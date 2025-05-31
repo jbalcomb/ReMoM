@@ -1,4 +1,46 @@
 
+
+
+MoO2
+
+Message_Box_Startup_()
+Message_Box_Cleanup_()
+Push_Block()
+Pop_Block()
+Save_Pushed_Blocks()
+Restore_Pushed_Blocks()
+
+Message_Box_Startup_()
+    Push_Block(_screen_seg)
+Message_Box_Cleanup_()
+    Pop_Block(_screen_seg)
+
+Warning_Box_() sets _warning_box = ST_TRUE and falls through to Do_Message_Box_()
+
+Do_Message_Box_()
+    ...
+    ...
+    ...
+    Assign_Auto_Function(Draw_Animating_Message_Box_, 2)
+
+
+
+
+Save_ScreenSeg()
+    Confirmation_Box()
+    Warn()
+    Selection_Box()
+    Notify_Load()
+    j_Save_ScreenSeg()
+        Do_Lair_Confirm()
+        Raze_City_Prompt()
+        CMB_CallChaos()
+        CMB_CallChaos()
+
+
+
+
+
 Notification Message
 
 ST: ~ "Notify"

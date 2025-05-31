@@ -227,7 +227,7 @@ Selected_Category = 0;
 
     Mana_Per_Turn = ((_players[player_idx].mana_reserve / 10) + Mana_Income);
 
-    if((spell_data_table[spell_idx].Casting_Cost / 50) > Mana_Per_Turn)
+    if((spell_data_table[spell_idx].casting_cost / 50) > Mana_Per_Turn)
     {
 
         spell_idx = 0;

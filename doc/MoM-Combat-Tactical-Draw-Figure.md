@@ -25,7 +25,7 @@ CMB_Units_Init__WIP()
     battle_units[itr].outline_magic_realm = 0;
 
 CMB_CreateEntities__WIP()
-    CMB_SpawnFigure__WIP(battle_units[itr].battle_unit_figure_idx, battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].target_cgc2, battle_units[itr].target_cgc1, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+    CMB_SpawnFigure__WIP(battle_units[itr].bufpi, battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].target_cgc2, battle_units[itr].target_cgc1, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
 
 CMB_Predraw_Figures__WIP()
     UE_Rlm = battle_units[itr].outline_magic_realm;
@@ -47,7 +47,7 @@ Combat_Unit_Enchantment_Outline_Draw()
 
 figures are 28 x 30
 28 * 30 = 840
-CMB_BU_Figure_GFX[] is 55 PR, 880 B
+battle_unit_picts_seg[] is 55 PR, 880 B
 
 840 * 8
 6720
@@ -72,7 +72,7 @@ CMB_Predraw_Figures__WIP()
     // TODO  ptr_figure_pointer_seg = SA_MK_FP0(figure_pointer_seg);
     ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
     FLIC_Set_CurrentFrame((SAMB_ptr)&ptr_figure_pointer_seg[figure_set_idx], Frame_Index);
-    GfxBuf_2400B = CMB_BU_Figure_GFX[battle_units[itr].battle_unit_figure_idx];
+    GfxBuf_2400B = battle_unit_picts_seg[battle_units[itr].bufpi];
     Draw_Picture_To_Bitmap((SAMB_ptr)&ptr_figure_pointer_seg[figure_set_idx], GfxBuf_2400B);
 
 void Combat_Figure_Compose(int16_t figure_index, int16_t Direction, int16_t player_idx, int16_t enchantment_magic_realm, int16_t Frame)
@@ -99,10 +99,10 @@ int16_t Combat_Figure_Load(int16_t unit_type, int16_t figure_index)
     ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
     ptr_figure_pointer_seg[itr] = LBX_Reload_Next(file_name, (entry_num + itr), (EMM_PageFrame + offset));
 
-void EMM_FIGUREX_Init__HACK(int16_t battle_unit_figure_idx)
-    logical_page = ((battle_unit_figure_idx * 3) / 2);
+void EMM_FIGUREX_Init__HACK(int16_t bufpi)
+    logical_page = ((bufpi * 3) / 2);
     
-    if((battle_unit_figure_idx & 0x1) == 0)
+    if((bufpi & 0x1) == 0)
     {
         offset = 0;
     }
@@ -111,8 +111,8 @@ void EMM_FIGUREX_Init__HACK(int16_t battle_unit_figure_idx)
         offset = 512;
     }
 
-    // offset += (battle_unit_figure_idx * 56);
-    offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));
+    // offset += (bufpi * 56);
+    offset += (bufpi * (56 * SZ_PARAGRAPH_B));
 
 
 
@@ -209,9 +209,9 @@ ptr_figure_pointer_seg[itr] = LBX_Reload_Next(file_name, (Fig_First_IMG_Entry + 
 
 
 CMB_Units_Init__WIP()
-    battle_units[_combat_total_unit_count].battle_unit_figure_idx = Combat_Figure_Load(_UNITS[troops[itr]].type, itr);
+    battle_units[_combat_total_unit_count].bufpi = Combat_Figure_Load(_UNITS[troops[itr]].type, itr);
     ...
-    battle_units[_combat_total_unit_count].battle_unit_figure_idx = Combat_Figure_Load(_UNITS[itr].type, _combat_total_unit_count);
+    battle_units[_combat_total_unit_count].bufpi = Combat_Figure_Load(_UNITS[itr].type, _combat_total_unit_count);
 
 
 

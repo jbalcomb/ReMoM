@@ -20,23 +20,6 @@ CMB_DrawFullScreen__WIP()
 
 
 
-CMB_CreateEntities__WIP()
-
-CMB_ZSort_Array
-CMB_SpriteCount
-
-dseg:D15A 00 00 00 00                                     CMB_EntitySprites@ dd 0                 ; DATA XREF: CMB_DrawEntities__WIP+1Cr ...
-dseg:D15A                                                                                         ; 1E2h LBX_Alloc_Next paragraphs, sandbox segment
-dseg:D15A                                                                                         ; (up to 101h records of 1Eh bytes each)
-
-dseg:D15E 00 00                                           CMB_SpriteCount dw 0                    ; DATA XREF: CMB_DrawEntities__WIP:loc_DD3A3r ...
-
-dseg:D280
-; 1-byte, unsigned
-CMB_ZSort_Array db 100h dup(0)
-
-
-
 
 
 ## MoveStage
@@ -55,7 +38,7 @@ CMB_ZSort_Array db 100h dup(0)
         CMB_SpawnDarkWall()
         CMB_SpawnFireWall()
         CMB_SpawnVortices()
-        CMB_SpawnFigure__WIP() passes battle_units[itr].battle_unit_figure_idx
+        CMB_SpawnFigure__WIP() passes battle_units[itr].bufpi
         CMB_SpawnUnitCurse()
         CMB_SpawnProjectiles()
 
@@ -117,7 +100,7 @@ CMB_ActiveUnitFrameY
 CMB_DrawEntities__WIP()
 
 for CMB_EntitySprites[IDK_combat_entity_idx].entity_type == 1
-uses CMB_BU_Figure_GFX[]
+uses battle_unit_picts_seg[]
 
 0, 2, 3, 4
 use CMB_EntitySprites[IDK_combat_entity_idx].pict_seg
@@ -155,7 +138,7 @@ Combat_Figure_Compose_USEFULL()
 
 
 
-CMB_SpawnFigure__WIP(battle_units[itr].battle_unit_figure_idx, battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].target_cgc2, battle_units[itr].target_cgc1, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+CMB_SpawnFigure__WIP(battle_units[itr].bufpi, battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].target_cgc2, battle_units[itr].target_cgc1, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
 
 
 void CMB_SpawnFigure__WIP(  int64_t seg_or_idx, 
@@ -191,7 +174,7 @@ CMB_DrawEntities__WIP()
     Draw_Picture_Windowed(
         (combat_grid_entities[IDK_combat_entity_idx].draw_x - combat_grid_entities[IDK_combat_entity_idx].draw_x_shift),
         (combat_grid_entities[IDK_combat_entity_idx].draw_y - combat_grid_entities[IDK_combat_entity_idx].draw_y_shift),
-        CMB_BU_Figure_GFX[combat_grid_entities[IDK_combat_entity_idx].index]
+        battle_unit_picts_seg[combat_grid_entities[IDK_combat_entity_idx].index]
     );
 
 
@@ -607,156 +590,3 @@ screen_x,screen_y
 {-16, 8}, {16,16}, {48, 8}, ...
 
 ¿ {((0 * 32) - 16), ((0 * 8) - 8)} ?
-
-
-
-## CMB_SpawnFigure__WIP()
-
-    Combat_Grid_Screen_Coordinates(position_cgc2, position_cgc1, 0, 0, &position_screen_x, &position_screen_y);
-
-    Combat_Grid_Screen_Coordinates(target_cgc2, target_cgc1, 0, 0, &target_screen_x, &target_screen_y);
-
-    switch(figure_count - 1)
-
-e.g., ...
-...`Deploy_Battle_Units() |-> CMB_CreateEntities__WIP() |-> CMB_SpawnFigure__WIP() |-> CMB_CreateEntity__WIP() |-> CMB_DrawEntities__WIP()`...
-Deploy_Battle_Units()
-    Melee_Count is 1
-    Cur_Figures is 8
-    Max_Figures is 8
-    position_cgc2 is 14
-    position_cgc1 is 12
-            if(battle_units[itr].controller_idx == player_idx)
-                if(_combat_attacker_player == player_idx)
-                    battle_units[itr].target_cgc2 = (battle_units[itr].position_cgc2 - 1);
-    target_cgc2 is 13
-    target_cgc1 is 12
-
-CMB_DrawFullScreen__WIP()
-    |-> CMB_CreateEntities__WIP()
-        unit_figure_count = battle_units[itr].Cur_Figures;
-        unit_figure_maximum = battle_units[itr].Max_Figures;
-        |-> CMB_SpawnFigure__WIP(battle_units[itr].battle_unit_figure_idx, battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].target_cgc2, battle_units[itr].target_cgc1, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
-
-CMB_SpawnFigure__WIP()
-    Combat_Grid_Screen_Coordinates(position_cgc2, position_cgc1, 0, 0, &position_screen_x, &position_screen_y);
-    Combat_Grid_Screen_Coordinates(target_cgc2, target_cgc1, 0, 0, &target_screen_x, &target_screen_y);
-position_screen_x is 190
-position_screen_y is 128
-target_screen_x is 174
-target_screen_y is 120
-figure_count is 8
-current_figure is 0
-switch(figure_count - 1)
-    case 7:
-        switch(current_figure)
-            case 0: { fig_x =   1; fig_y =  3; } break;
-fig_x is 1
-fig_y is 3
-if(position_cgc2 > target_cgc2)
-    NOT if(position_cgc1 > target_cgc1)
-    NOT else if(position_cgc1 < target_cgc1)
-    figure_set_idx = 7;
-    draw_x = (((((target_screen_x - position_screen_x) * MoveStage) / 8) + position_screen_x) + fig_x);  // used for combat_grid_entities[].draw_x
-    draw_y = (((((target_screen_y - position_screen_y) * MoveStage) / 8) + position_screen_y) + fig_y);  // used for combat_grid_entities[].draw_y
-    (((((174 - 190) * 0) / 8) + 190) + 1) = ((((-16 * 0) / 8) + 190) + 1) = (((0 / 8) + 190) + 1) = ((0 + 190) + 1) = (190 + 1) = 191
-    (((((120 - 128) * 0) / 8) + 128) + 3) = (((( -8 * 0) / 8) + 128) + 3) = (((0 / 8) + 128) + 3) = ((0 + 128) + 3) = (128 + 3) = 131
-draw_x is 191
-draw_y is 131
-    |-> CMB_CreateEntity__WIP(draw_x,draw_y,seg_or_idx,13,23,UU,1,controller_idx,figure_set_idx,outline_magic_realm,BldAmt,UU,Blood_Frame);
-
-CMB_CreateEntity__WIP()
-    combat_grid_entities[combat_grid_entity_count].draw_x = draw_x;
-    combat_grid_entities[combat_grid_entity_count].draw_y = draw_y;
-    combat_grid_entities[combat_grid_entity_count].seg_or_idx = seg_or_idx;
-    combat_grid_entities[combat_grid_entity_count].Draw_Frame = Frame;
-    combat_grid_entities[combat_grid_entity_count].draw_x_shift = draw_x_shift;
-    combat_grid_entities[combat_grid_entity_count].draw_y_shift = draw_y_shift;
-    combat_grid_entities[combat_grid_entity_count].entity_type = DrawType;
-    combat_grid_entities[combat_grid_entity_count].Owner = controller_idx;
-    combat_grid_entities[combat_grid_entity_count].outline_magic_realm = outline_magic_realm;
-    Screen_To_Combat_Grid_Cell_X_And_Offset(draw_x, draw_y, &combat_grid_cell_x, &combat_grid_cell_x_offset);
-    Screen_To_Combat_Grid_Cell_Y_And_Offset(draw_x, draw_y, &combat_grid_cell_y, &combat_grid_cell_y_offset);
-combat_grid_cell_x is 14
-combat_grid_cell_x_offset is 3
-combat_grid_cell_y is 12
-combat_grid_cell_y_offset is 3
-
-    ...
-    ...  END: CMB_DrawFullScreen__WIP() |-> CMB_CreateEntities__WIP()
-    ...
-
-CMB_DrawFullScreen__WIP()
-    |-> CMB_DrawMap__WIP()
-
-CMB_DrawMap__WIP()
-    |-> Combat_Figure_Compose_USEFULL()
-
-BEGIN:  Combat_Figure_Compose_USEFULL()
-            position_cgc2 = battle_units[itr].position_cgc2;
-            position_cgc1 = battle_units[itr].position_cgc1;
-            target_cgc2 = battle_units[itr].target_cgc2;
-            target_cgc1 = battle_units[itr].target_cgc1;
-            frame_num is 1
-            14,12  13,12
-            figure_set_idx is 7
-            itr is 0
-            battle_unit_figure_idx is 0
-            unit_idx is 825
-END:  Combat_Figure_Compose_USEFULL()
-
-for(itr_y = 0; itr_y < 22; itr_y++)
-    for(itr_x = 0; itr_x < 11; itr_x++)
-
-cgc2 is 0
-cgc1 is 9
-screen_x is 0
-screen_y is -8
-battlefield_terrain is 0
-
-|-> CMB_DrawEntities__WIP()
-
-CMB_DrawEntities__WIP()
-combat_grid_entity_count is 12  ... 1 + 1 + 1 + 1 + 8 figures
-
-...
-combat_entity_draw_order_array[] {11, 9, 8, 0, 1, 4, 2, 5, 3, 6, 7, 10 }
-...
-combat_grid_entities[] {  }
-...
-
-
-
-CMB_BU_Figure_GFX[]
-
-
-CMB_Units_Init__WIP
-    for(itr = 0; itr < troop_count; itr++)
-        battle_units[_combat_total_unit_count].battle_unit_figure_idx = Combat_Figure_Load(_UNITS[troops[itr]].type, itr);
-
-Combat_Figure_Load()
-
-    ptr_figure_pointer_seg[itr] = LBX_Reload_Next(file_name, (entry_num + itr), (EMM_PageFrame + offset));
-
-
-EMM_FIGUREX_Init__HACK()
-    logical_page = ((battle_unit_figure_idx * 3) / 2);
-    EMM_PageFrame = (EmmHndl_FIGUREX + (logical_page * SZ_EMM_LOGICAL_PAGE));
-
-Combat_Figure_Compose_USEFULL()
-    battle_unit_figure_idx = battle_units[itr].battle_unit_figure_idx;
-    EMM_FIGUREX_Init__HACK(battle_unit_figure_idx);
-    ...
-    figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 33);
-    ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
-    GfxBuf_2400B = CMB_BU_Figure_GFX[battle_units[itr].battle_unit_figure_idx];
-    Draw_Picture_To_Bitmap(ptr_figure_pointer_seg[figure_set_idx], GfxBuf_2400B);
-
-
-
-
-Draw_Picture_Windowed()
- x1,  y1
-175, 112
-*2
-350,224

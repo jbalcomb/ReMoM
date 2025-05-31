@@ -18,6 +18,35 @@ extern "C" {
 
 
 
+/*
+MOX_T4.C
+// WZD s01p03
+void PageFlip_FX(void)
+
+; executes a VGA page flip using a special effect for
+; screen transition set through VGA_PageFlipEffect,
+; which is zeroed out afterward:
+;   0 - simple flip, no extra effect
+;   1 - left to right cut (not used in the game)
+;   2 - black cut with the new image fading in
+;   3 - mosaic effect
+;   4 - grow out from a tile (not used in the game)
+;   5 - writes out the DAC, but DOES NOT do a page flip
+
+    Default: Apply_Palette(); Toggle_Pages();
+    Main Screen sets it to 4 before calling Outpost_Screen()
+    NameStartingCity_Dialog_Popup sets it to 3 before returning to Main Screen
+    Load Screen sets it to 2 when preparing to loop back to Main Screen
+    Production Screen sets it to 3 before returning to City Screen / CityList Screen
+
+*/
+enum e_PAGE_FLIP_TYPE
+{
+    pf_Normal = 0
+};
+
+
+
 extern int16_t current_screen;
 extern int16_t previous_screen;
 

@@ -18,7 +18,13 @@
 */
 
 
+
+extern uint32_t DBG__cmbt_cancel_button_seg_size;
+
+
+
 extern int16_t STU_DBG_trigger_event;
+
 
 
 // WZD dseg:9136

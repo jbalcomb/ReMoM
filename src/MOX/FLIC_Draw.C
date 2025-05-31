@@ -15,10 +15,11 @@ MoO2 Module: shear
 
 */
 
-#include "MOX_TYPE.H"
-
 #include "FLIC_Draw.H"
+
 #include "Fonts.H"
+#include "Graphics.H"
+#include "MOX_TYPE.H"
 
 #include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
 
@@ -183,32 +184,63 @@ void Capture_Screen_Block(byte_ptr frame_data, int16_t x1, int16_t y1, int16_t x
 
 // WZD s29p01
 // 1oom  lbxgfx_draw_pixels_fmt0()
+/*
+
+frame_data
+    pointer to buffer of FLIC animation frame
+
+200 lines of 320 pixels  64,000 pixels at 1 byte per pixel  64,000 bytes of data
+((SCREEN_YMIN * SCREEN_WIDTH) + SCREEN_XMIN)  ((  0 * 320) +   0)      0
+((SCREEN_YMAX * SCREEN_WIDTH) + SCREEN_XMAX)  ((199 * 320) + 319)  63999
+
+...on the last byte...
+the address of bbuff is the address of the last pixel/byte in current_video_page
+but, we still add SCREEN_WIDTH, one last time
+so, testing at that point is useless
+
+*/
 void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data, int16_t DBG_height)
 {
-    unsigned char * bbuff_pos;
-    unsigned char * bbuff;
-    unsigned char data_byte;
+    unsigned char * bbuff_pos = 0;
+    unsigned char * bbuff = 0;
+    unsigned char data_byte = 0;
 
-    unsigned char packet_op;
-    unsigned char packet_byte_count;
-    unsigned char sequence_byte_count;
-    unsigned char delta_byte_count;
-    unsigned char itr_op_repeat;
-    byte_ptr DBG_frame_data;
-    byte_ptr DBG_frame_data_end;
-    uint16_t DBG_frame_data_pos;
+    unsigned char packet_op = 0;
+    unsigned char packet_byte_count = 0;
+    unsigned char sequence_byte_count = 0;
+    unsigned char delta_byte_count = 0;
+    unsigned char itr_op_repeat = 0;
+
+    byte_ptr DBG_frame_data = 0;
+    // byte_ptr DBG_frame_data_end = 0;
+    //uint16_t DBG_frame_data_pos = 0;
+    unsigned char * DBG_bbuff_pos = 0;
+    unsigned char * DBG_bbuff_pos_end = 0;
+    unsigned char * DBG_bbuff = 0;
+    unsigned char* DBG_bbuff_end = 0;
+
+    assert(x_start >= SCREEN_XMIN);
+    assert(x_start <= SCREEN_XMAX);
+    assert(y_start >= SCREEN_YMIN);
+    assert(y_start <= SCREEN_YMAX);
+    assert((x_start + (width - 1)) <= SCREEN_XMAX);
+    assert((y_start + (DBG_height - 1)) <= SCREEN_YMAX);
 
     DBG_frame_data = frame_data;
-    DBG_frame_data_end = (DBG_frame_data + (width * DBG_height));
+    // DBG_frame_data_end = (DBG_frame_data + (width * DBG_height));
 
     bbuff_pos = current_video_page + ((y_start * SCREEN_WIDTH) + x_start);
+    DBG_bbuff_pos = bbuff_pos;
+    DBG_bbuff_pos_end = current_video_page + (((SCREEN_YMAX * SCREEN_WIDTH) + SCREEN_XMAX) - SCREEN_HEIGHT);
+    DBG_bbuff_end = current_video_page + ((SCREEN_YMAX * SCREEN_WIDTH) + SCREEN_XMAX);
 
     while(width--)
     {
-        bbuff = bbuff_pos++;
+        bbuff = bbuff_pos++;  // next column
+        assert(bbuff <= DBG_bbuff_end);
 
         packet_op = *frame_data++;
-        DBG_frame_data_pos = (frame_data - DBG_frame_data);
+        // DBG_frame_data_pos = (frame_data - DBG_frame_data);
         // assert(frame_data <= DBG_frame_data_end);
 
         if(packet_op == 0xFF)  /* Type: skip */
@@ -222,6 +254,7 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
                 sequence_byte_count = *frame_data++;
                 delta_byte_count = *frame_data++;
                 bbuff += (delta_byte_count * SCREEN_WIDTH);
+                assert(bbuff <= DBG_bbuff_end);
                 packet_byte_count -= sequence_byte_count + 2;
                 while(sequence_byte_count--)
                 {
@@ -233,12 +266,14 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
                         data_byte = *frame_data++;
                         while(itr_op_repeat--)
                         {
+                            assert(bbuff <= DBG_bbuff_end);
                             *bbuff = data_byte;
                             bbuff += SCREEN_WIDTH;
                         }
                     }
                     else  /* op: copy */
                     {
+                        assert(bbuff <= DBG_bbuff_end);
                         *bbuff = data_byte;
                         bbuff += SCREEN_WIDTH;
                     }
@@ -251,9 +286,11 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
                 sequence_byte_count = *frame_data++;
                 delta_byte_count = *frame_data++;
                 bbuff += (delta_byte_count * SCREEN_WIDTH);
+                assert(bbuff <= DBG_bbuff_end);
                 packet_byte_count -= sequence_byte_count + 2;
                 while(sequence_byte_count--)
                 {
+                    assert(bbuff <= DBG_bbuff_end);
                     *bbuff = *frame_data++;
                     bbuff += SCREEN_WIDTH;
                 }
@@ -430,7 +467,35 @@ void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte
 
 
 // WZD s30p01
-// UU_LBX_Image_Copy()
+// drake178: ¿UU_LBX_Image_Copy() or LBX_Image_Copy() ?
+// MoO2  Module: bitmap  Copy_Bitmap_To_Bitmap()
+// 1oom 
+/*
+; copies an LBX composed or decoded image to an
+; arbitrary far memory segment address (including the
+; header)
+*/
+/*
+
+*/
+void Copy_Bitmap_To_Bitmap(SAMB_ptr target_bitmap, SAMB_ptr source_bitmap)
+{
+    int16_t width = 0;
+    int16_t height = 0;
+    int16_t length = 0;
+
+    // DOMSDOS  width = farpeekw(source_bitmap, FLIC_HDR_POS_WIDTH);
+    width = GET_2B_OFS(source_bitmap, FLIC_HDR_POS_WIDTH);
+
+    // height = farpeekw(source_bitmap, FLIC_HDR_POS_HEIGHT);
+    height = GET_2B_OFS(source_bitmap, FLIC_HDR_POS_HEIGHT);
+
+    length = (16 + (width * height));
+
+    memcpy(target_bitmap, source_bitmap, length);
+
+}
+
 
 // WZD s30p02
 // AKA  FLIC_Prepare()
@@ -575,6 +640,12 @@ void Load_Palette_From_Animation(SAMB_ptr picture)
 
 // WZD s30p11
 // MoO2  Module: animate  Draw(); |-> Remap_Draw(); Draw_No_Glass(); ... Remap_Draw_Animated_Sprite();
+/*
+
+picture
+    pointer to buffer of FLIC animation file
+
+*/
 void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
 {
     int16_t current_frame;
@@ -584,9 +655,20 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
     unsigned short flic_frame_offset_ofst;
     byte_ptr p_FLIC_Frame;
     uint8_t remap_flag;
-    uint16_t DBG_palette_header_offset;
     int16_t DBG_width;
     int16_t DBG_height;
+
+    assert(picture != NULL);
+    assert(x_start >= SCREEN_XMIN);
+    assert(x_start <= SCREEN_XMAX);
+    assert(y_start >= SCREEN_YMIN);
+    assert(y_start <= SCREEN_YMAX);
+    DBG_width = FLIC_GET_WIDTH(picture);
+    DBG_height = FLIC_GET_HEIGHT(picture);
+    assert(DBG_width <= SCREEN_WIDTH);
+    assert(DBG_height <= SCREEN_HEIGHT);
+    assert((x_start + (DBG_width - 1)) <= SCREEN_XMAX);
+    assert((y_start + (DBG_height - 1)) <= SCREEN_YMAX);
 
     // ¿ MEM_Copy_Far(&pict_hdr, 0, 0, picture, 16) ?
 
@@ -601,7 +683,6 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
         FLIC_SET_CURRENT_FRAME(picture, FLIC_GET_LOOP_FRAME(picture));
     }
 
-    DBG_palette_header_offset = FLIC_GET_PALETTE_HEADER_OFFSET(picture);
     if((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))
     {
         FLIC_Load_Palette(picture, current_frame);
@@ -616,11 +697,6 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
     p_FLIC_Frame = picture + (flic_frame_offset) + 1;
 
     remap_flag = FLIC_GET_REMAP_FLAG(picture);
-
-    DBG_width = FLIC_GET_WIDTH(picture);
-    DBG_height = FLIC_GET_HEIGHT(picture);
-    assert(DBG_width <= SCREEN_WIDTH);
-    assert(DBG_height <= SCREEN_HEIGHT);
 
     if(remap_flag == ST_FALSE)
     {
@@ -2630,6 +2706,7 @@ void Clipped_Remap_Draw_Frame__NOP(int16_t x1, int16_t y1, int16_t width, int16_
 }
 
 
+
 /*
     WIZARDS.EXE  seg032
 */
@@ -3223,6 +3300,12 @@ void Enlarge_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y)
 // MoO2  Module: bitmap  Vanish_Bitmap()
 // MoO2  Moudle: shear   Vanish_Bitmap_Pixels_()
 /*
+; deletes an amount of random pixels from an LBX image
+; roughly corresponding to the specified percent (they
+; are replaced with transparent pixels - color #00)
+; uses three local RNGs, not the global one
+*/
+/*
 push    [Percent]                       ; percent
 push    [GfxBuf_2400B]                  ; bitmap
 call    Jumble_Bitmap  
@@ -3230,11 +3313,105 @@ call    Jumble_Bitmap
 bitmap is a segment address
 
 */
-void Vanish_Bitmap__NOP(SAMB_ptr bitmap, int16_t percent)
+// WZD seg033:06E3 00 00                                           _CS_GFX_RNG_TempSeed dw 0
+// WZD seg033:06E5 2A 44 23 01 46 19 4F 3B 3F 41 06 2E 52 1C 3E 5C+_CS_GFX_RND100_Lookup db 42,68,35,1,70,25,79,59,63,65,6,46,82,28,62,92,96,43,28,37,92,5,3,54,93,83,22,17,19,96,48,27,72,39,70,13,68,100,36,95,4,12,23,34,74,65,42,12,54,69,48,45,63,58,38,60,24,42,30,79,17,36,91,43,89,7,41,43,65,49,47,6,91,30,71,51,7,2,94,49,30,24,85,55,57,41,67
+// WZD seg033:06E5 60 2B 1C 25 5C 05 03 36 5D 53 16 11 13 60 30 1B+
+// WZD seg033:06E5 48 27 46 0D 44 64 24 5F 04 0C 17 22 4A 41 2A 0C+db 77,32,9,45,40,27,24,38,39,19,83,30,42,34,16,40,59,5,31,78,7,74,87,22,46,25,73,71,30,78,74,98,13,87,91,62,37,56,68,56,75,32,53,51,51,42,25,67,31,8,92,8,38,58,88,54,84,46,10,10,59,22,89,23,47,7,31,14,69,1,92,63,56,11,60,25,38,49,84,96,42,3,51,92,37,75,21
+// WZD seg033:06E5 36 45 30 2D 3F 3A 26 3C 18 2A 1E 4F 11 24 5B 2B+db 97,22,49,100,69,85,82,35,54,100,19,39,1,89,28,68,29,94,49,84,8,22,11,18,14,15,10,17,36,52,1,50,20,57,99,4,25,9,45,10,90,3,96,86,94,44,24,88,15,4,49,1,59,19,81,97,99,82,90,99,10,58,73,23,39,93,39,80,91,58,59,92,16,89,57,12,3,35,73,56,29,47
+static uint16_t _CS_GFX_RNG_TempSeed = 0;
+uint8_t _CS_GFX_RND100_Lookup[] = {42,68,35,1,70,25,79,59,63,65,6,46,82,28,62,92,96,43,28,37,92,5,3,54,93,83,22,17,19,96,48,27,72,39,70,13,68,100,36,95,4,12,23,34,74,65,42,12,54,69,48,45,63,58,38,60,24,42,30,79,17,36,91,43,89,7,41,43,65,49,47,6,91,30,71,51,7,2,94,49,30,24,85,55,57,41,67,77,32,9,45,40,27,24,38,39,19,83,30,42,34,16,40,59,5,31,78,7,74,87,22,46,25,73,71,30,78,74,98,13,87,91,62,37,56,68,56,75,32,53,51,51,42,25,67,31,8,92,8,38,58,88,54,84,46,10,10,59,22,89,23,47,7,31,14,69,1,92,63,56,11,60,25,38,49,84,96,42,3,51,92,37,75,21,97,22,49,100,69,85,82,35,54,100,19,39,1,89,28,68,29,94,49,84,8,22,11,18,14,15,10,17,36,52,1,50,20,57,99,4,25,9,45,10,90,3,96,86,94,44,24,88,15,4,49,1,59,19,81,97,99,82,90,99,10,58,73,23,39,93,39,80,91,58,59,92,16,89,57,12,3,35,73,56,29,47};
+static uint16_t _CS_width = 0;
+void Vanish_Bitmap__WIP(SAMB_ptr bitmap, int16_t percent)
 {
+    int16_t offset = 0;  // _DI_
+    int16_t _AX_ = 0;
+    int16_t _BX_ = 0;
+    int16_t _CX_ = 0;
+    int16_t _DX_ = 0;
+    void * _DS_ = NULL;
+    void * _SI_ = NULL;
+    void * _ES_ = NULL;
+    void * _DI_ = NULL;
 
-    // TODO  RNG_GFX_Random(1000);
+    _CS_GFX_RNG_TempSeed = RNG_GFX_Random__WIP(1000);
 
+    // mov     ax, [bp+bitmap]
+    // mov     es, ax
+
+    offset = SZ_FLIC_HDR;
+
+    // _CS_width = *((struct s_FLIC_Header *)bitmap)->width;
+    _CX_ = GET_2B_OFS(bitmap, FLIC_HDR_POS_WIDTH);
+
+    // mov     dx, [bp+percent]
+    _DX_ = percent;
+
+    // mov     ax, cs
+    // mov     ds, ax
+
+    do {
+
+        _AX_ = rnd_bitfiddle__1oom(_CS_GFX_RNG_TempSeed);
+        _CS_GFX_RNG_TempSeed = _AX_;
+
+        // mov     al, ah
+        // xor     ah, ah
+        _AX_ >>= 8;
+        _AX_ &= 0x0F;
+
+        // mov     bx, ax
+        _BX_ = _AX_;
+
+        // mov     si, bx
+        // add     si, offset GFX_RND100_Lookup
+        // _SI_ = _BX_;
+        // _SI_ += _CS_GFX_RND100_Lookup;
+        // ~ &_CS_GFX_RND100_Lookup[_BX_]
+        _SI_ = &_CS_GFX_RND100_Lookup[_BX_];
+
+        // mov     cx, [es:s_FLIC_HDR.height]
+        _CX_ = GET_2B_OFS(bitmap, FLIC_HDR_POS_HEIGHT);
+
+        while(--_CX_)
+        {
+            
+            // ; AL = byte ptr [DS:SI]
+            // lodsb
+            _AX_ = *(uint8_t *)_SI_;
+            // inc     _DI_offset
+            offset++;
+
+            // cmp     al, dl
+            // jz      short loc_24DCD
+            if(
+                (_AX_ & 0x0F) != (_DX_ * 0x0F)
+                &&
+                (_AX_ & 0x0F) >= (_DX_ * 0x0F)
+            )
+            {
+                // xor     al, al
+                _AX_ &= 0xF0; 
+                // dec     _DI_offset
+                offset--;
+                // stosb 
+                // ES:DI = AL
+                bitmap[offset] = ST_TRANSPARENT;
+
+                // inc     bx
+                _BX_++;
+                // xor     bh, bh
+                _BX_ &= 0x0F;
+                // mov     si, bx
+                // add     si, offset _CS_GFX_RND100_Lookup
+                _SI_ = &_CS_GFX_RND100_Lookup[_BX_];
+
+                // loop    loc_24DC1
+
+            }
+
+        }
+
+    } while (--_CS_width != 0);
 
 }
 
@@ -3348,6 +3525,7 @@ void LBX_IMG_RevGrayscale__STUB(byte_ptr bitmap, int16_t color_index)
 // WZD s33p18
 // UU_DUP_RevGrayscale()
 
+
 // WZD s33p19
 /*
 drake178:
@@ -3357,8 +3535,152 @@ drake178:
     but actually returning the lowest order 10 bits of the resulting state (1-1023)
     rather than the shifted out return value
 */
-int16_t RNG_GFX_Random__NOP(int16_t max)
+// WZD seg033:09E3 93 28                                           _CS_Local_LFSR_LO dw 2893h                  ; DATA XREF: RNG_GFX_Random__NOP+1Ar ...
+// WZD seg033:09E5 0A 00                                           _CS_Local_LFSR_HI dw 0Ah                    ; DATA XREF: RNG_GFX_Random__NOP+1Fr ...
+static uint16_t _CS_Local_LFSR_LO = 0x2893;
+static uint16_t _CS_Local_LFSR_HI = 0x0A;
+int16_t RNG_GFX_Random__WIP(int16_t max)
 {
+    int16_t UU_result = 0;
+    int16_t _AX_ = 0;
+    int16_t _BX_ = 0;
+    int16_t _CX_ = 0;
+    int16_t _DX_ = 0;
+    // void * _SI_ = NULL;
+    // void * _DI_ = NULL;
+    int16_t _SI_ = 0;
+    int16_t _DI_ = 0;
+    int16_t _CF_ = 0;
+
+    if(max == 0)
+    {
+        max = 1;
+    }
+
+    UU_result = 0;
+
+    // mov     si, [cs:_CS_Local_LFSR_LO]
+    // _SI_ = &_CS_Local_LFSR_LO[0];
+    _SI_ = _CS_Local_LFSR_LO;
+
+    // mov     di, [cs:_CS_Local_LFSR_HI]
+    // _DI_ = &_CS_Local_LFSR_HI[0];
+    _DI_ = _CS_Local_LFSR_HI;
+
+    // mov     cx, 9
+    _CX_ = 9;
+
+// loc_24F9E:
+do {
+_AX_ = _SI_;    // mov     ax, si
+_BX_ = _SI_;    // mov     bx, si
+_DX_ = _DI_;    // mov     dx, di
+_DX_ >>= 1;     // shr     dx, 1
+
+// rcr     bx, 1
+    if(_BX_ & 0x0001) { _CF_ = 0x0001; }
+    _BX_ >>= _BX_;
+    _BX_ &= _CF_;
+
+_AX_ ^= _BX_;   // xor     ax, bx
+_DX_ >>= 1;     // shr     dx, 1
+
+// rcr     bx, 1
+    if(_BX_ & 0x0001) { _CF_ = 0x0001; }
+    _BX_ >>= _BX_;
+    _BX_ &= _CF_;
+
+_AX_ ^= _BX_;   // xor     ax, bx
+_DX_ >>= 1;     // shr     dx, 1
+
+// rcr     bx, 1
+    if(_BX_ & 0x0001) { _CF_ = 0x0001; }
+    _BX_ >>= _BX_;
+    _BX_ &= _CF_;
+
+_DX_ >>= 1;     // shr     dx, 1
+
+// rcr     bx, 1
+    if(_BX_ & 0x0001) { _CF_ = 0x0001; }
+    _BX_ >>= _BX_;
+    _BX_ &= _CF_;
+
+_AX_ ^= _BX_;   // xor     ax, bx
+_DX_ >>= 1;     // shr     dx, 1
+
+// rcr     bx, 1
+    if(_BX_ & 0x0001) { _CF_ = 0x0001; }
+    _BX_ >>= _BX_;
+    _BX_ &= _CF_;
+
+_DX_ >>= 1;     // shr     dx, 1
+
+// rcr     bx, 1
+    if(_BX_ & 0x0001) { _CF_ = 0x0001; }
+    _BX_ >>= _BX_;
+    _BX_ &= _CF_;
+
+_AX_ ^= _BX_;   // xor     ax, bx
+_DX_ >>= 1;     // shr     dx, 1
+_AX_ = (_AX_ & 0x0F) ^ (_DX_ & 0xF0);   // xor     al, dh
+_DX_ = _AX_;    // mov     dx, ax
+_DX_ >>= 1;     // shr     dx, 1
+
+// rcl     [bp+UU_result], 1
+    if(UU_result & 0x8000) {_CF_ = 0x0001; }
+    UU_result >>= UU_result;
+    UU_result &= _CF_;
+
+_AX_ >>= 1;     // shr     ax, 1
+
+// rcr     di, 1
+    if(_DI_ & 0x0001) { _CF_ = 0x0001; }
+    _DI_ >>= _DI_;
+    _DI_ &= _CF_;
+
+// rcr     si, 1
+    if(_SI_ & 0x0001) { _CF_ = 0x0001; }
+    _SI_ >>= _SI_;
+    _SI_ &= _CF_;
+
+} while (--_CX_ != 0);
+// loop    loc_24F9E
+
+
+// cmp     si, 0
+// jnz     short loc_24FE4
+// cmp     di, 0
+// jnz     short loc_24FE4
+// mov     si, 12478
+if(
+    (_SI_ = 0)
+    &&
+    (_DI_ == 0)
+)
+{
+    _SI_ = 0x30BE;
+}
+
+// loc_24FE4:
+// mov     [cs:_CS_Local_LFSR_LO], si
+// mov     [cs:_CS_Local_LFSR_HI], di
+    _CS_Local_LFSR_LO = _SI_;
+    _CS_Local_LFSR_HI = _DI_;
+// mov     ax, si
+// and     ax, 1023
+    _AX_ = _SI_;
+    _AX_ &= 0x03FF;
     
-    return max;
+// loc_24FF3:
+// cmp     ax, [bp+max]
+// jb      short @@Done
+// sub     ax, [bp+max]
+// jmp     short loc_24FF3
+    while(!(_AX_ < max))
+    {
+        _AX_ -= max;
+    }
+
+    return _AX_;
+
 }

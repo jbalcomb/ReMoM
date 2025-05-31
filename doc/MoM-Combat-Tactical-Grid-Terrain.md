@@ -30,7 +30,7 @@ figure_draw_x   ==> draw_x
 figure_draw_y   ==> draw_y
 
 ZDepth                  ==> draw_order_value
-CMB_ZSort_Array         ==>  combat_entity_draw_order_array
+CMB_ZSort_Array         ==>  combat_grid_entities_draw_order
 CMB_ZSort_Insert__WIP() ==> Set_Entity_Draw_Order()
 
 CMB_GetInTileX__WIP()   ==> Screen_To_Combat_Grid_Cell_X_And_Offset()

@@ -259,7 +259,7 @@ int16_t sdl2_Play_Sound__WIP(void* sound_buffer, uint32_t sound_buffer_size)
         } break;
         case 2:  /* VOC file */
         {
-            dbg_prn("LBX Sound Entry is XMI\n");
+            dbg_prn("LBX Sound Entry is VOC\n");
             Convert_VOC_To_WAV(sound_buffer, sound_buffer_size, &wav_sound_buffer, &wav_sound_buffer_size);
             sdl2_rw_ops = SDL_RWFromMem(wav_sound_buffer, wav_sound_buffer_size);
             if(sdl2_rw_ops == NULL)
@@ -280,6 +280,7 @@ int16_t sdl2_Play_Sound__WIP(void* sound_buffer, uint32_t sound_buffer_size)
         } break;
         default:
         {
+            __debugbreak();
             Audio_Error__STUB(SND_Invalid_File);
         } break;
     }
@@ -322,7 +323,7 @@ out_wav_len
 
 NOTE: initial values for wav_header are hard-coded for SOUNDFX.LBX, entry 0  (SLX19.VOC)
 */
-int Convert_VOC_To_WAV(const uint8_t* voc_buf, uint32_t voc_len, int16_t** out_wav_buf, uint32_t* out_wav_len)
+int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out_wav_buf, uint32_t * out_wav_len)
 {
     /* WAV */
     // out_wav_buf
@@ -364,6 +365,7 @@ int Convert_VOC_To_WAV(const uint8_t* voc_buf, uint32_t voc_len, int16_t** out_w
         printf("voc_len: %u\n", voc_len);
         dbg_prn("voc_len: %u\n", voc_len);
         __debugbreak();
+        // Pssst... is your size var for lbxload_entry_length a uint32_t?
     }
 
     if(wav_buffer_idx == MAX_WAV_BUFFER_IDX)

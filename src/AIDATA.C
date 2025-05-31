@@ -288,7 +288,7 @@ void AI_Magic_Strategy__WIP(int16_t player_idx)
         if(_players[player_idx].Hostility[HUMAN_PLAYER_IDX] == 2)
         {
 
-            if(spell_data_table[_players[player_idx].casting_spell_idx].Casting_Cost >= spell_data_table[spl_Cruel_Unminding].Casting_Cost)
+            if(spell_data_table[_players[player_idx].casting_spell_idx].casting_cost >= spell_data_table[spl_Cruel_Unminding].casting_cost)
             {
 
                 Power_Strategy = 5;

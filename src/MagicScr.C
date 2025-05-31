@@ -1463,7 +1463,7 @@ void Build_Overland_Enchantment_List(void)
                     if(
                         (spell_data_table[itr2].Param0 == itr)  /* ; unit type, base damage, UE flag, or CE index */
                         &&
-                        (spell_data_table[itr2].type == sdt_Global_Enchantment)
+                        (spell_data_table[itr2].type == scc_Global_Enchantment)
                     )
                     {
                         ovl_ench_list_spells[ovl_ench_cnt] = itr2;

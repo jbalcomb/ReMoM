@@ -246,7 +246,7 @@ struct s_SPELL_BOOK_PAGE
     /* 00 */   char title[16];
     /* 10 */   int16_t spell[6];
     /* 1C */   int8_t count;  // 1-byte, signed
-    /* 1D */   // 2-byte alignment padding  Unused_1Dh db ?
+    /* 1D */   /* 2-byte alignment padding */
     /* 1E */
 };
 #pragma pack(pop)
@@ -323,7 +323,7 @@ extern int16_t SBK_NewSpellAnim_Stg;
 
 // WZD dseg:C8FE
 // drake178: IMG_SBK_BookRealms@ SPBK_ICONS
-// PRIVATE  extern SAMB_ptr spellbook_symbols_bitm[6];
+extern SAMB_ptr spellbook_symbols_bitm[NUM_MAGIC_REALMS];
 
 // WZD dseg:C90A
 // drake178:  the predicted amount of mana that the wizard will
@@ -410,7 +410,7 @@ extern char * SBK_Descriptions[];
 void Build_Spell_List(int16_t type, int16_t spell_list[]);
 
 // WZD o117p02
-// SBK_AddRealm()
+void Combat_Spellbook_Add_Spells_From_Magic_Realm(int16_t * spell_list, int16_t magic_realm);
 
 // WZD o117p03
 void Spellbook_Group_Counts(void);
@@ -422,19 +422,19 @@ void SBK_BuildSpellbook__WIP(int16_t spell_list_type, int16_t page_spell_count);
 int16_t UU_IDK_turn_to_cast__STUB(int16_t player_idx);
 
 // WZD o117p06
-// CMB_BuildSpellbook()
+int16_t Combat_Spellbook_Build__WIP(int16_t caster_idx);
 
 // WZD o117p07
-void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE Page, SAMB_ptr spellbook_bitmap);
+void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spellbook_bitmap);
 
 // WZD o117p08
-void CmbBook_Compose__STUB(void);
+void CmbBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spellbook_bitmap, int16_t caster_idx);
 
 // WZD o117p09
 void SmlBook_Draw__WIP(int16_t x, int16_t y);
 
 // WZD o117p10
-void CmbBook_Draw__STUB(void);
+void CmbBook_Draw__WIP(int16_t x, int16_t y, int16_t caster_idx);
 
 // WZD o117p11
 void SmlBook_PageTurn__WIP(int turn_type, int combat_flag, int player_idx);

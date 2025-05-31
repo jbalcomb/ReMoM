@@ -41,7 +41,9 @@
 uint16_t _SA_MEMSIG1 = 0x12FA;
 uint16_t _SA_MEMSIG2 = 0x4ECF;
 
-uint16_t _BBBB = 0xBBBB;
+uint16_t _AAAA = 0xAAAA;  // 43690
+uint16_t _BBBB = 0xBBBB;  // 48059
+uint16_t _CCCC = 0xCCCC;  // 52428
 
 
 
@@ -345,7 +347,17 @@ SAMB_ptr Allocate_Space(uint16_t size)
 
     tmp_SAMB_head = (SAMB_ptr) malloc(lsize);
     if(tmp_SAMB_head == NULL) { Allocation_Error(1, size); }
-    SAMB_head = tmp_SAMB_head + 12;  // 16-byte paragraph - 4-byte malloc header
+    // SAMB_head = tmp_SAMB_head + 12;  // 16-byte paragraph - 4-byte malloc header
+    SAMB_head = tmp_SAMB_head;
+
+    SET_2B_OFS(SAMB_head,  0, _AAAA);  // DNE in Dasm
+    SET_2B_OFS(SAMB_head,  2, _AAAA);  // DNE in Dasm
+    SET_2B_OFS(SAMB_head,  4, _AAAA);  // DNE in Dasm
+    SET_2B_OFS(SAMB_head,  6, _AAAA);  // DNE in Dasm
+    SET_2B_OFS(SAMB_head,  8, _AAAA);  // DNE in Dasm
+    SET_2B_OFS(SAMB_head, 10, _AAAA);  // DNE in Dasm
+    SET_2B_OFS(SAMB_head, 12, _AAAA);  // DNE in Dasm
+    SET_2B_OFS(SAMB_head, 14, _AAAA);  // DNE in Dasm
 
 #pragma warning(suppress : 6011)
     // SA_SET_MEMSIG1(SAMB_head);
@@ -483,29 +495,58 @@ void Reset_First_Block(SAMB_ptr block)
 }
 
 // WZD s08p14
+/*
+Moo2
+Module: allocate
+    function (0 bytes) Allocate_Next_Block
+    Address: 01:00110D3C
+        Num params: 2
+        Return type: pointer (4 bytes) 
+        pointer (4 bytes) 
+        signed integer (4 bytes) 
+        Locals:
+            pointer (4 bytes) block
+            signed integer (4 bytes) size
+            pointer (4 bytes) name
+            pointer (4 bytes) header
+            pointer (4 bytes) block_header
+            signed integer (4 bytes) lsize
+*/
 SAMB_ptr Allocate_Next_Block(SAMB_ptr SAMB_head, uint16_t size)
 {
-    SAMB_ptr sub_SAMB_head;
-    SAMB_ptr sub_SAMB_data;
-    uint16_t old_used;
-    uint16_t new_used;
+    uint16_t lsize = 0;
+    SAMB_ptr sub_SAMB_head = 0;
+    SAMB_ptr sub_SAMB_data = 0;
+    uint16_t old_used = 0;
+    uint16_t new_used = 0;
+
+    lsize = (size + 1);
     
-    if(Check_Allocation(SAMB_head) == ST_FAILURE) { Allocation_Error(0x03, size); }
-    if(Get_Free_Blocks(SAMB_head) < size+1) { Allocation_Error(0x02, size + 1); }
+    if(Check_Allocation(SAMB_head) == ST_FAILURE) { Allocation_Error(0x03, lsize); }
+    if(Get_Free_Blocks(SAMB_head) < lsize) { Allocation_Error(0x02, size); }
 
     old_used = SA_GET_USED(SAMB_head);
 
-    new_used = (SA_GET_USED(SAMB_head) + size + 1);
+    new_used = (SA_GET_USED(SAMB_head) + lsize);
 
     SA_SET_USED(SAMB_head, new_used);
     
-    sub_SAMB_head = SAMB_head + (old_used * 16);  // ~== &SAMB_head[SAMB->used]
+    sub_SAMB_head = SAMB_head + 16 + (old_used * SZ_PARAGRAPH_B);  // ~== &SAMB_head[SAMB->used]
+
+    SET_2B_OFS(sub_SAMB_head,  0, _CCCC);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head,  2, _CCCC);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head,  4, _CCCC);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head,  6, _CCCC);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head,  8, _CCCC);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head, 10, _CCCC);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head, 12, _CCCC);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head, 14, _CCCC);  // DNE in Dasm
 
     // SA_SET_MEMSIG1(sub_SAMB_head);
     // SA_SET_MEMSIG2(sub_SAMB_head);
     _SA_SET_MEMSIG1(sub_SAMB_head);
     _SA_SET_MEMSIG2(sub_SAMB_head);
-    SA_SET_SIZE(sub_SAMB_head,size);
+    SA_SET_SIZE(sub_SAMB_head,(lsize - 1));
     SA_SET_USED(sub_SAMB_head,1);
     // SA_SET_MARK(sub_SAMB_head,1);
 

@@ -906,7 +906,11 @@ void Set_Unit_Draw_Priority(void)
             draw_priority = ST_UNDEFINED;
         }
 
-        if(_UNITS[itr_units].owner_idx != _human_player_idx && Unit_Has_Invisibility(itr_units) == ST_TRUE)
+        if(
+            (_UNITS[itr_units].owner_idx != _human_player_idx)
+            &&
+            (Unit_Has_Invisibility(itr_units) == ST_TRUE)
+        )
         {
             draw_priority = ST_UNDEFINED;
         }
@@ -934,10 +938,18 @@ void Reset_Stack_Draw_Priority(void)
 
 
 // WZD o67p15
+/*
+; returns 1 if the tile has a tower of wizardry and
+; there is no Planar Seal active; or 0 otherwise
+*/
+/*
+OON XREF:
+    GAME_Overland_Init()
+*/
 int16_t IsPassableTower(int16_t wx, int16_t wy)
 {
-    int16_t itr_towers = 0;
-    int16_t is_passible_tower = 0;
+    int16_t itr_towers = 0;  // _SI_
+    int16_t is_passible_tower = 0;  // _DI_
     int16_t active_planar_seal = 0;
 
     is_passible_tower = ST_FALSE;
@@ -2538,6 +2550,9 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 }
 
 // WZD o150p12
+/*
+    draws Terrain Specials - Biota - Wild Game, Hunters Lodge, Nightshade
+*/
 void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
 {
     int16_t itr_screen_x;
@@ -2628,6 +2643,9 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 }
 
 // WZD o150p13
+/*
+    draws Terrain Specials - Minerals
+*/
 void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
 {
     // DEDU  does this actually exist in the Dasm?  uint8_t * ptr_TBL_Scouting;
@@ -2892,10 +2910,10 @@ void Draw_Map_Units(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
         while(itr_map_x < map_grid_width)
         {
             // unit_idx = entities_on_movement_map[ ((itr_map_y + map_start_y) * MAP_WIDTH) + (itr_map_x + map_start_x) ];
-            entities_index = ( ((itr_map_y + map_start_y) * MAP_WIDTH) + (itr_map_x + map_start_x) );
+            entities_index = (((itr_map_y + map_start_y) * MAP_WIDTH) + (itr_map_x + map_start_x));
             unit_idx = entities_on_movement_map[entities_index];
 
-            if( (unit_idx != ST_UNDEFINED) && (unit_idx < 1000) )
+            if((unit_idx != ST_UNDEFINED) && (unit_idx < MAX_UNIT_COUNT))
             {
                 Draw_Unit_Picture(itr_screen_x, itr_screen_y, unit_idx, 2);
             }
@@ -3563,3 +3581,4 @@ void Cartograph_Screen_Draw_Map_Terrain__NOWORKIE(int16_t cartograph_plane, SAMB
 }
 
 // WZD o150p18
+// sub_DAFF4()

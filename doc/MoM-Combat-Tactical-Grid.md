@@ -133,10 +133,10 @@ Tactical_Combat__WIP()
             Combat_Figure_Compose_USEFULL()
             CMB_DrawEntities__WIP()
                 ...
-                Draw_Picture_Windowed(CMB_BU_Figure_GFX[])
+                Draw_Picture_Windowed(battle_unit_picts_seg[])
                 ...
 
-        GfxBuf_2400B = CMB_BU_Figure_GFX[battle_units[itr].battle_unit_figure_idx];
+        GfxBuf_2400B = battle_unit_picts_seg[battle_units[itr].bufpi];
 
 
 
@@ -244,7 +244,7 @@ Deploy_Battle_Units()
         battle_units[Melee_Units[itr]].position_cgc1 = Starting_Ys[ctr];
 
 CMB_CreateEntities__WIP()
-    CMB_SpawnFigure__WIP(battle_units[itr].battle_unit_figure_idx, battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].Target_X, battle_units[itr].Target_Y, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+    CMB_SpawnFigure__WIP(battle_units[itr].bufpi, battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].Target_X, battle_units[itr].Target_Y, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
 
 CMB_SpawnFigure__WIP()
     Combat_Grid_Screen_Coordinates(PosX, PosY, 0, 0, &Tile_Left, &Tile_Top);

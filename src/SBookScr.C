@@ -7,6 +7,7 @@
     SPELLSCR.LBX
 */
 
+#include "MOX/FLIC_Draw.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
 #include "MOX/sdl2_Audio.H"
@@ -392,10 +393,8 @@ void Spellbook_Screen(void)
         if(leave_screen == ST_FALSE)
         {
             Clear_Fields();
-
             x_start = 16;
             y_start = 12;
-
             for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < 6; itr_spellbook_page_fields++)
             {
                 spellbook_pages[(0 + itr_spellbook_page_fields)] = Add_Hidden_Field((x_start + 16), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 137), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
@@ -404,7 +403,6 @@ void Spellbook_Screen(void)
             {
                 spellbook_pages[(6 + itr_spellbook_page_fields)] = Add_Hidden_Field((x_start + 148), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 268), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
             }
-
             hotkey_ESC = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, '\x1B', ST_UNDEFINED);
             hotkey_F   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, 'F',   ST_UNDEFINED);
             hotkey_B   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, 'B',   ST_UNDEFINED);
@@ -481,13 +479,13 @@ int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t
     }
 
     if(
-        (spell_data_table[spell_idx].type < sdt_Infusable_Spell)
+        (spell_data_table[spell_idx].type < scc_Infusable_Spell)
         ||
         (player_idx != HUMAN_PLAYER_IDX)
     )
     {
 
-        if(spell_data_table[spell_idx].type == sdt_Crafting_Spell)
+        if(spell_data_table[spell_idx].type == scc_Crafting_Spell)
         {
 
             if(spell_idx == spl_Enchant_Item)
@@ -566,14 +564,14 @@ int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t
                 Change_Relations_For_Enchantments(player_idx, spl_Spell_Of_Mastery, 1);
             }
 
-            _players[player_idx].casting_cost_original = spell_data_table[spell_idx].Casting_Cost;
+            _players[player_idx].casting_cost_original = spell_data_table[spell_idx].casting_cost;
 
             _players[player_idx].casting_cost_remaining  = Casting_Cost(player_idx, spell_idx, ST_FALSE);
 
             if(
                 (player_idx != HUMAN_PLAYER_IDX)
                 &&
-                (spell_data_table[spell_idx].type >= sdt_Infusable_Spell)
+                (spell_data_table[spell_idx].type >= scc_Infusable_Spell)
             )
             {
 
@@ -656,9 +654,9 @@ int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t
 
     if(spell_idx > spl_NONE)
     {
-        // === { sdt_Summoning, Unit_Enchantment, City_Enchantment, City_Curse, Fixed_Dmg_Spell, Special_Spell, Target_Wiz_Spell, sdt_Global_Enchantment, Battlefield_Spell }
+        // === { scc_Summoning, scc_Unit_Enchantment, City_Enchantment, scc_City_Curse, scc_Fixed_Dmg_Spell, scc_Special_Spell, scc_Target_Wiz_Spell, scc_Global_Enchantment, Battlefield_Spell }
         // DEDU  But, why?
-        if(spell_data_table[spell_idx].type < sdt_Crafting_Spell)
+        if(spell_data_table[spell_idx].type < scc_Crafting_Spell)
         {
 
             if(player_idx == HUMAN_PLAYER_IDX)
@@ -1086,7 +1084,7 @@ int16_t Spell_Animation_Load_Graphics__WIP(int16_t spell_idx)
         } break;
     }
 
-    if(spell_data_table[spell_idx].type == sdt_Summoning)
+    if(spell_data_table[spell_idx].type == scc_Summoning)
     {
         if (spell_idx == spl_Floating_Island)
         {

@@ -38,6 +38,9 @@ enum e_SA_Allocation_Type
     sa_Invalid
 };
 
+extern uint16_t _AAAA;  // 43690
+extern uint16_t _BBBB;  // 48059
+extern uint16_t _CCCC;  // 52428
 
 #define SAMB_RESERVED1   0
 #define SAMB_RESERVED2   2

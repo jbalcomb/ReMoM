@@ -60,6 +60,13 @@ ITEM_MAX_POWERS
 #define NUM_MAGIC_TYPES             5
 #define NUM_MAGIC_REALMS            6
 
+#define MAX_BATTLE_UNIT_COUNT      18
+#define MAX_BATTLE_UNIT_SLOT_COUNT 36
+#define CASTER_IDX_BASE            20
+#define CASTER_IDX_MAX             25  // 20 + 1 + 4  pretty sure MoO2 has name for players except neutral player(s)/monsters
+
+
+
 // MoO2: _NUM_SHIPS, _NUM_COLONIES, _NUM_PLAYERS, _NUM_STARS, _NUM_NEBULAS
 #define PLANE_COUNT_MAX             2
 #define PLAYER_COUNT_MAX            6
@@ -598,6 +605,10 @@ PS. 'MoM Demo' has "Forest Walk", "Mountain Walk", "Pathfinding"
 
 /*
     s_UNIT_TYPE.Attribs_1
+
+
+USA_SUMMON_DEMON_1 and USA_SUMMON_DEMON_2 are used as a count of summonable 'Demon's
+
 */
 // enum ATTRIB_1
 #define USA_IMMUNITY_FIRE       0x0001  // 0b0000000000000001  0x0001      1  "Fire Immunity"

@@ -118,7 +118,7 @@ void ui_draw_line_ctbl(int x1, int y1, int x2, int y2, const uint8_t *colortbl, 
 // UU_VGA_DiagColumns
 
 // WZD s16p07
-// RNG_Direct_LFSR
+uint16_t rnd_bitfiddle__1oom(uint16_t ax);
 
 // WZD s16p08
 void Tint_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t remap_block);

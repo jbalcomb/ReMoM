@@ -796,11 +796,13 @@ void Load_Unit_StatFigs(void)
 {
     uint16_t itr;
 
+    // UNITS1.LBX ... STATFIG1
     for(itr = 0; itr < 120; itr++)
     {
         _unit_type_table[itr].pict_seg = LBX_Reload_Next(units1_lbx_file, itr, GFX_Swap_Seg);
     }
 
+    // UNITS2.LBX ... STATFIG2
     for(itr = 120; itr < 198; itr++)
     {
         _unit_type_table[itr].pict_seg = LBX_Reload_Next(units2_lbx_file, (itr - 120), GFX_Swap_Seg);
@@ -901,9 +903,9 @@ void Reload_Combat_Graphics_Cache(void)
 
     IMG_CMB_SorcNode = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 66, GFX_Swap_Seg);
 
-    CMB_TargetFrame_GFX = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 67, GFX_Swap_Seg);
+    frame_scanned_seg = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 67, GFX_Swap_Seg);
 
-    CMB_ActiveFrame_GFX = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 68, GFX_Swap_Seg);
+    frame_active_seg = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 68, GFX_Swap_Seg);
 
     IMG_CMB_Mud = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 118, GFX_Swap_Seg);
 

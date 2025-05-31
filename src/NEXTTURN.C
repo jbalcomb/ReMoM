@@ -967,6 +967,8 @@ void All_Colony_Calculations(void)
         UNIT_Create((_CITIES[city_idx].construction - 100), _CITIES[city_idx].owner_idx, _CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, city_idx)
     Lair_Make_Guardians()
         Create_Unit__WIP(_LAIRS[lair_idx].guard2_unit_type, NEUTRAL_PLAYER_IDX, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, 2000)
+wp
+    9 if in combat
 
 R_Param
     if >= 0 && < 2000
@@ -981,6 +983,7 @@ R_Param
         ¿ just some number greater than what could be a city_idx ?
         overrides unit count limit
         ¿ only way to create units above 980 ?
+        also used by Demon Lord's Summon Demon
 
 */
 int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16_t wy, int16_t wp, int16_t R_Param)
@@ -992,13 +995,16 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
     did_create_unit = ST_FALSE;
 
     if(
-        (owner_idx == HUMAN_PLAYER_IDX) ||
-        (_units <= 950) ||
+        (owner_idx == HUMAN_PLAYER_IDX)
+        ||
+        (_units <= 950)
+        ||
         (R_Param == 2000)
     )
     {
         if(
-            (R_Param == 2000) ||
+            (R_Param == 2000)
+            ||
             (_units <= 980)
         )
         {
@@ -1171,7 +1177,7 @@ int16_t Casting_Cost(int16_t player_idx, int16_t spell_idx, int16_t combat_flag)
 
     cast_cost_reduction = Casting_Cost_Reduction(player_idx, spell_idx);
 
-    casting_cost = spell_data_table[spell_idx].Casting_Cost;
+    casting_cost = spell_data_table[spell_idx].casting_cost;
 
     if(
         (spell_data_table[spell_idx].magic_realm == sbr_Nature) ||
@@ -1265,7 +1271,7 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx)
 
     if(
         (_players[player_idx].artificer > 0) &&
-        (spell_data_table[spell_idx].type == 11)  /* sdt_Crafting_Spell */
+        (spell_data_table[spell_idx].type == 11)  /* scc_Crafting_Spell */
     )
     {
         casting_cost_reduction += 50;
@@ -1273,7 +1279,7 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx)
 
     if(
         (_players[player_idx].conjurer > 0) &&
-        (spell_data_table[spell_idx].type == 0)  /* sdt_Summoning */
+        (spell_data_table[spell_idx].type == 0)  /* scc_Summoning */
     )
     {
         casting_cost_reduction += 25;

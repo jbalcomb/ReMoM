@@ -290,7 +290,8 @@ void Page_Flip(void)
     draw_page_num = (1 - draw_page_num);  // NOTE: this is the only code that changes 'draw_page_num'
     // 1oom/Kilgore  draw_page_num ^= 1;
     draw_page = video_page_buffer[draw_page_num];
-    // current_video_page = video_page_buffer[1 - draw_page_num];
+    // DOMSDOS  VGA_WaitSync()
+    Set_Page_Off();
     // HERE: what was drawn should now be displayed
 #ifdef _STU_DOS
 
@@ -309,7 +310,6 @@ void Page_Flip(void)
     Pump_Paints();
 #endif
 
-    Set_Page_Off();
 
 }
 

@@ -205,6 +205,16 @@ Tactical_Combat__WIP()
             |-> Undeployable_Battle_Units_On_Water()
 
 
+## CMB_Units_Init__WIP()
+OON XREF:  Tactical_Combat__WIP()
+
+    Load_Battle_Unit(); Combat_Figure_Load(); Deploy_Battle_Units();
+    inits battle units, load figure picts, sets position & orientation
+
+
+XREF:
+    j_CMB_Units_Init__WIP()
+        Tactical_Combat__WIP()
 
 
 

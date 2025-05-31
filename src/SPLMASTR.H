@@ -62,7 +62,7 @@ extern int16_t GAME_SoM_Cast_By;
 // CMB_SliderRedraw()
 
 // WZD o136p07
-// CMB_SpellSlider()
+int16_t CMB_SpellSlider__STUB(int16_t spell_idx, int16_t Selected_Spell, int16_t caster_idx);
 
 // WZD o136p08
 // sub_BD8A8()
@@ -119,10 +119,10 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx);
 // IDK_SplScr_sBFAA5()
 
 // WZD o137p12
-// IDK_WizTgtSpl_sBFC85()
+// Spell_Target_Wizard_Screen_Draw()
 
 // WZD o137p13
-// IDK_DiploScrn()
+// Spell_Target_Wizard_Screen()
 
 
 

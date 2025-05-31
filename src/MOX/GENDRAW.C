@@ -503,6 +503,12 @@ void Warn0(char * msg)
 
 // WZD o149p05
 // drake178: GUI_ShowRedMessage
+// MoO2  GENDRAW  Warning_Box_()
+/*
+*/
+/*
+
+*/
 void Warn(char * msg)
 {
     int16_t UU_var3;
@@ -552,6 +558,7 @@ void Warn(char * msg)
         Restore_Alias_Colors();
         Reset_Window();
         Restore_Auto_Function();
+
         Restore_ScreenSeg();
 }
 

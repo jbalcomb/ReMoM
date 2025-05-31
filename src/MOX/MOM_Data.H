@@ -473,6 +473,34 @@ enum e_SPELL_BOOK_CATEGORY
     sbc_Combat       = 5,
 };
 
+// AKA enum enum_SPELL_DATA_TYPE
+// AKA enum e_SPELL_DATA_TYPE
+enum e_SPELL_CASTING_CATEGORY
+{
+    scc_Summoning           =  0,
+    scc_Unit_Enchantment        =  1,
+    scc_City_Enchantment    =  2,
+    scc_City_Curse              =  3,
+    scc_Fixed_Dmg_Spell         =  4,
+    scc_Special_Spell           =  5,
+    scc_Target_Wiz_Spell        =  6,
+    scc_Global_Enchantment  =  9,
+    scc_Battlefield_Spell   = 10,
+    scc_Crafting_Spell      = 11,
+    scc_Destruction_Spell       = 12,
+    scc_Resistable_Spell        = 13,
+    scc_Unresistable_Spell         = 14,
+    scc_Mundane_Enchantment = 15,
+    scc_Mundane_Curse       = 16,
+    scc_Infusable_Spell     = 17,
+    scc_Dispel_Spell            = 18,
+    scc_Disenchant_Spell        = 19,
+    scc_Disjunction_Spell       = 20,
+    scc_Counter_Spell       = 21,
+    scc_Var_Dmg_Spell           = 22,
+    scc_Banish_Spell            = 23
+};
+
 enum e_SPELL_LIST_TYPE
 {
     slt_Overland  = 0,
@@ -507,33 +535,6 @@ enum RETORTS
     rtt_Conjurer  = 15,
     rtt_Charismatic  = 16,
     rtt_Artificer  = 17
-};
-
-
-enum enum_SPELL_DATA_TYPE
-{
-    sdt_Summoning           =  0,
-    Unit_Enchantment        =  1,
-    City_Enchantment        =  2,
-    City_Curse              =  3,
-    Fixed_Dmg_Spell         =  4,
-    Special_Spell           =  5,
-    Target_Wiz_Spell        =  6,
-    sdt_Global_Enchantment  =  9,
-    Battlefield_Spell       = 10,
-    sdt_Crafting_Spell      = 11,
-    Destruction_Spell       = 12,
-    Resistable_Spell        = 13,
-    No_Resist_Spell         = 14,
-    Mundane_Enchantment     = 15,
-    Mundane_Curse           = 16,
-    sdt_Infusable_Spell     = 17,
-    Dispel_Spell            = 18,
-    Disenchant_Spell        = 19,
-    Disjunction_Spell       = 20,
-    Counter_Spell           = 21,
-    Var_Dmg_Spell           = 22,
-    Banish_Spell            = 23
 };
 
 
@@ -787,8 +788,8 @@ struct s_RETORTS
 /*
 
 Param0
-code for sdt_Summoning uses 2-byte, signed
-code for sdt_Global_Enchantment uses 2-byte, signed
+code for scc_Summoning uses 2-byte, signed
+code for scc_Global_Enchantment uses 2-byte, signed
 
 */
 // sizeof:  24h  36d
@@ -799,23 +800,23 @@ struct s_SPELL_DATA
     /* 00 */ char name[LEN_SPELLDAT_NAME];  // ¿ (LEN_SPELL_NAME - 1) ?
     /* 13 */  int8_t AI_Group;              //  ; enum AI_Spell_Groups
     /* 14 */  int8_t AI_Value;
-    /* 15 */  int8_t type;                  //  ; enum SPELLTYPES   "Type of spell effect"
+    /* 15 */  int8_t type;                  //  enum e_SPELL_CASTING_CATEGORY (SCC) used by 
     /* 16 */  int8_t spell_book_category;  // 1-byte, signed;  "spell category" "categories: summoning spells, special spells, city spells, enchantments, unit spells, combat spells and research spells"
     /* 17 */  int8_t magic_realm;  // magic realm  ¿ sbr_ ?
     /* 18 */  int8_t Eligibility;   /* ¿ overland, combat, ... ? */
-    /* 19 */  /* int8_t Unknown_19h; */  /* ¿ 2-byte alignment padding ? */
-    /* 1A */  int16_t Casting_Cost;
+    /* 19 */  /* 2-byte alignment padding */
+    /* 1A */  int16_t casting_cost;
     /* 1C */  int16_t research_cost;
-    /* 1E */  int8_t Sound;
-    /* 1F */  /* int8_t Unknown_1Fh; */  /* ¿ 2-byte alignment padding ? */
-    // /* 20 */  int8_t Param0;                // 2-byte, signed;  ; unit type, base damage, UE flag, or CE index;  for sdt_Global_Enchantment, used to index _players[].Globals[]
+    /* 1E */  int8_t Sound;                     /* 1-byte, signed;  positive SOUNDFX.LBX, abs(negative) NEWSOUND.LBX */
+    /* 1F */  /* 2-byte alignment padding */
+    // /* 20 */  int8_t Param0;                // 2-byte, signed;  ; unit type, base damage, UE flag, or CE index;  for scc_Global_Enchantment, used to index _players[].Globals[]
     // /* 21 */  int8_t Param1;
     union
     {
         /* 20 */  int8_t Param0;
         /* 21 */  int8_t Param1;
-        int16_t unit_type;                  // 0: sdt_Summoning IDK_SummonAnim_Draw()
-        int16_t ge_idx;                     // 9: sdt_Global_Enchantment
+        int16_t unit_type;                  // 0: scc_Summoning IDK_SummonAnim_Draw()
+        int16_t ge_idx;                     // 9: scc_Global_Enchantment
         uint8_t cmbt_0;                     // Attack_Strength  CMB_ConvSpellAttack()
         uint8_t cmbt_1;                     // Immunity_Flags   CMB_ConvSpellAttack()
     };
@@ -1596,7 +1597,7 @@ struct s_BATTLE_UNIT
     /* 0x0E */
     union {
         int64_t seg_or_idx;
-        int16_t battle_unit_figure_idx;  /* ~== battle_unit_idx;  used to index picture cache */
+        int16_t bufpi;  /* used to index picture cache */
         SAMB_ptr pict_seg;
     };
 
@@ -1608,9 +1609,9 @@ struct s_BATTLE_UNIT
     /* 0x15 */  int8_t   Spec_Att_Attrib;
     /* 0x16 */  uint16_t Move_Flags;                        // ; enum MOVEFLAGS
     /* 0x17 */  // int8_t Unused_17h;                       // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
-    /* 0x18 */  int16_t  Attribs_1;                         // ; enum ATTRIB_1
-    /* 0x1A */  int8_t   Attribs_2;
-    /* 0x1B */  int8_t   Unused_1Bh;                        // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
+    /* 0x18 */  int16_t  Attribs_1;                         // any reason these arent a uint32?  ; enum ATTRIB_1
+    /* 0x1A */  int8_t   Attribs_2;                         // any reason these arent a uint32?  ¿ ?
+    /* 0x1B */  int8_t   Unused_1Bh;                        // any reason these arent a uint32?  ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
     /* 0x1C */  uint16_t Abilities;                         // ; enum ABL_FLAGS  ~ 'Unit Abilities'
     /* 0x1E */  uint16_t Attack_Flags;                      // ; enum ATK_FLAGS
     /* 0x20 */  int16_t  Sound;
@@ -1636,17 +1637,17 @@ struct s_BATTLE_UNIT
     /* 0x41 */  int8_t   Item_Charges;
     /* 0x42 */  int8_t   Poison_Strength;
     /* 0x43 */  int8_t   Target_BU;             /* 1-byte, signed */
-    /* 0x44 */  int16_t  cgx;
-    /* 0x46 */  int16_t  cgy;
+    /* 0x44 */  int16_t  cgx;                   /* combat grid x coordinate */
+    /* 0x46 */  int16_t  cgy;                   /* combat grid y coordinate */
     /* 0x48 */  int16_t  target_cgx;            /* set by Deploy_Battle_Units()  ¿ used for facing direction ? */
     /* 0x4A */  int16_t  target_cgy;            /* set by Deploy_Battle_Units()  ¿ used for facing direction ? */
-    /* 0x4C */  int16_t  MoveStage;
+    /* 0x4C */  int16_t  MoveStage;             /* movement animation counter/increment */
     /* 0x4E */  int16_t  Atk_FigLoss;
     /* 0x50 */  int16_t  outline_magic_realm;   /* enchantment_magic_realm ... enum e_MAGIC_REALM{} ... index into enchantment_outline_colors[], used for unit outline color */
     /* 0x52 */  int16_t  Moving;                // set to ST_FALSE in Switch_Active_Battle_Unit()
     /* 0x54 */  int16_t  action;                /* enum e_BATTLE_UNIT_ACTION */
     /* 0x56 */  int8_t   Confusion_State;       /* {0: , 1: , 2: }  ~== stand around and do nothing while looking foolish and confused, move randomly, attack allies, attack enemies */
-    /* 0x57 */  int8_t   pad2B_57h;
+    /* 0x57 */  int8_t   pad2B_57h;             // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
     /* 0x58 */  int16_t  Blood_Amount;
     /* 0x5A */  int16_t  Unknown_5A;
     /* 0x5C */  int16_t  Always_Animate;
@@ -1683,7 +1684,7 @@ struct s_CMBT_DATA
     /* 0x0B */  int8_t race;                                // ; enum Race_Code
     /* 0x0C */  int8_t Unused_0Ch;
     /* 0x0D */  int8_t Cur_Figures;
-    /* 0x0E */  int16_t battle_unit_figure_idx;
+    /* 0x0E */  int16_t bufpi;
     /* 0x10 */  int8_t hits;
     /* 0x11 */  int8_t scout_range;
     /* 0x12 */  int8_t carry_capacity;
@@ -2757,7 +2758,7 @@ extern SAMB_ptr spell_animation_seg;
 
 // WZD dseg:9132
 extern SAMB_ptr SND_SpellCast;
-extern int16_t SND_SpellCast_size;
+extern uint32_t SND_SpellCast_size;
 
 // WZD dseg:9134
 extern SAMB_ptr SND_Spell_Music;
@@ -2821,18 +2822,18 @@ extern int16_t CMB_WallRise_Going;
 extern struct s_BATTLEFIELD * battlefield;
 
 // WZD dseg:9278
-extern int16_t CMB_ActiveUnitFrameY;
+extern int16_t frame_active_cgy;
 // WZD dseg:927A
-extern int16_t CMB_ActiveUnitFrameX;
+extern int16_t frame_active_cgx;
 // WZD dseg:927C
-extern int16_t CMB_ActiveUnitFrame;
+extern int16_t frame_active_flag;
 
 // WZD dseg:927E
-extern int16_t CMB_TargetFrame_Y;
+extern int16_t frame_scanned_cgy;
 // WZD dseg:9280
-extern int16_t CMB_TargetFrame_X;
+extern int16_t frame_scanned_cgx;
 // WZD dseg:9282
-extern int16_t CMB_TargetFrame;
+extern int16_t frame_scanned_flag;
 
 // WZD dseg:9284
 extern int16_t OVL_Action_Type;
@@ -3012,7 +3013,8 @@ extern uint8_t * square_scouted_p1;         // Bit_Field  alloc in Allocate_Data
 
 
 // WZD  dseg:939A
-extern SAMB_ptr _combat_terrain_pict_segs[48];
+// extern SAMB_ptr _combat_terrain_pict_segs[48];
+extern SAMB_ptr _combat_terrain_pict_segs[55];
 
 // WZD  dseg:93FA 00                                              db    0
 // WZD  dseg:93FB 00                                              db    0

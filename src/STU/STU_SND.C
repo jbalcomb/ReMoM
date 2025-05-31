@@ -315,7 +315,7 @@ out_wav_len
 
 NOTE: initial values for wav_header are hard-coded for SOUNDFX.LBX, entry 0  (SLX19.VOC)
 */
-int STU_Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, int16_t ** out_wav_buf, uint32_t * out_wav_len)
+int STU_Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out_wav_buf, uint32_t * out_wav_len)
 {
     /* WAV */
     // out_wav_buf

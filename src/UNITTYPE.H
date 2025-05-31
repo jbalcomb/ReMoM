@@ -302,7 +302,7 @@ struct s_UNIT_TYPE
     /* 1B */  // 2-byte alignment padding
     /* 1E */  uint16_t Abilities;               /* enum ABL_FLAGS */  // macros - UA_...
     /* 20 */  uint16_t Attack_Flags;            /* enum ATK_FLAGS */  // Att_ArmorPrc, etc.
-    /* 22 */  int16_t  Sound;
+    /* 22 */  int16_t  Sound;                   /* 1-byte, unsigned  high nibble move sound, low nibble melee sound */
 };
 #pragma pack(pop)
 

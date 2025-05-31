@@ -125,7 +125,7 @@ int16_t _osc_cancel_button_field;
 
 
 // WZD o70p01
-int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * var_8, int16_t * var_A, char * spell_name)
+int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * target_wx, int16_t * target_wy, char * spell_name)
 {
     int16_t Units = 0;
     int16_t Count = 0;
@@ -341,9 +341,8 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
     // Main_Screen() target_world_x = (_main_map_grid_x * SQUARE_WIDTH);
     // Main_Screen() target_world_y = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
-    *var_8 = (_osc_main_map_grid_x * SQUARE_WIDTH);
-
-    *var_A = (MAP_SCREEN_Y + (_osc_main_map_grid_y * SQUARE_HEIGHT));
+    *target_wx = (_osc_main_map_grid_x * SQUARE_WIDTH);
+    *target_wy = (MAP_SCREEN_Y + (_osc_main_map_grid_y * SQUARE_HEIGHT));
 
     return didnt_cancel;
     

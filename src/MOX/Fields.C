@@ -979,9 +979,9 @@ void Clear_Fields(void)
 */
 int16_t GUI_MoveDlgHighlight__STUB(int16_t Y_Direction)
 {
-    int16_t itr_fields_count;
-    int16_t field_idx;  // _SI_
-    int16_t scanned_field;  // _DI_
+    int16_t itr_fields_count = 0;
+    int16_t field_idx = 0;  // _SI_
+    int16_t scanned_field = 0;  // _DI_
 
     scanned_field = Scan_Input();
 
@@ -1048,20 +1048,20 @@ signed integer (2 bytes) old_window_y2
 
 void Draw_Fields()
 {
-    int16_t old_windows_x1;
-    int16_t old_windows_x2;
-    int16_t old_windows_y1;
-    int16_t old_windows_y2;
-    int16_t Text_Change;
-    int16_t State_Pointer1;
-    int16_t State_Pointer2;
-    int16_t bar_position;
-    int16_t Half_V_Spacing;
-    int16_t Half_Font_Height;
-    int16_t itr_fields_count;  // _SI_
-    int16_t itr_help_list_count;  // _SI_
-    int16_t itr_continuous_string;  // _DI_
-    int16_t IDK_InputField_ShadowType;  // _AX_ ... DNE in MoM Dasm, but in MoO2 Dasm
+    int16_t old_windows_x1 = 0;
+    int16_t old_windows_x2 = 0;
+    int16_t old_windows_y1 = 0;
+    int16_t old_windows_y2 = 0;
+    int16_t Text_Change = 0;
+    int16_t State_Pointer1 = 0;
+    int16_t State_Pointer2 = 0;
+    int16_t bar_position = 0;
+    int16_t Half_V_Spacing = 0;
+    int16_t Half_Font_Height = 0;
+    int16_t itr_fields_count = 0;  // _SI_
+    int16_t itr_help_list_count = 0;  // _SI_
+    int16_t itr_continuous_string = 0;  // _DI_
+    int16_t IDK_InputField_ShadowType = 0;  // _AX_ ... DNE in MoM Dasm, but in MoO2 Dasm
 
     old_windows_x1 = screen_window_x1;
     old_windows_x2 = screen_window_x2;

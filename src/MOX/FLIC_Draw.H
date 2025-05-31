@@ -30,6 +30,11 @@ MoO2 Module: shear
 "SZ"    "size"
 */
 
+/*
+    first byte of the flic frame data
+
+*/
+
 // MoO2  animation_header
 struct s_FLIC_HDR
 {
@@ -184,7 +189,7 @@ void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte
 */
 
 // WZD s30p01
-// LBX_Image_Copy
+void Copy_Bitmap_To_Bitmap(SAMB_ptr target_bitmap, SAMB_ptr source_bitmap);
 
 // WZD s30p02
 void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg);
@@ -220,7 +225,6 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr p_FLIC_File);
 
 // WZD s30p12
 void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture);
-
 
 // WZD s30p13
 void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg);
@@ -412,9 +416,7 @@ void Reduce_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y);
 void Enlarge_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y);
 
 // WZD s33p15
-// MoO2  Module: bitmap  Vanish_Bitmap()
-// MoO2  Moudle: shear   Vanish_Bitmap_Pixels_()
-void Vanish_Bitmap__NOP(SAMB_ptr bitmap, int16_t percent);
+void Vanish_Bitmap__WIP(SAMB_ptr bitmap, int16_t percent);
 
 // WZD s33p16
 // MoO2: Gray_Scale_Bitmap()
@@ -427,15 +429,7 @@ void LBX_IMG_RevGrayscale__STUB(byte_ptr bitmap, int16_t color_index);
 // UU_DUP_RevGrayscale()
 
 // WZD s33p19
-/*
-drake178:
-    a secondary linear feedback shift register using the
-    same feedback polynomial as RNG_Random, also shifted
-    9 states per call, but actually returning the lowest
-    order 10 bits of the resulting state (1-1023) rather
-    than the shifted out return value
-*/
-int16_t RNG_GFX_Random__NOP(int16_t max);
+int16_t RNG_GFX_Random__WIP(int16_t max);
 
 
 

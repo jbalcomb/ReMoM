@@ -783,30 +783,32 @@ void Loaded_Game_Update(void)
 */
 void GAME_Overland_Init(void)
 {
-    int16_t itr_cities;
-    int16_t itr_units;
+    int16_t itr_cities = 0;  // _SI_
+    int16_t itr_units = 0;  // _SI_
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: GAME_Overland_Init()\n", __FILE__, __LINE__);
 #endif
 
-
     G_WLD_StaticAssetRfrsh();
 
-
-    itr_cities = 0;
-    while(itr_cities++ < _cities)
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
         _CITIES[itr_cities].bldg_status[NONE] = bs_Built; // ? ~ enum City Building Status B_Replaced;
     }
 
 
-    itr_units = 0;
-    while(itr_units++ < _units)
+    
+    for(itr_units = 0; itr_units < _units; itr_units++)
     {
-        if(_UNITS[itr_units].wp == 2) {_UNITS[itr_units].wp = 0; }
+
+        if(_UNITS[itr_units].wp == 2)
+        {
+            _UNITS[itr_units].wp = 0;
+        }
 
         // NOTE: the DASM thinks world_plane is passed here as well, but IsPassableTower() makes no xref to it
+        // TODO  if(IsPassableTower(_UNITS[itr_units].wx, _UNITS[itr_units].wy, _UNITS[itr_units].wp) == ST_TRUE)
         if(IsPassableTower(_UNITS[itr_units].wx, _UNITS[itr_units].wy) == ST_TRUE)
         {
             _UNITS[itr_units].in_tower = ST_TRUE;
@@ -818,80 +820,62 @@ void GAME_Overland_Init(void)
 
     }
 
-
     skill_staff_locked = 0;
     mana_staff_locked = 0;
     research_staff_locked = 0;
 
-    // TODO  _players[0].Nominal_Skill = Player_Base_Casting_Skill(0);
+    _players[HUMAN_PLAYER_IDX].Nominal_Skill = Player_Base_Casting_Skill(HUMAN_PLAYER_IDX);
     
 
     // NIU?  CRP_OVL_MapWindowX = 0;
     // NIU?  CRP_OVL_MapWindowY = 0;
+
     _prev_world_x = 0;
     _prev_world_y = 0;
-    // _curr_world_x = 0;
-    // _curr_world_y = 0;
+    
     _map_x = 0;
     _map_y = 0;
 
-    // j_o62p01_Empty_pFxn(_human_player_idx)
+    // DONT  j_o62p01_empty_function(_human_player_idx)
 
     _unit = 0;  // 0: None / No Unit
 
-    // // TODO(JimBalcomb,20230629): validate the SAVE_GAM data for _FORTRESSES
-    // // // _active_world_x = _FORTRESSES[HUMAN_PLAYER_IDX].wx;
-    // // // _active_world_y = _FORTRESSES[HUMAN_PLAYER_IDX].wy;
-    // // OVL_Map_CenterX = _FORTRESSES[HUMAN_PLAYER_IDX].wx;
-    // // OVL_Map_CenterY = _FORTRESSES[HUMAN_PLAYER_IDX].wy;
-    // OVL_Map_CenterX = 24;
-    // OVL_Map_CenterY = 16;
     _active_world_x = _FORTRESSES[HUMAN_PLAYER_IDX].wx;
     _active_world_y = _FORTRESSES[HUMAN_PLAYER_IDX].wy;
 
     _unit_window_start_x = 247;
     _unit_window_start_y = 79;
 
-    // TODO(JimBalcomb,20230629): validate the SAVE_GAM data for _FORTRESSES
-    // _world_plane = _FORTRESSES[HUMAN_PLAYER_IDX].wp;
-    // _map_plane = _FORTRESSES[HUMAN_PLAYER_IDX].wp;  // TODO(JimBalcomb,20230614): Why is this getting set to 100?
-    // _map_plane = 0;
     _map_plane = _FORTRESSES[HUMAN_PLAYER_IDX].wp;
-
 
     All_AI_Players_Contacted();
 
-
     Allocate_Reduced_Map();
 
-    // Center_Map(&_curr_world_x, &_curr_world_y, _FORTRESSES[HUMAN_PLAYER_IDX].wx, _FORTRESSES[HUMAN_PLAYER_IDX].wy, _world_plane);
-    // TODO(JimBalcomb,20230629): validate the SAVE_GAM data for _FORTRESSES
-    // Center_Map(&_map_x, &_map_y, _FORTRESSES[HUMAN_PLAYER_IDX].wx, _FORTRESSES[HUMAN_PLAYER_IDX].wy, _map_plane);
-    // Center_Map(&_map_x, &_map_y, 24, 16, 0);
     Center_Map(&_map_x, &_map_y, _FORTRESSES[HUMAN_PLAYER_IDX].wx, _FORTRESSES[HUMAN_PLAYER_IDX].wy, _map_plane);
 
     Set_Unit_Draw_Priority();
-    Reset_Stack_Draw_Priority();
-    Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
 
+    Reset_Stack_Draw_Priority();
+
+    Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
 
     GFX_Swap_Cities();
 
-
+Capture_Cities_Data();
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+Check_Cities_Data();
 
+    // DONT  j_o108p02_empty_function()
 
-    // DONT  j_o108p02_Empty_pFxn()
+    All_City_Calculations();
+Capture_Cities_Data();
 
-    // TODO  All_City_Calculations()
-
-
-    // TODO  if(Check_Release_Version() != ST_FALSE)
-    // TODO  {
-    // TODO      // WZD s22p05
-    // TODO      RNG_SetSeed(0x2737, 0);  // LFSR_LO, LFSR_HI
-    // TODO      // ; sets the linear feedback shift register
-    // TODO  }
+    if(Check_Release_Version() == ST_FALSE)
+    {
+        __debugbreak();
+        Set_Random_Seed(10039);  // 0x2737
+    }
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: GAME_Overland_Init()\n", __FILE__, __LINE__);

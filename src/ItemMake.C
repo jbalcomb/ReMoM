@@ -436,7 +436,7 @@ static int16_t Get_Item_Cost(int16_t item_idx)
         {
             if(itemmake_item_powers_array[itr] == 65)
             {
-                item_cost += (spell_data_table[_ITEMS[item_idx].embed_spell_idx].Casting_Cost * _ITEMS[item_idx].embed_spell_cnt * 20);
+                item_cost += (spell_data_table[_ITEMS[item_idx].embed_spell_idx].casting_cost * _ITEMS[item_idx].embed_spell_cnt * 20);
             }
             else
             {
@@ -470,7 +470,7 @@ static int16_t Get_Item_Cost(int16_t item_idx)
 // sub_95E65()
 /*
 
-if(spell_data_table[spell_idx].type == sdt_Crafting_Spell)
+if(spell_data_table[spell_idx].type == scc_Crafting_Spell)
     if(spell_idx == spl_Enchant_Item)
         _players[player_idx].casting_cost_remaining = IDK_CreateArtifact(0, 0);
     else if(spell_idx == spl_Create_Artifact)

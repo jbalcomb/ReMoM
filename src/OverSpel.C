@@ -143,9 +143,9 @@ int16_t Calculate_Dispel_Difficulty(int16_t casting_cost, int16_t player_idx, in
 /*
 
 IDA Group Colors
-    sdt_Summoning          ( 0)  #24 reddish-brown
-    sdt_Global_Enchantment ( 9)  #13 ~ blue, greyish/greenish
-    sdt_Crafting_Spell     (11)  #17 brown
+    scc_Summoning          ( 0)  #24 reddish-brown
+    scc_Global_Enchantment ( 9)  #13 ~ blue, greyish/greenish
+    scc_Crafting_Spell     (11)  #17 brown
 
 */
 void Cast_Spell_Overland__WIP(int16_t player_idx)
@@ -346,30 +346,30 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
         {
 
 // enum enum_SPELL_DATA_TYPE
-// sdt_Summoning         =  0,
-// Unit_Enchantment        =  1,
+// scc_Summoning         =  0,
+// scc_Unit_Enchantment        =  1,
 // City_Enchantment        =  2,
-// City_Curse              =  3,
-// Fixed_Dmg_Spell         =  4,
-// Special_Spell           =  5,
-// Target_Wiz_Spell        =  6,
+// scc_City_Curse              =  3,
+// scc_Fixed_Dmg_Spell         =  4,
+// scc_Special_Spell           =  5,
+// scc_Target_Wiz_Spell        =  6,
 // 7 DNE
 // 8 DNE
-// sdt_Global_Enchantment  =  9,
+// scc_Global_Enchantment  =  9,
 // Battlefield_Spell       = 10,
-// sdt_Crafting_Spell      = 11,
-// Destruction_Spell       = 12,
-// Resistable_Spell        = 13,
-// No_Resist_Spell         = 14,
+// scc_Crafting_Spell      = 11,
+// scc_Destruction_Spell       = 12,
+// scc_Resistable_Spell        = 13,
+// scc_Unresistable_Spell         = 14,
 // Mundane_Enchantment     = 15,
 // Mundane_Curse           = 16,
-// sdt_Infusable_Spell     = 17,
+// scc_Infusable_Spell     = 17,
 // Dispel_Spell            = 18,
-// Disenchant_Spell        = 19,
-// Disjunction_Spell       = 20,
+// scc_Disenchant_Spell        = 19,
+// scc_Disjunction_Spell       = 20,
 // Counter_Spell           = 21,
-// Var_Dmg_Spell           = 22,
-// Banish_Spell            = 23
+// scc_Var_Dmg_Spell           = 22,
+// scc_Banish_Spell            = 23
 
 // ovr135:28B4 95 0C 31 10 59 17 77 1B 3D 0E 55 1F 3A 21 FA 27+jt_SpellDataType dw offset sdt_Summon   ; DATA XREF: Cast_Spell_Overland__WIP+2CCr
 // ovr135:28B4 FA 27 77 1E FA 27 0F 1B FA 27 FA 27 FA 27 31 10+dw offset Unit                          ; jump table for switch statement
@@ -423,7 +423,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
             switch(spell_data_table[spell_idx].type)
             {
-                case sdt_Summoning:
+                case scc_Summoning:
                 {
 
                     // ¿ BUG should be ((player_idx == HUMAN_PLAYER_IDX) && (_units < 950)) ?
@@ -527,9 +527,9 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                     }
 
-                } break;  /* case sdt_Summoning: */
+                } break;  /* case scc_Summoning: */
 
-                case sdt_Global_Enchantment:
+                case scc_Global_Enchantment:
                 {
 
                     AI_Eval_After_Spell = ST_TRUE;
@@ -593,7 +593,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                 } break;
 
-                case sdt_Crafting_Spell:
+                case scc_Crafting_Spell:
                 {
 
                 } break;

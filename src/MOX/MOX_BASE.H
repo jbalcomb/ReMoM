@@ -54,6 +54,7 @@
 #define LEN_ITEM_NAME         30
 
 
+
 #define ST_TRANSPARENT    0
 
 

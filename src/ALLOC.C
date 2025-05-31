@@ -1,7 +1,27 @@
+/*
+    MAGIC.EXE
+        ovr057
+    WIZARDS.EXE
+        ovr152
+*/
 
+#include "MOX/MOX_TYPE.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 
-#include "MOM.H"
+
+
+// WZD dseg:7056                                                 BEGIN:  ovr152 - Initialized Data
+
+// WZD dseg:7056
+char EmmHndlNm_FIGUREX[] = "FIGUREX";
+// WZD dseg:705E
+char EmmHndlNm_TILEXXX[] = "TILEXXX";
+// WZD dseg:7066
+char EmmHndlNm_CONTXXX[] = "CONTXXX";
+
+// WZD dseg:7066                                                 END:  ovr152 - Initialized Data
+
+
 
 /*
     MGC o57p01 (1of1)
@@ -25,12 +45,14 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     // 73600 + 8240 = 81840 bytes
     _screen_seg = Allocate_Space(gfx_buff_nparas + 515);
 
-    GfxBuf_2400B = Allocate_Space(150);  // 150 PR  2400 B
+    // lair_confirm_pict: 41 x 43 = 1763
+    // ¿ MoO2  Module: MOX  data (0 bytes) _global_bitmap_seg  Address: 02:0018B2D0 ?
+    GfxBuf_2400B = Allocate_Space(150);  // 150 PR  2400 B  ~ 48 x 48 = 2304 B w/ 6 headers ... 50 x 48 = 2400
 
 // World_Data
 // ¿ everything from a SAVE_GAM ? also, COMBAT.TMP ? 
 
-    // 635 paragraphs = 16 * 635 = 10,160 bytes
+    // 635 PR, 10160 B  / 198 = 51.3131 bytes per STATFIG pict?
     // GFX_Swap_Seg = Allocate_Space(635);
     // GFX_Swap_Seg = Allocate_Space(4092);
     // GFX_Swap_Seg = Allocate_Space(4092);
@@ -42,6 +64,7 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
         Min EMS is 2700 KB
     */
     // used to load all 198 StatFigs from UNIT1.LBX and UNITS2.LBX 
+    // ~ 198 * (18 * 16) = 198 * 288 = 57024 B
     /// lots of XREFs from City, Cmb, SplBk, ...
 
     // tmp_World_Data_Paras = 3519;
@@ -192,8 +215,7 @@ so, 300 PRs, + 1 for the SAMB header
 
     _LAIRS = (struct s_LAIR *)Allocate_Space(351);  // 351 PR, 5616 B
 
-    // events_table = (struct s_EVENT_DATA *)Allocate_Space(7);  // 7 PR, 112 B
-    events_table = (struct s_EVENT_DATA *)Allocate_Space(7);
+    events_table = (struct s_EVENT_DATA *)Allocate_Space(7);  // 7 PR, 112 B
 
     // ¿ MoO2  _officer_names ? ¿ Officer vs. Owned Officer ?
     hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);  // 37 PR, 592 B  ... ~ (36) 16-byte structs
@@ -205,8 +227,9 @@ so, 300 PRs, + 1 for the SAMB header
     // AKA TBL_Spell_Data
     spell_data_table = (struct s_SPELL_DATA *)Allocate_Space(485);  // 485 PR, 7760 B; actual: 215 * 36 = 7740
 
-    UnitDraw_WorkArea = Allocate_Space(60);  // 60 PR, 960 B  
+    UnitDraw_WorkArea = Allocate_Space(60);  // 60 PR, 960 B
     
+    // MoO2  Module: MOX  data (0 bytes) _global_music_handle  Address: 02:0018B17C
     SND_Music_Segment = Allocate_Space(350);  // 350 PR, 5600 B
 
 
@@ -275,7 +298,6 @@ so, 300 PRs, + 1 for the SAMB header
     AI_SCircle_Reevals = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18C8) );  // 16 bytes
 
     // TODO  EMM_ContXXX_H = EMM_GetHandle(4, cnst_EMM_ContH_Name, 1)
-    // EMS_PFBA = Allocate_Space(((4 * 16384) / 16));
     EmmHndl_CONTXXX = Allocate_Space(4096);   //  4 * 16384 EMM Page Size = 65536 B / 16 = 4096 PR
 
 }

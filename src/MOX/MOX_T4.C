@@ -212,7 +212,7 @@ void PageFlip_FX(void)
 
     switch(PageFlipEffect)
     {
-        case 0:
+        case pf_Normal:
         {
             Apply_Palette();
             Toggle_Pages();  // |-> Page_Flip()
@@ -242,7 +242,7 @@ void PageFlip_FX(void)
         } break;
     }
 
-    PageFlipEffect = 0;  // DEDUCE: PageFlipEffect 0 is the default PageFlipEffect
+    PageFlipEffect = pf_Normal;  // DEDUCE: PageFlipEffect 0 is the default PageFlipEffect
 
 }
 

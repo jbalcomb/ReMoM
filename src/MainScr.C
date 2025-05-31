@@ -1668,7 +1668,7 @@ void Main_Screen(void)
                 entity_idx = abs(entity_idx);
                 // entity_idx = entity_idx > 0 ? entity_idx : entity_idx*-1;
 
-                if(entity_idx < 1000)
+                if(entity_idx < MAX_UNIT_COUNT)
                 {
                     /* #### Section 9.2.2      Right-Click Movement Map - Stack */
                     if(_UNITS[entity_idx].owner_idx == _human_player_idx)
@@ -1712,9 +1712,9 @@ void Main_Screen(void)
                     screen_changed = ST_TRUE;
                     UU_MainScreen_flag = ST_TRUE;
                 }
-                else if(entity_idx < 1100)
+                else if(entity_idx < (MAX_UNIT_COUNT + 100))
                 {
-                    _city_idx = (entity_idx - 1000);
+                    _city_idx = (entity_idx - MAX_UNIT_COUNT);
                     if(_CITIES[_city_idx].owner_idx == _human_player_idx)
                     {
                         if(_CITIES[_city_idx].size == 0)
@@ -1745,7 +1745,7 @@ void Main_Screen(void)
 
 
                         }
-                        else
+                        else  /* (_CITIES[_city_idx].size != 0) */
                         {
                             PageFlipEffect = 4;
                             // TODO  GrowOutLeft = (_main_map_grid_x * 20);
@@ -1756,7 +1756,7 @@ void Main_Screen(void)
 
                         }
                     }
-                    else
+                    else  /* (_CITIES[_city_idx].owner_idx != _human_player_idx) */
                     {
                         Deactivate_Help_List();
                         Enemy_City_Screen();
@@ -2472,7 +2472,7 @@ XREF:
     Cast_Incarnation()
     Cast_Resurrection()
     Cast_Spell_Overland__WIP()
-        ¿ sdt_Summoning, but not 'Floating Island' ?
+        ¿ scc_Summoning, but not 'Floating Island' ?
 
 */
 void IDK_HumanPlayer_SelectStack_UnitLocation(int16_t unit_idx)
@@ -3586,14 +3586,14 @@ void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
     /*
         if flag is 0 / FALSE / None, skip to draw
         if unit owner is undefined, skip to draw
-        ? invalid test and jump for TRUE ?
-        ? maybe not &&, because two different jump locations ?
+        ¿ invalid test and jump for TRUE ?
+        ¿ maybe not &&, because two different jump locations ?
         ...
         WTF?
         if owner is player 5
             set banner to 5
             set owner banner to 5
-        ? generalization of neutral player and neutral planner banner ?
+        ¿ generalization of neutral player and neutral planner banner ?
     */
     if(flag != 0)
     {
@@ -3625,6 +3625,12 @@ void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 // pict_seg is 
 // MoO2  Draw_Ship_Icon()
 /*
+
+Main_Scren_Draw()
+    ...
+    Draw_Map_Units()
+        Draw_Unit_Picture(itr_screen_x, itr_screen_y, unit_idx, 2)
+            Draw_Unit_StatFig(x, y, unit_idx, flag)
 
 Outpost_Screen_Draw()
     Draw_Unit_StatFig(figure_x1, figure_y1, CTY_Garrison_Units[itr], 1);
@@ -4343,12 +4349,14 @@ int16_t City_At_Square__2(int16_t wx, int16_t wy, int16_t wp)
 */
 int16_t Check_Planar_Seal(void)
 {
-    int16_t itr_players;
-    int16_t planar_seal;
+    int16_t itr_players = 0;  // _CX_
+    int16_t planar_seal = 0;  // _SI_
 
-    for(itr_players = 0, planar_seal = ST_FALSE; ((itr_players < _num_players) && (planar_seal == ST_FALSE)); itr_players++)
+    planar_seal = ST_FALSE;
+
+    for(itr_players = 0; ((itr_players < _num_players) && (planar_seal == ST_FALSE)); itr_players++)
     {
-        if(_players[itr_players].Globals[PLANAR_SEAL] == ST_TRUE)
+        if(_players[itr_players].Globals[PLANAR_SEAL] > 0)
         {
             planar_seal = ST_TRUE;
         }

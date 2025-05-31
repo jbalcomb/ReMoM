@@ -25,6 +25,11 @@ https://olegkutkov.me/2019/03/25/simple-logger-with-stdout-files-and-syslog-supp
 */
 
 
+
+uint32_t DBG__cmbt_cancel_button_seg_size;
+
+
+
 // int16_t DBG_trigger_event = STU_FALSE;
 // int16_t DBG_trigger_event = ST_FALSE;
 // int16_t DBG_trigger_event = false;

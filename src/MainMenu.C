@@ -541,12 +541,12 @@ int16_t Main_Menu_Screen(void)
 // MGC s01p06
 void Main_Menu_Screen_Draw(void)
 {
-    int16_t logo_frame_idx;
-    int16_t itr_logo;
-    uint16_t menu_x_start;
-    uint16_t menu_y_start;
-    uint8_t menu_shift;
-    int16_t scanned_field;
+    int16_t logo_frame_idx = 0;
+    int16_t itr_logo = 0;
+    uint16_t menu_x_start = 0;
+    uint16_t menu_y_start = 0;
+    uint8_t menu_shift = 0;
+    int16_t scanned_field = 0;
 
     menu_x_start = 123;
     menu_y_start = 141;
@@ -554,8 +554,7 @@ void Main_Menu_Screen_Draw(void)
     scanned_field = Scan_Input();
 
     Set_Page_Off();
-    Fill(0, 0, 319, 199, ST_BLACK);
-    // CLROFF();
+    Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
 
     /*
         draw the main menu logo, with animation, and the rest of the screen background

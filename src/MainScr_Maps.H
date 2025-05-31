@@ -224,20 +224,15 @@ void List_Screen_Draw_Reduced_Map(int16_t x, int16_t y, int16_t w, int16_t h, in
 // WZD o150p01
 // AKA Undef_Prev_Map_Draw_XY()
 void Reset_Map_Draw(void);
-
 // WZD o150p02 
 // OVL_MapStateSave()
-
 // WZD o150p03 
 // OVL_MapStateRestore()
-
 // WZD o150p04
 void Draw_Map_Window(int16_t screen_x, int16_t screen_y, int16_t map_w, int16_t map_h, int16_t map_x, int16_t map_y, int16_t map_p);
-
 // WZD o150p05
 void TST_Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t map_xpos, int16_t map_ypos, int16_t map_plane);
 void Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t map_xpos, int16_t map_ypos, int16_t map_plane);
-
 // WZD o150p06
 void Cycle_Map_Animations(void);
 // WZD o150p07
@@ -250,32 +245,20 @@ void Draw_Map_Towers(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
 void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
 // WZD o150p11
 void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
-
 // WZD o150p12
-/*
-    draws Terrain Specials - Biota - Wild Game, Hunters Lodge, Nightshade
-*/
 void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
-
 // WZD o150p13
-/*
-    draws Terrain Specials - Minerals
-*/
 void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
-
 // WZD o150p14
 void Draw_Map_Roads(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
-
 // WZD o150p15
 void Draw_Map_Units(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y);
-
 // WZD o150p16
 void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t mark_x, int16_t mark_y, int16_t mark_flag);
-
 // WZD o150p17
 void Cartograph_Screen_Draw_Map_Terrain__NOWORKIE(int16_t cartograph_plane, SAMB_ptr cartograph_seg);
-
-// WZD o150p18 sub_DAFF4                 
+// WZD o150p18
+// sub_DAFF4()
 
 
 #ifdef __cplusplus

@@ -1,7 +1,7 @@
 /*
     WIZARDS.EXE
-        ovr128
         ovr117
+        ovr128
         ovr130
 */
 
@@ -17,6 +17,9 @@
 // TODO  #include ...  /* CMB_RedrawSpellbook(); */
 
 #include <stdlib.h>     /* abs(); itoa(); malloc(); */
+
+// Combat.C
+extern int16_t CMB_combat_structure;
 
 
 
@@ -481,7 +484,45 @@ void Build_Spell_List(int16_t type, int16_t spell_list[])
 
 // WZD o117p02
 // drake178: SBK_AddRealm()
-// SBK_AddRealm()
+/*
+; adds all combat castable spells (eligibility not 1)
+; from the selected realm to the specified buffer, with
+; its count assumed to be in GUI_Multipurpose_Int
+*/
+/*
+Combat Spellbook Add Spells From Magic Realm
+
+OON XREF
+    NX_j_SBK_AddRealm()
+    Combat_Spellbook_Build__WIP()
+*/
+void Combat_Spellbook_Add_Spells_From_Magic_Realm(int16_t * spell_list, int16_t magic_realm)
+{
+    int16_t zz_flag = 0;
+    int16_t realm_idx = 0;
+    int16_t itr_spell_per_magic_realm = 0;  // _CX_
+    int16_t spell_idx = 0;  // _SI_
+
+    realm_idx = magic_realm;
+
+    for(itr_spell_per_magic_realm = 0; itr_spell_per_magic_realm < NUM_SPELLS_PER_MAGIC_REALM; itr_spell_per_magic_realm++)
+    {
+
+        zz_flag = 0;
+
+        spell_idx = ((realm_idx * NUM_SPELLS_PER_MAGIC_REALM) + itr_spell_per_magic_realm + 1);
+
+        if(spell_data_table[spell_idx].Eligibility != 1)  // ¿ knowable ?
+        {
+
+            spell_list[m_spell_list_count] = spell_idx;
+
+        }
+
+    }
+
+}
+
 
 // WZD o117p03
 // drake178: SBK_CountSpellGroups()
@@ -745,7 +786,311 @@ int16_t UU_IDK_turn_to_cast__STUB(int16_t player_idx)
 
 // WZD o117p06
 // drake178: CMB_BuildSpellbook()
-// CMB_BuildSpellbook()
+/*
+; creates a combat spellbook for the selected entity
+; into the SBK_BookPages@ allocation and performs
+; a basic check to see if any of its spells may be cast
+; (looks at casting cost and ocean tile eligibility)
+; returns 1 if there are spells to cast, or 0 otherwise
+; BUGs: uses a signed comparison when adding hero
+; spells, resulting in indexes above 127 not being
+; included (all Death and most Life spells); returns 1
+; if there's an item charge even if it's not usable;
+; ignores Evil Omens for units, and can overflow mana
+; at the Fortress if above 16383
+*/
+/*
+
+*/
+int16_t Combat_Spellbook_Build__WIP(int16_t caster_idx)
+{
+    int16_t Charged_Spell_Index = 0;
+    int16_t Already_Added = 0;
+    int16_t itr_spellbook_spell_list = 0;
+    int16_t Can_Cast = 0;
+    int16_t Index_on_Page = 0;
+    int16_t itr1 = 0;  // _SI_
+    int16_t unit_type = 0;  // _DI_
+    int16_t total_pages = 0;  // _DI_
+
+    Near_Allocate_Mark();
+
+    Mark_Block(_screen_seg);
+
+    // DOMSDOS  m_spellbook_spell_list = SA_MK_FP0(Allocate_Next_Block(_screen_seg, 13));
+    m_spellbook_spell_list = Allocate_Next_Block(_screen_seg, 13);
+
+    SBK_Group_3_Count = 0;  // ; City Spells or Death
+    SBK_Group_2_Count = 0;  // ; Special Spells or Chaos
+    SBK_Group_1_Count = 0;  // ; Summoning Spells or Arcane
+    SBK_Group_5_Count = 0;  // ; Enchantments or Life
+    SBK_Group_4_Count = 0;  // ; Unit Spells or Nature
+    SBK_Group_6_Count = 0;  // ; Combat Spells or Sorcery
+
+    // GUI_Multipurpose_Int__spell_list_count = 0;
+    m_spell_list_count = 0;
+
+    m_spellbook_page_count = 0;
+
+    if(caster_idx > CASTER_IDX_BASE)
+    {
+
+        unit_type = Combat_Casting_Cost_Multiplier(HUMAN_PLAYER_IDX);
+
+        SBK_BookManaLimit = _players[HUMAN_PLAYER_IDX].Cmbt_Skill_Left;
+
+        // ; BUG: rounds the wrong way
+        // ; BUG: x0.5 multiplier results in a negative signed
+        // ; value if the player has over 16,383 mana
+        if(((_players[HUMAN_PLAYER_IDX].mana_reserve * 10) / unit_type) < SBK_BookManaLimit)
+        {
+            SBK_BookManaLimit = ((_players[HUMAN_PLAYER_IDX].mana_reserve * 10) / unit_type);
+        }
+
+    }
+    else
+    {
+
+        SBK_BookManaLimit = battle_units[caster_idx].mana;
+
+    }
+
+    if(caster_idx < CASTER_IDX_BASE)
+    {
+
+        if((battle_units[caster_idx].Attribs_1 & (USA_CASTER_20 | USA_CASTER_40)) != 0)
+        {
+
+            Combat_Spellbook_Add_Spells_From_Magic_Realm(m_spellbook_spell_list, (battle_units[caster_idx].race - 16));
+
+        }
+        else
+        {
+
+            Build_Spell_List(slt_Combat, m_spellbook_spell_list);
+
+            unit_type = _UNITS[battle_units[caster_idx].unit_idx].type;
+
+            for(itr1 = 0; itr1 < 4; itr1++)
+            {
+
+                Already_Added = ST_FALSE;
+
+                // ; BUG: ignores all spells with index > 127
+                if(_HEROES2[HUMAN_PLAYER_IDX]->heroes[unit_type].Spells[itr1] > 0)
+                {
+
+                    for(itr_spellbook_spell_list = 0; itr_spellbook_spell_list < m_spell_list_count; itr_spellbook_spell_list++)
+                    {
+
+                        if(_HEROES2[HUMAN_PLAYER_IDX]->heroes[unit_type].Spells[itr1] == m_spellbook_spell_list[itr_spellbook_spell_list])
+                        {
+
+                            Already_Added = ST_TRUE;
+
+                        }
+
+                    }
+
+                    if(Already_Added == ST_FALSE)
+                    {
+
+                        m_spellbook_spell_list[m_spell_list_count] = _HEROES2[HUMAN_PLAYER_IDX]->heroes[unit_type].Spells[itr1];
+
+                    }
+
+                }
+
+                if(battle_units[caster_idx].Item_Charges > 0)
+                {
+
+                    unit_type = _UNITS[battle_units[caster_idx].unit_idx].Hero_Slot;
+
+                    // ; BUG: this may not be the hero's original owner
+                    Charged_Spell_Index = _ITEMS[_players[battle_units[caster_idx].controller_idx].Heroes[unit_type].Items[0]].embed_spell_idx;
+                    
+                    if(Charged_Spell_Index > 0)
+                    {
+
+                        Already_Added = ST_FALSE;
+
+                        for(itr_spellbook_spell_list = 0; itr_spellbook_spell_list < m_spell_list_count; itr_spellbook_spell_list++)
+                        {
+
+                            if(m_spellbook_spell_list[itr_spellbook_spell_list] == Charged_Spell_Index)
+                            {
+
+                                Already_Added = ST_TRUE;
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+    else
+    {
+
+        Build_Spell_List(slt_Combat, m_spellbook_spell_list);
+
+    }
+
+
+
+
+    
+    Can_Cast = ST_FALSE;
+
+
+    if(caster_idx <= (CASTER_IDX_BASE - 1))
+    {
+
+        if(battle_units[caster_idx].Item_Charges > 0)
+        {
+            // ; BUG: just because it is in an item, the spell may not
+            // ; necessarily be castable (e.g. Earth Elemental on a
+            // ; water tile)
+            Can_Cast = ST_TRUE;
+        }
+        else
+        {
+            
+            for(itr1 = 0; itr1 < m_spell_list_count; itr1++)
+            {
+
+                // ; BUG: ignores Evil Omens
+                // ; the predicted amount of mana that the wizard will
+                // ; be able to channel into a spell each turn?
+                // ; (lower of mana+manaperturn and skill+heroskill)
+                // ; in combat, the highest castable cost
+                if(spell_data_table[abs(m_spellbook_spell_list[itr1])].casting_cost <= SBK_BookManaLimit)
+                {
+
+                    if(
+                        !(
+                            (spell_data_table[abs(m_spellbook_spell_list[itr1])].type == scc_Summoning)
+                            &&
+                            (CMB_combat_structure == cs_OceanTerrainType)
+                            &&
+                            ((_unit_type_table[spell_data_table[abs(m_spellbook_spell_list[itr1])].unit_type].Move_Flags & MV_FLYING) == 0)
+                            &&
+                            ((_unit_type_table[spell_data_table[abs(m_spellbook_spell_list[itr1])].unit_type].Abilities & UA_NONCORPOREAL) == 0)
+                        )
+                        &&
+                        !(
+                            (m_spellbook_spell_list[itr1] == spl_Cracks_Call)  // BUGBUG  should be abs(spell_idx)
+                            &&
+                            (CMB_combat_structure == cs_OceanTerrainType)
+                        )
+                    )
+                    {
+                        Can_Cast = ST_TRUE;
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+    else
+    {
+        
+        for(itr1 = 0; itr1 < m_spell_list_count; itr1++)
+        {
+
+            if(Casting_Cost((caster_idx - CASTER_IDX_BASE), abs(m_spellbook_spell_list[itr1]), 1) <= SBK_BookManaLimit)
+            {
+
+                if(
+                    !(
+                        (spell_data_table[abs(m_spellbook_spell_list[itr1])].type == scc_Summoning)
+                        &&
+                        (CMB_combat_structure == cs_OceanTerrainType)
+                        &&
+                        ((_unit_type_table[spell_data_table[abs(m_spellbook_spell_list[itr1])].unit_type].Move_Flags & MV_FLYING) == 0)
+                        &&
+                        ((_unit_type_table[spell_data_table[abs(m_spellbook_spell_list[itr1])].unit_type].Abilities & UA_NONCORPOREAL) == 0)
+                    )
+                    &&
+                    !(
+                        (m_spellbook_spell_list[itr1] == spl_Cracks_Call)  // BUGBUG  should be abs(spell_idx)
+                        &&
+                        (CMB_combat_structure == cs_OceanTerrainType)
+                    )
+                )
+                {
+                    Can_Cast = ST_TRUE;
+                }
+
+            }
+
+        }
+
+    }
+
+
+// SBK_BuildSpellbook__WIP()
+// Total_Pages =  ((SBK_Group_3_Count + page_spell_count - 1) / page_spell_count);
+// Total_Pages += ((SBK_Group_2_Count + page_spell_count - 1) / page_spell_count);
+// Total_Pages += ((SBK_Group_1_Count + page_spell_count - 1) / page_spell_count);
+// Total_Pages += ((SBK_Group_5_Count + page_spell_count - 1) / page_spell_count);
+// Total_Pages += ((SBK_Group_4_Count + page_spell_count - 1) / page_spell_count);
+// Total_Pages += ((SBK_Group_6_Count + page_spell_count - 1) / page_spell_count);
+
+    Spellbook_Group_Counts();
+
+total_pages =  ((SBK_Group_3_Count + 5) / NUM_SPELLS_PER_PAGE_SML);
+total_pages += ((SBK_Group_2_Count + 5) / NUM_SPELLS_PER_PAGE_SML);
+total_pages += ((SBK_Group_1_Count + 5) / NUM_SPELLS_PER_PAGE_SML);
+total_pages += ((SBK_Group_5_Count + 5) / NUM_SPELLS_PER_PAGE_SML);
+total_pages += ((SBK_Group_4_Count + 5) / NUM_SPELLS_PER_PAGE_SML);
+total_pages += ((SBK_Group_6_Count + 5) / NUM_SPELLS_PER_PAGE_SML);
+
+
+    m_spellbook_pages = CMB_NearBuffer_3;
+
+    // ¿ ~ Spellbook_Add_Page() ?
+    for(itr1 = 0; (total_pages + 3) > itr1; itr1++)
+    {
+
+        m_spellbook_pages[itr1].count = 0;
+
+        strcpy(m_spellbook_pages[itr1].title, str_empty_string__ovr117);
+
+        for(Index_on_Page = 0; Index_on_Page < NUM_SPELLS_PER_PAGE_SML; Index_on_Page++)
+        {
+
+            m_spellbook_pages[itr1].spell[Index_on_Page] = spl_NONE;
+
+        }
+
+    }
+
+    
+    Spellbook_Add_Group_Pages(NUM_SPELLS_PER_PAGE_SML);
+
+    Release_Block(_screen_seg);
+
+    if(CMB_SpellBookPage > m_spellbook_page_count)
+    {
+
+        CMB_SpellBookPage = (m_spellbook_page_count - 2);
+
+    }
+
+    return Can_Cast;
+
+}
+
 
 // WZD o117p07
 // drake178: OVL_ComposeBookText()
@@ -816,7 +1161,7 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
 
                 if(Cost_Limit >= casting_cost)
                 {
-                    if(spell_data_table[abs(spell_idx)].type != 11)  /* sdt_Crafting_Spell */
+                    if(spell_data_table[abs(spell_idx)].type != 11)  /* scc_Crafting_Spell */
                     {
                         Text_Width = Get_String_Width(cnst_Instant_Cast);
                         Clear_Bitmap_Region(9, (7 + (itr1 * 22)), (12 + Text_Width), (12 + (itr1 * 22)), spellbook_bitmap);
@@ -901,7 +1246,7 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
 
             if(
                 (casting_cost != 0) ||
-                (spell_data_table[abs(spell_idx)].type != 11)  /* sdt_Crafting_Spell */
+                (spell_data_table[abs(spell_idx)].type != 11)  /* scc_Crafting_Spell */
             )
             {
                 itoa(casting_cost, temp_string, 10);
@@ -932,8 +1277,224 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
 
 // WZD o117p08
 // drake178: CMB_ComposeBookText()
-void CmbBook_Compose__STUB(void)
+/*
+; composes the image of the passed spellbook page into
+; the specified work area based on caster attributes,
+; assuming combat, but omitting the page title, if any
+*/
+/*
+
+*/
+void CmbBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spellbook_bitmap, int16_t caster_idx)
 {
+
+    char spell_name[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char temp_string[LEN_TEMP_BUFFER] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Max_Spendable = 0;
+    int16_t Icon_Count = 0;
+    int16_t casting_cost = 0;
+    int16_t spell_idx = 0;
+    uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
+
+//     int16_t Text_Width = 0;
+//     int16_t Turns_To_Cast = 0;
+//     int16_t Cost_Limit = 0;
+//     int16_t casting_cost = 0;
+//     int16_t spell_idx = 0;
+    
+    int16_t itr1 = 0;  // _SI_
+    int16_t itr2 = 0;  // _DI_
+
+    Draw_Picture_To_Bitmap(_spellbook_small_text, spellbook_bitmap);
+
+    for(itr1 = 0; itr1 < 6; itr1++)
+    {
+        if(spell_book_page.count > itr1)
+        {
+            spell_idx = spell_book_page.spell[itr1];
+            if(caster_idx < (CASTER_IDX_BASE - 1))
+            {
+                casting_cost = spell_data_table[abs(spell_idx)].casting_cost;
+            }
+            else
+            {
+                casting_cost = Casting_Cost(HUMAN_PLAYER_IDX, abs(spell_idx), 1);
+            }
+            /*
+                BEGIN:  Icon_Count
+            */
+            if(casting_cost == 0)
+            {
+                Icon_Count = 40;
+            }
+            else
+            {
+                if(caster_idx >= CASTER_IDX_BASE)
+                {
+
+                    Icon_Count = Combat_Casting_Cost_Multiplier(HUMAN_PLAYER_IDX);
+
+                    Max_Spendable = _players[HUMAN_PLAYER_IDX].Cmbt_Skill_Left;
+
+                    // ; BUG: rounds the wrong way
+                    // ; BUG: x0.5 multiplier results in a negative signed
+                    // ; value if the player has over 16,383 mana
+                    if(((_players[HUMAN_PLAYER_IDX].mana_reserve * 10) / Icon_Count) < Max_Spendable)
+                    {
+                        Max_Spendable = ((_players[HUMAN_PLAYER_IDX].mana_reserve * 10) / Icon_Count);
+                    }
+
+                    if(casting_cost > Max_Spendable)
+                    {
+                        Icon_Count = 0;
+                    }
+                    else
+                    {
+                        Icon_Count = (Max_Spendable / casting_cost);
+                    }
+                }
+                else  /* (caster_idx < CASTER_IDX_BASE) */
+                {
+                    if(casting_cost > SBK_BookManaLimit)
+                    {
+                        Icon_Count = 0;
+                    }
+                    else
+                    {
+                        Icon_Count = (SBK_BookManaLimit / casting_cost);
+                    }
+
+                    if (battle_units[caster_idx].Item_Charges > 0)
+                    {
+                        if (_ITEMS[_players[HUMAN_PLAYER_IDX].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx == spell_idx)
+                        {
+                            Icon_Count = battle_units[caster_idx].Item_Charges;
+                            casting_cost = 22222;
+                        }
+                    }
+
+                }
+
+                if(
+                    (
+                        (spell_data_table[abs(spell_idx)].type == scc_City_Enchantment)
+                        ||
+                        (abs(spell_idx) == spl_Wall_of_Stone)
+                    )
+                    &&
+                    (
+                        (_combat_attacker_player == HUMAN_PLAYER_IDX)
+                        ||
+                        (OVL_Action_Type == 1)
+                    )
+                )
+                {
+                    Icon_Count = 0;
+                }
+
+                if(
+                    (spell_data_table[abs(spell_idx)].type == scc_Summoning)
+                    &&
+                    (CMB_combat_structure == cs_OceanTerrainType)
+                    &&
+                    ((_unit_type_table[spell_data_table[abs(spell_idx)].unit_type].Move_Flags & MV_FLYING) == 0)
+                    &&
+                    ((_unit_type_table[spell_data_table[abs(spell_idx)].unit_type].Abilities & UA_NONCORPOREAL) == 0)
+                )
+                {
+                    Icon_Count = 0;
+                }
+
+                if(
+                    (spell_idx == spl_Cracks_Call)  // BUGBUG  should be abs(spell_idx)
+                    &&
+                    (CMB_combat_structure == cs_OceanTerrainType)
+                )
+                {
+                    Icon_Count = 0;
+                }
+            }
+            if(Icon_Count > 40)
+            {
+                Icon_Count = 40;
+            }
+            /*
+                END:  Icon_Count
+            */
+
+            if(Icon_Count < 1)
+            {
+                for(itr2 = 0; itr2 < 5; itr2++)
+                {
+                    colors[itr2] = 26;
+                }
+            }
+            else
+            {
+                if(Icon_Count < 20)
+                {
+                    Clear_Bitmap_Region(0, (7 + (itr1 * 22)), (3 + (Icon_Count * 6)), (12 + (itr1 * 22)), spellbook_bitmap);
+                }
+                else
+                {
+                    Clear_Bitmap_Region(0, (7 + (itr1 * 22)), 121, (12 + (itr1 * 22)), spellbook_bitmap);
+                    Clear_Bitmap_Region(0, (13 + (itr1 * 22)), (3 + ((Icon_Count - 20) * 6)), (19 + (itr1 * 22)), spellbook_bitmap);
+                }
+                for(itr2 = 0; itr2 < Icon_Count; itr2++)
+                {
+                    if(itr2 < 20)
+                    {
+                        // ; decoded image headers appended to LBX_Sandbox_Segment
+                        Clipped_Copy_Bitmap((1 + (itr2 * 6)), (7 + (itr1 * 22)), spellbook_bitmap, spellbook_symbols_bitm[spell_data_table[abs(spell_idx)].magic_realm]);
+                    }
+                    else
+                    {
+                        // ; decoded image headers appended to LBX_Sandbox_Segment
+                        Clipped_Copy_Bitmap((1 + (itr2 * 6)), (7 + (itr1 * 22)), spellbook_bitmap, spellbook_symbols_bitm[spell_data_table[abs(spell_idx)].magic_realm]);
+                    }
+                }
+                colors[0] = 184;
+                for(itr2 = 1; itr2 < 5; itr2++)
+                {
+                    colors[itr2] = 187;
+                }
+            }
+
+            Set_Font_Colors_15(1, &colors[0]);
+
+            String_Copy_Far(spell_name, spell_data_table[abs(spell_idx)].name);
+
+            Max_Spendable = Get_String_Width(spell_name);
+
+            Clear_Bitmap_Region(0, (itr1 * 22), (3 + Max_Spendable), (5 + (itr1 * 22)), spellbook_bitmap);
+
+            Print_To_Bitmap(0, (itr1 * 22), spell_name, spellbook_bitmap);
+
+            if(casting_cost == 0)
+            {
+                strcpy(temp_string, cnst_QuestionMark5);
+            }
+            else
+            {
+                if(casting_cost == 22222)
+                {
+                    strcpy(temp_string, cnst_Item);
+                }
+                else
+                {
+                    itoa(casting_cost, temp_string, 10);
+                    strcat(temp_string, cnst_Space_MP_2);
+                }
+            }
+            Max_Spendable = Get_String_Width(temp_string);
+            Clear_Bitmap_Region((118 - Max_Spendable), (itr1 * 22), 121, (5 + (itr1 * 22)), spellbook_bitmap);
+            Print_Right_To_Bitmap(120, (itr1 * 22), temp_string, spellbook_bitmap);
+        }
+        else  /* (spell_book_page.count <= itr1) */
+        {
+            Clear_Bitmap_Region(0, (itr1 * 22), 121, (17 + (itr1 * 22)), spellbook_bitmap);
+        }
+    }
 
 }
 
@@ -1018,12 +1579,79 @@ void SmlBook_Draw__WIP(int16_t x, int16_t y)
 
 // WZD o117p10
 // drake178: CMB_DrawSpellbook()
-void CmbBook_Draw__STUB(void)
+/*
+; draws the combat spellbook into the current draw
+; frame using the passed parameters and the related
+; global variables
+*/
+/*
+
+*/
+void CmbBook_Draw__WIP(int16_t x, int16_t y, int16_t caster_idx)
 {
+    uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t itr = 0;  // _SI_
 
+    // DNE  Mark_Block(_screen_seg);
 
+    // DNE  spellbook_bitmap = Allocate_Next_Block(_screen_seg, 1050);  // 1050 PR  16800 B
 
+    FLIC_Draw(x, y, _spellbook_small_seg);
 
+    if(SBK_Dogears == 1)
+    {
+
+        if(SBK_OpenPage != 0)
+        {
+            FLIC_Draw((x + 13), (y + 4), _spellbook_small_left_corner_seg);
+        }
+        
+        if(
+            (SBK_OpenPage != m_spellbook_page_count)
+            &&
+            ((m_spellbook_page_count - 2) > SBK_OpenPage)
+        )
+        {
+            FLIC_Draw((x + 258), (y + 4), _spellbook_small_right_corner_seg);
+        }
+    }
+
+    // SmlBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], spellbook_bitmap);
+    // spellbook_bitmap  allocated in SmlBook_Draw__WIP(), passed to SmlBook_Compose__WIP()
+    CmbBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], IMG_SBK_Anims, caster_idx);
+
+    Draw_Picture((x + 16), (y + 21), IMG_SBK_Anims);
+
+    colors[0] = 53;
+
+    for(itr = 1; itr < 5; itr++)
+    {
+        colors[itr] = 46;
+    }
+
+    Set_Font_Colors_15(4, &colors[0]);
+
+    Print_Centered((x + 70), (y + 6), m_spellbook_pages[SBK_OpenPage].title);
+
+    Draw_Picture_To_Bitmap(_spellbook_small_text, IMG_SBK_Anims);
+
+    // SmlBook_Compose__WIP(m_spellbook_pages[(SBK_OpenPage + 1)], spellbook_bitmap);
+    CmbBook_Compose__WIP(m_spellbook_pages[(SBK_OpenPage + 1)], IMG_SBK_Anims, caster_idx);
+
+    Draw_Picture((x + 148), (y + 21), IMG_SBK_Anims);
+
+    colors[0] = 53;
+
+    for(itr = 1; itr < 5; itr++)
+    {
+        colors[itr] = 46;
+    }
+
+    Set_Font_Colors_15(4, &colors[0]);
+
+    Print_Centered((x + 208), (y + 6), m_spellbook_pages[(SBK_OpenPage + 1)].title);
+
+    // DNE  Release_Block(_screen_seg);
 
 }
 
@@ -1724,8 +2352,8 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
                     }
 
-                    // GUI_Multipurpose_Int__spell_list_count = itr_spellbook_page_spell_count;
-                    GUI_Multipurpose_Int = itr_spellbook_page_spell_count;
+                    // GUI_Multipurpose_Int__m_spell_list_count = itr_spellbook_page_spell_count;
+                    m_spell_list_count = itr_spellbook_page_spell_count;
 
                     Spell_Found = ST_TRUE;
 
@@ -1773,8 +2401,8 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
                         }
 
-                        // GUI_Multipurpose_Int__spell_list_count = itr_spellbook_page_spell_count;
-                        GUI_Multipurpose_Int = itr_spellbook_page_spell_count;
+                        // GUI_Multipurpose_Int__m_spell_list_count = itr_spellbook_page_spell_count;
+                        m_spell_list_count = itr_spellbook_page_spell_count;
 
                         Spell_Found = ST_TRUE;
 
@@ -2924,7 +3552,6 @@ int16_t WIZ_RefreshResearch__STUB(int16_t player_idx)
             }
         }
     }
-
 
     while((Candidate_Count < Max_Candidates) && (m_spell_list_count > 0))
     {

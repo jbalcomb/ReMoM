@@ -1121,7 +1121,7 @@ SAMB_ptr spell_animation_seg;
 // WZD dseg:9132
 // (-1 if none or SFX are disabled)
 SAMB_ptr SND_SpellCast;
-int16_t SND_SpellCast_size;  // DNE in Dasm
+uint32_t SND_SpellCast_size;  // DNE in Dasm
 
 // WZD dseg:9134
 // drake178: SND_Spell_Music
@@ -1158,7 +1158,7 @@ SAMB_ptr item_icons_seg[116];
 struct s_BATTLE_UNIT * global_battle_unit;                       // alloc in Allocate_Data_Space()
 
 // WZD dseg:922A
-// MoO  Module: Mox  _combat_data_
+// MoO2  Module: Mox  _combat_data_
 // WZD dseg:922A 00 00 00 00                                     _combat_data_ dd 0                      ; DATA XREF: USW_Build_Effect_List+AB7r ...
 struct s_BATTLE_UNIT * battle_units;                            // alloc in IDK_Combat_Allocate() and CMB_LoadResources()
 
@@ -1170,6 +1170,11 @@ int8_t * combat_enchantments;
 
 
 // WZD dseg:9232
+/*
+
+e.g.,
+    _HEROES2[HUMAN_PLAYER_IDX]->heroes[unit_type].Spells[itr1]
+*/
 struct s_HEROES * _HEROES2[NUM_PLAYERS];
 
 
@@ -1193,23 +1198,46 @@ int16_t CMB_WallRise_Going;
 // MoO2  Module: MoX  _combat_grid
 struct s_BATTLEFIELD * battlefield;
 
-// WZD dseg:9278
-int16_t CMB_ActiveUnitFrameY;
-// WZD dseg:927A
-int16_t CMB_ActiveUnitFrameX;
-// WZD dseg:927C
-int16_t CMB_ActiveUnitFrame;
+/*
 
+active unit - red outline
+scanned square - blue outline
+
+CMB_DrawMap__WIP()
+frame_scanned_seg
+frame_active_seg
+*/
+// WZD dseg:9278
+int16_t frame_active_cgy;
+// WZD dseg:927A
+int16_t frame_active_cgx;
+// WZD dseg:927C
+int16_t frame_active_flag;
 // WZD dseg:927E
-int16_t CMB_TargetFrame_Y;
+int16_t frame_scanned_cgy;
 // WZD dseg:9280
-int16_t CMB_TargetFrame_X;
+int16_t frame_scanned_cgx;
 // WZD dseg:9282
-int16_t CMB_TargetFrame;
+int16_t frame_scanned_flag;
 
 // WZD dseg:9284
+/*
+combat type?
+    ...mode, context, setting, circumstance, environment, ...
+¿ enum ?
+0: Enemy Stack
+1: Enemy City
+5: Lair
+*/
 int16_t OVL_Action_Type;
 // WZD dseg:9286
+/*
+STRUCTURES INFLUENCING COMBAT
+...
+vs. battlefield->Central_Structure?
+    enum Central_Structures
+
+*/
 int16_t OVL_Action_Structure;
 
 // WZD dseg:9288 00                                              db    0
@@ -1418,7 +1446,12 @@ uint8_t * square_scouted_p1;                // Bit_Field  alloc in Allocate_Data
 // drake178: IMG_CMB_TerrTiles
 // ; array of 48 images appended into the EMM TILEX handle
 // WZD  dseg:939A
-SAMB_ptr _combat_terrain_pict_segs[48];
+/*
+definitely just 48, but looks like 55
+¿ fits combat terrain type check of >55/>=56 ?
+*/
+// SAMB_ptr _combat_terrain_pict_segs[48];
+SAMB_ptr _combat_terrain_pict_segs[55];
 
 // WZD  dseg:93FA 00                                              db    0
 // WZD  dseg:93FB 00                                              db    0
@@ -1902,8 +1935,7 @@ SAMB_ptr UnitDraw_WorkArea;  // alloc in MoM_Init_Tables(), 60 PR, 960 DB
 // MoO2: ~== _ship_node
 int16_t entities_on_movement_map[120];  //  12 * 10  MAP_WIDTH * MAP_HEIGHT
 
-// dseg:973C                                                 ; unsigned int gsa_BACKGRND_3_IMG_CMB_Bottom_BG
-// dseg:973C 00 00                                           gsa_BACKGRND_3_IMG_CMB_Bottom_BG dw 0   ; DATA XREF: Load_Combat_Background_Bottom+12w ...
+// dseg:973C
 SAMB_ptr combat_background_bottom;
 
 
@@ -2588,6 +2620,17 @@ struct s_INACTV_HERO * hero_names_table;
 // int16_t _help_entries[250];
 // char _help_entries[500];
 // struct s_HELP_LIST _help_entries;
+/*
+
+e.g.,
+    mov     ax, _SI_itr
+    mov     dx, 0Ah
+    imul    dx
+    mov     bx, ax
+    mov     [_help_entries.help_03.help_idx+bx], -1
+    _help_entries[(3 + itr)].help_idx = ST_UNDEFINED;
+
+*/
 struct s_HELP_FIELD _help_entries[50];
 
 
@@ -3080,8 +3123,11 @@ SAMB_ptr m_hero_portrait_seg;
 
 
 
+// ¿ ovr108 ?
 // WZD dseg:C7FC
 // drake178: GUI_NearMsgString
+// ¿ MoO2 _temp_string || _temp_string_buf ?
+// what's with the length?
 char GUI_NearMsgString[154];
 
 
@@ -3229,6 +3275,14 @@ int16_t IDK_DiploScrn_scanned_field;
 // WZD dseg:CA32 00 00                                           IMG_OVL_TargetWizBG@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+39w ...
 
 // WZD dseg:CA34
+/*
+
+CmbBook_Draw__WIP() vs. SmlBook_Draw__WIP()
+    // SmlBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], spellbook_bitmap);
+    // spellbook_bitmap  allocated in SmlBook_Draw__WIP(), passed to SmlBook_Compose__WIP()
+    CmbBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], IMG_SBK_Anims, caster_idx);
+
+*/
 SAMB_ptr IMG_SBK_Anims;
 
 // WZD dseg:CA36

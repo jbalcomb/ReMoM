@@ -2701,7 +2701,7 @@ void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_or_type, in
 // WZD o89p06
 /*
 
-~== CMB_SpawnFigure__WIP()
+~ CMB_SpawnFigure__WIP()
 
 */
 void Unit_Figure_Position(int16_t figure_count, int16_t current_figure, int16_t * figure_x, int16_t * figure_y)

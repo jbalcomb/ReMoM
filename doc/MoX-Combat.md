@@ -5,6 +5,20 @@ Elsewhere, ...
 
 
 
+battle_unit_figure_idx  ==>  bufpi
+bufpi  Battle Unit Figure Picture Index
+TODO  rename bufpi to pict_idx or some such, after your're done feeling confused about all the the mix-ups you made
+
+CMB_BU_Figure_GFX  ==>  battle_unit_picts_seg
+
+ptr_figure_pointer_seg  ==>  figure_pict_seg
+figure_pointer_seg  ==>  figure_pict_seg
+
+CMB_EntitiesReset()  ==>  Clear_Combat_Grid_Entities()
+
+CMB_GetFigDrawPos__SEGRAX()  ==>  Battle_Unit_Figure_Position()
+
+combat_entity_draw_order_array  ==>  combat_grid_entities_draw_order
 
 
 

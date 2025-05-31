@@ -325,7 +325,32 @@ SAMB_ptr word_434FA;
 // CMB_SliderRedraw()
 
 // WZD o136p07
-// CMB_SpellSlider()
+// drake178: CMB_SpellSlider()
+/*
+; displays the spell infusion dialog, allowing the
+; player to specify the additional power they wish to
+; channel into an infusable spell
+; returns the total cost of the spell
+; BUG: will not allow infusion with >16383 mana while
+; fighting at the fortress, ignores Evil Omens almost
+; entirely, and has several rounding bugs
+; WARNING: obscures the actual extra power value
+*/
+/*
+
+*/
+int16_t CMB_SpellSlider__STUB(int16_t spell_idx, int16_t Selected_Spell, int16_t caster_idx)
+{
+    if(caster_idx >= CASTER_IDX_BASE)
+    {
+        return Casting_Cost(HUMAN_PLAYER_IDX, spell_idx, 1);
+    }
+    else
+    {
+        return spell_data_table[spell_idx].casting_cost;
+    }
+}
+
 
 // WZD o136p08
 // sub_BD8A8()
@@ -1122,11 +1147,11 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
 
 // WZD o137p12
 // drake178: sub_BFC85()
-// IDK_WizTgtSpl_sBFC85()
+// Spell_Target_Wizard_Screen_Draw()
 
 // WZD o137p13
 // drake178: ¿ ?
-// IDK_DiploScrn()
+// Spell_Target_Wizard_Screen()
 
 
 

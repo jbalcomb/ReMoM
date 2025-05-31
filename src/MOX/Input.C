@@ -1962,6 +1962,8 @@ int16_t Wait_For_Input(void)
 
     temp_field_count = fields_count;
 
+    fields_count = 1;
+
     while(keyboard_flag == ST_FALSE)
     {
         if(mouse_installed != ST_FALSE)
@@ -2036,6 +2038,7 @@ int16_t Wait_For_Input(void)
     }
 
     fields_count = temp_field_count;
+    
     Mouse_Button_Handler();
     Mouse_Buffer();
     Mouse_Buffer2();

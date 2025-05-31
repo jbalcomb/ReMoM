@@ -969,9 +969,46 @@ void ui_draw_line_ctbl(int x1, int y1, int x2, int y2, const uint8_t *colortbl, 
 // UU_VGA_DiagColumns
 
 // WZD s16p07
-// drake178: 
+// drake178: RNG_Direct_LFSR()
 // MoO2  
-// RNG_Direct_LFSR
+// 1oom  rnd.c  rnd_bitfiddle()
+uint16_t rnd_bitfiddle__1oom(uint16_t ax)
+{
+    int16_t loops = 0;  // _CX_
+    uint16_t bx;
+    uint16_t dx;
+
+    if (ax == 0) {
+        return 0x35c8;
+    }
+
+    loops = 8;
+
+    do {
+        dx = ax;    // mov     dx, ax
+        bx = ax;    // mov     bx, ax      ; using 1..16 indexing:
+        bx >>= 1;   // shr     bx, 1
+        ax ^= bx;   // xor     ax, bx      ; bit #15
+        bx >>= 1;   // shr     bx, 1
+        ax ^= bx;   // xor     ax, bx      ; bit #14
+        bx >>= 1;   // shr     bx, 1
+        bx >>= 1;   // shr     bx, 1
+        ax ^= bx;   // xor     ax, bx      ; bit #12
+        bx >>= 1;   // shr     bx, 1
+        bx >>= 1;   // shr     bx, 1
+        ax ^= bx;   // xor     ax, bx      ; bit #10
+        bx >>= 1;   // shr     bx, 1
+        ax ^= bx;   // xor     al, bh      ; bit #5
+
+                    // shr     ax, 1
+        dx >>= 1;   // rcr     dx, 1
+        if(ax & 1) { dx |= 0x8000; }
+
+        ax = dx;    // mov     ax, dx
+    } while (--loops);
+    return ax;
+}
+
 
 // WZD s16p08
 // drake178: VGA_Shade_Rect()
