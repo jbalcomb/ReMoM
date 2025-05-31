@@ -5,6 +5,13 @@ Light-Lime-3    maybe, kinda?
 ...orangish     coded, but known issues
 ...purpleish    IDK/IDGI/weirdness
 
+..."Combat Spells"..."Overland Spells"...
+
+all overland summons are done
+all combat summons are done
+
+
+
 [ ] Earth to Mud
 [ ] Resist Elements
 [ ] Wall of Stone
@@ -49,9 +56,9 @@ Light-Lime-3    maybe, kinda?
 [ ] Dispel Magic True
 [ ] Floating Island
 [ ] Guardian Wind
-[ ] Phantom Warriors
+[x] Phantom Warriors
 [ ] Confusion
-[ ] Word of Recall
+[x] Word of Recall
 [ ] Counter Magic
 [ ] Nagas
 [ ] Psionic Blast
@@ -64,7 +71,7 @@ Light-Lime-3    maybe, kinda?
 [ ] Wind Mastery
 [ ] Spell Blast
 [ ] Aura of Majesty
-[ ] Phantom Beast
+[x] Phantom Beast
 [ ] Disjunction True
 [ ] Invisibility
 [ ] Wind Walking
@@ -77,7 +84,7 @@ Light-Lime-3    maybe, kinda?
 [ ] Haste
 [ ] Djinn
 [ ] Spell Ward
-[ ] Creature Binding
+[x] Creature Binding
 [ ] Mass Invisibility
 [ ] Great Unsummoning
 [ ] Spell Binding
@@ -85,8 +92,8 @@ Light-Lime-3    maybe, kinda?
 [ ] Sky Drake
 [ ] Suppress Magic
 [ ] Time Stop
-[ ] Warp Wood
-[ ] Disrupt
+[x] Warp Wood
+[x] Disrupt
 [ ] Fire Bolt
 [x] Hell Hounds
 [ ] Corruption
@@ -129,7 +136,7 @@ Light-Lime-3    maybe, kinda?
 [ ] Star Fires
 [ ] Endurance
 [ ] Holy Weapon
-[ ] Healing
+[x] Healing
 [ ] Holy Armor
 [x] Just Cause
 [ ] True Light
@@ -209,7 +216,7 @@ Light-Lime-3    maybe, kinda?
 [ ] Dispel Magic
 [ ] Summoning Circle
 [ ] Disenchant Area
-[ ] Recall Hero
+[x] Recall Hero
 [ ] Detect Magic
 [ ] Enchant Item
 [ ] Summon Hero
@@ -217,5 +224,5 @@ Light-Lime-3    maybe, kinda?
 [ ] Disjunction
 [ ] Create Artifact
 [ ] Summon Champion
-[x] Spell Of Mastery
-[ ] Spell Of Return
+[x] Spell of Mastery
+[ ] Spell of Returning

@@ -630,6 +630,7 @@ void Set_Load_Screen_Help_List(void)
 /*
 vs. Loaded_Game_Update_MGC()
 vs. Loaded_Game_Update_WZD()
+FIXME_RIGHTMEOW  where did I get the idea there was such a thing as Loaded_Game_Update_MGC()?
 */
 void Loaded_Game_Update(void)
 {
@@ -644,7 +645,7 @@ void Loaded_Game_Update(void)
     _human_player_idx = HUMAN_PLAYER_IDX;
 
 
-    PageFlipEffect = 0;
+    PageFlipEffect = pf_Normal;
     
 
     Reset_City_Area_Bitfields();
@@ -763,6 +764,22 @@ void Loaded_Game_Update(void)
         }
 
     }
+
+
+    /*
+        BEGIN:  STU Debug
+    */
+        // TST_Validate_GameData();
+
+        TST_Patch_Game_Data();
+    /*
+        END:  STU Debug
+    */
+
+
+
+
+
 
 }
 

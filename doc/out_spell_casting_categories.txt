@@ -1,3 +1,14 @@
+
+Do I still need this?
+...spent a ridiculous amount of time organizing it...
+...but, should just all be in the spells spreadsheet? - source of truth?
+
+
+NOTE: no such thing as "spell of returning"
+NOTE: Guises was deprecated
+
+
+
 // enum enum_SPELL_DATA_TYPE
 // sdt_Summoning         =  0,
 // Unit_Enchantment        =  1,

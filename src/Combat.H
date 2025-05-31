@@ -17,7 +17,6 @@
         ovr122
         ovr123
         ovr124
-        ovr133
         ovr139
         ovr153
         ovr154
@@ -657,13 +656,13 @@ enum Combat_TileGroup
 */
 enum e_BATTLE_UNIT_STATUS
 {
-    bus_Active      = 0,  /* ~== Alive */
+    bus_Active      = 0,  /* ~== Alive; checked for 'attackable' target */
     bus_Recalled    = 1,  /* ¿ ? */
     bus_Fleeing     = 2,  /* ¿ ? */
     bus_Uninvolved  = 3,  /* ~ "can not engage" used for 'Floating Island', Transports, etc.; included in 'Flee'; EoC, set to bus_Active; */
     bus_Dead        = 4,  /* ¿ ? */
     bus_Drained     = 5,  /* ¿ ? */
-    bus_Gone        = 6   /* ¿ ? ¿ ~== _UNITS[].wp == 9 ? */
+    bus_Gone        = 6   /* ¿ ? ¿ ~== _UNITS[].wp == 9 ? ¿ excluded from 'Raise Dead' */
 };
 
 enum e_BATTLE_UNIT_ACTION
@@ -819,7 +818,7 @@ struct s_BATTLEFIELD
     /* 0x1516 */  int16_t House_TileYs[16];    // [4][4]
     /* 0x1536 */  SAMB_ptr House_IMG_Segs[16];  // [4][4]  ¿ assigned pict seg from [3][15] house types ?
     /* 0x1556 */  int16_t Walled_City;  // ¿ {{F,T} city has wall flag ?  ... used to set _battlefield_city_walls |= 0x1;, so must be specifcally 'City Walls'/'Wall of Stone'
-    /* 0x1558 */  int16_t Wall_Sections[16];   // {4,4,4,4}
+    /* 0x1558 */  int16_t Wall_Sections[16];   /* {4,4,4,4};  spl_Disrupt sets this to 2 */
     /* 0x1578 */  int16_t Wall_of_Fire;
     /* 0x157A */  int16_t Wall_of_Darkness;
     /* 0x157C */  int16_t wp;
@@ -968,13 +967,27 @@ struct s_MAGIC_VORTEX
 
 
 
+// WZD dseg:7080
+extern int16_t frame_anim_cycle;
+
+// WZD dseg:708A
+extern int16_t CMB_ChasmAnimStage;
+
+// WZD dseg:708E
+extern int16_t CMB_Chasm_Anim;
+
 // WZD dseg:7116
-/*
-used in AI_SetUnitOrders__WIP()
-*/
 extern int16_t ai_human_hostility;
 
+// WZD dseg:C418
+extern int16_t CMB_CityDamage;
 
+// WZD dseg:C41A
+extern SAMB_ptr SND_CMB_Silence;
+extern uint32_t SND_CMB_Silence_size;  // DNE in Dasm
+
+// WZD dseg:C432
+extern int16_t _auto_combat_flag;
 
 // WZD dseg:C47C
 extern int16_t _combat_wp;
@@ -984,6 +997,12 @@ extern int16_t _combat_wy;
 
 // WZD dseg:C480
 extern int16_t _combat_wx;
+
+// WZD dseg:C522
+extern struct s_mouse_list * _combat_mouse_grid;
+
+// WZD dseg:C524
+extern int8_t * CMB_TargetRows[22];
 
 // WZD dseg:C582
 extern int16_t _active_battle_unit;
@@ -996,6 +1015,9 @@ extern int16_t _combat_attacker_player;
 
 // WZD dseg:C588
 extern int16_t _combat_total_unit_count;
+
+// WZD dseg:C7B2
+extern SAMB_ptr IMG_CMB_FX_Figure;
 
 // WZD dseg:C972
 extern int16_t CMB_Winner;
@@ -1121,8 +1143,16 @@ extern uint8_t * CMB_Path_Costs;
 // WZD dseg:D148
 extern int8_t * CMB_ActiveMoveMap;
 
+// WZD dseg:D14A
+// WZD dseg:D14C
+extern int16_t CMB_Chasm_Anim_Y;
+extern int16_t CMB_Chasm_Anim_X;
+
 // WZD dseg:D14E
 extern struct s_MAGIC_VORTEX * CMB_Vortex_Array;
+
+// WZD dseg:D152
+extern int16_t CMB_Vortex_Count;
 
 // WZD dseg:D154
 extern SAMB_ptr CMB_Projectiles;
@@ -1824,41 +1854,6 @@ int16_t Raze_City_Prompt(char * message);
 
 // WZD o124p21
 void Raze_City_Prompt_Draw(void);
-
-
-
-/*
-    WIZARDS.EXE  ovr133
-*/
-
-// WZD o133p01  BU_WarpCreature()
-// WZD o133p02  WIZ_Wrack()
-// WZD o133p03  WIZ_CallLightning()
-// WZD o133p04  BU_LifeDrain()
-// WZD o133p05  CMB_WallRise_Anim()
-// WZD o133p06
-void CMB_CounterMessage__STUB(int16_t caster_idx, int16_t type, int16_t spell_idx, char * title);
-// WZD o133p07
-int16_t WIZ_DispelAttempt__STUB(int16_t dispel_strength, int16_t spell_cast, int16_t player_idx, int16_t magic_realm);
-// WZD o133p08  TILE_CracksCall()
-// WZD o133p09  TILE_BoltFromAbove()
-// WZD o133p10  TILE_CombatSpellAnim()
-// WZD o133p11  BU_Teleport()
-// WZD o133p12  BU_TunnelTo()
-// WZD o133p13  BU_CombatSummon()
-void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t XPos, int16_t YPos, int16_t spell_idx, int16_t player_idx);
-// WZD o133p14  TILE_LightningBolt()
-// WZD o133p15  WIZ_CreateVortex()
-// WZD o133p16  CMB_SetVortexCursor()
-void CMB_SetVortexCursor__SEGRAX(int Vortex_Index);
-// WZD o133p17  CMB_VortexPlayerMove()
-void CMB_VortexPlayerMove__SEGRAX(int Vortex_Index);
-// WZD o133p18  CMB_ProcessVortices()
-void CMB_ProcessVortices__SEGRAX(void);
-// WZD o133p19  CMB_VortexMovement()
-void CMB_VortexMovement__SEGRAX(int Vortex_Index, int Next_X, int Next_Y);
-// WZD o133p20  CMB_CallChaos()
-// WZD o133p21  WIZ_CallChaos()
 
 
 

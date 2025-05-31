@@ -4237,7 +4237,7 @@ void Diplomacy_Growth_For_Enchantments__WIP(void)
 // ovr140:2A3A 7E 11                                           jle     short loc_C699D
 // ovr140:2A3C B8 0A 00                                        mov     ax, 10
 // ovr140:2A3F 50                                              push    ax                              ; Divisor
-// ovr140:2A40 B8 3B 00                                        mov     ax, spl_Aura_of_Majesty
+// ovr140:2A40 B8 3B 00                                        mov     ax, spl_Aura_Of_Majesty
 // ovr140:2A43 50                                              push    ax                              ; Spell_Index
 // ovr140:2A44 56                                              push    _SI_itr_players                 ; Player_Index
 // ovr140:2A45 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations

@@ -1131,7 +1131,7 @@ uint32_t SND_SpellCast_size;  // DNE in Dasm
 */
 
 SAMB_ptr SND_Spell_Music;
-int16_t SND_Spell_Music_size;  // DNE in Dasm
+uint32_t SND_Spell_Music_size;  // DNE in Dasm
 
 // WZD dseg:9136                                                 ? BEGIN:  - Uninitialized Data ?
 
@@ -1165,6 +1165,15 @@ struct s_BATTLE_UNIT * battle_units;                            // alloc in IDK_
 // WZD dseg:922E
 // ; 3 LBX_Alloc_Next paragraphs, sandbox segment; the first 30 (1Eh) bytes are zeroed when allocated
 // struct s_COMBAT_ENCHANTMENTS * combat_enchantments;             // alloc in IDK_Combat_Allocate() and CMB_LoadResources()
+/*
+// ; 2-byte, signed; unit type, base damage, UE flag, or CE index
+if(combat_enchantments[(spell_data_table[spell_idx].Param0 + IDK)] > 0)
+...somehow, ...
+    spell_data_table[spell_idx].Param0 is the index into combat_enchantments
+    and [{0,1}] is {attacker,defender}
+    2-D array?
+    
+ */
 int8_t * combat_enchantments;
 
 

@@ -892,7 +892,7 @@ int16_t Spell_Animation_Load_Graphics__WIP(int16_t spell_idx)
 
     switch(l_spell_idx)
     {
-        case spl_Earth_to_Mud:
+        case spl_Earth_To_Mud:
         {
             spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 14, _screen_seg);
             return_value = ST_TRUE;
@@ -1057,7 +1057,7 @@ int16_t Spell_Animation_Load_Graphics__WIP(int16_t spell_idx)
         {
             __debugbreak();
         } break;
-        case spl_Word_of_Death:
+        case spl_Word_Of_Death:
         {
             __debugbreak();
         } break;
@@ -1133,10 +1133,12 @@ void Spell_Animation_Load_Sound_Effect__WIP(int16_t spell_idx)
         if(spell_data_table[spell_idx].Sound > ST_UNDEFINED)
         {
             SND_SpellCast = LBX_Reload_Next(soundfx_lbx_file__ovr134__1of2, spell_data_table[spell_idx].Sound, _screen_seg);
+            SND_SpellCast_size = lbxload_entry_length;
         }
         else
         {
             SND_SpellCast = LBX_Reload_Next(newfound_lbx_file__ovr134, abs(spell_data_table[spell_idx].Sound), _screen_seg);
+            SND_SpellCast_size = lbxload_entry_length;
         }
     }
     else
@@ -1152,6 +1154,11 @@ void Spell_Animation_Load_Sound_Effect__WIP(int16_t spell_idx)
 */
 /*
 DEDU  ¿ something specific to spell animations that have a target map square ?
+
+Where is the load for SND_SpellCast this uses?
+    Spells132.C  Spell_Animation_Load_Sound_Effect__WIP
+        |-> SBookScr.C  Spell_Animation_Load_Sound_Effect__WIP()
+
 */
 void Spell_Animation_Screen__WIP(int16_t wx, int16_t wy, int16_t wp)
 {
@@ -1194,7 +1201,7 @@ void Spell_Animation_Screen__WIP(int16_t wx, int16_t wy, int16_t wp)
     if(SND_SpellCast != ST_UNDEFINED)
     {
         // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
-        // DOME_RIGHTMEOW  sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
+        sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
     }
 
     for(itr = 0; (frame_count + 3) > itr; itr++)
@@ -1214,7 +1221,7 @@ void Spell_Animation_Screen__WIP(int16_t wx, int16_t wy, int16_t wp)
     Release_Time(5);
 
     // DOMSDOS  Play_Sound__STUB(sound_buffer);
-    // DOME_RIGHTMEOW  sdl2_Play_Sound__WIP(sound_buffer, sound_buffer_size);
+    sdl2_Play_Sound__WIP(sound_buffer, sound_buffer_size);
 
     _map_x = map_x;
 

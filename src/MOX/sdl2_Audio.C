@@ -164,14 +164,26 @@ void sdl2_Audio_Init(void)
     if(Mix_Init((MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID | MIX_INIT_OPUS | MIX_INIT_WAVPACK)) == 0)
     {
         dbg_prn("ERROR:  Mix_Init():  %s\n", Mix_GetError());
+        printf("ERROR:  Mix_Init():  %s\n", Mix_GetError());
+    }
+    else
+    {
+        printf("SUCCESS:  Mix_Init():  %s\n", Mix_GetError());
     }
     if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
     {
         dbg_prn("ERROR:  Mix_OpenAudio():  %s\n", Mix_GetError());
+        printf("ERROR:  Mix_OpenAudio():  %s\n", Mix_GetError());
+    }
+    else
+    {
+        printf("SUCCESS:  Mix_OpenAudio():  %s\n", Mix_GetError());
     }
 
     // Set the volume of the music to 50% (half the MAX_VOLUME)
+    printf("Mix_VolumeMusic():  %d\n", Mix_VolumeMusic(-1));
     Mix_VolumeMusic(MIX_MAX_VOLUME / 4);
+    printf("Mix_VolumeMusic():  %d\n", Mix_VolumeMusic(-1));
     // Later, elsewhere, ...
     // // Set the volume of the sound effect to 75%
     // Mix_VolumeChunk(sdl2_mix_chunk, MIX_MAX_VOLUME * 0.75);

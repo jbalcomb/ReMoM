@@ -1379,7 +1379,7 @@ void CmbBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
                     (
                         (spell_data_table[abs(spell_idx)].type == scc_City_Enchantment)
                         ||
-                        (abs(spell_idx) == spl_Wall_of_Stone)
+                        (abs(spell_idx) == spl_Wall_Of_Stone)
                     )
                     &&
                     (
@@ -3855,7 +3855,7 @@ spl_Spell_Of_Mastery    - 50  10
 spl_Eternal_Night       - 12  12
 spl_Evil_Omens          - 20  12
 spl_Zombie_Mastery      - 14  12
-spl_Aura_of_Majesty     + 10   0
+spl_Aura_Of_Majesty     + 10   0
 spl_Wind_Mastery        -  4  12
 spl_Suppress_Magic      - 25  12
 spl_Time_Stop              0  12
@@ -3922,7 +3922,7 @@ void Change_Relations_For_Enchantments(int16_t player_idx, int16_t spell_idx, in
                 Change_Relations((-14 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
-            if(spell_idx == spl_Aura_of_Majesty)
+            if(spell_idx == spl_Aura_Of_Majesty)
             {
                 Change_Relations((10 / divisor), player_idx, itr_players, 0, 0, spell_idx);
             }

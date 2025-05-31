@@ -82,7 +82,7 @@ void Screen_Control(void)
 
             TST_Validate_GameData();
 
-            TST_Patch_Game_Data();
+            // moved in to Loaded_Game_Update()  TST_Patch_Game_Data();
             
             Loaded_Game_Update();
 

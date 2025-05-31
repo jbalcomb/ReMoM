@@ -28,6 +28,44 @@ Combat_Ship_Is_Functional_()
 Destroy_Ship_()
 
 
+## Where and how does a unit get killed?
+
+BU_ApplyDamage__WIP()
+
+
+    if(battle_units[battle_unit_idx].Cur_Figures <= 0)
+        if(BU_IsCombatSummon__WIP(battle_unit_idx) == ST_TRUE)
+            _UNITS[battle_units[battle_unit_idx].unit_idx].wp = 9;
+BU_IsCombatSummon__WIP()
+    // field_CA8 / 24h = 5Ah  90 Fire_Elemental
+    // field_438 / 24h = 1Eh  30 Earth_Elemental  
+    // field_870 / 24h = 3Ch  60 Phantom_Beast
+    // field_654 / 24h = 2Dh  45 Phantom_Warriors
+    // field_948 / 24h = 42h  66 Air_Elemental
+    if(
+        (spell_data_table[90].Param0 == unit_type)
+        ||
+        (spell_data_table[30].Param0 == unit_type)
+        ||
+        (spell_data_table[60].Param0 == unit_type)
+        ||
+        (spell_data_table[45].Param0 == unit_type)
+        ||
+        (spell_data_table[66].Param0 == unit_type)
+        ||
+        (unit_type == ut_Demon)
+...depends on damage type
+    if battle_units[battle_unit_idx].damage[2]
+        battle_units[battle_unit_idx].status = bus_Gone
+    if battle_units[battle_unit_idx].damage[1]
+        if(_UNITS[battle_units[battle_unit_idx].unit_idx].wp != 9)
+            battle_units[battle_unit_idx].status = bus_Drained
+        else
+            battle_units[battle_unit_idx].status = bus_Gone
+    if battle_units[battle_unit_idx].damage[0]
+        battle_units[battle_unit_idx].status = bus_Dead
+
+
 
 ## Damage Types
 

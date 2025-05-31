@@ -1,5 +1,13 @@
 
 
+spl_Warp_Wood
+spl_Healing
+spl_Creature_Binding
+spl_Disrupt
+    handled in-line in G_CMB_SpellEffect__WIP()
+spl_Recall_Hero
+spl_Word_Of_Recall
+
 
 Spell Researching
 Spell Learning

@@ -478,27 +478,27 @@ enum e_SPELL_BOOK_CATEGORY
 enum e_SPELL_CASTING_CATEGORY
 {
     scc_Summoning           =  0,
-    scc_Unit_Enchantment        =  1,
+    scc_Unit_Enchantment    =  1,
     scc_City_Enchantment    =  2,
-    scc_City_Curse              =  3,
-    scc_Fixed_Dmg_Spell         =  4,
-    scc_Special_Spell           =  5,
-    scc_Target_Wiz_Spell        =  6,
+    scc_City_Curse          =  3,
+    scc_Fixed_Dmg_Spell     =  4,
+    scc_Special_Spell       =  5,
+    scc_Target_Wiz_Spell    =  6,
     scc_Global_Enchantment  =  9,
     scc_Battlefield_Spell   = 10,
     scc_Crafting_Spell      = 11,
-    scc_Destruction_Spell       = 12,
-    scc_Resistable_Spell        = 13,
-    scc_Unresistable_Spell         = 14,
+    scc_Destruction_Spell   = 12,
+    scc_Resistable_Spell    = 13,
+    scc_Unresistable_Spell  = 14,
     scc_Mundane_Enchantment = 15,
     scc_Mundane_Curse       = 16,
     scc_Infusable_Spell     = 17,
-    scc_Dispel_Spell            = 18,
-    scc_Disenchant_Spell        = 19,
-    scc_Disjunction_Spell       = 20,
+    scc_Dispel_Spell        = 18,
+    scc_Disenchant_Spell    = 19,
+    scc_Disjunction_Spell   = 20,
     scc_Counter_Spell       = 21,
-    scc_Var_Dmg_Spell           = 22,
-    scc_Banish_Spell            = 23
+    scc_Var_Dmg_Spell       = 22,
+    scc_Banish_Spell        = 23
 };
 
 enum e_SPELL_LIST_TYPE
@@ -1497,7 +1497,7 @@ struct s_UNIT
 {
     /* 00 */  int8_t  wx;
     /* 01 */  int8_t  wy;
-    /* 02 */  int8_t  wp;  // somewhere, doubles as a status?
+    /* 02 */  int8_t  wp;  // somewhere, doubles as a status? ... wp == 9 is excluded from 'Raise Dead', ~== battle_units[].status == bus_Gone
     /* 03 */  int8_t  owner_idx;    /* set to ST_UNDEFINED when a unit dies */
     /* 04 */  int8_t  moves2_max;
     /* 05 */  uint8_t type;         /* Unit Type Index |-> Unit Type Table */
@@ -2744,7 +2744,7 @@ extern int16_t * AI_Own_City_Values;
 // ...
 // ...
 
-// WZD dseg:912A                                                 ¿ BEGIN: ?
+// WZD dseg:912A                                                 ¿ BEGIN:  - Uninitialized Data ?
 
 // WZD dseg:912A
 // index of the Time Stop wizard plus 1 (0 if none)
@@ -2762,9 +2762,9 @@ extern uint32_t SND_SpellCast_size;
 
 // WZD dseg:9134
 extern SAMB_ptr SND_Spell_Music;
-extern int16_t SND_Spell_Music_size;  // DNE in Dasm
+extern uint32_t SND_Spell_Music_size;  // DNE in Dasm
 
-// WZD dseg:9136                                                 ? BEGIN:  - Uninitialized Data ?
+// WZD dseg:9136                                                 ¿ BEGIN:  - Uninitialized Data ?
 
 
 

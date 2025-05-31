@@ -52,6 +52,8 @@
 #include "SBookScr.H"
 #include "special.H"
 #include "Spellbook.H"  /* Combat_Spellbook_Build__WIP() */
+#include "Spells131.H"
+#include "Spells133.H"
 #include "Terrain.H"
 #include "TerrType.H"
 #include "UnitMove.H"   // WTFMATE
@@ -680,18 +682,23 @@ char figure_lbx_file__ovr163[] = "FIGURE";
 
 
 // WZD dseg:C406                                                 ¿ BEGIN:  ?
-// WZD dseg:C406
+
 // WZD dseg:C406
 int16_t CMB_ImmobileCanAct;
+
 // WZD dseg:C408
 int16_t CMB_WizardCitySiege;
+
 // WZD dseg:C40A
 char CMB_CityName[14];
+
 // WZD dseg:C418
 int16_t CMB_CityDamage;
+
 // WZD dseg:C41A
 SAMB_ptr SND_CMB_Silence;
 uint32_t SND_CMB_Silence_size;  // DNE in Dasm
+
 // WZD dseg:C41C
 SAMB_ptr SND_CMB_Music;
 uint32_t SND_CMB_Music_size;  // DNE in Dasm
@@ -719,12 +726,16 @@ SAMB_ptr _cmbt_lock_spell_button_seg;
 
 // WZD dseg:C430
 int16_t CMB_AIGoesFirst;
+
 // WZD dseg:C432
 int16_t _auto_combat_flag;
 
 /*
     CP, NPC, or MONSTER
     (either attacker or defender)
+
+vs. CMB_AI_Player
+
 */
 // WZD dseg:C434
 int16_t combat_computer_player;
@@ -739,18 +750,22 @@ int16_t combat_human_player;
 // WZD dseg:C438
 /*
 {F,T} cast spell enabled
+Combat_Cast_Spell_Error(1);  // "You may only cast once per turn."
 */
 int16_t CMB_WizCastAvailable;
+
 // WZD dseg:C43A
 int16_t CMB_DEFR_First_CE;
-// WZD dseg:C43A                                                                                         ; now 0 (after tactical BU init)
-// WZD dseg:C43A                                                                                         ; defender's first shown combat enchant
 // WZD dseg:C43C
 int16_t CMB_ATKR_First_CE;
-// WZD dseg:C43C                                                                                         ; now 0 (after tactical BU init)
-// WZD dseg:C43C                                                                                         ; attacker's first shown combat enchant
+
 // WZD dseg:C43E
+/*
+
+vs. combat_computer_player
+*/
 int16_t CMB_AI_Player;
+
 // WZD dseg:C43E                                                                                         ; when populating the BU table, set to the index of the
 // WZD dseg:C43E                                                                                         ; AI player (the other participant being always human)
 // WZD dseg:C440
@@ -1267,8 +1282,14 @@ movement cost is set in
 int8_t * CMB_ActiveMoveMap;
 
 // WZD dseg:D14A
-int16_t CMB_Chasm_Anim_Y;
 // WZD dseg:D14C
+/*
+cgx,cgy
+
+set in BU_CombatSummon__SEGRAX()
+    ...where used?
+*/
+int16_t CMB_Chasm_Anim_Y;
 int16_t CMB_Chasm_Anim_X;
 
 // WZD dseg:D14E
@@ -2180,7 +2201,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                         CMB_CE_Refresh__WIP();
 
-                        CMB_ComposeBackgrnd__WIP();
+                        CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
 
                         Deactivate_Help_List();
 
@@ -2234,7 +2255,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                             CMB_CE_Refresh__WIP();
 
-                            CMB_ComposeBackgrnd__WIP();
+                            CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
 
                             Deactivate_Help_List();
 
@@ -2291,7 +2312,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
                     if(CMB_WizCastAvailable == ST_TRUE)
                     {
 
-                        cast_status = Combat_Cast_Spell__WIP((20 + _human_player_idx), _combat_wx, _combat_wy, _combat_wp);
+                        cast_status = Combat_Cast_Spell__WIP((CASTER_IDX_BASE + _human_player_idx), _combat_wx, _combat_wy, _combat_wp);
 
                         switch(cast_status)
                         {
@@ -2332,7 +2353,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 CMB_CE_Refresh__WIP();  // ¿ because you may just cast a 'Combat Enchantment'
 
-                CMB_ComposeBackgrnd__WIP();
+                CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
 
                 Deactivate_Help_List();
 
@@ -2404,7 +2425,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 CMB_CE_Refresh__WIP();
 
-                CMB_ComposeBackgrnd__WIP();
+                CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
 
                 Deactivate_Help_List();
 
@@ -2500,7 +2521,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
             Assign_Auto_Function(Tactical_Combat_Draw, 1);
 
-            CMB_ComposeBackgrnd__WIP();
+            CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
 
             CMB_CE_Refresh__WIP();
 
@@ -9114,7 +9135,7 @@ void Combat_Cast_Spell_With_Caster(int16_t caster_id)
     {
         Combat_Cast_Spell_Error(2);  // "You are unable to throw spells at this time."
     }
-    CMB_ComposeBackgrnd__WIP();
+    CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
 }
 
 
@@ -11694,9 +11715,129 @@ void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caste
         {
 
         } break;
-        case scc_Special_Spell:
+        case scc_Special_Spell:  /* 38 of these... :(.. */
         {
+            if(
+                (spell_idx != spl_Wall_Of_Stone)
+                &&
+                (spell_idx != spl_Raise_Dead)
+                &&
+                (spell_idx != spl_Animate_Dead)
+            )
+            {
+                // SPELLY  CMB_PlaySpellAnim(target_cgx, target_cgy, spell_idx, player_idx, Anims, caster_idx);
+            }
+            if(spell_idx == spl_Wall_Of_Stone)
+            {
+                // SPELLY  CMB_WallRise_Anim(spl_Wall_Of_Stone, caster_idx);
+            }
+            if(spell_idx == spl_Warp_Wood)
+            {
+                battle_units[target_idx].ammo = 0;
+                battle_units[target_idx].ranged_type = rat_None;
+                Moves_Left = Battle_Unit_Moves2(target_idx);
+                Not_Moved_Yet = ST_FALSE;
+                if(battle_units[target_idx].movement_points == Moves_Left)
+                {
+                    Not_Moved_Yet = ST_TRUE;
+                }
+                else
+                {
+                    Moves_Left = battle_units[target_idx].movement_points;
+                }
+                BU_Init_Battle_Unit(&battle_units[target_idx]);
+                BU_Apply_Battlefield_Effects__WIP(&battle_units[target_idx]);
+                if(Not_Moved_Yet == ST_TRUE)
+                {
+                    battle_units[target_idx].movement_points = Battle_Unit_Moves2(target_idx);
+                }
+                else
+                {
+                    battle_units[target_idx].movement_points = Moves_Left;
+                }
+            }
+            if(spell_idx == spl_Healing)
+            {
+                Battle_Unit_Heal(target_idx, 5, 0);
+            }
+            if(spell_idx == spl_Creature_Binding)
+            {
+                Resist_Result = BU_ResistRoll__STUB(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
+                if(Resist_Result > 0)
+                {
+                    battle_units[target_idx].Combat_Effects |= bue_Creature_Binding;
 
+                    if(battle_units[target_idx].controller_idx == _combat_attacker_player)
+                    {
+                        battle_units[target_idx].controller_idx = _combat_defender_player;
+                    }
+                    else
+                    {
+                        battle_units[target_idx].controller_idx = _combat_attacker_player;
+                    }
+                }
+            }
+            if(spell_idx == spl_Warp_Creature)
+            {
+                Resist_Result = BU_ResistRoll__STUB(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
+                if(Resist_Result > 0)
+                {
+                    // SPELLY  BU_WarpCreature(target_idx);
+                }
+                Moves_Left = Battle_Unit_Moves2(target_idx);
+                Not_Moved_Yet = ST_FALSE;
+                if(battle_units[target_idx].movement_points == Moves_Left)
+                {
+                    Not_Moved_Yet = ST_TRUE;
+                }
+                else
+                {
+                    Moves_Left = battle_units[target_idx].movement_points;
+                }
+                BU_Init_Battle_Unit(&battle_units[target_idx]);
+                BU_Apply_Battlefield_Effects__WIP(&battle_units[target_idx]);
+                if(Not_Moved_Yet == ST_TRUE)
+                {
+                    battle_units[target_idx].movement_points = Battle_Unit_Moves2(target_idx);
+                }
+                else
+                {
+                    battle_units[target_idx].movement_points = Moves_Left;
+                }
+
+            }
+            if(
+                (spell_idx == spl_Recall_Hero)
+                ||
+                (spell_idx == spl_Word_Of_Recall)
+            )
+            {
+                battle_units[target_idx].status = bus_Recalled;
+            }
+            if(spell_idx == spl_Magic_Vortex)
+            {
+                // SPELLY  WIZ_CreateVortex(player_idx, target_cgx, target_cgy);
+            }
+            if(spell_idx == spl_Earth_To_Mud)
+            {
+                // SPELLY  CMB_EarthToMud(target_cgx, target_cgy);
+            }
+            if(spell_idx == spl_Cracks_Call)
+            {
+                // SPELLY  CMB_ApplyCracksCall(target_cgx, target_cgy);
+            }
+            if(spell_idx == spl_Disrupt)
+            {
+                battlefield->Wall_Sections[(((target_cgy - 10) * 3) + (target_cgx - 5))] = 2;
+            }
+            if(spell_idx == spl_Raise_Dead)
+            {
+                Cast_Raise_Dead(player_idx, caster_idx, target_cgx, target_cgy);
+            }
+            if(spell_idx == spl_Animate_Dead)
+            {
+                Cast_Animate_Dead(player_idx, caster_idx);
+            }
         } break;
         case scc_Target_Wiz_Spell:
         {
@@ -11793,7 +11934,7 @@ void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caste
 */
 void CMB_ComposeBookBG__WIP(void)
 {
-    CMB_ComposeBackgrnd__WIP();
+    CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
     Set_Page_Off();
     Tactical_Combat_Draw();
     FLIC_Draw(16, 10, _spellbook_small_seg);
@@ -11836,12 +11977,17 @@ void Combat_Spellbook_Screen_Draw(void)
 */
 /*
 
+not sure about the multiple returns
+handful of variable reuses  (don't make distinct without maintaining the bug(s)!!)
+atleast one BUGBUG with Target
+cast_status seems mixed up
+
 */
 int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t battle_unit_mana = 0;
     int16_t Spell_Like_Ability = 0;  // ; set to 1 if the human player uses a Spell ability
-    int16_t return_value = 0;
+    int16_t cast_status = 0;
     int16_t Opponent_Index = 0;
     int16_t Base_Cost = 0;
     int16_t Extra_Mana = 0;
@@ -11856,7 +12002,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
     int16_t spell_idx = 0;  // _SI_
     int16_t IDK_mana = 0;  // _DI_
 
-    return_value = ST_TRUE;
+    cast_status = ST_TRUE;
 
     Spell_Like_Ability = ST_FALSE;
 
@@ -11874,7 +12020,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
 
     if(caster_idx == (CASTER_IDX_BASE + NEUTRAL_PLAYER_IDX))
     {
-        return return_value;
+        return cast_status;
     }
 
     if(
@@ -11979,7 +12125,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
             Spell_Like_Ability = ST_TRUE;
         }
 
-        CMB_ComposeBackgrnd__WIP();
+        CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
         Set_Page_Off();
         Tactical_Combat_Draw();
         PageFlip_FX();
@@ -12070,7 +12216,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
 
                 _players[HUMAN_PLAYER_IDX].casting_spell_idx = Overland_Cast_Save;
 
-                CMB_ComposeBackgrnd__WIP();
+                CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
 
                 Set_Page_Off();
 
@@ -12298,7 +12444,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
 
                     }
 
-                    return_value == 2;
+                    cast_status == 2;
 
                     spell_idx = ST_UNDEFINED;
 
@@ -12449,7 +12595,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
 
                 }
 
-                return_value == 2;
+                cast_status == 2;
 
                 // spell_idx = ST_UNDEFINED;
                 spell_idx = 0;
@@ -12524,7 +12670,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
 
             G_CMB_SpellEffect__WIP(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
 
-            return_value = 2;
+            cast_status = 2;
 
             if(caster_idx >= CASTER_IDX_BASE)
             {
@@ -12635,7 +12781,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
 
     }
 
-    return return_value;
+    return cast_status;
 
 }
 
@@ -12868,7 +13014,7 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
                     (
                         (spell_data_table[abs(spell_idx)].type == scc_City_Enchantment)
                         ||
-                        (abs(spell_idx) == spl_Wall_of_Stone)
+                        (abs(spell_idx) == spl_Wall_Of_Stone)
                     )
                     &&
                     (
@@ -12945,7 +13091,7 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
 
     *selected_spell = spellbook_page_spell_index;
 
-    CMB_ComposeBackgrnd__WIP();
+    CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
 
     return spell_idx;
 
@@ -12966,12 +13112,14 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
 */
 /*
 
+¿ BUGBUG no legal check for 'Dispel Evil' ?
 */
 int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
 {
     int16_t Controlled_Units = 0;
     int16_t illegal = 0;
     int16_t itr = 0;  // _SI_
+    int16_t IDK = 0;  // _DI_
 
     illegal = ST_FALSE;
 
@@ -12985,69 +13133,200 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
         return ST_FALSE;
     }
 
-
-
-    // ; "Only ten vortexes can be in any area at once"
     if(spell_idx == spl_Magic_Vortex)
     {
-        STU_DEBUG_BREAK();
+        if(CMB_Vortex_Count == 10)
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 76, 1, 150);  // "Only ten vortexes can be in any area at once"
+            Warn1(GUI_NearMsgString);
+            illegal = ST_TRUE;
+        }
     }
 
-    // ; "Word of Recall and Recall Hero may not be cast while
-    // ; you are banished" (Word of Recall)
-    if(spell_idx == spl_Word_of_Recall)
+    if(spell_idx == spl_Word_Of_Recall)
     {
-        STU_DEBUG_BREAK();
+        if(_players[HUMAN_PLAYER_IDX].casting_spell_idx == spl_Spell_Of_Return)
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 85, 1, 150);  // "Word of Recall and Recall Hero may not be cast while you are banished"
+            Warn1(GUI_NearMsgString);
+            illegal = ST_TRUE;
+        }
     }
 
-    // ; "Word of Recall and Recall Hero may not be cast while
-    // ; you are banished"
-    // ; "There are no heroes left to recall"
-    // ; "Recall Hero returns your heroes to your summoning
-    // ; circle and this battle is at your summoning circle"
-    // ; 
-    // ; the last one should also apply to Word of Recall
     if(spell_idx == spl_Recall_Hero)
     {
-        STU_DEBUG_BREAK();
+        IDK = ST_FALSE;
+        if(_players[HUMAN_PLAYER_IDX].casting_spell_idx == spl_Spell_Of_Return)
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 85, 1, 150);  // "Word of Recall and Recall Hero may not be cast while you are banished"
+            Warn1(GUI_NearMsgString);
+            illegal = ST_TRUE;
+        }
+        else if(
+                (_combat_wx == _players[HUMAN_PLAYER_IDX].summon_wx)
+                &&
+                (_combat_wy == _players[HUMAN_PLAYER_IDX].summon_wy)
+                &&
+                (_combat_wp == _players[HUMAN_PLAYER_IDX].summon_wp)
+        )
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 77, 1, 150);  // "Recall Hero returns your heroes to your summoning circle and this battle is at your summoning circle"
+            Warn1(GUI_NearMsgString);
+            illegal = ST_TRUE;
+        }
+        else
+        {
+            for(itr = 0; ((itr < _combat_total_unit_count) && (IDK == ST_FALSE)); itr++)
+            {
+                if(
+                    (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
+                    &&
+                    (_UNITS[battle_units[itr].unit_idx].Hero_Slot > -1)
+                )
+                {
+                    IDK = ST_TRUE;
+                }
+                if(IDK == ST_FALSE)
+                {
+                    LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 78, 1, 150);  // "There are no heroes left to recall"
+                    Warn1(GUI_NearMsgString);
+                    illegal = ST_TRUE;
+                }
+            }
+        }
     }
 
-    // ; "There are no Chaos or Death units to throw this
-    // ; spell on" (Star Fires)
-    // ; 
-    // ; should really include Dispel Evil too
     if(spell_idx == spl_Star_Fires)
     {
-        STU_DEBUG_BREAK();
+        IDK = ST_FALSE;
+        for(itr = 0; ((itr < _combat_total_unit_count) && (IDK == ST_FALSE)); itr++)
+        {
+                if(
+                    (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
+                    &&
+                    (
+                        (battle_units[itr].race == rt_Death)
+                        ||
+                        (battle_units[itr].race == rt_Chaos)
+                    )
+                )
+                {
+                    IDK = ST_TRUE;
+                }
+        }
+        if(IDK == ST_FALSE)
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 79, 1, 150);  // "There are no Chaos or Death units to throw this spell on"
+            Warn1(GUI_NearMsgString);
+            illegal = ST_TRUE;
+        }
     }
 
-    // ; "You may only control 9 units in combat at one time"
-    // ; "There are no dead units that can be animated"
-    // ; 
     // ; BUG: the former does not recognize confused units as
     // ; not belonging to the player, while the latter counts
     // ; uninvolved, recalled, and fleeing units as valid
     // ; targets
     if(spell_idx == spl_Animate_Dead)
     {
-        STU_DEBUG_BREAK();
+        IDK = ST_FALSE;
+        Controlled_Units = 0;
+        for(itr = 0; ((itr < _combat_total_unit_count) && (IDK == ST_FALSE)); itr++)
+        {
+                if(
+                    (battle_units[itr].status == bus_Active)
+                    &&
+                    (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
+                )
+                {
+                    Controlled_Units++;
+                }
+                if(
+                    (battle_units[itr].status > bus_Active)
+                    &&
+                    (battle_units[itr].status != bus_Gone)
+                    &&
+                    (battle_units[itr].race != rt_Death)
+                    &&
+                    ((battle_units[itr].Attribs_1 & USA_IMMUNITY_MAGIC) != 0)
+                    &&
+                    (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
+                    &&
+                    (_UNITS[battle_units[itr].unit_idx].Hero_Slot == -1)
+                    &&
+                    (_UNITS[battle_units[itr].unit_idx].wp != 9)
+                )
+                {
+                    IDK = ST_TRUE;
+                }
+        }
+        if(IDK == ST_FALSE)
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 80, 1, 150);  // "There are no dead units that can be animated"
+            Warn1(GUI_NearMsgString);
+            illegal = ST_TRUE;
+        }
+        else if(Controlled_Units == MAX_STACK)
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 84, 1, 150);  // "You may only control 9 units in combat at one time"
+            Warn1(GUI_NearMsgString);
+            illegal = ST_TRUE;
+        }
     }
 
-    // ; "You may only control 9 units in combat at one time"
-    // ; "There are no dead units that can be raised from the
-    // ; dead"
-    // ; 
     // ; BUG: the former does not recognize confused units as
     // ; not belonging to the player, while the latter counts
     // ; uninvolved, recalled, and fleeing units as valid
     // ; targets
+    /*
+        Check if there are any (valid) *dead* units.
+            invalid: status <= bus_Active (0)  ¿ ?
+            invalid: controller is not Current/Human Player
+            invalid: race >= rt_Arcane  ¿ ?
+            
+    */
     if(spell_idx == spl_Raise_Dead)
     {
-        STU_DEBUG_BREAK();
+        IDK = ST_FALSE;
+        Controlled_Units = 0;
+        for(itr = 0; ((itr < _combat_total_unit_count) && (IDK == ST_FALSE)); itr++)
+        {
+                if(
+                    (battle_units[itr].status == bus_Active)
+                    &&
+                    (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
+                )
+                {
+                    Controlled_Units++;
+                }
+                if(
+                    (battle_units[itr].status > bus_Active)
+                    &&
+                    (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
+                    &&
+                    (battle_units[itr].race < rt_Arcane)
+                    &&
+                    (battle_units[itr].status != bus_Gone)
+                    &&
+                    (_UNITS[battle_units[itr].unit_idx].wp != 9)
+                )
+                {
+                    IDK = ST_TRUE;
+                }
+        }
+        if(IDK == ST_FALSE)
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 81, 1, 150);  // "There are no dead units that can be raised from the dead"
+            Warn1(GUI_NearMsgString);
+            illegal = ST_TRUE;
+        }
+        else if(Controlled_Units == MAX_STACK)
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 84, 1, 150);  // "You may only control 9 units in combat at one time"
+            Warn1(GUI_NearMsgString);
+            illegal = ST_TRUE;
+        }
     }
 
-    // ; "That combat enchantment is already in effect"
-    // ; 
     // ; BUG: the exclusions fail to include Mass Healing,
     // ; which then can't be cast with True Light active
     if(
@@ -13064,63 +13343,96 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
         (spell_idx == spl_Call_Chaos)
     )
     {
-        STU_DEBUG_BREAK();
+        if(_combat_attacker_player == HUMAN_PLAYER_IDX)
+        {
+            IDK = 0;
+        }
+        else
+        {
+            IDK = 1;
+        }
+        if(combat_enchantments[(spell_data_table[spell_idx].Param0 + IDK)] > 0)
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 82, 1, 150);  // "That combat enchantment is already in effect"
+            Warn1(GUI_NearMsgString);
+            illegal = ST_TRUE;
+        }
     }
 
-    // ; "There are no normal units to throw this spell on"
-    // ; 
     // ; BUG: fails to check if the units are active or not
-    if(
-        (spell_data_table[spell_idx].type == scc_Mundane_Enchantment)
-        ||
-        (spell_data_table[spell_idx].type == scc_Mundane_Curse)
-    )
+    if(spell_data_table[spell_idx].type == scc_Mundane_Enchantment)
     {
-        STU_DEBUG_BREAK();
+        IDK = ST_FALSE;
+        for(itr = 0; ((itr < _combat_total_unit_count) && (IDK == ST_FALSE)); itr++)
+        {
+                if(
+                    (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
+                    &&
+                    (battle_units[itr].race < rt_Arcane)
+                )
+                {
+                    IDK = ST_TRUE;
+                }
+        }
+        if(IDK == ST_FALSE)
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 83, 1, 150);  // "There are no normal units to throw this spell on"
+            Warn1(GUI_NearMsgString);
+            illegal = ST_TRUE;
+        }
+    }
+    if(spell_data_table[spell_idx].type == scc_Mundane_Curse)
+    {
+        IDK = ST_FALSE;
+        for(itr = 0; ((itr < _combat_total_unit_count) && (IDK == ST_FALSE)); itr++)
+        {
+                if(
+                    (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
+                    &&
+                    (battle_units[itr].race < rt_Arcane)
+                )
+                {
+                    IDK = ST_TRUE;
+                }
+        }
+        if(IDK == ST_FALSE)
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 83, 1, 150);  // "There are no normal units to throw this spell on"
+            Warn1(GUI_NearMsgString);
+            illegal = ST_TRUE;
+        }
     }
 
-    // ; "You may only control 9 units in combat at one time"
-    // ; "Maximum number of units exceeded"
-    // ; 
     // ; should also include Possession and Creature Binding
     if(spell_data_table[spell_idx].type == scc_Summoning)
     {
         if(_units == MAX_UNIT_COUNT)
         {
-            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 50, 1, 150);
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 50, 1, 150);  // "Maximum number of units exceeded"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
         else
         {
-
             Controlled_Units = 0;
-
             for(itr = 0; itr < _combat_total_unit_count; itr++)
             {
-
                 if(
                     (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
                     &&
                     (battle_units[itr].status == bus_Active)
                 )
                 {
-
                     Controlled_Units++;
-
                 }
-
             }
-
             if(Controlled_Units == MAX_STACK)
             {
-                LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 84, 1, 150);
+                LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 84, 1, 150);  // "You may only control 9 units in combat at one time"
                 Warn1(GUI_NearMsgString);
                 illegal = ST_TRUE;
             }
-
         }
-
     }
 
     return illegal;
@@ -13173,7 +13485,7 @@ int16_t Spell_Resistance_Modifier(int16_t spell_idx)
     if(spell_idx == spl_Black_Wind)        { resist_mod = -1; }
     if(spell_idx == spl_Terror)            { resist_mod =  1; }
     if(spell_idx == spl_Wrack)             { resist_mod =  1; }
-    if(spell_idx == spl_Word_of_Death)     { resist_mod = -5; }
+    if(spell_idx == spl_Word_Of_Death)     { resist_mod = -5; }
     if(spell_idx == spl_Death_Spell)       { resist_mod = -2; }
     if(spell_idx == spl_Death_Wish)        { resist_mod =  0; }
     if(spell_idx == spl_Dispel_Evil)       { resist_mod = -4; }
@@ -13616,7 +13928,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
                     CMB_TargetingType == CTT_EnemyUnit;
                 }
                 if(
-                    (spell_idx == spl_Earth_to_Mud)
+                    (spell_idx == spl_Earth_To_Mud)
                     ||
                     (spell_idx == spl_Cracks_Call)
                 )
@@ -13635,7 +13947,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
                 {
                     CMB_TargetingType = CTT_FriendlyHero;
                 }
-                if(spell_idx == spl_Word_of_Recall)
+                if(spell_idx == spl_Word_Of_Recall)
                 {
                     CMB_TargetingType = CTT_FriendlyUnit;
                 }
@@ -14124,7 +14436,7 @@ void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t Dmg_Array[])
 
         if(
             (battle_units[battle_unit_idx].damage[2] >= battle_units[battle_unit_idx].damage[1])
-            ||
+            &&
             (battle_units[battle_unit_idx].damage[2] >= battle_units[battle_unit_idx].damage[0])
         )
         {
@@ -14134,7 +14446,7 @@ void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t Dmg_Array[])
         {
             if(
                 (battle_units[battle_unit_idx].damage[1] > battle_units[battle_unit_idx].damage[2])
-                ||
+                &&
                 (battle_units[battle_unit_idx].damage[1] >= battle_units[battle_unit_idx].damage[0])
             )
             {
@@ -14716,6 +15028,8 @@ void CMB_SpellcastMessage__WIP(int16_t caster_idx, int16_t spell_idx)
     returns bufpi {0,...17}
     an unused entry in the battle unit pictures array
 
+Cast_Raise_Dead()
+    battle_units[battle_unit_idx].bufpi = Combat_Figure_Load(_UNITS[battle_units[battle_unit_idx].unit_idx].type, Battle_Unit_Pict_Open());
 */
 int16_t Battle_Unit_Pict_Open(void)
 {
@@ -23667,512 +23981,6 @@ void Raze_City_Prompt_Draw(void)
 
 
 /*
-    WIZARDS.EXE  ovr133
-*/
-
-// WZD o133p01  BU_WarpCreature()
-// WZD o133p02  WIZ_Wrack()
-// WZD o133p03  WIZ_CallLightning()
-// WZD o133p04  BU_LifeDrain()
-// WZD o133p05  CMB_WallRise_Anim()
-
-// WZD o133p06
-// drake178: CMB_CounterMessage()
-/*
-; displays the combat counter message for having
-; successfully fizzled a spell, either as a type 1 red
-; warning dialog, or an onscreen message for 30 frames
-; if Auto combat is enabled
-*/
-/*
-
-*/
-void CMB_CounterMessage__STUB(int16_t caster_idx, int16_t type, int16_t spell_idx, char * title)
-{
-
-
-
-}
-
-
-// WZD o133p07
-// drake178: WIZ_DispelAttempt()
-/*
-; makes a dispel attempt against a spell of the target
-; wizard, using the passed parameters - considers all
-; dispel resistance retorts, but dispel enhancing ones
-; need to be applied beforehand
-; returns 1 if the dispel is successful, or 0 if not
-*/
-/*
-
-*/
-int16_t WIZ_DispelAttempt__STUB(int16_t dispel_strength, int16_t spell_cast, int16_t player_idx, int16_t magic_realm)
-{
-
-    return ST_FALSE;
-
-}
-
-
-// WZD o133p08  TILE_CracksCall()
-// WZD o133p09  TILE_BoltFromAbove()
-// WZD o133p10  TILE_CombatSpellAnim()
-// WZD o133p11  BU_Teleport()
-// WZD o133p12  BU_TunnelTo()
-// WZD o133p13  BU_CombatSummon()
-// WZD o133p14  TILE_LightningBolt()
-// WZD o133p15  WIZ_CreateVortex()
-// WZD o133p16  CMB_SetVortexCursor()
-// WZD o133p17  CMB_VortexPlayerMove()
-// WZD o133p18  CMB_ProcessVortices()
-// WZD o133p19  CMB_VortexMovement()
-// WZD o133p20  CMB_CallChaos()
-// WZD o133p21  WIZ_CallChaos()
-
-// segrax
-// drake178: CMB_ProcessVortices()
-/*
-; processes the movement of magic votrices - 3 random
-; moves, then one player selected one
-;
-; BUGs: the player can't move their vortex if actions
-; are locked out, and the AI never gets its 4th move
-*/
-void CMB_ProcessVortices__SEGRAX(void)
-{
-    int Tries_Counter, Current_Y, Current_X, Next_Y, Loop_Var;
-    unsigned int Vortex_Index = 0;
-
-    if(magic_set.sound_effects == ST_TRUE)
-    {
-        // DOMSDOS  Play_Sound__WIP(SND_CMB_Silence);
-        sdl2_Play_Sound__WIP(SND_CMB_Silence, SND_CMB_Silence_size);
-        Mark_Block(World_Data);
-        SND_SpellCast = LBX_Reload_Next(cnst_SOUNDFX_File2, SFX_Flyer_S, World_Data);
-        SND_SpellCast_size = lbxload_entry_length;
-        Release_Block(World_Data);
-    }
-
-    while (Vortex_Index < CMB_Vortex_Count) {
-        Loop_Var = 0;
-
-        while (Loop_Var < 3) {
-            int Next_X, dx;
-
-            // Set Current_X and Current_Y from CMB_Vortex_Array
-            Current_X = CMB_Vortex_Array[Vortex_Index].cgx;
-            Current_Y = CMB_Vortex_Array[Vortex_Index].cgy;
-
-            Next_X = Current_X;
-            Next_Y = Current_Y;
-            Tries_Counter = 0;
-
-            do {
-                // Generate random next position
-                Next_X = Current_X + (Random(3) - 2);
-                Next_Y = Current_Y + (Random(3) - 2);
-
-                // Validate position
-                if (Next_X != Current_X || Next_Y != Current_Y) {
-                    dx = (Next_Y * COMBAT_GRID_WIDTH) + Next_X;
-
-                    if (battlefield->MoveCost_Teleport[dx] != -1 &&
-                        Next_X >= 0 && Next_X <= COMBAT_GRID_WIDTH &&
-                        Next_Y >= 0 && Next_Y <= COMBAT_GRID_HEIGHT) {
-
-                        // Calculate absolute movement distances
-                        int dist_x = abs(Next_X - CMB_Vortex_Array[Vortex_Index].Prev_or_Next_X);
-                        int dist_y = abs(Next_Y - CMB_Vortex_Array[Vortex_Index].Prev_or_Next_Y);
-
-                        if (dist_x + dist_y <= 1 && Tries_Counter < 50) {
-                            CMB_VortexMovement__SEGRAX(Vortex_Index, Next_X, Next_Y);
-                            break;
-                        }
-                    }
-                }
-
-                Tries_Counter++;
-            } while (Tries_Counter < 50);
-
-            Loop_Var++;
-        }
-
-        CMB_Vortex_Array[Vortex_Index].Prev_or_Next_X = CMB_Vortex_Array[Vortex_Index].cgx;
-        CMB_Vortex_Array[Vortex_Index].Prev_or_Next_Y = CMB_Vortex_Array[Vortex_Index].cgy;
-
-        CMB_VortexPlayerMove__SEGRAX(Vortex_Index);
-        Vortex_Index++;
-    }
-}
-
-
-// segrax
-/*
- * WZD o133p18
- * 
- * moves	a Magic	Vortex from its	current	location to the
- * target tile using an 8-step animation, processing its
- * damage after reaching	the destination
- *
- * prev coordinates are set to /	used as	next ones for
- * the duration of the movement
- */
-void CMB_VortexMovement__SEGRAX(int Vortex_Index, int Next_X, int Next_Y)
-{
-    int Prev_X, Prev_Y;
-    int16_t Damage_Array[3] = { 0, 0, 0 };
-    int X_Distance, Y_Distance;
-
-    // Retrieve the vortex
-    // struct s_CMB_Vortex* vortex = &CMB_Vortex_Array[Vortex_Index];
-    struct s_MAGIC_VORTEX * vortex = &CMB_Vortex_Array[Vortex_Index];
-    Prev_X = vortex->cgx;
-    Prev_Y = vortex->cgy;
-    frame_active_flag = 0;
-
-    // Update the vortex with the new position
-    vortex->Prev_or_Next_X = Next_X;
-    vortex->Prev_or_Next_Y = Next_Y;
-
-    if(magic_set.sound_effects == 1)
-    {
-        // DOMSDOS  Play_Sound__WIP(SND_SpellCast);
-        sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
-    }
-
-    // Animate the vortex movement
-    for (int i = 0; i < 8; i++) {
-        vortex->Move_Stage = i;
-        Set_Page_Off();
-        Tactical_Combat_Draw();
-        PageFlip_FX();
-    }
-
-    // Update vortex position
-    vortex->cgx = Next_X;
-    vortex->cgy = Next_Y;
-
-    // Check if the new position affects the city damage
-    if (Next_X >= 5 && Next_X <= 8 && Next_Y >= 10 && Next_Y <= 13) {
-        CMB_CityDamage += 5;
-    }
-
-    vortex->Prev_or_Next_X = Prev_X;
-    vortex->Prev_or_Next_Y = Prev_Y;
-    vortex->Move_Stage = 0;
-
-    for (int i = 0; i < _combat_total_unit_count; i++) {
-        struct s_BATTLE_UNIT* battleunit = &battle_units[i];
-        
-        struct s_UNIT* unit = &_UNITS[battleunit->unit_idx];
-        int32_t Enchants = unit->enchantments | battleunit->enchantments | battleunit->item_enchantments;
-
-        if (battleunit->cgx == Next_X && battleunit->cgy == Next_Y) {
-
-            if (battleunit->Attribs_1 & USA_IMMUNITY_MAGIC) {
-                continue;
-            }
-
-            if (!(Enchants & UE_RIGHTEOUSNESS)) {
-                Damage_Array[0] = 5;
-                Damage_Array[1] = 0;
-                Damage_Array[2] = 0;
-
-                BU_ApplyDamage__WIP(i, Damage_Array);
-            }
-        }
-
-        X_Distance = abs(battleunit->cgx - Next_X);
-        Y_Distance = abs(battleunit->cgy - Next_Y);
-        if ((X_Distance <= 1 && Y_Distance <= 1) && (X_Distance + Y_Distance != 0)) {
-            if (Random(3) == 1) {
-                CMB_ConvSpellAttack(spl_Lightning_Bolt, i, Damage_Array, 0);
-                BU_ApplyDamage__WIP(i, Damage_Array);
-            }
-        }
-    }
-}
-
-// segrax
-// WZD o133p16
-void CMB_VortexPlayerMove__SEGRAX(int Vortex_Index)
-{
-    // int16_t Picked_Y, Y_Retn, X_Retn;
-    int16_t cgy = 0;
-    int64_t Y_Retn = 0;
-    int64_t X_Retn = 0;
-    int16_t combat_grid_field = 0;
-    int16_t input_field_idx = 0;
-    int16_t leave_screen = 0;
-    int16_t cgx = 0;  // _DI_
-
-    if(CMB_Vortex_Array[Vortex_Index].owner_idx != HUMAN_PLAYER_IDX)
-    {
-        return;
-    }
-
-    if(_auto_combat_flag != ST_FALSE)
-    {
-        return;
-    }
-
-    Clear_Fields();
-
-    // int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int64_t *xpos, int64_t *ypos, int16_t help);
-    combat_grid_field = Add_Grid_Field(0, 0, 1, 1, 319, 168, &X_Retn, &Y_Retn, ST_UNDEFINED);
-
-    leave_screen = ST_FALSE;
-
-    _active_battle_unit = ST_UNDEFINED;
-
-    while(leave_screen == ST_FALSE)
-    {
-        Mark_Time();
-
-        input_field_idx = Get_Input();
-
-        if(input_field_idx == combat_grid_field)
-        {
-
-            cgx = Get_Combat_Grid_Cell_X(X_Retn + 4, Y_Retn + 4);
-            cgy = Get_Combat_Grid_Cell_Y(X_Retn + 4, Y_Retn + 4);
-
-            if(
-                (CMB_Vortex_Array[Vortex_Index].cgx != cgx)
-                ||
-                (CMB_Vortex_Array[Vortex_Index].cgy != cgy)
-            )
-            {
-
-                if(battlefield->MoveCost_Teleport[((cgy * COMBAT_GRID_WIDTH) + cgx)] != -1)
-                {
-
-                    if(
-                        (abs(cgx - CMB_Vortex_Array[Vortex_Index].cgx) <= 1)
-                        &&
-                        (abs(cgy - CMB_Vortex_Array[Vortex_Index].cgy) <= 1)
-                    )
-                    {
-
-                        CMB_VortexMovement__SEGRAX(Vortex_Index, cgx, cgy);
-
-                        leave_screen = ST_TRUE;
-
-                    }
-
-                }
-
-            }
-
-        }
-
-        if(leave_screen == ST_FALSE)
-        {
-
-            Tactical_Combat_Draw();
-
-            CMB_SetVortexCursor__SEGRAX(Vortex_Index);
-
-            PageFlip_FX();
-
-            Release_Time(2);
-
-        }
-
-    }
-
-}
-
-// segrax
-// WZD o133p15
-void CMB_SetVortexCursor__SEGRAX(int Vortex_Index)
-{
-    int Pointer_Offset = 4;
-    int Tile_Y, Scrn_Y, Scrn_X;
-
-    _combat_mouse_grid->image_num = crsr_RedCross;
-
-    Scrn_X = Pointer_X() + Pointer_Offset;
-    Scrn_Y = Pointer_Y() + Pointer_Offset;
-
-    frame_active_flag = ST_TRUE;
-
-    frame_active_cgx = CMB_Vortex_Array[Vortex_Index].cgx;
-    frame_active_cgy = CMB_Vortex_Array[Vortex_Index].cgy;
-
-    frame_anim_cycle = (frame_active_cgy + 1) % 3;
-
-    if((Pointer_Offset + 168) > Scrn_Y)
-    {
-
-        frame_scanned_flag = ST_FALSE;
-
-        Tile_Y = Get_Combat_Grid_Cell_Y(Scrn_X, Scrn_Y);
-        int Grid_X = Get_Combat_Grid_Cell_X(Scrn_X, Scrn_Y);
-
-        if(
-            (CMB_Vortex_Array[Vortex_Index].cgx == Grid_X)
-            &&
-            (CMB_Vortex_Array[Vortex_Index].cgy == Tile_Y)
-        )
-        {
-
-            if(battlefield->MoveCost_Teleport[Grid_X] != -1)
-            {
-                if(abs((int)(Grid_X - CMB_Vortex_Array[Vortex_Index].cgx)) <= 1
-                &&
-                    abs((int)(Tile_Y - CMB_Vortex_Array[Vortex_Index].cgy)) <= 1
-                )
-                {
-                    frame_scanned_flag = ST_TRUE;
-                    frame_scanned_cgx = Grid_X;
-                    frame_scanned_cgy = Tile_Y;
-                    _combat_mouse_grid->image_num = crsr_WingedBoot;
-                }
-            }
-        }
-    }
-
-    _combat_mouse_grid->center_offset = 2;
-    _combat_mouse_grid->x1 = 0;
-    _combat_mouse_grid->y1 = 0;
-    _combat_mouse_grid->x2 = 319;
-    _combat_mouse_grid->y2 = 199;
-    Set_Mouse_List(1, _combat_mouse_grid);
-}
-
-// segrax
-// WZD ovr133p
-void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t player_idx)
-{
-    int16_t uu_screen_x = 0;
-    int16_t uu_screen_y = 0;
-    int16_t screen_x = 0;
-    int16_t screen_y = 0;
-    int16_t anim_ctr = 0;
-    
-    struct s_BATTLE_UNIT* battle_unit = &battle_units[battle_unit_idx];
-
-    CMB_Chasm_Anim_X = battle_unit->cgx;
-    CMB_Chasm_Anim_Y = battle_unit->cgy;
-
-    Combat_Grid_Screen_Coordinates(cgx, cgy, 4, 4, &screen_x, &screen_y);
-
-    uu_screen_x = screen_x - 14;
-    uu_screen_y = screen_y - 25;
-
-    screen_x -= 13;
-    screen_y -= 27;
-
-    Mark_Block(_screen_seg);
-
-    Spell_Animation_Load_Graphics__WIP(spl_Fire_Elemental);
-
-    IMG_GUI_Chasm = spell_animation_seg;
-
-    CMB_Chasm_Anim = 1;
-
-    Mark_Block(World_Data);
-
-    if(magic_set.sound_effects == ST_TRUE)
-    {
-        // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
-        sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
-        SND_SpellCast = LBX_Reload_Next(cnst_SOUNDFX_File2, SFX_CombatSummon, World_Data);
-        SND_SpellCast_size = lbxload_entry_length;
-    }
-    else
-    {
-        SND_SpellCast = ST_UNDEFINED;
-    }
-
-    if (battle_unit->controller_idx == _combat_attacker_player)
-    {
-        battle_unit->target_cgx = 8;
-    }
-    else
-    {
-        battle_unit->target_cgx = 14;
-    }
-
-    battle_unit->target_cgy = 12;
-
-    BU_CreateImage__SEGRAX(battle_unit_idx);
-
-    battle_unit->status = bus_Dead;
-
-    if(SND_SpellCast != ST_UNDEFINED)
-    {
-        // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
-        sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
-    }
-
-    
-    for(anim_ctr = 0; anim_ctr < 16; anim_ctr++)
-    {
-
-        CMB_ChasmAnimStage = anim_ctr;
-
-        Mark_Time();
-
-        if(anim_ctr == 14)
-        {
-            battle_unit->status = bus_Active;
-        }
-
-        Set_Page_Off();
-
-        Tactical_Combat_Draw();
-
-        CMB_SpellcastMessage__WIP(player_idx, spell_idx);
-
-        Create_Picture(45, 42, GfxBuf_2400B);
-
-        Copy_Bitmap_To_Bitmap(GfxBuf_2400B, IMG_CMB_FX_Figure);
-
-        if(
-            (anim_ctr > 6)
-            &&
-            (anim_ctr < 14)
-        )
-        {
-
-            Vanish_Bitmap__WIP(GfxBuf_2400B, ((anim_ctr - 6) * 14));
-
-            Set_Window(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, (screen_y + 30));
-
-            FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-
-            Draw_Picture_Windowed(screen_x, ((screen_y + 21) - ((anim_ctr - 6) * 3)), GfxBuf_2400B);
-
-            Reset_Window();
-
-        }
-
-        PageFlip_FX();
-
-        Release_Time(2);
-
-    }
-
-    Set_Page_Off();
-
-    Tactical_Combat_Draw();
-
-    PageFlip_FX();
-
-    CMB_Chasm_Anim = 0;
-
-    Release_Block(_screen_seg);
-
-    Release_Block(World_Data);
-
-}
-
-
-
-/*
     WIZARDS.EXE  ovr139
 */
 
@@ -26058,7 +25866,7 @@ void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp)
 
     Set_Random_Seed(random_seed);
 
-    CMB_ComposeBackgrnd__WIP();
+    CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
 
 }
 
@@ -29566,8 +29374,6 @@ void CMB_ComposeBackgrnd__WIP(void)
     FLIC_Draw(0, 164, combat_background_bottom);
 
     Copy_Off_To_Back();
-    Toggle_Pages();
-    Toggle_Pages();
 
     dbg_prn("DEBUG: [%s, %d]: END: CMB_ComposeBackgrnd__WIP()\n", __FILE__, __LINE__);
 
@@ -29640,6 +29446,8 @@ per battle_units[], it's just value used to track the cached figure picture
 How does it track them separately for each stack?
 loads attackers, then loads for any units that are the defenders
 
+Cast_Raise_Dead()
+    battle_units[battle_unit_idx].bufpi = Combat_Figure_Load(_UNITS[battle_units[battle_unit_idx].unit_idx].type, Battle_Unit_Pict_Open());
 */
 int16_t Combat_Figure_Load(int16_t unit_type, int16_t bufpi)
 {

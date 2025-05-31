@@ -38,6 +38,16 @@
 */
 
 
+
+/*
+G_CMB_SpellEffect__WIP()
+
+    if(spell_idx == spl_Disrupt)
+        battlefield->Wall_Sections[(((target_cgy - 10) * 3) + (target_cgx - 5))] = 2;
+*/
+
+
+
 /*
 CMB_SpawnFigure__WIP()
     no battle_unit_idx, passed in cgx, cgy, target_cgx, target_cgy
@@ -197,3 +207,31 @@ this is as-seen in CMB_SpawnFigure__WIP()
         } break;    \
     }   \
 }
+
+
+
+/*
+G_CMB_SpellEffect__WIP()
+
+                Moves_Left = Battle_Unit_Moves2(target_idx);
+                Not_Moved_Yet = ST_FALSE;
+                if(battle_units[target_idx].movement_points == Moves_Left)
+                {
+                    Not_Moved_Yet = ST_TRUE;
+                }
+                else
+                {
+                    Moves_Left = battle_units[target_idx].movement_points;
+                }
+                BU_Init_Battle_Unit(&battle_units[target_idx]);
+                BU_Apply_Battlefield_Effects__WIP(&battle_units[target_idx]);
+                if(Not_Moved_Yet == ST_TRUE)
+                {
+                    battle_units[target_idx].movement_points = Battle_Unit_Moves2(target_idx);
+                }
+                else
+                {
+                    battle_units[target_idx].movement_points = Moves_Left;
+                }
+
+*/
