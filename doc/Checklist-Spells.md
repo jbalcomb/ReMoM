@@ -101,7 +101,7 @@ all combat summons are done
 [ ] Wall of Fire
 [ ] Shatter
 [ ] Warp Creature
-[ ] Fire Elemental
+[x] Fire Elemental
 [ ] Lightning Bolt
 [ ] Fire Giant
 [ ] Chaos Channels
@@ -148,7 +148,7 @@ all combat summons are done
 [ ] Dispel Evil
 [ ] Planar Seal
 [ ] Unicorns
-[ ] Raise Dead
+[x] Raise Dead
 [ ] Planar Travel
 [ ] Heavenly Light
 [ ] Prayer
@@ -206,7 +206,7 @@ all combat summons are done
 [ ] Word of Death
 [ ] Death Knights
 [ ] Death Spell
-[ ] Animate Dead
+[x] Animate Dead
 [ ] Pestilence
 [ ] Eternal Night
 [ ] Evil Omens

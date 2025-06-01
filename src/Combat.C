@@ -2055,7 +2055,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         if(input_field_idx == Flee_Button_Index)
         {
 
-            CMB_ImmobileCanAct = 0;
+            CMB_ImmobileCanAct = ST_FALSE;
 
             Play_Left_Click();
 
@@ -2385,7 +2385,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
             if(input_field_idx == wait_button_field)
             {
 
-                CMB_ImmobileCanAct = 0;
+                CMB_ImmobileCanAct = ST_FALSE;
 
                 Play_Left_Click();
 
@@ -2642,8 +2642,6 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
     Copy_Off_To_Page4();
 
-    // ; now 0 (non-strategic battle init)
-    // ; set to 1 if the AI decides to flee
     if(CMB_AI_Fled == ST_TRUE)
     {
         Battle_Result = 5;
@@ -2665,8 +2663,6 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         Battle_Result = 2;
     }
 
-    // ; $AC00, to the current draw frame, overwriting
-    // ; whatever was there before
     Copy_Page4_To_Off();
 
     Copy_Off_To_Back();
@@ -12952,10 +12948,10 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
         {
             if(SBK_OpenPage > 1)
             {
+                Release_Block(_screen_seg);
                 Play_Left_Click__DUPE();
                 // Spellbook_Screen()  SmlBook_PageTurn__WIP(0, 0, 0);
                 SmlBook_PageTurn__WIP(0, 1, caster_idx);
-
                 SBK_OpenPage -= 2;
                 Mark_Block(_screen_seg);
                 IMG_SBK_Anims = Allocate_Next_Block(_screen_seg, 1090);
@@ -27421,7 +27417,7 @@ void Combat_Cache_Read(void)
     // more_world_data_size_B = (more_world_data_size_PR * 16SZ_PARAGRAPH_B
     more_world_data_size_B = more_world_data_size_PR;
     more_world_data_size_B *= SZ_PARAGRAPH_B;
-    fread(World_Data, more_world_data_size_B, 1, file_pointer);
+    fread((World_Data + world_data_size_B), more_world_data_size_B, 1, file_pointer);
 
     // gfclose(filehandle);
     fclose(file_pointer);
@@ -27475,7 +27471,7 @@ void Combat_Cache_Write(void)
     // more_world_data_size_B = (more_world_data_size_PR * SZ_PARAGRAPH_B);
     more_world_data_size_B = more_world_data_size_PR;
     more_world_data_size_B *= SZ_PARAGRAPH_B;
-    fwrite(World_Data, more_world_data_size_B, 1, file_pointer);
+    fwrite((World_Data + world_data_size_B), more_world_data_size_B, 1, file_pointer);
 
 
     // gfclose(filehandle);

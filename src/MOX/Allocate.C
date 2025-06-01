@@ -611,7 +611,7 @@ void Allocation_Error(uint16_t error_num, uint16_t blocks)
         strcat(buffer, str_allocation_errors[6]);
     }
 
-    // TODO  Exit_With_Message(buffer);
+    Exit_With_Message(buffer);
 }
 
 

@@ -97,3 +97,6 @@ stdout.txt
 *.MAP
 *.OBJ
 *.XRF
+
+# Libre Office
+*.ods#

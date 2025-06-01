@@ -1713,7 +1713,7 @@ void SmlBook_PageTurn__WIP(int turn_type, int combat_flag, int player_idx)
 
     if(combat_flag != ST_FALSE)
     {
-        // TODO  Assign_Auto_Function(CMB_RedrawSpellbook, 2);
+        Assign_Auto_Function(Combat_Spellbook_Screen_Draw, 2);
     }
     else
     {
