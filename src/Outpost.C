@@ -375,7 +375,7 @@ void Outpost_Screen(int16_t flag)
                 if(-(g_unit_window_fields[itr_stack]) == input_field_idx)
                 {
                     Outpost_Garrison_Picture_Coords(itr_stack, &x1, &y1, &x2, &y2);
-                    USW_FullDisplay(_unit_stack[itr_stack].unit_idx, (x1 + 1), (y1 + 1), (x2 + 1), (y2 + 1));
+                    Main_Unit_Statistics_Window(_unit_stack[itr_stack].unit_idx, (x1 + 1), (y1 + 1), (x2 + 1), (y2 + 1));
                     Outpost_Screen_Load();
                     Deactivate_Auto_Function();
                     Assign_Auto_Function(Outpost_Screen_Draw, 1);

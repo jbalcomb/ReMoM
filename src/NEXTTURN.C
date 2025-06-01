@@ -270,7 +270,7 @@ void Next_Turn_Proc(void)
 Check_Cities_Data();
 
 
-    GFX_Swap_Cities();
+    Cache_Graphics_Overland();
 
 
     Delete_Dead_Units();

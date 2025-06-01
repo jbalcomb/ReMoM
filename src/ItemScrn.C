@@ -291,7 +291,7 @@ void Item_Screen(void)
                     Item_Window_Picture_Coords(itr_hero_slots, &portrait_x1, &portrait_y1, &portrait_x2, &portrait_y2);
                     unit_idx = _players[_human_player_idx].Heroes[itr_hero_slots].unit_idx;
 
-                    USW_FullDisplay(unit_idx, portrait_x1, portrait_y1, portrait_x2, portrait_y2);
+                    Main_Unit_Statistics_Window(unit_idx, portrait_x1, portrait_y1, portrait_x2, portrait_y2);
 
                     if(m_cursor_item_idx != ST_UNDEFINED)
                     {

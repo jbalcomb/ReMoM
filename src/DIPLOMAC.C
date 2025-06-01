@@ -236,7 +236,7 @@ void Diplomacy_Screen__STUB(void)
     PageFlipEffect = 2;
     // TODO  GAME_ReloadWorldData();
     // TODO  GAME_CheckResearch(1);
-    GFX_Swap_Cities();
+    Cache_Graphics_Overland();
     // DOSMSODS  Play_Background_Music__STUB();
     sdl2_Play_Background_Music__WIP();
 

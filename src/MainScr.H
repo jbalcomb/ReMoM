@@ -438,7 +438,7 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
 int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o62p10
-void USW_FullDisplay(int16_t unit_idx, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+void Main_Unit_Statistics_Window(int16_t unit_idx, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 
 
 

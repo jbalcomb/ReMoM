@@ -204,28 +204,45 @@ int16_t UV_x_start;
 ; memory management to show the unit statistics window
 ; in combat before doing it, and swaps back the combat
 ; graphics afterward
-;
 ; inherits multiple BUGs
 */
 /*
 
+no reason the view type isn't hard-coded here?
+ ...the graphics cache is hard-coded...
+ ...the combat flag is hard-coded...
 */
-void USW_CombatDisplay__WIP(int16_t x_start, int16_t y_start, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t flag, int16_t unit_idx)
+void Combat_Unit_Statistics_Window(int16_t x_start, int16_t y_start, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t view_type, int16_t unit_idx)
 {
 
+    Cache_Graphics_Things();
 
+    Mark_Block(_screen_seg);
+
+    Unit_View_Allocate();
+
+    if(_UNITS[unit_idx].type > ut_Chosen)
+    {
+        Load_Unit_Figure(unit_idx, 0);
+    }
+    else
+    {
+        m_hero_portrait_seg = LBX_Reload_Next(portrait_lbx_file, _unit_type_table[_UNITS[unit_idx].type].hero_portrait, _screen_seg);
+    }
+
+    uv_combat = ST_TRUE;
+
+    Unit_Statistics_Popup(x_start, y_start, x1, y1, x2, y2, view_type, unit_idx);
+
+    Release_Block(_screen_seg);
+
+    Cache_Graphics_Combat();
 
 }
 
 
 // WZD o72p02
-// drake178: USW_LoadAndShow()
-/*
-    Main_Screen()
-        BEGIN: Right-Click Unit Window Grid Field
-            USW_FullDisplay(_unit_stack[Stack_Index].unit_idx, target_world_x, target_world_y, (target_world_x + 18), (target_world_y + 18));
-                USW_LoadAndShow(31, 6, x1, y1, x2, y2, 1, unit_idx);
-*/
+// drake178: Overland_Unit_Statistics_Window()
 /*
 ; a wrapper for USW_Display that swaps in the overland
 ; graphics, loads the figure or portrait image of the
@@ -233,13 +250,26 @@ void USW_CombatDisplay__WIP(int16_t x_start, int16_t y_start, int16_t x1, int16_
 ; swapping back the city graphics afterwards
 ; inherits all the BUGs
 */
-void USW_LoadAndShow(int16_t x_start, int16_t y_start, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t flag, int16_t unit_idx)
+/*
+OON XREF: Main_Unit_Statistics_Window()
+
+Main_Screen()
+    BEGIN: Right-Click Unit Window Grid Field
+        Main_Unit_Statistics_Window(_unit_stack[Stack_Index].unit_idx, target_world_x, target_world_y, (target_world_x + 18), (target_world_y + 18));
+            Overland_Unit_Statistics_Window(31, 6, x1, y1, x2, y2, uvt_Stat, unit_idx);
+
+combat calls directly, without a local/warpper function
+everything, except production secreen, uses the main/local/wrapper function
+what does production secreen call?
+...must call with uvt_Prod
+*/
+void Overland_Unit_Statistics_Window(int16_t x_start, int16_t y_start, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t view_type, int16_t unit_idx)
 {
-    SAMB_ptr Sandbox_Paragraph;
+    SAMB_ptr temp_seg;
 
-    GFX_Swap_Overland();
+    Cache_Graphics_Things();
 
-    Sandbox_Paragraph = Allocate_First_Block(_screen_seg, 1);
+    temp_seg = Allocate_First_Block(_screen_seg, 1);
 
     Mark_Block(_screen_seg);
 
@@ -247,20 +277,20 @@ void USW_LoadAndShow(int16_t x_start, int16_t y_start, int16_t x1, int16_t y1, i
 
     uv_combat = ST_FALSE;
     
-    if(_UNITS[unit_idx].type <= ut_Chosen)
-    {
-        m_hero_portrait_seg = LBX_Reload_Next(portrait_lbx_file, _unit_type_table[_UNITS[unit_idx].type].hero_portrait, _screen_seg);
-    }
-    else
+    if(_UNITS[unit_idx].type > ut_Chosen)
     {
         Load_Unit_Figure(unit_idx, 0);
     }
+    else
+    {
+        m_hero_portrait_seg = LBX_Reload_Next(portrait_lbx_file, _unit_type_table[_UNITS[unit_idx].type].hero_portrait, _screen_seg);
+    }
 
-    Unit_Statistics_Popup(x_start, y_start, x1, y1, x2, y2, flag, unit_idx);
+    Unit_Statistics_Popup(x_start, y_start, x1, y1, x2, y2, view_type, unit_idx);
 
     Release_Block(_screen_seg);
 
-    GFX_Swap_Cities();
+    Cache_Graphics_Overland();
 
 }
 
@@ -399,7 +429,7 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
         }
 
         // unitview_full_screen = Add_Hidden_Field(0, 0, 319, 199, cnst_ZeroString_10, ST_UNDEFINED);
-        unitview_full_screen = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, 0, -1);
+        unitview_full_screen = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0, ST_UNDEFINED);
 
         // hotkey_idx_ESC = Add_Hot_Key(cnst_HOTKEY_Esc6);
         hotkey_idx_ESC = Add_Hot_Key('\x1B');
@@ -690,6 +720,8 @@ product_idx is building or unit
 ; BUG: the "Allows" list for buildings can contain incorrect information
 ; BUG: fails to animate item slot 0
 ; WARNING: not enough icons for top tier units
+
+TODO  rename View_Type; rename CalledFromFlag to view_type
 */
 void Thing_View_Draw__WIP(int16_t x_start, int16_t y_start, int16_t CalledFromFlag, int16_t thing_idx, struct s_UV_List * specials_list, int16_t specials_count, SAMB_ptr item_icon_pict_seg)
 {

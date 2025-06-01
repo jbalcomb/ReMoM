@@ -255,7 +255,7 @@ int16_t Unit_List_Window(int16_t unit_idx, int16_t flag, int16_t x, int16_t y)
     Reset_Window();
     Clear_Fields();
     Deactivate_Help_List();
-    GFX_Swap_Cities();
+    Cache_Graphics_Overland();
 
     return selected_unit_idx;
 }

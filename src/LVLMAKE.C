@@ -168,7 +168,7 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
 
     Copy_Off_To_Back();
 
-    GFX_Swap_Overland();
+    Cache_Graphics_Things();
 
     lvlmake_unit_idx = unit_idx;
 
@@ -288,7 +288,7 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
 
     }
 
-    GFX_Swap_Cities();
+    Cache_Graphics_Overland();
     Deactivate_Help_List();
     Reset_Window();
     Clear_Fields();

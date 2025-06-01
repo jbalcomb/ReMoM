@@ -1716,10 +1716,10 @@ void Spellbook_Load_Small_Pictures__WIP(void)
 
 
 // WZD o52p30
-void GFX_Swap_Cities(void)
+void Cache_Graphics_Overland(void)
 {
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: GFX_Swap_Cities()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Overland()\n", __FILE__, __LINE__);
 #endif
 
     GFX_Swap_Reset();
@@ -1735,15 +1735,15 @@ void GFX_Swap_Cities(void)
     Spellbook_Load_Small_Pictures__WIP();
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: GFX_Swap_Cities()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Cache_Graphics_Overland()\n", __FILE__, __LINE__);
 #endif
 }
 
 // WZD o52p31
-void GFX_Swap_Overland(void)
+void Cache_Graphics_Things(void)
 {
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: GFX_Swap_Cities()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Overland()\n", __FILE__, __LINE__);
 #endif
 
     GFX_Swap_Reset();
@@ -1755,7 +1755,7 @@ void GFX_Swap_Overland(void)
     GFX_Swap_AppndCtScap__WIP();
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: GFX_Swap_Cities()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Cache_Graphics_Overland()\n", __FILE__, __LINE__);
 #endif
 
 }

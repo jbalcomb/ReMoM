@@ -143,7 +143,7 @@ void Production_Screen(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Production_Screen()\n", __FILE__, __LINE__);
 #endif
 
-    GFX_Swap_Overland();
+    Cache_Graphics_Things();
 
     Deactivate_Help_List();
 
@@ -413,7 +413,7 @@ Capture_Cities_Data();
 
     Update_Remap_Gray_Palette();
 
-    GFX_Swap_Cities();
+    Cache_Graphics_Overland();
 
 }
 

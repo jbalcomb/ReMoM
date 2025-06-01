@@ -687,7 +687,7 @@ void Loaded_Game_Update(void)
     sdl2_Play_Background_Music__WIP();
 
 
-    GFX_Swap_Cities();
+    Cache_Graphics_Overland();
 
 
     Reset_City_Road_Connection_Bitfields();
@@ -794,7 +794,7 @@ void Loaded_Game_Update(void)
         staff lock flags
         nominal skill calc
         ! City Recalculate All - Main Screen needs that for the Resources Window
-        GFX_Swap_Cities(), which has a terribly misleading name, loads other screens stuff
+        Cache_Graphics_Overland(), which has a terribly misleading name, loads other screens stuff
         ? G_WLD_StaticAssetRfrsh() Meh. More oddities...
 
 */
@@ -877,7 +877,7 @@ void GAME_Overland_Init(void)
 
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
 
-    GFX_Swap_Cities();
+    Cache_Graphics_Overland();
 
 Capture_Cities_Data();
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);

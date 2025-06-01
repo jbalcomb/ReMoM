@@ -604,13 +604,15 @@ int16_t MoveDir_NextY_0[5] = { 0,  1,  0, -1,  0};
 
 // WZD dseg:70B4 00                                              db    0
 // WZD dseg:70B5 00                                              db    0
+
 // WZD dseg:70B6
 char str_COMBAT_TMP__ovr154[] = "COMBAT.TMP";
-// WZD dseg:70B6                                                                                         ; DATA XREF: Combat_Cache_Read+29o ...
+
 // WZD dseg:70C1
 char str_RB__ovr154[] = "rb";
 // WZD dseg:70C4
 char str_WB__ovr154[] = "wb";
+
 // WZD dseg:70C7 00                                              align 2
 
 // WZD dseg:70C7                                                 END:  ovr154 - Initialized Data
@@ -1396,8 +1398,8 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
     int16_t Combat_Winner = 0;
     int16_t auto_combat_cancel_ESC_field = 0;
     int16_t cast_status = 0;
-    int16_t MoveHalves_Save = 0;
-    uint32_t Overland_Enchants = 0;
+    int16_t temp_movement_points = 0;
+    uint32_t temp_unit_enchantments = 0;
     int16_t active_unit_window_field = 0;
     int16_t SPACE_Hotkey = 0;
     int16_t info_button_field = 0;
@@ -2177,21 +2179,21 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                         // ; byte-identical to the other branch
 
-                        MoveHalves_Save = battle_units[battle_unit_idx].movement_points;
+                        temp_movement_points = battle_units[battle_unit_idx].movement_points;
 
                         battle_units[battle_unit_idx].movement_points = Battle_Unit_Moves2(battle_unit_idx);
 
-                        Overland_Enchants = _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
+                        temp_unit_enchantments = _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
 
                         _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = (_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments | battle_units[battle_unit_idx].enchantments);
 
                         memcpy(global_battle_unit, &battle_units[_active_battle_unit], sizeof(struct s_BATTLE_UNIT));
 
-                        USW_CombatDisplay__WIP(61, 6, 89, 174, 117, 194, 2, battle_units[battle_unit_idx].unit_idx);
+                        Combat_Unit_Statistics_Window(61, 6, 89, 174, 117, 194, 2, battle_units[battle_unit_idx].unit_idx);
 
-                        battle_units[battle_unit_idx].movement_points += MoveHalves_Save;
+                        battle_units[battle_unit_idx].movement_points += temp_movement_points;
 
-                        _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = Overland_Enchants;
+                        _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = temp_unit_enchantments;
 
                         CMB_SetNearAllocs__WIP();
 
@@ -2230,22 +2232,22 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                             Set_Mouse_List(1, mouse_list_default);
 
-                            MoveHalves_Save = battle_units[battle_unit_idx].movement_points;
+                            temp_movement_points = battle_units[battle_unit_idx].movement_points;
 
                             battle_units[battle_unit_idx].movement_points = Battle_Unit_Moves2(battle_unit_idx);
 
-                            Overland_Enchants = _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
+                            temp_unit_enchantments = _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
 
                             _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = (_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments | battle_units[battle_unit_idx].enchantments);
 
                             // TODO  _fmemcpy(global_battle_unit, battle_units[battle_unit_idx], sizeof(struct s_BATTLE_UNIT));
                             memcpy(global_battle_unit, &battle_units[_active_battle_unit], sizeof(struct s_BATTLE_UNIT));
 
-                            USW_CombatDisplay__WIP(61, 6, 89, 174, 117, 194, 2, battle_units[battle_unit_idx].unit_idx);
+                            Combat_Unit_Statistics_Window(61, 6, 89, 174, 117, 194, 2, battle_units[battle_unit_idx].unit_idx);
 
-                            battle_units[battle_unit_idx].movement_points = MoveHalves_Save;
+                            battle_units[battle_unit_idx].movement_points = temp_movement_points;
 
-                            _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = Overland_Enchants;
+                            _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = temp_unit_enchantments;
 
                             CMB_SetNearAllocs__WIP();
 
@@ -2498,21 +2500,21 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
             Deactivate_Help_List();
 
-            MoveHalves_Save = battle_units[_active_battle_unit].movement_points;
+            temp_movement_points = battle_units[_active_battle_unit].movement_points;
 
             battle_units[_active_battle_unit].movement_points = Battle_Unit_Moves2(_active_battle_unit);
 
-            Overland_Enchants = _UNITS[battle_units[_active_battle_unit].unit_idx].enchantments;
+            temp_unit_enchantments = _UNITS[battle_units[_active_battle_unit].unit_idx].enchantments;
 
             _UNITS[battle_units[_active_battle_unit].unit_idx].enchantments = (_UNITS[battle_units[_active_battle_unit].unit_idx].enchantments | battle_units[_active_battle_unit].enchantments);
 
             memcpy(global_battle_unit, &battle_units[_active_battle_unit], sizeof(struct s_BATTLE_UNIT));
 
-            USW_CombatDisplay__WIP(61, 6, 89, 174, 117, 194, 2, battle_units[_active_battle_unit].unit_idx);
+            Combat_Unit_Statistics_Window(61, 6, 89, 174, 117, 194, uvt_Cmbt, battle_units[_active_battle_unit].unit_idx);
 
-            battle_units[_active_battle_unit].movement_points = MoveHalves_Save;
+            battle_units[_active_battle_unit].movement_points = temp_movement_points;
 
-            _UNITS[battle_units[_active_battle_unit].unit_idx].enchantments = Overland_Enchants;
+            _UNITS[battle_units[_active_battle_unit].unit_idx].enchantments = temp_unit_enchantments;
 
             CMB_SetNearAllocs__WIP();
 
@@ -2673,7 +2675,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
     Combat_Cache_Read();
 
-    GFX_Swap_Cities();
+    Cache_Graphics_Overland();
 
     Mark_Time();
 

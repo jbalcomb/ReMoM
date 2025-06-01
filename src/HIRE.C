@@ -465,7 +465,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
     Set_Page_On();
 
-    GFX_Swap_Overland();
+    Cache_Graphics_Things();
 
     Hire_Hero_Load(unit_type_idx);
 
@@ -486,7 +486,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
     if(Hire_Success == ST_FALSE)
     {
 
-        GFX_Swap_Cities();
+        Cache_Graphics_Overland();
 
         return ST_FALSE;
 
@@ -512,7 +512,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
         Kill_Unit((_units - 1), 1);
 
-        GFX_Swap_Cities();
+        Cache_Graphics_Overland();
 
         return ST_FALSE;
 
@@ -691,7 +691,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
     Deactivate_Auto_Function();
 
-    GFX_Swap_Cities();
+    Cache_Graphics_Overland();
 
     Full_Draw_Main_Screen();
 
@@ -786,7 +786,7 @@ int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost
 
     Set_Page_On();
 
-    GFX_Swap_Overland();
+    Cache_Graphics_Things();
 
     CRP_EVNT_MercUnitType = type;
 
@@ -875,7 +875,7 @@ int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost
     }
 
     Clear_Fields();
-    GFX_Swap_Cities();
+    Cache_Graphics_Overland();
     Full_Draw_Main_Screen();
     Deactivate_Auto_Function();
     Release_Block(_screen_seg);

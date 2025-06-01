@@ -375,10 +375,10 @@ void Reload_Item_Pictures(void);
 void Spellbook_Load_Small_Pictures__WIP(void);
 
 // WZD o52p30
-void GFX_Swap_Cities(void);
+void Cache_Graphics_Overland(void);
 
 // WZD o52p31
-void GFX_Swap_Overland(void);
+void Cache_Graphics_Things(void);
 
 // WZD o52p32
 void Cache_Graphics_Unit_List_Window(void);

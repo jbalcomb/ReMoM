@@ -61,13 +61,13 @@ extern "C" {
 */
 
 // WZD o72p01
-void USW_CombatDisplay__WIP(int16_t x_start, int16_t y_start, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t flag, int16_t unit_idx);
+void Combat_Unit_Statistics_Window(int16_t x_start, int16_t y_start, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t view_type, int16_t unit_idx);
 
 // WZD o72p02
-void USW_LoadAndShow(int16_t x_start, int16_t y_start, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t flag, int16_t unit_idx);
+void Overland_Unit_Statistics_Window(int16_t x_start, int16_t y_start, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t view_type, int16_t unit_idx);
 
 // WZD o72p03
-void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t CalledFromFlag, int16_t unit_idx);
+void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t view_type, int16_t unit_idx);
 
 // WZD o72p04
 void Unit_Statistics_Popup_Do_Draw(void);

@@ -656,7 +656,7 @@ Capture_Cities_Data();
                 if(-(g_unit_window_fields[itr_stack]) == input_field_idx)
                 {
                     City_Screen_Garrison_Window_Picture_Coords(itr_stack, &uv_x1, &uv_y1, &uv_x2, &uv_y2);
-                    USW_FullDisplay(_unit_stack[itr_stack].unit_idx, (uv_x1 + 1), (uv_y1 + 1), (uv_x2 + 1), (uv_y2 + 1));
+                    Main_Unit_Statistics_Window(_unit_stack[itr_stack].unit_idx, (uv_x1 + 1), (uv_y1 + 1), (uv_x2 + 1), (uv_y2 + 1));
                     Assign_Auto_Function(City_Screen_Draw__WIP, 1);
                     City_Screen_Load();
                     City_Screen_Required_Buildings_List(_city_idx);

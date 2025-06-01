@@ -359,7 +359,7 @@ void ArmyList_Screen(void)
             {
                 Deactivate_Help_List();
                 ArmyList_UnitFigure_Coordinates(itr, &x1, &y1, &x2, &y2);
-                USW_FullDisplay(list_armies[itr], x1, y1, x2, y2);
+                Main_Unit_Statistics_Window(list_armies[itr], x1, y1, x2, y2);
                 Assign_Auto_Function(ArmyList_Screen_Draw, 1);
                 ArmyList_Screen_Load();
                 Build_Army_List();
@@ -427,7 +427,7 @@ void ArmyList_Screen(void)
             {
                 Deactivate_Help_List();
                 ArmyList_Hero_Portrait_Coords(itr, &x1, &y1, &x2, &y2);
-                USW_FullDisplay(armylist_hero_portrait_unit_indices[itr], x1, y1, x2, y2);
+                Main_Unit_Statistics_Window(armylist_hero_portrait_unit_indices[itr], x1, y1, x2, y2);
                 Assign_Auto_Function(ArmyList_Screen_Draw, 1);
                 ArmyList_Screen_Load();
                 Build_Army_List();

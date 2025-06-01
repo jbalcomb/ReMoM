@@ -2540,7 +2540,7 @@ void Unit_View_Allocate(void)
     takes unit_idx or unit_type
     type_flag:  0 == unit_idx  1 == unit_type
 
-USW_LoadAndShow() calls this with the 'Type Flag' unset
+Overland_Unit_Statistics_Window() calls this with the 'Type Flag' unset
 USW_LoadHireScreen calls this with the 'Type Flag' set
 City_Screen_Allocate_First_Block() calls this with the 'Type Flag' set
 

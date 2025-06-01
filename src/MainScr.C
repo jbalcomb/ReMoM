@@ -1386,7 +1386,7 @@ void Main_Screen(void)
                     // NOTE(JimBalcomb,20230802): this here looks like what I just saw for clicking the Hero Picture on the Items Screen
                     //                            so, YayNayMay Unit_Window_Picture_Coords() is just getting the coords for the grow-out pop-up effect
 
-                    USW_FullDisplay(_unit_stack[itr_stack].unit_idx, target_world_x, target_world_y, (target_world_x + 18), (target_world_y + 18));
+                    Main_Unit_Statistics_Window(_unit_stack[itr_stack].unit_idx, target_world_x, target_world_y, (target_world_x + 18), (target_world_y + 18));
 
                     Assign_Auto_Function(Main_Screen_Draw, 1);
                     Allocate_Reduced_Map();
@@ -3258,19 +3258,19 @@ XREF:
     Main_Screen()
     Outpost_Screen()
 
-USW_FullDisplay()
+Main_Unit_Statistics_Window()
     |-> Load_Battle_Unit()
-    |-> USW_LoadAndShow()
+    |-> Overland_Unit_Statistics_Window()
     
 */
-void USW_FullDisplay(int16_t unit_idx, int16_t x1, int16_t y1, int16_t x2, int16_t y2)
+void Main_Unit_Statistics_Window(int16_t unit_idx, int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
 
     Set_Mouse_List(1, mouse_list_default);
 
     Load_Battle_Unit(unit_idx, global_battle_unit);
 
-    USW_LoadAndShow(31, 6, x1, y1, x2, y2, 1, unit_idx);
+    Overland_Unit_Statistics_Window(31, 6, x1, y1, x2, y2, uvt_Stat, unit_idx);
 
 }
 
