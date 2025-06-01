@@ -2320,7 +2320,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
                             {
                                 Combat_Cast_Spell_Error(2);  // "You are unable to throw spells at this time."
                             } break;
-                            case 1:
+                            case 1:  /* success */
                             {
                                 // N/A
                             } break;
@@ -2506,14 +2506,13 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
             _UNITS[battle_units[_active_battle_unit].unit_idx].enchantments = (_UNITS[battle_units[_active_battle_unit].unit_idx].enchantments | battle_units[_active_battle_unit].enchantments);
 
-            // TODO  _fmemcpy(global_battle_unit, battle_units[battle_unit_idx], sizeof(struct s_BATTLE_UNIT));
             memcpy(global_battle_unit, &battle_units[_active_battle_unit], sizeof(struct s_BATTLE_UNIT));
 
             USW_CombatDisplay__WIP(61, 6, 89, 174, 117, 194, 2, battle_units[_active_battle_unit].unit_idx);
 
             battle_units[_active_battle_unit].movement_points = MoveHalves_Save;
 
-            Overland_Enchants = _UNITS[battle_units[_active_battle_unit].unit_idx].enchantments;
+            _UNITS[battle_units[_active_battle_unit].unit_idx].enchantments = Overland_Enchants;
 
             CMB_SetNearAllocs__WIP();
 
@@ -3698,12 +3697,23 @@ void Assign_Combat_Grids(void)
     int16_t itr_y = 0;  // _SI_
     int16_t useable_moves2 = 0;  // _DI_
 
+    
+    /* DEBUG */  if(battle_units[_active_battle_unit].Unused_1Bh == spl_Animate_Dead)
+    /* DEBUG */  {
+    /* DEBUG */      STU_DEBUG_BREAK();
+    /* DEBUG */  }
+
 
     Set_Movement_Cost_Map(_active_battle_unit);
 
 
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
+
+        /* DEBUG */  if(battle_units[itr].Unused_1Bh == spl_Animate_Dead)
+        /* DEBUG */  {
+        /* DEBUG */      STU_DEBUG_BREAK();
+        /* DEBUG */  }
 
         if(battle_units[itr].status == bus_Active)
         {
@@ -3827,6 +3837,11 @@ void Assign_Combat_Grids(void)
     */
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
+
+        /* DEBUG */  if(battle_units[itr].Unused_1Bh == spl_Animate_Dead)
+        /* DEBUG */  {
+        /* DEBUG */      STU_DEBUG_BREAK();
+        /* DEBUG */  }
 
         if(
             (battle_units[itr].status == bus_Active)
@@ -13247,7 +13262,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
                     &&
                     (battle_units[itr].race != rt_Death)
                     &&
-                    ((battle_units[itr].Attribs_1 & USA_IMMUNITY_MAGIC) != 0)
+                    ((battle_units[itr].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)
                     &&
                     (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
                     &&

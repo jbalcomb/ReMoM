@@ -1097,7 +1097,8 @@ void Selection_Box_Coords(int16_t item_count, char ** list_text, char * title_st
 
     GUI_ListSel_Count = 0;
 
-    while(*list_text[GUI_ListSel_Count] != '\0')
+    // while(*list_text[GUI_ListSel_Count] != '\0')
+    while(list_text[GUI_ListSel_Count] != NULL)
     {
         GUI_ListSel_Count++;
     }

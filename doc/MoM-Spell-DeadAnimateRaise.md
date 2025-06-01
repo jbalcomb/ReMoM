@@ -91,13 +91,15 @@ Spell_Animation_Load_Graphics__WIP()
 
 ## Cast_Raise_Dead()
 
+Combat_Cast_Spell__WIP()
+    Do_Legal_Spell_Check__WIP()
+        if(spell_idx == spl_Raise_Dead)
+
 G_CMB_SpellEffect__WIP()
     switch(spell_data_table[spell_idx].type)
         case scc_Special_Spell:
             if(spell_idx == spl_Raise_Dead)
-                Cast_Raise_Dead(player_idx, caster_idx, target_cgx, target_cgy);
-
-
+                Cast_Raise_Dead(player_idx, caster_idx, target_cgx, target_cgy)
 
 XREF:
     j_Cast_Raise_Dead()
@@ -106,6 +108,16 @@ XREF:
 
 
 ## Cast_Animate_Dead()
+
+Combat_Cast_Spell__WIP()
+    Do_Legal_Spell_Check__WIP()
+        if(spell_idx == spl_Animate_Dead)
+
+G_CMB_SpellEffect__WIP()
+    switch(spell_data_table[spell_idx].type)
+        case scc_Special_Spell:
+            if(spell_idx == spl_Animate_Dead)
+                Cast_Animate_Dead(player_idx, caster_idx)
 
 XREF:
     j_Cast_Animate_Dead()

@@ -138,8 +138,8 @@ void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, 
 
     if(magic_set.sound_effects == ST_TRUE)
     {
-        // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
-        sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
+        // DOMSDOS  Play_Sound__STUB(SND_CMB_Silence);
+        sdl2_Play_Sound__WIP(SND_CMB_Silence, SND_CMB_Silence_size);
         SND_SpellCast = LBX_Reload_Next(soundfx_lbx_file__ovr133__2of2, SFX_CombatSummon, World_Data);
         SND_SpellCast_size = lbxload_entry_length;
     }

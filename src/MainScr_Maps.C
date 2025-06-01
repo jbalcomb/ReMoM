@@ -2115,6 +2115,7 @@ void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_gr
                 if( (square_explored_flag != 0) && (square_explored_flag != 15) )
                 {
                     unexplored_mask_pict_seg = unexplored_mask_seg[square_explored_flag - 1];
+                    assert(unexplored_mask_pict_seg != NULL);
                     FLIC_Draw(itr_screen_x, itr_screen_y, unexplored_mask_pict_seg);
                 }
             }
