@@ -2579,15 +2579,6 @@ void Load_Palette(int entry, int start_color, int end_color)
     int color_start;
     int color_count;
     int itr;
-#ifdef STU_DEBUG
-    int16_t palette_idx;
-    uint8_t font_color_block;
-    uint8_t color_index;
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_Palette(entry = %d, start_color = %d, end_color = %d)\n", __FILE__, __LINE__, entry, start_color, end_color);
-#endif
 
     palette_data = LBX_Reload(font_name, entry+2, palette_block);
     // 1oom: lbxpal_palette_inlbx = palette_data;
@@ -2603,6 +2594,7 @@ void Load_Palette(int entry, int start_color, int end_color)
     // 16 * 16 = 256
     // 4096 / 256 = 16
 
+    
     // array of 24 color fractions (B-G-R-Percent)
     // used to set shaded replacement colors for each color index
     // gsa_ShadingColors = (palette_data + (16 * (48 + 16 + 16 + 256)));  // 5376  (24 * 4 = 96) 0x60  6 PR
@@ -2640,10 +2632,6 @@ void Load_Palette(int entry, int start_color, int end_color)
     {
         Set_Palette_Changes(start_color, end_color);
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Load_Palette(entry = %d, start_color = %d, end_color = %d)\n", __FILE__, __LINE__, entry, start_color, end_color);
-#endif
 
 }
 

@@ -1,4 +1,14 @@
 
+Spellbook Screen
+
+AKA Small Spellbook
+NOT Big Spellbook
+NOT Combat Spellbook
+HLPENTRY Description: "Spell Book Help"
+
+uses Copy_Off_To_Back() && Copy_Back_To_Off() paradigm
+background graphic is _spellbook_small_seg
+
 
 
 
@@ -29,3 +39,10 @@ BOOKSYMB
 BOOKSYMB
 BOOKSYMB
 SMALTEXT
+
+
+
+
+
+##### Naming Things Is Hard
+

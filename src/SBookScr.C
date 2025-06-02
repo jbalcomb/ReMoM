@@ -96,7 +96,7 @@ void Spell_Screen_Load(void)
     Set_Page_Off();
     Reset_Map_Draw();
     Main_Screen_Draw();
-    Gradient_Fill(0, 0, 319, 199, 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL);  // ..., remap_block, Slope, Scale, Seed
+    Gradient_Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL);  // ..., remap_block, Slope, Scale, Seed
     FLIC_Draw(16, 10, _spellbook_small_seg);
     Copy_Off_To_Back();
     Set_Page_On();
@@ -113,6 +113,7 @@ void Spellbook_Screen_Draw(void)
 
 
 // WZD o134p03
+
 void Spellbook_Screen(void)
 {
     char temp_string[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -218,6 +219,7 @@ void Spellbook_Screen(void)
 
     while(leave_screen == ST_FALSE)
     {
+
         input_field_idx = Get_Input();
 
         // TODO  add help fields
@@ -329,7 +331,7 @@ void Spellbook_Screen(void)
                             {
                                 _players[HUMAN_PLAYER_IDX].casting_cost_remaining = 0;
                                 _players[HUMAN_PLAYER_IDX].casting_cost_original = 0;
-                                _players[HUMAN_PLAYER_IDX].casting_spell_idx = 0;
+                                _players[HUMAN_PLAYER_IDX].casting_spell_idx = spl_NONE;
                                 spell_idx = ST_UNDEFINED;
                                 leave_screen = ST_TRUE;
                             }
@@ -1158,7 +1160,6 @@ DEDU  ¿ something specific to spell animations that have a target map square ?
 Where is the load for SND_SpellCast this uses?
     Spells132.C  Spell_Animation_Load_Sound_Effect__WIP
         |-> SBookScr.C  Spell_Animation_Load_Sound_Effect__WIP()
-
 */
 void Spell_Animation_Screen__WIP(int16_t wx, int16_t wy, int16_t wp)
 {
@@ -1177,7 +1178,7 @@ void Spell_Animation_Screen__WIP(int16_t wx, int16_t wy, int16_t wp)
     Y_To_Top = wy;
 
     sound_buffer = LBX_Reload_Next(soundfx_lbx_file__ovr134__2of2, SFX_Silence, _screen_seg);
-    sound_buffer_size - lbxload_entry_length;
+    sound_buffer_size = lbxload_entry_length;
 
     frame_count = FLIC_Get_FrameCount(spell_animation_seg);
 
@@ -1221,7 +1222,7 @@ void Spell_Animation_Screen__WIP(int16_t wx, int16_t wy, int16_t wp)
     Release_Time(5);
 
     // DOMSDOS  Play_Sound__STUB(sound_buffer);
-    sdl2_Play_Sound__WIP(sound_buffer, sound_buffer_size);
+    sdl2_Play_Sound__WIP(sound_buffer, sound_buffer_size);  // SFX_Silence
 
     _map_x = map_x;
 

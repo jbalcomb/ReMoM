@@ -15,6 +15,25 @@ Settings_Screen_Help                           ovr125
 
 
 
+don't get the copy struct
+
+4 titles
+19 settings
+11 rows
+...same down to 8
+
+
+When 'Spell Book Ordering' is activated or deactivated, it clears the saved spellbook page variables.
+...ordered by category or realm...
+CMB_SpellBookPage = 0;
+SBK_SomePageSaveVar = 0;
+SBK_Candidate_Page = 0;
+
+
+
+
+
+
 
 ## 1oom
 

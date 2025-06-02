@@ -211,16 +211,16 @@ void Create_Screen_Buffers(int size)
     // memset(video_page_buffer[3], 0, (64 * 1024));
     memset(video_memory, 0, (256 * 1024));
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer[0]: %p\n", __FILE__, __LINE__, video_page_buffer[0]);
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer[1]: %p\n", __FILE__, __LINE__, video_page_buffer[1]);
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer[2]: %p\n", __FILE__, __LINE__, video_page_buffer[2]);
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer[4]: %p\n", __FILE__, __LINE__, video_page_buffer[3]);
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer[0] + (320*200*1): %p\n", __FILE__, __LINE__, (uint8_t *)(video_page_buffer[0] + (320*200*1)));
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer[1] + (320*200*1): %p\n", __FILE__, __LINE__, (uint8_t *)(video_page_buffer[1] + (320*200*1)));
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer[2] + (320*200*1): %p\n", __FILE__, __LINE__, (uint8_t*)(video_page_buffer[2] + (320 * 200 * 1)));
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer[3] + (320*200*1): %p\n", __FILE__, __LINE__, (uint8_t*)(video_page_buffer[3] + (320 * 200 * 1)));
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer[0]: %p\n", __FILE__, __LINE__, video_page_buffer[0]);
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer[1]: %p\n", __FILE__, __LINE__, video_page_buffer[1]);
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer[2]: %p\n", __FILE__, __LINE__, video_page_buffer[2]);
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer[4]: %p\n", __FILE__, __LINE__, video_page_buffer[3]);
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer[0] + (320*200*1): %p\n", __FILE__, __LINE__, (uint8_t *)(video_page_buffer[0] + (320*200*1)));
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer[1] + (320*200*1): %p\n", __FILE__, __LINE__, (uint8_t *)(video_page_buffer[1] + (320*200*1)));
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer[2] + (320*200*1): %p\n", __FILE__, __LINE__, (uint8_t*)(video_page_buffer[2] + (320 * 200 * 1)));
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer[3] + (320*200*1): %p\n", __FILE__, __LINE__, (uint8_t*)(video_page_buffer[3] + (320 * 200 * 1)));
+// #endif
 
     video_page_buffer_2x[0] = (uint8_t*)Allocate_Space( ((640 * 400 * 1) / 16) );  // 640 * 400 * 1Bpp = 256000  / 16 = 16000 PR
     video_page_buffer_2x[1] = (uint8_t*)Allocate_Space( ((640 * 400 * 1) / 16) );
@@ -230,16 +230,17 @@ void Create_Screen_Buffers(int size)
     memset(video_page_buffer_2x[1], 0, screen_pixel_size * 2);
     memset(video_page_buffer_2x[2], 0, screen_pixel_size * 2);
     memset(video_page_buffer_2x[3], 0, screen_pixel_size * 2);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[0]: %p\n", __FILE__, __LINE__, video_page_buffer_2x[0]);
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[1]: %p\n", __FILE__, __LINE__, video_page_buffer_2x[1]);
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[2]: %p\n", __FILE__, __LINE__, video_page_buffer_2x[2]);
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[3]: %p\n", __FILE__, __LINE__, video_page_buffer_2x[3]);
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[0] + (640*400*1): %p\n", __FILE__, __LINE__, (uint8_t *)(video_page_buffer_2x[0] + (640*400*1)));
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[1] + (640*400*1): %p\n", __FILE__, __LINE__, (uint8_t *)(video_page_buffer_2x[1] + (640*400*1)));
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[2] + (640*400*1): %p\n", __FILE__, __LINE__, (uint8_t*)(video_page_buffer_2x[2] + (640 * 400 * 1)));
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[3] + (640*400*1): %p\n", __FILE__, __LINE__, (uint8_t*)(video_page_buffer_2x[3] + (640 * 400 * 1)));
-#endif
+
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[0]: %p\n", __FILE__, __LINE__, video_page_buffer_2x[0]);
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[1]: %p\n", __FILE__, __LINE__, video_page_buffer_2x[1]);
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[2]: %p\n", __FILE__, __LINE__, video_page_buffer_2x[2]);
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[3]: %p\n", __FILE__, __LINE__, video_page_buffer_2x[3]);
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[0] + (640*400*1): %p\n", __FILE__, __LINE__, (uint8_t *)(video_page_buffer_2x[0] + (640*400*1)));
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[1] + (640*400*1): %p\n", __FILE__, __LINE__, (uint8_t *)(video_page_buffer_2x[1] + (640*400*1)));
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[2] + (640*400*1): %p\n", __FILE__, __LINE__, (uint8_t*)(video_page_buffer_2x[2] + (640 * 400 * 1)));
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[3] + (640*400*1): %p\n", __FILE__, __LINE__, (uint8_t*)(video_page_buffer_2x[3] + (640 * 400 * 1)));
+// #endif
 
     video_page_buffer_2x_XBGR[0] = (uint8_t*)Allocate_Space( ((640 * 400 * 4) / 16) );  // 640 * 400 * 4Bpp = 1000000  / 16 = 64000 PR
     video_page_buffer_2x_XBGR[1] = (uint8_t*)Allocate_Space( ((640 * 400 * 4) / 16) );
@@ -249,16 +250,17 @@ void Create_Screen_Buffers(int size)
     memset(video_page_buffer_2x_XBGR[1], 0, (640 * 400 * 4));
     memset(video_page_buffer_2x_XBGR[2], 0, (640 * 400 * 4));
     memset(video_page_buffer_2x_XBGR[3], 0, (640 * 400 * 4));
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[0]: %p\n", __FILE__, __LINE__, video_page_buffer_2x_XBGR[0]);
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[1]: %p\n", __FILE__, __LINE__, video_page_buffer_2x_XBGR[1]);
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[2]: %p\n", __FILE__, __LINE__, video_page_buffer_2x_XBGR[2]);
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[3]: %p\n", __FILE__, __LINE__, video_page_buffer_2x_XBGR[3]);
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[0] + (640*400*4): %p\n", __FILE__, __LINE__, (uint8_t *)(video_page_buffer_2x_XBGR[0] + (640*400*4)));
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[1] + (640*400*4): %p\n", __FILE__, __LINE__, (uint8_t *)(video_page_buffer_2x_XBGR[1] + (640*400*4)));
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[2] + (640*400*4): %p\n", __FILE__, __LINE__, (uint8_t*)(video_page_buffer_2x_XBGR[2] + (640 * 400 * 4)));
-    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[3] + (640*400*4): %p\n", __FILE__, __LINE__, (uint8_t*)(video_page_buffer_2x_XBGR[3] + (640 * 400 * 4)));
-#endif
+
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[0]: %p\n", __FILE__, __LINE__, video_page_buffer_2x_XBGR[0]);
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[1]: %p\n", __FILE__, __LINE__, video_page_buffer_2x_XBGR[1]);
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[2]: %p\n", __FILE__, __LINE__, video_page_buffer_2x_XBGR[2]);
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[3]: %p\n", __FILE__, __LINE__, video_page_buffer_2x_XBGR[3]);
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[0] + (640*400*4): %p\n", __FILE__, __LINE__, (uint8_t *)(video_page_buffer_2x_XBGR[0] + (640*400*4)));
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[1] + (640*400*4): %p\n", __FILE__, __LINE__, (uint8_t *)(video_page_buffer_2x_XBGR[1] + (640*400*4)));
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[2] + (640*400*4): %p\n", __FILE__, __LINE__, (uint8_t*)(video_page_buffer_2x_XBGR[2] + (640 * 400 * 4)));
+//     dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[3] + (640*400*4): %p\n", __FILE__, __LINE__, (uint8_t*)(video_page_buffer_2x_XBGR[3] + (640 * 400 * 4)));
+// #endif
 
 }
 

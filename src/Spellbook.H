@@ -19,8 +19,9 @@ extern "C" {
 
 enum e_SPELLS
 {
+    spl_UNDEFINED           =  -1,  /* Eh? */
     spl_NONE                =   0,
-    spl_Earth_To_Mud        =   1,
+    spl_Earth_To_Mud        =   1,  /* sbr_Nature */
     spl_Resist_Elements     =   2,
     spl_Wall_Of_Stone       =   3,
     spl_Giant_Strength      =   4,
@@ -60,7 +61,7 @@ enum e_SPELLS
     spl_Herb_Mastery        =  38,
     spl_Great_Wyrm          =  39,
     spl_Natures_Wrath       =  40,
-    spl_Resist_Magic        =  41,
+    spl_Resist_Magic        =  41,  /* sbr_Sorcery */
     spl_Dispel_Magic_True   =  42,
     spl_Floating_Island     =  43,
     spl_Guardian_Wind       =  44,
@@ -100,7 +101,7 @@ enum e_SPELLS
     spl_Sky_Drake           =  78,
     spl_Suppress_Magic      =  79,
     spl_Time_Stop           =  80,
-    spl_Warp_Wood           =  81,
+    spl_Warp_Wood           =  81,  /* sbr_Chaos */
     spl_Disrupt             =  82,
     spl_Fire_Bolt           =  83,
     spl_Hell_Hounds         =  84,
@@ -139,7 +140,7 @@ enum e_SPELLS
     spl_Doom_Mastery        = 117,
     spl_Great_Drake         = 118,
     spl_Call_The_Void       = 119,
-    spl_Armageddon          = 120,
+    spl_Armageddon          = 120,  /* sbr_Life */
     spl_Bless               = 121,
     spl_Star_Fires          = 122,
     spl_Endurance           = 123,
@@ -180,7 +181,7 @@ enum e_SPELLS
     spl_Crusade             = 158,
     spl_Arch_Angel          = 159,
     spl_Charm_Of_Life       = 160,
-    spl_Skeletons           = 161,
+    spl_Skeletons           = 161,  /* sbr_Death */
     spl_Weakness            = 162,
     spl_Dark_Rituals        = 163,
     spl_Cloak_Of_Fear       = 164,
@@ -220,7 +221,7 @@ enum e_SPELLS
     spl_Evil_Omens          = 198,
     spl_Death_Wish          = 199,
     spl_Demon_Lord          = 200,
-    spl_Magic_Spirit        = 201,
+    spl_Magic_Spirit        = 201,  /* sbr_Arcane */
     spl_Dispel_Magic        = 202,
     spl_Summoning_Circle    = 203,
     spl_Disenchant_Area     = 204,
@@ -234,6 +235,14 @@ enum e_SPELLS
     spl_Summon_Champion     = 212,
     spl_Spell_Of_Mastery    = 213,
     spl_Spell_Of_Return     = 214
+};
+
+enum e_SPELL_LIBRARY_STATUS
+{
+    sls_Unknown         = 0,
+    sls_Knowable        = 1,
+    sls_Known           = 2,
+    sls_Researchable    = 3
 };
 
 
@@ -495,10 +504,10 @@ void Spell_Research_Select(void);
 */
 
 // WZD o128p01
-int16_t WIZ_RefreshResearch__STUB(int16_t player_idx);
+int16_t Player_Research_Spells(int16_t player_idx);
 
 // WZD o128p02
-void WIZ_GetResearchList__STUB(int16_t player_idx, int16_t research_list[]);
+void Build_Research_List(int16_t player_idx, int16_t research_list[]);
 
 // WZD o128p03
 int16_t WIZ_RollSpellReward(int16_t player_idx, int16_t rarity);
@@ -516,10 +525,10 @@ int16_t WIZ_RollSpellReward(int16_t player_idx, int16_t rarity);
 void Change_Relations_For_Enchantments(int16_t player_idx, int16_t spell_idx, int16_t divisor);
 
 // WZD o128p08
-void WIZ_ResearchSort__STUB(int16_t player_idx, int16_t count);
+void Sort_Research_List(int16_t player_idx, int16_t count);
 
 // WZD o128p09
-void WIZ_AddSpellbook__WIP(int16_t player_idx, int16_t magic_realm);
+void WIZ_AddSpellRank__WIP(int16_t player_idx, int16_t magic_realm);
 
 // WZD o128p10
 // sub_ACACC()

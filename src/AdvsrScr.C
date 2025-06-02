@@ -272,6 +272,7 @@ void Advisor_Screen(int16_t advisor_idx)
                                   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                                   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                                   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
     };
     // char box_list_stings[260];
     // int16_t str_list[10];
@@ -432,6 +433,7 @@ void Advisor_Screen(int16_t advisor_idx)
 
         // input_advisor_idx = GUI_ListSelect_Dlg(9, &List@[0], 0, cnst_Info_Msg_0_3);  // "Select An Advisor"
         input_advisor_idx = Selection_Box(9, &str_list[0], ST_FALSE, "Select An Advisor");
+        // input_advisor_idx = Selection_Box(9, box_list_stings, ST_FALSE, "Select An Advisor");
         // returns -1 for ESC
 
         Deactivate_Help_List();

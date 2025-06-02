@@ -1,4 +1,8 @@
 
+GAME_Overland_Init()  ==>  Init_Overland()
+G_WLD_StaticAssetRfrsh()  ==>  PreInit_Overland()
+
+
 
 
 
@@ -100,8 +104,8 @@ MGC & WZD Main  ~==  MGC & WZD Init
 * Load_MGC_Resources()
 * Load_WZD_Resources()
 * Loaded_Game_Update_WZD()  ~== WZD  ovr160  o150p04  Loaded_Game_Update()
-GAME_Overland_Init()
-G_WLD_StaticAssetRfrsh()
+* Init_Overland()
+* PreInit_Overland()
 Terrain_Init()
 
 
@@ -286,22 +290,22 @@ exact same in MGC & WZD
  [-] _turn
  [-] _unit
  [-] _players
- [x] _world_maps         World_Data
- [x] UU_TBL_1            World_Data
- [x] UU_TBL_2            World_Data
- [x] _landmasses      World_Data
- [x] TBL_Nodes
+ [x] _world_maps        World_Data
+ [x] UU_TBL_1           World_Data
+ [x] UU_TBL_2           World_Data
+ [x] _landmasses        World_Data
+ [x] _NODES
  [x] _FORTRESSES
  [x] _TOWERS
  [x] _LAIRS
  [x] _ITEMS
- [x] _CITIES             World_Data
+ [x] _CITIES            World_Data
  [x] _UNITS
- [x] TBL_Terr_Specials   World_Data
- [x] _square_explored    World_Data
+ [x] TBL_Terr_Specials  World_Data
+ [x] _square_explored   World_Data
  [x] TBL_MoveMaps_EMS
  [x] _events_table
- [x] _map_square_flags   World_Data
+ [x] _map_square_flags  World_Data
  [-] grand_vizier
  [x] TBL_Premade_Items
  [x] TBL_Hero_Names
@@ -347,13 +351,13 @@ _UNITS                                      Yay-SAVE_GAM
 
 Active_Unit                                 Nay-SAVE_GAM
 
-TBL_Nodes                                   Yay-SAVE_GAM
+_NODES                                      Yay-SAVE_GAM
 _FORTRESSES                                 Yay-SAVE_GAM
 _TOWERS                                     Yay-SAVE_GAM
-TBL_Lairs                                   Yay-SAVE_GAM
+_LAIRS                                      Yay-SAVE_GAM
 _events_table                               Yay-SAVE_GAM
 TBL_Hero_Names                              Yay-SAVE_GAM
-TBL_Items                                   Yay-SAVE_GAM
+_ITEMS                                      Yay-SAVE_GAM
 TBL_Premade_Items                           Yay-SAVE_GAM
 
 TBL_Spell_Data                              Nay-SAVE_GAM

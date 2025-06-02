@@ -49,7 +49,21 @@ struct s_mouse_list mouse_list_loadsave[1] = {
 int16_t loadsave_settings_flag = ST_UNDEFINED;
 
 // WZD dseg:60E2
-int16_t TBL_Settings_Tops[13] = {53, 64, 75, 102, 113, 124, 135, 153, 146, 157, 167, 163, 174};
+int16_t TBL_Settings_Tops[13] = {
+     53,    /*  0:  Sound Effects               Strategic Combat Only           */
+     64,    /*  1:  Background Music            Auto Unit Information           */
+     75,    /*  2:  Event Music                 Movement Animations             */
+    102,    /*  3:  City Spell Events           Enemy Moves                     */
+    113,    /*  4:  Overland Spell Events       Enemy Spells                    */
+    124,    /*  5:  Summon Events               Spellbook Ordering              */
+    135,    /*  6:  End of Turn Summary         Spell Animations                */
+    153,    /*  7:  ¿ nothing ?                                                 */
+    146,    /*  8:  Raze City                   Show Node Owners                */
+    157,    /*  9:  N/A                         Expanding Help                  */
+    167,    /* 10:                                      ¿ OK button border ?    */
+    163,    /* 11:  Random Events                                               */
+    174     /* 12:  End of Turn Wait                                            */
+};
 
 // WZD dseg:60FC
 uint8_t COL_Settings[4] = {98, 98, 98, 98};
@@ -215,7 +229,7 @@ void Settings_Screen(void)
     int16_t input_field_idx = 0;
     int16_t leave_screen = 0;
     int16_t itr = 0;  // _SI_
-    int16_t IDK = 0;  // _DI_
+    int16_t row = 0;  // _DI_
 
 // TODO  lea     ax, [bp+Local_Settings_Tops]
 // TODO  push    ss
@@ -283,36 +297,35 @@ void Settings_Screen(void)
     for(itr = 0; itr < 8; itr++)
     {
         // ¿ manually create gap between "Raze City" and "Random Events" ?
-        IDK = itr;
-        if(IDK == 7)
+        row = itr;
+        if(row == 7)
         {
-            IDK = 8;
+            row = 8;  // nothing at 7, skip to 8 for Raze City
         }
-        Option_Control_Indices[itr] = Add_Hidden_Field(31, Local_Settings_Tops[IDK], 175, (9 + Local_Settings_Tops[IDK]), str_empty_string__ovr125[0], ST_UNDEFINED);
+        Option_Control_Indices[itr] = Add_Hidden_Field(31, Local_Settings_Tops[row], 175, (Local_Settings_Tops[row] + 9), str_empty_string__ovr125[0], ST_UNDEFINED);
     }
 
     // ¿ "Random Events" ?
-    Option_Control_Indices[8] = Add_Hidden_Field(31, Local_Settings_Tops[11], 175, (9 + Local_Settings_Tops[11]), str_empty_string__ovr125[0], ST_UNDEFINED);
+    Option_Control_Indices[8] = Add_Hidden_Field(31, Local_Settings_Tops[11], 175, (Local_Settings_Tops[11] + 9), str_empty_string__ovr125[0], ST_UNDEFINED);
 
     // ¿ "End Of Turn Wait" ?
-    Option_Control_Indices[9] = Add_Hidden_Field(31, Local_Settings_Tops[12], 175, (9 + Local_Settings_Tops[12]), str_empty_string__ovr125[0], ST_UNDEFINED);
+    Option_Control_Indices[9] = Add_Hidden_Field(31, Local_Settings_Tops[12], 175, (Local_Settings_Tops[12] + 9), str_empty_string__ovr125[0], ST_UNDEFINED);
 
     for(itr = 0; itr < 8; itr++)
     {
-        // ¿ manually create gap between "Raze City" and "Random Events" ?
-        IDK = itr;
+        row = itr;
         if(itr > 5)
         {
-            IDK += 1;
+            row += 1;  // nothing at 7
         }
         if(itr > 1)
         {
-            IDK += 1;
+            row += 1;  // nothing at 2 / skip Movement Animations
         }
-        Option_Control_Indices[(10 + itr)] = Add_Hidden_Field(192, Local_Settings_Tops[IDK], 310, (9 + Local_Settings_Tops[IDK]), str_empty_string__ovr125[0], ST_UNDEFINED);
+        Option_Control_Indices[(10 + itr)] = Add_Hidden_Field(192, Local_Settings_Tops[row], 310, (Local_Settings_Tops[row] + 9), str_empty_string__ovr125[0], ST_UNDEFINED);
     }
 
-    // ¿ "Movement Animations" ?
+    // Movement Animations
     Option_Control_Indices[18] = Add_Hidden_Field(192, 74, 310, (9 + 74), str_empty_string__ovr125[0], ST_UNDEFINED);
 
 
@@ -359,7 +372,7 @@ void Settings_Screen(void)
                     magic_set_ptr[itr] = ST_FALSE;
                 }
             }
-            // ¿ "Enemy Spells" ? ... ¿ "Spell Animations" ?
+            // Spell Book Ordering
             if(input_field_idx == Option_Control_Indices[14])
             {
                 CMB_SpellBookPage = 0;
@@ -472,6 +485,7 @@ void Settings_Screen_Draw(void)
     IDK++;
 
 
+    // Startegic Combat Only, Auto Unit Information
     for(itr = 0; itr < 2; itr++)
     {
         if(magic_set_ptr[(10 + itr)] == 0)
@@ -485,7 +499,7 @@ void Settings_Screen_Draw(void)
         IDK++;
     }
 
-
+    // Enemy Moves, Enemy Spells, Spell Book Ordering, Spell Animations, Show Node Owners, Expanding Help
     for(itr = 0; itr < 6; itr++)
     {
         if(magic_set_ptr[(12 + itr)] == 0)
@@ -499,7 +513,7 @@ void Settings_Screen_Draw(void)
         IDK++;
     }
 
-
+    // Movement Animations
     if(magic_set.Movement_Anims == ST_FALSE)
     {
         FLIC_Draw(192, 74, IMG_GUI_ChkBoxNo[0]);
@@ -530,6 +544,7 @@ void Settings_Screen_Draw(void)
     Print( 47, 147, cnst_Settings_7);   // "Raze City"
     Print( 47, 165, cnst_Settings_8);   // "Random Events"
     Print( 47, 176, cnst_Settings_9);   // "End of Turn Wait"
+
     Print(208,  54, cnst_Settings_A);   // "Strategic Combat Only"
     Print(208,  65, cnst_Settings_B);   // "Auto Unit Information"
     Print(208,  76, cnst_Settings_C);   // "Movement Animations"
@@ -540,12 +555,12 @@ void Settings_Screen_Draw(void)
     Print(208, 147, cnst_Settings_11);  // "Show Node Owners"
     Print(208, 158, cnst_Settings_12);  // "Expanding Help"
 
-
     Set_Font_Colors_15(3, &colors[0]);
     Set_Font_Style_Shadow_Down(3, 15, 45, ST_NULL);
 
     Print(31, 42, cnst_SettingsGrp_1);  // "Sound and Music"
     Print(31, 92, cnst_SettingsGrp_2);  // "Messages"
+
     Print(192, 42, cnst_SettingsGrp_3);  // "Combat"
     Print(192, 92, cnst_SettingsGrp_4);  // "Display"
 

@@ -31,38 +31,25 @@ MoM-Rasm/
 # CMake auto-generated files
 CMakeFiles/
 x64/
-ALL_BUILD.vcxproj
-ALL_BUILD.vcxproj.filters
 cmake_install.cmake
 CMakeCache.txt
 game.sln
 ReMoM.sln
-ZERO_CHECK.vcxproj
-ZERO_CHECK.vcxproj.filters
 src/CMakeFiles/
 src/Debug/
 src/game.dir/
 src/gamelib.dir/
 src/ReMoM.dir/
 src/cmake_install.cmake
-src/game.vcxproj
-src/game.vcxproj.filters
-src/gamelib.vcxproj
-src/gamelib.vcxproj.filters
-src/ReMoM.vcxproj
-src/ReMoM.vcxproj.filters
 src/MOX/CMakeFiles/
 src/MOX/Debug
 src/MOX/MOX.dir
 src/MOX/cmake_install.cmake
-src/MOX/MOX.vcxproj
-src/MOX/MOX.vcxproj.filters
 src/STU/CMakeFiles/
 src/STU/Debug
 src/STU/STU.dir
 src/STU/cmake_install.cmake
-src/STU/STU.vcxproj
-src/STU/STU.vcxproj.filters
+
 
 # local debug  //Hand-Made Hero
 misc/
@@ -78,6 +65,7 @@ SDL2.dll
 *.LBX
 *.MOM
 *.SET
+*.TMP
 !SAVETEST.GAM
 
 
@@ -86,9 +74,14 @@ SDL2.dll
 *.BIN
 *.BMP
 *.LOG
+*.VOC
+*.WAV
+*.XMI
+
 
 stderr.txt
 stdout.txt
+
 
 # Borland C++ v3.0 (c) 1992
 *.DSK
@@ -97,6 +90,7 @@ stdout.txt
 *.MAP
 *.OBJ
 *.XRF
+
 
 # Libre Office
 *.ods#

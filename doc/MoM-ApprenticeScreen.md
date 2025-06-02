@@ -1,4 +1,8 @@
 
+...most of this should be in the spellbook docs...
+
+Elsewhere, Player_Research_Spells()
+
 
 
 Apprentice Screen
@@ -12,40 +16,6 @@ SEEALSO: Spell Research
 
 
 
-## SBK_Candidate_Page
-    G_WLD_StaticAssetRfrsh+67          mov     [SBK_Candidate_Page], 0               
-    Settings_Screen+344                mov     [SBK_Candidate_Page], 0               
-    Spellbook_Build__WIP+226        mov     [SBK_Candidate_Page], ax              
-    Apprentice_Screen__WIP+1C          mov     ax, [SBK_Candidate_Page]              
-    Apprentice_Screen__WIP+3B2         mov     [SBK_Candidate_Page], ax              
-    BigBook_PageTurn__WIP:loc_9CA9C    mov     ax, [SBK_Candidate_Page]              
-    BigBook_PageTurn__WIP+1A0          mov     ax, [SBK_Candidate_Page]              
-    GAME_LearnSpellAnim+5A8            cmp     ax, [SBK_Candidate_Page]              
-    GAME_LearnSpellAnim+60E            cmp     ax, [SBK_Candidate_Page]              
-    GAME_LearnSpellAnim+614            push    [SBK_Candidate_Page]            ; page
-    GAME_LearnSpellAnim+627            mov     ax, [SBK_Candidate_Page]              
-    BigBook_Compose__WIP:loc_9E35F cmp     _DI_page, [SBK_Candidate_Page]        
-    BigBook_Compose__WIP+557       cmp     _DI_page, [SBK_Candidate_Page]        
-    BigBook_Compose__WIP+615       cmp     _DI_page, [SBK_Candidate_Page]        
-    SBK_Research_Dialog__STUB+B8       mov     ax, [SBK_Candidate_Page]              
-
-zeroed out by G_WLD_StaticAssetRfrsh() and Settings_Screen()  
-
-set in Apprentice_Screen__WIP() and Spellbook_Build__WIP()  
-    Spellbook_Build__WIP()  
-        SBK_Candidate_Page = m_spellbook_page_count  
-    Apprentice_Screen__WIP()  
-        SBK_Candidate_Page = SBK_OpenPage  
-
-used in Apprentice_Screen__WIP()  
-    Spellbook_Build__WIP()  
-    SBK_OpenPage = SBK_Candidate_Page  
-    ...so, 'Apprentice Screen' ***ALWAYS*** starts on the "Research Spells" page?  
-
-used in BigBook_Compose__WIP()  
-    if(page < SBK_Candidate_Page) { ... } else { ... }  
-    ...does casting cost or research cost...  
-    ...so, SBK_Candidate_Page is assumed to be the last page/page-max?  
 
 
 
@@ -260,13 +230,6 @@ book order: arcane, chaos, life, nature, sorcery, ..., Research Spells
 ¿ sbr_ ?
 
 
-Why does it set `SBK_Candidate_Page = SBK_OpenPage` when you leave the 'Apprentice Screen'?
-    What uses SBK_Candidate_Page after that?
-        Spells button - spellbook
-        Apprentice - spellbook
-        Tactical Combat - spellbook
-        Choose Research
-        Learn Spell
 
 Spellbook_Add_Page() increments m_spellbook_page_count
 

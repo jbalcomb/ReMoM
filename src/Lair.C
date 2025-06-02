@@ -1244,7 +1244,7 @@ void EZ_SpecialTreasure(int16_t player_idx, int16_t lair_idx, int16_t points, in
                 }
                 if(Valid_Reward == ST_TRUE)
                 {
-                    WIZ_AddSpellbook__WIP(player_idx, EZ_Book_Realm);
+                    WIZ_AddSpellRank__WIP(player_idx, EZ_Book_Realm);
                     reward_specials[*reward_special_count] = EZ_Book_Realm;
                     *reward_special_count += 1;
                 }

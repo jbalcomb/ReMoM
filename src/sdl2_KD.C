@@ -453,23 +453,11 @@ void Platform_Keyboard_Event(SDL_Event * sdl2_event)
     SDL_Scancode sdl2_scan_code;
     int32_t sdl2_key_code;
     uint16_t sdl2_key_modifiers;
-    // int event_data1;
-    // int event_data2;
-    // int event_data3;
     int mox_key;
     uint32_t mox_mod;
     char mox_character;
-    // char sdl2_scan_code_name[4096];
-    // char sdl2_key_code_name[4096];
     const char * sdl2_scan_code_name;
     const char * sdl2_key_code_name;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Platform_Keyboard_Event()\n", __FILE__, __LINE__);
-#endif
-
-    // memset(sdl2_scan_code_name, 0, 4096);
-    // memset(sdl2_key_code_name, 0, 4096);
 
     sdl2_scan_code = sdl2_event->key.keysym.scancode;
     sdl2_key_code = sdl2_event->key.keysym.sym;
@@ -477,15 +465,6 @@ void Platform_Keyboard_Event(SDL_Event * sdl2_event)
 
     sdl2_scan_code_name = SDL_GetScancodeName(sdl2_scan_code);
     sdl2_key_code_name = SDL_GetKeyName(sdl2_key_code);
-
-    dbg_prn("scan code: %d  %s\n", sdl2_scan_code, sdl2_scan_code_name);
-    dbg_prn("key code: %d  %s\n", sdl2_key_code, sdl2_key_code_name);
-
-    //     dbg_prn("sym: %d  %s\n", virtual_key_code, sdl2_get_key_code_name(virtual_key_code));
-    //     dbg_prn("mod: %d\n", key_modifiers);  // Meh. *always* 0x1000 4096 for Num-Lock
-    //     dbg_prn("key: %d\n", mox_key_num);
-    //     dbg_prn("sym: %d, mod: %d, key: %d\n", virtual_key_code, key_modifiers, mox_key_num);
-    //     dbg_prn("sym: %08X, mod: %04X, key: %04X\n", virtual_key_code, key_modifiers, mox_key_num);
 
     switch (sdl2_event->type)
     {
@@ -497,10 +476,6 @@ void Platform_Keyboard_Event(SDL_Event * sdl2_event)
                 sdl2_push_event.type = SDL_QUIT;
                 SDL_PushEvent(&sdl2_push_event);
             }
-            // event_data1 = Platform_Translated_Key(&sdl2_event->key.keysym);
-            // event_data2 = Platform_Localized_Key(&sdl2_event->key.keysym);
-            // event_data3 = Platform_Typed_mox_character(&sdl2_event->key.keysym);
-            // Platform_Keyboard_Buffer_Add_Key_Press(&sdl2_event->key.keysym);
 
             // 1oom  if(!(Platform_Hotkey(sym, smod, c)))
             {
@@ -552,9 +527,6 @@ void Platform_Keyboard_Event(SDL_Event * sdl2_event)
         } break;
         case SDL_KEYUP:
         {
-            // event_data1 = Platform_Translated_Key(&sdl2_event->key.keysym);
-            // Platform_Keyboard_Buffer_Add_Key_Press(mox_key, mod_xlat(sdl2_key_modifiers), false);
-            
             sdl2_key_code = sdl2_event->key.keysym.sym;
             sdl2_key_modifiers = sdl2_event->key.keysym.mod;
             if(sdl2_key_code & SDLK_SCANCODE_MASK)
@@ -586,10 +558,6 @@ void Platform_Keyboard_Event(SDL_Event * sdl2_event)
         } break;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Platform_Keyboard_Event()\n", __FILE__, __LINE__);
-#endif
-
 }
 
 
@@ -605,33 +573,6 @@ void Platform_Keyboard_Buffer_Add_Key_Press(int mox_key, uint32_t mox_mod, char 
     uint16_t mox_key_num;
     int32_t virtual_key_code;
     uint16_t key_modifiers;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Platform_Keyboard_Buffer_Add_Key_Press()\n", __FILE__, __LINE__);
-// #endif
-// 
-//     virtual_key_code = sdl2_keysym->sym;
-// 
-//     key_modifiers = sdl2_keysym->mod;
-// 
-//     mox_key_num = Platform_Translate_Virtual_Key_Code_To_MOX_Key_Num(virtual_key_code, key_modifiers);
-// 
-//     dbg_prn("sym: %d  %s\n", virtual_key_code, sdl2_get_key_code_name(virtual_key_code));
-//     dbg_prn("mod: %d\n", key_modifiers);  // Meh. *always* 0x1000 4096 for Num-Lock
-//     dbg_prn("key: %d\n", mox_key_num);
-//     dbg_prn("sym: %d, mod: %d, key: %d\n", virtual_key_code, key_modifiers, mox_key_num);
-//     dbg_prn("sym: %08X, mod: %04X, key: %04X\n", virtual_key_code, key_modifiers, mox_key_num);
-// 
-//     key_pressed = ST_TRUE;
-// 
-//     platform_keyboard_buffer.key_num[platform_keyboard_buffer.key_write] = mox_key_num;
-// 
-//     platform_keyboard_buffer.key_write = ((platform_keyboard_buffer.key_write + 1) % PLATFORM_KEYBOARD_BUFFER_LENGTH);
-// 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Platform_Keyboard_Buffer_Add_Key_Press()\n", __FILE__, __LINE__);
-// #endif
-
     uint32_t kilgore_key = ((uint32_t)mox_key) | mox_mod | (((uint32_t)mox_character) << 8);
 
     if(mox_key == MOX_KEY_OVERRUN)
@@ -649,43 +590,8 @@ void Platform_Keyboard_Buffer_Add_Key_Press(int mox_key, uint32_t mox_mod, char 
 
 char * sdl2_get_key_code_name(int32_t sdl2_key_code)
 {
-    // Glow-Ball  static char sdl2_key_code_name[4096];
 
     memset(sdl2_key_code_name, 0, 4096);
-
-    // switch(sdl2_key_code)
-    // {
-    //     case SDLK_a: strcpy(sdl2_key_code_name, "SDLK_a"); break;
-    //     case SDLK_b: strcpy(sdl2_key_code_name, "SDLK_b"); break;
-    //     case SDLK_c: strcpy(sdl2_key_code_name, "SDLK_c"); break;
-    //     case SDLK_d: strcpy(sdl2_key_code_name, "SDLK_d"); break;
-    //     case SDLK_e: strcpy(sdl2_key_code_name, "SDLK_e"); break;
-    //     case SDLK_f: strcpy(sdl2_key_code_name, "SDLK_f"); break;
-    //     case SDLK_g: strcpy(sdl2_key_code_name, "SDLK_g"); break;
-    //     case SDLK_h: strcpy(sdl2_key_code_name, "SDLK_h"); break;
-    //     case SDLK_i: strcpy(sdl2_key_code_name, "SDLK_i"); break;
-    //     case SDLK_j: strcpy(sdl2_key_code_name, "SDLK_j"); break;
-    //     case SDLK_k: strcpy(sdl2_key_code_name, "SDLK_k"); break;
-    //     case SDLK_l: strcpy(sdl2_key_code_name, "SDLK_l"); break;
-    //     case SDLK_m: strcpy(sdl2_key_code_name, "SDLK_m"); break;
-    //     case SDLK_n: strcpy(sdl2_key_code_name, "SDLK_n"); break;
-    //     case SDLK_o: strcpy(sdl2_key_code_name, "SDLK_o"); break;
-    //     case SDLK_p: strcpy(sdl2_key_code_name, "SDLK_p"); break;
-    //     case SDLK_q: strcpy(sdl2_key_code_name, "SDLK_q"); break;
-    //     case SDLK_r: strcpy(sdl2_key_code_name, "SDLK_r"); break;
-    //     case SDLK_s: strcpy(sdl2_key_code_name, "SDLK_s"); break;
-    //     case SDLK_t: strcpy(sdl2_key_code_name, "SDLK_t"); break;
-    //     case SDLK_u: strcpy(sdl2_key_code_name, "SDLK_u"); break;
-    //     case SDLK_v: strcpy(sdl2_key_code_name, "SDLK_v"); break;
-    //     case SDLK_w: strcpy(sdl2_key_code_name, "SDLK_w"); break;
-    //     case SDLK_x: strcpy(sdl2_key_code_name, "SDLK_x"); break;
-    //     case SDLK_y: strcpy(sdl2_key_code_name, "SDLK_y"); break;
-    //     case SDLK_z: strcpy(sdl2_key_code_name, "SDLK_z"); break;
-    //     default:
-    //     {
-    //         strcpy(sdl2_key_code_name, "UNKNOWN");
-    //     } break;
-    // }
 
     strcpy(sdl2_key_code_name, SDL_GetKeyName(sdl2_key_code));
 

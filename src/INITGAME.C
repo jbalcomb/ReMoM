@@ -248,7 +248,7 @@ void Init_Summoning_Circle_And_Spell_Of_Mastery(void)
         _players[itr_players].summon_wx = _FORTRESSES[itr_players].wx;
         _players[itr_players].summon_wy = _FORTRESSES[itr_players].wy;
         
-        _players[itr_players].SoM_RC = spell_data_table[spl_Spell_Of_Mastery].research_cost;
+        _players[itr_players].som_research_cost = spell_data_table[spl_Spell_Of_Mastery].research_cost;
 
         if(
             (_players[itr_players].spellranks[0] == 11)
@@ -262,7 +262,7 @@ void Init_Summoning_Circle_And_Spell_Of_Mastery(void)
             (_players[itr_players].spellranks[4] == 11)
         )
         {
-            _players[itr_players].SoM_RC -= 3000;
+            _players[itr_players].som_research_cost -= 3000;
         }
         
     }

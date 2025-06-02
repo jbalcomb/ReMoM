@@ -32,12 +32,10 @@ extern "C" {
 */
 
 // WZD o51p01
-// OON XREF: Loaded_Game_Update()
-void GAME_Overland_Init(void);
+void Init_Overland(void);
 
 // WZD o51p02
-// OON XREF: Loaded_Game_Update() |-> GAME_Overland_Init()
-void G_WLD_StaticAssetRfrsh(void);
+void PreInit_Overland(void);
 
 
 

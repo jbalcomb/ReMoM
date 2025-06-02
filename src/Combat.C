@@ -706,9 +706,9 @@ SAMB_ptr SND_CMB_Music;
 uint32_t SND_CMB_Music_size;  // DNE in Dasm
 
 // WZD dseg:C41E
-int16_t CMB_DEFR_TrueSight;
+int16_t _defender_sees_illusions;
 // WZD dseg:C420
-int16_t CMB_ATKR_TrueSight;
+int16_t _attacker_sees_illusions;
 
 // WZD dseg:C422
 SAMB_ptr _cmbt_cancel_button_seg;
@@ -7382,7 +7382,7 @@ void CMB_CreateEntities__WIP(void)
     // ; proper ones, resulting in either not enough/wrong
     // ; rocks, or extra empty combat entities being created
 
-    CMB_UpdateTrueSight();
+    Update_Sees_Illusions();
 
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
@@ -9660,13 +9660,17 @@ Immunity to Illusion
     Unit is unaffected by Illusory spells: mind fires, vertigo, word of command;
     Unit can see Invisible enemies.
 
+XREF:
+    j_Update_Sees_Illusions()
+        CMB_CreateEntities__WIP()
+        BU_ApplyDamage__WIP()
 */
-void CMB_UpdateTrueSight(void)
+void Update_Sees_Illusions(void)
 {
     int16_t itr_battle_units;  // _CX_
 
-    CMB_ATKR_TrueSight = ST_FALSE;
-    CMB_DEFR_TrueSight = ST_FALSE;
+    _attacker_sees_illusions = ST_FALSE;
+    _defender_sees_illusions = ST_FALSE;
 
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
@@ -9676,7 +9680,7 @@ void CMB_UpdateTrueSight(void)
             {
                 if((battle_units[itr_battle_units].Attribs_1 & USA_IMMUNITY_ILLUSION) != 0)
                 {
-                    CMB_ATKR_TrueSight = ST_TRUE;
+                    _attacker_sees_illusions = ST_TRUE;
                 }
             }
             else
@@ -9685,7 +9689,7 @@ void CMB_UpdateTrueSight(void)
                 {
                     if((battle_units[itr_battle_units].Attribs_1 & USA_IMMUNITY_ILLUSION) != 0)
                     {
-                        CMB_DEFR_TrueSight = ST_TRUE;
+                        _defender_sees_illusions = ST_TRUE;
                     }
                 }
             }
@@ -9732,7 +9736,7 @@ void BU_SetVisibility__WIP(int16_t battle_unit_idx)
         if(
             (owner_idx == _combat_defender_player)
             &&
-            (CMB_ATKR_TrueSight == ST_TRUE)
+            (_attacker_sees_illusions == ST_TRUE)
         )
         {
 
@@ -14436,15 +14440,18 @@ void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t Dmg_Array[])
 
     }
 
+    /*
+        He's dead, Jim.
+    */
     if(battle_units[battle_unit_idx].Cur_Figures <= 0)
     {
         battle_units[battle_unit_idx].Cur_Figures = 0;
 
         CMB_Winner = Check_For_Winner();
 
-        if(BU_IsCombatSummon__WIP(battle_unit_idx) == ST_TRUE)
+        if(Battle_Unit_Is_Summoned_Creature(battle_unit_idx) == ST_TRUE)
         {
-            _UNITS[battle_units[battle_unit_idx].unit_idx].wp = 9;
+            _UNITS[battle_units[battle_unit_idx].unit_idx].wp = 9;  // dead combat summon
         }
 
         if(
@@ -14453,7 +14460,7 @@ void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t Dmg_Array[])
             (battle_units[battle_unit_idx].damage[2] >= battle_units[battle_unit_idx].damage[0])
         )
         {
-            battle_units[battle_unit_idx].status = 6;  /* Unit_Gone */
+            battle_units[battle_unit_idx].status = bus_Gone;
         }
         else
         {
@@ -14463,13 +14470,13 @@ void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t Dmg_Array[])
                 (battle_units[battle_unit_idx].damage[1] >= battle_units[battle_unit_idx].damage[0])
             )
             {
-                if(_UNITS[battle_units[battle_unit_idx].unit_idx].wp != 9)
+                if(_UNITS[battle_units[battle_unit_idx].unit_idx].wp != 9)  // dead combat summon
                 {
-                    battle_units[battle_unit_idx].status = 5;  /* Unit_Drained */
+                    battle_units[battle_unit_idx].status = bus_Drained;
                 }
                 else
                 {
-                    battle_units[battle_unit_idx].status = 6;  /* Unit_Gone */
+                    battle_units[battle_unit_idx].status = bus_Dead;
                 }
             }
             else
@@ -14480,12 +14487,13 @@ void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t Dmg_Array[])
                     (battle_units[battle_unit_idx].damage[0] > battle_units[battle_unit_idx].damage[1])
                 )
                 {
-                    battle_units[battle_unit_idx].status = 4;  /* Unit_Dead */
+                    battle_units[battle_unit_idx].status = bus_Dead;
                 }
             }
         }
 
-        CMB_UpdateTrueSight();
+        Update_Sees_Illusions();
+
     }
 
 }
@@ -17336,13 +17344,13 @@ BUG: this has just been done in the parent function
             (
                 (battle_units[battle_unit_idx].controller_idx != _combat_attacker_player)
                 &&
-                (CMB_ATKR_TrueSight != ST_TRUE)
+                (_attacker_sees_illusions != ST_TRUE)
             )
             ||
             (
                 (battle_units[battle_unit_idx].controller_idx != _combat_defender_player)
                 &&
-                (CMB_DEFR_TrueSight != ST_TRUE)
+                (_defender_sees_illusions != ST_TRUE)
             )
         )
         {
@@ -23431,40 +23439,31 @@ int16_t Combat_Grid_Cell_Has_City_Wall(int16_t cgc2, int16_t cgc1)
 }
 
 
-// Segrax
+// segrax
 // WZD o124p15
-// drake178: BU_IsCombatSummon
+// drake178: BU_IsCombatSummon()
 /*
-returns 1 if the target unit is a combat summon, or
-0 otherwise
-*/
-/*
+    returns ST_TRUE if the target unit is a combat summon, ST_FALSE otherwise
 
 "While most creature summonings are cast overland, the summoning of Elementals, Phantom Warriors and Phantom Beasts can only be performed during combat."
 
 */
-int16_t BU_IsCombatSummon__WIP(int16_t battle_unit_idx)
+int16_t Battle_Unit_Is_Summoned_Creature(int16_t battle_unit_idx)
 {
     int16_t unit_type = 0;  // _SI_
 
     unit_type = _UNITS[battle_units[battle_unit_idx].unit_idx].type;
 
-    // ovr124:0BFE 26 39 B7 C8 0C                                  cmp     es:[bx+(Fire_Elemental*24h)+s_SPELL_DATA.Param0], _SI_unit_type
-    // field_CA8 / 24h = 5Ah  90 Fire_Elemental
-    // field_438 / 24h = 1Eh  30 Earth_Elemental  
-    // field_870 / 24h = 3Ch  60 Phantom_Beast
-    // field_654 / 24h = 2Dh  45 Phantom_Warriors
-    // field_948 / 24h = 42h  66 Air_Elemental
     if(
-        (spell_data_table[90].Param0 == unit_type)
+        (spell_data_table[spl_Fire_Elemental].unit_type == unit_type)
         ||
-        (spell_data_table[30].Param0 == unit_type)
+        (spell_data_table[spl_Earth_Elemental].unit_type == unit_type)
         ||
-        (spell_data_table[60].Param0 == unit_type)
+        (spell_data_table[spl_Phantom_Beast].unit_type == unit_type)
         ||
-        (spell_data_table[45].Param0 == unit_type)
+        (spell_data_table[spl_Phantom_Warriors].unit_type == unit_type)
         ||
-        (spell_data_table[66].Param0 == unit_type)
+        (spell_data_table[spl_Air_Elemental].unit_type == unit_type)
         ||
         (unit_type == ut_Demon)
     )

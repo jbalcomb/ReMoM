@@ -1,13 +1,16 @@
 /*
     WIZARDS.EXE
-        seg036
+        eg036
+    MAGIC.EXE
+        seg034
 */
 
 #include "Fields.H"
 #include "MOX_DEF.H"
 #include "MOX_TYPE.H"
 #include "TEXTBOX.H"
-#include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
+
+#include "malloc.h"
 
 #ifdef _STU_SDL2
 #include "../sdl2_PFL.H"
@@ -227,115 +230,12 @@ int16_t * help_struct_pointer;
 
 
 
-// DELETE  uint8_t g_Key_Pressed = ST_FALSE;   // Platform - Decl in MoM.hpp
-// DELETE  uint16_t g_Last_Key_Pressed = 0;    // Platform - Decl in MoM.hpp
-// DELETE  uint16_t scan_code_char_code = 0;   // Platform - Decl in MoM.hpp
-
-
-
 /*
-    MGC  seg033
+    WIZARDS.EXE
+        eg036
+    MAGIC.EXE
+        seg034
 */
-
-// TODO  // MGC s33p01
-// TODO  Set_Mouse_List()
-
-// TODO  // MGC s33p02
-// TODO  Check_Mouse_Shape()
-
-// TODO  // MGC s33p03
-
-// TODO  // MGC s33p04
-// TODO  // Get_Pointer_Offset()
-
-// TODO  // MGC s33p07
-// TODO  // MD_Init()
-
-// TODO  // MGC s33p09
-// TODO  // MD_Reset()
-
-// TODO  // MGC s33p09
-// TODO  // MD_Button_Hanlder()
-
-// TODO  // MGC s33p11
-// TODO  // MD_Draw_Disable()
-// TODO  // MGC s33p12
-// TODO  // MD_Draw_Restore()
-
-
-
-/*
-    WZD  seg036
-    MGC  seg034
-*/
-
-
-
-
-
-void Handle_Key_Press(void)
-{
-
-}
-
-void Handle_Right_Click(void)
-{
-
-}
-
-void Handle_Left_Click(void)
-{
-    
-}
-
-
-//             // HACK: 
-//             if(MD_ButtonStatus == MOUSE_BUTTON_LEFT)
-//             {
-// #ifdef STU_DEBUG
-//                 // TODO  DLOG("if(MD_ButtonStatus == MOUSE_BUTTON_LEFT)");
-//                 DBG_In_MouseButtonLeft = ST_TRUE;
-// #endif
-//                 mouse_x = Pointer_X();
-//                 mouse_y = Pointer_Y();
-//                 pointer_offset = Get_Pointer_Offset();
-//                 field_num = 0;
-//                 character = 0;
-//                 field_num = Scan_Field();
-//                 if(field_num != 0)
-//                 {
-//                     field_num = field_num;
-//                 }
-// #ifdef STU_DEBUG
-//                 dbg_prn("DEBUG: [%s, %d]: Left-Click field_num: %d\n", __FILE__, __LINE__, field_num);
-//                 DBG_In_MouseButtonLeft = ST_FALSE;
-// #endif
-//             }
-
-
-//             // HACK: 
-//             if(MD_ButtonStatus == MOUSE_BUTTON_RIGHT)
-//             {
-// #ifdef STU_DEBUG
-//                 // TODO  DLOG("if(MD_ButtonStatus == MOUSE_BUTTON_RIGHT)");
-//                 DBG_In_MouseButtonRight = ST_TRUE;
-// #endif
-//                 mouse_x = Pointer_X();
-//                 mouse_y = Pointer_Y();
-//                 pointer_offset = Get_Pointer_Offset();
-//                 field_num = 0;
-//                 character = 0;
-//                 field_num = Scan_Field();
-//                 if(field_num != 0)
-//                 {
-//                     field_num = (field_num * -1);
-//                 }
-// #ifdef STU_DEBUG
-//                 dbg_prn("DEBUG: [%s, %d]: Right-Click field_num: %d\n", __FILE__, __LINE__, field_num);
-//                 DBG_In_MouseButtonRight = ST_FALSE;
-// #endif
-//             }
-
 
 // WZD s36p01
 // MGC s34p01
@@ -461,10 +361,6 @@ _DI_itr_continuous_string = di
     int16_t alt_field_num;  // _SI_
     int16_t scanned_field;  // _SI_
     int16_t return_value;  // _AX_  MoO2: return _EAX_ = return_value = maybe__field_num__scanned_field = itr_fields_count
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-// #endif
 
 /*
 MoO1
@@ -941,9 +837,6 @@ MoO2
                     // Unused_Local == ST_UNDEFINED
                     character = 0;
                     field_num = Scan_Field();
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: while(Mouse_Button() != 0)  mouse_button: %d field_num: %d\n", __FILE__, __LINE__, mouse_button, field_num);
-#endif
 
                     /*
                         BEGIN BLOCK: field_num = Scan_Field() != 0
@@ -1210,10 +1103,7 @@ MoO2
                         return field_num;
                     }
             */
-#ifdef STU_DEBUG
-        dbg_prn("DEBUG: [%s, %d]: switch(mouse_button)  mouse_button: %d field_num: %d\n", __FILE__, __LINE__, mouse_button, field_num);
-#endif
-
+            
             switch(mouse_button)
             {
                 case 0: { field_num =          0; goto Done; } break;
@@ -1470,9 +1360,7 @@ MoO2
     // TODO      
     // TODO  }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: goto Done  mouse_button: %d field_num: %d\n", __FILE__, __LINE__, mouse_button, field_num);
-// #endif
+
 
     goto Done;
 /*
@@ -1493,18 +1381,12 @@ MoO2
 return ST_UNDEFINED;
 */
 Return_Type_ESC:
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-// #endif
     return ST_UNDEFINED;
 
 /*
 return 0;
 */
 Return_Type_Z00:
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-// #endif
     return 0;
 
 /*
@@ -1512,9 +1394,6 @@ down_mouse_button = ST_UNDEFINED; return 0;
 */
 Return_Type_Z10:
     down_mouse_button = ST_UNDEFINED;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-// #endif
     return 0;
 
 /*
@@ -1522,9 +1401,6 @@ Mouse_Button_Handler(); return 0;
 */
 Return_Type_Z01:
     Mouse_Button_Handler();
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-// #endif
     return 0;
 
 /*
@@ -1533,9 +1409,6 @@ down_mouse_button = ST_UNDEFINED; Mouse_Button_Handler(); return 0;
 Return_Type_Z11:
     down_mouse_button = ST_UNDEFINED;
     Mouse_Button_Handler();
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-// #endif
     return 0;
 
 /*
@@ -1549,9 +1422,6 @@ down_mouse_button = ST_UNDEFINED; return field_num;
 */
 Return_Type_F10:
     down_mouse_button = ST_UNDEFINED;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-// #endif
     return field_num;
 
 /*
@@ -1559,9 +1429,6 @@ Mouse_Button_Handler(); return field_num;
 */
 Return_Type_F01:
     Mouse_Button_Handler();
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-// #endif
     return field_num;
 
 /*
@@ -1570,9 +1437,6 @@ down_mouse_button = ST_UNDEFINED; Mouse_Button_Handler(); return field_num;
 Return_Type_F11:
     down_mouse_button = ST_UNDEFINED;
     Mouse_Button_Handler();
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-// #endif
     return field_num;
 
 /*
@@ -1581,9 +1445,6 @@ Mouse_Button_Handler(); down_mouse_button == ST_UNDEFINED; return alt_field_num;
 Return_Type_4:
     Mouse_Button_Handler();
     down_mouse_button = ST_UNDEFINED;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-// #endif
     return alt_field_num;
 
 /*
@@ -1591,9 +1452,6 @@ down_mouse_button == ST_UNDEFINED; return alt_field_num;
 */
 Return_Type_5:
     down_mouse_button = ST_UNDEFINED;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-// #endif
     return alt_field_num;
 
 /*
@@ -1601,9 +1459,6 @@ down_mouse_button = ST_UNDEFINED; return p_fields[field_num].Param0;
 */
 Return_Type_P10:
     down_mouse_button = ST_UNDEFINED;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-// #endif
     return p_fields[field_num].parent;
 
 /*
@@ -1611,16 +1466,11 @@ down_mouse_button = ST_UNDEFINED; return p_fields[alt_field_num].Param0;
 */
 Return_Type_7:
     down_mouse_button = ST_UNDEFINED;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-// #endif
     return p_fields[alt_field_num].parent;
 
 Done:
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-// #endif
     return field_num;
+
 }
 
 

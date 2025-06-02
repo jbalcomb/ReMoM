@@ -21,7 +21,9 @@ MoO2 Module: shear
 #include "Graphics.H"
 #include "MOX_TYPE.H"
 
-#include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
+#include "malloc.h"
+
+
 
 /*
     Video
@@ -137,7 +139,7 @@ void Screen_Picture_Capture(int16_t x1, int16_t y1, int16_t x2, int16_t y2, SAMB
 
     Create_Picture(width, height, pict_seg);
 
-    Capture_Screen_Block((pict_seg + 16), x1, y1, x2, y2);
+    Capture_Screen_Block((pict_seg + SZ_FLIC_HDR), x1, y1, x2, y2);
 
 }
 
@@ -490,7 +492,7 @@ void Copy_Bitmap_To_Bitmap(SAMB_ptr target_bitmap, SAMB_ptr source_bitmap)
     // height = farpeekw(source_bitmap, FLIC_HDR_POS_HEIGHT);
     height = GET_2B_OFS(source_bitmap, FLIC_HDR_POS_HEIGHT);
 
-    length = (16 + (width * height));
+    length = (SZ_FLIC_HDR + (width * height));
 
     memcpy(target_bitmap, source_bitmap, length);
 
@@ -541,7 +543,7 @@ void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg)
 
     // rep stosb
     dst_sgmt = pict_seg;
-    dst_ofst = 16;
+    dst_ofst = SZ_FLIC_HDR;
     counter = length;
     while(counter > 0)
     {
@@ -576,7 +578,7 @@ void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint
     itr_length = 0;
     while(itr_length++ < length)
     {
-        *(pict_seg + 16 + itr_length) = color;
+        *(pict_seg + SZ_FLIC_HDR + itr_length) = color;
     }
 
 }
@@ -627,10 +629,11 @@ void Replace_Color_All(SAMB_ptr pict_seg, uint8_t replacement_color)
 */
 void Load_Palette_From_Animation(SAMB_ptr picture)
 {
+    struct s_FLIC_HDR animation_header;
 
-    // ¿ MEM_Copy_Far(&pict_hdr, 0, 0, picture, 16) ?
+    memcpy(&animation_header, picture, sizeof(struct s_FLIC_HDR));
 
-    if((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))
+    if(animation_header.palette_header_offset != 0)
     {
         FLIC_Load_Palette(picture, 0);
     }
@@ -648,12 +651,13 @@ picture
 */
 void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
 {
+    struct s_FLIC_HDR animation_header;
     int16_t current_frame;
     int16_t next_frame;
-    unsigned int flic_frame_offset;
+    unsigned int frame_offset;
     unsigned short flic_frame_offset_sgmt;
     unsigned short flic_frame_offset_ofst;
-    byte_ptr p_FLIC_Frame;
+    byte_ptr source_start;
     uint8_t remap_flag;
     int16_t DBG_width;
     int16_t DBG_height;
@@ -670,42 +674,44 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
     assert((x_start + (DBG_width - 1)) <= SCREEN_XMAX);
     assert((y_start + (DBG_height - 1)) <= SCREEN_YMAX);
 
-    // ¿ MEM_Copy_Far(&pict_hdr, 0, 0, picture, 16) ?
+    memcpy(&animation_header, picture, sizeof(struct s_FLIC_HDR));
 
-    current_frame = FLIC_GET_CURRENT_FRAME(picture);
-    next_frame = FLIC_GET_CURRENT_FRAME(picture) + 1;
-    if(next_frame < FLIC_GET_FRAME_COUNT(picture))
+    current_frame = animation_header.current_frame;
+    animation_header.current_frame++;
+    if(animation_header.current_frame >= animation_header.frame_count)
     {
-        FLIC_SET_CURRENT_FRAME(picture, next_frame);
+        // DOMSDOS  farpokew(picture, FLIC_HDR_POS_CURRENT_FRAME, animation_header.loop_frame);
+        FLIC_SET_CURRENT_FRAME(picture, animation_header.loop_frame);
     }
     else
     {
-        FLIC_SET_CURRENT_FRAME(picture, FLIC_GET_LOOP_FRAME(picture));
+        // DOMSDOS  farpokew(picture, FLIC_HDR_POS_CURRENT_FRAME, animation_header.current_frame);
+        FLIC_SET_CURRENT_FRAME(picture, animation_header.current_frame);
     }
 
-    if((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))
+    if(animation_header.palette_header_offset != 0)
     {
         FLIC_Load_Palette(picture, current_frame);
     }
 
-    /*
-        Test EMM_Handle_Number
-            FLIC_Draw_Frame_EMM()
-    */
+    // DOMSDOS  if(animation_header.emm_handle_number != 0)
+    // DOMSDOS  {
+    // DOMSDOS      FLIC_Draw_Frame_EMM()
+    // DOMSDOS  }
 
-    flic_frame_offset = FLIC_GET_FRAME_OFFSET(picture, current_frame);
-    p_FLIC_Frame = picture + (flic_frame_offset) + 1;
+    frame_offset = FLIC_GET_FRAME_OFFSET(picture, current_frame);
+    source_start = picture + (frame_offset + 1);
 
     remap_flag = FLIC_GET_REMAP_FLAG(picture);
 
     if(remap_flag == ST_FALSE)
     {
-        FLIC_Draw_Frame(x_start, y_start, FLIC_GET_WIDTH(picture), p_FLIC_Frame, DBG_height);
+        FLIC_Draw_Frame(x_start, y_start, animation_header.width, source_start, DBG_height);
     }
     else
     {
         // MoO2  Module: animate  Remap_Draw_Animated_Sprite(x_start, y_start, frame_data)
-        FLIC_Remap_Draw_Frame(x_start, y_start, FLIC_GET_WIDTH(picture), p_FLIC_Frame, DBG_height);
+        FLIC_Remap_Draw_Frame(x_start, y_start, animation_header.width, source_start, DBG_height);
     }
 
 }
@@ -858,89 +864,78 @@ void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
 
 // WZD s30p13
 // NOTE: Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg) ~== FLIC_Draw(SAMB_ptr p_FLIC_File)
-void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg)
+void Draw_Picture_To_Bitmap(SAMB_ptr source_picture, SAMB_ptr destination_bitmap)
 {
-    int16_t current_frame_index;
-    int16_t next_frame_index;
+    struct s_FLIC_HDR animation_header;
+    int16_t current_frame;
     int8_t full_store_flag;
     int16_t frame_start;
     int16_t frame_idx;
     int16_t itr_frames;
-    uint32_t flic_frame_offset;
-    byte_ptr p_FLIC_Frame;
+    uint32_t frame_offset;
+    byte_ptr source_start;
     int16_t loop_frame_index;  // DNE in Dasm
     int16_t frame_count;  // DNE in Dasm
 
     /*
         BEGIN: same as FLIC_Draw()
     */
-    // MEM_Copy_Far(src sgmt ofst dst sgmt ofst)
-    // ? MEM_Copy_Far(&flic_hdr, 0, 0, p_FLIC_File, 16) ?
+    memcpy(&animation_header, source_picture, sizeof(struct s_FLIC_HDR));
 
-    current_frame_index = FLIC_GET_CURRENT_FRAME(src_pict_seg);
-    next_frame_index = FLIC_GET_CURRENT_FRAME(src_pict_seg) + 1;
-    loop_frame_index = FLIC_GET_LOOP_FRAME(src_pict_seg);
-    frame_count = FLIC_GET_FRAME_COUNT(src_pict_seg);
-    // if(next_frame_index < FLIC_GET_FRAME_COUNT(src_pict_seg))
-    if (next_frame_index < frame_count)
+    current_frame = animation_header.current_frame;
+    animation_header.current_frame++;
+    if(animation_header.current_frame >= animation_header.frame_count)
     {
-        FLIC_SET_CURRENT_FRAME(src_pict_seg, next_frame_index);
+        // DOMSDOS  farpokew(picture, FLIC_HDR_POS_CURRENT_FRAME, animation_header.loop_frame);
+        FLIC_SET_CURRENT_FRAME(source_picture, animation_header.loop_frame);
     }
     else
     {
-        // FLIC_SET_CURRENT_FRAME(src_pict_seg, FLIC_GET_LOOP_FRAME(src_pict_seg));
-        FLIC_SET_CURRENT_FRAME(src_pict_seg, loop_frame_index);
+        // DOMSDOS  farpokew(picture, FLIC_HDR_POS_CURRENT_FRAME, animation_header.current_frame);
+        FLIC_SET_CURRENT_FRAME(source_picture, animation_header.current_frame);
     }
 
-    if((FLIC_GET_PALETTE_HEADER_OFFSET(src_pict_seg) != 0))
+    if(animation_header.palette_header_offset != 0)
     {
-        FLIC_Load_Palette(src_pict_seg, current_frame_index);
+        FLIC_Load_Palette(source_picture, current_frame);
     }
     /*
         END: same as FLIC_Draw()
     */
 
-   Create_Multi_Frame_Blank_Bitmap(src_pict_seg, dst_pict_seg, current_frame_index);
+   Create_Multi_Frame_Blank_Bitmap(source_picture, destination_bitmap, current_frame);
 
-   /*
-        if header.ehn != 0
-            ~ Add_Picture_To_Bitmap_EMM
-   */
-
-    /*
-        "Animation File"
-            "Get_Full_Store_Flag()"
-        ...
-        farpeekb(src_pict_seg, 16);
-
-        if full store, just draw current frame
-        else, build up to current frame
-    */
-    full_store_flag = GET_1B_OFS(src_pict_seg, 16);
+    // DOMSDOS  if(animation_header.emm_handle_number != 0)
+    // DOMSDOS  {
+    // DOMSDOS      Add_Picture_To_Bitmap_EMM
+    // DOMSDOS  }
+    
+    // DOMSDOS  full_store_flag = farpeekb(source_picture, sizeof(struct s_FLIC_HDR));
+    full_store_flag = GET_1B_OFS(source_picture, sizeof(struct s_FLIC_HDR));
 
     if(full_store_flag != ST_FALSE)
     {
-        frame_start = current_frame_index;
+        frame_start = current_frame;
     }
     else
     {
         frame_start = 0;
     }
 
-    frame_idx = current_frame_index;
+    frame_idx = current_frame;
 
     for(itr_frames = frame_start; itr_frames <= frame_idx; itr_frames++)
     {
         /*
             BEGIN: same as FLIC_Draw()
         */
-        flic_frame_offset = FLIC_GET_FRAME_OFFSET(src_pict_seg, itr_frames);
-        p_FLIC_Frame = (src_pict_seg + (flic_frame_offset + 1));
+        frame_offset = FLIC_GET_FRAME_OFFSET(source_picture, itr_frames);
+        source_start = (source_picture + (frame_offset + 1));
         /*
             END: same as FLIC_Draw()
         */
 
-        Add_Picture_To_Bitmap(p_FLIC_Frame, dst_pict_seg);
+        Add_Picture_To_Bitmap(source_start, destination_bitmap);
 
     }
 
@@ -2004,7 +1999,7 @@ void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color)
     height = FLIC_GET_HEIGHT(pict_seg);
     pict_size = width * height;
 
-    src_sgmt = (uint8_t *)(pict_seg + 16);
+    src_sgmt = (uint8_t *)(pict_seg + SZ_FLIC_HDR);
 
     /*
         Height-Wise / Horizontal Axis (horz)
@@ -2172,7 +2167,7 @@ void Get_Bitmap_Actual_Size(SAMB_ptr bitmap_addr, int16_t * x1, int16_t * y1, in
     x2 = 0;
     y2 = 0;
 
-    offset = 16;
+    offset = SZ_FLIC_HDR;
 
     for(itr_width = 0; itr_width < flic_width; itr_width++)
     {
@@ -2814,8 +2809,8 @@ void Add_Picture_To_Bitmap(byte_ptr source_picture, byte_ptr destination_bitmap)
     height = FLIC_GET_HEIGHT(destination_bitmap);
 
     src = source_picture;
-    dst = (destination_bitmap + 16);
-    dst_pos = (destination_bitmap + 16);
+    dst = (destination_bitmap + SZ_FLIC_HDR);
+    dst_pos = (destination_bitmap + SZ_FLIC_HDR);
 
     dst_base = dst;
     dst_curr = dst;
@@ -3057,7 +3052,7 @@ void Flip_Bitmap(SAMB_ptr pict_seg)
     uint8_t t;
     w = FLIC_GET_WIDTH(pict_seg);
     h = FLIC_GET_HEIGHT(pict_seg);
-    p = (pict_seg + 16);
+    p = (pict_seg + SZ_FLIC_HDR);
     for (y = 0; y < h; ++y) {
         for (x = 0; x < (w / 2); ++x) {
             t = p[x];
@@ -3066,7 +3061,6 @@ void Flip_Bitmap(SAMB_ptr pict_seg)
         }
         p += w;
     }
-
 }
 
 // WZD s33p09
@@ -3085,8 +3079,8 @@ void Replace_Color(SAMB_ptr pict_seg, uint8_t color_to_replace, uint8_t replacem
 
     pict_size = width * height;
 
-    src = pict_seg + 16;
-    dst = pict_seg + 16;
+    src = pict_seg + SZ_FLIC_HDR;
+    dst = pict_seg + SZ_FLIC_HDR;
 
     while(pict_size--)
     {
@@ -3478,8 +3472,8 @@ void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start)
     height = FLIC_GET_HEIGHT(pict_seg);
     pict_size = width * height;
 
-    src_ofst = 16;
-    dst_ofst = 16;
+    src_ofst = SZ_FLIC_HDR;
+    dst_ofst = SZ_FLIC_HDR;
 
     while(pict_size--)
     {

@@ -237,19 +237,24 @@ int16_t sdl2_Play_Sound__WIP(void* sound_buffer, uint32_t sound_buffer_size)
         return 1;
     }
 
-    printf("GET_2B_OFS(sound_buffer, 0): %04X\n", GET_2B_OFS(sound_buffer, 0));  // DEAF
-    printf("GET_2B_OFS(sound_buffer, 2): %04X\n", GET_2B_OFS(sound_buffer, 2));  // 0001 || 0002
-    printf("GET_2B_OFS(sound_buffer, 4): %04X\n", GET_2B_OFS(sound_buffer, 4));  // 0000
-    printf("GET_2B_OFS(sound_buffer, 6): %04X\n", GET_2B_OFS(sound_buffer, 6));  // 0000
+// #ifdef STU_DEBUG
+//     printf("GET_2B_OFS(sound_buffer, 0): %04X\n", GET_2B_OFS(sound_buffer, 0));  // DEAF
+//     printf("GET_2B_OFS(sound_buffer, 2): %04X\n", GET_2B_OFS(sound_buffer, 2));  // 0001 || 0002
+//     printf("GET_2B_OFS(sound_buffer, 4): %04X\n", GET_2B_OFS(sound_buffer, 4));  // 0000
+//     printf("GET_2B_OFS(sound_buffer, 6): %04X\n", GET_2B_OFS(sound_buffer, 6));  // 0000
+// #endif
 
     lbx_sound_type = GET_2B_OFS(sound_buffer, 2);
+    printf("lbx_sound_type: %d\n", lbx_sound_type);
+#ifdef STU_DEBUG
     dbg_prn("lbx_sound_type: %d\n", lbx_sound_type);
+#endif
 
     switch(lbx_sound_type)
     {
         case 1:  /* XMI file */
         {
-            dbg_prn("LBX Sound Entry is XMI\n");
+            DLOG("LBX Sound Entry is XMI");
             hw_audio_music_stop();
             // hw_audio_music_init(0, sound_buffer, sound_buffer_size);
             const uint8_t* data = NULL;
@@ -271,28 +276,34 @@ int16_t sdl2_Play_Sound__WIP(void* sound_buffer, uint32_t sound_buffer_size)
         } break;
         case 2:  /* VOC file */
         {
-            dbg_prn("LBX Sound Entry is VOC\n");
+            DLOG("LBX Sound Entry is VOC");
             Convert_VOC_To_WAV(sound_buffer, sound_buffer_size, &wav_sound_buffer, &wav_sound_buffer_size);
             sdl2_rw_ops = SDL_RWFromMem(wav_sound_buffer, wav_sound_buffer_size);
             if(sdl2_rw_ops == NULL)
             {
+#ifdef STU_DEBUG
                 dbg_prn("ERROR:  SDL_RWFromMem()  %s\n", SDL_GetError());
+#endif
             }
             sdl2_audio_data_chunk = Mix_LoadWAV_RW(sdl2_rw_ops, 0);
             if(sdl2_audio_data_chunk == NULL)
             {
+#ifdef STU_DEBUG
                 dbg_prn("ERROR:  Mix_LoadWAV_RW()  %s\n", SDL_GetError());
+#endif
             }
             Mix_VolumeChunk(sdl2_audio_data_chunk, MIX_MAX_VOLUME * 0.75);
             sdl2_play_channel_result = Mix_PlayChannel(0, sdl2_audio_data_chunk, 0);
             if(sdl2_play_channel_result == -1)
             {
+#ifdef STU_DEBUG
                 dbg_prn("ERROR:  Mix_PlayChannel()  %s\n", SDL_GetError());
+#endif
             }
         } break;
         default:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
             Audio_Error__STUB(SND_Invalid_File);
         } break;
     }
@@ -307,7 +318,9 @@ void sdl2_Play_Sound_WAV(Mix_Chunk * wav_sound_chunk)
 
     if(result == -1)
     {
+#ifdef STU_DEBUG
         dbg_prn("ERROR:  SOUND:  Mix_PlayChannel()  %s\n", SDL_GetError());
+#endif
     }
 
 }
@@ -340,7 +353,7 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
     /* WAV */
     // out_wav_buf
     // out_wav_len
-    uint8_t* wav_rvr = NULL;
+    uint8_t * wav_rvr = NULL;
     int16_t sample_16bit_signed = 0;
     uint8_t wav_header[LEN_WAV_HDR] = { 'R', 'I', 'F', 'F', 0, 0, 0, 0, 'W', 'A', 'V', 'E', 'f', 'm', 't', ' ', 16, 0, 0, 0, 1, 0, 1, 0, 0x94, 0x15, 0, 0, 0x94, 0x15, 0, 0, 1, 0, 8, 0, 'd', 'a', 't', 'a', 0, 0, 0, 0 };
     uint32_t wav_samples_per_second = 0;  // frequency, in hertz
@@ -353,7 +366,7 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
     /* VOC */
     // voc_buf
     // voc_len
-    const uint8_t* voc_rvr = NULL;
+    const uint8_t * voc_rvr = NULL;
     uint8_t sample_8bit_unsigned = 0;
     uint8_t voc_block_type;
     uint8_t voc_block_sample_rate = 0;
@@ -367,35 +380,43 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
     // Average Bytes per Second    4       32-bit unsigned integer     (number of bytes required for one second of audio data - sample rate * sample frame size)
     // Block align                 2       16-bit unsigned integer     (sample frame size - size in bytes of a unit of sample data) (e.g., 16-bit, 2-channel (16÷8)×2=4)
     // Bits per sample             2       16-bit unsigned integer     (the size in bits of a single sample (not a sample frame, but a single sample))
-    uint8_t* wav_buffer = NULL;
+    uint8_t * wav_buffer = NULL;
 
     // digi_sound_buffer1 = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_IntroT3, _screen_seg);
     // // TORAN3M1    intro speech
     // voc_len: 80602
+    printf("voc_len: %u\n", voc_len);
     if(voc_len >= (128 * 1024))
     {
-        printf("voc_len: %u\n", voc_len);
+#ifdef STU_DEBUG
         dbg_prn("voc_len: %u\n", voc_len);
-        __debugbreak();
+#endif
+        STU_DEBUG_BREAK();
         // Pssst... is your size var for lbxload_entry_length a uint32_t?
     }
 
     if(wav_buffer_idx == MAX_WAV_BUFFER_IDX)
     {
+#ifdef STU_DEBUG
         dbg_prn("(wav_buffer_idx == MAX_WAV_BUFFER_IDX)\n");
-        // __debugbreak();
+#endif
+        // STU_DEBUG_BREAK();
         wav_buffer_idx = 0;
     }
     if(wav_buffers[wav_buffer_idx] != NULL)
     {
+#ifdef STU_DEBUG
         dbg_prn("(wav_buffers[wav_buffer_idx] != NULL)\n");
+#endif
         free(wav_buffers[wav_buffer_idx]);
     }
     wav_buffers[wav_buffer_idx] = malloc(WAV_BUFFER_SIZE);
     if(wav_buffers[wav_buffer_idx] == NULL)
     {
+#ifdef STU_DEBUG
         dbg_prn("FATAL: malloc()\n");
-        __debugbreak();
+#endif
+        STU_DEBUG_BREAK();
     }
     wav_buffer = wav_buffers[wav_buffer_idx];
     wav_buffer_idx += 1;
@@ -433,33 +454,42 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
         {
         case 0:  /* VOC_TYPE_EOF */
         {
+            DLOG("VOC_TYPE_EOF\n");
             printf("VOC_TYPE_EOF\n");
             voc_len -= 1;  // -1 for block type
         } break;
         case 1:  /* VOC_TYPE_VOICE_DATA */
         {
+            DLOG("VOC_TYPE_VOICE_DATA\n");
             printf("VOC_TYPE_VOICE_DATA\n");
             voc_block_sample_rate = voc_rvr[4];
             printf("voc_block_sample_rate: %u\n", voc_block_sample_rate);
             voc_block_codec_id = voc_rvr[5];
             printf("voc_block_codec_id: %u\n", voc_block_codec_id);
-            voc_block_size = voc_rvr[3] << 16;
-            voc_block_size |= voc_rvr[2] << 8;
+            voc_block_size =  voc_rvr[3] << 16;
+            voc_block_size |= voc_rvr[2] <<  8;
             voc_block_size |= voc_rvr[1];
             voc_block_size -= 2;  // -2 for sample rate and codec id
             printf("voc_block_size: %u\n", voc_block_size);
+            if(voc_block_size >= (128 * 1024))
+            {
+#ifdef STU_DEBUG
+                dbg_prn("voc_block_size: %u\n", voc_block_size);
+#endif
+                STU_DEBUG_BREAK();
+            }
             voc_len -= 6;  // -6 for block type, block size, sample rate, and codec id
             voc_rvr += 6;  // +6 for block type, block size, sample rate, and codec id
             voc_block_frequency = 1000000 / (256 - voc_block_sample_rate);  // sample rate in hertz
             printf("voc_block_frequency: %u\n", voc_block_frequency);
             // wav_frequency = voc_block_frequency;
-            if (voc_block_codec_id != 0)
+            if(voc_block_codec_id != 0)
             {
-                __debugbreak();
+                STU_DEBUG_BREAK();
             }
             wav_sample_count += voc_block_size;
             voc_len -= voc_block_size;
-            while (voc_block_size--)
+            while(voc_block_size--)
             {
                 sample_8bit_unsigned = *voc_rvr++;
                 *wav_rvr++ = sample_8bit_unsigned;
@@ -467,7 +497,7 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
         } break;
         default:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
         } break;
         }
     }

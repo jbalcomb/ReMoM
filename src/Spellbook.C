@@ -256,6 +256,8 @@ SAMB_ptr SBK_Research_Incomes;
 /*
 SBK_BuildSpellbook__WIP()
 WIZ_ManaPerTurn = (((_players[HUMAN_PLAYER_IDX].mana_ratio * _players[HUMAN_PLAYER_IDX].Power_Base) / 100) - Player_Armies_And_Enchantments_Mana_Upkeep(HUMAN_PLAYER_IDX));
+just used for the calculation for SBK_BookManaLimit
+no reason this is module scoped?
 */
 int16_t WIZ_ManaPerTurn;
 
@@ -320,6 +322,10 @@ AI_Kill_Lame_Units()
 
 */
 int16_t GUI_Multipurpose_Int;  /* NOTE(JimBalcomb,20240922): presently, now, only used in Combat.C */
+/*
+
+count for research_list[] coming out of Build_Research_List()
+*/
 int16_t m_spell_list_count;  // DNE in Dasm;  uses GUI_Multipurpose_Int
 
 // WZD dseg:C928
@@ -338,6 +344,7 @@ SAMB_ptr wizlab_blue_column_seg;
 // WZD dseg:C96E
 SAMB_ptr wizlab_background_seg;  // DNE in Dasm
 SAMB_ptr wizlab_podium_seg;
+
 // WZD dseg:C970 00                                              db    0
 // WZD dseg:C971 00                                              db    0
 
@@ -379,7 +386,6 @@ void Build_Spell_List(int16_t type, int16_t spell_list[])
     int16_t itr_realms;  // _CX_
     int16_t itr_spells;  // _SI_
     int16_t spell_status;  // _DI_
-
     int16_t spells_list_status = 0;  // DNE in Dasm
 
     for(itr_realms = 0; itr_realms < NUM_MAGIC_REALMS; itr_realms++)
@@ -2197,7 +2203,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
     char Spell_Description[LEN_SPELL_DESCRIPTION] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     uint8_t Blink_Color_Array[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     char Spell_Name[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    SAMB_ptr Spell_Gained_Dlg_IMG = 0;
+    SAMB_ptr learn_spell_notify_seg = 0;
     int16_t Have_Candidates = 0;
     int16_t Interrupted = 0;
     char Conversion_String[LEN_TEMP_BUFFER] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -2219,7 +2225,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
         Allocate_Reduced_Map();
 
         // SPELLSCR.LBX, 060  "SUMGREEN"    ""
-        Spell_Gained_Dlg_IMG = LBX_Reload_Next(spellscr_lbx_file__ovr118, 60, _screen_seg);
+        learn_spell_notify_seg = LBX_Reload_Next(spellscr_lbx_file__ovr118, 60, _screen_seg);
 
         Assign_Auto_Function(Fill_Black_Draw, 2);
 
@@ -2227,13 +2233,13 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
         Main_Screen_Draw();
 
-        strcpy(GUI_NearMsgString, cnst_NewSpell_Msg);
+        strcpy(GUI_NearMsgString, cnst_NewSpell_Msg);  // "You have mastered the spell of "
 
         String_Copy_Far(Spell_Name, spell_data_table[spell_idx].name);
 
         strcat(GUI_NearMsgString, Spell_Name);
 
-        Notify2(0, 40, 2, GUI_NearMsgString, 0, Spell_Gained_Dlg_IMG, 0, 9, 0, 0, 0, 1, 0);
+        Notify2(0, 40, 2, GUI_NearMsgString, 0, learn_spell_notify_seg, 0, 9, 0, 0, 0, 1, 0);
 
         Deactivate_Auto_Function();
 
@@ -2263,7 +2269,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
         Learn_Spell_Animation_Draw();
 
-        PageFlipEffect = 2;
+        PageFlipEffect = pf_TogglePagesFadeIn;
 
         PageFlip_FX();
 
@@ -2299,8 +2305,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
         PageFlip_FX();
 
-        // Load_Palette(0, 255);  // ; EMPERATO - main game palette
-        Load_Palette(0, 0, 255);
+        Load_Palette(0, -1, ST_NULL);  // ; EMPERATO - main game palette
 
         Reset_Cycle_Palette_Color();
 
@@ -2352,7 +2357,6 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
                     }
 
-                    // GUI_Multipurpose_Int__m_spell_list_count = itr_spellbook_page_spell_count;
                     m_spell_list_count = itr_spellbook_page_spell_count;
 
                     Spell_Found = ST_TRUE;
@@ -2401,7 +2405,6 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
                         }
 
-                        // GUI_Multipurpose_Int__m_spell_list_count = itr_spellbook_page_spell_count;
                         m_spell_list_count = itr_spellbook_page_spell_count;
 
                         Spell_Found = ST_TRUE;
@@ -2435,15 +2438,6 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
         // SPECFX.LBX, 049  "NEWSPELL"  ""
         spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr118, 49, _screen_seg);
 
-        // mov     bx, [bp+Spell_on_Side]
-        // mov     cl, 2
-        // shl     bx, cl
-        // add     bx, _DI_itr_spellbook_page_spell_count
-        // mov     cl, 2
-        // shl     bx, cl
-        // push    SBK_Descriptions@[bx-4+2]       ; src_sgmt
-        // push    SBK_Descriptions@[bx-4]         ; src_ofst
-        // String_Copy_Far(Spell_Description, SBK_Descriptions[(((Spell_on_Side * 4) + itr_spellbook_page_spell_count) - 4)]);
         String_Copy_Far(Spell_Description, SBK_Descriptions[((Spell_on_Side * 4) + itr_spellbook_page_spell_count)]);
 
         Create_Picture(129, 37, IMG_SBK_Anims);
@@ -2477,7 +2471,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
         Clear_Fields();
 
-        SBK_NewSpellAnim_Stg = 0;  // ; (0-7), also combat casting cursor anim stage (0-4)
+        SBK_NewSpellAnim_Stg = 0;
 
         Minus1_Hotkey_Ctrl_Index = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_UNDEFINED, ST_UNDEFINED);
 
@@ -2485,13 +2479,11 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
         Assign_Auto_Function(SBK_DrawSpellDecode__STUB, 2);
 
-        // ; (0-7), also combat casting cursor anim stage (0-4)
         for(SBK_NewSpellAnim_Stg = 0; ((SBK_NewSpellAnim_Stg < 45) && (Interrupted == ST_FALSE)); SBK_NewSpellAnim_Stg++)
         {
 
             Interrupted = Get_Input();
 
-            // ; (0-7), also combat casting cursor anim stage (0-4)
             if(SBK_NewSpellAnim_Stg < 15)
             {
 
@@ -2505,10 +2497,9 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
             PageFlip_FX();
 
-            // ; (0-7), also combat casting cursor anim stage (0-4)
             if(SBK_NewSpellAnim_Stg == 0)
             {
-                PageFlipEffect = 0;
+                PageFlipEffect = pf_Normal;
             }
 
         }
@@ -3160,7 +3151,7 @@ void BigBook_Compose__WIP(int16_t page, SAMB_ptr pict_seg, int16_t flag)
             }
             else if(abs(m_spellbook_pages[page].spell[itr]) == spl_Spell_Of_Mastery)
             {
-                research_cost = _players[HUMAN_PLAYER_IDX].SoM_RC;
+                research_cost = _players[HUMAN_PLAYER_IDX].som_research_cost;
             }
             else
             {
@@ -3497,116 +3488,122 @@ void Spell_Research_Select(void)
 */
 
 // WZD o128p01
+// drake178: WIZ_RefreshResearch()
 /*
-
 ; fills any empty slots in the research candidate list
 ; if possible, and ensures that if the wizard has any
 ; candidates available, they are researching something
 ; by calling AI_Research_Picker or GUI_Research_Dialog
 ; if that is not the case
 ; returns the player's research candidate count
-
 */
-int16_t WIZ_RefreshResearch__STUB(int16_t player_idx)
+/*
+
+XREF:
+    WIZ_AddSpellRank__WIP()
+    j_Player_Research_Spells()
+        Player_Research_Spells()
+        PreInit_Overland()
+        WIZ_LearnSpell__WIP()
+*/
+int16_t Player_Research_Spells(int16_t player_idx)
 {
-    int16_t * Possible_Candidate_List = 0;
-    int16_t Ignore_SoM = 0;
-    int16_t Candidate_Index_In_Realm = 0;
-    int16_t Candidate_Realm = 0;
-    int16_t Candidate_Count = 0;
-    int16_t List_Index = 0;
-    int16_t Max_Candidates = 0;
+    int16_t * research_list = 0;
+    int16_t skip_som = 0;
+    int16_t spell_realm_idx = 0;
+    int16_t spell_realm = 0;
+    int16_t spells_cnt = 0;
+    int16_t research_list_idx = 0;
+    int16_t spells_max = 0;
     int16_t itr = 0; // _SI_
 
 
-    Max_Candidates = 8;
+    spells_max = NUM_RESEARCH_SPELLS;
+
     m_spell_list_count = 0;
-    Candidate_Count = 0;
-    Ignore_SoM = 0;
 
-    Possible_Candidate_List = (int16_t *)Near_Allocate_First(200);
+    spells_cnt = 0;
 
-    WIZ_GetResearchList__STUB(player_idx, Possible_Candidate_List);
+    skip_som = ST_FALSE;
+
+    research_list = (int16_t *)Near_Allocate_First(200);
 
 
-    // [byte ptr bx-24062]
-    // [(_players.spells_list+0D4h)+bx]
-    // D4h  212d  5 * 40 + 12
-    // _players.spells_list+Spell_Of_Mastery-1)
-    // DEDU  ¿ macro for spell status would know to xlat 'Spell Number' to 'spell_idx' ?
-    if(_players[player_idx].spells_list[((sbr_Arcane * 40) + 12)] == 2)
+    Build_Research_List(player_idx, &research_list[0]);
+
+
+    if(_players[player_idx].spells_list[(spl_Spell_Of_Mastery - 1)] == sls_Known)
     {
-        Ignore_SoM = ST_TRUE;
+        skip_som = ST_TRUE;
     }
     else
     {
-        for(itr = 0; itr < Max_Candidates; itr++)
+        for(itr = 0; itr < spells_max; itr++)
         {
-            if(_players[player_idx].research_spells[itr] > 0)
+            if(_players[player_idx].research_spells[itr] > spl_NONE)
             {
-                Candidate_Count++;
-                if(_players[player_idx].research_spells[itr] == 213)  /* Spell_Of_Mastery */
+                spells_cnt++;
+                if(_players[player_idx].research_spells[itr] == spl_Spell_Of_Mastery)
                 {
-                    Ignore_SoM = ST_TRUE;
+                    skip_som = ST_TRUE;
                 }
             }
         }
     }
 
-    while((Candidate_Count < Max_Candidates) && (m_spell_list_count > 0))
+    while((spells_cnt < spells_max) && (m_spell_list_count > 0))
     {
-        List_Index = (Random(m_spell_list_count) - 1);
+        research_list_idx = (Random(m_spell_list_count) - 1);
 
-        Candidate_Count++;
+        spells_cnt++;
 
-        for(itr = 0; itr < Max_Candidates; itr++)
+        for(itr = 0; itr < spells_max; itr++)
         {
-            if(_players[player_idx].research_spells[itr] == 0)
+            if(_players[player_idx].research_spells[itr] == spl_NONE)
             {
-                _players[player_idx].research_spells[itr] = Possible_Candidate_List[List_Index];
-                Candidate_Index_In_Realm = ((Possible_Candidate_List[List_Index] - 1) % 40);
-                Candidate_Realm = ((Possible_Candidate_List[List_Index] - 1) / 40);
-                _players[player_idx].spells_list[((Candidate_Realm * 40) + Candidate_Index_In_Realm)] = 3;  /* S_Researchable */
-                WIZ_GetResearchList__STUB(player_idx, &Possible_Candidate_List[0]);
+                _players[player_idx].research_spells[itr] = research_list[research_list_idx];
+                spell_realm_idx = ((research_list[research_list_idx] - 1) % NUM_SPELLS_PER_MAGIC_REALM);
+                spell_realm = ((research_list[research_list_idx] - 1) / NUM_SPELLS_PER_MAGIC_REALM);
+                _players[player_idx].spells_list[((spell_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx)] = sls_Researchable;
+                Build_Research_List(player_idx, &research_list[0]);
             }
         }
     }
 
 
-    Candidate_Count = 0;
+    spells_cnt = 0;
 
-    for(itr = 0; itr < Max_Candidates; itr++)
+    for(itr = 0; itr < spells_max; itr++)
     {
-        if(_players[player_idx].research_spells[itr] > 0)
+        if(_players[player_idx].research_spells[itr] > spl_NONE)
         {
-            Candidate_Count++;
+            spells_cnt++;
         }
     }
 
 
     if(
-        (Candidate_Count < Max_Candidates)
+        (spells_cnt < spells_max)
         &&
-        /* DELETEME  (GUI_Multipurpose_Int == 0) */
         (m_spell_list_count == 0)
         &&
-        (Ignore_SoM == ST_FALSE)
+        (skip_som == ST_FALSE)
     )
     {
-        if(_players[player_idx].research_spells[itr] == 0)
+        if(_players[player_idx].research_spells[itr] == spl_NONE)
         {
             _players[player_idx].research_spells[itr] = spl_Spell_Of_Mastery;
         }
     }
 
 
-    WIZ_ResearchSort__STUB(player_idx, Candidate_Count);
+    Sort_Research_List(player_idx, spells_cnt);
 
 
     if(
-        (_players[player_idx].researching_spell_idx == 0)
+        (_players[player_idx].researching_spell_idx == spl_NONE)
         &&
-        (Candidate_Count > 0)
+        (spells_cnt > 0)
         &&
         (_turn > 1)
     )
@@ -3626,92 +3623,89 @@ int16_t WIZ_RefreshResearch__STUB(int16_t player_idx)
 
     }
 
-    return Candidate_Count;
+    return spells_cnt;
 }
 
 
 // WZD o128p02
 // drake178: WIZ_GetResearchList()
 /*
-
 ; compiles a list of the lowest rarity spells from each realm available to the specified player
+*/
+/*
 
 */
-void WIZ_GetResearchList__STUB(int16_t player_idx, int16_t research_list[])
+void Build_Research_List(int16_t player_idx, int16_t research_list[])
 {
-    int16_t Max_Rarity;
-    int16_t itr;  // _SI_
+    int16_t rarity;
+    int16_t itr_realms;  // _SI_
     int16_t flag;  // _DI_
     int16_t itr_spells;  // _CX_
 
-    // DELETEME  GUI_Multipurpose_Int = 0;  // ; Spell List Count, New Spell Index, ...
     m_spell_list_count = 0;
 
-    for(itr = 0; itr < 4; itr++)
+    // itr 5 realms
+    for(itr_realms = 0; itr_realms <= 4; itr_realms++)
     {
 
         flag = ST_FALSE;
 
-        for(itr_spells = 0; itr_spells < 40; itr_spells++)
+        // itr 40 spells per realm
+        for(itr_spells = 0; itr_spells < NUM_SPELLS_PER_MAGIC_REALM; itr_spells++)
         {
 
             if(flag == ST_FALSE)
             {
-                Max_Rarity = (itr_spells / 10);
+                rarity = (itr_spells / 10);  // updates until the first 'knowable'
+            }
+
+            if((itr_spells / 10) <= rarity)
+            {
+
+                if(_players[player_idx].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] == sls_Knowable)
+                {
+
+                    research_list[m_spell_list_count] = ((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + (itr_spells + 1));
+
+                    m_spell_list_count++;
+
+                    flag = ST_TRUE;
+
+                }
+
             }
 
         }
 
     }
 
-    // drake178: add Arcane spells up to Disenchant Area, Awareness, or Summon Champion (the lowest available group)
     flag = ST_FALSE;
 
-    // itr_spells, Disenchant_Area - Magic_Spirit
-    //     spl_Spell_Of_Mastery    = 213,
-    //     spl_Magic_Spirit        = 201,
     for(itr_spells = 0; itr_spells < 12; itr_spells++)
     {
 
-        // itr_spells, Disenchant_Area - Magic_Spirit
-        //     spl_Disenchant_Area     = 204,
-        //     spl_Magic_Spirit        = 201,
-        // itr_spells, Awareness - Magic_Spirit
-        //     spl_Awareness           = 209,
-        //     spl_Magic_Spirit        = 201,
         if(
-            (flag == ST_TRUE)
-            &&
+            (flag != ST_TRUE)
+            ||
             (
-                (itr_spells == 3)
-                ||
-                (itr_spells == 8)
+                (itr_spells != 3)
+                &&
+                (itr_spells != 8)
             )
         )
         {
-            return;
-        }
 
-        // ~==
-        // (player_idx * sizeof(struct s_WIZARD))
-        // + itr_spells
-        // cmp     (_players.spells_list+Magic_Spirit-1)[bx], S_Knowable
-        // ...
-        // if(_players[player_idx].spells_list[(201 - 1 + itr_spells)] == 1)
-        // ovr128:02EE 80 BF F6 A1 01                                  cmp     [byte ptr bx-5E0Ah], 1
-        // cmp     [(_players.spells_list+0C8h)+bx], 1
-        // ...
-        if(_players[player_idx].spells_list[(200 + itr_spells)] == 1)
-        {
+            if(_players[player_idx].spells_list[((sbr_Arcane * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] == sls_Knowable)
+            {
 
-            // DELETEME  research_list[(GUI_Multipurpose_Int)] = (201 + itr_spells);
-            research_list[(m_spell_list_count)] = (201 + itr_spells);
+                research_list[(m_spell_list_count)] = ((sbr_Arcane * NUM_SPELLS_PER_MAGIC_REALM) + (itr_spells + 1));
 
-            // DELETEME  GUI_Multipurpose_Int++;
-            m_spell_list_count++;
+                m_spell_list_count++;
 
-            flag = ST_TRUE;
+                flag = ST_TRUE;
 
+            }
+            
         }
 
     }
@@ -4038,26 +4032,117 @@ void Change_Relations_For_Enchantments(int16_t player_idx, int16_t spell_idx, in
 
 
 // WZD o128p08
+// drake178: WIZ_ResearchSort()
 /*
-
 ; sorts the wizard's research candidates in ascending
 ; order by estimated research time or, if the research
 ; income is 0, by research cost
-;
 ; contains a BUG that results in some retorts not
 ; being applied properly, especially Conjurer
-
 */
-void WIZ_ResearchSort__STUB(int16_t player_idx, int16_t count)
+/*
+OON XREF:  Player_Research_Spells()
+*/
+void Sort_Research_List(int16_t player_idx, int16_t count)
 {
+    int16_t realm_research_incomes[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int16_t cost2 = 0;
+    int16_t cost1 = 0;
+    int16_t research_idx2 = 0;
+    int16_t spell_idx2 = 0;
+    int16_t research_points = 0;
+    int16_t research_bonus_percentage = 0;
+    int16_t itr = 0;
+    int16_t research_idx1 = 0;  // _SI_
+    int16_t spell_idx1 = 0;  // DNE in Dasm
 
+    Players_Update_Magic_Power();
 
+    Player_Magic_Power_Distribution(&research_bonus_percentage, &research_bonus_percentage, &research_points, player_idx);
 
+    // ~== SBK_BuildSpellbook__WIP()
+    for(itr = 0; itr < NUM_MAGIC_REALMS; itr++)
+    {
 
+        // ; BUG: research bonus calculated using an arbitrary
+        // ; spell of the realm, which won't always include all
+        // ; relevant bonuses, and may also add wrong ones
+        research_bonus_percentage = Player_Spell_Research_Bonus(HUMAN_PLAYER_IDX, ((itr * NUM_SPELLS_PER_MAGIC_REALM) + 1));
+        realm_research_incomes[itr] = ((research_points * research_bonus_percentage) / 100);
+    }
+
+    for(research_idx2 = 1; research_idx2 < count; research_idx2++)
+    {
+
+        spell_idx2 = _players[player_idx].research_spells[research_idx2];
+
+        research_idx1 = (research_idx2 - 1);
+
+        spell_idx1 = _players[player_idx].research_spells[research_idx1];  // DNE in Dasm
+
+        if(realm_research_incomes[spell_data_table[spell_idx1].magic_realm] == 0)
+        {
+    
+            cost1 = spell_data_table[spell_idx1].research_cost;
+
+        }
+        else
+        {
+
+            cost1 = (spell_data_table[spell_idx1].research_cost / realm_research_incomes[spell_data_table[spell_idx1].magic_realm]);
+
+        }
+
+        if(realm_research_incomes[spell_data_table[spell_idx2].magic_realm] == 0)
+        {
+
+            cost2 = spell_data_table[spell_idx2].research_cost;
+
+        }
+        else
+        {
+
+            cost2 = (spell_data_table[spell_idx2].research_cost / realm_research_incomes[spell_idx2]);
+
+        }
+
+        while((research_idx1 > -1) && (cost1 > cost2))
+        {
+
+            _players[player_idx].research_spells[(research_idx1 + 1)] = _players[player_idx].research_spells[research_idx1];
+
+            research_idx1--;
+
+            spell_idx1 = _players[player_idx].research_spells[research_idx1];  // DNE in Dasm
+
+            if(research_idx1 > -1)
+            {
+
+                if(realm_research_incomes[spell_data_table[spell_idx1].magic_realm] == 0)
+                {
+            
+                    cost1 = spell_data_table[spell_idx1].research_cost;
+
+                }
+                else
+                {
+
+                    cost1 = (spell_data_table[spell_idx1].research_cost / realm_research_incomes[spell_data_table[spell_idx1].magic_realm]);
+
+                }
+
+            }
+
+        }
+
+        _players[player_idx].research_spells[(research_idx1 + 1)] = spell_idx2;
+
+    }
 
 }
 
 // WZD o128p09
+// drake178: WIZ_AddSpellbook()
 /*
 awards the selected wizard a spellbook of the
 specified realm, adding knowable spells as necessary,
@@ -4079,7 +4164,7 @@ BUG: if called with 12 books and missing spells,
 00000008 ends PerBook_Spells
 
 */
-void WIZ_AddSpellbook__WIP(int16_t player_idx, int16_t magic_realm)
+void WIZ_AddSpellRank__WIP(int16_t player_idx, int16_t magic_realm)
 {
     int16_t realm_spells[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Book_Spell_Table[10][4] = {
@@ -4181,7 +4266,7 @@ void WIZ_AddSpellbook__WIP(int16_t player_idx, int16_t magic_realm)
 
     _players[player_idx].spellranks[magic_realm]++;
 
-    // TODO  WIZ_RefreshResearch(player_idx);
+    Player_Research_Spells(player_idx);
 
 }
 

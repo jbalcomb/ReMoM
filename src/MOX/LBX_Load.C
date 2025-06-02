@@ -56,15 +56,7 @@ SAMB_ptr LBX_Load_Data(char * lbx_name, int16_t entry_num, int16_t start_rec, in
 {
     SAMB_ptr SAMB_data;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: LBX_Load_Data(lbx_name = %s, entry_num = %d, start_rec = %d, num_recs = %d, record_size = %d)\n", __FILE__, __LINE__, lbx_name, entry_num, start_rec, num_recs, record_size);
-#endif
-
     SAMB_data = LBX_Load_Library_Data(lbx_name, entry_num, ST_NULL, sa_Single, start_rec, num_recs, record_size);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: LBX_Load_Data(lbx_name = %s, entry_num = %d, start_rec = %d, num_recs = %d, record_size = %d) { SAMB_data = %p }\n", __FILE__, __LINE__, lbx_name, entry_num, start_rec, num_recs, record_size, SAMB_data);
-#endif
 
     return SAMB_data;
 }
@@ -74,15 +66,7 @@ SAMB_ptr LBX_Reload_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head,
 {
     SAMB_ptr SAMB_data;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: LBX_Reload_Data(lbx_name = %s, entry_num = %d, SAMB_head = %p, start_rec = %d, num_recs = %d, record_size = %d)\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, start_rec, num_recs, record_size);
-#endif
-
     SAMB_data = LBX_Load_Library_Data(lbx_name, entry_num, SAMB_head, sa_First, start_rec, num_recs, record_size);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: LBX_Reload_Data(lbx_name = %s, entry_num = %d, SAMB_head = %p, start_rec = %d, num_recs = %d, record_size = %d) { SAMB_data = %p }\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, start_rec, num_recs, record_size, SAMB_data);
-#endif
 
     return SAMB_data;
 }
@@ -92,15 +76,7 @@ SAMB_ptr LBX_Reload_Next_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_
 {
     SAMB_ptr SAMB_data;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: LBX_Reload_Next_Data(lbx_name = %s, entry_num = %d, SAMB_head = %p, start_rec = %d, num_recs = %d, record_size = %d)\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, start_rec, num_recs, record_size);
-#endif
-
     SAMB_data = LBX_Load_Library_Data(lbx_name, entry_num, SAMB_head, sa_Next, start_rec, num_recs, record_size);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: LBX_Reload_Next_Data(lbx_name = %s, entry_num = %d, SAMB_head = %p, start_rec = %d, num_recs = %d, record_size = %d) { SAMB_data = %p }\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, start_rec, num_recs, record_size, SAMB_data);
-#endif
 
     return SAMB_data;
 }
@@ -293,14 +269,8 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
 // current_extended_flag= word ptr -6
 // header_offset= word ptr -4
     SAMB_ptr SAMB_data;
-
-
     uint16_t num_blocks_used;  // DNE in Dasm
     uint32_t record_start;  // DNE in Dasm; entry_start__record_start
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: LBX_Load_Library_Data(lbx_name = %s, entry_num = %d, SAMB_head = %p, allocation_type = %d, start_rec = %d, num_recs = %d, record_size = %d)\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, allocation_type, start_rec, num_recs, record_size);
-#endif
 
     // if(entry_num < 0) { LBX_Error(lbx_name, 1, entry_num, NULL); }  // "<lbx_name>.LBX [entry <entry_num>] could not be found."
 
@@ -311,9 +281,6 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
     }
 
     File_Name_Base(lbx_name);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] lbx_name: %s\n", __FILE__, __LINE__, lbx_name);
-#endif
 
     // SAMB_data = EMM_LBX_RecLoader(file_name, entry_num, SAMB_head@, start_rec, num_recs, record_size)
     // current_extended_flag = ST_FALSE;
@@ -323,7 +290,7 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
     /*
         BEGIN: Current vs. Previous
     */
-// #pragma warning(suppress : 4996)
+
     // if((lbxload_fptr == NULL) || (stricmp(lbx_name, lbxload_lbx_name) != 0))
     if(
         (lbxload_fptr == NULL)
@@ -364,22 +331,13 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
     /*
         END: Current vs. Previous
     */
-
-
-
-
-
+    
     /*
         BEGIN: Entry - Offset Start, End, Length
     */
     entry_start = ( GET_4B_OFS( (lbxload_lbx_header), ( 8 + ((entry_num) * 4)    ) ) );
     entry_end   = ( GET_4B_OFS( (lbxload_lbx_header), ( 8 + ((entry_num) * 4) + 4) ) );
     entry_length = entry_end - entry_start;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] entry_start: %d\n", __FILE__, __LINE__, entry_start);
-    dbg_prn("DEBUG: [%s, %d] entry_end: %d\n", __FILE__, __LINE__, entry_end);
-    dbg_prn("DEBUG: [%s, %d] entry_length: %d\n", __FILE__, __LINE__, entry_length);
-#endif
 
     fseek(lbxload_fptr, entry_start, 0);
     /*
@@ -405,26 +363,11 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
     record_start = entry_start + (start_rec * rec_size) + 4;
     fseek(lbxload_fptr, record_start, 0);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] max_records: %d\n", __FILE__, __LINE__, max_records);
-    dbg_prn("DEBUG: [%s, %d] rec_size: %d\n", __FILE__, __LINE__, rec_size);
-    dbg_prn("DEBUG: [%s, %d] (record_size != rec_size): %d\n", __FILE__, __LINE__, (record_size != rec_size));
-    dbg_prn("DEBUG: [%s, %d] (start_rec + num_recs > max_records): %d\n", __FILE__, __LINE__, (start_rec + num_recs > max_records));
-    dbg_prn("DEBUG: [%s, %d] record_start: %d\n", __FILE__, __LINE__, record_start);
-#endif
-
-
-
-
-
-
     /*
         BEGIN: Allocation Type
     */
     num_blocks = 1 + (entry_length / SZ_PARAGRAPH_B);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] num_blocks: %d\n", __FILE__, __LINE__, num_blocks);
-#endif
+
     switch(allocation_type)
     {
         case 0:  /* sa_Single */
@@ -457,11 +400,6 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
         END: Allocation Type
     */
 
-
-
-
-
-
     /*
         BEGIN: Read Data
     */
@@ -478,7 +416,7 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
     {
         read_size = entry_length;
         // if ( lbx_read_sgmt(current_seg, read_size, lbxload_fhnd) == ST_FAILURE ) { Error_Handler(lbx_name, 2, entry_num, NULL); }
-// #pragma warning(suppress : 28183)
+
         fread(rvr_SAMB_data, read_size, 1, lbxload_fptr);
     }
     /*
@@ -491,10 +429,6 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
 
 #if defined(__DOS16__)
 Done:
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: LBX_Load_Library_Data(lbx_name = %s, entry_num = %d, SAMB_head = %p, allocation_type = %d, start_rec = %d, num_recs = %d, record_size = %d) { SAMB_data = %p }\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, allocation_type, start_rec, num_recs, record_size, SAMB_data);
 #endif
 
     return SAMB_data;
@@ -544,12 +478,7 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
     int16_t max_records;
     int16_t rec_size;
     uint16_t read_size;
-
     uint32_t record_start;  // DNE in Dasm; entry_start__record_start
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: LBX_Load_Data_Static(lbx_name = %s, entry_num = %d, SAMB_head = %p, start_rec = %d, num_recs = %d, record_size = %)\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, start_rec, num_recs, record_size);
-#endif
 
     // if(entry_num < 0) { LBX_Error(lbx_name, 1, entry_num, NULL); }  // "<lbx_name>.LBX [entry <entry_num>] could not be found."
 
@@ -668,12 +597,8 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
 
 
 
-    // Update_MemFreeWorst_KB();
+    // DOMSDOS  Update_MemFreeWorst_KB();
     // MoO2: Check_Free();
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: LBX_Load_Data_Static(lbx_name = %s, entry_num = %d, SAMB_head = %p, start_rec = %d, num_recs = %d, record_size = %)\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, start_rec, num_recs, record_size);
-#endif
 
 }
 
@@ -708,10 +633,6 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
 {
     char buffer[120];
     char buffer2[20];
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Error_Handler(file_name = %s, error_num = %d, entry_num = %d, pages = %)\n", __FILE__, __LINE__, file_name, error_num, entry_num, pages);
-#endif
 
     strcpy(buffer, file_name);
 #pragma warning(suppress : 4996)
@@ -788,13 +709,10 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
     dbg_prn("DEBUG: [%s, %d] Exit_With_Message(buffer): %s\n", __FILE__, __LINE__, buffer);
 #endif
 
-    // Exit_With_Message(buffer);
+    Exit_With_Message(buffer);
+
 #if defined(__DOS16__)
     Exit(buffer);
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Error_Handler(file_name = %s, error_num = %d, entry_num = %d, pages = %)\n", __FILE__, __LINE__, file_name, error_num, entry_num, pages);
 #endif
 
 }

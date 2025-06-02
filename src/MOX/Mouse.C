@@ -1,7 +1,8 @@
+
 #include "Mouse.H"
 
 #include "MOX_DEF.H"
-// #include "MOX_TYPE.H"
+#include "MOX_TYPE.H"
 #include "Video.H"
 
 #include <assert.h>  /* assert() */
@@ -144,44 +145,29 @@ void Set_Mouse_List(int16_t count, struct s_mouse_list * list)
     struct s_mouse_list * tmp_list;
 
     tmp_list = list;
-
     tmp_count = count;
 
     current_mouse_list_count = count;
-
     current_mouse_list = list;
 
     tmp_count--;
-
     if(tmp_count != 0)
     {
-
-        // TODO  Why did I put this here?  Why can't I see the file history in VSC?  STU_DEBUG_BREAK();
-
         *tmp_list = list[tmp_count];
-
         do
         {
-
             if((tmp_list->x1 == 0) && (tmp_list->y1 == 0))
             {
-
                 break;
-
             }
-
             *tmp_list = list[tmp_count];
-
             tmp_list--;
-
             tmp_count--;
-
         } while(tmp_count != 0);
 
     }
 
     current_pointer_offset = list[tmp_count].center_offset;
-
     current_pointer_image_number = list[tmp_count].image_num;
 
 }

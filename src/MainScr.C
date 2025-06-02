@@ -1161,12 +1161,13 @@ void Main_Screen(void)
         }
 
         /*
-            BEGIN: Game Buttons - Spells Button
+            BEGIN:  Game Buttons - Spells Button
+                    Left-Click Spells Button
         */
         if(input_field_idx == _spells_button)
         {
             Play_Left_Click();
-            if(_players[_human_player_idx].casting_spell_idx == 214) /* Spell of Return */
+            if(_players[_human_player_idx].casting_spell_idx == spl_Spell_Of_Return)
             {
                 turns_til_return = _players[HUMAN_PLAYER_IDX].casting_cost_remaining / _players[HUMAN_PLAYER_IDX].Nominal_Skill;
                 itoa(turns_til_return, temp_string, 10);

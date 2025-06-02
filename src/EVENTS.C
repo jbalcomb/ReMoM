@@ -1141,6 +1141,7 @@ void Event_Twiddle(void)
             if(_CITIES[events_table->Plague_Data].population > 2)
             {
                 _CITIES[events_table->Plague_Data].population -= 1;
+Capture_Cities_Data();
             }
         }
         if(events_table->Plague_Status == 1)

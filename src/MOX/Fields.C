@@ -1465,10 +1465,6 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
 void Push_Field_Down(int16_t field_num, int16_t l_mx, int16_t l_my)
 {
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Push_Field_Down()\n", __FILE__, __LINE__);
-#endif
-
     if( (l_mx < 0) || (l_mx >= SCREEN_WIDTH) || (l_my < 0) || (l_my >= SCREEN_HEIGHT) )
     {
         return;
@@ -1540,10 +1536,6 @@ void Push_Field_Down(int16_t field_num, int16_t l_mx, int16_t l_my)
         Draw_Mouse_On_Page(l_mx, l_my);
         Set_Pointer_Position(l_mx, l_my);
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Push_Field_Down()\n", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -1664,10 +1656,6 @@ void Quick_Call_Auto_Function(void)
 void Call_Auto_Function(void)
 {
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Call_Auto_Function()\n", __FILE__, __LINE__);
-#endif
-
     if(auto_active_flag == ST_TRUE)
     {
         Mark_Time();
@@ -1682,10 +1670,6 @@ void Call_Auto_Function(void)
         Apply_Palette();
         Toggle_Pages();
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Call_Auto_Function()\n", __FILE__, __LINE__);
-#endif
 
 }
 

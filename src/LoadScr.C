@@ -628,18 +628,22 @@ void Set_Load_Screen_Help_List(void)
 
 // WZD o160p04
 /*
-vs. Loaded_Game_Update_MGC()
-vs. Loaded_Game_Update_WZD()
-FIXME_RIGHTMEOW  where did I get the idea there was such a thing as Loaded_Game_Update_MGC()?
+main_()
+    |-> Loaded_Game_Update__seg001()
+Load_Screen()
+    |-> Loaded_Game_Update__ovr160()
 */
 void Loaded_Game_Update(void)
 {
     int16_t itr;
     int16_t itr_players;
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()\n", __FILE__, __LINE__);
+#endif
 
-// DIFF DNE   WZD  s01p06  Loaded_Game_Update_WZD()
-    GAME_RazeCity = ST_FALSE;
+
+    /* seg001 */ GAME_RazeCity = ST_FALSE;
 
 
     _human_player_idx = HUMAN_PLAYER_IDX;
@@ -651,33 +655,21 @@ void Loaded_Game_Update(void)
     Reset_City_Area_Bitfields();
 
 
-    GAME_Overland_Init();
+    Init_Overland();
 
 
     Patch_Units_Upkeep_And_Sound();
 
 
-    // DONT  j_LD_CTY_ResRefresh();
-//     ; drake178: LD_CTY_ResRefresh()
-//     ; Legacy Development function, can be removed
-//     ; would update some aspect of some resource on every
-//     ; tile of every catchment area (including corners)
-// call    j_NOOP_Current_Player_All_City_Areas
+    // DONT  o142p04  NOOP_Current_Player_All_City_Areas() |-> empty_fxn_o142p03()
 
 
-    // DONT  j_LD_MAP_TFUnk40_Eval();  // drake178: ; not sure what this resource is or would have been, this function enumerates the first five tiles that have it, and records their coordinates
-// call    j_LD_MAP_TFUnk40_Eval           ; not sure what this resource is or would have been,
-//                                         ; this function enumerates the first five tiles that
-//                                         ; have it, and records their coordinates
+    // DONT  o142p19  LD_MAP_TFUnk40_Eval()
 
 
-    // ¿ in MGC, not WZD ?
-// call    j_CTY_CheckMinFarmers           ; ensures that every city has at least the minimum
-//                                         ; amount of farmers it needs, or can have if there are
-//                                         ; also rebels in it
-
-
+Check_Cities_Data();
     All_Colony_Calculations();
+Capture_Cities_Data();
 
 
     _unit_stack_count = 0;
@@ -699,121 +691,97 @@ void Loaded_Game_Update(void)
     All_AI_Refresh_Units_Movement();
 
 
-// DIFF DNE   WZD  s01p06  Loaded_Game_Update_WZD()
-    for(itr = 1; itr < NUM_PLAYERS; itr++)
-    {
-
-        _players[itr].average_unit_cost = 0;
-
-    }
+    /* seg001 */  for(itr = 1; itr < NUM_PLAYERS; itr++)
+    /* seg001 */  {
+    /* seg001 */      _players[itr].average_unit_cost = 0;
+    /* seg001 */  }
 
 
-    // DEDU  ¿¿¿ WIZ_NextIdleStack() was called above in GAME_Overland_Init() ???
     GAME_NextHumanStack();
 
 
     if(_difficulty == god_Intro)
     {
-
         magic_set.random_events = ST_FALSE;
-
     }
-
 
 
     /*
         BEGIN:  AI CONT / MOVE
     */
-
     for(itr = 0; itr < 100; itr++)
     {
-
         TBL_OvlMovePaths_EMS[itr] = ST_UNDEFINED;
-
     }
-
     CRP_UNIT_OverlandPath = ST_UNDEFINED;
-
     CONTX_CreateChains__WIP();
-
     CONTX_CreateLChains__WIP();
-
     for(itr = 0; itr < _num_players; itr++)
     {
-
         _ai_reevaluate_continents_countdown[itr] = ST_FALSE;
-
     }
-
     /*
         END:  AI CONT / MOVE
     */
 
 
-
     g_TimeStop_PlayerNum = ST_NONE;
-
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-
         if(_players[itr_players].Globals[TIME_STOP] > 0)
         {
-
             g_TimeStop_PlayerNum = (itr_players + 1);
-
         }
-
     }
+
 
 
     /*
         BEGIN:  STU Debug
     */
+
         // TST_Validate_GameData();
 
         TST_Patch_Game_Data();
+
     /*
         END:  STU Debug
     */
 
-
-
-
-
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Loaded_Game_Update()\n", __FILE__, __LINE__);
+#endif
 
 }
 
 
 // WZD o51p01
-// _main() |-> Loaded_Game_Update_WZD() |-> GAME_Overland_Init()
-// Load_Screen |-> [WZD ovr160] Loaded_Game_Update() |-> GAME_Overland_Init()
+// drake178: GAME_Overland_Init()
 /*
-    Does this not feel like ~ Init Main Screen?
-    There are a few oddities...
-        city buildings
-        staff lock flags
-        nominal skill calc
-        ! City Recalculate All - Main Screen needs that for the Resources Window
-        Cache_Graphics_Overland(), which has a terribly misleading name, loads other screens stuff
-        ? G_WLD_StaticAssetRfrsh() Meh. More oddities...
+OON XREF: Loaded_Game_Update()
 
+_main()     |-> Loaded_Game_Update_WZD()          |-> Init_Overland() |-> PreInit_Overland()
+Load_Screen |-> [WZD ovr160] Loaded_Game_Update() |-> Init_Overland() |-> PreInit_Overland()
+
+SEEALSO:  MoM-Init.md
 */
-void GAME_Overland_Init(void)
+void Init_Overland(void)
 {
     int16_t itr_cities = 0;  // _SI_
     int16_t itr_units = 0;  // _SI_
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: GAME_Overland_Init()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Init_Overland()\n", __FILE__, __LINE__);
 #endif
 
-    G_WLD_StaticAssetRfrsh();
+
+    PreInit_Overland();
+
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-        _CITIES[itr_cities].bldg_status[NONE] = bs_Built; // ? ~ enum City Building Status B_Replaced;
+        _CITIES[itr_cities].bldg_status[NONE] = bs_Built;
     }
-
 
     
     for(itr_units = 0; itr_units < _units; itr_units++)
@@ -837,19 +805,17 @@ void GAME_Overland_Init(void)
 
     }
 
+
     skill_staff_locked = 0;
     mana_staff_locked = 0;
     research_staff_locked = 0;
-
     _players[HUMAN_PLAYER_IDX].Nominal_Skill = Player_Base_Casting_Skill(HUMAN_PLAYER_IDX);
     
 
     // NIU?  CRP_OVL_MapWindowX = 0;
     // NIU?  CRP_OVL_MapWindowY = 0;
-
     _prev_world_x = 0;
     _prev_world_y = 0;
-    
     _map_x = 0;
     _map_y = 0;
 
@@ -895,54 +861,64 @@ Capture_Cities_Data();
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: GAME_Overland_Init()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Init_Overland()\n", __FILE__, __LINE__);
 #endif
 }
 
 // WZD o51p02
-// Loaded_Game_Update_WZD()  |-> GAME_Overland_Init()
-// Loaded_Game_Update()    |-> GAME_Overland_Init()
-// GAME_Overland_Init()  |-> G_WLD_StaticAssetRfrsh()
-// NOTE: no XREFs to j_G_WLD_StaticAssetRfrsh()
-void G_WLD_StaticAssetRfrsh(void)
-{
-// LFSR_LO= word ptr -4
-// LFSR_HI= word ptr -2
+// drake178: G_WLD_StaticAssetRfrsh()
+/*
+OON XREF: Loaded_Game_Update() |-> Init_Overland()
 
-    int16_t itr_cities;
-    int16_t itr_players;
+Loaded_Game_Update()
+    |-> Init_Overland()
+        |-> PreInit_Overland()
+
+SEEALSO:  MoM-Init.md
+*/
+void PreInit_Overland(void)
+{
+    uint32_t debug_random_seed = 0;
+    int16_t itr_cities = 0;
+    int16_t itr_players = 0;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: PreInit_Overland()\n", __FILE__, __LINE__);
+#endif
+
 
     Randomize();
+    debug_random_seed = 1000;
+    if(!Check_Release_Version())
+    {
+        Set_Random_Seed(debug_random_seed);
+    }
 
-//    LFSR_HI = 0;
-//    LFSR_LO = 0x03E8;
-//    if(!Check_Release_Version())
-//    {
-//        RNG_SetSeed(LFSR_LO, LFSR_HI)
-//    }
 
     all_units_moved = ST_FALSE;
-
     reset_active_stack = ST_TRUE;
-
     Reset_Draw_Active_Stack();
 
-    _map_plane = ARCANUS_PLANE;
 
+    _map_plane = ARCANUS_PLANE;
+    // === All_City_Calculations()
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
         Do_City_Calculations(itr_cities);
     }
 
-    Players_Update_Magic_Power();
 
+    Players_Update_Magic_Power();
     SBK_SomePageSaveVar = 0;
     CMB_SpellBookPage = 0;
     SBK_Candidate_Page = 0;
-
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-        WIZ_RefreshResearch__STUB(itr_players);
+        Player_Research_Spells(itr_players);
     }
 
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: PreInit_Overland()\n", __FILE__, __LINE__);
+#endif
 }

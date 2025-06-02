@@ -18,7 +18,9 @@ MoO2 Module: shear
 #ifndef FLIC_DRAW_H
 #define FLIC_DRAW_H
 
-#include "MOX_Lib.H"
+#include "MOX_TYPE.H"
+
+
 
 /*
 "BRUN"  "byte run"
@@ -36,6 +38,8 @@ MoO2 Module: shear
 */
 
 // MoO2  animation_header
+#pragma pack(push)
+#pragma pack(2)
 struct s_FLIC_HDR
 {
     /* 00 */ int16_t width;
@@ -48,6 +52,7 @@ struct s_FLIC_HDR
     /* 0C */ uint16_t emm_logical_page_offset;
     /* 0E */ int16_t palette_header_offset;
 };
+#pragma pack(pop)
 
 #define SZ_FLIC_HDR                             16
 #define SZ_FLIC_PAL_HDR                          8

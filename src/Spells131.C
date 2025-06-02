@@ -15,6 +15,8 @@
 
 // WZD dseg:6844                                                 BEGIN:  ovr131 - Initialized Data
 
+/* HACK */  char str_empty_string__ovr131[] = "";
+
 // WZD dseg:6844 53 50 45 43 46 58 00                            specfx_lbx_file__ovr131__1of2 db 'SPECFX',0         ; DATA XREF: CMB_Disenchant+1C8o
 // WZD dseg:684B 20 68 61 73 20 62 65 65 6E 20 64 69 73 70 65 6C+cnst_Dispel_Msg db ' has been dispelled.',0
 // WZD dseg:6860 6D 65 73 73 61 67 65 00                         message_lbx_file__ovr131 db 'message',0       ; DATA XREF: CMB_Disenchant+22Co ...
@@ -128,9 +130,11 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
             // ; least 9 even if combat summons can't be raised
             // ; BUG: this will copy the string to a random address
             // ; instead of saving its pointer here
-            // BUGBUG  strcpy(Target_Name_Ptr_List[Target_Count], _unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name);
-            Target_Name_Ptr_List[Target_Count] = _unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name;
+            // // BUGBUG  strcpy(Target_Name_Ptr_List[Target_Count], _unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name);
+            // Target_Name_Ptr_List[Target_Count] = _unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name;
+            Target_Name_Ptr_List[Target_Count] = (char *)*_unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name;
             Target_Count++;
+            /* HACK */  Target_Name_Ptr_List[Target_Count] = (char *)str_empty_string__ovr131;
         }
 
     }
@@ -155,12 +159,14 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
                 if(Target_Count < 7)
                 {
                     // Picked_Target = Selection_Box(Target_Count, &Target_Name_Ptr_List[0], 0, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
-                    Picked_Target = Selection_Box(Target_Count, Target_Name_Ptr_List, 0, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
+                    // Picked_Target = Selection_Box(Target_Count, Target_Name_Ptr_List, 0, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
+                    Picked_Target = Selection_Box(Target_Count, &Target_Name_Ptr_List[0], 0, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
                 }
                 else
                 {
                     // Picked_Target = Selection_Box(6, &Target_Name_Ptr_List[0], 1, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
-                    Picked_Target = Selection_Box(6, Target_Name_Ptr_List, 1, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
+                    // Picked_Target = Selection_Box(6, Target_Name_Ptr_List, 1, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
+                    Picked_Target = Selection_Box(6, &Target_Name_Ptr_List[0], 1, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
                 }
             }
 
@@ -298,20 +304,24 @@ void Cast_Animate_Dead(int16_t player_idx, int16_t caster_idx)
             // ; instead of saving its pointer here
             // ; dest
             // BUGBUG  strcpy(Target_Name_Ptr_List[Target_Count], _unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name);
-            Target_Name_Ptr_List[Target_Count] = _unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name;
+            // Target_Name_Ptr_List[Target_Count] = _unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name;
+            Target_Name_Ptr_List[Target_Count] = (char *)*_unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name;
             Target_Count++;
+            /* HACK */  Target_Name_Ptr_List[Target_Count] = (char *)str_empty_string__ovr131;
         }
     }
 
     if(Target_Count < 7)
     {
         // Picked_Target = Selection_Box(Target_Count, &Target_Name_Ptr_List[0], 0, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
-        Picked_Target = Selection_Box(Target_Count, Target_Name_Ptr_List, 0, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
+        // Picked_Target = Selection_Box(Target_Count, Target_Name_Ptr_List, 0, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
+        Picked_Target = Selection_Box(Target_Count, &Target_Name_Ptr_List[0], 0, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
     }
     else
     {
         // Picked_Target = Selection_Box(6, &Target_Name_Ptr_List[0], 1, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
-        Picked_Target = Selection_Box(6, Target_Name_Ptr_List, 1, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
+        // Picked_Target = Selection_Box(6, Target_Name_Ptr_List, 1, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
+        Picked_Target = Selection_Box(6, &Target_Name_Ptr_List[0], 1, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
     }
 
     if(Picked_Target != ST_UNDEFINED)

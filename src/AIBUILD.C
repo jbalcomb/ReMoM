@@ -163,10 +163,6 @@ void Player_Colony_Autobuild_CP(int16_t player_idx, int16_t city_idx)
     int16_t itr_units = 0;  // _DI_
     int16_t itr_cities = 0;  // _DI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Colony_Autobuild_CP()\n", __FILE__, __LINE__);
-#endif
-
 Check_Cities_Data();
 
     assert((player_idx >= 1) && (player_idx <= 4));
@@ -278,18 +274,9 @@ Check_Cities_Data();
             }
 
             product_idx = _CITIES[itr_cities].construction;
-if(_CITIES[itr_cities].construction < -4)
-{
-#ifdef WIN32
-    STU_DEBUG_BREAK();
-#endif
-}
-if(_CITIES[itr_cities].construction > 298)
-{
-#ifdef WIN32
-    STU_DEBUG_BREAK();
-#endif
-}
+
+            assert(_CITIES[city_idx].construction >= -4);  // min -1 is grand vizier
+            assert(_CITIES[city_idx].construction <= 298);  // 100 buildings + 198 units
 
             if(product_idx >= 100)
             {
@@ -443,10 +430,6 @@ Check_Cities_Data();
         _CITIES[city_idx].construction = bt_TradeGoods;
 // Check_Cities_Data();
 Capture_Cities_Data();
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_Colony_Autobuild_CP()\n", __FILE__, __LINE__);
-#endif
 
         return;
 
@@ -607,25 +590,10 @@ Check_Cities_Data();
 
 Check_Cities_Data();
     _CITIES[city_idx].construction = product_array[product_choice];
-// Check_Cities_Data();
 Capture_Cities_Data();
-if(_CITIES[city_idx].construction < -4)
-{
-#ifdef WIN32
-    STU_DEBUG_BREAK();
-#endif
-}
-if(_CITIES[city_idx].construction > 298)
-{
-#ifdef WIN32
-    STU_DEBUG_BREAK();
-#endif
-}
-Check_Cities_Data();
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_Colony_Autobuild_CP()\n", __FILE__, __LINE__);
-#endif
+    assert(_CITIES[city_idx].construction >= -4);  // min -1 is grand vizier
+    assert(_CITIES[city_idx].construction <= 298);  // 100 buildings + 198 units
 
 }
 
@@ -774,23 +742,12 @@ Check_Cities_Data();
 
 Check_Cities_Data();
         _CITIES[city_idx].construction = product_choice;
-// Check_Cities_Data();
 Capture_Cities_Data();
 
-if(_CITIES[city_idx].construction < -4)
-{
-#ifdef WIN32
-    STU_DEBUG_BREAK();
-#endif
-}
-if(_CITIES[city_idx].construction > 298)
-{
-#ifdef WIN32
-    STU_DEBUG_BREAK();
-#endif
-}
-
     }
+
+    assert(_CITIES[city_idx].construction >= -4);  // min -1 is grand vizier
+    assert(_CITIES[city_idx].construction <= 298);  // 100 buildings + 198 units
 
 }
 
@@ -1107,17 +1064,8 @@ Check_Cities_Data();
 
     _CITIES[city_idx].construction = product_array[product_choice];
 
-if(_CITIES[city_idx].construction < -4)
-{
-#ifdef WIN32
-    STU_DEBUG_BREAK();
-#endif
-}
-if(_CITIES[city_idx].construction > 298)
-{
-#ifdef WIN32
-    STU_DEBUG_BREAK();
-#endif
-}
+    
+    assert(_CITIES[city_idx].construction >= -4);  // min -1 is grand vizier
+    assert(_CITIES[city_idx].construction <= 298);  // 100 buildings + 198 units
 
 }

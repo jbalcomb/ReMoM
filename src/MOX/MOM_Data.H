@@ -752,6 +752,8 @@ enum e_EVENT_MESSAGE_TYPE
 
 
 // sizeof:  0Ah  10d
+#pragma pack(push)
+#pragma pack(2)
 struct s_BOOKSHELF
 {
     /* 00 */ int16_t Nature;
@@ -760,8 +762,11 @@ struct s_BOOKSHELF
     /* 06 */ int16_t Life;
     /* 08 */ int16_t Death;
 };
+#pragma pack(pop)
 
 // sizeof:  12h  18d
+#pragma pack(push)
+#pragma pack(2)
 struct s_RETORTS
 {
     /* 00 */ int8_t Alchemy;
@@ -783,6 +788,7 @@ struct s_RETORTS
     /* 10 */ int8_t Charismatic;
     /* 11 */ int8_t Artificer;
 };
+#pragma pack(pop)
 
 
 /*
@@ -826,38 +832,6 @@ struct s_SPELL_DATA
 #pragma pack(pop)
 
 
-// DELETE  // sizeof:  0Ch  12d
-// DELETE  #pragma pack(push)
-// DELETE  #pragma pack(2)
-// DELETE  struct s_HERO
-// DELETE  {
-// DELETE      /* 00 */  int16_t  Level;  // ¿ experience (level) ?
-// DELETE      /* / * 02 * /  uint16_t Abilities_LO;  // ; enum Hero_Ability_LO */
-// DELETE      /* / * 04 * /  uint16_t Abilities_HI;  // ; enum Hero_Ability_HI */
-// DELETE      union {
-// DELETE          uint32_t abilities;
-// DELETE          uint16_t Abilities_LO;  // ; enum Hero_Ability_LO
-// DELETE          uint16_t Abilities_HI;  // ; enum Hero_Ability_HI
-// DELETE      };
-// DELETE      /* 06 */  int8_t   Casting_Skill;
-// DELETE      /* 07 */  uint8_t  Spells[4];
-// DELETE      /* 0B */  uint8_t  Unused_0Bh;      /* ¿ padding byte to align-2 or Spells was [5] ? */
-// DELETE      /* 0C */
-// DELETE  };
-// DELETE  #pragma pack(pop)
-// DELETE  struct s_HERO2
-// DELETE  {
-// DELETE      /* 00 */  int16_t  Level;  // ¿ experience (level) ?
-// DELETE      /* 02 */  uint32_t abilities;
-// DELETE      /* 06 */  int8_t   Casting_Skill;
-// DELETE      /* 07 */  uint8_t  Spells[4];
-// DELETE      /* 0B */  uint8_t  Unused_0Bh;      /* ¿ padding byte to align-2 or Spells was [5] ? */
-// DELETE      /* 0C */
-// DELETE  };
-// DELETE  struct s_HEROES
-// DELETE  {
-// DELETE      struct s_HERO2 heroes[NUM_HERO_TYPES];
-// DELETE  };
 // sizeof:  0Ch  12d
 #pragma pack(push)
 #pragma pack(2)
@@ -872,10 +846,13 @@ struct s_HERO
 };
 #pragma pack(pop)
 
+#pragma pack(push)
+#pragma pack(2)
 struct s_HEROES
 {
     struct s_HERO heroes[NUM_HERO_TYPES];
 };
+#pragma pack(pop)
 
 // sizeof:  1Ch  28d
 #pragma pack(push)
@@ -889,6 +866,7 @@ struct s_OWNED_HERO
     /* 1C */
 };
 #pragma pack(pop)
+
 
 // drake178: INACTV_HERO
 /*
@@ -909,6 +887,7 @@ struct s_INACTV_HERO
 };
 #pragma pack(pop)
 
+
 // sizeof:  1Eh  30d
 #pragma pack(push)
 #pragma pack(2)
@@ -924,6 +903,7 @@ struct s_ITEM_POWER
 /* 1E */
 };
 #pragma pack(pop)
+
 
 // sizeof:  38h  56d
 #pragma pack(push)
@@ -1038,6 +1018,8 @@ struct s_DIFFICULTY_MODIFIERS
     /* 0E */  int16_t maintenance;
     /* 10 */
 };
+#pragma pack(pop)
+
 
 // sizeof:  06h  6d
 struct s_Astr_Data
@@ -1046,6 +1028,8 @@ struct s_Astr_Data
     /* 02 */ int16_t Spell_Research;    /* populated in Record_History(), by WIZ_Get_Astr_ArmyStr() */
     /* 04 */ int16_t Army_Strength;     /* populated in Record_History(), by WIZ_Get_Astr_Resrch() */
 };
+#pragma pack(pop)
+
 
 // sizeof:  18h  24d
 struct s_GLOBALE
@@ -1076,7 +1060,7 @@ struct s_GLOBALE
     /* 17 */ int8_t Awareness;
     /* 18 */
 };
-
+#pragma pack(pop)
 
 
 // sizeof:  10h  16d
@@ -1092,8 +1076,7 @@ struct s_GAME_DATA
     /* 0E */ uint16_t Total_Wizards;
     /* 10 */
 };
-
-
+#pragma pack(pop)
 
 
 // sizeof:  132h  306d
@@ -1128,6 +1111,7 @@ struct s_WIZ_DIPL
     /* 012C */ int8_t G_Warning_Progress[NUM_PLAYERS];
     /* 0132 */
 };
+#pragma pack(pop)
 
 
 #pragma pack(push)
@@ -1143,7 +1127,7 @@ struct s_WIZARD
     /* 0018 */ uint16_t Personality;            /* enum AI_Personality */
     /* 001A */ uint16_t Objective;              /* enum AI_Objective */
     /* 001C */ uint8_t Unknown_01Ch[6];         /* ¿  ? */
-    /* 0022 */ uint16_t SoM_RC;                 /* in Init_Summoning_Circle_And_Spell_Of_Mastery(), sets to spell_data_table[spl_Spell_Of_Mastery].research_cost;  DEDU  What is this? ¿ 'Spell of Mastery' Research Cost ? ¿ Is it dynamic / why is it not just in the spell data table or a formula/function ? */
+    /* 0022 */ uint16_t som_research_cost;                 /* in Init_Summoning_Circle_And_Spell_Of_Mastery(), sets to spell_data_table[spl_Spell_Of_Mastery].research_cost;  DEDU  What is this? ¿ 'Spell of Mastery' Research Cost ? ¿ Is it dynamic / why is it not just in the spell data table or a formula/function ? */
     /* 0024 */ uint16_t fame;
     /* 0026 */ uint16_t Power_Base;
     /* 0028 */ uint16_t volcanoes;              /* count of volcanoes created by the Wizard  (NOTE: stored as a 3-bit member in the _map_square_flags bitfield) */
@@ -1205,7 +1189,7 @@ struct s_WIZARD
     /* 025C */ uint16_t mana_reserve;       /*  */
     /* 025E */ int32_t  spell_casting_skill;  /* "spell casting skill" */
     /* 0262 */ int16_t researching_spell_idx;  /* spells_list[] spell_idx of the spell currently being researched */
-    /* 0264 */ uint8_t  spells_list[NUM_SPELLS];   /* TODO should be [6][40] or some odd, equivalent struct */ /* enum? known, knowable, ? */
+    /* 0264 */ uint8_t  spells_list[NUM_SPELLS];   /* "Spell Library" TODO should be [6][40] or some odd, equivalent struct */ /* enum? known, knowable, ? */
     /* 0354 */ uint16_t Defeated_Wizards;  /* ¿ bifield of bit_num == play_num ? */
     /* 0356 */ uint16_t gold_reserve;       /*  */
     /* 0358 */ uint16_t Unknown_358h;
@@ -1236,6 +1220,8 @@ struct s_WIZARD
 
 // drake178: struc BLD_REC
 // sizeof:  34h  52d
+#pragma pack(push)
+#pragma pack(2)
 struct s_BLDG_DATA
 {
     /* 00 */  char name[LEN_BUILDING_NAME];
@@ -1262,8 +1248,11 @@ struct s_BLDG_DATA
     /* 32 */  int16_t Category;
     /* 34 */
 };
+#pragma pack(pop)
 
 
+#pragma pack(push)
+#pragma pack(2)
 struct s_BLDG_CR
 {
     int16_t x1;
@@ -1271,8 +1260,11 @@ struct s_BLDG_CR
     int16_t x2;
     int16_t y2;
 };
+#pragma pack(pop)
 
 // sizeof:  0Eh  14d
+#pragma pack(push)
+#pragma pack(2)
 struct s_BLDG
 {
     /* 00 */  int16_t bldg_idx;  // enum e_BUILDING_TYPE
@@ -1284,8 +1276,12 @@ struct s_BLDG
     /* 0C */  int16_t IDK_y;
     /* 0E */
 };
+#pragma pack(pop)
+
 
 // sizeof: 2Eh 46d
+#pragma pack(push)
+#pragma pack(2)
 struct s_CITYSCAPE
 {
     /* 00 */ struct s_BLDG * column_00;
@@ -1312,14 +1308,20 @@ struct s_CITYSCAPE
     /* 2A */ struct s_BLDG * column_21;
     /* 2C */ struct s_BLDG * column_22;
 };
+#pragma pack(pop)
 
+#pragma pack(push)
+#pragma pack(2)
 struct s_CITYSCAPE_CR
 {
     struct s_BLDG cr[15][23];
 };
+#pragma pack(pop)
 
 
 // sizeof:  24h  36d
+#pragma pack(push)
+#pragma pack(2)
 struct s_CITY_BUILDINGS
 {
     /* 00 */ int8_t None;
@@ -1359,11 +1361,12 @@ struct s_CITY_BUILDINGS
     /* 22 */ int8_t Miners_Gld;
     /* 23 */ int8_t City_Walls;
 };
-
-
+#pragma pack(pop)
 
 
 // sizeof:  19h  25d
+#pragma pack(push)
+#pragma pack(2)
 struct s_CITY_ENCHANTMENTS
 {
     /* 00 */ int8_t Wall_of_Fire;
@@ -1393,10 +1396,12 @@ struct s_CITY_ENCHANTMENTS
     /* 18 */ int8_t Altar_of_Battle;
     /* 19 */
 };
-
+#pragma pack(pop)
 
 
 // sizeof:  72h  114d
+#pragma pack(push)
+#pragma pack(2)
 struct s_CITY
 {
     /* 00 */ char name[LEN_CITY_NAME];  // pointer  2-byte in 16-bit DOS  8-byte in 64-bit Windows
@@ -1431,6 +1436,8 @@ struct s_CITY
     /* 65 */ int8_t road_connections[13];  // Bit-Field; use Test_Bit_Field(); bit_idx is city_idx;
     /* 66 */ 
 };
+#pragma pack(pop)
+
 
 // sizeof:  18h  24d
 #pragma pack(push)
@@ -1457,6 +1464,7 @@ struct s_LAIR
     /* 18 */
 };
 #pragma pack(pop)
+
 
 // sizeof:  30h  48d
 #pragma pack(push)
@@ -1669,6 +1677,8 @@ struct s_BATTLE_UNIT
 #pragma pack(pop)
 
 
+#pragma pack(push)
+#pragma pack(2)
 struct s_CMBT_DATA
 {
     /* 0x00 */  int8_t melee;
@@ -1701,9 +1711,12 @@ struct s_CMBT_DATA
     /* 0x20 */  int16_t Sound;
 
 };
+#pragma pack(pop)
 
 
 // sizeof: 04h  4d
+#pragma pack(push)
+#pragma pack(2)
 struct s_TOWER
 {
     /* 00 */ int8_t wx;
@@ -1712,9 +1725,12 @@ struct s_TOWER
     /* 03 */ int8_t pad2B_03h;  // 2-byte alignment padding
     /* 04 */
 };
+#pragma pack(pop)
 
 
 // sizeof: 04h  4d
+#pragma pack(push)
+#pragma pack(2)
 struct s_FORTRESS
 {
     /* 00 */ int8_t wx;
@@ -1723,19 +1739,25 @@ struct s_FORTRESS
     /* 03 */ int8_t active;
     /* 04 */
 };
+#pragma pack(pop)
 
 
 // sizeof: 04h  4d
+#pragma pack(push)
+#pragma pack(2)
 struct s_STACK
 {
     /* 00 */ int16_t unit_idx;
     /* 02 */ int16_t active;  // AKA Can_Move  if us_Purify then ~busy
     /* 04 */
 };
+#pragma pack(pop)
 
 
 // drake178: struc STD_EVENT
 // sizeof:  6h  6d
+#pragma pack(push)
+#pragma pack(2)
 struct STD_EVENT
 {
     /* 0x00 */ int16_t Status;
@@ -1743,9 +1765,12 @@ struct STD_EVENT
     /* 0x04 */ int16_t Data;
     /* 0x06 */
 };
+#pragma pack(pop)
 
 // drake178: struc REV_EVENT
 // sizeof:  6h  6d
+#pragma pack(push)
+#pragma pack(2)
 struct REV_EVENT
 {
     /* 0x00 */ int16_t Status;
@@ -1753,15 +1778,19 @@ struct REV_EVENT
     /* 0x04 */ int16_t Player;
     /* 0x06 */
 };
+#pragma pack(pop)
 
 // drake178: struc CON_EVENT
 // sizeof:  4h  4d
+#pragma pack(push)
+#pragma pack(2)
 struct CON_EVENT
 {
     /* 0x00 */ int16_t Status;
     /* 0x02 */ int16_t Duration;
     /* 0x04 */
 };
+#pragma pack(pop)
 
 // // drake178: ¿ ?
 // // sizeof:  64h  100d
@@ -1792,6 +1821,8 @@ struct CON_EVENT
 //     /* 0x64 */
 // };
 
+#pragma pack(push)
+#pragma pack(2)
 struct s_EVENT_2
 {
     /* 0x00 */ int16_t status;
@@ -1800,7 +1831,10 @@ struct s_EVENT_2
     /* 0x4A */ int16_t duration;
 
 };
+#pragma pack(pop)
 
+#pragma pack(push)
+#pragma pack(2)
 struct s_EVENT_DATA
 {
     /* 0x00 */  int16_t last_event_turn;
@@ -1891,7 +1925,10 @@ struct s_EVENT_DATA
 
     /* 0x64 */
 };
+#pragma pack(pop)
 
+#pragma pack(push)
+#pragma pack(2)
 struct s_EVENT_DATA_2
 {
     /* 0x00 */  int16_t last_event_turn__MGFY;
@@ -1915,10 +1952,13 @@ struct s_EVENT_DATA_2
     struct s_EVENT_2 mana_short;
     /* 0x64 */
 };
+#pragma pack(pop)
 
 
 
 // drake178: USW_List
+#pragma pack(push)
+#pragma pack(2)
 struct s_UV_List
 {
  /* 00 */ char names[NUM_UNIT_VIEW_LIST_ITEMS][LEN_DESCRIPTION];
@@ -1927,6 +1967,7 @@ struct s_UV_List
  /* 24 */ int16_t helps[NUM_UNIT_VIEW_LIST_ITEMS];      // enum HELP_TXT
  /* 26 */
 };
+#pragma pack(pop)
 
 
 

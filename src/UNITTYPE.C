@@ -67,8 +67,7 @@ char unit_type_name_030[] = "Elven Archer";
 char unit_type_name_031[] = "Knight";
 char unit_type_name_032[] = "Necromancer";
 char unit_type_name_033[] = "Chaos Warrior";
-char unit_type_name_034[] = "Chosen";
-
+char unit_type_name_034[] = "Chosen";           /* ^^^ Hero Unit Types ^^^ */
 char unit_type_name_035[] = "Trireme";
 char unit_type_name_036[] = "Galley";
 char unit_type_name_037[] = "Catapult";

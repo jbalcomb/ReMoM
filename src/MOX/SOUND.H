@@ -79,16 +79,6 @@ enum e_SND_DRV
 
 
 /*
-    SOUNDFX.LBX
-    .VOC files
-    Creative Labs - Creative Voice File
-*/
-enum e_SOUNDFX
-{
-    SFX_000 = 0  /* SLX19.VOC  Standard Button click */
-};
-
-/*
 MUSIC.LBX
 Entries: 116
 {  0, ..., 115 }
@@ -214,6 +204,16 @@ enum MUSIC_Tracks
     MUSIC_Fanfare               = 115
 };
 
+
+/*
+    SOUNDFX.LBX
+    .VOC files
+    Creative Labs - Creative Voice File
+*/
+enum e_SOUNDFX
+{
+    SFX_000 = 0  /* SLX19.VOC  Standard Button click */
+};
 
 enum SOUND_FX
 {

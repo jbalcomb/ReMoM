@@ -73,20 +73,28 @@
 
 
 //  ; (sizeof=0x4, standard type)
+#pragma pack(push)
+#pragma pack(2)
 struct s_COMBAT_ENCHANTMENT_ICON_DATA
 {
     /* 00 */  int16_t icon_idx;
     /* 02 */  int16_t help_idx;
     /* 04 */
 };
+#pragma pack(pop)
+
 
 //  ; (sizeof=0x4, standard type)
+#pragma pack(push)
+#pragma pack(2)
 struct s_COMBAT_ENCHANTMENT_ICON
 {
     /* 00 */ SAMB_ptr icon_seg;
     /* 02 */ int16_t help_idx;
     /* 04 */
 };
+#pragma pack(pop)
+
 
 
 extern SAMB_ptr DBG_EmmHndl_FIGUREX;
@@ -1440,7 +1448,7 @@ void Combat_Unit_Enchantment_Outline_Set(int16_t battle_unit_idx);
 void Combat_Unit_Enchantment_Outline_Draw(int16_t enchantment_magic_realm);
 
 // WZD o105p07
-void CMB_UpdateTrueSight(void);
+void Update_Sees_Illusions(void);
 
 // WZD o105p08
  void BU_SetVisibility__WIP(int16_t battle_unit_idx);
@@ -1835,7 +1843,7 @@ int16_t BU_IsInCityProper__STUB(int16_t battle_unit_idx);
 int16_t Combat_Grid_Cell_Has_City_Wall(int16_t cgc2, int16_t cgc1);
 
 // WZD o124p15
-int16_t BU_IsCombatSummon__WIP(int16_t battle_unit_idx);
+int16_t Battle_Unit_Is_Summoned_Creature(int16_t battle_unit_idx);
 
 // WZD o124p16
 int16_t Battle_Unit_Moves2(int16_t battle_unit_idx);

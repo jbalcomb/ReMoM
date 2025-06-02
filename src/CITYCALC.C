@@ -146,7 +146,7 @@ void Players_Update_Magic_Power(void)
 
     for(itr = 1; itr < _num_players; itr++)
     {
-        _players[itr].Power_Base = ((_players[itr].Power_Base * difficulty_modifiers_table[_difficulty].mana) / 100);  // e.g., * 150 / 100 ~== * 1.5 ~== +50%
+        _players[itr].Power_Base *= ((difficulty_modifiers_table[_difficulty].mana) / 100);  // e.g., * 150 / 100 ~== * 1.5 ~== +50%
     }
 
     for(itr = 0; itr < _cities; itr++)
@@ -159,7 +159,7 @@ void Players_Update_Magic_Power(void)
 
     for(itr = 0; itr < _num_players; itr++)
     {
-        if(_players[itr].casting_spell_idx == 214)  /* Spell_Of_Return */
+        if(_players[itr].casting_spell_idx == spl_Spell_Of_Return)
         {
             _players[itr].Power_Base = 0;
         }
@@ -3047,9 +3047,7 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 
 /* DEBUG */  if(minimum_farmer_count < 0)
 /* DEBUG */  {
-#ifdef WIN32
 /* DEBUG */      STU_DEBUG_BREAK();
-#endif
 /* DEBUG */  }
 
     return minimum_farmer_count;

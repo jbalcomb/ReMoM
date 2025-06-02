@@ -11,6 +11,25 @@ Learn Spell
 ???
 
 
+Features?
+big spellbook
+no casting
+    no spell power slider
+no turns-to-cast symbols
+    text instead - "(5 Turns)" ... "Casting Cost:" or "Research Cost:"
+
+small spellbook
+casting
+    spell power slider
+turns-to-cast symbols
+
+combat spellbook
+casting
+    spell power slider
+turns-to-cast symbols
+
+
+
 
 ¿ anywhere it might be worth knowing what is specific to big or small or just agnostic ?
 

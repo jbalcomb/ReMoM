@@ -12,12 +12,30 @@ all combat summons are done
 
 
 
+Spreadsheet - OSG Spells by Category
+[ ] Creature Summoning Spells
+[ ] City Enchantments
+[ ] Creature Enchantments
+[x] Global Enchantments
+[ ] Combat Spells
+[ ] Special Spells
+
+Spreadsheet - OSG Spells by Realm
+[ ] Arcane
+[ ] Chaos
+[ ] Death
+[ ] Life
+[ ] Nature
+[ ] Sorcery
+
+
+
 [ ] Earth to Mud
 [ ] Resist Elements
 [ ] Wall of Stone
 [ ] Giant Strength
 [ ] Web
-[ ] War Bears
+[x] War Bears
 [ ] Stone Skin
 [ ] Water Walking
 [ ] Sprites
@@ -103,7 +121,7 @@ all combat summons are done
 [ ] Warp Creature
 [x] Fire Elemental
 [ ] Lightning Bolt
-[ ] Fire Giant
+[x] Fire Giant
 [ ] Chaos Channels
 [ ] Flame Blade
 [ ] Gargoyles

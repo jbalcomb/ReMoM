@@ -1817,210 +1817,206 @@ _TrlSpearmen
         }
     }
 
-/*
-[byte ptr _unit_type_table.Sound], 102
-[byte ptr _unit_type_table.Sound+24h], 102
-[byte ptr _unit_type_table.Sound+48h], 103
-[byte ptr _unit_type_table.Sound+6Ch], 102
-[byte ptr _unit_type_table.Sound+90h], 102
-[byte ptr _unit_type_table.Sound+0B4h], 102
-[byte ptr _unit_type_table.Sound+0D8h], 102
-[byte ptr _unit_type_table.Sound+0FCh], 102
-[byte ptr _unit_type_table.Sound+120h], 102
-[byte ptr _unit_type_table.Sound+144h], 102
-[byte ptr _unit_type_table.Sound+168h], 103
-[byte ptr _unit_type_table.Sound+18Ch], 102
-[byte ptr _unit_type_table.Sound+1B0h], 102
-[byte ptr _unit_type_table.Sound+1D4h], 103
-[byte ptr _unit_type_table.Sound+1F8h], 102
-[byte ptr _unit_type_table.Sound+21Ch], 103
-[byte ptr _unit_type_table.Sound+240h], 102
-[byte ptr _unit_type_table.Sound+264h], 134
-[byte ptr _unit_type_table.Sound+288h], 103
-[byte ptr _unit_type_table.Sound+2ACh], 102
-[byte ptr _unit_type_table.Sound+2D0h], 102
-[byte ptr _unit_type_table.Sound+2F4h], 102
-[byte ptr _unit_type_table.Sound+318h], 102
-[byte ptr _unit_type_table.Sound+33Ch], 103
-[byte ptr _unit_type_table.Sound+360h], 102
-[byte ptr _unit_type_table.Sound+384h], 103
-[byte ptr _unit_type_table.Sound+3A8h], 102
-[byte ptr _unit_type_table.Sound+3CCh], 103
-[byte ptr _unit_type_table.Sound+3F0h], 102
-[byte ptr _unit_type_table.Sound+414h], 102
-[byte ptr _unit_type_table.Sound+438h], 102
-[byte ptr _unit_type_table.Sound+45Ch], 102
-[byte ptr _unit_type_table.Sound+480h], 103
-[byte ptr _unit_type_table.Sound+4A4h], 102
-[byte ptr _unit_type_table.Sound+4C8h], 102
-[byte ptr _unit_type_table.Sound+4ECh], 134
-[byte ptr _unit_type_table.Sound+510h], 134
-[byte ptr _unit_type_table.Sound+534h], 134
-[byte ptr _unit_type_table.Sound+558h], 134
-[byte ptr _unit_type_table.Sound+57Ch], 86
-[byte ptr _unit_type_table.Sound+5A0h], 86
-[byte ptr _unit_type_table.Sound+5C4h], 86
-[byte ptr _unit_type_table.Sound+5E8h], 102
-[byte ptr _unit_type_table.Sound+60Ch], 151
-[byte ptr _unit_type_table.Sound+630h], 150
-[byte ptr _unit_type_table.Sound+654h], 86
-[byte ptr _unit_type_table.Sound+678h], 86
-[byte ptr _unit_type_table.Sound+69Ch], 86
-[byte ptr _unit_type_table.Sound+6C0h], 86
-[byte ptr _unit_type_table.Sound+6E4h], 86
-[byte ptr _unit_type_table.Sound+708h], 151
-[byte ptr _unit_type_table.Sound+72Ch], 151
-[byte ptr _unit_type_table.Sound+750h], 86
-[byte ptr _unit_type_table.Sound+774h], 150
-[byte ptr _unit_type_table.Sound+798h], 102
-[byte ptr _unit_type_table.Sound+7BCh], 131
-[byte ptr _unit_type_table.Sound+7E0h], 85
-[byte ptr _unit_type_table.Sound+804h], 86
-[byte ptr _unit_type_table.Sound+828h], 86
-[byte ptr _unit_type_table.Sound+84Ch], 86
-[byte ptr _unit_type_table.Sound+870h], 102
-[byte ptr _unit_type_table.Sound+894h], 151
-[byte ptr _unit_type_table.Sound+8B8h], 150
-[byte ptr _unit_type_table.Sound+8DCh], 6
-[byte ptr _unit_type_table.Sound+900h], 151
-[byte ptr _unit_type_table.Sound+924h], 134
-[byte ptr _unit_type_table.Sound+948h], 134
-[byte ptr _unit_type_table.Sound+96Ch], 134
-[byte ptr _unit_type_table.Sound+990h], 134
-[byte ptr _unit_type_table.Sound+9B4h], 134
-[byte ptr _unit_type_table.Sound+9D8h], 135
-[byte ptr _unit_type_table.Sound+9FCh], 135
-[byte ptr _unit_type_table.Sound+0A20h], 134
-[byte ptr _unit_type_table.Sound+0A44h], 150
-[byte ptr _unit_type_table.Sound+0A68h], 116
-[byte ptr _unit_type_table.Sound+0A8Ch], 134
-[byte ptr _unit_type_table.Sound+0AB0h], 86
-[byte ptr _unit_type_table.Sound+0AD4h], 86
-[byte ptr _unit_type_table.Sound+0AF8h], 86
-[byte ptr _unit_type_table.Sound+0B1Ch], 86
-[byte ptr _unit_type_table.Sound+0B40h], 150
-[byte ptr _unit_type_table.Sound+0B64h], 214
-[byte ptr _unit_type_table.Sound+0B88h], 150
-[byte ptr _unit_type_table.Sound+0BACh], 86
-[byte ptr _unit_type_table.Sound+0BD0h], 86
-[byte ptr _unit_type_table.Sound+0BF4h], 86
-[byte ptr _unit_type_table.Sound+0C18h], 86
-[byte ptr _unit_type_table.Sound+0C3Ch], 150
-[byte ptr _unit_type_table.Sound+0C60h], 150
-[byte ptr _unit_type_table.Sound+0C84h], 86
-[byte ptr _unit_type_table.Sound+0CA8h], 86
-[byte ptr _unit_type_table.Sound+0CCCh], 86
-[byte ptr _unit_type_table.Sound+0CF0h], 151
-[byte ptr _unit_type_table.Sound+0D14h], 150
-[byte ptr _unit_type_table.Sound+0D38h], 150
-[byte ptr _unit_type_table.Sound+0D5Ch], 86
-[byte ptr _unit_type_table.Sound+0D80h], 86
-[byte ptr _unit_type_table.Sound+0DA4h], 86
-[byte ptr _unit_type_table.Sound+0DC8h], 102
-[byte ptr _unit_type_table.Sound+0DECh], 151
-[byte ptr _unit_type_table.Sound+0E10h], 150
-[byte ptr _unit_type_table.Sound+0E34h], 86
-[byte ptr _unit_type_table.Sound+0E58h], 102
-[byte ptr _unit_type_table.Sound+0E7Ch], 134
-[byte ptr _unit_type_table.Sound+0EA0h], 86
-[byte ptr _unit_type_table.Sound+0EC4h], 86
-[byte ptr _unit_type_table.Sound+0EE8h], 86
-[byte ptr _unit_type_table.Sound+0F0Ch], 102
-[byte ptr _unit_type_table.Sound+0F30h], 151
-[byte ptr _unit_type_table.Sound+0F54h], 151
-[byte ptr _unit_type_table.Sound+0F78h], 86
-[byte ptr _unit_type_table.Sound+0F9Ch], 150
-[byte ptr _unit_type_table.Sound+0FC0h], 86
-[byte ptr _unit_type_table.Sound+0FE4h], 102
-[byte ptr _unit_type_table.Sound+1008h], 150
-[byte ptr _unit_type_table.Sound+102Ch], 150
-[byte ptr _unit_type_table.Sound+1050h], 150
-[byte ptr _unit_type_table.Sound+1074h], 150
-[byte ptr _unit_type_table.Sound+1098h], 150
-[byte ptr _unit_type_table.Sound+10BCh], 150
-[byte ptr _unit_type_table.Sound+10E0h], 86
-[byte ptr _unit_type_table.Sound+1104h], 86
-[byte ptr _unit_type_table.Sound+1128h], 86
-[byte ptr _unit_type_table.Sound+114Ch], 86
-[byte ptr _unit_type_table.Sound+1170h], 151
-[byte ptr _unit_type_table.Sound+1194h], 150
-[byte ptr _unit_type_table.Sound+11B8h], 214
-[byte ptr _unit_type_table.Sound+11DCh], 86
-[byte ptr _unit_type_table.Sound+1200h], 86
-[byte ptr _unit_type_table.Sound+1224h], 86
-[byte ptr _unit_type_table.Sound+1248h], 151
-[byte ptr _unit_type_table.Sound+126Ch], 151
-[byte ptr _unit_type_table.Sound+1290h], 150
-[byte ptr _unit_type_table.Sound+12B4h], 102
-[byte ptr _unit_type_table.Sound+12D8h], 86
-[byte ptr _unit_type_table.Sound+12FCh], 86
-[byte ptr _unit_type_table.Sound+1320h], 132
-[byte ptr _unit_type_table.Sound+1344h], 86
-[byte ptr _unit_type_table.Sound+1368h], 86
-[byte ptr _unit_type_table.Sound+138Ch], 86
-[byte ptr _unit_type_table.Sound+13B0h], 86
-[byte ptr _unit_type_table.Sound+13D4h], 102
-[byte ptr _unit_type_table.Sound+13F8h], 151
-[byte ptr _unit_type_table.Sound+141Ch], 151
-[byte ptr _unit_type_table.Sound+1440h], 86
-[byte ptr _unit_type_table.Sound+1464h], 150
-[byte ptr _unit_type_table.Sound+1488h], 116
-[byte ptr _unit_type_table.Sound+14ACh], 85
-[byte ptr _unit_type_table.Sound+14D0h], 85
-[byte ptr _unit_type_table.Sound+14F4h], 85
-[byte ptr _unit_type_table.Sound+1518h], 151
-[byte ptr _unit_type_table.Sound+153Ch], 149
-[byte ptr _unit_type_table.Sound+1560h], 85
-[byte ptr _unit_type_table.Sound+1584h], 162
-[byte ptr _unit_type_table.Sound+15A8h], 147
-[byte ptr _unit_type_table.Sound+15CCh], 147
-[byte ptr _unit_type_table.Sound+15F0h], 130
-[byte ptr _unit_type_table.Sound+1614h], 213
-[byte ptr _unit_type_table.Sound+1638h], 131
-[byte ptr _unit_type_table.Sound+165Ch], 130
-[byte ptr _unit_type_table.Sound+1680h], 130
-[byte ptr _unit_type_table.Sound+16A4h], 130
-[byte ptr _unit_type_table.Sound+16C8h], 134
-[byte ptr _unit_type_table.Sound+16ECh], 161
-[byte ptr _unit_type_table.Sound+1710h], 112
-[byte ptr _unit_type_table.Sound+1734h], 150
-[byte ptr _unit_type_table.Sound+1758h], 150
-[byte ptr _unit_type_table.Sound+177Ch], 147
-[byte ptr _unit_type_table.Sound+17A0h], 147
-[byte ptr _unit_type_table.Sound+17C4h], 130
-[byte ptr _unit_type_table.Sound+17E8h], 130
-[byte ptr _unit_type_table.Sound+180Ch], 130
-[byte ptr _unit_type_table.Sound+1830h], 102
-[byte ptr _unit_type_table.Sound+1854h], 113
-[byte ptr _unit_type_table.Sound+1878h], 150
-[byte ptr _unit_type_table.Sound+189Ch], 179
-[byte ptr _unit_type_table.Sound+18C0h], 131
-[byte ptr _unit_type_table.Sound+18E4h], 134
-[byte ptr _unit_type_table.Sound+1908h], 134
-[byte ptr _unit_type_table.Sound+192Ch], 147
-[byte ptr _unit_type_table.Sound+1950h], 135
-[byte ptr _unit_type_table.Sound+1974h], 135
-[byte ptr _unit_type_table.Sound+1998h], 210
-[byte ptr _unit_type_table.Sound+19BCh], 147
-[byte ptr _unit_type_table.Sound+19E0h], 213
-[byte ptr _unit_type_table.Sound+1A04h], 165
-[byte ptr _unit_type_table.Sound+1A28h], 114
-[byte ptr _unit_type_table.Sound+1A4Ch], 161
-[byte ptr _unit_type_table.Sound+1A70h], 161
-[byte ptr _unit_type_table.Sound+1A94h], 192
-[byte ptr _unit_type_table.Sound+1AB8h], 8
-[byte ptr _unit_type_table.Sound+1ADCh], 8
-[byte ptr _unit_type_table.Sound+1B00h], 8
-[byte ptr _unit_type_table.Sound+1B24h], 165
-[byte ptr _unit_type_table.Sound+1B48h], 130
-[byte ptr _unit_type_table.Sound+1B6Ch], 182
-[byte ptr _unit_type_table.Sound+1B90h], 112
-[byte ptr _unit_type_table.Sound+1BB4h], 146
+    _unit_type_table[ut_Dwarf].Sound = 102;
+    _unit_type_table[0x24].Sound = 102;
+    _unit_type_table[0x48].Sound = 103;
+    _unit_type_table[0x6C].Sound = 102;
+    _unit_type_table[0x90].Sound = 102;
+    _unit_type_table[0x0B4].Sound = 102;
+    _unit_type_table[0x0D8].Sound = 102;
+    _unit_type_table[0x0FC].Sound = 102;
+    _unit_type_table[0x120].Sound = 102;
+    _unit_type_table[0x144].Sound = 102;
+    _unit_type_table[0x168].Sound = 103;
+    _unit_type_table[0x18C].Sound = 102;
+    _unit_type_table[0x1B0].Sound = 102;
+    _unit_type_table[0x1D4].Sound = 103;
+    _unit_type_table[0x1F8].Sound = 102;
+    _unit_type_table[0x21C].Sound = 103;
+    _unit_type_table[0x240].Sound = 102;
+    _unit_type_table[0x264].Sound = 134;
+    _unit_type_table[0x288].Sound = 103;
+    _unit_type_table[0x2AC].Sound = 102;
+    _unit_type_table[0x2D0].Sound = 102;
+    _unit_type_table[0x2F4].Sound = 102;
+    _unit_type_table[0x318].Sound = 102;
+    _unit_type_table[0x33C].Sound = 103;
+    _unit_type_table[0x360].Sound = 102;
+    _unit_type_table[0x384].Sound = 103;
+    _unit_type_table[0x3A8].Sound = 102;
+    _unit_type_table[0x3CC].Sound = 103;
+    _unit_type_table[0x3F0].Sound = 102;
+    _unit_type_table[0x414].Sound = 102;
+    _unit_type_table[0x438].Sound = 102;
+    _unit_type_table[0x45C].Sound = 102;
+    _unit_type_table[0x480].Sound = 103;
+    _unit_type_table[0x4A4].Sound = 102;
+    _unit_type_table[0x4C8].Sound = 102;
+    _unit_type_table[0x4EC].Sound = 134;
+    _unit_type_table[0x510].Sound = 134;
+    _unit_type_table[0x534].Sound = 134;
+    _unit_type_table[0x558].Sound = 134;
+    _unit_type_table[0x57C].Sound = 86;
+    _unit_type_table[0x5A0].Sound = 86;
+    _unit_type_table[0x5C4].Sound = 86;
+    _unit_type_table[0x5E8].Sound = 102;
+    _unit_type_table[0x60C].Sound = 151;
+    _unit_type_table[0x630].Sound = 150;
+    _unit_type_table[0x654].Sound = 86;
+    _unit_type_table[0x678].Sound = 86;
+    _unit_type_table[0x69C].Sound = 86;
+    _unit_type_table[0x6C0].Sound = 86;
+    _unit_type_table[0x6E4].Sound = 86;
+    _unit_type_table[0x708].Sound = 151;
+    _unit_type_table[0x72C].Sound = 151;
+    _unit_type_table[0x750].Sound = 86;
+    _unit_type_table[0x774].Sound = 150;
+    _unit_type_table[0x798].Sound = 102;
+    _unit_type_table[0x7BC].Sound = 131;
+    _unit_type_table[0x7E0].Sound = 85;
+    _unit_type_table[0x804].Sound = 86;
+    _unit_type_table[0x828].Sound = 86;
+    _unit_type_table[0x84C].Sound = 86;
+    _unit_type_table[0x870].Sound = 102;
+    _unit_type_table[0x894].Sound = 151;
+    _unit_type_table[0x8B8].Sound = 150;
+    _unit_type_table[0x8DC].Sound = 6;
+    _unit_type_table[0x900].Sound = 151;
+    _unit_type_table[0x924].Sound = 134;
+    _unit_type_table[0x948].Sound = 134;
+    _unit_type_table[0x96C].Sound = 134;
+    _unit_type_table[0x990].Sound = 134;
+    _unit_type_table[0x9B4].Sound = 134;
+    _unit_type_table[0x9D8].Sound = 135;
+    _unit_type_table[0x9FC].Sound = 135;
+    _unit_type_table[0x0A20].Sound = 134;
+    _unit_type_table[0x0A44].Sound = 150;
+    _unit_type_table[0x0A68].Sound = 116;
+    _unit_type_table[0x0A8C].Sound = 134;
+    _unit_type_table[0x0AB0].Sound = 86;
+    _unit_type_table[0x0AD4].Sound = 86;
+    _unit_type_table[0x0AF8].Sound = 86;
+    _unit_type_table[0x0B1C].Sound = 86;
+    _unit_type_table[0x0B40].Sound = 150;
+    _unit_type_table[0x0B64].Sound = 214;
+    _unit_type_table[0x0B88].Sound = 150;
+    _unit_type_table[0x0BAC].Sound = 86;
+    _unit_type_table[0x0BD0].Sound = 86;
+    _unit_type_table[0x0BF4].Sound = 86;
+    _unit_type_table[0x0C18].Sound = 86;
+    _unit_type_table[0x0C3C].Sound = 150;
+    _unit_type_table[0x0C60].Sound = 150;
+    _unit_type_table[0x0C84].Sound = 86;
+    _unit_type_table[0x0CA8].Sound = 86;
+    _unit_type_table[0x0CCC].Sound = 86;
+    _unit_type_table[0x0CF0].Sound = 151;
+    _unit_type_table[0x0D14].Sound = 150;
+    _unit_type_table[0x0D38].Sound = 150;
+    _unit_type_table[0x0D5C].Sound = 86;
+    _unit_type_table[0x0D80].Sound = 86;
+    _unit_type_table[0x0DA4].Sound = 86;
+    _unit_type_table[0x0DC8].Sound = 102;
+    _unit_type_table[0x0DEC].Sound = 151;
+    _unit_type_table[0x0E10].Sound = 150;
+    _unit_type_table[0x0E34].Sound = 86;
+    _unit_type_table[0x0E58].Sound = 102;
+    _unit_type_table[0x0E7C].Sound = 134;
+    _unit_type_table[0x0EA0].Sound = 86;
+    _unit_type_table[0x0EC4].Sound = 86;
+    _unit_type_table[0x0EE8].Sound = 86;
+    _unit_type_table[0x0F0C].Sound = 102;
+    _unit_type_table[0x0F30].Sound = 151;
+    _unit_type_table[0x0F54].Sound = 151;
+    _unit_type_table[0x0F78].Sound = 86;
+    _unit_type_table[0x0F9C].Sound = 150;
+    _unit_type_table[0x0FC0].Sound = 86;
+    _unit_type_table[0x0FE4].Sound = 102;
+    _unit_type_table[0x1008].Sound = 150;
+    _unit_type_table[0x102C].Sound = 150;
+    _unit_type_table[0x1050].Sound = 150;
+    _unit_type_table[0x1074].Sound = 150;
+    _unit_type_table[0x1098].Sound = 150;
+    _unit_type_table[0x10BC].Sound = 150;
+    _unit_type_table[0x10E0].Sound = 86;
+    _unit_type_table[0x1104].Sound = 86;
+    _unit_type_table[0x1128].Sound = 86;
+    _unit_type_table[0x114C].Sound = 86;
+    _unit_type_table[0x1170].Sound = 151;
+    _unit_type_table[0x1194].Sound = 150;
+    _unit_type_table[0x11B8].Sound = 214;
+    _unit_type_table[0x11DC].Sound = 86;
+    _unit_type_table[0x1200].Sound = 86;
+    _unit_type_table[0x1224].Sound = 86;
+    _unit_type_table[0x1248].Sound = 151;
+    _unit_type_table[0x126C].Sound = 151;
+    _unit_type_table[0x1290].Sound = 150;
+    _unit_type_table[0x12B4].Sound = 102;
+    _unit_type_table[0x12D8].Sound = 86;
+    _unit_type_table[0x12FC].Sound = 86;
+    _unit_type_table[0x1320].Sound = 132;
+    _unit_type_table[0x1344].Sound = 86;
+    _unit_type_table[0x1368].Sound = 86;
+    _unit_type_table[0x138C].Sound = 86;
+    _unit_type_table[0x13B0].Sound = 86;
+    _unit_type_table[0x13D4].Sound = 102;
+    _unit_type_table[0x13F8].Sound = 151;
+    _unit_type_table[0x141C].Sound = 151;
+    _unit_type_table[0x1440].Sound = 86;
+    _unit_type_table[0x1464].Sound = 150;
+    _unit_type_table[0x1488].Sound = 116;
+    _unit_type_table[0x14AC].Sound = 85;
+    _unit_type_table[0x14D0].Sound = 85;
+    _unit_type_table[0x14F4].Sound = 85;
+    _unit_type_table[0x1518].Sound = 151;
+    _unit_type_table[0x153C].Sound = 149;
+    _unit_type_table[0x1560].Sound = 85;
+    _unit_type_table[0x1584].Sound = 162;
+    _unit_type_table[0x15A8].Sound = 147;
+    _unit_type_table[0x15CC].Sound = 147;
+    _unit_type_table[0x15F0].Sound = 130;
+    _unit_type_table[0x1614].Sound = 213;
+    _unit_type_table[0x1638].Sound = 131;
+    _unit_type_table[0x165C].Sound = 130;
+    _unit_type_table[0x1680].Sound = 130;
+    _unit_type_table[0x16A4].Sound = 130;
+    _unit_type_table[0x16C8].Sound = 134;
+    _unit_type_table[0x16EC].Sound = 161;
+    _unit_type_table[0x1710].Sound = 112;
+    _unit_type_table[0x1734].Sound = 150;
+    _unit_type_table[0x1758].Sound = 150;
+    _unit_type_table[0x177C].Sound = 147;
+    _unit_type_table[0x17A0].Sound = 147;
+    _unit_type_table[0x17C4].Sound = 130;
+    _unit_type_table[0x17E8].Sound = 130;
+    _unit_type_table[0x180C].Sound = 130;
+    _unit_type_table[0x1830].Sound = 102;
+    _unit_type_table[0x1854].Sound = 113;
+    _unit_type_table[0x1878].Sound = 150;
+    _unit_type_table[0x189C].Sound = 179;
+    _unit_type_table[0x18C0].Sound = 131;
+    _unit_type_table[0x18E4].Sound = 134;
+    _unit_type_table[0x1908].Sound = 134;
+    _unit_type_table[0x192C].Sound = 147;
+    _unit_type_table[0x1950].Sound = 135;
+    _unit_type_table[0x1974].Sound = 135;
+    _unit_type_table[0x1998].Sound = 210;
+    _unit_type_table[0x19BC].Sound = 147;
+    _unit_type_table[0x19E0].Sound = 213;
+    _unit_type_table[0x1A04].Sound = 165;
+    _unit_type_table[0x1A28].Sound = 114;
+    _unit_type_table[0x1A4C].Sound = 161;
+    _unit_type_table[0x1A70].Sound = 161;
+    _unit_type_table[0x1A94].Sound = 192;
+    _unit_type_table[0x1AB8].Sound = 8;
+    _unit_type_table[0x1ADC].Sound = 8;
+    _unit_type_table[0x1B00].Sound = 8;
+    _unit_type_table[0x1B24].Sound = 165;
+    _unit_type_table[0x1B48].Sound = 130;
+    _unit_type_table[0x1B6C].Sound = 182;
+    _unit_type_table[0x1B90].Sound = 112;
 
-1BB4h  7092d
-7092 / 36 = 197
+    _unit_type_table[ut_Nagas].Sound = 146;
 
-*/
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Patch_Units_Upkeep_And_Sound()\n", __FILE__, __LINE__);
@@ -2140,10 +2136,6 @@ void City_Apply_Production(int16_t city_idx)
     int16_t uu_troops[MAX_STACK] = { 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB };  // HACK
     int16_t uu_troop_count;
     int16_t product_cost;  // _SI_
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Apply_Production()\n", __FILE__, __LINE__);
-#endif
 
 Check_Cities_Data();
     product_cost = City_Current_Product_Cost(city_idx);
@@ -2429,10 +2421,6 @@ Check_Cities_Data();
     }
 
 Check_Cities_Data();
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: City_Apply_Production()\n", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -3759,7 +3747,7 @@ void Players_Check_Spell_Research(void)
         )
         {
 
-            WIZ_LearnSpell__WIP(itr_players, _players[itr_players].researching_spell_idx, 1);
+            WIZ_LearnSpell__WIP(itr_players, _players[itr_players].researching_spell_idx, 1);  // learned from research
 
             IDK = ST_TRUE;
 
@@ -3803,7 +3791,7 @@ void Players_Check_Spell_Research(void)
             if(_players[itr_players].researching_spell_idx == spl_Spell_Of_Mastery)
             {
 
-                _players[itr_players].research_cost_remaining = _players[itr_players].SoM_RC;
+                _players[itr_players].research_cost_remaining = _players[itr_players].som_research_cost;
 
             }
             else
@@ -3829,28 +3817,28 @@ handles researched spell, traded/gifted spell, treasure spell, and conquest spel
 */
 void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Research)
 {
-    int16_t Candidate_Count;
+    int16_t spells_cnt;
     int16_t Was_Research_Target;
-    int16_t InRealm_Index;
-    int16_t Spell_Realm;
+    int16_t spell_realm_idx;
+    int16_t spell_realm;
     int16_t itr;  // _DI_
 
     Was_Research_Target = ST_FALSE;
 
-    if(_players[player_idx].SoM_RC > spell_data_table[spell_idx].research_cost)
+    if(_players[player_idx].som_research_cost > spell_data_table[spell_idx].research_cost)
     {
-        _players[player_idx].SoM_RC = spell_data_table[spell_idx].research_cost;
+        _players[player_idx].som_research_cost = spell_data_table[spell_idx].research_cost;
     }
     else
     {
-        _players[player_idx].SoM_RC = 0;
+        _players[player_idx].som_research_cost = 0;
     }
 
-    Spell_Realm = ((spell_idx - 1) / NUM_SPELLS_PER_MAGIC_REALM);
+    spell_realm = ((spell_idx - 1) / NUM_SPELLS_PER_MAGIC_REALM);
 
-    InRealm_Index = ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM);
+    spell_realm_idx = ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM);
 
-    _players[player_idx].spells_list[((Spell_Realm * NUM_SPELLS_PER_MAGIC_REALM) + InRealm_Index)] = 2;  /* S_Known */
+    _players[player_idx].spells_list[((spell_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx)] = sls_Known;
 
     if(_players[player_idx].researching_spell_idx == spell_idx)
     {
@@ -3865,13 +3853,13 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
             }
         }
 
-        Candidate_Count = WIZ_RefreshResearch__STUB(player_idx);
+        spells_cnt = Player_Research_Spells(player_idx);
 
         _players[player_idx].research_cost_remaining = 0;
 
-        if(Candidate_Count == 0)
+        if(spells_cnt == 0)
         {
-            _players[player_idx].researching_spell_idx = -1; /* No_spell */
+            _players[player_idx].researching_spell_idx = spl_UNDEFINED;
         }
         else
         {
@@ -3886,8 +3874,8 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
             if(_players[player_idx].research_spells[itr] == _players[player_idx].researching_spell_idx)
             {
                 Clear_Structure(itr, (uint8_t *)&_players[player_idx].research_spells[0], sizeof(_players[player_idx].research_spells[0]), NUM_RESEARCH_SPELLS);
-                _players[player_idx].research_spells[(NUM_RESEARCH_SPELLS - 1)] = 0; // BUG  ¿ drake178: ; this is already done by the above function ?
-                WIZ_RefreshResearch__STUB(player_idx);
+                _players[player_idx].research_spells[(NUM_RESEARCH_SPELLS - 1)] = spl_NONE; // BUG  ¿ drake178: ; this is already done by the above function ?
+                Player_Research_Spells(player_idx);
             }
         }
     }
@@ -3921,7 +3909,7 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
 
         if(_players[player_idx].researching_spell_idx == spl_Spell_Of_Mastery)
         {
-            _players[player_idx].research_cost_remaining = _players[player_idx].SoM_RC;
+            _players[player_idx].research_cost_remaining = _players[player_idx].som_research_cost;
         }
         else
         {

@@ -1094,14 +1094,30 @@ void Selection_Box_Coords(int16_t item_count, char ** list_text, char * title_st
     int16_t selectbox_width;
     int16_t horizontal_space;
     int16_t itr_GUI_ListSel_Count;
+    char * list_text_ptr;  // DNE in Dasm
 
     GUI_ListSel_Count = 0;
 
-    // while(*list_text[GUI_ListSel_Count] != '\0')
-    while(list_text[GUI_ListSel_Count] != NULL)
+    while (*list_text[GUI_ListSel_Count] != '\0')
     {
         GUI_ListSel_Count++;
     }
+//     // while(list_text[GUI_ListSel_Count] != NULL)
+//     // {
+//     //     GUI_ListSel_Count++;
+//     // }
+//     for(;;)
+//     {
+//         list_text_ptr = list_text[GUI_ListSel_Count];
+//         if(list_text_ptr != NULL)
+//         {
+//             GUI_ListSel_Count++;
+//         }
+//         else
+//         {
+//             break;
+//         }
+//     }
 
 
     Set_Font_Style(4, 0, 0, 0);
