@@ -1,27 +1,25 @@
-// #pragma runtime_checks( "", off )
 /*
+    WIZARDS.EXE
+        ovr161
+
     Terrain
     Terrain Types
     Terrain Type Attributes
-
-
-    WIZARDS.EXE
-        ovr161
-    
 */
 
-#include "MOM.H"
-
-
-
-// TerType_Count 0x2FA 762
+#include "MOX/MOM_Data.H"
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_TYPE.H"
 
 
 
 // WZD s161p01
-void Map_Square_Clear_Corruption(int16_t wx, int16_t wy, int16_t wp)
+/*
+    ~ "Purify"
+*/
+void Square_Clear_Corruption(int16_t wx, int16_t wy, int16_t wp)
 {
-    _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= 0xDF;  // not MSF_CORRUPTION
+    _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= ~MSF_CORRUPTION;
 }
 
 
@@ -1816,14 +1814,14 @@ int16_t Square_Is_Volcano(int16_t wx, int16_t wy, int16_t wp)
 // drake178: TILE_IsCorrupted()
 int16_t Square_Has_Corruption(int16_t wx, int16_t wy, int16_t wp)
 {
-    uint8_t square_flag;  // _CX_
-    int16_t has_corruption;  // DNE in Dasm
+    uint8_t map_square_flag = 0;  // DNE in Dasm
+    int16_t has_corruption = 0;  // DNE in Dasm
 
     has_corruption = ST_FALSE;  // DNE in Dasm
 
-    square_flag = GET_MAP_SQUARE_FLAG(wx, wy, wp);
+    map_square_flag = GET_MAP_SQUARE_FLAG(wx, wy, wp);
     
-    if((square_flag & MSF_CORRUPTION) != 0)
+    if((map_square_flag & MSF_CORRUPTION) != 0)
     {
         has_corruption = ST_TRUE;
     }
@@ -1838,16 +1836,19 @@ int16_t Square_Has_Corruption(int16_t wx, int16_t wy, int16_t wp)
 
 // WZD s161p36
 // drake178: UU_TILE_IsRes_40h()
-int16_t Square_Has_Unknown40h(int16_t wx, int16_t wy, int16_t wp)
+/*
+wild game?
+*/
+int16_t UU_Square_Has_MSF_UNKNOWN_40H(int16_t wx, int16_t wy, int16_t wp)
 {
-    uint8_t square_flag;  // _CX_
-    int16_t has_unknown40h;  // DNE in Dasm
+    uint8_t map_square_flag = 0;  // DNE in Dasm
+    int16_t has_unknown40h = 0;  // DNE in Dasm
 
     has_unknown40h = ST_FALSE;  // DNE in Dasm
 
-    square_flag = GET_MAP_SQUARE_FLAG(wx, wy, wp);
+    map_square_flag = GET_MAP_SQUARE_FLAG(wx, wy, wp);
     
-    if((square_flag & MSF_UNKNOWN_40H) != 0)
+    if((map_square_flag & MSF_UNKNOWN_40H) != 0)
     {
         has_unknown40h = ST_TRUE;
     }
@@ -1962,7 +1963,7 @@ returns 1 for land (walkable) tiles, 0 otherwise
 /*
 
 */
-int16_t Map_Square_Is_Land(int16_t wx, int16_t wy, int16_t wp)
+int16_t Square_Is_Land(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type;  // _CX_
     int16_t is_land;  // DNE in Dasm
@@ -2158,4 +2159,64 @@ int16_t Square_Is_OceanLike(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD s161p40
-// UU_TILE_BotchedResFn 
+// drake178: UU_TILE_BotchedResFn()
+/*
+; Unused in MoM, no wonder since its totally botched
+;
+; would return a resource value (likely gold) based on
+; tile type, but in the end overwrites most of the
+; values it originally wants to set due to the
+; non-nesting of its "if" instructions
+*/
+/*
+~ Square_Gold_Bonus()
+
+looks like it's checking for shore, river, and/or river mouth?
+
+*/
+int16_t UU_Square_Provides_Some_Amount(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type;  // _DI_
+    int16_t amount = 0;  // _SI_
+
+    amount = 0;
+
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    if(terrain_type >= tt_Tundra_1st)  { amount =  0; }
+    if(terrain_type == TT_BugGrass)    { amount =  0; }
+    if(terrain_type < tt_Grasslands1)  { amount = 10; }
+    if(terrain_type > TT_4WRiver5)     { amount = 10; }
+    if(terrain_type > TT_Shore2_end)   { amount = 25; }
+    if(terrain_type > TT_Desert_end)   { amount = 10; }
+    if(terrain_type > tt_Hills_end)    { amount =  0; }
+    if(terrain_type > tt_Mntns_end)    { amount =  0; }
+    if(terrain_type > tt_Rivers_end)   { amount =  0; }
+    if(terrain_type > tt_Forest3)      { amount = 25; }
+
+    switch(terrain_type)
+    {
+        case tt_Grasslands1:  // 0xA2  162  tt_Grasslands1
+        case tt_Forest1:      // 0xA3  163  tt_Forest1
+        case tt_Mountain1:    // 0xA4  164  tt_Mountain1
+        case tt_Desert1:      // 0xA5  165  tt_Desert1
+        case tt_Swamp1:       // 0xA6  166  tt_Swamp1
+        case tt_Tundra1:      // 0xA7  167  tt_Tundra1
+        case tt_SorceryNode:  // 0xA8  168  tt_SorceryNode
+        case tt_NatureNode:   // 0xA9  169  tt_NatureNode
+        case tt_ChaosNode:    // 0xAA  170  tt_ChaosNode
+        case tt_Hills1:       // 0xAB  171  tt_Hills1
+        case tt_Volcano:      // 0xB3  179  tt_Volcano__2
+        {
+            amount = 0;
+        }
+    }
+
+    if(City_Area_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
+    {
+        amount /= 2;
+    }
+
+    return amount;
+
+}

@@ -17,20 +17,6 @@ extern "C" {
 
 
 
-enum e_OSC_TARGET_TYPE
-{
-    osc_Friendly_Unit   = 0,
-    osc_Friendly_Group  = 1,
-    osc_Enemy_Unit      = 2,
-    osc_Enemy_Group     = 3,
-    osc_Map_Square      = 4,
-    osc_Friendly_City   = 5,
-    osc_Enemy_City      = 6,
-    osc_Magic_Node      = 7
-};
-
-
-
 /*
     WIZARDS.EXE  ovr070
 
@@ -74,6 +60,7 @@ void Set_Mouse_List_Image_Nums(void);
 
 // WZD o70p15
 void Spell_Casting_Screen_Draw_Panel(void);
+
 
 
 #ifdef __cplusplus

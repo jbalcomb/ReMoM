@@ -17,12 +17,13 @@
 #include "MOX/MOX_TYPE.H"
 #include "MOX/SOUND.H"
 
+#include "CityScr.H"  /* City_Screen__WIP(); */
 #include "MainScr.H"
 #include "MainScr_Maps.H"
 #include "MOM_DBG.H"
 #include "MOM_SCR.H"
+#include "Spells130.H"
 #include "WZD_o059.H"
-#include "CityScr.H"  /* City_Screen__WIP(); */
 
 #ifdef STU_DEBUG
 #include "STU/STU_DBG.H"    /* DLOG() */
@@ -3278,27 +3279,27 @@ Check_Cities_Data();
 
         if(_CITIES[itr_cities].enchantments[CONSECRATION] > 0)
         {
-            // TODO  CTY_Consecration(itr_cities);
+            Apply_Spell_Consecration(itr_cities);
         }
 
         if(_CITIES[itr_cities].enchantments[STREAM_OF_LIFE] > 0)
         {
-            // TODO  CTY_StreamOfLife(itr_cities);
+            // SPELLY  CTY_StreamOfLife(itr_cities);
         }
 
         if(_CITIES[itr_cities].enchantments[CHAOS_RIFT] > 0)
         {
-            // TODO  CTY_ChaosRift(itr_cities);
+            // SPELLY  CTY_ChaosRift(itr_cities);
         }
 
         if(_CITIES[itr_cities].enchantments[GAIAS_BLESSING] > 0)
         {
-            // TODO  CTY_GaiasBlessing(itr_cities);
+            // SPELLY  CTY_GaiasBlessing(itr_cities);
         }
         
         if(_CITIES[itr_cities].enchantments[NIGHTSHADE] > 0)
         {
-            // TODO  CTY_NightshadeDispel(itr_cities);
+            // SPELLY  CTY_NightshadeDispel(itr_cities);
         }
     }
 

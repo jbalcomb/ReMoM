@@ -9,6 +9,7 @@
 #include "MOX/MOX_SET.H"  /* magic_set */
 #include "MOX/MOX_TYPE.H"
 
+#include "SPELLDEF.H"
 #include "Spells132.H"
 
 
@@ -32,14 +33,16 @@ char str_LifeForce[] = "Life Force";
 // WZD dseg:6A8C 54 68 61 74 20 75 6E 69 74 20 61 6C 72 65 61 64+cnst_SpellError_1_2 db 'That unit already has ',0
 // WZD dseg:6A8C 79 20 68 61 73 20 00                                                                    ; DATA XREF: Cast_Spell_Overland__WIP+6F8o
 // WZD dseg:6A8C                                                                                         ; should use dseg:5b48
-// WZD dseg:6AA3 20 63 61 73 74 20 6F 6E 20 69 74 00             cnst_SpellError_2_2 db ' cast on it',0  ; DATA XREF: Cast_Spell_Overland__WIP+716o ...
+// WZD dseg:6AA3
+char cnst_SpellError_2_2[] = " cast on it";
 // WZD dseg:6AA3                                                                                         ; should use dseg:5b5f
 // WZD dseg:6AAF 4F 6E 6C 79 20 6E 6F 72 6D 61 6C 20 75 6E 69 74+aOnlyNormalUnit db 'Only normal units may have ',0
 // WZD dseg:6AAF 73 20 6D 61 79 20 68 61 76 65 20 00                                                     ; DATA XREF: Cast_Spell_Overland__WIP+87Ao
 // WZD dseg:6ACB 20 63 61 73 74 20 6F 6E 20 74 68 65 6D 00       aCastOnThem db ' cast on them',0        ; DATA XREF: Cast_Spell_Overland__WIP+898o ...
 // WZD dseg:6AD9 4F 6E 6C 79 20 6E 6F 72 6D 61 6C 20 75 6E 69 74+aOnlyNormalUn_0 db 'Only normal units and created undead may have ',0
 // WZD dseg:6AD9 73 20 61 6E 64 20 63 72 65 61 74 65 64 20 75 6E+                                        ; DATA XREF: Cast_Spell_Overland__WIP+C40o
-// WZD dseg:6B08 54 68 61 74 20 63 69 74 79 20 61 6C 72 65 61 64+aThatCityAlread db 'That city already has ',0
+// WZD dseg:6B08
+char aThatCityAlread[] = "That city already has ";
 // WZD dseg:6B08 79 20 68 61 73 20 00                                                                    ; DATA XREF: Cast_Spell_Overland__WIP+EB0o ...
 // WZD dseg:6B1F 20 73 70 65 6C 6C 20 68 61 73 20 66 61 69 6C 65+cnst_SpellError_4 db ' spell has failed.',0
 // WZD dseg:6B1F 64 2E 00                                                                                ; DATA XREF: Cast_Spell_Overland__WIP+1825o
@@ -144,6 +147,7 @@ int16_t Calculate_Dispel_Difficulty(int16_t casting_cost, int16_t player_idx, in
 
 IDA Group Colors
     scc_Summoning          ( 0)  #24 reddish-brown
+    scc_City_Enchantment   ( 2)  #14 
     scc_Global_Enchantment ( 9)  #13 ~ blue, greyish/greenish
     scc_Crafting_Spell     (11)  #17 brown
 
@@ -160,7 +164,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
     int16_t var_10 = 0;
     int16_t RetP = 0;
     int16_t RetY = 0;
-    int16_t G_Have_Targets = 0;
+    int16_t G_Have_Targets = 0; /* 2: city_idx */
     int16_t itr_players = 0;  // itr
     int16_t itr_cities = 0;  // itr
     int16_t itr_units = 0;  // itr
@@ -345,85 +349,9 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
         else
         {
 
-// enum enum_SPELL_DATA_TYPE
-// scc_Summoning         =  0,
-// scc_Unit_Enchantment        =  1,
-// City_Enchantment        =  2,
-// scc_City_Curse              =  3,
-// scc_Fixed_Dmg_Spell         =  4,
-// scc_Special_Spell           =  5,
-// scc_Target_Wiz_Spell        =  6,
-// 7 DNE
-// 8 DNE
-// scc_Global_Enchantment  =  9,
-// Battlefield_Spell       = 10,
-// scc_Crafting_Spell      = 11,
-// scc_Destruction_Spell       = 12,
-// scc_Resistable_Spell        = 13,
-// scc_Unresistable_Spell         = 14,
-// Mundane_Enchantment     = 15,
-// Mundane_Curse           = 16,
-// scc_Infusable_Spell     = 17,
-// Dispel_Spell            = 18,
-// scc_Disenchant_Spell        = 19,
-// scc_Disjunction_Spell       = 20,
-// Counter_Spell           = 21,
-// scc_Var_Dmg_Spell           = 22,
-// scc_Banish_Spell            = 23
-
-// ovr135:28B4 95 0C 31 10 59 17 77 1B 3D 0E 55 1F 3A 21 FA 27+jt_SpellDataType dw offset sdt_Summon   ; DATA XREF: Cast_Spell_Overland__WIP+2CCr
-// ovr135:28B4 FA 27 77 1E FA 27 0F 1B FA 27 FA 27 FA 27 31 10+dw offset Unit                          ; jump table for switch statement
-// ovr135:28B4 FA 27 3A 21 FA 27 3E 23 AB 26                   dw offset City
-// ovr135:28B4                                                 dw offset CityCurse
-// ovr135:28B4                                                 dw offset FixDmg
-// ovr135:28B4                                                 dw offset Special
-// ovr135:28B4                                                 dw offset sdt_Target_Wizard
-// ovr135:28B4                                                 dw offset Nothing
-// ovr135:28B4                                                 dw offset Nothing
-// ovr135:28B4                                                 dw offset Global
-// ovr135:28B4                                                 dw offset Nothing
-// ovr135:28B4                                                 dw offset Crafting
-// ovr135:28B4                                                 dw offset Nothing
-// ovr135:28B4                                                 dw offset Nothing
-// ovr135:28B4                                                 dw offset Nothing
-// ovr135:28B4                                                 dw offset Unit
-// ovr135:28B4                                                 dw offset Nothing
-// ovr135:28B4                                                 dw offset sdt_Target_Wizard
-// ovr135:28B4                                                 dw offset Nothing
-// ovr135:28B4                                                 dw offset DE
-// ovr135:28B4                                                 dw offset Disj
-
-// ovr135:28B4 95 0C 31 10 59 17 77 1B 3D 0E 55 1F 3A 21 FA 27+jt_SpellDataType dw offset jt_sdt_00    ; DATA XREF: Cast_Spell_Overland__WIP+2CCr
-// ovr135:28B4 FA 27 77 1E FA 27 0F 1B FA 27 FA 27 FA 27 31 10+dw offset jt_sdt_01_15                  ; jump table for switch statement
-// ovr135:28B4 FA 27 3A 21 FA 27 3E 23 AB 26                   dw offset jt_sdt_02
-// ovr135:28B4                                                 dw offset jt_sdt_03
-// ovr135:28B4                                                 dw offset jt_sdt_04
-// ovr135:28B4                                                 dw offset jt_sdt_05
-// ovr135:28B4                                                 dw offset jt_sdt_06_17
-// ovr135:28B4                                                 dw offset jt_sdt_07_08_10_12_13_14_16_18
-// ovr135:28B4                                                 dw offset jt_sdt_07_08_10_12_13_14_16_18
-// ovr135:28B4                                                 dw offset jt_sdt_09
-// ovr135:28B4                                                 dw offset jt_sdt_07_08_10_12_13_14_16_18
-// ovr135:28B4                                                 dw offset jt_sdt_11
-// ovr135:28B4                                                 dw offset jt_sdt_07_08_10_12_13_14_16_18
-// ovr135:28B4                                                 dw offset jt_sdt_07_08_10_12_13_14_16_18
-// ovr135:28B4                                                 dw offset jt_sdt_07_08_10_12_13_14_16_18
-// ovr135:28B4                                                 dw offset jt_sdt_01_15
-// ovr135:28B4                                                 dw offset jt_sdt_07_08_10_12_13_14_16_18
-// ovr135:28B4                                                 dw offset jt_sdt_06_17
-// ovr135:28B4                                                 dw offset jt_sdt_07_08_10_12_13_14_16_18
-// ovr135:28B4                                                 dw offset jt_sdt_19
-// ovr135:28B4                                                 dw offset jt_sdt_20
-
-// ptr_players_globals = &_players[player_idx].Globals[0];
-
-/*
-
-*/
-
             switch(spell_data_table[spell_idx].type)
             {
-                case scc_Summoning:
+                case scc_Summoning:  //  0
                 {
 
                     // ¿ BUG should be ((player_idx == HUMAN_PLAYER_IDX) && (_units < 950)) ?
@@ -468,7 +396,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                                 (player_idx == HUMAN_PLAYER_IDX)
                                 ||
                                 (
-                                    (magic_set.Enemy_Spells == ST_TRUE)
+                                    (magic_set.enemy_spells == ST_TRUE)
                                     &&
                                     (_players[player_idx].Dipl.Contacted[HUMAN_PLAYER_IDX] == ST_TRUE)
                                     &&
@@ -528,8 +456,204 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                     }
 
                 } break;  /* case scc_Summoning: */
+                
+                case scc_Unit_Enchantment:  //  1
+                {
 
-                case scc_Global_Enchantment:
+                } break;
+
+                case scc_City_Enchantment:  //  2
+                {
+
+                    if(player_idx != HUMAN_PLAYER_IDX)
+                    {
+
+                        /* SPELLY */  Cast_Successful = Pick_Target_For_City_Enchantment__WIP(stt_Friendly_City, &G_Have_Targets, spell_idx, player_idx);
+
+                    }
+                    else
+                    {
+
+                        MultiPurpose_Local_Var = ST_FALSE;
+
+                        Cast_Successful = ST_TRUE;
+
+                        while((MultiPurpose_Local_Var == ST_FALSE) && (Cast_Successful == ST_TRUE))
+                        {
+
+                            MultiPurpose_Local_Var = ST_TRUE;
+
+                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Friendly_City, &G_Have_Targets, &RetY, &RetP, &var_12, &var_10, &spell_name);
+
+                            if(Cast_Successful == ST_TRUE)
+                            {
+
+                                if(
+                                    (spell_idx == spl_Summoning_Circle)
+                                    &&
+                                    (_CITIES[G_Have_Targets].wx == _players[HUMAN_PLAYER_IDX].summon_wx)
+                                    &&
+                                    (_CITIES[G_Have_Targets].wy == _players[HUMAN_PLAYER_IDX].summon_wy)
+                                    &&
+                                    (_CITIES[G_Have_Targets].wp == _players[HUMAN_PLAYER_IDX].summon_wp)
+                                )
+                                {
+
+                                    MultiPurpose_Local_Var = ST_FALSE;
+
+                                    Full_Draw_Main_Screen();
+
+                                    LBX_Load_Data_Static(message_lbx_file__ovr135, 0, GUI_NearMsgString, 25, 1, 150);
+
+                                    Warn0(GUI_NearMsgString);
+
+                                }
+
+                                ptr_players_globals = &_CITIES[G_Have_Targets].enchantments;
+
+                                if(ptr_players_globals[spell_data_table[spell_idx].ce_idx] > 0)
+                                {
+
+                                    MultiPurpose_Local_Var = ST_FALSE;
+
+                                    Full_Draw_Main_Screen();
+
+                                    strcpy(GUI_NearMsgString, aThatCityAlread);  // "That city already has "
+
+                                    strcat(GUI_NearMsgString, spell_name);
+
+                                    strcat(GUI_NearMsgString, cnst_SpellError_2_2);  // " cast on it"
+
+                                    Warn0(GUI_NearMsgString);
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                    // ovr135:18D3  @@CE2AfterWhileCityEnchantmentAndPlayerIdx:
+                    if(Cast_Successful == ST_TRUE)  // ...else @@END_CityEnchantment
+                    {
+
+                        if(
+                            (player_idx == HUMAN_PLAYER_IDX)
+                            ||
+                            (_CITIES[G_Have_Targets].owner_idx == HUMAN_PLAYER_IDX)
+                            ||
+                            (
+                                (magic_set.enemy_spells == ST_TRUE)
+                                &&
+                                (SQUARE_EXPLORED(_CITIES[G_Have_Targets].wx, _CITIES[G_Have_Targets].wy, _CITIES[G_Have_Targets].wp))
+                                &&
+                                (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] > 0)
+                            )
+                        )
+                        {
+
+                            AI_Eval_After_Spell = ST_TRUE;  // Why?
+
+                            /* SPELLY */  IDK_Spell_Cityscape_1(G_Have_Targets, spell_idx, player_idx);
+
+                        }
+
+                        if(spell_idx == spl_Summoning_Circle)
+                        {
+
+                            _players[player_idx].summon_wx = _CITIES[G_Have_Targets].wx;
+
+                            _players[player_idx].summon_wy = _CITIES[G_Have_Targets].wy;
+
+                            _players[player_idx].summon_wp = _CITIES[G_Have_Targets].wp;
+
+                        }
+                        else
+                        {
+
+                            ptr_players_globals = &_CITIES[G_Have_Targets].enchantments;
+
+                            players_globals_idx = spell_data_table[spell_idx].ce_idx;
+
+                            ptr_players_globals[players_globals_idx] = (player_idx + 1);
+
+                        }
+
+                        if(
+                            (player_idx == HUMAN_PLAYER_IDX)
+                            ||
+                            (
+                                (magic_set.enemy_spells == ST_TRUE)
+                                &&
+                                (SQUARE_EXPLORED(_CITIES[G_Have_Targets].wx, _CITIES[G_Have_Targets].wy, _CITIES[G_Have_Targets].wp))
+                                &&
+                                (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] > 0)
+                            )
+                        )
+                        {
+
+                            /* SPELLY */  IDK_Spell_Cityscape_2(G_Have_Targets, spell_idx, player_idx);
+
+                        }
+
+                        if(
+                            (player_idx == HUMAN_PLAYER_IDX)
+                            &&
+                            (spell_idx == spl_Natures_Eye)
+                        )
+                        {
+                            // Nature's Eye:
+                            // Nature. City Enchantment. Casting Cost: 75 mana;
+                            // Upkeep: 1 mana/turn. Uncommon.
+                            // Extends the scouting range of a friendly target city to five squares
+                            // in any direction, revealing all lands and all non-invisible enemy
+                            // troops within that radius.
+                            Set_Map_Square_Explored_Flags_XYP_Range(_CITIES[G_Have_Targets].wx, _CITIES[G_Have_Targets].wy, _CITIES[G_Have_Targets].wp, 5);
+                        }
+
+                        if(spell_idx == spl_Consecration)
+                        {
+
+                            Apply_Spell_Consecration(G_Have_Targets);
+
+                        }
+
+                    }
+
+                } break;
+
+                case scc_City_Curse:  //  3
+                {
+
+                } break;
+
+                case scc_Fixed_Dmg_Spell:  //  4
+                {
+
+                } break;
+
+                case scc_Special_Spell:  //  5
+                {
+
+                } break;
+
+                case scc_Target_Wiz_Spell:  //  6
+                {
+
+                } break;
+
+//                 case N/A:  //  7
+//                 {
+// 
+//                 } break;
+
+//                 case N/A:  //  8
+//                 {
+// 
+//                 } break;
+
+                case scc_Global_Enchantment:  // 9
                 {
 
                     AI_Eval_After_Spell = ST_TRUE;
@@ -593,7 +717,72 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                 } break;
 
-                case scc_Crafting_Spell:
+                case scc_Battlefield_Spell:  // 10
+                {
+
+                } break;
+
+                case scc_Crafting_Spell:  // 11
+                {
+
+                } break;
+
+                case scc_Destruction_Spell:  // 12
+                {
+
+                } break;
+
+                case scc_Resistable_Spell:  // 13
+                {
+
+                } break;
+
+                case scc_Unresistable_Spell:  // 14
+                {
+
+                } break;
+
+                case scc_Mundane_Enchantment:  // 15
+                {
+
+                } break;
+
+                case scc_Mundane_Curse:  // 16
+                {
+
+                } break;
+
+                case scc_Infusable_Spell:  // 17
+                {
+
+                } break;
+
+                case scc_Dispel_Spell:  // 18
+                {
+
+                } break;
+
+                case scc_Disenchant_Spell:  // 19
+                {
+
+                } break;
+
+                case scc_Disjunction_Spell:  // 20
+                {
+
+                } break;
+
+                case scc_Counter_Spell:  // 21
+                {
+
+                } break;
+
+                case scc_Var_Dmg_Spell:  // 22
+                {
+
+                } break;
+
+                case scc_Banish_Spell:  // 23
                 {
 
                 } break;

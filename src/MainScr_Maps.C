@@ -2427,7 +2427,7 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 
             if(node_owner_idx != ST_UNDEFINED)
             {
-                if(magic_set.Show_Node_Owners == ST_TRUE)
+                if(magic_set.show_node_owners == ST_TRUE)
                 {
                     node_owner_banner_idx = _players[node_owner_idx].banner_id;
 

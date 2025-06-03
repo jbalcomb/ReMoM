@@ -36,10 +36,10 @@ enum enum_Terrain_Specials
     ts_Adamantium     =   7,  // "TERRAIN SPECIAL ... Adamantium"
     ts_QuorkCrystals  =   8,
     ts_CrysxCrystals  =   9,
-    ts_HuntersLodge   =  16,
-    ts_Unknown_20     =  32,
-    ts_Wild_Game      =  64,
-    ts_Nightshade     = 128
+    ts_HuntersLodge   =  16,    // 0x10
+    ts_Unknown_20     =  32,    // 0x20  corruption?
+    ts_Wild_Game      =  64,    // 0x40
+    ts_Nightshade     = 128     // 0x80
 };
 
 #define TS_IRON             1  // 0001
@@ -52,29 +52,31 @@ enum enum_Terrain_Specials
 #define TS_QUORK            8  // 1000
 #define TS_CRYSX            9  // 1001
 #define TS_HUNTERSLODGE  0x10  // 0001
-#define TS_UNKNOWN_20H   0x20  // 0010
+#define TS_UNKNOWN_20H   0x20  // 0010  corruption?
 #define TS_WILDGAME      0x40  // 0100
 #define TS_NIGHTSHADE    0x80  // 1000
 
 
 // drake178: enum Terrain_Flags
 /*
-Meh. I put stuff in MoX_DEF.H that is mean to have access to this.
+    used for _map_square_flags[]
+
+Meh. I put stuff in MoX_DEF.H that is meant to have access to this.
 */
 // 0x01
 // 0x02
 // 0x04
 #define MSF_ROAD        0x08
 #define TF_Enc_Road     0x10
-#define MSF_CORRUPTION  0x20
-#define MSF_UNKNOWN_40H 0x40
-#define TF_NoRoad80     0x80  // ~== -1 ST_UNDEFINED
 #define TF_AnyRoad      0x18    // (MSF_ROAD | TF_Enc_Road)
+#define MSF_CORRUPTION  0x20
+#define MSF_UNKNOWN_40H 0x40    // wild game?
+#define TF_NoRoad80     0x80    // ~== -1 ST_UNDEFINED
 
 
 
 // WZD s161p01
-void Map_Square_Clear_Corruption(int16_t wx, int16_t wy, int16_t wp);
+void Square_Clear_Corruption(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p02
 // TILE_IsNode          
@@ -179,22 +181,22 @@ int16_t Square_Is_Grasslands(int16_t wx, int16_t wy, int16_t wp);
 int16_t Square_Is_Volcano(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p35
-// drake178: TILE_IsCorrupted()
+int16_t Square_Has_Corruption(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p36
-// drake178: UU_TILE_IsRes_40h()
+// int16_t UU_Square_Has_MSF_UNKNOWN_40H(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p37
 void All_City_Nightshade_Count(void);
 
 // WZD s161p38
-int16_t Map_Square_Is_Land(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Is_Land(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p39
 int16_t Square_Is_OceanLike(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p40
-// UU_TILE_BotchedResFn 
+// int16_t UU_Square_Provides_Some_Amount(int16_t wx, int16_t wy, int16_t wp);
 
 
 

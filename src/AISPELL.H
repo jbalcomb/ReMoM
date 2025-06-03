@@ -139,7 +139,7 @@ void Cast_Spell_Target_Error(int16_t spell_idx);
 void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx);
 
 // WZD o156p39
-// sub_E7CC9()
+int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t * city_idx, int16_t spell_idx, int16_t player_idx);
 
 // WZD o156p40
 // AI_CanTargetCities()
@@ -193,10 +193,10 @@ int16_t Pick_Target_For_Floating_Island(int16_t player_idx, int16_t * wx, int16_
 // AI_MyrrorAdvantage()
 
 // WZD o156p57
-int16_t Map_Square_Is_Legal_For_Floating_Island(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Is_Legal_For_Floating_Island(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o156p58
-// sub_EA61E()
+// AITP_Summoning_Circle()
 
 // WZD o156p59
 // WIZ_SummonInFortress()

@@ -16,6 +16,8 @@
 
 #include "MainScr_Maps.H"  /* Add_Nodes_To_Entities_On_Map_Window() */
 
+#include "SPELLDEF.H"
+
 #include <assert.h>
 
 
@@ -239,7 +241,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
         if(input_field_idx == _main_map_grid_field)
         {
             IDK_rightclicked_city_idx = ST_FALSE;
-            if(_osc_spell_target_type == osc_Magic_Node)
+            if(_osc_spell_target_type == stt_Magic_Node)
             {
                 entity_idx = Get_Map_Square_Magic_Node(((_map_x + _main_map_grid_x) % WORLD_WIDTH), ((_main_map_grid_y + _map_y) % WORLD_HEIGHT), _map_plane);
                 if(entity_idx != ST_UNDEFINED)
@@ -256,13 +258,13 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
             {
                 Play_Left_Click();
                 entity_idx = abs(entity_idx);
-                if (_osc_spell_target_type == osc_Map_Square)
+                if (_osc_spell_target_type == stt_Map_Square)
                 {
                     leave_screen = IDK_Map_Square_Is_Targetable(_main_map_grid_x, _main_map_grid_y);
                 }
                 else
                 {
-                    if (_osc_spell_target_type == osc_Map_Square)
+                    if (_osc_spell_target_type == stt_Map_Square)
                     {
                         leave_screen = IDK_Map_Square_Is_Targetable(_main_map_grid_x, _main_map_grid_y);
                     }
@@ -676,7 +678,7 @@ void Set_Mouse_List_Image_Nums(void)
     int16_t mouse_list_count = 0;  // _SI_
     int16_t entity_idx = 0;  // _DI_
 
-    if(_osc_spell_target_type == osc_Magic_Node)
+    if(_osc_spell_target_type == stt_Magic_Node)
     {
         Add_Nodes_To_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
     }
@@ -713,7 +715,7 @@ void Set_Mouse_List_Image_Nums(void)
             current_mouse_list[mouse_list_count].y2 = my_y2;
             current_mouse_list[mouse_list_count].center_offset = 0;
 
-            if(_osc_spell_target_type == osc_Map_Square)
+            if(_osc_spell_target_type == stt_Map_Square)
             {
 
                 current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
@@ -760,7 +762,7 @@ void Set_Mouse_List_Image_Nums(void)
                     else
                     {
 
-                        if(_osc_spell_target_type == osc_Magic_Node)
+                        if(_osc_spell_target_type == stt_Magic_Node)
                         {
 
                             current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
@@ -781,7 +783,7 @@ void Set_Mouse_List_Image_Nums(void)
 
     Set_Mouse_List(mouse_list_count, &current_mouse_list[0]);
 
-    if(_osc_spell_target_type == osc_Magic_Node)
+    if(_osc_spell_target_type == stt_Magic_Node)
     {
         Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
     }

@@ -1798,7 +1798,7 @@ void HLP_DrawExpanding__TODO(int16_t TL, int16_t TT, int16_t TR, int16_t TB, int
     HLP_ExpandOrigRight = OR;
     HLP_ExpandOrigBottom = OB;
 
-    if(magic_set.Expanding_Help != ST_FALSE)
+    if(magic_set.expanding_help != ST_FALSE)
     {
 
         if(FL > FR)

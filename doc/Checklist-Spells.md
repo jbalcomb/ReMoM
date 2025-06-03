@@ -1,4 +1,6 @@
 
+NOTE: the check on the check-list is only for the human player side, CP/AI is a different beast
+
 Checklist-Spells.ods
 Green   Done-Done
 Light-Lime-3    maybe, kinda?

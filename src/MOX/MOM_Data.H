@@ -822,6 +822,7 @@ struct s_SPELL_DATA
         /* 20 */  int8_t Param0;            // 
         /* 21 */  int8_t Param1;
         int16_t unit_type;                  // 0: scc_Summoning             IDK_SummonAnim_Draw()
+        int16_t ce_idx;                     // 9: scc_City_Enchantment      index into _CITIES[].enchantments
         int16_t ge_idx;                     // 9: scc_Global_Enchantment    indexes into _players[].Globals[], which holds player_num (i.e., player_idx + 1)
         uint8_t cmbt_0;                     // Attack_Strength  CMB_ConvSpellAttack()
         uint8_t cmbt_1;                     // Immunity_Flags   CMB_ConvSpellAttack()
@@ -1151,11 +1152,11 @@ struct s_WIZARD
     /* 0058 */ uint16_t tax_rate;
 
 /* 005A struct s_BOOKSHELF Books; */
-//     /* 005A */ int16_t spellrank_nature;   +0
-//     /* 005C */ int16_t spellrank_sorcery;  +2
-//     /* 005E */ int16_t spellrank_chaos;    +4
-//     /* 0060 */ int16_t spellrank_life;     +6
-//     /* 0062 */ int16_t spellrank_death;    +8
+//     /* 005A */ int16_t spellrank_nature;   +0  sbr_Nature
+//     /* 005C */ int16_t spellrank_sorcery;  +2  sbr_Sorcery
+//     /* 005E */ int16_t spellrank_chaos;    +4  sbr_Chaos
+//     /* 0060 */ int16_t spellrank_life;     +6  sbr_Life
+//     /* 0062 */ int16_t spellrank_death;    +8  sbr_Death
     /* 005A */ int16_t spellranks[5];
 
 /* 0064 struct s_RETORTS Retorts; */

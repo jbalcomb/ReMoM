@@ -6583,7 +6583,7 @@ int16_t TILE_AI_FindEmptyLnd__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * 
                 }
 
                 if(
-                    (Map_Square_Is_Land(some_wx, some_wy, wp) == ST_TRUE)
+                    (Square_Is_Land(some_wx, some_wy, wp) == ST_TRUE)
                     &&
                     CONTX_NmeStrMap[wp][((some_wy * WORLD_WIDTH) + some_wx)]
                 )
@@ -6664,7 +6664,7 @@ int16_t TILE_NextFreeLand__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
         for(itr1 = 0; itr1 < 3; itr1++)
         {
 
-            if(Map_Square_Is_Land((wx + itr2 - 1), (wy + itr1 - 1), wp) == ST_FALSE)
+            if(Square_Is_Land((wx + itr2 - 1), (wy + itr1 - 1), wp) == ST_FALSE)
             {
 
                 map_square_area[((itr1 * 6) + itr2)] = ST_FALSE;

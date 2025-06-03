@@ -1421,7 +1421,7 @@ void Main_Screen(void)
         if(
             (input_field_idx == _next_turn_button) ||
             ((g_TimeStop_PlayerNum > 0) && ((_human_player_idx + 1) != g_TimeStop_PlayerNum)) ||
-            ((all_units_moved == ST_TRUE) && (IDK_EoT_flag == ST_FALSE) && (magic_set.EoT_Wait == ST_FALSE) && (Any_Units_Not_Busy() == ST_TRUE))
+            ((all_units_moved == ST_TRUE) && (IDK_EoT_flag == ST_FALSE) && (magic_set.end_of_turn_wait == ST_FALSE) && (Any_Units_Not_Busy() == ST_TRUE))
         )
         {
 
@@ -5431,7 +5431,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
     if(
         (player_idx != _human_player_idx)
         &&
-        (magic_set.Enemy_Moves == ST_TRUE)
+        (magic_set.enemy_moves == ST_TRUE)
     )
     {
 

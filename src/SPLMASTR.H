@@ -82,51 +82,6 @@ int16_t CMB_SpellSlider__STUB(int16_t spell_idx, int16_t Selected_Spell, int16_t
 
 
 /*
-    WIZARDS.EXE  ovr137
-*/
-
-// WZD o137p01
-void IDK_SummonAnim_Load(int16_t unit_type, int16_t player_idx);
-
-// WZD o137p02
-void IDK_SummonAnim_Draw(void);
-
-// WZD o137p03
-void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t player_idx);
-
-// WZD o137p04
-// sub_BECD9()
-
-// WZD o137p05
-// IDK_City_sBEE75()
-
-// WZD o137p06
-// sub_BF048()
-
-// WZD o137p07
-// sub_BF2AF()
-
-// WZD o137p08
-void OVL_LoadGlobalAnim(int16_t spell_idx, int16_t player_idx);
-
-// WZD o137p09
-void OVL_DrawGlobalAnim(void);
-
-// WZD o137p10
-void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx);
-
-// WZD o137p11
-// IDK_SplScr_sBFAA5()
-
-// WZD o137p12
-// Spell_Target_Wizard_Screen_Draw()
-
-// WZD o137p13
-// Spell_Target_Wizard_Screen()
-
-
-
-/*
     WIZARDS.EXE  ovr138
 */
 

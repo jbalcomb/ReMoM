@@ -317,7 +317,7 @@ void Hall_Of_Fame_Screen_Draw(void)
 
             strcpy(GUI_String_1, magic_set.hof_names[itr_scores]);
             strcat(GUI_String_1, cnst_HoF_String_D);  // " of the "
-            strcat(GUI_String_1, TBL_HoF_RaceStrings[magic_set.HallofFame_Races[itr_scores]]);
+            strcat(GUI_String_1, TBL_HoF_RaceStrings[magic_set.hof_races[itr_scores]]);
             Print((print_x + 9), print_y, GUI_String_1);  // ¿ 9 is ~ x offset for title column ?
             Print_Integer_Right((print_x + 170), print_y, magic_set.hof_scores[itr_scores]);  // ¿ 9 is ~ x offset for score column ?
 

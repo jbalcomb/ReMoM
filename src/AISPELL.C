@@ -8,9 +8,11 @@ MoO2
 Module: AITECH
 */
 
-#include "MOX/MOX_DAT.H"  /* _players[] */
+#include "MOX/MOM_Data.H"
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_TYPE.H"
 
-#include "MOM.H"
+#include "SPELLDEF.H"
 
 
 
@@ -606,6 +608,234 @@ void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx)
 
 // WZD o156p39
 // drake178: sub_E7CC9()
+/*
+
+XREF:
+    j_IDK_AI_City_Spell()
+        Cast_CallOfTheVoid()
+        Cast_Move_Fortress()
+        Cast_Earthquake()
+        Cast_WallOfStone()
+        Cast_SpellOfReturn()
+        Cast_Spell_Overland__WIP()
+        Cast_Spell_Overland__WIP()
+
+*/
+int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t * city_idx, int16_t spell_idx, int16_t player_idx)
+{
+    int16_t sw2_spell_idx = 0;
+    int16_t sw1_spell_idx = 0;
+    int16_t best_enemy_city_value = 0;
+    int16_t enemy_city_idx = 0;
+    int16_t itr_cities = 0;
+    int16_t duped = 0;
+    int16_t consecration = 0;
+
+    if(spell_target_type == stt_Friendly_City)
+    {
+        sw1_spell_idx = spell_idx;
+        switch(sw1_spell_idx)
+        {
+            // case spl_Wall_Of_Stone:    { return AITP_WallofStone(player_idx, city_idx);      } break;
+            // case spl_Move_Fortress:    { return AITP_MoveFortress(player_idx, city_idx);     } break;
+            // case spl_Earth_Gate:       { return AITP_EarthGate(player_idx, city_idx);        } break;
+            // case spl_Flying_Fortress:  { return AITP_FlyingFortress(player_idx, city_idx);   } break;
+            // case spl_Wall_Of_Fire:     { return AITP_WallofFire(player_idx, city_idx);       } break;
+            // case spl_Heavenly_Light:   { return AITP_HeavenlyLight(player_idx, city_idx);    } break;
+            // case spl_Altar_Of_Battle:  { return AITP_AltarofBattle(player_idx, city_idx);    } break;
+            // case spl_Inspirations:     { return AITP_Inspirations(player_idx, city_idx);     } break;
+            // case spl_Stream_Of_Life:   { return AITP_StreamofLife(player_idx, city_idx);     } break;
+            // case spl_Astral_Gate:      { return AITP_AstralGate(player_idx, city_idx);       } break;
+            // case spl_Prosperity:       { return AITP_Prosperity(player_idx, city_idx);       } break;
+            // case spl_Consecration:     { return AITP_Consecration(player_idx, city_idx);     } break;
+            // case spl_Cloud_Of_Shadow:  { return AITP_CloudofShadow(player_idx, city_idx);    } break;
+            // case spl_Summoning_Circle: { return AITP_Summoning_Circle(player_idx, city_idx); } break;
+            // case spl_Dark_Rituals:     { return AITP_DarkRituals(player_idx, city_idx);      } break;
+            // case spl_Gaias_Blessing:   { return AITP_GaiasBlessing(player_idx, city_idx);    } break;
+            default: { Cast_Spell_Target_Error(spell_idx); } break;
+        }
+    }
+    else if(spell_target_type == stt_Enemy_City)
+    {
+
+        if(
+            (spell_idx == spl_Earthquake)
+            ||
+            (spell_idx == spl_Chaos_Rift)  /* ¿ BUGBUG  Chaos Rift is also dispelled by Consecration ? */
+            ||
+            (spell_idx == spl_Call_The_Void)
+        )
+        {
+
+            consecration = ST_FALSE;
+
+        }
+        else if(
+            (spell_idx == spl_Evil_Presence)
+            ||
+            (spell_idx == spl_Cursed_Lands)
+            ||
+            (spell_idx == spl_Pestilence)
+            ||
+            (spell_idx == spl_Famine)
+        )
+        {
+
+            consecration = ST_TRUE;
+
+        }
+        else
+        {
+
+            Cast_Spell_Target_Error(spell_idx);
+
+        }
+
+        enemy_city_idx = ST_UNDEFINED;
+        best_enemy_city_value = 0;
+
+        for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+        {
+
+            if(
+                (AI_Enemy_City_Values[itr_cities] > best_enemy_city_value)
+                &&
+                (_CITIES[itr_cities].owner_idx != NEUTRAL_PLAYER_IDX)
+                &&
+                (_CITIES[itr_cities].enchantments[CONSECRATION] == 0)
+            )
+            {
+
+                if(
+                    (
+                        (consecration == ST_FALSE)
+                        &&
+                        (_CITIES[itr_cities].enchantments[CHAOS_WARD] != 0)
+                    )
+                    ||
+                    (
+                        (consecration == ST_FALSE)
+                        &&
+                        (_CITIES[itr_cities].enchantments[DEATH_WARD] != 0)
+                    )
+                )
+                {
+
+                    if(
+                        (
+                            (spell_idx != spl_Evil_Presence)
+                            ||
+                            (_players[_CITIES[itr_cities].owner_idx].spellranks[sbr_Death] != 0)
+                        )
+                        &&
+                        (Test_Bit_Field(_CITIES[itr_cities].contacts, player_idx) == 0)
+                    )
+                    {
+
+                        duped = ST_FALSE;
+
+                        sw2_spell_idx = spell_idx;
+
+                        switch(sw2_spell_idx)
+                        {
+
+                            case spl_Earthquake:    // 0x1A   26  spl_Earthquake
+                            {
+                                // EMPTY
+                            } break;
+
+                            case spl_Call_The_Void: // 0x77   119  spl_Call_The_Void
+                            {
+                                // EMPTY
+                            } break;
+
+                            case spl_Chaos_Rift:    // 0x6E  110  spl_Chaos_Rift
+                            {
+                                if(_CITIES[itr_cities].enchantments[CHAOS_RIFT] != 0)
+                                {
+                                    duped = ST_TRUE;
+                                }
+                            } break;
+
+                            case spl_Evil_Presence:  // 0xB7  183  spl_Evil_Presence
+                            {
+                                if(_CITIES[itr_cities].enchantments[EVIL_PRESENCE] != 0)
+                                {
+                                    duped = ST_TRUE;
+                                }
+                            } break;
+
+                            case spl_Famine:  // 0xBD  189  spl_Famine
+                            {
+                                if(_CITIES[itr_cities].enchantments[FAMINE] != 0)
+                                {
+                                    duped = ST_TRUE;
+                                }
+                            } break;
+
+                            case spl_Cursed_Lands:  // 0xBE  190  spl_Cursed_Lands
+                            {
+                                if(_CITIES[itr_cities].enchantments[EVIL_PRESENCE] != 0)
+                                {
+                                    duped = ST_TRUE;
+                                }
+                            } break;
+
+                            case spl_Pestilence:  // 0xC4  196  spl_Pestilence
+                            {
+                                if(_CITIES[itr_cities].enchantments[EVIL_PRESENCE] != 0)
+                                {
+                                    duped = ST_TRUE;
+                                }
+                            } break;
+
+                            default:
+                            {
+                                // EMPTY
+                            } break;
+
+                        }
+
+                        if(duped == ST_FALSE)
+                        {
+
+                            best_enemy_city_value = AI_Enemy_City_Values[itr_cities];
+
+                            enemy_city_idx = itr_cities;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        if(enemy_city_idx != ST_UNDEFINED)
+        {
+
+            *city_idx = enemy_city_idx;
+
+            return ST_TRUE;
+
+        }
+        else
+        {
+
+            return ST_FALSE;
+
+        }
+
+    }
+    else
+    {
+        Cast_Spell_Target_Error(spell_idx);
+    }
+
+}
+
 
 // WZD o156p40
 // drake178: AI_CanTargetCities()
@@ -783,7 +1013,7 @@ int16_t Pick_Target_For_Floating_Island(int16_t player_idx, int16_t * wx, int16_
         {
             if(Vertical == ST_FALSE)
             {
-                if(Map_Square_Is_Legal_For_Floating_Island((city_wx + itr_squares), city_wy, city_wp) == ST_TRUE)
+                if(Square_Is_Legal_For_Floating_Island((city_wx + itr_squares), city_wy, city_wp) == ST_TRUE)
                 {
                     check_value = ST_TRUE;
                     target_wx = (city_wx + itr_squares);
@@ -793,7 +1023,7 @@ int16_t Pick_Target_For_Floating_Island(int16_t player_idx, int16_t * wx, int16_
             }
             else  /* (Vertical == ST_TRUE) */
             {
-                if(Map_Square_Is_Legal_For_Floating_Island(city_wx, (city_wy + itr_squares), city_wp) == ST_TRUE)
+                if(Square_Is_Legal_For_Floating_Island(city_wx, (city_wy + itr_squares), city_wp) == ST_TRUE)
                 {
                     check_value = ST_TRUE;
                     target_wx = city_wx;
@@ -806,7 +1036,7 @@ int16_t Pick_Target_For_Floating_Island(int16_t player_idx, int16_t * wx, int16_
         {
             if(Vertical == ST_FALSE)
             {
-                if(Map_Square_Is_Legal_For_Floating_Island((city_wx - itr_squares), city_wy, city_wp) == ST_TRUE)
+                if(Square_Is_Legal_For_Floating_Island((city_wx - itr_squares), city_wy, city_wp) == ST_TRUE)
                 {
                     check_value = ST_TRUE;
                     target_wx = (city_wx - itr_squares);
@@ -816,7 +1046,7 @@ int16_t Pick_Target_For_Floating_Island(int16_t player_idx, int16_t * wx, int16_
             }
             else  /* (Vertical == ST_TRUE) */
             {
-                if(Map_Square_Is_Legal_For_Floating_Island(city_wx, (city_wy - itr_squares), city_wp) == ST_TRUE)
+                if(Square_Is_Legal_For_Floating_Island(city_wx, (city_wy - itr_squares), city_wp) == ST_TRUE)
                 {
                     check_value = ST_TRUE;
                     target_wx = city_wx;
@@ -885,12 +1115,11 @@ int16_t Pick_Target_For_Floating_Island(int16_t player_idx, int16_t * wx, int16_
 /*
 
 */
-int16_t Map_Square_Is_Legal_For_Floating_Island(int16_t wx, int16_t wy, int16_t wp)
+int16_t Square_Is_Legal_For_Floating_Island(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type;  // DNE in Dasm
 
-    // DEDU  `% _TerType_Count`? same seen in NEXTTURN.C
-    terrain_type = (GET_TERRAIN_TYPE(wx, wy, wp) % _TerType_Count);
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
     if(
         ((terrain_type < _Tundra00001000) && (terrain_type > _River1111_5))
@@ -914,6 +1143,7 @@ int16_t Map_Square_Is_Legal_For_Floating_Island(int16_t wx, int16_t wy, int16_t 
 
 // WZD o156p58
 // drake178: sub_EA61E()
+// int16_t AITP_Summoning_Circle(int16_t player_idx, int16_t * city_idx)
 
 // WZD o156p59
 // drake178: WIZ_SummonInFortress()

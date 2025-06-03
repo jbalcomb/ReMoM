@@ -1082,12 +1082,32 @@ AI_OVL_GetSpellList__WIP() only clears 90 bytes; uses byte ptr
 SAMB_ptr AI_OVL_Spell_Cats;
 
 // WZD dseg:9122
+/*
+2-byte, signed
+100 values
+allocated in Allocate_AI_Data()
+*/
 int16_t * AI_NME_Garrison_Strs;
 // WZD dseg:9124
+/*
+2-byte, signed
+100 values
+allocated in Allocate_AI_Data()
+*/
 int16_t * AI_Own_Garr_Strs;
 // WZD dseg:9126
+/*
+2-byte, signed
+100 values
+allocated in Allocate_AI_Data()
+*/
 int16_t * AI_Enemy_City_Values;
 // WZD dseg:9128
+/*
+2-byte, signed
+100 values
+allocated in Allocate_AI_Data()
+*/
 int16_t * AI_Own_City_Values;
 
 

@@ -1596,12 +1596,12 @@ void Next_Turn_Process_Purify(void)
                 if(Purify_Progress >= 4)
                 {
 
-                    Map_Square_Clear_Corruption(_UNITS[troops[0]].wx, _UNITS[troops[0]].wy, _UNITS[troops[0]].wp);
+                    Square_Clear_Corruption(_UNITS[troops[0]].wx, _UNITS[troops[0]].wy, _UNITS[troops[0]].wp);
                     // unit_idx = troops[(itr_troops - 1)];
                     // unit_wx = _UNITS[unit_idx].wx;
                     // unit_wy = _UNITS[unit_idx].wy;
                     // unit_wp = _UNITS[unit_idx].wp;
-                    // Map_Square_Clear_Corruption(unit_wx, unit_wy, unit_wp);
+                    // Square_Clear_Corruption(unit_wx, unit_wy, unit_wp);
 
                     for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
                     {

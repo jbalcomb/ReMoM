@@ -41,6 +41,21 @@ Which LBX has the spell's sound effects?
 Which LBX has the spell's music?
 
 
+Apply_City_Changes()
+    Apply_Spell_Consecration(itr_cities);
+    // SPELLY  CTY_StreamOfLife(itr_cities);
+    // SPELLY  CTY_ChaosRift(itr_cities);
+    // SPELLY  CTY_GaiasBlessing(itr_cities);
+    // SPELLY  CTY_NightshadeDispel(itr_cities);
+"...negative enchantments..."
+    Apply_Spell_Consecration()
+        _CITIES[city_idx].enchantments[CHAOS_RIFT] = 0;
+        _CITIES[city_idx].enchantments[EVIL_PRESENCE] = 0;
+        _CITIES[city_idx].enchantments[CURSED_LANDS] = 0;
+        _CITIES[city_idx].enchantments[FAMINE] = 0;
+        _CITIES[city_idx].enchantments[PESTILENCE] = 0;
+        _CITIES[city_idx].enchantments[CHAOS_RIFT] = 0;
+
 
 
 SBookScr.C
@@ -61,7 +76,7 @@ spell_idx == spl_Animate_Dead
 
 
 
-## Spell Casting
+## Cast Spell - Overland
 
 Next_Turn_Proc()
     |-> Cast_Spell_Overland__WIP()
@@ -102,7 +117,15 @@ spl_Crusade             extra in-line handling
 spl_Awareness           calls out
 
 
-## Global Enchantment
+
+## City Enchantment (2)
+
+
+## City Curse (3)
+
+
+
+## Global Enchantment (9)
 
 ~ Special Global Enchantments
 spl_Time_Stop

@@ -34,6 +34,21 @@
 
 
 
+/*
+
+if(combat_enchantments[CALL_LIGHTNING_DFNDR] != 0)
+
+
+like with CMB_CE_Refresh__WIP()
+// even/odd - attacker/defender
+if((itr % 2) == 0)
+    CMB_ATKR_CE_Wnd[attacker_enchantment_count].icon_seg = combat_enchantment_icon_segs[combat_enchantment_icon_data[idx].icon_idx];
+    CMB_ATKR_CE_Wnd[attacker_enchantment_count].help_idx = combat_enchantment_icon_data[idx].help_idx;
+else
+    CMB_DEFR_CE_Wnd[defender_enchantment_count].icon_seg = combat_enchantment_icon_segs[combat_enchantment_icon_data[idx].icon_idx];
+    CMB_DEFR_CE_Wnd[defender_enchantment_count].help_idx = combat_enchantment_icon_data[idx].help_idx;
+
+*/
 #define TRUE_LIGHT_ATTKR 0
 #define TRUE_LIGHT_DFNDR 1
 #define DARKNESS_ATTKR 2
@@ -740,8 +755,8 @@ enum e_CMB_ScrollMsg_Type
 
 struct s_COMBAT_ENCHANTMENT_STATUS
 {
-    /* 00 */ int8_t Attkr;
-    /* 01 */ int8_t Dfndr;
+    /* 00 */ int8_t Attkr;  // even /  left
+    /* 01 */ int8_t Dfndr;  //  odd / right
     /* 02 */
 };
 

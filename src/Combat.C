@@ -52,6 +52,7 @@
 #include "SBookScr.H"
 #include "special.H"
 #include "Spellbook.H"  /* Combat_Spellbook_Build__WIP() */
+#include "SPELLDEF.H"
 #include "Spells131.H"
 #include "Spells133.H"
 #include "Terrain.H"
@@ -105,27 +106,6 @@ Module: MOX
     Address: 02:00191902
 
 */
-
-
-
-enum e_COMBAT_SPELL_TARGET_TYPE
-{
-    CTT_Tile_NoUnit  = 1,
-    CTT_Tile  = 2,
-    CTT_Wall  = 3,
-    CTT_Tile_NoUnitA  = 4,
-    CTT_Tile_NoUnitD  = 5,
-
-    CTT_EnemyUnit  = 10,
-    CTT_EnemyNU  = 11,
-
-    CTT_FriendlyUnit  = 20,
-    CTT_FriendlyNU  = 21,
-
-    CTT_FriendlyHero  = 23,
-
-    CTT_DispelMagic  = 30
-};
 
 
 
@@ -3301,7 +3281,7 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
                 sdl2_Play_Sound__WIP(Sound_Data_Seg, Sound_Data_Seg_size);
             }
 
-            if(magic_set.Movement_Anims == ST_TRUE)
+            if(magic_set.movement_animations == ST_TRUE)
             {
 
                 for(itr = 0; itr < 8; itr++)
@@ -13683,7 +13663,7 @@ void Combat_Set_Mouse_List_Image_Num(void)
 
         if(CMB_TargetRows[cgy][cgx] == -2)
         {
-            if(CMB_TargetingType < CTT_EnemyUnit)
+            if(CMB_TargetingType < cstt_EnemyUnit)
             {
                 _combat_mouse_grid[0].image_num =  crsr_CastBase;
             }
@@ -13694,7 +13674,7 @@ void Combat_Set_Mouse_List_Image_Num(void)
         }
         else if(CMB_TargetRows[cgy][cgx] == -1)
         {
-            if(CMB_TargetingType < CTT_EnemyUnit)
+            if(CMB_TargetingType < cstt_EnemyUnit)
             {
                 _combat_mouse_grid[0].image_num =  crsr_CastBase;
             }
@@ -13716,20 +13696,20 @@ void Combat_Set_Mouse_List_Image_Num(void)
             if(battle_units[Cursor_Unit].controller_idx == HUMAN_PLAYER_IDX)
             {
                 if(
-                    (CMB_TargetingType == CTT_FriendlyUnit)
+                    (CMB_TargetingType == cstt_FriendlyUnit)
                     ||
-                    (CMB_TargetingType == CTT_Tile)
+                    (CMB_TargetingType == cstt_Tile)
                     ||
-                    (CMB_TargetingType == CTT_DispelMagic)
+                    (CMB_TargetingType == cstt_DispelMagic)
                     ||
                     (
-                        (CMB_TargetingType == CTT_FriendlyNU)
+                        (CMB_TargetingType == cstt_FriendlyNU)
                         &&
                         (battle_units[Cursor_Unit].race == rt_Arcane)
                     )
                     ||
                     (
-                        (CMB_TargetingType ==CTT_FriendlyHero)
+                        (CMB_TargetingType ==cstt_FriendlyHero)
                         &&
                         (_UNITS[battle_units[Cursor_Unit].unit_idx].Hero_Slot > -1)
                     )
@@ -13745,14 +13725,14 @@ void Combat_Set_Mouse_List_Image_Num(void)
             else
             {
                 if(
-                    (CMB_TargetingType == CTT_EnemyUnit)
+                    (CMB_TargetingType == cstt_EnemyUnit)
                     ||
-                    (CMB_TargetingType == CTT_Tile)
+                    (CMB_TargetingType == cstt_Tile)
                     ||
-                    (CMB_TargetingType == CTT_DispelMagic)
+                    (CMB_TargetingType == cstt_DispelMagic)
                     ||
                     (
-                        (CMB_TargetingType == CTT_EnemyNU)
+                        (CMB_TargetingType == cstt_EnemyNU)
                         &&
                         (battle_units[Cursor_Unit].race == rt_Arcane)
                     )
@@ -13772,7 +13752,7 @@ void Combat_Set_Mouse_List_Image_Num(void)
 
 
     if(
-        (CMB_TargetingType == CTT_Tile_NoUnitA)
+        (CMB_TargetingType == cstt_Tile_NoUnitA)
         &&
         (cgx < 11)
     )
@@ -13781,7 +13761,7 @@ void Combat_Set_Mouse_List_Image_Num(void)
     }
 
     if(
-        (CMB_TargetingType == CTT_Tile_NoUnitD)
+        (CMB_TargetingType == cstt_Tile_NoUnitD)
         &&
         (cgx > 10)
     )
@@ -13789,7 +13769,7 @@ void Combat_Set_Mouse_List_Image_Num(void)
         _combat_mouse_grid[0].image_num = crsr_RedCross;
     }
 
-    if(CMB_TargetingType == CTT_Wall)
+    if(CMB_TargetingType == cstt_Wall)
     {
         _combat_mouse_grid[0].image_num = crsr_RedCross;
         if(Combat_Grid_Cell_Has_City_Wall(cgx, cgy) != ST_FALSE)
@@ -13798,7 +13778,7 @@ void Combat_Set_Mouse_List_Image_Num(void)
         }
     }
 
-    if(CMB_TargetingType == CTT_DispelMagic)
+    if(CMB_TargetingType == cstt_DispelMagic)
     {
         for(itr = 0; itr < CMB_Vortex_Count; itr++)
         {
@@ -13898,7 +13878,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
 
     if(spell_idx == spl_NONE)
     {
-        CMB_TargetingType = CTT_Tile_NoUnit;
+        CMB_TargetingType = cstt_Tile_NoUnit;
     }
     else
     {
@@ -13908,18 +13888,18 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
             {
                 if(_combat_attacker_player == HUMAN_PLAYER_IDX)
                 {
-                    CMB_TargetingType = CTT_Tile_NoUnitA;
+                    CMB_TargetingType = cstt_Tile_NoUnitA;
                 }
                 else
                 {
-                    CMB_TargetingType = CTT_Tile_NoUnitD;
+                    CMB_TargetingType = cstt_Tile_NoUnitD;
                 }
             } // FALL-THROUGH
             case scc_Special_Spell:
             {
                 if(spell_idx == spl_Healing)
                 {
-                    CMB_TargetingType = CTT_FriendlyUnit;
+                    CMB_TargetingType = cstt_FriendlyUnit;
                 }
                 if(
                     (spell_idx == spl_Raise_Dead)
@@ -13929,11 +13909,11 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
                 {
                     if(_combat_attacker_player == HUMAN_PLAYER_IDX)
                     {
-                        CMB_TargetingType = CTT_Tile_NoUnitA;
+                        CMB_TargetingType = cstt_Tile_NoUnitA;
                     }
                     else
                     {
-                        CMB_TargetingType = CTT_Tile_NoUnitD;
+                        CMB_TargetingType = cstt_Tile_NoUnitD;
                     }
                 }
                 if(
@@ -13942,7 +13922,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
                     (spell_idx == spl_Creature_Binding)
                 )
                 {
-                    CMB_TargetingType == CTT_EnemyUnit;
+                    CMB_TargetingType == cstt_EnemyUnit;
                 }
                 if(
                     (spell_idx == spl_Earth_To_Mud)
@@ -13950,44 +13930,44 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
                     (spell_idx == spl_Cracks_Call)
                 )
                 {
-                    CMB_TargetingType == CTT_Tile;
+                    CMB_TargetingType == cstt_Tile;
                 }
                 if(spell_idx == spl_Magic_Vortex)
                 {
-                    CMB_TargetingType == CTT_Tile_NoUnit;
+                    CMB_TargetingType == cstt_Tile_NoUnit;
                 }
                 if(spell_idx == spl_Disrupt)
                 {
-                    CMB_TargetingType = CTT_Wall;
+                    CMB_TargetingType = cstt_Wall;
                 }
                 if(spell_idx == spl_Recall_Hero)
                 {
-                    CMB_TargetingType = CTT_FriendlyHero;
+                    CMB_TargetingType = cstt_FriendlyHero;
                 }
                 if(spell_idx == spl_Word_Of_Recall)
                 {
-                    CMB_TargetingType = CTT_FriendlyUnit;
+                    CMB_TargetingType = cstt_FriendlyUnit;
                 }
             } break;
             case scc_Unit_Enchantment:
             {
-                CMB_TargetingType = CTT_FriendlyUnit;
+                CMB_TargetingType = cstt_FriendlyUnit;
             } break;
             case scc_Fixed_Dmg_Spell:
             {
-                CMB_TargetingType = CTT_EnemyUnit;
+                CMB_TargetingType = cstt_EnemyUnit;
             } break;
             case scc_Mundane_Enchantment:
             {
-                CMB_TargetingType = CTT_FriendlyNU;
+                CMB_TargetingType = cstt_FriendlyNU;
             } break;
             case scc_Mundane_Curse:
             {
-                CMB_TargetingType = CTT_EnemyNU;
+                CMB_TargetingType = cstt_EnemyNU;
             } break;
             case scc_Dispel_Spell:
             {
-                CMB_TargetingType = CTT_DispelMagic;
+                CMB_TargetingType = cstt_DispelMagic;
             } break;
         }
 // scc_City_Enchantment    =  2,
@@ -14041,7 +14021,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
             *target_cgy = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
 
             if(
-                (CMB_TargetingType == CTT_Wall)
+                (CMB_TargetingType == cstt_Wall)
                 &&
                 (Combat_Grid_Cell_Has_City_Wall(*target_cgx, *target_cgy) != ST_FALSE)
             )
@@ -14051,7 +14031,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
                 continue;
             }
 
-            if(CMB_TargetingType == CTT_DispelMagic)
+            if(CMB_TargetingType == cstt_DispelMagic)
             {
                 STU_DEBUG_BREAK();
             }
@@ -14062,9 +14042,9 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
             {
 
                 if(
-                    (CMB_TargetingType == CTT_Tile_NoUnit)
+                    (CMB_TargetingType == cstt_Tile_NoUnit)
                     ||
-                    (CMB_TargetingType == CTT_Tile)
+                    (CMB_TargetingType == cstt_Tile)
                 )
                 {
                     leave_screen = ST_TRUE;
@@ -14073,7 +14053,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
 
                 // ; BUG: allows summoning on invalid tiles
                 if(
-                    (CMB_TargetingType == CTT_Tile_NoUnitD)
+                    (CMB_TargetingType == cstt_Tile_NoUnitD)
                     &&
                     (*target_cgx < 11)
                 )
@@ -14099,7 +14079,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
 
                 // ; BUG: allows summoning on invalid tiles
                 if(
-                    (CMB_TargetingType == CTT_Tile_NoUnitA)
+                    (CMB_TargetingType == cstt_Tile_NoUnitA)
                     &&
                     (*target_cgx >= 11)
                 )
@@ -14133,11 +14113,11 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
                 {
                     
                     if(
-                        (CMB_TargetingType == CTT_FriendlyUnit)
+                        (CMB_TargetingType == cstt_FriendlyUnit)
                         ||
-                        (CMB_TargetingType == CTT_Tile)
+                        (CMB_TargetingType == cstt_Tile)
                         ||
-                        (CMB_TargetingType == CTT_DispelMagic)
+                        (CMB_TargetingType == cstt_DispelMagic)
                     )
                     {
                         leave_screen == ST_TRUE;
@@ -17569,7 +17549,7 @@ BUG: this has just been done in the parent function
 
                             }
 
-                            if(magic_set.Movement_Anims == ST_TRUE)
+                            if(magic_set.movement_animations == ST_TRUE)
                             {
 
                                 for(itr_battle_units = 0; itr_battle_units < 8; itr_battle_units += Move_Anim_Base_Speed)
@@ -21531,7 +21511,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                 }
                 else
                 {
-                    if(magic_set.Raze_City == ST_TRUE)
+                    if(magic_set.raze_city == ST_TRUE)
                     {
                         RazeCity = Raze_City_Prompt(cnst_RazeCity_Msg);
                         if(RazeCity == 0)
@@ -23682,7 +23662,7 @@ void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
 
         if(Stack_Owner == HUMAN_PLAYER_IDX)
         {
-            if(magic_set.Raze_City == ST_TRUE)
+            if(magic_set.raze_city == ST_TRUE)
             {
                 if(Raze_City_Prompt(cnst_RazeCity_Msg2) == 0)
                 {

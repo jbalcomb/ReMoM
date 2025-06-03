@@ -383,7 +383,7 @@ void Settings_Screen(void)
 
         if(input_field_idx == Option_Control_Indices[18])
         {
-            magic_set.Movement_Anims = (1 - magic_set.Movement_Anims);
+            magic_set.movement_animations = (1 - magic_set.movement_animations);
         }
 
         if(leave_screen == ST_FALSE)
@@ -514,7 +514,7 @@ void Settings_Screen_Draw(void)
     }
 
     // Movement Animations
-    if(magic_set.Movement_Anims == ST_FALSE)
+    if(magic_set.movement_animations == ST_FALSE)
     {
         FLIC_Draw(192, 74, IMG_GUI_ChkBoxNo[0]);
     }
@@ -588,8 +588,8 @@ void Load_MAGIC_SET(void)
     fclose(file_pointer);
 
 
-    if(magic_set.Movement_Anims != ST_FALSE) { magic_set.Movement_Anims = ST_TRUE; }
-    if(magic_set.Raze_City != ST_FALSE) { magic_set.Raze_City = ST_TRUE; }
+    if(magic_set.movement_animations != ST_FALSE) { magic_set.movement_animations = ST_TRUE; }
+    if(magic_set.raze_city != ST_FALSE) { magic_set.raze_city = ST_TRUE; }
 
     
     if(magic_set.hof_scores[0] == 0)
@@ -597,7 +597,7 @@ void Load_MAGIC_SET(void)
         for(itr = 0; itr < NUM_HOF_ENTRIES; itr++)
         {
             magic_set.hof_scores[itr] = 0;
-            magic_set.HallofFame_Races[itr] = 0;
+            magic_set.hof_races[itr] = 0;
             strcpy(magic_set.hof_names[itr], "");
         }
     }
@@ -617,22 +617,22 @@ void Set_Default_Game_Settings(void)
     magic_set.sound_effects = ST_TRUE;
     magic_set.background_music = ST_TRUE;
     magic_set.event_music = ST_TRUE;
-    magic_set.Enemy_Moves = ST_TRUE;
-    magic_set.Enemy_Spells = ST_TRUE;
+    magic_set.enemy_moves = ST_TRUE;
+    magic_set.enemy_spells = ST_TRUE;
     magic_set.random_events = ST_TRUE;
-    magic_set.EoT_Wait = ST_TRUE;
+    magic_set.end_of_turn_wait = ST_TRUE;
     magic_set.end_of_turn_summary = ST_TRUE;
-    magic_set.Raze_City = ST_TRUE;
+    magic_set.raze_city = ST_TRUE;
     magic_set.spell_book_ordering = ST_TRUE;
     magic_set.strategic_combat_only = ST_FALSE;
     magic_set.spell_animations = ST_TRUE;
-    magic_set.City_Spell_Events = ST_TRUE;
-    magic_set.Ovl_Spell_Events = ST_TRUE;
-    magic_set.Summoning_Events = ST_TRUE;
+    magic_set.city_spell_events = ST_TRUE;
+    magic_set.overland_spell_events = ST_TRUE;
+    magic_set.summoning_events = ST_TRUE;
     magic_set.auto_unit_information = ST_TRUE;
-    magic_set.Show_Node_Owners = ST_TRUE;
-    magic_set.Expanding_Help = ST_TRUE;
-    magic_set.Movement_Anims = ST_TRUE;
+    magic_set.show_node_owners = ST_TRUE;
+    magic_set.expanding_help = ST_TRUE;
+    magic_set.movement_animations = ST_TRUE;
 
     magic_set.Difficulty = god_Intro;
     magic_set.Opponents = goo_Four;
@@ -650,7 +650,7 @@ void Set_Default_Game_Settings(void)
     for(itr = 0; itr < NUM_HOF_ENTRIES; itr++)
     {
         magic_set.hof_scores[itr] = 0;
-        magic_set.HallofFame_Races[itr] = 0;
+        magic_set.hof_races[itr] = 0;
         strcpy(magic_set.hof_names[itr], "");
     }
 
