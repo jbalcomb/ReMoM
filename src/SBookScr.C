@@ -117,7 +117,7 @@ void Spellbook_Screen_Draw(void)
 void Spellbook_Screen(void)
 {
     char temp_string[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t spellbook_pages[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t spellbook_pages[(2 * 6)] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t hotkey_B = 0;
     int16_t hotkey_F = 0;
     int16_t spellbook_page_spell_index = 0;
@@ -134,7 +134,7 @@ void Spellbook_Screen(void)
     int16_t itr_spellbook_page_fields = 0;  // _SI_
     int16_t x_start = 0;  // _DI_
 
-    did_select_spell = 0;
+    did_select_spell = ST_FALSE;
 
     OVL_DisableIncmBlink();
 
@@ -151,19 +151,14 @@ void Spellbook_Screen(void)
     SBK_Dogears = 1;
 
     player_is_casting = ST_FALSE;
-
     for(itr_spellbook_page_count = 0; ((itr_spellbook_page_count < m_spellbook_page_count) && (player_is_casting == ST_FALSE)); itr_spellbook_page_count++)
     {
-
         for(itr_page_spell_count = 0; m_spellbook_pages[itr_spellbook_page_count].count > itr_page_spell_count; itr_page_spell_count++)
         {
-
             if(player_is_casting == ST_FALSE)
             {
-
                 if(m_spellbook_pages[itr_spellbook_page_count].spell[itr_page_spell_count] == _players[HUMAN_PLAYER_IDX].casting_spell_idx)
                 {
-
                     if((itr_spellbook_page_count % 2) != 1)
                     {
                         SBK_OpenPage = itr_spellbook_page_count;
@@ -172,15 +167,10 @@ void Spellbook_Screen(void)
                     {
                         SBK_OpenPage = (itr_spellbook_page_count - 1);
                     }
-
                     player_is_casting = ST_TRUE;
-
                 }
-
             }
-
         }
-
     }
 
     if(player_is_casting == ST_FALSE)
@@ -262,7 +252,7 @@ void Spellbook_Screen(void)
         /*
             BEGIN:  Left-Click Spellbook Page Spell Fields
         */
-        for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < 12; itr_spellbook_page_fields++)
+        for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < (2 * 6); itr_spellbook_page_fields++)
         {
 
             if(spellbook_pages[itr_spellbook_page_fields] == input_field_idx)
@@ -285,7 +275,6 @@ void Spellbook_Screen(void)
                             spell_idx = ST_UNDEFINED;
 
                             strcpy(GUI_NearMsgString, _msg_abort_1);
-                            // TODO  String_Copy_Far(MK_FP(temp_string, 0), spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].Name);
                             strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].name);
                             strcat(GUI_NearMsgString, temp_string);
                             strcat(GUI_NearMsgString, _msg_abort_3);
@@ -304,7 +293,7 @@ void Spellbook_Screen(void)
                     }
 
                 }
-                else
+                else  /* (itr_spellbook_page_fields >= 6) */
                 {
 
                     if(m_spellbook_pages[(SBK_OpenPage + 1)].count > (itr_spellbook_page_fields - 6))
@@ -321,7 +310,6 @@ void Spellbook_Screen(void)
                             spell_idx = ST_UNDEFINED;
 
                             strcpy(GUI_NearMsgString, _msg_abort_1);
-                            // TODO  String_Copy_Far(MK_FP(temp_string, 0), spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].Name);
                             strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].name);
                             strcat(GUI_NearMsgString, temp_string);
                             strcat(GUI_NearMsgString, _msg_abort_3);
@@ -348,7 +336,6 @@ void Spellbook_Screen(void)
                     {
                 
                         strcpy(GUI_NearMsgString, _msg_abort_1);
-                        // TODO  String_Copy_Far(MK_FP(temp_string, 0), spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].Name);
                         strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].name);
                         strcat(GUI_NearMsgString, temp_string);
                         strcat(GUI_NearMsgString, _msg_abort_3);
@@ -452,12 +439,20 @@ void Spellbook_Screen(void)
 ; UNEXPLORED SUBFUNCTIONS INSIDE, RE-EXPLORE!
 */
 /*
+handles spl_Enchant_Item, spl_Create_Artifact, spl_Spell_Of_Mastery
+
+if "Instant", calls Cast_Spell_Overland__WIP()
 
 Spellbook_Screen() has only set _players[].casting_spell_idx...
 
 ¿ handles the 'slider' for variable power spells ?
 
 ¿ doesn't *know* it's for the human/current player ?
+
+XREF:
+    Spellbook_Screen()
+    j_WIZ_SetOverlandSpell__WIP()
+        AI_Spell_Select__STUB()
 
 */
 int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t spellbook_page_spell_index)
@@ -495,7 +490,7 @@ int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t
 
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
-                    // TODO  _players[player_idx].casting_cost_remaining = IDK_CreateArtifact__STUB(0, 0);
+                    // SPELLY  _players[player_idx].casting_cost_remaining = IDK_CreateArtifact__STUB(0, 0);
                     // _players[player_idx].casting_cost_original = _ITEMS[136].cost;
                     // Allocate_Reduced_Map();
                     item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 1000);
@@ -513,7 +508,6 @@ int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t
 
                     _players[player_idx].casting_cost_remaining = ((_players[player_idx].casting_cost_remaining * var_8) / 100);
 
-                    // TODO  _fmemcpy(_ITEMS[(136 - player_idx)], _ITEMS[item_idx]);
                     memcpy(&_ITEMS[(136 - player_idx)], &_ITEMS[item_idx], sizeof(struct s_ITEM));
 
                     Remove_Item(item_idx);
@@ -526,7 +520,7 @@ int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t
 
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
-                    // TODO  _players[player_idx].casting_cost_remaining = IDK_CreateArtifact__STUB(0, 1);
+                    // SPELLY  _players[player_idx].casting_cost_remaining = IDK_CreateArtifact__STUB(0, 1);
                     // _players[player_idx].casting_cost_original = _ITEMS[136].cost;
                     // Allocate_Reduced_Map();
                     item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 30000);
@@ -544,7 +538,6 @@ int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t
 
                     _players[player_idx].casting_cost_remaining = ((_players[player_idx].casting_cost_remaining * var_8) / 100);
 
-                    // TODO  _fmemcpy(_ITEMS[(136 - player_idx)], _ITEMS[item_idx]);
                     memcpy(&_ITEMS[(136 - player_idx)], &_ITEMS[item_idx], sizeof(struct s_ITEM));
 
                     Remove_Item(item_idx);
@@ -593,18 +586,12 @@ int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t
         }
 
     }
-    else
+    else  /* ((spell_data_table[spell_idx].type >= scc_Infusable_Spell) && (player_idx == HUMAN_PLAYER_IDX)) */
     {
 
         _players[player_idx].casting_cost_remaining = Casting_Cost(HUMAN_PLAYER_IDX, spell_idx, ST_FALSE);
 
-        // ; displays the spell infusion dialog, allowing the
-        // ; player to specify the additional power they wish to
-        // ; channel into an infusable spell, setting both the
-        // ; initial and final cost into the wizard record
-        // ;
-        // ; BUG: ignores Evil Omens almost entirely
-        // TODO  SBK_SpellSlider(spell_idx, spellbook_page_spell_index);
+        // SPELLY  SBK_SpellSlider(spell_idx, spellbook_page_spell_index);
 
     }
 
@@ -638,7 +625,7 @@ int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t
 
                 _players[player_idx].mana_reserve -= Mana_This_Turn;
 
-                // BUG  already tested, only true in this path
+                // ; BUG  already tested, only true in this path
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
                     OVL_MosaicFlip__STUB();
@@ -832,7 +819,7 @@ void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t
 
     }
 
-    String_Copy_Far(temp_string, spell_data_table[spell_idx].name);
+    _fstrcpy(temp_string, spell_data_table[spell_idx].name);
 
     strcat(GUI_NearMsgString, temp_string);
 

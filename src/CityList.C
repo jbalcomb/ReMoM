@@ -554,7 +554,7 @@ void CityList_Screen_Draw(void)
         city_construction = _CITIES[city_idx].construction;
         if(city_construction < 100)  /* building */
         {
-            // TODO  String_Copy_Far()
+            // TODO  _fstrcpy()
             strcpy(GUI_String_1, bldg_data_table[city_construction].name);
         }
         else  /* unit */
@@ -582,7 +582,7 @@ void CityList_Screen_Draw(void)
         colors1[2] = 129;
         Set_Font_Colors_15(1, &colors1[0]);
         Set_Font_Style_Shadow_Down(1, 15, 0, 0);
-        // TODO  String_Copy_Far()
+        // TODO  _fstrcpy()
         strcpy(GUI_String_1, _CITIES[city_idx].name);
         String_To_Upper(GUI_String_1);
         Print(99, 158, GUI_String_1);

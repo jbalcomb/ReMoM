@@ -1124,6 +1124,7 @@ void Draw_Picture_Windowed(int16_t x1, int16_t y1, byte_ptr pict_seg)
 
 
 // WZD s30p26
+// MoO2  Module: bitmap  Mask_Out_Bitmap_With_Bitmap() |-> Mask_Bitmap_Pixels_()
 /*
     no RLE
         so, ~"bitmap"
@@ -1148,6 +1149,15 @@ Draw_Item_Icon_With_Enchantment_Outline(int16_t item_idx, SAMB_ptr item_icon_pic
     |-> Create_Picture(19, 19, item_icon_pict_seg);
     |-> Clipped_Copy_Bitmap(2, 2, item_icon_pict_seg, GfxBuf_2400B);
 
+*/
+/*
+doesn't copy transparent pixels from the src
+so, the dst keeps those pixels of its own
+
+Mask_Out_Bitmap_With_Bitmap() vs. Mask_Out_Bitmap_With_Bitmap_Inverse()
+...inverse only copies the transparent pixels
+
+probably, definitely should be Mask_Bitmap_Pixels() and Mask_Bitmap_Pixels_ASM()
 */
 void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr src_pict_seg)
 {
@@ -1249,13 +1259,14 @@ void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr s
     dst = (dst_pict_seg + dst_ofst);
     src = (src_pict_seg + src_ofst);
 
-    Color_Stream_Copy(dst, src, dst_skip_y, src_skip_y, cwidth, cheight);
+    Mask_Bitmap_Pixels(dst, src, dst_skip_y, src_skip_y, cwidth, cheight);
 
 }
 
 
 // WZD s30p27
-// LBX_IMG_Overlay()
+// drake178: LBX_IMG_Overlay()
+// MoO2  Module: bitmap  Mask_Out_Bitmap_With_Bitmap() |-> Mask_Bitmap_Pixels_Inverse_()
 /*
 ; overlays one LBX image onto another, trimming the
 ; source if necessary; Left and Top are the coordinates
@@ -1263,9 +1274,34 @@ void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr s
 ; copied if possible
 */
 /*
+Usage:
+Warped Node
+    Draw_Map_Nodes()
+
+Overland Spell Animation
+    OVL_LoadGlobalAnim()
+        // SPECFX.LBX, 054  "MASK1"     ""
+        GAME_MP_SpellVar_2 = LBX_Reload_Next(specfx_lbx_file__ovr137, 54, _screen_seg);
+        OR
+        // SPECFX.LBX, 055  "MASK2"     ""
+        GAME_MP_SpellVar_2 = LBX_Reload_Next(specfx_lbx_file__ovr137, 55, _screen_seg);
+    OVL_DrawGlobalAnim()
+        Draw_Picture_To_Bitmap(ge_anim_moodwiz_seg, IMG_SBK_PageText);
+        Clipped_Copy_Mask(0, 0, IMG_SBK_PageText, IMG_SBK_Anims);
+        Draw_Picture((start_x + 12), (start_y + 12), IMG_SBK_PageText);
 
 */
-void LBX_IMG_Overlay(int16_t x, int16_t y, SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg)
+/*
+    IDGI
+
+XREF:
+    OVL_DrawGlobalAnim()
+    Draw_Map_Nodes()
+
+probably, definitely should be Mask_Bitmap_Pixels_Inverse() and Mask_Bitmap_Pixels_Inverse_ASM()
+
+*/
+void Clipped_Copy_Mask(int16_t x, int16_t y, SAMB_ptr target_bitmap, SAMB_ptr mask_bitmap)
 {
 
     int16_t dst_ofst;
@@ -1285,22 +1321,22 @@ void LBX_IMG_Overlay(int16_t x, int16_t y, SAMB_ptr src_pict_seg, SAMB_ptr dst_p
     byte_ptr dst;  // DNE in Dasm
     byte_ptr src;  // DNE in Dasm
 
-    dst_width = FLIC_GET_WIDTH(dst_pict_seg);
-    dst_height = FLIC_GET_HEIGHT(dst_pict_seg);
+    dst_width = FLIC_GET_WIDTH(mask_bitmap);
+    dst_height = FLIC_GET_HEIGHT(mask_bitmap);
 
     if(((dst_width - 1) < x) || ((dst_height - 1) < y))
     {
         return;
     }
 
-    x2 = (x + FLIC_GET_WIDTH(src_pict_seg) - 1);
+    x2 = (x + FLIC_GET_WIDTH(target_bitmap) - 1);
 
     if(x2 < 0)
     {
         return;
     }
 
-    y2 = (y + FLIC_GET_HEIGHT(src_pict_seg) - 1);
+    y2 = (y + FLIC_GET_HEIGHT(target_bitmap) - 1);
 
     if(y2 < 0)
     {
@@ -1360,15 +1396,13 @@ void LBX_IMG_Overlay(int16_t x, int16_t y, SAMB_ptr src_pict_seg, SAMB_ptr dst_p
     dst_ofst = (sizeof(struct s_FLIC_HDR) + ((cx1 * dst_height) + cy1));
     dst_skip_y = (dst_height - cheight);
 
-    src_ofst = (sizeof(struct s_FLIC_HDR) + (skip_x * FLIC_GET_HEIGHT(src_pict_seg)) + skip_y);
-    src_skip_y = (FLIC_GET_HEIGHT(src_pict_seg) - cheight);
+    src_ofst = (sizeof(struct s_FLIC_HDR) + (skip_x * FLIC_GET_HEIGHT(target_bitmap)) + skip_y);
+    src_skip_y = (FLIC_GET_HEIGHT(target_bitmap) - cheight);
 
-    dst = (dst_pict_seg + dst_ofst);
-    src = (src_pict_seg + src_ofst);
+    dst = (mask_bitmap + dst_ofst);
+    src = (target_bitmap + src_ofst);
 
-    // LBX_IMG_PartialCopy(dst_ofst, dst_pict_seg, src_ofst, src_pict_seg, dst_skip_y, src_skip_y, cwidth, cheight);
-    LBX_IMG_PartialCopy(dst, src, dst_skip_y, src_skip_y, cwidth, cheight);
-
+    Mask_Bitmap_Pixels_Inverse(dst, src, dst_skip_y, src_skip_y, cwidth, cheight);
 
 }
 
@@ -2999,15 +3033,16 @@ void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte
 }
 
 // WZD s33p07
-// MoO2  Module: draw  Color_Stream_Copy_()
+// drake178: 
+// MoO2  Module: shear  Mask_Bitmap_Pixels_()
 // 1oom  gfxaux.c  static void gfx_aux_overlay_do_normal(uint8_t *dest, const uint8_t *src, int w, int h, int destskipw, int srcskipw)
 /*
-¿ exact same as LBX_IMG_PartialCopy() ?
-Color_Stream_Copy() skips transparent pixels from the src
-LBX_IMG_PartialCopy() only draws 
+doesn't copy transparent pixels
+Mask_Bitmap_Pixels() vs. Mask_Bitmap_Pixels_Inverse()
+...inverse only copies transparent pixels
 
 */
-void Color_Stream_Copy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height)
+void Mask_Bitmap_Pixels(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height)
 {
     int16_t itr_height;  // _CX_
     uint8_t pixel;  // _AL_
@@ -3107,7 +3142,7 @@ void Replace_Color(SAMB_ptr pict_seg, uint8_t color_to_replace, uint8_t replacem
 /*
 ...copies transparent from the src to the dst...
 
-JZ vs. JNZ is same in MoO2 Mask_Bitmap_Pixels_() vs. Mask_Bitmap_Pixels_Inverse_()
+JZ vs. JNZ is same in MoO2 Mask_Bitmap_Pixels() vs. Mask_Bitmap_Pixels_Inverse()
 ¿ ~ Copy_Bitmap_Pixels() ?
 
 ¿ exact same as Color_Stream_Copy_() ?
@@ -3115,10 +3150,10 @@ JZ vs. JNZ is same in MoO2 Mask_Bitmap_Pixels_() vs. Mask_Bitmap_Pixels_Inverse_
 // WZD s33p07
 // MoO2  Module: draw  Color_Stream_Copy_()
 // 1oom  gfxaux.c  static void gfx_aux_overlay_do_normal(uint8_t *dest, const uint8_t *src, int w, int h, int destskipw, int srcskipw)
-void Color_Stream_Copy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height)
+void Mask_Bitmap_Pixels(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height)
 
 */
-void LBX_IMG_PartialCopy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height)
+void Mask_Bitmap_Pixels_Inverse(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height)
 {
     int16_t itr_height;  // _CX_
     uint8_t pixel;  // _AL_

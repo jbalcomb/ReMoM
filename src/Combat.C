@@ -1458,7 +1458,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
     if(OVL_Action_Type == 1)  /* Enemy City */
     {
-        String_Copy_Far(CMB_CityName, _CITIES[OVL_Action_Structure].name);
+        _fstrcpy(CMB_CityName, _CITIES[OVL_Action_Structure].name);
     }
 
 
@@ -14019,7 +14019,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
     {
 
         strcpy(GUI_NearMsgString, cnst_CmbSpellMsg1);  // "Select a target for a "
-        String_Copy_Far(spell_name, spell_data_table[spell_idx].name);
+        _fstrcpy(spell_name, spell_data_table[spell_idx].name);
         strcat(GUI_NearMsgString, spell_name);
         strcat(GUI_NearMsgString, cnst_SpaceSpellDot_3);  // " spell."
 
@@ -14160,7 +14160,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
         if(leave_screen == ST_FALSE)
         {
             strcpy(GUI_NearMsgString, cnst_CmbSpellMsg1);  // "Select a target for a "
-            String_Copy_Far(spell_name, spell_data_table[spell_idx].name);
+            _fstrcpy(spell_name, spell_data_table[spell_idx].name);
             strcat(GUI_NearMsgString, spell_name);
             strcat(GUI_NearMsgString, cnst_SpaceSpellDot_3);  // " spell."
 
@@ -14990,7 +14990,7 @@ void CMB_SpellcastMessage__WIP(int16_t caster_idx, int16_t spell_idx)
 
     if(spell_idx != spl_NONE)
     {
-        String_Copy_Far(spell_name, spell_data_table[spell_idx].name);
+        _fstrcpy(spell_name, spell_data_table[spell_idx].name);
         strcat(GUI_NearMsgString, spell_name);
     }
     else
@@ -22455,7 +22455,7 @@ int16_t Combat_Results_Scroll_Text(void)
         } break;
         case 12:
         {
-            // String_Copy_Far(GUI_NearMsgString, _CITIES[OVL_Action_Structure].name);
+            // _fstrcpy(GUI_NearMsgString, _CITIES[OVL_Action_Structure].name);
             strcpy(GUI_NearMsgString, _CITIES[OVL_Action_Structure].name);
             strcat(GUI_NearMsgString, cnst_CityLost_Msg);  /* " has been conquered" */
             Print_Centered(160, (_scroll_text_top + 25), GUI_NearMsgString);
@@ -22475,7 +22475,7 @@ int16_t Combat_Results_Scroll_Text(void)
     if(_active_battle_unit == 668)  /* ; 668 - rampage, created ruins */
     {
         Set_Font_Colors_15(1, &colors2[0]);
-        // String_Copy_Far(GUI_NearMsgString, _CITIES[OVL_Action_Structure].name);
+        // _fstrcpy(GUI_NearMsgString, _CITIES[OVL_Action_Structure].name);
         strcpy(message, _CITIES[OVL_Action_Structure].name);
         strcat(message, cnst_NewRuins_Msg);  /* " has been reduced to ruins" */
         Print_Paragraph(75, (_scroll_text_top + text_height), 175, message, 2);
@@ -22485,7 +22485,7 @@ int16_t Combat_Results_Scroll_Text(void)
 
     if(_active_battle_unit == 667)  /* ; 667 - raiders won (city neutral) */
     {
-        // String_Copy_Far(GUI_NearMsgString, _CITIES[OVL_Action_Structure].name);
+        // _fstrcpy(GUI_NearMsgString, _CITIES[OVL_Action_Structure].name);
         strcpy(message, _CITIES[OVL_Action_Structure].name);
         strcat(message, cnst_CityRaided_Msg);  /* " has fallen to raiders" */
         Print_Paragraph(75, (_scroll_text_top + text_height), 175, message, 2);

@@ -639,7 +639,7 @@ USA_SUMMON_DEMON_1 and USA_SUMMON_DEMON_2 are used as a count of summonable 'Dem
 #define USA_WEB          0x0010      // 0b0000000000010000  0x0010     16  as if Spell Caster - Web, Nature, Common
 #define USA_CAUSEFEAR    0x0020      // 0b0000000000100000  0x0020     32  as if has creature enchantment - Cloak of Fear, Death, Common
 #define USA_RESISTALL    0x0040      // 0b0000000001000000  0x0040     64  ¿ as if has creature enchantment - Resist Elements, Nature, Common ?
-#define USA_HOLYBONUS    0x0080      // 0b0000000010000000  0x0080    128  ¿ as if High Prayer, Life, Very Rare ?
+#define USA_HOLYBONUS    0x0080      // 0b0000000010000000  0x0080    128  Holy Weapon and High Prayer, Life, Very Rare
 
 /*
     s_UNIT_TYPE.Abilities

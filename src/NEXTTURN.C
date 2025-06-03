@@ -1148,14 +1148,56 @@ Done:
 
 // WZD o121p02
 // drake178: Calc_Nominal_Skill()
+// AKA Player_Nominal_Skill()
+// MGC ovr056 o56p16
+// int16_t Player_Base_Casting_Skill(int16_t player_idx)
+// {
+// 
+//     int16_t casting_skill;  // _CX_
+// 
+//     casting_skill = sqrt(_players[player_idx].spell_casting_skill);
+// 
+//     casting_skill += 1;  // STUBUG(JimBalcomb,20240113): getting 71 instead of 72; truncated? round up? imperfect square? isqrt()? CORDIC Algorithm - Successive Approximation?
+// 
+//     if(_players[player_idx].archmage > 0)
+//     {
+//         casting_skill += 10;
+//     }
+// 
+//     return casting_skill;
+// }
+/*
+
+    Nope. ¿ estimate the square root of a number ?
+    Nope. ¿ the Babylonian method AKA the Newton-Raphson method ?
+    Nope. ¿ CORDIC Algorithm - Successive Approximation?
+    https://www.kindfortress.com/2018/04/24/design-patterns-triangular-scoring/
+    https://en.wikipedia.org/wiki/Triangular_number
+    https://en.wikipedia.org/wiki/File:Triangular_Numbers_Plot.svg
+*/
+// int16_t Player_Base_Casting_Skill__ORIG(int16_t player_idx)
 int16_t Player_Base_Casting_Skill(int16_t player_idx)
 {
-
+    int32_t num = 0;
     int16_t casting_skill;  // _CX_
+    int16_t twos = 0;  // _SI_
 
-    casting_skill = sqrt(_players[player_idx].spell_casting_skill);
+    twos = 0;
 
-    casting_skill += 1;  // STUBUG(JimBalcomb,20240113): getting 71 instead of 72; truncated? round up? imperfect square? isqrt()? CORDIC Algorithm - Successive Approximation?
+    casting_skill = 0;
+
+    num = 0;
+
+    while(_players[player_idx].spell_casting_skill > num)
+    {
+        casting_skill++;
+
+        twos += 2;      // { 2, 4,  6,  8, 10, 12, 14, 16, 18,  20 ... }
+
+        num += twos;    // { 2, 6, 12, 20, 30, 42, 56, 72, 90, 110, ... }
+        // count of twos   { 1, 3,  6, 10, 15, 21, 28, 36, 45,  55, ... }
+
+    }
 
     if(_players[player_idx].archmage > 0)
     {
@@ -1163,6 +1205,7 @@ int16_t Player_Base_Casting_Skill(int16_t player_idx)
     }
 
     return casting_skill;
+
 }
 
 
@@ -1598,28 +1641,28 @@ int16_t Unit_Moves2(int16_t unit_idx)
 void Cheat_Power(void)
 {
     int16_t itr3;
-    int16_t itr;  // _SI_
+    int16_t itr1;  // _SI_
     int16_t itr2;  // _DI_
 
-    for(itr = 0; itr < NUM_RESEARCH_SPELLS; itr++)
+    for(itr1 = 0; itr1 < NUM_RESEARCH_SPELLS; itr1++)
     {
-        _players[HUMAN_PLAYER_IDX].research_spells[itr] = 0;
+        _players[HUMAN_PLAYER_IDX].research_spells[itr1] = 0;
     }
 
-    for(itr = 0; itr < _num_players; itr++)
+    for(itr1 = 0; itr1 < _num_players; itr1++)
     {
-        _players[itr].mana_reserve = 10000;
-        _players[itr].gold_reserve = 10000;
-        _players[itr].spell_casting_skill = 10000;
-        _players[itr].Nominal_Skill = Player_Base_Casting_Skill(itr);
-        _players[itr].Skill_Left = _players[itr].Nominal_Skill;
-        for(itr2 = 0; itr2 < 5; itr2++)
+        _players[itr1].mana_reserve = 10000;
+        _players[itr1].gold_reserve = 10000;
+        _players[itr1].spell_casting_skill = 10000;
+        _players[itr1].Nominal_Skill = Player_Base_Casting_Skill(itr1);
+        _players[itr1].Skill_Left = _players[itr1].Nominal_Skill;
+        for(itr2 = 0; itr2 <= 5; itr2++)
         {
             for(itr3 = 0; itr3 < NUM_SPELLS_PER_MAGIC_REALM; itr3++)
             {
-                if(_players[itr].spells_list[((itr2 * NUM_SPELLS_PER_MAGIC_REALM) + itr3)] == 1)  /* ¿ knowable ? */
+                if(_players[itr1].spells_list[((itr2 * NUM_SPELLS_PER_MAGIC_REALM) + itr3)] == sls_Knowable)
                 {
-                    _players[itr].spells_list[((itr2 * NUM_SPELLS_PER_MAGIC_REALM) + itr3)] = 2;  /* ¿ known ? */
+                    _players[itr1].spells_list[((itr2 * NUM_SPELLS_PER_MAGIC_REALM) + itr3)] = sls_Known;
                 }
             }
         }
@@ -1627,7 +1670,7 @@ void Cheat_Power(void)
 
     _players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] = ST_TRUE;
 
-    _players[HUMAN_PLAYER_IDX].researching_spell_idx = 0;
+    _players[HUMAN_PLAYER_IDX].researching_spell_idx = spl_NONE;
 
 }
 
@@ -1818,202 +1861,202 @@ _TrlSpearmen
     }
 
     _unit_type_table[ut_Dwarf].Sound = 102;
-    _unit_type_table[0x24].Sound = 102;
-    _unit_type_table[0x48].Sound = 103;
-    _unit_type_table[0x6C].Sound = 102;
-    _unit_type_table[0x90].Sound = 102;
-    _unit_type_table[0x0B4].Sound = 102;
-    _unit_type_table[0x0D8].Sound = 102;
-    _unit_type_table[0x0FC].Sound = 102;
-    _unit_type_table[0x120].Sound = 102;
-    _unit_type_table[0x144].Sound = 102;
-    _unit_type_table[0x168].Sound = 103;
-    _unit_type_table[0x18C].Sound = 102;
-    _unit_type_table[0x1B0].Sound = 102;
-    _unit_type_table[0x1D4].Sound = 103;
-    _unit_type_table[0x1F8].Sound = 102;
-    _unit_type_table[0x21C].Sound = 103;
-    _unit_type_table[0x240].Sound = 102;
-    _unit_type_table[0x264].Sound = 134;
-    _unit_type_table[0x288].Sound = 103;
-    _unit_type_table[0x2AC].Sound = 102;
-    _unit_type_table[0x2D0].Sound = 102;
-    _unit_type_table[0x2F4].Sound = 102;
-    _unit_type_table[0x318].Sound = 102;
-    _unit_type_table[0x33C].Sound = 103;
-    _unit_type_table[0x360].Sound = 102;
-    _unit_type_table[0x384].Sound = 103;
-    _unit_type_table[0x3A8].Sound = 102;
-    _unit_type_table[0x3CC].Sound = 103;
-    _unit_type_table[0x3F0].Sound = 102;
-    _unit_type_table[0x414].Sound = 102;
-    _unit_type_table[0x438].Sound = 102;
-    _unit_type_table[0x45C].Sound = 102;
-    _unit_type_table[0x480].Sound = 103;
-    _unit_type_table[0x4A4].Sound = 102;
-    _unit_type_table[0x4C8].Sound = 102;
-    _unit_type_table[0x4EC].Sound = 134;
-    _unit_type_table[0x510].Sound = 134;
-    _unit_type_table[0x534].Sound = 134;
-    _unit_type_table[0x558].Sound = 134;
-    _unit_type_table[0x57C].Sound = 86;
-    _unit_type_table[0x5A0].Sound = 86;
-    _unit_type_table[0x5C4].Sound = 86;
-    _unit_type_table[0x5E8].Sound = 102;
-    _unit_type_table[0x60C].Sound = 151;
-    _unit_type_table[0x630].Sound = 150;
-    _unit_type_table[0x654].Sound = 86;
-    _unit_type_table[0x678].Sound = 86;
-    _unit_type_table[0x69C].Sound = 86;
-    _unit_type_table[0x6C0].Sound = 86;
-    _unit_type_table[0x6E4].Sound = 86;
-    _unit_type_table[0x708].Sound = 151;
-    _unit_type_table[0x72C].Sound = 151;
-    _unit_type_table[0x750].Sound = 86;
-    _unit_type_table[0x774].Sound = 150;
-    _unit_type_table[0x798].Sound = 102;
-    _unit_type_table[0x7BC].Sound = 131;
-    _unit_type_table[0x7E0].Sound = 85;
-    _unit_type_table[0x804].Sound = 86;
-    _unit_type_table[0x828].Sound = 86;
-    _unit_type_table[0x84C].Sound = 86;
-    _unit_type_table[0x870].Sound = 102;
-    _unit_type_table[0x894].Sound = 151;
-    _unit_type_table[0x8B8].Sound = 150;
-    _unit_type_table[0x8DC].Sound = 6;
-    _unit_type_table[0x900].Sound = 151;
-    _unit_type_table[0x924].Sound = 134;
-    _unit_type_table[0x948].Sound = 134;
-    _unit_type_table[0x96C].Sound = 134;
-    _unit_type_table[0x990].Sound = 134;
-    _unit_type_table[0x9B4].Sound = 134;
-    _unit_type_table[0x9D8].Sound = 135;
-    _unit_type_table[0x9FC].Sound = 135;
-    _unit_type_table[0x0A20].Sound = 134;
-    _unit_type_table[0x0A44].Sound = 150;
-    _unit_type_table[0x0A68].Sound = 116;
-    _unit_type_table[0x0A8C].Sound = 134;
-    _unit_type_table[0x0AB0].Sound = 86;
-    _unit_type_table[0x0AD4].Sound = 86;
-    _unit_type_table[0x0AF8].Sound = 86;
-    _unit_type_table[0x0B1C].Sound = 86;
-    _unit_type_table[0x0B40].Sound = 150;
-    _unit_type_table[0x0B64].Sound = 214;
-    _unit_type_table[0x0B88].Sound = 150;
-    _unit_type_table[0x0BAC].Sound = 86;
-    _unit_type_table[0x0BD0].Sound = 86;
-    _unit_type_table[0x0BF4].Sound = 86;
-    _unit_type_table[0x0C18].Sound = 86;
-    _unit_type_table[0x0C3C].Sound = 150;
-    _unit_type_table[0x0C60].Sound = 150;
-    _unit_type_table[0x0C84].Sound = 86;
-    _unit_type_table[0x0CA8].Sound = 86;
-    _unit_type_table[0x0CCC].Sound = 86;
-    _unit_type_table[0x0CF0].Sound = 151;
-    _unit_type_table[0x0D14].Sound = 150;
-    _unit_type_table[0x0D38].Sound = 150;
-    _unit_type_table[0x0D5C].Sound = 86;
-    _unit_type_table[0x0D80].Sound = 86;
-    _unit_type_table[0x0DA4].Sound = 86;
-    _unit_type_table[0x0DC8].Sound = 102;
-    _unit_type_table[0x0DEC].Sound = 151;
-    _unit_type_table[0x0E10].Sound = 150;
-    _unit_type_table[0x0E34].Sound = 86;
-    _unit_type_table[0x0E58].Sound = 102;
-    _unit_type_table[0x0E7C].Sound = 134;
-    _unit_type_table[0x0EA0].Sound = 86;
-    _unit_type_table[0x0EC4].Sound = 86;
-    _unit_type_table[0x0EE8].Sound = 86;
-    _unit_type_table[0x0F0C].Sound = 102;
-    _unit_type_table[0x0F30].Sound = 151;
-    _unit_type_table[0x0F54].Sound = 151;
-    _unit_type_table[0x0F78].Sound = 86;
-    _unit_type_table[0x0F9C].Sound = 150;
-    _unit_type_table[0x0FC0].Sound = 86;
-    _unit_type_table[0x0FE4].Sound = 102;
-    _unit_type_table[0x1008].Sound = 150;
-    _unit_type_table[0x102C].Sound = 150;
-    _unit_type_table[0x1050].Sound = 150;
-    _unit_type_table[0x1074].Sound = 150;
-    _unit_type_table[0x1098].Sound = 150;
-    _unit_type_table[0x10BC].Sound = 150;
-    _unit_type_table[0x10E0].Sound = 86;
-    _unit_type_table[0x1104].Sound = 86;
-    _unit_type_table[0x1128].Sound = 86;
-    _unit_type_table[0x114C].Sound = 86;
-    _unit_type_table[0x1170].Sound = 151;
-    _unit_type_table[0x1194].Sound = 150;
-    _unit_type_table[0x11B8].Sound = 214;
-    _unit_type_table[0x11DC].Sound = 86;
-    _unit_type_table[0x1200].Sound = 86;
-    _unit_type_table[0x1224].Sound = 86;
-    _unit_type_table[0x1248].Sound = 151;
-    _unit_type_table[0x126C].Sound = 151;
-    _unit_type_table[0x1290].Sound = 150;
-    _unit_type_table[0x12B4].Sound = 102;
-    _unit_type_table[0x12D8].Sound = 86;
-    _unit_type_table[0x12FC].Sound = 86;
-    _unit_type_table[0x1320].Sound = 132;
-    _unit_type_table[0x1344].Sound = 86;
-    _unit_type_table[0x1368].Sound = 86;
-    _unit_type_table[0x138C].Sound = 86;
-    _unit_type_table[0x13B0].Sound = 86;
-    _unit_type_table[0x13D4].Sound = 102;
-    _unit_type_table[0x13F8].Sound = 151;
-    _unit_type_table[0x141C].Sound = 151;
-    _unit_type_table[0x1440].Sound = 86;
-    _unit_type_table[0x1464].Sound = 150;
-    _unit_type_table[0x1488].Sound = 116;
-    _unit_type_table[0x14AC].Sound = 85;
-    _unit_type_table[0x14D0].Sound = 85;
-    _unit_type_table[0x14F4].Sound = 85;
-    _unit_type_table[0x1518].Sound = 151;
-    _unit_type_table[0x153C].Sound = 149;
-    _unit_type_table[0x1560].Sound = 85;
-    _unit_type_table[0x1584].Sound = 162;
-    _unit_type_table[0x15A8].Sound = 147;
-    _unit_type_table[0x15CC].Sound = 147;
-    _unit_type_table[0x15F0].Sound = 130;
-    _unit_type_table[0x1614].Sound = 213;
-    _unit_type_table[0x1638].Sound = 131;
-    _unit_type_table[0x165C].Sound = 130;
-    _unit_type_table[0x1680].Sound = 130;
-    _unit_type_table[0x16A4].Sound = 130;
-    _unit_type_table[0x16C8].Sound = 134;
-    _unit_type_table[0x16EC].Sound = 161;
-    _unit_type_table[0x1710].Sound = 112;
-    _unit_type_table[0x1734].Sound = 150;
-    _unit_type_table[0x1758].Sound = 150;
-    _unit_type_table[0x177C].Sound = 147;
-    _unit_type_table[0x17A0].Sound = 147;
-    _unit_type_table[0x17C4].Sound = 130;
-    _unit_type_table[0x17E8].Sound = 130;
-    _unit_type_table[0x180C].Sound = 130;
-    _unit_type_table[0x1830].Sound = 102;
-    _unit_type_table[0x1854].Sound = 113;
-    _unit_type_table[0x1878].Sound = 150;
-    _unit_type_table[0x189C].Sound = 179;
-    _unit_type_table[0x18C0].Sound = 131;
-    _unit_type_table[0x18E4].Sound = 134;
-    _unit_type_table[0x1908].Sound = 134;
-    _unit_type_table[0x192C].Sound = 147;
-    _unit_type_table[0x1950].Sound = 135;
-    _unit_type_table[0x1974].Sound = 135;
-    _unit_type_table[0x1998].Sound = 210;
-    _unit_type_table[0x19BC].Sound = 147;
-    _unit_type_table[0x19E0].Sound = 213;
-    _unit_type_table[0x1A04].Sound = 165;
-    _unit_type_table[0x1A28].Sound = 114;
-    _unit_type_table[0x1A4C].Sound = 161;
-    _unit_type_table[0x1A70].Sound = 161;
-    _unit_type_table[0x1A94].Sound = 192;
-    _unit_type_table[0x1AB8].Sound = 8;
-    _unit_type_table[0x1ADC].Sound = 8;
-    _unit_type_table[0x1B00].Sound = 8;
-    _unit_type_table[0x1B24].Sound = 165;
-    _unit_type_table[0x1B48].Sound = 130;
-    _unit_type_table[0x1B6C].Sound = 182;
-    _unit_type_table[0x1B90].Sound = 112;
+    _unit_type_table[(0x24 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x48 / sizeof(struct s_UNIT_TYPE))].Sound = 103;
+    _unit_type_table[(0x6C / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x90 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x0B4 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x0D8 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x0FC / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x120 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x144 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x168 / sizeof(struct s_UNIT_TYPE))].Sound = 103;
+    _unit_type_table[(0x18C / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x1B0 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x1D4 / sizeof(struct s_UNIT_TYPE))].Sound = 103;
+    _unit_type_table[(0x1F8 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x21C / sizeof(struct s_UNIT_TYPE))].Sound = 103;
+    _unit_type_table[(0x240 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x264 / sizeof(struct s_UNIT_TYPE))].Sound = 134;
+    _unit_type_table[(0x288 / sizeof(struct s_UNIT_TYPE))].Sound = 103;
+    _unit_type_table[(0x2AC / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x2D0 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x2F4 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x318 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x33C / sizeof(struct s_UNIT_TYPE))].Sound = 103;
+    _unit_type_table[(0x360 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x384 / sizeof(struct s_UNIT_TYPE))].Sound = 103;
+    _unit_type_table[(0x3A8 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x3CC / sizeof(struct s_UNIT_TYPE))].Sound = 103;
+    _unit_type_table[(0x3F0 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x414 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x438 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x45C / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x480 / sizeof(struct s_UNIT_TYPE))].Sound = 103;
+    _unit_type_table[(0x4A4 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x4C8 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x4EC / sizeof(struct s_UNIT_TYPE))].Sound = 134;
+    _unit_type_table[(0x510 / sizeof(struct s_UNIT_TYPE))].Sound = 134;
+    _unit_type_table[(0x534 / sizeof(struct s_UNIT_TYPE))].Sound = 134;
+    _unit_type_table[(0x558 / sizeof(struct s_UNIT_TYPE))].Sound = 134;
+    _unit_type_table[(0x57C / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x5A0 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x5C4 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x5E8 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x60C / sizeof(struct s_UNIT_TYPE))].Sound = 151;
+    _unit_type_table[(0x630 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x654 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x678 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x69C / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x6C0 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x6E4 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x708 / sizeof(struct s_UNIT_TYPE))].Sound = 151;
+    _unit_type_table[(0x72C / sizeof(struct s_UNIT_TYPE))].Sound = 151;
+    _unit_type_table[(0x750 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x774 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x798 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x7BC / sizeof(struct s_UNIT_TYPE))].Sound = 131;
+    _unit_type_table[(0x7E0 / sizeof(struct s_UNIT_TYPE))].Sound = 85;
+    _unit_type_table[(0x804 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x828 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x84C / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x870 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x894 / sizeof(struct s_UNIT_TYPE))].Sound = 151;
+    _unit_type_table[(0x8B8 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x8DC / sizeof(struct s_UNIT_TYPE))].Sound = 6;
+    _unit_type_table[(0x900 / sizeof(struct s_UNIT_TYPE))].Sound = 151;
+    _unit_type_table[(0x924 / sizeof(struct s_UNIT_TYPE))].Sound = 134;
+    _unit_type_table[(0x948 / sizeof(struct s_UNIT_TYPE))].Sound = 134;
+    _unit_type_table[(0x96C / sizeof(struct s_UNIT_TYPE))].Sound = 134;
+    _unit_type_table[(0x990 / sizeof(struct s_UNIT_TYPE))].Sound = 134;
+    _unit_type_table[(0x9B4 / sizeof(struct s_UNIT_TYPE))].Sound = 134;
+    _unit_type_table[(0x9D8 / sizeof(struct s_UNIT_TYPE))].Sound = 135;
+    _unit_type_table[(0x9FC / sizeof(struct s_UNIT_TYPE))].Sound = 135;
+    _unit_type_table[(0x0A20 / sizeof(struct s_UNIT_TYPE))].Sound = 134;
+    _unit_type_table[(0x0A44 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x0A68 / sizeof(struct s_UNIT_TYPE))].Sound = 116;
+    _unit_type_table[(0x0A8C / sizeof(struct s_UNIT_TYPE))].Sound = 134;
+    _unit_type_table[(0x0AB0 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0AD4 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0AF8 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0B1C / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0B40 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x0B64 / sizeof(struct s_UNIT_TYPE))].Sound = 214;
+    _unit_type_table[(0x0B88 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x0BAC / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0BD0 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0BF4 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0C18 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0C3C / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x0C60 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x0C84 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0CA8 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0CCC / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0CF0 / sizeof(struct s_UNIT_TYPE))].Sound = 151;
+    _unit_type_table[(0x0D14 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x0D38 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x0D5C / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0D80 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0DA4 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0DC8 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x0DEC / sizeof(struct s_UNIT_TYPE))].Sound = 151;
+    _unit_type_table[(0x0E10 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x0E34 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0E58 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x0E7C / sizeof(struct s_UNIT_TYPE))].Sound = 134;
+    _unit_type_table[(0x0EA0 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0EC4 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0EE8 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0F0C / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x0F30 / sizeof(struct s_UNIT_TYPE))].Sound = 151;
+    _unit_type_table[(0x0F54 / sizeof(struct s_UNIT_TYPE))].Sound = 151;
+    _unit_type_table[(0x0F78 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0F9C / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x0FC0 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x0FE4 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x1008 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x102C / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x1050 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x1074 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x1098 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x10BC / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x10E0 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x1104 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x1128 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x114C / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x1170 / sizeof(struct s_UNIT_TYPE))].Sound = 151;
+    _unit_type_table[(0x1194 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x11B8 / sizeof(struct s_UNIT_TYPE))].Sound = 214;
+    _unit_type_table[(0x11DC / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x1200 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x1224 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x1248 / sizeof(struct s_UNIT_TYPE))].Sound = 151;
+    _unit_type_table[(0x126C / sizeof(struct s_UNIT_TYPE))].Sound = 151;
+    _unit_type_table[(0x1290 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x12B4 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x12D8 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x12FC / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x1320 / sizeof(struct s_UNIT_TYPE))].Sound = 132;
+    _unit_type_table[(0x1344 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x1368 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x138C / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x13B0 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x13D4 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x13F8 / sizeof(struct s_UNIT_TYPE))].Sound = 151;
+    _unit_type_table[(0x141C / sizeof(struct s_UNIT_TYPE))].Sound = 151;
+    _unit_type_table[(0x1440 / sizeof(struct s_UNIT_TYPE))].Sound = 86;
+    _unit_type_table[(0x1464 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x1488 / sizeof(struct s_UNIT_TYPE))].Sound = 116;
+    _unit_type_table[(0x14AC / sizeof(struct s_UNIT_TYPE))].Sound = 85;
+    _unit_type_table[(0x14D0 / sizeof(struct s_UNIT_TYPE))].Sound = 85;
+    _unit_type_table[(0x14F4 / sizeof(struct s_UNIT_TYPE))].Sound = 85;
+    _unit_type_table[(0x1518 / sizeof(struct s_UNIT_TYPE))].Sound = 151;
+    _unit_type_table[(0x153C / sizeof(struct s_UNIT_TYPE))].Sound = 149;
+    _unit_type_table[(0x1560 / sizeof(struct s_UNIT_TYPE))].Sound = 85;
+    _unit_type_table[(0x1584 / sizeof(struct s_UNIT_TYPE))].Sound = 162;
+    _unit_type_table[(0x15A8 / sizeof(struct s_UNIT_TYPE))].Sound = 147;
+    _unit_type_table[(0x15CC / sizeof(struct s_UNIT_TYPE))].Sound = 147;
+    _unit_type_table[(0x15F0 / sizeof(struct s_UNIT_TYPE))].Sound = 130;
+    _unit_type_table[(0x1614 / sizeof(struct s_UNIT_TYPE))].Sound = 213;
+    _unit_type_table[(0x1638 / sizeof(struct s_UNIT_TYPE))].Sound = 131;
+    _unit_type_table[(0x165C / sizeof(struct s_UNIT_TYPE))].Sound = 130;
+    _unit_type_table[(0x1680 / sizeof(struct s_UNIT_TYPE))].Sound = 130;
+    _unit_type_table[(0x16A4 / sizeof(struct s_UNIT_TYPE))].Sound = 130;
+    _unit_type_table[(0x16C8 / sizeof(struct s_UNIT_TYPE))].Sound = 134;
+    _unit_type_table[(0x16EC / sizeof(struct s_UNIT_TYPE))].Sound = 161;
+    _unit_type_table[(0x1710 / sizeof(struct s_UNIT_TYPE))].Sound = 112;
+    _unit_type_table[(0x1734 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x1758 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x177C / sizeof(struct s_UNIT_TYPE))].Sound = 147;
+    _unit_type_table[(0x17A0 / sizeof(struct s_UNIT_TYPE))].Sound = 147;
+    _unit_type_table[(0x17C4 / sizeof(struct s_UNIT_TYPE))].Sound = 130;
+    _unit_type_table[(0x17E8 / sizeof(struct s_UNIT_TYPE))].Sound = 130;
+    _unit_type_table[(0x180C / sizeof(struct s_UNIT_TYPE))].Sound = 130;
+    _unit_type_table[(0x1830 / sizeof(struct s_UNIT_TYPE))].Sound = 102;
+    _unit_type_table[(0x1854 / sizeof(struct s_UNIT_TYPE))].Sound = 113;
+    _unit_type_table[(0x1878 / sizeof(struct s_UNIT_TYPE))].Sound = 150;
+    _unit_type_table[(0x189C / sizeof(struct s_UNIT_TYPE))].Sound = 179;
+    _unit_type_table[(0x18C0 / sizeof(struct s_UNIT_TYPE))].Sound = 131;
+    _unit_type_table[(0x18E4 / sizeof(struct s_UNIT_TYPE))].Sound = 134;
+    _unit_type_table[(0x1908 / sizeof(struct s_UNIT_TYPE))].Sound = 134;
+    _unit_type_table[(0x192C / sizeof(struct s_UNIT_TYPE))].Sound = 147;
+    _unit_type_table[(0x1950 / sizeof(struct s_UNIT_TYPE))].Sound = 135;
+    _unit_type_table[(0x1974 / sizeof(struct s_UNIT_TYPE))].Sound = 135;
+    _unit_type_table[(0x1998 / sizeof(struct s_UNIT_TYPE))].Sound = 210;
+    _unit_type_table[(0x19BC / sizeof(struct s_UNIT_TYPE))].Sound = 147;
+    _unit_type_table[(0x19E0 / sizeof(struct s_UNIT_TYPE))].Sound = 213;
+    _unit_type_table[(0x1A04 / sizeof(struct s_UNIT_TYPE))].Sound = 165;
+    _unit_type_table[(0x1A28 / sizeof(struct s_UNIT_TYPE))].Sound = 114;
+    _unit_type_table[(0x1A4C / sizeof(struct s_UNIT_TYPE))].Sound = 161;
+    _unit_type_table[(0x1A70 / sizeof(struct s_UNIT_TYPE))].Sound = 161;
+    _unit_type_table[(0x1A94 / sizeof(struct s_UNIT_TYPE))].Sound = 192;
+    _unit_type_table[(0x1AB8 / sizeof(struct s_UNIT_TYPE))].Sound = 8;
+    _unit_type_table[(0x1ADC / sizeof(struct s_UNIT_TYPE))].Sound = 8;
+    _unit_type_table[(0x1B00 / sizeof(struct s_UNIT_TYPE))].Sound = 8;
+    _unit_type_table[(0x1B24 / sizeof(struct s_UNIT_TYPE))].Sound = 165;
+    _unit_type_table[(0x1B48 / sizeof(struct s_UNIT_TYPE))].Sound = 130;
+    _unit_type_table[(0x1B6C / sizeof(struct s_UNIT_TYPE))].Sound = 182;
+    _unit_type_table[(0x1B90 / sizeof(struct s_UNIT_TYPE))].Sound = 112;
 
     _unit_type_table[ut_Nagas].Sound = 146;
 
@@ -2512,30 +2555,30 @@ void Update_Players_Gold_Reserve(void)
 */
 void Players_Apply_Magic_Power(void)
 {
-    int16_t Research_Income = 0;
-    int16_t Mana_Income = 0;
-    int16_t Skill_Income = 0;
+    int16_t research_income = 0;
+    int16_t mana_income = 0;
+    int16_t skill_income = 0;
     int16_t itr_players = 0;  // _SI_
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
         if(_players[itr_players].casting_spell_idx != spl_Spell_Of_Return)
         {
-            Player_Magic_Power_Income_Total(&Mana_Income, &Research_Income, &Skill_Income, itr_players);
+            Player_Magic_Power_Income_Total(&mana_income, &research_income, &skill_income, itr_players);
         }
 
-        if(_players[itr_players].research_cost_remaining <= Research_Income)
+        if(_players[itr_players].research_cost_remaining <= research_income)
         {
             _players[itr_players].research_cost_remaining = 0;
         }
         else
         {
-            _players[itr_players].research_cost_remaining -= Research_Income;
+            _players[itr_players].research_cost_remaining -= research_income;
         }
 
-        if((32000 - _players[itr_players].mana_reserve) >= Mana_Income)
+        if((32000 - _players[itr_players].mana_reserve) >= mana_income)
         {
-            _players[itr_players].mana_reserve += Mana_Income;
+            _players[itr_players].mana_reserve += mana_income;
         }
         else
         {
@@ -2546,11 +2589,11 @@ void Players_Apply_Magic_Power(void)
         // ¿ vs. Calc_Nominal_Skill() ?
         if(_players[itr_players].archmage > 0)
         {
-            _players[itr_players].spell_casting_skill += ((Skill_Income * 3) / 2);
+            _players[itr_players].spell_casting_skill += ((skill_income * 3) / 2);
         }
         else
         {
-            _players[itr_players].spell_casting_skill += Skill_Income;
+            _players[itr_players].spell_casting_skill += skill_income;
         }
     }
 

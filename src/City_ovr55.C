@@ -617,7 +617,7 @@ int16_t Init_Outpost(void)
     _CITIES[_cities].population = 0;
     _CITIES[_cities].did_sell_building = ST_FALSE;
     _CITIES[_cities].Pop_10s = 0;
-    _CITIES[_cities].PlayerBits = 0;
+    _CITIES[_cities].contacts = 0;
     _CITIES[_cities].construction = bt_Housing;
     _CITIES[_cities].bldg_cnt = 0;
 

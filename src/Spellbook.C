@@ -1468,7 +1468,7 @@ void CmbBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
 
             Set_Font_Colors_15(1, &colors[0]);
 
-            String_Copy_Far(spell_name, spell_data_table[abs(spell_idx)].name);
+            _fstrcpy(spell_name, spell_data_table[abs(spell_idx)].name);
 
             Max_Spendable = Get_String_Width(spell_name);
 
@@ -2235,7 +2235,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
         strcpy(GUI_NearMsgString, cnst_NewSpell_Msg);  // "You have mastered the spell of "
 
-        String_Copy_Far(Spell_Name, spell_data_table[spell_idx].name);
+        _fstrcpy(Spell_Name, spell_data_table[spell_idx].name);
 
         strcat(GUI_NearMsgString, Spell_Name);
 
@@ -2438,7 +2438,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
         // SPECFX.LBX, 049  "NEWSPELL"  ""
         spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr118, 49, _screen_seg);
 
-        String_Copy_Far(Spell_Description, SBK_Descriptions[((Spell_on_Side * 4) + itr_spellbook_page_spell_count)]);
+        _fstrcpy(Spell_Description, SBK_Descriptions[((Spell_on_Side * 4) + itr_spellbook_page_spell_count)]);
 
         Create_Picture(129, 37, IMG_SBK_Anims);
 
@@ -2451,7 +2451,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
         Set_Font_Colors_15(7, &Blink_Color_Array[0]);
 
-        String_Copy_Far(Spell_Name, spell_data_table[SBK_Spell_Index].name);
+        _fstrcpy(Spell_Name, spell_data_table[SBK_Spell_Index].name);
 
         Print_To_Bitmap(0, 0, Spell_Name, IMG_SBK_Anims);
 
@@ -4006,18 +4006,15 @@ void Change_Relations_For_Enchantments(int16_t player_idx, int16_t spell_idx, in
                 Change_Relations((-20 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
-
             if(spell_idx == spl_Crusade)
             {
                 Change_Relations((-10 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
-
             if(spell_idx == spl_Just_Cause)
             {
                 Change_Relations((0 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
-
 
             if(spell_idx == spl_Holy_Arms)
             {
@@ -4332,52 +4329,105 @@ void Hero_Slot_Types(int16_t unit_type_idx, int16_t item_slots[])
 
 
 // WZD o130p02
-// sub_AF331()
+// drake178: sub_AF331()
+//Cast_DeathWish()
 
 // WZD o130p03
-// sub_AF56D()
+// drake178: sub_AF56D()
+//IDK_Spell_GreatUnsummoning()
 
 // WZD o130p04
-// sub_AF7C1()
+// drake178: sub_AF7C1()
+//Cast_BlackWind()
 
 // WZD o130p05
-// sub_AF9AA()
+// drake178: sub_AF9AA()
+//IDK_Random_Spell_Cost()
 
 // WZD o130p06
-// sAFA06_Anim_EarthLore()
+// drake178: sAFA06_Anim_EarthLore()
+//sAFA06_Anim_EarthLore()
 
 // WZD o130p07
-// sub_AFB7F()
+// drake178: sub_AFB7F()
+//Cast_SpellBinding()
 
 // WZD o130p08
-// sub_AFCA8()
+// drake178: sub_AFCA8()
+//Cast_ChangeTerain()
 
 // WZD o130p09
-// sub_B01F7()
+// drake178: sub_B01F7()
+//Cast_RaiseVolcano()
 
 // WZD o130p10
-// sub_B0692()
+// drake178: sub_B0692()
+//Cast_Transmute()
 
 // WZD o130p11
-// sub_B0C07()
+// drake178: sub_B0C07()
+//Cast_Corruption()
 
 // WZD o130p12
-// sub_B1108()
+// drake178: sub_B1108()
+//Cast_WordOfRecall()
 
 // WZD o130p13
-// sB1280_Anim_EnchantRoad()
+// drake178: sB1280_Anim_EnchantRoad()
+//Cast_EnchantRoad()
 
 // WZD o130p14
-// sub_B148C()
+// drake178: sub_B148C()
+//Cast_SpellWard()
 
 // WZD o130p15
-// sub_B1843()
+// drake178: sub_B1843()
+/*
+    turns off bonus from Holy Weapon / High Prayer
+*/
+void Cast_HolyArms(int16_t player_idx)
+{
+    int16_t itr = 0;  // _DI_
+
+    for(itr = 0; itr < _units; itr++)
+    {
+
+        if(
+            (_UNITS[itr].owner_idx == player_idx)
+            &&
+            ((_UNITS[itr].enchantments & USA_HOLYBONUS) != 0)
+        )
+        {
+
+            _UNITS[itr].enchantments ^= USA_HOLYBONUS;
+
+        }
+
+    }
+
+}
 
 // WZD o130p16
-// CTY_Consecration()
+// drake178: CTY_Consecration()
+//CTY_Consecration()
 
 // WZD o130p17
-// sub_B1A01()
+// drake178: sub_B1A01()
+//sub_B1A01()
 
 // WZD o130p18
-// sub_B1ABE()
+// drake178: sub_B1ABE()
+void Cast_NaturesAwareness(int16_t player_idx)
+{
+
+    if(player_idx == HUMAN_PLAYER_IDX)
+    {
+
+        Allocate_Reduced_Map();
+        Cheat_Reveal();
+        All_AI_Players_Contacted();
+        Release_Block(_screen_seg);
+
+    }
+
+}

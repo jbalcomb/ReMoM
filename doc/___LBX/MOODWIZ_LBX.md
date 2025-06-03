@@ -5,24 +5,20 @@ Type:         0
 
 
 
-
-
-MERLFACE�g,b,n merlin�����������
-SHAMFACE�g,b,n raven������������
-PRIEFACE�g,b,n sharee�����������
-WUFACE���g,b,n lopan������������
-ARABFACE�g,b,n enki�������������
-OBERFACE�g,b,n alric������������
-WRATFACE�g,b,n druga������������
-DRACFACE�g,b,n sss'ra�����������
-NMOIFACE�g,b,n horus������������
-FREYFACE�g,b,n freya������������
-GALEFACE�g,b,n ahto?������������
-ARIELFAC�g,b,n ariel������������
-AZTEFACE�g,b,n tlaloc�����������
-KARLFACE�g,b,n kali        �����
-
-
+// MOODWIZ.LBX, 000  "MERLFACE"  "g,b,n merlin"
+// MOODWIZ.LBX, 001  "SHAMFACE"  "g,b,n raven"
+// MOODWIZ.LBX, 002  "PRIEFACE"  "g,b,n sharee"
+// MOODWIZ.LBX, 003  "WUFACE"    "g,b,n lopan"
+// MOODWIZ.LBX, 004  "ARABFACE"  "g,b,n enki"
+// MOODWIZ.LBX, 005  "OBERFACE"  "g,b,n alric"
+// MOODWIZ.LBX, 006  "WRATFACE"  "g,b,n druga"
+// MOODWIZ.LBX, 007  "DRACFACE"  "g,b,n sss'ra"
+// MOODWIZ.LBX, 008  "NMOIFACE"  "g,b,n horus"
+// MOODWIZ.LBX, 009  "FREYFACE"  "g,b,n freya"
+// MOODWIZ.LBX, 010  "GALEFACE"  "g,b,n ahto?"
+// MOODWIZ.LBX, 011  "ARIELFAC"  "g,b,n ariel"
+// MOODWIZ.LBX, 012  "AZTEFACE"  "g,b,n tlaloc"
+// MOODWIZ.LBX, 013  "KARLFACE"  "g,b,n kali        "
 
 
 

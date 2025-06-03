@@ -942,7 +942,7 @@ void Surveyor_IDK_Print_Terrain_And_Effect(int16_t IDK_type, int16_t IDK_IDK)
 
         Print_Centered(280, 114, GUI_String_1);
 
-        String_Copy_Far(GUI_String_1, _CITIES[IDK_IDK].name);
+        _fstrcpy(GUI_String_1, _CITIES[IDK_IDK].name);
 
         Print_Centered(280, 121, GUI_String_1);
 

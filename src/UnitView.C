@@ -1341,7 +1341,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
 
             if(item_idx > -1)
             {
-                // String_Copy_Far(specials_list->names[specials_index], 0, _ITEMS[item_idx].name);
+                // _fstrcpy(specials_list->names[specials_index], 0, _ITEMS[item_idx].name);
                 strcpy(specials_list->names[specials_index], _ITEMS[item_idx].name);
                 specials_list->flags[specials_index] = -99;
                 specials_list->picts[specials_index] = (SAMB_INT)item_icons_seg[_ITEMS[item_idx].icon_idx];
@@ -2448,7 +2448,7 @@ void ITEM_GetPowerNames(int16_t item_idx, char power_names[5][20], char power_de
 
     if((_ITEMS[item_idx].embed_spell_idx > 0) && (display_count < 5))
     {
-        // TODO  String_Copy_Far(Temp_String, 0, spell_data_table[_ITEMS[item_idx].embed_spell_idx].name)
+        // TODO  _fstrcpy(Temp_String, 0, spell_data_table[_ITEMS[item_idx].embed_spell_idx].name)
         strcpy(Temp_String, spell_data_table[_ITEMS[item_idx].embed_spell_idx].name);
         strcpy(power_names[display_count], Temp_String);
         strcat(power_names[display_count], cnst_TimesSign);

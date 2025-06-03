@@ -393,7 +393,7 @@ void Restore_Alias_Colors(void)
 // PLATFORM  MSDOS  {
 // PLATFORM  MSDOS      int16_t next_x;
 // PLATFORM  MSDOS  
-// PLATFORM  MSDOS      String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
+// PLATFORM  MSDOS      _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
 // PLATFORM  MSDOS  
 // PLATFORM  MSDOS      next_x = Print(x, y, near_buffer);
 // PLATFORM  MSDOS  
@@ -404,8 +404,8 @@ int16_t Print_Far(int16_t x, int16_t y, char * src)
 {
     int16_t next_x;
 
-    // String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
-    String_Copy_Far(near_buffer, src);
+    // _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
+    _fstrcpy(near_buffer, src);
 
     next_x = Print(x, y, near_buffer);
 
@@ -416,16 +416,24 @@ int16_t Print_Far(int16_t x, int16_t y, char * src)
 // WZD s17p16
 // drake178: VGA_DrawCenteredFar()
 // int16_t Print_Centered_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt)
+/*
+Print_Centered() vs. Print_Centered_Far()
+Print_Centered() doesn't copy the string.
+Print_Centered_Far() copies the string from some other data/code segment into the current data+code segment.
+...still don't quite get how that works
+...no idea how the programmers woul've known when to use which
+*/
 int16_t Print_Centered_Far(int16_t x, int16_t y, char * src)
 {
     int16_t next_x;
 
-    // String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
-    String_Copy_Far(near_buffer, src);
+    // _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
+    _fstrcpy(near_buffer, src);
 
-    next_x = Print(x, y, near_buffer);
+    next_x = Print_Centered(x, y, near_buffer);
 
     return next_x;
+
 }
 
 // WZD s17p17
@@ -435,8 +443,8 @@ int16_t Print_Right_Far(int16_t x, int16_t y, char * src)
 {
     int16_t next_x;
 
-    // String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
-    String_Copy_Far(near_buffer, src);
+    // _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
+    _fstrcpy(near_buffer, src);
 
     next_x = Print(x, y, near_buffer);
 
@@ -450,8 +458,8 @@ int16_t Clipped_Print_Far(int16_t x, int16_t y, char * src)
 {
     int16_t next_x;
 
-    // String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
-    String_Copy_Far(near_buffer, src);
+    // _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
+    _fstrcpy(near_buffer, src);
 
     next_x = Clipped_Print(x, y, near_buffer);
 
@@ -465,8 +473,8 @@ int16_t Clipped_Print_Centered_Far(int16_t x, int16_t y, char * src)
 {
     int16_t next_x;
 
-    // String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
-    String_Copy_Far(near_buffer, src);
+    // _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
+    _fstrcpy(near_buffer, src);
 
     next_x = Clipped_Print_Centered(x, y, near_buffer);
 
@@ -480,8 +488,8 @@ int16_t Clipped_Print_Right_Far(int16_t x, int16_t y, char * src)
 {
     int16_t next_x;
 
-    // String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
-    String_Copy_Far(near_buffer, src);
+    // _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
+    _fstrcpy(near_buffer, src);
 
     next_x = Clipped_Print_Right(x, y, near_buffer);
 
@@ -1394,8 +1402,8 @@ int16_t Get_Current_Special_Color(void)
 void String_Copy_Far_To_Near(int offset, char * src)
 {
 
-    // String_Copy_Far(near_buffer[offset], 0, src_ofst, src_sgmt);
-    String_Copy_Far((char *)&near_buffer[offset], src);
+    // _fstrcpy(near_buffer[offset], 0, src_ofst, src_sgmt);
+    _fstrcpy((char *)&near_buffer[offset], src);
 
 }
 
@@ -1755,7 +1763,7 @@ int16_t Print_Full_To_Bitmap(int16_t x, int16_t y, char * string, int16_t right_
 int16_t Print_To_Bitmap_Far(int16_t x, int16_t y, char * string, SAMB_ptr bitmap)
 {
     int16_t next_x;  // DNE in Dasm
-    // TODO  String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
+    // TODO  _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
     strcpy(near_buffer, string);
     next_x = Print_To_Bitmap(x, y, near_buffer, bitmap);
     return next_x;
@@ -1845,6 +1853,11 @@ Settings_Screen_Draw()
     ...
     Set_Font_Colors_15(3, &colors[0]);
     Set_Font_Style_Shadow_Down(3, 15, 45, ST_NULL);
+
+style num
+    0 ¿ narrow font style ?  used when GP/MP are too wide  >19999
+    1 ¿ normal font style ?
+    5 fancy script, used for overland spell cast animation
 
 */
 void Set_Font_Style(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3)

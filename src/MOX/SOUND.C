@@ -661,7 +661,7 @@ int16_t Audio_Init__WIP(int16_t midi_driver, int16_t sound_channels, int16_t MID
 
     strcpy(GTL_filename, str_prefix_GTL_filename);
 
-    String_Copy_Far(SND_tbank_suffix, SND_MIDI_drvr_desc->data_suffix);
+    _fstrcpy(SND_tbank_suffix, SND_MIDI_drvr_desc->data_suffix);
 
     strcat(GTL_filename, SND_tbank_suffix);
 

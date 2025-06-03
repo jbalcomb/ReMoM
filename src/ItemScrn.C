@@ -754,7 +754,7 @@ void Draw_Item_With_Name(int16_t x, int16_t y, int16_t item_idx)
 {
     Draw_Item_Icon_With_Enchantment_Outline(item_idx, m_item_icon_workarea);
     Draw_Picture_Windowed(x, y, m_item_icon_workarea);
-    // TODO  String_Copy_Far(GUI_String_1, 0, _ITEMS[item_idx].name);
+    // TODO  _fstrcpy(GUI_String_1, 0, _ITEMS[item_idx].name);
     strcpy(GUI_String_1, _ITEMS[item_idx].name);
     // Clipped_Print_Centered((x + 12), (y + 19), GUI_String_1);
     Print_Centered((x + 12), (y + 19), GUI_String_1);
@@ -789,7 +789,7 @@ void Destroy_Item(void)
     Copy_On_To_Off_Page();
     item_cost_mana = (_ITEMS[m_cursor_item_idx].cost / 2);
     strcpy(GUI_String_1, cnst_ItemDestroyMsg1);  // "Do you want to destroy your \x02"
-    // TODO  String_Copy_Far(GUI_String_2, _ITEMS[m_cursor_item_idx].name);
+    // TODO  _fstrcpy(GUI_String_2, _ITEMS[m_cursor_item_idx].name);
     strcpy(GUI_String_2, _ITEMS[m_cursor_item_idx].name);
     strcat(GUI_String_1, GUI_String_2);
     strcat(GUI_String_1, cnst_ItemDestroyMsg2);  // "\x01 and gain "

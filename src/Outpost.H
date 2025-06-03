@@ -48,7 +48,7 @@ void Change_City_Name_Popup_Draw(void);
 int16_t Map_Square_Survey(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o077p09
-// sub_67918()
+void Cast_Awareness(int16_t player_idx);
 
 
 

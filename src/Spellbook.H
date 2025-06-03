@@ -547,55 +547,55 @@ void WIZ_AddSpellRank__WIP(int16_t player_idx, int16_t magic_realm);
 void Hero_Slot_Types(int16_t unit_type_idx, int16_t item_slots[]);
 
 // WZD o130p02
-// sub_AF331()
+//Cast_DeathWish()
 
 // WZD o130p03
-// sub_AF56D()
+// drake178: sub_AF56D()
 
 // WZD o130p04
-// sub_AF7C1()
+//Cast_BlackWind()
 
 // WZD o130p05
-// sub_AF9AA()
+//IDK_Random_Spell_Cost()
 
 // WZD o130p06
-// sAFA06_Anim_EarthLore()
+//sAFA06_Anim_EarthLore()
 
 // WZD o130p07
-// sub_AFB7F()
+//Cast_SpellBinding()
 
 // WZD o130p08
-// sub_AFCA8()
+//Cast_ChangeTerain()
 
 // WZD o130p09
-// sub_B01F7()
+//Cast_RaiseVolcano()
 
 // WZD o130p10
-// sub_B0692()
+//Cast_Transmute()
 
 // WZD o130p11
-// sub_B0C07()
+//Cast_Corruption()
 
 // WZD o130p12
-// sub_B1108()
+//Cast_WordOfRecall()
 
 // WZD o130p13
-// sB1280_Anim_EnchantRoad()
+//Cast_EnchantRoad()
 
 // WZD o130p14
-// sub_B148C()
+//Cast_SpellWard()
 
 // WZD o130p15
-// sub_B1843()
+void Cast_HolyArms(int16_t player_idx);
 
 // WZD o130p16
-// CTY_Consecration()
+//CTY_Consecration()
 
 // WZD o130p17
-// sub_B1A01()
+//sub_B1A01()
 
 // WZD o130p18
-// sub_B1ABE()
+void Cast_NaturesAwareness(int16_t player_idx);
 
 
 

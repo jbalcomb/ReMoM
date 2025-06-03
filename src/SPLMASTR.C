@@ -753,6 +753,20 @@ void OVL_LoadGlobalAnim(int16_t spell_idx, int16_t player_idx)
 {
     int16_t specfx_entry_num = 0;  // _SI_
 
+    // MOODWIZ.LBX, 000  "MERLFACE"  "g,b,n merlin"
+    // MOODWIZ.LBX, 001  "SHAMFACE"  "g,b,n raven"
+    // MOODWIZ.LBX, 002  "PRIEFACE"  "g,b,n sharee"
+    // MOODWIZ.LBX, 003  "WUFACE"    "g,b,n lopan"
+    // MOODWIZ.LBX, 004  "ARABFACE"  "g,b,n enki"
+    // MOODWIZ.LBX, 005  "OBERFACE"  "g,b,n alric"
+    // MOODWIZ.LBX, 006  "WRATFACE"  "g,b,n druga"
+    // MOODWIZ.LBX, 007  "DRACFACE"  "g,b,n sss'ra"
+    // MOODWIZ.LBX, 008  "NMOIFACE"  "g,b,n horus"
+    // MOODWIZ.LBX, 009  "FREYFACE"  "g,b,n freya"
+    // MOODWIZ.LBX, 010  "GALEFACE"  "g,b,n ahto?"
+    // MOODWIZ.LBX, 011  "ARIELFAC"  "g,b,n ariel"
+    // MOODWIZ.LBX, 012  "AZTEFACE"  "g,b,n tlaloc"
+    // MOODWIZ.LBX, 013  "KARLFACE"  "g,b,n kali        "
     ge_anim_moodwiz_seg = LBX_Reload_Next(moodwiz_lbx_file__ovr137, _players[player_idx].wizard_id, _screen_seg);
 
     // BACKGRND.LBX, 018    "MIRROR"      "diplomacy mirror"
@@ -786,11 +800,6 @@ void OVL_LoadGlobalAnim(int16_t spell_idx, int16_t player_idx)
     )
     {
 
-        // SPECFX.LBX, 015  "ETRNIGHT"  ""
-        // ...
-        // SPECFX.LBX, 038  "DETHWISH"  ""
-        // SPECFX.LBX, 039  "UNSUMMON"  ""
-        // SPECFX.LBX, 056  "AWARENES"  ""
         spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr137, (15 + specfx_entry_num), _screen_seg);
 
         // SPECFX.LBX, 054  "MASK1"     ""
@@ -802,8 +811,7 @@ void OVL_LoadGlobalAnim(int16_t spell_idx, int16_t player_idx)
     else if(GAME_MP_SpellVar_1 == 30)
     {
 
-        // SPECFX.LBX, 015  "ETRNIGHT"  ""
-        spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr137, 15, _screen_seg);
+        spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr137, (15 + specfx_entry_num), _screen_seg);
 
         // SPECFX.LBX, 055  "MASK2"     ""
         GAME_MP_SpellVar_2 = LBX_Reload_Next(specfx_lbx_file__ovr137, 55, _screen_seg);
@@ -846,6 +854,11 @@ void OVL_LoadGlobalAnim(int16_t spell_idx, int16_t player_idx)
 */
 /*
 
+XREF:
+    WIZ_GlobalSpellAnim()
+    j_OVL_DrawGlobalAnim()
+        WIZ_GlobalSpellAnim()
+
 */
 void OVL_DrawGlobalAnim(void)
 {
@@ -864,15 +877,15 @@ void OVL_DrawGlobalAnim(void)
 
     Set_Outline_Color(0);
 
-    Set_Font_Style_Outline(5, 0, 0, 0);
+    Set_Font_Style_Outline(5, 0, 0, 0);  // fancy script
 
     if(magic_set.spell_animations != ST_TRUE)
     {
 
-        if(GAME_MP_SpellVar_3 == 0)
+        if(GAME_MP_SpellVar_3 == HUMAN_PLAYER_IDX)
         {
 
-            strcpy(GUI_NearMsgString, cnst_Spellcast_Msg_1);
+            strcpy(GUI_NearMsgString, cnst_Spellcast_Msg_1);  // "You have completed casting..."
 
         }
         else
@@ -880,20 +893,20 @@ void OVL_DrawGlobalAnim(void)
 
             strcpy(GUI_NearMsgString, _players[GAME_MP_SpellVar_3].name);
 
-            strcat(GUI_NearMsgString, cnst_Spellcast_Msg_2);
+            strcat(GUI_NearMsgString, cnst_Spellcast_Msg_2);  // " has cast..."
 
         }
 
-        Print_Centered((62 + start_x), (133 + start_y), GUI_NearMsgString);
+        Print_Centered((start_x + 62), (start_y + 133), GUI_NearMsgString);
 
         FLIC_Draw(start_x, start_y, diplomacy_mirror_seg);
 
-        FLIC_Draw((10 + start_x), (8 + start_y), spell_animation_seg);
+        FLIC_Draw((start_x + 10), (start_y + 8), spell_animation_seg);
 
-        Print_Centered_Far((62 + start_x), (153 + start_y), spell_data_table[SBK_Spell_Index].name);
+        Print_Centered_Far((start_x + 62), (start_y + 153), spell_data_table[SBK_Spell_Index].name);
 
     }
-    else
+    else  /* (magic_set.spell_animations != ST_TRUE) */
     {
 
         if(GAME_MP_SpellVar_1 < 34)
@@ -914,7 +927,7 @@ void OVL_DrawGlobalAnim(void)
 
             }
 
-            Print_Centered((62 + start_x), (133 + start_y), GUI_NearMsgString);
+            Print_Centered((start_x + 62), (start_y + 133), GUI_NearMsgString);
 
         }
 
@@ -929,7 +942,7 @@ void OVL_DrawGlobalAnim(void)
 
             Draw_Picture_To_Bitmap(IMG_SBK_SliderBG, IMG_SBK_PageText);
 
-            LBX_IMG_Overlay(0, 0, IMG_SBK_PageText, IMG_SBK_Anims);
+            Clipped_Copy_Mask(0, 0, IMG_SBK_PageText, IMG_SBK_Anims);
 
             Draw_Picture((start_x + 12), (start_y + 12), IMG_SBK_PageText);
 
@@ -959,7 +972,7 @@ void OVL_DrawGlobalAnim(void)
 
             Draw_Picture_To_Bitmap(ge_anim_moodwiz_seg, IMG_SBK_PageText);
 
-            LBX_IMG_Overlay(0, 0, IMG_SBK_PageText, IMG_SBK_Anims);
+            Clipped_Copy_Mask(0, 0, IMG_SBK_PageText, IMG_SBK_Anims);
 
             Draw_Picture((start_x + 12), (start_y + 12), IMG_SBK_PageText);
 
@@ -1028,9 +1041,27 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
     else
     {
         // MUSIC.LBX, 019 "MOM35 XM"    "Eternal Night  DEATH"
-        // ...
+        // MUSIC.LBX, 020 "MOM36 XM"    "Evil Omens"
+        // MUSIC.LBX, 021 "MOM37 XM"    "Zombie Mastery"
+        // MUSIC.LBX, 022 "MOM31 XM"    "Aura of Majesty  SORCE"
+        // MUSIC.LBX, 023 "MOM46 XM"    "Wind Mastery "
+        // MUSIC.LBX, 024 "MOM47 XM"    "Supress Magic"
+        // MUSIC.LBX, 025 "MOM48 XM"    "Time Stop"
+        // MUSIC.LBX, 026 "MOM43 XM"    "Nature's Awareness NAT"
+        // MUSIC.LBX, 027 "MOM45 XM"    "Force of Nature"
+        // MUSIC.LBX, 028 "MOM44 XM"    "Herb Mastery"
+        // MUSIC.LBX, 029 "MOM30 XM"    "Chaos Surge  CHAOS"
+        // MUSIC.LBX, 030 "MOM32 XM"    "Doom Mastery"
+        // MUSIC.LBX, 031 "MOM29 XM"    "Great Wasting"
+        // MUSIC.LBX, 032 "MOM33 XM"    "Meteor Storm"
+        // MUSIC.LBX, 033 "MOM34 XM"    "Armagedon"
+        // MUSIC.LBX, 034 "MOM41 XM"    "Tranquility    LIFE"
+        // MUSIC.LBX, 035 "MOM40 XM"    "Life Force"
+        // MUSIC.LBX, 036 "MOM42 XM"    "Crusade"
+        // MUSIC.LBX, 037 "MOM38 XM"    "Just Cause"
+        // MUSIC.LBX, 038 "MOM39 XM"    "Holy Arms"
         // MUSIC.LBX, 039 "TEMP XMI"    "Wrath of God"
-        SND_Spell_Music = LBX_Reload(music_lbx_file__ovr137, (music_entry_number + 19), SND_Music_Segment);
+        SND_Spell_Music = LBX_Reload(music_lbx_file__ovr137, (19 + music_entry_number), SND_Music_Segment);
         SND_Spell_Music_size = lbxload_entry_length;
     }
 
@@ -1062,7 +1093,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
 
     Assign_Auto_Function(OVL_DrawGlobalAnim, 2);
 
-    GUI_Interaction_Done = 0;
+    GUI_Interaction_Done = ST_FALSE;
 
     for(GAME_MP_SpellVar_1 = 0; ((GAME_MP_SpellVar_1 < 120) && (GUI_Interaction_Done == 0)); GAME_MP_SpellVar_1++)
     {

@@ -16,6 +16,8 @@ void OVL_DrawGlobalAnim(void)
 // WZD o137p10
 void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
 
+...Learn_Spell_Animation() in ovr118
+...Cast_Spell_Overland__WIP() in ovr135
 
 
 
@@ -34,7 +36,26 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
 ; (indicates the draw location for the animation)
 ; CAN'T LOAD MULTIPLE ANIMATIONS ONE AFTER THE OTHER!
 */
-void GAME_LoadSpellAnim__WIP(int16_t spell_idx)
+void Spell_Animation_Load_Graphics__WIP(int16_t spell_idx)
+
+
+spl_Floating_Island
+spl_Raise_Dead
+spl_Animate_Dead
+
+if(spell_data_table[spell_idx].type == scc_Summoning)
+    if (spell_idx == spl_Floating_Island)
+        spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, spell_data_table[spell_idx].magic_realm, _screen_seg);
+        return_value = ST_TRUE;
+    else if(
+    (spell_idx == spl_Raise_Dead)
+    ||
+    (spell_idx == spl_Animate_Dead)
+        spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 22, _screen_seg);
+        return_value = ST_FALSE;
+    else
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, spell_data_table[spell_idx].magic_realm, _screen_seg);
+            return_value = ST_TRUE;
 
 
 

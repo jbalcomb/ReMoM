@@ -515,8 +515,6 @@ void Cheat_Reveal(void)
     {
         for(itr_x = 0; itr_x <WORLD_WIDTH; itr_x++)
         {
-            // DELETEME  _square_explored[((0 * WORLD_SIZE) + (itr_y * WORLD_WIDTH) + itr_x)] = 0xF;  /* 0b11111111 */
-            // DELETEME  _square_explored[((1 * WORLD_SIZE) + (itr_y * WORLD_WIDTH) + itr_x)] = 0xF;  /* 0b11111111 */
             SET_SQUARE_EXPLORED(itr_x, itr_y, 0, 0xF);
             SET_SQUARE_EXPLORED(itr_x, itr_y, 1, 0xF);
         }

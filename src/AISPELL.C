@@ -480,7 +480,7 @@ void Cast_Spell_Target_Error(int16_t spell_idx)
         return;
     }
 
-    String_Copy_Far(near_buffer, spell_data_table[spell_idx].name);
+    _fstrcpy(near_buffer, spell_data_table[spell_idx].name);
 
     strcat(near_buffer, CRP_AI_SpellTargetError);  // " could not be found for CP."
 

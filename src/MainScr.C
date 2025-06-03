@@ -726,7 +726,7 @@ void Main_Screen(void)
 {
     int16_t hotkey_idx_Alt_P = 0;
     int16_t hotkey_idx_U = 0;
-    char temp_string[10];
+    char temp_string[LEN_TEMP_BUFFER];
     int16_t hotkey_idx_F9 = 0;
     int16_t hotkey_idx_F8 = 0;
     int16_t hotkey_idx_F7 = 0;
@@ -809,7 +809,7 @@ void Main_Screen(void)
     Reset_Window();
     Clear_Fields();
 
-    // TODO  UU_MainScreen_flag = 1;  // only XREF Main_Screen(), sets TRUE, never tests
+    // DONT  UU_MainScreen_flag = 1;  // only XREF Main_Screen(), sets TRUE, never tests
 
     Allocate_Reduced_Map();
     Reset_Draw_Active_Stack();
@@ -853,8 +853,8 @@ void Main_Screen(void)
 
     DBG_Alt_A__TurnCount = ST_UNDEFINED;
     
-    assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
-    assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
+    assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);
+    assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);
 
     Main_Screen_Draw();
 
@@ -3286,7 +3286,7 @@ void Main_Unit_Statistics_Window(int16_t unit_idx, int16_t x1, int16_t y1, int16
 void Main_Screen_Draw_Status_Window(void)
 {
 
-    Set_Outline_Color(0);
+    Set_Outline_Color(ST_TRANSPARENT);
 
     if(
         _players[player_idx].gold_reserve > 9999

@@ -7,8 +7,59 @@ Light-Lime-3    maybe, kinda?
 
 ..."Combat Spells"..."Overland Spells"...
 
+Weird Ones?
+    Astral Gate
+    Banish
+    Chaos Channels
+    Change Terrain?
+    Create Artifact!    handled special during casting
+    Earth Gate
+    Earth To Mud        don't have mud code in combat
+    Enchant Item!       handled special during casting
+    Enchant Road
+    Flying Fortress?
+    Move Fortress?
+    Raise Volcano?
+    Recall Hero?
+    Resurrection?
+    Spell Ward          seem to recall the code tfor the effects being messy
+    Summon Champion?
+    Summon Hero?
+    Summoning Circle?
+    Warp Creature
+    Warp Node
+    Word of Recall?
+
+
 all overland summons are done
 all combat summons are done
+all overland/global enchantments are done
+
+    SCC  Description
+[x]   0  scc_Summoning
+[ ]   1  scc_Unit_Enchantment
+[ ]   2  scc_City_Enchantment
+[ ]   3  scc_City_Curse
+[ ]   4  scc_Fixed_Dmg_Spell
+[-]   5  scc_Special_Spell
+[ ]   6  scc_Target_Wiz_Spell
+[ ]   7  N/A
+[ ]   8  N/A
+[x]   9  scc_Global_Enchantment
+[ ]  10  scc_Battlefield_Spell
+[ ]  11  scc_Crafting_Spell
+[ ]  12  scc_Destruction_Spell
+[ ]  13  scc_Resistable_Spell
+[ ]  14  scc_Unresistable_Spell
+[ ]  15  scc_Mundane_Enchantment
+[ ]  16  scc_Mundane_Curse
+[ ]  17  scc_Infusable_Spell
+[ ]  18  scc_Dispel_Spell
+[ ]  19  scc_Disenchant_Spell
+[ ]  20  scc_Disjunction_Spell
+[ ]  21  scc_Counter_Spell
+[ ]  22  scc_Var_Dmg_Spell
+[ ]  23  scc_Banish_Spell
 
 
 
@@ -63,16 +114,16 @@ Spreadsheet - OSG Spells by Realm
 [ ] Regeneration
 [ ] Behemoth
 [ ] Entangle
-[ ] Natures Awareness
+[x] Natures Awareness
 [ ] Call Lightning
 [ ] Colossus
 [ ] Earth Gate
-[ ] Herb Mastery
+[x] Herb Mastery
 [ ] Great Wyrm
-[ ] Natures Wrath
+[x] Natures Wrath
 [ ] Resist Magic
 [ ] Dispel Magic True
-[ ] Floating Island
+[x] Floating Island
 [ ] Guardian Wind
 [x] Phantom Warriors
 [ ] Confusion
@@ -86,9 +137,9 @@ Spreadsheet - OSG Spells by Realm
 [ ] Spell Lock
 [ ] Enchant Road
 [ ] Flight
-[ ] Wind Mastery
+[x] Wind Mastery
 [ ] Spell Blast
-[ ] Aura of Majesty
+[x] Aura of Majesty
 [x] Phantom Beast
 [ ] Disjunction True
 [ ] Invisibility
@@ -104,12 +155,12 @@ Spreadsheet - OSG Spells by Realm
 [ ] Spell Ward
 [x] Creature Binding
 [ ] Mass Invisibility
-[ ] Great Unsummoning
+[x] Great Unsummoning
 [ ] Spell Binding
 [ ] Flying Fortress
 [ ] Sky Drake
-[ ] Suppress Magic
-[ ] Time Stop
+[x] Suppress Magic
+[x] Time Stop
 [x] Warp Wood
 [x] Disrupt
 [ ] Fire Bolt
@@ -142,14 +193,14 @@ Spreadsheet - OSG Spells by Realm
 [ ] Chaos Rift
 [ ] Hydra
 [ ] Disintegrate
-[ ] Meteor Storms
-[ ] Great Wasting
+[x] Meteor Storms
+[x] Great Wasting
 [ ] Call Chaos
-[ ] Chaos Surge
-[ ] Doom Mastery
+[x] Chaos Surge
+[x] Doom Mastery
 [ ] Great Drake
 [ ] Call The Void
-[ ] Armageddon
+[x] Armageddon
 [ ] Bless
 [ ] Star Fires
 [ ] Endurance
@@ -164,7 +215,7 @@ Spreadsheet - OSG Spells by Realm
 [ ] Plane Shift
 [ ] Resurrection
 [ ] Dispel Evil
-[ ] Planar Seal
+[x] Planar Seal
 [ ] Unicorns
 [x] Raise Dead
 [ ] Planar Travel
@@ -183,13 +234,13 @@ Spreadsheet - OSG Spells by Realm
 [ ] High Prayer
 [ ] Inspirations
 [ ] Astral Gate
-[ ] Holy Arms
+[x] Holy Arms
 [ ] Consecration
-[ ] Life Force
-[ ] Tranquility
-[ ] Crusade
+[x] Life Force
+[x] Tranquility
+[x] Crusade
 [ ] Arch Angel
-[ ] Charm of Life
+[x] Charm of Life
 [ ] Skeletons
 [ ] Weakness
 [ ] Dark Rituals
@@ -217,7 +268,7 @@ Spreadsheet - OSG Spells by Realm
 [ ] Cloud of Shadow
 [ ] Warp Node
 [ ] Black Wind
-[ ] Zombie Mastery
+[x] Zombie Mastery
 [ ] Famine
 [ ] Cursed Lands
 [ ] Cruel Unminding
@@ -226,9 +277,9 @@ Spreadsheet - OSG Spells by Realm
 [ ] Death Spell
 [x] Animate Dead
 [ ] Pestilence
-[ ] Eternal Night
-[ ] Evil Omens
-[ ] Death Wish
+[x] Eternal Night
+[x] Evil Omens
+[x] Death Wish
 [ ] Demon Lord
 [ ] Magic Spirit
 [ ] Dispel Magic

@@ -3200,8 +3200,8 @@ int16_t AI_Eval_After_Spell;
 WIZ_GlobalSpellAnim()
     for(GAME_MP_SpellVar_1 = 0; ((GAME_MP_SpellVar_1 < 120) && (GUI_Interaction_Done == 0)); GAME_MP_SpellVar_1++)
 ...animation counter...anim_ctr...
-
 incrememnted in WIZ_GlobalSpellAnim()
+
 */
 int16_t GAME_MP_SpellVar_1;
 
@@ -3329,6 +3329,12 @@ SAMB_ptr IMG_SBK_PageText;
 // WZD dseg:CA4B 00                                              db    0
 
 // WZD dseg:CA4C
+// drake178: GUI_Interaction_Done
+/*
+
+WIZ_GlobalSpellAnim()
+    used as leave_screen flag
+*/
 int16_t GUI_Interaction_Done;
 
 // WZD dseg:CA4E 00 00                                           IDK_WizTgt_SplCmpl_w434EE dw 0          ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+20Ar ...
@@ -3337,7 +3343,11 @@ int16_t GUI_Interaction_Done;
 /*
 ; clicked spell label index during combat sliders
 ; player_idx during global cast anims
-; city_idx during ¿ ?*/
+; city_idx during ¿ ?
+*/
+/*
+
+*/
 int16_t GAME_MP_SpellVar_3;
 
 // WZD dseg:CA52 00 00                                           word_434F2 dw 0                         ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+25Fr ...

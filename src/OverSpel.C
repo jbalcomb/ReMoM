@@ -193,7 +193,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
     }
 
 
-    String_Copy_Far(spell_name, spell_data_table[spell_idx].name);
+    strcpy(spell_name, spell_data_table[spell_idx].name);
 
 
     /*
@@ -443,7 +443,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                         if(spell_idx == spl_Floating_Island)
                         {
 
-                            AI_Eval_After_Spell = ST_TRUE;
+                            AI_Eval_After_Spell = ST_TRUE;  // Why?
 
                             Cast_Floating_Island(player_idx);
 
@@ -540,7 +540,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                     ptr_players_globals = &_players[player_idx].Globals[0];
 
-                    players_globals_idx = spell_data_table[spell_idx].Param0;
+                    players_globals_idx = spell_data_table[spell_idx].ge_idx;
 
                     ptr_players_globals[players_globals_idx] = (player_idx + 1);
 
@@ -554,14 +554,14 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                     if(spell_idx == spl_Natures_Awareness)
                     {
 
-                        // TODO  Cast_NaturesAwareness(player_idx);
+                        Cast_NaturesAwareness(player_idx);
 
                     }
 
                     if(spell_idx == spl_Holy_Arms)
                     {
 
-                        // TODO  Cast_HolyArms(player_idx);
+                        Cast_HolyArms(player_idx);
 
                     }
 
@@ -574,7 +574,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                             if(_UNITS[itr_units].owner_idx == player_idx)
                             {
 
-                            _UNITS[itr_units].Level = Calc_Unit_Level(itr_units);
+                                _UNITS[itr_units].Level = Calc_Unit_Level(itr_units);
 
                             }
 
@@ -585,7 +585,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                     if(spell_idx == spl_Awareness)
                     {
 
-                        // TODO  Cast_Awareness(player_idx);
+                        // SPELLY  Cast_Awareness(player_idx);
 
                     }
 

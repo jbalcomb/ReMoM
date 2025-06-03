@@ -834,7 +834,7 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
 
             if(MSG_UnitKilled_Array[itr].Unit_Type <= ut_Chosen)
             {
-                String_Copy_Far(GUI_NearMsgString, hero_names_table[MSG_UnitKilled_Array[itr].Unit_Type].name);
+                _fstrcpy(GUI_NearMsgString, hero_names_table[MSG_UnitKilled_Array[itr].Unit_Type].name);
             }
             else
             {
@@ -843,7 +843,7 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
 
             strcat(GUI_NearMsgString, aKilledBy);
 
-            String_Copy_Far(temp_string, spell_data_table[MSG_UnitKilled_Array[itr].Spell].name);
+            _fstrcpy(temp_string, spell_data_table[MSG_UnitKilled_Array[itr].Spell].name);
 
             strcat(GUI_NearMsgString, temp_string);
 
@@ -852,7 +852,7 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
 
                 strcat(GUI_NearMsgString, aIn);
 
-                String_Copy_Far(temp_string, _CITIES[MSG_UnitKilled_Array[itr].City].name);
+                _fstrcpy(temp_string, _CITIES[MSG_UnitKilled_Array[itr].City].name);
 
                 strcat(GUI_NearMsgString, temp_string);
 

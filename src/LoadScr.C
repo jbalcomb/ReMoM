@@ -461,11 +461,11 @@ void Load_Screen(void)
 
     if(current_screen == scr_Main_Screen)
     {
-        PageFlipEffect = 2;
+        PageFlipEffect = pf_TogglePagesFadeIn;
         Fade_Out();
-        Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0);
+        Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
         Set_Page_On();
-        Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0);
+        Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
         Set_Page_Off();
         // HERE: set the palette back to the /normal/ palette
         Load_Palette(0, ST_UNDEFINED, ST_NULL);  // EMPERATO - main game palette

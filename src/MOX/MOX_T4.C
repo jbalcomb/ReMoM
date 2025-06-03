@@ -18,6 +18,8 @@
     ...or ovr51
     or how they relate to Init, Loader, Loaded_Game_Update, etc.
 
+    What did I mean by "T4"?
+
 */
 
 
@@ -394,11 +396,13 @@ void s01p16_empty_function(void)
 // lbx_read_ofst()
 
 // WZD s09p07
+// AKA  String_Copy_Far()
 /*
-    Meh.
+    MSC/BCPP Compiler Generated?  ..."#pragma inline"?
+    ~== BCPP _fstrcpy()
 */ 
 // void String_Copy_Far(uint16_t dst_ofst, char * dst_sgmt, uint16_t src_ofst, char * src_sgmt)
-void String_Copy_Far(char * dst, char * src)
+void _fstrcpy(char * dst, char * src)
 {
     char character;
 
@@ -411,31 +415,5 @@ void String_Copy_Far(char * dst, char * src)
             break;
         }
     }
-
-}
-
-void String_Copy_Far__ASM(unsigned short int dst_ofst, unsigned short int dst_sgmt, unsigned short int src_ofst, unsigned short int src_sgmt)
-{
-
-//     if(dst_sgmt == 0)
-//     {
-//         dst_sgmt = _DS_;
-//     }
-// 
-//     if(src_sgmt == 0)
-//     {
-//         src_sgmt = _DS_;
-//     }
-// 
-//     _ES_ = dst_sgmt;
-//     _SI_ = src_ofst;
-//     _DI_ = dst_ofst;
-//     _DS_ = src_sgmt;
-// 
-//     
-//     do {
-//         *(dst_sgmt + dst_ofst++) = *(src_sgmt + src_ofst++);
-// 
-//     } while(*(src_sgmt + src_ofst) != '\0')
 
 }

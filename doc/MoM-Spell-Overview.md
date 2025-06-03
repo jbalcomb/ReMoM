@@ -38,6 +38,21 @@ ovr135
     ...
 
 
+### Choose, Change, Abort
+SBookScr.C
+Spellbook_Screen()
+Small Spellbook (Overland)
+Abort_Spell__YN
+
+¿ Abort_Spell__YN vs. did_select_spell ?
+if(Abort_Spell__YN == ST_TRUE)
+    did_select_spell = ST_TRUE;
+if(did_select_spell == ST_TRUE)
+    WIZ_SetOverlandSpell__WIP(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
+else
+    OVL_MosaicFlip__STUB();
+
+
 
 e.g. "Casting Overland"
     Main Screen
@@ -53,4 +68,8 @@ switch(current_screen)
 case scr_Spellbook_Screen:
 SBookScr.C
 Spellbook_Screen()
-
+Left-Click Spellbook Page Spell Fields
+...
+WIZ_SetOverlandSpell__WIP()
+Cast_Spell_Overland__WIP()
+switch(spell_data_table[spell_idx].type)

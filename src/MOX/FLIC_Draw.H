@@ -274,7 +274,7 @@ void Draw_Picture_Windowed(int16_t x, int16_t y, byte_ptr pict_seg);
 void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr src_pict_seg);
 
 // WZD s30p27
-void LBX_IMG_Overlay(int16_t x, int16_t y, SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg);
+void Clipped_Copy_Mask(int16_t x, int16_t y, SAMB_ptr target_bitmap, SAMB_ptr mask_bitmap);
 
 // WZD s30p28
 void Transparent_Color_Range(SAMB_ptr bitmap, int16_t color_start, int16_t color_end);
@@ -394,7 +394,7 @@ void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte
 
 // WZD s33p07
 // MoO2  Module: draw  Color_Stream_Copy_()
-void Color_Stream_Copy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height);
+void Mask_Bitmap_Pixels(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height);
 
 // WZD s33p08
 void Flip_Bitmap(SAMB_ptr pict_seg);
@@ -407,7 +407,7 @@ void Replace_Color(SAMB_ptr pict_seg, uint8_t color_to_replace, uint8_t replacem
 // UU_LBX_IMG_GetIntensity()
 
 // WZD s33p11
-void LBX_IMG_PartialCopy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height);
+void Mask_Bitmap_Pixels_Inverse(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height);
 
 // WZD s33p12
 void Clear_Memory_Far(byte_ptr dst, int16_t n);

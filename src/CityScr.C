@@ -278,7 +278,7 @@ Check_Cities_Data();
 
     if(_CITIES[_city_idx].construction < 100)
     {
-        String_Copy_Far(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
+        _fstrcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
         // strcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
     }
     else
@@ -381,7 +381,7 @@ Capture_Cities_Data();
                 City_Can_Buy_Product();
                 if(_CITIES[_city_idx].construction < 100)
                 {
-                    // TODO  String_Copy_Far(IDK_production_title, bldg_data_table[_CITIES[_city_idx].construction]);
+                    // TODO  _fstrcpy(IDK_production_title, bldg_data_table[_CITIES[_city_idx].construction]);
                     strcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
                 }
                 else

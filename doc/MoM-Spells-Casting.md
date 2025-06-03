@@ -93,22 +93,45 @@ Spellbook_Screen()
 ```
 
 
+
+
 spl_Time_Stop           handles in-line     (just sets g_TimeStop_PlayerNum)
 spl_Natures_Awareness   calls out
 spl_Holy_Arms           calls out
-spl_Crusade             handles in-line
+spl_Crusade             extra in-line handling
 spl_Awareness           calls out
 
 
+## Global Enchantment
 
-
+~ Special Global Enchantments
+spl_Time_Stop
+spl_Natures_Awareness
+spl_Holy_Arms
+spl_Crusade
+spl_Awareness
 
 WIZ_GlobalSpellAnim()
+g_TimeStop_PlayerNum = (player_idx + 1);
+// SPELLY  Cast_NaturesAwareness(player_idx);
+// SPELLY  Cast_HolyArms(player_idx);
+// SPELLY  Cast_Awareness(player_idx);
+
+Change_Relations_For_Enchantments(player_idx, spell_idx, 1);
+
+
 
 
 
 Next_Turn_Proc()
-    |-> Cast_Spell_Overland__WIP()
+    if(
+        (_players[_human_player_idx].casting_cost_remaining <= 0)
+        &&
+        (_players[_human_player_idx].casting_spell_idx > spl_NONE))
+    {
+        Cast_Spell_Overland__WIP(_human_player_idx);
+    }
+
 
 
 IDA Group Colors

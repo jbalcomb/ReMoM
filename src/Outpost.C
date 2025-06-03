@@ -141,7 +141,7 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
                     }
                     else
                     {
-                        Set_Bit_Field(itr_players, &_CITIES[city_idx].PlayerBits);
+                        Set_Bit_Field(itr_players, &_CITIES[city_idx].contacts);
                     }
                 }
             }
@@ -759,4 +759,27 @@ int16_t Map_Square_Survey(int16_t wx, int16_t wy, int16_t wp)
 }
 
 // WZD o077p09
-// sub_67918()
+// drake178: sub_67918()
+void Cast_Awareness(int16_t player_idx)
+{
+    int16_t itr = 0;  // _SI_
+
+    for(itr = 0; itr < _cities; itr++)
+    {
+
+        if(player_idx == _human_player_idx)
+        {
+
+            Set_Map_Square_Explored_Flags_XYP_Range(_CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, 1);
+
+        }
+        else
+        {
+
+            Set_Bit_Field(player_idx, &_CITIES[itr].contacts);
+
+        }
+
+    }
+
+}

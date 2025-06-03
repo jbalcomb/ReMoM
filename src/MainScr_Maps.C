@@ -2538,7 +2538,7 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 // TODO                                  Set_Random_Seed(tmp_random_seed);
 // TODO                                  // TODO  LBX_IMG_HorzWarp(&TBL_Warp_GFX_Lines, Warp_Node_WorkArea);
 // TODO                                  // TODO  LBX_IMG_VertWarp(&TBL_Warp_GFX_Lines, Warp_Node_WorkArea);
-// TODO                                  // TODO  LBX_IMG_Overlay(0, 0, Warp_Node_WorkArea, Map_Square_WorkArea);
+// TODO                                  // TODO  Clipped_Copy_Mask(0, 0, Warp_Node_WorkArea, Map_Square_WorkArea);
 // TODO                                  Draw_Picture(start_x, start_y, Warp_Node_WorkArea);
 // TODO                              }
 // TODO                          }

@@ -492,7 +492,7 @@ enum e_SPELL_CASTING_CATEGORY
     scc_Unresistable_Spell  = 14,
     scc_Mundane_Enchantment = 15,
     scc_Mundane_Curse       = 16,
-    scc_Infusable_Spell     = 17,
+    scc_Infusable_Spell     = 17,   /* below, no slider, above, maybe slider */
     scc_Dispel_Spell        = 18,
     scc_Disenchant_Spell    = 19,
     scc_Disjunction_Spell   = 20,
@@ -819,10 +819,10 @@ struct s_SPELL_DATA
     // /* 21 */  int8_t Param1;
     union
     {
-        /* 20 */  int8_t Param0;
+        /* 20 */  int8_t Param0;            // 
         /* 21 */  int8_t Param1;
-        int16_t unit_type;                  // 0: scc_Summoning IDK_SummonAnim_Draw()
-        int16_t ge_idx;                     // 9: scc_Global_Enchantment
+        int16_t unit_type;                  // 0: scc_Summoning             IDK_SummonAnim_Draw()
+        int16_t ge_idx;                     // 9: scc_Global_Enchantment    indexes into _players[].Globals[], which holds player_num (i.e., player_idx + 1)
         uint8_t cmbt_0;                     // Attack_Strength  CMB_ConvSpellAttack()
         uint8_t cmbt_1;                     // Immunity_Flags   CMB_ConvSpellAttack()
     };
@@ -1187,7 +1187,7 @@ struct s_WIZARD
 
     /* 025A */ uint16_t research_cost_remaining;  // ¿ ~ research_cost_remaining ?
     /* 025C */ uint16_t mana_reserve;       /*  */
-    /* 025E */ int32_t  spell_casting_skill;  /* "spell casting skill" */
+    /* 025E */ int32_t  spell_casting_skill;  /* stored as powers of 2?  "spell casting skill" */
     /* 0262 */ int16_t researching_spell_idx;  /* spells_list[] spell_idx of the spell currently being researched */
     /* 0264 */ uint8_t  spells_list[NUM_SPELLS];   /* "Spell Library" TODO should be [6][40] or some odd, equivalent struct */ /* enum? known, knowable, ? */
     /* 0354 */ uint16_t Defeated_Wizards;  /* ¿ bifield of bit_num == play_num ? */
@@ -1416,7 +1416,7 @@ struct s_CITY
     /* 16 */ int8_t did_sell_building;  // {F/T} sold a building a this turn  // TODO  rename did_sell/just_sold_building
     /* 17 */ int8_t pad2B_17h;  /* 2-byte aligment padding */
     /* 18 */ int16_t Pop_10s;
-    /* 1A */ uint8_t PlayerBits;  /* bit per player_idx - city (map square) is visible / explored / targetable */
+    /* 1A */ uint8_t contacts;  /* bit per player_idx {F,T} in-contact */
     /* 1B */ int8_t pad2B_1Bh;  /* 2-byte aligment padding */
     /* 1C */ int16_t construction;  /* ~== `product_idx`  < 100 building, >= 100 unit .. 0 is meaning? ... 99 max bldg, 256 - 1 - 99 = 156 max unit types? */
     /* 1E */ int8_t bldg_cnt;
