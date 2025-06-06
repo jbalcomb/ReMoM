@@ -1434,7 +1434,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
     Toggle_Pages();
 
-    PageFlipEffect = pf_Normal;
+    _page_flip_effect = pfe_NONE;
 
     if(OVL_Action_Type == 1)  /* Enemy City */
     {
@@ -7687,7 +7687,7 @@ void Combat_Information_Window(void)
 
     Deactivate_Auto_Function();
 
-    PageFlipEffect = 3;
+    _page_flip_effect = 3;
 
     Deactivate_Help_List();
 
@@ -12107,7 +12107,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
             )
             {
                 
-                PageFlipEffect = 3;
+                _page_flip_effect = 3;
 
                 CMB_ComposeBookBG__WIP();
 
@@ -13817,7 +13817,7 @@ void Combat_Set_Mouse_List_Image_Num(void)
 */
 /*
 
-~== SCastScr  Spell_Casting_Screen__WIP() |-> Set_Mouse_List_Image_Nums()
+~== SCastScr  Spell_Casting_Screen__WIP() |-> Spell_Casting_Screen_Assign_Mouse_Images()
 
 */
 void Combat_Spell_Target_Screen_Draw(void)
@@ -22261,9 +22261,9 @@ void Combat_Results_Scroll(void)
 
     Combat_Results_Scroll_Draw();
 
-    PageFlipEffect = 3;
+    _page_flip_effect = 3;
     PageFlip_FX();
-    PageFlipEffect = 0;
+    _page_flip_effect = 0;
     
     Copy_On_To_Off_Page();
 

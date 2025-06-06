@@ -88,6 +88,10 @@
 // WZD dseg:0156 4D 21 55 21 5C 21 64 21 69 21 6E 21             _city_size_names dw offset cnst_Outpost, offset cnst_Hamlet, offset cnst_Village, offset cnst_Town, offset cnst_City, offset cnst_Capital
 
 // WZD dseg:0162
+/*
+used with if(bldg_idx >= 100) bldg_idx -= 100
+
+*/
 char * STR_MagicBuildings[7] =
 {
     cnst_SummoningCircle, 
@@ -763,32 +767,37 @@ int16_t cityscape_water_anim_ctr = 0;
 int16_t cityscape_wall_anim_ctr = 0;
 
 // WZD dseg:6ED6
-int16_t IDK_cityscape_vanish_percent = 100;
+int16_t cityscape_build_anim_ctr = 100;
 
 // WZD dseg:6ED8
 struct s_BLDG_CR cityscape_cr[5][3] =
 {
     {
+        /* 2x2 */
         {  0, -12,  18,   0 },
         {  5, -20,  24, -13 },
         { 19, -13,  24,  -7 },
     },
     {
+        /* 2x3 */
         {  0, -14,  29,   0 },
         {  4, -17,  31,  -4 },
         {  7, -21,  35,  -6 },
     },
     {
+        /* 3x2 */
         {  0, -15,  19,   0 },
         {  6, -20,  23,  -6 },
         { 10, -25,  30, -11 },
     },
     {
+        /* 3x3 */
         {  0, -14,  29,   0 },
         {  6, -19,  34,  -5 },
         { 11, -25,  39, -11 },
     },
     {
+        /* NIU */
         {  6, -41,  30,  -3 },
         { 11, -47,  30, -42 },
         { 25, -41,  30,  -9 },
@@ -1297,7 +1306,7 @@ int16_t OVL_Action_Structure;
 
 // WZD dseg:92B0
 // drake178: cityscape_bldgs
-struct s_BLDG * cityscape_bldgs;
+struct s_BLDG * cityscape_bldg_fields;
 
 // WZD dseg:92B4
 int16_t cityscape_bldg_count;
@@ -1312,7 +1321,7 @@ SAMB_ptr bldg_picts_seg[35];
 
 // WZD dseg:92FE
 // drake178: IMG_CTY_CITYSPL4
-SAMB_ptr IDK_CITYSPL4_city_walls_build_seg;
+SAMB_ptr cityscape_city_walls_build_seg;
 
 // WZD dseg:9300
 // drake178: IMG_CTY_TradeGoods@
@@ -1328,12 +1337,24 @@ SAMB_ptr cityscape_fortress_seg;
 // WZD dseg:930A
 SAMB_ptr cityscape_city_walls_seg;
 
-// WZD dseg:930C 00 00                                           IMG_CTY_AltarofBtl@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+498w ...
-// WZD dseg:930E 00 00                                           IMG_CTY_EvilPresnc@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+4C6w ...
-// WZD dseg:9310 00 00                                           IMG_CTY_Dark_Ritual@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+4AFw ...
-// WZD dseg:9312 00 00                                           IMG_CTY_Astral_Gate@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+481w ...
-// WZD dseg:9314 00 00                                           IMG_CTY_StreamofLif@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+46Aw ...
-// WZD dseg:9316 00 00                                           IMG_CTY_Earth_Gate@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+453w ...
+// WZD dseg:930C
+// drake178: IMG_CTY_AltarofBtl
+SAMB_ptr cityscape_altarofbattle_seg;
+// WZD dseg:930E
+// drake178: IMG_CTY_EvilPresnc
+SAMB_ptr cityscape_evilpresence_seg;
+// WZD dseg:9310
+// drake178: IMG_CTY_Dark_Ritual
+SAMB_ptr cityscape_darkrituals_seg;
+// WZD dseg:9312
+// drake178: IMG_CTY_Astral_Gate
+SAMB_ptr cityscape_astralgate_seg;
+// WZD dseg:9314
+// drake178: IMG_CTY_StreamofLif
+SAMB_ptr cityscape_streamoflife_seg;
+// WZD dseg:9316
+// drake178: IMG_CTY_Earth_Gate
+SAMB_ptr cityscape_earthgate_seg;
 
 // WZD dseg:9318
 SAMB_ptr cityscape_summon_circle_seg;
@@ -1352,18 +1373,44 @@ SAMB_ptr cityscape_houses_seg[15];
 // drake178: IMG_CTY_Scap_Roads
 SAMB_ptr cityscape_roads_seg;
 
-// WZD dseg:9346 00 00                                           IMG_CTY_WallofDark@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+30Fw ...
-// WZD dseg:9348 00 00                                           IMG_CTY_Unk dw 0
-// WZD dseg:934A 00 00                                           IMG_CTY_WallofFire@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+2F8w ...
-// WZD dseg:934C 00 00                                           IMG_CTY_Consecrate@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+2E1w ...
-// WZD dseg:934E 00 00                                           IMG_CTY_Prosperity@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+2CAw ...
-// WZD dseg:9350 00 00                                           IMG_CTY_Inspiratn@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+2B3w ...
-// WZD dseg:9352 00 00                                           IMG_CTY_NatsEye@ dw 0                   ; DATA XREF: GFX_Swap_AppndCtScap+29Cw ...
-// WZD dseg:9354 00 00                                           IMG_CTY_SorcWard@ dw 0                  ; DATA XREF: GFX_Swap_AppndCtScap+285w ...
-// WZD dseg:9356 00 00                                           IMG_CTY_LifeWard@ dw 0                  ; DATA XREF: GFX_Swap_AppndCtScap+26Ew ...
-// WZD dseg:9358 00 00                                           IMG_CTY_NatWard@ dw 0                   ; DATA XREF: GFX_Swap_AppndCtScap+257w ...
-// WZD dseg:935A 00 00                                           IMG_CTY_ChaosWard@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+240w ...
-// WZD dseg:935C 00 00                                           IMG_CTY_DeathWard@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+229w ...
+// WZD dseg:9346
+// drake178: IMG_CTY_WallofDark
+SAMB_ptr cityscape_wall_of_air_seg;
+// WZD dseg:9348
+// drake178: IMG_CTY_Unk
+SAMB_ptr cityscape_wall_of_stine_seg;
+// WZD dseg:934A
+// drake178: IMG_CTY_WallofFire
+SAMB_ptr cityscape_wall_of_fire_seg;
+
+// WZD dseg:934C
+// drake178: IMG_CTY_Consecrate
+SAMB_ptr cityscape_natureseye_seg;
+// WZD dseg:934E
+// drake178: IMG_CTY_Prosperity
+SAMB_ptr cityscape_inspirations_seg;
+// WZD dseg:9350
+// drake178: IMG_CTY_Inspiratn
+SAMB_ptr cityscape_prosperity_seg;
+// WZD dseg:9352
+// drake178: IMG_CTY_NatsEye
+SAMB_ptr cityscape_consecrations_seg;
+
+// WZD dseg:9354
+// drake178: IMG_CTY_SorcWard
+SAMB_ptr cityscape_blue_ward_seg;
+// WZD dseg:9356
+// drake178: IMG_CTY_LifeWard
+SAMB_ptr cityscape_white_ward_seg;
+// WZD dseg:9358
+// drake178: IMG_CTY_NatWard
+SAMB_ptr cityscape_green_ward_seg;
+// WZD dseg:935A
+// drake178: IMG_CTY_ChaosWard
+SAMB_ptr cityscape_red_ward_seg;
+// WZD dseg:935C
+// drake178: IMG_CTY_DeathWard
+SAMB_ptr cityscape_black_ward_seg;
 
 // WZD dseg:935E
 SAMB_ptr cityscape_famine_mask_seg;
@@ -1417,7 +1464,9 @@ SAMB_ptr cityscape_background_myrror_river_seg;
 // drake178: IMG_CTY_Myr_Ocean@
 SAMB_ptr cityscape_background_myrror_ocean_seg;
 
-// WZD dseg:937C 00 00                                           IMG_CTY_Arc_GrassBG@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+143w ...
+// WZD dseg:937C
+// drake178: IMG_CTY_Arc_GrassBG
+SAMB_ptr cityscape_background_arcanus_plain_seg;
 
 // WZD dseg:937E
 // drake178: IMG_CTY_Myr_CRift@
@@ -1431,7 +1480,9 @@ SAMB_ptr cityscape_background_myrror_darkcloud_seg;
 // drake178: IMG_CTY_Myr_HLight@
 SAMB_ptr cityscape_background_myrror_alkar_seg;
 
-// WZD dseg:9384 00 00                                           IMG_CTY_Myr_GrassBG@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+19Fw ...
+// WZD dseg:9384
+// drake178: IMG_CTY_Myr_GrassBG
+SAMB_ptr cityscape_background_myrror_plain_seg;
 
 // WZD dseg:9386
 // drake178: IMG_CTY_Myr_MtnBG@
@@ -1520,14 +1571,16 @@ SAMB_ptr _combat_terrain_pict_segs[55];
 // WZD  dseg:942C 00 00                                           TF_Unk_40_Counter dw 0                  ; DATA XREF: LD_MAP_TFUnk40_Eval+6w ...
 
 // WZD  dseg:942E
+/*
+; array of 6 single-loaded images
+; (blue - red - green - bad - good - short)
+; not actually used as far as  i can tell...
+*/
 SAMB_ptr main_lilevent_icons[6];
-// WZD  dseg:942E                                                                                         ; array of 6 single-loaded images
-// WZD  dseg:942E                                                                                         ; (blue - red - green - bad - good - short)
-// WZD  dseg:942E                                                                                         ; not actually used as far as  i can tell...
 
-// WZD  dseg:943A 00 00 00 00 00 00 00 00                         IMG_CTY_Rubble@ dw 4 dup(0)             ; DATA XREF: GFX_Swap_AppndCtScap+5B6w ...
-// WZD  dseg:943A                                                                                         ; array of 4 appended reserved EMM headers in
-// WZD  dseg:943A                                                                                         ; GFX_Swap_Seg, 2x2 - 2x3 - 3x2 - 3x3 rubble images
+// WZD  dseg:943A
+// drake178: IMG_CTY_Rubble
+SAMB_ptr cityscape_rubble_seg[4];
 
 
 
@@ -2185,7 +2238,7 @@ SAMB_ptr movement_mode_icons[10];  // {0,...,9} 10 icons
 
 used for battle unit figure, in Combat_Figure_Compose_USEFULL()
 
-used for ..., in Cityscape_Draw_Buildings_And_Features__WIP()
+used for ..., in Cityscape_Draw_Buildings()
 
 used for ..., in Draw_Item_Icon_With_Enchantment_Outline()
 
@@ -2210,7 +2263,7 @@ SAMB_ptr GfxBuf_2400B;
 // MoX/MOX_T4.C  only used twice, from 'Main Screen'
 // MoX/MOX_T4.C  
 // MoX/MOX_T4.C  PageFlip_FX()
-// MoX/MOX_T4.C      PageFlipEffect == 4
+// MoX/MOX_T4.C      _page_flip_effect == 4
 // MoX/MOX_T4.C      RP_VGA_GrowOutFlip(GrowOutLeft, GrowOutTop, GrowOutFrames, (_screen_seg + 400));
 // MoX/MOX_T4.C  */
 // MoX/MOX_T4.C  // WZD dseg:9992
@@ -2545,7 +2598,7 @@ uint16_t tmp_World_Data_Paras;
 SAMB_ptr World_Data_Extra;
 
 // WZD dseg:9D1E
-// ? blocks, alloc in MoM_Init_Tables()
+// drake178: GFX_Swap_Seg
 SAMB_ptr GFX_Swap_Seg;
 
 // WZD dseg:9D20
@@ -3218,14 +3271,14 @@ int16_t AI_Eval_After_Spell;
 /*
 
 WIZ_GlobalSpellAnim()
-    for(GAME_MP_SpellVar_1 = 0; ((GAME_MP_SpellVar_1 < 120) && (GUI_Interaction_Done == 0)); GAME_MP_SpellVar_1++)
+    for(GAME_MP_SpellVar_1 = 0; ((GAME_MP_SpellVar_1 < 120) && (_osc_leave_screen == 0)); GAME_MP_SpellVar_1++)
 ...animation counter...anim_ctr...
 incrememnted in WIZ_GlobalSpellAnim()
 
 */
 int16_t GAME_MP_SpellVar_1;
 
-// WZD dseg:CA14 00 00                                           SBK_SliderAnimStage dw 0                ; DATA XREF: SBK_SliderRedraw+2Cr ...
+// WZD dseg:CA14 00 00                                           _osc_anim_ctr dw 0                ; DATA XREF: SBK_SliderRedraw+2Cr ...
 // WZD dseg:CA14                                                                                         ; steps 0 to 7 for sliders
 
 // WZD dseg:CA16
@@ -3267,37 +3320,8 @@ SAMB_ptr GAME_MP_SpellVar_2;
 // WZD dseg:CA2C
 /*
 
-XREF:
-    IDK_Spell_DisjunctOrBind_Draw+44  cmp     [IDK_DiploScrn_scanned_field], 0            
-    IDK_Spell_DisjunctOrBind_Draw+54  cmp     ax, [IDK_DiploScrn_scanned_field]           
-    IDK_Spell_DisjunctOrBind_Draw+5E  mov     ax, [IDK_DiploScrn_scanned_field]           
-    IDK_Spell_DisjunctOrBind_Draw+6C  mov     ax, [IDK_DiploScrn_scanned_field]           
-    IDK_Spell_DisjunctOrBind_Draw+26A mov     ax, [IDK_DiploScrn_scanned_field]           
-    IDK_Spell_DisjunctOrBind_Draw+278 mov     ax, [IDK_DiploScrn_scanned_field]           
-    IDK_Spell_DisjunctOrBind+1E4      mov     [IDK_DiploScrn_scanned_field], ax           
-    IDK_Spell_DisjunctOrBind+1E7      mov     ax, [IDK_DiploScrn_scanned_field]           
-    IDK_Spell_DisjunctOrBind+1F1      mov     ax, [IDK_DiploScrn_scanned_field]           
-    IDK_Spell_DisjunctOrBind+207      mov     [IDK_DiploScrn_scanned_field], 0            
-    IDK_Spell_DisjunctOrBind+221      cmp     [IDK_DiploScrn_scanned_field], 0            
-    IDK_SummonAnim_Draw+F9            cmp     [IDK_DiploScrn_scanned_field], 0            
-    IDK_SummonAnim_Draw:loc_BEB43     cmp     [IDK_DiploScrn_scanned_field], -1           
-    IDK_SummonAnim_Draw:loc_BEB5B     cmp     [IDK_DiploScrn_scanned_field], -10          
-    IDK_SummonAnim+48                 mov     [IDK_DiploScrn_scanned_field], _DI_unit_type
-    IDK_Spell_Cityscape_Draw+49       cmp     ax, [IDK_DiploScrn_scanned_field]           
-    IDK_Spell_Cityscape_1+58          mov     [IDK_DiploScrn_scanned_field], -1000
-    IDK_Spell_Cityscape_2+12D         mov     [IDK_DiploScrn_scanned_field], ax           
-    IDK_WizTgtSpl_sBFC85+104          cmp     ax, [IDK_DiploScrn_scanned_field]           
-    IDK_DiploScrn+1B1                 mov     [IDK_DiploScrn_scanned_field], ax           
-    SoM_Started+5F                    mov     [IDK_DiploScrn_scanned_field], 67           
-
-IDK_SummonAnim()
-IDK_SummonAnim_Draw()
-set to unit_type, which spell_data_table[].Param0
-but, also special cases of -1 for *summon* item and -2,-3,-20,-30 for summon hero/champion
-¿ ~ summon_type ?
-
 */
-int16_t IDK_DiploScrn_scanned_field;
+int16_t _temp_sint_4;
 
 // WZD dseg:CA2E 00 00                                           IDK_SUMMONBK_pict_seg dw 0              ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+17Dw ...
 // WZD dseg:CA30 00 00                                           IMG_SBK_SliderOK@ dw 0                  ; DATA XREF: SBK_LoadSpellSlider+7Dw ...
@@ -3355,22 +3379,26 @@ SAMB_ptr IMG_SBK_PageText;
 WIZ_GlobalSpellAnim()
     used as leave_screen flag
 */
-int16_t GUI_Interaction_Done;
+int16_t _osc_leave_screen;
 
-// WZD dseg:CA4E 00 00                                           IDK_WizTgt_SplCmpl_w434EE dw 0          ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+20Ar ...
+// WZD dseg:CA4E
+/*
+    {F,T} 'need target' for wizard or wizard spell
+    BUGBUG in Cast_Spell_City_Enchantment_Animation_1__WIP()
+*/
+int16_t _osc_need_target_flag;
 
 // WZD dseg:CA50
-/*
-; clicked spell label index during combat sliders
-; player_idx during global cast anims
-; city_idx during ¿ ?
-*/
-/*
+int16_t _temp_sint_1;
 
+// WZD dseg:CA52
+// AKA word_434F2
+/*
+in IDK_Spell_Cityscape_Draw()
+passed to  Cityscape_Window__WIP
+as bldg_idx_1 and bldg_idx_2
 */
-int16_t GAME_MP_SpellVar_3;
-
-// WZD dseg:CA52 00 00                                           word_434F2 dw 0                         ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+25Fr ...
+int16_t _ce_bldg_idx;
 
 // WZD dseg:CA52                                                 END: ovr136 - Uninitialized Data
 
@@ -3379,17 +3407,17 @@ int16_t GAME_MP_SpellVar_3;
 // WZD dseg:CA78                                                 ¿ BEGIN: Cityscape - ?
 
 // WZD dseg:CA78
-// drake178: IDK_animate_new_building_idx
+// drake178: new_bldg_idx
 // WZD dseg:CA7A
 // drake178: dword_4351A
 
 // WZD dseg:CA7E
 // drake178: IMG_CTY_Vtrcl_Mask@
-SAMB_ptr IDK_BUILDS1_vertical_mask_seg;
+SAMB_ptr cityscape_roads_vertical_mask_seg;
 
 // WZD dseg:CA80
 // drake178: IMG_CTY_Horz_Mask@
-SAMB_ptr IDK_BUILDS1_horizontal_mask_seg;
+SAMB_ptr cityscape_roads_horizontal_mask_seg;
 
 // WZD dseg:CA82
 // drake178: Frame_Index

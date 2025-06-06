@@ -225,7 +225,7 @@ void Mirror_Screen(int16_t player_idx, int16_t OL, int16_t OT, int16_t OR, int16
     Deactivate_Help_List();
     Clear_Fields();
     Deactivate_Auto_Function();
-    PageFlipEffect = 3;
+    _page_flip_effect = 3;
 
 }
 

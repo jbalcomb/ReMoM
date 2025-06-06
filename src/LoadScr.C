@@ -461,7 +461,7 @@ void Load_Screen(void)
 
     if(current_screen == scr_Main_Screen)
     {
-        PageFlipEffect = pf_TogglePagesFadeIn;
+        _page_flip_effect = pfe_TogglePagesFadeIn;
         Fade_Out();
         Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
         Set_Page_On();
@@ -649,7 +649,7 @@ void Loaded_Game_Update(void)
     _human_player_idx = HUMAN_PLAYER_IDX;
 
 
-    PageFlipEffect = pf_Normal;
+    _page_flip_effect = pfe_NONE;
     
 
     Reset_City_Area_Bitfields();

@@ -21,6 +21,25 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
 
 
 
+## City Enchantment
+
+// WZD o137p06
+void IDK_Spell_Cityscape_1(int16_t city_idx, int16_t spell_idx, int16_t player_idx)
+// WZD o137p07
+void IDK_Spell_Cityscape_2(int16_t city_idx, int16_t spell_idx, int16_t player_idx)
+
+Cast_Spell_Overland__WIP()
+    switch(spell_data_table[spell_idx].type)
+    case scc_City_Enchantment:  //  2
+    Cast_Successful = Spell_Casting_Screen__WIP(stt_Friendly_City, &G_Have_Targets, &RetY, &RetP, &var_12, &var_10, &spell_name);
+    if(Cast_Successful == ST_TRUE)
+    /* SPELLY */  IDK_Spell_Cityscape_1__WIP(G_Have_Targets, spell_idx, player_idx);
+    /* SPELLY */  IDK_Spell_Cityscape_2__WIP(G_Have_Targets, spell_idx, player_idx);
+
+
+
+
+
 
 
 

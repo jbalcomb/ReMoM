@@ -665,7 +665,7 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
 
 
 // @@Done:
-    PageFlipEffect = 3;
+    _page_flip_effect = 3;
     Reset_Window();
     Clear_Fields();
     Deactivate_Auto_Function();

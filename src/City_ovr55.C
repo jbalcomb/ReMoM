@@ -195,7 +195,7 @@ void Enemy_City_Screen(void)
 
         City_Add_Fields_City_Enchantments((x_start + 139), (y_start + 51));
 
-        City_Add_Fields_Buildings();
+        Cityscape_Add_Fields();
 
         for(itr_troops = 0; itr_troops < m_troop_count; itr_troops++)
         {
@@ -340,7 +340,7 @@ void Enemy_City_Screen(void)
         screen_changed = ST_FALSE;
     }
 
-    PageFlipEffect = 3;
+    _page_flip_effect = 3;
     Deactivate_Auto_Function();
     Deactivate_Help_List();
     Reset_Window();
@@ -366,20 +366,20 @@ void Enemy_City_Screen_Draw(void)
     {
         if(city_cityscape_fields[itr] == city_screen_scanned_field)
         {
-            if(cityscape_bldgs[itr].bldg_idx < 100)
+            if(cityscape_bldg_fields[itr].field_bldg_idx < bt_NUM_BUILDINGS)
             {
-                // TODO  mov     [_help_entries.help_03.entry_idx], (HLP_GUISE + cityscape_bldgs[itr].bldg_idx)
+                // TODO  mov     [_help_entries.help_03.entry_idx], (HLP_GUISE + cityscape_bldg_fields[itr].bldg_idx)
             }
             else
             {
-                // TODO  mov     [_help_entries.help_03.entry_idx], (HLP_LAND_SIZE + cityscape_bldgs[itr].bldg_idx)
+                // TODO  mov     [_help_entries.help_03.entry_idx], (HLP_LAND_SIZE + cityscape_bldg_fields[itr].bldg_idx)
             }
         }
     }
 
     for( itr = 0; itr < 6; itr++)
     {
-        // mov     [_help_entries[itr].help_05.entry_idx+bx], e_ST_UNDEFINED
+        // TODO  mov     [_help_entries[itr].help_05.entry_idx+bx], e_ST_UNDEFINED
     }
 
     if(city_enchantment_display_count > 0)
@@ -445,13 +445,13 @@ void Enemy_City_Screen_Draw(void)
     }
     else
     {
-        // mov     [_help_entries.help_04.entry_idx], HLP_NO_REPORT
+        // TODO  mov     [_help_entries.help_04.entry_idx], HLP_NO_REPORT
         Print((x_start + 54), (y_start + 64), str_NoReport);  // "No Report"
     }
 
     City_Screen_Draw_City_Enchantments((x_start + 139), (y_start + 51));
 
-    Cityscape_Draw__WIP(_city_idx, (x_start + 4), (y_start + 101), 0, ST_UNDEFINED);
+    Cityscape_Window__WIP(_city_idx, (x_start + 4), (y_start + 101), 0, ST_UNDEFINED);
 
     // BUGBUG  Dasm looks like Cityscape_Draw_Scanned_Building_Name(_CITIES[_city_idx].owner_idx, x_start, city_screen_scanned_field);
     Cityscape_Draw_Scanned_Building_Name(city_screen_scanned_field, x_start, _CITIES[_city_idx].owner_idx);
@@ -511,19 +511,20 @@ void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start
 
     for(itr = 0; itr < city_cityscape_field_count; itr++)
     {
+
         if(city_cityscape_fields[itr] != scanned_field)
         {
             continue;
         }
 
-        if(cityscape_bldgs[itr].bldg_idx < 100)
+        if(cityscape_bldg_fields[itr].field_bldg_idx < bt_NUM_BUILDINGS)
         {
-            if(_CITIES[_city_idx].bldg_status[cityscape_bldgs[itr].bldg_idx] == bs_Removed)
+            if(_CITIES[_city_idx].bldg_status[cityscape_bldg_fields[itr].field_bldg_idx] == bs_Removed)
             {
                 if(
-                    (cityscape_bldgs[itr].IDK_x > IDK)
+                    (cityscape_bldg_fields[itr].field_print_sx > IDK)
                     &&
-                    (cityscape_bldgs[itr].IDK_x <= var_2)
+                    (cityscape_bldg_fields[itr].field_print_sx <= var_2)
                 )
                 {
                     Set_Font_Style_Outline(1, 2, 0, 0);
@@ -535,15 +536,15 @@ void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start
                 }
                 Set_Alias_Color(166);
                 Set_Outline_Color(0);
-                Print_Centered((cityscape_bldgs[itr].IDK_x + 1), cityscape_bldgs[itr].IDK_y, str_Destroyed);  // "Destroyed"
-                Print_Centered((cityscape_bldgs[itr].IDK_x + 1), (cityscape_bldgs[itr].IDK_y + 6), bldg_data_table[cityscape_bldgs[itr].bldg_idx].name);
+                Print_Centered((cityscape_bldg_fields[itr].field_print_sx + 1), cityscape_bldg_fields[itr].field_print_sy, str_Destroyed);  // "Destroyed"
+                Print_Centered((cityscape_bldg_fields[itr].field_print_sx + 1), (cityscape_bldg_fields[itr].field_print_sy + 6), bldg_data_table[cityscape_bldg_fields[itr].field_bldg_idx].name);
             }
             else
             {
                 if(
-                    (cityscape_bldgs[itr].IDK_x > IDK)
+                    (cityscape_bldg_fields[itr].field_print_sx > IDK)
                     &&
-                    (cityscape_bldgs[itr].IDK_x <= var_2)
+                    (cityscape_bldg_fields[itr].field_print_sx <= var_2)
                 )
                 {
                     Set_Font_Style_Outline(1, 0, 0, 0);
@@ -555,16 +556,16 @@ void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start
                 }
                 Set_Alias_Color(8);
                 Set_Outline_Color(0);
-                Print_Centered((cityscape_bldgs[itr].IDK_x + 1), (cityscape_bldgs[itr].IDK_y + 6), bldg_data_table[cityscape_bldgs[itr].bldg_idx].name);
+                Print_Centered((cityscape_bldg_fields[itr].field_print_sx + 1), (cityscape_bldg_fields[itr].field_print_sy + 6), bldg_data_table[cityscape_bldg_fields[itr].field_bldg_idx].name);
             }
         }
         else
         {
             Set_Font_Style_Outline(1, 0, 0, 0);
             if(
-                (cityscape_bldgs[itr].IDK_x <= IDK)
+                (cityscape_bldg_fields[itr].field_print_sx <= IDK)
                 ||
-                (cityscape_bldgs[itr].IDK_x > var_2)
+                (cityscape_bldg_fields[itr].field_print_sx > var_2)
             )
             {
                     Set_Font_Style_Outline(0, 0, 0, 0);
@@ -573,16 +574,16 @@ void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start
             Set_Alias_Color(8);
             Set_Outline_Color(0);
 
-            if(cityscape_bldgs[itr].bldg_idx == 104)  /* ¿ per IDK_Spell_Cityscape_1(), some spell as building  ? */
+            if(cityscape_bldg_fields[itr].field_bldg_idx == bt_Fortress)
             {
                 strcpy(string, _players[owner_idx].name);
                 Possessive(&string[0]);
-                Print_Centered((cityscape_bldgs[itr].IDK_x + 1), (cityscape_bldgs[itr].IDK_y - 4), string);
-                Print_Centered((cityscape_bldgs[itr].IDK_x + 1), (cityscape_bldgs[itr].IDK_y + 3), STR_MagicBuildings[(cityscape_bldgs[itr].bldg_idx - 100)]);
+                Print_Centered((cityscape_bldg_fields[itr].field_print_sx + 1), (cityscape_bldg_fields[itr].field_print_sy - 4), string);
+                Print_Centered((cityscape_bldg_fields[itr].field_print_sx + 1), (cityscape_bldg_fields[itr].field_print_sy + 3), STR_MagicBuildings[(cityscape_bldg_fields[itr].field_bldg_idx - bt_NUM_BUILDINGS)]);
             }
             else
             {
-                Print_Centered((cityscape_bldgs[itr].IDK_x + 1), (cityscape_bldgs[itr].IDK_y + 3), STR_MagicBuildings[(cityscape_bldgs[itr].bldg_idx - 100)]);
+                Print_Centered((cityscape_bldg_fields[itr].field_print_sx + 1), (cityscape_bldg_fields[itr].field_print_sy + 3), STR_MagicBuildings[(cityscape_bldg_fields[itr].field_bldg_idx - bt_NUM_BUILDINGS)]);
             }
 
         }
@@ -785,7 +786,7 @@ void CTY_ApplyDamage(int16_t city_idx, int16_t PopLoss, int16_t DChance, int16_t
         {
             if(_CITIES[city_idx].bldg_status[itr_buildings] > bs_Built)
             {
-                Destruction_Roll = Random(100);
+                Destruction_Roll = Random(bt_NUM_BUILDINGS);
                 
                 if(Destruction_Roll > DChance)
                 {
@@ -1109,7 +1110,7 @@ int16_t City_Building_Is_Currently_Required(int16_t city_idx, int16_t bldg_idx)
 
     product_idx = _CITIES[city_idx].construction;
 
-    if(product_idx < 100)
+    if(product_idx < bt_NUM_BUILDINGS)
     {
         if(
             (bldg_data_table[product_idx].reqd_bldg_1 == bldg_idx) ||
@@ -1125,7 +1126,7 @@ int16_t City_Building_Is_Currently_Required(int16_t city_idx, int16_t bldg_idx)
     }
     else
     {
-        product_idx -= 100;  // translate to unit_type_idx
+        product_idx -= bt_NUM_BUILDINGS;  // translate to unit_type_idx
         if(
             (_unit_type_table[product_idx].reqd_bldg_1 == bldg_idx) ||
             (_unit_type_table[product_idx].reqd_bldg_2 == bldg_idx)
@@ -1151,9 +1152,9 @@ void City_Check_Production(int16_t city_idx)
 
     production_idx = _CITIES[city_idx].construction;
 
-    if(production_idx < 100)
+    if(production_idx < bt_NUM_BUILDINGS)
     {
-        if(bldg_data_table[production_idx].reqd_bldg_1 > 100)
+        if(bldg_data_table[production_idx].reqd_bldg_1 > bt_NUM_BUILDINGS)
         {
             if(
                 (_CITIES[city_idx].bldg_status[bldg_data_table[production_idx].reqd_bldg_2] != bs_Built)
@@ -1164,7 +1165,7 @@ void City_Check_Production(int16_t city_idx)
                 City_Cancel_Production(city_idx);
             }
         }
-        else  /* if(bldg_data_table[production_idx].reqd_bldg_1 > 100) */
+        else  /* if(bldg_data_table[production_idx].reqd_bldg_1 > bt_NUM_BUILDINGS) */
         {
             if(
                 (
@@ -1184,9 +1185,9 @@ void City_Check_Production(int16_t city_idx)
             }
         }
     }
-    else  /* if(_CITIES[city_idx].construction] < 100) */
+    else  /* if(_CITIES[city_idx].construction] < bt_NUM_BUILDINGS) */
     {
-        production_idx -= 100;  // production index - 100 == unit type index
+        production_idx -= bt_NUM_BUILDINGS;  // production index - bt_NUM_BUILDINGS == unit type index
 
         if(
             (

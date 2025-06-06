@@ -360,7 +360,7 @@ void Reload_Combat_Graphics_Cache(void);
 // fxn_o52p24()
 
 // WZD o52p25
-void GFX_Swap_AppndCtScap__WIP(void);
+void Reload_Cityscape_Graphics_Cache(void);
 
 // WZD o52p26
 // fxn_o52p6()

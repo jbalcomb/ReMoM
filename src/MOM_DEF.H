@@ -120,9 +120,6 @@ ITEM_MAX_POWERS
 #define NUM_VAULT_ITEMS             4
 #define NUM_VAULT_ITEM_SLOTS        4
 
-#define NUM_CITYSCAPE_ROWS         15
-#define NUM_CITYSCAPE_COLS         23
-
 #define VAULT_HERO_SLOT_IDX         6
 #define AWARD_HERO_SLOT_IDX         7
 

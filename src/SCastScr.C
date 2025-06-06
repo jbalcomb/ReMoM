@@ -99,6 +99,7 @@ byte_ptr _osc_panel_title;
 // WZD dseg:C15D 00                                              db    0
 // WZD dseg:C15E 00                                              db    0
 // WZD dseg:C15F 00                                              db    0
+
 // WZD dseg:C160
 int16_t _osc_main_map_grid_y;
 // WZD dseg:C162
@@ -106,15 +107,19 @@ int16_t _osc_main_map_grid_x;
 // WZD dseg:C164
 int16_t _osc_spell_target_type;
 // WZD dseg:C166
-int16_t _osc_wp_IDK;
 // WZD dseg:C168
-int16_t _osc_wy_IDK;
 // WZD dseg:C16A
-int16_t _osc_wx_IDK;
+/*
+¿ (only) used capture, track, and pass back the coordinates of the (valid) target selected ?
+*/
+int16_t _osc_wp;
+int16_t _osc_wy;
+int16_t _osc_wx;
+
 // WZD dseg:C16C
 int16_t _osc_mouse_image_num;
 // WZD dseg:C16E
-struct s_mouse_list * current_mouse_list;
+struct s_mouse_list * _current_mouse_list;
 // WZD dseg:C170
 int16_t word_42C10;
 // WZD dseg:C172
@@ -129,22 +134,22 @@ int16_t _osc_cancel_button_field;
 // WZD o70p01
 int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * target_wx, int16_t * target_wy, char * spell_name)
 {
-    int16_t Units = 0;
-    int16_t Count = 0;
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t troop_count = 0;
     int16_t var_14 = 0;
     int16_t var_12 = 0;
     int16_t var_10 = 0;
     int16_t didnt_cancel = 0;
     int16_t screen_changed = 0;
-    int16_t TopY = 0;
-    int16_t LeftX = 0;
+    int16_t y_screen_or_map = 0;  // passed to Unit_List_Window() or Reduced_Map_Coords()
+    int16_t x_screen_or_map = 0;  // passed to Unit_List_Window() or Reduced_Map_Coords()
     int16_t scanned_field = 0;
     int16_t input_field_idx = 0;
     int16_t leave_screen = 0;
-    int16_t IDK_rightclicked_city_idx = 0;  // _DI_
+    int16_t have_valid_target = 0;  // _DI_
     int16_t entity_idx = 0;  // _SI_
 
-    PageFlipEffect = 0;
+    _page_flip_effect = 0;
 
     _osc_spell_idx = _players[_human_player_idx].casting_spell_idx;
 
@@ -156,11 +161,11 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
     didnt_cancel = ST_TRUE;
 
-    _osc_wx_IDK = ST_UNDEFINED;
+    _osc_wx = ST_UNDEFINED;
 
-    _osc_wy_IDK = ST_UNDEFINED;
+    _osc_wy = ST_UNDEFINED;
 
-    _osc_wp_IDK = ST_UNDEFINED;
+    _osc_wp = ST_UNDEFINED;
 
     word_42BE4 = 0;
 
@@ -184,7 +189,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
 
-    Set_Mouse_List_Image_Nums();
+    Spell_Casting_Screen_Assign_Mouse_Images();
 
     Reset_Map_Draw();
 
@@ -232,7 +237,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
             MainScr_Create_Reduced_Map_Picture();
             Deactivate_Auto_Function();
             Assign_Auto_Function(Spell_Casting_Screen_Draw, 1);
-            Set_Mouse_List_Image_Nums();
+            Spell_Casting_Screen_Assign_Mouse_Images();
         }
 
         /*
@@ -240,39 +245,250 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
         */
         if(input_field_idx == _main_map_grid_field)
         {
-            IDK_rightclicked_city_idx = ST_FALSE;
+            have_valid_target = ST_FALSE;
             if(_osc_spell_target_type == stt_Magic_Node)
             {
                 entity_idx = Get_Map_Square_Magic_Node(((_map_x + _main_map_grid_x) % WORLD_WIDTH), ((_main_map_grid_y + _map_y) % WORLD_HEIGHT), _map_plane);
                 if(entity_idx != ST_UNDEFINED)
                 {
-                    entity_idx += 1100;
+                    entity_idx += (MAX_UNIT_COUNT + MAX_CITY_COUNT);
                 }
             }
-            else
+            else  /* (_osc_spell_target_type == stt_Magic_Node) */
             {
                 entity_idx = GET_MAIN_MAP_ENTITY();
             }
-
             if(entity_idx == ST_UNDEFINED)
             {
                 Play_Left_Click();
                 entity_idx = abs(entity_idx);
-                if (_osc_spell_target_type == stt_Map_Square)
+                if(_osc_spell_target_type == stt_Map_Square)
                 {
-                    leave_screen = IDK_Map_Square_Is_Targetable(_main_map_grid_x, _main_map_grid_y);
+                    leave_screen = Map_Square_Is_Targetable(_main_map_grid_x, _main_map_grid_y);
+                }
+            }
+            else  /* (entity_idx == ST_UNDEFINED) */
+            {
+                if(_osc_spell_target_type == stt_Map_Square)
+                {
+                    leave_screen = Map_Square_Is_Targetable(_main_map_grid_x, _main_map_grid_y);
                 }
                 else
                 {
-                    if (_osc_spell_target_type == stt_Map_Square)
+                    if(entity_idx < MAX_UNIT_COUNT)
                     {
-                        leave_screen = IDK_Map_Square_Is_Targetable(_main_map_grid_x, _main_map_grid_y);
+                        if(_UNITS[entity_idx].owner_idx == _human_player_idx)
+                        {
+                            if(
+                                (_osc_spell_target_type == stt_Friendly_Unit)
+                                ||
+                                (_osc_spell_target_type == stt_Friendly_Group)
+                                ||
+                                (_osc_spell_target_type == stt_Map_Square)
+                            )
+                            {
+                                have_valid_target = ST_TRUE;
+                            }
+                        }
+                        else
+                        {
+                            if(
+                                (_osc_spell_target_type == stt_Enemy_Group)
+                                ||
+                                (_osc_spell_target_type == stt_Enemy_Unit)
+                                ||
+                                (_osc_spell_target_type == stt_Map_Square)
+                            )
+                            {
+                                have_valid_target = ST_TRUE;
+                            }
+                        }
+                    }
+                    else if(entity_idx < (MAX_UNIT_COUNT + MAX_CITY_COUNT))
+                    {
+                        entity_idx -= MAX_UNIT_COUNT;
+                        switch(_osc_spell_target_type)
+                        {
+                            case stt_Friendly_Unit:
+                            {
+                                if(_CITIES[entity_idx].owner_idx == _human_player_idx)
+                                {
+                                    Army_At_City(entity_idx, &troop_count, &troops[0]);
+                                    if(troop_count > 0)
+                                    {
+                                        entity_idx = troops[0];
+                                        have_valid_target = ST_TRUE;
+                                    }
+                                }
+                            } break;
+                            case stt_Friendly_Group:
+                            {
+                                // N/A
+                            } break;
+                            case stt_Enemy_Unit:
+                            {
+                                if(_CITIES[entity_idx].owner_idx != _human_player_idx)
+                                {
+                                    Army_At_City(entity_idx, &troop_count, &troops[0]);
+                                    if(troop_count > 0)
+                                    {
+                                        entity_idx = troops[0];
+                                        have_valid_target = ST_TRUE;
+                                    }
+                                }
+                            } break;
+                            case stt_Enemy_Group:
+                            {
+                                // N/A
+                            } break;
+                            case stt_Map_Square:
+                            {
+                                // N/A
+                            } break;
+                            case stt_Friendly_City:
+                            {
+                                if(_CITIES[entity_idx].owner_idx == _human_player_idx)
+                                {
+                                    have_valid_target = ST_TRUE;
+                                }
+                            } break;
+                            case stt_Enemy_City:
+                            {
+                                if(_CITIES[entity_idx].owner_idx != _human_player_idx)
+                                {
+                                    have_valid_target = ST_TRUE;
+                                }
+                            } break;
+                            case stt_Magic_Node:
+                            {
+                                // N/A
+                            } break;
+                            default:
+                            {
+                                STU_DEBUG_BREAK();
+                            } break;
+                        }
+                    }
+                    else
+                    {
+                        if(_osc_spell_target_type == stt_Magic_Node)
+                        {
+                            entity_idx -= (MAX_UNIT_COUNT + MAX_CITY_COUNT);
+                            have_valid_target = ST_TRUE;
+                        }
+                    }
+
+                    if(have_valid_target == ST_TRUE)
+                    {
+
+                        _osc_main_map_grid_x = _main_map_grid_x;
+
+                        _osc_main_map_grid_y = _main_map_grid_y;
+
+                        if(_osc_main_map_grid_x == 0)
+                        {
+                            _osc_main_map_grid_x++;
+                        }
+                        if(_osc_main_map_grid_x == 11)
+                        {
+                            _osc_main_map_grid_x--;
+                        }
+                        if(_osc_main_map_grid_y == 0)
+                        {
+                            _osc_main_map_grid_y++;
+                        }
+                        if(_osc_main_map_grid_y == 9)
+                        {
+                            _osc_main_map_grid_y--;
+                        }
+                        switch(_osc_spell_target_type)
+                        {
+                            case stt_Friendly_Unit:
+                            {
+                                x_screen_or_map = (_main_map_grid_x * SQUARE_WIDTH);
+                                y_screen_or_map = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
+                                _osc_wx = Unit_List_Window(entity_idx, 1, x_screen_or_map, y_screen_or_map);
+                                if(_osc_wx != ST_UNDEFINED)
+                                {
+                                    leave_screen = ST_TRUE;
+                                }
+                                else
+                                {
+                                    Deactivate_Help_List();
+                                    Spell_Casting_Screen_Reset_Map_Draw();
+                                    Spell_Casting_Screen_Allocate();
+                                    Build_Select_Target_String(_osc_spell_target_type, spell_name);
+                                    Assign_Auto_Function(Spell_Casting_Screen_Draw, 1);
+                                    Spell_Casting_Screen_Assign_Mouse_Images();
+                                    Deactivate_Help_List();
+                                    Set_Spell_Cast_Screen_Help_List();
+                                    Reset_Map_Draw();
+                                    MainScr_Create_Reduced_Map_Picture();
+                                    screen_changed = ST_TRUE;
+                                }
+                            } break;
+                            case stt_Friendly_Group:
+                            {
+                                Spell_Casting_Screen_Reset_Map_Draw_With_WX__1(entity_idx);
+                                leave_screen = ST_TRUE;
+                            } break;
+                            case stt_Enemy_Unit:
+                            {
+                                x_screen_or_map = (_main_map_grid_x * SQUARE_WIDTH);
+                                y_screen_or_map = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
+                                _osc_wx = Unit_List_Window(entity_idx, 1, x_screen_or_map, y_screen_or_map);
+                                if(_osc_wx != ST_UNDEFINED)
+                                {
+                                    leave_screen = ST_TRUE;
+                                }
+                                else
+                                {
+                                    Deactivate_Help_List();
+                                    Spell_Casting_Screen_Reset_Map_Draw();
+                                    Spell_Casting_Screen_Allocate();
+                                    Build_Select_Target_String(_osc_spell_target_type, spell_name);
+                                    Assign_Auto_Function(Spell_Casting_Screen_Draw, 1);
+                                    Spell_Casting_Screen_Assign_Mouse_Images();
+                                    Reset_Map_Draw();
+                                    MainScr_Create_Reduced_Map_Picture();
+                                    Deactivate_Help_List();
+                                    Set_Spell_Cast_Screen_Help_List();
+                                    screen_changed = ST_TRUE;
+                                }
+                            } break;
+                            case stt_Enemy_Group:
+                            {
+                                Spell_Casting_Screen_Reset_Map_Draw_With_WX__3(entity_idx);
+                                leave_screen = ST_TRUE;
+                            } break;
+                            case stt_Map_Square:
+                            {
+                                Map_Square_Is_Targetable(_main_map_grid_x, _main_map_grid_y);
+                                leave_screen = ST_TRUE;
+                            } break;
+                            case stt_Friendly_City:
+                            {
+                                Spell_Casting_Screen_Reset_Map_Draw_With_WX__2(entity_idx);
+                                leave_screen = ST_TRUE;
+                            } break;
+                            case stt_Enemy_City:
+                            {
+                                Spell_Casting_Screen_Reset_Map_Draw_With_WX__2(entity_idx);
+                                leave_screen = ST_TRUE;
+                            } break;
+                            case stt_Magic_Node:
+                            {
+                                Spell_Casting_Screen_Reset_Map_Draw_With_WX__4(entity_idx);
+                                leave_screen = ST_TRUE;
+
+                            } break;
+                            default:
+                            {
+                                STU_DEBUG_BREAK();
+                            } break;
+                        }
                     }
                 }
-            }
-            else
-            {
-
             }
         }  /* (input_field_idx == _main_map_grid_field) */
         /*
@@ -285,13 +501,13 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
         if(abs(input_field_idx) == _minimap_grid_field)
         {
             Play_Left_Click();
-            Reduced_Map_Coords(&LeftX, &TopY, (((12 / 2) + _map_x) % WORLD_WIDTH), ((10 / 2) + _map_y), 58, 30);
-            _prev_world_x = (LeftX + _minimap_grid_x);
-            _prev_world_y = (TopY + _minimap_grid_y);
+            Reduced_Map_Coords(&x_screen_or_map, &y_screen_or_map, (((12 / 2) + _map_x) % WORLD_WIDTH), ((10 / 2) + _map_y), 58, 30);
+            _prev_world_x = (x_screen_or_map + _minimap_grid_x);
+            _prev_world_y = (y_screen_or_map + _minimap_grid_y);
             IDK_CheckSet_MapDisplay_XY();
             Center_Map(&_map_x, &_map_y, _prev_world_x, _prev_world_y, _map_plane);
             MainScr_Create_Reduced_Map_Picture();
-            Set_Mouse_List_Image_Nums();
+            Spell_Casting_Screen_Assign_Mouse_Images();
             Reset_Map_Draw();
             screen_changed = ST_TRUE;
         }
@@ -304,7 +520,137 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
         */
         if(-input_field_idx == _main_map_grid_field)
         {
+            entity_idx = GET_MAIN_MAP_ENTITY();
+            if(entity_idx == ST_UNDEFINED)
+            {
+                _prev_world_x += (_main_map_grid_x - (12 / 2));
+                _prev_world_y += (_main_map_grid_y - (10 / 2));
+                IDK_CheckSet_MapDisplay_XY();  // ; updates _prev_world_x,y and _map_x
+            }
+            else
+            {
+                if(entity_idx < MAX_UNIT_COUNT)
+                {
+                    if(_UNITS[entity_idx].owner_idx == _human_player_idx)
+                    {
+                        if(
+                            (_osc_spell_target_type == stt_Friendly_Unit)
+                            ||
+                            (_osc_spell_target_type == stt_Friendly_Group)
+                        )
+                        {
+                            x_screen_or_map = (_main_map_grid_x * SQUARE_WIDTH);
+                            y_screen_or_map = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
+                            Deactivate_Help_List();
+                            _osc_wx = Unit_List_Window(entity_idx, 0, x_screen_or_map, y_screen_or_map);
+                            Assign_Auto_Function(Spell_Casting_Screen_Draw, 1);
+                            Spell_Casting_Screen_Allocate();
+                            Build_Select_Target_String(_osc_spell_target_type, spell_name);
+                            Spell_Casting_Screen_Assign_Mouse_Images();
+                            Reset_Map_Draw();
+                            MainScr_Create_Reduced_Map_Picture();
+                            Deactivate_Help_List();
+                            Set_Spell_Cast_Screen_Help_List();
+                            screen_changed = ST_TRUE;
+                        }
+                    }
+                    else
+                    {
+                        if(
+                            (_osc_spell_target_type == stt_Enemy_Unit)
+                            ||
+                            (_osc_spell_target_type == stt_Enemy_Group)
+                        )
+                        {
+                            x_screen_or_map = (_main_map_grid_x * SQUARE_WIDTH);
+                            y_screen_or_map = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
+                            Deactivate_Help_List();
+                            _osc_wx = Unit_List_Window(entity_idx, 0, x_screen_or_map, y_screen_or_map);
+                            Assign_Auto_Function(Spell_Casting_Screen_Draw, 1);
+                            Spell_Casting_Screen_Allocate();
+                            Build_Select_Target_String(_osc_spell_target_type, spell_name);
+                            Spell_Casting_Screen_Assign_Mouse_Images();
+                            Reset_Map_Draw();
+                            MainScr_Create_Reduced_Map_Picture();
+                            Deactivate_Help_List();
+                            Set_Spell_Cast_Screen_Help_List();
+                            screen_changed = ST_TRUE;
+                        }
+                    }
 
+                }
+                else if(entity_idx < (MAX_UNIT_COUNT + MAX_CITY_COUNT))
+                {
+                    have_valid_target = ST_FALSE;
+                    entity_idx -= MAX_UNIT_COUNT;
+                    switch(_osc_spell_target_type)
+                    {
+                        case stt_Friendly_Unit:
+                        {
+                            if(_CITIES[entity_idx].owner_idx == _human_player_idx)
+                            {
+                                have_valid_target = ST_TRUE;
+                            }
+                        } break;
+                        case stt_Friendly_Group:
+                        {
+
+                        } break;
+                        case stt_Enemy_Unit:
+                        {
+                            if(_CITIES[entity_idx].owner_idx != _human_player_idx)
+                            {
+                                have_valid_target = ST_TRUE;
+                            }
+                        } break;
+                        case stt_Enemy_Group:
+                        {
+                            // N/A
+                        } break;
+                        case stt_Map_Square:
+                        {
+                            // N/A
+                        } break;
+                        case stt_Friendly_City:
+                        {
+                            if(_CITIES[entity_idx].owner_idx == _human_player_idx)
+                            {
+                                have_valid_target = ST_TRUE;
+                            }
+                        } break;
+                        case stt_Enemy_City:
+                        {
+                            if(_CITIES[entity_idx].owner_idx != _human_player_idx)
+                            {
+                                have_valid_target = ST_TRUE;
+                            }
+                        } break;
+                        case stt_Magic_Node:
+                        {
+                            // N/A
+                        } break;
+                        default:
+                        {
+                            STU_DEBUG_BREAK();
+                        } break;
+                    }
+                    if(have_valid_target == ST_TRUE)
+                    {
+                        _city_idx = entity_idx;
+                        Deactivate_Help_List();
+                        Enemy_City_Screen();
+                        Assign_Auto_Function(Spell_Casting_Screen_Draw, 1);
+                        Spell_Casting_Screen_Allocate();
+                        Build_Select_Target_String(_osc_spell_target_type, spell_name);
+                        Spell_Casting_Screen_Assign_Mouse_Images();
+                        Reset_Map_Draw();
+                        MainScr_Create_Reduced_Map_Picture();
+                        Deactivate_Help_List();
+                        Set_Spell_Cast_Screen_Help_List();
+                        screen_changed = ST_TRUE;
+                    }
+                }
+            }
         }
         /*
             END:  Right-Click Movement Map
@@ -335,11 +681,11 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
     Reset_Map_Draw();
 
-    *wx = _osc_wx_IDK;
+    *wx = _osc_wx;
 
-    *wy = _osc_wy_IDK;
+    *wy = _osc_wy;
 
-    *wp = _osc_wp_IDK;
+    *wp = _osc_wp;
 
     // Main_Screen() target_world_x = (_main_map_grid_x * SQUARE_WIDTH);
     // Main_Screen() target_world_y = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
@@ -370,9 +716,9 @@ void Spell_Casting_Screen_Add_Fields(void)
     Add_Game_Button_Fields();
 
     if(
-        (_map_x = _prev_world_x)
+        (_map_x == _prev_world_x)
         &&
-        (_map_y = _prev_world_y)
+        (_map_y == _prev_world_y)
     )
     {
         _main_map_grid_field = Add_Grid_Field(MAP_SCREEN_X, MAP_SCREEN_Y, SQUARE_WIDTH, SQUARE_HEIGHT, MAP_WIDTH, MAP_HEIGHT, &_main_map_grid_x, &_main_map_grid_y, ST_UNDEFINED);
@@ -408,7 +754,7 @@ void Spell_Casting_Screen_Draw(void)
     Main_Screen_Draw_Game_Buttons();
     Main_Screen_Draw_Status_Window();
     Spell_Casting_Screen_Draw_Panel();
-    Set_Mouse_List_Image_Nums();
+    Spell_Casting_Screen_Assign_Mouse_Images();
     FLIC_Set_CurrentFrame(cast_cancel_button, 0);
     FLIC_Draw(263, 181, cast_cancel_button);
 }
@@ -508,7 +854,7 @@ int16_t World_To_Screen(int16_t map_wx, int16_t map_wy, int16_t * unit_wx, int16
 void Spell_Casting_Screen_Allocate(void)
 {
     _reduced_map_seg = Allocate_First_Block(_screen_seg, 303);
-    current_mouse_list = Near_Allocate_First(1560);  // mouse lists?  1560 / 12 = 130 ...targets?
+    _current_mouse_list = Near_Allocate_First(1560);  // mouse lists?  1560 / 12 = 130 ...targets?
     _osc_panel_title = Near_Allocate_Next(100);
 }
 
@@ -576,37 +922,99 @@ void Build_Select_Target_String(int16_t spell_target_type, char * spell_name)
 
 }
 
+
 // WZD o70p07
 // drake178: sub_5D0B3()
-// sub_5D0B3()
+// DONT  void UU_IDK_Entirely_On_Map(int16_t * new_mx, int16_t * new_my, int16_t old_mx, int16_t old_my)
+// DONT  {
+// DONT  
+// DONT      *new_mx = old_mx;
+// DONT      *new_my = old_my;
+// DONT  
+// DONT      if(*new_mx == 0)
+// DONT      {
+// DONT          *new_mx++;
+// DONT      }
+// DONT  
+// DONT      if(*new_mx == 11)
+// DONT      {
+// DONT          *new_mx--;
+// DONT      }
+// DONT  
+// DONT      if(*new_my == 0)
+// DONT      {
+// DONT          *new_my++;
+// DONT      }
+// DONT  
+// DONT      if(*new_my == 9)
+// DONT      {
+// DONT          *new_my--;
+// DONT      }
+// DONT  
+// DONT  }
+
 
 // WZD o70p08
-// drake178: sub_5D0E8()
-// sub_5D0E8()
+// drake178: Spell_Casting_Screen_Reset_Map_Draw()
+void Spell_Casting_Screen_Reset_Map_Draw(void)
+{
+    _osc_wx = ST_UNDEFINED;
+    _osc_wy = ST_UNDEFINED;
+    _osc_wp = ST_UNDEFINED;
+}
+
 
 // WZD o70p09
 // drake178: sub_5D0FF()
-// sub_5D0FF()
+void Spell_Casting_Screen_Reset_Map_Draw_With_WX__1(int16_t wx)
+{
+    _osc_wx = wx;
+    _osc_wy = ST_UNDEFINED;
+    _osc_wp = ST_UNDEFINED;
+}
+
 
 // WZD o70p10
 // drake178: sub_5D116()
-// sub_5D116()
+void Spell_Casting_Screen_Reset_Map_Draw_With_WX__2(int16_t wx)
+{
+    _osc_wx = wx;
+    _osc_wy = ST_UNDEFINED;
+    _osc_wp = ST_UNDEFINED;
+}
+
 
 // WZD o70p11
 // drake178: sub_5D12D()
-// sub_5D12D()
+void Spell_Casting_Screen_Reset_Map_Draw_With_WX__3(int16_t wx)
+{
+    _osc_wx = wx;
+    _osc_wy = ST_UNDEFINED;
+    _osc_wp = ST_UNDEFINED;
+}
+
 
 // WZD o70p12
 // drake178: sub_5D144()
-// sub_5D144()
+void Spell_Casting_Screen_Reset_Map_Draw_With_WX__4(int16_t wx)
+{
+    _osc_wx = wx;
+    _osc_wy = ST_UNDEFINED;
+    _osc_wp = ST_UNDEFINED;
+}
+
 
 // WZD o70p13
 // drake178: sub_5D15B()
-int16_t IDK_Map_Square_Is_Targetable(int16_t mx, int16_t my)
+/*
+Map_Square_...as in Main Movement Map
+(not Square_...as in World Map)
+*/
+int16_t Map_Square_Is_Targetable(int16_t mx, int16_t my)
 {
-    int16_t return_value = 0;  // _DI_
+    int16_t map_sqaure_is_targetable = 0;  // _DI_
 
-    return_value = ST_FALSE;
+    map_sqaure_is_targetable = ST_FALSE;
 
     _osc_main_map_grid_x = mx;
     _osc_main_map_grid_y = my;
@@ -631,39 +1039,43 @@ int16_t IDK_Map_Square_Is_Targetable(int16_t mx, int16_t my)
         _osc_main_map_grid_y -= 1;
     }
 
-    _osc_wx_IDK = (mx + _map_x);
+    _osc_wx = (mx + _map_x);
 
-    if(_osc_wx_IDK >= WORLD_WIDTH)
+    if(_osc_wx >= WORLD_WIDTH)
     {
-        _osc_wx_IDK -= WORLD_WIDTH;
+        _osc_wx -= WORLD_WIDTH;
     }
 
-    _osc_wy_IDK = (_map_y + my);
+    _osc_wy = (_map_y + my);
 
-    _osc_wp_IDK = _map_plane;
+    _osc_wp = _map_plane;
 
     if(
-        (SQUARE_UNEXPLORED(_osc_wx_IDK, _osc_wy_IDK, _osc_wp_IDK))
+        (SQUARE_UNEXPLORED(_osc_wx, _osc_wy, _osc_wp))
         &&
         (_osc_spell_idx != spl_Earth_Lore)
     )
     {
-        _osc_wx_IDK = ST_UNDEFINED;
-        _osc_wy_IDK = ST_UNDEFINED;
-        _osc_wp_IDK = ST_UNDEFINED;
+        _osc_wx = ST_UNDEFINED;
+        _osc_wy = ST_UNDEFINED;
+        _osc_wp = ST_UNDEFINED;
     }
     else
     {
-        return_value = ST_TRUE;
+        map_sqaure_is_targetable = ST_TRUE;
     }
 
-    return return_value;
+    return map_sqaure_is_targetable;
 
 }
 
 // WZD o70p14
 // drake178: sub_5D20A()
-void Set_Mouse_List_Image_Nums(void)
+// MoO2  Module: COMBAT1  Assign_Mouse_Images_()
+/*
+Spell_Casting_Screen_Assign_Mouse_Images
+*/
+void Spell_Casting_Screen_Assign_Mouse_Images(void)
 {
     int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t troop_count = 0;
@@ -683,12 +1095,12 @@ void Set_Mouse_List_Image_Nums(void)
         Add_Nodes_To_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
     }
 
-    current_mouse_list->image_num = crsr_Finger;
-    current_mouse_list->center_offset = 0;
-    current_mouse_list->x1 = SCREEN_XMIN;
-    current_mouse_list->y1 = SCREEN_YMIN;
-    current_mouse_list->x2 = SCREEN_XMAX;
-    current_mouse_list->y2 = SCREEN_YMAX;
+    _current_mouse_list->image_num = crsr_Finger;
+    _current_mouse_list->center_offset = 0;
+    _current_mouse_list->x1 = SCREEN_XMIN;
+    _current_mouse_list->y1 = SCREEN_YMIN;
+    _current_mouse_list->x2 = SCREEN_XMAX;
+    _current_mouse_list->y2 = SCREEN_YMAX;
 
     _osc_mouse_image_num = (crsr_CastAnim1 + _osc_mouse_image_cycle);
 
@@ -704,75 +1116,168 @@ void Set_Mouse_List_Image_Nums(void)
 
             my_y1 = (MAP_SCREEN_Y + (itr_my * SQUARE_HEIGHT));
 
-            mx_x2 = (mx_x1 + 19);
+            mx_x2 = (mx_x1 + (SQUARE_WIDTH - 1));
 
-            my_y2 = (my_y1 + 17);
+            my_y2 = (my_y1 + (SQUARE_HEIGHT - 1));
 
-            current_mouse_list[mouse_list_count].center_offset = 0;
-            current_mouse_list[mouse_list_count].x1 = mx_x1;
-            current_mouse_list[mouse_list_count].y1 = my_y1;
-            current_mouse_list[mouse_list_count].x2 = mx_x2;
-            current_mouse_list[mouse_list_count].y2 = my_y2;
-            current_mouse_list[mouse_list_count].center_offset = 0;
+            _current_mouse_list[mouse_list_count].center_offset = 0;
+            _current_mouse_list[mouse_list_count].x1 = mx_x1;
+            _current_mouse_list[mouse_list_count].y1 = my_y1;
+            _current_mouse_list[mouse_list_count].x2 = mx_x2;
+            _current_mouse_list[mouse_list_count].y2 = my_y2;
 
             if(_osc_spell_target_type == stt_Map_Square)
             {
-
-                current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
-
+                _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
                 wx = (_map_x + itr_mx);
-
                 if(wx >= WORLD_WIDTH)
                 {
                     wx -= WORLD_WIDTH;
                 }
-
                 wy = (_map_y + itr_my);
-                
                 if(
                     SQUARE_UNEXPLORED(wx, wy, _map_plane)
                     &&
                     (_osc_spell_idx == spl_Earth_Lore)
                 )
                 {
-                    current_mouse_list[mouse_list_count].image_num = crsr_RedCross;
+                    _current_mouse_list[mouse_list_count].image_num = crsr_RedCross;
                 }
-
             }
-            else
+            else  /* (_osc_spell_target_type != stt_Map_Square) */
             {
-
-                current_mouse_list[mouse_list_count].image_num = crsr_RedCross;
-
+                _current_mouse_list[mouse_list_count].image_num = crsr_RedCross;
                 entity_idx = entities_on_movement_map[((itr_my * MAP_WIDTH) + itr_mx)];
-
                 if(entity_idx != ST_UNDEFINED)
                 {
-
                     entity_idx = abs(entity_idx);
-
                     if(entity_idx < MAX_UNIT_COUNT)
                     {
-
+                        switch(_osc_spell_target_type)
+                        {
+                            case stt_Friendly_Unit:
+                            {
+                                if(_UNITS[entity_idx].owner_idx == _human_player_idx)
+                                {
+                                    _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                                }
+                                else
+                                {
+                                    _current_mouse_list[mouse_list_count].image_num = crsr_RedCross;
+                                }
+                            } break;
+                            case stt_Friendly_Group:
+                            {
+                                // N/A
+                            } break;
+                            case stt_Enemy_Unit:
+                            {
+                                if(_UNITS[entity_idx].owner_idx != _human_player_idx)
+                                {
+                                    _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                                }
+                                else
+                                {
+                                    _current_mouse_list[mouse_list_count].image_num = crsr_RedCross;
+                                }
+                            } break;
+                            case stt_Enemy_Group:
+                            {
+                                // N/A
+                            } break;
+                            case stt_Map_Square:
+                            {
+                                // N/A
+                            } break;
+                            case stt_Friendly_City:
+                            {
+                                // N/A
+                            } break;
+                            case stt_Enemy_City:
+                            {
+                                // N/A
+                            } break;
+                            case stt_Magic_Node:
+                            {
+                                // N/A
+                            } break;
+                            default:
+                            {
+                                STU_DEBUG_BREAK();
+                            }
+                        }
                     }
-                    else if(entity_idx < (MAX_UNIT_COUNT + 100))  // ¿ MAX_CITY_COUNT ?
+                    else if(entity_idx < (MAX_UNIT_COUNT + MAX_CITY_COUNT))
                     {
-
+                        entity_idx -= MAX_UNIT_COUNT;
+                        switch(_osc_spell_target_type)
+                        {
+                            case stt_Friendly_Unit:
+                            {
+                                if(_CITIES[entity_idx].owner_idx == _human_player_idx)
+                                {
+                                    Army_At_City(entity_idx, &troop_count, &troops[0]);
+                                    if(troop_count > 0)
+                                    {
+                                        _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                                    }
+                                }
+                            } break;
+                            case stt_Friendly_Group:
+                            {
+                                // N/A
+                            } break;
+                            case stt_Enemy_Unit:
+                            {
+                                if(_CITIES[entity_idx].owner_idx != _human_player_idx)
+                                {
+                                    Army_At_City(entity_idx, &troop_count, &troops[0]);
+                                    if(troop_count > 0)
+                                    {
+                                        _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                                    }
+                                }
+                            } break;
+                            case stt_Enemy_Group:
+                            {
+                                // N/A
+                            } break;
+                            case stt_Map_Square:
+                            {
+                                // N/A
+                            } break;
+                            case stt_Friendly_City:
+                            {
+                                if(_CITIES[entity_idx].owner_idx == _human_player_idx)
+                                {
+                                    _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                                }
+                            } break;
+                            case stt_Enemy_City:
+                            {
+                                if(_CITIES[entity_idx].owner_idx != _human_player_idx)
+                                {
+                                    _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                                }
+                            } break;
+                            case stt_Magic_Node:
+                            {
+                                // N/A
+                            } break;
+                            default:
+                            {
+                                STU_DEBUG_BREAK();
+                            }
+                        }
                     }
                     else
                     {
-
                         if(_osc_spell_target_type == stt_Magic_Node)
                         {
-
-                            current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
-
+                            _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
                         }
-
                     }
-
                 }
-
             }
 
             mouse_list_count++;
@@ -781,7 +1286,7 @@ void Set_Mouse_List_Image_Nums(void)
 
     }
 
-    Set_Mouse_List(mouse_list_count, &current_mouse_list[0]);
+    Set_Mouse_List(mouse_list_count, &_current_mouse_list[0]);
 
     if(_osc_spell_target_type == stt_Magic_Node)
     {

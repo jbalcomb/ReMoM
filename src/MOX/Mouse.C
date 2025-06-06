@@ -109,7 +109,7 @@ int16_t init_pointer_y = 100;
 int16_t mouse_state = ST_FALSE;
 
 // WZD dseg:78DE
-struct s_mouse_list * current_mouse_list;
+struct s_mouse_list * _current_mouse_list;
 
 // WZD dseg:78E0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+Cursor_Save_Main Cursor_Area_Copy <0>
 // WZD dseg:7A66 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+REUSABLE_810bytes db 32Ah dup(0)
@@ -148,7 +148,7 @@ void Set_Mouse_List(int16_t count, struct s_mouse_list * list)
     tmp_count = count;
 
     current_mouse_list_count = count;
-    current_mouse_list = list;
+    _current_mouse_list = list;
 
     tmp_count--;
     if(tmp_count != 0)
@@ -188,21 +188,21 @@ void Check_Mouse_Shape(int16_t l_mx, int16_t l_my)
     while(--count)
     {
         if(
-            (l_mx >= current_mouse_list[count].x1)
+            (l_mx >= _current_mouse_list[count].x1)
             &&
-            (l_my >= current_mouse_list[count].y1)
+            (l_my >= _current_mouse_list[count].y1)
             &&
-            (current_mouse_list[count].x2 >= l_mx)
+            (_current_mouse_list[count].x2 >= l_mx)
             &&
-            (current_mouse_list[count].y2 >= l_my)
+            (_current_mouse_list[count].y2 >= l_my)
         )
         {
             list_index = count;
         }
     }
 
-    current_pointer_offset = current_mouse_list[list_index].center_offset;
-    current_pointer_image_number = current_mouse_list[list_index].image_num;
+    current_pointer_offset = _current_mouse_list[list_index].center_offset;
+    current_pointer_image_number = _current_mouse_list[list_index].image_num;
 
 }
 

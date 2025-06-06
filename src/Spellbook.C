@@ -201,7 +201,8 @@ SAMB_ptr _spellbook_small_right_corner_seg;
 // WZD dseg:946A
 SAMB_ptr _spellbook_small_left_corner_seg;
 
-// WZD dseg:946C 00 00                                           word_3FF0C dw 0                         ; DATA XREF: sub_BECD9+23w ...
+// WZD dseg:946C
+SAMB_ptr cityspel_seg;
 
 // WZD dseg:946E
 SAMB_ptr _spellbook_small_seg;
@@ -2268,7 +2269,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
         Learn_Spell_Animation_Draw();
 
-        PageFlipEffect = pf_TogglePagesFadeIn;
+        _page_flip_effect = pfe_TogglePagesFadeIn;
 
         PageFlip_FX();
 
@@ -2498,7 +2499,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
             if(SBK_NewSpellAnim_Stg == 0)
             {
-                PageFlipEffect = pf_Normal;
+                _page_flip_effect = pfe_NONE;
             }
 
         }
@@ -3352,7 +3353,7 @@ void Spell_Research_Select(void)
 
     }
 
-    PageFlipEffect = 3;
+    _page_flip_effect = 3;
 
     Set_Page_Off();
 

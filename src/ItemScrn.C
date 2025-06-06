@@ -264,7 +264,7 @@ void Item_Screen(void)
             Item_Screen_Load();
             Deactivate_Help_List();
             Set_Items_Screen_Help_List();
-            PageFlipEffect = 3;  // triggers the *disintegration* effect when the Alchemy Popup exits
+            _page_flip_effect = 3;  // triggers the *disintegration* effect when the Alchemy Popup exits
         }
         /*
             BEGIN:  Alchemy Button  (Alchemy Popup)
@@ -452,7 +452,7 @@ void Item_Screen(void)
 
     current_screen = scr_Armies_Screen;
 
-    PageFlipEffect = 3;
+    _page_flip_effect = 3;
 
 }
 
@@ -1175,7 +1175,7 @@ void Process_Item_Pool(int16_t item_count, int16_t item_list[])
     Item_Screen();
 
 
-    PageFlipEffect = 0;
+    _page_flip_effect = 0;
 
     item_pool_item_idx = ST_UNDEFINED;
 

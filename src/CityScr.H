@@ -60,7 +60,7 @@ void City_Screen_Draw2__WIP(void);
 void City_Screen_Add_Fields__WIP(void);
 
 // WZD o54p05
-void City_Add_Fields_Buildings(void);
+void Cityscape_Add_Fields(void);
 
 // WZD o54p06
 void City_Screen_Add_Fields_Production_Window(void);

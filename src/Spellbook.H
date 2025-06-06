@@ -311,7 +311,8 @@ extern SAMB_ptr _spellbook_small_right_corner_seg;
 // WZD dseg:946A
 extern SAMB_ptr _spellbook_small_left_corner_seg;
 
-// WZD dseg:946C 00 00                                           word_3FF0C dw 0                         ; DATA XREF: sub_BECD9+23w ...
+// WZD dseg:946C
+extern SAMB_ptr cityspel_seg;
 
 // WZD dseg:946E
 extern SAMB_ptr _spellbook_small_seg;

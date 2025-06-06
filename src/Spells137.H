@@ -30,16 +30,17 @@ void IDK_SummonAnim_Draw(void);
 void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t player_idx);
 
 // WZD o137p04
-// sub_BECD9()
+void Cast_Spell_City_Enchantment_Animation_Load(int16_t spell_idx,int16_t  player_idx);
 
 // WZD o137p05
 // IDK_City_sBEE75()
+void Cast_Spell_City_Enchantment_Animation_Draw(void);
 
 // WZD o137p06
-void IDK_Spell_Cityscape_1(int16_t city_idx, int16_t spell_idx, int16_t player_idx);
+void Cast_Spell_City_Enchantment_Animation_1__WIP(int16_t city_idx, int16_t spell_idx, int16_t player_idx);
 
 // WZD o137p07
-void IDK_Spell_Cityscape_1(int16_t city_idx, int16_t spell_idx, int16_t player_idx);
+void Cast_Spell_City_Enchantment_Animation_2__WIP(int16_t city_idx, int16_t spell_idx, int16_t player_idx);
 
 // WZD o137p08
 void OVL_LoadGlobalAnim(int16_t spell_idx, int16_t player_idx);

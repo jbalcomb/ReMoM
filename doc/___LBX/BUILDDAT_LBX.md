@@ -1,7 +1,7 @@
 
 BUILDDAT.LBX
 Entries:    1
-Type:       5
+Type:       5  data
 
 record count    36
 record size     52

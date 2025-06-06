@@ -9,6 +9,24 @@ Light-Lime-3    maybe, kinda?
 
 ..."Combat Spells"..."Overland Spells"...
 
+
+*infuseable*
+search for "+ mana"
+
+
+Target Wizard or Wizard's Spell:
+(uses 'Magic Screen')
+    Cruel Unminding
+    Drain Power
+    Spell Binding
+    Spell Blast
+    Subversion
+
+Custom Animation? ...Custom Summon Animation?
+    Animate Dead, Raise Dead
+    Create Undead
+
+
 Weird Ones?
     Astral Gate
     Banish
@@ -17,6 +35,7 @@ Weird Ones?
     Create Artifact!    handled special during casting
     Earth Gate
     Earth To Mud        don't have mud code in combat
+    Earthquake          lots of extra special code
     Enchant Item!       handled special during casting
     Enchant Road
     Flying Fortress?
@@ -40,7 +59,7 @@ all overland/global enchantments are done
     SCC  Description
 [x]   0  scc_Summoning
 [ ]   1  scc_Unit_Enchantment
-[ ]   2  scc_City_Enchantment
+[x]   2  scc_City_Enchantment       ¿ ..., Stream of Life, ... ?
 [ ]   3  scc_City_Curse
 [ ]   4  scc_Fixed_Dmg_Spell
 [-]   5  scc_Special_Spell
@@ -230,7 +249,7 @@ Spreadsheet - OSG Spells by Realm
 [ ] Prosperity
 [ ] Altar of Battle
 [ ] Angel
-[ ] Stream of Life
+[x] Stream of Life
 [ ] Mass Healing
 [ ] Holy Word
 [ ] High Prayer
@@ -285,7 +304,7 @@ Spreadsheet - OSG Spells by Realm
 [ ] Demon Lord
 [ ] Magic Spirit
 [ ] Dispel Magic
-[ ] Summoning Circle
+[x] Summoning Circle
 [ ] Disenchant Area
 [x] Recall Hero
 [ ] Detect Magic

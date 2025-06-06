@@ -555,7 +555,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                             AI_Eval_After_Spell = ST_TRUE;  // Why?
 
-                            /* SPELLY */  IDK_Spell_Cityscape_1(G_Have_Targets, spell_idx, player_idx);
+                            Cast_Spell_City_Enchantment_Animation_1__WIP(G_Have_Targets, spell_idx, player_idx);
 
                         }
 
@@ -577,7 +577,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                             players_globals_idx = spell_data_table[spell_idx].ce_idx;
 
                             ptr_players_globals[players_globals_idx] = (player_idx + 1);
-
+Capture_Cities_Data();
                         }
 
                         if(
@@ -593,7 +593,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                         )
                         {
 
-                            /* SPELLY */  IDK_Spell_Cityscape_2(G_Have_Targets, spell_idx, player_idx);
+                            Cast_Spell_City_Enchantment_Animation_2__WIP(G_Have_Targets, spell_idx, player_idx);
 
                         }
 

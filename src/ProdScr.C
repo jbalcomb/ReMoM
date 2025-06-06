@@ -405,7 +405,7 @@ Capture_Cities_Data();
         current_screen = scr_City_Screen;
     }
 
-    PageFlipEffect = 3;
+    _page_flip_effect = 3;
 
     Clear_Palette_Changes(0, 255);
 

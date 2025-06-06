@@ -12,7 +12,7 @@
 
 // SPLMASR.C
 // WZD dseg:CA14
-extern int16_t SBK_SliderAnimStage;
+extern int16_t _osc_anim_ctr;
 
 
 
@@ -140,9 +140,9 @@ SAMB_ptr ge_anim_moodwiz_seg;
 // WZD dseg:CA4A 00                                              db    0
 // WZD dseg:CA4B 00                                              db    0
 
-// WZD dseg:CA4C 00 00                                           GUI_Interaction_Done dw 0               ; DATA XREF: SBK_SpellSlider+D5w ...
-// WZD dseg:CA4E 00 00                                           IDK_WizTgt_SplCmpl_w434EE dw 0          ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+20Ar ...
-// WZD dseg:CA50 00 00                                           GAME_MP_SpellVar_3 dw 0                 ; DATA XREF: SBK_SliderRedraw+8r ...
+// WZD dseg:CA4C 00 00                                           _osc_leave_screen dw 0               ; DATA XREF: SBK_SpellSlider+D5w ...
+// WZD dseg:CA4E 00 00                                           _osc_need_target_flag dw 0          ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+20Ar ...
+// WZD dseg:CA50 00 00                                           _osc_player_idx dw 0                 ; DATA XREF: SBK_SliderRedraw+8r ...
 // WZD dseg:CA50                                                                                         ; clicked spell label index during combat sliders
 // WZD dseg:CA50                                                                                         ; player_idx during global cast anims
 // WZD dseg:CA50                                                                                         ; city_idx during ¿ ?
@@ -344,15 +344,15 @@ void IDK_SummonAnim_Draw(void)
     Set_Window(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, (start_y + 105));
 
     if(
-        (SBK_SliderAnimStage < 30)
+        (_osc_anim_ctr < 30)
         &&
         (magic_set.spell_animations == ST_TRUE)
         &&
-        (GAME_MP_SpellVar_3 == HUMAN_PLAYER_IDX)
+        (_osc_player_idx == HUMAN_PLAYER_IDX)
     )
     {
 
-        Clipped_Draw((start_x + 76), (start_y + 110 - (SBK_SliderAnimStage * 3)), IDK_MONSTER_seg);
+        Clipped_Draw((start_x + 76), (start_y + 110 - (_osc_anim_ctr * 3)), IDK_MONSTER_seg);
 
     }
     else
@@ -370,12 +370,12 @@ void IDK_SummonAnim_Draw(void)
 
     Set_Alias_Color(190);
 
-    if(IDK_DiploScrn_scanned_field > 0)
+    if(_osc_summon_unit_type > 0)
     {
 
-        // strcpy(GUI_NearMsgString, *_unit_type_table[spell_data_table[_players[GAME_MP_SpellVar_3].casting_spell_idx].Param0].name);
-        DBG_unit_type = spell_data_table[_players[GAME_MP_SpellVar_3].casting_spell_idx].Param0;
-        DBG_unit_type = spell_data_table[_players[GAME_MP_SpellVar_3].casting_spell_idx].unit_type;
+        // strcpy(GUI_NearMsgString, *_unit_type_table[spell_data_table[_players[_osc_player_idx].casting_spell_idx].Param0].name);
+        DBG_unit_type = spell_data_table[_players[_osc_player_idx].casting_spell_idx].Param0;
+        DBG_unit_type = spell_data_table[_players[_osc_player_idx].casting_spell_idx].unit_type;
         strcpy(GUI_NearMsgString, *_unit_type_table[DBG_unit_type].name);
 
         strcat(GUI_NearMsgString, aSummoned);
@@ -383,7 +383,7 @@ void IDK_SummonAnim_Draw(void)
     }
     else
     {
-        if(IDK_DiploScrn_scanned_field == -1)
+        if(_osc_summon_unit_type == -1)
         {
 
             strcpy(GUI_NearMsgString, aItemEnchanted);
@@ -392,7 +392,7 @@ void IDK_SummonAnim_Draw(void)
         else
         {
 
-            if(IDK_DiploScrn_scanned_field > -10)
+            if(_osc_summon_unit_type > -10)
             {
 
                 strcpy(GUI_NearMsgString, aHeroSummoned_0);
@@ -425,7 +425,7 @@ void IDK_SummonAnim_Draw(void)
 */
 void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t player_idx)
 {
-    int16_t var_6;
+    int16_t anim_stg_cnt;
     int16_t input_field_idx;
     int16_t full_screen_field;
 
@@ -442,11 +442,11 @@ void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t pl
 
     }
 
-    SBK_SliderAnimStage = 0;
+    _osc_anim_ctr = 0;
 
-    GAME_MP_SpellVar_3 = player_idx;
+    _osc_player_idx = player_idx;
 
-    IDK_DiploScrn_scanned_field = unit_type;
+    _osc_summon_unit_type = unit_type;
 
     Allocate_Reduced_Map();
 
@@ -456,7 +456,7 @@ void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t pl
 
     Assign_Auto_Function(IDK_SummonAnim_Draw, 2);
 
-    PageFlipEffect = 3;
+    _page_flip_effect = pfe_Dissolve;
 
     Clear_Fields();
 
@@ -464,16 +464,16 @@ void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t pl
 
     if(magic_set.spell_animations == ST_TRUE)
     {
-        var_6 = 130;
+        anim_stg_cnt = 130;
     }
     else
     {
-        var_6 = 40;
+        anim_stg_cnt = 40;
     }
 
-    GUI_Interaction_Done = ST_FALSE;
+    _osc_leave_screen = ST_FALSE;
 
-    for(SBK_SliderAnimStage = 0; ((SBK_SliderAnimStage < var_6) && (GUI_Interaction_Done == ST_FALSE)); SBK_SliderAnimStage++)
+    for(_osc_anim_ctr = 0; ((_osc_anim_ctr < anim_stg_cnt) && (_osc_leave_screen == ST_FALSE)); _osc_anim_ctr++)
     {
 
         Mark_Time();
@@ -482,7 +482,7 @@ void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t pl
 
         if(input_field_idx == full_screen_field)
         {
-            GUI_Interaction_Done = ST_TRUE;
+            _osc_leave_screen = ST_TRUE;
         }
 
         Set_Page_Off();
@@ -493,7 +493,7 @@ void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t pl
 
         Release_Time(2);
 
-        PageFlipEffect =  0;
+        _page_flip_effect = pfe_NONE;
 
     }
 
@@ -521,28 +521,374 @@ void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t pl
 
 // WZD o137p04
 // drake178: sub_BECD9()
-// sub_BECD9()
+// AKA IDK_CastCityEnchMsg()
+void Cast_Spell_City_Enchantment_Animation_Load(int16_t spell_idx,int16_t  player_idx)
+{
+    char string[26] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+    Copy_On_To_Off_Page();
+
+    // SPELLSCR.LBX, 073  "CITYSPEL"    ""
+    cityspel_seg = LBX_Reload(spellscr_lbx_file__ovr137__2, 73, _screen_seg);
+
+    Set_Page_Off();
+
+    FLIC_Draw(53, 38, cityspel_seg);
+
+    Set_Outline_Color(17);
+
+    Set_Font_Style_Shadow_Down(5, 5, 0, 0);
+
+    strcpy(GUI_NearMsgString, _city_size_names[_CITIES[_osc_city_idx].size]);  // { "Outpost", "Hamlet", "Village", "Town", "City", "Capital" }
+
+    strcat(GUI_NearMsgString, cnst_Sp_Of_Sp_5);  // " of "
+
+    _fstrcpy(string, _CITIES[_osc_city_idx].name);  // [YOUR CITY NAME HERE]
+
+    strcat(GUI_NearMsgString, string);
+
+    Print_Centered(160, 44, GUI_NearMsgString);
+
+    Set_Outline_Color(17);
+
+    Set_Font_Style_Shadow_Down(4, 4, 0, 0);
+
+    Set_Alias_Color(24);
+
+    if(player_idx == HUMAN_PLAYER_IDX)
+    {
+
+        strcpy(GUI_NearMsgString, aYouCast);  // "You cast "
+
+    }
+    else
+    {
+
+        strcpy(GUI_NearMsgString, _players[player_idx].name);
+
+        strcat(GUI_NearMsgString, aCasts);  // " casts "
+
+    }
+
+    _fstrcpy(string, spell_data_table[spell_idx].name);
+
+    strcat(GUI_NearMsgString, string);
+
+    Print_Centered(160, 164, GUI_NearMsgString);
+
+    Copy_Off_To_Back();
+
+    Near_Allocate_Mark();
+
+    city_cityscape_fields = Near_Allocate_First(144);
+
+}
 
 // WZD o137p05
 // drake178: sub_BEE75()
-// IDK_City_sBEE75()
+// AKA IDK_City_sBEE75()
+// AKA IDK_Spell_Cityscape_Draw()
+/*
+
+~ City_ovr55.C  // WZD o55p04  Cityscape_Draw_Scanned_Building_Name()
+*/
+void Cast_Spell_City_Enchantment_Animation_Draw(void)
+{
+    int16_t y_start = 0;
+    int16_t x_start = 0;
+    int16_t itr = 0;  // _SI_
+
+    x_start = 53;
+    y_start = 38;
+
+    Copy_Back_To_Off();
+
+    Cityscape_Window__WIP(_osc_city_idx, (x_start + 5),(y_start + 27), _ce_bldg_idx, _ce_bldg_idx);
+
+    for(itr = 0; itr < city_cityscape_field_count; itr++)
+    {
+        if(city_cityscape_fields[itr] == _osc_scanned_field)
+        {
+            Set_Font_Style_Outline(1, 0, 0, 0);
+            Set_Alias_Color(8);
+            if(cityscape_bldg_fields[itr].field_bldg_idx >= bt_NUM_BUILDINGS)
+            {
+                Print_Centered(cityscape_bldg_fields[itr].field_print_sx, cityscape_bldg_fields[itr].field_print_sy, STR_MagicBuildings[(cityscape_bldg_fields[itr].field_bldg_idx - bt_NUM_BUILDINGS)]);
+            }
+            else
+            {
+                if(_CITIES[_osc_city_idx].bldg_status[cityscape_bldg_fields[itr].field_bldg_idx] != bs_Removed)
+                {
+                    Print_Centered_Far(cityscape_bldg_fields[itr].field_print_sx, cityscape_bldg_fields[itr].field_print_sy, bldg_data_table[cityscape_bldg_fields[itr].field_bldg_idx].name);
+                }
+                else
+                {
+                    Set_Font_Style_Outline(1, 2, 0, 0);
+                    Set_Alias_Color(166);
+                    Print_Centered_Far(cityscape_bldg_fields[itr].field_print_sx, (cityscape_bldg_fields[itr].field_print_sy + 6), aDestroyed);
+                    Print_Centered_Far(cityscape_bldg_fields[itr].field_print_sx, cityscape_bldg_fields[itr].field_print_sy, bldg_data_table[cityscape_bldg_fields[itr].field_bldg_idx].name);
+                }
+            }
+        }
+    }
+
+}
+
 
 // WZD o137p06
 // drake178: sub_BF048()
-void IDK_Spell_Cityscape_1(int16_t city_idx, int16_t spell_idx, int16_t player_idx)
+void Cast_Spell_City_Enchantment_Animation_1__WIP(int16_t city_idx, int16_t spell_idx, int16_t player_idx)
 {
+    int16_t sw_spell_idx = 0;
+    int16_t good_bad = 0;
+    int16_t OT = 0;
+    int16_t OL = 0;
+    int16_t itr = 0;  // _SI_
 
+    Stop_All_Sounds__STUB();
 
+    if(spell_data_table[spell_idx].type == scc_City_Curse)
+    {
+        good_bad = 6;
+    }
+    else  /* (spell_data_table[spell_idx].type == scc_City_Enchantment) */
+    {
+        good_bad = 0;
+    }
+
+    Cast_Spell_City_Enchantment_Animation_Load_Music(spell_idx, good_bad);
+
+    if(magic_set.background_music == ST_TRUE)
+    {
+        // DOMSDOS  Play_Sound__STUB(SND_Spell_Music);
+        sdl2_Play_Sound__WIP(SND_Spell_Music, SND_Spell_Music_size);
+
+    }
+
+    _osc_need_target_flag = _UNITS[0].type;
+
+    _osc_need_target_flag = 1;
+
+    _osc_city_idx = city_idx;
+
+    _osc_scanned_field = INVALID_FIELD;
+
+    sw_spell_idx = spell_idx;
+
+    switch(sw_spell_idx)
+    {
+        case spl_Move_Fortress:    { _ce_bldg_idx = 104; } break;
+        case spl_Earth_Gate:       { _ce_bldg_idx = 101; } break;
+        case spl_Stream_Of_Life:   { _ce_bldg_idx = 102; } break;
+        case spl_Astral_Gate:      { _ce_bldg_idx = 103; } break;
+        case spl_Summoning_Circle: { _ce_bldg_idx = 100; } break;
+        case spl_Dark_Rituals:     { _ce_bldg_idx = 105; } break;
+        case spl_Altar_Of_Battle:  { _ce_bldg_idx = 106; } break;
+        default: { _ce_bldg_idx = bt_NONE; } break;
+    }
+
+    Cast_Spell_City_Enchantment_Animation_Load(spell_idx, player_idx);
+
+    Reset_First_Block(_screen_seg);
+
+    Assign_Auto_Function(Cast_Spell_City_Enchantment_Animation_Draw, 2);
+
+    _osc_need_target_flag = 0;
+
+    Set_Page_Off();
+
+    Cast_Spell_City_Enchantment_Animation_Draw();
+
+    Copy_Off_To_Page4();
+
+    _osc_need_target_flag = 1;
+
+    Set_Page_Off();
+
+    Cast_Spell_City_Enchantment_Animation_Draw();
+
+    _osc_need_target_flag = 0;
+
+    if(magic_set.spell_animations != ST_FALSE)
+    {
+
+        OL = _CITIES[city_idx].wx;
+        OT = _CITIES[city_idx].wy;
+
+        World_To_Screen(_map_x, _map_y, &OL, &OT);
+
+        // TODO  HLP_NoResizeExpand__TODO(53, 38, 268, 162, OL, OT, (OL + 20), (OT + 18), 0);
+
+        Set_Page_Off();
+
+        Copy_Page4_To_Off();
+
+        Copy_Off_To_Back();
+
+        PageFlip_FX();
+
+        if(spell_idx == spl_Earthquake)
+        {
+
+//             Spell_Animation_Load_Sound_Effect__WIP(spell_idx);
+// 
+//             Set_Page_Off();
+// 
+//             Cast_Spell_City_Enchantment_Animation_Draw();
+// 
+//             Copy_Off_To_Back();
+// 
+//             if(SND_SpellCast != ST_UNDEFINED)
+//             {
+//                 // DOMSDOS  Play_Sound__STUB(SND_SpellCast)
+//                 sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
+//             }
+// 
+//             for(itr = 35; itr > 5; itr--)
+//             {
+// 
+//                 VGA_PartCopyFromF3((Random(itr) / 5), (Random(itr) / 5));
+// 
+//                 PageFlip_FX();
+// 
+//             }
+// 
+//             Set_Page_Off();
+// 
+//             Cast_Spell_City_Enchantment_Animation_Draw();
+// 
+//             PageFlip_FX();
+// 
+//             SND_SpellCast = ST_UNDEFINED;
+
+        }
+        else
+        {
+            
+            for(itr = 0; itr < 8; itr++)
+            {
+
+                Set_Page_Off();
+
+                Cast_Spell_City_Enchantment_Animation_Draw();
+
+                PageFlip_FX();
+
+            }
+
+        }
+
+        Near_Allocate_Undo();
+
+        Clear_Fields();
+
+        Deactivate_Auto_Function();
+
+        Cityscape_Build_Anim_Reset();
+
+    }
 
 }
 
 
 // WZD o137p07
 // drake178: sub_BF2AF()
-void IDK_Spell_Cityscape_2(int16_t city_idx, int16_t spell_idx, int16_t player_idx)
+void Cast_Spell_City_Enchantment_Animation_2__WIP(int16_t city_idx, int16_t spell_idx, int16_t player_idx)
 {
+    int16_t y2 = 0;
+    int16_t y1 = 0;
+    int16_t x2 = 0;
+    int16_t x1 = 0;
+    int16_t fullscreen_field = 0;
+    int16_t itr = 0;  // _SI_
+
+    _osc_city_idx = city_idx;
+
+    if(spell_idx != spl_Earthquake)
+    {
+
+        Reset_First_Block(_screen_seg);
+
+        Spell_Animation_Load_Sound_Effect__WIP(spell_idx);
+
+    }
+
+    _ce_bldg_idx = bt_NONE;
+
+    _page_flip_effect = pfe_Dissolve;
+
+    Set_Page_Off();
+
+    Cast_Spell_City_Enchantment_Animation_Draw();
+
+    PageFlip_FX();
 
 
+    if(
+        (spell_idx != spl_Earthquake)
+        &&
+        (SND_SpellCast != ST_UNDEFINED)
+    )
+    {
+
+        // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
+        sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
+
+    }
+
+    Assign_Auto_Function(Cast_Spell_City_Enchantment_Animation_Draw, 2);
+
+    Clear_Fields();
+
+    for(itr = 0; itr < cityscape_bldg_count; itr++)
+    {
+
+        x1 = cityscape_bldg_fields[itr].field_x1;
+        y1 = cityscape_bldg_fields[itr].field_y1;
+        x2 = cityscape_bldg_fields[itr].field_x2;
+        y2 = cityscape_bldg_fields[itr].field_y2;
+
+        city_cityscape_fields[city_cityscape_field_count] = Add_Hidden_Field(x1, y1, x2, y2, empty_string__ovr137, ST_UNDEFINED);
+
+        city_cityscape_field_count++;
+
+    }
+
+    fullscreen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, empty_string__ovr137, ST_UNDEFINED);
+
+    for(itr = 0; ((itr < 250) && (Get_Input() == ST_FALSE)); itr++)
+    {
+
+        _osc_scanned_field = Scan_Input();
+
+        Mark_Time();
+
+        Set_Page_Off();
+
+        Cast_Spell_City_Enchantment_Animation_Draw();
+
+        PageFlip_FX();
+
+        Release_Time(2);
+
+    }
+
+    Near_Allocate_Undo();
+
+    Release_Block(_screen_seg);
+
+    Clear_Fields();
+
+    // DOMSDOS  Stop_All_Sounds__STUB();
+
+    // DOMSDOS  Play_Background_Music__STUB();
+    sdl2_Play_Background_Music__WIP();
+
+    Deactivate_Auto_Function();
+
+    Allocate_Reduced_Map();
+
+    OVL_MosaicFlip__STUB();
 
 }
 
@@ -681,7 +1027,7 @@ void OVL_DrawGlobalAnim(void)
     start_x = 58;
     start_y = 28;
 
-    if(GUI_Interaction_Done == ST_TRUE)
+    if(_osc_leave_screen == ST_TRUE)
     {
         return;
     }
@@ -695,7 +1041,7 @@ void OVL_DrawGlobalAnim(void)
     if(magic_set.spell_animations != ST_TRUE)
     {
 
-        if(GAME_MP_SpellVar_3 == HUMAN_PLAYER_IDX)
+        if(_osc_player_idx == HUMAN_PLAYER_IDX)
         {
 
             strcpy(GUI_NearMsgString, cnst_Spellcast_Msg_1);  // "You have completed casting..."
@@ -704,7 +1050,7 @@ void OVL_DrawGlobalAnim(void)
         else
         {
 
-            strcpy(GUI_NearMsgString, _players[GAME_MP_SpellVar_3].name);
+            strcpy(GUI_NearMsgString, _players[_osc_player_idx].name);
 
             strcat(GUI_NearMsgString, cnst_Spellcast_Msg_2);  // " has cast..."
 
@@ -725,7 +1071,7 @@ void OVL_DrawGlobalAnim(void)
         if(GAME_MP_SpellVar_1 < 34)
         {
 
-            if(GAME_MP_SpellVar_3 == 0)
+            if(_osc_player_idx == 0)
             {
 
                 strcpy(GUI_NearMsgString, cnst_Spellcast_Msg_1);
@@ -734,7 +1080,7 @@ void OVL_DrawGlobalAnim(void)
             else
             {
 
-                strcpy(GUI_NearMsgString, _players[GAME_MP_SpellVar_3].name);
+                strcpy(GUI_NearMsgString, _players[_osc_player_idx].name);
 
                 strcat(GUI_NearMsgString, cnst_Spellcast_Msg_2);
 
@@ -888,7 +1234,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
 
     GAME_MP_SpellVar_1 = 0;
 
-    GAME_MP_SpellVar_3 = player_idx;
+    _osc_player_idx = player_idx;
 
     SBK_Spell_Index = spell_idx;
 
@@ -906,9 +1252,9 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
 
     Assign_Auto_Function(OVL_DrawGlobalAnim, 2);
 
-    GUI_Interaction_Done = ST_FALSE;
+    _osc_leave_screen = ST_FALSE;
 
-    for(GAME_MP_SpellVar_1 = 0; ((GAME_MP_SpellVar_1 < 120) && (GUI_Interaction_Done == 0)); GAME_MP_SpellVar_1++)
+    for(GAME_MP_SpellVar_1 = 0; ((GAME_MP_SpellVar_1 < 120) && (_osc_leave_screen == 0)); GAME_MP_SpellVar_1++)
     {
 
         input_field_idx = abs(Get_Input());
@@ -916,11 +1262,11 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
         if(input_field_idx == fullscreen_ESC_field)
         {
 
-            GUI_Interaction_Done = ST_TRUE;
+            _osc_leave_screen = ST_TRUE;
 
         }
 
-        if(GUI_Interaction_Done != ST_TRUE)
+        if(_osc_leave_screen != ST_TRUE)
         {
 
             if(GAME_MP_SpellVar_1 == 10)
@@ -956,7 +1302,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
 
             if(GAME_MP_SpellVar_1 == 34)
             {
-                PageFlipEffect = 3;
+                _page_flip_effect = 3;
             }
 
             Mark_Time();  // DNE in Dasm

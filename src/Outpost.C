@@ -199,7 +199,7 @@ void Outpost_Screen(int16_t flag)
 
     screen_changed = ST_FALSE;
 
-    PageFlipEffect = 0;
+    _page_flip_effect = 0;
 
     Set_Mouse_List(1, mouse_list_default);
 
@@ -405,7 +405,7 @@ void Outpost_Screen(int16_t flag)
     Clear_Fields();
     Deactivate_Auto_Function();
     Deactivate_Help_List();
-    PageFlipEffect = 3;
+    _page_flip_effect = 3;
 
 }
 
@@ -580,7 +580,7 @@ void Change_City_Name_Popup(int16_t city_idx, int16_t player_idx)
     int16_t x_start;
     int16_t input_box_result;
 
-    PageFlipEffect = 0;
+    _page_flip_effect = 0;
 
     colors[0] = 97;
     colors[1] = 97;

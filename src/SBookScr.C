@@ -855,6 +855,58 @@ void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t
 /*
 OON XREF  IDK_Spell_Cityscape_1()
 */
+void Cast_Spell_City_Enchantment_Animation_Load_Music(int16_t spell_idx, int16_t good_bad)
+{
+
+// MUSIC.LBX, 000 "MOM81 XM"    "Good Arcane"
+// MUSIC.LBX, 001 "MOM103 X"    "Good Chaos"
+// MUSIC.LBX, 002 "MOM75 XM"    "Good Death"
+// MUSIC.LBX, 003 "MOM77 XM"    "Good Life"
+// MUSIC.LBX, 004 "MOM73 XM"    "Good nature"
+// MUSIC.LBX, 005 "MOM79 XM"    "Good Sorcery"
+// MUSIC.LBX, 006 "MOM82 XM"    "Bad Arcane"
+// MUSIC.LBX, 007 "MOM104 X"    "Bad Chaos"
+// MUSIC.LBX, 008 "MOM76 XM"    "Bad Death"
+// MUSIC.LBX, 009 "MOM78 XM"    "Bad Life"
+// MUSIC.LBX, 010 "MOM74 XM"    "Bad Nature"
+// MUSIC.LBX, 011 "MOM80 XM"    "Bad Sorcery"
+
+    switch(spell_data_table[spell_idx].magic_realm)
+    {
+        case sbr_Life:
+        {
+            SND_Spell_Music = LBX_Reload(music_lbx_file__ovr134, (MUSIC_Good_Life + good_bad), SND_Music_Segment);
+            SND_Spell_Music_size = lbxload_entry_length;
+        } break;
+        case sbr_Chaos:
+        {
+            SND_Spell_Music = LBX_Reload(music_lbx_file__ovr134, (MUSIC_Good_Chaos + good_bad), SND_Music_Segment);
+            SND_Spell_Music_size = lbxload_entry_length;
+        } break;
+        case sbr_Sorcery:
+        {
+            SND_Spell_Music = LBX_Reload(music_lbx_file__ovr134, (MUSIC_Good_Sorcery + good_bad), SND_Music_Segment);
+            SND_Spell_Music_size = lbxload_entry_length;
+        } break;
+        case sbr_Death:
+        {
+            SND_Spell_Music = LBX_Reload(music_lbx_file__ovr134, (MUSIC_Good_Death + good_bad), SND_Music_Segment);
+            SND_Spell_Music_size = lbxload_entry_length;
+        } break;
+        case sbr_Nature:
+        {
+            SND_Spell_Music = LBX_Reload(music_lbx_file__ovr134, (MUSIC_Good_Nature + good_bad), SND_Music_Segment);
+            SND_Spell_Music_size = lbxload_entry_length;
+        } break;
+        default:
+        {
+            SND_Spell_Music = LBX_Reload(music_lbx_file__ovr134, (MUSIC_Good_Arcane + good_bad), SND_Music_Segment);
+            SND_Spell_Music_size = lbxload_entry_length;
+        } break;
+    }
+
+}
+
 
 // WZD o134p10
 // drake178: GAME_LoadSpellAnim()

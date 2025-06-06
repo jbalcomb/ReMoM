@@ -1721,7 +1721,7 @@ void Main_Screen(void)
                         if(_CITIES[_city_idx].size == 0)
                         {
                             /* #### Section 9.2.3.1.1      Right-Click Movement Map - City - Own - Outpost */
-                            PageFlipEffect = 4;
+                            _page_flip_effect = 4;
                             GrowOutLeft = (_main_map_grid_x * SQUARE_WIDTH);
                             GrowOutTop = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
                             GrowOutFrames = 8;
@@ -1748,7 +1748,7 @@ void Main_Screen(void)
                         }
                         else  /* (_CITIES[_city_idx].size != 0) */
                         {
-                            PageFlipEffect = 4;
+                            _page_flip_effect = 4;
                             // TODO  GrowOutLeft = (_main_map_grid_x * 20);
                             // TODO  GrowOutTop = ((_main_map_grid_y * 18) + 20);
                             // TODO  GrowOutFrames = 8;

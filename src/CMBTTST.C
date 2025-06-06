@@ -54,7 +54,7 @@ int16_t Combat_Screen_TST_001(int16_t combat_attacker_player_idx, int16_t combat
         END: Combat Screen Compose Background
     */
 
-    PageFlipEffect = pf_Normal;
+    _page_flip_effect = pfe_NONE;
 
     Assign_Auto_Function(Combat_Screen_TST_001_Draw, 1);
 
@@ -141,7 +141,7 @@ int16_t Combat_Screen_TST_002(int16_t combat_attacker_player_idx, int16_t combat
         END: Combat Screen Compose Background
     */
 
-    PageFlipEffect = pf_Normal;
+    _page_flip_effect = pfe_NONE;
 
     Assign_Auto_Function(Combat_Screen_TST_002_Draw, 1);
 
@@ -228,7 +228,7 @@ int16_t Combat_Screen_TST_003(int16_t combat_attacker_player_idx, int16_t combat
         END: Combat Screen Compose Background
     */
 
-    PageFlipEffect = pf_Normal;
+    _page_flip_effect = pfe_NONE;
 
     Assign_Auto_Function(Combat_Screen_TST_003_Draw, 1);
 
@@ -314,7 +314,7 @@ int16_t Combat_Screen_TST_004(int16_t combat_attacker_player_idx, int16_t combat
     Set_Page_Off();
     Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
     Toggle_Pages();
-    PageFlipEffect = pf_Normal;
+    _page_flip_effect = pfe_NONE;
 
     // CMB_BaseAllocs__WIP()
     battlefield = (struct s_BATTLEFIELD *)Allocate_First_Block(_screen_seg, 348);  // 348 PR, 5568 B

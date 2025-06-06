@@ -275,10 +275,12 @@ Release_Cities_Data();
 
             case scr_Test_Screen:
             {
+                STU_DEBUG_BREAK();
                 // Test_Screen();
             } break;
             case scr_PoC_Screen:
             {
+                STU_DEBUG_BREAK();
                 // PoC_Screen();
             } break;
 

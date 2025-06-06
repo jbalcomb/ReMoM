@@ -8,12 +8,11 @@ MoO2
     ~ Science Room?
 */
 
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
 #include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
-
-#include "MOM.H"
 
 
 
@@ -107,7 +106,7 @@ int16_t cast_spell_of_mastery_player_idx;
 /*
 ; steps 0 to 7 for sliders
 */
-int16_t SBK_SliderAnimStage;
+int16_t _osc_anim_ctr;
 
 // WZD dseg:CA16 00 00                                           SBK_Spell_Index dw 0                    ; DATA XREF: Learn_Spell_Animation+Cw ...
 // WZD dseg:CA18 00 00                                           SBK_SliderState dw 0                    ; DATA XREF: SBK_SliderRedraw+6Br ...
@@ -119,7 +118,7 @@ SAMB_ptr word_434C4;
 // WZD dseg:CA28                                                                                         ; holds the caster ID during combat sliders
 // WZD dseg:CA28                                                                                         ; holds the mirror reveal mask during global cast anims
 // WZD dseg:CA2A 00 00                                           IMG_OVL_TrgtWizCncl@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+50w ...
-// WZD dseg:CA2C 00 00                                           IDK_DiploScrn_scanned_field dw 0        ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+44r ...
+// WZD dseg:CA2C 00 00                                           _temp_sint_4 dw 0        ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+44r ...
 // WZD dseg:CA2E 00 00                                           IDK_SUMMONBK_pict_seg dw 0              ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+17Dw ...
 // WZD dseg:CA30 00 00                                           IMG_SBK_SliderOK@ dw 0                  ; DATA XREF: SBK_LoadSpellSlider+7Dw ...
 // WZD dseg:CA32 00 00                                           IMG_OVL_TargetWizBG@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+39w ...
@@ -142,9 +141,9 @@ SAMB_ptr word_434C4;
 int16_t GAME_SoM_Cast_By;
 
 // WZD dseg:CA58
-SAMB_ptr word_434F8;
+SAMB_ptr spellose_wizard_sphere_seg;
 // WZD dseg:CA5A
-SAMB_ptr word_434FA;
+SAMB_ptr spellose_sphere_seg;
 
 // WZD dseg:CA5A                                                 END: ovr138 - Uninitialized Data
 
@@ -244,10 +243,39 @@ void Spell_Of_Mastery_Lose_Load(int16_t wizard_id)
 
     strcat(GUI_NearMsgString, strHasCastThe);  // " has cast the"
 
-    word_434FA = LBX_Reload(spellose_lbx_file__ovr138, 29, _screen_seg);
+    // SPELLOSE.LBX, 029  "SPHERE"    ""
+    spellose_sphere_seg = LBX_Reload(spellose_lbx_file__ovr138, 29, _screen_seg);
 
-    word_434F8 = LBX_Reload_Next(spellose_lbx_file__ovr138, wizard_id, _screen_seg);
+    // SPELLOSE.LBX, 000  "MERLISPH"  ""
+    // SPELLOSE.LBX, 001  "SHAMMSPH"  ""
+    // SPELLOSE.LBX, 002  "PRIESSPH"  ""
+    // SPELLOSE.LBX, 003  "WUSPH"     ""
+    // SPELLOSE.LBX, 004  "ARABSPH"   ""
+    // SPELLOSE.LBX, 005  "OBERSPH"   ""
+    // SPELLOSE.LBX, 006  "WRAITSPH"  ""
+    // SPELLOSE.LBX, 007  "DRACOSPH"  ""
+    // SPELLOSE.LBX, 008  "NMOISPH"   ""
+    // SPELLOSE.LBX, 009  "FREYASPH"  ""
+    // SPELLOSE.LBX, 010  "GALESPH"   ""
+    // SPELLOSE.LBX, 011  "ARIELSPH"  ""
+    // SPELLOSE.LBX, 012  "AZTECSPH"  ""
+    // SPELLOSE.LBX, 013  "KARLASPH"  ""
+    spellose_wizard_sphere_seg = LBX_Reload_Next(spellose_lbx_file__ovr138, wizard_id, _screen_seg);
 
+    // SPELLOSE.LBX, 014  "MERLIWIN"  ""
+    // SPELLOSE.LBX, 015  "SHAMMWIN"  ""
+    // SPELLOSE.LBX, 016  "PRIESWIN"  ""
+    // SPELLOSE.LBX, 017  "WUWIN"     ""
+    // SPELLOSE.LBX, 018  "ARABWIN"   ""
+    // SPELLOSE.LBX, 019  "OBERWIN"   ""
+    // SPELLOSE.LBX, 020  "WRAITWIN"  ""
+    // SPELLOSE.LBX, 021  "DRACOWIN"  ""
+    // SPELLOSE.LBX, 022  "NMOIWIN"   ""
+    // SPELLOSE.LBX, 023  "FREYAWIN"  ""
+    // SPELLOSE.LBX, 024  "GALEWIN"   ""
+    // SPELLOSE.LBX, 025  "ARIELWIN"  ""
+    // SPELLOSE.LBX, 026  "AZTECWIN"  ""
+    // SPELLOSE.LBX, 027  "KARLAWIN"  ""
     wizlab_wizard_seg = LBX_Reload_Next(spellose_lbx_file__ovr138, (14 + wizard_id), _screen_seg);
 
     IMG_SBK_Anims = Allocate_Next_Block(_screen_seg, 900);  // 900 PR  14400 B
@@ -297,31 +325,31 @@ void Spell_Of_Mastery_Lose_Draw(void)
 
     Print_Centered(160, 25, strSpellOfMastery, ST_NULL);
 
-    if(SBK_SliderAnimStage < 12)
+    if(_osc_anim_ctr < 12)
     {
 
         FLIC_Draw(61, 68, wizlab_wizard_seg);
 
-        FLIC_Set_CurrentFrame(word_434FA, (SBK_SliderAnimStage / 2));
+        FLIC_Set_CurrentFrame(spellose_sphere_seg, (_osc_anim_ctr / 2));
 
-        FLIC_Draw(start_x, 34, word_434FA);
+        FLIC_Draw(start_x, 34, spellose_sphere_seg);
 
     }
     else
     {
 
-        if(SBK_SliderAnimStage < 24)
+        if(_osc_anim_ctr < 24)
         {
 
-            FLIC_Set_CurrentFrame(word_434FA, 5);
+            FLIC_Set_CurrentFrame(spellose_sphere_seg, 5);
 
-            FLIC_Draw(start_x, 34, word_434FA);
+            FLIC_Draw(start_x, 34, spellose_sphere_seg);
 
             x = 61;  // BUGBUG  never used
 
             IDK = -y1;
 
-            if(((SBK_SliderAnimStage - 12) / 2) < 2)
+            if(((_osc_anim_ctr - 12) / 2) < 2)
             {
 
                 // SPELLY  LBX_IMG_VShiftRect(x1, 0, (x1 + (width / 4)), (IDK / 6), IMG_SBK_Anims);
@@ -336,7 +364,7 @@ void Spell_Of_Mastery_Lose_Draw(void)
             else
             {
 
-                if(((SBK_SliderAnimStage - 12) / 2) < 4)
+                if(((_osc_anim_ctr - 12) / 2) < 4)
                 {
 
                     // SPELLY  LBX_IMG_VShiftRect(x1, 0, (x1 + (width / 4)), (IDK / 4), IMG_SBK_Anims);
@@ -363,17 +391,17 @@ void Spell_Of_Mastery_Lose_Draw(void)
 
             }
 
-            Scale_Bitmap(IMG_SBK_Anims, (100 - ((SBK_SliderAnimStage - 12) * 6)), 100);
+            Scale_Bitmap(IMG_SBK_Anims, (100 - ((_osc_anim_ctr - 12) * 6)), 100);
 
-            x = (61 + (((SBK_SliderAnimStage - 12) * 714) / 200));
+            x = (61 + (((_osc_anim_ctr - 12) * 714) / 200));
 
             Draw_Picture(x, 68, IMG_SBK_Anims);
 
-            FLIC_Reset_CurrentFrame(word_434F8);
+            FLIC_Reset_CurrentFrame(spellose_wizard_sphere_seg);
 
-            Draw_Picture_To_Bitmap(word_434F8, IMG_SBK_Anims);
+            Draw_Picture_To_Bitmap(spellose_wizard_sphere_seg, IMG_SBK_Anims);
 
-            // SPELLY  Vanish_Bitmap(IMG_SBK_Anims, ((SBK_SliderAnimStage - 12) * 8));
+            // SPELLY  Vanish_Bitmap(IMG_SBK_Anims, ((_osc_anim_ctr - 12) * 8));
 
             Draw_Picture(start_x, 34, IMG_SBK_Anims);
 
@@ -381,12 +409,12 @@ void Spell_Of_Mastery_Lose_Draw(void)
         else
         {
 
-            if(SBK_SliderAnimStage < 36)
+            if(_osc_anim_ctr < 36)
             {
 
-                FLIC_Set_CurrentFrame(word_434F8, ((SBK_SliderAnimStage - 24) / 2));
+                FLIC_Set_CurrentFrame(spellose_wizard_sphere_seg, ((_osc_anim_ctr - 24) / 2));
 
-                FLIC_Draw(start_x, 34, word_434F8);
+                FLIC_Draw(start_x, 34, spellose_wizard_sphere_seg);
 
             }
 
@@ -430,9 +458,9 @@ void Spell_Of_Mastery_Lose(void)
 
     Assign_Auto_Function(Spell_Of_Mastery_Lose_Draw, 2);
     
-    SBK_SliderAnimStage = 0;
+    _osc_anim_ctr = 0;
 
-    PageFlipEffect = 3;
+    _page_flip_effect = 3;
 
     Set_Page_Off();
 
@@ -440,7 +468,7 @@ void Spell_Of_Mastery_Lose(void)
 
     PageFlip_FX();
 
-    for(SBK_SliderAnimStage = 0; SBK_SliderAnimStage < 43; SBK_SliderAnimStage++)
+    for(_osc_anim_ctr = 0; _osc_anim_ctr < 43; _osc_anim_ctr++)
     {
 
         Mark_Time();
@@ -453,7 +481,7 @@ void Spell_Of_Mastery_Lose(void)
 
         Release_Time(2);
 
-        SBK_SliderAnimStage++;
+        _osc_anim_ctr++;
  
     }
 
@@ -519,7 +547,7 @@ void SoM_Started(int16_t player_idx)
     // SPELLSCR.LBX, 067  "VORTEX3" ""
     Open_File_Animation__HACK(spellscr_lbx_file__ovr138, 67);
 
-    IDK_DiploScrn_scanned_field = 67;
+    _temp_sint_4 = 67;
 
     Set_Mouse_List(1, mouse_list_none);
 
@@ -638,7 +666,7 @@ void Spell_Of_Mastery_Draw(void)
 
     FLIC_Draw(90, 0, wizlab_blue_column_seg);
 
-    if(SBK_SliderAnimStage <= 6)
+    if(_osc_anim_ctr <= 6)
     {
 
         FLIC_Reset_CurrentFrame(IDK_wizard_id_thing_seg);
@@ -649,19 +677,19 @@ void Spell_Of_Mastery_Draw(void)
     else
     {
 
-        if(((SBK_SliderAnimStage - 6) % 60) < 10)
+        if(((_osc_anim_ctr - 6) % 60) < 10)
         {
 
-            FLIC_Set_CurrentFrame(IDK_wizard_id_thing_seg, (((SBK_SliderAnimStage - 6) % 60) / 2));
+            FLIC_Set_CurrentFrame(IDK_wizard_id_thing_seg, (((_osc_anim_ctr - 6) % 60) / 2));
 
         }
         else
         {
 
-            if(((SBK_SliderAnimStage - 6) % 60) > 50)
+            if(((_osc_anim_ctr - 6) % 60) > 50)
             {
 
-                FLIC_Set_CurrentFrame(IDK_wizard_id_thing_seg, ((60 - ((SBK_SliderAnimStage - 6) % 60)) / 2));
+                FLIC_Set_CurrentFrame(IDK_wizard_id_thing_seg, ((60 - ((_osc_anim_ctr - 6) % 60)) / 2));
 
             }
             else
@@ -675,12 +703,12 @@ void Spell_Of_Mastery_Draw(void)
 
         FLIC_Draw(69, 75, IDK_wizard_id_thing_seg);
 
-        if((6 + ((_num_players - 1) * 60)) > SBK_SliderAnimStage)
+        if((6 + ((_num_players - 1) * 60)) > _osc_anim_ctr)
         {
 
             Draw_File_Animation__HACK();
 
-            if(((SBK_SliderAnimStage - 6) % 60) < 9)
+            if(((_osc_anim_ctr - 6) % 60) < 9)
             {
 
                 FLIC_Draw(95, 55, word_434C4);
@@ -717,7 +745,7 @@ void Spell_Of_Mastery(int16_t player_idx)
         Spell_Of_Mastery_Lose();
     }
     
-    SBK_SliderAnimStage = 0;
+    _osc_anim_ctr = 0;
 
     cast_spell_of_mastery_player_idx = player_idx;
 
@@ -770,13 +798,13 @@ void Spell_Of_Mastery(int16_t player_idx)
 
     IDK = 0;
 
-    SBK_SliderAnimStage = 0;
+    _osc_anim_ctr = 0;
 
-    while((SBK_SliderAnimStage < var_4) && (Get_Input() != hotkey_ESC))
+    while((_osc_anim_ctr < var_4) && (Get_Input() != hotkey_ESC))
     {
 
         // IDGI
-        if(((SBK_SliderAnimStage + 65530) % 60) == 0)
+        if(((_osc_anim_ctr + 65530) % 60) == 0)
         {
             while(_players[++IDK].casting_spell_idx == spl_Spell_Of_Return) {}
 
@@ -785,7 +813,7 @@ void Spell_Of_Mastery(int16_t player_idx)
             FLIC_Reset_CurrentFrame(word_434C4);
         }
 
-        if((var_4 - 6) == SBK_SliderAnimStage)
+        if((var_4 - 6) == _osc_anim_ctr)
         {
 
             Release_Block(_screen_seg);
@@ -796,7 +824,7 @@ void Spell_Of_Mastery(int16_t player_idx)
 
         }
 
-        if(SBK_SliderAnimStage == 7)
+        if(_osc_anim_ctr == 7)
         {
 
             wizlab_blue_column_seg = LBX_Reload(splmastr_lbx_file__ovr138, 30, _screen_seg);
@@ -813,7 +841,7 @@ void Spell_Of_Mastery(int16_t player_idx)
 
         Release_Time(3);
 
-        SBK_SliderAnimStage++;
+        _osc_anim_ctr++;
 
     }
 

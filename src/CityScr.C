@@ -182,9 +182,9 @@ void City_Screen__WIP(void)
 
     Set_City_Screen_Help_List();
 
-    if((PageFlipEffect != 0) && (PageFlipEffect != 3))
+    if((_page_flip_effect != 0) && (_page_flip_effect != 3))
     {
-        PageFlipEffect = 0;
+        _page_flip_effect = 0;
     }
 
 
@@ -504,7 +504,7 @@ Capture_Cities_Data();
             if(city_cityscape_fields[itr_cityscape] == input_field_idx)
             {
                 Play_Left_Click();
-                cityscape_bldg_idx = cityscape_bldgs[itr_cityscape].bldg_idx;
+                cityscape_bldg_idx = cityscape_bldg_fields[itr_cityscape].field_bldg_idx;
 
                 if(cityscape_bldg_idx <= NUM_BUILDINGS)
                 {
@@ -779,7 +779,7 @@ void City_Screen_Draw__WIP(void)
         /* jmp  short $+2 */
     }
 
-    Cityscape_Draw__WIP(_city_idx, 4, 101, cityscreen_city_built_bldg_idx, cityscreen_city_built_bldg_idx);
+    Cityscape_Window__WIP(_city_idx, 4, 101, cityscreen_city_built_bldg_idx, cityscreen_city_built_bldg_idx);
 
     Cityscape_Draw_Scanned_Building_Name(city_screen_scanned_field, 1, _CITIES[_city_idx].owner_idx);
 
@@ -1064,7 +1064,7 @@ void City_Screen_Add_Fields__WIP(void)
 
     for(itr = 0; itr < MAX_STACK; itr++)
     {
-        g_unit_window_fields[itr] = -100;
+        g_unit_window_fields[itr] = -100;  // ¿ BUGBUG  should be -1000 ?
     }
 
     city_screen_buy_button = INVALID_FIELD;
@@ -1081,7 +1081,7 @@ void City_Screen_Add_Fields__WIP(void)
 
     City_Add_Fields_City_Enchantments(139, 51);
 
-    City_Add_Fields_Buildings();
+    Cityscape_Add_Fields();
 
     City_Screen_Add_Fields_Production_Window();
 
@@ -1097,7 +1097,7 @@ void City_Screen_Add_Fields__WIP(void)
 // 000BE486 cmp     _colony_bldgs[eax], 0
 // 000BE4EF mov     _colony_bldg_fields[ebx], -1000
 // MoO2  Module: COLONY  N_Bldgs_()
-void City_Add_Fields_Buildings(void)
+void Cityscape_Add_Fields(void)
 {
     int16_t y2;
     int16_t x2;
@@ -1110,10 +1110,10 @@ void City_Add_Fields_Buildings(void)
     for(itr = 0; itr < cityscape_bldg_count; itr++)
     {
 
-        x1 = cityscape_bldgs[itr].x1;
-        y1 = cityscape_bldgs[itr].y1;
-        x2 = cityscape_bldgs[itr].x2;
-        y2 = cityscape_bldgs[itr].y2;
+        x1 = cityscape_bldg_fields[itr].field_x1;
+        y1 = cityscape_bldg_fields[itr].field_y1;
+        x2 = cityscape_bldg_fields[itr].field_x2;
+        y2 = cityscape_bldg_fields[itr].field_y2;
 
         city_cityscape_fields[city_cityscape_field_count] = Add_Hidden_Field(x1, y1, x2, y2, emptystring__ovr054[0], ST_UNDEFINED);
 
@@ -1280,7 +1280,7 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
     // DOMSDOS  Play_Background_Music__STUB();
     sdl2_Play_Background_Music__WIP();
 
-    IDK_Clear_Cityscape_Vanish_Percent();
+    Cityscape_Build_Anim_Reset();
 
     cityscreen_city_built_bldg_idx = bldg_idx;
 }
@@ -1300,7 +1300,7 @@ void Change_Home_City_Name_Popup(int16_t city_idx)
     int16_t UU_RetVal_TextEditDialog;
 #pragma clang diagnostic push
 
-    PageFlipEffect = 0;
+    _page_flip_effect = 0;
 
     color_array[0]  =  97;
     color_array[1]  =  97;
@@ -1354,7 +1354,7 @@ void Change_Home_City_Name_Popup(int16_t city_idx)
 
     strcpy(_CITIES[city_idx].name, Text);
 
-    PageFlipEffect = 3;
+    _page_flip_effect = 3;
 
 }
 

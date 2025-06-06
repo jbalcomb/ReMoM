@@ -154,7 +154,7 @@ int16_t GrowOutLeft;
 
 // WZD dseg:9C8E
 // ...unitialized data...after MSG's, before TBL's...
-int16_t PageFlipEffect;
+int16_t _page_flip_effect;
 
 
 
@@ -212,9 +212,9 @@ char music_lbx__main[] = "music";
 void PageFlip_FX(void)
 {
 
-    switch(PageFlipEffect)
+    switch(_page_flip_effect)
     {
-        case pf_Normal:
+        case pfe_NONE:
         {
             Apply_Palette();
             Toggle_Pages();  // |-> Page_Flip()
@@ -244,7 +244,7 @@ void PageFlip_FX(void)
         } break;
     }
 
-    PageFlipEffect = pf_Normal;  // DEDUCE: PageFlipEffect 0 is the default PageFlipEffect
+    _page_flip_effect = pfe_NONE;  // DEDUCE: PageFlipEffect 0 is the default PageFlipEffect
 
 }
 

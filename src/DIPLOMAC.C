@@ -233,7 +233,7 @@ void Diplomacy_Screen__STUB(void)
     Clear_Fields();
     current_screen = scr_Magic_Screen;
     Fade_Out();
-    PageFlipEffect = 2;
+    _page_flip_effect = 2;
     // TODO  GAME_ReloadWorldData();
     // TODO  GAME_CheckResearch(1);
     Cache_Graphics_Overland();

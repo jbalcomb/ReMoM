@@ -35,40 +35,16 @@ Spell Casting
 Spell Cast Animation
 Spell Researching
 
-
-
 Spell Cast Animation - Global Enchantment
 Global Enchantment Animation
-
-animation counter
-    GAME_MP_SpellVar_1
-player index
-    GAME_MP_SpellVar_3
-spell index
-    SBK_Spell_Index
-
-
 
 Spell Cast Animation - Summoning
 Creature Summon Animation
 
-IDK_SummonAnim()
-IDK_SummonAnim_Load()
-IDK_SummonAnim_Draw()
-
-    GAME_MP_SpellVar_3 = player_idx;
-
-    IDK_DiploScrn_scanned_field = unit_type;
-
-    GUI_Interaction_Done = ST_FALSE;
-    var_6 = 130;
-    ((SBK_SliderAnimStage < var_6) && (GUI_Interaction_Done == ST_FALSE))
-
-
-
 
 
 Spells that take a "Target Wizard"
+...or target wizard spell
 
 Cruel Unminding:
 Death. Instant. Casting Cost: 150 mana. Very Rare.

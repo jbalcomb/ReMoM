@@ -5,29 +5,34 @@
         ovr144
 */
 
-#include "MOX/MOX_DAT.H"  /* _screen_seg */
-
-#include "MOM.H"
 #include "CITYSCAP.H"
+
+#include "MOX/MOM_Data.H"
+#include "MOX/MOX_TYPE.H"
 
 
 
 // WZD dseg:CA78                                                 ¿ BEGIN: Cityscape - ?
 
 // WZD dseg:CA78
-int16_t IDK_animate_new_building_idx;
+int16_t new_bldg_idx;
 
 // WZD dseg:CA7A
 /*
+~ int16_t cityscape_bldg_array->RC[NUM_CITYSCAPE_ROWS][NUM_CITYSCAPE_COLS];
 allocated in Cityscape_Draw()
-44 PR, 704 B
-¿ struct sizeof 46h 70d ?
+ 2: house
+ 1: building
+ 0: open
+-1: unuseable
+-2: road
+-3: tree
+-4: rock
 */
-// struct s_CITYSCAPE * cityscape_bldg_array;
-struct s_CITYSCAPE_CR * cityscape_bldg_array;
+struct s_CITYSCAPE_RC * cityscape_bldg_array;
 
-// WZD dseg:CA7E 00 00                                           IDK_BUILDS1_vertical_mask_seg dw 0      ; DATA XREF: GFX_Swap_AppndCtScap+5EBw
-// WZD dseg:CA80 00 00                                           IDK_BUILDS1_horizontal_mask_seg dw 0    ; DATA XREF: GFX_Swap_AppndCtScap+5D4w ...
+// WZD dseg:CA7E 00 00                                           cityscape_roads_vertical_mask_seg dw 0      ; DATA XREF: GFX_Swap_AppndCtScap+5EBw
+// WZD dseg:CA80 00 00                                           cityscape_roads_horizontal_mask_seg dw 0    ; DATA XREF: GFX_Swap_AppndCtScap+5D4w ...
 
 // WZD dseg:CA82
 int16_t cityscape_background_frame;
@@ -37,7 +42,6 @@ int16_t m_cityscape_summon_city;
 
 // WZD dseg:CA86
 int16_t m_cityscape_fortress_city;
-
 
 // WZD dseg:CA88
 SAMB_ptr cityscape_pict_seg;
@@ -53,16 +57,16 @@ SAMB_ptr cityscape_pict_seg;
 
 
 // WZD o144p01
-void IDK_Clear_Cityscape_Vanish_Percent(void)
+void Cityscape_Build_Anim_Reset(void)
 {
-    IDK_cityscape_vanish_percent = 0;
+    cityscape_build_anim_ctr = 0;
 }
 
 
 // WZD o144p02
-void Cityscape_Draw__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int16_t bldg_idx_1, int16_t bldg_idx_2)
+void Cityscape_Window__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int16_t bldg_idx_1, int16_t bldg_idx_2)
 {
-    uint32_t tmp_random_seed;
+    uint32_t temp_random_seed;
     int16_t itr_players;
     int16_t city_wp;
     int16_t city_wy;
@@ -70,7 +74,7 @@ void Cityscape_Draw__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int16
 
     Update_Remap_Color_Range(7, 7);
 
-    IDK_animate_new_building_idx = bldg_idx_2;
+    new_bldg_idx = bldg_idx_2;
 
     if(_CITIES[city_idx].enchantments[FLYING_FORTRESS] != ST_FALSE)
     {
@@ -93,29 +97,31 @@ void Cityscape_Draw__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int16
         cityscape_background_frame = 4;
     }
 
-    if(bldg_idx_1 < 3) /* bt_Barracks */
+    // ¿ unset bldg_idx_1 ... if it's invalid or normal ?
+    if(bldg_idx_1 < bt_Barracks)
     {
-        bldg_idx_1 = 0;
+        bldg_idx_1 = bt_NONE;
     }
-    if( (bldg_idx_1 > 34) && (bldg_idx_1 < 100))  /* bt_MinersGuild && ¿ ? */
+    if((bldg_idx_1 > bt_MinersGuild) && (bldg_idx_1 < bt_NUM_BUILDINGS))
     {
-        bldg_idx_1 = 0;
+        bldg_idx_1 = bt_NONE;
     }
 
-    tmp_random_seed = Get_Random_Seed();
+    temp_random_seed = Get_Random_Seed();
 
     Mark_Block(_screen_seg);
-    cityscape_pict_seg = Allocate_Next_Block(_screen_seg, 1250);  // 20,000 bytes
-    cityscape_bldgs = (struct s_BLDG *)Allocate_Next_Block(_screen_seg, 176);  // 2,816 bytes  ¿ 16 + 100 * 14 * 2 ?
-    // cityscape_bldg_array = (struct s_CITYSCAPE *)Allocate_Next_Block(_screen_seg, 44);  // 704 bytes ... 15 * sizeof(s_CITYSCAPE) = 690 / 16 = 43 + 1 = 44 ...Or, ((690 + 15) / 16) = 44
-    // cityscape_bldg_array = (struct s_CITYSCAPE_CR *)Allocate_Next_Block(_screen_seg, (((15 * sizeof(struct s_BLDG *)) / 16) + 1));  // 704 bytes ... 15 * sizeof(s_CITYSCAPE) = 690 / 16 = 43 + 1 = 44
-    cityscape_bldg_array = (struct s_CITYSCAPE_CR *)Allocate_Next_Block(_screen_seg, (((15 * 23 * sizeof(struct s_BLDG)) / 16) + 1));  // 704 bytes ... 15 * sizeof(s_CITYSCAPE) = 690 / 16 = 43 + 1 = 44
+
+    cityscape_pict_seg = Allocate_Next_Block(_screen_seg, 1250);  // 1250 PR, 20000 B
+
+    cityscape_bldg_fields = (struct s_BLDG *)Allocate_Next_Block(_screen_seg, 176);  // 176 PR, 2816 B  100 * 14 * 2 = 2800
+
+    cityscape_bldg_array = (struct s_CITYSCAPE_RC *)Allocate_Next_Block(_screen_seg, 44);  // 44 PR, 704   23 * 15 = 345 * 2 = 690
 
     city_wx = _CITIES[city_idx].wx;
     city_wy = _CITIES[city_idx].wy;
     city_wp = _CITIES[city_idx].wp;
     
-    Set_Random_Seed(((city_wx * city_wy) + 10389));  // IDGI:  deterministic per City? Why the addition? Related to (max) wx,wy?
+    Set_Random_Seed((0x2895 + (city_wx * city_wy)));  // IDGI:  deterministic per City? Why the addition? Related to (max) wx,wy?
 
     m_cityscape_fortress_city = ST_FALSE;
     m_cityscape_summon_city = ST_FALSE;
@@ -137,39 +143,37 @@ void Cityscape_Draw__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int16
 
     Cityscape_Draw_Background(city_idx, xstart, ystart, city_wx, city_wy, city_wp);
 
-    Cityscape_Set_BldgStruc__WIP(city_idx, bldg_idx_1);
+    // HERE: bldg_idx_1 is bt_NONE or city walls or a magic building
+    Cityscape_Make_Buildings_Array(city_idx, bldg_idx_1);
 
-    Cityscape_Roads_1__WIP(xstart, ystart);
+    // Cityscape_Roads_1__WIP(xstart, ystart);
 
-    Cityscape_Draw_Buildings_And_Features__WIP(city_idx, xstart, ystart, bldg_idx_1);
+    Cityscape_Draw_Buildings(city_idx, xstart, ystart, bldg_idx_1);
 
-    Cityscape_Draw_Wards_And_Walls__STUB(city_idx, xstart, ystart);
+    // Cityscape_Draw_Wards_And_Walls__STUB(city_idx, xstart, ystart);
 
     cityscape_bldg_anim_ctr  = ((cityscape_bldg_anim_ctr  + 1) %  9);
     cityscape_water_anim_ctr = ((cityscape_water_anim_ctr + 1) % 12);
     cityscape_wall_anim_ctr  = ((cityscape_wall_anim_ctr  + 1) %  4);
 
-    Line(xstart, ystart, (xstart + 204), ystart, 0);
-    Line(xstart, (ystart + 95), (xstart + 204), (ystart + 95), 0);
-    Line(xstart, ystart, xstart, (ystart + 95), 0);
-    Line((xstart + 204), ystart, (xstart + 204), (ystart + 95), 0);
+    Line((xstart      ), (ystart     ), (xstart + 204), (ystart     ), ST_TRANSPARENT);
+    Line((xstart      ), (ystart + 95), (xstart + 204), (ystart + 95), ST_TRANSPARENT);
+    Line((xstart      ), (ystart     ), (xstart      ), (ystart + 95), ST_TRANSPARENT);
+    Line((xstart + 204), (ystart     ), (xstart + 204), (ystart + 95), ST_TRANSPARENT);
 
-    if(IDK_cityscape_vanish_percent < 100)
+    if(cityscape_build_anim_ctr < 100)
     {
-        IDK_cityscape_vanish_percent += 10;
+        cityscape_build_anim_ctr += 10;
     }
 
     Release_Block(_screen_seg);
+
 }
 
 
 // WZD o144p03
-// sub_CD8B0()
+// drake178: sub_CD8B0()
 
-// WZD o144p04
-// IDK_City_Screen_Draw_Cityscape()
-
-// WZD o144p05
 void Cityscape_Roads_1__WIP(int16_t xstart, int16_t ystart)
 {
 
@@ -179,10 +183,10 @@ void Cityscape_Roads_1__WIP(int16_t xstart, int16_t ystart)
 
     Draw_Picture_To_Bitmap(cityscape_roads_seg, cityscape_pict_seg);
 
-    // BUGBUG  FLIC_Reset_CurrentFrame(IDK_BUILDS1_horizontal_mask_seg, 0);
-    FLIC_Reset_CurrentFrame(IDK_BUILDS1_horizontal_mask_seg);
+    // BUGBUG  FLIC_Reset_CurrentFrame(cityscape_roads_horizontal_mask_seg, 0);
+    FLIC_Reset_CurrentFrame(cityscape_roads_horizontal_mask_seg);
 
-    Draw_Picture_To_Bitmap(IDK_BUILDS1_horizontal_mask_seg, GfxBuf_2400B);
+    Draw_Picture_To_Bitmap(cityscape_roads_horizontal_mask_seg, GfxBuf_2400B);
 
     // TODO  Cityscape_Roads_2__STUB(cityscape_pict_seg);
 
@@ -190,7 +194,7 @@ void Cityscape_Roads_1__WIP(int16_t xstart, int16_t ystart)
 
 }
 
-// WZD o144p06
+// WZD o144p04
 /*
 Cityscape_Roads_1()
     |-> Cityscape_Roads_2(cityscape_pict_seg)
@@ -214,7 +218,7 @@ void Cityscape_Roads_2__STUB(SAMB_ptr picture)
 
 }
 
-// WZD o144p07
+// WZD o144p05
 /*
 Cityscape_Roads_2()
     |-> Cityscape_Roads_3((29 + (itr * 10)), 4, IDK_cityscape_pict_seg);
@@ -227,7 +231,7 @@ void Cityscape_Roads_3__STUB(int16_t x, int16_t y, SAMB_ptr picture)
 }
 
 
-// WZD o144p08
+// WZD o144p06
 /*
 Cityscape_Roads_2()
     |-> Cityscape_Roads_4(69, 4, IDK_cityscape_pict_seg);
@@ -240,7 +244,7 @@ void Cityscape_Roads_4__STUB(int16_t x, int16_t y, SAMB_ptr picture)
 }
 
 
-// WZD o144p09
+// WZD o144p07
 /*
 Cityscape_Roads_2()
     |-> Cityscape_Roads_5((70 - (5 * _DI_itr)), ((5 * _DI_itr) - 1), IDK_cityscape_pict_seg);
@@ -253,160 +257,146 @@ void Cityscape_Roads_5__STUB(int16_t x, int16_t y, SAMB_ptr picture)
 }
 
 
-// WZD o144p10
+// WZD o144p08
 /*
 
-Cityscape_Draw__WIP()
-    |-> Cityscape_Draw_Buildings_And_Features__WIP(_SI_city_idx, _DI_xstart, ystart, bldg_idx_1)
+Cityscape_Window__WIP()
+    |-> Cityscape_Draw_Buildings(_SI_city_idx, _DI_xstart, ystart, bldg_idx_1)
 
 */
-void Cityscape_Draw_Buildings_And_Features__WIP(int16_t city_idx, int16_t x_start, int16_t y_start, int16_t bldg_idx)
+void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start, int16_t bldg_idx)
 {
     SAMB_ptr src_pict_seg;
     int16_t cr_bldg_idx;
-    int16_t var_8;
+    int16_t random_shift_1;
     int16_t city_race_house_type;
     int16_t itr_row;
     int16_t itr_col;
-    int16_t IDK_X_or_R;  // _SI_
-    int16_t IDK_Y_or_C;  // _DI_
-
+    int16_t col_sx;  // _SI_
+    int16_t row_sy;  // _DI_
 
     cityscape_bldg_count = 0;
 
     city_race_house_type = _race_type_table[_CITIES[city_idx].race].house_type;
 
+    /*
+        BEGIN:  Buildings
+    */
     for(itr_row = 1; itr_row < NUM_CITYSCAPE_ROWS; itr_row++)
     {
+
         for(itr_col = 0; itr_col < NUM_CITYSCAPE_COLS; itr_col++)
         {
-            IDK_Y_or_C = ((itr_row - 1) * 5);
 
-            if(itr_row > 4)
+            row_sy = ((itr_row - 1) * 5);
+            if(itr_row >  4) { row_sy -= 2; }  // -2  road #1
+            if(itr_row >  8) { row_sy -= 2; }  // -4  road #2
+            if(itr_row > 13) { row_sy -= 2; }  // -6  road #3
+            row_sy += (y_start + 27);
+
+            col_sx = (itr_col * 10);
+            if(itr_col >  3) { col_sx -= 2; }  // -2  road #A
+            if(itr_col >  8) { col_sx -= 2; }  // -4  road #B
+            if(itr_col > 13) { col_sx -= 2; }  // -6  road #C
+            if(itr_col > 18) { col_sx -= 2; }  // -8  road #D
+            col_sx += ((x_start + 27) - (row_sy - y_start - 27));
+
+
+            // cr_bldg_idx = cityscape_bldg_array->RC[itr_row][itr_col];
+            cr_bldg_idx = cityscape_bldg_array->RC[itr_row][itr_col];
+
+
+            // Houses
+            if(cr_bldg_idx == 2)
             {
-                IDK_Y_or_C -= 2;
-            }
-
-            if(itr_row > 8)
-            {
-                IDK_Y_or_C -= 2;
-            }
-
-            if(itr_row > 13)
-            {
-                IDK_Y_or_C -= 2;
-            }
-
-            IDK_Y_or_C += (y_start + 27);
-
-            IDK_X_or_R = (itr_col * 10);
-
-            if(itr_col > 3)
-            {
-                IDK_X_or_R -= 2;
-            }
-
-            if(itr_col > 8)
-            {
-                IDK_X_or_R -= 2;
-            }
-
-            if(itr_col > 13)
-            {
-                IDK_X_or_R -= 2;
-            }
-
-            if(itr_col > 18)
-            {
-                IDK_X_or_R -= 2;
-            }
-
-            IDK_X_or_R += ((x_start + 27) - (IDK_Y_or_C - y_start - 27));
-
-
-
-
-
-            // cr_bldg_idx = cityscape_bldg_array[itr1][itr2].bldg_idx;
-            // cr_bldg_idx = ( (struct s_BLDG *)( cityscape_bldg_array + (itr1 * sizeof(struct s_CITYSCAPE)) + (itr2 * sizeof(struct s_BLDG *)) ) )->bldg_idx;
-            // cr_bldg_idx = cityscape_bldg_array.cr[itr_row][itr_col].bldg_idx;
-            cr_bldg_idx = cityscape_bldg_array->cr[itr_row][itr_col].bldg_idx;
-
-
-            if (cr_bldg_idx == 2)
-            {
-                if ((x_start + 195) > IDK_X_or_R)
+                if((x_start + 195) > col_sx)
                 {
-                    // WTF  FLIC_Draw(IDK_X_or_R, (IDK_Y_or_C - 19), cityscape_trees_seg[(2 + ((city_race_house_type * 10) + Random(5)))]);
+                    FLIC_Draw(col_sx, (row_sy - 19), cityscape_houses_seg[((city_race_house_type * 5) + (Random(5) - 1))]);
                 }
             }
 
-            if (cr_bldg_idx == -3)
+            // Trees
+            if(cr_bldg_idx == -3)
             {
-                var_8 = (Random(3) - 1);
-                if ((x_start + 195) > (IDK_X_or_R + var_8))
+                random_shift_1 = (Random(3) - 1);
+                if((x_start + 195) > (col_sx + random_shift_1))
                 {
-                    // WTF  FLIC_Draw((IDK_X_or_R + var_8), (IDK_Y_or_C - 6 - var_8), cityscape_rocks_seg[(2 + (Random(3)))]);
+                    FLIC_Draw((col_sx + random_shift_1), (row_sy - 6 - random_shift_1), cityscape_trees_seg[(Random(3) - 1)]);
                 }
             }
 
-            if (cr_bldg_idx == -4)
+            // Rocks
+            if(cr_bldg_idx == -4)
             {
-                var_8 = (Random(3) - 1);
-                if ((x_start + 195) > (IDK_X_or_R + var_8))
+                random_shift_1 = (Random(3) - 1);
+                if((x_start + 195) > (col_sx + random_shift_1))
                 {
-                    // WTF  FLIC_Draw((IDK_X_or_R + var_8), (IDK_Y_or_C - 6 - var_8), cityscape_summon_circle_seg[Random(3)]);
+                    FLIC_Draw((col_sx + random_shift_1), (row_sy - 6), cityscape_rocks_seg[(Random(3) - 1)]);
                 }
             }
 
+            
             /*
-                BEGIN:  buildings
+                BEGIN:  Draw Buildings
                     IDA color #11 green,bright,1
             */
-            if((cr_bldg_idx >= bt_Barracks) && (cr_bldg_idx <= bt_MinersGuild))
+            if((cr_bldg_idx >= bt_Barracks) && (cr_bldg_idx <= bt_MinersGuild))  // first real building, not city walls, not magic buildings
             {
-                Cityscape_XY(IDK_X_or_R, IDK_Y_or_C, cr_bldg_idx, bldg_data_table[cr_bldg_idx].G_Animation);
+
+                Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, cr_bldg_idx, bldg_data_table[cr_bldg_idx].shape);
 
                 if (_CITIES[city_idx].bldg_status[cr_bldg_idx] == bs_Removed)
                 {
-                    // TODO  src_pict_seg = IMG_CTY_Rubble[bldg_data_table[cr_bldg_idx].G_Animation];  // ; GFX_Swap_Seg, 2x2 - 2x3 - 3x2 - 3x3 rubble images
-                    // TODO  FLIC_Set_CurrentFrame(src_pict_seg, cityscape_bldg_anim_ctr);
-                    // TODO  FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-                    // TODO  Draw_Picture_To_Bitmap(src_pict_seg, GfxBuf_2400B);
+                    src_pict_seg = cityscape_rubble_seg[bldg_data_table[cr_bldg_idx].shape];  // shape: {2x2, 2x3, 3x2, 3x3}
+                    FLIC_Set_CurrentFrame(src_pict_seg, cityscape_bldg_anim_ctr);
+                    FLIC_Set_LoopFrame_1(GfxBuf_2400B);
+                    Draw_Picture_To_Bitmap(src_pict_seg, GfxBuf_2400B);
                 }
                 else
                 {
                     FLIC_Set_CurrentFrame(bldg_picts_seg[cr_bldg_idx], cityscape_bldg_anim_ctr);
                     Draw_Picture_To_Bitmap(bldg_picts_seg[cr_bldg_idx], GfxBuf_2400B);
-                    if (cr_bldg_idx == IDK_animate_new_building_idx)
+                    if (cr_bldg_idx == new_bldg_idx)
                     {
-                        // TODO  Vanish_Bitmap(GfxBuf_2400B, IDK_cityscape_vanish_percent);
+                        Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
                     }
                     FLIC_Set_LoopFrame_1(GfxBuf_2400B);
                 }
 
-                Draw_Picture(IDK_X_or_R, (IDK_Y_or_C - 32), GfxBuf_2400B);
+                Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
 
                 if((cr_bldg_idx >= bt_Shrine) && (cr_bldg_idx <= bt_Parthenon) && (_CITIES[city_idx].enchantments[EVIL_PRESENCE] != ST_FALSE))
                 {
-                    // TODO  FLIC_Set_CurrentFrame(IMG_CTY_EvilPresnc, cityscape_bldg_anim_ctr);
-                    // TODO  Draw_Picture_To_Bitmap(IMG_CTY_EvilPresnc, GfxBuf_2400B);
-                    if(cr_bldg_idx == IDK_animate_new_building_idx)
+                    FLIC_Set_CurrentFrame(cityscape_evilpresence_seg, cityscape_bldg_anim_ctr);
+                    Draw_Picture_To_Bitmap(cityscape_evilpresence_seg, GfxBuf_2400B);
+                    if(cr_bldg_idx == new_bldg_idx)
                     {
-                        // TODO  Vanish_Bitmap(GfxBuf_2400B, IDK_cityscape_vanish_percent);
+                        Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
                     }
-                    // TODO  FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-                    // TODO  Draw_Picture(IDK_X_or_R, (IDK_Y_or_C - 32), GfxBuf_2400B);
+                    FLIC_Set_LoopFrame_1(GfxBuf_2400B);
+                    Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
                 }
             }
             /*
-                END:  buildings
+                END:  Draw Buildings
             */
 
 
             /*
                 BEGIN:  Dark Rituals  (105)
             */
+            if((cr_bldg_idx == bt_Dark_Rituals) && (bldg_idx != bt_Dark_Rituals))
+            {
+                FLIC_Set_CurrentFrame(cityscape_darkrituals_seg, cityscape_bldg_anim_ctr);
+                Draw_Picture_To_Bitmap(cityscape_darkrituals_seg, GfxBuf_2400B);
+                if(cr_bldg_idx == new_bldg_idx)
+                {
+                    Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
+                }
+                FLIC_Set_LoopFrame_1(GfxBuf_2400B);
+                Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
+                Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, bt_Dark_Rituals, bp_2x3);
+            }
             /*
                 END:  Dark Rituals  (105)
             */
@@ -414,17 +404,17 @@ void Cityscape_Draw_Buildings_And_Features__WIP(int16_t city_idx, int16_t x_star
             /*
                 BEGIN:  Summon Circle  (100)
             */
-            if((cr_bldg_idx == 100) || (bldg_idx == 100))
+            if((cr_bldg_idx == bt_Summoning_Circle) && (bldg_idx != bt_Summoning_Circle))
             {
                 FLIC_Set_CurrentFrame(cityscape_summon_circle_seg, cityscape_bldg_anim_ctr);
                 Draw_Picture_To_Bitmap(cityscape_summon_circle_seg, GfxBuf_2400B);
-                if(cr_bldg_idx == IDK_animate_new_building_idx)
+                if(cr_bldg_idx == new_bldg_idx)
                 {
-                    // TODO  Vanish_Bitmap(GfxBuf_2400B, IDK_cityscape_vanish_percent);
+                    Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
                 }
                 FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-                Draw_Picture(IDK_X_or_R, (IDK_Y_or_C - 32), GfxBuf_2400B);
-                Cityscape_XY(IDK_X_or_R, IDK_Y_or_C, 100, 1);
+                Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
+                Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, bt_Summoning_Circle, bp_2x3);
             }
             /*
                 END:  Summon Circle  (100)
@@ -433,6 +423,18 @@ void Cityscape_Draw_Buildings_And_Features__WIP(int16_t city_idx, int16_t x_star
             /*
                 BEGIN:  Earth Gate  (101)
             */
+            if((cr_bldg_idx == bt_Earth_Gate) && (bldg_idx != bt_Earth_Gate))
+            {
+                FLIC_Set_CurrentFrame(cityscape_earthgate_seg, cityscape_bldg_anim_ctr);
+                Draw_Picture_To_Bitmap(cityscape_earthgate_seg, GfxBuf_2400B);
+                if(cr_bldg_idx == new_bldg_idx)
+                {
+                    Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
+                }
+                FLIC_Set_LoopFrame_1(GfxBuf_2400B);
+                Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
+                Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, bt_Earth_Gate, bp_2x2);
+            }
             /*
                 END:  Earth Gate  (101)
             */
@@ -440,6 +442,19 @@ void Cityscape_Draw_Buildings_And_Features__WIP(int16_t city_idx, int16_t x_star
             /*
                 BEGIN:  Stream Of Life  (102)
             */
+            if((cr_bldg_idx == bt_Stream_Of_Life) && (bldg_idx != bt_Stream_Of_Life))
+            {
+                FLIC_Set_CurrentFrame(cityscape_streamoflife_seg, cityscape_bldg_anim_ctr);
+                Draw_Picture_To_Bitmap(cityscape_streamoflife_seg, GfxBuf_2400B);
+                if(cr_bldg_idx == new_bldg_idx)
+                {
+                    Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
+                }
+                FLIC_Set_LoopFrame_1(GfxBuf_2400B);
+                FLIC_Set_LoopFrame_1(GfxBuf_2400B);  // NOTE: definitely duplicated
+                Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
+                Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, bt_Stream_Of_Life, bp_2x2);
+            }
             /*
                 END:  Stream Of Life  (102)
             */
@@ -447,6 +462,18 @@ void Cityscape_Draw_Buildings_And_Features__WIP(int16_t city_idx, int16_t x_star
             /*
                 BEGIN:  Astral Gate  (103)
             */
+            if((cr_bldg_idx == bt_Astral_Gate) && (bldg_idx != bt_Astral_Gate))
+            {
+                FLIC_Set_CurrentFrame(cityscape_astralgate_seg, cityscape_bldg_anim_ctr);
+                Draw_Picture_To_Bitmap(cityscape_astralgate_seg, GfxBuf_2400B);
+                if(cr_bldg_idx == new_bldg_idx)
+                {
+                    Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
+                }
+                FLIC_Set_LoopFrame_1(GfxBuf_2400B);
+                Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
+                Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, bt_Astral_Gate, bp_2x2);
+            }
             /*
                 END:  Astral Gate  (103)
             */
@@ -454,17 +481,17 @@ void Cityscape_Draw_Buildings_And_Features__WIP(int16_t city_idx, int16_t x_star
             /*
                 BEGIN:  Fortress  (104)
             */
-            if((cr_bldg_idx == 104) || (bldg_idx == 104))
+            if((cr_bldg_idx == bt_Fortress) && (bldg_idx != bt_Fortress))
             {
                 FLIC_Set_CurrentFrame(cityscape_fortress_seg, cityscape_bldg_anim_ctr);
                 Draw_Picture_To_Bitmap(cityscape_fortress_seg, GfxBuf_2400B);
-                if(cr_bldg_idx == IDK_animate_new_building_idx)
+                if(cr_bldg_idx == new_bldg_idx)
                 {
-                    // TODO  Vanish_Bitmap(GfxBuf_2400B, IDK_cityscape_vanish_percent);
+                    Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
                 }
                 FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-                Draw_Picture(IDK_X_or_R, (IDK_Y_or_C - 47), GfxBuf_2400B);
-                Cityscape_XY(IDK_X_or_R, IDK_Y_or_C, 104, 4);
+                Draw_Picture(col_sx, (row_sy - 47), GfxBuf_2400B);
+                Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, bt_Fortress, bp_Fortress);
             }
             /*
                 END:  Fortress  (104)
@@ -473,55 +500,27 @@ void Cityscape_Draw_Buildings_And_Features__WIP(int16_t city_idx, int16_t x_star
             /*
                 BEGIN:  Altar Of Battle  (106)
             */
+            if((cr_bldg_idx == bt_Altar_Of_Battle) && (bldg_idx != bt_Altar_Of_Battle))
+            {
+                FLIC_Set_CurrentFrame(cityscape_altarofbattle_seg, cityscape_bldg_anim_ctr);
+                Draw_Picture_To_Bitmap(cityscape_altarofbattle_seg, GfxBuf_2400B);
+                if(cr_bldg_idx == new_bldg_idx)
+                {
+                    Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
+                }
+                FLIC_Set_LoopFrame_1(GfxBuf_2400B);
+                Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
+                Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, bt_Altar_Of_Battle, bp_2x3);
+            }
             /*
                 END:  Altar Of Battle  (106)
             */
 
-            /*
-                BEGIN:  
-            */
-            /*
-                END:  
-            */
-
-            /*
-                BEGIN:  
-            */
-            /*
-                END:  
-            */
-
-            /*
-                BEGIN:  
-            */
-            /*
-                END:  
-            */
-
-            /*
-                BEGIN:  
-            */
-            /*
-                END:  
-            */
-
-            /*
-                BEGIN:  
-            */
-            /*
-                END:  
-            */
-
-            /*
-                BEGIN:  
-            */
-            /*
-                END:  
-            */
-
-
         }
     }
+    /*
+        END:  Buildings
+    */
 
     /*
         BEGIN:  City Walls
@@ -531,21 +530,20 @@ void Cityscape_Draw_Buildings_And_Features__WIP(int16_t city_idx, int16_t x_star
     {
         FLIC_Set_CurrentFrame(cityscape_city_walls_seg, 0);
         Draw_Picture_To_Bitmap(cityscape_city_walls_seg, GfxBuf_2400B);
-        if(cr_bldg_idx == IDK_animate_new_building_idx)
+        if(cr_bldg_idx == new_bldg_idx)
         {
-            // TODO  Vanish_Bitmap(GfxBuf_2400B, IDK_cityscape_vanish_percent);
+            Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
         }
         FLIC_Set_LoopFrame_1(GfxBuf_2400B);
         Draw_Picture(x_start, (y_start + 82), GfxBuf_2400B);
-        Cityscape_XY(IDK_X_or_R, IDK_Y_or_C, 104, 4);
 
-        cityscape_bldgs[cityscape_bldg_count].bldg_idx = bt_CityWalls;
-        cityscape_bldgs[cityscape_bldg_count].x1 = x_start;
-        cityscape_bldgs[cityscape_bldg_count].y1 = (y_start + 82);
-        cityscape_bldgs[cityscape_bldg_count].x2 = (x_start + 204);
-        cityscape_bldgs[cityscape_bldg_count].y2 = (y_start + 93);
-        cityscape_bldgs[cityscape_bldg_count].IDK_x = (x_start + 102);
-        cityscape_bldgs[cityscape_bldg_count].IDK_y = (y_start + 85);
+        cityscape_bldg_fields[cityscape_bldg_count].field_bldg_idx = bt_CityWalls;
+        cityscape_bldg_fields[cityscape_bldg_count].field_x1 = x_start;
+        cityscape_bldg_fields[cityscape_bldg_count].field_y1 = (y_start + 82);
+        cityscape_bldg_fields[cityscape_bldg_count].field_x2 = (x_start + 204);
+        cityscape_bldg_fields[cityscape_bldg_count].field_y2 = (y_start + 93);
+        cityscape_bldg_fields[cityscape_bldg_count].field_print_sx = (x_start + 102);
+        cityscape_bldg_fields[cityscape_bldg_count].field_print_sy = (y_start + 85);
         cityscape_bldg_count++;
     }
 
@@ -556,345 +554,418 @@ void Cityscape_Draw_Buildings_And_Features__WIP(int16_t city_idx, int16_t x_star
 }
 
 
-// WZD o144p11
+// WZD o144p09
 // MoO2  Module: COLDRAW  Make_Bldg_Array_For_Colony_()
 /*
 
 */
-void Cityscape_Set_BldgStruc__WIP(int16_t city_idx, int16_t bldg_idx)
+void Cityscape_Make_Buildings_Array(int16_t city_idx, int16_t bldg_idx)
 {
-    int16_t var_BC[8];
-    int16_t var_AC[8];
-    int16_t var_9C[8];
-    int16_t var_8C[8];
-    int16_t var_7C[8];
-    int16_t var_6C[8];
-    int16_t var_5C[14];
-    int16_t var_40[14];
-    int16_t house_count;
-    int16_t IDK_itr_bldg_status;
-    int16_t rock_count;
-    int16_t tree_count;
-    int16_t var_1C;
-    int16_t row;
-    int16_t col;
-    int16_t var_16;
-    int16_t var_14;
-    int16_t var_12;
-    int16_t var_10;
-    int16_t var_E;
-    int16_t building_shape_3x3_count;
-    int16_t building_shape_2x3_count;
-    int16_t building_shape_3x2_count;
-    int16_t building_shape_2x2_count;
-    int16_t IDK_itr_bldg;
-    int16_t itr_bldg;  // Dasm uses IDK_itr_bldg
-    int16_t itr2;
-    int16_t itr1;  // _DI_
-    int16_t itr_row;  // Dasm uses itr2
-    int16_t itr_col;  // Dasm uses itr1
+    int16_t rows_3x3[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t cols_3x3[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t rows_2x3[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t cols_2x3[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t rows_3x2[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t cols_3x2[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t rows_2x2[14] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t cols_2x2[14] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t house_count = 0;
+    int16_t bldg_status = 0;
+    int16_t rock_count = 0;
+    int16_t tree_count = 0;
+    int16_t rnd_loc = 0;
+    int16_t row = 0;
+    int16_t col = 0;
+    int16_t tries = 0;
+    int16_t ctr_3x3 = 0;
+    int16_t ctr_2x3 = 0;
+    int16_t ctr_3x2 = 0;
+    int16_t ctr_2x2 = 0;
+    int16_t building_shape_3x3_count = 0;
+    int16_t building_shape_2x3_count = 0;
+    int16_t building_shape_3x2_count = 0;
+    int16_t building_shape_2x2_count = 0;
+    int16_t itr_bldg = 0;
+    int16_t itr2 = 0;
+    int16_t itr1 = 0;  // _DI_
+    int16_t itr_row = 0;  // Dasm uses itr2
+    int16_t itr_col = 0;  // Dasm uses itr1
+    int16_t DBG_ever_is = 0;
 
-    for(itr_row = 1; itr_row < NUM_CITYSCAPE_ROWS; itr_row++)
+    /*
+        BEGIN:  Clear buildings array  (MoO2  Module: COLONY  Clear_Bldgs_Array_())
+    */
     {
-        for(itr_col = 0; itr_col < NUM_CITYSCAPE_COLS; itr_col++)
+        for(itr_row = 1; itr_row < NUM_CITYSCAPE_ROWS; itr_row++)
         {
-            cityscape_bldg_array->cr[itr_row][itr_col].bldg_idx = 0;
-        }
-    }
-
-    for(itr_row = 4; itr_row < NUM_CITYSCAPE_ROWS; itr_row++)
-    {
-        cityscape_bldg_array->cr[itr_row][0].bldg_idx = -1;
-    }
-
-    for(itr_row = 7; itr_row < NUM_CITYSCAPE_ROWS; itr_row++)
-    {
-        cityscape_bldg_array->cr[itr_row][1].bldg_idx = -1;
-    }
-
-    for(itr_row = 10; itr_row < NUM_CITYSCAPE_ROWS; itr_row++)
-    {
-        cityscape_bldg_array->cr[itr_row][2].bldg_idx = -1;
-    }
-
-    for(itr_row = 12; itr_row < NUM_CITYSCAPE_ROWS; itr_row++)
-    {
-        cityscape_bldg_array->cr[itr_row][3].bldg_idx = -1;
-    }
-
-    for(itr_col = 19; itr_col < NUM_CITYSCAPE_COLS; itr_col++)
-    {
-        for(itr_row = 0; itr_row < 5; itr_row++)
-        {
-            cityscape_bldg_array->cr[itr_row][itr_col].bldg_idx = -1;
-        }
-    }
-
-    cityscape_bldg_array->cr[6][21].bldg_idx = -1;
-    cityscape_bldg_array->cr[6][22].bldg_idx = -1;
-    cityscape_bldg_array->cr[7][22].bldg_idx = -1;
-    cityscape_bldg_array->cr[0][18].bldg_idx = -1;
-
-    // fortress or building type 104
-    if(
-        (m_cityscape_fortress_city == ST_TRUE)
-        ||
-        (bldg_idx == 104)
-    )
-    {
-        for(itr2 = 10; itr2 < 13; itr2++)
-        {
-            for(itr1 = 6; itr1 < 9; itr1++)
+            for(itr_col = 0; itr_col < NUM_CITYSCAPE_COLS; itr_col++)
             {
-                cityscape_bldg_array->cr[itr1][itr2].bldg_idx = 1;
+                cityscape_bldg_array->RC[itr_row][itr_col] = 0;
+            }
+        }
+    }
+    /*
+        BEGIN:  Clear buildings array  (MoO2  Module: COLONY  Clear_Bldgs_Array_())
+    */
+
+    /*
+        BEGIN:  Grid Cell Reservations
+    */
+    {
+
+        /*
+            BEGIN:  Reserve Corners
+        */
+        {
+            for(itr_row = 4; itr_row < NUM_CITYSCAPE_ROWS; itr_row++)
+            {
+                cityscape_bldg_array->RC[itr_row][0] = -1;
+            }
+            for(itr_row = 7; itr_row < NUM_CITYSCAPE_ROWS; itr_row++)
+            {
+                cityscape_bldg_array->RC[itr_row][1] = -1;
+            }
+            for(itr_row = 10; itr_row < NUM_CITYSCAPE_ROWS; itr_row++)
+            {
+                cityscape_bldg_array->RC[itr_row][2] = -1;
+            }
+            for(itr_row = 12; itr_row < NUM_CITYSCAPE_ROWS; itr_row++)
+            {
+                cityscape_bldg_array->RC[itr_row][3] = -1;
+            }
+
+            for(itr_col = 19; itr_col < NUM_CITYSCAPE_COLS; itr_col++)
+            {
+                for(itr_row = 0; itr_row < 5; itr_row++)
+                {
+                    cityscape_bldg_array->RC[itr_row][itr_col] = -1;
+                }
+            }
+        }
+        /*
+            END:  Reserve Corners
+        */
+
+        /*
+            BEGIN:  Reserve IDK#1
+        */
+        {
+            cityscape_bldg_array->RC[6][21] = -1;
+            cityscape_bldg_array->RC[6][22] = -1;
+            cityscape_bldg_array->RC[7][22] = -1;
+            cityscape_bldg_array->RC[0][18] = -1;
+        }
+        /*
+            END:  Reserve IDK#1
+        */
+
+        /*
+            BEGIN:  Reserve Fortress
+        */
+        {
+            if(
+                (m_cityscape_fortress_city == ST_TRUE)
+                ||
+                (bldg_idx == bt_Fortress)
+            )
+            {
+                for(itr2 = 10; itr2 < 13; itr2++)
+                {
+                    for(itr1 = 6; itr1 < 9; itr1++)
+                    {
+                        cityscape_bldg_array->RC[itr1][itr2] = 1;
+                    }
+                }
+
+                for(itr1 = 1; itr1 <= 2; itr1++)
+                {
+                    cityscape_bldg_array->RC[itr1][7] = -1;
+                }
+
+                for(itr1 = 1; itr1 <= 2; itr1++)
+                {
+                    cityscape_bldg_array->RC[itr1][8] = -1;
+                }
+
+                for(itr1 = 3; itr1 <= 4; itr1++)
+                {
+                    cityscape_bldg_array->RC[itr1][10] = -1;
+                }
+
+            }
+        }
+        /*
+            END:  Reserve Fortress
+        */
+
+        /*
+            BEGIN:  Reserve IDK#2
+        */
+        {
+            cityscape_bldg_array->RC[7][22] = -1;
+            cityscape_bldg_array->RC[8][22] = -1;
+            cityscape_bldg_array->RC[7][21] = -1;
+            cityscape_bldg_array->RC[8][21] = -1;
+        }
+        /*
+            END:  Reserve IDK#2
+        */
+
+        /*
+            BEGIN: Reserve Roads
+        */
+        {
+            for(itr2 = 0; itr2 < 18; itr2++)
+            {
+                cityscape_bldg_array->RC[0][itr2] = -2;    // Road #1
+            }
+
+            for(itr2 = 1; itr2 < 23; itr2++)
+            {
+                cityscape_bldg_array->RC[10][itr2] = -2;   // Road #2
+            }
+
+            for(itr2 = 3; itr2 < 23; itr2++)
+            {
+                cityscape_bldg_array->RC[9][itr2] = -2;    // Road #3
+            }
+
+            for(itr2 = 4; itr2 < 23; itr2++)
+            {
+                cityscape_bldg_array->RC[14][itr2] = -2;   // Road #4
+            }
+
+            for(itr1 = 0; itr1 < 15; itr1++)
+            {
+                cityscape_bldg_array->RC[itr1][4] = -2;    // Road #A
+            }
+
+            for(itr1 = 0; itr1 < 15; itr1++)
+            {
+                cityscape_bldg_array->RC[itr1][9] = -2;    // Road #B
+            }
+
+            for(itr1 = 0; itr1 < 15; itr1++)
+            {
+                cityscape_bldg_array->RC[itr1][13] = -2;   // Road #C
+            }
+
+            for(itr1 = 1; itr1 < 15; itr1++)
+            {
+                cityscape_bldg_array->RC[itr1][18] = -2;   // Road #D
+            }
+        }
+        /*
+            END: Reserve Roads
+        */
+        
+    }
+    /*
+        END:  Grid Cell Reservations
+    */
+
+
+
+    /*
+        BEGIN:  Counts Per Building Shape
+    */
+    {
+        building_shape_2x2_count = 0;
+        building_shape_3x2_count = 0;
+        building_shape_2x3_count = 0;
+        building_shape_3x3_count = 0;
+
+        for(itr_bldg = bt_Barracks; itr_bldg <= bt_MinersGuild; itr_bldg++)  /* first through last normal building */
+        {
+
+            bldg_status = _CITIES[city_idx].bldg_status[itr_bldg];
+
+            if(
+                (
+                    (bldg_status < bs_Built)
+                    &&
+                    (itr_bldg != bldg_idx)
+                )
+                ||
+                (itr_bldg == bt_ShipYard)
+                ||
+                (itr_bldg == bt_ShipWrightsGuild)
+                ||
+                (itr_bldg == bt_MaritimeGuild)
+            )
+            {
+                continue;
+            }
+        
+            switch(bldg_data_table[itr_bldg].shape)
+            {
+                case bp_2x2:
+                {
+                    building_shape_2x2_count++;
+                } break;
+                case bp_2x3:
+                {
+                    building_shape_2x3_count++;
+                } break;
+                case bp_3x2:
+                {
+                    building_shape_3x2_count++;
+                } break;
+                case bp_3x3:
+                {
+                    building_shape_3x3_count++;
+                } break;
             }
         }
 
-        for(itr1 = 1; itr1 <= 2; itr1++)
-        {
-            cityscape_bldg_array->cr[itr1][7].bldg_idx = -1;
-        }
-
-        for(itr1 = 1; itr1 <= 2; itr1++)
-        {
-            cityscape_bldg_array->cr[itr1][8].bldg_idx = -1;
-        }
-
-        for(itr1 = 3; itr1 <= 4; itr1++)
-        {
-            cityscape_bldg_array->cr[itr1][10].bldg_idx = -1;
-        }
-
-    }
-
-    cityscape_bldg_array->cr[7][22].bldg_idx = -1;
-    cityscape_bldg_array->cr[8][22].bldg_idx = -1;
-    cityscape_bldg_array->cr[7][21].bldg_idx = -1;
-    cityscape_bldg_array->cr[8][21].bldg_idx = -1;
-
-    for(itr2 = 0; itr2 < 18; itr2++)
-    {
-        cityscape_bldg_array->cr[0][itr2].bldg_idx = -2;
-    }
-
-    for(itr2 = 1; itr2 < 23; itr2++)
-    {
-        cityscape_bldg_array->cr[10][itr2].bldg_idx = -2;
-    }
-
-    for(itr2 = 3; itr2 < 23; itr2++)
-    {
-        cityscape_bldg_array->cr[9][itr2].bldg_idx = -2;
-    }
-
-    for(itr2 = 4; itr2 < 23; itr2++)
-    {
-        cityscape_bldg_array->cr[14][itr2].bldg_idx = -2;
-    }
-
-    for(itr1 = 0; itr1 < 15; itr1++)
-    {
-        cityscape_bldg_array->cr[itr1][4].bldg_idx = -2;
-    }
-
-    for(itr1 = 0; itr1 < 15; itr1++)
-    {
-        cityscape_bldg_array->cr[itr1][9].bldg_idx = -2;
-    }
-
-    for(itr1 = 0; itr1 < 15; itr1++)
-    {
-        cityscape_bldg_array->cr[itr1][13].bldg_idx = -2;
-    }
-
-    for(itr1 = 1; itr1 < 15; itr1++)
-    {
-        cityscape_bldg_array->cr[itr1][18].bldg_idx = -2;
-    }
-
-    building_shape_2x2_count = 0;
-    building_shape_3x2_count = 0;
-    building_shape_2x3_count = 0;
-    building_shape_3x3_count = 0;
-
-    for(IDK_itr_bldg = bt_Barracks; IDK_itr_bldg <= bt_MinersGuild; IDK_itr_bldg++)
-    {
-        IDK_itr_bldg_status = _CITIES[city_idx].bldg_status[IDK_itr_bldg];
-
         if(
-            (
-                (IDK_itr_bldg_status < bs_Built)
-                &&
-                (IDK_itr_bldg != bldg_idx)
-            )
+            (m_cityscape_summon_city != ST_FALSE)
             ||
-            (IDK_itr_bldg == bt_ShipYard)
-            ||
-            (IDK_itr_bldg == bt_ShipWrightsGuild)
-            ||
-            (IDK_itr_bldg == bt_MaritimeGuild)
+            (bldg_idx == bt_Summoning_Circle)
         )
         {
-            continue;
+            building_shape_2x3_count++;
         }
+
+        if(
+            (_CITIES[city_idx].enchantments[EARTH_GATE] != ST_FALSE)
+            ||
+            (bldg_idx == bt_Earth_Gate)
+        )
+        {
+            building_shape_2x2_count++;
+        }
+
+        if(
+            (_CITIES[city_idx].enchantments[STREAM_OF_LIFE] != ST_FALSE)
+            ||
+            (bldg_idx == bt_Stream_Of_Life)
+        )
+        {
+            building_shape_2x2_count++;
+        }
+
+        if(
+            (_CITIES[city_idx].enchantments[ASTRAL_GATE] != ST_FALSE)
+            ||
+            (bldg_idx == bt_Astral_Gate)
+        )
+        {
+            building_shape_2x2_count++;
+        }
+
+        if(
+            (_CITIES[city_idx].enchantments[DARK_RITUALS] != ST_FALSE)
+            ||
+            (bldg_idx == bt_Dark_Rituals)
+        )
+        {
+            building_shape_2x3_count++;
+        }
+
+        if(
+            (_CITIES[city_idx].enchantments[ALTAR_OF_BATTLE] != ST_FALSE)
+            ||
+            (bldg_idx == bt_Altar_Of_Battle)
+        )
+        {
+            building_shape_2x3_count++;
+        }
+    }
+    /*
+        END:  Counts Per Building Shape
+    */
+
+
+
+    /*
+        BEGIN:  Reserve Port
+    */
+    {
+        // {..., bt_ShipWrightsGuild, bt_ShipYard, bt_MaritimeGuild, ...}
+        // sets *occuppied* for...
+        // {{6,2},{6,3},{7,2},{7,3},{8,2},{8,3}}
+        for(itr_bldg = bt_ShipWrightsGuild; itr_bldg <= bt_MaritimeGuild; itr_bldg++)
+        {
+            if(((_CITIES[city_idx].bldg_status[itr_bldg] >= bs_Built) || (itr_bldg == bldg_idx)))
+            {
+                for(itr_row = 6; itr_row < 9; itr_row++)
+                {
+                    for(itr_col = 2; itr_col < 4; itr_col++)
+                    {
+                        cityscape_bldg_array->RC[itr_row][itr_col] = 1;
+                    }
+                }
+            }
+        }
+    }
+    /*
+        END:  Reserve Port
+    */
+
     
-        switch(bldg_data_table[IDK_itr_bldg].G_Animation)
-        {
-            case bp_2x2:
-            {
-                building_shape_2x2_count++;
-            } break;
-            case bp_2x3:
-            {
-                building_shape_2x3_count++;
-            } break;
-            case bp_3x2:
-            {
-                building_shape_3x2_count++;
-            } break;
-            case bp_3x3:
-            {
-                building_shape_3x3_count++;
-            } break;
-        }
-    }
 
-    if(
-        (m_cityscape_summon_city != ST_FALSE)
-        ||
-        (bldg_idx == 100)
-    )
-    {
-        building_shape_2x3_count++;
-    }
-
-    if(
-        (_CITIES[city_idx].enchantments[EARTH_GATE] != ST_FALSE)
-        ||
-        (bldg_idx == 101)
-    )
-    {
-        building_shape_2x2_count++;
-    }
-
-    if(
-        (_CITIES[city_idx].enchantments[STREAM_OF_LIFE] != ST_FALSE)
-        ||
-        (bldg_idx == 102)
-    )
-    {
-        building_shape_2x2_count++;
-    }
-
-    if(
-        (_CITIES[city_idx].enchantments[ASTRAL_GATE] != ST_FALSE)
-        ||
-        (bldg_idx == 103)
-    )
-    {
-        building_shape_2x2_count++;
-    }
-
-    if(
-        (_CITIES[city_idx].enchantments[DARK_RITUALS] != ST_FALSE)
-        ||
-        (bldg_idx == 105)
-    )
-    {
-        building_shape_2x3_count++;
-    }
-
-    if(
-        (_CITIES[city_idx].enchantments[ALTAR_OF_BATTLE] != ST_FALSE)
-        ||
-        (bldg_idx == 106)
-    )
-    {
-        building_shape_2x3_count++;
-    }
-
-    // {..., bt_ShipWrightsGuild, bt_ShipYard, bt_MaritimeGuild, ...}
-    for(itr_bldg = 12; itr_bldg <= 14; itr_bldg++)
-    {
-        if(
-            (
-                (_CITIES[city_idx].bldg_status[itr_bldg] < bs_Built)
-                &&
-                (itr_bldg != bldg_idx)
-            )
-        )
-        {
-            continue;
-        }
-
-        for(itr_row = 6; itr_row < 9; itr_row++)
-        {
-            for(itr_col = 2; itr_col < 4; itr_col++)
-            {
-                cityscape_bldg_array->cr[itr_row][itr_col].bldg_idx = 1;
-            }
-        }
-
-    }
-
-
+    /*
+        BEGIN: Building Placements
+    */
+    
     /*
         BEGIN:  building_shape_3x3_count
     */
    {
-        var_1C = 3;
-        IDK_itr_bldg = 0;
-        var_16 = 0;
+        rnd_loc = 3;
+        itr_bldg = 0;
+        tries = 0;
 
-        while(IDK_itr_bldg < building_shape_3x3_count)
+        while(itr_bldg < building_shape_3x3_count)
         {
-            col = ((Random((var_1C + 1)) + 10) - (var_1C / 2));
-            row = ((Random((var_1C + 1)) +  6) - (var_1C / 2));
+            col = ((10 + Random((rnd_loc + 1))) - (rnd_loc / 2));
+            row = (( 6 + Random((rnd_loc + 1))) - (rnd_loc / 2));
 
-            if((col >= 0) && (col < 20) && (row >= 0) && (row < 12))
+            if((col >= 0) && (col < (NUM_CITYSCAPE_COLS - 3)) && (row >= 0) && (row < (NUM_CITYSCAPE_ROWS - 3)))
             {
                 if(
-                    cityscape_bldg_array->cr[(row + 0)][(col + 0)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 0)][(col + 1)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 0)][(col + 2)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 1)][(col + 0)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 1)][(col + 1)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 1)][(col + 2)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 2)][(col + 0)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 2)][(col + 1)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 2)][(col + 2)].bldg_idx == 0
+                    cityscape_bldg_array->RC[(row + 0)][(col + 0)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 0)][(col + 1)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 0)][(col + 2)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 1)][(col + 0)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 1)][(col + 1)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 1)][(col + 2)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 2)][(col + 0)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 2)][(col + 1)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 2)][(col + 2)] == 0
 
                 )
                 {
-                    var_16 = 0;
+                    tries = 0;
 
-                    var_AC[IDK_itr_bldg] = col;
-                    var_BC[IDK_itr_bldg] = row;
+                    cols_3x3[itr_bldg] = col;
+                    rows_3x3[itr_bldg] = row;
 
-                    IDK_itr_bldg++;
+                    itr_bldg++;
 
                     for(itr_row = 0; itr_row < 3; itr_row++)
                     {
                         for(itr_col = 0; itr_col < 3; itr_col++)
                         {
-                            cityscape_bldg_array->cr[(row + itr_row)][(col + itr_col)].bldg_idx = 1;
+                            cityscape_bldg_array->RC[(row + itr_row)][(col + itr_col)] = 1;
                         }
                     }
 
                 }
 
-                var_16++;
+                tries++;
 
-                if(var_16 > 500)
+                if(tries > 500)
                 {
-                    var_16 = 0;
+                    tries = 0;
                     building_shape_3x3_count--;
                 }
             }
 
-            if(var_1C < 30)
+            if(rnd_loc < 30)
             {
-                var_1C++;
+                rnd_loc++;
             }
         }
    }
@@ -908,58 +979,58 @@ void Cityscape_Set_BldgStruc__WIP(int16_t city_idx, int16_t bldg_idx)
     */
     {
 
-        var_1C = 3;
-        IDK_itr_bldg = 0;
-        var_16 = 0;
+        rnd_loc = 3;
+        itr_bldg = 0;
+        tries = 0;
 
-        while(IDK_itr_bldg < building_shape_2x3_count)
+        while(itr_bldg < building_shape_2x3_count)
         {
-            col = ((Random((var_1C + 1)) + 10) - (var_1C / 2));
-            row = ((Random((var_1C + 1)) +  6) - (var_1C / 2));
+            col = ((10 + Random((rnd_loc + 1))) - (rnd_loc / 2));
+            row = (( 6 + Random((rnd_loc + 1))) - (rnd_loc / 2));
 
-            if((col >= 0) && (col < 20) && (row >= 0) && (row < 13))
+            if((col >= 0) && (col < (NUM_CITYSCAPE_COLS - 3)) && (row >= 0) && (row < (NUM_CITYSCAPE_ROWS - 2)))
             {
                 if(
-                    cityscape_bldg_array->cr[(row + 0)][(col + 0)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 0)][(col + 1)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 0)][(col + 2)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 1)][(col + 0)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 1)][(col + 1)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 1)][(col + 2)].bldg_idx == 0
+                    cityscape_bldg_array->RC[(row + 0)][(col + 0)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 0)][(col + 1)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 0)][(col + 2)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 1)][(col + 0)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 1)][(col + 1)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 1)][(col + 2)] == 0
 
                 )
                 {
-                    var_16 = 0;
+                    tries = 0;
 
-                    var_8C[IDK_itr_bldg] = col;
-                    var_9C[IDK_itr_bldg] = row;
+                    cols_2x3[itr_bldg] = col;
+                    rows_2x3[itr_bldg] = row;
 
-                    IDK_itr_bldg++;
+                    itr_bldg++;
 
                     for(itr1 = 0; itr1 < 2; itr1++)
                     {
                         for(itr2 = 0; itr2 < 3; itr2++)
                         {
-                            cityscape_bldg_array->cr[(row + itr1)][(col + itr2)].bldg_idx = 1;
+                            cityscape_bldg_array->RC[(row + itr1)][(col + itr2)] = 1;
                         }
                     }
 
                 }
 
-                var_16++;
+                tries++;
 
-                if(var_16 > 500)
+                if(tries > 500)
                 {
-                    var_16 = 0;
+                    tries = 0;
                     building_shape_2x3_count--;
                 }
             }
 
-            if(var_1C < 30)
+            if(rnd_loc < 30)
             {
                 if(Random(3) == 1)
                 {
-                    var_1C++;
+                    rnd_loc++;
                 }
             }
 
@@ -978,57 +1049,57 @@ void Cityscape_Set_BldgStruc__WIP(int16_t city_idx, int16_t bldg_idx)
     */
     {
 
-        var_1C = 3;
-        IDK_itr_bldg = 0;
-        var_16 = 0;
+        rnd_loc = 3;
+        itr_bldg = 0;
+        tries = 0;
 
-        while(IDK_itr_bldg < building_shape_3x2_count)
+        while(itr_bldg < building_shape_3x2_count)
         {
-            col = ((Random((var_1C + 1)) + 10) - (var_1C / 2));
-            row = ((Random((var_1C + 1)) +  6) - (var_1C / 2));
+            col = ((10 + Random((rnd_loc + 1))) - (rnd_loc / 2));
+            row = (( 6 + Random((rnd_loc + 1))) - (rnd_loc / 2));
 
-            if((col >= 0) && (col < 21) && (row >= 0) && (row < 12))
+            if((col >= 0) && (col < (NUM_CITYSCAPE_COLS - 2)) && (row >= 0) && (row < (NUM_CITYSCAPE_ROWS - 3)))
             {
                 if(
-                    cityscape_bldg_array->cr[(row + 0)][(col + 0)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 0)][(col + 1)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 1)][(col + 0)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 1)][(col + 1)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 2)][(col + 0)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 2)][(col + 1)].bldg_idx == 0
+                    cityscape_bldg_array->RC[(row + 0)][(col + 0)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 0)][(col + 1)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 1)][(col + 0)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 1)][(col + 1)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 2)][(col + 0)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 2)][(col + 1)] == 0
                 )
                 {
-                    var_16 = 0;
+                    tries = 0;
 
-                    var_6C[IDK_itr_bldg] = col;
-                    var_7C[IDK_itr_bldg] = row;
+                    cols_3x2[itr_bldg] = col;
+                    rows_3x2[itr_bldg] = row;
 
-                    IDK_itr_bldg++;
+                    itr_bldg++;
 
                     for(itr1 = 0; itr1 < 3; itr1++)
                     {
                         for(itr2 = 0; itr2 < 2; itr2++)
                         {
-                            cityscape_bldg_array->cr[(row + itr1)][(col + itr2)].bldg_idx = 1;
+                            cityscape_bldg_array->RC[(row + itr1)][(col + itr2)] = 1;
                         }
                     }
 
                 }
 
-                var_16++;
+                tries++;
 
-                if(var_16 > 500)
+                if(tries > 500)
                 {
-                    var_16 = 0;
+                    tries = 0;
                     building_shape_3x2_count--;
                 }
             }
 
-            if(var_1C < 30)
+            if(rnd_loc < 30)
             {
                 if(Random(3) == 1)
                 {
-                    var_1C++;
+                    rnd_loc++;
                 }
             }
 
@@ -1040,154 +1111,116 @@ void Cityscape_Set_BldgStruc__WIP(int16_t city_idx, int16_t bldg_idx)
         END:  building_shape_3x2_count
     */
 
-
-
     /*
         BEGIN:  building_shape_2x2_count
     */
     {
-
-        var_1C = 3;
-        IDK_itr_bldg = 0;
-        var_16 = 0;
-
-        while(IDK_itr_bldg < building_shape_2x2_count)
+        rnd_loc = 3;
+        itr_bldg = 0;
+        tries = 0;
+        while(itr_bldg < building_shape_2x2_count)
         {
-            col = ((Random((var_1C + 1)) + 10) - (var_1C / 2));
-            row = ((Random((var_1C + 1)) +  6) - (var_1C / 2));
-
-            if((col >= 0) && (col < 21) && (row >= 0) && (row < 13))
+            col = ((10 + Random((rnd_loc + 1))) - (rnd_loc / 2));
+            row = (( 6 + Random((rnd_loc + 1))) - (rnd_loc / 2));
+            if((col >= 0) && (col < (NUM_CITYSCAPE_COLS - 2)) && (row >= 0) && (row < (NUM_CITYSCAPE_ROWS - 2)))
             {
                 if(
-                    cityscape_bldg_array->cr[(row + 0)][(col + 0)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 0)][(col + 1)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 1)][(col + 0)].bldg_idx == 0 &&
-                    cityscape_bldg_array->cr[(row + 1)][(col + 1)].bldg_idx == 0
+                    cityscape_bldg_array->RC[(row + 0)][(col + 0)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 0)][(col + 1)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 1)][(col + 0)] == 0 &&
+                    cityscape_bldg_array->RC[(row + 1)][(col + 1)] == 0
                 )
                 {
-                    var_16 = 0;
-
-                    var_40[IDK_itr_bldg] = col;
-                    var_5C[IDK_itr_bldg] = row;
-
-                    IDK_itr_bldg++;
-
+                    tries = 0;
+                    cols_2x2[itr_bldg] = col;
+                    rows_2x2[itr_bldg] = row;
+                    itr_bldg++;
                     for(itr1 = 0; itr1 < 2; itr1++)
                     {
                         for(itr2 = 0; itr2 < 2; itr2++)
                         {
-                            cityscape_bldg_array->cr[(row + itr1)][(col + itr2)].bldg_idx = 1;
+                            cityscape_bldg_array->RC[(row + itr1)][(col + itr2)] = 1;
                         }
                     }
-
                 }
-
-                var_16++;
-
-                if(var_16 > 500)
+                tries++;
+                if(tries > 500)
                 {
-                    var_16 = 0;
+                    tries = 0;
                     building_shape_2x2_count--;
                 }
             }
-
-            if(var_1C < 30)
+            if(rnd_loc < 30)
             {
                 if(Random(3) == 1)
                 {
-                    var_1C++;
+                    rnd_loc++;
                 }
             }
-
         }
-
-
     }
     /*
         END:  building_shape_2x2_count
     */
 
-
     /*
-        BEGIN:  houses
+        BEGIN:  Houses Placement
     */
     {
         house_count = (_CITIES[city_idx].population * 8);
-
         if(house_count == 0)
         {
-
             house_count = 1;
-
         }
-
-        var_1C = 3;
-
-        for(IDK_itr_bldg = 0; IDK_itr_bldg < house_count; IDK_itr_bldg++)
-        
+        rnd_loc = 3;
+        for(itr_bldg = 0; itr_bldg < house_count; itr_bldg++)
         {
-            col = ((Random((var_1C + 1)) + 10) - (var_1C / 2));
-
-            row = ((Random((var_1C + 1)) +  6) - (var_1C / 2));
-
-            if((col >= 0) && (col < 23) && (row >= 0) && (row < 15))
+            col = ((10 + Random((rnd_loc + 1))) - (rnd_loc / 2));
+            row = (( 6 + Random((rnd_loc + 1))) - (rnd_loc / 2));
+            if(
+                ((col >= 0) && (col < NUM_CITYSCAPE_COLS) && (row >= 0) && (row < NUM_CITYSCAPE_ROWS))
+                &&
+                (cityscape_bldg_array->RC[row][col] == 0)
+            )
             {
-
-                if(cityscape_bldg_array->cr[row][col].bldg_idx == 0)
-                {
-
-                    cityscape_bldg_array->cr[row][col].bldg_idx = 2;
-
-                }
-
+                    cityscape_bldg_array->RC[row][col] = 2;
             }
             else
             {
-
-                if(Random(4) == 1)
+                if(rnd_loc < 30)
                 {
-
-                    if(var_1C < 30)
+                    if(Random(4) == 1)
                     {
-
-                        var_1C++;
-
+                        rnd_loc++;
                     }
-
                 }
-
                 if(Random(4) != 1)
                 {
-
-                    IDK_itr_bldg--;
-
+                    itr_bldg--;
                 }
-                
             }
-
         }
-
     }
     /*
-        END:  houses
+        END:  Houses Placement
     */
 
-
     /*
-        BEGIN:  trees & rocks
+        BEGIN:  Trees Placement
+        BEGIN:  Rocks Placement
     */
     {
         if(
             (Square_Is_Forest(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) == ST_TRUE)
             ||
-            (_race_type_table[_CITIES[city_idx].race].house_type == 1)
+            (_race_type_table[_CITIES[city_idx].race].house_type == 1)  /* tree house */
         )
         {
-            tree_count = (Random(20) + 80);
+            tree_count = (80 + Random(20));
         }
         else
         {
-            tree_count = (Random(8) + Random(8) + 5);
+            tree_count = (5 + Random(8) + Random(8));
         }
 
         if(
@@ -1196,242 +1229,232 @@ void Cityscape_Set_BldgStruc__WIP(int16_t city_idx, int16_t bldg_idx)
             (Square_Is_Hills(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) == ST_TRUE)
         )
         {
-            rock_count = (Random(10) + 20);
+            rock_count = (20 + Random(10));
         }
         else
         {
             rock_count = (Random(8) + Random(8));
         }
 
-
-        var_1C = 6;
-        for(IDK_itr_bldg = 0; IDK_itr_bldg < tree_count; IDK_itr_bldg++)
+        rnd_loc = 6;
+        for(itr_bldg = 0; itr_bldg < tree_count; itr_bldg++)
         {
-            col = ((Random((var_1C + 1)) + 10) - (var_1C / 2));
-            row = ((Random((var_1C + 1)) +  6) - (var_1C / 2));
+            col = ((10 + Random((rnd_loc + 1))) - (rnd_loc / 2));
+            row = (( 6 + Random((rnd_loc + 1))) - (rnd_loc / 2));
 
-            if((col >= 0) && (col < 23) && (row >= 0) && (row < 15))
+            if(
+                ((col >= 0) && (col < NUM_CITYSCAPE_COLS) && (row >= 0) && (row < NUM_CITYSCAPE_ROWS))
+                &&
+                (cityscape_bldg_array->RC[row][col] == 0)
+            )
             {
-                if(
-                   cityscape_bldg_array->cr[(row + 0)][(col + 0)].bldg_idx == 0
-                )
-                {
-                    cityscape_bldg_array->cr[(row + itr1)][(col + itr2)].bldg_idx = -3;
-                    IDK_itr_bldg++;
-                }
+                cityscape_bldg_array->RC[row][col] = -3;
             }
             else
             {
-                if(var_1C < 30)
+                if(rnd_loc < 30)
                 {
                     if(Random(4) == 1)
                     {
-                        var_1C++;
+                        rnd_loc++;
                     }
                 }
                 if(Random(2) == 1)
                 {
-                    IDK_itr_bldg--;
+                    itr_bldg--;
                 }
             }
         }
         
-
-        var_1C = 6;
-        for(IDK_itr_bldg = 0; IDK_itr_bldg < rock_count; IDK_itr_bldg++)
+        rnd_loc = 6;
+        for(itr_bldg = 0; itr_bldg < rock_count; itr_bldg++)
         {
-            col = ((Random((var_1C + 1)) + 10) - (var_1C / 2));
-            row = ((Random((var_1C + 1)) +  6) - (var_1C / 2));
+            col = ((10 + Random((rnd_loc + 1))) - (rnd_loc / 2));
+            row = (( 6 + Random((rnd_loc + 1))) - (rnd_loc / 2));
 
-            if((col >= 0) && (col < 23) && (row >= 0) && (row < 15))
+            if(
+                ((col >= 0) && (col < NUM_CITYSCAPE_COLS) && (row >= 0) && (row < NUM_CITYSCAPE_ROWS))
+                &&
+                (cityscape_bldg_array->RC[row][col] == 0)
+            )
             {
-                if(
-                    cityscape_bldg_array->cr[(row + 0)][(col + 0)].bldg_idx == 0
-                )
-                {
-                    cityscape_bldg_array->cr[(row + itr1)][(col + itr2)].bldg_idx = -4;
-                    IDK_itr_bldg++;
-                }
+                cityscape_bldg_array->RC[row][col] = -4;
             }
             else
             {
-                if(var_1C < 30)
+                if(rnd_loc < 30)
                 {
                     if(Random(4) == 1)
                     {
-                        var_1C++;
+                        rnd_loc++;
                     }
                 }
                 if(Random(2) == 1)
                 {
-                    IDK_itr_bldg--;
+                    itr_bldg--;
                 }
             }
         }
         
     }
     /*
-        END:  trees & rocks
+        END:  Trees Placement
+        END:  Rocks Placement
     */
 
 
     cityscape_bldg_count = 0;
 
-    var_E = 0;
-    var_10 = 0;
-    var_12 = 0;
-    var_14 = 0;
+    ctr_2x2 = 0;
+    ctr_3x2 = 0;
+    ctr_2x3 = 0;
+    ctr_3x3 = 0;
 
     if(
         (m_cityscape_summon_city != ST_FALSE)
         ||
-        (bldg_idx == 100)
+        (bldg_idx == bt_Summoning_Circle)
     )
     {
-        if(var_12 < building_shape_2x3_count)
+        if(ctr_2x3 < building_shape_2x3_count)
         {
-            cityscape_bldg_array->cr[(var_9C[var_12] + 1)][(var_8C[var_12])].bldg_idx = 100;
+            cityscape_bldg_array->RC[(rows_2x3[ctr_2x3] + 1)][(cols_2x3[ctr_2x3])] = bt_Summoning_Circle;
         }
-        var_12++;
+        ctr_2x3++;
     }
 
     if(
         (_CITIES[city_idx].enchantments[EARTH_GATE] != ST_FALSE)
         ||
-        (bldg_idx == 101)
+        (bldg_idx == bt_Earth_Gate)
     )
     {
-        if(var_E < building_shape_2x2_count)
+        if(ctr_2x2 < building_shape_2x2_count)
         {
-            cityscape_bldg_array->cr[(var_5C[var_E] + 1)][(var_40[var_E])].bldg_idx = 101;
+            cityscape_bldg_array->RC[(rows_2x2[ctr_2x2] + 1)][(cols_2x2[ctr_2x2])] = bt_Earth_Gate;
         }
-        var_E++;
+        ctr_2x2++;
     }
 
     if(
         (_CITIES[city_idx].enchantments[STREAM_OF_LIFE] != ST_FALSE)
         ||
-        (bldg_idx == 102)
+        (bldg_idx == bt_Stream_Of_Life)
     )
     {
-        if(var_E < building_shape_2x2_count)
+        if(ctr_2x2 < building_shape_2x2_count)
         {
-            cityscape_bldg_array->cr[(var_5C[var_E] + 1)][(var_40[var_E])].bldg_idx = 102;
+            cityscape_bldg_array->RC[(rows_2x2[ctr_2x2] + 1)][(cols_2x2[ctr_2x2])] = bt_Stream_Of_Life;
         }
-        var_E++;
+        ctr_2x2++;
     }
 
     if(
         (_CITIES[city_idx].enchantments[ASTRAL_GATE] != ST_FALSE)
         ||
-        (bldg_idx == 103)
+        (bldg_idx == bt_Astral_Gate)
     )
     {
-        if(var_E < building_shape_2x2_count)
+        if(ctr_2x2 < building_shape_2x2_count)
         {
-            cityscape_bldg_array->cr[(var_5C[var_E] + 1)][(var_40[var_E])].bldg_idx = 103;
+            cityscape_bldg_array->RC[(rows_2x2[ctr_2x2] + 1)][(cols_2x2[ctr_2x2])] = bt_Astral_Gate;
         }
-        var_E++;
+        ctr_2x2++;
     }
 
     if(
         (_CITIES[city_idx].enchantments[ALTAR_OF_BATTLE] != ST_FALSE)
         ||
-        (bldg_idx == 106)
+        (bldg_idx == bt_Altar_Of_Battle)
     )
     {
-        if(var_12 < building_shape_2x3_count)
+        if(ctr_2x3 < building_shape_2x3_count)
         {
-            cityscape_bldg_array->cr[(var_9C[var_12] + 1)][(var_8C[var_12])].bldg_idx = 106;
+            cityscape_bldg_array->RC[(rows_2x3[ctr_2x3] + 1)][(cols_2x3[ctr_2x3])] = bt_Altar_Of_Battle;
         }
-        var_12++;
+        ctr_2x3++;
     }
 
     if(
         (_CITIES[city_idx].enchantments[DARK_RITUALS] != ST_FALSE)
         ||
-        (bldg_idx == 105)
+        (bldg_idx == bt_Dark_Rituals)
     )
     {
-        if(var_12 < building_shape_2x3_count)
+        if(ctr_2x3 < building_shape_2x3_count)
         {
-            cityscape_bldg_array->cr[(var_9C[var_12] + 1)][(var_8C[var_12])].bldg_idx = 106;
+            cityscape_bldg_array->RC[(rows_2x3[ctr_2x3] + 1)][(cols_2x3[ctr_2x3])] = bt_Dark_Rituals;
         }
-        var_12++;
+        ctr_2x3++;
     }
+
 
     for(itr_bldg = bt_Barracks; itr_bldg <= bt_MinersGuild; itr_bldg++)
     {
-        if(
-            (
-                (_CITIES[city_idx].bldg_status[itr_bldg] < bs_Built)
-                &&
-                (itr_bldg != bldg_idx)
-            )
-            ||
-            (itr_bldg == bt_ShipYard)
-            ||
-            (itr_bldg == bt_ShipWrightsGuild)
-            ||
-            (itr_bldg == bt_MaritimeGuild)
-        )
-        {
+
+        // skip, manually handled, bt_ShipWrightsGuild, bt_ShipYard, bt_MaritimeGuild
+        if(((_CITIES[city_idx].bldg_status[itr_bldg] < bs_Built)&&(itr_bldg != bldg_idx))||(itr_bldg == bt_ShipYard)||(itr_bldg == bt_ShipWrightsGuild)||(itr_bldg == bt_MaritimeGuild))
             continue;
-        }
-        
-        switch(bldg_data_table[itr_bldg].G_Animation)
+
+
+        switch(bldg_data_table[itr_bldg].shape)
         {
+
             case bp_2x2:
             {
                 if(
-                    (var_E < building_shape_2x2_count)
+                    (ctr_2x2 < building_shape_2x2_count)
                     &&
-                    (_CITIES[city_idx].bldg_status[itr_bldg] >= bs_Built)  /* {-1:NotBuilt,0:Replaced,1:Built,2:Removed} */
+                    (_CITIES[city_idx].bldg_status[itr_bldg] >= bs_Built)
                 )
                 {
-                    cityscape_bldg_array->cr[(var_5C[var_E] + 1)][(var_40[var_E])].bldg_idx = itr_bldg;
-                    var_E++;
+                    cityscape_bldg_array->RC[(rows_2x2[ctr_2x2] + 1)][(cols_2x2[ctr_2x2])] = itr_bldg;
+                    ctr_2x2++;
                 }
             } break;
+
             case bp_2x3:
             {
                 if(
-                    (var_12 < building_shape_2x3_count)
+                    (ctr_2x3 < building_shape_2x3_count)
                     &&
-                    (_CITIES[city_idx].bldg_status[itr_bldg] >= bs_Built)  /* {-1:NotBuilt,0:Replaced,1:Built,2:Removed} */
+                    (_CITIES[city_idx].bldg_status[itr_bldg] >= bs_Built)
                 )
                 {
-                    cityscape_bldg_array->cr[(var_9C[var_12] + 1)][(var_8C[var_12])].bldg_idx = itr_bldg;
-                    var_12++;
+                    cityscape_bldg_array->RC[(rows_2x3[ctr_2x3] + 1)][(cols_2x3[ctr_2x3])] = itr_bldg;
+                    ctr_2x3++;
                 }
 
             } break;
+
             case bp_3x2:
             {
                 if(
-                    (var_10 < building_shape_3x2_count)
+                    (ctr_3x2 < building_shape_3x2_count)
                     &&
-                    (_CITIES[city_idx].bldg_status[itr_bldg] >= 1)  /* {-1:NotBuilt,0:Replaced,1:Built,2:Removed} */
+                    (_CITIES[city_idx].bldg_status[itr_bldg] >= bs_Built)
                 )
                 {
-                    cityscape_bldg_array->cr[(var_7C[var_10] + 1)][(var_6C[var_10])].bldg_idx = itr_bldg;
-                    var_10++;
+                    cityscape_bldg_array->RC[(rows_3x2[ctr_3x2] + 2)][(cols_3x2[ctr_3x2])] = itr_bldg;
+                    ctr_3x2++;
                 }
 
             } break;
+
             case bp_3x3:
             {
                 if(
-                    (var_14 < building_shape_3x3_count)
+                    (ctr_3x3 < building_shape_3x3_count)
                     &&
-                    (_CITIES[city_idx].bldg_status[itr_bldg] >= bs_Built)  /* {-1:NotBuilt,0:Replaced,1:Built,2:Removed} */
+                    (_CITIES[city_idx].bldg_status[itr_bldg] >= bs_Built)
                 )
                 {
-                    cityscape_bldg_array->cr[(var_BC[var_14] + 1)][(var_AC[var_14])].bldg_idx = itr_bldg;
-                    var_14++;
+                    cityscape_bldg_array->RC[(rows_3x3[ctr_3x3] + 2)][(cols_3x3[ctr_3x3])] = itr_bldg;
+                    ctr_3x3++;
                 }
 
             } break;
+
         }
 
     }
@@ -1439,7 +1462,7 @@ void Cityscape_Set_BldgStruc__WIP(int16_t city_idx, int16_t bldg_idx)
 
     if(m_cityscape_fortress_city != ST_FALSE)
     {
-        cityscape_bldg_array->cr[8][10].bldg_idx = 104;
+        cityscape_bldg_array->RC[8][10] = bt_Fortress;
     }
 
 
@@ -1452,14 +1475,14 @@ void Cityscape_Set_BldgStruc__WIP(int16_t city_idx, int16_t bldg_idx)
             (itr_bldg == bldg_idx)
         )
         {
-            cityscape_bldg_array->cr[8][2].bldg_idx = itr_bldg;
+            cityscape_bldg_array->RC[8][2] = itr_bldg;
         }
     }
 
 }
 
 
-// WZD o144p12
+// WZD o144p10
 /*
     Death Ward
     Chaos Ward
@@ -1482,7 +1505,7 @@ void Cityscape_Draw_Wards_And_Walls__STUB(int16_t city_idx, int16_t xstart, int1
 }
 
 
-// WZD o144p13
+// WZD o144p11
 void Cityscape_Draw_Background(int16_t city_idx, int16_t xstart, int16_t ystart, int16_t city_wx, int16_t city_wy, int16_t city_wp)
 {
     int16_t itr;
@@ -1492,7 +1515,7 @@ void Cityscape_Draw_Background(int16_t city_idx, int16_t xstart, int16_t ystart,
         FLIC_Set_CurrentFrame(cityscape_background_arcanus_ground_seg, cityscape_background_frame);
         FLIC_Draw(xstart, ystart, cityscape_background_arcanus_ground_seg);
     }
-    else
+    else  /* (_CITIES[city_idx].wp == MYRROR_PLANE)*/
     {
         FLIC_Set_CurrentFrame(cityscape_background_myrror_ground_seg, cityscape_background_frame);
         FLIC_Draw(xstart, ystart, cityscape_background_myrror_ground_seg);
@@ -1660,100 +1683,84 @@ void Cityscape_Draw_Background(int16_t city_idx, int16_t xstart, int16_t ystart,
 }
 
 
-// WZD o144p14
+// WZD o144p12
 /*
-    populates cityscape_bldgs[], indexed by cityscape_bldg_count
+    populates cityscape_bldg_fields[], indexed by cityscape_bldg_count
 
-IDK_X_or_R, IDK_Y_or_C, bldg_idx, bldg_data_table[bldg_idx].G_Animation)
+Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, cr_bldg_idx, bldg_data_table[cr_bldg_idx].shape);
+
 *type*, as in 'size & position'
 
 */
-void Cityscape_XY(int16_t x, int16_t y, int16_t bldg_idx, int16_t type)
+void Cityscape_Add_Bldg_To_Fields_Array(int16_t x, int16_t y, int16_t bldg_idx, int16_t type)
 {
-    int16_t x_max;
-    int16_t x_min;
+    int16_t x2_max;
+    int16_t x1_min;
     int16_t itr;  // _SI_
 
-    x_max = 0;
-    x_min = 1000;
+    x2_max = 0;
+    x1_min = 1000;
 
     for(itr = 0; itr < 3; itr++)
     {
-        cityscape_bldgs[cityscape_bldg_count].bldg_idx = bldg_idx;
 
-        cityscape_bldgs[cityscape_bldg_count].x1 = (x + cityscape_cr[type][itr].x1);
-        cityscape_bldgs[cityscape_bldg_count].y1 = (y + cityscape_cr[type][itr].y1);
-        cityscape_bldgs[cityscape_bldg_count].x2 = (x + cityscape_cr[type][itr].x2);
-        cityscape_bldgs[cityscape_bldg_count].y2 = (y + cityscape_cr[type][itr].y2);
+        cityscape_bldg_fields[cityscape_bldg_count].field_bldg_idx = bldg_idx;
 
-        cityscape_bldgs[cityscape_bldg_count].IDK_y = (y + 1);
+        cityscape_bldg_fields[cityscape_bldg_count].field_x1 = (x + cityscape_cr[type][itr].x1);
+        cityscape_bldg_fields[cityscape_bldg_count].field_y1 = (y + cityscape_cr[type][itr].y1);
+        cityscape_bldg_fields[cityscape_bldg_count].field_x2 = (x + cityscape_cr[type][itr].x2);
+        cityscape_bldg_fields[cityscape_bldg_count].field_y2 = (y + cityscape_cr[type][itr].y2);
 
-        if(cityscape_bldgs[cityscape_bldg_count].x1 < x_min)
+        cityscape_bldg_fields[cityscape_bldg_count].field_print_sy = (y + 1);  // (row_sy + 1) ... gets used as?
+
+        if(cityscape_bldg_fields[cityscape_bldg_count].field_x1 < x1_min)
         {
-            x_min = cityscape_bldgs[cityscape_bldg_count].x1;
+            x1_min = cityscape_bldg_fields[cityscape_bldg_count].field_x1;
         }
 
-        if(cityscape_bldgs[cityscape_bldg_count].x2 > x_max)
+        if(cityscape_bldg_fields[cityscape_bldg_count].field_x2 > x2_max)
         {
-            x_max = cityscape_bldgs[cityscape_bldg_count].x2;
+            x2_max = cityscape_bldg_fields[cityscape_bldg_count].field_x2;
         }
 
         cityscape_bldg_count++;
     }
 
-    // DEDU  ¿ -3, because 1st *real* building is 3 ?
+    // DEDU  ¿ (cityscape_bldg_count - 3), because 1st *real* building is 3 ?
+    // ((x2_max + x1_min) / 2) is centering
     for(itr = (cityscape_bldg_count - 3); itr < cityscape_bldg_count; itr++)
     {
-        cityscape_bldgs[itr].IDK_x = (((x_max + x_min) / 2) - 3);
+        cityscape_bldg_fields[itr].field_print_sx = (((x2_max + x1_min) / 2) - 3);
     }
 
 }
 
 
-// WZD o144p15
+// WZD o144p13
 /*
 ; a wrapper for Outpost_Cityscape_Draw that sets an unused random seed and draws a border around the final image
 ; BUG: fails to draw the altered backgrounds of the Gaia's Blessing, Flying Fortress, Famine, and Cursed Lands enchantments
 */
 void Outpost_Cityscape(int16_t city_idx, int16_t x_start, int16_t y_start)
 {
-    uint32_t LFSR;
+    uint32_t temp_random_seed;
     int16_t city_wp;
     int16_t city_wy;
     int16_t city_wx;
 
-    // TODO  LFSR = Get_Random_Seed();
+    temp_random_seed = Get_Random_Seed();
 
     city_wx = _CITIES[city_idx].wx;
     city_wy = _CITIES[city_idx].wy;
     city_wp = _CITIES[city_idx].wp;
 
-// TODO  mov     ax, [bp+city_wx]                ; would fit into 16 bits, but unnecessary anyway
-// TODO  cwd
-// TODO  push    ax
-// TODO  mov     ax, [bp+city_wy]
-// TODO  push    dx
-// TODO  cwd
-// TODO  pop     cx
-// TODO  pop     bx
-// TODO  call    LXMUL@
-// TODO  add     ax, 10100010010101b
-// TODO  adc     dx, 0
-// TODO  push    dx                              ; LFSR_HI
-// TODO  push    ax                              ; LFSR_LO
-// TODO  call    Set_Random_Seed
-// TODO  pop     cx
-// TODO  pop     cx                              ; no randomness involved here
-
+    Set_Random_Seed((10389 + (city_wx * city_wy)));  // IDGI:  deterministic per City? Why the addition? Related to (max) wx,wy?
 
     Outpost_Cityscape_Draw(city_idx, x_start, y_start);
 
+    cityscape_bldg_anim_ctr = ((cityscape_bldg_anim_ctr + 1) % 10);
 
-    cityscape_bldg_anim_ctr = ((cityscape_bldg_anim_ctr + 1) / 10);
-
-
-    // TODO  Set_Random_Seed(LFSR);  // BUGBUG  ; no randomness involved here
-
+    Set_Random_Seed(temp_random_seed);  // BUGBUG  ; no randomness involved here
 
     Line(x_start, y_start, (x_start + 71), y_start, 0);
     Line(x_start, (y_start + 65), (x_start + 71), (y_start + 65), 0);
@@ -1763,7 +1770,7 @@ void Outpost_Cityscape(int16_t city_idx, int16_t x_start, int16_t y_start)
 }
 
 
-// WZD o144p16
+// WZD o144p14
 /*
 ; draws the reduced cityscape of the outpost screen into the current draw segment
 ; BUG: fails to draw the altered backgrounds of the Gaia's Blessing, Flying Fortress, Famine, and Cursed Lands enchantments

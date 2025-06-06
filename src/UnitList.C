@@ -91,6 +91,7 @@ int16_t m_ulw_start_x;
 
 // WZD o79p01
 /*
+x,y only used for the expanding box/grow-out effect
 
 Main_Screen()
     #### Section 9.2.2.2      Right-Click Movement Map - Stack - Other
@@ -249,7 +250,7 @@ int16_t Unit_List_Window(int16_t unit_idx, int16_t flag, int16_t x, int16_t y)
     }
 
 
-    PageFlipEffect = 3;
+    _page_flip_effect = 3;
 
     Deactivate_Auto_Function();
     Reset_Window();

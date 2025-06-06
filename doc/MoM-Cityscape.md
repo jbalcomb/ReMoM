@@ -8,9 +8,32 @@ CITYSCAP.C
 
 
 
+
+Cityscape_Draw__WIP()
+    Cityscape_Draw_Background()
+    Cityscape_Make_Buildings_Array()
+    Cityscape_Roads_1__WIP()
+    Cityscape_Draw_Buildings()
+    Cityscape_Draw_Wards_And_Walls__STUB()
+
+
+
+
+
+
+struct s_CITYSCAPE_CR * cityscape_bldg_array;
+
+cityscape_bldgs = (struct s_BLDG *)Allocate_Next_Block(_screen_seg, 176);
+cityscape_bldg_array = (struct s_CITYSCAPE_CR *)Allocate_Next_Block(_screen_seg, (((15 * 23 * sizeof(struct s_BLDG)) / 16) + 1));
+
+
+BEGIN:  City Walls
+
+
+
 ## TODO
     the balance of LOADER - GFX_Swap_AppndCtScap__WIP() AKA ~'Reload Cityscape Graphics'
-    first three in Cityscape_Draw_Buildings_And_Features() - odness with trees, rocks, and something
+    first three in Cityscape_Draw_Buildings() - oddness with trees, rocks, and something
     IMG_CTY_Scap_Wall
     IMG_CTY_AltarofBtl
     IMG_CTY_EvilPresnc
@@ -22,17 +45,6 @@ CITYSCAP.C
     IMG_CTY_Rubble
     new building, removed building, sold building  (new building ~== cast city enchantment)
     Vanish_Bitmap()
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -63,21 +75,21 @@ Enemy_City_Screen_Draw()
     |-> Cityscape_Draw__WIP(_city_idx, (x_start + 4), (y_start + 101), 0, ST_UNDEFINED);
     |-> Cityscape_Draw_Scanned_Building_Name(_CITIES[_city_idx].owner_idx, x_start, city_screen_scanned_field);
 
-IDK_Spell_Cityscape_Draw()
-    |-> Cityscape_Draw__WIP(GAME_MP_SpellVar_3, (var_2 + 5), (var_4 + 27), word_434F2, word_434F2)
+Cast_Spell_City_Enchantment_Animation_Draw()
+    |-> Cityscape_Draw__WIP(_osc_city_idx, (x_start + 5),(y_start + 27), _ce_bldg_idx, _ce_bldg_idx);
 
 
 
  1  Cityscape_Draw__WIP()
  2      |-> Cityscape_Draw_Background()
- 3      |-> Cityscape_Set_BldgStruc__WIP(city_idx, bldg_idx_1)
+ 3      |-> Cityscape_Make_Buildings_Array(city_idx, bldg_idx_1)
  4      |-> Cityscape_Roads_1(xstart, ystart)
  5          |-> Cityscape_Roads_2()
  6              |-> Cityscape_Roads_3()
  7              |-> Cityscape_Roads_4()
  8              |-> Cityscape_Roads_5()
- 9      |-> Cityscape_Draw_Buildings_And_Features(city_idx, xstart, ystart, bldg_idx_1)
-10          |-> Cityscape_XY()
+ 9      |-> Cityscape_Draw_Buildings(city_idx, xstart, ystart, bldg_idx_1)
+10          |-> Cityscape_Add_Bldg_To_Fields_Array()
 11      |-> Cityscape_Draw_Wards_And_Walls()
 
 
@@ -114,7 +126,7 @@ Cityscape_Roads_5    IDK_Cityscape_BldgStruc_Init()
 
 
 
-IDK_animate_new_building_idx
+new_bldg_idx
 cityscape_background_frame
 cityscape_pict_seg
 cityscape_bldgs
@@ -154,26 +166,41 @@ CITYSCAP.C:        cityscape_bldgs[cityscape_bldg_count].x1 = (x + cityscape_cr[
 CITYSCAP.C:        cityscape_bldgs[cityscape_bldg_count].y1 = (y + cityscape_cr[type][itr].y1);
 CITYSCAP.C:        cityscape_bldgs[cityscape_bldg_count].x2 = (x + cityscape_cr[type][itr].x2);
 CITYSCAP.C:        cityscape_bldgs[cityscape_bldg_count].y2 = (y + cityscape_cr[type][itr].y2);
-CITYSCAP.C:        cityscape_bldgs[cityscape_bldg_count].IDK_y = (y + 1);
-CITYSCAP.C:        cityscape_bldgs[itr].IDK_x = (((x_max + x_min) / 2) - 3);
+CITYSCAP.C:        cityscape_bldgs[cityscape_bldg_count].print_sy = (y + 1);
+CITYSCAP.C:        cityscape_bldgs[itr].print_sx = (((x_max + x_min) / 2) - 3);
 
 row 8, column 10 is fortress
 cityscape_cr[8][10]
 
-Cityscape_XY()
+
+
+## cityscape_bldgs[]
+SEEALSO: MoM-Cityscape-Fields.md
+
+## cityscape_cr[][]{}
+SEEALSO: MoM-Cityscape-Fields.md
+
+## Cityscape_Add_Bldg_To_Fields_Array()
+SEEALSO: MoM-Cityscape-Fields.md
+
+
+
 
 fortress
-Cityscape_XY(IDK_X_or_R, IDK_Y_or_C, 104, 4)
+Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, bt_Fortress, 4)
 
-¿ IDK_X_or_R, IDK_Y_or_C are screen x,y ?
+NOTE: shape is 4!!!!! there's no 4's in the regular buildings!
 
-Draw_Picture() gets passed IDK_X_or_R and (IDK_Y_or_C - 47)
+¿ col_sx, row_sy are screen x,y ?
+Nope. They are center x and bottom y.
+
+Draw_Picture() gets passed col_sx and (row_sy - 47)
 
 width  is ~28
 height is ~45
 
 Cityscape_Draw_Scanned_Building_Name()
-Print_Centered((cityscape_bldgs[itr].IDK_x + 1), (cityscape_bldgs[itr].IDK_y - 4), string);
+Print_Centered((cityscape_bldgs[itr].print_sx + 1), (cityscape_bldgs[itr].print_sy - 4), string);
 
 0x0000013030D85490  68 00 a1 68 02 70 d1 20 ee 61 d9 34 a2 00
 0x0000013030D8549E  68 00 d1 74 06 73 d7 00 a1 00 d9 34 a2 00
@@ -181,6 +208,13 @@ Print_Centered((cityscape_bldgs[itr].IDK_x + 1), (cityscape_bldgs[itr].IDK_y - 4
 0x0000013030D854BA  68 00 a1 68 02 70 d1 20 ee 61 d9 34 a2 00
 0x0000013030D854C8  68 00 d1 74 06 73 d7 00 a1 00 d9 34 a2 00
 0x0000013030D854D6  68 00 ac 61 15 76 d0 65 c1 4d d9 34 a2 00
+
+
+
+## Cityscape_Draw_Buildings()
+gets passed bldg_idx, from Cityscape_Draw__WIP()
+in Cityscape_Draw__WIP(), that's bldg_idx_1, but, it's not the bldg_idx_1 that was passed into Cityscape_Draw__WIP() from City_Screen_Draw__WIP()
+
 
 
 
@@ -207,7 +241,7 @@ Cityscape_Roads_2()
 
 
 
-## Cityscape_XY()
+## Cityscape_Add_Bldg_To_Fields_Array()
 ~== MoO2  CR_To_XY_()
 
 ({0,1,2} * 24) + ({0,1,2,3} * 8)
@@ -236,16 +270,16 @@ row 8, column 10 is fortress
 
 
 
-## IDK_animate_new_building_idx
-set in Cityscape_Draw__WIP(), from thew parameter bldg_idx_2
+## new_bldg_idx
+set in Cityscape_Draw__WIP(), from the parameter bldg_idx_2
 
 Down P City_Screen_Draw__WIP+231   call    j_Cityscape_Draw__WIP
 Down P Enemy_City_Screen_Draw+3AC  call    j_Cityscape_Draw__WIP
-Down P IDK_Spell_Cityscape_Draw+30 call    j_Cityscape_Draw__WIP
+Down P Cast_Spell_City_Enchantment_Animation_Draw+30 call    j_Cityscape_Draw__WIP
 
 City_Screen_Draw__WIP(..., cityscreen_city_built_bldg_idx)
 Enemy_City_Screen_Draw(..., ST_UNDEFINED)
-IDK_Spell_Cityscape_Draw(..., word_434F2)
+Cast_Spell_City_Enchantment_Animation_Draw(..., _ce_bldg_idx)
 
 cityscreen_city_built_bldg_idx
     City_Built_Building_Message()
@@ -254,6 +288,19 @@ cityscreen_city_built_bldg_idx
 ...
 mov     ax, [bp+bldg_idx]
 mov     [cityscreen_city_built_bldg_idx], ax
+
+XREF:
+    Cityscape_Draw__WIP+20                         mov     [new_bldg_idx], ax
+    Cityscape_Draw_Buildings+251 cmp     ax, [new_bldg_idx]
+    Cityscape_Draw_Buildings+2C5 cmp     ax, [new_bldg_idx]
+    Cityscape_Draw_Buildings+324 cmp     ax, [new_bldg_idx]
+    Cityscape_Draw_Buildings+395 cmp     ax, [new_bldg_idx]
+    Cityscape_Draw_Buildings+406 cmp     ax, [new_bldg_idx]
+    Cityscape_Draw_Buildings+476 cmp     ax, [new_bldg_idx]
+    Cityscape_Draw_Buildings+4F0 cmp     ax, [new_bldg_idx]
+    Cityscape_Draw_Buildings+560 cmp     ax, [new_bldg_idx]
+    Cityscape_Draw_Buildings+5D1 cmp     ax, [new_bldg_idx]
+    Cityscape_Draw_Buildings+665 cmp     ax, [new_bldg_idx]
 
 
 
@@ -266,27 +313,27 @@ XREF:
     City_Screen_Draw__WIP+221       push    [cityscreen_city_built_bldg_idx]                
     City_Built_Building_Message+254 mov     [cityscreen_city_built_bldg_idx], ax            
 
-## word_434F2
+## _ce_bldg_idx
 
 { 0, 1, 100, 101, 102, 103, 104, 105, 106 }
 
 XREF:
-    IDK_Spell_DisjunctOrBind_Draw+25F     cmp     [word_434F2], 1                            
-    IDK_Spell_Cityscape_2:loc_BF2D6       mov     [word_434F2], 0                            
-    IDK_Spell_DisjunctOrBind+25           mov     [word_434F2], 0                            
-    IDK_Spell_Cityscape_1:loc_BF0FA       mov     [word_434F2], 0
-    IDK_Spell_DisjunctOrBind__1+210       mov     [word_434F2], 1                            
-    IDK_Spell_DisjunctOrBind__1+2EF       mov     [word_434F2], 1                            
-    IDK_Spell_DisjunctOrBind__2:loc_BE84C mov     [word_434F2], 1                            
-    IDK_Spell_Cityscape_1:loc_BF0E2       mov     [word_434F2], 100               ; case 0xCB
-    IDK_Spell_Cityscape_1:loc_BF0CA       mov     [word_434F2], 101               ; case 0x25
-    IDK_Spell_Cityscape_1:loc_BF0D2       mov     [word_434F2], 102               ; case 0x94
-    IDK_Spell_Cityscape_1:loc_BF0DA       mov     [word_434F2], 103               ; case 0x99
-    IDK_Spell_Cityscape_1:loc_BF0C2       mov     [word_434F2], 104               ; case 0x1C
-    IDK_Spell_Cityscape_1:loc_BF0EA       mov     [word_434F2], 105               ; case 0xA3
-    IDK_Spell_Cityscape_1:loc_BF0F2       mov     [word_434F2], 106               ; case 0x92
-    IDK_Spell_Cityscape_Draw+16           push    [word_434F2]                               
-    IDK_Spell_Cityscape_Draw+1A           push    [word_434F2]                               
+    IDK_Spell_DisjunctOrBind_Draw+25F     cmp     [_ce_bldg_idx], 1                            
+    IDK_Spell_Cityscape_2:loc_BF2D6       mov     [_ce_bldg_idx], 0                            
+    IDK_Spell_DisjunctOrBind+25           mov     [_ce_bldg_idx], 0                            
+    IDK_Spell_Cityscape_1:loc_BF0FA       mov     [_ce_bldg_idx], 0
+    IDK_Spell_DisjunctOrBind__1+210       mov     [_ce_bldg_idx], 1                            
+    IDK_Spell_DisjunctOrBind__1+2EF       mov     [_ce_bldg_idx], 1                            
+    IDK_Spell_DisjunctOrBind__2:loc_BE84C mov     [_ce_bldg_idx], 1                            
+    IDK_Spell_Cityscape_1:loc_BF0E2       mov     [_ce_bldg_idx], 100               ; case 0xCB
+    IDK_Spell_Cityscape_1:loc_BF0CA       mov     [_ce_bldg_idx], 101               ; case 0x25
+    IDK_Spell_Cityscape_1:loc_BF0D2       mov     [_ce_bldg_idx], 102               ; case 0x94
+    IDK_Spell_Cityscape_1:loc_BF0DA       mov     [_ce_bldg_idx], 103               ; case 0x99
+    IDK_Spell_Cityscape_1:loc_BF0C2       mov     [_ce_bldg_idx], 104               ; case 0x1C
+    IDK_Spell_Cityscape_1:loc_BF0EA       mov     [_ce_bldg_idx], 105               ; case 0xA3
+    IDK_Spell_Cityscape_1:loc_BF0F2       mov     [_ce_bldg_idx], 106               ; case 0x92
+    Cast_Spell_City_Enchantment_Animation_Draw+16           push    [_ce_bldg_idx]                               
+    Cast_Spell_City_Enchantment_Animation_Draw+1A           push    [_ce_bldg_idx]                               
 
 
 
@@ -303,16 +350,16 @@ XREF:
     Cityscape_Draw__WIP+35B                        cmp     [IDK_cityscape_vanish_percent], 100      
     Cityscape_Draw__WIP+362                        add     [IDK_cityscape_vanish_percent], 10       
     Cityscape_Roads_1+77E                          mov     ax, [IDK_cityscape_vanish_percent+bx]    
-    Cityscape_Draw_Buildings_And_Features__WIP+257 push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings_And_Features__WIP+2CB push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings_And_Features__WIP+32A push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings_And_Features__WIP+39B push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings_And_Features__WIP+40C push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings_And_Features__WIP+47C push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings_And_Features__WIP+4F6 push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings_And_Features__WIP+566 push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings_And_Features__WIP+5D7 push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings_And_Features__WIP+66B push    [IDK_cityscape_vanish_percent]  ; percent
+    Cityscape_Draw_Buildings+257 push    [IDK_cityscape_vanish_percent]  ; percent
+    Cityscape_Draw_Buildings+2CB push    [IDK_cityscape_vanish_percent]  ; percent
+    Cityscape_Draw_Buildings+32A push    [IDK_cityscape_vanish_percent]  ; percent
+    Cityscape_Draw_Buildings+39B push    [IDK_cityscape_vanish_percent]  ; percent
+    Cityscape_Draw_Buildings+40C push    [IDK_cityscape_vanish_percent]  ; percent
+    Cityscape_Draw_Buildings+47C push    [IDK_cityscape_vanish_percent]  ; percent
+    Cityscape_Draw_Buildings+4F6 push    [IDK_cityscape_vanish_percent]  ; percent
+    Cityscape_Draw_Buildings+566 push    [IDK_cityscape_vanish_percent]  ; percent
+    Cityscape_Draw_Buildings+5D7 push    [IDK_cityscape_vanish_percent]  ; percent
+    Cityscape_Draw_Buildings+66B push    [IDK_cityscape_vanish_percent]  ; percent
 
 
 
@@ -329,11 +376,11 @@ void Cityscape_Draw__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int16
 
     Cityscape_Draw_Background(city_idx, xstart, ystart, city_wx, city_wy, city_wp);
 
-    Cityscape_Set_BldgStruc__WIP(city_idx, bldg_idx_1);
+    Cityscape_Make_Buildings_Array(city_idx, bldg_idx_1);
 
     Cityscape_Roads_1(xstart, ystart);
 
-    Cityscape_Draw_Buildings_And_Features(city_idx, xstart, ystart, bldg_idx_1);
+    Cityscape_Draw_Buildings(city_idx, xstart, ystart, bldg_idx_1);
 
     Cityscape_Draw_Wards_And_Walls__STUB(city_idx, xstart, ystart);
 
@@ -350,16 +397,16 @@ handles plane, river, ocean, mountain, hills
 ¿ enchantments ?
 
 
-## Cityscape_Set_BldgStruc__WIP()
+## Cityscape_Make_Buildings_Array()
 
 // WZD o144p11
-void Cityscape_Set_BldgStruc__WIP(int16_t city_idx, int16_t bldg_idx)
+void Cityscape_Make_Buildings_Array(int16_t city_idx, int16_t bldg_idx)
 
 XREF:
     Cityscape_Draw__WIP()
     NX_j_Cityscape_Set_BldgStruc__WIP()
 
-Cityscape_Set_BldgStruc__WIP(city_idx, bldg_idx_1)
+Cityscape_Make_Buildings_Array(city_idx, bldg_idx_1)
 
 bldg_idx
     e.g.,
@@ -370,44 +417,6 @@ doesn't do 4 incr's for buildings 13, 12, 14
     bt_ShipYard           =  13,
     bt_MaritimeGuild      =  14,
 
-
-blocks of random business
-    var_1C = 3;
-    ...
-    col = ((Random((var_1C + 1)) + 10) - (var_1C / 2));
-    row = ((Random((var_1C + 1)) +  6) - (var_1C / 2));
-    ...
-    if(var_1C < 30)
-    {
-        var_1C++;
-    }
-    So, ...
-        ... 3 through 29 ...
-        (Random(3 + 1) + 10) ... (Random(4) + 10) ... {11,12,13,14}
-        (Random(3 + 1) +  6) ... (Random(4) +  6) ... { 7, 8, 9,10}
-        (3 / 2) ... {1}
-        {11,12,13,14} - {1} ... {10,11,12,13}
-        { 7, 8, 9,10} - {1} ... { 6, 7, 8, 9}
-        through
-        (Random(29 + 1) + 10) ... (Random(30) + 10) ... {11,...,40}
-        (Random(29 + 1) +  6) ... (Random(30) +  6) ... {11,...,36}
-        (29 / 2) ... {14}
-        {11,...,40} - {14} ... {-3,...,26}
-        {11,...,36} - {14} ... {-3,...,22}
-    Then,
-        if((col >= 0) && (col < 20) && (row >= 0) && (row < 12))
-        if((col >= 0) && (col < 20) && (row >= 0) && (row < 13))
-        if((col >= 0) && (col < 21) && (row >= 0) && (row < 12))
-        if((col >= 0) && (col < 21) && (row >= 0) && (row < 13))
-        if((col >= 0) && (col < 23) && (row >= 0) && (row < 15))
-        ...
-        *((int16_t *)cityscape_bldg_array + ((row + itr1) * sizeof(struct s_CITYSCAPE)) + (col + itr2)) = 1;
-
-
-4 counts, based on bldg_data_table[IDK_itr_bldg].G_Animation {0,1,2,3,4}
-while(IDK_itr_bldg < incr0)
-where IDK_itr_bldg gets incremented every time one gets added, given random lands and nothing is already there
-maybe max 30, and incr1 and incr2 have an additional 1/3 check
 
 4 sets of columns and rows
 
@@ -430,7 +439,7 @@ War College is 3x3
 
 ## Cityscape_Roads_1()
 
-## Cityscape_Draw_Buildings_And_Features()
+## Cityscape_Draw_Buildings()
 
 iterates over 15 rows and 23 columns, but skips the first column
 ¿ 15 columns at 14 pixels each ?
@@ -439,13 +448,13 @@ iterates over 15 rows and 23 columns, but skips the first column
 * 10 in the x direction AKA columns
 * 5 in the y direction AKA rows
 
-IDK_Y_or_C = ((itr_row - 1) * 5);
-IDK_Y_or_C += (y_start + 27);
+row_sy = ((itr_row - 1) * 5);
+row_sy += (y_start + 27);
 ...27 + (5 * row)
 ...looks like Sages Guild starts at 37; ...(27 + (5 * (3 - 1))) = (27 + (5 * 2)) = (27 + 10) = 37
 
-IDK_X_or_R = (itr_col * 10);
-IDK_X_or_R += ((x_start + 27) - (IDK_Y_or_C - y_start - 27));
+col_sx = (itr_col * 10);
+col_sx += ((x_start + 27) - (row_sy - y_start - 27));
 
 ...looks like Sages Guild starts at 16
 
@@ -494,21 +503,21 @@ XREF:
 
 
 
-#### word_434F2
+#### _ce_bldg_idx
 XREF:
-    IDK_Spell_DisjunctOrBind_Draw+25F     cmp     [word_434F2], 1                            
-    IDK_Spell_DisjunctOrBind+25           mov     [word_434F2], 0                            
-    IDK_Spell_DisjunctOrBind__1+210       mov     [word_434F2], 1                            
-    IDK_Spell_DisjunctOrBind__1+2EF       mov     [word_434F2], 1                            
-    IDK_Spell_DisjunctOrBind__2:loc_BE84C mov     [word_434F2], 1                            
-    IDK_Spell_Cityscape_Draw+16           push    [word_434F2]                               
-    IDK_Spell_Cityscape_Draw+1A           push    [word_434F2]                               
-    IDK_Spell_Cityscape_1:loc_BF0C2       mov     [word_434F2], 104               ; case 0x1C
-    IDK_Spell_Cityscape_1:loc_BF0CA       mov     [word_434F2], 101               ; case 0x25
-    IDK_Spell_Cityscape_1:loc_BF0D2       mov     [word_434F2], 102               ; case 0x94
-    IDK_Spell_Cityscape_1:loc_BF0DA       mov     [word_434F2], 103               ; case 0x99
-    IDK_Spell_Cityscape_1:loc_BF0E2       mov     [word_434F2], 100               ; case 0xCB
-    IDK_Spell_Cityscape_1:loc_BF0EA       mov     [word_434F2], 105               ; case 0xA3
-    IDK_Spell_Cityscape_1:loc_BF0F2       mov     [word_434F2], 106               ; case 0x92
-    IDK_Spell_Cityscape_1:loc_BF0FA       mov     [word_434F2], 0                 ; default  
-    IDK_Spell_Cityscape_2:loc_BF2D6       mov     [word_434F2], 0                            
+    IDK_Spell_DisjunctOrBind_Draw+25F     cmp     [_ce_bldg_idx], 1                            
+    IDK_Spell_DisjunctOrBind+25           mov     [_ce_bldg_idx], 0                            
+    IDK_Spell_DisjunctOrBind__1+210       mov     [_ce_bldg_idx], 1                            
+    IDK_Spell_DisjunctOrBind__1+2EF       mov     [_ce_bldg_idx], 1                            
+    IDK_Spell_DisjunctOrBind__2:loc_BE84C mov     [_ce_bldg_idx], 1                            
+    Cast_Spell_City_Enchantment_Animation_Draw+16           push    [_ce_bldg_idx]                               
+    Cast_Spell_City_Enchantment_Animation_Draw+1A           push    [_ce_bldg_idx]                               
+    IDK_Spell_Cityscape_1:loc_BF0C2       mov     [_ce_bldg_idx], 104               ; case 0x1C
+    IDK_Spell_Cityscape_1:loc_BF0CA       mov     [_ce_bldg_idx], 101               ; case 0x25
+    IDK_Spell_Cityscape_1:loc_BF0D2       mov     [_ce_bldg_idx], 102               ; case 0x94
+    IDK_Spell_Cityscape_1:loc_BF0DA       mov     [_ce_bldg_idx], 103               ; case 0x99
+    IDK_Spell_Cityscape_1:loc_BF0E2       mov     [_ce_bldg_idx], 100               ; case 0xCB
+    IDK_Spell_Cityscape_1:loc_BF0EA       mov     [_ce_bldg_idx], 105               ; case 0xA3
+    IDK_Spell_Cityscape_1:loc_BF0F2       mov     [_ce_bldg_idx], 106               ; case 0x92
+    IDK_Spell_Cityscape_1:loc_BF0FA       mov     [_ce_bldg_idx], 0                 ; default  
+    IDK_Spell_Cityscape_2:loc_BF2D6       mov     [_ce_bldg_idx], 0                            

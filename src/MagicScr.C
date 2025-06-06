@@ -661,7 +661,7 @@ void Magic_Screen(void)
             }
             Deactivate_Help_List();
             Set_Magic_Screen_Help_List();
-            PageFlipEffect = 3;
+            _page_flip_effect = 3;
             Clear_Fields();
             multihotkey_RVL = Add_Multi_Hot_Key_Field(aRvl);
             multihotkey_PWR = Add_Multi_Hot_Key_Field(aPwr);

@@ -485,7 +485,7 @@ void Advisor_Screen(int16_t advisor_idx)
         } break;        
     }
 
-    PageFlipEffect = 3;
+    _page_flip_effect = 3;
 
     current_screen = scr_Main_Screen;
 
@@ -1276,7 +1276,7 @@ void Cartographer_Screen__WIP(void)
     Deactivate_Help_List();
     Reset_Window();
     Clear_Fields();
-    PageFlipEffect = 2;
+    _page_flip_effect = 2;
 
 }
 

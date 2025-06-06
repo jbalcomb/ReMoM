@@ -473,7 +473,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
     Set_Button_Down_Offsets(1, 1);
 
-    PageFlipEffect = 0;
+    _page_flip_effect = 0;
 
     window_x = 25;
     window_y = 17;
@@ -822,7 +822,7 @@ int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost
 
     Set_Font_Style(0, 0, 2, 0);
 
-    PageFlipEffect = 3;
+    _page_flip_effect = 3;
 
     Set_Page_Off();
 
@@ -832,7 +832,7 @@ int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost
 
     PageFlip_FX();
 
-    PageFlipEffect = 0;
+    _page_flip_effect = 0;
 
     leave_screen = ST_FALSE;
 

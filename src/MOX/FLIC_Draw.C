@@ -471,7 +471,7 @@ void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte
 // WZD s30p01
 // drake178: ¿UU_LBX_Image_Copy() or LBX_Image_Copy() ?
 // MoO2  Module: bitmap  Copy_Bitmap_To_Bitmap()
-// 1oom 
+// ¿ 1oom  gfxaux.c  gfx_aux_draw_frame_to() ?
 /*
 ; copies an LBX composed or decoded image to an
 ; arbitrary far memory segment address (including the

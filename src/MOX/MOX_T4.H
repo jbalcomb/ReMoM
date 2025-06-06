@@ -40,14 +40,14 @@ void PageFlip_FX(void)
     Production Screen sets it to 3 before returning to City Screen / CityList Screen
 
 */
-enum e_PAGE_FLIP_TYPE
+enum e_PAGE_FLIP_EFFECT_TYPE
 {
-    pf_Normal = 0,
-    pf_VGA_CutRight = 1,
-    pf_TogglePagesFadeIn = 2,  /* ¿ MoO2  Module: MISC  Fade_To_Palette_() ? */
-    pf_Dissolve = 3,
-    pf_Palette = 4,
-    pf_GrowOut = 5
+    pfe_NONE = 0,
+    pfe_VGA_CutRight = 1,
+    pfe_TogglePagesFadeIn = 2,  /* ¿ MoO2  Module: MISC  Fade_To_Palette_() ? */
+    pfe_Dissolve = 3,
+    pfe_Palette = 4,
+    pfe_GrowOut = 5
 };
 
 
@@ -66,7 +66,7 @@ extern int16_t GrowOutLeft;
 
 
 
-extern int16_t PageFlipEffect;
+extern int16_t _page_flip_effect;
 
 
 

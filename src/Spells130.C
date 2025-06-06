@@ -217,7 +217,7 @@ void Apply_Spell_Consecration(int16_t city_idx)
 
     }
 
-    PageFlipEffect = 3;
+    _page_flip_effect = 3;
 
 }
 

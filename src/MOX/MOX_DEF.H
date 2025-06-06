@@ -458,6 +458,9 @@ mov     _SI_entity_idx, [entities_on_movement_map+bx]
 */
 // #define GET_MOVEMENT_MAP_ENTITY(_wx_, _wy_, _wp_)         ( entities_on_movement_map[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ]             )
 // #define SET_MOVEMENT_MAP_FLAG(_wx_, _wy_, _wp_, _value_)  ( entities_on_movement_map[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ] = (_value_) )
+/*
+    assumes _main_map_grid_x, _main_map_grid_y
+*/
 #define GET_MAIN_MAP_ENTITY()              ( entities_on_movement_map[ ( ( (_main_map_grid_y) * MAP_WIDTH ) + (_main_map_grid_x) ) ]                  )
 #define SET_MAIN_MAP_ENTITY(_entity_idx_)  ( entities_on_movement_map[ ( ( (_main_map_grid_y) * MAP_WIDTH ) + (_main_map_grid_x) ) ] = (_entity_idx_) )
 
@@ -542,6 +545,8 @@ uint8_t COL_Banners2[36] = {
 #define BANNER_COLOR_YELLOW_211          211
 
 #define MAX_UNIT_COUNT                  1000    /* AKA MAX_UNITS  used by Create_Unit__WIP(); City_Apply_Production(); Determine_Offer(); */
+#define MAX_CITY_COUNT                   100
+#define MAX_WHAT_COUNT  (MAX_UNIT_COUNT + MAX_CITY_COUNT)  // no idea what to call this ... entity_idx above this is Nodes
 
 #define MAX_CITY_POPULATION 25
 #define MAX_CITY_POPULATION_NEUTRAL_PLAYER 8  // NOTE: *should* be ((_difficulty + 1) * 2))  (({0,1,2,3} + 1) * 2) = {2,4,6,8}

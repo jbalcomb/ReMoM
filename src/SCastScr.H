@@ -41,22 +41,28 @@ void Spell_Casting_Screen_Allocate(void);
 void Build_Select_Target_String(int16_t spell_target_type, char * spell_name);
 
 // WZD o70p07
+// DONT  void UU_IDK_Entirely_On_Map(int16_t * new_mx, int16_t * new_my, int16_t old_mx, int16_t old_my);
 
 // WZD o70p08
+void Spell_Casting_Screen_Reset_Map_Draw(void);
 
 // WZD o70p09
+void Spell_Casting_Screen_Reset_Map_Draw_With_WX__1(int16_t wx);
 
 // WZD o70p10
+void Spell_Casting_Screen_Reset_Map_Draw_With_WX__2(int16_t wx);
 
 // WZD o70p11
+void Spell_Casting_Screen_Reset_Map_Draw_With_WX__3(int16_t wx);
 
 // WZD o70p12
+void Spell_Casting_Screen_Reset_Map_Draw_With_WX__4(int16_t wx);
 
 // WZD o70p13
-int16_t IDK_Map_Square_Is_Targetable(int16_t mx, int16_t my);
+int16_t Map_Square_Is_Targetable(int16_t mx, int16_t my);
 
 // WZD o70p14
-void Set_Mouse_List_Image_Nums(void);
+void Spell_Casting_Screen_Assign_Mouse_Images(void);
 
 // WZD o70p15
 void Spell_Casting_Screen_Draw_Panel(void);
