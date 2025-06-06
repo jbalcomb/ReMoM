@@ -754,63 +754,6 @@ int16_t tax_unrest_pct_table[7] = {0, 10, 20, 30, 45, 60, 75};
 
 
 
-// WZD dseg:6ED0                                                 ¿ BEGIN: Cityscape - Initialized Data ?
-
-// WZD dseg:6ED0
-// drake178: CTY_EnchantAnimStage
-int16_t cityscape_bldg_anim_ctr = 0;
-
-// WZD dseg:6ED2
-int16_t cityscape_water_anim_ctr = 0;
-
-// WZD dseg:6ED4
-int16_t cityscape_wall_anim_ctr = 0;
-
-// WZD dseg:6ED6
-int16_t cityscape_build_anim_ctr = 100;
-
-// WZD dseg:6ED8
-struct s_BLDG_CR cityscape_cr[5][3] =
-{
-    {
-        /* 2x2 */
-        {  0, -12,  18,   0 },
-        {  5, -20,  24, -13 },
-        { 19, -13,  24,  -7 },
-    },
-    {
-        /* 2x3 */
-        {  0, -14,  29,   0 },
-        {  4, -17,  31,  -4 },
-        {  7, -21,  35,  -6 },
-    },
-    {
-        /* 3x2 */
-        {  0, -15,  19,   0 },
-        {  6, -20,  23,  -6 },
-        { 10, -25,  30, -11 },
-    },
-    {
-        /* 3x3 */
-        {  0, -14,  29,   0 },
-        {  6, -19,  34,  -5 },
-        { 11, -25,  39, -11 },
-    },
-    {
-        /* NIU */
-        {  6, -41,  30,  -3 },
-        { 11, -47,  30, -42 },
-        { 25, -41,  30,  -9 },
-    }
-
-};
-
-// WZD dseg:6F5E                                                 ¿ END: Cityscape - Initialized Data ?
-
-
-
-
-
 // WZD dseg:6F76                                                 BEGIN:  ovr148 - Initialized Data
 
 // WZD dseg:6F76
@@ -1394,7 +1337,7 @@ SAMB_ptr cityscape_inspirations_seg;
 SAMB_ptr cityscape_prosperity_seg;
 // WZD dseg:9352
 // drake178: IMG_CTY_NatsEye
-SAMB_ptr cityscape_consecrations_seg;
+SAMB_ptr cityscape_consecration_seg;
 
 // WZD dseg:9354
 // drake178: IMG_CTY_SorcWard
@@ -3401,34 +3344,6 @@ as bldg_idx_1 and bldg_idx_2
 int16_t _ce_bldg_idx;
 
 // WZD dseg:CA52                                                 END: ovr136 - Uninitialized Data
-
-
-
-// WZD dseg:CA78                                                 ¿ BEGIN: Cityscape - ?
-
-// WZD dseg:CA78
-// drake178: new_bldg_idx
-// WZD dseg:CA7A
-// drake178: dword_4351A
-
-// WZD dseg:CA7E
-// drake178: IMG_CTY_Vtrcl_Mask@
-SAMB_ptr cityscape_roads_vertical_mask_seg;
-
-// WZD dseg:CA80
-// drake178: IMG_CTY_Horz_Mask@
-SAMB_ptr cityscape_roads_horizontal_mask_seg;
-
-// WZD dseg:CA82
-// drake178: Frame_Index
-// WZD dseg:CA84
-// drake178: word_43524
-// WZD dseg:CA86
-// drake178: word_43526
-// WZD dseg:CA88
-// drake178: pict_seg
-
-// WZD dseg:CA88                                                 ¿ END: Cityscape - ?
 
 
 

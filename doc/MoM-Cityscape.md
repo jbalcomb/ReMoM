@@ -9,6 +9,19 @@ CITYSCAP.C
 
 
 
+
+Where is ... ?
+    Flying Fortress
+    Gaia's Blessing
+    Cursed Lands
+    
+
+
+
+
+
+
+
 Cityscape_Draw__WIP()
     Cityscape_Draw_Background()
     Cityscape_Make_Buildings_Array()

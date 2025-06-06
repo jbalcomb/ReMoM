@@ -7,6 +7,8 @@
 
 #include "MGC_DATA.H"
 
+#include "CITYSCAP.H"
+
 
 
 // WZD dseg:291E                            BEGIN: ovr052
@@ -1089,7 +1091,7 @@ void Reload_Cityscape_Graphics_Cache(void)
     // CITYSCAP.LBX, 101  "CITYSPL4"  "prosperity"
     cityscape_prosperity_seg = LBX_Reload_Next(cityscap_lbx_file, 101, GFX_Swap_Seg);
     // CITYSCAP.LBX, 102  "CITYSPL4"  "consecration"
-    cityscape_consecrations_seg = LBX_Reload_Next(cityscap_lbx_file, 101, GFX_Swap_Seg);
+    cityscape_consecration_seg = LBX_Reload_Next(cityscap_lbx_file, 101, GFX_Swap_Seg);
 
 
     // CITYSCAP.LBX, 077  "CSWALLS"   "wall of fire"

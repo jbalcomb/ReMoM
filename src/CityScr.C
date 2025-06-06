@@ -269,7 +269,7 @@ Capture_Cities_Data();
 
 Check_Cities_Data();
     Do_City_Calculations(_city_idx);
-Check_Cities_Data();
+Capture_Cities_Data();
 
     m_city_production_cost = City_Production_Cost(_CITIES[_city_idx].construction, _city_idx);
 
@@ -1290,14 +1290,14 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
 // MoO2  Module: NAMESTAR  Change_Home_Star_Name_Popup_
 void Change_Home_City_Name_Popup(int16_t city_idx)
 {
-    uint8_t color_array[14];
-    char default_cityname[16];
-    char Text[16];
-    int16_t start_y;
-    int16_t start_x;
+    uint8_t color_array[14] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char default_cityname[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char Text[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t start_y = 0;
+    int16_t start_x = 0;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-but-set-variable"
-    int16_t UU_RetVal_TextEditDialog;
+    int16_t UU_RetVal_TextEditDialog = 0;
 #pragma clang diagnostic push
 
     _page_flip_effect = 0;

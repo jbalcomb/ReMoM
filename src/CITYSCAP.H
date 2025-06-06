@@ -16,6 +16,13 @@
 
 
 
+// WZD dseg:CA7E
+extern SAMB_ptr cityscape_roads_vertical_mask_seg;
+// WZD dseg:CA80
+extern SAMB_ptr cityscape_roads_horizontal_mask_seg;
+
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif

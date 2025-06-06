@@ -12,7 +12,66 @@
 
 
 
-// WZD dseg:CA78                                                 ¿ BEGIN: Cityscape - ?
+// WZD dseg:6ED0                                                 BEGIN:  ovr144 - Initialized Data  (Cityscape)
+
+// WZD dseg:6ED0
+// drake178: CTY_EnchantAnimStage
+int16_t cityscape_bldg_anim_ctr = 0;
+int16_t cityscape_bldg_anim_itr = 0;  // DNE in Dasm
+
+// WZD dseg:6ED2
+int16_t cityscape_water_anim_ctr = 0;
+int16_t cityscape_water_anim_itr = 0;  // DNE in Dasm
+
+// WZD dseg:6ED4
+int16_t cityscape_wall_anim_ctr = 0;
+int16_t cityscape_wall_anim_itr = 0;  // DNE in Dasm
+
+// WZD dseg:6ED6
+int16_t cityscape_build_anim_ctr = 100;
+int16_t cityscape_build_anim_itr = 100;  // DNE in Dasm
+
+// WZD dseg:6ED8
+struct s_BLDG_CR cityscape_cr[5][3] =
+{
+    {
+        /* 2x2 */
+        {  0, -12,  18,   0 },
+        {  5, -20,  24, -13 },
+        { 19, -13,  24,  -7 },
+    },
+    {
+        /* 2x3 */
+        {  0, -14,  29,   0 },
+        {  4, -17,  31,  -4 },
+        {  7, -21,  35,  -6 },
+    },
+    {
+        /* 3x2 */
+        {  0, -15,  19,   0 },
+        {  6, -20,  23,  -6 },
+        { 10, -25,  30, -11 },
+    },
+    {
+        /* 3x3 */
+        {  0, -14,  29,   0 },
+        {  6, -19,  34,  -5 },
+        { 11, -25,  39, -11 },
+    },
+    {
+        /* Fortress */
+        {  6, -41,  30,  -3 },
+        { 11, -47,  30, -42 },
+        { 25, -41,  30,  -9 },
+    }
+
+};
+
+// WZD dseg:6EE8                                                 END:  ovr144 - Initialized Data  (Cityscape)
+
+
+
+// WZD dseg:CA78                                                 BEGIN:  ovr144 - Uninitialized Data  (Cityscape)
 
 // WZD dseg:CA78
 int16_t new_bldg_idx;
@@ -31,8 +90,13 @@ allocated in Cityscape_Draw()
 */
 struct s_CITYSCAPE_RC * cityscape_bldg_array;
 
-// WZD dseg:CA7E 00 00                                           cityscape_roads_vertical_mask_seg dw 0      ; DATA XREF: GFX_Swap_AppndCtScap+5EBw
-// WZD dseg:CA80 00 00                                           cityscape_roads_horizontal_mask_seg dw 0    ; DATA XREF: GFX_Swap_AppndCtScap+5D4w ...
+// WZD dseg:CA7E
+// drake178: IMG_CTY_Vtrcl_Mask@
+SAMB_ptr cityscape_roads_vertical_mask_seg;
+
+// WZD dseg:CA80
+// drake178: IMG_CTY_Horz_Mask@
+SAMB_ptr cityscape_roads_horizontal_mask_seg;
 
 // WZD dseg:CA82
 int16_t cityscape_background_frame;
@@ -44,10 +108,10 @@ int16_t m_cityscape_summon_city;
 int16_t m_cityscape_fortress_city;
 
 // WZD dseg:CA88
+// MoO2  bldg_bitm
 SAMB_ptr cityscape_pict_seg;
 
-// WZD dseg:CA88                                                 ¿ END: Cityscape - ?
-
+// WZD dseg:CA88                                                 END:  ovr144 - Uninitialized Data  (Cityscape)
 
 
 
@@ -60,6 +124,7 @@ SAMB_ptr cityscape_pict_seg;
 void Cityscape_Build_Anim_Reset(void)
 {
     cityscape_build_anim_ctr = 0;
+    cityscape_build_anim_itr = 0;  // DNE in Dasm
 }
 
 
@@ -150,7 +215,7 @@ void Cityscape_Window__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int
 
     Cityscape_Draw_Buildings(city_idx, xstart, ystart, bldg_idx_1);
 
-    // Cityscape_Draw_Wards_And_Walls__STUB(city_idx, xstart, ystart);
+    Cityscape_Draw_Wards_And_Walls__STUB(city_idx, xstart, ystart);
 
     cityscape_bldg_anim_ctr  = ((cityscape_bldg_anim_ctr  + 1) %  9);
     cityscape_water_anim_ctr = ((cityscape_water_anim_ctr + 1) % 12);
@@ -1501,6 +1566,73 @@ NOTE: Cloud Of Shadow, Heavenly Light, and Chaos Rift are handled in Cityscape_D
 */
 void Cityscape_Draw_Wards_And_Walls__STUB(int16_t city_idx, int16_t xstart, int16_t ystart)
 {
+
+    if(_CITIES[city_idx].enchantments[DEATH_WARD] != ST_FALSE)
+    {
+        FLIC_Draw((xstart + 8), (ystart + 83), cityscape_black_ward_seg);
+    }
+
+    if(_CITIES[city_idx].enchantments[CHAOS_WARD] != ST_FALSE)
+    {
+        FLIC_Draw((xstart + 29), (ystart + 83), cityscape_red_ward_seg);
+    }
+
+    if(_CITIES[city_idx].enchantments[NATURE_WARD] != ST_FALSE)
+    {
+        FLIC_Draw((xstart + 50), (ystart + 83), cityscape_green_ward_seg);
+    }
+
+    if(_CITIES[city_idx].enchantments[LIFE_WARD] != ST_FALSE)
+    {
+        FLIC_Draw((xstart + 71), (ystart + 83), cityscape_white_ward_seg);
+    }
+
+    if(_CITIES[city_idx].enchantments[SORCERY_WARD] != ST_FALSE)
+    {
+        FLIC_Draw((xstart + 92), (ystart + 83), cityscape_blue_ward_seg);
+    }
+
+
+    if(_CITIES[city_idx].enchantments[NATURES_EYE] != ST_FALSE)
+    {
+        FLIC_Draw((xstart + 113), (ystart + 83), cityscape_natureseye_seg);
+    }
+
+    if(_CITIES[city_idx].enchantments[INSPIRATIONS] != ST_FALSE)
+    {
+        FLIC_Draw((xstart + 134), (ystart + 83), cityscape_inspirations_seg);
+    }
+
+    if(_CITIES[city_idx].enchantments[PROSPERITY] != ST_FALSE)
+    {
+        FLIC_Draw((xstart + 155), (ystart + 83), cityscape_prosperity_seg);
+    }
+
+    if(_CITIES[city_idx].enchantments[CONSECRATION] != ST_FALSE)
+    {
+        FLIC_Draw((xstart + 176), (ystart + 83), cityscape_consecration_seg);
+    }
+
+    if(_CITIES[city_idx].enchantments[WALL_OF_DARKNESS] != ST_FALSE)
+    {
+        FLIC_Set_CurrentFrame(cityscape_wall_of_air_seg, cityscape_wall_anim_ctr);
+        Draw_Picture_To_Bitmap(cityscape_wall_of_air_seg, cityscape_pict_seg);
+        Draw_Picture(xstart, (ystart + 84), cityscape_pict_seg);
+    }
+
+    if(_CITIES[city_idx].enchantments[WALL_OF_FIRE] != ST_FALSE)
+    {
+        FLIC_Set_CurrentFrame(cityscape_wall_of_fire_seg, cityscape_wall_anim_ctr);
+        Draw_Picture_To_Bitmap(cityscape_wall_of_fire_seg, cityscape_pict_seg);
+        Draw_Picture(xstart, (ystart + 84), cityscape_pict_seg);
+    }
+
+    // if(_CITIES[city_idx].enchantments[WALL_OF_FIRE] != ST_FALSE)
+    // {
+    //     FLIC_Set_CurrentFrame(cityscape_wall_of_stine_seg, cityscape_wall_anim_ctr);
+    //     Draw_Picture_To_Bitmap(cityscape_wall_of_stine_seg, cityscape_pict_seg);
+    //     Draw_Picture(xstart, (ystart + 84), cityscape_pict_seg);
+    // }
 
 }
 

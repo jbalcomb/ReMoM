@@ -2552,34 +2552,11 @@ extern char hlpentry_lbx_file[];
 
 
 
+
+
 // WZD dseg:6E9E
 // drake178: TBL_Tax_Unrest_Pcnts
 extern int16_t tax_unrest_pct_table[7];
-
-
-
-
-
-
-// WZD dseg:6ED0                                                 ¿ BEGIN: Cityscape - Initialized Data ?
-
-// WZD dseg:6ED0
-// drake178: CTY_EnchantAnimStage
-extern int16_t cityscape_bldg_anim_ctr;
-
-// WZD dseg:6ED2
-extern int16_t cityscape_water_anim_ctr;
-
-// WZD dseg:6ED4
-extern int16_t cityscape_wall_anim_ctr;
-
-// WZD dseg:6ED6
-extern int16_t cityscape_build_anim_ctr;
-
-// WZD dseg:6ED8
-extern struct s_BLDG_CR cityscape_cr[5][3];
-
-// WZD dseg:6F5E                                                 ¿ END: Cityscape - Initialized Data ?
 
 
 
@@ -2987,9 +2964,9 @@ extern SAMB_ptr cityscape_houses_seg[15];
 extern SAMB_ptr cityscape_roads_seg;
 
 // WZD dseg:9346
-SAMB_ptr cityscape_wall_of_air_seg;
+extern SAMB_ptr cityscape_wall_of_air_seg;
 // WZD dseg:9348
-SAMB_ptr cityscape_wall_of_stine_seg;
+extern SAMB_ptr cityscape_wall_of_stine_seg;
 // WZD dseg:934A
 extern SAMB_ptr cityscape_wall_of_fire_seg;
 
@@ -3000,7 +2977,7 @@ extern SAMB_ptr cityscape_inspirations_seg;
 // WZD dseg:9350
 extern SAMB_ptr cityscape_prosperity_seg;
 // WZD dseg:9352
-extern SAMB_ptr cityscape_consecrations_seg;
+extern SAMB_ptr cityscape_consecration_seg;
 
 // WZD dseg:9354
 extern SAMB_ptr cityscape_blue_ward_seg;
@@ -4555,34 +4532,6 @@ extern int16_t _temp_sint_1;
 extern int16_t _ce_bldg_idx;
 
 // WZD dseg:CA52                                                 END: ovr136 - Uninitialized Data
-
-
-
-// WZD dseg:CA78                                                 ¿ BEGIN: Cityscape - ?
-
-// WZD dseg:CA78
-// drake178: new_bldg_idx
-// WZD dseg:CA7A
-// drake178: dword_4351A
-
-// WZD dseg:CA7E
-// drake178: IMG_CTY_Vtrcl_Mask@
-extern SAMB_ptr cityscape_roads_vertical_mask_seg;
-
-// WZD dseg:CA80
-// drake178: IMG_CTY_Horz_Mask@
-extern SAMB_ptr cityscape_roads_horizontal_mask_seg;
-
-// WZD dseg:CA82
-// drake178: Frame_Index
-// WZD dseg:CA84
-// drake178: word_43524
-// WZD dseg:CA86
-// drake178: word_43526
-// WZD dseg:CA88
-// drake178: pict_seg
-
-// WZD dseg:CA88                                                 ¿ END: Cityscape - ?
 
 
 

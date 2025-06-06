@@ -34,8 +34,8 @@ void TST_Cheat_Power(int16_t player_idx)
 
 void TST_Learn_Spell(int16_t player_idx, int16_t spell_idx)
 {
-    int16_t spell_realm_idx;
-    int16_t spell_realm;
+    int16_t spell_realm_idx = 0;
+    int16_t spell_realm = 0;
 
     spell_realm = ((spell_idx - 1) / NUM_SPELLS_PER_MAGIC_REALM);
     spell_realm_idx = ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM);
@@ -45,8 +45,8 @@ void TST_Learn_Spell(int16_t player_idx, int16_t spell_idx)
 
 void TST_Patch_Game_Data(void)
 {
-    int16_t player_idx;
-    int16_t spell_idx;
+    int16_t player_idx = 0;
+    int16_t spell_idx = 0;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: TST_Patch_Game_Data()\n", __FILE__, __LINE__);
@@ -58,6 +58,17 @@ void TST_Patch_Game_Data(void)
     
     TST_Cheat_Power(player_idx);
 
+    // City Enchantment
+    TST_Learn_Spell(player_idx, spl_Consecration);
+    TST_Learn_Spell(player_idx, spl_Inspirations);
+    TST_Learn_Spell(player_idx, spl_Natures_Eye);
+    TST_Learn_Spell(player_idx, spl_Prosperity);
+    TST_Learn_Spell(player_idx, spl_Spell_Ward);
+    TST_Learn_Spell(player_idx, spl_Stream_Of_Life);
+    TST_Learn_Spell(player_idx, spl_Summoning_Circle);
+    TST_Learn_Spell(player_idx, spl_Wall_Of_Darkness);
+    TST_Learn_Spell(player_idx, spl_Wall_Of_Fire);
+    TST_Learn_Spell(player_idx, spl_Wall_Of_Stone);
 
     // TST_Learn_Spell(player_idx, spl_Animate_Dead);
     // TST_Learn_Spell(player_idx, spl_Awareness);
@@ -66,6 +77,32 @@ void TST_Patch_Game_Data(void)
     // TST_Learn_Spell(player_idx, spl_Holy_Arms);
     // TST_Learn_Spell(player_idx, spl_Raise_Dead);
     // TST_Learn_Spell(player_idx, spl_Natures_Awareness);
+
+    // Cityscape_Draw_Background()
+    // if(_CITIES[city_idx].enchantments[FLYING_FORTRESS] != ST_TRUE)
+    //     if(_CITIES[city_idx].enchantments[CLOUD_OF_SHADOW] == ST_TRUE)
+    //     else if(_CITIES[city_idx].enchantments[HEAVENLY_LIGHT] == ST_TRUE)
+    //     else if(_CITIES[city_idx].enchantments[CHAOS_RIFT] == ST_TRUE)
+    // _CITIES[0].enchantments[FLYING_FORTRESS] = ST_TRUE;
+    // _CITIES[0].enchantments[CLOUD_OF_SHADOW] = ST_TRUE;
+    _CITIES[0].enchantments[HEAVENLY_LIGHT] = ST_TRUE;
+    // _CITIES[0].enchantments[CHAOS_RIFT] = ST_TRUE;
+    
+    // Cityscape_Draw_Wards_And_Walls__STUB()
+    _CITIES[0].enchantments[DEATH_WARD] = ST_TRUE;
+    _CITIES[0].enchantments[CHAOS_WARD] = ST_TRUE;
+    _CITIES[0].enchantments[NATURE_WARD] = ST_TRUE;
+    _CITIES[0].enchantments[LIFE_WARD] = ST_TRUE;
+    _CITIES[0].enchantments[SORCERY_WARD] = ST_TRUE;
+    _CITIES[0].enchantments[NATURES_EYE] = ST_TRUE;
+    _CITIES[0].enchantments[INSPIRATIONS] = ST_TRUE;
+    _CITIES[0].enchantments[PROSPERITY] = ST_TRUE;
+    _CITIES[0].enchantments[CONSECRATION] = ST_TRUE;
+    _CITIES[0].enchantments[WALL_OF_DARKNESS] = ST_TRUE;
+    // _CITIES[0].enchantments[WALL_OF_FIRE] = ST_TRUE;
+    // _CITIES[0].enchantments[WALL_OF_FIRE] = ST_TRUE;
+Capture_Cities_Data();
+
 
 
 #ifdef STU_DEBUG
