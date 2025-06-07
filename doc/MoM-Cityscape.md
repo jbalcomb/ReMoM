@@ -123,7 +123,7 @@ m_cityscape_summon_city
 cityscape_bldg_anim_ctr
 cityscape_water_anim_ctr
 cityscape_wall_anim_ctr
-IDK_cityscape_vanish_percent
+cityscape_build_anim_ctr
 cityscape_cr
 city_cityscape_field_count
 
@@ -328,22 +328,22 @@ XREF:
         City_Built_Building_Message()
         IDK_Spell_Cityscape_1()
 
-```IDK_cityscape_vanish_percent = 0;```
+```cityscape_build_anim_ctr = 0;```
 
-    IDK_Clear_Cityscape_Vanish_Percent+3           mov     [IDK_cityscape_vanish_percent], 0        
-    Cityscape_Draw__WIP+35B                        cmp     [IDK_cityscape_vanish_percent], 100      
-    Cityscape_Draw__WIP+362                        add     [IDK_cityscape_vanish_percent], 10       
-    Cityscape_Roads_1+77E                          mov     ax, [IDK_cityscape_vanish_percent+bx]    
-    Cityscape_Draw_Buildings+257 push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings+2CB push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings+32A push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings+39B push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings+40C push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings+47C push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings+4F6 push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings+566 push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings+5D7 push    [IDK_cityscape_vanish_percent]  ; percent
-    Cityscape_Draw_Buildings+66B push    [IDK_cityscape_vanish_percent]  ; percent
+    IDK_Clear_Cityscape_Vanish_Percent+3           mov     [cityscape_build_anim_ctr], 0        
+    Cityscape_Draw__WIP+35B                        cmp     [cityscape_build_anim_ctr], 100      
+    Cityscape_Draw__WIP+362                        add     [cityscape_build_anim_ctr], 10       
+    Cityscape_Roads_1+77E                          mov     ax, [cityscape_build_anim_ctr+bx]    
+    Cityscape_Draw_Buildings+257 push    [cityscape_build_anim_ctr]  ; percent
+    Cityscape_Draw_Buildings+2CB push    [cityscape_build_anim_ctr]  ; percent
+    Cityscape_Draw_Buildings+32A push    [cityscape_build_anim_ctr]  ; percent
+    Cityscape_Draw_Buildings+39B push    [cityscape_build_anim_ctr]  ; percent
+    Cityscape_Draw_Buildings+40C push    [cityscape_build_anim_ctr]  ; percent
+    Cityscape_Draw_Buildings+47C push    [cityscape_build_anim_ctr]  ; percent
+    Cityscape_Draw_Buildings+4F6 push    [cityscape_build_anim_ctr]  ; percent
+    Cityscape_Draw_Buildings+566 push    [cityscape_build_anim_ctr]  ; percent
+    Cityscape_Draw_Buildings+5D7 push    [cityscape_build_anim_ctr]  ; percent
+    Cityscape_Draw_Buildings+66B push    [cityscape_build_anim_ctr]  ; percent
 
 
 

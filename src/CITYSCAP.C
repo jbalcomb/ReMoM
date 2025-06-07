@@ -267,29 +267,30 @@ void Cityscape_Roads_1__WIP(int16_t xstart, int16_t ystart)
     int16_t itr1 = 0;  // _DI_
     int16_t n_roads = 0;  // _SI_
 
-    /* IDK  #1 */  for(itr1 =  0; itr1 <  4; itr1++) { if((cityscape_bldg_array->RC[1][itr1] > 0                                           )) { for(itr2 =  0; itr2 <  4; itr2++) { cityscape_bldg_array->RC[itr2][ 0] = -5; } itr1 = 1000; } }
-    /* IDK  #2 */  for(itr1 =  5; itr1 <  9; itr1++) { if((cityscape_bldg_array->RC[1][itr1] > 0                                           )) { for(itr2 =  5; itr2 <  9; itr2++) { cityscape_bldg_array->RC[itr2][ 0] = -5; } itr1 = 1000; } }
-    /* IDK  #3 */  for(itr1 = 10; itr1 < 13; itr1++) { if((cityscape_bldg_array->RC[1][itr1] > 0                                           )) { for(itr2 = 10; itr2 < 13; itr2++) { cityscape_bldg_array->RC[itr2][ 0] = -5; } itr1 = 1000; } }
-    /* IDK  #4 */  for(itr1 = 14; itr1 < 18; itr1++) { if((cityscape_bldg_array->RC[1][itr1] > 0                                           )) { for(itr2 = 14; itr2 < 18; itr2++) { cityscape_bldg_array->RC[10][itr2] = -5; } itr1 = 1000; } }
 
-    /* IDK  #5 */  for(itr1 =  1; itr1 <  4; itr1++) { if((cityscape_bldg_array->RC[4][itr1] > 0) || (cityscape_bldg_array->RC[6][itr1] > 0)) { for(itr2 =  1; itr2 <  4; itr2++) { cityscape_bldg_array->RC[10][itr2] = -5; } itr1 = 1000; } }
-    /* IDK  #6 */  for(itr1 =  5; itr1 <  9; itr1++) { if((cityscape_bldg_array->RC[4][itr1] > 0) || (cityscape_bldg_array->RC[6][itr1] > 0)) { for(itr2 =  5; itr2 <  9; itr2++) { cityscape_bldg_array->RC[10][itr2] = -5; } itr1 = 1000; } }
-    /* IDK  #7 */  for(itr1 = 10; itr1 < 13; itr1++) { if((cityscape_bldg_array->RC[4][itr1] > 0) || (cityscape_bldg_array->RC[6][itr1] > 0)) { for(itr2 = 10; itr2 < 13; itr2++) { cityscape_bldg_array->RC[10][itr2] = -5; } itr1 = 1000; } }
 
-    for(itr1 = 10; itr1 < 13; itr1++) { if( (cityscape_bldg_array->RC[4][itr1] > 0) || (cityscape_bldg_array->RC[6][itr1] > 0) ) { for(itr2 = 10; itr2 < 13; itr2++) { cityscape_bldg_array->RC[10][itr2] = -5; } itr1 = 1000; } }
+    /* IDK  #1 */  for(itr1 =  0; itr1 <  4; itr1++) { if((cityscape_bldg_array->RC[ 1][itr1] > 0                                            )) { for(itr2 =  0; itr2 <  4; itr2++) { cityscape_bldg_array->RC[ 0][itr2] = -5; } itr1 = 1000; } }
+    /* IDK  #2 */  for(itr1 =  5; itr1 <  9; itr1++) { if((cityscape_bldg_array->RC[ 1][itr1] > 0                                            )) { for(itr2 =  5; itr2 <  9; itr2++) { cityscape_bldg_array->RC[ 0][itr2] = -5; } itr1 = 1000; } }
+    /* IDK  #3 */  for(itr1 = 10; itr1 < 13; itr1++) { if((cityscape_bldg_array->RC[ 1][itr1] > 0                                            )) { for(itr2 = 10; itr2 < 13; itr2++) { cityscape_bldg_array->RC[ 0][itr2] = -5; } itr1 = 1000; } }
+    /* IDK  #4 */  for(itr1 = 14; itr1 < 18; itr1++) { if((cityscape_bldg_array->RC[ 1][itr1] > 0                                            )) { for(itr2 = 14; itr2 < 18; itr2++) { cityscape_bldg_array->RC[ 0][itr2] = -5; } itr1 = 1000; } }
 
-    /* IDK  #8 */  for(itr1 = 19; itr1 < 23; itr1++) { if((cityscape_bldg_array->RC[4][itr1] > 0) || (cityscape_bldg_array->RC[ 6][itr1] > 0)) { for(itr2 = 19; itr2 < 23; itr2++) { cityscape_bldg_array->RC[ 5][itr2] = -5; } itr1 = 1000; } }
+    /* IDK  #5 */  for(itr1 =  1; itr1 <  4; itr1++) { if((cityscape_bldg_array->RC[ 4][itr1] > 0) || (cityscape_bldg_array->RC[ 6][itr1] > 0)) { for(itr2 =  1; itr2 <  4; itr2++) { cityscape_bldg_array->RC[ 5][itr2] = -5; } itr1 = 1000; } }
+    /* IDK  #6 */  for(itr1 =  5; itr1 <  9; itr1++) { if((cityscape_bldg_array->RC[ 4][itr1] > 0) || (cityscape_bldg_array->RC[ 6][itr1] > 0)) { for(itr2 =  5; itr2 <  9; itr2++) { cityscape_bldg_array->RC[ 5][itr2] = -5; } itr1 = 1000; } }
+    /* IDK  #7 */  for(itr1 = 10; itr1 < 13; itr1++) { if((cityscape_bldg_array->RC[ 4][itr1] > 0) || (cityscape_bldg_array->RC[ 6][itr1] > 0)) { for(itr2 = 10; itr2 < 13; itr2++) { cityscape_bldg_array->RC[ 5][itr2] = -5; } itr1 = 1000; } }
+    /* IDK  #8 */  for(itr1 = 19; itr1 < 23; itr1++) { if((cityscape_bldg_array->RC[ 4][itr1] > 0) || (cityscape_bldg_array->RC[ 6][itr1] > 0)) { for(itr2 = 19; itr2 < 23; itr2++) { cityscape_bldg_array->RC[ 5][itr2] = -5; } itr1 = 1000; } }
 
-    /* IDK  #9 */  for(itr1 =  2; itr1 <  4; itr1++) { if((cityscape_bldg_array->RC[8][itr1] > 0) || (cityscape_bldg_array->RC[10][itr1] > 0)) { for(itr2 =  2; itr2 <  4; itr2++) { cityscape_bldg_array->RC[ 9][itr2] = -5; } itr1 = 1000; } }
-    /* IDK #10 */  for(itr1 =  5; itr1 <  9; itr1++) { if((cityscape_bldg_array->RC[8][itr1] > 0) || (cityscape_bldg_array->RC[10][itr1] > 0)) { for(itr2 =  5; itr2 <  9; itr2++) { cityscape_bldg_array->RC[ 9][itr2] = -5; } itr1 = 1000; } }
-    /* IDK #11 */  for(itr1 = 10; itr1 < 13; itr1++) { if((cityscape_bldg_array->RC[8][itr1] > 0) || (cityscape_bldg_array->RC[10][itr1] > 0)) { for(itr2 = 10; itr2 < 13; itr2++) { cityscape_bldg_array->RC[ 9][itr2] = -5; } itr1 = 1000; } }
-    /* IDK #12 */  for(itr1 = 14; itr1 < 18; itr1++) { if((cityscape_bldg_array->RC[8][itr1] > 0) || (cityscape_bldg_array->RC[10][itr1] > 0)) { for(itr2 = 14; itr2 < 18; itr2++) { cityscape_bldg_array->RC[ 9][itr2] = -5; } itr1 = 1000; } }
-    /* IDK #12 */  for(itr1 = 19; itr1 < 23; itr1++) { if((cityscape_bldg_array->RC[8][itr1] > 0) || (cityscape_bldg_array->RC[10][itr1] > 0)) { for(itr2 = 19; itr2 < 23; itr2++) { cityscape_bldg_array->RC[ 9][itr2] = -5; } itr1 = 1000; } }
+    /* IDK  #9 */  for(itr1 =  2; itr1 <  4; itr1++) { if((cityscape_bldg_array->RC[ 8][itr1] > 0) || (cityscape_bldg_array->RC[10][itr1] > 0)) { for(itr2 =  2; itr2 <  4; itr2++) { cityscape_bldg_array->RC[ 9][itr2] = -5; } itr1 = 1000; } }
+    /* IDK #10 */  for(itr1 =  5; itr1 <  9; itr1++) { if((cityscape_bldg_array->RC[ 8][itr1] > 0) || (cityscape_bldg_array->RC[10][itr1] > 0)) { for(itr2 =  5; itr2 <  9; itr2++) { cityscape_bldg_array->RC[ 9][itr2] = -5; } itr1 = 1000; } }
+    /* IDK #11 */  for(itr1 = 10; itr1 < 13; itr1++) { if((cityscape_bldg_array->RC[ 8][itr1] > 0) || (cityscape_bldg_array->RC[10][itr1] > 0)) { for(itr2 = 10; itr2 < 13; itr2++) { cityscape_bldg_array->RC[ 9][itr2] = -5; } itr1 = 1000; } }
+    /* IDK #12 */  for(itr1 = 14; itr1 < 18; itr1++) { if((cityscape_bldg_array->RC[ 8][itr1] > 0) || (cityscape_bldg_array->RC[10][itr1] > 0)) { for(itr2 = 14; itr2 < 18; itr2++) { cityscape_bldg_array->RC[ 9][itr2] = -5; } itr1 = 1000; } }
+    /* IDK #12 */  for(itr1 = 19; itr1 < 23; itr1++) { if((cityscape_bldg_array->RC[ 8][itr1] > 0) || (cityscape_bldg_array->RC[10][itr1] > 0)) { for(itr2 = 19; itr2 < 23; itr2++) { cityscape_bldg_array->RC[ 9][itr2] = -5; } itr1 = 1000; } }
 
-    /* IDK #13 */  for(itr1 =  5; itr1 <  9; itr1++) { if((cityscape_bldg_array->RC[13][itr1] > 0)                                           ) { for(itr2 =  5; itr2 <  9; itr2++) { cityscape_bldg_array->RC[14][itr2] = -5; } itr1 = 1000; } }
-    /* IDK #14 */  for(itr1 = 10; itr1 < 13; itr1++) { if((cityscape_bldg_array->RC[13][itr1] > 0)                                           ) { for(itr2 = 10; itr2 < 13; itr2++) { cityscape_bldg_array->RC[14][itr2] = -5; } itr1 = 1000; } }
-    /* IDK #15 */  for(itr1 = 14; itr1 < 18; itr1++) { if((cityscape_bldg_array->RC[13][itr1] > 0)                                           ) { for(itr2 = 14; itr2 < 18; itr2++) { cityscape_bldg_array->RC[14][itr2] = -5; } itr1 = 1000; } }
-    /* IDK #16 */  for(itr1 = 19; itr1 < 23; itr1++) { if((cityscape_bldg_array->RC[13][itr1] > 0)                                           ) { for(itr2 = 19; itr2 < 23; itr2++) { cityscape_bldg_array->RC[14][itr2] = -5; } itr1 = 1000; } }
+    /* IDK #13 */  for(itr1 =  5; itr1 <  9; itr1++) { if((cityscape_bldg_array->RC[13][itr1] > 0)                                            ) { for(itr2 =  5; itr2 <  9; itr2++) { cityscape_bldg_array->RC[14][itr2] = -5; } itr1 = 1000; } }
+    /* IDK #14 */  for(itr1 = 10; itr1 < 13; itr1++) { if((cityscape_bldg_array->RC[13][itr1] > 0)                                            ) { for(itr2 = 10; itr2 < 13; itr2++) { cityscape_bldg_array->RC[14][itr2] = -5; } itr1 = 1000; } }
+    /* IDK #15 */  for(itr1 = 14; itr1 < 18; itr1++) { if((cityscape_bldg_array->RC[13][itr1] > 0)                                            ) { for(itr2 = 14; itr2 < 18; itr2++) { cityscape_bldg_array->RC[14][itr2] = -5; } itr1 = 1000; } }
+    /* IDK #16 */  for(itr1 = 19; itr1 < 23; itr1++) { if((cityscape_bldg_array->RC[13][itr1] > 0)                                            ) { for(itr2 = 19; itr2 < 23; itr2++) { cityscape_bldg_array->RC[14][itr2] = -5; } itr1 = 1000; } }
+
+
 
     // IDA yellow #2 ... switch roads A,B,C,D #1,#2,#3
     for(itr2 = 0; itr2 < 4; itr2++)
@@ -301,6 +302,10 @@ void Cityscape_Roads_1__WIP(int16_t xstart, int16_t ystart)
             case 2: { itr1 = 13; } break; /* road #C */
             case 3: { itr1 = 18; } break; /* road #D */
         }
+
+        // rows 1 to 5, col 3||5, 8||10, 12||14, 17||19
+        // ...for rows 1 to 5, if there is a building on either side of the column, mask off the column
+        // ...but, only down to the first match
         for(var_2 =  1; var_2 <  5; var_2++) {if( (cityscape_bldg_array->RC[var_2][(itr1 - 1)] > 0) || (cityscape_bldg_array->RC[var_2][(itr1 + 1)] > 0)) { for(var_6 =  1; var_6 <  5; var_6++) { cityscape_bldg_array->RC[var_6][itr1] = -5; } var_2 = 1000; } }
         for(var_2 =  6; var_2 <  9; var_2++) {if( (cityscape_bldg_array->RC[var_2][(itr1 - 1)] > 0) || (cityscape_bldg_array->RC[var_2][(itr1 + 1)] > 0)) { for(var_6 =  6; var_6 <  9; var_6++) { cityscape_bldg_array->RC[var_6][itr1] = -5; } var_2 = 1000; } }
         for(var_2 = 10; var_2 < 14; var_2++) {if( (cityscape_bldg_array->RC[var_2][(itr1 - 1)] > 0) || (cityscape_bldg_array->RC[var_2][(itr1 + 1)] > 0)) { for(var_6 = 10; var_6 < 14; var_6++) { cityscape_bldg_array->RC[var_6][itr1] = -5; } var_2 = 1000; } }
@@ -415,6 +420,9 @@ void Cityscape_Roads_1__WIP(int16_t xstart, int16_t ystart)
                             for(var_2 = (var_E + 1); var_2 < var_A; var_2++)
                             {
                                 cityscape_bldg_array->RC[var_2][var_8] = -5;
+/* DEBUG */  if(cityscape_bldg_array->RC[ 4][18] != -2) { STU_DEBUG_BREAK(); }
+/* DEBUG */  if(cityscape_bldg_array->RC[ 8][18] != -2) { STU_DEBUG_BREAK(); }
+/* DEBUG */  if(cityscape_bldg_array->RC[13][18] != -2) { STU_DEBUG_BREAK(); }
                             }
                         }
                     }
@@ -463,6 +471,9 @@ void Cityscape_Roads_1__WIP(int16_t xstart, int16_t ystart)
                             for(itr1 = (var_C + 1); itr1 < var_8; itr1++)
                             {
                                 cityscape_bldg_array->RC[var_A][itr1] = -5;
+/* DEBUG */  if(cityscape_bldg_array->RC[ 4][18] != -2) { STU_DEBUG_BREAK(); }
+/* DEBUG */  if(cityscape_bldg_array->RC[ 8][18] != -2) { STU_DEBUG_BREAK(); }
+/* DEBUG */  if(cityscape_bldg_array->RC[13][18] != -2) { STU_DEBUG_BREAK(); }
                             }
                         }
                     }
@@ -511,6 +522,9 @@ void Cityscape_Roads_1__WIP(int16_t xstart, int16_t ystart)
                             for(var_2 = (var_A + 1); var_2 < var_E; var_2++)
                             {
                                 cityscape_bldg_array->RC[var_2][var_8] = -5;
+/* DEBUG */  if(cityscape_bldg_array->RC[ 4][18] != -2) { STU_DEBUG_BREAK(); }
+/* DEBUG */  if(cityscape_bldg_array->RC[ 8][18] != -2) { STU_DEBUG_BREAK(); }
+/* DEBUG */  if(cityscape_bldg_array->RC[13][18] != -2) { STU_DEBUG_BREAK(); }
                             }
                         }
                     }
@@ -526,93 +540,92 @@ void Cityscape_Roads_1__WIP(int16_t xstart, int16_t ystart)
     */
     {
         n_roads = 0;
-        if(((int16_t *)cityscape_bldg_array)[(( 0 * SZ_CITYSCAPE_ROW) +  3)] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[(( 0 * SZ_CITYSCAPE_ROW) +  5)] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[(( 1 * SZ_CITYSCAPE_ROW) +  4)] == -5) { n_roads++; }
-        if(n_roads > 1) { ((int16_t *)cityscape_bldg_array)[(( 0 * SZ_CITYSCAPE_ROW) +  4)] = -5; }  // road #1,A
+        if(cityscape_bldg_array->RC[ 0][ 3] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 0][ 5] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 1][ 4] == -5) { n_roads++; }
+        if(n_roads > 1) { cityscape_bldg_array->RC[ 0][ 4] = -5; }  // [ 0][ 4] intersection A1
         n_roads = 0;
-        if(((int16_t *)cityscape_bldg_array)[(( 0 * SZ_CITYSCAPE_ROW) +  8)] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[(( 0 * SZ_CITYSCAPE_ROW) + 10)] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[(( 1 * SZ_CITYSCAPE_ROW) +  9)] == -5) { n_roads++; }
-        if(n_roads > 1) { ((int16_t *)cityscape_bldg_array)[(( 0 * SZ_CITYSCAPE_ROW) +  9)] = -5; }  // road #1,B
+        if(cityscape_bldg_array->RC[ 0][ 8] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 0][10] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 1][ 9] == -5) { n_roads++; }
+        if(n_roads > 1) { cityscape_bldg_array->RC[ 0][ 9] = -5; }  // [ 0][ 9] intersection A2
         n_roads = 0;
-        if(((int16_t *)cityscape_bldg_array)[(( 0 * SZ_CITYSCAPE_ROW) + 12)] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[(( 0 * SZ_CITYSCAPE_ROW) + 14)] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[(( 1 * SZ_CITYSCAPE_ROW) + 13)] == -5) { n_roads++; }
-        if(n_roads > 1) { ((int16_t *)cityscape_bldg_array)[(( 0 * SZ_CITYSCAPE_ROW) + 13)] = -5; }  // road #1,C
-        // DNE  road #1,D
+        if(cityscape_bldg_array->RC[ 0][12] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 0][14] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 1][13] == -5) { n_roads++; }
+        if(n_roads > 1) { cityscape_bldg_array->RC[ 0][13] = -5; }  // [ 0][13] intersection A3
+        // NOTE:  DNE  [ 0][18] intersection A4
 
         n_roads = 0;
-        if(((int16_t *)cityscape_bldg_array)[(( 5 * SZ_CITYSCAPE_ROW) +  3)] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[(( 5 * SZ_CITYSCAPE_ROW) +  5)] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[(( 6 * SZ_CITYSCAPE_ROW) +  9)] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[(( 4 * SZ_CITYSCAPE_ROW) +  9)] == -5) { n_roads++; }
-        if(n_roads > 1) { ((int16_t *)cityscape_bldg_array)[(( 5 * SZ_CITYSCAPE_ROW) + 12)] = -5; }  // road #2,
+        if(cityscape_bldg_array->RC[ 5][ 3] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 5][ 5] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 6][ 4] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 4][ 4] == -5) { n_roads++; }
+        if(n_roads > 1) { cityscape_bldg_array->RC[ 5][ 4] = -5; }  // [ 5][ 4] intersection B1
         n_roads = 0;
-        if(((int16_t *)cityscape_bldg_array)[(( 5 * SZ_CITYSCAPE_ROW) +  8)] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[(( 5 * SZ_CITYSCAPE_ROW) + 10)] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[(( 6 * SZ_CITYSCAPE_ROW) +  9)] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[(( 4 * SZ_CITYSCAPE_ROW) +  9)] == -5) { n_roads++; }
-        if(n_roads > 1) { ((int16_t *)cityscape_bldg_array)[(( 5 * SZ_CITYSCAPE_ROW) +  9)] = -5; }  // road #2,
-        // Fuck it.
+        if(cityscape_bldg_array->RC[ 5][ 8] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 5][10] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 6][ 9] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 4][ 9] == -5) { n_roads++; }
+        if(n_roads > 1) { cityscape_bldg_array->RC[ 5][ 9] = -5; }  // [ 5][ 9] intersection B2
         n_roads = 0;
-        if(((int16_t *)cityscape_bldg_array)[0xFE] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x102] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x12E] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0xD2] == -5) { n_roads++; }
-        if(n_roads > 1) { ((int16_t *)cityscape_bldg_array)[0x100] = -5; }  // road #2,
+        if(cityscape_bldg_array->RC[ 5][12] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 5][14] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 6][13] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 4][13] == -5) { n_roads++; }
+        if(n_roads > 1) { cityscape_bldg_array->RC[ 5][13] = -5; }  // [ 5][13] intersection B3
         n_roads = 0;
-        if(((int16_t *)cityscape_bldg_array)[0x108] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x10C] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x138] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0xDC] == -5) { n_roads++; }
-        if(n_roads > 1) { ((int16_t *)cityscape_bldg_array)[0x10A] = -5; }  // road #2,
+        if(cityscape_bldg_array->RC[ 5][17] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 5][19] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 6][18] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 4][18] == -5) { n_roads++; }  //  4,18
+        if(n_roads > 1) { cityscape_bldg_array->RC[ 5][18] = -5; }  // [ 5][18] intersection B4
 
         n_roads = 0;
-        if(((int16_t *)cityscape_bldg_array)[0x1A4] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x1A8] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x1D4] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x178] == -5) { n_roads++; }
-        if(n_roads > 1) { ((int16_t *)cityscape_bldg_array)[0x1A6] = -5; }  // road #3,
+        if(cityscape_bldg_array->RC[ 9][ 3] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 9][ 5] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[10][ 4] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 8][ 4] == -5) { n_roads++; }
+        if(n_roads > 1) { cityscape_bldg_array->RC[ 9][ 4] = -5; }  // [ 9][ 4] intersection C1
         n_roads = 0;
-        if(((int16_t *)cityscape_bldg_array)[0x1AE] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x1B2] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x1DE] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x182] == -5) { n_roads++; }
-        if(n_roads > 1) { ((int16_t *)cityscape_bldg_array)[0x1B0] = -5; }  // road #3,
+        if(cityscape_bldg_array->RC[ 9][ 8] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 9][ 10] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 10][ 9] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 8][ 9] == -5) { n_roads++; }
+        if(n_roads > 1) { cityscape_bldg_array->RC[ 9][ 9] = -5; }  // [ 9][ 9] intersection C2
         n_roads = 0;
-        if(((int16_t *)cityscape_bldg_array)[0x1B6] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x1BA] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x1E6] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x18A] == -5) { n_roads++; }
-        if(n_roads > 1) { ((int16_t *)cityscape_bldg_array)[0x1B8] = -5; }  // road #3,
+        if(cityscape_bldg_array->RC[ 9][12] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 9][14] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[10][13] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 8][13] == -5) { n_roads++; }
+        if(n_roads > 1) { cityscape_bldg_array->RC[ 9][13] = -5; }  // [ 9][13] intersection C3
         n_roads = 0;
-        if(((int16_t *)cityscape_bldg_array)[0x1C0] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x1C4] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x1F0] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x194] == -5) { n_roads++; }
-        if(n_roads > 1) { ((int16_t *)cityscape_bldg_array)[0x1C2] = -5; }  // road #3,
+        if(cityscape_bldg_array->RC[ 9][17] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[ 9][19] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[10][18] == -5) { n_roads++; }  // [10][18]
+        if(cityscape_bldg_array->RC[ 8][18] == -5) { n_roads++; }
+        if(n_roads > 1) { cityscape_bldg_array->RC[ 9][18] = -5; }  // [ 9][18] intersection C4
 
         n_roads = 0;
-        if(((int16_t *)cityscape_bldg_array)[0x28A] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x28E] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x25E] == -5) { n_roads++; }
-        if(n_roads > 1) { ((int16_t *)cityscape_bldg_array)[0x28C] = -5; }  // road #4,
+        if(cityscape_bldg_array->RC[14][ 3] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[14][ 5] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[13][ 4] == -5) { n_roads++; }
+        if(n_roads > 1) { cityscape_bldg_array->RC[14][4] = -5; }  // [14][ 4] intersection D1
         n_roads = 0;
-        if(((int16_t *)cityscape_bldg_array)[0x294] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x298] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x268] == -5) { n_roads++; }
-        if(n_roads > 1) { ((int16_t *)cityscape_bldg_array)[0x296] = -5; }  // road #4,
+        if(cityscape_bldg_array->RC[14][ 8] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[14][10] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[13][ 9] == -5) { n_roads++; }
+        if(n_roads > 1) { cityscape_bldg_array->RC[14][9] = -5; }  // [14][ 9] intersection D2
         n_roads = 0;
-        if(((int16_t *)cityscape_bldg_array)[0x29C] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x2A0] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x270] == -5) { n_roads++; }
-        if(n_roads > 1) { ((int16_t *)cityscape_bldg_array)[0x29E] = -5; }  // road #4,
+        if(cityscape_bldg_array->RC[14][12] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[14][14] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[13][13] == -5) { n_roads++; }
+        if(n_roads > 1) { cityscape_bldg_array->RC[14][13] = -5; }  // [14][13] intersection D3
         n_roads = 0;
-        if(((int16_t *)cityscape_bldg_array)[0x2A6] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x2AA] == -5) { n_roads++; }
-        if(((int16_t *)cityscape_bldg_array)[0x27A] == -5) { n_roads++; }
-        if(n_roads > 1) { ((int16_t *)cityscape_bldg_array)[0x2A8] = -5; }  // road #4,
+        if(cityscape_bldg_array->RC[14][17] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[14][19] == -5) { n_roads++; }
+        if(cityscape_bldg_array->RC[13][18] == -5) { n_roads++; }
+        if(n_roads > 1) { cityscape_bldg_array->RC[14][18] = -5; }  // [14][18] intersection D4
     }
     /*
         END:  Intersections
@@ -645,7 +658,7 @@ void Cityscape_Roads_2__WIP(SAMB_ptr cityscape_pict_seg)
     int16_t itr1 = 0;  // _SI_
     int16_t itr2 = 0;  // _DI_
 
-
+    // #1 CR3
     for(itr1 = 0; itr1 < 4; itr1++)
     {
         if(cityscape_bldg_array->RC[0][itr1] == -2)
@@ -654,25 +667,409 @@ void Cityscape_Roads_2__WIP(SAMB_ptr cityscape_pict_seg)
         }
     }
 
-    if(cityscape_bldg_array->RC[0][4] == -2)
+    // #2 CR4
+    if(cityscape_bldg_array->RC[0][4] == -2)  // [ 0][ 4] intersection A1
     {
         Cityscape_Roads_4__WIP(69, 4, cityscape_pict_seg);
     }
 
-    // ...
-    // ...
-    // ...
-
-    for(itr2 = 1; itr2 < 5; itr2++)
+    // #3 CR3
+    for(itr1 = 5; itr1 < 9; itr1++)
     {
-        if(cityscape_bldg_array->RC[itr2][4] == -2)
+        if(cityscape_bldg_array->RC[0][itr1] == -2)
         {
-            Cityscape_Roads_5__WIP((70 - (itr2 * 5)), ((itr2 * 5) - 1), cityscape_pict_seg);
+            Cityscape_Roads_3__WIP((27 + (itr1 * 10)), 4, cityscape_pict_seg);
+        }
+    }
+
+    // #4 CR4
+    if(cityscape_bldg_array->RC[0][9] == -2)  // [ 0][ 9] intersection A2
+    {
+        Cityscape_Roads_4__WIP(117, 4, cityscape_pict_seg);
+        if(
+            (cityscape_bldg_array->RC[0][8] == -2)
+            ||
+            (cityscape_bldg_array->RC[0][8] == -2)
+        )
+        {
+            Cityscape_Roads_4__WIP(120, 1, cityscape_pict_seg);
+        }
+    }
+
+    // #5 CR3
+    for(itr1 = 10; itr1 < 13; itr1++)
+    {
+        if(cityscape_bldg_array->RC[0][itr1] == -2)
+        {
+            Cityscape_Roads_3__WIP((25 + (itr1 * 10)), 4, cityscape_pict_seg);
+        }
+    }
+
+    // #6 CR4
+    if(cityscape_bldg_array->RC[0][13] == -2)
+    {
+        Cityscape_Roads_4__WIP(154, 4, cityscape_pict_seg);
+        if(
+            (cityscape_bldg_array->RC[0][12] == -2)
+            ||
+            (cityscape_bldg_array->RC[0][14] == -2)
+        )
+        {
+            Cityscape_Roads_4__WIP(157, 1, cityscape_pict_seg);
+        }
+    }
+
+    // #7 CR3
+    for(itr1 = 14; itr1 < 18; itr1++)
+    {
+        if(cityscape_bldg_array->RC[0][itr1] == -2)
+        {
+            Cityscape_Roads_3__WIP((22 + (itr1 * 10)), 4, cityscape_pict_seg);
+        }
+    }
+
+    
+    // Fuck it.
+
+
+    // #8 CR3
+    for(itr1 = 1; itr1 < 4; itr1++)
+    {
+        if(cityscape_bldg_array->RC[5][itr1] == -2)
+        {
+            Cityscape_Roads_3__WIP((6 + (itr1 * 10)), 27, cityscape_pict_seg);
+        }
+    }
+
+    // #9 CR4
+    if(cityscape_bldg_array->RC[5][4] == -2)  // road #1,B
+    {
+        Cityscape_Roads_4__WIP(46, 27, cityscape_pict_seg);
+    }
+
+    // #10 CR3
+    for(itr1 = 5; itr1 < 9; itr1++)
+    {
+        if(cityscape_bldg_array->RC[5][itr1] == -2)
+        {
+            Cityscape_Roads_3__WIP((4 + (itr1 * 10)), 27, cityscape_pict_seg);
+        }
+    }
+
+    // #11 CR4
+    if(cityscape_bldg_array->RC[5][9] == -2)  // road #2,B
+    {
+        Cityscape_Roads_4__WIP(94, 27, cityscape_pict_seg);
+    }
+
+    // #12 CR3
+    for(itr1 = 10; itr1 < 13; itr1++)
+    {
+        if(cityscape_bldg_array->RC[5][itr1] == -2)
+        {
+            Cityscape_Roads_3__WIP((2 + (itr1 * 10)), 27, cityscape_pict_seg);
+        }
+    }
+
+    // #13 CR4
+    if(cityscape_bldg_array->RC[5][13] == -2)  // road #3,B
+    {
+        Cityscape_Roads_4__WIP(131, 27, cityscape_pict_seg);
+    }
+
+    // #14 CR3
+    for(itr1 = 14; itr1 < 18; itr1++)
+    {
+        if(cityscape_bldg_array->RC[5][itr1] == -2)
+        {
+            Cityscape_Roads_3__WIP((10 + (itr1 * 10)), 27, cityscape_pict_seg);
+        }
+    }
+
+    // #15 CR4
+    if(cityscape_bldg_array->RC[5][18] == -2)  // [ 5][18] intersection B4
+    {
+        Cityscape_Roads_4__WIP(180, 27, cityscape_pict_seg);
+    }
+
+    // #16 CR3
+    if(cityscape_bldg_array->RC[5][19] == -2)  // [ 5][19] road #B nub right
+    {
+        Cityscape_Roads_3__WIP(188, 27, cityscape_pict_seg);  // BUGBUG
+    }
+// BUGBUGFIX    for(itr1 = 19; itr1 < 22; itr1++)
+// BUGBUGFIX    {
+// BUGBUGFIX        if(cityscape_bldg_array->RC[5][itr1] == -2)
+// BUGBUGFIX        {
+// BUGBUGFIX            Cityscape_Roads_3__WIP((-3 + (itr1 * 10)), 27, cityscape_pict_seg);
+// BUGBUGFIX        }
+// BUGBUGFIX    }
+
+
+    // #17 CR3
+    for(itr1 = 3; itr1 < 4; itr1++)
+    {
+        if(cityscape_bldg_array->RC[9][itr1] == -2)
+        {
+            Cityscape_Roads_3__WIP((-12 + (itr1 * 10)), 45, cityscape_pict_seg);
+        }
+    }
+
+    // #18 CR4
+    if(cityscape_bldg_array->RC[9][4] == -2)
+    {
+        Cityscape_Roads_4__WIP(28, 45, cityscape_pict_seg);
+    }
+
+    // #19 CR3
+    for(itr1 = 5; itr1 < 9; itr1++)
+    {
+        if(cityscape_bldg_array->RC[9][itr1] == -2)
+        {
+            Cityscape_Roads_3__WIP((-14 + (itr1 * 10)), 45, cityscape_pict_seg);
+        }
+    }
+
+    // #20 CR4
+    if(cityscape_bldg_array->RC[9][9] == -2)  // [ 9][ 9] intersection C2
+    {
+        Cityscape_Roads_4__WIP(76, 45, cityscape_pict_seg);
+    }
+
+    // #21 CR3
+    for(itr1 = 10; itr1 < 13; itr1++)
+    {
+        if(cityscape_bldg_array->RC[9][itr1] == -2)
+        {
+            Cityscape_Roads_3__WIP((-16 + (itr1 * 10)), 45, cityscape_pict_seg);
+        }
+    }
+
+    // #22 CR4
+    if(cityscape_bldg_array->RC[9][13] == -2)  // [ 9][13] intersection C3
+    {
+        Cityscape_Roads_4__WIP(113, 45, cityscape_pict_seg);
+    }
+
+    // #23 CR3
+    for(itr1 = 14; itr1 < 18; itr1++)
+    {
+        if(cityscape_bldg_array->RC[9][itr1] == -2)
+        {
+            Cityscape_Roads_3__WIP((-19 + (itr1 * 10)), 45, cityscape_pict_seg);
+        }
+    }
+
+    // #24 CR4
+    if(cityscape_bldg_array->RC[9][18] == -2)  // [ 9][18] intersection C4
+    {
+        Cityscape_Roads_4__WIP(161, 45, cityscape_pict_seg);
+    }
+
+    // #25 CR3
+    for(itr1 = 19; itr1 < 22; itr1++)  // [ 9][19] road #C nub right
+    {
+        if(cityscape_bldg_array->RC[9][itr1] == -2)
+        {
+            Cityscape_Roads_3__WIP((-21 + (itr1 * 10)), 45, cityscape_pict_seg);
+        }
+    }
+
+    // #26 CR4
+    if(cityscape_bldg_array->RC[14][4] == -2)  // [14][ 4] intersection D1
+    {
+        Cityscape_Roads_4__WIP(5, 68, cityscape_pict_seg);
+        Cityscape_Roads_4__WIP(0, 45, cityscape_pict_seg);
+        Cityscape_Roads_4__WIP(2, 71, cityscape_pict_seg);
+    }
+
+    // #27 CR3
+    for(itr1 = 5; itr1 < 9; itr1++)
+    {
+        if(cityscape_bldg_array->RC[14][itr1] == -2)
+        {
+            Cityscape_Roads_3__WIP((-37 + (itr1 * 10)), 68, cityscape_pict_seg);
+        }
+    }
+
+    // #28 CR4
+    if(cityscape_bldg_array->RC[14][9] == -2)  // [14][ 9] intersection D2
+    {
+        Cityscape_Roads_4__WIP(68, 53, cityscape_pict_seg);
+        if(
+            (cityscape_bldg_array->RC[14][8] == -2)
+            ||
+            (cityscape_bldg_array->RC[14][10] == -2)
+        )
+        {
+            Cityscape_Roads_4__WIP(52, 71, cityscape_pict_seg);
+        }
+    }
+
+    // #29 CR3
+    for(itr1 = 10; itr1 < 13; itr1++)
+    {
+        if(cityscape_bldg_array->RC[14][itr1] == -2)
+        {
+            Cityscape_Roads_3__WIP((-39 + (itr1 * 10)), 68, cityscape_pict_seg);
+        }
+    }
+
+    // #30 CR4
+    if(cityscape_bldg_array->RC[14][13] == -2)  // [14][13] intersection D3
+    {
+        Cityscape_Roads_4__WIP(91, 68, cityscape_pict_seg);
+        if(
+            (cityscape_bldg_array->RC[14][12] == -2)
+            ||
+            (cityscape_bldg_array->RC[14][14] == -2)
+        )
+        {
+            Cityscape_Roads_4__WIP(89, 71, cityscape_pict_seg);
+        }
+    }
+
+    // #31 CR3
+    for(itr1 = 14; itr1 < 18; itr1++)
+    {
+        if(cityscape_bldg_array->RC[14][itr1] == -2)
+        {
+            Cityscape_Roads_3__WIP((-41 + (itr1 * 10)), 68, cityscape_pict_seg);
+        }
+    }
+
+    // #32 CR4
+    if(cityscape_bldg_array->RC[14][18] == -2)  // [14][18] intersection D4
+    {
+        Cityscape_Roads_4__WIP(139, 68, cityscape_pict_seg);
+        if(
+            (cityscape_bldg_array->RC[14][17] == -2)
+            ||
+            (cityscape_bldg_array->RC[14][19] == -2)
+        )
+        {
+            Cityscape_Roads_4__WIP(137, 71, cityscape_pict_seg);  // ~[15][18]
+        }
+    }
+
+    // #33 CR3
+    for(itr1 = 19; itr1 < 23; itr1++)  // [14][19] road #D nub right
+    {
+        if(cityscape_bldg_array->RC[14][itr1] == -2)
+        {
+            Cityscape_Roads_3__WIP((-44 + (itr1 * 10)), 68, cityscape_pict_seg);
         }
     }
 
 
 
+    // #34 CR5
+    for(itr2 = 1; itr2 < 5; itr2++)
+    {
+        if(cityscape_bldg_array->RC[itr2][4] == -2)
+        {
+            Cityscape_Roads_5__WIP((70 - (itr2 * 5)), (-1 + (itr2 * 5)), cityscape_pict_seg);
+        }
+    }
+
+    // #35 CR5
+    for(itr2 = 6; itr2 < 9; itr2++)
+    {
+        if(cityscape_bldg_array->RC[itr2][4] == -2)
+        {
+            Cityscape_Roads_5__WIP((72 - (itr2 * 5)), (-3 + (itr2 * 5)), cityscape_pict_seg);
+        }
+    }
+
+    // #36 CR5
+    for(itr2 = 10; itr2 < 14; itr2++)
+    {
+        if(cityscape_bldg_array->RC[itr2][4] == -2)
+        {
+            Cityscape_Roads_5__WIP((74 - (itr2 * 5)), (-5 + (itr2 * 5)), cityscape_pict_seg);
+        }
+    }
+
+    // #37 CR5
+    for(itr2 = 1; itr2 < 5; itr2++)
+    {
+        if(cityscape_bldg_array->RC[itr2][9] == -2)
+        {
+            Cityscape_Roads_5__WIP((118 - (itr2 * 5)), (-1 + (itr2 * 5)), cityscape_pict_seg);
+        }
+    }
+
+    // #38 CR5
+    for(itr2 = 6; itr2 < 9; itr2++)
+    {
+        if(cityscape_bldg_array->RC[itr2][9] == -2)
+        {
+            Cityscape_Roads_5__WIP((120 - (itr2 * 5)), (-3 + (itr2 * 5)), cityscape_pict_seg);
+        }
+    }
+
+    // #39 CR5
+    for(itr2 = 10; itr2 < 14; itr2++)
+    {
+        if(cityscape_bldg_array->RC[itr2][9] == -2)
+        {
+            Cityscape_Roads_5__WIP((122 - (itr2 * 5)), (-5 + (itr2 * 5)), cityscape_pict_seg);
+        }
+    }
+
+    // #40 CR5
+    for(itr2 = 1; itr2 < 5; itr2++)
+    {
+        if(cityscape_bldg_array->RC[itr2][13] == -2)
+        {
+            Cityscape_Roads_5__WIP((156 - (itr2 * 5)), (-1 + (itr2 * 5)), cityscape_pict_seg);
+        }
+    }
+
+    // #41 CR5
+    for(itr2 = 6; itr2 < 9; itr2++)
+    {
+        if(cityscape_bldg_array->RC[itr2][13] == -2)
+        {
+            Cityscape_Roads_5__WIP((158 - (itr2 * 5)), (-3 + (itr2 * 5)), cityscape_pict_seg);
+        }
+    }
+
+    // #42 CR5
+    for(itr2 = 10; itr2 < 14; itr2++)
+    {
+        if(cityscape_bldg_array->RC[itr2][13] == -2)
+        {
+            Cityscape_Roads_5__WIP((160 - (itr2 * 5)), (-5 + (itr2 * 5)), cityscape_pict_seg);
+        }
+    }
+
+    // #43 CR5
+    for(itr2 = 2; itr2 < 5; itr2++)
+    {
+        if(cityscape_bldg_array->RC[itr2][18] == -2)
+        {
+            Cityscape_Roads_5__WIP((204 - (itr2 * 5)), (-1 + (itr2 * 5)), cityscape_pict_seg);
+        }
+    }
+
+    // #44 CR5
+    for(itr2 = 6; itr2 < 9; itr2++)
+    {
+        if(cityscape_bldg_array->RC[itr2][18] == -2)
+        {
+            Cityscape_Roads_5__WIP((206 - (itr2 * 5)), (-3 + (itr2 * 5)), cityscape_pict_seg);
+        }
+    }
+
+    // #45 CR5
+    for(itr2 = 10; itr2 < 14; itr2++)
+    {
+        if(cityscape_bldg_array->RC[itr2][18] == -2)
+        {
+            Cityscape_Roads_5__WIP((208 - (itr2 * 5)), (-5 + (itr2 * 5)), cityscape_pict_seg);
+        }
+    }
 
 }
 
@@ -1349,7 +1746,7 @@ void Cityscape_Make_Buildings_Array(int16_t city_idx, int16_t bldg_idx)
 
             for(itr2 = 1; itr2 < 23; itr2++)
             {
-                cityscape_bldg_array->RC[10][itr2] = -2;   // Road #2
+                cityscape_bldg_array->RC[5][itr2] = -2;   // Road #2
             }
 
             for(itr2 = 3; itr2 < 23; itr2++)

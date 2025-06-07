@@ -18,6 +18,20 @@ Cityscape_Draw_Foreground()
 
 
 
+cityscape_bldg_anim_ctr
+cityscape_water_anim_ctr
+cityscape_wall_anim_ctr
+cityscape_build_anim_ctr
+...added...
+cityscape_bldg_anim_itr
+cityscape_water_anim_itr
+cityscape_wall_anim_itr
+cityscape_build_anim_itr
+
+
+
+
+
 
 
 

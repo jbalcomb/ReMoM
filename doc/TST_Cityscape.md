@@ -40,7 +40,7 @@ Later, ...
                 Draw_Picture_To_Bitmap(cityscape_summon_circle_seg, GfxBuf_2400B);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
-                    // TODO  Vanish_Bitmap(GfxBuf_2400B, IDK_cityscape_vanish_percent);
+                    // TODO  Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
                 }
                 FLIC_Set_LoopFrame_1(GfxBuf_2400B);
                 Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
