@@ -13,6 +13,7 @@
 
 #define NUM_CITYSCAPE_ROWS         15
 #define NUM_CITYSCAPE_COLS         23
+#define SZ_CITYSCAPE_ROW           23  // 46 B, 23 int16_t
 
 
 
