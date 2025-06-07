@@ -413,16 +413,16 @@ void CityList_Screen_Draw(void)
     */
     if(list_first_item == 0 && m_city_list_count > NUM_CITY_LIST)
     {
-        FLIC_Set_CurrentFrame(citylist_up_button_seg, 1);
+        Set_Animation_Frame(citylist_up_button_seg, 1);
         FLIC_Draw(11, 26, citylist_up_button_seg);
-        FLIC_Set_CurrentFrame(citylist_up_button_seg, 1);
+        Set_Animation_Frame(citylist_up_button_seg, 1);
         FLIC_Draw(299, 26, citylist_up_button_seg);
     }
     else if(m_city_list_count > NUM_CITY_LIST)
     {
-        FLIC_Set_CurrentFrame(citylist_up_button_seg, 0);
+        Set_Animation_Frame(citylist_up_button_seg, 0);
         FLIC_Draw(11, 26, citylist_up_button_seg);
-        FLIC_Set_CurrentFrame(citylist_up_button_seg, 0);
+        Set_Animation_Frame(citylist_up_button_seg, 0);
         FLIC_Draw(299, 26, citylist_up_button_seg);
     }
 
@@ -439,16 +439,16 @@ void CityList_Screen_Draw(void)
         )
     )
     {
-        FLIC_Set_CurrentFrame(citylist_down_button_seg, 1);
+        Set_Animation_Frame(citylist_down_button_seg, 1);
         FLIC_Draw(11, 139, citylist_down_button_seg);
-        FLIC_Set_CurrentFrame(citylist_down_button_seg, 1);
+        Set_Animation_Frame(citylist_down_button_seg, 1);
         FLIC_Draw(299, 139, citylist_down_button_seg);
     }
     else if(m_city_list_count > NUM_CITY_LIST)
     {
-        FLIC_Set_CurrentFrame(citylist_down_button_seg, 0);
+        Set_Animation_Frame(citylist_down_button_seg, 0);
         FLIC_Draw(11, 139, citylist_down_button_seg);
-        FLIC_Set_CurrentFrame(citylist_down_button_seg, 0);
+        Set_Animation_Frame(citylist_down_button_seg, 0);
         FLIC_Draw(299, 139, citylist_down_button_seg);
     }
 

@@ -44,16 +44,16 @@ void Cityscape_Window__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int
 void Cityscape_Roads_1__WIP(int16_t xstart, int16_t ystart);
 
 // WZD o144p04
-void Cityscape_Roads_2__STUB(SAMB_ptr picture);
+void Cityscape_Roads_2__WIP(SAMB_ptr picture);
 
 // WZD o144p05
-void Cityscape_Roads_3__STUB(int16_t x, int16_t y, SAMB_ptr picture);
+void Cityscape_Roads_3__WIP(int16_t x, int16_t y, SAMB_ptr picture);
 
 // WZD o144p06
-void Cityscape_Roads_4__STUB(int16_t x, int16_t y, SAMB_ptr picture);
+void Cityscape_Roads_4__WIP(int16_t x, int16_t y, SAMB_ptr picture);
 
 // WZD o144p07
-void Cityscape_Roads_5__STUB(int16_t x, int16_t y, SAMB_ptr picture);
+void Cityscape_Roads_5__WIP(int16_t x, int16_t y, SAMB_ptr picture);
 
 // WZD o144p08
 void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start, int16_t bldg_idx);
@@ -62,7 +62,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
 void Cityscape_Make_Buildings_Array(int16_t city_idx, int16_t bldg_idx);
 
 // WZD o144p10
-void Cityscape_Draw_Wards_And_Walls__STUB(int16_t city_idx, int16_t xstart, int16_t ystart);
+void Cityscape_Draw_Foreground(int16_t city_idx, int16_t xstart, int16_t ystart);
 
 // WZD o144p11
 void Cityscape_Draw_Background(int16_t city_idx, int16_t xstart, int16_t ystart, int16_t city_wx, int16_t city_wy, int16_t city_wp);

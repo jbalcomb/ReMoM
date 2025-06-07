@@ -60,6 +60,10 @@ void TST_Patch_Game_Data(void)
 
     // City Enchantment
     TST_Learn_Spell(player_idx, spl_Consecration);
+    TST_Learn_Spell(player_idx, spl_Cursed_Lands);
+    TST_Learn_Spell(player_idx, spl_Famine);
+    TST_Learn_Spell(player_idx, spl_Flying_Fortress);
+    TST_Learn_Spell(player_idx, spl_Gaias_Blessing);
     TST_Learn_Spell(player_idx, spl_Inspirations);
     TST_Learn_Spell(player_idx, spl_Natures_Eye);
     TST_Learn_Spell(player_idx, spl_Prosperity);
@@ -78,28 +82,28 @@ void TST_Patch_Game_Data(void)
     // TST_Learn_Spell(player_idx, spl_Raise_Dead);
     // TST_Learn_Spell(player_idx, spl_Natures_Awareness);
 
-    // Cityscape_Draw_Background()
-    // if(_CITIES[city_idx].enchantments[FLYING_FORTRESS] != ST_TRUE)
-    //     if(_CITIES[city_idx].enchantments[CLOUD_OF_SHADOW] == ST_TRUE)
-    //     else if(_CITIES[city_idx].enchantments[HEAVENLY_LIGHT] == ST_TRUE)
-    //     else if(_CITIES[city_idx].enchantments[CHAOS_RIFT] == ST_TRUE)
+    // Cityscape_Window() - Farbackground
     // _CITIES[0].enchantments[FLYING_FORTRESS] = ST_TRUE;
-    // _CITIES[0].enchantments[CLOUD_OF_SHADOW] = ST_TRUE;
-    _CITIES[0].enchantments[HEAVENLY_LIGHT] = ST_TRUE;
+    // _CITIES[0].enchantments[CURSED_LANDS] = ST_TRUE;
+    // _CITIES[0].enchantments[FAMINE] = ST_TRUE;
+    // _CITIES[0].enchantments[GAIAS_BLESSING] = ST_TRUE;
+
+    // Cityscape_Draw_Background()
     // _CITIES[0].enchantments[CHAOS_RIFT] = ST_TRUE;
+    // _CITIES[0].enchantments[CLOUD_OF_SHADOW] = ST_TRUE;
+    // _CITIES[0].enchantments[HEAVENLY_LIGHT] = ST_TRUE;
     
-    // Cityscape_Draw_Wards_And_Walls__STUB()
-    _CITIES[0].enchantments[DEATH_WARD] = ST_TRUE;
-    _CITIES[0].enchantments[CHAOS_WARD] = ST_TRUE;
-    _CITIES[0].enchantments[NATURE_WARD] = ST_TRUE;
-    _CITIES[0].enchantments[LIFE_WARD] = ST_TRUE;
-    _CITIES[0].enchantments[SORCERY_WARD] = ST_TRUE;
-    _CITIES[0].enchantments[NATURES_EYE] = ST_TRUE;
-    _CITIES[0].enchantments[INSPIRATIONS] = ST_TRUE;
-    _CITIES[0].enchantments[PROSPERITY] = ST_TRUE;
-    _CITIES[0].enchantments[CONSECRATION] = ST_TRUE;
-    _CITIES[0].enchantments[WALL_OF_DARKNESS] = ST_TRUE;
-    // _CITIES[0].enchantments[WALL_OF_FIRE] = ST_TRUE;
+    // Cityscape_Draw_Foreground()
+    // _CITIES[0].enchantments[DEATH_WARD] = ST_TRUE;
+    // _CITIES[0].enchantments[CHAOS_WARD] = ST_TRUE;
+    // _CITIES[0].enchantments[NATURE_WARD] = ST_TRUE;
+    // _CITIES[0].enchantments[LIFE_WARD] = ST_TRUE;
+    // _CITIES[0].enchantments[SORCERY_WARD] = ST_TRUE;
+    // _CITIES[0].enchantments[NATURES_EYE] = ST_TRUE;
+    // _CITIES[0].enchantments[INSPIRATIONS] = ST_TRUE;
+    // _CITIES[0].enchantments[PROSPERITY] = ST_TRUE;
+    // _CITIES[0].enchantments[CONSECRATION] = ST_TRUE;
+    // _CITIES[0].enchantments[WALL_OF_DARKNESS] = ST_TRUE;
     // _CITIES[0].enchantments[WALL_OF_FIRE] = ST_TRUE;
 Capture_Cities_Data();
 

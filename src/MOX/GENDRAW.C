@@ -930,13 +930,13 @@ void Selection_Box_Draw(void)
         {
             if(itr_selectbox_items != selectbox_highlight_item)
             {
-                FLIC_Set_CurrentFrame(selectbk_button_12to16_seg[itr_selectbox_items], 0);
-                FLIC_Set_CurrentFrame(selectbk_button_22to26_seg[itr_selectbox_items], 0);
+                Set_Animation_Frame(selectbk_button_12to16_seg[itr_selectbox_items], 0);
+                Set_Animation_Frame(selectbk_button_22to26_seg[itr_selectbox_items], 0);
             }
             else
             {
-                FLIC_Set_CurrentFrame(selectbk_button_12to16_seg[itr_selectbox_items], 1);
-                FLIC_Set_CurrentFrame(selectbk_button_22to26_seg[itr_selectbox_items], 1);
+                Set_Animation_Frame(selectbk_button_12to16_seg[itr_selectbox_items], 1);
+                Set_Animation_Frame(selectbk_button_22to26_seg[itr_selectbox_items], 1);
             }
 
             y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * itr_selectbox_items));
@@ -952,13 +952,13 @@ void Selection_Box_Draw(void)
 
         if((selectbox_items - 1) != selectbox_highlight_item)
         {
-            FLIC_Set_CurrentFrame(selectbk_button_12to16_seg[9], 0);
-            FLIC_Set_CurrentFrame(selectbk_button_22to26_seg[9], 0);
+            Set_Animation_Frame(selectbk_button_12to16_seg[9], 0);
+            Set_Animation_Frame(selectbk_button_22to26_seg[9], 0);
         }
         else
         {
-            FLIC_Set_CurrentFrame(selectbk_button_12to16_seg[9], 1);
-            FLIC_Set_CurrentFrame(selectbk_button_22to26_seg[9], 1);
+            Set_Animation_Frame(selectbk_button_12to16_seg[9], 1);
+            Set_Animation_Frame(selectbk_button_22to26_seg[9], 1);
         }
 
         y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * (selectbox_items - 1)));
@@ -976,13 +976,13 @@ void Selection_Box_Draw(void)
         {
             if(itr_selectbox_items != selectbox_highlight_item)
             {
-                FLIC_Set_CurrentFrame(selectbk_button_12to16_seg[itr_selectbox_items], 0);
-                FLIC_Set_CurrentFrame(selectbk_button_22to26_seg[itr_selectbox_items], 0);
+                Set_Animation_Frame(selectbk_button_12to16_seg[itr_selectbox_items], 0);
+                Set_Animation_Frame(selectbk_button_22to26_seg[itr_selectbox_items], 0);
             }
             else
             {
-                FLIC_Set_CurrentFrame(selectbk_button_12to16_seg[itr_selectbox_items], 1);
-                FLIC_Set_CurrentFrame(selectbk_button_22to26_seg[itr_selectbox_items], 1);
+                Set_Animation_Frame(selectbk_button_12to16_seg[itr_selectbox_items], 1);
+                Set_Animation_Frame(selectbk_button_22to26_seg[itr_selectbox_items], 1);
             }
 
             y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * itr_selectbox_items));
@@ -999,13 +999,13 @@ void Selection_Box_Draw(void)
         
         if((selectbox_items - 1) != selectbox_highlight_item)
         {
-            FLIC_Set_CurrentFrame(selectbk_button_12to16_seg[9], 0);
-            FLIC_Set_CurrentFrame(selectbk_button_22to26_seg[9], 0);
+            Set_Animation_Frame(selectbk_button_12to16_seg[9], 0);
+            Set_Animation_Frame(selectbk_button_22to26_seg[9], 0);
         }
         else
         {
-            FLIC_Set_CurrentFrame(selectbk_button_12to16_seg[9], 1);
-            FLIC_Set_CurrentFrame(selectbk_button_22to26_seg[9], 1);
+            Set_Animation_Frame(selectbk_button_12to16_seg[9], 1);
+            Set_Animation_Frame(selectbk_button_22to26_seg[9], 1);
         }
 
         y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * (selectbox_items - 1)));

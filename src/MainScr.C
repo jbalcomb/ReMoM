@@ -1985,21 +1985,21 @@ void Main_Screen_Draw_Unit_Action_Buttons(void)
 
     if(_unit_stack_count > 0)
     {
-        FLIC_Set_CurrentFrame(main_done_button, 0);
+        Set_Animation_Frame(main_done_button, 0);
         FLIC_Draw(246, 176, main_done_button);
         // TODO  _help_entries.Entry_Index+46h = HLP_DONE;
 
-        FLIC_Set_CurrentFrame(main_patrol_button, 0);
+        Set_Animation_Frame(main_patrol_button, 0);
         FLIC_Draw(280, 176, main_patrol_button);
         // TODO  _help_entries.Entry_Index+50h = HLP_PATROL;
 
-        FLIC_Set_CurrentFrame(main_wait_button, 0);
+        Set_Animation_Frame(main_wait_button, 0);
         FLIC_Draw(246, 186, main_wait_button);
         // TODO  _help_entries.Entry_Index+5Ah = ST_UNDEFINED;
 
         if(special_action_flag == ST_UNDEFINED)
         {
-            FLIC_Set_CurrentFrame(main_lock_build_button, 0);
+            Set_Animation_Frame(main_lock_build_button, 0);
             FLIC_Draw(280, 186, main_lock_build_button);
             // TODO  _help_entries.Entry_Index+64h = ST_UNDEFINED;
         }
@@ -2007,19 +2007,19 @@ void Main_Screen_Draw_Unit_Action_Buttons(void)
         {
             if(special_action_flag == 2)
             {
-                FLIC_Set_CurrentFrame(main_purify_button, 0);
+                Set_Animation_Frame(main_purify_button, 0);
                 FLIC_Draw(280, 186, main_purify_button);
                 // TODO  _help_entries.Entry_Index+64h = HLP_PURIFY;
             }
             else if(special_action_flag == 9)
             {
-                FLIC_Set_CurrentFrame(main_meld_button, 0);
+                Set_Animation_Frame(main_meld_button, 0);
                 FLIC_Draw(280, 186, main_meld_button);
                 // TODO  _help_entries.Entry_Index+64h = HLP_MELD;
             }
             else
             {
-                FLIC_Set_CurrentFrame(main_build_button, 0);
+                Set_Animation_Frame(main_build_button, 0);
                 FLIC_Draw(280, 186, main_build_button);
                 // TODO  _help_entries.Entry_Index+64h = HLP_BUILD;
             }
@@ -2027,19 +2027,19 @@ void Main_Screen_Draw_Unit_Action_Buttons(void)
     }
     else
     {
-        FLIC_Set_CurrentFrame(main_lock_done_button, 0);
+        Set_Animation_Frame(main_lock_done_button, 0);
         FLIC_Draw(246, 176, main_lock_done_button);
         // TODO  _help_entries.Entry_Index+46h = ST_UNDEFINED;
 
-        FLIC_Set_CurrentFrame(main_lock_patrol_button, 0);
+        Set_Animation_Frame(main_lock_patrol_button, 0);
         FLIC_Draw(280, 176, main_lock_patrol_button);
         // TODO  _help_entries.Entry_Index+50h = ST_UNDEFINED;
 
-        FLIC_Set_CurrentFrame(main_lock_build_button, 0);
+        Set_Animation_Frame(main_lock_build_button, 0);
         FLIC_Draw(280, 186, main_lock_build_button);
         // TODO  _help_entries.Entry_Index+64h = ST_UNDEFINED;
 
-        FLIC_Set_CurrentFrame(main_wait_button, 0);  // BUGBUG  should be main_lock_wait_button
+        Set_Animation_Frame(main_wait_button, 0);  // BUGBUG  should be main_lock_wait_button
         FLIC_Draw(246, 186, main_wait_button);
         // TODO  _help_entries.Entry_Index+5Ah = ST_UNDEFINED;
     }
@@ -2069,25 +2069,25 @@ void Add_Game_Button_Fields(void)
 // MoO2: ~Add_Map_Fields_()
 void Main_Screen_Draw_Game_Buttons(void)
 {
-    FLIC_Set_CurrentFrame(main_game_button, 0);
+    Set_Animation_Frame(main_game_button, 0);
     FLIC_Draw((7 + (40 * 0)), 4, main_game_button);
 
-    FLIC_Set_CurrentFrame(main_spells_button, 0);
+    Set_Animation_Frame(main_spells_button, 0);
     FLIC_Draw(47, 4, main_spells_button);
 
-    FLIC_Set_CurrentFrame(main_armies_button, 0);
+    Set_Animation_Frame(main_armies_button, 0);
     FLIC_Draw(89, 4, main_armies_button);
 
-    FLIC_Set_CurrentFrame(main_cities_button, 0);
+    Set_Animation_Frame(main_cities_button, 0);
     FLIC_Draw(140, 4, main_cities_button);
 
-    FLIC_Set_CurrentFrame(main_magic_button, 0);
+    Set_Animation_Frame(main_magic_button, 0);
     FLIC_Draw(184, 4, main_magic_button);
 
-    FLIC_Set_CurrentFrame(main_info_button, 0);
+    Set_Animation_Frame(main_info_button, 0);
     FLIC_Draw(226, 4, main_info_button);
 
-    FLIC_Set_CurrentFrame(main_plane_button, 0);
+    Set_Animation_Frame(main_plane_button, 0);
     FLIC_Draw(270, 4, main_plane_button);
 }
 
@@ -3651,12 +3651,12 @@ void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 
     unit_type_idx = _UNITS[unit_idx].type;
 
-    FLIC_Set_CurrentFrame(_unit_type_table[unit_type_idx].pict_seg, 0);
+    Set_Animation_Frame(_unit_type_table[unit_type_idx].pict_seg, 0);
 
     // TODO  if(flag == 0)
     // TODO  {
 
-    FLIC_Set_CurrentFrame(_unit_type_table[unit_type_idx].pict_seg, 1);
+    Set_Animation_Frame(_unit_type_table[unit_type_idx].pict_seg, 1);
     Draw_Picture_To_Bitmap(_unit_type_table[unit_type_idx].pict_seg, UnitDraw_WorkArea);
 
     unit_owner_idx = (int16_t)_UNITS[unit_idx].owner_idx;
@@ -3879,7 +3879,7 @@ void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
                     weapon_type_icon_seg = main_adamantium_weapon_icon;
                 } break;
             }
-            FLIC_Set_CurrentFrame(weapon_type_icon_seg, unit_weapon_type_animation_count);
+            Set_Animation_Frame(weapon_type_icon_seg, unit_weapon_type_animation_count);
             FLIC_Draw(Wpn_Left, Wpn_Top, weapon_type_icon_seg);
         }
     /*
@@ -4722,23 +4722,23 @@ void OVL_EnableIncmBlink(void)
 void Main_Screen_Draw_Unit_Action_Locked_Buttons(void)
 {
 
-    FLIC_Set_CurrentFrame(main_lock_done_button, 0);
+    Set_Animation_Frame(main_lock_done_button, 0);
     FLIC_Draw(246, 176, main_lock_done_button);
 
-    FLIC_Set_CurrentFrame(main_lock_patrol_button, 0);
+    Set_Animation_Frame(main_lock_patrol_button, 0);
     FLIC_Draw(280, 176, main_lock_patrol_button);
 
-    FLIC_Set_CurrentFrame(main_lock_wait_button, 0);
+    Set_Animation_Frame(main_lock_wait_button, 0);
     FLIC_Draw(246, 186, main_lock_wait_button);
 
     if(special_action_flag == ST_UNDEFINED)
     {
-        FLIC_Set_CurrentFrame(main_lock_build_button, 0);
+        Set_Animation_Frame(main_lock_build_button, 0);
         FLIC_Draw(280, 186, main_lock_build_button);
     }
     else
     {
-        FLIC_Set_CurrentFrame(main_lock_purify_button, 0);
+        Set_Animation_Frame(main_lock_purify_button, 0);
         FLIC_Draw(280, 186, main_lock_purify_button);
     }
 

@@ -1513,7 +1513,7 @@ struct s_NODE
     /* 01 */  int8_t  wy;
     /* 02 */  int8_t  wp;
     /* 03 */  int8_t  owner_idx;    /* controller */
-    /* 04 */  int8_t  power;        /* ¿ value range ? */  // 1-byte, signed;  used to index Aura_Xs,Ys and added to node_anim_ctr for FLIC_Set_CurrentFrame()
+    /* 04 */  int8_t  power;        /* ¿ value range ? */  // 1-byte, signed;  used to index Aura_Xs,Ys and added to node_anim_ctr for Set_Animation_Frame()
     /* 05 */  int8_t  Aura_Xs[20];
     /* 19 */  int8_t  Aura_Ys[20];
     /* 2D */  int8_t  type;         // enum e_NODE_TYPE {0: nt_Sorcery, 1: nt_Nature, 2: nt_Chaos}

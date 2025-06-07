@@ -165,7 +165,7 @@ void Draw_Help_Entry__WIP(int16_t help_entry_idx)
 
             help_pict_segs[Entry_Load_Count] = LBX_Reload_Next(help_data_near_buffer->lbx_name, help_data_near_buffer->lbx_entry, _screen_seg);
 
-            FLIC_Reset_CurrentFrame(help_pict_segs[Entry_Load_Count]);
+            Reset_Animation_Frame(help_pict_segs[Entry_Load_Count]);
             
             Draw_Picture_To_Bitmap(help_pict_segs[Entry_Load_Count], help_pict_seg);
 
@@ -318,7 +318,7 @@ void Draw_Help_Entry__WIP(int16_t help_entry_idx)
 
             help_pict_segs[Entry_Loop_Var] = LBX_Reload_Next(help_data_near_buffer->lbx_name, help_data_near_buffer->lbx_entry, _screen_seg);
 
-            FLIC_Reset_CurrentFrame(help_pict_segs[Entry_Loop_Var]);
+            Reset_Animation_Frame(help_pict_segs[Entry_Loop_Var]);
             
             Draw_Picture_To_Bitmap(help_pict_segs[Entry_Loop_Var], help_pict_seg);
             

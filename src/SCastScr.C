@@ -755,7 +755,7 @@ void Spell_Casting_Screen_Draw(void)
     Main_Screen_Draw_Status_Window();
     Spell_Casting_Screen_Draw_Panel();
     Spell_Casting_Screen_Assign_Mouse_Images();
-    FLIC_Set_CurrentFrame(cast_cancel_button, 0);
+    Set_Animation_Frame(cast_cancel_button, 0);
     FLIC_Draw(263, 181, cast_cancel_button);
 }
 

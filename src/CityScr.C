@@ -968,7 +968,7 @@ void City_Screen_Draw2__WIP(void)
         }
         else
         {
-            FLIC_Set_CurrentFrame(unit_grass_diamond_seg, 0);
+            Set_Animation_Frame(unit_grass_diamond_seg, 0);
             FLIC_Draw(218, 144, unit_grass_diamond_seg);
         }
 
@@ -1156,24 +1156,24 @@ void City_Screen_Draw_Buttons(void)
     }
     else
     {
-        FLIC_Set_CurrentFrame(city_buy_button_seg, 0);
+        Set_Animation_Frame(city_buy_button_seg, 0);
         FLIC_Draw(214, 188, city_buy_button_seg);
     }
 
-    FLIC_Set_CurrentFrame(city_change_button_seg, 0);
+    Set_Animation_Frame(city_change_button_seg, 0);
     FLIC_Draw(247, 188, city_change_button_seg);
 
 
-    FLIC_Set_CurrentFrame(city_ok_button_seg, 0);
+    Set_Animation_Frame(city_ok_button_seg, 0);
     FLIC_Draw(286, 188, city_ok_button_seg);
 
     if(city_enchantment_display_scroll_flag == ST_TRUE)
     {
 
-        FLIC_Set_CurrentFrame(city_spell_up_arrow_button_seg, 0);
+        Set_Animation_Frame(city_spell_up_arrow_button_seg, 0);
         FLIC_Draw(201, 50, city_spell_up_arrow_button_seg);
 
-        FLIC_Set_CurrentFrame(city_spell_dn_arrow_button_seg, 0);
+        Set_Animation_Frame(city_spell_dn_arrow_button_seg, 0);
         FLIC_Draw(201, 85, city_spell_dn_arrow_button_seg);
     }
 
@@ -1545,26 +1545,26 @@ void Draw_Building_Picture_To_Bitmap(int16_t city_idx, int16_t bldg_idx, int16_t
 
         if(bldg_idx == bt_TradeGoods)
         {
-            FLIC_Set_CurrentFrame(building_trade_goods_seg, itr_frames);
+            Set_Animation_Frame(building_trade_goods_seg, itr_frames);
             Draw_Picture_To_Bitmap(building_trade_goods_seg, bitmap);
             Get_Bitmap_Actual_Size(bitmap, &l_x1, &l_y1, &l_width, &l_height);
         }
         else if(bldg_idx == bt_Housing)
         {
-            FLIC_Set_CurrentFrame(bldg_housing_seg[_race_type_table[_CITIES[city_idx].race].house_type], itr_frames);
+            Set_Animation_Frame(bldg_housing_seg[_race_type_table[_CITIES[city_idx].race].house_type], itr_frames);
             Draw_Picture_To_Bitmap(bldg_housing_seg[_race_type_table[_CITIES[city_idx].race].house_type], bitmap);
             Get_Bitmap_Actual_Size(bitmap, &l_x1, &l_y1, &l_width, &l_height);
         }
         else if(bldg_idx == bt_CityWalls)
         {
-            FLIC_Set_CurrentFrame(cityscape_big_city_wall_seg, itr_frames);
+            Set_Animation_Frame(cityscape_big_city_wall_seg, itr_frames);
             Draw_Picture_To_Bitmap(cityscape_big_city_wall_seg, bitmap);
             Get_Bitmap_Actual_Size(bitmap, &l_x1, &l_y1, &l_width, &l_height);
         }
         else
         {
             // Building Type / Product Idx:  {3, ..., 34}
-            FLIC_Set_CurrentFrame(bldg_picts_seg[bldg_idx], itr_frames);
+            Set_Animation_Frame(bldg_picts_seg[bldg_idx], itr_frames);
             Draw_Picture_To_Bitmap(bldg_picts_seg[bldg_idx], bitmap);
             Get_Bitmap_Actual_Size(bitmap, &l_x1, &l_y1, &l_width, &l_height);
         }
@@ -1586,23 +1586,23 @@ void Draw_Building_Picture_To_Bitmap(int16_t city_idx, int16_t bldg_idx, int16_t
 
     if(bldg_idx == bt_TradeGoods)
     {
-        FLIC_Set_CurrentFrame(building_trade_goods_seg, current_frame);
+        Set_Animation_Frame(building_trade_goods_seg, current_frame);
         Draw_Picture_To_Bitmap(building_trade_goods_seg, bitmap);
     }
     else if(bldg_idx == bt_Housing)
     {
-        FLIC_Set_CurrentFrame(bldg_housing_seg[_race_type_table[_CITIES[city_idx].race].house_type], current_frame);
+        Set_Animation_Frame(bldg_housing_seg[_race_type_table[_CITIES[city_idx].race].house_type], current_frame);
         Draw_Picture_To_Bitmap(bldg_housing_seg[_race_type_table[_CITIES[city_idx].race].house_type], bitmap);
     }
     else if(bldg_idx == bt_CityWalls)
     {
-        FLIC_Set_CurrentFrame(cityscape_big_city_wall_seg, current_frame);
+        Set_Animation_Frame(cityscape_big_city_wall_seg, current_frame);
         Draw_Picture_To_Bitmap(cityscape_big_city_wall_seg, bitmap);
     }
     else
     {
         // Building Type / Product Idx:  {3, ..., 34}
-        FLIC_Set_CurrentFrame(bldg_picts_seg[bldg_idx], current_frame);
+        Set_Animation_Frame(bldg_picts_seg[bldg_idx], current_frame);
         Draw_Picture_To_Bitmap(bldg_picts_seg[bldg_idx], bitmap);
     }
 

@@ -396,9 +396,9 @@ void Hire_Hero_Popup_Draw(void)
         outpost_name_background_seg = LBX_Reload_Next("BACKGRND", 33, GFX_Swap_Seg);
         FLIC_Draw((window_x + 29), (window_y + 55), outpost_name_background_seg);
         Print_Centered((window_x + 104), (window_y + 61), cnst_Hire_Msg_6);
-        FLIC_Reset_CurrentFrame(red_button_seg);
+        Reset_Animation_Frame(red_button_seg);
         FLIC_Draw((window_x + 221), (window_y + 143), red_button_seg);
-        FLIC_Reset_CurrentFrame(red_button_seg);
+        Reset_Animation_Frame(red_button_seg);
         FLIC_Draw((window_x + 221), (window_y + 162), red_button_seg);
         if(GAME_HeroHireType == 0)  // ; 0: random, 1: summon, 2: prisoner, 3: champion
         {

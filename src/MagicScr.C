@@ -874,10 +874,10 @@ void Magic_Screen_Draw(void)
 
     FLIC_Draw(0, 0, magic_background_seg);
 
-    FLIC_Set_CurrentFrame(magic_ok_button_seg, 0);
+    Set_Animation_Frame(magic_ok_button_seg, 0);
     FLIC_Draw(291, 181, magic_ok_button_seg);
 
-    FLIC_Set_CurrentFrame(magic_alchemy_button_seg, 0);
+    Set_Animation_Frame(magic_alchemy_button_seg, 0);
     FLIC_Draw(232, 181, magic_alchemy_button_seg);
 
 

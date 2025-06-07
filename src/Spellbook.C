@@ -2089,7 +2089,7 @@ void Learn_Spell_Animation_Draw(void)
 
     FLIC_Draw(149, 133, wizlab_podium_seg);
 
-    FLIC_Reset_CurrentFrame(wizlab_wizard_seg);
+    Reset_Animation_Frame(wizlab_wizard_seg);
 
     FLIC_Draw(69, 75, wizlab_wizard_seg);
 
@@ -2639,7 +2639,7 @@ struct s_SPELL_DECODE var_C = { 0, 0, 0, 0, 0, 0 };
         )
         {
 
-            FLIC_Set_CurrentFrame(spell_animation_seg, (SBK_NewSpellAnim_Stg - 16));
+            Set_Animation_Frame(spell_animation_seg, (SBK_NewSpellAnim_Stg - 16));
 
             FLIC_Draw(20, (21 + (GUI_Multipurpose_Int * 37)), spell_animation_seg);
             
@@ -2665,7 +2665,7 @@ struct s_SPELL_DECODE var_C = { 0, 0, 0, 0, 0, 0 };
         )
         {
 
-            FLIC_Set_CurrentFrame(spell_animation_seg, (SBK_NewSpellAnim_Stg - 16));
+            Set_Animation_Frame(spell_animation_seg, (SBK_NewSpellAnim_Stg - 16));
 
             FLIC_Draw(168, (24 + (GUI_Multipurpose_Int * 37)), spell_animation_seg);
 

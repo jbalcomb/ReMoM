@@ -622,10 +622,10 @@ void Item_Screen_Draw(void)
     Print((_item_window_start_x + 169), (_item_window_start_y + 164), cnst_GP_5);
     Print((_item_window_start_x + 203), (_item_window_start_y + 164), cnst_MP_4);
 
-    FLIC_Set_CurrentFrame(hero_alchemy_button_seg, 0);
+    Set_Animation_Frame(hero_alchemy_button_seg, 0);
     FLIC_Draw((_item_window_start_x + 219), (_item_window_start_y + 155), hero_alchemy_button_seg);
     
-    FLIC_Set_CurrentFrame(hero_ok_button_seg, 0);
+    Set_Animation_Frame(hero_ok_button_seg, 0);
     FLIC_Draw((_item_window_start_x + 219), (_item_window_start_y + 175), hero_ok_button_seg);
 
     if(m_cursor_item_idx > -1)

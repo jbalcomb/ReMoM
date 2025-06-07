@@ -2661,7 +2661,7 @@ void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_or_type, in
 
     for(itr_figure_count = 0; itr_figure_count < unit_figure_count; itr_figure_count++)
     {
-        FLIC_Set_CurrentFrame(unit_figure_seg, 2);
+        Set_Animation_Frame(unit_figure_seg, 2);
         Draw_Picture_To_Bitmap(unit_figure_seg, UnitDraw_WorkArea);
 
         // HERE: same as in Combat_Figure_Banner_Color()

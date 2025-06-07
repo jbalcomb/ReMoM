@@ -560,7 +560,7 @@ void Main_Menu_Screen_Draw(void)
         draw the main menu logo, with animation, and the rest of the screen background
     */
     logo_frame_idx = FLIC_Get_CurrentFrame(mainmenu_top);
-    FLIC_Set_CurrentFrame(mainmenu_top, 0);
+    Set_Animation_Frame(mainmenu_top, 0);
     for(itr_logo = 0; itr_logo <= logo_frame_idx; itr_logo++)
     {
         FLIC_Draw(0, 0, mainmenu_top);
@@ -585,9 +585,9 @@ void Main_Menu_Screen_Draw(void)
     if(load_flag != ST_FALSE)
     {
         if(scanned_field == _load_button)
-            FLIC_Reset_CurrentFrame(mainmenu_l);
+            Reset_Animation_Frame(mainmenu_l);
         else
-            FLIC_Set_CurrentFrame(mainmenu_l, 1);
+            Set_Animation_Frame(mainmenu_l, 1);
         FLIC_Draw(menu_x_start, (menu_y_start + 12), mainmenu_l);
     }
     else
@@ -598,28 +598,28 @@ void Main_Menu_Screen_Draw(void)
     if(cont_flag != ST_FALSE)
     {
         if(scanned_field == _continue_button )
-            FLIC_Reset_CurrentFrame(mainmenu_c);
+            Reset_Animation_Frame(mainmenu_c);
         else
-            FLIC_Set_CurrentFrame(mainmenu_c, 1);
+            Set_Animation_Frame(mainmenu_c, 1);
         FLIC_Draw(menu_x_start, (menu_y_start + (12 * menu_shift)), mainmenu_c);
     }
 
     if(scanned_field == _new_button)
-        FLIC_Reset_CurrentFrame(mainmenu_n);
+        Reset_Animation_Frame(mainmenu_n);
     else
-        FLIC_Set_CurrentFrame(mainmenu_n, 1);
+        Set_Animation_Frame(mainmenu_n, 1);
     FLIC_Draw(menu_x_start, (menu_y_start + 24), mainmenu_n);
 
     if(scanned_field == _hof_button)
-        FLIC_Reset_CurrentFrame(mainmenu_h);
+        Reset_Animation_Frame(mainmenu_h);
     else
-        FLIC_Set_CurrentFrame(mainmenu_h, 1);
+        Set_Animation_Frame(mainmenu_h, 1);
     FLIC_Draw(menu_x_start, (menu_y_start + 36), mainmenu_h);
 
     if(scanned_field == _quit_button)
-        FLIC_Reset_CurrentFrame(mainmenu_q);
+        Reset_Animation_Frame(mainmenu_q);
     else
-        FLIC_Set_CurrentFrame(mainmenu_q, 1);
+        Set_Animation_Frame(mainmenu_q, 1);
     FLIC_Draw(menu_x_start, (menu_y_start + 48), mainmenu_q);
 
     // TODO  IDK_frame_count = ((IDK_frame_count + 1) % 20);
@@ -651,7 +651,7 @@ void Main_Menu_Screen_Draw_Debug()
         draw the main menu logo, with animation, and the rest of the screen background
     */
     logo_frame_idx = FLIC_Get_CurrentFrame(mainmenu_top);
-    FLIC_Set_CurrentFrame(mainmenu_top, 0);
+    Set_Animation_Frame(mainmenu_top, 0);
     for(itr_logo = 0; itr_logo <= logo_frame_idx; itr_logo++)
     {
         FLIC_Draw(0, 0, mainmenu_top);
@@ -671,7 +671,7 @@ void Main_Menu_Screen_Draw_Debug()
 //     if(load_flag != ST_FALSE)
 //     {
 //         if(scanned_field == _load_button)
-//             FLIC_Reset_CurrentFrame(mainmenu_l);
+//             Reset_Animation_Frame(mainmenu_l);
 //         else
 //             FLIC_Set_CurrentFrame(mainmenu_l, 1);
 //         FLIC_Draw(menu_x_start, (menu_y_start + 12), mainmenu_l);
@@ -684,26 +684,26 @@ void Main_Menu_Screen_Draw_Debug()
 //     if(cont_flag != ST_FALSE)
 //     {
 //         if(scanned_field == _continue_button )
-//             FLIC_Reset_CurrentFrame(mainmenu_c);
+//             Reset_Animation_Frame(mainmenu_c);
 //         else
 //             FLIC_Set_CurrentFrame(mainmenu_c, 1);
 //         FLIC_Draw(menu_x_start, (menu_y_start + (12 * menu_shift)), mainmenu_c);
 //     }
 // 
 //     if(scanned_field == _new_button)
-//         FLIC_Reset_CurrentFrame(mainmenu_n);
+//         Reset_Animation_Frame(mainmenu_n);
 //     else
 //         FLIC_Set_CurrentFrame(mainmenu_n, 1);
 //     FLIC_Draw(menu_x_start, (menu_y_start + 24), mainmenu_n);
 // 
 //     if(scanned_field == _hof_button)
-//         FLIC_Reset_CurrentFrame(mainmenu_h);
+//         Reset_Animation_Frame(mainmenu_h);
 //     else
 //         FLIC_Set_CurrentFrame(mainmenu_h, 1);
 //     FLIC_Draw(menu_x_start, (menu_y_start + 36), mainmenu_h);
 // 
 //     if(scanned_field == _quit_button)
-//         FLIC_Reset_CurrentFrame(mainmenu_q);
+//         Reset_Animation_Frame(mainmenu_q);
 //     else
 //         FLIC_Set_CurrentFrame(mainmenu_q, 1);
 //     FLIC_Draw(menu_x_start, (menu_y_start + 48), mainmenu_q);

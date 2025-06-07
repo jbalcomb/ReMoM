@@ -235,10 +235,10 @@ void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture);
 void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg);
 
 // WZD s30p14
-void FLIC_Set_CurrentFrame(SAMB_ptr p_FLIC_Header, int16_t frame_index);
+void Set_Animation_Frame(SAMB_ptr p_FLIC_Header, int16_t frame_index);
 
 // WZD s30p15
-void FLIC_Reset_CurrentFrame(SAMB_ptr p_FLIC_Header);
+void Reset_Animation_Frame(SAMB_ptr p_FLIC_Header);
 
 // WZD s30p16
 int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header);

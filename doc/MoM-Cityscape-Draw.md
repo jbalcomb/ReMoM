@@ -12,7 +12,7 @@ cityscape_bldgs[]
 Cityscape_Draw_Background()
 Cityscape_Make_Buildings_Array()
 Cityscape_Draw_Buildings()
-Cityscape_Draw_Wards_And_Walls()
+Cityscape_Draw_Foreground()
 
 
 

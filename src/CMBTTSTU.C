@@ -239,7 +239,7 @@ void Compose_Battle_Unit_Pictures(void)
         FIGUREX_OFFSET
         FIGUREX_POINTER
 
-        FLIC_Set_CurrentFrame(figure_pict_set_seg[figure_set_idx], frame_num);
+        Set_Animation_Frame(figure_pict_set_seg[figure_set_idx], frame_num);
         GfxBuf_2400B = battle_unit_picts_seg[battle_units[battle_unit_idx].bufpi];
         Draw_Picture_To_Bitmap(figure_pict_set_seg[figure_set_idx], GfxBuf_2400B);
 

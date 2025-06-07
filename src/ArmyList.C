@@ -555,16 +555,16 @@ void ArmyList_Screen_Draw(void)
     */
     if(list_first_item == 0 && m_army_list_count > 6)
     {
-        FLIC_Set_CurrentFrame(armylist_up_button_seg, 1);
+        Set_Animation_Frame(armylist_up_button_seg, 1);
         FLIC_Draw(250, 26, armylist_up_button_seg);
-        FLIC_Set_CurrentFrame(armylist_up_button_seg, 1);
+        Set_Animation_Frame(armylist_up_button_seg, 1);
         FLIC_Draw(60, 26, armylist_up_button_seg);
     }
     else
     {
-        FLIC_Set_CurrentFrame(armylist_up_button_seg, 0);
+        Set_Animation_Frame(armylist_up_button_seg, 0);
         FLIC_Draw(250, 26, armylist_up_button_seg);
-        FLIC_Set_CurrentFrame(armylist_up_button_seg, 0);
+        Set_Animation_Frame(armylist_up_button_seg, 0);
         FLIC_Draw(60, 26, armylist_up_button_seg);
     }
 
@@ -573,16 +573,16 @@ void ArmyList_Screen_Draw(void)
     */
     if(m_army_list_count > NUM_ARMY_LIST && ( (((NUM_ARMY_LIST + list_first_item) - m_army_list_count) == 0)  || ((list_item_count - m_army_list_count) == 0)))
     {
-        FLIC_Set_CurrentFrame(armylist_down_button_seg, 1);
+        Set_Animation_Frame(armylist_down_button_seg, 1);
         FLIC_Draw(250, 139, armylist_down_button_seg);
-        FLIC_Set_CurrentFrame(armylist_down_button_seg, 1);
+        Set_Animation_Frame(armylist_down_button_seg, 1);
         FLIC_Draw(60, 139, armylist_down_button_seg);
     }
     else
     {
-        FLIC_Set_CurrentFrame(armylist_down_button_seg, 0);
+        Set_Animation_Frame(armylist_down_button_seg, 0);
         FLIC_Draw(250, 139, armylist_down_button_seg);
-        FLIC_Set_CurrentFrame(armylist_down_button_seg, 0);
+        Set_Animation_Frame(armylist_down_button_seg, 0);
         FLIC_Draw(60, 139, armylist_down_button_seg);
     }
 

@@ -6944,9 +6944,9 @@ void Draw_Active_Unit_Window(void)
 
     if(_active_battle_unit == ST_UNDEFINED)
     {
-        FLIC_Set_CurrentFrame(IMG_GUI_Vortex, 1);
+        Set_Animation_Frame(IMG_GUI_Vortex, 1);
         Draw_Picture_To_Bitmap(IMG_GUI_Vortex, GfxBuf_2400B);
-        FLIC_Set_CurrentFrame(IMG_GUI_Vortex, CMB_VortexAnimStage);
+        Set_Animation_Frame(IMG_GUI_Vortex, CMB_VortexAnimStage);
         start_x = 82;
         start_y = 170;
         Get_Bitmap_Actual_Size(GfxBuf_2400B, &bitm_x, &bitm_y, &bitm_w, &bitm_h);
@@ -7062,7 +7062,7 @@ void Tactical_Combat_Draw_Buttons(void)
     if(_auto_combat_flag == ST_TRUE)
     {
 
-        FLIC_Set_CurrentFrame(_cmbt_auto_button_seg, 0);
+        Set_Animation_Frame(_cmbt_auto_button_seg, 0);
 
         FLIC_Draw(170, 178, _cmbt_auto_button_seg);
 
@@ -7096,7 +7096,7 @@ void Tactical_Combat_Draw_Buttons(void)
         )
         {
 
-            FLIC_Set_CurrentFrame(_cmbt_spell_button_seg, 0);
+            Set_Animation_Frame(_cmbt_spell_button_seg, 0);
 
             FLIC_Draw(144, 168, _cmbt_spell_button_seg);
 
@@ -7108,18 +7108,18 @@ void Tactical_Combat_Draw_Buttons(void)
 
         }
 
-        FLIC_Set_CurrentFrame(_cmbt_wait_button_seg, 0);
+        Set_Animation_Frame(_cmbt_wait_button_seg, 0);
 
         FLIC_Draw(170, 168, _cmbt_wait_button_seg);
 
-        FLIC_Set_CurrentFrame(_cmbt_done_button_seg, 0);
+        Set_Animation_Frame(_cmbt_done_button_seg, 0);
 
         FLIC_Draw(170, 188, _cmbt_done_button_seg);
 
         if(_combat_total_battle_effect_count > 0)
         {
 
-            FLIC_Set_CurrentFrame(_cmbt_info_button_seg, 0);
+            Set_Animation_Frame(_cmbt_info_button_seg, 0);
 
             FLIC_Draw(144, 178, _cmbt_info_button_seg);
 
@@ -7131,11 +7131,11 @@ void Tactical_Combat_Draw_Buttons(void)
 
         }
 
-        FLIC_Set_CurrentFrame(_cmbt_auto_button_seg, 0);
+        Set_Animation_Frame(_cmbt_auto_button_seg, 0);
 
         FLIC_Draw(170, 178, _cmbt_auto_button_seg);
 
-        FLIC_Set_CurrentFrame(_cmbt_flee_button_seg, 0);
+        Set_Animation_Frame(_cmbt_flee_button_seg, 0);
 
         FLIC_Draw(144, 188, _cmbt_flee_button_seg);
 
@@ -8521,7 +8521,7 @@ void BU_CreateImage__SEGRAX(int battle_unit_idx)
 
     figure_set_idx = 7;  // look left/west?
 
-    FLIC_Set_CurrentFrame(figure_pict_set_seg[figure_set_idx], frame_num);
+    Set_Animation_Frame(figure_pict_set_seg[figure_set_idx], frame_num);
     Draw_Picture_To_Bitmap(figure_pict_set_seg[figure_set_idx], GfxBuf_2400B);
 
     Combat_Figure_Banner_Color(player_idx);
@@ -24123,7 +24123,7 @@ void CMB_DrawMap__WIP(void)
                 if(battlefield->Tile_Mud[((cgy * COMBAT_GRID_WIDTH) + cgx)] != 0)
                 {
                     STU_DEBUG_BREAK();
-                    FLIC_Set_CurrentFrame(IMG_CMB_Mud, ((cgx + cgy + CMB_MudAnimStage) % 8));
+                    Set_Animation_Frame(IMG_CMB_Mud, ((cgx + cgy + CMB_MudAnimStage) % 8));
                     Clipped_Draw(screen_x, screen_y, IMG_CMB_Mud);
                 }
                 else
@@ -24137,7 +24137,7 @@ void CMB_DrawMap__WIP(void)
 // mov     bx, _DI_battlefield_terrain
 // shl     bx, 1
 // push    (IMG_CMB_RiverTile@-70h)[bx]    ; pict_seg
-// call    FLIC_Set_CurrentFrame
+// call    Set_Animation_Frame
 // pop     cx
 // pop     cx
 // mov     bx, _DI_battlefield_terrain
@@ -24152,7 +24152,7 @@ void CMB_DrawMap__WIP(void)
 // mov     bx, _DI_battlefield_terrain
 // shl     bx, 1
 // push    (IMG_CMB_RivrNULLs@-70h)[bx]    ; pict_seg
-// call    FLIC_Set_CurrentFrame
+// call    Set_Animation_Frame
 // pop     cx
 // pop     cx
 // mov     bx, _DI_battlefield_terrain
@@ -24175,7 +24175,7 @@ void CMB_DrawMap__WIP(void)
 // mov     bx, _DI_battlefield_terrain
 // shl     bx, 1
 // push    (IMG_CMB_OceanTile@-60h)[bx]    ; pict_seg
-// call    FLIC_Set_CurrentFrame
+// call    Set_Animation_Frame
 // pop     cx
 // pop     cx
 // mov     bx, _DI_battlefield_terrain
@@ -24189,7 +24189,7 @@ void CMB_DrawMap__WIP(void)
 // mov     bx, _DI_battlefield_terrain
 // shl     bx, 1
 // push    (IMG_CMB_ChaosOcn@-60h)[bx]     ; pict_seg
-// call    FLIC_Set_CurrentFrame
+// call    Set_Animation_Frame
 // pop     cx
 // pop     cx
 // mov     bx, _DI_battlefield_terrain
@@ -24200,7 +24200,7 @@ void CMB_DrawMap__WIP(void)
 // mov     bx, _DI_battlefield_terrain
 // shl     bx, 1
 // push    (IMG_CMB_Cloud@-68h)[bx]        ; pict_seg
-// call    FLIC_Set_CurrentFrame
+// call    Set_Animation_Frame
 // pop     cx
 // pop     cx
 // mov     bx, _DI_battlefield_terrain
@@ -24220,7 +24220,7 @@ void CMB_DrawMap__WIP(void)
 // mov     bx, _DI_battlefield_terrain
 // shl     bx, 1
 // push    (IMG_CMB_Cloud@-68h)[bx]        ; pict_seg
-// call    FLIC_Set_CurrentFrame
+// call    Set_Animation_Frame
 // pop     cx
 // pop     cx
 // mov     bx, _DI_battlefield_terrain
@@ -24242,7 +24242,7 @@ void CMB_DrawMap__WIP(void)
                         Combat_Grid_Screen_Coordinates(6, 11, 0, 0, &screen_x, &screen_y);
                         screen_x -= 46;
                         screen_y -= 15;
-                        FLIC_Set_CurrentFrame(IMG_CMB_SorcNode, CMB_CNodeAnimStage);
+                        Set_Animation_Frame(IMG_CMB_SorcNode, CMB_CNodeAnimStage);
                         Clipped_Draw(screen_x, screen_y, IMG_CMB_SorcNode);
                         screen_x += 46;
                         screen_y += 15;
@@ -24273,7 +24273,7 @@ void CMB_DrawMap__WIP(void)
                             (Road_Flags & 0x01) != 0
                         )
                         {
-                            FLIC_Set_CurrentFrame(IMG_CMB_FlotIsle, CMB_RoadAnimStage);
+                            Set_Animation_Frame(IMG_CMB_FlotIsle, CMB_RoadAnimStage);
                             Clipped_Draw((screen_x - 32), (screen_y - 48), IMG_CMB_FlotIsle);
                         }
                         else
@@ -24296,32 +24296,32 @@ void CMB_DrawMap__WIP(void)
                             }
                             if((Road_Flags & 0x02) != 0)
                             {
-                                FLIC_Set_CurrentFrame(IMG_CMB_RoadTiles[(0 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
+                                Set_Animation_Frame(IMG_CMB_RoadTiles[(0 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
                                 Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(0 + (Set_Base_1 + Set_Base_2))]);
                             }
                             if((Road_Flags & 0x04) != 0)
                             {
-                                FLIC_Set_CurrentFrame(IMG_CMB_RoadTiles[(1 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
+                                Set_Animation_Frame(IMG_CMB_RoadTiles[(1 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
                                 Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(1 + (Set_Base_1 + Set_Base_2))]);
                             }
                             if((Road_Flags & 0x08) != 0)
                             {
-                                FLIC_Set_CurrentFrame(IMG_CMB_RoadTiles[(2 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
+                                Set_Animation_Frame(IMG_CMB_RoadTiles[(2 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
                                 Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(2 + (Set_Base_1 + Set_Base_2))]);
                             }
                             if((Road_Flags & 0x10) != 0)
                             {
-                                FLIC_Set_CurrentFrame(IMG_CMB_RoadTiles[(3 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
+                                Set_Animation_Frame(IMG_CMB_RoadTiles[(3 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
                                 Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(3 + (Set_Base_1 + Set_Base_2))]);
                             }
                             if((Road_Flags & 0x20) != 0)
                             {
-                                FLIC_Set_CurrentFrame(IMG_CMB_RoadTiles[(4 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
+                                Set_Animation_Frame(IMG_CMB_RoadTiles[(4 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
                                 Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(4 + (Set_Base_1 + Set_Base_2))]);
                             }
                             if((Road_Flags & 0x40) != 0)
                             {
-                                FLIC_Set_CurrentFrame(IMG_CMB_RoadTiles[(5 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
+                                Set_Animation_Frame(IMG_CMB_RoadTiles[(5 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
                                 Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(5 + (Set_Base_1 + Set_Base_2))]);
                             }
                             if(
@@ -24364,7 +24364,7 @@ void CMB_DrawMap__WIP(void)
                                 (CMB_Chasm_Anim_Y == cgy)
                             )
                             {
-                                FLIC_Set_CurrentFrame(IMG_GUI_Chasm, CMB_ChasmAnimStage);
+                                Set_Animation_Frame(IMG_GUI_Chasm, CMB_ChasmAnimStage);
                                 Clipped_Draw(screen_x, (screen_y - 18), IMG_GUI_Chasm);
                             }
                         }
@@ -24397,7 +24397,7 @@ void CMB_DrawMap__WIP(void)
                     (cgy == frame_scanned_cgy)
                 )
                 {
-                    FLIC_Set_CurrentFrame(frame_scanned_seg, frame_anim_cycle);
+                    Set_Animation_Frame(frame_scanned_seg, frame_anim_cycle);
                     Clipped_Draw(screen_x, screen_y, frame_scanned_seg);
                 }
                 if(
@@ -24408,7 +24408,7 @@ void CMB_DrawMap__WIP(void)
                     (cgy == frame_active_cgy)
                 )
                 {
-                    FLIC_Set_CurrentFrame(frame_active_seg, frame_anim_cycle);
+                    Set_Animation_Frame(frame_active_seg, frame_anim_cycle);
                     Clipped_Draw(screen_x, screen_y, frame_active_seg);
                 }
             }
@@ -24575,7 +24575,7 @@ void CMB_DrawEntities__WIP(void)
                     if(combat_grid_entities[combat_grid_entity_idx].Blood_Frame >= 0)
                     {
 
-                        FLIC_Set_CurrentFrame(
+                        Set_Animation_Frame(
                             IMG_CMB_Blood[(combat_grid_entities[combat_grid_entity_idx].Blood_Amt - 1)],
                             combat_grid_entities[combat_grid_entity_idx].Blood_Frame
                         );
@@ -24599,7 +24599,7 @@ void CMB_DrawEntities__WIP(void)
         else if(combat_grid_entities[combat_grid_entity_idx].entity_type == 0)
         {
 
-            FLIC_Set_CurrentFrame(
+            Set_Animation_Frame(
                 combat_grid_entities[combat_grid_entity_idx].pict_seg,
                 combat_grid_entities[combat_grid_entity_idx].frame_num
             );
@@ -24638,7 +24638,7 @@ void CMB_DrawEntities__WIP(void)
 // REDO         {
 // REDO 
 // REDO 
-// REDO             FLIC_Set_CurrentFrame(
+// REDO             Set_Animation_Frame(
 // REDO                 combat_grid_entities[combat_grid_entity_idx].pict_seg,
 // REDO                 CMB_ProjectileFrame
 // REDO             );
@@ -24653,7 +24653,7 @@ void CMB_DrawEntities__WIP(void)
 // REDO         else if(combat_grid_entities[combat_grid_entity_idx].entity_type == 2)
 // REDO         {
 // REDO 
-// REDO             FLIC_Set_CurrentFrame(
+// REDO             Set_Animation_Frame(
 // REDO                 combat_grid_entities[combat_grid_entity_idx].pict_seg,
 // REDO                 CMB_CurseAnimStage
 // REDO             );
@@ -24941,7 +24941,7 @@ void USELESS_Combat_Figure_Load_Compose(int16_t bufpi, int16_t figure_set_idx, i
     FIGUREX_OFFSET
     FIGUREX_MAP
     FIGUREX_POINTER
-    FLIC_Set_CurrentFrame(figure_pict_set_seg[figure_set_idx], frame_num);
+    Set_Animation_Frame(figure_pict_set_seg[figure_set_idx], frame_num);
     Draw_Picture_To_Bitmap(figure_pict_set_seg[figure_set_idx], GfxBuf_2400B);
     Combat_Figure_Banner_Color(player_idx);
     Combat_Unit_Enchantment_Outline_Draw(enchantment_magic_realm);
@@ -25442,7 +25442,7 @@ void Combat_Figure_Compose_USEFULL(void)
         FIGUREX_OFFSET
         FIGUREX_POINTER
 
-        FLIC_Set_CurrentFrame(figure_pict_set_seg[figure_set_idx], frame_num);
+        Set_Animation_Frame(figure_pict_set_seg[figure_set_idx], frame_num);
         GfxBuf_2400B = battle_unit_picts_seg[battle_units[battle_unit_idx].bufpi];
         Draw_Picture_To_Bitmap(figure_pict_set_seg[figure_set_idx], GfxBuf_2400B);
 

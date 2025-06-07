@@ -2200,7 +2200,7 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                                     {
                                         city_size = 4;
                                     }
-                                    FLIC_Set_CurrentFrame(city_pict_seg, city_size);
+                                    Set_Animation_Frame(city_pict_seg, city_size);
                                     Draw_Picture_To_Bitmap(city_pict_seg, Map_Square_WorkArea);
                                     for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
                                     {
@@ -2222,7 +2222,7 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                                     {
                                         city_size = 4;
                                     }
-                                    FLIC_Set_CurrentFrame(city_pict_seg, city_size);
+                                    Set_Animation_Frame(city_pict_seg, city_size);
                                     Draw_Picture_To_Bitmap(city_pict_seg, Map_Square_WorkArea);
                                     for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
                                     {
@@ -2479,7 +2479,7 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 
                                 node_anim_frame_idx = ((node_anim_ctr + Tile_Index) % 6);
 
-                                FLIC_Set_CurrentFrame(node_anim_seg, node_anim_frame_idx);
+                                Set_Animation_Frame(node_anim_seg, node_anim_frame_idx);
                                 FLIC_Draw(start_x, start_y, node_anim_seg);
                             }
                         }
@@ -2818,42 +2818,42 @@ void Draw_Map_Roads(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                     {
                         if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst +   1) & 0x08) != 0)
                         {
-                            FLIC_Set_CurrentFrame(eroads_seg[0], road_anim_ctr);
+                            Set_Animation_Frame(eroads_seg[0], road_anim_ctr);
                             FLIC_Draw(itr_screen_x, itr_screen_y, eroads_seg[0]);
                         }
                         if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst +   2) & 0x08) != 0)
                         {
-                            FLIC_Set_CurrentFrame(eroads_seg[1], road_anim_ctr);
+                            Set_Animation_Frame(eroads_seg[1], road_anim_ctr);
                             FLIC_Draw(itr_screen_x, itr_screen_y, eroads_seg[1]);
                         }
                         if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst +  62) & 0x08) != 0)
                         {
-                            FLIC_Set_CurrentFrame(eroads_seg[2], road_anim_ctr);
+                            Set_Animation_Frame(eroads_seg[2], road_anim_ctr);
                             FLIC_Draw(itr_screen_x, itr_screen_y, eroads_seg[2]);
                         }
                         if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst + 122) & 0x08) != 0)
                         {
-                            FLIC_Set_CurrentFrame(eroads_seg[3], road_anim_ctr);
+                            Set_Animation_Frame(eroads_seg[3], road_anim_ctr);
                             FLIC_Draw(itr_screen_x, itr_screen_y, eroads_seg[3]);
                         }
                         if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst + 121) & 0x08) != 0)
                         {
-                            FLIC_Set_CurrentFrame(eroads_seg[4], road_anim_ctr);
+                            Set_Animation_Frame(eroads_seg[4], road_anim_ctr);
                             FLIC_Draw(itr_screen_x, itr_screen_y, eroads_seg[4]);
                         }
                         if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst + 120) & 0x08) != 0)
                         {
-                            FLIC_Set_CurrentFrame(eroads_seg[5], road_anim_ctr);
+                            Set_Animation_Frame(eroads_seg[5], road_anim_ctr);
                             FLIC_Draw(itr_screen_x, itr_screen_y, eroads_seg[5]);
                         }
                         if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst +  60) & 0x08) != 0)
                         {
-                            FLIC_Set_CurrentFrame(eroads_seg[6], road_anim_ctr);
+                            Set_Animation_Frame(eroads_seg[6], road_anim_ctr);
                             FLIC_Draw(itr_screen_x, itr_screen_y, eroads_seg[6]);
                         }
                         if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst +   0) & 0x08) != 0)
                         {
-                            FLIC_Set_CurrentFrame(eroads_seg[7], road_anim_ctr);
+                            Set_Animation_Frame(eroads_seg[7], road_anim_ctr);
                             FLIC_Draw(itr_screen_x, itr_screen_y, eroads_seg[7]);
                         }                        
                     }

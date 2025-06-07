@@ -943,31 +943,37 @@ void Draw_Picture_To_Bitmap(SAMB_ptr source_picture, SAMB_ptr destination_bitmap
 
 
 // WZD s30p14
-void FLIC_Set_CurrentFrame(SAMB_ptr p_FLIC_Header, int16_t frame_index)
+// AKA  FLIC_Set_CurrentFrame()
+// 
+// MoO2  Module: animate  Set_Animation_Frame()
+// looks like MoO2  Module: file_ani  Set_File_Animation_Frame()
+void Set_Animation_Frame(SAMB_ptr picture, int16_t frame_num)
 {
     int16_t loop_length;
     int16_t loop_frame;
     int16_t frame_count;
 
-    frame_index = (frame_index & 0x7fff);
-    frame_count = FLIC_GET_FRAME_COUNT(p_FLIC_Header);
-    loop_frame = FLIC_GET_LOOP_FRAME(p_FLIC_Header);
+    frame_num = (frame_num & 0x7fff);
+    frame_count = FLIC_GET_FRAME_COUNT(picture);
+    loop_frame = FLIC_GET_LOOP_FRAME(picture);
     loop_length = frame_count - loop_frame;
 
-    if( !(frame_index < frame_count) )
+    if( !(frame_num < frame_count) )
     {
-        frame_index = loop_frame + ((frame_index - frame_count) % loop_length);
+        frame_num = loop_frame + ((frame_num - frame_count) % loop_length);
     }
 
-    FLIC_SET_CURRENT_FRAME(p_FLIC_Header, frame_index);
+    FLIC_SET_CURRENT_FRAME(picture, frame_num);
 
 }
 
 
 // WZD s30p15
-void FLIC_Reset_CurrentFrame(SAMB_ptr p_FLIC_Header)
+// AKA  FLIC_Reset_CurrentFrame()
+// MoO2  Module: animate  Reset_Animation_Frame()
+void Reset_Animation_Frame(SAMB_ptr picture)
 {
-    FLIC_SET_CURRENT_FRAME(p_FLIC_Header, 0);
+    FLIC_SET_CURRENT_FRAME(picture, 0);
 }
 
 

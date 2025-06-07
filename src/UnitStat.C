@@ -690,17 +690,17 @@ void Unit_Statistics_Popup_Do_Draw(void)
 
     if(uv_view_type != uvt_Cmbt)
     {
-        FLIC_Set_CurrentFrame(red_button_seg, 0);
+        Set_Animation_Frame(red_button_seg, 0);
         FLIC_Draw((UV_x_start + 222), (UV_y_start + 162), red_button_seg);  // Ok
-        FLIC_Set_CurrentFrame(red_button_seg, 0);
+        Set_Animation_Frame(red_button_seg, 0);
         FLIC_Draw((UV_x_start + 222), (UV_y_start + 143), red_button_seg);  // Dismiss
     }
 
     if(uv_multipage == ST_TRUE)
     {
-        FLIC_Set_CurrentFrame(unitview_up_arrow_seg, 0);
+        Set_Animation_Frame(unitview_up_arrow_seg, 0);
         FLIC_Draw((UV_x_start + 204), (UV_y_start + 105), unitview_up_arrow_seg);
-        FLIC_Set_CurrentFrame(unitview_down_arrow_seg, 0);
+        Set_Animation_Frame(unitview_down_arrow_seg, 0);
         FLIC_Draw((UV_x_start + 204), (UV_y_start + 168), unitview_down_arrow_seg);
     }
 
@@ -1063,7 +1063,7 @@ if(_CITIES[_city_idx].construction > 298)
             }
             else
             {
-                FLIC_Set_CurrentFrame(unit_grass_diamond_seg, 0);
+                Set_Animation_Frame(unit_grass_diamond_seg, 0);
                 FLIC_Draw(( UV_x_start_offset + (UV_x_start + 5)), (UV_y_start + 5), unit_grass_diamond_seg);
                 Draw_Unit_Figure((UV_x_start_offset + UV_x_start + 11), (UV_y_start - 3), unit_idx, CalledFromFlag);  // HERE: unit_idx = (thing_idx - 100)
             }

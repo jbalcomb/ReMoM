@@ -11,10 +11,11 @@ CITYSCAP.C
 
 
 Where is ... ?
+    Cursed Lands
     Flying Fortress
     Gaia's Blessing
-    Cursed Lands
-    
+    Famine    
+Their effect is handled by the cityscape window background.
 
 
 
@@ -27,37 +28,7 @@ Cityscape_Draw__WIP()
     Cityscape_Make_Buildings_Array()
     Cityscape_Roads_1__WIP()
     Cityscape_Draw_Buildings()
-    Cityscape_Draw_Wards_And_Walls__STUB()
-
-
-
-
-
-
-struct s_CITYSCAPE_CR * cityscape_bldg_array;
-
-cityscape_bldgs = (struct s_BLDG *)Allocate_Next_Block(_screen_seg, 176);
-cityscape_bldg_array = (struct s_CITYSCAPE_CR *)Allocate_Next_Block(_screen_seg, (((15 * 23 * sizeof(struct s_BLDG)) / 16) + 1));
-
-
-BEGIN:  City Walls
-
-
-
-## TODO
-    the balance of LOADER - GFX_Swap_AppndCtScap__WIP() AKA ~'Reload Cityscape Graphics'
-    first three in Cityscape_Draw_Buildings() - oddness with trees, rocks, and something
-    IMG_CTY_Scap_Wall
-    IMG_CTY_AltarofBtl
-    IMG_CTY_EvilPresnc
-    IMG_CTY_Dark_Ritual
-    IMG_CTY_Astral_Gate
-    IMG_CTY_StreamofLif
-    IMG_CTY_Earth_Gate
-    Cityscape_Draw_Wards_And_Walls()
-    IMG_CTY_Rubble
-    new building, removed building, sold building  (new building ~== cast city enchantment)
-    Vanish_Bitmap()
+    Cityscape_Draw_Foreground()
 
 
 
@@ -103,7 +74,7 @@ Cast_Spell_City_Enchantment_Animation_Draw()
  8              |-> Cityscape_Roads_5()
  9      |-> Cityscape_Draw_Buildings(city_idx, xstart, ystart, bldg_idx_1)
 10          |-> Cityscape_Add_Bldg_To_Fields_Array()
-11      |-> Cityscape_Draw_Wards_And_Walls()
+11      |-> Cityscape_Draw_Foreground()
 
 
 MoO2
@@ -395,7 +366,7 @@ void Cityscape_Draw__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int16
 
     Cityscape_Draw_Buildings(city_idx, xstart, ystart, bldg_idx_1);
 
-    Cityscape_Draw_Wards_And_Walls__STUB(city_idx, xstart, ystart);
+    Cityscape_Draw_Foreground__STUB(city_idx, xstart, ystart);
 
 
 
@@ -500,7 +471,7 @@ or
 
 
 
-## Cityscape_Draw_Wards_And_Walls__STUB()
+## Cityscape_Draw_Foreground__STUB()
 
 
 

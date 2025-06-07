@@ -7,7 +7,9 @@
 
 #include "CITYSCAP.H"
 
+#include "MOX/FLIC_Draw.H"
 #include "MOX/MOM_Data.H"
+#include "MOX/MOX_BITS.H"
 #include "MOX/MOX_TYPE.H"
 
 
@@ -32,6 +34,18 @@ int16_t cityscape_build_anim_ctr = 100;
 int16_t cityscape_build_anim_itr = 100;  // DNE in Dasm
 
 // WZD dseg:6ED8
+int16_t cityscape_roads_cr[8] = {
+    4,  /* road #A */
+    9,  /* road #B */
+    13, /* road #C */
+    18, /* road #D */
+    0,  /* road #1 */
+    5,  /* road #2 */
+    9,  /* road #3 */
+    14  /* road #4 */
+};
+
+// WZD dseg:6EE8
 struct s_BLDG_CR cityscape_cr[5][3] =
 {
     {
@@ -211,11 +225,11 @@ void Cityscape_Window__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int
     // HERE: bldg_idx_1 is bt_NONE or city walls or a magic building
     Cityscape_Make_Buildings_Array(city_idx, bldg_idx_1);
 
-    // Cityscape_Roads_1__WIP(xstart, ystart);
+    Cityscape_Roads_1__WIP(xstart, ystart);
 
     Cityscape_Draw_Buildings(city_idx, xstart, ystart, bldg_idx_1);
 
-    Cityscape_Draw_Wards_And_Walls__STUB(city_idx, xstart, ystart);
+    Cityscape_Draw_Foreground(city_idx, xstart, ystart);
 
     cityscape_bldg_anim_ctr  = ((cityscape_bldg_anim_ctr  + 1) %  9);
     cityscape_water_anim_ctr = ((cityscape_water_anim_ctr + 1) % 12);
@@ -238,22 +252,304 @@ void Cityscape_Window__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int
 
 // WZD o144p03
 // drake178: sub_CD8B0()
+/*
 
+*/
 void Cityscape_Roads_1__WIP(int16_t xstart, int16_t ystart)
 {
+    int16_t var_E = 0;
+    int16_t var_C = 0;
+    int16_t var_A = 0;
+    int16_t var_8 = 0;
+    int16_t var_6 = 0;
+    int16_t itr2 = 0;
+    int16_t var_2 = 0;
+    int16_t itr1 = 0;  // _DI_
+    int16_t n_roads = 0;  // _SI_
+
+    /* IDK  #1 */  for(itr1 =  0; itr1 <  4; itr1++) { if((cityscape_bldg_array->RC[1][itr1] > 0                                           )) { for(itr2 =  0; itr2 <  4; itr2++) { cityscape_bldg_array->RC[itr2][ 0] = -5; } itr1 = 1000; } }
+    /* IDK  #2 */  for(itr1 =  5; itr1 <  9; itr1++) { if((cityscape_bldg_array->RC[1][itr1] > 0                                           )) { for(itr2 =  5; itr2 <  9; itr2++) { cityscape_bldg_array->RC[itr2][ 0] = -5; } itr1 = 1000; } }
+    /* IDK  #3 */  for(itr1 = 10; itr1 < 13; itr1++) { if((cityscape_bldg_array->RC[1][itr1] > 0                                           )) { for(itr2 = 10; itr2 < 13; itr2++) { cityscape_bldg_array->RC[itr2][ 0] = -5; } itr1 = 1000; } }
+    /* IDK  #4 */  for(itr1 = 14; itr1 < 18; itr1++) { if((cityscape_bldg_array->RC[1][itr1] > 0                                           )) { for(itr2 = 14; itr2 < 18; itr2++) { cityscape_bldg_array->RC[10][itr2] = -5; } itr1 = 1000; } }
+
+    /* IDK  #5 */  for(itr1 =  1; itr1 <  4; itr1++) { if((cityscape_bldg_array->RC[4][itr1] > 0) || (cityscape_bldg_array->RC[6][itr1] > 0)) { for(itr2 =  1; itr2 <  4; itr2++) { cityscape_bldg_array->RC[10][itr2] = -5; } itr1 = 1000; } }
+    /* IDK  #6 */  for(itr1 =  5; itr1 <  9; itr1++) { if((cityscape_bldg_array->RC[4][itr1] > 0) || (cityscape_bldg_array->RC[6][itr1] > 0)) { for(itr2 =  5; itr2 <  9; itr2++) { cityscape_bldg_array->RC[10][itr2] = -5; } itr1 = 1000; } }
+    /* IDK  #7 */  for(itr1 = 10; itr1 < 13; itr1++) { if((cityscape_bldg_array->RC[4][itr1] > 0) || (cityscape_bldg_array->RC[6][itr1] > 0)) { for(itr2 = 10; itr2 < 13; itr2++) { cityscape_bldg_array->RC[10][itr2] = -5; } itr1 = 1000; } }
+
+    for(itr1 = 10; itr1 < 13; itr1++) { if( (cityscape_bldg_array->RC[4][itr1] > 0) || (cityscape_bldg_array->RC[6][itr1] > 0) ) { for(itr2 = 10; itr2 < 13; itr2++) { cityscape_bldg_array->RC[10][itr2] = -5; } itr1 = 1000; } }
+
+    /* IDK  #8 */  for(itr1 = 19; itr1 < 23; itr1++) { if((cityscape_bldg_array->RC[4][itr1] > 0) || (cityscape_bldg_array->RC[ 6][itr1] > 0)) { for(itr2 = 19; itr2 < 23; itr2++) { cityscape_bldg_array->RC[ 5][itr2] = -5; } itr1 = 1000; } }
+
+    /* IDK  #9 */  for(itr1 =  2; itr1 <  4; itr1++) { if((cityscape_bldg_array->RC[8][itr1] > 0) || (cityscape_bldg_array->RC[10][itr1] > 0)) { for(itr2 =  2; itr2 <  4; itr2++) { cityscape_bldg_array->RC[ 9][itr2] = -5; } itr1 = 1000; } }
+    /* IDK #10 */  for(itr1 =  5; itr1 <  9; itr1++) { if((cityscape_bldg_array->RC[8][itr1] > 0) || (cityscape_bldg_array->RC[10][itr1] > 0)) { for(itr2 =  5; itr2 <  9; itr2++) { cityscape_bldg_array->RC[ 9][itr2] = -5; } itr1 = 1000; } }
+    /* IDK #11 */  for(itr1 = 10; itr1 < 13; itr1++) { if((cityscape_bldg_array->RC[8][itr1] > 0) || (cityscape_bldg_array->RC[10][itr1] > 0)) { for(itr2 = 10; itr2 < 13; itr2++) { cityscape_bldg_array->RC[ 9][itr2] = -5; } itr1 = 1000; } }
+    /* IDK #12 */  for(itr1 = 14; itr1 < 18; itr1++) { if((cityscape_bldg_array->RC[8][itr1] > 0) || (cityscape_bldg_array->RC[10][itr1] > 0)) { for(itr2 = 14; itr2 < 18; itr2++) { cityscape_bldg_array->RC[ 9][itr2] = -5; } itr1 = 1000; } }
+    /* IDK #12 */  for(itr1 = 19; itr1 < 23; itr1++) { if((cityscape_bldg_array->RC[8][itr1] > 0) || (cityscape_bldg_array->RC[10][itr1] > 0)) { for(itr2 = 19; itr2 < 23; itr2++) { cityscape_bldg_array->RC[ 9][itr2] = -5; } itr1 = 1000; } }
+
+    /* IDK #13 */  for(itr1 =  5; itr1 <  9; itr1++) { if((cityscape_bldg_array->RC[13][itr1] > 0)                                           ) { for(itr2 =  5; itr2 <  9; itr2++) { cityscape_bldg_array->RC[14][itr2] = -5; } itr1 = 1000; } }
+    /* IDK #14 */  for(itr1 = 10; itr1 < 13; itr1++) { if((cityscape_bldg_array->RC[13][itr1] > 0)                                           ) { for(itr2 = 10; itr2 < 13; itr2++) { cityscape_bldg_array->RC[14][itr2] = -5; } itr1 = 1000; } }
+    /* IDK #15 */  for(itr1 = 14; itr1 < 18; itr1++) { if((cityscape_bldg_array->RC[13][itr1] > 0)                                           ) { for(itr2 = 14; itr2 < 18; itr2++) { cityscape_bldg_array->RC[14][itr2] = -5; } itr1 = 1000; } }
+    /* IDK #16 */  for(itr1 = 19; itr1 < 23; itr1++) { if((cityscape_bldg_array->RC[13][itr1] > 0)                                           ) { for(itr2 = 19; itr2 < 23; itr2++) { cityscape_bldg_array->RC[14][itr2] = -5; } itr1 = 1000; } }
+
+    // IDA yellow #2 ... switch roads A,B,C,D #1,#2,#3
+    for(itr2 = 0; itr2 < 4; itr2++)
+    {
+        switch(itr2)
+        {
+            case 0: { itr1 =  4; } break; /* road #A */
+            case 1: { itr1 =  9; } break; /* road #B */
+            case 2: { itr1 = 13; } break; /* road #C */
+            case 3: { itr1 = 18; } break; /* road #D */
+        }
+        for(var_2 =  1; var_2 <  5; var_2++) {if( (cityscape_bldg_array->RC[var_2][(itr1 - 1)] > 0) || (cityscape_bldg_array->RC[var_2][(itr1 + 1)] > 0)) { for(var_6 =  1; var_6 <  5; var_6++) { cityscape_bldg_array->RC[var_6][itr1] = -5; } var_2 = 1000; } }
+        for(var_2 =  6; var_2 <  9; var_2++) {if( (cityscape_bldg_array->RC[var_2][(itr1 - 1)] > 0) || (cityscape_bldg_array->RC[var_2][(itr1 + 1)] > 0)) { for(var_6 =  6; var_6 <  9; var_6++) { cityscape_bldg_array->RC[var_6][itr1] = -5; } var_2 = 1000; } }
+        for(var_2 = 10; var_2 < 14; var_2++) {if( (cityscape_bldg_array->RC[var_2][(itr1 - 1)] > 0) || (cityscape_bldg_array->RC[var_2][(itr1 + 1)] > 0)) { for(var_6 = 10; var_6 < 14; var_6++) { cityscape_bldg_array->RC[var_6][itr1] = -5; } var_2 = 1000; } }
+    }
+
+    // IDA green #2
+    for(var_6 = 0; var_6 < 4; var_6++)
+    {
+        for(itr2 = 0; itr2 < 4; itr2++)
+        {
+            var_8 = cityscape_roads_cr[itr2];
+            var_A = cityscape_roads_cr[(4 + var_6)];
+            n_roads = 0;
+            if( (cityscape_bldg_array->RC[(var_A - 1)][var_8] == -5) && (var_A > 0)  ) { n_roads++; }
+            if( (cityscape_bldg_array->RC[(var_A + 1)][var_8] == -5) && (var_A < 14) ) { n_roads++; }
+            if( (cityscape_bldg_array->RC[var_A][(var_8 - 1)] == -5) && (var_8 > 0)  ) { n_roads++; }
+            if( (cityscape_bldg_array->RC[var_A][(var_8 + 1)] == -5) && (var_8 < 22) ) { n_roads++; }
+
+            if(n_roads > 0)
+            {
+                if(itr2 > 0)
+                {
+                    if(cityscape_bldg_array->RC[var_A][(var_8 - 1)] != -5)
+                    {
+                        var_C = cityscape_roads_cr[(itr2 - 1)];
+                        var_E = var_A;
+                        n_roads = 0;
+                        if(
+                            (cityscape_bldg_array->RC[(var_E - 1)][var_C] == -5)
+                            &&
+                            (var_E > 0)
+                        )
+                        {
+                            n_roads++;
+                        }
+                        if(
+                            (cityscape_bldg_array->RC[(var_E + 1)][var_C] == -5)
+                            &&
+                            (var_E < 14)
+                        )
+                        {
+                            n_roads++;
+                        }
+                        if(
+                            (cityscape_bldg_array->RC[var_E][(var_C - 1)] == -5)
+                            &&
+                            (var_C > 0)
+                        )
+                        {
+                            n_roads++;
+                        }
+                        if(
+                            (cityscape_bldg_array->RC[var_E][(var_C + 1)] == -5)
+                            &&
+                            (var_C < 22)
+                        )
+                        {
+                            n_roads++;
+                        }
+                        if(n_roads > 0)
+                        {
+                            for(itr1 = (var_C + 1); itr1 < var_8; itr1++)
+                            {
+                                cityscape_bldg_array->RC[var_A][itr1] = -5;
+                            }
+                        }
+                    }
+                }  /* if(itr2 > 0) */
+                if(itr2 < 3)
+                {
+                    if(cityscape_bldg_array->RC[(var_A - 1)][var_8] != -5)
+                    {
+                        var_C = cityscape_roads_cr[(itr2 + 1)];
+                        var_E = var_A;
+                        n_roads = 0;
+                        if(
+                            (cityscape_bldg_array->RC[(var_E - 1)][var_C] == -5)
+                            &&
+                            (var_E > 0)
+                        )
+                        {
+                            n_roads++;
+                        }
+                        if(
+                            (cityscape_bldg_array->RC[(var_E + 1)][var_C] == -5)
+                            &&
+                            (var_E < 14)
+                        )
+                        {
+                            n_roads++;
+                        }
+                        if(
+                            (cityscape_bldg_array->RC[var_E][(var_C - 1)] == -5)
+                            &&
+                            (var_C > 0)
+                        )
+                        {
+                            n_roads++;
+                        }
+                        if(
+                            (cityscape_bldg_array->RC[var_E][(var_C + 1)] == -5)
+                            &&
+                            (var_C < 22)
+                        )
+                        {
+                            n_roads++;
+                        }
+                        if(n_roads > 0)
+                        {
+                            for(var_2 = (var_E + 1); var_2 < var_A; var_2++)
+                            {
+                                cityscape_bldg_array->RC[var_2][var_8] = -5;
+                            }
+                        }
+                    }
+                }  /* if(itr2 < 3) */
+                if(var_6 > 0)
+                {
+                    if(cityscape_bldg_array->RC[(var_A - 1)][var_8] != -5)
+                    {
+                        var_C = var_8;
+                        var_E = cityscape_roads_cr[(var_6 + 3)];
+                        n_roads = 0;
+                        if(
+                            (cityscape_bldg_array->RC[(var_E - 1)][var_C] == -5)
+                            &&
+                            (var_E > 0)
+                        )
+                        {
+                            n_roads++;
+                        }
+                        if(
+                            (cityscape_bldg_array->RC[(var_E + 1)][var_C] == -5)
+                            &&
+                            (var_E < 14)
+                        )
+                        {
+                            n_roads++;
+                        }
+                        if(
+                            (cityscape_bldg_array->RC[var_E][(var_C - 1)] == -5)
+                            &&
+                            (var_C > 0)
+                        )
+                        {
+                            n_roads++;
+                        }
+                        if(
+                            (cityscape_bldg_array->RC[var_E][(var_C + 1)] == -5)
+                            &&
+                            (var_C < 22)
+                        )
+                        {
+                            n_roads++;
+                        }
+                        if(n_roads > 0)
+                        {
+                            for(itr1 = (var_C + 1); itr1 < var_8; itr1++)
+                            {
+                                cityscape_bldg_array->RC[var_A][itr1] = -5;
+                            }
+                        }
+                    }
+                }  /* if(var_6 > 0) */
+                if(var_6 < 3)
+                {
+                    if(cityscape_bldg_array->RC[(var_A + 1)][var_8] != -5)
+                    {
+                        var_C = var_8;
+                        var_E = cityscape_roads_cr[(var_6 + 5)];
+                        n_roads = 0;
+                        if(
+                            (cityscape_bldg_array->RC[(var_E - 1)][var_C] == -5)
+                            &&
+                            (var_E > 0)
+                        )
+                        {
+                            n_roads++;
+                        }
+                        if(
+                            (cityscape_bldg_array->RC[(var_E + 1)][var_C] == -5)
+                            &&
+                            (var_E < 14)
+                        )
+                        {
+                            n_roads++;
+                        }
+                        if(
+                            (cityscape_bldg_array->RC[var_E][(var_C - 1)] == -5)
+                            &&
+                            (var_C > 0)
+                        )
+                        {
+                            n_roads++;
+                        }
+                        if(
+                            (cityscape_bldg_array->RC[var_E][(var_C + 1)] == -5)
+                            &&
+                            (var_C < 22)
+                        )
+                        {
+                            n_roads++;
+                        }
+                        if(n_roads > 0)
+                        {
+                            for(var_2 = (var_A + 1); var_2 < var_E; var_2++)
+                            {
+                                cityscape_bldg_array->RC[var_2][var_8] = -5;
+                            }
+                        }
+                    }
+                }  /* if(var_6 < 3) */
+            }  /* if(n_roads > 0) */
+        }  /* for(itr2 = 0; itr2 < 4; itr2++) */
+    }  /* for(var_6 = 0; var_6 < 4; var_6++) */
 
 
 
-    FLIC_Set_CurrentFrame(cityscape_roads_seg, cityscape_background_frame);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    Set_Animation_Frame(cityscape_roads_seg, cityscape_background_frame);
 
     Draw_Picture_To_Bitmap(cityscape_roads_seg, cityscape_pict_seg);
 
-    // BUGBUG  FLIC_Reset_CurrentFrame(cityscape_roads_horizontal_mask_seg, 0);
-    FLIC_Reset_CurrentFrame(cityscape_roads_horizontal_mask_seg);
+    // BUGBUG  Reset_Animation_Frame(cityscape_roads_horizontal_mask_seg, 0);
+    Reset_Animation_Frame(cityscape_roads_horizontal_mask_seg);
 
     Draw_Picture_To_Bitmap(cityscape_roads_horizontal_mask_seg, GfxBuf_2400B);
 
-    // TODO  Cityscape_Roads_2__STUB(cityscape_pict_seg);
+    Cityscape_Roads_2__WIP(cityscape_pict_seg);
 
     Draw_Picture((xstart + 1), (ystart + 17), cityscape_pict_seg);
 
@@ -264,20 +560,37 @@ void Cityscape_Roads_1__WIP(int16_t xstart, int16_t ystart)
 Cityscape_Roads_1()
     |-> Cityscape_Roads_2(cityscape_pict_seg)
 */
-void Cityscape_Roads_2__STUB(SAMB_ptr picture)
+void Cityscape_Roads_2__WIP(SAMB_ptr cityscape_pict_seg)
 {
+    int16_t itr1 = 0;  // _SI_
+    int16_t itr2 = 0;  // _DI_
 
 
-    
-    // Cityscape_Roads_3((29 + (itr * 10)), 4, IDK_cityscape_pict_seg);
+    for(itr1 = 0; itr1 < 4; itr1++)
+    {
+        if(cityscape_bldg_array->RC[0][itr1] == -2)
+        {
+            Cityscape_Roads_3__WIP((29 + (itr1 * 10)), 4, cityscape_pict_seg);
+        }
+    }
 
+    if(cityscape_bldg_array->RC[0][4] == -2)
+    {
+        Cityscape_Roads_4__WIP(69, 4, cityscape_pict_seg);
+    }
 
+    // ...
+    // ...
+    // ...
 
-    // Cityscape_Roads_4(69, 4, IDK_cityscape_pict_seg);
+    for(itr2 = 1; itr2 < 5; itr2++)
+    {
+        if(cityscape_bldg_array->RC[itr2][4] == -2)
+        {
+            Cityscape_Roads_5__WIP((70 - (itr2 * 5)), ((itr2 * 5) - 1), cityscape_pict_seg);
+        }
+    }
 
-
-
-    // Cityscape_Roads_5((70 - (5 * _DI_itr)), ((5 * _DI_itr) - 1), IDK_cityscape_pict_seg);
 
 
 
@@ -288,10 +601,51 @@ void Cityscape_Roads_2__STUB(SAMB_ptr picture)
 Cityscape_Roads_2()
     |-> Cityscape_Roads_3((29 + (itr * 10)), 4, IDK_cityscape_pict_seg);
 */
-void Cityscape_Roads_3__STUB(int16_t x, int16_t y, SAMB_ptr picture)
+void Cityscape_Roads_3__WIP(int16_t x, int16_t y, SAMB_ptr cityscape_pict_seg)
 {
+    uint8_t * fp_cityscape_pict_seg = 0;
+    int16_t itr = 0;
+    int16_t height = 0;  // _DI_
+    int16_t size = 0;  // _SI_
 
+    // DOMSDOS  height = farpeekw(cityscape_pict_seg, s_FLIC_HDR.height);
+    height = GET_2B_OFS(cityscape_pict_seg, FLIC_HDR_POS_HEIGHT);
 
+    // DOMSDOS  fp_cityscape_pict_seg = SA_MK_FP0(cityscape_pict_seg);
+    fp_cityscape_pict_seg = (uint8_t *)cityscape_pict_seg;
+
+    size = (height * x) + y + 18;
+
+    *(fp_cityscape_pict_seg + size + FLIC_HDR_POS_WIDTH) = 0;
+
+    size += (height - 1);
+
+    *(fp_cityscape_pict_seg + size) = 0;
+
+    *(fp_cityscape_pict_seg + size + 1) = 0;
+
+    size += (height - 1);
+
+    for(itr = 0; itr < 8; itr++)
+    {
+
+        *(fp_cityscape_pict_seg + size) = 0;
+
+        *(fp_cityscape_pict_seg + size + 1) = 0;
+
+        *(fp_cityscape_pict_seg + size + 2) = 0;
+
+        size += height;
+
+    }
+
+    *(fp_cityscape_pict_seg + size) = 0;
+
+    *(fp_cityscape_pict_seg + size + 1) = 0;
+
+    size += height;
+
+    *(fp_cityscape_pict_seg + size) = 0;
 
 }
 
@@ -301,10 +655,51 @@ void Cityscape_Roads_3__STUB(int16_t x, int16_t y, SAMB_ptr picture)
 Cityscape_Roads_2()
     |-> Cityscape_Roads_4(69, 4, IDK_cityscape_pict_seg);
 */
-void Cityscape_Roads_4__STUB(int16_t x, int16_t y, SAMB_ptr picture)
+void Cityscape_Roads_4__WIP(int16_t x, int16_t y, SAMB_ptr picture)
 {
+    uint8_t * fp_cityscape_pict_seg = 0;
+    int16_t itr = 0;
+    int16_t height = 0;  // _DI_
+    int16_t size = 0;  // _SI_
 
+    // DOMSDOS  height = farpeekw(cityscape_pict_seg, s_FLIC_HDR.height);
+    height = GET_2B_OFS(cityscape_pict_seg, FLIC_HDR_POS_HEIGHT);
 
+    // DOMSDOS  fp_cityscape_pict_seg = SA_MK_FP0(cityscape_pict_seg);
+    fp_cityscape_pict_seg = (uint8_t *)cityscape_pict_seg;
+
+    size = (height * x) + y + 18;
+
+    *(fp_cityscape_pict_seg + size + FLIC_HDR_POS_WIDTH) = 0;
+
+    size += (height - 1);
+
+    *(fp_cityscape_pict_seg + size) = 0;
+
+    *(fp_cityscape_pict_seg + size + 1) = 0;
+
+    size += (height - 1);
+
+    for(itr = 0; itr < 6; itr++)
+    {
+
+        *(fp_cityscape_pict_seg + size) = 0;
+
+        *(fp_cityscape_pict_seg + size + 1) = 0;
+
+        *(fp_cityscape_pict_seg + size + 2) = 0;
+
+        size += height;
+
+    }
+
+    *(fp_cityscape_pict_seg + size) = 0;
+
+    *(fp_cityscape_pict_seg + size + 1) = 0;
+
+    size += height;
+
+    *(fp_cityscape_pict_seg + size) = 0;
 
 }
 
@@ -314,10 +709,97 @@ void Cityscape_Roads_4__STUB(int16_t x, int16_t y, SAMB_ptr picture)
 Cityscape_Roads_2()
     |-> Cityscape_Roads_5((70 - (5 * _DI_itr)), ((5 * _DI_itr) - 1), IDK_cityscape_pict_seg);
 */
-void Cityscape_Roads_5__STUB(int16_t x, int16_t y, SAMB_ptr picture)
+void Cityscape_Roads_5__WIP(int16_t x, int16_t y, SAMB_ptr cityscape_pict_seg)
 {
+    uint8_t * fp_cityscape_pict_seg = 0;
+    int16_t height = 0;  // _DI_
+    int16_t size = 0;  // _SI_
 
+    // DOMSDOS  height = farpeekw(cityscape_pict_seg, s_FLIC_HDR.height);
+    height = GET_2B_OFS(cityscape_pict_seg, FLIC_HDR_POS_HEIGHT);
 
+    // DOMSDOS  fp_cityscape_pict_seg = SA_MK_FP0(cityscape_pict_seg);
+    fp_cityscape_pict_seg = (uint8_t *)cityscape_pict_seg;
+
+    size = (height * x) + y + 23;
+
+    *(fp_cityscape_pict_seg + size + FLIC_HDR_POS_WIDTH) = 0;
+
+    size += (height - 1);
+
+    *(fp_cityscape_pict_seg + size) = 0;
+
+    *(fp_cityscape_pict_seg + size + 1) = 0;
+
+    size += (height - 1);
+
+    *(fp_cityscape_pict_seg + size) = 0;
+
+    *(fp_cityscape_pict_seg + size + 1) = 0;
+
+    *(fp_cityscape_pict_seg + size + 2) = 0;
+
+    size += (height - 1);
+
+    *(fp_cityscape_pict_seg + size) = 0;
+
+    *(fp_cityscape_pict_seg + size + 1) = 0;
+
+    *(fp_cityscape_pict_seg + size + 2) = 0;
+
+    *(fp_cityscape_pict_seg + size + 3) = 0;
+
+    size += (height - 1);
+
+    *(fp_cityscape_pict_seg + size) = 0;
+
+    *(fp_cityscape_pict_seg + size + 1) = 0;
+
+    *(fp_cityscape_pict_seg + size + 2) = 0;
+
+    *(fp_cityscape_pict_seg + size + 3) = 0;
+
+    *(fp_cityscape_pict_seg + size + 4) = 0;
+
+    size += height;
+
+    *(fp_cityscape_pict_seg + size) = 0;
+
+    *(fp_cityscape_pict_seg + size + 1) = 0;
+
+    *(fp_cityscape_pict_seg + size + 2) = 0;
+
+    *(fp_cityscape_pict_seg + size + 3) = 0;
+
+    *(fp_cityscape_pict_seg + size + 4) = 0;
+
+    size += height;
+
+    *(fp_cityscape_pict_seg + size) = 0;
+
+    *(fp_cityscape_pict_seg + size + 1) = 0;
+
+    *(fp_cityscape_pict_seg + size + 2) = 0;
+
+    *(fp_cityscape_pict_seg + size + 3) = 0;
+
+    size += height;
+
+    *(fp_cityscape_pict_seg + size) = 0;
+
+    *(fp_cityscape_pict_seg + size + 1) = 0;
+
+    *(fp_cityscape_pict_seg + size + 2) = 0;
+
+    size += height;
+
+    *(fp_cityscape_pict_seg + size) = 0;
+
+    *(fp_cityscape_pict_seg + size + 1) = 0;
+
+    size += height;
+
+    *(fp_cityscape_pict_seg + size) = 0;
 
 }
 
@@ -413,13 +895,13 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
                 if (_CITIES[city_idx].bldg_status[cr_bldg_idx] == bs_Removed)
                 {
                     src_pict_seg = cityscape_rubble_seg[bldg_data_table[cr_bldg_idx].shape];  // shape: {2x2, 2x3, 3x2, 3x3}
-                    FLIC_Set_CurrentFrame(src_pict_seg, cityscape_bldg_anim_ctr);
+                    Set_Animation_Frame(src_pict_seg, cityscape_bldg_anim_ctr);
                     FLIC_Set_LoopFrame_1(GfxBuf_2400B);
                     Draw_Picture_To_Bitmap(src_pict_seg, GfxBuf_2400B);
                 }
                 else
                 {
-                    FLIC_Set_CurrentFrame(bldg_picts_seg[cr_bldg_idx], cityscape_bldg_anim_ctr);
+                    Set_Animation_Frame(bldg_picts_seg[cr_bldg_idx], cityscape_bldg_anim_ctr);
                     Draw_Picture_To_Bitmap(bldg_picts_seg[cr_bldg_idx], GfxBuf_2400B);
                     if (cr_bldg_idx == new_bldg_idx)
                     {
@@ -432,7 +914,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
 
                 if((cr_bldg_idx >= bt_Shrine) && (cr_bldg_idx <= bt_Parthenon) && (_CITIES[city_idx].enchantments[EVIL_PRESENCE] != ST_FALSE))
                 {
-                    FLIC_Set_CurrentFrame(cityscape_evilpresence_seg, cityscape_bldg_anim_ctr);
+                    Set_Animation_Frame(cityscape_evilpresence_seg, cityscape_bldg_anim_ctr);
                     Draw_Picture_To_Bitmap(cityscape_evilpresence_seg, GfxBuf_2400B);
                     if(cr_bldg_idx == new_bldg_idx)
                     {
@@ -452,7 +934,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
             */
             if((cr_bldg_idx == bt_Dark_Rituals) && (bldg_idx != bt_Dark_Rituals))
             {
-                FLIC_Set_CurrentFrame(cityscape_darkrituals_seg, cityscape_bldg_anim_ctr);
+                Set_Animation_Frame(cityscape_darkrituals_seg, cityscape_bldg_anim_ctr);
                 Draw_Picture_To_Bitmap(cityscape_darkrituals_seg, GfxBuf_2400B);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
@@ -471,7 +953,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
             */
             if((cr_bldg_idx == bt_Summoning_Circle) && (bldg_idx != bt_Summoning_Circle))
             {
-                FLIC_Set_CurrentFrame(cityscape_summon_circle_seg, cityscape_bldg_anim_ctr);
+                Set_Animation_Frame(cityscape_summon_circle_seg, cityscape_bldg_anim_ctr);
                 Draw_Picture_To_Bitmap(cityscape_summon_circle_seg, GfxBuf_2400B);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
@@ -490,7 +972,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
             */
             if((cr_bldg_idx == bt_Earth_Gate) && (bldg_idx != bt_Earth_Gate))
             {
-                FLIC_Set_CurrentFrame(cityscape_earthgate_seg, cityscape_bldg_anim_ctr);
+                Set_Animation_Frame(cityscape_earthgate_seg, cityscape_bldg_anim_ctr);
                 Draw_Picture_To_Bitmap(cityscape_earthgate_seg, GfxBuf_2400B);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
@@ -509,7 +991,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
             */
             if((cr_bldg_idx == bt_Stream_Of_Life) && (bldg_idx != bt_Stream_Of_Life))
             {
-                FLIC_Set_CurrentFrame(cityscape_streamoflife_seg, cityscape_bldg_anim_ctr);
+                Set_Animation_Frame(cityscape_streamoflife_seg, cityscape_bldg_anim_ctr);
                 Draw_Picture_To_Bitmap(cityscape_streamoflife_seg, GfxBuf_2400B);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
@@ -529,7 +1011,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
             */
             if((cr_bldg_idx == bt_Astral_Gate) && (bldg_idx != bt_Astral_Gate))
             {
-                FLIC_Set_CurrentFrame(cityscape_astralgate_seg, cityscape_bldg_anim_ctr);
+                Set_Animation_Frame(cityscape_astralgate_seg, cityscape_bldg_anim_ctr);
                 Draw_Picture_To_Bitmap(cityscape_astralgate_seg, GfxBuf_2400B);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
@@ -548,7 +1030,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
             */
             if((cr_bldg_idx == bt_Fortress) && (bldg_idx != bt_Fortress))
             {
-                FLIC_Set_CurrentFrame(cityscape_fortress_seg, cityscape_bldg_anim_ctr);
+                Set_Animation_Frame(cityscape_fortress_seg, cityscape_bldg_anim_ctr);
                 Draw_Picture_To_Bitmap(cityscape_fortress_seg, GfxBuf_2400B);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
@@ -567,7 +1049,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
             */
             if((cr_bldg_idx == bt_Altar_Of_Battle) && (bldg_idx != bt_Altar_Of_Battle))
             {
-                FLIC_Set_CurrentFrame(cityscape_altarofbattle_seg, cityscape_bldg_anim_ctr);
+                Set_Animation_Frame(cityscape_altarofbattle_seg, cityscape_bldg_anim_ctr);
                 Draw_Picture_To_Bitmap(cityscape_altarofbattle_seg, GfxBuf_2400B);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
@@ -593,7 +1075,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
 
     if(_CITIES[city_idx].bldg_status[bt_CityWalls] == bs_Built)
     {
-        FLIC_Set_CurrentFrame(cityscape_city_walls_seg, 0);
+        Set_Animation_Frame(cityscape_city_walls_seg, 0);
         Draw_Picture_To_Bitmap(cityscape_city_walls_seg, GfxBuf_2400B);
         if(cr_bldg_idx == new_bldg_idx)
         {
@@ -1564,7 +2046,7 @@ NOTE: Cloud Of Shadow, Heavenly Light, and Chaos Rift are handled in Cityscape_D
 ¿ FLYING_FORTRESS ?
 
 */
-void Cityscape_Draw_Wards_And_Walls__STUB(int16_t city_idx, int16_t xstart, int16_t ystart)
+void Cityscape_Draw_Foreground(int16_t city_idx, int16_t xstart, int16_t ystart)
 {
 
     if(_CITIES[city_idx].enchantments[DEATH_WARD] != ST_FALSE)
@@ -1615,21 +2097,21 @@ void Cityscape_Draw_Wards_And_Walls__STUB(int16_t city_idx, int16_t xstart, int1
 
     if(_CITIES[city_idx].enchantments[WALL_OF_DARKNESS] != ST_FALSE)
     {
-        FLIC_Set_CurrentFrame(cityscape_wall_of_air_seg, cityscape_wall_anim_ctr);
+        Set_Animation_Frame(cityscape_wall_of_air_seg, cityscape_wall_anim_ctr);
         Draw_Picture_To_Bitmap(cityscape_wall_of_air_seg, cityscape_pict_seg);
         Draw_Picture(xstart, (ystart + 84), cityscape_pict_seg);
     }
 
     if(_CITIES[city_idx].enchantments[WALL_OF_FIRE] != ST_FALSE)
     {
-        FLIC_Set_CurrentFrame(cityscape_wall_of_fire_seg, cityscape_wall_anim_ctr);
+        Set_Animation_Frame(cityscape_wall_of_fire_seg, cityscape_wall_anim_ctr);
         Draw_Picture_To_Bitmap(cityscape_wall_of_fire_seg, cityscape_pict_seg);
         Draw_Picture(xstart, (ystart + 84), cityscape_pict_seg);
     }
 
     // if(_CITIES[city_idx].enchantments[WALL_OF_FIRE] != ST_FALSE)
     // {
-    //     FLIC_Set_CurrentFrame(cityscape_wall_of_stine_seg, cityscape_wall_anim_ctr);
+    //     Set_Animation_Frame(cityscape_wall_of_stine_seg, cityscape_wall_anim_ctr);
     //     Draw_Picture_To_Bitmap(cityscape_wall_of_stine_seg, cityscape_pict_seg);
     //     Draw_Picture(xstart, (ystart + 84), cityscape_pict_seg);
     // }
@@ -1644,12 +2126,12 @@ void Cityscape_Draw_Background(int16_t city_idx, int16_t xstart, int16_t ystart,
 
     if(_CITIES[city_idx].wp == ARCANUS_PLANE)
     {
-        FLIC_Set_CurrentFrame(cityscape_background_arcanus_ground_seg, cityscape_background_frame);
+        Set_Animation_Frame(cityscape_background_arcanus_ground_seg, cityscape_background_frame);
         FLIC_Draw(xstart, ystart, cityscape_background_arcanus_ground_seg);
     }
     else  /* (_CITIES[city_idx].wp == MYRROR_PLANE)*/
     {
-        FLIC_Set_CurrentFrame(cityscape_background_myrror_ground_seg, cityscape_background_frame);
+        Set_Animation_Frame(cityscape_background_myrror_ground_seg, cityscape_background_frame);
         FLIC_Draw(xstart, ystart, cityscape_background_myrror_ground_seg);
     }
 
@@ -1678,7 +2160,7 @@ void Cityscape_Draw_Background(int16_t city_idx, int16_t xstart, int16_t ystart,
     {
         if(city_wp == ARCANUS_PLANE)
         {
-            FLIC_Set_CurrentFrame(cityscape_background_arcanus_river_seg, 0);
+            Set_Animation_Frame(cityscape_background_arcanus_river_seg, 0);
             for(itr = 0; (cityscape_water_anim_ctr / 2) >= itr; itr++)
             {
                 FLIC_Draw(xstart, ystart, cityscape_background_arcanus_river_seg);
@@ -1686,7 +2168,7 @@ void Cityscape_Draw_Background(int16_t city_idx, int16_t xstart, int16_t ystart,
         }
         else
         {
-            FLIC_Set_CurrentFrame(cityscape_background_myrror_river_seg, 0);
+            Set_Animation_Frame(cityscape_background_myrror_river_seg, 0);
             for(itr = 0; (cityscape_water_anim_ctr / 2) >= itr; itr++)
             {
                 FLIC_Draw(xstart, ystart, cityscape_background_myrror_river_seg);
@@ -1707,7 +2189,7 @@ void Cityscape_Draw_Background(int16_t city_idx, int16_t xstart, int16_t ystart,
     {
         if(city_wp == ARCANUS_PLANE)
         {
-            FLIC_Set_CurrentFrame(cityscape_background_arcanus_ocean_seg, 0);
+            Set_Animation_Frame(cityscape_background_arcanus_ocean_seg, 0);
             for(itr = 0; (cityscape_water_anim_ctr / 2) >= itr; itr++)
             {
                 FLIC_Draw(xstart, ystart, cityscape_background_arcanus_ocean_seg);
@@ -1715,7 +2197,7 @@ void Cityscape_Draw_Background(int16_t city_idx, int16_t xstart, int16_t ystart,
         }
         else
         {
-            FLIC_Set_CurrentFrame(cityscape_background_myrror_ocean_seg, 0);
+            Set_Animation_Frame(cityscape_background_myrror_ocean_seg, 0);
             for(itr = 0; (cityscape_water_anim_ctr / 2) >= itr; itr++)
             {
                 FLIC_Draw(xstart, ystart, cityscape_background_myrror_ocean_seg);
@@ -1782,12 +2264,12 @@ void Cityscape_Draw_Background(int16_t city_idx, int16_t xstart, int16_t ystart,
             {
                 if(city_wp == ARCANUS_PLANE)
                 {
-                    FLIC_Reset_CurrentFrame(cityscape_background_arcanus_mountain_seg);
+                    Reset_Animation_Frame(cityscape_background_arcanus_mountain_seg);
                     FLIC_Draw(xstart, ystart, cityscape_background_arcanus_mountain_seg);
                 }
                 else
                 {
-                    FLIC_Reset_CurrentFrame(cityscape_background_myrror_mountain_seg);
+                    Reset_Animation_Frame(cityscape_background_myrror_mountain_seg);
                     FLIC_Draw(xstart, ystart, cityscape_background_myrror_mountain_seg);
                 }
             }
@@ -1800,12 +2282,12 @@ void Cityscape_Draw_Background(int16_t city_idx, int16_t xstart, int16_t ystart,
             {
                 if(city_wp == ARCANUS_PLANE)
                 {
-                    FLIC_Reset_CurrentFrame(cityscape_background_arcanus_hills_seg);
+                    Reset_Animation_Frame(cityscape_background_arcanus_hills_seg);
                     FLIC_Draw(xstart, ystart, cityscape_background_arcanus_hills_seg);
                 }
                 else
                 {
-                    FLIC_Reset_CurrentFrame(cityscape_background_myrror_hills_seg);
+                    Reset_Animation_Frame(cityscape_background_myrror_hills_seg);
                     FLIC_Draw(xstart, ystart, cityscape_background_myrror_hills_seg);
                 }
             }
@@ -1924,30 +2406,30 @@ void Outpost_Cityscape_Draw(int16_t city_idx, int16_t x_start, int16_t y_start)
     if(_CITIES[city_idx].enchantments[GAIAS_BLESSING] != 0)
     {
         // ; BUG: this is not an actual image
-        FLIC_Set_CurrentFrame(cityscape_gaiasblessing_mask_seg, 0);
+        Set_Animation_Frame(cityscape_gaiasblessing_mask_seg, 0);
         Clipped_Draw((x_start - 65), y_start, cityscape_gaiasblessing_mask_seg);
     }
     else if(_CITIES[city_idx].enchantments[FLYING_FORTRESS] != 0)
     {
         // ; BUG: this is not an actual image
-        FLIC_Set_CurrentFrame(cityscape_flyingfortress_mask_seg, 0);
+        Set_Animation_Frame(cityscape_flyingfortress_mask_seg, 0);
         Clipped_Draw((x_start - 65), y_start, cityscape_flyingfortress_mask_seg);
     }
     else
     {
-        FLIC_Set_CurrentFrame(cityscape_background_arcanus_ground_seg, 0);
+        Set_Animation_Frame(cityscape_background_arcanus_ground_seg, 0);
         Clipped_Draw((x_start - 65), y_start, cityscape_background_arcanus_ground_seg);
     }
 
     if(_CITIES[city_idx].enchantments[FAMINE] != 0)
     {
-        FLIC_Set_CurrentFrame(cityscape_famine_mask_seg, 0);
+        Set_Animation_Frame(cityscape_famine_mask_seg, 0);
         Clipped_Draw((x_start - 65), y_start, cityscape_famine_mask_seg);
     }
 
     if(_CITIES[city_idx].enchantments[CURSED_LANDS] != 0)
     {
-        FLIC_Set_CurrentFrame(cityscape_cursedland_mask_seg, 0);
+        Set_Animation_Frame(cityscape_cursedland_mask_seg, 0);
         Clipped_Draw((x_start - 65), y_start, cityscape_cursedland_mask_seg);
     }
 
@@ -1960,7 +2442,7 @@ void Outpost_Cityscape_Draw(int16_t city_idx, int16_t x_start, int16_t y_start)
             (Square_Is_Mountain( city_wx     ,  city_wy     , city_wp) == ST_TRUE)
         )
         {
-            FLIC_Set_CurrentFrame(cityscape_background_arcanus_mountain_seg, 0);
+            Set_Animation_Frame(cityscape_background_arcanus_mountain_seg, 0);
             Clipped_Draw((x_start - 65), y_start, cityscape_background_arcanus_mountain_seg);
         }
         else if(
@@ -1970,7 +2452,7 @@ void Outpost_Cityscape_Draw(int16_t city_idx, int16_t x_start, int16_t y_start)
             (Square_Is_Hills( city_wx     ,  city_wy     , city_wp) == ST_TRUE)
         )
         {
-            FLIC_Set_CurrentFrame(cityscape_background_arcanus_mountain_seg, 0);  // BUGBUG  c&p error?
+            Set_Animation_Frame(cityscape_background_arcanus_mountain_seg, 0);  // BUGBUG  c&p error?
             Clipped_Draw((x_start - 65), y_start, cityscape_background_arcanus_hills_seg);
         }
 
@@ -1978,7 +2460,7 @@ void Outpost_Cityscape_Draw(int16_t city_idx, int16_t x_start, int16_t y_start)
 
     if(_CITIES[city_idx].enchantments[CLOUD_OF_SHADOW] != 0)
     {
-        FLIC_Set_CurrentFrame(cityscape_background_arcanus_darkcloud_seg, 0);
+        Set_Animation_Frame(cityscape_background_arcanus_darkcloud_seg, 0);
         for(itr_anim = 0; itr_anim < cityscape_bldg_anim_ctr; itr_anim++)
         {
 
@@ -1988,7 +2470,7 @@ void Outpost_Cityscape_Draw(int16_t city_idx, int16_t x_start, int16_t y_start)
 
     if(_CITIES[city_idx].enchantments[HEAVENLY_LIGHT] != 0)
     {
-        FLIC_Set_CurrentFrame(cityscape_background_arcanus_alkar_seg, 0);
+        Set_Animation_Frame(cityscape_background_arcanus_alkar_seg, 0);
         for(itr_anim = 0; itr_anim < cityscape_bldg_anim_ctr; itr_anim++)
         {
 
@@ -1998,7 +2480,7 @@ void Outpost_Cityscape_Draw(int16_t city_idx, int16_t x_start, int16_t y_start)
 
     if(_CITIES[city_idx].enchantments[CHAOS_RIFT] != 0)
     {
-        FLIC_Set_CurrentFrame(cityscape_background_arcanus_chaosrift_seg, 0);
+        Set_Animation_Frame(cityscape_background_arcanus_chaosrift_seg, 0);
         for(itr_anim = 0; itr_anim < cityscape_bldg_anim_ctr; itr_anim++)
         {
 
@@ -2009,7 +2491,7 @@ void Outpost_Cityscape_Draw(int16_t city_idx, int16_t x_start, int16_t y_start)
 
     race_house_type = _race_type_table[_CITIES[city_idx].race].house_type;
 
-    FLIC_Set_CurrentFrame(cityscape_houses_seg[(race_house_type * 10)], 0);
+    Set_Animation_Frame(cityscape_houses_seg[(race_house_type * 10)], 0);
 
     Clipped_Draw((x_start + 30), (y_start + 30), cityscape_houses_seg[(race_house_type * 10)]);
 

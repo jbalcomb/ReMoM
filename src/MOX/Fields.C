@@ -1357,7 +1357,7 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
         {
             if(up_down_flag == 0)  /* up */
             {
-                FLIC_Reset_CurrentFrame((SAMB_ptr)p_fields[field_num].pict_seg);
+                Reset_Animation_Frame((SAMB_ptr)p_fields[field_num].pict_seg);
                 FLIC_Draw(p_fields[field_num].x1, p_fields[field_num].y1, (SAMB_ptr)p_fields[field_num].pict_seg);
                 Set_Font_Style(p_fields[field_num].font_style_num, p_fields[field_num].font_normal_color, ST_NULL, ST_NULL);
                 Half_Font_Height = ((Get_Font_Height() - 1) / 2);
@@ -1371,12 +1371,12 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
             {
                 if(p_fields[field_num].Param3 == 0)  /* FullFrames */
                 {
-                    FLIC_Reset_CurrentFrame((SAMB_ptr)p_fields[field_num].pict_seg);
+                    Reset_Animation_Frame((SAMB_ptr)p_fields[field_num].pict_seg);
                     FLIC_Draw(p_fields[field_num].x1, p_fields[field_num].y1, (SAMB_ptr)p_fields[field_num].pict_seg);
                 }
                 else
                 {
-                    FLIC_Set_CurrentFrame((SAMB_ptr)p_fields[field_num].pict_seg, 1);
+                    Set_Animation_Frame((SAMB_ptr)p_fields[field_num].pict_seg, 1);
                 }
                 FLIC_Draw(p_fields[field_num].x1, p_fields[field_num].y1, (SAMB_ptr)p_fields[field_num].pict_seg);
                 Set_Font_Style(p_fields[field_num].font_style_num, p_fields[field_num].font_normal_color, ST_NULL, ST_NULL);

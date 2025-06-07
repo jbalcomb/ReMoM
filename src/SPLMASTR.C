@@ -304,7 +304,7 @@ void Spell_Of_Mastery_Lose_Draw(void)
 
     Copy_Back_To_Off();
 
-    FLIC_Reset_CurrentFrame(wizlab_wizard_seg);
+    Reset_Animation_Frame(wizlab_wizard_seg);
 
     Draw_Picture_To_Bitmap(wizlab_wizard_seg, IMG_SBK_Anims);
 
@@ -312,7 +312,7 @@ void Spell_Of_Mastery_Lose_Draw(void)
 
     start_x = 35 + x1 + (width / 2);
 
-    FLIC_Reset_CurrentFrame(wizlab_wizard_seg);
+    Reset_Animation_Frame(wizlab_wizard_seg);
 
     Set_Font_Colors_15(5, &colors[0]);
 
@@ -330,7 +330,7 @@ void Spell_Of_Mastery_Lose_Draw(void)
 
         FLIC_Draw(61, 68, wizlab_wizard_seg);
 
-        FLIC_Set_CurrentFrame(spellose_sphere_seg, (_osc_anim_ctr / 2));
+        Set_Animation_Frame(spellose_sphere_seg, (_osc_anim_ctr / 2));
 
         FLIC_Draw(start_x, 34, spellose_sphere_seg);
 
@@ -341,7 +341,7 @@ void Spell_Of_Mastery_Lose_Draw(void)
         if(_osc_anim_ctr < 24)
         {
 
-            FLIC_Set_CurrentFrame(spellose_sphere_seg, 5);
+            Set_Animation_Frame(spellose_sphere_seg, 5);
 
             FLIC_Draw(start_x, 34, spellose_sphere_seg);
 
@@ -397,7 +397,7 @@ void Spell_Of_Mastery_Lose_Draw(void)
 
             Draw_Picture(x, 68, IMG_SBK_Anims);
 
-            FLIC_Reset_CurrentFrame(spellose_wizard_sphere_seg);
+            Reset_Animation_Frame(spellose_wizard_sphere_seg);
 
             Draw_Picture_To_Bitmap(spellose_wizard_sphere_seg, IMG_SBK_Anims);
 
@@ -412,7 +412,7 @@ void Spell_Of_Mastery_Lose_Draw(void)
             if(_osc_anim_ctr < 36)
             {
 
-                FLIC_Set_CurrentFrame(spellose_wizard_sphere_seg, ((_osc_anim_ctr - 24) / 2));
+                Set_Animation_Frame(spellose_wizard_sphere_seg, ((_osc_anim_ctr - 24) / 2));
 
                 FLIC_Draw(start_x, 34, spellose_wizard_sphere_seg);
 
@@ -669,7 +669,7 @@ void Spell_Of_Mastery_Draw(void)
     if(_osc_anim_ctr <= 6)
     {
 
-        FLIC_Reset_CurrentFrame(IDK_wizard_id_thing_seg);
+        Reset_Animation_Frame(IDK_wizard_id_thing_seg);
 
         FLIC_Draw(69, 75, IDK_wizard_id_thing_seg);
 
@@ -680,7 +680,7 @@ void Spell_Of_Mastery_Draw(void)
         if(((_osc_anim_ctr - 6) % 60) < 10)
         {
 
-            FLIC_Set_CurrentFrame(IDK_wizard_id_thing_seg, (((_osc_anim_ctr - 6) % 60) / 2));
+            Set_Animation_Frame(IDK_wizard_id_thing_seg, (((_osc_anim_ctr - 6) % 60) / 2));
 
         }
         else
@@ -689,13 +689,13 @@ void Spell_Of_Mastery_Draw(void)
             if(((_osc_anim_ctr - 6) % 60) > 50)
             {
 
-                FLIC_Set_CurrentFrame(IDK_wizard_id_thing_seg, ((60 - ((_osc_anim_ctr - 6) % 60)) / 2));
+                Set_Animation_Frame(IDK_wizard_id_thing_seg, ((60 - ((_osc_anim_ctr - 6) % 60)) / 2));
 
             }
             else
             {
 
-                FLIC_Set_CurrentFrame(IDK_wizard_id_thing_seg, 4);
+                Set_Animation_Frame(IDK_wizard_id_thing_seg, 4);
 
             }
 
@@ -810,7 +810,7 @@ void Spell_Of_Mastery(int16_t player_idx)
 
             Open_File_Animation__HACK(splmastr_lbx_file__ovr138, _players[IDK].wizard_id);
 
-            FLIC_Reset_CurrentFrame(word_434C4);
+            Reset_Animation_Frame(word_434C4);
         }
 
         if((var_4 - 6) == _osc_anim_ctr)

@@ -964,7 +964,7 @@ void OVL_LoadGlobalAnim(int16_t spell_idx, int16_t player_idx)
         // SPECFX.LBX, 054  "MASK1"     ""
         GAME_MP_SpellVar_2 = LBX_Reload_Next(specfx_lbx_file__ovr137, 54, _screen_seg);
 
-        FLIC_Reset_CurrentFrame(GAME_MP_SpellVar_2);
+        Reset_Animation_Frame(GAME_MP_SpellVar_2);
 
     }
     else if(GAME_MP_SpellVar_1 == 30)
@@ -975,7 +975,7 @@ void OVL_LoadGlobalAnim(int16_t spell_idx, int16_t player_idx)
         // SPECFX.LBX, 055  "MASK2"     ""
         GAME_MP_SpellVar_2 = LBX_Reload_Next(specfx_lbx_file__ovr137, 55, _screen_seg);
 
-        FLIC_Reset_CurrentFrame(GAME_MP_SpellVar_2);
+        Reset_Animation_Frame(GAME_MP_SpellVar_2);
 
     }
     else if(GAME_MP_SpellVar_1 < 10)
@@ -997,7 +997,7 @@ void OVL_LoadGlobalAnim(int16_t spell_idx, int16_t player_idx)
         // SPECFX.LBX, 055  "MASK2"     ""
         GAME_MP_SpellVar_2 = LBX_Reload_Next(specfx_lbx_file__ovr137, 55, _screen_seg);
 
-        FLIC_Reset_CurrentFrame(GAME_MP_SpellVar_2);
+        Reset_Animation_Frame(GAME_MP_SpellVar_2);
         
     }
 
@@ -1093,7 +1093,7 @@ void OVL_DrawGlobalAnim(void)
         if(GAME_MP_SpellVar_1 < 14)
         {
 
-            FLIC_Reset_CurrentFrame(ge_anim_moodwiz_seg);
+            Reset_Animation_Frame(ge_anim_moodwiz_seg);
 
             FLIC_Draw((start_x + 12), (start_y + 12), ge_anim_moodwiz_seg);
 
@@ -1113,7 +1113,7 @@ void OVL_DrawGlobalAnim(void)
 
             FLIC_Draw((start_x + 12), (start_y + 12), IMG_SBK_SliderBG);
 
-            FLIC_Reset_CurrentFrame(ge_anim_moodwiz_seg);
+            Reset_Animation_Frame(ge_anim_moodwiz_seg);
 
             FLIC_Draw((start_x + 12), (start_y + 12), ge_anim_moodwiz_seg);
 
@@ -1127,7 +1127,7 @@ void OVL_DrawGlobalAnim(void)
 
             Draw_Picture_To_Bitmap(GAME_MP_SpellVar_2, IMG_SBK_Anims);
 
-            FLIC_Reset_CurrentFrame(ge_anim_moodwiz_seg);
+            Reset_Animation_Frame(ge_anim_moodwiz_seg);
 
             Draw_Picture_To_Bitmap(ge_anim_moodwiz_seg, IMG_SBK_PageText);
 
