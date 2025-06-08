@@ -1,0 +1,1 @@
+git checkout develop && git merge current && git push && git checkout main && git merge develop && git push && git checkout current
