@@ -3574,32 +3574,31 @@ drake178:
 // WZD seg033:09E5 0A 00                                           _CS_Local_LFSR_HI dw 0Ah                    ; DATA XREF: RNG_GFX_Random__NOP+1Fr ...
 static uint16_t _CS_Local_LFSR_LO = 0x2893;
 static uint16_t _CS_Local_LFSR_HI = 0x0A;
+static uint32_t _bitmap_random_seed = 0x0A2893;  /* 665747 */
 int16_t RNG_GFX_Random__WIP(int16_t max)
 {
-    int16_t UU_result = 0;
-    int16_t _AX_ = 0;
-    int16_t _BX_ = 0;
-    int16_t _CX_ = 0;
-    int16_t _DX_ = 0;
+    int16_t result = 0;
+    uint16_t _AX_ = 0;
+    uint16_t _BX_ = 0;
+    uint16_t _CX_ = 0;
+    uint16_t _DX_ = 0;
     // void * _SI_ = NULL;
     // void * _DI_ = NULL;
-    int16_t _SI_ = 0;
-    int16_t _DI_ = 0;
-    int16_t _CF_ = 0;
+    uint16_t _SI_ = 0;
+    uint16_t _DI_ = 0;
+    uint16_t _CF_ = 0;
 
     if(max == 0)
     {
         max = 1;
     }
 
-    UU_result = 0;
+    result = 0;
 
     // mov     si, [cs:_CS_Local_LFSR_LO]
-    // _SI_ = &_CS_Local_LFSR_LO[0];
     _SI_ = _CS_Local_LFSR_LO;
 
     // mov     di, [cs:_CS_Local_LFSR_HI]
-    // _DI_ = &_CS_Local_LFSR_HI[0];
     _DI_ = _CS_Local_LFSR_HI;
 
     // mov     cx, 9
@@ -3613,7 +3612,7 @@ _DX_ = _DI_;    // mov     dx, di
 _DX_ >>= 1;     // shr     dx, 1
 
 // rcr     bx, 1
-    if(_BX_ & 0x0001) { _CF_ = 0x0001; }
+    if(_BX_ & 0x0001) { _CF_ = 0x0001; }  // ~== set the Carry Flag, if a bit is going to shift out
     _BX_ >>= _BX_;
     _BX_ &= _CF_;
 
@@ -3661,10 +3660,10 @@ _AX_ = (_AX_ & 0x0F) ^ (_DX_ & 0xF0);   // xor     al, dh
 _DX_ = _AX_;    // mov     dx, ax
 _DX_ >>= 1;     // shr     dx, 1
 
-// rcl     [bp+UU_result], 1
-    if(UU_result & 0x8000) {_CF_ = 0x0001; }
-    UU_result >>= UU_result;
-    UU_result &= _CF_;
+// rcl     [bp+result], 1
+    if(result & 0x8000) {_CF_ = 0x0001; }
+    result >>= result;
+    result &= _CF_;
 
 _AX_ >>= 1;     // shr     ax, 1
 
@@ -3688,7 +3687,7 @@ _AX_ >>= 1;     // shr     ax, 1
 // jnz     short loc_24FE4
 // mov     si, 12478
 if(
-    (_SI_ = 0)
+    (_SI_ == 0)
     &&
     (_DI_ == 0)
 )
@@ -3697,14 +3696,14 @@ if(
 }
 
 // loc_24FE4:
-// mov     [cs:_CS_Local_LFSR_LO], si
-// mov     [cs:_CS_Local_LFSR_HI], di
+// mov     [word ptr cs:_CS_random_seed], si
+// mov     [word ptr cs:_CS_random_seed+2], di
     _CS_Local_LFSR_LO = _SI_;
     _CS_Local_LFSR_HI = _DI_;
 // mov     ax, si
-// and     ax, 1023
+// and     ax, 3FFh
     _AX_ = _SI_;
-    _AX_ &= 0x03FF;
+    _AX_ &= 0x03FF;  // 001111111111 take the first ten bits  <= 1023
     
 // loc_24FF3:
 // cmp     ax, [bp+max]

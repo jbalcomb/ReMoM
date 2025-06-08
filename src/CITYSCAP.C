@@ -551,9 +551,6 @@ void Cityscape_Roads_1__WIP(int16_t xstart, int16_t ystart)
                             for(var_2 = (var_A + 1); var_2 < var_E; var_2++)
                             {
                                 cityscape_bldg_array->RC[var_2][var_8] = -5;
-/* DEBUG */  if(cityscape_bldg_array->RC[ 4][18] != -2) { STU_DEBUG_BREAK(); }
-/* DEBUG */  if(cityscape_bldg_array->RC[ 8][18] != -2) { STU_DEBUG_BREAK(); }
-/* DEBUG */  if(cityscape_bldg_array->RC[13][18] != -2) { STU_DEBUG_BREAK(); }
                             }
                         }
                     }
@@ -1327,6 +1324,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
     int16_t itr_col;
     int16_t col_sx;  // _SI_
     int16_t row_sy;  // _DI_
+    int16_t random_result = 0;  // DNE in Dasm
 
     cityscape_bldg_count = 0;
 
@@ -1965,7 +1963,7 @@ void Cityscape_Make_Buildings_Array(int16_t city_idx, int16_t bldg_idx)
     /*
         BEGIN:  building_shape_3x3_count
     */
-   {
+    {
         rnd_loc = 3;
         itr_bldg = 0;
         tries = 0;
@@ -2021,7 +2019,7 @@ void Cityscape_Make_Buildings_Array(int16_t city_idx, int16_t bldg_idx)
                 rnd_loc++;
             }
         }
-   }
+    }
     /*
         END:  building_shape_3x3_count
     */
@@ -2877,7 +2875,7 @@ void Outpost_Cityscape(int16_t city_idx, int16_t x_start, int16_t y_start)
     city_wy = _CITIES[city_idx].wy;
     city_wp = _CITIES[city_idx].wp;
 
-    Set_Random_Seed((10389 + (city_wx * city_wy)));  // IDGI:  deterministic per City? Why the addition? Related to (max) wx,wy?
+    Set_Random_Seed((0x2895 + (city_wx * city_wy)));  // IDGI:  deterministic per City? Why the addition? Related to (max) wx,wy?
 
     Outpost_Cityscape_Draw(city_idx, x_start, y_start);
 
@@ -2996,7 +2994,6 @@ void Outpost_Cityscape_Draw(int16_t city_idx, int16_t x_start, int16_t y_start)
             Clipped_Draw((x_start - 65), y_start, cityscape_background_arcanus_chaosrift_seg);
         }
     }
-
 
     race_house_type = _race_type_table[_CITIES[city_idx].race].house_type;
 

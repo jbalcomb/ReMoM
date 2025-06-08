@@ -1,6 +1,38 @@
 
 
 
+## Cityscape_Window()
+
+    /*
+        How to systematize and make configurable, these animation cycles?
+    */
+    // cityscape_bldg_anim_ctr  = ((cityscape_bldg_anim_ctr  + 1) %  9);
+    // cityscape_water_anim_ctr = ((cityscape_water_anim_ctr + 1) % 12);
+    // cityscape_wall_anim_ctr  = ((cityscape_wall_anim_ctr  + 1) %  4);
+
+    cityscape_bldg_anim_itr++;
+    if(cityscape_bldg_anim_itr == 60)  // IDK ... (9 * F) + (F - 1) + 1 ... 
+    {
+        cityscape_bldg_anim_itr = 6;   // IDK ... F/F = 1
+    }
+    cityscape_bldg_anim_ctr = (cityscape_bldg_anim_itr / 6);  // { 1, 1, 1, 1, ..., 9, 9, 9, 9 }
+
+    cityscape_water_anim_itr++;
+    if(cityscape_water_anim_itr == 84)
+    {
+        cityscape_water_anim_itr = 6;
+    }
+    cityscape_water_anim_ctr = (cityscape_water_anim_itr / 6);
+
+    cityscape_wall_anim_itr++;
+    if(cityscape_wall_anim_itr == 60)
+    {
+        cityscape_wall_anim_itr = 6;
+    }
+    cityscape_wall_anim_ctr = (cityscape_wall_anim_itr / 6);
+
+
+
 
 
 ## cityscape_wall_anim_ctr
@@ -30,3 +62,6 @@ presumably, updates per screen draw...
     {
         cityscape_build_anim_ctr += 10;
     }
+
+
+Outpost_Cityscape_Draw() uses these for the backgrounds
