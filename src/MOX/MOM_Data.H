@@ -356,7 +356,7 @@ enum e_BUILDING_TYPE
     bt_NONE               =   0,  /* MoO2  "No Building" */
     bt_TradeGoods         =   1,
     bt_Housing            =   2,
-    bt_Barracks           =   3,
+    bt_Barracks           =   3,  /* First Useable Building Type */
     bt_Armory             =   4,
     bt_FightersGuild      =   5,
     bt_ArmorersGuild      =   6,
@@ -398,7 +398,7 @@ enum e_BUILDING_TYPE
     bt_Astral_Gate        = 103,
     bt_Fortress           = 104,
     bt_Dark_Rituals       = 105,
-    bt_Altar_Of_Battle    = 106,
+    bt_Altar_Of_Battle    = 106,  /* Last Useable Building Type */
     
     /* ¿ drake178: bt_BREQ_Forest        = 101, ? */
     /* ¿ drake178: bt_BREQ_Grass         = 104, ? */
@@ -2150,7 +2150,8 @@ struct s_MSG_UNIT_KILLED
 // WZD dseg:0156                                                                                         ; "Outpost"
 
 // WZD dseg:0162
-extern char * STR_MagicBuildings[7];
+// drake178: STR_MagicBuildings@
+extern char * _magic_building_names[7];
 
 // WZD dseg:0170 8C 00 00 00 82 00 05 00 78 00 0A 00 6E 00 0F 00+UU_UnknownValuePairs dw 140, 0, 130, 5, 120, 10, 110, 15, 100, 20, 90, 25, 80, 30, 70, 35, 60, 40, 50, 45, 40, 50
 // WZD dseg:019C

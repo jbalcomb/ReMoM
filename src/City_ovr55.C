@@ -488,43 +488,45 @@ void Enemy_City_Screen_Load(void)
 void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start, int16_t owner_idx)
 {
     char string[26];
-    int16_t var_2;
+    int16_t x2;
     int16_t itr;  // _SI_
-    int16_t IDK;  // _DI_
+    int16_t x1;  // _DI_
 
     if(owner_idx == ST_UNDEFINED)
     {
         return;
     }
 
-    var_2 = 175;
+    x2 = 175;
 
     if(x_start == 1)
     {
-        IDK = 38;
+        x1 = 38;
     }
     else
     {
-        IDK = (x_start + 38);
-        var_2 = (x_start + 175);
+        x1 = (x_start + 38);
+        x2 = (x_start + 175);
     }
 
     for(itr = 0; itr < city_cityscape_field_count; itr++)
     {
+        assert(cityscape_bldg_fields[itr].field_bldg_idx >= bt_Barracks);
+        assert(cityscape_bldg_fields[itr].field_bldg_idx <= bt_Altar_Of_Battle);
 
         if(city_cityscape_fields[itr] != scanned_field)
         {
             continue;
         }
 
-        if(cityscape_bldg_fields[itr].field_bldg_idx < bt_NUM_BUILDINGS)
+        if(cityscape_bldg_fields[itr].field_bldg_idx < bt_Summoning_Circle)
         {
             if(_CITIES[_city_idx].bldg_status[cityscape_bldg_fields[itr].field_bldg_idx] == bs_Removed)
             {
                 if(
-                    (cityscape_bldg_fields[itr].field_print_sx > IDK)
+                    (cityscape_bldg_fields[itr].field_print_sx > x1)
                     &&
-                    (cityscape_bldg_fields[itr].field_print_sx <= var_2)
+                    (cityscape_bldg_fields[itr].field_print_sx <= x2)
                 )
                 {
                     Set_Font_Style_Outline(1, 2, 0, 0);
@@ -542,9 +544,9 @@ void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start
             else
             {
                 if(
-                    (cityscape_bldg_fields[itr].field_print_sx > IDK)
+                    (cityscape_bldg_fields[itr].field_print_sx > x1)
                     &&
-                    (cityscape_bldg_fields[itr].field_print_sx <= var_2)
+                    (cityscape_bldg_fields[itr].field_print_sx <= x2)
                 )
                 {
                     Set_Font_Style_Outline(1, 0, 0, 0);
@@ -559,13 +561,13 @@ void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start
                 Print_Centered((cityscape_bldg_fields[itr].field_print_sx + 1), (cityscape_bldg_fields[itr].field_print_sy + 6), bldg_data_table[cityscape_bldg_fields[itr].field_bldg_idx].name);
             }
         }
-        else
+        else  /* (cityscape_bldg_fields[itr].field_bldg_idx >= bt_Summoning_Circle) */
         {
             Set_Font_Style_Outline(1, 0, 0, 0);
             if(
-                (cityscape_bldg_fields[itr].field_print_sx <= IDK)
+                (cityscape_bldg_fields[itr].field_print_sx <= x1)
                 ||
-                (cityscape_bldg_fields[itr].field_print_sx > var_2)
+                (cityscape_bldg_fields[itr].field_print_sx > x2)
             )
             {
                     Set_Font_Style_Outline(0, 0, 0, 0);
@@ -573,17 +575,17 @@ void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start
             }
             Set_Alias_Color(8);
             Set_Outline_Color(0);
-
+            
             if(cityscape_bldg_fields[itr].field_bldg_idx == bt_Fortress)
             {
                 strcpy(string, _players[owner_idx].name);
                 Possessive(&string[0]);
                 Print_Centered((cityscape_bldg_fields[itr].field_print_sx + 1), (cityscape_bldg_fields[itr].field_print_sy - 4), string);
-                Print_Centered((cityscape_bldg_fields[itr].field_print_sx + 1), (cityscape_bldg_fields[itr].field_print_sy + 3), STR_MagicBuildings[(cityscape_bldg_fields[itr].field_bldg_idx - bt_NUM_BUILDINGS)]);
+                Print_Centered((cityscape_bldg_fields[itr].field_print_sx + 1), (cityscape_bldg_fields[itr].field_print_sy + 3), _magic_building_names[(cityscape_bldg_fields[itr].field_bldg_idx - bt_NUM_BUILDINGS)]);
             }
             else
             {
-                Print_Centered((cityscape_bldg_fields[itr].field_print_sx + 1), (cityscape_bldg_fields[itr].field_print_sy + 3), STR_MagicBuildings[(cityscape_bldg_fields[itr].field_bldg_idx - bt_NUM_BUILDINGS)]);
+                Print_Centered((cityscape_bldg_fields[itr].field_print_sx + 1), (cityscape_bldg_fields[itr].field_print_sy + 3), _magic_building_names[(cityscape_bldg_fields[itr].field_bldg_idx - bt_NUM_BUILDINGS)]);
             }
 
         }

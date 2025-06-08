@@ -92,7 +92,7 @@
 used with if(bldg_idx >= 100) bldg_idx -= 100
 
 */
-char * STR_MagicBuildings[7] =
+char * _magic_building_names[NUM_BUILDINGS_MAGIC] =
 {
     cnst_SummoningCircle, 
     cnst_EarthGate, 
@@ -398,7 +398,7 @@ int16_t unit_enchantment_upkeep_table[32] = {2, 2, 0, 1, 1, 3, 10, 1, 1, 1, 5, 1
 /*
 City Enchantment upkeeps in byte order, from Wall of Fire to Altar of Battle, plus Nightshade
 */
-int16_t city_enchantment_upkeep_table[26] = {2, 10, 0, 4, 2, 5, 3, 5, 25, 5, 5, 5, 5, 5, 1, 5, 8, 3, 2, 2, 5, 2, 8, 5, 5, 0};
+int16_t city_enchantment_upkeep_table[NUM_CITY_ENCHANTMENTS] = {2, 10, 0, 4, 2, 5, 3, 5, 25, 5, 5, 5, 5, 5, 1, 5, 8, 3, 2, 2, 5, 2, 8, 5, 5, 0};
 
 // WZD dseg:1F8C
 /*

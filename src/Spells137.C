@@ -613,7 +613,7 @@ void Cast_Spell_City_Enchantment_Animation_Draw(void)
             Set_Alias_Color(8);
             if(cityscape_bldg_fields[itr].field_bldg_idx >= bt_NUM_BUILDINGS)
             {
-                Print_Centered(cityscape_bldg_fields[itr].field_print_sx, cityscape_bldg_fields[itr].field_print_sy, STR_MagicBuildings[(cityscape_bldg_fields[itr].field_bldg_idx - bt_NUM_BUILDINGS)]);
+                Print_Centered(cityscape_bldg_fields[itr].field_print_sx, cityscape_bldg_fields[itr].field_print_sy, _magic_building_names[(cityscape_bldg_fields[itr].field_bldg_idx - bt_NUM_BUILDINGS)]);
             }
             else
             {
@@ -665,9 +665,7 @@ void Cast_Spell_City_Enchantment_Animation_1__WIP(int16_t city_idx, int16_t spel
 
     }
 
-    _osc_need_target_flag = _UNITS[0].type;
-
-    _osc_need_target_flag = 1;
+    _osc_need_target_flag = ST_TRUE;
 
     _osc_city_idx = city_idx;
 

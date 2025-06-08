@@ -79,6 +79,7 @@ ITEM_MAX_POWERS
 #define NUM_OVERLAND_ENCHANTMENTS  24
 #define NUM_COMBAT_ENCHANTMENTS    15
 #define NUM_BUILDINGS              36
+#define NUM_BUILDINGS_MAGIC         7
 #define NUM_RESOURCE_TYPES          5
 #define CITY_COUNT_MAX            100
 #define UNIT_COUNT_MAX           1009  // SEEALSO:  MAX_UNIT_COUNT  1000 in MoX_DEF

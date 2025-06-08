@@ -231,9 +231,36 @@ void Cityscape_Window__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int
 
     Cityscape_Draw_Foreground(city_idx, xstart, ystart);
 
-    cityscape_bldg_anim_ctr  = ((cityscape_bldg_anim_ctr  + 1) %  9);
-    cityscape_water_anim_ctr = ((cityscape_water_anim_ctr + 1) % 12);
-    cityscape_wall_anim_ctr  = ((cityscape_wall_anim_ctr  + 1) %  4);
+
+    /*
+        How to systematize and make configurable, these animation cycles?
+    */
+    // cityscape_bldg_anim_ctr  = ((cityscape_bldg_anim_ctr  + 1) %  9);
+    // cityscape_water_anim_ctr = ((cityscape_water_anim_ctr + 1) % 12);
+    // cityscape_wall_anim_ctr  = ((cityscape_wall_anim_ctr  + 1) %  4);
+
+    cityscape_bldg_anim_itr++;
+    if(cityscape_bldg_anim_itr == 60)  // IDK ... (9 * F) + (F - 1) + 1 ... 
+    {
+        cityscape_bldg_anim_itr = 6;   // IDK ... F/F = 1
+    }
+    cityscape_bldg_anim_ctr = (cityscape_bldg_anim_itr / 6);  // { 1, 1, 1, 1, ..., 9, 9, 9, 9 }
+
+    cityscape_water_anim_itr++;
+    if(cityscape_water_anim_itr == 84)
+    {
+        cityscape_water_anim_itr = 6;
+    }
+    cityscape_water_anim_ctr = (cityscape_water_anim_itr / 6);
+
+    cityscape_wall_anim_itr++;
+    if(cityscape_wall_anim_itr == 60)
+    {
+        cityscape_wall_anim_itr = 6;
+    }
+    cityscape_wall_anim_ctr = (cityscape_wall_anim_itr / 6);
+
+
 
     Line((xstart      ), (ystart     ), (xstart + 204), (ystart     ), ST_TRANSPARENT);
     Line((xstart      ), (ystart + 95), (xstart + 204), (ystart + 95), ST_TRANSPARENT);
@@ -243,6 +270,8 @@ void Cityscape_Window__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int
     if(cityscape_build_anim_ctr < 100)
     {
         cityscape_build_anim_ctr += 10;
+        cityscape_build_anim_itr++;
+
     }
 
     Release_Block(_screen_seg);
@@ -2788,6 +2817,9 @@ void Cityscape_Add_Bldg_To_Fields_Array(int16_t x, int16_t y, int16_t bldg_idx, 
     int16_t x2_max;
     int16_t x1_min;
     int16_t itr;  // _SI_
+
+    assert(bldg_idx >= bt_Barracks);
+    assert(bldg_idx <= bt_Altar_Of_Battle);
 
     x2_max = 0;
     x1_min = 1000;
