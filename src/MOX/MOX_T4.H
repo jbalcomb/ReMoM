@@ -5,6 +5,12 @@
         ...
         seg009
         ...
+
+
+What did I mean by "T4"?
+...something ~4X genre?
+// ~ MOX & MOX2 //MoO2
+
 */
 
 #ifndef MOX_UNORG_H

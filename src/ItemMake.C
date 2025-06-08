@@ -822,7 +822,7 @@ XREF:
         EVNT_GenerateRandom()
         Determine_Offer()
         Lair_Generate_Treasure()
-        WIZ_SetOverlandSpell()
+        Cast_Spell_Overland_Do()
 
 
 e.g.,
@@ -834,7 +834,7 @@ e.g.,
             j_ITEM_Generate(_LAIRS[].Item_Values, &_players[].spellranks, 0)
             j_ITEM_Generate(2, &_players[].spellranks, 1200)
             j_ITEM_Generate(0, &_players[].spellranks, 1200)
-        WIZ_SetOverlandSpell()
+        Cast_Spell_Overland_Do()
             j_ITEM_Generate(1, &_players[].spellranks, 1000)
             j_ITEM_Generate(2, &_players[].spellranks, 30000)
 

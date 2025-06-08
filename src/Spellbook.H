@@ -1,14 +1,15 @@
 /*
     WIZARDS.EXE
         ovr117
-        ovr128
-        ovr132
+        ovr118
 */
 
 #ifndef SPELLBOOK_H
 #define SPELLBOOK_H
 
-#include "MOM.H"
+#include "MOX/MOX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -395,7 +396,7 @@ extern int16_t SBK_OpenPage;
 // WZD dseg:C926
 // drake178:  Spell List Count, New Spell Index, ...
 extern int16_t GUI_Multipurpose_Int;
-extern int16_t spell_list_count;  // DNE in Dasm;  uses GUI_Multipurpose_Int
+extern int16_t m_spell_list_count;  // DNE in Dasm;  uses GUI_Multipurpose_Int
 
 // WZD dseg:C928
 extern char * SBK_Descriptions[];
@@ -496,45 +497,6 @@ void Spell_Research_Select(void);
 
 // WZD o118p12
 // GAME_CheckResearch()
-
-
-
-/*
-    WIZARDS.EXE  ovr128
-*/
-
-// WZD o128p01
-int16_t Player_Research_Spells(int16_t player_idx);
-
-// WZD o128p02
-void Build_Research_List(int16_t player_idx, int16_t research_list[]);
-
-// WZD o128p03
-int16_t WIZ_RollSpellReward(int16_t player_idx, int16_t rarity);
-
-// WZD o128p04
-// WIZ_GetSpellValue()
-
-// WZD o128p05
-// WIZ_SpellTradeList()
-
-// WZD o128p06
-// sub_AC19E()
-
-// WZD o128p07
-void Change_Relations_For_Enchantments(int16_t player_idx, int16_t spell_idx, int16_t divisor);
-
-// WZD o128p08
-void Sort_Research_List(int16_t player_idx, int16_t count);
-
-// WZD o128p09
-void WIZ_AddSpellRank__WIP(int16_t player_idx, int16_t magic_realm);
-
-// WZD o128p10
-// sub_ACACC()
-
-// WZD o128p11
-// WIZ_ConquestSpells()
 
 
 

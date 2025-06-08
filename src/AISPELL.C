@@ -237,7 +237,7 @@ Selected_Category = 0;
     }
 
 
-    /* TODO */ WIZ_SetOverlandSpell__WIP(player_idx, spell_idx, spellbook_page_spell_index);
+    /* TODO */ Cast_Spell_Overland_Do(player_idx, spell_idx, spellbook_page_spell_index);
 
 
 }

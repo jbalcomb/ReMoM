@@ -1,6 +1,19 @@
 
 
 
+Overland Casting
+Combat Casting
+
+...accumulate mana/skill towards current casting
+
+Clicking on a Spell in the Spellbook
+vs.
+Casting Cost is Paid
+
+
+
+
+
 Eh?  ... "Spell Casting Category" (SCC)?
 
 
@@ -82,7 +95,9 @@ Next_Turn_Proc()
     |-> Cast_Spell_Overland__WIP()
 
 Spellbook_Screen()
-    |-> WIZ_SetOverlandSpell__WIP
+    |-> Cast_Spell_Overland_Do
+        if(did_select_spell == ST_TRUE)
+            Cast_Spell_Overland_Do(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
 
 ```c
 Next_Turn_Proc()
@@ -102,7 +117,9 @@ Spellbook_Screen()
 {
     if(did_select_spell == ST_TRUE)
     {
-        WIZ_SetOverlandSpell__WIP(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
+        Cast_Spell_Overland_Do(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
+            ...
+            Cast_Spell_Overland__WIP(player_idx);
     }
 }
 ```
@@ -165,6 +182,69 @@ IDA Group Colors
     sdt_Crafting_Spell      (11)  #17 brown
     ...
     Banish_Spell            (23)
+
+
+
+
+## Cast_Spell_Overland_Do()
+
+But, what does it *DO*?!?
+    "To cast a spell, click on the name of the spell."
+
+...in ovr134, so ~ 'Spellbook Screen - Cast Spell'
+...but, also, just 'Cast Spell'
+...maybe, no reason it's not Overland_Cast_Spell() |-> Overland_Cast_Spell_Do()
+    ...overstates the relationship?  ...no, because it's clear how the spell to cast gets set?
+(What does the 'Combat Spellbook' do?)
+
+...checks mana reserve and spell casting skill...
+    ...just to see if it will/can/does cast immediately?  "Instant"
+
+if scc_Crafting_Spell
+    if spl_Enchant_Item
+        IDK_CreateArtifact__STUB();  Make_Item();
+    if spl_Create_Artifact
+        IDK_CreateArtifact__STUB();  Make_Item();
+else
+    if spl_Spell_Of_Mastery
+        SoM_Started()
+    else
+        sets casting_cost_remaining
+        sets casting_cost_original
+if >= scc_Infusable_Spell
+    Casting_Cost()
+    SBK_SpellSlider()
+
+
+
+
+XREF:
+    Spellbook_Screen()
+    j_Cast_Spell_Overland_Do()
+        AI_Spell_Select__STUB()
+```c
+Spellbook_Screen()
+{
+    if(did_select_spell == ST_TRUE)
+    {
+        Cast_Spell_Overland_Do(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
+            ...
+            Cast_Spell_Overland__WIP(player_idx);
+    }
+}
+```
+
+
+
+
+
+## AI_Spell_Select__STUB()
+
+XREF:
+    j_AI_Spell_Select__STUB()
+        AI_Next_Turn__WIP()
+            j_AI_Next_Turn__WIP()
+                Next_Turn_Calc()
 
 
 

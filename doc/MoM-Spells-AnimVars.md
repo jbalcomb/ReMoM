@@ -243,7 +243,7 @@ _temp_sint_1
 #define _osc_city_idx _temp_sint_1
 #define _osc_bldg_idx _temp_sint_1
 
-WIZ_SetOverlandSpell__WIP() passes spellbook_page_spell_index to SBK_SpellSlider()
+Cast_Spell_Overland_Do() passes spellbook_page_spell_index to SBK_SpellSlider()
 SBK_SpellSlider() sets GAME_MP_SpellVar_3 to spellbook_page_spell_index
 
 Areas of Usage:

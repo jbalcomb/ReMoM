@@ -499,7 +499,7 @@ void Spell_Of_Mastery_Lose(void)
 
 
 // WZD o138p04
-void SoM_Started_Draw(void)
+void SoM_Started_Draw__STUB(void)
 {
     int16_t itr_frames = 0;  // _SI_
     int16_t frame_count = 0;  // _DI_
@@ -529,7 +529,7 @@ void SoM_Started_Draw(void)
 }
 
 // WZD o138p05
-void SoM_Started(int16_t player_idx)
+void SoM_Started__STUB(int16_t player_idx)
 {
     int16_t full_screen_ESC_field = 0;
 
@@ -539,7 +539,7 @@ void SoM_Started(int16_t player_idx)
 
     strcpy(GUI_NearMsgString, _players[player_idx].name);
 
-    strcat(GUI_NearMsgString, strHasStartedCastingThe);
+    strcat(GUI_NearMsgString, strHasStartedCastingThe);  // " has started casting the"
 
     SND_Spell_Music = LBX_Reload(music_lbx_file__ovr138, MUSIC_SoM_Started, SND_Music_Segment);
     SND_Spell_Music_size = lbxload_entry_length;
@@ -566,13 +566,13 @@ void SoM_Started(int16_t player_idx)
 
     Set_Page_Off();
 
-    SoM_Started_Draw();
+    SoM_Started_Draw__STUB();
 
     Toggle_Pages();
 
     Fade_In();
 
-    Assign_Auto_Function(SoM_Started_Draw, 2);
+    Assign_Auto_Function(SoM_Started_Draw__STUB, 2);
 
     if(magic_set.background_music == ST_TRUE)
     {
@@ -586,7 +586,7 @@ void SoM_Started(int16_t player_idx)
 
     
     _combat_wx = 0;
-    /* incremented in SoM_Started_Draw() */
+    /* incremented in SoM_Started_Draw__STUB() */
     while((_combat_wx < 200) && (Get_Input() != full_screen_ESC_field))
     {
 

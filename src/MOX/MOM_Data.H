@@ -498,8 +498,8 @@ enum e_SPELL_CASTING_CATEGORY
 {
     scc_Summoning           =  0,
     scc_Unit_Enchantment    =  1,
-    scc_City_Enchantment    =  2,
-    scc_City_Curse          =  3,
+    scc_City_Enchantment_Positive   =  2,
+    scc_City_Enchantment_Negative   =  3,
     scc_Fixed_Dmg_Spell     =  4,
     scc_Special_Spell       =  5,
     scc_Target_Wiz_Spell    =  6,
@@ -825,7 +825,7 @@ struct s_SPELL_DATA
     /* 00 */ char name[LEN_SPELLDAT_NAME];  // ¿ (LEN_SPELL_NAME - 1) ?
     /* 13 */  int8_t AI_Group;              //  ; enum AI_Spell_Groups
     /* 14 */  int8_t AI_Value;
-    /* 15 */  int8_t type;                  //  enum e_SPELL_CASTING_CATEGORY (SCC) used by 
+    /* 15 */  int8_t type;                  //  enum e_SPELL_CASTING_CATEGORY (SCC) used by   ;  ¿ ~ "Type of spell effect" ?
     /* 16 */  int8_t spell_book_category;  // 1-byte, signed;  "spell category" "categories: summoning spells, special spells, city spells, enchantments, unit spells, combat spells and research spells"
     /* 17 */  int8_t magic_realm;  // magic realm  ¿ sbr_ ?
     /* 18 */  int8_t Eligibility;   /* ¿ overland, combat, ... ? */
@@ -841,7 +841,7 @@ struct s_SPELL_DATA
         /* 20 */  int8_t Param0;            // 
         /* 21 */  int8_t Param1;
         int16_t unit_type;                  // 0: scc_Summoning             IDK_SummonAnim_Draw()
-        int16_t ce_idx;                     // 9: scc_City_Enchantment      index into _CITIES[].enchantments
+        int16_t ce_idx;                     // 9: scc_City_Enchantment_Positive      index into _CITIES[].enchantments
         int16_t ge_idx;                     // 9: scc_Global_Enchantment    indexes into _players[].Globals[], which holds player_num (i.e., player_idx + 1)
         uint8_t cmbt_0;                     // Attack_Strength  CMB_ConvSpellAttack()
         uint8_t cmbt_1;                     // Immunity_Flags   CMB_ConvSpellAttack()
@@ -1219,7 +1219,7 @@ struct s_WIZARD
     /* 025C */ uint16_t mana_reserve;       /*  */
     /* 025E */ int32_t  spell_casting_skill;  /* stored as powers of 2?  "spell casting skill" */
     /* 0262 */ int16_t researching_spell_idx;  /* spells_list[] spell_idx of the spell currently being researched */
-    /* 0264 */ uint8_t  spells_list[NUM_SPELLS];   /* "Spell Library" TODO should be [6][40] or some odd, equivalent struct */ /* enum? known, knowable, ? */
+    /* 0264 */ uint8_t  spells_list[NUM_SPELLS];   /* "Spell Library" TODO should be [6][40] or [6][4][10] or some odd, equivalent struct */ /* enum? known, knowable, ? */
     /* 0354 */ uint16_t Defeated_Wizards;  /* ¿ bifield of bit_num == play_num ? */
     /* 0356 */ uint16_t gold_reserve;       /*  */
     /* 0358 */ uint16_t Unknown_358h;

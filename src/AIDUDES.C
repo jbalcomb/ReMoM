@@ -6,12 +6,8 @@
 */
 
 #include "MOX/MOX_DAT.H"  /* _players[] */
-
-#include "MOM.H"
-
-#ifdef STU_DEBUG
-#include "STU/STU_DBG.H"    /* DLOG() */
-#endif
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_TYPE.H"
 
 
 

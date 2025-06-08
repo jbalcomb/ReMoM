@@ -3,10 +3,12 @@
         ovr129
 */
 
-#ifndef WZD_O129_H
-#define WZD_O129_H
+#ifndef SPELLS129_H
+#define SPELLS129_H
 
-#include "MOM.H"
+#include "MOX/MOX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,7 +39,7 @@ extern "C" {
 int16_t CTY_CallTheVoid__STUB(int16_t city_idx);
 
 // WZD o129p07
-// CTY_CounterSpell()
+int16_t Apply_Automatic_Spell_Counters(int16_t spell_idx, int16_t city_idx, int16_t player_idx, int16_t show_message);
 
 // WZD o129p08
 // UNIT_ChaosChannel()
@@ -74,4 +76,4 @@ int16_t CTY_Earthquake__STUB(int16_t city_idx, int16_t * list_count, int16_t lis
 
 
 
-#endif /* WZD_O129_H */
+#endif /* SPELLS129_H */

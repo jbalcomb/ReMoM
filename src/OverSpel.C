@@ -10,6 +10,9 @@
 #include "MOX/MOX_TYPE.H"
 
 #include "SPELLDEF.H"
+
+#include "Spellbook.H"
+#include "Spells129.H"
 #include "Spells132.H"
 
 
@@ -146,10 +149,12 @@ int16_t Calculate_Dispel_Difficulty(int16_t casting_cost, int16_t player_idx, in
 /*
 
 IDA Group Colors
-    scc_Summoning          ( 0)  #24 reddish-brown
-    scc_City_Enchantment   ( 2)  #14 
-    scc_Global_Enchantment ( 9)  #13 ~ blue, greyish/greenish
-    scc_Crafting_Spell     (11)  #17 brown
+    scc_Summoning           ( 0)  #24 reddish-brown
+    scc_City_Enchantment_Positive    ( 2)  #14 blueish lighter
+    scc_City_Enchantment_Negative          ( 3)  #14 blueish lighter
+    scc_Special_Spell       ( 5)  
+    scc_Global_Enchantment  ( 9)  #13 ~ blue, greyish/greenish
+    scc_Crafting_Spell      (11)  #17 mauve
 
 */
 void Cast_Spell_Overland__WIP(int16_t player_idx)
@@ -164,13 +169,13 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
     int16_t var_10 = 0;
     int16_t RetP = 0;
     int16_t RetY = 0;
-    int16_t G_Have_Targets = 0; /* 2: city_idx */
+    int16_t spell_target_idx = 0; /* 2: city_idx */
     int16_t itr_players = 0;  // itr
     int16_t itr_cities = 0;  // itr
     int16_t itr_units = 0;  // itr
     int16_t Dispel_Chance = 0;
-    int16_t players_globals_idx = 0;  // DNE in Dasm, uses Dispel_Chance
-    uint8_t * ptr_players_globals = 0;
+    int16_t enchantments_idx = 0;  // DNE in Dasm, uses Dispel_Chance
+    uint8_t * ptr_enchantments = 0;  // &_CITIES[].enchantments
     int16_t spell_idx = 0;  // _DI_
     struct s_SPELL_DATA * DBG_spell_data_table;
     // int8_t * DBG_spell_data_table__Param0;
@@ -351,6 +356,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
             switch(spell_data_table[spell_idx].type)
             {
+
                 case scc_Summoning:  //  0
                 {
 
@@ -371,7 +377,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                         if(spell_idx == spl_Floating_Island)
                         {
 
-                            AI_Eval_After_Spell = ST_TRUE;  // Why?
+                            AI_Eval_After_Spell = ST_TRUE;
 
                             Cast_Floating_Island(player_idx);
 
@@ -462,13 +468,13 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                 } break;
 
-                case scc_City_Enchantment:  //  2
+                case scc_City_Enchantment_Positive:  //  2
                 {
 
                     if(player_idx != HUMAN_PLAYER_IDX)
                     {
 
-                        /* SPELLY */  Cast_Successful = Pick_Target_For_City_Enchantment__WIP(stt_Friendly_City, &G_Have_Targets, spell_idx, player_idx);
+                        /* SPELLY */  Cast_Successful = Pick_Target_For_City_Enchantment__WIP(stt_Friendly_City, &spell_target_idx, spell_idx, player_idx);
 
                     }
                     else
@@ -483,7 +489,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                             MultiPurpose_Local_Var = ST_TRUE;
 
-                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Friendly_City, &G_Have_Targets, &RetY, &RetP, &var_12, &var_10, &spell_name);
+                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Friendly_City, &spell_target_idx, &RetY, &RetP, &var_12, &var_10, &spell_name);
 
                             if(Cast_Successful == ST_TRUE)
                             {
@@ -491,11 +497,11 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                                 if(
                                     (spell_idx == spl_Summoning_Circle)
                                     &&
-                                    (_CITIES[G_Have_Targets].wx == _players[HUMAN_PLAYER_IDX].summon_wx)
+                                    (_CITIES[spell_target_idx].wx == _players[HUMAN_PLAYER_IDX].summon_wx)
                                     &&
-                                    (_CITIES[G_Have_Targets].wy == _players[HUMAN_PLAYER_IDX].summon_wy)
+                                    (_CITIES[spell_target_idx].wy == _players[HUMAN_PLAYER_IDX].summon_wy)
                                     &&
-                                    (_CITIES[G_Have_Targets].wp == _players[HUMAN_PLAYER_IDX].summon_wp)
+                                    (_CITIES[spell_target_idx].wp == _players[HUMAN_PLAYER_IDX].summon_wp)
                                 )
                                 {
 
@@ -509,9 +515,9 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                                 }
 
-                                ptr_players_globals = &_CITIES[G_Have_Targets].enchantments;
+                                ptr_enchantments = &_CITIES[spell_target_idx].enchantments;
 
-                                if(ptr_players_globals[spell_data_table[spell_idx].ce_idx] > 0)
+                                if(ptr_enchantments[spell_data_table[spell_idx].ce_idx] > 0)
                                 {
 
                                     MultiPurpose_Local_Var = ST_FALSE;
@@ -541,42 +547,42 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                         if(
                             (player_idx == HUMAN_PLAYER_IDX)
                             ||
-                            (_CITIES[G_Have_Targets].owner_idx == HUMAN_PLAYER_IDX)
+                            (_CITIES[spell_target_idx].owner_idx == HUMAN_PLAYER_IDX)
                             ||
                             (
                                 (magic_set.enemy_spells == ST_TRUE)
                                 &&
-                                (SQUARE_EXPLORED(_CITIES[G_Have_Targets].wx, _CITIES[G_Have_Targets].wy, _CITIES[G_Have_Targets].wp))
+                                (SQUARE_EXPLORED(_CITIES[spell_target_idx].wx, _CITIES[spell_target_idx].wy, _CITIES[spell_target_idx].wp))
                                 &&
                                 (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] > 0)
                             )
                         )
                         {
 
-                            AI_Eval_After_Spell = ST_TRUE;  // Why?
+                            AI_Eval_After_Spell = ST_TRUE;
 
-                            Cast_Spell_City_Enchantment_Animation_1__WIP(G_Have_Targets, spell_idx, player_idx);
+                            Cast_Spell_City_Enchantment_Animation_1__WIP(spell_target_idx, spell_idx, player_idx);
 
                         }
 
                         if(spell_idx == spl_Summoning_Circle)
                         {
 
-                            _players[player_idx].summon_wx = _CITIES[G_Have_Targets].wx;
+                            _players[player_idx].summon_wx = _CITIES[spell_target_idx].wx;
 
-                            _players[player_idx].summon_wy = _CITIES[G_Have_Targets].wy;
+                            _players[player_idx].summon_wy = _CITIES[spell_target_idx].wy;
 
-                            _players[player_idx].summon_wp = _CITIES[G_Have_Targets].wp;
+                            _players[player_idx].summon_wp = _CITIES[spell_target_idx].wp;
 
                         }
                         else
                         {
 
-                            ptr_players_globals = &_CITIES[G_Have_Targets].enchantments;
+                            ptr_enchantments = &_CITIES[spell_target_idx].enchantments;
 
-                            players_globals_idx = spell_data_table[spell_idx].ce_idx;
+                            enchantments_idx = spell_data_table[spell_idx].ce_idx;
 
-                            ptr_players_globals[players_globals_idx] = (player_idx + 1);
+                            ptr_enchantments[enchantments_idx] = (player_idx + 1);
 Capture_Cities_Data();
                         }
 
@@ -586,14 +592,14 @@ Capture_Cities_Data();
                             (
                                 (magic_set.enemy_spells == ST_TRUE)
                                 &&
-                                (SQUARE_EXPLORED(_CITIES[G_Have_Targets].wx, _CITIES[G_Have_Targets].wy, _CITIES[G_Have_Targets].wp))
+                                (SQUARE_EXPLORED(_CITIES[spell_target_idx].wx, _CITIES[spell_target_idx].wy, _CITIES[spell_target_idx].wp))
                                 &&
                                 (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] > 0)
                             )
                         )
                         {
 
-                            Cast_Spell_City_Enchantment_Animation_2__WIP(G_Have_Targets, spell_idx, player_idx);
+                            Cast_Spell_City_Enchantment_Animation_2__WIP(spell_target_idx, spell_idx, player_idx);
 
                         }
 
@@ -609,13 +615,13 @@ Capture_Cities_Data();
                             // Extends the scouting range of a friendly target city to five squares
                             // in any direction, revealing all lands and all non-invisible enemy
                             // troops within that radius.
-                            Set_Map_Square_Explored_Flags_XYP_Range(_CITIES[G_Have_Targets].wx, _CITIES[G_Have_Targets].wy, _CITIES[G_Have_Targets].wp, 5);
+                            Set_Map_Square_Explored_Flags_XYP_Range(_CITIES[spell_target_idx].wx, _CITIES[spell_target_idx].wy, _CITIES[spell_target_idx].wp, 5);
                         }
 
                         if(spell_idx == spl_Consecration)
                         {
 
-                            Apply_Spell_Consecration(G_Have_Targets);
+                            Apply_Spell_Consecration(spell_target_idx);
 
                         }
 
@@ -623,9 +629,101 @@ Capture_Cities_Data();
 
                 } break;
 
-                case scc_City_Curse:  //  3
+                case scc_City_Enchantment_Negative:  //  3
                 {
+                    if(player_idx != HUMAN_PLAYER_IDX)
+                    {
+                        /* SPELLY */  Cast_Successful = Pick_Target_For_City_Enchantment__WIP(stt_Friendly_City, &spell_target_idx, spell_idx, player_idx);
+                    }
+                    else
+                    {
 
+                        MultiPurpose_Local_Var = ST_FALSE;
+
+                        Cast_Successful = ST_TRUE;
+
+                        while((MultiPurpose_Local_Var == ST_FALSE) && (Cast_Successful == ST_TRUE))
+                        {
+                            MultiPurpose_Local_Var = ST_TRUE;
+                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Enemy_City, &spell_target_idx, &RetY, &RetP, &var_12, &var_10, &spell_name);
+                            if(Cast_Successful == ST_TRUE)
+                            {
+                                ptr_enchantments = &_CITIES[spell_target_idx].enchantments;
+                                if(ptr_enchantments[spell_data_table[spell_idx].ce_idx] > 0)
+                                {
+                                    Full_Draw_Main_Screen();
+                                    strcpy(GUI_NearMsgString, aThatCityAlread);  // "That city already has "
+                                    strcat(GUI_NearMsgString, spell_name);
+                                    strcat(GUI_NearMsgString, cnst_SpellError_2_2);  // " cast on it"
+                                    Warn0(GUI_NearMsgString);
+                                }
+                                else
+                                {
+                                    if(
+                                        (spell_idx == spl_Evil_Presence)
+                                        &&
+                                        (_CITIES[spell_target_idx].owner_idx < _num_players)
+                                        &&
+                                        (_players[_CITIES[spell_target_idx].owner_idx].spellranks[sbr_Death] > 0)
+                                    )
+                                    {
+                                        Full_Draw_Main_Screen();
+                                        LBX_Load_Data_Static(message_lbx_file__ovr135, 0, GUI_NearMsgString, 26, 1, 150);  // "Evil Presence has no effect on cities whose controller can cast Death magic."
+                                        Warn0(GUI_NearMsgString);
+                                    }
+                                    else
+                                    {
+                                        MultiPurpose_Local_Var = ST_TRUE;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if(Cast_Successful == ST_TRUE)
+                    {
+                        Cast_Successful = Apply_Automatic_Spell_Counters(spell_idx, spell_target_idx, player_idx, show_message_flag);
+                    }
+                    if(Cast_Successful == ST_TRUE)
+                    {
+                        if(
+                            (player_idx == HUMAN_PLAYER_IDX)
+                            ||
+                            (_CITIES[spell_target_idx].owner_idx == HUMAN_PLAYER_IDX)
+                            ||
+                            (
+                                (magic_set.enemy_spells == ST_TRUE)
+                                &&
+                                (SQUARE_EXPLORED(_CITIES[spell_target_idx].wx, _CITIES[spell_target_idx].wy, _CITIES[spell_target_idx].wp))
+                                &&
+                                (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] > 0)
+                            )
+                        )
+                        {
+                            AI_Eval_After_Spell = ST_TRUE;
+                            Allocate_Reduced_Map();
+                            Mark_Block(_screen_seg);
+                            Cast_Spell_City_Enchantment_Animation_1__WIP(spell_target_idx, spell_idx, player_idx);
+                        }
+                        ptr_enchantments = &_CITIES[spell_target_idx].enchantments;
+                        enchantments_idx = spell_data_table[spell_idx].ce_idx;
+                        ptr_enchantments[enchantments_idx] = (player_idx + 1);  // PLAYER_NUM();
+Capture_Cities_Data();
+                        if(
+                            (player_idx == HUMAN_PLAYER_IDX)
+                            ||
+                            (
+                                (magic_set.enemy_spells == ST_TRUE)
+                                &&
+                                (SQUARE_EXPLORED(_CITIES[spell_target_idx].wx, _CITIES[spell_target_idx].wy, _CITIES[spell_target_idx].wp))
+                                &&
+                                (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] > 0)
+                            )
+                        )
+                        {
+                            Cast_Spell_City_Enchantment_Animation_2__WIP(spell_target_idx, spell_idx, player_idx);
+                        }
+                        Change_Relations_For_Bad_City_Spell(player_idx, spell_idx, spell_target_idx);
+                    }
                 } break;
 
                 case scc_Fixed_Dmg_Spell:  //  4
@@ -662,11 +760,11 @@ Capture_Cities_Data();
 
                     Cast_Successful = ST_TRUE;
 
-                    ptr_players_globals = &_players[player_idx].Globals[0];
+                    ptr_enchantments = &_players[player_idx].Globals[0];
 
-                    players_globals_idx = spell_data_table[spell_idx].ge_idx;
+                    enchantments_idx = spell_data_table[spell_idx].ge_idx;
 
-                    ptr_players_globals[players_globals_idx] = (player_idx + 1);
+                    ptr_enchantments[enchantments_idx] = (player_idx + 1);
 
                     if(spell_idx == spl_Time_Stop)
                     {
@@ -792,6 +890,17 @@ Capture_Cities_Data();
         }
 
     }
+
+
+
+// ¿¿¿
+// After Did/Didn't Cast
+// ...
+// Nature's Wrath
+// ..
+// re-init
+// ???
+
 
 
     if(Cast_Successful == ST_TRUE)

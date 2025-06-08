@@ -1183,18 +1183,10 @@ int16_t Calc_Unit_Level(int16_t unit_idx)
                 }
             }
 
-            // DELETEME  if(_UNITS[unit_idx].XP >= TBL_Experience[UNIT_LEVEL_MAX])
-            // DELETEME  {
-            // DELETEME      _UNITS[unit_idx].XP = TBL_Experience[UNIT_LEVEL_MAX];
-            // DELETEME  }
             SETMAX(_UNITS[unit_idx].XP, TBL_Experience[UNIT_LEVEL_MAX]);
         }
         else
         {
-            // DELETEME  if(_UNITS[unit_idx].XP >= TBL_Experience[UL_ELITE])
-            // DELETEME  {
-            // DELETEME      _UNITS[unit_idx].XP = TBL_Experience[UL_ELITE];
-            // DELETEME  }
             SETMAX(_UNITS[unit_idx].XP, TBL_Experience[UNIT_LEVEL_MAX]);
         }
 
@@ -1235,10 +1227,6 @@ int16_t Calc_Unit_Level(int16_t unit_idx)
 
     }
 
-    // DELETEME  if(level > UNIT_LEVEL_MAX)
-    // DELETEME  {
-    // DELETEME      level = UNIT_LEVEL_MAX;
-    // DELETEME  }
     SETMAX(level, UNIT_LEVEL_MAX);
 
     return level;
@@ -2075,7 +2063,7 @@ int16_t City_Gold_Production(int16_t city_idx)
 
         }
         
-        if(_CITIES[city_idx].race != 0x04 /* R_Dwarf */)
+        if(_CITIES[city_idx].race != rt_Dwarf)
         {
             are_dwarf = ST_FALSE;
         }
@@ -2094,7 +2082,7 @@ int16_t City_Gold_Production(int16_t city_idx)
         // not sure why this is adding 100 to the modifier, instead of just doing +=
         gold_units = ((gold_units * (gold_modifier + 100)) / 100);
 
-        if(_CITIES[city_idx].construction == 0x01 /* _Trade_Goods */)
+        if(_CITIES[city_idx].construction == bt_TradeGoods)
         {
             gold_units += (_CITIES[city_idx].production_units / 2);
         }
@@ -2210,7 +2198,7 @@ int16_t City_Mana_Production(int16_t city_idx)
 
         if(
             (_CITIES[city_idx].bldg_status[SHRINE] == bs_Built) ||
-            (_CITIES[city_idx].bldg_status[SHRINE] == bs_Replaced   /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[SHRINE] == bs_Replaced)
         )
         {
             building_magic_power += 1;
@@ -2262,15 +2250,15 @@ int16_t City_Mana_Production(int16_t city_idx)
 
         city_wp = _CITIES[city_idx].wp;
 
-        if(_CITIES[city_idx].race == 0x02 /* R_Dark_Elf */)
+        if(_CITIES[city_idx].race == rt_Dark_Elf)
         {
             mana_units += _CITIES[city_idx].population;
         }
 
         if(
-            (_CITIES[city_idx].race == 0x07 /* R_High_Elf */) ||
-            (_CITIES[city_idx].race == 0x01 /* R_Beastman */) ||
-            (_CITIES[city_idx].race == 0x03 /* R_Draconian */)
+            (_CITIES[city_idx].race == rt_High_Elf) ||
+            (_CITIES[city_idx].race == rt_Beastman) ||
+            (_CITIES[city_idx].race == rt_Draconian)
         )
         {
             mana_units += (_CITIES[city_idx].population / 2);
@@ -2300,7 +2288,7 @@ int16_t City_Mana_Production(int16_t city_idx)
             }
         }
 
-        if(_CITIES[city_idx].race != 0x04 /* R_Dwarf */)
+        if(_CITIES[city_idx].race != rt_Dwarf)
         {
             are_dwarf = ST_FALSE;
         }
@@ -3045,10 +3033,7 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 
     }
 
-/* DEBUG */  if(minimum_farmer_count < 0)
-/* DEBUG */  {
-/* DEBUG */      STU_DEBUG_BREAK();
-/* DEBUG */  }
+    assert(minimum_farmer_count >= 0)
 
     return minimum_farmer_count;
 }

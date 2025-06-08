@@ -641,7 +641,6 @@ int16_t Init_Outpost(void)
     _CITIES[_cities].enchantments[PESTILENCE] = ST_FALSE;
     _CITIES[_cities].enchantments[CLOUD_OF_SHADOW] = ST_FALSE;
     _CITIES[_cities].enchantments[FAMINE] = ST_FALSE;
-    _CITIES[_cities].enchantments[FAMINE] = ST_FALSE;
     _CITIES[_cities].enchantments[FLYING_FORTRESS] = ST_FALSE;
     _CITIES[_cities].enchantments[NATURE_WARD] = ST_FALSE;
     _CITIES[_cities].enchantments[SORCERY_WARD] = ST_FALSE;
@@ -659,7 +658,7 @@ int16_t Init_Outpost(void)
     _CITIES[_cities].enchantments[CONSECRATION] = ST_FALSE;
     _CITIES[_cities].enchantments[WALL_OF_DARKNESS] = ST_FALSE;
     _CITIES[_cities].enchantments[INSPIRATIONS] = ST_FALSE;
-    _CITIES[_cities].enchantments[NIGHTSHADE] = ST_FALSE;
+    _CITIES[_cities].enchantments[NIGHTSHADE] = 0;  // this is a count, not (ST_FALSE || PLAYER_NUM())
     _CITIES[_cities].enchantments[ALTAR_OF_BATTLE] = ST_FALSE;
     _CITIES[_cities].enchantments[CONSECRATION] = ST_FALSE;  // BUGBUG dupe
 

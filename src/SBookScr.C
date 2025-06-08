@@ -418,7 +418,7 @@ void Spellbook_Screen(void)
 
     if(did_select_spell == ST_TRUE)
     {
-        WIZ_SetOverlandSpell__WIP(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
+        Cast_Spell_Overland_Do(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
     }
     else
     {
@@ -441,7 +441,7 @@ void Spellbook_Screen(void)
 /*
 handles spl_Enchant_Item, spl_Create_Artifact, spl_Spell_Of_Mastery
 
-if "Instant", calls Cast_Spell_Overland__WIP()
+if "Instant", calls Cast_Spell_Overland__WIP()  (same as called from Next_Turn_Proc())
 
 Spellbook_Screen() has only set _players[].casting_spell_idx...
 
@@ -451,16 +451,16 @@ Spellbook_Screen() has only set _players[].casting_spell_idx...
 
 XREF:
     Spellbook_Screen()
-    j_WIZ_SetOverlandSpell__WIP()
+    j_Cast_Spell_Overland_Do()
         AI_Spell_Select__STUB()
 
 */
-int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t spellbook_page_spell_index)
+int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t spellbook_page_spell_index)
 {
     int16_t var_8 = 0;
     int16_t item_idx = 0;
     int16_t did_cast_spell__iff_human_player = 0;
-    int16_t Mana_This_Turn = 0;
+    int16_t instant_mana = 0;
 
     did_cast_spell__iff_human_player = ST_FALSE;
 
@@ -468,26 +468,19 @@ int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t
 
     if(_players[player_idx].Skill_Left > _players[player_idx].mana_reserve)
     {
-        Mana_This_Turn = _players[player_idx].mana_reserve;
+        instant_mana = _players[player_idx].mana_reserve;
     }
     else
     {
-        Mana_This_Turn = _players[player_idx].Skill_Left;
+        instant_mana = _players[player_idx].Skill_Left;
     }
 
-    if(
-        (spell_data_table[spell_idx].type < scc_Infusable_Spell)
-        ||
-        (player_idx != HUMAN_PLAYER_IDX)
-    )
+    if( (spell_data_table[spell_idx].type < scc_Infusable_Spell) || (player_idx != HUMAN_PLAYER_IDX) )
     {
-
         if(spell_data_table[spell_idx].type == scc_Crafting_Spell)
         {
-
             if(spell_idx == spl_Enchant_Item)
             {
-
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
                     // SPELLY  _players[player_idx].casting_cost_remaining = IDK_CreateArtifact__STUB(0, 0);
@@ -501,23 +494,15 @@ int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t
                 }
                 else
                 {
-
                     item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 1000);
-
                     _players[player_idx].casting_cost_original = _ITEMS[item_idx].cost;
-
                     _players[player_idx].casting_cost_remaining = ((_players[player_idx].casting_cost_remaining * var_8) / 100);
-
                     memcpy(&_ITEMS[(136 - player_idx)], &_ITEMS[item_idx], sizeof(struct s_ITEM));
-
                     Remove_Item(item_idx);
-
                 }
-
             }
             else if(spell_idx == spl_Create_Artifact)
             {
-
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
                     // SPELLY  _players[player_idx].casting_cost_remaining = IDK_CreateArtifact__STUB(0, 1);
@@ -531,68 +516,39 @@ int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t
                 }
                 else
                 {
-
                     item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 30000);
-
                     _players[player_idx].casting_cost_original = _ITEMS[item_idx].cost;
-
                     _players[player_idx].casting_cost_remaining = ((_players[player_idx].casting_cost_remaining * var_8) / 100);
-
                     memcpy(&_ITEMS[(136 - player_idx)], &_ITEMS[item_idx], sizeof(struct s_ITEM));
-
                     Remove_Item(item_idx);
-
                 }
-
             }
-            // ¿ no else {} ?
-
             _players[player_idx].casting_cost_remaining = 0;
-
         }
-        else
+        else  /* (spell_data_table[spell_idx].type != scc_Crafting_Spell) */
         {
-
             if(spell_idx == spl_Spell_Of_Mastery)
             {
-                SoM_Started(player_idx);
+                SoM_Started__STUB(player_idx);
                 Change_Relations_For_Enchantments(player_idx, spl_Spell_Of_Mastery, 1);
             }
-
             _players[player_idx].casting_cost_original = spell_data_table[spell_idx].casting_cost;
-
             _players[player_idx].casting_cost_remaining  = Casting_Cost(player_idx, spell_idx, ST_FALSE);
-
-            if(
-                (player_idx != HUMAN_PLAYER_IDX)
-                &&
-                (spell_data_table[spell_idx].type >= scc_Infusable_Spell)
-            )
+            if( (player_idx != HUMAN_PLAYER_IDX) && (spell_data_table[spell_idx].type >= scc_Infusable_Spell) )
             {
-
                 _players[player_idx].casting_cost_remaining *= 3;
-
                 _players[player_idx].casting_cost_original *= 3;
-
             }
-
             if(_players[player_idx].casting_cost_remaining > _players[player_idx].casting_cost_original)
             {
-                
                 _players[player_idx].casting_cost_original = _players[player_idx].casting_cost_remaining;
-
             }
-
         }
-
     }
     else  /* ((spell_data_table[spell_idx].type >= scc_Infusable_Spell) && (player_idx == HUMAN_PLAYER_IDX)) */
     {
-
         _players[player_idx].casting_cost_remaining = Casting_Cost(HUMAN_PLAYER_IDX, spell_idx, ST_FALSE);
-
         // SPELLY  SBK_SpellSlider(spell_idx, spellbook_page_spell_index);
-
     }
 
     if(_players[player_idx].casting_spell_idx == spl_NONE)
@@ -601,60 +557,42 @@ int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t
     }
     else
     {
-
         if(player_idx == HUMAN_PLAYER_IDX)
         {
-
             // ((x) < (y) ? (x) : (y))
-            // if(_players[player_idx].casting_cost_remaining < Mana_This_Turn)
-            // if(Mana_This_Turn >= _players[player_idx].casting_cost_remaining)
-            // Mana_This_Turn = ((_players[player_idx].casting_cost_remaining) < (Mana_This_Turn) ? (_players[player_idx].casting_cost_remaining) : (Mana_This_Turn));
-            if(_players[player_idx].casting_cost_remaining < Mana_This_Turn)
+            // if(_players[player_idx].casting_cost_remaining < instant_mana)
+            // if(instant_mana >= _players[player_idx].casting_cost_remaining)
+            // instant_mana = ((_players[player_idx].casting_cost_remaining) < (instant_mana) ? (_players[player_idx].casting_cost_remaining) : (instant_mana));
+            if(_players[player_idx].casting_cost_remaining < instant_mana)
             {
-
-                Mana_This_Turn = _players[player_idx].casting_cost_remaining;
-
+                instant_mana = _players[player_idx].casting_cost_remaining;
             }
+            SETMIN(instant_mana, 0);
 
-            SETMIN(Mana_This_Turn, 0);
-
-            if(_players[player_idx].casting_cost_remaining <= Mana_This_Turn)
+            if(_players[player_idx].casting_cost_remaining <= instant_mana)
             {
-
-                _players[player_idx].Skill_Left -= Mana_This_Turn;
-
-                _players[player_idx].mana_reserve -= Mana_This_Turn;
-
+                _players[player_idx].Skill_Left -= instant_mana;
+                _players[player_idx].mana_reserve -= instant_mana;
                 // ; BUG  already tested, only true in this path
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
-                    OVL_MosaicFlip__STUB();
+                    /* SPELLY */  OVL_MosaicFlip__STUB();
                 }
-
                 did_cast_spell__iff_human_player = ST_TRUE;
-
                 Cast_Spell_Overland__WIP(player_idx);
-
             }
-
         }
-
     }
 
     if(spell_idx > spl_NONE)
     {
-        // === { scc_Summoning, scc_Unit_Enchantment, City_Enchantment, scc_City_Curse, scc_Fixed_Dmg_Spell, scc_Special_Spell, scc_Target_Wiz_Spell, scc_Global_Enchantment, Battlefield_Spell }
-        // DEDU  But, why?
         if(spell_data_table[spell_idx].type < scc_Crafting_Spell)
         {
-
             if(player_idx == HUMAN_PLAYER_IDX)
             {
                 OVL_MosaicFlip__STUB();
             }
-            
         }
-
     }
 
     return did_cast_spell__iff_human_player;

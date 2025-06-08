@@ -47,6 +47,14 @@ mov     ax, dx
         ax = dx;    // mov     ax, dx
 
 
+// shr     dx, 1
+// rcr     bx, 1
+...for `shr     dx, 1`, we need to capture the bit to be shifted out, and bring in the carry flag
+...then, for `rcr     bx, 1`, we need to capture the bit to be shifted out, do the shift, and bring in the carry flag
+
+
+
+
 
 ## SHL
 shl     dx, 1

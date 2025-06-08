@@ -75,7 +75,6 @@
 #include "MOM_PFL.H"
 #include "MOM_SCR.H"
 #include "MovePath.H"
-#include "NEXTTURN.H"
 #include "Outpost.H"
 #include "OverSpel.H"
 #include "ProdScr.H"
@@ -88,8 +87,6 @@
 #include "Settings.H"
 #include "SETTLE.H"
 #include "special.H"
-#include "Spellbook.H"
-#include "SPLMASTR.H"
 #include "Surveyor.H"
 #include "Terrain.H"
 #include "TerrType.H"
@@ -101,7 +98,6 @@
 #include "UnitView.H"
 #include "WIZVIEW.H"
 #include "WZD_o059.H"
-#include "WZD_o129.H"
 #include "WZD_o143.H"
 
 #ifdef STU_DEBUG

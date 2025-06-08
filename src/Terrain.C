@@ -11,6 +11,8 @@
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_TYPE.H"
 
+#include "Terrain.H"
+
 
 
 // WZD s161p01

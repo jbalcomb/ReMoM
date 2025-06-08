@@ -647,11 +647,11 @@ void Cast_Spell_City_Enchantment_Animation_1__WIP(int16_t city_idx, int16_t spel
 
     Stop_All_Sounds__STUB();
 
-    if(spell_data_table[spell_idx].type == scc_City_Curse)
+    if(spell_data_table[spell_idx].type == scc_City_Enchantment_Negative)
     {
         good_bad = 6;
     }
-    else  /* (spell_data_table[spell_idx].type == scc_City_Enchantment) */
+    else  /* (spell_data_table[spell_idx].type == scc_City_Enchantment_Positive) */
     {
         good_bad = 0;
     }

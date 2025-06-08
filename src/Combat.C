@@ -11700,11 +11700,11 @@ void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caste
         {
 
         } break;
-        case scc_City_Enchantment:
+        case scc_City_Enchantment_Positive:
         {
 
         } break;
-        case scc_City_Curse:
+        case scc_City_Enchantment_Negative:
         {
 
         } break;
@@ -12622,7 +12622,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
             ||
             (spell_data_table[spell_idx].type == scc_Disenchant_Spell)
             ||
-            (spell_data_table[spell_idx].type == scc_City_Enchantment)
+            (spell_data_table[spell_idx].type == scc_City_Enchantment_Positive)
             ||
             (spell_idx == spl_Animate_Dead)
         )
@@ -13009,7 +13009,7 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
 
                 if(
                     (
-                        (spell_data_table[abs(spell_idx)].type == scc_City_Enchantment)
+                        (spell_data_table[abs(spell_idx)].type == scc_City_Enchantment_Positive)
                         ||
                         (abs(spell_idx) == spl_Wall_Of_Stone)
                     )
@@ -13970,8 +13970,8 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
                 CMB_TargetingType = cstt_DispelMagic;
             } break;
         }
-// scc_City_Enchantment    =  2,
-// scc_City_Curse              =  3,
+// scc_City_Enchantment_Positive    =  2,
+// scc_City_Enchantment_Negative              =  3,
 // scc_Target_Wiz_Spell        =  6,
 // scc_Global_Enchantment  =  9,
 // scc_Battlefield_Spell   = 10,

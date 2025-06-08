@@ -55,12 +55,14 @@ Weird Ones?
 all overland summons are done
 all combat summons are done
 all overland/global enchantments are done
+all city enchantments are done
 
     SCC  Description
+[x]  -1  scc_None
 [x]   0  scc_Summoning
 [ ]   1  scc_Unit_Enchantment
-[x]   2  scc_City_Enchantment       ¿ ..., Stream of Life, ... ?
-[ ]   3  scc_City_Curse
+[x]   2  scc_City_Enchantment_Positive       ¿ ..., Stream of Life, ... ?
+[x]   3  scc_City_Enchantment_Negative      ¿ Evil Presence, Famine, 
 [ ]   4  scc_Fixed_Dmg_Spell
 [-]   5  scc_Special_Spell
 [ ]   6  scc_Target_Wiz_Spell
@@ -110,37 +112,37 @@ Spreadsheet - OSG Spells by Realm
 [x] War Bears
 [ ] Stone Skin
 [ ] Water Walking
-[ ] Sprites
+[x] Sprites
 [ ] Earth Lore
 [ ] Cracks Call
 [ ] Natures eye
 [ ] Ice Bolt
-[ ] Giant Spiders
+[x] Giant Spiders
 [ ] Change Terrain
 [ ] Path Finding
-[ ] Cockatrices
+[x] Cockatrices
 [ ] Transmute
 [ ] Natures Cures
-[ ] Basilisk
+[x] Basilisk
 [ ] Elemental Armor
 [ ] Petrify
-[ ] Stone Giant
+[x] Stone Giant
 [ ] Iron Skin
 [ ] Ice Storm
 [ ] Earthquake
-[ ] Gorgons
+[x] Gorgons
 [ ] Move Fortress
-[ ] Gaias Blessing
-[ ] Earth Elemental
+[x] Gaias Blessing
+[x] Earth Elemental
 [ ] Regeneration
-[ ] Behemoth
+[x] Behemoth
 [ ] Entangle
 [x] Natures Awareness
 [ ] Call Lightning
-[ ] Colossus
+[x] Colossus
 [ ] Earth Gate
 [x] Herb Mastery
-[ ] Great Wyrm
+[x] Great Wyrm
 [x] Natures Wrath
 [ ] Resist Magic
 [ ] Dispel Magic True
@@ -150,7 +152,7 @@ Spreadsheet - OSG Spells by Realm
 [ ] Confusion
 [x] Word of Recall
 [ ] Counter Magic
-[ ] Nagas
+[x] Nagas
 [ ] Psionic Blast
 [ ] Blur
 [ ] Disenchant True
@@ -166,20 +168,20 @@ Spreadsheet - OSG Spells by Realm
 [ ] Invisibility
 [ ] Wind Walking
 [ ] Banish
-[ ] Storm Giant
-[ ] Air Elemental
+[x] Storm Giant
+[x] Air Elemental
 [ ] Mind Storm
 [ ] Stasis
 [ ] Magic Immunity
 [ ] Haste
-[ ] Djinn
-[ ] Spell Ward
+[x] Djinn
+[x] Spell Ward
 [x] Creature Binding
 [ ] Mass Invisibility
 [x] Great Unsummoning
 [ ] Spell Binding
-[ ] Flying Fortress
-[ ] Sky Drake
+[x] Flying Fortress
+[x] Sky Drake
 [x] Suppress Magic
 [x] Time Stop
 [x] Warp Wood
@@ -188,7 +190,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Hell Hounds
 [ ] Corruption
 [ ] Eldritch Weapon
-[ ] Wall of Fire
+[x] Wall of Fire
 [ ] Shatter
 [ ] Warp Creature
 [x] Fire Elemental
@@ -196,30 +198,30 @@ Spreadsheet - OSG Spells by Realm
 [x] Fire Giant
 [ ] Chaos Channels
 [ ] Flame Blade
-[ ] Gargoyles
+[X] Gargoyles
 [ ] Fireball
-[ ] Doombat
+[X] Doombat
 [ ] Raise Volcano
 [ ] Immolation
-[ ] Chimeras
+[X] Chimeras
 [ ] Warp Lightning
 [ ] Metal Fires
-[ ] Chaos Spawn
+[x] Chaos Spawn
 [ ] Doom Bolt
 [ ] Magic Vortex
-[ ] Efreet
+[X] Efreet
 [ ] Fire Storm
 [ ] Warp Reality
 [ ] Flame Strike
 [ ] Chaos Rift
-[ ] Hydra
+[X] Hydra
 [ ] Disintegrate
 [x] Meteor Storms
 [x] Great Wasting
 [ ] Call Chaos
 [x] Chaos Surge
 [x] Doom Mastery
-[ ] Great Drake
+[x] Great Drake
 [ ] Call The Void
 [x] Armageddon
 [ ] Bless
@@ -230,14 +232,14 @@ Spreadsheet - OSG Spells by Realm
 [ ] Holy Armor
 [x] Just Cause
 [ ] True Light
-[ ] Guardian Spirit
+[x] Guardian Spirit
 [ ] Heroism
 [ ] True Sight
 [ ] Plane Shift
 [ ] Resurrection
 [ ] Dispel Evil
 [x] Planar Seal
-[ ] Unicorns
+[x] Unicorns
 [x] Raise Dead
 [ ] Planar Travel
 [ ] Heavenly Light
@@ -246,28 +248,28 @@ Spreadsheet - OSG Spells by Realm
 [ ] Incarnation
 [ ] Invulnerability
 [ ] Righteousness
-[ ] Prosperity
-[ ] Altar of Battle
-[ ] Angel
+[x] Prosperity
+[x] Altar of Battle
+[x] Angel
 [x] Stream of Life
 [ ] Mass Healing
 [ ] Holy Word
 [ ] High Prayer
-[ ] Inspirations
-[ ] Astral Gate
+[x] Inspirations
+[x] Astral Gate
 [x] Holy Arms
-[ ] Consecration
+[x] Consecration
 [x] Life Force
 [x] Tranquility
 [x] Crusade
-[ ] Arch Angel
+[x] Arch Angel
 [x] Charm of Life
-[ ] Skeletons
+[x] Skeletons
 [ ] Weakness
-[ ] Dark Rituals
+[x] Dark Rituals
 [ ] Cloak of Fear
 [ ] Black Sleep
-[ ] Ghouls
+[x] Ghouls
 [ ] Life Drain
 [ ] Terror
 [ ] Darkness
@@ -277,32 +279,32 @@ Spreadsheet - OSG Spells by Realm
 [ ] Lycantrophy
 [ ] Black Prayer
 [ ] Black Channels
-[ ] Night Stalker
+[x] Night Stalker
 [ ] Subversion
-[ ] Wall of Darkness
+[x] Wall of Darkness
 [ ] Berserk
-[ ] Shadow Demons
+[x] Shadow Demons
 [ ] Wraith Form
 [ ] Wrack
-[ ] Evil Presence
-[ ] Wraiths
+[x] Evil Presence
+[x] Wraiths
 [ ] Cloud of Shadow
 [ ] Warp Node
 [ ] Black Wind
 [x] Zombie Mastery
-[ ] Famine
-[ ] Cursed Lands
+[x] Famine
+[x] Cursed Lands
 [ ] Cruel Unminding
 [ ] Word of Death
-[ ] Death Knights
+[x] Death Knights
 [ ] Death Spell
 [x] Animate Dead
-[ ] Pestilence
+[x] Pestilence
 [x] Eternal Night
 [x] Evil Omens
 [x] Death Wish
-[ ] Demon Lord
-[ ] Magic Spirit
+[x] Demon Lord
+[x] Magic Spirit
 [ ] Dispel Magic
 [x] Summoning Circle
 [ ] Disenchant Area
@@ -310,7 +312,7 @@ Spreadsheet - OSG Spells by Realm
 [ ] Detect Magic
 [ ] Enchant Item
 [ ] Summon Hero
-[ ] Awareness
+[x] Awareness
 [ ] Disjunction
 [ ] Create Artifact
 [ ] Summon Champion

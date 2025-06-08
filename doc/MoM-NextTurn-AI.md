@@ -327,7 +327,7 @@ AI_OVL_SpellPicker__STUB()
     |-> AI_OVL_PickRealmSupr()
     |-> AI_OVL_PickGlobal()
     ...
-    |-> WIZ_SetOverlandSpell__WIP()
+    |-> Cast_Spell_Overland_Do()
 
 ## AI_Compute_Spells_Info()
 

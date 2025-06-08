@@ -48,7 +48,7 @@ Abort_Spell__YN
 if(Abort_Spell__YN == ST_TRUE)
     did_select_spell = ST_TRUE;
 if(did_select_spell == ST_TRUE)
-    WIZ_SetOverlandSpell__WIP(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
+    Cast_Spell_Overland_Do(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
 else
     OVL_MosaicFlip__STUB();
 
@@ -70,6 +70,6 @@ SBookScr.C
 Spellbook_Screen()
 Left-Click Spellbook Page Spell Fields
 ...
-WIZ_SetOverlandSpell__WIP()
+Cast_Spell_Overland_Do()
 Cast_Spell_Overland__WIP()
 switch(spell_data_table[spell_idx].type)

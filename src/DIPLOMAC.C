@@ -315,7 +315,7 @@ called from End_Of_Combat()
 
 Spellbook_Screen()
     if(did_select_spell == ST_TRUE)
-        WIZ_SetOverlandSpell__WIP(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
+        Cast_Spell_Overland_Do(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
             Change_Relations_For_Enchantments(player_idx, spl_Spell_Of_Mastery, 1)
                 if(spell_idx == spl_Spell_Of_Mastery)
                     Change_Relations((-50 / divisor), player_idx, itr_players, 10, 0, spell_idx);
