@@ -860,7 +860,7 @@ void Cast_Spell_City_Enchantment_Animation_Load_Music(int16_t spell_idx, int16_t
 ; (indicates the draw location for the animation)
 ; CAN'T LOAD MULTIPLE ANIMATIONS ONE AFTER THE OTHER!
 */
-int16_t Spell_Animation_Load_Graphics__WIP(int16_t spell_idx)
+int16_t Spell_Animation_Load_Graphics(int16_t spell_idx)
 {
     int16_t l_spell_idx = 0;
     int16_t return_value = 0;  // _DI_
@@ -880,15 +880,15 @@ int16_t Spell_Animation_Load_Graphics__WIP(int16_t spell_idx)
         } break;
         case spl_Web:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 13, _screen_seg);
         } break;
         case spl_Cracks_Call:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 15, _screen_seg);
         } break;
         case spl_Ice_Bolt:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 11, _screen_seg);
         } break;
         case spl_Change_Terrain:
         {
@@ -896,11 +896,11 @@ int16_t Spell_Animation_Load_Graphics__WIP(int16_t spell_idx)
         } break;
         case spl_Petrify:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 12, _screen_seg);
         } break;
         case spl_Ice_Storm:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 10, _screen_seg);
         } break;
         case spl_Call_Lightning:
         {
@@ -908,63 +908,63 @@ int16_t Spell_Animation_Load_Graphics__WIP(int16_t spell_idx)
         } break;
         case spl_Dispel_Magic_True:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__2of2, 26, _screen_seg);
         } break;
         case spl_Confusion:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__2of2, 20, _screen_seg);
         } break;
         case spl_Psionic_Blast:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__2of2, 16, _screen_seg);
         } break;
         case spl_Disenchant_True:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 13, _screen_seg);
         } break;
         case spl_Vertigo:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__2of2, 17, _screen_seg);
         } break;
         case spl_Spell_Blast:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 40, _screen_seg);
         } break;
         case spl_Disjunction_True:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 47, _screen_seg);
         } break;
         case spl_Banish:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__2of2, 19, _screen_seg);
         } break;
         case spl_Mind_Storm:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__2of2, 21, _screen_seg);
         } break;
         case spl_Stasis:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 53, _screen_seg);
         } break;
         case spl_Spell_Binding:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 44, _screen_seg);
         } break;
         case spl_Warp_Wood:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 2, _screen_seg);
         } break;
         case spl_Disrupt:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 1, _screen_seg);
         } break;
         case spl_Fire_Bolt:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 0, _screen_seg);
         } break;
         case spl_Corruption:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 7, _screen_seg);
         } break;
         case spl_Fireball:      /* 0x60  96*/
         {
@@ -976,15 +976,15 @@ int16_t Spell_Animation_Load_Graphics__WIP(int16_t spell_idx)
         } break;
         case spl_Warp_Lightning:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 3, _screen_seg);
         } break;
         case spl_Doom_Bolt:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 5, _screen_seg);
         } break;
         case spl_Magic_Vortex:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 25, _screen_seg);
         } break;
         case spl_Fire_Storm:
         {
@@ -992,100 +992,105 @@ int16_t Spell_Animation_Load_Graphics__WIP(int16_t spell_idx)
         } break;
         case spl_Flame_Strike:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 33, _screen_seg);
         } break;
         case spl_Disintegrate:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 4, _screen_seg);
         } break;
         case spl_Call_The_Void:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 12, _screen_seg);
         } break;
         case spl_Star_Fires:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 9, _screen_seg);
         } break;
         case spl_Dispel_Evil:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 10, _screen_seg);
         } break;
         case spl_Life_Drain:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 6, _screen_seg);
         } break;
         case spl_Drain_Power:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 42, _screen_seg);
         } break;
         case spl_Possession:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 8, _screen_seg);
         } break;
         case spl_Subversion:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 13, _screen_seg);
         } break;
         case spl_Warp_Node:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 13, _screen_seg);
         } break;
         case spl_Black_Wind:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 14, _screen_seg);
         } break;
         case spl_Cruel_Unminding:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 41, _screen_seg);
         } break;
         case spl_Word_Of_Death:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 13, _screen_seg);
         } break;
         case spl_Death_Spell:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 13, _screen_seg);
         } break;
         case spl_Dispel_Magic:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 13, _screen_seg);
         } break;
         case spl_Disenchant_Area:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 9, _screen_seg);
         } break;
         case spl_Disjunction:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 48, _screen_seg);
         } break;
 
         default:
         {
-            // __debugbreak();
-        } break;
-    }
+                    
+            if(spell_data_table[spell_idx].type == scc_Summoning)
+            {
+                if (spell_idx == spl_Floating_Island)
+                {
+                    spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, spell_data_table[spell_idx].magic_realm, _screen_seg);
+                    return_value = ST_TRUE;
+                }
+                else if(
+                    (spell_idx == spl_Raise_Dead)
+                    ||
+                    (spell_idx == spl_Animate_Dead)
+                )
+                {
+                    spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 22, _screen_seg);
+                    return_value = ST_FALSE;
+                }
+                else
+                {
+                    spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, spell_data_table[spell_idx].magic_realm, _screen_seg);
+                    return_value = ST_TRUE;
+                }
+            }
+            else
+            {
+                STU_DEBUG_BREAK();
+            }
 
-    if(spell_data_table[spell_idx].type == scc_Summoning)
-    {
-        if (spell_idx == spl_Floating_Island)
-        {
-            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, spell_data_table[spell_idx].magic_realm, _screen_seg);
-            return_value = ST_TRUE;
-        }
-        else if(
-            (spell_idx == spl_Raise_Dead)
-            ||
-            (spell_idx == spl_Animate_Dead)
-        )
-        {
-            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 22, _screen_seg);
-            return_value = ST_FALSE;
-        }
-        else
-        {
-            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, spell_data_table[spell_idx].magic_realm, _screen_seg);
-            return_value = ST_TRUE;
-        }
+        } break;
+        
     }
 
     return return_value;

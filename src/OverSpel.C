@@ -722,7 +722,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                         Spell_Animation_Load_Sound_Effect__WIP(spell_idx);
 
-                        Spell_Animation_Load_Graphics__WIP(spell_idx);
+                        Spell_Animation_Load_Graphics(spell_idx);
 
                         Spell_Animation_Screen__WIP(_UNITS[spell_target_idx].wx, _UNITS[spell_target_idx].wy, _UNITS[spell_target_idx].wp);
 
@@ -1070,7 +1070,7 @@ Capture_Cities_Data();
 
                             Spell_Animation_Load_Sound_Effect__WIP(spell_idx);
 
-                            Spell_Animation_Load_Graphics__WIP(spell_idx);
+                            Spell_Animation_Load_Graphics(spell_idx);
 
                             Spell_Animation_Screen__WIP(_UNITS[spell_target_idx].wx, _UNITS[spell_target_idx].wy, _UNITS[spell_target_idx].wp);
 
