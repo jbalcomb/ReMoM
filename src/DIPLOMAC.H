@@ -17,6 +17,7 @@ MoO2
 #ifndef DIPLOMAC_H
 #define DIPLOMAC_H
 
+#include "MOX/MOX_TYPE.H"
 
 
 /*
@@ -253,7 +254,7 @@ void Diplomacy_Screen__STUB(void);
 // DIPL_LeaveMeAlone()
 
 // WZD o85p12
-void Change_Relations(int16_t value, int16_t attacker_idx, int16_t defender_idx, int16_t type, int16_t city_idx, int16_t spell_idx);
+void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender_idx, int16_t type, int16_t city_idx, int16_t spell_idx);
 
 // WZD o85p13
 void Declare_War(int16_t attacker_idx, int16_t defender_idx);

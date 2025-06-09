@@ -444,7 +444,6 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 /*
 entities_on_movement_map
 
-
 loc_5C6B6:
 mov     ax, [_main_map_grid_y]
 mov     dx, e_MAP_WIDTH_DB

@@ -5,13 +5,17 @@
         ovr135
 */
 
+#include "Explore.H"
 #include "MOM_DEF.H"
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_DEF.H"
 #include "MOX/MOX_SET.H"  /* magic_set */
 #include "MOX/MOX_TYPE.H"
 
 #include "SPELLDEF.H"
 
+#include "DIPLOMAC.H"
 #include "NEXTTURN.H"
 #include "Outpost.H"
 #include "Spellbook.H"
@@ -156,9 +160,12 @@ IDA Group Colors
     scc_Unit_Enchantment           ( 1)  #43 pea green
     scc_City_Enchantment_Positive  ( 2)  #14 blueish lighter
     scc_City_Enchantment_Negative  ( 3)  #14 blueish lighter
-    scc_Special_Spell       ( 5)  
-    scc_Global_Enchantment  ( 9)  #13 ~ blue, greyish/greenish
-    scc_Crafting_Spell      (11)  #17 mauve
+    scc_Direct_Damage_Fixed        ( 4)  #32 purple
+    scc_Special_Spell              ( 5)  
+    scc_Global_Enchantment         ( 9)  #13 ~ blue, greyish/greenish
+    scc_Crafting_Spell             (11)  #17 mauve
+
+    scc_Direct_Damage_Variable     (22)  #31 redish purple
 
 */
 void Cast_Spell_Overland__WIP(int16_t player_idx)
@@ -169,14 +176,14 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
     int16_t item_list = 0;
     int16_t MultiPurpose_Local_Var = 0;
     int16_t Cast_Successful = 0;
-    int16_t var_12 = 0;
-    int16_t var_10 = 0;
-    int16_t RetP = 0;
-    int16_t RetY = 0;
-    int16_t spell_target_idx = 0; /* 2: city_idx */
-    int16_t itr_players = 0;  // itr
-    int16_t itr_cities = 0;  // itr
-    int16_t itr_units = 0;  // itr
+    int16_t target_wy = 0;
+    int16_t target_wp = 0;
+    int16_t wp = 0;
+    int16_t wy = 0;
+    int16_t spell_target_idx = 0; /* also gets used as &wx */
+    int16_t itr_players = 0;  // DNE in Dasm, reuses itr
+    int16_t itr_cities = 0;  // DNE in Dasm, reuses itr
+    int16_t itr_units = 0;  // DNE in Dasm, reuses itr
     int16_t Dispel_Chance = 0;
     int16_t enchantments_idx = 0;  // DNE in Dasm, uses Dispel_Chance
     uint8_t * ptr_enchantments = 0;  // (uint8_t *)&_CITIES[].enchantments[0]
@@ -491,7 +498,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                             MultiPurpose_Local_Var = ST_TRUE;
 
-                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Friendly_Unit, &spell_target_idx, &RetY, &RetP, &var_12, &var_10, (char *)&spell_name[0]);
+                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Friendly_Unit, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
 
                             if(Cast_Successful == ST_TRUE)
                             {
@@ -763,7 +770,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                             MultiPurpose_Local_Var = ST_TRUE;
 
-                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Friendly_City, &spell_target_idx, &RetY, &RetP, &var_12, &var_10, (char *)&spell_name[0]);
+                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Friendly_City, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
 
                             if(Cast_Successful == ST_TRUE)
                             {
@@ -920,7 +927,7 @@ Capture_Cities_Data();
                         while((MultiPurpose_Local_Var == ST_FALSE) && (Cast_Successful == ST_TRUE))
                         {
                             MultiPurpose_Local_Var = ST_TRUE;
-                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Enemy_City, &spell_target_idx, &RetY, &RetP, &var_12, &var_10, (char *)&spell_name[0]);
+                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Enemy_City, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
                             if(Cast_Successful == ST_TRUE)
                             {
                                 ptr_enchantments = (uint8_t *)&_CITIES[spell_target_idx].enchantments[0];
@@ -1004,6 +1011,78 @@ Capture_Cities_Data();
                 // BOTH:  Doom Bolt, Fire Storm, Ice Storm, Star Fires, Warp Lightning
                 case scc_Direct_Damage_Fixed:  //  4
                 {
+                    
+                    if(player_idx == HUMAN_PLAYER_IDX)
+                    {
+
+                        Cast_Successful = Spell_Casting_Screen__WIP(stt_Enemy_Group, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
+
+                    }
+                    else
+                    {
+
+                        Cast_Successful = Get_Map_Square_Target_For_Spell(stt_Enemy_Group, &spell_target_idx, &wy, &wp, spell_idx, player_idx);
+
+                    }
+
+                    if(Cast_Successful == ST_TRUE)
+                    {
+
+                        for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+                        {
+
+                            if(
+                                (_CITIES[itr_cities].wx == _UNITS[spell_target_idx].wx)
+                                &&
+                                (_CITIES[itr_cities].wy == _UNITS[spell_target_idx].wy)
+                                &&
+                                (_CITIES[itr_cities].wp == _UNITS[spell_target_idx].wp)
+                            )
+                            {
+
+                                Cast_Successful = Apply_Automatic_Spell_Counters(spell_idx, itr_cities, player_idx, show_message_flag);
+
+                            }
+
+                        }
+
+                    }
+
+                    if(Cast_Successful == ST_TRUE)
+                    {
+
+                        if(
+                            (player_idx == HUMAN_PLAYER_IDX)
+                            ||
+                            (_UNITS[spell_target_idx].owner_idx == HUMAN_PLAYER_IDX)
+                            ||
+                            (
+                                (Check_Square_Scouted(_UNITS[spell_target_idx].wx, _UNITS[spell_target_idx].wy, _UNITS[spell_target_idx].wp) != ST_FALSE)
+                                &&
+                                (magic_set.enemy_spells == ST_TRUE)
+                            )
+                        )
+                        {
+
+                            AI_Eval_After_Spell = ST_TRUE;
+                            
+                            Allocate_Reduced_Map();
+
+                            Spell_Animation_Load_Sound_Effect__WIP(spell_idx);
+
+                            Spell_Animation_Load_Graphics__WIP(spell_idx);
+
+                            Spell_Animation_Screen__WIP(_UNITS[spell_target_idx].wx, _UNITS[spell_target_idx].wy, _UNITS[spell_target_idx].wp);
+
+                            Full_Draw_Main_Screen();
+
+                        }
+
+                        /* SPELLY */  Change_Relations__WIP(-3, player_idx, _UNITS[spell_target_idx].owner_idx, 8, 0, spell_target_idx);
+
+                        /* SPELLY */  OVL_ConvSpellAttack__WIP(spell_target_idx, spell_idx);
+
+                    }
 
                 } break;  /* case scc_Fixed_Dmg_Spell: */
 

@@ -856,7 +856,7 @@ STU_DEBUG_BREAK();
 int16_t IDK_Pick_Target_For_Unit_Enchantment__STUB(int16_t spell_target_type, int16_t * unit_idx, int16_t spell_idx, int16_t player_idx)
 {
 
-
+    return ST_FALSE;
 
 }
 
@@ -883,7 +883,7 @@ select completely inappropriate targets
     calls out to get wx,wy,wp, for 14 spells
 
 */
-int16_t Get_Map_Square_Target_For_Spell(int16_t something, int16_t * wx, int16_t * wy, int16_t * wp, int16_t spell_idx, int16_t player_idx)
+int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx, int16_t * wy, int16_t * wp, int16_t spell_idx, int16_t player_idx)
 {
     int16_t Passed_Return = 0;
     int16_t return_value = 0;  // DNE in Dasm
@@ -892,20 +892,20 @@ int16_t Get_Map_Square_Target_For_Spell(int16_t something, int16_t * wx, int16_t
     {
         case spl_Transmute:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
             // SPELLY  return_value = AITP_Transmute(player_idx, wx, wy, wp);
         } break;
         case spl_Change_Terrain:
         {
+            STU_DEBUG_BREAK();
             /* SPELLY */  return_value = AITP_ChangeTerrain__WIP(player_idx, wx, wy, wp);
-
         } break;
         case spl_Ice_Storm:
         case spl_Fire_Storm:
         case spl_Black_Wind:
         case spl_Stasis:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
             // SPELLY  return_value AITP_OVL_HarmStack(player_idx, wx, wy, wp);
         } break;
         case spl_Floating_Island:
@@ -914,35 +914,35 @@ int16_t Get_Map_Square_Target_For_Spell(int16_t something, int16_t * wx, int16_t
         } break;
         case spl_Enchant_Road:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
             // SPELLY  return_value = AITP_EnchantRoad(player_idx, wx, wy, wp);
         } break;
         case spl_Disenchant_True:
         case spl_Disenchant_Area:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
             // SPELLY  return_value = AITP_Disenchant(player_idx, wx, wy, wp);
         } break;
         case spl_Corruption:
         case spl_Raise_Volcano:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
             // SPELLY  return_value = AITP_HarmTerrain(player_idx, wx, wy, wp, spell_idx);
         } break;
         case spl_Plane_Shift:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
             // SPELLY  return_value = AITP_PlaneShift(player_idx, wx, wy, wp);
         } break;
         case spl_Natures_Cures:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
             // SPELLY  return_value = AITP_NaturesCures(player_idx, wx, wy, wp);
         } break;
         default:
         {
             Cast_Spell_Target_Error(spell_idx);  // "[spell name] could not be found for CP."
-            return_value = something;
+            return_value = spell_target_type;
             Passed_Return = return_value;
         } break;
     }

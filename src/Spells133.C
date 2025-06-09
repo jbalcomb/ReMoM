@@ -148,7 +148,7 @@ void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, 
     }
     else
     {
-        SND_SpellCast = ST_UNDEFINED;
+        SND_SpellCast = (SAMB_ptr)ST_UNDEFINED;
     }
 
     if (battle_unit->controller_idx == _combat_attacker_player)
@@ -166,7 +166,7 @@ void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, 
 
     battle_unit->status = bus_Dead;
 
-    if(SND_SpellCast != ST_UNDEFINED)
+    if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
     {
         // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
         sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
@@ -512,7 +512,8 @@ void CMB_VortexMovement__SEGRAX(int Vortex_Index, int Next_X, int Next_Y)
     }
 
     // Animate the vortex movement
-    for (int i = 0; i < 8; i++) {
+    for(int i = 0; i < 8; i++)
+    {
         vortex->Move_Stage = i;
         Set_Page_Off();
         Tactical_Combat_Draw();
@@ -524,7 +525,8 @@ void CMB_VortexMovement__SEGRAX(int Vortex_Index, int Next_X, int Next_Y)
     vortex->cgy = Next_Y;
 
     // Check if the new position affects the city damage
-    if (Next_X >= 5 && Next_X <= 8 && Next_Y >= 10 && Next_Y <= 13) {
+    if(Next_X >= 5 && Next_X <= 8 && Next_Y >= 10 && Next_Y <= 13)
+    {
         CMB_CityDamage += 5;
     }
 
@@ -532,36 +534,53 @@ void CMB_VortexMovement__SEGRAX(int Vortex_Index, int Next_X, int Next_Y)
     vortex->Prev_or_Next_Y = Prev_Y;
     vortex->Move_Stage = 0;
 
-    for (int i = 0; i < _combat_total_unit_count; i++) {
+    for(int i = 0; i < _combat_total_unit_count; i++)
+    {
         struct s_BATTLE_UNIT* battleunit = &battle_units[i];
         
         struct s_UNIT* unit = &_UNITS[battleunit->unit_idx];
+
         int32_t Enchants = unit->enchantments | battleunit->enchantments | battleunit->item_enchantments;
 
-        if (battleunit->cgx == Next_X && battleunit->cgy == Next_Y) {
+        if(battleunit->cgx == Next_X && battleunit->cgy == Next_Y)
+        {
 
-            if (battleunit->Attribs_1 & USA_IMMUNITY_MAGIC) {
+            if(battleunit->Attribs_1 & USA_IMMUNITY_MAGIC)
+            {
+
                 continue;
+
             }
 
-            if (!(Enchants & UE_RIGHTEOUSNESS)) {
+            if(!(Enchants & UE_RIGHTEOUSNESS))
+            {
                 Damage_Array[0] = 5;
                 Damage_Array[1] = 0;
                 Damage_Array[2] = 0;
 
                 BU_ApplyDamage__WIP(i, Damage_Array);
+
             }
         }
 
         X_Distance = abs(battleunit->cgx - Next_X);
         Y_Distance = abs(battleunit->cgy - Next_Y);
-        if ((X_Distance <= 1 && Y_Distance <= 1) && (X_Distance + Y_Distance != 0)) {
-            if (Random(3) == 1) {
-                CMB_ConvSpellAttack(spl_Lightning_Bolt, i, Damage_Array, 0);
+
+        if((X_Distance <= 1 && Y_Distance <= 1) && (X_Distance + Y_Distance != 0))
+        {
+            if(Random(3) == 1)
+            {
+
+                CMB_ConvSpellAttack__WIP(spl_Lightning_Bolt, i, Damage_Array, 0);
+
                 BU_ApplyDamage__WIP(i, Damage_Array);
+
             }
+
         }
+
     }
+
 }
 
 

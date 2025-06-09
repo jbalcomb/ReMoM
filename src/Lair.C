@@ -19,6 +19,8 @@ NOTE: IDGI, but the FanDom MoM Wiki uses the term "Encounter Zone"
 
 #include "MOM.H"
 
+#include "Spells128.H"
+
 
 
 // WZD dseg:4AB4                                                 ¿ BEGIN: ovr083 - Strings ?

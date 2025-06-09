@@ -381,53 +381,53 @@ void Change_Relations_For_Bad_City_Spell(int16_t player_idx, int16_t spell_idx, 
 
         case spl_Earthquake:  // 0x1A  26
         {
-            Change_Relations(-9, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
+            Change_Relations__WIP(-9, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
         } break;
 
         case spl_Corruption:  // 0x55  85
         {
-            Change_Relations(-25, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
+            Change_Relations__WIP(-25, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
         } break;
 
         case spl_Raise_Volcano:  // 0x62  98
         {
-            Change_Relations(-50, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
+            Change_Relations__WIP(-50, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
 
         } break;
 
         case spl_Chaos_Rift:  // 0x6E  110
         {
-            Change_Relations(-5, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
+            Change_Relations__WIP(-5, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
 
         } break;
 
         case spl_Call_The_Void:  // 0x77  119
         {
-            Change_Relations(-20, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
+            Change_Relations__WIP(-20, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
 
         } break;
 
         case spl_Evil_Presence:  // 0xB7  183
         {
-            Change_Relations(-5, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
+            Change_Relations__WIP(-5, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
 
         } break;
 
         case spl_Famine:  // 0xBD  189
         {
-            Change_Relations(-5, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
+            Change_Relations__WIP(-5, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
 
         } break;
 
         case spl_Cursed_Lands:  // 0xBE  190
         {
-            Change_Relations(-5, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
+            Change_Relations__WIP(-5, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
 
         } break;
 
         case spl_Pestilence:  // 0xC4  196
         {
-            Change_Relations(-8, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
+            Change_Relations__WIP(-8, player_idx, _CITIES[city_idx].owner_idx, 13, city_idx, spell_idx);
             
         } break;
 
@@ -491,12 +491,12 @@ void Change_Relations_For_Enchantments(int16_t player_idx, int16_t spell_idx, in
 
             if(spell_idx == spl_Spell_Of_Mastery)
             {
-                Change_Relations((-50 / divisor), player_idx, itr_players, 10, 0, spell_idx);
+                Change_Relations__WIP((-50 / divisor), player_idx, itr_players, 10, 0, spell_idx);
             }
 
             if(spell_idx == spl_Eternal_Night)
             {
-                Change_Relations((-12 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((-12 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(
@@ -509,37 +509,37 @@ void Change_Relations_For_Enchantments(int16_t player_idx, int16_t spell_idx, in
                 )
             )
             {
-                Change_Relations((-20 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((-20 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(spell_idx == spl_Zombie_Mastery)
             {
-                Change_Relations((-14 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((-14 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(spell_idx == spl_Aura_Of_Majesty)
             {
-                Change_Relations((10 / divisor), player_idx, itr_players, 0, 0, spell_idx);
+                Change_Relations__WIP((10 / divisor), player_idx, itr_players, 0, 0, spell_idx);
             }
 
             if(spell_idx == spl_Wind_Mastery)
             {
-                Change_Relations((-4 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((-4 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(spell_idx == spl_Suppress_Magic)
             {
-                Change_Relations((-4 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((-4 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(spell_idx == spl_Time_Stop)
             {
-                Change_Relations((0 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((0 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(spell_idx == spl_Natures_Awareness)
             {
-                Change_Relations((0 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((0 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(
@@ -552,12 +552,12 @@ void Change_Relations_For_Enchantments(int16_t player_idx, int16_t spell_idx, in
                 )
             )
             {
-                Change_Relations((-20 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((-20 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(spell_idx == spl_Herb_Mastery)
             {
-                Change_Relations((0 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((0 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(
@@ -566,27 +566,27 @@ void Change_Relations_For_Enchantments(int16_t player_idx, int16_t spell_idx, in
                 (_players[itr_players].spellranks[sbr_Chaos] == 0)
             )
             {
-                Change_Relations((-10 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((-10 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(spell_idx == spl_Doom_Mastery)
             {
-                Change_Relations((-8 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((-8 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(spell_idx == spl_Great_Wasting)
             {
-                Change_Relations((-20 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((-20 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(spell_idx == spl_Meteor_Storms)
             {
-                Change_Relations((-15 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((-15 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(spell_idx == spl_Armageddon)
             {
-                Change_Relations((-25 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((-25 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(
@@ -595,7 +595,7 @@ void Change_Relations_For_Enchantments(int16_t player_idx, int16_t spell_idx, in
                 (_players[itr_players].spellranks[sbr_Chaos] > 0)
             )
             {
-                Change_Relations((-20 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((-20 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(
@@ -604,22 +604,22 @@ void Change_Relations_For_Enchantments(int16_t player_idx, int16_t spell_idx, in
                 (_players[itr_players].spellranks[sbr_Death] > 0)
             )
             {
-                Change_Relations((-20 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((-20 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(spell_idx == spl_Crusade)
             {
-                Change_Relations((-10 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((-10 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(spell_idx == spl_Just_Cause)
             {
-                Change_Relations((0 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((0 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
             if(spell_idx == spl_Holy_Arms)
             {
-                Change_Relations((-5 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+                Change_Relations__WIP((-5 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
         }

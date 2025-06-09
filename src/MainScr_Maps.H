@@ -164,7 +164,7 @@ void Draw_World_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t 
 void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_plane);
 
 // WZD o67p11
-void Add_Nodes_To_Entities_On_Map_Window(void);
+void Add_Nodes_To_Entities_On_Map_Window(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o67p12
 // OVL_DrawMapSection

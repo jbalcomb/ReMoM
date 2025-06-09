@@ -3,13 +3,16 @@
         ovr129
 */
 
+#include "MOM_DEF.H"
+#include "MOX/Allocate.H"
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"
-#include "MOX/MOX_DEF.H"
-#include "MOX/MOX_TYPE.H"
 
 #include "OverSpel.H"
 #include "SBookScr.H"
+#include "Spells129.H"
+
+int16_t * CMB_HolyBonusArray;
 
 
 
@@ -58,10 +61,191 @@ char str_Nightshade__ovr129[] = "Nightshade";
 // sub_ACD60()
 
 // WZD o129p02
-// OVL_ConvSpellAttack()
+// drake178: OVL_ConvSpellAttack()
+/*
+; performs a conventional spell damage attack against
+; all units stacked with the target, returning any
+; items from slain heroes to their owner
+; inherits all the BUGs of UNIT_ConvSpellATK
+*/
+/*
+
+*/
+void OVL_ConvSpellAttack__WIP(int16_t unit_idx, int16_t spell_idx)
+{
+    int16_t item_list[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
+    int16_t item_count = 0;
+    int16_t wp = 0;
+    int16_t wy = 0;
+    int16_t wx = 0;
+    int16_t player_idx = 0;
+    int16_t itr_units = 0;  // _SI_
+
+    wx = _UNITS[unit_idx].wx;
+    wy = _UNITS[unit_idx].wy;
+    wp = _UNITS[unit_idx].wp;
+
+    item_count = 0;
+
+    item_pool_in_process = ST_TRUE;
+
+    m_item_wx = wx;
+    m_item_wy = wy;
+    m_item_wp = wp;
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+
+        if(
+            (_UNITS[itr_units].wx == wx)
+            &&
+            (_UNITS[itr_units].wy == wy)
+            &&
+            (_UNITS[itr_units].wp == wp)
+        )
+        {
+
+            player_idx = _UNITS[itr_units].owner_idx;
+
+            UNIT_ConvSpellATK__WIP(itr_units, spell_idx, &item_count, &item_list[0], 0);
+
+        }
+
+    }
+
+    Player_Process_Item_Pool(player_idx, item_count, &item_list[0]);
+
+}
+
 
 // WZD o129p03
-// UNIT_ConvSpellATK()
+// drake178: UNIT_ConvSpellATK()
+/*
+; performs a conventional spell attack against the
+; selected overland unit, converting it into a battle
+; unit and then back to do so
+; BUG: scuttles the sandbox instead of using the
+;  Active_Unit@ allocation
+; BUG: allocates and clears a holy bonus array but then
+;  fails to set and use it
+; BUG: if killing a hero, their item slots are set to
+;  0 instead of the empty marker -1
+*/
+/*
+
+#XREF:
+    OVL_ConvSpellAttack__WIP()
+    j_UNIT_ConvSpellATK__WIP()
+        CTY_ChaosRift()
+        WIZ_MeteorStorm()
+
+*/
+void UNIT_ConvSpellATK__WIP(int16_t unit_idx, int16_t spell_idx, int16_t * item_count, int16_t item_list[], int16_t attack_override_flag)
+{
+    uint32_t enchantments = 0;
+    int16_t damage_total = 0;
+    int16_t damage_types[3] = { 0, 0, 0 };
+    int16_t itr2 = 0;
+    int16_t itr1 = 0;
+
+    AI_Eval_After_Spell = ST_TRUE;
+
+
+    for(itr1 = 0; itr1 < 3; itr1++)
+    {
+
+        damage_types[itr1] = 0;
+
+    }
+
+    // ; BUG: why not use Active_Unit@ instead of scuttling
+    // DOMSDOS  battle_units = SA_MK_FP0(Allocate_First_Block(_screen_seg, 8));
+    battle_units = (struct s_BATTLE_UNIT *)Allocate_First_Block(_screen_seg, 8);
+
+    // ; BUG: it would take a lot more than this for a bonus
+    // ; to actually apply too
+    // DOMSDOS  CMB_HolyBonusArray = SA_MK_FP0(Allocate_Next_Block(_screen_seg, 3));
+    CMB_HolyBonusArray = (int16_t *)Allocate_Next_Block(_screen_seg, 3);
+
+    for(itr1 = 0; itr1 < _num_players; itr1++)
+    {
+
+        CMB_HolyBonusArray[itr1] = 0;
+
+    }
+
+    Load_Battle_Unit(unit_idx, &battle_units[0]);
+
+    CMB_ConvSpellAttack__WIP(spell_idx, 0, &damage_types[0], attack_override_flag);
+
+    battle_units[0].enchantments |= _UNITS[unit_idx].enchantments;
+
+    if((battle_units[0].enchantments & UE_REGENERATION) != 0)
+    {
+
+        damage_types[0] = 0;
+
+    }
+
+    damage_total = 0;
+
+    for(itr2 = 0; itr2 < 3; itr2++)
+    {
+
+        damage_total += damage_types[itr2];
+
+    }
+
+    damage_total += battle_units[0].TopFig_Dmg;
+
+    battle_units[0].Cur_Figures -= (damage_total / battle_units[0].hits);
+
+    battle_units[0].TopFig_Dmg = (damage_total % battle_units[0].hits);
+
+    if(battle_units[0].Cur_Figures > 0)
+    {
+
+        if(battle_units[0].TopFig_Dmg < 0)
+        {
+
+            battle_units[0].TopFig_Dmg = 0;
+
+        }
+
+        _UNITS[unit_idx].Damage = (((battle_units[0].Max_Figures - battle_units[0].Cur_Figures) * battle_units[0].hits) + battle_units[0].TopFig_Dmg);
+
+    }
+    else  /* DEAD / DIED */
+    {
+
+        if(_UNITS[unit_idx].Hero_Slot >  -1)
+        {
+
+            for(itr2 = 0; itr2 < 3; itr2++)
+            {
+
+                if(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr2] > -1)
+                {
+
+                    item_list[*item_count] = _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr2];
+
+                    *item_count += 1;
+
+                }
+
+                // ; BUG: empty slots are -1, not 0
+                _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr2] = 0;
+
+            }
+
+        }
+
+        Kill_Unit(unit_idx, 0);
+
+    }
+
+}
+
 
 // WZD o129p04
 // sub_AD1F0()

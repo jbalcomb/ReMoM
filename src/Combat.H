@@ -529,7 +529,7 @@ bufpi
 }
 #define FIGUREX_POINTER     {                                                   \
     /* figure_pict_set_seg = SA_MK_FP0(Allocate_First_Block((EMS_PFBA + offset), 33)); */   \
-    figure_pict_set_seg = Allocate_First_Block((EMS_PFBA + offset), 33);        \
+    figure_pict_set_seg = (SAMB_ptr *)Allocate_First_Block((EMS_PFBA + offset), 33);        \
 }
 
 /*
@@ -1608,7 +1608,7 @@ void CMB_RangedAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_bat
 void CMB_MeleeAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t attacker_damage, int16_t defender_damage, int16_t cgx, int16_t cgy);
 
 // WZD o113p06
-void CMB_ConvSpellAttack(uint16_t spell_idx, uint16_t battle_unit_idx, int16_t* Dmg_Array, int16_t ATK_Override);
+void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int16_t damage_types[], int16_t attack_override_flag);
 
 // WZD o113p07
 void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t Dmg_Array[]);
@@ -1756,7 +1756,7 @@ void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_bat
 void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_count, int16_t defender_battle_unit_idx, int16_t attack_mode, int16_t damage_array[], int16_t Counter, int16_t SpFx);
 
 // WZD o122p08
-int16_t BU_GetEffectiveDEF__SEGRAX(int16_t battle_unit_idx, int16_t attack_type, int16_t Imm_Flags, int16_t ATK_Flags, int16_t Realm);
+int16_t BU_GetEffectiveDEF__SEGRAX(int16_t battle_unit_idx, int16_t attack_type, int16_t attack_immunities, int16_t attack_attributes, int16_t magic_realm);
 
 // WZD o122p09
 // BU_GetATKRealm()

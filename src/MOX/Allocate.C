@@ -350,14 +350,22 @@ SAMB_ptr Allocate_Space(uint16_t size)
     // SAMB_head = tmp_SAMB_head + 12;  // 16-byte paragraph - 4-byte malloc header
     SAMB_head = tmp_SAMB_head;
 
-    SET_2B_OFS(SAMB_head,  0, _AAAA);  // DNE in Dasm
-    SET_2B_OFS(SAMB_head,  2, _AAAA);  // DNE in Dasm
-    SET_2B_OFS(SAMB_head,  4, _AAAA);  // DNE in Dasm
-    SET_2B_OFS(SAMB_head,  6, _AAAA);  // DNE in Dasm
-    SET_2B_OFS(SAMB_head,  8, _AAAA);  // DNE in Dasm
-    SET_2B_OFS(SAMB_head, 10, _AAAA);  // DNE in Dasm
-    SET_2B_OFS(SAMB_head, 12, _AAAA);  // DNE in Dasm
-    SET_2B_OFS(SAMB_head, 14, _AAAA);  // DNE in Dasm
+#pragma warning(suppress : 6011)
+    SET_2B_OFS(SAMB_head, 0, _AAAA);   // DNE in Dasm
+#pragma warning(suppress : 6011)
+    SET_2B_OFS(SAMB_head, 2, _AAAA);   // DNE in Dasm
+#pragma warning(suppress : 6011)
+    SET_2B_OFS(SAMB_head, 4, _AAAA);   // DNE in Dasm
+#pragma warning(suppress : 6011)
+    SET_2B_OFS(SAMB_head, 6, _AAAA);   // DNE in Dasm
+#pragma warning(suppress : 6011)
+    SET_2B_OFS(SAMB_head, 8, _AAAA);   // DNE in Dasm
+#pragma warning(suppress : 6011)
+    SET_2B_OFS(SAMB_head, 10, _AAAA); // DNE in Dasm
+#pragma warning(suppress : 6011)
+    SET_2B_OFS(SAMB_head, 12, _AAAA); // DNE in Dasm
+#pragma warning(suppress : 6011)
+    SET_2B_OFS(SAMB_head, 14, _AAAA); // DNE in Dasm
 
 #pragma warning(suppress : 6011)
     // SA_SET_MEMSIG1(SAMB_head);

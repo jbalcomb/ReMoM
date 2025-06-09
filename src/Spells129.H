@@ -24,10 +24,10 @@ extern "C" {
 // sub_ACD60()
 
 // WZD o129p02
-// OVL_ConvSpellAttack()
+void OVL_ConvSpellAttack__WIP(int16_t unit_idx, int16_t spell_idx);
 
 // WZD o129p03
-// UNIT_ConvSpellATK()
+void UNIT_ConvSpellATK__WIP(int16_t unit_idx, int16_t spell_idx, int16_t * item_count, int16_t item_list[], int16_t attack_override_flag);
 
 // WZD o129p04
 // sub_AD1F0()

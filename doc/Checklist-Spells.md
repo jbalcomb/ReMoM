@@ -73,7 +73,7 @@ all city enchantments are done
 [x]   1  scc_Unit_Enchantment
 [x]   2  scc_City_Enchantment_Positive       ¿ ..., Stream of Life, ... ?
 [x]   3  scc_City_Enchantment_Negative      ¿ Evil Presence, Famine, 
-[ ]   4  scc_Fixed_Dmg_Spell
+[x]   4  scc_Direct_Damage_Fixed
 [-]   5  scc_Special_Spell
 [ ]   6  scc_Target_Wiz_Spell
 [ ]   7  N/A
@@ -162,7 +162,7 @@ Spreadsheet - OSG Spells by Realm
 [ ] Petrify
 [x] Stone Giant
 [x] Iron Skin
-[ ] Ice Storm
+[x] Ice Storm
 [ ] Earthquake
 [x] Gorgons
 [ ] Move Fortress
@@ -238,13 +238,13 @@ Spreadsheet - OSG Spells by Realm
 [ ] Raise Volcano
 [x] Immolation
 [X] Chimeras
-[ ] Warp Lightning
+[x] Warp Lightning
 [ ] Metal Fires
 [x] Chaos Spawn
-[ ] Doom Bolt
+[x] Doom Bolt
 [ ] Magic Vortex
 [X] Efreet
-[ ] Fire Storm
+[x] Fire Storm
 [ ] Warp Reality
 [ ] Flame Strike
 [ ] Chaos Rift
@@ -259,7 +259,7 @@ Spreadsheet - OSG Spells by Realm
 [ ] Call The Void
 [x] Armageddon
 [ ] Bless
-[ ] Star Fires
+[x] Star Fires
 [x] Endurance
 [x] Holy Weapon
 [x] Healing

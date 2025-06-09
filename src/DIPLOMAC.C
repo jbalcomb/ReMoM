@@ -321,7 +321,7 @@ Spellbook_Screen()
                     Change_Relations((-50 / divisor), player_idx, itr_players, 10, 0, spell_idx);
 
 */
-void Change_Relations(int16_t value, int16_t attacker_idx, int16_t defender_idx, int16_t type, int16_t city_idx, int16_t spell_idx)
+void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender_idx, int16_t type, int16_t city_idx, int16_t spell_idx)
 {
     int16_t Rel_Divisor;
     int16_t NoCharisma_RelValue;

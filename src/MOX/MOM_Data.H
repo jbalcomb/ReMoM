@@ -843,16 +843,23 @@ struct s_SPELL_DATA
     {
         uint32_t enchantments;                  // gets OR'd with _UNITS[].enchantments
         struct {
-            /* 20 */  int8_t Param0;            // 
-            /* 21 */  int8_t Param1;
-            /* 22 */  int16_t Params2_3;        //  tested as a bit-field against ATK_FLAGS  ; ATK_Flags
+            /* 20 */  int8_t Param0;            // spell attack strength  e.g., Meteor Storms "...a strength four magic fire attack..."
+            /* 21 */  int8_t Param1;            // passed to BU_GetEffectiveDEF()
+            /* 22 */  int16_t Params2_3;        // tested as a bit-field against ATK_FLAGS  ; ATK_Flags ; passed to BU_GetEffectiveDEF()
         };
         struct {
             int16_t unit_type;                  // 0: scc_Summoning             IDK_SummonAnim_Draw()
+        };
+        struct {
             int16_t ce_idx;                     // 9: scc_City_Enchantment_Positive      index into _CITIES[].enchantments
+        };
+        struct {
             int16_t ge_idx;                     // 9: scc_Global_Enchantment    indexes into _players[].Globals[], which holds player_num (i.e., player_idx + 1)
-            uint8_t cmbt_0;                     // Attack_Strength  CMB_ConvSpellAttack()
-            uint8_t cmbt_1;                     // Immunity_Flags   CMB_ConvSpellAttack()
+        };
+        struct {
+            uint8_t strength;                     // Attack_Strength  CMB_ConvSpellAttack()
+            uint8_t immunities;                     // Immunity_Flags   CMB_ConvSpellAttack()
+            uint16_t attributes;
         };
     };
     /* 24 */

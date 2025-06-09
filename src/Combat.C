@@ -31,7 +31,6 @@
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_ITOA.H"  /* mox_itoa() */
 #include "MOX/MOX_SET.H"  /* magic_set */
-#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 
 #include "CMBTDEF.H"
@@ -3677,22 +3676,11 @@ void Assign_Combat_Grids(void)
     int16_t useable_moves2 = 0;  // _DI_
 
     
-    /* DEBUG */  if(battle_units[_active_battle_unit].Unused_1Bh == spl_Animate_Dead)
-    /* DEBUG */  {
-    /* DEBUG */      STU_DEBUG_BREAK();
-    /* DEBUG */  }
-
-
     Set_Movement_Cost_Map(_active_battle_unit);
 
 
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
-
-        /* DEBUG */  if(battle_units[itr].Unused_1Bh == spl_Animate_Dead)
-        /* DEBUG */  {
-        /* DEBUG */      STU_DEBUG_BREAK();
-        /* DEBUG */  }
 
         if(battle_units[itr].status == bus_Active)
         {
@@ -3816,11 +3804,6 @@ void Assign_Combat_Grids(void)
     */
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
-
-        /* DEBUG */  if(battle_units[itr].Unused_1Bh == spl_Animate_Dead)
-        /* DEBUG */  {
-        /* DEBUG */      STU_DEBUG_BREAK();
-        /* DEBUG */  }
 
         if(
             (battle_units[itr].status == bus_Active)
@@ -4126,7 +4109,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
                     )
                     {
                         // drake178: ; BUG: calling these two functions in this order can allow war without declaring or properly applying it
-                        Change_Relations(-40, combat_attacker_player_idx, defender_idx, 5, 0, 0);
+                        Change_Relations__WIP(-40, combat_attacker_player_idx, defender_idx, 5, 0, 0);
                         Break_Treaties(defender_idx, combat_attacker_player_idx);
                     }
                 }
@@ -4219,7 +4202,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
                     (defender_idx < NUM_PLAYERS)
                 )
                 {
-                    Change_Relations(-40, combat_attacker_player_idx, defender_idx, 9, OVL_Action_Structure, 0);
+                    Change_Relations__WIP(-40, combat_attacker_player_idx, defender_idx, 9, OVL_Action_Structure, 0);
                 }
 
                 if(
@@ -4280,11 +4263,11 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
                     {
                         if(Player_Fortress_City(defender_idx) != OVL_Action_Structure)
                         {
-                            Change_Relations(-20, combat_attacker_player_idx, defender_idx, 9, OVL_Action_Structure, 0);
+                            Change_Relations__WIP(-20, combat_attacker_player_idx, defender_idx, 9, OVL_Action_Structure, 0);
                         }
                         else
                         {
-                            Change_Relations(-60, combat_attacker_player_idx, defender_idx, 9, OVL_Action_Structure, 0);
+                            Change_Relations__WIP(-60, combat_attacker_player_idx, defender_idx, 9, OVL_Action_Structure, 0);
                         }
                     }
 
@@ -9103,7 +9086,7 @@ void Combat_Cast_Spell_With_Caster(int16_t caster_id)
     else
     {
         selection_list_text[0] = _players[HUMAN_PLAYER_IDX].name;
-        selection_list_text[1] = _unit_type_table[_UNITS[battle_units[caster_id].unit_idx].type].name;
+        selection_list_text[1] = *_unit_type_table[_UNITS[battle_units[caster_id].unit_idx].type].name;
         selection_list_text[2] = str_cancel__ovr103;
         selection_list_text[3] = str_empty_string__ovr103;
         Clear_Fields();
@@ -11617,9 +11600,22 @@ int16_t AITP_CombatSpell__STUB(int16_t spell_idx, int16_t player_idx, int16_t * 
 */
 /*
 
-Combat_cast_Spell__WIP()
+Combat_Cast_Spell__WIP()
     Target = Combat_Spell_Target_Screen__WIP(spell_idx, &Target_X, &Target_Y);
     G_CMB_SpellEffect__WIP(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
+
+
+IDA Group Colors
+    scc_Summoning                  ( 0)  #24 reddish-brown
+    scc_Unit_Enchantment           ( 1)  #43 pea green
+    scc_City_Enchantment_Positive  ( 2)  #14 blueish lighter
+    scc_City_Enchantment_Negative  ( 3)  #14 blueish lighter
+    scc_Direct_Damage_Fixed        ( 4)  #32 purple
+    scc_Special_Spell              ( 5)  
+    scc_Global_Enchantment         ( 9)  #13 ~ blue, greyish/greenish
+    scc_Crafting_Spell             (11)  #17 mauve
+
+    scc_Direct_Damage_Variable     (22)  #31 redish purple
 
 */
 void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caster_idx, int16_t target_cgx, int16_t target_cgy, int16_t Mana, int16_t Anims, int16_t UU1, int16_t UU2)
@@ -12851,17 +12847,17 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
 
     for(itr = 0; itr < 6; itr++)
     {
-        spellbook_pages[(itr + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr * 22) + 17), (x_start + 137), (y_start + (itr * 22) + 34), (int16_t)&str_empty_string__ovr112[0], ST_UNDEFINED);
+        spellbook_pages[(itr + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr * 22) + 17), (x_start + 137), (y_start + (itr * 22) + 34), (int16_t)str_empty_string__ovr112[0], ST_UNDEFINED);
     }
 
     for(itr = 0; itr < 6; itr++)
     {
-        spellbook_pages[(itr + 6)] = Add_Hidden_Field((x_start + 148), (y_start + (itr * 22) + 17), (x_start + 268), (y_start + (itr * 22) + 34), (int16_t)&str_empty_string__ovr112[0], ST_UNDEFINED);
+        spellbook_pages[(itr + 6)] = Add_Hidden_Field((x_start + 148), (y_start + (itr * 22) + 17), (x_start + 268), (y_start + (itr * 22) + 34), (int16_t)str_empty_string__ovr112[0], ST_UNDEFINED);
     }
 
     hotkey_ESC = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, ST_UNDEFINED, ST_UNDEFINED);
-    hotkey_F   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, (int16_t)&str_hotkey_F__ovr112[0], ST_UNDEFINED);
-    hotkey_B   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, (int16_t)&str_hotkey_B__ovr112[0], ST_UNDEFINED);
+    hotkey_F   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, (int16_t)str_hotkey_F__ovr112[0], ST_UNDEFINED);
+    hotkey_B   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, (int16_t)str_hotkey_B__ovr112[0], ST_UNDEFINED);
 
     leave_screen = ST_FALSE;
 
@@ -13059,15 +13055,15 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
             y_start = 12;
             for(itr = 0; itr < 6; itr++)
             {
-                spellbook_pages[(itr + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr * 22) + 17), (x_start + 137), (y_start + (itr * 22) + 34), (int16_t)&str_empty_string__ovr112[0], ST_UNDEFINED);
+                spellbook_pages[(itr + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr * 22) + 17), (x_start + 137), (y_start + (itr * 22) + 34), (int16_t)str_empty_string__ovr112[0], ST_UNDEFINED);
             }
             for(itr = 0; itr < 6; itr++)
             {
-                spellbook_pages[(itr + 6)] = Add_Hidden_Field((x_start + 148), (y_start + (itr * 22) + 17), (x_start + 268), (y_start + (itr * 22) + 34), (int16_t)&str_empty_string__ovr112[0], ST_UNDEFINED);
+                spellbook_pages[(itr + 6)] = Add_Hidden_Field((x_start + 148), (y_start + (itr * 22) + 17), (x_start + 268), (y_start + (itr * 22) + 34), (int16_t)str_empty_string__ovr112[0], ST_UNDEFINED);
             }
             hotkey_ESC = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, ST_UNDEFINED, ST_UNDEFINED);
-            hotkey_F   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, (int16_t)&str_hotkey_F__ovr112[0], ST_UNDEFINED);
-            hotkey_B   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, (int16_t)&str_hotkey_B__ovr112[0], ST_UNDEFINED);
+            hotkey_F   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, (int16_t)str_hotkey_F__ovr112[0], ST_UNDEFINED);
+            hotkey_B   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, (int16_t)str_hotkey_B__ovr112[0], ST_UNDEFINED);
 
             Set_Page_Off();
             Combat_Spellbook_Screen_Draw();
@@ -14108,7 +14104,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
                         (CMB_TargetingType == cstt_DispelMagic)
                     )
                     {
-                        leave_screen == ST_TRUE;
+                        leave_screen = ST_TRUE;
                     }
 
 
@@ -14189,161 +14185,263 @@ void CMB_MeleeAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_batt
 }
 
 
-// Segrax
+// segrax
 // WZD o113p06
 // drake178: CMB_ConvSpellAttack()
 /*
+; performs a conventional damage spell attack with the
+; given spell against the target battle unit, recording
+; the resulting damage (always regular) into the return
+; array
+; unlike regular attacks, this considers top figure
+; damage when allowing for the second defense roll
 */
 /*
 
 
 
 */
-void CMB_ConvSpellAttack(uint16_t spell_idx, uint16_t battle_unit_idx, int16_t* Dmg_Array, int16_t ATK_Override) {
-    int32_t Enchants = 0;
-    int16_t Total_Damage = 0;
+void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int16_t damage_types[], int16_t attack_override_flag)
+{
+    uint32_t enchantments = 0;
+    int16_t damage_total = 0;
     int16_t Figures_Slain = 0;
     int16_t To_Block = 0;
     int16_t Attack_Count = 0;
-    int16_t Attack_Strength = 0;
+    int16_t attack_strength = 0;
     int16_t Effective_Defense = 0;
-    int16_t Immunity_Flags = 0;
-    int16_t Attack_Flags = 0;
+    int16_t attack_immunities = 0;
+    int16_t attack_attributes = 0;
     int16_t Top_Figure_Damage = 0;
-    uint16_t Loop_Var = 0;
+    uint16_t itr = 0;
 
     struct s_BATTLE_UNIT* battleunit = &battle_units[battle_unit_idx];
     struct s_UNIT* unit = &_UNITS[battleunit->unit_idx];
 
-    Enchants = unit->enchantments | battleunit->enchantments | battleunit->item_enchantments;
+    enchantments = unit->enchantments | battleunit->enchantments | battleunit->item_enchantments;
 
-    for (Loop_Var = 0; Loop_Var < 3; Loop_Var++) {
-        Dmg_Array[Loop_Var] = 0;
+    for(itr = 0; itr < 3; itr++)
+    {
+
+        damage_types[itr] = 0;
+
     }
 
-    if (Enchants & UE_RIGHTEOUSNESS) {
+    if(enchantments & UE_RIGHTEOUSNESS)
+    {
         struct s_SPELL_DATA* spell = &spell_data_table[spell_idx];
-        if (spell->magic_realm == sbr_Chaos || spell->magic_realm == sbr_Death) {
+
+        if (spell->magic_realm == sbr_Chaos || spell->magic_realm == sbr_Death)
+        {
+
             return;
+
         }
+
     }
 
-    if (battleunit->Attribs_1 & USA_IMMUNITY_MAGIC) {
+    if(battleunit->Attribs_1 & USA_IMMUNITY_MAGIC)
+    {
+
         return;
+
     }
 
     Top_Figure_Damage = battleunit->TopFig_Dmg;
 
     struct s_SPELL_DATA* spell = &spell_data_table[spell_idx];
-    Attack_Flags = spell->Params2_3;
+
+    attack_attributes = spell->attributes;
 
     To_Block = battleunit->To_Block;
-    if (Attack_Flags & Att_EldrWeap) {
+
+    if(attack_attributes & Att_EldrWeap)
+    {
+
         To_Block--;
+
     }
 
-    Immunity_Flags = spell->Param1;
+    attack_immunities = spell->immunities;
 
-    if (ATK_Override > 0) {
-        Attack_Strength = ATK_Override;
-    } else {
-        Attack_Strength = spell->Param0;
+    if(attack_override_flag > 0)
+    {
+
+        attack_strength = attack_override_flag;
+
+    }
+    else
+    {
+
+        attack_strength = spell->strength;
+
     }
 
-    Effective_Defense = BU_GetEffectiveDEF__SEGRAX(battle_unit_idx, 0x26, Immunity_Flags, Attack_Flags, spell->magic_realm);
+    Effective_Defense = BU_GetEffectiveDEF__SEGRAX(battle_unit_idx, 0x26, attack_immunities, attack_attributes, spell->magic_realm);
 
-    if (Attack_Flags & Att_AREAFLAG) {
+    if(attack_attributes & Att_AREAFLAG)
+    {
         Attack_Count = battleunit->Cur_Figures;
-        Attack_Flags |= Att_DMGLIMIT;
+
+        attack_attributes |= Att_DMGLIMIT;
+
     }
-    else if (Attack_Flags & Att_WarpLghtn) {
-        Attack_Count = Attack_Strength;
+    else if(attack_attributes & Att_WarpLghtn)
+    {
+
+        Attack_Count = attack_strength;
+
     }
-    else {
+    else
+    {
+
         Attack_Count = 1;
+
     }
 
-    if (battleunit->Combat_Effects & bue_Black_Sleep) {
-        Attack_Flags |= Att_DoomDmg;
+    if(battleunit->Combat_Effects & bue_Black_Sleep)
+    {
+
+        attack_attributes |= Att_DoomDmg;
+
     }
 
-    for (Loop_Var = 0; Loop_Var < Attack_Count; Loop_Var++) {
+    for(itr = 0; itr < Attack_Count; itr++)
+    {
+
         int16_t damage = 0;
 
-        if (Attack_Flags & Att_DoomDmg) {
-            damage = Attack_Strength;
+        if(attack_attributes & Att_DoomDmg)
+        {
+
+            damage = attack_strength;
+
         }
-        else {
-            damage = CMB_AttackRoll__SEGRAX(Attack_Strength, 0) - CMB_DefenseRoll__SEGRAX(Effective_Defense, To_Block);
-            if (Enchants & UE_INVULNERABILITY) {
+        else
+        {
+
+            damage = CMB_AttackRoll__SEGRAX(attack_strength, 0) - CMB_DefenseRoll__SEGRAX(Effective_Defense, To_Block);
+
+            if(enchantments & UE_INVULNERABILITY)
+            {
                 damage -= 2;
+
             }
+
         }
 
         if (damage < 0) damage = 0;
 
-        if (Loop_Var == 0 && Top_Figure_Damage > 0) {
+        if(itr == 0 && Top_Figure_Damage > 0)
+        {
+
             damage += Top_Figure_Damage;
+
             Top_Figure_Damage = 0;
+
         }
 
-        if (Top_Figure_Damage < 0) {
+        if(Top_Figure_Damage < 0)
+        {
+
             Top_Figure_Damage += damage;
-            if (Top_Figure_Damage > 0) {
+
+            if(Top_Figure_Damage > 0)
+            {
+
                 damage = Top_Figure_Damage;
+
                 Top_Figure_Damage = 0;
+
             }
-            else {
+            else
+            {
+
                 damage = 0;
+
             }
+
         }
 
-        if (Attack_Flags & Att_DMGLIMIT) {
-            if (battleunit->hits <= damage) {
+        if(attack_attributes & Att_DMGLIMIT)
+        {
+
+            if(battleunit->hits <= damage)
+            {
+
                 Figures_Slain++;
+
                 damage = 0;
+
             }
-            else {
+            else
+            {
+
                 battleunit->hits -= damage;
+
             }
+
         }
-        else {
-            while (battleunit->hits < damage) {
+        else
+        {
+
+            while(battleunit->hits < damage)
+            {
+
                 Figures_Slain++;
 
                 damage -= battleunit->hits;
 
-                if (!(Attack_Flags & Att_DoomDmg)) {
+                if(!(attack_attributes & Att_DoomDmg))
+                {
 
                     damage -= CMB_DefenseRoll__SEGRAX(Effective_Defense, To_Block);
 
-                    if (Enchants & UE_INVULNERABILITY) {
+                    if(enchantments & UE_INVULNERABILITY)
+                    {
+
                         damage -= 2;
+
                     }
+
                 }
+
             } 
 
-            if (damage < 0) {
+            if(damage < 0)
+            {
+
                 damage = 0;
+
             }
+
         }
 
         //ovr113:1A6B
-        Total_Damage += battleunit->hits * Figures_Slain;
+        damage_total += battleunit->hits * Figures_Slain;
+
         Figures_Slain = 0;
 
-        if (Attack_Flags & Att_WarpLghtn) {
-            Attack_Strength--;
+        if(attack_attributes & Att_WarpLghtn)
+        {
+
+            attack_strength--;
+
         }
+
     }
 
-    Total_Damage -= battleunit->TopFig_Dmg;
+    damage_total -= battleunit->TopFig_Dmg;
 
-    if (Total_Damage < 0) {
-        Total_Damage = 0;
+    if(damage_total < 0)
+    {
+
+        damage_total = 0;
+
     }
 
-    Dmg_Array[0] = Total_Damage;
+    damage_types[0] = damage_total;
+
 }
 
 
@@ -14362,18 +14460,18 @@ void CMB_ConvSpellAttack(uint16_t spell_idx, uint16_t battle_unit_idx, int16_t* 
 void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t Dmg_Array[])
 {
     int16_t Figures_Lost = 0;
-    int16_t Total_Damage = 0;
+    int16_t damage_total = 0;
     int16_t itr = 0;  // _DI_
 
-    Total_Damage = 0;
+    damage_total = 0;
 
     for(itr = 0; itr < 3; itr++)
     {
-        Total_Damage += Dmg_Array[itr];
+        damage_total += Dmg_Array[itr];
     }
 
     if(
-        (Total_Damage > 0)
+        (damage_total > 0)
         &&
         (battle_units[battle_unit_idx].status == 0)  /* Unit_Active */
     )
@@ -14391,11 +14489,11 @@ void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t Dmg_Array[])
         }
     }
 
-    Total_Damage += battle_units[battle_unit_idx].TopFig_Dmg;
+    damage_total += battle_units[battle_unit_idx].TopFig_Dmg;
 
-    if(Total_Damage > 0)
+    if(damage_total > 0)
     {
-        Figures_Lost = (Total_Damage / battle_units[battle_unit_idx].hits);
+        Figures_Lost = (damage_total / battle_units[battle_unit_idx].hits);
 
         if(battle_units[battle_unit_idx].Cur_Figures < Figures_Lost)
         {
@@ -14404,7 +14502,7 @@ void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t Dmg_Array[])
 
         battle_units[battle_unit_idx].Cur_Figures -= Figures_Lost;
 
-        battle_units[battle_unit_idx].TopFig_Dmg = (Total_Damage % battle_units[battle_unit_idx].hits);
+        battle_units[battle_unit_idx].TopFig_Dmg = (damage_total % battle_units[battle_unit_idx].hits);
 
     }
 
@@ -17525,12 +17623,12 @@ BUG: this has just been done in the parent function
                             }
                             else
                             {
-                                Sound_Data_Seg = ST_UNDEFINED;
+                                Sound_Data_Seg = (SAMB_ptr)ST_UNDEFINED;
                             }
 
                             battle_units[battle_unit_idx].MoveStage = 1;
 
-                            if(Sound_Data_Seg != ST_UNDEFINED)
+                            if(Sound_Data_Seg != (SAMB_ptr)ST_UNDEFINED)
                             {
 
                                 // DOMSDOS  Play_Sound__WIP(Sound_Data_Seg);
@@ -19859,7 +19957,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
         if((battle_units[attacker_battle_unit_idx].Attribs_2 & USA_IMMOLATION) != 0)
         {
 
-            CMB_ConvSpellAttack(spl_Fireball, defender_battle_unit_idx, &new_damage_array[0], 4);
+            CMB_ConvSpellAttack__WIP(spl_Fireball, defender_battle_unit_idx, &new_damage_array[0], 4);
 
         }
 
@@ -20376,23 +20474,23 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
 
 
 */
-int16_t BU_GetEffectiveDEF__SEGRAX(int16_t battle_unit_idx, int16_t attack_type, int16_t Imm_Flags, int16_t ATK_Flags, int16_t Realm)
+int16_t BU_GetEffectiveDEF__SEGRAX(int16_t battle_unit_idx, int16_t attack_type, int16_t attack_immunities, int16_t attack_attributes, int16_t magic_realm)
 {
     int16_t Immunity_Type = 0;
     int16_t IDK_effective_defense = 0;  // _SI_
 
-    struct s_BATTLE_UNIT* battleunit = &battle_units[battle_unit_idx];
-    struct s_UNIT* unit = &_UNITS[battleunit->unit_idx];
+    struct s_BATTLE_UNIT * battleunit = &battle_units[battle_unit_idx];
+    struct s_UNIT * unit = &_UNITS[battleunit->unit_idx];
 
-    int32_t Enchants = unit->enchantments | battleunit->enchantments | battleunit->item_enchantments;
+    int32_t enchantments = unit->enchantments | battleunit->enchantments | battleunit->item_enchantments;
 
     IDK_effective_defense = battleunit->defense;
 
-    if (Imm_Flags & battleunit->Attribs_1 & USA_IMMUNITY_ILLUSION) {
-        Imm_Flags ^= USA_IMMUNITY_ILLUSION;
+    if (attack_immunities & battleunit->Attribs_1 & USA_IMMUNITY_ILLUSION) {
+        attack_immunities ^= USA_IMMUNITY_ILLUSION;
     }
 
-    if (Imm_Flags & USA_IMMUNITY_ILLUSION) {
+    if (attack_immunities & USA_IMMUNITY_ILLUSION) {
         return 0;
     }
 
@@ -20400,32 +20498,32 @@ int16_t BU_GetEffectiveDEF__SEGRAX(int16_t battle_unit_idx, int16_t attack_type,
         IDK_effective_defense += 2;
     }
 
-    if (Imm_Flags & battleunit->Attribs_1) {
+    if (attack_immunities & battleunit->Attribs_1) {
         if (attack_type != am_Melee) {
             Immunity_Type = 2;
         }
     }
 
-    if (Imm_Flags & battleunit->Attribs_1 & USA_IMMUNITY_WEAPON) {
+    if (attack_immunities & battleunit->Attribs_1 & USA_IMMUNITY_WEAPON) {
         Immunity_Type = 1;
     }
 
-    if ((battleunit->Attribs_1 & USA_IMMUNITY_MAGIC) && Realm != ST_UNDEFINED && attack_type != 0) {
+    if ((battleunit->Attribs_1 & USA_IMMUNITY_MAGIC) && magic_realm != ST_UNDEFINED && attack_type != 0) {
         Immunity_Type = 2;
     }
 
-    if ((Realm == sbr_Chaos || Realm == sbr_Death) && (Enchants & UE_RESISTELEMENTS)) {
+    if ((magic_realm == sbr_Chaos || magic_realm == sbr_Death) && (enchantments & UE_RESISTELEMENTS)) {
         IDK_effective_defense += 3;
     }
 
-    if ((Realm == sbr_Chaos || Realm == sbr_Nature) && (Enchants & UE_ELEMENTALARMOR)) {
+    if ((magic_realm == sbr_Chaos || magic_realm == sbr_Nature) && (enchantments & UE_ELEMENTALARMOR)) {
         IDK_effective_defense += 10;
     }
-    else if ((Enchants & UE_RESISTELEMENTS)) {
+    else if ((enchantments & UE_RESISTELEMENTS)) {
         IDK_effective_defense += 3;
     }
 
-    if (ATK_Flags & Att_ArmorPrc) {
+    if (attack_attributes & Att_ArmorPrc) {
         IDK_effective_defense -= IDK_effective_defense >> 1;
     }
 
@@ -21910,7 +22008,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         (_combat_attacker_player != NEUTRAL_PLAYER_IDX)
     )
     {
-        Change_Relations(-Diplomatic_Value, _combat_attacker_player, _combat_defender_player, 8, ST_NULL, ST_NULL);
+        Change_Relations__WIP(-Diplomatic_Value, _combat_attacker_player, _combat_defender_player, 8, ST_NULL, ST_NULL);
     }
 
 
@@ -22387,7 +22485,8 @@ int16_t Combat_Results_Scroll_Text(void)
         {
             LBX_Load_Data_Static(message_lbx_file__ovr123, 0, (SAMB_ptr)message, 7, 1, 150);  /* "Your forces have retreated" */
             Print_Centered(160, (_scroll_text_top + 25), message);
-            if(GUI_NearMsgString != 0)
+            // if(GUI_NearMsgString != 0)
+            if(GUI_NearMsgString[0] != '\0')
             {
                 Set_Font_Colors_15(1, &colors2[0]);
                 Set_Font_Spacing_Width(2);

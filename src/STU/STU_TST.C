@@ -12,6 +12,9 @@
 #include "../Spellbook.H"
 #include "../NEXTTURN.H"
 
+#ifdef STU_DEBUG
+#include "STU/STU_DBG.H"
+#endif
 
 
 void TST_Cheat_Power(int16_t player_idx)
@@ -63,39 +66,50 @@ void TST_Patch_Game_Data(void)
 
 
     
-    TST_Learn_Spell(player_idx, spl_Berserk);
-    TST_Learn_Spell(player_idx, spl_Black_Channels);
-    TST_Learn_Spell(player_idx, spl_Bless);
-    TST_Learn_Spell(player_idx, spl_Cloak_Of_Fear);
-    TST_Learn_Spell(player_idx, spl_Eldritch_Weapon);
-    TST_Learn_Spell(player_idx, spl_Elemental_Armor);
-    TST_Learn_Spell(player_idx, spl_Endurance);
-    TST_Learn_Spell(player_idx, spl_Flame_Blade);
-    TST_Learn_Spell(player_idx, spl_Flight);
-    TST_Learn_Spell(player_idx, spl_Giant_Strength);
-    TST_Learn_Spell(player_idx, spl_Guardian_Wind);
-    TST_Learn_Spell(player_idx, spl_Haste);
-    TST_Learn_Spell(player_idx, spl_Heroism);
-    TST_Learn_Spell(player_idx, spl_Holy_Armor);
-    TST_Learn_Spell(player_idx, spl_Holy_Weapon);
-    TST_Learn_Spell(player_idx, spl_Immolation);
-    TST_Learn_Spell(player_idx, spl_Invisibility);
-    TST_Learn_Spell(player_idx, spl_Invulnerability);
-    TST_Learn_Spell(player_idx, spl_Iron_Skin);
-    TST_Learn_Spell(player_idx, spl_Lionheart);
-    TST_Learn_Spell(player_idx, spl_Magic_Immunity);
-    TST_Learn_Spell(player_idx, spl_Path_Finding);
-    TST_Learn_Spell(player_idx, spl_Planar_Travel);
-    TST_Learn_Spell(player_idx, spl_Regeneration);
-    TST_Learn_Spell(player_idx, spl_Resist_Elements);
-    TST_Learn_Spell(player_idx, spl_Resist_Magic);
-    TST_Learn_Spell(player_idx, spl_Righteousness);
-    TST_Learn_Spell(player_idx, spl_Spell_Lock);
-    TST_Learn_Spell(player_idx, spl_Stone_Skin);
-    TST_Learn_Spell(player_idx, spl_True_Sight);
-    TST_Learn_Spell(player_idx, spl_Water_Walking);
-    TST_Learn_Spell(player_idx, spl_Wind_Walking);
-    TST_Learn_Spell(player_idx, spl_Wraith_Form);
+    // Direct Damage - Fixed
+    TST_Learn_Spell(player_idx, spl_Doom_Bolt);
+    TST_Learn_Spell(player_idx, spl_Fire_Storm);
+    TST_Learn_Spell(player_idx, spl_Ice_Storm);
+    TST_Learn_Spell(player_idx, spl_Star_Fires);
+    TST_Learn_Spell(player_idx, spl_Warp_Lightning);
+
+    // Overland Unit Enchantments
+    // Overland Unit Enchantments - Normal Units Only
+    // TST_Learn_Spell(player_idx, spl_Berserk);
+    // TST_Learn_Spell(player_idx, spl_Black_Channels);
+    // TST_Learn_Spell(player_idx, spl_Bless);
+    // TST_Learn_Spell(player_idx, spl_Cloak_Of_Fear);
+    // TST_Learn_Spell(player_idx, spl_Eldritch_Weapon);
+    // TST_Learn_Spell(player_idx, spl_Elemental_Armor);
+    // TST_Learn_Spell(player_idx, spl_Endurance);
+    // TST_Learn_Spell(player_idx, spl_Flame_Blade);
+    // TST_Learn_Spell(player_idx, spl_Flight);
+    // TST_Learn_Spell(player_idx, spl_Giant_Strength);
+    // TST_Learn_Spell(player_idx, spl_Guardian_Wind);
+    // TST_Learn_Spell(player_idx, spl_Haste);
+    // TST_Learn_Spell(player_idx, spl_Heroism);
+    // TST_Learn_Spell(player_idx, spl_Holy_Armor);
+    // TST_Learn_Spell(player_idx, spl_Holy_Weapon);
+    // TST_Learn_Spell(player_idx, spl_Immolation);
+    // TST_Learn_Spell(player_idx, spl_Invisibility);
+    // TST_Learn_Spell(player_idx, spl_Invulnerability);
+    // TST_Learn_Spell(player_idx, spl_Iron_Skin);
+    // TST_Learn_Spell(player_idx, spl_Lionheart);
+    // TST_Learn_Spell(player_idx, spl_Magic_Immunity);
+    // TST_Learn_Spell(player_idx, spl_Path_Finding);
+    // TST_Learn_Spell(player_idx, spl_Planar_Travel);
+    // TST_Learn_Spell(player_idx, spl_Regeneration);
+    // TST_Learn_Spell(player_idx, spl_Resist_Elements);
+    // TST_Learn_Spell(player_idx, spl_Resist_Magic);
+    // TST_Learn_Spell(player_idx, spl_Righteousness);
+    // TST_Learn_Spell(player_idx, spl_Spell_Lock);
+    // TST_Learn_Spell(player_idx, spl_Stone_Skin);
+    // TST_Learn_Spell(player_idx, spl_True_Sight);
+    // TST_Learn_Spell(player_idx, spl_Water_Walking);
+    // TST_Learn_Spell(player_idx, spl_Wind_Walking);
+    // TST_Learn_Spell(player_idx, spl_Wraith_Form);
+
+
 
     // TST_Learn_Spell(player_idx, spl_Floating_Island);
 
@@ -104,20 +118,20 @@ void TST_Patch_Game_Data(void)
 
     // City Enchantment - Positive
     // City Enchantment - Negative
-    TST_Learn_Spell(player_idx, spl_Consecration);
-    TST_Learn_Spell(player_idx, spl_Cursed_Lands);
-    TST_Learn_Spell(player_idx, spl_Famine);
-    TST_Learn_Spell(player_idx, spl_Flying_Fortress);
-    TST_Learn_Spell(player_idx, spl_Gaias_Blessing);
-    TST_Learn_Spell(player_idx, spl_Inspirations);
-    TST_Learn_Spell(player_idx, spl_Natures_Eye);
-    TST_Learn_Spell(player_idx, spl_Prosperity);
-    TST_Learn_Spell(player_idx, spl_Spell_Ward);
-    TST_Learn_Spell(player_idx, spl_Stream_Of_Life);
-    TST_Learn_Spell(player_idx, spl_Summoning_Circle);
-    TST_Learn_Spell(player_idx, spl_Wall_Of_Darkness);
-    TST_Learn_Spell(player_idx, spl_Wall_Of_Fire);
-    TST_Learn_Spell(player_idx, spl_Wall_Of_Stone);
+    // TST_Learn_Spell(player_idx, spl_Consecration);
+    // TST_Learn_Spell(player_idx, spl_Cursed_Lands);
+    // TST_Learn_Spell(player_idx, spl_Famine);
+    // TST_Learn_Spell(player_idx, spl_Flying_Fortress);
+    // TST_Learn_Spell(player_idx, spl_Gaias_Blessing);
+    // TST_Learn_Spell(player_idx, spl_Inspirations);
+    // TST_Learn_Spell(player_idx, spl_Natures_Eye);
+    // TST_Learn_Spell(player_idx, spl_Prosperity);
+    // TST_Learn_Spell(player_idx, spl_Spell_Ward);
+    // TST_Learn_Spell(player_idx, spl_Stream_Of_Life);
+    // TST_Learn_Spell(player_idx, spl_Summoning_Circle);
+    // TST_Learn_Spell(player_idx, spl_Wall_Of_Darkness);
+    // TST_Learn_Spell(player_idx, spl_Wall_Of_Fire);
+    // TST_Learn_Spell(player_idx, spl_Wall_Of_Stone);
 
     // TST_Learn_Spell(player_idx, spl_Awareness);
     // TST_Learn_Spell(player_idx, spl_Aura_Of_Majesty);

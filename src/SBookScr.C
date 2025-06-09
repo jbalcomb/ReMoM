@@ -988,7 +988,7 @@ int16_t Spell_Animation_Load_Graphics__WIP(int16_t spell_idx)
         } break;
         case spl_Fire_Storm:
         {
-            __debugbreak();
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__3of3, 6, _screen_seg);
         } break;
         case spl_Flame_Strike:
         {
@@ -1086,10 +1086,6 @@ int16_t Spell_Animation_Load_Graphics__WIP(int16_t spell_idx)
             spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, spell_data_table[spell_idx].magic_realm, _screen_seg);
             return_value = ST_TRUE;
         }
-    }
-    else
-    {
-        __debugbreak();  // FTLOGAATIH!?!?!
     }
 
     return return_value;

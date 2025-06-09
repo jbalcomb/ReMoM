@@ -13,9 +13,11 @@
 #include "MOX/MOX_DAT.H"
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_T4.H"
-#include "MOX/Timer.H"
 #include "MOX/MOX_TYPE.H"
+#include "MOX/paragrph.H"
+#include "MOX/Timer.H"
 
+#include "Lair.H"
 #include "MOM_DEF.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"  /* Add_Nodes_To_Entities_On_Map_Window() */
@@ -23,6 +25,7 @@
 #include "SPELLDEF.H"
 
 #include <assert.h>
+#include <string.h>
 
 
 
@@ -858,7 +861,7 @@ int16_t World_To_Screen(int16_t map_wx, int16_t map_wy, int16_t * unit_wx, int16
 void Spell_Casting_Screen_Allocate(void)
 {
     _reduced_map_seg = Allocate_First_Block(_screen_seg, 303);
-    _current_mouse_list = Near_Allocate_First(1560);  // mouse lists?  1560 / 12 = 130 ...targets?
+    _current_mouse_list = (struct s_mouse_list *)Near_Allocate_First(1560);  // mouse lists?  1560 / 12 = 130 ...targets?
     _osc_panel_title = Near_Allocate_Next(100);
 }
 
@@ -1160,6 +1163,7 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                         switch(_osc_spell_target_type)
                         {
                             case stt_Friendly_Unit:
+                            case stt_Friendly_Group:
                             {
                                 if(_UNITS[entity_idx].owner_idx == _human_player_idx)
                                 {
@@ -1170,11 +1174,8 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                                     _current_mouse_list[mouse_list_count].image_num = crsr_RedCross;
                                 }
                             } break;
-                            case stt_Friendly_Group:
-                            {
-                                // N/A
-                            } break;
                             case stt_Enemy_Unit:
+                            case stt_Enemy_Group:
                             {
                                 if(_UNITS[entity_idx].owner_idx != _human_player_idx)
                                 {
@@ -1184,10 +1185,6 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                                 {
                                     _current_mouse_list[mouse_list_count].image_num = crsr_RedCross;
                                 }
-                            } break;
-                            case stt_Enemy_Group:
-                            {
-                                // N/A
                             } break;
                             case stt_Map_Square:
                             {
@@ -1355,7 +1352,7 @@ void Spell_Casting_Screen_Draw_Panel(void)
         word_42C12 = 0;
     }
 
-    Print_Paragraph(249, 114, 60, _osc_panel_title, 0);
+    Print_Paragraph(249, 114, 60, (char *)_osc_panel_title, 0);
 
     Set_Outline_Color(ST_TRANSPARENT);
 

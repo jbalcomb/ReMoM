@@ -157,7 +157,7 @@ int16_t IDK_Pick_Target_For_Unit_Enchantment__STUB(int16_t spell_target_type, in
 // sub_E88F3()
 
 // WZD o156p45
-int16_t Get_Map_Square_Target_For_Spell(int16_t something, int16_t * wx, int16_t * wy, int16_t * wp, int16_t spell_idx, int16_t player_idx);
+int16_t Get_Map_Square_Target_For_Spell(int16_t spell_arget_type, int16_t * wx, int16_t * wy, int16_t * wp, int16_t spell_idx, int16_t player_idx);
 
 // WZD o156p46
 // AITP_OVL_HarmStack()
