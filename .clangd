@@ -1,5 +1,7 @@
-If:
-  PathMatch: .*\.h
-
 CompileFlags:
-  Add: [-xc-header]
+  Add: [
+
+    # VERY new warning. Active in C, where it can't be fixed. A bug?
+    -Wno-unsafe-buffer-usage,
+
+  ]
