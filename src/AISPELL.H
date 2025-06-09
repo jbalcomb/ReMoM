@@ -145,7 +145,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
 // AI_CanTargetCities()
 
 // WZD o156p41
-// sub_E8070()
+int16_t IDK_Pick_Target_For_Unit_Enchantment__STUB(int16_t spell_target_type, int16_t * unit_idx, int16_t spell_idx, int16_t player_idx);
 
 // WZD o156p42
 // sub_E8448()

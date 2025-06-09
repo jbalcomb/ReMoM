@@ -5,6 +5,7 @@
         ovr135
 */
 
+#include "MOM_DEF.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
 #include "MOX/MOX_TYPE.H"
@@ -38,12 +39,16 @@ char str_Tranquility[] = "Tranquility";
 // WZD dseg:6A81
 char str_LifeForce[] = "Life Force";
 
-// WZD dseg:6A8C 54 68 61 74 20 75 6E 69 74 20 61 6C 72 65 61 64+cnst_SpellError_1_2 db 'That unit already has ',0
+// WZD dseg:6A8C
+char cnst_SpellError_1_2[] = "That unit already has ";
 // WZD dseg:6AA3
 char cnst_SpellError_2_2[] = " cast on it";
-// WZD dseg:6AAF 4F 6E 6C 79 20 6E 6F 72 6D 61 6C 20 75 6E 69 74+aOnlyNormalUnit db 'Only normal units may have ',0
-// WZD dseg:6ACB 20 63 61 73 74 20 6F 6E 20 74 68 65 6D 00       aCastOnThem db ' cast on them',0        
-// WZD dseg:6AD9 4F 6E 6C 79 20 6E 6F 72 6D 61 6C 20 75 6E 69 74+aOnlyNormalUn_0 db 'Only normal units and created undead may have ',0
+// WZD dseg:6AAF
+char aOnlyNormalUnit[] = "Only normal units may have ";
+// WZD dseg:6ACB
+char aCastOnThem[] = " cast on them";
+// WZD dseg:6AD9
+char aOnlyNormalUn_0[] = "Only normal units and created undead may have ";
 // WZD dseg:6B08
 char aThatCityAlread[] = "That city already has ";
 // WZD dseg:6B1F 20 73 70 65 6C 6C 20 68 61 73 20 66 61 69 6C 65+cnst_SpellError_4 db ' spell has failed.',0
@@ -147,9 +152,10 @@ int16_t Calculate_Dispel_Difficulty(int16_t casting_cost, int16_t player_idx, in
 /*
 
 IDA Group Colors
-    scc_Summoning           ( 0)  #24 reddish-brown
-    scc_City_Enchantment_Positive    ( 2)  #14 blueish lighter
-    scc_City_Enchantment_Negative          ( 3)  #14 blueish lighter
+    scc_Summoning                  ( 0)  #24 reddish-brown
+    scc_Unit_Enchantment           ( 1)  #43 pea green
+    scc_City_Enchantment_Positive  ( 2)  #14 blueish lighter
+    scc_City_Enchantment_Negative  ( 3)  #14 blueish lighter
     scc_Special_Spell       ( 5)  
     scc_Global_Enchantment  ( 9)  #13 ~ blue, greyish/greenish
     scc_Crafting_Spell      (11)  #17 mauve
@@ -355,7 +361,8 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
             switch(spell_data_table[spell_idx].type)
             {
 
-                case scc_Summoning:  //  0
+                // Air Elemental, Angel, Arch Angel, Basilisk, Behemoth, Chaos Spawn, Chimeras, Cockatrices, Colossus, Death Knights, Demon Lord, Djinn, Doom Bat, Earth Elemental, Efreet, Fire Elemental, Fire Giant, Floating Island, Gargoyles, Ghouls, Giant Spiders, Gorgons, Great Drake, Great Wyrm, Guardian Spirit, Hell Hounds, Hydra, Magic Spirit, Nagas, Night Stalker, Phantom Beast, Phantom Warriors, Shadow Demons, Skeletons, Sky Drake, Sprites, Stone Giant, Storm Giant, Unicorns, War Bears, Wraiths
+                case scc_Summoning:
                 {
 
                     // ¿ BUG should be ((player_idx == HUMAN_PLAYER_IDX) && (_units < 950)) ?
@@ -461,11 +468,280 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                 } break;  /* case scc_Summoning: */
                 
-                case scc_Unit_Enchantment:  //  1
+                // Berserk, Black Channels, Bless, Cloak of Fear, Elemental Armor, Endurance, Flight, Giant Strength, Guardian Wind, Haste, Immolation, Invisibility, Invulnerability, Iron Skin, Lionheart, Magic Immunity, Path Finding, Planar Travel, Regeneration, Resist Elements, Resist Magic, Righteousness, Spell Lock, Stone Skin, True Sight, Water Walking, Wind Walking, Wraith Form
+                case scc_Unit_Enchantment:
+                // Eldritch Weapon, Flame Blade, Heroism, Holy Armor, Holy Weapon
+                case scc_Unit_Enchantment_Normal_Only:
                 {
 
-                } break;
+                    if(player_idx != HUMAN_PLAYER_IDX)
+                    {
 
+                        /* SPELLY */  Cast_Successful = IDK_Pick_Target_For_Unit_Enchantment__STUB(stt_Friendly_Unit, &spell_target_idx, spell_idx, player_idx);
+
+                    }
+                    else
+                    {
+
+                        MultiPurpose_Local_Var = ST_FALSE;
+                        Cast_Successful = ST_TRUE;
+
+                        while((MultiPurpose_Local_Var == ST_FALSE) && (Cast_Successful == ST_TRUE))
+                        {
+
+                            MultiPurpose_Local_Var = ST_TRUE;
+
+                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Friendly_Unit, &spell_target_idx, &RetY, &RetP, &var_12, &var_10, (char *)&spell_name[0]);
+
+                            if(Cast_Successful == ST_TRUE)
+                            {
+
+                                if((_UNITS[spell_target_idx].enchantments & spell_data_table[spell_idx].enchantments) != 0)
+                                {
+                                    MultiPurpose_Local_Var = ST_FALSE;
+                                    Allocate_Reduced_Map();
+                                    Full_Draw_Main_Screen();
+                                    strcpy(GUI_NearMsgString, cnst_SpellError_1_2);
+                                    strcat(GUI_NearMsgString, spell_name);
+                                    strcat(GUI_NearMsgString, cnst_SpellError_2_2);
+                                    Warn0(GUI_NearMsgString);
+                                }
+
+                                if(
+                                    (spell_idx == spl_Stone_Skin)
+                                    &&
+                                    ((_UNITS[spell_target_idx].enchantments & UE_IRONSKIN) != 0)
+                                )
+                                {
+                                    MultiPurpose_Local_Var = ST_FALSE;
+                                    Allocate_Reduced_Map();
+                                    Full_Draw_Main_Screen();
+                                    LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 22, 1, 150);  // "Stone Skin is not cumulative with Iron Skin."
+                                    Warn0(GUI_NearMsgString);
+                                }
+
+                                if(
+                                    (spell_idx == spl_Resist_Elements)
+                                    &&
+                                    ((_UNITS[spell_target_idx].enchantments & UE_ELEMENTALARMOR) != 0)
+                                )
+                                {
+                                    MultiPurpose_Local_Var = ST_FALSE;
+                                    Allocate_Reduced_Map();
+                                    Full_Draw_Main_Screen();
+                                    LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 23, 1, 150);
+                                    Warn0(GUI_NearMsgString);
+                                }
+
+                                if(
+                                    (spell_idx == spl_Resist_Elements)
+                                    &&
+                                    ((_UNITS[spell_target_idx].enchantments & UE_WRAITHFORM) != 0)
+                                )
+                                {
+                                    MultiPurpose_Local_Var = ST_FALSE;
+                                    Allocate_Reduced_Map();
+                                    Full_Draw_Main_Screen();
+                                    LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 24, 1, 150);
+                                    Warn0(GUI_NearMsgString);
+                                }
+
+                                if(
+                                    (spell_data_table[spell_idx].type == scc_Unit_Enchantment_Normal_Only)
+                                    ||
+                                    (spell_idx == spl_Chaos_Channels)
+                                )
+                                {
+                                    // BUGBUG:  bad definition of "Normal Unit"
+                                    if(Unit_Is_Normal(spell_target_idx) == ST_FALSE)
+                                    {
+                                        MultiPurpose_Local_Var = ST_FALSE;
+                                        Allocate_Reduced_Map();
+                                        Full_Draw_Main_Screen();
+                                        strcpy(GUI_NearMsgString, aOnlyNormalUnit);
+                                        strcat(GUI_NearMsgString, spell_name);
+                                        strcat(GUI_NearMsgString, aCastOnThem);
+                                        Warn0(GUI_NearMsgString);
+                                    }
+                                }
+
+                                if(
+                                    (spell_idx == spl_Immolation)
+                                    &&
+                                    ((_unit_type_table[_UNITS[spell_target_idx].type].Attribs_2 & USA_IMMOLATION) != 0)
+                                )
+                                {
+                                    MultiPurpose_Local_Var = ST_FALSE;
+                                    Allocate_Reduced_Map();
+                                    Full_Draw_Main_Screen();
+                                    LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 87, 1, 150);
+                                    Warn0(GUI_NearMsgString);
+                                }
+
+                                if(
+                                    (spell_idx == spl_Cloak_Of_Fear)
+                                    &&
+                                    ((_unit_type_table[_UNITS[spell_target_idx].type].Attribs_2 & USA_CAUSEFEAR) != 0)
+                                )
+                                {
+                                    MultiPurpose_Local_Var = ST_FALSE;
+                                    Allocate_Reduced_Map();
+                                    Full_Draw_Main_Screen();
+                                    LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 87, 1, 150);
+                                    Warn0(GUI_NearMsgString);
+                                }
+
+                                if(
+                                    (spell_idx == spl_True_Sight)
+                                    &&
+                                    ((_unit_type_table[_UNITS[spell_target_idx].type].Attribs_1 & USA_IMMUNITY_ILLUSION) != 0)
+                                )
+                                {
+                                    MultiPurpose_Local_Var = ST_FALSE;
+                                    Allocate_Reduced_Map();
+                                    Full_Draw_Main_Screen();
+                                    LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 87, 1, 150);
+                                    Warn0(GUI_NearMsgString);
+                                }
+
+                                if(
+                                    (spell_idx == spl_Magic_Immunity)
+                                    &&
+                                    ((_unit_type_table[_UNITS[spell_target_idx].type].Attribs_1 & USA_IMMUNITY_MAGIC) != 0)
+                                )
+                                {
+                                    MultiPurpose_Local_Var = ST_FALSE;
+                                    Allocate_Reduced_Map();
+                                    Full_Draw_Main_Screen();
+                                    LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 87, 1, 150);
+                                    Warn0(GUI_NearMsgString);
+                                }
+
+                                if(
+                                    (spell_idx == spl_Planar_Travel)
+                                    &&
+                                    ((_unit_type_table[_UNITS[spell_target_idx].type].Abilities & UA_PLANARTRAVEL) != 0)
+                                )
+                                {
+                                    MultiPurpose_Local_Var = ST_FALSE;
+                                    Allocate_Reduced_Map();
+                                    Full_Draw_Main_Screen();
+                                    LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 87, 1, 150);
+                                    Warn0(GUI_NearMsgString);
+                                }
+
+                                if(
+                                    (spell_idx == spl_Invisibility)
+                                    &&
+                                    ((_unit_type_table[_UNITS[spell_target_idx].type].Abilities & UA_INVISIBILITY) != 0)
+                                )
+                                {
+                                    MultiPurpose_Local_Var = ST_FALSE;
+                                    Allocate_Reduced_Map();
+                                    Full_Draw_Main_Screen();
+                                    LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 87, 1, 150);
+                                    Warn0(GUI_NearMsgString);
+                                }
+
+                                if(
+                                    (spell_idx == spl_Wraith_Form)
+                                    &&
+                                    ((_unit_type_table[_UNITS[spell_target_idx].type].Abilities & UA_NONCORPOREAL) != 0)
+                                )
+                                {
+                                    MultiPurpose_Local_Var = ST_FALSE;
+                                    Allocate_Reduced_Map();
+                                    Full_Draw_Main_Screen();
+                                    LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 87, 1, 150);
+                                    Warn0(GUI_NearMsgString);
+                                }
+
+                                if(
+                                    (spell_idx == spl_Wind_Walking)
+                                    &&
+                                    ((_unit_type_table[_UNITS[spell_target_idx].type].Abilities & UA_WINDWALKING) != 0)
+                                )
+                                {
+                                    MultiPurpose_Local_Var = ST_FALSE;
+                                    Allocate_Reduced_Map();
+                                    Full_Draw_Main_Screen();
+                                    LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 87, 1, 150);
+                                    Warn0(GUI_NearMsgString);
+                                }
+
+                                if(
+                                    (spell_idx == spl_Regeneration)
+                                    &&
+                                    ((_unit_type_table[_UNITS[spell_target_idx].type].Abilities & UA_REGENERATION) != 0)
+                                )
+                                {
+                                    MultiPurpose_Local_Var = ST_FALSE;
+                                    Allocate_Reduced_Map();
+                                    Full_Draw_Main_Screen();
+                                    LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 87, 1, 150);
+                                    Warn0(GUI_NearMsgString);
+                                }
+
+                                // ¿ BUGBUG  should be NOT normal AND undead ?
+                                if(
+                                    (spell_idx == spl_Black_Channels)
+                                    &&
+                                    (Unit_Is_Normal(spell_target_idx) == ST_FALSE)
+                                    &&
+                                    ((_UNITS[spell_target_idx].mutations & UM_UNDEAD) != 0)
+                                )
+                                {
+                                    MultiPurpose_Local_Var = ST_FALSE;
+                                    Allocate_Reduced_Map();
+                                    Full_Draw_Main_Screen();
+                                    strcpy(GUI_NearMsgString, aOnlyNormalUn_0);
+                                    strcat(GUI_NearMsgString, spell_name);
+                                    strcat(GUI_NearMsgString, aCastOnThem);
+                                    Warn0(GUI_NearMsgString);
+                                }
+
+                            }  /* if(Cast_Successful == ST_TRUE)  */
+
+                        }  /* while((MultiPurpose_Local_Var == ST_FALSE) && (Cast_Successful == ST_TRUE)) */
+
+                    }
+
+                    // @@After_CastUnitEnch
+
+                    if(player_idx == HUMAN_PLAYER_IDX)
+                    {
+                        
+                        Allocate_Reduced_Map();
+
+                        Spell_Animation_Load_Sound_Effect__WIP(spell_idx);
+
+                        Spell_Animation_Load_Graphics__WIP(spell_idx);
+
+                        Spell_Animation_Screen__WIP(_UNITS[spell_target_idx].wx, _UNITS[spell_target_idx].wy, _UNITS[spell_target_idx].wp);
+
+                        Full_Draw_Main_Screen();
+
+                    }
+
+                    _UNITS[spell_target_idx].enchantments |= spell_data_table[spell_idx].enchantments;
+
+                    if(spell_idx == spl_Heroism)
+                    {
+
+                        _UNITS[spell_target_idx].Level = Calc_Unit_Level(spell_target_idx);
+
+                    }
+
+                    if(spell_idx == spl_Black_Channels)
+                    {
+
+                        _UNITS[spell_target_idx].mutations |= UM_UNDEAD;
+
+                    }
+
+                } break;  /* case scc_Unit_Enchantment, scc_Unit_Enchantment_Normal_Only:*/
+
+                // Altar of Battle, Astral Gate, Cloud of Shadow, Consecration, Dark Rituals, Earth Gate, Flying Fortress, Gaias Blessing, Heavenly Light, Inspirations, Natures Eye, Prosperity, Stream of Life, Summoning Circle, Wall of Darkness, Wall of Fire
                 case scc_City_Enchantment_Positive:  //  2
                 {
 
@@ -625,8 +901,9 @@ Capture_Cities_Data();
 
                     }
 
-                } break;
+                } break;  /* case scc_City_Enchantment_Positive: */
 
+                // Chaos Rift, Cursed Lands, Evil Presence, Famine, Pestilence
                 case scc_City_Enchantment_Negative:  //  3
                 {
                     if(player_idx != HUMAN_PLAYER_IDX)
@@ -722,33 +999,27 @@ Capture_Cities_Data();
                         }
                         Change_Relations_For_Bad_City_Spell(player_idx, spell_idx, spell_target_idx);
                     }
-                } break;
+                } break;  /* case scc_City_Enchantment_Negative: */
 
-                case scc_Fixed_Dmg_Spell:  //  4
+                // BOTH:  Doom Bolt, Fire Storm, Ice Storm, Star Fires, Warp Lightning
+                case scc_Direct_Damage_Fixed:  //  4
                 {
 
-                } break;
+                } break;  /* case scc_Fixed_Dmg_Spell: */
 
+                // Animate Dead, Black Wind, Call The Void, Change Terrain, Chaos Channels, Corruption, Cracks Call, Death Wish, Disrupt, Earth Lore, Earth to Mud, Earthquake, Enchant Road, Great Unsummoning, Healing, Incarnation, Lycanthropy, Magic Vortex, Move Fortress, Natures Cures, Plane Shift, Raise Dead, Raise Volcano, Recall Hero, Resurrection, Spell Binding, Spell Of Mastery, Spell Of Return, Spell Ward, Stasis, Summon Champion, Summon Hero, Transmute, Wall of Stone, Warp Creature, Warp Node, Warp Wood, Word of Recall
                 case scc_Special_Spell:  //  5
                 {
 
                 } break;
 
+                // WIZARD:  Cruel Unminding, Drain Power, Spell Blast, Subversion
                 case scc_Target_Wiz_Spell:  //  6
                 {
 
                 } break;
 
-//                 case N/A:  //  7
-//                 {
-// 
-//                 } break;
-
-//                 case N/A:  //  8
-//                 {
-// 
-//                 } break;
-
+                // Armageddon, Aura of Majesty, Awareness, Chaos Surge, Charm of Life, Crusade, Detect Magic, Doom Mastery, Eternal Night, Evil Omens, Great Wasting, Herb Mastery, Holy Arms, Just Cause, Life Force, Meteor Storms, Natures Awareness, Natures Wrath, Planar Seal, Suppress Magic, Time Stop, Tranquility, Wind Mastery, Zombie Mastery
                 case scc_Global_Enchantment:  // 9
                 {
 
@@ -813,74 +1084,32 @@ Capture_Cities_Data();
 
                 } break;
 
-                case scc_Battlefield_Spell:  // 10
-                {
-
-                } break;
-
                 case scc_Crafting_Spell:  // 11
                 {
 
                 } break;
 
-                case scc_Destruction_Spell:  // 12
-                {
-
-                } break;
-
-                case scc_Resistable_Spell:  // 13
-                {
-
-                } break;
-
-                case scc_Unresistable_Spell:  // 14
-                {
-
-                } break;
-
-                case scc_Mundane_Enchantment:  // 15
-                {
-
-                } break;
-
+                // COMBAT:  Possession, Shatter
                 case scc_Mundane_Curse:  // 16
                 {
 
                 } break;
 
-                case scc_Infusable_Spell:  // 17
-                {
-
-                } break;
-
-                case scc_Dispel_Spell:  // 18
-                {
-
-                } break;
-
+                // ¿ BOTH ?  Disenchant Area, Disenchant True
                 case scc_Disenchant_Spell:  // 19
                 {
 
                 } break;
 
+                // OVERLAND:  Disjunction, Disjunction True
                 case scc_Disjunction_Spell:  // 20
                 {
 
                 } break;
 
-                case scc_Counter_Spell:  // 21
+                default:
                 {
-
-                } break;
-
-                case scc_Var_Dmg_Spell:  // 22
-                {
-
-                } break;
-
-                case scc_Banish_Spell:  // 23
-                {
-
+                    STU_DEBUG_BREAK();
                 } break;
 
             }

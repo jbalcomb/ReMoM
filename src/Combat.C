@@ -11710,7 +11710,7 @@ void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caste
         {
 
         } break;
-        case scc_Fixed_Dmg_Spell:
+        case scc_Direct_Damage_Fixed:
         {
 
         } break;
@@ -11854,7 +11854,7 @@ void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caste
         {
 
         } break;
-        case scc_Destruction_Spell:
+        case scc_Combat_Destroy_Unit:
         {
 
         } break;
@@ -11866,7 +11866,7 @@ void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caste
         {
 
         } break;
-        case scc_Mundane_Enchantment:
+        case scc_Unit_Enchantment_Normal_Only:
         {
 
         } break;
@@ -13359,7 +13359,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
     }
 
     // ; BUG: fails to check if the units are active or not
-    if(spell_data_table[spell_idx].type == scc_Mundane_Enchantment)
+    if(spell_data_table[spell_idx].type == scc_Unit_Enchantment_Normal_Only)
     {
         IDK = ST_FALSE;
         for(itr = 0; ((itr < _combat_total_unit_count) && (IDK == ST_FALSE)); itr++)
@@ -13955,11 +13955,11 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
             {
                 CMB_TargetingType = cstt_FriendlyUnit;
             } break;
-            case scc_Fixed_Dmg_Spell:
+            case scc_Direct_Damage_Fixed:
             {
                 CMB_TargetingType = cstt_EnemyUnit;
             } break;
-            case scc_Mundane_Enchantment:
+            case scc_Unit_Enchantment_Normal_Only:
             {
                 CMB_TargetingType = cstt_FriendlyNU;
             } break;
@@ -13972,21 +13972,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
                 CMB_TargetingType = cstt_DispelMagic;
             } break;
         }
-// scc_City_Enchantment_Positive    =  2,
-// scc_City_Enchantment_Negative              =  3,
-// scc_Target_Wiz_Spell        =  6,
-// scc_Global_Enchantment  =  9,
-// scc_Battlefield_Spell   = 10,
-// scc_Crafting_Spell      = 11,
-// scc_Destruction_Spell       = 12,
-// scc_Resistable_Spell        = 13,
-// scc_Unresistable_Spell         = 14,
-// scc_Infusable_Spell     = 17,
-// Disenchant_Spell        = 19,
-// scc_Disjunction_Spell       = 20,
-// scc_Counter_Spell       = 21,
-// scc_Var_Dmg_Spell           = 22,
-// scc_Banish_Spell            = 23
+
     }
 
     Clear_Fields();

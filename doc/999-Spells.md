@@ -1,5 +1,17 @@
 
 
+
+
+Blur
+Not in the manual, but is in the OSG
+¿ added in v1.2 ?
+https://masterofmagic.fandom.com/wiki/Blur#:~:text=Blur%20is%20an%20Uncommon%20Combat,by%20enemy%20units%20will%20miss.
+
+
+
+
+
+
 spl_Warp_Wood
 spl_Healing
 spl_Creature_Binding

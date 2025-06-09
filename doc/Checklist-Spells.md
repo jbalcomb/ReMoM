@@ -1,5 +1,15 @@
 
+scc_Destruction_Spell  ==>  scc_Combat_Destroy_Unit
+scc_Fixed_Dmg_Spell    ==>  scc_Direct_Damage_Fixed
+scc_Var_Dmg_Spell      ==>  scc_Direct_Damage_Variable
+scc_Mundane_Enchantment  ==> scc_Unit_Enchantment_Normal_Only
+
+
 NOTE: the check on the check-list is only for the human player side, CP/AI is a different beast
+
+NOTE: 'Blur' is not in the manual, but is in the OSG - ¿ added in v1.2 ?
+
+
 
 Checklist-Spells.ods
 Green   Done-Done
@@ -60,7 +70,7 @@ all city enchantments are done
     SCC  Description
 [x]  -1  scc_None
 [x]   0  scc_Summoning
-[ ]   1  scc_Unit_Enchantment
+[x]   1  scc_Unit_Enchantment
 [x]   2  scc_City_Enchantment_Positive       ¿ ..., Stream of Life, ... ?
 [x]   3  scc_City_Enchantment_Negative      ¿ Evil Presence, Famine, 
 [ ]   4  scc_Fixed_Dmg_Spell
@@ -71,10 +81,10 @@ all city enchantments are done
 [x]   9  scc_Global_Enchantment
 [ ]  10  scc_Battlefield_Spell
 [ ]  11  scc_Crafting_Spell
-[ ]  12  scc_Destruction_Spell
+[ ]  12  scc_Combat_Destroy_Unit
 [ ]  13  scc_Resistable_Spell
 [ ]  14  scc_Unresistable_Spell
-[ ]  15  scc_Mundane_Enchantment
+[x]  15  scc_Unit_Enchantment_Normal_Only
 [ ]  16  scc_Mundane_Curse
 [ ]  17  scc_Infusable_Spell
 [ ]  18  scc_Dispel_Spell
@@ -84,6 +94,30 @@ all city enchantments are done
 [ ]  22  scc_Var_Dmg_Spell
 [ ]  23  scc_Banish_Spell
 
+    scc_Summoning           =  0,   /* Air Elemental, Angel, Arch Angel, Basilisk, Behemoth, Chaos Spawn, Chimeras, Cockatrices, Colossus, Death Knights, Demon Lord, Djinn, Doom Bat, Earth Elemental, Efreet, Fire Elemental, Fire Giant, Floating Island, Gargoyles, Ghouls, Giant Spiders, Gorgons, Great Drake, Great Wyrm, Guardian Spirit, Hell Hounds, Hydra, Magic Spirit, Nagas, Night Stalker, Phantom Beast, Phantom Warriors, Shadow Demons, Skeletons, Sky Drake, Sprites, Stone Giant, Storm Giant, Unicorns, War Bears, Wraiths */
+    scc_Unit_Enchantment    =  1,   /* Berserk, Black Channels, Bless, Cloak of Fear, Elemental Armor, Endurance, Flight, Giant Strength, Guardian Wind, Haste, Immolation, Invisibility, Invulnerability, Iron Skin, Lionheart, Magic Immunity, Path Finding, Planar Travel, Regeneration, Resist Elements, Resist Magic, Righteousness, Spell Lock, Stone Skin, True Sight, Water Walking, Wind Walking, Wraith Form */
+    scc_City_Enchantment_Positive   =  2,   /* Altar of Battle, Astral Gate, Cloud of Shadow, Consecration, Dark Rituals, Earth Gate, Flying Fortress, Gaias Blessing, Heavenly Light, Inspirations, Natures Eye, Prosperity, Stream of Life, Summoning Circle, Wall of Darkness, Wall of Fire */
+    scc_City_Enchantment_Negative   =  3,   /* Chaos Rift, Cursed Lands, Evil Presence, Famine, Pestilence */
+    scc_Direct_Damage_Fixed     =  4,   /* BOTH:    Doom Bolt, Fire Storm, Ice Storm, Star Fires, Warp Lightning */
+    scc_Special_Spell       =  5,   /* Animate Dead, Black Wind, Call The Void, Change Terrain, Chaos Channels, Corruption, Cracks Call, Death Wish, Disrupt, Earth Lore, Earth to Mud, Earthquake, Enchant Road, Great Unsummoning, Healing, Incarnation, Lycanthropy, Magic Vortex, Move Fortress, Natures Cures, Plane Shift, Raise Dead, Raise Volcano, Recall Hero, Resurrection, Spell Binding, Spell Of Mastery, Spell Of Return, Spell Ward, Stasis, Summon Champion, Summon Hero, Transmute, Wall of Stone, Warp Creature, Warp Node, Warp Wood, Word of Recall */
+    scc_Target_Wiz_Spell    =  6,   /* WIZARD:  Cruel Unminding, Drain Power, Spell Blast, Subversion */
+    /* DNE 7 */
+    /* DNE 8*/
+    scc_Global_Enchantment  =  9,   /* Armageddon, Aura of Majesty, Awareness, Chaos Surge, Charm of Life, Crusade, Detect Magic, Doom Mastery, Eternal Night, Evil Omens, Great Wasting, Herb Mastery, Holy Arms, Just Cause, Life Force, Meteor Storms, Natures Awareness, Natures Wrath, Planar Seal, Suppress Magic, Time Stop, Tranquility, Wind Mastery, Zombie Mastery */
+    scc_Battlefield_Spell   = 10,   /* COMBAT:  Black Prayer, Blur, Call Chaos, Call Lightning, Darkness, Death Spell, Entangle, Flame Strike, High Prayer, Holy Word, Mana Leak, Mass Healing, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack */
+    scc_Crafting_Spell      = 11,
+    scc_Combat_Destroy_Unit   = 12, /* COMBAT:  Disintegrate, Dispel Evil, Petrify, Word of Death */
+    scc_Resistable_Spell    = 13,   /* COMBAT:  Black Sleep, Confusion, Creature Binding, Vertigo, Weakness */
+    scc_Unresistable_Spell  = 14,   /* COMBAT:  Mind Storm, Web */
+    scc_Unit_Enchantment_Normal_Only = 15,   /*          Eldritch Weapon, Flame Blade, Heroism, Holy Armor, Holy Weapon */
+    scc_Mundane_Curse       = 16,   /* COMBAT:  Possession, Shatter */
+    /* DNE */ scc_Infusable_Spell     = 17,   /* below, no slider, above, maybe slider */
+    scc_Dispel_Spell        = 18,   /* COMBAT:  Dispel Magic, Dispel Magic True */
+    scc_Disenchant_Spell    = 19,   /* ¿ BOTH ?  Disenchant Area, Disenchant True */
+    scc_Disjunction_Spell   = 20,   /* OVERLAND:  Disjunction, Disjunction True */
+    scc_Counter_Spell       = 21,   /* COMBAT:  Counter Magic */
+    scc_Var_Dmg_Spell       = 22,   /* COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast */
+    scc_Banish_Spell        = 23    /* COMBAT:  Banish */
 
 
 Spreadsheet - OSG Spells by Category
@@ -106,12 +140,12 @@ Spreadsheet - OSG Spells by Realm
 
 [ ] Earth to Mud
 [ ] Resist Elements
-[ ] Wall of Stone
-[ ] Giant Strength
+[x] Wall of Stone
+[x] Giant Strength
 [ ] Web
 [x] War Bears
-[ ] Stone Skin
-[ ] Water Walking
+[x] Stone Skin
+[x] Water Walking
 [x] Sprites
 [ ] Earth Lore
 [ ] Cracks Call
@@ -124,10 +158,10 @@ Spreadsheet - OSG Spells by Realm
 [ ] Transmute
 [ ] Natures Cures
 [x] Basilisk
-[ ] Elemental Armor
+[x] Elemental Armor
 [ ] Petrify
 [x] Stone Giant
-[ ] Iron Skin
+[x] Iron Skin
 [ ] Ice Storm
 [ ] Earthquake
 [x] Gorgons
@@ -144,7 +178,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Herb Mastery
 [x] Great Wyrm
 [x] Natures Wrath
-[ ] Resist Magic
+[x] Resist Magic
 [ ] Dispel Magic True
 [x] Floating Island
 [ ] Guardian Wind
@@ -157,23 +191,23 @@ Spreadsheet - OSG Spells by Realm
 [ ] Blur
 [ ] Disenchant True
 [ ] Vertigo
-[ ] Spell Lock
+[x] Spell Lock
 [ ] Enchant Road
-[ ] Flight
+[x] Flight
 [x] Wind Mastery
 [ ] Spell Blast
 [x] Aura of Majesty
 [x] Phantom Beast
 [ ] Disjunction True
-[ ] Invisibility
-[ ] Wind Walking
+[x] Invisibility
+[x] Wind Walking
 [ ] Banish
 [x] Storm Giant
 [x] Air Elemental
 [ ] Mind Storm
 [ ] Stasis
-[ ] Magic Immunity
-[ ] Haste
+[x] Magic Immunity
+[x] Haste
 [x] Djinn
 [x] Spell Ward
 [x] Creature Binding
@@ -189,20 +223,20 @@ Spreadsheet - OSG Spells by Realm
 [ ] Fire Bolt
 [x] Hell Hounds
 [ ] Corruption
-[ ] Eldritch Weapon
+[x] Eldritch Weapon
 [x] Wall of Fire
 [ ] Shatter
 [ ] Warp Creature
 [x] Fire Elemental
 [ ] Lightning Bolt
 [x] Fire Giant
-[ ] Chaos Channels
-[ ] Flame Blade
+[x] Chaos Channels
+[x] Flame Blade
 [X] Gargoyles
 [ ] Fireball
 [X] Doombat
 [ ] Raise Volcano
-[ ] Immolation
+[x] Immolation
 [X] Chimeras
 [ ] Warp Lightning
 [ ] Metal Fires
@@ -226,22 +260,22 @@ Spreadsheet - OSG Spells by Realm
 [x] Armageddon
 [ ] Bless
 [ ] Star Fires
-[ ] Endurance
-[ ] Holy Weapon
+[x] Endurance
+[x] Holy Weapon
 [x] Healing
-[ ] Holy Armor
+[x] Holy Armor
 [x] Just Cause
 [ ] True Light
 [x] Guardian Spirit
-[ ] Heroism
-[ ] True Sight
+[x] Heroism
+[x] True Sight
 [ ] Plane Shift
 [ ] Resurrection
 [ ] Dispel Evil
 [x] Planar Seal
 [x] Unicorns
 [x] Raise Dead
-[ ] Planar Travel
+[x] Planar Travel
 [ ] Heavenly Light
 [ ] Prayer
 [ ] Lionheart
@@ -267,7 +301,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Skeletons
 [ ] Weakness
 [x] Dark Rituals
-[ ] Cloak of Fear
+[x] Cloak of Fear
 [ ] Black Sleep
 [x] Ghouls
 [ ] Life Drain
@@ -278,13 +312,13 @@ Spreadsheet - OSG Spells by Realm
 [ ] Possession
 [ ] Lycantrophy
 [ ] Black Prayer
-[ ] Black Channels
+[x] Black Channels
 [x] Night Stalker
 [ ] Subversion
 [x] Wall of Darkness
 [ ] Berserk
 [x] Shadow Demons
-[ ] Wraith Form
+[x] Wraith Form
 [ ] Wrack
 [x] Evil Presence
 [x] Wraiths

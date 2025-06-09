@@ -9,6 +9,25 @@ NOTE: Guises was deprecated
 
 
 
+N/A    7,8,10,12,13,14,16,18,21,22,23
+0      Ovl Summon
+1,15   Ovl Unit Enchantment
+2      city enchantment positive
+3      city enchantment negative
+4      direct damage fixed  (Ovl & Cmb)
+5      special
+6,17   target wizard
+9      global enchantment
+11      item make
+19  Ovl,Cmb - Disenchant Area, Disenchant True
+20  Ovl     - Disjunction, Disjunction True
+21  combat - Counter Magic
+22  combat - direct damage variable - Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast
+23  combat - Banish
+NOTE: No spells set to 7, 8, 17
+
+
+
 // enum enum_SPELL_DATA_TYPE
 // sdt_Summoning         =  0,
 // Unit_Enchantment        =  1,

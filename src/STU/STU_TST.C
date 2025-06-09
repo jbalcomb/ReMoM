@@ -4,12 +4,14 @@
 
 */
 
+#include "STU_CHK.H"
+
 #include "../MOX/MOX_DAT.H"
-#include "../MOX/MOX_TYPE.H"
 
 #include "../MOM_DEF.H"
-
 #include "../Spellbook.H"
+#include "../NEXTTURN.H"
+
 
 
 void TST_Cheat_Power(int16_t player_idx)
@@ -59,7 +61,49 @@ void TST_Patch_Game_Data(void)
     
     TST_Cheat_Power(player_idx);
 
-    // City Enchantment
+
+    
+    TST_Learn_Spell(player_idx, spl_Berserk);
+    TST_Learn_Spell(player_idx, spl_Black_Channels);
+    TST_Learn_Spell(player_idx, spl_Bless);
+    TST_Learn_Spell(player_idx, spl_Cloak_Of_Fear);
+    TST_Learn_Spell(player_idx, spl_Eldritch_Weapon);
+    TST_Learn_Spell(player_idx, spl_Elemental_Armor);
+    TST_Learn_Spell(player_idx, spl_Endurance);
+    TST_Learn_Spell(player_idx, spl_Flame_Blade);
+    TST_Learn_Spell(player_idx, spl_Flight);
+    TST_Learn_Spell(player_idx, spl_Giant_Strength);
+    TST_Learn_Spell(player_idx, spl_Guardian_Wind);
+    TST_Learn_Spell(player_idx, spl_Haste);
+    TST_Learn_Spell(player_idx, spl_Heroism);
+    TST_Learn_Spell(player_idx, spl_Holy_Armor);
+    TST_Learn_Spell(player_idx, spl_Holy_Weapon);
+    TST_Learn_Spell(player_idx, spl_Immolation);
+    TST_Learn_Spell(player_idx, spl_Invisibility);
+    TST_Learn_Spell(player_idx, spl_Invulnerability);
+    TST_Learn_Spell(player_idx, spl_Iron_Skin);
+    TST_Learn_Spell(player_idx, spl_Lionheart);
+    TST_Learn_Spell(player_idx, spl_Magic_Immunity);
+    TST_Learn_Spell(player_idx, spl_Path_Finding);
+    TST_Learn_Spell(player_idx, spl_Planar_Travel);
+    TST_Learn_Spell(player_idx, spl_Regeneration);
+    TST_Learn_Spell(player_idx, spl_Resist_Elements);
+    TST_Learn_Spell(player_idx, spl_Resist_Magic);
+    TST_Learn_Spell(player_idx, spl_Righteousness);
+    TST_Learn_Spell(player_idx, spl_Spell_Lock);
+    TST_Learn_Spell(player_idx, spl_Stone_Skin);
+    TST_Learn_Spell(player_idx, spl_True_Sight);
+    TST_Learn_Spell(player_idx, spl_Water_Walking);
+    TST_Learn_Spell(player_idx, spl_Wind_Walking);
+    TST_Learn_Spell(player_idx, spl_Wraith_Form);
+
+    // TST_Learn_Spell(player_idx, spl_Floating_Island);
+
+    // TST_Learn_Spell(player_idx, spl_Animate_Dead);
+    // TST_Learn_Spell(player_idx, spl_Raise_Dead);
+
+    // City Enchantment - Positive
+    // City Enchantment - Negative
     TST_Learn_Spell(player_idx, spl_Consecration);
     TST_Learn_Spell(player_idx, spl_Cursed_Lands);
     TST_Learn_Spell(player_idx, spl_Famine);
@@ -75,12 +119,9 @@ void TST_Patch_Game_Data(void)
     TST_Learn_Spell(player_idx, spl_Wall_Of_Fire);
     TST_Learn_Spell(player_idx, spl_Wall_Of_Stone);
 
-    // TST_Learn_Spell(player_idx, spl_Animate_Dead);
     // TST_Learn_Spell(player_idx, spl_Awareness);
     // TST_Learn_Spell(player_idx, spl_Aura_Of_Majesty);
-    // TST_Learn_Spell(player_idx, spl_Floating_Island);
     // TST_Learn_Spell(player_idx, spl_Holy_Arms);
-    // TST_Learn_Spell(player_idx, spl_Raise_Dead);
     // TST_Learn_Spell(player_idx, spl_Natures_Awareness);
 
     // Cityscape_Window() - Farbackground
@@ -88,12 +129,10 @@ void TST_Patch_Game_Data(void)
     // _CITIES[0].enchantments[CURSED_LANDS] = ST_TRUE;
     // _CITIES[0].enchantments[FAMINE] = ST_TRUE;
     // _CITIES[0].enchantments[GAIAS_BLESSING] = ST_TRUE;
-
     // Cityscape_Draw_Background()
     // _CITIES[0].enchantments[CHAOS_RIFT] = ST_TRUE;
     // _CITIES[0].enchantments[CLOUD_OF_SHADOW] = ST_TRUE;
     // _CITIES[0].enchantments[HEAVENLY_LIGHT] = ST_TRUE;
-    
     // Cityscape_Draw_Foreground()
     // _CITIES[0].enchantments[DEATH_WARD] = ST_TRUE;
     // _CITIES[0].enchantments[CHAOS_WARD] = ST_TRUE;

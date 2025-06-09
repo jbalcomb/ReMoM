@@ -196,7 +196,7 @@ enum e_SPELLS
     spl_Mana_Leak           = 170,
     spl_Drain_Power         = 171,
     spl_Possession          = 172,
-    spl_Lycantrophy         = 173,
+    spl_Lycanthropy         = 173,
     spl_Black_Prayer        = 174,
     spl_Black_Channels      = 175,
     spl_Night_Stalker       = 176,

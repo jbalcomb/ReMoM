@@ -9,6 +9,7 @@
         ovr141
 */
 
+#include "MOM_DEF.H"
 #include "NEXTTURN.H"
 
 #include "MOX/LOADSAVE.H"
@@ -1635,7 +1636,35 @@ int16_t Unit_Moves2(int16_t unit_idx)
 
 // WZD o121p09
 // drake178: UNIT_IsNormalUnit()
-// UNIT_IsNormalUnit()
+/*
+; returns 1 for normal units, 0 for fantastic ones
+; INCONSISTENT: treats Chaos Channeled units and Torin
+; the Chosen as normal units
+*/
+/*
+    returns ST_FALSE for summoned or undead
+
+REMINDME:  ¿ Normal, Regular, Fantastic, Summoned, ... ?
+*/
+int16_t Unit_Is_Normal(int16_t unit_idx)
+{
+    int16_t unit_is_normal = 0;  // _DI_
+
+    if(
+        ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_FANTASTIC) != 0)
+        ||
+        ((_UNITS[unit_idx].mutations & UM_UNDEAD) != 0)
+    )
+    {
+
+        unit_is_normal = ST_FALSE;
+
+    }
+
+    return unit_is_normal;
+
+}
+
 
 // WZD o121p10
 // ¿ MoO2  ..._ALL_TECH_CHEAT..._MORE_MONEY_CHEAT... ?

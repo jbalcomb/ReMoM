@@ -36,10 +36,10 @@ enum e_COMBAT_SPELL_TARGET_TYPE
     cstt_Tile_NoUnitD  =  5,
 
     cstt_EnemyUnit     = 10,
-    cstt_EnemyNU       = 11,
+    cstt_EnemyNU       = 11,    /* Enemy Unit - Normal Only    */
 
     cstt_FriendlyUnit  = 20,
-    cstt_FriendlyNU    = 21,
+    cstt_FriendlyNU    = 21,    /* Friendly Unit - Normal Only */
 
     cstt_FriendlyHero  = 23,
 

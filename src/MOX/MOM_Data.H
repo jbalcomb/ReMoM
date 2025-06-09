@@ -497,28 +497,30 @@ enum e_SPELL_BOOK_CATEGORY
 // AKA enum e_SPELL_DATA_TYPE
 enum e_SPELL_CASTING_CATEGORY
 {
-    scc_Summoning           =  0,
-    scc_Unit_Enchantment    =  1,
-    scc_City_Enchantment_Positive   =  2,
-    scc_City_Enchantment_Negative   =  3,
-    scc_Fixed_Dmg_Spell     =  4,
-    scc_Special_Spell       =  5,
-    scc_Target_Wiz_Spell    =  6,
-    scc_Global_Enchantment  =  9,
-    scc_Battlefield_Spell   = 10,
-    scc_Crafting_Spell      = 11,
-    scc_Destruction_Spell   = 12,
-    scc_Resistable_Spell    = 13,
-    scc_Unresistable_Spell  = 14,
-    scc_Mundane_Enchantment = 15,
-    scc_Mundane_Curse       = 16,
-    scc_Infusable_Spell     = 17,   /* below, no slider, above, maybe slider */
-    scc_Dispel_Spell        = 18,
-    scc_Disenchant_Spell    = 19,
-    scc_Disjunction_Spell   = 20,
-    scc_Counter_Spell       = 21,
-    scc_Var_Dmg_Spell       = 22,
-    scc_Banish_Spell        = 23
+    scc_Summoning                    =  0,   /* Air Elemental, Angel, Arch Angel, Basilisk, Behemoth, Chaos Spawn, Chimeras, Cockatrices, Colossus, Death Knights, Demon Lord, Djinn, Doom Bat, Earth Elemental, Efreet, Fire Elemental, Fire Giant, Floating Island, Gargoyles, Ghouls, Giant Spiders, Gorgons, Great Drake, Great Wyrm, Guardian Spirit, Hell Hounds, Hydra, Magic Spirit, Nagas, Night Stalker, Phantom Beast, Phantom Warriors, Shadow Demons, Skeletons, Sky Drake, Sprites, Stone Giant, Storm Giant, Unicorns, War Bears, Wraiths */
+    scc_Unit_Enchantment             =  1,   /* Berserk, Black Channels, Bless, Cloak of Fear, Elemental Armor, Endurance, Flight, Giant Strength, Guardian Wind, Haste, Immolation, Invisibility, Invulnerability, Iron Skin, Lionheart, Magic Immunity, Path Finding, Planar Travel, Regeneration, Resist Elements, Resist Magic, Righteousness, Spell Lock, Stone Skin, True Sight, Water Walking, Wind Walking, Wraith Form */
+    scc_City_Enchantment_Positive    =  2,   /* Altar of Battle, Astral Gate, Cloud of Shadow, Consecration, Dark Rituals, Earth Gate, Flying Fortress, Gaias Blessing, Heavenly Light, Inspirations, Natures Eye, Prosperity, Stream of Life, Summoning Circle, Wall of Darkness, Wall of Fire */
+    scc_City_Enchantment_Negative    =  3,   /* Chaos Rift, Cursed Lands, Evil Presence, Famine, Pestilence */
+    scc_Direct_Damage_Fixed          =  4,   /* BOTH:    Doom Bolt, Fire Storm, Ice Storm, Star Fires, Warp Lightning */
+    scc_Special_Spell                =  5,   /* Animate Dead, Black Wind, Call The Void, Change Terrain, Chaos Channels, Corruption, Cracks Call, Death Wish, Disrupt, Earth Lore, Earth to Mud, Earthquake, Enchant Road, Great Unsummoning, Healing, Incarnation, Lycanthropy, Magic Vortex, Move Fortress, Natures Cures, Plane Shift, Raise Dead, Raise Volcano, Recall Hero, Resurrection, Spell Binding, Spell Of Mastery, Spell Of Return, Spell Ward, Stasis, Summon Champion, Summon Hero, Transmute, Wall of Stone, Warp Creature, Warp Node, Warp Wood, Word of Recall */
+    scc_Target_Wiz_Spell             =  6,   /* WIZARD:  Cruel Unminding, Drain Power, Spell Blast, Subversion */
+    /* DNE 7 */
+    /* DNE 8*/
+    scc_Global_Enchantment           =  9,   /* Armageddon, Aura of Majesty, Awareness, Chaos Surge, Charm of Life, Crusade, Detect Magic, Doom Mastery, Eternal Night, Evil Omens, Great Wasting, Herb Mastery, Holy Arms, Just Cause, Life Force, Meteor Storms, Natures Awareness, Natures Wrath, Planar Seal, Suppress Magic, Time Stop, Tranquility, Wind Mastery, Zombie Mastery */
+    scc_Battlefield_Spell            = 10,   /* COMBAT:  Black Prayer, Blur, Call Chaos, Call Lightning, Darkness, Death Spell, Entangle, Flame Strike, High Prayer, Holy Word, Mana Leak, Mass Healing, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack */
+    scc_Crafting_Spell               = 11,
+    scc_Combat_Destroy_Unit          = 12, /* COMBAT:  Disintegrate, Dispel Evil, Petrify, Word of Death */
+    scc_Resistable_Spell             = 13,   /* COMBAT:  Black Sleep, Confusion, Creature Binding, Vertigo, Weakness */
+    scc_Unresistable_Spell           = 14,   /* COMBAT:  Mind Storm, Web */
+    scc_Unit_Enchantment_Normal_Only = 15,   /*          Eldritch Weapon, Flame Blade, Heroism, Holy Armor, Holy Weapon */
+    scc_Mundane_Curse                = 16,   /* COMBAT:  Possession, Shatter */
+    /* DNE */ scc_Infusable_Spell    = 17,   /* below, no slider, above, maybe slider */
+    scc_Dispel_Spell                 = 18,   /* COMBAT:  Dispel Magic, Dispel Magic True */
+    scc_Disenchant_Spell             = 19,   /* ¿ BOTH ?  Disenchant Area, Disenchant True */
+    scc_Disjunction_Spell            = 20,   /* OVERLAND:  Disjunction, Disjunction True */
+    scc_Counter_Spell                = 21,   /* COMBAT:  Counter Magic */
+    scc_Var_Dmg_Spell                = 22,   /* COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast */
+    scc_Banish_Spell                 = 23    /* COMBAT:  Banish */
 };
 
 enum e_SPELL_LIST_TYPE
@@ -839,15 +841,20 @@ struct s_SPELL_DATA
     // /* 21 */  int8_t Param1;
     union
     {
-        /* 20 */  int8_t Param0;            // 
-        /* 21 */  int8_t Param1;
-        int16_t unit_type;                  // 0: scc_Summoning             IDK_SummonAnim_Draw()
-        int16_t ce_idx;                     // 9: scc_City_Enchantment_Positive      index into _CITIES[].enchantments
-        int16_t ge_idx;                     // 9: scc_Global_Enchantment    indexes into _players[].Globals[], which holds player_num (i.e., player_idx + 1)
-        uint8_t cmbt_0;                     // Attack_Strength  CMB_ConvSpellAttack()
-        uint8_t cmbt_1;                     // Immunity_Flags   CMB_ConvSpellAttack()
+        uint32_t enchantments;                  // gets OR'd with _UNITS[].enchantments
+        struct {
+            /* 20 */  int8_t Param0;            // 
+            /* 21 */  int8_t Param1;
+            /* 22 */  int16_t Params2_3;        //  tested as a bit-field against ATK_FLAGS  ; ATK_Flags
+        };
+        struct {
+            int16_t unit_type;                  // 0: scc_Summoning             IDK_SummonAnim_Draw()
+            int16_t ce_idx;                     // 9: scc_City_Enchantment_Positive      index into _CITIES[].enchantments
+            int16_t ge_idx;                     // 9: scc_Global_Enchantment    indexes into _players[].Globals[], which holds player_num (i.e., player_idx + 1)
+            uint8_t cmbt_0;                     // Attack_Strength  CMB_ConvSpellAttack()
+            uint8_t cmbt_1;                     // Immunity_Flags   CMB_ConvSpellAttack()
+        };
     };
-    /* 22 */  int16_t Params2_3;            //  ; ATK_Flags
     /* 24 */
 };
 #pragma pack(pop)
@@ -1555,27 +1562,20 @@ struct s_UNIT
     /* 0A */  int8_t  dst_wy;       /* 1-byte, signed;  Go-To Destination World Y */
     /* 0B */  int8_t  Status;  // Build_Unit_Stack() resets us_WAIT to us_Ready
     /* 0C */  int8_t  Level;
-    /* 0D */  /* int8_t  Unused_0Dh; */  /* ¿ 2-byte alignment padding ? */ /* CLUE: here is odd and next one is 2-byte value */
+    /* 0D */  uint8_t pad2B_0Dh;    /* 2-byte alignment padding */
     /* 0E */  int16_t XP;  // should be `"ep"
     /* 10 */  int8_t  Move_Failed;
     /* 11 */  int8_t  Damage;
     /* 12 */  int8_t  Draw_Priority;
-    /* 13 */  /* int8_t  Unknown_13h; */  /* ¿ 2-byte alignment padding ? */ /* CLUE: here is odd and next one is 2-byte value */
+    /* 13 */  uint8_t pad2B_13h;    /* 2-byte alignment padding */
     /* 14 */  int16_t in_tower;     /* {F,T};  Unit is on/in a Tower of Wizardry */
     /* 16 */  int8_t  Sight_Range;
     /* 17 */  int8_t  mutations;    // UM_...  ; enum MUT_FLAGS
-    /* / * 18 * /  int16_t Enchants_LO;  // ; enum UE_FLAGS_L */
-    /* / * 1A * /  int16_t Enchants_HI;  // ; enum UE_FLAGS_H */
-    // DELETEME  union {
-    // DELETEME      uint32_t enchantments;
-    // DELETEME      int16_t  Enchants_LO;
-    // DELETEME      int16_t  Enchants_HI;
-    // DELETEME  };
-    uint32_t enchantments;
+    /* 18 */  uint32_t enchantments;    /* ; enum UE_FLAGS_L ; enum UE_FLAGS_H */
     /* 1C */  int8_t  Rd_Constr_Left;  // 1-byte, signed;  turns to build  ~ movement points;  Move_Units() sets movepath_cost_array[0]
     /* 1D */  int8_t  Rd_From_X;  // wx?
     /* 1E */  int8_t  Rd_From_Y;  // wy?
-    /* 1F */  /* int8_t  Unknown_1Fh; */  /* ¿ 2-byte alignment padding ? */
+    /* 1F */  uint8_t pad2B_1Fh;    /* 2-byte alignment padding */
     /* 20 */
 };
 #pragma pack(pop)

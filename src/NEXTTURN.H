@@ -93,7 +93,7 @@ int16_t Pick_Random_Hero(int16_t player_idx, int16_t zero_cost, int16_t hero_typ
 int16_t Unit_Moves2(int16_t unit_idx);
 
 // WZD o121p09
-// UNIT_IsNormalUnit()
+int16_t Unit_Is_Normal(int16_t unit_idx);
 
 // WZD o121p10
 void Cheat_Power(void);
