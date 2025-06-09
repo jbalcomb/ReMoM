@@ -5,12 +5,19 @@
         ovr102
 */
 
+#include "LVLMAKE.H"
+
+#include "MOX/LBX_Load.H"
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/MOX_TYPE.H"
 #include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 
-#include "MOM.H"
+#include "Help.H"
+#include "UnitStat.H"
+#include "UnitView.H"
 
 
 
@@ -456,7 +463,7 @@ void Hero_Build_Specials_List(int16_t unit_idx, struct s_UV_List * specials_list
 
     specials_list->flags[specials_index] = ST_UNDEFINED;
 
-    specials_list->picts[specials_index] = (SAMB_INT)special_seg[(204 + _UNITS[unit_idx].Level)];
+    specials_list->picts[specials_index] = (SAMB_INT)special_seg[(102 + _UNITS[unit_idx].Level)];
 
     specials_list->helps[specials_index] = (HLP_HERO_LEVEL_0 + _UNITS[unit_idx].Level);
 
@@ -476,7 +483,7 @@ void Hero_Build_Specials_List(int16_t unit_idx, struct s_UV_List * specials_list
         strcat(specials_list->names[specials_index], temp_string);
         strcat(specials_list->names[specials_index], str_SPACE_ToHit__ovr102);  // " To Hit"
         specials_list->flags[specials_index] = ST_UNDEFINED;
-        specials_list->picts[specials_index] = (SAMB_INT)special_seg[250];
+        specials_list->picts[specials_index] = (SAMB_INT)special_seg[125];
         specials_list->helps[specials_index] = HLP_TOHIT_PLUS;
         specials_index++;
     }

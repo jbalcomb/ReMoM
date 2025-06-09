@@ -7,7 +7,10 @@
 #ifndef SPELLBOOK_H
 #define SPELLBOOK_H
 
+#include "MOX/MOX_DEF.H"
 #include "MOX/MOX_TYPE.H"
+
+#include "MOM_DEF.H"
 
 
 

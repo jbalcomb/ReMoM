@@ -5,8 +5,11 @@
         ovr152
 */
 
+#include "MOX/Allocate.H"
 #include "MOX/MOX_TYPE.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
+
+#include "Combat.H"
 
 
 

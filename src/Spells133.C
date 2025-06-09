@@ -5,7 +5,10 @@
 
 #include "Spells133.H"
 
+#include "MOX/LBX_Load.H"
+#include "MOX/MOX_DAT.H"
 #include "MOX/MOX_DEF.H"
+#include "MOX/MOX_SET.H"
 #include "MOX/MOX_TYPE.H"
 #include "MOX/SOUND.H"
 

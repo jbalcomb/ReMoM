@@ -7,8 +7,11 @@
 
 */
 #include "Fields.H"
+#include "MOX_DAT.H"
 #include "MOX_DEF.H"
 #include "MOX_TYPE.H"
+
+#include "../Help.H"
 
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 

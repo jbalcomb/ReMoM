@@ -5,10 +5,15 @@
 
 #include "Spells128.H"
 
+#include "MOX/Allocate.H"
 #include "MOX/MOM_Data.H"
+#include "MOX/MOX_DAT.H"
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_TYPE.H"
+#include "MOX/random.H"
 
+#include "AISPELL.H"
+#include "DIPLOMAC.H"
 #include "Spellbook.H"
 
 
@@ -704,9 +709,9 @@ void Sort_Research_List(int16_t player_idx, int16_t count)
 
             _players[player_idx].research_spells[(research_idx1 + 1)] = _players[player_idx].research_spells[research_idx1];
 
-            research_idx1--;
-
             spell_idx1 = _players[player_idx].research_spells[research_idx1];  // DNE in Dasm
+
+            research_idx1--;
 
             if(research_idx1 > -1)
             {

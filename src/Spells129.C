@@ -9,6 +9,7 @@
 #include "MOX/MOX_TYPE.H"
 
 #include "OverSpel.H"
+#include "SBookScr.H"
 
 
 
@@ -192,7 +193,6 @@ int16_t Apply_Automatic_Spell_Counters(int16_t spell_idx, int16_t city_idx, int1
         success = ST_FALSE;
     }
 
-
     if(
         (_CITIES[city_idx].enchantments[SORCERY_WARD] > 0)
         &&
@@ -220,6 +220,7 @@ int16_t Apply_Automatic_Spell_Counters(int16_t spell_idx, int16_t city_idx, int1
         }
     }
 
+    return success;
 }
 
 // WZD o129p08

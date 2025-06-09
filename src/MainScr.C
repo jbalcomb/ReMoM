@@ -724,7 +724,7 @@ o57p10  ? Move_Stack_DirKey() ?
 // WZD 057p01
 void Main_Screen(void)
 {
-    int16_t hotkey_idx_Alt_P = 0;
+    // TODO  int16_t hotkey_idx_Alt_P = 0;
     int16_t hotkey_idx_U = 0;
     char temp_string[LEN_TEMP_BUFFER];
     int16_t hotkey_idx_F9 = 0;
@@ -737,7 +737,7 @@ void Main_Screen(void)
     int16_t hotkey_idx_F2 = 0;
     int16_t hotkey_idx_F1 = 0;
     int16_t IDK_EoT_flag = 0;
-    int16_t DBG_Alt_A__TurnCount = 0;
+    // TODO  int16_t DBG_Alt_A__TurnCount = 0;
     int16_t hotkey_idx_Alt_A = 0;
     int16_t hotkey_idx_RightDown = 0;
     int16_t hotkey_idx_Down = 0;
@@ -750,11 +750,11 @@ void Main_Screen(void)
     int16_t eot_gold_nop = 0;  // only used for 'Next Turn'; place-holder, not used; set by Player_Resource_Income_Total()
     int16_t eot_food = 0;  // only used for 'Next Turn'; set by Player_Resource_Income_Total()
     int16_t eot_mana_nop = 0;  // only used for 'Next Turn'; place-holder, not used; set by Player_Resource_Income_Total()
-    int16_t hotkey_idx_Alt_N = 0;
-    int16_t hotkey_idx_Shift_3 = 0;
+    // TODO  int16_t hotkey_idx_Alt_N = 0;
+    // TODO  int16_t hotkey_idx_Shift_3 = 0;
     int16_t hotkey_idx_Alt_K = 0;
     int16_t hotkey_idx_F10 = 0;
-    int16_t hotkey_idx_Alt_T = 0;
+    // TODO  int16_t hotkey_idx_Alt_T = 0;
     int16_t unit_stack_hmoves = 0;
     int16_t unit_stack_world_y = 0;
     int16_t unit_stack_world_x = 0;
@@ -762,9 +762,9 @@ void Main_Screen(void)
     int16_t entity_idx = 0;  // AKA "input"
     int16_t hotkey_idx_Q = 0;
     int16_t hotkey_idx_C = 0;
-    int16_t hotkey_idx_Shift_2 = 0;
-    int16_t hotkey_idx_Shift_1 = 0;
-    int16_t Unused_Button_Index = 0;
+    // TODO  int16_t hotkey_idx_Shift_2 = 0;
+    // TODO  int16_t hotkey_idx_Shift_1 = 0;
+    // TODO  int16_t Unused_Button_Index = 0;
     int16_t hotkey_idx_X = 0;
     int16_t selected_unit_wy = 0;
     int16_t selected_unit_wx = 0;
@@ -851,7 +851,7 @@ void Main_Screen(void)
     Deactivate_Help_List();
     Set_Main_Screen_Help_List();
 
-    DBG_Alt_A__TurnCount = ST_UNDEFINED;
+    // TODO  DBG_Alt_A__TurnCount = ST_UNDEFINED;
     
     assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);
     assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);
@@ -878,14 +878,14 @@ void Main_Screen(void)
         Main_Screen_Add_Fields();
 
         hotkey_idx_X = Add_Hot_Key('X');
-        Unused_Button_Index = -1000;
-        hotkey_idx_Shift_1 = Add_Hot_Key('!');
-        hotkey_idx_Shift_2 = Add_Hot_Key('@');
-        hotkey_idx_Shift_3 = Add_Hot_Key('#');
+        // TODO  Unused_Button_Index = INVALID_FIELD;
+        // TODO  hotkey_idx_Shift_1 = Add_Hot_Key('!');
+        // TODO  hotkey_idx_Shift_2 = Add_Hot_Key('@');
+        // TODO  hotkey_idx_Shift_3 = Add_Hot_Key('#');
         hotkey_idx_C = Add_Hot_Key('C');
-        hotkey_idx_Alt_T = Add_Multi_Hot_Key_Field("T");
-        hotkey_idx_Alt_N = Add_Multi_Hot_Key_Field("N");
-        hotkey_idx_Alt_P = Add_Multi_Hot_Key_Field("P");
+        // TODO  hotkey_idx_Alt_T = Add_Multi_Hot_Key_Field("T");
+        // TODO  hotkey_idx_Alt_N = Add_Multi_Hot_Key_Field("N");
+        // TODO  hotkey_idx_Alt_P = Add_Multi_Hot_Key_Field("P");
         hotkey_idx_Q = Add_Hot_Key('Q');
         hotkey_idx_U = Add_Hot_Key('U');
 

@@ -8,8 +8,8 @@
 #include "MOX/MOX_TYPE.H"
 
 #include "Combat.H"
-
 #include "Spells133.H"
+#include "UNITTYPE.H"
 
 
 
@@ -341,7 +341,10 @@ void Cast_Animate_Dead(int16_t player_idx, int16_t caster_idx)
         while(CMB_TargetRows[cgy][cgx] >= 0);
     }
 
-    battle_unit_idx = Target_BU_List[Picked_Target];
+// Severity Code Description Project File Line Suppression State Details
+//     Warning C6385 Reading invalid data from 'Target_BU_List'.sdl2_ReMoM C :\STU\devel\ReMoM\src\Spells131.C 344		
+    if(Picked_Target > ST_UNDEFINED)
+        battle_unit_idx = Target_BU_List[Picked_Target];
 
     /* DEBUG */ battle_units[battle_unit_idx].Unused_1Bh = spl_Animate_Dead;
 

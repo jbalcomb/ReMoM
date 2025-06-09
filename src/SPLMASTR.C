@@ -8,11 +8,17 @@ MoO2
     ~ Science Room?
 */
 
+#include "MOX/LBX_Load.H"
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_DEF.H"
 #include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/MOX_TYPE.H"
 #include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
+
+#include "Combat.H"
+#include "MainScr.H"
 
 
 

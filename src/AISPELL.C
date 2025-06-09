@@ -8,11 +8,16 @@ MoO2
 Module: AITECH
 */
 
+#include "AISPELL.H"
+#include "MOX/Allocate.H"
 #include "MOX/MOM_Data.H"
+#include "MOX/MOX_DAT.H"
 #include "MOX/MOX_DEF.H"
-#include "MOX/MOX_TYPE.H"
 
+#include "MOX/random.H"
+#include "Spellbook.H"
 #include "SPELLDEF.H"
+#include "TerrType.H"
 
 
 
@@ -728,7 +733,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
                             (_players[_CITIES[itr_cities].owner_idx].spellranks[sbr_Death] != 0)
                         )
                         &&
-                        (Test_Bit_Field(_CITIES[itr_cities].contacts, player_idx) == 0)
+                        (Test_Bit_Field(player_idx, &_CITIES[itr_cities].contacts) == 0)
                     )
                     {
 
@@ -833,6 +838,12 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
     {
         Cast_Spell_Target_Error(spell_idx);
     }
+
+#ifdef STU_DEBUG
+STU_DEBUG_BREAK();
+#endif
+
+    return ST_FALSE;
 
 }
 

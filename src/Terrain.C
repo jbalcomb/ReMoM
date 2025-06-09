@@ -774,7 +774,7 @@ int16_t Square_Adamantium_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have
 ; on it, or 0 otherwise
 */
 /*
-Compute_Base_Map_Square_Values()
+Compute_Base_Values_For_Map_Square()
     if(Square_Has_Mithril(curr_wx, itr_wy, wp) == ST_TRUE)
 */
 int16_t Square_Has_Mithril(int16_t wx, int16_t wy, int16_t wp)

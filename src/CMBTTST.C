@@ -5,6 +5,7 @@
 
 #include "CMBTDEF.H"
 
+#include "MOX/MOX_DAT.H"
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_T4.H"  /* PageFlipEffect */
 #include "MOX/MOX_TYPE.H"

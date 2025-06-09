@@ -28,6 +28,8 @@
 #ifndef COMBAT_H
 #define COMBAT_H
 
+#include "MOX/EMM.H"
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_TYPE.H"
 
 #include "Spellbook.H"
@@ -1618,7 +1620,7 @@ int16_t Check_Attack_Ranged(int16_t attacker_battle_unit_idx, int16_t defender_b
 void Deploy_Battle_Units(int16_t player_idx);
 
 // WZD o113p10
-void BU_SummonDemon__SEGRAX(int battle_unit_idx);
+void BU_SummonDemon__SEGRAX(int16_t caster_idx);
 
 // WZD o113p11
 int16_t BU_MeleeWallCheck__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx);

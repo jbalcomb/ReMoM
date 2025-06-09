@@ -4863,7 +4863,7 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                                         if(Tile_Distance == 0)
                                         {
 
-                                            Compute_Base_Map_Square_Values(wx, wy, wp, &maximum_population, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &Unexplored);
+                                            Compute_Base_Values_For_Map_Square(wx, wy, wp, &maximum_population, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &Unexplored);
 
                                             Tile_Settling_Value = 
                                                 (

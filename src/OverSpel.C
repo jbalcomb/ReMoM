@@ -11,17 +11,22 @@
 
 #include "SPELLDEF.H"
 
+#include "NEXTTURN.H"
+#include "Outpost.H"
 #include "Spellbook.H"
+#include "Spells128.H"
 #include "Spells129.H"
+#include "Spells130.H"
 #include "Spells132.H"
+#include "Spells137.H"
+#include "SPLMASTR.H"
 
 
 
 // WZD dseg:6A42                                                 BEGIN:  ovr135 - Initialized Data
 
 // WZD dseg:6A42 53 70 45 63 46 78 00                            cnst_SPECFX_FileA db 'SpEcFx',0         ; DATA XREF: IDK_Cast_Disenchant_True+15o ...
-// WZD dseg:6A42                                                                                         ; should use dseg:5e17
-// WZD dseg:6A49 20 68 61 73 20 62 65 65 6E 20 64 69 73 70 65 6C+cnst_Dispel_Msg_2 db ' has been dispelled.',0 ; should use dseg:684b
+// WZD dseg:6A49 20 68 61 73 20 62 65 65 6E 20 64 69 73 70 65 6C+cnst_Dispel_Msg_2 db ' has been dispelled.',0
 
 // WZD dseg:6A5E
 char message_lbx_file__ovr135[] = "message";
@@ -34,23 +39,16 @@ char str_Tranquility[] = "Tranquility";
 char str_LifeForce[] = "Life Force";
 
 // WZD dseg:6A8C 54 68 61 74 20 75 6E 69 74 20 61 6C 72 65 61 64+cnst_SpellError_1_2 db 'That unit already has ',0
-// WZD dseg:6A8C 79 20 68 61 73 20 00                                                                    ; DATA XREF: Cast_Spell_Overland__WIP+6F8o
-// WZD dseg:6A8C                                                                                         ; should use dseg:5b48
 // WZD dseg:6AA3
 char cnst_SpellError_2_2[] = " cast on it";
-// WZD dseg:6AA3                                                                                         ; should use dseg:5b5f
 // WZD dseg:6AAF 4F 6E 6C 79 20 6E 6F 72 6D 61 6C 20 75 6E 69 74+aOnlyNormalUnit db 'Only normal units may have ',0
-// WZD dseg:6AAF 73 20 6D 61 79 20 68 61 76 65 20 00                                                     ; DATA XREF: Cast_Spell_Overland__WIP+87Ao
-// WZD dseg:6ACB 20 63 61 73 74 20 6F 6E 20 74 68 65 6D 00       aCastOnThem db ' cast on them',0        ; DATA XREF: Cast_Spell_Overland__WIP+898o ...
+// WZD dseg:6ACB 20 63 61 73 74 20 6F 6E 20 74 68 65 6D 00       aCastOnThem db ' cast on them',0        
 // WZD dseg:6AD9 4F 6E 6C 79 20 6E 6F 72 6D 61 6C 20 75 6E 69 74+aOnlyNormalUn_0 db 'Only normal units and created undead may have ',0
-// WZD dseg:6AD9 73 20 61 6E 64 20 63 72 65 61 74 65 64 20 75 6E+                                        ; DATA XREF: Cast_Spell_Overland__WIP+C40o
 // WZD dseg:6B08
 char aThatCityAlread[] = "That city already has ";
-// WZD dseg:6B08 79 20 68 61 73 20 00                                                                    ; DATA XREF: Cast_Spell_Overland__WIP+EB0o ...
 // WZD dseg:6B1F 20 73 70 65 6C 6C 20 68 61 73 20 66 61 69 6C 65+cnst_SpellError_4 db ' spell has failed.',0
-// WZD dseg:6B1F 64 2E 00                                                                                ; DATA XREF: Cast_Spell_Overland__WIP+1825o
 // WZD dseg:6B32 53 70 65 6C 6C 20 42 6C 61 73 74 00             aSpellBlast db 'Spell Blast',0
-// WZD dseg:6B3E 44 69 73 6A 75 6E 63 74 69 6F 6E 00             aDisjunction db 'Disjunction',0         ; DATA XREF: Cast_Spell_Overland__WIP+1E1Fo
+// WZD dseg:6B3E 44 69 73 6A 75 6E 63 74 69 6F 6E 00             aDisjunction db 'Disjunction',0         
 // WZD dseg:6B4A 20 74 68 65 20                                  aThe_0 db ' the '
 
 // WZD dseg:6B4A                                                 END:  ovr135 - Initialized Data
@@ -175,7 +173,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
     int16_t itr_units = 0;  // itr
     int16_t Dispel_Chance = 0;
     int16_t enchantments_idx = 0;  // DNE in Dasm, uses Dispel_Chance
-    uint8_t * ptr_enchantments = 0;  // &_CITIES[].enchantments
+    uint8_t * ptr_enchantments = 0;  // (uint8_t *)&_CITIES[].enchantments[0]
     int16_t spell_idx = 0;  // _DI_
     struct s_SPELL_DATA * DBG_spell_data_table;
     // int8_t * DBG_spell_data_table__Param0;
@@ -451,7 +449,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                         if(player_idx == HUMAN_PLAYER_IDX)
                         {
 
-                            LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)GUI_NearMsgString, 21, 1, 150);  // "Maximum unit count exceeded.  Summons fails."
+                            LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 21, 1, 150);  // "Maximum unit count exceeded.  Summons fails."
 
                             Warn0(GUI_NearMsgString);
 
@@ -489,7 +487,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                             MultiPurpose_Local_Var = ST_TRUE;
 
-                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Friendly_City, &spell_target_idx, &RetY, &RetP, &var_12, &var_10, &spell_name);
+                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Friendly_City, &spell_target_idx, &RetY, &RetP, &var_12, &var_10, (char *)&spell_name[0]);
 
                             if(Cast_Successful == ST_TRUE)
                             {
@@ -509,13 +507,13 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                                     Full_Draw_Main_Screen();
 
-                                    LBX_Load_Data_Static(message_lbx_file__ovr135, 0, GUI_NearMsgString, 25, 1, 150);
+                                    LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 25, 1, 150);
 
                                     Warn0(GUI_NearMsgString);
 
                                 }
 
-                                ptr_enchantments = &_CITIES[spell_target_idx].enchantments;
+                                ptr_enchantments = (uint8_t *)&_CITIES[spell_target_idx].enchantments[0];
 
                                 if(ptr_enchantments[spell_data_table[spell_idx].ce_idx] > 0)
                                 {
@@ -578,7 +576,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                         else
                         {
 
-                            ptr_enchantments = &_CITIES[spell_target_idx].enchantments;
+                            ptr_enchantments = (uint8_t *)&_CITIES[spell_target_idx].enchantments[0];
 
                             enchantments_idx = spell_data_table[spell_idx].ce_idx;
 
@@ -645,10 +643,10 @@ Capture_Cities_Data();
                         while((MultiPurpose_Local_Var == ST_FALSE) && (Cast_Successful == ST_TRUE))
                         {
                             MultiPurpose_Local_Var = ST_TRUE;
-                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Enemy_City, &spell_target_idx, &RetY, &RetP, &var_12, &var_10, &spell_name);
+                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Enemy_City, &spell_target_idx, &RetY, &RetP, &var_12, &var_10, (char *)&spell_name[0]);
                             if(Cast_Successful == ST_TRUE)
                             {
-                                ptr_enchantments = &_CITIES[spell_target_idx].enchantments;
+                                ptr_enchantments = (uint8_t *)&_CITIES[spell_target_idx].enchantments[0];
                                 if(ptr_enchantments[spell_data_table[spell_idx].ce_idx] > 0)
                                 {
                                     Full_Draw_Main_Screen();
@@ -668,7 +666,7 @@ Capture_Cities_Data();
                                     )
                                     {
                                         Full_Draw_Main_Screen();
-                                        LBX_Load_Data_Static(message_lbx_file__ovr135, 0, GUI_NearMsgString, 26, 1, 150);  // "Evil Presence has no effect on cities whose controller can cast Death magic."
+                                        LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 26, 1, 150);  // "Evil Presence has no effect on cities whose controller can cast Death magic."
                                         Warn0(GUI_NearMsgString);
                                     }
                                     else
@@ -704,7 +702,7 @@ Capture_Cities_Data();
                             Mark_Block(_screen_seg);
                             Cast_Spell_City_Enchantment_Animation_1__WIP(spell_target_idx, spell_idx, player_idx);
                         }
-                        ptr_enchantments = &_CITIES[spell_target_idx].enchantments;
+                        ptr_enchantments = (uint8_t *)&_CITIES[spell_target_idx].enchantments[0];
                         enchantments_idx = spell_data_table[spell_idx].ce_idx;
                         ptr_enchantments[enchantments_idx] = (player_idx + 1);  // PLAYER_NUM();
 Capture_Cities_Data();
@@ -807,7 +805,7 @@ Capture_Cities_Data();
                     if(spell_idx == spl_Awareness)
                     {
 
-                        // SPELLY  Cast_Awareness(player_idx);
+                        Cast_Awareness(player_idx);
 
                     }
 

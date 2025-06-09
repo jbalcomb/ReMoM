@@ -1806,7 +1806,7 @@ int16_t City_Food_Production(int16_t city_idx)
 
 XREF:
     City_Growth_Rate()
-    Compute_Base_Map_Square_Values()
+    Compute_Base_Values_For_Map_Square()
     NX_j_City_Maximum_Size()
 
 */
@@ -3033,7 +3033,7 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 
     }
 
-    assert(minimum_farmer_count >= 0)
+    assert(minimum_farmer_count >= 0);
 
     return minimum_farmer_count;
 }
@@ -3637,7 +3637,7 @@ int16_t City_Rebel_Count(int16_t city_idx)
     *is_unexplored flag {F,T}
 
 Surveyor_Window_Display()
-    Compute_Base_Map_Square_Values(l_mx, l_my, _map_plane, &val, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &is_unexplored);
+    Compute_Base_Values_For_Map_Square(l_mx, l_my, _map_plane, &val, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &is_unexplored);
 ...
 """
 City Resources
@@ -3647,11 +3647,11 @@ gold_units Bonus +10%
 """
 
 AI_ProcessSettlers()
-    Compute_Base_Map_Square_Values(wx, wy, wp, &maximum_population, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &is_unexplored);
+    Compute_Base_Values_For_Map_Square(wx, wy, wp, &maximum_population, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &is_unexplored);
 
 
 */
-void Compute_Base_Map_Square_Values(int16_t wx, int16_t wy, int16_t wp, int16_t *MaxPop, int16_t *production_bonus, int16_t *gold_bonus, int16_t *unit_cost_reduction, int16_t *gold_units, int16_t *magic_units, int16_t *have_nightshade, int16_t *have_mithril, int16_t *have_adamantium, int16_t *have_shore, int16_t *is_unexplored)
+void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int16_t *MaxPop, int16_t *production_bonus, int16_t *gold_bonus, int16_t *unit_cost_reduction, int16_t *gold_units, int16_t *magic_units, int16_t *have_nightshade, int16_t *have_mithril, int16_t *have_adamantium, int16_t *have_shore, int16_t *is_unexplored)
 {
     int16_t city_idx;
     int16_t itr;
@@ -3923,7 +3923,7 @@ void Compute_Base_Map_Square_Values(int16_t wx, int16_t wy, int16_t wp, int16_t 
 
     SETMAX(*MaxPop, 25);
 
-    for(itr_wy = (wy - 1); ((wy + 2) <= itr_wy); itr_wy++)
+    for(itr_wy = (wy - 1); (wy + 2) > itr_wy; itr_wy++)
     {
 
         if(

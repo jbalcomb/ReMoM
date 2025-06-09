@@ -8,7 +8,12 @@
 #include "NEWGAME.H"
 
 #include "MOX/MOM_DATA.H"
-#include "MOX/MOX_TYPE.H"
+#include "MOX/MOX_DAT.H"
+#include "MOX/MOX_DEF.H"
+#include "MOX/random.H"
+
+#include "Spellbook.H"
+#include "UNITTYPE.H"
 
 
 

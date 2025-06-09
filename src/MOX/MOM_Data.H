@@ -1,13 +1,16 @@
 #ifndef MOM_DATA_H
 #define MOM_DATA_H
 
+#include "Input.H"
 #include "MOX_BASE.H"
 #include "MOX_TYPE.H"
 #include "Mouse.H"
 
 #include "../MOM_DEF.H"
 
-#include "../AIDUDES.H"  /* struct s_AI_CONTINENTS */
+// #include "../AIDATA.H"  /* struct s_AI_CONTINENTS */
+// AIDATA.H includes MoM.H, which includes MOX_DAT.H, which includes MOM_Data.H
+struct s_AI_CONTINENTS; // Forward declaration of struct MyStruct
 
 
 
@@ -155,10 +158,9 @@ enum e_Magic
 
 /*
     Rival Wizard Relationship Status
-
 */
-enum e_RELATIONSHIP_STATS
-{
+// enum e_RELATIONSHIP_STATS
+// {
 // Hate
 // Troubled
 // Tense
@@ -170,8 +172,7 @@ enum e_RELATIONSHIP_STATS
 // Peaceful
 // Friendly
 // Harmony
-
-};
+// };
 
 enum e_TREATY_TYPE
 {
@@ -3539,50 +3540,39 @@ extern SAMB_ptr black_gold1_icon_seg;
 extern SAMB_ptr unitview_specials_borders_seg[8];
 
 // WZD dseg:97B4
-// drake178: IMG_USW_ArrowDown@
 extern SAMB_ptr unitview_down_arrow_seg;
 
 // WZD dseg:97B6
-// drake178: IMG_USW_ArrowUp@
 extern SAMB_ptr unitview_up_arrow_seg;
 
 // WZD dseg:97B8
-// drake178: IMG_USW_Background@
 extern SAMB_ptr unitview_large_background_seg;
 
 // WZD dseg:97BA
-// IMG_USW_UnitHire_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+5Dw ...
 extern SAMB_ptr unitview_small_background_seg;
-// WZD dseg:97BA                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
 
 // WZD dseg:97BC
-// drake178: IMG_USW_Stats_Gold
 extern SAMB_ptr unitview_stat_gold_icons_seg[15];
 
 // WZD dseg:97DA
-// drake178: IMG_USW_Stat_Icons
 extern SAMB_ptr unitview_stat_icons_seg[15];
 
 // WZD dseg:97F8
-// extern SAMB_ptr special_seg[145];
 extern SAMB_ptr special_seg[144];
 
 // WZD dseg:9918
 extern SAMB_ptr diplomacy_mirror_seg;
 
 // WZD dseg:991A
-// drake178: IMG_OVL_EZConfirmBG@
 extern SAMB_ptr lair_confirm_border_seg;
 
 // WZD dseg:991C
-// drake178: IMG_OVL_EZBtm_BG@
 extern SAMB_ptr lair_bottom_without_button_seg;
 
 // WZD dseg:991E
-// drake178: IMG_OVL_EZBtn_BG@
 extern SAMB_ptr lair_bottom_with_button_seg;
 
-// WZD dseg:9920 00 00                                           CRP_DBG_Alt_T_State dw 0                ; DATA XREF: Main_Screen+47Fr ...
+// WZD dseg:9920 00 00                                           CRP_DBG_Alt_T_State dw 0
 
 // WZD dseg:9920                                                 ? END: City Screen ?
 
@@ -3597,14 +3587,14 @@ extern SAMB_ptr unit_backgrounds[9];
 
 // WZD dseg:9924                                                 END:  Main Screen Pictures
 
-// WZD dseg:9936 00 00                                           city_background_seg dw 0                ; DATA XREF: City_Screen_Load_Pictures+18w ...
-// WZD dseg:9938 00 00                                           city_block_out_seg dw 0                 ; DATA XREF: City_Screen_Load_Pictures+B9w ...
-// WZD dseg:993A 00 00                                           city_full_resource_seg dw 0             ; DATA XREF: City_Screen_Load_Pictures+A2w ...
-// WZD dseg:993C 00 00                                           city_reqd_resource_seg dw 0             ; DATA XREF: City_Screen_Load_Pictures+8Bw ...
-// WZD dseg:993E 00 00                                           city_lock_buy_button_seg dw 0           ; DATA XREF: City_Screen_Load_Pictures+D0w ...
-// WZD dseg:9940 00 00                                           city_ok_button_seg dw 0                 ; DATA XREF: City_Screen_Load_Pictures+5Dw ...
-// WZD dseg:9942 00 00                                           city_buy_button_seg dw 0                ; DATA XREF: City_Screen_Load_Pictures+2Fw ...
-// WZD dseg:9944 00 00                                           city_change_button_seg dw 0             ; DATA XREF: City_Screen_Load_Pictures+46w ...
+// WZD dseg:9936 00 00                                           city_background_seg dw 0     
+// WZD dseg:9938 00 00                                           city_block_out_seg dw 0      
+// WZD dseg:993A 00 00                                           city_full_resource_seg dw 0  
+// WZD dseg:993C 00 00                                           city_reqd_resource_seg dw 0  
+// WZD dseg:993E 00 00                                           city_lock_buy_button_seg dw 0
+// WZD dseg:9940 00 00                                           city_ok_button_seg dw 0      
+// WZD dseg:9942 00 00                                           city_buy_button_seg dw 0     
+// WZD dseg:9944 00 00                                           city_change_button_seg dw 0  
 
 // WZD dseg:9946                                                 BEGIN:  Main Screen Pictures
 

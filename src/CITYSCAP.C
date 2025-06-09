@@ -10,7 +10,10 @@
 #include "MOX/FLIC_Draw.H"
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_BITS.H"
+#include "MOX/MOX_DAT.H"
 #include "MOX/MOX_TYPE.H"
+
+#include "RACETYPE.H"
 
 
 
@@ -715,7 +718,7 @@ void Cityscape_Roads_2__WIP(SAMB_ptr cityscape_pict_seg)
         if(
             (cityscape_bldg_array->RC[0][8] == -2)
             ||
-            (cityscape_bldg_array->RC[0][8] == -2)
+            (cityscape_bldg_array->RC[0][10] == -2)
         )
         {
             Cityscape_Roads_4__WIP(120, 1, cityscape_pict_seg);

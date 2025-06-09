@@ -1,7 +1,10 @@
 #ifndef UNITTYPE_H
 #define UNITTYPE_H
 
-#include "MOM.H"
+#include "MOX/MOX_TYPE.H"
+#include "MOX/MOX_TYPE.H"
+
+#include "MOM_DEF.H"
 
 
 
@@ -313,8 +316,8 @@ struct s_UNIT_TYPE
     BEGIN: STU-MoXer :: Generate_Unit_Type_Data()
 
 */
-extern char * _unit_type_names[];
-extern struct s_UNIT_TYPE _unit_type_table[];
+extern char * _unit_type_names[NUM_UNIT_TYPE_NAMES];
+extern struct s_UNIT_TYPE _unit_type_table[NUM_UNIT_TYPES];
 
 
 

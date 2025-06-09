@@ -1,8 +1,9 @@
 
 #include "MOM_Data.H"
+#include "MOX_DEF.H"
 #include "MOX_TYPE.H"
 
-#include "../AIDUDES.H"  /* struct s_AI_CONTINENTS */
+#include "../AIDATA.H"  /* struct s_AI_CONTINENTS */
 
 
 

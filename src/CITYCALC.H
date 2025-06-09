@@ -203,7 +203,7 @@ int16_t WIZ_Get_Nation_Size__STUB(int16_t player_idx);
 int16_t City_Rebel_Count(int16_t city_idx);
 
 // WZD o142p28
-void Compute_Base_Map_Square_Values(int16_t wx, int16_t wy, int16_t wp, int16_t *MaxPop, int16_t *Prod, int16_t *TrdGld, int16_t *CostRed, int16_t *Gold, int16_t *Power, int16_t *NitShd, int16_t *Mithrl, int16_t *Admntm, int16_t *Shored, int16_t *Unexplored);
+void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int16_t *MaxPop, int16_t *Prod, int16_t *TrdGld, int16_t *CostRed, int16_t *Gold, int16_t *Power, int16_t *NitShd, int16_t *Mithrl, int16_t *Admntm, int16_t *Shored, int16_t *Unexplored);
 
 // WZD o142p29
 void Reset_City_Area_Bitfields(void);

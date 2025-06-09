@@ -15,10 +15,12 @@
 
 #include "MOM.H"
 
-#include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
+#include "malloc.h"
 
+#include "NEXTTURN.H"
 #include "SBookScr.H"
 #include "Spellbook.H"
+#include "Spells128.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"
 
@@ -1122,7 +1124,7 @@ void Spell_Animation_Load_Sound_Effect__WIP(int16_t spell_idx)
     }
     else
     {
-        SND_SpellCast = ST_UNDEFINED;
+        SND_SpellCast = (SAMB_ptr)ST_UNDEFINED;
     }
 }
 
@@ -1176,7 +1178,7 @@ void Spell_Animation_Screen__WIP(int16_t wx, int16_t wy, int16_t wp)
 
     World_To_Screen(_map_x, _map_y, &X_To_Left, &Y_To_Top);
 
-    if(SND_SpellCast != ST_UNDEFINED)
+    if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
     {
         // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
         sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);

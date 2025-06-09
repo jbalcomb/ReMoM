@@ -5,9 +5,14 @@
         ¿ ovr145 ?
 */
 
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"  /* _players[] */
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_TYPE.H"
+
+#include "RACETYPE.H"
+#include "Spellbook.H"
+#include "UNITTYPE.H"
 
 
 

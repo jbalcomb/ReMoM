@@ -5,10 +5,23 @@
 
 #include "Spells137.H"
 
+
+#include "MOX/LBX_Load.H"
 #include "MOX/MOM_Data.H"
+#include "MOX/MOX_DAT.H"
 #include "MOX/MOX_DEF.H"
-#include "MOX/SOUND.H"
+#include "MOX/MOX_SET.H"
 #include "MOX/MOX_TYPE.H"
+#include "MOX/SOUND.H"
+
+#include "CITYSCAP.H"
+#include "MainScr.H"
+#include "RACETYPE.H"
+#include "SBookScr.H"
+#include "Spellbook.H"
+#include "UNITTYPE.H"
+
+
 
 // SPLMASR.C
 // WZD dseg:CA14
@@ -328,7 +341,6 @@ void IDK_SummonAnim_Draw(void)
 {
     int16_t start_y = 0;  // _SI_
     int16_t start_x = 0;  // _DI_
-    int16_t DBG_unit_type;
 
     start_x = 30;
     start_y = 42;
@@ -373,10 +385,7 @@ void IDK_SummonAnim_Draw(void)
     if(_osc_summon_unit_type > 0)
     {
 
-        // strcpy(GUI_NearMsgString, *_unit_type_table[spell_data_table[_players[_osc_player_idx].casting_spell_idx].Param0].name);
-        DBG_unit_type = spell_data_table[_players[_osc_player_idx].casting_spell_idx].Param0;
-        DBG_unit_type = spell_data_table[_players[_osc_player_idx].casting_spell_idx].unit_type;
-        strcpy(GUI_NearMsgString, *_unit_type_table[DBG_unit_type].name);
+        strcpy(GUI_NearMsgString, *_unit_type_table[spell_data_table[_players[_osc_player_idx].casting_spell_idx].unit_type].name);
 
         strcat(GUI_NearMsgString, aSummoned);
 
@@ -825,7 +834,7 @@ void Cast_Spell_City_Enchantment_Animation_2__WIP(int16_t city_idx, int16_t spel
     if(
         (spell_idx != spl_Earthquake)
         &&
-        (SND_SpellCast != ST_UNDEFINED)
+        (SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
     )
     {
 
@@ -846,13 +855,13 @@ void Cast_Spell_City_Enchantment_Animation_2__WIP(int16_t city_idx, int16_t spel
         x2 = cityscape_bldg_fields[itr].field_x2;
         y2 = cityscape_bldg_fields[itr].field_y2;
 
-        city_cityscape_fields[city_cityscape_field_count] = Add_Hidden_Field(x1, y1, x2, y2, empty_string__ovr137, ST_UNDEFINED);
+        city_cityscape_fields[city_cityscape_field_count] = Add_Hidden_Field(x1, y1, x2, y2, &empty_string__ovr137[0], ST_UNDEFINED);
 
         city_cityscape_field_count++;
 
     }
 
-    fullscreen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, empty_string__ovr137, ST_UNDEFINED);
+    fullscreen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, &empty_string__ovr137[0], ST_UNDEFINED);
 
     for(itr = 0; ((itr < 250) && (Get_Input() == ST_FALSE)); itr++)
     {

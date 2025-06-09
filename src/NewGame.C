@@ -8,11 +8,14 @@
 
 #include "MOX/Fonts.H"
 #include "MOX/Mouse.H"
+#include "MOX/MOX_DAT.H"
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_SET.H"
 #include "MOX/MOX_TYPE.H"
 #include "MOX/MOM_DATA.H"  /* _difficulty, _magic, _landsize, _num_players */
 #include "MOX/Timer.H"
+
+#include "Spellbook.H"
 
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), frite(), fseek(); */
 

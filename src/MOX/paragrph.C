@@ -6,7 +6,14 @@
         paragrph
 */
 
-#include "MOX_Lib.H"
+#include "MOX_BASE.H"
+#include "MOX_BITS.H"
+#include "MOX_TYPE.H"
+
+
+
+#include "Fonts.H"
+#include "paragrph.H"
 
 
 
@@ -122,10 +129,6 @@ void Print_Paragraph(int16_t x, int16_t y, int16_t max_width, char * string, int
 {
     int16_t itr;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Paragraph(x = %d, y = %d, max_width = %d, string = %s, print_type = %d)\n", __FILE__, __LINE__, x, y, max_width, string, print_type);
-#endif
-
     Mark_Paragraph(x, y, max_width, string);
 
     for(itr = 0; itr < paragraph_max_lines; itr++)
@@ -186,10 +189,6 @@ void Print_Paragraph(int16_t x, int16_t y, int16_t max_width, char * string, int
 
     exclusion_count = 0;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Print_Paragraph(x = %d, y = %d, max_width = %d, string = %s, print_type = %d)\n", __FILE__, __LINE__, x, y, max_width, string, print_type);
-#endif
-
 }
 
 // WZD s19p02
@@ -232,13 +231,8 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
     int16_t spacing;
     int16_t font_height;
     int16_t str_ptr;
-
     int16_t itr_exclusion_count;
     int16_t temp_ptr;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Mark_Paragraph(x = %d, y = %d, full_width = %d, string = %s)\n", __FILE__, __LINE__, x, y, full_width, string);
-#endif
 
     str_ptr = 0;
     paragraph_max_lines = 0; // ; the amount of elements in the VGA_TextLine_ arrays
@@ -249,12 +243,6 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
     line_feed = GET_2B_OFS(font_style_data, FONT_HDR_POS_CURRENT_BASE_HEIGHT);  // MoO2  font_header.current_line_feed ¿ added after MoM ?
     ypos = y;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: font_height: %d\n", __FILE__, __LINE__, font_height);
-    dbg_prn("DEBUG: [%s, %d]: spacing: %d\n", __FILE__, __LINE__, spacing);
-    dbg_prn("DEBUG: [%s, %d]: line_feed: %d\n", __FILE__, __LINE__, line_feed);
-#endif
-
     xmin = 0;  // DNE in Dasm
     xmax = 0;  // DNE in Dasm
     Line_Width = 0;  // DNE in Dasm
@@ -263,20 +251,9 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
 
     while(string[str_ptr] != '\0')
     {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: string[%d]: %c\n", __FILE__, __LINE__, str_ptr, string[str_ptr]);
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: ypos: %d\n", __FILE__, __LINE__, ypos);
-#endif
 
         skip_flag = 0;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: x_override: %d\n", __FILE__, __LINE__, x_override);
-    dbg_prn("DEBUG: [%s, %d]: xmax: %d\n", __FILE__, __LINE__, xmax);
-    dbg_prn("DEBUG: [%s, %d]: xmin: %d\n", __FILE__, __LINE__, xmin);
-#endif
         if(x_override != -1)
         {
             xmin = x_override;
@@ -288,11 +265,6 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
             xmin = x;
             xmax = x + full_width;
         }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: x_override: %d\n", __FILE__, __LINE__, x_override);
-    dbg_prn("DEBUG: [%s, %d]: xmax: %d\n", __FILE__, __LINE__, xmax);
-    dbg_prn("DEBUG: [%s, %d]: xmin: %d\n", __FILE__, __LINE__, xmin);
-#endif
 
 
 
@@ -346,34 +318,30 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
 
         if(skip_flag == ST_FALSE)
         {
+
             if((ypos + font_height) >= SCREEN_HEIGHT)
             {
+
                 goto Error;
+
             }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Line_Width: %d\n", __FILE__, __LINE__, Line_Width);
-#endif
             Line_Width = xmax - xmin + 1;  // we just didn't skip, so (xmin <= xmax)
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Line_Width: %d\n", __FILE__, __LINE__, Line_Width);
-#endif
+
             blank_pos = -1;
+
             tab = -1;
-
-
 
             temp_ptr = str_ptr;
 
             while( -(spacing) <= Line_Width )
             {
+
                 character = string[temp_ptr];
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: character: %02X  '%c'\n", __FILE__, __LINE__, character, character);
-#endif
+
                 if(character < 0x20)  /* LT ASCII SPACE ∴ Non-Printable ∴ Control Character */
                 {
-                    // TODO  DLOG("(character < 0x20)");
+                    
                     if(
                         character == 0x14   /*  ASCII  14h  20d  DC4 (device control 4)      */
                         ||
@@ -393,13 +361,7 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
                 else
                 {
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Line_Width: %d\n", __FILE__, __LINE__, Line_Width);
-#endif
                     Line_Width -= string_widths[(character - 32)] + spacing;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Line_Width: %d\n", __FILE__, __LINE__, Line_Width);
-#endif
 
                     if(character == 0x20)
                     {
@@ -480,12 +442,6 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
 
         }  /* if(skip_flag == ST_FALSE) */
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: (x + full_width - 1): %d\n", __FILE__, __LINE__, (x + full_width - 1));
-    dbg_prn("DEBUG: [%s, %d]: xmax: %d\n", __FILE__, __LINE__, xmax);
-    dbg_prn("DEBUG: [%s, %d]: ypos: %d\n", __FILE__, __LINE__, ypos);
-    dbg_prn("DEBUG: [%s, %d]: x_override: %d\n", __FILE__, __LINE__, x_override);
-#endif
         // @@StringLoopTail
         if( (x + full_width - 1) <= xmax)
         {
@@ -495,10 +451,6 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
         {
             x_override = (xmax + 1);
         }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: ypos: %d\n", __FILE__, __LINE__, ypos);
-    dbg_prn("DEBUG: [%s, %d]: x_override: %d\n", __FILE__, __LINE__, x_override);
-#endif
 
     }  /* while(string[str_ptr] != '\0') */
 
@@ -512,14 +464,6 @@ Error:
 
 
 Done:
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: paragraph_max_lines: %d\n", __FILE__, __LINE__, paragraph_max_lines);
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Mark_Paragraph(x = %d, y = %d, full_width = %d, string = %s)\n", __FILE__, __LINE__, x, y, full_width, string);
-#endif
 
     return;  // DNE in Dasm - VSBS
 }

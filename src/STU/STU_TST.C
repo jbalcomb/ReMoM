@@ -4,6 +4,7 @@
 
 */
 
+#include "../MOX/MOX_DAT.H"
 #include "../MOX/MOX_TYPE.H"
 
 #include "../MOM_DEF.H"

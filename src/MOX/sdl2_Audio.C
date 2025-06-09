@@ -17,6 +17,8 @@
 // WZD dseg:82AC
 extern int16_t audio_initialized;
 
+int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out_wav_buf, uint32_t * out_wav_len);
+
 
 
 // C:\STU\developp\1oom\src\ui\classic\uidefs.h

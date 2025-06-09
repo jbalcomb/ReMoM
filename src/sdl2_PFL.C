@@ -7,7 +7,7 @@
 #include "MOX/Mouse.H"
 #include "MOX/Video.H"
 
-#include "sdl2_MoM.H"
+#include "sdl2_MOM.H"
 #include "sdl2_SCCC.H"
 
 #include "MOM_PFL.H"

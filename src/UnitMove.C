@@ -30,6 +30,7 @@ Elsewhere, ...
 
 #include "Combat.H"
 #include "MOM_DEF.H"
+#include "Terrain.H"
 
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(); */
 

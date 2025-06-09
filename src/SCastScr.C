@@ -7,15 +7,19 @@
 
 #include "SCastScr.H"
 
-#include "MOX/MOM_DATA.H"
+#include "MOX/Fields.H"
+#include "MOX/Fonts.H"
+#include "MOX/MOM_Data.H"
+#include "MOX/MOX_DAT.H"
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_T4.H"
+#include "MOX/Timer.H"
 #include "MOX/MOX_TYPE.H"
 
 #include "MOM_DEF.H"
-
+#include "MainScr.H"
 #include "MainScr_Maps.H"  /* Add_Nodes_To_Entities_On_Map_Window() */
-
+#include "Spellbook.H"
 #include "SPELLDEF.H"
 
 #include <assert.h>

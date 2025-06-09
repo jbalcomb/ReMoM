@@ -26,7 +26,6 @@
 #include "SBookScr.H"
 #include "UNITTYPE.H"   // WTFMATE
 #include "WZD_o059.H"
-#include "WZD_o129.H"
 #include "WZD_o143.H"
 
 
@@ -361,26 +360,29 @@ void Determine_Event(void)
 
         event_type = Random(18);
 
-// et_Meteor               =  1,
-// et_Gift                 =  2,
-// et_Disjunction          =  3,
-// et_Marriage             =  4,
-// et_Earthquake           =  5,
-// et_Pirates              =  6,
-        if(DBG_trigger_event_plague               == ST_TRUE) { event_type = et_Plague;               DBG_trigger_event_plague               = ST_FALSE; }
-// et_Rebellion            =  8,
-// et_Donation             =  9,
-// et_Depletion            = 10,
-// et_New_Mine             = 11,
-        if(DBG_trigger_event_population_boom      == ST_TRUE) { event_type = et_Population_Boom;      DBG_trigger_event_population_boom      = ST_FALSE; }
-        if(DBG_trigger_event_good_moon            == ST_TRUE) { event_type = et_Good_Moon;            DBG_trigger_event_good_moon            = ST_FALSE; }
-        if(DBG_trigger_event_bad_moon             == ST_TRUE) { event_type = et_Bad_Moon;             DBG_trigger_event_bad_moon             = ST_FALSE; }
-        if(DBG_trigger_event_conjunction_chaos    == ST_TRUE) { event_type = et_Conjunction_Chaos;    DBG_trigger_event_conjunction_chaos    = ST_FALSE; }
-        if(DBG_trigger_event_conjunction_nature   == ST_TRUE) { event_type = et_Conjunction_Nature;   DBG_trigger_event_conjunction_nature   = ST_FALSE; }
-        if(DBG_trigger_event_conjunction_sorcery  == ST_TRUE) { event_type = et_Conjunction_Sorcery;  DBG_trigger_event_conjunction_sorcery  = ST_FALSE; }
-        if(DBG_trigger_event_mana_short           == ST_TRUE) { event_type = et_Mana_Short;           DBG_trigger_event_mana_short           = ST_FALSE; }
+// // et_Meteor               =  1,
+// // et_Gift                 =  2,
+// // et_Disjunction          =  3,
+// // et_Marriage             =  4,
+// // et_Earthquake           =  5,
+// // et_Pirates              =  6,
+//         if(DBG_trigger_event_plague               == ST_TRUE) { event_type = et_Plague;               DBG_trigger_event_plague               = ST_FALSE; }
+// // et_Rebellion            =  8,
+// // et_Donation             =  9,
+// // et_Depletion            = 10,
+// // et_New_Mine             = 11,
+//         if(DBG_trigger_event_population_boom      == ST_TRUE) { event_type = et_Population_Boom;      DBG_trigger_event_population_boom      = ST_FALSE; }
+//         if(DBG_trigger_event_good_moon            == ST_TRUE) { event_type = et_Good_Moon;            DBG_trigger_event_good_moon            = ST_FALSE; }
+//         if(DBG_trigger_event_bad_moon             == ST_TRUE) { event_type = et_Bad_Moon;             DBG_trigger_event_bad_moon             = ST_FALSE; }
+//         if(DBG_trigger_event_conjunction_chaos    == ST_TRUE) { event_type = et_Conjunction_Chaos;    DBG_trigger_event_conjunction_chaos    = ST_FALSE; }
+//         if(DBG_trigger_event_conjunction_nature   == ST_TRUE) { event_type = et_Conjunction_Nature;   DBG_trigger_event_conjunction_nature   = ST_FALSE; }
+//         if(DBG_trigger_event_conjunction_sorcery  == ST_TRUE) { event_type = et_Conjunction_Sorcery;  DBG_trigger_event_conjunction_sorcery  = ST_FALSE; }
+//         if(DBG_trigger_event_mana_short           == ST_TRUE) { event_type = et_Mana_Short;           DBG_trigger_event_mana_short           = ST_FALSE; }
 
-        player_idx = Get_Event_Victim(m_event_good_array[event_type]);
+// Severity Code Description Project File Line Suppression State Details
+//     Warning C6385 Reading invalid data from 'm_event_good_array'.sdl2_ReMoM C :\STU\devel\ReMoM\src\EVENTS.C 382		
+        if(event_type > ST_UNDEFINED)
+            player_idx = Get_Event_Victim(m_event_good_array[event_type]);
 
         if(DBG_trigger_event == ST_TRUE)
         {

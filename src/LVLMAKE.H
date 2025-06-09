@@ -7,7 +7,10 @@
 #ifndef LVLMAKE_H
 #define LVLMAKE_H
 
-#include "MOM.H"
+#include "MOX/MOM_Data.H"
+#include "MOX/MOX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {

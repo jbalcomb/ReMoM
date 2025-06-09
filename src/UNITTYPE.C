@@ -1,5 +1,11 @@
 
-#include "MOM.H"
+#include "UNITTYPE.H"
+
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_TYPE.H"
+
+#include "MOM_DEF.H"
+
 
 
 /*
@@ -160,7 +166,7 @@ char unit_type_name_120[] = "Nagas";
 
 
 
-char * _unit_type_names[] =
+char * _unit_type_names[NUM_UNIT_TYPE_NAMES] =
 {
     unit_type_name_000,
     unit_type_name_001,
@@ -311,7 +317,7 @@ Race_Life  = 13h
 Race_Death  = 14h
 */
 /* Name, Melee, Ranged, Ranged_Type, Ammo, To_Hit, Defense, Resist, Move_Halves, Cost, Upkeep, Race, Bldng1_or_Portrait, Bldng2_or_HeroType, pict_seg, Hits, Sight, Transport, Figures, Construction, Spec_Att_Attr, Move_Flags, Attribs_1, Attribs_2, Abilities, Attack_Flags, Sound */
-struct s_UNIT_TYPE _unit_type_table[] =
+struct s_UNIT_TYPE _unit_type_table[NUM_UNIT_TYPES] =
 {
     /* BEGIN: Hero Unit Type */
     /* name,                 mel, rng,  rt, amm, hit, def, res, mov, cos, upk, rac, bl1, bl2,   pict, hp, sco, tra, fig, con, spec,   mvfl,   att1,   att2,    abl,   atfl, snd */

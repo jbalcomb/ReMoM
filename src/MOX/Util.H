@@ -13,7 +13,7 @@
 #ifndef MOX_UTIL_H
 #define MOX_UTIL_H
 
-#include "MOX_Lib.H"
+#include "MOX_TYPE.H"
 
 
 

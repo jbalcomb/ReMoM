@@ -54,7 +54,7 @@ void Cast_Spell_City_Enchantment_Animation_Load_Music(int16_t spell_idx, int16_t
 int16_t Spell_Animation_Load_Graphics__WIP(int16_t spell_idx);
 
 // WZD o134p11
-void Spell_Animation_Load_Sound_Effect__WIP(void);
+void Spell_Animation_Load_Sound_Effect__WIP(int16_t spell_idx);
 
 // WZD o134p12
 void Spell_Animation_Screen__WIP(int16_t wx, int16_t wy, int16_t wp);

@@ -55,6 +55,7 @@
 #include "SPELLDEF.H"
 #include "Spells131.H"
 #include "Spells133.H"
+#include "SPLMASTR.H"
 #include "Terrain.H"
 #include "TerrType.H"
 #include "UnitMove.H"   // WTFMATE
@@ -2913,7 +2914,7 @@ void CMB_PrepareTurn__WIP(void)
             else if(battle_units[itr].ranged_type > srat_Thrown)
             {
 
-                Roll_Result = (Roll_Result = battle_units[itr].melee + battle_units[itr].ranged);
+                Roll_Result = (battle_units[itr].melee + battle_units[itr].ranged);
 
             }
             else
@@ -9720,7 +9721,7 @@ void BU_SetVisibility__WIP(int16_t battle_unit_idx)
         )
         {
 
-            Visible == ST_TRUE;
+            Visible = ST_TRUE;
 
             battle_units[battle_unit_idx].Image_Effect = 4;
 
@@ -9729,7 +9730,7 @@ void BU_SetVisibility__WIP(int16_t battle_unit_idx)
         if(owner_idx == combat_human_player)
         {
 
-            Visible == ST_TRUE;
+            Visible = ST_TRUE;
 
             battle_units[battle_unit_idx].Image_Effect = 4;
 
@@ -9799,7 +9800,8 @@ void BU_SetBaseAnims__WIP(int16_t battle_unit_idx)
 
         Flight_Bob = ST_TRUE;
 
-        animate = BU_CheckFlight__WIP(battle_unit_idx, 0);  // ST_TRUE if flying and not web or black sleep
+        // TODO  is that 0 really there?  animate = BU_CheckFlight__WIP(battle_unit_idx, 0);  // ST_TRUE if flying and not web or black sleep
+        animate = BU_CheckFlight__WIP(battle_unit_idx);
 
     }
 
@@ -12441,7 +12443,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
 
                     }
 
-                    cast_status == 2;
+                    cast_status = 2;
 
                     spell_idx = ST_UNDEFINED;
 
@@ -12592,7 +12594,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
 
                 }
 
-                cast_status == 2;
+                cast_status = 2;
 
                 // spell_idx = ST_UNDEFINED;
                 spell_idx = 0;
@@ -12834,7 +12836,7 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
 
     Assign_Auto_Function(Combat_Spellbook_Screen_Draw, 2);
 
-    LBX_Load_Data_Static(hlpentry_lbx_file__ovr112, 0, _help_entries, 0, 15, 10);
+    LBX_Load_Data_Static(hlpentry_lbx_file__ovr112, 0, (SAMB_ptr)&_help_entries[0], 0, 15, 10);
 
     Set_Help_List(_help_entries, 15);
 
@@ -12849,17 +12851,17 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
 
     for(itr = 0; itr < 6; itr++)
     {
-        spellbook_pages[(itr + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr * 22) + 17), (x_start + 137), (y_start + (itr * 22) + 34), str_empty_string__ovr112, ST_UNDEFINED);
+        spellbook_pages[(itr + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr * 22) + 17), (x_start + 137), (y_start + (itr * 22) + 34), (int16_t)&str_empty_string__ovr112[0], ST_UNDEFINED);
     }
 
     for(itr = 0; itr < 6; itr++)
     {
-        spellbook_pages[(itr + 6)] = Add_Hidden_Field((x_start + 148), (y_start + (itr * 22) + 17), (x_start + 268), (y_start + (itr * 22) + 34), str_empty_string__ovr112, ST_UNDEFINED);
+        spellbook_pages[(itr + 6)] = Add_Hidden_Field((x_start + 148), (y_start + (itr * 22) + 17), (x_start + 268), (y_start + (itr * 22) + 34), (int16_t)&str_empty_string__ovr112[0], ST_UNDEFINED);
     }
 
     hotkey_ESC = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, ST_UNDEFINED, ST_UNDEFINED);
-    hotkey_F   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, &str_hotkey_F__ovr112[0], ST_UNDEFINED);
-    hotkey_B   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, &str_hotkey_B__ovr112[0], ST_UNDEFINED);
+    hotkey_F   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, (int16_t)&str_hotkey_F__ovr112[0], ST_UNDEFINED);
+    hotkey_B   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, (int16_t)&str_hotkey_B__ovr112[0], ST_UNDEFINED);
 
     leave_screen = ST_FALSE;
 
@@ -13057,15 +13059,15 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
             y_start = 12;
             for(itr = 0; itr < 6; itr++)
             {
-                spellbook_pages[(itr + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr * 22) + 17), (x_start + 137), (y_start + (itr * 22) + 34), str_empty_string__ovr112, ST_UNDEFINED);
+                spellbook_pages[(itr + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr * 22) + 17), (x_start + 137), (y_start + (itr * 22) + 34), (int16_t)&str_empty_string__ovr112[0], ST_UNDEFINED);
             }
             for(itr = 0; itr < 6; itr++)
             {
-                spellbook_pages[(itr + 6)] = Add_Hidden_Field((x_start + 148), (y_start + (itr * 22) + 17), (x_start + 268), (y_start + (itr * 22) + 34), str_empty_string__ovr112, ST_UNDEFINED);
+                spellbook_pages[(itr + 6)] = Add_Hidden_Field((x_start + 148), (y_start + (itr * 22) + 17), (x_start + 268), (y_start + (itr * 22) + 34), (int16_t)&str_empty_string__ovr112[0], ST_UNDEFINED);
             }
             hotkey_ESC = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, ST_UNDEFINED, ST_UNDEFINED);
-            hotkey_F   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, &str_hotkey_F__ovr112[0], ST_UNDEFINED);
-            hotkey_B   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, &str_hotkey_B__ovr112[0], ST_UNDEFINED);
+            hotkey_F   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, (int16_t)&str_hotkey_F__ovr112[0], ST_UNDEFINED);
+            hotkey_B   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, (int16_t)&str_hotkey_B__ovr112[0], ST_UNDEFINED);
 
             Set_Page_Off();
             Combat_Spellbook_Screen_Draw();
@@ -13134,7 +13136,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
     {
         if(CMB_Vortex_Count == 10)
         {
-            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 76, 1, 150);  // "Only ten vortexes can be in any area at once"
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 76, 1, 150);  // "Only ten vortexes can be in any area at once"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
@@ -13144,7 +13146,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
     {
         if(_players[HUMAN_PLAYER_IDX].casting_spell_idx == spl_Spell_Of_Return)
         {
-            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 85, 1, 150);  // "Word of Recall and Recall Hero may not be cast while you are banished"
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 85, 1, 150);  // "Word of Recall and Recall Hero may not be cast while you are banished"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
@@ -13155,7 +13157,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
         IDK = ST_FALSE;
         if(_players[HUMAN_PLAYER_IDX].casting_spell_idx == spl_Spell_Of_Return)
         {
-            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 85, 1, 150);  // "Word of Recall and Recall Hero may not be cast while you are banished"
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 85, 1, 150);  // "Word of Recall and Recall Hero may not be cast while you are banished"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
@@ -13167,7 +13169,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
                 (_combat_wp == _players[HUMAN_PLAYER_IDX].summon_wp)
         )
         {
-            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 77, 1, 150);  // "Recall Hero returns your heroes to your summoning circle and this battle is at your summoning circle"
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 77, 1, 150);  // "Recall Hero returns your heroes to your summoning circle and this battle is at your summoning circle"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
@@ -13185,7 +13187,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
                 }
                 if(IDK == ST_FALSE)
                 {
-                    LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 78, 1, 150);  // "There are no heroes left to recall"
+                    LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 78, 1, 150);  // "There are no heroes left to recall"
                     Warn1(GUI_NearMsgString);
                     illegal = ST_TRUE;
                 }
@@ -13213,7 +13215,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
         }
         if(IDK == ST_FALSE)
         {
-            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 79, 1, 150);  // "There are no Chaos or Death units to throw this spell on"
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 79, 1, 150);  // "There are no Chaos or Death units to throw this spell on"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
@@ -13258,13 +13260,13 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
         }
         if(IDK == ST_FALSE)
         {
-            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 80, 1, 150);  // "There are no dead units that can be animated"
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 80, 1, 150);  // "There are no dead units that can be animated"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
         else if(Controlled_Units == MAX_STACK)
         {
-            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 84, 1, 150);  // "You may only control 9 units in combat at one time"
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 84, 1, 150);  // "You may only control 9 units in combat at one time"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
@@ -13312,13 +13314,13 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
         }
         if(IDK == ST_FALSE)
         {
-            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 81, 1, 150);  // "There are no dead units that can be raised from the dead"
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 81, 1, 150);  // "There are no dead units that can be raised from the dead"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
         else if(Controlled_Units == MAX_STACK)
         {
-            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 84, 1, 150);  // "You may only control 9 units in combat at one time"
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 84, 1, 150);  // "You may only control 9 units in combat at one time"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
@@ -13350,7 +13352,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
         }
         if(combat_enchantments[(spell_data_table[spell_idx].Param0 + IDK)] > 0)
         {
-            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 82, 1, 150);  // "That combat enchantment is already in effect"
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 82, 1, 150);  // "That combat enchantment is already in effect"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
@@ -13373,7 +13375,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
         }
         if(IDK == ST_FALSE)
         {
-            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 83, 1, 150);  // "There are no normal units to throw this spell on"
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 83, 1, 150);  // "There are no normal units to throw this spell on"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
@@ -13394,7 +13396,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
         }
         if(IDK == ST_FALSE)
         {
-            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 83, 1, 150);  // "There are no normal units to throw this spell on"
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 83, 1, 150);  // "There are no normal units to throw this spell on"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
@@ -13405,7 +13407,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
     {
         if(_units == MAX_UNIT_COUNT)
         {
-            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 50, 1, 150);  // "Maximum number of units exceeded"
+            LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 50, 1, 150);  // "Maximum number of units exceeded"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
@@ -13425,7 +13427,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
             }
             if(Controlled_Units == MAX_STACK)
             {
-                LBX_Load_Data_Static(message_lbx_file__ovr112, 0, GUI_NearMsgString, 84, 1, 150);  // "You may only control 9 units in combat at one time"
+                LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 84, 1, 150);  // "You may only control 9 units in combat at one time"
                 Warn1(GUI_NearMsgString);
                 illegal = ST_TRUE;
             }
@@ -13922,7 +13924,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
                     (spell_idx == spl_Creature_Binding)
                 )
                 {
-                    CMB_TargetingType == cstt_EnemyUnit;
+                    CMB_TargetingType = cstt_EnemyUnit;
                 }
                 if(
                     (spell_idx == spl_Earth_To_Mud)
@@ -13930,11 +13932,11 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
                     (spell_idx == spl_Cracks_Call)
                 )
                 {
-                    CMB_TargetingType == cstt_Tile;
+                    CMB_TargetingType = cstt_Tile;
                 }
                 if(spell_idx == spl_Magic_Vortex)
                 {
-                    CMB_TargetingType == cstt_Tile_NoUnit;
+                    CMB_TargetingType = cstt_Tile_NoUnit;
                 }
                 if(spell_idx == spl_Disrupt)
                 {
@@ -13991,7 +13993,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
 
     combat_grid_field = Add_Grid_Field(0, 0, 1, 1, 319, 168, &Grid_X, &Grid_Y, ST_UNDEFINED);
 
-    cancel_button_field = Add_Button_Field(263, 186, str_empty_string__ovr113, _cmbt_cancel_button_seg, str_hotkey_ESC__ovr113, ST_UNDEFINED);
+    cancel_button_field = Add_Button_Field(263, 186, str_empty_string__ovr113, _cmbt_cancel_button_seg, (int16_t)&str_hotkey_ESC__ovr113[0], ST_UNDEFINED);
 
     leave_screen = ST_FALSE;
 
@@ -14071,7 +14073,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
                         )
                         {
                             leave_screen = ST_FALSE;
-                            LBX_Load_Data_Static(message_lbx_file__ovr113__1of2, 0, GUI_NearMsgString, 88, 1, 150);
+                            LBX_Load_Data_Static(message_lbx_file__ovr113__1of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 88, 1, 150);
                             Warn1(GUI_NearMsgString);
                         }
                     }
@@ -14097,7 +14099,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
                         )
                         {
                             leave_screen = ST_FALSE;
-                            LBX_Load_Data_Static(message_lbx_file__ovr113__1of2, 0, GUI_NearMsgString, 88, 1, 150);  // "There is an invisible unit in that square."
+                            LBX_Load_Data_Static(message_lbx_file__ovr113__1of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 88, 1, 150);  // "There is an invisible unit in that square."
                             Warn1(GUI_NearMsgString);
                         }
                     }
@@ -14956,7 +14958,7 @@ void CMB_SpellcastMessage__WIP(int16_t caster_idx, int16_t spell_idx)
         else
         {
             strcpy(GUI_NearMsgString, cnst_CombatCast_2);  // "The "
-            strcat(GUI_NearMsgString, _unit_type_table[_UNITS[battle_units[caster_idx].unit_idx].type].name);
+            strcat(GUI_NearMsgString, *_unit_type_table[_UNITS[battle_units[caster_idx].unit_idx].type].name);
             if(battle_units[caster_idx].Max_Figures > 1)
             {
                 strcat(GUI_NearMsgString, cnst_CombatCast_3);  // " have cast "
@@ -17044,7 +17046,8 @@ int16_t Auto_Move_Ship(int16_t battle_unit_idx, int16_t Dest_X, int16_t Dest_Y, 
 {
     int16_t Move_Anim_Base_Speed = 0;
     int16_t First_Step_Index = 0;
-    SAMB_INT Sound_Data_Seg = 0;
+    // SAMB_INT Sound_Data_Seg = 0;
+    SAMB_ptr Sound_Data_Seg = 0;
     int16_t Move_Visible = 0;
     int16_t Y_Distance = 0;
     int16_t X_Distance = 0;
@@ -23321,7 +23324,7 @@ void GAME_LoadSpellSound__WIP(int16_t spell_idx)
     }
     else
     {
-        SND_SpellCast = ST_UNDEFINED;
+        SND_SpellCast = (SAMB_ptr)ST_UNDEFINED;
     }
 
 }
