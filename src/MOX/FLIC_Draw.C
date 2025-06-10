@@ -978,6 +978,7 @@ void Reset_Animation_Frame(SAMB_ptr picture)
 
 
 // WZD s30p16
+// MoO2  DNE
 int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header)
 {
     int16_t current_frame;
@@ -987,6 +988,7 @@ int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header)
 
 
 // WZD s30p17
+// MoO2  DNE
 int16_t FLIC_Get_FrameCount(SAMB_ptr p_FLIC_Header)
 {
     int16_t frame_count;
@@ -996,6 +998,7 @@ int16_t FLIC_Get_FrameCount(SAMB_ptr p_FLIC_Header)
 
 
 // WZD s30p18
+// MoO2  DNE
 int16_t FLIC_Get_Width(SAMB_ptr p_FLIC_Header)
 {
     int16_t flic_width;
@@ -1005,6 +1008,7 @@ int16_t FLIC_Get_Width(SAMB_ptr p_FLIC_Header)
 
 
 // WZD s30p19
+// MoO2  DNE
 int16_t FLIC_Get_Height(SAMB_ptr p_FLIC_Header)
 {
     int16_t flic_height;

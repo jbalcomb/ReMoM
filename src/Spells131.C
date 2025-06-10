@@ -3,11 +3,16 @@
         ovr131
 */
 
+#include "MOX/Fonts.H"
+#include "MOX/MOX_DAT.H"
+#include "MOX/MOM_Data.H"
+#include "MOX/Video.H"
+#include "Spellbook.H"
 #include "Spells131.H"
 
-#include "MOX/MOX_TYPE.H"
 
 #include "Combat.H"
+#include "SBookScr.H"
 #include "Spells133.H"
 #include "UNITTYPE.H"
 
@@ -51,7 +56,24 @@ char cnst_AnimDead_Msg[] = "Select a unit to Animate";
 
 // WZD o131p04
 // drake178: CMB_BattlefieldSpell()
-// CMB_BattlefieldSpell()
+/*
+; processes the effects and animations for battlefield
+; spells that affect all of a player's units at the
+; same time
+; BUG: if spell anims are disabled, the effects nearly
+;  always won't be applied either
+; BUG: GUI_CallChaos has multiple other issues too
+*/
+/*
+
+*/
+void CMB_BattlefieldSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t Anims, int16_t caster_idx)
+{
+
+
+
+}
+
 
 // WZD o131p05
 // drake178: WIZ_FlameStrike()
@@ -67,7 +89,206 @@ char cnst_AnimDead_Msg[] = "Select a unit to Animate";
 
 // WZD o131p08
 // drake178: CMB_PlaySpellAnim()
-// CMB_PlaySpellAnim()
+/*
+; plays the animation for and, in the case of spells
+; affecting all units of a player, also processes the
+; effects of the selected spell
+; inherits BUGs from GUI_CallChaos, and will nearly
+; always fail fail to apply "all units" spell effects
+; if combat spell anims (deprecated) are disabled
+*/
+/*
+    OON XREF:  G_CMB_SpellEffect__WIP()
+
+XREF:
+    j_CMB_PlaySpellAnim__WIP(*)
+        G_CMB_SpellEffect__WIP()
+
+*/
+void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t player_idx, int16_t Anims, int16_t caster_idx)
+{
+    int16_t blue = 0;
+    int16_t green = 0;
+    int16_t red = 0;
+    int16_t Anim_Size = 0;
+    int16_t itr = 0;  // _DI_
+
+    if(
+        (spell_data_table[spell_idx].type == scc_Battlefield_Spell)
+        ||
+        (spell_data_table[spell_idx].type == scc_Counter_Spell)
+        ||
+        (spell_data_table[spell_idx].type == scc_Disenchant_Spell)
+        ||
+        (spell_idx == spl_Raise_Dead)
+        ||
+        (spell_idx == spl_Animate_Dead)
+    )
+    {
+
+        if(
+            (spell_idx == spl_Flame_Strike)
+            ||
+            (spell_idx == spl_Holy_Word)
+            ||
+            (spell_idx == spl_Death_Spell)
+            ||
+            (spell_idx == spl_Call_Chaos)
+            ||
+            (spell_idx == spl_Mass_Healing)
+        )
+        {
+
+            /* SPELLY */  CMB_BattlefieldSpell__WIP(player_idx, spell_idx, Anims, caster_idx);
+
+        }
+        else
+        {
+
+// shade the screen to 40% of the realm's color and
+// then back to the original, while displaying the
+// combat spell cast message (but no animation)
+            if(Anims != ST_FALSE)
+            {
+
+                switch(spell_data_table[spell_idx].magic_realm)
+                {
+
+                    case sbr_Nature:   // 0
+                    {
+                        red = 0;
+                        green = 63;
+                        blue = 0;
+                    } break;
+                    case sbr_Sorcery:  // 1
+                    {
+                        red = 0;
+                        green = 0;
+                        blue = 63;
+                    } break;
+                    case sbr_Chaos:    // 2
+                    {
+                        red = 63;
+                        green = 0;
+                        blue = 0;
+                    } break;
+                    case sbr_Life:     // 3
+                    {
+                        red = 63;
+                        green = 63;
+                        blue = 63;
+                    } break;
+                    case sbr_Death:    // 4
+                    {
+                        red = 0;
+                        green = 0;
+                        blue = 0;
+                    } break;
+                    case sbr_Arcane:   // 5
+                    {
+                        red = 63;
+                        green = 63;
+                        blue = 63;
+                    } break;
+                    default:
+                    {
+                        STU_DEBUG_BREAK();
+                    } break;
+
+                }
+
+                Set_Page_Off();
+
+                Tactical_Combat_Draw();
+
+                CMB_SpellcastMessage__WIP(caster_idx, spell_idx);
+
+                PageFlip_FX();
+
+                for(itr = 0; itr < 20; itr++)
+                {
+
+                    Set_Palette_Changes(0, -1);
+
+                    /* SPELLY */  VGA_ShadeScreen__STUB((itr / 2), red, green, blue);
+
+                }
+
+                for(itr = 20; itr > -1; itr--)
+                {
+
+                    Set_Palette_Changes(0, -1);
+
+                    /* SPELLY */  VGA_ShadeScreen__STUB((itr / 2), red, green, blue);
+
+                }
+
+            }
+
+        }
+
+    }
+    else
+    {
+
+        if(Anims != ST_FALSE)
+        {
+
+            Combat_Load_Spell_Sound_Effect(spell_idx);
+
+            if(
+                (spell_idx == spl_Fireball)
+                ||
+                (spell_idx == spl_Fire_Bolt)
+                ||
+                (spell_idx == spl_Ice_Bolt)
+                ||
+                (spell_idx == spl_Doom_Bolt)
+            )
+            {
+
+                /* SPELLY */  TILE_BoltFromAbove__WIP(cgx, cgy, spell_idx, caster_idx);
+
+            }
+            else if(spell_idx == spl_Lightning_Bolt)
+            {
+
+                Spell_Animation_Load_Graphics(spl_Call_Lightning);
+
+                /* SPELLY */  TILE_LightningBolt__WIP(cgx, cgy, caster_idx);
+
+            }
+            else
+            {
+
+                Mark_Block(_screen_seg);
+
+                Anim_Size = Spell_Animation_Load_Graphics(spell_idx);
+
+                Release_Block(_screen_seg);
+
+                if(spell_idx == spl_Cracks_Call)
+                {
+
+                    /* SPELLY */  TILE_CracksCall__WIP(cgx, cgy, caster_idx);
+
+                }
+                else
+                {
+
+                    /* SPELLY */  TILE_CombatSpellAnim__WIP(cgx, cgy, Anim_Size, caster_idx, spell_idx);
+
+                }
+
+            }
+
+            Release_Block(_screen_seg);
+
+        }
+
+    }
+
+}
 
 
 // WZD o131p09
@@ -139,7 +360,7 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
 
     }
 
-    Picked_Target == ST_UNDEFINED;
+    Picked_Target = ST_UNDEFINED;
 
     if(Target_Count > 0)
     {
@@ -198,8 +419,6 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
         }
 
         battle_unit_idx = Target_BU_List[Picked_Target];
-
-        /* DEBUG */ battle_units[battle_unit_idx].Unused_1Bh = spl_Animate_Dead;
 
         if(battle_units[battle_unit_idx].Max_Figures > 1)
         {
@@ -345,8 +564,6 @@ void Cast_Animate_Dead(int16_t player_idx, int16_t caster_idx)
 //     Warning C6385 Reading invalid data from 'Target_BU_List'.sdl2_ReMoM C :\STU\devel\ReMoM\src\Spells131.C 344		
     if(Picked_Target > ST_UNDEFINED)
         battle_unit_idx = Target_BU_List[Picked_Target];
-
-    /* DEBUG */ battle_units[battle_unit_idx].Unused_1Bh = spl_Animate_Dead;
 
     battle_units[battle_unit_idx].controller_idx = player_idx;  // ; BUG: fails to set the overland owner of the unit
     battle_units[battle_unit_idx].Cur_Figures = battle_units[battle_unit_idx].Max_Figures;

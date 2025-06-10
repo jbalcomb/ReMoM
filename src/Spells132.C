@@ -3,11 +3,13 @@
         ovr132
 */
 
+#include "MOX/LBX_Load.H"
 #include "MOX/MOX_TYPE.H"
 #include "MOX/SOUND.H"
 
 #include "MOX/MOM_Data.H"
 
+#include "NEXTTURN.H"
 #include "SBookScr.H"
 
 
@@ -266,7 +268,7 @@ void Cast_Floating_Island(int16_t player_idx)
 
         Mark_Block(_screen_seg);
 
-        Spell_Animation_Load_Graphics__WIP(spl_Floating_Island);
+        Spell_Animation_Load_Graphics(spl_Floating_Island);
 
         Spell_Animation_Load_Sound_Effect__WIP(spl_Floating_Island);
 

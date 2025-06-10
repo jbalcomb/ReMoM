@@ -11622,7 +11622,7 @@ void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caste
 {
     int16_t Not_Moved_Yet = 0;
     int16_t Moves_Left = 0;
-    int16_t Damage_Array[3] = { 0, 0, 0 };
+    int16_t damage_types[3] = { 0, 0, 0 };
     uint32_t enchantments = 0;
     int16_t resistance_modifier = 0;
     int16_t Figure_Count = 0;
@@ -11675,7 +11675,7 @@ void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caste
 
     for(itr = 0; itr < 3; itr++)
     {
-        Damage_Array[itr] = 0;
+        damage_types[itr] = 0;
     }
 
     switch(spell_data_table[spell_idx].type)
@@ -11708,7 +11708,12 @@ void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caste
         } break;
         case scc_Direct_Damage_Fixed:
         {
-
+            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, Anims, caster_idx);
+            CMB_ConvSpellAttack__WIP(spell_idx, target_idx, &damage_types[0], 0);
+            BU_ApplyDamage__WIP(target_idx, &damage_types[0]);
+            Set_Page_Off();
+            Tactical_Combat_Draw();
+            PageFlip_FX();
         } break;
         case scc_Special_Spell:  /* 38 of these... :(.. */
         {
@@ -13493,6 +13498,8 @@ int16_t Spell_Resistance_Modifier(int16_t spell_idx)
     if(spell_idx == spl_Creature_Binding)  { resist_mod = -2; }
     if(spell_idx == spl_Great_Unsummoning) { resist_mod = -3; }
 
+    return resist_mod;
+
 }
 
 
@@ -14093,6 +14100,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
 
                 enchantments = (_UNITS[battle_units[target_idx].unit_idx].enchantments | battle_units[target_idx].item_enchantments | battle_units[target_idx].enchantments);
 
+                // Target is Friend or Enemy
                 if(battle_units[target_idx].controller_idx == HUMAN_PLAYER_IDX)
                 {
                     
@@ -14110,8 +14118,29 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
 
 
                 }
-                else
+                else  /* Target is Enemy */
                 {
+
+                    if(
+                        (CMB_TargetingType == cstt_EnemyUnit)
+                        ||
+                        (CMB_TargetingType == cstt_Tile)
+                        ||
+                        (CMB_TargetingType == cstt_DispelMagic)
+                    )
+                    {
+
+                        leave_screen = ST_TRUE;
+                        
+                    }
+
+                    
+
+
+
+
+
+
 
                 }
 
@@ -14201,7 +14230,7 @@ void CMB_MeleeAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_batt
 
 
 */
-void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int16_t damage_types[], int16_t attack_override_flag)
+void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int16_t damage_types[], int16_t attack_strength_override)
 {
     uint32_t enchantments = 0;
     int16_t damage_total = 0;
@@ -14212,7 +14241,7 @@ void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int1
     int16_t Effective_Defense = 0;
     int16_t attack_immunities = 0;
     int16_t attack_attributes = 0;
-    int16_t Top_Figure_Damage = 0;
+    int16_t front_figure_damage = 0;
     uint16_t itr = 0;
 
     struct s_BATTLE_UNIT* battleunit = &battle_units[battle_unit_idx];
@@ -14247,7 +14276,7 @@ void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int1
 
     }
 
-    Top_Figure_Damage = battleunit->TopFig_Dmg;
+    front_figure_damage = battleunit->TopFig_Dmg;
 
     struct s_SPELL_DATA* spell = &spell_data_table[spell_idx];
 
@@ -14264,10 +14293,10 @@ void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int1
 
     attack_immunities = spell->immunities;
 
-    if(attack_override_flag > 0)
+    if(attack_strength_override > 0)
     {
 
-        attack_strength = attack_override_flag;
+        attack_strength = attack_strength_override;
 
     }
     else
@@ -14332,26 +14361,26 @@ void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int1
 
         if (damage < 0) damage = 0;
 
-        if(itr == 0 && Top_Figure_Damage > 0)
+        if(itr == 0 && front_figure_damage > 0)
         {
 
-            damage += Top_Figure_Damage;
+            damage += front_figure_damage;
 
-            Top_Figure_Damage = 0;
+            front_figure_damage = 0;
 
         }
 
-        if(Top_Figure_Damage < 0)
+        if(front_figure_damage < 0)
         {
 
-            Top_Figure_Damage += damage;
+            front_figure_damage += damage;
 
-            if(Top_Figure_Damage > 0)
+            if(front_figure_damage > 0)
             {
 
-                damage = Top_Figure_Damage;
+                damage = front_figure_damage;
 
-                Top_Figure_Damage = 0;
+                front_figure_damage = 0;
 
             }
             else
@@ -14417,7 +14446,6 @@ void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int1
 
         }
 
-        //ovr113:1A6B
         damage_total += battleunit->hits * Figures_Slain;
 
         Figures_Slain = 0;
@@ -23383,7 +23411,7 @@ XREF:
         CMB_CallChaos()
 
 */
-void GAME_LoadSpellSound__WIP(int16_t spell_idx)
+void Combat_Load_Spell_Sound_Effect(int16_t spell_idx)
 {
 
     if(magic_set.sound_effects == ST_TRUE)

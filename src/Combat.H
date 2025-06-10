@@ -1611,7 +1611,7 @@ void CMB_MeleeAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_batt
 void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int16_t damage_types[], int16_t attack_override_flag);
 
 // WZD o113p07
-void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t Dmg_Array[]);
+void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t damage_types[]);
 
 // WZD o113p08
 int16_t Check_Attack_Ranged(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx);
@@ -1842,7 +1842,7 @@ void BU_LoadMoveSound__WIP(int16_t battle_unit_idx, SAMB_ptr * sound_seg, uint32
 void BU_LoadMeleeSound__WIP(int16_t battle_unit_idx, SAMB_ptr * sound_seg, uint32_t * sound_seg_size);
 
 // WZD o124p09
-void GAME_LoadSpellSound__WIP(int16_t spell_idx);
+void Combat_Load_Spell_Sound_Effect(int16_t spell_idx);
 
 // WZD o124p10
 void BU_WallofFire__NOOP(int16_t battle_unit_idx);

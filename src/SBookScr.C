@@ -10,19 +10,17 @@
 #include "MOX/FLIC_Draw.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
-#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
-
-#include "MOM.H"
-
-#include "malloc.h"
 
 #include "NEXTTURN.H"
 #include "SBookScr.H"
 #include "Spellbook.H"
 #include "Spells128.H"
+#include "SPLMASTR.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"
+
+#include "malloc.h"
 
 
 

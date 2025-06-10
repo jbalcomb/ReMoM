@@ -562,7 +562,7 @@ void Cycle_Palette(int16_t percent);
 
 
 // WZD s21p03
-// drake178: VGA_ShadeScreen()
+void VGA_ShadeScreen__STUB(int16_t percent, int16_t red, int16_t green, int16_t blue);
 
 // WZD s21p04
 // drake178: VGA_SlideColors()

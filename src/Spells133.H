@@ -36,11 +36,14 @@ void CMB_CounterMessage__STUB(int16_t caster_idx, int16_t type, int16_t spell_id
 // WZD o133p07
 int16_t WIZ_DispelAttempt__STUB(int16_t dispel_strength, int16_t spell_cast, int16_t player_idx, int16_t magic_realm);
 
-// WZD o133p08  TILE_CracksCall()
+// WZD o133p08
+void TILE_CracksCall__WIP(int16_t cgx, int16_t cgy, int16_t caster_idx);
 
-// WZD o133p09  TILE_BoltFromAbove()
+// WZD o133p09
+void TILE_BoltFromAbove__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t caster_idx);
 
-// WZD o133p10  TILE_CombatSpellAnim()
+// WZD o133p10
+void TILE_CombatSpellAnim__WIP(int16_t cgx, int16_t cgy, int16_t Anim_Size, int16_t caster_idx, int16_t spell_idx);
 
 // WZD o133p11  BU_Teleport()
 
@@ -49,7 +52,8 @@ int16_t WIZ_DispelAttempt__STUB(int16_t dispel_strength, int16_t spell_cast, int
 // WZD o133p13
 void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t player_idx);
 
-// WZD o133p14  TILE_LightningBolt()
+// WZD o133p14
+void TILE_LightningBolt__WIP(int16_t cgx, int16_t cgy, int16_t caster_idx);
 
 // WZD o133p15  WIZ_CreateVortex()
 

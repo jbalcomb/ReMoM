@@ -37,7 +37,7 @@ extern "C" {
 
 // WZD o131p04
 // drake178: CMB_BattlefieldSpell()
-// CMB_BattlefieldSpell()
+void CMB_BattlefieldSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t Anims, int16_t caster_idx);
 
 // WZD o131p05
 // drake178: WIZ_FlameStrike()
@@ -52,8 +52,7 @@ extern "C" {
 // WIZ_DeathSpell()
 
 // WZD o131p08
-// drake178: CMB_PlaySpellAnim()
-// CMB_PlaySpellAnim()
+void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t player_idx, int16_t Anims, int16_t caster_idx);
 
 // WZD o131p09
 void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t target_cgx, int16_t target_cgy);

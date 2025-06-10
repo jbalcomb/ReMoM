@@ -3,8 +3,9 @@
         ovr133
 */
 
-#include "Spells133.H"
 
+#include "MOX/FLIC_Draw.H"
+#include "MOX/MOM_Data.H"
 #include "MOX/LBX_Load.H"
 #include "MOX/MOX_DAT.H"
 #include "MOX/MOX_DEF.H"
@@ -13,6 +14,11 @@
 #include "MOX/SOUND.H"
 
 #include "Combat.H"
+#include "SBookScr.H"
+#include "Spellbook.H"
+#include "Spells133.H"
+
+#include "STU/STU_DBG.H"
 
 
 
@@ -95,8 +101,188 @@ int16_t WIZ_DispelAttempt__STUB(int16_t dispel_strength, int16_t spell_cast, int
 
 
 // WZD o133p08  TILE_CracksCall()
-// WZD o133p09  TILE_BoltFromAbove()
-// WZD o133p10  TILE_CombatSpellAnim()
+void TILE_CracksCall__WIP(int16_t cgx, int16_t cgy, int16_t caster_idx)
+{
+
+
+
+}
+
+
+// WZD o133p09
+// drake178: TILE_BoltFromAbove()
+/*
+; plays the bolt from the sky animations of Ice Bolt,
+; Fire Bolt, Fireball, or Doom Bolt, using a single
+; draw of the combat screen, which is reloaded between
+; each frame instead of being redrawn
+*/
+/*
+    spl_Ice_Bolt, spl_Fire_Bolt, spl_Fireball, spl_Doom_Bolt
+
+*/
+void TILE_BoltFromAbove__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t caster_idx)
+{
+    int16_t sw_spell_idx = 0;
+    int16_t cgy_add = 0;
+    int16_t cgx_add = 0;
+    int16_t frame_num = 0;
+    int16_t screen_y = 0;
+    int16_t screen_x = 0;
+    int16_t frame_count = 0;
+
+    Combat_Grid_Screen_Coordinates(cgx, cgy, 4, 4, &screen_x, &screen_y);
+
+    sw_spell_idx = spell_idx;
+
+    switch(sw_spell_idx)
+    {
+        case spl_Ice_Bolt:
+        {
+            screen_x -= 17;
+            screen_y -= 20;
+            cgx = (screen_x + 110);
+            cgy = (screen_y - 100);
+            cgx_add = -10;
+            cgy_add = 10;
+            frame_count = 11;
+        } break;
+
+        case spl_Fire_Bolt:
+        {
+            screen_x -= 16;
+            screen_y -= 20;
+            cgx = (screen_x + 110);
+            cgy = (screen_y - 66);
+            cgx_add = -10;
+            cgy_add = 6;
+            frame_count = 11;
+        } break;
+
+        case spl_Fireball:
+        {
+            screen_x -= 14;
+            screen_y -= 21;
+            cgx = (screen_x + 110);
+            cgy = (screen_y - 66);
+            cgx_add = -10;
+            cgy_add = 6;
+            frame_count = 16;
+        } break;
+
+        case spl_Doom_Bolt:
+        {
+            screen_x -= 14;
+            screen_y -= 25;
+            cgx = screen_x;
+            cgy = (screen_y - 72);
+            cgx_add = 0;
+            cgy_add = 6;
+            frame_count = 13;
+        } break;
+
+        default:
+        {
+            STU_DEBUG_BREAK();
+        } break;
+
+    }
+
+    Set_Page_Off();
+
+    Tactical_Combat_Draw();
+
+    CMB_SpellcastMessage__WIP(caster_idx, spell_idx);
+
+    Copy_Off_To_Back();
+
+    Mark_Block(_screen_seg);
+
+    Spell_Animation_Load_Graphics(spell_idx);
+
+    if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
+    {
+
+        // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
+        sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
+
+    }
+
+    for(frame_num = 0; frame_num < frame_count; frame_num++)
+    {
+
+        Mark_Time();
+
+        if(spell_idx == spl_Fireball)
+        {
+
+            Set_Animation_Frame(spell_animation_seg, frame_num);
+
+        }
+        else if(spell_idx == spl_Doom_Bolt)
+        {
+            Set_Animation_Frame(spell_animation_seg, (frame_num / 4));
+        }
+        else
+        {
+
+            if((frame_count - 1) == frame_num)
+            {
+
+                Set_Animation_Frame(spell_animation_seg, 3);
+
+            }
+            else
+            {
+
+                Set_Animation_Frame(spell_animation_seg, (frame_num % 3));
+            
+            }
+
+        }
+
+        Set_Page_Off();
+
+        Copy_Back_To_Off();
+
+        if(frame_num > 10)
+        {
+
+            Clipped_Draw(screen_x, screen_y, spell_animation_seg);
+
+            PageFlip_FX();
+
+            Release_Time(2);
+
+        }
+        else
+        {
+
+            Clipped_Draw(cgx, cgy, spell_animation_seg);
+
+            cgx += cgx_add;
+            cgy += cgy_add;
+
+            PageFlip_FX();
+
+            Release_Time(1);
+
+        }
+
+    }
+
+}
+
+
+// WZD o133p10
+// drake178: TILE_CombatSpellAnim()
+void TILE_CombatSpellAnim__WIP(int16_t cgx, int16_t cgy, int16_t Anim_Size, int16_t caster_idx, int16_t spell_idx)
+{
+
+
+
+}
+
 // WZD o133p11  BU_Teleport()
 // WZD o133p12  BU_TunnelTo()
 
@@ -131,7 +317,7 @@ void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, 
 
     Mark_Block(_screen_seg);
 
-    Spell_Animation_Load_Graphics__WIP(spl_Fire_Elemental);
+    Spell_Animation_Load_Graphics(spl_Fire_Elemental);
 
     IMG_GUI_Chasm = spell_animation_seg;
 
@@ -235,7 +421,14 @@ void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, 
 }
 
 
-// WZD o133p14  TILE_LightningBolt()
+// WZD o133p14
+// drake178: TILE_LightningBolt()
+void TILE_LightningBolt__WIP(int16_t cgx, int16_t cgy, int16_t caster_idx)
+{
+
+
+
+}
 
 
 // WZD o133p15  WIZ_CreateVortex()

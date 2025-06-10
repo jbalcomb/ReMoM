@@ -12,7 +12,6 @@ MoO2
 
 
 #include "MOX_TYPE.H"
-#include "sdl2_Audio.H"
 
 
 
@@ -20,6 +19,8 @@ MoO2
 extern "C" {
 #endif
 
+// sdl2_Audio.C
+int16_t sdl2_Play_Sound__WIP(void * sound_buffer, uint32_t sound_buffer_size);
 
 
 

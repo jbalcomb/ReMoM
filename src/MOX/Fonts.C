@@ -3111,6 +3111,26 @@ Done:
 
 // WZD s21p03
 // drake178: VGA_ShadeScreen()
+// seems not in 1oom
+// MoO2  maybe  Create_Brighten_Bitmap_Palettes()  Set_Palette_Gradient()
+/*
+; shades the entire screen to the percent of the passed
+; color, and the remaining percent of the original
+; displayed colors; while it does not change the colors
+; stored in the VGA_DAC_Segment (it writes directly to
+; the DAC instead), it only affects registers that are
+; previously marked as changed
+*/
+/*
+
+*/
+void VGA_ShadeScreen__STUB(int16_t percent, int16_t red, int16_t green, int16_t blue)
+{
+
+
+
+}
+
 
 // WZD s21p04
 // drake178: VGA_SlideColors()
