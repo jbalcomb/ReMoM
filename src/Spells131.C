@@ -3,7 +3,10 @@
         ovr131
 */
 
+#include "MOX/GENDRAW.H"
+#include "MOM_DEF.H"
 #include "MOX/Fonts.H"
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"
 #include "MOX/MOM_Data.H"
 #include "MOX/Video.H"
@@ -22,10 +25,14 @@
 
 /* HACK */  char str_empty_string__ovr131[] = "";
 
-// WZD dseg:6844 53 50 45 43 46 58 00                            specfx_lbx_file__ovr131__1of2 db 'SPECFX',0         ; DATA XREF: CMB_Disenchant+1C8o
-// WZD dseg:684B 20 68 61 73 20 62 65 65 6E 20 64 69 73 70 65 6C+cnst_Dispel_Msg db ' has been dispelled.',0
-// WZD dseg:6860 6D 65 73 73 61 67 65 00                         message_lbx_file__ovr131 db 'message',0       ; DATA XREF: CMB_Disenchant+22Co ...
-// WZD dseg:6868 73 70 65 63 66 78 00                            specfx_lbx_file__ovr131__2of2 db 'specfx',0         ; DATA XREF: CMB_Disenchant+50Fo ...
+// WZD dseg:6844
+char specfx_lbx_file__ovr131__1of2[] = "SPECFX";
+// WZD dseg:684B
+char cnst_Dispel_Msg[] = " has been dispelled.";
+// WZD dseg:6860
+char message_lbx_file__ovr131[] = "message";
+// WZD dseg:6868
+char specfx_lbx_file__ovr131__2of2[] = "specfx";
 // WZD dseg:686F
 char cnst_RaiseDead_Msg[] = "Select a unit to Raise";
 // WZD dseg:6886
@@ -48,7 +55,594 @@ char cnst_AnimDead_Msg[] = "Select a unit to Animate";
 
 // WZD o131p02
 // drake178: TILE_DispelMagic()
-// TILE_DispelMagic()
+/*
+; attempts to dispel, from a combat tile, persistent
+; spells cast by the opponent, and Magic Votrices cast
+; by anyone, producing click-away GUI messages for each
+; successful dispel, except for those of Vortices
+; contains an extreme amount of BUGs - surprisingly,
+;  none of them can corrupt memory or cause crashes
+*/
+/*
+    'Dispel Magic' & 'Dispel Magic True'
+
+    in-outs a count of magics dispelled
+
+scc_Dispels        = 18,   / * COMBAT:  Dispel Magic, Dispel Magic True * /
+
+¿ code-blocks ?
+
+battle_units[battle_unit_idx].controller_idx == player_idx
+0-14
+battle_units[battle_unit_idx].Combat_Effects
+
+(battle_units[battle_unit_idx].controller_idx != player_idx)
+'Spell Lock'
+OR
+1-31
+if((battle_units[battle_unit_idx].enchantments & test) > 0)
+
+Haste
+
+Confusion (state 2)
+
+*/
+void Cast_Dispel_Magic(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t Dispel_Str, int16_t * D_Count)
+{
+    SAMB_ptr dispell1_notify_background_seg = 0;
+    int16_t enemy_player_idx = 0;
+    int16_t Dispel_Target = 0;
+    int16_t Test_Flag = 0;
+    uint32_t test = 0;
+    int16_t Flag_Loop_Var = 0;
+    int16_t itr = 0;
+    int16_t player_idx = 0;
+    int16_t battle_unit_idx = 0;  // _DI_
+
+    Near_Allocate_Mark();
+
+    CMB_NearDispel_UEs = (int16_t *)Near_Allocate_Next(64);
+
+    CMB_NearDispel_UCs = (int16_t *)Near_Allocate_Next(30);
+
+    CMB_NearDispel_UEs[ 0] = spl_Immolation;
+    CMB_NearDispel_UCs[ 0] = spl_Vertigo;
+    CMB_NearDispel_UEs[ 1] = spl_Guardian_Wind;
+    CMB_NearDispel_UCs[ 1] = spl_Confusion;
+    CMB_NearDispel_UEs[ 2] = spl_Berserk;
+    CMB_NearDispel_UCs[ 2] = spl_NONE;
+    CMB_NearDispel_UEs[ 3] = spl_Cloak_Of_Fear;
+    CMB_NearDispel_UCs[ 3] = spl_Mind_Storm;
+    CMB_NearDispel_UEs[ 4] = spl_Black_Channels;
+    CMB_NearDispel_UCs[ 4] = spl_Shatter;
+    CMB_NearDispel_UEs[ 5] = spl_Wraith_Form;
+    CMB_NearDispel_UCs[ 5] = spl_Weakness;
+    CMB_NearDispel_UEs[ 6] = spl_Regeneration;
+    CMB_NearDispel_UCs[ 6] = spl_Black_Sleep;
+    CMB_NearDispel_UEs[ 7] = spl_Path_Finding;
+    CMB_NearDispel_UCs[ 7] = spl_Warp_Creature;
+    CMB_NearDispel_UEs[ 8] = spl_Water_Walking;
+    CMB_NearDispel_UCs[ 8] = spl_Warp_Creature;
+    CMB_NearDispel_UEs[ 9] = spl_Resist_Elements;
+    CMB_NearDispel_UCs[ 9] = spl_Warp_Creature;
+    CMB_NearDispel_UEs[10] = spl_Elemental_Armor;
+    CMB_NearDispel_UCs[10] = spl_NONE;
+    CMB_NearDispel_UEs[11] = spl_Stone_Skin;
+    CMB_NearDispel_UCs[11] = spl_Haste;
+    CMB_NearDispel_UEs[12] = spl_Iron_Skin;
+    CMB_NearDispel_UCs[12] = spl_Web;
+    CMB_NearDispel_UEs[13] = spl_Endurance;
+    CMB_NearDispel_UCs[13] = spl_Creature_Binding;
+
+    CMB_NearDispel_UEs[14] = spl_Spell_Lock;
+    CMB_NearDispel_UEs[15] = spl_Invisibility;
+    CMB_NearDispel_UEs[16] = spl_Wind_Walking;
+    CMB_NearDispel_UEs[17] = spl_Flight;
+    CMB_NearDispel_UEs[18] = spl_Resist_Magic;
+    CMB_NearDispel_UEs[19] = spl_Magic_Immunity;
+    CMB_NearDispel_UEs[20] = spl_Flame_Blade;
+    CMB_NearDispel_UEs[21] = spl_Eldritch_Weapon;
+    CMB_NearDispel_UEs[22] = spl_True_Sight;
+    CMB_NearDispel_UEs[23] = spl_Holy_Weapon;
+    CMB_NearDispel_UEs[24] = spl_Heroism;
+    CMB_NearDispel_UEs[25] = spl_Bless;
+    CMB_NearDispel_UEs[26] = spl_Lionheart;
+    CMB_NearDispel_UEs[27] = spl_Giant_Strength;
+    CMB_NearDispel_UEs[28] = spl_Planar_Travel;
+    CMB_NearDispel_UEs[29] = spl_Holy_Armor;
+    CMB_NearDispel_UEs[30] = spl_Righteousness;
+    CMB_NearDispel_UEs[31] = spl_Invulnerability;
+
+    Copy_On_To_Off_Page();
+
+    if(caster_idx >= CASTER_IDX_BASE)
+    {
+        player_idx -= CASTER_IDX_BASE;
+    }
+    else
+    {
+
+        player_idx = battle_units[battle_unit_idx].controller_idx;
+
+    }
+
+    if(player_idx == _combat_attacker_player)
+    {
+        enemy_player_idx = _combat_defender_player;
+    }
+    else
+    {
+        enemy_player_idx = _combat_attacker_player;
+    }
+
+    // ; attempt to dispel all Magic Vortices from the tile
+    // ; WARNING: will also affect the caster's own!
+    for(itr = 0; itr < CMB_Vortex_Count; itr++)
+    {
+        /* SPELLY  - dispell magic vortex */
+    }
+
+    for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+    {
+
+        if(
+            (battle_units[battle_unit_idx].cgx == cgx)
+            &&
+            (battle_units[battle_unit_idx].cgy == cgy)
+        )
+        {
+
+            // ; BUG: non-active units are not excluded!
+            if(battle_units[battle_unit_idx].controller_idx == player_idx)
+            {
+                // attempt to remove all curses from the unit
+                // BUG: includes Possession and Creature Binding
+                // BUG: overrides the result to always succeed
+                // BUG: can still dispel other curses from confused
+                //  state 2 units
+                // WARNING: dispelling Web does not restore any lost
+                //  movement types
+
+                // ; BUG: also includes Creature Binding
+                for(Flag_Loop_Var = 0; Flag_Loop_Var < 14; Flag_Loop_Var++)
+                {
+
+                    Test_Flag = (1 << Flag_Loop_Var);
+
+                    if((battle_units[battle_unit_idx].Combat_Effects & Test_Flag) > 0)
+                    {
+
+                        if(
+                            (Test_Flag != bue_Haste)
+                            &&
+                            (
+                                (Test_Flag != bue_Haste)
+                                ||
+                                (battle_units[battle_unit_idx].Confusion_State != 2)
+                            )
+                        )
+                        {
+
+                            Dispel_Target = (Dispel_Str + Calculate_Dispel_Difficulty(spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].casting_cost, enemy_player_idx, spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].magic_realm));
+
+                            Dispel_Target = ((Dispel_Str * 250) / Dispel_Target);
+
+                            // ; BUG: will always yield a success, making the whole
+                            // ; check redundant
+                            if(Random(250) <= (Dispel_Target + 500))
+                            {
+
+                                if(Test_Flag == bue_Web)
+                                {
+
+                                    battle_units[battle_unit_idx].Web_HP = 0;
+
+                                }
+
+                                Mark_Block(_screen_seg);
+
+                                // SPECFX.LBX, 051  "DISPELL1"  ""
+                                dispell1_notify_background_seg = LBX_Reload_Next(specfx_lbx_file__ovr131__2of2, 51, _screen_seg);
+
+                                battle_units[battle_unit_idx].Combat_Effects ^= Test_Flag;
+
+                                if(*D_Count < 5)
+                                {
+
+                                    if(*D_Count < 4)
+                                    {
+
+                                        _fstrcpy(GUI_NearMsgString, spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].name);
+
+                                        strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
+
+                                    }
+                                    else
+                                    {
+
+                                        LBX_Load_Data_Static(message_lbx_file__ovr131, 0, (SAMB_ptr)&GUI_NearMsgString[0], 19, 1, 150);
+
+                                    }
+
+                                    Dispel_Target = (160 + (*D_Count * 10));
+
+                                    Notify2(Dispel_Target, (20 + (*D_Count * 25)), 3, GUI_NearMsgString, 0, dispell1_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
+
+                                    *D_Count += 1;
+
+                                }
+
+                                Release_Block(_screen_seg);
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+            else  /* (battle_units[battle_unit_idx].controller_idx != player_idx) */
+            {
+            
+                // ; BUG: ignores combat-cast Spell Lock
+                if((_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments & UE_SPELLLOCK) != 0)
+                {
+
+                    Dispel_Target = (Dispel_Str + Calculate_Dispel_Difficulty(150, battle_units[battle_unit_idx].controller_idx, spell_data_table[spl_Spell_Lock].magic_realm));
+
+                    Dispel_Target = ((Dispel_Str * 250) / Dispel_Target);
+
+                    // ; BUG: Haste is not protected by Spell Lock
+                    if(Random(250) <= Dispel_Target)
+                    {
+                        
+                        _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments ^= Test_Flag;
+
+                    }
+
+                }
+                else
+                {
+
+                    // ; attempt to remove all overland-cast unit enchantments
+                    // ; from the unit
+                    // ; BUG: uses signed comparisons - Invulnerability can
+                    // ;  not be dispelled
+                    // ; BUG: uses the wrong costs for overland-only spells
+
+                    // ; BUG: will ignore the highest order bit
+                    for(Flag_Loop_Var = 0; Flag_Loop_Var < 31; Flag_Loop_Var++)
+                    {
+
+                        test = (1 << Flag_Loop_Var);
+
+                        // ; BUG: signed comparison on a bitfield!
+                        if((_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments & test) > 0)
+                        {
+
+                            // ; BUG: this is not the right value if the spell can
+                            // ; not be cast in combat
+                            Dispel_Target = (Dispel_Str + Calculate_Dispel_Difficulty((spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].casting_cost * 5), battle_units[battle_unit_idx].controller_idx, spell_data_table[CMB_NearDispel_UEs[Flag_Loop_Var]].magic_realm));
+
+                            Dispel_Target = ((Dispel_Str * 250) / Dispel_Target);
+
+                            if(Random(250) <= Dispel_Target)
+                            {
+                                
+                                _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments ^= Test_Flag;
+
+                                // ; BUG: this should be done elsewhere - if the unit has
+                                // ; natural flight too, that will also be removed here
+                                if(Flag_Loop_Var == 24)
+                                {
+
+                                    _UNITS[battle_units[battle_unit_idx].unit_idx].Level = Calc_Unit_Level(battle_units[battle_unit_idx].unit_idx);
+
+                                }
+                                
+                                // ; BUG: this should be done elsewhere - if the unit has
+                                // ; natural flight too, that will also be removed here
+                                if(Flag_Loop_Var == 17)
+                                {
+
+                                    battle_units[battle_unit_idx].Move_Flags ^= MV_FLYING;
+
+                                }
+
+                                if(*D_Count < 5)
+                                {
+
+                                    Mark_Block(_screen_seg);
+
+                                    // SPECFX.LBX, 051  "DISPELL1"  ""
+                                    dispell1_notify_background_seg = LBX_Reload_Next(specfx_lbx_file__ovr131__2of2, 51, _screen_seg);
+
+                                    if(*D_Count < 4)
+                                    {
+
+                                        _fstrcpy(GUI_NearMsgString, spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].name);
+
+                                        strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
+
+                                    }
+                                    else
+                                    {
+
+                                        LBX_Load_Data_Static(message_lbx_file__ovr131, 0, (SAMB_ptr)&GUI_NearMsgString[0], 19, 1, 150);
+
+                                    }
+
+                                    Notify2((160 + (*D_Count * 10)), (20 + (*D_Count * 25)), 3, GUI_NearMsgString, 0, dispell1_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
+
+                                    *D_Count += 1;
+                                    
+                                    Release_Block(_screen_seg);
+                                }
+
+                            }
+
+                        }
+
+                    }
+                                        
+                    // ; attempt to remove all combat-cast unit enchantments
+                    // ; from the unit
+                    // ; BUG: uses signed comparisons - Invulnerability grants
+                    // ;  immunity to the entire effect
+                    // ; BUG: ignores combat-cast Invisibility if Mass
+                    // ;  Invisibility is also in effect
+
+                    // ; BUG: will ignore the highest order bit
+                    for(Flag_Loop_Var = 0; Flag_Loop_Var < 31; Flag_Loop_Var++)
+                    {
+
+                        test = (1 << Flag_Loop_Var);
+
+                        if(enemy_player_idx == _combat_attacker_player)
+                        {
+
+                            // ; BUG: will ignore an actual combat-cast invisibility
+                            if(
+                                (combat_enchantments[MASS_INVISIBILITY_ATTKR] > 0)
+                                &&
+                                (test == UE_INVISIBILITY)
+                            )
+                            {
+
+                                continue;
+
+                            }
+
+                            if(
+                                (test == UE_HOLYWEAPON)
+                                &&
+                                (_players[player_idx].Globals[HOLY_ARMS] > 0)
+                            )
+                            {
+
+                                continue;
+
+                            }
+
+                            // ; BUG: signed comparison on a bitfield!
+                            if((battle_units[battle_unit_idx].enchantments & test) > 0)
+                            {
+
+                                Dispel_Target = (Dispel_Str + Calculate_Dispel_Difficulty(spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].casting_cost, battle_units[battle_unit_idx].controller_idx, spell_data_table[CMB_NearDispel_UEs[Flag_Loop_Var]].magic_realm));
+
+                                Dispel_Target = ((Dispel_Str * 250) / Dispel_Target);
+
+                                if(Random(250) <= Dispel_Target)
+                                {
+
+                                    Mark_Block(_screen_seg);
+
+                                    // SPECFX.LBX, 051  "DISPELL1"  ""
+                                    dispell1_notify_background_seg = LBX_Reload_Next(specfx_lbx_file__ovr131__2of2, 51, _screen_seg);
+
+                                    _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments ^= Test_Flag;  // turn off the enchantment
+
+                                    // ; BUG: this should be done elsewhere - if the unit has
+                                    // ; natural flight too, that will also be removed here
+                                    if(Flag_Loop_Var == 24)  // CMB_NearDispel_UEs[24] = spl_Heroism;
+                                    {
+
+                                        _UNITS[battle_units[battle_unit_idx].unit_idx].Level = Calc_Unit_Level(battle_units[battle_unit_idx].unit_idx);
+
+                                    }
+                                    
+                                    // ; BUG: this should be done elsewhere - if the unit has
+                                    // ; natural flight too, that will also be removed here
+                                    if(Flag_Loop_Var == 17)  // CMB_NearDispel_UEs[17] = spl_Flight;
+                                    {
+
+                                        battle_units[battle_unit_idx].Move_Flags ^= MV_FLYING;
+
+                                    }
+
+                                    if(*D_Count < 5)
+                                    {
+
+                                        if(*D_Count < 4)
+                                        {
+
+                                            _fstrcpy(GUI_NearMsgString, spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].name);
+
+                                            strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
+
+                                        }
+                                        else
+                                        {
+
+                                            LBX_Load_Data_Static(message_lbx_file__ovr131, 0, (SAMB_ptr)&GUI_NearMsgString[0], 19, 1, 150);
+
+                                        }
+
+                                        Notify2((160 + (*D_Count * 10)), (20 + (*D_Count * 25)), 3, GUI_NearMsgString, 0, dispell1_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
+
+                                        *D_Count += 1;
+
+                                        Release_Block(_screen_seg);
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                /*
+                    BEGIN:  Haste
+                */
+
+                // ; attempt to remove Haste if present
+                // ; BUG: not protected by Spell Lock
+
+                if(battle_units[battle_unit_idx].Combat_Effects == bue_Haste)
+                {
+
+                    Dispel_Target = (Dispel_Str + Calculate_Dispel_Difficulty(spell_data_table[spl_Haste].casting_cost, battle_units[battle_unit_idx].controller_idx, spell_data_table[spl_Haste].magic_realm));
+
+                    Dispel_Target = ((Dispel_Str * 250) / Dispel_Target);
+
+                    if(Random(250) <= Dispel_Target)
+                    {
+
+                        Mark_Block(_screen_seg);
+
+                        // SPECFX.LBX, 051  "DISPELL1"  ""
+                        dispell1_notify_background_seg = LBX_Reload_Next(specfx_lbx_file__ovr131__2of2, 51, _screen_seg);
+
+                        battle_units[battle_unit_idx].Combat_Effects ^= bue_Haste;  // turn off the enchantment
+
+                        if(*D_Count < 5)
+                        {
+
+                            if(*D_Count < 4)
+                            {
+
+                                _fstrcpy(GUI_NearMsgString, spell_data_table[spl_Haste].name);
+
+                                strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
+
+                            }
+                            else
+                            {
+
+                                LBX_Load_Data_Static(message_lbx_file__ovr131, 0, (SAMB_ptr)&GUI_NearMsgString[0], 19, 1, 150);
+
+                            }
+
+                            Notify2((160 + (*D_Count * 10)), (20 + (*D_Count * 25)), 3, GUI_NearMsgString, 0, dispell1_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
+
+                            *D_Count += 1;
+
+                            Release_Block(_screen_seg);
+
+                        }
+
+                    }
+
+                }
+
+                /*
+                    END:  Haste
+                */
+
+                /*
+                    BEGIN:  Confusion
+                */
+
+                // ; attempt to remove state 2 Confusion if present
+                // ; BUG: fails to clear the confusion state
+
+                if(
+                    (battle_units[battle_unit_idx].Combat_Effects == bue_Confusion)
+                    &&
+                    (battle_units[battle_unit_idx].Confusion_State == 2)
+                )
+                {
+
+                    Dispel_Target = (Dispel_Str + Calculate_Dispel_Difficulty(spell_data_table[spl_Confusion].casting_cost, battle_units[battle_unit_idx].controller_idx, spell_data_table[spl_Confusion].magic_realm));
+
+                    Dispel_Target = ((Dispel_Str * 250) / Dispel_Target);
+
+                    if(Random(250) <= Dispel_Target)
+                    {
+
+                        Mark_Block(_screen_seg);
+
+                        if(battle_units[battle_unit_idx].controller_idx == _combat_attacker_player)
+                        {
+
+                            battle_units[battle_unit_idx].controller_idx = _combat_defender_player;
+
+                        }
+                        else
+                        {
+
+                            battle_units[battle_unit_idx].controller_idx = _combat_attacker_player;
+
+                        }
+
+                        // SPECFX.LBX, 051  "DISPELL1"  ""
+                        dispell1_notify_background_seg = LBX_Reload_Next(specfx_lbx_file__ovr131__2of2, 51, _screen_seg);
+
+                        // ; BUG: should also clear the confusion state
+                        battle_units[battle_unit_idx].Combat_Effects ^= bue_Confusion;  // turn off the enchantment
+
+                        if(*D_Count < 5)
+                        {
+
+                            if(*D_Count < 4)
+                            {
+
+                                _fstrcpy(GUI_NearMsgString, spell_data_table[spl_Confusion].name);
+
+                                strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
+
+                            }
+                            else
+                            {
+
+                                LBX_Load_Data_Static(message_lbx_file__ovr131, 0, (SAMB_ptr)&GUI_NearMsgString[0], 19, 1, 150);
+
+                            }
+
+                            Notify2((160 + (*D_Count * 10)), (20 + (*D_Count * 25)), 3, GUI_NearMsgString, 0, dispell1_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
+
+                            *D_Count += 1;
+
+                            Release_Block(_screen_seg);
+
+                        }
+
+                    }
+
+                }
+
+                /*
+                    END:  Confusion
+                */
+
+            }  /* (battle_units[battle_unit_idx].controller_idx != player_idx) */
+
+        }
+
+    }
+
+    Near_Allocate_Undo();
+
+    CMB_ComposeBackgrnd__WIP();
+
+}
+
 
 // WZD o131p03
 // drake178: CMB_ApplyCracksCall()

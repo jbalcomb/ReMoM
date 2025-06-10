@@ -22,6 +22,8 @@
 
 */
 
+#include "MOX_T4.H"
+
 
 
 // WZD s01p03
@@ -214,7 +216,7 @@ void PageFlip_FX(void)
 
     switch(_page_flip_effect)
     {
-        case pfe_NONE:
+        case pfe_None:
         {
             Apply_Palette();
             Toggle_Pages();  // |-> Page_Flip()
@@ -244,7 +246,7 @@ void PageFlip_FX(void)
         } break;
     }
 
-    _page_flip_effect = pfe_NONE;  // DEDUCE: PageFlipEffect 0 is the default PageFlipEffect
+    _page_flip_effect = pfe_None; // DEDUCE: PageFlipEffect 0 is the default PageFlipEffect
 
 }
 

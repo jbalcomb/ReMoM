@@ -238,7 +238,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                 Dispel_Chance = (500 + Calculate_Dispel_Difficulty(_players[player_idx].casting_cost_original, player_idx, spell_data_table[spell_idx].magic_realm));
 
-                Dispel_Chance = (125000 / Dispel_Chance);
+                Dispel_Chance = (125000 / Dispel_Chance);  // 250 * 500 = 125000
 
                 if(Random(250) <= Dispel_Chance)
                 {

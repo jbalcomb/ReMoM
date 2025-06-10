@@ -1,8 +1,11 @@
 
-scc_Destruction_Spell  ==>  scc_Combat_Destroy_Unit
-scc_Fixed_Dmg_Spell    ==>  scc_Direct_Damage_Fixed
-scc_Var_Dmg_Spell      ==>  scc_Direct_Damage_Variable
-scc_Mundane_Enchantment  ==> scc_Unit_Enchantment_Normal_Only
+scc_Destruction_Spell    ==>  scc_Combat_Destroy_Unit
+scc_Fixed_Dmg_Spell      ==>  scc_Direct_Damage_Fixed
+scc_Var_Dmg_Spell        ==>  scc_Direct_Damage_Variable
+scc_Mundane_Enchantment  ==>  scc_Unit_Enchantment_Normal_Only
+scc_Dispel_Spell         ==>  scc_Dispels
+scc_Disenchant_Spell     ==>  scc_Disenchants
+scc_Disjunction_Spell    ==>  scc_Disjunctions
 
 
 NOTE: the check on the check-list is only for the human player side, CP/AI is a different beast
@@ -87,7 +90,7 @@ all city enchantments are done
 [x]  15  scc_Unit_Enchantment_Normal_Only
 [ ]  16  scc_Mundane_Curse
 [ ]  17  scc_Infusable_Spell
-[ ]  18  scc_Dispel_Spell
+[ ]  18  scc_Dispels
 [ ]  19  scc_Disenchant_Spell
 [ ]  20  scc_Disjunction_Spell
 [ ]  21  scc_Counter_Spell
@@ -135,7 +138,7 @@ Eldritch Weapon, Flame Blade, Heroism, Holy Armor, Holy Weapon
 
 scc_Mundane_Curse       = 16,   /* COMBAT:  Possession, Shatter */
 
-scc_Dispel_Spell        = 18,   /* COMBAT:  Dispel Magic, Dispel Magic True */
+scc_Dispels        = 18,   /* COMBAT:  Dispel Magic, Dispel Magic True */
 scc_Disenchant_Spell    = 19,   /* ¿ BOTH ?  Disenchant Area, Disenchant True */
 scc_Disjunction_Spell   = 20,   /* OVERLAND:  Disjunction, Disjunction True */
 scc_Counter_Spell       = 21,   /* COMBAT:  Counter Magic */
@@ -202,7 +205,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Great Wyrm
 [x] Natures Wrath
 [x] Resist Magic
-[ ] Dispel Magic True
+[x] Dispel Magic True
 [x] Floating Island
 [ ] Guardian Wind
 [x] Phantom Warriors
@@ -362,7 +365,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Death Wish
 [x] Demon Lord
 [x] Magic Spirit
-[ ] Dispel Magic
+[x] Dispel Magic
 [x] Summoning Circle
 [ ] Disenchant Area
 [x] Recall Hero

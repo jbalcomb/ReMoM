@@ -515,11 +515,11 @@ enum e_SPELL_CASTING_CATEGORY
     scc_Unit_Enchantment_Normal_Only = 15,   /*          Eldritch Weapon, Flame Blade, Heroism, Holy Armor, Holy Weapon */
     scc_Mundane_Curse                = 16,   /* COMBAT:  Possession, Shatter */
     /* DNE */ scc_Infusable_Spell    = 17,   /* below, no slider, above, maybe slider */
-    scc_Dispel_Spell                 = 18,   /* COMBAT:  Dispel Magic, Dispel Magic True */
+    scc_Dispels                 = 18,   /* COMBAT:  Dispel Magic, Dispel Magic True */
     scc_Disenchant_Spell             = 19,   /* ¿ BOTH ?  Disenchant Area, Disenchant True */
     scc_Disjunction_Spell            = 20,   /* OVERLAND:  Disjunction, Disjunction True */
     scc_Counter_Spell                = 21,   /* COMBAT:  Counter Magic */
-    scc_Var_Dmg_Spell                = 22,   /* COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast */
+    scc_Direct_Damage_Variable                = 22,   /* COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast */
     scc_Banish_Spell                 = 23    /* COMBAT:  Banish */
 };
 

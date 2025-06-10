@@ -9,6 +9,7 @@
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_T4.H"  /* PageFlipEffect */
 #include "MOX/MOX_TYPE.H"
+#include "MOX/Video.H"
 
 
 
@@ -18,6 +19,9 @@ SAMB_ptr combat_background_bottom;
 // WZD dseg:C550
 SAMB_ptr battle_unit_picts_seg[(2 * MAX_STACK)];
 
+
+void Make_Combat_Grid_Battle_Unit_Entities(void);
+void Draw_Combat_Grid_Battle_Unit_Entities(void);
 
 
 void Combat_Screen_TST_001_Draw(void);
@@ -55,7 +59,7 @@ int16_t Combat_Screen_TST_001(int16_t combat_attacker_player_idx, int16_t combat
         END: Combat Screen Compose Background
     */
 
-    _page_flip_effect = pfe_NONE;
+    _page_flip_effect = pfe_None;
 
     Assign_Auto_Function(Combat_Screen_TST_001_Draw, 1);
 
@@ -142,7 +146,7 @@ int16_t Combat_Screen_TST_002(int16_t combat_attacker_player_idx, int16_t combat
         END: Combat Screen Compose Background
     */
 
-    _page_flip_effect = pfe_NONE;
+    _page_flip_effect = pfe_None;
 
     Assign_Auto_Function(Combat_Screen_TST_002_Draw, 1);
 
@@ -229,7 +233,7 @@ int16_t Combat_Screen_TST_003(int16_t combat_attacker_player_idx, int16_t combat
         END: Combat Screen Compose Background
     */
 
-    _page_flip_effect = pfe_NONE;
+    _page_flip_effect = pfe_None;
 
     Assign_Auto_Function(Combat_Screen_TST_003_Draw, 1);
 
@@ -315,7 +319,7 @@ int16_t Combat_Screen_TST_004(int16_t combat_attacker_player_idx, int16_t combat
     Set_Page_Off();
     Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
     Toggle_Pages();
-    _page_flip_effect = pfe_NONE;
+    _page_flip_effect = pfe_None;
 
     // CMB_BaseAllocs__WIP()
     battlefield = (struct s_BATTLEFIELD *)Allocate_First_Block(_screen_seg, 348);  // 348 PR, 5568 B

@@ -31,6 +31,7 @@
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_ITOA.H"  /* mox_itoa() */
 #include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/MOX_T4.H"
 #include "MOX/SOUND.H"
 
 #include "CMBTDEF.H"
@@ -1022,11 +1023,13 @@ int16_t * CMB_ResistAllArray;
 int16_t * CMB_HolyBonusArray;
 // WZD dseg:C8A2
 int16_t * CMB_IDK_4PR;
-// WZD dseg:C8A6 00 00                                           
+// WZD dseg:C8A6
 int16_t CMB_TargetingType;
-// WZD dseg:C8A8 00 00                                           CMB_NearDispel_UCs@ dw 0                ; DATA XREF: TILE_DispelMagic+27w ...
-// WZD dseg:C8AA 00 00                                           CMB_NearDispel_UEs@ dw 0                ; DATA XREF: TILE_DispelMagic+1Aw ...
-// WZD dseg:C8AC 00 00                                           
+// WZD dseg:C8A8
+int16_t * CMB_NearDispel_UCs;
+// WZD dseg:C8AA
+int16_t * CMB_NearDispel_UEs;
+// WZD dseg:C8AC
 uint16_t _combat_caster_idx;
 
 // WZD dseg:C8AC                                                 ¿ END:  ovr112 ?
@@ -1434,7 +1437,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
     Toggle_Pages();
 
-    _page_flip_effect = pfe_NONE;
+    _page_flip_effect = pfe_None;
 
     if(OVL_Action_Type == 1)  /* Enemy City */
     {
@@ -11671,8 +11674,45 @@ void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caste
         damage_types[itr] = 0;
     }
 
+/*
+jt_cscc_cast
+offset jt_cscc_00
+offset jt_cscc_01_15
+offset jt_cscc_02
+offset jt_cscc_03_06_07_08_09_11_17_20
+offset jt_cscc_04
+offset jt_cscc_05
+offset jt_cscc_03_06_07_08_09_11_17_20
+offset jt_cscc_03_06_07_08_09_11_17_20
+offset jt_cscc_03_06_07_08_09_11_17_20
+offset jt_cscc_03_06_07_08_09_11_17_20
+offset jt_cscc_10_21
+offset jt_cscc_03_06_07_08_09_11_17_20
+offset jt_cscc_12_23
+offset jt_cscc_13_16
+offset jt_cscc_14
+offset jt_cscc_01_15
+offset jt_cscc_13_16
+offset jt_cscc_03_06_07_08_09_11_17_20
+offset jt_cscc_18
+offset jt_cscc_19
+offset jt_cscc_03_06_07_08_09_11_17_20
+offset jt_cscc_10_21
+offset jt_cscc_22
+offset jt_cscc_12_23
+
+case scc_City_Enchantment_Negative:  //  3
+case scc_Target_Wiz_Spell:  //  6
+DNE  7
+DNE  8
+case scc_Global_Enchantment:
+case scc_Crafting_Spell:  // 11
+DNE 17
+case scc_Disjunction_Spell:  // 20
+*/
     switch(spell_data_table[spell_idx].type)
     {
+
         case scc_Summoning:
         {
 // int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16_t wy, int16_t wp, int16_t R_Param)
@@ -11687,18 +11727,18 @@ void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caste
                 STU_DEBUG_BREAK();
             }
         } break;
+
         case scc_Unit_Enchantment:
+        case scc_Unit_Enchantment_Normal_Only:
         {
 
         } break;
+
         case scc_City_Enchantment_Positive:
         {
 
         } break;
-        case scc_City_Enchantment_Negative:
-        {
 
-        } break;
         case scc_Direct_Damage_Fixed:
         {
             Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, Anims, caster_idx);
@@ -11708,6 +11748,7 @@ void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caste
             Tactical_Combat_Draw();
             PageFlip_FX();
         } break;
+
         case scc_Special_Spell:  /* 38 of these... :(.. */
         {
             if(
@@ -11832,63 +11873,82 @@ void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caste
                 Cast_Animate_Dead(player_idx, caster_idx);
             }
         } break;
-        case scc_Target_Wiz_Spell:
+
+        case scc_Battlefield_Spell:  // 10
+        case scc_Counter_Spell:  // 21
         {
 
         } break;
-        case scc_Global_Enchantment:
+
+        case scc_Combat_Destroy_Unit:  // 12
+        case scc_Banish_Spell:  // 23  (XtraMana)
         {
 
         } break;
-        case scc_Battlefield_Spell:
+
+        case scc_Resistable_Spell:  // 13
+        case scc_Mundane_Curse:  // 16
         {
 
         } break;
-        case scc_Crafting_Spell:
+
+        case scc_Unresistable_Spell:  // 14
         {
 
         } break;
-        case scc_Combat_Destroy_Unit:
+
+        case scc_Dispels:  // 18
+        {
+            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, Anims, caster_idx);
+            _page_flip_effect = pfe_Dissolve;
+            Set_Page_Off();
+            Tactical_Combat_Draw();
+            PageFlip_FX();
+            _page_flip_effect = pfe_None;  // ; this is done automatically already
+            if(
+                (caster_idx >= CASTER_IDX_BASE)
+                &&
+                (_players[caster_idx].runemaster > 0)
+                &&
+                (spell_idx == spl_Dispel_Magic_True)
+            )
+            {
+
+                Mana *= 3;
+
+            }
+            resistance_modifier = 0;
+            Cast_Dispel_Magic(target_cgx, target_cgy, caster_idx, Mana, &resistance_modifier);
+            // ; BUG: Dispel Magic DOES NOT use unit-based targeting,
+            // ; this value can contain any valid index or even 99
+            Moves_Left = Battle_Unit_Moves2(target_idx);
+            Not_Moved_Yet = ST_FALSE;
+            if(battle_units[target_idx].movement_points == Moves_Left)
+            {
+                Not_Moved_Yet = ST_TRUE;
+            }
+            else
+            {
+                Not_Moved_Yet = battle_units[target_idx].movement_points;
+            }
+            BU_Init_Battle_Unit(&battle_units[target_idx]);
+            BU_Apply_Battlefield_Effects__WIP(&battle_units[target_idx]);
+            if(Not_Moved_Yet == ST_TRUE)
+            {
+                battle_units[target_idx].movement_points = Battle_Unit_Moves2(target_idx);
+            }
+            else
+            {
+                battle_units[target_idx].movement_points = Moves_Left;
+            }
+        } break;
+
+        case scc_Disenchant_Spell:  // 19
         {
 
         } break;
-        case scc_Resistable_Spell:
-        {
 
-        } break;
-        case scc_Unresistable_Spell:
-        {
-
-        } break;
-        case scc_Unit_Enchantment_Normal_Only:
-        {
-
-        } break;
-        case scc_Mundane_Curse:
-        {
-
-        } break;
-        case scc_Infusable_Spell:
-        {
-
-        } break;
-        case scc_Dispel_Spell:
-        {
-
-        } break;
-        case scc_Disenchant_Spell:
-        {
-
-        } break;
-        case scc_Disjunction_Spell:
-        {
-
-        } break;
-        case scc_Counter_Spell:
-        {
-
-        } break;
-        case scc_Var_Dmg_Spell:
+        case scc_Direct_Damage_Variable:  // 22
         {
             Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, Anims, caster_idx);
             if(spell_idx == spl_Life_Drain)
@@ -11943,10 +12003,7 @@ void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caste
             Tactical_Combat_Draw();
             PageFlip_FX();
         } break;
-        case scc_Banish_Spell:
-        {
 
-        } break;
     }
 
     Tactical_Combat_Draw();
@@ -12120,11 +12177,11 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
                     return ST_FALSE;
                 }
             }
+
+        }
         /*
             END:  Caster is Battle Unit
         */
-
-        }
 
     }
 
@@ -13978,7 +14035,7 @@ offset jt_cstt_ms_04_12_13_14_22_23
 // NIU  scc_Unit_Enchantment_Normal_Only = 15,            Eldritch Weapon, Flame Blade, Heroism, Holy Armor, Holy Weapon
 // NIU  scc_Mundane_Curse                = 16,   COMBAT:  Possession, Shatter
 // NIU  DNE scc_Infusable_Spell    = 17,   below, no slider, above, maybe slider
-// NIU  scc_Dispel_Spell                 = 18,   COMBAT:  Dispel Magic, Dispel Magic True
+// NIU  scc_Dispels                 = 18,   COMBAT:  Dispel Magic, Dispel Magic True
 // NIU  scc_Disenchant_Spell             = 19,   ¿ BOTH ?  Disenchant Area, Disenchant True
 // NIU  scc_Disjunction_Spell            = 20,   OVERLAND:  Disjunction, Disjunction True
 // NIU  scc_Counter_Spell                = 21,   COMBAT:  Counter Magic
@@ -14067,7 +14124,7 @@ But, where's 'Counter Magic'?
             case scc_Combat_Destroy_Unit:  // 12  COMBAT:  Disintegrate, Dispel Evil, Petrify, Word of Death
             case scc_Resistable_Spell:     // 13  COMBAT:  Black Sleep, Confusion, Creature Binding, Vertigo, Weakness
             case scc_Unresistable_Spell:   // 14  COMBAT:  Mind Storm, Web
-            case scc_Var_Dmg_Spell:        // 22  COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast
+            case scc_Direct_Damage_Variable:        // 22  COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast
             case scc_Banish_Spell:         // 23  COMBAT:  Banish
             {
                 CMB_TargetingType = cstt_EnemyUnit;
@@ -14083,7 +14140,7 @@ But, where's 'Counter Magic'?
                 CMB_TargetingType = cstt_EnemyNU;
             } break;
 
-            case scc_Dispel_Spell:  // 18
+            case scc_Dispels:  // 18
             {
                 CMB_TargetingType = cstt_DispelMagic;
             } break;
@@ -26752,6 +26809,7 @@ void CMB_TileGen__WIP(int16_t ctt)
             // ctg_2 = battlefield->terrain_group[((((itr_cgy + 1) * COMBAT_GRID_WIDTH) + itr_cgx)    )];
             // ctg_3 = battlefield->terrain_group[((((itr_cgy + 1) * COMBAT_GRID_WIDTH) + itr_cgx) + 1)];
 
+            // BUGBUG  what's this accessing when itr_cgy is -1? ...(-1 * COMBAT_GRID_WIDTH) = -21...
             DBG_battlefield_terrain_group_idx = ((((itr_cgy - 1) * COMBAT_GRID_WIDTH) + itr_cgx) - 1);
             DBG_ptr_battlefield_terrain_group = &battlefield->terrain_group[DBG_battlefield_terrain_group_idx];
             ctg_7 = *DBG_ptr_battlefield_terrain_group;

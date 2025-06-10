@@ -840,7 +840,7 @@ int16_t Combat_Spellbook_Build__WIP(int16_t caster_idx)
 
     m_spellbook_page_count = 0;
 
-    if(caster_idx > CASTER_IDX_BASE)
+    if(caster_idx >= CASTER_IDX_BASE)
     {
 
         unit_type = Combat_Casting_Cost_Multiplier(HUMAN_PLAYER_IDX);
@@ -2501,7 +2501,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
             if(SBK_NewSpellAnim_Stg == 0)
             {
-                _page_flip_effect = pfe_NONE;
+                _page_flip_effect = pfe_None;
             }
 
         }

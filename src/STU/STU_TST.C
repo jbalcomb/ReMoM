@@ -65,7 +65,14 @@ void TST_Patch_Game_Data(void)
     TST_Cheat_Power(player_idx);
 
 
-    
+    // Dispel, Disenchant, Disjunct
+    TST_Learn_Spell(player_idx, spl_Dispel_Magic);
+    TST_Learn_Spell(player_idx, spl_Dispel_Magic_True);
+    // TST_Learn_Spell(player_idx, spl_Disenchant_Area);
+    // TST_Learn_Spell(player_idx, spl_Disenchant_True);
+    // TST_Learn_Spell(player_idx, spl_Disjunction);
+    // TST_Learn_Spell(player_idx, spl_Disjunction_True);
+
     // Direct Damage - Fixed
     // TST_Learn_Spell(player_idx, spl_Doom_Bolt);
     // TST_Learn_Spell(player_idx, spl_Fire_Storm);
@@ -74,12 +81,12 @@ void TST_Patch_Game_Data(void)
     // TST_Learn_Spell(player_idx, spl_Warp_Lightning);
 
     // Direct Damage - Variable
-    TST_Learn_Spell(player_idx, spl_Fire_Bolt);
-    TST_Learn_Spell(player_idx, spl_Fireball);
-    TST_Learn_Spell(player_idx, spl_Ice_Bolt);
-    TST_Learn_Spell(player_idx, spl_Life_Drain);
-    TST_Learn_Spell(player_idx, spl_Lightning_Bolt);
-    TST_Learn_Spell(player_idx, spl_Psionic_Blast);
+    // TST_Learn_Spell(player_idx, spl_Fire_Bolt);
+    // TST_Learn_Spell(player_idx, spl_Fireball);
+    // TST_Learn_Spell(player_idx, spl_Ice_Bolt);
+    // TST_Learn_Spell(player_idx, spl_Life_Drain);
+    // TST_Learn_Spell(player_idx, spl_Lightning_Bolt);
+    // TST_Learn_Spell(player_idx, spl_Psionic_Blast);
 
     // Overland Unit Enchantments
     // Overland Unit Enchantments - Normal Units Only

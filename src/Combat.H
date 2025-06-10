@@ -1044,6 +1044,14 @@ extern int16_t _combat_total_unit_count;
 // WZD dseg:C7B2
 extern SAMB_ptr IMG_CMB_FX_Figure;
 
+// WZD dseg:C8A8
+// WZD dseg:C8AA
+/*
+¿ only used by/for TILE_DispelMagic__WIP() ?
+*/
+extern int16_t * CMB_NearDispel_UCs;
+extern int16_t * CMB_NearDispel_UEs;
+
 // WZD dseg:C972
 extern int16_t CMB_Winner;
 

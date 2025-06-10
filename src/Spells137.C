@@ -502,7 +502,7 @@ void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t pl
 
         Release_Time(2);
 
-        _page_flip_effect = pfe_NONE;
+        _page_flip_effect = pfe_None;
 
     }
 

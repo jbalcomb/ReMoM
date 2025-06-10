@@ -649,7 +649,7 @@ void Loaded_Game_Update(void)
     _human_player_idx = HUMAN_PLAYER_IDX;
 
 
-    _page_flip_effect = pfe_NONE;
+    _page_flip_effect = pfe_None;
     
 
     Reset_City_Area_Bitfields();

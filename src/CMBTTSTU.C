@@ -34,6 +34,7 @@ BU_UnitLoadToBattle__SEGRAX()
 
 #include "CMBTDEF.H"
 #include "Combat.H"
+#include "MOX/Video.H"
 
 
 
