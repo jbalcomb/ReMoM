@@ -51,7 +51,312 @@ char cnst_AnimDead_Msg[] = "Select a unit to Animate";
 
 // WZD o131p01
 // drake178: CMB_Disenchant()
-// CMB_Disenchant()
+void Cast_Disenchant(int16_t caster_idx, int16_t strength)
+{
+    int16_t spells[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t enemy_player_idx = 0;
+    int16_t player_idx = 0;
+    SAMB_ptr dispell2_notify_background_seg = 0;
+    int16_t Msg_Count = 0;
+    int8_t * ptr_enchantments = 0;
+    int16_t spell_idx = 0;
+    int16_t itr2 = 0;
+    int16_t Enchant_Offset = 0;
+    int16_t itr1 = 0;  // _SI_
+    int16_t threshold = 0;  // _DI_
+
+    spells[0] = spl_True_Light;
+    spells[1] = spl_Darkness;
+    spells[2] = spl_Warp_Reality;
+    spells[3] = spl_Black_Prayer;
+    spells[4] = spl_Wrack;
+    spells[5] = spl_Metal_Fires;
+    spells[6] = spl_Prayer;
+    spells[7] = spl_High_Prayer;
+    spells[8] = spl_Terror;
+    spells[9] = spl_Call_Lightning;
+    spells[10] = spl_Counter_Magic;
+    spells[11] = spl_Mass_Invisibility;
+    spells[12] = spl_Entangle;
+    spells[13] = spl_Mana_Leak;
+    spells[14] = spl_Blur;
+
+    if(caster_idx >= CASTER_IDX_BASE)
+    {
+        player_idx = (caster_idx - CASTER_IDX_BASE);
+    }
+    else
+    {
+        // ; BUG: this is NOT the caster ID
+        player_idx = battle_units[itr1].controller_idx;
+    }
+
+    Msg_Count = 0;
+
+    Copy_On_To_Off_Page();
+
+    if(player_idx == _combat_attacker_player)
+    {
+        // WTF  mov     [bp+Enchant_Offset], s_COMBAT_ENCHANTMENT_STATUS.Dfndr
+        // Enchant_Offset = struct s_COMBAT_ENCHANTMENT_STATUS.Dfndr;
+        Enchant_Offset = 1;
+        enemy_player_idx = _combat_defender_player;
+    }
+    else
+    {
+        Enchant_Offset = 0;
+        enemy_player_idx = _combat_attacker_player;
+    }
+
+    // ; BUG: neutral units can cast Combat Enchantments too
+    if(enemy_player_idx != NEUTRAL_PLAYER_IDX)
+    {
+        // ; process any Combat Enchantments that the opponent
+        // ; has active
+        // ; BUG: dispelling Mass Invisibility will remove all
+        // ; combat-cast Invisibility effects indiscriminately
+
+        for(itr1 = 0; itr1 < 30; itr1++)
+        {
+
+            // if(*(combat_enchantments + itr1 + Enchant_Offset) > 0)
+            if(combat_enchantments[(itr1 + Enchant_Offset)] > 0)
+            {
+
+                spell_idx = spells[itr1];
+
+                threshold = (strength + Calculate_Dispel_Difficulty(spell_data_table[spell_idx].casting_cost, enemy_player_idx, spell_data_table[spell_idx].magic_realm));
+
+                threshold = ((strength * 250) / threshold);
+
+                if(Random(250) <= (threshold + 500))
+                {
+
+                    if(itr1 == 22)
+                    {
+                        // ; remove combat-cast Invisibility from all opposing
+                        // ; units
+                        // ; BUG: will also remove those that were cast
+                        // ; individually instead of placed by Mass Invisibility
+
+                    }
+
+                    combat_enchantments[(itr1 + Enchant_Offset)] = 0;
+
+                    Mark_Block(_screen_seg);
+
+                    // SPECFX.LBX, 052  "DISPELL2"  ""
+                    dispell2_notify_background_seg = LBX_Reload_Next(specfx_lbx_file__ovr131__2of2, 51, _screen_seg);
+
+                    if(Msg_Count < 5)
+                    {
+
+                        if(Msg_Count < 4)
+                        {
+
+                            _fstrcpy(GUI_NearMsgString, spell_data_table[spell_idx].name);
+
+                            strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
+
+                        }
+                        else
+                        {
+
+                            LBX_Load_Data_Static(message_lbx_file__ovr131, 0, (SAMB_ptr)&GUI_NearMsgString[0], 45, 1, 150);
+
+                        }
+
+                        Notify2((160 + (Msg_Count * 10)), (40 + (Msg_Count * 25)), 3, GUI_NearMsgString, 0, dispell2_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
+
+                        Msg_Count += 1;
+
+                    }
+
+                    Release_Block(_screen_seg);
+
+                }
+
+            }
+
+        }
+
+    }
+
+    // ; check if the battle is taking place in a warped node
+    // ; owned by the caster, and if so, attempt to dispel
+    // ; the Warp Node effect
+    // ; WARNING: the effect has no owner, and thus its dispel
+    // ;  resistance can't be improved
+    // ; INCONSISTENT: there is no dispel message
+    for(itr1 = 0; itr1 < NUM_NODES; itr1++)
+    {
+
+        // ; should really use jnz
+        if(
+            ((_NODES[itr1].Meld_Flags & M_Warped) > 0)
+            &&
+            (_NODES[itr1].owner_idx == player_idx)
+            &&
+            (_NODES[itr1].wx == _combat_wx)
+            &&
+            (_NODES[itr1].wy == _combat_wy)
+            &&
+            (_NODES[itr1].wp == _combat_wp)
+        )
+        {
+
+            spell_idx = spl_Warp_Node;
+
+            threshold = (strength + Calculate_Dispel_Difficulty(spell_data_table[spell_idx].casting_cost, enemy_player_idx, spell_data_table[spell_idx].magic_realm));
+
+            threshold = ((strength * 250) / threshold);
+
+            if(Random(250) <= (threshold + 500))
+            {
+
+                _NODES[itr1].Meld_Flags ^= M_Warped;
+
+            }
+            
+        }
+
+    }
+
+    // ; attempt to dispel every Magic Vortex that does not
+    // ; belong to the caster
+    // ; BUG: this will cause all Vortices that are on the
+    // ;  same tile as a unit to be targeted twice
+    // ; INCONSISTENT: Dispel Magic does not check owners
+    // ; INCONSISTENT: there is no dispel message
+    for(itr1 = 0; itr1 < CMB_Vortex_Count; itr1++)
+    {
+
+        if(CMB_Vortex_Array[itr1].owner_idx == player_idx)
+        {
+
+            spell_idx = spl_Magic_Vortex;
+
+            threshold = (strength + Calculate_Dispel_Difficulty(spell_data_table[spell_idx].casting_cost, enemy_player_idx, spell_data_table[spell_idx].magic_realm));
+
+            threshold = ((strength * 250) / threshold);
+
+            if(Random(250) <= (threshold + 500))
+            {
+
+                Delete_Structure(itr1, (uint8_t *)&CMB_Vortex_Array[0], sizeof(struct s_MAGIC_VORTEX), CMB_Vortex_Count);
+
+                CMB_Vortex_Count--;
+
+            }
+            
+        }
+
+    }
+
+    // ; attempt to dispel every existing city enchantment
+    // ; that was not placed by the caster
+    // ; BUG: does not recognize combat-cast Wall spells
+    // ; BUG: uses the wrong costs for overland-cast Wall of
+    // ;  Fire and Wall of Darkness
+    // ; BUG: the loop includes Nightshades, which return no
+    // ;  spell index to work with
+    ptr_enchantments = (int8_t *)&battlefield->city_enchantments;
+
+    // ; BUG: also includes Nightshades - not an enchantment
+
+    for(Enchant_Offset = 0; Enchant_Offset < NUM_CITY_ENCHANTMENTS; Enchant_Offset++)
+    {
+
+        if(
+            (ptr_enchantments[Enchant_Offset] > 0)
+            &&
+            (ptr_enchantments[Enchant_Offset] == (player_idx + 1))
+        )
+        {
+
+            spell_idx = Get_Spell_For_City_Enchandment(Enchant_Offset);
+
+            threshold = (strength + Calculate_Dispel_Difficulty(spell_data_table[spell_idx].casting_cost, enemy_player_idx, spell_data_table[spell_idx].magic_realm));
+
+            threshold = ((strength * 250) / threshold);
+
+            if(Random(250) <= (threshold + 500))
+            {
+
+                ptr_enchantments[Enchant_Offset] = 0;
+
+                Mark_Block(_screen_seg);
+
+                // SPECFX.LBX, 052  "DISPELL2"  ""
+                dispell2_notify_background_seg = LBX_Reload_Next(specfx_lbx_file__ovr131__2of2, 51, _screen_seg);
+
+                if(spell_idx == spl_Wall_Of_Fire)
+                {
+
+                    battlefield->Wall_Of_Fire = 0;
+
+                }
+
+                if(spell_idx == spl_Wall_Of_Darkness)
+                {
+                    
+                    battlefield->Wall_Of_Darkness = 0;
+
+                }
+
+                if(Msg_Count < 5)
+                {
+
+                    if(Msg_Count < 4)
+                    {
+
+                        _fstrcpy(GUI_NearMsgString, spell_data_table[spell_idx].name);
+
+                        strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
+
+                    }
+                    else
+                    {
+
+                        LBX_Load_Data_Static(message_lbx_file__ovr131, 0, (SAMB_ptr)&GUI_NearMsgString[0], 46, 1, 150);
+
+                    }
+
+                    Notify2((160 + (Msg_Count * 10)), (40 + (Msg_Count * 25)), 3, GUI_NearMsgString, 0, dispell2_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
+
+                    Msg_Count += 1;
+
+                }
+
+                Release_Block(_screen_seg);
+
+            }
+
+        }
+
+    }
+
+    // ; call TILE_DispelMagic for every tile with an active
+    // ; unit on it
+    // ; BUG: can attempt to dispel Magic Vortices twice if
+    // ;  they are on the same tile as an active unit
+    // ; BUGs: iherits everything from TILE_DispelMagic
+
+    Msg_Count = 0;
+    for(itr1 = 0; itr1 < _combat_total_unit_count; itr1++)
+    {
+
+        if(battle_units[itr1].status == bus_Active)
+        {
+
+            Cast_Dispel(battle_units[itr1].cgx, battle_units[itr1].cgy, caster_idx, strength, &Msg_Count);
+
+        }
+
+    }
+
+}
+
 
 // WZD o131p02
 // drake178: TILE_DispelMagic()
@@ -87,11 +392,11 @@ Haste
 Confusion (state 2)
 
 */
-void Cast_Dispel_Magic(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t Dispel_Str, int16_t * D_Count)
+void Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t strength, int16_t * D_Count)
 {
     SAMB_ptr dispell1_notify_background_seg = 0;
     int16_t enemy_player_idx = 0;
-    int16_t Dispel_Target = 0;
+    int16_t threshold = 0;
     int16_t Test_Flag = 0;
     uint32_t test = 0;
     int16_t Flag_Loop_Var = 0;
@@ -223,13 +528,13 @@ void Cast_Dispel_Magic(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t Dis
                         )
                         {
 
-                            Dispel_Target = (Dispel_Str + Calculate_Dispel_Difficulty(spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].casting_cost, enemy_player_idx, spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].magic_realm));
+                            threshold = (strength + Calculate_Dispel_Difficulty(spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].casting_cost, enemy_player_idx, spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].magic_realm));
 
-                            Dispel_Target = ((Dispel_Str * 250) / Dispel_Target);
+                            threshold = ((strength * 250) / threshold);
 
                             // ; BUG: will always yield a success, making the whole
                             // ; check redundant
-                            if(Random(250) <= (Dispel_Target + 500))
+                            if(Random(250) <= (threshold + 500))
                             {
 
                                 if(Test_Flag == bue_Web)
@@ -264,9 +569,9 @@ void Cast_Dispel_Magic(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t Dis
 
                                     }
 
-                                    Dispel_Target = (160 + (*D_Count * 10));
+                                    threshold = (160 + (*D_Count * 10));
 
-                                    Notify2(Dispel_Target, (20 + (*D_Count * 25)), 3, GUI_NearMsgString, 0, dispell1_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
+                                    Notify2(threshold, (20 + (*D_Count * 25)), 3, GUI_NearMsgString, 0, dispell1_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
 
                                     *D_Count += 1;
 
@@ -290,12 +595,12 @@ void Cast_Dispel_Magic(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t Dis
                 if((_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments & UE_SPELLLOCK) != 0)
                 {
 
-                    Dispel_Target = (Dispel_Str + Calculate_Dispel_Difficulty(150, battle_units[battle_unit_idx].controller_idx, spell_data_table[spl_Spell_Lock].magic_realm));
+                    threshold = (strength + Calculate_Dispel_Difficulty(150, battle_units[battle_unit_idx].controller_idx, spell_data_table[spl_Spell_Lock].magic_realm));
 
-                    Dispel_Target = ((Dispel_Str * 250) / Dispel_Target);
+                    threshold = ((strength * 250) / threshold);
 
                     // ; BUG: Haste is not protected by Spell Lock
-                    if(Random(250) <= Dispel_Target)
+                    if(Random(250) <= threshold)
                     {
                         
                         _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments ^= Test_Flag;
@@ -324,11 +629,11 @@ void Cast_Dispel_Magic(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t Dis
 
                             // ; BUG: this is not the right value if the spell can
                             // ; not be cast in combat
-                            Dispel_Target = (Dispel_Str + Calculate_Dispel_Difficulty((spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].casting_cost * 5), battle_units[battle_unit_idx].controller_idx, spell_data_table[CMB_NearDispel_UEs[Flag_Loop_Var]].magic_realm));
+                            threshold = (strength + Calculate_Dispel_Difficulty((spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].casting_cost * 5), battle_units[battle_unit_idx].controller_idx, spell_data_table[CMB_NearDispel_UEs[Flag_Loop_Var]].magic_realm));
 
-                            Dispel_Target = ((Dispel_Str * 250) / Dispel_Target);
+                            threshold = ((strength * 250) / threshold);
 
-                            if(Random(250) <= Dispel_Target)
+                            if(Random(250) <= threshold)
                             {
                                 
                                 _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments ^= Test_Flag;
@@ -430,11 +735,11 @@ void Cast_Dispel_Magic(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t Dis
                             if((battle_units[battle_unit_idx].enchantments & test) > 0)
                             {
 
-                                Dispel_Target = (Dispel_Str + Calculate_Dispel_Difficulty(spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].casting_cost, battle_units[battle_unit_idx].controller_idx, spell_data_table[CMB_NearDispel_UEs[Flag_Loop_Var]].magic_realm));
+                                threshold = (strength + Calculate_Dispel_Difficulty(spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].casting_cost, battle_units[battle_unit_idx].controller_idx, spell_data_table[CMB_NearDispel_UEs[Flag_Loop_Var]].magic_realm));
 
-                                Dispel_Target = ((Dispel_Str * 250) / Dispel_Target);
+                                threshold = ((strength * 250) / threshold);
 
-                                if(Random(250) <= Dispel_Target)
+                                if(Random(250) <= threshold)
                                 {
 
                                     Mark_Block(_screen_seg);
@@ -507,11 +812,11 @@ void Cast_Dispel_Magic(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t Dis
                 if(battle_units[battle_unit_idx].Combat_Effects == bue_Haste)
                 {
 
-                    Dispel_Target = (Dispel_Str + Calculate_Dispel_Difficulty(spell_data_table[spl_Haste].casting_cost, battle_units[battle_unit_idx].controller_idx, spell_data_table[spl_Haste].magic_realm));
+                    threshold = (strength + Calculate_Dispel_Difficulty(spell_data_table[spl_Haste].casting_cost, battle_units[battle_unit_idx].controller_idx, spell_data_table[spl_Haste].magic_realm));
 
-                    Dispel_Target = ((Dispel_Str * 250) / Dispel_Target);
+                    threshold = ((strength * 250) / threshold);
 
-                    if(Random(250) <= Dispel_Target)
+                    if(Random(250) <= threshold)
                     {
 
                         Mark_Block(_screen_seg);
@@ -569,11 +874,11 @@ void Cast_Dispel_Magic(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t Dis
                 )
                 {
 
-                    Dispel_Target = (Dispel_Str + Calculate_Dispel_Difficulty(spell_data_table[spl_Confusion].casting_cost, battle_units[battle_unit_idx].controller_idx, spell_data_table[spl_Confusion].magic_realm));
+                    threshold = (strength + Calculate_Dispel_Difficulty(spell_data_table[spl_Confusion].casting_cost, battle_units[battle_unit_idx].controller_idx, spell_data_table[spl_Confusion].magic_realm));
 
-                    Dispel_Target = ((Dispel_Str * 250) / Dispel_Target);
+                    threshold = ((strength * 250) / threshold);
 
-                    if(Random(250) <= Dispel_Target)
+                    if(Random(250) <= threshold)
                     {
 
                         Mark_Block(_screen_seg);

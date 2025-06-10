@@ -4,6 +4,7 @@
         ovr118
 */
 
+#include "NEXTTURN.H"
 #include "Spellbook.H"
 
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
@@ -826,7 +827,7 @@ int16_t Combat_Spellbook_Build__WIP(int16_t caster_idx)
     Mark_Block(_screen_seg);
 
     // DOMSDOS  m_spellbook_spell_list = SA_MK_FP0(Allocate_Next_Block(_screen_seg, 13));
-    m_spellbook_spell_list = Allocate_Next_Block(_screen_seg, 13);
+    m_spellbook_spell_list = (int16_t *)Allocate_Next_Block(_screen_seg, 13);
 
     SBK_Group_3_Count = 0;  // ; City Spells or Death
     SBK_Group_2_Count = 0;  // ; Special Spells or Chaos
@@ -1064,7 +1065,7 @@ total_pages += ((SBK_Group_4_Count + 5) / NUM_SPELLS_PER_PAGE_SML);
 total_pages += ((SBK_Group_6_Count + 5) / NUM_SPELLS_PER_PAGE_SML);
 
 
-    m_spellbook_pages = CMB_NearBuffer_3;
+    m_spellbook_pages = (struct s_SPELL_BOOK_PAGE *)CMB_NearBuffer_3;
 
     // ¿ ~ Spellbook_Add_Page() ?
     for(itr1 = 0; (total_pages + 3) > itr1; itr1++)

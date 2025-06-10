@@ -11905,6 +11905,7 @@ case scc_Disjunction_Spell:  // 20
             Tactical_Combat_Draw();
             PageFlip_FX();
             _page_flip_effect = pfe_None;  // ; this is done automatically already
+            // ¿ BUGBUG  no runemaster for 'Dispel Magic' ?
             if(
                 (caster_idx >= CASTER_IDX_BASE)
                 &&
@@ -11918,7 +11919,7 @@ case scc_Disjunction_Spell:  // 20
 
             }
             resistance_modifier = 0;
-            Cast_Dispel_Magic(target_cgx, target_cgy, caster_idx, Mana, &resistance_modifier);
+            Cast_Dispel(target_cgx, target_cgy, caster_idx, Mana, &resistance_modifier);
             // ; BUG: Dispel Magic DOES NOT use unit-based targeting,
             // ; this value can contain any valid index or even 99
             Moves_Left = Battle_Unit_Moves2(target_idx);
@@ -11929,7 +11930,7 @@ case scc_Disjunction_Spell:  // 20
             }
             else
             {
-                Not_Moved_Yet = battle_units[target_idx].movement_points;
+                Moves_Left = battle_units[target_idx].movement_points;
             }
             BU_Init_Battle_Unit(&battle_units[target_idx]);
             BU_Apply_Battlefield_Effects__WIP(&battle_units[target_idx]);
@@ -11945,6 +11946,62 @@ case scc_Disjunction_Spell:  // 20
 
         case scc_Disenchant_Spell:  // 19
         {
+            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, Anims, caster_idx);
+            _page_flip_effect = pfe_Dissolve;
+            Set_Page_Off();
+            Tactical_Combat_Draw();
+            PageFlip_FX();
+            _page_flip_effect = pfe_None;  // ; this is done automatically already
+            if(
+                (caster_idx >= CASTER_IDX_BASE)
+                &&
+                (_players[caster_idx].runemaster > 0)
+            )
+            {
+
+                Mana *= 2;
+
+            }
+            // BUGBUG  should be if *3 else *2, in previous block
+            if(spell_idx == spl_Disenchant_True)
+            {
+
+                Mana *= 3;
+            }
+            Cast_Disenchant(caster_idx, Mana);
+            for(itr = 0; itr < _combat_total_unit_count; itr++)
+            {
+
+                Not_Moved_Yet = ST_FALSE;
+
+                if(battle_units[itr].status == bus_Active)
+                {
+
+                    Moves_Left = Battle_Unit_Moves2(itr);
+                    
+                    if(battle_units[itr].movement_points == Moves_Left)
+                    {
+                        Not_Moved_Yet = ST_TRUE;
+                    }
+                    else
+                    {
+                        Moves_Left = battle_units[itr].movement_points;
+                    }
+                    BU_Init_Battle_Unit(&battle_units[itr]);
+                    BU_Apply_Battlefield_Effects__WIP(&battle_units[itr]);
+                    if(Not_Moved_Yet == ST_TRUE)
+                    {
+                        battle_units[itr].movement_points = Battle_Unit_Moves2(itr);
+                    }
+                    else
+                    {
+                        battle_units[itr].movement_points = Moves_Left;
+                    }
+                    
+                }
+
+            }
+
 
         } break;
 
@@ -14822,7 +14879,7 @@ int16_t Check_Attack_Ranged(int16_t attacker_battle_unit_idx, int16_t defender_b
 
     }
 
-    if(battlefield->Wall_of_Darkness == 1)
+    if(battlefield->Wall_Of_Darkness == 1)
     {
 
         // ; BUG: ignores natural Illusions Immunity
@@ -16193,14 +16250,14 @@ void AI_MoveBattleUnits__WIP(int16_t player_idx)
 
     }
 
-    if(battlefield->Wall_of_Darkness == ST_TRUE)
+    if(battlefield->Wall_Of_Darkness == ST_TRUE)
     {
 
         _battlefield_city_walls |= BATTLEFIELD_CITY_WALL_DARKNESS;
 
     }
 
-    if(battlefield->Wall_of_Fire == ST_TRUE)
+    if(battlefield->Wall_Of_Fire == ST_TRUE)
     {
 
         _battlefield_city_walls |= BATTLEFIELD_CITY_WALL_FIRE;
@@ -17212,9 +17269,9 @@ void G_AI_BU_MoveOrRampage__WIP(int16_t battle_unit_idx, int16_t Dest_X, int16_t
         (G_AI_StayInTownProper == ST_TRUE)
         &&
         (
-            (battlefield->Wall_of_Fire > 0)
+            (battlefield->Wall_Of_Fire > 0)
             ||
-            (battlefield->Wall_of_Darkness > 0)
+            (battlefield->Wall_Of_Darkness > 0)
         )
         &&
         (BU_IsInCityProper__STUB(battle_unit_idx) == ST_TRUE)
@@ -17404,9 +17461,9 @@ int16_t Auto_Move_Ship(int16_t battle_unit_idx, int16_t Dest_X, int16_t Dest_Y, 
         (G_AI_StayInTownProper == ST_TRUE)
         &&
         (
-            (battlefield->Wall_of_Fire > 0)
+            (battlefield->Wall_Of_Fire > 0)
             ||
-            (battlefield->Wall_of_Darkness > 0)
+            (battlefield->Wall_Of_Darkness > 0)
         )
         &&
         (BU_IsInCityProper__STUB(battle_unit_idx) == ST_TRUE)
@@ -26476,26 +26533,26 @@ void Generate_Combat_Map__WIP(
     if((magic_walls & 1) != 0)
     {
 
-        battlefield->Wall_of_Fire = ST_TRUE;
+        battlefield->Wall_Of_Fire = ST_TRUE;
 
     }
     else
     {
 
-        battlefield->Wall_of_Fire = ST_FALSE;
+        battlefield->Wall_Of_Fire = ST_FALSE;
 
     }
 
     if((magic_walls & 2) != 0)
     {
 
-        battlefield->Wall_of_Darkness = ST_TRUE;
+        battlefield->Wall_Of_Darkness = ST_TRUE;
 
     }
     else
     {
 
-        battlefield->Wall_of_Darkness = ST_FALSE;
+        battlefield->Wall_Of_Darkness = ST_FALSE;
 
     }
 

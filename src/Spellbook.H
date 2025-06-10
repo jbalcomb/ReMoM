@@ -237,7 +237,10 @@ enum e_SPELLS
     spl_Create_Artifact     = 211,
     spl_Summon_Champion     = 212,
     spl_Spell_Of_Mastery    = 213,
-    spl_Spell_Of_Return     = 214
+    spl_Spell_Of_Return     = 214,
+
+    spl_MAX_SPELL_COUNT
+    
 };
 
 enum e_SPELL_LIBRARY_STATUS

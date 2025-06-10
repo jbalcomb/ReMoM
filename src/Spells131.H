@@ -25,11 +25,11 @@ extern "C" {
 
 // WZD o131p01
 // drake178: CMB_Disenchant()
-// CMB_Disenchant()
+void Cast_Disenchant(int16_t caster_idx, int16_t strength);
 
 // WZD o131p02
 // drake178: TILE_DispelMagic()
-void Cast_Dispel_Magic(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t Dispel_Str, int16_t  * D_Count);
+void Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t strength, int16_t  * D_Count);
 
 // WZD o131p03
 // drake178: CMB_ApplyCracksCall()

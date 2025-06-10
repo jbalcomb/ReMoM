@@ -23,7 +23,7 @@ extern "C" {
 */
 
 // WZD o135p01
-// SPL_Get_CityE_Index()
+int16_t Get_Spell_For_City_Enchandment(int16_t city_enchantment_idx);
 
 // WZD o135p02
 int16_t Calculate_Dispel_Difficulty(int16_t casting_cost, int16_t player_idx, int16_t magic_realm);

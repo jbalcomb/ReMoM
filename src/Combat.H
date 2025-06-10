@@ -844,8 +844,8 @@ struct s_BATTLEFIELD
     /* 0x1536 */  SAMB_ptr House_IMG_Segs[16];  // [4][4]  ¿ assigned pict seg from [3][15] house types ?
     /* 0x1556 */  int16_t Walled_City;  // ¿ {{F,T} city has wall flag ?  ... used to set _battlefield_city_walls |= 0x1;, so must be specifcally 'City Walls'/'Wall of Stone'
     /* 0x1558 */  int16_t Wall_Sections[16];   /* {4,4,4,4};  spl_Disrupt sets this to 2 */
-    /* 0x1578 */  int16_t Wall_of_Fire;
-    /* 0x157A */  int16_t Wall_of_Darkness;
+    /* 0x1578 */  int16_t Wall_Of_Fire;
+    /* 0x157A */  int16_t Wall_Of_Darkness;
     /* 0x157C */  int16_t wp;
     /* 0x157E */  // struct s_CTY_ENCH city_enchantments[26];  // int16_t city_enchantments CTY_ENCH
                   int8_t city_enchantments[26];

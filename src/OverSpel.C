@@ -69,7 +69,59 @@ char aThatCityAlread[] = "That city already has ";
 */
 
 // WZD o135p01
-// SPL_Get_CityE_Index()
+// drake178: SPL_Get_CityE_Index()
+/*
+; returns the spell index corresponding to a specific
+; offset in the city enchantments array, based on the
+; parameters stored in the spell records
+*/
+/*
+    gives spell_dx
+    takes city_enchantment_idx
+*/
+int16_t Get_Spell_For_City_Enchandment(int16_t city_enchantment_idx)
+{
+    int16_t spell_idx = 0;  // _SI_
+    int16_t itr = 0;  // _CX_
+
+    spell_idx = spl_NONE;
+
+    if(
+        (city_enchantment_idx == NATURE_WARD)
+        ||
+        (city_enchantment_idx == DEATH_WARD)
+    )
+    {
+
+        spell_idx = spl_Spell_Ward;
+
+    }
+
+    for(itr = spl_Earth_To_Mud; ((itr < spl_MAX_SPELL_COUNT) && (spell_idx == spl_NONE)); itr++)
+    {
+
+        if(
+            (spell_data_table[itr].type == scc_City_Enchantment_Positive)
+            ||
+            (spell_data_table[itr].type == scc_City_Enchantment_Positive)
+        )
+        {
+
+            if(spell_data_table[itr].ce_idx == city_enchantment_idx)
+            {
+
+                spell_idx = itr;
+
+            }
+
+        }
+
+    }
+
+    return spell_idx;
+    
+}
+
 
 // WZD o135p02
 // drake178: WIZ_GetSpellStrength()
