@@ -56,13 +56,13 @@ extern int16_t GAME_SoM_Cast_By;
 // SBK_SpellSlider()
 
 // WZD o136p05
-// CMB_LoadSpellSlider()
+void Combat_Spellbook_Mana_Adder_Load(void);
 
 // WZD o136p06
-// CMB_SliderRedraw()
+void Combat_Spellbook_Mana_Adder_Draw(void);
 
 // WZD o136p07
-int16_t CMB_SpellSlider__STUB(int16_t spell_idx, int16_t Selected_Spell, int16_t caster_idx);
+int16_t Combat_Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_field_idx, int16_t caster_idx);
 
 // WZD o136p08
 // sub_BD8A8()

@@ -38,6 +38,12 @@ MoO2 Module: shear
 */
 
 // MoO2  animation_header
+
+struct s_WTF
+{
+    char * IDGI_how_is_this_pragma_unterminated;
+};
+
 #pragma pack(push)
 #pragma pack(2)
 struct s_FLIC_HDR
@@ -53,6 +59,7 @@ struct s_FLIC_HDR
     /* 0E */ int16_t palette_header_offset;
 };
 #pragma pack(pop)
+
 
 #define SZ_FLIC_HDR                             16
 #define SZ_FLIC_PAL_HDR                          8

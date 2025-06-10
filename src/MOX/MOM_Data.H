@@ -857,9 +857,9 @@ struct s_SPELL_DATA
             int16_t ge_idx;                     // 9: scc_Global_Enchantment    indexes into _players[].Globals[], which holds player_num (i.e., player_idx + 1)
         };
         struct {
-            uint8_t strength;                     // Attack_Strength  CMB_ConvSpellAttack()
-            uint8_t immunities;                     // Immunity_Flags   CMB_ConvSpellAttack()
-            uint16_t attributes;
+            uint8_t strength;                   // AKA base damage  Attack_Strength  CMB_ConvSpellAttack()
+            uint8_t immunities;                 //                  Immunity_Flags   CMB_ConvSpellAttack()
+            uint16_t attributes;                //                                   CMB_ConvSpellAttack()
         };
     };
     /* 24 */
@@ -4452,27 +4452,32 @@ extern int16_t AI_Eval_After_Spell;
 
 // WZD dseg:CA10                                                 BEGIN: ovr136 - Uninitialized Data
 
-// WZD dseg:CA10 00 00                                           CMB_SliderLimit dw 0                    ; DATA XREF: CMB_SliderRedraw+7Br ...
-// WZD dseg:CA10                                                                                         ; is this really necessary?
+// WZD dseg:CA10
+extern int16_t CMB_SliderLimit;
 
 // WZD dseg:CA12
 extern int16_t GAME_MP_SpellVar_1;
 
-// WZD dseg:CA14 00 00                                           _osc_anim_ctr dw 0                ; DATA XREF: SBK_SliderRedraw+2Cr ...
-// WZD dseg:CA14                                                                                         ; steps 0 to 7 for sliders
+// WZD dseg:CA14
+extern int16_t _osc_anim_ctr;
 
 // WZD dseg:CA16
 extern int16_t SBK_Spell_Index;
 
-// WZD dseg:CA18 00 00                                           SBK_SliderState dw 0                    ; DATA XREF: SBK_SliderRedraw+6Br ...
+// WZD dseg:CA18
+extern int16_t _xtra_mana_pos;
+
 // WZD dseg:CA1A 00 00 00 00 00 00 00 00 00 00                   word_434BA dw 5 dup(0)                  ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+308w ...
-// WZD dseg:CA24 00 00                                           word_434C4 dw 0                         ; DATA XREF: IDK_SomScr_Load+8Cw ...
+
+// WZD dseg:CA24
+extern SAMB_ptr word_434C4;
 
 // WZD dseg:CA26
 extern SAMB_ptr IMG_SBK_SliderBG;
 
 // WZD dseg:CA28
 extern SAMB_ptr GAME_MP_SpellVar_2;
+extern int16_t _mana_adder_caster_idx;  // DNE in Dasm
 
 // WZD dseg:CA2A 00 00                                           IMG_OVL_TrgtWizCncl@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+50w ...
 
@@ -4482,7 +4487,10 @@ extern int16_t _temp_sint_4;
 #define _osc_summon_unit_type _temp_sint_4
 
 // WZD dseg:CA2E 00 00                                           IDK_SUMMONBK_pict_seg dw 0              ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+17Dw ...
-// WZD dseg:CA30 00 00                                           IMG_SBK_SliderOK@ dw 0                  ; DATA XREF: SBK_LoadSpellSlider+7Dw ...
+
+// WZD dseg:CA30
+extern SAMB_ptr xtramana_ok_button_seg;
+
 // WZD dseg:CA32 00 00                                           IMG_OVL_TargetWizBG@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+39w ...
 
 // WZD dseg:CA34
@@ -4495,10 +4503,13 @@ extern SAMB_ptr IMG_SBK_PageText;
 // WZD dseg:CA3A 00 00                                           word_434DA dw 0                         ; DATA XREF: IDK_SummonAnim_Load+CBw ...
 // WZD dseg:CA3C 00 00                                           SPELLSCR_FLAMEFR1_seg dw 0                ; DATA XREF: IDK_SummonAnim_Load+49w ...
 // WZD dseg:CA3E 00 00                                           word_434DE dw 0                         ; DATA XREF: IDK_SummonAnim_Load+B4w ...
-// WZD dseg:CA40 00 00                                           IMG_SBK_SliderBar@ dw 0                 ; DATA XREF: ITEM_LoadCraftingRes+188w ...
-// WZD dseg:CA40                                                                                         ; also the item crafting right arrow (2 state image)
-// WZD dseg:CA42 00 00                                           IMG_SBK_SliderDot@ dw 0                 ; DATA XREF: ITEM_LoadCraftingRes+171w ...
-// WZD dseg:CA42                                                                                         ; also the item crafting left arrow (2 state image)
+
+// WZD dseg:CA40
+extern SAMB_ptr IMG_SBK_SliderBar;
+
+// WZD dseg:CA42
+extern SAMB_ptr IMG_SBK_SliderDot;
+
 // WZD dseg:CA44 00 00                                           IMG_MoodWizPortrait@ dw 0               ; DATA XREF: OVL_LoadGlobalAnim+28w ...
 // WZD dseg:CA46 00                                              db    0
 // WZD dseg:CA47 00                                              db    0

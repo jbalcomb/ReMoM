@@ -4574,17 +4574,7 @@ void AI_CMB_PlayTurn__WIP(int16_t player_idx)
     if(player_idx == combat_human_player)
     {
 
-// TODO  G_CMB_CastSpell((player_idx + 20), _combat_wx, _combat_wy, _combat_wp);
-// ; resolves combat spellcasting by the specified entity,
-// ; from opening the spellbook to casting the spell; or
-// ; evaluating the castable list, selecting one, and
-// ; casting it in case of the AI
-// ; returns 0 if no spell can be cast, 1 if cancelled
-// ; during targeting, or 2 if resolved (or countered)
-// ;
-// ; contains many BUGs related to casting costs, and
-// ; inherints many more from the targeting-, spell list
-// ; building-, and spell effect functions
+        // SPELLY  G_CMB_CastSpell((player_idx + 20), _combat_wx, _combat_wy, _combat_wp);
 
     }
 
@@ -6108,12 +6098,14 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
 
     if(_combat_defender_player == ST_UNDEFINED)
     {
-        _combat_defender_player = MOO_MONSTER_PLAYER_IDX;  // ; THIS WILL CORRUPT MEMORY IF IT IS POSSIBLE AT ALL!
+        STU_DEBUG_BREAK();
+        // BUGBUG  _combat_defender_player = MOO_MONSTER_PLAYER_IDX;  // ; THIS WILL CORRUPT MEMORY IF IT IS POSSIBLE AT ALL!
     }
 
     if(_combat_attacker_player == ST_UNDEFINED)
     {
-        _combat_attacker_player = MOO_MONSTER_PLAYER_IDX;  // ; THIS WILL CORRUPT MEMORY IF IT IS POSSIBLE AT ALL!
+        STU_DEBUG_BREAK();
+        // BUGBUG  _combat_attacker_player = MOO_MONSTER_PLAYER_IDX;  // ; THIS WILL CORRUPT MEMORY IF IT IS POSSIBLE AT ALL!
     }
 
     if(_combat_defender_player != _human_player_idx)
@@ -6125,7 +6117,8 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
 
     if(CMB_AI_Player == ST_UNDEFINED)
     {
-        CMB_AI_Player = MOO_MONSTER_PLAYER_IDX;  // ; THIS WILL CORRUPT MEMORY IF IT IS POSSIBLE AT ALL!
+        STU_DEBUG_BREAK();
+        // BUGBUG  CMB_AI_Player = MOO_MONSTER_PLAYER_IDX;  // ; THIS WILL CORRUPT MEMORY IF IT IS POSSIBLE AT ALL!
     }
 
 
@@ -11897,7 +11890,58 @@ void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caste
         } break;
         case scc_Var_Dmg_Spell:
         {
+            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, Anims, caster_idx);
+            if(spell_idx == spl_Life_Drain)
+            {
+                /* SPELLY */  BU_LifeDrain__WIP(target_idx, &damage_types[0], caster_idx);
+            }
+            // Fire Bolt, Ice Bolt, Lightning Bolt: +1 damage per extra mana spent
+            if(
+                (spell_idx == spl_Fire_Bolt)
+                ||
+                (spell_idx == spl_Ice_Bolt)
+                ||
+                (spell_idx == spl_Lightning_Bolt)
+            )
+            {
+                Moves_Left = spell_data_table[spell_idx].strength;
+                if(Mana > 0)
+                {
+                    Moves_Left += (Mana - spell_data_table[spell_idx].casting_cost);
+                    CMB_ConvSpellAttack__WIP(spell_idx, target_idx, &damage_types[0], Moves_Left);
+                }
+            }
 
+            // Psionic_Blast: +1 damage per every 2 extra mana spent
+            if(spell_idx == spl_Psionic_Blast)
+            {
+                Moves_Left = spell_data_table[spell_idx].strength;
+                if(Mana > 0)
+                {
+                    Moves_Left += ((Mana - spell_data_table[spell_idx].casting_cost) / 2);
+                    CMB_ConvSpellAttack__WIP(spell_idx, target_idx, &damage_types[0], Moves_Left);
+                }
+            }
+            // Fireball: +1 damage per every 3 extra mana spent
+            if(spell_idx == spl_Fireball)
+            {
+                Moves_Left = spell_data_table[spell_idx].strength;
+                if(Mana > 0)
+                {
+                    Moves_Left += ((Mana - spell_data_table[spell_idx].casting_cost) / 3);
+                    CMB_ConvSpellAttack__WIP(spell_idx, target_idx, &damage_types[0], Moves_Left);
+                }
+            }
+
+
+
+
+
+
+            BU_ApplyDamage__WIP(target_idx, &damage_types[0]);
+            Set_Page_Off();
+            Tactical_Combat_Draw();
+            PageFlip_FX();
         } break;
         case scc_Banish_Spell:
         {
@@ -12101,6 +12145,9 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
 
             CMB_ComposeBookBG__WIP();
 
+            // Selected_Spell@  index on page of selected spell
+            // ...gets passed to Combat_Spellbook_Mana_Adder_Screen()
+            // CMB_SpellBookPage is the associated page number
             spell_idx = Combat_Spellbook_Screen(caster_idx, &Selected_Spell);
 
             if(
@@ -12120,15 +12167,19 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
         // ...not illegal...
 
         // ; conflicting condition - will always jump
-        if(spell_data_table[spell_idx].type > scc_Infusable_Spell)
+        if(
+            (spell_data_table[spell_idx].type > scc_Infusable_Spell)
+            ||
+            (Spell_Like_Ability == ST_TRUE)
+        )
         {
-            Spell_Like_Ability = ST_TRUE;
-        }
 
-        CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
-        Set_Page_Off();
-        Tactical_Combat_Draw();
-        PageFlip_FX();
+            CMB_ComposeBackgrnd__WIP(); // ... |-> Copy_Off_To_Back();
+            Set_Page_Off();
+            Tactical_Combat_Draw();
+            PageFlip_FX();
+            
+        }
 
     }
 
@@ -12167,7 +12218,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
             Effective_Cost = IDK_mana;
 
         }
-        else
+        else  /* (spell_data_table[spell_idx].type >= scc_Infusable_Spell) && (Spell_Like_Ability == ST_FALSE) */
         {
             
             if(
@@ -12197,7 +12248,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
 
                 }
 
-                IDK_mana = CMB_SpellSlider__STUB(spell_idx, Selected_Spell, caster_idx);
+                IDK_mana = Combat_Spellbook_Mana_Adder_Screen(spell_idx, Selected_Spell, caster_idx);
 
                 if(caster_idx >= CASTER_IDX_BASE)
                 {
@@ -12980,7 +13031,7 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
                     {
                         Play_Left_Click();
                         spell_idx = m_spellbook_pages[(SBK_OpenPage + 1)].spell[(itr - 6)];
-                        spellbook_page_spell_index = (itr - 6);
+                        spellbook_page_spell_index = itr;
                     }
                     else
                     {
@@ -13887,8 +13938,56 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
     }
     else
     {
+/*
+jt_cstt_mouse
+offset jt_cstt_ms_00
+offset jt_cstt_ms_01
+offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
+offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
+offset jt_cstt_ms_04_12_13_14_22_23
+offset jt_cstt_ms_05
+offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
+offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
+offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
+offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
+offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
+offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
+offset jt_cstt_ms_04_12_13_14_22_23
+offset jt_cstt_ms_04_12_13_14_22_23
+offset jt_cstt_ms_04_12_13_14_22_23
+offset jt_cstt_ms_15
+offset jt_cstt_ms_16
+offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
+offset jt_cstt_ms_18
+offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
+offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
+offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
+offset jt_cstt_ms_04_12_13_14_22_23
+offset jt_cstt_ms_04_12_13_14_22_23
+
+// NIU  scc_City_Enchantment_Positive    =  2,   Altar of Battle, Astral Gate, Cloud of Shadow, Consecration, Dark Rituals, Earth Gate, Flying Fortress, Gaias Blessing, Heavenly Light, Inspirations, Natures Eye, Prosperity, Stream of Life, Summoning Circle, Wall of Darkness, Wall of Fire
+// NIU  scc_City_Enchantment_Negative    =  3,   Chaos Rift, Cursed Lands, Evil Presence, Famine, Pestilence
+// NIU  scc_Direct_Damage_Fixed          =  4,   BOTH:    Doom Bolt, Fire Storm, Ice Storm, Star Fires, Warp Lightning
+// NIU  scc_Special_Spell                =  5,   Animate Dead, Black Wind, Call The Void, Change Terrain, Chaos Channels, Corruption, Cracks Call, Death Wish, Disrupt, Earth Lore, Earth to Mud, Earthquake, Enchant Road, Great Unsummoning, Healing, Incarnation, Lycanthropy, Magic Vortex, Move Fortress, Natures Cures, Plane Shift, Raise Dead, Raise Volcano, Recall Hero, Resurrection, Spell Binding, Spell Of Mastery, Spell Of Return, Spell Ward, Stasis, Summon Champion, Summon Hero, Transmute, Wall of Stone, Warp Creature, Warp Node, Warp Wood, Word of Recall
+// NIU  scc_Target_Wiz_Spell             =  6,   WIZARD:  Cruel Unminding, Drain Power, Spell Blast, Subversion
+// NIU  DNE 7
+// NIU  DNE 8
+// NIU  scc_Global_Enchantment           =  9,   Armageddon, Aura of Majesty, Awareness, Chaos Surge, Charm of Life, Crusade, Detect Magic, Doom Mastery, Eternal Night, Evil Omens, Great Wasting, Herb Mastery, Holy Arms, Just Cause, Life Force, Meteor Storms, Natures Awareness, Natures Wrath, Planar Seal, Suppress Magic, Time Stop, Tranquility, Wind Mastery, Zombie Mastery
+// NIU  scc_Battlefield_Spell            = 10,   COMBAT:  Black Prayer, Blur, Call Chaos, Call Lightning, Darkness, Death Spell, Entangle, Flame Strike, High Prayer, Holy Word, Mana Leak, Mass Healing, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack
+// NIU  scc_Crafting_Spell               = 11,
+// NIU  scc_Unit_Enchantment_Normal_Only = 15,            Eldritch Weapon, Flame Blade, Heroism, Holy Armor, Holy Weapon
+// NIU  scc_Mundane_Curse                = 16,   COMBAT:  Possession, Shatter
+// NIU  DNE scc_Infusable_Spell    = 17,   below, no slider, above, maybe slider
+// NIU  scc_Dispel_Spell                 = 18,   COMBAT:  Dispel Magic, Dispel Magic True
+// NIU  scc_Disenchant_Spell             = 19,   ¿ BOTH ?  Disenchant Area, Disenchant True
+// NIU  scc_Disjunction_Spell            = 20,   OVERLAND:  Disjunction, Disjunction True
+// NIU  scc_Counter_Spell                = 21,   COMBAT:  Counter Magic
+
+But, where's 'Counter Magic'?
+*/
         switch(spell_data_table[spell_idx].type)
         {
+
             case scc_Summoning:
             {
                 if(_combat_attacker_player == HUMAN_PLAYER_IDX)
@@ -13954,26 +14053,41 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
                     CMB_TargetingType = cstt_FriendlyUnit;
                 }
             } break;
-            case scc_Unit_Enchantment:
+
+
+
+            case scc_Unit_Enchantment:  //  1
             {
                 CMB_TargetingType = cstt_FriendlyUnit;
             } break;
-            case scc_Direct_Damage_Fixed:
+
+
+
+            case scc_Direct_Damage_Fixed:  //  4  
+            case scc_Combat_Destroy_Unit:  // 12  COMBAT:  Disintegrate, Dispel Evil, Petrify, Word of Death
+            case scc_Resistable_Spell:     // 13  COMBAT:  Black Sleep, Confusion, Creature Binding, Vertigo, Weakness
+            case scc_Unresistable_Spell:   // 14  COMBAT:  Mind Storm, Web
+            case scc_Var_Dmg_Spell:        // 22  COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast
+            case scc_Banish_Spell:         // 23  COMBAT:  Banish
             {
                 CMB_TargetingType = cstt_EnemyUnit;
             } break;
-            case scc_Unit_Enchantment_Normal_Only:
+
+            case scc_Unit_Enchantment_Normal_Only:  // 15
             {
                 CMB_TargetingType = cstt_FriendlyNU;
             } break;
-            case scc_Mundane_Curse:
+
+            case scc_Mundane_Curse:  // 16
             {
                 CMB_TargetingType = cstt_EnemyNU;
             } break;
-            case scc_Dispel_Spell:
+
+            case scc_Dispel_Spell:  // 18
             {
                 CMB_TargetingType = cstt_DispelMagic;
             } break;
+
         }
 
     }
@@ -13982,7 +14096,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
 
     combat_grid_field = Add_Grid_Field(0, 0, 1, 1, 319, 168, &Grid_X, &Grid_Y, ST_UNDEFINED);
 
-    cancel_button_field = Add_Button_Field(263, 186, str_empty_string__ovr113, _cmbt_cancel_button_seg, (int16_t)&str_hotkey_ESC__ovr113[0], ST_UNDEFINED);
+    cancel_button_field = Add_Button_Field(263, 186, str_empty_string__ovr113, _cmbt_cancel_button_seg, (int16_t)str_hotkey_ESC__ovr113[0], ST_UNDEFINED);
 
     leave_screen = ST_FALSE;
 

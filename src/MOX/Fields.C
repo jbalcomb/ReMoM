@@ -1,5 +1,27 @@
 
-#include "MOX_Lib.H"
+#include "MOX_BASE.H"
+#include "MOX_DEF.H"
+#include "MOX_TYPE.H"
+
+#include "../MOM_DEF.H"
+
+
+#include "Fields.H"
+#include "FLIC_Draw.H"
+#include "Fonts.H"
+#include "Graphics.H"
+#include "Input.H"
+#include "Mouse.H"
+#include "Timer.H"
+#include "Video.H"
+
+#ifdef STU_DEBUG
+#include "../STU/STU_DBG.H"    /* DLOG() */
+#endif
+
+#include <assert.h>
+#include <malloc.h>     /* malloc() */
+#include <string.h>     /* strcat(), strcpy() */
 
 
 

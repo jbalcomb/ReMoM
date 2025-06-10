@@ -58,7 +58,23 @@ char soundfx_lbx_file__ovr133__2of2[] = "SOUNDFX";
 // WZD o133p01  BU_WarpCreature()
 // WZD o133p02  WIZ_Wrack()
 // WZD o133p03  WIZ_CallLightning()
-// WZD o133p04  BU_LifeDrain()
+
+// WZD o133p04
+// drake178: BU_LifeDrain()
+/*
+Which damage type is 'Life Drain'?
+
+*/
+void BU_LifeDrain__WIP(int16_t target_idx, int16_t damage_types[], int16_t caster_idx)
+{
+
+    damage_types[0] = 1;
+    damage_types[1] = 1;
+    damage_types[2] = 1;
+
+}
+
+
 // WZD o133p05  CMB_WallRise_Anim()
 
 // WZD o133p06

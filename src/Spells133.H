@@ -26,7 +26,8 @@ extern "C" {
 
 // WZD o133p03  WIZ_CallLightning()
 
-// WZD o133p04  BU_LifeDrain()
+// WZD o133p04
+void BU_LifeDrain__WIP(int16_t target_idx, int16_t damage_types[], int16_t caster_idx);
 
 // WZD o133p05  CMB_WallRise_Anim()
 

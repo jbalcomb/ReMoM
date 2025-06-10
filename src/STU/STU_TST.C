@@ -67,11 +67,19 @@ void TST_Patch_Game_Data(void)
 
     
     // Direct Damage - Fixed
-    TST_Learn_Spell(player_idx, spl_Doom_Bolt);
-    TST_Learn_Spell(player_idx, spl_Fire_Storm);
-    TST_Learn_Spell(player_idx, spl_Ice_Storm);
-    TST_Learn_Spell(player_idx, spl_Star_Fires);
-    TST_Learn_Spell(player_idx, spl_Warp_Lightning);
+    // TST_Learn_Spell(player_idx, spl_Doom_Bolt);
+    // TST_Learn_Spell(player_idx, spl_Fire_Storm);
+    // TST_Learn_Spell(player_idx, spl_Ice_Storm);
+    // TST_Learn_Spell(player_idx, spl_Star_Fires);
+    // TST_Learn_Spell(player_idx, spl_Warp_Lightning);
+
+    // Direct Damage - Variable
+    TST_Learn_Spell(player_idx, spl_Fire_Bolt);
+    TST_Learn_Spell(player_idx, spl_Fireball);
+    TST_Learn_Spell(player_idx, spl_Ice_Bolt);
+    TST_Learn_Spell(player_idx, spl_Life_Drain);
+    TST_Learn_Spell(player_idx, spl_Lightning_Bolt);
+    TST_Learn_Spell(player_idx, spl_Psionic_Blast);
 
     // Overland Unit Enchantments
     // Overland Unit Enchantments - Normal Units Only

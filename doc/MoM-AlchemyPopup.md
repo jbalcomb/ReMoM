@@ -5,6 +5,27 @@
 Item_Screen()
     |-> Alchemy_Popup()
 
+push    [word ptr bp+conversion_rate+2]
+push    [word ptr bp+conversion_rate]   ; divisor
+mov     ax, [m_alchemy_arrowbar_pos]
+cwd
+add     ax, -3
+adc     dx, 0FFFFh
+push    ax
+mov     ax, [_players.gold_reserve]
+push    dx
+cwd
+pop     cx
+pop     bx
+call    LXMUL@                          ; #2 * #3 / #1
+push    dx
+push    ax                              ; dividend
+call    LDIV@                           ; #2 * #3 / #1
+mov     [m_alchemy_amount], ax
+
+m_alchemy_amount = ((_players[HUMAN_PLAYER_IDX].gold_reserve * (m_alchemy_arrowbar_pos - 3)) / conversion_rate);
+
+
 
 
 ##### Naming Things Is Hard
