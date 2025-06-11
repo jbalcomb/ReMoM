@@ -6,6 +6,7 @@
         ovr142
 */
 
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"  /* _players[] */
 
 #include "MOM.H"
@@ -92,7 +93,7 @@ void Players_Update_Magic_Power(void)
         {
             node_owner_idx = _NODES[itr].owner_idx;
 
-            if((_NODES[itr].Meld_Flags & 0x01) > 0)   /* M_Warped */
+            if((_NODES[itr].flags & NF_WARPED) > 0)
             {
                 _players[node_owner_idx].Power_Base -= 5;
                 continue;

@@ -29,10 +29,10 @@ int16_t Get_Spell_For_City_Enchandment(int16_t city_enchantment_idx);
 int16_t Calculate_Dispel_Difficulty(int16_t casting_cost, int16_t player_idx, int16_t magic_realm);
 
 // WZD o135p03
-// sub_BA3A4()
+void Cast_Disenchant(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t strength);
 
 // WZD o135p04
-// sub_BAB5D()
+int16_t Square_Has_Disenchant_Target(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o135p05
 void Cast_Spell_Overland__WIP(int16_t player_idx);

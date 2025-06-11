@@ -2486,63 +2486,63 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                         Tile_Index++;
                     }
 
-// TODO                      if( (_NODES[itr_nodes].Meld_Flags & 0x01) != 0 )/* M_Warped */
-// TODO                      {
-// TODO                          node_aura_world_x = _NODES[itr_nodes].Aura_Xs[Tile_Index];
-// TODO                          node_aura_world_y = _NODES[itr_nodes].Aura_Ys[Tile_Index];
-// TODO                          unexplored_area = _square_explored[(wp * WORLD_SIZE_DB) + (node_aura_world_y) + (node_aura_world_x)];
-// TODO                          if(unexplored_area != ST_FALSE)
-// TODO                          {
-// TODO                              node_aura_map_x = node_aura_world_x - world_grid_x;
-// TODO                              if(node_aura_map_x < 0)
-// TODO                              {
-// TODO                                  node_aura_map_x = node_aura_map_x + WORLD_WIDTH;
-// TODO                              }
-// TODO                              node_aura_map_y = node_aura_world_y - world_grid_y;
-// TODO                              if( (node_aura_map_y >= 0) && (node_aura_map_y < map_grid_height) && (node_aura_map_x >= 0) && (node_aura_map_x < map_grid_width) )
-// TODO                              {
-// TODO                                  start_x = screen_x + (node_aura_map_y * SQUARE_WIDTH) + node_aura_map_x;
-// TODO                                  start_y = screen_y + (node_aura_map_y * SQUARE_HEIGHT) + node_aura_map_x;
-// TODO                                  FLIC_Set_CurrentFrame(node_warped_seg, 0);
-// TODO                                  Draw_Picture_To_Bitmap(node_warped_seg, Map_Square_WorkArea);
-// TODO                                  FLIC_Set_CurrentFrame(node_warped_seg, 0);
-// TODO                                  Screen_Picture_Capture(start_x, start_y, start_x + 19, start_y + 17, Warp_Node_WorkArea);
-// TODO                                  if(terrain_anim_ctr >= 0)
-// TODO                                  {
-// TODO                                      WarpNode_SeedSave = Get_Random_Seed();
-// TODO                                      for(Warp_Byte_Index = 0; Warp_Byte_Index < 20; Warp_Byte_Index++)
-// TODO                                      {
-// TODO                                          Warp_Line_Value = (int16_t)TBL_Warp_GFX_Lines[Warp_Byte_Index];
-// TODO                                          if(Random(4) == 1)
-// TODO                                          {
-// TODO                                              Warp_Line_Value++;
-// TODO                                          }
-// TODO                                          if(Random(4) == 1)
-// TODO                                          {
-// TODO                                              Warp_Line_Value--;
-// TODO                                          }
-// TODO                                          if(Warp_Line_Value < -1)
-// TODO                                          {
-// TODO                                              Warp_Line_Value = -1;
-// TODO                                          }
-// TODO                                          if(Warp_Line_Value > 1)
-// TODO                                          {
-// TODO                                              Warp_Line_Value = 1;
-// TODO                                          }
-// TODO                                          TBL_Warp_GFX_Lines[Warp_Byte_Index] = Warp_Line_Value;
-// TODO                                      }
-// TODO                                  }
-// TODO                                  tmp_random_seed = Get_Random_Seed();
-// TODO                                  Set_Random_Seed(WarpNode_SeedSave);
-// TODO                                  // TODO  LBX_IMG_RandomDelete(Warp_Node_WorkArea, 50);
-// TODO                                  Set_Random_Seed(tmp_random_seed);
-// TODO                                  // TODO  LBX_IMG_HorzWarp(&TBL_Warp_GFX_Lines, Warp_Node_WorkArea);
-// TODO                                  // TODO  LBX_IMG_VertWarp(&TBL_Warp_GFX_Lines, Warp_Node_WorkArea);
-// TODO                                  // TODO  Clipped_Copy_Mask(0, 0, Warp_Node_WorkArea, Map_Square_WorkArea);
-// TODO                                  Draw_Picture(start_x, start_y, Warp_Node_WorkArea);
-// TODO                              }
-// TODO                          }
-// TODO                      }
+// SPELLY                      if( (_NODES[itr_nodes].flags & NF_WARPED) != 0 )
+// SPELLY                      {
+// SPELLY                          node_aura_world_x = _NODES[itr_nodes].Aura_Xs[Tile_Index];
+// SPELLY                          node_aura_world_y = _NODES[itr_nodes].Aura_Ys[Tile_Index];
+// SPELLY                          unexplored_area = _square_explored[(wp * WORLD_SIZE_DB) + (node_aura_world_y) + (node_aura_world_x)];
+// SPELLY                          if(unexplored_area != ST_FALSE)
+// SPELLY                          {
+// SPELLY                              node_aura_map_x = node_aura_world_x - world_grid_x;
+// SPELLY                              if(node_aura_map_x < 0)
+// SPELLY                              {
+// SPELLY                                  node_aura_map_x = node_aura_map_x + WORLD_WIDTH;
+// SPELLY                              }
+// SPELLY                              node_aura_map_y = node_aura_world_y - world_grid_y;
+// SPELLY                              if( (node_aura_map_y >= 0) && (node_aura_map_y < map_grid_height) && (node_aura_map_x >= 0) && (node_aura_map_x < map_grid_width) )
+// SPELLY                              {
+// SPELLY                                  start_x = screen_x + (node_aura_map_y * SQUARE_WIDTH) + node_aura_map_x;
+// SPELLY                                  start_y = screen_y + (node_aura_map_y * SQUARE_HEIGHT) + node_aura_map_x;
+// SPELLY                                  FLIC_Set_CurrentFrame(node_warped_seg, 0);
+// SPELLY                                  Draw_Picture_To_Bitmap(node_warped_seg, Map_Square_WorkArea);
+// SPELLY                                  FLIC_Set_CurrentFrame(node_warped_seg, 0);
+// SPELLY                                  Screen_Picture_Capture(start_x, start_y, start_x + 19, start_y + 17, Warp_Node_WorkArea);
+// SPELLY                                  if(terrain_anim_ctr >= 0)
+// SPELLY                                  {
+// SPELLY                                      WarpNode_SeedSave = Get_Random_Seed();
+// SPELLY                                      for(Warp_Byte_Index = 0; Warp_Byte_Index < 20; Warp_Byte_Index++)
+// SPELLY                                      {
+// SPELLY                                          Warp_Line_Value = (int16_t)TBL_Warp_GFX_Lines[Warp_Byte_Index];
+// SPELLY                                          if(Random(4) == 1)
+// SPELLY                                          {
+// SPELLY                                              Warp_Line_Value++;
+// SPELLY                                          }
+// SPELLY                                          if(Random(4) == 1)
+// SPELLY                                          {
+// SPELLY                                              Warp_Line_Value--;
+// SPELLY                                          }
+// SPELLY                                          if(Warp_Line_Value < -1)
+// SPELLY                                          {
+// SPELLY                                              Warp_Line_Value = -1;
+// SPELLY                                          }
+// SPELLY                                          if(Warp_Line_Value > 1)
+// SPELLY                                          {
+// SPELLY                                              Warp_Line_Value = 1;
+// SPELLY                                          }
+// SPELLY                                          TBL_Warp_GFX_Lines[Warp_Byte_Index] = Warp_Line_Value;
+// SPELLY                                      }
+// SPELLY                                  }
+// SPELLY                                  tmp_random_seed = Get_Random_Seed();
+// SPELLY                                  Set_Random_Seed(WarpNode_SeedSave);
+// SPELLY                                  // TODO  LBX_IMG_RandomDelete(Warp_Node_WorkArea, 50);
+// SPELLY                                  Set_Random_Seed(tmp_random_seed);
+// SPELLY                                  // TODO  LBX_IMG_HorzWarp(&TBL_Warp_GFX_Lines, Warp_Node_WorkArea);
+// SPELLY                                  // TODO  LBX_IMG_VertWarp(&TBL_Warp_GFX_Lines, Warp_Node_WorkArea);
+// SPELLY                                  // TODO  Clipped_Copy_Mask(0, 0, Warp_Node_WorkArea, Map_Square_WorkArea);
+// SPELLY                                  Draw_Picture(start_x, start_y, Warp_Node_WorkArea);
+// SPELLY                              }
+// SPELLY                          }
+// SPELLY                      }
                 }
             }
         }

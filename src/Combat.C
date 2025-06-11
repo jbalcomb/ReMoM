@@ -11919,7 +11919,7 @@ case scc_Disjunction_Spell:  // 20
 
             }
             resistance_modifier = 0;
-            Cast_Dispel(target_cgx, target_cgy, caster_idx, Mana, &resistance_modifier);
+            Combat_Cast_Dispel(target_cgx, target_cgy, caster_idx, Mana, &resistance_modifier);
             // ; BUG: Dispel Magic DOES NOT use unit-based targeting,
             // ; this value can contain any valid index or even 99
             Moves_Left = Battle_Unit_Moves2(target_idx);
@@ -11944,7 +11944,7 @@ case scc_Disjunction_Spell:  // 20
             }
         } break;
 
-        case scc_Disenchant_Spell:  // 19
+        case scc_Disenchants:  // 19
         {
             Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, Anims, caster_idx);
             _page_flip_effect = pfe_Dissolve;
@@ -11968,7 +11968,7 @@ case scc_Disjunction_Spell:  // 20
 
                 Mana *= 3;
             }
-            Cast_Disenchant(caster_idx, Mana);
+            Combat_Cast_Disenchant(caster_idx, Mana);
             for(itr = 0; itr < _combat_total_unit_count; itr++)
             {
 
@@ -12788,7 +12788,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
             ||
             (spell_data_table[spell_idx].type == scc_Counter_Spell)
             ||
-            (spell_data_table[spell_idx].type == scc_Disenchant_Spell)
+            (spell_data_table[spell_idx].type == scc_Disenchants)
             ||
             (spell_data_table[spell_idx].type == scc_City_Enchantment_Positive)
             ||

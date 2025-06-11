@@ -243,14 +243,13 @@ enum AI_Objective
 // 4000 Ab_Caster_40  = 4000h
 // 8000 Std_Unit  = 8000h  // 1000 0000 0000 0000
 
-enum Meld_Flags
+enum e_NODE_FLAGS
 {
-    M_Warped,
-    M_Guardian
+    NF_WARPED,
+    NF_GUARDIAN
 };
 
 // drake178: EZ_Types
-// TODO  rename to Lairs
 /*
     {0,...}
 */
@@ -516,8 +515,8 @@ enum e_SPELL_CASTING_CATEGORY
     scc_Mundane_Curse                = 16,   /* COMBAT:  Possession, Shatter */
     /* DNE */ scc_Infusable_Spell    = 17,   /* below, no slider, above, maybe slider */
     scc_Dispels                 = 18,   /* COMBAT:  Dispel Magic, Dispel Magic True */
-    scc_Disenchant_Spell             = 19,   /* ¿ BOTH ?  Disenchant Area, Disenchant True */
-    scc_Disjunction_Spell            = 20,   /* OVERLAND:  Disjunction, Disjunction True */
+    scc_Disenchants             = 19,   /* ¿ BOTH ?  Disenchant Area, Disenchant True */
+    scc_Disjunctions            = 20,   /* OVERLAND:  Disjunction, Disjunction True */
     scc_Counter_Spell                = 21,   /* COMBAT:  Counter Magic */
     scc_Direct_Damage_Variable                = 22,   /* COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast */
     scc_Banish_Spell                 = 23    /* COMBAT:  Banish */
@@ -1532,7 +1531,7 @@ struct s_NODE
     /* 05 */  int8_t  Aura_Xs[20];
     /* 19 */  int8_t  Aura_Ys[20];
     /* 2D */  int8_t  type;         // enum e_NODE_TYPE {0: nt_Sorcery, 1: nt_Nature, 2: nt_Chaos}
-    /* 2E */  int8_t  Meld_Flags;
+    /* 2E */  int8_t  flags;
     /* 2F */  int8_t  pad2B_2Fh;  // ¿ 2-byte alignment padding ?
 };
 #pragma pack(pop)

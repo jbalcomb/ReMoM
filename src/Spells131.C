@@ -51,13 +51,13 @@ char cnst_AnimDead_Msg[] = "Select a unit to Animate";
 
 // WZD o131p01
 // drake178: CMB_Disenchant()
-void Cast_Disenchant(int16_t caster_idx, int16_t strength)
+void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
 {
     int16_t spells[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t enemy_player_idx = 0;
     int16_t player_idx = 0;
     SAMB_ptr dispell2_notify_background_seg = 0;
-    int16_t Msg_Count = 0;
+    int16_t notify_count = 0;
     int8_t * ptr_enchantments = 0;
     int16_t spell_idx = 0;
     int16_t itr2 = 0;
@@ -91,7 +91,7 @@ void Cast_Disenchant(int16_t caster_idx, int16_t strength)
         player_idx = battle_units[itr1].controller_idx;
     }
 
-    Msg_Count = 0;
+    notify_count = 0;
 
     Copy_On_To_Off_Page();
 
@@ -148,10 +148,10 @@ void Cast_Disenchant(int16_t caster_idx, int16_t strength)
                     // SPECFX.LBX, 052  "DISPELL2"  ""
                     dispell2_notify_background_seg = LBX_Reload_Next(specfx_lbx_file__ovr131__2of2, 51, _screen_seg);
 
-                    if(Msg_Count < 5)
+                    if(notify_count < 5)
                     {
 
-                        if(Msg_Count < 4)
+                        if(notify_count < 4)
                         {
 
                             _fstrcpy(GUI_NearMsgString, spell_data_table[spell_idx].name);
@@ -166,9 +166,9 @@ void Cast_Disenchant(int16_t caster_idx, int16_t strength)
 
                         }
 
-                        Notify2((160 + (Msg_Count * 10)), (40 + (Msg_Count * 25)), 3, GUI_NearMsgString, 0, dispell2_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
+                        Notify2((160 + (notify_count * 10)), (40 + (notify_count * 25)), 3, GUI_NearMsgString, 0, dispell2_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
 
-                        Msg_Count += 1;
+                        notify_count += 1;
 
                     }
 
@@ -193,7 +193,7 @@ void Cast_Disenchant(int16_t caster_idx, int16_t strength)
 
         // ; should really use jnz
         if(
-            ((_NODES[itr1].Meld_Flags & M_Warped) > 0)
+            ((_NODES[itr1].flags & NF_WARPED) > 0)
             &&
             (_NODES[itr1].owner_idx == player_idx)
             &&
@@ -214,7 +214,7 @@ void Cast_Disenchant(int16_t caster_idx, int16_t strength)
             if(Random(250) <= (threshold + 500))
             {
 
-                _NODES[itr1].Meld_Flags ^= M_Warped;
+                _NODES[itr1].flags ^= NF_WARPED;
 
             }
             
@@ -304,10 +304,10 @@ void Cast_Disenchant(int16_t caster_idx, int16_t strength)
 
                 }
 
-                if(Msg_Count < 5)
+                if(notify_count < 5)
                 {
 
-                    if(Msg_Count < 4)
+                    if(notify_count < 4)
                     {
 
                         _fstrcpy(GUI_NearMsgString, spell_data_table[spell_idx].name);
@@ -322,9 +322,9 @@ void Cast_Disenchant(int16_t caster_idx, int16_t strength)
 
                     }
 
-                    Notify2((160 + (Msg_Count * 10)), (40 + (Msg_Count * 25)), 3, GUI_NearMsgString, 0, dispell2_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
+                    Notify2((160 + (notify_count * 10)), (40 + (notify_count * 25)), 3, GUI_NearMsgString, 0, dispell2_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
 
-                    Msg_Count += 1;
+                    notify_count += 1;
 
                 }
 
@@ -342,14 +342,14 @@ void Cast_Disenchant(int16_t caster_idx, int16_t strength)
     // ;  they are on the same tile as an active unit
     // ; BUGs: iherits everything from TILE_DispelMagic
 
-    Msg_Count = 0;
+    notify_count = 0;
     for(itr1 = 0; itr1 < _combat_total_unit_count; itr1++)
     {
 
         if(battle_units[itr1].status == bus_Active)
         {
 
-            Cast_Dispel(battle_units[itr1].cgx, battle_units[itr1].cgy, caster_idx, strength, &Msg_Count);
+            Combat_Cast_Dispel(battle_units[itr1].cgx, battle_units[itr1].cgy, caster_idx, strength, &notify_count);
 
         }
 
@@ -392,7 +392,7 @@ Haste
 Confusion (state 2)
 
 */
-void Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t strength, int16_t * D_Count)
+void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t strength, int16_t * notify_count)
 {
     SAMB_ptr dispell1_notify_background_seg = 0;
     int16_t enemy_player_idx = 0;
@@ -551,10 +551,10 @@ void Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t strength,
 
                                 battle_units[battle_unit_idx].Combat_Effects ^= Test_Flag;
 
-                                if(*D_Count < 5)
+                                if(*notify_count < 5)
                                 {
 
-                                    if(*D_Count < 4)
+                                    if(*notify_count < 4)
                                     {
 
                                         _fstrcpy(GUI_NearMsgString, spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].name);
@@ -569,11 +569,11 @@ void Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t strength,
 
                                     }
 
-                                    threshold = (160 + (*D_Count * 10));
+                                    threshold = (160 + (*notify_count * 10));
 
-                                    Notify2(threshold, (20 + (*D_Count * 25)), 3, GUI_NearMsgString, 0, dispell1_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
+                                    Notify2(threshold, (20 + (*notify_count * 25)), 3, GUI_NearMsgString, 0, dispell1_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
 
-                                    *D_Count += 1;
+                                    *notify_count += 1;
 
                                 }
 
@@ -656,7 +656,7 @@ void Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t strength,
 
                                 }
 
-                                if(*D_Count < 5)
+                                if(*notify_count < 5)
                                 {
 
                                     Mark_Block(_screen_seg);
@@ -664,7 +664,7 @@ void Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t strength,
                                     // SPECFX.LBX, 051  "DISPELL1"  ""
                                     dispell1_notify_background_seg = LBX_Reload_Next(specfx_lbx_file__ovr131__2of2, 51, _screen_seg);
 
-                                    if(*D_Count < 4)
+                                    if(*notify_count < 4)
                                     {
 
                                         _fstrcpy(GUI_NearMsgString, spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].name);
@@ -679,9 +679,9 @@ void Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t strength,
 
                                     }
 
-                                    Notify2((160 + (*D_Count * 10)), (20 + (*D_Count * 25)), 3, GUI_NearMsgString, 0, dispell1_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
+                                    Notify2((160 + (*notify_count * 10)), (20 + (*notify_count * 25)), 3, GUI_NearMsgString, 0, dispell1_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
 
-                                    *D_Count += 1;
+                                    *notify_count += 1;
                                     
                                     Release_Block(_screen_seg);
                                 }
@@ -767,10 +767,10 @@ void Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t strength,
 
                                     }
 
-                                    if(*D_Count < 5)
+                                    if(*notify_count < 5)
                                     {
 
-                                        if(*D_Count < 4)
+                                        if(*notify_count < 4)
                                         {
 
                                             _fstrcpy(GUI_NearMsgString, spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].name);
@@ -785,9 +785,9 @@ void Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t strength,
 
                                         }
 
-                                        Notify2((160 + (*D_Count * 10)), (20 + (*D_Count * 25)), 3, GUI_NearMsgString, 0, dispell1_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
+                                        Notify2((160 + (*notify_count * 10)), (20 + (*notify_count * 25)), 3, GUI_NearMsgString, 0, dispell1_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
 
-                                        *D_Count += 1;
+                                        *notify_count += 1;
 
                                         Release_Block(_screen_seg);
                                     }
@@ -826,10 +826,10 @@ void Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t strength,
 
                         battle_units[battle_unit_idx].Combat_Effects ^= bue_Haste;  // turn off the enchantment
 
-                        if(*D_Count < 5)
+                        if(*notify_count < 5)
                         {
 
-                            if(*D_Count < 4)
+                            if(*notify_count < 4)
                             {
 
                                 _fstrcpy(GUI_NearMsgString, spell_data_table[spl_Haste].name);
@@ -844,9 +844,9 @@ void Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t strength,
 
                             }
 
-                            Notify2((160 + (*D_Count * 10)), (20 + (*D_Count * 25)), 3, GUI_NearMsgString, 0, dispell1_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
+                            Notify2((160 + (*notify_count * 10)), (20 + (*notify_count * 25)), 3, GUI_NearMsgString, 0, dispell1_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
 
-                            *D_Count += 1;
+                            *notify_count += 1;
 
                             Release_Block(_screen_seg);
 
@@ -902,10 +902,10 @@ void Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t strength,
                         // ; BUG: should also clear the confusion state
                         battle_units[battle_unit_idx].Combat_Effects ^= bue_Confusion;  // turn off the enchantment
 
-                        if(*D_Count < 5)
+                        if(*notify_count < 5)
                         {
 
-                            if(*D_Count < 4)
+                            if(*notify_count < 4)
                             {
 
                                 _fstrcpy(GUI_NearMsgString, spell_data_table[spl_Confusion].name);
@@ -920,9 +920,9 @@ void Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t strength,
 
                             }
 
-                            Notify2((160 + (*D_Count * 10)), (20 + (*D_Count * 25)), 3, GUI_NearMsgString, 0, dispell1_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
+                            Notify2((160 + (*notify_count * 10)), (20 + (*notify_count * 25)), 3, GUI_NearMsgString, 0, dispell1_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
 
-                            *D_Count += 1;
+                            *notify_count += 1;
 
                             Release_Block(_screen_seg);
 
@@ -1017,7 +1017,7 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
         ||
         (spell_data_table[spell_idx].type == scc_Counter_Spell)
         ||
-        (spell_data_table[spell_idx].type == scc_Disenchant_Spell)
+        (spell_data_table[spell_idx].type == scc_Disenchants)
         ||
         (spell_idx == spl_Raise_Dead)
         ||

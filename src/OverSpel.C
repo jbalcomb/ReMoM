@@ -30,8 +30,11 @@
 
 // WZD dseg:6A42                                                 BEGIN:  ovr135 - Initialized Data
 
-// WZD dseg:6A42 53 70 45 63 46 78 00                            cnst_SPECFX_FileA db 'SpEcFx',0         ; DATA XREF: IDK_Cast_Disenchant_True+15o ...
-// WZD dseg:6A49 20 68 61 73 20 62 65 65 6E 20 64 69 73 70 65 6C+cnst_Dispel_Msg_2 db ' has been dispelled.',0
+// WZD dseg:6A42
+char specfx_lbx_file__ovr135[] = "SpEcFx";
+
+// WZD dseg:6A49
+char cnst_Dispel_Msg_2[] = " has been dispelled.";
 
 // WZD dseg:6A5E
 char message_lbx_file__ovr135[] = "message";
@@ -193,10 +196,387 @@ int16_t Calculate_Dispel_Difficulty(int16_t casting_cost, int16_t player_idx, in
 
 
 // WZD o135p03
-// sub_BA3A4()
+// drake178: sub_BA3A4()
+void Cast_Disenchant(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t strength)
+{
+    int16_t spells[32] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint32_t test_bit = 0;
+    SAMB_ptr dispell2_notify_background_seg = 0 ;
+    SAMB_ptr dispell1_notify_background_seg = 0 ;
+    int16_t notify_count = 0;
+    int16_t threshold = 0 ;
+    uint8_t * ptr_enchantments = 0 ;
+    int16_t spell_idx = 0;
+    int16_t city_enchantment_idx = 0 ;
+    int16_t itr = 0;  // _DI_
+
+    notify_count = 0;
+
+    // SPECFX.LBX, 051  "DISPELL2"  ""
+    dispell1_notify_background_seg = LBX_Reload_Next(specfx_lbx_file__ovr135, 51, _screen_seg);
+
+    // SPECFX.LBX, 052  "DISPELL2"  ""
+    dispell2_notify_background_seg = LBX_Reload_Next(specfx_lbx_file__ovr135, 52, _screen_seg);
+
+    spells[ 0] = spl_Immolation;
+    spells[ 1] = spl_Guardian_Wind;
+    spells[ 2] = spl_Berserk;
+    spells[ 3] = spl_Cloak_Of_Fear;
+    spells[ 4] = spl_Black_Channels;
+    spells[ 5] = spl_Wraith_Form;
+    spells[ 6] = spl_Regeneration;
+    spells[ 7] = spl_Path_Finding;
+    spells[ 8] = spl_Water_Walking;
+    spells[ 9] = spl_Resist_Elements;
+    spells[10] = spl_Elemental_Armor;
+    spells[11] = spl_Stone_Skin;
+    spells[12] = spl_Iron_Skin;
+    spells[13] = spl_Endurance;
+    spells[14] = spl_Spell_Lock;
+    spells[15] = spl_Invisibility;
+    spells[16] = spl_Wind_Walking;
+    spells[17] = spl_Flight;
+    spells[18] = spl_Resist_Magic;
+    spells[19] = spl_Magic_Immunity;
+    spells[20] = spl_Flame_Blade;
+    spells[21] = spl_Eldritch_Weapon;
+    spells[22] = spl_True_Sight;
+    spells[23] = spl_Holy_Weapon;
+    spells[24] = spl_Heroism;
+    spells[25] = spl_Bless;
+    spells[26] = spl_Lionheart;
+    spells[27] = spl_Giant_Strength;
+    spells[28] = spl_Planar_Travel;
+    spells[29] = spl_Holy_Armor;
+    spells[30] = spl_Righteousness;
+    spells[31] = spl_Invulnerability;
+
+    for(itr = 0; itr < NUM_NODES; itr++)
+    {
+
+        if(
+            ((_NODES[itr].flags & NF_WARPED) > 0)
+            &&
+            (_NODES[itr].wx == wx)
+            &&
+            (_NODES[itr].wy == wy)
+            &&
+            (_NODES[itr].wp == wp)
+        )
+        {
+
+            threshold = (strength + Calculate_Dispel_Difficulty(spell_data_table[spl_Warp_Node].casting_cost, ST_UNDEFINED, sbr_Chaos));
+
+            threshold = ((strength * 250) / threshold);
+
+            if(Random(250) <= threshold)
+            {
+
+                _NODES[itr].flags ^= NF_WARPED;
+
+            }
+        }
+
+    }
+
+    for(itr = 0; itr < _cities; itr++)
+    {
+
+        if(
+            (_CITIES[itr].wx == wx)
+            &&
+            (_CITIES[itr].wy == wy)
+            &&
+            (_CITIES[itr].wp == wp)
+        )
+        {
+
+            ptr_enchantments = (uint8_t *)&_CITIES[itr].enchantments[0];
+
+            for(city_enchantment_idx = 0; city_enchantment_idx < 26; city_enchantment_idx++)
+            {
+
+                if(
+                    (ptr_enchantments[city_enchantment_idx] > 0)
+                    &&
+                    (ptr_enchantments[city_enchantment_idx] == (player_idx + 1))
+                )
+                {
+
+                    spell_idx = Get_Spell_For_City_Enchandment(city_enchantment_idx);
+
+                    threshold = (strength + Calculate_Dispel_Difficulty(spell_data_table[spell_idx].casting_cost, (ptr_enchantments[city_enchantment_idx] - 1), spell_data_table[spell_idx].magic_realm));
+
+                    threshold = ((strength * 250) / threshold);
+
+                    if(Random(250) <= (threshold + 500))
+                    {
+
+                        ptr_enchantments[city_enchantment_idx] = 0;
+
+                        if(player_idx == HUMAN_PLAYER_IDX)
+                        {
+
+                            if(notify_count < 5)
+                            {
+
+                                if(notify_count < 4)
+                                {
+
+                                    _fstrcpy(GUI_NearMsgString, spell_data_table[spell_idx].name);
+
+                                    strcat(GUI_NearMsgString, cnst_Dispel_Msg_2);  // " has been dispelled."
+
+                                }
+                                else
+                                {
+
+                                    LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 18, 1, 150);
+
+                                }
+
+                                Notify2(160, (40 + (notify_count * 25)), 2, GUI_NearMsgString, 0, dispell2_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
+
+                                notify_count += 1;
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    for(itr = 0; itr > _units; itr++)
+    {
+
+        if(
+            (_UNITS[itr].wx == wx)
+            &&
+            (_UNITS[itr].wy == wy)
+            &&
+            (_UNITS[itr].wp == wp)
+        )
+        {
+
+            if(_UNITS[itr].owner_idx == player_idx)
+            {
+
+                if((_UNITS[itr].mutations & (C_STASISINIT | C_STASISLINGER)) != 0)
+                {
+
+                    spell_idx = spl_Stasis;
+
+                    threshold = (strength + Calculate_Dispel_Difficulty(spell_data_table[spell_idx].casting_cost, _UNITS[itr].owner_idx, spell_data_table[spell_idx].magic_realm));
+
+                    threshold = ((strength * 250) / threshold);
+
+                    if(Random(250) <= (threshold + 500))
+                    {
+
+                        if((_UNITS[itr].mutations & C_STASISINIT) != 0)
+                        {
+
+                            _UNITS[itr].mutations ^= C_STASISINIT;
+
+                        }
+                        else
+                        {
+
+                            _UNITS[itr].mutations ^= C_STASISLINGER;
+
+                        }
+
+                        if(player_idx == HUMAN_PLAYER_IDX)
+                        {
+
+                            LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 20, 1, 150);
+
+                            Notify2(160, (40 + (notify_count * 25)), 2, GUI_NearMsgString, 0, dispell2_notify_background_seg, 0, 8, 0, 0, 0, 1, 0);
+
+                        }
+
+                    }
+
+                }
+
+            }
+            else  /* (_UNITS[itr].owner_idx == player_idx) */
+            {
+
+                if((_UNITS[itr].enchantments & UE_SPELLLOCK) != 0)
+                {
+
+                    threshold = (strength + Calculate_Dispel_Difficulty(150, _UNITS[itr].owner_idx, sbr_Sorcery));
+
+                    threshold = ((strength * 250) / threshold);
+
+                    if(Random(250) <= (threshold + 500))
+                    {
+
+                        _UNITS[itr].enchantments ^= UE_SPELLLOCK;
+
+                    }
+
+                }  /* ((_UNITS[itr].enchantments & UE_SPELLLOCK) == 0) */
+                else
+                {
+
+                    for(city_enchantment_idx = 0; city_enchantment_idx < 31; city_enchantment_idx++)
+                    {
+
+                        test_bit = (1 << city_enchantment_idx);
+
+                        if((_UNITS[itr].enchantments & test_bit) >= 0)
+                        {
+
+                            threshold = (strength + Calculate_Dispel_Difficulty(spell_data_table[spells[city_enchantment_idx]].casting_cost, _UNITS[itr].owner_idx, spell_data_table[spells[city_enchantment_idx]].magic_realm));
+
+                            threshold = ((strength * 250) / threshold);
+
+                            if(Random(250) <= (threshold + 500))
+                            {
+
+                                _UNITS[itr].enchantments ^= test_bit;
+
+                                if(player_idx == HUMAN_PLAYER_IDX)
+                                {
+
+                                    if(notify_count < 5)
+                                    {
+
+                                        if(notify_count < 4)
+                                        {
+
+                                            _fstrcpy(GUI_NearMsgString, spell_data_table[spells[city_enchantment_idx]].name);
+
+                                            strcat(GUI_NearMsgString, cnst_Dispel_Msg_2);  // " has been dispelled."
+
+                                        }
+                                        else
+                                        {
+
+                                            LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 19, 1, 150);
+
+                                        }
+
+                                        Notify2(160, (40 + (notify_count * 25)), 2, GUI_NearMsgString, 0, dispell1_notify_background_seg, 4, 8, 0, 0, 0, 1, 0);
+
+                                        notify_count += 1;
+
+                                    }
+
+                                }
+
+                            }
+
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // WZD o135p04
-// sub_BAB5D()
+// drake178: sub_BAB5D()
+/*
+*/
+/*
+    returns ST_TRUE if the map square has a viable target
+    checks Nodes for Warped
+*/
+int16_t Square_Has_Disenchant_Target(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t itr = 0;  // _SI_
+    int16_t found_target_flag = 0;  // _DI_
+
+    found_target_flag = ST_FALSE;
+
+    for(itr = 0; itr < _cities; itr++)
+    {
+
+        if(
+            (_CITIES[itr].wx == wx)
+            &&
+            (_CITIES[itr].wy == wy)
+            &&
+            (_CITIES[itr].wp == wp)
+        )
+        {
+
+            found_target_flag = ST_TRUE;
+
+        }
+        
+    }
+
+    if(found_target_flag == ST_FALSE)
+    {
+
+        for(itr = 0; itr < NUM_NODES; itr++)
+        {
+
+            if(
+                ((_NODES[itr].flags & NF_WARPED) > 0)
+                &&
+                (_NODES[itr].wx == wx)
+                &&
+                (_NODES[itr].wy == wy)
+                &&
+                (_NODES[itr].wp == wp)
+            )
+            {
+
+                found_target_flag = ST_TRUE;
+
+            }
+
+        }
+
+    }
+
+
+    if(found_target_flag == ST_FALSE)
+    {
+
+        for(itr = 0; itr < NUM_NODES; itr++)
+        {
+
+            if(
+                (_UNITS[itr].wx == wx)
+                &&
+                (_UNITS[itr].wy == wy)
+                &&
+                (_UNITS[itr].wp == wp)
+            )
+            {
+
+                found_target_flag = ST_TRUE;
+
+            }
+
+        }
+
+    }
+
+    return found_target_flag;
+
+}
 
 
 // WZD o135p05
@@ -236,7 +616,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
     int16_t itr_players = 0;  // DNE in Dasm, reuses itr
     int16_t itr_cities = 0;  // DNE in Dasm, reuses itr
     int16_t itr_units = 0;  // DNE in Dasm, reuses itr
-    int16_t Dispel_Chance = 0;
+    int16_t threshold = 0;
     int16_t enchantments_idx = 0;  // DNE in Dasm, uses Dispel_Chance
     uint8_t * ptr_enchantments = 0;  // (uint8_t *)&_CITIES[].enchantments[0]
     int16_t spell_idx = 0;  // _DI_
@@ -288,11 +668,11 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
             )
             {
 
-                Dispel_Chance = (500 + Calculate_Dispel_Difficulty(_players[player_idx].casting_cost_original, player_idx, spell_data_table[spell_idx].magic_realm));
+                threshold = (500 + Calculate_Dispel_Difficulty(_players[player_idx].casting_cost_original, player_idx, spell_data_table[spell_idx].magic_realm));
 
-                Dispel_Chance = (125000 / Dispel_Chance);  // 250 * 500 = 125000
+                threshold = (125000 / threshold);  // 250 * 500 = 125000
 
-                if(Random(250) <= Dispel_Chance)
+                if(Random(250) <= threshold)
                 {
 
                     Fizzle_Notification(player_idx, itr_players, spell_idx, str_SuppressMagic);
@@ -331,11 +711,11 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                 )
                 {
 
-                    Dispel_Chance = (500 + Calculate_Dispel_Difficulty(_players[player_idx].casting_cost_original, player_idx, spell_data_table[spell_idx].magic_realm));
+                    threshold = (500 + Calculate_Dispel_Difficulty(_players[player_idx].casting_cost_original, player_idx, spell_data_table[spell_idx].magic_realm));
 
-                    Dispel_Chance = (125000 / Dispel_Chance);
+                    threshold = (125000 / threshold);
 
-                    if(Random(250) <= Dispel_Chance)
+                    if(Random(250) <= threshold)
                     {
 
                         Fizzle_Notification(player_idx, itr_players, spell_idx, str_Tranquility);
@@ -377,11 +757,11 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                 )
                 {
 
-                    Dispel_Chance = (500 + Calculate_Dispel_Difficulty(_players[player_idx].casting_cost_original, player_idx, spell_data_table[spell_idx].magic_realm));
+                    threshold = (500 + Calculate_Dispel_Difficulty(_players[player_idx].casting_cost_original, player_idx, spell_data_table[spell_idx].magic_realm));
 
-                    Dispel_Chance = (125000 / Dispel_Chance);
+                    threshold = (125000 / threshold);
 
-                    if(Random(250) <= Dispel_Chance)
+                    if(Random(250) <= threshold)
                     {
 
                         Fizzle_Notification(player_idx, itr_players, spell_idx, str_LifeForce);
@@ -1227,13 +1607,183 @@ Capture_Cities_Data();
                 } break;
 
                 // ¿ BOTH ?  Disenchant Area, Disenchant True
-                case scc_Disenchant_Spell:  // 19
+                case scc_Disenchants:  // 19
                 {
+
+                    if(player_idx != HUMAN_PLAYER_IDX)
+                    {
+
+                        Cast_Successful = Get_Map_Square_Target_For_Spell(stt_Map_Square, &spell_target_idx, &wy, &wp, spell_idx, player_idx);
+
+                    }
+                    else
+                    {
+
+                        MultiPurpose_Local_Var = ST_FALSE;
+
+                        Cast_Successful = ST_TRUE;
+
+                        Allocate_Reduced_Map();
+
+                        Mark_Block(_screen_seg);
+
+                        while((MultiPurpose_Local_Var == ST_FALSE) && (Cast_Successful == ST_TRUE))
+                        {
+
+                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Map_Square, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name);
+
+                            if(Cast_Successful == ST_TRUE)
+                            {
+
+                                MultiPurpose_Local_Var = Square_Has_Disenchant_Target(spell_target_idx, wy, wp);
+
+                                if(MultiPurpose_Local_Var == ST_FALSE)
+                                {
+
+                                    Full_Draw_Main_Screen();
+
+                                    LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 28, 1, 150);  // "There is nothing to dispel in that area."
+
+                                    Warn0(GUI_NearMsgString);
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                    if(Cast_Successful == ST_TRUE)
+                    {
+
+                        MultiPurpose_Local_Var = ST_FALSE;
+
+
+                        if(player_idx == HUMAN_PLAYER_IDX)
+                        {
+
+                            MultiPurpose_Local_Var = ST_TRUE;
+
+                        }
+                        else
+                        {
+
+                            for(itr_cities = 0; ((itr_cities < _cities) && (MultiPurpose_Local_Var == ST_FALSE)); itr_cities++)
+                            {
+
+
+                                if(
+                                    (_CITIES[itr_cities].wx == spell_target_idx)
+                                    &&
+                                    (_CITIES[itr_cities].wy == wy)
+                                    &&
+                                    (_CITIES[itr_cities].wp == wp)
+                                    
+                                )
+                                {
+
+                                    if(
+                                        (_CITIES[itr_units].owner_idx != HUMAN_PLAYER_IDX)
+                                        ||
+                                        (
+                                            (magic_set.enemy_spells == ST_TRUE)
+                                            &&
+                                            (SQUARE_EXPLORED(_CITIES[itr_units].wx, _CITIES[itr_units].wy, _CITIES[itr_units].wp) != ST_FALSE)
+                                            &&
+                                            (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] > 0)
+                                        )
+                                    )
+                                    {
+
+                                        AI_Eval_After_Spell = ST_TRUE;
+
+                                        MultiPurpose_Local_Var = ST_TRUE;
+
+                                        Allocate_Reduced_Map();
+
+                                        Mark_Block(_screen_seg);
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                        for(itr_units = 0; ((itr_units < _units) && (MultiPurpose_Local_Var == ST_FALSE)); itr_units++)
+                        {
+
+                            if(
+                                (_UNITS[itr_units].wx == spell_target_idx)
+                                &&
+                                (_UNITS[itr_units].wy == wy)
+                                &&
+                                (_UNITS[itr_units].wp == wp)
+                                
+                            )
+                            {
+
+                                if(
+                                    (_UNITS[itr_units].owner_idx != HUMAN_PLAYER_IDX)
+                                    ||
+                                    (
+                                        (Check_Square_Scouted(_UNITS[itr_units].wx, _UNITS[itr_units].wy, _UNITS[itr_units].wp) != ST_FALSE)
+                                        &&
+                                        (magic_set.enemy_spells == ST_TRUE)
+                                        &&
+                                        (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] > 0)
+                                    )
+                                )
+                                {
+
+                                    MultiPurpose_Local_Var = ST_TRUE;
+
+                                    AI_Eval_After_Spell = ST_TRUE;
+
+                                    Allocate_Reduced_Map();
+
+                                    Mark_Block(_screen_seg);
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+
+                    if(MultiPurpose_Local_Var == ST_TRUE)
+                    {
+                        AI_Eval_After_Spell = ST_TRUE;
+                        Spell_Animation_Load_Sound_Effect__WIP(spell_idx);
+                        Spell_Animation_Load_Graphics(spell_idx);
+                        Spell_Animation_Screen__WIP(spell_target_idx, wy, wp);
+                        Full_Draw_Main_Screen();
+                        Release_Block(_screen_seg);
+                    }
+
+                    if(_players[player_idx].runemaster > 0)
+                    {
+
+                        _players[player_idx].casting_cost_original *= 2;
+
+                    }
+
+                    if(spell_idx == spl_Disenchant_True)
+                    {
+
+                        _players[player_idx].casting_cost_original *= 3;
+
+                    }
+
+                    Cast_Disenchant(spell_target_idx, wy, wp, player_idx, _players[player_idx].casting_cost_original);
 
                 } break;
 
                 // OVERLAND:  Disjunction, Disjunction True
-                case scc_Disjunction_Spell:  // 20
+                case scc_Disjunctions:  // 20
                 {
 
                 } break;

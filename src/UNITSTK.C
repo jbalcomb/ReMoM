@@ -1361,7 +1361,7 @@ int16_t Unit_Action_Special_Meld(int16_t troop_count, int16_t troops[])
 
         if(_NODES[node_idx].owner_idx != unit_owner)
         {
-            if((_NODES[node_idx].Meld_Flags & M_Warped) != 0)
+            if((_NODES[node_idx].flags & NF_WARPED) != 0)
             {
                 return ST_FALSE;
             }
@@ -1373,7 +1373,7 @@ int16_t Unit_Action_Special_Meld(int16_t troop_count, int16_t troops[])
         }
         else
         {
-            if((_NODES[node_idx].Meld_Flags & M_Guardian) != 0)
+            if((_NODES[node_idx].flags & NF_GUARDIAN) != 0)
             {
                 return ST_FALSE;
             }
@@ -1439,7 +1439,7 @@ void STK_DoMeldWithNode(int16_t troop_count, int16_t troops[])
 
     node_idx = Get_Map_Square_Magic_Node(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
 
-    if((_NODES[node_idx].Meld_Flags & M_Warped) != 0)
+    if((_NODES[node_idx].flags & NF_WARPED) != 0)
     {
         return;
     }
@@ -1483,7 +1483,7 @@ void STK_DoMeldWithNode(int16_t troop_count, int16_t troops[])
     }
     else
     {
-        if((_NODES[node_idx].Meld_Flags & M_Guardian) == 0)
+        if((_NODES[node_idx].flags & NF_GUARDIAN) == 0)
         {
             Can_Meld = ST_TRUE;
         }
@@ -1493,7 +1493,7 @@ void STK_DoMeldWithNode(int16_t troop_count, int16_t troops[])
             if(Random_Result <= 25)
             {
                 Can_Meld = ST_TRUE;
-                _NODES[node_idx].Meld_Flags ^= M_Guardian;
+                _NODES[node_idx].flags ^= NF_GUARDIAN;
             }
             else
             {
@@ -1508,7 +1508,7 @@ void STK_DoMeldWithNode(int16_t troop_count, int16_t troops[])
 
         if(Guardian == ST_TRUE)
         {
-            _NODES[node_idx].Meld_Flags |= M_Guardian;
+            _NODES[node_idx].flags |= NF_GUARDIAN;
         }
     }
 

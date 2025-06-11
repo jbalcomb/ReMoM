@@ -92,7 +92,7 @@ all city enchantments are done
 [ ]  17  scc_Infusable_Spell
 [ ]  18  scc_Dispels
 [ ]  19  scc_Disenchant_Spell
-[ ]  20  scc_Disjunction_Spell
+[ ]  20  scc_Disjunctions
 [ ]  21  scc_Counter_Spell
 [ ]  22  scc_Var_Dmg_Spell
 [ ]  23  scc_Banish_Spell
@@ -140,7 +140,7 @@ scc_Mundane_Curse       = 16,   /* COMBAT:  Possession, Shatter */
 
 scc_Dispels        = 18,   /* COMBAT:  Dispel Magic, Dispel Magic True */
 scc_Disenchant_Spell    = 19,   /* ¿ BOTH ?  Disenchant Area, Disenchant True */
-scc_Disjunction_Spell   = 20,   /* OVERLAND:  Disjunction, Disjunction True */
+scc_Disjunctions   = 20,   /* OVERLAND:  Disjunction, Disjunction True */
 scc_Counter_Spell       = 21,   /* COMBAT:  Counter Magic */
 scc_Var_Dmg_Spell       = 22,   /* COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast */
 scc_Banish_Spell        = 23    /* COMBAT:  Banish */

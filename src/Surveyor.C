@@ -1101,11 +1101,11 @@ int16_t Surveyor_Nodes(int16_t wx, int16_t wy, int16_t wp)
             if(_NODES[itr_nodes].owner_idx != ST_UNDEFINED)
             {
 
-                if((_NODES[itr_nodes].Meld_Flags & 0x01) != 0)
+                if((_NODES[itr_nodes].flags & NF_WARPED) != 0)
                 {
                     strcpy(survey_near_alloc_2_50, aWarped);
                 }
-                else if((_NODES[itr_nodes].Meld_Flags & 0x02) != 0)
+                else if((_NODES[itr_nodes].flags & NF_GUARDIAN) != 0)
                 {
                     strcpy(survey_near_alloc_2_50, aGuardianSpir_0);
                 }
