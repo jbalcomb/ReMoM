@@ -869,6 +869,16 @@ int16_t IDK_Pick_Target_For_Unit_Enchantment__STUB(int16_t spell_target_type, in
 
 // WZD o156p44
 // drake178: sub_E88F3()
+/*
+
+*/
+int16_t IDK_AITP_Disjunction__STUB(int16_t * wx, int16_t * wy, int16_t spell_idx, int16_t player_idx)
+{
+
+
+
+}
+
 
 // WZD o156p45
 // drake178: AITP_OVL_TileSpells()

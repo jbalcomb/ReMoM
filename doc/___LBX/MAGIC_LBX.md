@@ -12,81 +12,81 @@ Type:        0
 
 
 
-000  MAGICBAK
-001  GEMS       blue gem
-002  GEMS       green gem
-003  GEMS       purple gem
-004  GEMS       red gem
-005  GEMS       yellow gem
-006  GEMS       grey gem
-007  STAVES     mana staff empty
-008  STAVES     mana staff full
-009  STAVES     researchstaff empt
-010  STAVES     researchstaff full
-011  STAVES     skill staff empty
-012  STAVES     skill staff full
-013  MAGIBUT2   alchemy button
-014  MAGIBUT2   ok button
-015  STAVES     mana staff locked
-016  STAVES     researstaff locked
-017  STAVES     skill staff locked
-018  SMAPORT3   merlin
-019  SMAPORT3   shaman
-020  SMAPORT3   vodoo
-021  SMAPORT3   wu
-022  SMAPORT3   arab
-023  SMAPORT3   ober
-024  SMAPORT3   wraith
-025  SMAPORT3   draconian
-026  SMAPORT3   galen
-027  SMAPORT3   freya
-028  SMAPORT3   horus
-029  SMAPORT3   circe
-030  SMAPORT3   aztec
-031  SMAPORT3   witch
-032  
-033  BOOKS      green book 1
-034  BOOKS      green book 2
-035  BOOKS      green book 3
-036  BOOKS      blue book 1
-037  BOOKS      blue book 2
-038  BOOKS      blue book 3
-039  BOOKS      red book 1
-040  BOOKS      red book 2
-041  BOOKS      red book 3
-042  BOOKS      white book 1
-043  BOOKS      white book 2
-044  BOOKS      white book 3
-045  BOOKS      black book 1
-046  BOOKS      black book 2
-047  BOOKS      black book 3
-048  BOOKS      grey book 1
-049  BOOKS      grey book 2
-050  BOOKS      grey book 3
-051  GEMS       broken grey gem
-052  ALCHEMY    alchemy background
-053  ALCHBUTN   alchemy cancel
-054  ALCHBUTN   alchemy ok
-055  ALCHBUTN   alchemy right arro
-056  ALCHBUTN   alchemy left arrow
-057  ARROWBAR   alchemy lines >>>
-058  ALCHSTAR   alchemy star
-059  ALCHEMY    alchemy pow2gold
-060  DIPLICON   blue wizpak
-061  DIPLICON   blue alliance
-062  DIPLICON   blue war
-063  DIPLICON   green wizpaq
-064  DIPLICON   green alliance
-065  DIPLICON   green war
-066  DIPLICON   purple wizpack
-067  DIPLICON   purple alliance
-068  DIPLICON   purple war
-069  DIPLICON   red whizpaq
-070  DIPLICON   red alliance
-071  DIPLICON   red war
-072  DIPLICON   yellow wizpax
-073  DIPLICON   yellow alliance
-074  DIPLICON    yellow war
+// MAGIC.LBX, 000  "MAGICBAK"  ""
+// MAGIC.LBX, 001  "GEMS"      "blue gem"
+// MAGIC.LBX, 002  "GEMS"      "green gem"
+// MAGIC.LBX, 003  "GEMS"      "purple gem"
+// MAGIC.LBX, 004  "GEMS"      "red gem"
+// MAGIC.LBX, 005  "GEMS"      "yellow gem"
+// MAGIC.LBX, 006  "GEMS"      "grey gem"
+// MAGIC.LBX, 007  "STAVES"    "mana staff empty"
+// MAGIC.LBX, 008  "STAVES"    "mana staff full"
+// MAGIC.LBX, 009  "STAVES"    "researchstaff empt"
+// MAGIC.LBX, 010  "STAVES"    "researchstaff full"
+// MAGIC.LBX, 011  "STAVES"    "skill staff empty"
+// MAGIC.LBX, 012  "STAVES"    "skill staff full"
+// MAGIC.LBX, 013  "MAGIBUT2"  "alchemy button"
+// MAGIC.LBX, 014  "MAGIBUT2"  "ok button"
+// MAGIC.LBX, 015  "STAVES"    "mana staff locked"
+// MAGIC.LBX, 016  "STAVES"    "researstaff locked"
+// MAGIC.LBX, 017  "STAVES"    "skill staff locked"
+// MAGIC.LBX, 018  "SMAPORT3"  "merlin"
+// MAGIC.LBX, 019  "SMAPORT3"  "shaman"
+// MAGIC.LBX, 020  "SMAPORT3"  "vodoo"
+// MAGIC.LBX, 021  "SMAPORT3"  "wu"
+// MAGIC.LBX, 022  "SMAPORT3"  "arab"
+// MAGIC.LBX, 023  "SMAPORT3"  "ober"
+// MAGIC.LBX, 024  "SMAPORT3"  "wraith"
+// MAGIC.LBX, 025  "SMAPORT3"  "draconian"
+// MAGIC.LBX, 026  "SMAPORT3"  "galen"
+// MAGIC.LBX, 027  "SMAPORT3"  "freya"
+// MAGIC.LBX, 028  "SMAPORT3"  "horus"
+// MAGIC.LBX, 029  "SMAPORT3"  "circe"
+// MAGIC.LBX, 030  "SMAPORT3"  "aztec"
+// MAGIC.LBX, 031  "SMAPORT3"  "witch"
+// MAGIC.LBX, 032  ""          ""
+// MAGIC.LBX, 033  "BOOKS"     "green book 1"
+// MAGIC.LBX, 034  "BOOKS"     "green book 2"
+// MAGIC.LBX, 035  "BOOKS"     "green book 3"
+// MAGIC.LBX, 036  "BOOKS"     "blue book 1"
+// MAGIC.LBX, 037  "BOOKS"     "blue book 2"
+// MAGIC.LBX, 038  "BOOKS"     "blue book 3"
+// MAGIC.LBX, 039  "BOOKS"     "red book 1"
+// MAGIC.LBX, 040  "BOOKS"     "red book 2"
+// MAGIC.LBX, 041  "BOOKS"     "red book 3"
+// MAGIC.LBX, 042  "BOOKS"     "white book 1"
+// MAGIC.LBX, 043  "BOOKS"     "white book 2"
+// MAGIC.LBX, 044  "BOOKS"     "white book 3"
+// MAGIC.LBX, 045  "BOOKS"     "black book 1"
+// MAGIC.LBX, 046  "BOOKS"     "black book 2"
+// MAGIC.LBX, 047  "BOOKS"     "black book 3"
+// MAGIC.LBX, 048  "BOOKS"     "grey book 1"
+// MAGIC.LBX, 049  "BOOKS"     "grey book 2"
+// MAGIC.LBX, 050  "BOOKS"     "grey book 3"
+// MAGIC.LBX, 051  "GEMS"      "broken grey gem"
+// MAGIC.LBX, 052  "ALCHEMY"   "alchemy background"
+// MAGIC.LBX, 053  "ALCHBUTN"  "alchemy cancel"
+// MAGIC.LBX, 054  "ALCHBUTN"  "alchemy ok"
+// MAGIC.LBX, 055  "ALCHBUTN"  "alchemy right arro"
+// MAGIC.LBX, 056  "ALCHBUTN"  "alchemy left arrow"
+// MAGIC.LBX, 057  "ARROWBAR"  "alchemy lines >>>"
+// MAGIC.LBX, 058  "ALCHSTAR"  "alchemy star"
+// MAGIC.LBX, 059  "ALCHEMY"   "alchemy pow2gold"
+// MAGIC.LBX, 060  "DIPLICON"  "blue wizpak"
+// MAGIC.LBX, 061  "DIPLICON"  "blue alliance"
+// MAGIC.LBX, 062  "DIPLICON"  "blue war"
+// MAGIC.LBX, 063  "DIPLICON"  "green wizpaq"
+// MAGIC.LBX, 064  "DIPLICON"  "green alliance"
+// MAGIC.LBX, 065  "DIPLICON"  "green war"
+// MAGIC.LBX, 066  "DIPLICON"  "purple wizpack"
+// MAGIC.LBX, 067  "DIPLICON"  "purple alliance"
+// MAGIC.LBX, 068  "DIPLICON"  "purple war"
+// MAGIC.LBX, 069  "DIPLICON"  "red whizpaq"
+// MAGIC.LBX, 070  "DIPLICON"  "red alliance"
+// MAGIC.LBX, 071  "DIPLICON"  "red war"
+// MAGIC.LBX, 072  "DIPLICON"  "yellow wizpax"
+// MAGIC.LBX, 073  "DIPLICON"  "yellow alliance"
+// MAGIC.LBX, 074  "DIPLICON"  "yellow war"
 
 
 

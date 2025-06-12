@@ -8,6 +8,9 @@ MoO2
     ~ Science Room?
 */
 
+#include "SPLMASTR.H"
+
+#include "MOM_DEF.H"
 #include "MOX/Fields.H"
 #include "MOX/LBX_Load.H"
 #include "MOX/MOM_Data.H"
@@ -18,10 +21,32 @@ MoO2
 #include "MOX/SOUND.H"
 
 #include "Combat.H"
+#include "MagicScr.H"
 #include "MainScr.H"
 #include "NEXTTURN.H"
+#include "SBookScr.H"
 #include "Spellbook.H"
 
+// GENDRAW.C
+// WZD dseg:CB12
+SAMB_ptr selectbk_bottom_arrow_seg;
+// WZD dseg:CB14
+SAMB_ptr selectbk_top_arrow_seg;
+
+// MagicScr.C
+// WZD dseg:958E
+SAMB_ptr lilwiz_gem_segs[5];
+// WZD dseg:95C0
+SAMB_ptr grey_gem_seg;
+// WZD dseg:95C2
+SAMB_ptr broken_grey_gem_seg;
+// WZD dseg:C238
+int16_t ovl_ench_cnt; // overland_enchantment_count
+// WZD dseg:C23A
+int8_t * ovl_ench_list_players;
+// WZD dseg:C23C
+// SAMB_ptr ovl_ench_list_spells;
+int16_t * ovl_ench_list_spells;
 
 
 // Spellbook.C
@@ -35,6 +60,8 @@ extern SAMB_ptr wizlab_blue_column_seg;
 // Spells137.C
 // WZD dseg:CA54
 extern SAMB_ptr IDK_wizard_id_thing_seg;
+
+
 
 
 
@@ -56,17 +83,28 @@ char str_AdditionalPower__ovr136[] = "Additional Power:";
 // WZD dseg:6B88
 char str_hotkey_O__ovr136[] = "O";
 
-// WZD dseg:6B8A 4C 69 6C 77 69 7A 00                            cnst_LILWIZ_File3 db 'Lilwiz',0         ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+1BCo
-// WZD dseg:6B91 4D 41 47 49 43 00                               cnst_MAGIC_File3 db 'MAGIC',0           ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+1E5o ...
-// WZD dseg:6B97 52 45 53 4F 55 52 43 45 00                      cnst_RESOURCE_File3 db 'RESOURCE',0     ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+237o ...
-// WZD dseg:6BA0 53 65 6C 65 63 74 20 61 20 73 70 65 6C 6C 20 74+aSelectASpellTo db 'Select a spell to ',0
-// WZD dseg:6BB3 64 69 73 6A 75 6E 63 74 2E 00                   aDisjunct_ db 'disjunct.',0             ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+227o ...
-// WZD dseg:6BBD 62 69 6E 64 2E 00                               aBind_ db 'bind.',0                     ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw:loc_BDDF1o ...
-// WZD dseg:6BC3 53 70 65 6C 6C 20 73 75 63 63 65 73 66 75 6C 6C+aSpellSuccesful db 'Spell succesfully dispelled.',0
-// WZD dseg:6BE0 53 70 65 6C 6C 20 73 75 63 63 65 73 66 75 6C 6C+aSpellSuccesf_0 db 'Spell succesfully bound.',0
-// WZD dseg:6BF9 44 69 73 6A 75 6E 63 74 69 6F 6E 20 75 6E 73 75+aDisjunctionUns db 'Disjunction unsuccesful',0
-// WZD dseg:6C11 53 70 65 6C 6C 20 42 69 6E 64 69 6E 67 20 75 6E+aSpellBindingUn db 'Spell Binding unsuccesful',0
-// WZD dseg:6C2B 54 68 65 72 65 20 61 72 65 20 6E 6F 20 67 6C 6F+aThereAreNoGlob db 'There are no global spells to ',0
+// WZD dseg:6B8A
+char lilwiz_lbx_file__ovr136[] = "Lilwiz";
+// WZD dseg:6B91
+char magic_lbx_file__ovr136[] = "MAGIC";
+// WZD dseg:6B97
+char resource_lbx_file__ovr136[] = "RESOURCE";
+// WZD dseg:6BA0
+char aSelectASpellTo[] = "Select a spell to ";
+// WZD dseg:6BB3
+char aDisjunct_[] = "disjunct.";
+// WZD dseg:6BBD
+char aBind_[] = "bind.";
+// WZD dseg:6BC3
+char aSpellSuccesful[] = "Spell succesfully dispelled.";
+// WZD dseg:6BE0
+char aSpellSuccesf_0[] = "Spell succesfully bound.";
+// WZD dseg:6BF9
+char aDisjunctionUns[] = "Disjunction unsuccesful";
+// WZD dseg:6C11
+char aSpellBindingUn[] = "Spell Binding unsuccesful";
+// WZD dseg:6C2B
+char aThereAreNoGlob[] = "There are no global spells to ";
 
 // WZD dseg:6C2B                                                 END:  ovr136 - Initialized Data
 
@@ -128,19 +166,19 @@ int16_t cast_spell_of_mastery_player_idx;
 
 // WZD dseg:C9FA                                                 BEGIN: ovr136 - Uninitialized Data
 
-// WZD dseg:C9FA 00 00                                           word_4349A dw 0                         ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+265w ...
-// WZD dseg:C9FC 00 00                                           word_4349C dw 0                         ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+2BEr ...
-// WZD dseg:C9FE 00 00                                           word_4349E dw 0                         ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+2D5r ...
-// WZD dseg:CA00 00 00                                           word_434A0 dw 0                         ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+2F0r
-// WZD dseg:CA02 00                                              db    0
-// WZD dseg:CA03 00                                              db    0
-// WZD dseg:CA04 00 00                                           word_434A4 dw 0                         ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+194r ...
-// WZD dseg:CA06 00 00                                           word_434A6 dw 0                         ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+2B7w ...
-// WZD dseg:CA08 00 00                                           word_434A8 dw 0                         ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+2CAw
-// WZD dseg:CA0A 00 00                                           word_434AA dw 0                         ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+2E1w
-// WZD dseg:CA0C 00 00                                           word_434AC dw 0                         ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+2FCw
-// WZD dseg:CA0E 00                                              db    0
-// WZD dseg:CA0F 00                                              db    0
+// WZD dseg:C9FA
+/*
+count of elements in the player's subset of the ovl_ench_list_spells array
+*/
+int16_t ovl_ench_list_cnt[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+
+// WZD dseg:CA06
+// int16_t IDK_list_count_end[(NUM_PLAYERS - 1)];
+/*
+pointer to first element of the player's subset of the ovl_ench_list_spells array
+*/
+int16_t * ovl_ench_list_ptr[(NUM_PLAYERS - 1)] = { 0, 0, 0, 0, 0 };
+
 // WZD dseg:CA10
 // drake178: is this really necessary?
 // MOM_Data  int16_t CMB_SliderLimit;
@@ -164,7 +202,11 @@ int16_t cast_spell_of_mastery_player_idx;
 // WZD dseg:CA18
 // MOM_Data  int16_t SBK_SliderState;
 
-// WZD dseg:CA1A 00 00 00 00 00 00 00 00 00 00                   word_434BA dw 5 dup(0)                  ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+308w ...
+// WZD dseg:CA1A
+/*
+index of first/current element in the player's subset of the ovl_ench_list_spells array
+*/
+int16_t ovl_ench_list_fst[(NUM_PLAYERS - 1)] = { 0, 0, 0, 0, 0};
 
 // WZD dseg:CA24
 // MOM_Data  SAMB_ptr word_434C4;
@@ -174,8 +216,15 @@ int16_t cast_spell_of_mastery_player_idx;
 // WZD dseg:CA28                                                                                         ; holds the caster ID during combat sliders
 // WZD dseg:CA28                                                                                         ; holds the mirror reveal mask during global cast anims
 // WZD dseg:CA2A 00 00                                           IMG_OVL_TrgtWizCncl@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+50w ...
-// WZD dseg:CA2C 00 00                                           _temp_sint_4 dw 0        ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+44r ...
-// WZD dseg:CA2E 00 00                                           IDK_SUMMONBK_pict_seg dw 0              ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+17Dw ...
+// WZD dseg:CA2C 00 00                                           _temp_sint_4 dw 0        ; DATA XREF: Cast_Spell_Disjuncts_Draw__WIP+44r ...
+
+// WZD dseg:CA2E
+/*
+only used by 'Cast Spell Disjunct'
+*/
+SAMB_ptr spellscr_oversbut_seg;
+
+
 // WZD dseg:CA30 00 00                                           IMG_SBK_SliderOK@ dw 0                  ; DATA XREF: SBK_LoadSpellSlider+7Dw ...
 // WZD dseg:CA32 00 00                                           IMG_OVL_TargetWizBG@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+39w ...
 // WZD dseg:CA34 00 00                                           IMG_SBK_Anims@ dw 0                     ; DATA XREF: CMB_ShowSpellbook+30w ...
@@ -524,19 +573,560 @@ int16_t Combat_Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_
 
 
 // WZD o136p08
-// sub_BD8A8()
+/*
+screen for targeting other players' global enchantments
+
+"Tries to remove one global enemy enchantment."
+"...the purposes of dispelling the target global enchantment."
+*/
+void Spell_Target_Global_Enchantment_Screen_Load(int16_t spell_idx)
+{
+    int16_t x_start = 0;
+    int16_t itr1 = 0;
+    int16_t itr2 = 0;  // _SI_
+    int16_t y_start = 0;  // _DI_
+
+    Near_Allocate_Reset();
+
+    Allocate_Reduced_Map();
+
+    Near_Allocate_Mark();
+
+    ovl_ench_list_spells = (int16_t *)Near_Allocate_Next(288);  // 144 2-byte values as int16_t
+
+    ovl_ench_list_players = (int8_t *)Near_Allocate_Next(144);  // 144 int8_t
+
+    Mark_Block(_screen_seg);
+
+    xtramana_ok_button_seg = LBX_Reload_Next(spellscr_lbx_file__ovr136, 1, _screen_seg);
+
+    x_start = 50;
+
+    y_start = ((5 - _num_players) * 23);
+
+    Set_Page_Off();
+
+    Main_Screen_Draw();
+
+    Set_Window(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, (y_start + 56 + ((_num_players - 2) * 46)));
+
+    Clipped_Draw(x_start, y_start, xtramana_ok_button_seg);
+
+    Set_Window(SCREEN_XMIN, (y_start + 56 + ((_num_players - 2) * 46)), SCREEN_XMAX, SCREEN_YMAX);
+
+    Clipped_Draw(x_start, (y_start + (((_num_players - 2) * 46) - 138)), xtramana_ok_button_seg);
+
+    if(y_start > 0)
+    {
+
+        Line(x_start, (y_start - 1), (x_start + 208), (y_start - 1), ST_BLACK);
+        
+        Line(x_start, (y_start + 62 + ((_num_players - 2) * 46)), (x_start + 208), (y_start + 62 + ((_num_players - 2) * 46)), ST_BLACK);
+
+    }
+
+    Copy_Off_To_Back();
+
+    Set_Page_On();
+
+    Release_Block(_screen_seg);
+
+    Mark_Block(_screen_seg);
+
+    // SPELLSCR.LBX, 007  "OVERSBUT"    ""
+    spellscr_oversbut_seg = LBX_Reload_Next(spellscr_lbx_file__ovr136, 7, _screen_seg);
+
+    Spell_Animation_Load_Graphics(spell_idx);
+
+    for(itr1 = 1; itr1 < _num_players; itr1++)
+    {
+        lilwiz_gem_segs[itr1] = LBX_Reload_Next(lilwiz_lbx_file__ovr136, ((_players[itr1].wizard_id * 5) + _players[itr1].banner_id), _screen_seg);
+    }
+
+    // MAGIC.LBX, 006  "GEMS"      "grey gem"
+    grey_gem_seg              = LBX_Reload_Next(magic_lbx_file__ovr136,  6, _screen_seg);
+    // MAGIC.LBX, 051  "GEMS"      "broken grey gem"
+    broken_grey_gem_seg       = LBX_Reload_Next(magic_lbx_file__ovr136, 51, _screen_seg);
+
+    IMG_SBK_Anims = Allocate_Next_Block(_screen_seg, 100);
+
+    IMG_SBK_PageText = Allocate_Next_Block(_screen_seg, 100);
+
+    // RESOURCE.LBX, 032  "SELECTBK"  "top arrow"
+    // RESOURCE.LBX, 033  "SELECTBK"  "bottom arrow"
+    selectbk_top_arrow_seg = LBX_Reload_Next(resource_lbx_file__ovr136, 32, _screen_seg);
+    selectbk_bottom_arrow_seg = LBX_Reload_Next(resource_lbx_file__ovr136, 33, _screen_seg);
+
+
+
+    for(itr2 = 0; itr2 < _num_players; itr2++)
+    {
+        ovl_ench_list_cnt[itr2] = 0;
+    }
+
+    for(itr2 = 0; itr2 < 144; itr2++)
+    {
+        ovl_ench_list_spells[itr2] = ST_UNDEFINED;
+    }
+
+    Build_Overland_Enchantment_List();
+
+    for(itr2 = 0; itr2 < ovl_ench_cnt; itr2++)
+    {
+        ovl_ench_list_cnt[ovl_ench_list_players[itr2]] += 1;
+    }
+
+    ovl_ench_list_ptr[0] = (ovl_ench_list_spells + (ovl_ench_list_cnt[0]));
+    ovl_ench_list_ptr[1] = (ovl_ench_list_spells + (ovl_ench_list_cnt[0] + ovl_ench_list_cnt[1]));
+    ovl_ench_list_ptr[2] = (ovl_ench_list_spells + (ovl_ench_list_cnt[0] + ovl_ench_list_cnt[1] + ovl_ench_list_cnt[2]));
+    ovl_ench_list_ptr[3] = (ovl_ench_list_spells + (ovl_ench_list_cnt[0] + ovl_ench_list_cnt[1] + ovl_ench_list_cnt[2] + ovl_ench_list_cnt[3]));
+    
+    for(itr2 = 0; (_num_players - 1) > itr2; itr2++)
+    {
+        ovl_ench_list_fst[itr2] = 0;
+    }
+
+}
+
 
 // WZD o136p09
-// sub_BDBC5()
+/*
+screen for targeting other players' global enchantments
+*/
+void Spell_Target_Global_Enchantment_Screen_Draw(void)
+{
+    char string[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t y = 0;
+    int16_t x = 0;
+    int16_t itr1 = 0;
+    int16_t y_start = 0;
+    int16_t x_start = 0;
+    int16_t itr2 = 0;  // _DI_
+    int16_t DBG_spell_idx = 0;  // DNE in Dasm
+    int16_t DBG_string_width = 0;  // DNE in Dasm
+    int16_t DBG_ovl_ench_list_idx = 0;  // DNE in Dasm
+
+    x_start = 50;
+
+    y_start = ((5 - _num_players) * 23);
+
+    colors[0] = 246;
+
+    for(itr1 = 1; itr1 < 6; itr1++)
+    {
+        colors[itr1] = (177 + itr1);
+    }
+
+    Copy_Back_To_Off();
+
+    if(_osc_scanned_field > 0)
+    {
+
+        if(((_num_players - 1) * 3) >= _osc_scanned_field)
+        {
+
+            FLIC_Draw((x_start + 73), (y_start + 16 + ((_osc_scanned_field - 1) * 13) + (((_osc_scanned_field - 1) / 3) * 7)), spellscr_oversbut_seg);
+            
+        }
+
+    }
+
+    for(itr2 = 1; itr2 < _num_players; itr2++)
+    {
+        
+        x = (x_start + 8);
+        
+        y = (y_start + 14 + ((itr2 - 1) * 46));
+
+        if(
+            (
+                (_FORTRESSES[itr2].active == ST_TRUE)
+                &&
+                (_players[_human_player_idx].Dipl.Contacted[itr2] == ST_TRUE)
+            )
+            ||
+            (ovl_ench_list_cnt[itr2] > 0)
+        )
+        {
+
+            FLIC_Draw(x, y, lilwiz_gem_segs[itr2]);
+
+        }
+        else
+        {
+
+            if(_FORTRESSES[itr2].active == ST_TRUE)
+            {
+
+                FLIC_Draw(x, y, grey_gem_seg);
+
+            }
+            else
+            {
+
+                FLIC_Draw(x, y, broken_grey_gem_seg);
+
+            }
+
+        }
+
+        if(ovl_ench_list_cnt[itr2] > 0)
+        {
+
+            x = (x_start + 76);
+
+            y = (y_start + 18 + ((itr2 - 1) * 46));
+
+            for(itr1 = 0; itr1 < 3; itr1++)
+            {
+
+                if(ovl_ench_list_cnt[itr2] > (ovl_ench_list_fst[(itr2 - 1)] + itr1))
+                {
+
+                    Set_Font_Style(2, 1, 0, 0);
+
+                    Set_Alias_Color(186);
+
+                    _fstrcpy((char *)&string[0], spell_data_table[ovl_ench_list_ptr[(itr2 - 1)][(ovl_ench_list_fst[(itr2 - 1)] + itr1)]].name);
+
+                    Print(x, (y + (itr1 * 13)), (char *)&string[0]);
+
+                }
+
+            }
+
+        }
+
+    }
+
+    Set_Font_Colors_15(4, &colors[0]);
+
+    if(_osc_need_target_flag == ST_TRUE)
+    {
+
+        strcpy(GUI_NearMsgString, aSelectASpellTo);  // "Select a spell to "
+
+        if(SBK_Spell_Index != spl_Spell_Binding)
+        {
+
+            strcat(GUI_NearMsgString, aDisjunct_);  // "disjunct."
+
+        }
+        else
+        {
+
+            strcat(GUI_NearMsgString, aBind_);  // "bind."
+        }
+
+    }
+    else
+    {
+
+        // _temp_sint_1 is {F,T} - disjunct/bind succeeded  (same as _ce_bldg_idx)
+        if(_temp_sint_1 == ST_TRUE)
+        {
+            
+            if(SBK_Spell_Index != spl_Spell_Binding)
+            {
+
+                strcpy(GUI_NearMsgString, aSpellSuccesful);  // "Spell succesfully dispelled."
+
+            }
+            else
+            {
+
+                strcpy(GUI_NearMsgString, aSpellSuccesf_0);  // "Spell succesfully bound."
+
+            }
+
+            // _ce_bldg_idx is {F,T} - disjunct/bind succeeded  (same as _temp_sint_1)
+            if(_ce_bldg_idx == ST_TRUE)
+            {
+
+                FLIC_Draw((x_start + 73), (y_start + 16 + ((_osc_scanned_field - 1) * 13) + (((_osc_scanned_field - 1) % 3) * 7)), spellscr_oversbut_seg);
+
+            }
+
+        }
+        else
+        {
+
+            if(SBK_Spell_Index != spl_Spell_Binding)
+            {
+
+                strcpy(GUI_NearMsgString, aDisjunctionUns);  // "Disjunction unsuccesful"
+
+            }
+            else
+            {
+
+                strcpy(GUI_NearMsgString, aSpellBindingUn);  // "Spell Binding unsuccesful"
+
+            }
+
+        }
+
+    }
+
+    Print_Centered((x_start + 105), (y_start + 3), GUI_NearMsgString);
+
+}
+
 
 // WZD o136p10
-// IDK_SplBk_OvlEnch_sBDEA0()
+/*
+screen for targeting other players' global enchantments
+*/
+int16_t Spell_Target_Global_Enchantment_Screen__WIP(int16_t spell_idx, int16_t player_idx)
+{
+    int16_t fields[(3 * (5 - 1))] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t bot_arrow_fields[4] = { 0, 0, 0, 0 };
+    int16_t top_arrow_fields[4] = { 0, 0, 0, 0 };
+    int16_t y = 0;
+    int16_t x = 0;
+    int16_t var_C = 0;
+    int16_t var_A = 0;
+    int16_t y_start = 0;
+    int16_t x_start = 0;
+    int16_t var_4 = 0;
+    int16_t input_field_idx = 0;
+    int16_t itr = 0;
+
+// #define UIOBJ_CLEAR_LOCAL() \
+//     do { \
+//         STARMAP_UIOBJ_CLEAR_COMMON(); \
+//         oi_accept = UIOBJI_INVALID; \
+//         oi_cancel = UIOBJI_INVALID; \
+//     } while (0)
+// 
+//     UIOBJ_CLEAR_LOCAL();
+#define ADD_SPELL_FIELDS_LOCAL()  \
+    do {  \
+        for(itr = 0; ((_num_players - 1) * 3) > itr; itr++)  \
+        {  \
+            x = (x_start + 74);  \
+            y = (y_start + 16 + ((itr / 3) * 46) + ((itr % 3) * 13));  \
+            fields[itr] = Add_Hidden_Field(x, y, (x + 120), (y + 13), (int16_t)str_empty_string__ovr136[0], ST_UNDEFINED);  \
+        }  \
+    } while(0)
+#define ADD_ARROW_FIELDS_LOCAL()  \
+    do {  \
+        for(itr = 0; (_num_players - 1) > itr; itr++)  \
+        {  \
+            if(ovl_ench_list_fst[itr] > 0)  \
+            {  \
+                top_arrow_fields[itr] = Add_Button_Field((x_start + 61), (y_start + 19 + (itr * 46)), str_empty_string__ovr136, selectbk_top_arrow_seg, (int16_t)str_empty_string__ovr136[0], ST_UNDEFINED);  \
+            }  \
+            else  \
+            {  \
+                top_arrow_fields[itr] = INVALID_FIELD;  \
+            }  \
+            if((ovl_ench_list_fst[itr] + 3) < ovl_ench_list_cnt[(itr + 1)])  \
+            {  \
+                bot_arrow_fields[itr] = Add_Button_Field((x_start + 61), (y_start + 43 + (itr * 46)), str_empty_string__ovr136, selectbk_bottom_arrow_seg, (int16_t)str_empty_string__ovr136[0], ST_UNDEFINED);  \
+            }  \
+            else  \
+            {  \
+                bot_arrow_fields[itr] = INVALID_FIELD;  \
+            }  \
+        }  \
+    } while(0)
+#define ADD_FIELDS_LOCAL()  \
+    do {  \
+        Clear_Fields();  \
+        ADD_SPELL_FIELDS_LOCAL();  \
+        ADD_ARROW_FIELDS_LOCAL();  \
+    } while(0)
+
+    x_start = 50;
+
+    y_start = ((5 - _num_players) * 23);  // { 0, 23, 46, 69, 92 }
+
+    _osc_need_target_flag = ST_TRUE;
+
+    _ce_bldg_idx = ST_FALSE;  // {F,T} - disjunct/bind succeeded
+
+    SBK_Spell_Index = spell_idx;
+
+    Spell_Target_Global_Enchantment_Screen_Load(spell_idx);
+
+    // total count - human player count ... you might, but they don't
+    if((ovl_ench_cnt - ovl_ench_list_cnt[0]) <= 0)
+    {
+        strcpy(GUI_NearMsgString, aThereAreNoGlob);  // "There are no global spells to "
+        if(spell_idx != spl_Spell_Binding)
+        {
+            strcat(GUI_NearMsgString, aDisjunct_);  // "disjunct."
+            Warn0(GUI_NearMsgString);
+            var_A = ST_UNDEFINED;
+            var_C = ST_UNDEFINED;
+        }
+        else
+        {
+            strcat(GUI_NearMsgString, aBind_);  // "bind."
+            Warn0(GUI_NearMsgString);
+            var_A = ST_UNDEFINED;
+            var_C = ST_UNDEFINED;
+        }
+    }
+    else
+    {
+
+        Assign_Auto_Function(Spell_Target_Global_Enchantment_Screen_Draw, 2);
+
+        ADD_FIELDS_LOCAL();
+
+        _osc_leave_screen = ST_FALSE;
+
+        while(_osc_leave_screen == ST_FALSE)
+        {
+
+            input_field_idx = Get_Input();
+
+            _osc_scanned_field = Scan_Input();
+
+            if(_osc_scanned_field != 0)
+            {
+                printf("_osc_scanned_field: %d\n", _osc_scanned_field);
+            }
+
+            if(((_osc_scanned_field - 1) % 3) >= ovl_ench_list_cnt[(1 + ((_osc_scanned_field - 1) / 3))])
+            {
+                
+                _osc_scanned_field = 0;
+
+            }
+
+
+            for(itr = 0; ((_num_players - 1) * 3) > itr; itr++)
+            {
+                if(fields[itr] == input_field_idx)
+                {
+                    if(_osc_scanned_field != 0)
+                    {
+                        Play_Left_Click();
+
+                        var_A = ovl_ench_list_ptr[(itr / 3)][(itr % 3) + ovl_ench_list_fst[(itr / 3)]];
+
+                        var_C = (1 + (itr / 3));
+
+                        var_4 = itr;
+
+                        _osc_leave_screen = ST_TRUE;
+                    }
+                }
+            }
+
+
+            /*
+                BEGIN:  Left-Click Arrows
+            */
+            for(itr = 0; (_num_players - 1) > itr; itr++)
+            {
+                if(top_arrow_fields[itr] == input_field_idx)
+                {
+                    if(ovl_ench_list_fst[itr] > 0)
+                    {
+                        Play_Left_Click__DUPE();
+                        ovl_ench_list_fst[itr] -= 1;
+                    }
+                }
+                if(bot_arrow_fields[itr] == input_field_idx)
+                {
+                    if((ovl_ench_list_fst[itr] + 3) < ovl_ench_list_cnt[(1 + itr)])
+                    {
+                        Play_Left_Click__DUPE();
+                        ovl_ench_list_fst[itr] += 1;
+                    }
+                }
+            }
+            /*
+                END:  Left-Click Arrows
+            */
+
+            ADD_FIELDS_LOCAL();
+
+            if(_osc_leave_screen == ST_FALSE)
+            {
+
+                Set_Page_Off();
+
+                Spell_Target_Global_Enchantment_Screen_Draw();
+
+                PageFlip_FX();
+
+            }
+
+        }
+
+    }
+
+    Clear_Fields();
+
+    fields[0] = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_empty_string__ovr136[0], ST_UNDEFINED);
+
+    // we did it
+    if(var_A > ST_UNDEFINED)
+    {
+
+        // which one did we do?
+        if(spell_idx != spl_Spell_Binding)
+        {
+
+            // apply the effects of spl_Disjunction or spl_Disjunction_True
+
+            // ; is this part of a redraw function? (seravy's bug)
+            Spell_Target_Global_Enchantment_Disjunct__WIP(var_4, player_idx, spell_idx, var_C);
+
+        }
+        else
+        {
+
+            // apply the effects ofspl_Spell_Binding
+
+            // ; is this part of a redraw function? (seravy's bug)
+            Spell_Target_Global_Enchantment_Bind__WIP(var_4, player_idx, spell_idx, var_C);
+
+        }
+
+    }
+
+    /* SPELLY */  OVL_MosaicFlip__STUB();
+
+    Release_Block(_screen_seg);
+
+    Near_Allocate_Undo();
+
+
+    // I don't see anything anywhere that returns a value
+    return ST_TRUE;
+
+}
+
 
 // WZD o136p11
-// sub_BE356()
+/*
+applies the effects of spl_Spell_Binding
+*/
+void Spell_Target_Global_Enchantment_Bind__WIP(int16_t var_4, int16_t player_idx, int16_t spell_idx, int16_t var_C)
+{
+
+    STU_DEBUG_BREAK();
+
+}
+
 
 // WZD o136p12
-// sub_BE656()
+/*
+applies the effects of spl_Disjunction or spl_Disjunction_True
+*/
+void Spell_Target_Global_Enchantment_Disjunct__WIP(int16_t var_4, int16_t player_idx, int16_t spell_idx, int16_t var_C)
+{
+
+    STU_DEBUG_BREAK();
+
+}
 
 
 
@@ -872,7 +1462,7 @@ void SoM_Started__STUB(int16_t player_idx)
     // SPELLSCR.LBX, 067  "VORTEX3" ""
     Open_File_Animation__HACK(spellscr_lbx_file__ovr138, 67);
 
-    _temp_sint_4 = 67;
+    _temp_sint_4 = 67;  // ¿ DEDU ?
 
     Set_Mouse_List(1, mouse_list_none);
 

@@ -65,19 +65,19 @@ void Combat_Spellbook_Mana_Adder_Draw(void);
 int16_t Combat_Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_field_idx, int16_t caster_idx);
 
 // WZD o136p08
-// sub_BD8A8()
+void Spell_Target_Global_Enchantment_Screen_Load(int16_t spell_idx);
 
 // WZD o136p09
-// sub_BDBC5()
+void Spell_Target_Global_Enchantment_Screen_Draw(void);
 
 // WZD o136p10
-// IDK_SplBk_OvlEnch_sBDEA0()
+int16_t Spell_Target_Global_Enchantment_Screen__WIP(int16_t spell_idx, int16_t player_idx);
 
 // WZD o136p11
-// sub_BE356()
+void Spell_Target_Global_Enchantment_Bind__WIP(int16_t var_4, int16_t player_idx, int16_t spell_idx, int16_t var_C);
 
 // WZD o136p12
-// sub_BE656()
+void Spell_Target_Global_Enchantment_Disjunct__WIP(int16_t var_4, int16_t player_idx, int16_t spell_idx, int16_t var_C);
 
 
 

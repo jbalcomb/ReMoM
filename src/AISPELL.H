@@ -154,7 +154,7 @@ int16_t IDK_Pick_Target_For_Unit_Enchantment__STUB(int16_t spell_target_type, in
 // sub_E882B()
 
 // WZD o156p44
-// sub_E88F3()
+int16_t IDK_AITP_Disjunction__STUB(int16_t * wx, int16_t * wy, int16_t spell_idx, int16_t player_idx);
 
 // WZD o156p45
 int16_t Get_Map_Square_Target_For_Spell(int16_t spell_arget_type, int16_t * wx, int16_t * wy, int16_t * wp, int16_t spell_idx, int16_t player_idx);

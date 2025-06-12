@@ -90,8 +90,8 @@ all city enchantments are done
 [x]  15  scc_Unit_Enchantment_Normal_Only
 [ ]  16  scc_Mundane_Curse
 [ ]  17  scc_Infusable_Spell
-[ ]  18  scc_Dispels
-[ ]  19  scc_Disenchant_Spell
+[x]  18  scc_Dispels
+[x]  19  scc_Disenchants
 [ ]  20  scc_Disjunctions
 [ ]  21  scc_Counter_Spell
 [ ]  22  scc_Var_Dmg_Spell

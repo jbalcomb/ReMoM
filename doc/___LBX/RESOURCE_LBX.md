@@ -43,89 +43,90 @@ Type:        0
 
 
 
-000  CONFMBAK    
-001  CONFMBAK    
-002  
-003  CONFMBUT    yes
-004  CONFMBUT    no
-005  SELECTBD    left
-006  SELECTBD    bottom left
-007  SELECTBD    top
-008  SELECTBD    right
-009  SELECTBD    bottom
-010  SELECTBD    bottom right
-011  SELECTBD    scroll
-012  SELECTBK    button 1
-013  SELECTBK    button 2
-014  SELECTBK    button 3
-015  SELECTBK    button 4
-016  SELECTBK    button 5
-017  SELECTBK    button 6
-018  SELECTBK    button 7
-019  SELECTBK    button 8
-020  SELECTBK    button 9
-021  SELECTBK    button 10
-022  SELECTBK    button 1
-023  SELECTBK    button 2
-024  SELECTBK    button 3
-025  SELECTBK    button 4
-026  SELECTBK    button 5
-027  SELECTBK    button 6
-028  SELECTBK    button 7
-029  SELECTBK    button 8
-030  SELECTBK    button 9
-031  SELECTBK    button 10
-032  SELECTBK    top arrow
-033  SELECTBK    bottom arrow
-034  SELECTBD    scroll top
-035  SELECTBD    scroll bottom
-036  SELECTBD    scroll locked up
-037  SELECTBD    scroll locked down
-038  WARNBACK    warning top
-039  WARNBACK    warning bottom
-040  G_NOTIFY    green notify
-041  G_NOTIFY    
-042  G_NOTIFY    
-043  F_NOTIFY    red notify
-044  F_NOTIFY    pict box
-045  F_NOTIFY    gem box
-046  B_NOTIFY    green notify
-047  B_NOTIFY    pict box
-048  B_NOTIFY    gem box
-049  WARNBCK2    warning top
-050  WARNBCK2    warning bottom
-051  CHAOS       
-052  DEATH       
-053  LIFE        
-054  NATURE      
-055  SORCERY     
-056  BRNOTIFY    
-057  BRNOTIFY    
-058  BRNOTIFY    
-059  CHAOSRIV 1  
-060  CHAOSRIV 1  
-061  CHAOSRIV 1  
-062  CHAOSRIV 1  
-063  CHAOSRIV 1  
-064  CHAOSRIV 1  
-065  CHAOSRIV 2  
-066  CHAOSRIV 2  
-067  CHAOSRIV 2  
-068  CHAOSRIV 2  
-069  CHAOSRIV 2  
-070  CHAOSRIV 2  
-071  CHAOSWAT    
-072  CHAOSWAT    
-073  CHAOSWAT    
-074  CHAOSWAT    
-075  CURSES      
-076  CURSES      
-077  CURSES      
-078  CURSES      
-079  CURSES      
-080  CURSES      
-081  CURSES      
-082  WEB         
+// RESOURCE.LBX, 000  "CONFMBAK"  ""
+// RESOURCE.LBX, 001  "CONFMBAK"  ""
+// RESOURCE.LBX, 002  ""          ""
+// RESOURCE.LBX, 003  "CONFMBUT"  "yes"
+// RESOURCE.LBX, 004  "CONFMBUT"  "no"
+// RESOURCE.LBX, 005  "SELECTBD"  "left"
+// RESOURCE.LBX, 006  "SELECTBD"  "bottom left"
+// RESOURCE.LBX, 007  "SELECTBD"  "top"
+// RESOURCE.LBX, 008  "SELECTBD"  "right"
+// RESOURCE.LBX, 009  "SELECTBD"  "bottom"
+// RESOURCE.LBX, 010  "SELECTBD"  "bottom right"
+// RESOURCE.LBX, 011  "SELECTBD"  "scroll"
+// RESOURCE.LBX, 012  "SELECTBK"  "button 1"
+// RESOURCE.LBX, 013  "SELECTBK"  "button 2"
+// RESOURCE.LBX, 014  "SELECTBK"  "button 3"
+// RESOURCE.LBX, 015  "SELECTBK"  "button 4"
+// RESOURCE.LBX, 016  "SELECTBK"  "button 5"
+// RESOURCE.LBX, 017  "SELECTBK"  "button 6"
+// RESOURCE.LBX, 018  "SELECTBK"  "button 7"
+// RESOURCE.LBX, 019  "SELECTBK"  "button 8"
+// RESOURCE.LBX, 020  "SELECTBK"  "button 9"
+// RESOURCE.LBX, 021  "SELECTBK"  "button 10"
+// RESOURCE.LBX, 022  "SELECTBK"  "button 1"
+// RESOURCE.LBX, 023  "SELECTBK"  "button 2"
+// RESOURCE.LBX, 024  "SELECTBK"  "button 3"
+// RESOURCE.LBX, 025  "SELECTBK"  "button 4"
+// RESOURCE.LBX, 026  "SELECTBK"  "button 5"
+// RESOURCE.LBX, 027  "SELECTBK"  "button 6"
+// RESOURCE.LBX, 028  "SELECTBK"  "button 7"
+// RESOURCE.LBX, 029  "SELECTBK"  "button 8"
+// RESOURCE.LBX, 030  "SELECTBK"  "button 9"
+// RESOURCE.LBX, 031  "SELECTBK"  "button 10"
+// RESOURCE.LBX, 032  "SELECTBK"  "top arrow"
+// RESOURCE.LBX, 033  "SELECTBK"  "bottom arrow"
+// RESOURCE.LBX, 034  "SELECTBD"  "scroll top"
+// RESOURCE.LBX, 035  "SELECTBD"  "scroll bottom"
+// RESOURCE.LBX, 036  "SELECTBD"  "scroll locked up"
+// RESOURCE.LBX, 037  "SELECTBD"  "scroll locked down"
+// RESOURCE.LBX, 038  "WARNBACK"  "warning top"
+// RESOURCE.LBX, 039  "WARNBACK"  "warning bottom"
+// RESOURCE.LBX, 040  "G_NOTIFY"  "green notify"
+// RESOURCE.LBX, 041  "G_NOTIFY"  ""
+// RESOURCE.LBX, 042  "G_NOTIFY"  ""
+// RESOURCE.LBX, 043  "F_NOTIFY"  "red notify"
+// RESOURCE.LBX, 044  "F_NOTIFY"  "pict box"
+// RESOURCE.LBX, 045  "F_NOTIFY"  "gem box"
+// RESOURCE.LBX, 046  "B_NOTIFY"  "green notify"
+// RESOURCE.LBX, 047  "B_NOTIFY"  "pict box"
+// RESOURCE.LBX, 048  "B_NOTIFY"  "gem box"
+// RESOURCE.LBX, 049  "WARNBCK2"  "warning top"
+// RESOURCE.LBX, 050  "WARNBCK2"  "warning bottom"
+// RESOURCE.LBX, 051  "CHAOS"     ""
+// RESOURCE.LBX, 052  "DEATH"     ""
+// RESOURCE.LBX, 053  "LIFE"      ""
+// RESOURCE.LBX, 054  "NATURE"    ""
+// RESOURCE.LBX, 055  "SORCERY"   ""
+// RESOURCE.LBX, 056  "BRNOTIFY"  ""
+// RESOURCE.LBX, 057  "BRNOTIFY"  ""
+// RESOURCE.LBX, 058  "BRNOTIFY"  ""
+// RESOURCE.LBX, 059  "CHAOSRIV"  "1"
+// RESOURCE.LBX, 060  "CHAOSRIV"  "1"
+// RESOURCE.LBX, 061  "CHAOSRIV"  "1"
+// RESOURCE.LBX, 062  "CHAOSRIV"  "1"
+// RESOURCE.LBX, 063  "CHAOSRIV"  "1"
+// RESOURCE.LBX, 064  "CHAOSRIV"  "1"
+// RESOURCE.LBX, 065  "CHAOSRIV"  "2"
+// RESOURCE.LBX, 066  "CHAOSRIV"  "2"
+// RESOURCE.LBX, 067  "CHAOSRIV"  "2"
+// RESOURCE.LBX, 068  "CHAOSRIV"  "2"
+// RESOURCE.LBX, 069  "CHAOSRIV"  "2"
+// RESOURCE.LBX, 070  "CHAOSRIV"  "2"
+// RESOURCE.LBX, 071  "CHAOSWAT"  ""
+// RESOURCE.LBX, 072  "CHAOSWAT"  ""
+// RESOURCE.LBX, 073  "CHAOSWAT"  ""
+// RESOURCE.LBX, 074  "CHAOSWAT"  ""
+// RESOURCE.LBX, 075  "CURSES"    ""
+// RESOURCE.LBX, 076  "CURSES"    ""
+// RESOURCE.LBX, 077  "CURSES"    ""
+// RESOURCE.LBX, 078  "CURSES"    ""
+// RESOURCE.LBX, 079  "CURSES"    ""
+// RESOURCE.LBX, 080  "CURSES"    ""
+// RESOURCE.LBX, 081  "CURSES"    ""
+// RESOURCE.LBX, 082  "WEB"       ""
+
 
 
 53 00 

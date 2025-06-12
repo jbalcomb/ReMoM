@@ -58,9 +58,14 @@ char aCastOnThem[] = " cast on them";
 char aOnlyNormalUn_0[] = "Only normal units and created undead may have ";
 // WZD dseg:6B08
 char aThatCityAlread[] = "That city already has ";
+
 // WZD dseg:6B1F 20 73 70 65 6C 6C 20 68 61 73 20 66 61 69 6C 65+cnst_SpellError_4 db ' spell has failed.',0
+
 // WZD dseg:6B32 53 70 65 6C 6C 20 42 6C 61 73 74 00             aSpellBlast db 'Spell Blast',0
-// WZD dseg:6B3E 44 69 73 6A 75 6E 63 74 69 6F 6E 00             aDisjunction db 'Disjunction',0         
+
+// WZD dseg:6B3E
+char aDisjunction[] = "Disjunction";
+
 // WZD dseg:6B4A 20 74 68 65 20                                  aThe_0 db ' the '
 
 // WZD dseg:6B4A                                                 END:  ovr135 - Initialized Data
@@ -1786,6 +1791,47 @@ Capture_Cities_Data();
                 case scc_Disjunctions:  // 20
                 {
 
+                    if(player_idx == HUMAN_PLAYER_IDX)
+                    {
+
+                        Cast_Successful = Spell_Target_Global_Enchantment_Screen__WIP(spell_idx, player_idx);
+
+                    }
+                    else
+                    {
+
+                        /* SPELLY */  Cast_Successful = IDK_AITP_Disjunction__STUB(&spell_target_idx, &wy, spell_idx, player_idx);
+
+                        if(Cast_Successful == ST_TRUE)
+                        {
+
+                            if(_players[player_idx].runemaster > 0)
+                            {
+
+                                _players[player_idx].casting_cost_original *= 2;
+
+                            }
+
+                            if(spell_idx == spl_Disjunction_True)
+                            {
+
+                                _players[player_idx].casting_cost_original *= 3;
+
+                            }
+/* SPELLY */  enchantments_idx = IDK_Get_Global_Enchant_Index__STUB(wy);
+item_list = (_players[player_idx].casting_cost_original + Calculate_Dispel_Difficulty(spell_data_table[enchantments_idx].casting_cost, spell_target_idx, spell_data_table[enchantments_idx].magic_realm));
+item_list = ((_players[player_idx].casting_cost_original * 250) / item_list);
+if(Random(250) <= item_list)
+{
+    ptr_enchantments = &_players[spell_target_idx].Globals[0];
+    ptr_enchantments[spell_data_table[enchantments_idx].Param0] = 0;
+    Fizzle_Notification(spell_target_idx, player_idx, enchantments_idx, aDisjunction);  // "Disjunction"
+}
+
+                        }
+
+                    }
+
                 } break;
 
                 default:
@@ -1871,3 +1917,9 @@ Capture_Cities_Data();
 
 // WZD o135p06
 // sub_BCB9E()
+int16_t IDK_Get_Global_Enchant_Index__STUB(int16_t value)
+{
+
+
+
+}

@@ -4461,6 +4461,23 @@ extern int16_t GAME_MP_SpellVar_1;
 extern int16_t _osc_anim_ctr;
 
 // WZD dseg:CA16
+/*
+¿ _osc_spell_idx ? NOT _temp_sint?
+
+XREF:
+    Learn_Spell_Animation()
+    Cast_Spell_Overland__WIP()
+    SBK_SliderRedraw()
+    SBK_SpellSlider()
+    Combat_Spellbook_Mana_Adder_Draw()
+    Combat_Spellbook_Mana_Adder_Screen()
+    Spell_Target_Global_Enchantment_Screen_Draw()
+    OVL_DrawGlobalAnim()
+    WIZ_GlobalSpellAnim()
+    Spell_Target_Wizard_Screen_Draw()
+    Spell_Target_Wizard_Screen()
+
+*/
 extern int16_t SBK_Spell_Index;
 
 // WZD dseg:CA18
@@ -4481,6 +4498,9 @@ extern int16_t _mana_adder_caster_idx;  // DNE in Dasm
 // WZD dseg:CA2A 00 00                                           IMG_OVL_TrgtWizCncl@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+50w ...
 
 // WZD dseg:CA2C
+/*
+
+*/
 extern int16_t _temp_sint_4;
 #define _osc_scanned_field _temp_sint_4
 #define _osc_summon_unit_type _temp_sint_4

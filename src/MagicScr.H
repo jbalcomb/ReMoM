@@ -13,7 +13,9 @@
 #ifndef MAGICSCR_H
 #define MAGICSCR_H
 
-#include "MOM.H"
+#include "MOX/MOX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,7 +40,7 @@ void Magic_Screen_Add_Fields(void);
 void Build_Overland_Enchantment_List(void);
 
 // WZD o73p05
-void Magic_Screen_Load_Pictures(void);
+void Magic_Screen_Load(void);
 
 // WZD o73p06
 void Alchemy_Popup(int16_t start_x, int16_t y_start);

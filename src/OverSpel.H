@@ -38,7 +38,8 @@ int16_t Square_Has_Disenchant_Target(int16_t wx, int16_t wy, int16_t wp);
 void Cast_Spell_Overland__WIP(int16_t player_idx);
 
 // WZD o135p06
-// sub_BCB9E()
+int16_t IDK_Get_Global_Enchant_Index__STUB(int16_t value);
+
 
 
 #ifdef __cplusplus

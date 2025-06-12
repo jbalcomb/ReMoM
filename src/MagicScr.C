@@ -233,28 +233,16 @@ char aFinalWar[] = "Final War";
 
 
 
-
+// dseg:958E                                                 BEGIN:  ovr073 - Uninitialized Data
 
 // WZD dseg:958E
-SAMB_ptr lilwiz_gem_segs[5];
-
 /*
     ¿ 28 DB, 14 DW, 7 DD ? ¿ gem wiz picts - player 0 always human, always index 0 ?
     ~ Wizard Picture
     
 */
-// WZD dseg:958E 00                                              profile_gem_00 db    0                  ; DATA XREF: Magic_Screen_Load_Pictures+BFw ...
-// WZD dseg:958F 00                                              db    0
-// WZD dseg:9590 00                                              db    0
-// WZD dseg:9591 00                                              db    0
-// WZD dseg:9592 00                                              db    0
-// WZD dseg:9593 00                                              db    0
-// WZD dseg:9594 00                                              db    0
-// WZD dseg:9595 00                                              db    0
-// WZD dseg:9596 00                                              db    0
-// WZD dseg:9597 00                                              db    0
-// WZD dseg:9598 00                                              db    0
-// WZD dseg:9599 00                                              db    0
+SAMB_ptr lilwiz_gem_segs[5];
+
 // WZD dseg:959A 00                                              db    0
 // WZD dseg:959B 00                                              db    0
 // WZD dseg:959C 00                                              db    0
@@ -394,7 +382,11 @@ int16_t ovl_ench_cnt; // overland_enchantment_count
 int8_t * ovl_ench_list_players;
 
 // WZD dseg:C23C
-SAMB_ptr ovl_ench_list_spells;
+/*
+spell_idx
+*/
+// SAMB_ptr ovl_ench_list_spells;
+int16_t * ovl_ench_list_spells;
 
 // WZD dseg:C23E
 int16_t button_magic_alchemy;
@@ -495,7 +487,7 @@ void Magic_Screen(void)
         gem_count++;
     }
 
-    Magic_Screen_Load_Pictures();
+    Magic_Screen_Load();
 
 
     /*
@@ -644,7 +636,7 @@ void Magic_Screen(void)
             Alchemy_Popup(80, 60);
 
             Assign_Auto_Function(Magic_Screen_Draw, 1);
-            Magic_Screen_Load_Pictures();
+            Magic_Screen_Load();
             Build_Overland_Enchantment_List();
             screen_changed = ST_TRUE;
             if((WIZ_ManaPerTurn + _players[HUMAN_PLAYER_IDX].mana_reserve) > _players[HUMAN_PLAYER_IDX].Nominal_Skill)
@@ -686,7 +678,7 @@ void Magic_Screen(void)
                 gem_x2 = (gem_x1 + 30);
                 gem_y2 = (gem_y1 + 30);
                 Mirror_Screen(gem_player_nums[itr], gem_x1, gem_y1, gem_x2, gem_y2);
-                Magic_Screen_Load_Pictures();
+                Magic_Screen_Load();
                 Build_Overland_Enchantment_List();
                 Assign_Auto_Function(Magic_Screen_Draw, 1);
                 Deactivate_Help_List();
@@ -1443,7 +1435,7 @@ updates ovl_ench_cnt
 */
 void Build_Overland_Enchantment_List(void)
 {
-    uint8_t * players_globals;
+    uint8_t * ptr_enchantments;
     int16_t player_idx;
     int16_t itr;  // _SI_
     int16_t itr2;  // _CX_
@@ -1452,34 +1444,45 @@ void Build_Overland_Enchantment_List(void)
 
     for(player_idx = 0; player_idx < NUM_PLAYERS; player_idx++)
     {
-        players_globals = &_players[player_idx].Globals[0];
+
+        ptr_enchantments = &_players[player_idx].Globals[0];
 
         for(itr = 0; itr < NUM_OVERLAND_ENCHANTMENTS; itr++)
         {
-            if(players_globals[itr] > 0)
+
+            if(ptr_enchantments[itr] > 0)
             {
-                for(itr2 = 0; itr2 < 215; itr2++)
+
+                for(itr2 = spl_NONE; itr2 < spl_MAX_SPELL_COUNT; itr2++)
                 {
+
                     if(
-                        (spell_data_table[itr2].Param0 == itr)  /* ; unit type, base damage, UE flag, or CE index */
+                        (spell_data_table[itr2].ge_idx == itr)
                         &&
                         (spell_data_table[itr2].type == scc_Global_Enchantment)
                     )
                     {
-                        ovl_ench_list_spells[ovl_ench_cnt] = itr2;
+
+                        ovl_ench_list_spells[ovl_ench_cnt] = (int16_t)itr2;
+
                     }
                 }
-                ovl_ench_list_players[ovl_ench_cnt] = player_idx;  // "enchantments are shown in the banner-color of the casting wizard"
+
+                ovl_ench_list_players[ovl_ench_cnt] = (int8_t)player_idx;  // "enchantments are shown in the banner-color of the casting wizard"
+
                 ovl_ench_cnt++;
+
             }
+
         }
+
     }
 
 }
 
 
 // WZD o73p05
-void Magic_Screen_Load_Pictures(void)
+void Magic_Screen_Load(void)
 {
     int16_t itr;
     int16_t itr_gem_count;
@@ -1492,7 +1495,7 @@ void Magic_Screen_Load_Pictures(void)
 
     GUI_String_1 = (char *)Near_Allocate_First(100);
     GUI_String_2 = (char *)Near_Allocate_Next(30);
-    ovl_ench_list_spells = Near_Allocate_Next(192);  // 192 bytes ... ¿ 96 of ?
+    ovl_ench_list_spells = (int16_t *)Near_Allocate_Next(192);  // 192 bytes ... ¿ 96 of ?
     ovl_ench_list_players = (int8_t *)Near_Allocate_Next(96);  // 96 bytes ... ¿ 96 of player_idx ?
     magic_ovl_ench_flds = Near_Allocate_Next(40);  // 40 bytes ... ¿ 40 or 20 of ... ?
     magic_gem_fields = Near_Allocate_Next(12);  // 12 bytes ... ¿ 12 or 6 of ... ?
