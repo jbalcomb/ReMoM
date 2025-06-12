@@ -1794,7 +1794,7 @@ Capture_Cities_Data();
                     if(player_idx == HUMAN_PLAYER_IDX)
                     {
 
-                        Cast_Successful = Spell_Target_Global_Enchantment_Screen__WIP(spell_idx, player_idx);
+                        Cast_Successful = Spell_Target_Global_Enchantment_Screen(spell_idx, player_idx);
 
                     }
                     else
@@ -1818,15 +1818,23 @@ Capture_Cities_Data();
                                 _players[player_idx].casting_cost_original *= 3;
 
                             }
-/* SPELLY */  enchantments_idx = IDK_Get_Global_Enchant_Index__STUB(wy);
-item_list = (_players[player_idx].casting_cost_original + Calculate_Dispel_Difficulty(spell_data_table[enchantments_idx].casting_cost, spell_target_idx, spell_data_table[enchantments_idx].magic_realm));
-item_list = ((_players[player_idx].casting_cost_original * 250) / item_list);
-if(Random(250) <= item_list)
-{
-    ptr_enchantments = &_players[spell_target_idx].Globals[0];
-    ptr_enchantments[spell_data_table[enchantments_idx].Param0] = 0;
-    Fizzle_Notification(spell_target_idx, player_idx, enchantments_idx, aDisjunction);  // "Disjunction"
-}
+
+                            /* SPELLY */  enchantments_idx = IDK_Get_Global_Enchant_Index__STUB(wy);
+
+                            item_list = (_players[player_idx].casting_cost_original + Calculate_Dispel_Difficulty(spell_data_table[enchantments_idx].casting_cost, spell_target_idx, spell_data_table[enchantments_idx].magic_realm));
+
+                            item_list = ((_players[player_idx].casting_cost_original * 250) / item_list);
+
+                            if(Random(250) <= item_list)
+                            {
+
+                                ptr_enchantments = &_players[spell_target_idx].Globals[0];
+
+                                ptr_enchantments[spell_data_table[enchantments_idx].Param0] = 0;
+
+                                Fizzle_Notification(spell_target_idx, player_idx, enchantments_idx, aDisjunction);  // "Disjunction"
+                                
+                            }
 
                         }
 

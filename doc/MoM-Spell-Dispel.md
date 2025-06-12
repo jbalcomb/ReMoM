@@ -1,7 +1,42 @@
 
 
 
-NOTE: also call from Disenchant
+NOTE: also called from Disenchant
+
+
+
+
+
+
+
+
+e.g.,
+100 * 250 / 100 = 25000
+25000 / 100 = 250
+
+~ Percentage Difference
+
+Dispel Strength / (Dispel Strength + Spell Cost)
+
+200 / (200 + 1000) = 0.16666666666666666666666666666667
+41 /250 = 0.164
+
+
+casting_cost = (spell_data_table[spell_idx].casting_cost + _players[player_idx].casting_cost_original);
+casting_cost = ((_players[player_idx].casting_cost_original * 250) / casting_cost);
+threshold = Calculate_Dispel_Difficulty(casting_cost, target_player_idx, spell_data_table[target_spell_idx].magic_realm);
+
+Calculate_Dispel_Difficulty()
+    multiplyer = 1;
+        if(_players[player_idx].nature_mastery > 0)
+            multiplyer += 1;
+        if(_players[player_idx].sorcery_mastery > 0)
+            multiplyer += 1;
+        if(_players[player_idx].chaos_mastery > 0)
+            multiplyer += 1;
+        if(_players[player_idx].archmage > 0)
+            multiplyer += 1;
+    return (casting_cost * multiplyer);
 
 
 

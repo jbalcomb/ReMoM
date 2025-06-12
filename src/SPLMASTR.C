@@ -8,6 +8,9 @@ MoO2
     ~ Science Room?
 */
 
+#include "MOX/Graphics.H"
+#include "MOX/MOX_BASE.H"
+#include "MOX/MOX_T4.H"
 #include "SPLMASTR.H"
 
 #include "MOM_DEF.H"
@@ -262,13 +265,211 @@ SAMB_ptr spellose_sphere_seg;
 // Select_Hero_To_Ressurect()
 
 // WZD o136p02
-// SBK_LoadSpellSlider()
+/*
+
+*/
+void SBK_LoadSpellSlider__WIP(void)
+{
+
+    int16_t itr = 0;  // _SI_
+
+    Allocate_Reduced_Map();
+
+    Mark_Block(_screen_seg);
+
+    IMG_SBK_PageText = Allocate_Next_Block(_screen_seg, 40);
+
+    // SPELLSCR.LBX, 005  "XTRAMANA"    "background"
+    IMG_SBK_SliderBG = LBX_Reload_Next(spellscr_lbx_file__ovr136, 5, _screen_seg);
+
+    // SPELLSCR.LBX, 003  "XTRAMANA"    "star"
+    IMG_SBK_SliderDot = LBX_Reload_Next(spellscr_lbx_file__ovr136, 3, _screen_seg);
+
+    // SPELLSCR.LBX, 004  "XTRAMANA"    "arrow bar"
+    IMG_SBK_SliderBar = LBX_Reload_Next(spellscr_lbx_file__ovr136, 4, _screen_seg);
+
+    // SPELLSCR.LBX, 042  "XTRABUTT"    "var ok button"
+    xtramana_ok_button_seg = LBX_Reload_Next(spellscr_lbx_file__ovr136, 42, _screen_seg);
+
+    Reset_Cycle_Palette_Color();
+
+}
+
 
 // WZD o136p03
-// SBK_SliderRedraw()
+/*
+
+*/
+void SBK_SliderRedraw__WIP(void)
+{
+    char buffer[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char string[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t x_start = 0;  // _SI_
+    int16_t y_start = 0;  // _DI_
+
+    if(_temp_sint_1 > 5)
+    {
+        x_start = 5;
+    }
+    else
+    {
+        x_start = 165;
+    }
+
+    y_start = (21 + ((_temp_sint_1 % 6) * 22));  // center the popup box on the selected spell, vertically
+
+    _osc_anim_ctr = ((_osc_anim_ctr + 1) % 8);
+
+    Copy_Back_To_Off();
+
+    SmlBook_Draw__WIP(16, 10);
+
+    FLIC_Draw((x_start - 4), (y_start + 1), IMG_SBK_SliderBG);
+
+    GAME_MP_SpellVar_1 = (((_xtra_mana_pos - 3) * spell_data_table[SBK_Spell_Index].casting_cost) / 100);  // extra mana amount
+
+    strcpy(string, str_PLUS_SIGN__ovr136);
+
+    itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
+
+    strcat(string, buffer);  // extra mana amount
+
+    Set_Outline_Color(246);
+
+    Set_Font_Style_Shadow_Up(4, 4, 4, 4);
+
+    Set_Alias_Color(6);
+
+    Print((x_start + 4), (y_start + 8), str_AdditionalPower__ovr136);
+
+    Print_Right((x_start + 144), (y_start + 8), string);  // extra mana amount
+
+    Set_Outline_Color(251);
+
+    Set_Font_Style_Shadow_Down(4, 4, 4, 4);
+
+    Set_Alias_Color(6);
+
+    Print((x_start + 4), (y_start + 8), str_AdditionalPower__ovr136);  // "Additional Power:"
+
+    Print_Right((x_start + 144), (y_start + 8), string);
+
+    GAME_MP_SpellVar_1 = (((_xtra_mana_pos - 3) * spell_data_table[SBK_Spell_Index].casting_cost) / 100);
+    GAME_MP_SpellVar_1 += spell_data_table[SBK_Spell_Index].casting_cost;
+    _players[HUMAN_PLAYER_IDX].casting_cost_original = GAME_MP_SpellVar_1;
+    _players[HUMAN_PLAYER_IDX].casting_cost_remaining = (GAME_MP_SpellVar_1 - (GAME_MP_SpellVar_1 * Casting_Cost_Reduction(HUMAN_PLAYER_IDX, SBK_Spell_Index)) / 100);
+
+    Draw_Picture_To_Bitmap(IMG_SBK_SliderBar, IMG_SBK_PageText);
+
+    Set_Window((x_start + 8), 0, (x_start + _xtra_mana_pos + 8), 199);
+
+    Draw_Picture_Windowed((x_start + _osc_anim_ctr + 8), (y_start + 23), IMG_SBK_PageText);
+
+    Draw_Picture_Windowed((x_start + _osc_anim_ctr - 40), (y_start + 23), IMG_SBK_PageText);
+
+    FLIC_Draw((x_start + _xtra_mana_pos + 5),(y_start + 22), IMG_SBK_SliderDot);
+
+    Reset_Window();
+
+}
+
 
 // WZD o136p04
-// SBK_SpellSlider()
+/*
+; displays the spell infusion dialog, allowing the
+; player to specify the additional power they wish to
+; channel into an infusable spell, setting both the
+; initial and final cost into the wizard record
+;
+; BUG: ignores Evil Omens almost entirely
+*/
+/*
+
+*/
+void SBK_SpellSlider__WIP(int16_t spell_idx, int16_t spellbook_field_idx)
+{
+    int16_t y_start = 0;
+    int16_t ok_button_field = 0;
+    int16_t input_field_idx = 0;
+    int16_t x_start = 0;  // _DI_
+
+    _temp_sint_1 = spellbook_field_idx;
+
+    if(spellbook_field_idx > 5)
+    {
+
+        x_start = 5;
+
+    }
+    else
+    {
+        
+        x_start = 165;
+
+    }
+
+    y_start = (21 + ((spellbook_field_idx % 6) * 22));  // center the popup box on the selected spell, vertically
+    
+    SBK_LoadSpellSlider__WIP();
+
+    _osc_anim_ctr = 0;
+
+    GAME_MP_SpellVar_1 = spell_data_table[spell_idx].casting_cost;
+
+    _xtra_mana_pos = 3;
+
+    SBK_Spell_Index = spell_idx;
+
+    Clear_Fields();
+
+    Add_Scroll_Field((x_start + 12), (y_start + 22), 0, 106, 3, 103, 106, 7, &_xtra_mana_pos, (int16_t)str_empty_string__ovr136[0], ST_UNDEFINED);
+
+    ok_button_field = Add_Button_Field((x_start + 123), (y_start + 18), &str_empty_string__ovr136[0], xtramana_ok_button_seg, (int16_t)str_hotkey_O__ovr136[0], ST_UNDEFINED);
+
+    Assign_Auto_Function(SBK_SliderRedraw__WIP, 2);
+
+    _osc_leave_screen = ST_FALSE;
+
+    // ; completely redundant, the result of all this is zero
+    GAME_MP_SpellVar_1 = (((_xtra_mana_pos - 3) * spell_data_table[SBK_Spell_Index].casting_cost) / 100);
+    GAME_MP_SpellVar_1 += spell_data_table[SBK_Spell_Index].casting_cost;
+    _players[HUMAN_PLAYER_IDX].casting_cost_original = GAME_MP_SpellVar_1;
+    _players[HUMAN_PLAYER_IDX].casting_cost_remaining = (GAME_MP_SpellVar_1 - (GAME_MP_SpellVar_1 * Casting_Cost_Reduction(HUMAN_PLAYER_IDX, SBK_Spell_Index)) / 100);
+
+    while(_osc_leave_screen == ST_FALSE)
+    {
+
+        Mark_Time();
+
+        input_field_idx = Get_Input();
+
+        if(input_field_idx == ok_button_field)
+        {
+
+            _osc_leave_screen = ST_TRUE;
+
+        }
+
+        if(_osc_leave_screen == ST_FALSE)
+        {
+
+            Set_Page_Off();
+
+            SBK_SliderRedraw__WIP();
+                                   
+            PageFlip_FX();
+
+        }
+
+    }
+
+    Clear_Fields();
+
+    Deactivate_Auto_Function();
+
+    Release_Block(_screen_seg);
+
+}
 
 
 // WZD o136p05
@@ -878,7 +1079,7 @@ void Spell_Target_Global_Enchantment_Screen_Draw(void)
 /*
 screen for targeting other players' global enchantments
 */
-int16_t Spell_Target_Global_Enchantment_Screen__WIP(int16_t spell_idx, int16_t player_idx)
+int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player_idx)
 {
     int16_t fields[(3 * (5 - 1))] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t bot_arrow_fields[4] = { 0, 0, 0, 0 };
@@ -985,11 +1186,6 @@ int16_t Spell_Target_Global_Enchantment_Screen__WIP(int16_t spell_idx, int16_t p
             input_field_idx = Get_Input();
 
             _osc_scanned_field = Scan_Input();
-
-            if(_osc_scanned_field != 0)
-            {
-                printf("_osc_scanned_field: %d\n", _osc_scanned_field);
-            }
 
             if(((_osc_scanned_field - 1) % 3) >= ovl_ench_list_cnt[(1 + ((_osc_scanned_field - 1) / 3))])
             {
@@ -1109,10 +1305,147 @@ int16_t Spell_Target_Global_Enchantment_Screen__WIP(int16_t spell_idx, int16_t p
 /*
 applies the effects of spl_Spell_Binding
 */
-void Spell_Target_Global_Enchantment_Bind__WIP(int16_t var_4, int16_t player_idx, int16_t spell_idx, int16_t var_C)
+void Spell_Target_Global_Enchantment_Bind__WIP(int16_t field_idx, int16_t player_idx, int16_t target_spell_idx, int16_t target_player_idx)
 {
+    char string[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
+    int16_t spell_idx = 0;
+    int16_t input_field_idx = 0;
+    int16_t x = 0;
+    int16_t y = 0;
+    int16_t y_start = 0;
+    int16_t IDK_x = 0;
+    int16_t x_start = 0;
+    uint8_t * ptr_enchantments = 0;
+    int16_t succeeded = 0;
+    int16_t itr = 0;  // _SI_
+    // _DI_IDK_cast_or_dispel_cost__strlen = di
+    int16_t casting_cost = 0;
+    int16_t threshold = 0;
+    int16_t character_count = 0;
+    int16_t half_width = 0;
 
-    STU_DEBUG_BREAK();
+    x_start = 50;
+
+    y_start = ((5 - _num_players) * 23);
+
+    Update_Remap_Color_Range(9, 10);
+
+    // spell_idx = ovl_ench_list_ptr[(itr2 - 1)][(ovl_ench_list_fst[itr2] + itr1)]
+    spell_idx = ovl_ench_list_ptr[(target_player_idx - 1)][((field_idx % 3) + ovl_ench_list_fst[(target_player_idx - 1)])];
+
+    _players[player_idx].casting_cost_original *= 20;
+
+    succeeded = ST_FALSE;
+
+    casting_cost = (spell_data_table[spell_idx].casting_cost + _players[player_idx].casting_cost_original);
+
+    casting_cost = ((_players[player_idx].casting_cost_original * 250) / casting_cost);
+
+    threshold = Calculate_Dispel_Difficulty(casting_cost, target_player_idx, spell_data_table[target_spell_idx].magic_realm);
+
+    if(Random(250) <= threshold)
+    {
+
+        succeeded = ST_TRUE;
+
+        ptr_enchantments = &_players[target_player_idx].Globals[0];
+
+        ptr_enchantments[spell_data_table[spell_idx].ge_idx] = 0;
+
+        ptr_enchantments = &_players[player_idx].Globals[0];
+
+        ptr_enchantments[spell_data_table[spell_idx].ge_idx] = (player_idx + 1);  // player num
+
+    }
+
+    _temp_sint_1 = succeeded;
+
+    x = (x_start + 73);
+
+    y = (y_start + 16 + (field_idx * 13) + ((field_idx / 3) * 7));
+// FLIC_Draw((x_start + 73), (y_start + 16 + ((_osc_scanned_field - 1) * 13) + (((_osc_scanned_field - 1) / 3) * 7)), spellscr_oversbut_seg);
+
+    _fstrcpy(string, spell_data_table[spell_idx].name);
+
+    character_count = strlen(string);
+
+    half_width = ((character_count * 5) / 2);
+
+    IDK_x = (x + half_width - 18);
+
+    input_field_idx = 0;
+
+    for(itr = 0; ((itr < 54) && (input_field_idx == 0)); itr++)
+    {
+
+        input_field_idx = Get_Input();
+
+        Mark_Time();
+
+        Set_Page_Off();
+
+        Spell_Target_Global_Enchantment_Screen_Draw();
+
+        if(itr > 23)
+        {
+
+            _osc_need_target_flag = ST_FALSE;
+
+        }
+
+        if(succeeded == ST_TRUE)
+        {
+
+            Create_Picture(126, 12, IMG_SBK_PageText);
+
+            if(
+                (itr > 23)
+                &&
+                (itr < 36)
+            )
+            {
+
+                _ce_bldg_idx = ST_TRUE;  // ¿ redundant ?
+
+                Set_Font_Style(2, 1, 0, 0);
+
+                Print_To_Bitmap(3, 2, string, IMG_SBK_PageText);
+
+                Scale_Bitmap(IMG_SBK_PageText, (100 - ((itr - 23) * 8)), 100);
+
+                Draw_Picture((x + ((((itr - 23) * half_width) * 8) / 100)), y, IMG_SBK_PageText);
+
+            }
+
+        }
+
+        Reset_Window();
+
+        if(itr < 36)
+        {
+
+            FLIC_Draw(IDK_x, (y - 1), spell_animation_seg);
+
+        }
+        else
+        {
+
+            Clipped_Draw((IDK_x - ((IDK_x / 12) * (itr - 35))), y, spell_animation_seg);
+
+        }
+
+        PageFlip_FX();
+
+        Release_Time(2);
+
+    }
+
+    if(succeeded == ST_TRUE)
+    {
+
+        _ce_bldg_idx = ST_TRUE;
+
+    }
 
 }
 
@@ -1121,10 +1454,117 @@ void Spell_Target_Global_Enchantment_Bind__WIP(int16_t var_4, int16_t player_idx
 /*
 applies the effects of spl_Disjunction or spl_Disjunction_True
 */
-void Spell_Target_Global_Enchantment_Disjunct__WIP(int16_t var_4, int16_t player_idx, int16_t spell_idx, int16_t var_C)
+void Spell_Target_Global_Enchantment_Disjunct__WIP(int16_t field_idx, int16_t player_idx, int16_t target_spell_idx, int16_t target_player_idx)
 {
+    int16_t spell_idx = 0;
+    int16_t input_field_idx = 0;
+    int16_t x = 0;
+    int16_t y = 0;
+    int16_t y_start = 0;
+    int16_t IDK_x = 0;
+    int16_t x_start = 0;
+    uint8_t * ptr_enchantments = 0;
+    int16_t succeeded = 0;
+    int16_t itr = 0;  // _SI_
+    // _DI_IDK_cast_or_dispel_cost__strlen = di
+    int16_t casting_cost = 0;
+    int16_t threshold = 0;
+    int16_t character_count = 0;
+    int16_t half_width = 0;
 
-    STU_DEBUG_BREAK();
+    x_start = 50;
+
+    y_start = ((5 - _num_players) * 23);
+
+    spell_idx = ovl_ench_list_ptr[(target_player_idx - 1)][(ovl_ench_list_fst[target_player_idx] + (field_idx % 3))];
+
+    if(target_spell_idx == spl_Disjunction_True)
+    {
+
+        _players[player_idx].casting_cost_original *= 3;
+
+    }
+
+    succeeded = ST_FALSE;
+
+    casting_cost = (spell_data_table[spell_idx].casting_cost + _players[player_idx].casting_cost_original);
+
+    casting_cost = ((_players[player_idx].casting_cost_original * 250) / casting_cost);
+
+
+    threshold = Calculate_Dispel_Difficulty(casting_cost, target_player_idx, spell_data_table[target_spell_idx].magic_realm);
+
+    if(Random(250) <= threshold)
+    {
+
+        succeeded = ST_TRUE;
+
+        ptr_enchantments = &_players[target_player_idx].Globals[0];
+
+        ptr_enchantments[spell_data_table[spell_idx].ge_idx] = 0;
+
+    }
+
+    _temp_sint_1 = succeeded;
+
+    x = (x_start + 73);
+
+    y = (y_start + 16 + (field_idx * 13) + ((field_idx / 3) * 7));
+
+    input_field_idx = 0;
+
+    for(itr = 0; ((itr < 24) && (input_field_idx == 0)); itr++)
+    {
+
+        input_field_idx = Get_Input();
+
+        Mark_Time();
+
+        Set_Page_Off();
+
+        Spell_Target_Global_Enchantment_Screen_Draw();
+
+        if(itr > 10)
+        {
+
+            _osc_need_target_flag = ST_FALSE;
+
+        }
+
+        if(
+            (succeeded == ST_TRUE)
+            &&
+            (itr > 10)
+        )
+        {
+
+            Draw_Picture_To_Bitmap(spellscr_oversbut_seg, IMG_SBK_Anims);
+
+            if(((itr - 11) * 10) < 100)
+            {
+
+                Vanish_Bitmap__WIP(IMG_SBK_Anims, ((itr - 11) * 10));
+
+            }
+
+            Draw_Picture(x, y, IMG_SBK_Anims);
+
+        }
+
+        FLIC_Draw((x - 4), (y - 12), spell_animation_seg);
+
+        PageFlip_FX();
+
+        Release_Time(2);
+        
+    }
+
+    if(succeeded == ST_TRUE)
+    {
+
+        _ce_bldg_idx = ST_TRUE;
+
+    }
 
 }
 

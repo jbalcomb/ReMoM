@@ -13,6 +13,7 @@ MoO2
 
 */
 
+#include "EXIT.H"
 #include "random.H"
 
 #include "MOX_BITS.H"
@@ -233,8 +234,8 @@ uint16_t rnd_1_n(uint16_t n, uint32_t *seed)
     return 1 + rnd_0_nm1(n, seed);
 }
 */
-// int16_t Random(int16_t n)
-int16_t The_Old_Random(int16_t n)
+// int16_t The_Old_Random(int16_t n)
+int16_t Random(int16_t n)
 {
     uint16_t result;
     uint32_t r = random_seed;
@@ -296,8 +297,7 @@ uint16_t _CFO_ = 0;
     _CFO_ = 0x0000;                             \
 }
 
-// int16_t The_New_Random(int16_t n)
-int16_t Random(int16_t n)
+int16_t The_New_Random(int16_t n)
 {
     uint16_t result = 0;
     uint16_t return_value = 0;

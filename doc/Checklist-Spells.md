@@ -92,7 +92,7 @@ all city enchantments are done
 [ ]  17  scc_Infusable_Spell
 [x]  18  scc_Dispels
 [x]  19  scc_Disenchants
-[ ]  20  scc_Disjunctions
+[x]  20  scc_Disjunctions
 [ ]  21  scc_Counter_Spell
 [ ]  22  scc_Var_Dmg_Spell
 [ ]  23  scc_Banish_Spell
@@ -215,7 +215,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Nagas
 [ ] Psionic Blast
 [ ] Blur
-[ ] Disenchant True
+[x] Disenchant True
 [ ] Vertigo
 [x] Spell Lock
 [ ] Enchant Road
@@ -224,7 +224,7 @@ Spreadsheet - OSG Spells by Realm
 [ ] Spell Blast
 [x] Aura of Majesty
 [x] Phantom Beast
-[ ] Disjunction True
+[x] Disjunction True
 [x] Invisibility
 [x] Wind Walking
 [ ] Banish
@@ -367,13 +367,13 @@ Spreadsheet - OSG Spells by Realm
 [x] Magic Spirit
 [x] Dispel Magic
 [x] Summoning Circle
-[ ] Disenchant Area
+[x] Disenchant Area
 [x] Recall Hero
 [ ] Detect Magic
 [ ] Enchant Item
 [ ] Summon Hero
 [x] Awareness
-[ ] Disjunction
+[x] Disjunction
 [ ] Create Artifact
 [ ] Summon Champion
 [x] Spell of Mastery

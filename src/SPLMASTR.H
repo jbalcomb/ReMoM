@@ -47,13 +47,13 @@ extern int16_t GAME_SoM_Cast_By;
 // Select_Hero_To_Ressurect()
 
 // WZD o136p02
-// SBK_LoadSpellSlider()
+void SBK_LoadSpellSlider__WIP(void);
 
 // WZD o136p03
-// SBK_SliderRedraw()
+void SBK_SliderRedraw__WIP(void);
 
 // WZD o136p04
-// SBK_SpellSlider()
+void SBK_SpellSlider__WIP(int16_t spell_idx, int16_t spellbook_field_idx);
 
 // WZD o136p05
 void Combat_Spellbook_Mana_Adder_Load(void);
@@ -71,13 +71,13 @@ void Spell_Target_Global_Enchantment_Screen_Load(int16_t spell_idx);
 void Spell_Target_Global_Enchantment_Screen_Draw(void);
 
 // WZD o136p10
-int16_t Spell_Target_Global_Enchantment_Screen__WIP(int16_t spell_idx, int16_t player_idx);
+int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player_idx);
 
 // WZD o136p11
-void Spell_Target_Global_Enchantment_Bind__WIP(int16_t var_4, int16_t player_idx, int16_t spell_idx, int16_t var_C);
+void Spell_Target_Global_Enchantment_Bind__WIP(int16_t field_idx, int16_t player_idx, int16_t target_spell_idx, int16_t target_player_idx);
 
 // WZD o136p12
-void Spell_Target_Global_Enchantment_Disjunct__WIP(int16_t var_4, int16_t player_idx, int16_t spell_idx, int16_t var_C);
+void Spell_Target_Global_Enchantment_Disjunct__WIP(int16_t field_idx, int16_t player_idx, int16_t target_spell_idx, int16_t target_player_idx);
 
 
 

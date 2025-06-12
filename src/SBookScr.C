@@ -542,13 +542,14 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
             if(_players[player_idx].casting_cost_remaining > _players[player_idx].casting_cost_original)
             {
                 _players[player_idx].casting_cost_original = _players[player_idx].casting_cost_remaining;
+                printf("_players[player_idx].casting_cost_original: %d\n", _players[player_idx].casting_cost_original);
             }
         }
     }
     else  /* ((spell_data_table[spell_idx].type >= scc_Infusable_Spell) && (player_idx == HUMAN_PLAYER_IDX)) */
     {
         _players[player_idx].casting_cost_remaining = Casting_Cost(HUMAN_PLAYER_IDX, spell_idx, ST_FALSE);
-        // SPELLY  SBK_SpellSlider(spell_idx, spellbook_page_spell_index);
+        SBK_SpellSlider__WIP(spell_idx, spellbook_page_spell_index);
     }
 
     if(_players[player_idx].casting_spell_idx == spl_NONE)

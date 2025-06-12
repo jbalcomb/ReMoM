@@ -65,9 +65,11 @@ void TST_Patch_Game_Data(void)
     TST_Cheat_Power(player_idx);
 
 
+    // Spell Bind
+    spell_data_table[spl_Spell_Binding].casting_cost = 1;
+    TST_Learn_Spell(player_idx, spl_Spell_Binding);  // 76
+
     // Dispel, Disenchant, Disjunct
-    spell_data_table[spl_Disjunction].casting_cost = 1;
-    spell_data_table[spl_Disjunction_True].casting_cost = 1;
     _players[0].Globals[DETECT_MAGIC     ] = (0 + 1);  // 206  spl_Detect_Magic
     _players[1].Globals[AWARENESS        ] = (1 + 1);  // 209  spl_Awareness
     _players[1].Globals[DETECT_MAGIC     ] = (1 + 1);  // 206  spl_Detect_Magic
@@ -85,7 +87,7 @@ void TST_Patch_Game_Data(void)
     TST_Learn_Spell(player_idx, spl_Dispel_Magic_True);
     TST_Learn_Spell(player_idx, spl_Disenchant_Area);
     TST_Learn_Spell(player_idx, spl_Disenchant_True);
-    TST_Learn_Spell(player_idx, spl_Disjunction);
+    TST_Learn_Spell(player_idx, spl_Disjunction);  // 210
     TST_Learn_Spell(player_idx, spl_Disjunction_True);
 
     // Direct Damage - Fixed
