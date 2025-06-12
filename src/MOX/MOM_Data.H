@@ -4549,10 +4549,12 @@ AKA  _osc_bldg_idx
 AKA  _osc_city_idx
 AKA  _osc_player_idx
 AKA  _osc_spell_Idx
+SmlBook XtraMana & CmbBook XtraMana
+    spellbook field index; used to position the popup window
 */
 extern int16_t _temp_sint_1;
 #define _osc_player_idx _temp_sint_1
-#define _osc_spell_Idx _temp_sint_1
+#define _osc_spell_idx _temp_sint_1
 #define _osc_city_idx _temp_sint_1
 #define _osc_bldg_idx _temp_sint_1
 

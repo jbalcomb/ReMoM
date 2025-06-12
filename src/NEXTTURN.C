@@ -369,7 +369,9 @@ Check_Cities_Data();
 
     o59p10_empty_function();
 
-
+#ifdef STU_DEBUG
+    _players[HUMAN_PLAYER_IDX].casting_cost_remaining = 0;
+#endif
 
     if(
         (_players[_human_player_idx].casting_cost_remaining <= 0)

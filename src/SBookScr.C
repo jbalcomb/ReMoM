@@ -549,7 +549,7 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
     else  /* ((spell_data_table[spell_idx].type >= scc_Infusable_Spell) && (player_idx == HUMAN_PLAYER_IDX)) */
     {
         _players[player_idx].casting_cost_remaining = Casting_Cost(HUMAN_PLAYER_IDX, spell_idx, ST_FALSE);
-        SBK_SpellSlider__WIP(spell_idx, spellbook_page_spell_index);
+        Spellbook_Mana_Adder_Screen(spell_idx, spellbook_page_spell_index);
     }
 
     if(_players[player_idx].casting_spell_idx == spl_NONE)

@@ -47,13 +47,13 @@ extern int16_t GAME_SoM_Cast_By;
 // Select_Hero_To_Ressurect()
 
 // WZD o136p02
-void SBK_LoadSpellSlider__WIP(void);
+void Spellbook_Mana_Adder_Load(void);
 
 // WZD o136p03
-void SBK_SliderRedraw__WIP(void);
+void Spellbook_Mana_Adder_Draw(void);
 
 // WZD o136p04
-void SBK_SpellSlider__WIP(int16_t spell_idx, int16_t spellbook_field_idx);
+void Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_field_idx);
 
 // WZD o136p05
 void Combat_Spellbook_Mana_Adder_Load(void);

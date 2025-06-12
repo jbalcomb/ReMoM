@@ -266,12 +266,15 @@ SAMB_ptr spellose_sphere_seg;
 
 // WZD o136p02
 /*
+; reallocates the minimap, marks the sandbox, then
+; loads the spell slider images into it, finally
+; resetting the blink color state
+*/
+/*
 
 */
-void SBK_LoadSpellSlider__WIP(void)
+void Spellbook_Mana_Adder_Load(void)
 {
-
-    int16_t itr = 0;  // _SI_
 
     Allocate_Reduced_Map();
 
@@ -298,12 +301,21 @@ void SBK_LoadSpellSlider__WIP(void)
 
 // WZD o136p03
 /*
+; redraws the screen from the 3rd VGA frame, then the
+; overland spellbook pages over it, and finally the
+; active infusion slider control, while also converting
+; the the slider value into total spell cost and saving
+; it to the wizard record
+; BUG: ignores Evil Omens when calculating the slider
+; values
+*/
+/*
 
 */
-void SBK_SliderRedraw__WIP(void)
+void Spellbook_Mana_Adder_Draw(void)
 {
-    char buffer[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    char string[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char buffer[LEN_TEMP_BUFFER] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char string[LEN_TEMP_BUFFER] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t x_start = 0;  // _SI_
     int16_t y_start = 0;  // _DI_
 
@@ -335,26 +347,17 @@ void SBK_SliderRedraw__WIP(void)
     strcat(string, buffer);  // extra mana amount
 
     Set_Outline_Color(246);
-
     Set_Font_Style_Shadow_Up(4, 4, 4, 4);
-
     Set_Alias_Color(6);
-
-    Print((x_start + 4), (y_start + 8), str_AdditionalPower__ovr136);
-
+    Print((x_start + 4), (y_start + 8), str_AdditionalPower__ovr136);  // "Additional Power:"
     Print_Right((x_start + 144), (y_start + 8), string);  // extra mana amount
 
     Set_Outline_Color(251);
-
     Set_Font_Style_Shadow_Down(4, 4, 4, 4);
-
     Set_Alias_Color(6);
-
     Print((x_start + 4), (y_start + 8), str_AdditionalPower__ovr136);  // "Additional Power:"
-
-    Print_Right((x_start + 144), (y_start + 8), string);
-
-    GAME_MP_SpellVar_1 = (((_xtra_mana_pos - 3) * spell_data_table[SBK_Spell_Index].casting_cost) / 100);
+    Print_Right((x_start + 144), (y_start + 8), string);  // extra mana amount
+    
     GAME_MP_SpellVar_1 += spell_data_table[SBK_Spell_Index].casting_cost;
     _players[HUMAN_PLAYER_IDX].casting_cost_original = GAME_MP_SpellVar_1;
     _players[HUMAN_PLAYER_IDX].casting_cost_remaining = (GAME_MP_SpellVar_1 - (GAME_MP_SpellVar_1 * Casting_Cost_Reduction(HUMAN_PLAYER_IDX, SBK_Spell_Index)) / 100);
@@ -380,13 +383,12 @@ void SBK_SliderRedraw__WIP(void)
 ; player to specify the additional power they wish to
 ; channel into an infusable spell, setting both the
 ; initial and final cost into the wizard record
-;
 ; BUG: ignores Evil Omens almost entirely
 */
 /*
 
 */
-void SBK_SpellSlider__WIP(int16_t spell_idx, int16_t spellbook_field_idx)
+void Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_field_idx)
 {
     int16_t y_start = 0;
     int16_t ok_button_field = 0;
@@ -410,7 +412,7 @@ void SBK_SpellSlider__WIP(int16_t spell_idx, int16_t spellbook_field_idx)
 
     y_start = (21 + ((spellbook_field_idx % 6) * 22));  // center the popup box on the selected spell, vertically
     
-    SBK_LoadSpellSlider__WIP();
+    Spellbook_Mana_Adder_Load();
 
     _osc_anim_ctr = 0;
 
@@ -426,7 +428,7 @@ void SBK_SpellSlider__WIP(int16_t spell_idx, int16_t spellbook_field_idx)
 
     ok_button_field = Add_Button_Field((x_start + 123), (y_start + 18), &str_empty_string__ovr136[0], xtramana_ok_button_seg, (int16_t)str_hotkey_O__ovr136[0], ST_UNDEFINED);
 
-    Assign_Auto_Function(SBK_SliderRedraw__WIP, 2);
+    Assign_Auto_Function(Spellbook_Mana_Adder_Draw, 2);
 
     _osc_leave_screen = ST_FALSE;
 
@@ -455,11 +457,13 @@ void SBK_SpellSlider__WIP(int16_t spell_idx, int16_t spellbook_field_idx)
 
             Set_Page_Off();
 
-            SBK_SliderRedraw__WIP();
+            Spellbook_Mana_Adder_Draw();
                                    
             PageFlip_FX();
 
         }
+
+        Release_Time(2);
 
     }
 
@@ -467,6 +471,7 @@ void SBK_SpellSlider__WIP(int16_t spell_idx, int16_t spellbook_field_idx)
 
     Deactivate_Auto_Function();
 
+    // BUGBUG  Release_Block();
     Release_Block(_screen_seg);
 
 }
