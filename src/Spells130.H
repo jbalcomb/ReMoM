@@ -39,7 +39,7 @@ int16_t Apply_Drain_Power(int16_t player_idx);
 //sAFA06_Anim_EarthLore()
 
 // WZD o130p07
-//Cast_SpellBinding()
+void Cast_Spell_Binding(int16_t player_idx);
 
 // WZD o130p08
 //Cast_ChangeTerain()

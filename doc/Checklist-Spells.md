@@ -239,7 +239,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Creature Binding
 [ ] Mass Invisibility
 [x] Great Unsummoning
-[ ] Spell Binding
+[x] Spell Binding
 [x] Flying Fortress
 [x] Sky Drake
 [x] Suppress Magic

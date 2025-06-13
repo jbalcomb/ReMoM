@@ -1373,7 +1373,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
 
 
 // WZD o137p11
-void Target_Wizard_Screen_Load(int16_t spell_idx)
+static void Target_Wizard_Screen_Load(int16_t spell_idx)
 {
     int16_t y = 0;
     int16_t x = 0;
@@ -1462,7 +1462,7 @@ void Target_Wizard_Screen_Load(int16_t spell_idx)
 /*
 "Choose target for a " ... " spell"
 */
-void Target_Wizard_Screen_Draw(void)
+static void Target_Wizard_Screen_Draw(void)
 {
     char string[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t var_14 = 0;

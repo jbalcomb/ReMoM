@@ -72,7 +72,6 @@ void TST_Patch_Game_Data(void)
     TST_Learn_Spell(player_idx, spl_Subversion);       // 177
 
     // Spell Bind
-    spell_data_table[spl_Spell_Binding].casting_cost = 1;
     TST_Learn_Spell(player_idx, spl_Spell_Binding);  // 76
 
     // Dispel, Disenchant, Disjunct

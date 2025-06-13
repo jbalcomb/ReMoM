@@ -4,6 +4,7 @@
 */
 
 #include "NEXTTURN.H"
+#include "SPLMASTR.H"
 #include "Spells130.H"
 
 #include "MOX/MOX_DEF.H"
@@ -120,7 +121,51 @@ int16_t Apply_Drain_Power(int16_t player_idx)
 
 // WZD o130p07
 // drake178: sub_AFB7F()
-//Cast_SpellBinding()
+void Cast_Spell_Binding(int16_t player_idx)
+{
+    int16_t var_A = 0;
+    uint8_t * ptr_enchantments = 0;
+    int16_t target_player_idx = 0;
+    int16_t spell_idx = 0;
+    int16_t threshold = 0;  // _SI_
+
+    if(player_idx == HUMAN_PLAYER_IDX)
+    {
+
+        Spell_Target_Global_Enchantment_Screen(spl_Spell_Binding, player_idx);
+
+    }
+    else
+    {
+
+        var_A = IDK_AITP_Disjunction__STUB(&target_player_idx, &spell_idx, spl_Spell_Binding, player_idx);
+
+        if(var_A == 1)
+        {
+
+            threshold = (_players[player_idx].casting_cost_original + Calculate_Dispel_Difficulty(spell_data_table[spell_idx].casting_cost, target_player_idx, spell_data_table[spell_idx].magic_realm));
+
+            threshold = ((_players[player_idx].casting_cost_original * 250) / threshold);
+
+            if(Random(250) <= threshold)
+            {
+
+                ptr_enchantments = &_players[target_player_idx].Globals[0];
+
+                ptr_enchantments[spell_data_table[spell_idx].ge_idx] = 0;
+
+                ptr_enchantments = &_players[player_idx].Globals[0];
+
+                ptr_enchantments[spell_data_table[spell_idx].ge_idx] = (player_idx + 1);  // player_num
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // WZD o130p08
 // drake178: sub_AFCA8()

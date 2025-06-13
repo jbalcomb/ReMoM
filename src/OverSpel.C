@@ -601,7 +601,7 @@ IDA Group Colors
     scc_City_Enchantment_Positive  ( 2)  #14 blueish lighter
     scc_City_Enchantment_Negative  ( 3)  #14 blueish lighter
     scc_Direct_Damage_Fixed        ( 4)  #32 purple
-    scc_Special_Spell              ( 5)  
+    scc_Special_Spell              ( 5)      darker orange
     scc_Global_Enchantment         ( 9)  #13 ~ blue, greyish/greenish
     scc_Crafting_Spell             (11)  #17 mauve
 
@@ -1529,8 +1529,183 @@ Capture_Cities_Data();
                 // Animate Dead, Black Wind, Call The Void, Change Terrain, Chaos Channels, Corruption, Cracks Call, Death Wish, Disrupt, Earth Lore, Earth to Mud, Earthquake, Enchant Road, Great Unsummoning, Healing, Incarnation, Lycanthropy, Magic Vortex, Move Fortress, Natures Cures, Plane Shift, Raise Dead, Raise Volcano, Recall Hero, Resurrection, Spell Binding, Spell Of Mastery, Spell Of Return, Spell Ward, Stasis, Summon Champion, Summon Hero, Transmute, Wall of Stone, Warp Creature, Warp Node, Warp Wood, Word of Recall
                 case scc_Special_Spell:  //  5
                 {
+                    
+                    AI_Eval_After_Spell = ST_TRUE;
 
-                } break;
+                    switch(spell_idx)
+                    {
+
+                        case spl_Spell_Of_Return:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Corruption:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Earth_Lore:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Change_Terrain:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Stasis:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Natures_Cures:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Move_Fortress:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Transmute:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Wall_Of_Stone:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Earthquake:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Word_Of_Recall:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Enchant_Road:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Spell_Ward:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Spell_Binding:
+                        {
+
+                            Cast_Spell_Binding(player_idx);
+
+
+                        } break;
+
+                        case spl_Chaos_Channels:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Warp_Node:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Raise_Volcano:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Call_The_Void:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Plane_Shift:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Resurrection:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Incarnation:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Great_Unsummoning:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Death_Wish:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Black_Wind:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Lycanthropy:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Summon_Hero:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        case spl_Summon_Champion:
+                        {
+                            STU_DEBUG_BREAK();
+
+                        } break;
+
+                        default:
+                        {
+                            STU_DEBUG_BREAK();
+                        } break;
+                    }
+
+                } break;  /* case scc_Special_Spell:  //  5 */
 
                 // WIZARD:  Cruel Unminding, Drain Power, Spell Blast, Subversion
                 case scc_Target_Wizard:  //  6
@@ -1622,7 +1797,7 @@ Capture_Cities_Data();
                         else
                         {
                             Cast_Successful = ST_FALSE;
-                            LBX_Load_Data_Static(message_lbx_file__ovr135, 0, GUI_NearMsgString, 27, 1, 150);  // "You have no contact with any other wizards. Your "
+                            LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 27, 1, 150);  // "You have no contact with any other wizards. Your "
                             // ; already copied here...
                             _fstrcpy(&spell_name[0], spell_data_table[spell_idx].name);
                             strcat(GUI_NearMsgString, (char *)&spell_name[0]);
@@ -2025,6 +2200,6 @@ Capture_Cities_Data();
 int16_t IDK_Get_Global_Enchant_Index__STUB(int16_t value)
 {
 
-
+    return 0;
 
 }

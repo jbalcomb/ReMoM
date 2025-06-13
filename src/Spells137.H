@@ -52,13 +52,13 @@ void OVL_DrawGlobalAnim(void);
 void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx);
 
 // WZD o137p11
-void IDK_SplScr_sBFAA5(int16_t spell_idx);
+void Target_Wizard_Screen_Load(int16_t spell_idx);
 
 // WZD o137p12
-// Spell_Target_Wizard_Screen_Draw()
+void Target_Wizard_Screen_Draw(void);
 
 // WZD o137p13
-int16_t Spell_Target_Wizard_Screen(int16_t spell_idx);
+int16_t Target_Wizard_Screen(int16_t spell_idx);
 
 
 

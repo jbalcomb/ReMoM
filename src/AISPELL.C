@@ -874,6 +874,62 @@ int16_t IDK_Pick_Target_For_Unit_Enchantment__STUB(int16_t spell_target_type, in
 */
 int16_t IDK_AITP_Disjunction__STUB(int16_t * wx, int16_t * wy, int16_t spell_idx, int16_t player_idx)
 {
+    int8_t var_9E[6][25] = {
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+    };
+    int16_t var_8 = 0;
+    int16_t var_6 = 0;
+    int16_t var_4 = 0;
+    int16_t var_2 = 0;
+    int16_t itr = 0;  // _DI_
+    int16_t _SI_player_idx = 0;  // _SI_
+
+    for(itr = 0; itr < NUM_PLAYERS; itr++)
+    {
+
+        for(var_2 = 0; var_2 < 25; var_2++)
+        {
+
+            var_9E[itr][var_2] = 0;
+
+        }
+
+    }
+
+    _SI_player_idx = 0;
+
+    if(spell_idx == spl_Spell_Binding)
+    {
+        
+        for(itr = 0; itr < _num_players; itr++)
+        {
+
+        }
+
+    }
+    else if(
+        (spell_idx == spl_Disjunction)
+        ||
+        (spell_idx == spl_Disjunction_True)
+    )
+    {
+
+    }
+    else
+    {
+    
+    }
+
+
+
+
+
+
 
     return ST_FALSE;
 
