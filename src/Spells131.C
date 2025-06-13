@@ -274,7 +274,7 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
         )
         {
 
-            spell_idx = Get_Spell_For_City_Enchandment(Enchant_Offset);
+            spell_idx = Get_Spell_For_City_Enchantment(Enchant_Offset);
 
             threshold = (strength + Calculate_Dispel_Difficulty(spell_data_table[spell_idx].casting_cost, enemy_player_idx, spell_data_table[spell_idx].magic_realm));
 

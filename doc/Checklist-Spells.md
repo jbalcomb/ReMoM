@@ -6,7 +6,7 @@ scc_Mundane_Enchantment  ==>  scc_Unit_Enchantment_Normal_Only
 scc_Dispel_Spell         ==>  scc_Dispels
 scc_Disenchant_Spell     ==>  scc_Disenchants
 scc_Disjunction_Spell    ==>  scc_Disjunctions
-
+scc_Target_Wiz_Spell     ==>  scc_Target_Wizard
 
 NOTE: the check on the check-list is only for the human player side, CP/AI is a different beast
 
@@ -78,7 +78,7 @@ all city enchantments are done
 [x]   3  scc_City_Enchantment_Negative      ¿ Evil Presence, Famine, 
 [x]   4  scc_Direct_Damage_Fixed
 [-]   5  scc_Special_Spell
-[ ]   6  scc_Target_Wiz_Spell
+[x]   6  scc_Target_Wizard
 [ ]   7  N/A
 [ ]   8  N/A
 [x]   9  scc_Global_Enchantment
@@ -176,7 +176,7 @@ Spreadsheet - OSG Spells by Realm
 [ ] Earth Lore
 [ ] Cracks Call
 [ ] Natures eye
-[ ] Ice Bolt
+[x] Ice Bolt
 [x] Giant Spiders
 [ ] Change Terrain
 [ ] Path Finding
@@ -213,7 +213,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Word of Recall
 [ ] Counter Magic
 [x] Nagas
-[ ] Psionic Blast
+[x] Psionic Blast
 [ ] Blur
 [x] Disenchant True
 [ ] Vertigo
@@ -221,7 +221,7 @@ Spreadsheet - OSG Spells by Realm
 [ ] Enchant Road
 [x] Flight
 [x] Wind Mastery
-[ ] Spell Blast
+[x] Spell Blast
 [x] Aura of Majesty
 [x] Phantom Beast
 [x] Disjunction True
@@ -246,7 +246,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Time Stop
 [x] Warp Wood
 [x] Disrupt
-[ ] Fire Bolt
+[x] Fire Bolt
 [x] Hell Hounds
 [ ] Corruption
 [x] Eldritch Weapon
@@ -254,12 +254,12 @@ Spreadsheet - OSG Spells by Realm
 [ ] Shatter
 [ ] Warp Creature
 [x] Fire Elemental
-[ ] Lightning Bolt
+[x] Lightning Bolt
 [x] Fire Giant
 [x] Chaos Channels
 [x] Flame Blade
 [X] Gargoyles
-[ ] Fireball
+[x] Fireball
 [X] Doombat
 [ ] Raise Volcano
 [x] Immolation
@@ -334,13 +334,13 @@ Spreadsheet - OSG Spells by Realm
 [ ] Terror
 [ ] Darkness
 [ ] Mana Leak
-[ ] Drain Power
+[x] Drain Power
 [ ] Possession
 [ ] Lycantrophy
 [ ] Black Prayer
 [x] Black Channels
 [x] Night Stalker
-[ ] Subversion
+[x] Subversion
 [x] Wall of Darkness
 [ ] Berserk
 [x] Shadow Demons
@@ -354,7 +354,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Zombie Mastery
 [x] Famine
 [x] Cursed Lands
-[ ] Cruel Unminding
+[x] Cruel Unminding
 [ ] Word of Death
 [x] Death Knights
 [ ] Death Spell
@@ -369,7 +369,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Summoning Circle
 [x] Disenchant Area
 [x] Recall Hero
-[ ] Detect Magic
+[x] Detect Magic
 [ ] Enchant Item
 [ ] Summon Hero
 [x] Awareness

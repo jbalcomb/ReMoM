@@ -31,47 +31,47 @@ struct s_HLP_DATA
 
 
 
-HLPENTRY.LBX, 00  Spell Book Help
-HLPENTRY.LBX, 01  main scrn Help
-HLPENTRY.LBX, 02  armylist Help
-HLPENTRY.LBX, 03  item Help
-HLPENTRY.LBX, 04  citylist Help
-HLPENTRY.LBX, 05  magic scrn Help
-HLPENTRY.LBX, 06  city scrn Help
-HLPENTRY.LBX, 07  wizview scrn Help
-HLPENTRY.LBX, 08  cartographer scrn Help
-HLPENTRY.LBX, 09  powergraph scrn Help
-HLPENTRY.LBX, 10  status scrn Help
-HLPENTRY.LBX, 11  alchemy scrn Help
-HLPENTRY.LBX, 12  build Help
-HLPENTRY.LBX, 13  view Help
-HLPENTRY.LBX, 14  enemy city Help
-HLPENTRY.LBX, 15  level Help
-HLPENTRY.LBX, 16  enemy unit Help
-HLPENTRY.LBX, 17  outpost Help
-HLPENTRY.LBX, 18  casting Help
-HLPENTRY.LBX, 19  road Help
-HLPENTRY.LBX, 20  survey Help
-HLPENTRY.LBX, 21  combat Help
-HLPENTRY.LBX, 22  combat view Help
-HLPENTRY.LBX, 23  hiring view Help
-HLPENTRY.LBX, 24  big book Help
-HLPENTRY.LBX, 25  main menu Help
-HLPENTRY.LBX, 26  Load Screen Help
-HLPENTRY.LBX, 27  Save Screen Help
-HLPENTRY.LBX, 28  target wizard Help
-HLPENTRY.LBX, 29  Options Screen Help
-HLPENTRY.LBX, 30  Banner Selection Help
-HLPENTRY.LBX, 31  Wizard Picture Select
-HLPENTRY.LBX, 32  Wizard Selection Help
-HLPENTRY.LBX, 33  Wizard Creation Help
-HLPENTRY.LBX, 34  settings Help
-HLPENTRY.LBX, 35  Wizard Race Help
-HLPENTRY.LBX, 36  Select Spells Help
-HLPENTRY.LBX, 37  Target Wizard Help
-HLPENTRY.LBX, 38  Tax Help
-HLPENTRY.LBX, 39  advisor Help
-HLPENTRY.LBX, 40  score Help
+// HLPENTRY.LBX, 000  ""  "Spell Book Help"
+// HLPENTRY.LBX, 001  ""  "main scrn Help"
+// HLPENTRY.LBX, 002  ""  "armylist Help"
+// HLPENTRY.LBX, 003  ""  "item Help"
+// HLPENTRY.LBX, 004  ""  "citylist Help"
+// HLPENTRY.LBX, 005  ""  "magic scrn Help"
+// HLPENTRY.LBX, 006  ""  "city scrn Help"
+// HLPENTRY.LBX, 007  ""  "wizview scrn Help"
+// HLPENTRY.LBX, 008  ""  "cartographer scrn Help"
+// HLPENTRY.LBX, 009  ""  "powergraph scrn Help"
+// HLPENTRY.LBX, 010  ""  "status scrn Help"
+// HLPENTRY.LBX, 011  ""  "alchemy scrn Help"
+// HLPENTRY.LBX, 012  ""  "build Help"
+// HLPENTRY.LBX, 013  ""  "view Help"
+// HLPENTRY.LBX, 014  ""  "enemy city Help"
+// HLPENTRY.LBX, 015  ""  "level Help"
+// HLPENTRY.LBX, 016  ""  "enemy unit Help"
+// HLPENTRY.LBX, 017  ""  "outpost Help"
+// HLPENTRY.LBX, 018  ""  "casting Help"
+// HLPENTRY.LBX, 019  ""  "road Help"
+// HLPENTRY.LBX, 020  ""  "survey Help"
+// HLPENTRY.LBX, 021  ""  "combat Help"
+// HLPENTRY.LBX, 022  ""  "combat view Help"
+// HLPENTRY.LBX, 023  ""  "hiring view Help"
+// HLPENTRY.LBX, 024  ""  "big book Help"
+// HLPENTRY.LBX, 025  ""  "main menu Help"
+// HLPENTRY.LBX, 026  ""  "Load Screen Help"
+// HLPENTRY.LBX, 027  ""  "Save Screen Help"
+// HLPENTRY.LBX, 028  ""  "target wizard Help"
+// HLPENTRY.LBX, 029  ""  "Options Screen Help"
+// HLPENTRY.LBX, 030  ""  "Banner Selection Help"
+// HLPENTRY.LBX, 031  ""  "Wizard Picture Select"
+// HLPENTRY.LBX, 032  ""  "Wizard Selection Help"
+// HLPENTRY.LBX, 033  ""  "Wizard Creation Help"
+// HLPENTRY.LBX, 034  ""  "settings Help"
+// HLPENTRY.LBX, 035  ""  "Wizard Race Help"
+// HLPENTRY.LBX, 036  ""  "Select Spells Help"
+// HLPENTRY.LBX, 037  ""  "Target Wizard Help"
+// HLPENTRY.LBX, 038  ""  "Tax Help"
+// HLPENTRY.LBX, 039  ""  "advisor Help"
+// HLPENTRY.LBX, 040  ""  "score Help"
 
 
 

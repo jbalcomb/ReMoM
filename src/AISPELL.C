@@ -875,7 +875,7 @@ int16_t IDK_Pick_Target_For_Unit_Enchantment__STUB(int16_t spell_target_type, in
 int16_t IDK_AITP_Disjunction__STUB(int16_t * wx, int16_t * wy, int16_t spell_idx, int16_t player_idx)
 {
 
-
+    return ST_FALSE;
 
 }
 
@@ -1122,6 +1122,13 @@ int16_t Pick_Target_For_Floating_Island(int16_t player_idx, int16_t * wx, int16_
 
 // WZD o156p54
 // drake178: sub_EA43C()
+int16_t IDK_AITP_Target_Wizard__STUB(int16_t * spell_target_idx, int16_t spell_idx, int16_t player_idx)
+{
+
+    return ST_FALSE;
+    
+}
+
 
 // WZD o156p55
 // drake178: sub_EA4FE()

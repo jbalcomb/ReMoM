@@ -65,6 +65,12 @@ void TST_Patch_Game_Data(void)
     TST_Cheat_Power(player_idx);
 
 
+    // Target Wizard
+    TST_Learn_Spell(player_idx, spl_Cruel_Unminding);  // 191
+    TST_Learn_Spell(player_idx, spl_Drain_Power);      // 171
+    TST_Learn_Spell(player_idx, spl_Spell_Blast);      //  58
+    TST_Learn_Spell(player_idx, spl_Subversion);       // 177
+
     // Spell Bind
     spell_data_table[spl_Spell_Binding].casting_cost = 1;
     TST_Learn_Spell(player_idx, spl_Spell_Binding);  // 76

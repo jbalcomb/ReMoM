@@ -502,7 +502,7 @@ enum e_SPELL_CASTING_CATEGORY
     scc_City_Enchantment_Negative    =  3,   /* Chaos Rift, Cursed Lands, Evil Presence, Famine, Pestilence */
     scc_Direct_Damage_Fixed          =  4,   /* BOTH:    Doom Bolt, Fire Storm, Ice Storm, Star Fires, Warp Lightning */
     scc_Special_Spell                =  5,   /* Animate Dead, Black Wind, Call The Void, Change Terrain, Chaos Channels, Corruption, Cracks Call, Death Wish, Disrupt, Earth Lore, Earth to Mud, Earthquake, Enchant Road, Great Unsummoning, Healing, Incarnation, Lycanthropy, Magic Vortex, Move Fortress, Natures Cures, Plane Shift, Raise Dead, Raise Volcano, Recall Hero, Resurrection, Spell Binding, Spell Of Mastery, Spell Of Return, Spell Ward, Stasis, Summon Champion, Summon Hero, Transmute, Wall of Stone, Warp Creature, Warp Node, Warp Wood, Word of Recall */
-    scc_Target_Wiz_Spell             =  6,   /* WIZARD:  Cruel Unminding, Drain Power, Spell Blast, Subversion */
+    scc_Target_Wizard             =  6,   /* WIZARD:  Cruel Unminding, Drain Power, Spell Blast, Subversion */
     /* DNE 7 */
     /* DNE 8*/
     scc_Global_Enchantment           =  9,   /* Armageddon, Aura of Majesty, Awareness, Chaos Surge, Charm of Life, Crusade, Detect Magic, Doom Mastery, Eternal Night, Evil Omens, Great Wasting, Herb Mastery, Holy Arms, Just Cause, Life Force, Meteor Storms, Natures Awareness, Natures Wrath, Planar Seal, Suppress Magic, Time Stop, Tranquility, Wind Mastery, Zombie Mastery */

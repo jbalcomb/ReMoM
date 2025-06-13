@@ -33,7 +33,7 @@ void Hero_Slot_Types(int16_t unit_type_idx, int16_t item_slots[]);
 //Cast_BlackWind()
 
 // WZD o130p05
-//IDK_Random_Spell_Cost()
+int16_t Apply_Drain_Power(int16_t player_idx);
 
 // WZD o130p06
 //sAFA06_Anim_EarthLore()
@@ -69,7 +69,7 @@ void Cast_HolyArms(int16_t player_idx);
 void Apply_Spell_Consecration(int16_t city_idx);
 
 // WZD o130p17
-//sub_B1A01()
+void Apply_Subversion(int16_t player_idx);
 
 // WZD o130p18
 void Cast_NaturesAwareness(int16_t player_idx);

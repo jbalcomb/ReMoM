@@ -8,6 +8,7 @@
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"
 
+#include "NEXTTURN.H"
 #include "OverSpel.H"
 #include "SBookScr.H"
 #include "Spells129.H"
@@ -58,7 +59,61 @@ char str_Nightshade__ovr129[] = "Nightshade";
 */
 
 // WZD o129p01
-// sub_ACD60()
+/*
+191  spl_Cruel_Unminding
+Cruel Unminding:
+Death. Instant. Casting Cost: 150 mana. Very Rare.
+Permanently destroys one to 10% of a target wizard’s total spell casting skill points!
+*/
+int16_t Apply_Cruel_Unminding(int16_t player_idx)
+{
+    int16_t current_skill = 0;
+    int16_t twos = 0;
+    int16_t num = 0;
+    int16_t ctr = 0;
+    int16_t count = 0;
+    int16_t random_skill = 0;  // _SI_
+
+    current_skill = Player_Base_Casting_Skill(player_idx);
+
+    random_skill = Random(10);
+
+    random_skill = ((current_skill * random_skill) / 100);
+
+    if(random_skill == 0)
+    {
+        random_skill = 1;
+    }
+
+    count = (current_skill - random_skill);
+
+    if(_players[player_idx].archmage > 0)
+    {
+        count -= 10;
+    }
+
+    twos = 0;
+
+    ctr = 0;
+
+    while(ctr > count)
+    {
+
+        num += twos;    // { 2, 6, 12, 20, 30, 42, 56, 72, 90, 110, ... }
+        // count of twos   { 1, 3,  6, 10, 15, 21, 28, 36, 45,  55, ... }
+
+        twos += 2;      // { 2, 4,  6,  8, 10, 12, 14, 16, 18,  20 ... }
+
+        ctr += 1;
+
+    }
+
+    _players[player_idx].spell_casting_skill = (num + 1);
+
+    return random_skill;
+    
+}
+
 
 // WZD o129p02
 // drake178: OVL_ConvSpellAttack()

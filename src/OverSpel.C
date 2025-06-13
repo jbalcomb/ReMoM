@@ -59,14 +59,17 @@ char aOnlyNormalUn_0[] = "Only normal units and created undead may have ";
 // WZD dseg:6B08
 char aThatCityAlread[] = "That city already has ";
 
-// WZD dseg:6B1F 20 73 70 65 6C 6C 20 68 61 73 20 66 61 69 6C 65+cnst_SpellError_4 db ' spell has failed.',0
+// WZD dseg:6B1F
+char cnst_SpellError_4[] = " spell has failed.";
 
-// WZD dseg:6B32 53 70 65 6C 6C 20 42 6C 61 73 74 00             aSpellBlast db 'Spell Blast',0
+// WZD dseg:6B32
+char aSpellBlast[] = "Spell Blast";
 
 // WZD dseg:6B3E
 char aDisjunction[] = "Disjunction";
 
-// WZD dseg:6B4A 20 74 68 65 20                                  aThe_0 db ' the '
+// WZD dseg:6B4A
+char aThe_0[] = " the ";
 
 // WZD dseg:6B4A                                                 END:  ovr135 - Initialized Data
 
@@ -87,7 +90,7 @@ char aDisjunction[] = "Disjunction";
     gives spell_dx
     takes city_enchantment_idx
 */
-int16_t Get_Spell_For_City_Enchandment(int16_t city_enchantment_idx)
+int16_t Get_Spell_For_City_Enchantment(int16_t city_enchantment_idx)
 {
     int16_t spell_idx = 0;  // _SI_
     int16_t itr = 0;  // _CX_
@@ -111,7 +114,7 @@ int16_t Get_Spell_For_City_Enchandment(int16_t city_enchantment_idx)
         if(
             (spell_data_table[itr].type == scc_City_Enchantment_Positive)
             ||
-            (spell_data_table[itr].type == scc_City_Enchantment_Positive)
+            (spell_data_table[itr].type == scc_City_Enchantment_Negative)
         )
         {
 
@@ -308,7 +311,7 @@ void Cast_Disenchant(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int
                 )
                 {
 
-                    spell_idx = Get_Spell_For_City_Enchandment(city_enchantment_idx);
+                    spell_idx = Get_Spell_For_City_Enchantment(city_enchantment_idx);
 
                     threshold = (strength + Calculate_Dispel_Difficulty(spell_data_table[spell_idx].casting_cost, (ptr_enchantments[city_enchantment_idx] - 1), spell_data_table[spell_idx].magic_realm));
 
@@ -358,7 +361,7 @@ void Cast_Disenchant(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int
 
     }
 
-    for(itr = 0; itr > _units; itr++)
+    for(itr = 0; itr < _units; itr++)
     {
 
         if(
@@ -1530,9 +1533,103 @@ Capture_Cities_Data();
                 } break;
 
                 // WIZARD:  Cruel Unminding, Drain Power, Spell Blast, Subversion
-                case scc_Target_Wiz_Spell:  //  6
+                case scc_Target_Wizard:  //  6
                 {
+                    if(player_idx != HUMAN_PLAYER_IDX)
+                    {
+                        /* SPELLY */  Cast_Successful = IDK_AITP_Target_Wizard__STUB(&spell_target_idx, spell_idx, player_idx);
+                        if(Cast_Successful == ST_TRUE)
+                        {
+                            switch(spell_data_table[spell_idx].Param0)
+                            {
+                                case 0:  // Spell Blast
+                                {
 
+                                    // target wizard's mana spent
+                                    var_1A = (spell_data_table[_players[spell_target_idx].casting_spell_idx].casting_cost - _players[spell_target_idx].casting_cost_remaining);
+
+                                    if(_players[player_idx].mana_reserve > var_1A)
+                                    {
+
+                                        if(spell_target_idx == HUMAN_PLAYER_IDX)
+                                        {
+
+                                            Fizzle_Notification(HUMAN_PLAYER_IDX, player_idx, _players[HUMAN_PLAYER_IDX].casting_spell_idx, aSpellBlast);  // "Spell Blast"
+
+                                        }
+
+                                        _players[player_idx].mana_reserve -= var_1A;
+
+                                        if(_players[spell_target_idx].casting_spell_idx != spl_Spell_Of_Return)
+                                        {
+
+                                            _players[spell_target_idx].casting_spell_idx = 0;
+                                            _players[spell_target_idx].casting_cost_remaining = 0;
+                                            _players[spell_target_idx].casting_cost_original = 0;
+
+                                        }
+                                        else
+                                        {
+
+                                            _players[spell_target_idx].casting_cost_remaining = Casting_Cost(spell_target_idx, spl_Spell_Of_Return, ST_FALSE);
+
+                                        }
+
+                                    }
+
+                                } break;
+                                case 1:
+                                {
+                                    Apply_Cruel_Unminding(spell_target_idx);
+                                } break;
+                                case 2:
+                                {
+                                    Apply_Drain_Power(spell_target_idx);
+                                } break;
+                                case 3:
+                                {
+                                    Apply_Subversion(spell_target_idx);
+                                } break;
+                                default:
+                                {
+                                    STU_DEBUG_BREAK();
+                                } break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        spell_target_idx = ST_FALSE;
+                        // ; check if there are any valid targets for wizard
+                        // ; spells (contacted and not banished)
+                        for(itr_players = 1; itr_players < _num_players; itr_players++)
+                        {
+
+                            if(
+                                (_players[itr_players].Dipl.Contacted[HUMAN_PLAYER_IDX] == ST_TRUE)
+                                &&
+                                (_FORTRESSES[itr_players].active == ST_TRUE)
+                            )
+                            {
+                                spell_target_idx = ST_TRUE;
+                            }
+                        }
+                        if(spell_target_idx == ST_TRUE)
+                        {
+                            Cast_Successful = ST_TRUE;
+                            spell_target_idx = Target_Wizard_Screen(spell_idx);
+                        }
+                        else
+                        {
+                            Cast_Successful = ST_FALSE;
+                            LBX_Load_Data_Static(message_lbx_file__ovr135, 0, GUI_NearMsgString, 27, 1, 150);  // "You have no contact with any other wizards. Your "
+                            // ; already copied here...
+                            _fstrcpy(&spell_name[0], spell_data_table[spell_idx].name);
+                            strcat(GUI_NearMsgString, (char *)&spell_name[0]);
+                            strcat(GUI_NearMsgString, cnst_SpellError_4);  // " spell has failed."
+                            Warn0(GUI_NearMsgString);
+                        }
+                    }
                 } break;
 
                 // Armageddon, Aura of Majesty, Awareness, Chaos Surge, Charm of Life, Crusade, Detect Magic, Doom Mastery, Eternal Night, Evil Omens, Great Wasting, Herb Mastery, Holy Arms, Just Cause, Life Force, Meteor Storms, Natures Awareness, Natures Wrath, Planar Seal, Suppress Magic, Time Stop, Tranquility, Wind Mastery, Zombie Mastery

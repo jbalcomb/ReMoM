@@ -21,7 +21,7 @@ extern "C" {
 */
 
 // WZD o129p01
-// sub_ACD60()
+int16_t Apply_Cruel_Unminding(int16_t player_idx);
 
 // WZD o129p02
 void OVL_ConvSpellAttack__WIP(int16_t unit_idx, int16_t spell_idx);

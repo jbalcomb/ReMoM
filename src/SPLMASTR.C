@@ -218,7 +218,10 @@ int16_t ovl_ench_list_fst[(NUM_PLAYERS - 1)] = { 0, 0, 0, 0, 0};
 // WZD dseg:CA28 00 00                                           GAME_MP_SpellVar_2 dw 0                 ; DATA XREF: CMB_SliderRedraw+3Fr ...
 // WZD dseg:CA28                                                                                         ; holds the caster ID during combat sliders
 // WZD dseg:CA28                                                                                         ; holds the mirror reveal mask during global cast anims
-// WZD dseg:CA2A 00 00                                           IMG_OVL_TrgtWizCncl@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+50w ...
+
+// WZD dseg:CA2A
+SAMB_ptr IMG_OVL_TrgtWizCncl;
+
 // WZD dseg:CA2C 00 00                                           _temp_sint_4 dw 0        ; DATA XREF: Cast_Spell_Disjuncts_Draw__WIP+44r ...
 
 // WZD dseg:CA2E
@@ -229,7 +232,10 @@ SAMB_ptr spellscr_oversbut_seg;
 
 
 // WZD dseg:CA30 00 00                                           IMG_SBK_SliderOK@ dw 0                  ; DATA XREF: SBK_LoadSpellSlider+7Dw ...
-// WZD dseg:CA32 00 00                                           IMG_OVL_TargetWizBG@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+39w ...
+
+// WZD dseg:CA32
+SAMB_ptr IMG_OVL_TargetWizBG;
+
 // WZD dseg:CA34 00 00                                           IMG_SBK_Anims@ dw 0                     ; DATA XREF: CMB_ShowSpellbook+30w ...
 // WZD dseg:CA36 00 00                                           IMG_SBK_PageText@ dw 0                  ; DATA XREF: Learn_Spell_Animation+34Bw ...
 

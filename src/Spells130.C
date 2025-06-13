@@ -3,6 +3,7 @@
         ovr130
 */
 
+#include "NEXTTURN.H"
 #include "Spells130.H"
 
 #include "MOX/MOX_DEF.H"
@@ -78,8 +79,40 @@ void Hero_Slot_Types(int16_t unit_type_idx, int16_t item_slots[])
 //Cast_BlackWind()
 
 // WZD o130p05
-// drake178: sub_AF9AA()
-//IDK_Random_Spell_Cost()
+/*
+171  spl_Drain_Power
+Drain Power:
+Death. Instant. Casting Cost: 50 mana. Uncommon.
+Drains from 50 to 150 points of magic power from a target wizard’s mana reserve.
+*/
+int16_t Apply_Drain_Power(int16_t player_idx)
+{
+    int16_t itr = 0;
+    int16_t return_value = 0;  // _SI_
+
+    return_value = 0;
+
+    for(itr = 0; itr < 10; itr++)
+    {
+
+        // 10 * Random(20) = {10, ..., 200}
+        return_value += Random(20);
+
+    }
+
+    if(_players[player_idx].mana_reserve < return_value)
+    {
+
+        _players[player_idx].mana_reserve = return_value;
+
+    }
+
+    _players[player_idx].mana_reserve -= return_value;
+
+    return return_value;
+
+}
+
 
 // WZD o130p06
 // drake178: sAFA06_Anim_EarthLore()
@@ -223,8 +256,47 @@ void Apply_Spell_Consecration(int16_t city_idx)
 
 
 // WZD o130p17
-// drake178: sub_B1A01()
-//sub_B1A01()
+void Apply_Subversion(int16_t player_idx)
+{
+    int16_t itr = 0;  // _CX_
+
+    for(itr = 0; itr < _num_players; itr++)
+    {
+
+        if(itr == 0)
+        {
+            continue;
+        }
+
+        if(itr != player_idx)
+        {
+
+            if(_players[itr].Dipl.Contacted[player_idx] == ST_TRUE)
+            {
+
+                _players[itr].Dipl.Visible_Rel[player_idx] -= 25;
+
+                if(_players[itr].Dipl.Visible_Rel[player_idx] < -100)
+                {
+
+                    _players[itr].Dipl.Visible_Rel[player_idx] = -100;
+
+                }
+
+                _players[itr].Dipl.Visible_Rel[player_idx] = _players[player_idx].Dipl.Visible_Rel[itr];
+
+                _players[player_idx].peace_duration[itr] = 0;
+
+                _players[itr].peace_duration[player_idx] = 0;
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // WZD o130p18
 // drake178: sub_B1ABE()
