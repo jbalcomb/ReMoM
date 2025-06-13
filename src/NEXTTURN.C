@@ -23,6 +23,7 @@
 #include "MainScr_Maps.H"
 #include "MOM_DBG.H"
 #include "MOM_SCR.H"
+#include "Spells128.H"
 #include "Spells130.H"
 #include "WZD_o059.H"
 
@@ -4620,7 +4621,7 @@ void Do_All_Units_XP_Check_(void)
 
             Load_Battle_Unit(itr_units, &battle_unit);
 
-            if(BU_ResistRoll__STUB(battle_unit, -5, sbr_Sorcery) == 0)
+            if(Combat_Resistance_Check(battle_unit, -5, sbr_Sorcery) == 0)
             {
 
                 _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0x7F /*0b01111111*/);  // ¿ xor     al, C_STASISLINGER  10000000b ?

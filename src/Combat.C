@@ -2841,12 +2841,7 @@ void CMB_PrepareTurn__WIP(void)
         {
                         
             // ¿ ; BUG: this is already applied to the unit itself ?
-            // TODO  Roll_Result = BU_ResistRoll(SPUSH(&battle_units[itr]), (CMB_ResistAllArray[battle_units[itr].controller_idx] + 1), spell_data_table[spl_Terror].magic_realm);
-            // ; calculates the unit's effective Resistance score,
-            // ; then makes a resistance check with the passed
-            // ; modifier, returning 0 if the unit succeeded, or the
-            // ; difference from the target number if it didn't
-            /* HACK */  Roll_Result = 0;
+            Roll_Result = Combat_Resistance_Check(battle_units[itr], (CMB_ResistAllArray[battle_units[itr].controller_idx] + 1), spell_data_table[spl_Terror].magic_realm);
 
             if(Roll_Result > 0)
             {
@@ -10287,7 +10282,7 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
     int32_t IDK_health_defender = 0;
     int32_t IDK_health_attacker = 0;
     int16_t combat_structure = 0;
-    int16_t Dmg_Array[3] = { 0, 0, 0 };
+    int16_t damage_types[3] = { 0, 0, 0 };
     int16_t battle_unit_idx = 0;  // ¿ MsgType__BU_Index ?
     int16_t MsgType = 0;  // ¿ MsgType__BU_Index ?
     int16_t unit_idx = 0;
@@ -10990,9 +10985,9 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
     }
 
 
-    Dmg_Array[0] = 3;
-    Dmg_Array[1] = 0;
-    Dmg_Array[2] = 0;
+    damage_types[0] = 3;
+    damage_types[1] = 0;
+    damage_types[2] = 0;
 
     if(winner_player_idx != ST_UNDEFINED)
     {
@@ -11002,10 +10997,6 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
         {
             if(MsgType <= ST_UNDEFINED)
             {
-                // ; chooses a random item from a list of 16bit weighted
-                // ; chances; condensing the weights such that the total
-                // ; fits into a single call of the 9-bit RNG (max 512),
-                // ; using repeated divisions by 2 if necessary
                 battle_unit_idx = Get_Weighted_Choice(&Weights[0], _combat_total_unit_count);
             }
             else
@@ -11015,11 +11006,7 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
 
             Weights[battle_unit_idx] += 50;
 
-            // ; applies the damage points passed through the array
-            // ; to the target battle unit, reducing its figure count
-            // ; or marking it dead as necessary (in which case the
-            // ; combat victor and true sights are also updated)
-            BU_ApplyDamage__WIP(battle_unit_idx, &Dmg_Array[0]);
+            BU_ApplyDamage__WIP(battle_unit_idx, &damage_types[0]);
 
             if(battle_units[battle_unit_idx].status <= 0)
             {
@@ -11716,7 +11703,6 @@ case scc_Disjunction_Spell:  // 20
 
         case scc_Summoning:
         {
-// int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16_t wy, int16_t wp, int16_t R_Param)
             Figure_Count = Create_Unit__WIP(spell_data_table[spell_idx].unit_type, player_idx, 0, 0, 9, 2000);
             if(Figure_Count == ST_TRUE)
             {
@@ -11797,7 +11783,7 @@ case scc_Disjunction_Spell:  // 20
             }
             if(spell_idx == spl_Creature_Binding)
             {
-                Resist_Result = BU_ResistRoll__STUB(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
+                Resist_Result = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
                 if(Resist_Result > 0)
                 {
                     battle_units[target_idx].Combat_Effects |= bue_Creature_Binding;
@@ -11814,7 +11800,7 @@ case scc_Disjunction_Spell:  // 20
             }
             if(spell_idx == spl_Warp_Creature)
             {
-                Resist_Result = BU_ResistRoll__STUB(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
+                Resist_Result = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
                 if(Resist_Result > 0)
                 {
                     // SPELLY  BU_WarpCreature(target_idx);
@@ -11961,8 +11947,95 @@ case scc_Disjunction_Spell:  // 20
         } break;
 
         case scc_Combat_Destroy_Unit:  // 12
-        case scc_Banish_Spell:  // 23  (XtraMana)
+        case scc_Combat_Banish:        // 23  (XtraMana)
         {
+
+            // "If the target unit is a summoned creature, it also protects the bonds that keep it tied to the controlling wizard."
+            if(
+                !(
+                    (
+                        (spell_idx != spl_Banish)
+                        ||
+                        (spell_idx != spl_Dispel_Evil)
+                    )
+                    &&
+                    ((enchantments & UE_SPELLLOCK) != 0)
+                )
+            )
+            {
+
+                Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, Anims, caster_idx);
+
+                if(spell_idx == spl_Disintegrate)
+                {
+
+// SPELLY                      if((Combat_Effective_Resistance(battle_units[target_idx], sbr_Chaos) + resistance_modifier) < 10)
+// SPELLY                      {
+// SPELLY  
+// SPELLY                          damage_types[2] = 200;
+// SPELLY  
+// SPELLY                          BU_ApplyDamage__WIP(target_idx, &damage_types[0]);
+// SPELLY  
+// SPELLY                      }
+
+                }
+                else
+                {
+                    
+// SPELLY                      if(
+// SPELLY                          (spell_idx == spl_Dispel_Evil)
+// SPELLY                          &&
+// SPELLY                          ((_UNITS[battle_units[target_idx].unit_idx].mutations & UM_UNDEAD) != 0)
+// SPELLY                      )
+// SPELLY                      {
+// SPELLY  
+// SPELLY                          resistance_modifier -= 5;
+// SPELLY  
+// SPELLY                      }
+
+                    if(spell_idx == spl_Banish)
+                    {
+
+                        resistance_modifier -= (spell_data_table[spl_Banish].casting_cost / 15);
+
+                    }
+
+                    if(
+                        !(
+                            (spell_idx == spl_Petrify)
+                            &&
+                            ((battle_units[target_idx].Attribs_1 & USA_IMMUNITY_STONING) != 0)
+                        )
+                    )
+                    {
+
+                        Figure_Count = battle_units[target_idx].Cur_Figures;
+
+                        for(itr = 0; itr < Figure_Count; itr++)
+                        {
+
+                            Resist_Result = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
+
+                            if(Resist_Result > 0)
+                            {
+
+                                damage_types[2] = battle_units[target_idx].hits;
+
+                                BU_ApplyDamage__WIP(target_idx, &damage_types[0]);
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                Set_Page_Off();
+                Tactical_Combat_Draw();
+                PageFlip_FX();
+
+            }
 
         } break;
 
@@ -14263,7 +14336,7 @@ Nowhere. It doesn't use a target, never even gets to that code.
             case scc_Resistable_Spell:     // 13  COMBAT:  Black Sleep, Confusion, Creature Binding, Vertigo, Weakness
             case scc_Unresistable_Spell:   // 14  COMBAT:  Mind Storm, Web
             case scc_Direct_Damage_Variable:        // 22  COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast
-            case scc_Banish_Spell:         // 23  COMBAT:  Banish
+            case scc_Combat_Banish:         // 23  COMBAT:  Banish
             {
                 CMB_TargetingType = cstt_EnemyUnit;
             } break;
@@ -14794,7 +14867,7 @@ void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int1
 /*
 
 */
-void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t Dmg_Array[])
+void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t damage_types[])
 {
     int16_t Figures_Lost = 0;
     int16_t damage_total = 0;
@@ -14804,20 +14877,20 @@ void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t Dmg_Array[])
 
     for(itr = 0; itr < 3; itr++)
     {
-        damage_total += Dmg_Array[itr];
+        damage_total += damage_types[itr];
     }
 
     if(
         (damage_total > 0)
         &&
-        (battle_units[battle_unit_idx].status == 0)  /* Unit_Active */
+        (battle_units[battle_unit_idx].status == bus_Active)
     )
     {
         for(itr = 0; itr < 3; itr++)
         {
-            if((battle_units[battle_unit_idx].damage[itr] + Dmg_Array[itr]) <= 200)
+            if((battle_units[battle_unit_idx].damage[itr] + damage_types[itr]) <= 200)
             {
-                battle_units[battle_unit_idx].damage[itr] += Dmg_Array[itr];
+                battle_units[battle_unit_idx].damage[itr] += damage_types[itr];
             }
             else
             {
@@ -14830,6 +14903,7 @@ void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t Dmg_Array[])
 
     if(damage_total > 0)
     {
+
         Figures_Lost = (damage_total / battle_units[battle_unit_idx].hits);
 
         if(battle_units[battle_unit_idx].Cur_Figures < Figures_Lost)
@@ -19675,16 +19749,124 @@ uint16_t CMB_DefenseRoll__SEGRAX(uint16_t defense, uint16_t to_block) {
 ; modifier, returning 0 if the unit succeeded, or the
 ; difference from the target number if it didn't
 */
-int16_t BU_ResistRoll__STUB(struct s_BATTLE_UNIT battle_unit, int16_t Save_Mod, int16_t magic_realm)
-{
+/*
+    returns 0 if saved/resisted
 
-    return 0;
+
+*/
+int16_t Combat_Resistance_Check(struct s_BATTLE_UNIT battle_unit, int16_t resistance_modifier, int16_t magic_realm)
+{
+    int16_t resistance = 0;  // _DI_
+    int16_t chance = 0;  // _SI_
+    int16_t fail;  // DNE in Dasm
+
+    resistance = (Combat_Effective_Resistance(battle_unit, magic_realm) + resistance_modifier);
+
+    chance = Random(10);  // 10 as in a 10% chance out of 100%  (min:1,max:10)
+
+    if(chance > resistance)
+    {
+
+        fail = (chance - resistance);
+
+    }
+    else
+    {
+
+        fail = 0;
+
+    }
+
+    return fail;
 
 }
 
 
 // WZD o122p04
 // drake178: BU_GetEffectiveRES()
+/*
+; calculates and returns the unit's effective
+; Resistance score based on immunities and other
+; conditional modifiers
+*/
+/*
+
+*/
+int16_t Combat_Effective_Resistance(struct s_BATTLE_UNIT battle_unit, int16_t magic_realm)
+{
+    uint32_t enchantments = 0;
+    int16_t unit_idx = 0;
+    int16_t resistance = 0;  // _DI_
+
+    enchantments = (_UNITS[battle_unit.unit_idx].enchantments | battle_unit.enchantments | battle_unit.item_enchantments);
+
+    resistance = battle_unit.resist;
+
+    unit_idx = battle_unit.unit_idx;
+
+    if(
+        (_UNITS[unit_idx].Hero_Slot > -1)
+        &&
+        ((_HEROES2[_UNITS[unit_idx].owner_idx]->heroes[_UNITS[unit_idx].type].abilities & HSA_CHARMED) != 0)
+    )
+    {
+
+        resistance += 30;
+
+    }
+
+    if(
+        (magic_realm == sbr_Chaos)
+        ||
+        (magic_realm == sbr_Nature)
+    )
+    {
+
+        if((enchantments & UE_ELEMENTALARMOR) != 0)
+        {
+
+            resistance += 10;
+
+        }
+        else if((enchantments & UE_RESISTELEMENTS) != 0)
+        {
+
+            resistance += 3;
+
+        }
+
+    }
+
+    if(
+        ((enchantments & UE_BLESS) != 0)
+        &&
+        (
+            (magic_realm == sbr_Chaos)
+            ||
+            (magic_realm == sbr_Nature)
+        )
+    )
+    {
+
+        resistance += 3;
+
+    }
+
+    if(
+        ((enchantments & UE_RESISTMAGIC) != 0)
+        &&
+        (magic_realm > sbr_Nature)
+    )
+    {
+
+        resistance += 5;
+
+    }
+
+    return resistance;
+    
+}
+
 
 // WZD o122p05
 // drake178: BU_GetATKImmFlags()
@@ -20314,8 +20496,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
             for(itr = 0; battle_units[defender_battle_unit_idx].Cur_Figures > itr; itr++)
             {
 
-                // // IDGI  BU_ResistRoll(SPUSH@(battle_units[defender_battle_unit_idx]), -(abs(battle_units[attacker_battle_unit_idx].Spec_Att_Attrib)), 0);
-                if(BU_ResistRoll__STUB(battle_units[defender_battle_unit_idx], -(abs(battle_units[attacker_battle_unit_idx].Spec_Att_Attrib)), sbr_Nature) > 0)
+                if(Combat_Resistance_Check(battle_units[defender_battle_unit_idx], -(abs(battle_units[attacker_battle_unit_idx].Spec_Att_Attrib)), sbr_Nature) > 0)
                 {
 
                     new_damage_array[2] += battle_units[defender_battle_unit_idx].hits;
@@ -20341,8 +20522,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
             for(itr = 0; battle_units[defender_battle_unit_idx].Cur_Figures > itr; itr++)
             {
 
-                // // IDGI  BU_ResistRoll(SPUSH@(battle_units[defender_battle_unit_idx]), -(abs(battle_units[attacker_battle_unit_idx].Spec_Att_Attrib)), sbr_Death);
-                if(BU_ResistRoll__STUB(battle_units[defender_battle_unit_idx], -(abs(battle_units[attacker_battle_unit_idx].Spec_Att_Attrib)), sbr_Death) > 0)
+                if(Combat_Resistance_Check(battle_units[defender_battle_unit_idx], -(abs(battle_units[attacker_battle_unit_idx].Spec_Att_Attrib)), sbr_Death) > 0)
                 {
 
                     new_damage_array[0] += battle_units[defender_battle_unit_idx].hits;
@@ -20437,7 +20617,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
                     Save_Mod -= 5;
                 }
 
-                if(BU_ResistRoll__STUB(battle_units[defender_battle_unit_idx], Save_Mod, sbr_Life) > 0)
+                if(Combat_Resistance_Check(battle_units[defender_battle_unit_idx], Save_Mod, sbr_Life) > 0)
                 {
 
                     new_damage_array[2] += battle_units[defender_battle_unit_idx].hits;
@@ -20463,7 +20643,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
 
                 }
 
-                if(BU_ResistRoll__STUB(battle_units[defender_battle_unit_idx], Save_Mod, sbr_Nature) > 0)
+                if(Combat_Resistance_Check(battle_units[defender_battle_unit_idx], Save_Mod, sbr_Nature) > 0)
                 {
 
                     new_damage_array[2] += battle_units[defender_battle_unit_idx].hits;
@@ -20489,7 +20669,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
 
                 }
 
-                if(BU_ResistRoll__STUB(battle_units[defender_battle_unit_idx], Save_Mod, sbr_Death) > 0)
+                if(Combat_Resistance_Check(battle_units[defender_battle_unit_idx], Save_Mod, sbr_Death) > 0)
                 {
 
                     new_damage_array[0] += battle_units[defender_battle_unit_idx].hits;
@@ -20515,7 +20695,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
 
                 }
 
-                Loop_Var_2 = BU_ResistRoll__STUB(battle_units[defender_battle_unit_idx], Save_Mod, sbr_Death);
+                Loop_Var_2 = Combat_Resistance_Check(battle_units[defender_battle_unit_idx], Save_Mod, sbr_Death);
 
                 new_damage_array[1] += Loop_Var_2;
 
@@ -20532,7 +20712,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
             if((Combined_ATK_Flags & Att_Destruct) != 0)
             {
 
-                if(BU_ResistRoll__STUB(battle_units[defender_battle_unit_idx], 0, sbr_Death) > 0)
+                if(Combat_Resistance_Check(battle_units[defender_battle_unit_idx], 0, sbr_Death) > 0)
                 {
 
                     new_damage_array[2] += battle_units[defender_battle_unit_idx].hits;
@@ -20629,7 +20809,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
             for(Loop_Var_2 = 0; battle_units[attacker_battle_unit_idx].Poison_Strength > Loop_Var_2; Loop_Var_2++)
             {
 
-                if(BU_ResistRoll__STUB(battle_units[defender_battle_unit_idx], 0, -1) != 0)
+                if(Combat_Resistance_Check(battle_units[defender_battle_unit_idx], 0, -1) != 0)
                 {
 
                     if(

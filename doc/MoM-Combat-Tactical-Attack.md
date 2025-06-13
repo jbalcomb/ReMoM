@@ -256,7 +256,7 @@ Poison Attack
 ...
 
     if((Combined_ATK_Flags & Att_Destruct) != 0)
-        if(BU_ResistRoll__STUB(battle_units[defender_battle_unit_idx], 0, sbr_Death) > 0)
+        if(Combat_Resistance_Check(battle_units[defender_battle_unit_idx], 0, sbr_Death) > 0)
             new_damage_array[2] += battle_units[defender_battle_unit_idx].hits;
 
 ¿ Word of Death ... Death Realm ... deal 'Irreversible Damage' ... -5 to save ?

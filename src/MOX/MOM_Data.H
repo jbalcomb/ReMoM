@@ -519,7 +519,7 @@ enum e_SPELL_CASTING_CATEGORY
     scc_Disjunctions                  = 20,   /* OVERLAND:  Disjunction, Disjunction True */
     scc_Combat_Counter_Magic          = 21,   /* COMBAT:  Counter Magic; in with scc_Battlefield_Spell */
     scc_Direct_Damage_Variable        = 22,   /* COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast */
-    scc_Banish_Spell                  = 23    /* COMBAT:  Banish */
+    scc_Combat_Banish                 = 23    /* COMBAT:  Banish */
 };
 
 enum e_SPELL_LIST_TYPE

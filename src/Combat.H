@@ -1749,10 +1749,10 @@ int16_t CMB_AttackRoll__SEGRAX(uint16_t attack_strength, uint16_t to_hit);
 uint16_t CMB_DefenseRoll__SEGRAX(uint16_t defense, uint16_t to_block);
 
 // WZD o122p03
-int16_t BU_ResistRoll__STUB(struct s_BATTLE_UNIT battle_unit, int16_t Save_Mod, int16_t magic_realm);
+int16_t Combat_Resistance_Check(struct s_BATTLE_UNIT battle_unit, int16_t resistance_modifier, int16_t magic_realm);
 
 // WZD o122p04
-// BU_GetEffectiveRES()
+int16_t Combat_Effective_Resistance(struct s_BATTLE_UNIT battle_unit, int16_t magic_realm);
 
 // WZD o122p05
 // BU_GetATKImmFlags()

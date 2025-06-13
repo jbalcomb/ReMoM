@@ -8,10 +8,21 @@ scc_Disenchant_Spell     ==>  scc_Disenchants
 scc_Disjunction_Spell    ==>  scc_Disjunctions
 scc_Target_Wiz_Spell     ==>  scc_Target_Wizard
 scc_Counter_Spell        ==>  scc_Combat_Counter_Magic
+scc_Banish_Spell         ==>  scc_Combat_Banish
 
 NOTE: the check on the check-list is only for the human player side, CP/AI is a different beast
 
 NOTE: 'Blur' is not in the manual, but is in the OSG - ¿ added in v1.2 ?
+
+
+no target / hard-coded to 99
+Combat_Cast_Spell__WIP()
+    (spell_data_table[spell_idx].type == scc_Battlefield_Spell)
+    (spell_data_table[spell_idx].type == scc_Combat_Counter_Magic)
+    (spell_data_table[spell_idx].type == scc_Disenchants)
+    (spell_data_table[spell_idx].type == scc_City_Enchantment_Positive)
+    (spell_idx == spl_Animate_Dead)
+Target = 99;  Target_X = 0;  Target_Y = 0;
 
 
 
@@ -95,8 +106,8 @@ all city enchantments are done
 [x]  19  scc_Disenchants
 [x]  20  scc_Disjunctions
 [x]  21  scc_Combat_Counter_Magic  (w/ scc_Battlefield_Spell)
-[ ]  22  scc_Var_Dmg_Spell
-[ ]  23  scc_Banish_Spell
+[x]  22  scc_Direct_Damage_Variable
+[x]  23  scc_Combat_Banish  (w/ scc_Combat_Destroy_Unit)
 
 scc_Summoning
 Air Elemental, Angel, Arch Angel, Basilisk, Behemoth, Chaos Spawn, Chimeras, Cockatrices, Colossus, Death Knights, Demon Lord, Djinn, Doom Bat, Earth Elemental, Efreet, Fire Elemental, Fire Giant, Floating Island, Gargoyles, Ghouls, Giant Spiders, Gorgons, Great Drake, Great Wyrm, Guardian Spirit, Hell Hounds, Hydra, Magic Spirit, Nagas, Night Stalker, Phantom Beast, Phantom Warriors, Shadow Demons, Skeletons, Sky Drake, Sprites, Stone Giant, Storm Giant, Unicorns, War Bears, Wraiths
@@ -143,8 +154,8 @@ scc_Dispels        = 18,   /* COMBAT:  Dispel Magic, Dispel Magic True */
 scc_Disenchant_Spell    = 19,   /* ¿ BOTH ?  Disenchant Area, Disenchant True */
 scc_Disjunctions   = 20,   /* OVERLAND:  Disjunction, Disjunction True */
 scc_Combat_Counter_Magic       = 21,   /* COMBAT:  Counter Magic */
-scc_Var_Dmg_Spell       = 22,   /* COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast */
-scc_Banish_Spell        = 23    /* COMBAT:  Banish */
+scc_Direct_Damage_Variable       = 22,   /* COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast */
+scc_Combat_Banish        = 23    /* COMBAT:  Banish */
 
 
 Spreadsheet - OSG Spells by Category
@@ -228,7 +239,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Disjunction True
 [x] Invisibility
 [x] Wind Walking
-[ ] Banish
+[x] Banish
 [x] Storm Giant
 [x] Air Elemental
 [ ] Mind Storm

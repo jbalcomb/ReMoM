@@ -8,12 +8,12 @@ WHEREIS  add extra mana / slider
 
 
 
-scc_Var_Dmg_Spell       = 22,   /* COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast */
+scc_Direct_Damage_Variable       = 22,   /* COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast */
 
 before G_CMB_SpellEffect__WIP()
 ¿ 'Mana' is the extra mana passed in ?
 ...and, some things override this value...
-...in G_CMB_SpellEffect__WIP, case scc_Var_Dmg_Spell: just applies the cost and damage
+...in G_CMB_SpellEffect__WIP, case scc_Direct_Damage_Variable: just applies the cost and damage
 
 Combat_Cast_Spell__WIP()
     Combat_Spellbook_Build__WIP()

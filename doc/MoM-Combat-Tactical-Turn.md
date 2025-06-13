@@ -40,7 +40,7 @@ battle_units[itr].action = bua_Finished;
         if(((battle_units[_active_battle_unit].movement_points < 1) && (battle_units[_active_battle_unit].action != bua_Finished)) || (battle_units[_active_battle_unit].status > bus_Active))
     'Left-Click Done Button'
     CMB_PrepareTurn__WIP()
-        Roll_Result = BU_ResistRoll()
+        Roll_Result = Combat_Resistance_Check()
         if(Roll_Result > 0)
 
 ...

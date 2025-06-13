@@ -66,7 +66,10 @@ void TST_Patch_Game_Data(void)
 
 
     // Counter Magic
-    TST_Learn_Spell(player_idx, spl_Counter_Magic);  //  48
+    TST_Learn_Spell(player_idx, spl_Banish);  //  64
+
+    // Counter Magic
+    // TST_Learn_Spell(player_idx, spl_Counter_Magic);  //  48
 
     // Target Wizard
     // TST_Learn_Spell(player_idx, spl_Cruel_Unminding);  // 191

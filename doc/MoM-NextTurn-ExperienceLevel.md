@@ -7,7 +7,7 @@
 Next_Turn_Calc()
     Do_All_Units_XP_Check()
         Load_Battle_Unit()
-        BU_ResistRoll__STUB()
+        Combat_Resistance_Check()
         Unit_Level()
         Hero_LevelUp_Popup()
 
