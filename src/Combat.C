@@ -11954,9 +11954,9 @@ case scc_Disjunction_Spell:  // 20
             if(
                 !(
                     (
-                        (spell_idx != spl_Banish)
+                        (spell_idx == spl_Banish)
                         ||
-                        (spell_idx != spl_Dispel_Evil)
+                        (spell_idx == spl_Dispel_Evil)
                     )
                     &&
                     ((enchantments & UE_SPELLLOCK) != 0)
@@ -11969,29 +11969,29 @@ case scc_Disjunction_Spell:  // 20
                 if(spell_idx == spl_Disintegrate)
                 {
 
-// SPELLY                      if((Combat_Effective_Resistance(battle_units[target_idx], sbr_Chaos) + resistance_modifier) < 10)
-// SPELLY                      {
-// SPELLY  
-// SPELLY                          damage_types[2] = 200;
-// SPELLY  
-// SPELLY                          BU_ApplyDamage__WIP(target_idx, &damage_types[0]);
-// SPELLY  
-// SPELLY                      }
+                    if((Combat_Effective_Resistance(battle_units[target_idx], sbr_Chaos) + resistance_modifier) < 10)
+                    {
+                    
+                        damage_types[2] = 200;
+                    
+                        BU_ApplyDamage__WIP(target_idx, &damage_types[0]);
+                    
+                    }
 
                 }
                 else
                 {
                     
-// SPELLY                      if(
-// SPELLY                          (spell_idx == spl_Dispel_Evil)
-// SPELLY                          &&
-// SPELLY                          ((_UNITS[battle_units[target_idx].unit_idx].mutations & UM_UNDEAD) != 0)
-// SPELLY                      )
-// SPELLY                      {
-// SPELLY  
-// SPELLY                          resistance_modifier -= 5;
-// SPELLY  
-// SPELLY                      }
+                    if(
+                        (spell_idx == spl_Dispel_Evil)
+                        &&
+                        ((_UNITS[battle_units[target_idx].unit_idx].mutations & UM_UNDEAD) != 0)
+                    )
+                    {
+                    
+                        resistance_modifier -= 5;
+                    
+                    }
 
                     if(spell_idx == spl_Banish)
                     {

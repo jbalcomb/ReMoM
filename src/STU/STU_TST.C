@@ -65,10 +65,16 @@ void TST_Patch_Game_Data(void)
     TST_Cheat_Power(player_idx);
 
 
-    // Counter Magic
-    TST_Learn_Spell(player_idx, spl_Banish);  //  64
+    // scc_Combat_Destroy_Unit  12
+    TST_Learn_Spell(player_idx, spl_Disintegrate);   //  112
+    TST_Learn_Spell(player_idx, spl_Dispel_Evil);    //  134
+    TST_Learn_Spell(player_idx, spl_Petrify);        //   22
+    TST_Learn_Spell(player_idx, spl_Word_Of_Death);  //  192
 
-    // Counter Magic
+    // scc_Combat_Banish  23
+    // TST_Learn_Spell(player_idx, spl_Banish);  //  64
+
+    // scc_Combat_Counter_Magic  21
     // TST_Learn_Spell(player_idx, spl_Counter_Magic);  //  48
 
     // Target Wizard

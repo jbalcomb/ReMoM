@@ -1,4 +1,48 @@
 
+Combat Only Spell Casting Categories
+
+[ ]   5  scc_Special_Spell
+[ ]  10  scc_Battlefield_Spell
+[x]  12  scc_Combat_Destroy_Unit
+[ ]  13  scc_Resistable_Spell
+[ ]  14  scc_Unresistable_Spell
+[ ]  16  scc_Mundane_Curse
+[x]  21  scc_Combat_Counter_Magic
+[x]  22  scc_Direct_Damage_Variable
+[x]  23  scc_Combat_Banish
+
+12  scc_Combat_Destroy_Unit
+        Disintegrate, Dispel Evil, Petrify, Word of Death
+23  scc_Combat_Banish
+        Banish
+
+13  scc_Resistable_Spell
+        Black Sleep, Confusion, Creature Binding, Vertigo, Weakness
+
+14  scc_Unresistable_Spell
+        Mind Storm, Web
+16  scc_Mundane_Curse
+        Possession, Shatter
+
+10  scc_Battlefield_Spell
+        Black Prayer, Blur, Call Chaos, Call Lightning, Darkness, Death Spell, Entangle, Flame Strike, High Prayer, Holy Word, Mana Leak, Mass Healing, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack
+21  scc_Combat_Counter_Magic
+        spl_Counter_Magic
+
+
+
+
+
+0x05   5  scc_Special_Spell       (9-11)
+0x0A  10  scc_Battlefield_Spell   (19)
+0x0C  12  scc_Destruction_Spell   (4)
+0x0D  13  scc_Resistable_Spell    (5)
+0x0E  14  scc_Unresistable_Spell  (2)
+
+
+
+
+
 scc_Destruction_Spell    ==>  scc_Combat_Destroy_Unit
 scc_Fixed_Dmg_Spell      ==>  scc_Direct_Damage_Fixed
 scc_Var_Dmg_Spell        ==>  scc_Direct_Damage_Variable
@@ -54,7 +98,6 @@ Custom Animation? ...Custom Summon Animation?
 
 Weird Ones?
     Astral Gate
-    Banish
     Chaos Channels
     Change Terrain?
     Create Artifact!    handled special during casting
@@ -91,8 +134,8 @@ all city enchantments are done
 [x]   4  scc_Direct_Damage_Fixed
 [-]   5  scc_Special_Spell
 [x]   6  scc_Target_Wizard
-[ ]   7  N/A
-[ ]   8  N/A
+[x]   7  N/A
+[x]   8  N/A
 [x]   9  scc_Global_Enchantment
 [ ]  10  scc_Battlefield_Spell
 [ ]  11  scc_Crafting_Spell
@@ -101,7 +144,7 @@ all city enchantments are done
 [ ]  14  scc_Unresistable_Spell
 [x]  15  scc_Unit_Enchantment_Normal_Only
 [ ]  16  scc_Mundane_Curse
-[ ]  17  scc_Infusable_Spell
+[x]  17  N/A
 [x]  18  scc_Dispels
 [x]  19  scc_Disenchants
 [x]  20  scc_Disjunctions
@@ -133,6 +176,9 @@ Cruel Unminding, Drain Power, Spell Blast, Subversion
 scc_Global_Enchantment
 Armageddon, Aura of Majesty, Awareness, Chaos Surge, Charm of Life, Crusade, Detect Magic, Doom Mastery, Eternal Night, Evil Omens, Great Wasting, Herb Mastery, Holy Arms, Just Cause, Life Force, Meteor Storms, Natures Awareness, Natures Wrath, Planar Seal, Suppress Magic, Time Stop, Tranquility, Wind Mastery, Zombie Mastery */
 scc_Battlefield_Spell   = 10,   /* COMBAT:  Black Prayer, Blur, Call Chaos, Call Lightning, Darkness, Death Spell, Entangle, Flame Strike, High Prayer, Holy Word, Mana Leak, Mass Healing, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack
+
+scc_Battlefield_Spell
+Black Prayer, Blur, Call Chaos, Call Lightning, Darkness, Death Spell, Entangle, Flame Strike, High Prayer, Holy Word, Mana Leak, Mass Healing, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack
 
 scc_Crafting_Spell
 
@@ -197,7 +243,7 @@ Spreadsheet - OSG Spells by Realm
 [ ] Natures Cures
 [x] Basilisk
 [x] Elemental Armor
-[ ] Petrify
+[x] Petrify
 [x] Stone Giant
 [x] Iron Skin
 [x] Ice Storm
@@ -287,7 +333,7 @@ Spreadsheet - OSG Spells by Realm
 [ ] Flame Strike
 [ ] Chaos Rift
 [X] Hydra
-[ ] Disintegrate
+[x] Disintegrate
 [x] Meteor Storms
 [x] Great Wasting
 [ ] Call Chaos
@@ -309,7 +355,7 @@ Spreadsheet - OSG Spells by Realm
 [x] True Sight
 [ ] Plane Shift
 [ ] Resurrection
-[ ] Dispel Evil
+[x] Dispel Evil
 [x] Planar Seal
 [x] Unicorns
 [x] Raise Dead
@@ -367,7 +413,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Famine
 [x] Cursed Lands
 [x] Cruel Unminding
-[ ] Word of Death
+[x] Word of Death
 [x] Death Knights
 [ ] Death Spell
 [x] Animate Dead
