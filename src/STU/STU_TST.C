@@ -65,35 +65,38 @@ void TST_Patch_Game_Data(void)
     TST_Cheat_Power(player_idx);
 
 
+    // Counter Magic
+    TST_Learn_Spell(player_idx, spl_Counter_Magic);  //  48
+
     // Target Wizard
-    TST_Learn_Spell(player_idx, spl_Cruel_Unminding);  // 191
-    TST_Learn_Spell(player_idx, spl_Drain_Power);      // 171
-    TST_Learn_Spell(player_idx, spl_Spell_Blast);      //  58
-    TST_Learn_Spell(player_idx, spl_Subversion);       // 177
+    // TST_Learn_Spell(player_idx, spl_Cruel_Unminding);  // 191
+    // TST_Learn_Spell(player_idx, spl_Drain_Power);      // 171
+    // TST_Learn_Spell(player_idx, spl_Spell_Blast);      //  58
+    // TST_Learn_Spell(player_idx, spl_Subversion);       // 177
 
     // Spell Bind
-    TST_Learn_Spell(player_idx, spl_Spell_Binding);  // 76
+    // TST_Learn_Spell(player_idx, spl_Spell_Binding);  // 76
 
     // Dispel, Disenchant, Disjunct
-    _players[0].Globals[DETECT_MAGIC     ] = (0 + 1);  // 206  spl_Detect_Magic
-    _players[1].Globals[AWARENESS        ] = (1 + 1);  // 209  spl_Awareness
-    _players[1].Globals[DETECT_MAGIC     ] = (1 + 1);  // 206  spl_Detect_Magic
-    // ¿ global enchantments that do not affect other players ? ...negatively? e.g., AURA_OF_MAJESTY
-    _players[2].Globals[AWARENESS        ] = (2 + 1);  // 209  spl_Awareness
-    _players[2].Globals[CHAOS_SURGE      ] = (2 + 1);  // 116  spl_Chaos_Surge
-    _players[2].Globals[CRUSADE          ] = (2 + 1);  // 158  spl_Crusade
-    _players[2].Globals[DOOM_MASTERY     ] = (2 + 1);  // 117  spl_Doom_Mastery
-    _players[2].Globals[HERB_MASTERY     ] = (2 + 1);  //  38  spl_Herb_Mastery
-    _players[2].Globals[JUST_CAUSE       ] = (2 + 1);  // 127  spl_Just_Cause
-    _players[2].Globals[NATURES_AWARENESS] = (2 + 1);  //  34  spl_Natures_Awareness
-    _players[3].Globals[AWARENESS        ] = (3 + 1);  // 209  spl_Awareness
-    _players[4].Globals[AWARENESS        ] = (4 + 1);  // 209  spl_Awareness
-    TST_Learn_Spell(player_idx, spl_Dispel_Magic);
-    TST_Learn_Spell(player_idx, spl_Dispel_Magic_True);
-    TST_Learn_Spell(player_idx, spl_Disenchant_Area);
-    TST_Learn_Spell(player_idx, spl_Disenchant_True);
-    TST_Learn_Spell(player_idx, spl_Disjunction);  // 210
-    TST_Learn_Spell(player_idx, spl_Disjunction_True);
+    // _players[0].Globals[DETECT_MAGIC     ] = (0 + 1);  // 206  spl_Detect_Magic
+    // _players[1].Globals[AWARENESS        ] = (1 + 1);  // 209  spl_Awareness
+    // _players[1].Globals[DETECT_MAGIC     ] = (1 + 1);  // 206  spl_Detect_Magic
+    // // ¿ global enchantments that do not affect other players ? ...negatively? e.g., AURA_OF_MAJESTY
+    // _players[2].Globals[AWARENESS        ] = (2 + 1);  // 209  spl_Awareness
+    // _players[2].Globals[CHAOS_SURGE      ] = (2 + 1);  // 116  spl_Chaos_Surge
+    // _players[2].Globals[CRUSADE          ] = (2 + 1);  // 158  spl_Crusade
+    // _players[2].Globals[DOOM_MASTERY     ] = (2 + 1);  // 117  spl_Doom_Mastery
+    // _players[2].Globals[HERB_MASTERY     ] = (2 + 1);  //  38  spl_Herb_Mastery
+    // _players[2].Globals[JUST_CAUSE       ] = (2 + 1);  // 127  spl_Just_Cause
+    // _players[2].Globals[NATURES_AWARENESS] = (2 + 1);  //  34  spl_Natures_Awareness
+    // _players[3].Globals[AWARENESS        ] = (3 + 1);  // 209  spl_Awareness
+    // _players[4].Globals[AWARENESS        ] = (4 + 1);  // 209  spl_Awareness
+    // TST_Learn_Spell(player_idx, spl_Dispel_Magic);
+    // TST_Learn_Spell(player_idx, spl_Dispel_Magic_True);
+    // TST_Learn_Spell(player_idx, spl_Disenchant_Area);
+    // TST_Learn_Spell(player_idx, spl_Disenchant_True);
+    // TST_Learn_Spell(player_idx, spl_Disjunction);  // 210
+    // TST_Learn_Spell(player_idx, spl_Disjunction_True);
 
     // Direct Damage - Fixed
     // TST_Learn_Spell(player_idx, spl_Doom_Bolt);

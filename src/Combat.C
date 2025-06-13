@@ -11625,6 +11625,7 @@ void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caste
     int16_t player_idx = 0;
     int16_t itr = 0;
     int16_t Resist_Result = 0;
+    int16_t combat_enchantment_index = 0;  // DNE in Dasm, reuses Resist_Result
 
     if(caster_idx >= CASTER_IDX_BASE)
     {
@@ -11874,9 +11875,88 @@ case scc_Disjunction_Spell:  // 20
             }
         } break;
 
-        case scc_Battlefield_Spell:  // 10
-        case scc_Counter_Spell:  // 21
+        case scc_Battlefield_Spell:     // 10
+        case scc_Combat_Counter_Magic:  // 21
         {
+
+            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, Anims, caster_idx);
+
+            if(
+                (spell_idx != spl_Flame_Strike)
+                &&
+                (spell_idx != spl_Holy_Word)
+                &&
+                (spell_idx != spl_Death_Spell)
+                &&
+                (spell_idx != spl_Call_Chaos)
+                &&
+                (spell_idx != spl_Mass_Healing)
+            )
+            {
+
+                combat_enchantment_index = spell_data_table[spell_idx].ce_idx;
+
+                if(player_idx != _combat_attacker_player)
+                {
+                    combat_enchantment_index++;
+                }
+
+                if(spell_idx == spl_Counter_Magic)
+                {
+
+                    combat_enchantments[combat_enchantment_index] = Mana;
+
+                }
+                else
+                {
+
+                    combat_enchantments[combat_enchantment_index] = ST_TRUE;
+
+                }
+
+                for(itr = 0; itr < _combat_total_unit_count; itr++)
+                {
+
+                    if(battle_units[itr].status == bus_Active)
+                    {
+                        
+                        Not_Moved_Yet = ST_FALSE;
+
+                        Moves_Left = Battle_Unit_Moves2(itr);
+
+                        if(battle_units[itr].movement_points == Moves_Left)
+                        {
+                            Not_Moved_Yet = ST_TRUE;
+                        }
+                        else
+                        {
+
+                            battle_units[itr].movement_points = Moves_Left;
+
+                        }
+
+                        BU_Init_Battle_Unit(&battle_units[itr]);
+
+                        BU_Apply_Battlefield_Effects__WIP(&battle_units[itr]);
+
+                        if(Not_Moved_Yet == ST_TRUE)
+                        {
+
+                            battle_units[itr].movement_points = Battle_Unit_Moves2(itr);
+
+                        }
+                        else
+                        {
+
+                            battle_units[itr].movement_points = Moves_Left;
+
+                        }
+
+                    }
+
+                }
+
+            }
 
         } break;
 
@@ -12786,7 +12866,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
         if(
             (spell_data_table[spell_idx].type == scc_Battlefield_Spell)
             ||
-            (spell_data_table[spell_idx].type == scc_Counter_Spell)
+            (spell_data_table[spell_idx].type == scc_Combat_Counter_Magic)
             ||
             (spell_data_table[spell_idx].type == scc_Disenchants)
             ||
@@ -13497,7 +13577,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
     if(
         (spell_data_table[spell_idx].type == scc_Battlefield_Spell)
         ||
-        (spell_data_table[spell_idx].type == scc_Counter_Spell)
+        (spell_data_table[spell_idx].type == scc_Combat_Counter_Magic)
         ||
         (spell_idx == spl_Holy_Word)
         ||
@@ -14079,25 +14159,26 @@ offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
 offset jt_cstt_ms_04_12_13_14_22_23
 offset jt_cstt_ms_04_12_13_14_22_23
 
-// NIU  scc_City_Enchantment_Positive    =  2,   Altar of Battle, Astral Gate, Cloud of Shadow, Consecration, Dark Rituals, Earth Gate, Flying Fortress, Gaias Blessing, Heavenly Light, Inspirations, Natures Eye, Prosperity, Stream of Life, Summoning Circle, Wall of Darkness, Wall of Fire
-// NIU  scc_City_Enchantment_Negative    =  3,   Chaos Rift, Cursed Lands, Evil Presence, Famine, Pestilence
-// NIU  scc_Direct_Damage_Fixed          =  4,   BOTH:    Doom Bolt, Fire Storm, Ice Storm, Star Fires, Warp Lightning
-// NIU  scc_Special_Spell                =  5,   Animate Dead, Black Wind, Call The Void, Change Terrain, Chaos Channels, Corruption, Cracks Call, Death Wish, Disrupt, Earth Lore, Earth to Mud, Earthquake, Enchant Road, Great Unsummoning, Healing, Incarnation, Lycanthropy, Magic Vortex, Move Fortress, Natures Cures, Plane Shift, Raise Dead, Raise Volcano, Recall Hero, Resurrection, Spell Binding, Spell Of Mastery, Spell Of Return, Spell Ward, Stasis, Summon Champion, Summon Hero, Transmute, Wall of Stone, Warp Creature, Warp Node, Warp Wood, Word of Recall
-// NIU  scc_Target_Wiz_Spell             =  6,   WIZARD:  Cruel Unminding, Drain Power, Spell Blast, Subversion
+// NIU  scc_City_Enchantment_Positive     =  2,   Altar of Battle, Astral Gate, Cloud of Shadow, Consecration, Dark Rituals, Earth Gate, Flying Fortress, Gaias Blessing, Heavenly Light, Inspirations, Natures Eye, Prosperity, Stream of Life, Summoning Circle, Wall of Darkness, Wall of Fire
+// NIU  scc_City_Enchantment_Negative     =  3,   Chaos Rift, Cursed Lands, Evil Presence, Famine, Pestilence
+// NIU  scc_Direct_Damage_Fixed           =  4,   BOTH:    Doom Bolt, Fire Storm, Ice Storm, Star Fires, Warp Lightning
+// NIU  scc_Special_Spell                 =  5,   Animate Dead, Black Wind, Call The Void, Change Terrain, Chaos Channels, Corruption, Cracks Call, Death Wish, Disrupt, Earth Lore, Earth to Mud, Earthquake, Enchant Road, Great Unsummoning, Healing, Incarnation, Lycanthropy, Magic Vortex, Move Fortress, Natures Cures, Plane Shift, Raise Dead, Raise Volcano, Recall Hero, Resurrection, Spell Binding, Spell Of Mastery, Spell Of Return, Spell Ward, Stasis, Summon Champion, Summon Hero, Transmute, Wall of Stone, Warp Creature, Warp Node, Warp Wood, Word of Recall
+// NIU  scc_Target_Wiz_Spell              =  6,   WIZARD:  Cruel Unminding, Drain Power, Spell Blast, Subversion
 // NIU  DNE 7
 // NIU  DNE 8
-// NIU  scc_Global_Enchantment           =  9,   Armageddon, Aura of Majesty, Awareness, Chaos Surge, Charm of Life, Crusade, Detect Magic, Doom Mastery, Eternal Night, Evil Omens, Great Wasting, Herb Mastery, Holy Arms, Just Cause, Life Force, Meteor Storms, Natures Awareness, Natures Wrath, Planar Seal, Suppress Magic, Time Stop, Tranquility, Wind Mastery, Zombie Mastery
-// NIU  scc_Battlefield_Spell            = 10,   COMBAT:  Black Prayer, Blur, Call Chaos, Call Lightning, Darkness, Death Spell, Entangle, Flame Strike, High Prayer, Holy Word, Mana Leak, Mass Healing, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack
-// NIU  scc_Crafting_Spell               = 11,
-// NIU  scc_Unit_Enchantment_Normal_Only = 15,            Eldritch Weapon, Flame Blade, Heroism, Holy Armor, Holy Weapon
-// NIU  scc_Mundane_Curse                = 16,   COMBAT:  Possession, Shatter
-// NIU  DNE scc_Infusable_Spell    = 17,   below, no slider, above, maybe slider
-// NIU  scc_Dispels                 = 18,   COMBAT:  Dispel Magic, Dispel Magic True
-// NIU  scc_Disenchant_Spell             = 19,   ¿ BOTH ?  Disenchant Area, Disenchant True
-// NIU  scc_Disjunction_Spell            = 20,   OVERLAND:  Disjunction, Disjunction True
-// NIU  scc_Counter_Spell                = 21,   COMBAT:  Counter Magic
+// NIU  scc_Global_Enchantment            =  9,   Armageddon, Aura of Majesty, Awareness, Chaos Surge, Charm of Life, Crusade, Detect Magic, Doom Mastery, Eternal Night, Evil Omens, Great Wasting, Herb Mastery, Holy Arms, Just Cause, Life Force, Meteor Storms, Natures Awareness, Natures Wrath, Planar Seal, Suppress Magic, Time Stop, Tranquility, Wind Mastery, Zombie Mastery
+// NIU  scc_Battlefield_Spell             = 10,   COMBAT:  Black Prayer, Blur, Call Chaos, Call Lightning, Darkness, Death Spell, Entangle, Flame Strike, High Prayer, Holy Word, Mana Leak, Mass Healing, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack
+// NIU  scc_Crafting_Spell                = 11,
+// NIU  scc_Unit_Enchantment_Normal_Only  = 15,            Eldritch Weapon, Flame Blade, Heroism, Holy Armor, Holy Weapon
+// NIU  scc_Mundane_Curse                 = 16,   COMBAT:  Possession, Shatter
+// NIU  DNE scc_Infusable_Spell           = 17,   below, no slider, above, maybe slider
+// NIU  scc_Dispels                       = 18,   COMBAT:  Dispel Magic, Dispel Magic True
+// NIU  scc_Disenchant_Spell              = 19,   ¿ BOTH ?  Disenchant Area, Disenchant True
+// NIU  scc_Disjunction_Spell             = 20,   OVERLAND:  Disjunction, Disjunction True
+// NIU  scc_Combat_Counter_Magic          = 21,   COMBAT:  Counter Magic
 
 But, where's 'Counter Magic'?
+Nowhere. It doesn't use a target, never even gets to that code.
 */
         switch(spell_data_table[spell_idx].type)
         {
@@ -15885,7 +15966,8 @@ jt_bua_10
 
         case BUA_RangedAttack:
         {
-            STU_DEBUG_BREAK();
+
+            // STU_DEBUG_BREAK();
 
         } break;
 

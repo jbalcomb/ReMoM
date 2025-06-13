@@ -64,7 +64,7 @@ Comat Spell Target Type
         if(
             (spell_data_table[spell_idx].type == scc_Battlefield_Spell)
             ||
-            (spell_data_table[spell_idx].type == scc_Counter_Spell)
+            (spell_data_table[spell_idx].type == scc_Combat_Counter_Magic)
             ||
             (spell_data_table[spell_idx].type == scc_Disenchant_Spell)
             ||

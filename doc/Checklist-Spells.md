@@ -7,6 +7,7 @@ scc_Dispel_Spell         ==>  scc_Dispels
 scc_Disenchant_Spell     ==>  scc_Disenchants
 scc_Disjunction_Spell    ==>  scc_Disjunctions
 scc_Target_Wiz_Spell     ==>  scc_Target_Wizard
+scc_Counter_Spell        ==>  scc_Combat_Counter_Magic
 
 NOTE: the check on the check-list is only for the human player side, CP/AI is a different beast
 
@@ -93,7 +94,7 @@ all city enchantments are done
 [x]  18  scc_Dispels
 [x]  19  scc_Disenchants
 [x]  20  scc_Disjunctions
-[ ]  21  scc_Counter_Spell
+[x]  21  scc_Combat_Counter_Magic  (w/ scc_Battlefield_Spell)
 [ ]  22  scc_Var_Dmg_Spell
 [ ]  23  scc_Banish_Spell
 
@@ -141,7 +142,7 @@ scc_Mundane_Curse       = 16,   /* COMBAT:  Possession, Shatter */
 scc_Dispels        = 18,   /* COMBAT:  Dispel Magic, Dispel Magic True */
 scc_Disenchant_Spell    = 19,   /* ¿ BOTH ?  Disenchant Area, Disenchant True */
 scc_Disjunctions   = 20,   /* OVERLAND:  Disjunction, Disjunction True */
-scc_Counter_Spell       = 21,   /* COMBAT:  Counter Magic */
+scc_Combat_Counter_Magic       = 21,   /* COMBAT:  Counter Magic */
 scc_Var_Dmg_Spell       = 22,   /* COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast */
 scc_Banish_Spell        = 23    /* COMBAT:  Banish */
 
@@ -211,7 +212,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Phantom Warriors
 [ ] Confusion
 [x] Word of Recall
-[ ] Counter Magic
+[x] Counter Magic
 [x] Nagas
 [x] Psionic Blast
 [ ] Blur

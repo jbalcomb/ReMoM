@@ -496,30 +496,30 @@ enum e_SPELL_BOOK_CATEGORY
 // AKA enum e_SPELL_DATA_TYPE
 enum e_SPELL_CASTING_CATEGORY
 {
-    scc_Summoning                    =  0,   /* Air Elemental, Angel, Arch Angel, Basilisk, Behemoth, Chaos Spawn, Chimeras, Cockatrices, Colossus, Death Knights, Demon Lord, Djinn, Doom Bat, Earth Elemental, Efreet, Fire Elemental, Fire Giant, Floating Island, Gargoyles, Ghouls, Giant Spiders, Gorgons, Great Drake, Great Wyrm, Guardian Spirit, Hell Hounds, Hydra, Magic Spirit, Nagas, Night Stalker, Phantom Beast, Phantom Warriors, Shadow Demons, Skeletons, Sky Drake, Sprites, Stone Giant, Storm Giant, Unicorns, War Bears, Wraiths */
-    scc_Unit_Enchantment             =  1,   /* Berserk, Black Channels, Bless, Cloak of Fear, Elemental Armor, Endurance, Flight, Giant Strength, Guardian Wind, Haste, Immolation, Invisibility, Invulnerability, Iron Skin, Lionheart, Magic Immunity, Path Finding, Planar Travel, Regeneration, Resist Elements, Resist Magic, Righteousness, Spell Lock, Stone Skin, True Sight, Water Walking, Wind Walking, Wraith Form */
-    scc_City_Enchantment_Positive    =  2,   /* Altar of Battle, Astral Gate, Cloud of Shadow, Consecration, Dark Rituals, Earth Gate, Flying Fortress, Gaias Blessing, Heavenly Light, Inspirations, Natures Eye, Prosperity, Stream of Life, Summoning Circle, Wall of Darkness, Wall of Fire */
-    scc_City_Enchantment_Negative    =  3,   /* Chaos Rift, Cursed Lands, Evil Presence, Famine, Pestilence */
-    scc_Direct_Damage_Fixed          =  4,   /* BOTH:    Doom Bolt, Fire Storm, Ice Storm, Star Fires, Warp Lightning */
-    scc_Special_Spell                =  5,   /* Animate Dead, Black Wind, Call The Void, Change Terrain, Chaos Channels, Corruption, Cracks Call, Death Wish, Disrupt, Earth Lore, Earth to Mud, Earthquake, Enchant Road, Great Unsummoning, Healing, Incarnation, Lycanthropy, Magic Vortex, Move Fortress, Natures Cures, Plane Shift, Raise Dead, Raise Volcano, Recall Hero, Resurrection, Spell Binding, Spell Of Mastery, Spell Of Return, Spell Ward, Stasis, Summon Champion, Summon Hero, Transmute, Wall of Stone, Warp Creature, Warp Node, Warp Wood, Word of Recall */
-    scc_Target_Wizard             =  6,   /* WIZARD:  Cruel Unminding, Drain Power, Spell Blast, Subversion */
+    scc_Summoning                     =  0,   /* Air Elemental, Angel, Arch Angel, Basilisk, Behemoth, Chaos Spawn, Chimeras, Cockatrices, Colossus, Death Knights, Demon Lord, Djinn, Doom Bat, Earth Elemental, Efreet, Fire Elemental, Fire Giant, Floating Island, Gargoyles, Ghouls, Giant Spiders, Gorgons, Great Drake, Great Wyrm, Guardian Spirit, Hell Hounds, Hydra, Magic Spirit, Nagas, Night Stalker, Phantom Beast, Phantom Warriors, Shadow Demons, Skeletons, Sky Drake, Sprites, Stone Giant, Storm Giant, Unicorns, War Bears, Wraiths */
+    scc_Unit_Enchantment              =  1,   /* Berserk, Black Channels, Bless, Cloak of Fear, Elemental Armor, Endurance, Flight, Giant Strength, Guardian Wind, Haste, Immolation, Invisibility, Invulnerability, Iron Skin, Lionheart, Magic Immunity, Path Finding, Planar Travel, Regeneration, Resist Elements, Resist Magic, Righteousness, Spell Lock, Stone Skin, True Sight, Water Walking, Wind Walking, Wraith Form */
+    scc_City_Enchantment_Positive     =  2,   /* Altar of Battle, Astral Gate, Cloud of Shadow, Consecration, Dark Rituals, Earth Gate, Flying Fortress, Gaias Blessing, Heavenly Light, Inspirations, Natures Eye, Prosperity, Stream of Life, Summoning Circle, Wall of Darkness, Wall of Fire */
+    scc_City_Enchantment_Negative     =  3,   /* Chaos Rift, Cursed Lands, Evil Presence, Famine, Pestilence */
+    scc_Direct_Damage_Fixed           =  4,   /* BOTH:    Doom Bolt, Fire Storm, Ice Storm, Star Fires, Warp Lightning */
+    scc_Special_Spell                 =  5,   /* Animate Dead, Black Wind, Call The Void, Change Terrain, Chaos Channels, Corruption, Cracks Call, Death Wish, Disrupt, Earth Lore, Earth to Mud, Earthquake, Enchant Road, Great Unsummoning, Healing, Incarnation, Lycanthropy, Magic Vortex, Move Fortress, Natures Cures, Plane Shift, Raise Dead, Raise Volcano, Recall Hero, Resurrection, Spell Binding, Spell Of Mastery, Spell Of Return, Spell Ward, Stasis, Summon Champion, Summon Hero, Transmute, Wall of Stone, Warp Creature, Warp Node, Warp Wood, Word of Recall */
+    scc_Target_Wizard                 =  6,   /* WIZARD:  Cruel Unminding, Drain Power, Spell Blast, Subversion */
     /* DNE 7 */
     /* DNE 8*/
-    scc_Global_Enchantment           =  9,   /* Armageddon, Aura of Majesty, Awareness, Chaos Surge, Charm of Life, Crusade, Detect Magic, Doom Mastery, Eternal Night, Evil Omens, Great Wasting, Herb Mastery, Holy Arms, Just Cause, Life Force, Meteor Storms, Natures Awareness, Natures Wrath, Planar Seal, Suppress Magic, Time Stop, Tranquility, Wind Mastery, Zombie Mastery */
-    scc_Battlefield_Spell            = 10,   /* COMBAT:  Black Prayer, Blur, Call Chaos, Call Lightning, Darkness, Death Spell, Entangle, Flame Strike, High Prayer, Holy Word, Mana Leak, Mass Healing, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack */
-    scc_Crafting_Spell               = 11,
-    scc_Combat_Destroy_Unit          = 12, /* COMBAT:  Disintegrate, Dispel Evil, Petrify, Word of Death */
-    scc_Resistable_Spell             = 13,   /* COMBAT:  Black Sleep, Confusion, Creature Binding, Vertigo, Weakness */
-    scc_Unresistable_Spell           = 14,   /* COMBAT:  Mind Storm, Web */
-    scc_Unit_Enchantment_Normal_Only = 15,   /*          Eldritch Weapon, Flame Blade, Heroism, Holy Armor, Holy Weapon */
-    scc_Mundane_Curse                = 16,   /* COMBAT:  Possession, Shatter */
-    /* DNE */ scc_Infusable_Spell    = 17,   /* below, no slider, above, maybe slider */
-    scc_Dispels                 = 18,   /* COMBAT:  Dispel Magic, Dispel Magic True */
-    scc_Disenchants             = 19,   /* ¿ BOTH ?  Disenchant Area, Disenchant True */
-    scc_Disjunctions            = 20,   /* OVERLAND:  Disjunction, Disjunction True */
-    scc_Counter_Spell                = 21,   /* COMBAT:  Counter Magic */
-    scc_Direct_Damage_Variable                = 22,   /* COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast */
-    scc_Banish_Spell                 = 23    /* COMBAT:  Banish */
+    scc_Global_Enchantment            =  9,   /* Armageddon, Aura of Majesty, Awareness, Chaos Surge, Charm of Life, Crusade, Detect Magic, Doom Mastery, Eternal Night, Evil Omens, Great Wasting, Herb Mastery, Holy Arms, Just Cause, Life Force, Meteor Storms, Natures Awareness, Natures Wrath, Planar Seal, Suppress Magic, Time Stop, Tranquility, Wind Mastery, Zombie Mastery */
+    scc_Battlefield_Spell             = 10,   /* COMBAT:  Black Prayer, Blur, Call Chaos, Call Lightning, Darkness, Death Spell, Entangle, Flame Strike, High Prayer, Holy Word, Mana Leak, Mass Healing, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack */
+    scc_Crafting_Spell                = 11,
+    scc_Combat_Destroy_Unit           = 12, /* COMBAT:  Disintegrate, Dispel Evil, Petrify, Word of Death */
+    scc_Resistable_Spell              = 13,   /* COMBAT:  Black Sleep, Confusion, Creature Binding, Vertigo, Weakness */
+    scc_Unresistable_Spell            = 14,   /* COMBAT:  Mind Storm, Web */
+    scc_Unit_Enchantment_Normal_Only  = 15,   /*          Eldritch Weapon, Flame Blade, Heroism, Holy Armor, Holy Weapon */
+    scc_Mundane_Curse                 = 16,   /* COMBAT:  Possession, Shatter */
+    /* DNE */ scc_Infusable_Spell     = 17,   /* below, no slider, above, maybe slider */
+    scc_Dispels                       = 18,   /* COMBAT:  Dispel Magic, Dispel Magic True */
+    scc_Disenchants                   = 19,   /* ¿ BOTH ?  Disenchant Area, Disenchant True */
+    scc_Disjunctions                  = 20,   /* OVERLAND:  Disjunction, Disjunction True */
+    scc_Combat_Counter_Magic          = 21,   /* COMBAT:  Counter Magic; in with scc_Battlefield_Spell */
+    scc_Direct_Damage_Variable        = 22,   /* COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast */
+    scc_Banish_Spell                  = 23    /* COMBAT:  Banish */
 };
 
 enum e_SPELL_LIST_TYPE
@@ -2863,6 +2863,15 @@ extern struct s_BATTLE_UNIT * battle_units;
 // WZD dseg:922E
 // ; 3 LBX_Alloc_Next paragraphs, sandbox segment; the first 30 (1Eh) bytes are zeroed when allocated
 // extern struct s_COMBAT_ENCHANTMENTS * combat_enchantments;      // alloc in
+/*
+NOTE: spl_Counter_Magic uses count, rather than {F,T}
+indexed by spell_data_table[].ce_idx
+~ combat_enchantments[ce_idx][side]
+combat_enchantment_index = spell_data_table[spell_idx].ce_idx;
+if(player_idx != _combat_attacker_player)
+    combat_enchantment_index++;
+combat_enchantments[combat_enchantment_index] = Mana;
+*/
 extern int8_t * combat_enchantments;
 
 
