@@ -153,12 +153,12 @@ BU_Apply_Items() uses s_STRATEGIC_UNIT.mana_max as if it means 'has spell caster
 ### BU_Init_Battle_Unit()
 
 gets called directly elsewhere
-so, not just a part of loading a 'Battle Unit'
+so, not just a part of loading a 'Battle Unit'  ... Indeed. It's part of creating a new battle unit for combat summons
     BU_Heal()
     CMB_AnimateDead()
     CMB_PrepareTurn()
     CMB_RaiseDead()
-    G_CMB_SpellEffect()
+    Cast_Spell_On_Battle_Unit()
 
 
 

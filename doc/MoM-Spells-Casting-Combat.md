@@ -8,6 +8,7 @@ CMB_ShowSpellbook__WIP()  ==>  Combat_Spellbook_Screen()
 CMB_RedrawSpellbook__WIP()  ==>  Combat_Spellbook_Screen_Draw()
 CMB_DrawFullScreen__WIP()  ==>  Tactical_Combat_Draw()
 CMB_CheckSpellErrors()  ==>  Do_Legal_Spell_Check__WIP()
+G_CMB_SpellEffect()  ==> G_CMB_SpellEffect__WIP()  ==>  Cast_Spell_On_Battle_Unit()
 
 
 
@@ -26,12 +27,44 @@ AI_BU_ProcessAction__WIP()
 
 
 
+## Cast_Spell_On_Battle_Unit()
+
+
+
+Combat_Cast_Spell__WIP()
+    if(Target != 999)
+        Cast_Spell_On_Battle_Unit(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
+'Target' is battle_unit_idx
+'IDK_mana' is casting cost (as in TSCC)
+
+'Anims' is always ST_TRUE  (used by group and individual spell functions)
+no idea what's up with the two unused parameters
+
+### IDK_mana
+    Combat_Cast_Spell__WIP()
+        if(spell_idx != spl_NONE)
+            if( (spell_data_table[spell_idx].type < scc_Infusable_Spell) || (Spell_Like_Ability != ST_FALSE) )
+                if(caster_idx > CASTER_IDX_BASE)
+                    IDK_mana = Casting_Cost(player_idx, spell_idx, 1);
+                else
+                    IDK_mana = spell_data_table[spell_idx].casting_cost;
+            else
+                if( (player_idx == HUMAN_PLAYER_IDX) && (_auto_combat_flag == ST_FALSE) )
+                    IDK_mana = Combat_Spellbook_Mana_Adder_Screen(spell_idx, Selected_Spell, caster_idx);
+        if(spell_idx > spl_NONE)
+            if(Target != 999)
+                Cast_Spell_On_Battle_Unit(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
+
+
+
+
+
 
 '(Summon) Phantom Warriors'
 Tactical_Combat__WIP()
     Combat_Cast_Spell__WIP()
         Combat_Spell_Target_Screen__WIP()
-        G_CMB_SpellEffect__WIP()
+        Cast_Spell_On_Battle_Unit()
             Create_Unit__WIP()
             UNIT_SummonToBattle__SEGRAX()
             BU_CombatSummon__SEGRAX()
@@ -44,7 +77,7 @@ Combat_Spell_Target_Screen__WIP()
             if(_combat_attacker_player == HUMAN_PLAYER_IDX)
                 CMB_TargetingType = CTT_Tile_NoUnitA;
 ...
-G_CMB_SpellEffect__WIP()
+Cast_Spell_On_Battle_Unit()
     switch(spell_data_table[spell_idx].type)
         case scc_Summoning:
             Figure_Count = Create_Unit__WIP(spell_data_table[spell_idx].unit_type, player_idx, 0, 0, 9, 2000);
@@ -104,7 +137,7 @@ Combat_Cast_Spell__WIP()
     ovr112:0A6D
     @@Target_And_Effect:
         j_CMB_TargetSpell()  || j_AITP_CombatSpell__STUB()
-        j_G_CMB_SpellEffect()
+        j_Cast_Spell_On_Battle_Unit()
 
 
 
@@ -142,27 +175,27 @@ Combat_Cast_Spell_With_Caster()
 Combat_Cast_Spell__WIP()
 Combat_Cast_Spell_Error()
 
-j_Combat_Spellbook_Build__STUB()
+Combat_Spellbook_Build__STUB()
 CMB_ComposeBookBG()
 CMB_ShowSpellbook()
 
-j_CMB_SpellSlider()
+CMB_SpellSlider()
 
 CMB_CheckSpellErrors()
 
-j_Casting_Cost()
-j_Casting_Cost_Reduction()
+Casting_Cost()
+Casting_Cost_Reduction()
 
-j_WIZ_DispelAttempt()
+WIZ_DispelAttempt()
 
-j_CMB_CounterMessage()
+CMB_CounterMessage()
 
-j_CMB_TargetSpell()
-j_AITP_CombatSpell__STUB()
+CMB_TargetSpell()
+AITP_CombatSpell__STUB()
 
-j_G_CMB_SpellEffect()
+Cast_Spell_On_Battle_Unit()
 
-j_BU_SummonDemon()
+BU_SummonDemon()
 
 
 

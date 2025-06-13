@@ -1545,7 +1545,7 @@ int16_t AITP_CombatSpell__STUB(int16_t spell_idx, int16_t player_idx, int16_t * 
 // AITP_DispelMagic()
 
 // WZD 111p08
-void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caster_idx, int16_t target_cgx, int16_t target_cgy, int16_t Mana, int16_t Anims, int16_t UU1, int16_t UU2);
+void Cast_Spell_On_Battle_Unit(int16_t spell_idx, int16_t target_idx, int16_t caster_idx, int16_t target_cgx, int16_t target_cgy, int16_t Mana, int16_t Anims, int16_t UU1, int16_t UU2);
 
 // WZD 111p09
 // drake178: AITP_HolyWord() 

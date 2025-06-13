@@ -33,7 +33,7 @@ Tactical_Combat__WIP()
             Do_Legal_Spell_Check__WIP()
             Combat_Spell_Target_Screen__WIP()
             if(Target != 999)
-                G_CMB_SpellEffect__WIP()
+                Cast_Spell_On_Battle_Unit()
             
 
 
@@ -95,7 +95,7 @@ Combat_Cast_Spell__WIP()
     Do_Legal_Spell_Check__WIP()
         if(spell_idx == spl_Raise_Dead)
 
-G_CMB_SpellEffect__WIP()
+Cast_Spell_On_Battle_Unit()
     switch(spell_data_table[spell_idx].type)
         case scc_Special_Spell:
             if(spell_idx == spl_Raise_Dead)
@@ -103,7 +103,7 @@ G_CMB_SpellEffect__WIP()
 
 XREF:
     j_Cast_Raise_Dead()
-        G_CMB_SpellEffect__WIP()
+        Cast_Spell_On_Battle_Unit()
 
 
 
@@ -113,7 +113,7 @@ Combat_Cast_Spell__WIP()
     Do_Legal_Spell_Check__WIP()
         if(spell_idx == spl_Animate_Dead)
 
-G_CMB_SpellEffect__WIP()
+Cast_Spell_On_Battle_Unit()
     switch(spell_data_table[spell_idx].type)
         case scc_Special_Spell:
             if(spell_idx == spl_Animate_Dead)
@@ -121,4 +121,4 @@ G_CMB_SpellEffect__WIP()
 
 XREF:
     j_Cast_Animate_Dead()
-        G_CMB_SpellEffect__WIP()
+        Cast_Spell_On_Battle_Unit()

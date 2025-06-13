@@ -54,8 +54,8 @@ sub_BEB92+F2                        mov     [PageFlipEffect], 0
 CMB_TacticalCombat+64               mov     [PageFlipEffect], 0
 Outpost_Screen+D                    mov     [PageFlipEffect], 0
 NameStartingCity_Dialog_Popup+A     mov     [PageFlipEffect], 0
-G_CMB_SpellEffect+CB0               mov     [PageFlipEffect], 0
-G_CMB_SpellEffect+B52               mov     [PageFlipEffect], 0
+Cast_Spell_On_Battle_Unit+CB0               mov     [PageFlipEffect], 0
+Cast_Spell_On_Battle_Unit+B52               mov     [PageFlipEffect], 0
 
 IDK_DiplScrn_s6EA70+1A5             mov     [PageFlipEffect], 2
 IDK_Cartographer_Screen+1AB         mov     [PageFlipEffect], 2
@@ -76,8 +76,8 @@ CTY_Consecration:loc_B19F5          mov     [PageFlipEffect], 3
 EVNT_MercHireDialog+193             mov     [PageFlipEffect], 3
 G_CMB_CastSpell:loc_8D0F2           mov     [PageFlipEffect], 3
 G_CMB_ShowSummary+12D               mov     [PageFlipEffect], 3
-G_CMB_SpellEffect+B3D               mov     [PageFlipEffect], 3
-G_CMB_SpellEffect+C9B               mov     [PageFlipEffect], 3
+Cast_Spell_On_Battle_Unit+B3D               mov     [PageFlipEffect], 3
+Cast_Spell_On_Battle_Unit+C9B               mov     [PageFlipEffect], 3
 IDK_CityEncht_s4A3F0:loc_4A8ED      mov     [PageFlipEffect], 3
 IDK_UnitListScreen_s6A2D0:loc_6A5A8 mov     [PageFlipEffect], 3
 Items_Screen+181                    mov     [PageFlipEffect], 3

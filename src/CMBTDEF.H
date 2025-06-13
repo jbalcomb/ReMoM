@@ -40,7 +40,7 @@
 
 
 /*
-G_CMB_SpellEffect__WIP()
+Cast_Spell_On_Battle_Unit()
 
     if(spell_idx == spl_Disrupt)
         battlefield->Wall_Sections[(((target_cgy - 10) * 3) + (target_cgx - 5))] = 2;
@@ -211,7 +211,7 @@ this is as-seen in CMB_SpawnFigure__WIP()
 
 
 /*
-G_CMB_SpellEffect__WIP()
+Cast_Spell_On_Battle_Unit()
 
                 Moves_Left = Battle_Unit_Moves2(target_idx);
                 Not_Moved_Yet = ST_FALSE;

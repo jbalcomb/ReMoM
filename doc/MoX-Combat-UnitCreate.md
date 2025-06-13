@@ -181,7 +181,7 @@ BU_SummonDemon__SEGRAX()
 
 
 
-G_CMB_SpellEffect__WIP()
+Cast_Spell_On_Battle_Unit()
 
     switch(spell_data_table[spell_idx].type)
         case scc_Summoning:

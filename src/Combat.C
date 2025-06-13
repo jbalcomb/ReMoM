@@ -5885,7 +5885,7 @@ int16_t Battle_Unit_Movement_Icon(int16_t battle_unit_idx)
 */
 /*
 
-G_CMB_SpellEffect__WIP()
+Cast_Spell_On_Battle_Unit()
     UNIT_SummonToBattle__SEGRAX(player_idx, (_units - 1), target_cgx, target_cgy);
 BU_SummonDemon__SEGRAX()
     BU_SummonDemon__SEGRAX(caster_idx);
@@ -11585,7 +11585,7 @@ int16_t AITP_CombatSpell__STUB(int16_t spell_idx, int16_t player_idx, int16_t * 
 
 Combat_Cast_Spell__WIP()
     Target = Combat_Spell_Target_Screen__WIP(spell_idx, &Target_X, &Target_Y);
-    G_CMB_SpellEffect__WIP(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
+    Cast_Spell_On_Battle_Unit(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
 
 
 IDA Group Colors
@@ -11601,7 +11601,7 @@ IDA Group Colors
     scc_Direct_Damage_Variable     (22)  #31 redish purple
 
 */
-void G_CMB_SpellEffect__WIP(int16_t spell_idx, int16_t target_idx, int16_t caster_idx, int16_t target_cgx, int16_t target_cgy, int16_t Mana, int16_t Anims, int16_t UU1, int16_t UU2)
+void Cast_Spell_On_Battle_Unit(int16_t spell_idx, int16_t target_idx, int16_t caster_idx, int16_t target_cgx, int16_t target_cgy, int16_t tscc, int16_t anims_on, int16_t unused1, int16_t unused2)
 {
     int16_t Not_Moved_Yet = 0;
     int16_t Moves_Left = 0;
@@ -11728,7 +11728,7 @@ case scc_Disjunction_Spell:  // 20
 
         case scc_Direct_Damage_Fixed:
         {
-            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, Anims, caster_idx);
+            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
             CMB_ConvSpellAttack__WIP(spell_idx, target_idx, &damage_types[0], 0);
             BU_ApplyDamage__WIP(target_idx, &damage_types[0]);
             Set_Page_Off();
@@ -11865,7 +11865,7 @@ case scc_Disjunction_Spell:  // 20
         case scc_Combat_Counter_Magic:  // 21
         {
 
-            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, Anims, caster_idx);
+            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
 
             if(
                 (spell_idx != spl_Flame_Strike)
@@ -11890,7 +11890,7 @@ case scc_Disjunction_Spell:  // 20
                 if(spell_idx == spl_Counter_Magic)
                 {
 
-                    combat_enchantments[combat_enchantment_index] = Mana;
+                    combat_enchantments[combat_enchantment_index] = tscc;
 
                 }
                 else
@@ -11964,7 +11964,7 @@ case scc_Disjunction_Spell:  // 20
             )
             {
 
-                Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, Anims, caster_idx);
+                Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
 
                 if(spell_idx == spl_Disintegrate)
                 {
@@ -12052,7 +12052,7 @@ case scc_Disjunction_Spell:  // 20
 
         case scc_Dispels:  // 18
         {
-            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, Anims, caster_idx);
+            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
             _page_flip_effect = pfe_Dissolve;
             Set_Page_Off();
             Tactical_Combat_Draw();
@@ -12068,11 +12068,11 @@ case scc_Disjunction_Spell:  // 20
             )
             {
 
-                Mana *= 3;
+                tscc *= 3;
 
             }
             resistance_modifier = 0;
-            Combat_Cast_Dispel(target_cgx, target_cgy, caster_idx, Mana, &resistance_modifier);
+            Combat_Cast_Dispel(target_cgx, target_cgy, caster_idx, tscc, &resistance_modifier);
             // ; BUG: Dispel Magic DOES NOT use unit-based targeting,
             // ; this value can contain any valid index or even 99
             Moves_Left = Battle_Unit_Moves2(target_idx);
@@ -12099,7 +12099,7 @@ case scc_Disjunction_Spell:  // 20
 
         case scc_Disenchants:  // 19
         {
-            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, Anims, caster_idx);
+            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
             _page_flip_effect = pfe_Dissolve;
             Set_Page_Off();
             Tactical_Combat_Draw();
@@ -12112,16 +12112,16 @@ case scc_Disjunction_Spell:  // 20
             )
             {
 
-                Mana *= 2;
+                tscc *= 2;
 
             }
             // BUGBUG  should be if *3 else *2, in previous block
             if(spell_idx == spl_Disenchant_True)
             {
 
-                Mana *= 3;
+                tscc *= 3;
             }
-            Combat_Cast_Disenchant(caster_idx, Mana);
+            Combat_Cast_Disenchant(caster_idx, tscc);
             for(itr = 0; itr < _combat_total_unit_count; itr++)
             {
 
@@ -12160,7 +12160,7 @@ case scc_Disjunction_Spell:  // 20
 
         case scc_Direct_Damage_Variable:  // 22
         {
-            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, Anims, caster_idx);
+            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
             if(spell_idx == spl_Life_Drain)
             {
                 /* SPELLY */  BU_LifeDrain__WIP(target_idx, &damage_types[0], caster_idx);
@@ -12175,9 +12175,9 @@ case scc_Disjunction_Spell:  // 20
             )
             {
                 Moves_Left = spell_data_table[spell_idx].strength;
-                if(Mana > 0)
+                if(tscc > 0)
                 {
-                    Moves_Left += (Mana - spell_data_table[spell_idx].casting_cost);
+                    Moves_Left += (tscc - spell_data_table[spell_idx].casting_cost);
                     CMB_ConvSpellAttack__WIP(spell_idx, target_idx, &damage_types[0], Moves_Left);
                 }
             }
@@ -12186,9 +12186,9 @@ case scc_Disjunction_Spell:  // 20
             if(spell_idx == spl_Psionic_Blast)
             {
                 Moves_Left = spell_data_table[spell_idx].strength;
-                if(Mana > 0)
+                if(tscc > 0)
                 {
-                    Moves_Left += ((Mana - spell_data_table[spell_idx].casting_cost) / 2);
+                    Moves_Left += ((tscc - spell_data_table[spell_idx].casting_cost) / 2);
                     CMB_ConvSpellAttack__WIP(spell_idx, target_idx, &damage_types[0], Moves_Left);
                 }
             }
@@ -12196,9 +12196,9 @@ case scc_Disjunction_Spell:  // 20
             if(spell_idx == spl_Fireball)
             {
                 Moves_Left = spell_data_table[spell_idx].strength;
-                if(Mana > 0)
+                if(tscc > 0)
                 {
-                    Moves_Left += ((Mana - spell_data_table[spell_idx].casting_cost) / 3);
+                    Moves_Left += ((tscc - spell_data_table[spell_idx].casting_cost) / 3);
                     CMB_ConvSpellAttack__WIP(spell_idx, target_idx, &damage_types[0], Moves_Left);
                 }
             }
@@ -12986,7 +12986,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
         if(Target != 999)
         {
 
-            G_CMB_SpellEffect__WIP(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
+            Cast_Spell_On_Battle_Unit(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
 
             cast_status = 2;
 
@@ -13774,7 +13774,7 @@ XREF:
     j_Spell_Resistance_Modifier()
         AITP_CombatSpell__STUB()
         AITP_CombatSpell__STUB()
-        G_CMB_SpellEffect__WIP()
+        Cast_Spell_On_Battle_Unit()
 
 RESISTANCE TO SPELLS
 ...resistance to magic and poison (as symbolized by the number of crosses they have on their unit statistics window)

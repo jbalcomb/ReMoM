@@ -997,14 +997,14 @@ void CMB_BattlefieldSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t An
 ; if combat spell anims (deprecated) are disabled
 */
 /*
-    OON XREF:  G_CMB_SpellEffect__WIP()
+    OON XREF:  Cast_Spell_On_Battle_Unit()
 
 XREF:
     j_CMB_PlaySpellAnim__WIP(*)
-        G_CMB_SpellEffect__WIP()
+        Cast_Spell_On_Battle_Unit()
 
 */
-void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t player_idx, int16_t Anims, int16_t caster_idx)
+void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t player_idx, int16_t anims_on, int16_t caster_idx)
 {
     int16_t blue = 0;
     int16_t green = 0;
@@ -1038,7 +1038,7 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
         )
         {
 
-            /* SPELLY */  CMB_BattlefieldSpell__WIP(player_idx, spell_idx, Anims, caster_idx);
+            /* SPELLY */  CMB_BattlefieldSpell__WIP(player_idx, spell_idx, anims_on, caster_idx);
 
         }
         else
@@ -1047,7 +1047,7 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
 // shade the screen to 40% of the realm's color and
 // then back to the original, while displaying the
 // combat spell cast message (but no animation)
-            if(Anims != ST_FALSE)
+            if(anims_on != ST_FALSE)
             {
 
                 switch(spell_data_table[spell_idx].magic_realm)
@@ -1130,7 +1130,7 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
     else
     {
 
-        if(Anims != ST_FALSE)
+        if(anims_on != ST_FALSE)
         {
 
             Combat_Load_Spell_Sound_Effect(spell_idx);
