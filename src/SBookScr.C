@@ -861,16 +861,16 @@ void Cast_Spell_City_Enchantment_Animation_Load_Music(int16_t spell_idx, int16_t
 */
 int16_t Spell_Animation_Load_Graphics(int16_t spell_idx)
 {
-    int16_t l_spell_idx = 0;
+    int16_t sw_spell_idx = 0;
     int16_t return_value = 0;  // _DI_
 
     Allocate_Next_Block(_screen_seg, 1010);  // 1,010 PR  16,160 B
 
     return_value = ST_FALSE;
 
-    l_spell_idx = spell_idx;
+    sw_spell_idx = spell_idx;
 
-    switch(l_spell_idx)
+    switch(sw_spell_idx)
     {
         case spl_Earth_To_Mud:
         {
@@ -1032,6 +1032,7 @@ int16_t Spell_Animation_Load_Graphics(int16_t spell_idx)
         case spl_Black_Wind:
         {
             spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 14, _screen_seg);
+            return_value = ST_TRUE;
         } break;
         case spl_Cruel_Unminding:
         {
@@ -1060,32 +1061,35 @@ int16_t Spell_Animation_Load_Graphics(int16_t spell_idx)
 
         default:
         {
-                    
-            if(spell_data_table[spell_idx].type == scc_Summoning)
-            {
-                if (spell_idx == spl_Floating_Island)
-                {
-                    spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, spell_data_table[spell_idx].magic_realm, _screen_seg);
-                    return_value = ST_TRUE;
-                }
-                else if(
+
+            if(
+                !(
+                    (spell_data_table[spell_idx].type == scc_Summoning)
+                    &&
+                    (spell_idx == spl_Floating_Island)
+                )
+                &&
+                (
                     (spell_idx == spl_Raise_Dead)
                     ||
                     (spell_idx == spl_Animate_Dead)
                 )
-                {
-                    spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 22, _screen_seg);
-                    return_value = ST_FALSE;
-                }
-                else
-                {
-                    spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, spell_data_table[spell_idx].magic_realm, _screen_seg);
-                    return_value = ST_TRUE;
-                }
+            )
+            {
+                // CMBTFX.LBX, 022  "SUMMON"    "Summoning"
+                spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 22, _screen_seg);
+                return_value = ST_FALSE;
             }
             else
             {
-                STU_DEBUG_BREAK();
+                // SPECFX.LBX, 000  "UNCHANT2"  "Nature"
+                // SPECFX.LBX, 001  "UENCHANT"  "Sorcery"
+                // SPECFX.LBX, 002  "CHAOS"     "Chaos"
+                // SPECFX.LBX, 003  "UNCHANT2"  "Life"
+                // SPECFX.LBX, 004  "UNCHANT2"  "Death"
+                // SPECFX.LBX, 005  "UNCHANT2"  "Arcane"
+                spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, spell_data_table[spell_idx].magic_realm, _screen_seg);
+                return_value = ST_TRUE;
             }
 
         } break;

@@ -29,6 +29,7 @@
 #include "MOX/FLIC_Draw.H"
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_DEF.H"
 #include "MOX/MOX_ITOA.H"  /* mox_itoa() */
 #include "MOX/MOX_SET.H"  /* magic_set */
 #include "MOX/MOX_T4.H"
@@ -7365,11 +7366,7 @@ void CMB_CreateEntities__WIP(void)
 
         BU_SetBaseAnims__WIP(itr);  // sets Always_Animate and Move_Bob
 
-        // TODO  Curse_Anim = BU_GetCombatEffect(itr);
-        // ; returns the highest order (negative) combat effect
-        // ; on the unit, or -1 if there aren't any; Black Sleep
-        // ; and Warp Creature set a BU image effect instead
-        /* HACK */  Curse_Anim = ST_UNDEFINED;
+        Curse_Anim = BU_GetCombatEffect__WIP(itr);  // sets Image_Effect  {1, 3}
 
         BU_SetVisibility__WIP(itr);  // sets Image_Effect to 4 or 5
 
@@ -9337,7 +9334,7 @@ void Combat_Figure_Effect__WIP(int16_t effect)
     switch(effect)
     {
 
-        case 1:
+        case 1:  // Black Sleep
         {
 
             Transparent_Color_Range(GfxBuf_2400B, 232, 232);
@@ -9749,6 +9746,44 @@ void BU_SetVisibility__WIP(int16_t battle_unit_idx)
 
 // WZD o105p09
 // drake178: BU_GetCombatEffect()
+int16_t BU_GetCombatEffect__WIP(int16_t battle_unit_idx)
+{
+    int16_t effect;
+
+    if((battle_units[battle_unit_idx].Combat_Effects & bue_Black_Sleep) != 0)
+    {
+
+        battle_units[battle_unit_idx].Image_Effect = 1;
+
+    }
+
+    if(
+        ((battle_units[battle_unit_idx].Combat_Effects & bue_Warped_Attack) != 0)
+        ||
+        ((battle_units[battle_unit_idx].Combat_Effects & bue_Warped_Defense) != 0)
+        ||
+        ((battle_units[battle_unit_idx].Combat_Effects & bue_Warped_Resist) != 0)
+    )
+    {
+
+        battle_units[battle_unit_idx].Image_Effect = 3;
+
+    }
+
+    if((battle_units[battle_unit_idx].Combat_Effects & bue_Vertigo) != 0) { effect = 0; }
+    else if((battle_units[battle_unit_idx].Combat_Effects & bue_Confusion) != 0) { effect = 1; }
+    else if((battle_units[battle_unit_idx].Combat_Effects & bue_Whirlwind) != 0) { effect = 2; }
+    else if((battle_units[battle_unit_idx].Combat_Effects & bue_Mind_Storm) != 0) { effect = 3; }
+    else if((battle_units[battle_unit_idx].Combat_Effects & bue_Shatter) != 0) { effect = 4; }
+    else if((battle_units[battle_unit_idx].Combat_Effects & bue_Weakness) != 0) { effect = 5; }
+    else if((battle_units[battle_unit_idx].Combat_Effects & bue_Mind_Twist) != 0) { effect = 6; }
+    else if(((battle_units[battle_unit_idx].Combat_Effects & bue_Web) != 0) && (battle_units[battle_unit_idx].Web_HP > 0)){ effect = 7; }
+    else { effect = ST_UNDEFINED; }
+
+    return effect;
+
+}
+
 
 // WZD o105p10
 // drake178: BU_SetBaseAnims()
@@ -11614,6 +11649,32 @@ void Cast_Spell_On_Battle_Unit(int16_t spell_idx, int16_t target_idx, int16_t ca
     int16_t Resist_Result = 0;
     int16_t combat_enchantment_index = 0;  // DNE in Dasm, reuses Resist_Result
 
+#define UPDATE_SCREEN_LOCAL()  \
+    do {  \
+        Set_Page_Off();  \
+        Tactical_Combat_Draw();  \
+        PageFlip_FX();  \
+    } while(0)
+#define REINIT_BATTLEUNIT() \
+    do { \
+        Not_Moved_Yet = ST_FALSE;  \
+        if(battle_units[itr].status == bus_Active)  \
+        {  \
+            Moves_Left = Battle_Unit_Moves2(itr);  \
+            if(battle_units[itr].movement_points == Moves_Left)  \
+                Not_Moved_Yet = ST_TRUE;  \
+            else  \
+                Moves_Left = battle_units[itr].movement_points;  \
+            BU_Init_Battle_Unit(&battle_units[itr]);  \
+            BU_Apply_Battlefield_Effects__WIP(&battle_units[itr]);  \
+            if(Not_Moved_Yet == ST_TRUE)  \
+                battle_units[itr].movement_points = Battle_Unit_Moves2(itr);  \
+            else  \
+                battle_units[itr].movement_points = Moves_Left;  \
+        }  \
+    } while(0)
+
+
     if(caster_idx >= CASTER_IDX_BASE)
     {
         player_idx = (caster_idx - CASTER_IDX_BASE);
@@ -11728,12 +11789,15 @@ case scc_Disjunction_Spell:  // 20
 
         case scc_Direct_Damage_Fixed:
         {
+
             Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
+
             CMB_ConvSpellAttack__WIP(spell_idx, target_idx, &damage_types[0], 0);
+
             BU_ApplyDamage__WIP(target_idx, &damage_types[0]);
-            Set_Page_Off();
-            Tactical_Combat_Draw();
-            PageFlip_FX();
+
+            UPDATE_SCREEN_LOCAL();
+
         } break;
 
         case scc_Special_Spell:  /* 38 of these... :(.. */
@@ -11756,26 +11820,7 @@ case scc_Disjunction_Spell:  // 20
             {
                 battle_units[target_idx].ammo = 0;
                 battle_units[target_idx].ranged_type = rat_None;
-                Moves_Left = Battle_Unit_Moves2(target_idx);
-                Not_Moved_Yet = ST_FALSE;
-                if(battle_units[target_idx].movement_points == Moves_Left)
-                {
-                    Not_Moved_Yet = ST_TRUE;
-                }
-                else
-                {
-                    Moves_Left = battle_units[target_idx].movement_points;
-                }
-                BU_Init_Battle_Unit(&battle_units[target_idx]);
-                BU_Apply_Battlefield_Effects__WIP(&battle_units[target_idx]);
-                if(Not_Moved_Yet == ST_TRUE)
-                {
-                    battle_units[target_idx].movement_points = Battle_Unit_Moves2(target_idx);
-                }
-                else
-                {
-                    battle_units[target_idx].movement_points = Moves_Left;
-                }
+                REINIT_BATTLEUNIT();
             }
             if(spell_idx == spl_Healing)
             {
@@ -11800,31 +11845,15 @@ case scc_Disjunction_Spell:  // 20
             }
             if(spell_idx == spl_Warp_Creature)
             {
+
                 Resist_Result = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
+
                 if(Resist_Result > 0)
                 {
                     // SPELLY  BU_WarpCreature(target_idx);
                 }
-                Moves_Left = Battle_Unit_Moves2(target_idx);
-                Not_Moved_Yet = ST_FALSE;
-                if(battle_units[target_idx].movement_points == Moves_Left)
-                {
-                    Not_Moved_Yet = ST_TRUE;
-                }
-                else
-                {
-                    Moves_Left = battle_units[target_idx].movement_points;
-                }
-                BU_Init_Battle_Unit(&battle_units[target_idx]);
-                BU_Apply_Battlefield_Effects__WIP(&battle_units[target_idx]);
-                if(Not_Moved_Yet == ST_TRUE)
-                {
-                    battle_units[target_idx].movement_points = Battle_Unit_Moves2(target_idx);
-                }
-                else
-                {
-                    battle_units[target_idx].movement_points = Moves_Left;
-                }
+
+                REINIT_BATTLEUNIT();
 
             }
             if(
@@ -11906,38 +11935,7 @@ case scc_Disjunction_Spell:  // 20
                     if(battle_units[itr].status == bus_Active)
                     {
                         
-                        Not_Moved_Yet = ST_FALSE;
-
-                        Moves_Left = Battle_Unit_Moves2(itr);
-
-                        if(battle_units[itr].movement_points == Moves_Left)
-                        {
-                            Not_Moved_Yet = ST_TRUE;
-                        }
-                        else
-                        {
-
-                            battle_units[itr].movement_points = Moves_Left;
-
-                        }
-
-                        BU_Init_Battle_Unit(&battle_units[itr]);
-
-                        BU_Apply_Battlefield_Effects__WIP(&battle_units[itr]);
-
-                        if(Not_Moved_Yet == ST_TRUE)
-                        {
-
-                            battle_units[itr].movement_points = Battle_Unit_Moves2(itr);
-
-                        }
-                        else
-                        {
-
-                            battle_units[itr].movement_points = Moves_Left;
-
-                        }
-
+                        REINIT_BATTLEUNIT();
                     }
 
                 }
@@ -12031,17 +12029,72 @@ case scc_Disjunction_Spell:  // 20
 
                 }
 
-                Set_Page_Off();
-                Tactical_Combat_Draw();
-                PageFlip_FX();
+                UPDATE_SCREEN_LOCAL();
 
             }
 
         } break;
 
-        case scc_Resistable_Spell:  // 13
-        case scc_Mundane_Curse:  // 16
+        case scc_Resistable_Spell:  // 13  Black Sleep, Confusion, Creature Binding, Vertigo, Weakness
+        case scc_Mundane_Curse:     // 16  Possession, Shatter
         {
+
+            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
+
+            Resist_Result = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
+
+            if(Resist_Result <= 0)
+            {
+                UPDATE_SCREEN_LOCAL();
+            }
+            else
+            {
+
+                battle_units[target_idx].Combat_Effects |= spell_data_table[spell_idx].Param0;  // e.g., bue_Black_Sleep
+                
+                if(
+                    (spell_idx == spl_Possession)
+                    ||
+                    (spell_idx == spl_Creature_Binding)
+                )
+                {
+
+                    if(battle_units[target_idx].controller_idx == _combat_attacker_player)
+                    {
+
+                        battle_units[target_idx].controller_idx = _combat_defender_player;
+
+                    }
+                    else
+                    {
+
+                        battle_units[target_idx].controller_idx = _combat_attacker_player;
+
+                    }
+
+                    if(battle_units[target_idx].controller_idx == HUMAN_PLAYER_IDX)
+                    {
+
+                        battle_units[target_idx].action = bua_Ready;
+
+                    }
+
+                }
+
+                if(spell_idx == spl_Black_Sleep)
+                {
+
+                    battle_units[target_idx].action = bua_Finished;
+
+                    battle_units[target_idx].movement_points = 0;
+
+                }
+
+                UPDATE_SCREEN_LOCAL();
+
+                REINIT_BATTLEUNIT();
+
+            }
 
         } break;
 
@@ -12052,12 +12105,13 @@ case scc_Disjunction_Spell:  // 20
 
         case scc_Dispels:  // 18
         {
+
             Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
+
             _page_flip_effect = pfe_Dissolve;
-            Set_Page_Off();
-            Tactical_Combat_Draw();
-            PageFlip_FX();
+            UPDATE_SCREEN_LOCAL();
             _page_flip_effect = pfe_None;  // ; this is done automatically already
+
             // ¿ BUGBUG  no runemaster for 'Dispel Magic' ?
             if(
                 (caster_idx >= CASTER_IDX_BASE)
@@ -12071,40 +12125,25 @@ case scc_Disjunction_Spell:  // 20
                 tscc *= 3;
 
             }
+
             resistance_modifier = 0;
             Combat_Cast_Dispel(target_cgx, target_cgy, caster_idx, tscc, &resistance_modifier);
+
             // ; BUG: Dispel Magic DOES NOT use unit-based targeting,
             // ; this value can contain any valid index or even 99
-            Moves_Left = Battle_Unit_Moves2(target_idx);
-            Not_Moved_Yet = ST_FALSE;
-            if(battle_units[target_idx].movement_points == Moves_Left)
-            {
-                Not_Moved_Yet = ST_TRUE;
-            }
-            else
-            {
-                Moves_Left = battle_units[target_idx].movement_points;
-            }
-            BU_Init_Battle_Unit(&battle_units[target_idx]);
-            BU_Apply_Battlefield_Effects__WIP(&battle_units[target_idx]);
-            if(Not_Moved_Yet == ST_TRUE)
-            {
-                battle_units[target_idx].movement_points = Battle_Unit_Moves2(target_idx);
-            }
-            else
-            {
-                battle_units[target_idx].movement_points = Moves_Left;
-            }
+
+            REINIT_BATTLEUNIT();
+
         } break;
 
         case scc_Disenchants:  // 19
         {
             Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
+
             _page_flip_effect = pfe_Dissolve;
-            Set_Page_Off();
-            Tactical_Combat_Draw();
-            PageFlip_FX();
+            UPDATE_SCREEN_LOCAL();
             _page_flip_effect = pfe_None;  // ; this is done automatically already
+
             if(
                 (caster_idx >= CASTER_IDX_BASE)
                 &&
@@ -12121,37 +12160,14 @@ case scc_Disjunction_Spell:  // 20
 
                 tscc *= 3;
             }
+
             Combat_Cast_Disenchant(caster_idx, tscc);
+
+            // BUGBUG  doesn't check active?
             for(itr = 0; itr < _combat_total_unit_count; itr++)
             {
 
-                Not_Moved_Yet = ST_FALSE;
-
-                if(battle_units[itr].status == bus_Active)
-                {
-
-                    Moves_Left = Battle_Unit_Moves2(itr);
-                    
-                    if(battle_units[itr].movement_points == Moves_Left)
-                    {
-                        Not_Moved_Yet = ST_TRUE;
-                    }
-                    else
-                    {
-                        Moves_Left = battle_units[itr].movement_points;
-                    }
-                    BU_Init_Battle_Unit(&battle_units[itr]);
-                    BU_Apply_Battlefield_Effects__WIP(&battle_units[itr]);
-                    if(Not_Moved_Yet == ST_TRUE)
-                    {
-                        battle_units[itr].movement_points = Battle_Unit_Moves2(itr);
-                    }
-                    else
-                    {
-                        battle_units[itr].movement_points = Moves_Left;
-                    }
-                    
-                }
+                REINIT_BATTLEUNIT();
 
             }
 
@@ -12203,15 +12219,10 @@ case scc_Disjunction_Spell:  // 20
                 }
             }
 
-
-
-
-
-
             BU_ApplyDamage__WIP(target_idx, &damage_types[0]);
-            Set_Page_Off();
-            Tactical_Combat_Draw();
-            PageFlip_FX();
+
+            UPDATE_SCREEN_LOCAL();
+
         } break;
 
     }
@@ -14028,7 +14039,7 @@ void Combat_Set_Mouse_List_Image_Num(void)
                     (
                         (CMB_TargetingType == cstt_FriendlyNU)
                         &&
-                        (battle_units[Cursor_Unit].race == rt_Arcane)
+                        (battle_units[Cursor_Unit].race < rt_Arcane)
                     )
                     ||
                     (
@@ -14057,7 +14068,7 @@ void Combat_Set_Mouse_List_Image_Num(void)
                     (
                         (CMB_TargetingType == cstt_EnemyNU)
                         &&
-                        (battle_units[Cursor_Unit].race == rt_Arcane)
+                        (battle_units[Cursor_Unit].race < rt_Arcane)
                     )
                 )
                 {
@@ -14514,6 +14525,17 @@ Nowhere. It doesn't use a target, never even gets to that code.
 
                         leave_screen = ST_TRUE;
                         
+                    }
+
+                    if(
+                        (CMB_TargetingType == cstt_EnemyNU)
+                        &&
+                        (battle_units[target_idx].race < rt_Arcane)
+                    )
+                    {
+
+                        leave_screen = ST_TRUE;
+
                     }
 
                     
@@ -16172,43 +16194,44 @@ void BU_SortSlowestFirst__WIP(int16_t Melee_Unit_List[], int16_t Melee_Unit_Coun
     int16_t previous_battle_unit_moves2 = 0;
     int16_t itr = 0;
     int16_t current_battle_unit_idx = 0;
-    int16_t previous_battle_unit_idx = 0;  // _CL_
+    int16_t previous_list_idx = 0; // _CL_
 
 
-    for(itr = 1; itr < Melee_Unit_Count; itr++)
+    itr = 1;
+    while(itr < Melee_Unit_Count)
     {
 
         current_battle_unit_idx = Melee_Unit_List[itr];
 
-        previous_battle_unit_idx = (itr - 1);
+        previous_list_idx = (itr - 1);
 
-        previous_battle_unit_moves2 = battle_units[previous_battle_unit_idx].movement_points;
+        previous_battle_unit_moves2 = battle_units[Melee_Unit_List[previous_list_idx]].movement_points;
 
         current_battle_unit_moves2 = battle_units[current_battle_unit_idx].movement_points;
 
         while(
-            (previous_battle_unit_idx > -1)
+            (previous_list_idx > -1)
             &&
             (previous_battle_unit_moves2 > current_battle_unit_moves2)
         )
         {
 
-            Melee_Unit_List[(previous_battle_unit_idx + 1)] = Melee_Unit_List[previous_battle_unit_idx];
+            Melee_Unit_List[(previous_list_idx + 1)] = Melee_Unit_List[previous_list_idx];
 
-            previous_battle_unit_idx--;
+            previous_list_idx--;
 
-            if(previous_battle_unit_idx > -1)
+            if (previous_list_idx > -1)
             {
 
-                previous_battle_unit_moves2 = battle_units[Melee_Unit_List[previous_battle_unit_idx]].movement_points;
+                previous_battle_unit_moves2 = battle_units[Melee_Unit_List[previous_list_idx]].movement_points;
 
             }
 
         }
 
-        Melee_Unit_List[previous_battle_unit_idx] = current_battle_unit_idx;
+        Melee_Unit_List[(previous_list_idx + 1)] = current_battle_unit_idx;
 
-        // NEWBUG  itr++;
+        itr++;
 
     }
 
@@ -19777,6 +19800,12 @@ int16_t Combat_Resistance_Check(struct s_BATTLE_UNIT battle_unit, int16_t resist
 
     }
 
+#ifdef STU_DEBUG
+    if (battle_unit.controller_idx != HUMAN_PLAYER_IDX)
+    {
+        return 10;
+    }
+#endif
     return fail;
 
 }

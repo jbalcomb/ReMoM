@@ -1705,7 +1705,7 @@ struct s_BATTLE_UNIT
     /* 0x5A */  int16_t  Unknown_5A;
     /* 0x5C */  int16_t  Always_Animate;
     /* 0x5E */  int16_t  Melee_Anim;
-    /* 0x60 */  int16_t  Image_Effect;          /* passed to Combat_Figure_Effect__WIP() for BU figure bitmap composition */
+    /* 0x60 */  int16_t  Image_Effect;          /* {1:'Black Sleep', 2:  , 3: 'Warp Creature', ...}  passed to Combat_Figure_Effect__WIP() for BU figure bitmap composition */
     /* 0x62 */  int16_t  Move_Bob;
     /* 0x64 */  int8_t   Gold_Melee;
     /* 0x65 */  int8_t   Gold_Ranged;

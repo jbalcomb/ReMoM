@@ -18,11 +18,13 @@ Combat Only Spell Casting Categories
 
 13  scc_Resistable_Spell
         Black Sleep, Confusion, Creature Binding, Vertigo, Weakness
+16  scc_Mundane_Curse  (requires normal unit)
+        Possession, Shatter
+
+¿ Black Sleep, Confusion, Vertigo, Weakness have a CombatEffect, Creature Binding does not, but also Warp Creature does ?
 
 14  scc_Unresistable_Spell
         Mind Storm, Web
-16  scc_Mundane_Curse
-        Possession, Shatter
 
 10  scc_Battlefield_Spell
         Black Prayer, Blur, Call Chaos, Call Lightning, Darkness, Death Spell, Entangle, Flame Strike, High Prayer, Holy Word, Mana Leak, Mass Healing, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack
@@ -267,7 +269,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Floating Island
 [ ] Guardian Wind
 [x] Phantom Warriors
-[ ] Confusion
+[x] Confusion
 [x] Word of Recall
 [x] Counter Magic
 [x] Nagas
@@ -288,7 +290,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Banish
 [x] Storm Giant
 [x] Air Elemental
-[ ] Mind Storm
+[x] Mind Storm
 [ ] Stasis
 [x] Magic Immunity
 [x] Haste
@@ -309,7 +311,7 @@ Spreadsheet - OSG Spells by Realm
 [ ] Corruption
 [x] Eldritch Weapon
 [x] Wall of Fire
-[ ] Shatter
+[x] Shatter
 [ ] Warp Creature
 [x] Fire Elemental
 [x] Lightning Bolt
@@ -342,7 +344,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Great Drake
 [ ] Call The Void
 [x] Armageddon
-[ ] Bless
+[x] Bless
 [x] Star Fires
 [x] Endurance
 [x] Holy Weapon
@@ -383,17 +385,17 @@ Spreadsheet - OSG Spells by Realm
 [x] Arch Angel
 [x] Charm of Life
 [x] Skeletons
-[ ] Weakness
+[x] Weakness
 [x] Dark Rituals
 [x] Cloak of Fear
-[ ] Black Sleep
+[x] Black Sleep
 [x] Ghouls
 [ ] Life Drain
 [ ] Terror
 [ ] Darkness
 [ ] Mana Leak
 [x] Drain Power
-[ ] Possession
+[x] Possession
 [ ] Lycantrophy
 [ ] Black Prayer
 [x] Black Channels

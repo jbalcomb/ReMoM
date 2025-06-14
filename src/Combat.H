@@ -1479,7 +1479,7 @@ void Update_Sees_Illusions(void);
  void BU_SetVisibility__WIP(int16_t battle_unit_idx);
 
 // WZD o105p09
-// BU_GetCombatEffect()
+int16_t BU_GetCombatEffect__WIP(int16_t battle_unit_idx);
 
 // WZD o105p10
 void BU_SetBaseAnims__WIP(int16_t battle_unit_idx);

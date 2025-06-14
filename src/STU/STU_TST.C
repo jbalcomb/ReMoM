@@ -65,11 +65,22 @@ void TST_Patch_Game_Data(void)
     TST_Cheat_Power(player_idx);
 
 
+    
+    // scc_Resistable_Spell  13
+    TST_Learn_Spell(player_idx, spl_Black_Sleep);       //  165
+    TST_Learn_Spell(player_idx, spl_Confusion);         //   46
+    TST_Learn_Spell(player_idx, spl_Creature_Binding);  //   73
+    TST_Learn_Spell(player_idx, spl_Vertigo);           //   53
+    TST_Learn_Spell(player_idx, spl_Weakness);          //  162
+    // scc_Mundane_Curse  16
+    TST_Learn_Spell(player_idx, spl_Possession);        //  172
+    TST_Learn_Spell(player_idx, spl_Shatter);           //   88
+
     // scc_Combat_Destroy_Unit  12
-    TST_Learn_Spell(player_idx, spl_Disintegrate);   //  112
-    TST_Learn_Spell(player_idx, spl_Dispel_Evil);    //  134
-    TST_Learn_Spell(player_idx, spl_Petrify);        //   22
-    TST_Learn_Spell(player_idx, spl_Word_Of_Death);  //  192
+    // TST_Learn_Spell(player_idx, spl_Disintegrate);   //  112
+    // TST_Learn_Spell(player_idx, spl_Dispel_Evil);    //  134
+    // TST_Learn_Spell(player_idx, spl_Petrify);        //   22
+    // TST_Learn_Spell(player_idx, spl_Word_Of_Death);  //  192
 
     // scc_Combat_Banish  23
     // TST_Learn_Spell(player_idx, spl_Banish);  //  64
