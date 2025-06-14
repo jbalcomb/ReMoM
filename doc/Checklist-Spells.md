@@ -23,7 +23,7 @@ Combat Only Spell Casting Categories
 
 ¿ Black Sleep, Confusion, Vertigo, Weakness have a CombatEffect, Creature Binding does not, but also Warp Creature does ?
 
-14  scc_Unresistable_Spell
+14  scc_Unresistable_Spell  (no resistance check)
         Mind Storm, Web
 
 10  scc_Battlefield_Spell

@@ -12098,8 +12098,62 @@ case scc_Disjunction_Spell:  // 20
 
         } break;
 
-        case scc_Unresistable_Spell:  // 14
+        case scc_Unresistable_Spell:  // 14  Mind Storm, Web
         {
+            
+            if(
+                (
+                    ((battle_units[target_idx].Attribs_1 & USA_IMMUNITY_MAGIC) != 0)
+                    &&
+                    (spell_idx != spl_Web)
+                )
+                ||
+                (
+                    (
+                        (
+                            (spell_data_table[spell_idx].magic_realm == sbr_Chaos)
+                            ||
+                            (spell_data_table[spell_idx].magic_realm == sbr_Chaos)
+                        )
+                        &&
+                        ((enchantments & UE_RIGHTEOUSNESS) != 0)
+                    )
+                )
+                ||
+                (
+                    (spell_data_table[spell_idx].magic_realm == sbr_Sorcery)
+                    &&
+                    ((battle_units[target_idx].Attribs_1 & USA_IMMUNITY_ILLUSION) != 0)
+                )
+            )
+            {
+                UPDATE_SCREEN_LOCAL();
+            }
+            else
+            {
+
+                Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
+
+                // Resist_Result = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
+
+                battle_units[target_idx].Combat_Effects |= spell_data_table[spell_idx].Param0;  // e.g., bue_Black_Sleep
+                
+                if(spell_idx == spl_Web)
+                {
+
+                    battle_units[target_idx].Web_HP = 12;
+
+                    battle_units[target_idx].action = bua_Finished;
+
+                    battle_units[target_idx].movement_points = 0;
+
+                }
+
+                UPDATE_SCREEN_LOCAL();
+
+                REINIT_BATTLEUNIT();
+
+            }
 
         } break;
 
