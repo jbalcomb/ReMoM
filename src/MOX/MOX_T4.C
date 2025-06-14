@@ -211,42 +211,53 @@ char music_lbx__main[] = "music";
     Load Screen sets it to 2 when preparing to loop back to Main Screen
     Production Screen sets it to 3 before returning to City Screen / CityList Screen
 */
+/*
+switches on (_page_flip_effect - 1)
+...means there was no case 0:?
+    ...means 0 was also default
+
+*/
 void PageFlip_FX(void)
 {
 
     switch(_page_flip_effect)
     {
-        case pfe_None:
-        {
-            Apply_Palette();
-            Toggle_Pages();  // |-> Page_Flip()
-        } break;
-        case 1:
+//         case pfe_None:
+//         {
+//             Apply_Palette();
+//             Toggle_Pages();  // |-> Page_Flip()
+//         } break;
+        case pfe_VGA_CutRight:
         {
             // TODO  RP_VGA_CutRight();
         } break;
-        case 2:
+        case pfe_TogglePagesFadeIn:
         {
             Toggle_Pages();  // |-> Page_Flip()
             Fade_In();
         } break;
-        case 3:
+        case pfe_Dissolve:
         {
             Apply_Palette();
-            // TODO  VGA_MosaicFlip();  // |-> Toggle_Pages() |-> Page_Flip()
+            /* SPELLY */  VGA_MosaicFlip__STUB();  // s026p01;  |-> Toggle_Pages_No_Draw_Fields() |-> Page_Flip()
             Toggle_Pages();  // |-> Page_Flip()
         } break;
-        case 4:
+        case pfe_GrowOut:
         {
             PageFlip_GrowOut__WIP(GrowOutLeft, GrowOutTop, GrowOutFrames, (_screen_seg + (20 * SCREEN_WIDTH)));
         } break;
+        case pfe_Palette:
+        {
+            Apply_Palette();
+        } break;
         default:
         {
-            // Apply_Palette();
+            Apply_Palette();
+            Toggle_Pages();  // |-> Page_Flip()
         } break;
     }
 
-    _page_flip_effect = pfe_None; // DEDUCE: PageFlipEffect 0 is the default PageFlipEffect
+    _page_flip_effect = pfe_None;
 
 }
 

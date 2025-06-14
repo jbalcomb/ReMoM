@@ -48,12 +48,12 @@ void PageFlip_FX(void)
 */
 enum e_PAGE_FLIP_EFFECT_TYPE
 {
-    pfe_None = 0,
+    pfe_None = 0,  // ~== default
     pfe_VGA_CutRight = 1,
     pfe_TogglePagesFadeIn = 2,  /* ¿ MoO2  Module: MISC  Fade_To_Palette_() ? */
     pfe_Dissolve = 3,
-    pfe_Palette = 4,
-    pfe_GrowOut = 5
+    pfe_GrowOut = 4,
+    pfe_Palette = 5
 };
 
 

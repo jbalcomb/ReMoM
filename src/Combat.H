@@ -1640,7 +1640,7 @@ int16_t BU_MeleeWallCheck__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_u
 // GUI_DrawNearMessage()
 
 // WZD o113p14
-void CMB_SpellcastMessage__WIP(int16_t caster_idx, int16_t spell_idx);
+void Combat_Cast_Spell_Message(int16_t caster_idx, int16_t spell_idx);
 
 // WZD o113p15
 int16_t Battle_Unit_Pict_Open(void);

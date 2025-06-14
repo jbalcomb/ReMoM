@@ -40,16 +40,13 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
 void CMB_BattlefieldSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t Anims, int16_t caster_idx);
 
 // WZD o131p05
-// drake178: WIZ_FlameStrike()
-// WIZ_FlameStrike()
+void Apply_Flame_Strike(int16_t player_idx);
 
 // WZD o131p06
-// drake178: WIZ_HolyWord()
-// WIZ_HolyWord()
+void Apply_Holy_Word(int16_t player_idx);
 
 // WZD o131p07
-// drake178: WIZ_DeathSpell()
-// WIZ_DeathSpell()
+void Apply_Death_Spell(int16_t player_idx);
 
 // WZD o131p08
 void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t player_idx, int16_t Anims, int16_t caster_idx);

@@ -20,7 +20,8 @@ extern "C" {
     WIZARDS.EXE  ovr133
 */
 
-// WZD o133p01  BU_WarpCreature()
+// WZD o133p01
+void BU_WarpCreature__STUB(int16_t battle_unit_idx);
 
 // WZD o133p02  WIZ_Wrack()
 
@@ -58,21 +59,23 @@ void TILE_LightningBolt__WIP(int16_t cgx, int16_t cgy, int16_t caster_idx);
 
 // WZD o133p15  WIZ_CreateVortex()
 
-// WZD o133p16  CMB_SetVortexCursor()
+// WZD o133p16
 void CMB_SetVortexCursor__SEGRAX(int Vortex_Index);
 
-// WZD o133p17  CMB_VortexPlayerMove()
+// WZD o133p17
 void CMB_VortexPlayerMove__SEGRAX(int Vortex_Index);
 
-// WZD o133p18  CMB_ProcessVortices()
+// WZD o133p18
 void CMB_ProcessVortices__SEGRAX(void);
 
-// WZD o133p19  CMB_VortexMovement()
+// WZD o133p19
 void CMB_VortexMovement__SEGRAX(int Vortex_Index, int Next_X, int Next_Y);
 
-// WZD o133p20  CMB_CallChaos()
+// WZD o133p20
+void Cast_Call_Chaos__WIP(int16_t caster_idx, int16_t anims_on);
 
-// WZD o133p21  WIZ_CallChaos()
+// WZD o133p21
+void Apply_Call_Chaos__WIP(int16_t player_idx, int16_t effects[]);
 
 
 

@@ -54,7 +54,7 @@ Type:         0
 // MONSTER.LBX, 044  "MONSTER4" "Female Hero"
 // MONSTER.LBX, 045  "MONSTER4" "Male Hero"
 // MONSTER.LBX, 046  "MONSTER2" "Sword"
-// MONSTER.LBX, 047  "BLANK"    "
+// MONSTER.LBX, 047  "BLANK"    ""
 
 
 

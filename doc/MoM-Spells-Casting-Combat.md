@@ -27,6 +27,30 @@ AI_BU_ProcessAction__WIP()
 
 
 
+## Combat_Spell_Animation__WIP() |-> CMB_BattlefieldSpell__WIP()
+
+
+## Combat_Spell_Animation__WIP()
+
+Cast_Spell_On_Battle_Unit()
+        case scc_Battlefield_Spell:     // 10
+        case scc_Combat_Counter_Magic:  // 21
+
+
+
+### anims_on
+
+## CMB_BattlefieldSpell__WIP()
+
+### anims_on
+
+
+
+
+
+
+
+
 ## Cast_Spell_On_Battle_Unit()
 
 

@@ -4,6 +4,7 @@
 */
 
 
+#include "MOM_DEF.H"
 #include "MOX/FLIC_Draw.H"
 #include "MOX/MOM_Data.H"
 #include "MOX/LBX_Load.H"
@@ -14,8 +15,10 @@
 #include "MOX/SOUND.H"
 
 #include "Combat.H"
+#include "NEXTTURN.H"
 #include "SBookScr.H"
 #include "Spellbook.H"
+#include "Spells129.H"
 #include "Spells133.H"
 
 #include "STU/STU_DBG.H"
@@ -40,9 +43,12 @@
 char soundfx_lbx_file__ovr133__1of2[] = "soundfx";
 // WZD  dseg:6975
 char soundfx_lbx_file__ovr133__2of2[] = "SOUNDFX";
-// WZD  dseg:697D 6D 6F 6E 73 74 65 72 00                         monster_lbx_file__ovr133 db 'monster',0 ; DATA XREF: CMB_CallChaos+11Bo ...
-// WZD  dseg:6985 73 70 65 63 66 78 00                            specfx_lbx_file__ovr133 db 'specfx',0   ; DATA XREF: CMB_CallChaos+132o ...
-// WZD  dseg:698C 63 6D 62 74 66 78 00                            spec_lbx_file__ovr133 db 'cmbtfx',0     ; DATA XREF: CMB_CallChaos+166o ...
+// WZD  dseg:697D
+char monster_lbx_file__ovr133[] = "monster";
+// WZD  dseg:6985
+char specfx_lbx_file__ovr133[] = "specfx";
+// WZD  dseg:698C
+char cmbtfx_lbx_file__ovr133[] = "cmbtfx";
 
 // WZD  dseg:6993 00                                              align 2
 
@@ -55,7 +61,25 @@ char soundfx_lbx_file__ovr133__2of2[] = "SOUNDFX";
     WIZARDS.EXE  ovr133
 */
 
-// WZD o133p01  BU_WarpCreature()
+// WZD o133p01
+/*
+; applies the Warp Creature effect to a battle unit,
+; choosing a random one of the three possible effects,
+; or less if some are already active
+; WARNING: will enter an infinite loop if all 3 effects
+; are already present
+*/
+/*
+
+*/
+void BU_WarpCreature__STUB(int16_t battle_unit_idx)
+{
+
+
+
+}
+
+
 // WZD o133p02  WIZ_Wrack()
 // WZD o133p03  WIZ_CallLightning()
 
@@ -208,7 +232,7 @@ void TILE_BoltFromAbove__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_
 
     Tactical_Combat_Draw();
 
-    CMB_SpellcastMessage__WIP(caster_idx, spell_idx);
+    Combat_Cast_Spell_Message(caster_idx, spell_idx);
 
     Copy_Off_To_Back();
 
@@ -391,7 +415,7 @@ void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, 
 
         Tactical_Combat_Draw();
 
-        CMB_SpellcastMessage__WIP(player_idx, spell_idx);
+        Combat_Cast_Spell_Message(player_idx, spell_idx);
 
         Create_Picture(45, 42, GfxBuf_2400B);
 
@@ -793,7 +817,357 @@ void CMB_VortexMovement__SEGRAX(int Vortex_Index, int Next_X, int Next_Y)
 }
 
 
-// WZD o133p20  CMB_CallChaos()
+// WZD o133p20
+// drake178: CMB_CallChaos()
+/*
+; processes the Call Chaos effect cast by the selected
+; entity, including loading and playing both sound and
+; animation
+;
+; BUG: the healing animation is misaligned
+; BUG: dumps the sandbox even though the animations
+;  would all fit, causing a crash if the GUI is not
+;  cleared before casting the spell
+; BUG: can damage units with disintegrate despite them
+;  not being affected by it
+; BUG: glitches the graphic during effect application
+;  (drawing on the wrong background)
+*/
+/*
+
+*/
+void Cast_Call_Chaos__WIP(int16_t caster_idx, int16_t anims_on)
+{
+    int16_t Y_Pos_Array[MAX_BATTLE_UNIT_SLOT_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t X_Pos_Array[MAX_BATTLE_UNIT_SLOT_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Anim_Delay_Array[MAX_BATTLE_UNIT_SLOT_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    SAMB_ptr Blank_Effect = 0;
+    SAMB_ptr Healing_Anim = 0;
+    SAMB_ptr Generic_Chaos_Anim = 0;
+    SAMB_ptr Generic_Chaos_Anim2 = 0;
+    SAMB_ptr FlameStrike_Anim = 0;
+    SAMB_ptr WarpLightning_Anim = 0;
+    SAMB_ptr Generic_Chaos_Anim3 = 0;
+    SAMB_ptr Disintegrate_Anim = 0;
+    int16_t effects[MAX_BATTLE_UNIT_SLOT_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t screen_y = 0;
+    int16_t screen_x = 0;
+    int16_t player_idx = 0;
+    int16_t Effect_Frame_Count = 0;
+    int16_t Highest_Frame_Count = 0;
+    int16_t itr2 = 0;
+    int16_t itr1 = 0;  // _DI_
+
+    // MONSTER.LBX, 047  "BLANK"    ""
+    // SPECFX.LBX, 003  "UNCHANT2"  "Life"
+    // SPECFX.LBX, 002  "CHAOS"     "Chaos"
+    // CMBTFX.LBX, 033  "FIREPILL"  "Fire Storm"
+    // CMBTFX.LBX, 003  "WARPLITE"  "Warp Lightning"
+    // CMBTFX.LBX, 004  "DISINTEG"  "disintegrate"
+#define LOAD_ANIMS_LOCAL()  \
+do {  \
+        Blank_Effect = LBX_Reload(monster_lbx_file__ovr133, 47, _screen_seg);  \
+        Healing_Anim = LBX_Reload_Next(specfx_lbx_file__ovr133, 3, _screen_seg);  \
+        Generic_Chaos_Anim = LBX_Reload_Next(specfx_lbx_file__ovr133, 2, _screen_seg);  \
+        Generic_Chaos_Anim2 = Generic_Chaos_Anim;  \
+        FlameStrike_Anim = LBX_Reload_Next(cmbtfx_lbx_file__ovr133, 33, _screen_seg);  \
+        WarpLightning_Anim = LBX_Reload_Next(cmbtfx_lbx_file__ovr133, 3, _screen_seg);  \
+        Generic_Chaos_Anim3 = Generic_Chaos_Anim;  \
+        Disintegrate_Anim = LBX_Reload_Next(cmbtfx_lbx_file__ovr133, 4, _screen_seg);  \
+} while(0)
+
+    if(caster_idx >= CASTER_IDX_BASE)
+    {
+        player_idx = (caster_idx - CASTER_IDX_BASE);
+    }
+    else
+    {
+        player_idx = battle_units[caster_idx].controller_idx;
+    }
+
+    Highest_Frame_Count = 0;
+
+    if(anims_on != ST_FALSE)
+    {
+
+        Copy_On_To_Off_Page();
+        Copy_Off_To_Back();
+
+        for(itr1 = 0; itr1 < _combat_total_unit_count; itr1++)
+        {
+
+            if(
+                (battle_units[itr1].controller_idx != player_idx)
+                &&
+                (battle_units[itr1].status == bus_Active)
+            )
+            {
+                Anim_Delay_Array[itr1] = (Random(5) - 1);
+                X_Pos_Array[itr1] = battle_units[itr1].cgx;
+                Y_Pos_Array[itr1] = battle_units[itr1].cgy;
+            }
+            else
+            {
+                Anim_Delay_Array[itr1] = ST_UNDEFINED;
+            }
 
 
-// WZD o133p21  WIZ_CallChaos()
+
+        }
+
+        CMB_ComposeBackgrnd__WIP();
+        Set_Page_Off();
+        Tactical_Combat_Draw();
+        PageFlip_FX();
+        Copy_On_To_Off_Page();
+        Copy_Off_To_Back();
+        Save_ScreenSeg();
+
+        LOAD_ANIMS_LOCAL();
+
+        for(itr1 = 0; itr1 < _combat_total_unit_count; itr1++)
+        {
+
+            effects[itr1] = (Random(8) - 1);
+
+            Effect_Frame_Count = FLIC_Get_FrameCount(&Blank_Effect[effects[itr1]]);
+
+            if(Effect_Frame_Count > Highest_Frame_Count)
+            {
+                Highest_Frame_Count = Effect_Frame_Count;
+            }
+
+        }
+
+        if(magic_set.sound_effects == ST_TRUE)
+        {
+            Combat_Load_Spell_Sound_Effect(spl_Call_Chaos);
+            if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
+            {
+                // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
+                sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
+            }
+        }
+
+        for(itr2 = 0; (Highest_Frame_Count + 4) > itr2; itr2++)
+        {
+
+            Mark_Time();
+
+            Set_Page_Off();
+
+            if(((Highest_Frame_Count + 4) / 2) == 0)
+            {
+                
+                Restore_ScreenSeg();
+                Apply_Call_Chaos__WIP(player_idx, &effects[0]);
+                // ; BUG: the background is not redrawn
+                Set_Page_Off();
+                Tactical_Combat_Draw();
+                Combat_Cast_Spell_Message(caster_idx, spl_Call_Chaos);
+                Copy_Off_To_Back();
+                Save_ScreenSeg();
+
+                LOAD_ANIMS_LOCAL();
+
+            }
+
+            Copy_Back_To_Off();
+
+            for(itr1 = 0; itr1 < _combat_total_unit_count; itr1++)
+            {
+
+                if(Anim_Delay_Array[itr1] > ST_UNDEFINED)
+                {
+
+                    Combat_Grid_Screen_Coordinates(X_Pos_Array[itr1], Y_Pos_Array[itr1], 4, 4, &screen_x, &screen_y);
+
+                    // ; BUG: the Healing animation is also this size
+                    if(
+                        (effects[itr1] == 2)
+                        ||
+                        (effects[itr1] == 3)
+                        ||
+                        (effects[itr1] == 6)
+                    )
+                    {
+                        screen_x -= 28;
+                        screen_y -= 30;
+                    }
+                    else
+                    {
+                        screen_x -= 14;
+                        screen_y -= 27;
+                    }
+
+                    if(
+                        ((itr2 - Anim_Delay_Array[itr1]) < Highest_Frame_Count)
+                        &&
+                        ((itr2 - Anim_Delay_Array[itr1]) >= 0)
+                    )
+                    {
+
+                        if(FLIC_Get_FrameCount(&Blank_Effect[effects[itr1]]) > (itr2 - Anim_Delay_Array[itr1]))
+                        {
+
+                            Set_Animation_Frame(&Blank_Effect[effects[itr1]], (itr2 - Anim_Delay_Array[itr1]));
+
+                            Clipped_Draw(screen_x, screen_y, &Blank_Effect[effects[itr1]]);
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            PageFlip_FX();
+
+            Release_Time(2);
+
+        }
+
+        Restore_ScreenSeg();
+
+        CMB_ComposeBackgrnd__WIP();
+
+    }
+
+    // ; BUG: this can't be done here, the effect array is not
+    // ; yet filled out
+    Apply_Call_Chaos__WIP(player_idx, &effects[0]);
+
+}
+
+// WZD o133p21
+/*
+; applies the effects of Call Chaos cast by the
+; specified player, based on the passed effect array:
+;   0 - no effect
+;   1 - healing
+;   2 - chaos channels
+;   3 - warp creature
+;   4 - fire bolt (strength 15)
+;   5 - warp lightning
+;   6 - doom bolt
+;   7 - disintegrate (BUG: can cause damage anyway)
+*/
+/*
+
+...all enemy units.
+Individual units may be randomly subjected to one of the following effects:
+nothing, healing of five hits of damage, chaos channels, warp creature, fire bolt of strength 15, warp lightning, doom bolt or disintegrate.
+*/
+void Apply_Call_Chaos__WIP(int16_t player_idx, int16_t effects[])
+{
+    int16_t resist_fails = 0;
+    int16_t damage_types[3] = { 0, 0, 0 };
+    int16_t battle_unit_idx = 0;
+
+    for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+    {
+
+        if(
+            (battle_units[battle_unit_idx].controller_idx != player_idx)
+            &&
+            (battle_units[battle_unit_idx].status == bus_Active)
+        )
+        {
+
+            switch(effects[battle_unit_idx])
+            {
+
+                case 0:
+                {
+
+                    // "nothing"
+
+                } break;
+
+                case 1:
+                {
+
+                    if(battle_units[battle_unit_idx].race != rt_Death)
+                    {
+                        Battle_Unit_Heal(battle_unit_idx, 5, 0);
+                    }
+
+                } break;
+
+                case 2:
+                {
+
+                    if(Unit_Is_Normal(battle_units[battle_unit_idx].unit_idx) != ST_FALSE)
+                    {
+
+                        /* SPELLY */  UNIT_ChaosChannel__STUB(battle_units[battle_unit_idx].unit_idx);
+
+                    }
+
+
+                } break;
+
+                case 3:
+                {
+
+                    resist_fails = Combat_Resistance_Check(battle_units[battle_unit_idx], -1, sbr_Chaos);
+
+                    if(resist_fails > 0)
+                    {
+
+                        /* SPELLY */  BU_WarpCreature__STUB(battle_unit_idx);
+
+                    }
+
+                } break;
+
+                case 4:
+                {
+
+                    CMB_ConvSpellAttack__WIP(spl_Fire_Bolt, battle_unit_idx, &damage_types[0], 15);
+
+                } break;
+
+                case 5:
+                {
+
+                    CMB_ConvSpellAttack__WIP(spl_Warp_Lightning, battle_unit_idx, &damage_types[0], 0);
+
+                } break;
+
+                case 6:
+                {
+
+                    CMB_ConvSpellAttack__WIP(spl_Doom_Bolt, battle_unit_idx, &damage_types[0], 0);
+
+                } break;
+
+                case 7:
+                {
+
+                    if(Combat_Effective_Resistance(battle_units[battle_unit_idx], sbr_Chaos) < 10)
+                    {
+
+                        damage_types[0] = 0;
+                        damage_types[1] = 0;
+                        damage_types[2] = 200;
+
+                    }
+
+                } break;
+
+                default:
+                {
+
+                    STU_DEBUG_BREAK();
+
+                }
+
+            }
+
+        }
+
+    }
+
+}

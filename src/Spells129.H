@@ -42,7 +42,7 @@ int16_t CTY_CallTheVoid__STUB(int16_t city_idx);
 int16_t Apply_Automatic_Spell_Counters(int16_t spell_idx, int16_t city_idx, int16_t player_idx, int16_t show_message);
 
 // WZD o129p08
-// UNIT_ChaosChannel()
+void UNIT_ChaosChannel__STUB(int16_t unit_idx);
 
 // WZD o129p09
 // sub_ADC3E()

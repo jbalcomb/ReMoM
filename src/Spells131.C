@@ -9,7 +9,9 @@
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"
 #include "MOX/MOM_Data.H"
+#include "MOX/SOUND.H"
 #include "MOX/Video.H"
+#include "RACETYPE.H"
 #include "Spellbook.H"
 #include "Spells131.H"
 
@@ -964,27 +966,417 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
 ; BUG: GUI_CallChaos has multiple other issues too
 */
 /*
+OON XREF:  Combat_Spell_Animation__WIP()
+
+Boundaries?
+    each does all _combat_total_unit_count?
+    only own units?
+    only active units?
+
+All Units, but not Enchantment?
+
+calls out for Call Chaos, Death Spell, Holy Word, Flame Strike
+handles in-line Mass Healing
+
+XREF:
+    Combat_Spell_Animation__WIP()
+    NX_j_CMB_BattlefieldSpell()
 
 */
-void CMB_BattlefieldSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t Anims, int16_t caster_idx)
+void CMB_BattlefieldSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t anims_on, int16_t caster_idx)
 {
+    int16_t Anim_Delay_Array[MAX_BATTLE_UNIT_SLOT_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Anim_Size = 0;
+    int16_t screen_y = 0;
+    int16_t screen_x = 0;
+    int16_t frame_count = 0;
+    int16_t itr2 = 0;
+    int16_t itr1 = 0;  // _SI_
 
+    if(spell_idx == spl_Call_Chaos)
+    {
 
+        Cast_Call_Chaos__WIP(player_idx, anims_on);
+
+    }
+    else
+    {
+
+        if(anims_on != ST_FALSE)
+        {
+            Mark_Block(_screen_seg);
+            Spell_Animation_Load_Graphics(spell_idx);
+            Combat_Load_Spell_Sound_Effect(spell_idx);
+            frame_count = FLIC_Get_FrameCount(spell_animation_seg);
+            if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
+            {
+                // DOMSDOS  Play_Sound__STUB(SND_SpellCast)
+                sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
+            }
+            // ; randomize the animation delay array (0-4), or set it
+            // ; to -1 for units that belong to the wrong player to
+            // ; be affected by the spell
+            for(itr1 = 0; itr1 < _combat_total_unit_count; itr1++)
+            {
+                if(
+                    (
+                        (
+                            (battle_units[itr1].controller_idx == player_idx)
+                            &&
+                            (spell_idx == spl_Mass_Healing)
+                        )
+                        ||
+                        (
+                            (battle_units[itr1].controller_idx != player_idx)
+                            &&
+                            (spell_idx != spl_Mass_Healing)
+                        )
+                    )
+                    &&
+                    (battle_units[itr1].status == bus_Active)
+                )
+                {
+                    Anim_Delay_Array[itr1] = (Random(5) - 1);
+                }
+                else
+                {
+                    Anim_Delay_Array[itr1] = ST_UNDEFINED;
+                }
+            }
+            for(itr2 = 0; (frame_count + 4) > itr2; itr2++)
+            {
+                Mark_Time();
+                if(((frame_count + 4) / 2) == itr2)
+                {
+                    if(spell_idx == spl_Death_Spell)
+                    {
+                        Apply_Death_Spell(player_idx);
+                    }
+                    if(spell_idx == spl_Holy_Word)
+                    {
+                        Apply_Holy_Word(player_idx);
+                    }
+                    if(spell_idx == spl_Flame_Strike)
+                    {
+                        Apply_Flame_Strike(player_idx);
+                    }
+                    if(spell_idx == spl_Mass_Healing)
+                    {
+                        if(
+                        (battle_units[itr1].controller_idx == player_idx)
+                        &&
+                        (battle_units[itr1].status == bus_Active)
+                        &&
+                        (battle_units[itr1].race != rt_Death)
+                        )
+                        {
+                            Battle_Unit_Heal(itr1, 5, 0);
+                        }
+                    }
+                }
+                Tactical_Combat_Draw();
+                Combat_Cast_Spell_Message(caster_idx, spell_idx);
+                for(itr1 = 0; itr1 < _combat_total_unit_count; itr1++)
+                {
+                    if(Anim_Delay_Array[itr1] > ST_UNDEFINED)
+                    {
+                        Combat_Grid_Screen_Coordinates(battle_units[itr1].cgx, battle_units[itr1].cgy, 4, 4, &screen_x, &screen_y);
+                        if(Anim_Size == 0)  /* Flame Strike */
+                        {
+                            screen_x -= 14;
+                            screen_y -= 21;
+                        }
+                        else
+                        {
+                            screen_x -= 28;
+                            screen_y -= 30;
+                        }
+                        if(
+                            ((itr2 - Anim_Delay_Array[itr1]) < frame_count)
+                            &&
+                            ((Anim_Delay_Array[itr1] - itr2) >= 0)
+                        )
+                        {
+                            Set_Animation_Frame(spell_animation_seg, (itr2 - Anim_Delay_Array[itr1]));
+                            Clipped_Draw(screen_x, screen_y, spell_animation_seg);
+                        }
+                    }
+                }
+                PageFlip_FX();
+                Release_Time(2);
+            }  /* for(itr2 = 0; (frame_count + 4) > itr2; itr2++) */
+            Release_Block(_screen_seg);
+            Set_Page_Off();
+            Tactical_Combat_Draw();
+            PageFlip_FX();
+        }
+        else  /* (anims_on == ST_FALSE) */
+        {
+
+            STU_DEBUG_BREAK();
+
+            // ; process Death Spell, Holy Word, Flame Strike, or Mass
+            // ; Healing without any animations
+            // ; BUG: the application frame condition block is
+            // ; repeated here, making this code branch fail nearly
+            // ; every time
+            if(spell_idx == spl_Death_Spell)
+            {
+                // ; BUG: this block should not be here
+                if(((frame_count + 4) / 2) == itr2)
+                {
+                    Apply_Death_Spell(player_idx);
+                }
+            }
+            if(spell_idx == spl_Holy_Word)
+            {
+                // ; BUG: this block should not be here
+                if(((frame_count + 4) / 2) == itr2)
+                {
+                    Apply_Holy_Word(player_idx);
+                }
+            }
+            if(spell_idx == spl_Flame_Strike)
+            {
+                // ; BUG: this block should not be here
+                if(((frame_count + 4) / 2) == itr2)
+                {
+                    Apply_Flame_Strike(player_idx);
+                }
+            }
+            if(spell_idx == spl_Mass_Healing)
+            {
+                // ; BUG: this block should not be here
+                if(((frame_count + 4) / 2) == itr2)
+                {
+                    if(spell_idx == spl_Mass_Healing)
+                    {
+                        if(
+                            (battle_units[itr1].controller_idx == player_idx)
+                            &&
+                            (battle_units[itr1].status == bus_Active)
+                            &&
+                            (battle_units[itr1].race != rt_Death)
+                        )
+                        {
+                            Battle_Unit_Heal(itr1, 5, 0);
+                        }
+                    }
+                }
+            }
+
+        }
+
+    }
 
 }
 
 
 // WZD o131p05
 // drake178: WIZ_FlameStrike()
-// WIZ_FlameStrike()
+/*
+; processes and applies the effect of Flame Strike cast
+; by the speficied wizard during battle
+;
+; BUG: Wraith Form incorrectly grants immunity from
+;  this effect
+*/
+/*
+
+*/
+void Apply_Flame_Strike(int16_t player_idx)
+{
+    uint32_t enchantments = 0;
+    int16_t damage_types[3] = { 0, 0, 0 };
+    int16_t figure_count = 0;
+    int16_t battle_unit_idx = 0;  // _SI_
+    int16_t itr = 0;  // _DI_
+
+    for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+    {
+
+        enchantments = ( _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments | battle_units[battle_unit_idx].enchantments | battle_units[battle_unit_idx].item_enchantments);
+
+        if(
+            (battle_units[battle_unit_idx].controller_idx != player_idx)
+            &&
+            (battle_units[battle_unit_idx].status == bus_Active)
+        )
+        {
+
+            // ; BUG: this enchantment should not grant immunity here
+            if(
+                ((enchantments & UE_WRAITHFORM) == 0)
+                &&
+                ((enchantments & UE_RIGHTEOUSNESS) == 0)
+            )
+            {
+
+                CMB_ConvSpellAttack__WIP(spl_Flame_Strike, battle_unit_idx, &damage_types[0], 0);
+
+                BU_ApplyDamage__WIP(battle_unit_idx, &damage_types[0]);    
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // WZD o131p06
 // drake178: WIZ_HolyWord()
-// WIZ_HolyWord()
+/*
+; processes and applies the effect of Holy Word cast
+; by the speficied wizard during battle
+; BUG: Wraith Form incorrectly grants immunity from
+;  this effect
+*/
+/*
+
+*/
+void Apply_Holy_Word(int16_t player_idx)
+{
+    int16_t damage_types[3] = { 0, 0, 0 };
+    int16_t resistance_modifier = 0;
+    uint32_t enchantments = 0;
+    int16_t figure_count = 0;
+    int16_t battle_unit_idx = 0;  // _SI_
+    int16_t itr = 0;  // _DI_
+
+    damage_types[0] = 0;
+    damage_types[1] = 0;
+    damage_types[2] = 0;
+
+    for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+    {
+
+        enchantments = ( _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments | battle_units[battle_unit_idx].enchantments | battle_units[battle_unit_idx].item_enchantments);
+
+        if(
+            (battle_units[battle_unit_idx].controller_idx != player_idx)
+            &&
+            (battle_units[battle_unit_idx].status == bus_Active)
+        )
+        {
+
+            // ; BUG: this enchantment should not grant immunity here
+            if(
+                ((enchantments & UE_WRAITHFORM) == 0)
+                &&
+                ((enchantments & UE_SPELLLOCK) == 0)
+                &&
+                (battle_units[battle_unit_idx].race >= rt_Arcane)
+            )
+            {
+
+                resistance_modifier = -2;
+
+                if((_UNITS[battle_units[battle_unit_idx].unit_idx].mutations & UM_UNDEAD) == 0)
+                {
+
+                    resistance_modifier += -5;
+
+                }
+
+                figure_count = battle_units[battle_unit_idx].Cur_Figures;
+
+                for(itr = 0; itr < figure_count; itr++)
+                {
+ 
+                    damage_types[2] = 0;
+
+                    if(Combat_Resistance_Check(battle_units[battle_unit_idx], -2, sbr_Death) > 0)
+                    {
+
+                        damage_types[2] = battle_units[battle_unit_idx].hits;
+
+                        BU_ApplyDamage__WIP(battle_unit_idx, &damage_types[0]);    
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // WZD o131p07
 // drake178: WIZ_DeathSpell()
-// WIZ_DeathSpell()
+/*
+; processes and applies the effect of Death Spell cast
+; by the speficied wizard during battle
+;
+; BUG: Wraith Form incorrectly grants immunity from
+;  this effect
+*/
+/*
+
+*/
+void Apply_Death_Spell(int16_t player_idx)
+{
+    int16_t damage_types[3] = { 0, 0, 0 };
+    uint32_t enchantments = 0;
+    int16_t figure_count = 0;
+    int16_t battle_unit_idx = 0;  // _SI_
+    int16_t itr = 0;  // _DI_
+
+    damage_types[0] = 0;
+    damage_types[1] = 0;
+    damage_types[2] = 0;
+
+    for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+    {
+
+        enchantments = ( _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments | battle_units[battle_unit_idx].enchantments | battle_units[battle_unit_idx].item_enchantments);
+
+        if(
+            (battle_units[battle_unit_idx].controller_idx != player_idx)
+            &&
+            (battle_units[battle_unit_idx].status == bus_Active)
+        )
+        {
+
+            // ; BUG: this enchantment should not grant immunity here
+            if(
+                ((enchantments & UE_WRAITHFORM) == 0)
+                &&
+                ((battle_units[battle_unit_idx].Attribs_1 & USA_IMMUNITY_DEATH) == 0)
+            )
+            {
+
+                figure_count = battle_units[battle_unit_idx].Cur_Figures;
+
+                for(itr = 0; itr < figure_count; itr++)
+                {
+ 
+                    damage_types[0] = 0;
+
+                    if(Combat_Resistance_Check(battle_units[battle_unit_idx], -2, sbr_Death) > 0)
+                    {
+
+                        damage_types[0] = battle_units[battle_unit_idx].hits;
+
+                        BU_ApplyDamage__WIP(battle_unit_idx, &damage_types[0]);    
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // WZD o131p08
 // drake178: CMB_PlaySpellAnim()
@@ -1038,7 +1430,7 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
         )
         {
 
-            /* SPELLY */  CMB_BattlefieldSpell__WIP(player_idx, spell_idx, anims_on, caster_idx);
+            CMB_BattlefieldSpell__WIP(player_idx, spell_idx, anims_on, caster_idx);
 
         }
         else
@@ -1100,7 +1492,7 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
 
                 Tactical_Combat_Draw();
 
-                CMB_SpellcastMessage__WIP(caster_idx, spell_idx);
+                Combat_Cast_Spell_Message(caster_idx, spell_idx);
 
                 PageFlip_FX();
 

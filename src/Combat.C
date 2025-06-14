@@ -6542,7 +6542,7 @@ void Tactical_Combat_Draw(void)
 
     CMB_CreateEntities__WIP();
 
-    CMB_DrawMap__WIP();
+    CMB_DrawMap__WIP();  // |-> Copy_Back_To_Off();  // 'combat background' from Combat_Screen_Compose_Background()
 
     Reset_Window();
 
@@ -11652,7 +11652,7 @@ void Cast_Spell_On_Battle_Unit(int16_t spell_idx, int16_t target_idx, int16_t ca
 #define UPDATE_SCREEN_LOCAL()  \
     do {  \
         Set_Page_Off();  \
-        Tactical_Combat_Draw();  \
+        Tactical_Combat_Draw();  /* |-> CMB_DrawMap__WIP() |-> Copy_Back_To_Off();  // 'combat background' from Combat_Screen_Compose_Background() */  \
         PageFlip_FX();  \
     } while(0)
 #define REINIT_BATTLEUNIT() \
@@ -12113,7 +12113,7 @@ case scc_Disjunction_Spell:  // 20
                         (
                             (spell_data_table[spell_idx].magic_realm == sbr_Chaos)
                             ||
-                            (spell_data_table[spell_idx].magic_realm == sbr_Chaos)
+                            (spell_data_table[spell_idx].magic_realm == sbr_Death)
                         )
                         &&
                         ((enchantments & UE_RIGHTEOUSNESS) != 0)
@@ -12475,42 +12475,39 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
 
         do {
 
-            CMB_ComposeBookBG__WIP();
+            CMB_ComposeBookBG__WIP();  // ... |-> Copy_Off_To_Back();
 
             // Selected_Spell@  index on page of selected spell
             // ...gets passed to Combat_Spellbook_Mana_Adder_Screen()
             // CMB_SpellBookPage is the associated page number
             spell_idx = Combat_Spellbook_Screen(caster_idx, &Selected_Spell);
 
+            // prep for going right back to the combat screen
             if(
                 (spell_idx <= 0)
                 ||
                 (spell_data_table[spell_idx].type < scc_Infusable_Spell)
             )
             {
-                
-                _page_flip_effect = 3;
-
-                CMB_ComposeBookBG__WIP();
-
+                _page_flip_effect = pfe_Dissolve;
+                CMB_ComposeBookBG__WIP();  // ... |-> Copy_Off_To_Back();
+                // where's the rest of the screen update?
             }
 
         } while (Do_Legal_Spell_Check__WIP(spell_idx) != ST_FALSE);
         // ...not illegal...
 
-        // ; conflicting condition - will always jump
+        // not doing xtramana popup, so go right back to the combat screen
         if(
-            (spell_data_table[spell_idx].type > scc_Infusable_Spell)
+            (spell_data_table[spell_idx].type < scc_Infusable_Spell)
             ||
-            (Spell_Like_Ability == ST_TRUE)
+            (Spell_Like_Ability == ST_TRUE)  // ; conflicting condition - will always jump
         )
         {
-
-            CMB_ComposeBackgrnd__WIP(); // ... |-> Copy_Off_To_Back();
+            CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
             Set_Page_Off();
             Tactical_Combat_Draw();
             PageFlip_FX();
-            
         }
 
     }
@@ -13051,6 +13048,10 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
         if(Target != 999)
         {
 
+            // ... |-> Tactical_Combat_Draw() |-> CMB_DrawMap__WIP() |-> Copy_Back_To_Off()  // 'combat background' from Combat_Screen_Compose_Background()
+            // So, ... What's in back-page here?
+            // Maybe, maybe not, we called the Combat_Spellbook_Mana_Adder_Screen()? 
+            // Maybe, maybe not, we called the Combat_Spell_Target_Screen__WIP()?
             Cast_Spell_On_Battle_Unit(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
 
             cast_status = 2;
@@ -15502,8 +15503,10 @@ int16_t BU_MeleeWallCheck__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_u
 */
 /*
 
+'caster' aware
+hard-coded "summon demon"
 */
-void CMB_SpellcastMessage__WIP(int16_t caster_idx, int16_t spell_idx)
+void Combat_Cast_Spell_Message(int16_t caster_idx, int16_t spell_idx)
 {
     char spell_name[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t string_width = 0;
@@ -23981,7 +23984,7 @@ XREF:
         CMB_BattlefieldSpell()
         CMB_PlaySpellAnim()
         WIZ_CallLightning()
-        CMB_CallChaos()
+        Cast_Call_Chaos__WIP()
 
 */
 void Combat_Load_Spell_Sound_Effect(int16_t spell_idx)
@@ -27216,6 +27219,10 @@ void CMB_TileGen__WIP(int16_t ctt)
             DBG_ptr_battlefield_terrain_group = &battlefield->terrain_group[DBG_battlefield_terrain_group_idx];
             ctg_7 = *DBG_ptr_battlefield_terrain_group;
 
+// Severity Code Description Project File Line Suppression State Details
+//                 Warning C6385 Reading invalid data from 'battlefield->terrain_group'.sdl2_ReMoM C :\STU\devel\ReMoM\src\Combat.C 27223		
+// ...
+// DBG_battlefield_terrain_group_idx may equal -21
             DBG_battlefield_terrain_group_idx = ((((itr_cgy - 1) * COMBAT_GRID_WIDTH) + itr_cgx)    );
             DBG_ptr_battlefield_terrain_group = &battlefield->terrain_group[DBG_battlefield_terrain_group_idx];
             ctg_8 = battlefield->terrain_group[DBG_battlefield_terrain_group_idx];

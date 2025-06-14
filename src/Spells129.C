@@ -463,7 +463,24 @@ int16_t Apply_Automatic_Spell_Counters(int16_t spell_idx, int16_t city_idx, int1
 }
 
 // WZD o129p08
-// UNIT_ChaosChannel()
+/*
+; applies the Chaos Channels effect to the target unit,
+; granting it a random one of the CC_Flight, CC_Breath,
+; or CC_Defense mutations, although the first can't be
+; applied to flying or sailing units, while the second
+; won't work on units with a ranged attack other than a
+; Thrown attack of strength 3 or lower
+*/
+/*
+
+*/
+void UNIT_ChaosChannel__STUB(int16_t unit_idx)
+{
+
+
+
+}
+
 
 // WZD o129p09
 // sub_ADC3E()

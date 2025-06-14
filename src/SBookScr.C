@@ -991,6 +991,7 @@ int16_t Spell_Animation_Load_Graphics(int16_t spell_idx)
         } break;
         case spl_Flame_Strike:
         {
+            // CMBTFX.LBX, 033  "FIREPILL"  "Fire Storm"
             spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 33, _screen_seg);
         } break;
         case spl_Disintegrate:
@@ -1040,14 +1041,17 @@ int16_t Spell_Animation_Load_Graphics(int16_t spell_idx)
         } break;
         case spl_Word_Of_Death:
         {
+            // SPECFX.LBX, 013  "WARPNODE"  "Warp node"
             spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 13, _screen_seg);
         } break;
         case spl_Death_Spell:
         {
+            // SPECFX.LBX, 013  "WARPNODE"  "Warp node"
             spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 13, _screen_seg);
         } break;
         case spl_Dispel_Magic:
         {
+            // SPECFX.LBX, 013  "WARPNODE"  "Warp node"
             spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 13, _screen_seg);
         } break;
         case spl_Disenchant_Area:

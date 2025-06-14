@@ -4,32 +4,70 @@ Combat Only Spell Casting Categories
 [ ]   5  scc_Special_Spell
 [ ]  10  scc_Battlefield_Spell
 [x]  12  scc_Combat_Destroy_Unit
-[ ]  13  scc_Resistable_Spell
-[ ]  14  scc_Unresistable_Spell
-[ ]  16  scc_Mundane_Curse
+[x]  13  scc_Resistable_Spell
+[x]  14  scc_Unresistable_Spell
+[x]  16  scc_Mundane_Curse
 [x]  21  scc_Combat_Counter_Magic
 [x]  22  scc_Direct_Damage_Variable
 [x]  23  scc_Combat_Banish
 
-12  scc_Combat_Destroy_Unit
-        Disintegrate, Dispel Evil, Petrify, Word of Death
-23  scc_Combat_Banish
-        Banish
 
-13  scc_Resistable_Spell
-        Black Sleep, Confusion, Creature Binding, Vertigo, Weakness
-16  scc_Mundane_Curse  (requires normal unit)
-        Possession, Shatter
 
-¿ Black Sleep, Confusion, Vertigo, Weakness have a CombatEffect, Creature Binding does not, but also Warp Creature does ?
-
-14  scc_Unresistable_Spell  (no resistance check)
-        Mind Storm, Web
+ 5  scc_Special_Spell  (Combat-Only or BOTH or ¿ BOTH ?)
+        Animate Dead, Chaos Channels, Cracks Call, Disrupt, Earth to Mud, Healing, Magic Vortex, Raise Dead, Recall Hero, Wall of Stone, Warp Creature, Warp Wood
 
 10  scc_Battlefield_Spell
         Black Prayer, Blur, Call Chaos, Call Lightning, Darkness, Death Spell, Entangle, Flame Strike, High Prayer, Holy Word, Mana Leak, Mass Healing, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack
 21  scc_Combat_Counter_Magic
         spl_Counter_Magic
+
+add Combat Battlefield  (5) (part 1of2)
+Flame_Strike, Holy_Word, Death_Spell, Call_Chaos, Mass_Healing
+
+
+Combat_Spell_Animation__WIP() |-> CMB_BattlefieldSpell__WIP()
+            (spell_idx == spl_Flame_Strike)
+            (spell_idx == spl_Holy_Word)
+            (spell_idx == spl_Death_Spell)
+            (spell_idx == spl_Call_Chaos)
+            (spell_idx == spl_Mass_Healing)
+
+Cast_Call_Chaos(player_idx, anims_on);
+    |-> Apply_Call_Chaos()
+    ...depends on chaos channels, warp creature, fire bolt, warp lightning, doom bolt, disintegrate
+Apply_Death_Spell(player_idx);
+Apply_Holy_Word(player_idx);
+Apply_Flame_Strike(player_idx);
+
+[x]  spl_Flame_Strike
+[x]  spl_Holy_Word
+[x]  spl_Death_Spell
+[ ]  spl_Call_Chaos
+    [ ] chaos channels
+    [ ] warp creature
+    [x] fire bolt
+    [ ] warp lightning
+    [x] doom bolt
+    [x] disintegrate  (in-line)
+[x]  spl_Mass_Healing  (in-line)
+
+So, ...
+    scc_Battlefield_Spell, not handled by CMB_BattlefieldSpell__WIP()
+[ ] Black Prayer
+[ ] Blur
+[ ] Call Lightning
+[ ] Darkness
+[ ] Death Spell
+[ ] Entangle
+[ ] High Prayer
+[ ] Mana Leak
+[ ] Mass Invisibility
+[ ] Metal Fires
+[ ] Prayer
+[ ] Terror
+[ ] True Light
+[ ] Warp Reality
+[ ] Wrack
 
 
 
