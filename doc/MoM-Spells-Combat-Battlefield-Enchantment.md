@@ -1,4 +1,6 @@
 
+¿ Combat Battlefield Enchantment ?
+    Black Prayer, Blur, Call Lightning, Darkness, Entangle, High Prayer, Mana Leak, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack
 
 
 Black Prayer, Blur, Call Lightning, Darkness, Entangle, High Prayer, Mana Leak, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack

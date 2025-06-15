@@ -21,7 +21,7 @@ extern "C" {
 */
 
 // WZD o133p01
-void BU_WarpCreature__STUB(int16_t battle_unit_idx);
+void Apply_Warp_Creature(int16_t battle_unit_idx);
 
 // WZD o133p02  WIZ_Wrack()
 

@@ -2,7 +2,7 @@
 Combat Only Spell Casting Categories
 
 [ ]   5  scc_Special_Spell
-[ ]  10  scc_Battlefield_Spell
+[x]  10  scc_Battlefield_Spell
 [x]  12  scc_Combat_Destroy_Unit
 [x]  13  scc_Resistable_Spell
 [x]  14  scc_Unresistable_Spell
@@ -16,63 +16,18 @@ Combat Only Spell Casting Categories
  5  scc_Special_Spell  (Combat-Only or BOTH or ¿ BOTH ?)
         Animate Dead, Chaos Channels, Cracks Call, Disrupt, Earth to Mud, Healing, Magic Vortex, Raise Dead, Recall Hero, Wall of Stone, Warp Creature, Warp Wood
 
-10  scc_Battlefield_Spell
-        Black Prayer, Blur, Call Chaos, Call Lightning, Darkness, Death Spell, Entangle, Flame Strike, High Prayer, Holy Word, Mana Leak, Mass Healing, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack
-21  scc_Combat_Counter_Magic
-        spl_Counter_Magic
-
-
-
-¿ Combat Battlefield Instant ?
-    Flame Strike, Holy Word, Death Spell, Call Chaos, Mass Healing
-¿ Combat Battlefield Enchantment ?
-    Black Prayer, Blur, Call Lightning, Darkness, Entangle, High Prayer, Mana Leak, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack
-
-Combat_Spell_Animation__WIP() |-> Combat_Battlefield_Instant()
-            (spell_idx == spl_Flame_Strike)
-            (spell_idx == spl_Holy_Word)
-            (spell_idx == spl_Death_Spell)
-            (spell_idx == spl_Call_Chaos)
-            (spell_idx == spl_Mass_Healing)
-
-Cast_Call_Chaos(player_idx, anims_on);
-    |-> Apply_Call_Chaos()
-    ...depends on chaos channels, warp creature, fire bolt, warp lightning, doom bolt, disintegrate
-Apply_Death_Spell(player_idx);
-Apply_Holy_Word(player_idx);
-Apply_Flame_Strike(player_idx);
-
-[x]  spl_Flame_Strike
-[x]  spl_Holy_Word
-[x]  spl_Death_Spell
-[ ]  spl_Call_Chaos
-    [ ] chaos channels
-    [ ] warp creature
-    [x] fire bolt
-    [ ] warp lightning
-    [x] doom bolt
-    [x] disintegrate  (in-line)
-[x]  spl_Mass_Healing  (in-line)
-
-So, ...
-    scc_Battlefield_Spell, not handled by Combat_Battlefield_Instant()
-[x] Black Prayer
-[x] Blur
-[-] Call Lightning
-[x] Darkness
-[x] Death Spell
-[x] Entangle
-[x] High Prayer
-[x] Mana Leak
-[x] Mass Invisibility
-[x] Metal Fires
-[x] Prayer
-[x] Terror
-[x] True Light
-[x] Warp Reality
-[-] Wrack
-
-
+[x] Animate Dead
+[ ] Chaos Channels
+[ ] Cracks Call
+[ ] Disrupt
+[ ] Earth to Mud
+[x] Healing
+[ ] Magic Vortex
+[x] Raise Dead
+[ ] Recall Hero
+[ ] Wall of Stone
+[ ] Warp Creature
+[ ] Warp Wood
 
 
 

@@ -72,10 +72,77 @@ char cmbtfx_lbx_file__ovr133[] = "cmbtfx";
 /*
 
 */
-void BU_WarpCreature__STUB(int16_t battle_unit_idx)
+void Apply_Warp_Creature(int16_t battle_unit_idx)
 {
+    int16_t warp = 0;  // _DI_
 
+    warp = -2;
 
+    while(warp < 0)
+    {
+
+        warp = Random(3);
+
+        switch(warp)
+        {
+
+            case 1:
+            {
+
+                if((battle_units[battle_unit_idx].Combat_Effects & bue_Warped_Attack) == 0)
+                {
+
+                    battle_units[battle_unit_idx].Combat_Effects |= bue_Warped_Attack;
+
+                }
+                else
+                {
+
+                    warp = -1;
+
+                }
+
+            } break;
+
+            case 2:
+            {
+
+                if((battle_units[battle_unit_idx].Combat_Effects & bue_Warped_Defense) == 0)
+                {
+
+                    battle_units[battle_unit_idx].Combat_Effects |= bue_Warped_Defense;
+
+                }
+                else
+                {
+
+                    warp = -2;
+
+                }
+
+            } break;
+
+            case 3:
+            {
+
+                if((battle_units[battle_unit_idx].Combat_Effects & bue_Warped_Resist) == 0)
+                {
+
+                    battle_units[battle_unit_idx].Combat_Effects |= bue_Warped_Resist;
+
+                }
+                else
+                {
+
+                    warp = -3;
+
+                }
+
+            } break;
+
+        }
+
+    }
 
 }
 
@@ -1116,7 +1183,7 @@ void Apply_Call_Chaos__WIP(int16_t player_idx, int16_t effects[])
                     if(resist_fails > 0)
                     {
 
-                        /* SPELLY */  BU_WarpCreature__STUB(battle_unit_idx);
+                        Apply_Warp_Creature(battle_unit_idx);
 
                     }
 

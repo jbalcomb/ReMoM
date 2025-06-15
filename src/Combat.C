@@ -11801,7 +11801,7 @@ case scc_Disjunction_Spell:  // 20
 
         } break;
 
-        case scc_Special_Spell:  /* 38 of these... :(.. */
+        case scc_Special_Spell:  //  5
         {
             if(
                 (spell_idx != spl_Wall_Of_Stone)
@@ -11833,7 +11833,6 @@ case scc_Disjunction_Spell:  // 20
                 if(resist_fails > 0)
                 {
                     battle_units[target_idx].Combat_Effects |= bue_Creature_Binding;
-
                     if(battle_units[target_idx].controller_idx == _combat_attacker_player)
                     {
                         battle_units[target_idx].controller_idx = _combat_defender_player;
@@ -11846,16 +11845,12 @@ case scc_Disjunction_Spell:  // 20
             }
             if(spell_idx == spl_Warp_Creature)
             {
-
                 resist_fails = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
-
                 if(resist_fails > 0)
                 {
-                    // SPELLY  BU_WarpCreature(target_idx);
+                    Apply_Warp_Creature(target_idx);
                 }
-
                 REINIT_BATTLEUNIT();
-
             }
             if(
                 (spell_idx == spl_Recall_Hero)
