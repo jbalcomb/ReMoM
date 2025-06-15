@@ -657,7 +657,8 @@ char cmbmounc_lbx_file__ovr163[] = "CMBMOUNC";
 char cmbtundr_lbx_file__ovr163[] = "CMBTUNDR";
 // WZD dseg:71C7
 char cmbtundc_lbx_file__ovr163[] = "CMBTUNDC";
-// WZD dseg:71D0 57 41 4C 4C 52 49 53 45 00                      cnst_WALLRISE_File db 'WALLRISE',0      ; DATA XREF: CMB_LoadWallRiseGFX+5Do ...
+// WZD dseg:71D0
+char wallrise_lbx_file__ovr163[] = "WALLRISE";
 // WZD dseg:71D9
 char figure_lbx_file__ovr163[] = "FIGURE";
 
@@ -1118,8 +1119,10 @@ SAMB_ptr EmmHndl_FIGUREX;
 int16_t CMB_Enchanted_Roads;
 
 // WZD dseg:CFA2                                                 ovr153, ovr163
-// WZD dseg:CFA2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CMB_WallRise@ dw 0Eh dup(0)         ; DATA XREF: CMB_SpawnStoneWall+69r ...
-// WZD dseg:CFA2 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 12 or 14 appended animations in the sandbox
+
+// WZD dseg:CFA2
+SAMB_ptr _wallrise_seg[14];
+
 // WZD dseg:CFBE                                                 ovr052, ovr153
 // WZD dseg:CFBE
 SAMB_ptr IMG_CMB_Blood[5];
@@ -1320,11 +1323,14 @@ SAMB_ptr CMB_RangedAtx_GFX[15][8];
 // WZD dseg:D18C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; appended LBX_Alloc_Space header links to reserved
 // WZD dseg:D18C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; EMM resources, 8 4-frame animations for each of the
 // WZD dseg:D18C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; 15 ranged attack graphics types (last is unused?)
+
 // WZD dseg:D27C
 SAMB_ptr CMB_Damage_GFX;
 // WZD dseg:D27C                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
 // WZD dseg:D27C                                                                                         ; 4 frame animation
-// WZD dseg:D27E 00 00                                           CMB_WallRise_Type dw 0                  ; DATA XREF: CMB_SpawnStoneWall+36r ...
+
+// WZD dseg:D27E
+int16_t _wall_rise_type;
 // WZD dseg:D27E                                                                                         ; 0 branches wall entity creation (unknown IMG array)
 
 // WZD dseg:D280
@@ -3178,7 +3184,7 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
 
 
     if(
-        (battlefield->Walled_City == ST_TRUE)
+        (battlefield->walled == ST_TRUE)
         ||
         (battlefield->city_enchantments[FLYING_FORTRESS] > 0)
     )
@@ -3708,7 +3714,7 @@ void Assign_Combat_Grids(void)
     }
 
     if(
-        (battlefield->Walled_City == ST_TRUE)
+        (battlefield->walled == ST_TRUE)
         ||
         (battlefield->city_enchantments[FLYING_FORTRESS] > 0)
     )
@@ -3770,7 +3776,7 @@ void Assign_Combat_Grids(void)
         tested for in Battle_Unit_Action__WIP()
     */
     if(
-        (battlefield->Walled_City == ST_TRUE)
+        (battlefield->walled == ST_TRUE)
         &&
         (battle_units[_active_battle_unit].controller_idx == _combat_attacker_player)
         &&
@@ -11811,11 +11817,14 @@ case scc_Disjunction_Spell:  // 20
                 (spell_idx != spl_Animate_Dead)
             )
             {
-                // SPELLY  CMB_PlaySpellAnim(target_cgx, target_cgy, spell_idx, player_idx, Anims, caster_idx);
+                Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
             }
+            // ; Wall of Stone:
+            // ; play the wall rise animation
+            // ; BUG: this is neither a combat nor a special spell
             if(spell_idx == spl_Wall_Of_Stone)
             {
-                // SPELLY  CMB_WallRise_Anim(spl_Wall_Of_Stone, caster_idx);
+                Wall_Rise(spl_Wall_Of_Stone, caster_idx);
             }
             if(spell_idx == spl_Warp_Wood)
             {
@@ -11874,7 +11883,7 @@ case scc_Disjunction_Spell:  // 20
             }
             if(spell_idx == spl_Disrupt)
             {
-                battlefield->Wall_Sections[(((target_cgy - 10) * 3) + (target_cgx - 5))] = 2;
+                battlefield->walls[(((target_cgy - 10) * 3) + (target_cgx - 5))] = 2;
             }
             if(spell_idx == spl_Raise_Dead)
             {
@@ -15106,7 +15115,7 @@ int16_t Check_Attack_Ranged(int16_t attacker_battle_unit_idx, int16_t defender_b
 
     }
 
-    if(battlefield->Wall_Of_Darkness == 1)
+    if(battlefield->wall_of_darkness == 1)
     {
 
         // ; BUG: ignores natural Illusions Immunity
@@ -15299,7 +15308,7 @@ void Deploy_Battle_Units(int16_t player_idx)
         {
 
             while(
-                (battlefield->Walled_City == ST_TRUE)
+                (battlefield->walled == ST_TRUE)
                 &&
                 (
                     (ctr == 2)
@@ -15340,7 +15349,7 @@ void Deploy_Battle_Units(int16_t player_idx)
         {
 
             while(
-                (battlefield->Walled_City == ST_TRUE)
+                (battlefield->walled == ST_TRUE)
                 &&
                 (
                     (ctr == 2)
@@ -16474,21 +16483,21 @@ void AI_MoveBattleUnits__WIP(int16_t player_idx)
 
     _battlefield_city_walls = 0;
 
-    if(battlefield->Walled_City == ST_TRUE)
+    if(battlefield->walled == ST_TRUE)
     {
 
         _battlefield_city_walls |= BATTLEFIELD_CITY_WALL_STONE;
 
     }
 
-    if(battlefield->Wall_Of_Darkness == ST_TRUE)
+    if(battlefield->wall_of_darkness == ST_TRUE)
     {
 
         _battlefield_city_walls |= BATTLEFIELD_CITY_WALL_DARKNESS;
 
     }
 
-    if(battlefield->Wall_Of_Fire == ST_TRUE)
+    if(battlefield->wall_of_fire == ST_TRUE)
     {
 
         _battlefield_city_walls |= BATTLEFIELD_CITY_WALL_FIRE;
@@ -17500,9 +17509,9 @@ void G_AI_BU_MoveOrRampage__WIP(int16_t battle_unit_idx, int16_t Dest_X, int16_t
         (G_AI_StayInTownProper == ST_TRUE)
         &&
         (
-            (battlefield->Wall_Of_Fire > 0)
+            (battlefield->wall_of_fire > 0)
             ||
-            (battlefield->Wall_Of_Darkness > 0)
+            (battlefield->wall_of_darkness > 0)
         )
         &&
         (BU_IsInCityProper__STUB(battle_unit_idx) == ST_TRUE)
@@ -17692,9 +17701,9 @@ int16_t Auto_Move_Ship(int16_t battle_unit_idx, int16_t Dest_X, int16_t Dest_Y, 
         (G_AI_StayInTownProper == ST_TRUE)
         &&
         (
-            (battlefield->Wall_Of_Fire > 0)
+            (battlefield->wall_of_fire > 0)
             ||
-            (battlefield->Wall_Of_Darkness > 0)
+            (battlefield->wall_of_darkness > 0)
         )
         &&
         (BU_IsInCityProper__STUB(battle_unit_idx) == ST_TRUE)
@@ -20649,7 +20658,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
         &&
         (BU_IsInCityProper__STUB(attacker_battle_unit_idx) == ST_FALSE)
         &&
-        (battlefield->Walled_City != 0)
+        (battlefield->walled != 0)
     )
     {
 
@@ -23497,31 +23506,31 @@ void BU_SetCityMovement__WIP(int16_t battle_unit_idx)
     int16_t itr2 = 0;  // _SI_
     int16_t itr1 = 0;  // _DI_
 
-    if(battlefield->Walled_City == ST_TRUE)
+    if(battlefield->walled == ST_TRUE)
     {
 
-        if(battlefield->Wall_Sections[0] == ST_TRUE)
+        if(battlefield->walls[0] == ST_TRUE)
         {
 
             CMB_ActiveMoveMap[((10 * COMBAT_GRID_WIDTH) + 5)] = INF;  // 0xD7
 
         }
 
-        if(battlefield->Wall_Sections[3] == ST_TRUE)
+        if(battlefield->walls[3] == ST_TRUE)
         {
             
             CMB_ActiveMoveMap[((10 * COMBAT_GRID_WIDTH) + 8)] = INF;  // 0xDA
 
         }
 
-        if(battlefield->Wall_Sections[9] == ST_TRUE)
+        if(battlefield->walls[9] == ST_TRUE)
         {
             
             CMB_ActiveMoveMap[((13 * COMBAT_GRID_WIDTH) + 5)] = INF;  // 0x116
 
         }
 
-        if(battlefield->Wall_Sections[15] == ST_TRUE)
+        if(battlefield->walls[15] == ST_TRUE)
         {
             
             CMB_ActiveMoveMap[((13 * COMBAT_GRID_WIDTH) + 8)] = INF;  // 0x119
@@ -23551,7 +23560,7 @@ void BU_SetCityMovement__WIP(int16_t battle_unit_idx)
         )
         &&
         (
-            (battlefield->Walled_City == ST_TRUE)
+            (battlefield->walled == ST_TRUE)
             ||
             (battlefield->city_enchantments[FLYING_FORTRESS] != 0)
         )
@@ -24067,7 +24076,7 @@ int16_t Combat_Grid_Cell_Has_City_Wall(int16_t cgc2, int16_t cgc1)
     has_wall = ST_FALSE;
 
     if(
-        (battlefield->Walled_City == ST_TRUE)
+        (battlefield->walled == ST_TRUE)
         &&
         (
             (cgc2 >= 5)
@@ -24092,7 +24101,7 @@ int16_t Combat_Grid_Cell_Has_City_Wall(int16_t cgc2, int16_t cgc1)
     {
 
         // DEDU  sizeof()?  if(battlefield->Wall_Sections[((cgc1 - 10) * 8) + ((cgc2 - 5) * 2)] == ST_TRUE)
-        if(battlefield->Wall_Sections[(((cgc1 - 10) * 4) + (cgc2 - 5))] == ST_TRUE)
+        if(battlefield->walls[(((cgc1 - 10) * 4) + (cgc2 - 5))] == ST_TRUE)
         {
 
             has_wall = ST_TRUE;
@@ -26190,7 +26199,7 @@ void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp)
     int16_t itr = 0;  // _SI_
 
 
-    CMB_WallRise_Going = 0;  // ; set to 0 at the beginning of combat map creation
+    _wall_rise_on = 0;  // ; set to 0 at the beginning of combat map creation
                              // ; 1 branches wall entity creation (unknown IMG array)
 
     Magic_Walls = 0;
@@ -26605,7 +26614,7 @@ void Generate_Combat_Map__WIP(
         for(itr1 = 0; itr1 <= 3; itr1++)
         {
 
-            battlefield->Wall_Sections[((itr2 * 3) + itr1)] = 0;
+            battlefield->walls[((itr2 * 3) + itr1)] = 0;
 
         }
 
@@ -26770,7 +26779,7 @@ void Generate_Combat_Map__WIP(
             }
 
 
-            battlefield->Walled_City = city_walls;
+            battlefield->walled = city_walls;
 
             if(city_walls == ST_TRUE)
             {
@@ -26780,16 +26789,16 @@ void Generate_Combat_Map__WIP(
                     for(itr1 = 0; itr1 <= 3; itr1++)
                     {
 
-                        battlefield->Wall_Sections[((itr2 * 4) + itr1)] = 1;
+                        battlefield->walls[((itr2 * 4) + itr1)] = 1;
 
                     }
 
                 }
 
-                battlefield->Wall_Sections[5] = 0;
-                battlefield->Wall_Sections[9] = 0;
-                battlefield->Wall_Sections[6] = 0;
-                battlefield->Wall_Sections[10] = 0;
+                battlefield->walls[5] = 0;
+                battlefield->walls[9] = 0;
+                battlefield->walls[6] = 0;
+                battlefield->walls[10] = 0;
 
             }
 
@@ -26876,26 +26885,26 @@ void Generate_Combat_Map__WIP(
     if((magic_walls & 1) != 0)
     {
 
-        battlefield->Wall_Of_Fire = ST_TRUE;
+        battlefield->wall_of_fire = ST_TRUE;
 
     }
     else
     {
 
-        battlefield->Wall_Of_Fire = ST_FALSE;
+        battlefield->wall_of_fire = ST_FALSE;
 
     }
 
     if((magic_walls & 2) != 0)
     {
 
-        battlefield->Wall_Of_Darkness = ST_TRUE;
+        battlefield->wall_of_darkness = ST_TRUE;
 
     }
     else
     {
 
-        battlefield->Wall_Of_Darkness = ST_FALSE;
+        battlefield->wall_of_darkness = ST_FALSE;
 
     }
 
@@ -30066,6 +30075,79 @@ void CMB_ComposeBackgrnd__WIP(void)
 
 // WZD ovr163p03
 // drake178: CMB_LoadWallRiseGFX()
+/*
+; marks the sandbox, reallocates the battle figure
+; space, then loads the animations for creating walls
+; during battle before undoing the mark
+*/
+/*
+
+*/
+void Wall_Rise_Load(int16_t wall_type)
+{
+    int16_t itr = 0;  // _SI_
+
+    // ; 0 branches wall entity creation (unknown IMG array)
+    _wall_rise_type = wall_type;
+
+    Mark_Block(_screen_seg);
+
+// ; reallocate the battle figure predraw space and
+// ; reassign all of their pointers
+// ; WARNING: redoing the pointers may cause trouble
+
+    for(itr = 0; itr < 18; itr++)
+    {
+
+        battle_unit_picts_seg[itr] = Allocate_Next_Block(_screen_seg, 55);
+
+    }
+
+    if(wall_type == 0)
+    {
+
+        // load a set of 12 animations based on what type of
+        // stone walls are being used in the battle
+        // WARNING: these animations are empty in the file (but
+        // are present in CMBTWALL.LBX, an otherwise unused data
+        // file, although the animation sequence is in reverse
+        // and the total is too large for the sandbox)
+
+        for(itr = 0; itr < 12; itr++)
+        {
+
+            _wallrise_seg[itr] = LBX_Reload_Next(wallrise_lbx_file__ovr163, ((CMB_StoneWallType * 12) + itr), _screen_seg);
+
+        }
+
+    }
+    else if(wall_type == 1)
+    {
+
+        for(itr = 0; itr < 14; itr++)
+        {
+
+            _wallrise_seg[itr] = LBX_Reload_Next(wallrise_lbx_file__ovr163, ((3 * 12) + itr), _screen_seg);
+
+        }
+
+    }
+    else if(wall_type == 2)
+    {
+
+        for(itr = 0; itr < 14; itr++)
+        {
+
+            _wallrise_seg[itr] = LBX_Reload_Next(wallrise_lbx_file__ovr163, (((3 * 12) + 14) + itr), _screen_seg);
+
+        }
+
+    }
+
+    Release_Block(_screen_seg);
+
+}
+
 
 // WZD ovr163p04
 // drake178: CMB_BaseAllocs()

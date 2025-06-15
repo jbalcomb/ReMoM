@@ -295,14 +295,14 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
                 if(spell_idx == spl_Wall_Of_Fire)
                 {
 
-                    battlefield->Wall_Of_Fire = 0;
+                    battlefield->wall_of_fire = 0;
 
                 }
 
                 if(spell_idx == spl_Wall_Of_Darkness)
                 {
                     
-                    battlefield->Wall_Of_Darkness = 0;
+                    battlefield->wall_of_darkness = 0;
 
                 }
 

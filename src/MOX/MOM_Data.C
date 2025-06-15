@@ -1167,11 +1167,12 @@ int16_t CMB_AI_Fled;
 
 // WZD dseg:924C
 // struct CSCAN_ICONS IMG_CMB_ScanIcons;
-SAMB_ptr IMG_CMB_ScanIcons[18];
+SAMB_ptr IMG_CMB_ScanIcons[MAX_BATTLE_UNIT_COUNT];
 
-// WZD dseg:9270 00 00                                           CMB_WallRise_Frame dw 0                 ; DATA XREF: CMB_WallRise_Anim:loc_B6D7Ew ...
+// WZD dseg:9270
+int16_t _wall_rise_frame;
 // WZD dseg:9272
-int16_t CMB_WallRise_Going;
+int16_t _wall_rise_on;
 // WZD dseg:9272                                                                                         ; set to 0 at the beginning of combat map creation
 // WZD dseg:9272                                                                                         ; 1 branches wall entity creation (unknown IMG array)
 

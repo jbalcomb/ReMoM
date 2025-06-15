@@ -30,7 +30,8 @@ void Apply_Warp_Creature(int16_t battle_unit_idx);
 // WZD o133p04
 void BU_LifeDrain__WIP(int16_t target_idx, int16_t damage_types[], int16_t caster_idx);
 
-// WZD o133p05  CMB_WallRise_Anim()
+// WZD o133p05
+void Wall_Rise(int16_t spell_idx, int16_t caster_idx);
 
 // WZD o133p06
 void CMB_CounterMessage__STUB(int16_t caster_idx, int16_t type, int16_t spell_idx, char * title);

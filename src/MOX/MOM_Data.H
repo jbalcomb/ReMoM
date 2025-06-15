@@ -2885,11 +2885,12 @@ extern struct s_HEROES * _HEROES2[NUM_PLAYERS];                  // alloc in All
 extern int16_t CMB_AI_Fled;
 
 // WZD dseg:924C
-extern SAMB_ptr IMG_CMB_ScanIcons[18];
+extern SAMB_ptr IMG_CMB_ScanIcons[MAX_BATTLE_UNIT_COUNT];
 
-// WZD dseg:9270 00 00                                           CMB_WallRise_Frame dw 0                 ; DATA XREF: CMB_WallRise_Anim:loc_B6D7Ew ...
+// WZD dseg:9270
+extern int16_t _wall_rise_frame;
 // WZD dseg:9272
-extern int16_t CMB_WallRise_Going;
+extern int16_t _wall_rise_on;
 
 // WZD dseg:9274
 extern struct s_BATTLEFIELD * battlefield;

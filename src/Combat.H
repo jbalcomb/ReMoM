@@ -29,6 +29,7 @@
 #define COMBAT_H
 
 #include "MOX/EMM.H"
+
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_TYPE.H"
 
@@ -92,6 +93,17 @@ else
 //  ; (sizeof=0x4, standard type)
 #pragma pack(push)
 #pragma pack(2)
+struct s_CLANGD
+{
+    /* 00 */  int16_t wtf;
+    /* 02 */  int16_t mgfy;
+    /* 04 */
+};
+#pragma pack(pop)
+
+//  ; (sizeof=0x4, standard type)
+#pragma pack(push)
+#pragma pack(2)
 struct s_COMBAT_ENCHANTMENT_ICON_DATA
 {
     /* 00 */  int16_t icon_idx;
@@ -99,7 +111,6 @@ struct s_COMBAT_ENCHANTMENT_ICON_DATA
     /* 04 */
 };
 #pragma pack(pop)
-
 
 //  ; (sizeof=0x4, standard type)
 #pragma pack(push)
@@ -111,7 +122,6 @@ struct s_COMBAT_ENCHANTMENT_ICON
     /* 04 */
 };
 #pragma pack(pop)
-
 
 
 extern SAMB_ptr DBG_EmmHndl_FIGUREX;
@@ -842,14 +852,14 @@ struct s_BATTLEFIELD
     /* 0x14F6 */  int16_t House_TileXs[16];    // [4][4]
     /* 0x1516 */  int16_t House_TileYs[16];    // [4][4]
     /* 0x1536 */  SAMB_ptr House_IMG_Segs[16];  // [4][4]  ¿ assigned pict seg from [3][15] house types ?
-    /* 0x1556 */  int16_t Walled_City;  // ¿ {{F,T} city has wall flag ?  ... used to set _battlefield_city_walls |= 0x1;, so must be specifcally 'City Walls'/'Wall of Stone'
-    /* 0x1558 */  int16_t Wall_Sections[16];   /* {4,4,4,4};  spl_Disrupt sets this to 2 */
-    /* 0x1578 */  int16_t Wall_Of_Fire;
-    /* 0x157A */  int16_t Wall_Of_Darkness;
+    /* 0x1556 */  int16_t walled;  // {F,T} city has stone wall;  ... used to set _battlefield_city_walls |= 0x1;, so must be specifcally 'City Walls'/'Wall of Stone'
+    /* 0x1558 */  int16_t walls[16];   /* [4][4] as {4,4,4,4}; state/status 1:good, 2:bad  spl_Wall_Of_Stone sets 1, spl_Disrupt sets 2 */
+    /* 0x1578 */  int16_t wall_of_fire;  // {F,T}
+    /* 0x157A */  int16_t wall_of_darkness;  // {F,T}
     /* 0x157C */  int16_t wp;
     /* 0x157E */  // struct s_CTY_ENCH city_enchantments[26];  // int16_t city_enchantments CTY_ENCH
                   int8_t city_enchantments[26];
-    /* 0x1597 */  int8_t Nightshades;
+    /* 0x1597 */  int8_t Nightshades;  // ~ enchantment, but count, rather than player num bitfield
     /* 0x1598 */
 };
 
@@ -2091,7 +2101,7 @@ void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp);
 void CMB_ComposeBackgrnd__WIP(void);
 
 // WZD ovr163p03
-// CMB_LoadWallRiseGFX()
+void Wall_Rise_Load(int16_t wall_type);
 
 // WZD ovr163p04
 void CMB_BaseAllocs__WIP(void);

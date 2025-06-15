@@ -19,15 +19,15 @@ Combat Only Spell Casting Categories
 [x] Animate Dead
 [ ] Chaos Channels
 [ ] Cracks Call
-[ ] Disrupt
+[x] Disrupt
 [ ] Earth to Mud
 [x] Healing
 [ ] Magic Vortex
 [x] Raise Dead
-[ ] Recall Hero
-[ ] Wall of Stone
-[ ] Warp Creature
-[ ] Warp Wood
+[x] Recall Hero
+[x] Wall of Stone
+[x] Warp Creature
+[x] Warp Wood
 
 
 
@@ -107,7 +107,6 @@ Weird Ones?
     Flying Fortress?
     Move Fortress?
     Raise Volcano?
-    Recall Hero?
     Resurrection?
     Spell Ward          seem to recall the code tfor the effects being messy
     Summon Champion?
@@ -115,7 +114,6 @@ Weird Ones?
     Summoning Circle?
     Warp Creature
     Warp Node
-    Word of Recall?
 
 
 all overland summons are done

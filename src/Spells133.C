@@ -166,7 +166,100 @@ void BU_LifeDrain__WIP(int16_t target_idx, int16_t damage_types[], int16_t caste
 }
 
 
-// WZD o133p05  CMB_WallRise_Anim()
+// WZD o133p05
+void Wall_Rise(int16_t spell_idx, int16_t caster_idx)
+{
+    int16_t frame_count = 0;
+    int16_t itr_cgx = 0;
+    int16_t itr_cgy = 0;  // _DI_
+    int16_t wall_type = 0;  // _SI_
+
+    frame_count = 10;
+
+    if(spell_idx == spl_Wall_Of_Stone)
+    {
+
+        wall_type = 0;
+
+    }
+    else if(spell_idx == spl_Wall_Of_Fire)
+    {
+
+        wall_type = 1;
+
+    }
+    else
+    {
+
+        wall_type = 2;
+
+    }
+
+    if(wall_type == 1)
+    {
+
+        frame_count = 2;
+
+    }
+
+    Wall_Rise_Load(wall_type);
+
+    _wall_rise_on = ST_TRUE;
+
+    if(wall_type == 0)
+    {
+
+        // mark the city as Walled, and mark all wall sections
+        // as intact
+        // BUG: would also mark the center sections although
+        // there is no wall there (but the spell can't be cast
+        // in combat in v1.31 anyway)
+
+        battlefield->walled = ST_TRUE;
+
+        for(itr_cgy = 0; itr_cgy < 4; itr_cgy++)
+        {
+
+            for(itr_cgx = 0; itr_cgx < 4; itr_cgx++)
+            {
+                
+                battlefield->walls[((itr_cgy * 4) + itr_cgx)] = 1;
+
+            }
+
+        }
+
+    }
+    else if (wall_type == 1)
+    {
+
+        battlefield->wall_of_fire = ST_TRUE;
+
+    }
+    else if(wall_type == 2)
+    {
+
+        battlefield->wall_of_darkness = ST_TRUE;
+
+    }
+
+    for(_wall_rise_frame = 0; _wall_rise_frame < frame_count; _wall_rise_frame++)
+    {
+
+        Set_Page_Off();
+
+        Tactical_Combat_Draw();
+
+        Combat_Cast_Spell_Message(caster_idx, spell_idx);
+
+        PageFlip_FX();
+
+    }
+
+    _wall_rise_on = ST_FALSE;
+    
+}
+
 
 // WZD o133p06
 // drake178: CMB_CounterMessage()
