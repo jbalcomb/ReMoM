@@ -8,7 +8,10 @@
         seg028
 */
 
-#include "MOX_Lib.H"
+#include "Video.H"
+
+#include "Mouse.H"
+#include "Video2.H"
 
 
 

@@ -8,7 +8,6 @@
 */
 
 #include "Allocate.H"
-#include "FLIC_Draw.H"
 #include "Fonts.H"
 #include "Graphics.H"
 #include "LBX_Load.H"
@@ -3029,7 +3028,7 @@ void Cycle_Palette(int16_t percent)
     uint8_t color_grn;
     uint8_t color_blu;
 
-    vpercent = 100 - percent;
+    vpercent = (100 - percent);
     
     if(vpercent > 0)                    /* percent < 100 */
     {
@@ -3112,7 +3111,7 @@ Done:
 // WZD s21p03
 // drake178: VGA_ShadeScreen()
 // seems not in 1oom
-// MoO2  maybe  Create_Brighten_Bitmap_Palettes()  Set_Palette_Gradient()
+// MoO2  Module: palstore  Tint_Palette_()
 /*
 ; shades the entire screen to the percent of the passed
 ; color, and the remaining percent of the original
@@ -3122,14 +3121,207 @@ Done:
 ; previously marked as changed
 */
 /*
+three paths
+    percent >= 100
+    percent <=   0
+    percent {1,...99}
 
 */
-void VGA_ShadeScreen__STUB(int16_t percent, int16_t red, int16_t green, int16_t blue)
+void Tint_Palette(int16_t percent, int16_t red, int16_t grn, int16_t blu)
 {
+    int16_t vpercent = 0;
+    uint16_t multi = 0;
+    uint16_t scale = 0;
+    static uint16_t red_add = 0;
+    static uint16_t grn_add = 0;
+    static uint16_t blu_add = 0;
+    int16_t itr = 0;
+    uint16_t ofst = 0;
+    uint16_t cur_red = 0;
+    uint16_t cur_grn = 0;
+    uint16_t cur_blu = 0;
+    uint16_t new_red = 0;
+    uint16_t new_grn = 0;
+    uint16_t new_blu = 0;
+
+    vpercent = (100 - percent);
+
+    if(vpercent <= 0)               /* (percent >= 100) */
+    {
+
+        Apply_Palette();
+
+    }
+    else if(vpercent >= 100)        /* (percent <= 0) */
+    {
+
+// TODO  IDGI         for(itr = 0; itr < 256; itr++)
+// TODO  IDGI         {
+// TODO  IDGI 
+// TODO  IDGI             if(PALETTE_FLAG(itr))
+// TODO  IDGI             {
+// TODO  IDGI 
+// TODO  IDGI                 platform_palette_buffer[itr].r = (red_add << 2);  // CS_red1
+// TODO  IDGI                 platform_palette_buffer[itr].g = (grn_add << 2);  // CS_green1
+// TODO  IDGI                 platform_palette_buffer[itr].b = (blu_add << 2);  // CS_blue1
+// TODO  IDGI                 platform_palette_buffer[itr].a = 0xFF;
+// TODO  IDGI 
+// TODO  IDGI             }
+// TODO  IDGI 
+// TODO  IDGI         }
+
+    }
+    else                            /* (percent > 0) && (percent < 100) */
+    {
+
+// mov     bx, 256
+// mul     bx
+// mov     bx, 100
+// div     bx
+// mov     [cs:color1_multiplier], ax      ; original color percent * 256 / 100
+
+        multi = (vpercent * 256) / 100;
+
+// mov     ax, [bp+percent]
+// mov     bx, 256
+// mul     bx
+// mov     bx, 100
+// div     bx
+// mov     bx, ax
+
+        scale = (percent * 256) / 100;
+
+// mov     ax, [bp+red]
+// mul     bl
+// mov     al, ah
+// xor     ah, ah
+// mov     [cs:CS_red1], ax
+// 
+// mov     ax, [bp+green]
+// mul     bl
+// mov     al, ah
+// xor     ah, ah
+// mov     [cs:CS_green1], ax
+// 
+// mov     ax, [bp+blue]
+// mul     bl
+// mov     al, ah
+// xor     ah, ah
+// mov     [cs:CS_blue1], ax
+
+        red_add = (red * scale) >> 8;  // CS_red1
+
+        grn_add = (grn * scale) >> 8;  // CS_green1
+
+        blu_add = (blu * scale) >> 8;  // CS_blue1
 
 
+
+        /*
+            get color from color-map, add tint value, write to the platform palette
+        */
+        
+        for(itr = 0; itr < 256; itr++)
+        {
+
+            if(PALETTE_FLAG(itr))
+            {
+
+                ofst = itr * 3;
+
+                cur_red = *(current_palette + ofst++);
+                cur_grn = *(current_palette + ofst++);
+                cur_blu = *(current_palette + ofst++);
+
+                new_red = (((cur_red * multi) >> 8) + red_add);
+                new_grn = (((cur_grn * multi) >> 8) + grn_add);
+                new_blu = (((cur_blu * multi) >> 8) + blu_add);
+
+                // ~== Platform_Palette_Update()
+                platform_palette_buffer[itr].r = (new_red << 2);
+                platform_palette_buffer[itr].g = (new_grn << 2);
+                platform_palette_buffer[itr].b = (new_blu << 2);
+                platform_palette_buffer[itr].a = 0xFF;
+
+            }
+
+        }
+
+    }
+
+
+    // ~== REP STOSW
+    memset((uint8_t *)(current_palette + 768), 0x00, 256);  // ~== `REP STOSB`
+
+    Platform_Video_Update();
 
 }
+/*
+
+mov     ax, 100
+sub     ax, [bp+percent]
+ja      short loc_1CF6E
+
+jmp     loc_1D02F
+
+loc_1CF6E:
+cmp     ax, 100
+js      short loc_1CF76
+
+loc_1D02F:
+mov     ax, [current_palette]
+mov     ds, ax
+mov     bx, 0
+mov     di, 768
+mov     cx, 0
+
+
+
+loc_1CF76:
+mov     bx, 256
+mul     bx
+mov     bx, 100
+div     bx
+mov     [cs:color1_multiplier], ax
+
+mov     ax, [bp+percent]
+mov     bx, 256
+mul     bx
+mov     bx, 100
+div     bx
+mov     bx, ax
+
+mov     ax, [bp+red]
+mul     bl
+mov     al, ah
+xor     ah, ah
+mov     [cs:CS_red1], ax
+
+mov     ax, [bp+green]
+mul     bl
+mov     al, ah
+xor     ah, ah
+mov     [cs:CS_green1], ax
+
+mov     ax, [bp+blue]
+mul     bl
+mov     al, ah
+xor     ah, ah
+mov     [cs:CS_blue1], ax
+
+mov     si, 3
+
+mov     bx, [cs:color1_multiplier]
+mov     bh, 1
+
+mov     di, 771
+
+mov     cx, 0
+
+mov     ax, [current_palette]
+mov     ds, ax
+
+*/
 
 
 // WZD s21p04
@@ -3265,7 +3457,7 @@ rep stosw
 
 // WZD s21p05
 // drake178: UU_VGA_ColorWave()
-
+// NX_VGA_ColorWave()
 
 
 // WZD s21p06

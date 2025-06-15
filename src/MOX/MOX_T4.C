@@ -24,6 +24,18 @@
 
 #include "MOX_T4.H"
 
+#include "Fonts.H"
+#include "Input.H"
+#include "MOM_Data.H"
+#include "MOX_DAT.H"  /* _screen_seg */
+#include "MOX_SET.H"  /* magic_set */
+#include "MOX_SND.H"
+#include "MOX_TYPE.H"
+#include "SOUND.H"
+#include "Timer.H"
+#include "Util.H"
+#include "Video.H"
+
 
 
 // WZD s01p03
@@ -117,18 +129,6 @@ OON XREF:
 
 */
 
-
-
-#include "Fonts.H"
-#include "Input.H"
-#include "MOM_Data.H"
-#include "MOX_DAT.H"  /* _screen_seg */
-#include "MOX_SET.H"  /* magic_set */
-#include "MOX_SND.H"
-#include "MOX_TYPE.H"
-#include "SOUND.H"
-#include "Timer.H"
-#include "Util.H"
 
 
 

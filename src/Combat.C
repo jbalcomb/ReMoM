@@ -11643,11 +11643,12 @@ void Cast_Spell_On_Battle_Unit(int16_t spell_idx, int16_t target_idx, int16_t ca
     int16_t damage_types[3] = { 0, 0, 0 };
     uint32_t enchantments = 0;
     int16_t resistance_modifier = 0;
-    int16_t Figure_Count = 0;
+    int16_t figure_count = 0;
+    int16_t did_create_unit = 0;  // DNE in Dasm, uses figure_count
     int16_t player_idx = 0;
     int16_t itr = 0;
-    int16_t Resist_Result = 0;
-    int16_t combat_enchantment_index = 0;  // DNE in Dasm, reuses Resist_Result
+    int16_t resist_fails = 0;
+    int16_t combat_enchantment_index = 0;  // DNE in Dasm, uses resist_fails
 
 #define UPDATE_SCREEN_LOCAL()  \
     do {  \
@@ -11764,8 +11765,8 @@ case scc_Disjunction_Spell:  // 20
 
         case scc_Summoning:
         {
-            Figure_Count = Create_Unit__WIP(spell_data_table[spell_idx].unit_type, player_idx, 0, 0, 9, 2000);
-            if(Figure_Count == ST_TRUE)
+            did_create_unit = Create_Unit__WIP(spell_data_table[spell_idx].unit_type, player_idx, 0, 0, 9, 2000);
+            if(did_create_unit == ST_TRUE)
             {
                 UNIT_SummonToBattle__SEGRAX(player_idx, (_units - 1), target_cgx, target_cgy);
                 BU_CombatSummon__SEGRAX((_combat_total_unit_count - 1), target_cgx, target_cgy, spell_idx, caster_idx);
@@ -11828,8 +11829,8 @@ case scc_Disjunction_Spell:  // 20
             }
             if(spell_idx == spl_Creature_Binding)
             {
-                Resist_Result = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
-                if(Resist_Result > 0)
+                resist_fails = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
+                if(resist_fails > 0)
                 {
                     battle_units[target_idx].Combat_Effects |= bue_Creature_Binding;
 
@@ -11846,9 +11847,9 @@ case scc_Disjunction_Spell:  // 20
             if(spell_idx == spl_Warp_Creature)
             {
 
-                Resist_Result = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
+                resist_fails = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
 
-                if(Resist_Result > 0)
+                if(resist_fails > 0)
                 {
                     // SPELLY  BU_WarpCreature(target_idx);
                 }
@@ -11896,6 +11897,7 @@ case scc_Disjunction_Spell:  // 20
 
             Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
 
+            // Combat Battlefield Enchantment  (NOT Combat Battlefield Instant)
             if(
                 (spell_idx != spl_Flame_Strike)
                 &&
@@ -11908,7 +11910,7 @@ case scc_Disjunction_Spell:  // 20
                 (spell_idx != spl_Mass_Healing)
             )
             {
-
+                
                 combat_enchantment_index = spell_data_table[spell_idx].ce_idx;
 
                 if(player_idx != _combat_attacker_player)
@@ -12007,14 +12009,14 @@ case scc_Disjunction_Spell:  // 20
                     )
                     {
 
-                        Figure_Count = battle_units[target_idx].Cur_Figures;
+                        figure_count = battle_units[target_idx].Cur_Figures;
 
-                        for(itr = 0; itr < Figure_Count; itr++)
+                        for(itr = 0; itr < figure_count; itr++)
                         {
 
-                            Resist_Result = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
+                            resist_fails = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
 
-                            if(Resist_Result > 0)
+                            if(resist_fails > 0)
                             {
 
                                 damage_types[2] = battle_units[target_idx].hits;
@@ -12041,9 +12043,9 @@ case scc_Disjunction_Spell:  // 20
 
             Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
 
-            Resist_Result = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
+            resist_fails = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
 
-            if(Resist_Result <= 0)
+            if(resist_fails <= 0)
             {
                 UPDATE_SCREEN_LOCAL();
             }
@@ -12133,8 +12135,6 @@ case scc_Disjunction_Spell:  // 20
             {
 
                 Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
-
-                // Resist_Result = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
 
                 battle_units[target_idx].Combat_Effects |= spell_data_table[spell_idx].Param0;  // e.g., bue_Black_Sleep
                 

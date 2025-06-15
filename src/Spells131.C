@@ -980,10 +980,10 @@ handles in-line Mass Healing
 
 XREF:
     Combat_Spell_Animation__WIP()
-    NX_j_CMB_BattlefieldSpell()
+    NX_j_Combat_Battlefield_Instant()
 
 */
-void CMB_BattlefieldSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t anims_on, int16_t caster_idx)
+void Combat_Battlefield_Instant(int16_t player_idx, int16_t spell_idx, int16_t anims_on, int16_t caster_idx)
 {
     int16_t Anim_Delay_Array[MAX_BATTLE_UNIT_SLOT_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Anim_Size = 0;
@@ -1430,7 +1430,7 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
         )
         {
 
-            CMB_BattlefieldSpell__WIP(player_idx, spell_idx, anims_on, caster_idx);
+            Combat_Battlefield_Instant(player_idx, spell_idx, anims_on, caster_idx);
 
         }
         else
@@ -1499,18 +1499,18 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
                 for(itr = 0; itr < 20; itr++)
                 {
 
-                    Set_Palette_Changes(0, -1);
+                    Set_Palette_Changes(0, 255);
 
-                    /* SPELLY */  VGA_ShadeScreen__STUB((itr / 2), red, green, blue);
+                    Tint_Palette((itr * 2), red, green, blue);
 
                 }
 
                 for(itr = 20; itr > -1; itr--)
                 {
 
-                    Set_Palette_Changes(0, -1);
+                    Set_Palette_Changes(0, 255);
 
-                    /* SPELLY */  VGA_ShadeScreen__STUB((itr / 2), red, green, blue);
+                    Tint_Palette((itr * 2), red, green, blue);
 
                 }
 

@@ -1,8 +1,9 @@
 
-// #include "MOM.H"
 #include "MOX/Fonts.H"
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_TYPE.H"
+#include "MOX/Video.H"
+#include "MOX/Video2.H"
 
 // #ifdef _STU_SDL2
 #include "sdl2_PFL.H"
@@ -182,7 +183,7 @@ void Platform_Palette_Update(void)
 
 
 /*
-
+...just update what the user sees on the screen
 
 ¿ always/only 'On-Page' ?
 
@@ -195,7 +196,7 @@ void Platform_Video_Update(void)
 
 
 
-    Platform_Palette_Update();
+    // Why did this get here?  Platform_Palette_Update();  ...should be called on purpose beforehand
 
     SDL_SetPaletteColors(sdl2_surface_RGB666->format->palette, platform_palette_buffer, 0, 256);
 

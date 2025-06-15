@@ -66,27 +66,27 @@ void TST_Patch_Game_Data(void)
 
 
     // scc_Battlefield_Spell  10  (part 2of2)
-    // TST_Learn_Spell(player_idx, spl_Black_Prayer);
-    // TST_Learn_Spell(player_idx, spl_Blur);
-    // TST_Learn_Spell(player_idx, spl_Call_Lightning);
-    // TST_Learn_Spell(player_idx, spl_Darkness);
-    // TST_Learn_Spell(player_idx, spl_Entangle);
-    // TST_Learn_Spell(player_idx, spl_High_Prayer);
-    // TST_Learn_Spell(player_idx, spl_Mana_Leak);
-    // TST_Learn_Spell(player_idx, spl_Mass_Invisibility);
-    // TST_Learn_Spell(player_idx, spl_Metal_Fires);
-    // TST_Learn_Spell(player_idx, spl_Prayer);
-    // TST_Learn_Spell(player_idx, spl_Terror);
-    // TST_Learn_Spell(player_idx, spl_True_Light);
-    // TST_Learn_Spell(player_idx, spl_Warp_Reality);
-    // TST_Learn_Spell(player_idx, spl_Wrack);
+    TST_Learn_Spell(player_idx, spl_Black_Prayer);  // 174
+    TST_Learn_Spell(player_idx, spl_Blur);
+    TST_Learn_Spell(player_idx, spl_Call_Lightning);
+    TST_Learn_Spell(player_idx, spl_Darkness);
+    TST_Learn_Spell(player_idx, spl_Entangle);
+    TST_Learn_Spell(player_idx, spl_High_Prayer);
+    TST_Learn_Spell(player_idx, spl_Mana_Leak);
+    TST_Learn_Spell(player_idx, spl_Mass_Invisibility);  //  74
+    TST_Learn_Spell(player_idx, spl_Metal_Fires);
+    TST_Learn_Spell(player_idx, spl_Prayer);
+    TST_Learn_Spell(player_idx, spl_Terror);
+    TST_Learn_Spell(player_idx, spl_True_Light);
+    TST_Learn_Spell(player_idx, spl_Warp_Reality);
+    TST_Learn_Spell(player_idx, spl_Wrack);
 
     // scc_Battlefield_Spell  10  (part 1of2)
-    TST_Learn_Spell(player_idx, spl_Flame_Strike);  // 109
-    TST_Learn_Spell(player_idx, spl_Holy_Word);
-    TST_Learn_Spell(player_idx, spl_Death_Spell);
-    TST_Learn_Spell(player_idx, spl_Call_Chaos);
-    TST_Learn_Spell(player_idx, spl_Mass_Healing);
+    // TST_Learn_Spell(player_idx, spl_Flame_Strike);  // 109
+    // TST_Learn_Spell(player_idx, spl_Holy_Word);
+    // TST_Learn_Spell(player_idx, spl_Death_Spell);
+    // TST_Learn_Spell(player_idx, spl_Call_Chaos);
+    // TST_Learn_Spell(player_idx, spl_Mass_Healing);
 
     // scc_Unresistable_Spell  14
     // TST_Learn_Spell(player_idx, spl_Mind_Storm);  //   67

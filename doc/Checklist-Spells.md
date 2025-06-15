@@ -21,11 +21,14 @@ Combat Only Spell Casting Categories
 21  scc_Combat_Counter_Magic
         spl_Counter_Magic
 
-add Combat Battlefield  (5) (part 1of2)
-Flame_Strike, Holy_Word, Death_Spell, Call_Chaos, Mass_Healing
 
 
-Combat_Spell_Animation__WIP() |-> CMB_BattlefieldSpell__WIP()
+¿ Combat Battlefield Instant ?
+    Flame Strike, Holy Word, Death Spell, Call Chaos, Mass Healing
+¿ Combat Battlefield Enchantment ?
+    Black Prayer, Blur, Call Lightning, Darkness, Entangle, High Prayer, Mana Leak, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack
+
+Combat_Spell_Animation__WIP() |-> Combat_Battlefield_Instant()
             (spell_idx == spl_Flame_Strike)
             (spell_idx == spl_Holy_Word)
             (spell_idx == spl_Death_Spell)
@@ -52,22 +55,22 @@ Apply_Flame_Strike(player_idx);
 [x]  spl_Mass_Healing  (in-line)
 
 So, ...
-    scc_Battlefield_Spell, not handled by CMB_BattlefieldSpell__WIP()
-[ ] Black Prayer
-[ ] Blur
-[ ] Call Lightning
-[ ] Darkness
-[ ] Death Spell
-[ ] Entangle
-[ ] High Prayer
-[ ] Mana Leak
-[ ] Mass Invisibility
-[ ] Metal Fires
-[ ] Prayer
-[ ] Terror
-[ ] True Light
-[ ] Warp Reality
-[ ] Wrack
+    scc_Battlefield_Spell, not handled by Combat_Battlefield_Instant()
+[x] Black Prayer
+[x] Blur
+[-] Call Lightning
+[x] Darkness
+[x] Death Spell
+[x] Entangle
+[x] High Prayer
+[x] Mana Leak
+[x] Mass Invisibility
+[x] Metal Fires
+[x] Prayer
+[x] Terror
+[x] True Light
+[x] Warp Reality
+[-] Wrack
 
 
 
@@ -263,7 +266,7 @@ Spreadsheet - OSG Spells by Realm
 
 
 [ ] Earth to Mud
-[ ] Resist Elements
+[x] Resist Elements
 [x] Wall of Stone
 [x] Giant Strength
 [ ] Web
@@ -292,11 +295,11 @@ Spreadsheet - OSG Spells by Realm
 [ ] Move Fortress
 [x] Gaias Blessing
 [x] Earth Elemental
-[ ] Regeneration
+[-] Regeneration
 [x] Behemoth
-[ ] Entangle
+[x] Entangle
 [x] Natures Awareness
-[ ] Call Lightning
+[-] Call Lightning
 [x] Colossus
 [ ] Earth Gate
 [x] Herb Mastery
@@ -312,9 +315,9 @@ Spreadsheet - OSG Spells by Realm
 [x] Counter Magic
 [x] Nagas
 [x] Psionic Blast
-[ ] Blur
+[x] Blur
 [x] Disenchant True
-[ ] Vertigo
+[x] Vertigo
 [x] Spell Lock
 [ ] Enchant Road
 [x] Flight
@@ -335,7 +338,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Djinn
 [x] Spell Ward
 [x] Creature Binding
-[ ] Mass Invisibility
+[x] Mass Invisibility
 [x] Great Unsummoning
 [x] Spell Binding
 [x] Flying Fortress
@@ -363,20 +366,20 @@ Spreadsheet - OSG Spells by Realm
 [x] Immolation
 [X] Chimeras
 [x] Warp Lightning
-[ ] Metal Fires
+[x] Metal Fires
 [x] Chaos Spawn
 [x] Doom Bolt
 [ ] Magic Vortex
 [X] Efreet
 [x] Fire Storm
-[ ] Warp Reality
-[ ] Flame Strike
+[x] Warp Reality
+[x] Flame Strike
 [ ] Chaos Rift
 [X] Hydra
 [x] Disintegrate
 [x] Meteor Storms
 [x] Great Wasting
-[ ] Call Chaos
+[x] Call Chaos
 [x] Chaos Surge
 [x] Doom Mastery
 [x] Great Drake
@@ -389,7 +392,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Healing
 [x] Holy Armor
 [x] Just Cause
-[ ] True Light
+[x] True Light
 [x] Guardian Spirit
 [x] Heroism
 [x] True Sight
@@ -400,8 +403,8 @@ Spreadsheet - OSG Spells by Realm
 [x] Unicorns
 [x] Raise Dead
 [x] Planar Travel
-[ ] Heavenly Light
-[ ] Prayer
+[x] Heavenly Light
+[x] Prayer
 [ ] Lionheart
 [ ] Incarnation
 [ ] Invulnerability
@@ -410,9 +413,9 @@ Spreadsheet - OSG Spells by Realm
 [x] Altar of Battle
 [x] Angel
 [x] Stream of Life
-[ ] Mass Healing
-[ ] Holy Word
-[ ] High Prayer
+[x] Mass Healing
+[x] Holy Word
+[x] High Prayer
 [x] Inspirations
 [x] Astral Gate
 [x] Holy Arms
@@ -429,13 +432,13 @@ Spreadsheet - OSG Spells by Realm
 [x] Black Sleep
 [x] Ghouls
 [ ] Life Drain
-[ ] Terror
-[ ] Darkness
-[ ] Mana Leak
+[x] Terror
+[x] Darkness
+[x] Mana Leak
 [x] Drain Power
 [x] Possession
 [ ] Lycantrophy
-[ ] Black Prayer
+[x] Black Prayer
 [x] Black Channels
 [x] Night Stalker
 [x] Subversion
@@ -455,7 +458,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Cruel Unminding
 [x] Word of Death
 [x] Death Knights
-[ ] Death Spell
+[x] Death Spell
 [x] Animate Dead
 [x] Pestilence
 [x] Eternal Night

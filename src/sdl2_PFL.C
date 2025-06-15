@@ -2,6 +2,7 @@
 #include "sdl2_PFL.H"
 
 #include "MOX/MOX_BASE.H"
+#include "MOX/MOX_DEF.H"
 #include "MOX/MOX_KEYS.H"
 #include "MOX/MOX_TYPE.H"
 #include "MOX/Mouse.H"
@@ -86,6 +87,7 @@ void Platform_Maybe_Move_Mouse(void)
     Save_Mouse_On_Page((mx / 2), (my / 2));
     Draw_Mouse_On_Page((mx / 2), (my / 2));
     // hw_video_redraw_front();  // doesn't touch any game/MoX/MoO1 code, just updates what is displayed on the platform window
+    // Dont?  Platform_Palette_Update();
     Platform_Video_Update();
     Restore_Mouse_On_Page();
 

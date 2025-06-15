@@ -1,6 +1,7 @@
 
 #include "Mouse.H"
 
+#include "Fonts.H"
 #include "MOX_DEF.H"
 #include "MOX_TYPE.H"
 #include "Video.H"

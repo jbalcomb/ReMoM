@@ -9,6 +9,22 @@ CMB_RedrawSpellbook__WIP()  ==>  Combat_Spellbook_Screen_Draw()
 CMB_DrawFullScreen__WIP()  ==>  Tactical_Combat_Draw()
 CMB_CheckSpellErrors()  ==>  Do_Legal_Spell_Check__WIP()
 G_CMB_SpellEffect()  ==> G_CMB_SpellEffect__WIP()  ==>  Cast_Spell_On_Battle_Unit()
+CMB_BattlefieldSpell()  ==>  Combat_Battlefield_Instant()
+
+
+
+
+
+Cast_Spell_On_Battle_Unit()
+...not actually always casting *on* a 'Battle Unit'
+...target_idx can be 99
+...none take a target scc_Battlefield_Spell (10), scc_Combat_Counter_Magic (21)
+
+
+
+
+
+
 
 
 
@@ -27,7 +43,7 @@ AI_BU_ProcessAction__WIP()
 
 
 
-## Combat_Spell_Animation__WIP() |-> CMB_BattlefieldSpell__WIP()
+## Combat_Spell_Animation__WIP() |-> Combat_Battlefield_Instant()
 
 
 ## Combat_Spell_Animation__WIP()
@@ -40,7 +56,7 @@ Cast_Spell_On_Battle_Unit()
 
 ### anims_on
 
-## CMB_BattlefieldSpell__WIP()
+## Combat_Battlefield_Instant()
 
 ### anims_on
 

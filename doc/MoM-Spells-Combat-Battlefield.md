@@ -1,4 +1,9 @@
 
+Combat Battlefield Instant
+Combat Battlefield Enchantment
+
+
+
 NOTE: 'Counter Magic' uses count, rather than {F,T}
 
 'Counter Magic' is in its own SCC, but takes the same code-path as the battlefield spells

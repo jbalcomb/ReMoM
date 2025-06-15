@@ -10,8 +10,6 @@
 #include "MOX_TYPE.H"
 #include "TEXTBOX.H"
 
-#include "malloc.h"
-
 #ifdef _STU_SDL2
 #include "../sdl2_PFL.H"
 #endif

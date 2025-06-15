@@ -9,7 +9,8 @@
 #ifndef FONTS_H
 #define FONTS_H
 
-#include "MOX_Lib.H"
+#include "MOX_BITS.H"
+#include "MOX_TYPE.H"
 
 
 
@@ -37,6 +38,9 @@
 
 
 
+/*
+    {0,1}{F,T} 
+*/
 #define PALETTE_FLAG(_palette_index_)                  ( GET_1B_OFS( (current_palette), (768 + (_palette_index_)) ) )
 
 
@@ -562,7 +566,7 @@ void Cycle_Palette(int16_t percent);
 
 
 // WZD s21p03
-void VGA_ShadeScreen__STUB(int16_t percent, int16_t red, int16_t green, int16_t blue);
+void Tint_Palette(int16_t percent, int16_t red, int16_t green, int16_t blue);
 
 // WZD s21p04
 // drake178: VGA_SlideColors()
