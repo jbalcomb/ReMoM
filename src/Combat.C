@@ -2729,62 +2729,40 @@ void CMB_PrepareTurn__WIP(void)
     CMB_AIGoesFirst = ST_FALSE;
 
 
-    // TODO  CMB_ManaLeak();
-    // ; processes the effects of any Mana Leak combat
-    // ; enchantments for both parties
+    /*
+        BEGIN:  apply spell effects per-turn/on-going
+    */
 
-    // if(combat_enchantments->Call_Lightning.Attkr != 0)
+    Apply_Mana_Leak();
+
+
     if(combat_enchantments[CALL_LIGHTNING_ATTKR] != 0)
     {
-        // TODO  WIZ_CallLightning(_combat_attacker_player);
-        // ; processes the Call Lightning effect of the selected
-        // ; player, including loading and playing both sound and
-        // ; animation
-        // ;
-        // ; BUGs: will sometimes fire less bolts than intended,
-        // ; ignores units with Wraith Form, and stores its spell
-        // ; data parameters in Wall of Stone's, even though it
-        // ; doesn't actually need to
+        
+        // WIZ_CallLightning(_combat_attacker_player);
+
     }
 
-    // if(combat_enchantments->Call_Lightning.Dfndr != 0)
     if(combat_enchantments[CALL_LIGHTNING_DFNDR] != 0)
     {
-        // TODO  WIZ_CallLightning(_combat_defender_player);
-        // ; processes the Call Lightning effect of the selected
-        // ; player, including loading and playing both sound and
-        // ; animation
-        // ;
-        // ; BUGs: will sometimes fire less bolts than intended,
-        // ; ignores units with Wraith Form, and stores its spell
-        // ; data parameters in Wall of Stone's, even though it
-        // ; doesn't actually need to
+
+        // WIZ_CallLightning(_combat_defender_player);
+
     }
 
-    // if(combat_enchantments->Wrack.Attkr != 0)
+
     if(combat_enchantments[WRACK_ATTKR] != 0)
     {
-        // TODO     (_combat_attacker_player);
-        // ; processes the Wrack effect of the selected player,
-        // ; including loading and playing its animation
-        // ;
-        // ; BUGs: can only affect up to 40 figures at a time, can
-        // ; corrupt memory in unlucky scenarios, its effect is
-        // ; prevented by Wraith Form, and it does squared the
-        // ; intended damage to units
+        
+        // TODO  WIZ_Wrack(_combat_attacker_player);
+
     }
 
-    // if(combat_enchantments->Wrack.Dfndr != 0)
     if(combat_enchantments[WRACK_DFNDR] != 0)
     {
+
         // TODO  WIZ_Wrack(_combat_defender_player);
-        // ; processes the Wrack effect of the selected player,
-        // ; including loading and playing its animation
-        // ;
-        // ; BUGs: can only affect up to 40 figures at a time, can
-        // ; corrupt memory in unlucky scenarios, its effect is
-        // ; prevented by Wraith Form, and it does squared the
-        // ; intended damage to units
+        
     }
 
 
@@ -2796,18 +2774,10 @@ void CMB_PrepareTurn__WIP(void)
 
 
     // TODO  Init_Battlefield_Effects(CMB_combat_structure);
-    // ; calculates and stores the highest unit aura values
-    // ; for each player (Holy Bonus, Resistance to All, and
-    // ; Leadership), and applies Heavenly Light, Cloud of
-    // ; Shadow, and Eternal Night
-    // ;
-    // ; BUG: grants +3 Defense to defending units in battle
-    // ; condition 1 (else wouldn't even need this argument)
+
 
     // TODO  CMB_UnitCityDamage();
-    // ; increases the probable building damage for each
-    // ; offending unit currently in the city proper during
-    // ; a town siege
+
 
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
@@ -2832,14 +2802,12 @@ void CMB_PrepareTurn__WIP(void)
 
         if(
             (
-                /* (combat_enchantments->Terror.Attkr != 0) */
                 (combat_enchantments[TERROR_ATTKR] != 0)
                 &&
                 (battle_units[itr].controller_idx == _combat_defender_player)
             )
             ||
             (
-                /* (combat_enchantments->Terror.Dfndr != 0) */
                 (combat_enchantments[TERROR_DFNDR] != 0)
                 &&
                 (battle_units[itr].controller_idx == _combat_attacker_player)
@@ -2864,14 +2832,12 @@ void CMB_PrepareTurn__WIP(void)
 
         if(
             (
-                /* (combat_enchantments->Entangle.Attkr != 0) */
                 (combat_enchantments[ENTANGLE_ATTKR] != 0)
                 &&
                 (battle_units[itr].controller_idx == _combat_defender_player)
             )
             ||
             (
-                /* (combat_enchantments->Entangle.Dfndr != 0) */
                 (combat_enchantments[ENTANGLE_DFNDR] != 0)
                 &&
                 (battle_units[itr].controller_idx == _combat_attacker_player)
@@ -15492,7 +15458,152 @@ int16_t BU_MeleeWallCheck__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_u
 
 
 // WZD o113p12
-// drake178: CMB_ManaLeak()
+// drake178: 
+void Apply_Mana_Leak(void)
+{
+    int16_t player_idx = 0;  // _SI_
+    int16_t battle_unit_idx = 0;  // _CX_
+
+    player_idx = ST_UNDEFINED;
+
+    if(combat_enchantments[MANA_LEAK_ATTKR] > 0)
+    {
+
+            player_idx = _combat_defender_player;
+
+            if(combat_enchantments[MANA_LEAK_DFNDR] > 0)
+            {
+
+                player_idx = 666;
+
+            }
+
+    }
+    else
+    {
+
+        if(combat_enchantments[MANA_LEAK_DFNDR] > 0)
+        {
+
+            player_idx = _combat_attacker_player;
+            
+        }
+
+    }
+
+    if(player_idx >= 0)
+    {
+
+        for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+        {
+
+            if(
+                (battle_units[battle_unit_idx].status == bus_Active)
+                &&
+                (
+                    (battle_units[battle_unit_idx].controller_idx == player_idx)
+                    ||
+                    (battle_units[battle_unit_idx].controller_idx == 666)
+                )
+            )
+            {
+
+                if(battle_units[battle_unit_idx].mana < 5)
+                {
+
+                    battle_units[battle_unit_idx].mana = 0;
+
+                }
+                else
+                {
+
+                    battle_units[battle_unit_idx].mana -= 5;
+
+                }
+
+                if(
+                    ((battle_units[battle_unit_idx].ranged_type / 10) == rag_Magic)
+                    &&
+                    (battle_units[battle_unit_idx].ammo > 0)
+                )
+                {
+
+                    battle_units[battle_unit_idx].ammo -= 1;
+
+                }
+
+                if(
+                    (battle_units[battle_unit_idx].ammo == 0)
+                    &&
+                    (battle_units[battle_unit_idx].mana < 3)
+                )
+                {
+
+                    battle_units[battle_unit_idx].ranged_type = rat_None;
+
+                    battle_units[battle_unit_idx].ranged = 0;
+
+                }
+
+            }
+
+        }
+
+    }
+
+    if(player_idx < _num_players)
+    {
+
+        _players[player_idx].mana_reserve -= 5;
+
+        if(_players[player_idx].mana_reserve < 0)
+        {
+
+            _players[player_idx].mana_reserve = 0;
+
+        }
+
+    }
+    else  /* ¿ player_idx == 666 ? */
+    {
+
+        if(player_idx != NEUTRAL_PLAYER_IDX)
+        {
+
+            if(_combat_attacker_player < _num_players)
+            {
+
+                _players[_combat_attacker_player].mana_reserve -= 5;
+
+                if(_players[_combat_attacker_player].mana_reserve < 0)
+                {
+
+                    _players[_combat_attacker_player].mana_reserve = 0;
+                    
+                }
+                
+            }
+
+            if(_combat_defender_player < _num_players)
+            {
+
+                _players[_combat_defender_player].mana_reserve -= 5;
+
+                if(_players[_combat_defender_player].mana_reserve < 0)
+                {
+
+                    _players[_combat_defender_player].mana_reserve = 0;
+                    
+                }
+                
+            }
+
+        }
+    
+    }
+
+}
+
 
 // WZD o113p13
 // drake178: GUI_DrawNearMessage()

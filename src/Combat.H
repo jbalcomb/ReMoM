@@ -1644,7 +1644,7 @@ void BU_SummonDemon__SEGRAX(int16_t caster_idx);
 int16_t BU_MeleeWallCheck__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx);
 
 // WZD o113p12
-// CMB_ManaLeak()
+void Apply_Mana_Leak(void);
 
 // WZD o113p13
 // GUI_DrawNearMessage()
