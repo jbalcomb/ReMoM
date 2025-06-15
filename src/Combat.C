@@ -11874,7 +11874,7 @@ case scc_Disjunction_Spell:  // 20
             }
             if(spell_idx == spl_Earth_To_Mud)
             {
-                // SPELLY  CMB_EarthToMud(target_cgx, target_cgy);
+                Apply_Earth_To_Mud(target_cgx, target_cgy);
             }
             if(spell_idx == spl_Cracks_Call)
             {
@@ -24819,12 +24819,13 @@ void CMB_DrawMap__WIP(void)
             )
             {
 
-                // ¿ Earth to Mud ?
-                if(battlefield->Tile_Mud[((cgy * COMBAT_GRID_WIDTH) + cgx)] != 0)
+                if(battlefield->muds[((cgy * COMBAT_GRID_WIDTH) + cgx)] != ST_FALSE)
                 {
-                    STU_DEBUG_BREAK();
+
                     Set_Animation_Frame(IMG_CMB_Mud, ((cgx + cgy + CMB_MudAnimStage) % 8));
+
                     Clipped_Draw(screen_x, screen_y, IMG_CMB_Mud);
+
                 }
                 else
                 {
@@ -24966,7 +24967,7 @@ void CMB_DrawMap__WIP(void)
                     BEGIN:  Roads
                 */
 
-                Road_Flags = battlefield->Tile_Road[((cgy * COMBAT_GRID_WIDTH) + cgx)];
+                Road_Flags = battlefield->roads[((cgy * COMBAT_GRID_WIDTH) + cgx)];
 
                 if(Road_Flags != 0)
                 {
@@ -26805,6 +26806,7 @@ void Generate_Combat_Map__WIP(
 
             if(city_walls == ST_TRUE)
             {
+
                 for(itr2 = 0; itr2 <= 3; itr2++)
                 {
                     
@@ -26817,9 +26819,9 @@ void Generate_Combat_Map__WIP(
 
                 }
 
-                battlefield->walls[5] = 0;
-                battlefield->walls[9] = 0;
-                battlefield->walls[6] = 0;
+                battlefield->walls[ 5] = 0;
+                battlefield->walls[ 9] = 0;
+                battlefield->walls[ 6] = 0;
                 battlefield->walls[10] = 0;
 
             }
@@ -26898,7 +26900,7 @@ void Generate_Combat_Map__WIP(
         for(itr_cgx = 0; itr_cgx < COMBAT_GRID_WIDTH; itr_cgx++)
         {
 
-            battlefield->Tile_Mud[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = 0;
+            battlefield->muds[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ST_FALSE;
 
         }
 
@@ -26938,7 +26940,7 @@ void Generate_Combat_Map__WIP(
         for(itr_cgx = 0; itr_cgx < COMBAT_GRID_WIDTH; itr_cgx++)
         {
 
-            battlefield->Tile_Road[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = 0;
+            battlefield->roads[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ST_FALSE;
 
         }
 
@@ -27740,7 +27742,7 @@ void Set_Movement_Cost_Maps(int16_t location_type, int16_t city_walls)
         for(itr_cgx = 0; itr_cgx < COMBAT_GRID_WIDTH; itr_cgx++)
         {
 
-            terain_group = battlefield->Tile_Road[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)];
+            terain_group = battlefield->roads[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)];
 
             if(
                 (terain_group != 0)
@@ -27954,6 +27956,42 @@ void Combat_Grid_Screen_Coordinates(int16_t cgx, int16_t cgy, int16_t something_
 
 // WZD ovr154p13
 // drake178: CMB_EarthToMud()
+int16_t Apply_Earth_To_Mud(int16_t cgx, int16_t cgy)
+{
+    int16_t itr_cgy = 0;  // _SI_
+    int16_t itr_cgx = 0;  // _CX_
+    int16_t combat_terrain_type_group = 0;  // DNE in Dasm
+
+    for(itr_cgy = -2; itr_cgy < 3; itr_cgy++)
+    {
+
+        for(itr_cgx = -2; itr_cgx < 3; itr_cgx++)
+        {
+
+            combat_terrain_type_group = battlefield->terrain_group[(((cgy + itr_cgy) * COMBAT_GRID_WIDTH) + (cgx + itr_cgx))];
+            // combat_terrain_type_group = GET_COMBAT_TERRAIN_GROUP((cgy + itr_cgy),(cgx + itr_cgx));
+
+            if(
+                (combat_terrain_type_group == CTG_Grass)
+                ||
+                (combat_terrain_type_group == CTG_Dirt)
+            )
+            {
+
+                battlefield->muds[(((cgy + itr_cgy) * COMBAT_GRID_WIDTH) + (cgx + itr_cgx))] = ST_TRUE;
+
+                battlefield->MoveCost_Ground[ (((cgy + itr_cgy) * COMBAT_GRID_WIDTH) + (cgx + itr_cgx))] = 12;
+                battlefield->MoveCost_Ground2[(((cgy + itr_cgy) * COMBAT_GRID_WIDTH) + (cgx + itr_cgx))] = 12;
+                battlefield->MoveCost_Sailing[(((cgy + itr_cgy) * COMBAT_GRID_WIDTH) + (cgx + itr_cgx))] = 12;
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // WZD ovr154p14
 // drake178: CMB_GetTileX()

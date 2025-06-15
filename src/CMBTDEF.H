@@ -1,4 +1,18 @@
 
+/*
+
+
+
+
+
+
+Combat Terrain
+
+battlefield->terrain_group[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = CTG_Grass;
+
+
+
+*/
 
 
 #define MAX_ENTITIES  256
@@ -40,10 +54,27 @@
 
 
 /*
+    Combat Terrain
+
+{ 0: CTG_Grass, 1: CTG_Rough, 2: CTG_Dirt, 3: CTG_River, 4: CTG_DeepWater, 5: CTG_IDK }
+*/
+#define COMBAT_TERRAIN_GROUP()          battlefield->terrain_group[((cgy * COMBAT_GRID_WIDTH) + cgx)]
+#define GET_COMBAT_TERRAIN_GROUP(_cgx_,_cgy_)                                               \
+    do {                                                                                    \
+        battlefield->terrain_group[(((_cgy_) * COMBAT_GRID_WIDTH) + (_cgx_))];              \
+    } while(0)
+#define SET_COMBAT_TERRAIN_GROUP(_cgx_,_cgy_,_terrain_)                                     \
+    do {                                                                                    \
+        battlefield->terrain_group[(((_cgy_) * COMBAT_GRID_WIDTH) + (_cgx_))] = (_terrain); \
+    } while(0)
+
+
+
+/*
 Cast_Spell_On_Battle_Unit()
 
     if(spell_idx == spl_Disrupt)
-        battlefield->Wall_Sections[(((target_cgy - 10) * 3) + (target_cgx - 5))] = 2;
+        battlefield->walls[(((target_cgy - 10) * 3) + (target_cgx - 5))] = 2;
 */
 
 

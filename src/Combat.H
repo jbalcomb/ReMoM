@@ -833,7 +833,7 @@ struct s_BATTLEFIELD
 {
     /* 0x0000 */  int8_t terrain_type[COMBAT_GRID_CELL_COUNT];  // 21 x 22
     /* 0x039C */  int8_t terrain_group[COMBAT_GRID_CELL_COUNT];  /* 1-byte, unsigned */
-    /* 0x056A */  int8_t Tile_Road[COMBAT_GRID_CELL_COUNT];
+    /* 0x056A */  int8_t roads[COMBAT_GRID_CELL_COUNT];
     /* 0x0738 */  int8_t MoveCost_Ground[COMBAT_GRID_CELL_COUNT];
     /* 0x0906 */  int8_t MoveCost_Teleport[COMBAT_GRID_CELL_COUNT];
     /* 0x0AD4 */  int8_t MoveCost_Ground2[COMBAT_GRID_CELL_COUNT];
@@ -846,14 +846,14 @@ struct s_BATTLEFIELD
     /* 0x10CC */  int16_t Rock_DrawXs[100];
     /* 0x1194 */  int16_t Rock_DrawYs[100];
     /* 0x125C */  int16_t Rock_IMG_Segs[100];
-    /* 0x1324 */  int8_t Tile_Mud[COMBAT_GRID_CELL_COUNT];
+    /* 0x1324 */  int8_t muds[COMBAT_GRID_CELL_COUNT];  /* {F,T} combat map square is 'mud' */
     /* 0x14F2 */  int16_t Central_Structure;   // enum Central_Structures
     /* 0x14F4 */  int16_t House_Count;
     /* 0x14F6 */  int16_t House_TileXs[16];    // [4][4]
     /* 0x1516 */  int16_t House_TileYs[16];    // [4][4]
     /* 0x1536 */  SAMB_ptr House_IMG_Segs[16];  // [4][4]  ¿ assigned pict seg from [3][15] house types ?
     /* 0x1556 */  int16_t walled;  // {F,T} city has stone wall;  ... used to set _battlefield_city_walls |= 0x1;, so must be specifcally 'City Walls'/'Wall of Stone'
-    /* 0x1558 */  int16_t walls[16];   /* [4][4] as {4,4,4,4}; state/status 1:good, 2:bad  spl_Wall_Of_Stone sets 1, spl_Disrupt sets 2 */
+    /* 0x1558 */  int16_t walls[16];   /* [4][4] as {4,4,4,4}; state/status 0: none, 1:good, 2:bad  spl_Wall_Of_Stone sets 1, spl_Disrupt sets 2 */
     /* 0x1578 */  int16_t wall_of_fire;  // {F,T}
     /* 0x157A */  int16_t wall_of_darkness;  // {F,T}
     /* 0x157C */  int16_t wp;
@@ -2056,7 +2056,7 @@ void Patch_Terrain_Group(int16_t ctg, int16_t count, int16_t max, int16_t min);
 void Combat_Grid_Screen_Coordinates(int16_t cgx, int16_t cgy, int16_t something_x, int16_t something_y, int16_t * screen_x, int16_t * screen_y);
 
 // WZD ovr154p13
-// drake178: CMB_EarthToMud()
+int16_t Apply_Earth_To_Mud(int16_t cgx, int16_t cgy);
 
 // WZD ovr154p14
 int16_t Get_Combat_Grid_Cell_X(int16_t screen_x, int16_t screen_y);

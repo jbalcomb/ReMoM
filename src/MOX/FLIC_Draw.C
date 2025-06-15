@@ -960,7 +960,6 @@ void Set_Animation_Frame(SAMB_ptr picture, int16_t frame_num)
 
     if( !(frame_num < frame_count) )
     {
-        STU_DEBUG_BREAK();
         frame_num = loop_frame + ((frame_num - frame_count) % loop_length);
     }
 
