@@ -1,42 +1,18 @@
 
-Combat Only Spell Casting Categories
-
-[ ]   5  scc_Special_Spell
-[x]  10  scc_Battlefield_Spell
-[x]  12  scc_Combat_Destroy_Unit
-[x]  13  scc_Resistable_Spell
-[x]  14  scc_Unresistable_Spell
-[x]  16  scc_Mundane_Curse
-[x]  21  scc_Combat_Counter_Magic
-[x]  22  scc_Direct_Damage_Variable
-[x]  23  scc_Combat_Banish
+FIXME_RIGHTMEOW
+CMB_PrepareTurn__WIP()
+Combat_Spell_Target_Screen__WIP()
+CMB_DrawMap__WIP()
+OVL_ConvSpellAttack()
+SoM_Started()
 
 
 
- 5  scc_Special_Spell  (Combat-Only or BOTH or ¿ BOTH ?)
-        Animate Dead, Cracks Call, Disrupt, Earth to Mud, Healing, Magic Vortex, Raise Dead, Recall Hero, Wall of Stone, Warp Creature, Warp Wood
+## 'Create Undead'
+What is 'Create Undead'?
+Where is 'Create Undead'?
 
-[x] Animate Dead
-[x] Cracks Call
-[x] Disrupt
-[x] Earth to Mud
-[x] Healing
-[x] Magic Vortex
-[x] Raise Dead
-[x] Recall Hero
-[x] Wall of Stone
-[x] Warp Creature
-[x] Warp Wood
-
-
-
-0x05   5  scc_Special_Spell       (9-11)
-0x0A  10  scc_Battlefield_Spell   (19)
-0x0C  12  scc_Destruction_Spell   (4)
-0x0D  13  scc_Resistable_Spell    (5)
-0x0E  14  scc_Unresistable_Spell  (2)
-
-
+"...(the same rules as those for the Create Undead special ability apply)."
 
 
 
@@ -54,6 +30,7 @@ scc_Banish_Spell         ==>  scc_Combat_Banish
 NOTE: the check on the check-list is only for the human player side, CP/AI is a different beast
 
 NOTE: 'Blur' is not in the manual, but is in the OSG - ¿ added in v1.2 ?
+
 
 
 no target / hard-coded to 99
@@ -76,22 +53,6 @@ Light-Lime-3    maybe, kinda?
 ..."Combat Spells"..."Overland Spells"...
 
 
-*infuseable*
-search for "+ mana"
-
-
-Target Wizard or Wizard's Spell:
-(uses 'Magic Screen')
-    Cruel Unminding
-    Drain Power
-    Spell Binding
-    Spell Blast
-    Subversion
-
-Custom Animation? ...Custom Summon Animation?
-    Animate Dead, Raise Dead
-    Create Undead
-
 
 Weird Ones?
     Astral Gate
@@ -99,7 +60,6 @@ Weird Ones?
     Change Terrain?
     Create Artifact!    handled special during casting
     Earth Gate
-    Earth To Mud        don't have mud code in combat
     Earthquake          lots of extra special code
     Enchant Item!       handled special during casting
     Enchant Road
@@ -111,14 +71,20 @@ Weird Ones?
     Summon Champion?
     Summon Hero?
     Summoning Circle?
-    Warp Creature
     Warp Node
 
 
+
 all overland summons are done
-all combat summons are done
 all overland/global enchantments are done
 all city enchantments are done
+all combat spell casting categories are done
+all combat summons are done
+...need to fix-up on-going/per-turn effects
+...need to review battlefield effects/combat enchantments
+...need to review battle unit effects/enchantments ...outlined, glassed/remapped?
+...need to do color cycling
+...need to do dissolve page-flip
 
     SCC  Description
 [x]  -1  scc_None
@@ -132,13 +98,13 @@ all city enchantments are done
 [x]   7  N/A
 [x]   8  N/A
 [x]   9  scc_Global_Enchantment
-[ ]  10  scc_Battlefield_Spell
+[x]  10  scc_Battlefield_Spell
 [ ]  11  scc_Crafting_Spell
-[ ]  12  scc_Combat_Destroy_Unit
-[ ]  13  scc_Resistable_Spell
-[ ]  14  scc_Unresistable_Spell
+[x]  12  scc_Combat_Destroy_Unit
+[x]  13  scc_Resistable_Spell
+[x]  14  scc_Unresistable_Spell
 [x]  15  scc_Unit_Enchantment_Normal_Only
-[ ]  16  scc_Mundane_Curse
+[x]  16  scc_Mundane_Curse
 [x]  17  N/A
 [x]  18  scc_Dispels
 [x]  19  scc_Disenchants
@@ -148,16 +114,22 @@ all city enchantments are done
 [x]  23  scc_Combat_Banish  (w/ scc_Combat_Destroy_Unit)
 
 scc_Special_Spell
-    Animate Dead, Black Wind, Call The Void, Change Terrain, Chaos Channels, Corruption, Cracks Call, Death Wish, Disrupt, Earth Lore, Earth to Mud, Earthquake, Enchant Road, Great Unsummoning, Healing, Incarnation, Lycanthropy, Magic Vortex, Move Fortress, Natures Cures, Plane Shift, Raise Dead, Raise Volcano, Recall Hero, Resurrection, Spell Binding, Spell Of Mastery, Spell Of Return, Spell Ward, Stasis, Summon Champion, Summon Hero, Transmute, Wall of Stone, Warp Creature, Warp Node, Warp Wood, Word of Recall
+    Overland
+        Black Wind, Call The Void, Change Terrain, Chaos Channels, Corruption, Earth Lore, Earthquake, Enchant Road, Great Unsummoning, Incarnation, Lycanthropy, Move Fortress, Natures Cures, Plane Shift, Raise Volcano, Resurrection, Spell Binding, Spell Of Mastery, Spell Of Return, Spell Ward, Stasis, Summon Champion, Summon Hero, Transmute, Warp Node
+    Combat
+        Animate Dead, Cracks Call, Death Wish, Disrupt, Earth to Mud, Magic Vortex, Raise Dead, Recall Hero, Word of Recall, Warp Creature, Warp Wood
+    BOTH
+        Healing, Wall of Stone
 
 scc_Crafting_Spell
     Enchant Item, Create Artifact
 
 
+
 Spreadsheet - OSG Spells by Category
-[ ] Creature Summoning Spells
-[ ] City Enchantments
-[ ] Creature Enchantments
+[x] Creature Summoning Spells
+[x] City Enchantments
+[x] Creature Enchantments
 [x] Global Enchantments
 [x] Combat Spells
 [ ] Special Spells
