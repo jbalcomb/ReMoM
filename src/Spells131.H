@@ -30,7 +30,7 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength);
 void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t strength, int16_t * notify_count);
 
 // WZD o131p03
-// CMB_ApplyCracksCall()
+void Apply_Cracks_Call(int16_t cgx, int16_t cgy);
 
 // WZD o131p04
 void Combat_Battlefield_Instant(int16_t player_idx, int16_t spell_idx, int16_t Anims, int16_t caster_idx);

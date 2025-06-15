@@ -953,7 +953,63 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
 
 // WZD o131p03
 // drake178: CMB_ApplyCracksCall()
-// CMB_ApplyCracksCall()
+void Apply_Cracks_Call(int16_t cgx, int16_t cgy)
+{
+    int16_t wall_cgy = 0;
+    int16_t wall_cgx = 0;
+    int16_t damage_types[3] = { 0, 0, 0, };
+    int16_t battle_unit_idx = 0;  // _SI_
+    int16_t itr = 0;  // _DI_
+
+    for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+    {
+
+        for(itr = 0; itr < 3; itr++)
+        {
+
+            damage_types[itr] = 0;
+
+        }
+
+        if(
+            (battle_units[battle_unit_idx].cgx == cgx)
+            &&
+            (battle_units[battle_unit_idx].cgy == cgy)
+            &&
+            ((battle_units[battle_unit_idx].Move_Flags & MV_FLYING) == 0)
+            &&
+            ((battle_units[battle_unit_idx].Abilities & UA_NONCORPOREAL) == 0)
+        )
+        {
+
+            itr = Random(4);
+
+            if(itr == 1)
+            {
+
+                damage_types[2] = 200;
+
+                BU_ApplyDamage__WIP(battle_unit_idx, &damage_types[0]);
+
+            }
+
+        }
+
+    }
+
+    if(Combat_Grid_Cell_Has_City_Wall(cgx, cgy) == ST_TRUE)
+    {
+
+        wall_cgx = (cgx - 5);
+
+        wall_cgy = (cgy - 10);
+
+        battlefield->walls[((wall_cgy * 4) + wall_cgx)] = 2;
+
+    }
+
+}
+
 
 // WZD o131p04
 // drake178: CMB_BattlefieldSpell()
@@ -1436,9 +1492,10 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
         else
         {
 
-// shade the screen to 40% of the realm's color and
-// then back to the original, while displaying the
-// combat spell cast message (but no animation)
+            // shade the screen to 40% of the realm's color and
+            // then back to the original, while displaying the
+            // combat spell cast message (but no animation)
+
             if(anims_on != ST_FALSE)
             {
 
@@ -1521,6 +1578,15 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
     }
     else
     {
+        // (spell_data_table[spell_idx].type != scc_Battlefield_Spell)
+        // (spell_data_table[spell_idx].type != scc_Combat_Counter_Magic)
+        // (spell_data_table[spell_idx].type != scc_Disenchants)
+        // (spell_idx != spl_Raise_Dead)
+        // (spell_idx != spl_Animate_Dead)
+        // ∴
+        // Fireball, Fire Bolt, Ice Bolt, Doom Bolt
+        // Lightning Bolt
+        // 
 
         if(anims_on != ST_FALSE)
         {
@@ -1551,6 +1617,11 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
             }
             else
             {
+                // (spell_idx != spl_Fireball)
+                // (spell_idx != spl_Fire_Bolt)
+                // (spell_idx != spl_Ice_Bolt)
+                // (spell_idx != spl_Doom_Bolt)
+                // (spell_idx != spl_Lightning_Bolt)
 
                 Mark_Block(_screen_seg);
 
@@ -1561,7 +1632,7 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
                 if(spell_idx == spl_Cracks_Call)
                 {
 
-                    /* SPELLY */  TILE_CracksCall__WIP(cgx, cgy, caster_idx);
+                    Animate_Cracks_Call(cgx, cgy, caster_idx);
 
                 }
                 else

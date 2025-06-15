@@ -2,6 +2,7 @@
 ∵   Because
 ∴   Therefore
 ≜   Equal By Definition  (A=B, A:=B, A≜B)
+¡   Inverted Exclamation Mark
 
 
 
@@ -64,3 +65,27 @@ HTML Entity:
 UTF-8 Encoding:	0xE2 0x88 0xB4
 UTF-16 Encoding:	0x2234
 UTF-32 Encoding:	0x00002234
+
+
+
+https://www.compart.com/en/unicode/U+00A1
+Unicode Character “¡” (U+00A1)
+¡
+Name:	Inverted Exclamation Mark[1]
+Unicode Version:	1.1 (June 1993)[2]
+Block:	Latin-1 Supplement, U+0080 - U+00FF[3]
+Plane:	Basic Multilingual Plane, U+0000 - U+FFFF[3]
+Script:	Code for undetermined script (Zyyy) [4]
+Category:	Other Punctuation (Po) [1]
+Bidirectional Class:	Other Neutral (ON) [1]
+Combining Class:	Not Reordered (0) [1]
+Character is Mirrored:	No [1]
+GCGID:	SP030000[5]
+PostScript Name:	exclamdown[6]
+HTML Entity:	
+&#161;
+&#xA1;
+&iexcl;
+UTF-8 Encoding:	0xC2 0xA1
+UTF-16 Encoding:	0x00A1
+UTF-32 Encoding:	0x000000A1

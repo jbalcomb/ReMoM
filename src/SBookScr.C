@@ -883,6 +883,7 @@ int16_t Spell_Animation_Load_Graphics(int16_t spell_idx)
         } break;
         case spl_Cracks_Call:
         {
+            // CMBTFX.LBX, 015  "CRACK"     "Cracks Call"
             spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 15, _screen_seg);
         } break;
         case spl_Ice_Bolt:

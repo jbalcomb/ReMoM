@@ -300,11 +300,51 @@ int16_t WIZ_DispelAttempt__STUB(int16_t dispel_strength, int16_t spell_cast, int
 }
 
 
-// WZD o133p08  TILE_CracksCall()
-void TILE_CracksCall__WIP(int16_t cgx, int16_t cgy, int16_t caster_idx)
+// WZD o133p08
+/*
+; plays the Cracks Call animation using the chasm
+; functionality built into GUI_DrawCombatScreen
+*/
+/*
+
+*/
+void Animate_Cracks_Call(int16_t cgx, int16_t cgy, int16_t caster_idx)
 {
+    int16_t frame = 0;  // _SI_
+    int16_t frame_count = 0;  // DNE in Dasm
 
+    if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
+    {
+        // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
+        sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
+    }
 
+    CMB_Chasm_Anim_X = cgx;
+
+    CMB_Chasm_Anim_Y = cgy;
+
+    IMG_GUI_Chasm = spell_animation_seg;
+
+    CMB_Chasm_Anim = ST_TRUE;
+
+    frame_count = FLIC_Get_FrameCount(spell_animation_seg);
+
+    for(frame = 0; (frame_count * 7) > frame; frame++)
+    {
+
+        CMB_ChasmAnimStage = (frame / 6);
+
+        Set_Page_Off();
+
+        Tactical_Combat_Draw();  // incrs frame, 0-7; sets frame
+
+        Combat_Cast_Spell_Message(caster_idx, spl_Cracks_Call);
+
+        PageFlip_FX();
+
+    }
+
+    CMB_Chasm_Anim = ST_FALSE;
 
 }
 
@@ -476,6 +516,14 @@ void TILE_BoltFromAbove__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_
 
 // WZD o133p10
 // drake178: TILE_CombatSpellAnim()
+/*
+; plays a generic combat spellcast animation along with
+; sound effect if loaded, redrawing the combat screen
+; between each frame with a standard spellcast message
+*/
+/*
+
+*/
 void TILE_CombatSpellAnim__WIP(int16_t cgx, int16_t cgy, int16_t Anim_Size, int16_t caster_idx, int16_t spell_idx)
 {
 
@@ -484,6 +532,7 @@ void TILE_CombatSpellAnim__WIP(int16_t cgx, int16_t cgy, int16_t Anim_Size, int1
 }
 
 // WZD o133p11  BU_Teleport()
+
 // WZD o133p12  BU_TunnelTo()
 
 

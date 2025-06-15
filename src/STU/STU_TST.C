@@ -65,21 +65,35 @@ void TST_Patch_Game_Data(void)
     TST_Cheat_Power(player_idx);
 
 
+    // scc_Special_Spell   5
+    TST_Learn_Spell(player_idx, spl_Animate_Dead);
+    TST_Learn_Spell(player_idx, spl_Chaos_Channels);
+    TST_Learn_Spell(player_idx, spl_Cracks_Call);
+    TST_Learn_Spell(player_idx, spl_Disrupt);
+    TST_Learn_Spell(player_idx, spl_Earth_To_Mud);
+    TST_Learn_Spell(player_idx, spl_Healing);
+    TST_Learn_Spell(player_idx, spl_Magic_Vortex);
+    TST_Learn_Spell(player_idx, spl_Raise_Dead);
+    TST_Learn_Spell(player_idx, spl_Recall_Hero);
+    TST_Learn_Spell(player_idx, spl_Wall_Of_Stone);
+    TST_Learn_Spell(player_idx, spl_Warp_Creature);
+    TST_Learn_Spell(player_idx, spl_Warp_Wood);
+
     // scc_Battlefield_Spell  10  (part 2of2)
-    TST_Learn_Spell(player_idx, spl_Black_Prayer);  // 174
-    TST_Learn_Spell(player_idx, spl_Blur);
-    TST_Learn_Spell(player_idx, spl_Call_Lightning);
-    TST_Learn_Spell(player_idx, spl_Darkness);
-    TST_Learn_Spell(player_idx, spl_Entangle);
-    TST_Learn_Spell(player_idx, spl_High_Prayer);
-    TST_Learn_Spell(player_idx, spl_Mana_Leak);
-    TST_Learn_Spell(player_idx, spl_Mass_Invisibility);  //  74
-    TST_Learn_Spell(player_idx, spl_Metal_Fires);
-    TST_Learn_Spell(player_idx, spl_Prayer);
-    TST_Learn_Spell(player_idx, spl_Terror);
-    TST_Learn_Spell(player_idx, spl_True_Light);
-    TST_Learn_Spell(player_idx, spl_Warp_Reality);
-    TST_Learn_Spell(player_idx, spl_Wrack);
+    // TST_Learn_Spell(player_idx, spl_Black_Prayer);  // 174
+    // TST_Learn_Spell(player_idx, spl_Blur);
+    // TST_Learn_Spell(player_idx, spl_Call_Lightning);
+    // TST_Learn_Spell(player_idx, spl_Darkness);
+    // TST_Learn_Spell(player_idx, spl_Entangle);
+    // TST_Learn_Spell(player_idx, spl_High_Prayer);
+    // TST_Learn_Spell(player_idx, spl_Mana_Leak);
+    // TST_Learn_Spell(player_idx, spl_Mass_Invisibility);  //  74
+    // TST_Learn_Spell(player_idx, spl_Metal_Fires);
+    // TST_Learn_Spell(player_idx, spl_Prayer);
+    // TST_Learn_Spell(player_idx, spl_Terror);
+    // TST_Learn_Spell(player_idx, spl_True_Light);
+    // TST_Learn_Spell(player_idx, spl_Warp_Reality);
+    // TST_Learn_Spell(player_idx, spl_Wrack);
 
     // scc_Battlefield_Spell  10  (part 1of2)
     // TST_Learn_Spell(player_idx, spl_Flame_Strike);  // 109

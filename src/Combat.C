@@ -6869,9 +6869,10 @@ void Tactical_Combat_Draw(void)
         CMB_VortexAnimStage = 0;
     }
 
+    // ¿ Cracks Calls, Summon, ... ?
     CMB_ChasmAnimStage++;
-
-    if(CMB_ChasmAnimStage > 7)
+    // if(CMB_ChasmAnimStage > 7)
+    if(CMB_ChasmAnimStage > (7 * 7))
     {
         CMB_ChasmAnimStage = 0;
     }
@@ -11819,8 +11820,6 @@ case scc_Disjunction_Spell:  // 20
             {
                 Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
             }
-            // ; Wall of Stone:
-            // ; play the wall rise animation
             // ; BUG: this is neither a combat nor a special spell
             if(spell_idx == spl_Wall_Of_Stone)
             {
@@ -11879,7 +11878,7 @@ case scc_Disjunction_Spell:  // 20
             }
             if(spell_idx == spl_Cracks_Call)
             {
-                // SPELLY  CMB_ApplyCracksCall(target_cgx, target_cgy);
+                Apply_Cracks_Call(target_cgx, target_cgy);
             }
             if(spell_idx == spl_Disrupt)
             {
@@ -24797,14 +24796,18 @@ void CMB_DrawMap__WIP(void)
 
     for(itr_y = 0; itr_y < 22; itr_y++)
     {
+
         CALC_BASE_CGC2;
         CALC_BASE_CGC1;
+
         for(itr_x = 0; itr_x < 11; itr_x++)
         {
+
             CALC_CGX;
             CALC_CGY;
             CALC_SCREEN_X;
             CALC_SCREEN_Y;
+
             if(
                 (cgx >= COMBAT_GRID_XMIN)
                 &&
@@ -24815,6 +24818,7 @@ void CMB_DrawMap__WIP(void)
                 (cgy < COMBAT_GRID_YMAX)
             )
             {
+
                 // ¿ Earth to Mud ?
                 if(battlefield->Tile_Mud[((cgy * COMBAT_GRID_WIDTH) + cgx)] != 0)
                 {
@@ -24824,36 +24828,35 @@ void CMB_DrawMap__WIP(void)
                 }
                 else
                 {
+
                     battlefield_terrain = battlefield->terrain_type[((cgy * COMBAT_GRID_WIDTH) + cgx)];
+
                     if(battlefield_terrain >= 56)
                     {
+
                         if(battlefield->wp == 0)
                         {
-// push    [CMB_WaterAnimStage]            ; frame_num
-// mov     bx, _DI_battlefield_terrain
-// shl     bx, 1
-// push    (IMG_CMB_RiverTile@-70h)[bx]    ; pict_seg
-// call    Set_Animation_Frame
-// pop     cx
-// pop     cx
-// mov     bx, _DI_battlefield_terrain
-// shl     bx, 1
-// push    (IMG_CMB_RiverTile@-70h)[bx]    ; array of 12 appended reserved EMM headers in
-//                                         ; GFX_Swap_Seg; the first 6 are empty, the other 6
-//                                         ; have 5 frame animations for rivers
+
+                            // push    [CMB_WaterAnimStage]            ; frame_num
+                            // mov     bx, _DI_battlefield_terrain
+                            // push    (IMG_CMB_RiverTile@-70h)[bx]    ; pict_seg
+                            // call    Set_Animation_Frame
+                            // mov     bx, _DI_battlefield_terrain
+                            // push    (IMG_CMB_RiverTile@-70h)[bx]    ; array of 12 appended reserved EMM headers in
+                            //                                         ; GFX_Swap_Seg; the first 6 are empty, the other 6
+                            //                                         ; have 5 frame animations for rivers
+                            
                         }
                         else
                         {
-// push    [CMB_WaterAnimStage]
-// mov     bx, _DI_battlefield_terrain
-// shl     bx, 1
-// push    (IMG_CMB_RivrNULLs@-70h)[bx]    ; pict_seg
-// call    Set_Animation_Frame
-// pop     cx
-// pop     cx
-// mov     bx, _DI_battlefield_terrain
-// shl     bx, 1
-// push    (IMG_CMB_RivrNULLs@-70h)[bx]    ; picture
+
+                            // push    [CMB_WaterAnimStage]
+                            // mov     bx, _DI_battlefield_terrain
+                            // push    (IMG_CMB_RivrNULLs@-70h)[bx]    ; pict_seg
+                            // call    Set_Animation_Frame
+                            // mov     bx, _DI_battlefield_terrain
+                            // push    (IMG_CMB_RivrNULLs@-70h)[bx]    ; picture
+
                         }
 
 //                         Clipped_Draw(screen_x, screen_y);
@@ -24865,46 +24868,42 @@ void CMB_DrawMap__WIP(void)
                         (battlefield_terrain < 52)
                     )
                     {
+
                         if(battlefield->wp == 0)
                         {
-// push    [CMB_WaterAnimStage]            ; frame_num
-// mov     bx, _DI_battlefield_terrain
-// shl     bx, 1
-// push    (IMG_CMB_OceanTile@-60h)[bx]    ; pict_seg
-// call    Set_Animation_Frame
-// pop     cx
-// pop     cx
-// mov     bx, _DI_battlefield_terrain
-// shl     bx, 1
-// push    (IMG_CMB_OceanTile@-60h)[bx]    ; array of 4 appended reserved EMM headers in
-//                                         ; GFX_Swap_Seg, each with a 5 frame animation
+
+                            // push    [CMB_WaterAnimStage]            ; frame_num
+                            // mov     bx, _DI_battlefield_terrain
+                            // push    (IMG_CMB_OceanTile@-60h)[bx]    ; pict_seg
+                            // call    Set_Animation_Frame
+                            // mov     bx, _DI_battlefield_terrain
+                            // push    (IMG_CMB_OceanTile@-60h)[bx]    ; array of 4 appended reserved EMM headers in
+                            //                                         ; GFX_Swap_Seg, each with a 5 frame animation
+
                         }
                         else
                         {
-// push    [CMB_WaterAnimStage]
-// mov     bx, _DI_battlefield_terrain
-// shl     bx, 1
-// push    (IMG_CMB_ChaosOcn@-60h)[bx]     ; pict_seg
-// call    Set_Animation_Frame
-// pop     cx
-// pop     cx
-// mov     bx, _DI_battlefield_terrain
-// shl     bx, 1
-// push    (IMG_CMB_ChaosOcn@-60h)[bx]     ; picture
+
+                            // push    [CMB_WaterAnimStage]
+                            // mov     bx, _DI_battlefield_terrain
+                            // push    (IMG_CMB_ChaosOcn@-60h)[bx]     ; pict_seg
+                            // call    Set_Animation_Frame
+                            // mov     bx, _DI_battlefield_terrain
+                            // shl     bx, 1
+                            // push    (IMG_CMB_ChaosOcn@-60h)[bx]     ; picture
+
                         }
-// push    [CMB_WaterAnimStage]            ; frame_num
-// mov     bx, _DI_battlefield_terrain
-// shl     bx, 1
-// push    (IMG_CMB_Cloud@-68h)[bx]        ; pict_seg
-// call    Set_Animation_Frame
-// pop     cx
-// pop     cx
-// mov     bx, _DI_battlefield_terrain
-// shl     bx, 1
-// push    (IMG_CMB_Cloud@-68h)[bx]        ; picture
-// push    [bp+screen_y]                        ; y
-// push    [bp+screen_x]                       ; x
-// call    Clipped_Draw
+
+                        // push    [CMB_WaterAnimStage]            ; frame_num
+                        // mov     bx, _DI_battlefield_terrain
+                        // push    (IMG_CMB_Cloud@-68h)[bx]        ; pict_seg
+                        // call    Set_Animation_Frame
+                        // mov     bx, _DI_battlefield_terrain
+                        // push    (IMG_CMB_Cloud@-68h)[bx]        ; picture
+                        // push    [bp+screen_y]                        ; y
+                        // push    [bp+screen_x]                       ; x
+                        // call    Clipped_Draw
+
                     }
                     else if(
                         (battlefield_terrain >= 52)
@@ -24912,162 +24911,185 @@ void CMB_DrawMap__WIP(void)
                         (battlefield_terrain < 56)
                     )
                     {
-// push    [CMB_WaterAnimStage]            ; frame_num
-// mov     bx, _DI_battlefield_terrain
-// shl     bx, 1
-// push    (IMG_CMB_Cloud@-68h)[bx]        ; pict_seg
-// call    Set_Animation_Frame
-// pop     cx
-// pop     cx
-// mov     bx, _DI_battlefield_terrain
-// shl     bx, 1
-// push    (IMG_CMB_Cloud@-68h)[bx]        ; picture
-// push    [bp+screen_y]                        ; y
-// push    [bp+screen_x]                       ; x
-// call    Clipped_Draw
+
+                        // push    [CMB_WaterAnimStage]            ; frame_num
+                        // mov     bx, _DI_battlefield_terrain
+                        // push    (IMG_CMB_Cloud@-68h)[bx]        ; pict_seg
+                        // call    Set_Animation_Frame
+                        // mov     bx, _DI_battlefield_terrain
+                        // push    (IMG_CMB_Cloud@-68h)[bx]        ; picture
+                        // push    [bp+screen_y]                        ; y
+                        // push    [bp+screen_x]                       ; x
+                        // call    Clipped_Draw
+
                     }
+
+                }
+            
+                if(
+                    (battlefield->Central_Structure == CS_SorceryNode)
+                    &&
+                    (cgx == 6)
+                    &&
+                    (cgy == 11)
+                )
+                {
+                    STU_DEBUG_BREAK();
+                    Combat_Grid_Screen_Coordinates(6, 11, 0, 0, &screen_x, &screen_y);
+                    screen_x -= 46;
+                    screen_y -= 15;
+                    Set_Animation_Frame(IMG_CMB_SorcNode, CMB_CNodeAnimStage);
+                    Clipped_Draw(screen_x, screen_y, IMG_CMB_SorcNode);
+                    screen_x += 46;
+                    screen_y += 15;
+                }
+                if(
+                    (battlefield->Central_Structure == CS_ChaosNode)
+                    &&
+                    (cgx == 6)
+                    &&
+                    (cgy == 11)
+                )
+                {
+                    STU_DEBUG_BREAK();
+                    Combat_Grid_Screen_Coordinates(6, 11, 0, 0, &screen_x, &screen_y);
+                    screen_x -= 10;
+                    screen_y -= 2;
+                    FLIC_Draw(screen_x, screen_y, IMG_CMB_Volcano[(CMB_CNodeAnimStage % 8)]);
+                    screen_x += 10;
+                    screen_y += 2;
+                }
+
+
+
+                /*
+                    BEGIN:  Roads
+                */
+
+                Road_Flags = battlefield->Tile_Road[((cgy * COMBAT_GRID_WIDTH) + cgx)];
+
+                if(Road_Flags != 0)
+                {
+                    STU_DEBUG_BREAK();  // don't recall why I put this here... did I just not do roads?
                     if(
-                        (battlefield->Central_Structure == CS_SorceryNode)
+                        (Road_Flags & 0x80) != 0
                         &&
-                        (cgx == 6)
-                        &&
-                        (cgy == 11)
+                        (Road_Flags & 0x01) != 0
                     )
                     {
-                        STU_DEBUG_BREAK();
-                        Combat_Grid_Screen_Coordinates(6, 11, 0, 0, &screen_x, &screen_y);
-                        screen_x -= 46;
-                        screen_y -= 15;
-                        Set_Animation_Frame(IMG_CMB_SorcNode, CMB_CNodeAnimStage);
-                        Clipped_Draw(screen_x, screen_y, IMG_CMB_SorcNode);
-                        screen_x += 46;
-                        screen_y += 15;
+                        Set_Animation_Frame(IMG_CMB_FlotIsle, CMB_RoadAnimStage);
+                        Clipped_Draw((screen_x - 32), (screen_y - 48), IMG_CMB_FlotIsle);
                     }
-                    if(
-                        (battlefield->Central_Structure == CS_ChaosNode)
-                        &&
-                        (cgx == 6)
-                        &&
-                        (cgy == 11)
-                    )
+                    else
                     {
-                        STU_DEBUG_BREAK();
-                        Combat_Grid_Screen_Coordinates(6, 11, 0, 0, &screen_x, &screen_y);
-                        screen_x -= 10;
-                        screen_y -= 2;
-                        FLIC_Draw(screen_x, screen_y, IMG_CMB_Volcano[(CMB_CNodeAnimStage % 8)]);
-                        screen_x += 10;
-                        screen_y += 2;
-                    }
-                    Road_Flags = battlefield->Tile_Road[((cgy * COMBAT_GRID_WIDTH) + cgx)];
-                    if(Road_Flags != 0)
-                    {
-                        STU_DEBUG_BREAK();  // don't recall why I put this here... did I just not do roads?
-                        if(
-                            (Road_Flags & 0x80) != 0
-                            &&
-                            (Road_Flags & 0x01) != 0
-                        )
+                        if(CMB_Enchanted_Roads == ST_TRUE)
                         {
-                            Set_Animation_Frame(IMG_CMB_FlotIsle, CMB_RoadAnimStage);
-                            Clipped_Draw((screen_x - 32), (screen_y - 48), IMG_CMB_FlotIsle);
+                            Set_Base_1 = 14;
                         }
                         else
                         {
-                            if(CMB_Enchanted_Roads == ST_TRUE)
-                            {
-                                Set_Base_1 = 14;
-                            }
-                            else
-                            {
-                                Set_Base_1 = 0;
-                            }
-                            if((Road_Flags & 0x01) != 0)
-                            {
-                                Set_Base_2 = 0;
-                            }
-                            else
-                            {
-                                Set_Base_2 = 7;
-                            }
-                            if((Road_Flags & 0x02) != 0)
-                            {
-                                Set_Animation_Frame(IMG_CMB_RoadTiles[(0 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
-                                Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(0 + (Set_Base_1 + Set_Base_2))]);
-                            }
-                            if((Road_Flags & 0x04) != 0)
-                            {
-                                Set_Animation_Frame(IMG_CMB_RoadTiles[(1 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
-                                Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(1 + (Set_Base_1 + Set_Base_2))]);
-                            }
-                            if((Road_Flags & 0x08) != 0)
-                            {
-                                Set_Animation_Frame(IMG_CMB_RoadTiles[(2 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
-                                Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(2 + (Set_Base_1 + Set_Base_2))]);
-                            }
-                            if((Road_Flags & 0x10) != 0)
-                            {
-                                Set_Animation_Frame(IMG_CMB_RoadTiles[(3 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
-                                Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(3 + (Set_Base_1 + Set_Base_2))]);
-                            }
-                            if((Road_Flags & 0x20) != 0)
-                            {
-                                Set_Animation_Frame(IMG_CMB_RoadTiles[(4 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
-                                Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(4 + (Set_Base_1 + Set_Base_2))]);
-                            }
-                            if((Road_Flags & 0x40) != 0)
-                            {
-                                Set_Animation_Frame(IMG_CMB_RoadTiles[(5 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
-                                Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(5 + (Set_Base_1 + Set_Base_2))]);
-                            }
-                            if(
-                                (battlefield->Central_Structure == CS_Outpost)
-                                &&
-                                (cgx == 6)
-                                &&
-                                (cgy == 11)
-                            )
-                            {
-                                Clipped_Draw(screen_x, screen_y, IMG_CMB_DirtTile);
-                            }
-                            // ; BUG: will fail to show Flying Fortress graphics on outposts
-                            if(
-                                (
-                                    (battlefield->Central_Structure == CS_City)
-                                    ||
-                                    (battlefield->Central_Structure == CS_Fortress)
-                                )
-                                &&
-                                (cgx == 8)
-                                &&
-                                (cgy == 13)
-                            )
-                            {
-                                if(battlefield->city_enchantments[FLYING_FORTRESS] != 0)
-                                {
-                                    Clipped_Draw((screen_x - 48), (screen_y - 48), IMG_CMB_Cloud);
-                                }
-                                else
-                                {
-                                    Clipped_Draw((screen_x - 48), (screen_y - 48), IMG_CMB_RoadGrid);
-                                }
-                            }
-                            if(
-                                (CMB_Chasm_Anim == 1)
-                                &&
-                                (CMB_Chasm_Anim_X == cgx)
-                                &&
-                                (CMB_Chasm_Anim_Y == cgy)
-                            )
-                            {
-                                Set_Animation_Frame(IMG_GUI_Chasm, CMB_ChasmAnimStage);
-                                Clipped_Draw(screen_x, (screen_y - 18), IMG_GUI_Chasm);
-                            }
+                            Set_Base_1 = 0;
                         }
+                        if((Road_Flags & 0x01) != 0)
+                        {
+                            Set_Base_2 = 0;
+                        }
+                        else
+                        {
+                            Set_Base_2 = 7;
+                        }
+                        if((Road_Flags & 0x02) != 0)
+                        {
+                            Set_Animation_Frame(IMG_CMB_RoadTiles[(0 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
+                            Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(0 + (Set_Base_1 + Set_Base_2))]);
+                        }
+                        if((Road_Flags & 0x04) != 0)
+                        {
+                            Set_Animation_Frame(IMG_CMB_RoadTiles[(1 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
+                            Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(1 + (Set_Base_1 + Set_Base_2))]);
+                        }
+                        if((Road_Flags & 0x08) != 0)
+                        {
+                            Set_Animation_Frame(IMG_CMB_RoadTiles[(2 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
+                            Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(2 + (Set_Base_1 + Set_Base_2))]);
+                        }
+                        if((Road_Flags & 0x10) != 0)
+                        {
+                            Set_Animation_Frame(IMG_CMB_RoadTiles[(3 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
+                            Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(3 + (Set_Base_1 + Set_Base_2))]);
+                        }
+                        if((Road_Flags & 0x20) != 0)
+                        {
+                            Set_Animation_Frame(IMG_CMB_RoadTiles[(4 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
+                            Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(4 + (Set_Base_1 + Set_Base_2))]);
+                        }
+                        if((Road_Flags & 0x40) != 0)
+                        {
+                            Set_Animation_Frame(IMG_CMB_RoadTiles[(5 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
+                            Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(5 + (Set_Base_1 + Set_Base_2))]);
+                        }
+
+                    }
+
+                }
+
+                /*
+                    END:  Roads
+                */
+
+
+
+                if(
+                    (battlefield->Central_Structure == CS_Outpost)
+                    &&
+                    (cgx == 6)
+                    &&
+                    (cgy == 11)
+                )
+                {
+                    Clipped_Draw(screen_x, screen_y, IMG_CMB_DirtTile);
+                }
+
+                // ; BUG: will fail to show Flying Fortress graphics on outposts
+                if(
+                    (
+                        (battlefield->Central_Structure == CS_City)
+                        ||
+                        (battlefield->Central_Structure == CS_Fortress)
+                    )
+                    &&
+                    (cgx == 8)
+                    &&
+                    (cgy == 13)
+                )
+                {
+                    if(battlefield->city_enchantments[FLYING_FORTRESS] != 0)
+                    {
+                        Clipped_Draw((screen_x - 48), (screen_y - 48), IMG_CMB_Cloud);
+                    }
+                    else
+                    {
+                        Clipped_Draw((screen_x - 48), (screen_y - 48), IMG_CMB_RoadGrid);
                     }
                 }
+
+                if(
+                    (CMB_Chasm_Anim == ST_TRUE)
+                    &&
+                    (CMB_Chasm_Anim_X == cgx)
+                    &&
+                    (CMB_Chasm_Anim_Y == cgy)
+                )
+                {
+                    // Set_Animation_Frame(IMG_GUI_Chasm, CMB_ChasmAnimStage);
+                    Set_Animation_Frame(IMG_GUI_Chasm, (CMB_ChasmAnimStage / 6));
+                    Clipped_Draw(screen_x, (screen_y - 18), IMG_GUI_Chasm);
+                }
+
             }
+
         }
+
     }
 
 

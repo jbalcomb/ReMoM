@@ -18,11 +18,11 @@ Combat Only Spell Casting Categories
 
 [x] Animate Dead
 [ ] Chaos Channels
-[ ] Cracks Call
+[x] Cracks Call
 [x] Disrupt
 [ ] Earth to Mud
 [x] Healing
-[ ] Magic Vortex
+[x] Magic Vortex
 [x] Raise Dead
 [x] Recall Hero
 [x] Wall of Stone
@@ -228,7 +228,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Water Walking
 [x] Sprites
 [ ] Earth Lore
-[ ] Cracks Call
+[x] Cracks Call
 [ ] Natures eye
 [x] Ice Bolt
 [x] Giant Spiders
