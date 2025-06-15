@@ -2739,14 +2739,14 @@ void CMB_PrepareTurn__WIP(void)
     if(combat_enchantments[CALL_LIGHTNING_ATTKR] != 0)
     {
         
-        // WIZ_CallLightning(_combat_attacker_player);
+        Apply_Call_Lightning(_combat_attacker_player);
 
     }
 
     if(combat_enchantments[CALL_LIGHTNING_DFNDR] != 0)
     {
 
-        // WIZ_CallLightning(_combat_defender_player);
+        Apply_Call_Lightning(_combat_defender_player);
 
     }
 
@@ -2762,7 +2762,7 @@ void CMB_PrepareTurn__WIP(void)
     {
 
         // TODO  WIZ_Wrack(_combat_defender_player);
-        
+
     }
 
 
@@ -11665,7 +11665,20 @@ void Cast_Spell_On_Battle_Unit(int16_t spell_idx, int16_t target_idx, int16_t ca
     // ...
     // ; used for checking Spell Lock vs Banish/Dispel Evil,
     // ; and Righteousness vs non-resistables (none exist)
-    enchantments = (_UNITS[battle_units[target_idx].unit_idx].enchantments | battle_units[itr].enchantments | battle_units[itr].item_enchantments);
+    // CRASH  enchantments = (_UNITS[battle_units[target_idx].unit_idx].enchantments | battle_units[itr].enchantments | battle_units[itr].item_enchantments);
+    // BUGBUG  how was this working? what would have been going wrong?
+    if(
+        (target_idx >= 0)
+        &&
+        (target_idx <= MAX_BATTLE_UNIT_COUNT)
+    )
+    {
+        enchantments = (_UNITS[battle_units[target_idx].unit_idx].enchantments | battle_units[itr].enchantments | battle_units[itr].item_enchantments);
+    }
+    else
+    {
+        enchantments = 0;
+    }
     
     resistance_modifier = Spell_Resistance_Modifier(spell_idx);
 

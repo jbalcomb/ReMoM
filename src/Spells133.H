@@ -25,7 +25,8 @@ void Apply_Warp_Creature(int16_t battle_unit_idx);
 
 // WZD o133p02  WIZ_Wrack()
 
-// WZD o133p03  WIZ_CallLightning()
+// WZD o133p03
+void Apply_Call_Lightning(int16_t player_idx);
 
 // WZD o133p04
 void BU_LifeDrain__WIP(int16_t target_idx, int16_t damage_types[], int16_t caster_idx);
@@ -56,7 +57,7 @@ void TILE_CombatSpellAnim__WIP(int16_t cgx, int16_t cgy, int16_t Anim_Size, int1
 void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t player_idx);
 
 // WZD o133p14
-void TILE_LightningBolt__WIP(int16_t cgx, int16_t cgy, int16_t caster_idx);
+void Animate_Lightning_Bolt(int16_t cgx, int16_t cgy, int16_t caster_idx);
 
 // WZD o133p15
 void Magic_Vortex_Create(int16_t player_idx, int16_t cgx, int16_t cgy);

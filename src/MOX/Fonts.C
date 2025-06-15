@@ -3571,30 +3571,30 @@ void Create_Remap_Palette_1(int16_t block, uint8_t red, uint8_t green, uint8_t b
 */
 void Create_Remap_Palette_(int16_t block, uint8_t red, uint8_t green, uint8_t blue, uint8_t percent)
 {
-    int16_t itr;
-    uint8_t palette_change_flag;
-    uint8_t * remap_palette;
-    uint8_t * tmpcurrpal;
-    uint16_t ofst;
-    uint8_t vpercent;
-    uint16_t color2_multiplier;
-    uint16_t color1_multiplier;
-    uint8_t color2_red;
-    uint8_t color2_grn;
-    uint8_t color2_blu;
-    uint8_t color1_red;
-    uint8_t color1_grn;
-    uint8_t color1_blu;
-    uint8_t color2_red_portion;
-    uint8_t color2_grn_portion;
-    uint8_t color2_blu_portion;
-    uint8_t color1_red_portion;
-    uint8_t color1_grn_portion;
-    uint8_t color1_blu_portion;
-    uint8_t color3_red;
-    uint8_t color3_grn;
-    uint8_t color3_blu;
-    uint8_t closest;
+    int16_t itr = 0;
+    uint8_t palette_change_flag = 0;
+    uint8_t * remap_palette = 0;
+    uint8_t * tmpcurrpal = 0;
+    uint16_t ofst = 0;
+    uint8_t vpercent = 0;
+    uint16_t color2_multiplier = 0;
+    uint16_t color1_multiplier = 0;
+    uint8_t color2_red = 0;
+    uint8_t color2_grn = 0;
+    uint8_t color2_blu = 0;
+    uint8_t color1_red = 0;
+    uint8_t color1_grn = 0;
+    uint8_t color1_blu = 0;
+    uint8_t color2_red_portion = 0;
+    uint8_t color2_grn_portion = 0;
+    uint8_t color2_blu_portion = 0;
+    uint8_t color1_red_portion = 0;
+    uint8_t color1_grn_portion = 0;
+    uint8_t color1_blu_portion = 0;
+    uint8_t color3_red = 0;
+    uint8_t color3_grn = 0;
+    uint8_t color3_blu = 0;
+    uint8_t closest = 0;
     
     color2_red = red;
     color2_grn = green;
@@ -3616,7 +3616,9 @@ void Create_Remap_Palette_(int16_t block, uint8_t red, uint8_t green, uint8_t bl
     // iterate through the current build, make the new mixed color, and find the closest existing color
     for(itr = 0; itr < 256; itr++)
     {
+
         palette_change_flag = PALETTE_FLAG(itr);
+
         if(palette_change_flag != ST_FALSE)
         {
             ofst = itr * 3;
@@ -3637,7 +3639,7 @@ void Create_Remap_Palette_(int16_t block, uint8_t red, uint8_t green, uint8_t bl
             closest = Find_Closest_Color(color3_red, color3_grn, color3_blu);
         }
 
-        *(remap_palette + itr) = closest;
+        *(remap_palette + itr) = closest;  // BUGBUG  ..being used without being initialized
     }
 
 }

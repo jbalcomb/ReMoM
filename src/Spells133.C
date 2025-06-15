@@ -148,7 +148,92 @@ void Apply_Warp_Creature(int16_t battle_unit_idx)
 
 
 // WZD o133p02  WIZ_Wrack()
-// WZD o133p03  WIZ_CallLightning()
+
+// WZD o133p03
+/*
+; processes the Call Lightning effect of the selected
+; player, including loading and playing both sound and
+; animation
+; BUGs: will sometimes fire less bolts than intended,
+; ignores units with Wraith Form, stores its spell data
+; parameters in Wall of Stone's even though it doesn't
+; actually need to, and undoes an alloc it didn't mark
+*/
+/*
+
+*/
+void Apply_Call_Lightning(int16_t player_idx)
+{
+    int16_t damage_types[3] = { 0, 0, 0 };
+    int16_t bolts = 0;
+    uint32_t enchantments = 0;
+    int16_t tries = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
+
+    for(itr = 0; itr < 3; itr++)
+    {
+
+        damage_types[itr] = 0;
+
+    }
+
+    Mark_Block(_screen_seg);
+
+    Spell_Animation_Load_Graphics(spl_Call_Lightning);
+
+    Combat_Load_Spell_Sound_Effect(spl_Lightning_Bolt);
+
+    bolts = (Random(3) + 2);
+
+    tries = 0;
+    while((bolts > 0) && (tries < 30))
+    {
+        
+        tries++;
+
+        itr = (Random(_combat_total_unit_count) -1);
+
+        enchantments = (_UNITS[battle_units[itr].unit_idx].enchantments | battle_units[itr].enchantments | battle_units[itr].item_enchantments);
+
+        if(
+            (battle_units[itr].controller_idx != player_idx)
+            &&
+            (battle_units[itr].status == bus_Active)
+            &&
+            ((battle_units[itr].enchantments & UE_WRAITHFORM) == 0)
+            &&
+            (Random(2) == 1)
+        )
+        {
+
+            Mark_Time();
+
+            CMB_ConvSpellAttack__WIP(spl_Wall_Of_Stone, itr, &damage_types[0], 0);
+
+            Animate_Lightning_Bolt(battle_units[itr].cgx, battle_units[itr].cgy, ST_UNDEFINED);
+
+            BU_ApplyDamage__WIP(itr, &damage_types[0]);
+
+            Release_Time((Random(10) + 3));
+
+            bolts--;
+
+            tries = 0;
+
+        }
+
+    }
+
+    Mark_Time();
+
+    Release_Time(12);
+
+    Release_Block(_screen_seg);
+
+    Release_Block(World_Data);
+
+}
+
 
 // WZD o133p04
 // drake178: BU_LifeDrain()
@@ -672,10 +757,103 @@ void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, 
 
 // WZD o133p14
 // drake178: TILE_LightningBolt()
-void TILE_LightningBolt__WIP(int16_t cgx, int16_t cgy, int16_t caster_idx)
+/*
+; plays the Lightning Bolt spellcast animation, with
+; or without a corresponding cast message (none if
+; Caster_ID is -1, used by Call Lightning)
+; GUI_SpellAnimGFX@ and GUI_Spell_SFX@ need to be
+; loaded and assigned to the correct effects
+*/
+/*
+
+if caster_idx is ST_UNDEFINED, will not display the message "..has cast Lightning Bolt"
+
+*/
+void Animate_Lightning_Bolt(int16_t cgx, int16_t cgy, int16_t caster_idx)
 {
+    int16_t screen_y = 0;
+    int16_t screen_x = 0;
+    int16_t itr = 0;  // _SI_
+
+    for(itr = 0; itr < 5; itr++)
+    {
+
+        Tactical_Combat_Draw();
 
 
+        if(caster_idx > ST_UNDEFINED)
+        {
+
+            Combat_Cast_Spell_Message(caster_idx, spl_Lightning_Bolt);
+
+        }
+
+        PageFlip_FX();
+
+    }
+
+
+// ; repeast three redraws of the combat screen, with a
+// ; Lightning Bolt spellcast message if Caster_ID is
+// ; greater than -1, drawing a random frame of the loaded
+// ; GUI_SpellAnimGFX@ each time, and initiating
+// ; GUI_Spell_SFX@ playback on the first frame
+
+    for(itr = 0; itr < 2; itr++)
+    {
+
+        Set_Page_Off();
+
+        Tactical_Combat_Draw();
+
+        if(caster_idx > ST_UNDEFINED)
+        {
+
+            Combat_Cast_Spell_Message(caster_idx, spl_Lightning_Bolt);
+
+        }
+
+        Combat_Grid_Screen_Coordinates(cgx, cgy, 4, 4, &screen_x, &screen_y);
+
+        if(itr == 0)
+        {
+            if(magic_set.sound_effects == ST_TRUE)
+            {
+                // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
+                sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
+            }
+        }
+
+        Set_Animation_Frame(spell_animation_seg, (Random(4) - 1));
+
+        Clipped_Draw(screen_x, (screen_y - 199), spell_animation_seg);  // DEDU  `- 199`?
+
+        PageFlip_FX();
+
+    }
+
+    for(itr = 0; itr < 5; itr++)
+    {
+
+        Tactical_Combat_Draw();
+
+
+        if(caster_idx > ST_UNDEFINED)
+        {
+
+            Combat_Cast_Spell_Message(caster_idx, spl_Lightning_Bolt);
+
+        }
+
+        PageFlip_FX();
+
+    }
+
+    Set_Page_Off();
+
+    Tactical_Combat_Draw();
+
+    PageFlip_FX();
 
 }
 

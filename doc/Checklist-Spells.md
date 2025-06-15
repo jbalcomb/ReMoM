@@ -178,7 +178,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Behemoth
 [x] Entangle
 [x] Natures Awareness
-[-] Call Lightning
+[x] Call Lightning
 [x] Colossus
 [ ] Earth Gate
 [x] Herb Mastery

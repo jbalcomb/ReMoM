@@ -1612,7 +1612,7 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
 
                 Spell_Animation_Load_Graphics(spl_Call_Lightning);
 
-                /* SPELLY */  TILE_LightningBolt__WIP(cgx, cgy, caster_idx);
+                Animate_Lightning_Bolt(cgx, cgy, caster_idx);
 
             }
             else

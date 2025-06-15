@@ -65,21 +65,33 @@ void TST_Patch_Game_Data(void)
     TST_Cheat_Power(player_idx);
 
 
-    // scc_Special_Spell   5
-    TST_Learn_Spell(player_idx, spl_Animate_Dead);
-    TST_Learn_Spell(player_idx, spl_Chaos_Channels);
-    TST_Learn_Spell(player_idx, spl_Cracks_Call);
-    TST_Learn_Spell(player_idx, spl_Disrupt);
-    TST_Learn_Spell(player_idx, spl_Earth_To_Mud);
-    TST_Learn_Spell(player_idx, spl_Healing);
+    // Combat Per-Turn Effects
+    TST_Learn_Spell(player_idx, spl_Black_Sleep);       //  165
+    TST_Learn_Spell(player_idx, spl_Call_Lightning);    //   35
+    TST_Learn_Spell(player_idx, spl_Confusion);         //   46
+    TST_Learn_Spell(player_idx, spl_Entangle);
     TST_Learn_Spell(player_idx, spl_Magic_Vortex);
-    TST_Learn_Spell(player_idx, spl_Raise_Dead);
-    TST_Learn_Spell(player_idx, spl_Recall_Hero);
-    TST_Learn_Spell(player_idx, spl_Wall_Of_Stone);
-    TST_Learn_Spell(player_idx, spl_Warp_Creature);
-    TST_Learn_Spell(player_idx, spl_Warp_Wood);
+    TST_Learn_Spell(player_idx, spl_Mana_Leak);
+    TST_Learn_Spell(player_idx, spl_Regeneration);
+    TST_Learn_Spell(player_idx, spl_Terror);
+    TST_Learn_Spell(player_idx, spl_Web);               //    5
+    TST_Learn_Spell(player_idx, spl_Wrack);
 
-    // scc_Battlefield_Spell  10  (part 2of2)
+    // Combat  scc_Special_Spell   5
+    // TST_Learn_Spell(player_idx, spl_Animate_Dead);
+    // TST_Learn_Spell(player_idx, spl_Chaos_Channels);
+    // TST_Learn_Spell(player_idx, spl_Cracks_Call);
+    // TST_Learn_Spell(player_idx, spl_Disrupt);
+    // TST_Learn_Spell(player_idx, spl_Earth_To_Mud);
+    // TST_Learn_Spell(player_idx, spl_Healing);
+    // TST_Learn_Spell(player_idx, spl_Magic_Vortex);
+    // TST_Learn_Spell(player_idx, spl_Raise_Dead);
+    // TST_Learn_Spell(player_idx, spl_Recall_Hero);
+    // TST_Learn_Spell(player_idx, spl_Wall_Of_Stone);
+    // TST_Learn_Spell(player_idx, spl_Warp_Creature);
+    // TST_Learn_Spell(player_idx, spl_Warp_Wood);
+
+    // Combat  scc_Battlefield_Spell  10  (part 2of2)
     // TST_Learn_Spell(player_idx, spl_Black_Prayer);  // 174
     // TST_Learn_Spell(player_idx, spl_Blur);
     // TST_Learn_Spell(player_idx, spl_Call_Lightning);
