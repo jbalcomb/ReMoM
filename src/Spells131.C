@@ -230,7 +230,7 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
     // ;  same tile as a unit to be targeted twice
     // ; INCONSISTENT: Dispel Magic does not check owners
     // ; INCONSISTENT: there is no dispel message
-    for(itr1 = 0; itr1 < CMB_Vortex_Count; itr1++)
+    for(itr1 = 0; itr1 < _vortex_count; itr1++)
     {
 
         if(CMB_Vortex_Array[itr1].owner_idx == player_idx)
@@ -245,9 +245,9 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
             if(Random(250) <= (threshold + 500))
             {
 
-                Delete_Structure(itr1, (uint8_t *)&CMB_Vortex_Array[0], sizeof(struct s_MAGIC_VORTEX), CMB_Vortex_Count);
+                Delete_Structure(itr1, (uint8_t *)&CMB_Vortex_Array[0], sizeof(struct s_MAGIC_VORTEX), _vortex_count);
 
-                CMB_Vortex_Count--;
+                _vortex_count--;
 
             }
             
@@ -484,7 +484,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
 
     // ; attempt to dispel all Magic Vortices from the tile
     // ; WARNING: will also affect the caster's own!
-    for(itr = 0; itr < CMB_Vortex_Count; itr++)
+    for(itr = 0; itr < _vortex_count; itr++)
     {
         /* SPELLY  - dispell magic vortex */
     }

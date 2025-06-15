@@ -991,9 +991,9 @@ struct s_MAGIC_VORTEX
 {
     /* 00 */ int16_t cgx;
     /* 02 */ int16_t cgy;
-    /* 04 */ int16_t Prev_or_Next_X;  // ; prev when stationary, next while moving
-    /* 06 */ int16_t Prev_or_Next_Y;  // ; prev when stationary, next while moving
-    /* 08 */ int16_t Move_Stage;
+    /* 04 */ int16_t move_cgx;  // ; prev when stationary, next while moving
+    /* 06 */ int16_t move_cgy;  // ; prev when stationary, next while moving
+    /* 08 */ int16_t stage;
     /* 0A */ int16_t owner_idx;
     /* 0C */
 };
@@ -1195,7 +1195,7 @@ extern int16_t CMB_Chasm_Anim_X;
 extern struct s_MAGIC_VORTEX * CMB_Vortex_Array;
 
 // WZD dseg:D152
-extern int16_t CMB_Vortex_Count;
+extern int16_t _vortex_count;
 
 // WZD dseg:D154
 extern SAMB_ptr CMB_Projectiles;

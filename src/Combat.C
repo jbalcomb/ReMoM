@@ -1284,7 +1284,7 @@ int16_t CMB_Chasm_Anim_X;
 // WZD dseg:D14E
 struct s_MAGIC_VORTEX * CMB_Vortex_Array;
 // WZD dseg:D152
-int16_t CMB_Vortex_Count;
+int16_t _vortex_count;
 
 // WZD dseg:D154
 SAMB_ptr CMB_Projectiles;
@@ -3164,7 +3164,7 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
 
     }
 
-    for(itr = 0; itr < CMB_Vortex_Count; itr++)
+    for(itr = 0; itr < _vortex_count; itr++)
     {
 
         CMB_ActiveMoveMap[((CMB_Vortex_Array[itr].cgy * COMBAT_GRID_WIDTH) + CMB_Vortex_Array[itr].cgx)] = INF;  /* ¿ occupied ? */
@@ -3697,7 +3697,7 @@ void Assign_Combat_Grids(void)
     }
 
 
-    for(itr= 0; itr < CMB_Vortex_Count; itr++)
+    for(itr= 0; itr < _vortex_count; itr++)
     {
 
         CMB_ActiveMoveMap[((CMB_Vortex_Array[itr].cgy * COMBAT_GRID_WIDTH) + CMB_Vortex_Array[itr].cgx)] = -1;
@@ -11871,7 +11871,7 @@ case scc_Disjunction_Spell:  // 20
             }
             if(spell_idx == spl_Magic_Vortex)
             {
-                // SPELLY  WIZ_CreateVortex(player_idx, target_cgx, target_cgy);
+                Magic_Vortex_Create(player_idx, target_cgx, target_cgy);
             }
             if(spell_idx == spl_Earth_To_Mud)
             {
@@ -13523,7 +13523,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
 
     if(spell_idx == spl_Magic_Vortex)
     {
-        if(CMB_Vortex_Count == 10)
+        if(_vortex_count == 10)
         {
             LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 76, 1, 150);  // "Only ten vortexes can be in any area at once"
             Warn1(GUI_NearMsgString);
@@ -14173,7 +14173,7 @@ void Combat_Set_Mouse_List_Image_Num(void)
 
     if(CMB_TargetingType == cstt_DispelMagic)
     {
-        for(itr = 0; itr < CMB_Vortex_Count; itr++)
+        for(itr = 0; itr < _vortex_count; itr++)
         {
             if(
                 (CMB_Vortex_Array[itr].cgx == cgx)
@@ -16363,7 +16363,7 @@ void AI_GetCombatRallyPt__WIP(int16_t battle_unit_idx, int16_t * Rally_X, int16_
     /*
         mark all magic vortices as impassable
     */
-    for(itr = 0; itr < CMB_Vortex_Count; itr++)
+    for(itr = 0; itr < _vortex_count; itr++)
     {
 
         CMB_ActiveMoveMap[((CMB_Vortex_Array[itr].cgy * COMBAT_GRID_WIDTH) + CMB_Vortex_Array[itr].cgx)] = INF;
@@ -16519,7 +16519,7 @@ void AI_MoveBattleUnits__WIP(int16_t player_idx)
 
             Attacker_Vortices = 0;
 
-            for(itr = 0; itr < CMB_Vortex_Count; itr++)
+            for(itr = 0; itr < _vortex_count; itr++)
             {
 
                 if (CMB_Vortex_Array[itr].owner_idx == _combat_attacker_player)
@@ -17523,7 +17523,7 @@ void G_AI_BU_MoveOrRampage__WIP(int16_t battle_unit_idx, int16_t Dest_X, int16_t
     }
 
 
-    for(itr_battle_units = 0; itr_battle_units < CMB_Vortex_Count; itr_battle_units++)
+    for(itr_battle_units = 0; itr_battle_units < _vortex_count; itr_battle_units++)
     {
 
         CMB_ActiveMoveMap[((CMB_Vortex_Array[itr_battle_units].cgy * COMBAT_GRID_WIDTH) + CMB_Vortex_Array[itr_battle_units].cgx)] = INF;
@@ -17720,7 +17720,7 @@ impassable
 
 BUG: this has just been done in the parent function
 */
-    for(itr_battle_units = 0; itr_battle_units < CMB_Vortex_Count; itr_battle_units++)
+    for(itr_battle_units = 0; itr_battle_units < _vortex_count; itr_battle_units++)
     {
 
         CMB_ActiveMoveMap[((CMB_Vortex_Array[itr_battle_units].cgy * COMBAT_GRID_WIDTH) + CMB_Vortex_Array[itr_battle_units].cgx)] = INF;
@@ -26550,7 +26550,7 @@ void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp)
 
     }
 
-    CMB_Vortex_Count = 0;
+    _vortex_count = 0;
 
     Set_Random_Seed(random_seed);
 

@@ -58,7 +58,8 @@ void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, 
 // WZD o133p14
 void TILE_LightningBolt__WIP(int16_t cgx, int16_t cgy, int16_t caster_idx);
 
-// WZD o133p15  WIZ_CreateVortex()
+// WZD o133p15
+void Magic_Vortex_Create(int16_t player_idx, int16_t cgx, int16_t cgy);
 
 // WZD o133p16
 void CMB_SetVortexCursor__SEGRAX(int Vortex_Index);

@@ -631,7 +631,30 @@ void TILE_LightningBolt__WIP(int16_t cgx, int16_t cgy, int16_t caster_idx)
 }
 
 
-// WZD o133p15  WIZ_CreateVortex()
+// WZD o133p15
+/*
+; adds a magic vortex to the vortex array using the
+; specified attributes
+*/
+/*
+
+*/
+void Magic_Vortex_Create(int16_t player_idx, int16_t cgx, int16_t cgy)
+{
+
+    CMB_Vortex_Array[_vortex_count].cgx = cgx;
+    CMB_Vortex_Array[_vortex_count].cgy = cgy;
+
+    CMB_Vortex_Array[_vortex_count].move_cgx = cgx;
+    CMB_Vortex_Array[_vortex_count].move_cgy = cgy;
+
+    CMB_Vortex_Array[_vortex_count].stage = 0;
+
+    CMB_Vortex_Array[_vortex_count].owner_idx = player_idx;
+
+    _vortex_count++;
+
+}
 
 
 // segrax
@@ -642,52 +665,63 @@ void TILE_LightningBolt__WIP(int16_t cgx, int16_t cgy, int16_t caster_idx)
 /*
 
 */
-void CMB_SetVortexCursor__SEGRAX(int Vortex_Index)
+void CMB_SetVortexCursor__SEGRAX(int vortex_idx)
 {
-    int Pointer_Offset = 4;
-    int Tile_Y, Scrn_Y, Scrn_X;
+    int16_t pointer_offset = 0;
+    int16_t cgy = 0;
+    int16_t screen_y = 0; 
+    int16_t screen_x = 0;
+    int16_t cgx = 0;
+    pointer_offset = 4;
 
     _combat_mouse_grid->image_num = crsr_RedCross;
 
-    Scrn_X = Pointer_X() + Pointer_Offset;
-    Scrn_Y = Pointer_Y() + Pointer_Offset;
+    screen_x = Pointer_X() + pointer_offset;
+    screen_y = Pointer_Y() + pointer_offset;
 
     frame_active_flag = ST_TRUE;
 
-    frame_active_cgx = CMB_Vortex_Array[Vortex_Index].cgx;
-    frame_active_cgy = CMB_Vortex_Array[Vortex_Index].cgy;
+    frame_active_cgx = CMB_Vortex_Array[vortex_idx].cgx;
+    frame_active_cgy = CMB_Vortex_Array[vortex_idx].cgy;
 
-    frame_anim_cycle = (frame_active_cgy + 1) % 3;
+    frame_anim_cycle = ((frame_active_cgy + 1) % 3);
 
-    if((Pointer_Offset + 168) > Scrn_Y)
+    if((168 + pointer_offset) > screen_y)
     {
 
         frame_scanned_flag = ST_FALSE;
 
-        Tile_Y = Get_Combat_Grid_Cell_Y(Scrn_X, Scrn_Y);
-        int Grid_X = Get_Combat_Grid_Cell_X(Scrn_X, Scrn_Y);
+        cgy = Get_Combat_Grid_Cell_Y(screen_x, screen_y);
+        cgx = Get_Combat_Grid_Cell_X(screen_x, screen_y);
 
         if(
-            (CMB_Vortex_Array[Vortex_Index].cgx == Grid_X)
+            (CMB_Vortex_Array[vortex_idx].cgx == cgx)
             &&
-            (CMB_Vortex_Array[Vortex_Index].cgy == Tile_Y)
+            (CMB_Vortex_Array[vortex_idx].cgy == cgy)
         )
         {
 
-            if(battlefield->MoveCost_Teleport[Grid_X] != -1)
+            if(battlefield->MoveCost_Teleport[cgx] != -1)
             {
-                if(abs((int)(Grid_X - CMB_Vortex_Array[Vortex_Index].cgx)) <= 1
-                &&
-                    abs((int)(Tile_Y - CMB_Vortex_Array[Vortex_Index].cgy)) <= 1
+
+                if(
+                    (abs((cgx - CMB_Vortex_Array[vortex_idx].cgx)) <= 1)
+                    &&
+                    (abs((cgy - CMB_Vortex_Array[vortex_idx].cgy)) <= 1)
                 )
                 {
+
                     frame_scanned_flag = ST_TRUE;
-                    frame_scanned_cgx = Grid_X;
-                    frame_scanned_cgy = Tile_Y;
+                    frame_scanned_cgx = cgx;
+                    frame_scanned_cgy = cgy;
                     _combat_mouse_grid->image_num = crsr_WingedBoot;
+
                 }
+
             }
+
         }
+
     }
 
     _combat_mouse_grid->center_offset = 2;
@@ -702,18 +736,17 @@ void CMB_SetVortexCursor__SEGRAX(int Vortex_Index)
 // segrax
 // WZD o133p17
 // drake178: CMB_VortexPlayerMove()
-void CMB_VortexPlayerMove__SEGRAX(int Vortex_Index)
+void CMB_VortexPlayerMove__SEGRAX(int vortex_idx)
 {
-    // int16_t Picked_Y, Y_Retn, X_Retn;
-    int16_t cgy = 0;
-    int64_t Y_Retn = 0;
-    int64_t X_Retn = 0;
+    int16_t target_cgy = 0;
+    int64_t cgy = 0;
+    int64_t cgx = 0;
     int16_t combat_grid_field = 0;
     int16_t input_field_idx = 0;
     int16_t leave_screen = 0;
-    int16_t cgx = 0;  // _DI_
+    int16_t target_cgx = 0;  // _DI_
 
-    if(CMB_Vortex_Array[Vortex_Index].owner_idx != HUMAN_PLAYER_IDX)
+    if(CMB_Vortex_Array[vortex_idx].owner_idx != HUMAN_PLAYER_IDX)
     {
         return;
     }
@@ -725,8 +758,7 @@ void CMB_VortexPlayerMove__SEGRAX(int Vortex_Index)
 
     Clear_Fields();
 
-    // int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int64_t *xpos, int64_t *ypos, int16_t help);
-    combat_grid_field = Add_Grid_Field(0, 0, 1, 1, 319, 168, &X_Retn, &Y_Retn, ST_UNDEFINED);
+    combat_grid_field = Add_Grid_Field(0, 0, 1, 1, 319, 168, &cgx, &cgy, ST_UNDEFINED);
 
     leave_screen = ST_FALSE;
 
@@ -734,6 +766,7 @@ void CMB_VortexPlayerMove__SEGRAX(int Vortex_Index)
 
     while(leave_screen == ST_FALSE)
     {
+
         Mark_Time();
 
         input_field_idx = Get_Input();
@@ -741,27 +774,27 @@ void CMB_VortexPlayerMove__SEGRAX(int Vortex_Index)
         if(input_field_idx == combat_grid_field)
         {
 
-            cgx = Get_Combat_Grid_Cell_X(X_Retn + 4, Y_Retn + 4);
-            cgy = Get_Combat_Grid_Cell_Y(X_Retn + 4, Y_Retn + 4);
+            target_cgx = Get_Combat_Grid_Cell_X(cgx + 4, cgy + 4);
+            target_cgy = Get_Combat_Grid_Cell_Y(cgx + 4, cgy + 4);
 
             if(
-                (CMB_Vortex_Array[Vortex_Index].cgx != cgx)
+                (CMB_Vortex_Array[vortex_idx].cgx != target_cgx)
                 ||
-                (CMB_Vortex_Array[Vortex_Index].cgy != cgy)
+                (CMB_Vortex_Array[vortex_idx].cgy != target_cgy)
             )
             {
 
-                if(battlefield->MoveCost_Teleport[((cgy * COMBAT_GRID_WIDTH) + cgx)] != -1)
+                if(battlefield->MoveCost_Teleport[((target_cgy * COMBAT_GRID_WIDTH) + target_cgx)] != -1)
                 {
 
                     if(
-                        (abs(cgx - CMB_Vortex_Array[Vortex_Index].cgx) <= 1)
+                        (abs(target_cgx - CMB_Vortex_Array[vortex_idx].cgx) <= 1)
                         &&
-                        (abs(cgy - CMB_Vortex_Array[Vortex_Index].cgy) <= 1)
+                        (abs(target_cgy - CMB_Vortex_Array[vortex_idx].cgy) <= 1)
                     )
                     {
 
-                        CMB_VortexMovement__SEGRAX(Vortex_Index, cgx, cgy);
+                        CMB_VortexMovement__SEGRAX(vortex_idx, target_cgx, target_cgy);
 
                         leave_screen = ST_TRUE;
 
@@ -778,7 +811,7 @@ void CMB_VortexPlayerMove__SEGRAX(int Vortex_Index)
 
             Tactical_Combat_Draw();
 
-            CMB_SetVortexCursor__SEGRAX(Vortex_Index);
+            CMB_SetVortexCursor__SEGRAX(vortex_idx);
 
             PageFlip_FX();
 
@@ -803,8 +836,14 @@ void CMB_VortexPlayerMove__SEGRAX(int Vortex_Index)
 */
 void CMB_ProcessVortices__SEGRAX(void)
 {
-    int Tries_Counter, Current_Y, Current_X, Next_Y, Loop_Var;
-    unsigned int Vortex_Index = 0;
+    int16_t tries = 0;
+    int16_t Current_Y = 0;
+    int16_t Current_X = 0;
+    int16_t Next_Y = 0;
+    int16_t itr = 0;
+    int16_t vortex_idx = 0;
+    int16_t Next_X = 0;
+    int16_t dx = 0;
 
     if(magic_set.sound_effects == ST_TRUE)
     {
@@ -816,57 +855,86 @@ void CMB_ProcessVortices__SEGRAX(void)
         Release_Block(World_Data);
     }
 
-    while (Vortex_Index < CMB_Vortex_Count)
+    while(vortex_idx < _vortex_count)
     {
-        Loop_Var = 0;
 
-        while (Loop_Var < 3) {
-            int Next_X, dx;
+        itr = 0;
+
+        while(itr < 3)
+        {
 
             // Set Current_X and Current_Y from CMB_Vortex_Array
-            Current_X = CMB_Vortex_Array[Vortex_Index].cgx;
-            Current_Y = CMB_Vortex_Array[Vortex_Index].cgy;
+            Current_X = CMB_Vortex_Array[vortex_idx].cgx;
+            Current_Y = CMB_Vortex_Array[vortex_idx].cgy;
 
             Next_X = Current_X;
             Next_Y = Current_Y;
-            Tries_Counter = 0;
+
+            tries = 0;
 
             do {
+
                 // Generate random next position
                 Next_X = Current_X + (Random(3) - 2);
                 Next_Y = Current_Y + (Random(3) - 2);
 
                 // Validate position
-                if (Next_X != Current_X || Next_Y != Current_Y) {
+                if(Next_X != Current_X || Next_Y != Current_Y)
+                {
+
                     dx = (Next_Y * COMBAT_GRID_WIDTH) + Next_X;
 
-                    if (battlefield->MoveCost_Teleport[dx] != -1 &&
-                        Next_X >= 0 && Next_X <= COMBAT_GRID_WIDTH &&
-                        Next_Y >= 0 && Next_Y <= COMBAT_GRID_HEIGHT) {
+                    if(
+                        (battlefield->MoveCost_Teleport[dx] != -1)
+                        &&
+                        (Next_X >= 0)
+                        &&
+                        (Next_X <= COMBAT_GRID_WIDTH)
+                        &&
+                        (Next_Y >= 0)
+                        &&
+                        (Next_Y <= COMBAT_GRID_HEIGHT)
+                    )
+                    {
 
                         // Calculate absolute movement distances
-                        int dist_x = abs(Next_X - CMB_Vortex_Array[Vortex_Index].Prev_or_Next_X);
-                        int dist_y = abs(Next_Y - CMB_Vortex_Array[Vortex_Index].Prev_or_Next_Y);
+                        int dist_x = abs(Next_X - CMB_Vortex_Array[vortex_idx].move_cgx);
+                        int dist_y = abs(Next_Y - CMB_Vortex_Array[vortex_idx].move_cgy);
 
-                        if (dist_x + dist_y <= 1 && Tries_Counter < 50) {
-                            CMB_VortexMovement__SEGRAX(Vortex_Index, Next_X, Next_Y);
+                        if(
+                            (dist_x + dist_y <= 1)
+                            &&
+                            (tries < 50)
+                        )
+                        {
+
+                            CMB_VortexMovement__SEGRAX(vortex_idx, Next_X, Next_Y);
+
                             break;
+
                         }
+
                     }
+
                 }
 
-                Tries_Counter++;
-            } while (Tries_Counter < 50);
+                tries++;
 
-            Loop_Var++;
+            } while (tries < 50);
+
+            itr++;
+
         }
 
-        CMB_Vortex_Array[Vortex_Index].Prev_or_Next_X = CMB_Vortex_Array[Vortex_Index].cgx;
-        CMB_Vortex_Array[Vortex_Index].Prev_or_Next_Y = CMB_Vortex_Array[Vortex_Index].cgy;
+        CMB_Vortex_Array[vortex_idx].move_cgx = CMB_Vortex_Array[vortex_idx].cgx;
+        CMB_Vortex_Array[vortex_idx].move_cgy = CMB_Vortex_Array[vortex_idx].cgy;
 
-        CMB_VortexPlayerMove__SEGRAX(Vortex_Index);
-        Vortex_Index++;
+        CMB_VortexPlayerMove__SEGRAX(vortex_idx);
+
+        vortex_idx++;
+
     }
+
 }
 
 
@@ -881,22 +949,22 @@ void CMB_ProcessVortices__SEGRAX(void)
  * prev coordinates are set to /	used as	next ones for
  * the duration of the movement
  */
-void CMB_VortexMovement__SEGRAX(int Vortex_Index, int Next_X, int Next_Y)
+void CMB_VortexMovement__SEGRAX(int vortex_idx, int Next_X, int Next_Y)
 {
     int Prev_X, Prev_Y;
     int16_t Damage_Array[3] = { 0, 0, 0 };
     int X_Distance, Y_Distance;
 
     // Retrieve the vortex
-    // struct s_CMB_Vortex* vortex = &CMB_Vortex_Array[Vortex_Index];
-    struct s_MAGIC_VORTEX * vortex = &CMB_Vortex_Array[Vortex_Index];
+    // struct s_CMB_Vortex* vortex = &CMB_Vortex_Array[vortex_idx];
+    struct s_MAGIC_VORTEX * vortex = &CMB_Vortex_Array[vortex_idx];
     Prev_X = vortex->cgx;
     Prev_Y = vortex->cgy;
     frame_active_flag = 0;
 
     // Update the vortex with the new position
-    vortex->Prev_or_Next_X = Next_X;
-    vortex->Prev_or_Next_Y = Next_Y;
+    vortex->move_cgx = Next_X;
+    vortex->move_cgy = Next_Y;
 
     if(magic_set.sound_effects == 1)
     {
@@ -907,7 +975,7 @@ void CMB_VortexMovement__SEGRAX(int Vortex_Index, int Next_X, int Next_Y)
     // Animate the vortex movement
     for(int i = 0; i < 8; i++)
     {
-        vortex->Move_Stage = i;
+        vortex->stage = i;
         Set_Page_Off();
         Tactical_Combat_Draw();
         PageFlip_FX();
@@ -923,9 +991,9 @@ void CMB_VortexMovement__SEGRAX(int Vortex_Index, int Next_X, int Next_Y)
         CMB_CityDamage += 5;
     }
 
-    vortex->Prev_or_Next_X = Prev_X;
-    vortex->Prev_or_Next_Y = Prev_Y;
-    vortex->Move_Stage = 0;
+    vortex->move_cgx = Prev_X;
+    vortex->move_cgy = Prev_Y;
+    vortex->stage = 0;
 
     for(int i = 0; i < _combat_total_unit_count; i++)
     {
