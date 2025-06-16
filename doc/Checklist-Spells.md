@@ -325,7 +325,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Berserk
 [x] Shadow Demons
 [x] Wraith Form
-[-] Wrack
+[x] Wrack
 [x] Evil Presence
 [x] Wraiths
 [x] Cloud of Shadow

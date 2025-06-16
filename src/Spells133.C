@@ -147,7 +147,160 @@ void Apply_Warp_Creature(int16_t battle_unit_idx)
 }
 
 
-// WZD o133p02  WIZ_Wrack()
+// WZD o133p02
+/*
+; processes the Wrack effect of the selected player,
+; including loading and playing its animation
+; BUGs: can only affect up to 40 figures at a time, can
+; corrupt memory in unlucky scenarios, its effect is
+; prevented by Wraith Form, and it does squared the
+; intended damage to units
+*/
+/*
+
+Wrack:
+Death. Combat Enchantment. Casting Cost: 40 mana. Rare.
+Wracks all non-death creatures with the agonies of darkness
+every combat turn. All enemy figures that cannot resist this pain
+lose one hit point.
+*/
+void Apply_Wrack(int16_t player_idx)
+{
+    // count of damages per battle unit
+    int8_t Damage_Per_Unit_Array[MAX_BATTLE_UNIT_SLOT_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } ;
+    // populated with battle_unit_idx
+    int8_t Damaged_Unit_Array[MAX_BATTLE_UNIT_SLOT_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } ;
+    int16_t screen_y = 0 ;
+    int16_t screen_x = 0 ;
+    int16_t figure_ctr = 0 ;  /// used to index Damaged_Unit_Array[]
+    int16_t damage_types[3] = { 0, 0, 0 } ;
+    uint32_t enchantments = 0 ;
+    int16_t anim_size = 0 ;
+    int16_t itr1 = 0 ;
+    int16_t itr2 = 0;  // _SI_
+    int16_t itr3 = 0;  // _DI_
+
+    damage_types[0] = 1;
+    damage_types[2] = 0;
+    damage_types[1] = 0;
+
+    figure_ctr = 0;
+
+    for(itr1 = 0; itr1 < MAX_BATTLE_UNIT_SLOT_COUNT; itr1++)
+    {
+
+        Damage_Per_Unit_Array[itr1] = 0;
+
+    }
+
+    Mark_Block(_screen_seg);
+
+    anim_size = Spell_Animation_Load_Graphics(spl_Wrack);
+
+    // preform a resistance check for each figure of every
+    // enemy unit, storing the results into the local arrays
+    // BUGs: Wraith Form grants immunity, and the damaged
+    // unit array is filled out fundamentally wrong
+
+    for(itr1 = 0; itr1 < _combat_total_unit_count; itr1++)
+    {
+
+        enchantments = (_UNITS[battle_units[itr1].unit_idx].enchantments | battle_units[itr1].enchantments | battle_units[itr1].item_enchantments);
+
+        if(
+            (battle_units[itr1].controller_idx != player_idx)
+            &&
+            (battle_units[itr1].status == bus_Active)
+            &&
+            ((battle_units[itr1].enchantments & UE_WRAITHFORM) == 0)  /* ; BUG: this enchantment should not help here */
+            &&
+            ((battle_units[itr1].Attribs_1 & USA_IMMUNITY_DEATH) == 0)
+        )
+        {
+
+            for(itr2 = 0; battle_units[itr1].Cur_Figures > itr2; itr2++)
+            {
+                
+                if(Combat_Resistance_Check(battle_units[itr1], 1, sbr_Death) > 0)
+                {
+
+                    Damaged_Unit_Array[figure_ctr] = itr1;
+
+                    Damage_Per_Unit_Array[itr1] += 1;
+
+                    figure_ctr++;
+
+                }
+
+            }
+
+        }
+
+    }
+
+    for(itr1 = 0; (FLIC_Get_FrameCount(spell_animation_seg) + figure_ctr) > itr1; itr1++)
+    {
+
+        if(((FLIC_Get_FrameCount(spell_animation_seg) + figure_ctr) / 2) == itr1)
+        {
+
+            // apply damage to the affected units
+            // BUG: overwriting the damage array causes the actual
+            // damage done to be the square of what was intended
+            for(itr2 = 0; itr2 < figure_ctr; itr2++)
+            {
+
+                if(Damage_Per_Unit_Array[Damaged_Unit_Array[itr2]] > 0)
+                {
+
+                    damage_types[0] = Damage_Per_Unit_Array[Damaged_Unit_Array[itr2]];
+
+                    BU_ApplyDamage__WIP(Damaged_Unit_Array[itr2], &damage_types[0]);
+
+                }
+
+            }
+            
+            Set_Page_Off();
+
+            Tactical_Combat_Draw();
+
+            for(itr3 = 0; itr3 < figure_ctr; itr3++)
+            {
+
+                Combat_Grid_Screen_Coordinates(battle_units[Damaged_Unit_Array[itr3]].cgx, battle_units[Damaged_Unit_Array[itr3]].cgy, 4, 4, &screen_x, &screen_y);
+
+                if(anim_size == 0)
+                {
+
+                    screen_x -= 14;
+                    screen_y -= 21;
+
+                }
+                else
+                {
+
+                    screen_x -= 28;
+                    screen_y -= 30;
+
+                }
+
+                Set_Animation_Frame(spell_animation_seg, (itr1 - itr3));
+
+                Clipped_Draw(screen_x, screen_y, spell_animation_seg);
+
+            }
+
+            PageFlip_FX();
+
+        }
+
+    }
+
+    Release_Block(_screen_seg);
+
+}
+
 
 // WZD o133p03
 /*

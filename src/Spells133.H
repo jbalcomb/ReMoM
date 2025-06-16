@@ -23,7 +23,8 @@ extern "C" {
 // WZD o133p01
 void Apply_Warp_Creature(int16_t battle_unit_idx);
 
-// WZD o133p02  WIZ_Wrack()
+// WZD o133p02
+void Apply_Wrack(int16_t player_idx);
 
 // WZD o133p03
 void Apply_Call_Lightning(int16_t player_idx);

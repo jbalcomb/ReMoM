@@ -60,7 +60,9 @@ ITEM_MAX_POWERS
 #define NUM_MAGIC_TYPES             5
 #define NUM_MAGIC_REALMS            6
 
+// #define MAX_BATTLE_UNIT_COUNT      18
 #define MAX_BATTLE_UNIT_COUNT      18
+// #define MAX_BATTLE_UNIT_SLOT_COUNT 36
 #define MAX_BATTLE_UNIT_SLOT_COUNT 36
 #define CASTER_IDX_BASE            20
 #define CASTER_IDX_MAX             25  // 20 + 1 + 4  pretty sure MoO2 has name for players except neutral player(s)/monsters

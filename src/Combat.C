@@ -2712,7 +2712,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 */
 void CMB_PrepareTurn__WIP(void)
 {
-    int16_t Selected_Unit = 0;
+    int16_t saved_active_battle_unit = 0;
     int16_t Roll_Result = 0;
     int16_t itr = 0;  // _SI_
 
@@ -2754,23 +2754,23 @@ void CMB_PrepareTurn__WIP(void)
     if(combat_enchantments[WRACK_ATTKR] != 0)
     {
         
-        // TODO  WIZ_Wrack(_combat_attacker_player);
+        Apply_Wrack(_combat_attacker_player);
 
     }
 
     if(combat_enchantments[WRACK_DFNDR] != 0)
     {
 
-        // TODO  WIZ_Wrack(_combat_defender_player);
+        Apply_Wrack(_combat_defender_player);
 
     }
 
 
-    Selected_Unit = _active_battle_unit;
+    saved_active_battle_unit = _active_battle_unit;
 
     CMB_ProcessVortices__SEGRAX();
 
-    _active_battle_unit = Selected_Unit;
+    _active_battle_unit = saved_active_battle_unit;
 
 
     // TODO  Init_Battlefield_Effects(CMB_combat_structure);
