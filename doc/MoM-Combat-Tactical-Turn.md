@@ -1,6 +1,42 @@
 
 
 
+
+
+## CMB_ProgressTurnFlow__WIP()
+
+
+
+## CMB_PrepareTurn__WIP()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Move_Battle_Unit__WIP() ==> Battle_Unit_Move__WIP()
 BU_CombatAction__WIP() ==> Battle_Unit_Action__WIP()
 ... ==> Battle_Unit_Attack__WIP()
@@ -15,14 +51,12 @@ _ai_retreat_flag is {F,T} for hether the AI is allowed to retreat, checked in Re
 
 
 
-
 How does a 'Combat Turn' happen?
 
 Battle_Unit_Action__WIP()
 
 CMB_ProgressTurnFlow__WIP() does the turn for the computer player and the auto combat for the human player, but still has nothing for an 'end of turn' indicator.
 ...calls AI_CMB_PlayTurn__WIP()
-
 
 At the end of Tactical_Combat__WIP()
     if((leave_screen == ST_FALSE) && (CMB_HumanUnitsDone == ST_TRUE) && (CMB_ImmobileCanAct == ST_FALSE))
@@ -34,14 +68,15 @@ At the end of Tactical_Combat__WIP()
 ...after moving, didn't hit Next_Battle_Unit() and it still thinks the moved unit is the active unit
 
 
+
 battle_units[itr].action = bua_Finished;
     Tactical_Combat__WIP()
         ...right after 'Auto Combat', before balance of input matching...
         if(((battle_units[_active_battle_unit].movement_points < 1) && (battle_units[_active_battle_unit].action != bua_Finished)) || (battle_units[_active_battle_unit].status > bus_Active))
     'Left-Click Done Button'
     CMB_PrepareTurn__WIP()
-        Roll_Result = Combat_Resistance_Check()
-        if(Roll_Result > 0)
+        resist_fails = Combat_Resistance_Check()
+        if(resist_fails > 0)
 
 ...
 no movement points triggers setting all_done_none_available

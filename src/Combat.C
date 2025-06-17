@@ -1032,13 +1032,23 @@ Init_Battlefield_Effects()
 UNIT_ConvSpellATK()
 UNIT_ConvSpellATK()
 
+
+Holy Bonus, Leadership, Prayer Master
+"...only the best applies..."
+"...only the highest bonus applies..."
+"...Prayer Master or Resistance to All..."
+    attack strength (swords), defense (shields) and resistance (crosses) of all friendly units in combat by bonus level of holy bonus
+
+¿ indexed by PLAYER_NUM() ?
+
 */
 // WZD dseg:C896
-int16_t * CMB_LeadershipArray;
 // WZD dseg:C89A
-int16_t * CMB_ResistAllArray;
 // WZD dseg:C89E
-int16_t * CMB_HolyBonusArray;
+int16_t * _battlefield_leadership;
+int16_t * _battlefield_resistall;
+int16_t * _battlefield_holybonus;
+
 // WZD dseg:C8A2
 int16_t * CMB_IDK_4PR;
 // WZD dseg:C8A6
@@ -1541,7 +1551,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     _combat_total_battle_effect_count = Combat_Info_Effects_Count();
 
 
-    Init_Battlefield_Effects(CMB_combat_structure);
+    Calc_Battlefield_Bonuses(CMB_combat_structure);
 
 
     Combat_Cache_Write();
@@ -2748,7 +2758,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 void CMB_PrepareTurn__WIP(void)
 {
     int16_t saved_active_battle_unit = 0;
-    int16_t Roll_Result = 0;
+    int16_t resist_fails = 0;
     int16_t itr = 0;  // _SI_
 
     CMB_ImmobileCanAct = ST_TRUE;
@@ -2816,10 +2826,10 @@ void CMB_PrepareTurn__WIP(void)
     */
 
 
-    // TODO  Init_Battlefield_Effects(CMB_combat_structure);
+    Calc_Battlefield_Bonuses(CMB_combat_structure);
 
 
-    // TODO  CMB_UnitCityDamage();
+    CMB_UnitCityDamage__WIP();
 
 
     for(itr = 0; itr < _combat_total_unit_count; itr++)
@@ -2859,9 +2869,9 @@ void CMB_PrepareTurn__WIP(void)
         {
                         
             // ¿ ; BUG: this is already applied to the unit itself ?
-            Roll_Result = Combat_Resistance_Check(battle_units[itr], (CMB_ResistAllArray[battle_units[itr].controller_idx] + 1), spell_data_table[spl_Terror].magic_realm);
+            resist_fails = Combat_Resistance_Check(battle_units[itr], (_battlefield_resistall[battle_units[itr].controller_idx] + 1), spell_data_table[spl_Terror].magic_realm);
 
-            if(Roll_Result > 0)
+            if(resist_fails > 0)
             {
 
                 battle_units[itr].action = bua_Finished;
@@ -2913,13 +2923,13 @@ void CMB_PrepareTurn__WIP(void)
                 if(battle_units[itr].melee > battle_units[itr].ranged)
                 {
 
-                    Roll_Result = battle_units[itr].melee;
+                    resist_fails = battle_units[itr].melee;
 
                 }
                 else
                 {
 
-                    Roll_Result = battle_units[itr].ranged;
+                    resist_fails = battle_units[itr].ranged;
 
                 }
 
@@ -2927,19 +2937,19 @@ void CMB_PrepareTurn__WIP(void)
             else if(battle_units[itr].ranged_type > srat_Thrown)
             {
 
-                Roll_Result = (battle_units[itr].melee + battle_units[itr].ranged);
+                resist_fails = (battle_units[itr].melee + battle_units[itr].ranged);
 
             }
             else
             {
 
-                Roll_Result = battle_units[itr].melee;
+                resist_fails = battle_units[itr].melee;
 
             }
 
         }
 
-        battle_units[itr].Web_HP -= Roll_Result; 
+        battle_units[itr].Web_HP -= resist_fails; 
 
         if(battle_units[itr].Web_HP > 0)
         {
@@ -2977,9 +2987,9 @@ void CMB_PrepareTurn__WIP(void)
         if((battle_units[itr].Combat_Effects & bue_Confusion) != 0)
         {
 
-            Roll_Result = Random(4);
+            resist_fails = Random(4);
 
-            if(Roll_Result == 1)
+            if(resist_fails == 1)
             {
 
                 battle_units[itr].action = bua_Finished;
@@ -2988,14 +2998,14 @@ void CMB_PrepareTurn__WIP(void)
 
             }
 
-            if(Roll_Result == 2)
+            if(resist_fails == 2)
             {
 
                 battle_units[itr].Confusion_State = 1;
 
             }
 
-            if(Roll_Result == 3)
+            if(resist_fails == 3)
             {
 
                 battle_units[itr].Confusion_State = 2;
@@ -3913,6 +3923,18 @@ int16_t BU_IsVisible__STUB(int16_t battle_unit_idx)
 
 // WZD s91p09
 // drake178: CMB_UnitCityDamage()
+/*
+*/
+/*
+
+*/
+void CMB_UnitCityDamage__WIP(void)
+{
+
+
+
+}
+
 
 // WZD s91p10
 // drake178: BU_GetInstaMoveType()
@@ -8843,9 +8865,9 @@ void CMB_LoadResources__WIP(void)
 
     CMB_IDK_4PR = (int16_t *)Allocate_Next_Block(_screen_seg, 4);  // header + sub-header + 2 PR ... or header + 3 sub-headers?
 
-    CMB_HolyBonusArray  = (int16_t *)Allocate_Next_Block(_screen_seg, 6);
-    CMB_ResistAllArray  = (int16_t *)Allocate_Next_Block(_screen_seg, 6);
-    CMB_LeadershipArray = (int16_t *)Allocate_Next_Block(_screen_seg, 6);
+    _battlefield_holybonus  = (int16_t *)Allocate_Next_Block(_screen_seg, 6);
+    _battlefield_resistall  = (int16_t *)Allocate_Next_Block(_screen_seg, 6);
+    _battlefield_leadership = (int16_t *)Allocate_Next_Block(_screen_seg, 6);
 
     _cmbt_spell_button_seg = LBX_Reload_Next(compix_lbx_file__ovr103, 1, _screen_seg);
 
@@ -10284,9 +10306,9 @@ void Strategic_Combat_Allocate(void)
     }
 
     CMB_IDK_4PR = (int16_t *)Allocate_Next_Block(_screen_seg, 4);  // header + sub-header + 2 PR ... or header + 3 sub-headers?
-    CMB_HolyBonusArray  = (int16_t *)Allocate_Next_Block(_screen_seg, 3);  // sub-header + 2 PR  32 B
-    CMB_ResistAllArray  = (int16_t *)Allocate_Next_Block(_screen_seg, 3);  // sub-header + 2 PR  32 B
-    CMB_LeadershipArray = (int16_t *)Allocate_Next_Block(_screen_seg, 3);  // sub-header + 2 PR  32 B
+    _battlefield_holybonus  = (int16_t *)Allocate_Next_Block(_screen_seg, 3);  // sub-header + 2 PR  32 B
+    _battlefield_resistall  = (int16_t *)Allocate_Next_Block(_screen_seg, 3);  // sub-header + 2 PR  32 B
+    _battlefield_leadership = (int16_t *)Allocate_Next_Block(_screen_seg, 3);  // sub-header + 2 PR  32 B
 
 }
 
@@ -10412,7 +10434,7 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
     }
 
 
-    Init_Battlefield_Effects(combat_structure);
+    Calc_Battlefield_Bonuses(combat_structure);
 
 
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
@@ -21342,11 +21364,31 @@ int16_t BU_GetEffectiveDEF__SEGRAX(int16_t battle_unit_idx, int16_t attack_type,
     Hero - Prayer Master
     Hero - Leadership
     CMB_ResistAllArray += CMB_HolyBonusArray
+
+Holy Bonus . . . . . . . . Increases attack strength (swords), defense (shields) and resistance (crosses) of all friendly units in combat by bonus level of holy bonus; only the best Holy Bonus applies at any one time.
+
+*Leadership. . . . . . . . Increases melee attack strength by one per three experience levels of the hero to all normal units on the battlefield; note that Undead, Black Channeled or Chaos Channeled units which were once normal do not get this bonus. Only the highest Leadership bonus applies.
+
+*Prayer Master . . . . . . Increases all resistance rolls for all units on the battlefield by one (10%) per experience level. Only the best Prayer Master or Resistance to All applies.
+
+
+Cloud of Shadow:
+Death. City Enchantment. Casting Cost: 150 mana; Upkeep: 3 mana/turn. Rare.
+Envelops the target friendly city in a dense cloud of darkness (equivalent in effect to the darkness spell). All combat in the city takes place under this effect.
+
+Darkness:
+Death. Combat Enchantment. Casting Cost: 25 mana. Common.
+Drapes a shroud of darkness over the entire battlefield, inspiring creatures of death who gain one point each in attack strength (swords), defense (shields) and resistance (crosses). Creatures of life, on the other hand, are dispirited and lose one point each in attack strength, defense and resistance.
+
 */
-void Init_Battlefield_Effects(int16_t combat_structure)
+/*
+    handles Cloud of Darkness, City Walls, Holy Bonus, Leadershipd, Prayer Master/Resistance to All
+
+*/
+void Calc_Battlefield_Bonuses(int16_t combat_structure)
 {
-    int16_t Leadership_Value;
-    int16_t Prayermaster_Bonus;
+    int16_t leadership_level;
+    int16_t prayer_level;
     int16_t itr_players;  // _SI_
     int16_t itr_arrays;  // _SI_
     int16_t itr_battle_units;  // _SI_
@@ -21382,29 +21424,25 @@ void Init_Battlefield_Effects(int16_t combat_structure)
 
         if(_players[itr_players].Globals[ETERNAL_NIGHT] > 0)
         {
-            // if(combat_enchantments->True_Light.Dfndr != 2)
+
             if(combat_enchantments[TRUE_LIGHT_DFNDR] != 2)
             {
 
                 if(itr_players == _combat_attacker_player)
                 {
 
-                    // combat_enchantments->Darkness.Attkr = 3;
                     combat_enchantments[DARKNESS_ATTKR] = 3;
 
                 }
                 else if(itr_players == _combat_defender_player)
                 {
 
-                    // combat_enchantments->Darkness.Dfndr = 3;
                     combat_enchantments[DARKNESS_DFNDR] = 3;
 
                 }
                 else
                 {
                     
-                    // combat_enchantments->Darkness.Dfndr = 3;
-                    // combat_enchantments->Darkness.Attkr = 3;
                     combat_enchantments[DARKNESS_DFNDR] = 3;
                     combat_enchantments[DARKNESS_ATTKR] = 3;
 
@@ -21416,19 +21454,20 @@ void Init_Battlefield_Effects(int16_t combat_structure)
 
     }
 
-    for(itr_arrays = 0; itr_arrays < 7; itr_arrays++)
+    for(itr_arrays = 0; itr_arrays < (NUM_PLAYERS + 1); itr_arrays++)
     {
-        CMB_HolyBonusArray[itr_arrays] = 0;
-        CMB_ResistAllArray[itr_arrays] = 0;
-        CMB_LeadershipArray[itr_arrays] = 0;
+        _battlefield_holybonus[itr_arrays] = 0;
+        _battlefield_resistall[itr_arrays] = 0;
+        _battlefield_leadership[itr_arrays] = 0;
     }
 
 
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
-        Leadership_Value = 0;
 
-        if(battle_units[itr_battle_units].status == 0) /* Unit_Active */
+        leadership_level = 0;
+
+        if(battle_units[itr_battle_units].status == bus_Active)
         {
 
             // BUGBUG: should be checking for City Wall
@@ -21443,21 +21482,21 @@ void Init_Battlefield_Effects(int16_t combat_structure)
 
             battle_unit_owner_idx = battle_units[itr_battle_units].controller_idx;
 
-            if((battle_units[itr_battle_units].Attribs_2 & USA_HOLYBONUS) !=0)
+            if((battle_units[itr_battle_units].Attribs_2 & USA_HOLYBONUS) != 0)
             {
                 // DEDU  what is it testing/setting here? what's in Spec_Att_Attrib, how'd it get there - memcpy?
-                if(battle_units[itr_battle_units].Spec_Att_Attrib > CMB_HolyBonusArray[battle_unit_owner_idx])
+                if(battle_units[itr_battle_units].Spec_Att_Attrib > _battlefield_holybonus[battle_unit_owner_idx])
                 {
-                    CMB_HolyBonusArray[battle_unit_owner_idx] = battle_units[itr_battle_units].Spec_Att_Attrib;
+                    _battlefield_holybonus[battle_unit_owner_idx] = battle_units[itr_battle_units].Spec_Att_Attrib;
                 }
             }
 
             if((battle_units[itr_battle_units].Attribs_2 & USA_RESISTALL) != 0)
             {
                 // DEDU  what is it testing/setting here? what's in Spec_Att_Attrib, how'd it get there - memcpy?
-                if(battle_units[itr_battle_units].Spec_Att_Attrib > CMB_ResistAllArray[battle_unit_owner_idx])
+                if(battle_units[itr_battle_units].Spec_Att_Attrib > _battlefield_resistall[battle_unit_owner_idx])
                 {
-                    CMB_ResistAllArray[battle_unit_owner_idx] = battle_units[itr_battle_units].Spec_Att_Attrib;
+                    _battlefield_resistall[battle_unit_owner_idx] = battle_units[itr_battle_units].Spec_Att_Attrib;
                 }
             }
 
@@ -21467,36 +21506,36 @@ void Init_Battlefield_Effects(int16_t combat_structure)
                 // Prayermaster
                 if(HERO_PRAYERMASTER(battle_unit_owner_idx, _UNITS[battle_units[itr_battle_units].unit_idx].type))
                 {
-                    Prayermaster_Bonus = (_UNITS[battle_units[itr_battle_units].unit_idx].Level + 1);
-                    if(Prayermaster_Bonus > CMB_ResistAllArray[battle_unit_owner_idx])
+                    prayer_level = (_UNITS[battle_units[itr_battle_units].unit_idx].Level + 1);
+                    if(prayer_level > _battlefield_resistall[battle_unit_owner_idx])
                     {
-                        CMB_ResistAllArray[battle_unit_owner_idx] = Prayermaster_Bonus;
+                        _battlefield_resistall[battle_unit_owner_idx] = prayer_level;
                     }
                 }
                 if(HERO_PRAYERMASTER2(battle_unit_owner_idx, _UNITS[battle_units[itr_battle_units].unit_idx].type))
                 {
-                    Prayermaster_Bonus = (((_UNITS[battle_units[itr_battle_units].unit_idx].Level + 1) * 3) / 2);
-                    if(Prayermaster_Bonus > CMB_ResistAllArray[battle_unit_owner_idx])
+                    prayer_level = (((_UNITS[battle_units[itr_battle_units].unit_idx].Level + 1) * 3) / 2);
+                    if(prayer_level > _battlefield_resistall[battle_unit_owner_idx])
                     {
-                        CMB_ResistAllArray[battle_unit_owner_idx] = Prayermaster_Bonus;
+                        _battlefield_resistall[battle_unit_owner_idx] = prayer_level;
                     }
                 }
 
                 // Leadership
                 if(HERO_LEADERSHIP(battle_unit_owner_idx, _UNITS[battle_units[itr_battle_units].unit_idx].type))
                 {
-                    Leadership_Value = ((_UNITS[battle_units[itr_battle_units].unit_idx].Level + 1) / 3);
-                    if(Leadership_Value > CMB_LeadershipArray[battle_unit_owner_idx])
+                    leadership_level = ((_UNITS[battle_units[itr_battle_units].unit_idx].Level + 1) / 3);
+                    if(leadership_level > _battlefield_leadership[battle_unit_owner_idx])
                     {
-                        CMB_LeadershipArray[battle_unit_owner_idx] = Leadership_Value;
+                        _battlefield_leadership[battle_unit_owner_idx] = leadership_level;
                     }
                 }
                 if(HERO_LEADERSHIP2(battle_unit_owner_idx, _UNITS[battle_units[itr_battle_units].unit_idx].type))
                 {
-                    Leadership_Value = ((_UNITS[battle_units[itr_battle_units].unit_idx].Level + 1) / 2);
-                    if(Leadership_Value > CMB_LeadershipArray[battle_unit_owner_idx])
+                    leadership_level = ((_UNITS[battle_units[itr_battle_units].unit_idx].Level + 1) / 2);
+                    if(leadership_level > _battlefield_leadership[battle_unit_owner_idx])
                     {
-                        CMB_LeadershipArray[battle_unit_owner_idx] = Leadership_Value;
+                        _battlefield_leadership[battle_unit_owner_idx] = leadership_level;
                     }
                 }
 
@@ -21509,7 +21548,7 @@ void Init_Battlefield_Effects(int16_t combat_structure)
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-        CMB_ResistAllArray[itr_players] += CMB_HolyBonusArray[itr_players];
+        _battlefield_resistall[itr_players] += _battlefield_holybonus[itr_players];
     }
 
 }

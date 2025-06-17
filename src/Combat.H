@@ -1261,7 +1261,7 @@ void Assign_Combat_Grids(void);
 int16_t BU_IsVisible__STUB(int16_t battle_unit_idx);
 
 // WZD s91p09
-// drake178: CMB_UnitCityDamage()
+void CMB_UnitCityDamage__WIP(void);
 
 // WZD s91p10
 int16_t BU_GetInstaMoveType__WIP(int16_t battle_unit_idx);
@@ -1776,7 +1776,7 @@ int16_t BU_GetEffectiveDEF__SEGRAX(int16_t battle_unit_idx, int16_t attack_type,
 // BU_GetATKRealm()
 
 // WZD o122p10
-void Init_Battlefield_Effects(int16_t combat_structure);
+void Calc_Battlefield_Bonuses(int16_t combat_structure);
 
 // WZD o122p11
 void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t cgx, int16_t cgy);
