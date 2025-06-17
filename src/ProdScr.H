@@ -9,7 +9,8 @@
 #ifndef PRODSCR_H
 #define PRODSCR_H
 
-#include "MOM.H"
+#include "MOX/MOX_TYPE.H"
+
 
 
 #ifdef __cplusplus

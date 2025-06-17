@@ -233,7 +233,7 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
     for(itr1 = 0; itr1 < _vortex_count; itr1++)
     {
 
-        if(CMB_Vortex_Array[itr1].owner_idx == player_idx)
+        if(_vortexes[itr1].owner_idx == player_idx)
         {
 
             spell_idx = spl_Magic_Vortex;
@@ -245,7 +245,7 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
             if(Random(250) <= (threshold + 500))
             {
 
-                Delete_Structure(itr1, (uint8_t *)&CMB_Vortex_Array[0], sizeof(struct s_MAGIC_VORTEX), _vortex_count);
+                Delete_Structure(itr1, (uint8_t *)&_vortexes[0], sizeof(struct s_MAGIC_VORTEX), _vortex_count);
 
                 _vortex_count--;
 
@@ -1130,7 +1130,7 @@ void Combat_Battlefield_Instant(int16_t player_idx, int16_t spell_idx, int16_t a
                         }
                     }
                 }
-                Tactical_Combat_Draw();
+                Combat_Screen_Draw();
                 Combat_Cast_Spell_Message(caster_idx, spell_idx);
                 for(itr1 = 0; itr1 < _combat_total_unit_count; itr1++)
                 {
@@ -1163,7 +1163,7 @@ void Combat_Battlefield_Instant(int16_t player_idx, int16_t spell_idx, int16_t a
             }  /* for(itr2 = 0; (frame_count + 4) > itr2; itr2++) */
             Release_Block(_screen_seg);
             Set_Page_Off();
-            Tactical_Combat_Draw();
+            Combat_Screen_Draw();
             PageFlip_FX();
         }
         else  /* (anims_on == ST_FALSE) */
@@ -1450,7 +1450,7 @@ void Apply_Death_Spell(int16_t player_idx)
 XREF:
     j_CMB_PlaySpellAnim__WIP(*)
         Cast_Spell_On_Battle_Unit()
-
+            Combat_Spell_Animation__WIP()
 */
 void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t player_idx, int16_t anims_on, int16_t caster_idx)
 {
@@ -1547,7 +1547,7 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
 
                 Set_Page_Off();
 
-                Tactical_Combat_Draw();
+                Combat_Screen_Draw();
 
                 Combat_Cast_Spell_Message(caster_idx, spell_idx);
 
@@ -1586,7 +1586,8 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
         // ∴
         // Fireball, Fire Bolt, Ice Bolt, Doom Bolt
         // Lightning Bolt
-        // 
+        // Cracks Call
+        // ..., Magic Vortex, ...
 
         if(anims_on != ST_FALSE)
         {
@@ -1637,8 +1638,14 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
                 }
                 else
                 {
+                    // (spell_idx != spl_Fireball)
+                    // (spell_idx != spl_Fire_Bolt)
+                    // (spell_idx != spl_Ice_Bolt)
+                    // (spell_idx != spl_Doom_Bolt)
+                    // (spell_idx != spl_Lightning_Bolt)
+                    // (spell_idx != spl_Cracks_Call)
 
-                    /* SPELLY */  TILE_CombatSpellAnim__WIP(cgx, cgy, Anim_Size, caster_idx, spell_idx);
+                    Combat_Spell_Animation_Generic__WIP(cgx, cgy, Anim_Size, caster_idx, spell_idx);
 
                 }
 
@@ -1678,7 +1685,7 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
 
     CMB_ComposeBackgrnd__WIP();
     Set_Page_Off();
-    Tactical_Combat_Draw();
+    Combat_Screen_Draw();
     PageFlip_FX();
     Copy_On_To_Off_Page();
     Copy_Off_To_Back();
@@ -1757,7 +1764,7 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
     }
 
     Set_Page_Off();
-    Tactical_Combat_Draw();
+    Combat_Screen_Draw();
     PageFlip_FX();
 
     if(Picked_Target != ST_UNDEFINED)
@@ -1812,7 +1819,7 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
     }
 
     Set_Page_Off();
-    Tactical_Combat_Draw();
+    Combat_Screen_Draw();
     PageFlip_FX();
 
 }
@@ -1848,7 +1855,7 @@ void Cast_Animate_Dead(int16_t player_idx, int16_t caster_idx)
 
     CMB_ComposeBackgrnd__WIP();
     Set_Page_Off();
-    Tactical_Combat_Draw();
+    Combat_Screen_Draw();
     PageFlip_FX();
     Copy_On_To_Off_Page();
     Copy_Off_To_Back();

@@ -5,8 +5,14 @@
         ovr072
 */
 
+#include "LOADER.H"
+#include "MOX/Allocate.H"
+#include "MOX/LBX_Load.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_TYPE.H"
 
+#include "UNITSTK.H"
+#include "UNITTYPE.H"
 #include "UnitStat.H"
 #include "CityScr.H"
 #include "Lair.H"
@@ -15,6 +21,9 @@
 #include "UnitView.H"
 #include "City_ovr55.H"
 #include "ItemView.H"
+#include "RACETYPE.H"
+
+
 
 /*
     Product Screen

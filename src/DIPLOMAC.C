@@ -14,10 +14,14 @@ MoO2
     Module: DIPLOMAC
 */
 
+#include "Combat.H"
+#include "DIPLOMAC.H"
+
+#include "MOX/Fields.H"
 #include "MOX/MOX_DAT.H"  /* _players[] */
+#include "MOX/MOX_T4.H"
 #include "MOX/SOUND.H"
 
-#include "DIPLOMAC.H"
 #include "LOADER.H"
 #include "MainScr.H"
 #include "MOM_SCR.H"
@@ -229,16 +233,27 @@ void Diplomacy_Screen__STUB(void)
 
     // @@leave_screen
     // DOMSDOS  Stop_All_Sounds__STUB();
+
     Deactivate_Auto_Function();
+
     Clear_Fields();
+
     current_screen = scr_Magic_Screen;
+
     Fade_Out();
-    _page_flip_effect = 2;
-    // TODO  GAME_ReloadWorldData();
+
+    _page_flip_effect = pfe_TogglePagesFadeIn;
+
+    Combat_Cache_Read();
+
     // TODO  GAME_CheckResearch(1);
+
     Cache_Graphics_Overland();
+
     // DOSMSODS  Play_Background_Music__STUB();
     sdl2_Play_Background_Music__WIP();
+
+
 
     // @@done
 

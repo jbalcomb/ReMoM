@@ -31,12 +31,18 @@
 #define INVALID_FIELD       -1000
 
 
+/*
+
+#define ABS(x) (((x) < 0) ? -(x) : (x))
+https://wiki.sei.cmu.edu/confluence/display/c/PRE12-C.+Do+not+define+unsafe+macros
+*/
 #define AbsVal(_val_) ( (_val_) < 0 ? (-(_val_)) : (_val_) )
 
 // Define macro to swap two numbers
 // #define SWAP(x, y, temp) temp = x; x = y; y = temp;  ... macro expansion(temp = x; x = y; y = temp;)
 // x = x + y - ( y = x );
 // #define SWAP(x, y, T) do { T SWAP = x; x = y; y = SWAP; } while (0)  ...  invoke: SWAP(a, b, int);
+// 'Graphics Gems'
 #define SWAP(x, y) (x ^= y ^= x ^= y)
 // temp = x2; x2 = x1; x1 = temp;
 // temp = y2; y2 = y1; y1 = temp;
@@ -104,6 +110,35 @@ Eh?
 // TODO  
 // TODO  #define sgn(x)  ( (x < 0) ? -1 : ((x > 0) ? 1 : 0) )    /* macro to return the sign of a number */
 
+
+/*
+    Distance Calculations
+
+orthogonal movement
+diagonal
+cardinal direction
+
+Euclidean Distance
+sqrt((x * x) + (y * y))
+most well known method
+this can cause issues later on
+
+Manhattan Distance      AKA "taxicab distance" or "L1 distance"
+|x1 - x2| + |y1 - y2|
+more often use in 2D games, as it doesn't suffer from the issues that Euclidean distance does
+notable difference Manhattan distance treats diagonal moves as being twice as expensive as a move in a cardinal direction
+
+Chebyshev Distance
+
+the Moore neighborhood
+
+https://iq.opengenus.org/euclidean-vs-manhattan-vs-chebyshev-distance/
+
+https://chris3606.github.io/GoRogue/articles/grid_components/measuring-distance.html
+*/
+#define DIST(_x1_,_x2_,_y1_,_y2_)               ( abs( ( (_x1_) - (_x2_) ) ) + abs( ( (_y1_) - (_y2_) ) ) )
+#define ABS_DIST(_x1_,_x2_,_y1_,_y2_)           ( abs( ( (_x1_) - (_x2_) ) ) + abs( ( (_y1_) - (_y2_) ) ) )
+#define MANHATTAN_DISTANCE(_x1_,_x2_,_y1_,_y2_) ( abs( ( (_x1_) - (_x2_) ) ) + abs( ( (_y1_) - (_y2_) ) ) )
 
 
 

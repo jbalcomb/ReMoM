@@ -3,6 +3,8 @@
         ovr128
 */
 
+#include "CITYCALC.H"
+#include "MOX/Util.H"
 #include "Spells128.H"
 
 #include "MOX/Allocate.H"

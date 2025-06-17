@@ -8,7 +8,7 @@
 #ifndef ITEMVIEW_H
 #define ITEMVIEW_H
 
-#include "MOM.H"
+#include "MOX/MOX_TYPE.H"
 
 
 

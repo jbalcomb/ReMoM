@@ -6,10 +6,28 @@
         ovr162
 */
 
-#include "MOX/MOX_DEF.H"
-#include "MOX/MOX_DAT.H"  /* _players[] */
+#include "AIMOVE.H"
 
-#include "MOM.H"
+#include "MOX/random.H"
+#include "STU/STU_CHK.H"
+
+#include "MOX/MOM_Data.H"
+#include "MOX/MOX_DAT.H"  /* _players[] */
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_TYPE.H"
+#include "MOX/Util.H"
+
+#include "AIDATA.H"
+#include "AIDUDES.H"
+#include "CITYCALC.H"
+#include "Combat.H"
+#include "DIPLOMAC.H"
+#include "NEXTTURN.H"
+#include "RACETYPE.H"
+#include "Spellbook.H"
+#include "UNITTYPE.H"
+#include "UnitMove.H"
+#include "special.H"
 
 
 
@@ -98,7 +116,7 @@ void AI_SetUnitOrders__WIP(int16_t player_idx)
             (_players[player_idx].Dipl.Dipl_Status[HUMAN_PLAYER_IDX] >= DIPL_War)
         )
         &&
-        (_players[player_idx].peace_duration == 0)
+        (_players[player_idx].peace_duration[HUMAN_PLAYER_IDX] == 0)
     )
     {
 

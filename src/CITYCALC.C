@@ -6,10 +6,36 @@
         ovr142
 */
 
-#include "MOX/MOM_Data.H"
-#include "MOX/MOX_DAT.H"  /* _players[] */
+#include "CITYCALC.H"
 
-#include "MOM.H"
+#include "MOX/MOM_Data.H"
+#include "MOX/MOX_BASE.H"
+#include "MOX/MOX_BITS.H"
+#include "MOX/MOX_DAT.H"  /* _players[] */
+#include "MOX/MOX_DEF.H"
+#include "MOX/random.H"
+#include "MOX/Util.H"
+
+#include "AIDUDES.H"
+#include "Items.H"
+#include "MOM_DEF.H"
+#include "MovePath.H"
+#include "RACETYPE.H"
+#include "SETTLE.H"
+#include "Spellbook.H"
+#include "Terrain.H"
+#include "UNITTYPE.H"   // WTFMATE
+
+#ifdef STU_DEBUG
+#include "STU/STU_DBG.H"
+#endif
+
+#include <assert.h>
+#include <math.h>       /* sqrt() */
+#include <stdlib.h>     /* abs(); itoa(); malloc(); */
+#include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
+
+
 
 /*
     WIZARDS.EXE  ovr120

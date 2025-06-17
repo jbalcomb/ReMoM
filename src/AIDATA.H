@@ -9,7 +9,10 @@
 #ifndef AIDATA_H
 #define AIDATA_H
 
-#include "MOM.H"
+#include "MOM_DEF.H"
+#include "MOX/MOX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {

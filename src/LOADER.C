@@ -1,13 +1,15 @@
 
 #include "LOADER.H"
 
-
+#include "MOX/LBX_Load.H"
 #include "MOX/MOX_TYPE.H"
 #include "MOX/MOX_SND.H"
 
-#include "MGC_DATA.H"
-
 #include "CITYSCAP.H"
+#include "MGC_DATA.H"
+#include "MainMenu.H"
+#include "Settings.H"
+#include "Spellbook.H"
 
 
 
@@ -861,7 +863,7 @@ void Reload_Combat_Graphics_Cache(void)
     }
 
     // CMBMAGIC.LBX, 120  "VORTEX2"   ""
-    IMG_GUI_Vortex = LBX_Reload_Next(cmbmagic_lbx_file__ovr052, 120, GFX_Swap_Seg);
+    magic_vortex_seg = LBX_Reload_Next(cmbmagic_lbx_file__ovr052, 120, GFX_Swap_Seg);
 
     for(itr1 = 0; itr1 < 5; itr1++)
     {

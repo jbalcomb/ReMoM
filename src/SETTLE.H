@@ -10,6 +10,10 @@
 #ifndef SETTLE_H
 #define SETTLE_H
 
+#include "MOX/MOX_TYPE.H"
+
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif

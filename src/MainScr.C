@@ -18,14 +18,18 @@
 #include "MOX/LOADSAVE.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
-#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 #include "MOX/MOX_T4.H"
 
+#include "AdvsrScr.H"
 #include "LOADER.H"
 #include "MOM_DBG.H"
 #include "MOM_SCR.H"
+#include "MainScr_Maps.H"
 #include "SCastScr.H"  /* World_To_Screen() */
+#include "Spellbook.H"
+#include "UNITSTK.H"
+#include "WZD_o059.H"
 
 #ifdef STU_DEBUG
 #include "STU/STU_DBG.H"    /* DLOG() */

@@ -6,9 +6,18 @@
         ¿ ovr164 ?
 */
 
-#include "MOX/MOX_DAT.H"  /* _players[] */
+#include "AIDATA.H"
 
-#include "MOM.H"
+#include "AIDUDES.H"
+#include "CITYCALC.H"
+#include "DIPLOMAC.H"
+#include "MOX/Allocate.H"
+#include "MOX/MOX_DAT.H"  /* _players[] */
+#include "MOX/MOX_TYPE.H"
+
+#include "MOX/random.H"
+#include "NEXTTURN.H"
+#include "Spellbook.H"
 
 
 

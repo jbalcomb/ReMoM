@@ -248,7 +248,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Metal Fires
 [x] Chaos Spawn
 [x] Doom Bolt
-[-] Magic Vortex
+[x] Magic Vortex
 [X] Efreet
 [x] Fire Storm
 [x] Warp Reality

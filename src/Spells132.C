@@ -3,14 +3,18 @@
         ovr132
 */
 
+#include "Spells130.H"
+#include "Spells132.H"
+
 #include "MOX/LBX_Load.H"
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_TYPE.H"
 #include "MOX/SOUND.H"
 
-#include "MOX/MOM_Data.H"
 
 #include "NEXTTURN.H"
 #include "SBookScr.H"
+#include "Spellbook.H"
 
 
 
@@ -190,7 +194,7 @@ void Cast_Floating_Island(int16_t player_idx)
         {
 
             // if(valid_cast = IDK_Spell_Casting_Screen_s5C500(4, &wx, &wy, &wp, &var_8, &var_A, aFloatingIsla_0) == ST_TRUE)
-            /* SPELLY */  if(valid_cast = Spell_Casting_Screen__WIP(4, &wx, &wy, &wp, &var_8, &var_A, "Floating Island") == ST_TRUE)
+            /* SPELLY */  if((valid_cast = Spell_Casting_Screen__WIP(4, &wx, &wy, &wp, &var_8, &var_A, "Floating Island")) == ST_TRUE)
             {
 
                 valid_target = ST_TRUE;
@@ -200,7 +204,7 @@ void Cast_Floating_Island(int16_t player_idx)
 
                     valid_target = ST_FALSE;
 
-                    LBX_Load_Data_Static(message_lbx_file__ovr132, 0, GUI_NearMsgString, 58, 1, 150);
+                    LBX_Load_Data_Static(message_lbx_file__ovr132, 0, (SAMB_ptr)&GUI_NearMsgString[0], 58, 1, 150);
 
                     Warn0(GUI_NearMsgString);
 
@@ -216,7 +220,7 @@ void Cast_Floating_Island(int16_t player_idx)
 
                         valid_target = ST_FALSE;
 
-                        LBX_Load_Data_Static(message_lbx_file__ovr132, 0, GUI_NearMsgString, 59, 1, 150);
+                        LBX_Load_Data_Static(message_lbx_file__ovr132, 0, (SAMB_ptr)&GUI_NearMsgString[0], 59, 1, 150);
 
                         Warn0(GUI_NearMsgString);
 
@@ -224,12 +228,12 @@ void Cast_Floating_Island(int16_t player_idx)
                     else
                     {
 
-                        if(troop_count = MAX_STACK)
+                        if(troop_count == MAX_STACK)
                         {
 
                             valid_target = ST_FALSE;
 
-                            LBX_Load_Data_Static(message_lbx_file__ovr132, 0, GUI_NearMsgString, 60, 1, 150);
+                            LBX_Load_Data_Static(message_lbx_file__ovr132, 0, (SAMB_ptr)&GUI_NearMsgString[0], 60, 1, 150);
 
                             Warn0(GUI_NearMsgString);
 

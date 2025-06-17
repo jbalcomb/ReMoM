@@ -70,7 +70,7 @@ void TST_Patch_Game_Data(void)
     TST_Learn_Spell(player_idx, spl_Call_Lightning);    //   35
     TST_Learn_Spell(player_idx, spl_Confusion);         //   46
     TST_Learn_Spell(player_idx, spl_Entangle);
-    TST_Learn_Spell(player_idx, spl_Magic_Vortex);
+    TST_Learn_Spell(player_idx, spl_Magic_Vortex);      //  105
     TST_Learn_Spell(player_idx, spl_Mana_Leak);
     TST_Learn_Spell(player_idx, spl_Regeneration);
     TST_Learn_Spell(player_idx, spl_Terror);

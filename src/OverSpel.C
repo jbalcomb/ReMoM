@@ -7,12 +7,14 @@
 
 #include "Explore.H"
 #include "MOM_DEF.H"
+#include "MOX/LBX_Load.H"
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_SET.H"  /* magic_set */
 #include "MOX/MOX_TYPE.H"
 
+#include "SBookScr.H"
 #include "SPELLDEF.H"
 
 #include "DIPLOMAC.H"

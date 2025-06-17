@@ -31,47 +31,47 @@ A nibble is four consecutive binary digits, or half of an 8-bit byte. It can be 
 
 // DEDU  ¿ should case to (void *) ?
 #define GET_1B_OFS(_ptr_,_ofs_) (                              \
-  ( (uint8_t)  ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 0) )       ) \
+  ( (uint8_t)  ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 0) )       )   \
 )
 
 #define GET_2B_OFS(_ptr_,_ofs_) (                              \
-  ( (uint16_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 0) )       ) \
-| ( (uint16_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 1) ) <<  8 ) \
+  ( (uint16_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 0) )       )   \
+| ( (uint16_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 1) ) <<  8 )   \
 )
 
 #define GET_3B_OFS(_ptr_,_ofs_) (                              \
-  ( (uint32_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 0) )       ) \
-| ( (uint32_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 1) ) <<  8 ) \
-| ( (uint32_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 2) ) << 16 ) \
+  ( (uint32_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 0) )       )   \
+| ( (uint32_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 1) ) <<  8 )   \
+| ( (uint32_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 2) ) << 16 )   \
 )
     
-#define GET_4B_OFS(_ptr_,_ofs_) (                              \
-  ( (uint32_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 0) )       ) \
-| ( (uint32_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 1) ) <<  8 ) \
-| ( (uint32_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 2) ) << 16 ) \
-| ( (uint32_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 3) ) << 24 ) \
+#define GET_4B_OFS(_ptr_,_ofs_) (                                           \
+  ( (uint32_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 0) )       )   \
+| ( (uint32_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 1) ) <<  8 )   \
+| ( (uint32_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 2) ) << 16 )   \
+| ( (uint32_t) ( (uint8_t) *( (uint8_t *)(_ptr_) + (_ofs_) + 3) ) << 24 )   \
 )
 
-#define SET_1B_OFS(_ptr_,_ofs_,_val_) (        \
-*( (uint8_t *)(_ptr_) + (_ofs_) + 0 ) = ( (_val_)      )  \
+#define SET_1B_OFS(_ptr_,_ofs_,_val_) (                                     \
+*( (uint8_t *)(_ptr_) + (_ofs_) + 0 ) = ( (uint8_t)(_val_)        )         \
 )
 
-#define SET_2B_OFS(_ptr_,_ofs_,_val_) (        \
-*( (uint8_t *)(_ptr_) + (_ofs_) + 0 ) = ( (_val_)      ), \
-*( (uint8_t *)(_ptr_) + (_ofs_) + 1 ) = ( (_val_) >> 8 )  \
+#define SET_2B_OFS(_ptr_,_ofs_,_val_) (                                     \
+*( (uint8_t *)(_ptr_) + (_ofs_) + 0 ) = ( (uint8_t)((_val_)     ) ),        \
+*( (uint8_t *)(_ptr_) + (_ofs_) + 1 ) = ( (uint8_t)((_val_) >> 8) )         \
 )
 
-#define SET_3B_OFS(_ptr_,_ofs_,_val_) (        \
-*( (uint8_t *)(_ptr_) + (_ofs_) + 0 ) = ( (_val_)      ), \
-*( (uint8_t *)(_ptr_) + (_ofs_) + 1 ) = ( (_val_) >>  8), \
-*( (uint8_t *)(_ptr_) + (_ofs_) + 2 ) = ( (_val_) >> 16), \
+#define SET_3B_OFS(_ptr_,_ofs_,_val_) (                                     \
+*( (uint8_t *)(_ptr_) + (_ofs_) + 0 ) = ( (uint8_t)((_val_)      ) ),       \
+*( (uint8_t *)(_ptr_) + (_ofs_) + 1 ) = ( (uint8_t)((_val_) >>  8) ),       \
+*( (uint8_t *)(_ptr_) + (_ofs_) + 2 ) = ( (uint8_t)((_val_) >> 16) ),       \
 )
 
-#define SET_4B_OFS(_ptr_,_ofs_,_val_) (        \
-*( (uint8_t *)(_ptr_) + (_ofs_) + 0 ) = ( (_val_)      ), \
-*( (uint8_t *)(_ptr_) + (_ofs_) + 1 ) = ( (_val_) >>  8), \
-*( (uint8_t *)(_ptr_) + (_ofs_) + 2 ) = ( (_val_) >> 16), \
-*( (uint8_t *)(_ptr_) + (_ofs_) + 3 ) = ( (_val_) >> 24)  \
+#define SET_4B_OFS(_ptr_,_ofs_,_val_) (                                     \
+*( (uint8_t *)(_ptr_) + (_ofs_) + 0 ) = ( (uint8_t)((_val_)      ) ),       \
+*( (uint8_t *)(_ptr_) + (_ofs_) + 1 ) = ( (uint8_t)((_val_) >>  8) ),       \
+*( (uint8_t *)(_ptr_) + (_ofs_) + 2 ) = ( (uint8_t)((_val_) >> 16) ),       \
+*( (uint8_t *)(_ptr_) + (_ofs_) + 3 ) = ( (uint8_t)((_val_) >> 24) )        \
 )
 
 

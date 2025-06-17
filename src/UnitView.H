@@ -10,6 +10,9 @@
 #ifndef UNITVIEW_H
 #define UNITVIEW_H
 
+#include "MOX/MOM_Data.H"
+#include "MOX/MOX_TYPE.H"
+
 #include "Help.H"
 
 

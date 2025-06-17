@@ -4,19 +4,15 @@
         ovr118
 */
 
-#include "NEXTTURN.H"
-#include "Spellbook.H"
-
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
-#include "MOX/MOX_ITOA.H"  /* mox_itoa() */
 #include "MOX/MOX_SET.H"  /* magic_set */
 #include "MOX/SOUND.H"
 
-#include "MOX/MOM_Data.H"
-
 #include "MainScr.H"   /* Allocate_Reduced_Map(); */
+#include "NEXTTURN.H"
 #include "SBookScr.H"  /* Spellbook_Screen_Draw(); */
-// TODO  #include ...  /* CMB_RedrawSpellbook(); */
+#include "Spellbook.H"
 
 #include <stdlib.h>     /* abs(); itoa(); malloc(); */
 
@@ -221,6 +217,10 @@ SAMB_ptr _spellbook_small_seg;
 struct s_SPELL_BOOK_PAGE * m_spellbook_pages;
 
 // WZD dseg:C8FC
+/*
+
+¿ also used for the magic dripping mouse cursor image ?
+*/
 int16_t SBK_NewSpellAnim_Stg;
 
 // WZD dseg:C8FE

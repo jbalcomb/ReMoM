@@ -16,9 +16,7 @@ MoO2
 #ifndef HELP_H
 #define HELP_H
 
-#include "MOM.H"
-
-
+#include "MOX/MOX_TYPE.H"
 
 
 

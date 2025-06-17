@@ -12,7 +12,9 @@ Module: AITECH
 #ifndef AISPELL_H
 #define AISPELL_H
 
-#include "MOM.H"
+#include "MOX/MOX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {

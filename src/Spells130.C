@@ -3,16 +3,25 @@
         ovr130
 */
 
-#include "NEXTTURN.H"
-#include "SPLMASTR.H"
+#include "AISPELL.H"
+#include "MOX/Allocate.H"
+#include "MOX/MOX_DAT.H"
+#include "MOX/MOX_T4.H"
+#include "MOX/random.H"
+#include "MainScr.H"
+#include "OverSpel.H"
 #include "Spells130.H"
 
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_TYPE.H"
 
-#include "MOX/MOM_Data.H"
-
+#include "NEXTTURN.H"
+#include "Spellbook.H"
+#include "SPLMASTR.H"
 #include "Terrain.H"
+#include "UNITTYPE.H"
+#include "WZD_o059.H"
 
 
 
@@ -295,7 +304,7 @@ void Apply_Spell_Consecration(int16_t city_idx)
 
     }
 
-    _page_flip_effect = 3;
+    _page_flip_effect = pfe_Dissolve;
 
 }
 

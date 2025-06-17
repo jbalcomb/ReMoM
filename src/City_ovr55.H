@@ -9,7 +9,8 @@
 #ifndef CITYOVR55_H
 #define CITYOVR55_H
 
-#include "MOM.H"
+#include "MOX/MOX_TYPE.H"
+
 
 
 #ifdef __cplusplus

@@ -28,12 +28,8 @@
 #ifndef COMBAT_H
 #define COMBAT_H
 
-#include "MOX/EMM.H"
-
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_TYPE.H"
-
-#include "Spellbook.H"
 
 
 
@@ -90,38 +86,38 @@ else
 
 
 
-//  ; (sizeof=0x4, standard type)
-#pragma pack(push)
-#pragma pack(2)
+// WHERE IS THIS COMING FROM!?!  Unterminated '#pragma pack (push, ...)' at end of file
+// #pragma pack(push)
+// #pragma pack(2)
 struct s_CLANGD
 {
     /* 00 */  int16_t wtf;
     /* 02 */  int16_t mgfy;
     /* 04 */
 };
-#pragma pack(pop)
+// #pragma pack(pop)
 
 //  ; (sizeof=0x4, standard type)
-#pragma pack(push)
-#pragma pack(2)
+// #pragma pack(push)
+// #pragma pack(2)
 struct s_COMBAT_ENCHANTMENT_ICON_DATA
 {
     /* 00 */  int16_t icon_idx;
     /* 02 */  int16_t help_idx;
     /* 04 */
 };
-#pragma pack(pop)
+// #pragma pack(pop)
 
 //  ; (sizeof=0x4, standard type)
-#pragma pack(push)
-#pragma pack(2)
+// #pragma pack(push)
+// #pragma pack(2)
 struct s_COMBAT_ENCHANTMENT_ICON
 {
     /* 00 */ SAMB_ptr icon_seg;
     /* 02 */ int16_t help_idx;
     /* 04 */
 };
-#pragma pack(pop)
+// #pragma pack(pop)
 
 
 extern SAMB_ptr DBG_EmmHndl_FIGUREX;
@@ -677,7 +673,7 @@ enum Combat_TileGroup
     CTG_Dirt        = 2, 
     CTG_River       = 3, 
     CTG_DeepWater   = 4, 
-    CTG_IDK         = 5
+    CTG_IDK         = 5  // not used in Set_Movement_Cost_Maps()
 };
 
 /*
@@ -1015,7 +1011,7 @@ extern int16_t CMB_Chasm_Anim;
 extern int16_t ai_human_hostility;
 
 // WZD dseg:C418
-extern int16_t CMB_CityDamage;
+extern int16_t _combat_city_damage;
 
 // WZD dseg:C41A
 extern SAMB_ptr SND_CMB_Silence;
@@ -1037,7 +1033,7 @@ extern int16_t _combat_wx;
 extern struct s_mouse_list * _combat_mouse_grid;
 
 // WZD dseg:C524
-extern int8_t * CMB_TargetRows[22];
+extern int8_t * CMB_TargetRows[COMBAT_GRID_HEIGHT];
 
 // WZD dseg:C582
 extern int16_t _active_battle_unit;
@@ -1166,7 +1162,7 @@ extern SAMB_ptr IMG_CMB_Houses[15];
 extern SAMB_ptr IMG_GUI_Chasm;
 
 // WZD dseg:D13C
-extern SAMB_ptr IMG_GUI_Vortex;
+extern SAMB_ptr magic_vortex_seg;
 
 // WZD dseg:D13E
 extern SAMB_ptr CMB_Path_Ys;
@@ -1192,7 +1188,7 @@ extern int16_t CMB_Chasm_Anim_Y;
 extern int16_t CMB_Chasm_Anim_X;
 
 // WZD dseg:D14E
-extern struct s_MAGIC_VORTEX * CMB_Vortex_Array;
+extern struct s_MAGIC_VORTEX * _vortexes;
 
 // WZD dseg:D152
 extern int16_t _vortex_count;
@@ -1232,7 +1228,7 @@ extern "C" {
 
 // WZD s90p01
 // drake178: CMB_TacticalCombat()
-int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_defender_player_idx, int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[]);
+int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_defender_player_idx, int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[]);
 
 
 
@@ -1336,7 +1332,7 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
 int16_t Unit_Try_To_Move(int16_t wx, int16_t wy, int16_t wp, int16_t unit_idx, int16_t troop_count);
 
 // WZD o98p10
-void Assign_Mouse_Image(void);
+void Assign_Mouse_Images(void);
 
 // WZD o98p11
 int16_t BU_GetRangedCursor__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx);
@@ -1390,7 +1386,7 @@ void STK_ComposeFleeLost__STUB(int16_t troop_count, int16_t troop_list[]);
 // WZD o99p07
 
 // WZD o99p01
-void Tactical_Combat_Draw(void);
+void Combat_Screen_Draw(void);
 
 // WZD o99p02
 void Draw_Active_Unit_Window(void);
@@ -1405,7 +1401,7 @@ void Draw_Spell_Information_Window(void);
 void Draw_Active_Unit_Stats_And_Icons(void);
 
 // WZD o99p06
-void CMB_CreateEntities__WIP(void);
+void Combat_Grid_Entities__WIP(void);
 
 // WZD o99p07
 void Draw_Active_Unit_Damage_Bar(int16_t battle_unit_idx, int16_t x, int16_t y);
@@ -1610,7 +1606,7 @@ int16_t Combat_Casting_Cost_Multiplier(int16_t player_idx);
 */
 
 // WZD o113p01
-void Combat_Set_Mouse_List_Image_Num(void);
+void Combat_Screen_Assign_Mouse_Images(void);
 
 // WZD o113p02
 // drake178: CMB_DrawTargetScreen()
@@ -1932,10 +1928,10 @@ int16_t Effective_Battle_Unit_Strength(int16_t battle_unit_idx);
 void NX_IDK_CombatInit_Tactical(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD ovr153p02
-void CMB_DrawMap__WIP(void);
+void Combat_Screen_Map_Draw__WIP(void);
 
 // WZD ovr153p03
-void CMB_DrawEntities__WIP(void);
+void Combat_Screen_Map_Draw_Entities__WIP(void);
 
 // WZD ovr153p04
 // drake178: sub_DD536()
@@ -1959,7 +1955,7 @@ void CMB_DrawEntities__WIP(void);
 // drake178: CMB_SpawnFireWall()
 
 // WZD ovr153p11
-// drake178: CMB_SpawnVortices()
+void Combat_Grid_Entity_Create_Vortexes(void);
 
 // WZD ovr153p12
 void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_t TarX, int16_t TarY, int16_t MStage, int16_t FigId, int16_t MaxFigs, int16_t owner_idx, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU, int16_t LostFigs, int16_t SrcBld);
@@ -1980,7 +1976,7 @@ void USELESS_Combat_Figure_Load_Compose(int16_t figure_index, int16_t figure_set
 void Battle_Unit_Figure_Position(int16_t figure_count, int16_t current_figure, int16_t * figure_x, int16_t * figure_y);
 
 // WZD ovr153p18
-void CMB_CreateEntity__WIP(int16_t draw_x, int16_t draw_y, int64_t seg_or_idx, int16_t draw_x_shift, int16_t draw_y_shift, int16_t Frame, int16_t entity_type, int16_t controller_idx, int16_t niu_figure_set_idx, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU_14h, int16_t BldFrm);
+void Combat_Grid_Entity_Create__WIP(int16_t draw_x, int16_t draw_y, int64_t seg_or_idx, int16_t draw_x_shift, int16_t draw_y_shift, int16_t Frame, int16_t entity_type, int16_t controller_idx, int16_t niu_figure_set_idx, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU_14h, int16_t BldFrm);
 
 // WZD ovr153p19
 void Set_Entity_Draw_Order(void);
@@ -2056,7 +2052,7 @@ void Patch_Terrain_Group(int16_t ctg, int16_t count, int16_t max, int16_t min);
 void Combat_Grid_Screen_Coordinates(int16_t cgx, int16_t cgy, int16_t something_x, int16_t something_y, int16_t * screen_x, int16_t * screen_y);
 
 // WZD ovr154p13
-int16_t Apply_Earth_To_Mud(int16_t cgx, int16_t cgy);
+void Apply_Earth_To_Mud(int16_t cgx, int16_t cgy);
 
 // WZD ovr154p14
 int16_t Get_Combat_Grid_Cell_X(int16_t screen_x, int16_t screen_y);

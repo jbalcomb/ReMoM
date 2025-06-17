@@ -8,7 +8,9 @@
 #ifndef ITEMS_H
 #define ITEMS_H
 
-#include "MOM.H"
+#include "MOX/MOX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {

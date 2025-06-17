@@ -7,7 +7,26 @@
 
 */
 
-#include "MOM.H"
+#include "SETTLE.H"
+
+#include "MOX/MOM_Data.H"
+#include "MOX/MOX_BASE.H"
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_TYPE.H"
+
+#include "CITYCALC.H"
+#include "Combat.H"
+#include "Lair.H"
+#include "MainScr.H"
+#include "MOM_DEF.H"
+#include "Outpost.H"
+#include "Terrain.H"
+#include "UnitMove.H"   // WTFMATE
+#include "UNITSTK.H"
+#include "UNITTYPE.H"   // WTFMATE
+#include "WZD_o059.H"
+
+
 
 /*
 o100p04

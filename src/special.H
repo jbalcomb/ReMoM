@@ -17,6 +17,10 @@
 #ifndef SPECIAL_H
 #define SPECIAL_H
 
+#include "MOX/MOX_TYPE.H"
+
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif

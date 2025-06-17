@@ -48,7 +48,7 @@ void Animate_Cracks_Call(int16_t cgx, int16_t cgy, int16_t caster_idx);
 void TILE_BoltFromAbove__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t caster_idx);
 
 // WZD o133p10
-void TILE_CombatSpellAnim__WIP(int16_t cgx, int16_t cgy, int16_t Anim_Size, int16_t caster_idx, int16_t spell_idx);
+void Combat_Spell_Animation_Generic__WIP(int16_t cgx, int16_t cgy, int16_t anim_size, int16_t caster_idx, int16_t spell_idx);
 
 // WZD o133p11  BU_Teleport()
 
@@ -64,16 +64,16 @@ void Animate_Lightning_Bolt(int16_t cgx, int16_t cgy, int16_t caster_idx);
 void Magic_Vortex_Create(int16_t player_idx, int16_t cgx, int16_t cgy);
 
 // WZD o133p16
-void CMB_SetVortexCursor__SEGRAX(int Vortex_Index);
+void Vortex_Move_Screen_Assign_Mouse_Images(int Vortex_Index);
 
 // WZD o133p17
-void CMB_VortexPlayerMove__SEGRAX(int Vortex_Index);
+void Vortex_Move_Screen(int Vortex_Index);
 
 // WZD o133p18
-void CMB_ProcessVortices__SEGRAX(void);
+void Vortex_Combat_Round(void);
 
 // WZD o133p19
-void CMB_VortexMovement__SEGRAX(int Vortex_Index, int Next_X, int Next_Y);
+void Vortex_Move_And_Attack(int Vortex_Index, int Next_X, int Next_Y);
 
 // WZD o133p20
 void Cast_Call_Chaos__WIP(int16_t caster_idx, int16_t anims_on);

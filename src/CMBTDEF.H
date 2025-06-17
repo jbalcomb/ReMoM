@@ -23,11 +23,16 @@ battlefield->terrain_group[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = CTG_Gras
 */
 // Set_Window(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, 163);
 #define COMBAT_MAP_YMAX 163
+// Combat_Screen_Assign_Mouse_Images() does screen_y <= 168 + 4 (pointer_offset)
+// ... Vortex Move Screen does screen_y <= 168 + 4 (pointer_offset)
 
 // hard-coded in CMB_SpawnFigure__WIP() in call to CMB_CreateEntity__WIP()
 // 13, /* draw_x_shift */
 // 23, /* draw_y_shift */
 // 1,  /* entity_type: battle unit figure */
+
+// CMB_ComposeBackgrnd__WIP()
+//     FLIC_Draw(0, 164, combat_background_bottom);
 
 
 
@@ -49,8 +54,25 @@ battlefield->terrain_group[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = CTG_Gras
 &&
 (cgy == 13)
 
-*/
 
+Magic Vortex
+    if(
+        (next_cgx >= 5)
+        &&
+        (next_cgx <= 8)
+        &&
+        (next_cgy >= 10)
+        &&
+        (next_cgy <= 13)
+    )
+    {
+        CMB_CityDamage += 5;
+    }
+*/
+#define MIN_CGX_CITY  5
+#define MAX_CGX_CITY  8
+#define MIN_CGY_CITY 10
+#define MAX_CGY_CITY 13
 
 
 /*

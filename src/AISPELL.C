@@ -9,15 +9,22 @@ Module: AITECH
 */
 
 #include "AISPELL.H"
+#include "CITYCALC.H"
 #include "MOX/Allocate.H"
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"
 #include "MOX/MOX_DEF.H"
 
 #include "MOX/random.H"
+#include "SBookScr.H"
+#include "STU/STU_DBG.H"
 #include "Spellbook.H"
 #include "SPELLDEF.H"
 #include "TerrType.H"
+
+#ifdef STU_DEBUG
+#include "STU/STU_DBG.H"
+#endif
 
 
 
@@ -144,11 +151,9 @@ void AI_Spell_Select__STUB(int16_t player_idx)
     int16_t Selected_Category = 0;
     int16_t spell_idx = 0;  // _DI_
 
-
     ptr_players_spells_known = &_players[player_idx].spells_list[0];
 
-
-AI_Compute_Spells_Info(player_idx);
+    AI_Compute_Spells_Info(player_idx);
 
 // TODO  Selected_Category = AI_OVL_SplCat_Picker(player_idx);
 // ; selects a spell category for the AI to use next:
@@ -229,7 +234,6 @@ Selected_Category = 0;
 
     }
 
-
     Player_Resource_Income_Total(player_idx, &Gold_Income, &Food_Income, &Mana_Income);
 
     Mana_Per_Turn = ((_players[player_idx].mana_reserve / 10) + Mana_Income);
@@ -241,9 +245,7 @@ Selected_Category = 0;
 
     }
 
-
-    /* TODO */ Cast_Spell_Overland_Do(player_idx, spell_idx, spellbook_page_spell_index);
-
+    Cast_Spell_Overland_Do(player_idx, spell_idx, spellbook_page_spell_index);
 
 }
 
@@ -401,7 +403,7 @@ int16_t AITP_ChangeTerrain__WIP(int16_t player_idx, int16_t * wx, int16_t * wy, 
     int16_t Target_City = 0;
     int16_t itr_cities = 0;  // _SI_
 
-    __debugbreak();
+    STU_DEBUG_BREAK();
 
     Target_City = ST_UNDEFINED;
 
@@ -840,7 +842,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
     }
 
 #ifdef STU_DEBUG
-STU_DEBUG_BREAK();
+    STU_DEBUG_BREAK();
 #endif
 
     return ST_FALSE;

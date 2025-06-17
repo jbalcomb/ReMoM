@@ -10,7 +10,9 @@
 #ifndef ITEMMAKE_H
 #define ITEMMAKE_H
 
-#include "MOM.H"
+#include "MOX/MOX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {

@@ -9,7 +9,9 @@
 #ifndef CITYCALC_H
 #define CITYCALC_H
 
-#include "MOM.H"
+#include "MOX/MOX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {

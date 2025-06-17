@@ -14,7 +14,9 @@
 
 */
 
-#include "MOM.H"
+#include "special.H"
+
+#include "MOX/MOX_TYPE.H"
 
 
 

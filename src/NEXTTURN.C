@@ -9,7 +9,6 @@
         ovr141
 */
 
-#include "MOM_DEF.H"
 #include "NEXTTURN.H"
 
 #include "MOX/LOADSAVE.H"
@@ -22,7 +21,9 @@
 #include "MainScr.H"
 #include "MainScr_Maps.H"
 #include "MOM_DBG.H"
+#include "MOM_DEF.H"
 #include "MOM_SCR.H"
+#include "Spellbook.H"
 #include "Spells128.H"
 #include "Spells130.H"
 #include "WZD_o059.H"
