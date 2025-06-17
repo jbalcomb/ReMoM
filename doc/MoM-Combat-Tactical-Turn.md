@@ -21,7 +21,11 @@
 
 
 
-
+OSG
+Page 252  (PDG Page 259)
+Table 17.2 Bonuses to Unit Attributes and Abilities
+Effects of Structures on Combat Statistics
+Combat Variations: Flying, Water, Walls, and More
 
 
 

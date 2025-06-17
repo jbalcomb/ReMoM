@@ -794,35 +794,27 @@ struct  s_COMBAT_ENCHANTMENT_ICON CMB_DEFR_CE_Wnd[NUM_COMBAT_ENCHANTMENTS];
 struct  s_COMBAT_ENCHANTMENT_ICON CMB_ATKR_CE_Wnd[NUM_COMBAT_ENCHANTMENTS];
 // WZD dseg:C4FE
 SAMB_ptr combat_enchantment_icon_segs[NUM_COMBAT_ENCHANTMENTS];
-// SAMB_ptr IMG_CMB_TrueLight;
-// SAMB_ptr IMG_CMB_Darkness;
-// SAMB_ptr IMG_CMB_WarpReality;
-// SAMB_ptr IMG_CMB_BlackPrayer;
-// SAMB_ptr IMG_CMB_Wrack;
-// SAMB_ptr IMG_CMB_MetalFires;
-// SAMB_ptr IMG_CMB_Prayer;
-// SAMB_ptr IMG_CMB_HighPrayer;
-// SAMB_ptr IMG_CMB_Terror;
-// SAMB_ptr IMG_CMB_CallLightng;
-// SAMB_ptr IMG_CMB_CounterMgc;
-// SAMB_ptr IMG_CMB_MassInvis;
-// SAMB_ptr IMG_CMB_Entangle;
-// SAMB_ptr IMG_CMB_ManaLeak;
-// SAMB_ptr IMG_CMB_Blur;
 
 // WZD dseg:C51C
 int16_t _combat_turn;
+
 // WZD dseg:C51E
 int16_t CMB_HumanUnitsDone;
+
 // WZD dseg:C520
-int16_t CMB_combat_structure;
-// WZD dseg:C520                                                                                         ; a seemingly pointless variable whose state could have
-// WZD dseg:C520                                                                                         ; been extrapolated from others
-// WZD dseg:C520                                                                                         ;   1 - city battle (defender only for wall spells?)
-// WZD dseg:C520                                                                                         ;   2 - sorcery node
-// WZD dseg:C520                                                                                         ;   3 - nature node
-// WZD dseg:C520                                                                                         ;   4 - chaos node
-// WZD dseg:C520                                                                                         ;   6 - sailable tile
+/*
+; a seemingly pointless variable whose state could have
+; been extrapolated from others
+;   1 - city battle (defender only for wall spells?)
+;   2 - sorcery node
+;   3 - nature node
+;   4 - chaos node
+;   6 - sailable tile
+*/
+/*
+{ 1: city, 2: node, sorcery, 3: node, nature, 4: node, chaos, 6: ocean }
+*/
+int16_t _combat_structure;
 
 // WZD dseg:C522
 // MoO2  Module: MOX  _combat_mouse_grid
@@ -1464,7 +1456,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     CMB_WizardCitySiege = ST_FALSE;
 
     if(
-        (OVL_Action_Type == 1)  /* Enemy City */
+        (_combat_environ == 1)  /* Enemy City */
         &&
         (combat_defender_player_idx != NEUTRAL_PLAYER_IDX)
     )
@@ -1490,9 +1482,9 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
     _page_flip_effect = pfe_None;
 
-    if(OVL_Action_Type == 1)  /* Enemy City */
+    if(_combat_environ == 1)  /* Enemy City */
     {
-        _fstrcpy(CMB_CityName, _CITIES[OVL_Action_Structure].name);
+        _fstrcpy(CMB_CityName, _CITIES[_combat_environ_idx].name);
     }
 
 
@@ -1532,7 +1524,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     CMB_DEFR_First_CE = 0;
 
 
-    CMB_combat_structure = Combat_Structure(wx, wy, wp, 0);
+    _combat_structure = Combat_Structure(wx, wy, wp, 0);
 
 
     CMB_CE_Refresh__WIP();
@@ -1551,7 +1543,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     _combat_total_battle_effect_count = Combat_Info_Effects_Count();
 
 
-    Calc_Battlefield_Bonuses(CMB_combat_structure);
+    Calc_Battlefield_Bonuses(_combat_structure);
 
 
     Combat_Cache_Write();
@@ -2826,10 +2818,10 @@ void CMB_PrepareTurn__WIP(void)
     */
 
 
-    Calc_Battlefield_Bonuses(CMB_combat_structure);
+    Calc_Battlefield_Bonuses(_combat_structure);
 
 
-    CMB_UnitCityDamage__WIP();
+    Add_City_Damage_From_Battle_Units_Within();
 
 
     for(itr = 0; itr < _combat_total_unit_count; itr++)
@@ -3928,10 +3920,32 @@ int16_t BU_IsVisible__STUB(int16_t battle_unit_idx)
 /*
 
 */
-void CMB_UnitCityDamage__WIP(void)
+void Add_City_Damage_From_Battle_Units_Within(void)
 {
+    int16_t battle_unit_idx = 0;  // _SI_
 
+    if(_combat_environ != cnv_Enemy_City)
+    {
+        return;
+    }
 
+    for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+    {
+
+        if(
+            (battle_units[battle_unit_idx].status == bus_Active)
+            &&
+            (battle_units[battle_unit_idx].controller_idx == _combat_attacker_player)
+            &&
+            (Battle_Unit_Is_Within_City(battle_unit_idx) == ST_TRUE)
+        )
+        {
+
+            _combat_city_damage += 1;
+
+        }
+
+    }
 
 }
 
@@ -4016,7 +4030,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
 
     if(combat_attacker_player_idx == NEUTRAL_PLAYER_IDX)
     {
-        switch(OVL_Action_Type)
+        switch(_combat_environ)
         {
             case 0:  // Stack vs. Stack
             {
@@ -4031,7 +4045,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
             } break;
             case 1:  // Stack vs. City
             {
-                if(_CITIES[OVL_Action_Structure].owner_idx == NEUTRAL_PLAYER_IDX)
+                if(_CITIES[_combat_environ_idx].owner_idx == NEUTRAL_PLAYER_IDX)
                 {
                     for(itr = 0; itr < troop_count; itr++)
                     {
@@ -4051,7 +4065,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
         }
     }
 
-    switch(OVL_Action_Type)
+    switch(_combat_environ)
     {
         case 0:  // Stack vs. Stack
         {
@@ -4063,9 +4077,9 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
         case 1:  // Stack vs. City
         {
             // TODO  _players.banner_id+17E8h], BNR_Brown
-            _combat_wx = _CITIES[OVL_Action_Structure].wx;
-            _combat_wy = _CITIES[OVL_Action_Structure].wy;
-            _combat_wp = _CITIES[OVL_Action_Structure].wp;
+            _combat_wx = _CITIES[_combat_environ_idx].wx;
+            _combat_wy = _CITIES[_combat_environ_idx].wy;
+            _combat_wp = _CITIES[_combat_environ_idx].wp;
             Garrison_Size = 0;
             for(itr = 0; itr < _units; itr++)
             {
@@ -4085,10 +4099,10 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
         case 5:  // Stack vs. Lair
         {
             // TODO  _players.banner_id+17E8h], BNR_Brown
-            Lair_Make_Guardians(OVL_Action_Structure);
-            _combat_wx = _LAIRS[OVL_Action_Structure].wx;
-            _combat_wy = _LAIRS[OVL_Action_Structure].wy;
-            _combat_wp = _LAIRS[OVL_Action_Structure].wp;
+            Lair_Make_Guardians(_combat_environ_idx);
+            _combat_wx = _LAIRS[_combat_environ_idx].wx;
+            _combat_wy = _LAIRS[_combat_environ_idx].wy;
+            _combat_wp = _LAIRS[_combat_environ_idx].wp;
         } break;
     }
 
@@ -4096,8 +4110,8 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
         (combat_attacker_player_idx < NEUTRAL_PLAYER_IDX) &&
         (defender_idx < NEUTRAL_PLAYER_IDX) &&
         (
-            (OVL_Action_Type == 1) ||
-            (OVL_Action_Type == 0)
+            (_combat_environ == 1) ||
+            (_combat_environ == 0)
         )
     )
     {
@@ -4143,7 +4157,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
     }
 
     if(
-        (OVL_Action_Type == 1)  /* Enemy City */
+        (_combat_environ == 1)  /* Enemy City */
         &&
         (Garrison_Size < 1)
     )
@@ -4210,19 +4224,19 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
         item_pool_in_process = ST_FALSE;
 
         if(
-            (OVL_Action_Type == 1)  /* Enemy City */
+            (_combat_environ == 1)  /* Enemy City */
             &&
-            (_CITIES[OVL_Action_Structure].owner_idx != combat_attacker_player_idx)
+            (_CITIES[_combat_environ_idx].owner_idx != combat_attacker_player_idx)
         )
         {
-            if(_CITIES[OVL_Action_Structure].size != 0)
+            if(_CITIES[_combat_environ_idx].size != 0)
             {
                 if(
                     (combat_attacker_player_idx < NUM_PLAYERS) &&
                     (defender_idx < NUM_PLAYERS)
                 )
                 {
-                    Change_Relations__WIP(-40, combat_attacker_player_idx, defender_idx, 9, OVL_Action_Structure, 0);
+                    Change_Relations__WIP(-40, combat_attacker_player_idx, defender_idx, 9, _combat_environ_idx, 0);
                 }
 
                 if(
@@ -4240,11 +4254,11 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
 
                     if(GAME_RazeCity == ST_FALSE)
                     {
-                        Change_City_Ownership(OVL_Action_Structure, combat_attacker_player_idx);
+                        Change_City_Ownership(_combat_environ_idx, combat_attacker_player_idx);
 
                         if(combat_attacker_player_idx != _human_player_idx)
                         {
-                            _CITIES[OVL_Action_Structure].construction = bt_AUTOBUILD;  // -4 gran vizier
+                            _CITIES[_combat_environ_idx].construction = bt_AUTOBUILD;  // -4 gran vizier
                         }
 
                     }
@@ -4270,24 +4284,24 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
         Player_Process_Item_Pool(defender_idx, Item_Count, &Item_List[0]);
         item_pool_in_process = ST_FALSE;  // drake178: BUG: never set it to 1 in this branch
 
-        if(OVL_Action_Type == 1)  /* Enemy City */
+        if(_combat_environ == 1)  /* Enemy City */
         {
-            if(_CITIES[OVL_Action_Structure].owner_idx == defender_idx)
+            if(_CITIES[_combat_environ_idx].owner_idx == defender_idx)
             {
                 if(
                     (combat_attacker_player_idx < 6) &&
                     (defender_idx < 6)
                 )
                 {
-                    if(_CITIES[OVL_Action_Structure].size != 0)
+                    if(_CITIES[_combat_environ_idx].size != 0)
                     {
-                        if(Player_Fortress_City(defender_idx) != OVL_Action_Structure)
+                        if(Player_Fortress_City(defender_idx) != _combat_environ_idx)
                         {
-                            Change_Relations__WIP(-20, combat_attacker_player_idx, defender_idx, 9, OVL_Action_Structure, 0);
+                            Change_Relations__WIP(-20, combat_attacker_player_idx, defender_idx, 9, _combat_environ_idx, 0);
                         }
                         else
                         {
-                            Change_Relations__WIP(-60, combat_attacker_player_idx, defender_idx, 9, OVL_Action_Structure, 0);
+                            Change_Relations__WIP(-60, combat_attacker_player_idx, defender_idx, 9, _combat_environ_idx, 0);
                         }
                     }
 
@@ -4296,7 +4310,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
             }
             else
             {
-                if(_CITIES[OVL_Action_Structure].size == 0)
+                if(_CITIES[_combat_environ_idx].size == 0)
                 {
                     City_Destroyed = ST_TRUE;
                 }
@@ -4304,7 +4318,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
                 {
                     if(GAME_RazeCity == ST_FALSE)
                     {
-                        Change_City_Ownership(OVL_Action_Structure, defender_idx);
+                        Change_City_Ownership(_combat_environ_idx, defender_idx);
                     }
                 }
             }
@@ -4319,20 +4333,20 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
 
     if(City_Destroyed == ST_TRUE)
     {
-        Change_City_Ownership(OVL_Action_Structure, combat_attacker_player_idx);
-        Destroy_City(OVL_Action_Structure);
+        Change_City_Ownership(_combat_environ_idx, combat_attacker_player_idx);
+        Destroy_City(_combat_environ_idx);
         GAME_RazeCity = ST_FALSE;
     }
 
     if(GAME_RazeCity == ST_TRUE)
     {
-        Change_City_Ownership(OVL_Action_Structure, combat_attacker_player_idx);
-        Destroy_City(OVL_Action_Structure);
+        Change_City_Ownership(_combat_environ_idx, combat_attacker_player_idx);
+        Destroy_City(_combat_environ_idx);
         GAME_RazeCity = ST_FALSE;
     }
 
-    OVL_Action_Structure = ST_UNDEFINED;
-    OVL_Action_Type = ST_UNDEFINED;
+    _combat_environ_idx = ST_UNDEFINED;
+    _combat_environ = ST_UNDEFINED;
 
     // DONT j_EmptyFxn_o153p24()
 
@@ -4354,8 +4368,8 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
 
 
 No_Combat:
-    OVL_Action_Structure = ST_UNDEFINED;
-    OVL_Action_Type = ST_UNDEFINED;
+    _combat_environ_idx = ST_UNDEFINED;
+    _combat_environ = ST_UNDEFINED;
     return_value = 0;
     goto Done;
 
@@ -6186,7 +6200,7 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
         battle_units[itr].Image_Effect = 0;
         battle_units[itr].Move_Bob = 0;
 
-        if(OVL_Action_Type == 1)  /* Enemy City */
+        if(_combat_environ == 1)  /* Enemy City */
         {
 
             // ; BUG: excludes ships with Wraith Form (the comparison value should also include swimming)
@@ -6654,7 +6668,7 @@ void Combat_Screen_Draw(void)
     }
 
 
-    if(OVL_Action_Type == 0)  /* Enemy Stack */
+    if(_combat_environ == 0)  /* Enemy Stack */
     {
 
         for(itr = 1; itr < 5; itr++)
@@ -6695,7 +6709,7 @@ void Combat_Screen_Draw(void)
         }
 
     }
-    else if(OVL_Action_Type == 1)  /* Enemy City */
+    else if(_combat_environ == 1)  /* Enemy City */
     {
 
         for(itr = 1; itr < 5; itr++)
@@ -6751,10 +6765,10 @@ void Combat_Screen_Draw(void)
         }
 
     }
-    else if(OVL_Action_Type == 5)  /* Lair */
+    else if(_combat_environ == 5)  /* Lair */
     {
 
-        strcpy(GUI_String_1, TBL_EZ_Names[_LAIRS[OVL_Action_Structure].type]);
+        strcpy(GUI_String_1, TBL_EZ_Names[_LAIRS[_combat_environ_idx].type]);
 
         string_index = 0;
 
@@ -8133,7 +8147,7 @@ void Combat_Info_Effects_Base(void)
     }
 
 
-    if(OVL_Action_Type == 1)
+    if(_combat_environ == 1)
     {
 
         if(CMB_CloudofShadow > 0)
@@ -8320,7 +8334,7 @@ int16_t Combat_Info_Effects_Count(void)
 
 
 
-    if(OVL_Action_Type == 1)
+    if(_combat_environ == 1)
     {
 
         if(battlefield->city_enchantments[CLOUD_OF_SHADOW] > 0)
@@ -10816,7 +10830,7 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
 
     IDK_health_attacker__2 = IDK_health_attacker;
     IDK_health_defender__2 = IDK_health_defender;
-    /* DEMOHACK */ if(OVL_Action_Type == 5) { IDK_health_attacker__2 = IDK_health_attacker = 0x7FFFFFFF /*0b01111111111111111111111111111111*/; }
+    /* DEMOHACK */ if(_combat_environ == 5) { IDK_health_attacker__2 = IDK_health_attacker = 0x7FFFFFFF /*0b01111111111111111111111111111111*/; }
 
     /*
         BEGIN:  ¿ halve values for Neutral Player ?
@@ -13431,7 +13445,7 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
                 if(
                     (spell_data_table[abs(spell_idx)].type == scc_Summoning)
                     &&
-                    (CMB_combat_structure == cs_OceanTerrainType)
+                    (_combat_structure == cs_OceanTerrainType)
                     &&
                     ((_unit_type_table[spell_data_table[abs(spell_idx)].unit_type].Move_Flags & MV_FLYING) == 0)
                     &&
@@ -13451,7 +13465,7 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
                     (
                         (_combat_attacker_player == HUMAN_PLAYER_IDX)
                         ||
-                        (OVL_Action_Type != 1)  /* move onto Enemy City */
+                        (_combat_environ != 1)  /* move onto Enemy City */
                     )
                 )
                 {
@@ -15170,10 +15184,10 @@ int16_t Check_Attack_Ranged(int16_t attacker_battle_unit_idx, int16_t defender_b
         if((attacker_enchantments & UE_TRUESIGHT) == 0)
         {
 
-            if(BU_IsInCityProper__STUB(defender_battle_unit_idx) == ST_TRUE)
+            if(Battle_Unit_Is_Within_City(defender_battle_unit_idx) == ST_TRUE)
             {
                 
-                if(BU_IsInCityProper__STUB(attacker_battle_unit_idx) == ST_FALSE)
+                if(Battle_Unit_Is_Within_City(attacker_battle_unit_idx) == ST_FALSE)
                 {
 
                     result = 2;
@@ -16256,7 +16270,7 @@ jt_bua_10
                         &&
                         (battle_units[battle_unit_idx].controller_idx == _combat_attacker_player)
                         &&
-                        (OVL_Action_Type == 1)  /* Enemy City */
+                        (_combat_environ == 1)  /* Enemy City */
                     )
                     {
 
@@ -16864,7 +16878,7 @@ void AI_MoveBattleUnits__WIP(int16_t player_idx)
                         &&
                         (_battlefield_city_walls > 0)
                         &&
-                        (BU_IsInCityProper__STUB(battle_unit_idx) == ST_FALSE)
+                        (Battle_Unit_Is_Within_City(battle_unit_idx) == ST_FALSE)
                     )
                     {
 
@@ -17455,9 +17469,9 @@ int16_t AI_BU_SelectAction__WIP(int16_t battle_unit_idx, int16_t * selected_acti
                         ||
                         ((battle_units[battle_unit_idx].Attribs_1 & 0x8 /* Imm_Illusion */) != 0)
                         ||
-                        (/* TODO */ BU_IsInCityProper__STUB(battle_unit_idx) != ST_FALSE)
+                        (/* TODO */ Battle_Unit_Is_Within_City(battle_unit_idx) != ST_FALSE)
                         ||
-                        (BU_IsInCityProper__STUB(itr_battle_units) != ST_TRUE)
+                        (Battle_Unit_Is_Within_City(itr_battle_units) != ST_TRUE)
                     )
                     {
 
@@ -17512,7 +17526,7 @@ int16_t AI_BU_SelectAction__WIP(int16_t battle_unit_idx, int16_t * selected_acti
                                     ||
                                     (battle_units[battle_unit_idx].controller_idx != _combat_defender_player)
                                     ||
-                                    (BU_IsInCityProper__STUB(battle_unit_idx) != ST_TRUE)
+                                    (Battle_Unit_Is_Within_City(battle_unit_idx) != ST_TRUE)
                                     ||
                                     (
                                         (
@@ -17523,7 +17537,7 @@ int16_t AI_BU_SelectAction__WIP(int16_t battle_unit_idx, int16_t * selected_acti
                                             ((_battlefield_city_walls & 0x1) == 0)
                                         )
                                         &&
-                                        (BU_IsInCityProper__STUB(itr_battle_units) != ST_FALSE)
+                                        (Battle_Unit_Is_Within_City(itr_battle_units) != ST_FALSE)
                                     )
                                 )
                                 {
@@ -17707,7 +17721,7 @@ void G_AI_BU_MoveOrRampage__WIP(int16_t battle_unit_idx, int16_t Dest_X, int16_t
             (battlefield->wall_of_darkness > 0)
         )
         &&
-        (BU_IsInCityProper__STUB(battle_unit_idx) == ST_TRUE)
+        (Battle_Unit_Is_Within_City(battle_unit_idx) == ST_TRUE)
     )
     {
 
@@ -17899,7 +17913,7 @@ int16_t Auto_Move_Ship(int16_t battle_unit_idx, int16_t Dest_X, int16_t Dest_Y, 
             (battlefield->wall_of_darkness > 0)
         )
         &&
-        (BU_IsInCityProper__STUB(battle_unit_idx) == ST_TRUE)
+        (Battle_Unit_Is_Within_City(battle_unit_idx) == ST_TRUE)
     )
     {
 
@@ -18253,7 +18267,7 @@ BUG: this has just been done in the parent function
                         (CMB_Path_Ys[itr_grid] <= 13)
                     )
                     ||
-                    (BU_IsInCityProper__STUB(battle_unit_idx) != ST_TRUE)
+                    (Battle_Unit_Is_Within_City(battle_unit_idx) != ST_TRUE)
                 )
                 {
 
@@ -20842,9 +20856,9 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
 
 
     if(
-        (BU_IsInCityProper__STUB(defender_battle_unit_idx) == ST_TRUE)
+        (Battle_Unit_Is_Within_City(defender_battle_unit_idx) == ST_TRUE)
         &&
-        (BU_IsInCityProper__STUB(attacker_battle_unit_idx) == ST_FALSE)
+        (Battle_Unit_Is_Within_City(attacker_battle_unit_idx) == ST_FALSE)
         &&
         (battlefield->walled != 0)
     )
@@ -22153,14 +22167,14 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
 
     // Lair Guard nibbles
-    if(OVL_Action_Type == 5)  /* Lair */
+    if(_combat_environ == 5)  /* Lair */
     {
-        _LAIRS[OVL_Action_Structure].guard1_count = (_LAIRS[OVL_Action_Structure].guard1_count & 0xF0);  // clear low-nibble
-        if((_LAIRS[OVL_Action_Structure].guard2_count & 0x0F) == 0)
+        _LAIRS[_combat_environ_idx].guard1_count = (_LAIRS[_combat_environ_idx].guard1_count & 0xF0);  // clear low-nibble
+        if((_LAIRS[_combat_environ_idx].guard2_count & 0x0F) == 0)
         {
             No_Secondaries = ST_TRUE;
         }
-        _LAIRS[OVL_Action_Structure].guard2_count = (_LAIRS[OVL_Action_Structure].guard2_count & 0xF0);  // clear low-nibble
+        _LAIRS[_combat_environ_idx].guard2_count = (_LAIRS[_combat_environ_idx].guard2_count & 0xF0);  // clear low-nibble
     }
 
 
@@ -22369,7 +22383,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         BEGIN:  Enemey City
     */
 
-    if(OVL_Action_Type == 1)
+    if(_combat_environ == 1)
     {
         CMB_Population_Lost = 0;
         CMB_Buildings_Lost = 0;
@@ -22381,16 +22395,16 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         {
             if(_combat_defender_player != NEUTRAL_PLAYER_IDX)
             {
-                _players[_combat_defender_player].fame -= _CITIES[OVL_Action_Structure].size;
+                _players[_combat_defender_player].fame -= _CITIES[_combat_environ_idx].size;
                 SETMIN(_players[_combat_defender_player].fame, 0);
             }
 
             if(_combat_defender_player != HUMAN_PLAYER_IDX)
             {
-                GUI_Multipurpose_Int = _CITIES[OVL_Action_Structure].size;
+                GUI_Multipurpose_Int = _CITIES[_combat_environ_idx].size;
             }
 
-            if(_CITIES[OVL_Action_Structure].population == 0)
+            if(_CITIES[_combat_environ_idx].population == 0)
             {
                 GAME_RazeCity = ST_TRUE;
             }
@@ -22425,7 +22439,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
             if(GAME_RazeCity == ST_FALSE)
             {
-                CMB_Gold_Reward = (_CITIES[OVL_Action_Structure].size - 2);
+                CMB_Gold_Reward = (_CITIES[_combat_environ_idx].size - 2);
 
                 SETMIN(CMB_Gold_Reward, 0);
 
@@ -22438,21 +22452,21 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
                 CMB_Gold_Reward = 0;
 
-                CMB_Gold_Reward = CTY_GetConquerGold(OVL_Action_Structure);  // the conquering wizard gets a portion of the previous owner's gold reserve as loot.
+                CMB_Gold_Reward = CTY_GetConquerGold(_combat_environ_idx);  // the conquering wizard gets a portion of the previous owner's gold reserve as loot.
 
                 if(player_idx < _num_players)
                 {
                     Player_Add_Gold(player_idx, CMB_Gold_Reward);
                 }
 
-                if(_CITIES[OVL_Action_Structure].owner_idx < _num_players)
+                if(_CITIES[_combat_environ_idx].owner_idx < _num_players)
                 {
                     _players[_combat_defender_player].gold_reserve -= CMB_Gold_Reward;
                 }
             }
             else
             {
-                CMB_Gold_Reward = _CITIES[OVL_Action_Structure].size;
+                CMB_Gold_Reward = _CITIES[_combat_environ_idx].size;
 
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
@@ -22463,16 +22477,16 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
                 SETMIN(_players[player_idx].fame, 0);
 
-                CMB_Gold_Reward = CTY_GetConquerGold(OVL_Action_Structure);
+                CMB_Gold_Reward = CTY_GetConquerGold(_combat_environ_idx);
 
-                if(_CITIES[OVL_Action_Structure].owner_idx < _num_players)
+                if(_CITIES[_combat_environ_idx].owner_idx < _num_players)
                 {
                     _players[_combat_defender_player].gold_reserve -= CMB_Gold_Reward;
                 }
 
                 for(itr_buildings = bt_Barracks; itr_buildings < NUM_BUILDINGS; itr_buildings++)
                 {
-                    if(_CITIES[OVL_Action_Structure].bldg_status[itr_buildings] > bs_NotBuilt)
+                    if(_CITIES[_combat_environ_idx].bldg_status[itr_buildings] > bs_NotBuilt)
                     {
                         CMB_Gold_Reward += (bldg_data_table[itr_buildings].construction_cost / 10);
                     }
@@ -22489,7 +22503,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
 
 
-        if(_CITIES[OVL_Action_Structure].population != 0)
+        if(_CITIES[_combat_environ_idx].population != 0)
         {
             Population_Loss_Percent = (_combat_city_damage / 2);
 
@@ -22534,7 +22548,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
             IDK_population_lost = 0;
 
-            for(itr_population = 0; (_CITIES[OVL_Action_Structure].population - 1) > itr_population; itr_population++)
+            for(itr_population = 0; (_CITIES[_combat_environ_idx].population - 1) > itr_population; itr_population++)
             {
                 if(Random(100) <= Population_Loss_Percent)
                 {
@@ -22565,14 +22579,14 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
             if(_active_battle_unit != 668)  /* 668 - rampage, created ruins */
             {
-                CTY_ApplyDamage(OVL_Action_Structure, IDK_population_lost, Destruction_Chance, &Buildings_Lost[0]);
+                CTY_ApplyDamage(_combat_environ_idx, IDK_population_lost, Destruction_Chance, &Buildings_Lost[0]);
             }
 
             if(player_idx != _combat_defender_player)
             {
                 for(itr_bldg_msg = 0; g_bldg_msg_ctr> itr_bldg_msg; itr_bldg_msg++)
                 {
-                    if(MSG_Building_Complete[itr_bldg_msg].city_idx == OVL_Action_Structure)
+                    if(MSG_Building_Complete[itr_bldg_msg].city_idx == _combat_environ_idx)
                     {
                         for(bldg_msg_idx = itr_bldg_msg; g_bldg_msg_ctr > itr_bldg_msg; itr_bldg_msg++)
                         {
@@ -22620,7 +22634,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         */
         {
             if(
-                (OVL_Action_Type == 5)
+                (_combat_environ == 5)
                 &&
                 (player_idx == NEUTRAL_PLAYER_IDX)
                 &&
@@ -22629,14 +22643,14 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                 (battle_units[itr_battle_units].status == bus_Active)
             )
             {
-                if(_UNITS[battle_units[itr_battle_units].unit_idx].type == _LAIRS[OVL_Action_Structure].guard1_unit_type)
+                if(_UNITS[battle_units[itr_battle_units].unit_idx].type == _LAIRS[_combat_environ_idx].guard1_unit_type)
                 {
-                    _LAIRS[OVL_Action_Structure].guard1_count++;
+                    _LAIRS[_combat_environ_idx].guard1_count++;
                     battle_units[itr_battle_units].status = bus_Dead;
                 }
-                else if(_UNITS[battle_units[itr_battle_units].unit_idx].type == _LAIRS[OVL_Action_Structure].guard2_unit_type)
+                else if(_UNITS[battle_units[itr_battle_units].unit_idx].type == _LAIRS[_combat_environ_idx].guard2_unit_type)
                 {
-                    _LAIRS[OVL_Action_Structure].guard2_count++;
+                    _LAIRS[_combat_environ_idx].guard2_count++;
                     battle_units[itr_battle_units].status = bus_Dead;
                 }
                 else
@@ -22647,8 +22661,8 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                     }
                     else
                     {
-                        _LAIRS[OVL_Action_Structure].guard2_unit_type = _UNITS[battle_units[itr_battle_units].unit_idx].type;
-                        _LAIRS[OVL_Action_Structure].guard2_count += 0x11;  // add 1 to both the high and low nibbles
+                        _LAIRS[_combat_environ_idx].guard2_unit_type = _UNITS[battle_units[itr_battle_units].unit_idx].type;
+                        _LAIRS[_combat_environ_idx].guard2_count += 0x11;  // add 1 to both the high and low nibbles
                         battle_units[itr_battle_units].status = bus_Dead;
                         No_Secondaries = ST_FALSE;
                     }
@@ -22672,10 +22686,10 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             (
                 (battle_units[itr_battle_units].controller_idx == NEUTRAL_PLAYER_IDX)
                 &&
-                (OVL_Action_Type != 0)  /* Enemy Army */
+                (_combat_environ != 0)  /* Enemy Army */
                 &&
                 (
-                    (OVL_Action_Type != 1)  /* Enemy City */
+                    (_combat_environ != 1)  /* Enemy City */
                     ||
                     ((battle_units[itr_battle_units].Abilities & UA_FANTASTIC) != 0)
                 )
@@ -22830,30 +22844,30 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
     */
 
     if(
-        (OVL_Action_Type == 5)  // Lair
+        (_combat_environ == 5)  // Lair
         &&   
         (player_idx == NEUTRAL_PLAYER_IDX)
     )
     {
 
         if(
-            ((_LAIRS[OVL_Action_Structure].guard1_count & 0x0F) == 0)
+            ((_LAIRS[_combat_environ_idx].guard1_count & 0x0F) == 0)
             &&
-            ((_LAIRS[OVL_Action_Structure].guard2_count & 0x0F) > 0)
+            ((_LAIRS[_combat_environ_idx].guard2_count & 0x0F) > 0)
         )
         {
-            _LAIRS[OVL_Action_Structure].guard1_count = _LAIRS[OVL_Action_Structure].guard2_count;
-            _LAIRS[OVL_Action_Structure].guard1_unit_type = _LAIRS[OVL_Action_Structure].guard2_unit_type;
-            _LAIRS[OVL_Action_Structure].guard2_count = 0;
-            _LAIRS[OVL_Action_Structure].guard2_unit_type = ut_Gargoyles;
+            _LAIRS[_combat_environ_idx].guard1_count = _LAIRS[_combat_environ_idx].guard2_count;
+            _LAIRS[_combat_environ_idx].guard1_unit_type = _LAIRS[_combat_environ_idx].guard2_unit_type;
+            _LAIRS[_combat_environ_idx].guard2_count = 0;
+            _LAIRS[_combat_environ_idx].guard2_unit_type = ut_Gargoyles;
         }
 
         if(
             (Undead_Created > 0)
             &&
-            (_LAIRS[OVL_Action_Structure].guard1_unit_type >= ut_Magic_Spirit)
+            (_LAIRS[_combat_environ_idx].guard1_unit_type >= ut_Magic_Spirit)
             &&
-            (_LAIRS[OVL_Action_Structure].guard2_unit_type >= ut_Magic_Spirit)
+            (_LAIRS[_combat_environ_idx].guard2_unit_type >= ut_Magic_Spirit)
         )
         {
             Undead_Created = 0;
@@ -23087,7 +23101,7 @@ void Combat_Results_Scroll(void)
     }
     else
     {
-        if(OVL_Action_Type == 1)  /* Enemy City */
+        if(_combat_environ == 1)  /* Enemy City */
         {
             if(
                 (CMB_ScrollMsg_Type == 1)
@@ -23198,13 +23212,13 @@ void Combat_Results_Scroll(void)
                         GAME_RazeCity = ST_TRUE;
                         // ; BUG: this is different than the original penalty, as conquest fame is already applied!
                         // ; BUG: no zero check!
-                        _players[HUMAN_PLAYER_IDX].fame -= (_CITIES[OVL_Action_Structure].size + 1);
-                        GUI_Multipurpose_Int -= (_CITIES[OVL_Action_Structure].size + 1);
+                        _players[HUMAN_PLAYER_IDX].fame -= (_CITIES[_combat_environ_idx].size + 1);
+                        GUI_Multipurpose_Int -= (_CITIES[_combat_environ_idx].size + 1);
 
                         // ; (this resets the timeout counter)
                         for(IDK_popup_timer = 3; IDK_popup_timer < NUM_BUILDINGS; IDK_popup_timer++)
                         {
-                            if(_CITIES[OVL_Action_Structure].bldg_status[IDK_popup_timer] > bs_NotBuilt)
+                            if(_CITIES[_combat_environ_idx].bldg_status[IDK_popup_timer] > bs_NotBuilt)
                             {
                                 // ; BUG: will re-award the original looted gold another time!
                                 CMB_Gold_Reward += bldg_data_table[IDK_popup_timer].construction_cost;
@@ -23337,7 +23351,7 @@ int16_t Combat_Results_Scroll_Text(void)
         case 12:
         {
             // _fstrcpy(GUI_NearMsgString, _CITIES[OVL_Action_Structure].name);
-            strcpy(GUI_NearMsgString, _CITIES[OVL_Action_Structure].name);
+            strcpy(GUI_NearMsgString, _CITIES[_combat_environ_idx].name);
             strcat(GUI_NearMsgString, cnst_CityLost_Msg);  /* " has been conquered" */
             Print_Centered(160, (_scroll_text_top + 25), GUI_NearMsgString);
         } break;
@@ -23357,7 +23371,7 @@ int16_t Combat_Results_Scroll_Text(void)
     {
         Set_Font_Colors_15(1, &colors2[0]);
         // _fstrcpy(GUI_NearMsgString, _CITIES[OVL_Action_Structure].name);
-        strcpy(message, _CITIES[OVL_Action_Structure].name);
+        strcpy(message, _CITIES[_combat_environ_idx].name);
         strcat(message, cnst_NewRuins_Msg);  /* " has been reduced to ruins" */
         Print_Paragraph(75, (_scroll_text_top + text_height), 175, message, 2);
         // TODO  text_height += (Get_Paragraph_Max_Height(175, message, 2) + 2));
@@ -23367,7 +23381,7 @@ int16_t Combat_Results_Scroll_Text(void)
     if(_active_battle_unit == 667)  /* ; 667 - raiders won (city neutral) */
     {
         // _fstrcpy(GUI_NearMsgString, _CITIES[OVL_Action_Structure].name);
-        strcpy(message, _CITIES[OVL_Action_Structure].name);
+        strcpy(message, _CITIES[_combat_environ_idx].name);
         strcat(message, cnst_CityRaided_Msg);  /* " has fallen to raiders" */
         Print_Paragraph(75, (_scroll_text_top + text_height), 175, message, 2);
         // TODO  text_height += (Get_Paragraph_Max_Height(175, message, 2) + 2));
@@ -23533,15 +23547,15 @@ int16_t CTY_RampageVictory(void)
         ||
         (idx == ST_UNDEFINED)
         ||
-        (Player_Fortress_City(_CITIES[OVL_Action_Structure].owner_idx) == OVL_Action_Structure)
+        (Player_Fortress_City(_CITIES[_combat_environ_idx].owner_idx) == _combat_environ_idx)
     )
     {
         return_value = 666;
     }
     else
     {
-        Change_City_Ownership(OVL_Action_Structure, NEUTRAL_PLAYER_IDX);
-        Destroy_City(OVL_Action_Structure);
+        Change_City_Ownership(_combat_environ_idx, NEUTRAL_PLAYER_IDX);
+        Destroy_City(_combat_environ_idx);
 
         Unit_Types = 0;
 
@@ -23772,7 +23786,7 @@ void BU_SetCityMovement__WIP(int16_t battle_unit_idx)
     )
     {
 
-        if(BU_IsInCityProper__STUB(battle_unit_idx) == ST_FALSE)
+        if(Battle_Unit_Is_Within_City(battle_unit_idx) == ST_FALSE)
         {
             /*
             mark all tiles immediately behind an intact city wall
@@ -23808,7 +23822,7 @@ void BU_SetCityMovement__WIP(int16_t battle_unit_idx)
         &&
         ((battle_units[battle_unit_idx].Move_Flags & MV_TELEPORT) == 0)
         &&
-        (BU_IsInCityProper__STUB(battle_unit_idx) != ST_FALSE)
+        (Battle_Unit_Is_Within_City(battle_unit_idx) != ST_FALSE)
     )
     {
 
@@ -23951,17 +23965,17 @@ int16_t Combat_Structure(int16_t wx, int16_t wy, int16_t wp, int16_t set_city_fl
 
     }
 
-    if(OVL_Action_Type == 1)  /* Combat - Enemy City */
+    if(_combat_environ == 1)  /* Combat - Enemy City */
     {
 
-        if(_CITIES[OVL_Action_Structure].enchantments[HEAVENLY_LIGHT] > 0)
+        if(_CITIES[_combat_environ_idx].enchantments[HEAVENLY_LIGHT] > 0)
         {
 
             combat_enchantments[TRUE_LIGHT_DFNDR] = 2;
 
         }
 
-        if(_CITIES[OVL_Action_Structure].enchantments[CLOUD_OF_SHADOW] > 0)
+        if(_CITIES[_combat_environ_idx].enchantments[CLOUD_OF_SHADOW] > 0)
         {
 
             combat_enchantments[DARKNESS_DFNDR] = 2;
@@ -24257,10 +24271,25 @@ void BU_WallofFire__NOOP(int16_t battle_unit_idx)
 
 // WZD o124p13
 // drake178: BU_IsInCityProper()
-int16_t BU_IsInCityProper__STUB(int16_t battle_unit_idx)
+int16_t Battle_Unit_Is_Within_City(int16_t battle_unit_idx)
 {
 
-    return ST_FALSE;
+    if(
+        (battle_units[battle_unit_idx].cgx >= MIN_CGX_CITY)
+        &&
+        (battle_units[battle_unit_idx].cgx <= MAX_CGX_CITY)
+        &&
+        (battle_units[battle_unit_idx].cgy >= MIN_CGY_CITY)
+        &&
+        (battle_units[battle_unit_idx].cgy >= MAX_CGY_CITY)
+    )
+    {
+        return ST_TRUE;
+    }
+    else
+    {
+        return ST_FALSE;
+    }
 
 }
 
@@ -24534,17 +24563,17 @@ void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
 
     Stack_Owner = _UNITS[troops[0]].owner_idx;
 
-    City_Owner = _CITIES[OVL_Action_Structure].owner_idx;
+    City_Owner = _CITIES[_combat_environ_idx].owner_idx;
 
     GUI_Multipurpose_Int = 0;
 
     if(City_Owner < _num_players)
     {
-        _players[City_Owner].fame -= _CITIES[OVL_Action_Structure].size;
+        _players[City_Owner].fame -= _CITIES[_combat_environ_idx].size;
 
         if(City_Owner == HUMAN_PLAYER_IDX)
         {
-            GUI_Multipurpose_Int -= _CITIES[OVL_Action_Structure].size;
+            GUI_Multipurpose_Int -= _CITIES[_combat_environ_idx].size;
         }
 
         if(_players[City_Owner].fame < 0)
@@ -24553,7 +24582,7 @@ void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
         }
     }
 
-    if(_CITIES[OVL_Action_Structure].population == 0)
+    if(_CITIES[_combat_environ_idx].population == 0)
     {
         GAME_RazeCity = ST_TRUE;
     }
@@ -24583,7 +24612,7 @@ void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
 
     if(GAME_RazeCity == ST_FALSE)
     {
-        CMB_Gold_Reward = (_CITIES[OVL_Action_Structure].size - 2);
+        CMB_Gold_Reward = (_CITIES[_combat_environ_idx].size - 2);
 
         if(CMB_Gold_Reward < 0)
         {
@@ -24599,7 +24628,7 @@ void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
 
         CMB_Gold_Reward = 0;
 
-        CMB_Gold_Reward = CTY_GetConquerGold(OVL_Action_Structure);
+        CMB_Gold_Reward = CTY_GetConquerGold(_combat_environ_idx);
 
         if(Stack_Owner < _num_players)
         {
@@ -24619,7 +24648,7 @@ void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
     }
     else
     {
-        CMB_Gold_Reward = _CITIES[OVL_Action_Structure].size;
+        CMB_Gold_Reward = _CITIES[_combat_environ_idx].size;
 
         if(Stack_Owner == HUMAN_PLAYER_IDX)
         {
@@ -24636,7 +24665,7 @@ void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
             }
         }
 
-        CMB_Gold_Reward = CTY_GetConquerGold(OVL_Action_Structure);
+        CMB_Gold_Reward = CTY_GetConquerGold(_combat_environ_idx);
 
         if(City_Owner < _num_players)
         {
@@ -24650,7 +24679,7 @@ void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
 
         for(itr = 3; itr < 36; itr++)
         {
-            if(_CITIES[OVL_Action_Structure].bldg_status[itr] > bs_NotBuilt)
+            if(_CITIES[_combat_environ_idx].bldg_status[itr] > bs_NotBuilt)
             {
                 CMB_Gold_Reward += (bldg_data_table[itr].construction_cost / 10);
             }

@@ -1204,6 +1204,7 @@ int16_t frame_scanned_cgx;
 int16_t frame_scanned_flag;
 
 // WZD dseg:9284
+// WZD dseg:9286
 /*
 combat type?
     ...mode, context, setting, circumstance, environment, ...
@@ -1211,17 +1212,16 @@ combat type?
 0: Enemy Stack
 1: Enemy City
 5: Lair
-*/
-int16_t OVL_Action_Type;
-// WZD dseg:9286
-/*
+
 STRUCTURES INFLUENCING COMBAT
 ...
 vs. battlefield->Central_Structure?
     enum Central_Structures
 
+¿ vs. _combat_structure ?
 */
-int16_t OVL_Action_Structure;
+int16_t _combat_environ;
+int16_t _combat_environ_idx;
 
 // WZD dseg:9288 00                                              db    0
 // WZD dseg:9289 00                                              db    0
@@ -1262,7 +1262,7 @@ SAMB_ptr unit_grass_diamond_seg;
 
 // WZD dseg:92B8
 // drake178: IMG_CTY_Buildings BLDNG_GFX
-SAMB_ptr bldg_picts_seg[35];
+SAMB_ptr bldg_picts_seg[(NUM_BUILDINGS - 1)];
 
 // WZD dseg:92FE
 // drake178: IMG_CTY_CITYSPL4

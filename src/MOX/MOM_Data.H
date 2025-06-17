@@ -2896,23 +2896,23 @@ extern int16_t _wall_rise_on;
 extern struct s_BATTLEFIELD * battlefield;
 
 // WZD dseg:9278
-extern int16_t frame_active_cgy;
 // WZD dseg:927A
-extern int16_t frame_active_cgx;
 // WZD dseg:927C
+extern int16_t frame_active_cgy;
+extern int16_t frame_active_cgx;
 extern int16_t frame_active_flag;
 
 // WZD dseg:927E
-extern int16_t frame_scanned_cgy;
 // WZD dseg:9280
-extern int16_t frame_scanned_cgx;
 // WZD dseg:9282
+extern int16_t frame_scanned_cgy;
+extern int16_t frame_scanned_cgx;
 extern int16_t frame_scanned_flag;
 
 // WZD dseg:9284
-extern int16_t OVL_Action_Type;
 // WZD dseg:9286
-extern int16_t OVL_Action_Structure;
+extern int16_t _combat_environ;
+extern int16_t _combat_environ_idx;
 
 
 
@@ -2931,7 +2931,7 @@ extern SAMB_ptr unit_grass_diamond_seg;
 
 // WZD dseg:92B8
 // drake178: IMG_CTY_Buildings BLDNG_GFX
-extern SAMB_ptr bldg_picts_seg[35];
+extern SAMB_ptr bldg_picts_seg[(NUM_BUILDINGS - 1)];
 
 // WZD dseg:92FE
 // drake178: IMG_CTY_CITYSPL4

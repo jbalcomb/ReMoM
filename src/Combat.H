@@ -592,6 +592,17 @@ enum e_COMBAT_ATTACK_MODE
     am_Ranged           = 2
 };
 
+/*
+    _combat_environ
+*/
+enum e_COMBAT_ENVIRONMENT_TYPE
+{
+    cnv_Enemy_Stack     = 0,
+    cnv_Enemy_City      = 1,
+    cnv_Lair            = 5
+};
+
+
 enum e_COMBAT_STRUCTURE
 {
     cs_NONE              = 0,
@@ -1261,7 +1272,7 @@ void Assign_Combat_Grids(void);
 int16_t BU_IsVisible__STUB(int16_t battle_unit_idx);
 
 // WZD s91p09
-void CMB_UnitCityDamage__WIP(void);
+void Add_City_Damage_From_Battle_Units_Within(void);
 
 // WZD s91p10
 int16_t BU_GetInstaMoveType__WIP(int16_t battle_unit_idx);
@@ -1868,7 +1879,7 @@ void BU_WallofFire__NOOP(int16_t battle_unit_idx);
 // BU_ClearBlood()
 
 // WZD o124p13
-int16_t BU_IsInCityProper__STUB(int16_t battle_unit_idx);
+int16_t Battle_Unit_Is_Within_City(int16_t battle_unit_idx);
 
 // WZD o124p14
 int16_t Combat_Grid_Cell_Has_City_Wall(int16_t cgc2, int16_t cgc1);

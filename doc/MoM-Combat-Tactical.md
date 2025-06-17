@@ -25,6 +25,32 @@ Wall Crushers
 
 
 
+
+
+OVL_Action_Type  ==>  _combat_environ
+OVL_Action_Structure  ==> _combat_environ_idx
+CMB_combat_structure  ==>  _combat_structure
+OVL_Action_Plane  ==>  _combat_wp
+OVL_Action_YPos  ==>  _combat_wy
+OVL_Action_XPos  ==>  _combat_wx
+
+
+
+## _combat_environ
+
+
+## _combat_environ_idx
+
+
+## _combat_structure
+    set by Combat_Structure(wx,wy,wp)
+    only called once each by tactical combat and strategic combat
+    looks like what was described in the manual and OSG
+
+
+
+
+
 ¿ "entity" vs. unit/object/combat_grid_datum ?
 unit level
 figure level
