@@ -33,6 +33,7 @@ CMB_combat_structure  ==>  _combat_structure
 OVL_Action_Plane  ==>  _combat_wp
 OVL_Action_YPos  ==>  _combat_wy
 OVL_Action_XPos  ==>  _combat_wx
+BU_GetEffectiveDEF()  ==>  Battle_Unit_Defense_Special()
 
 
 

@@ -298,10 +298,10 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
 
     notify_draw_offscr = ST_FALSE;  // ¿ ALWAYS 0 ?
 
-    // DEDU: Why OVL_Action_Structure here instead of passed in lair_idx? Macro? API Boundary?
-    _combat_wx = _LAIRS[OVL_Action_Structure].wx;
-    _combat_wy = _LAIRS[OVL_Action_Structure].wy;
-    _combat_wp = _LAIRS[OVL_Action_Structure].wp;
+    // DEDU: Why _combat_environ_idx here instead of passed in lair_idx? Macro? API Boundary?
+    _combat_wx = _LAIRS[_combat_environ_idx].wx;
+    _combat_wy = _LAIRS[_combat_environ_idx].wy;
+    _combat_wp = _LAIRS[_combat_environ_idx].wp;
 
     if(
         (Encounter_Outcome == ST_TRUE)  // drake178: ; conflicting condition, will never jump
@@ -793,14 +793,14 @@ char * STR_GetIndefinite(char * word)
 */
 void Lair_Generate_Treasure(int16_t player_idx, int16_t lair_idx, int16_t items[], int16_t * spell, int16_t * hero, int16_t * hero_slot, int16_t * total_rewards, int16_t * reward_special_count, int16_t reward_specials[])
 {
-    int16_t troops[9];
-    int16_t troop_count;
-    int16_t lair_item_count;
-    int16_t Prisoner_Reward;
-    int16_t Spell_Or_Special;
-    int16_t Mana_Reward;
-    int16_t Gold_Reward;
-    int16_t itr;
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t troop_count = 0;
+    int16_t lair_item_count = 0;
+    int16_t Prisoner_Reward = 0;
+    int16_t Spell_Or_Special = 0;
+    int16_t Mana_Reward = 0;
+    int16_t Gold_Reward = 0;
+    int16_t itr = 0;
 
 
     Gold_Reward = _LAIRS[lair_idx].Loot_Gold;

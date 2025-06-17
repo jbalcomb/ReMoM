@@ -1737,7 +1737,7 @@ int16_t Effective_Unit_Type_Strength(int16_t unit_type)
     if((_unit_type_table[unit_type].Ranged_Type / 10) <= rag_Magic)
     {
 
-        unit_type_strength += (Get_Effective_Ranged_Strength(_unit_type_table[unit_type].Ranged, _unit_type_table[unit_type].Figures, _unit_type_table[unit_type].Attack_Flags) * 2);
+        unit_type_strength += (Get_Effective_Ranged_Strength(_unit_type_table[unit_type].Ranged, _unit_type_table[unit_type].Figures, _unit_type_table[unit_type].attack_attributes) * 2);
 
     }
 
@@ -1746,14 +1746,14 @@ int16_t Effective_Unit_Type_Strength(int16_t unit_type)
 
         temp = _unit_type_table[unit_type].Ranged;
 
-        unit_type_strength += Get_Effective_Melee_Strength(_unit_type_table[unit_type].Melee, temp, _unit_type_table[unit_type].Figures, _unit_type_table[unit_type].Attack_Flags, _unit_type_table[unit_type].Ranged_Type);
+        unit_type_strength += Get_Effective_Melee_Strength(_unit_type_table[unit_type].Melee, temp, _unit_type_table[unit_type].Figures, _unit_type_table[unit_type].attack_attributes, _unit_type_table[unit_type].Ranged_Type);
 
     }
     else
     {
         temp = 0;
 
-        unit_type_strength += Get_Effective_Melee_Strength(_unit_type_table[unit_type].Melee, temp, _unit_type_table[unit_type].Figures, _unit_type_table[unit_type].Attack_Flags, ST_UNDEFINED);
+        unit_type_strength += Get_Effective_Melee_Strength(_unit_type_table[unit_type].Melee, temp, _unit_type_table[unit_type].Figures, _unit_type_table[unit_type].attack_attributes, ST_UNDEFINED);
 
     }
 
@@ -1796,7 +1796,7 @@ int16_t Effective_Unit_Strength(int16_t unit_idx)
 
     Load_Battle_Unit(unit_idx, global_battle_unit);
 
-    temp = ((global_battle_unit->Cur_Figures * global_battle_unit->hits) - global_battle_unit->TopFig_Dmg);
+    temp = ((global_battle_unit->Cur_Figures * global_battle_unit->hits) - global_battle_unit->front_figure_damage);
 
     effective_strength += Get_Effective_Hits(temp, global_battle_unit->defense);
 
@@ -1807,7 +1807,7 @@ int16_t Effective_Unit_Strength(int16_t unit_idx)
     )
     {
 
-        effective_strength += Get_Effective_Ranged_Strength(global_battle_unit->ranged, global_battle_unit->Cur_Figures, (global_battle_unit->Attack_Flags | global_battle_unit->Ranged_ATK_Flags));
+        effective_strength += Get_Effective_Ranged_Strength(global_battle_unit->ranged, global_battle_unit->Cur_Figures, (global_battle_unit->attack_attributes | global_battle_unit->ranged_attack_attributes));
 
     }
 
@@ -1816,7 +1816,7 @@ int16_t Effective_Unit_Strength(int16_t unit_idx)
 
         temp = 0;
 
-        effective_strength += Get_Effective_Melee_Strength(global_battle_unit->melee, temp, global_battle_unit->Cur_Figures, (global_battle_unit->Attack_Flags | global_battle_unit->Melee_ATK_Flags), ST_UNDEFINED);
+        effective_strength += Get_Effective_Melee_Strength(global_battle_unit->melee, temp, global_battle_unit->Cur_Figures, (global_battle_unit->attack_attributes | global_battle_unit->melee_attack_attributes), ST_UNDEFINED);
 
     }
     else
@@ -1824,7 +1824,7 @@ int16_t Effective_Unit_Strength(int16_t unit_idx)
 
         temp = global_battle_unit->ranged;
 
-        effective_strength += Get_Effective_Melee_Strength(global_battle_unit->melee, temp, global_battle_unit->Cur_Figures, (global_battle_unit->Attack_Flags | global_battle_unit->Melee_ATK_Flags), global_battle_unit->ranged_type);
+        effective_strength += Get_Effective_Melee_Strength(global_battle_unit->melee, temp, global_battle_unit->Cur_Figures, (global_battle_unit->attack_attributes | global_battle_unit->melee_attack_attributes), global_battle_unit->ranged_type);
 
     }
 

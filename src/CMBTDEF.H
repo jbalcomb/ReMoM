@@ -18,6 +18,23 @@ battlefield->terrain_group[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = CTG_Gras
 #define MAX_ENTITIES  256
 
 
+
+
+
+#define NUM_DAMAGE_TYPES  3
+
+
+enum e_DAMAGE_TYPES
+{
+    dt_Normal  = 0,     /* AKA basic */
+    dt_Drain   = 1,     /* 'Life Steal', */
+    dt_Doom    = 2      /* "doom" ~== "chaos" irreversible, destruction, disintegration, ... */
+};
+
+
+
+
+
 /*
     ~ screen coordinates
 */

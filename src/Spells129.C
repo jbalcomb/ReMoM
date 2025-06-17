@@ -251,23 +251,23 @@ void UNIT_ConvSpellATK__WIP(int16_t unit_idx, int16_t spell_idx, int16_t * item_
 
     }
 
-    damage_total += battle_units[0].TopFig_Dmg;
+    damage_total += battle_units[0].front_figure_damage;
 
     battle_units[0].Cur_Figures -= (damage_total / battle_units[0].hits);
 
-    battle_units[0].TopFig_Dmg = (damage_total % battle_units[0].hits);
+    battle_units[0].front_figure_damage = (damage_total % battle_units[0].hits);
 
     if(battle_units[0].Cur_Figures > 0)
     {
 
-        if(battle_units[0].TopFig_Dmg < 0)
+        if(battle_units[0].front_figure_damage < 0)
         {
 
-            battle_units[0].TopFig_Dmg = 0;
+            battle_units[0].front_figure_damage = 0;
 
         }
 
-        _UNITS[unit_idx].Damage = (((battle_units[0].Max_Figures - battle_units[0].Cur_Figures) * battle_units[0].hits) + battle_units[0].TopFig_Dmg);
+        _UNITS[unit_idx].Damage = (((battle_units[0].Max_Figures - battle_units[0].Cur_Figures) * battle_units[0].hits) + battle_units[0].front_figure_damage);
 
     }
     else  /* DEAD / DIED */

@@ -17,7 +17,8 @@
 #include <stdlib.h>     /* abs(); itoa(); malloc(); */
 
 // Combat.C
-extern int16_t CMB_combat_structure;
+// WZD dseg:C520
+extern int16_t _combat_structure;
 
 
 
@@ -986,7 +987,7 @@ int16_t Combat_Spellbook_Build__WIP(int16_t caster_idx)
                         !(
                             (spell_data_table[abs(m_spellbook_spell_list[itr1])].type == scc_Summoning)
                             &&
-                            (CMB_combat_structure == cs_OceanTerrainType)
+                            (_combat_structure == cs_OceanTerrainType)
                             &&
                             ((_unit_type_table[spell_data_table[abs(m_spellbook_spell_list[itr1])].unit_type].Move_Flags & MV_FLYING) == 0)
                             &&
@@ -996,7 +997,7 @@ int16_t Combat_Spellbook_Build__WIP(int16_t caster_idx)
                         !(
                             (m_spellbook_spell_list[itr1] == spl_Cracks_Call)  // BUGBUG  should be abs(spell_idx)
                             &&
-                            (CMB_combat_structure == cs_OceanTerrainType)
+                            (_combat_structure == cs_OceanTerrainType)
                         )
                     )
                     {
@@ -1023,7 +1024,7 @@ int16_t Combat_Spellbook_Build__WIP(int16_t caster_idx)
                     !(
                         (spell_data_table[abs(m_spellbook_spell_list[itr1])].type == scc_Summoning)
                         &&
-                        (CMB_combat_structure == cs_OceanTerrainType)
+                        (_combat_structure == cs_OceanTerrainType)
                         &&
                         ((_unit_type_table[spell_data_table[abs(m_spellbook_spell_list[itr1])].unit_type].Move_Flags & MV_FLYING) == 0)
                         &&
@@ -1033,7 +1034,7 @@ int16_t Combat_Spellbook_Build__WIP(int16_t caster_idx)
                     !(
                         (m_spellbook_spell_list[itr1] == spl_Cracks_Call)  // BUGBUG  should be abs(spell_idx)
                         &&
-                        (CMB_combat_structure == cs_OceanTerrainType)
+                        (_combat_structure == cs_OceanTerrainType)
                     )
                 )
                 {
@@ -1394,7 +1395,7 @@ void CmbBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
                     (
                         (_combat_attacker_player == HUMAN_PLAYER_IDX)
                         ||
-                        (OVL_Action_Type == 1)
+                        (_combat_environ == cnv_Enemy_City)
                     )
                 )
                 {
@@ -1404,7 +1405,7 @@ void CmbBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
                 if(
                     (spell_data_table[abs(spell_idx)].type == scc_Summoning)
                     &&
-                    (CMB_combat_structure == cs_OceanTerrainType)
+                    (_combat_structure == cs_OceanTerrainType)
                     &&
                     ((_unit_type_table[spell_data_table[abs(spell_idx)].unit_type].Move_Flags & MV_FLYING) == 0)
                     &&
@@ -1417,7 +1418,7 @@ void CmbBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
                 if(
                     (spell_idx == spl_Cracks_Call)  // BUGBUG  should be abs(spell_idx)
                     &&
-                    (CMB_combat_structure == cs_OceanTerrainType)
+                    (_combat_structure == cs_OceanTerrainType)
                 )
                 {
                     Icon_Count = 0;

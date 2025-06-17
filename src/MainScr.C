@@ -5221,9 +5221,9 @@ Combat_Handlers:
 
     // set in Eval_Move_Path__WIP() (AKA STK_EvaluatePath)
     // {0: Enemy Stack, 1: Enemy City, 5: Lair}
-    if(OVL_Action_Type == 5)
+    if(_combat_environ == cnv_Lair)
     {
-        lair_combat_result = Lair_Combat__WIP(OVL_Action_Structure, player_idx);
+        lair_combat_result = Lair_Combat__WIP(_combat_environ_idx, player_idx);
 
         if(lair_combat_result == 0)  // ~ Winner == False / Combat - Lose
         {
@@ -6228,8 +6228,8 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
             Path_Length = itr_Path_Length;
             Path_Length = itr_Path_Length + 1;
             Combat_Path_Value = 1;
-            OVL_Action_Type = 5;
-            OVL_Action_Structure = lair_idx;
+            _combat_environ = cnv_Lair;
+            _combat_environ_idx = lair_idx;
             Obstacle_Value = 5;
             Out_of_Moves_Value = 0;
 
@@ -6272,8 +6272,8 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
                     Path_Length = (itr_Path_Length + 1);
                     Combat_Path_Value = 1;
                     Obstacle_Value = _CITIES[city_idx].owner_idx;
-                    OVL_Action_Structure = city_idx;
-                    OVL_Action_Type = 1;
+                    _combat_environ_idx = city_idx;
+                    _combat_environ = cnv_Enemy_City;
                     Out_of_Moves_Value = 0;
                 }
 
@@ -6295,7 +6295,7 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
             Out_of_Moves_Value = 0;
             Combat_Path_Value = 1;
             Obstacle_Value = Units[0];
-            OVL_Action_Type = 0;
+            _combat_environ = cnv_Enemy_Stack;
 
             continue;
         }

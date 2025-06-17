@@ -1963,7 +1963,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         // ArmorPiercing, Poison, LifeSteal, AutomaticDmg, Destruction, Illusion, StoningTouch, DeathTouch, PowerDrain, DispelEvil
         for(itr = 0; ((itr < 11) && (specials_index < 39)); itr++)
         {
-            if((USW_ATK_Flags[itr].bit_idx & global_battle_unit->Attack_Flags) != 0)
+            if((USW_ATK_Flags[itr].bit_idx & global_battle_unit->attack_attributes) != 0)
             {
 				const char* pcszName = *USW_ATK_Flags[itr].name;
 				if(pcszName)
@@ -2286,7 +2286,7 @@ void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_lis
 
     for(itr = 0; itr < 11; itr++)
     {
-        if((_unit_type_table[unit_type].Attack_Flags & USW_ATK_Flags[itr].bit_idx) != 0)
+        if((_unit_type_table[unit_type].attack_attributes & USW_ATK_Flags[itr].bit_idx) != 0)
         {
             strcpy(specials_list->names[specials_index], *USW_ATK_Flags[itr].name);
 
@@ -2492,7 +2492,7 @@ void Prod_Load_Battle_Unit(int16_t unit_type, struct s_BATTLE_UNIT * battle_unit
     //MoO2  Module: struct  Copy_Structure_()
     memcpy(battle_unit, &_unit_type_table[unit_type].Melee, sizeof(struct s_UNIT_TYPE));
 
-    battle_unit->TopFig_Dmg = 0;
+    battle_unit->front_figure_damage = 0;
 
     battle_unit->Weapon_Plus1 = 0;
 
@@ -2506,7 +2506,7 @@ void Prod_Load_Battle_Unit(int16_t unit_type, struct s_BATTLE_UNIT * battle_unit
     battle_unit->Grey_Defense = 0;
     battle_unit->Grey_Resist = 0;
 
-    // in Load_Battle_Unit(), tests s_BATTLE_UNIT.Attack_Flags & Att_Poison
+    // in Load_Battle_Unit(), tests s_BATTLE_UNIT.attack_attributes & Att_Poison
     battle_unit->Poison_Strength = _unit_type_table[unit_type].Spec_Att_Attr;
 
 }

@@ -1781,10 +1781,10 @@ void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_bat
 void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_count, int16_t defender_battle_unit_idx, int16_t attack_mode, int16_t damage_array[], int16_t Counter, int16_t SpFx);
 
 // WZD o122p08
-int16_t BU_GetEffectiveDEF__SEGRAX(int16_t battle_unit_idx, int16_t attack_type, int16_t attack_immunities, int16_t attack_attributes, int16_t magic_realm);
+int16_t Battle_Unit_Defense_Special(int16_t battle_unit_idx, int16_t attack_type, int16_t attack_immunities, int16_t attack_attributes, int16_t magic_realm);
 
 // WZD o122p09
-// BU_GetATKRealm()
+int16_t Battle_Unit_Attack_Magic_Realm(int16_t attack_type, int16_t battle_unit_idx);
 
 // WZD o122p10
 void Calc_Battlefield_Bonuses(int16_t combat_structure);

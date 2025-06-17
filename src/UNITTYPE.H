@@ -224,35 +224,37 @@ attake type 0 is Melee
 */
 enum e_RANGED_ATTACK_TYPE
 {
-    rat_None         =  -1,  /* ¿ out of ammo / not enough mana ? Battle_unit_attack__WIP() */
-    rat_NONE         =   0,
+    rat_None         =  -1,     /* ¿ out of ammo / not enough mana ? Battle_unit_attack__WIP() */
+    rat_NONE         =   0,     /* sbr_ NONE   */
         /* BU_IsRangedUnit() checks ranged_type > 0 */
         /* BU_MeleeFlightCheck__WIP() checks ranged_type > 0 */
 
-    rat_Rock         =  10,
-    rat_Cannon       =  11,
+    rat_Rock         =  10,     /* sbr_ NONE   */
+    rat_Cannon       =  11,     /* sbr_ NONE   */
 
-    rat_Bow          =  20,
-    rat_Sling        =  21,
-    rat_Unknown      =  22,
+    rat_Bow          =  20,     /* sbr_ NONE   */
+    rat_Sling        =  21,     /* sbr_ NONE   */
+    rat_Unknown      =  22,     /* sbr_ NONE   */
 
     /* this group is used for assigning 'Arcane Power' - "magic ranged attack" */
-    rat_Lightning    =  30,
-    rat_Fireball     =  31,
-    rat_Sorcery      =  32,
-    rat_Deathbolt    =  33,
-    rat_Icebolt      =  34,
-    rat_Pr_Shaman    =  35,
-    rat_Drow         =  36,
-    rat_Sprite       =  37,
-    rat_Nat_Bolt     =  38,
+    /* the OSG lists these by magic realm color */
+    /* there is no Life / "White Magic" 'magic ranged attack' */
+    rat_Lightning    =  30,     /* sbr_Chaos   */
+    rat_Fireball     =  31,     /* sbr_Chaos   */  /* "Red Magic"   */
+    rat_Sorcery      =  32,     /* sbr_Sorcery */  /* "Blue Magic"  */
+    rat_Deathbolt    =  33,     /* sbr_Chaos   */  /* "Black Magic" */
+    rat_Icebolt      =  34,     /* sbr_Nature  */  /* "Green Magic" */
+    rat_Pr_Shaman    =  35,     /* sbr_Nature  */
+    rat_Drow         =  36,     /* sbr_Chaos   */
+    rat_Sprite       =  37,     /* sbr_Nature  */
+    rat_Nat_Bolt     =  38,     /* sbr_Nature  */ /* hard-coded in conventional spell damage call to Battle_Unit_Defense_Special() */
 
-    srat_Thrown      = 100,     /* Thrown Attack */
-    srat_FireBreath  = 101,     /* Breath Attack */ /* "Fiery Breath"     */
-    srat_Lightning   = 102,     /* Breath Attack */ /* "Lightning Breath" */
-    srat_StoneGaze   = 103,     /* Gaze Attack   */
-    srat_MultiGaze   = 104,     /* Gaze Attack   */
-    srat_DeathGaze   = 105      /* Gaze Attack   */
+    srat_Thrown      = 100,     /* Thrown Attack    sbr_NONE   */
+    srat_FireBreath  = 101,     /* Breath Attack    sbr_Chaos  */  /* "Fiery Breath"     */
+    srat_Lightning   = 102,     /* Breath Attack    sbr_Chaos  */  /* "Lightning Breath" */
+    srat_StoneGaze   = 103,     /* Gaze Attack      sbr_Nature */
+    srat_MultiGaze   = 104,     /* Gaze Attack      sbr_Chaos  */
+    srat_DeathGaze   = 105      /* Gaze Attack      sbr_Death  */
 };
 
 enum e_RANGED_ATTACK_GROUP
@@ -304,7 +306,7 @@ struct s_UNIT_TYPE
     /* 1C */  uint8_t Attribs_2;                 /* enum ATTRIB_2 */
     /* 1B */  // 2-byte alignment padding
     /* 1E */  uint16_t Abilities;               /* enum ABL_FLAGS */  // macros - UA_...
-    /* 20 */  uint16_t Attack_Flags;            /* enum ATK_FLAGS */  // Att_ArmorPrc, etc.
+    /* 20 */  uint16_t attack_attributes;       /* enum ATK_FLAGS */  // Att_ArmorPrc, etc.
     /* 22 */  int16_t  Sound;                   /* 1-byte, unsigned  high nibble move sound, low nibble melee sound */
 };
 #pragma pack(pop)

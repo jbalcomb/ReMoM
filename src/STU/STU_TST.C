@@ -65,17 +65,52 @@ void TST_Patch_Game_Data(void)
     TST_Cheat_Power(player_idx);
 
 
+
+    // Wierd Ones
+    // scc_City_Enchantment_Positive   2
+    // TST_Learn_Spell(player_idx, spl_Earth_Gate);
+    // TST_Learn_Spell(player_idx, spl_Astral_Gate);
+
+    // Combat  scc_Special_Spell   5
+    TST_Learn_Spell(player_idx, spl_Black_Wind);
+    TST_Learn_Spell(player_idx, spl_Call_The_Void);
+    TST_Learn_Spell(player_idx, spl_Change_Terrain);
+    TST_Learn_Spell(player_idx, spl_Chaos_Channels);
+    TST_Learn_Spell(player_idx, spl_Corruption);
+    TST_Learn_Spell(player_idx, spl_Earth_Lore);
+    TST_Learn_Spell(player_idx, spl_Earthquake);
+    TST_Learn_Spell(player_idx, spl_Enchant_Road);
+    TST_Learn_Spell(player_idx, spl_Incarnation);
+    TST_Learn_Spell(player_idx, spl_Just_Cause);
+    TST_Learn_Spell(player_idx, spl_Lycanthropy);
+    TST_Learn_Spell(player_idx, spl_Move_Fortress);
+    TST_Learn_Spell(player_idx, spl_Natures_Cures);
+    TST_Learn_Spell(player_idx, spl_Plane_Shift);
+    TST_Learn_Spell(player_idx, spl_Raise_Volcano);
+    TST_Learn_Spell(player_idx, spl_Resurrection);
+    TST_Learn_Spell(player_idx, spl_Spell_Of_Return);
+    TST_Learn_Spell(player_idx, spl_Stasis);
+    TST_Learn_Spell(player_idx, spl_Summon_Champion);
+    TST_Learn_Spell(player_idx, spl_Summon_Hero);
+    TST_Learn_Spell(player_idx, spl_Transmute);
+    TST_Learn_Spell(player_idx, spl_Warp_Node);
+
+    // Overland  scc_Crafting_Spell  11
+    // TST_Learn_Spell(player_idx, spl_Enchant_Item);
+    // TST_Learn_Spell(player_idx, spl_Create_Artifact);
+
+
     // Combat Per-Turn Effects
-    TST_Learn_Spell(player_idx, spl_Black_Sleep);       //  165
-    TST_Learn_Spell(player_idx, spl_Call_Lightning);    //   35
-    TST_Learn_Spell(player_idx, spl_Confusion);         //   46
-    TST_Learn_Spell(player_idx, spl_Entangle);
-    TST_Learn_Spell(player_idx, spl_Magic_Vortex);      //  105
-    TST_Learn_Spell(player_idx, spl_Mana_Leak);
-    TST_Learn_Spell(player_idx, spl_Regeneration);
-    TST_Learn_Spell(player_idx, spl_Terror);
-    TST_Learn_Spell(player_idx, spl_Web);               //    5
-    TST_Learn_Spell(player_idx, spl_Wrack);
+    // TST_Learn_Spell(player_idx, spl_Black_Sleep);       //  165
+    // TST_Learn_Spell(player_idx, spl_Call_Lightning);    //   35
+    // TST_Learn_Spell(player_idx, spl_Confusion);         //   46
+    // TST_Learn_Spell(player_idx, spl_Entangle);
+    // TST_Learn_Spell(player_idx, spl_Magic_Vortex);      //  105
+    // TST_Learn_Spell(player_idx, spl_Mana_Leak);
+    // TST_Learn_Spell(player_idx, spl_Regeneration);
+    // TST_Learn_Spell(player_idx, spl_Terror);
+    // TST_Learn_Spell(player_idx, spl_Web);               //    5
+    // TST_Learn_Spell(player_idx, spl_Wrack);
 
     // Combat  scc_Special_Spell   5
     // TST_Learn_Spell(player_idx, spl_Animate_Dead);

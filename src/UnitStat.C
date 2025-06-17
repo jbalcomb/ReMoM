@@ -1173,7 +1173,7 @@ if(_CITIES[_city_idx].construction > 298)
         {
             // Combat Screen
             Print((UV_x_start + 51), (UV_y_start + 34), "Damage");
-            Print_Integer_Right((UV_x_start + 90), (UV_y_start + 34), global_battle_unit->TopFig_Dmg);
+            Print_Integer_Right((UV_x_start + 90), (UV_y_start + 34), global_battle_unit->front_figure_damage);
         }
 
         colors[0] = 197;
@@ -1216,7 +1216,7 @@ if(_CITIES[_city_idx].construction > 298)
         UV_Draw_Stat_Icons((UV_x_start_offset + UV_x_start + 49), (UV_y_start + 79), 14, global_battle_unit->resist, stat_icon_row_limit, global_battle_unit->Gold_Resist, global_battle_unit->Grey_Resist);
 
         Print((UV_x_start_offset + UV_x_start + 8), (UV_y_start + 90), "Hits");
-        UV_Draw_Hits_Icons((UV_x_start_offset + UV_x_start + 49), (UV_y_start + 90), 10, global_battle_unit->hits, global_battle_unit->TopFig_Dmg, stat_icon_row_limit, global_battle_unit->Gold_Hits);
+        UV_Draw_Hits_Icons((UV_x_start_offset + UV_x_start + 49), (UV_y_start + 90), 10, global_battle_unit->hits, global_battle_unit->front_figure_damage, stat_icon_row_limit, global_battle_unit->Gold_Hits);
 
         USW_DrawListPage((UV_x_start_offset + UV_x_start + 8), (UV_y_start + 108), specials_list, specials_count, uv_specials_list_index, item_icon_pict_seg);
 

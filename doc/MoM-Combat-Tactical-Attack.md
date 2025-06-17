@@ -1,4 +1,10 @@
 
+...unit’s rolls...
+attack, defense, resistance
+swords, shields, crosses
+plus 10% modifier to hit, plus 10% chance to block, plus 10% modifier resistance checks
++1 ~== +10%
+
 
 
 
@@ -74,6 +80,9 @@ BU_IsCombatSummon__WIP()
         damage_array[1] += (battle_units[defender_battle_unit_idx].hits + Attack_Damage);
     else
         damage_array[0] += (battle_units[defender_battle_unit_idx].hits + Attack_Damage);
+
+"Doom Damage"
+"Armor Piercing Damage"  (//FanDom AKA "Lightning Damage)
 
 
 
@@ -202,7 +211,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
 attack_mode
     0: Melee
     1: Thrown/Breath
-    2: Ranged 
+    2: Ranged/Magic
 
 
 Attack_Type
@@ -216,10 +225,103 @@ cmp     [bp+Attack_Type], srat_Lightning
 
 
 
-calls BU_GetEffectiveDEF__SEGRAX()
+calls Battle_Unit_Defense_Special()
+
+City Walls
+    if(
+        (Battle_Unit_Is_Within_City(defender_battle_unit_idx) == ST_TRUE)
+        &&
+        (Battle_Unit_Is_Within_City(attacker_battle_unit_idx) == ST_FALSE)
+        &&
+        (battlefield->walled != ST_FALSE)
+    )
+    {
+        if(Combat_Grid_Cell_Has_City_Wall(battle_units[defender_battle_unit_idx].cgx, battle_units[defender_battle_unit_idx].cgy) != ST_FALSE)
+        {
+            defense_special += 3;
+        }
+        else
+        {
+            defense_special += 1;
+        }
+    }
+
+Battle_Unit_Is_Within_City() just checks the coordinates of the battle unit, nothing for if there actually is a city
+
+battlefield->walled != ST_FALSE
+...
+    CMB_Terrain_Init__WIP()
+        City_Walls
+        Generate_Combat_Map__WIP(..., City_Walls, ...)
+            battlefield->walled = city_walls;
+                if(city_walls == ST_TRUE)
+                    battlefield->walls[((itr2 * 4) + itr1)] = 1;
+
+
+
+
+
 
 
 srat_Thrown, srat_FireBreath, srat_Lightning, srat_StoneGaze, srat_MultiGaze, srat_DeathGaze
+
+
+# ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # #
+# ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # #
+# ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # #
+
+# ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # #
+# ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # #
+# ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # #
+
+First Block:
+    melee OR not melee
+        attack_attributes
+        Type_Specific_ATK_Flags
+        attacker_tohit
+        attack_strength
+        attack_magic_realm
+        attack_type
+
+...
+...
+...
+
+Defense Special, Eldritch Weapon, City Walls
+
+...
+...
+...
+
+¿ no more usages of attack_mode ?
+
+...
+...
+...
+
+¿ no more usages of attack_type ?
+
+...
+...
+...
+
+...
+...
+...
+
+
+# ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # #
+# ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # #
+# ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # #
+
+# ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # #
+# ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # #
+# ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # ### # #
+
+
+
+
+
 
 
 
@@ -265,6 +367,24 @@ Poison Attack
 
 ...special abilities such as Poison Attacks, Life-stealing, Gaze Attacks, etc.
 
+00000001 ; enum e_ATK_FLAGS (bitfield)
+00000001 Att_ArmorPrc  = 1
+00000002 Att_1stStrike  = 2
+00000004 Att_Poison  = 4
+00000008 Att_LifeSteal  = 8
+00000010 Att_DoomDmg  = 10h
+00000020 Att_Destruct  = 20h
+00000040 Att_Illusion  = 40h
+00000080 Att_StnTouch  = 80h
+00000100 _noeffect100  = 100h
+00000200 Att_DthTouch  = 200h
+00000400 Att_PwrDrain  = 400h
+00000800 Att_DsplEvil  = 800h
+00001000 Att_AREAFLAG  = 1000h
+00002000 Att_DMGLIMIT  = 2000h
+00004000 Att_EldrWeap  = 4000h
+00008000 Att_WarpLghtn  = 8000h
+
 
 
 ## Battle_Unit_Attack__WIP()
@@ -290,6 +410,12 @@ XREF:
 
 
 
+##### Naming Things Is Hard
+
+shield
+one chance (30%)
+basic attack (one damage)
+...unit’s rolls ... attack, defense, resistance ... plus 10% modifier to hit, plus 10% chance to block, plus 10% modifier resistance checks
 
 
 Page 75  (PDF Page 80)
@@ -322,3 +448,20 @@ However, once a unit has conducted a breath attack, gaze attack or
 thrown attack against a flying unit, the flying unit gets angry, descends
 and forces the attacker to engage in normal melee combat. See Table
 N in the Appendix.
+
+
+Page 76  (PDF Page 81)
+
+Defense
+The armor row in the unit statistics window indicates, by the number of shields, the defense rating of the unit.  
+Each shield represents one chance (30%) to stop one successful basic attack (one damage).  
+Damage that is not stopped decreases the hit points of the defending figure.  
+If the defending figure dies, then the next figure (if any remain in the unit) becomes the defender.  
+Note that defense blocks both non-magic and magic melee or ranged attacks.  
+The following attribute, resistance, describes a unit’s ability to resist spells only.  
+
+
+
+Page 83  (PDF Page 88)
+
+Luck . . . . . . . . . . . . . Adds one to all of unit’s rolls: attack, defense and resistance (i.e., a plus 10% modifier to hit with each sword, a plus 10% chance to block with each shield, and plus 10% modifier for all resistance checks).

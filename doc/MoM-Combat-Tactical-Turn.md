@@ -9,7 +9,9 @@
 
 ## CMB_PrepareTurn__WIP()
 
-
+~ 'Combat Turn Update' ?
+    ...battlefield bonuses is more begin-turn?
+    ...city damage is more end-turn?
 
 
 

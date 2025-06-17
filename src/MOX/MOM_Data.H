@@ -474,12 +474,13 @@ enum e_MAGIC_REALM
 */
 enum e_SPELL_BOOK_REALM
 {
-    sbr_Nature   = 0,
-    sbr_Sorcery  = 1,
-    sbr_Chaos    = 2,
-    sbr_Life     = 3,
-    sbr_Death    = 4,
-    sbr_Arcane   = 5
+    sbr_NONE     = -1,
+    sbr_Nature   =  0,
+    sbr_Sorcery  =  1,
+    sbr_Chaos    =  2,
+    sbr_Life     =  3,
+    sbr_Death    =  4,
+    sbr_Arcane   =  5
 };
 
 enum e_SPELL_BOOK_CATEGORY
@@ -843,8 +844,8 @@ struct s_SPELL_DATA
         uint32_t enchantments;                  // gets OR'd with _UNITS[].enchantments
         struct {
             /* 20 */  int8_t Param0;            // spell attack strength  e.g., Meteor Storms "...a strength four magic fire attack..."
-            /* 21 */  int8_t Param1;            // passed to BU_GetEffectiveDEF()
-            /* 22 */  int16_t Params2_3;        // tested as a bit-field against ATK_FLAGS  ; ATK_Flags ; passed to BU_GetEffectiveDEF()
+            /* 21 */  int8_t Param1;            // passed to Battle_Unit_Defense_Special()
+            /* 22 */  int16_t Params2_3;        // tested as a bit-field against ATK_FLAGS  ; ATK_Flags ; passed to Battle_Unit_Defense_Special()
         };
         struct {
             int16_t unit_type;                  // 0: scc_Summoning             IDK_SummonAnim_Draw()
@@ -1635,7 +1636,7 @@ struct s_BATTLE_UNIT
     /* 0x07 */  int8_t   movement_points;   /* ¿ moves2 ? */
     /* 0x08 */  int16_t  cost;
     /* 0x0A */  int8_t   upkeep;
-    /* 0x0B */  int8_t   race;                              // ; enum Race_Code
+    /* 0x0B */  int8_t   race;              /* 1-byte, signed;  enum e_RACE_TYPE;  -16 == Magic/Spellbook Realm */
     /* 0x0C */  /* int8_t Unused_0Ch; */                          // reqd_bldg_1 & hero_portrait
     union {
                 int8_t   reqd_bldg_1;
@@ -1666,23 +1667,23 @@ struct s_BATTLE_UNIT
     /* 0x1A */  int8_t   Attribs_2;                         // any reason these arent a uint32?  ¿ ?
     /* 0x1B */  int8_t   Unused_1Bh;                        // any reason these arent a uint32?  ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
     /* 0x1C */  uint16_t Abilities;                         // ; enum ABL_FLAGS  ~ 'Unit Abilities'
-    /* 0x1E */  uint16_t Attack_Flags;                      // ; enum ATK_FLAGS
+    /* 0x1E */  uint16_t attack_attributes;     /* defs Att_  enum e_ATTACK_FLAGS  AKA ATK_FLAGS */
     /* 0x20 */  int16_t  Sound;
-    /* 0x22 */  int16_t  Combat_Effects;                    /* enum e_BATTLE_UNIT_EFFECT */
-    /* 0x24 */  int8_t   Melee_To_Hit;
+    /* 0x22 */  int16_t  Combat_Effects;        /* enum e_BATTLE_UNIT_EFFECT */
+    /* 0x24 */  int8_t   melee_tohit;
     /* 0x25 */  int8_t   Ranged_To_Hit;
-    /* 0x26 */  int8_t   To_Block;
-    /* 0x27 */  int8_t   Weapon_Plus1;
-    /* 0x28 */  uint16_t Melee_ATK_Flags;                   // ; enum ATK_FLAGS
-    /* 0x2A */  uint16_t Ranged_ATK_Flags;                  // ; enum ATK_FLAGS
-    /* 0x2C */  uint32_t item_enchantments;                 // Item Powers, as Unit Enchantments  enum e_UNIT_ENCHANTMENTS ... macro UE_...
+    /* 0x26 */  int8_t   toblock;
+    /* 0x27 */  int8_t   Weapon_Plus1;          /* ~ Magic Weapon ... `if(!= 0)` */
+    /* 0x28 */  uint16_t melee_attack_attributes;       /* defs Att_  enum e_ATTACK_FLAGS  AKA ATK_FLAGS */
+    /* 0x2A */  uint16_t ranged_attack_attributes;      /* defs Att_  enum e_ATTACK_FLAGS  AKA ATK_FLAGS */
+    /* 0x2C */  uint32_t item_enchantments;     // Item Powers, as Unit Enchantments  enum e_UNIT_ENCHANTMENTS ... macro UE_...
     /* 0x30 */  int16_t  unit_idx;
     /* 0x32 */  int8_t   Extra_Hits;
     /* 0x33 */  int8_t   Web_HP;
     /* 0x34 */  int8_t   status;                /* enum e_BATTLE_UNIT_STATUS */
     /* 0x35 */  int8_t   controller_idx;        // Player Number of the Controlling Wizard  (was owner_idx, but conflicts with _UNITS[unit_idx].owner_idx)
     /* 0x36 */  uint8_t  damage[3];             // Regular_Dmg, Undeath_Dmg, Irreversible_Dmg
-    /* 0x39 */  int8_t   TopFig_Dmg;
+    /* 0x39 */  int8_t   front_figure_damage;
     /* 0x3A */  uint32_t enchantments;          // Unit Enchantments
     /* 0x3E */  int8_t   Suppression;
     /* 0x3F */  int8_t   mana_max;
