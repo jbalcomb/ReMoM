@@ -3,6 +3,9 @@
         ovr132
 */
 
+#include "MOX/MOX_DEF.H"
+#include "SPELLDEF.H"
+#include "STU/STU_CHK.H"
 #include "Spells130.H"
 #include "Spells132.H"
 
@@ -15,6 +18,7 @@
 #include "NEXTTURN.H"
 #include "SBookScr.H"
 #include "Spellbook.H"
+#include "Spells137.H"
 
 
 
@@ -46,10 +50,20 @@ char aSpellOfReturn[] = "Spell of Return";
 */
 
 // WZD o132p01
-// sub_B4250()
+int16_t Cast_SummonHero(int16_t player_idx, int16_t type)
+{
+
+    return ST_FALSE;
+
+}
 
 // WZD o132p02
-// sub_B4471()
+int16_t Cast_Incarnation(int16_t player_idx)
+{
+
+    return ST_FALSE;
+
+}
 
 // WZD o132p03
 // CTY_ChaosRift()
@@ -140,7 +154,12 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
 
 
 // WZD o132p07
-// sub_B4E00()
+int16_t Cast_Resurrection(int16_t player_idx)
+{
+
+    return ST_FALSE;
+
+}
 
 // WZD o132p08
 // sub_B50AE()
@@ -149,7 +168,13 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
 // sub_B517B()
 
 // WZD o132p10
-// IDK_SplCst_sB529D()
+int16_t Cast_PlaneShift(int16_t player_idx)
+{
+
+    return ST_FALSE;
+
+}
+
 
 // WZD o132p11
 // WIZ_GreatWasting()
@@ -170,8 +195,8 @@ void Cast_Floating_Island(int16_t player_idx)
     int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t troop_count = 0;
     int16_t valid_target = 0;
-    int16_t var_A = 0;
-    int16_t var_8 = 0;
+    int16_t target_wy = 0;
+    int16_t target_wx = 0;
     int16_t wp = 0;
     int16_t wy = 0;
     int16_t wx = 0;
@@ -180,7 +205,7 @@ void Cast_Floating_Island(int16_t player_idx)
     if(player_idx != HUMAN_PLAYER_IDX)
     {
 
-        valid_cast = Get_Map_Square_Target_For_Spell(4, &wx, &wy, &wp, spl_Floating_Island, player_idx);  // returns {F,T} got target?
+        valid_cast = Get_Map_Square_Target_For_Spell(stt_Map_Square, &wx, &wy, &wp, spl_Floating_Island, player_idx);  // returns {F,T} got target?
 
     }
     else
@@ -194,7 +219,7 @@ void Cast_Floating_Island(int16_t player_idx)
         {
 
             // if(valid_cast = IDK_Spell_Casting_Screen_s5C500(4, &wx, &wy, &wp, &var_8, &var_A, aFloatingIsla_0) == ST_TRUE)
-            /* SPELLY */  if((valid_cast = Spell_Casting_Screen__WIP(4, &wx, &wy, &wp, &var_8, &var_A, "Floating Island")) == ST_TRUE)
+            /* SPELLY */  if((valid_cast = Spell_Casting_Screen__WIP(stt_Map_Square, &wx, &wy, &wp, &target_wx, &target_wy, "Floating Island")) == ST_TRUE)
             {
 
                 valid_target = ST_TRUE;
@@ -284,7 +309,7 @@ void Cast_Floating_Island(int16_t player_idx)
 
     }
 
-    Create_Unit__WIP(spell_data_table[spl_Floating_Island].Param0, player_idx, wx, wy, wp, ST_UNDEFINED);
+    Create_Unit__WIP(spell_data_table[spl_Floating_Island].unit_type, player_idx, wx, wy, wp, ST_UNDEFINED);
    
 }
 
@@ -293,10 +318,120 @@ void Cast_Floating_Island(int16_t player_idx)
 // CTY_NightshadeDispel()
 
 // WZD o132p16
-// sub_B609C()
+int16_t Cast_Lycantrophy(int16_t player_idx)
+{
+
+    return ST_FALSE;
+
+}
 
 // WZD o132p17
-// sub_B62F7()
+int16_t Cast_Wall_Of_Stone(int16_t player_idx)
+{
+    int16_t status = 0;
+    int16_t return_value = 0;
+    int16_t target_wy = 0;
+    int16_t target_wx = 0;
+    int16_t wp = 0;
+    int16_t wy = 0;
+    int16_t city_idx = 0;
+
+    Allocate_Reduced_Map();
+
+    Mark_Block(_screen_seg);
+
+    if(player_idx != HUMAN_PLAYER_IDX)
+    {
+
+        return_value = Pick_Target_For_City_Enchantment__WIP(stt_Friendly_City, &city_idx, spl_Wall_Of_Stone, player_idx);
+
+    }
+    else
+    {
+
+        status = ST_FALSE;
+
+        return_value = ST_TRUE;
+
+        while((status == ST_FALSE) && (return_value == ST_TRUE))
+        {
+
+            return_value = Spell_Casting_Screen__WIP(stt_Friendly_City, &city_idx, &wy, &wp, &target_wx, &target_wy, aWallOfStone);  // "Wall of Stone"
+
+            if(return_value == ST_TRUE)
+            {
+
+                if(_CITIES[city_idx].bldg_status[bt_CityWalls] > bs_Replaced)
+                {
+
+                    LBX_Load_Data_Static(message_lbx_file__ovr132, 0, (SAMB_ptr)&GUI_NearMsgString[0], 65, 1, 150);
+
+                    Warn0(GUI_NearMsgString);
+
+                }
+                else
+                {
+                    status = ST_TRUE;
+                }
+
+            }
+
+        }
+
+    }
+
+    if(return_value == ST_TRUE)
+    {
+
+        if(
+            (player_idx == HUMAN_PLAYER_IDX)
+            ||
+            (
+                (magic_set.enemy_spells == ST_TRUE)
+                &&
+                (SQUARE_EXPLORED(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) != ST_FALSE)
+                &&
+                (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] > ST_FALSE)
+            )
+        )
+        {
+
+            Cast_Spell_City_Enchantment_Animation_1__WIP(city_idx, spl_Wall_Of_Stone, player_idx);
+
+        }
+
+        _CITIES[city_idx].bldg_status[bt_CityWalls] = bs_Built;
+Capture_Cities_Data();
+
+        if(
+            (player_idx == HUMAN_PLAYER_IDX)
+            ||
+            (
+                (magic_set.enemy_spells == ST_TRUE)
+                &&
+                (SQUARE_EXPLORED(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) != ST_FALSE)
+                &&
+                (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] > ST_FALSE)
+            )
+        )
+        {
+
+            Cast_Spell_City_Enchantment_Animation_2__WIP(city_idx, spl_Wall_Of_Stone, player_idx);
+
+        }
+
+    }
+
+    Release_Block(_screen_seg);
+
+    return return_value;
+
+}
 
 // WZD o132p18
-// sub_B6505()
+int16_t Cast_SpellOfReturn(int16_t player_idx)
+{
+
+    return ST_FALSE;
+
+}

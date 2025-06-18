@@ -33,7 +33,7 @@ void UNIT_ConvSpellATK__WIP(int16_t unit_idx, int16_t spell_idx, int16_t * item_
 // sub_AD1F0()
 
 // WZD o129p05
-// sub_AD46B()
+int16_t Cast_CallOfTheVoid(int16_t player_idx);
 
 // WZD o129p06
 int16_t CTY_CallTheVoid__STUB(int16_t city_idx);
@@ -45,22 +45,22 @@ int16_t Apply_Automatic_Spell_Counters(int16_t spell_idx, int16_t city_idx, int1
 void UNIT_ChaosChannel__STUB(int16_t unit_idx);
 
 // WZD o129p09
-// sub_ADC3E()
+int16_t Cast_ChaosChannels(int16_t player_idx);
 
 // WZD o129p10
-// sub_ADDA2()
+int16_t Cast_WarpNode(int16_t player_idx);
 
 // WZD o129p11
-// sub_AE017()
+int16_t Cast_Stasis(int16_t player_idx);
 
 // WZD o129p12
-// sub_AE352()
+int16_t Cast_NaturesCures(int16_t player_idx);
 
 // WZD o129p13
-// sub_AE51E()
+int16_t Cast_Move_Fortress(int16_t player_idx);
 
 // WZD o129p14
-// sub_AE8B0()
+int16_t Cast_Earthquake(int16_t player_idx);
 
 // WZD o129p15
 int16_t CTY_Earthquake__STUB(int16_t city_idx, int16_t * list_count, int16_t list_array[]);

@@ -77,16 +77,31 @@ void Hero_Slot_Types(int16_t unit_type_idx, int16_t item_slots[])
 
 
 // WZD o130p02
-// drake178: sub_AF331()
-//Cast_DeathWish()
+int16_t Cast_DeathWish(int16_t player_idx)
+{
+
+    return ST_FALSE;
+
+}
+
 
 // WZD o130p03
-// drake178: sub_AF56D()
-//IDK_Spell_GreatUnsummoning()
+int16_t Cast_GreatUnsummoning(int16_t player_idx)
+{
+
+    return ST_FALSE;
+
+}
+
 
 // WZD o130p04
-// drake178: sub_AF7C1()
-//Cast_BlackWind()
+int16_t Cast_BlackWind(int16_t player_idx)
+{
+
+    return ST_FALSE;
+
+}
+
 
 // WZD o130p05
 /*
@@ -125,8 +140,13 @@ int16_t Apply_Drain_Power(int16_t player_idx)
 
 
 // WZD o130p06
-// drake178: sAFA06_Anim_EarthLore()
-//sAFA06_Anim_EarthLore()
+int16_t Cast_Earthlore(int16_t player_idx)
+{
+
+    return ST_FALSE;
+
+}
+
 
 // WZD o130p07
 // drake178: sub_AFB7F()
@@ -177,32 +197,67 @@ void Cast_Spell_Binding(int16_t player_idx)
 
 
 // WZD o130p08
-// drake178: sub_AFCA8()
-//Cast_ChangeTerain()
+int16_t Cast_ChangeTerain(int16_t player_idx)
+{
+
+    return ST_FALSE;
+
+}
+
 
 // WZD o130p09
-// drake178: sub_B01F7()
-//Cast_RaiseVolcano()
+int16_t Cast_RaiseVolcano(int16_t player_idx)
+{
+
+    return ST_FALSE;
+
+}
+
 
 // WZD o130p10
-// drake178: sub_B0692()
-//Cast_Transmute()
+int16_t Cast_Transmute(int16_t player_idx)
+{
+
+    return ST_FALSE;
+
+}
+
 
 // WZD o130p11
-// drake178: sub_B0C07()
-//Cast_Corruption()
+int16_t Cast_Corruption(int16_t player_idx)
+{
+
+    return ST_FALSE;
+
+}
+
 
 // WZD o130p12
-// drake178: sub_B1108()
-//Cast_WordOfRecall()
+int16_t Cast_WordOfRecall(int16_t player_idx)
+{
+
+    return ST_FALSE;
+
+}
+
 
 // WZD o130p13
-// drake178: sB1280_Anim_EnchantRoad()
-//Cast_EnchantRoad()
+int16_t Cast_EnchantRoad(int16_t player_idx)
+{
+
+    return ST_FALSE;
+
+}
+
 
 // WZD o130p14
-// drake178: sub_B148C()
-//Cast_SpellWard()
+int16_t Cast_SpellWard(int16_t player_idx)
+{
+
+    return ST_FALSE;
+
+}
+
 
 // WZD o130p15
 // drake178: sub_B1843()

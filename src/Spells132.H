@@ -23,10 +23,10 @@ extern "C" {
 */
 
 // WZD o132p01
-// sub_B4250()
+int16_t Cast_SummonHero(int16_t player_idx, int16_t type);
 
 // WZD o132p02
-// sub_B4471()
+int16_t Cast_Incarnation(int16_t player_idx);
 
 // WZD o132p03
 // CTY_ChaosRift()
@@ -41,7 +41,7 @@ extern "C" {
 int16_t WIZ_HireHero(int16_t player_idx, int16_t Type, int16_t Hero_Slot, int16_t Saved);
 
 // WZD o132p07
-// sub_B4E00()
+int16_t Cast_Resurrection(int16_t player_idx);
 
 // WZD o132p08
 // sub_B50AE()
@@ -50,7 +50,7 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t Type, int16_t Hero_Slot, int16_
 // sub_B517B()
 
 // WZD o132p10
-// IDK_SplCst_sB529D()
+int16_t Cast_PlaneShift(int16_t player_idx);
 
 // WZD o132p11
 // WIZ_GreatWasting()
@@ -68,13 +68,13 @@ void Cast_Floating_Island(int16_t player_idx);
 // CTY_NightshadeDispel()
 
 // WZD o132p16
-// sub_B609C()
+int16_t Cast_Lycantrophy(int16_t player_idx);
 
 // WZD o132p17
-// sub_B62F7()
+int16_t Cast_Wall_Of_Stone(int16_t player_idx);
 
 // WZD o132p18
-// sub_B6505()
+int16_t Cast_SpellOfReturn(int16_t player_idx);
 
 
 

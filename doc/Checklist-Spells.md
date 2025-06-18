@@ -1,4 +1,32 @@
 
+git commit -m "add Overland Specials 'Move Fortress'" -m "add Overland Specials 'Wall of Stone'"
+
+git commit -m "add Overland Specials 'Call The Void'"
+
+git commit -m "add Overland Specials 'Earthquake'"
+
+git commit -m "add Overland Specials 'Chaos Channels'"
+git commit -m "add Overland Specials 'Lycanthropy'"
+git commit -m "add Overland Specials 'Natures Cures'"
+git commit -m "add Overland Specials 'Plane Shift'"
+git commit -m "add Overland Specials 'Word Of Recall'"
+
+git commit -m "add Overland Specials 'Black Wind'"
+git commit -m "add Overland Specials 'Change Terrain'"
+git commit -m "add Overland Specials 'Corruption'"
+git commit -m "add Overland Specials 'Earth Lore'"
+git commit -m "add Overland Specials 'Enchant Road'"
+git commit -m "add Overland Specials 'Incarnation'"
+git commit -m "add Overland Specials 'Raise Volcano'"
+git commit -m "add Overland Specials 'Resurrection'"
+git commit -m "add Overland Specials 'Spell Of Return'"
+git commit -m "add Overland Specials 'Stasis'"
+git commit -m "add Overland Specials 'Summon Champion'"
+git commit -m "add Overland Specials 'Summon Hero'"
+git commit -m "add Overland Specials 'Transmute'"
+git commit -m "add Overland Specials 'Warp Node'"
+
+
 FIXME_RIGHTMEOW
 CMB_PrepareTurn__WIP()
 Combat_Spell_Target_Screen__WIP()
@@ -26,6 +54,7 @@ scc_Disjunction_Spell    ==>  scc_Disjunctions
 scc_Target_Wiz_Spell     ==>  scc_Target_Wizard
 scc_Counter_Spell        ==>  scc_Combat_Counter_Magic
 scc_Banish_Spell         ==>  scc_Combat_Banish
+scc_Special_Spell        ==>  scc_Specials
 
 NOTE: the check on the check-list is only for the human player side, CP/AI is a different beast
 
@@ -116,10 +145,6 @@ all combat summons are done
 scc_Special_Spell
     Overland
         Black Wind, Call The Void, Change Terrain, Chaos Channels, Corruption, Earth Lore, Earthquake, Enchant Road, Great Unsummoning, Incarnation, Lycanthropy, Move Fortress, Natures Cures, Plane Shift, Raise Volcano, Resurrection, Spell Binding, Spell Of Mastery, Spell Of Return, Spell Ward, Stasis, Summon Champion, Summon Hero, Transmute, Warp Node
-    Combat
-        Animate Dead, Cracks Call, Death Wish, Disrupt, Earth to Mud, Magic Vortex, Raise Dead, Recall Hero, Word of Recall, Warp Creature, Warp Wood
-    BOTH
-        Healing, Wall of Stone
 
 scc_Crafting_Spell
     Enchant Item, Create Artifact

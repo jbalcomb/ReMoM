@@ -1539,79 +1539,92 @@ Capture_Cities_Data();
 
                         case spl_Spell_Of_Return:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_SpellOfReturn(player_idx);
 
                         } break;
 
                         case spl_Corruption:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_Corruption(player_idx);
 
                         } break;
 
                         case spl_Earth_Lore:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_Earthlore(player_idx);
 
                         } break;
 
                         case spl_Change_Terrain:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_ChangeTerain(player_idx);
 
                         } break;
 
                         case spl_Stasis:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_Stasis(player_idx);
 
                         } break;
 
                         case spl_Natures_Cures:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_NaturesCures(player_idx);
 
                         } break;
 
                         case spl_Move_Fortress:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_Move_Fortress(player_idx);
 
                         } break;
 
                         case spl_Transmute:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_Transmute(player_idx);
 
                         } break;
 
                         case spl_Wall_Of_Stone:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_Wall_Of_Stone(player_idx);
 
                         } break;
 
                         case spl_Earthquake:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_Earthquake(player_idx);
 
                         } break;
 
                         case spl_Word_Of_Recall:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_WordOfRecall(player_idx);
 
                         } break;
 
                         case spl_Enchant_Road:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_EnchantRoad(player_idx);
 
                         } break;
 
                         case spl_Spell_Ward:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_SpellWard(player_idx);
 
                         } break;
 
@@ -1620,91 +1633,106 @@ Capture_Cities_Data();
 
                             Cast_Spell_Binding(player_idx);
 
-
                         } break;
 
                         case spl_Chaos_Channels:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_ChaosChannels(player_idx);
 
                         } break;
 
                         case spl_Warp_Node:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_WarpNode(player_idx);
 
                         } break;
 
                         case spl_Raise_Volcano:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_RaiseVolcano(player_idx);
 
                         } break;
 
                         case spl_Call_The_Void:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_CallOfTheVoid(player_idx);
 
                         } break;
 
                         case spl_Plane_Shift:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_PlaneShift(player_idx);
 
                         } break;
 
                         case spl_Resurrection:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_Resurrection(player_idx);
 
                         } break;
 
                         case spl_Incarnation:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_Incarnation(player_idx);
 
                         } break;
 
                         case spl_Great_Unsummoning:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_GreatUnsummoning(player_idx);
 
                         } break;
 
                         case spl_Death_Wish:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_DeathWish(player_idx);
 
                         } break;
 
                         case spl_Black_Wind:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_BlackWind(player_idx);
 
                         } break;
 
                         case spl_Lycanthropy:
                         {
-                            STU_DEBUG_BREAK();
+                            
+                            Cast_Successful = Cast_Lycantrophy(player_idx);
 
                         } break;
 
                         case spl_Summon_Hero:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_SummonHero(player_idx, 1);
 
                         } break;
 
                         case spl_Summon_Champion:
                         {
-                            STU_DEBUG_BREAK();
+
+                            Cast_Successful = Cast_SummonHero(player_idx, 2);
 
                         } break;
 
                         default:
                         {
+
                             STU_DEBUG_BREAK();
+
                         } break;
+
                     }
 
                 } break;  /* case scc_Special_Spell:  //  5 */

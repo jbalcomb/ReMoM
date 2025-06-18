@@ -24,43 +24,43 @@ extern "C" {
 void Hero_Slot_Types(int16_t unit_type_idx, int16_t item_slots[]);
 
 // WZD o130p02
-//Cast_DeathWish()
+int16_t Cast_DeathWish(int16_t player_idx);
 
 // WZD o130p03
-// drake178: sub_AF56D()
+int16_t Cast_GreatUnsummoning(int16_t player_idx);
 
 // WZD o130p04
-//Cast_BlackWind()
+int16_t Cast_BlackWind(int16_t player_idx);
 
 // WZD o130p05
 int16_t Apply_Drain_Power(int16_t player_idx);
 
 // WZD o130p06
-//sAFA06_Anim_EarthLore()
+int16_t Cast_Earthlore(int16_t player_idx);
 
 // WZD o130p07
 void Cast_Spell_Binding(int16_t player_idx);
 
 // WZD o130p08
-//Cast_ChangeTerain()
+int16_t Cast_ChangeTerain(int16_t player_idx);
 
 // WZD o130p09
-//Cast_RaiseVolcano()
+int16_t Cast_RaiseVolcano(int16_t player_idx);
 
 // WZD o130p10
-//Cast_Transmute()
+int16_t Cast_Transmute(int16_t player_idx);
 
 // WZD o130p11
-//Cast_Corruption()
+int16_t Cast_Corruption(int16_t player_idx);
 
 // WZD o130p12
-//Cast_WordOfRecall()
+int16_t Cast_WordOfRecall(int16_t player_idx);
 
 // WZD o130p13
-//Cast_EnchantRoad()
+int16_t Cast_EnchantRoad(int16_t player_idx);
 
 // WZD o130p14
-//Cast_SpellWard()
+int16_t Cast_SpellWard(int16_t player_idx);
 
 // WZD o130p15
 void Cast_HolyArms(int16_t player_idx);

@@ -1,8 +1,6 @@
 
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
-#include "MOX/MOX_ITOA.H"  /* mox_itoa() */
 #include "MOX/MOX_SET.H"  /* magic_set */
-#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 
 #include "City_ovr55.H"
@@ -1082,6 +1080,7 @@ void City_Screen_Add_Fields__WIP(void)
     City_Add_Fields_City_Enchantments(139, 51);
 
     Cityscape_Add_Fields();
+    assert(city_cityscape_field_count == cityscape_bldg_count);
 
     City_Screen_Add_Fields_Production_Window();
 

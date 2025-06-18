@@ -635,6 +635,7 @@ void Cast_Spell_City_Enchantment_Animation_Draw(void)
     int16_t y_start = 0;
     int16_t x_start = 0;
     int16_t itr = 0;  // _SI_
+    struct s_BLDG * cityscape_bldg_field = 0;
 
     x_start = 53;
     y_start = 38;
@@ -647,6 +648,8 @@ void Cast_Spell_City_Enchantment_Animation_Draw(void)
     {
         if(city_cityscape_fields[itr] == _osc_scanned_field)
         {
+            cityscape_bldg_field = &cityscape_bldg_fields[itr];
+            // cityscape_bldg_fields[itr].field_bldg_idx
             Set_Font_Style_Outline(1, 0, 0, 0);
             Set_Alias_Color(8);
             if(cityscape_bldg_fields[itr].field_bldg_idx >= bt_NUM_BUILDINGS)
