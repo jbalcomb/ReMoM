@@ -11,7 +11,6 @@
 #include "MOX/LOADSAVE.H"
 #include "MOX/MOX_SET.H"  /* magic_set */
 #include "MOX/Mouse.H"
-#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 #include "MOX/Video.H"
 
@@ -45,13 +44,13 @@
 // MoO2 Module: MOX2
 void Screen_Control(void)
 {
-    int16_t prev__Settings_BG_Music;
+    int16_t prev__Settings_BG_Music = 0;
     /*  BEGIN:  DEBUG */
-    int16_t itr_lairs;
-    int16_t lair_wp;
-    struct s_LAIR * lair_ptr;
+    int16_t itr_lairs = 0;
+    int16_t lair_wp = 0;
+    struct s_LAIR * lair_ptr = 0;
     /*  END:  DEBUG */
-    int quit_flag;
+    int quit_flag = 0;
 
     quit_flag = ST_FALSE;
 

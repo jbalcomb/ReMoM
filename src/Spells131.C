@@ -11,15 +11,15 @@
 #include "MOX/MOM_Data.H"
 #include "MOX/SOUND.H"
 #include "MOX/Video.H"
-#include "RACETYPE.H"
-#include "Spellbook.H"
-#include "Spells131.H"
 
-
+#include "CMBTDEF.H"
 #include "Combat.H"
 #include "SBookScr.H"
 #include "Spells133.H"
 #include "UNITTYPE.H"
+#include "RACETYPE.H"
+#include "Spellbook.H"
+#include "Spells131.H"
 
 
 
@@ -1243,7 +1243,7 @@ void Combat_Battlefield_Instant(int16_t player_idx, int16_t spell_idx, int16_t a
 void Apply_Flame_Strike(int16_t player_idx)
 {
     uint32_t enchantments = 0;
-    int16_t damage_types[3] = { 0, 0, 0 };
+    int16_t damage_types[NUM_DAMAGE_TYPES] = { 0, 0, 0 };
     int16_t figure_count = 0;
     int16_t battle_unit_idx = 0;  // _SI_
     int16_t itr = 0;  // _DI_
@@ -1260,15 +1260,14 @@ void Apply_Flame_Strike(int16_t player_idx)
         )
         {
 
-            // ; BUG: this enchantment should not grant immunity here
             if(
-                ((enchantments & UE_WRAITHFORM) == 0)
+                ((enchantments & UE_WRAITHFORM) == 0)  // ; BUG: this enchantment should not grant immunity here
                 &&
                 ((enchantments & UE_RIGHTEOUSNESS) == 0)
             )
             {
 
-                CMB_ConvSpellAttack__WIP(spl_Flame_Strike, battle_unit_idx, &damage_types[0], 0);
+                Apply_Battle_Unit_Damage_From_Spell(spl_Flame_Strike, battle_unit_idx, &damage_types[0], 0);
 
                 BU_ApplyDamage__WIP(battle_unit_idx, &damage_types[0]);    
 

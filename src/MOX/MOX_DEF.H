@@ -454,9 +454,11 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 #define TF_NoRoad80     0x80  // ~== -1 ST_UNDEFINED
 #define TF_AnyRoad      0x18
 */
-#define MAP_SQUARE_FLAG(_wx_, _wy_, _wp_)           ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ]             )
+#define MAP_SQUARE_FLAG(_wx_, _wy_, _wp_)               ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ]             )
 #define GET_MAP_SQUARE_FLAG(_wx_, _wy_, _wp_)           ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ]             )
 #define SET_MAP_SQUARE_FLAG(_wx_, _wy_, _wp_, _value_)  ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ] = (_value_) )
+#define ADD_MAP_SQUARE_FLAG(_wx_, _wy_, _wp_, _value_)  ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ] |= (_value_) )
+#define REM_MAP_SQUARE_FLAG(_wx_, _wy_, _wp_, _value_)  ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ] ^= (_value_) )
 
 #define CLEAR_MAP_SQUARE_FLAGS_VOLCANO_PLAYER_IDX()  ( SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) & 0b11111000)) )
 

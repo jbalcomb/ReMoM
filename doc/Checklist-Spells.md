@@ -287,7 +287,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Chaos Surge
 [x] Doom Mastery
 [x] Great Drake
-[ ] Call The Void
+[x] Call The Void
 [x] Armageddon
 [x] Bless
 [x] Star Fires

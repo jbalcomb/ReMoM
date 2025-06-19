@@ -3,21 +3,28 @@
         ovr129
 */
 
+#include "Spells129.H"
+
 #include "MOM_DEF.H"
 #include "MOX/Allocate.H"
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"
-
 #include "MOX/MOX_DEF.H"
+#include "MOX/random.H"
+
+#include "CMBTDEF.H"
+#include "CITYCALC.H"
+#include "City_ovr55.H"
 #include "NEXTTURN.H"
 #include "OverSpel.H"
 #include "SBookScr.H"
 #include "SPELLDEF.H"
 #include "Spellbook.H"
-#include "Spells129.H"
+#include "Spells128.H"
 #include "Spells137.H"
+#include "Terrain.H"
 
-int16_t * CMB_HolyBonusArray;
+int16_t * _battlefield_holybonus;
 
 
 
@@ -140,8 +147,12 @@ int16_t Apply_Cruel_Unminding(int16_t player_idx)
 */
 /*
 
+...not just cast spell...
+...only called in two places...
+...directly from Aplly_Call_The_Void() and Cast_Spell_Overland__WIP(), for scc_Direct_Damage_Fixed (4), Human Player Only
+
 */
-void OVL_ConvSpellAttack__WIP(int16_t unit_idx, int16_t spell_idx)
+void Cast_Attack_Spell_On_Enemy_Stack(int16_t unit_idx, int16_t spell_idx)
 {
     int16_t item_list[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
     int16_t item_count = 0;
@@ -177,7 +188,7 @@ void OVL_ConvSpellAttack__WIP(int16_t unit_idx, int16_t spell_idx)
 
             player_idx = _UNITS[itr_units].owner_idx;
 
-            UNIT_ConvSpellATK__WIP(itr_units, spell_idx, &item_count, &item_list[0], 0);
+            Cast_Attack_Spell_On_Enemy_Unit(itr_units, spell_idx, &item_count, &item_list[0], 0);
 
         }
 
@@ -204,19 +215,21 @@ void OVL_ConvSpellAttack__WIP(int16_t unit_idx, int16_t spell_idx)
 /*
 
 #XREF:
-    OVL_ConvSpellAttack__WIP()
+    Cast_Attack_Spell_On_Enemy_Stack()
     j_UNIT_ConvSpellATK__WIP()
-        CTY_ChaosRift()
-        WIZ_MeteorStorm()
+        CTY_ChaosRift()     ...five lightning bolts (strength eight)
+        WIZ_MeteorStorm()   ...strength four magic fire attack
 
 */
-void UNIT_ConvSpellATK__WIP(int16_t unit_idx, int16_t spell_idx, int16_t * item_count, int16_t item_list[], int16_t attack_override_flag)
+void Cast_Attack_Spell_On_Enemy_Unit(int16_t unit_idx, int16_t spell_idx, int16_t * item_count, int16_t item_list[], int16_t attack_strength_override)
 {
     uint32_t enchantments = 0;
     int16_t damage_total = 0;
-    int16_t damage_types[3] = { 0, 0, 0 };
+    int16_t damage_types[NUM_DAMAGE_TYPES] = { 0, 0, 0 };
     int16_t itr2 = 0;
     int16_t itr1 = 0;
+    struct s_BATTLE_UNIT * battleunit;
+
 
     AI_Eval_After_Spell = ST_TRUE;
 
@@ -229,28 +242,32 @@ void UNIT_ConvSpellATK__WIP(int16_t unit_idx, int16_t spell_idx, int16_t * item_
     }
 
     // ; BUG: why not use Active_Unit@ instead of scuttling
+    // ; the sandbox?
+    // ...because some of the subsequent code takes battle_unit_idx and/or uses battle_units[]
     // DOMSDOS  battle_units = SA_MK_FP0(Allocate_First_Block(_screen_seg, 8));
     battle_units = (struct s_BATTLE_UNIT *)Allocate_First_Block(_screen_seg, 8);
 
     // ; BUG: it would take a lot more than this for a bonus
     // ; to actually apply too
-    // DOMSDOS  CMB_HolyBonusArray = SA_MK_FP0(Allocate_Next_Block(_screen_seg, 3));
-    CMB_HolyBonusArray = (int16_t *)Allocate_Next_Block(_screen_seg, 3);
+    // DOMSDOS  _battlefield_holybonus = SA_MK_FP0(Allocate_Next_Block(_screen_seg, 3));
+    _battlefield_holybonus = (int16_t *)Allocate_Next_Block(_screen_seg, 3);  // 6 2-byte values
 
     for(itr1 = 0; itr1 < _num_players; itr1++)
     {
 
-        CMB_HolyBonusArray[itr1] = 0;
+        _battlefield_holybonus[itr1] = 0;
 
     }
 
+    battleunit = &battle_units[0];
+
     Load_Battle_Unit(unit_idx, &battle_units[0]);
 
-    CMB_ConvSpellAttack__WIP(spell_idx, 0, &damage_types[0], attack_override_flag);
+    Apply_Battle_Unit_Damage_From_Spell(spell_idx, 0, &damage_types[0], attack_strength_override);
 
-    battle_units[0].enchantments |= _UNITS[unit_idx].enchantments;
+    enchantments = (battle_units[0].enchantments | battle_units[0].item_enchantments | _UNITS[unit_idx].enchantments);
 
-    if((battle_units[0].enchantments & UE_REGENERATION) != 0)
+    if((enchantments & UE_REGENERATION) != 0)
     {
 
         damage_types[0] = 0;
@@ -259,7 +276,7 @@ void UNIT_ConvSpellATK__WIP(int16_t unit_idx, int16_t spell_idx, int16_t * item_
 
     damage_total = 0;
 
-    for(itr2 = 0; itr2 < 3; itr2++)
+    for(itr2 = 0; itr2 < NUM_DAMAGE_TYPES; itr2++)
     {
 
         damage_total += damage_types[itr2];
@@ -275,12 +292,7 @@ void UNIT_ConvSpellATK__WIP(int16_t unit_idx, int16_t spell_idx, int16_t * item_
     if(battle_units[0].Cur_Figures > 0)
     {
 
-        if(battle_units[0].front_figure_damage < 0)
-        {
-
-            battle_units[0].front_figure_damage = 0;
-
-        }
+        SETMIN(battle_units[0].front_figure_damage, 0);
 
         _UNITS[unit_idx].Damage = (((battle_units[0].Max_Figures - battle_units[0].Cur_Figures) * battle_units[0].hits) + battle_units[0].front_figure_damage);
 
@@ -288,7 +300,7 @@ void UNIT_ConvSpellATK__WIP(int16_t unit_idx, int16_t spell_idx, int16_t * item_
     else  /* DEAD / DIED */
     {
 
-        if(_UNITS[unit_idx].Hero_Slot >  -1)
+        if(_UNITS[unit_idx].Hero_Slot > -1)
         {
 
             for(itr2 = 0; itr2 < 3; itr2++)
@@ -310,7 +322,7 @@ void UNIT_ConvSpellATK__WIP(int16_t unit_idx, int16_t spell_idx, int16_t * item_
 
         }
 
-        Kill_Unit(unit_idx, 0);
+        Kill_Unit(unit_idx, kt_Normal);
 
     }
 
@@ -321,10 +333,75 @@ void UNIT_ConvSpellATK__WIP(int16_t unit_idx, int16_t spell_idx, int16_t * item_
 // sub_AD1F0()
 
 // WZD o129p05
-int16_t Cast_CallOfTheVoid(int16_t player_idx)
+int16_t Cast_Call_The_Void(int16_t player_idx)
 {
+    int16_t status = 0;
+    int16_t return_value = 0;
+    int16_t target_wy = 0;
+    int16_t target_wx = 0;
+    int16_t wp = 0;
+    int16_t wy = 0;
+    int16_t city_idx = 0;
 
-    return ST_FALSE;
+    AI_Eval_After_Spell = ST_TRUE;
+
+    Allocate_Reduced_Map();
+
+    Mark_Block(_screen_seg);
+
+    if(player_idx == HUMAN_PLAYER_IDX)
+    {
+
+        return_value = Spell_Casting_Screen__WIP(stt_Enemy_City, &city_idx, &wy, &wp, &target_wx, &target_wy, aCallTheVoid);
+
+    }
+    else
+    {
+
+        return_value = Pick_Target_For_City_Enchantment__WIP(stt_Enemy_City, &city_idx, spl_Call_The_Void, player_idx);
+
+    }
+
+    if(return_value == ST_TRUE)
+    {
+
+        return_value = Apply_Automatic_Spell_Counters(spl_Call_The_Void, city_idx, player_idx, ST_TRUE);
+
+    }
+
+    if(return_value == ST_TRUE)
+    {
+
+        if(
+            (player_idx == HUMAN_PLAYER_IDX)
+            ||
+            (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+            ||
+            (SQUARE_EXPLORED(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) != ST_FALSE)
+        )
+        {
+
+            AI_Eval_After_Spell = ST_TRUE;
+
+            Spell_Animation_Load_Sound_Effect__WIP(spl_Call_The_Void);
+
+            Spell_Animation_Load_Graphics(spl_Call_The_Void);
+
+            Spell_Animation_Screen__WIP(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp);
+
+        }
+
+        Release_Block(_screen_seg);
+
+        Apply_Call_The_Void(city_idx);
+
+        Full_Draw_Main_Screen();
+
+        Change_Relations_For_Bad_City_Spell(player_idx, spl_Call_The_Void, city_idx);
+
+    }
+
+    return return_value;
 
 }
 
@@ -332,20 +409,159 @@ int16_t Cast_CallOfTheVoid(int16_t player_idx)
 // WZD o129p06
 // drake178: CTY_CallTheVoid()
 /*
-            // ; processes the statistical effects of the Call the
-            // ; Void spell cast on the target city
-            // ; returns the number of buildings destroyed
-            // ;
-            // ; BUG: can corrupt the corner tiles outside the
-            // ;  catchment area
-            // ; inherits BUGs from UNIT_ConvSpellATK
+; processes the statistical effects of the Call the
+; Void spell cast on the target city
+; returns the number of buildings destroyed
+;
+; BUG: can corrupt the corner tiles outside the
+;  catchment area
+; inherits BUGs from UNIT_ConvSpellATK
 */
-int16_t CTY_CallTheVoid__STUB(int16_t city_idx)
+/*
+
+Event_Twiddle()
+    EVNT_DestroyedBldngs = Apply_Call_The_Void(m_event_city_idx);
+*/
+int16_t Apply_Call_The_Void(int16_t city_idx)
 {
+    int16_t bldg_list[NUM_BUILDINGS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t curr_wx = 0;
+    int16_t buildings_lost = 0;
+    int16_t troop_count = 0;
+    int16_t itr_wx = 0;  // _SI_
+    int16_t itr_wy = 0;  // _DI_
+    int16_t bldg_idx = 0;  // _SI_
+    int16_t itr_population = 0;  // _SI_
+    int16_t population_lost = 0;  // _DI_
 
-    return 0;
+    for(itr_wx = (_CITIES[city_idx].wx - 2); (_CITIES[city_idx].wx + 2) >= itr_wx; itr_wx++)
+    {
 
+        if(itr_wx < 0)
+        {
+
+            curr_wx = (itr_wx + WORLD_WIDTH);
+
+        }
+        else
+        {
+
+            if(itr_wx > WORLD_WIDTH)
+            {
+
+                curr_wx = (itr_wx - WORLD_WIDTH);
+
+            }
+            else
+            {
+
+                curr_wx = itr_wx;
+
+            }
+
+        }
+
+        for(itr_wy = (_CITIES[city_idx].wy - 2); (_CITIES[city_idx].wy + 2) >= itr_wy; itr_wy++)
+        {
+
+            if(
+                (itr_wy >= WORLD_YMIN)
+                &&
+                (itr_wy <= WORLD_YMAX)
+            )
+            {
+
+                if(
+                    (Random(2) == 1)
+                    &&
+                    (Square_Is_Sailable(curr_wx, itr_wy, _CITIES[city_idx].wp) == ST_FALSE)
+                )
+                {
+
+                    ADD_MAP_SQUARE_FLAG(curr_wx, itr_wy, _CITIES[city_idx].wp, MSF_CORRUPTION);
+
+                }
+
+            }
+
+        }
+
+    }
+
+    Army_At_City(city_idx, &troop_count, &troops[0]);
+
+    if(troop_count > 0)
+    {
+
+        Cast_Attack_Spell_On_Enemy_Stack(troops[0], spl_Call_The_Void);
+
+    }
+
+    for(bldg_idx = 0; bldg_idx < NUM_BUILDINGS; bldg_idx++)
+    {
+
+        bldg_list[bldg_idx] = bs_Replaced;
+
+    }
+
+    for(itr_population = 0; itr_population < (_CITIES[city_idx].population - 1); itr_population++)
+    {
+
+        if(Random(2) == 1)
+        {
+
+            population_lost += 1;
+
+        }
+
+    }
+
+    Apply_Damage_To_City(city_idx, population_lost, 50, &bldg_list[0]);
+
+    buildings_lost = 0;
+
+    for(bldg_idx = 0; bldg_idx < NUM_BUILDINGS; bldg_idx++)
+    {
+
+        if(bldg_list[bldg_idx] > bs_Replaced)
+        {
+
+            buildings_lost += 1;
+
+        }
+
+    }
+
+    if(_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+    {
+
+        for(bldg_idx = 0; bldg_idx < NUM_BUILDINGS; bldg_idx++)
+        {
+
+            if(bldg_list[bldg_idx] > bs_Replaced)
+            {
+
+                if(MSG_BldLost_Count < 20)
+                {
+
+                    MSG_BldLost_Array[MSG_BldLost_Count].city_idx = city_idx;
+
+                    MSG_BldLost_Array[MSG_BldLost_Count].bldg_type_idx = bldg_list[bldg_idx];
+
+                    MSG_BldLost_Count++;
+
+                }
+
+            }
+
+        }
+
+    }
+
+    return buildings_lost;
 }
+
 
 // WZD o129p07
 // drake178: CTY_CounterSpell()
@@ -568,7 +784,7 @@ int16_t Cast_Move_Fortress(int16_t player_idx)
         while((status == ST_FALSE) && (return_value == ST_TRUE))
         {
 
-            return_value = Spell_Casting_Screen__WIP(stt_Friendly_City, &city_idx, &wy, &wp, &target_wx, &target_wy, aMoveFortress);  // "Wall of Stone"
+            return_value = Spell_Casting_Screen__WIP(stt_Friendly_City, &city_idx, &wy, &wp, &target_wx, &target_wy, aMoveFortress);
 
             if(return_value == ST_TRUE)
             {

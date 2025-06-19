@@ -726,53 +726,6 @@ enum e_WEAPON_QUALITY
 
 
 
-/*
-19 events
-{0, ..., 18}
-
-*/
-enum e_EVENT_TYPE
-{
-    et_None                 =  0,
-    et_Meteor               =  1,
-    et_Gift                 =  2,
-    et_Disjunction          =  3,
-    et_Marriage             =  4,
-    et_Earthquake           =  5,
-    et_Pirates              =  6,
-    et_Plague               =  7,
-    et_Rebellion            =  8,
-    et_Donation             =  9,
-    et_Depletion            = 10,
-    et_New_Mine             = 11,
-    et_Population_Boom      = 12,
-    et_Good_Moon            = 13,
-    et_Bad_Moon             = 14,
-    et_Conjunction_Chaos    = 15,
-    et_Conjunction_Nature   = 16,
-    et_Conjunction_Sorcery  = 17,
-    et_Mana_Short           = 18
-};
-
-enum e_EVENT_STATUS
-{
-    es_Nothing = 0,
-    es_Starting = 1,
-    es_Ongoing = 2,
-    es_Ending = 3
-};
-
-enum e_EVENT_MESSAGE_TYPE
-{
-    emt_Started = 0,
-    emt_Ended = 1,
-    emt_IDK_two = 2,
-    emt_Happened = 3,
-    emt_Elsewhere = 4
-};
-
-
-
 // sizeof:  0Ah  10d
 #pragma pack(push)
 #pragma pack(2)
@@ -857,9 +810,9 @@ struct s_SPELL_DATA
             int16_t ge_idx;                     // 9: scc_Global_Enchantment    indexes into _players[].Globals[], which holds player_num (i.e., player_idx + 1)
         };
         struct {
-            uint8_t strength;                   // AKA base damage  Attack_Strength  CMB_ConvSpellAttack()
-            uint8_t immunities;                 //                  Immunity_Flags   CMB_ConvSpellAttack()
-            uint16_t attributes;                //                                   CMB_ConvSpellAttack()
+            uint8_t strength;                   // AKA base damage  Attack_Strength  Apply_Battle_Unit_Damage_From_Spell()
+            uint8_t immunities;                 //                  Immunity_Flags   Apply_Battle_Unit_Damage_From_Spell()
+            uint16_t attributes;                //                                   Apply_Battle_Unit_Damage_From_Spell()
         };
     };
     /* 24 */
@@ -928,7 +881,7 @@ struct s_INACTV_HERO
 #pragma pack(2)
 struct s_ITEM_POWER
 {
-/* 00 */ char name[18];
+/* 00 */ char name[LEN_ITEM_POWER_NAME];
 /* 12 */ int16_t item_types;  // bitfield; bit position ~== item type;  enum I_TypeBits
 /* 14 */ int16_t cost;
 /* 16 */ int8_t type;
@@ -945,7 +898,7 @@ struct s_ITEM_POWER
 #pragma pack(2)
 struct s_ITEM_DATA
 {
-/* 00 */ char name[30];  // array is 30, but last 4 are always 0, longest name is 26 characters
+/* 00 */ char name[LEN_ITEM_NAME];  // array is 30, but last 4 are always 0, longest name is 26 characters
 /* 1E */ char icon_idx;
 /* 1F */ char field_1F;
 /* 20 */ char field_20;
@@ -1660,7 +1613,7 @@ struct s_BATTLE_UNIT
     /* 0x12 */  int8_t   carry_capacity;
     /* 0x13 */  int8_t   Max_Figures;
     /* 0x14 */  int8_t   Construction;
-    /* 0x15 */  int8_t   Spec_Att_Attrib;
+    /* 0x15 */  int8_t   Spec_Att_Attrib;                   // -abs() is resistance_modifier
     /* 0x16 */  uint16_t Move_Flags;                        // ; enum MOVEFLAGS
     /* 0x17 */  // int8_t Unused_17h;                       // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
     /* 0x18 */  int16_t  Attribs_1;                         // any reason these arent a uint32?  ; enum ATTRIB_1

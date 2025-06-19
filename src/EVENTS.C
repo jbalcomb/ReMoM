@@ -9,7 +9,6 @@
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
-#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 
 #include "City_ovr55.H"
@@ -24,6 +23,7 @@
 #include "MOM_DEF.H"
 #include "RACETYPE.H"
 #include "SBookScr.H"
+#include "Spells129.H"
 #include "UNITTYPE.H"   // WTFMATE
 #include "WZD_o059.H"
 #include "WZD_o143.H"
@@ -873,7 +873,7 @@ void Event_Twiddle(void)
     int16_t troops[MAX_STACK];
     int16_t item_list_count;
     int16_t troop_count;
-    int16_t City_Population;
+    int16_t city_population;
     int16_t terrain_special;
     int16_t wp;
     int16_t wy;
@@ -922,14 +922,23 @@ void Event_Twiddle(void)
             {
                 m_event_message_type = 4;
             }
+
             events_table->Meteor_Status = 0;
+
             Army_At_City(m_event_city_idx, &troop_count, &troops[0]);
-            City_Population = _CITIES[m_event_city_idx].population;
-            /* TODO */  EVNT_DestroyedBldngs = CTY_CallTheVoid__STUB(m_event_city_idx);
-            EVNT_LostPopulation = (City_Population - _CITIES[m_event_city_idx].population);
+
+            city_population = _CITIES[m_event_city_idx].population;
+
+            EVNT_DestroyedBldngs = Apply_Call_The_Void(m_event_city_idx);
+
+            EVNT_LostPopulation = (city_population - _CITIES[m_event_city_idx].population);
+
             Army_At_City(m_event_city_idx, &post_event_troop_count, &troops[0]);
+
             EVNT_LostUnitCount = (troop_count - post_event_troop_count);
+
             Show_Event_Message();
+
         }
     }
     /*
@@ -1071,9 +1080,9 @@ void Event_Twiddle(void)
             m_event_message_type = 4;
         }
         Army_At_City(m_event_city_idx, &troop_count, &troops[0]);
-        City_Population = _CITIES[m_event_city_idx].population;
+        city_population = _CITIES[m_event_city_idx].population;
         /* TODO */  EVNT_DestroyedBldngs = CTY_Earthquake__STUB(m_event_city_idx, &item_list_count, &item_list_array[0]);
-        EVNT_LostPopulation = (City_Population - _CITIES[m_event_city_idx].population);
+        EVNT_LostPopulation = (city_population - _CITIES[m_event_city_idx].population);
         Army_At_City(m_event_city_idx, &post_event_troop_count, &troops[0]);
         EVNT_LostUnitCount = (troop_count - post_event_troop_count);
         if(

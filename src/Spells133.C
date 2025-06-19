@@ -362,7 +362,7 @@ void Apply_Call_Lightning(int16_t player_idx)
 
             Mark_Time();
 
-            CMB_ConvSpellAttack__WIP(spl_Wall_Of_Stone, itr, &damage_types[0], 0);
+            Apply_Battle_Unit_Damage_From_Spell(spl_Wall_Of_Stone, itr, &damage_types[0], 0);
 
             Animate_Lightning_Bolt(battle_units[itr].cgx, battle_units[itr].cgy, ST_UNDEFINED);
 
@@ -1508,7 +1508,7 @@ void Vortex_Move_And_Attack(int vortex_idx, int next_cgx, int next_cgy)
         )
         {
 
-            CMB_ConvSpellAttack__WIP(spl_Lightning_Bolt, battle_unit_idx, &damage_types[0], 0);
+            Apply_Battle_Unit_Damage_From_Spell(spl_Lightning_Bolt, battle_unit_idx, &damage_types[0], 0);
 
             BU_ApplyDamage__WIP(battle_unit_idx, &damage_types[0]);
 
@@ -1827,21 +1827,21 @@ void Apply_Call_Chaos__WIP(int16_t player_idx, int16_t effects[])
                 case 4:
                 {
 
-                    CMB_ConvSpellAttack__WIP(spl_Fire_Bolt, battle_unit_idx, &damage_types[0], 15);
+                    Apply_Battle_Unit_Damage_From_Spell(spl_Fire_Bolt, battle_unit_idx, &damage_types[0], 15);
 
                 } break;
 
                 case 5:
                 {
 
-                    CMB_ConvSpellAttack__WIP(spl_Warp_Lightning, battle_unit_idx, &damage_types[0], 0);
+                    Apply_Battle_Unit_Damage_From_Spell(spl_Warp_Lightning, battle_unit_idx, &damage_types[0], 0);
 
                 } break;
 
                 case 6:
                 {
 
-                    CMB_ConvSpellAttack__WIP(spl_Doom_Bolt, battle_unit_idx, &damage_types[0], 0);
+                    Apply_Battle_Unit_Damage_From_Spell(spl_Doom_Bolt, battle_unit_idx, &damage_types[0], 0);
 
                 } break;
 

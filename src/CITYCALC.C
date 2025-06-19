@@ -678,6 +678,8 @@ Artifacts may be picked up from heroes killed in battle
 Meh. ~ "Perma-Death"
 ¿ "eradicated" ?
 
+""...any items he or she is carrying disappear with the hero"
+
 "The Chosen" ... can be resummoned.
 
 What does the resurrection spell get up to?
@@ -696,6 +698,16 @@ e.g.,
         AI_Kill_Lame_Units()
             |-> Kill_Unit(troops[itr_troops], 0);
 
+    STK_CaptureCity__WIP()
+        |-> Kill_Unit(unit_idx, 0)
+
+    UNIT_RemoveExcess()
+        |-> Kill_Unit(unit_idx, 1)
+
+*/
+/*
+kill_type
+    e_KILL_TYPE
 */
 void Kill_Unit(int16_t unit_idx, int16_t kill_type)
 {
@@ -707,7 +719,8 @@ void Kill_Unit(int16_t unit_idx, int16_t kill_type)
     _UNITS[unit_idx].Level = Unit_Base_Level(unit_idx);
 
     // ¿ removal type 1 is "Dismiss" ?
-    if((kill_type == 1) || (_UNITS[unit_idx].type == ut_Chosen))
+    // ...can be resurected or reincarnated
+    if((kill_type == kt_Dismissed) || (_UNITS[unit_idx].type == ut_Chosen))
     {
 
         _UNITS[unit_idx].Finished = ST_TRUE;
@@ -759,7 +772,7 @@ void Kill_Unit(int16_t unit_idx, int16_t kill_type)
 
             _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].unit_idx = ST_UNDEFINED;
 
-            if(kill_type != 2)  /* ¿ must be type 0 ? */
+            if(kill_type != kt_Disappeared)  /* ¿ must be type 0 kt_Normal ? */
             {
 
                 if(_UNITS[unit_idx].owner_idx == HUMAN_PLAYER_IDX)
@@ -1356,14 +1369,14 @@ void UNIT_LoggedPushOff(int16_t unit_idx)
 void UNIT_RemoveExcess(int16_t unit_idx)
 {
     int16_t troops[10] = { 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB };
-    int16_t unit_wp;
-    int16_t unit_wy;
-    int16_t unit_wx;
-    int16_t troop_count;
-    int16_t lowest_trooper_idx;
-    int16_t trooper_value;
-    int16_t lowest_trooper_value;
-    int16_t itr_troops;
+    int16_t unit_wp = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t troop_count = 0;
+    int16_t lowest_trooper_idx = 0;
+    int16_t trooper_value = 0;
+    int16_t lowest_trooper_value = 0;
+    int16_t itr_troops = 0;
 
     lowest_trooper_idx   = -999;
     lowest_trooper_value =  999;
@@ -1388,13 +1401,13 @@ void UNIT_RemoveExcess(int16_t unit_idx)
             }
         }
 
-        if (_UNITS[lowest_trooper_idx].owner_idx != NEUTRAL_PLAYER_BANNER_COLOR_IDX)
+        if(_UNITS[lowest_trooper_idx].owner_idx != NEUTRAL_PLAYER_IDX)
         {
             UNIT_LoggedPushOff(lowest_trooper_idx);
         }
         else
         {
-            Kill_Unit(lowest_trooper_idx, 1);
+            Kill_Unit(lowest_trooper_idx, kt_Dismissed);
         }
 
     }

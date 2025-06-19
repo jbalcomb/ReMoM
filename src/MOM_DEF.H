@@ -603,6 +603,26 @@ PS. 'MoM Demo' has "Forest Walk", "Mountain Walk", "Pathfinding"
         Mutations
     s_UNIT
         enchantments
+
+What all do these get tested against?
+
+battle_units[].Attribs_1
+...
+Combat_Effects?
+
+_UNITS[].enchantments
+battle_units[].enchantments
+battle_units[].item_enchantments
+¿ _players[].Globals ?
+¿ _CITIES[].enchantments ?
+
+
+NOTE: summon demon is two bits used as a count
+¿ same for caster - 20 * 1,2,3 ?
+
+
+¿ Item ~== Unit Enchantment ?
+
 */
 
 /*
@@ -793,6 +813,11 @@ s_HERO.Abilities_LO
 
 
 /*
+Attack Attributes
+
+spell_data_table[].attack_attributes  AKA Params2_3
+
+
 enum e_ATTACK_FLAGS
 ...
 Touch Attacks?
@@ -806,7 +831,7 @@ Combined_ATK_Flags
 #define Att_1stStrike   0x0002
 #define Att_Poison      0x0004
 #define Att_LifeSteal   0x0008
-#define Att_DoomDmg     0x0010
+#define Att_DoomDmg     0x0010  /* ~ do damage type 2 ...a defenseless target for enemies...unit takes the full force of the attack in damage */
 #define Att_Destruct    0x0020
 #define Att_Illusion    0x0040
 #define Att_StnTouch    0x0080
@@ -814,10 +839,10 @@ Combined_ATK_Flags
 #define Att_DthTouch    0x0200
 #define Att_PwrDrain    0x0400
 #define Att_DsplEvil    0x0800
-#define Att_AREAFLAG    0x1000
-#define Att_DMGLIMIT    0x2000
-#define Att_EldrWeap    0x4000
-#define Att_WarpLghtn   0x8000
+#define Att_AREAFLAG    0x1000  /* sets attack count to figure count */
+#define Att_DMGLIMIT    0x2000  /* ¿ per attack damage is set to figure hits ? */
+#define Att_EldrWeap    0x4000  /* reduces defender's to-block by one;  ¿ OON 'Eldritch Weapon' ? */
+#define Att_WarpLghtn   0x8000  /* sets attack count to attack strength;  ¿ OON 'Warp Lightning' ? */
 
 
 

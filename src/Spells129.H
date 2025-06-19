@@ -24,19 +24,19 @@ extern "C" {
 int16_t Apply_Cruel_Unminding(int16_t player_idx);
 
 // WZD o129p02
-void OVL_ConvSpellAttack__WIP(int16_t unit_idx, int16_t spell_idx);
+void Cast_Attack_Spell_On_Enemy_Stack(int16_t unit_idx, int16_t spell_idx);
 
 // WZD o129p03
-void UNIT_ConvSpellATK__WIP(int16_t unit_idx, int16_t spell_idx, int16_t * item_count, int16_t item_list[], int16_t attack_override_flag);
+void Cast_Attack_Spell_On_Enemy_Unit(int16_t unit_idx, int16_t spell_idx, int16_t * item_count, int16_t item_list[], int16_t attack_override_flag);
 
 // WZD o129p04
 // sub_AD1F0()
 
 // WZD o129p05
-int16_t Cast_CallOfTheVoid(int16_t player_idx);
+int16_t Cast_Call_The_Void(int16_t player_idx);
 
 // WZD o129p06
-int16_t CTY_CallTheVoid__STUB(int16_t city_idx);
+int16_t Apply_Call_The_Void(int16_t city_idx);
 
 // WZD o129p07
 int16_t Apply_Automatic_Spell_Counters(int16_t spell_idx, int16_t city_idx, int16_t player_idx, int16_t show_message);

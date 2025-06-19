@@ -356,7 +356,7 @@ int16_t Cast_Wall_Of_Stone(int16_t player_idx)
         while((status == ST_FALSE) && (return_value == ST_TRUE))
         {
 
-            return_value = Spell_Casting_Screen__WIP(stt_Friendly_City, &city_idx, &wy, &wp, &target_wx, &target_wy, aWallOfStone);  // "Wall of Stone"
+            return_value = Spell_Casting_Screen__WIP(stt_Friendly_City, &city_idx, &wy, &wp, &target_wx, &target_wy, aWallOfStone);
 
             if(return_value == ST_TRUE)
             {

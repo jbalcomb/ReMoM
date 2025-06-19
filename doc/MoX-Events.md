@@ -6,6 +6,28 @@ EVENTS.C/.H
 
 
 
+[x]  Great Meteor  (uses Apply_Call_The_Void())
+[ ]  Gift
+[ ]  Disjunction
+[ ]  Marriage
+[ ]  Earthquake
+[ ]   Piracy
+[ ]   Plague
+[ ]   Rebellion
+[ ]   Donation
+[ ]   Depletion
+[ ]   New Minerals
+[ ]   Population Boom
+[ ]   Good Moon
+[ ]   Bad Moon
+[ ]  Conjunction, Chaos
+[ ]  Conjunction, Nature
+[ ]  Conjunction, Sorcery
+[ ]   Mana Short
+
+
+
+
 
 ## Event Status
 

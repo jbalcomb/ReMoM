@@ -6,12 +6,18 @@
 
 */
 
+#include "Help.H"
+#include "MOX/Fields.H"
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 
-#include "MOM.H"
 #include "City_ovr55.H"
 #include "CityScr.H"
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_T4.H"
 #include "ProdScr.H"
+#include "STU/STU_CHK.H"
+#include "WZD_o059.H"
 
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 
@@ -280,7 +286,7 @@ void Enemy_City_Screen(void)
                     strcat(GUI_String_1, str_TurnOffSpell_2__ovr055);
                     if(Confirmation_Box(GUI_String_1) == ST_TRUE)
                     {
-                        // TODO  CTY_ClearEnchant(_city_idx, city_enchantment_list[(city_enchantment_display_first + itr)]);
+                        // SPELLY  CTY_ClearEnchant(_city_idx, city_enchantment_list[(city_enchantment_display_first + itr)]);
                         Build_City_Enchantment_List(_city_idx, &city_enchantment_list[0], &city_enchantment_owner_list[0], &city_enchantment_list_count);
                         city_enchantment_display_scroll_flag = ST_FALSE;
                         if(city_enchantment_list_count > 6)
@@ -340,7 +346,7 @@ void Enemy_City_Screen(void)
         screen_changed = ST_FALSE;
     }
 
-    _page_flip_effect = 3;
+    _page_flip_effect = pfe_Dissolve;
     Deactivate_Auto_Function();
     Deactivate_Help_List();
     Reset_Window();
@@ -604,9 +610,9 @@ void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start
 */
 int16_t Init_Outpost(void)
 {
-    int16_t itr;  // _CX_
+    int16_t itr = 0;  // _CX_
 
-    if(_cities == 99)
+    if(_cities == (MAX_CITY_COUNT - 1))
     {
         return ST_FALSE;
     }
@@ -630,7 +636,8 @@ int16_t Init_Outpost(void)
         _CITIES[_cities].bldg_status[itr] = bs_NotBuilt;
     }
 
-    _CITIES[_cities].bldg_status[0] = bs_Replaced;
+
+    _CITIES[_cities].bldg_status[bt_NONE] = bs_Replaced;
 
 
     _CITIES[_cities].enchantments[WALL_OF_FIRE] = ST_FALSE;
@@ -680,12 +687,12 @@ int16_t Init_Outpost(void)
 // ¿ MoO2  Module: INVASION  Change_Colony_Ownership_() ?  ... Check_Rebellion_() |->  Change_Colony_Ownership_()
 void Change_City_Ownership(int16_t city_idx, int16_t player_idx)
 {
-    int16_t City_Count;
-    int16_t summon_city_idx;
-    int16_t fortress_city_idx;
-    uint8_t * city_enchantments;
-    int16_t city_owner_idx;
-    int16_t itr;  // _DI_
+    int16_t city_count = 0;
+    int16_t summon_city_idx = 0;
+    int16_t fortress_city_idx = 0;
+    uint8_t * city_enchantments = 0;
+    int16_t city_owner_idx = 0;
+    int16_t itr = 0;  // _DI_
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
 
@@ -708,12 +715,12 @@ void Change_City_Ownership(int16_t city_idx, int16_t player_idx)
 
     summon_city_idx = Player_Summon_City(city_owner_idx);
 
-    City_Count = 0;
-    for(itr = 0; ((itr < _cities) && (City_Count < 2)); itr++)
+    city_count = 0;
+    for(itr = 0; ((itr < _cities) && (city_count < 2)); itr++)
     {
         if(_CITIES[itr].owner_idx == city_owner_idx)
         {
-            City_Count++;
+            city_count++;
         }
     }
 
@@ -723,7 +730,7 @@ void Change_City_Ownership(int16_t city_idx, int16_t player_idx)
         (
             (city_idx == fortress_city_idx)
             ||
-            (City_Count < 2)
+            (city_count < 2)
         )
     )
     {
@@ -768,45 +775,84 @@ void Change_City_Ownership(int16_t city_idx, int16_t player_idx)
 }
 
 // WZD o55p07
+// ~ MoO2  Module: CMBTFIRE  Apply_Damage_To_Planet_()
 /*
+
+city_idx
+    index into _CITIES[]
+population_lost
+    count of population units killed
+bldg_chance
+    chance of building being destroyed
+bldg_list[]
+    array of bldg_status, of each NUM_BUILDINGS
+
     called from End_Of_Combat()
         |-> CTY_ApplyDamage(OVL_Action_Structure, IDK_population_lost, Destruction_Chance, &Buildings_Lost[0]);
 
-*/
-void CTY_ApplyDamage(int16_t city_idx, int16_t PopLoss, int16_t DChance, int16_t BList[])
-{
-    int16_t Destruction_Roll;
-    int16_t Destruction_Count;
-    // int16_t city_idx;  // _SI_
-    int16_t itr_buildings;  // _DI_
+Aplly_Call_The_Void()
+    CTY_ApplyDamage(city_idx, population_lost, 50, &bldg_status[0]);
 
-    if(DChance > 0)
+XREF:
+    j_City_Apply_Damage()
+        End_Of_Combat__WIP()
+        Apply_Call_The_Void()
+        CTY_Earthquake()
+        Call_Forth_The_Force_Of_Nature()
+        Cast_RaiseVolcano()
+        CTY_ChaosRift()
+        WIZ_MeteorStorm()
+
+*/
+void Apply_Damage_To_City(int16_t city_idx, int16_t population_lost, int16_t bldg_chance, int16_t bldg_list[])
+{
+    int16_t bldg_roll = 0;
+    int16_t bldg_ctr = 0;
+    int16_t itr_buildings = 0;  // _DI_
+
+    if(bldg_chance > 0)
     {
-        Destruction_Count = 0;
+
+        bldg_ctr = 0;
+
         for(itr_buildings = 1; itr_buildings < NUM_BUILDINGS; itr_buildings++)
         {
+
             if(_CITIES[city_idx].bldg_status[itr_buildings] > bs_Built)
             {
-                Destruction_Roll = Random(bt_NUM_BUILDINGS);
+
+                bldg_roll = Random(100);
                 
-                if(Destruction_Roll > DChance)
+                if(bldg_roll > bldg_chance)
                 {
+
                     if(City_Remove_Building(itr_buildings, city_idx) == ST_TRUE)
                     {
-                        BList[Destruction_Count] = itr_buildings;
-                        Destruction_Count++;
+
+                        bldg_list[bldg_ctr] = itr_buildings;
+
+                        bldg_ctr++;
+
                     }
+
                 }
+
             }
+
         }
+
     }
 
-    if(PopLoss > 0)
+    if(population_lost > 0)
     {
-        _CITIES[city_idx].population -= PopLoss;
+
+        _CITIES[city_idx].population -= population_lost;
+Capture_Cities_Data();
     }
 
     _CITIES[city_idx].size = ((_CITIES[city_idx].population + 3) / 4);
+Capture_Cities_Data();
+
     SETMAX(_CITIES[city_idx].size, 5);
 
     City_Check_Production(city_idx);
@@ -818,8 +864,11 @@ void CTY_ApplyDamage(int16_t city_idx, int16_t PopLoss, int16_t DChance, int16_t
         (_CITIES[city_idx].size < 1)
     )
     {
+
         _CITIES[city_idx].size = 0;
+
         Destroy_City(city_idx);
+
     }
 
 }
@@ -952,6 +1001,20 @@ void Print_City_Enchantment_List(int16_t start_x, int16_t start_y, int16_t * cit
 // WZD o55p12
 // drake178: CTY_DestroyBuilding()
 // MoO2  Module: ERICNET  Remove_Building_()
+/*
+// drake178: CTY_ClearEnchant()
+
+// WZD o55p11
+// drake178: N/A
+// sub_4B9BF()
+
+// WZD o55p12
+// drake178: CTY_DestroyBuilding()
+// MoO2  Module: ERICNET  Remove_Building_()
+*/
+/*
+
+*/
 int16_t City_Remove_Building(int16_t city_idx, int16_t bldg_idx)
 {
     int16_t has_reqd_bldg;
@@ -1155,19 +1218,25 @@ void City_Check_Production(int16_t city_idx)
 
     if(production_idx < bt_NUM_BUILDINGS)
     {
+
         if(bldg_data_table[production_idx].reqd_bldg_1 > bt_NUM_BUILDINGS)
         {
+
             if(
                 (_CITIES[city_idx].bldg_status[bldg_data_table[production_idx].reqd_bldg_2] != bs_Built)
                 &&
                 (_CITIES[city_idx].bldg_status[bldg_data_table[production_idx].reqd_bldg_2] != bs_Replaced)
             )
             {
+
                 City_Cancel_Production(city_idx);
+
             }
+
         }
         else  /* if(bldg_data_table[production_idx].reqd_bldg_1 > bt_NUM_BUILDINGS) */
         {
+
             if(
                 (
                     (_CITIES[city_idx].bldg_status[bldg_data_table[production_idx].reqd_bldg_1] != bs_Built)
@@ -1182,12 +1251,17 @@ void City_Check_Production(int16_t city_idx)
                 )
             )
             {
+
                 City_Cancel_Production(city_idx);
+
             }
+
         }
+
     }
     else  /* if(_CITIES[city_idx].construction] < bt_NUM_BUILDINGS) */
     {
+
         production_idx -= bt_NUM_BUILDINGS;  // production index - bt_NUM_BUILDINGS == unit type index
 
         if(
@@ -1204,8 +1278,11 @@ void City_Check_Production(int16_t city_idx)
             )
         )
         {
+
             City_Cancel_Production(city_idx);
+
         }
+
     }
 
 }
@@ -1232,6 +1309,7 @@ void City_Cancel_Production(int16_t city_idx)
         {
 
             _CITIES[city_idx].construction = bt_Housing;
+Capture_Cities_Data();
 
         }
         
@@ -1240,6 +1318,7 @@ void City_Cancel_Production(int16_t city_idx)
     {
 
         _CITIES[city_idx].construction = bt_AUTOBUILD;
+Capture_Cities_Data();
 
     }
 
@@ -1247,6 +1326,7 @@ void City_Cancel_Production(int16_t city_idx)
 
 
 // WZD o55p18
+// MoO2  Module: MAINTAIN  Building_Worth_()
 int16_t City_Sell_Building_Value(int16_t bldg_idx)
 {
     int16_t building_value;

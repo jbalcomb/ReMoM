@@ -47,15 +47,14 @@
 #define LEN_SPELL_NAME        20
 #define LEN_SPELLDAT_NAME        19
 #define LEN_SPELL_DESCRIPTION   110
-#define LEN_CITY_NAME         14  /* WTF, Mate? */
-#define LEN_HERO_NAME         14  /* WTF, Mate? */  /* longest in NAMES is 12 */
+#define LEN_CITY_NAME         14    /* WTF, Mate? */
+#define LEN_HERO_NAME         14    /* WTF, Mate? */  /* longest in NAMES is 12 */
 #define LEN_SAVE_DESCRIPTION  20
 #define LEN_RACE_NAME         20
-#define LEN_ITEM_NAME         30
+#define LEN_ITEM_NAME         30    /* array is 30, but last 4 are always 0, longest name is 26 characters */
+#define LEN_ITEM_POWER_NAME   18
 
 
-
-#define ST_TRANSPARENT    0
 
 
 

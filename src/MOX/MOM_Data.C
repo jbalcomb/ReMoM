@@ -1133,6 +1133,9 @@ struct s_BATTLE_UNIT * global_battle_unit;                       // alloc in All
 // WZD dseg:922A
 // MoO2  Module: Mox  _combat_data_
 // WZD dseg:922A 00 00 00 00                                     _combat_data_ dd 0                      ; DATA XREF: USW_Build_Effect_List+AB7r ...
+/*
+~ a 'battle unit' is a combat data *record*
+*/
 struct s_BATTLE_UNIT * battle_units;                            // alloc in IDK_Combat_Allocate() and CMB_LoadResources()
 
 // WZD dseg:922E
@@ -1145,7 +1148,7 @@ if(combat_enchantments[(spell_data_table[spell_idx].Param0 + IDK)] > 0)
     spell_data_table[spell_idx].Param0 is the index into combat_enchantments
     and [{0,1}] is {attacker,defender}
     2-D array?
-    
+    //MoO2 and the manual ~ "side"
  */
 int8_t * combat_enchantments;
 
@@ -1161,9 +1164,13 @@ struct s_HEROES * _HEROES2[NUM_PLAYERS];
 
 
 // WZD dseg:924A
+// drake178: CMB_AI_Fled
+/*
+; now 0 (non-strategic battle init)
+; set to 1 if the AI decides to flee
+*/
+// MoO2  Module: MOX  data (0 bytes) _ai_retreat_flag  Address: 02:001918C8
 int16_t CMB_AI_Fled;
-// WZD dseg:924A                                                                                         ; now 0 (non-strategic battle init)
-// WZD dseg:924A                                                                                         ; set to 1 if the AI decides to flee
 
 // WZD dseg:924C
 // struct CSCAN_ICONS IMG_CMB_ScanIcons;
@@ -2252,6 +2259,7 @@ struct s_STACK _unit_stack[MAX_STACK];
 
 
 
+// TODO  all of this should be in ~ MoO2  Module: MSG
 // WZD dseg:99C2
 // drake178: MSG_CityLost_Count
 int8_t MSG_CityLost_Count;
@@ -2270,6 +2278,7 @@ int8_t MSG_CityGained_Array[20];
 
 // WZD dseg:9AF0
 // drake178: MSG_BuildDone_Count
+// MoO2  Module: MSG  ... n_msgs
 int8_t g_bldg_msg_ctr;
 
 // WZD dseg:9AF1 00                                              db    0

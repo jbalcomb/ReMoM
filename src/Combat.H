@@ -1633,7 +1633,7 @@ void CMB_RangedAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_bat
 void CMB_MeleeAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t attacker_damage, int16_t defender_damage, int16_t cgx, int16_t cgy);
 
 // WZD o113p06
-void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int16_t damage_types[], int16_t attack_override_flag);
+void Apply_Battle_Unit_Damage_From_Spell(uint16_t spell_idx, uint16_t battle_unit_idx, int16_t damage_types[], int16_t attack_override_flag);
 
 // WZD o113p07
 void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t damage_types[]);

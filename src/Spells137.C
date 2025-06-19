@@ -658,6 +658,18 @@ void Cast_Spell_City_Enchantment_Animation_Draw(void)
             }
             else
             {
+// Severity	Code	Description	Project	File	Line	Suppression State	Details
+// Warning	C6385	Reading invalid data from '_CITIES[_temp_sint_1].bldg_status'.	sdl2_ReMoM	C:\STU\devel\ReMoM\src\Spells137.C	661		
+                assert(cityscape_bldg_fields[itr].field_bldg_idx >= 0);
+                assert(cityscape_bldg_fields[itr].field_bldg_idx <= 35);
+                if(cityscape_bldg_fields[itr].field_bldg_idx < 0)
+                {
+                    STU_DEBUG_BREAK();
+                }
+                if(cityscape_bldg_fields[itr].field_bldg_idx > 35)
+                {
+                    STU_DEBUG_BREAK();
+                }
                 if(_CITIES[_osc_city_idx].bldg_status[cityscape_bldg_fields[itr].field_bldg_idx] != bs_Removed)
                 {
                     Print_Centered_Far(cityscape_bldg_fields[itr].field_print_sx, cityscape_bldg_fields[itr].field_print_sy, bldg_data_table[cityscape_bldg_fields[itr].field_bldg_idx].name);

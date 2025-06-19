@@ -11859,7 +11859,7 @@ case scc_Disjunction_Spell:  // 20
 
             Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
 
-            CMB_ConvSpellAttack__WIP(spell_idx, target_idx, &damage_types[0], 0);
+            Apply_Battle_Unit_Damage_From_Spell(spell_idx, target_idx, &damage_types[0], 0);
 
             BU_ApplyDamage__WIP(target_idx, &damage_types[0]);
 
@@ -12310,7 +12310,7 @@ case scc_Disjunction_Spell:  // 20
                 if(tscc > 0)
                 {
                     Moves_Left += (tscc - spell_data_table[spell_idx].casting_cost);
-                    CMB_ConvSpellAttack__WIP(spell_idx, target_idx, &damage_types[0], Moves_Left);
+                    Apply_Battle_Unit_Damage_From_Spell(spell_idx, target_idx, &damage_types[0], Moves_Left);
                 }
             }
 
@@ -12321,7 +12321,7 @@ case scc_Disjunction_Spell:  // 20
                 if(tscc > 0)
                 {
                     Moves_Left += ((tscc - spell_data_table[spell_idx].casting_cost) / 2);
-                    CMB_ConvSpellAttack__WIP(spell_idx, target_idx, &damage_types[0], Moves_Left);
+                    Apply_Battle_Unit_Damage_From_Spell(spell_idx, target_idx, &damage_types[0], Moves_Left);
                 }
             }
             // Fireball: +1 damage per every 3 extra mana spent
@@ -12331,7 +12331,7 @@ case scc_Disjunction_Spell:  // 20
                 if(tscc > 0)
                 {
                     Moves_Left += ((tscc - spell_data_table[spell_idx].casting_cost) / 3);
-                    CMB_ConvSpellAttack__WIP(spell_idx, target_idx, &damage_types[0], Moves_Left);
+                    Apply_Battle_Unit_Damage_From_Spell(spell_idx, target_idx, &damage_types[0], Moves_Left);
                 }
             }
 
@@ -14752,70 +14752,102 @@ void CMB_MeleeAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_batt
 ; damage when allowing for the second defense roll
 */
 /*
+    sets damage_types[]
 
-
+XREF:
+    j_Apply_Battle_Unit_Damage_From_Spell()
+        AITP_CombatSpell__STUB()
+        Cast_Spell_On_Battle_Unit()
+        Cast_Spell_On_Battle_Unit()
+        Cast_Spell_On_Battle_Unit()
+        Cast_Spell_On_Battle_Unit()
+        BU_ProcessAttack__WIP()
+        AI_BU_GetAttackValue__STUB()
+        BU_WallofFire__NOOP()
+        UNIT_ConvSpellATK__WIP()
+        Apply_Flame_Strike()
+        Apply_Call_Lightning()
+        Vortex_Move_And_Attack()
+        Apply_Call_Chaos__WIP()
 
 */
-void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int16_t damage_types[], int16_t attack_strength_override)
+void Apply_Battle_Unit_Damage_From_Spell(uint16_t spell_idx, uint16_t battle_unit_idx, int16_t damage_types[], int16_t attack_strength_override)
 {
     uint32_t enchantments = 0;
     int16_t damage_total = 0;
-    int16_t Figures_Slain = 0;
-    int16_t To_Block = 0;
-    int16_t Attack_Count = 0;
+    int16_t figures_lost = 0;
+    int16_t defender_toblock = 0;
+    int16_t attack_count = 0;
     int16_t attack_strength = 0;
     int16_t defense_special = 0;
     int16_t attack_immunities = 0;
     int16_t attack_attributes = 0;
     int16_t front_figure_damage = 0;
-    uint16_t itr = 0;
+    int16_t itr = 0;
+    int16_t damage = 0;  // _SI_
+    int16_t attack_roll = 0;  // DNE in Dasm
+    int16_t defense_roll = 0;  // DNE in Dasm
+    struct s_BATTLE_UNIT * battleunit;
+    struct s_UNIT * unit;
+    struct s_SPELL_DATA * spell;
 
-    struct s_BATTLE_UNIT* battleunit = &battle_units[battle_unit_idx];
-    struct s_UNIT* unit = &_UNITS[battleunit->unit_idx];
-    struct s_SPELL_DATA* spell = &spell_data_table[spell_idx];
+    battleunit = &battle_units[battle_unit_idx];
+    unit = &_UNITS[battle_units[battle_unit_idx].unit_idx];
+    spell = &spell_data_table[spell_idx];
 
-    enchantments = unit->enchantments | battleunit->enchantments | battleunit->item_enchantments;
+    figures_lost = 0;
 
-    for(itr = 0; itr < 3; itr++)
+    damage = 0;
+
+    enchantments = (battleunit->enchantments | battleunit->item_enchantments | unit->enchantments);
+
+    for(itr = 0; itr < NUM_DAMAGE_TYPES; itr++)
     {
 
         damage_types[itr] = 0;
 
     }
 
-    if(enchantments & UE_RIGHTEOUSNESS)
-    {
-
-        if (spell->magic_realm == sbr_Chaos || spell->magic_realm == sbr_Death)
-        {
-
-            return;
-
-        }
-
-    }
-
-    if(battleunit->Attribs_1 & USA_IMMUNITY_MAGIC)
+    if(
+        ((enchantments & UE_RIGHTEOUSNESS) != 0)
+        &&
+        (
+            (spell->magic_realm == sbr_Chaos)
+            ||
+            (spell->magic_realm == sbr_Death)
+        )
+    )
     {
 
         return;
 
     }
 
+    if((battleunit->Attribs_1 & USA_IMMUNITY_MAGIC) != 0)
+    {
+
+        return;
+
+    }
+
+
     front_figure_damage = battleunit->front_figure_damage;
+
 
     attack_attributes = spell->attributes;
 
-    To_Block = battleunit->toblock;
+    defender_toblock = battleunit->toblock;
 
     if(attack_attributes & Att_EldrWeap)
     {
 
-        To_Block--;
+        defender_toblock--;
 
     }
 
+
     attack_immunities = spell->immunities;
+
 
     if(attack_strength_override > 0)
     {
@@ -14836,7 +14868,8 @@ void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int1
 
     if(attack_attributes & Att_AREAFLAG)
     {
-        Attack_Count = battleunit->Cur_Figures;
+
+        attack_count = battleunit->Cur_Figures;
 
         attack_attributes |= Att_DMGLIMIT;
 
@@ -14844,15 +14877,16 @@ void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int1
     else if(attack_attributes & Att_WarpLghtn)
     {
 
-        Attack_Count = attack_strength;
+        attack_count = attack_strength;
 
     }
     else
     {
 
-        Attack_Count = 1;
+        attack_count = 1;
 
     }
+
 
     if(battleunit->Combat_Effects & bue_Black_Sleep)
     {
@@ -14866,10 +14900,8 @@ void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int1
     /*
         BEGIN:  Attacks
     */
-    for(itr = 0; itr < Attack_Count; itr++)
+    for(itr = 0; itr < attack_count; itr++)
     {
-
-        int16_t damage = 0;
 
         if(attack_attributes & Att_DoomDmg)
         {
@@ -14880,11 +14912,13 @@ void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int1
         else
         {
 
+            // damage = CMB_AttackRoll__SEGRAX(attack_strength, 0);
+            // damage -= CMB_DefenseRoll__SEGRAX(defense_special, defender_toblock);
+            attack_roll = CMB_AttackRoll__SEGRAX(attack_strength, 0);
+            defense_roll = CMB_DefenseRoll__SEGRAX(defense_special, defender_toblock);
+            damage = (attack_roll - defense_roll);
 
-            damage = CMB_AttackRoll__SEGRAX(attack_strength, 0) - CMB_DefenseRoll__SEGRAX(defense_special, To_Block);
-
-
-            if(enchantments & UE_INVULNERABILITY)
+            if((enchantments & UE_INVULNERABILITY) != 0)
             {
                 damage -= 2;
 
@@ -14896,7 +14930,11 @@ void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int1
         SETMIN(damage, 0);
 
 
-        if(itr == 0 && front_figure_damage > 0)
+        if(
+            (itr == 0)
+            &&
+            (front_figure_damage >= 0)
+        )
         {
 
             damage += front_figure_damage;
@@ -14927,21 +14965,15 @@ void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int1
 
         }
 
-        if(attack_attributes & Att_DMGLIMIT)
+        if((attack_attributes & Att_DMGLIMIT) != 0)
         {
 
-            if(battleunit->hits <= damage)
+            if(battleunit->hits < damage)
             {
 
-                Figures_Slain++;
+                figures_lost++;
 
                 damage = 0;
-
-            }
-            else
-            {
-
-                battleunit->hits -= damage;
 
             }
 
@@ -14952,16 +14984,18 @@ void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int1
             while(battleunit->hits < damage)
             {
 
-                Figures_Slain++;
+                figures_lost++;
 
                 damage -= battleunit->hits;
 
-                if(!(attack_attributes & Att_DoomDmg))
+                if((attack_attributes & Att_DoomDmg) == 0)
                 {
 
-                    damage -= CMB_DefenseRoll__SEGRAX(defense_special, To_Block);
+                    // damage -= CMB_DefenseRoll__SEGRAX(defense_special, defender_toblock);
+                    defense_roll = CMB_DefenseRoll__SEGRAX(defense_special, defender_toblock);
+                    damage -= defense_roll;
 
-                    if(enchantments & UE_INVULNERABILITY)
+                    if((enchantments & UE_INVULNERABILITY) != 0)
                     {
 
                         damage -= 2;
@@ -14972,18 +15006,13 @@ void CMB_ConvSpellAttack__WIP(uint16_t spell_idx, uint16_t battle_unit_idx, int1
 
             } 
 
-            if(damage < 0)
-            {
-
-                damage = 0;
-
-            }
+            SETMIN(damage, 0);
 
         }
 
-        damage_total += battleunit->hits * Figures_Slain;
+        damage_total += (damage + (figures_lost * battleunit->hits));
 
-        Figures_Slain = 0;
+        figures_lost = 0;
 
         if(attack_attributes & Att_WarpLghtn)
         {
@@ -20850,14 +20879,20 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
     if((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)
     {
 
+        /*
+            Immolation . . . . . . . . Every opponent engaged in melee combat is subjected to a strength four fire attack; this occurs at the same time and in addition to melee combat.
+            ...strength four fire attack...
+            ...occurs at the same time and in addition to melee combat
+        */
         if((battle_units[attacker_battle_unit_idx].Attribs_2 & USA_IMMOLATION) != 0)
         {
-
-            CMB_ConvSpellAttack__WIP(spl_Fireball, defender_battle_unit_idx, &new_damage_array[0], 4);
+            
+            // sets damage_types[0]
+            Apply_Battle_Unit_Damage_From_Spell(spl_Fireball, defender_battle_unit_idx, &new_damage_array[0], 4);
 
         }
 
-
+        // Stonig Gaze - before melee combat
         if(
             (
                 (attack_type == srat_StoneGaze)
@@ -20883,7 +20918,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
 
         }
 
-
+        // Death Gaze - before melee combat
         if(
             (
                 (attack_type == srat_MultiGaze)
@@ -20939,7 +20974,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
         defender_toblock -= 1;
     }
 
-    // BUGBUG  broken logic, bad flag; gets +1 in non-City combat
+    // BUGBUG  broken logic, bad flag value; gets +1 in non-City combat
     if(
         (Battle_Unit_Is_Within_City(defender_battle_unit_idx) == ST_TRUE)
         &&
@@ -20958,7 +20993,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
         }
     }
     /*
-        BEGIN:  Defense Special
+        END:  Defense Special
     */
 
 
@@ -22884,7 +22919,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
             if(_active_battle_unit != 668)  /* 668 - rampage, created ruins */
             {
-                CTY_ApplyDamage(_combat_environ_idx, IDK_population_lost, Destruction_Chance, &Buildings_Lost[0]);
+                Apply_Damage_To_City(_combat_environ_idx, IDK_population_lost, Destruction_Chance, &Buildings_Lost[0]);
             }
 
             if(player_idx != _combat_defender_player)
@@ -23100,11 +23135,11 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                 ((_UNITS[battle_units[itr_battle_units].unit_idx].mutations & UM_UNDEAD) != 0)
             )
             {
-                Kill_Unit(battle_units[itr_battle_units].unit_idx, 2);  // wiped from existence
+                Kill_Unit(battle_units[itr_battle_units].unit_idx, kt_Disappeared);
             }
             else
             {
-                Kill_Unit(battle_units[itr_battle_units].unit_idx, 0);  // just mostly dead
+                Kill_Unit(battle_units[itr_battle_units].unit_idx, kt_Normal);
             }
 
         }
@@ -25019,7 +25054,7 @@ void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
 
         for(itr = 0; itr < troop_count; itr++)
         {
-            Kill_Unit(troops[itr], 0);
+            Kill_Unit(troops[itr], kt_Normal);
         }
 
     }

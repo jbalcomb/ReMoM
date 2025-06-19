@@ -13,6 +13,54 @@
 
 
 
+
+/*
+19 events
+{0, ..., 18}
+
+*/
+enum e_EVENT_TYPE
+{
+    et_None                 =  0,
+    et_Meteor               =  1,
+    et_Gift                 =  2,
+    et_Disjunction          =  3,
+    et_Marriage             =  4,
+    et_Earthquake           =  5,
+    et_Pirates              =  6,
+    et_Plague               =  7,
+    et_Rebellion            =  8,
+    et_Donation             =  9,
+    et_Depletion            = 10,
+    et_New_Mine             = 11,
+    et_Population_Boom      = 12,
+    et_Good_Moon            = 13,
+    et_Bad_Moon             = 14,
+    et_Conjunction_Chaos    = 15,
+    et_Conjunction_Nature   = 16,
+    et_Conjunction_Sorcery  = 17,
+    et_Mana_Short           = 18
+};
+
+enum e_EVENT_STATUS
+{
+    es_Nothing = 0,
+    es_Starting = 1,
+    es_Ongoing = 2,
+    es_Ending = 3
+};
+
+enum e_EVENT_MESSAGE_TYPE
+{
+    emt_Started = 0,
+    emt_Ended = 1,
+    emt_IDK_two = 2,
+    emt_Happened = 3,
+    emt_Elsewhere = 4
+};
+
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif

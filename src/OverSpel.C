@@ -1522,7 +1522,7 @@ Capture_Cities_Data();
 
                         /* SPELLY */  Change_Relations__WIP(-3, player_idx, _UNITS[spell_target_idx].owner_idx, 8, 0, spell_target_idx);
 
-                        /* SPELLY */  OVL_ConvSpellAttack__WIP(spell_target_idx, spell_idx);
+                        /* SPELLY */  Cast_Attack_Spell_On_Enemy_Stack(spell_target_idx, spell_idx);
 
                     }
 
@@ -1659,7 +1659,7 @@ Capture_Cities_Data();
                         case spl_Call_The_Void:
                         {
 
-                            Cast_Successful = Cast_CallOfTheVoid(player_idx);
+                            Cast_Successful = Cast_Call_The_Void(player_idx);
 
                         } break;
 

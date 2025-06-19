@@ -19,6 +19,15 @@ extern "C" {
 
 
 
+enum e_KILL_TYPE
+{
+    kt_Normal       = 0,    // normal
+    kt_Dismissed    = 1,    // dismiss  ...can be resurected or reincarnated
+    kt_Disappeared  = 2     // disappear - killed by damage[2] (doom/chaos damage); banish, cracks call, disintegrate, dispel evil, holy word, petrify, unsummon
+};
+
+
+
 /*
     WIZARDS.EXE  ovr120
 */
@@ -67,8 +76,7 @@ int16_t Player_Overland_Enchantments_Upkeep(int16_t player_idx);
 // UU_UNIT_OnSameTile()
 
 // WZD o120p13
-// drake178: UNIT_MarkRemoved()
-void Kill_Unit(int16_t unit_idx, int16_t Rmv_Type);
+void Kill_Unit(int16_t unit_idx, int16_t kill_type);
 
 // WZD o120p14
 // drake178: UU_BYTE_SortDescnd()
