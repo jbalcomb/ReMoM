@@ -3,7 +3,12 @@
         ovr132
 */
 
+#include "Explore.H"
+#include "MOM_DEF.H"
+#include "MOX/Allocate.H"
+#include "MOX/MOX_BASE.H"
 #include "MOX/MOX_DEF.H"
+#include "MainScr.H"
 #include "SPELLDEF.H"
 #include "STU/STU_CHK.H"
 #include "Spells130.H"
@@ -19,6 +24,7 @@
 #include "SBookScr.H"
 #include "Spellbook.H"
 #include "Spells137.H"
+#include "UNITTYPE.H"
 
 
 
@@ -320,8 +326,113 @@ void Cast_Floating_Island(int16_t player_idx)
 // WZD o132p16
 int16_t Cast_Lycantrophy(int16_t player_idx)
 {
+    int16_t status = 0;
+    int16_t scsv5 = 0;
+    int16_t scsv4 = 0;
+    int16_t scsv3 = 0;
+    int16_t scsv2 = 0;
+    int16_t unit_idx = 0;
+    int16_t return_value = 0;  // _SI_
 
-    return ST_FALSE;
+    Allocate_Reduced_Map();
+
+    Mark_Block(_screen_seg);
+
+    if(player_idx != HUMAN_PLAYER_IDX)
+    {
+
+        return_value = IDK_Pick_Target_For_Unit_Enchantment__STUB(stt_Friendly_Unit, &unit_idx, spl_Lycanthropy, player_idx);
+
+    }
+    else
+    {
+
+        return_value = ST_TRUE;
+
+        status = ST_FALSE;
+
+        while((return_value == ST_TRUE) && (status == ST_FALSE))
+        {
+            
+            return_value = Spell_Casting_Screen__WIP(stt_Friendly_Unit, &unit_idx, &scsv2, &scsv3, &scsv4, &scsv5, aLycanthropy);
+
+            if(return_value == ST_TRUE)
+            {
+
+                if(_UNITS[unit_idx].type < ut_Trireme)
+                {
+
+                    Full_Draw_Main_Screen();
+
+                    LBX_Load_Data_Static(message_lbx_file__ovr132, 0, (SAMB_ptr)&GUI_NearMsgString[0], 62, 1, 150);
+
+                    Warn0(GUI_NearMsgString);
+
+                }
+                else if((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_FANTASTIC) != 0)
+                {
+                    
+                    Full_Draw_Main_Screen();
+
+                    LBX_Load_Data_Static(message_lbx_file__ovr132, 0, (SAMB_ptr)&GUI_NearMsgString[0], 63, 1, 150);
+
+                    Warn0(GUI_NearMsgString);
+
+                }
+                else if((_UNITS[unit_idx].mutations & (CC_ARMOR | CC_ARMOR | CC_BREATH | UM_UNDEAD)) != 0)
+                {
+
+                    Full_Draw_Main_Screen();
+
+                    LBX_Load_Data_Static(message_lbx_file__ovr132, 0, (SAMB_ptr)&GUI_NearMsgString[0], 64, 1, 150);
+
+                    Warn0(GUI_NearMsgString);
+
+                }
+                else
+                {
+
+                    status = ST_TRUE;
+
+                }
+
+            }
+
+        }
+
+        if(return_value == ST_TRUE)
+        {
+
+            if(
+                (player_idx == HUMAN_PLAYER_IDX)
+                ||
+                (Check_Square_Scouted(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp) != ST_FALSE)
+            )
+            {
+
+                Spell_Animation_Load_Sound_Effect__WIP(spl_Lycanthropy);
+
+                Spell_Animation_Load_Graphics(spl_Lycanthropy);
+
+                Spell_Animation_Screen__WIP(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
+
+                Full_Draw_Main_Screen();
+
+            }
+
+        }
+
+        _UNITS[unit_idx].type = spell_data_table[spl_Lycanthropy].unit_type;
+
+        _UNITS[unit_idx].XP = 0;
+
+        _UNITS[unit_idx].Level = 0;
+
+    }
+
+    Release_Block(_screen_seg);
+
+    return return_value;
 
 }
 

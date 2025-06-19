@@ -1,7 +1,6 @@
 
-git commit -m "add Overland Specials 'Chaos Channels'"
-
 git commit -m "add Overland Specials 'Lycanthropy'"
+
 git commit -m "add Overland Specials 'Natures Cures'"
 git commit -m "add Overland Specials 'Plane Shift'"
 git commit -m "add Overland Specials 'Word Of Recall'"
@@ -338,7 +337,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Mana Leak
 [x] Drain Power
 [x] Possession
-[ ] Lycantrophy
+[x] Lycanthropy
 [x] Black Prayer
 [x] Black Channels
 [x] Night Stalker
