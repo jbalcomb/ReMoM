@@ -869,9 +869,9 @@ void Determine_Event(void)
 */
 void Event_Twiddle(void)
 {
-    int16_t item_list_array[18];
+    int16_t item_list[18];
     int16_t troops[MAX_STACK];
-    int16_t item_list_count;
+    int16_t item_count;
     int16_t troop_count;
     int16_t city_population;
     int16_t terrain_special;
@@ -1081,7 +1081,7 @@ void Event_Twiddle(void)
         }
         Army_At_City(m_event_city_idx, &troop_count, &troops[0]);
         city_population = _CITIES[m_event_city_idx].population;
-        /* TODO */  EVNT_DestroyedBldngs = CTY_Earthquake__STUB(m_event_city_idx, &item_list_count, &item_list_array[0]);
+        EVNT_DestroyedBldngs = Apply_Earthquake(m_event_city_idx, &item_count, &item_list[0]);
         EVNT_LostPopulation = (city_population - _CITIES[m_event_city_idx].population);
         Army_At_City(m_event_city_idx, &post_event_troop_count, &troops[0]);
         EVNT_LostUnitCount = (troop_count - post_event_troop_count);
@@ -1094,7 +1094,7 @@ void Event_Twiddle(void)
         )
         {
             Show_Event_Message();
-            Player_Process_Item_Pool(_CITIES[m_event_city_idx].owner_idx, item_list_count, &item_list_array[0]);
+            Player_Process_Item_Pool(_CITIES[m_event_city_idx].owner_idx, item_count, &item_list[0]);
         }
 
     }

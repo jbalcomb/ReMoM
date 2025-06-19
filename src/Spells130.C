@@ -150,6 +150,12 @@ int16_t Cast_Earthlore(int16_t player_idx)
 
 // WZD o130p07
 // drake178: sub_AFB7F()
+/*
+¿ return value ?
+    Dasm thinks it should get one, but doesn't show returning one.
+
+*/
+// int16_t Cast_Spell_Binding(int16_t player_idx)
 void Cast_Spell_Binding(int16_t player_idx)
 {
     int16_t var_A = 0;

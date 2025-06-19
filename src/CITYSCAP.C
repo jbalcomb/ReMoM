@@ -2616,6 +2616,8 @@ void Cityscape_Draw_Foreground(int16_t city_idx, int16_t xstart, int16_t ystart)
         Draw_Picture(xstart, (ystart + 84), cityscape_pict_seg);
     }
 
+
+    // 'Wall of Stone'
     // if(_CITIES[city_idx].enchantments[WALL_OF_FIRE] != ST_FALSE)
     // {
     //     Set_Animation_Frame(cityscape_wall_of_stine_seg, cityscape_wall_anim_ctr);

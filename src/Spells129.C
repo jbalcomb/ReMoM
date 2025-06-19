@@ -3,6 +3,9 @@
         ovr129
 */
 
+#include "MOX/MOX_BASE.H"
+#include "MOX/MOX_SET.H"
+#include "STU/STU_CHK.H"
 #include "Spells129.H"
 
 #include "MOM_DEF.H"
@@ -560,6 +563,7 @@ int16_t Apply_Call_The_Void(int16_t city_idx)
     }
 
     return buildings_lost;
+
 }
 
 
@@ -894,8 +898,101 @@ int16_t Cast_Move_Fortress(int16_t player_idx)
 // WZD o129p14
 int16_t Cast_Earthquake(int16_t player_idx)
 {
+    int16_t item_list[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t city_population2 = 0;
+    int16_t city_population1 = 0;
+    int16_t item_count = 0;
+    int16_t return_value = 0;
+    int16_t target_wy = 0;
+    int16_t target_wx = 0;
+    int16_t wp = 0;
+    int16_t wy = 0;
+    int16_t city_idx = 0;
 
-    return ST_FALSE;
+    if(player_idx == HUMAN_PLAYER_IDX)
+    {
+
+        return_value = Spell_Casting_Screen__WIP(stt_Enemy_City, &city_idx, &wy, &wp, &target_wx, &target_wy, aEarthquake);
+
+    }
+    else
+    {
+
+        return_value = Pick_Target_For_City_Enchantment__WIP(stt_Enemy_City, &city_idx, spl_Earthquake, player_idx);
+
+    }
+
+    if(return_value == ST_TRUE)
+    {
+
+        if(
+            (player_idx == HUMAN_PLAYER_IDX)
+            ||
+            (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+            ||
+            (
+                (magic_set.enemy_spells == ST_TRUE)
+                &&
+                (SQUARE_EXPLORED(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) != ST_FALSE)
+                &&
+                (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] != ST_FALSE)
+            )
+        )
+        {
+
+            AI_Eval_After_Spell = ST_TRUE;
+
+            Allocate_Reduced_Map();
+
+            Mark_Block(_screen_seg);
+
+            Cast_Spell_City_Enchantment_Animation_1__WIP(city_idx, spl_Earthquake, player_idx);
+
+        }
+
+        city_population1 = _CITIES[city_idx].population;
+
+        Apply_Earthquake(city_idx, &item_count, &item_list[0]);
+
+        city_population2 = _CITIES[city_idx].population;
+
+        _CITIES[city_idx].population = city_population1;
+Capture_Cities_Data();
+
+        Change_Relations_For_Bad_City_Spell(player_idx, spl_Earthquake, city_idx);
+            
+        if(
+            (player_idx == HUMAN_PLAYER_IDX)
+            ||
+            (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+            ||
+            (
+                (magic_set.enemy_spells == ST_TRUE)
+                &&
+                (SQUARE_EXPLORED(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) != ST_FALSE)
+                &&
+                (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] != ST_FALSE)
+            )
+        )
+        {
+
+            Cast_Spell_City_Enchantment_Animation_2__WIP(city_idx, spl_Earthquake, player_idx);
+
+            Release_Block(_screen_seg);
+
+        }
+
+        item_pool_in_process = ST_TRUE;
+
+        m_item_wx = _CITIES[city_idx].wx;
+        m_item_wy = _CITIES[city_idx].wy;
+        m_item_wp = _CITIES[city_idx].wp;
+
+        Player_Process_Item_Pool(player_idx, item_count, &item_list[0]);
+
+    }
+
+    return return_value;
 
 }
 
@@ -909,10 +1006,127 @@ int16_t Cast_Earthquake(int16_t player_idx)
 /*
 
 */
-int16_t CTY_Earthquake__STUB(int16_t city_idx, int16_t * list_count, int16_t list_array[])
+int16_t Apply_Earthquake(int16_t city_idx, int16_t * item_count, int16_t item_list[])
 {
+    int16_t bldg_list[NUM_BUILDINGS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t buildings_lost = 0;
+    int16_t troop_count = 0;
+    int16_t unit_idx = 0;
+    int16_t itr1 = 0;  // _SI_
+    int16_t itr2 = 0;  // _DI_
+    int16_t bldg_idx = 0;  // _SI_ & _DI_
 
-    return 0;
+    Mark_Block(_screen_seg);
+
+    // DOMSDOS  battle_units = SA_MK_FP0(Allocate_Next_Block(_screen_seg, 8));
+    battle_units = (struct s_BATTLE_UNIT * )Allocate_Next_Block(_screen_seg, 8);
+
+    Army_At_City(city_idx, &troop_count, &troops[0]);
+
+    *item_count = 0;
+
+    for(itr1 = 0; itr1 < troop_count; itr1++)
+    {
+
+        Load_Battle_Unit(troops[itr1], &battle_units[0]);
+
+        if(
+            ((battle_units[0].Move_Flags & MV_FLYING) == 0)
+            &&
+            ((battle_units[0].Abilities & UA_NONCORPOREAL) == 0)
+        )
+        {
+
+            if(Random(4) == 1)  // 25% chance
+            {
+
+                unit_idx = troops[itr1];
+
+                if(_UNITS[unit_idx].Hero_Slot > -1)
+                {
+
+                    for(itr2 = 0; itr2 < NUM_HERO_SLOTS; itr2++)
+                    {
+
+                        if(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr2] > -1)
+                        {
+
+                            item_list[*item_count] = _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr2];
+
+                            *item_count += 1;
+
+                        }
+
+                        _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr2] = -1;
+
+                    }
+
+                }
+
+                Kill_Unit(unit_idx, kt_Normal);
+
+
+            }
+
+        }
+
+    }
+
+    Release_Block(_screen_seg);
+    
+    for(bldg_idx = 0; bldg_idx < NUM_BUILDINGS; bldg_idx++)
+    {
+
+        bldg_list[bldg_idx] = 0;
+
+    }
+
+
+    Apply_Damage_To_City(city_idx, 0, 15, &bldg_list[0]);
+
+    buildings_lost = 0;
+
+    
+    for(bldg_idx = 0; bldg_idx < NUM_BUILDINGS; bldg_idx++)
+    {
+
+        if(bldg_list[bldg_idx] > bs_Replaced)
+        {
+
+            buildings_lost++;
+
+        }
+
+    }
+
+    if(_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+    {
+
+        for(bldg_idx = 0; bldg_idx < NUM_BUILDINGS; bldg_idx++)
+        {
+
+            if(bldg_list[bldg_idx] > bs_Replaced)
+            {
+
+                if(MSG_BldLost_Count < 20)
+                {
+
+                    MSG_BldLost_Array[MSG_BldLost_Count].city_idx = city_idx;
+
+                    MSG_BldLost_Array[MSG_BldLost_Count].bldg_type_idx = bldg_list[bldg_idx];
+
+                    MSG_BldLost_Count++;
+
+                }
+
+            }
+
+        }
+
+    }
+
+    return buildings_lost;
 
 }
 

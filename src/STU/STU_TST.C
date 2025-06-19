@@ -105,10 +105,11 @@ void TST_Patch_Game_Data(void)
     TST_Learn_Spell(player_idx, spl_Great_Unsummoning);
     TST_Learn_Spell(player_idx, spl_Incarnation);
     TST_Learn_Spell(player_idx, spl_Resurrection);
-    TST_Learn_Spell(player_idx, spl_Spell_Of_Mastery);
-    TST_Learn_Spell(player_idx, spl_Spell_Of_Return);
     TST_Learn_Spell(player_idx, spl_Summon_Champion);
     TST_Learn_Spell(player_idx, spl_Summon_Hero);
+    // Extra Special
+    TST_Learn_Spell(player_idx, spl_Spell_Of_Mastery);
+    TST_Learn_Spell(player_idx, spl_Spell_Of_Return);
 
     TST_Learn_Spell(player_idx, spl_Just_Cause);
 

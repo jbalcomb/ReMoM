@@ -63,7 +63,7 @@ int16_t Cast_Move_Fortress(int16_t player_idx);
 int16_t Cast_Earthquake(int16_t player_idx);
 
 // WZD o129p15
-int16_t CTY_Earthquake__STUB(int16_t city_idx, int16_t * list_count, int16_t list_array[]);
+int16_t Apply_Earthquake(int16_t city_idx, int16_t * item_count, int16_t item_list[]);
 
 // WZD o129p16
 // sub_AEDB1()

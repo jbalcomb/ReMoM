@@ -1631,6 +1631,7 @@ Capture_Cities_Data();
                         case spl_Spell_Binding:
                         {
 
+                            // BUGBUG  no return_value  Cast_Successful = Cast_Spell_Binding(player_idx);
                             Cast_Spell_Binding(player_idx);
 
                         } break;

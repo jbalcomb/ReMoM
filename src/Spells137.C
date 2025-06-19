@@ -728,13 +728,13 @@ void Cast_Spell_City_Enchantment_Animation_1__WIP(int16_t city_idx, int16_t spel
 
     switch(sw_spell_idx)
     {
-        case spl_Move_Fortress:    { _ce_bldg_idx = 104; } break;
-        case spl_Earth_Gate:       { _ce_bldg_idx = 101; } break;
-        case spl_Stream_Of_Life:   { _ce_bldg_idx = 102; } break;
-        case spl_Astral_Gate:      { _ce_bldg_idx = 103; } break;
-        case spl_Summoning_Circle: { _ce_bldg_idx = 100; } break;
-        case spl_Dark_Rituals:     { _ce_bldg_idx = 105; } break;
-        case spl_Altar_Of_Battle:  { _ce_bldg_idx = 106; } break;
+        case spl_Move_Fortress:    { _ce_bldg_idx = bt_Fortress; } break;
+        case spl_Earth_Gate:       { _ce_bldg_idx = bt_Earth_Gate; } break;
+        case spl_Stream_Of_Life:   { _ce_bldg_idx = bt_Stream_Of_Life; } break;
+        case spl_Astral_Gate:      { _ce_bldg_idx = bt_Astral_Gate; } break;
+        case spl_Summoning_Circle: { _ce_bldg_idx = bt_Summoning_Circle; } break;
+        case spl_Dark_Rituals:     { _ce_bldg_idx = bt_Dark_Rituals; } break;
+        case spl_Altar_Of_Battle:  { _ce_bldg_idx = bt_Altar_Of_Battle; } break;
         default: { _ce_bldg_idx = bt_NONE; } break;
     }
 
@@ -781,36 +781,36 @@ void Cast_Spell_City_Enchantment_Animation_1__WIP(int16_t city_idx, int16_t spel
         if(spell_idx == spl_Earthquake)
         {
 
-//             Spell_Animation_Load_Sound_Effect__WIP(spell_idx);
-// 
-//             Set_Page_Off();
-// 
-//             Cast_Spell_City_Enchantment_Animation_Draw();
-// 
-//             Copy_Off_To_Back();
-// 
-//             if(SND_SpellCast != ST_UNDEFINED)
-//             {
-//                 // DOMSDOS  Play_Sound__STUB(SND_SpellCast)
-//                 sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
-//             }
-// 
-//             for(itr = 35; itr > 5; itr--)
-//             {
-// 
-//                 VGA_PartCopyFromF3((Random(itr) / 5), (Random(itr) / 5));
-// 
-//                 PageFlip_FX();
-// 
-//             }
-// 
-//             Set_Page_Off();
-// 
-//             Cast_Spell_City_Enchantment_Animation_Draw();
-// 
-//             PageFlip_FX();
-// 
-//             SND_SpellCast = ST_UNDEFINED;
+            Spell_Animation_Load_Sound_Effect__WIP(spell_idx);
+
+            Set_Page_Off();
+
+            Cast_Spell_City_Enchantment_Animation_Draw();
+
+            Copy_Off_To_Back();
+
+            if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
+            {
+                // DOMSDOS  Play_Sound__STUB(SND_SpellCast)
+                sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
+            }
+
+            for(itr = 35; itr > 5; itr--)
+            {
+            
+                // TODO  SPELLY  GRRRFUCKS  VGA_PartCopyFromF3((Random(itr) / 5), (Random(itr) / 5));
+            
+                PageFlip_FX();
+            
+            }
+
+            Set_Page_Off();
+
+            Cast_Spell_City_Enchantment_Animation_Draw();
+
+            PageFlip_FX();
+
+            SND_SpellCast = (SAMB_ptr)ST_UNDEFINED;
 
         }
         else

@@ -15,6 +15,10 @@ OHDIO
 SPELLY
     Spell Casting code that I should have already finished probably in the current *sprint*
 
+GRRRFUCKS
+    VGA 'Mode Y', and other (low-level) graphics routines stuff
+        Spellbook Page-Turn, Mosaic/Dissolve, Vanish/Jumble, 'Earthquake' shake, Expanding Box/Help, etc.
+
 ¿ ?
     Question?
 
