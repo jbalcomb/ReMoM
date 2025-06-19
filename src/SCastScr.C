@@ -5,6 +5,7 @@
         ovr070
 */
 
+#include "Help.H"
 #include "SCastScr.H"
 
 #include "MOX/Fields.H"
@@ -23,6 +24,7 @@
 #include "MainScr_Maps.H"  /* Add_Nodes_To_Entities_On_Map_Window() */
 #include "Spellbook.H"
 #include "SPELLDEF.H"
+#include "WZD_o059.H"
 
 #include <assert.h>
 #include <string.h>
@@ -156,7 +158,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
     int16_t have_valid_target = 0;  // _DI_
     int16_t entity_idx = 0;  // _SI_
 
-    _page_flip_effect = 0;
+    _page_flip_effect = pfe_None;
 
     _osc_spell_idx = _players[_human_player_idx].casting_spell_idx;
 
@@ -252,40 +254,62 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
         */
         if(input_field_idx == _main_map_grid_field)
         {
+
             have_valid_target = ST_FALSE;
+
             if(_osc_spell_target_type == stt_Magic_Node)
             {
+
                 entity_idx = Get_Map_Square_Magic_Node(((_map_x + _main_map_grid_x) % WORLD_WIDTH), ((_main_map_grid_y + _map_y) % WORLD_HEIGHT), _map_plane);
+
                 if(entity_idx != ST_UNDEFINED)
                 {
+
                     entity_idx += (MAX_UNIT_COUNT + MAX_CITY_COUNT);
+
                 }
+
             }
             else  /* (_osc_spell_target_type == stt_Magic_Node) */
             {
+
                 entity_idx = GET_MAIN_MAP_ENTITY();
+
             }
+
             if(entity_idx == ST_UNDEFINED)
             {
+
                 Play_Left_Click();
+
                 entity_idx = abs(entity_idx);
+
                 if(_osc_spell_target_type == stt_Map_Square)
                 {
+
                     leave_screen = Map_Square_Is_Targetable(_main_map_grid_x, _main_map_grid_y);
+
                 }
+
             }
             else  /* (entity_idx == ST_UNDEFINED) */
             {
+
                 if(_osc_spell_target_type == stt_Map_Square)
                 {
+
                     leave_screen = Map_Square_Is_Targetable(_main_map_grid_x, _main_map_grid_y);
+
                 }
                 else
                 {
+
                     if(entity_idx < MAX_UNIT_COUNT)
                     {
+
                         if(_UNITS[entity_idx].owner_idx == _human_player_idx)
                         {
+
                             if(
                                 (_osc_spell_target_type == stt_Friendly_Unit)
                                 ||
@@ -294,11 +318,15 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                                 (_osc_spell_target_type == stt_Map_Square)
                             )
                             {
+
                                 have_valid_target = ST_TRUE;
+
                             }
+
                         }
                         else
                         {
+
                             if(
                                 (_osc_spell_target_type == stt_Enemy_Group)
                                 ||
@@ -307,16 +335,24 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                                 (_osc_spell_target_type == stt_Map_Square)
                             )
                             {
+
                                 have_valid_target = ST_TRUE;
+
                             }
+
                         }
+
                     }
                     else if(entity_idx < (MAX_UNIT_COUNT + MAX_CITY_COUNT))
                     {
+
                         entity_idx -= MAX_UNIT_COUNT;
+
                         switch(_osc_spell_target_type)
                         {
+
                             case stt_Friendly_Unit:
+                            case stt_Friendly_Group:
                             {
                                 if(_CITIES[entity_idx].owner_idx == _human_player_idx)
                                 {
@@ -328,11 +364,9 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                                     }
                                 }
                             } break;
-                            case stt_Friendly_Group:
-                            {
-                                // N/A
-                            } break;
+
                             case stt_Enemy_Unit:
+                            case stt_Enemy_Group:
                             {
                                 if(_CITIES[entity_idx].owner_idx != _human_player_idx)
                                 {
@@ -344,14 +378,12 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                                     }
                                 }
                             } break;
-                            case stt_Enemy_Group:
-                            {
-                                // N/A
-                            } break;
+
                             case stt_Map_Square:
                             {
                                 // N/A
                             } break;
+
                             case stt_Friendly_City:
                             {
                                 if(_CITIES[entity_idx].owner_idx == _human_player_idx)
@@ -359,6 +391,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                                     have_valid_target = ST_TRUE;
                                 }
                             } break;
+
                             case stt_Enemy_City:
                             {
                                 if(_CITIES[entity_idx].owner_idx != _human_player_idx)
@@ -366,15 +399,19 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                                     have_valid_target = ST_TRUE;
                                 }
                             } break;
+
                             case stt_Magic_Node:
                             {
                                 // N/A
                             } break;
+
                             default:
                             {
                                 STU_DEBUG_BREAK();
                             } break;
+
                         }
+
                     }
                     else
                     {
@@ -408,8 +445,10 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                         {
                             _osc_main_map_grid_y--;
                         }
+
                         switch(_osc_spell_target_type)
                         {
+
                             case stt_Friendly_Unit:
                             {
                                 x_screen_or_map = (_main_map_grid_x * SQUARE_WIDTH);
@@ -434,11 +473,13 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                                     screen_changed = ST_TRUE;
                                 }
                             } break;
+
                             case stt_Friendly_Group:
                             {
                                 Spell_Casting_Screen_Reset_Map_Draw_With_WX__1(entity_idx);
                                 leave_screen = ST_TRUE;
                             } break;
+
                             case stt_Enemy_Unit:
                             {
                                 x_screen_or_map = (_main_map_grid_x * SQUARE_WIDTH);
@@ -463,37 +504,45 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                                     screen_changed = ST_TRUE;
                                 }
                             } break;
+
                             case stt_Enemy_Group:
                             {
                                 Spell_Casting_Screen_Reset_Map_Draw_With_WX__3(entity_idx);
                                 leave_screen = ST_TRUE;
                             } break;
+
                             case stt_Map_Square:
                             {
                                 Map_Square_Is_Targetable(_main_map_grid_x, _main_map_grid_y);
                                 leave_screen = ST_TRUE;
                             } break;
+
                             case stt_Friendly_City:
                             {
                                 Spell_Casting_Screen_Reset_Map_Draw_With_WX__2(entity_idx);
                                 leave_screen = ST_TRUE;
                             } break;
+
                             case stt_Enemy_City:
                             {
                                 Spell_Casting_Screen_Reset_Map_Draw_With_WX__2(entity_idx);
                                 leave_screen = ST_TRUE;
                             } break;
+
                             case stt_Magic_Node:
                             {
                                 Spell_Casting_Screen_Reset_Map_Draw_With_WX__4(entity_idx);
                                 leave_screen = ST_TRUE;
 
                             } break;
+
                             default:
                             {
                                 STU_DEBUG_BREAK();
                             } break;
+
                         }
+                        
                     }
                 }
             }
@@ -592,32 +641,30 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                     entity_idx -= MAX_UNIT_COUNT;
                     switch(_osc_spell_target_type)
                     {
+
                         case stt_Friendly_Unit:
+                        case stt_Friendly_Group:
                         {
                             if(_CITIES[entity_idx].owner_idx == _human_player_idx)
                             {
                                 have_valid_target = ST_TRUE;
                             }
                         } break;
-                        case stt_Friendly_Group:
-                        {
 
-                        } break;
                         case stt_Enemy_Unit:
+                        case stt_Enemy_Group:
                         {
                             if(_CITIES[entity_idx].owner_idx != _human_player_idx)
                             {
                                 have_valid_target = ST_TRUE;
                             }
                         } break;
-                        case stt_Enemy_Group:
-                        {
-                            // N/A
-                        } break;
+
                         case stt_Map_Square:
                         {
                             // N/A
                         } break;
+
                         case stt_Friendly_City:
                         {
                             if(_CITIES[entity_idx].owner_idx == _human_player_idx)
@@ -625,6 +672,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                                 have_valid_target = ST_TRUE;
                             }
                         } break;
+
                         case stt_Enemy_City:
                         {
                             if(_CITIES[entity_idx].owner_idx != _human_player_idx)
@@ -632,14 +680,17 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                                 have_valid_target = ST_TRUE;
                             }
                         } break;
+
                         case stt_Magic_Node:
                         {
                             // N/A
                         } break;
+
                         default:
                         {
                             STU_DEBUG_BREAK();
                         } break;
+
                     }
                     if(have_valid_target == ST_TRUE)
                     {

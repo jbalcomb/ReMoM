@@ -1639,7 +1639,7 @@ Capture_Cities_Data();
                         case spl_Chaos_Channels:
                         {
 
-                            Cast_Successful = Cast_ChaosChannels(player_idx);
+                            Cast_Successful = Cast_Chaos_Channels(player_idx);
 
                         } break;
 

@@ -42,10 +42,10 @@ int16_t Apply_Call_The_Void(int16_t city_idx);
 int16_t Apply_Automatic_Spell_Counters(int16_t spell_idx, int16_t city_idx, int16_t player_idx, int16_t show_message);
 
 // WZD o129p08
-void UNIT_ChaosChannel__STUB(int16_t unit_idx);
+void Apply_Chaos_Channels(int16_t unit_idx);
 
 // WZD o129p09
-int16_t Cast_ChaosChannels(int16_t player_idx);
+int16_t Cast_Chaos_Channels(int16_t player_idx);
 
 // WZD o129p10
 int16_t Cast_WarpNode(int16_t player_idx);

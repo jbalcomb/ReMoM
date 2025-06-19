@@ -3,18 +3,20 @@
         ovr129
 */
 
-#include "MOX/MOX_BASE.H"
-#include "MOX/MOX_SET.H"
-#include "STU/STU_CHK.H"
 #include "Spells129.H"
 
-#include "MOM_DEF.H"
 #include "MOX/Allocate.H"
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"
 #include "MOX/MOX_DEF.H"
 #include "MOX/random.H"
+#include "MOX/MOX_BASE.H"
+#include "MOX/MOX_SET.H"
+#include "STU/STU_CHK.H"
 
+#include "MOM_DEF.H"
+#include "MainScr.H"
+#include "SCastScr.H"
 #include "CMBTDEF.H"
 #include "CITYCALC.H"
 #include "City_ovr55.H"
@@ -26,6 +28,7 @@
 #include "Spells128.H"
 #include "Spells137.H"
 #include "Terrain.H"
+#include "UNITTYPE.H"
 
 int16_t * _battlefield_holybonus;
 
@@ -715,19 +718,169 @@ int16_t Apply_Automatic_Spell_Counters(int16_t spell_idx, int16_t city_idx, int1
 /*
 
 */
-void UNIT_ChaosChannel__STUB(int16_t unit_idx)
+void Apply_Chaos_Channels(int16_t unit_idx)
 {
+    int16_t unit_type = 0;
+    int16_t warp = 0;  // _DI_
 
+    warp = ST_UNDEFINED;
 
+    unit_type = _UNITS[unit_idx].type;
+    
+    do {
+
+        warp = (Random(3) - 1);
+
+        if(
+            (warp == 0)
+            &&
+            (
+                ((_unit_type_table[unit_type].Move_Flags & MV_FLYING) != 0)
+                ||
+                ((_unit_type_table[unit_type].Move_Flags & MV_SAILING) != 0)
+            )
+        )
+        {
+
+            warp = ST_UNDEFINED;
+
+        }
+        else if(
+            (warp == 1)
+            &&
+            (
+                (_unit_type_table[unit_type].Ranged_Type > rag_Magic)
+                ||
+                (
+                    (_unit_type_table[unit_type].Ranged_Type != rat_None)
+                    &&
+                    (_unit_type_table[unit_type].Ranged_Type != srat_Thrown)
+                )
+            )
+        )
+        {
+
+            warp = ST_UNDEFINED;
+
+        }
+
+        if(warp != ST_UNDEFINED)
+        {
+
+            switch(warp)
+            {
+                case 0:
+                {
+                    _UNITS[unit_idx].mutations |= CC_FLIGHT;
+                } break;
+                case 1:
+                {
+                    _UNITS[unit_idx].mutations |= CC_ARMOR;
+                } break;
+                case 2:
+                {
+                    _UNITS[unit_idx].mutations |= CC_BREATH;
+                } break;
+                default:
+                {
+                    STU_DEBUG_BREAK();
+                } break;
+            }
+
+        }
+
+    } while(warp == ST_UNDEFINED);
 
 }
 
 
 // WZD o129p09
-int16_t Cast_ChaosChannels(int16_t player_idx)
+int16_t Cast_Chaos_Channels(int16_t player_idx)
 {
+    int16_t scsv5 = 0;
+    int16_t scsv4 = 0;
+    int16_t scsv3 = 0;
+    int16_t scsv2 = 0;
+    int16_t unit_idx = 0;
+    int16_t status = 0;
+    int16_t return_value = 0;  // _SI_
 
-    return ST_FALSE;
+    if(player_idx != HUMAN_PLAYER_IDX)
+    {
+
+        return_value = IDK_Pick_Target_For_Unit_Enchantment__STUB(0, &unit_idx, spl_Chaos_Channels, player_idx);
+
+    }
+    else
+    {
+
+        status = ST_FALSE;
+        // ¿ BUGBUG  the looping and conditions are invalid ? should loop on status, and something should set status back to ST_FALSE?
+        do {
+
+            if(status == ST_TRUE)
+            {
+
+                Full_Draw_Main_Screen();
+
+                LBX_Load_Data_Static(message_lbx_file__ovr129, 0, (SAMB_ptr)&GUI_NearMsgString[0], 29, 1, 150);
+
+                Warn0(GUI_NearMsgString);
+
+            }
+
+            status = ST_TRUE;
+
+            return_value = Spell_Casting_Screen__WIP(HUMAN_PLAYER_IDX, &unit_idx, &scsv2, &scsv3, &scsv4, &scsv5, aChaosChannels);
+
+            if(return_value == ST_TRUE)
+            {
+
+                if(
+                    ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_FANTASTIC) == 0)
+                    &&
+                    ((_UNITS[unit_idx].mutations & (CC_ARMOR | CC_FLIGHT | CC_BREATH | UM_UNDEAD)) == 0)
+                )
+                {
+
+                    break;
+
+                }
+
+            }
+
+        } while(return_value == ST_TRUE);
+
+    }
+
+    if(return_value == ST_TRUE)
+    {
+        if(player_idx == HUMAN_PLAYER_IDX)
+        {
+
+            Allocate_Reduced_Map();
+
+            Mark_Block(_screen_seg);
+
+            AI_Eval_After_Spell = ST_TRUE;
+
+            Spell_Animation_Load_Sound_Effect__WIP(spl_Chaos_Channels);
+
+            Spell_Animation_Load_Graphics(spl_Chaos_Channels);
+
+            Spell_Animation_Screen__WIP(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
+
+            Full_Draw_Main_Screen();
+
+            Release_Block(_screen_seg);
+
+        }
+
+        Apply_Chaos_Channels(unit_idx);
+
+    }
+
+    return return_value;
 
 }
 

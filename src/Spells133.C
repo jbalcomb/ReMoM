@@ -1803,7 +1803,7 @@ void Apply_Call_Chaos__WIP(int16_t player_idx, int16_t effects[])
                     if(Unit_Is_Normal(battle_units[battle_unit_idx].unit_idx) != ST_FALSE)
                     {
 
-                        /* SPELLY */  UNIT_ChaosChannel__STUB(battle_units[battle_unit_idx].unit_idx);
+                        /* SPELLY */  Apply_Chaos_Channels(battle_units[battle_unit_idx].unit_idx);
 
                     }
 

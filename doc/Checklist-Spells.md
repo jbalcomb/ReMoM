@@ -1,7 +1,6 @@
 
-git commit -m "add Overland Specials 'Spell Ward'"
-
 git commit -m "add Overland Specials 'Chaos Channels'"
+
 git commit -m "add Overland Specials 'Lycanthropy'"
 git commit -m "add Overland Specials 'Natures Cures'"
 git commit -m "add Overland Specials 'Plane Shift'"
@@ -20,10 +19,10 @@ git commit -m "add Overland Specials 'Raise Volcano'"
 git commit -m "add Overland Specials 'Transmute'"
 git commit -m "add Overland Specials 'Warp Node'"
 
+git commit -m "add Overland Specials 'Summon Hero'"
+git commit -m "add Overland Specials 'Summon Champion'"
 git commit -m "add Overland Specials 'Incarnation'"
 git commit -m "add Overland Specials 'Resurrection'"
-git commit -m "add Overland Specials 'Summon Champion'"
-git commit -m "add Overland Specials 'Summon Hero'"
 
 git commit -m "add Overland Specials 'Spell Of Mastery'"
 git commit -m "add Overland Specials 'Spell Of Return'"
