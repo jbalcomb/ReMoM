@@ -472,6 +472,13 @@ int16_t AITP_ChangeTerrain__WIP(int16_t player_idx, int16_t * wx, int16_t * wy, 
 
 // WZD o156p34
 // drake178: AITP_SpellWard()
+int16_t AITP_SpellWard__STUB(int16_t player_idx, int16_t * city_idx, int16_t * magic_realm)
+{
+    *city_idx = ST_UNDEFINED;
+    *magic_realm = ST_UNDEFINED;
+    return ST_FALSE;
+}
+
 
 // WZD o156p35
 // drake178: AITP_Consecration()
@@ -1190,6 +1197,13 @@ int16_t IDK_AITP_Target_Wizard__STUB(int16_t * spell_target_idx, int16_t spell_i
 
 // WZD o156p55
 // drake178: sub_EA4FE()
+int16_t AITP_SpellWard_Wrapper__STUB(int16_t * city_idx, int16_t * magic_realm, int16_t player_idx)
+{
+
+    return AITP_SpellWard__STUB(player_idx, city_idx, magic_realm);
+
+}
+
 
 // WZD o156p56
 // drake178: AI_MyrrorAdvantage()

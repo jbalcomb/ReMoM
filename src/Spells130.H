@@ -61,7 +61,7 @@ int16_t Cast_WordOfRecall(int16_t player_idx);
 int16_t Cast_EnchantRoad(int16_t player_idx);
 
 // WZD o130p14
-int16_t Cast_SpellWard(int16_t player_idx);
+int16_t Cast_Spell_Ward(int16_t player_idx);
 
 // WZD o130p15
 void Cast_HolyArms(int16_t player_idx);

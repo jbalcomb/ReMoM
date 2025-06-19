@@ -1624,7 +1624,7 @@ Capture_Cities_Data();
                         case spl_Spell_Ward:
                         {
 
-                            Cast_Successful = Cast_SpellWard(player_idx);
+                            Cast_Successful = Cast_Spell_Ward(player_idx);
 
                         } break;
 

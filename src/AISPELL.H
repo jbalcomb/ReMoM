@@ -126,7 +126,7 @@ int16_t AITP_ChangeTerrain__WIP(int16_t player_idx, int16_t * wx, int16_t * wy, 
 // AITP_CloudofShadow()
 
 // WZD o156p34
-// AITP_SpellWard()
+int16_t AITP_SpellWard__STUB(int16_t player_idx, int16_t * city_idx, int16_t * magic_realm);
 
 // WZD o156p35
 // AITP_Consecration()
@@ -190,7 +190,7 @@ int16_t Pick_Target_For_Floating_Island(int16_t player_idx, int16_t * wx, int16_
 int16_t IDK_AITP_Target_Wizard__STUB(int16_t * spell_target_idx, int16_t spell_idx, int16_t player_idx);
 
 // WZD o156p55
-// sub_EA4FE()
+int16_t AITP_SpellWard_Wrapper__STUB(int16_t * city_idx, int16_t * magic_realm, int16_t player_idx);
 
 // WZD o156p56
 // AI_MyrrorAdvantage()

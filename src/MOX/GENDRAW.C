@@ -50,10 +50,9 @@ uint8_t COL_Dialog_Text[5] = {0x06, 0x09, 0x0B, 0x0D, 0x0F};
 /*
     BEGIN:  Selection Box
 */
-// WZD dseg:6F82 14 B2 B3 B4 B4                                  
+// WZD dseg:6F82
 uint8_t COL_ListSel_Shadows[5] = {0x14, 0xB2, 0xB3, 0xB4, 0xB4};
-// WZD dseg:6F82                                                                                         ; DATA XREF: Selection_Box_Draw+5E6o
-// WZD dseg:6F87 66 FB FB FB FB                                  
+// WZD dseg:6F82
 uint8_t COL_ListSel_Titles[5] = {0x66, 0xFB, 0xFB, 0xFB, 0xFB};
 /*
     END:  Selection Box
@@ -202,50 +201,34 @@ int16_t HLP_ExpandTgtLeft;
 */
 // WZD dseg:CAA0
 int16_t selectbox_fields[10];
-// WZD dseg:CAB4 00 00                                           
+// WZD dseg:CAB4
 char * selectbox_title;
-// WZD dseg:CAB6 00 00                                           
+// WZD dseg:CAB6
 // char * selectbox_list[];
 char ** selectbox_list;
-// WZD dseg:CAB8 00 00                                           
+// WZD dseg:CAB8
 int16_t selectbox_items;
-// WZD dseg:CABA 00 00                                           
+// WZD dseg:CABA
 int16_t selectbox_first_item;
-// WZD dseg:CABC 00 00                                           
+// WZD dseg:CABC
 int16_t selectbox_highlight_item;
-// WZD dseg:CABE 00 00                                           
+// WZD dseg:CABE
 int16_t UU_selectbox;
-// WZD dseg:CAC0 00 00                                           
+// WZD dseg:CAC0
 int16_t selectbox_y2;
-// WZD dseg:CAC2 00 00                                           
+// WZD dseg:CAC2
 int16_t selectbox_x2;
-// WZD dseg:CAC4 00 00                                           
+// WZD dseg:CAC4
 int16_t selectbox_y1;
-// WZD dseg:CAC6 00 00                                           
+// WZD dseg:CAC6
 int16_t selectbox_x1;
-// WZD dseg:CAC8 00 00                                           
+// WZD dseg:CAC8
 int16_t selectbox_multi;
-// WZD dseg:CACA 00 00                                           
-int16_t GUI_ListSel_Count;
+// WZD dseg:CACA
+int16_t selectbox_list_count;
 /*
     END:  Selection Box
 */
-// WZD dseg:CAA0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+selectbox_fields dw 0Ah dup(0)          ; DATA XREF: Selection_Box+217w ...
-// WZD dseg:CAB4 00 00                                           selectbox_title dw 0                    ; DATA XREF: Selection_Box+1CBw ...
-// WZD dseg:CAB6 00 00                                           selectbox_list dw 0                     ; DATA XREF: Selection_Box+1C5w ...
-// WZD dseg:CAB8 00 00                                           selectbox_items dw 0                    ; DATA XREF: Selection_Box+1BFw ...
-// WZD dseg:CABA 00 00                                           selectbox_first_item dw 0               ; DATA XREF: Selection_Box+1CEw ...
-// WZD dseg:CABC 00 00                                           selectbox_highlight_item dw 0           ; DATA XREF: Selection_Box+1D4w ...
-// WZD dseg:CABE 00 00                                           UU_selectbox dw 0
-// WZD dseg:CAC0 00 00                                           selectbox_y2 dw 0                       ; DATA XREF: Selection_Box+441r ...
-// WZD dseg:CAC2 00 00                                           selectbox_x2 dw 0                       ; DATA XREF: Selection_Box+2EFr ...
-// WZD dseg:CAC4 00 00                                           selectbox_y1 dw 0                       ; DATA XREF: Selection_Box+2DAr ...
-// WZD dseg:CAC6 00 00                                           selectbox_x1 dw 0                       ; DATA XREF: Selection_Box+321r ...
-// WZD dseg:CAC8 00 00                                           selectbox_multi dw 0                    ; DATA XREF: Selection_Box+1B9w ...
-// WZD dseg:CACA 00 00                                           GUI_ListSel_Count dw 0                  ; DATA XREF: Selection_Box+264r ...
-// WZD dseg:CACA                                                 END:  Selection Box
-
-// WZD dseg:CACA                                                 END:  Selection Box
 
 // WZD dseg:CACC                                                 BEGIN:  Confirmation Box
 // WZD dseg:CACC
@@ -315,7 +298,7 @@ SAMB_ptr selectbk_top_arrow_seg;
 // WZD dseg:CB16
 SAMB_ptr selectbk_button_22to26_seg[10];
 // WZD dseg:CB2A
-SAMB_ptr selectbk_button_12to16_seg[10];
+SAMB_ptr selectbk_buttons_seg[10];
 // WZD dseg:CB3E
 SAMB_ptr selectbd_scroll_seg;
 // WZD dseg:CB40
@@ -696,14 +679,14 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
     // RESOURCE.LBX, 026  SELECTBK    button 5
     for(itr = 0; itr < 5; itr++)
     {
-        selectbk_button_12to16_seg[itr] = LBX_Reload_Next(resource_lbx_file__ovr149, (itr + 12), _screen_seg);
+        selectbk_buttons_seg[itr] = LBX_Reload_Next(resource_lbx_file__ovr149, (itr + 12), _screen_seg);
 
         selectbk_button_22to26_seg[itr] = LBX_Reload_Next(resource_lbx_file__ovr149, (itr + 22), _screen_seg);
     }
 
     for(itr = 5; itr < 10; itr++)
     {
-        selectbk_button_12to16_seg[itr] = selectbk_button_12to16_seg[itr - 5];
+        selectbk_buttons_seg[itr] = selectbk_buttons_seg[itr - 5];
         selectbk_button_22to26_seg[itr] = selectbk_button_22to26_seg[itr - 5];
     }
 
@@ -740,7 +723,7 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
             list_select_idx = ST_UNDEFINED;
         }
 
-        for(itr = 0; (itr < selectbox_items) && (itr < GUI_ListSel_Count); itr++)
+        for(itr = 0; (itr < selectbox_items) && (itr < selectbox_list_count); itr++)
         {
             if(selectbox_fields[itr] == input_field_idx)
             {
@@ -772,22 +755,22 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
             selectbox_fields[itr] = INVALID_FIELD;
         }
 
-        for(itr = 0; (itr < selectbox_items) && (itr < GUI_ListSel_Count); itr++)
+        for(itr = 0; (itr < selectbox_items) && (itr < selectbox_list_count); itr++)
         {
             if(selectbox_multi == ST_TRUE)
             {
-                y2 = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * (itr + 1));
+                y2 = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * (itr + 1));
                 x2 = selectbox_x2 - FLIC_Get_Width(selectbd_right_seg);
-                y1 = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * itr);
+                y1 = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * itr);
                 x1 = selectbox_x1 + FLIC_Get_Width(selectbd_left_seg) + FLIC_Get_Width(selectbd_scroll_seg);
 
                 selectbox_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2, str_empty_string__ovr149[0], ST_UNDEFINED);
             }
             else
             {
-                y2 = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * (itr + 1));
+                y2 = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * (itr + 1));
                 x2 = selectbox_x2 - FLIC_Get_Width(selectbd_right_seg);
-                y1 = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * itr);
+                y1 = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * itr);
                 x1 = selectbox_x1 + FLIC_Get_Width(selectbd_left_seg);
 
                 selectbox_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2, str_empty_string__ovr149[0], ST_UNDEFINED);
@@ -822,7 +805,7 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
 // mov     [bp+Up_Arrow_Ctrl_Index], ax
             }
 
-            if((selectbox_first_item + item_count) < GUI_ListSel_Count)
+            if((selectbox_first_item + item_count) < selectbox_list_count)
             {
 // mov     ax, -1
 // push    ax                              ; help
@@ -898,7 +881,7 @@ void Selection_Box_Draw(void)
 
     scanned_field = Scan_Input();
 
-    if( (scanned_field > GUI_ListSel_Count) || (scanned_field > selectbox_items) )
+    if( (scanned_field > selectbox_list_count) || (scanned_field > selectbox_items) )
     {
         scanned_field = 0;
     }
@@ -930,20 +913,20 @@ void Selection_Box_Draw(void)
         {
             if(itr_selectbox_items != selectbox_highlight_item)
             {
-                Set_Animation_Frame(selectbk_button_12to16_seg[itr_selectbox_items], 0);
+                Set_Animation_Frame(selectbk_buttons_seg[itr_selectbox_items], 0);
                 Set_Animation_Frame(selectbk_button_22to26_seg[itr_selectbox_items], 0);
             }
             else
             {
-                Set_Animation_Frame(selectbk_button_12to16_seg[itr_selectbox_items], 1);
+                Set_Animation_Frame(selectbk_buttons_seg[itr_selectbox_items], 1);
                 Set_Animation_Frame(selectbk_button_22to26_seg[itr_selectbox_items], 1);
             }
 
-            y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * itr_selectbox_items));
+            y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * itr_selectbox_items));
             x_start = (selectbox_x1 + FLIC_Get_Width(selectbd_left_seg));
-            Clipped_Draw(x_start, y_start, selectbk_button_12to16_seg[itr_selectbox_items]);
+            Clipped_Draw(x_start, y_start, selectbk_buttons_seg[itr_selectbox_items]);
 
-            y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * itr_selectbox_items));
+            y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * itr_selectbox_items));
             x_start = (selectbox_x2 - FLIC_Get_Width(selectbd_right_seg) + 1);
             Clipped_Draw(x_start, y_start, selectbk_button_22to26_seg[itr_selectbox_items]);
 
@@ -952,20 +935,20 @@ void Selection_Box_Draw(void)
 
         if((selectbox_items - 1) != selectbox_highlight_item)
         {
-            Set_Animation_Frame(selectbk_button_12to16_seg[9], 0);
+            Set_Animation_Frame(selectbk_buttons_seg[9], 0);
             Set_Animation_Frame(selectbk_button_22to26_seg[9], 0);
         }
         else
         {
-            Set_Animation_Frame(selectbk_button_12to16_seg[9], 1);
+            Set_Animation_Frame(selectbk_buttons_seg[9], 1);
             Set_Animation_Frame(selectbk_button_22to26_seg[9], 1);
         }
 
-        y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * (selectbox_items - 1)));
+        y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * (selectbox_items - 1)));
         x_start = (selectbox_x1 + FLIC_Get_Width(selectbd_left_seg));
-        Clipped_Draw(x_start, y_start, selectbk_button_12to16_seg[9]);
+        Clipped_Draw(x_start, y_start, selectbk_buttons_seg[9]);
 
-        y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * (selectbox_items - 1)));
+        y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * (selectbox_items - 1)));
         x_start = (selectbox_x2 - FLIC_Get_Width(selectbd_right_seg) + 1);
         Clipped_Draw(x_start, y_start, selectbk_button_22to26_seg[9]);
     }
@@ -976,20 +959,20 @@ void Selection_Box_Draw(void)
         {
             if(itr_selectbox_items != selectbox_highlight_item)
             {
-                Set_Animation_Frame(selectbk_button_12to16_seg[itr_selectbox_items], 0);
+                Set_Animation_Frame(selectbk_buttons_seg[itr_selectbox_items], 0);
                 Set_Animation_Frame(selectbk_button_22to26_seg[itr_selectbox_items], 0);
             }
             else
             {
-                Set_Animation_Frame(selectbk_button_12to16_seg[itr_selectbox_items], 1);
+                Set_Animation_Frame(selectbk_buttons_seg[itr_selectbox_items], 1);
                 Set_Animation_Frame(selectbk_button_22to26_seg[itr_selectbox_items], 1);
             }
 
-            y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * itr_selectbox_items));
+            y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * itr_selectbox_items));
             x_start = (selectbox_x1 + FLIC_Get_Width(selectbd_left_seg) + FLIC_Get_Width(selectbd_scroll_seg));
-            Clipped_Draw(x_start, y_start, selectbk_button_12to16_seg[itr_selectbox_items]);
+            Clipped_Draw(x_start, y_start, selectbk_buttons_seg[itr_selectbox_items]);
 
-            y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * itr_selectbox_items));
+            y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * itr_selectbox_items));
             x_start = (selectbox_x2 - FLIC_Get_Width(selectbd_right_seg) + FLIC_Get_Width(selectbd_scroll_seg) + 1);
             Clipped_Draw(x_start, y_start, selectbk_button_22to26_seg[itr_selectbox_items]);
 
@@ -999,20 +982,20 @@ void Selection_Box_Draw(void)
         
         if((selectbox_items - 1) != selectbox_highlight_item)
         {
-            Set_Animation_Frame(selectbk_button_12to16_seg[9], 0);
+            Set_Animation_Frame(selectbk_buttons_seg[9], 0);
             Set_Animation_Frame(selectbk_button_22to26_seg[9], 0);
         }
         else
         {
-            Set_Animation_Frame(selectbk_button_12to16_seg[9], 1);
+            Set_Animation_Frame(selectbk_buttons_seg[9], 1);
             Set_Animation_Frame(selectbk_button_22to26_seg[9], 1);
         }
 
-        y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * (selectbox_items - 1)));
+        y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * (selectbox_items - 1)));
         x_start = (selectbox_x1 + FLIC_Get_Width(selectbd_left_seg) + FLIC_Get_Width(selectbd_scroll_seg));
-        Clipped_Draw(x_start, y_start, selectbk_button_12to16_seg[9]);
+        Clipped_Draw(x_start, y_start, selectbk_buttons_seg[9]);
 
-        y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * (selectbox_items - 1)));
+        y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * (selectbox_items - 1)));
         x_start = (selectbox_x2 - FLIC_Get_Width(selectbd_right_seg) + FLIC_Get_Width(selectbd_scroll_seg) + 1);
         Clipped_Draw(x_start, y_start, selectbk_button_22to26_seg[9]);
     }
@@ -1054,7 +1037,7 @@ void Selection_Box_Draw(void)
 
     Set_Font_Style_Shadow_Down(4, 1, 0, 0);
 
-    for(itr_selectbox_items = 0; (itr_selectbox_items < selectbox_items) && (itr_selectbox_items < GUI_ListSel_Count); itr_selectbox_items++)
+    for(itr_selectbox_items = 0; (itr_selectbox_items < selectbox_items) && (itr_selectbox_items < selectbox_list_count); itr_selectbox_items++)
     {
         if(itr_selectbox_items != selectbox_highlight_item)
         {
@@ -1069,13 +1052,13 @@ void Selection_Box_Draw(void)
 
         if(selectbox_multi != ST_TRUE)
         {
-            y_start = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * itr_selectbox_items) + 2;
+            y_start = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * itr_selectbox_items) + 2;
             x_start = selectbox_x1 + FLIC_Get_Width(selectbd_left_seg) + 4;
             Print(x_start, y_start, selectbox_list[selectbox_first_item + itr_selectbox_items]);
         }
         else
         {
-            y_start = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * itr_selectbox_items) + 2;
+            y_start = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * itr_selectbox_items) + 2;
             x_start = selectbox_x1 + FLIC_Get_Width(selectbd_left_seg) + FLIC_Get_Width(selectbd_scroll_seg) + 4;
             Print(x_start, y_start, selectbox_list[selectbox_first_item + itr_selectbox_items]);
         }
@@ -1087,52 +1070,41 @@ void Selection_Box_Draw(void)
 }
 
 // WZD o149p09
+/*
+Exception thrown at 0x00007FF73FFB9CC5 in sdl2_ReMoM.exe: 0xC0000005: Access violation reading location 0xFFFFFFFFFFFFFFFF.
+*/
+/*
+
+WARNING: the last string MUST BE an 'empty sting' - "" - first character is the null-terminator character
+
+*/
 void Selection_Box_Coords(int16_t item_count, char ** list_text, char * title_string)
 {
     int16_t title_string_width;
     int16_t selectbox_height;
     int16_t selectbox_width;
     int16_t horizontal_space;
-    int16_t itr_GUI_ListSel_Count;
+    int16_t itr;
     char * list_text_ptr;  // DNE in Dasm
 
-    GUI_ListSel_Count = 0;
+    selectbox_list_count = 0;
 
-    while (*list_text[GUI_ListSel_Count] != '\0')
+    while(*list_text[selectbox_list_count] != '\0')
     {
-        GUI_ListSel_Count++;
+        selectbox_list_count++;
     }
-//     // while(list_text[GUI_ListSel_Count] != NULL)
-//     // {
-//     //     GUI_ListSel_Count++;
-//     // }
-//     for(;;)
-//     {
-//         list_text_ptr = list_text[GUI_ListSel_Count];
-//         if(list_text_ptr != NULL)
-//         {
-//             GUI_ListSel_Count++;
-//         }
-//         else
-//         {
-//             break;
-//         }
-//     }
-
 
     Set_Font_Style(4, 0, 0, 0);
 
-
     horizontal_space = 0;
 
-    for(itr_GUI_ListSel_Count = 0; itr_GUI_ListSel_Count < GUI_ListSel_Count; itr_GUI_ListSel_Count++)
+    for(itr = 0; itr < selectbox_list_count; itr++)
     {
-        if(Get_String_Width(list_text[itr_GUI_ListSel_Count]) > horizontal_space)
+        if(Get_String_Width(list_text[itr]) > horizontal_space)
         {
-            horizontal_space = Get_String_Width(list_text[itr_GUI_ListSel_Count]);
+            horizontal_space = Get_String_Width(list_text[itr]);
         }
     }
-
 
     if(selectbox_multi != ST_FALSE)
     {
@@ -1149,12 +1121,13 @@ void Selection_Box_Coords(int16_t item_count, char ** list_text, char * title_st
     horizontal_space += 8;
 
     selectbox_width = FLIC_Get_Width(selectbd_left_seg) + horizontal_space + FLIC_Get_Width(selectbd_right_seg);
-    selectbox_height = FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * item_count) + FLIC_Get_Height(selectbd_bottom_seg);
+
+    selectbox_height = FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * item_count) + FLIC_Get_Height(selectbd_bottom_seg);
 
     selectbox_x1 = ((SCREEN_WIDTH - selectbox_width) / 2);
     selectbox_y1 = ((SCREEN_HEIGHT - selectbox_height) / 2);
-    selectbox_x2 = selectbox_x1 + selectbox_width - 1;
-    selectbox_y2 = selectbox_y1 + selectbox_height - 1;
+    selectbox_x2 = (selectbox_x1 + (selectbox_width - 1));
+    selectbox_y2 = (selectbox_y1 + (selectbox_height - 1));
 
 }
 

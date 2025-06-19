@@ -1,6 +1,4 @@
 
-git commit -m "add Overland Specials 'Earthquake'"
-
 git commit -m "add Overland Specials 'Spell Ward'"
 
 git commit -m "add Overland Specials 'Chaos Channels'"
@@ -89,18 +87,14 @@ Light-Lime-3    maybe, kinda?
 
 Weird Ones?
     Astral Gate
-    Chaos Channels
     Change Terrain?
     Create Artifact!    handled special during casting
     Earth Gate
-    Earthquake          lots of extra special code
     Enchant Item!       handled special during casting
     Enchant Road
     Flying Fortress?
-    Move Fortress?
     Raise Volcano?
     Resurrection?
-    Spell Ward          seem to recall the code tfor the effects being messy
     Summon Champion?
     Summon Hero?
     Summoning Circle?

@@ -3,25 +3,77 @@
         ovr130
 */
 
-#include "AISPELL.H"
+#include "MOM_DEF.H"
 #include "MOX/Allocate.H"
+#include "MOX/MOX_BASE.H"
 #include "MOX/MOX_DAT.H"
 #include "MOX/MOX_T4.H"
+#include "MOX/GENDRAW.H"
 #include "MOX/random.H"
-#include "MainScr.H"
-#include "OverSpel.H"
-#include "Spells130.H"
-
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_TYPE.H"
 
+#include "AISPELL.H"
+#include "MainScr.H"
+#include "OverSpel.H"
+#include "STU/STU_CHK.H"
+#include "Spells130.H"
+#include "SPELLDEF.H"
 #include "NEXTTURN.H"
 #include "Spellbook.H"
 #include "SPLMASTR.H"
+#include "Spells137.H"
 #include "Terrain.H"
 #include "UNITTYPE.H"
 #include "WZD_o059.H"
+
+
+
+// WZD dseg:6768                                                 BEGIN:  ovr130 - Initialized Data
+
+// WZD dseg:6768
+char aBlackWind[] = "Black Wind";
+// WZD dseg:6772
+char str_empty_string__ovr130[] = "";
+// WZD dseg:6773
+char aEarthLore[] = "Earth Lore";
+// WZD dseg:677E
+char soundfx_lbx_file__ovr130[] = "soundfx";
+// WZD dseg:6786
+char specfx_lbx_file__ovr130[] = "specfx";
+// WZD dseg:678D
+char aChangeTerrain[] = "Change Terrain";
+// WZD dseg:679C
+char message_lbx_file__ovr130[] = "message";
+// WZD dseg:67A4
+char aRaiseVolcano[] = "Raise Volcano";
+// WZD dseg:67B2
+char aTransmute[] = "Transmute";
+// WZD dseg:67BC
+char aCorruption_0[] = "Corruption";
+// WZD dseg:67C7
+char aWordOfRecall[] = "Word of Recall";
+// WZD dseg:67D6
+char aEnchantRoad[] = "Enchant Road";
+// WZD dseg:67E3
+char cnst_NatureWard_3[] = "Nature Ward";
+// WZD dseg:67EF
+char cnst_SorceryWard_3[] = "Sorcery Ward";
+// WZD dseg:67FC
+char cnst_ChaosWard_3[] = "Chaos Ward";
+// WZD dseg:6807
+char cnst_LifeWard_3[] = "Life Ward";
+// WZD dseg:6811
+char cnst_DeathWard_3[] = "Death Ward";
+// WZD dseg:681C
+char aSpellWard[] = "Spell Ward";
+// WZD dseg:6827
+char aSelectASpellWa[] = "Select a Spell Ward To Cast";
+
+// WZD dseg:6843 00                                              align 2
+
+// WZD dseg:6843                                                 END:  ovr130 - Initialized Data
 
 
 
@@ -257,10 +309,215 @@ int16_t Cast_EnchantRoad(int16_t player_idx)
 
 
 // WZD o130p14
-int16_t Cast_SpellWard(int16_t player_idx)
+int16_t Cast_Spell_Ward(int16_t player_idx)
 {
+    uint8_t * ptr_enchantments = 0;
+    int8_t ward_pos[NUM_MAGIC_TYPES] = { 0, 0, 0, 0, 0 };  // 1-byte, signed
+    /* HACK */  char * ward_list[(NUM_MAGIC_TYPES + 1)] = { 0, 0, 0, 0, 0, 0 };
+    char * strings[NUM_MAGIC_TYPES] = { 0, 0, 0, 0, 0 };
+    int16_t magic_type_ench_idx = 0;
+    int16_t status = 0;
+    int16_t return_value = 0;
+    int16_t scsv5 = 0;
+    int16_t scsv4 = 0;
+    int16_t scsv3 = 0;
+    int16_t scsv2 = 0;
+    int16_t city_idx = 0;  // scsv1
+    int16_t itr = 0;
+    int16_t ctr = 0;  // _DI_
 
-    return ST_FALSE;
+    strings[0] = cnst_NatureWard_3;
+    strings[1] = cnst_SorceryWard_3;
+    strings[2] = cnst_ChaosWard_3;
+    strings[3] = cnst_LifeWard_3;
+    strings[4] = cnst_DeathWard_3;
+
+    Allocate_Reduced_Map();
+
+    Mark_Block(_screen_seg);
+
+    if(player_idx != HUMAN_PLAYER_IDX)
+    {
+
+        return_value = AITP_SpellWard_Wrapper__STUB(&city_idx, &magic_type_ench_idx, player_idx);
+        
+        magic_type_ench_idx += 9;
+
+    }
+    else
+    {
+
+        status = ST_FALSE;
+
+        return_value = ST_TRUE;
+
+        while((status == ST_FALSE) && (return_value == ST_TRUE))
+        {
+
+            return_value = Spell_Casting_Screen__WIP(stt_Friendly_City, &city_idx, &scsv2, &scsv3, &scsv4, &scsv5, aSpellWard);
+
+            if(return_value == ST_TRUE)
+            {
+
+                if(
+                    ((_CITIES[city_idx].enchantments[NATURE_WARD]) > ST_FALSE)
+                    &&
+                    ((_CITIES[city_idx].enchantments[SORCERY_WARD]) > ST_FALSE)
+                    &&
+                    ((_CITIES[city_idx].enchantments[CHAOS_WARD]) > ST_FALSE)
+                    &&
+                    ((_CITIES[city_idx].enchantments[LIFE_WARD]) > ST_FALSE)
+                    &&
+                    ((_CITIES[city_idx].enchantments[DEATH_WARD]) > ST_FALSE)
+                )
+                {
+
+                    LBX_Load_Data_Static(message_lbx_file__ovr130, 0, (SAMB_ptr)&GUI_NearMsgString[0], 44, 1, 150);
+
+                    Warn0(GUI_NearMsgString);
+
+                }
+                else
+                {
+
+                    for(itr = 0; itr < NUM_MAGIC_TYPES; itr++)
+                    {
+
+                        ward_list[itr] = str_empty_string__ovr130;
+
+                        ward_pos[itr] = ST_UNDEFINED;
+
+                    }
+
+                    ctr = 0;
+
+                    if((_CITIES[city_idx].enchantments[NATURE_WARD]) == ST_FALSE)
+                    {
+
+                        ward_list[ctr] = strings[0];
+
+                        ward_pos[ctr] = 0;
+
+                        ctr++;
+
+                    }
+
+                    if((_CITIES[city_idx].enchantments[SORCERY_WARD]) == ST_FALSE)
+                    {
+
+                        ward_list[ctr] = strings[1];
+
+                        ward_pos[ctr] = 1;
+
+                        ctr++;
+
+                    }
+
+                    if((_CITIES[city_idx].enchantments[CHAOS_WARD]) == ST_FALSE)
+                    {
+
+                        ward_list[ctr] = strings[2];
+
+                        ward_pos[ctr] = 2;
+
+                        ctr++;
+
+                    }
+
+                    if((_CITIES[city_idx].enchantments[LIFE_WARD]) == ST_FALSE)
+                    {
+
+                        ward_list[ctr] = strings[3];
+
+                        ward_pos[ctr] = 3;
+
+                        ctr++;
+
+                    }
+
+                    if((_CITIES[city_idx].enchantments[DEATH_WARD]) == ST_FALSE)
+                    {
+
+                        ward_list[ctr] = strings[4];
+
+                        ward_pos[ctr] = 4;
+
+                        ctr++;
+
+                    }
+
+                    /* HACK */  ward_list[ctr] = str_empty_string__ovr130;
+
+                    magic_type_ench_idx = Selection_Box(ctr, &ward_list[0], ST_FALSE, aSelectASpellWa);  // "Select a Spell Ward To Cast"
+
+                    if(magic_type_ench_idx != ST_UNDEFINED)
+                    {
+
+                        status = ST_TRUE;
+
+                        magic_type_ench_idx = (9 + ward_pos[magic_type_ench_idx]);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    if(return_value == ST_TRUE)
+    {
+
+        if(
+            (player_idx == HUMAN_PLAYER_IDX)
+            ||
+            (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+            ||
+            (
+                (magic_set.enemy_spells == ST_TRUE)
+                &&
+                (SQUARE_EXPLORED(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) != ST_FALSE)
+                &&
+                (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] != ST_FALSE)
+            )
+        )
+        {
+
+            Cast_Spell_City_Enchantment_Animation_1__WIP(city_idx, spl_Spell_Ward, player_idx);
+
+        }
+
+        ptr_enchantments = &_CITIES[city_idx].enchantments[0];
+
+        ptr_enchantments[magic_type_ench_idx] = (player_idx + 1);
+Capture_Cities_Data();
+
+        if(
+            (player_idx == HUMAN_PLAYER_IDX)
+            ||
+            (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+            ||
+            (
+                (magic_set.enemy_spells == ST_TRUE)
+                &&
+                (SQUARE_EXPLORED(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) != ST_FALSE)
+                &&
+                (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] != ST_FALSE)
+            )
+        )
+        {
+
+            Cast_Spell_City_Enchantment_Animation_2__WIP(city_idx, spl_Earthquake, player_idx);
+
+            Release_Block(_screen_seg);
+
+        }
+
+    }
+
+    return return_value;
 
 }
 
