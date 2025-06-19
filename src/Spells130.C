@@ -527,7 +527,7 @@ Capture_Cities_Data();
 /*
     turns off bonus from Holy Weapon / High Prayer
 */
-void Cast_HolyArms(int16_t player_idx)
+void Cast_Holy_Arms(int16_t player_idx)
 {
     int16_t itr = 0;  // _DI_
 
@@ -569,7 +569,7 @@ Dispels all negative enchantments on a city and protects the city
 from further chaos and death enchantments (whether city-specific
 or global).
 */
-void Apply_Spell_Consecration(int16_t city_idx)
+void Apply_Consecration(int16_t city_idx)
 {
     int16_t cur_wx = 0;
     int16_t city_wp = 0;

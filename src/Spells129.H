@@ -54,7 +54,7 @@ int16_t Cast_WarpNode(int16_t player_idx);
 int16_t Cast_Stasis(int16_t player_idx);
 
 // WZD o129p12
-int16_t Cast_NaturesCures(int16_t player_idx);
+int16_t Cast_Natures_Cures(int16_t player_idx);
 
 // WZD o129p13
 int16_t Cast_Move_Fortress(int16_t player_idx);

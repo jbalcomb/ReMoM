@@ -438,9 +438,9 @@ void All_AI_Refresh_Units_Movement(void)
 
             if(
                 (_UNITS[itr_units].Status == us_Patrol)
-                &&
+                ||
                 (_UNITS[itr_units].Status == us_BuildRoad)
-                &&
+                ||
                 (_UNITS[itr_units].Status == us_Casting)
             )
             {
@@ -451,9 +451,9 @@ void All_AI_Refresh_Units_Movement(void)
 
             if(
                 (_UNITS[itr_units].Status == us_Wait)
-                &&
+                ||
                 (_UNITS[itr_units].Status == us_ReachedDest)
-                &&
+                ||
                 (_UNITS[itr_units].Status == us_Ready)
             )
             {
@@ -2506,14 +2506,13 @@ Check_Cities_Data();
 // drake178: WIZ_GoldIncomes()
 void Update_Players_Gold_Reserve(void)
 {
-    int16_t normal_units[NUM_PLAYERS];
-    int16_t food_incomes[NUM_PLAYERS];
-    int16_t gold_incomes[NUM_PLAYERS];
-    int16_t Excess_Food;
-
-    int16_t itr_players;  // _SI_
-    int16_t itr_heroes;  // _DI_
-    int16_t itr_cities;  // _SI_
+    int16_t normal_units[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int16_t food_incomes[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int16_t gold_incomes[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int16_t Excess_Food = 0;
+    int16_t itr_players = 0;  // _SI_
+    int16_t itr_heroes = 0;  // _DI_
+    int16_t itr_cities = 0;  // _SI_
 
     // for(itr_players = 0; itr_players < _num_players; itr_players++)
     // VS complains about leaving elements in the array uninitialized, even though they can never be accessed
@@ -3312,7 +3311,7 @@ Check_Cities_Data();
 
         if(_CITIES[itr_cities].enchantments[CONSECRATION] > 0)
         {
-            Apply_Spell_Consecration(itr_cities);
+            Apply_Consecration(itr_cities);
         }
 
         if(_CITIES[itr_cities].enchantments[STREAM_OF_LIFE] > 0)
@@ -3526,21 +3525,21 @@ void All_Players_Apply_Spell_Casting(void)
 */
 void Determine_Offer(void)
 {
-    int16_t Bookshelf[NUM_MAGIC_TYPES];
-    int16_t item_price;
-    int16_t Hire_Response;
-    int16_t Merc_Level;
-    int16_t Merc_Cost;
-    int16_t Merc_Amount;
-    int16_t wp;
-    int16_t wy;
-    int16_t wx;
-    int16_t Hero_Slot;
-    int16_t unit_type;  // used for Generate_Mercenaries() and Pick_Random_Hero()
-    int16_t player_fame;
-    int16_t itr;
-    int16_t itr_players;  // _SI_
-    int16_t IDK;  // _DI_
+    int16_t Bookshelf[NUM_MAGIC_TYPES] = { 0, 0, 0, 0, 0 };
+    int16_t item_price = 0;
+    int16_t Hire_Response = 0;
+    int16_t Merc_Level = 0;
+    int16_t Merc_Cost = 0;
+    int16_t Merc_Amount = 0;
+    int16_t wp = 0;
+    int16_t wy = 0;
+    int16_t wx = 0;
+    int16_t Hero_Slot = 0;
+    int16_t unit_type = 0;  // used for Generate_Mercenaries() and Pick_Random_Hero()
+    int16_t player_fame = 0;
+    int16_t itr = 0;
+    int16_t itr_players = 0;  // _SI_
+    int16_t IDK = 0;  // _DI_
 
     for(itr = 0; itr < NUM_MAGIC_TYPES; itr++)
     {

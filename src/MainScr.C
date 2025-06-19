@@ -3766,24 +3766,23 @@ void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 // WZD o063p06
 void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
 {
-    int8_t Weapon_Quality;
-    int16_t Relative_Zero_Level;
-    int16_t Icons_Drawn;
-    int16_t bar_length;
-    int16_t current_hits;
-    int16_t max_hits;
-    int16_t Wpn_Top;
-    int16_t Wpn_Left;
-    int16_t Exp_Top;
-    int16_t Exp_Left;
-    int16_t Level_Index;
-    uint8_t Unit_Type;
-    uint8_t bar_color;
-    SAMB_ptr experience_level_icon_seg;
-    // SAMB_ptr weapon_type_icon_seg;
-    SAMB_ptr weapon_type_icon_seg = NULL;  // Error	C4703	potentially uninitialized local pointer variable 'weapon_type_icon_seg' used
+    int8_t Weapon_Quality = 0;
+    int16_t Relative_Zero_Level = 0;
+    int16_t icon_ctr = 0;
+    int16_t bar_length = 0;
+    int16_t current_hits = 0;
+    int16_t max_hits = 0;
+    int16_t wpn_y_start = 0;
+    int16_t wpn_x_start = 0;
+    int16_t ep_y_start = 0;
+    int16_t ep_x_start = 0;
+    int16_t level_ctr = 0;
+    uint8_t unit_type = 0;
+    uint8_t bar_color = 0;
+    SAMB_ptr experience_level_icon_seg = 0;
+    SAMB_ptr weapon_type_icon_seg = 0;
 
-    Unit_Type = _UNITS[unit_idx].type;
+    unit_type = _UNITS[unit_idx].type;
 
     /*
         BEGIN: Draw Unit Damage Bar
@@ -3791,7 +3790,7 @@ void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
     // MoO2  Module: AIPOWER  Current_Ship_Hits_  Address: 01:0005F2C3
     // MoO2  Module: AIPOWER  Max_Ship_Hits_      Address: 01:0005F2F6
     // MoO2  Module: CMBTAI   Get_Total_Hits_     Address: 01:0002BB06
-    max_hits = Unit_Hit_Points(unit_idx) * _unit_type_table[Unit_Type].Figures;
+    max_hits = Unit_Hit_Points(unit_idx) * _unit_type_table[unit_type].Figures;
 
     current_hits = max_hits - _UNITS[unit_idx].Damage;
 
@@ -3841,15 +3840,15 @@ void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
             experience_level_icon_seg = main_white_medal_icon;
             Relative_Zero_Level = 0;
         }
-        Icons_Drawn = 0;
-        Level_Index = Relative_Zero_Level;
-        while(_UNITS[unit_idx].Level > Level_Index)
+        icon_ctr = 0;
+        level_ctr = Relative_Zero_Level;
+        while(_UNITS[unit_idx].Level > level_ctr)
         {
-            Exp_Left = 2 + x + (Icons_Drawn * 4);
-            Exp_Top = y + 21;
-            FLIC_Draw(Exp_Left, Exp_Top, experience_level_icon_seg);
-            Icons_Drawn++;
-            Level_Index++;
+            ep_x_start = 2 + x + (icon_ctr * 4);
+            ep_y_start = y + 21;
+            FLIC_Draw(ep_x_start, ep_y_start, experience_level_icon_seg);
+            icon_ctr++;
+            level_ctr++;
         }
     }
     /*
@@ -3862,8 +3861,8 @@ void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
         Weapon_Quality = (_UNITS[unit_idx].mutations & 0x03);  /* mask-off bits besides weapon quality;  bit set - 1st and/or 2nd  OR  2^2 values {0,1,2,3} */
         if(Weapon_Quality > 0)
         {
-            Wpn_Left = x + 13;
-            Wpn_Top = y + 19;
+            wpn_x_start = x + 13;
+            wpn_y_start = y + 19;
 
             switch(Weapon_Quality)
             {
@@ -3884,7 +3883,7 @@ void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
                 } break;
             }
             Set_Animation_Frame(weapon_type_icon_seg, unit_weapon_type_animation_count);
-            FLIC_Draw(Wpn_Left, Wpn_Top, weapon_type_icon_seg);
+            FLIC_Draw(wpn_x_start, wpn_y_start, weapon_type_icon_seg);
         }
     /*
         END: Weapon - "Circle"/"Ring"/"Medal"/"Icon"

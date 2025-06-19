@@ -347,15 +347,15 @@ int16_t m_warn_type;
 // drake178: GUI_Confirm_Dialog()
 int16_t Confirmation_Box(char * text_string)
 {
-    int16_t choice;
-    int16_t Text_Label_Index;
-    int16_t hotkey_ESC;
-    int16_t confirmation_button_no;
-    int16_t confirmation_button_yes;
-    int16_t input_field_idx;
-    int16_t Box_Height;
-    int16_t paragraph_height;
-    int16_t leave_screen;
+    int16_t choice = 0;
+    int16_t Text_Label_Index = 0;
+    int16_t hotkey_ESC = 0;
+    int16_t confirmation_button_no = 0;
+    int16_t confirmation_button_yes = 0;
+    int16_t input_field_idx = 0;
+    int16_t Box_Height = 0;
+    int16_t paragraph_height = 0;
+    int16_t leave_screen = 0;
 
     Save_Alias_Colors();
 
@@ -440,7 +440,7 @@ int16_t Confirmation_Box(char * text_string)
 // drake178: GUI_DrawConfrmDialog()
 void Confirmation_Box_Draw(void)
 {
-    int16_t paragraph_height;
+    int16_t paragraph_height = 0;
 
     Set_Font_Style(4, 4, 15, ST_NULL);
 
@@ -494,55 +494,56 @@ void Warn0(char * msg)
 */
 void Warn(char * msg)
 {
-    int16_t UU_var3;
-    int16_t textbox_height;
-    int16_t max_para_height;
+    int16_t UU_var3 = 0;
+    int16_t textbox_height = 0;
+    int16_t max_para_height = 0;
 
-        Save_ScreenSeg();
+    Save_ScreenSeg();
 
-        // RESOURCE.LBX,  38  WARNBACK    warning top
-        // RESOURCE.LBX,  39  WARNBACK    warning bottom
-        // RESOURCE.LBX,  49  WARNBCK2    warning top
-        // RESOURCE.LBX,  50  WARNBCK2    warning bottom
+    // RESOURCE.LBX,  38  WARNBACK    warning top
+    // RESOURCE.LBX,  39  WARNBACK    warning bottom
+    // RESOURCE.LBX,  49  WARNBCK2    warning top
+    // RESOURCE.LBX,  50  WARNBCK2    warning bottom
 
-        IMG_GUI_RedMessage1  = LBX_Reload(resource_lbx_file__ovr149, 38, _screen_seg);
-        IMG_GUI_RedMsg1Btm   = LBX_Reload_Next(resource_lbx_file__ovr149, 39, _screen_seg);
-        IMG_GUI_RedMessage2  = LBX_Reload_Next(resource_lbx_file__ovr149, 49, _screen_seg);
-        IMG_GUI_RedMsg2Btm   = LBX_Reload_Next(resource_lbx_file__ovr149, 50, _screen_seg);
+    IMG_GUI_RedMessage1  = LBX_Reload(resource_lbx_file__ovr149, 38, _screen_seg);
+    IMG_GUI_RedMsg1Btm   = LBX_Reload_Next(resource_lbx_file__ovr149, 39, _screen_seg);
+    IMG_GUI_RedMessage2  = LBX_Reload_Next(resource_lbx_file__ovr149, 49, _screen_seg);
+    IMG_GUI_RedMsg2Btm   = LBX_Reload_Next(resource_lbx_file__ovr149, 50, _screen_seg);
 
-        Save_Auto_Function();
+    Save_Auto_Function();
 
-        Save_Alias_Colors();
+    Save_Alias_Colors();
 
-        Set_Font_Colors_15(0, COL_Dialog_Text);
+    Set_Font_Colors_15(0, COL_Dialog_Text);
 
-        Copy_On_To_Off_Page();
+    Copy_On_To_Off_Page();
 
-        message_box_text = msg;
+    message_box_text = msg;
 
-        Set_Font_Style(4, 4, 4, ST_NULL);
+    Set_Font_Style(4, 4, 4, ST_NULL);
 
-        max_para_height = Get_Paragraph_Max_Height(166, msg);
+    max_para_height = Get_Paragraph_Max_Height(166, msg);
 
-        textbox_height = max_para_height + 33;
+    textbox_height = max_para_height + 33;
 
-        message_box_x = 68;
+    message_box_x = 68;
 
-        message_box_y = ((200 - textbox_height) / 2);
+    message_box_y = ((200 - textbox_height) / 2);
 
-        Assign_Auto_Function(Warn_Draw, 1);
+    Assign_Auto_Function(Warn_Draw, 1);
 
-        UU_var3 = 0;
+    UU_var3 = 0;
 
-        Play_Standard_Click();
+    Play_Standard_Click();
 
-        Wait_For_Input();
+    Wait_For_Input();
 
-        Restore_Alias_Colors();
-        Reset_Window();
-        Restore_Auto_Function();
+    Restore_Alias_Colors();
+    Reset_Window();
+    Restore_Auto_Function();
 
-        Restore_ScreenSeg();
+    Restore_ScreenSeg();
+
 }
 
 
@@ -550,7 +551,7 @@ void Warn(char * msg)
 // drake178: GUI_DrawRedMessage()
 void Warn_Draw(void)
 {
-    int16_t max_para_height;  // _SI_
+    int16_t max_para_height = 0;  // _SI_
 
     Set_Font_Style(4, 4, 4, ST_NULL);
 
@@ -630,18 +631,18 @@ IDK_ResurectHero_sBCC70
 */
 int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page, char * title_string)
 {
-    int16_t selectbox_window;
-    int16_t list_select_idx;
-    int16_t hotkey_ESC;
-    int16_t Down_Arrow_Ctrl_Index;
-    int16_t Up_Arrow_Ctrl_Index;
-    int16_t leave_screen;
-    int16_t itr;
-    int16_t input_field_idx;
-    int16_t x1;
-    int16_t y1;
-    int16_t x2;
-    int16_t y2;
+    int16_t selectbox_window = 0;
+    int16_t list_select_idx = 0;
+    int16_t hotkey_ESC = 0;
+    int16_t Down_Arrow_Ctrl_Index = 0;
+    int16_t Up_Arrow_Ctrl_Index = 0;
+    int16_t leave_screen = 0;
+    int16_t itr = 0;
+    int16_t input_field_idx = 0;
+    int16_t x1 = 0;
+    int16_t y1 = 0;
+    int16_t x2 = 0;
+    int16_t y2 = 0;
 
     Save_Alias_Colors();
 
@@ -874,10 +875,10 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
 */
 void Selection_Box_Draw(void)
 {
-    int16_t scanned_field;
-    int16_t itr_selectbox_items;
-    int16_t x_start;  // DNE in Dasm
-    int16_t y_start;  // DNE in Dasm
+    int16_t scanned_field = 0;
+    int16_t itr_selectbox_items = 0;
+    int16_t x_start = 0;  // DNE in Dasm
+    int16_t y_start = 0;  // DNE in Dasm
 
     scanned_field = Scan_Input();
 
@@ -1080,12 +1081,12 @@ WARNING: the last string MUST BE an 'empty sting' - "" - first character is the 
 */
 void Selection_Box_Coords(int16_t item_count, char ** list_text, char * title_string)
 {
-    int16_t title_string_width;
-    int16_t selectbox_height;
-    int16_t selectbox_width;
-    int16_t horizontal_space;
-    int16_t itr;
-    char * list_text_ptr;  // DNE in Dasm
+    int16_t title_string_width = 0;
+    int16_t selectbox_height = 0;
+    int16_t selectbox_width = 0;
+    int16_t horizontal_space = 0;
+    int16_t itr = 0;
+    char * list_text_ptr = 0;  // DNE in Dasm
 
     selectbox_list_count = 0;
 
@@ -1135,7 +1136,7 @@ void Selection_Box_Coords(int16_t item_count, char ** list_text, char * title_st
 // drake178: GUI_LoadNotifyGfx()
 void Notify_Load(int16_t type, SAMB_ptr pict1)
 {
-    int16_t itr;  // _SI_
+    int16_t itr = 0;  // _SI_
 
     Save_ScreenSeg();
 
@@ -1233,8 +1234,8 @@ Lair_Treasure_Popup()
 */
 void Notify1(int16_t box_center_x, int16_t box_top_y, int16_t type, char * message_text, int16_t box_border, SAMB_ptr pict1, int16_t pict1_x, int16_t pict1_y, SAMB_ptr pict2, int16_t pict2_x, int16_t pict2_y, int16_t do_cslide, int16_t do_dim_back)
 {
-    int16_t UU_var2;
-    int16_t max_para_width;
+    int16_t UU_var2 = 0;
+    int16_t max_para_width = 0;
 
     Notify_Load(type, pict1);
 
@@ -1373,8 +1374,8 @@ void Notify1(int16_t box_center_x, int16_t box_top_y, int16_t type, char * messa
 // drake178: GUI_DrawNotifyDialog
 void Notify1_Draw(void)
 {
-    int16_t xadd;  // _SI_
-    int16_t max_para_width;  // _DI_
+    int16_t xadd = 0;  // _SI_
+    int16_t max_para_width = 0;  // _DI_
 
     if(notify_type == 2)
     {
@@ -1494,8 +1495,8 @@ Show_Event_Message()
 */
 void Notify2(int16_t UU_box_center_x, int16_t box_top_y, int16_t type, char * message_text, int16_t box_border, SAMB_ptr pict1, int16_t pict1_x, int16_t pict1_y, SAMB_ptr pict2, int16_t pict2_x, int16_t pict2_y, int16_t do_cslide, int16_t do_dim_back)
 {
-    int16_t UU_var2;
-    int16_t UU_max_para_width;
+    int16_t UU_var2 = 0;
+    int16_t UU_max_para_width = 0;
 
     Notify_Load(type, pict1);
 
@@ -1641,8 +1642,8 @@ void Notify2(int16_t UU_box_center_x, int16_t box_top_y, int16_t type, char * me
 */
 void Notify2_Draw(void)
 {
-    int16_t text_x2;  // _SI_
-    int16_t max_para_width;  // _DI_
+    int16_t text_x2 = 0;  // _SI_
+    int16_t max_para_width = 0;  // _DI_
 
     if(notify_color_slide == 1)
     {
@@ -1862,13 +1863,13 @@ ITEM_GetViewDrawPos(ITEM_ViewLeft, ITEM_ViewTop, item_view_popup_bitm, 5, &IView
 */
 void ITEM_GetViewDrawPos(int16_t start_x, int16_t start_y, SAMB_ptr picture_seg, int16_t stages, int16_t * draw_x, int16_t * draw_y)
 {
-    int16_t scale_percentage;
-    int16_t y2;
-    int16_t x2;
-    int16_t y1;
-    int16_t width;
-    int16_t height;
-    int16_t x1;  // _DI_
+    int16_t scale_percentage = 0;
+    int16_t y2 = 0;
+    int16_t x2 = 0;
+    int16_t y1 = 0;
+    int16_t width = 0;
+    int16_t height = 0;
+    int16_t x1 = 0;  // _DI_
 
     // TODO  width = farpeekw(picture_seg, 0);
     // TODO  height = farpeekw(picture_seg, 2);

@@ -64,10 +64,10 @@ int16_t Cast_EnchantRoad(int16_t player_idx);
 int16_t Cast_Spell_Ward(int16_t player_idx);
 
 // WZD o130p15
-void Cast_HolyArms(int16_t player_idx);
+void Cast_Holy_Arms(int16_t player_idx);
 
 // WZD o130p16
-void Apply_Spell_Consecration(int16_t city_idx);
+void Apply_Consecration(int16_t city_idx);
 
 // WZD o130p17
 void Apply_Subversion(int16_t player_idx);

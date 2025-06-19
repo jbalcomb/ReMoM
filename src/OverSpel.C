@@ -1344,7 +1344,7 @@ Capture_Cities_Data();
                         if(spell_idx == spl_Consecration)
                         {
 
-                            Apply_Spell_Consecration(spell_target_idx);
+                            Apply_Consecration(spell_target_idx);
 
                         }
 
@@ -1575,7 +1575,7 @@ Capture_Cities_Data();
                         case spl_Natures_Cures:
                         {
 
-                            Cast_Successful = Cast_NaturesCures(player_idx);
+                            Cast_Successful = Cast_Natures_Cures(player_idx);
 
                         } break;
 
@@ -1871,7 +1871,7 @@ Capture_Cities_Data();
                     if(spell_idx == spl_Holy_Arms)
                     {
 
-                        Cast_HolyArms(player_idx);
+                        Cast_Holy_Arms(player_idx);
 
                     }
 

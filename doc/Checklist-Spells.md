@@ -1,7 +1,6 @@
 
-git commit -m "add Overland Specials 'Lycanthropy'"
-
 git commit -m "add Overland Specials 'Natures Cures'"
+
 git commit -m "add Overland Specials 'Plane Shift'"
 git commit -m "add Overland Specials 'Word Of Recall'"
 
@@ -183,7 +182,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Path Finding
 [x] Cockatrices
 [ ] Transmute
-[ ] Natures Cures
+[x] Natures Cures
 [x] Basilisk
 [x] Elemental Armor
 [x] Petrify

@@ -3,6 +3,7 @@
         ovr129
 */
 
+#include "RACETYPE.H"
 #include "Spells129.H"
 
 #include "MOX/Allocate.H"
@@ -903,10 +904,93 @@ int16_t Cast_Stasis(int16_t player_idx)
 
 
 // WZD o129p12
-int16_t Cast_NaturesCures(int16_t player_idx)
+int16_t Cast_Natures_Cures(int16_t player_idx)
 {
+    int16_t return_value = 0;
+    int16_t scsv5 = 0;
+    int16_t scsv4 = 0;
+    int16_t scsv3 = 0;
+    int16_t scsv2 = 0;
+    int16_t scsv1 = 0;
+    int16_t unit_idx = 0;  // _SI_
 
-    return ST_FALSE;
+    Allocate_Reduced_Map();
+
+    Mark_Block(_screen_seg);
+
+    if(player_idx == HUMAN_PLAYER_IDX)
+    {
+            
+        return_value = Spell_Casting_Screen__WIP(stt_Friendly_Group, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aNatureSCures);
+
+    }
+    else
+    {
+
+        return_value = Get_Map_Square_Target_For_Spell(stt_Friendly_Group, &scsv1, &scsv2, &scsv3, spl_Natures_Cures, player_idx);
+
+    }
+
+    scsv2 = _UNITS[scsv1].wy;
+    scsv3 = _UNITS[scsv1].wp;
+    scsv1 = _UNITS[scsv1].wx;
+    
+    if(return_value == ST_TRUE)
+    {
+
+        if(
+            (player_idx == HUMAN_PLAYER_IDX)
+            ||
+            (Check_Square_Scouted(scsv1, scsv2, scsv3) != ST_FALSE)
+        )
+        {
+
+            AI_Eval_After_Spell = ST_TRUE;
+
+            Mark_Block(_screen_seg);
+
+            Spell_Animation_Load_Sound_Effect__WIP(spl_Natures_Cures);
+
+            Spell_Animation_Load_Graphics(spl_Natures_Cures);
+
+            Spell_Animation_Screen__WIP(scsv1, scsv2, scsv3);
+
+            Full_Draw_Main_Screen();
+
+            Release_Block(_screen_seg);
+
+        }
+
+    }
+
+    for(unit_idx = 0; unit_idx < _units; unit_idx++)
+    {
+        
+        if(
+            (_UNITS[unit_idx].wx == scsv1)
+            &&
+            (_UNITS[unit_idx].wy == scsv2)
+            &&
+            (_UNITS[unit_idx].wp == scsv3)
+        )
+        {
+
+            if(
+                (_unit_type_table[_UNITS[unit_idx].type].Race != rt_Death)
+                &&
+                ((_UNITS[unit_idx].mutations & UM_UNDEAD) == 0)
+            )
+            {
+
+                _UNITS[unit_idx].Damage = 0;
+
+            }
+
+        }
+
+    }
+
+    return return_value;
 
 }
 
