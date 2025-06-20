@@ -954,7 +954,7 @@ int16_t IsPassableTower(int16_t wx, int16_t wy)
 
     is_passible_tower = ST_FALSE;
 
-    for(itr_towers = 0; itr_towers < TOWER_COUNT_MAX; itr_towers++)
+    for(itr_towers = 0; itr_towers < NUM_TOWERS; itr_towers++)
     {
 
         if(

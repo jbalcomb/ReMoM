@@ -1667,7 +1667,7 @@ Capture_Cities_Data();
                         case spl_Plane_Shift:
                         {
 
-                            Cast_Successful = Cast_PlaneShift(player_idx);
+                            Cast_Successful = Cast_Plane_Shift(player_idx);
 
                         } break;
 

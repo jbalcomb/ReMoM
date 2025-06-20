@@ -70,7 +70,7 @@ ITEM_MAX_POWERS
 
 
 // MoO2: _NUM_SHIPS, _NUM_COLONIES, _NUM_PLAYERS, _NUM_STARS, _NUM_NEBULAS
-#define PLANE_COUNT_MAX             2
+// NUM_PLANES  #define PLANE_COUNT_MAX             2
 #define PLAYER_COUNT_MAX            6
 #define NUM_DIFFICULTY_LEVEL        5   /* Intro, Easy, Normal, Hard, Impossible */
 #define NUM_UNIT_ENCHANTMENTS      32
@@ -85,7 +85,7 @@ ITEM_MAX_POWERS
 #define NUM_RESOURCE_TYPES          5
 #define CITY_COUNT_MAX            100
 #define UNIT_COUNT_MAX           1009  // SEEALSO:  MAX_UNIT_COUNT  1000 in MoX_DEF
-#define TOWER_COUNT_MAX             6
+// NUM_TOWERS  #define TOWER_COUNT_MAX             6
 #define FORTRESS_COUNT_MAX          6
 // #define NODE_COUNT_MAX          30
 // #define LAIR_COUNT_MAX         102

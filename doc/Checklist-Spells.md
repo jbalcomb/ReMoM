@@ -1,7 +1,6 @@
 
-git commit -m "add Overland Specials 'Natures Cures'"
-
 git commit -m "add Overland Specials 'Plane Shift'"
+
 git commit -m "add Overland Specials 'Word Of Recall'"
 
 git commit -m "add Overland Specials 'Black Wind'"
@@ -295,7 +294,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Guardian Spirit
 [x] Heroism
 [x] True Sight
-[ ] Plane Shift
+[x] Plane Shift
 [ ] Resurrection
 [x] Dispel Evil
 [x] Planar Seal

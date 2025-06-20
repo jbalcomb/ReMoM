@@ -44,13 +44,13 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t Type, int16_t Hero_Slot, int16_
 int16_t Cast_Resurrection(int16_t player_idx);
 
 // WZD o132p08
-// sub_B50AE()
+int16_t Cast_Plane_Shift_Check(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o132p09
-// sub_B517B()
+void Cast_Plane_Shift_Draw(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o132p10
-int16_t Cast_PlaneShift(int16_t player_idx);
+int16_t Cast_Plane_Shift(int16_t player_idx);
 
 // WZD o132p11
 // WIZ_GreatWasting()

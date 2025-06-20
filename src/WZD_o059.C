@@ -3,10 +3,11 @@
         ovr059
 */
 
+#include "WZD_o059.H"
+
 #include "MOX/MOX_DAT.H"  /* _players[] */
 
-#include "MOM.H"
-#include "WZD_o059.H"
+#include "MOM_DEF.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"  /* TILE_Explore(); */
 
@@ -19,8 +20,8 @@
 // WZD o59p01
 int16_t Player_Fortress_City(int16_t player_idx)
 {
-    int16_t city_idx;
-    int16_t itr_cities;  // _SI_
+    int16_t city_idx = 0;
+    int16_t itr_cities = 0;  // _SI_
 
     if(player_idx == NEUTRAL_PLAYER_IDX)
     {
@@ -32,9 +33,12 @@ int16_t Player_Fortress_City(int16_t player_idx)
     for(itr_cities = 0; ((itr_cities < _cities) && (city_idx == ST_UNDEFINED)); itr_cities++)
     {
         if(
-            (_FORTRESSES[player_idx].active == ST_TRUE) &&
-            (_FORTRESSES[player_idx].wp == _CITIES[itr_cities].wp) &&
-            (_FORTRESSES[player_idx].wx == _CITIES[itr_cities].wx) &&
+            (_FORTRESSES[player_idx].active == ST_TRUE)
+            &&
+            (_FORTRESSES[player_idx].wp == _CITIES[itr_cities].wp)
+            &&
+            (_FORTRESSES[player_idx].wx == _CITIES[itr_cities].wx)
+            &&
             (_FORTRESSES[player_idx].wy == _CITIES[itr_cities].wy)
         )
         {
@@ -49,8 +53,8 @@ int16_t Player_Fortress_City(int16_t player_idx)
 // WZD o59p02
 int16_t Player_Summon_City(int16_t player_idx)
 {
-    int16_t city_idx;  // _DI_
-    int16_t itr_cities;  // _CX_
+    int16_t city_idx = 0;  // _DI_
+    int16_t itr_cities = 0;  // _CX_
 
     if(player_idx == NEUTRAL_PLAYER_IDX)
     {
@@ -83,7 +87,7 @@ in-outs count and indices of units in city
 */
 void Army_At_City(int16_t city_idx, int16_t * troop_count, int16_t troops[])
 {
-    int16_t itr;
+    int16_t itr = 0;
 
     *troop_count = 0;
 
@@ -107,7 +111,7 @@ void Army_At_City(int16_t city_idx, int16_t * troop_count, int16_t troops[])
 // WZD o59p04
 void Player_Army_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * troop_count, int16_t troops[])
 {
-    int16_t itr;
+    int16_t itr = 0;
 
     *troop_count = 0;
 
@@ -131,7 +135,7 @@ void Player_Army_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_id
 // WZD o59p05
 void Enemy_Army_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * troop_count, int16_t troops[])
 {
-    int16_t itr;
+    int16_t itr = 0;
 
     *troop_count = 0;
 
@@ -157,7 +161,7 @@ void Enemy_Army_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx
 // drake178: TILE_GetUnits_2()
 void Army_At_Square_2(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count, int16_t troops[])
 {
-    int16_t itr;
+    int16_t itr = 0;
 
     *troop_count = 0;
 
@@ -293,10 +297,10 @@ void UU_Army_At_Square_4(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_cou
 */
 int16_t Unit_Action_Special_Settle(int16_t troop_count, int16_t troops[])
 {
-    int16_t unit_type;
-    int16_t have_settlers;
-    int16_t itr_troops;  // _DI_
-    int16_t unit_idx;  // _SI_
+    int16_t unit_type = 0;
+    int16_t have_settlers = 0;
+    int16_t itr_troops = 0;  // _DI_
+    int16_t unit_idx = 0;  // _SI_
 
     have_settlers = ST_FALSE;
 
@@ -390,13 +394,13 @@ updates explored
 */
 void Units_In_Tower(int16_t troop_count, int16_t troops[], int16_t map_p)
 {
-    int16_t unit_wy;
-    int16_t unit_wx;
-    int16_t tower_idx;
-    int16_t units_in_tower;
-    int16_t unit_idx;
-    int16_t itr_towers;
-    int16_t itr_units;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t tower_idx = 0;
+    int16_t units_in_tower = 0;
+    int16_t unit_idx = 0;
+    int16_t itr_towers = 0;
+    int16_t itr_units = 0;
 
     if(troop_count < 1)
     {
@@ -460,9 +464,9 @@ void Units_In_Tower(int16_t troop_count, int16_t troops[], int16_t map_p)
 */
 void All_Units_In_Towers(void)
 {
-    int16_t have_planar_seal;
-    int16_t itr_units; // _SI_
-    int16_t itr_towers; // _DI_
+    int16_t have_planar_seal = 0;
+    int16_t itr_units = 0; // _SI_
+    int16_t itr_towers = 0; // _DI_
 
     have_planar_seal = Check_Planar_Seal();
 
@@ -506,10 +510,10 @@ void Dismiss_Unit(int16_t unit_idx)
 // WZD o59p16
 void Cheat_Reveal(void)
 {
-    int16_t itr_y;  // _DI_
-    int16_t itr_x;  // _SI_
-    int16_t itr_players1;  // _SI_
-    int16_t itr_players2;  // _DI_
+    int16_t itr_y = 0;  // _DI_
+    int16_t itr_x = 0;  // _SI_
+    int16_t itr_players1 = 0;  // _SI_
+    int16_t itr_players2 = 0;  // _DI_
 
     for(itr_y = 0; itr_y < WORLD_HEIGHT; itr_y++)
     {
@@ -603,15 +607,15 @@ void Set_Map_Square_Explored_Flags_XYP_Range(int16_t wx, int16_t wy, int16_t wp,
 // WZD o59p19
 void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane)
 {
-    int16_t stack_is_on_tower;
-    int16_t stack_plane_shift;
+    int16_t stack_is_on_tower = 0;
+    int16_t stack_plane_shift = 0;
 // Radius= word ptr -0Eh
-    int16_t unit_world_x;
-    int16_t unit_world_y;
-    int16_t stack_planar_travel;
-    int16_t unit_stack_unit_idx;
-    int16_t itr_towers;
-    int16_t orig_map_plane;
+    int16_t unit_world_x = 0;
+    int16_t unit_world_y = 0;
+    int16_t stack_planar_travel = 0;
+    int16_t unit_stack_unit_idx = 0;
+    int16_t itr_towers = 0;
+    int16_t orig_map_plane = 0;
     // int16_t curr_map_plane;  // _DI_
 
 #ifdef STU_DEBUG
@@ -623,7 +627,7 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
     // orig_map_plane = curr_map_plane;
     orig_map_plane = *map_plane;
     // curr_map_plane = ((curr_map_plane + 1) % PLANE_COUNT_MAX);
-    *map_plane = ((*map_plane + 1) % PLANE_COUNT_MAX);
+    *map_plane = ((*map_plane + 1) % NUM_PLANES);
     stack_planar_travel = ST_FALSE;
 
 #ifdef STU_DEBUG
@@ -636,17 +640,13 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
     */
     if(all_units_moved == ST_FALSE)
     {
-        // TODO  DLOG("(all_units_moved == ST_FALSE)");
         if(_unit_stack_count > 0)
         {
-            // TODO  DLOG("(_unit_stack_count > 0)");
             stack_planar_travel = Stack_Has_PlanarTravel();
             if(stack_planar_travel == ST_TRUE)
             {
-                // TODO  DLOG("(stack_planar_travel == ST_TRUE)");
                 if(Check_Planar_Seal() == ST_TRUE)
                 {
-                    // TODO  DLOG("(Check_Planar_Seal() == ST_TRUE)");
                     Warn0(_msg_planar_seal_prevents);  // "Planar Seal prevents your units from changing planes."
                     // curr_map_plane = orig_map_plane;
                     *map_plane = orig_map_plane;
@@ -731,8 +731,8 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
             // if(curr_map_plane == orig_map_plane)  /* ¿ ~== stack_planar_travel = 99 ? ¿ couln't possibly, but would only happens if Check_Stack_Plane_Shift() returned -2 ? */
             if(*map_plane == orig_map_plane)
             {
-                // curr_map_plane = ((curr_map_plane + 1) % PLANE_COUNT_MAX);
-                *map_plane = ((*map_plane + 1) % PLANE_COUNT_MAX);
+                // curr_map_plane = ((curr_map_plane + 1) % NUM_PLANES);
+                *map_plane = ((*map_plane + 1) % NUM_PLANES);
                 _unit_stack_count = 0;
             }
 
@@ -746,7 +746,7 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
                     unit_stack_unit_idx = _unit_stack[0].unit_idx;
                     unit_world_x = _UNITS[unit_stack_unit_idx].wx;
                     unit_world_y = _UNITS[unit_stack_unit_idx].wy;
-                    for(itr_towers = 0; itr_towers < TOWER_COUNT_MAX && stack_is_on_tower == ST_FALSE; itr_towers++)
+                    for(itr_towers = 0; itr_towers < NUM_TOWERS && stack_is_on_tower == ST_FALSE; itr_towers++)
                     {
                         if(_TOWERS[itr_towers].wx == unit_world_x && _TOWERS[itr_towers].wy == unit_world_y)
                         {
@@ -768,10 +768,6 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
         END: Nay PlanarTravel OR Yay PlanarTravel, Yay PlanarSeal
     */
 
-#ifdef STU_DEBUG
-    // dbg_prn("DEBUG: [%s, %d]: curr_map_plane: %d\n", __FILE__, __LINE__, curr_map_plane);
-    dbg_prn("DEBUG: [%s, %d]: *map_plane: %d\n", __FILE__, __LINE__, *map_plane);
-#endif
 
 // @@Done:
     Set_Unit_Draw_Priority();
@@ -796,16 +792,16 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
 {
     int16_t movement_mode_flags[6] = { 0xBB,0xBB,0xBB,0xBB,0xBB,0xBB };
     int16_t stack_array[MAX_STACK] = { 0xBB,0xBB,0xBB,0xBB,0xBB,0xBB,0xBB,0xBB,0xBB };
-    int16_t city_has_spellward;
+    int16_t city_has_spellward = 0;
     // int16_t laird_idx__city_idx;
-    int16_t lair_idx;
-    int16_t city_idx;
-    int16_t unit_world_x;
-    int16_t unit_world_y;
-    int16_t stack_size;
+    int16_t lair_idx = 0;
+    int16_t city_idx = 0;
+    int16_t unit_world_x = 0;
+    int16_t unit_world_y = 0;
+    int16_t stack_size = 0;
 
-    int16_t unit_idx;
-    int16_t _DI_return_value;
+    int16_t unit_idx = 0;
+    int16_t return_value = 0;
 
 
 #ifdef STU_DEBUG
@@ -814,20 +810,20 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
 
     unit_idx = unit_stack_unit_idx;
 
-    _DI_return_value = -1;  // ¿ ST_SUCCESS ?
+    return_value = -1;  // ¿ ST_SUCCESS ?
 
     Active_Stack_Movement_Modes(&movement_mode_flags[0]);
 
     if(Square_Is_Sailable(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, map_plane) == ST_TRUE)
     {
-        _DI_return_value = -2;  // ¿ -2 ~== Non-Walking Terrain ?
+        return_value = -2;  // ¿ -2 ~== Non-Walking Terrain ?
         if(movement_mode_flags[MM_SWIMMING] == ST_TRUE || movement_mode_flags[MM_SAILING] == ST_TRUE || movement_mode_flags[MM_FLYING] == ST_TRUE)
         {
-            _DI_return_value = -1;  // ¿ ST_SUCCESS ?
+            return_value = -1;  // ¿ ST_SUCCESS ?
         }
     }
 
-    if(_DI_return_value == -1)
+    if(return_value == -1)
     {
         unit_world_x = _UNITS[unit_stack_unit_idx].wx;
         unit_world_y = _UNITS[unit_stack_unit_idx].wy;
@@ -842,7 +838,7 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
                 // TODO  TILE_GetEnemyStack(unit_world_x, unit_world_y, map_plane, _UNITS[unit_idx].owner_idx, &stack_size, &stack_array[0]);
                 if(stack_size > 0)
                 {
-                    _DI_return_value = -2;
+                    return_value = -2;
                 }
                 else
                 {
@@ -850,9 +846,9 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
                     // drake178: fills the return variables with the count and indices of all units on the selected tile that belong to the specified player
                     // TODO  TILE_GetUnitStack(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, map_plane, _UNITS[unit_idx].owner_idx, &stack_size, &stack_array[0]);
                     stack_size = stack_size + _unit_stack_count;
-                    if(stack_size > 9)
+                    if(stack_size > MAX_STACK)
                     {
-                        _DI_return_value = -2;
+                        return_value = -2;
                     }
                 }
             }
@@ -861,13 +857,13 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
                 city_has_spellward = RP_CTY_CheckSpellWard__STUB(city_idx, &stack_size, &stack_array[0]);
                 if(city_has_spellward == ST_TRUE)
                 {
-                    _DI_return_value = -2;
+                    return_value = -2;
                 }
                 else
                 {
                     if(_CITIES[city_idx].owner_idx != _UNITS[unit_idx].owner_idx)
                     {
-                        _DI_return_value = -2;
+                        return_value = -2;
                     }
                     else
                     {
@@ -875,9 +871,9 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
                         // TODO  TILE_GetUnitStack(unit_world_x, unit_world_y, map_plane, _UNITS[unit_idx].owner_idx, &stack_size, &stack_array[0]);
                         stack_size = stack_size + _unit_stack_count;
 
-                        if(stack_size > 9)
+                        if(stack_size > MAX_STACK)
                         {
-                            _DI_return_value = -2;
+                            return_value = -2;
                         }
                     }
                 }
@@ -889,5 +885,5 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
     dbg_prn("DEBUG: [%s, %d]: END: Check_Stack_Plane_Shift(unit_stack_unit_idx = %d, map_plane = %d)\n", __FILE__, __LINE__, unit_stack_unit_idx, map_plane);
 #endif
 
-    return _DI_return_value;
+    return return_value;
 }

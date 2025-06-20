@@ -3231,7 +3231,7 @@ int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp)
 
             player_idx = _CITIES[src_city_idx].owner_idx;
             // TODO  Radius = IDK_City_Radius_s34255(player_idx, wx, wy, wp);
-            // AI_ContactWizards((player_idx, wx, wy, wp, Radius);
+            // TODO  DIPLO  AI_ContactWizards((player_idx, wx, wy, wp, Radius);
             // TODO Set_Map_Square_Explored_Flags_XYP_Range(wx, wy, wp, Radius);
             Set_Map_Square_Explored_Flags_XYP_Range(wx, wy, wp, 2);
             _active_world_x = _CITIES[dst_city_idx].wx;
@@ -5794,7 +5794,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 
         }
 
-        // TOOD  AI_ContactWizards(player_idx, unit_x, unit_y, map_p, scout_range);
+        // TOOD  DIPLO  AI_ContactWizards(player_idx, unit_x, unit_y, map_p, scout_range);
 
 
         curr_src_wx = movepath_x_array[(2 + itr_path_length)];
@@ -5808,8 +5808,10 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 
 }
 
+
 // WZD o95p03
 // AI_ContactWizards()
+
 
 // WZD o95p04
 // drake178: G_STK_OvlObstacles()
