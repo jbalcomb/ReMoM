@@ -30,7 +30,7 @@ void Cast_Attack_Spell_On_Enemy_Stack(int16_t unit_idx, int16_t spell_idx);
 void Cast_Attack_Spell_On_Enemy_Unit(int16_t unit_idx, int16_t spell_idx, int16_t * item_count, int16_t item_list[], int16_t attack_override_flag);
 
 // WZD o129p04
-// sub_AD1F0()
+void Apply_Black_Wind(int16_t wx, int16_t wy, int16_t wp, int16_t spell_idx);
 
 // WZD o129p05
 int16_t Cast_Call_The_Void(int16_t player_idx);

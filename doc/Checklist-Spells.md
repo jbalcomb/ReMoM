@@ -1,7 +1,6 @@
 
-git commit -m "add Overland Specials 'Word Of Recall'"
-
 git commit -m "add Overland Specials 'Black Wind'"
+
 git commit -m "add Overland Specials 'Stasis'"
 
 git commit -m "add Overland Specials 'Healing'"
@@ -347,7 +346,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Wraiths
 [x] Cloud of Shadow
 [ ] Warp Node
-[ ] Black Wind
+[x] Black Wind
 [x] Zombie Mastery
 [x] Famine
 [x] Cursed Lands

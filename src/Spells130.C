@@ -18,6 +18,7 @@
 #include "MainScr.H"
 #include "OverSpel.H"
 #include "STU/STU_CHK.H"
+#include "Spells129.H"
 #include "Spells130.H"
 #include "SPELLDEF.H"
 #include "NEXTTURN.H"
@@ -147,11 +148,115 @@ int16_t Cast_GreatUnsummoning(int16_t player_idx)
 
 
 // WZD o130p04
-int16_t Cast_BlackWind(int16_t player_idx)
+int16_t Cast_Black_Wind(int16_t player_idx)
 {
+    int16_t return_value = 0;
+    int16_t scsv5 = 0;
+    int16_t scsv4 = 0;
+    int16_t scsv3 = 0;
+    int16_t scsv2 = 0;
+    int16_t scsv1 = 0;
+    int16_t itr = 0;  // _SI_
 
-    return ST_FALSE;
+    Allocate_Reduced_Map();
 
+    Mark_Block(_screen_seg);
+
+    if(player_idx == HUMAN_PLAYER_IDX)
+    {
+
+        return_value = Spell_Casting_Screen__WIP(stt_Enemy_Group, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aBlackWind);
+
+        scsv2 = _UNITS[scsv1].wy;
+        scsv3 = _UNITS[scsv1].wp;
+        scsv1 = _UNITS[scsv1].wx;
+
+    }
+    else
+    {
+
+        return_value = IDK_Pick_Target_For_Unit_Enchantment__STUB(stt_Enemy_Group, &scsv1, spl_Black_Wind, player_idx);
+
+    }
+
+    if(return_value == ST_TRUE)
+    {
+
+        for(itr = 0; itr < _cities; itr++)
+        {
+
+            if(
+                (_CITIES[itr].wx == scsv1)
+                &&
+                (_CITIES[itr].wy == scsv2)
+                &&
+                (_CITIES[itr].wp == scsv3)
+            )
+            {
+
+                if(
+                    (_CITIES[itr].owner_idx == HUMAN_PLAYER_IDX)
+                    ||
+                    (player_idx == HUMAN_PLAYER_IDX)
+                )
+                {
+
+                    return_value = Apply_Automatic_Spell_Counters(spl_Black_Wind, itr, player_idx, ST_TRUE);
+
+                }
+                else
+                {
+
+                    return_value = Apply_Automatic_Spell_Counters(spl_Black_Wind, itr, player_idx, ST_FALSE);
+
+                }
+
+            }
+
+        }
+
+    }
+
+    if(return_value == ST_TRUE)
+    {
+
+        if(
+            (player_idx == HUMAN_PLAYER_IDX)
+            ||
+            (_UNITS[scsv1].owner_idx == HUMAN_PLAYER_IDX)  // BUGBUG  scsv1 is wx here, not unit_idx ...c&p error
+            ||
+            (Check_Square_Scouted(scsv1, scsv2, scsv3) != ST_FALSE)
+        )
+        {
+            
+            AI_Eval_After_Spell = ST_TRUE;
+
+            Allocate_Reduced_Map();
+
+            Mark_Block(_screen_seg);
+
+            Spell_Animation_Load_Sound_Effect__WIP(spl_Black_Wind);
+
+            Spell_Animation_Load_Graphics(spl_Black_Wind);
+
+            Spell_Animation_Screen__WIP(scsv1, scsv2, scsv3);
+
+            Full_Draw_Main_Screen();
+
+            Release_Block(_screen_seg);
+
+        }
+
+            Apply_Black_Wind(scsv1, scsv2, scsv3, spl_Black_Wind);
+
+            // BUGBUG  scsv1 is wx here, not unit_idx ...c&p error
+            // BUGBUG  should pass spl_Black_Wind, not scsv1 (which is wx) ...c&p error
+            Change_Relations__WIP(-3, player_idx, _UNITS[scsv1].owner_idx, 8, 0, scsv1);
+
+    }
+
+    return return_value;
+    
 }
 
 

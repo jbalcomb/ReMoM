@@ -1702,7 +1702,7 @@ Capture_Cities_Data();
                         case spl_Black_Wind:
                         {
 
-                            Cast_Successful = Cast_BlackWind(player_idx);
+                            Cast_Successful = Cast_Black_Wind(player_idx);
 
                         } break;
 

@@ -3,6 +3,7 @@
         ovr129
 */
 
+#include "Combat.H"
 #include "RACETYPE.H"
 #include "Spells129.H"
 
@@ -161,7 +162,7 @@ int16_t Apply_Cruel_Unminding(int16_t player_idx)
 */
 void Cast_Attack_Spell_On_Enemy_Stack(int16_t unit_idx, int16_t spell_idx)
 {
-    int16_t item_list[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
+    int16_t item_list[(NUM_HERO_SLOTS * NUM_HERO_ITEM_SLOTS)] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
     int16_t item_count = 0;
     int16_t wp = 0;
     int16_t wy = 0;
@@ -337,7 +338,121 @@ void Cast_Attack_Spell_On_Enemy_Unit(int16_t unit_idx, int16_t spell_idx, int16_
 
 
 // WZD o129p04
-// sub_AD1F0()
+void Apply_Black_Wind(int16_t wx, int16_t wy, int16_t wp, int16_t spell_idx)
+{
+    int16_t item_list[(NUM_HERO_SLOTS * NUM_HERO_ITEM_SLOTS)] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
+    int16_t damage_types[NUM_DAMAGE_TYPES] = { 0, 0, 0 };
+    int16_t save_mod = 0;
+    int16_t item_count = 0;
+    int16_t unit_owner = 0;
+    int16_t resist_fails = 0;
+    int16_t unit_idx = 0;  // _SI_
+    int16_t itr = 0;  // _DI_
+
+    AI_Eval_After_Spell = ST_TRUE;
+
+    Mark_Block(_screen_seg);
+
+    // DOMSDOS  battle_units = SA_MK_FP0(Allocate_First_Block(_screen_seg, 8));
+    battle_units = (struct s_BATTLE_UNIT *)Allocate_First_Block(_screen_seg, 8);
+
+    item_count = 0;
+
+    save_mod = 0;
+
+    if(spell_idx == spl_Black_Wind)
+    {
+
+        save_mod = -1;
+
+    }
+
+    for(unit_idx = 0; unit_idx < _units; unit_idx++)
+    {
+
+        if(
+            (_UNITS[unit_idx].wx == wx)
+            &&
+            (_UNITS[unit_idx].wy == wy)
+            &&
+            (_UNITS[unit_idx].wp == wp)
+        )
+        {
+
+            unit_owner = _UNITS[unit_idx].owner_idx;
+
+            for(itr = 0; itr < NUM_DAMAGE_TYPES; itr++)
+            {
+
+                damage_types[itr] = 0;
+
+            }
+
+            Load_Battle_Unit(unit_idx, &battle_units[0]);
+
+            for(itr = 0; battle_units[0].Cur_Figures > itr; itr++)
+            {
+
+                resist_fails = Combat_Resistance_Check(battle_units[0], save_mod, spell_data_table[spell_idx].magic_realm);
+
+                if(resist_fails > 0)
+                {
+
+                    damage_types[0] += battle_units[0].hits;
+
+                }
+
+            }
+
+            BU_ApplyDamage__WIP(0, &damage_types[0]);
+
+            _UNITS[unit_idx].Damage += damage_types[0];
+
+        }
+
+    }
+
+    if(battle_units[0].status > bus_Active)
+    {
+
+        if(_UNITS[unit_idx].Hero_Slot > -1)
+        {
+
+            for(itr = 0; itr < NUM_HERO_ITEM_SLOTS; itr++)
+            {
+
+                if(_players[unit_owner].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] > -1)
+                {
+
+                    item_list[item_count] = _players[unit_owner].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr];
+
+                    item_count += 1;
+
+                }
+
+                // ; BUG: empty slots are -1, not 0
+                _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] = 0;
+
+            }
+
+        }
+
+        Kill_Unit(unit_idx, kt_Normal);
+
+    }
+
+    Release_Block(_screen_seg);
+
+    item_pool_in_process = ST_TRUE;
+
+    m_item_wx = wx;
+    m_item_wy = wy;
+    m_item_wp = wp;
+
+    Player_Process_Item_Pool(unit_owner, item_count, &item_list[0]);
+
+}
+
 
 // WZD o129p05
 int16_t Cast_Call_The_Void(int16_t player_idx)
@@ -1135,7 +1250,7 @@ int16_t Cast_Move_Fortress(int16_t player_idx)
 // WZD o129p14
 int16_t Cast_Earthquake(int16_t player_idx)
 {
-    int16_t item_list[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t item_list[(NUM_HERO_SLOTS * NUM_HERO_ITEM_SLOTS)] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t city_population2 = 0;
     int16_t city_population1 = 0;
     int16_t item_count = 0;

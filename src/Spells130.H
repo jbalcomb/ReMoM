@@ -30,7 +30,7 @@ int16_t Cast_DeathWish(int16_t player_idx);
 int16_t Cast_GreatUnsummoning(int16_t player_idx);
 
 // WZD o130p04
-int16_t Cast_BlackWind(int16_t player_idx);
+int16_t Cast_Black_Wind(int16_t player_idx);
 
 // WZD o130p05
 int16_t Apply_Drain_Power(int16_t player_idx);
