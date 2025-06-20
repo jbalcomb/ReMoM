@@ -1,6 +1,4 @@
 
-git commit -m "add Overland Specials 'Black Wind'"
-
 git commit -m "add Overland Specials 'Stasis'"
 
 git commit -m "add Overland Specials 'Healing'"
@@ -227,7 +225,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Storm Giant
 [x] Air Elemental
 [x] Mind Storm
-[ ] Stasis
+[x] Stasis
 [x] Magic Immunity
 [x] Haste
 [x] Djinn

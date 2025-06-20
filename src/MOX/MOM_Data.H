@@ -1622,7 +1622,7 @@ struct s_BATTLE_UNIT
     /* 0x1C */  uint16_t Abilities;                         // ; enum ABL_FLAGS  ~ 'Unit Abilities'
     /* 0x1E */  uint16_t attack_attributes;     /* defs Att_  enum e_ATTACK_FLAGS  AKA ATK_FLAGS */
     /* 0x20 */  int16_t  Sound;
-    /* 0x22 */  int16_t  Combat_Effects;        /* enum e_BATTLE_UNIT_EFFECT */
+    /* 0x22 */  int16_t  Combat_Effects;        /* ¿ ~ combat unit enchantment ? enum e_BATTLE_UNIT_EFFECT */
     /* 0x24 */  int8_t   melee_tohit;
     /* 0x25 */  int8_t   Ranged_To_Hit;
     /* 0x26 */  int8_t   toblock;

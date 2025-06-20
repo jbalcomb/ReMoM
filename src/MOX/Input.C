@@ -862,7 +862,7 @@ MoO2
                                 )
                             )
                             {
-
+                                // BUGBUG  down_mouse_button can be -1 here  AVRL  how to avoid?  shouldn't happen? conditions should be ||?
                                 if(p_fields[down_mouse_button].type == ft_Scroll)
                                 {
                                     Invoke_Auto_Function();

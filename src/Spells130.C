@@ -247,11 +247,11 @@ int16_t Cast_Black_Wind(int16_t player_idx)
 
         }
 
-            Apply_Black_Wind(scsv1, scsv2, scsv3, spl_Black_Wind);
+        Apply_Black_Wind(scsv1, scsv2, scsv3, spl_Black_Wind);
 
-            // BUGBUG  scsv1 is wx here, not unit_idx ...c&p error
-            // BUGBUG  should pass spl_Black_Wind, not scsv1 (which is wx) ...c&p error
-            Change_Relations__WIP(-3, player_idx, _UNITS[scsv1].owner_idx, 8, 0, scsv1);
+        // BUGBUG  scsv1 is wx here, not unit_idx ...c&p error
+        // BUGBUG  should pass spl_Black_Wind, not scsv1 (which is wx) ...c&p error
+        Change_Relations__WIP(-3, player_idx, _UNITS[scsv1].owner_idx, 8, 0, scsv1);
 
     }
 

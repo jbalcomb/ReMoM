@@ -1012,8 +1012,198 @@ int16_t Cast_WarpNode(int16_t player_idx)
 // WZD o129p11
 int16_t Cast_Stasis(int16_t player_idx)
 {
+    int16_t var_10 = 0;
+    int16_t status = 0;
+    int16_t var_C = 0;
+    int16_t scsv5 = 0;
+    int16_t scsv4 = 0;
+    int16_t scsv3 = 0;
+    int16_t scsv2 = 0;
+    int16_t scsv1 = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t return_value = 0;  // _DI_
 
-    return ST_FALSE;
+    // DNE  Allocate_Reduced_Map();
+
+    // DNE  Mark_Block(_screen_seg);
+
+    if(player_idx != HUMAN_PLAYER_IDX)
+    {
+
+        return_value = Pick_Target_For_City_Enchantment__WIP(stt_Enemy_Group, &scsv1, spl_Stasis, player_idx);
+
+    }
+    else
+    {
+
+        status = ST_FALSE;
+
+        return_value = ST_TRUE;
+
+        while((status == ST_FALSE) && (return_value == ST_TRUE))
+        {
+
+            return_value = Spell_Casting_Screen__WIP(stt_Enemy_Group, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, cnst_Stasis_2);
+
+            if(return_value == ST_TRUE)
+            {
+
+                var_10 = ST_FALSE;
+
+                if((_UNITS[scsv1].mutations & (C_STASISINIT | C_STASISLINGER)) == 0)
+                {
+
+                    status = ST_TRUE;
+
+                }
+                else
+                {
+
+                    for(itr = 0; itr < _units; itr++)
+                    {
+
+                        if(var_10 == ST_FALSE)
+                        {
+
+                            if(
+                                (_UNITS[itr].wx == scsv1)
+                                &&
+                                (_UNITS[itr].wy == scsv2)
+                                &&
+                                (_UNITS[itr].wp == scsv3)
+                            )
+                            {
+
+                                if((_UNITS[itr].mutations & (C_STASISINIT | C_STASISLINGER)) == 0)
+                                {
+
+                                    status = ST_TRUE;
+
+                                }
+
+                                var_10 = ST_TRUE;
+                                
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            if(
+                (return_value != ST_TRUE)
+                ||
+                (status != ST_FALSE)
+            )
+            {
+
+                scsv2 = _UNITS[scsv1].wy;
+                scsv3 = _UNITS[scsv1].wp;
+                scsv1 = _UNITS[scsv1].wx;
+
+            }
+
+        }
+
+    }
+
+    if(return_value == ST_TRUE)
+    {
+
+        for(itr = 0; itr < _cities; itr++)
+        {
+
+            if(var_10 == ST_FALSE)
+            {
+
+                if(
+                    (_CITIES[itr].wx == scsv1)
+                    &&
+                    (_CITIES[itr].wy == scsv2)
+                    &&
+                    (_CITIES[itr].wp == scsv3)
+                )
+                {
+
+                    return_value = Apply_Automatic_Spell_Counters(spl_Stasis, itr, player_idx, ST_TRUE);
+
+                }
+
+            }
+
+        }
+
+        if(return_value == ST_TRUE)
+        {
+
+            Allocate_Reduced_Map();
+
+            AI_Eval_After_Spell = ST_TRUE;
+
+            Mark_Block(_screen_seg);
+
+            // DOMSDOS  battle_units = SA_MK_FP0(Allocate_Next_Block(_screen_seg, 8));
+            battle_units = (struct s_BATTLE_UNIT *)Allocate_Next_Block(_screen_seg, 8);
+
+            for(itr = 0; itr < _units; itr++)
+            {
+
+                if(
+                    (_UNITS[itr].wx == scsv1)
+                    &&
+                    (_UNITS[itr].wy == scsv2)
+                    &&
+                    (_UNITS[itr].wp == scsv3)
+                )
+                {
+
+                    if(_UNITS[itr].owner_idx == HUMAN_PLAYER_IDX)
+                    {
+
+                        var_C = ST_TRUE;
+
+                    }
+
+                    _UNITS[itr].mutations |= C_STASISINIT;
+
+                    _UNITS[itr].moves2 = 0;
+
+                    _UNITS[itr].Finished = ST_TRUE;
+
+                }
+
+            }
+
+            Release_Block(_screen_seg);
+
+        }
+
+
+        if(
+            (player_idx == HUMAN_PLAYER_IDX)
+            ||
+            (_UNITS[scsv1].owner_idx == HUMAN_PLAYER_IDX)  // BUGBUG  scsv1 is wx here, not unit_idx ...c&p error
+            ||
+            (Check_Square_Scouted(scsv1, scsv2, scsv3) != ST_FALSE)
+        )
+        {
+
+            Spell_Animation_Load_Sound_Effect__WIP(spl_Stasis);
+
+            Spell_Animation_Load_Graphics(spl_Stasis);
+
+            Spell_Animation_Screen__WIP(scsv1, scsv2, scsv3);
+
+            Full_Draw_Main_Screen();
+
+        }
+
+    }
+
+    return return_value;
 
 }
 

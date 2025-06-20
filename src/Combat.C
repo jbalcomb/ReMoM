@@ -9393,7 +9393,7 @@ void Combat_Figure_Effect__WIP(int16_t effect)
 
         } break;
 
-        case 3:
+        case 3:  // Warp Creature
         {
 
             Transparent_Color_Range(GfxBuf_2400B, 232, 232);
@@ -9402,7 +9402,7 @@ void Combat_Figure_Effect__WIP(int16_t effect)
 
         } break;
 
-        case 4:
+        case 4:  // Invisibility - visible
         {
 
             Transparent_Color_Range(GfxBuf_2400B, 232, 232);
@@ -9411,7 +9411,7 @@ void Combat_Figure_Effect__WIP(int16_t effect)
 
         } break;
 
-        case 5:
+        case 5:  // Invisibility - invisible
         {
 
             Transparent_Color_Range(GfxBuf_2400B,   1, 228);
@@ -12114,7 +12114,7 @@ case scc_Disjunction_Spell:  // 20
             else
             {
 
-                battle_units[target_idx].Combat_Effects |= spell_data_table[spell_idx].Param0;  // e.g., bue_Black_Sleep
+                battle_units[target_idx].Combat_Effects |= spell_data_table[spell_idx].ce_idx;  // e.g., bue_Black_Sleep
                 
                 if(
                     (spell_idx == spl_Possession)

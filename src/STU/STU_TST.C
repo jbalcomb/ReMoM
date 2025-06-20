@@ -79,7 +79,7 @@ void TST_Patch_Game_Data(void)
     // Enemy City
     TST_Learn_Spell(player_idx, spl_Call_The_Void);
     TST_Learn_Spell(player_idx, spl_Earthquake);
-    // Frienly Stack
+    // Friendly Stack
     TST_Learn_Spell(player_idx, spl_Chaos_Channels);
     TST_Learn_Spell(player_idx, spl_Lycanthropy);
     TST_Learn_Spell(player_idx, spl_Natures_Cures);

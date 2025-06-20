@@ -17,6 +17,7 @@
 #include "MOX/MOX_TYPE.H"
 #include "MOX/SOUND.H"
 
+#include "LVLMAKE.H"
 #include "CityScr.H"  /* City_Screen__WIP(); */
 #include "MainScr.H"
 #include "MainScr_Maps.H"
@@ -4574,7 +4575,7 @@ void Diplomacy_Growth_For_Enchantments__WIP(void)
     clears stasis
     ...
     _UNITS[itr_units].XP += 1;
-    New_Level = Calc_Unit_Level(itr_units);
+    hero_level = Calc_Unit_Level(itr_units);
     Hero_LevelUp_Popup(itr_units);
     _UNITS[itr_units].Level = Calc_Unit_Level(itr_units);    
     ...
@@ -4587,7 +4588,7 @@ void Do_All_Units_XP_Check_(void)
     /* TODO  init to zeroes (But, HOW!?!?!) */  static struct s_BATTLE_UNIT battle_unit;  // // sizeof: 6Eh  110d
     int16_t Processed_Hero_List[NUM_HEROES] = { 0, 0, 0, 0, 0, 0 };
     int16_t troop_list[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t New_Level = 0;
+    int16_t hero_level = 0;
     int16_t hero_unit_idx = 0;
     int16_t troop_count = 0;
     int16_t Highest_Armsmaster_XP = 0;
@@ -4616,6 +4617,9 @@ void Do_All_Units_XP_Check_(void)
 
         }
 
+        /*
+            BEGIN:  Stasis
+        */
         if((_UNITS[itr_units].mutations & C_STASISLINGER) != 0)
         {
 
@@ -4624,7 +4628,7 @@ void Do_All_Units_XP_Check_(void)
             if(Combat_Resistance_Check(battle_unit, -5, sbr_Sorcery) == 0)
             {
 
-                _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0x7F /*0b01111111*/);  // ¿ xor     al, C_STASISLINGER  10000000b ?
+                _UNITS[itr_units].mutations ^= C_STASISLINGER;
 
             }
 
@@ -4633,12 +4637,18 @@ void Do_All_Units_XP_Check_(void)
         if((_UNITS[itr_units].mutations & C_STASISINIT) != 0)
         {
 
-            _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations | C_STASISLINGER);
+            _UNITS[itr_units].mutations |= C_STASISLINGER;
 
-            _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0xBF /*0b10111111*/);  // ¿ xor     al, C_STASISINIT  01000000b ?
+            _UNITS[itr_units].mutations ^= C_STASISINIT;
 
         }
+        /*
+            END:  Stasis
+        */
 
+        /*
+            BEGIN:  Experience Points & Experience Level
+        */
         if(
             ((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_FANTASTIC) == 0)
             &&
@@ -4654,7 +4664,7 @@ void Do_All_Units_XP_Check_(void)
 
             _UNITS[itr_units].XP += 1;
 
-            New_Level = Calc_Unit_Level(itr_units);
+            hero_level = Calc_Unit_Level(itr_units);
 
             if(_UNITS[itr_units].Hero_Slot > -1)
             {
@@ -4662,7 +4672,7 @@ void Do_All_Units_XP_Check_(void)
                 if(_UNITS[itr_units].owner_idx == HUMAN_PLAYER_IDX)
                 {
 
-                    if(_UNITS[itr_units].Level < New_Level)
+                    if(_UNITS[itr_units].Level < hero_level)
                     {
 
                         Hero_LevelUp_Popup(itr_units);
@@ -4676,6 +4686,9 @@ void Do_All_Units_XP_Check_(void)
             _UNITS[itr_units].Level = Calc_Unit_Level(itr_units);
 
         }
+        /*
+            END:  Experience Points & Experience Level
+        */
 
 
     }

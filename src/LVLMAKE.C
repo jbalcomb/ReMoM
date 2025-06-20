@@ -12,10 +12,11 @@
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
 #include "MOX/MOX_TYPE.H"
-#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 
 #include "Help.H"
+#include "MainScr.H"
+#include "SBookScr.H"
 #include "UnitStat.H"
 #include "UnitView.H"
 
@@ -282,26 +283,40 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
 
         if(input_field_idx == hotkey_ESC)
         {
+
             leave_screen = ST_UNDEFINED;
+
         }
 
         if(leave_screen == ST_FALSE)
         {
+
             Copy_Back_To_Off();
+
             Hero_LevelUp_Popup_Draw();
+
             PageFlip_FX();
+
             Release_Time(1);
+
         }
 
     }
 
     Cache_Graphics_Overland();
+
     Deactivate_Help_List();
+
     Reset_Window();
+
     Clear_Fields();
+
     Deactivate_Auto_Function();
+
     Allocate_Reduced_Map();
+
     OVL_MosaicFlip__STUB();
+
     // DOMSDOS  Play_Background_Music__STUB();
     sdl2_Play_Background_Music__WIP();
 
