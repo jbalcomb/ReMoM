@@ -21,16 +21,16 @@ extern "C" {
 */
 
 // WZD o143p01
-void Set_Terrain_Type_Volcano(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx);
+void Set_Terrain_Type_Volcano_With_Owner(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx);
 
 // WZD o143p02
 void Volcano_Counts(void);
 
 // WZD o143p03
-// TILE_MakeGrassland()
+void Set_Terrain_Type_Grasslands(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o143p04
-// TILE_MakeForest()
+void Set_Terrain_Type_Forest(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o143p05
 // RP_TILE_MakeDesert()
@@ -39,7 +39,7 @@ void Volcano_Counts(void);
 void Set_Terrain_Type_Mountain(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o143p07
-// TILE_MakeHill()
+void Set_Terrain_Type_Hills(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o143p08
 // TILE_AdjustMapFlow()

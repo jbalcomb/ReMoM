@@ -1,9 +1,6 @@
 
-git commit -m "add Overland Specials 'Stasis'"
-
-git commit -m "add Overland Specials 'Healing'"
-
 git commit -m "add Overland Specials 'Change Terrain'"
+
 git commit -m "add Overland Specials 'Corruption'"
 git commit -m "add Overland Specials 'Earth Lore'"
 git commit -m "add Overland Specials 'Enchant Road'"
@@ -172,7 +169,7 @@ Spreadsheet - OSG Spells by Realm
 [ ] Natures eye
 [x] Ice Bolt
 [x] Giant Spiders
-[ ] Change Terrain
+[x] Change Terrain
 [x] Path Finding
 [x] Cockatrices
 [ ] Transmute

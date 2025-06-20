@@ -420,14 +420,14 @@ enum OVL_Tiles_Extended
     _Shore10101111  = 0xA1,
     _Grasslands1    = 0xA2,
     _Forest1        = 0xA3,
-    tte_1Mountain1   = 0xA4,  /* type used by Set_Terrain_Type_Mountain() */
+    tte_1Mountain1  = 0xA4,  /* type used by Set_Terrain_Type_Mountain() */
     _AllDesert1     = 0xA5,
     _Swamp1         = 0xA6,
     _AllTundra1     = 0xA7,
     _SorceryLake    = 0xA8,
     _NatureForest   = 0xA9,
     _ChaosVolcano   = 0xAA,
-    _1Hills1        = 0xAB,
+    tte_1Hills1     = 0xAB,
     _Grasslands2    = 0xAC,
     _Grasslands3    = 0xAD,
     _AllDesert2     = 0xAE,
@@ -435,7 +435,7 @@ enum OVL_Tiles_Extended
     _AllDesert4     = 0xB0,
     _Swamp2         = 0xB1,
     _Swamp3         = 0xB2,
-    tte_Volcano      = 0xB3,  /* type used by Set_Terrain_Type_Volcano() */
+    tte_Volcano     = 0xB3,  /* type used by Set_Terrain_Type_Volcano() */
     _Grasslands4    = 0xB4,
     _AllTundra2     = 0xB5,
     _AllTundra3     = 0xB6,

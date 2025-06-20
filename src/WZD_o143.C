@@ -24,11 +24,15 @@
 
 // WZD dseg:6EAC BEGIN:  ovr143 - Initialized Data
 
-// WZD dseg:6EAC TBL_Conv_Grassland dw _Grasslands1, _Grasslands2, _Grasslands3
-// WZD dseg:6EB2 TBL_Conv_Forest dw _Forest1, _Forest2, _Forest3 ; adjusted in the TERRSTAT patch (A3 -> B4)
-// WZD dseg:6EB8 UU_TBL_Conv_Desert dw _AllDesert2, _AllDesert3, _AllDesert3 ; adjusted in the TERRSTAT patch (AE -> A3)
-// WZD dseg:6EB8                                         ; the last 4 bytes can be repurposed
-// WZD dseg:6EBE terrtype_lbx_file__ovr143 db 'TERRTYPE',0
+// WZD dseg:6EAC
+int16_t rnd_grasslands[3] = { _Grasslands1, _Grasslands2, _Grasslands3 };
+// WZD dseg:6EB2
+int16_t rnd_forests[3] = { _Forest1, _Forest2, _Forest3 };
+// WZD dseg:6EB8
+int16_t rnd_deserts[3] = { _AllDesert2, _AllDesert3, _AllDesert3 };
+
+// WZD dseg:6EBE 
+char terrtype_lbx_file__ovr143[] = "TERRTYPE";
 
 // WZD dseg:6EC7
 char cityname_lbx_file__ovr143[] = "CITYNAME";
@@ -51,7 +55,7 @@ char cityname_lbx_file__ovr143[] = "CITYNAME";
 ; BUG: does not update movement costs (fixed in the TERRSTAT patch)
 ; BUG: fails to create minerals
 */
-void Set_Terrain_Type_Volcano(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx)
+void Set_Terrain_Type_Volcano_With_Owner(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx)
 {
     uint16_t terrain_type = 0;
     int16_t terrain_special = 0;
@@ -64,12 +68,7 @@ void Set_Terrain_Type_Volcano(int16_t wx, int16_t wy, int16_t wp, int16_t player
 
     _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = (_map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] | (player_idx + 1) );
 
-
-    // ; adjusts the extended tile type (graphic) of the tile
-    // ; and all adjacent tiles to produce a seamless flow of
-    // ; desert, tundra, hill, and mountain tiles
     // TODO  TILE_AdjustMapFlow(wx, wy, wp);
-
 
     terrain_special = *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx);
 
@@ -142,13 +141,44 @@ void Volcano_Counts(void)
 }
 
 // WZD o143p03
-// TILE_MakeGrassland()
+void Set_Terrain_Type_Grasslands(int16_t wx, int16_t wy, int16_t wp)
+{
+
+    SET_TERRAIN_TYPE(wx, wy, wp, rnd_grasslands[(Random(2) - 1)]);  // ¿ BUGBUG   3 types in the arrays, 4 types overall ?
+
+    // TODO  TILE_AdjustMapFlow(wx, wy, wp);
+
+    SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) & 0xF8 /*0b11111000*/));  // clear the volcano player idx
+
+}
+
 
 // WZD o143p04
-// TILE_MakeForest()
+void Set_Terrain_Type_Forest(int16_t wx, int16_t wy, int16_t wp)
+{
+
+    SET_TERRAIN_TYPE(wx, wy, wp, rnd_forests[(Random(3) - 1)]);
+
+    // TODO  TILE_AdjustMapFlow(wx, wy, wp);
+
+    SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) & 0xF8 /*0b11111000*/));  // clear the volcano player idx
+
+}
+
 
 // WZD o143p05
-// RP_TILE_MakeDesert()
+// drake178: RP_TILE_MakeDesert()
+void Set_Terrain_Type_Desert(int16_t wx, int16_t wy, int16_t wp)
+{
+
+    SET_TERRAIN_TYPE(wx, wy, wp, rnd_deserts[(Random(3) - 1)]);
+
+    // TODO  TILE_AdjustMapFlow(wx, wy, wp);
+
+    SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) & 0xF8 /*0b11111000*/));  // clear the volcano player idx
+
+}
+
 
 // WZD o143p06
 // drake178: TILE_MakeMountain()
@@ -158,14 +188,9 @@ void Volcano_Counts(void)
 */
 void Set_Terrain_Type_Mountain(int16_t wx, int16_t wy, int16_t wp)
 {
-    uint16_t terrain_type;
-    int16_t terrain_special;
 
     SET_TERRAIN_TYPE(wx, wy, wp, tte_1Mountain1);
 
-    // ; adjusts the extended tile type (graphic) of the tile
-    // ; and all adjacent tiles to produce a seamless flow of
-    // ; desert, tundra, hill, and mountain tiles
     // TODO  TILE_AdjustMapFlow(wx, wy, wp);
 
     SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) & 0xF8 /*0b11111000*/));  // clear the volcano player idx
@@ -174,7 +199,17 @@ void Set_Terrain_Type_Mountain(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD o143p07
-// TILE_MakeHill()
+void Set_Terrain_Type_Hills(int16_t wx, int16_t wy, int16_t wp)
+{
+
+    SET_TERRAIN_TYPE(wx, wy, wp, tte_1Hills1);
+
+    // TODO  TILE_AdjustMapFlow(wx, wy, wp);
+
+    SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) & 0xF8 /*0b11111000*/));  // clear the volcano player idx
+
+}
+
 
 // WZD o143p08
 // TILE_AdjustMapFlow()

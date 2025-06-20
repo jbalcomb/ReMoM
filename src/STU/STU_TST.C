@@ -72,26 +72,22 @@ void TST_Patch_Game_Data(void)
     // TST_Learn_Spell(player_idx, spl_Astral_Gate);
 
     // Combat  scc_Special_Spell   5
-    // Friendly City
-    TST_Learn_Spell(player_idx, spl_Move_Fortress);
-    TST_Learn_Spell(player_idx, spl_Spell_Ward);
-    TST_Learn_Spell(player_idx, spl_Wall_Of_Stone);
-    // Enemy City
-    TST_Learn_Spell(player_idx, spl_Call_The_Void);
-    TST_Learn_Spell(player_idx, spl_Earthquake);
-    // Friendly Stack
-    TST_Learn_Spell(player_idx, spl_Chaos_Channels);
-    TST_Learn_Spell(player_idx, spl_Lycanthropy);
-    TST_Learn_Spell(player_idx, spl_Natures_Cures);
-    TST_Learn_Spell(player_idx, spl_Plane_Shift);
-    TST_Learn_Spell(player_idx, spl_Word_Of_Recall);
-    // Enemy Stack
-    TST_Learn_Spell(player_idx, spl_Black_Wind);
-    TST_Learn_Spell(player_idx, spl_Stasis);
-    // Friendly Unit
-    TST_Learn_Spell(player_idx, spl_Healing);
-    // Enemy Unit
-    // DNE
+    // // Friendly City
+    // TST_Learn_Spell(player_idx, spl_Move_Fortress);
+    // TST_Learn_Spell(player_idx, spl_Spell_Ward);
+    // TST_Learn_Spell(player_idx, spl_Wall_Of_Stone);
+    // // Enemy City
+    // TST_Learn_Spell(player_idx, spl_Call_The_Void);
+    // TST_Learn_Spell(player_idx, spl_Earthquake);
+    // // Friendly Unit/Group
+    // TST_Learn_Spell(player_idx, spl_Chaos_Channels);
+    // TST_Learn_Spell(player_idx, spl_Lycanthropy);
+    // TST_Learn_Spell(player_idx, spl_Natures_Cures);
+    // TST_Learn_Spell(player_idx, spl_Plane_Shift);
+    // TST_Learn_Spell(player_idx, spl_Word_Of_Recall);
+    // // Enemy Unit/Group
+    // TST_Learn_Spell(player_idx, spl_Black_Wind);
+    // TST_Learn_Spell(player_idx, spl_Stasis);
     // Map Square
     TST_Learn_Spell(player_idx, spl_Change_Terrain);
     TST_Learn_Spell(player_idx, spl_Corruption);
@@ -100,7 +96,7 @@ void TST_Patch_Game_Data(void)
     TST_Learn_Spell(player_idx, spl_Raise_Volcano);
     TST_Learn_Spell(player_idx, spl_Transmute);
     TST_Learn_Spell(player_idx, spl_Warp_Node);
-    // N/A
+    // N/A  (99)
     TST_Learn_Spell(player_idx, spl_Death_Wish);
     TST_Learn_Spell(player_idx, spl_Great_Unsummoning);
     TST_Learn_Spell(player_idx, spl_Incarnation);

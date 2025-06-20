@@ -1561,7 +1561,7 @@ Capture_Cities_Data();
                         case spl_Change_Terrain:
                         {
 
-                            Cast_Successful = Cast_ChangeTerain(player_idx);
+                            Cast_Successful = Cast_Change_Terrain(player_idx);
 
                         } break;
 
