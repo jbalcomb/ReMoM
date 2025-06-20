@@ -1610,7 +1610,7 @@ Capture_Cities_Data();
                         case spl_Word_Of_Recall:
                         {
 
-                            Cast_Successful = Cast_WordOfRecall(player_idx);
+                            Cast_Successful = Cast_Word_Of_Recall(player_idx);
 
                         } break;
 

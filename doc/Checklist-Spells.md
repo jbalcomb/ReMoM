@@ -1,6 +1,4 @@
 
-git commit -m "add Overland Specials 'Plane Shift'"
-
 git commit -m "add Overland Specials 'Word Of Recall'"
 
 git commit -m "add Overland Specials 'Black Wind'"

@@ -55,7 +55,7 @@ int16_t Cast_Transmute(int16_t player_idx);
 int16_t Cast_Corruption(int16_t player_idx);
 
 // WZD o130p12
-int16_t Cast_WordOfRecall(int16_t player_idx);
+int16_t Cast_Word_Of_Recall(int16_t player_idx);
 
 // WZD o130p13
 int16_t Cast_EnchantRoad(int16_t player_idx);

@@ -291,10 +291,63 @@ int16_t Cast_Corruption(int16_t player_idx)
 
 
 // WZD o130p12
-int16_t Cast_WordOfRecall(int16_t player_idx)
+int16_t Cast_Word_Of_Recall(int16_t player_idx)
 {
+    int16_t scsv5 = 0;
+    int16_t scsv4 = 0;
+    int16_t scsv3 = 0;
+    int16_t scsv2 = 0;
+    int16_t scsv1 = 0;
+    int16_t return_value = 0;  // _DI_
 
-    return ST_FALSE;
+    Allocate_Reduced_Map();
+
+    Mark_Block(_screen_seg);
+
+    if(player_idx == HUMAN_PLAYER_IDX)
+    {
+
+        return_value = Spell_Casting_Screen__WIP(stt_Friendly_Unit, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aWordOfRecall);
+
+    }
+    else
+    {
+
+        return_value = IDK_Pick_Target_For_Unit_Enchantment__STUB(stt_Friendly_Unit, &scsv1, spl_Word_Of_Recall, player_idx);
+
+    }
+
+    if(return_value == ST_TRUE)
+    {
+
+        if(
+            (player_idx == HUMAN_PLAYER_IDX)
+            ||
+            (Check_Square_Scouted(_UNITS[scsv1].wx, _UNITS[scsv1].wy, _UNITS[scsv1].wp) != ST_FALSE)
+        )
+        {
+
+            Spell_Animation_Load_Sound_Effect__WIP(spl_Word_Of_Recall);
+
+            Spell_Animation_Load_Graphics(spl_Word_Of_Recall);
+
+            Spell_Animation_Screen__WIP(_UNITS[scsv1].wx, _UNITS[scsv1].wy, _UNITS[scsv1].wp);
+
+        }
+
+        _UNITS[scsv1].wx = _players[player_idx].summon_wx;
+        _UNITS[scsv1].wy = _players[player_idx].summon_wy;
+        _UNITS[scsv1].wp = _players[player_idx].summon_wp;
+
+        UNIT_RemoveExcess(scsv1);
+
+    }
+
+    Full_Draw_Main_Screen();
+
+    Release_Block(_screen_seg);
+
+    return return_value;
 
 }
 
