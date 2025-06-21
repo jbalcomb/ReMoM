@@ -1,7 +1,6 @@
 
-git commit -m "add Overland Specials 'Enchant Road'"
-
 git commit -m "add Overland Specials 'Raise Volcano'"
+
 git commit -m "add Overland Specials 'Transmute'"
 git commit -m "add Overland Specials 'Warp Node'"
 
@@ -248,7 +247,7 @@ Spreadsheet - OSG Spells by Realm
 [X] Gargoyles
 [x] Fireball
 [X] Doombat
-[ ] Raise Volcano
+[x] Raise Volcano
 [x] Immolation
 [X] Chimeras
 [x] Warp Lightning

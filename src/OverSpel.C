@@ -1653,7 +1653,7 @@ Capture_Cities_Data();
                         case spl_Raise_Volcano:
                         {
 
-                            Cast_Successful = Cast_RaiseVolcano(player_idx);
+                            Cast_Successful = Cast_Raise_Volcano(player_idx);
 
                         } break;
 

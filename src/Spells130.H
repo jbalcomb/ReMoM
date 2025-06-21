@@ -46,7 +46,7 @@ void Cast_Spell_Binding(int16_t player_idx);
 int16_t Cast_Change_Terrain(int16_t player_idx);
 
 // WZD o130p09
-int16_t Cast_RaiseVolcano(int16_t player_idx);
+int16_t Cast_Raise_Volcano(int16_t player_idx);
 
 // WZD o130p10
 int16_t Cast_Transmute(int16_t player_idx);

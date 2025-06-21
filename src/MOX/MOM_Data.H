@@ -1997,9 +1997,9 @@ struct s_MSG_BUILDING_COMPLETE
 #pragma pack(2)
 struct s_MSG_BUILDING_LOST
 {
-    /* 00 */ int8_t city_idx;
+    /* 00 */ int8_t city_idx;  // 1-byte, signed
     /* 01 */ char align2B_01h; // 2-byte alignment padding
-    /* 02 */ int16_t bldg_type_idx;
+    /* 02 */ int16_t bldg_type_idx;  // 2-byte, signed
     /* 04 */
 };
 #pragma pack(pop)

@@ -90,7 +90,8 @@ This can be used by the software to synchronize the sound with an animation.
 
 ## Block type 0x05: Text
 bytes 0..n   zero terminated string
-Block type 0x06: Repeat start
+
+## Block type 0x06: Repeat start
 bytes 0-1    repeat count - 1
 The sound data following this block and up to the next Repeat end block is repeated count+1 times. When count == 0xFFFF this means endless repetitions.
 

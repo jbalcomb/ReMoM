@@ -381,14 +381,14 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
     // digi_sound_buffer1 = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_IntroT3, _screen_seg);
     // // TORAN3M1    intro speech
     // voc_len: 80602
+#ifdef STU_DEBUG
+    dbg_prn("voc_len: %u\n", voc_len);
     if(voc_len >= (128 * 1024))
     {
-#ifdef STU_DEBUG
-        dbg_prn("voc_len: %u\n", voc_len);
-#endif
         STU_DEBUG_BREAK();
         // Pssst... is your size var for lbxload_entry_length a uint32_t?
     }
+#endif
 
     if(wav_buffer_idx == MAX_WAV_BUFFER_IDX)
     {
@@ -433,7 +433,7 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
 
         voc_block_type = voc_rvr[0];
 
-        switch (voc_block_type)
+        switch(voc_block_type)
         {
         case 0:  /* VOC_TYPE_EOF */
         {
@@ -446,14 +446,20 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
             voc_block_size =  voc_rvr[3] << 16;
             voc_block_size |= voc_rvr[2] <<  8;
             voc_block_size |= voc_rvr[1];
-            voc_block_size -= 2;  // -2 for sample rate and codec id
-            if(voc_block_size >= (128 * 1024))
-            {
 #ifdef STU_DEBUG
-                dbg_prn("voc_block_size: %u\n", voc_block_size);
-#endif
+            dbg_prn("voc_block_size: %u\n", voc_block_size);
+            if(voc_len >= (128 * 1024))
+            {
                 STU_DEBUG_BREAK();
             }
+#endif
+            voc_block_size -= 2;  // -2 for sample rate and codec id
+#ifdef STU_DEBUG
+            if(voc_len >= (128 * 1024))
+            {
+                STU_DEBUG_BREAK();
+            }
+#endif
             voc_len -= 6;  // -6 for block type, block size, sample rate, and codec id
             voc_rvr += 6;  // +6 for block type, block size, sample rate, and codec id
             voc_block_frequency = 1000000 / (256 - voc_block_sample_rate);  // sample rate in hertz
@@ -464,15 +470,33 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
             }
             wav_sample_count += voc_block_size;
             voc_len -= voc_block_size;
-            while(voc_block_size--)
+#ifdef STU_DEBUG
+            dbg_prn("voc_len: %u\n", voc_len);
+    if(voc_len >= (128 * 1024))
+    {
+        STU_DEBUG_BREAK();
+    }
+#endif
+
+            while(voc_block_size)
             {
                 sample_8bit_unsigned = *voc_rvr++;
                 *wav_rvr++ = sample_8bit_unsigned;
+                voc_block_size--;
+#ifdef STU_DEBUG
+            if(voc_len >= (128 * 1024))
+            {
+                dbg_prn("voc_block_size: %u\n", voc_block_size);
+                STU_DEBUG_BREAK();
+            }
+#endif
             }
         } break;
         default:
         {
-            STU_DEBUG_BREAK();
+            DLOG("FIXME - BAD/UNKNOWN VOC BLOCK TYPE")
+            voc_len = 0;
+            // STU_DEBUG_BREAK();
         } break;
         }
     }

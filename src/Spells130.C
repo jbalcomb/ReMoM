@@ -39,6 +39,7 @@
 #include "Terrain.H"
 #include "UNITTYPE.H"
 #include "WZD_o059.H"
+#include "WZD_o143.H"
 
 
 
@@ -774,10 +775,254 @@ int16_t Cast_Change_Terrain(int16_t player_idx)
 
 
 // WZD o130p09
-int16_t Cast_RaiseVolcano(int16_t player_idx)
+int16_t Cast_Raise_Volcano(int16_t player_idx)
 {
+    int16_t bldg_list[NUM_BUILDINGS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t ctr = 0;
+    int16_t list[2] = { 0, 0 };
+    int16_t target_is_human = 0;
+    int16_t bldg_idx = 0;
+    int16_t status = 0;
+    int16_t return_value = 0;  // _DI_
+    int16_t scsv5 = 0;
+    int16_t scsv4 = 0;
+    int16_t scsv3 = 0;
+    int16_t scsv2 = 0;
+    int16_t scsv1 = 0;
+    int16_t terrain_type = 0;  // _SI_
+    int16_t city_idx = 0;  // _SI_
 
-    return ST_FALSE;
+    return_value = ST_TRUE;
+
+    target_is_human = ST_FALSE;
+
+    if(player_idx != HUMAN_PLAYER_IDX)
+    {
+
+        return_value = Get_Map_Square_Target_For_Spell(stt_Map_Square, &scsv1, &scsv2, &scsv3, spl_Raise_Volcano, player_idx);
+
+    }
+    else
+    {
+
+        status = ST_FALSE;
+
+        while((status == ST_FALSE) && (return_value == ST_TRUE))
+        {
+
+            return_value = Spell_Casting_Screen__WIP(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aRaiseVolcano);
+
+            if(return_value == ST_TRUE)
+            {
+
+                status = ST_TRUE;
+
+                if(Square_Is_Sailable(scsv1, scsv2, scsv3) != ST_FALSE)
+                {
+
+                        status = ST_FALSE;
+
+                        LBX_Load_Data_Static(message_lbx_file__ovr130, 0, (SAMB_ptr)&GUI_NearMsgString[0], 36, 1, 150);
+
+                        Warn0(GUI_NearMsgString);
+
+                }
+                else if(Square_Is_Mountain(scsv1, scsv2, scsv3) != ST_FALSE)
+                {
+
+                        status = ST_FALSE;
+
+                        LBX_Load_Data_Static(message_lbx_file__ovr130, 0, (SAMB_ptr)&GUI_NearMsgString[0], 37, 1, 150);
+
+                        Warn0(GUI_NearMsgString);
+
+                }
+                else if(Square_Is_Hills(scsv1, scsv2, scsv3) != ST_FALSE)
+                {
+
+                        status = ST_FALSE;
+
+                        LBX_Load_Data_Static(message_lbx_file__ovr130, 0, (SAMB_ptr)&GUI_NearMsgString[0], 38, 1, 150);
+
+                        Warn0(GUI_NearMsgString);
+
+                }
+                else if(Square_Is_River(scsv1, scsv2, scsv3) != ST_FALSE)
+                {
+
+                        status = ST_FALSE;
+
+                        LBX_Load_Data_Static(message_lbx_file__ovr130, 0, (SAMB_ptr)&GUI_NearMsgString[0], 86, 1, 150);
+
+                        Warn0(GUI_NearMsgString);
+
+                }
+                else
+                {
+
+                    terrain_type = TERRAIN_TYPE(scsv1, scsv2, scsv3);
+
+                    if(
+                        (terrain_type == tt_ChaosNode)
+                        &&
+                        (terrain_type == tt_SorceryNode)
+                        &&
+                        (terrain_type = tt_NatureNode)
+                    )
+                    {
+
+                        status = ST_FALSE;
+
+                        LBX_Load_Data_Static(message_lbx_file__ovr130, 0, (SAMB_ptr)&GUI_NearMsgString[0], 39, 1, 150);
+
+                        Warn0(GUI_NearMsgString);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    if(return_value == ST_TRUE)
+    {
+
+        target_is_human = ST_FALSE;
+
+        for(city_idx = 0; ((city_idx < _cities) && (target_is_human == ST_FALSE)); city_idx++)
+        {
+
+            if(
+                (
+                    (abs((_CITIES[city_idx].wx - scsv1)) <= 2)
+                    ||
+                    (abs((_CITIES[city_idx].wx - scsv1)) >= 58)
+                )
+                &
+                (abs((_CITIES[city_idx].wy - scsv2)) <= 2)
+                &&
+                (_CITIES[city_idx].wp == scsv3)
+            )
+            {
+
+                list[ctr] = city_idx;
+
+                if(_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+                {
+
+                    target_is_human = ST_TRUE;
+
+                }
+
+                city_idx++;
+
+            }
+
+        }
+
+
+        if(
+            (_CITIES[city_idx].wx == scsv1)
+            &&
+            (_CITIES[city_idx].wy == scsv2)
+            &&
+            (_CITIES[city_idx].wp == scsv3)
+        )
+        {
+
+            if(
+                (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+                ||
+                (player_idx == HUMAN_PLAYER_IDX)
+            )
+            {
+
+                Apply_Damage_To_City(city_idx, 0, 15, &bldg_list[0]);
+
+                if(_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+                {
+
+                    for(bldg_idx = 0; bldg_idx < NUM_BUILDINGS; bldg_idx++)
+                    {
+
+                        if(MSG_BldLost_Count < 20)
+                        {
+
+                            if(bldg_list[bldg_idx] > bs_Replaced)
+                            {
+
+                                MSG_BldLost_Array[MSG_BldLost_Count].city_idx = scsv1;  // BUGBUG  should be city_idx, not wx
+
+                                MSG_BldLost_Array[MSG_BldLost_Count].bldg_type_idx = bldg_list[bldg_idx];
+
+                                MSG_BldLost_Count++;
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        if(return_value == ST_TRUE)
+        {
+
+            if(
+                (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+                ||
+                (player_idx == HUMAN_PLAYER_IDX)
+                ||
+                (SQUARE_EXPLORED(scsv1, scsv2, scsv3) != ST_FALSE)
+            )
+            {
+
+                AI_Eval_After_Spell = ST_TRUE;
+
+                Allocate_Reduced_Map();
+
+                Spell_Animation_Load_Sound_Effect__WIP(spl_Raise_Volcano);
+
+                Spell_Animation_Load_Graphics(spl_Raise_Volcano);
+
+                Spell_Animation_Screen__WIP(scsv1, scsv2, scsv3);
+
+            }
+
+            Set_Terrain_Type_Volcano_With_Owner(scsv1, scsv2, scsv3, player_idx);
+
+            Full_Draw_Main_Screen();
+
+            if(ctr > 0)
+            {
+
+                Change_Relations_For_Bad_City_Spell(player_idx, spl_Raise_Volcano, list[0]);
+
+                if(ctr > 1)
+                {
+
+                    Change_Relations_For_Bad_City_Spell(player_idx, spl_Raise_Volcano, list[1]);
+
+                }
+
+            }
+
+        }
+
+    }
+
+    Full_Draw_Main_Screen();
+
+    Release_Block(_screen_seg);
+
+    return return_value;
 
 }
 
@@ -794,14 +1039,14 @@ int16_t Cast_Transmute(int16_t player_idx)
 // WZD o130p11
 int16_t Cast_Corruption(int16_t player_idx)
 {
-    int16_t var_22 = 0;
-    int16_t var_20[2] = { 0, 0 };
+    int16_t ctr = 0;
+    int16_t list[2] = { 0, 0 };
     int16_t saved_map_plane = 0;
     int16_t saved_map_y = 0;
     int16_t saved_map_x = 0;
     SAMB_ptr soundfx_seg = 0;
     uint32_t soundfx_seg_size = 0;
-    int16_t var_14 = 0;
+    int16_t target_is_human = 0;
     int16_t frame_count = 0;
     int16_t terrain_type = 0;
     int16_t status = 0;
@@ -813,7 +1058,7 @@ int16_t Cast_Corruption(int16_t player_idx)
     int16_t scsv1 = 0;
     int16_t itr = 0;  // _SI_
 
-    var_14 = 0;
+    target_is_human = ST_FALSE;
 
     Allocate_Reduced_Map();
 
@@ -893,7 +1138,7 @@ int16_t Cast_Corruption(int16_t player_idx)
 
     }
 
-    var_22 = 0;
+    ctr = 0;
 
     for(itr = 0; itr < _cities; itr++)
     {
@@ -910,16 +1155,16 @@ int16_t Cast_Corruption(int16_t player_idx)
             (_CITIES[itr].wp == scsv3)
         )
         {
-            var_20[var_22] = itr;
+            list[ctr] = itr;
 
             if(_CITIES[itr].owner_idx == HUMAN_PLAYER_IDX)
             {
 
-                var_14 = ST_TRUE;
+                target_is_human = ST_TRUE;
 
             }
 
-            var_22++;
+            ctr++;
 
         }
 
@@ -959,7 +1204,7 @@ int16_t Cast_Corruption(int16_t player_idx)
         if(
             (player_idx == HUMAN_PLAYER_IDX)
             ||
-            (var_14 == ST_TRUE)
+            (target_is_human == ST_TRUE)
             ||
             (
                 (magic_set.enemy_spells == ST_TRUE)
@@ -1043,15 +1288,15 @@ int16_t Cast_Corruption(int16_t player_idx)
 
         }
 
-        if(var_22 > 0)
+        if(ctr > 0)
         {
 
-            Change_Relations_For_Bad_City_Spell(player_idx, spl_Corruption, var_20[0]);
+            Change_Relations_For_Bad_City_Spell(player_idx, spl_Corruption, list[0]);
 
-            if(var_22 > 1)
+            if(ctr > 1)
             {
 
-                Change_Relations_For_Bad_City_Spell(player_idx, spl_Corruption, var_20[1]);
+                Change_Relations_For_Bad_City_Spell(player_idx, spl_Corruption, list[1]);
 
             }
 
