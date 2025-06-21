@@ -3,6 +3,7 @@
         ovr130
 */
 
+#include "CITYCALC.H"
 #include "MOX/Fonts.H"
 #include "MainScr_Maps.H"
 #include "Spells130.H"
@@ -338,7 +339,6 @@ int16_t Cast_Earth_Lore(int16_t player_idx)
     // SOUNDFX.LBX, 106  "SILENT V"  "sILENCE"
     soundfx_seg = LBX_Reload_Next(soundfx_lbx_file__ovr130, 106, _screen_seg);
     soundfx_seg_size = lbxload_entry_length;
-
 
     if(return_value == ST_TRUE)
     {
@@ -1140,10 +1140,165 @@ int16_t Cast_Word_Of_Recall(int16_t player_idx)
 
 
 // WZD o130p13
-int16_t Cast_EnchantRoad(int16_t player_idx)
+int16_t Cast_Enchant_Road(int16_t player_idx)
 {
+    int16_t saved_map_plane = 0;
+    int16_t saved_map_y = 0;
+    int16_t saved_map_x = 0;
+    SAMB_ptr soundfx_seg = 0;
+    /* HACK */  uint32_t soundfx_seg_size = 0;  // DNE in Dasm
+    int16_t return_value = 0;
+    int16_t scsv5 = 0;
+    int16_t scsv4 = 0;
+    int16_t scsv3 = 0;
+    int16_t scsv2 = 0;
+    int16_t scsv1 = 0;
+    int16_t itr = 0;
+    int16_t curr_wx = 0;
 
-    return ST_FALSE;
+    int16_t itr_wx = 0;  // _SI_
+    int16_t itr_wy = 0;  // _DI_
+
+    saved_map_x = _map_x;
+    saved_map_y = _map_y;
+    saved_map_plane = _map_plane;
+
+    Allocate_Reduced_Map();
+
+    Mark_Block(_screen_seg);
+
+    // SOUNDFX.LBX, 106  "SILENT V"  "sILENCE"
+    soundfx_seg = LBX_Reload_Next(soundfx_lbx_file__ovr130, 106, _screen_seg);
+    soundfx_seg_size = lbxload_entry_length;
+    
+    if(player_idx == HUMAN_PLAYER_IDX)
+    {
+
+        return_value = Spell_Casting_Screen__WIP(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aEnchantRoad);
+
+    }
+    else
+    {
+        
+        return_value = Get_Map_Square_Target_For_Spell(stt_Map_Square, &scsv1, &scsv2, &scsv3, spl_Enchant_Road, player_idx);
+
+    }
+
+    if(return_value == ST_TRUE)
+    {
+
+        if(
+            (player_idx == HUMAN_PLAYER_IDX)
+            ||
+            (
+                (magic_set.enemy_spells == ST_TRUE)
+                &&
+                (SQUARE_EXPLORED(scsv1, scsv2, scsv3) != ST_FALSE)
+            )
+        )
+        {
+
+            Center_Map(&_map_x, &_map_y, scsv1, scsv2, scsv3);
+
+            _map_plane = scsv3;
+
+            Mark_Time();
+
+            Release_Time(3);
+
+            Spell_Animation_Load_Sound_Effect__WIP(spl_Enchant_Road);
+
+            Update_Remap_Color_Range(1, 4);
+
+            // SPECFX.LBX, 046  "FULLBLUE"  "Enchant road"
+            Open_File_Animation__HACK(specfx_lbx_file__ovr130, 46);
+
+            for(itr = 0; itr < 22; itr++)
+            {
+
+                Mark_Time();
+
+                Set_Page_Off();
+
+                Fill(0, 20, 240, 199, ST_TRANSPARENT);
+
+                Reset_Map_Draw();
+
+                Main_Screen_Draw();
+
+                Draw_File_Animation__HACK();
+
+                PageFlip_FX();
+
+                Release_Time(2);
+
+            }
+
+
+            // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
+            sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
+
+            for(itr_wx = (scsv1 - 2); (scsv1 + 2) >= itr_wx; itr_wx++)
+            {
+
+                if(itr_wx < 0)
+                {
+
+                    curr_wx = (itr_wx + WORLD_WIDTH);
+
+                }
+                else if(itr_wx > WORLD_WIDTH)
+                {
+
+                    curr_wx = (itr_wx - WORLD_WIDTH);
+
+                }
+                else
+                {
+
+                    curr_wx = itr_wx;
+
+                }
+
+                for(itr_wy = (scsv2 - 2); (scsv2 + 2) >= itr_wy; itr_wy++)
+                {
+
+                    if(
+                        (itr_wy >= 0)
+                        &&
+                        (itr_wy <= WORLD_HEIGHT)
+                    )
+                    {
+
+                        Make_Road_Enchanted(curr_wx, itr_wy, scsv3);
+
+                    }
+
+                }
+
+            }
+            
+        }
+
+    }
+
+
+
+
+
+
+
+
+    
+    OVL_MosaicFlip__STUB();
+
+    Release_Block(_screen_seg);
+
+    _map_x = saved_map_x;
+    _map_y = saved_map_y;
+    _map_plane = saved_map_plane;
+
+    return return_value;
 
 }
 

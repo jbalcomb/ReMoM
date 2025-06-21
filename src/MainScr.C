@@ -5078,7 +5078,7 @@ Prep_Road_Path:
                 Current_Step = 0;
                 _UNITS[troops[itr_troops]].Rd_Constr_Left = ST_UNDEFINED;
                 _UNITS[troops[itr_troops]].Status = us_Ready;
-                TILE_CreateRoad(_UNITS[troops[itr_troops]].wx, _UNITS[troops[itr_troops]].wy, map_p);
+                Make_Road(_UNITS[troops[itr_troops]].wx, _UNITS[troops[itr_troops]].wy, map_p);
                 TILE_ResetRoadConns(_UNITS[troops[itr_troops]].wx, _UNITS[troops[itr_troops]].wy, map_p);
 Capture_Cities_Data();
             }
@@ -5398,7 +5398,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
     int16_t curr_src_sy;
     int16_t curr_src_sx;
     int16_t scout_range;
-    int16_t Building_Road;
+    int16_t build_road;
     int16_t curr_dst_wy;
     int16_t curr_dst_wx;
     int16_t unit_pict_sy;
@@ -5572,14 +5572,14 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
     }
 
 
-    Building_Road = ST_FALSE;
+    build_road = ST_FALSE;
     if(_UNITS[unit_idx].Rd_Constr_Left != -1)
     {
         if(_UNITS[unit_idx].Rd_Constr_Left == 99)
         {
             _UNITS[unit_idx].Rd_Constr_Left = -1;
         }
-        Building_Road = ST_TRUE;
+        build_road = ST_TRUE;
     }
 
 
@@ -5596,9 +5596,9 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
     curr_src_wy = unit_y;
 
 
-    if(Building_Road == ST_TRUE)
+    if(build_road == ST_TRUE)
     {
-        TILE_CreateRoad(unit_x, unit_y, map_p);
+        Make_Road(unit_x, unit_y, map_p);
         TILE_ResetRoadConns(unit_x, unit_y, map_p);
     }
 

@@ -935,7 +935,7 @@ Flying:
         terrain_flags_ptr = (int8_t *)&_map_square_flags[wp * WORLD_SIZE];
         movemap_ptr = (int8_t *)&movepath_cost_map->moves2;
         map_squares = WORLD_SIZE;
-        road_bits = (MSF_ROAD | TF_Enc_Road);
+        road_bits = (MSF_ROAD | MSF_EROAD);
         for(itr_squares = 0; itr_squares < map_squares; itr_squares++)
         {
             if((terrain_flags_ptr[itr_squares] & road_bits) != 0)

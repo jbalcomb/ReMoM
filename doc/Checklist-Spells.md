@@ -1,7 +1,6 @@
 
-git commit -m "add Overland Specials 'Earth Lore'"
-
 git commit -m "add Overland Specials 'Enchant Road'"
+
 git commit -m "add Overland Specials 'Raise Volcano'"
 git commit -m "add Overland Specials 'Transmute'"
 git commit -m "add Overland Specials 'Warp Node'"
@@ -77,7 +76,6 @@ Weird Ones?
     Create Artifact!    handled special during casting
     Earth Gate
     Enchant Item!       handled special during casting
-    Enchant Road
     Flying Fortress?
     Raise Volcano?
     Resurrection?
@@ -207,7 +205,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Disenchant True
 [x] Vertigo
 [x] Spell Lock
-[ ] Enchant Road
+[x] Enchant Road
 [x] Flight
 [x] Wind Mastery
 [x] Spell Blast

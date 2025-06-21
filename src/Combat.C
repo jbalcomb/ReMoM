@@ -26822,7 +26822,7 @@ void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp)
     int16_t Flying_Fortress = 0;
     /* combat map terrain set/core/base */
     int16_t cts = 0;
-    int16_t Enchanted_Roads = 0;
+    int16_t roads_enchanted = 0;
     int16_t City_House_Type = 0;
     int16_t City_Population = 0;
     int16_t Location_Type = 0;
@@ -27067,16 +27067,16 @@ void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp)
     }
 
 
-    if((MAP_SQUARE_FLAG(wx, wy, wp) & TF_Enc_Road) != 0)
+    if((MAP_SQUARE_FLAG(wx, wy, wp) & MSF_EROAD) != 0)
     {
 
-        Enchanted_Roads = ST_TRUE;
+        roads_enchanted = ST_TRUE;
 
     }
     else
     {
 
-        Enchanted_Roads = ST_FALSE;
+        roads_enchanted = ST_FALSE;
 
     }
 
@@ -27171,7 +27171,7 @@ void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp)
             Location_Type, 
             City_House_Type, 
             &Road_Matrix[0], 
-            Enchanted_Roads, 
+            roads_enchanted, 
             cts, 
             &River_Matrix[0], 
             Flying_Fortress, 

@@ -70,8 +70,8 @@ Meh. I put stuff in MoX_DEF.H that is meant to have access to this.
 // 0x02
 // 0x04
 #define MSF_ROAD        0x08
-#define TF_Enc_Road     0x10
-#define TF_AnyRoad      0x18    // (MSF_ROAD | TF_Enc_Road)
+#define MSF_EROAD       0x10
+#define TF_AnyRoad      0x18    // (MSF_ROAD | MSF_EROAD)
 #define MSF_CORRUPTION  0x20
 #define MSF_UNKNOWN_40H 0x40    // wild game?
 #define TF_NoRoad80     0x80    // ~== -1 ST_UNDEFINED

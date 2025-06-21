@@ -1428,9 +1428,8 @@ void UNIT_RemoveExcess(int16_t unit_idx)
 ; flag if set, but then also enchanting the road if the
 ; tile is on Myrror
 */
-void TILE_CreateRoad(int16_t wx, int16_t wy, int16_t wp)
+void Make_Road(int16_t wx, int16_t wy, int16_t wp)
 {
-    uint8_t terrain_flags;
 
     // TODO  EMM_Map_DataH();  // ; maps the EMM Data block into the page frame
 
@@ -1440,22 +1439,14 @@ void TILE_CreateRoad(int16_t wx, int16_t wy, int16_t wp)
     movement_mode_cost_maps[wp].mountaineer.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
     movement_mode_cost_maps[wp].swimming.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
 
-    terrain_flags = _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
-
     _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] |= MSF_ROAD;
 
-    terrain_flags = _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+    _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= ~(MSF_EROAD);
 
-    _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= ~(TF_Enc_Road);
-
-    terrain_flags = _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
-
-    if(wp == 1)  /* Myrror */
+    if(wp == MYRROR_PLANE)
     {
-        TILE_EnchantRoad(wx, wy, wp);
+        Make_Road_Enchanted(wx, wy, wp);
     }
-
-    terrain_flags = _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
 
 }
 
@@ -1466,7 +1457,15 @@ void TILE_CreateRoad(int16_t wx, int16_t wy, int16_t wp)
 ; changes a regular road on a tile to an enchanted one,
 ; or does nothing if there is no road on the tile
 */
-void TILE_EnchantRoad(int16_t wx, int16_t wy, int16_t wp)
+/*
+    changes a normal road to an enchant road
+
+XREF:
+    Make_Road()
+    j_Make_Road_Enchanted()
+        Cast_Enchant_Road()
+*/
+void Make_Road_Enchanted(int16_t wx, int16_t wy, int16_t wp)
 {
 
     // TODO  EMM_Map_DataH();                   ; maps the EMM Data block into the page frame
@@ -1474,7 +1473,7 @@ void TILE_EnchantRoad(int16_t wx, int16_t wy, int16_t wp)
     if((_map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] & MSF_ROAD) != 0)
     {
 
-        _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] |= TF_Enc_Road;
+        _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] |= MSF_EROAD;
 
         movement_mode_cost_maps[wp].UU_MvMd.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
 

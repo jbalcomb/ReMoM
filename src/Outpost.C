@@ -7,12 +7,19 @@
 
 */
 
+#include "Outpost.H"
+
+#include "MOX/GENDRAW.H"
+#include "MOX/LBX_Load.H"
+#include "MOX/MOX_T4.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
-#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 
-#include "MOM.H"
+#include "City_ovr55.H"
+#include "MainScr.H"
+#include "CITYCALC.H"
+#include "WZD_o059.H"
 
 
 
@@ -158,7 +165,7 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
 
         Do_City_Calculations(city_idx);
 
-        TILE_CreateRoad(outpost_wx, outpost_wy, outpost_wp);
+        Make_Road(outpost_wx, outpost_wy, outpost_wp);
 
         Reset_City_Area_Bitfields();
 
@@ -580,7 +587,7 @@ void Change_City_Name_Popup(int16_t city_idx, int16_t player_idx)
     int16_t x_start;
     int16_t input_box_result;
 
-    _page_flip_effect = 0;
+    _page_flip_effect = pfe_None;
 
     colors[0] = 97;
     colors[1] = 97;
@@ -630,8 +637,6 @@ void Change_City_Name_Popup(int16_t city_idx, int16_t player_idx)
 
     input_box_result = Setup_Input_Box_Popup((x_start + 16), (y_start + 21), 75, city_name, 12, 0, 0, 0, &colors[0], ST_UNDEFINED);
 
-    // ; trims white space from the beginning and end of the passed string
-    // ; BUGGED: will only remove one trailing space if there are multiple
     Trim(city_name);
 
     if(strlen(city_name) < 1)

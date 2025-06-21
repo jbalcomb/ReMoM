@@ -452,7 +452,6 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 #define MSF_CORRUPTION   0x20
 #define TF_Unk_40       0x40
 #define TF_NoRoad80     0x80  // ~== -1 ST_UNDEFINED
-#define TF_AnyRoad      0x18
 */
 #define MAP_SQUARE_FLAG(_wx_, _wy_, _wp_)               ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ]             )
 #define GET_MAP_SQUARE_FLAG(_wx_, _wy_, _wp_)           ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ]             )
@@ -460,12 +459,12 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 #define ADD_MAP_SQUARE_FLAG(_wx_, _wy_, _wp_, _value_)  ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ] |= (_value_) )
 #define REM_MAP_SQUARE_FLAG(_wx_, _wy_, _wp_, _value_)  ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ] ^= (_value_) )
 
-#define CLEAR_MAP_SQUARE_FLAGS_VOLCANO_PLAYER_IDX()  ( SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) & 0b11111000)) )
+#define CLEAR_MAP_SQUARE_FLAGS_VOLCANO_PLAYER_IDX()  ( SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) & 0xF8)) )  /* 0b11111000 */
 
 #define MAP_SQUARE_HAS_NO_ROAD(_wx_, _wy_, _wp_)  ( GET_MAP_SQUARE_FLAG((_wx_), (_wy_), (_wp_)) & TF_NoRoad80 )
-#define MAP_SQUARE_HAS_ROAD(_wx_, _wy_, _wp_)  ( GET_MAP_SQUARE_FLAG((_wx_), (_wy_), (_wp_)) & TF_AnyRoad )
-#define MAP_SQUARE_HAS_ROAD_REGULAR(_wx_, _wy_, _wp_)  ( GET_MAP_SQUARE_FLAG((_wx_), (_wy_), (_wp_)) & TF_Road )
-#define MAP_SQUARE_HAS_ROAD_ENCHANTED(_wx_, _wy_, _wp_)  ( GET_MAP_SQUARE_FLAG((_wx_), (_wy_), (_wp_)) & TF_Enc_Road )
+#define MAP_SQUARE_HAS_ROAD(_wx_, _wy_, _wp_)  ( GET_MAP_SQUARE_FLAG((_wx_), (_wy_), (_wp_)) & (MSF_ROAD | MSF_EROAD) )
+#define MAP_SQUARE_HAS_ROAD_REGULAR(_wx_, _wy_, _wp_)  ( GET_MAP_SQUARE_FLAG((_wx_), (_wy_), (_wp_)) & MSF_ROAD )
+#define MAP_SQUARE_HAS_ROAD_ENCHANTED(_wx_, _wy_, _wp_)  ( GET_MAP_SQUARE_FLAG((_wx_), (_wy_), (_wp_)) & MSF_EROAD )
 #define MAP_SQUARE_HAS_CORRUPTION(_wx_, _wy_, _wp_)  ( GET_MAP_SQUARE_FLAG((_wx_), (_wy_), (_wp_)) & MSF_CORRUPTION )
 #define MAP_SQUARE_HAS_UNKOWN(_wx_, _wy_, _wp_)  ( GET_MAP_SQUARE_FLAG((_wx_), (_wy_), (_wp_)) & TF_Unk_40 )
 

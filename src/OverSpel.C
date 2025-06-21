@@ -1617,7 +1617,7 @@ Capture_Cities_Data();
                         case spl_Enchant_Road:
                         {
 
-                            Cast_Successful = Cast_EnchantRoad(player_idx);
+                            Cast_Successful = Cast_Enchant_Road(player_idx);
 
                         } break;
 
