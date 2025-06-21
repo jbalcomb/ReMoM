@@ -1554,7 +1554,7 @@ Capture_Cities_Data();
                         case spl_Earth_Lore:
                         {
 
-                            Cast_Successful = Cast_Earthlore(player_idx);
+                            Cast_Successful = Cast_Earth_Lore(player_idx);
 
                         } break;
 

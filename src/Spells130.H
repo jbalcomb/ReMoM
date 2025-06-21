@@ -36,7 +36,7 @@ int16_t Cast_Black_Wind(int16_t player_idx);
 int16_t Apply_Drain_Power(int16_t player_idx);
 
 // WZD o130p06
-int16_t Cast_Earthlore(int16_t player_idx);
+int16_t Cast_Earth_Lore(int16_t player_idx);
 
 // WZD o130p07
 // int16_t Cast_Spell_Binding(int16_t player_idx);

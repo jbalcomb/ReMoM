@@ -1753,9 +1753,9 @@ void Main_Screen(void)
                         else  /* (_CITIES[_city_idx].size != 0) */
                         {
                             _page_flip_effect = 4;
-                            // TODO  GrowOutLeft = (_main_map_grid_x * 20);
-                            // TODO  GrowOutTop = ((_main_map_grid_y * 18) + 20);
-                            // TODO  GrowOutFrames = 8;
+                            GrowOutLeft = (_main_map_grid_x * SQUARE_WIDTH);
+                            GrowOutTop = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
+                            GrowOutFrames = 8;
                             current_screen = scr_City_Screen;
                             leave_screen_flag = ST_TRUE;
 
@@ -1798,8 +1798,12 @@ void Main_Screen(void)
             Reduced_Map_Coords(&reduced_map_window_wx, &reduced_map_window_wy, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
             _prev_world_x = reduced_map_window_wx + _minimap_grid_x;  // ...is the 'wx' of the clicked square
             _prev_world_y = reduced_map_window_wy + _minimap_grid_y;  // ...is the 'wy' of the clicked square
+            assert(_prev_world_x >= WORLD_XMIN && _prev_world_x <= WORLD_XMAX);  /*  0 & 59 */
+            assert(_prev_world_y >= WORLD_YMIN && _prev_world_y <= WORLD_YMAX);  /*  0 & 39 */
             _map_x = _prev_world_x;
             _map_y = _prev_world_y;
+            assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
+            assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
             Center_Map(&_map_x, &_map_y, _prev_world_x, _prev_world_y, _map_plane);
             // Hot-Key 'C'
                 // unit_idx = _unit_stack[0].unit_idx;
@@ -5487,8 +5491,9 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
         OVL_BringIntoView(map_x, map_y, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, map_p);
 
         _map_x = *map_x;
-
         _map_y = *map_y;
+        assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
+        assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
 
         Set_Unit_Draw_Priority();
 
@@ -5499,7 +5504,6 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
         MainScr_Create_Reduced_Map_Picture();
 
         assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
-
         assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
         Main_Screen_Draw_Do_Draw(map_x, map_y, map_p, *map_x, *map_y, player_idx);
@@ -5709,6 +5713,8 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
                 {
                     _map_x = *map_x;
                     _map_y = *map_y;
+                    assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
+                    assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
                 }
 
                 Set_Entities_On_Map_Window(*map_x, *map_y, map_p);

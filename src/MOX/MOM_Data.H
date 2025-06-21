@@ -3933,11 +3933,15 @@ extern int16_t _active_world_y;  // AKA _active_world_y
 extern int16_t OVL_Map_CenterX;  // AKA _active_world_x
 extern int16_t _active_world_x;  // AKA _active_world_x
 
-// WZD dseg:BD86 
+// WZD dseg:BD86
+// WZD dseg:BD88
+// WZD dseg:BD8A
+/*
+world x,y,p of main movement map
+
+*/
 extern int16_t _map_plane;
-// WZD dseg:BD88 
 extern int16_t _map_y;
-// WZD dseg:BD8A 
 extern int16_t _map_x;
 
 // WZD dseg:BD8C

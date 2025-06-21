@@ -3,6 +3,8 @@
         ovr130
 */
 
+#include "MOX/Fonts.H"
+#include "MainScr_Maps.H"
 #include "Spells130.H"
 
 #include "STU/STU_CHK.H"
@@ -305,10 +307,121 @@ int16_t Apply_Drain_Power(int16_t player_idx)
 
 
 // WZD o130p06
-int16_t Cast_Earthlore(int16_t player_idx)
+int16_t Cast_Earth_Lore(int16_t player_idx)
 {
+    SAMB_ptr soundfx_seg = 0;
+    /* HACK */  uint32_t soundfx_seg_size = 0;  // DNE in Dasm
+    int16_t itr = 0;
+    int16_t curr_wx = 0;
+    int16_t return_value = 0;
+    int16_t scsv5 = 0;
+    int16_t scsv4 = 0;
+    int16_t scsv3 = 0;
+    int16_t scsv2 = 0;
+    int16_t scsv1 = 0;
+    int16_t itr_wx = 0;  // _SI_
+    int16_t itr_wy = 0;  // _DI_
 
-    return ST_FALSE;
+    return_value = ST_FALSE;
+
+    if(player_idx == HUMAN_PLAYER_IDX)
+    {
+
+        Allocate_Reduced_Map();
+
+        Mark_Block(_screen_seg);
+
+        return_value = Spell_Casting_Screen__WIP(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aCorruption_0);
+
+    }
+
+    // SOUNDFX.LBX, 106  "SILENT V"  "sILENCE"
+    soundfx_seg = LBX_Reload_Next(soundfx_lbx_file__ovr130, 106, _screen_seg);
+    soundfx_seg_size = lbxload_entry_length;
+
+
+    if(return_value == ST_TRUE)
+    {
+
+        if(player_idx == HUMAN_PLAYER_IDX)
+        {
+
+            Update_Remap_Color_Range(1, 4);
+
+            // SPECFX.LBX, 045  "FULGRN2"   "Earth lore"
+            Open_File_Animation__HACK(specfx_lbx_file__ovr130, 45);
+
+            Spell_Animation_Load_Sound_Effect__WIP(spl_Earth_Lore);
+
+            if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
+            {
+                // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
+                sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
+            }
+
+            for(itr = 0; itr < 22; itr++)
+            {
+
+                Set_Page_Off();
+
+                Fill(0, 20, 240, 199, ST_TRANSPARENT);
+
+                Reset_Map_Draw();
+
+                Main_Screen_Draw();
+
+                Draw_File_Animation__HACK();
+
+                PageFlip_FX();
+
+                Release_Time(2);
+
+            }
+
+            for(itr_wx = _map_x; (_map_x + (MAP_WIDTH - 1)) >= itr_wx; itr_wx++)
+            {
+
+                if(itr_wx >= WORLD_WIDTH)
+                {
+
+                    curr_wx = (itr_wx - WORLD_WIDTH);
+
+                }
+                else
+                {
+
+                    curr_wx = itr_wx;
+
+                }
+
+                for(itr_wy = _map_y; (_map_y + (MAP_HEIGHT - 1)) >= itr_wy; itr_wy++)
+                {
+
+                    if(itr_wy < WORLD_HEIGHT)
+                    {
+
+                        Set_Map_Square_Explored_Flags_XYP(curr_wx, itr_wy, scsv3);
+
+                        // DONT  j_empty_fxn_o142p03(curr_wx, itr_wy, scsv3);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    // DOMSDOS  Play_Sound__STUB(soundfx_seg);
+    sdl2_Play_Sound__WIP(soundfx_seg, soundfx_seg_size);
+
+    OVL_MosaicFlip__STUB();
+
+    Release_Block(_screen_seg);
+
+    return return_value;
 
 }
 

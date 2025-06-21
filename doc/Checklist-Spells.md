@@ -1,7 +1,6 @@
 
-git commit -m "add Overland Specials 'Corruption'"
-
 git commit -m "add Overland Specials 'Earth Lore'"
+
 git commit -m "add Overland Specials 'Enchant Road'"
 git commit -m "add Overland Specials 'Raise Volcano'"
 git commit -m "add Overland Specials 'Transmute'"
@@ -163,7 +162,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Stone Skin
 [x] Water Walking
 [x] Sprites
-[ ] Earth Lore
+[x] Earth Lore
 [x] Cracks Call
 [ ] Natures eye
 [x] Ice Bolt

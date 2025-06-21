@@ -315,8 +315,10 @@ void Platform_Event_Handler(void)
 
     while(SDL_PollEvent(&sdl2_event))
     {
+
         switch(sdl2_event.type)
         {
+
             case SDL_KEYDOWN:
             case SDL_KEYUP:
             case SDL_TEXTINPUT:
