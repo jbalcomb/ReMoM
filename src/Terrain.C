@@ -7,10 +7,14 @@
     Terrain Type Attributes
 */
 
+#include "CITYCALC.H"
 #include "MOX/MOM_Data.H"
+#include "MOX/MOX_BITS.H"
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_TYPE.H"
 
+#include "MOX/Util.H"
+#include "TerrType.H"
 #include "Terrain.H"
 
 

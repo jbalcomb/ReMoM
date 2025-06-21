@@ -17,6 +17,8 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 
 */
 
+#include "MOX/Graphics.H"
+#include "MOX/MOX_DEF.H"
 #include "MainScr_Maps.H"
 
 #include "MOX/FLIC_Draw.H"
@@ -1463,10 +1465,10 @@ void Set_Square_Explored_Flags_Bottom_Right_Corner(int16_t wx, int16_t wy, int16
 
     if(IDK_itr2 == 4)
     {
-        ptr_square_explored[((wy * WORLD_WIDTH) + wx)] = ptr_square_explored[((wy * WORLD_WIDTH) + wx)] || SCT_BottomRight;
-        ptr_square_explored[((wy * WORLD_WIDTH) + wx_r1)] = ptr_square_explored[((wy * WORLD_WIDTH) + wx_r1)] || SCT_BottomLeft;
-        ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx)] = ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx)] || SCT_BottomLeft;
-        ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx_r1)] = ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx_r1)] || SCT_BottomLeft;
+        ptr_square_explored[((wy    * WORLD_WIDTH) + wx   )] = ptr_square_explored[((wy    * WORLD_WIDTH) + wx   )] | SCT_BottomRight;
+        ptr_square_explored[((wy    * WORLD_WIDTH) + wx_r1)] = ptr_square_explored[((wy    * WORLD_WIDTH) + wx_r1)] | SCT_BottomLeft;
+        ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx   )] = ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx   )] | SCT_BottomLeft;
+        ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx_r1)] = ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx_r1)] | SCT_BottomLeft;
     }
 
 }
@@ -1893,7 +1895,11 @@ void Draw_Map_Window(int16_t screen_x, int16_t screen_y, int16_t map_w, int16_t 
     map_draw_curr_y = map_y;
 
 
-    if(map_draw_curr_x != map_draw_prev_x || map_draw_prev_y != map_draw_prev_y)
+    if(
+        (map_draw_curr_x != map_draw_prev_x)
+        ||
+        (map_draw_curr_y != map_draw_prev_y)
+    )
     {
         map_draw_full = ST_TRUE;
         map_draw_sustain = 1;

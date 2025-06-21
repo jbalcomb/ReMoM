@@ -3,24 +3,30 @@
         ovr130
 */
 
-#include "MOM_DEF.H"
+#include "Spells130.H"
+
+#include "STU/STU_CHK.H"
+
 #include "MOX/Allocate.H"
+#include "MOX/LBX_Load.H"
 #include "MOX/MOX_BASE.H"
 #include "MOX/MOX_DAT.H"
 #include "MOX/MOX_T4.H"
 #include "MOX/GENDRAW.H"
 #include "MOX/SOUND.H"
+#include "MOX/Video.H"
 #include "MOX/random.H"
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_TYPE.H"
 
+#include "MOM_DEF.H"
 #include "AISPELL.H"
 #include "MainScr.H"
 #include "OverSpel.H"
-#include "STU/STU_CHK.H"
+#include "SBookScr.H"
+#include "Spells128.H"
 #include "Spells129.H"
-#include "Spells130.H"
 #include "SPELLDEF.H"
 #include "NEXTTURN.H"
 #include "Spellbook.H"
@@ -675,8 +681,285 @@ int16_t Cast_Transmute(int16_t player_idx)
 // WZD o130p11
 int16_t Cast_Corruption(int16_t player_idx)
 {
+    int16_t var_22 = 0;
+    int16_t var_20[2] = { 0, 0 };
+    int16_t saved_map_plane = 0;
+    int16_t saved_map_y = 0;
+    int16_t saved_map_x = 0;
+    SAMB_ptr soundfx_seg = 0;
+    uint32_t soundfx_seg_size = 0;
+    int16_t var_14 = 0;
+    int16_t frame_count = 0;
+    int16_t terrain_type = 0;
+    int16_t status = 0;
+    int16_t return_value = 0;
+    int16_t scsv5 = 0;
+    int16_t scsv4 = 0;
+    int16_t scsv3 = 0;
+    int16_t scsv2 = 0;
+    int16_t scsv1 = 0;
+    int16_t itr = 0;  // _SI_
 
-    return ST_FALSE;
+    var_14 = 0;
+
+    Allocate_Reduced_Map();
+
+    Mark_Block(_screen_seg);
+
+    saved_map_x = _map_x;
+    saved_map_y = _map_y;
+    saved_map_plane = _map_plane;
+
+    if(player_idx != HUMAN_PLAYER_IDX)
+    {
+
+        return_value = Get_Map_Square_Target_For_Spell(stt_Map_Square, &scsv1, &scsv2, &scsv3, spl_Corruption, player_idx);
+
+    }
+    else
+    {
+
+        // SOUNDFX.LBX, 106  "SILENT V"  "sILENCE"
+        soundfx_seg = LBX_Reload_Next(soundfx_lbx_file__ovr130, 106, _screen_seg);
+        soundfx_seg_size = lbxload_entry_length;
+
+        status = ST_FALSE;
+
+        return_value = ST_TRUE;
+
+        while((status == ST_FALSE) && (return_value == ST_TRUE))
+        {
+
+            return_value = Spell_Casting_Screen__WIP(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aCorruption_0);
+
+            if(return_value == ST_TRUE)
+            {
+
+                terrain_type = TERRAIN_TYPE(scsv1, scsv2, scsv3);
+
+                if(
+                    (terrain_type == tt_ChaosNode)
+                    ||
+                    (terrain_type == tt_SorceryNode)
+                    ||
+                    (terrain_type == tt_NatureNode)
+                )
+                {
+
+                    LBX_Load_Data_Static(message_lbx_file__ovr130, 0, (SAMB_ptr)&GUI_NearMsgString[0], 41, 1, 150);
+
+                    Warn0(GUI_NearMsgString);
+
+                }
+                else if((MAP_SQUARE_FLAG(scsv1, scsv2, scsv3) & MSF_CORRUPTION) != 0)
+                {
+
+                    LBX_Load_Data_Static(message_lbx_file__ovr130, 0, (SAMB_ptr)&GUI_NearMsgString[0], 42, 1, 150);
+
+                    Warn0(GUI_NearMsgString);
+
+                }
+                else if(Square_Is_Sailable(scsv1, scsv2, scsv3) != ST_FALSE)
+                {
+
+                    LBX_Load_Data_Static(message_lbx_file__ovr130, 0, (SAMB_ptr)&GUI_NearMsgString[0], 43, 1, 150);
+
+                    Warn0(GUI_NearMsgString);
+
+                }
+                else
+                {
+
+                    status = ST_TRUE;
+
+                }
+
+            }
+
+        }
+
+    }
+
+    var_22 = 0;
+
+    for(itr = 0; itr < _cities; itr++)
+    {
+
+        if(
+            (
+                (abs((_CITIES[itr].wx - scsv1)) <= 2)
+                ||
+                (abs((_CITIES[itr].wx - scsv1)) >= 58)
+            )
+            &
+            (abs((_CITIES[itr].wy - scsv2)) <= 2)
+            &&
+            (_CITIES[itr].wp == scsv3)
+        )
+        {
+            var_20[var_22] = itr;
+
+            if(_CITIES[itr].owner_idx == HUMAN_PLAYER_IDX)
+            {
+
+                var_14 = ST_TRUE;
+
+            }
+
+            var_22++;
+
+        }
+
+        if(
+            (_CITIES[itr].wx == scsv1)
+            &&
+            (_CITIES[itr].wy == scsv2)
+            &&
+            (_CITIES[itr].wp == scsv3)
+        )
+        {
+
+            if(
+                (_CITIES[itr].owner_idx == HUMAN_PLAYER_IDX)
+                ||
+                (player_idx == HUMAN_PLAYER_IDX)
+            )
+            {
+
+                return_value = Apply_Automatic_Spell_Counters(spl_Corruption, itr, player_idx, ST_TRUE);
+
+            }
+            else
+            {
+
+                return_value = Apply_Automatic_Spell_Counters(spl_Corruption, itr, player_idx, ST_FALSE);
+
+            }
+
+        }
+
+    }
+
+    if(return_value == ST_TRUE)
+    {
+
+        if(
+            (player_idx == HUMAN_PLAYER_IDX)
+            ||
+            (var_14 == ST_TRUE)
+            ||
+            (
+                (magic_set.enemy_spells == ST_TRUE)
+                &&
+                (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] > ST_FALSE)
+                &&
+                (SQUARE_EXPLORED(scsv1, scsv2, scsv3) != ST_FALSE)
+            )
+        )
+        {
+
+            Spell_Animation_Load_Sound_Effect__WIP(spl_Corruption);
+
+            Spell_Animation_Load_Graphics(spl_Corruption);
+
+            // full draw twice - same off & on
+            for(itr = 0; itr < 2; itr++)
+            {
+                Set_Page_Off();
+                Main_Screen_Draw();
+                PageFlip_FX();
+            }
+
+            if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
+            {
+                // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
+                sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
+            }
+
+            frame_count = FLIC_Get_FrameCount(spell_animation_seg);
+
+            SETMAX(frame_count, 12);
+
+            OVL_BringIntoView(&_map_x, &_map_y, scsv1, scsv2, scsv3);
+
+            _map_plane = scsv3;
+
+            Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+
+            scsv4 = scsv1;
+            scsv5 = scsv2;
+
+            World_To_Screen(_map_x, _map_y, &scsv4, &scsv5);
+
+            for(itr = 0; itr < frame_count; itr++)
+            {
+                
+                Mark_Time();
+
+                if(itr == 11)
+                {
+
+                    SET_MAP_SQUARE_FLAG(scsv1, scsv2, scsv3, MSF_CORRUPTION);
+
+                }
+
+                Set_Page_Off();
+
+                Reset_Map_Draw();
+
+                Main_Screen_Draw();
+
+                Set_Animation_Frame(spell_animation_seg, itr);
+
+                Clipped_Draw((scsv4 - SQUARE_WIDTH), (scsv5 - SQUARE_HEIGHT), spell_animation_seg);
+
+                PageFlip_FX();
+
+                Release_Time(2);
+
+            }
+
+            Full_Draw_Main_Screen();
+
+            Release_Block(_screen_seg);
+
+        }
+        {
+
+            SET_MAP_SQUARE_FLAG(scsv1, scsv2, scsv3, MSF_CORRUPTION);
+
+        }
+
+        if(var_22 > 0)
+        {
+
+            Change_Relations_For_Bad_City_Spell(player_idx, spl_Corruption, var_20[0]);
+
+            if(var_22 > 1)
+            {
+
+                Change_Relations_For_Bad_City_Spell(player_idx, spl_Corruption, var_20[1]);
+
+            }
+
+        }
+
+    }
+
+    /*
+        AFTER:
+            success OR failure
+    */
+
+    Full_Draw_Main_Screen();
+
+    _map_x = saved_map_x;
+    _map_y = saved_map_y;
+    _map_plane = saved_map_plane;
+
+    Release_Block(_screen_seg);
+
+    return return_value;
 
 }
 

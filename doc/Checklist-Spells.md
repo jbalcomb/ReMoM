@@ -1,7 +1,6 @@
 
-git commit -m "add Overland Specials 'Change Terrain'"
-
 git commit -m "add Overland Specials 'Corruption'"
+
 git commit -m "add Overland Specials 'Earth Lore'"
 git commit -m "add Overland Specials 'Enchant Road'"
 git commit -m "add Overland Specials 'Raise Volcano'"
@@ -239,7 +238,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Disrupt
 [x] Fire Bolt
 [x] Hell Hounds
-[ ] Corruption
+[x] Corruption
 [x] Eldritch Weapon
 [x] Wall of Fire
 [x] Shatter

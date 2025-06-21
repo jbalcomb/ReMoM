@@ -8,9 +8,13 @@
 
 #include "../MOM_DEF.H"
 
+
+
 // #include "../AIDATA.H"  /* struct s_AI_CONTINENTS */
 // AIDATA.H includes MoM.H, which includes MOX_DAT.H, which includes MOM_Data.H
-struct s_AI_CONTINENTS; // Forward declaration of struct MyStruct
+struct s_AI_CONTINENTS;  // Forward declaration of struct
+// MovePath.H
+struct s_MOVE_PATH;   // Forward declaration of struct
 
 
 

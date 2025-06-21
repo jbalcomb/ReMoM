@@ -22,6 +22,9 @@ Elsewhere, ...
 
 */
 
+#include "MOX/Util.H"
+#include "MainScr.H"
+#include "UNITTYPE.H"
 #include "UnitMove.H"
 
 #include "MOX/MOM_Data.H"
@@ -31,6 +34,7 @@ Elsewhere, ...
 #include "Combat.H"
 #include "MOM_DEF.H"
 #include "Terrain.H"
+#include "MovePath.H"
 
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(); */
 

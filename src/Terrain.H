@@ -12,7 +12,9 @@
 #ifndef TERRAIN_H
 #define TERRAIN_H
 
-#include "MOM.H"
+#include "MOX/MOX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -59,7 +61,8 @@ enum enum_Terrain_Specials
 
 // drake178: enum Terrain_Flags
 /*
-    used for _map_square_flags[]
+    Map Square Flags
+        used for _map_square_flags[]
 
 Meh. I put stuff in MoX_DEF.H that is meant to have access to this.
 */
