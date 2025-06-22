@@ -1,5 +1,5 @@
 
-git commit -m "add Overland Specials 'Transmute'"s
+git commit -m "add Overland Specials 'Transmute'"
 
 git commit -m "add Overland Specials 'Warp Node'"
 
