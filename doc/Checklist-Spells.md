@@ -1,13 +1,16 @@
 
-git commit -m "add Overland Specials 'Warp Node'"
+git commit -m "add Overland Specials 'Summon Hero' & 'Summon Champion'"
 
-git commit -m "add Overland Specials 'Summon Hero'"
-git commit -m "add Overland Specials 'Summon Champion'"
 git commit -m "add Overland Specials 'Incarnation'"
 git commit -m "add Overland Specials 'Resurrection'"
 
 git commit -m "add Overland Specials 'Spell Of Mastery'"
 git commit -m "add Overland Specials 'Spell Of Return'"
+
+scc_Crafting_Spell
+git commit -m "add Overland Specials 'Enchant Item'"
+git commit -m "add Overland Specials 'Create Artifact'"
+
 
 
 FIXME_RIGHTMEOW
@@ -69,9 +72,8 @@ Light-Lime-3    maybe, kinda?
 Weird Ones?
     Astral Gate
     Change Terrain?
-    Create Artifact!    handled special during casting
     Earth Gate
-    Enchant Item!       handled special during casting
+    Enchant Item, Create Artifact!!       handled special during casting
     Flying Fortress?
     Raise Volcano?
     Resurrection?
@@ -354,10 +356,10 @@ Spreadsheet - OSG Spells by Realm
 [x] Recall Hero
 [x] Detect Magic
 [ ] Enchant Item
-[ ] Summon Hero
+[x] Summon Hero
 [x] Awareness
 [x] Disjunction
 [ ] Create Artifact
-[ ] Summon Champion
+[x] Summon Champion
 [-] Spell of Mastery
 [ ] Spell of Returning

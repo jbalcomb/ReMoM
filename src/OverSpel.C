@@ -892,7 +892,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                             _map_plane = _UNITS[_units].wp;
 
                             // ; BUG: this function has a parameter!
-                            /* WASBUG */ IDK_HumanPlayer_SelectStack_UnitLocation((_units - 1));  // how to reproduce calling this without the unit_idx parameter?
+                            /* WASBUG */ Select_Stack_At_Unit((_units - 1));  // how to reproduce calling this without the unit_idx parameter?
 
                         }
 
@@ -1716,14 +1716,16 @@ Capture_Cities_Data();
                         case spl_Summon_Hero:
                         {
 
-                            Cast_Successful = Cast_SummonHero(player_idx, 1);
+                            // BUGBUG  no return value  Cast_Successful = Cast_Summon_Hero(player_idx, 1);
+                            Cast_Summon_Hero(player_idx, 1);
 
                         } break;
 
                         case spl_Summon_Champion:
                         {
 
-                            Cast_Successful = Cast_SummonHero(player_idx, 2);
+                            // BUGBUG  no return value  Cast_Successful = Cast_Summon_Hero(player_idx, 2);
+                            Cast_Summon_Hero(player_idx, 2);
 
                         } break;
 

@@ -14,12 +14,14 @@
 #include "ItemScrn.H"
 #include "ItemView.H"
 #include "LOADER.H"
+#include "MOX/MOX_T4.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"
 #include "MOM_SCR.H"
 #include "NEXTTURN.H"
 #include "SBookScr.H"
 #include "Spellbook.H"
+#include "Spells132.H"
 #include "UnitStat.H"
 #include "UNITTYPE.H"   // WTFMATE
 #include "UnitView.H"
@@ -473,7 +475,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
     Set_Button_Down_Offsets(1, 1);
 
-    _page_flip_effect = 0;
+    _page_flip_effect = pfe_None;
 
     window_x = 25;
     window_y = 17;

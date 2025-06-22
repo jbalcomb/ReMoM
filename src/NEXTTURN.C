@@ -972,6 +972,8 @@ void All_Colony_Calculations(void)
 
     City_Apply_Production()
         UNIT_Create((_CITIES[city_idx].construction - 100), _CITIES[city_idx].owner_idx, _CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, city_idx)
+    WIZ_HireHero()
+        Create_Unit__WIP(unit_type_idx, player_idx, FORTX(), FORTY(), FORTP(), -1);
     Lair_Make_Guardians()
         Create_Unit__WIP(_LAIRS[lair_idx].guard2_unit_type, NEUTRAL_PLAYER_IDX, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, 2000)
 wp
@@ -987,7 +989,7 @@ R_Param
         then, updates s_UNIT.level from UNIT_GetLevel()
     if == 2000
         e.g., Lair_Make_Guardians()
-        ¿ just some number greater than what could be a city_idx ?
+        ¿ just some number greater than what could be (unit_idx  + city_idx + node_idx ...lair, tower, etc.) ?
         overrides unit count limit
         ¿ only way to create units above 980 ?
         also used by Demon Lord's Summon Demon

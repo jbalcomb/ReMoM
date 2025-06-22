@@ -23,7 +23,7 @@ extern "C" {
 */
 
 // WZD o132p01
-int16_t Cast_SummonHero(int16_t player_idx, int16_t type);
+void Cast_Summon_Hero(int16_t player_idx, int16_t type);
 
 // WZD o132p02
 int16_t Cast_Incarnation(int16_t player_idx);

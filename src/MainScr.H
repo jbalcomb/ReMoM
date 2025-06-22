@@ -400,10 +400,10 @@ int16_t Get_Background_Music(void);
 void sdl2_Play_Background_Music__WIP(void);
 
 // WZD o58p08
-void IDK_HumanPlayer_SelectStack_UnitLocation(int16_t unit_idx);
+void Select_Stack_At_Unit(int16_t unit_idx);
 
 // WZD o58p09
-void IDK_HumanPlayer_SelectStack_SummonLocation(void);
+void Select_Stack_At_Summon(void);
 
 
 /*

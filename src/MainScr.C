@@ -15,6 +15,7 @@
 
 #include "MainScr.H"
 
+#include "MOX/MOM_Data.H"
 #include "MOX/LOADSAVE.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
@@ -2327,9 +2328,23 @@ NOT IN USE
 
 ¿ would control whether o58p03_empty_function() gets called from Move_Stack() ?
 
+Move_Stack()
+cmp     [CRP_OVL_Obstacle_Var1], e_ST_FALSE
+jnz     short loc_533C1
+call    j_o58p03_empty_function
+
 XREF:
     Falsify_CRP_OVL_Obstacle_Var1()
         NX_j_Falsify_CRP_OVL_Obstacle_Var1()
+
+XREF CRP_OVL_Obstacle_Var1:
+    Main_Screen+66                  mov     [CRP_OVL_Obstacle_Var1], e_ST_FALSE
+    Falsify_CRP_OVL_Obstacle_Var1+3 mov     [CRP_OVL_Obstacle_Var1], e_ST_FALSE
+    Move_Stack+43                   mov     [CRP_OVL_Obstacle_Var1], e_ST_FALSE
+    Move_Stack:loc_533B5            cmp     [CRP_OVL_Obstacle_Var1], e_ST_FALSE
+    Stack_Action+13                 mov     [CRP_OVL_Obstacle_Var1], e_ST_FALSE
+    Move_Units+4FE                  mov     [CRP_OVL_Obstacle_Var1], e_ST_FALSE
+
 */
 void Falsify_CRP_OVL_Obstacle_Var1(void)
 {
@@ -2476,7 +2491,11 @@ void sdl2_Play_Background_Music__WIP(void)
 // drake178: sub_51A1A()
 /*
 
+same as one below, just unit wx,wy,wp vs. summon wx,wy,wp
+
 XREF:
+    j_IDK_HumanPlayer_SelectStack_UnitLocation()
+
     Cast_SummonHero()
     Cast_Incarnation()
     Cast_Resurrection()
@@ -2484,7 +2503,7 @@ XREF:
         ¿ scc_Summoning, but not 'Floating Island' ?
 
 */
-void IDK_HumanPlayer_SelectStack_UnitLocation(int16_t unit_idx)
+void Select_Stack_At_Unit(int16_t unit_idx)
 {
 
     o62p01_empty_function(_human_player_idx);
@@ -2508,11 +2527,13 @@ void IDK_HumanPlayer_SelectStack_UnitLocation(int16_t unit_idx)
 // drake178: sub_51AA0()
 /*
 
+same as one above, just summon wx,wy,wp vs. unit wx,wy,wp
+
 XREF:
     UV_Remove_Unit_Enchantment()
 
 */
-void IDK_HumanPlayer_SelectStack_SummonLocation(void)
+void Select_Stack_At_Summon(void)
 {
 
     o62p01_empty_function(_human_player_idx);
@@ -3073,15 +3094,17 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
             for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
             {
                 if(
-                    (_unit_stack[itr_stack].active == ST_TRUE) &&
-                    ((_UNITS[_unit_stack[itr_stack].unit_idx].Status & 3) == 0) &&  /* "GOTO"  us_GOTO */
-                    ((_UNITS[_unit_stack[itr_stack].unit_idx].Status & 8) == 0)     /* "PURIFY"  us_Purify  */
+                    (_unit_stack[itr_stack].active == ST_TRUE)
+                    &&
+                    ((_UNITS[_unit_stack[itr_stack].unit_idx].Status & us_GOTO) == 0)
+                    &&
+                    ((_UNITS[_unit_stack[itr_stack].unit_idx].Status & us_Purify) == 0)
                 )
                 {
                     unit_idx = _unit_stack[itr_stack].unit_idx;
                     _unit_stack[itr_stack].active = ST_FALSE;
                     _UNITS[unit_idx].Finished = ST_TRUE;
-                    _UNITS[unit_idx].Status = 4;  /* "DONE"  us_ReachedDest */
+                    _UNITS[unit_idx].Status = us_ReachedDest;
                     _UNITS[unit_idx].Rd_Constr_Left = ST_UNDEFINED;
                     _UNITS[unit_idx].moves2 = 0;
                     _UNITS[unit_idx].dst_wx = 0;
@@ -3141,10 +3164,12 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
 
     }
 
-
     Reset_Draw_Active_Stack();
+
     Set_Unit_Draw_Priority();
+
     Reset_Stack_Draw_Priority();
+
     Set_Entities_On_Map_Window(*map_x, *map_y, *map_p);
 
 }
@@ -3192,10 +3217,14 @@ int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp)
     src_city_idx = City_At_Square__2(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
 
     if(
-        (dst_city_idx != ST_UNDEFINED) &&
-        (_CITIES[src_city_idx].wp == _CITIES[dst_city_idx].wp) &&
-        (_CITIES[src_city_idx].owner_idx == _CITIES[dst_city_idx].owner_idx) &&
-        (_CITIES[src_city_idx].enchantments[EARTH_GATE] == ST_TRUE) &&
+        (dst_city_idx != ST_UNDEFINED)
+        &&
+        (_CITIES[src_city_idx].wp == _CITIES[dst_city_idx].wp)
+        &&
+        (_CITIES[src_city_idx].owner_idx == _CITIES[dst_city_idx].owner_idx)
+        &&
+        (_CITIES[src_city_idx].enchantments[EARTH_GATE] == ST_TRUE)
+        &&
         (_CITIES[dst_city_idx].enchantments[EARTH_GATE] == ST_TRUE)
     )
     {
@@ -3203,8 +3232,10 @@ int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp)
         {
             unit_idx = _unit_stack[itr].unit_idx;
             if(
-                (_UNITS[unit_idx].Finished != ST_FALSE) &&
-                (_unit_stack[itr].active == ST_TRUE) &&
+                (_UNITS[unit_idx].Finished != ST_FALSE)
+                &&
+                (_unit_stack[itr].active == ST_TRUE)
+                &&
                 (_UNITS[unit_idx].moves2 > 0)
             )
             {
@@ -3218,8 +3249,10 @@ int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp)
             {
                 unit_idx = _unit_stack[itr].unit_idx;
                 if(
-                    (_UNITS[unit_idx].Finished != ST_FALSE) &&
-                    (_unit_stack[itr].active == ST_TRUE) &&
+                    (_UNITS[unit_idx].Finished != ST_FALSE)
+                    &&
+                    (_unit_stack[itr].active == ST_TRUE)
+                    &&
                     (_UNITS[unit_idx].moves2 > 0)
                 )
                 {

@@ -59,10 +59,175 @@ char aSpellOfReturn[] = "Spell of Return";
 */
 
 // WZD o132p01
-int16_t Cast_SummonHero(int16_t player_idx, int16_t type)
-{
+/*
 
-    return ST_FALSE;
+type
+    1: Hero
+    2: Champion
+
+Hire_Hero_Popup()
+    |-> WIZ_HireHero()
+        |-> Create_Unit__WIP()
+
+*/
+// int16_t Cast_Summon_Hero(int16_t player_idx, int16_t type)
+void Cast_Summon_Hero(int16_t player_idx, int16_t type)
+{
+    int16_t var_4 = 0;
+    int16_t open_hero_slot_idx = 0;
+    int16_t random_hero = 0;  // _DI_
+
+    open_hero_slot_idx = Hero_Slot_Open(player_idx);
+
+    if(open_hero_slot_idx == ST_UNDEFINED)
+    {
+
+        Full_Draw_Main_Screen();
+
+        LBX_Load_Data_Static(message_lbx_file__ovr132, 0, (SAMB_ptr)&GUI_NearMsgString[0], 47, 1, 150);
+
+        Warn0(GUI_NearMsgString);
+
+    }
+    else
+    {
+
+        random_hero = Pick_Random_Hero(player_idx, 1, type);
+
+        if(
+            (random_hero != ST_UNDEFINED)
+            &&
+            (
+                (_units < 950)
+                ||
+                (
+                    (player_idx == HUMAN_PLAYER_IDX)
+                    &&
+                    (_units < 980)
+                )
+            )
+        )
+        {
+
+            if(player_idx != HUMAN_PLAYER_IDX)
+            {
+
+                if(
+                    (magic_set.enemy_spells == ST_TRUE)
+                    &&
+                    (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] != ST_FALSE)
+                    &&
+                    (_players[HUMAN_PLAYER_IDX].Dipl.Contacted[player_idx] == ST_TRUE)
+                )
+                {
+
+                    if((_HEROES2[player_idx]->heroes[random_hero].abilities & HSA_FEMALE) != 0)
+                    {
+
+                        IDK_SummonAnim(-3, 3, player_idx);
+
+                    }
+                    else
+                    {
+                        
+                        IDK_SummonAnim(-2, 3, player_idx);
+
+                    }
+
+                }
+
+                WIZ_HireHero(player_idx, random_hero, open_hero_slot_idx, 0);
+
+                UNIT_RemoveExcess((_units - 1));
+
+                _HEROES2[player_idx]->heroes[random_hero].Level = -20;  // Why?
+
+            }
+            else
+            {
+
+                if((_HEROES2[player_idx]->heroes[random_hero].abilities & HSA_FEMALE) != 0)
+                {
+
+                    if(type == 1)
+                    {
+
+                        IDK_SummonAnim(-3, 3, player_idx);
+
+                    }
+                    else  /* type == 2 */
+                    {
+
+                        IDK_SummonAnim(-30, 3, player_idx);
+
+                    }
+
+                }
+                else
+                {
+
+                    if(type == 1)
+                    {
+
+                        IDK_SummonAnim(-2, 3, player_idx);
+
+                    }
+                    else  /* type == 2 */
+                    {
+
+                        IDK_SummonAnim(-20, 3, player_idx);
+
+                    }
+
+                }
+
+                Allocate_Reduced_Map();
+
+                if(type == 1)
+                {
+
+                    var_4 = Hire_Hero_Popup(open_hero_slot_idx, random_hero, 1);
+
+                }
+                else  /* type == 2 */
+                {
+
+                    var_4 = Hire_Hero_Popup(open_hero_slot_idx, random_hero, 3);
+
+                }
+
+                if(var_4 == ST_TRUE)
+                {
+
+                    _active_world_x = _UNITS[(_units - 1)].wx;
+                    _active_world_y = _UNITS[(_units - 1)].wy;
+                    _map_plane = _UNITS[(_units - 1)].wp;
+
+                    // ¿ BUGBUG  no unit_idx param  IDK_HumanPlayer_SelectStack_UnitLocation();  ...as-compiled, would be _map_plane, in AX?
+                    Select_Stack_At_Unit((_units - 1));
+
+                }
+
+            }
+
+        }
+        else
+        {
+
+            if(player_idx == HUMAN_PLAYER_IDX)
+            {
+
+                Full_Draw_Main_Screen();
+
+                LBX_Load_Data_Static(message_lbx_file__ovr132, 0, (SAMB_ptr)&GUI_NearMsgString[0], 48, 1, 150);
+
+                Warn0(GUI_NearMsgString);
+
+            }
+
+        }
+
+    }
 
 }
 
@@ -116,7 +281,7 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
 
     Create_Unit__WIP(unit_type_idx, player_idx, FORTX(), FORTY(), FORTP(), -1);
 
-    _UNITS[(_units - 1)].Finished = 0;
+    _UNITS[(_units - 1)].Finished = ST_FALSE;
 
     _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;
 
@@ -128,37 +293,54 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
 
     for(itr = 0; itr < NUM_HERO_ITEM_SLOTS; itr++)
     {
+
         _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].Items[itr] = ST_UNDEFINED;
+
     }
 
     if(saved_flag == ST_TRUE)
     {
+
         if(player_idx == HUMAN_PLAYER_IDX)
         {
+
             strcpy(_players[player_idx].Heroes[hero_slot_idx].name, hero_names_table[unit_type_idx].name);
+
             _UNITS[(_units - 1)].XP = hero_names_table[unit_type_idx].experience_points;
+
             _UNITS[(_units - 1)].Level = Calc_Unit_Level((_units - 1));
+
         }
         else
         {
+
             LBX_Load_Data_Static(names_lbx_file__ovr132, 0, (SAMB_ptr)_players[player_idx].Heroes[hero_slot_idx].name, ((player_idx * 35) + unit_type_idx), 1, 13);
+
             _UNITS[(_units - 1)].Level = abs(_HEROES2[player_idx]->heroes[unit_type_idx].Level);
+
             _UNITS[(_units - 1)].XP = TBL_Experience[_UNITS[(_units - 1)].Level];
+
         }
+
     }
     else
     {
+
         LBX_Load_Data_Static(names_lbx_file__ovr132, 0, (SAMB_ptr)_players[player_idx].Heroes[hero_slot_idx].name, ((player_idx * 35) + unit_type_idx), 1, 13);
+
         SETMAX(_HEROES2[player_idx]->heroes[unit_type_idx].Level, HL_GRANDLORD);
+
     }
 
     _UNITS[(_units - 1)].Level = _HEROES2[player_idx]->heroes[unit_type_idx].Level;
+
     _UNITS[(_units - 1)].XP = TBL_Experience[_HEROES2[player_idx]->heroes[unit_type_idx].Level];
 
     // BUG  Did this used to do something different? What tests it?
     // may be is/was success status as in cast the spell
     // NOTE(JimBalcomb,202409090905): AI_Accept_Hero() tests this
     return ST_TRUE;
+
 }
 
 
