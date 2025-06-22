@@ -41,7 +41,7 @@ void Cast_Incarnation(int16_t player_idx);
 int16_t WIZ_HireHero(int16_t player_idx, int16_t Type, int16_t Hero_Slot, int16_t Saved);
 
 // WZD o132p07
-int16_t Cast_Resurrection(int16_t player_idx);
+void Cast_Resurrection(int16_t player_idx);
 
 // WZD o132p08
 int16_t Cast_Plane_Shift_Check(int16_t wx, int16_t wy, int16_t wp);

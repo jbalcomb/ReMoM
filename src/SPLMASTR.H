@@ -12,7 +12,9 @@ MoO2
 #ifndef SPLMASTR_H
 #define SPLMASTR_H
 
-#include "MOM.H"
+#include "MOX/MOX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,7 +46,7 @@ extern int16_t GAME_SoM_Cast_By;
 */
 
 // WZD o136p01
-// Select_Hero_To_Ressurect()
+int16_t Select_Hero_To_Ressurect(int16_t hero_count, int16_t hero_list[]);
 
 // WZD o136p02
 void Spellbook_Mana_Adder_Load(void);

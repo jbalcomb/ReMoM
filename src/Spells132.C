@@ -3,26 +3,27 @@
         ovr132
 */
 
-#include "Explore.H"
-#include "MOM_DEF.H"
+#include "Spells132.H"
+
+#include "STU/STU_CHK.H"
+
 #include "MOX/Allocate.H"
 #include "MOX/MOX_BASE.H"
 #include "MOX/MOX_DAT.H"
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_T4.H"
-#include "MainScr.H"
-#include "MainScr_Maps.H"
-#include "SPELLDEF.H"
-#include "STU/STU_CHK.H"
-#include "Spells130.H"
-#include "Spells132.H"
-
 #include "MOX/LBX_Load.H"
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_TYPE.H"
 #include "MOX/SOUND.H"
 
-
+#include "Explore.H"
+#include "MOM_DEF.H"
+#include "MainScr.H"
+#include "MainScr_Maps.H"
+#include "SPELLDEF.H"
+#include "Spells130.H"
+#include "SPLMASTR.H"
 #include "NEXTTURN.H"
 #include "SBookScr.H"
 #include "Spellbook.H"
@@ -203,7 +204,7 @@ void Cast_Summon_Hero(int16_t player_idx, int16_t type)
                     _active_world_y = _UNITS[(_units - 1)].wy;
                     _map_plane = _UNITS[(_units - 1)].wp;
 
-                    // ¿ BUGBUG  no unit_idx param  Select_Stack_At_Unit();  ...as-compiled, would be _map_plane, in AX?
+                    // ¿ BUGBUG  no unit_idx param  Select_Stack_At_Unit();  ...as-compiled, would be wp, in AX?
                     Select_Stack_At_Unit((_units - 1));
 
                 }
@@ -315,7 +316,7 @@ void Cast_Incarnation(int16_t player_idx)
                         _active_world_y = _players[HUMAN_PLAYER_IDX].summon_wy;
                         _map_plane = _players[HUMAN_PLAYER_IDX].summon_wp;
 
-                        // ¿ BUGBUG  no unit_idx param  Select_Stack_At_Unit();  ...as-compiled, would be _map_plane, in AX?
+                        // ¿ BUGBUG  no unit_idx param  Select_Stack_At_Unit();  ...as-compiled, would be wp, in AX?
                         Select_Stack_At_Unit((_units - 1));
 
                     }
@@ -461,10 +462,146 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
 
 
 // WZD o132p07
-int16_t Cast_Resurrection(int16_t player_idx)
+// int16_t Cast_Resurrection(int16_t player_idx)
+void Cast_Resurrection(int16_t player_idx)
 {
+    int16_t hero_list[NUM_HERO_TYPES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t hero_slot_idx = 0;
+    int16_t unit_type = 0;
+    int16_t itr = 0;
+    int16_t hero_ctr = 0;  // _DI_
 
-    return ST_FALSE;
+    hero_ctr = 0;
+
+    if(
+        (_units < 980)
+        ||
+        (
+            (_units < 950)
+            &&
+            (player_idx == HUMAN_PLAYER_IDX)
+        )
+    )
+    {
+
+        for(itr = 0; itr < (NUM_HERO_TYPES - 1); itr++)
+        {
+
+            if(
+                (_HEROES2[player_idx]->heroes[itr].Level < 0)
+                &&
+                (_HEROES2[player_idx]->heroes[itr].Level != -20)
+            )
+            {
+
+                hero_list[(1 + hero_ctr)] = itr;
+
+                hero_ctr++;
+
+            }
+
+        }
+
+        hero_slot_idx = Hero_Slot_Open(player_idx);
+
+        if(player_idx != HUMAN_PLAYER_IDX)
+        {
+
+            if(
+                (hero_ctr != 0)
+                &&
+                (hero_slot_idx != ST_UNDEFINED)
+            )
+            {
+
+                unit_type = hero_list[hero_ctr];
+
+                WIZ_HireHero(player_idx, unit_type, hero_slot_idx, ST_TRUE);
+
+                UNIT_RemoveExcess((_units - 1));
+
+            }
+
+        }
+        else
+        {
+
+            if(
+                (hero_ctr != 0)
+                &&
+                (hero_slot_idx != ST_UNDEFINED)
+            )
+            {
+
+                Allocate_Reduced_Map();
+
+                Set_Page_Off();
+
+                Main_Screen_Draw();
+
+                PageFlip_FX();
+
+
+                if(hero_ctr == 1)
+                {
+
+                    unit_type = hero_list[1];
+
+                }
+                else
+                {
+
+                    Select_Hero_To_Ressurect(hero_ctr, &hero_list[1]);
+
+                }
+
+                WIZ_HireHero(player_idx, unit_type, hero_slot_idx, 1);
+
+                _UNITS[(_units - 1)].wx = _players[player_idx].summon_wx;
+                _UNITS[(_units - 1)].wy = _players[player_idx].summon_wy;
+                _UNITS[(_units - 1)].wp = _players[player_idx].summon_wp;
+
+                UNIT_RemoveExcess((_units - 1));
+
+                Spell_Animation_Load_Graphics(spl_Resurrection);
+
+                Spell_Animation_Load_Sound_Effect__WIP(spl_Resurrection);
+
+                Spell_Animation_Screen__WIP(_players[player_idx].summon_wx, _players[player_idx].summon_wy, _players[player_idx].summon_wp);
+
+                _UNITS[(_units - 1)].Finished = ST_FALSE;
+
+                _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;
+
+                if(player_idx == HUMAN_PLAYER_IDX)
+                {
+
+                    _active_world_x = _UNITS[(_units - 1)].wx;
+                    _active_world_y = _UNITS[(_units - 1)].wy;
+                    _map_plane = _UNITS[(_units - 1)].wp;
+
+                    // ¿ BUGBUG  no unit_idx param  Select_Stack_At_Unit();  ...as-compiled, would be wp, in AX?
+                    Select_Stack_At_Unit((_units - 1));
+
+                }
+
+            }
+
+        }
+
+        _HEROES2[player_idx]->heroes[unit_type].Level = -20;
+
+    }
+    else
+    {
+
+        Full_Draw_Main_Screen();
+
+        LBX_Load_Data_Static(message_lbx_file__ovr132, 0, (SAMB_ptr)&GUI_NearMsgString[0], 50, 1, 150);
+
+        Warn0(GUI_NearMsgString);
+
+    }
 
 }
 

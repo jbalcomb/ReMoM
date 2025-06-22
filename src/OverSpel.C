@@ -70,9 +70,6 @@ char aSpellBlast[] = "Spell Blast";
 // WZD dseg:6B3E
 char aDisjunction[] = "Disjunction";
 
-// WZD dseg:6B4A
-char aThe_0[] = " the ";
-
 // WZD dseg:6B4A                                                 END:  ovr135 - Initialized Data
 
 
@@ -1674,7 +1671,8 @@ Capture_Cities_Data();
                         case spl_Resurrection:
                         {
 
-                            Cast_Successful = Cast_Resurrection(player_idx);
+                            // BUGBUG  no return value  Cast_Successful = Cast_Resurrection(player_idx);
+                            Cast_Resurrection(player_idx);
 
                         } break;
 

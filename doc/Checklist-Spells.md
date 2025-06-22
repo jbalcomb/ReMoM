@@ -1,6 +1,4 @@
 
-git commit -m "add Overland Specials 'Incarnation'"
-
 git commit -m "add Overland Specials 'Resurrection'"
 
 git commit -m "add Overland Specials 'Spell Of Mastery'"
@@ -280,7 +278,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Heroism
 [x] True Sight
 [x] Plane Shift
-[ ] Resurrection
+[x] Resurrection
 [x] Dispel Evil
 [x] Planar Seal
 [x] Unicorns

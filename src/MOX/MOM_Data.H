@@ -829,7 +829,7 @@ struct s_SPELL_DATA
 #pragma pack(2)
 struct s_HERO
 {
-    /* 00 */  int16_t  Level;          // ¿ experience (level) ?  Pick_Random_Hero() uses `>= 0` to mean 'player has hero'
+    /* 00 */  int16_t  Level;          // ¿ experience (level) ?  Pick_Random_Hero() uses `>= 0` to mean 'player has hero'; negative means dead, -20 means dead forever/disappeared
     /* 02 */  uint32_t abilities;      // HSA_
     /* 06 */  int8_t   Casting_Skill;  //
     /* 07 */  uint8_t  Spells[4];      //

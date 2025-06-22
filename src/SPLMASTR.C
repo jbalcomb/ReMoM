@@ -70,10 +70,15 @@ extern SAMB_ptr IDK_wizard_id_thing_seg;
 
 // WZD dseg:6B4F                                                 BEGIN:  ovr136 - Initialized Data
 
+// WZD dseg:6B4A
+char aThe_0[] = " the ";
+
 // WZD dseg:6B4F
 char str_empty_string__ovr136[] = "";
 
-// WZD dseg:6B50 53 65 6C 65 63 74 20 61 20 68 65 72 6F 20 74 6F+aSelectAHeroToR db 'Select a hero to Ressurect',0
+// WZD dseg:6B50
+char aSelectAHeroToR[] = "Select a hero to Ressurect";
+
 // WZD dseg:6B6B
 char spellscr_lbx_file__ovr136[] = "SPELLSCR";
 
@@ -269,6 +274,69 @@ SAMB_ptr spellose_sphere_seg;
 
 // WZD o136p01
 // Select_Hero_To_Ressurect()
+int16_t Select_Hero_To_Ressurect(int16_t hero_count, int16_t hero_list[])
+{
+    char * selection_list[31] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t multi_page = 0;
+    int16_t selection_count = 0;
+    int16_t selection_idx = 0;
+    int16_t itr = 0;  // _SI_
+    char * strings_seg = 0;
+
+    strings_seg = (char *)Near_Allocate_First(1240);  // 1240 / 40 = 31
+
+    for(itr = 0; itr < hero_count; itr++)
+    {
+
+        _fstrcpy(&strings_seg[(itr * 40)], hero_names_table[hero_list[itr]].name);
+
+        strcat(&strings_seg[(itr * 40)], aThe_0);
+
+        strcat(&strings_seg[itr * 40], *_unit_type_table[hero_list[itr]].name);
+
+        selection_list[itr] = &strings_seg[(itr * 40)];
+
+    }
+
+    strcpy(&strings_seg[(itr * 40)], str_empty_string__ovr136);
+
+    selection_list[itr] = &strings_seg[(itr * 40)];
+
+    if(hero_count > NUM_HERO_SLOTS)
+    {
+
+        selection_count = NUM_HERO_SLOTS;
+
+        multi_page = ST_TRUE;
+
+    }
+    else
+    {
+
+        selection_count = hero_count;
+
+        multi_page = ST_FALSE;
+
+    }
+
+    selection_idx = Selection_Box(selection_count, &selection_list[0], multi_page, aSelectAHeroToR);  // "Select a hero to Ressurect"
+
+    Clear_Fields();
+
+    Allocate_Reduced_Map();
+
+    Set_Page_Off();
+
+    Main_Screen_Draw();
+
+    PageFlip_FX();
+
+    Assign_Auto_Function(Main_Screen_Draw, 2);
+
+    return hero_list[selection_idx];
+
+}
+
 
 // WZD o136p02
 /*
