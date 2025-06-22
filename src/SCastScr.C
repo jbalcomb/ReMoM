@@ -5,7 +5,6 @@
         ovr070
 */
 
-#include "Help.H"
 #include "SCastScr.H"
 
 #include "MOX/Fields.H"
@@ -18,6 +17,7 @@
 #include "MOX/paragrph.H"
 #include "MOX/Timer.H"
 
+#include "Help.H"
 #include "Lair.H"
 #include "MOM_DEF.H"
 #include "MainScr.H"
@@ -257,7 +257,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
             have_valid_target = ST_FALSE;
 
-            if(_osc_spell_target_type == stt_Magic_Node)
+            if(_osc_spell_target_type == stt_Node)
             {
 
                 entity_idx = Get_Map_Square_Magic_Node(((_map_x + _main_map_grid_x) % WORLD_WIDTH), ((_main_map_grid_y + _map_y) % WORLD_HEIGHT), _map_plane);
@@ -270,7 +270,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                 }
 
             }
-            else  /* (_osc_spell_target_type == stt_Magic_Node) */
+            else  /* (_osc_spell_target_type == stt_Node) */
             {
 
                 entity_idx = GET_MAIN_MAP_ENTITY();
@@ -400,7 +400,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                                 }
                             } break;
 
-                            case stt_Magic_Node:
+                            case stt_Node:
                             {
                                 // N/A
                             } break;
@@ -415,7 +415,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                     }
                     else
                     {
-                        if(_osc_spell_target_type == stt_Magic_Node)
+                        if(_osc_spell_target_type == stt_Node)
                         {
                             entity_idx -= (MAX_UNIT_COUNT + MAX_CITY_COUNT);
                             have_valid_target = ST_TRUE;
@@ -529,7 +529,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                                 leave_screen = ST_TRUE;
                             } break;
 
-                            case stt_Magic_Node:
+                            case stt_Node:
                             {
                                 Spell_Casting_Screen_Reset_Map_Draw_With_WX__4(entity_idx);
                                 leave_screen = ST_TRUE;
@@ -681,7 +681,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                             }
                         } break;
 
-                        case stt_Magic_Node:
+                        case stt_Node:
                         {
                             // N/A
                         } break;
@@ -1148,7 +1148,7 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
     int16_t mouse_list_count = 0;  // _SI_
     int16_t entity_idx = 0;  // _DI_
 
-    if(_osc_spell_target_type == stt_Magic_Node)
+    if(_osc_spell_target_type == stt_Node)
     {
         Add_Nodes_To_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
     }
@@ -1249,7 +1249,7 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                             {
                                 // N/A
                             } break;
-                            case stt_Magic_Node:
+                            case stt_Node:
                             {
                                 // N/A
                             } break;
@@ -1312,7 +1312,7 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                                     _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
                                 }
                             } break;
-                            case stt_Magic_Node:
+                            case stt_Node:
                             {
                                 // N/A
                             } break;
@@ -1324,7 +1324,7 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                     }
                     else
                     {
-                        if(_osc_spell_target_type == stt_Magic_Node)
+                        if(_osc_spell_target_type == stt_Node)
                         {
                             _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
                         }
@@ -1340,7 +1340,7 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
 
     Set_Mouse_List(mouse_list_count, &_current_mouse_list[0]);
 
-    if(_osc_spell_target_type == stt_Magic_Node)
+    if(_osc_spell_target_type == stt_Node)
     {
         Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
     }

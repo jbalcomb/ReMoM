@@ -1,6 +1,4 @@
 
-git commit -m "add Overland Specials 'Transmute'"
-
 git commit -m "add Overland Specials 'Warp Node'"
 
 git commit -m "add Overland Specials 'Summon Hero'"
@@ -334,7 +332,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Evil Presence
 [x] Wraiths
 [x] Cloud of Shadow
-[ ] Warp Node
+[x] Warp Node
 [x] Black Wind
 [x] Zombie Mastery
 [x] Famine

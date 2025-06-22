@@ -25,7 +25,7 @@ enum e_OVERLAND_SPELL_TARGET_TYPE
     stt_Map_Square      = 4,
     stt_Friendly_City   = 5,
     stt_Enemy_City      = 6,
-    stt_Magic_Node      = 7
+    stt_Node            = 7
 };
 enum e_COMBAT_SPELL_TARGET_TYPE
 {

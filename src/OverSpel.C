@@ -1646,7 +1646,7 @@ Capture_Cities_Data();
                         case spl_Warp_Node:
                         {
 
-                            Cast_Successful = Cast_WarpNode(player_idx);
+                            Cast_Successful = Cast_Warp_Node(player_idx);
 
                         } break;
 

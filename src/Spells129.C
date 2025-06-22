@@ -1001,10 +1001,121 @@ int16_t Cast_Chaos_Channels(int16_t player_idx)
 }
 
 // WZD o129p10
-int16_t Cast_WarpNode(int16_t player_idx)
+int16_t Cast_Warp_Node(int16_t player_idx)
 {
+    int16_t status = 0;
+    int16_t scsv5 = 0;
+    int16_t scsv4 = 0;
+    int16_t scsv3 = 0;
+    int16_t scsv2 = 0;
+    int16_t scsv1 = 0;
+    int16_t return_value = 0;  // _DI_
 
-    return ST_FALSE;
+    if(player_idx != HUMAN_PLAYER_IDX)
+    {
+
+        // SPELLY  return_value = IDK_AI_Node_Target_For_Spell(stt_Node, &scsv1, &scsv2, &scsv3, spl_Warp_Node, player_idx);
+
+    }
+    else
+    {
+
+        Allocate_Reduced_Map();
+
+        Mark_Block(_screen_seg);
+
+        status = ST_FALSE;
+
+        return_value = ST_TRUE;
+
+        while((status == ST_FALSE) && (return_value == ST_TRUE))
+        {
+
+            return_value = Spell_Casting_Screen__WIP(stt_Node, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aWarpNode);
+
+            if(return_value == ST_TRUE)
+            {
+
+                if((_NODES[scsv1].flags & NF_WARPED) != 0)
+                {
+
+                    LBX_Load_Data_Static(message_lbx_file__ovr129, 0, (SAMB_ptr)&GUI_NearMsgString[0], 30, 1, 150);
+
+                    Warn0(GUI_NearMsgString);
+
+                }
+                else if(_NODES[scsv1].owner_idx == ST_UNDEFINED)
+                {
+
+                    LBX_Load_Data_Static(message_lbx_file__ovr129, 0, (SAMB_ptr)&GUI_NearMsgString[0], 31, 1, 150);
+
+                    Warn0(GUI_NearMsgString);
+
+                }
+                else if(_NODES[scsv1].owner_idx == HUMAN_PLAYER_IDX)
+                {
+
+                    LBX_Load_Data_Static(message_lbx_file__ovr129, 0, (SAMB_ptr)&GUI_NearMsgString[0], 32, 1, 150);
+
+                    Warn0(GUI_NearMsgString);
+
+                }
+                else
+                {
+
+                    status = ST_TRUE;
+
+                }
+
+            }
+
+        }
+
+    }
+
+    if(return_value == ST_TRUE)
+    {
+
+        if(
+            (player_idx == HUMAN_PLAYER_IDX)
+            ||
+            (_NODES[scsv1].owner_idx == HUMAN_PLAYER_IDX)
+            ||
+            (
+                (magic_set.enemy_spells == ST_TRUE)
+                &&
+                (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] > ST_FALSE)
+                &&
+                (SQUARE_EXPLORED(_NODES[scsv1].wx, _NODES[scsv1].wy, _NODES[scsv1].wp) != ST_FALSE)
+                &&
+                (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC])
+            )
+        )
+        {
+
+            AI_Eval_After_Spell = ST_TRUE;
+
+            Allocate_Reduced_Map();
+
+            Mark_Block(_screen_seg);
+
+            Spell_Animation_Load_Sound_Effect__WIP(spl_Warp_Node);
+
+            Spell_Animation_Load_Graphics(spl_Warp_Node);
+
+            Spell_Animation_Screen__WIP(_NODES[scsv1].wx, _NODES[scsv1].wy, _NODES[scsv1].wp);
+
+            Release_Block(_screen_seg);
+
+        }
+
+        _NODES[scsv1].flags |= NF_WARPED;
+
+        Full_Draw_Main_Screen();
+
+    }
+
+    return return_value;
 
 }
 

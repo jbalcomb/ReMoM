@@ -48,7 +48,7 @@ void Apply_Chaos_Channels(int16_t unit_idx);
 int16_t Cast_Chaos_Channels(int16_t player_idx);
 
 // WZD o129p10
-int16_t Cast_WarpNode(int16_t player_idx);
+int16_t Cast_Warp_Node(int16_t player_idx);
 
 // WZD o129p11
 int16_t Cast_Stasis(int16_t player_idx);
