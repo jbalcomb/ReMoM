@@ -26,7 +26,7 @@ extern "C" {
 void Cast_Summon_Hero(int16_t player_idx, int16_t type);
 
 // WZD o132p02
-int16_t Cast_Incarnation(int16_t player_idx);
+void Cast_Incarnation(int16_t player_idx);
 
 // WZD o132p03
 // CTY_ChaosRift()

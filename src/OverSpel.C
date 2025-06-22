@@ -1681,7 +1681,8 @@ Capture_Cities_Data();
                         case spl_Incarnation:
                         {
 
-                            Cast_Successful = Cast_Incarnation(player_idx);
+                            // BUGBUG  no return value  Cast_Successful = Cast_Incarnation(player_idx);
+                            Cast_Incarnation(player_idx);
 
                         } break;
 

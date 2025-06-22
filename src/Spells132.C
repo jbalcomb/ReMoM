@@ -73,13 +73,13 @@ Hire_Hero_Popup()
 // int16_t Cast_Summon_Hero(int16_t player_idx, int16_t type)
 void Cast_Summon_Hero(int16_t player_idx, int16_t type)
 {
-    int16_t var_4 = 0;
-    int16_t open_hero_slot_idx = 0;
-    int16_t random_hero = 0;  // _DI_
+    int16_t hired = 0;
+    int16_t hero_slot_idx = 0;
+    int16_t unit_type = 0;  // _DI_
 
-    open_hero_slot_idx = Hero_Slot_Open(player_idx);
+    hero_slot_idx = Hero_Slot_Open(player_idx);
 
-    if(open_hero_slot_idx == ST_UNDEFINED)
+    if(hero_slot_idx == ST_UNDEFINED)
     {
 
         Full_Draw_Main_Screen();
@@ -92,10 +92,10 @@ void Cast_Summon_Hero(int16_t player_idx, int16_t type)
     else
     {
 
-        random_hero = Pick_Random_Hero(player_idx, 1, type);
+        unit_type = Pick_Random_Hero(player_idx, 1, type);
 
         if(
-            (random_hero != ST_UNDEFINED)
+            (unit_type != ST_UNDEFINED)
             &&
             (
                 (_units < 950)
@@ -121,7 +121,7 @@ void Cast_Summon_Hero(int16_t player_idx, int16_t type)
                 )
                 {
 
-                    if((_HEROES2[player_idx]->heroes[random_hero].abilities & HSA_FEMALE) != 0)
+                    if((_HEROES2[player_idx]->heroes[unit_type].abilities & HSA_FEMALE) != 0)
                     {
 
                         IDK_SummonAnim(-3, 3, player_idx);
@@ -136,17 +136,17 @@ void Cast_Summon_Hero(int16_t player_idx, int16_t type)
 
                 }
 
-                WIZ_HireHero(player_idx, random_hero, open_hero_slot_idx, 0);
+                WIZ_HireHero(player_idx, unit_type, hero_slot_idx, 0);
 
                 UNIT_RemoveExcess((_units - 1));
 
-                _HEROES2[player_idx]->heroes[random_hero].Level = -20;  // Why?
+                _HEROES2[player_idx]->heroes[unit_type].Level = -20;  // Why?
 
             }
             else
             {
 
-                if((_HEROES2[player_idx]->heroes[random_hero].abilities & HSA_FEMALE) != 0)
+                if((_HEROES2[player_idx]->heroes[unit_type].abilities & HSA_FEMALE) != 0)
                 {
 
                     if(type == 1)
@@ -186,24 +186,24 @@ void Cast_Summon_Hero(int16_t player_idx, int16_t type)
                 if(type == 1)
                 {
 
-                    var_4 = Hire_Hero_Popup(open_hero_slot_idx, random_hero, 1);
+                    hired = Hire_Hero_Popup(hero_slot_idx, unit_type, 1);
 
                 }
                 else  /* type == 2 */
                 {
 
-                    var_4 = Hire_Hero_Popup(open_hero_slot_idx, random_hero, 3);
+                    hired = Hire_Hero_Popup(hero_slot_idx, unit_type, 3);
 
                 }
 
-                if(var_4 == ST_TRUE)
+                if(hired == ST_TRUE)
                 {
 
                     _active_world_x = _UNITS[(_units - 1)].wx;
                     _active_world_y = _UNITS[(_units - 1)].wy;
                     _map_plane = _UNITS[(_units - 1)].wp;
 
-                    // ¿ BUGBUG  no unit_idx param  IDK_HumanPlayer_SelectStack_UnitLocation();  ...as-compiled, would be _map_plane, in AX?
+                    // ¿ BUGBUG  no unit_idx param  Select_Stack_At_Unit();  ...as-compiled, would be _map_plane, in AX?
                     Select_Stack_At_Unit((_units - 1));
 
                 }
@@ -232,10 +232,126 @@ void Cast_Summon_Hero(int16_t player_idx, int16_t type)
 }
 
 // WZD o132p02
-int16_t Cast_Incarnation(int16_t player_idx)
+// int16_t Cast_Incarnation(int16_t player_idx)
+void Cast_Incarnation(int16_t player_idx)
 {
+    int16_t hired = 0;
+    int16_t hero_slot_idx = 0;
+    int16_t unit_type = 0;  // _DI_
 
-    return ST_FALSE;
+    hero_slot_idx = Hero_Slot_Open(player_idx);
+
+    if(hero_slot_idx == ST_UNDEFINED)
+    {
+
+        if(player_idx == HUMAN_PLAYER_IDX)
+        {
+
+            Full_Draw_Main_Screen();
+
+            LBX_Load_Data_Static(message_lbx_file__ovr132, 0, (SAMB_ptr)&GUI_NearMsgString[0], 49, 1, 150);
+
+            Warn0(GUI_NearMsgString);
+
+        }
+
+    }
+    else
+    {
+
+        if(_HEROES2[player_idx]->heroes[ut_Chosen].Level != -20)
+        {
+
+            unit_type = ut_Chosen;
+
+        }
+        else
+        {
+
+            unit_type = ST_UNDEFINED;
+
+        }
+
+        if(
+            (_units < 980)
+            ||
+            (
+                (_units < 950)
+                &&
+                (player_idx == HUMAN_PLAYER_IDX)
+            )
+        )
+        {
+
+            if(unit_type == ST_UNDEFINED)
+            {
+
+                if(player_idx == HUMAN_PLAYER_IDX)
+                {
+
+                    Full_Draw_Main_Screen();
+
+                    LBX_Load_Data_Static(message_lbx_file__ovr132, 0, (SAMB_ptr)&GUI_NearMsgString[0], 51, 1, 150);
+
+                    Warn0(GUI_NearMsgString);
+
+                }
+
+            }
+            else
+            {
+
+                if(player_idx == HUMAN_PLAYER_IDX)
+                {
+
+                    Allocate_Reduced_Map();
+
+                    hired = Hire_Hero_Popup(hero_slot_idx, unit_type, 1);
+
+                    if(hired == ST_TRUE)
+                    {
+
+                        _active_world_x = _players[HUMAN_PLAYER_IDX].summon_wx;
+                        _active_world_y = _players[HUMAN_PLAYER_IDX].summon_wy;
+                        _map_plane = _players[HUMAN_PLAYER_IDX].summon_wp;
+
+                        // ¿ BUGBUG  no unit_idx param  Select_Stack_At_Unit();  ...as-compiled, would be _map_plane, in AX?
+                        Select_Stack_At_Unit((_units - 1));
+
+                    }
+
+                }
+                else
+                {
+
+                    WIZ_HireHero(player_idx, unit_type, hero_slot_idx, 0);
+
+                    UNIT_RemoveExcess((_units - 1));
+
+                    _HEROES2[player_idx]->heroes[unit_type].Level = -20;  // Why?
+
+                }
+
+            }
+
+        }
+        else
+        {
+
+            if(player_idx == HUMAN_PLAYER_IDX)
+            {
+
+                Full_Draw_Main_Screen();
+
+                LBX_Load_Data_Static(message_lbx_file__ovr132, 0, (SAMB_ptr)&GUI_NearMsgString[0], 50, 1, 150);
+
+                Warn0(GUI_NearMsgString);
+
+            }
+
+        }
+
+    }
 
 }
 

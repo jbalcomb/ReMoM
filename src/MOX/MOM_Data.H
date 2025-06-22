@@ -840,6 +840,7 @@ struct s_HERO
 
 #pragma pack(push)
 #pragma pack(2)
+// sizeof:  0x0C  12
 struct s_HEROES
 {
     struct s_HERO heroes[NUM_HERO_TYPES];

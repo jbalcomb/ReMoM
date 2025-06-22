@@ -1,7 +1,6 @@
 
-git commit -m "add Overland Specials 'Summon Hero' & 'Summon Champion'"
-
 git commit -m "add Overland Specials 'Incarnation'"
+
 git commit -m "add Overland Specials 'Resurrection'"
 
 git commit -m "add Overland Specials 'Spell Of Mastery'"
@@ -290,7 +289,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Heavenly Light
 [x] Prayer
 [x] Lionheart
-[ ] Incarnation
+[x] Incarnation
 [x] Invulnerability
 [x] Righteousness
 [x] Prosperity
