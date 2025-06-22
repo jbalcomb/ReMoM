@@ -2018,11 +2018,29 @@ void SoM_Started__STUB(int16_t player_idx)
 
     full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr138[0], ST_UNDEFINED);
 
-    
     _combat_wx = 0;
     /* incremented in SoM_Started_Draw__STUB() */
     while((_combat_wx < 200) && (Get_Input() != full_screen_ESC_field))
     {
+
+        if(_combat_wx == 17)
+        {
+
+            Open_File_Animation__HACK(spellscr_lbx_file__ovr138, 68);
+
+        }
+        else if(_combat_wx == 33)
+        {
+
+            Open_File_Animation__HACK(spellscr_lbx_file__ovr138, 69);
+
+        }
+        else if(_combat_wx == 49)
+        {
+
+            Open_File_Animation__HACK(spellscr_lbx_file__ovr138, 70);
+
+        }
 
     }
 
@@ -2034,7 +2052,7 @@ void SoM_Started__STUB(int16_t player_idx)
     Fade_Out();
 
     // SPELLY  Load_Palette(0, -1);  // ; EMPERATO - main game palette
-    Load_Palette(0, 0, 255);
+    Load_Palette(0, ST_UNDEFINED, NULL);
 
     Allocate_Reduced_Map();
 

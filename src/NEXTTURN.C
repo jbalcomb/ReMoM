@@ -3988,11 +3988,15 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
 
         if(_players[player_idx].researching_spell_idx == spl_Spell_Of_Mastery)
         {
+
             _players[player_idx].research_cost_remaining = _players[player_idx].som_research_cost;
+
         }
         else
         {
+
             _players[player_idx].research_cost_remaining = spell_data_table[spell_idx].research_cost;
+            
         }
 
     }

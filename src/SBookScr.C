@@ -525,12 +525,18 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
         }
         else  /* (spell_data_table[spell_idx].type != scc_Crafting_Spell) */
         {
+            
             if(spell_idx == spl_Spell_Of_Mastery)
             {
+
                 SoM_Started__STUB(player_idx);
+
                 Change_Relations_For_Enchantments(player_idx, spl_Spell_Of_Mastery, 1);
+
             }
+
             _players[player_idx].casting_cost_original = spell_data_table[spell_idx].casting_cost;
+
             _players[player_idx].casting_cost_remaining  = Casting_Cost(player_idx, spell_idx, ST_FALSE);
             if( (player_idx != HUMAN_PLAYER_IDX) && (spell_data_table[spell_idx].type >= scc_Infusable_Spell) )
             {

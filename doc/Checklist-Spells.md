@@ -7,6 +7,8 @@ scc_Crafting_Spell
 git commit -m "add Overland Specials 'Enchant Item'"
 git commit -m "add Overland Specials 'Create Artifact'"
 
+'Create Undead'
+
 
 
 FIXME_RIGHTMEOW
@@ -14,15 +16,10 @@ CMB_PrepareTurn__WIP()
 Combat_Spell_Target_Screen__WIP()
 CMB_DrawMap__WIP()
 OVL_ConvSpellAttack()
-SoM_Started()
+
+GAME_PlayVictoryAnim(); GAME_OVER(); s01p16_empty_function(); GAME_EXE_Swap();
 
 
-
-## 'Create Undead'
-What is 'Create Undead'?
-Where is 'Create Undead'?
-
-"...(the same rules as those for the Create Undead special ability apply)."
 
 
 
@@ -357,5 +354,5 @@ Spreadsheet - OSG Spells by Realm
 [x] Disjunction
 [ ] Create Artifact
 [x] Summon Champion
-[-] Spell of Mastery
-[x] Spell of Returning
+[x] Spell of Mastery
+[x] Spell of Return

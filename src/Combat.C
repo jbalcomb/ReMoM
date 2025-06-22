@@ -782,6 +782,9 @@ int16_t attacker_enchantment_fields[NUM_COMBAT_ENCHANTMENTS];
 */
 int16_t _combat_wp;
 int16_t _combat_wy;
+/*
+    reused as the anim ctr for Cast_Spell_Of_Mastery()
+*/
 int16_t _combat_wx;
 
 // WZD dseg:C482

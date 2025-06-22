@@ -161,6 +161,7 @@ int16_t Player_Research_Spells(int16_t player_idx)
     }
 
     return spells_cnt;
+    
 }
 
 
