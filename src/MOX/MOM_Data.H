@@ -3798,7 +3798,7 @@ extern uint8_t * _square_explored;              // alloc in Allocate_Data_Space(
 extern uint8_t * _map_square_flags;         // alloc in Allocate_Data_Space()
 
 // WZD dseg:9CB8
-extern SAMB_ptr TBL_Terr_Specials;          // alloc in Allocate_Data_Space()
+extern SAMB_ptr _map_square_terrain_specials;          // alloc in Allocate_Data_Space()
 
 // WZD dseg:9CBC
 // WZD dseg:9CC0

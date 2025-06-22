@@ -3,9 +3,6 @@
 
 #include "MOX_BASE.H"
 
-#ifndef STU_DEBUG
-#define DLOG
-#endif
 
 
 /*
@@ -423,9 +420,13 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 /*
     Terrain Special
 
+4 bits as number
+4 bits as flags
+
 ...( & 0x0F) ~== 'any mineral'
 */
-#define GET_TERRAIN_SPECIAL(_wx_, _wy_, _wp_)  ( *(TBL_Terr_Specials + ((_wp_) * WORLD_SIZE) + ((_wy_) * WORLD_WIDTH) + (_wx_)) )
+#define GET_TERRAIN_SPECIAL(_wx_, _wy_, _wp_)           ( GET_1B_OFS( _map_square_terrain_specials, ( ((_wp_) * WORLD_SIZE) + ((_wy_) * WORLD_WIDTH) + (_wx_) )            ) )
+#define SET_TERRAIN_SPECIAL(_wx_, _wy_, _wp_, _value_)  ( SET_1B_OFS( _map_square_terrain_specials, ( ((_wp_) * WORLD_SIZE) + ((_wy_) * WORLD_WIDTH) + (_wx_) ), (_value_) ) )
 
 
 //            _square_explored[((0 * WORLD_SIZE) + (itr_y * WORLD_WIDTH) + itr_x)] = 0xF;  /* 0b11111111 */

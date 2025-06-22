@@ -57,32 +57,20 @@ char cityname_lbx_file__ovr143[] = "CITYNAME";
 */
 void Set_Terrain_Type_Volcano_With_Owner(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx)
 {
-    uint16_t terrain_type = 0;
-    int16_t terrain_special = 0;
-
-    terrain_type = GET_TERRAIN_TYPE(wx, wy, wp);
 
     SET_TERRAIN_TYPE(wx, wy, wp, tt_Volcano);
-
-    terrain_type = GET_TERRAIN_TYPE(wx, wy, wp);
 
     _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = (_map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] | (player_idx + 1) );
 
     // TODO  TILE_AdjustMapFlow(wx, wy, wp);
 
-    terrain_special = *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx);
-
-    *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx) = (*(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx) & 0x2F);
-
-    terrain_special = *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx);
-
-    *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx) = 0;
-
+    // NOTE: as best I can tell, it does actually do exactly this silliness
+    *(_map_square_terrain_specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx) &= 0x2F;  /* 0b00101111  clears bits 5,7,8 ...keeps TS_WILDGAME? */
+    *(_map_square_terrain_specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx) = 0;
 
     // ; attempts to generate a new mineral type terrain special on the tile with a 20% chance
     // ; BUG: clears the result after setting it
-    // TODO  TILE_GenerateOre(wx, wy, wp);
-
+    // SPELLY  TILE_GenerateOre(wx, wy, wp);
 
 }
 
@@ -389,11 +377,11 @@ void TILE_ReplaceMinerals__STUB(int16_t wx, int16_t wy, int16_t wp, int16_t tera
 ; returns the new terrain special flags for the tile
 */
 /*
-    clears the low-byte of TBL_Terr_Specials[]
+    clears the low-nibble of _map_square_terrain_specials[]
 */
 void Clear_Terrain_Specials(int16_t wx, int16_t wy, int16_t wp)
 {
-    TBL_Terr_Specials[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= 0xF0;
+    _map_square_terrain_specials[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= 0xF0;
 }
 
 

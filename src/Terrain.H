@@ -44,17 +44,18 @@ enum enum_Terrain_Specials
     ts_Nightshade     = 128     // 0x80
 };
 
+#define TS_NONE             0  // 0000
 #define TS_IRON             1  // 0001
 #define TS_COAL             2  // 0020
 #define TS_SILVER           3  // 0011
 #define TS_GOLD             4  // 0100
-#define TS_GEM              5  // 0101
+#define TS_GEMS             5  // 0101
 #define TS_MITHRIL          6  // 0110
 #define TS_ADAMANTIUM       7  // 0111
 #define TS_QUORK            8  // 1000
 #define TS_CRYSX            9  // 1001
 #define TS_HUNTERSLODGE  0x10  // 0001
-#define TS_UNKNOWN_20H   0x20  // 0010  corruption?
+#define TS_UNKNOWN_20H   0x20  // 0010  DEDU was corruption?
 #define TS_WILDGAME      0x40  // 0100
 #define TS_NIGHTSHADE    0x80  // 1000
 
@@ -71,7 +72,6 @@ Meh. I put stuff in MoX_DEF.H that is meant to have access to this.
 // 0x04
 #define MSF_ROAD        0x08
 #define MSF_EROAD       0x10
-#define TF_AnyRoad      0x18    // (MSF_ROAD | MSF_EROAD)
 #define MSF_CORRUPTION  0x20
 #define MSF_UNKNOWN_40H 0x40    // wild game?
 #define TF_NoRoad80     0x80    // ~== -1 ST_UNDEFINED

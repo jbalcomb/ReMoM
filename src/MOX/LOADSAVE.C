@@ -37,7 +37,7 @@ void TST_Validate_GameData(void)
 {
     int16_t itr;
     int16_t is_bjorked;
-    int8_t * ptr_TBL_Terr_Specials;
+    int8_t * map_square_terrain_specials_ptr;
     int8_t terrain_special;
     int8_t terrain_special_min;
     int8_t terrain_special_max;
@@ -104,12 +104,12 @@ void TST_Validate_GameData(void)
 // terrain_special_min: -128
 // terrain_special_max: 64
     is_bjorked = ST_FALSE;
-    ptr_TBL_Terr_Specials = (int8_t *)TBL_Terr_Specials;
+    map_square_terrain_specials_ptr = (int8_t *)_map_square_terrain_specials;
     terrain_special_min = 0;
     terrain_special_max = 0;
     for(itr = 0; itr < (NUM_PLANES * WORLD_SIZE); itr++)
     {
-        terrain_special = *(ptr_TBL_Terr_Specials + itr);
+        terrain_special = *(map_square_terrain_specials_ptr + itr);
 #ifdef STU_DEBUG
         dbg_prn("terrain_special: 0x%02X  %d\n", terrain_special, terrain_special);
 #endif
@@ -127,7 +127,7 @@ void TST_Validate_GameData(void)
 //     if(is_bjorked == ST_TRUE)
 //     {
 // #ifdef STU_DEBUG
-//         dbg_prn("DEBUG: [%s, %d]: TBL_Terr_Specials is bjorked!!\n", __FILE__, __LINE__);
+//         dbg_prn("DEBUG: [%s, %d]: _map_square_terrain_specials is bjorked!!\n", __FILE__, __LINE__);
 // #endif
 //     }
 
@@ -282,7 +282,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 79188);
 
-    fwrite(TBL_Terr_Specials, NUM_PLANES, 2400, file_pointer);
+    fwrite(_map_square_terrain_specials, NUM_PLANES, 2400, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 83988);
@@ -463,7 +463,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 79188);
 
-    fread(TBL_Terr_Specials, NUM_PLANES, 2400, file_pointer);
+    fread(_map_square_terrain_specials, NUM_PLANES, 2400, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 83988);

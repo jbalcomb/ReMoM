@@ -604,21 +604,21 @@ int16_t Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_mine
     int16_t terrain_special;  // _DI_
     int16_t gold_units;  // _SI_
 
-    terrain_special = *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx);
+    terrain_special = GET_TERRAIN_SPECIAL(wx, wy, wp);
 
     gold_units = 0;
 
-    if(terrain_special == ts_Silver)
+    if(terrain_special == TS_SILVER)
     {
         gold_units = 2;
     }
 
-    if(terrain_special == ts_Gold)
+    if(terrain_special == TS_GOLD)
     {
         gold_units = 3;
     }
 
-    if(terrain_special == ts_Gems)
+    if(terrain_special == TS_GEMS)
     {
         gold_units = 5;
     }
@@ -657,26 +657,26 @@ int16_t Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_mine
     int16_t terrain_special;  // _DI_
     int16_t mana_units;  // _SI_
 
-    terrain_special = *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx);
+    terrain_special = GET_TERRAIN_SPECIAL(wx, wy, wp);
 
     mana_units = 0;
 
-    if(terrain_special == ts_Mithril)
+    if(terrain_special == TS_MITHRIL)
     {
         mana_units = 1;
     }
 
-    if(terrain_special == ts_Adamantium)
+    if(terrain_special == TS_ADAMANTIUM)
     {
         mana_units = 2;
     }
 
-    if(terrain_special == ts_QuorkCrystals)
+    if(terrain_special == TS_QUORK)
     {
         mana_units = 3;
     }
 
-    if(terrain_special == ts_CrysxCrystals)
+    if(terrain_special == TS_CRYSX)
     {
         mana_units = 5;
     }
@@ -710,11 +710,11 @@ int16_t Square_Mithril_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_mi
     int16_t terrain_special;
     int16_t power;  // _SI_
 
-    terrain_special = *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx);
+    terrain_special = GET_TERRAIN_SPECIAL(wx, wy, wp);
 
     power = 0;
 
-    if(terrain_special == ts_Mithril)
+    if(terrain_special == TS_MITHRIL)
     {
         power = 1;
     }
@@ -743,11 +743,11 @@ int16_t Square_Adamantium_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have
     int16_t terrain_special;
     int16_t power;  // _SI_
 
-    terrain_special = *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx);
+    terrain_special = GET_TERRAIN_SPECIAL(wx, wy, wp);
 
     power = 0;
 
-    if(terrain_special == ts_Adamantium)
+    if(terrain_special == TS_ADAMANTIUM)
     {
         power = 2;
     }
@@ -787,7 +787,7 @@ int16_t Square_Has_Mithril(int16_t wx, int16_t wy, int16_t wp)
 
     terrain_special = GET_TERRAIN_SPECIAL(wx, wy, wp);
 
-    if(terrain_special == ts_Mithril)
+    if(terrain_special == TS_MITHRIL)
     {
         return ST_TRUE;
     }
@@ -810,7 +810,7 @@ int16_t Square_Has_Adamantium(int16_t wx, int16_t wy, int16_t wp)
 
     terrain_special = GET_TERRAIN_SPECIAL(wx, wy, wp);
 
-    if(terrain_special == ts_Adamantium)
+    if(terrain_special == TS_ADAMANTIUM)
     {
         return ST_TRUE;
     }
@@ -841,9 +841,9 @@ int16_t Square_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t h
 
     cost_reduction = 0;
 
-    terrain_special = *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx);
+    terrain_special = GET_TERRAIN_SPECIAL(wx, wy, wp);
 
-    if(terrain_special == ts_Iron)
+    if(terrain_special == TS_IRON)
     {
         if(have_minersguild != ST_TRUE)
         {
@@ -855,7 +855,7 @@ int16_t Square_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t h
         }
     }
     
-    if(terrain_special == ts_Coal)
+    if(terrain_special == TS_COAL)
     {
         if(have_minersguild != ST_TRUE)
         {
@@ -910,15 +910,15 @@ int16_t City_Best_Weapon(int16_t city_idx)
 
         for(itr = 0; itr < useable_map_squares; itr++)
         {
-            terrain_special = *(TBL_Terr_Specials + (city_wp * WORLD_SIZE) + (wy_array[itr] * WORLD_WIDTH) + wx_array[itr]);
+            terrain_special = GET_TERRAIN_SPECIAL(wx_array[itr], wy_array[itr], city_wp);
 
-            if(terrain_special == ts_Adamantium)
+            if(terrain_special == TS_ADAMANTIUM)
             {
                 weapon_quality = wq_Adamantium;
             }
 
             if(
-                (terrain_special == ts_Mithril)
+                (terrain_special == TS_MITHRIL)
                 &&
                 (weapon_quality != wq_Adamantium)
             )

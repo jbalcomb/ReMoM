@@ -2473,6 +2473,11 @@ uint8_t * _map_square_flags;                // load in Load_SAVE_GAM()
 
 // WZD dseg:9CB8  
 /*
+1-byte, unsigned
+2 nibbles
+    mineral ids  only 1 of 15 values
+    biota flags  any of all 4 values
+
 "Terrain Specials"
 "special terrain features (minerals, crystals, wild game, etc.)"
 
@@ -2493,7 +2498,7 @@ TS_Wild_Game  = 40h
 ts_Nightshade  = 80h
 
 */
-SAMB_ptr TBL_Terr_Specials;                 // load in Load_SAVE_GAM()
+SAMB_ptr _map_square_terrain_specials;                 // load in Load_SAVE_GAM()
 
 // WZD dseg:9CBC  
 // WZD dseg:9CC0

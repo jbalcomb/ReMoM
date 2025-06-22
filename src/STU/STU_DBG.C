@@ -63,7 +63,7 @@ uint8_t * DBG_ORIG_TBL_Scouting;
 // WZD dseg:9CB4  
 uint8_t * DBG_ORIG__map_square_flags;
 // WZD dseg:9CB8  
-SAMB_ptr  DBG_ORIG_TBL_Terr_Specials;
+SAMB_ptr  DBG_ORIG__map_square_terrain_specials;
 // WZD dseg:9CBC  
 struct s_CITY * DBG_ORIG__CITIES;
 // WZD dseg:9CC0

@@ -1610,36 +1610,39 @@ int16_t City_Food_WildGame(int16_t city_idx)
     int16_t food_units = 0;  // _DI_
     int16_t itr = 0;  // _SI_
     uint8_t * bit_field = 0;  // _DX_
-    uint16_t terrain_specials_offset = 0;
-    uint8_t terrain_special = 0;
 
     city_wp = _CITIES[city_idx].wp;
 
     // NOTE: Accounts for 'Corruption'
-    // useable_map_squares = Get_Useable_City_Area(_CITIES[city_idx].wx, _CITIES[city_idx].wy, city_wp, &wx_array[0], &wy_array[0]);
     useable_map_squares = Get_Useable_City_Area(CITYX(), CITYY(), city_wp, &wx_array[0], &wy_array[0]);
 
     food_units = 0;
 
     for(itr = 0; itr < useable_map_squares; itr++)
     {
-        terrain_specials_offset = ((city_wp * WORLD_SIZE) + (wy_array[itr] * WORLD_WIDTH) + (wx_array[itr]));
-        terrain_special = GET_1B_OFS(TBL_Terr_Specials,terrain_specials_offset);
 
-        // if( (*((uint8_t *)&TBL_Terr_Specials[((city_wp * WORLD_SIZE) + (wy_array[itr] * WORLD_WIDTH) + wx_array[itr])]) & 0x40 /* TS_Wild_Game */) != 0)
-        if((terrain_special & 0x40) != 0)  /* TS_Wild_Game */
+        if((GET_TERRAIN_SPECIAL(wx_array[itr], wy_array[itr], city_wp) & TS_WILDGAME) != 0)
         {
+
             bit_index = ((wy_array[itr] * WORLD_WIDTH) + wx_array[itr]);
+
             bit_field = (city_area_shared_bits + (city_wp * WORLD_SIZE) );
+
             if(Test_Bit_Field(bit_index, bit_field) == ST_FALSE)
             {
+
                 food_units += 2;
+
             }
             else
             {
+
                 food_units += 1;
+
             }
+
         }
+
     }
 
     return food_units;
@@ -3133,27 +3136,34 @@ void All_Outpost_Population_Growth(void)
 
         for(itr = 0; itr < useable_map_squares; itr++)
         {
-            terrain_special = *(TBL_Terr_Specials + (city_wp * WORLD_SIZE) + (wy_array[itr] * WORLD_WIDTH) + wx_array[itr]);
+
+            terrain_special = GET_TERRAIN_SPECIAL(wx_array[itr], wy_array[itr], city_wp);
 
             if(terrain_special != 0)
             {
+
                 if(
-                    (terrain_special == 1)  /* TS_IronOre */
+                    (terrain_special == TS_IRON)
                     ||
-                    (terrain_special == 3)  /* TS_SilverOre */
+                    (terrain_special == TS_SILVER)
                 )
                 {
+
                     grow += 5;
+
                 }
                 else
                 {
+
                     grow += 10;
+
                 }
+
             }
 
         }
 
-        shrink =  5;  // 5%  1:20
+        shrink = 5;  // 5%  1:20
 
         if(_CITIES[itr_cities].enchantments[EVIL_PRESENCE] != 0)
         {
@@ -3186,6 +3196,7 @@ void All_Outpost_Population_Growth(void)
         {
             _CITIES[itr_cities].Pop_10s += Random(2);
         }
+        
     }
 
 }

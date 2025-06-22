@@ -1,7 +1,6 @@
 
-git commit -m "add Overland Specials 'Raise Volcano'"
+git commit -m "add Overland Specials 'Transmute'"s
 
-git commit -m "add Overland Specials 'Transmute'"
 git commit -m "add Overland Specials 'Warp Node'"
 
 git commit -m "add Overland Specials 'Summon Hero'"
@@ -167,7 +166,7 @@ Spreadsheet - OSG Spells by Realm
 [x] Change Terrain
 [x] Path Finding
 [x] Cockatrices
-[ ] Transmute
+[x] Transmute
 [x] Natures Cures
 [x] Basilisk
 [x] Elemental Armor

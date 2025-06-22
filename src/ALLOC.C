@@ -6,6 +6,7 @@
 */
 
 #include "MOX/Allocate.H"
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_TYPE.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 
@@ -90,7 +91,7 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
 
     _landmasses    = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
 
-    TBL_Terr_Specials = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
+    _map_square_terrain_specials = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
 
     _map_square_flags = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
 

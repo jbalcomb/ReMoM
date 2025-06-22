@@ -1028,10 +1028,199 @@ int16_t Cast_Raise_Volcano(int16_t player_idx)
 
 
 // WZD o130p10
+/*
+
+coal to gems
+iron to gold
+silver to mithril
+
+*/
 int16_t Cast_Transmute(int16_t player_idx)
 {
+    int16_t saved_map_plane = 0;
+    int16_t saved_map_y = 0;
+    int16_t saved_map_x = 0;
+    int16_t frame_count = 0;
+    int16_t terrain_type = 0;
+    int16_t status = 0;
+    int16_t scsv5 = 0;
+    int16_t scsv4 = 0;
+    int16_t scsv3 = 0;
+    int16_t scsv2 = 0;
+    int16_t scsv1 = 0;
+    int16_t did_it = 0;  // _SI_
+    int16_t return_value = 0;  // _DI_
 
-    return ST_FALSE;
+    did_it = ST_FALSE;
+
+    Allocate_Reduced_Map();
+
+    Mark_Block(_screen_seg);
+
+    return_value = ST_TRUE;
+
+    if(player_idx != HUMAN_PLAYER_IDX)
+    {
+
+        return_value = Get_Map_Square_Target_For_Spell(stt_Map_Square, &scsv1, &scsv2, &scsv3, spl_Transmute, player_idx);
+
+    }
+    else
+    {
+
+        status = ST_FALSE;
+
+        while((status == ST_FALSE) && (return_value == ST_TRUE))
+        {
+
+            return_value = Spell_Casting_Screen__WIP(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aTransmute);
+
+            if(return_value == ST_TRUE)
+            {
+
+                if(
+                    (GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) != TS_COAL)
+                    &&
+                    (GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) != TS_IRON)
+                    &&
+                    (GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) != TS_SILVER)
+                    &&
+                    (GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) != TS_GEMS)
+                    &&
+                    (GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) != TS_GOLD)
+                    &&
+                    (GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) != TS_MITHRIL)
+                )
+                {
+
+                    LBX_Load_Data_Static(message_lbx_file__ovr130, 0, (SAMB_ptr)&GUI_NearMsgString[0], 40, 1, 150);
+
+                    Warn0(GUI_NearMsgString);
+
+                }
+                else
+                {
+
+                    status = ST_TRUE;
+
+                }
+
+            }
+
+        }
+
+    }
+
+    if(return_value == ST_TRUE)
+    {
+
+        if(
+            (player_idx == HUMAN_PLAYER_IDX)
+            ||
+            (
+                (magic_set.enemy_spells == ST_TRUE)
+                &&
+                (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] > ST_FALSE)
+                &&
+                (SQUARE_EXPLORED(scsv1, scsv2, scsv3) != ST_FALSE)
+            )
+            &&
+            (magic_set.spell_animations == ST_TRUE)
+        )
+        {
+
+            Spell_Animation_Load_Sound_Effect__WIP(spl_Change_Terrain);
+
+            Spell_Animation_Load_Graphics(spl_Change_Terrain);
+
+            Spell_Animation_Screen__WIP(scsv1, scsv2, scsv3);
+
+        }
+
+        if(GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) == TS_MITHRIL)
+        {
+
+            SET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3, TS_NONE);
+
+            SET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3, GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) | TS_SILVER);
+
+            did_it = ST_TRUE;
+
+        }
+
+        if(GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) == TS_GOLD)
+        {
+
+            SET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3, TS_NONE);
+
+            SET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3, GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) | TS_IRON);
+
+            did_it = ST_TRUE;
+
+        }
+
+        if(GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) == TS_GEMS)
+        {
+
+            SET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3, TS_NONE);
+
+            SET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3, GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) | TS_COAL);
+
+            did_it = ST_TRUE;
+
+        }
+
+        if(
+            (GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) == TS_COAL)
+            &&
+            (did_it == ST_FALSE)
+        )
+        {
+
+            SET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3, TS_NONE);
+
+            SET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3, GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) | TS_GEMS);
+
+            did_it = ST_TRUE;
+
+        }
+
+        if(
+            (GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) == TS_IRON)
+            &&
+            (did_it == ST_FALSE)
+        )
+        {
+
+            SET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3, TS_NONE);
+
+            SET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3, GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) | TS_GOLD);
+
+            did_it = ST_TRUE;
+
+        }
+        if(
+            (GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) == TS_SILVER)
+            &&
+            (did_it == ST_FALSE)
+        )
+        {
+
+            SET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3, TS_NONE);
+
+            SET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3, GET_TERRAIN_SPECIAL(scsv1, scsv2, scsv3) | TS_MITHRIL);
+
+            did_it = ST_TRUE;
+
+        }
+
+    }
+
+    OVL_MosaicFlip__STUB();
+
+    Release_Block(_screen_seg);
+
+    return return_value;
 
 }
 

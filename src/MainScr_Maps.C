@@ -17,10 +17,10 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 
 */
 
-#include "MOX/Graphics.H"
-#include "MOX/MOX_DEF.H"
 #include "MainScr_Maps.H"
 
+#include "MOX/Graphics.H"
+#include "MOX/MOX_DEF.H"
 #include "MOX/FLIC_Draw.H"
 #include "MOX/MOX_DAT.H"  /* _players[] */
 #include "MOX/MOX_SET.H"  /* magic_set */
@@ -2596,11 +2596,11 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 
             if(unexplored_area != ST_FALSE)
             {
-                terrain_special = TBL_Terr_Specials[(wp * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+                terrain_special = _map_square_terrain_specials[(wp * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
 
                 terrain_flag = _map_square_flags[(wp * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
 
-                if((terrain_flag & 0x20) != 0)  /* Corruption */
+                if((terrain_flag & MSF_CORRUPTION) != 0)
                 {
                     site_pict_seg = IMG_OVL_Corruption;
                     FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
@@ -2633,7 +2633,7 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                     }
                 }
 
-                if((terrain_special & 0x80) != 0)  /* Nightshade */
+                if((terrain_special & TS_NIGHTSHADE) != 0)
                 {
                     site_pict_seg = IMG_OVL_Nightshade;
                     FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
@@ -2656,8 +2656,8 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
 {
     // DEDU  does this actually exist in the Dasm?  uint8_t * ptr_TBL_Scouting;
-    uint8_t * ptr_TBL_Terr_Specials;
-    int16_t Terrain_Special;
+    uint8_t * terrain_specials_ptr;
+    int16_t terrain_special;
     int16_t City_Cover;
     int16_t curr_world_x;
     int16_t itr_screen_x;
@@ -2665,70 +2665,93 @@ void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_widt
     int16_t itr_world_x;
     int16_t itr_world_y;
     int16_t itr_cities;
-    uint8_t unexplored_area;
-    SAMB_ptr site_pict_seg;
+    uint8_t unexplored_area;  // DNE in Dasm
+    SAMB_ptr site_pict_seg;  // DNE in Dasm
 
     itr_screen_y = screen_y;
+
     itr_world_y = world_grid_y;
 
     while(world_grid_y + map_grid_height > itr_world_y)
     {
         itr_screen_x = screen_x;
 
-        ptr_TBL_Terr_Specials = (uint8_t *)(TBL_Terr_Specials + (wp * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH));
+        terrain_specials_ptr = (uint8_t *)(_map_square_terrain_specials + (wp * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH));
 
-        // DELETEME  ptr_TBL_Scouting = (uint8_t *)(_square_explored + (wp * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH));
+        // TODO  square_explored_ptr
 
         itr_world_x = world_grid_x;
 
         while(world_grid_x + map_grid_width > itr_world_x)
         {
+
             if(itr_world_x < WORLD_WIDTH)
             {
+
                 curr_world_x = itr_world_x;
+
             }
             else
             {
+
                 curr_world_x = itr_world_x - WORLD_WIDTH;
+
             }
 
-            // DELETEME  unexplored_area = *(ptr_TBL_Scouting + curr_world_x);
             unexplored_area = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp);
 
+            // if(square_explored_ptr + 
             if(unexplored_area != ST_FALSE)
             {
-                // mov     al, [es:bx]
-                // mov     ah, 0
-                // and     ax, 0Fh                         ; ¿ clearing sign-extended ?
-                // TODO: What's with the 0x40 and 0x80?
-                Terrain_Special = (((int16_t)*(ptr_TBL_Terr_Specials + curr_world_x)) & 0x0F);
-                if(Terrain_Special != 0)
+
+                terrain_special = (((int16_t)*(terrain_specials_ptr + curr_world_x)) & 0x0F);
+
+                if(terrain_special != 0)
                 {
+
                     City_Cover = 0;
+
                     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
                     {
-                        if((_CITIES[itr_cities].wx == curr_world_x) && (_CITIES[itr_cities].wy == itr_world_y) && (_CITIES[itr_cities].wp == wp))
+
+                        if(
+                            (_CITIES[itr_cities].wx == curr_world_x)
+                            &&
+                            (_CITIES[itr_cities].wy == itr_world_y)
+                            &&
+                            (_CITIES[itr_cities].wp == wp)
+                        )
                         {
+
                             City_Cover = 1;
+
                         }
+
                     }
 
                     if(City_Cover == 0)
                     {
-                        site_pict_seg = mineral_site_segs[Terrain_Special];
+
+                        site_pict_seg = mineral_site_segs[terrain_special];
+
                         FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
+
                     }
+
                 }
+
             }
 
-
             itr_screen_x += SQUARE_WIDTH;
+
             itr_world_x += 1;
+
         }
 
-
         itr_screen_y += SQUARE_HEIGHT;
+
         itr_world_y += 1;
+
     }
 
 }

@@ -103,7 +103,7 @@ _ITEMS
 _CITIES
 _UNITS
 
-TBL_Terr_Specials
+_map_square_terrain_specials
 _square_explored
 movement_mode_cost_maps
 events_table
@@ -153,7 +153,7 @@ void Test_Run(void)
     assert(sizeof(struct s_CITY) == CITY_RECORD_SIZE);          //  114  _CITIES
     assert(sizeof(struct s_UNIT) == UNIT_RECORD_SIZE);          //   32  _UNITS
 
-    // TBL_Terr_Specials
+    // _map_square_terrain_specials
     // _square_explored
     // movement_mode_cost_maps
     // events_table
