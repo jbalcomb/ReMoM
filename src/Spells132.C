@@ -1486,9 +1486,55 @@ Capture_Cities_Data();
 }
 
 // WZD o132p18
-int16_t Cast_SpellOfReturn(int16_t player_idx)
+int16_t Cast_Spell_Of_Return(int16_t player_idx)
 {
+    int16_t scsv5 = 0;
+    int16_t scsv4 = 0;
+    int16_t scsv3 = 0;
+    int16_t scsv2 = 0;
+    int16_t scsv1 = 0;
+    int16_t return_value = 0;  // _DI_
 
-    return ST_FALSE;
+    Allocate_Reduced_Map();
+
+    Mark_Block(_screen_seg);
+
+    if(player_idx == HUMAN_PLAYER_IDX)
+    {
+
+        do {
+            return_value = Spell_Casting_Screen__WIP(stt_Friendly_City, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aSpellOfReturn);  // "Spell of Return"
+        } while (return_value == ST_FALSE);
+
+    }
+    else
+    {
+
+        return_value = Pick_Target_For_City_Enchantment__WIP(stt_Friendly_City, &scsv1, spl_Move_Fortress, player_idx);
+
+    }
+
+    if(return_value == ST_TRUE)
+    {
+
+        Cast_Spell_City_Enchantment_Animation_1__WIP(scsv1, spl_Spell_Of_Return, player_idx);
+
+        _players[player_idx].summon_wx = _CITIES[scsv1].wx;
+        _players[player_idx].summon_wy = _CITIES[scsv1].wy;
+        _players[player_idx].summon_wp = _CITIES[scsv1].wp;
+
+        _FORTRESSES[player_idx].wx = _CITIES[scsv1].wx;
+        _FORTRESSES[player_idx].wy = _CITIES[scsv1].wy;
+        _FORTRESSES[player_idx].wp = _CITIES[scsv1].wp;
+
+        _players[player_idx].capital_race = _CITIES[scsv1].race;
+
+        Cast_Spell_City_Enchantment_Animation_2__WIP(scsv1, spl_Spell_Of_Return, player_idx);
+
+    }
+
+    Release_Block(_screen_seg);
+
+    return return_value;
 
 }

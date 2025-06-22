@@ -74,7 +74,7 @@ int16_t Cast_Lycantrophy(int16_t player_idx);
 int16_t Cast_Wall_Of_Stone(int16_t player_idx);
 
 // WZD o132p18
-int16_t Cast_SpellOfReturn(int16_t player_idx);
+int16_t Cast_Spell_Of_Return(int16_t player_idx);
 
 
 

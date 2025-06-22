@@ -1537,7 +1537,7 @@ Capture_Cities_Data();
                         case spl_Spell_Of_Return:
                         {
 
-                            Cast_Successful = Cast_SpellOfReturn(player_idx);
+                            Cast_Successful = Cast_Spell_Of_Return(player_idx);
 
                         } break;
 

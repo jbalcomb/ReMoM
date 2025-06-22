@@ -972,7 +972,7 @@ void Selection_Box_Draw(void)
             y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * itr_selectbox_items));
             x_start = (selectbox_x1 + FLIC_Get_Width(selectbd_left_seg) + FLIC_Get_Width(selectbd_scroll_seg));
             Clipped_Draw(x_start, y_start, selectbk_buttons_seg[itr_selectbox_items]);
-
+                
             y_start = (selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * itr_selectbox_items));
             x_start = (selectbox_x2 - FLIC_Get_Width(selectbd_right_seg) + FLIC_Get_Width(selectbd_scroll_seg) + 1);
             Clipped_Draw(x_start, y_start, selectbk_button_22to26_seg[itr_selectbox_items]);
