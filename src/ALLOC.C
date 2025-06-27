@@ -61,7 +61,7 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     // GFX_Swap_Seg = Allocate_Space(4092);
     // GFX_Swap_Seg = Allocate_Space(4092);
     // GFX_Swap_Seg = Allocate_Space((65536 * 3));
-    GFX_Swap_Seg = Allocate_Space(65535);
+    g_graphics_cache_seg = Allocate_Space(65535);
     /*
         1024 * 1024 = 1048576
         1048576 / 16 = 65536

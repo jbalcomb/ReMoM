@@ -172,7 +172,7 @@ enum e_DIPLOMATIC_ACTION
 // WZD dseg:C3F0                                                                                         ; DATA XREF: IDK_Diplo_Scrn+C0r ...
 // WZD dseg:C3F0                                                                                         ; 100 LBX_NearAlloc_Next bytes each
 // WZD dseg:C3FE
-extern int16_t G_DIPL_TargetWizard;
+extern int16_t m_diplomac_player_idx;
 // WZD dseg:C400 00 00                                           G_DiploMsg_E0_Field0 dw 0               ; DATA XREF: sub_732D9+2Do ...
 // WZD dseg:C402 00 00                                           G_DiploMsg_E0_Field2 dw 0               ; DATA XREF: sub_732D9+3A4r
 // WZD dseg:C404 00 00                                           G_DiploMsg_E0_Field4 dw 0               ; DATA XREF: sub_732D9+47r ...
@@ -234,13 +234,13 @@ void Diplomacy_Screen__WIP(void);
 // static void Diplomacy_Screen_Load__WIP(void);
 
 // WZD o84p13
-// DIPL_LoadTalkGFX()
+// static void DIPL_LoadTalkGFX(void);
 
 // WZD o84p14
-// IDK_DiplEyes_s7028D()
+// static void IDK_DiplEyes_s7028D(void);
 
 // WZD o84p15
-// IDK_Dipl_Draw_s702E6()
+// static void IDK_Dipl_Draw_s702E6(void);
 
 // WZD o84p16
 // sub_7038D()
@@ -255,7 +255,7 @@ void Diplomacy_Screen__WIP(void);
 */
 
 // WZD o85p01
-// IDK_DiplSts_s70570()
+static void IDK_DiplSts_s70570(void);
 
 // WZD o85p02
 // DIPL_Gravitation()

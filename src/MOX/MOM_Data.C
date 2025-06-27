@@ -408,7 +408,7 @@ Global Enchantment upkeeps in byte order, from Eternal Night to Awareness
 int16_t overland_enchantment_upkeep_table[24] = {15, 10, 40, 5, 5, 50, 200, 7, 10, 10, 40, 15, 20, 10, 40, 10, 10, 10, 3, 10, 5, 10, 3, 3};
 
 // WZD dseg:1FBC 11 28                                           
-char * _personality_type_names[] =
+char * _personality_type_names[6] =
 {
     aManiacal,
     aRuthless, 
@@ -418,14 +418,13 @@ char * _personality_type_names[] =
     aPeaceful
 };
 
-
+// WZD dseg:1FC8
 // ; added to chance of forming treaties
 // ; added to chance of avoiding superiority wars
-// WZD dseg:1FC8 00 00 0A 00 14 00 1E 00 28 00 32 00             TBL_AI_PRS_???_Mod dw 0, 10, 20, 30, 40, 50
-
+int16_t TBL_AI_PRS_IDK_Mod[6] = { 0, 10, 20, 30, 40, 50 };
 
 // WZD dseg:1FD4
-char * _objective_type_names[] =
+char * _objective_type_names[5] =
 {
     aPragmatist,
     aMilitarist,
@@ -433,7 +432,6 @@ char * _objective_type_names[] =
     aPerfectionist,
     aExpansionist
 };
-
 
 // WZD dseg:1FDE
 /*
@@ -2562,7 +2560,7 @@ SAMB_ptr World_Data_Extra;
 
 // WZD dseg:9D1E
 // drake178: GFX_Swap_Seg
-SAMB_ptr GFX_Swap_Seg;
+SAMB_ptr g_graphics_cache_seg;
 
 // WZD dseg:9D20
 SAMB_ptr World_Data;

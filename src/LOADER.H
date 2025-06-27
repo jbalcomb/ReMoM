@@ -296,7 +296,7 @@ void Units_Upkeeps(void);
 void Terrain_Init(void);
 
 // WZD o52p04
-// fxn_o52p04()
+void o52p4_empty_function(void);
 
 // WZD o52p05
 void Main_Screen_Load_Pictures(void);
@@ -346,7 +346,7 @@ void Load_BUILDDAT(void);
 void Load_Combat_Background_Bottom(void);
 
 // WZD o52p20
-void GFX_Swap_Reset(void);
+void Graphics_Cache_Reset(void);
 
 // WZD o52p21
 // UU_WrldDatBuf_Reset()
@@ -386,7 +386,7 @@ void Cache_Graphics_Things(void);
 void Cache_Graphics_Unit_List_Window(void);
 
 // WZD o52p33
-// U_GFX_Swap_Empty()
+void Cache_Graphics_Diplomacy(void);
 
 // WZD o52p34
 void Cache_Graphics_Combat(void);

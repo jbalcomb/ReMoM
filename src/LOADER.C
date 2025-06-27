@@ -161,57 +161,60 @@ void Load_MGC_Resources(void)
 // 1oom ¿ ?
 void Load_WZD_Resources(void)
 {
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_WZD_Resources()\n", __FILE__, __LINE__);
 #endif
 
     Load_MAGIC_SET();
 
-// EMM_Load_LBX_File_1(rsc01_MAIN_LBX)
-// EMM_Load_LBX_File_1(rsc02_BACKGRND_LBX);
-// EMM_Load_LBX_File_1(rsc03_UNITS1_LBX);
-// EMM_Load_LBX_File_1(rsc04_UNITS2_LBX);
-// EMM_Load_LBX_File_1(rsc05_UNITVIEW_LBX);
-// EMM_Load_LBX_File_1(rsc06_SPECIAL_LBX);
-// EMM_Load_LBX_File_1(rsc07_SPECIAL2_LBX);
-// EMM_Load_LBX_File_1(rsc08_ITEMS_LBX);
-// EMM_Load_LBX_File_1(rsc09_CHRIVER_LBX);
-// EMM_Load_LBX_File_1(rsc0A_ITEMISC_LBX);
-// EMM_Load_LBX_File_1(rsc0B_CITYSCAP_LBX);
-// EMM_Load_LBX_File_1(rsc0C_MAPBACK_LBX);
-// EMM_Load_LBX_File_1(rsc0D_CMBMAGIC_LBX);
-// EMM_Load_LBX_File_1(rsc0E_CMBTCITY_LBX);
-// EMM_Load_LBX_File_1(rsc0F_CITYWALL_LBX);
+    // DOMSDOS  EMM_Load_LBX_File_1(rsc01_MAIN_LBX)
+    // DOMSDOS  EMM_Load_LBX_File_1(rsc02_BACKGRND_LBX);
+    // DOMSDOS  EMM_Load_LBX_File_1(rsc03_UNITS1_LBX);
+    // DOMSDOS  EMM_Load_LBX_File_1(rsc04_UNITS2_LBX);
+    // DOMSDOS  EMM_Load_LBX_File_1(rsc05_UNITVIEW_LBX);
+    // DOMSDOS  EMM_Load_LBX_File_1(rsc06_SPECIAL_LBX);
+    // DOMSDOS  EMM_Load_LBX_File_1(rsc07_SPECIAL2_LBX);
+    // DOMSDOS  EMM_Load_LBX_File_1(rsc08_ITEMS_LBX);
+    // DOMSDOS  EMM_Load_LBX_File_1(rsc09_CHRIVER_LBX);
+    // DOMSDOS  EMM_Load_LBX_File_1(rsc0A_ITEMISC_LBX);
+    // DOMSDOS  EMM_Load_LBX_File_1(rsc0B_CITYSCAP_LBX);
+    // DOMSDOS  EMM_Load_LBX_File_1(rsc0C_MAPBACK_LBX);
+    // DOMSDOS  EMM_Load_LBX_File_1(rsc0D_CMBMAGIC_LBX);
+    // DOMSDOS  EMM_Load_LBX_File_1(rsc0E_CMBTCITY_LBX);
+    // DOMSDOS  EMM_Load_LBX_File_1(rsc0F_CITYWALL_LBX);
 
     Terrain_Init();
 
-// fxn_o52p04();
-// Main_Screen_Load_Pictures();  // ; loads and processes the main screen graphic elements
-// fxn_o52p08();
-// fxn_o52p10();
-// fxn_o52p07();
-// fxn_o52p11();
+// o52p04_empty_function();
 
+    Main_Screen_Load_Pictures();
 
-    Load_Combat_Background_Bottom();  // ; creates a reserved EMM LBX header for the combat screen's bottom background
+// o52p08_empty_function();
+// o52p10_empty_function();
+// o52p07_empty_function();
+// o52p11_empty_function();
 
-// fxn_o52p12();
-// fxn_o52p14():
-// fxn_o52p15();
+    Load_Combat_Background_Bottom();
 
-    Load_SPELLDAT();  // loads all records from SPELLDAT.LBX, overwriting the pointer to a previous allocation (8k wasted)
+    // o52p12_empty_function();
+    // o52p14_empty_function():
+    // o52p15_empty_function();
 
-    Load_BUILDDAT();  // loads all records from BUILDDAT.LBX
+    Load_SPELLDAT();  // ¿ BUGBUG  overwriting the pointer to a previous allocation (8k wasted) ?
 
-    // fxn_o52p18();
+    Load_BUILDDAT();
 
-    Load_Button_Sounds();  // ; loads the standard and left click sounds
+    // o52p18_empty_function();
+
+    Load_Button_Sounds();
 
     Units_Upkeeps();
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Load_WZD_Resources()\n", __FILE__, __LINE__);
 #endif
+
 }
 
 
@@ -421,7 +424,13 @@ void Terrain_Init(void)
 
 
 // WZD o52p04
-// fxn_o52p04()
+void o52p4_empty_function(void)
+{
+// push    bp
+// mov     bp, sp
+// pop     bp
+// retf
+}
 
 
 // WZD o52p05
@@ -556,20 +565,20 @@ void City_Screen_Load_Pictures(void)
     // BACKGRND.LBX, 15  CITYBUTT  city spell up arro
     // BACKGRND.LBX, 16  CITYBUTT  city spell dn arro
 
-    city_background_seg              = LBX_Reload_Next(backgrnd_lbx_file, 6, GFX_Swap_Seg);
-    city_buy_button_seg              = LBX_Reload_Next(backgrnd_lbx_file, 7, GFX_Swap_Seg);
-    city_change_button_seg           = LBX_Reload_Next(backgrnd_lbx_file, 8, GFX_Swap_Seg);
-    city_ok_button_seg               = LBX_Reload_Next(backgrnd_lbx_file, 9, GFX_Swap_Seg);
-    city_new_build_notify_grass_seg  = LBX_Reload_Next(backgrnd_lbx_file, 10, GFX_Swap_Seg);
-    city_reqd_resource_seg           = LBX_Reload_Next(backgrnd_lbx_file, 11, GFX_Swap_Seg);
-    city_full_resource_seg           = LBX_Reload_Next(backgrnd_lbx_file, 12, GFX_Swap_Seg);
-    city_block_out_seg               = LBX_Reload_Next(backgrnd_lbx_file, 13, GFX_Swap_Seg);
-    city_lock_buy_button_seg         = LBX_Reload_Next(backgrnd_lbx_file, 14, GFX_Swap_Seg);
-    city_spell_up_arrow_button_seg   = LBX_Reload_Next(backgrnd_lbx_file, 15, GFX_Swap_Seg);
-    city_spell_dn_arrow_button_seg   = LBX_Reload_Next(backgrnd_lbx_file, 16, GFX_Swap_Seg);
+    city_background_seg              = LBX_Reload_Next(backgrnd_lbx_file, 6, g_graphics_cache_seg);
+    city_buy_button_seg              = LBX_Reload_Next(backgrnd_lbx_file, 7, g_graphics_cache_seg);
+    city_change_button_seg           = LBX_Reload_Next(backgrnd_lbx_file, 8, g_graphics_cache_seg);
+    city_ok_button_seg               = LBX_Reload_Next(backgrnd_lbx_file, 9, g_graphics_cache_seg);
+    city_new_build_notify_grass_seg  = LBX_Reload_Next(backgrnd_lbx_file, 10, g_graphics_cache_seg);
+    city_reqd_resource_seg           = LBX_Reload_Next(backgrnd_lbx_file, 11, g_graphics_cache_seg);
+    city_full_resource_seg           = LBX_Reload_Next(backgrnd_lbx_file, 12, g_graphics_cache_seg);
+    city_block_out_seg               = LBX_Reload_Next(backgrnd_lbx_file, 13, g_graphics_cache_seg);
+    city_lock_buy_button_seg         = LBX_Reload_Next(backgrnd_lbx_file, 14, g_graphics_cache_seg);
+    city_spell_up_arrow_button_seg   = LBX_Reload_Next(backgrnd_lbx_file, 15, g_graphics_cache_seg);
+    city_spell_dn_arrow_button_seg   = LBX_Reload_Next(backgrnd_lbx_file, 16, g_graphics_cache_seg);
 
     // BACKGRND.LBX, 24  REDBUTT  red button
-    red_button_seg = LBX_Reload_Next(backgrnd_lbx_file, 24, GFX_Swap_Seg);
+    red_button_seg = LBX_Reload_Next(backgrnd_lbx_file, 24, g_graphics_cache_seg);
 
     // BACKGRND.LBX, 45  CITYICON  worker barbarian
     // BACKGRND.LBX, 46  CITYICON  worker beastman
@@ -588,7 +597,7 @@ void City_Screen_Load_Pictures(void)
 
     for(itr = 0; itr < 14; itr++)
     {
-        city_worker_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (45 + itr), GFX_Swap_Seg);
+        city_worker_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (45 + itr), g_graphics_cache_seg);
     }
 
     // BACKGRND.LBX, 59  CITYICON  farmer barbarian
@@ -608,7 +617,7 @@ void City_Screen_Load_Pictures(void)
 
     for(itr = 0; itr < 14; itr++)
     {
-        city_farmer_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (59 + itr), GFX_Swap_Seg);
+        city_farmer_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (59 + itr), g_graphics_cache_seg);
     }
 
     // BACKGRND.LBX, 74  CITYICON  barbarian rebel
@@ -628,7 +637,7 @@ void City_Screen_Load_Pictures(void)
 
     for(itr = 0; itr < 14; itr++)
     {
-        city_rebel_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (74 + itr), GFX_Swap_Seg);
+        city_rebel_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (74 + itr), g_graphics_cache_seg);
     }
 
     // BACKGRND.LBX, 40  CITYICON  food icon
@@ -639,11 +648,11 @@ void City_Screen_Load_Pictures(void)
 
     for(itr = 0; itr < 5; itr++)
     {
-        city_lil_resource_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (40 + itr), GFX_Swap_Seg);
+        city_lil_resource_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (40 + itr), g_graphics_cache_seg);
     }
 
     // BACKGRND.LBX, 94  CITYICON  grey lil bread
-    city_grey_lil_bread_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 94, GFX_Swap_Seg);
+    city_grey_lil_bread_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 94, g_graphics_cache_seg);
 
     // BACKGRND.LBX, 88  CITYICO3  10 food
     // BACKGRND.LBX, 89  CITYICO3  10 prod
@@ -654,18 +663,18 @@ void City_Screen_Load_Pictures(void)
 
     for(itr = 0; itr < 6; itr++)
     {
-        city_big_resource_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (88 + itr), GFX_Swap_Seg);
+        city_big_resource_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (88 + itr), g_graphics_cache_seg);
     }
 
     // BACKGRND.LBX, 95  CITYICO3  grey big bread
-    city_grey_big_bread_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 95, GFX_Swap_Seg);
+    city_grey_big_bread_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 95, g_graphics_cache_seg);
 
 
     // BACKGRND.LBX, 32  OUTPOST  outpost background
-    outpost_background_seg = LBX_Reload_Next(backgrnd_lbx_file, 32, GFX_Swap_Seg);
+    outpost_background_seg = LBX_Reload_Next(backgrnd_lbx_file, 32, g_graphics_cache_seg);
 
     // BACKGRND.LBX, 33  OUTNAME  outpost name backg
-    outpost_name_background_seg = LBX_Reload_Next(backgrnd_lbx_file, 33, GFX_Swap_Seg);
+    outpost_name_background_seg = LBX_Reload_Next(backgrnd_lbx_file, 33, g_graphics_cache_seg);
 
 
     // BACKGRND.LBX, 34  OUTPOST  outpost brt house
@@ -673,7 +682,7 @@ void City_Screen_Load_Pictures(void)
     // BACKGRND.LBX, 36  OUTPOST  outpost brt hut
     for(itr = 0; itr < 3; itr++)
     {
-        outpost_bright_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (34 + itr), GFX_Swap_Seg);
+        outpost_bright_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (34 + itr), g_graphics_cache_seg);
     }
 
     // BACKGRND.LBX, 37  OUTPOST  outpost drk house
@@ -681,18 +690,18 @@ void City_Screen_Load_Pictures(void)
     // BACKGRND.LBX, 39  OUTPOST  outpost drk hut
     for(itr = 0; itr < 3; itr++)
     {
-        outpost_dark_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (37 + itr), GFX_Swap_Seg);
+        outpost_dark_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (37 + itr), g_graphics_cache_seg);
     }
 
     // BACKGRND.LBX, 25  LCONFIRM  lair confirm borde
     // BACKGRND.LBX, 26  LCONFIRM  lair bottom w/butt
     // BACKGRND.LBX, 27  LCONFIRM  lair bottom wo/but
-    lair_confirm_border_seg = LBX_Reload_Next(backgrnd_lbx_file, 25, GFX_Swap_Seg);
-    lair_bottom_with_button_seg = LBX_Reload_Next(backgrnd_lbx_file, 26, GFX_Swap_Seg);
-    lair_bottom_without_button_seg = LBX_Reload_Next(backgrnd_lbx_file, 27, GFX_Swap_Seg);
+    lair_confirm_border_seg = LBX_Reload_Next(backgrnd_lbx_file, 25, g_graphics_cache_seg);
+    lair_bottom_with_button_seg = LBX_Reload_Next(backgrnd_lbx_file, 26, g_graphics_cache_seg);
+    lair_bottom_without_button_seg = LBX_Reload_Next(backgrnd_lbx_file, 27, g_graphics_cache_seg);
 
     // BACKGRND.LBX,  0  CITYHALF  1/2 for city scrn
-    city_half_background_seg = LBX_Reload_Next(backgrnd_lbx_file, 0, GFX_Swap_Seg);
+    city_half_background_seg = LBX_Reload_Next(backgrnd_lbx_file, 0, g_graphics_cache_seg);
 
 }
 
@@ -784,9 +793,19 @@ void Load_Combat_Background_Bottom(void)
 
 
 // WZD o52p20
-void GFX_Swap_Reset(void)
+void Graphics_Cache_Reset(void)
 {
-    Allocate_First_Block(GFX_Swap_Seg, 1);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Graphics_Cache_Reset()\n", __FILE__, __LINE__);
+#endif
+
+    Allocate_First_Block(g_graphics_cache_seg, 1);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Graphics_Cache_Reset()\n", __FILE__, __LINE__);
+#endif
+
 }
 
 
@@ -800,17 +819,25 @@ void Load_Unit_StatFigs(void)
 {
     uint16_t itr;
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_Unit_StatFigs()\n", __FILE__, __LINE__);
+#endif
+
     // UNITS1.LBX ... STATFIG1
     for(itr = 0; itr < 120; itr++)
     {
-        _unit_type_table[itr].pict_seg = LBX_Reload_Next(units1_lbx_file, itr, GFX_Swap_Seg);
+        _unit_type_table[itr].pict_seg = LBX_Reload_Next(units1_lbx_file, itr, g_graphics_cache_seg);
     }
 
     // UNITS2.LBX ... STATFIG2
     for(itr = 120; itr < 198; itr++)
     {
-        _unit_type_table[itr].pict_seg = LBX_Reload_Next(units2_lbx_file, (itr - 120), GFX_Swap_Seg);
+        _unit_type_table[itr].pict_seg = LBX_Reload_Next(units2_lbx_file, (itr - 120), g_graphics_cache_seg);
     }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Load_Unit_StatFigs()\n", __FILE__, __LINE__);
+#endif
 
 }
 
@@ -834,6 +861,10 @@ void Reload_Combat_Graphics_Cache(void)
     int16_t itr1 = 0;  // _SI_
     int16_t itr2 = 0;  // _DI_
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Reload_Combat_Graphics_Cache()\n", __FILE__, __LINE__);
+#endif
+
     // CMBMAGIC.LBX, 000  "LIGHTNIN"  ""
     // CMBMAGIC.LBX, 008  "ARROW"     ""
     // CMBMAGIC.LBX, 016  "FIREBALL"  ""
@@ -856,121 +887,121 @@ void Reload_Combat_Graphics_Cache(void)
         {
 
             // CMB_RangedAtx_GFX[((itr1 * 8) + itr2)].Up = LBX_Reload_Next(cmbmagic_lbx_file__ovr052, ((itr1 * 8) + itr2), GFX_Swap_Seg);
-            CMB_RangedAtx_GFX[itr1][itr2] = LBX_Reload_Next(cmbmagic_lbx_file__ovr052, ((itr1 * 8) + itr2), GFX_Swap_Seg);
+            CMB_RangedAtx_GFX[itr1][itr2] = LBX_Reload_Next(cmbmagic_lbx_file__ovr052, ((itr1 * 8) + itr2), g_graphics_cache_seg);
 
         }
 
     }
 
     // CMBMAGIC.LBX, 120  "VORTEX2"   ""
-    magic_vortex_seg = LBX_Reload_Next(cmbmagic_lbx_file__ovr052, 120, GFX_Swap_Seg);
+    magic_vortex_seg = LBX_Reload_Next(cmbmagic_lbx_file__ovr052, 120, g_graphics_cache_seg);
 
     for(itr1 = 0; itr1 < 5; itr1++)
     {
 
-        IMG_CMB_Blood[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (24 + itr1), GFX_Swap_Seg);
+        IMG_CMB_Blood[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (24 + itr1), g_graphics_cache_seg);
 
     }
 
-    CMB_Damage_GFX = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 119, GFX_Swap_Seg);
+    CMB_Damage_GFX = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 119, g_graphics_cache_seg);
 
-    IMG_GUI_Chasm = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 120, GFX_Swap_Seg);
+    IMG_GUI_Chasm = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 120, g_graphics_cache_seg);
 
     for(itr1 = 0; itr1 < 15; itr1++)
     {
 
-        IMG_CMB_Houses[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (2 + itr1), GFX_Swap_Seg);
+        IMG_CMB_Houses[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (2 + itr1), g_graphics_cache_seg);
 
     }
 
-    IMG_CMB_Fortress = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 17, GFX_Swap_Seg);
+    IMG_CMB_Fortress = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 17, g_graphics_cache_seg);
 
-    IMG_CMB_Outpost = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 18, GFX_Swap_Seg);
+    IMG_CMB_Outpost = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 18, g_graphics_cache_seg);
 
-    IMG_CMB_Cave = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 19, GFX_Swap_Seg);
+    IMG_CMB_Cave = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 19, g_graphics_cache_seg);
 
-    IMG_CMB_Tower = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 20, GFX_Swap_Seg);
+    IMG_CMB_Tower = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 20, g_graphics_cache_seg);
 
-    IMG_CMB_Dungeon = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 21, GFX_Swap_Seg);
+    IMG_CMB_Dungeon = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 21, g_graphics_cache_seg);
 
-    IMG_CMB_Fort = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 22, GFX_Swap_Seg);
+    IMG_CMB_Fort = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 22, g_graphics_cache_seg);
 
-    IMG_CMB_Temple = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 23, GFX_Swap_Seg);
+    IMG_CMB_Temple = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 23, g_graphics_cache_seg);
 
-    IMG_CMB_RoadGrid = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 0, GFX_Swap_Seg);
+    IMG_CMB_RoadGrid = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 0, g_graphics_cache_seg);
 
-    IMG_CMB_DirtTile = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 1, GFX_Swap_Seg);
+    IMG_CMB_DirtTile = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 1, g_graphics_cache_seg);
 
-    IMG_CMB_Ruins = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 121, GFX_Swap_Seg);
+    IMG_CMB_Ruins = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 121, g_graphics_cache_seg);
 
-    IMG_CMB_NatNode = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 65, GFX_Swap_Seg);
+    IMG_CMB_NatNode = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 65, g_graphics_cache_seg);
 
-    IMG_CMB_SorcNode = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 66, GFX_Swap_Seg);
+    IMG_CMB_SorcNode = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 66, g_graphics_cache_seg);
 
-    frame_scanned_seg = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 67, GFX_Swap_Seg);
+    frame_scanned_seg = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 67, g_graphics_cache_seg);
 
-    frame_active_seg = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 68, GFX_Swap_Seg);
+    frame_active_seg = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 68, g_graphics_cache_seg);
 
-    IMG_CMB_Mud = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 118, GFX_Swap_Seg);
+    IMG_CMB_Mud = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 118, g_graphics_cache_seg);
 
-    IMG_CMB_FlotIsle = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 117, GFX_Swap_Seg);
+    IMG_CMB_FlotIsle = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 117, g_graphics_cache_seg);
 
-    IMG_CMB_Cloud = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 113, GFX_Swap_Seg);
+    IMG_CMB_Cloud = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 113, g_graphics_cache_seg);
 
-    IMG_GUI_Chasm = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 120, GFX_Swap_Seg);
+    IMG_GUI_Chasm = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 120, g_graphics_cache_seg);
 
     for(itr1 = 0; itr1 < 4; itr1++)
     {
 
-        IMG_CMB_OceanTile[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (109 + itr1), GFX_Swap_Seg);
+        IMG_CMB_OceanTile[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (109 + itr1), g_graphics_cache_seg);
 
     }
 
     for(itr1 = 0; itr1 < 28; itr1++)
     {
 
-        IMG_CMB_RoadTiles[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (69 + itr1), GFX_Swap_Seg);
+        IMG_CMB_RoadTiles[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (69 + itr1), g_graphics_cache_seg);
 
     }
 
     for(itr1 = 0; itr1 < 12; itr1++)
     {
-        IMG_CMB_RiverTile[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (97 + itr1), GFX_Swap_Seg);
+        IMG_CMB_RiverTile[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (97 + itr1), g_graphics_cache_seg);
 
     }
 
     for(itr1 = 0; itr1 < 12; itr1++)
     {
 
-        IMG_CMB_RivrNULLs[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (0 + itr1), GFX_Swap_Seg);
+        IMG_CMB_RivrNULLs[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (0 + itr1), g_graphics_cache_seg);
 
     }
 
     for(itr1 = 0; itr1 < 4; itr1++)
     {
 
-        IMG_CMB_ChaosOcn[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (12 + itr1), GFX_Swap_Seg);
+        IMG_CMB_ChaosOcn[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (12 + itr1), g_graphics_cache_seg);
 
     }
 
     for(itr1 = 0; itr1 < 9; itr1++)
     {
 
-        IMG_CMB_Volcano[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (24 + itr1), GFX_Swap_Seg);
+        IMG_CMB_Volcano[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (24 + itr1), g_graphics_cache_seg);
 
     }
 
     for(itr1 = 0; itr1 < 14; itr1++)
     {
 
-        IMG_CMB_FireWall[itr1] = LBX_Reload_Next(citywall_lbx_file__ovr052, (36 + itr1), GFX_Swap_Seg);
+        IMG_CMB_FireWall[itr1] = LBX_Reload_Next(citywall_lbx_file__ovr052, (36 + itr1), g_graphics_cache_seg);
 
     }
 
     for(itr1 = 0; itr1 < 14; itr1++)
     {
 
-        IMG_CMB_DarkWall[itr1] = LBX_Reload_Next(citywall_lbx_file__ovr052, (50 + itr1), GFX_Swap_Seg);
+        IMG_CMB_DarkWall[itr1] = LBX_Reload_Next(citywall_lbx_file__ovr052, (50 + itr1), g_graphics_cache_seg);
 
     }
 
@@ -979,7 +1010,7 @@ void Reload_Combat_Graphics_Cache(void)
         for(itr2 = 0; itr2 < 12; itr2++)
         {
 
-            IMG_CMB_StoneWalls[itr1][itr2] = LBX_Reload_Next(citywall_lbx_file__ovr052, ((itr1 * 12) + itr2), GFX_Swap_Seg);
+            IMG_CMB_StoneWalls[itr1][itr2] = LBX_Reload_Next(citywall_lbx_file__ovr052, ((itr1 * 12) + itr2), g_graphics_cache_seg);
 
         }
 
@@ -988,9 +1019,13 @@ void Reload_Combat_Graphics_Cache(void)
     for(itr1 = 0; itr1 < 8; itr1++)
     {
 
-        IMG_CMB_Curses[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (16 + itr1), GFX_Swap_Seg);
+        IMG_CMB_Curses[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (16 + itr1), g_graphics_cache_seg);
 
     }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Reload_Combat_Graphics_Cache()\n", __FILE__, __LINE__);
+#endif
 
 }
 
@@ -1005,105 +1040,109 @@ void Reload_Cityscape_Graphics_Cache(void)
     int16_t itr1;  // _SI_
     int16_t itr2;  // _DI_
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Reload_Cityscape_Graphics_Cache()\n", __FILE__, __LINE__);
+#endif
+
     // CITYSCAP.LBX,   0  BACKS      ground background
-    cityscape_background_arcanus_ground_seg = LBX_Reload_Next(cityscap_lbx_file, 0, GFX_Swap_Seg);
+    cityscape_background_arcanus_ground_seg = LBX_Reload_Next(cityscap_lbx_file, 0, g_graphics_cache_seg);
 
 
     // CITYSCAP.LBX,  87  CITYSPL1    flying fortress
     // CITYSCAP.LBX,  90  CITYSPL3    gaia
-    cityscape_flyingfortress_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 87, GFX_Swap_Seg);
-    cityscape_gaiasblessing_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 90, GFX_Swap_Seg);
+    cityscape_flyingfortress_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 87, g_graphics_cache_seg);
+    cityscape_gaiasblessing_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 90, g_graphics_cache_seg);
 
     // CITYSCAP.LBX,  89  CITYSPL2    living lands
     // CITYSCAP.LBX,  86  CITYSPL1    cursed land mask
-    cityscape_livinglands_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 89, GFX_Swap_Seg);
-    cityscape_cursedland_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 86, GFX_Swap_Seg);
+    cityscape_livinglands_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 89, g_graphics_cache_seg);
+    cityscape_cursedland_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 86, g_graphics_cache_seg);
 
 
     // CITYSCAP.LBX,   3  CSWATER     river
-    cityscape_background_arcanus_river_seg = LBX_Reload_Next(cityscap_lbx_file, 3, GFX_Swap_Seg);
+    cityscape_background_arcanus_river_seg = LBX_Reload_Next(cityscap_lbx_file, 3, g_graphics_cache_seg);
 
     // CITYSCAP.LBX,   4  CSWATER     ocean
-    cityscape_background_arcanus_ocean_seg = LBX_Reload_Next(cityscap_lbx_file, 4, GFX_Swap_Seg);
+    cityscape_background_arcanus_ocean_seg = LBX_Reload_Next(cityscap_lbx_file, 4, g_graphics_cache_seg);
 
     // CITYSCAP.LBX,   1  FARBACKS    hills background
-    cityscape_background_arcanus_hills_seg = LBX_Reload_Next(cityscap_lbx_file, 1, GFX_Swap_Seg);
+    cityscape_background_arcanus_hills_seg = LBX_Reload_Next(cityscap_lbx_file, 1, g_graphics_cache_seg);
 
     // CITYSCAP.LBX,   2  FARBACKS    mountain backgrnd
-    cityscape_background_arcanus_mountain_seg = LBX_Reload_Next(cityscap_lbx_file, 2, GFX_Swap_Seg);
+    cityscape_background_arcanus_mountain_seg = LBX_Reload_Next(cityscap_lbx_file, 2, g_graphics_cache_seg);
 
     // CITYSCAP.LBX,  91  FARBACKS    cloud of dark
-    cityscape_background_arcanus_darkcloud_seg = LBX_Reload_Next(cityscap_lbx_file, 91, GFX_Swap_Seg);
+    cityscape_background_arcanus_darkcloud_seg = LBX_Reload_Next(cityscap_lbx_file, 91, g_graphics_cache_seg);
 
     // CITYSCAP.LBX,  93  FARBACKS    alkar
-    cityscape_background_arcanus_alkar_seg = LBX_Reload_Next(cityscap_lbx_file, 93, GFX_Swap_Seg);
+    cityscape_background_arcanus_alkar_seg = LBX_Reload_Next(cityscap_lbx_file, 93, g_graphics_cache_seg);
 
     // CITYSCAP.LBX,  92  FARBACKS    chaos rift
-    cityscape_background_arcanus_chaosrift_seg = LBX_Reload_Next(cityscap_lbx_file, 92, GFX_Swap_Seg);
+    cityscape_background_arcanus_chaosrift_seg = LBX_Reload_Next(cityscap_lbx_file, 92, g_graphics_cache_seg);
 
     // CITYSCAP.LBX,  88  CITYSPL2    famine
-    cityscape_famine_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 88, GFX_Swap_Seg);
+    cityscape_famine_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 88, g_graphics_cache_seg);
 
     // CITYSCAP.LBX, 007  "FARBACKS"  "plain background"
-    cityscape_background_arcanus_plain_seg = LBX_Reload_Next(cityscap_lbx_file, 7, GFX_Swap_Seg);
+    cityscape_background_arcanus_plain_seg = LBX_Reload_Next(cityscap_lbx_file, 7, g_graphics_cache_seg);
 
     // CITYSCAP.LBX,   8  KAOSCAPE    chaos ground
-    cityscape_background_myrror_ground_seg = LBX_Reload_Next(cityscap_lbx_file, 8, GFX_Swap_Seg);
+    cityscape_background_myrror_ground_seg = LBX_Reload_Next(cityscap_lbx_file, 8, g_graphics_cache_seg);
 
     // CITYSCAP.LBX,   9  KAOBACKS    choas hills
-    cityscape_background_myrror_mountain_seg = LBX_Reload_Next(cityscap_lbx_file, 9, GFX_Swap_Seg);
+    cityscape_background_myrror_mountain_seg = LBX_Reload_Next(cityscap_lbx_file, 9, g_graphics_cache_seg);
 
     // CITYSCAP.LBX,  10  KAOBACKS    chaos mountain
-    cityscape_background_myrror_hills_seg = LBX_Reload_Next(cityscap_lbx_file, 10, GFX_Swap_Seg);
+    cityscape_background_myrror_hills_seg = LBX_Reload_Next(cityscap_lbx_file, 10, g_graphics_cache_seg);
 
     // CITYSCAP.LBX, 011  "KAOBACKS"  "choas plains"
-    cityscape_background_myrror_plain_seg = LBX_Reload_Next(cityscap_lbx_file, 11, GFX_Swap_Seg);
+    cityscape_background_myrror_plain_seg = LBX_Reload_Next(cityscap_lbx_file, 11, g_graphics_cache_seg);
 
     // CITYSCAP.LBX, 113  "KAOBACKS"  "chaos alkar "
-    cityscape_background_myrror_alkar_seg = LBX_Reload_Next(cityscap_lbx_file, 113, GFX_Swap_Seg);
+    cityscape_background_myrror_alkar_seg = LBX_Reload_Next(cityscap_lbx_file, 113, g_graphics_cache_seg);
 
     // CITYSCAP.LBX, 111  KAOBACKS    choas dark cloud
-    cityscape_background_myrror_darkcloud_seg = LBX_Reload_Next(cityscap_lbx_file, 111, GFX_Swap_Seg);
+    cityscape_background_myrror_darkcloud_seg = LBX_Reload_Next(cityscap_lbx_file, 111, g_graphics_cache_seg);
 
     // CITYSCAP.LBX, 112  KAOBACKS    choas chaos rift
-     cityscape_background_myrror_chaosrift_seg = LBX_Reload_Next(cityscap_lbx_file, 112, GFX_Swap_Seg);
+     cityscape_background_myrror_chaosrift_seg = LBX_Reload_Next(cityscap_lbx_file, 112, g_graphics_cache_seg);
 
     // CITYSCAP.LBX, 115  CHWATER     chaos river
-    cityscape_background_myrror_river_seg = LBX_Reload_Next(cityscap_lbx_file, 115, GFX_Swap_Seg);
+    cityscape_background_myrror_river_seg = LBX_Reload_Next(cityscap_lbx_file, 115, g_graphics_cache_seg);
 
     // CITYSCAP.LBX, 116  CHWATER     chaos ocean
-    cityscape_background_myrror_ocean_seg = LBX_Reload_Next(cityscap_lbx_file, 116, GFX_Swap_Seg);
+    cityscape_background_myrror_ocean_seg = LBX_Reload_Next(cityscap_lbx_file, 116, g_graphics_cache_seg);
 
 
     // CITYSCAP.LBX, 094  "CITYSPL4"  "black ward"
-    cityscape_black_ward_seg = LBX_Reload_Next(cityscap_lbx_file, 94, GFX_Swap_Seg);
+    cityscape_black_ward_seg = LBX_Reload_Next(cityscap_lbx_file, 94, g_graphics_cache_seg);
     // CITYSCAP.LBX, 095  "CITYSPL4"  "red ward"
-    cityscape_red_ward_seg = LBX_Reload_Next(cityscap_lbx_file, 95, GFX_Swap_Seg);
+    cityscape_red_ward_seg = LBX_Reload_Next(cityscap_lbx_file, 95, g_graphics_cache_seg);
     // CITYSCAP.LBX, 098  "CITYSPL4"  "green ward"
-    cityscape_green_ward_seg = LBX_Reload_Next(cityscap_lbx_file, 98, GFX_Swap_Seg);
+    cityscape_green_ward_seg = LBX_Reload_Next(cityscap_lbx_file, 98, g_graphics_cache_seg);
     // CITYSCAP.LBX, 096  "CITYSPL4"  "white ward"
-    cityscape_white_ward_seg = LBX_Reload_Next(cityscap_lbx_file, 96, GFX_Swap_Seg);
+    cityscape_white_ward_seg = LBX_Reload_Next(cityscap_lbx_file, 96, g_graphics_cache_seg);
     // CITYSCAP.LBX, 097  "CITYSPL4"  "blue ward"
-    cityscape_blue_ward_seg = LBX_Reload_Next(cityscap_lbx_file, 97, GFX_Swap_Seg);
+    cityscape_blue_ward_seg = LBX_Reload_Next(cityscap_lbx_file, 97, g_graphics_cache_seg);
 
     // CITYSCAP.LBX, 099  "CITYSPL4"  "nature's eye"
-    cityscape_natureseye_seg = LBX_Reload_Next(cityscap_lbx_file, 99, GFX_Swap_Seg);
+    cityscape_natureseye_seg = LBX_Reload_Next(cityscap_lbx_file, 99, g_graphics_cache_seg);
     // CITYSCAP.LBX, 100  "CITYSPL4"  "inspirations"
-    cityscape_inspirations_seg = LBX_Reload_Next(cityscap_lbx_file, 100, GFX_Swap_Seg);
+    cityscape_inspirations_seg = LBX_Reload_Next(cityscap_lbx_file, 100, g_graphics_cache_seg);
     // CITYSCAP.LBX, 101  "CITYSPL4"  "prosperity"
-    cityscape_prosperity_seg = LBX_Reload_Next(cityscap_lbx_file, 101, GFX_Swap_Seg);
+    cityscape_prosperity_seg = LBX_Reload_Next(cityscap_lbx_file, 101, g_graphics_cache_seg);
     // CITYSCAP.LBX, 102  "CITYSPL4"  "consecration"
-    cityscape_consecration_seg = LBX_Reload_Next(cityscap_lbx_file, 101, GFX_Swap_Seg);
+    cityscape_consecration_seg = LBX_Reload_Next(cityscap_lbx_file, 101, g_graphics_cache_seg);
 
 
     // CITYSCAP.LBX, 077  "CSWALLS"   "wall of fire"
-    cityscape_wall_of_fire_seg = LBX_Reload_Next(cityscap_lbx_file, 77, GFX_Swap_Seg);
+    cityscape_wall_of_fire_seg = LBX_Reload_Next(cityscap_lbx_file, 77, g_graphics_cache_seg);
 
     // CITYSCAP.LBX, 080  "CSWALLS"   "wall of stine"
-    cityscape_wall_of_stine_seg = LBX_Reload_Next(cityscap_lbx_file, 80, GFX_Swap_Seg);  // DNE in Dasm
+    cityscape_wall_of_stine_seg = LBX_Reload_Next(cityscap_lbx_file, 80, g_graphics_cache_seg);  // DNE in Dasm
 
     // CITYSCAP.LBX, 079  "CSWALLS"   "wall of air"
-    cityscape_wall_of_air_seg = LBX_Reload_Next(cityscap_lbx_file, 79, GFX_Swap_Seg);
+    cityscape_wall_of_air_seg = LBX_Reload_Next(cityscap_lbx_file, 79, g_graphics_cache_seg);
 
     
     /*
@@ -1119,11 +1158,11 @@ void Reload_Cityscape_Graphics_Cache(void)
     // CITYSCAP.LBX,  72  BUILDS3     farmer's market
     for(itr1 = 3; itr1 <= 30; itr1++)
     {
-        bldg_picts_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (42 + itr1), GFX_Swap_Seg);
+        bldg_picts_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (42 + itr1), g_graphics_cache_seg);
     }
 
     // CITYSCAP.LBX,  78  BUILDS2     forester's guild
-    bldg_picts_seg[31] = LBX_Reload_Next(cityscap_lbx_file, 78, GFX_Swap_Seg);
+    bldg_picts_seg[31] = LBX_Reload_Next(cityscap_lbx_file, 78, g_graphics_cache_seg);
     // 34th element  bt_ForestersGuild     = 31
 
     // CITYSCAP.LBX,  73  BUILDS2     builder's hall
@@ -1131,12 +1170,12 @@ void Reload_Cityscape_Graphics_Cache(void)
     // CITYSCAP.LBX,  75  BUILDS2     miner's guild
     for(itr1 = 32; itr1 <= 34; itr1++)
     {
-        bldg_picts_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (41 + itr1), GFX_Swap_Seg);
+        bldg_picts_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (41 + itr1), g_graphics_cache_seg);
     }
 
 
     // CITYSCAP.LBX,  5  BACKS       roads
-    cityscape_roads_seg = LBX_Reload_Next(cityscap_lbx_file, 5, GFX_Swap_Seg);
+    cityscape_roads_seg = LBX_Reload_Next(cityscap_lbx_file, 5, g_graphics_cache_seg);
 
 
     // {{25,26,27,28,29},{30,31,32,33,34},{35,36,37,38,39}}
@@ -1150,7 +1189,7 @@ void Reload_Cityscape_Graphics_Cache(void)
     {
         for(itr2 = 0; itr2 < 5; itr2++)
         {
-            cityscape_houses_seg[((itr1 * 5) + itr2)] = LBX_Reload_Next(cityscap_lbx_file, (25 + (itr1 * 5) + itr2), GFX_Swap_Seg);
+            cityscape_houses_seg[((itr1 * 5) + itr2)] = LBX_Reload_Next(cityscap_lbx_file, (25 + (itr1 * 5) + itr2), g_graphics_cache_seg);
         }
     }
 
@@ -1160,7 +1199,7 @@ void Reload_Cityscape_Graphics_Cache(void)
     // CITYSCAP.LBX, 21  HOUSES      tree3
     for(itr1 = 0; itr1 < 3; itr1++)
     {
-        cityscape_trees_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (19 + itr1), GFX_Swap_Seg);
+        cityscape_trees_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (19 + itr1), g_graphics_cache_seg);
     }
 
     // CITYSCAP.LBX, 22  HOUSES      rocks1
@@ -1168,65 +1207,65 @@ void Reload_Cityscape_Graphics_Cache(void)
     // CITYSCAP.LBX, 24  HOUSES      rocks3
     for(itr1 = 0; itr1 < 3; itr1++)
     {
-        cityscape_rocks_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (22 + itr1), GFX_Swap_Seg);
+        cityscape_rocks_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (22 + itr1), g_graphics_cache_seg);
     }
 
 
     // CITYSCAP.LBX,  6  BUILDS4     summon circle
-    cityscape_summon_circle_seg = LBX_Reload_Next(cityscap_lbx_file, 6, GFX_Swap_Seg);
+    cityscape_summon_circle_seg = LBX_Reload_Next(cityscap_lbx_file, 6, g_graphics_cache_seg);
 
 
 
     // CITYSCAP.LBX, 083  "GATES"     "earth gate"
-    cityscape_earthgate_seg = LBX_Reload_Next(cityscap_lbx_file, 83, GFX_Swap_Seg);
+    cityscape_earthgate_seg = LBX_Reload_Next(cityscap_lbx_file, 83, g_graphics_cache_seg);
 
     // CITYSCAP.LBX, 084  "ANIBUILD"  "stream of life"
-    cityscape_streamoflife_seg = LBX_Reload_Next(cityscap_lbx_file, 84, GFX_Swap_Seg);
+    cityscape_streamoflife_seg = LBX_Reload_Next(cityscap_lbx_file, 84, g_graphics_cache_seg);
 
     // CITYSCAP.LBX, 085  "GATES"     "astral gate"
-    cityscape_astralgate_seg = LBX_Reload_Next(cityscap_lbx_file, 85, GFX_Swap_Seg);
+    cityscape_astralgate_seg = LBX_Reload_Next(cityscap_lbx_file, 85, g_graphics_cache_seg);
 
     // CITYSCAP.LBX, 012  "ALTAROFB"  "altar"
-    cityscape_altarofbattle_seg = LBX_Reload_Next(cityscap_lbx_file, 12, GFX_Swap_Seg);
+    cityscape_altarofbattle_seg = LBX_Reload_Next(cityscap_lbx_file, 12, g_graphics_cache_seg);
 
     // CITYSCAP.LBX, 081  "ANIBUILD"  "dark rituals"
-    cityscape_darkrituals_seg = LBX_Reload_Next(cityscap_lbx_file, 81, GFX_Swap_Seg);
+    cityscape_darkrituals_seg = LBX_Reload_Next(cityscap_lbx_file, 81, g_graphics_cache_seg);
 
     // CITYSCAP.LBX, 082  "BUILDS4"   "evil presence"
-    cityscape_evilpresence_seg = LBX_Reload_Next(cityscap_lbx_file, 82, GFX_Swap_Seg);
+    cityscape_evilpresence_seg = LBX_Reload_Next(cityscap_lbx_file, 82, g_graphics_cache_seg);
 
 
     // CITYSCAP.LBX,  76  CSWALLS     city walls
-    cityscape_city_walls_seg = LBX_Reload_Next(cityscap_lbx_file, 76, GFX_Swap_Seg);
+    cityscape_city_walls_seg = LBX_Reload_Next(cityscap_lbx_file, 76, g_graphics_cache_seg);
 
 
     // CITYSCAP.LBX,  40  ANIBUILD    fortress
-    cityscape_fortress_seg = LBX_Reload_Next(cityscap_lbx_file, 40, GFX_Swap_Seg);
+    cityscape_fortress_seg = LBX_Reload_Next(cityscap_lbx_file, 40, g_graphics_cache_seg);
 
 
     // CITYSCAP.LBX,  41  BUILDS1     trade goods
-    building_trade_goods_seg = LBX_Reload_Next(cityscap_lbx_file, 41, GFX_Swap_Seg);
+    building_trade_goods_seg = LBX_Reload_Next(cityscap_lbx_file, 41, g_graphics_cache_seg);
 
 
     // CITYSCAP.LBX,  42  BUILDS1     stnd housing
-    bldg_housing_seg[0] = LBX_Reload_Next(cityscap_lbx_file, 42, GFX_Swap_Seg);
+    bldg_housing_seg[0] = LBX_Reload_Next(cityscap_lbx_file, 42, g_graphics_cache_seg);
 
     // CITYSCAP.LBX,  43  BUILDS1     tree housing
-    bldg_housing_seg[1] = LBX_Reload_Next(cityscap_lbx_file, 43, GFX_Swap_Seg);
+    bldg_housing_seg[1] = LBX_Reload_Next(cityscap_lbx_file, 43, g_graphics_cache_seg);
 
     // CITYSCAP.LBX,  44  BUILDS1     mound housing
-    bldg_housing_seg[2] = LBX_Reload_Next(cityscap_lbx_file, 44, GFX_Swap_Seg);
+    bldg_housing_seg[2] = LBX_Reload_Next(cityscap_lbx_file, 44, g_graphics_cache_seg);
 
 
     // UNITVIEW.LBX,  
-    unit_water_diamond_seg = LBX_Reload_Next(unitview_lbx_file, 34, GFX_Swap_Seg);
+    unit_water_diamond_seg = LBX_Reload_Next(unitview_lbx_file, 34, g_graphics_cache_seg);
 
     // CITYSCAP.LBX,  103  BUILDS4     untit base
-    unit_grass_diamond_seg = LBX_Reload_Next(cityscap_lbx_file, 103, GFX_Swap_Seg);
+    unit_grass_diamond_seg = LBX_Reload_Next(cityscap_lbx_file, 103, g_graphics_cache_seg);
 
 
     // CITYSCAP.LBX, 104  CITYSPL4    city walls build
-    cityscape_city_walls_build_seg = LBX_Reload_Next(cityscap_lbx_file, 104, GFX_Swap_Seg);
+    cityscape_city_walls_build_seg = LBX_Reload_Next(cityscap_lbx_file, 104, g_graphics_cache_seg);
 
 
     // CITYSCAP.LBX, 105  "BUILDS7"   "rubble 2x2"
@@ -1235,33 +1274,48 @@ void Reload_Cityscape_Graphics_Cache(void)
     // CITYSCAP.LBX, 108  "BUILDS7"   "rubble 3x3"
     for(itr1 = 0; itr1 < 4; itr1++)
     {
-        cityscape_rubble_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (105 + itr1), GFX_Swap_Seg);
+        cityscape_rubble_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (105 + itr1), g_graphics_cache_seg);
     }
 
 
     // CITYSCAP.LBX,  109  BUILDS1     horizontal mask
-    cityscape_roads_horizontal_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 109, GFX_Swap_Seg);
+    cityscape_roads_horizontal_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 109, g_graphics_cache_seg);
 
     // CITYSCAP.LBX,  110  BUILDS1     vertical mask
-    cityscape_roads_vertical_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 110, GFX_Swap_Seg);
+    cityscape_roads_vertical_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 110, g_graphics_cache_seg);
 
     // CITYSCAP.LBX,  114  BUILDS4     big city wall
-    cityscape_big_city_wall_seg = LBX_Reload_Next(cityscap_lbx_file, 114, GFX_Swap_Seg);
+    cityscape_big_city_wall_seg = LBX_Reload_Next(cityscap_lbx_file, 114, g_graphics_cache_seg);
 
     // BACKGRND.LBX,  73  CITYICON    black gold
-    black_gold1_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 73, GFX_Swap_Seg);
+    black_gold1_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 73, g_graphics_cache_seg);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Reload_Cityscape_Graphics_Cache()\n", __FILE__, __LINE__);
+#endif
 
 }
 
 
 // WZD o52p26
-// fxn_o52p6()
+void o52p26_empty_function(void)
+{
+// push    bp
+// mov     bp, sp
+// pop     bp
+// retf
+}
 
 
 // WZD o52p27
+// TODO  rename to Reload_...  ...~ Cache_Graphics_Thing()?
 void GFX_Swap_AppendUView(void)
 {
     int16_t itr;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: GFX_Swap_AppendUView()\n", __FILE__, __LINE__);
+#endif
 
     // load [111of111] from SPECIAL.LBX
     // { UNICON1, UNICON2, UNICON3, NEWICON, UNICON3, UNICON4, UNICON5 }
@@ -1269,7 +1323,7 @@ void GFX_Swap_AppendUView(void)
     for(itr = 0; itr < 111; itr++)
     {
         // IMG_USW_Abilities.Teleporting@
-        special_seg[itr] = LBX_Reload_Next(special_lbx_file, itr, GFX_Swap_Seg);
+        special_seg[itr] = LBX_Reload_Next(special_lbx_file, itr, g_graphics_cache_seg);
     }
 
     // load [(0to33)of44] from SPECIAL2.LBX
@@ -1277,7 +1331,7 @@ void GFX_Swap_AppendUView(void)
     for(itr = 0; itr < 34; itr++)
     {
         // IMG_USW_Abilities.Confusion@
-        special_seg[(111 + itr)] = LBX_Reload_Next(special2_lbx_file, itr, GFX_Swap_Seg);
+        special_seg[(111 + itr)] = LBX_Reload_Next(special2_lbx_file, itr, g_graphics_cache_seg);
     }
 
 
@@ -1285,15 +1339,15 @@ void GFX_Swap_AppendUView(void)
     // load {0,1,2,3,4} from UNITVIEW.LBX
 
     // UNITBACK small unit backgrn
-    unitview_small_background_seg = LBX_Reload_Next(unitview_lbx_file, 0, GFX_Swap_Seg);
+    unitview_small_background_seg = LBX_Reload_Next(unitview_lbx_file, 0, g_graphics_cache_seg);
     // FULLUNIT large unit backgrn
-    unitview_large_background_seg = LBX_Reload_Next(unitview_lbx_file, 1, GFX_Swap_Seg);
+    unitview_large_background_seg = LBX_Reload_Next(unitview_lbx_file, 1, g_graphics_cache_seg);
     // BLDBUTBK button background
-    unitview_button_background_seg = LBX_Reload_Next(unitview_lbx_file, 2, GFX_Swap_Seg);
+    unitview_button_background_seg = LBX_Reload_Next(unitview_lbx_file, 2, g_graphics_cache_seg);
     // UNITBUTT up arrow
-    unitview_up_arrow_seg = LBX_Reload_Next(unitview_lbx_file, 3, GFX_Swap_Seg);
+    unitview_up_arrow_seg = LBX_Reload_Next(unitview_lbx_file, 3, g_graphics_cache_seg);
     // UNITBUTT down arrow
-    unitview_down_arrow_seg = LBX_Reload_Next(unitview_lbx_file, 4, GFX_Swap_Seg);
+    unitview_down_arrow_seg = LBX_Reload_Next(unitview_lbx_file, 4, g_graphics_cache_seg);
 
 
     // load [5,12] from UNITVIEW.LBX
@@ -1309,7 +1363,7 @@ void GFX_Swap_AppendUView(void)
     */
     for(itr = 0; itr < 8; itr++)
     {
-        unitview_specials_borders_seg[itr] = LBX_Reload_Next(unitview_lbx_file, (5 + itr), GFX_Swap_Seg);
+        unitview_specials_borders_seg[itr] = LBX_Reload_Next(unitview_lbx_file, (5 + itr), g_graphics_cache_seg);
     }
 
 
@@ -1333,7 +1387,7 @@ void GFX_Swap_AppendUView(void)
     */
     for(itr = 0; itr < 15; itr++)
     {
-        unitview_stat_icons_seg[itr] = LBX_Reload_Next(unitview_lbx_file, (13 + itr), GFX_Swap_Seg);
+        unitview_stat_icons_seg[itr] = LBX_Reload_Next(unitview_lbx_file, (13 + itr), g_graphics_cache_seg);
     }
 
 
@@ -1357,35 +1411,35 @@ void GFX_Swap_AppendUView(void)
     */
     for(itr = 0; itr < 15; itr++)
     {
-        unitview_stat_gold_icons_seg[itr] = LBX_Reload_Next(unitview_lbx_file, (35 + itr), GFX_Swap_Seg);
+        unitview_stat_gold_icons_seg[itr] = LBX_Reload_Next(unitview_lbx_file, (35 + itr), g_graphics_cache_seg);
     }
 
 
-    _unitlist_background_seg = LBX_Reload_Next(unitview_lbx_file, 28, GFX_Swap_Seg);
-    _unitlist_bottom_seg = LBX_Reload_Next(unitview_lbx_file, 29, GFX_Swap_Seg);
+    _unitlist_background_seg = LBX_Reload_Next(unitview_lbx_file, 28, g_graphics_cache_seg);
+    _unitlist_bottom_seg = LBX_Reload_Next(unitview_lbx_file, 29, g_graphics_cache_seg);
 
     // UNITVIEW.LBX,  30  BLDBUTB2    bld button backgrn
-    IMG_OVL_BuildBtn_BG = LBX_Reload_Next(unitview_lbx_file, 30, GFX_Swap_Seg);
+    IMG_OVL_BuildBtn_BG = LBX_Reload_Next(unitview_lbx_file, 30, g_graphics_cache_seg);
 
-    red_button_seg = LBX_Reload_Next(backgrnd_lbx_file, 24, GFX_Swap_Seg);
+    red_button_seg = LBX_Reload_Next(backgrnd_lbx_file, 24, g_graphics_cache_seg);
 
-    black_gold1_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 73, GFX_Swap_Seg);
-    gold1_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 42, GFX_Swap_Seg);
+    black_gold1_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 73, g_graphics_cache_seg);
+    gold1_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 42, g_graphics_cache_seg);
 
     // UNITVIEW.LBX,  31  BUILDTAB    left city bld tab
-    IMG_CTY_LeftBldTab = LBX_Reload_Next(unitview_lbx_file, 31, GFX_Swap_Seg);
+    IMG_CTY_LeftBldTab = LBX_Reload_Next(unitview_lbx_file, 31, g_graphics_cache_seg);
 
     // UNITVIEW.LBX,  32  BUILDTAB    right city bld tab
-    IMG_CTY_RightBldTab = LBX_Reload_Next(unitview_lbx_file, 32, GFX_Swap_Seg);
+    IMG_CTY_RightBldTab = LBX_Reload_Next(unitview_lbx_file, 32, g_graphics_cache_seg);
 
     // UNITVIEW.LBX,  33  PORTBORD    portrait border
-    IMG_USW_Portrt_Brdr = LBX_Reload_Next(unitview_lbx_file, 33, GFX_Swap_Seg);
+    IMG_USW_Portrt_Brdr = LBX_Reload_Next(unitview_lbx_file, 33, g_graphics_cache_seg);
 
     // UNITVIEW.LBX,  34  WATERDIA    unit water diamond
-    unit_water_diamond_seg = LBX_Reload_Next(unitview_lbx_file, 34, GFX_Swap_Seg);
+    unit_water_diamond_seg = LBX_Reload_Next(unitview_lbx_file, 34, g_graphics_cache_seg);
 
     // CITYSCAP.LBX, 103  BUILDS4     untit base
-    unit_grass_diamond_seg = LBX_Reload_Next(cityscap_lbx_file, 103, GFX_Swap_Seg);
+    unit_grass_diamond_seg = LBX_Reload_Next(cityscap_lbx_file, 103, g_graphics_cache_seg);
 
     /*
         40  CITYICON    food icon
@@ -1396,13 +1450,13 @@ void GFX_Swap_AppendUView(void)
     */
     for(itr = 0; itr < 5; itr++)
     {
-        city_lil_resource_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (40 + itr), GFX_Swap_Seg);
+        city_lil_resource_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (40 + itr), g_graphics_cache_seg);
     }
 
     /*
         94  CITYICON    grey lil bread
     */
-    city_grey_lil_bread_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 94, GFX_Swap_Seg);
+    city_grey_lil_bread_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 94, g_graphics_cache_seg);
 
     /*
         88  CITYICO3    10 food
@@ -1414,19 +1468,18 @@ void GFX_Swap_AppendUView(void)
     */
     for(itr = 0; itr < 6; itr++)
     {
-        city_big_resource_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (88 + itr), GFX_Swap_Seg);
+        city_big_resource_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (88 + itr), g_graphics_cache_seg);
     }
 
     /*
         95  CITYICO3    grey big bread
     */
-    city_grey_big_bread_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 95, GFX_Swap_Seg);
-
-
+    city_grey_big_bread_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 95, g_graphics_cache_seg);
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: GFX_Swap_AppendUView()\n", __FILE__, __LINE__);
 #endif
+
 }
 
 // WZD o52p28
@@ -1453,7 +1506,7 @@ void Reload_Item_Pictures(void)
     // load all of ITEMS.LBX
     for(itr = 0; itr < 116; itr++)
     {
-        item_icons_seg[itr] = LBX_Reload_Next(items_lbx_file, itr, GFX_Swap_Seg);
+        item_icons_seg[itr] = LBX_Reload_Next(items_lbx_file, itr, g_graphics_cache_seg);
     }
 
     /*
@@ -1482,15 +1535,15 @@ void Reload_Item_Pictures(void)
     // ITEMISC.LBX, 018  ITEMPOWR  item merging
     for(itr = 0; itr < 19; itr++)
     {
-        item_power_icons_seg[itr] = LBX_Reload_Next(itemisc_lbx_file, itr, GFX_Swap_Seg);
+        item_power_icons_seg[itr] = LBX_Reload_Next(itemisc_lbx_file, itr, g_graphics_cache_seg);
     }
 
     // ITEMISC.LBX, 033  ITEMPOWR  item dispel evil
     // ITEMISC.LBX, 034  ITEMPOWR  item giant str
     // ITEMISC.LBX, 035  ITEMPOWR  item guardian wind
-    item_power_icons_seg[19] = LBX_Reload_Next(itemisc_lbx_file, 33, GFX_Swap_Seg);
-    item_power_icons_seg[20] = LBX_Reload_Next(itemisc_lbx_file, 34, GFX_Swap_Seg);
-    item_power_icons_seg[21] = LBX_Reload_Next(itemisc_lbx_file, 35, GFX_Swap_Seg);
+    item_power_icons_seg[19] = LBX_Reload_Next(itemisc_lbx_file, 33, g_graphics_cache_seg);
+    item_power_icons_seg[20] = LBX_Reload_Next(itemisc_lbx_file, 34, g_graphics_cache_seg);
+    item_power_icons_seg[21] = LBX_Reload_Next(itemisc_lbx_file, 35, g_graphics_cache_seg);
 
 
     // ITEMISC.LBX, 019  ITEMSLOT  sword
@@ -1499,18 +1552,18 @@ void Reload_Item_Pictures(void)
     // ITEMISC.LBX, 022  ITEMSLOT  wand
     // ITEMISC.LBX, 023  ITEMSLOT  misc
     // ITEMISC.LBX, 024  ITEMSLOT  armor
-    item_slot_icons_seg[0] = LBX_Reload_Next(itemisc_lbx_file, 19, GFX_Swap_Seg);
-    item_slot_icons_seg[1] = LBX_Reload_Next(itemisc_lbx_file, 20, GFX_Swap_Seg);
-    item_slot_icons_seg[2] = LBX_Reload_Next(itemisc_lbx_file, 21, GFX_Swap_Seg);
-    item_slot_icons_seg[3] = LBX_Reload_Next(itemisc_lbx_file, 22, GFX_Swap_Seg);
-    item_slot_icons_seg[4] = LBX_Reload_Next(itemisc_lbx_file, 24, GFX_Swap_Seg);
-    item_slot_icons_seg[5] = LBX_Reload_Next(itemisc_lbx_file, 23, GFX_Swap_Seg);
+    item_slot_icons_seg[0] = LBX_Reload_Next(itemisc_lbx_file, 19, g_graphics_cache_seg);
+    item_slot_icons_seg[1] = LBX_Reload_Next(itemisc_lbx_file, 20, g_graphics_cache_seg);
+    item_slot_icons_seg[2] = LBX_Reload_Next(itemisc_lbx_file, 21, g_graphics_cache_seg);
+    item_slot_icons_seg[3] = LBX_Reload_Next(itemisc_lbx_file, 22, g_graphics_cache_seg);
+    item_slot_icons_seg[4] = LBX_Reload_Next(itemisc_lbx_file, 24, g_graphics_cache_seg);
+    item_slot_icons_seg[5] = LBX_Reload_Next(itemisc_lbx_file, 23, g_graphics_cache_seg);
 
 
     // ITEMISC.LBX, 025  ITEMVIEW  item view backgrnd
     // ITEMISC.LBX, 026  ITEMVIEW  item view bullet
-    item_view_background_seg = LBX_Reload_Next(itemisc_lbx_file, 25, GFX_Swap_Seg);
-    item_view_bullet_seg = LBX_Reload_Next(itemisc_lbx_file, 26, GFX_Swap_Seg);
+    item_view_background_seg = LBX_Reload_Next(itemisc_lbx_file, 25, g_graphics_cache_seg);
+    item_view_bullet_seg = LBX_Reload_Next(itemisc_lbx_file, 26, g_graphics_cache_seg);
 
 
     // ITEMISC.LBX, 027  ITEMTILE  sword (unit view)
@@ -1519,12 +1572,12 @@ void Reload_Item_Pictures(void)
     // ITEMISC.LBX, 030  ITEMTILE  wand  (unit view)
     // ITEMISC.LBX, 031  ITEMTILE  misc  (unit view)
     // ITEMISC.LBX, 032  ITEMTILE  armor (unit view)
-    itemtile_icons_seg[0] = LBX_Reload_Next(itemisc_lbx_file, 27, GFX_Swap_Seg);
-    itemtile_icons_seg[1] = LBX_Reload_Next(itemisc_lbx_file, 28, GFX_Swap_Seg);
-    itemtile_icons_seg[2] = LBX_Reload_Next(itemisc_lbx_file, 29, GFX_Swap_Seg);
-    itemtile_icons_seg[3] = LBX_Reload_Next(itemisc_lbx_file, 30, GFX_Swap_Seg);
-    itemtile_icons_seg[4] = LBX_Reload_Next(itemisc_lbx_file, 32, GFX_Swap_Seg);
-    itemtile_icons_seg[5] = LBX_Reload_Next(itemisc_lbx_file, 31, GFX_Swap_Seg);
+    itemtile_icons_seg[0] = LBX_Reload_Next(itemisc_lbx_file, 27, g_graphics_cache_seg);
+    itemtile_icons_seg[1] = LBX_Reload_Next(itemisc_lbx_file, 28, g_graphics_cache_seg);
+    itemtile_icons_seg[2] = LBX_Reload_Next(itemisc_lbx_file, 29, g_graphics_cache_seg);
+    itemtile_icons_seg[3] = LBX_Reload_Next(itemisc_lbx_file, 30, g_graphics_cache_seg);
+    itemtile_icons_seg[4] = LBX_Reload_Next(itemisc_lbx_file, 32, g_graphics_cache_seg);
+    itemtile_icons_seg[5] = LBX_Reload_Next(itemisc_lbx_file, 31, g_graphics_cache_seg);
 
 }
 
@@ -1533,14 +1586,18 @@ void Spellbook_Load_Small_Pictures__WIP(void)
 {
     int16_t itr = 0;
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Spellbook_Load_Small_Pictures__WIP()\n", __FILE__, __LINE__);
+#endif
+
 
     // SPECIAL2.LBX, 034  SMLBOOK
     // SPECIAL2.LBX, 035  BCORNERS
     // SPECIAL2.LBX, 036  BCORNERS
 
-    _spellbook_small_seg              = LBX_Reload_Next(special2_lbx_file, 34, GFX_Swap_Seg);
-    _spellbook_small_left_corner_seg  = LBX_Reload_Next(special2_lbx_file, 35, GFX_Swap_Seg);
-    _spellbook_small_right_corner_seg = LBX_Reload_Next(special2_lbx_file, 36, GFX_Swap_Seg);
+    _spellbook_small_seg              = LBX_Reload_Next(special2_lbx_file, 34, g_graphics_cache_seg);
+    _spellbook_small_left_corner_seg  = LBX_Reload_Next(special2_lbx_file, 35, g_graphics_cache_seg);
+    _spellbook_small_right_corner_seg = LBX_Reload_Next(special2_lbx_file, 36, g_graphics_cache_seg);
 
 
     // SPECIAL2.LBX, 037  BOOKSYMB
@@ -1552,13 +1609,17 @@ void Spellbook_Load_Small_Pictures__WIP(void)
 
     for(itr = 0; itr <= 5; itr++)
     {
-        _spellbook_small_symbols[itr] = LBX_Reload_Next(special2_lbx_file, (37 + itr), GFX_Swap_Seg);
+        _spellbook_small_symbols[itr] = LBX_Reload_Next(special2_lbx_file, (37 + itr), g_graphics_cache_seg);
     }
 
 
     // SPECIAL2.LBX, 043  SMALTEXT
 
-    _spellbook_small_text = LBX_Reload_Next(special2_lbx_file, 43, GFX_Swap_Seg);
+    _spellbook_small_text = LBX_Reload_Next(special2_lbx_file, 43, g_graphics_cache_seg);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Spellbook_Load_Small_Pictures__WIP()\n", __FILE__, __LINE__);
+#endif
 
 }
 
@@ -1566,11 +1627,12 @@ void Spellbook_Load_Small_Pictures__WIP(void)
 // WZD o52p30
 void Cache_Graphics_Overland(void)
 {
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Overland()\n", __FILE__, __LINE__);
 #endif
 
-    GFX_Swap_Reset();
+    Graphics_Cache_Reset();
 
     Load_Unit_StatFigs();  // LBX_Reload_Next(); UNITS_.LBX, _unit_type_table, GFX_Swap_Seg
 
@@ -1585,16 +1647,18 @@ void Cache_Graphics_Overland(void)
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Cache_Graphics_Overland()\n", __FILE__, __LINE__);
 #endif
+
 }
 
 // WZD o52p31
 void Cache_Graphics_Things(void)
 {
+
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Overland()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Things()\n", __FILE__, __LINE__);
 #endif
 
-    GFX_Swap_Reset();
+    Graphics_Cache_Reset();
 
     GFX_Swap_AppendUView();
 
@@ -1603,7 +1667,7 @@ void Cache_Graphics_Things(void)
     Reload_Cityscape_Graphics_Cache();
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Cache_Graphics_Overland()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Cache_Graphics_Things()\n", __FILE__, __LINE__);
 #endif
 
 }
@@ -1619,18 +1683,71 @@ XREF:
 */
 void Cache_Graphics_Unit_List_Window(void)
 {
-    GFX_Swap_Reset();
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Unit_List_Window()\n", __FILE__, __LINE__);
+#endif
+
+    Graphics_Cache_Reset();
+
     Load_Unit_StatFigs();
+
     GFX_Swap_AppendUView();
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Cache_Graphics_Unit_List_Window()\n", __FILE__, __LINE__);
+#endif
+
 }
 
+
 // WZD o52p33
-// U_GFX_Swap_Empty()
+// drake178: U_GFX_Swap_Empty()
+/*
+; resets the GFX_Swap_Seg allocation, then calls an
+; empty loader function
+; (data likely moved during development)
+; Attributes: bp-based frame*/
+/*
+
+XREF:
+    j_U_GFX_Swap_Empty()
+        Diplomacy_Screen_Load__WIP()
+*/
+void Cache_Graphics_Diplomacy(void)
+{
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Diplomacy()\n", __FILE__, __LINE__);
+#endif
+
+    Graphics_Cache_Reset();
+
+    o52p26_empty_function();
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Cache_Graphics_Diplomacy()\n", __FILE__, __LINE__);
+#endif
+
+}
+
 
 // WZD o52p34
 void Cache_Graphics_Combat(void)
 {
-    GFX_Swap_Reset();
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Combat()\n", __FILE__, __LINE__);
+#endif
+
+    Graphics_Cache_Reset();
+
     Reload_Combat_Graphics_Cache();
+
     Spellbook_Load_Small_Pictures__WIP();
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Cache_Graphics_Combat()\n", __FILE__, __LINE__);
+#endif
+
 }

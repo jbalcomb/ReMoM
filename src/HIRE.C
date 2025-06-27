@@ -395,7 +395,7 @@ void Hire_Hero_Popup_Draw(void)
     {
         Set_Font_Style(4, 4, 4, 4);
         // BACKGRND.LBX, 33  OUTNAME  outpost name backg
-        outpost_name_background_seg = LBX_Reload_Next("BACKGRND", 33, GFX_Swap_Seg);
+        outpost_name_background_seg = LBX_Reload_Next("BACKGRND", 33, g_graphics_cache_seg);
         FLIC_Draw((window_x + 29), (window_y + 55), outpost_name_background_seg);
         Print_Centered((window_x + 104), (window_y + 61), cnst_Hire_Msg_6);
         Reset_Animation_Frame(red_button_seg);

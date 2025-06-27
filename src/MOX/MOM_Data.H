@@ -2207,21 +2207,16 @@ extern int16_t overland_enchantment_upkeep_table[24];
 
 
 // WZD dseg:1FBC 11 28                                           
-extern char * _personality_type_names[];
+extern char * _personality_type_names[6];
 
-
-// ; added to chance of forming treaties
-// ; added to chance of avoiding superiority wars
-// WZD dseg:1FC8 00 00 0A 00 14 00 1E 00 28 00 32 00             TBL_AI_PRS_???_Mod dw 0, 10, 20, 30, 40, 50
-
+// WZD dseg:1FC8
+extern int16_t TBL_AI_PRS_IDK_Mod[6];
 
 // WZD dseg:1FD4
-extern char * _objective_type_names[];
-
+extern char * _objective_type_names[5];
 
 // WZD dseg:1FDE
 extern int16_t TBL_AI_PRS_War_Mod[6];
-
 
 // WZD dseg:1FEA 
 // drake178: TBL_AI_DIFF_Mods 
@@ -3841,7 +3836,7 @@ extern SAMB_ptr World_Data_Extra;
 // ¿ MoO2 ?
 // ¿ blocks, alloc in MoM_Init_Tables()
 */
-extern SAMB_ptr GFX_Swap_Seg;
+extern SAMB_ptr g_graphics_cache_seg;
 
 // WZD dseg:9D20
 extern SAMB_ptr World_Data;
