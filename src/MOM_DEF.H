@@ -938,7 +938,7 @@ enum UE_FLAGS_H
 // FFFFFFFF it_Shield  = 7
 // FFFFFFFF it_Chainmail  = 8
 // FFFFFFFF it_Platemail  = 9
-enum enum_ITEM_TYPE
+enum e_ITEM_WEAPON_TYPE
 {
     it_Sword      = 0,
     it_Mace       = 1,
@@ -950,6 +950,20 @@ enum enum_ITEM_TYPE
     it_Shield     = 7,
     it_Chainmail  = 8,
     it_Platemail  = 9
+};
+
+enum enum_ITEM_POWER_TYPES
+{
+    ipt_Attack  = 0,
+    ipt_ToHit  = 1,
+    ipt_Defense  = 2,
+    ipt_SpellSkill  = 3,
+    ipt_SpellSave  = 4,
+    ipt_Movement  = 5,
+    ipt_Resist  = 6,
+    ipt_ElementDEF  = 7,
+    ipt_MagicDEF  = 8,
+    ipt_Special  = 9
 };
 
 /*

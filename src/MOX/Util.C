@@ -131,9 +131,9 @@ void Clear_Structure(int16_t record_index, uint8_t * records, int16_t record_siz
 
     int16_t shift_count;
     int16_t record_offset;
-    uint8_t * dst;
-    uint8_t * src;
-    uint16_t cnt;
+    uint8_t * dst;  // _DI_
+    uint8_t * src;  // _SI_
+    uint16_t cnt;  // _CX_
 
     record_offset = (record_index * record_size);
 
@@ -144,7 +144,7 @@ void Clear_Structure(int16_t record_index, uint8_t * records, int16_t record_siz
         return;
     }
 
-    if(shift_count == 0)
+    if(shift_count == 0)  // last record?
     {
         // mov ax, ds;  mov es, ax;  // assume es:dseg
         // mov ax, [bp+record_count];  dec ax;  mov bx, [bp+record_size];  mul bx;  add ax, [bp+records];  mov di, ax;
@@ -165,10 +165,11 @@ void Clear_Structure(int16_t record_index, uint8_t * records, int16_t record_siz
         // mov di, [bp+record_offset];  add di, [bp+records];
         // mov si, di;  add si, [bp+record_size];
         // mov cx, [bp+shift_count];  rep movsb;
-        dst = (records + ((record_count - 1) * record_size));
-        src = (dst + record_size);
+        // Why did I do this differently?  dst = (records + ((record_count - 1) * record_size));
+        // cnt = record_size;
+        dst = (records + record_offset);
+        src = (dst + record_size);  // next record
         cnt = shift_count;
-        cnt = record_size;
         while(cnt != 0)
         {
             *dst++ = *src++;

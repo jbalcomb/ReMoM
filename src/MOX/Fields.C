@@ -1123,27 +1123,39 @@ void Draw_Fields()
                 {
 
                 } break;
+
                 case ft_Input:                  /*  4  0x04 */  // drake178: EditBox
                 {
+
                     if(down_mouse_button != itr_fields_count)
                     {
+
                         Set_Font_Style(p_fields[itr_fields_count].font_style_num, p_fields[itr_fields_count].font_normal_color, p_fields[itr_fields_count].font_highlight_color, ST_NULL);
 
-                        if (p_fields[itr_fields_count].fill_color != 0)
+                        if(p_fields[itr_fields_count].fill_color != 0)
                         {
+
                             Fill(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].x2, p_fields[itr_fields_count].y2, p_fields[itr_fields_count].fill_color);
+
                         }
 
-                        if(p_fields[itr_fields_count].justification != 0)
+                        if(p_fields[itr_fields_count].justification == 0)
                         {
-                            // Print_Right(p_fields[itr_fields_count].x2, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].string);
+
+                            Print(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].string);
+
                         }
                         else
                         {
-                            // Print(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].string);
+
+                            Print_Right(p_fields[itr_fields_count].x2, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].string);
+
                         }
+
                     }
+
                 } break;
+
                 case ft_Picture:                /*  5  0x05 */  // drake178: ImageLabel      DNE/NIU in MoO2
                 {
 
@@ -1422,10 +1434,14 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
         {
 
         } break;
+
         case ft_Input:                  /*  4  0x04 */  // drake178: EditBox
         {
-            // TODO  Input_Box_Popup(field_num);
+
+            Input_Box_Popup(field_num);
+
         } break;
+
         case ft_Picture:                /*  5  0x05 */  // drake178: ImageLabel      DNE/NIU in MoO2
         {
             // default

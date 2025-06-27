@@ -197,14 +197,20 @@ void GAME_NextHumanStack(void)
     _combat_wx = ST_UNDEFINED;
     _combat_wy = ST_UNDEFINED;
 
+Check_Cities_Data();
     Update_Scouted_And_Contacted__WIP();
+Check_Cities_Data();
 
     // ; does nothing and returns zero; at some point must have been some wizard data refresh function
     // DONT  o62p01_Empty_pFxn(_human_player_idx);
 
+Check_Cities_Data();
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+Check_Cities_Data();
 
+Check_Cities_Data();
     Update_Scouted_And_Contacted__WIP();
+Check_Cities_Data();
 
 }
 

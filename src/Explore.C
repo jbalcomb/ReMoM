@@ -286,7 +286,7 @@ void Update_Scouted_And_Contacted__WIP(void)
         }
         else
         {
-            // TODO  if(_players[_human_player_idx].Globals.Nature_Awareness != ST_FALSE)
+            // SPELLY  if(_players[_human_player_idx].Globals.Nature_Awareness != ST_FALSE)
         }
 
 

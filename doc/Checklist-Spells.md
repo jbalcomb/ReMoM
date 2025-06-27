@@ -1,11 +1,6 @@
 
-git commit -m "add Overland Specials 'Spell Of Return'"
-
-git commit -m "add Overland Specials 'Spell Of Mastery'"
-
 scc_Crafting_Spell
-git commit -m "add Overland Specials 'Enchant Item'"
-git commit -m "add Overland Specials 'Create Artifact'"
+git commit -m "add Overland Specials 'Enchant Item' & 'Create Artifact'"
 
 'Create Undead'
 
@@ -348,11 +343,11 @@ Spreadsheet - OSG Spells by Realm
 [x] Disenchant Area
 [x] Recall Hero
 [x] Detect Magic
-[ ] Enchant Item
+[x] Enchant Item
 [x] Summon Hero
 [x] Awareness
 [x] Disjunction
-[ ] Create Artifact
+[x] Create Artifact
 [x] Summon Champion
 [x] Spell of Mastery
 [x] Spell of Return

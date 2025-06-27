@@ -35,6 +35,7 @@
 #define NUM_HOF_ENTRIES       10
 
 #define LEN_STRING            30  /* used for found_file in main() */
+#define LEN_MESSAGE_STRING   150
 #define LEN_NAME              20  /* ¿ Wizard Name, Unit Type Name, Building Name, HoF Name, Save-Game Name, ... ? (NOT Item Name, City Name)*/
 #define LEN_DESCRIPTION       30  /* ¿ Item Name ? */
 #define LEN_TEMP_STRING       20
@@ -52,6 +53,7 @@
 #define LEN_SAVE_DESCRIPTION  20
 #define LEN_RACE_NAME         20
 #define LEN_ITEM_NAME         30    /* array is 30, but last 4 are always 0, longest name is 26 characters */
+#define LEN_ITEM_MAKE_NAME    26
 #define LEN_ITEM_POWER_NAME   18
 
 

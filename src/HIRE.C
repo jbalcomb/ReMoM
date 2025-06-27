@@ -41,7 +41,7 @@ extern SAMB_ptr outpost_name_background_seg;
 
 // ovr115 'Item Make'
 // WZD dseg:C8DC
-extern SAMB_ptr ITEM_Draw_Seg;
+extern SAMB_ptr m_itemmake_item_icon_bitmap_seg;
 
 
 
@@ -166,7 +166,7 @@ void Merchant_Popup_Load(void)
     // HIRE.LBX, 001  REDBUTT
     IMG_MerchantBtns = LBX_Reload_Next(hire_lbx_file__ovr127, 1, _screen_seg);
 
-    ITEM_Draw_Seg = Allocate_Next_Block(_screen_seg, 1200);
+    m_itemmake_item_icon_bitmap_seg = Allocate_Next_Block(_screen_seg, 1200);
 
     IMG_SBK_PageText = Allocate_Next_Block(_screen_seg, 30);
 
@@ -186,7 +186,7 @@ void Merchant_Popup_Draw(void)
 
     Cycle_Item_Enchantment_Animation();
 
-    Item_View_Prepare(GUI_InHeroNaming, ITEM_Draw_Seg, IMG_SBK_PageText);
+    Item_View_Prepare(GUI_InHeroNaming, m_itemmake_item_icon_bitmap_seg, IMG_SBK_PageText);
 
     Copy_Back_To_Off();
 
@@ -214,7 +214,7 @@ void Merchant_Popup_Draw(void)
 
     Print_Paragraph((screen_x + 57), (screen_y + 9), 182, GUI_NearMsgString, 0);
 
-    Draw_Picture((screen_x + 14), (screen_y + 65), ITEM_Draw_Seg);
+    Draw_Picture((screen_x + 14), (screen_y + 65), m_itemmake_item_icon_bitmap_seg);
 
 }
 
@@ -318,7 +318,7 @@ void Hire_Hero_Load(int16_t unit_type)
     hire_banner_seg = LBX_Reload_Next(hire_lbx_file__ovr127, 0, _screen_seg);
 
     // BUG  ¿ ; should use the already allocated USW_ItemDraw_Seg ?
-    ITEM_Draw_Seg = Allocate_Next_Block(_screen_seg, 30);  // 30 PR, 480 B
+    m_itemmake_item_icon_bitmap_seg = Allocate_Next_Block(_screen_seg, 30);  // 30 PR, 480 B
 
     // BUG  ¿ ; asset never used ?
     // HIRE.LBX, 4  004  NAMEBOX
@@ -360,7 +360,7 @@ void Hire_Hero_Popup_Draw(void)
 
     Copy_Back_To_Off();
 
-    Thing_View_Draw__WIP(window_x, window_y, 1, (_units - 1), uv_specials_list_array, uv_specials_list_count, ITEM_Draw_Seg);
+    Thing_View_Draw__WIP(window_x, window_y, 1, (_units - 1), uv_specials_list_array, uv_specials_list_count, m_itemmake_item_icon_bitmap_seg);
 
     FLIC_Draw((window_x - 25), 0, hire_banner_seg);
 
@@ -720,7 +720,7 @@ void Hire_Merc_Popup_Draw(void)
 
     Copy_Back_To_Off();
 
-    Thing_View_Draw__WIP(window_x, window_y, 1, (_units - 1), uv_specials_list_array, uv_specials_list_count, ITEM_Draw_Seg);
+    Thing_View_Draw__WIP(window_x, window_y, 1, (_units - 1), uv_specials_list_array, uv_specials_list_count, m_itemmake_item_icon_bitmap_seg);
 
     FLIC_Draw((window_x - 25), 0, hire_banner_seg);
 

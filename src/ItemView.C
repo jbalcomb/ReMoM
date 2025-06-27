@@ -5,11 +5,16 @@
         ovr082
 */
 
-#include "MOX/MOX_DAT.H"  /* _screen_seg */
-
-#include "MOM.H"
 #include "ItemView.H"
+
+#include "MOX/Fields.H"
+#include "MOX/MOM_Data.H"
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_TYPE.H"
+
+#include "ItemScrn.H"
 #include "MainScr.H"  /* enchantment_outline_colors */
+#include "UnitView.H"
 
 
 
@@ -276,7 +281,7 @@ Draw_Item_With_Name()
     |-> Draw_Item_Icon_With_Enchantment_Outline(item_idx, m_item_icon_workarea)
 
 */
-void Draw_Item_Icon_With_Enchantment_Outline(int16_t item_idx, SAMB_ptr item_icon_pict_seg)
+void Draw_Item_Icon_With_Enchantment_Outline(int16_t item_idx, SAMB_ptr item_icon_bitm)
 {
     uint32_t item_powers;
     uint16_t item_powers_HI;  // _DX_
@@ -287,9 +292,9 @@ void Draw_Item_Icon_With_Enchantment_Outline(int16_t item_idx, SAMB_ptr item_ico
 
     Draw_Picture_To_Bitmap(item_icons_seg[_ITEMS[item_idx].icon_idx], GfxBuf_2400B);
 
-    Create_Picture(19, 19, item_icon_pict_seg);
+    Create_Picture(19, 19, item_icon_bitm);
 
-    Clipped_Copy_Bitmap(2, 2, item_icon_pict_seg, GfxBuf_2400B);
+    Clipped_Copy_Bitmap(2, 2, item_icon_bitm, GfxBuf_2400B);
 
     item_ptr = &_ITEMS[item_idx];
 
@@ -307,46 +312,46 @@ void Draw_Item_Icon_With_Enchantment_Outline(int16_t item_idx, SAMB_ptr item_ico
 
     if(item_powers != 0)
     {
-        if(      (item_powers & IP_HASTE             ) != 0) { magic_realm = 4; }
-        else if( (item_powers & IP_PHANTASMAL        ) != 0) { magic_realm = 4; }
-        else if( (item_powers & IP_CHAOS             ) != 0) { magic_realm = 0; }
-        else if( (item_powers & IP_TRUE_SIGHT        ) != 0) { magic_realm = 2; }
-        else if( (item_powers & IP_LION_HEART        ) != 0) { magic_realm = 2; }
-        else if( (item_powers & IP_REGENERATION      ) != 0) { magic_realm = 3; }
-        else if( (item_powers & IP_INVISIBILITY      ) != 0) { magic_realm = 4; }
-        else if( (item_powers & IP_WRAITH_FORM       ) != 0) { magic_realm = 1; }
-        else if( (item_powers & IP_PLANAR_TRAVEL     ) != 0) { magic_realm = 2; }
-        else if( (item_powers & IP_INVULNERABILITY   ) != 0) { magic_realm = 2; }
-        else if( (item_powers & IP_VAMPIRIC          ) != 0) { magic_realm = 0; }
-        else if( (item_powers & IP_LIGHTNING         ) != 0) { magic_realm = 0; }
-        else if( (item_powers & IP_DESTRUCTION       ) != 0) { magic_realm = 0; }
-        else if( (item_powers & IP_POWER_DRAIN       ) != 0) { magic_realm = 1; }
-        else if( (item_powers & IP_ELEMENTAL_ARMOUR  ) != 0) { magic_realm = 3; }
-        else if( (item_powers & IP_MAGIC_IMMUNITY    ) != 0) { magic_realm = 4; }
-        else if( (item_powers & IP_RIGHTEOUSNESS     ) != 0) { magic_realm = 2; }
-        else if( (item_powers & IP_MERGING           ) != 0) { magic_realm = 3; }
-        else if( (item_powers & IP_FLIGHT            ) != 0) { magic_realm = 4; }
-        else if( (item_powers & IP_PATHFINDING       ) != 0) { magic_realm = 3; }
-        else if( (item_powers & IP_GUARDIAN_WIND     ) != 0) { magic_realm = 4; }
-        else if( (item_powers & IP_GIANT_STRENGTH    ) != 0) { magic_realm = 3; }
-        else if( (item_powers & IP_HOLY_AVENGER      ) != 0) { magic_realm = 2; }
-        else if( (item_powers & IP_DEATH             ) != 0) { magic_realm = 1; }
-        else if( (item_powers & IP_FLAMING           ) != 0) { magic_realm = 0; }
-        else if( (item_powers & IP_CLOAK_OF_FEAR     ) != 0) { magic_realm = 1; }
-        else if( (item_powers & IP_RESIST_ELEMENTS   ) != 0) { magic_realm = 3; }
-        else if( (item_powers & IP_STONING           ) != 0) { magic_realm = 3; }
-        else if( (item_powers & IP_RESIST_MAGIC      ) != 0) { magic_realm = 4; }
-        else if( (item_powers & IP_CLOAK_OF_FEAR     ) != 0) { magic_realm = 1; }
-        else if( (item_powers & IP_BLESS             ) != 0) { magic_realm = 2; }
-        else if( (item_powers & IP_ENDURANCE         ) != 0) { magic_realm = 2; }
-        else if( (item_powers & IP_WATER_WALKING     ) != 0) { magic_realm = 3; }
+        if(      (item_powers & IP_HASTE             ) != 0) { magic_realm = mr_Sorcery;  }
+        else if( (item_powers & IP_PHANTASMAL        ) != 0) { magic_realm = mr_Sorcery;  }
+        else if( (item_powers & IP_CHAOS             ) != 0) { magic_realm = mr_Chaos;    }
+        else if( (item_powers & IP_TRUE_SIGHT        ) != 0) { magic_realm = mr_Life;     }
+        else if( (item_powers & IP_LION_HEART        ) != 0) { magic_realm = mr_Life;     }
+        else if( (item_powers & IP_REGENERATION      ) != 0) { magic_realm = mr_Nature;   }
+        else if( (item_powers & IP_INVISIBILITY      ) != 0) { magic_realm  = mr_Sorcery; }
+        else if( (item_powers & IP_WRAITH_FORM       ) != 0) { magic_realm = mr_Death;    }
+        else if( (item_powers & IP_PLANAR_TRAVEL     ) != 0) { magic_realm = mr_Life;     }
+        else if( (item_powers & IP_INVULNERABILITY   ) != 0) { magic_realm = mr_Life;     }
+        else if( (item_powers & IP_VAMPIRIC          ) != 0) { magic_realm = mr_Chaos;    }
+        else if( (item_powers & IP_LIGHTNING         ) != 0) { magic_realm = mr_Chaos;    }
+        else if( (item_powers & IP_DESTRUCTION       ) != 0) { magic_realm = mr_Chaos;    }
+        else if( (item_powers & IP_POWER_DRAIN       ) != 0) { magic_realm = mr_Death;    }
+        else if( (item_powers & IP_ELEMENTAL_ARMOUR  ) != 0) { magic_realm = mr_Nature;   }
+        else if( (item_powers & IP_MAGIC_IMMUNITY    ) != 0) { magic_realm  = mr_Sorcery; }
+        else if( (item_powers & IP_RIGHTEOUSNESS     ) != 0) { magic_realm = mr_Life;     }
+        else if( (item_powers & IP_MERGING           ) != 0) { magic_realm = mr_Nature;   }
+        else if( (item_powers & IP_FLIGHT            ) != 0) { magic_realm  = mr_Sorcery; }
+        else if( (item_powers & IP_PATHFINDING       ) != 0) { magic_realm = mr_Nature;   }
+        else if( (item_powers & IP_GUARDIAN_WIND     ) != 0) { magic_realm  = mr_Sorcery; }
+        else if( (item_powers & IP_GIANT_STRENGTH    ) != 0) { magic_realm = mr_Nature;   }
+        else if( (item_powers & IP_HOLY_AVENGER      ) != 0) { magic_realm = mr_Life;     }
+        else if( (item_powers & IP_DEATH             ) != 0) { magic_realm = mr_Death;    }
+        else if( (item_powers & IP_FLAMING           ) != 0) { magic_realm = mr_Chaos;    }
+        else if( (item_powers & IP_CLOAK_OF_FEAR     ) != 0) { magic_realm = mr_Death;    }
+        else if( (item_powers & IP_RESIST_ELEMENTS   ) != 0) { magic_realm = mr_Nature;   }
+        else if( (item_powers & IP_STONING           ) != 0) { magic_realm = mr_Nature;   }
+        else if( (item_powers & IP_RESIST_MAGIC      ) != 0) { magic_realm  = mr_Sorcery; }
+        else if( (item_powers & IP_CLOAK_OF_FEAR     ) != 0) { magic_realm = mr_Death;    }  // BUGBUG duplicated
+        else if( (item_powers & IP_BLESS             ) != 0) { magic_realm = mr_Life;     }
+        else if( (item_powers & IP_ENDURANCE         ) != 0) { magic_realm = mr_Life;     }
+        else if( (item_powers & IP_WATER_WALKING     ) != 0) { magic_realm = mr_Nature;   }
         // NO ...else { ... }
     }
 
     if(magic_realm != ST_UNDEFINED)
     {
-        Outline_Bitmap_Pixels(item_icon_pict_seg, 255);
-        Bitmap_Aura_Pixels(item_icon_pict_seg, 255, enchantment_outline_colors[magic_realm][item_enchantment_animation_count]);
+        Outline_Bitmap_Pixels(item_icon_bitm, 255);
+        Bitmap_Aura_Pixels(item_icon_bitm, 255, enchantment_outline_colors[magic_realm][item_enchantment_animation_count]);
     }
 
 }

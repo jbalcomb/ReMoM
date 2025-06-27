@@ -1055,6 +1055,8 @@ MoO2
                     case ft_Input:
                     {
 
+                        Push_Field_Down(field_num, l_mx, l_my);
+
                     } break;
 
                     /*  5  0x05 */  // drake178: ImageLabel      DNE/NIU in MoO2
@@ -1982,18 +1984,18 @@ int16_t Process_Direction_Key__STUB(int16_t dir_key)
 */
 void Input_Box_Popup(int16_t field_num)
 {
-    char input_string[63];
+    char input_string[63] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     // char key;  // ¿ clangd ... out of range ?
-    uint8_t key;
-    int16_t Timeout_Counter;
-    int16_t Control_Change;
-    int16_t Font_Height;
-    int16_t width;
-    int16_t String_Modified;
-    int16_t max_characters;
-    int16_t Allowed_Char;
-    int16_t string_pos;  // _SI_
-    int16_t itr;  // _DI_
+    uint8_t key = 0;
+    int16_t Timeout_Counter = 0;
+    int16_t Control_Change = 0;
+    int16_t Font_Height = 0;
+    int16_t width = 0;
+    int16_t String_Modified = 0;
+    int16_t max_characters = 0;
+    int16_t Allowed_Char = 0;
+    int16_t string_pos = 0;  // _SI_
+    int16_t itr = 0;  // _DI_
 
 #ifdef _STU_SDL2
     hw_textinput_start();
@@ -2005,10 +2007,13 @@ void Input_Box_Popup(int16_t field_num)
 
     if(mouse_installed != ST_FALSE)
     {
+
         while(Mouse_Button() != 0) { Invoke_Auto_Function(); }
+
     }
 
     GUI_Edit_Position = 0;
+
     GUI_EditAnimStage = 0;
 
     max_characters = p_fields[field_num].max_characters;
@@ -2031,9 +2036,13 @@ void Input_Box_Popup(int16_t field_num)
 
     while((Get_String_Width(input_string) > width) && (string_pos > 0))
     {
+
         // ¿ BUG  ; zeroes the string instead of backspacing it ?
+
         string_pos -= string_pos;
+
         input_string[string_pos] = 0;
+
     }
 
     GUI_Edit_Position = string_pos;
@@ -2056,6 +2065,7 @@ void Input_Box_Popup(int16_t field_num)
     // 1oom:  while ((key != MOO_KEY_RETURN) && (!flag_mouse_button))
     while((Control_Change == ST_FALSE) && (key != ST_KEY_ENTER))
     {
+
         if(Control_Change != ST_FALSE)
         {
             break;
@@ -2063,6 +2073,7 @@ void Input_Box_Popup(int16_t field_num)
         
         while((Keyboard_Status() == 0) && (Control_Change == ST_FALSE))
         {
+
             if(GUI_EditTimeOutType == ST_UNDEFINED)
             {
                 Timeout_Counter--;
@@ -2083,15 +2094,20 @@ void Input_Box_Popup(int16_t field_num)
                 )
             )
             {
+
                 Control_Change = ST_TRUE;
+
                 break;
+
             }
 
             GUI_EditAnimStage++;
 
             if(((Font_Height * 2) - 1) < GUI_EditAnimStage)
             {
+
                 GUI_EditAnimStage = 0;
+                
             }
 
             Draw_Input_Box_Popup(field_num, input_string);
@@ -2269,6 +2285,7 @@ ST_KEY_ENTER            = 0x0C
                         }
 
                         input_string[string_pos] = '\0';
+
                         GUI_EditAnimStage = 0;
 
                     }
@@ -2278,6 +2295,7 @@ ST_KEY_ENTER            = 0x0C
         }
 
         Draw_Input_Box_Popup(field_num, input_string);
+
     }  /* while((key != ST_KEY_ENTER) && (Control_Change == ST_FALSE)) */
     /*
         END:  
@@ -2291,20 +2309,26 @@ ST_KEY_ENTER            = 0x0C
 
     if(Control_Change != ST_FALSE)
     {
+
         if(mouse_installed != ST_FALSE)
         {
+
             // jmp     short $+2
 
             while(Mouse_Button() != 0) { }
+
         }
+
     }
 
     Restore_Mouse_On_Page();
+
     Restore_Mouse_State();
 
     down_mouse_button = ST_UNDEFINED;
 
     GUI_Edit_Position = 0;
+
     GUI_EditAnimStage = 0;
 
 }

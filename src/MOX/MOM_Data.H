@@ -4498,9 +4498,9 @@ extern SAMB_ptr IMG_SBK_PageText;
 
 // WZD dseg:CA40
 extern SAMB_ptr IMG_SBK_SliderBar;
-
-// WZD dseg:CA42
+#define m_itemmake_icon_window_right_arrow_seg IMG_SBK_SliderBar
 extern SAMB_ptr IMG_SBK_SliderDot;
+#define m_itemmake_icon_window_left_arrow_seg IMG_SBK_SliderDot
 
 // WZD dseg:CA44 00 00                                           IMG_MoodWizPortrait@ dw 0               ; DATA XREF: OVL_LoadGlobalAnim+28w ...
 // WZD dseg:CA46 00                                              db    0

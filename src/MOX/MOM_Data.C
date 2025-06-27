@@ -3345,9 +3345,14 @@ SAMB_ptr IMG_SBK_PageText;
 // WZD dseg:CA3E 00 00                                           word_434DE dw 0                         ; DATA XREF: IDK_SummonAnim_Load+B4w ...
 
 // WZD dseg:CA40
-SAMB_ptr IMG_SBK_SliderBar;
-
 // WZD dseg:CA42
+/*
+
+Item_Make_Screen()
+    IMG_SBK_SliderDot is used to hold the pict for m_itemmake_icon_window_left_arrow_button
+    IMG_SBK_SliderBar is used to hold the pict for m_itemmake_icon_window_right_arrow_button
+*/
+SAMB_ptr IMG_SBK_SliderBar;
 SAMB_ptr IMG_SBK_SliderDot;
 
 // WZD dseg:CA44 00 00                                           IMG_MoodWizPortrait@ dw 0               ; DATA XREF: OVL_LoadGlobalAnim+28w ...

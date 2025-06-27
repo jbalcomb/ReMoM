@@ -417,7 +417,7 @@ void Build_Spell_List(int16_t type, int16_t spell_list[])
                 {
                     
                     if(
-                        (_players[HUMAN_PLAYER_IDX].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] == 2)  /* S_Known */
+                        (_players[HUMAN_PLAYER_IDX].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] == sls_Known)
                         &&
                         (spell_data_table[spell_idx].Eligibility > -1)
                         &&
@@ -433,7 +433,7 @@ void Build_Spell_List(int16_t type, int16_t spell_list[])
                 {
 
                     if(
-                        (_players[HUMAN_PLAYER_IDX].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] == 2)  /* S_Known */
+                        (_players[HUMAN_PLAYER_IDX].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] == sls_Known)
                         &&
                         (spell_data_table[spell_idx].Eligibility != 1)
                         &&
@@ -448,10 +448,10 @@ void Build_Spell_List(int16_t type, int16_t spell_list[])
                 case slt_Library:  /* Apprentice */
                 {
 
-                    if(_players[HUMAN_PLAYER_IDX].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] > 0)  /* S_Unknown */  /* ¿ knowable or known ? */
+                    if(_players[HUMAN_PLAYER_IDX].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] > sls_Unknown)
                     {
                         
-                        if(_players[HUMAN_PLAYER_IDX].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] != 2)  /* S_Known */
+                        if(_players[HUMAN_PLAYER_IDX].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] != sls_Known)
                         {
                             spell_status = 2;  /* ¿ researchable ? */
                         }

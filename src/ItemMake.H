@@ -25,49 +25,49 @@ extern "C" {
 */
 
 // WZD o115p01
-// ITEM_LoadCraftingRes()
+// static void Item_Make_Screen_Load(void);
 
 // WZD o115p02
-// sub_94FDD()
+// static void Item_Make_Screen_Draw(void);
 
 // WZD o115p03
 char * Get_Item_Type_Name(int16_t item_idx);
 
 // WZD o115p04
-// PRIVATE  char * Get_Item_Name(int16_t item_idx);
+// static const char * Get_Item_Name(int16_t item_idx);
 
 // WZD o115p05
-// PRIVATE  int16_t Get_Item_Cost(int16_t item_idx);
+// static int16_t Get_Item_Cost(int16_t item_idx);
 
 // WZD o115p06
-// sub_95B62()
+// static void Item_Make_Screen_Build_Spell_List(void);
 
 // WZD o115p07
-// ITEM_CreateControls()
+// static void Item_Make_Screen_Add_Fields(void);
 
 // WZD o115p08
-int16_t IDK_CreateArtifact__STUB(int16_t IDK1, int16_t IDK2);
+int16_t Item_Make_Screen(int16_t player_idx, int16_t type);
 
 // WZD o115p09
-// PRIVATE  void Create_Item_Record(int16_t item_idx);
+// static void Create_Item_Record(int16_t item_idx);
 
 // WZD o115p11
-// ITEM_Get_IC_Powers()
+// static int16_t Itam_Make_Screen_Build_Weapon_Powers_List(int16_t player_idx, int16_t max_cost);
 
 // WZD o115p12
-// sub_96AF2()
+// static void Item_Make_Screen_Spellbook_Popup_Draw(void);
 
 // WZD o115p13
-// sub_96D84()
+// static int16_t Item_Make_Screen_Spellbook_Popup(void);
 
 // WZD o115p14
 // PRIVATE  int16_t Add_Item(int16_t itemdata_idx);
 
 // WZD o115p15
-static int16_t Activate_Item(int16_t old_item_idx);
+int16_t Activate_Item(int16_t old_item_idx);
 
 // WZD o115p16
-// PRIVATE  int16_t Create_Random_Item(int16_t Power, int16_t Value);
+// static void Create_Random_Item(int16_t Power, int16_t Value);
 
 // WZD o115p17
 int16_t Make_Item(int16_t Power, int16_t spellranks[], int16_t Value);

@@ -612,7 +612,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
     char spell_name[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t show_message_flag = 0;
     int16_t var_1A = 0;
-    int16_t item_list = 0;
+    int16_t item_list[1] = { 0 };
     int16_t MultiPurpose_Local_Var = 0;
     int16_t Cast_Successful = 0;
     int16_t target_wy = 0;
@@ -1907,6 +1907,29 @@ Capture_Cities_Data();
                 case scc_Crafting_Spell:  // 11
                 {
 
+                    if(player_idx == HUMAN_PLAYER_IDX)
+                    {
+
+                        IDK_SummonAnim(-1, 3, player_idx);
+
+                        item_list[0] = Activate_Item(137);
+
+                        Process_Item_Pool(1, &item_list[0]);
+
+                    }
+                    else
+                    {
+
+                        item_list[0] = Activate_Item((136 - player_idx));
+
+                        Player_Process_Item_Pool(player_idx, 1, &item_list[0]);
+
+                    }
+
+                    current_screen = scr_Main_Screen;
+
+                    Cast_Successful = ST_TRUE;
+
                 } break;
 
                 // COMBAT:  Possession, Shatter
@@ -2125,11 +2148,11 @@ Capture_Cities_Data();
 
                             /* SPELLY */  enchantments_idx = IDK_Get_Global_Enchant_Index__STUB(wy);
 
-                            item_list = (_players[player_idx].casting_cost_original + Calculate_Dispel_Difficulty(spell_data_table[enchantments_idx].casting_cost, spell_target_idx, spell_data_table[enchantments_idx].magic_realm));
+                            item_list[0] = (_players[player_idx].casting_cost_original + Calculate_Dispel_Difficulty(spell_data_table[enchantments_idx].casting_cost, spell_target_idx, spell_data_table[enchantments_idx].magic_realm));
 
-                            item_list = ((_players[player_idx].casting_cost_original * 250) / item_list);
+                            item_list[0] = ((_players[player_idx].casting_cost_original * 250) / item_list[0]);
 
-                            if(Random(250) <= item_list)
+                            if(Random(250) <= item_list[0])
                             {
 
                                 ptr_enchantments = &_players[spell_target_idx].Globals[0];

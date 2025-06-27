@@ -7,8 +7,10 @@
     SPELLSCR.LBX
 */
 
+#include "ItemMake.H"
 #include "MOX/FLIC_Draw.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_DEF.H"
 #include "MOX/MOX_SET.H"  /* magic_set */
 #include "MOX/SOUND.H"
 
@@ -481,9 +483,9 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
             {
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
-                    // SPELLY  _players[player_idx].casting_cost_remaining = IDK_CreateArtifact__STUB(0, 0);
-                    // _players[player_idx].casting_cost_original = _ITEMS[136].cost;
-                    // Allocate_Reduced_Map();
+                    _players[player_idx].casting_cost_remaining = Item_Make_Screen(0, 0);
+                    _players[player_idx].casting_cost_original = _ITEMS[137].cost;
+                    Allocate_Reduced_Map();
                     item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 1000);
                     _players[player_idx].casting_cost_original = _ITEMS[item_idx].cost;
                     _players[player_idx].casting_cost_remaining = ((_players[player_idx].casting_cost_remaining * var_8) / 100);
@@ -503,9 +505,9 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
             {
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
-                    // SPELLY  _players[player_idx].casting_cost_remaining = IDK_CreateArtifact__STUB(0, 1);
-                    // _players[player_idx].casting_cost_original = _ITEMS[136].cost;
-                    // Allocate_Reduced_Map();
+                    _players[player_idx].casting_cost_remaining = Item_Make_Screen(0, 1);
+                    _players[player_idx].casting_cost_original = _ITEMS[137].cost;
+                    Allocate_Reduced_Map();
                     item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 30000);
                     _players[player_idx].casting_cost_original = _ITEMS[item_idx].cost;
                     _players[player_idx].casting_cost_remaining = ((_players[player_idx].casting_cost_remaining * var_8) / 100);
@@ -521,7 +523,11 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
                     Remove_Item(item_idx);
                 }
             }
-            _players[player_idx].casting_cost_remaining = 0;
+            if(_players[player_idx].casting_cost_remaining == 0)
+            {
+                _players[player_idx].casting_cost_original = 0;
+                _players[player_idx].casting_spell_idx = spl_NONE;
+            }
         }
         else  /* (spell_data_table[spell_idx].type != scc_Crafting_Spell) */
         {

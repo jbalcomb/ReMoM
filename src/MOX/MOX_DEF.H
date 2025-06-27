@@ -47,6 +47,9 @@ https://wiki.sei.cmu.edu/confluence/display/c/PRE12-C.+Do+not+define+unsafe+macr
 #define SWAP_Y() (temp = y2; y2 = y1; y1 = temp;)
 #define SWAP_SHORT(_v1_,_v2_,_t_) ((_t_) = (_v2_); (_v2_) = (_v1_); (_v1_) = (_t_);)
 
+#define TOGGLE(_value_)  ( ( _value_ = (1 - (_value_)) ) )
+
+
 #define UPPERCASE(_character_) do { if(((_character_) > 96) && ((_character_) < 123) ) { (_character_) -= 32; } } while (0)
 
 
