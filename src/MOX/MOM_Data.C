@@ -2505,6 +2505,10 @@ SAMB_ptr _map_square_terrain_specials;                 // load in Load_SAVE_GAM(
 // WZD dseg:9CC4  
 // WZD dseg:9CC8
 // WZD dseg:9CCC
+/*
+
+IDGI, but _CITIES is reused in Diplomacy_Screen_Load__WIP()
+*/
 struct s_CITY * _CITIES;
 struct s_LAIR * _LAIRS;
 struct s_TOWER * _TOWERS;

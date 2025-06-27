@@ -1,10 +1,5 @@
 
-scc_Crafting_Spell
-git commit -m "add Overland Specials 'Enchant Item' & 'Create Artifact'"
-
 'Create Undead'
-
-
 
 FIXME_RIGHTMEOW
 CMB_PrepareTurn__WIP()

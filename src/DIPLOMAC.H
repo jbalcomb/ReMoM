@@ -20,6 +20,7 @@ MoO2
 #include "MOX/MOX_TYPE.H"
 
 
+
 /*
     Diplomatic Relations
     Treaty Status
@@ -152,8 +153,8 @@ enum e_DIPLOMATIC_ACTION
 // WZD dseg:C3D0 00 00                                           dw 0
 // WZD dseg:C3D2 00 00                                           IMG_DIPL_TalkAnim@ dw 0                 ; DATA XREF: IDK_DiplAnim_s6FDA1+2Ar ...
 // WZD dseg:C3D4 00 00                                           word_42E74 dw 0                         ; DATA XREF: Diplomacy_Screen+Dw ...
-// WZD dseg:C3D6 00 00                                           word_42E76 dw 0                         ; DATA XREF: sub_6FD5C:loc_6FD94r ...
-// WZD dseg:C3D8 00 00                                           word_42E78 dw 0                         ; DATA XREF: sub_6FD5C:loc_6FD86r ...
+// WZD dseg:C3D6 00 00                                           word_42E76 dw 0                         ; DATA XREF: IDK_Diplomacy_Background_Music__STUB:loc_6FD94r ...
+// WZD dseg:C3D8 00 00                                           word_42E78 dw 0                         ; DATA XREF: IDK_Diplomacy_Background_Music__STUB:loc_6FD86r ...
 // WZD dseg:C3DA 00 00                                           dw 0
 // WZD dseg:C3DC 00 00                                           word_42E7C dw 0                         ; DATA XREF: IDK_Diplo_LoadWorldData_s6FF63+C5w ...
 // WZD dseg:C3DE 00 00                                           word_42E7E dw 0                         ; DATA XREF: Diplomacy_Screen+13w ...
@@ -180,8 +181,6 @@ extern int16_t G_DIPL_TargetWizard;
 
 
 
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -193,26 +192,61 @@ extern "C" {
 */
 
 // WZD o84p01
-void Diplomacy_Screen__STUB(void);
+void Diplomacy_Screen__WIP(void);
 
-// Diplomacy_Screen_Draw                            ovr084
-// sub_6ECD9                                      ovr084
-// sub_6ED5D                                      ovr084
-// sub_6EE03                                      ovr084
-// sub_6EFA5                                      ovr084
-// sub_6F3E4                                      ovr084
-// sub_6F51A                                      ovr084
-// sub_6F6BB                                      ovr084
-// sub_6F90E                                      ovr084
-// sub_6F982                                      ovr084
-// sub_6FD5C                                      ovr084
-// IDK_DiplAnim_s6FDA1                            ovr084
-// IDK_Diplo_LoadWorldData_s6FF63                 ovr084
-// DIPL_LoadTalkGFX                               ovr084
-// IDK_DiplEyes_s7028D                            ovr084
-// IDK_Dipl_Draw_s702E6                           ovr084
-// sub_7038D                                      ovr084
-// DIPL_GetInvasionStr                            ovr084
+// WZD o84p02
+// static void Diplomacy_Screen_Draw__WIP(void);
+
+// WZD o84p01
+// sub_6ECD9()
+
+// WZD o84p02
+// sub_6ED5D()
+
+// WZD o84p03
+// sub_6EE03()
+
+// WZD o84p04
+// sub_6EFA5()
+
+// WZD o84p05
+// sub_6F3E4()
+
+// WZD o84p06
+// sub_6F51A()
+
+// WZD o84p07
+// sub_6F6BB()
+
+// WZD o84p08
+// sub_6F90E()
+
+// WZD o84p09
+// sub_6F982()
+
+// WZD o84p10
+// IDK_Diplomacy_Background_Music__STUB()
+
+// WZD o84p11
+// IDK_DiplAnim_s6FDA1()
+
+// WZD o84p12
+// static void Diplomacy_Screen_Load__WIP(void);
+
+// WZD o84p13
+// DIPL_LoadTalkGFX()
+
+// WZD o84p14
+// IDK_DiplEyes_s7028D()
+
+// WZD o84p15
+// IDK_Dipl_Draw_s702E6()
+
+// WZD o84p16
+// sub_7038D()
+
+// WZD o84p17
+// DIPL_GetInvasionStr()
 
 
 
@@ -236,7 +270,7 @@ void Diplomacy_Screen__STUB(void);
 // DIPL_LowestInterest()
 
 // WZD o85p06
-// DIPL_TreatyIntCaps()
+// static void Limit_Temporary_Peace_Modifier(void);
 
 // WZD o85p07
 // WIZ_DIPL_TeachSpell()

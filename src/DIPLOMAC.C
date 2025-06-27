@@ -2,7 +2,7 @@
     Diplomacy
 
     WIZARDS.EXE
-        ovr084
+        ovr084          Diplomacy_Screen();
         ovr085
         ovr086
         ovr087
@@ -10,7 +10,8 @@
 
 MoO2
     Module: DIPLODEF
-    Module: DIP-SCRN
+    Module: DIP-SCRN    Diplomacy_Screen_(); Draw_Diplomacy_Screen_();
+    Module: NPCDIPLO
     Module: DIPLOMAC
 */
 
@@ -18,13 +19,138 @@ MoO2
 #include "DIPLOMAC.H"
 
 #include "MOX/Fields.H"
+#include "MOX/LBX_Load.H"
 #include "MOX/MOX_DAT.H"  /* _players[] */
+#include "MOX/MOX_DEF.H"
 #include "MOX/MOX_T4.H"
 #include "MOX/SOUND.H"
 
 #include "LOADER.H"
 #include "MainScr.H"
 #include "MOM_SCR.H"
+
+/*
+    WIZARDS.EXE  ovr084
+*/
+// WZD o84p01
+void Diplomacy_Screen__WIP(void);
+// WZD o84p02
+static void Diplomacy_Screen_Draw__WIP(void);
+// WZD o84p01
+// sub_6ECD9()
+// WZD o84p02
+// sub_6ED5D()
+// WZD o84p03
+// sub_6EE03()
+// WZD o84p04
+// sub_6EFA5()
+// WZD o84p05
+// sub_6F3E4()
+// WZD o84p06
+// sub_6F51A()
+// WZD o84p07
+// sub_6F6BB()
+// WZD o84p08
+// sub_6F90E()
+// WZD o84p09
+// sub_6F982()
+// WZD o84p10
+// IDK_Diplomacy_Background_Music__STUB()
+// WZD o84p11
+// IDK_DiplAnim_s6FDA1()
+// WZD o84p12
+static void Diplomacy_Screen_Load__WIP(void);
+// WZD o84p13
+// DIPL_LoadTalkGFX()
+// WZD o84p14
+// IDK_DiplEyes_s7028D()
+// WZD o84p15
+// IDK_Dipl_Draw_s702E6()
+// WZD o84p16
+// sub_7038D()
+// WZD o84p17
+// DIPL_GetInvasionStr()
+/*
+    WIZARDS.EXE  ovr085
+*/
+// WZD o85p01
+// IDK_DiplSts_s70570()
+// WZD o85p02
+// DIPL_Gravitation()
+// WZD o85p03
+// sub_70A1A()
+// WZD o85p04
+// sub_70AFE()
+// WZD o85p05
+// DIPL_LowestInterest()
+// WZD o85p06
+static void Limit_Temporary_Peace_Modifier(void);
+// WZD o85p07
+// WIZ_DIPL_TeachSpell()
+// WZD o85p08
+// G_DIPL_PickSides()
+// WZD o85p09
+// DIPL_SignTreaty()
+// WZD o85p10
+// DIPL_SignPeaceTreaty()
+// WZD o85p11
+// DIPL_LeaveMeAlone()
+// WZD o85p12
+void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender_idx, int16_t type, int16_t city_idx, int16_t spell_idx);
+// WZD o85p13
+void Declare_War(int16_t attacker_idx, int16_t defender_idx);
+// WZD o85p14
+void Break_Treaties(int16_t attacker_idx, int16_t defender_idx);
+// WZD o85p15
+// DIPL_TribSpellList()
+// WZD o85p16
+// sub_71B90()
+// WZD o85p17
+// sub_72131()
+// WZD o85p18
+// DIPL_DropCityCurses()
+/*
+    WIZARDS.EXE  ovr086
+*/
+// WZD o86p0
+// IDK_Dipl_s72690()
+// DIPL_AI_To_AI()
+// sub_72DB6()
+// sub_7323F()
+// sub_732D9()
+/*
+    WIZARDS.EXE  ovr087
+*/
+// WZD o87p01
+// DIPL_ContactProgress()
+// WZD o87p02
+// IDK_Dipl_s7373B()
+// WZD o87p03
+// G_DIPL_NeedForWar()
+// WZD o87p04
+// G_DIPL_SuperiorityWar()
+// WZD o87p05
+// IDK_Dipl_s73F1C()
+// WZD o87p06
+// IDK_Dipl_s73FBF()
+// WZD o87p07
+// DIPL_GetOffMyLawn()
+// WZD o87p08
+void Decrease_Peace_Duration(void);
+// WZD o87p09
+// IDK_Dipl_s7436F()
+/*
+    WIZARDS.EXE  ovr088
+*/
+// WZD o88p0
+// sub_74420()
+// DIPL_HumanWarOrPeace()
+// IDK_Dipl_s74B68()
+// sub_74E2F()
+// sub_74E38()
+// sub_74F4A()
+
+
 
 
 
@@ -71,7 +197,10 @@ int16_t AI_Dipl_Unset_0;
 // WZD dseg:4CA4 E2 4D                                           off_3B744 dw offset aYourActions        ; DATA XREF: sub_6F982+24r
 // WZD dseg:4CA4                                                                                         ; "Your actions: "
 // WZD dseg:4CA6 5B 20 50 72 6F 70 6F 73 65 20 54 72 65 61 74 79 aProposeTreaty db '[ Propose Treaty'    ; DATA XREF: dseg:off_3B6E8o
-// WZD dseg:4CB6 00                                              cnst_ZeroString_4 db 0                  ; DATA XREF: dseg:off_3B6E8o ...
+
+// WZD dseg:4CB6
+char str_empty_string__ovr084[] = "";
+
 // WZD dseg:4CB7 5B 20 54 68 72 65 61 74 65 6E 2F 42 72 65 61 6B+aThreatenBreakT db '[ Threaten/Break Treaty',0
 // WZD dseg:4CB7 20 54 72 65 61 74 79 00                                                                 ; DATA XREF: dseg:off_3B6E8o
 // WZD dseg:4CCF 5B 20 4F 66 66 65 72 20 54 72 69 62 75 74 65 00 aOfferTribute db '[ Offer Tribute',0    ; DATA XREF: dseg:off_3B6E8o
@@ -105,13 +234,21 @@ int16_t AI_Dipl_Unset_0;
 // WZD dseg:4E62 20 77 65 20 63 6F 75 6C 64 20 64 65 61 6C 2E 00 aWeCouldDeal_ db ' we could deal.',0
 // WZD dseg:4E72 49 66 20 79 6F 75 20 61 6C 73 6F 20 6F 66 66 65+aIfYouAlsoOffer db 'If you also offer me ',0
 // WZD dseg:4E88 20 49 20 77 6F 75 6C 64 20 61 63 63 65 70 74 2E+aIWouldAccept_ db ' I would accept.',0
-// WZD dseg:4E99 4D 55 53 49 43 00                               cnst_MUSIC_File6 db 'MUSIC',0           ; DATA XREF: IDK_Diplo_LoadWorldData_s6FF63+4Co ...
-// WZD dseg:4E99                                                                                         ; should use dseg:2c81
-// WZD dseg:4E9F 44 49 50 4C 4F 4D 41 43 00                      cnst_DIPLOMAC_File db 'DIPLOMAC',0      ; DATA XREF: IDK_Diplo_LoadWorldData_s6FF63+B9o ...
-// WZD dseg:4EA8 4D 4F 4F 44 57 49 5A 00                         cnst_MOODWIZ_File db 'MOODWIZ',0        ; DATA XREF: DIPL_LoadTalkGFX+D8o
-// WZD dseg:4EB0 42 41 43 4B 47 52 4E 44 00                      cnst_BACKGRND_File2 db 'BACKGRND',0     ; DATA XREF: DIPL_LoadTalkGFX+EFo ...
+
+// WZD dseg:4E99
+char music_lbx_file__ovr084[] = "MUSIC";
+// WZD dseg:4E9F
+char diplomac_lbx_file__ovr084[] = "DIPLOMAC";
+// WZD dseg:4EA8
+char moodwiz_lbx_file__ovr084[] = "MOODWIZ";
+// WZD dseg:4EB0
+char backgrnd_lbx_file__ovr084[] = "BACKGRND";
 
 // WZD dseg:4EB9 00                                              align 2
+
+// WZD dseg:4EB9                                                 END:  ovr084 - Initialized Data
+
+
 
 // WZD dseg:4EBA C0 4E                                           off_3B95A dw offset aWhatDoYouOffer     ; DATA XREF: sub_71B90+F5r ...
 // WZD dseg:4EBA                                                                                         ; "What do you offer as tribute?"
@@ -181,29 +318,48 @@ int16_t AI_Dipl_Unset_0;
 // WZD dseg:C3C4 00 00                                           Target_Player dw 0                      ; DATA XREF: sub_6EFA5+2D2w ...
 // WZD dseg:C3C6 00 00                                           word_42E66 dw 0                         ; DATA XREF: sub_6F982+39Bw ...
 // WZD dseg:C3C8 00 00                                           Spell_Index dw 0                        ; DATA XREF: sub_6F51A+D7w ...
-// WZD dseg:C3CA 00 00                                           IMG_DIPL_RightEyes@ dw 0                ; DATA XREF: IDK_Diplo_LoadWorldData_s6FF63+AFw ...
-// WZD dseg:C3CA                                                                                         ; 22 LBX_NearAlloc_Next bytes holding IMG_Seg addresses
-// WZD dseg:C3CC 00 00                                           IMG_DIPL_LeftEyes@ dw 0                 ; DATA XREF: IDK_Diplo_LoadWorldData_s6FF63+A2w ...
-// WZD dseg:C3CC                                                                                         ; 22 LBX_NearAlloc_Next bytes holding IMG_Seg addresses
+
+// WZD dseg:C3CA
+SAMB_ptr * IMG_DIPL_RightEyes;
+// WZD dseg:C3CC
+SAMB_ptr * IMG_DIPL_LeftEyes;
+
 // WZD dseg:C3CE 00 00                                           dw 0
 // WZD dseg:C3D0 00 00                                           dw 0
 // WZD dseg:C3D2 00 00                                           IMG_DIPL_TalkAnim@ dw 0                 ; DATA XREF: IDK_DiplAnim_s6FDA1+2Ar ...
-// WZD dseg:C3D4 00 00                                           word_42E74 dw 0                         ; DATA XREF: Diplomacy_Screen+Dw ...
-// WZD dseg:C3D6 00 00                                           word_42E76 dw 0                         ; DATA XREF: sub_6FD5C:loc_6FD94r ...
-// WZD dseg:C3D8 00 00                                           word_42E78 dw 0                         ; DATA XREF: sub_6FD5C:loc_6FD86r ...
+// WZD dseg:C3D4
+int16_t word_42E74;
+
+// WZD dseg:C3D6
+SAMB_ptr sound_buffer2;
+/* HACK */  uint32_t sound_buffer2_size;
+// WZD dseg:C3D8
+SAMB_ptr sound_buffer1;
+/* HACK */  uint32_t sound_buffer1_size;
+
 // WZD dseg:C3DA 00 00                                           dw 0
-// WZD dseg:C3DC 00 00                                           word_42E7C dw 0                         ; DATA XREF: IDK_Diplo_LoadWorldData_s6FF63+C5w ...
-// WZD dseg:C3DE 00 00                                           word_42E7E dw 0                         ; DATA XREF: Diplomacy_Screen+13w ...
-// WZD dseg:C3E0 00 00                                           word_42E80 dw 0                         ; DATA XREF: Diplomacy_Screen+19w ...
+
+// WZD dseg:C3DC
+SAMB_ptr diplomacy_background_seg;
+
+// WZD dseg:C3DE
+int16_t word_42E7E;
+// WZD dseg:C3E0
+int16_t word_42E80;
 // WZD dseg:C3E2 00 00                                           G_DIPL_ComposedMessage dw 0             ; DATA XREF: DIPL_LoadTalkGFX+48w ...
 // WZD dseg:C3E2                                                                                         ; 220 LBX_NearAlloc_Next bytes
 // WZD dseg:C3E4 00 00                                           G_DIPL_TempMessage dw 0                 ; DATA XREF: Diplomacy_Screen_Draw+83r ...
 // WZD dseg:C3E4                                                                                         ; 220 LBX_NearAlloc_First bytes
-// WZD dseg:C3E6 00 00                                           word_42E86 dw 0                         ; DATA XREF: Diplomacy_Screen+C8w ...
-// WZD dseg:C3E8 00 00                                           word_42E88 dw 0                         ; DATA XREF: Diplomacy_Screen+B0w ...
-// WZD dseg:C3EA 00 00                                           G_DIPL_RndMsgIndex dw 0                 ; DATA XREF: Diplomacy_Screen+8Bw ...
-// WZD dseg:C3EC 00 00                                           word_42E8C dw 0                         ; DATA XREF: Diplomacy_Screen+58w ...
-// WZD dseg:C3EE 00 00                                           word_42E8E dw 0                         ; DATA XREF: Diplomacy_Screen+49w ...
+// WZD dseg:C3E6
+int16_t word_42E86;
+// WZD dseg:C3E8
+int16_t word_42E88;
+// WZD dseg:C3EA
+int16_t G_DIPL_RndMsgIndex;
+// WZD dseg:C3EC
+int16_t word_42E8C;
+// WZD dseg:C3EE
+int16_t word_42E8E;
 // WZD dseg:C3F0 00 00 00 00 00 00 00 00 00 00 00 00 00 00       G_Some_DIPL_Allocs_7 dw 0, 0, 0, 0, 0, 0, 0
 // WZD dseg:C3F0                                                                                         ; DATA XREF: IDK_Diplo_Scrn+C0r ...
 // WZD dseg:C3F0                                                                                         ; 100 LBX_NearAlloc_Next bytes each
@@ -219,20 +375,177 @@ int16_t G_DIPL_TargetWizard = 0;
 
 
 
-
 /*
     WIZARDS.EXE  ovr084
 */
 
 
+
 // WZD o84p01
-void Diplomacy_Screen__STUB(void)
+/*
+*/
+void Diplomacy_Screen__WIP(void)
 {
+    int16_t full_screen_field = 0;
+    int16_t input_field_idx = 0;  // _DI_
+    int16_t leave_screen = 0;  // _SI_
+
+    Limit_Temporary_Peace_Modifier();
+
+    word_42E74 = ST_UNDEFINED;
+
+    word_42E7E = ST_UNDEFINED;
+
+    word_42E80 = 0;
+
+    Apply_Palette();
+
+    leave_screen = ST_FALSE;
+
+    Assign_Auto_Function(Diplomacy_Screen_Draw__WIP, 3);
+
+    Set_Input_Delay(1);
+
+    Clear_Fields();
+
+    word_42E8E = 6;
+
+    word_42E8C = _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[G_DIPL_TargetWizard];
+
+    _page_flip_effect = pfe_None;
+
+    if(
+        (word_42E8C == 54)
+        ||
+        (word_42E8C == 1)
+    )
+    {
+
+        return;
+
+    }
+
+    if(word_42E8C == 0)
+    {
+
+        word_42E8E = 0;
+
+        IDK_DiplSts_s70570();
+
+    }
+
+    Diplomacy_Screen_Load__WIP();
+
+    G_DIPL_RndMsgIndex = ST_UNDEFINED;
 
 
+    if(
+        (
+            (word_42E8C >= 45)
+            &&
+            (word_42E8C <= 49)
+        )
+        ||
+        (word_42E8C == 2)
+        ||
+        (word_42E8C == 47)
+    )
+    {
 
-    // @@leave_screen
-    // DOMSDOS  Stop_All_Sounds__STUB();
+        word_42E88 = word_42E8C;
+
+        word_42E8C = 42;
+
+        word_42E8E = 2;
+
+        word_42E86 = _players[HUMAN_PLAYER_IDX].Dipl.Unknown_22Ah[G_DIPL_TargetWizard];
+
+    }
+
+    full_screen_field = INVALID_FIELD;
+
+    while(leave_screen == ST_FALSE)
+    {
+
+        Mark_Time();
+
+        input_field_idx = Get_Input();
+
+        if(word_42E8E == 0)
+        {
+
+            if(input_field_idx == ST_UNDEFINED)
+            {
+
+                leave_screen = ST_TRUE;
+
+            }
+
+            if(input_field_idx == full_screen_field)
+            {
+
+                IDK_Diplo_Scrn();
+
+                leave_screen = ST_TRUE;
+
+            }
+
+        }
+        else if(word_42E8E == 1)
+        {
+
+            if(
+                (input_field_idx == ST_UNDEFINED)
+                ||
+                (input_field_idx == full_screen_field)
+            )
+            {
+
+                leave_screen = ST_TRUE;
+
+            }
+
+        }
+        else if(word_42E8E == 6)
+        {
+
+            sub_6F51A(word_42E8C, 3);
+
+            leave_screen = ST_TRUE;
+
+        }
+
+        Clear_Fields();
+
+        full_screen_field = INVALID_FIELD;
+
+        if(
+            (word_42E8E == 0)
+            ||
+            (word_42E8E == 1)
+            ||
+            (word_42E8E == 2)
+        )
+        {
+
+            full_screen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_empty_string__ovr084[0], ST_UNDEFINED);
+
+        }
+
+        if(leave_screen == ST_FALSE)
+        {
+
+            Diplomacy_Screen_Draw__WIP();
+
+            PageFlip_FX();
+
+            Release_Time(3);
+
+        }
+
+    }
+
+    Stop_All_Sounds__STUB();
 
     Deactivate_Auto_Function();
 
@@ -246,37 +559,171 @@ void Diplomacy_Screen__STUB(void)
 
     Combat_Cache_Read();
 
-    // TODO  GAME_CheckResearch(1);
+    GAME_CheckResearch(1);
 
     Cache_Graphics_Overland();
 
-    // DOSMSODS  Play_Background_Music__STUB();
-    sdl2_Play_Background_Music__WIP();
-
-
-
-    // @@done
+    Play_Background_Music__STUB();
 
 }
 
-// Diplomacy_Screen_Draw                            ovr084
-// sub_6ECD9                                      ovr084
-// sub_6ED5D                                      ovr084
-// sub_6EE03                                      ovr084
-// sub_6EFA5                                      ovr084
-// sub_6F3E4                                      ovr084
-// sub_6F51A                                      ovr084
-// sub_6F6BB                                      ovr084
-// sub_6F90E                                      ovr084
-// sub_6F982                                      ovr084
-// sub_6FD5C                                      ovr084
-// IDK_DiplAnim_s6FDA1                            ovr084
-// IDK_Diplo_LoadWorldData_s6FF63                 ovr084
-// DIPL_LoadTalkGFX                               ovr084
-// IDK_DiplEyes_s7028D                            ovr084
-// IDK_Dipl_Draw_s702E6                           ovr084
-// sub_7038D                                      ovr084
-// DIPL_GetInvasionStr                            ovr084
+
+// WZD o84p02
+void Diplomacy_Screen_Draw__WIP(void)
+{
+
+
+
+}
+
+
+// WZD o84p01
+// sub_6ECD9()
+
+// WZD o84p02
+// sub_6ED5D()
+
+// WZD o84p03
+// sub_6EE03()
+
+// WZD o84p04
+// sub_6EFA5()
+
+// WZD o84p05
+// sub_6F3E4()
+
+// WZD o84p06
+// sub_6F51A()
+
+// WZD o84p07
+// sub_6F6BB()
+
+// WZD o84p08
+// sub_6F90E()
+
+// WZD o84p09
+// sub_6F982()
+
+// WZD o84p10
+// IDK_Diplomacy_Background_Music__STUB()
+
+// WZD o84p11
+// IDK_DiplAnim_s6FDA1()
+
+// WZD o84p12
+static void Diplomacy_Screen_Load__WIP(void)
+{
+    int16_t var_2 = 0;
+    int16_t itr = 0;  // _SI_
+
+    Stop_All_Sounds__STUB();
+
+    U_GFX_Swap_Empty();
+
+    Combat_Cache_Write();
+
+    // DOMSDOS  _CITIES = SA_MK_FP0(Allocate_First_Block(World_Data, 714));
+    _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, 714);
+
+    sound_buffer1 = LBX_Reload_Next(music_lbx_file__ovr084, (MUSIC_Merlin_Good + _players[G_DIPL_TargetWizard].wizard_id), World_Data);
+    sound_buffer1_size = lbxload_entry_length;
+
+    sound_buffer2 = LBX_Reload_Next(music_lbx_file__ovr084, (MUSIC_Merlin_Bad + _players[G_DIPL_TargetWizard].wizard_id), World_Data);
+    sound_buffer2_size = lbxload_entry_length;
+
+    var_2 = ((100 + _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[G_DIPL_TargetWizard]) / 20);
+
+    IMG_DIPL_LeftEyes = (SAMB_ptr *)Near_Allocate_First((11 * sizeof(SAMB_ptr)));  // was 11 * 2, now 11 * 8
+
+    IMG_DIPL_RightEyes = (SAMB_ptr *)Near_Allocate_Next((11 * sizeof(SAMB_ptr)));  // was 11 * 2, now 11 * 8
+
+    // DIPLOMAC.LBX, 000    "DIPLGAR2"  "diplomacy back"
+    diplomacy_background_seg = LBX_Reload(diplomac_lbx_file__ovr084, 0, _screen_seg);
+
+    for(itr = 0; itr < 11; itr++)
+    {
+
+        // DIPLOMAC.LBX, 002    "EYES1"     "left eyes"
+        // DIPLOMAC.LBX, 003    "EYES2"     "left eyes"
+        // DIPLOMAC.LBX, 004    "EYES3"     "left eyes"
+        // DIPLOMAC.LBX, 005    "EYES4"     "left eyes"
+        // DIPLOMAC.LBX, 006    "EYES5"     "left eyes"
+        // DIPLOMAC.LBX, 007    "EYES6"     "left eyes"
+        // DIPLOMAC.LBX, 008    "EYES7"     "left eyes"
+        // DIPLOMAC.LBX, 009    "EYES8"     "left eyes"
+        // DIPLOMAC.LBX, 010    "EYES9"     "left eyes"
+        // DIPLOMAC.LBX, 011    "EYES10"    "left eyes"
+        // DIPLOMAC.LBX, 012    "EYES11"    "left eyes"
+        IMG_DIPL_LeftEyes[itr] = LBX_Reload_Next(diplomac_lbx_file__ovr084, (2 + itr), _screen_seg);
+
+    }
+
+    for(itr = 0; itr < 11; itr++)
+    {
+
+        // DIPLOMAC.LBX, 013    "EYES1"     "right eyes"
+        // DIPLOMAC.LBX, 014    "EYES2"     "right eyes"
+        // DIPLOMAC.LBX, 015    "EYES3"     "right eyes"
+        // DIPLOMAC.LBX, 016    "EYES4"     "right eyes"
+        // DIPLOMAC.LBX, 017    "EYES5"     "right eyes"
+        // DIPLOMAC.LBX, 018    "EYES6"     "right eyes"
+        // DIPLOMAC.LBX, 019    "EYES7"     "right eyes"
+        // DIPLOMAC.LBX, 020    "EYES8"     "right eyes"
+        // DIPLOMAC.LBX, 021    "EYES9"     "right eyes"
+        // DIPLOMAC.LBX, 022    "EYES10"    "right eyes"
+        // DIPLOMAC.LBX, 023    "EYES11"    "right eyes"
+        IMG_DIPL_RightEyes[itr] = LBX_Reload_Next(diplomac_lbx_file__ovr084, (13 + itr), _screen_seg);
+
+    }
+
+    CLROFF();
+
+    FLIC_Draw(0, 0, diplomacy_background_seg);
+
+    IDK_DiplEyes_s7028D();
+
+    Clear_Fields();
+
+    Apply_Palette();
+
+    Toggle_Pages();
+
+    CLROFF();
+
+    FLIC_Draw(0, 0, diplomacy_background_seg);
+
+    IDK_DiplEyes_s7028D();
+
+    Copy_On_To_Off_Page();
+
+    Copy_Off_To_Back();
+
+    if(word_42E8E != 1)
+    {
+
+        IDK_Dipl_Draw_s702E6();
+
+    }
+
+    DIPL_LoadTalkGFX();
+
+}
+
+
+// WZD o84p13
+// DIPL_LoadTalkGFX()
+
+// WZD o84p14
+// IDK_DiplEyes_s7028D()
+
+// WZD o84p15
+// IDK_Dipl_Draw_s702E6()
+
+// WZD o84p16
+// sub_7038D()
+
+// WZD o84p17
+// DIPL_GetInvasionStr()
 
 
 
@@ -300,7 +747,31 @@ void Diplomacy_Screen__STUB(void)
 // DIPL_LowestInterest()
 
 // WZD o85p06
-// DIPL_TreatyIntCaps()
+static void Limit_Temporary_Peace_Modifier(void)
+{
+    int16_t itr2 = 0;  // _SI_
+    int16_t itr1 = 0;  // CX_
+
+    for(itr1 = 0; itr1 < _num_players; itr1++)
+    {
+
+        for(itr2 = 0; itr2 < _num_players; itr2++)
+        {
+
+            if(itr1 != itr2)
+            {
+
+                SETMAX(_players[itr1].Dipl.Treaty_Interest[itr2], 120);
+
+                SETMIN(_players[itr1].Dipl.Treaty_Interest[itr2], -200);
+
+            }
+
+        }
+
+    }
+
+}
 
 // WZD o85p07
 // WIZ_DIPL_TeachSpell()

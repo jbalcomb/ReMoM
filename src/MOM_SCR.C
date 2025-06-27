@@ -267,7 +267,7 @@ Release_Cities_Data();
             case scr_Diplomacy_Screen:
             {
 Capture_Cities_Data();
-                Diplomacy_Screen__STUB();
+                Diplomacy_Screen__WIP();
 Check_Cities_Data();
 Release_Cities_Data();
             } break;

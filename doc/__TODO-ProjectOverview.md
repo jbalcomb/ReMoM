@@ -1,5 +1,18 @@
 
 
+gtest
+gmock
+ctest
+github actions
+tagged commits
+releases
+cpack
+redo cmake
+ninja compile_commands VSC
+
+
+
+
 
 DOME_RIGHTMEOW
     I'm an idiot, but I'm trying to move forward...

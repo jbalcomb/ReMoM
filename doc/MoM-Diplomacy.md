@@ -1,6 +1,12 @@
 
 
 
+
+
+
+
+
+
     // ovr085:14A0 C7 87 5E A0 00 00                               mov     [_players.Dipl.Unknown_194h+bx], 0
     //                         ^ = 0
     // 0000006C Unknown_194h dw 6 dup(?)
@@ -190,3 +196,23 @@ Threaten/Break Treaty
 Offer Tribute
 Exchange Spells
 Good-bye
+
+
+
+
+
+
+
+
+
+OSG
+
+Page 365  (PDF Page 366)
+
+A Computer Player's Reaction Modifier Temporay Variables  
+Besides a wizard's fairly stable Core Reaction, most of the diplomatic decisions she makes are also affected by more volatile temporary modifier variables.  
+These apply in each of the following decision making areas and are kept track of separately:  
+• Temporary Treaty Modifier (for Wizard's Pacts and Alliances)  
+• Temporary Peace Modifier (for Peace Treaties)  
+• Temporary Exchange Modifier (for spell exchanges)  
+• Temporary Cold Shoulder Modifier (for their leader's patience)  
