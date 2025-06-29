@@ -76,7 +76,7 @@ void Lair_Loot_Gold_And_Mana(int16_t lair_idx, int16_t player_idx);
 void Add_Comma_Or_And(int16_t * size, int16_t count, char * list);
 
 // WZD o83p09
-char * STR_GetIndefinite(char * word);
+char * An(char * word);
 
 // WZD o83p10
 void Lair_Generate_Treasure(int16_t player_idx, int16_t lair_idx, int16_t items[], int16_t * spell, int16_t * hero, int16_t * hero_slot, int16_t * total_rewards, int16_t * reward_special_count, int16_t reward_specials[]);

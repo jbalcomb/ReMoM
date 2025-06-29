@@ -3,6 +3,25 @@
 
 
 
+m_diplomac_player_idx
+
+_players[].Dipl.Hidden_Rel[]
+_players[].Dipl.Visible_Rel[]
+_players[].Dipl.Dipl_Status[]
+
+_players[].Dipl.Treaty_Interest[]
+_players[].Dipl.Trade_Interest[]
+_players[].Dipl.Peace_Interest[]
+
+TBL_AI_PRS_IDK_Mod[_players[].Personality]
+
+
+
+## m_diplomac_player_idx
+
+
+
+
 
 
 

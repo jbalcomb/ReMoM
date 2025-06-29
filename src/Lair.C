@@ -500,7 +500,7 @@ int16_t Do_Lair_Confirm(int16_t lair_idx)
 
         if(_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].Figures == 1)
         {
-            strcat(lair_message_box_text, STR_GetIndefinite(*_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].name));
+            strcat(lair_message_box_text, An(*_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].name));
             strcat(lair_message_box_text, cnst_EZ_Msg_2);
         }
 
@@ -613,7 +613,7 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
     {
         Add_Comma_Or_And(&List_Count, Total_Rewards, lair_message_box_text);
         strcpy(Spell_Name, spell_data_table[spell].name);
-        strcat(lair_message_box_text, STR_GetIndefinite(Spell_Name));
+        strcat(lair_message_box_text, An(Spell_Name));
         strcat(lair_message_box_text, cnst_EZ_Msg_2);  // " "
         strcat(lair_message_box_text, Spell_Name);
         strcat(lair_message_box_text, cnst_Reward_Msg_6);  // " spell"
@@ -697,7 +697,7 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
                 else
                 {
                     strcpy(temp_string, Item_Type_Names[itr]);
-                    strcat(lair_message_box_text, STR_GetIndefinite(temp_string));
+                    strcat(lair_message_box_text, An(temp_string));
                     strcat(lair_message_box_text, cnst_EZ_Msg_2);  // " "
                     strcat(lair_message_box_text, temp_string);
                 }
@@ -746,21 +746,25 @@ void Add_Comma_Or_And(int16_t * size, int16_t count, char * list)
 
 
 // WZD o83p09
+// MoO2  Module: DIP-SCRN  An_()  Address: 01:0001DE17
 /*
     https://owl.purdue.edu/owl/general_writing/grammar/articles_a_versus_an.html
 
 ...a and an are different forms of the same word, the indefinite article that often precedes a noun.
      a is used before a noun that starts with a consonant sound.
     an is used before a noun that starts with a vowel sound.
+
+Maybe, probably, the string optimizer made this look crazy.
+In MoO2, it's just "an" and "a" strings, with a check for language set to English.
 */
-char * STR_GetIndefinite(char * word)
+char * An(char * word)
 {
-    char * Vowel_Indef;
-    char * Consonant_Indef;
+    char * an;
+    char * a;
     char * indefinite_article_string;  // DNE in Dasm
 
-    Vowel_Indef = cnst_EZ_Indef2;      // "an"
-    Consonant_Indef = cnst_EZ_Indef1;  // "a"
+    an = cnst_EZ_Indef2;      // "an"
+    a = cnst_EZ_Indef1;  // "a"
 
     switch(word[0])
     {
@@ -775,15 +779,16 @@ char * STR_GetIndefinite(char * word)
         case 'U':
         case 'u':
         {
-            indefinite_article_string = Vowel_Indef;
+            indefinite_article_string = an;
         } break;
         default:
         {
-            indefinite_article_string = Consonant_Indef;
+            indefinite_article_string = a;
         } break;
     }
 
     return indefinite_article_string;
+    
 }
 
 

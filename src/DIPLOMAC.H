@@ -213,19 +213,19 @@ void Diplomacy_Screen__WIP(void);
 // sub_6F3E4()
 
 // WZD o84p06
-// sub_6F51A()
+// static void sub_6F51A(int16_t IDK1, int16_t IDK2);
 
 // WZD o84p07
 // sub_6F6BB()
 
 // WZD o84p08
-// sub_6F90E()
+// static void _sub_6F90E_Draw(void);
 
 // WZD o84p09
 // sub_6F982()
 
 // WZD o84p10
-// IDK_Diplomacy_Background_Music__STUB()
+// static void IDK_Diplomacy_Background_Music__STUB(int16_t IDK);
 
 // WZD o84p11
 // IDK_DiplAnim_s6FDA1()
@@ -267,7 +267,7 @@ static void IDK_DiplSts_s70570(void);
 // sub_70AFE()
 
 // WZD o85p05
-// DIPL_LowestInterest()
+// static int16_t DIPL_LowestInterest(void);
 
 // WZD o85p06
 // static void Limit_Temporary_Peace_Modifier(void);
@@ -314,13 +314,20 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx);
     WIZARDS.EXE  ovr086
 */
 
-// WZD o86p0
-
+// WZD o86p01
 // IDK_Dipl_s72690()
+
+// WZD o86p02
 // DIPL_AI_To_AI()
-// sub_72DB6()
-// sub_7323F()
-// sub_732D9()
+
+// WZD o86p03
+// DIPL_sub_72DB6()
+
+// WZD o86p04
+// DIPL_sub_72DB6_Draw()
+
+// WZD o86p05
+// static void IDK_DIPLOMSG_s732D9(int16_t IDK, int16_t player_idx);
 
 
 

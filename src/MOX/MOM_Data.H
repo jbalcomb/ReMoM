@@ -1104,11 +1104,18 @@ struct s_WIZ_DIPL
     /* 0066 */ int8_t Broken_Treaty[NUM_PLAYERS];  /* 1oom: broken_treaty */
     /* 006C */ int16_t Unknown_194h[NUM_PLAYERS];
     /* 0078 */ int8_t Hidden_Rel[NUM_PLAYERS];  /* 1oom:  trust */
-    /* 007E */ int8_t Unknown_1A6h[24];
+    /* 007E */ int8_t field_7E[6];
+    /* 0084 */ int8_t field_84[6];
+    /* 008A */ int8_t field_8A[6];
+    /* 0090 */ int8_t field_90[6];
     /* 0096 */ int8_t Tribute_Spell[NUM_PLAYERS];
     /* 009C */ int8_t Unknown_1C4h[90];
     /* 00F6 */ int16_t Tribute_Gold[NUM_PLAYERS];
-    /* 0102 */ int8_t Unknown_22Ah[30];
+    /* 0102 */ int8_t field_102[6];
+    /* 0108 */ int8_t field_108[6];
+    /* 010E */ int8_t field_10E[6];
+    /* 0114 */ int8_t field_114[6];
+    /* 011A */ int8_t field_11A[6];
     /* 0120 */ int8_t Unknown_248h[NUM_PLAYERS];
     /* 0126 */ int8_t Unknown_24Eh[NUM_PLAYERS];
     /* 012C */ int8_t G_Warning_Progress[NUM_PLAYERS];

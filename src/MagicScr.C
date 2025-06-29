@@ -528,6 +528,7 @@ void Magic_Screen(void)
 
     while(leave_screen_flag == ST_FALSE)
     {
+
         Mark_Time();
 
         Clear_Fields_Above(multihotkey_DESTIN);
@@ -535,6 +536,7 @@ void Magic_Screen(void)
         Magic_Screen_Add_Fields();
 
         hotkey_X = Add_Hot_Key('X');  // cnst_HOTKEY_X_5
+
         hotkey_ESC = Add_Hot_Key('\x1B');  // cnst_HOTKEY_Esc7
 
         input_field_idx = Get_Input();
@@ -545,11 +547,13 @@ void Magic_Screen(void)
             Cheat_Reveal();
             screen_changed = ST_TRUE;
         }
+
         if(input_field_idx == multihotkey_PWR)
         {
             Cheat_Power();
             screen_changed = ST_TRUE;
         }
+
         if(input_field_idx == multihotkey_DESTIN)
         {
             Warn1(aWriteItUpGiveMeASav);  // "Write it up, give me a save game."
@@ -565,12 +569,14 @@ void Magic_Screen(void)
             // mov  ax, [mana_staff_locked];  neg  ax;  sbb  ax, ax;  inc  ax;  mov  [mana_staff_locked], ax;
             mana_staff_locked = (1 - mana_staff_locked);
         }
+
         if(input_field_idx == magic_skill_staff_locked)
         {
             Play_Left_Click();
             // mov  ax, [skill_staff_locked];  neg  ax;  sbb  ax, ax;  inc  ax;  mov  [skill_staff_locked], ax;
             skill_staff_locked = (1 - skill_staff_locked);
         }
+        
         if(input_field_idx == magic_research_staff_locked)
         {
             Play_Left_Click();
@@ -702,14 +708,14 @@ void Magic_Screen(void)
         {
             if((magic_gem_fields[itr] == input_field_idx) && (gem_player_nums[itr] > 0))
             {
-                if(_players[_human_player_idx].casting_spell_idx == 214)  /* Spell_Of_Return */
+                if(_players[_human_player_idx].casting_spell_idx == spl_Spell_Of_Return)
                 {
                     Warn1(aYouMayNotContactOth);  // "You may not contact other wizards while you are banished."
                 }
                 else
                 {
                     Play_Left_Click();
-                    G_DIPL_TargetWizard = gem_player_nums[itr];
+                    m_diplomac_player_idx = gem_player_nums[itr];
                     current_screen = scr_Diplomacy_Screen;
                     leave_screen_flag = 2;
                 }

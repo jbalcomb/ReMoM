@@ -970,7 +970,7 @@ void Build_Select_Target_String(int16_t spell_target_type, char * spell_name)
 
     strcat(_osc_panel_title, str_AsTheTargetFor);
 
-    strcat(_osc_panel_title, STR_GetIndefinite(spell_name));
+    strcat(_osc_panel_title, An(spell_name));
 
     strcat(_osc_panel_title, byte_39E44);
     

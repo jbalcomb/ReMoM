@@ -337,7 +337,7 @@ Check_Cities_Data();
                         else
                         {
                             strcpy(temp_string, bldg_data_table[curr_prod_idx].name);
-                            strcat(GUI_NearMsgString, STR_GetIndefinite(&temp_string[0]));
+                            strcat(GUI_NearMsgString, An(&temp_string[0]));
                             strcat(GUI_NearMsgString, " ");
                             strcat(GUI_NearMsgString, temp_string);
                         }
