@@ -502,7 +502,7 @@ void BigBook_Compose__WIP(int16_t pict_seg, SAMB_ptr seg, int16_t flag);
 void Spell_Research_Select(void);
 
 // WZD o118p12
-// GAME_CheckResearch()
+void Check_Research_Spell_Is_Known(int16_t fade);
 
 
 

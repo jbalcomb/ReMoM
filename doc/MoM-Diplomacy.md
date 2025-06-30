@@ -15,6 +15,145 @@ _players[].Dipl.Peace_Interest[]
 
 TBL_AI_PRS_IDK_Mod[_players[].Personality]
 
+m_diplomacy_message_record_data
+m_diplomsg_1_record_sub_number
+G_DIPL_ComposedMessage
+G_DIPL_TempMessage
+
+
+## m_diplomacy_message_record_data
+DIPLOMSG record
+    G_DiploMsg_E0_Field0    {0,1,2}
+    G_DiploMsg_E0_Field2    {0,1,2,3,4,5}
+    G_DiploMsg_E0_Field4    {0,1,2,3,4,5,6,7,8,9,10,12,15}  no 11, 13, 14
+set by LBX_Load_Data_Static(), in IDK_DIPLOMSG_s732D9()
+    and passed to IDK_Diplomacy_Background_Music__STUB(m_diplomacy_message_record_data.IDK_mood)
+¿ good, bad, neutral ? message type/mood
+tested against word_42E74, updates if different
+    0 or 1 plays sound_buffer1
+    2 plays sound_buffer2
+
+word_42E80 = m_diplomacy_message_record_data.IDK_group
+
+if(_num_players == 2)
+    m_diplomsg_1_record_sub_number = (Random(m_diplomacy_message_record_data.IDK_count) - 2);
+else
+    m_diplomsg_1_record_sub_number = (Random(m_diplomacy_message_record_data.IDK_count) - 1);
+
+
+
+## m_diplomsg_1_record_sub_number
+
+IDK_DIPLOMSG_s732D9()
+    if(_num_players == 2)
+        m_diplomsg_1_record_sub_number = (Random(m_diplomacy_message_record_data.IDK_count) - 2);
+    else
+        m_diplomsg_1_record_sub_number = (Random(m_diplomacy_message_record_data.IDK_count) - 1);
+    LBX_Load_Data_Static(diplomsg_lbx_file__ovr86, 1, (SAMB_ptr)G_DIPL_ComposedMessage, m_diplomsg_1_record_sub_number + (diplomsg_1_record_number * 15), 1, 200);
+
+XREF:
+    Diplomacy_Screen__WIP+8B      mov     [m_diplomsg_1_record_sub_number], e_ST_UNDEFINED
+    sub_6F51A+118                 mov     [m_diplomsg_1_record_sub_number], e_ST_UNDEFINED
+    sub_70A1A+66                  mov     [m_diplomsg_1_record_sub_number], e_ST_UNDEFINED        
+    IDK_Dipl_s72690+8B            mov     [m_diplomsg_1_record_sub_number], e_ST_UNDEFINED        
+    IDK_Dipl_s72690+11D           mov     [m_diplomsg_1_record_sub_number], e_ST_UNDEFINED        
+    DIPL_AI_To_AI+263             mov     dx, [m_diplomsg_1_record_sub_number]            
+    IDK_DIPLOMSG_s732D9+18        cmp     [m_diplomsg_1_record_sub_number], e_ST_UNDEFINED
+    IDK_DIPLOMSG_s732D9:loc_7333A mov     [m_diplomsg_1_record_sub_number], ax            
+    IDK_DIPLOMSG_s732D9+64        cmp     [m_diplomsg_1_record_sub_number], 0             
+    IDK_DIPLOMSG_s732D9+6B        mov     [m_diplomsg_1_record_sub_number], 0             
+    IDK_DIPLOMSG_s732D9+81        mov     dx, [m_diplomsg_1_record_sub_number]            
+
+
+
+## G_DIPL_ComposedMessage
+G_DIPL_TempMessage
+
+IDK_DIPLOMSG_s732D9()
+...load
+DIPL_LoadTalkGFX()
+...allocate
+
+¿ MoO2  Module: MSG  _native_msg ?
+
+XREF:
+    DIPL_LoadTalkGFX+48           mov     [G_DIPL_ComposedMessage], ax
+    IDK_DIPLOMSG_s732D9+88        push    [G_DIPL_ComposedMessage]    
+    IDK_DIPLOMSG_s732D9:loc_7337D mov     bx, [G_DIPL_ComposedMessage]
+    IDK_DIPLOMSG_s732D9+373       mov     bx, [G_DIPL_ComposedMessage]
+    IDK_DIPLOMSG_s732D9+38F       push    [G_DIPL_ComposedMessage]    
+    IDK_DIPLOMSG_s732D9:loc_73685 push    [G_DIPL_ComposedMessage]    
+
+## G_DIPL_TempMessage
+
+XREF:
+    Diplomacy_Screen_Draw__WIP+83  push    [G_DIPL_TempMessage]
+    sub_6ECD9+3F                   push    [G_DIPL_TempMessage]
+    sub_6ECD9+64                   push    [G_DIPL_TempMessage]
+    sub_6ECD9+73                   push    [G_DIPL_TempMessage]
+    sub_6ED5D+58                   push    [G_DIPL_TempMessage]
+    sub_6ED5D+77                   push    [G_DIPL_TempMessage]
+    sub_6ED5D+8B                   push    [G_DIPL_TempMessage]
+    IDK_Diplo_Scrn+A5              push    [G_DIPL_TempMessage]
+    sub_6EFA5+28                   push    [G_DIPL_TempMessage]
+    sub_6F3E4+94                   push    [G_DIPL_TempMessage]
+    sub_6F6BB+100                  push    [G_DIPL_TempMessage]
+    sub_6F6BB+10F                  push    [G_DIPL_TempMessage]
+    sub_6F6BB+123                  push    [G_DIPL_TempMessage]
+    sub_6F6BB+132                  push    [G_DIPL_TempMessage]
+    sub_6F6BB+141                  push    [G_DIPL_TempMessage]
+    sub_6F6BB+19E                  push    [G_DIPL_TempMessage]
+    _sub_6F90E_Draw+5A             push    [G_DIPL_TempMessage]
+    sub_6F982+28                   push    [G_DIPL_TempMessage]
+    DIPL_LoadTalkGFX+3B            mov     [G_DIPL_TempMessage], ax
+    sub_71B90+F9                   push    [G_DIPL_TempMessage]
+    sub_71B90+3E8                  push    [G_DIPL_TempMessage]
+    sub_72131+201                  push    [G_DIPL_TempMessage]
+    sub_72131:loc_72452            push    [G_DIPL_TempMessage]
+    DIPL_sub_72DB6+179             push    [G_DIPL_TempMessage]
+    DIPL_sub_72DB6+198             push    [G_DIPL_TempMessage]
+    DIPL_sub_72DB6+214             push    [G_DIPL_TempMessage]
+    DIPL_sub_72DB6+324             push    [G_DIPL_TempMessage]
+    DIPL_sub_72DB6+354             push    [G_DIPL_TempMessage]
+    DIPL_sub_72DB6+363             push    [G_DIPL_TempMessage]
+    DIPL_sub_72DB6+39A             push    [G_DIPL_TempMessage]
+    DIPL_sub_72DB6+3B9             push    [G_DIPL_TempMessage]
+    DIPL_sub_72DB6_Draw+5A         push    [G_DIPL_TempMessage]
+    DIPL_sub_72DB6_Draw+7E         push    [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9+AD         mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9+B5         mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_00 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:loc_733B9  push    [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:loc_733C4  push    [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_01 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_02 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9+134        mov     ax, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9+161        mov     ax, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_05 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_07 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_08 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_09 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_10 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9+208        push    [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_11 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9+22D        push    [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9+24A        push    [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_12 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_13 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_14 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_15 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9+2C4        push    [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9+2E1        push    [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_16 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_17 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_18 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_19 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:sw_cmsg_20 mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9:loc_7365B  mov     bx, [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9+38B        push    [G_DIPL_TempMessage]
+    IDK_DIPLOMSG_s732D9+3B0        push    [G_DIPL_TempMessage]
+
+
 
 
 ## m_diplomac_player_idx
@@ -235,3 +374,16 @@ These apply in each of the following decision making areas and are kept track of
 • Temporary Peace Modifier (for Peace Treaties)  
 • Temporary Exchange Modifier (for spell exchanges)  
 • Temporary Cold Shoulder Modifier (for their leader's patience)  
+
+Page 366  (PDF Page 367)
+
+"No" Really Means "Stop Asking"
+
+Every parlay, no matter its outcome, inflicts a -10 point penalty to each of these fom temporary modifiers. (In effect, you're wearing down that wizard's patience.)  
+If your diplomatic offer is rejected, then the temporary modifier for the area you were specifically rejected in receives a -30 point penalty instead of the usual -10 point penalty that would have occurred had she agreed.  
+These temporary modifier penalties are cumulative.  
+They are adjusted back toward zero at the rate of 10 points per turn per category.  
+The principle behind these temporary modifiers is quite simple.  
+They're designed to prevent you from annoying computer players with incessant demands on their diplomatic time.  
+They simulate that point where computer players simply get tired of dealing with you and, consequently, will be more likely to say "No" to any of your proposals.  
+It might help to think of tl1ese temporary modifiers as "patience modifiers" instead.  

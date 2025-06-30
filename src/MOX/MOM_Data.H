@@ -1080,36 +1080,53 @@ struct s_GAME_DATA
 #pragma pack(pop)
 
 
-// sizeof:  132h  306d
 /*
     SEE: MoM-Diplomacy.md
 
 */
 #pragma pack(push)
 #pragma pack(2)
+// sizeof:  6h  6d
+struct s_DIPLOMSG_RECORD
+{
+    /* 00 */  int16_t IDK_mood;   /* {0,1,2}                                       */
+    /* 02 */  int16_t IDK_group;  /* {0,1,2,3,4,5}                                 */
+    /* 04 */  int16_t IDK_count;  /* {0,1,2,3,4,5,6,7,8,9,10,12,15}  (no 11,13,14) */
+    /* 06 */
+};
+#pragma pack(pop)
+
+#pragma pack(push)
+#pragma pack(2)
+// sizeof:  132h  306d
 struct s_WIZ_DIPL
 {
     /* 0000 */ int8_t Contacted[NUM_PLAYERS];  /* ¿ BOOLVEC_DECLARE(contact, PLAYER_NUM); ? */
     /* 0006 */ int16_t Treaty_Interest[NUM_PLAYERS];
     /* 0012 */ int16_t Peace_Interest[NUM_PLAYERS];
     /* 001E */ int16_t Trade_Interest[NUM_PLAYERS];
-    /* 002A */ int8_t Visible_Rel[NUM_PLAYERS];  /* 1-byte, signed;  1oom: relation1 */
+    /* 002A */ int8_t Visible_Rel[NUM_PLAYERS];  /* 1-byte, signed;  ¿ -100 to 120 ?  1oom: relation1 */
     /* 0030 */ int8_t Dipl_Status[NUM_PLAYERS];  /* 1-byte, signed;  1oom: treaty;  enum DIPL_Status { DIPL_NoTreaty, DIPL_WizardPact, DIPL_Alliance, DIPL_War, DIPL_Crusade } */
     /* 0036 */ int16_t DA_Strength[NUM_PLAYERS];
-    /* 0042 */ int8_t Dipl_Action[NUM_PLAYERS];
+    /* 0042 */ int8_t Dipl_Action[NUM_PLAYERS];     /*  */
     /* 0048 */ int16_t DA_Spell[NUM_PLAYERS];
     /* 0054 */ int8_t DA_City[NUM_PLAYERS];
     /* 005A */ int8_t Default_Rel[NUM_PLAYERS];  /* 1oom: relation2 */
     /* 0060 */ int8_t Contact_Progress[NUM_PLAYERS];  /* ¿ 1oom have_met[] {0,1,2} ? */
     /* 0066 */ int8_t Broken_Treaty[NUM_PLAYERS];  /* 1oom: broken_treaty */
-    /* 006C */ int16_t Unknown_194h[NUM_PLAYERS];
+    // /* 006C */ int16_t Unknown_194h[NUM_PLAYERS];
+    /* 006C */ int16_t IDK_MoO1_attack_bounty[NUM_PLAYERS];
     /* 0078 */ int8_t Hidden_Rel[NUM_PLAYERS];  /* 1oom:  trust */
     /* 007E */ int8_t field_7E[6];
     /* 0084 */ int8_t field_84[6];
     /* 008A */ int8_t field_8A[6];
     /* 0090 */ int8_t field_90[6];
     /* 0096 */ int8_t Tribute_Spell[NUM_PLAYERS];
-    /* 009C */ int8_t Unknown_1C4h[90];
+    // /* 009C */ int8_t Unknown_1C4h[90];
+    // 0000009C UU_MoO1_field_9C dw 42 dup(?)           ; UU never checked, set in Modifier_Diplomacy_Adjustments()
+    // 000000F0 UU_MoO1_field_F0 db 6 dup(?)            ; UU never checked, set in Modifier_Diplomacy_Adjustments()
+    /* 009C */ int16_t UU_MoO1_field_9C[42];
+    /* 00F0 */ uint8_t UU_MoO1_field_F0[6];
     /* 00F6 */ int16_t Tribute_Gold[NUM_PLAYERS];
     /* 0102 */ int8_t field_102[6];
     /* 0108 */ int8_t field_108[6];

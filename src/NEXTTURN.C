@@ -875,15 +875,9 @@ Check_Cities_Data();
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
 
-        if(_players[itr_players].gold_reserve > 30000)
-        {
-            _players[itr_players].gold_reserve = 30000;
-        }
+        SETMAX(_players[itr_players].gold_reserve, 30000);
 
-        if(_players[itr_players].mana_reserve > 30000)
-        {
-            _players[itr_players].mana_reserve = 30000;
-        }
+        SETMAX(_players[itr_players].mana_reserve, 30000);
 
     }
 

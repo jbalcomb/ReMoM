@@ -21,8 +21,10 @@ MoO2
 #include "MOX/Fields.H"
 #include "MOX/Input.H"
 #include "MOX/LBX_Load.H"
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"  /* _players[] */
 #include "MOX/MOX_DEF.H"
+#include "MOX/MOX_SET.H"
 #include "MOX/MOX_T4.H"
 #include "MOX/SOUND.H"
 
@@ -30,6 +32,8 @@ MoO2
 #include "LOADER.H"
 #include "MainScr.H"
 #include "MOM_SCR.H"
+#include "STU/STU_DBG.H"
+#include "Spellbook.H"
 #include "UNITTYPE.H"
 
 /*
@@ -44,7 +48,7 @@ static void Diplomacy_Screen_Draw__WIP(void);
 // WZD o84p02
 // sub_6ED5D()
 // WZD o84p03
-// sub_6EE03()
+static void IDK_Diplo_Scrn(void);
 // WZD o84p04
 // sub_6EFA5()
 // WZD o84p05
@@ -60,15 +64,15 @@ static void _sub_6F90E_Draw(void);
 // WZD o84p10
 static void IDK_Diplomacy_Background_Music__STUB(int16_t IDK);
 // WZD o84p11
-// IDK_DiplAnim_s6FDA1()
+static void IDK_DiplAnim_s6FDA1(void);
 // WZD o84p12
 static void Diplomacy_Screen_Load__WIP(void);
 // WZD o84p13
 static void DIPL_LoadTalkGFX(void);
 // WZD o84p14
-static void IDK_DiplEyes_s7028D(void);
+static void Diplomacy_Screen_Draw_Gargoyle_Eyes(void);
 // WZD o84p15
-static void IDK_Dipl_Draw_s702E6(void);
+static void Diplomacy_Screen_Fade_In(void);
 // WZD o84p16
 // sub_7038D()
 // WZD o84p17
@@ -116,7 +120,7 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx);
     WIZARDS.EXE  ovr086
 */
 // WZD o86p01
-// IDK_Dipl_s72690()
+static void IDK_Dipl_s72690(void);
 // WZD o86p02
 // DIPL_AI_To_AI()
 // WZD o86p03
@@ -139,7 +143,7 @@ static void IDK_DIPLOMSG_s732D9(int16_t IDK, int16_t player_idx);
 // WZD o87p05
 // IDK_Dipl_s73F1C()
 // WZD o87p06
-// IDK_Dipl_s73FBF()
+static void IDK_Dipl_s73FBF(void);
 // WZD o87p07
 // DIPL_GetOffMyLawn()
 // WZD o87p08
@@ -258,22 +262,17 @@ char backgrnd_lbx_file__ovr084[] = "BACKGRND";
 
 
 // WZD dseg:4EBA C0 4E                                           off_3B95A dw offset aWhatDoYouOffer     ; DATA XREF: sub_71B90+F5r ...
-// WZD dseg:4EBA                                                                                         ; "What do you offer as tribute?"
 // WZD dseg:4EBC DE 4E                                           off_3B95C dw offset aWhatTypeOfSpel     ; DATA XREF: sub_72131+1FDr
-// WZD dseg:4EBC                                                                                         ; "What type of spell interests you?"
 // WZD dseg:4EBE 00 4F                                           off_3B95E dw offset aWhatWillYouTra     ; DATA XREF: sub_72131+31Dr
-// WZD dseg:4EBE                                                                                         ; "What will you trade for it?"
 // WZD dseg:4EC0 57 68 61 74 20 64 6F 20 79 6F 75 20 6F 66 66 65+aWhatDoYouOffer db 'What do you offer as tribute?',0
-// WZD dseg:4EC0 72 20 61 73 20 74 72 69 62 75 74 65 3F 00                                               ; DATA XREF: dseg:off_3B95Ao
 // WZD dseg:4EDE 57 68 61 74 20 74 79 70 65 20 6F 66 20 73 70 65+aWhatTypeOfSpel db 'What type of spell interests you?',0
-// WZD dseg:4EDE 6C 6C 20 69 6E 74 65 72 65 73 74 73 20 79 6F 75+                                        ; DATA XREF: dseg:off_3B95Co
 // WZD dseg:4F00 57 68 61 74 20 77 69 6C 6C 20 79 6F 75 20 74 72+aWhatWillYouTra db 'What will you trade for it?',0
-// WZD dseg:4F00 61 64 65 20 66 6F 72 20 69 74 3F 00                                                     ; DATA XREF: dseg:off_3B95Eo
 // WZD dseg:4F1C 5B 20 00                                        db '[ ',0
 // WZD dseg:4F1F 20 67 6F 6C 64 00                               aGold_0 db ' gold',0
 // WZD dseg:4F25 5B 20 53 70 65 6C 6C 73 00                      aSpells db '[ Spells',0
 // WZD dseg:4F2E 5B 20 46 6F 72 67 65 74 20 49 74 00             aForgetIt_0 db '[ Forget It',0
-// WZD dseg:4F3A 00                                              db    0
+// WZD dseg:4F3A
+char str_empty_string__ovr086[] = "";
 // WZD dseg:4F3B 5B 20 00                                        asc_3B9DB db '[ ',0                     ; DATA XREF: sub_72DB6:loc_72DD6o
 // WZD dseg:4F3E 41 63 63 65 70 74 00                            aAccept_0 db 'Accept',0                 ; DATA XREF: sub_72DB6:loc_72E05o
 // WZD dseg:4F45 52 65 6A 65 63 74 00                            aReject_0 db 'Reject',0
@@ -332,7 +331,8 @@ byte_ptr G_Some_DIPL_Alloc_3;
 
 // WZD dseg:C3C4
 int16_t Target_Player;
-// WZD dseg:C3C6 00 00                                           word_42E66 dw 0                         ; DATA XREF: sub_6F982+39Bw ...
+// WZD dseg:C3C6
+int16_t word_42E66;
 // WZD dseg:C3C8
 int16_t Spell_Index;
 
@@ -346,7 +346,7 @@ SAMB_ptr * m_diplomac_left_eyes_segs;
 // WZD dseg:C3D2
 SAMB_ptr IMG_DIPL_TalkAnim;
 // WZD dseg:C3D4
-int16_t word_42E74;
+int16_t m_diplomacy_current_music;
 
 // WZD dseg:C3D6
 SAMB_ptr sound_buffer2;
@@ -362,17 +362,17 @@ SAMB_ptr diplomacy_background_seg;
 // WZD dseg:C3DE
 int16_t word_42E7E;
 // WZD dseg:C3E0
-int16_t word_42E80;
+int16_t m_diplomacy_message_IDK_group;
 // WZD dseg:C3E2
 char * G_DIPL_ComposedMessage;
 // WZD dseg:C3E4
-char * G_DIPL_TempMessage;
+char * m_diplomacy_message;
 // WZD dseg:C3E6
 int16_t word_42E86;
 // WZD dseg:C3E8
 int16_t word_42E88;
 // WZD dseg:C3EA
-int16_t G_DIPL_RndMsgIndex;
+int16_t m_diplomsg_1_record_sub_number;
 // WZD dseg:C3EC
 int16_t word_42E8C;
 // WZD dseg:C3EE
@@ -381,12 +381,16 @@ int16_t word_42E8E;
 byte_ptr * G_Some_DIPL_Allocs_7;
 // WZD dseg:C3FE
 int16_t m_diplomac_player_idx = 0;
+/*
+DIPLOMSG record
+*/
 // WZD dseg:C400
-SAMB_ptr G_DiploMsg_E0_Field0;
 // WZD dseg:C402
-int16_t G_DiploMsg_E0_Field2;
 // WZD dseg:C404
-int16_t G_DiploMsg_E0_Field4;
+// SAMB_ptr G_DiploMsg_E0_Field0;
+// int16_t G_DiploMsg_E0_Field2;
+// int16_t G_DiploMsg_E0_Field4;
+struct s_DIPLOMSG_RECORD m_diplomacy_message_record_data = { 0, 0, 0 };
 
 // WZD dseg:C404                                                 END:  ovr086 - Uninitialized Data
 
@@ -411,11 +415,11 @@ void Diplomacy_Screen__WIP(void)
 
     Limit_Temporary_Peace_Modifier();
 
-    word_42E74 = ST_UNDEFINED;
+    m_diplomacy_current_music = ST_UNDEFINED;
 
     word_42E7E = ST_UNDEFINED;
 
-    word_42E80 = 0;
+    m_diplomacy_message_IDK_group = 0;
 
     Apply_Palette();
 
@@ -455,7 +459,7 @@ void Diplomacy_Screen__WIP(void)
 
     Diplomacy_Screen_Load__WIP();
 
-    G_DIPL_RndMsgIndex = ST_UNDEFINED;
+    m_diplomsg_1_record_sub_number = ST_UNDEFINED;
 
 
     if(
@@ -477,7 +481,7 @@ void Diplomacy_Screen__WIP(void)
 
         word_42E8E = 2;
 
-        word_42E86 = _players[HUMAN_PLAYER_IDX].Dipl.Unknown_22Ah[m_diplomac_player_idx];
+        word_42E86 = _players[HUMAN_PLAYER_IDX].Dipl.field_102[m_diplomac_player_idx];
 
     }
 
@@ -578,11 +582,12 @@ void Diplomacy_Screen__WIP(void)
 
     Combat_Cache_Read();
 
-    GAME_CheckResearch(1);
+    Check_Research_Spell_Is_Known(1);
 
     Cache_Graphics_Overland();
 
-    Play_Background_Music__STUB();
+    // DOMSDOS  Play_Background_Music__STUB();
+    sdl2_Play_Background_Music__WIP();
 
 }
 
@@ -590,6 +595,44 @@ void Diplomacy_Screen__WIP(void)
 // WZD o84p02
 void Diplomacy_Screen_Draw__WIP(void)
 {
+
+    Set_Page_Off();
+
+    Copy_Back_To_Off();
+
+    if(word_42E8E != 1)
+    {
+        
+        IDK_DiplAnim_s6FDA1();
+
+    }
+
+    FLIC_Draw(95, 1, diplomacy_mirror_seg);
+
+    Diplomacy_Screen_Draw_Gargoyle_Eyes();
+
+    if(
+        (word_42E8E == 0)
+        ||
+        (word_42E8E == 1)
+        ||
+        (word_42E8E == 2)
+    )
+    {
+
+        Set_Font_Style_Shadow_Down(4, 4, ST_NULL, ST_NULL);
+
+        Set_Outline_Color(ST_TRANSPARENT);
+
+        Set_Alias_Color(187);
+
+        Set_Font_LF(1);
+
+        IDK_DIPLOMSG_s732D9(word_42E8C, m_diplomac_player_idx);
+
+        Print_Paragraph(38, 140, 245, m_diplomacy_message, 0);
+
+    }
 
 
 
@@ -602,8 +645,23 @@ void Diplomacy_Screen_Draw__WIP(void)
 // WZD o84p02
 // sub_6ED5D()
 
+
 // WZD o84p03
-// sub_6EE03()
+/*
+
+XREF:
+    Diplomacy_Screen__WIP()
+    j_IDK_Diplo_Scrn()
+        IDK_Dipl_s72690()
+
+*/
+static void IDK_Diplo_Scrn(void)
+{
+
+
+
+}
+
 
 // WZD o84p04
 // sub_6EFA5()
@@ -752,7 +810,7 @@ static void sub_6F51A(int16_t IDK1, int16_t IDK2)
 
     Set_Input_Delay(1);
 
-    G_DIPL_RndMsgIndex = ST_UNDEFINED;
+    m_diplomsg_1_record_sub_number = ST_UNDEFINED;
 
     IDK_DIPLOMSG_s732D9(word_42E8C, m_diplomac_player_idx);
 
@@ -794,10 +852,34 @@ static void sub_6F51A(int16_t IDK1, int16_t IDK2)
 // sub_6F6BB()
 
 // WZD o84p08
+/*
+vs. Diplomacy_Screen_Draw__WIP()
+doesn't check flag for call to IDK_DiplAnim_s6FDA1()
+doesn't call get message
+otherwise, all the same calls with all the same parameters
+*/
 static void _sub_6F90E_Draw(void)
 {
 
+    Set_Page_Off();
 
+    Copy_Back_To_Off();
+
+    IDK_DiplAnim_s6FDA1();
+
+    Diplomacy_Screen_Draw_Gargoyle_Eyes();
+
+    FLIC_Draw(95, 1, diplomacy_mirror_seg);
+
+    Set_Font_Style_Shadow_Down(4, 4, ST_NULL, ST_NULL);
+
+    Set_Outline_Color(ST_TRANSPARENT);
+
+    Set_Alias_Color(187);
+
+    Set_Font_LF(1);
+
+    Print_Paragraph(38, 140, 245, m_diplomacy_message, 0);
 
 }
 
@@ -806,30 +888,35 @@ static void _sub_6F90E_Draw(void)
 // sub_6F982()
 
 // WZD o84p10
-static void IDK_Diplomacy_Background_Music__STUB(int16_t IDK)
+// MoO2  Module: DIP-SCRN  Start_Diplomacy_Music_()
+/*
+Maybe, good,bad,neutral music
+
+*/
+static void IDK_Diplomacy_Background_Music__STUB(int16_t diplomacy_music)
 {
 
-    if(IDK != word_42E74)
+    if(diplomacy_music != m_diplomacy_current_music)
     {
 
         if(magic_set.background_music == ST_TRUE)
         {
 
-            if(IDK == 0)
+            if(diplomacy_music == 0)
             {
 
                 // DOMSDOS  Play_Sound__STUB(sound_buffer1);
                 sdl2_Play_Sound__WIP(sound_buffer1, sound_buffer1_size);
 
             }
-            else if(IDK == 1)
+            else if(diplomacy_music == 1)
             {
 
                 // DOMSDOS  Play_Sound__STUB(sound_buffer1);
                 sdl2_Play_Sound__WIP(sound_buffer1, sound_buffer1_size);
 
             }
-            else if(IDK == 2)
+            else if(diplomacy_music == 2)
             {
 
                 // DOMSDOS  Play_Sound__STUB(sound_buffer2);
@@ -839,14 +926,211 @@ static void IDK_Diplomacy_Background_Music__STUB(int16_t IDK)
 
         }
 
-        word_42E74 = IDK;
+        m_diplomacy_current_music = diplomacy_music;
 
     }
 
 }
 
 // WZD o84p11
-// IDK_DiplAnim_s6FDA1()
+/*
+draws IMG_DIPL_TalkAnim or IMG_MOODWIZPortrait
+checks and updates m_diplomacy_message_IDK_group
+
+XREF:
+    Diplomacy_Screen_Draw__WIP()
+    sub_6ED5D()
+    _sub_6F90E_Draw()
+    j_IDK_DiplAnim_s6FDA1()
+        DIPL_sub_72DB6_Draw()
+            DIPL_sub_72DB6()
+            j_DIPL_sub_72DB6_Draw()
+
+*/
+static void IDK_DiplAnim_s6FDA1(void)
+{
+    int16_t var_4 = 0;
+    int16_t current_frame_num = 0;
+    int16_t si = 0;
+    int16_t di = 0;
+
+    si = 107;
+    di = 13;
+
+    if(m_diplomacy_message_IDK_group != word_42E7E)
+    {
+
+        switch(m_diplomacy_message_IDK_group)
+        {
+
+            case 0:
+            case 1:
+            case 2:
+            case 5:
+            case 6:
+            {
+
+                Set_Animation_Frame(IMG_DIPL_TalkAnim, 0);
+
+            } break;
+
+            case 3:
+            {
+
+                Set_Animation_Frame(IMG_MOODWIZPortrait, 0);
+
+            } break;
+
+            case 4:
+            {
+
+                Set_Animation_Frame(IMG_MOODWIZPortrait, 1);
+
+            } break;
+
+            case 7:
+            {
+
+                Set_Animation_Frame(IMG_MOODWIZPortrait, 2);
+
+            } break;
+
+            default:
+            {
+
+                STU_DEBUG_BREAK();
+
+            } break;
+
+        }
+
+    }
+
+    current_frame_num = FLIC_Get_CurrentFrame(IMG_DIPL_TalkAnim);
+
+    Set_Page_Off();
+
+    switch(m_diplomacy_message_IDK_group)
+    {
+
+        case 0:
+        case 1:
+        {
+            if(current_frame_num < 24)
+            {
+
+                Set_Animation_Frame(IMG_DIPL_TalkAnim, 0);
+
+                for(var_4 = 0; var_4 < current_frame_num; var_4++)
+                {
+
+                    FLIC_Draw(si, di, IMG_DIPL_TalkAnim);
+
+                }
+
+            }
+            else
+            {
+
+                Set_Animation_Frame(IMG_MOODWIZPortrait, 0);
+
+                FLIC_Draw(si, di, IMG_MOODWIZPortrait);
+
+                m_diplomacy_message_IDK_group = 3;
+
+            }
+
+        } break;
+
+        case 2:
+        {
+
+            if(current_frame_num < 24)
+            {
+
+                Set_Animation_Frame(IMG_DIPL_TalkAnim, 0);
+
+                for(var_4 = 0; var_4 < current_frame_num; var_4++)
+                {
+
+                    FLIC_Draw(si, di, IMG_DIPL_TalkAnim);
+
+                }
+
+            }
+            else
+            {
+
+                m_diplomacy_message_IDK_group = 4;
+
+                Set_Animation_Frame(IMG_MOODWIZPortrait, 0);
+
+                FLIC_Draw(si, di, IMG_MOODWIZPortrait);
+
+                FLIC_Draw(si, di, IMG_MOODWIZPortrait);
+
+            }
+
+        } break;
+
+        case 3:
+        {
+
+            Set_Animation_Frame(IMG_MOODWIZPortrait, 0);
+
+            FLIC_Draw(si, di, IMG_MOODWIZPortrait);
+
+        } break;
+
+        case 4:
+        {
+
+            Set_Animation_Frame(IMG_MOODWIZPortrait, 0);
+
+            FLIC_Draw(si, di, IMG_MOODWIZPortrait);
+
+            FLIC_Draw(si, di, IMG_MOODWIZPortrait);
+
+        } break;
+
+        case 5:
+        {
+
+            // Do Nothing
+            STU_DEBUG_BREAK();
+            
+        } break;
+
+        case 6:
+        {
+
+            // Do Nothing
+            STU_DEBUG_BREAK();
+            
+        } break;
+
+        case 7:
+        {
+
+            Set_Animation_Frame(IMG_MOODWIZPortrait, 0);
+
+            FLIC_Draw(si, di, IMG_MOODWIZPortrait);
+
+        } break;
+
+        default:
+        {
+
+            STU_DEBUG_BREAK();
+
+        } break;
+
+    }
+
+    word_42E7E = m_diplomacy_message_IDK_group;
+
+}
+
 
 // WZD o84p12
 static void Diplomacy_Screen_Load__WIP(void)
@@ -918,7 +1202,7 @@ static void Diplomacy_Screen_Load__WIP(void)
 
     FLIC_Draw(0, 0, diplomacy_background_seg);
 
-    IDK_DiplEyes_s7028D();
+    Diplomacy_Screen_Draw_Gargoyle_Eyes();
 
     Clear_Fields();
 
@@ -930,7 +1214,7 @@ static void Diplomacy_Screen_Load__WIP(void)
 
     FLIC_Draw(0, 0, diplomacy_background_seg);
 
-    IDK_DiplEyes_s7028D();
+    Diplomacy_Screen_Draw_Gargoyle_Eyes();
 
     Copy_On_To_Off_Page();
 
@@ -939,7 +1223,7 @@ static void Diplomacy_Screen_Load__WIP(void)
     if(word_42E8E != 1)
     {
 
-        IDK_Dipl_Draw_s702E6();
+        Diplomacy_Screen_Fade_In();
 
     }
 
@@ -959,7 +1243,7 @@ static void DIPL_LoadTalkGFX(void)
 
     UU_Relation_Index = ((100 + _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]) / 20);
 
-    G_DIPL_TempMessage = (char * )Near_Allocate_First(220);
+    m_diplomacy_message = (char * )Near_Allocate_First(220);
 
     G_DIPL_ComposedMessage = (char * )Near_Allocate_First(220);
 
@@ -1033,7 +1317,21 @@ static void DIPL_LoadTalkGFX(void)
 
 
 // WZD o84p14
-static void IDK_DiplEyes_s7028D(void)
+/*
+
+11 pictures
+...must be -100 + 100 / 20 = 0 === "vivid red"
+11 * 20 = 220
+...100 + 220 = 320 / 20 = 16
+...100 + 120 = 220 / 20 = 11  deep green
+
+Page 69  (PDF Page 74)  
+The wizard appears flanked by gargoyles.  
+The eye color of the gargoyles is a measure of your opponent’s feelings toward you.  
+The eye color ranges from deep shades of green to vivid red, with green representing positive relations, yellow representing neutrality and red representing anger and negative feelings.  
+
+*/
+static void Diplomacy_Screen_Draw_Gargoyle_Eyes(void)
 {
     int16_t si = 0;
 
@@ -1047,7 +1345,11 @@ static void IDK_DiplEyes_s7028D(void)
 
 
 // WZD o84p15
-static void IDK_Dipl_Draw_s702E6(void)
+// MoO2  Module: DIP-SCRN  Diplomacy_Fade_In_();  Draw_Diplomacy_Fade_In_Screen_();
+/*
+OON XREF
+*/
+static void Diplomacy_Screen_Fade_In(void)
 {
     SAMB_ptr picture = 0;
     int16_t entry_num = 0;
@@ -1766,8 +2068,8 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx)
 
     // 1oom:  attack_bounty[] = PLAYER_NONE
     // MoO2:  reward_attack_player
-    _players[attacker_idx].Dipl.Unknown_194h[defender_idx] = 0;
-    _players[defender_idx].Dipl.Unknown_194h[attacker_idx] = 0;
+    _players[attacker_idx].Dipl.IDK_MoO1_attack_bounty[defender_idx] = 0;
+    _players[defender_idx].Dipl.IDK_MoO1_attack_bounty[attacker_idx] = 0;
 
     SETMIN(_players[attacker_idx].Dipl.Visible_Rel[defender_idx], -100);
     _players[defender_idx].Dipl.Visible_Rel[attacker_idx] = _players[attacker_idx].Dipl.Visible_Rel[defender_idx];
@@ -1805,19 +2107,34 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx)
 */
 
 // WZD o86p01
-// IDK_Dipl_s72690()
+static void IDK_Dipl_s72690(void)
+{
+
+
+
+}
+
+
 // WZD o86p02
 // DIPL_AI_To_AI()
+
 // WZD o86p03
 // DIPL_sub_72DB6()
+
 // WZD o86p04
 // DIPL_sub_72DB6_Draw()
 
+
 // WZD o86p05
-void IDK_DIPLOMSG_s732D9(int16_t G_Msg_Type, int16_t player_idx)
+// MoO2  Module: DIP-SCRN  Get_Diplomacy_Statement_();  ... Get_Text_Message_()
+/*
+...loads DIPLOMSG data and message...
+
+*/
+void IDK_DIPLOMSG_s732D9(int16_t diplomsg_0_record_number, int16_t player_idx)
 {
     char string[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t CRP_G_Msg_Type_Repeat = 0;
+    int16_t diplomsg_1_record_number = 0;
     int16_t var_4 = 0;
     int16_t itr = 0;
     int16_t pos = 0;
@@ -1827,35 +2144,49 @@ void IDK_DIPLOMSG_s732D9(int16_t G_Msg_Type, int16_t player_idx)
 
     var_4 = 0;
 
-    CRP_G_Msg_Type_Repeat = G_Msg_Type;
+    diplomsg_1_record_number = diplomsg_0_record_number;
 
-    if(G_DIPL_RndMsgIndex != ST_UNDEFINED)
+    if(m_diplomsg_1_record_sub_number != ST_UNDEFINED)
     {
 
-        strcpy(G_DIPL_TempMessage, G_DIPL_ComposedMessage);
+        strcpy(m_diplomacy_message, G_DIPL_ComposedMessage);
 
     }
     else
     {
 
-        LBX_Load_Data_Static(diplomsg_lbx_file__ovr86, 0, G_DiploMsg_E0_Field0, G_Msg_Type, 1, 6);
+        LBX_Load_Data_Static(
+            diplomsg_lbx_file__ovr86,
+            0,
+            (SAMB_ptr)&m_diplomacy_message_record_data,
+            diplomsg_0_record_number,
+            1,
+            6
+        );
 
         if(_num_players == 2)
         {
 
-            G_DIPL_RndMsgIndex = (Random(G_DiploMsg_E0_Field4) - 2);
+            m_diplomsg_1_record_sub_number = (Random(m_diplomacy_message_record_data.IDK_count) - 2);
 
         }
         else
         {
 
-            G_DIPL_RndMsgIndex = (Random(G_DiploMsg_E0_Field4) - 1);
+            m_diplomsg_1_record_sub_number = (Random(m_diplomacy_message_record_data.IDK_count) - 1);
 
         }
 
-        SETMIN(G_DIPL_RndMsgIndex, 0);
+        SETMIN(m_diplomsg_1_record_sub_number, 0);
     
-        LBX_Load_Data_Static(diplomsg_lbx_file__ovr86, 1, (SAMB_ptr)G_DIPL_ComposedMessage, G_DIPL_RndMsgIndex + (CRP_G_Msg_Type_Repeat * 15), 1, 200);
+        LBX_Load_Data_Static(
+            diplomsg_lbx_file__ovr86,
+            1,
+            (SAMB_ptr)G_DIPL_ComposedMessage,
+            m_diplomsg_1_record_sub_number + (diplomsg_1_record_number * 15),
+            1,
+            200
+        );
 
         for(itr = 0; itr < 200; itr++)
         {
@@ -1863,9 +2194,9 @@ void IDK_DIPLOMSG_s732D9(int16_t G_Msg_Type, int16_t player_idx)
             if(G_DIPL_ComposedMessage[itr] != 0)
             {
 
-                G_DIPL_TempMessage[pos] = G_DIPL_ComposedMessage[itr];
+                m_diplomacy_message[pos] = G_DIPL_ComposedMessage[itr];
 
-                code = (G_DIPL_TempMessage[pos] - 128);
+                code = (m_diplomacy_message[pos] - 128);
 
                 if(code > 20)
                 {
@@ -1880,66 +2211,66 @@ void IDK_DIPLOMSG_s732D9(int16_t G_Msg_Type, int16_t player_idx)
                         case 0:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
-                            strcat(G_DIPL_TempMessage, _players[HUMAN_PLAYER_IDX].name);
+                            strcat(m_diplomacy_message, _players[HUMAN_PLAYER_IDX].name);
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 1:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
-                            strcat(G_DIPL_TempMessage, _players[player_idx].name);
+                            strcat(m_diplomacy_message, _players[player_idx].name);
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 2:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
-                            strcat(G_DIPL_TempMessage, _players[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name);
+                            strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name);
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 3:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
-                            _fstrcpy(&G_DIPL_TempMessage[pos], _CITIES[_players[HUMAN_PLAYER_IDX].Dipl.DA_City[player_idx]].name);
+                            _fstrcpy(&m_diplomacy_message[pos], _CITIES[_players[HUMAN_PLAYER_IDX].Dipl.DA_City[player_idx]].name);
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 4:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
-                            strcpy(&G_DIPL_TempMessage[pos], _city_size_names[_CITIES[_players[HUMAN_PLAYER_IDX].Dipl.DA_City[player_idx]].size]);
+                            strcpy(&m_diplomacy_message[pos], _city_size_names[_CITIES[_players[HUMAN_PLAYER_IDX].Dipl.DA_City[player_idx]].size]);
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 5:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
-                            strcat(G_DIPL_TempMessage, _players[_players[HUMAN_PLAYER_IDX].Dipl.field_102[player_idx]].name);
+                            strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.field_102[player_idx]].name);
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
@@ -1954,204 +2285,204 @@ void IDK_DIPLOMSG_s732D9(int16_t G_Msg_Type, int16_t player_idx)
                         case 7:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
-                            strcat(G_DIPL_TempMessage, _players[_players[HUMAN_PLAYER_IDX].Dipl.IDK_MoO1_attack_bounty[player_idx]].name);
+                            strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.IDK_MoO1_attack_bounty[player_idx]].name);
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 8:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
                             itoa(_players[HUMAN_PLAYER_IDX].Dipl.field_114[player_idx], string, 10);
 
-                            strcat(G_DIPL_TempMessage, string);
+                            strcat(m_diplomacy_message, string);
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 9:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
                             _fstrcpy(string, spell_data_table[_players[HUMAN_PLAYER_IDX].Dipl.UU_MoO1_field_9C[player_idx]].name);
 
-                            strcat(G_DIPL_TempMessage, string);
+                            strcat(m_diplomacy_message, string);
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 10:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
                             itoa(_players[HUMAN_PLAYER_IDX].Dipl.field_114[player_idx], string, 10);
 
-                            strcat(G_DIPL_TempMessage, string);
+                            strcat(m_diplomacy_message, string);
 
-                            strcat(G_DIPL_TempMessage, aGold_2);
+                            strcat(m_diplomacy_message, aGold_2);
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 11:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
                             if(_players[HUMAN_PLAYER_IDX].Dipl.Broken_Treaty[player_idx] == 2)
                             {
 
-                                strcat(G_DIPL_TempMessage, aAlliance_0);
+                                strcat(m_diplomacy_message, aAlliance_0);
 
                             }
                             else if(_players[HUMAN_PLAYER_IDX].Dipl.Broken_Treaty[player_idx] == 1)
                             {
 
-                                strcat(G_DIPL_TempMessage, aWizardPact_0);
+                                strcat(m_diplomacy_message, aWizardPact_0);
                                 
                             }
                             else
                             {
 
-                                strcat(G_DIPL_TempMessage, aTreaty);
+                                strcat(m_diplomacy_message, aTreaty);
 
                             }
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 12:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
                             _fstrcpy(string, spell_data_table[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name);
 
-                            strcat(G_DIPL_TempMessage, string);
+                            strcat(m_diplomacy_message, string);
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 13:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
-                            strcat(G_DIPL_TempMessage, _unit_type_table[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name);
+                            strcat(m_diplomacy_message, *_unit_type_table[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name);
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 14:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
     
-                            strcat(G_DIPL_TempMessage, An(_unit_type_table[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name));
+                            strcat(m_diplomacy_message, An(*_unit_type_table[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name));
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 15:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
                             if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[player_idx] == 2)
                             {
 
-                                strcat(G_DIPL_TempMessage, aAlliance_0);
+                                strcat(m_diplomacy_message, aAlliance_0);
 
                             }
                             else if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[player_idx] == 1)
                             {
 
-                                strcat(G_DIPL_TempMessage, aWizardPact_0);
+                                strcat(m_diplomacy_message, aWizardPact_0);
                                 
                             }
                             else
                             {
 
-                                strcat(G_DIPL_TempMessage, aTreaty);
+                                strcat(m_diplomacy_message, aTreaty);
 
                             }
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 16:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
                             itoa((1400 + (_turn / 12)), string, 10);
 
-                            strcat(G_DIPL_TempMessage, string);
+                            strcat(m_diplomacy_message, string);
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 17:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
                             _fstrcpy(string, spell_data_table[Spell_Index].name);
 
-                            strcat(G_DIPL_TempMessage, string);
+                            strcat(m_diplomacy_message, string);
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 18:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
-                            strcat(G_DIPL_TempMessage, _players[Target_Player].name);
+                            strcat(m_diplomacy_message, _players[Target_Player].name);
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 19:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
-                            strcat(G_DIPL_TempMessage, _players[word_42E86].name);
+                            strcat(m_diplomacy_message, _players[word_42E86].name);
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
                         case 20:
                         {
 
-                            G_DIPL_TempMessage[pos] = 0;
+                            m_diplomacy_message[pos] = 0;
 
                             itoa(word_42E66, string, 10);
 
-                            strcat(G_DIPL_TempMessage, string);
+                            strcat(m_diplomacy_message, string);
 
-                            pos = strlen(G_DIPL_TempMessage);
+                            pos = strlen(m_diplomacy_message);
 
                         } break;
 
@@ -2172,13 +2503,13 @@ void IDK_DIPLOMSG_s732D9(int16_t G_Msg_Type, int16_t player_idx)
 
     }
 
-    G_DIPL_TempMessage[pos] = 0;
+    m_diplomacy_message[pos] = 0;
 
-    strcpy(G_DIPL_ComposedMessage, G_DIPL_TempMessage);
+    strcpy(G_DIPL_ComposedMessage, m_diplomacy_message);  // pointless?
 
-    sub_6FD5C(G_DiploMsg_E0_Field0);
+    IDK_Diplomacy_Background_Music__STUB(m_diplomacy_message_record_data.IDK_mood);
 
-    word_42E80 = G_DiploMsg_E0_Field2;
+    m_diplomacy_message_IDK_group = m_diplomacy_message_record_data.IDK_group;
 
 }
 
@@ -2204,7 +2535,33 @@ void IDK_DIPLOMSG_s732D9(int16_t G_Msg_Type, int16_t player_idx)
 // IDK_Dipl_s73F1C()
 
 // WZD o87p06
-// IDK_Dipl_s73FBF()
+static void IDK_Dipl_s73FBF(void)
+{
+    int16_t itr = 0;  // _SI_
+    
+    if(_players[_human_player_idx].casting_spell_idx != spl_Spell_Of_Return)
+    {
+
+        for(itr = 1; itr < _num_players; itr++)
+        {
+
+            if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[itr] != 0)
+            {
+
+                m_diplomac_player_idx = itr;
+
+                IDK_Dipl_s72690();
+
+            }
+
+            _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[itr] = 0;
+
+        }
+
+    }
+
+}
+
 
 // WZD o87p07
 // DIPL_GetOffMyLawn()

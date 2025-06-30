@@ -19,6 +19,8 @@ NOTE: IDGI, but the FanDom MoM Wiki uses the term "Encounter Zone"
 
 #include "MOM.H"
 
+#include "NEXTTURN.H"
+#include "Spellbook.H"
 #include "Spells128.H"
 
 
@@ -445,9 +447,9 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
     confirmation_box_y_offset = 0;
     notify_draw_offscr = ST_FALSE;  // ¿ ALWAYS 0 ?
 
-    if (player_idx == _human_player_idx)
+    if(player_idx == _human_player_idx)
     {
-        // TODO  GAME_CheckResearch(0);
+        Check_Research_Spell_Is_Known(0);
     }
 
     goto Done;

@@ -445,7 +445,7 @@ Capture_Cities_Data();
                     strcat(GUI_String_1, GUI_String_2);
                     strcat(GUI_String_1, aGold_3);  // " Gold"
                     strcat(GUI_String_1, aByPurchasing);  // "\x01 by purchasing"
-                    strcat(GUI_String_1, STR_GetIndefinite(m_city_screen_product_name));
+                    strcat(GUI_String_1, An(m_city_screen_product_name));
                     strcat(GUI_String_1, cnst_Space);  // " "
                     strcat(GUI_String_1, m_city_screen_product_name);
                     strcat(GUI_String_1, cnst_QuestionMark);  // "?"
@@ -1219,7 +1219,7 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
     strcat(GUI_String_1, GUI_String_2);
     strcat(GUI_String_1, " has completed the construction of ");
     strcpy(GUI_String_2, bldg_data_table[city_built_bldg_idx].name);
-    strcat(GUI_String_1, STR_GetIndefinite(&GUI_String_2[0]));
+    strcat(GUI_String_1, An(&GUI_String_2[0]));
     strcat(GUI_String_1, " ");
     if(city_built_bldg_idx == bt_CityWalls)
     {

@@ -6,6 +6,7 @@
 
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_DEF.H"
 #include "MOX/MOX_SET.H"  /* magic_set */
 #include "MOX/SOUND.H"
 
@@ -3483,4 +3484,71 @@ void Spell_Research_Select(void)
 
 // WZD o118p12
 // drake178: GAME_CheckResearch()
-// GAME_CheckResearch()
+/*
+; checks whether the spell currently being researched
+; by the player is already known, and if so, triggers
+; the research selection dialog
+*/
+/*
+
+
+
+*/
+void Check_Research_Spell_Is_Known(int16_t fade)
+{
+    int16_t spell_idx;  // _DI_
+
+    spell_idx = abs(_players[HUMAN_PLAYER_IDX].researching_spell_idx);
+
+    if(_players[HUMAN_PLAYER_IDX].spells_list[((((spell_idx - 1) / NUM_SPELLS_PER_MAGIC_REALM) * NUM_SPELLS_PER_MAGIC_REALM) + ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM))] == sls_Known)
+    {
+
+        if(fade == ST_TRUE)
+        {
+
+            Set_Page_Off();
+
+            CLROFF()
+
+            Toggle_Pages();
+
+            Copy_On_To_Off_Page();
+
+            Fade_In();
+
+        }
+
+        Spell_Research_Select();
+        
+        if(_players[HUMAN_PLAYER_IDX].researching_spell_idx == spl_Spell_Of_Mastery)
+        {
+
+            _players[HUMAN_PLAYER_IDX].research_cost_remaining = _players[HUMAN_PLAYER_IDX].som_research_cost;
+
+        }
+        else
+        {
+
+            _players[HUMAN_PLAYER_IDX].research_cost_remaining = spell_data_table[_players[HUMAN_PLAYER_IDX].researching_spell_idx].research_cost;
+
+        }
+
+        if(fade == ST_TRUE)
+        {
+
+            Fade_Out();
+
+            CLROFF()
+
+            Toggle_Pages();
+
+            Copy_On_To_Off_Page();
+
+            // DOMSDOS  Load_Palette(0, -1);  // EMPERATO - main game palette
+            Load_Palette(0, -1, ST_NULL);
+
+        }
+
+    }
+
+}

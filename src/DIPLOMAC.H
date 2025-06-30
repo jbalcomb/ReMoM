@@ -204,7 +204,7 @@ void Diplomacy_Screen__WIP(void);
 // sub_6ED5D()
 
 // WZD o84p03
-// sub_6EE03()
+// static void IDK_Diplo_Scrn(void);
 
 // WZD o84p04
 // sub_6EFA5()
@@ -228,7 +228,7 @@ void Diplomacy_Screen__WIP(void);
 // static void IDK_Diplomacy_Background_Music__STUB(int16_t IDK);
 
 // WZD o84p11
-// IDK_DiplAnim_s6FDA1()
+// static void IDK_DiplAnim_s6FDA1(void);
 
 // WZD o84p12
 // static void Diplomacy_Screen_Load__WIP(void);
@@ -315,7 +315,7 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx);
 */
 
 // WZD o86p01
-// IDK_Dipl_s72690()
+// static void IDK_Dipl_s72690(void);
 
 // WZD o86p02
 // DIPL_AI_To_AI()
@@ -351,7 +351,7 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx);
 // IDK_Dipl_s73F1C()
 
 // WZD o87p06
-// IDK_Dipl_s73FBF()
+// static void IDK_Dipl_s73FBF(void);
 
 // WZD o87p07
 // DIPL_GetOffMyLawn()
