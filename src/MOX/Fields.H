@@ -100,7 +100,7 @@ struct s_Field
     /* 14 */ int16_t font_highlight_color;  // ¿ highlight colors ?
     union {
         int16_t Param0;
-        char * string;              //  4  ft_input         11  ft_ContinuousStringInput
+        char * string;              //  4  ft_input         10  ft_StringList11  ft_ContinuousStringInput
         int16_t min_valid;          //  6  ft_Scroll
         int16_t parent;             //  9  ft_ClickLink
     };
@@ -108,6 +108,7 @@ struct s_Field
         int16_t Param1;
         int16_t max_valid;          //  6  ft_Scroll
         int16_t string_pos;         //  8  ft_MultiHotKey
+        int16_t set_value;          // 10  ft_StringList
         SAMB_ptr marker_picture;    // 11  ft_ContinuousStringInput
     };
     union {
@@ -116,6 +117,7 @@ struct s_Field
         int16_t fill_color;         //  4  ft_input         11  ft_ContinuousStringInput
         // uint16_t var_segment;  //  6  ft_Scroll  ... MoO2 Draw_Visible_Fields_Back()
         int16_t string_len;         //  8  ft_MultiHotKey
+        int16_t * variable1;        // 10  ft_StringList
     };
     union {
         int64_t Param3;             //  ft_Grid  &xpos
@@ -408,7 +410,7 @@ extern int16_t down_y;
 // WZD dseg:8256 GUI_EmptyTitleHelp dw 0FFFFh            
 
 // WZD dseg:8258
-extern int16_t GUI_DialogDirections;
+extern int16_t list_field_on;
 
 
 // WZD dseg:825A
@@ -496,7 +498,7 @@ extern int16_t GUI_Edit_Position;
 extern int16_t GUI_EditTimeOutType;
 
 // WZD dseg:829E
-extern char cnst_ZeroString_12[];
+extern char str_empty_string__seg036[];
 
 /*
     WZD dseg:82A6                           END: Fields - Initialized Data
@@ -578,8 +580,7 @@ extern struct s_Field * p_fields;  // "p_fields dd 0" ? Far Pointer?
 
 
 /*
-    WZD  seg036
-    MGC  seg034
+    WIZARDS.EXE  seg036
 */
 
 // WZD s36p01
@@ -648,7 +649,7 @@ int16_t Add_Continuous_String_Input_Field(int16_t xmin, int16_t ymin, int16_t wi
 // UU_GUI_Ctrl_DecHeight();
 
 // WZD s36p37
-// GUI_CreateDialogLine();
+// static int16_t Add_String_List_Field(int16_t x1, int16_t y1, int16_t width, char * string, int16_t active_flag, int16_t * variable, int16_t set_value, int16_t fill_type, int16_t fill_param1, int16_t fill_param2, int16_t fill_param3, int16_t fill_param4, char * hotkey, int16_t help_entry);
 
 // WZD s36p38
 int16_t Add_Multi_Hot_Key_Field(char * string);
@@ -711,7 +712,7 @@ void Clear_Fields(void);
 // UU_GUI_ScrollableTxtDlg();
 
 // WZD s36p60
-// GUI_CreateTextDialog();
+int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, char * title_string, char * text_string, int16_t string_width, int16_t variable, int16_t * active_flag, int16_t select_fill_type, int16_t sfill1, int16_t sfill2, int16_t sfill3, int16_t sfill4, int16_t help_entry);
 
 // WZD s36p61
 // UU_GUI_NoMouseHighlight();

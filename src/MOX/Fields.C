@@ -1,12 +1,10 @@
 
+#include "Fields.H"
+
 #include "MOX_BASE.H"
 #include "MOX_DEF.H"
 #include "MOX_TYPE.H"
-
 #include "../MOM_DEF.H"
-
-
-#include "Fields.H"
 #include "FLIC_Draw.H"
 #include "Fonts.H"
 #include "Graphics.H"
@@ -14,6 +12,7 @@
 #include "Mouse.H"
 #include "Timer.H"
 #include "Video.H"
+#include "Util.H"
 
 #ifdef STU_DEBUG
 #include "../STU/STU_DBG.H"    /* DLOG() */
@@ -147,14 +146,14 @@ dseg:8298                                                 ¿ END: Help - Initial
 dseg:829A                                                 ? BEGIN: Mouse Buffer ?
 dseg:829A 00 00                                           multi_hotkey_active_field dw 0                ; DATA XREF: Interpret_Keyboard_Input:loc_27F9Br ...
 dseg:829C 72 62                                           UU_cnst_RB7 db 'rb'                     ; DATA XREF: UU_GUI_LoadClickFile+Eo
-dseg:829E 00                                              cnst_ZeroString_12 db 0                 ; DATA XREF: Setup_Input_Box_Popup+3Bo ...
+dseg:829E 00                                              str_empty_string__seg036 db 0                 ; DATA XREF: Setup_Input_Box_Popup+3Bo ...
 dseg:829F 77 62 00                                        UU_cnst_WB8 db 'wb',0                   ; DATA XREF: UU_GUI_SaveClickFile+Bo
 dseg:829F                                                 ? END: Mouse Buffer ?
 dseg:82A2 05 00                                           UU_GUI_Up_Hotkey db 5, 0                ; DATA XREF: UU_GUI_ScrollableTxtDlg+21Do ...
 dseg:82A4 06 00                                           UU_GUI_Down_Hotkey db 6, 0              ; DATA XREF: UU_GUI_ScrollableTxtDlg+240o ...
 dseg:82A6 5F 00                                           GUI_EditCursor db '_',0                 ; DATA XREF: Draw_Fields+117Do
 dseg:82A6
-dseg:82A6                                                 END: Fields, Input, Mouse, Keyboard
+dseg:82A6                                                 END: seg036 - Uninitialized Data (Fields, Input, Mouse, Keyboard)
 */
 
 // WZD dseg:8282
@@ -166,7 +165,7 @@ int16_t GUI_Edit_Position = 0;
 int16_t GUI_EditTimeOutType = 0;
 
 // WZD dseg:829E
-char cnst_ZeroString_12[] = "";
+char str_empty_string__seg036[] = "";
 
 
 
@@ -225,10 +224,19 @@ int16_t down_x = 1;
 // WZD dseg:8254
 int16_t down_y = -1;
 
-// WZD dseg:8256 GUI_EmptyTitleHelp dw 0FFFFh            
+// WZD dseg:8256
+// drake178: GUI_EmptyTitleHelp
+// MoO2  Module: fields  default_help_entry
+int16_t default_help_entry = ST_UNDEFINED;
+
 
 // WZD dseg:8258
-int16_t GUI_DialogDirections = 0;
+// drake178; GUI_DialogDirections
+// MoO2  Module: fields  list_field_on
+/*
+
+*/
+int16_t list_field_on = 0;
 
 // WZD dseg:825A
 // MoO2  Module: fields  auto_function_delay
@@ -251,7 +259,11 @@ struct s_mouse_list mouse_list_init[1] = {
 // MoO2  Module: fields  auto_input_variable
 int16_t auto_input_variable = 0;
 
-// WZD dseg:826A GUI_MouseHighlight dw 1                 
+// WZD dseg:826A
+// drake178: GUI_MouseHighlight
+// MoO2  Module: fields  list_field_scan_flag
+int16_t list_field_scan_flag = ST_TRUE;
+
 // WZD dseg:826C GUI_NoDialogWrap dw 0                   
 // WZD dseg:826E GUI_NoTxtSelectColor dw 0               
 // WZD dseg:8270 GUI_OnLastDialogLine dw 0               
@@ -397,6 +409,154 @@ struct s_Field * p_fields;  // "p_fields dd 0" ? Far Pointer?
 
 /*
     WZD dseg:E8AC                           END: seg036 (Fields) - Uninitialized Data
+*/
+
+
+
+
+/*
+    BEGIN:  Forward Declarations
+*/
+/*
+    WIZARDS.EXE  seg036
+*/
+// WZD s36p01
+// INPUT  int16_t Interpret_Mouse_Input(void);
+// WZD s36p08
+void Enable_Cancel(void);
+// WZD s36p09
+void Disable_Cancel(void);
+// WZD s36p10
+// Disable_Mouse_Wait()
+// WZD s36p11
+// Enable_Mouse_Wait()
+// WZD s36p12
+// HELP  void Set_Help_List(struct s_Help_Entry * help_pointer, int16_t count);
+// WZD s36p13
+// HELP  void Deactivate_Help_List(void);
+// WZD s36p14
+// HELP  void Check_Help_List(void);
+// WZD o159p01
+// HELP Draw_Help_Entry_()
+// WZD s36p20
+int16_t Auto_Input(void);
+// WZD s36p22
+// KD int16_t Interpret_Keyboard_Input(char  * character);
+// WZD s36p25
+// INPUT  int16_t Scan_Input(void);
+// WZD s36p26
+// INPUT  int16_t Scan_Field(void);
+// WZD s36p27
+// INPUT  UU_GUI_KeyWaitLoop()
+// WZD s36p28
+// INPUT  G_GUI_ClearInput()
+// WZD s36p29
+// INPUT  G_GUI_PressAnyKey()
+// WZD s36p30
+// WZD s36p31
+// WZD s36p32
+// WZD s36p33
+// WZD s36p34
+int16_t Add_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string, int16_t max_characters, int16_t fill_color, int16_t justification, int16_t cursor_type, uint8_t color_array[], char * select_char, int16_t help);
+// WZD s36p35
+int16_t Add_Continuous_String_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string, int16_t max_characters, int16_t fill_color, SAMB_ptr marker_picture, int16_t help, int16_t shadow);
+// WZD s36p36
+// UU_GUI_Ctrl_DecHeight();
+// WZD s36p37
+static int16_t Add_String_List_Field(int16_t x1, int16_t y1, int16_t width, char * string, int16_t active_flag, int16_t * variable, int16_t set_value, int16_t fill_type, int16_t fill_param1, int16_t fill_param2, int16_t fill_param3, int16_t fill_param4, char * hotkey, int16_t help_entry);
+// WZD s36p38
+int16_t Add_Multi_Hot_Key_Field(char * string);
+// WZD s36p39
+int16_t Add_Picture_Field(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
+// WZD s36p40
+// UU_GUI_CreateWndImgLbl()
+// WZD s36p41
+void Set_Button_Down_Offsets(int16_t x_offset, int16_t y_offset);
+// WZD s36p42
+void Add_Button_Info(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
+// WZD s36p43
+int16_t Add_Button_Field(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
+// UU_GUI_CreateToggleBtn
+// UU_GUI_CreateLockblBtn
+// UU_GUI_CreateMStateBtn
+// WZD s36p47
+int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, int16_t hotkey, int16_t help);
+// UU_GUI_CreateWndLabel
+// WZD s36p49
+int16_t Add_Hot_Key(int16_t select_char);
+// WZD s34p50
+// UU_GUI_CreateHelpLink
+// WZD s34p51
+int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int64_t *xpos, int64_t *ypos, int16_t help);
+// WZD s34p52
+// WZD s34p53
+int16_t Add_Scroll_Field(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, int16_t hotkey, int16_t help);
+// WZD s34p54
+int16_t Find_Bar_Position(int16_t field_num);
+// WZD s34p55
+void Increment_Scroll_Bar(int16_t field_num);
+// WZD s34p56
+void Decrement_Scroll_Bar(int16_t field_num);
+// WZD s36p57
+void Clear_Fields(void);
+// WZD s36p58
+// UU_GUI_NoSelectColor();
+// WZD s36p59
+// UU_GUI_ScrollableTxtDlg();
+// WZD s36p60
+int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, char * title_string, char * text_string, int16_t string_width, int16_t variable, int16_t * active_flag, int16_t select_fill_type, int16_t sfill1, int16_t sfill2, int16_t sfill3, int16_t sfill4, int16_t help_entry);
+// WZD s36p61
+// UU_GUI_NoMouseHighlight();
+// WZD s36p62
+int16_t GUI_MoveDlgHighlight__STUB(int16_t Y_Direction);
+// WZD s36p63
+void Clear_Fields_Above(int16_t field_num);
+// WZD s36p64
+// GUI_GetControlCount();
+// WZD s36p65  AKA GUI_Init()  AKA IN_Init()
+// INPUT  void Init_Mouse_Keyboard(int16_t input_type);
+// WZD s36p66
+// INPUT  int16_t Get_Input(void);
+// WZD s36p67
+// INPUT  void Set_Input_Delay(int16_t input_delay);
+// WZD s36p68
+// UU_Get_Input_Delay();
+// WZD s36p69
+// UU_GUI_ClearSelectable();
+// WZD s36p70
+// UU_GUI_SetSelectable();
+// WZD s36p71
+void Draw_Fields(void);
+// WZD s36p72
+void Draw_Field(int16_t field_num, int16_t up_down_flag);
+// WZD s36p73
+void Push_Field_Down(int16_t field_num, int16_t mouse_x, int16_t mouse_y);
+// WZD s36p74
+// UU_GUI_SetDlgTitleHelp()
+// WZD s36p75
+// UU_GUI_ClearTitleHelp()
+// WZD s36p76
+void Assign_Auto_Function(void (*auto_function)(void), uint16_t delay);
+// WZD s36p77
+void Save_Auto_Function(void);
+// WZD s36p78
+void Restore_Auto_Function(void);
+// WZD s36p79
+void Deactivate_Auto_Function(void);
+// WZD s36p80
+void UU_Activate_Auto_Function(void);
+// WZD s36p81
+void Invoke_Auto_Function(void);
+// WZD s36p82
+void Quick_Call_Auto_Function(void);
+// WZD s36p83
+void Call_Auto_Function(void);
+// WZD s36p84
+void UU_GUI_ExtClear(void);
+// WZD s36p85
+// INPUT  void Toggle_Pages(void);
+/*
+    END:  Forward Declarations
 */
 
 
@@ -550,7 +710,73 @@ int16_t Add_Continuous_String_Input_Field(int16_t xmin, int16_t ymin, int16_t wi
 // UU_GUI_Ctrl_DecHeight();
 
 // WZD s36p37
-// GUI_CreateDialogLine();
+// drake178: GUI_CreateDialogLine();
+/*
+; creates a dialog line with the passed attributes,
+; returns the index of the created control:
+;   Text@  - pointer to the response string
+;   Sel    - selectability
+;   State@ - pointer indicating the highlighted option
+;   Index  - the index of this line
+;   SelFX  - VGA_RectangleFX index for highlighting
+;   CBlk   - color block index for FX 0Fh
+;   U1-3   - VGA_RectangleFX params (unused with 0Fh)
+; dialog lines are individual controls that can be
+; highlighted or selected with both keys and mouse
+*/
+/*
+*/
+static int16_t Add_String_List_Field(int16_t x1, int16_t y1, int16_t width, char * string, int16_t active_flag, int16_t * variable, int16_t set_value, int16_t fill_type, int16_t fill_param1, int16_t fill_param2, int16_t fill_param3, int16_t fill_param4, char * hotkey, int16_t help_entry)
+{
+    char hotkey_string[LEN_STRING];
+    int16_t itr_string_length = 0;
+    strcpy(hotkey_string, string);
+    while(hotkey_string[itr_string_length] != '\0' && itr_string_length < LEN_STRING) itr_string_length++;
+
+    p_fields[fields_count].x1 = x1;
+    p_fields[fields_count].y1 = (y1 - 1);
+
+    p_fields[fields_count].font_style_num = Get_Current_Font_Style();
+
+    p_fields[fields_count].font_normal_color = Get_Current_Normal_Color();
+
+    p_fields[fields_count].font_highlight_color = Get_Current_Highlight_Color();
+
+    p_fields[fields_count].x2 = (x1 + width);
+
+    p_fields[fields_count].y2 = (y1 + Get_Font_Height() + 1);
+
+    p_fields[fields_count].set_value = set_value;
+
+    p_fields[fields_count].hotkey = hotkey[0];
+
+    p_fields[fields_count].Selectable = active_flag;
+
+    UPPERCASE(p_fields[fields_count].hotkey);
+
+    p_fields[fields_count].help = help_entry;
+
+    p_fields[fields_count].string = string;
+
+    p_fields[fields_count].variable1 = variable;
+
+    p_fields[fields_count].Rect_FX = fill_type;
+
+    p_fields[fields_count].Param3 = fill_param1;
+
+    p_fields[fields_count].Param4 = fill_param2;
+
+    p_fields[fields_count].Param5 = fill_param3;
+
+    p_fields[fields_count].Param6 = fill_param4;
+
+    p_fields[fields_count].type = ft_StringList;
+
+    fields_count += 1;
+
+    return (fields_count - 1);
+
+}
 
 // WZD s36p38
 int16_t Add_Multi_Hot_Key_Field(char * string)
@@ -988,7 +1214,228 @@ void Clear_Fields(void)
 // UU_GUI_ScrollableTxtDlg();
 
 // WZD s36p60
-// GUI_CreateTextDialog();
+// MoO2  Module: fields  Get_List_Field()
+// drake178: GUI_CreateTextDialog();
+/*
+; creates a multi-selection text response dialog based
+; on the passed parameters, then loops event handling,
+; exclusive to this control (but using the defined
+; redraw function, if any), until an option is selected
+; returns the index of the selection, or -1 on failure
+*/
+/*
+
+*/
+int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, char * title_string, char * text_string, int16_t string_width, int16_t variable, int16_t * active_flag, int16_t select_fill_type, int16_t sfill1, int16_t sfill2, int16_t sfill3, int16_t sfill4, int16_t help_entry)
+{
+    int16_t buffer[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t active = 0;
+    int16_t title_var = 0;
+    int16_t item_track = 0;
+    int16_t copy_flag = 0;
+    char * string_address = 0;
+    int16_t title_field = 0;
+    int16_t title_x2 = 0;
+    int16_t ymin = 0;
+    int16_t font_height = 0;
+    int16_t vertical_space = 0;
+    int16_t total_items = 0;
+    int16_t itr = 0;
+    int16_t esc = 0;
+    int16_t choice = 0;  // _DI_
+
+    list_field_on = ST_TRUE;
+
+    Set_Input_Delay(1);
+
+    Clear_Fields();
+
+    title_x2 = (title_x1 + fill_width);
+
+    font_height = Get_Font_Height();
+
+    vertical_space = (font_height + Get_Font_Vertical_Spacing());
+
+    esc = ST_FALSE;
+
+    itr = 0;
+
+    total_items = 0;
+
+    string_address = text_string;
+
+    ymin = title_y1;
+
+    choice = ST_UNDEFINED;
+
+    while(esc == ST_FALSE)
+    {
+
+        Copy_Memory_Near((uint8_t *)&buffer[0], (uint8_t *)string_address, 2);
+
+        if(buffer[0] == 0)
+        {
+
+            esc = ST_TRUE;
+
+        }
+        else
+        {
+            
+            if(
+                (total_items == 0)
+                &&
+                (
+                    (active_flag[itr] != 0)
+                    ||
+                    (active_flag == 0)
+                )
+            )
+            {
+
+                choice = itr;
+
+                total_items = 1;
+
+            }
+
+            ymin += vertical_space;
+            
+            if(active_flag == 0)
+            {
+
+                active = 1;
+
+            }
+            else
+            {
+
+                active = active_flag[itr];
+
+            }
+
+            Add_String_List_Field(
+                title_x1,
+                ymin,
+                fill_width,
+                string_address,
+                active,
+                &variable,
+                itr,
+                select_fill_type,
+                sfill1,
+                sfill2,
+                sfill3,
+                sfill4,
+                str_empty_string__seg036,
+                help_entry
+            );
+
+            itr += 1;
+
+        }
+
+        string_address += string_width;
+
+    }
+
+    total_items = itr;
+
+    Set_Font_Style(Get_Current_Font_Style(), Get_Current_Normal_Color(), Get_Current_Special_Color(), ST_NULL);
+
+    title_var = 0;
+
+    title_field = Add_String_List_Field(
+        title_x1,
+        title_y1,
+        fill_width,
+        title_string,
+        0,
+        &title_var,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        str_empty_string__seg036,
+        default_help_entry
+    );
+
+    if(
+        (variable < 0)
+        ||
+        (variable >= total_items)
+        ||
+        (variable < choice)
+    )
+    {
+
+        if(
+            (choice < 0)
+            ||
+            (choice >= total_items)
+        )
+        {
+
+            variable = ST_UNDEFINED;
+
+        }
+        else
+        {
+
+            variable = p_fields[(choice + 1)].Param1;
+
+        }
+
+    }
+
+    esc = 0;
+
+    copy_flag = 0;
+
+    choice = 0;
+
+    while(esc == 0)
+    {
+
+        Mark_Time();
+
+        choice = Get_Input();
+
+        if(choice != 0)
+        {
+
+            esc = 1;
+
+        }
+
+        if(choice > 0)
+        {
+
+            if(active_flag[(choice - 1)])
+            {
+
+            }
+
+        }
+
+    }
+
+    Clear_Fields();
+
+    list_field_on = 0;
+
+    list_field_scan_flag = 1;
+
+    Mouse_Buffer();
+
+    Mouse_Buffer2();
+
+    return(choice < 0 ? ST_UNDEFINED : (choice - 1));
+
+}
+
 
 // WZD s36p61
 // UU_GUI_NoMouseHighlight();
