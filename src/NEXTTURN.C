@@ -12,6 +12,7 @@
 #include "NEXTTURN.H"
 
 #include "MOX/LOADSAVE.H"
+#include "MOX/MOX_DEF.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
 #include "MOX/MOX_TYPE.H"
@@ -783,37 +784,21 @@ Check_Cities_Data();
 Check_Cities_Data();
 
 
-    // call    j_DIPL_Gravitation              ; process wizard pact and alliance relation
-    //                                         ; gravitation, military and city overextension, and
-    //                                         ; gravitation towards default relation
-    //                                         ; RE-EXPLORE!
+    // call    j_DIPL_Gravitation
 
-    // call    j_DIPL_ContactProgress          ; progress the human player's contact with other
-    //                                         ; wizards - if progress is 0, but contacted is 1,
-    //                                         ; set progress to 1 and relations to no treaty
+    // call    j_DIPL_ContactProgress
 
-
-Check_Cities_Data();
         Set_Mouse_List(1, mouse_list_hourglass);
-Check_Cities_Data();
-
 
     // call    j_DIPL_AI_To_AI                 ; many BUGs and INCONSISTENCIES inside ; RE-EXPLORE in more context!
 
-
-Check_Cities_Data();
         Set_Mouse_List(1, mouse_list_hourglass);
-Check_Cities_Data();
-
 
     // call    j_IDK_Dipl_s7373B
 
-    // call    j_IDK_Dipl_s73FBF
+    Resolve_Delayed_Diplomacy_Orders();
 
-
-Check_Cities_Data();
         Set_Mouse_List(1, mouse_list_hourglass);
-Check_Cities_Data();
 
         // TODO  End_Of_Turn_Diplomacy_Adjustments_
 
@@ -875,9 +860,9 @@ Check_Cities_Data();
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
 
-        SETMAX(_players[itr_players].gold_reserve, 30000);
+        SETMAX(_players[itr_players].gold_reserve, MAX_GOLD_RESERVE);
 
-        SETMAX(_players[itr_players].mana_reserve, 30000);
+        SETMAX(_players[itr_players].mana_reserve, MAX_MANA_RESERVE);
 
     }
 
@@ -2555,13 +2540,13 @@ void Update_Players_Gold_Reserve(void)
             food_incomes[itr_players] = 0;
         }
 
-        if((gold_incomes[itr_players] + food_incomes[itr_players]) < 32000)
+        if((gold_incomes[itr_players] + food_incomes[itr_players]) < MAX_SINT2)
         {
             _players[itr_players].gold_reserve += (gold_incomes[itr_players] + food_incomes[itr_players]);
         }
         else
         {
-            _players[itr_players].gold_reserve = 32000;
+            _players[itr_players].gold_reserve = MAX_SINT2;
         }
 
         if(_players[itr_players].gold_reserve < 0)
@@ -2606,13 +2591,13 @@ void Players_Apply_Magic_Power(void)
             _players[itr_players].research_cost_remaining -= research_income;
         }
 
-        if((32000 - _players[itr_players].mana_reserve) >= mana_income)
+        if((MAX_SINT2 - _players[itr_players].mana_reserve) >= mana_income)
         {
             _players[itr_players].mana_reserve += mana_income;
         }
         else
         {
-            _players[itr_players].mana_reserve = 32000;
+            _players[itr_players].mana_reserve = MAX_SINT2;
         }
 
         // 'Archmage' Special Ability 50% bonus to all mana spent on increasing skill

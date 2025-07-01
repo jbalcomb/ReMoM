@@ -593,6 +593,14 @@ uint8_t COL_Banners2[36] = {
 
 #define MAX_LEVEL_HERO       7
 
+// looks like both could have existed, maybe even MOX vs. MOM, with just one type in NEXTTURN.C
+// just two different peoples ideas of a maximum integer value that leaves a little header to avoid an overflow?
+#define MAX_SINT            30000
+#define MAX_SINT2           32000
+#define MAX_GOLD_RESERVE    30000
+#define MAX_MANA_RESERVE    30000
+
+
 
 
 // World (Grid) Dimensions, in Map Sqaures

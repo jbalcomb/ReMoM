@@ -36,6 +36,7 @@
 #include "MOX/MOX_T4.H"
 #include "MOX/SOUND.H"
 
+#include "DIPLODEF.H"
 #include "City_ovr55.H"
 #include "CITYCALC.H"
 #include "DIPLOMAC.H"
@@ -25737,7 +25738,7 @@ void Combat_Screen_Map_Draw__WIP(void)
 
     CMB_CurseAnimStage++;
 
-    if(CMB_CurseAnimStage > 30000)
+    if(CMB_CurseAnimStage > MAX_SINT)
     {
         CMB_CurseAnimStage = 0;
     }
@@ -30694,7 +30695,7 @@ void CMB_ComposeBackgrnd__WIP(void)
     }
     G_CMB_MWallAnimSkip = (1 - G_CMB_MWallAnimSkip);
     CMB_CurseAnimStage += 1;
-    if(CMB_CurseAnimStage > 30000)
+    if(CMB_CurseAnimStage > MAX_SINT)
     {
         CMB_CurseAnimStage = 0;
     }

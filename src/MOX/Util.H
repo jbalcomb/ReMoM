@@ -50,8 +50,7 @@ void String_To_Upper(char * string);
 void String_To_Lower(char * string);
 
 // WZD s22p11
-// drake178: RP_MEM_Copy()
-// Copy_Memory_Near()
+void Copy_Memory_Near(uint8_t * dst, uint8_t * src, int16_t count);
 
 // WZD s22p12 UU_MEM_CopyIfLess()
 // WZD s22p13 UU_MEM_Clear_Near()

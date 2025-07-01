@@ -100,7 +100,69 @@ void String_To_Lower(char * string)
 
 // WZD s22p11
 // drake178: RP_MEM_Copy()
-// Copy_Memory_Near()
+/*
+; nonstandard memcpy, copies an amount of bytes from
+; one near memory location to another
+;
+; fully replacable with other, already included code
+*/
+/*
+    not "Near", just not "Far"
+
+*/
+void Copy_Memory_Near(uint8_t * dst, uint8_t * src, int16_t count)
+{
+
+    if(count != 0)
+    {
+
+        while(count != 0)
+        {
+
+            *dst++ = *src++;
+
+            count--;
+
+        }
+
+    }
+
+}
+/*
+proc Copy_Memory_Near far
+dst= word ptr  6
+src= word ptr  8
+count= word ptr  0Ah
+push    bp
+mov     bp, sp
+push    si
+push    di
+cmp     [bp+count], 0
+jnz     short loc_1D6B3
+xor     ax, ax
+jmp     short @@Done
+loc_1D6B3:
+push    es
+push    si
+push    di
+mov     ax, ds
+mov     es, ax
+assume es:dseg
+mov     di, [bp+dst]
+mov     si, [bp+src]
+mov     cx, [bp+count]
+rep movsb
+pop     di
+pop     si
+pop     es
+assume es:nothing
+@@Done:
+pop     di
+pop     si
+pop     bp
+retf
+endp Copy_Memory_Near
+*/
 
 
 // WZD s22p12 UU_MEM_CopyIfLess()
@@ -501,16 +563,16 @@ void PageFlip_GrowOut__WIP(int16_t x_start, int16_t y_start, int16_t counter, SA
     Copy_On_To_Off_Page();
 
     // TODO  // ; maps in the pages required to reach the data offset in the specified handle, and copies the data from the passed destination (ds if 0 is passed as seg) to EMS returns the source segment
-    // TODO  EMM_MapnWrite(0, picture_data, 0, 0, 32000, EmmHndlNbr_VGAFILEH);
-    // TODO  EMM_MapnWrite(0, (picture_data + 32000), 32000, 0, 32000, EmmHndlNbr_VGAFILEH);
+    // TODO  EMM_MapnWrite(0, picture_data, 0, 0, MAX_SINT2, EmmHndlNbr_VGAFILEH);
+    // TODO  EMM_MapnWrite(0, (picture_data + MAX_SINT2), MAX_SINT2, 0, MAX_SINT2, EmmHndlNbr_VGAFILEH);
 
     for(itr = 0; itr < counter; itr++)
     {
         Mark_Time();
 
         // TODO  // ; maps in the pages required to reach the data offset in the specified handle, and copies the data to the required destination (ds if 0 is passed as seg) returns the page frame segment
-        // TODO  EMM_MapnRead(0, picture_data, 0, 0, 32000, EmmHndlNbr_VGAFILEH);
-        // TODO  EMM_MapnRead(0, (picture_data + 32000), 32000, 0, 32000, EmmHndlNbr_VGAFILEH);
+        // TODO  EMM_MapnRead(0, picture_data, 0, 0, MAX_SINT2, EmmHndlNbr_VGAFILEH);
+        // TODO  EMM_MapnRead(0, (picture_data + MAX_SINT2), MAX_SINT2, 0, MAX_SINT2, EmmHndlNbr_VGAFILEH);
 
         x1 = (x_start - (((itr + 1) * x_start) / counter));
         y1 = (y_start - (((itr + 1) * y_start) / counter));

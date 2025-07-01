@@ -5,6 +5,79 @@
 
 
 
+## word_42E8E
+
+
+## word_42E8C
+
+Diplomacy_Screen__WIP()
+    word_42E8C = _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[m_diplomac_player_idx];
+
+XREF:
+    Diplomacy_Screen__WIP+58        mov     [word_42E8C], ax                                          
+    Diplomacy_Screen__WIP+61        cmp     [word_42E8C], 54                                          
+    Diplomacy_Screen__WIP+68        cmp     [word_42E8C], 1                                           
+    Diplomacy_Screen__WIP:loc_6EAE4 cmp     [word_42E8C], 0                                           
+    Diplomacy_Screen__WIP+91        cmp     [word_42E8C], 45                                          
+    Diplomacy_Screen__WIP+98        cmp     [word_42E8C], 49                                          
+    Diplomacy_Screen__WIP:loc_6EB0F cmp     [word_42E8C], 2                                           
+    Diplomacy_Screen__WIP+A6        cmp     [word_42E8C], 47                                          
+    Diplomacy_Screen__WIP:loc_6EB1D mov     ax, [word_42E8C]                                          
+    Diplomacy_Screen__WIP+B3        mov     [word_42E8C], 42                                          
+    Diplomacy_Screen__WIP+F6        push    [word_42E8C]                                              
+    Diplomacy_Screen_Draw__WIP+75   push    [word_42E8C]                                              
+    IDK_Diplo_Scrn+157              cmp     [word_42E8C], 71                                          
+    sub_6F51A:loc_6F549             mov     [word_42E8C], si                                          
+    sub_6F51A+70                    mov     [word_42E8C], ax                                          
+    sub_6F51A+A1                    mov     [word_42E8C], 58                                          
+    sub_6F51A:loc_6F5C3             mov     [word_42E8C], 57                                          
+    sub_6F51A+E6                    mov     [word_42E8C], 54                                          
+    sub_6F51A:loc_6F608             mov     [word_42E8C], si                                          
+    sub_6F51A:loc_6F610             mov     [word_42E8C], si                                          
+    sub_6F51A+122                   push    [word_42E8C]                    ; diplomsg_0_record_number
+    IDK_DiplSts_s70570:loc_705CF    mov     [word_42E8C], 44                                          
+    IDK_DiplSts_s70570+72           mov     [word_42E8C], 42                                          
+    IDK_DiplSts_s70570:loc_705EA    mov     [word_42E8C], 43                                          
+    sub_70A1A:loc_70A6F             mov     [word_42E8C], 2Fh ; '/'                                   
+    IDK_Dipl_s72690+58              mov     [word_42E8C], ax                                          
+    IDK_Dipl_s72690+61              cmp     [word_42E8C], 54                                          
+    IDK_Dipl_s72690+68              cmp     [word_42E8C], 1                                           
+    IDK_Dipl_s72690:loc_72704       cmp     [word_42E8C], 0                                           
+    IDK_Dipl_s72690+91              cmp     [word_42E8C], 45                                          
+    IDK_Dipl_s72690+98              cmp     [word_42E8C], 50                                          
+    IDK_Dipl_s72690:loc_7272F       cmp     [word_42E8C], 2                                           
+    IDK_Dipl_s72690+A6              cmp     [word_42E8C], 47                                          
+    IDK_Dipl_s72690:loc_7273D       mov     ax, [word_42E8C]                                          
+    IDK_Dipl_s72690+B3              mov     [word_42E8C], 42                                          
+    IDK_Dipl_s72690+11A             mov     [word_42E8C], ax                                          
+    IDK_Dipl_s72690:loc_727C1       cmp     [word_42E8C], 45                                          
+    IDK_Dipl_s72690:loc_727DB       cmp     [word_42E8C], 46                                          
+    IDK_Dipl_s72690:loc_727F5       cmp     [word_42E8C], 49                                          
+    IDK_Dipl_s72690:loc_72859       cmp     [word_42E8C], 47                                          
+    IDK_Dipl_s72690:loc_7286E       cmp     [word_42E8C], 45                                          
+    IDK_Dipl_s72690+1E5             cmp     [word_42E8C], 46                                          
+    IDK_Dipl_s72690+1EC             cmp     [word_42E8C], 49                                          
+    IDK_Dipl_s72690:loc_728B9       cmp     [word_42E8C], 47                                          
+    IDK_Dipl_s72690+243             cmp     [word_42E8C], 48                                          
+    IDK_Dipl_s72690+276             cmp     [word_42E8C], 45                                          
+    IDK_Dipl_s72690+27D             cmp     [word_42E8C], 46                                          
+    IDK_Dipl_s72690:loc_7292B       cmp     [word_42E8C], 49                                          
+    IDK_Dipl_s72690:loc_72949       cmp     [word_42E8C], 48                                          
+    IDK_Dipl_s72690+2E0             push    [word_42E8C]                                              
+    DIPL_sub_72DB6+C                push    [word_42E8C]                                              
+    DIPL_sub_72DB6+39               mov     bx, [word_42E8C]                                          
+    DIPL_sub_72DB6+11C              push    [word_42E8C]                                              
+    DIPL_sub_72DB6:loc_72F5F        cmp     [word_42E8C], 2                                           
+    DIPL_sub_72DB6+1B0              cmp     [word_42E8C], 48                                          
+    DIPL_sub_72DB6+209              cmp     [word_42E8C], 48                                          
+    DIPL_sub_72DB6+3E8              cmp     [word_42E8C], 47                                          
+
+
+
+
+
+
+
 
 
 

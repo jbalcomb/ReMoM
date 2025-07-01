@@ -2284,22 +2284,22 @@ void All_City_Removed_Buildings(void)
 // drake178: WIZ_AddGold()
 void Player_Add_Gold(int16_t player_idx, int16_t amount)
 {
-    if(_players[player_idx].gold_reserve < 30000)
+    if(_players[player_idx].gold_reserve < MAX_GOLD_RESERVE)
     {
-        if((30000 - _players[player_idx].gold_reserve) >= amount)
+        if((MAX_GOLD_RESERVE - _players[player_idx].gold_reserve) >= amount)
         {
             _players[player_idx].gold_reserve += amount;
         }
         else
         {
-            _players[player_idx].gold_reserve = 30000;
+            _players[player_idx].gold_reserve = MAX_GOLD_RESERVE;
         }
     }
     else
     {
         if(amount > 0)
         {
-            _players[player_idx].gold_reserve = 30000;
+            _players[player_idx].gold_reserve = MAX_GOLD_RESERVE;
         }
         else
         {
@@ -2311,22 +2311,22 @@ void Player_Add_Gold(int16_t player_idx, int16_t amount)
 // WZD o55p35
 void Player_Add_Mana(int16_t player_idx, int16_t amount)
 {
-    if(_players[player_idx].mana_reserve < 30000)
+    if(_players[player_idx].mana_reserve < MAX_MANA_RESERVE)
     {
-        if((30000 - _players[player_idx].mana_reserve) >= amount)
+        if((MAX_MANA_RESERVE - _players[player_idx].mana_reserve) >= amount)
         {
             _players[player_idx].mana_reserve += amount;
         }
         else
         {
-            _players[player_idx].mana_reserve = 30000;
+            _players[player_idx].mana_reserve = MAX_MANA_RESERVE;
         }
     }
     else
     {
         if(amount > 0)
         {
-            _players[player_idx].mana_reserve = 30000;
+            _players[player_idx].mana_reserve = MAX_MANA_RESERVE;
         }
         else
         {

@@ -1967,19 +1967,9 @@ void AI_Update_Gold_And_Mana_Reserves(int16_t player_idx)
 
                             Desired_Mana = (Desired_Mana - (Desired_Mana / 2));
 
-                            if(Desired_Mana > 30000)
-                            {
+                            SETMAX(Desired_Mana, MAX_MANA_RESERVE);
 
-                                Desired_Mana = 30000;
-
-                            }
-
-                            if(Desired_Gold > 30000)
-                            {
-
-                                Desired_Gold = 30000;
-
-                            }
+                            SETMAX(Desired_Gold, MAX_GOLD_RESERVE);
 
                             _players[player_idx].gold_reserve = Desired_Gold;
 
@@ -2004,19 +1994,9 @@ void AI_Update_Gold_And_Mana_Reserves(int16_t player_idx)
 
                         Desired_Gold = (Desired_Gold - (Desired_Gold / 2));
 
-                        if(Desired_Mana > 30000)
-                        {
+                        SETMAX(Desired_Mana, MAX_MANA_RESERVE);
 
-                            Desired_Mana = 30000;
-
-                        }
-
-                        if(Desired_Gold > 30000)
-                        {
-
-                            Desired_Gold = 30000;
-
-                        }
+                        SETMAX(Desired_Gold, MAX_GOLD_RESERVE);
 
                         _players[player_idx].gold_reserve = Desired_Gold;
 
@@ -2040,21 +2020,11 @@ void AI_Update_Gold_And_Mana_Reserves(int16_t player_idx)
 
                 Desired_Mana = (Resource_Total * 7 / 10);  // mana = total * .7
 
-                if(Desired_Mana > 30000)
-                {
-
-                    Desired_Mana = 30000;
-
-                }
+                SETMAX(Desired_Mana, MAX_MANA_RESERVE);
 
                 Desired_Gold = (Resource_Total - Desired_Mana);
 
-                if(Desired_Gold > 30000)
-                {
-
-                    Desired_Gold = 30000;
-
-                }
+                SETMAX(Desired_Gold, MAX_GOLD_RESERVE);
 
             }
             else
@@ -2064,21 +2034,12 @@ void AI_Update_Gold_And_Mana_Reserves(int16_t player_idx)
 
                 Desired_Gold = (Resource_Total * 9 / 10);  // gold = total * .9
 
-                if(Desired_Gold > 30000
-                )
-                {
-                    Desired_Gold = 30000;
-                }
+                SETMAX(Desired_Gold, MAX_GOLD_RESERVE);
 
                 Desired_Mana = (Resource_Total - Desired_Gold);
 
 
-                if(Desired_Mana > 30000)
-                {
-
-                    Desired_Mana = 30000;
-
-                }
+                SETMAX(Desired_Mana, MAX_MANA_RESERVE);
 
             }
 

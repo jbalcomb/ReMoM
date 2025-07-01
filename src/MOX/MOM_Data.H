@@ -1117,22 +1117,24 @@ struct s_WIZ_DIPL
     // /* 006C */ int16_t Unknown_194h[NUM_PLAYERS];
     /* 006C */ int16_t IDK_MoO1_attack_bounty[NUM_PLAYERS];
     /* 0078 */ int8_t Hidden_Rel[NUM_PLAYERS];  /* 1oom:  trust */
-    /* 007E */ int8_t field_7E[6];
-    /* 0084 */ int8_t field_84[6];
-    /* 008A */ int8_t field_8A[6];
-    /* 0090 */ int8_t field_90[6];
+    /* 007E */ int8_t field_7E[NUM_PLAYERS];
+    /* 0084 */ int8_t field_84[NUM_PLAYERS];
+    /* 008A */ int8_t field_8A[NUM_PLAYERS];
+    /* 0090 */ int8_t field_90[NUM_PLAYERS];
     /* 0096 */ int8_t Tribute_Spell[NUM_PLAYERS];
     // /* 009C */ int8_t Unknown_1C4h[90];
     // 0000009C UU_MoO1_field_9C dw 42 dup(?)           ; UU never checked, set in Modifier_Diplomacy_Adjustments()
     // 000000F0 UU_MoO1_field_F0 db 6 dup(?)            ; UU never checked, set in Modifier_Diplomacy_Adjustments()
-    /* 009C */ int16_t UU_MoO1_field_9C[42];
-    /* 00F0 */ uint8_t UU_MoO1_field_F0[6];
+    /* 009C */ uint8_t field_9C[NUM_PLAYERS];
+    /* 00A2 */ uint8_t field_A2[NUM_PLAYERS];
+    /* 00A8 */ uint8_t field_A8[(NUM_PLAYERS * 6 * 2)]; /* spell_idx? for exchange and tribute? definitely something sizeof(12) * player_idx */
+    /* 00F0 */ uint8_t field_F0[NUM_PLAYERS];
     /* 00F6 */ int16_t Tribute_Gold[NUM_PLAYERS];
-    /* 0102 */ int8_t field_102[6];
-    /* 0108 */ int8_t field_108[6];
-    /* 010E */ int8_t field_10E[6];
-    /* 0114 */ int8_t field_114[6];
-    /* 011A */ int8_t field_11A[6];
+    /* 0102 */ int8_t field_102[NUM_PLAYERS];
+    /* 0108 */ int8_t field_108[NUM_PLAYERS];
+    /* 010E */ int8_t field_10E[NUM_PLAYERS];
+    /* 0114 */ int8_t field_114[NUM_PLAYERS];
+    /* 011A */ int8_t field_11A[NUM_PLAYERS];
     /* 0120 */ int8_t Unknown_248h[NUM_PLAYERS];
     /* 0126 */ int8_t Unknown_24Eh[NUM_PLAYERS];
     /* 012C */ int8_t G_Warning_Progress[NUM_PLAYERS];

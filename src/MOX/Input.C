@@ -610,7 +610,7 @@ MoO2
                 // IDA foggy hunter green #36
                 if(alt_field_num == 0)
                 {
-                    if(GUI_DialogDirections != 0)
+                    if(list_field_on != 0)
                     {
                         for(alt_field_num = 1; alt_field_num < fields_count; alt_field_num++)
                         {
@@ -1927,7 +1927,7 @@ int16_t Process_Direction_Key__STUB(int16_t dir_key)
     }
 
     if(
-        (GUI_DialogDirections != 0)
+        (list_field_on != 0)
         &&
         (Y_Direction != 0)
     )
@@ -2388,8 +2388,7 @@ int16_t Setup_Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, c
 
     Set_Input_Delay(1);
 
-    // TODO  Where does cnst_ZeroString_12 actually live?
-    input_field_idx = Add_Input_Field(x_start, y_start, width, string, max_characters, fill_color, justification, cursor_type, &colors[0], cnst_ZeroString_12, help);
+    input_field_idx = Add_Input_Field(x_start, y_start, width, string, max_characters, fill_color, justification, cursor_type, &colors[0], str_empty_string__seg036, help);
 
     down_mouse_button = input_field_idx;  // ¿ DEDU:  manually set here so it won't trigger in Draw_Field() ?
 

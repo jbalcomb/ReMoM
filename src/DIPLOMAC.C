@@ -15,6 +15,7 @@ MoO2
     Module: DIPLOMAC
 */
 
+#include "City_ovr55.H"
 #include "Combat.H"
 #include "DIPLOMAC.H"
 
@@ -28,6 +29,7 @@ MoO2
 #include "MOX/MOX_T4.H"
 #include "MOX/SOUND.H"
 
+#include "DIPLODEF.H"
 #include "Lair.H"
 #include "LOADER.H"
 #include "MainScr.H"
@@ -44,7 +46,7 @@ void Diplomacy_Screen__WIP(void);
 // WZD o84p02
 static void Diplomacy_Screen_Draw__WIP(void);
 // WZD o84p01
-// sub_6ECD9()
+// IDK_Diplo_Add_Spell_Or_Gold_To_Message()
 // WZD o84p02
 // sub_6ED5D()
 // WZD o84p03
@@ -53,8 +55,8 @@ static void IDK_Diplo_Scrn(void);
 // sub_6EFA5()
 // WZD o84p05
 // sub_6F3E4()
-static void sub_6F51A(int16_t IDK1, int16_t IDK2);
-// sub_6F51A()
+// WZD o84p06
+static void IDK_Diplo_Response(int16_t diplomatic_order, int16_t IDK2);
 // WZD o84p07
 // sub_6F6BB()
 // WZD o84p08
@@ -84,7 +86,7 @@ static void Diplomacy_Screen_Fade_In(void);
 static void IDK_DiplSts_s70570(void);
 // WZD o85p02
 // DIPL_Gravitation()
-// WZD o85p03
+// int16_t IDK_Dipl_PorposeBreakTreaty(void)
 // sub_70A1A()
 // WZD o85p04
 // sub_70AFE()
@@ -93,15 +95,15 @@ static int16_t DIPL_LowestInterest(void);
 // WZD o85p06
 static void Limit_Temporary_Peace_Modifier(void);
 // WZD o85p07
-// WIZ_DIPL_TeachSpell()
+static void WIZ_DIPL_TeachSpell__STUB(int16_t player_idx, int16_t spell_idx);
 // WZD o85p08
 // G_DIPL_PickSides()
 // WZD o85p09
-// DIPL_SignTreaty()
+static void DIPL_SignTreaty__STUB(int16_t player1, int16_t player2, int16_t type);
 // WZD o85p10
-// DIPL_SignPeaceTreaty()
+static void DIPL_SignPeaceTreaty__STUB(int16_t player1, int16_t player2);
 // WZD o85p11
-// DIPL_LeaveMeAlone()
+static void Adjust_Diplomat_Modifiers(int16_t player1, int16_t player2);
 // WZD o85p12
 void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender_idx, int16_t type, int16_t city_idx, int16_t spell_idx);
 // WZD o85p13
@@ -128,7 +130,7 @@ static void IDK_Dipl_s72690(void);
 // WZD o86p04
 // DIPL_sub_72DB6_Draw()
 // WZD o86p05
-static void IDK_DIPLOMSG_s732D9(int16_t IDK, int16_t player_idx);
+static void Get_Diplomacy_Statement(int16_t IDK, int16_t player_idx);
 /*
     WIZARDS.EXE  ovr087
 */
@@ -143,7 +145,7 @@ static void IDK_DIPLOMSG_s732D9(int16_t IDK, int16_t player_idx);
 // WZD o87p05
 // IDK_Dipl_s73F1C()
 // WZD o87p06
-static void IDK_Dipl_s73FBF(void);
+static void Resolve_Delayed_Diplomacy_Orders(void);
 // WZD o87p07
 // DIPL_GetOffMyLawn()
 // WZD o87p08
@@ -374,8 +376,30 @@ int16_t word_42E88;
 // WZD dseg:C3EA
 int16_t m_diplomsg_1_record_sub_number;
 // WZD dseg:C3EC
+/*
+
+¿ ~ "conversational option" ?
+
+
+IDK_DiplSts_s70570()
+    sets 42,43,44
+
+Diplomacy_Screen_Draw__WIP()
+    short-circuits if 54 or 1
+
+*/
 int16_t word_42E8C;
 // WZD dseg:C3EE
+/*
+only two usages
+Diplomacy_Screen_Load__WIP()
+    if not 1, calls Diplomacy_Screen_Fade_In()
+Diplomacy_Screen_Draw__WIP()
+    if 0,1,2, sets font/colors, gets a message, prints the message
+Diplomacy_Screen_Draw__WIP()
+    initialized to 6
+    depending on word_42E8C, reset to 0,2
+*/
 int16_t word_42E8E;
 // WZD dseg:C3F0
 byte_ptr * G_Some_DIPL_Allocs_7;
@@ -532,7 +556,7 @@ void Diplomacy_Screen__WIP(void)
         else if(word_42E8E == 6)
         {
 
-            sub_6F51A(word_42E8C, 3);
+            IDK_Diplo_Response(word_42E8C, 3);
 
             leave_screen = ST_TRUE;
 
@@ -628,7 +652,7 @@ void Diplomacy_Screen_Draw__WIP(void)
 
         Set_Font_LF(1);
 
-        IDK_DIPLOMSG_s732D9(word_42E8C, m_diplomac_player_idx);
+        Get_Diplomacy_Statement(word_42E8C, m_diplomac_player_idx);
 
         Print_Paragraph(38, 140, 245, m_diplomacy_message, 0);
 
@@ -640,10 +664,46 @@ void Diplomacy_Screen_Draw__WIP(void)
 
 
 // WZD o84p01
-// sub_6ECD9()
+// IDK_Diplo_Add_Spell_Or_Gold_To_Message()
 
 // WZD o84p02
-// sub_6ED5D()
+void _sub_6ED5D_Draw(void)
+{
+    int16_t si = 0;  // _SI_
+
+    Set_Page_Off();
+
+    Copy_Back_To_Off();
+
+    IDK_DiplAnim_s6FDA1();
+
+    Diplomacy_Screen_Draw_Gargoyle_Eyes();
+
+    FLIC_Draw(95, 1, diplomacy_mirror_seg);
+
+    Set_Font_Style_Shadow_Down(4, 4, ST_NULL, ST_NULL);
+
+    Set_Outline_Color(ST_TRANSPARENT);
+
+    Set_Alias_Color(187);
+
+    Set_Font_LF(1);
+
+    si = Get_Paragraph_Max_Height(245, m_diplomacy_message);
+
+    if(si > 39)
+    {
+
+        Set_Font_LF(0);
+
+        si = Get_Paragraph_Max_Height(245, m_diplomacy_message);
+
+    }
+
+    Print_Paragraph(38, 140, 245, m_diplomacy_message, 0);
+
+
+}
 
 
 // WZD o84p03
@@ -652,7 +712,6 @@ void Diplomacy_Screen_Draw__WIP(void)
 XREF:
     Diplomacy_Screen__WIP()
     j_IDK_Diplo_Scrn()
-        IDK_Dipl_s72690()
 
 */
 static void IDK_Diplo_Scrn(void)
@@ -670,18 +729,15 @@ static void IDK_Diplo_Scrn(void)
 // sub_6F3E4()
 
 // WZD o84p06
-static void sub_6F51A(int16_t IDK1, int16_t IDK2)
+static void IDK_Diplo_Response(int16_t diplomatic_order, int16_t IDK2)
 {
     int16_t full_screen_field = 0;
     int16_t leave_screen = 0;
-    int16_t si = 0;  // _SI_
     int16_t di = 0;  // _DI_
-
-    si = IDK1;
 
     di = 0;
 
-    if(si == 57)
+    if(diplomatic_order == 57)
     {
 
         di = 1;
@@ -689,9 +745,9 @@ static void sub_6F51A(int16_t IDK1, int16_t IDK2)
     }
 
     if(
-        (si >= 58)
+        (diplomatic_order >= 58)
         &&
-        (si <= 66)
+        (diplomatic_order <= 66)
     )
     {
 
@@ -700,9 +756,9 @@ static void sub_6F51A(int16_t IDK1, int16_t IDK2)
     }
 
     if(
-        (si >= 51)
+        (diplomatic_order >= 51)
         &&
-        (si <= 56)
+        (diplomatic_order <= 56)
     )
     {
 
@@ -710,7 +766,7 @@ static void sub_6F51A(int16_t IDK1, int16_t IDK2)
 
     }
 
-    word_42E8C = si;
+    word_42E8C = diplomatic_order;
 
     if(di != 1)
     {
@@ -782,7 +838,7 @@ static void sub_6F51A(int16_t IDK1, int16_t IDK2)
                 else
                 {
                     
-                    word_42E8C = si;
+                    word_42E8C = diplomatic_order;
 
                 }
 
@@ -802,7 +858,7 @@ static void sub_6F51A(int16_t IDK1, int16_t IDK2)
     else
     {
 
-        word_42E8C = si;
+        word_42E8C = diplomatic_order;
 
     }
 
@@ -812,7 +868,7 @@ static void sub_6F51A(int16_t IDK1, int16_t IDK2)
 
     m_diplomsg_1_record_sub_number = ST_UNDEFINED;
 
-    IDK_DIPLOMSG_s732D9(word_42E8C, m_diplomac_player_idx);
+    Get_Diplomacy_Statement(word_42E8C, m_diplomac_player_idx);
 
     leave_screen = ST_FALSE;
 
@@ -951,11 +1007,11 @@ static void IDK_DiplAnim_s6FDA1(void)
 {
     int16_t var_4 = 0;
     int16_t current_frame_num = 0;
-    int16_t si = 0;
-    int16_t di = 0;
+    int16_t draw_x = 0;
+    int16_t draw_y = 0;
 
-    si = 107;
-    di = 13;
+    draw_x = 107;
+    draw_y = 13;
 
     if(m_diplomacy_message_IDK_group != word_42E7E)
     {
@@ -1024,7 +1080,7 @@ static void IDK_DiplAnim_s6FDA1(void)
                 for(var_4 = 0; var_4 < current_frame_num; var_4++)
                 {
 
-                    FLIC_Draw(si, di, IMG_DIPL_TalkAnim);
+                    FLIC_Draw(draw_x, draw_y, IMG_DIPL_TalkAnim);
 
                 }
 
@@ -1034,7 +1090,7 @@ static void IDK_DiplAnim_s6FDA1(void)
 
                 Set_Animation_Frame(IMG_MOODWIZPortrait, 0);
 
-                FLIC_Draw(si, di, IMG_MOODWIZPortrait);
+                FLIC_Draw(draw_x, draw_y, IMG_MOODWIZPortrait);
 
                 m_diplomacy_message_IDK_group = 3;
 
@@ -1053,7 +1109,7 @@ static void IDK_DiplAnim_s6FDA1(void)
                 for(var_4 = 0; var_4 < current_frame_num; var_4++)
                 {
 
-                    FLIC_Draw(si, di, IMG_DIPL_TalkAnim);
+                    FLIC_Draw(draw_x, draw_y, IMG_DIPL_TalkAnim);
 
                 }
 
@@ -1065,9 +1121,9 @@ static void IDK_DiplAnim_s6FDA1(void)
 
                 Set_Animation_Frame(IMG_MOODWIZPortrait, 0);
 
-                FLIC_Draw(si, di, IMG_MOODWIZPortrait);
+                FLIC_Draw(draw_x, draw_y, IMG_MOODWIZPortrait);
 
-                FLIC_Draw(si, di, IMG_MOODWIZPortrait);
+                FLIC_Draw(draw_x, draw_y, IMG_MOODWIZPortrait);
 
             }
 
@@ -1078,7 +1134,7 @@ static void IDK_DiplAnim_s6FDA1(void)
 
             Set_Animation_Frame(IMG_MOODWIZPortrait, 0);
 
-            FLIC_Draw(si, di, IMG_MOODWIZPortrait);
+            FLIC_Draw(draw_x, draw_y, IMG_MOODWIZPortrait);
 
         } break;
 
@@ -1087,9 +1143,9 @@ static void IDK_DiplAnim_s6FDA1(void)
 
             Set_Animation_Frame(IMG_MOODWIZPortrait, 0);
 
-            FLIC_Draw(si, di, IMG_MOODWIZPortrait);
+            FLIC_Draw(draw_x, draw_y, IMG_MOODWIZPortrait);
 
-            FLIC_Draw(si, di, IMG_MOODWIZPortrait);
+            FLIC_Draw(draw_x, draw_y, IMG_MOODWIZPortrait);
 
         } break;
 
@@ -1114,7 +1170,7 @@ static void IDK_DiplAnim_s6FDA1(void)
 
             Set_Animation_Frame(IMG_MOODWIZPortrait, 0);
 
-            FLIC_Draw(si, di, IMG_MOODWIZPortrait);
+            FLIC_Draw(draw_x, draw_y, IMG_MOODWIZPortrait);
 
         } break;
 
@@ -1412,25 +1468,31 @@ static void Diplomacy_Screen_Fade_In(void)
 */
 
 // WZD o85p01
+/*
+*/
 static void IDK_DiplSts_s70570(void)
 {
-    int16_t var_2 = 0;
-    int16_t si = 0;
+    int16_t lowest_temporary_modifier = 0;
+    int16_t si = 0;  // _SI_
+    int16_t dx = 0;  // _DX_
 
-    var_2 = DIPL_LowestInterest();
+    lowest_temporary_modifier = DIPL_LowestInterest();
 
 // // ; added to chance of forming treaties
 // // ; added to chance of avoiding superiority wars
 // int16_t TBL_AI_PRS_IDK_Mod[6] = { 0, 10, 20, 30, 40, 50 };
-    si = (var_2
+    si = (lowest_temporary_modifier
         + _players[HUMAN_PLAYER_IDX].Dipl.Hidden_Rel[m_diplomac_player_idx]
         + _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]
         + TBL_AI_PRS_IDK_Mod[_players[m_diplomac_player_idx].Personality]);
 
-    if((si - _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]) <= -100)
+    dx = (si - _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]);
+
+    if(dx <= -100)
     {
 
-        if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[m_diplomac_player_idx] >= 3)
+        // ¿ BUGBUG  shoulda been <= -100 || >= DIPL_War ?
+        if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[m_diplomac_player_idx] >= DIPL_War)
         {
 
             // jmp     short $+2
@@ -1470,6 +1532,7 @@ static void IDK_DiplSts_s70570(void)
 
 // WZD o85p03
 // sub_70A1A()
+// int16_t IDK_Dipl_PorposeBreakTreaty(void)
 
 // WZD o85p04
 // sub_70AFE()
@@ -1551,18 +1614,50 @@ static void Limit_Temporary_Peace_Modifier(void)
 
 // WZD o85p07
 // WIZ_DIPL_TeachSpell()
+static void WIZ_DIPL_TeachSpell__STUB(int16_t player_idx, int16_t spell_idx)
+{
+
+
+
+}
+
 
 // WZD o85p08
 // G_DIPL_PickSides()
 
+
 // WZD o85p09
 // DIPL_SignTreaty()
+static void DIPL_SignTreaty__STUB(int16_t player1, int16_t player2, int16_t type)
+{
+
+
+
+}
+
 
 // WZD o85p10
-// DIPL_SignPeaceTreaty()
+static void DIPL_SignPeaceTreaty__STUB(int16_t player1, int16_t player2)
+{
+
+
+
+}
+
 
 // WZD o85p11
-// DIPL_LeaveMeAlone()
+// MoO2  Module: DIPLOMAC  Adjust_Diplomat_Modifiers_()
+static void Adjust_Diplomat_Modifiers(int16_t player1, int16_t player2)
+{
+
+    _players[player1].Dipl.Treaty_Interest[player2] -= 10;
+
+    _players[player1].Dipl.Trade_Interest[player2] -= 10;
+
+    _players[player1].Dipl.Peace_Interest[player2] -= 10;
+
+}
+
 
 // WZD o85p12
 // drake178: G_DIPL_Action()
@@ -1896,12 +1991,12 @@ void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender
 // MoO2  Module: DIPLOMAC  Declare_War_()
 // 1oom  game\game_diplo.c  game_diplo_start_war()
 /*
-
 ; this starts the actual war, after calling the war
 ; prepare function that does things like handle broken treaties
 ; uses at least one unknown variable, and has a
 ; possible parameter passing BUG, needs further study!
-
+*/
+/*
 */
 void Declare_War(int16_t attacker_idx, int16_t defender_idx)
 {
@@ -2107,9 +2202,320 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx)
 */
 
 // WZD o86p01
+/*
+
+XREF:
+    j_IDK_Dipl_s72690()
+        Resolve_Delayed_Diplomacy_Orders
+            Next_Turn_Calc()
+
+*/
 static void IDK_Dipl_s72690(void)
 {
+    int16_t full_screen_field = 0;
+    int16_t input_field_idx = 0;  // _DI_
+    int16_t leave_screen = 0;  // _SI_
+    int16_t var_4 = 0;
 
+    Limit_Temporary_Peace_Modifier();
+
+    m_diplomacy_current_music = ST_UNDEFINED;
+
+    word_42E7E = ST_UNDEFINED;
+
+    m_diplomacy_message_IDK_group = 0;
+
+    Apply_Palette();
+
+    leave_screen = ST_FALSE;
+
+    Assign_Auto_Function(Diplomacy_Screen_Draw__WIP, 3);
+
+    Set_Input_Delay(1);
+
+    Clear_Fields();
+
+    word_42E8E = 6;
+
+    word_42E8C = _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[m_diplomac_player_idx];
+
+    _page_flip_effect = pfe_None;
+
+    if(
+        (word_42E8C == 54)
+        ||
+        (word_42E8C == 1)
+    )
+    {
+
+        return;
+
+    }
+
+    if(word_42E8C == 0)
+    {
+
+        word_42E8E = 0;
+
+        IDK_DiplSts_s70570();
+
+    }
+
+    Diplomacy_Screen_Load__WIP();
+
+    m_diplomsg_1_record_sub_number = ST_UNDEFINED;
+
+    if(
+        (
+            (word_42E8C >= 45)
+            &&
+            /* Diplomacy_Screen__WIP() (word_42E8C <= 49) */
+            (word_42E8C <= 50)
+        )
+        ||
+        (word_42E8C == 2)
+        ||
+        (word_42E8C == 47)
+    )
+    {
+
+        word_42E88 = word_42E8C;
+
+        word_42E8C = 42;
+
+        word_42E8E = 2;
+
+        word_42E86 = _players[HUMAN_PLAYER_IDX].Dipl.field_102[m_diplomac_player_idx];
+
+    }
+
+    full_screen_field = INVALID_FIELD;
+
+    while(leave_screen == ST_FALSE)
+    {
+
+        Mark_Time();
+
+        input_field_idx = Get_Input();
+
+        if(word_42E8E == 0)
+        {
+
+            if(input_field_idx == ST_UNDEFINED)
+            {
+
+                leave_screen = ST_TRUE;
+
+            }
+
+            if(input_field_idx == full_screen_field)
+            {
+
+                IDK_Diplo_Scrn();
+
+                leave_screen = ST_TRUE;
+
+            }
+
+        }
+        /* Diplomacy_Screen__WIP()  else if(word_42E8E == 1) */
+        else if(word_42E8E == 2)
+        {
+
+            if(
+                (input_field_idx == ST_UNDEFINED)
+                ||
+                (input_field_idx == full_screen_field)
+            )
+            {
+
+                var_4 = IDK_Dipl_PorposeBreakTreaty();
+
+                if(var_4 != 0)
+                {
+
+                    word_42E8C = word_42E88;
+
+                    m_diplomsg_1_record_sub_number = ST_UNDEFINED;
+
+                    input_field_idx = DIPL_sub_72DB6();
+
+                    if(input_field_idx != 0)
+                    {
+
+                        if(word_42E8C == 47)
+                        {
+
+                            Break_Treaties(m_diplomac_player_idx, HUMAN_PLAYER_IDX);
+
+                        }
+
+                    }
+                    else
+                    {
+
+                        if(word_42E8C == 45)
+                        {
+
+                            DIPL_SignTreaty__STUB(HUMAN_PLAYER_IDX, m_diplomac_player_idx, 1);
+
+                        }
+
+                        if(word_42E8C == 46)
+                        {
+
+                            DIPL_SignTreaty__STUB(HUMAN_PLAYER_IDX, m_diplomac_player_idx, 2);
+
+                        }
+
+                        if(word_42E8C == 49)
+                        {
+
+                            DIPL_SignPeaceTreaty__STUB(HUMAN_PLAYER_IDX, m_diplomac_player_idx);
+
+                            if(_players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] < 80)
+                            {
+
+                                _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] += 20;
+
+                            }
+
+                            // ¿ BUGBUG  should be setting them equivalent, not to a player's relations with itself ?
+                            _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] = _players[m_diplomac_player_idx].Dipl.Visible_Rel[m_diplomac_player_idx];
+
+                            Adjust_Diplomat_Modifiers(HUMAN_PLAYER_IDX, m_diplomac_player_idx);
+
+                            Adjust_Diplomat_Modifiers(m_diplomac_player_idx, HUMAN_PLAYER_IDX);
+
+                        }
+
+                        if(word_42E8C == 47)
+                        {
+
+                            Declare_War(HUMAN_PLAYER_IDX, word_42E86);
+
+                        }
+
+                        if(
+                            (word_42E8C == 45)
+                            ||
+                            (word_42E8C == 46)
+                            ||
+                            (word_42E8C == 49)
+                        )
+                        {
+
+                            Player_Add_Gold(_human_player_idx, _players[HUMAN_PLAYER_IDX].Dipl.Tribute_Gold[m_diplomac_player_idx]);
+
+                            if(_players[HUMAN_PLAYER_IDX].Dipl.Tribute_Spell[m_diplomac_player_idx] != spl_NONE)
+                            {
+
+                                WIZ_DIPL_TeachSpell__STUB(HUMAN_PLAYER_IDX, _players[HUMAN_PLAYER_IDX].Dipl.Tribute_Spell[m_diplomac_player_idx]);
+
+                            }
+
+                        }
+
+                    }
+
+                    if(
+                        (input_field_idx > ST_UNDEFINED)
+                        &&
+                        (word_42E8C == 48)
+                    )
+                    {
+
+                        WIZ_DIPL_TeachSpell__STUB(HUMAN_PLAYER_IDX, _players[HUMAN_PLAYER_IDX].Dipl.field_A8[((m_diplomac_player_idx * 12) + input_field_idx)]);
+
+                    }
+
+                }
+
+                Adjust_Diplomat_Modifiers(HUMAN_PLAYER_IDX, m_diplomac_player_idx);
+
+                if(
+                    (word_42E8C == 45)
+                    ||
+                    (word_42E8C == 46)
+                )
+                {
+
+                    _players[HUMAN_PLAYER_IDX].Dipl.Treaty_Interest[m_diplomac_player_idx] -= (20 + Random(30));
+
+                }
+
+                if(word_42E8C == 49)
+                {
+
+                    _players[HUMAN_PLAYER_IDX].Dipl.Peace_Interest[m_diplomac_player_idx] -= (50 + Random(50));
+
+                }
+
+                if(word_42E8C == 48)
+                {
+
+                    _players[HUMAN_PLAYER_IDX].Dipl.Trade_Interest[m_diplomac_player_idx] -= (20 + Random(30));
+
+                }
+
+                leave_screen = ST_TRUE;
+
+            }
+
+        }
+        else if(word_42E8E == 6)
+        {
+
+            IDK_Diplo_Response(word_42E8C, 3);
+
+            leave_screen = ST_TRUE;
+
+        }
+
+        Clear_Fields();
+
+        full_screen_field = INVALID_FIELD;
+
+        if(
+            (word_42E8E == 0)
+            ||
+            (word_42E8E == 1)
+            ||
+            (word_42E8E == 2)
+        )
+        {
+
+            full_screen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_empty_string__ovr086[0], ST_UNDEFINED);
+
+        }
+
+        if(leave_screen == ST_FALSE)
+        {
+
+            Diplomacy_Screen_Draw__WIP();
+
+            PageFlip_FX();
+
+            Release_Time(3);
+
+        }
+
+    }
+
+    Stop_All_Sounds__STUB();
+
+    Deactivate_Auto_Function();
+
+    Clear_Fields();
+
+    current_screen = scr_Magic_Screen;
+
+    Combat_Cache_Read();
+
+    Cache_Graphics_Overland();
+
+    // DOMSDOS  Play_Background_Music__STUB();
+    sdl2_Play_Background_Music__WIP();
 
 
 }
@@ -2131,7 +2537,7 @@ static void IDK_Dipl_s72690(void)
 ...loads DIPLOMSG data and message...
 
 */
-void IDK_DIPLOMSG_s732D9(int16_t diplomsg_0_record_number, int16_t player_idx)
+void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_idx)
 {
     char string[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t diplomsg_1_record_number = 0;
@@ -2535,7 +2941,11 @@ void IDK_DIPLOMSG_s732D9(int16_t diplomsg_0_record_number, int16_t player_idx)
 // IDK_Dipl_s73F1C()
 
 // WZD o87p06
-static void IDK_Dipl_s73FBF(void)
+// MoO2  Module: DIP-SCRN  Resolve_Delayed_Diplomacy_Orders_()
+/*
+OON XREF:  Next_Turn_Calc()
+*/
+static void Resolve_Delayed_Diplomacy_Orders(void)
 {
     int16_t itr = 0;  // _SI_
     
@@ -2554,7 +2964,7 @@ static void IDK_Dipl_s73FBF(void)
 
             }
 
-            _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[itr] = 0;
+            _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[itr] = do_None;
 
         }
 

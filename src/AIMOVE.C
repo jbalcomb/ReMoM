@@ -28,6 +28,7 @@
 #include "UNITTYPE.H"
 #include "UnitMove.H"
 #include "special.H"
+#include "DIPLODEF.H"
 
 
 
