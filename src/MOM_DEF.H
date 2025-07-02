@@ -109,6 +109,7 @@ ITEM_MAX_POWERS
 #define MAX_STACK                   9
 #define NUM_SPELLS                      240  // 6 reals, 40 spells each
 #define NUM_SPELLS_PER_MAGIC_REALM       40
+#define NUM_SPELLS_PER_MAGIC_RARITY      10
 #define NUM_RESEARCH_SPELLS               8
 #define NUM_SPELLS_PER_PAGE_BIG           4
 #define NUM_SPELLS_PER_PAGE_SML           6

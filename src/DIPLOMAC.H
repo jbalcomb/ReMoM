@@ -59,7 +59,7 @@ void Diplomacy_Screen__WIP(void);
 // static void IDK_Diplo_Scrn(void);
 
 // WZD o84p04
-// sub_6EFA5()
+// static void Diplomacy_Propose_Treaty__STUB(void);
 
 // WZD o84p05
 // sub_6F3E4()
@@ -74,7 +74,7 @@ void Diplomacy_Screen__WIP(void);
 // static void _sub_6F90E_Draw(void);
 
 // WZD o84p09
-// sub_6F982()
+// static void Diplomacy_Break_Treaty__STUB(void);
 
 // WZD o84p10
 // static void IDK_Diplomacy_Background_Music__STUB(int16_t IDK);
@@ -107,7 +107,7 @@ void Diplomacy_Screen__WIP(void);
 */
 
 // WZD o85p01
-static void IDK_DiplSts_s70570(void);
+static void Diplomacy_Greeting(void);
 
 // WZD o85p02
 // DIPL_Gravitation()
@@ -149,13 +149,13 @@ void Declare_War(int16_t attacker_idx, int16_t defender_idx);
 void Break_Treaties(int16_t attacker_idx, int16_t defender_idx);
 
 // WZD o85p15
-// DIPL_TribSpellList()
+// static int16_t Get_Exchange_Spell_List(int16_t player1, int16_t player2, int16_t min_value);
 
 // WZD o85p16
-// sub_71B90()
+// static void Diplomacy_Offer_Tribute__STUB(void)
 
 // WZD o85p17
-// sub_72131()
+// static void Diplomacy_Exchange_Spell__STUB(void);
 
 // WZD o85p18
 // DIPL_DropCityCurses()
@@ -167,13 +167,13 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx);
 */
 
 // WZD o86p01
-// static void IDK_Dipl_s72690(void);
+// static void Npc_Diplomacy_Screen(void);
 
 // WZD o86p02
 // DIPL_AI_To_AI()
 
 // WZD o86p03
-// DIPL_sub_72DB6()
+// static int16_t DIPL_sub_72DB6(void);
 
 // WZD o86p04
 // DIPL_sub_72DB6_Draw()
@@ -203,7 +203,7 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx);
 // IDK_Dipl_s73F1C()
 
 // WZD o87p06
-// static void Resolve_Delayed_Diplomacy_Orders(void);
+void Resolve_Delayed_Diplomacy_Orders(void);
 
 // WZD o87p07
 // DIPL_GetOffMyLawn()

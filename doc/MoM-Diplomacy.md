@@ -26,7 +26,7 @@ DIPLOMSG record
     G_DiploMsg_E0_Field0    {0,1,2}
     G_DiploMsg_E0_Field2    {0,1,2,3,4,5}
     G_DiploMsg_E0_Field4    {0,1,2,3,4,5,6,7,8,9,10,12,15}  no 11, 13, 14
-set by LBX_Load_Data_Static(), in IDK_DIPLOMSG_s732D9()
+set by LBX_Load_Data_Static(), in Get_Diplomacy_Statement()
     and passed to IDK_Diplomacy_Background_Music__STUB(m_diplomacy_message_record_data.IDK_mood)
 ¿ good, bad, neutral ? message type/mood
 tested against word_42E74, updates if different
@@ -44,7 +44,7 @@ else
 
 ## m_diplomsg_1_record_sub_number
 
-IDK_DIPLOMSG_s732D9()
+Get_Diplomacy_Statement()
     if(_num_players == 2)
         m_diplomsg_1_record_sub_number = (Random(m_diplomacy_message_record_data.IDK_count) - 2);
     else
@@ -58,18 +58,18 @@ XREF:
     IDK_Dipl_s72690+8B            mov     [m_diplomsg_1_record_sub_number], e_ST_UNDEFINED        
     IDK_Dipl_s72690+11D           mov     [m_diplomsg_1_record_sub_number], e_ST_UNDEFINED        
     DIPL_AI_To_AI+263             mov     dx, [m_diplomsg_1_record_sub_number]            
-    IDK_DIPLOMSG_s732D9+18        cmp     [m_diplomsg_1_record_sub_number], e_ST_UNDEFINED
-    IDK_DIPLOMSG_s732D9:loc_7333A mov     [m_diplomsg_1_record_sub_number], ax            
-    IDK_DIPLOMSG_s732D9+64        cmp     [m_diplomsg_1_record_sub_number], 0             
-    IDK_DIPLOMSG_s732D9+6B        mov     [m_diplomsg_1_record_sub_number], 0             
-    IDK_DIPLOMSG_s732D9+81        mov     dx, [m_diplomsg_1_record_sub_number]            
+    Get_Diplomacy_Statement+18        cmp     [m_diplomsg_1_record_sub_number], e_ST_UNDEFINED
+    Get_Diplomacy_Statement:loc_7333A mov     [m_diplomsg_1_record_sub_number], ax            
+    Get_Diplomacy_Statement+64        cmp     [m_diplomsg_1_record_sub_number], 0             
+    Get_Diplomacy_Statement+6B        mov     [m_diplomsg_1_record_sub_number], 0             
+    Get_Diplomacy_Statement+81        mov     dx, [m_diplomsg_1_record_sub_number]            
 
 
 
 ## G_DIPL_ComposedMessage
 G_DIPL_TempMessage
 
-IDK_DIPLOMSG_s732D9()
+Get_Diplomacy_Statement()
 ...load
 DIPL_LoadTalkGFX()
 ...allocate
@@ -78,11 +78,11 @@ DIPL_LoadTalkGFX()
 
 XREF:
     DIPL_LoadTalkGFX+48           mov     [G_DIPL_ComposedMessage], ax
-    IDK_DIPLOMSG_s732D9+88        push    [G_DIPL_ComposedMessage]    
-    IDK_DIPLOMSG_s732D9:loc_7337D mov     bx, [G_DIPL_ComposedMessage]
-    IDK_DIPLOMSG_s732D9+373       mov     bx, [G_DIPL_ComposedMessage]
-    IDK_DIPLOMSG_s732D9+38F       push    [G_DIPL_ComposedMessage]    
-    IDK_DIPLOMSG_s732D9:loc_73685 push    [G_DIPL_ComposedMessage]    
+    Get_Diplomacy_Statement+88        push    [G_DIPL_ComposedMessage]    
+    Get_Diplomacy_Statement:loc_7337D mov     bx, [G_DIPL_ComposedMessage]
+    Get_Diplomacy_Statement+373       mov     bx, [G_DIPL_ComposedMessage]
+    Get_Diplomacy_Statement+38F       push    [G_DIPL_ComposedMessage]    
+    Get_Diplomacy_Statement:loc_73685 push    [G_DIPL_ComposedMessage]    
 
 ## G_DIPL_TempMessage
 
@@ -120,38 +120,38 @@ XREF:
     DIPL_sub_72DB6+3B9             push    [G_DIPL_TempMessage]
     DIPL_sub_72DB6_Draw+5A         push    [G_DIPL_TempMessage]
     DIPL_sub_72DB6_Draw+7E         push    [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9+AD         mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9+B5         mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_00 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:loc_733B9  push    [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:loc_733C4  push    [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_01 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_02 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9+134        mov     ax, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9+161        mov     ax, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_05 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_07 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_08 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_09 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_10 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9+208        push    [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_11 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9+22D        push    [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9+24A        push    [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_12 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_13 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_14 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_15 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9+2C4        push    [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9+2E1        push    [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_16 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_17 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_18 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_19 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:sw_cmsg_20 mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9:loc_7365B  mov     bx, [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9+38B        push    [G_DIPL_TempMessage]
-    IDK_DIPLOMSG_s732D9+3B0        push    [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement+AD         mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement+B5         mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_00 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:loc_733B9  push    [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:loc_733C4  push    [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_01 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_02 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement+134        mov     ax, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement+161        mov     ax, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_05 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_07 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_08 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_09 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_10 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement+208        push    [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_11 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement+22D        push    [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement+24A        push    [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_12 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_13 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_14 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_15 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement+2C4        push    [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement+2E1        push    [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_16 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_17 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_18 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_19 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:sw_cmsg_20 mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement:loc_7365B  mov     bx, [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement+38B        push    [G_DIPL_TempMessage]
+    Get_Diplomacy_Statement+3B0        push    [G_DIPL_TempMessage]
 
 
 

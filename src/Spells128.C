@@ -4,6 +4,7 @@
 */
 
 #include "CITYCALC.H"
+#include "MOM_DEF.H"
 #include "MOX/Util.H"
 #include "Spells128.H"
 
@@ -363,10 +364,210 @@ int16_t WIZ_RollSpellReward(int16_t player_idx, int16_t rarity)
 }
 
 // WZD o128p04
-// WIZ_GetSpellValue()
+// MoO2  Module: NEWTECH  Calc_Tech_Value_() |-> Get_Competition_Player_Tech_Value_()
+/*
+; returns -1 if the spell can't be learned based on the
+; wizard's spellbooks; 0 if it's already known; its
+; research cost if its knowable; 90% of that if it's
+; already researchable; or 150% of it is not knowable,
+; but learnable
+*/
+/*
+player_idx is listen_player
+
+*/
+int16_t Calc_Spell_Value(int16_t player_idx, int16_t spell_idx)
+{
+    int16_t spell_realm_idx = 0;
+    int16_t spell_value = 0;  // _SI_
+    int16_t magic_realm = 0;  // _CX_
+
+    spell_value = spell_data_table[spell_idx].research_cost;
+
+    magic_realm = spell_data_table[spell_idx].magic_realm;
+
+    spell_realm_idx = ((spell_idx - 1) / NUM_SPELLS_PER_MAGIC_REALM);  // ¿ thinks it's getting spell_num, rather than spell_idx ?
+
+    if(
+        (
+            (magic_realm != sbr_Arcane)
+            &&
+            (_players[player_idx].spellranks[magic_realm] == 0)
+        )
+        ||
+        (
+            (magic_realm != sbr_Arcane)
+            &&
+            (_players[player_idx].spellranks[magic_realm] == 1)
+            &&
+            (spell_realm_idx >= (2 * NUM_SPELLS_PER_MAGIC_RARITY))
+        )
+        ||
+        (
+            (magic_realm != sbr_Arcane)
+            &&
+            (_players[player_idx].spellranks[magic_realm] == 2)
+            &&
+            (spell_realm_idx >= (3 * NUM_SPELLS_PER_MAGIC_RARITY))
+        )
+    )
+    {
+
+        spell_value = ST_UNDEFINED;
+
+    }
+    else
+    {
+
+        if(_players[player_idx].spells_list[((magic_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx)] == sls_Known)
+        {
+
+            spell_value = 0;
+
+        }
+        else
+        {
+
+            if(_players[player_idx].spells_list[((magic_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx)] == sls_Researchable)
+            {
+
+                spell_value -= (spell_value / 10);  // - 10%
+
+            }
+
+            if(_players[player_idx].spells_list[((magic_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx)] == sls_Unknown)
+            {
+
+                spell_value += (spell_value / 2);  // + 50%
+
+            }
+
+        }
+
+    }
+
+    return spell_value;
+
+}
+
 
 // WZD o128p05
-// WIZ_SpellTradeList()
+// MoO2  Module: NPCDIPLO  Get_Exchange_Tech_List_();  Get_Differential_Tech_List_();
+int16_t Get_Differential_Spell_List(int16_t player1, int16_t player2, int16_t min_value, int16_t spell_list[])
+{
+    /* ¿ BUGBUG  6 * 10 ? */
+    uint8_t candidate_list[60] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t candidate_idx = 0;
+    int16_t spell_realm_idx = 0;
+    int16_t spell_idx = 0;
+    int16_t spell_count = 0;
+    int16_t spell_value = 0;
+    int16_t itr = 0;
+    int16_t magic_realm = 0;  // _SI_
+    int16_t candidate_count = 0;  // _DI_
+
+    for(itr = 0; itr < 10; itr++)
+    {
+
+        spell_list[itr] = 0;
+
+    }
+
+// create a list of spells that are in a realm that both
+// wizards have at least one book of, and are known by
+// the second wizard but not the first
+// 
+// BUG: if there are more than 60 possible spells,
+// wrong ones may be awarded, and if there are more than
+// 74, the game will crash if the 74th has an index of
+// 128 or more
+
+    candidate_count = 0;
+
+    for(itr = spl_Earth_To_Mud; itr < spl_Spell_Of_Return; itr++)
+    {
+
+        magic_realm = spell_data_table[itr].magic_realm;
+
+        spell_realm_idx = ((itr - 1) / NUM_SPELLS_PER_MAGIC_REALM);  // ¿ thinks it's getting spell_num, rather than spell_idx ?
+
+        if(
+            (
+                (magic_realm != sbr_Arcane)
+                &&
+                (_players[player1].spellranks[magic_realm] == 0)
+            )
+        )
+        {
+
+            itr += 39;
+
+        }
+        else
+        {
+
+            if(
+                (_players[player2].spells_list[((magic_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx)] == sls_Known)
+                &&
+                (_players[player1].spells_list[((magic_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx)] != sls_Known)
+            )
+            {
+
+                candidate_list[candidate_count] = itr;
+
+                candidate_count++;
+
+            }
+
+        }
+
+    }
+
+    spell_count = 0;
+
+    if(candidate_count > 0)
+    {
+
+        for(itr = 0; ((itr < 100) && (spell_count < 10)); itr++)
+        {
+
+            candidate_idx = (Random(candidate_count) - 1);
+
+            spell_idx = candidate_idx[candidate_list];
+
+            candidate_list[candidate_idx] = 0;
+            
+            if(spell_idx != 0)
+            {
+
+                spell_value = Calc_Spell_Value(player1, spell_idx);
+
+                if(spell_value >= min_value)
+                {
+
+                    // BUGBUG  dead code  ...or, should get spell_num, not use spell_idx?
+                    magic_realm = spell_data_table[spell_idx].magic_realm;
+
+                    spell_realm_idx = ((spell_idx - 1) / NUM_SPELLS_PER_MAGIC_REALM);  // ¿ thinks it's getting spell_num, rather than spell_idx ?
+
+                    spell_list[spell_count] = spell_idx;
+
+                    spell_count++;
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+
+
+    return spell_count;
+
+}
 
 // WZD o128p06
 // drake178: sub_AC19E()

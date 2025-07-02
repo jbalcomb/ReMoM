@@ -1,6 +1,8 @@
 
 
 IDK_DIPLOMSG_s732D9()  ==>  Get_Diplomacy_Statement()
+IDK_Dipl_s72690()  ==>  Npc_Diplomacy_Screen()
+
 
 
 MOM_SCR.C
@@ -20,6 +22,29 @@ BEGIN:  Left-Click Gem
                 m_diplomac_player_idx = gem_player_nums[itr];
                 current_screen = scr_Diplomacy_Screen;
                 leave_screen_flag = 2;
+
+
+void Diplomacy_Screen_Draw__WIP(void)
+    if(m_IDK_diplomatic_flag != 1)  /* refuse audience/negative greeting */
+        Diplomacy_Screen_Draw_Portrait_Mouth_Animation();
+
+Diplomacy_Screen_Draw_Portrait_Mouth_Animation()
+
+
+
+
+Diplomacy_Screen__WIP()
+    Limit_Temporary_Peace_Modifier();
+    m_diplomacy_current_music = ST_UNDEFINED;
+    word_42E7E = ST_UNDEFINED;
+    m_diplomacy_message_IDK_group = 0;
+    m_IDK_diplomatic_flag = 6;
+    m_IDK_diplomatic_order = _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[m_diplomac_player_idx];
+    Diplomacy_Greeting();
+    Diplomacy_Screen_Load__WIP();
+
+
+
 
 
 
@@ -80,16 +105,16 @@ Diplomacy_Screen__WIP()
     m_diplomacy_current_music = ST_UNDEFINED;
     word_42E7E = ST_UNDEFINED;
     m_diplomacy_message_IDK_group = 0;
-    word_42E8E = 6;
-    word_42E8C = _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[m_diplomac_player_idx];
-    if((word_42E8C == 54) || (word_42E8C == 1))
+    m_IDK_diplomatic_flag = 6;
+    m_IDK_diplomatic_order = _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[m_diplomac_player_idx];
+    if((m_IDK_diplomatic_order == 54) || (m_IDK_diplomatic_order == 1))
         return;
-    if(word_42E8C == 0)
-        word_42E8E = 0;
+    if(m_IDK_diplomatic_order == 0)
+        m_IDK_diplomatic_flag = 0;
         IDK_DiplSts_s70570();
-            ...sets word_42E8E and word_42E8C
-                word_42E8E = 0;  word_42E8C = {42,43};
-                word_42E8E = 1;  word_42E8C = 44;
+            ...sets m_IDK_diplomatic_flag and m_IDK_diplomatic_order
+                m_IDK_diplomatic_flag = 0;  m_IDK_diplomatic_order = {42,43};
+                m_IDK_diplomatic_flag = 1;  m_IDK_diplomatic_order = 44;
 
 
 

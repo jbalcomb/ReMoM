@@ -42,8 +42,38 @@ cleared/reset to 0
 
 enum e_DIPLOMATIC_ORDERS
 {
-    do_None = 0
+    do_None = 0,
 
+    do_IDK_greeting_positive  = 42,
+    do_IDK_greeting_neutral   = 43,
+    do_IDK_greeting_negative  = 44, /* set in IDK_DiplSts_s70570(), if 'core recation' <= -100 or 'War' */
+
+    do_IDK_treaty1   = 45,
+    do_IDK_treaty2   = 46,
+    do_IDK_war       = 47,
+    do_IDK_exchange  = 48,
+    do_IDK_peace     = 49,
+
+    // 51
+    // 52
+    // 53
+    // 54
+    // 55
+    // 56
+
+    // 57
+
+    // 58
+    // 59
+    // 60
+    // 61
+    // 62
+    // 63
+    // 64
+    // 65
+    // 66
+    
+    do_IDK_exchange_spell_goodbye = 71  /* Find_Worst_Modifier() < -100 */
 
 };
 
@@ -114,6 +144,15 @@ enum e_DIPLOMATIC_ACTION
     /* peace offer?                                */
     /* unit near city, in pact/alliance            */
 };
+
+
+
+#define DIPLO_MAIN_LIST_COUNT 6
+#define DIPLO_PROPOSE_TREATY_LIST_COUNT 6
+#define DIPLO_BREAK_TREATY_LIST_COUNT 4
+#define DIPLO_TRIBUTE_LIST_COUNT 6
+#define DIPLO_TRIBUTE_SPELL_LIST_COUNT 6
+#define DIPLO_EXCHANGE_LIST_COUNT 6
 
 
 

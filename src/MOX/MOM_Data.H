@@ -1104,27 +1104,24 @@ struct s_WIZ_DIPL
     /* 0000 */ int8_t Contacted[NUM_PLAYERS];  /* ¿ BOOLVEC_DECLARE(contact, PLAYER_NUM); ? */
     /* 0006 */ int16_t Treaty_Interest[NUM_PLAYERS];
     /* 0012 */ int16_t Peace_Interest[NUM_PLAYERS];
-    /* 001E */ int16_t Trade_Interest[NUM_PLAYERS];
-    /* 002A */ int8_t Visible_Rel[NUM_PLAYERS];  /* 1-byte, signed;  ¿ -100 to 120 ?  1oom: relation1 */
+    /* 001E */ int16_t temporary_exchange_modifier[NUM_PLAYERS];  // drake178: Trade_Interest
+    /* 002A */ int8_t Visible_Rel[NUM_PLAYERS];  /* 1-byte, signed; "'Diplomatic Relations Scale' position"  ¿ -100 to 120 ?  1oom: relation1 */
     /* 0030 */ int8_t Dipl_Status[NUM_PLAYERS];  /* 1-byte, signed;  1oom: treaty;  enum DIPL_Status { DIPL_NoTreaty, DIPL_WizardPact, DIPL_Alliance, DIPL_War, DIPL_Crusade } */
     /* 0036 */ int16_t DA_Strength[NUM_PLAYERS];
-    /* 0042 */ int8_t Dipl_Action[NUM_PLAYERS];     /*  */
+    /* 0042 */ int8_t Dipl_Action[NUM_PLAYERS];     /* option/order/action  MoO2  "Diplomacy Orders" */
     /* 0048 */ int16_t DA_Spell[NUM_PLAYERS];
     /* 0054 */ int8_t DA_City[NUM_PLAYERS];
-    /* 005A */ int8_t Default_Rel[NUM_PLAYERS];  /* 1oom: relation2 */
-    /* 0060 */ int8_t Contact_Progress[NUM_PLAYERS];  /* ¿ 1oom have_met[] {0,1,2} ? */
-    /* 0066 */ int8_t Broken_Treaty[NUM_PLAYERS];  /* 1oom: broken_treaty */
+    /* 005A */ int8_t Default_Rel[NUM_PLAYERS];         /* 1oom: relation2 */
+    /* 0060 */ int8_t Contact_Progress[NUM_PLAYERS];    /* ¿ 1oom have_met[] {0,1,2} ? */
+    /* 0066 */ int8_t Broken_Treaty[NUM_PLAYERS];       /* 1oom: broken_treaty */
     // /* 006C */ int16_t Unknown_194h[NUM_PLAYERS];
-    /* 006C */ int16_t IDK_MoO1_attack_bounty[NUM_PLAYERS];
-    /* 0078 */ int8_t Hidden_Rel[NUM_PLAYERS];  /* 1oom:  trust */
+    /* 006C */ int16_t field_6C[NUM_PLAYERS];           /* 1oom:  attack_bounty */
+    /* 0078 */ int8_t Hidden_Rel[NUM_PLAYERS];          /* 1oom:  trust */
     /* 007E */ int8_t field_7E[NUM_PLAYERS];
     /* 0084 */ int8_t field_84[NUM_PLAYERS];
     /* 008A */ int8_t field_8A[NUM_PLAYERS];
     /* 0090 */ int8_t field_90[NUM_PLAYERS];
     /* 0096 */ int8_t Tribute_Spell[NUM_PLAYERS];
-    // /* 009C */ int8_t Unknown_1C4h[90];
-    // 0000009C UU_MoO1_field_9C dw 42 dup(?)           ; UU never checked, set in Modifier_Diplomacy_Adjustments()
-    // 000000F0 UU_MoO1_field_F0 db 6 dup(?)            ; UU never checked, set in Modifier_Diplomacy_Adjustments()
     /* 009C */ uint8_t field_9C[NUM_PLAYERS];
     /* 00A2 */ uint8_t field_A2[NUM_PLAYERS];
     /* 00A8 */ uint8_t field_A8[(NUM_PLAYERS * 6 * 2)]; /* spell_idx? for exchange and tribute? definitely something sizeof(12) * player_idx */

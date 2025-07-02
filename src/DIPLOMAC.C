@@ -36,6 +36,7 @@ MoO2
 #include "MOM_SCR.H"
 #include "STU/STU_DBG.H"
 #include "Spellbook.H"
+#include "Spells128.H"
 #include "UNITTYPE.H"
 
 /*
@@ -50,23 +51,23 @@ static void Diplomacy_Screen_Draw__WIP(void);
 // WZD o84p02
 // sub_6ED5D()
 // WZD o84p03
-static void IDK_Diplo_Scrn(void);
+static void Get_Main_Diplomacy_Choices(void);
 // WZD o84p04
-// sub_6EFA5()
+static void Diplomacy_Propose_Treaty__STUB(void);
 // WZD o84p05
 // sub_6F3E4()
 // WZD o84p06
-static void IDK_Diplo_Response(int16_t diplomatic_order, int16_t IDK2);
+static void Diplomacy_Display_Response(int16_t diplomatic_order, int16_t IDK2);
 // WZD o84p07
 // sub_6F6BB()
 // WZD o84p08
-static void _sub_6F90E_Draw(void);
+static void Diplomacy_Display_Response_Draw(void);
 // WZD o84p09
-// sub_6F982()
+static void Diplomacy_Break_Treaty__STUB(void);
 // WZD o84p10
 static void IDK_Diplomacy_Background_Music__STUB(int16_t IDK);
 // WZD o84p11
-static void IDK_DiplAnim_s6FDA1(void);
+static void Diplomacy_Screen_Draw_Portrait_Mouth_Animation(void);
 // WZD o84p12
 static void Diplomacy_Screen_Load__WIP(void);
 // WZD o84p13
@@ -83,7 +84,7 @@ static void Diplomacy_Screen_Fade_In(void);
     WIZARDS.EXE  ovr085
 */
 // WZD o85p01
-static void IDK_DiplSts_s70570(void);
+static void Diplomacy_Greeting(void);
 // WZD o85p02
 // DIPL_Gravitation()
 // int16_t IDK_Dipl_PorposeBreakTreaty(void)
@@ -91,7 +92,7 @@ static void IDK_DiplSts_s70570(void);
 // WZD o85p04
 // sub_70AFE()
 // WZD o85p05
-static int16_t DIPL_LowestInterest(void);
+static int16_t Find_Worst_Modifier(void);
 // WZD o85p06
 static void Limit_Temporary_Peace_Modifier(void);
 // WZD o85p07
@@ -111,21 +112,22 @@ void Declare_War(int16_t attacker_idx, int16_t defender_idx);
 // WZD o85p14
 void Break_Treaties(int16_t attacker_idx, int16_t defender_idx);
 // WZD o85p15
-// DIPL_TribSpellList()
+static int16_t Get_Exchange_Spell_List(int16_t player1, int16_t player2, int16_t min_value);
 // WZD o85p16
-// sub_71B90()
+static void Diplomacy_Offer_Tribute__STUB(void);
 // WZD o85p17
-// sub_72131()
+static void Diplomacy_Exchange_Spell__STUB(void);
 // WZD o85p18
 // DIPL_DropCityCurses()
 /*
     WIZARDS.EXE  ovr086
 */
 // WZD o86p01
-static void IDK_Dipl_s72690(void);
+static void Npc_Diplomacy_Screen(void);
 // WZD o86p02
 // DIPL_AI_To_AI()
 // WZD o86p03
+static int16_t DIPL_sub_72DB6(void);
 // DIPL_sub_72DB6()
 // WZD o86p04
 // DIPL_sub_72DB6_Draw()
@@ -172,13 +174,12 @@ void Decrease_Peace_Duration(void);
 // WZD dseg:4C44
 int16_t AI_Dipl_Unset_0;
 
-// WZD dseg:4C46 00 00                                           word_3B6E6 dw 0                         ; DATA XREF: sub_6EFA5:loc_6F018w ...
-// WZD dseg:4C48 A6 4C B7 4C CF 4C DF 4C F1 4C B6 4C B6 4C FC 4C+off_3B6E8 dw offset aProposeTreaty, offset aThreatenBreakT, offset aOfferTribute, offset aExchangeSpells, offset aGoodBye, offset cnst_ZeroString_4, offset cnst_ZeroString_4, offset aWizardPact, offset aAlliance, offset aPeaceTreaty, offset aDeclarationOfW, offset aBreakAllianceW ; "[ Propose Treaty"
-// WZD dseg:4C48 0A 4D 15 4D 24 4D 4B 4D 70 4D B6 4C 7C 4D 90 4D+dw offset aForgetIt, offset cnst_ZeroString_4, offset aBreakWizardPac, offset aBreakAlliance, offset aThreatenToAtta, offset aForgetIt, offset cnst_ZeroString_4
-// WZD dseg:4C6E 00                                              db    0
-// WZD dseg:4C6F 00                                              db    0
-// WZD dseg:4C70 5B 20 41 67 72 65 65 20 20 20 20 00             LBuff@ db '[ Agree    ',0               ; DATA XREF: sub_6F6BB+1EFo
-// WZD dseg:4C7C 5B 20 46 6F 72 67 65 74 20 49 74 00             aForgetIt_2 db '[ Forget It',0
+// WZD dseg:4C46 00 00                                           word_3B6E6 dw 0
+
+// WZD dseg:4C70
+// LBuff@ db '[ Agree    ',0
+// WZD dseg:4C7C
+// aForgetIt_2 db '[ Forget It',0
 // WZD dseg:4C88 00                                              db    0
 // WZD dseg:4C89 00                                              db    0
 // WZD dseg:4C8A 00                                              db    0
@@ -203,41 +204,78 @@ int16_t AI_Dipl_Unset_0;
 // WZD dseg:4C9D 00                                              db    0
 // WZD dseg:4C9E 00                                              db    0
 // WZD dseg:4C9F 00                                              db    0
-// WZD dseg:4CA0 B6 4D                                           off_3B740 dw offset aHowMayIServeYo     ; DATA XREF: sub_6EE03+A1r
-// WZD dseg:4CA0                                                                                         ; "How may I serve you:"
-// WZD dseg:4CA2 CB 4D                                           off_3B742 dw offset aYouProposeATre     ; DATA XREF: sub_6EFA5+24r
-// WZD dseg:4CA2                                                                                         ; "You propose a treaty: "
-// WZD dseg:4CA4 E2 4D                                           off_3B744 dw offset aYourActions        ; DATA XREF: sub_6F982+24r
-// WZD dseg:4CA4                                                                                         ; "Your actions: "
-// WZD dseg:4CA6 5B 20 50 72 6F 70 6F 73 65 20 54 72 65 61 74 79 aProposeTreaty db '[ Propose Treaty'    ; DATA XREF: dseg:off_3B6E8o
 
+// WZD dseg:4CA6
+char aProposeTreaty[] = "[ Propose Treaty";
 // WZD dseg:4CB6
 char str_empty_string__ovr084[] = "";
+// WZD dseg:4CB7
+char aThreatenBreakT[] = "[ Threaten/Break Treaty";
+// WZD dseg:4CCF
+char aOfferTribute[] = "[ Offer Tribute";
+// WZD dseg:4CDF
+char aExchangeSpells[] = "[ Exchange Spells";
+// WZD dseg:4CF1
+char aGoodBye[] = "[ Good Bye";
+// WZD dseg:4CFC
+char aWizardPact[] = "[ Wizard Pact";
+// WZD dseg:4D0A
+char aAlliance[] = "[ Alliance";
+// WZD dseg:4D15
+char aPeaceTreaty[] = "[ Peace Treaty";
+// WZD dseg:4D24
+char aDeclarationOfW[] = "[ Declaration of War on Another Wizard";
+// WZD dseg:4D4B
+char aBreakAllianceW[] = "[ Break Alliance With Another Wizard";
+// WZD dseg:4D70
+char aForgetIt[] = "[ Forget It";
+// WZD dseg:4D7C
+char aBreakWizardPac[] = "[ Break Wizard Pact";
+// WZD dseg:4D90
+char aBreakAlliance[] = "[ Break Alliance";
+// WZD dseg:4DA1
+char aThreatenToAtta[] = "[ Threaten To Attack";
 
-// WZD dseg:4CB7 5B 20 54 68 72 65 61 74 65 6E 2F 42 72 65 61 6B+aThreatenBreakT db '[ Threaten/Break Treaty',0
-// WZD dseg:4CB7 20 54 72 65 61 74 79 00                                                                 ; DATA XREF: dseg:off_3B6E8o
-// WZD dseg:4CCF 5B 20 4F 66 66 65 72 20 54 72 69 62 75 74 65 00 aOfferTribute db '[ Offer Tribute',0    ; DATA XREF: dseg:off_3B6E8o
-// WZD dseg:4CDF 5B 20 45 78 63 68 61 6E 67 65 20 53 70 65 6C 6C+aExchangeSpells db '[ Exchange Spells',0
-// WZD dseg:4CDF 73 00                                                                                   ; DATA XREF: dseg:off_3B6E8o
-// WZD dseg:4CF1 5B 20 47 6F 6F 64 20 42 79 65 00                aGoodBye db '[ Good Bye',0              ; DATA XREF: dseg:off_3B6E8o
-// WZD dseg:4CFC 5B 20 57 69 7A 61 72 64 20 50 61 63 74 00       aWizardPact db '[ Wizard Pact',0        ; DATA XREF: dseg:off_3B6E8o
-// WZD dseg:4D0A 5B 20 41 6C 6C 69 61 6E 63 65 00                aAlliance db '[ Alliance',0             ; DATA XREF: dseg:off_3B6E8o
-// WZD dseg:4D15 5B 20 50 65 61 63 65 20 54 72 65 61 74 79 00    aPeaceTreaty db '[ Peace Treaty',0      ; DATA XREF: dseg:off_3B6E8o
-// WZD dseg:4D24 5B 20 44 65 63 6C 61 72 61 74 69 6F 6E 20 6F 66+aDeclarationOfW db '[ Declaration of War on Another Wizard',0
-// WZD dseg:4D24 20 57 61 72 20 6F 6E 20 41 6E 6F 74 68 65 72 20+                                        ; DATA XREF: dseg:off_3B6E8o
-// WZD dseg:4D4B 5B 20 42 72 65 61 6B 20 41 6C 6C 69 61 6E 63 65+aBreakAllianceW db '[ Break Alliance With Another Wizard',0
-// WZD dseg:4D4B 20 57 69 74 68 20 41 6E 6F 74 68 65 72 20 57 69+                                        ; DATA XREF: dseg:off_3B6E8o
-// WZD dseg:4D70 5B 20 46 6F 72 67 65 74 20 49 74 00             aForgetIt db '[ Forget It',0            ; DATA XREF: dseg:off_3B6E8o
-// WZD dseg:4D7C 5B 20 42 72 65 61 6B 20 57 69 7A 61 72 64 20 50+aBreakWizardPac db '[ Break Wizard Pact',0
-// WZD dseg:4D7C 61 63 74 00                                                                             ; DATA XREF: dseg:off_3B6E8o
-// WZD dseg:4D90 5B 20 42 72 65 61 6B 20 41 6C 6C 69 61 6E 63 65+aBreakAlliance db '[ Break Alliance',0  ; DATA XREF: dseg:off_3B6E8o
-// WZD dseg:4DA1 5B 20 54 68 72 65 61 74 65 6E 20 54 6F 20 41 74+aThreatenToAtta db '[ Threaten To Attack',0
-// WZD dseg:4DA1 74 61 63 6B 00                                                                          ; DATA XREF: dseg:off_3B6E8o
-// WZD dseg:4DB6 48 6F 77 20 6D 61 79 20 49 20 73 65 72 76 65 20+aHowMayIServeYo db 'How may I serve you:',0
-// WZD dseg:4DB6 79 6F 75 3A 00                                                                          ; DATA XREF: dseg:off_3B740o
-// WZD dseg:4DCB 59 6F 75 20 70 72 6F 70 6F 73 65 20 61 20 74 72+aYouProposeATre db 'You propose a treaty: ',0
-// WZD dseg:4DCB 65 61 74 79 3A 20 00                                                                    ; DATA XREF: dseg:off_3B742o
-// WZD dseg:4DE2 59 6F 75 72 20 61 63 74 69 6F 6E 73 3A 20 00    aYourActions db 'Your actions: ',0      ; DATA XREF: dseg:off_3B744o
+// NOTE:  OUT OF ORDER!!
+// WZD dseg:4C48
+char * IDK_Diplo_msg[19] = {
+    aProposeTreaty,
+    aThreatenBreakT,
+    aOfferTribute,
+    aExchangeSpells,
+    aGoodBye,
+    str_empty_string__ovr084,
+    str_empty_string__ovr084,
+    aWizardPact,
+    aAlliance,
+    aPeaceTreaty,
+    aDeclarationOfW,
+    aBreakAllianceW,
+    aForgetIt,
+    str_empty_string__ovr084,
+    aBreakWizardPac,
+    aBreakAlliance,
+    aThreatenToAtta,
+    aForgetIt,
+    str_empty_string__ovr084
+};
+// WZD dseg:4C6E 00                                              db    0
+// WZD dseg:4C6F 00                                              db    0
+
+// WZD dseg:4DB6
+char aHowMayIServeYo[] = "How may I serve you:";
+// WZD dseg:4DCB
+char aYouProposeATre[] = "You propose a treaty: ";
+// WZD dseg:4DE2
+char aYourActions[] = "Your actions: ";
+// NOTE:  OUT OF ORDER!!
+// WZD dseg:4CA0
+// WZD dseg:4CA2
+// WZD dseg:4CA4
+char * off_3B740 = aHowMayIServeYo;  // "How may I serve you:"
+char * off_3B742 = aYouProposeATre;  // "You propose a treaty: "
+char * off_3B744 = aYourActions;  // "Your actions: "
+
 // WZD dseg:4DF1 20 73 70 65 6C 6C 00                            aSpell db ' spell',0
 // WZD dseg:4DF8 20 67 6F 6C 64 00                               aGold db ' gold',0
 // WZD dseg:4DFE 5B 20 00                                        asc_3B89E db '[ ',0
@@ -262,29 +300,51 @@ char backgrnd_lbx_file__ovr084[] = "BACKGRND";
 // WZD dseg:4EB9                                                 END:  ovr084 - Initialized Data
 
 
+// NOTE: OUT OF ORDER!!
+// WZD dseg:4EC0
+char aWhatDoYouOffer[] = "What do you offer as tribute?";
+// WZD dseg:4EDE
+char aWhatTypeOfSpel[] = "What type of spell interests you?";
+// WZD dseg:4F00
+char aWhatWillYouTra[] = "What will you trade for it?";
+// WZD dseg:4EBA
+// WZD dseg:4EBC
+// WZD dseg:4EBE
+char * off_3B95A = &aWhatDoYouOffer[0];
+char * off_3B95C = &aWhatTypeOfSpel[0];
+char * off_3B95E = &aWhatWillYouTra[0];
 
-// WZD dseg:4EBA C0 4E                                           off_3B95A dw offset aWhatDoYouOffer     ; DATA XREF: sub_71B90+F5r ...
-// WZD dseg:4EBC DE 4E                                           off_3B95C dw offset aWhatTypeOfSpel     ; DATA XREF: sub_72131+1FDr
-// WZD dseg:4EBE 00 4F                                           off_3B95E dw offset aWhatWillYouTra     ; DATA XREF: sub_72131+31Dr
-// WZD dseg:4EC0 57 68 61 74 20 64 6F 20 79 6F 75 20 6F 66 66 65+aWhatDoYouOffer db 'What do you offer as tribute?',0
-// WZD dseg:4EDE 57 68 61 74 20 74 79 70 65 20 6F 66 20 73 70 65+aWhatTypeOfSpel db 'What type of spell interests you?',0
-// WZD dseg:4F00 57 68 61 74 20 77 69 6C 6C 20 79 6F 75 20 74 72+aWhatWillYouTra db 'What will you trade for it?',0
-// WZD dseg:4F1C 5B 20 00                                        db '[ ',0
-// WZD dseg:4F1F 20 67 6F 6C 64 00                               aGold_0 db ' gold',0
-// WZD dseg:4F25 5B 20 53 70 65 6C 6C 73 00                      aSpells db '[ Spells',0
-// WZD dseg:4F2E 5B 20 46 6F 72 67 65 74 20 49 74 00             aForgetIt_0 db '[ Forget It',0
+// WZD dseg:4F1C
+char lstr_gold[] = "[ ";
+// WZD dseg:4F1F
+char aGold_0[] = " gold";
+// WZD dseg:4F25
+char aSpells[] = "[ Spells";
+// WZD dseg:4F2E
+char aForgetIt_0[] = "[ Forget It";
 // WZD dseg:4F3A
 char str_empty_string__ovr086[] = "";
-// WZD dseg:4F3B 5B 20 00                                        asc_3B9DB db '[ ',0                     ; DATA XREF: sub_72DB6:loc_72DD6o
-// WZD dseg:4F3E 41 63 63 65 70 74 00                            aAccept_0 db 'Accept',0                 ; DATA XREF: sub_72DB6:loc_72E05o
-// WZD dseg:4F45 52 65 6A 65 63 74 00                            aReject_0 db 'Reject',0
-// WZD dseg:4F4C 41 67 72 65 65 00                               aAgree db 'Agree',0                     ; DATA XREF: sub_72DB6:loc_72E32o
-// WZD dseg:4F52 46 6F 72 67 65 74 20 49 74 00                   aForgetIt_1 db 'Forget It',0
-// WZD dseg:4F5C 49 6E 20 65 78 63 68 61 6E 67 65 20 79 6F 75 20+aInExchangeYouWillRe db 'In exchange you will receive:',0
-// WZD dseg:4F7A 57 68 61 74 20 69 66 20 77 65 20 77 65 72 65 20+aWhatIfWeWereToAlsoO db 'What if we were to also offer ',0
-// WZD dseg:4F99 50 65 72 68 61 70 73 20 79 6F 75 20 77 6F 75 6C+aPerhapsYouWouldReco db 'Perhaps you would reconsider if we also provided ',0
-// WZD dseg:4FCB 20 61 73 20 61 6E 20 69 6E 63 65 6E 74 69 76 65+aAsAnIncentive db ' as an incentive',0
-// WZD dseg:4FDC 3F 00                                           cnst_QuestionMark4 db '?',0             ; should use dseg:2adb
+
+// WZD dseg:4F3B
+char asc_3B9DB[] = "[ ";
+// WZD dseg:4F3E
+char aAccept_0[] = "Accept";
+// WZD dseg:4F45
+char aReject_0[] = "Reject";
+// WZD dseg:4F4C
+char aAgree[] = "Agree";
+// WZD dseg:4F52
+char aForgetIt_1[] = "Forget It";
+// WZD dseg:4F5C
+char aInExchangeYouWillRe[] = "In exchange you will receive:";
+// WZD dseg:4F7A
+char aWhatIfWeWereToAlsoO[] = "What if we were to also offer ";
+// WZD dseg:4F99
+char aPerhapsYouWouldReco[] = "Perhaps you would reconsider if we also provided ";
+// WZD dseg:4FCB
+char aAsAnIncentive[] = " as an incentive";
+// WZD dseg:4FDC
+char cnst_QuestionMark4[] = "?";
 // WZD dseg:4FDE
 char diplomsg_lbx_file__ovr86[] = "DIPLOMSG";
 // WZD dseg:4FE7
@@ -323,11 +383,28 @@ byte_ptr G_Some_DIPL_Alloc_3;
 // WZD dseg:C399 00 00 00 00 00 00 00 00 00 00                   byte_42E39 db 0Ah dup(0)                ; DATA XREF: sub_74420+36Aw ...
 // WZD dseg:C3A3 00 00 00 00 00 00 00 00 00 00                   byte_42E43 db 0Ah dup(0)                ; DATA XREF: sub_74420+347w ...
 // WZD dseg:C3AD 00                                              byte_42E4D db 0                         ; DATA XREF: sub_72131+A9w ...
-// WZD dseg:C3AE 00 00 00 00 00 00 00 00 00 00                   DIPL_SpellValues db 0Ah dup(0)          ; DATA XREF: DIPL_TribSpellList+53w ...
-// WZD dseg:C3AE                                                                                         ; BUG: these don't fit into a byte variable!
-// WZD dseg:C3B8 00 00 00 00 00 00 00 00 00 00                   DIPL_TradeSpells db 0Ah dup(0)          ; DATA XREF: sub_6F6BB+5Ar ...
-// WZD dseg:C3C2 00                                              DIPL_TradeSpellCount db 0               ; DATA XREF: IDK_Diplo_Scrn+58r ...
-// WZD dseg:C3C2                                                                                         ; 1-byte, unsigned
+
+/*
+    MoO2
+        Module: DIP-SCRN
+            data (0 bytes) _target_tech_list
+                Address: 02:001922DC
+            data (0 bytes) _exchange_tech_list
+                Address: 02:001923B0
+*/
+// WZD dseg:C3AE
+// ; BUG: these don't fit into a byte variable!
+uint8_t m_exchange_spell_values[10];
+// WZD dseg:C3B8
+uint8_t m_exchange_spell_list[10];
+
+// WZD dseg:C3C2
+// MoO2  Module: DIP-SCRN  _exchange_tech_count
+/*
+1-byte, unsigned
+*/
+int16_t m_exchange_spell_count;
+
 
 // WZD dseg:C3C3 00                                              align 2
 
@@ -388,21 +465,27 @@ Diplomacy_Screen_Draw__WIP()
     short-circuits if 54 or 1
 
 */
-int16_t word_42E8C;
+int16_t m_IDK_diplomatic_order;
 // WZD dseg:C3EE
 /*
 only two usages
 Diplomacy_Screen_Load__WIP()
     if not 1, calls Diplomacy_Screen_Fade_In()
 Diplomacy_Screen_Draw__WIP()
+    if not 1, calls Diplomacy_Screen_Draw_Portrait_Mouth_Animation()
     if 0,1,2, sets font/colors, gets a message, prints the message
 Diplomacy_Screen_Draw__WIP()
     initialized to 6
-    depending on word_42E8C, reset to 0,2
+    depending on m_IDK_diplomatic_order, reset to 0,2
+
 */
-int16_t word_42E8E;
+int16_t m_IDK_diplomatic_flag;
 // WZD dseg:C3F0
-byte_ptr * G_Some_DIPL_Allocs_7;
+/*
+array of 7 memory addresses
+100 bytes each
+*/
+char ** G_Some_DIPL_Allocs_7;
 // WZD dseg:C3FE
 int16_t m_diplomac_player_idx = 0;
 /*
@@ -455,16 +538,16 @@ void Diplomacy_Screen__WIP(void)
 
     Clear_Fields();
 
-    word_42E8E = 6;
+    m_IDK_diplomatic_flag = 6;
 
-    word_42E8C = _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[m_diplomac_player_idx];
+    m_IDK_diplomatic_order = _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[m_diplomac_player_idx];
 
     _page_flip_effect = pfe_None;
 
     if(
-        (word_42E8C == 54)
+        (m_IDK_diplomatic_order == 54)
         ||
-        (word_42E8C == 1)
+        (m_IDK_diplomatic_order == 1)
     )
     {
 
@@ -472,12 +555,12 @@ void Diplomacy_Screen__WIP(void)
 
     }
 
-    if(word_42E8C == 0)
+    if(m_IDK_diplomatic_order == 0)
     {
 
-        word_42E8E = 0;
+        m_IDK_diplomatic_flag = 0;
 
-        IDK_DiplSts_s70570();
+        Diplomacy_Greeting();
 
     }
 
@@ -486,24 +569,25 @@ void Diplomacy_Screen__WIP(void)
     m_diplomsg_1_record_sub_number = ST_UNDEFINED;
 
 
+    // i.e., not Greeting?
     if(
         (
-            (word_42E8C >= 45)
+            (m_IDK_diplomatic_order >= do_IDK_treaty1)
             &&
-            (word_42E8C <= 49)
+            (m_IDK_diplomatic_order <= do_IDK_peace)
         )
         ||
-        (word_42E8C == 2)
+        (m_IDK_diplomatic_order == 2)
         ||
-        (word_42E8C == 47)
+        (m_IDK_diplomatic_order == do_IDK_war)
     )
     {
 
-        word_42E88 = word_42E8C;
+        word_42E88 = m_IDK_diplomatic_order;
 
-        word_42E8C = 42;
+        m_IDK_diplomatic_order = do_IDK_greeting_positive;
 
-        word_42E8E = 2;
+        m_IDK_diplomatic_flag = 2;
 
         word_42E86 = _players[HUMAN_PLAYER_IDX].Dipl.field_102[m_diplomac_player_idx];
 
@@ -518,7 +602,7 @@ void Diplomacy_Screen__WIP(void)
 
         input_field_idx = Get_Input();
 
-        if(word_42E8E == 0)
+        if(m_IDK_diplomatic_flag == 0)
         {
 
             if(input_field_idx == ST_UNDEFINED)
@@ -531,14 +615,14 @@ void Diplomacy_Screen__WIP(void)
             if(input_field_idx == full_screen_field)
             {
 
-                IDK_Diplo_Scrn();
+                Get_Main_Diplomacy_Choices();
 
                 leave_screen = ST_TRUE;
 
             }
 
         }
-        else if(word_42E8E == 1)
+        else if(m_IDK_diplomatic_flag == 1)
         {
 
             if(
@@ -553,10 +637,10 @@ void Diplomacy_Screen__WIP(void)
             }
 
         }
-        else if(word_42E8E == 6)
+        else if(m_IDK_diplomatic_flag == 6)
         {
 
-            IDK_Diplo_Response(word_42E8C, 3);
+            Diplomacy_Display_Response(m_IDK_diplomatic_order, 3);
 
             leave_screen = ST_TRUE;
 
@@ -567,11 +651,11 @@ void Diplomacy_Screen__WIP(void)
         full_screen_field = INVALID_FIELD;
 
         if(
-            (word_42E8E == 0)
+            (m_IDK_diplomatic_flag == 0)
             ||
-            (word_42E8E == 1)
+            (m_IDK_diplomatic_flag == 1)
             ||
-            (word_42E8E == 2)
+            (m_IDK_diplomatic_flag == 2)
         )
         {
 
@@ -606,7 +690,7 @@ void Diplomacy_Screen__WIP(void)
 
     Combat_Cache_Read();
 
-    Check_Research_Spell_Is_Known(1);
+    Check_Research_Spell_Is_Known(ST_TRUE);
 
     Cache_Graphics_Overland();
 
@@ -624,10 +708,10 @@ void Diplomacy_Screen_Draw__WIP(void)
 
     Copy_Back_To_Off();
 
-    if(word_42E8E != 1)
+    if(m_IDK_diplomatic_flag != 1)  /* refuse audience/negative greeting */
     {
         
-        IDK_DiplAnim_s6FDA1();
+        Diplomacy_Screen_Draw_Portrait_Mouth_Animation();
 
     }
 
@@ -636,11 +720,11 @@ void Diplomacy_Screen_Draw__WIP(void)
     Diplomacy_Screen_Draw_Gargoyle_Eyes();
 
     if(
-        (word_42E8E == 0)
+        (m_IDK_diplomatic_flag == 0)
         ||
-        (word_42E8E == 1)
+        (m_IDK_diplomatic_flag == 1)
         ||
-        (word_42E8E == 2)
+        (m_IDK_diplomatic_flag == 2)
     )
     {
 
@@ -652,13 +736,11 @@ void Diplomacy_Screen_Draw__WIP(void)
 
         Set_Font_LF(1);
 
-        Get_Diplomacy_Statement(word_42E8C, m_diplomac_player_idx);
+        Get_Diplomacy_Statement(m_IDK_diplomatic_order, m_diplomac_player_idx);
 
         Print_Paragraph(38, 140, 245, m_diplomacy_message, 0);
 
     }
-
-
 
 }
 
@@ -675,7 +757,7 @@ void _sub_6ED5D_Draw(void)
 
     Copy_Back_To_Off();
 
-    IDK_DiplAnim_s6FDA1();
+    Diplomacy_Screen_Draw_Portrait_Mouth_Animation();
 
     Diplomacy_Screen_Draw_Gargoyle_Eyes();
 
@@ -707,6 +789,7 @@ void _sub_6ED5D_Draw(void)
 
 
 // WZD o84p03
+// MoO2  Module: DIP-SCRN  Get_Main_Diplomacy_Choices_();  Diplomacy_Set_Main_Options_();
 /*
 
 XREF:
@@ -714,7 +797,151 @@ XREF:
     j_IDK_Diplo_Scrn()
 
 */
-static void IDK_Diplo_Scrn(void)
+static void Get_Main_Diplomacy_Choices(void)
+{
+    int16_t list_item_active_flags[DIPLO_MAIN_LIST_COUNT] = { 0, 0, 0, 0, 0, 0 };
+    int16_t var_14 = 0;
+    int16_t var_12 = 0;
+    int16_t var_10 = 0;
+    int16_t _variable = 0;
+    int16_t leave_screen = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
+
+    leave_screen = ST_FALSE;
+
+    while(leave_screen == ST_FALSE)
+    {
+
+        _variable = 0;
+
+        for(itr = 0; itr < DIPLO_MAIN_LIST_COUNT; itr++)
+        {
+
+            list_item_active_flags[itr] = ST_TRUE;
+
+        }
+
+        if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[m_diplomac_player_idx] == DIPL_War)
+        {
+
+            list_item_active_flags[1] = ST_FALSE;  // deactive "Threaten/Break Treaty"
+
+            list_item_active_flags[3] = ST_FALSE;  // deactive "Exchange Spells"
+
+        }
+
+        Get_Exchange_Spell_List(_human_player_idx, m_diplomac_player_idx, 0);
+
+        if(
+            (_players[HUMAN_PLAYER_IDX].gold_reserve <= 25)
+            &&
+            (list_item_active_flags[2] == 0)
+        )
+        {
+
+            list_item_active_flags[2] = ST_FALSE;  // deactive "Offer Tribute"
+
+        }
+
+        if(Find_Worst_Modifier() < -100)
+        {
+
+            // MoO2
+            // if(_response_message != _old_response_message)
+            //     Diplomacy_Display_Response_();
+            // _response_message = 130;
+            // leave_screen = ST_TRUE
+
+            Diplomacy_Display_Response(do_IDK_exchange_spell_goodbye, 3);  // IDK2 == 3 means some spell specific, 25% chance something
+
+            leave_screen = ST_TRUE;
+
+        }
+        else
+        {
+
+            Assign_Auto_Function(_sub_6ED5D_Draw, 3);
+
+            Set_Input_Delay(1);
+
+            strcpy(m_diplomacy_message, off_3B740);
+
+            for(itr = 0; itr < 7; itr++)
+            {
+
+                strcpy(G_Some_DIPL_Allocs_7[itr], IDK_Diplo_msg[itr]);
+
+            }
+
+            Set_Font_Style(1, 4, 3, ST_NULL);
+
+            Set_Alias_Color(187);
+
+            _variable = Get_List_Field(38, 142, 245, str_empty_string__ovr084, G_Some_DIPL_Allocs_7, 100, &_variable, &list_item_active_flags[0], 15, 11, 0, 0, 0, ST_UNDEFINED);
+
+            switch(_variable)
+            {
+
+                case -1:
+                {
+
+                    leave_screen = ST_TRUE;
+
+                } break;
+
+                case 0:
+                {
+
+                    Diplomacy_Propose_Treaty__STUB();
+
+                } break;
+                
+                case 1:
+                {
+
+                    Diplomacy_Break_Treaty__STUB();
+
+                } break;
+                
+                case 2:
+                {
+
+                    Diplomacy_Offer_Tribute__STUB();
+
+                    if(m_IDK_diplomatic_order == do_IDK_exchange_spell_goodbye)
+                    {
+
+                        leave_screen = ST_TRUE;
+
+                    }
+
+                } break;
+                
+                case 3:
+                {
+
+                    Diplomacy_Exchange_Spell__STUB();
+
+                } break;
+
+            }
+                
+        }
+
+    }
+
+    Assign_Auto_Function(Diplomacy_Screen_Draw__WIP, 3);
+
+    Set_Input_Delay(1);
+
+}
+
+
+// WZD o84p04
+/*
+
+*/
+static void Diplomacy_Propose_Treaty__STUB(void)
 {
 
 
@@ -722,14 +949,24 @@ static void IDK_Diplo_Scrn(void)
 }
 
 
-// WZD o84p04
-// sub_6EFA5()
-
 // WZD o84p05
 // sub_6F3E4()
 
+
 // WZD o84p06
-static void IDK_Diplo_Response(int16_t diplomatic_order, int16_t IDK2)
+// MoO2  Module: DIP-SCRN  Diplomacy_Display_Response_()
+/*
+
+IDK_Diplo_Response(71, 3);
+    means Find_Worst_Modifier() < -100 ... impatient, talk later
+    maybe, didn't even exchange a spell yet?
+
+IDK == 3:
+    some spell specific business
+    no idea what the 25% chance is for
+    didn't see where spells got put in to_players[].Dipl.field_8A[]
+*/
+static void Diplomacy_Display_Response(int16_t diplomatic_order, int16_t IDK2)
 {
     int16_t full_screen_field = 0;
     int16_t leave_screen = 0;
@@ -766,7 +1003,7 @@ static void IDK_Diplo_Response(int16_t diplomatic_order, int16_t IDK2)
 
     }
 
-    word_42E8C = diplomatic_order;
+    m_IDK_diplomatic_order = diplomatic_order;
 
     if(di != 1)
     {
@@ -787,7 +1024,7 @@ static void IDK_Diplo_Response(int16_t diplomatic_order, int16_t IDK2)
                 )
                 {
 
-                    word_42E8C = _players[HUMAN_PLAYER_IDX].Dipl.field_84[m_diplomac_player_idx];
+                    m_IDK_diplomatic_order = _players[HUMAN_PLAYER_IDX].Dipl.field_84[m_diplomac_player_idx];
 
                     _players[HUMAN_PLAYER_IDX].Dipl.field_84[m_diplomac_player_idx] = 0;
 
@@ -804,13 +1041,13 @@ static void IDK_Diplo_Response(int16_t diplomatic_order, int16_t IDK2)
 
                         _players[HUMAN_PLAYER_IDX].Dipl.Broken_Treaty[m_diplomac_player_idx] = 0;
 
-                        word_42E8C = 58;
+                        m_IDK_diplomatic_order = 58;
 
                     }
                     else
                     {
 
-                        word_42E8C = 57;
+                        m_IDK_diplomatic_order = 57;
 
                     }
 
@@ -832,13 +1069,13 @@ static void IDK_Diplo_Response(int16_t diplomatic_order, int16_t IDK2)
 
                     _players[HUMAN_PLAYER_IDX].Dipl.field_8A[m_diplomac_player_idx] = 0;
 
-                    word_42E8C = 54;
+                    m_IDK_diplomatic_order = 54;
 
                 }
                 else
                 {
                     
-                    word_42E8C = diplomatic_order;
+                    m_IDK_diplomatic_order = diplomatic_order;
 
                 }
 
@@ -858,17 +1095,17 @@ static void IDK_Diplo_Response(int16_t diplomatic_order, int16_t IDK2)
     else
     {
 
-        word_42E8C = diplomatic_order;
+        m_IDK_diplomatic_order = diplomatic_order;
 
     }
 
-    Assign_Auto_Function(_sub_6F90E_Draw, 3);
+    Assign_Auto_Function(Diplomacy_Display_Response_Draw, 3);
 
     Set_Input_Delay(1);
 
     m_diplomsg_1_record_sub_number = ST_UNDEFINED;
 
-    Get_Diplomacy_Statement(word_42E8C, m_diplomac_player_idx);
+    Get_Diplomacy_Statement(m_IDK_diplomatic_order, m_diplomac_player_idx);
 
     leave_screen = ST_FALSE;
 
@@ -891,7 +1128,7 @@ static void IDK_Diplo_Response(int16_t diplomatic_order, int16_t IDK2)
         if(leave_screen == ST_FALSE)
         {
 
-            _sub_6F90E_Draw();
+            Diplomacy_Display_Response_Draw();
 
             PageFlip_FX();
 
@@ -914,14 +1151,14 @@ doesn't check flag for call to IDK_DiplAnim_s6FDA1()
 doesn't call get message
 otherwise, all the same calls with all the same parameters
 */
-static void _sub_6F90E_Draw(void)
+static void Diplomacy_Display_Response_Draw(void)
 {
 
     Set_Page_Off();
 
     Copy_Back_To_Off();
 
-    IDK_DiplAnim_s6FDA1();
+    Diplomacy_Screen_Draw_Portrait_Mouth_Animation();
 
     Diplomacy_Screen_Draw_Gargoyle_Eyes();
 
@@ -941,7 +1178,16 @@ static void _sub_6F90E_Draw(void)
 
 
 // WZD o84p09
-// sub_6F982()
+/*
+
+*/
+static void Diplomacy_Break_Treaty__STUB(void)
+{
+
+
+
+}
+
 
 // WZD o84p10
 // MoO2  Module: DIP-SCRN  Start_Diplomacy_Music_()
@@ -1003,7 +1249,7 @@ XREF:
             j_DIPL_sub_72DB6_Draw()
 
 */
-static void IDK_DiplAnim_s6FDA1(void)
+static void Diplomacy_Screen_Draw_Portrait_Mouth_Animation(void)
 {
     int16_t var_4 = 0;
     int16_t current_frame_num = 0;
@@ -1276,7 +1522,7 @@ static void Diplomacy_Screen_Load__WIP(void)
 
     Copy_Off_To_Back();
 
-    if(word_42E8E != 1)
+    if(m_IDK_diplomatic_flag != 1)
     {
 
         Diplomacy_Screen_Fade_In();
@@ -1306,7 +1552,7 @@ static void DIPL_LoadTalkGFX(void)
     for(itr = 0; itr < 7; itr++)
     {
 
-        G_Some_DIPL_Allocs_7[itr] = Near_Allocate_Next(100);
+        G_Some_DIPL_Allocs_7[itr] = (char *)Near_Allocate_Next(100);
 
     }
 
@@ -1386,16 +1632,20 @@ The wizard appears flanked by gargoyles.
 The eye color of the gargoyles is a measure of your opponent’s feelings toward you.  
 The eye color ranges from deep shades of green to vivid red, with green representing positive relations, yellow representing neutrality and red representing anger and negative feelings.  
 
+Table 25.1 The Diplomatic Relations Scale
+Relationship Level (Name)
+Diplomacy Point (DP)
+
 */
 static void Diplomacy_Screen_Draw_Gargoyle_Eyes(void)
 {
-    int16_t si = 0;
+    int16_t relationship_level = 0;
 
-    si = ((100 + _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]) / 20);
+    relationship_level = ((100 + _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]) / 20);
 
-    FLIC_Draw(64, 58, m_diplomac_left_eyes_segs[si]);
+    FLIC_Draw(64, 58, m_diplomac_left_eyes_segs[relationship_level]);
 
-    FLIC_Draw(233, 58, m_diplomac_right_eyes_segs[si]);
+    FLIC_Draw(233, 58, m_diplomac_right_eyes_segs[relationship_level]);
 
 }
 
@@ -1469,29 +1719,35 @@ static void Diplomacy_Screen_Fade_In(void)
 
 // WZD o85p01
 /*
-*/
-static void IDK_DiplSts_s70570(void)
-{
-    int16_t lowest_temporary_modifier = 0;
-    int16_t si = 0;  // _SI_
-    int16_t dx = 0;  // _DX_
+    sets m_IDK_diplomatic_order and m_IDK_diplomatic_flag
 
-    lowest_temporary_modifier = DIPL_LowestInterest();
+¿ computer player's Core Reaction ?
+¿ Diplomatic Relations Scale ?
+*/
+static void Diplomacy_Greeting(void)
+{
+    int16_t worst_modifier_value = 0;
+    int16_t relationship_level = 0;  // _SI_
+    int16_t IDK_nonvisible_relationship_level = 0;  // _DX_
+
+    worst_modifier_value = Find_Worst_Modifier();
 
 // // ; added to chance of forming treaties
 // // ; added to chance of avoiding superiority wars
 // int16_t TBL_AI_PRS_IDK_Mod[6] = { 0, 10, 20, 30, 40, 50 };
-    si = (lowest_temporary_modifier
+    relationship_level = (worst_modifier_value
         + _players[HUMAN_PLAYER_IDX].Dipl.Hidden_Rel[m_diplomac_player_idx]
         + _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]
         + TBL_AI_PRS_IDK_Mod[_players[m_diplomac_player_idx].Personality]);
 
-    dx = (si - _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]);
+    //OSG  back out the "Diplomatic Relations Scale" "position" portion of the "Core Reaction"
+    IDK_nonvisible_relationship_level = (relationship_level - _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]);
 
-    if(dx <= -100)
+    if(IDK_nonvisible_relationship_level <= -100)  /* //OSG 50% chance of War */
     {
 
         // ¿ BUGBUG  shoulda been <= -100 || >= DIPL_War ?
+        // looks similarly odd in MoO2
         if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[m_diplomac_player_idx] >= DIPL_War)
         {
 
@@ -1499,28 +1755,28 @@ static void IDK_DiplSts_s70570(void)
 
         }
 
-        word_42E8C = 44;
+        m_IDK_diplomatic_order = do_IDK_greeting_negative;  // gretting?
 
-        word_42E8E = 1;
+        m_IDK_diplomatic_flag = 1;  // refuse audience?
 
     }
     else
     {
 
-        if(si > -50)
+        if(relationship_level > -50)
         {
 
-            word_42E8C = 42;
+            m_IDK_diplomatic_order = do_IDK_greeting_positive;  // gretting? neutral?
 
         }
-        else
+        else  /* relationship_level > -100 <= -50 ... //OSG 25% chance of War */
         {
 
-            word_42E8C = 43;
+            m_IDK_diplomatic_order = do_IDK_greeting_neutral;  // gretting? negative?
 
         }
 
-        word_42E8E = 0;
+        m_IDK_diplomatic_flag = 0;  // allow audience?
 
     }
 
@@ -1538,6 +1794,8 @@ static void IDK_DiplSts_s70570(void)
 // sub_70AFE()
 
 // WZD o85p05
+// drake178: DIPL_LowestInterest()
+// MoO2  Module: DIPLOMAC  Find_Worst_Modifier_()
 /*
 ; returns the lowest out the target's treaty, trade,
 ; and peace interests towards the human player
@@ -1545,8 +1803,15 @@ static void IDK_DiplSts_s70570(void)
 ; but it can't (intended to be dipl status maybe?)
 */
 /*
+
+`if(Find_Worst_Modifier() < -100)` ~== 'Cold Shoulder'
+
+XREF:
+    IDK_Diplo_Scrn()
+    IDK_Dipl_s7373B()
+
 */
-static int16_t DIPL_LowestInterest(void)
+static int16_t Find_Worst_Modifier(void)
 {
     int16_t interest = 0;  // _DX_
     int16_t return_value = 0;  // _AX_
@@ -1562,7 +1827,7 @@ static int16_t DIPL_LowestInterest(void)
     else
     {
 
-        if(_players[HUMAN_PLAYER_IDX].Dipl.Treaty_Interest[m_diplomac_player_idx] < _players[HUMAN_PLAYER_IDX].Dipl.Trade_Interest[m_diplomac_player_idx])
+        if(_players[HUMAN_PLAYER_IDX].Dipl.Treaty_Interest[m_diplomac_player_idx] < _players[HUMAN_PLAYER_IDX].Dipl.temporary_exchange_modifier[m_diplomac_player_idx])
         {
 
             interest = _players[HUMAN_PLAYER_IDX].Dipl.Treaty_Interest[m_diplomac_player_idx];
@@ -1652,7 +1917,7 @@ static void Adjust_Diplomat_Modifiers(int16_t player1, int16_t player2)
 
     _players[player1].Dipl.Treaty_Interest[player2] -= 10;
 
-    _players[player1].Dipl.Trade_Interest[player2] -= 10;
+    _players[player1].Dipl.temporary_exchange_modifier[player2] -= 10;
 
     _players[player1].Dipl.Peace_Interest[player2] -= 10;
 
@@ -1898,16 +2163,17 @@ void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender
 
                     if(value != 0)
                     {
+
                         _players[defender_idx].Dipl.Visible_Rel[attacker_idx] += value;
 
                         SETMIN(_players[defender_idx].Dipl.Visible_Rel[attacker_idx], -100);
                         SETMAX(_players[defender_idx].Dipl.Visible_Rel[attacker_idx],  100);
 
                         _players[defender_idx].Dipl.Treaty_Interest[attacker_idx] += value;
-                        _players[defender_idx].Dipl.Trade_Interest[attacker_idx] += value;
+                        _players[defender_idx].Dipl.temporary_exchange_modifier[attacker_idx] += value;
 
                         _players[attacker_idx].Dipl.Treaty_Interest[defender_idx] = _players[defender_idx].Dipl.Treaty_Interest[attacker_idx];
-                        _players[attacker_idx].Dipl.Trade_Interest[defender_idx] = _players[defender_idx].Dipl.Trade_Interest[attacker_idx];
+                        _players[attacker_idx].Dipl.temporary_exchange_modifier[defender_idx] = _players[defender_idx].Dipl.temporary_exchange_modifier[attacker_idx];
 
                         // HERE:  ¿ NoCharisma_RelValue is value, without the Charismatic modifier, but with ?
                         if(NoCharisma_RelValue < 0)  /* relation change is negative */
@@ -1923,7 +2189,7 @@ void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender
 
                         
                         if(
-                            (spell_idx == 10)  /* Earth_Lore */
+                            (spell_idx == spl_Earth_Lore)
                             &&
                             (Random(100) < 11)
                         )
@@ -2048,8 +2314,8 @@ void Declare_War(int16_t attacker_idx, int16_t defender_idx)
     _players[attacker_idx].Dipl.Treaty_Interest[defender_idx] = -200;
     _players[defender_idx].Dipl.Treaty_Interest[attacker_idx] = -200;
 
-    _players[attacker_idx].Dipl.Trade_Interest[defender_idx] = -200;
-    _players[defender_idx].Dipl.Trade_Interest[attacker_idx] = -200;
+    _players[attacker_idx].Dipl.temporary_exchange_modifier[defender_idx] = -200;
+    _players[defender_idx].Dipl.temporary_exchange_modifier[attacker_idx] = -200;
 
     _players[attacker_idx].Dipl.Peace_Interest[defender_idx] = -130;
     _players[defender_idx].Dipl.Peace_Interest[attacker_idx] = -130;
@@ -2163,18 +2429,18 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx)
 
     // 1oom:  attack_bounty[] = PLAYER_NONE
     // MoO2:  reward_attack_player
-    _players[attacker_idx].Dipl.IDK_MoO1_attack_bounty[defender_idx] = 0;
-    _players[defender_idx].Dipl.IDK_MoO1_attack_bounty[attacker_idx] = 0;
+    _players[attacker_idx].Dipl.field_6C[defender_idx] = 0;
+    _players[defender_idx].Dipl.field_6C[attacker_idx] = 0;
 
     SETMIN(_players[attacker_idx].Dipl.Visible_Rel[defender_idx], -100);
     _players[defender_idx].Dipl.Visible_Rel[attacker_idx] = _players[attacker_idx].Dipl.Visible_Rel[defender_idx];
 
     _players[attacker_idx].Dipl.Treaty_Interest[defender_idx] = -200;
-    _players[attacker_idx].Dipl.Trade_Interest[defender_idx] = -200;
+    _players[attacker_idx].Dipl.temporary_exchange_modifier[defender_idx] = -200;
     _players[attacker_idx].Dipl.Peace_Interest[defender_idx] = -200;
 
     _players[defender_idx].Dipl.Treaty_Interest[attacker_idx] = -200;
-    _players[defender_idx].Dipl.Trade_Interest[attacker_idx] = -200;
+    _players[defender_idx].Dipl.temporary_exchange_modifier[attacker_idx] = -200;
     _players[defender_idx].Dipl.Peace_Interest[attacker_idx] = -200;
 
     _players[attacker_idx].reevaluate_hostility_countdown = (15 + Random(10));
@@ -2183,13 +2449,69 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx)
 }
 
 // WZD o85p15
-// DIPL_TribSpellList()
+/*
+; fills the corresponding global variables with up to
+; 10 spells and their values that the first player
+; could tribute to the second
+; BUG: only stores the low order byte of the spell
+; values, invalidating all comparisons
+*/
+/*
+
+*/
+static int16_t Get_Exchange_Spell_List(int16_t player1, int16_t player2, int16_t min_value)
+{
+    int16_t spell_count = 0;
+    int16_t itr = 0;  // _SI_
+
+    m_exchange_spell_count = 0;
+
+    spell_count = 0;
+
+    spell_count = Get_Differential_Spell_List(player2, player1, min_value, (int16_t *)&m_exchange_spell_list[0]);
+
+    if(spell_count < 1)
+    {
+
+        m_exchange_spell_count = 0;
+        
+    }
+    else
+    {
+
+        // ; BUG: value doesn't fit into a byte
+        m_exchange_spell_values[itr] = Calc_Spell_Value(player2, m_exchange_spell_list[itr]);
+
+    }
+
+    return m_exchange_spell_count;
+
+}
+
 
 // WZD o85p16
-// sub_71B90()
+/*
+
+*/
+static void Diplomacy_Offer_Tribute__STUB(void)
+{
+
+
+
+}
+
 
 // WZD o85p17
-// sub_72131()
+/*
+
+*/
+static void Diplomacy_Exchange_Spell__STUB(void)
+{
+
+
+
+}
+
 
 // WZD o85p18
 // DIPL_DropCityCurses()
@@ -2210,7 +2532,7 @@ XREF:
             Next_Turn_Calc()
 
 */
-static void IDK_Dipl_s72690(void)
+static void Npc_Diplomacy_Screen(void)
 {
     int16_t full_screen_field = 0;
     int16_t input_field_idx = 0;  // _DI_
@@ -2235,16 +2557,16 @@ static void IDK_Dipl_s72690(void)
 
     Clear_Fields();
 
-    word_42E8E = 6;
+    m_IDK_diplomatic_flag = 6;
 
-    word_42E8C = _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[m_diplomac_player_idx];
+    m_IDK_diplomatic_order = _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[m_diplomac_player_idx];
 
     _page_flip_effect = pfe_None;
 
     if(
-        (word_42E8C == 54)
+        (m_IDK_diplomatic_order == 54)
         ||
-        (word_42E8C == 1)
+        (m_IDK_diplomatic_order == 1)
     )
     {
 
@@ -2252,12 +2574,12 @@ static void IDK_Dipl_s72690(void)
 
     }
 
-    if(word_42E8C == 0)
+    if(m_IDK_diplomatic_order == do_None)
     {
 
-        word_42E8E = 0;
+        m_IDK_diplomatic_flag = 0;
 
-        IDK_DiplSts_s70570();
+        Diplomacy_Greeting();  // does this change m_IDK_diplomatic_flag or m_IDK_diplomatic_order?
 
     }
 
@@ -2267,23 +2589,23 @@ static void IDK_Dipl_s72690(void)
 
     if(
         (
-            (word_42E8C >= 45)
+            (m_IDK_diplomatic_order >= do_IDK_treaty1)
             &&
-            /* Diplomacy_Screen__WIP() (word_42E8C <= 49) */
-            (word_42E8C <= 50)
+            /* Diplomacy_Screen__WIP() (m_IDK_diplomatic_order <= do_IDK_peace) */
+            (m_IDK_diplomatic_order <= 50)
         )
         ||
-        (word_42E8C == 2)
+        (m_IDK_diplomatic_order == 2)
         ||
-        (word_42E8C == 47)
+        (m_IDK_diplomatic_order == do_IDK_war)
     )
     {
 
-        word_42E88 = word_42E8C;
+        word_42E88 = m_IDK_diplomatic_order;
 
-        word_42E8C = 42;
+        m_IDK_diplomatic_order = do_IDK_greeting_positive;
 
-        word_42E8E = 2;
+        m_IDK_diplomatic_flag = 2;
 
         word_42E86 = _players[HUMAN_PLAYER_IDX].Dipl.field_102[m_diplomac_player_idx];
 
@@ -2298,7 +2620,7 @@ static void IDK_Dipl_s72690(void)
 
         input_field_idx = Get_Input();
 
-        if(word_42E8E == 0)
+        if(m_IDK_diplomatic_flag == 0)
         {
 
             if(input_field_idx == ST_UNDEFINED)
@@ -2311,15 +2633,15 @@ static void IDK_Dipl_s72690(void)
             if(input_field_idx == full_screen_field)
             {
 
-                IDK_Diplo_Scrn();
+                Get_Main_Diplomacy_Choices();
 
                 leave_screen = ST_TRUE;
 
             }
 
         }
-        /* Diplomacy_Screen__WIP()  else if(word_42E8E == 1) */
-        else if(word_42E8E == 2)
+        /* Diplomacy_Screen__WIP()  else if(m_IDK_diplomatic_flag == 1) */
+        else if(m_IDK_diplomatic_flag == 2)
         {
 
             if(
@@ -2334,7 +2656,7 @@ static void IDK_Dipl_s72690(void)
                 if(var_4 != 0)
                 {
 
-                    word_42E8C = word_42E88;
+                    m_IDK_diplomatic_order = word_42E88;
 
                     m_diplomsg_1_record_sub_number = ST_UNDEFINED;
 
@@ -2343,7 +2665,7 @@ static void IDK_Dipl_s72690(void)
                     if(input_field_idx != 0)
                     {
 
-                        if(word_42E8C == 47)
+                        if(m_IDK_diplomatic_order == do_IDK_war)
                         {
 
                             Break_Treaties(m_diplomac_player_idx, HUMAN_PLAYER_IDX);
@@ -2354,21 +2676,21 @@ static void IDK_Dipl_s72690(void)
                     else
                     {
 
-                        if(word_42E8C == 45)
+                        if(m_IDK_diplomatic_order == do_IDK_treaty1)
                         {
 
                             DIPL_SignTreaty__STUB(HUMAN_PLAYER_IDX, m_diplomac_player_idx, 1);
 
                         }
 
-                        if(word_42E8C == 46)
+                        if(m_IDK_diplomatic_order == do_IDK_treaty2)
                         {
 
                             DIPL_SignTreaty__STUB(HUMAN_PLAYER_IDX, m_diplomac_player_idx, 2);
 
                         }
 
-                        if(word_42E8C == 49)
+                        if(m_IDK_diplomatic_order == do_IDK_peace)
                         {
 
                             DIPL_SignPeaceTreaty__STUB(HUMAN_PLAYER_IDX, m_diplomac_player_idx);
@@ -2389,7 +2711,7 @@ static void IDK_Dipl_s72690(void)
 
                         }
 
-                        if(word_42E8C == 47)
+                        if(m_IDK_diplomatic_order == do_IDK_war)
                         {
 
                             Declare_War(HUMAN_PLAYER_IDX, word_42E86);
@@ -2397,11 +2719,11 @@ static void IDK_Dipl_s72690(void)
                         }
 
                         if(
-                            (word_42E8C == 45)
+                            (m_IDK_diplomatic_order == do_IDK_treaty1)
                             ||
-                            (word_42E8C == 46)
+                            (m_IDK_diplomatic_order == do_IDK_treaty2)
                             ||
-                            (word_42E8C == 49)
+                            (m_IDK_diplomatic_order == do_IDK_peace)
                         )
                         {
 
@@ -2421,7 +2743,7 @@ static void IDK_Dipl_s72690(void)
                     if(
                         (input_field_idx > ST_UNDEFINED)
                         &&
-                        (word_42E8C == 48)
+                        (m_IDK_diplomatic_order == do_IDK_exchange)
                     )
                     {
 
@@ -2434,9 +2756,9 @@ static void IDK_Dipl_s72690(void)
                 Adjust_Diplomat_Modifiers(HUMAN_PLAYER_IDX, m_diplomac_player_idx);
 
                 if(
-                    (word_42E8C == 45)
+                    (m_IDK_diplomatic_order == do_IDK_treaty1)
                     ||
-                    (word_42E8C == 46)
+                    (m_IDK_diplomatic_order == do_IDK_treaty2)
                 )
                 {
 
@@ -2444,17 +2766,17 @@ static void IDK_Dipl_s72690(void)
 
                 }
 
-                if(word_42E8C == 49)
+                if(m_IDK_diplomatic_order == do_IDK_peace)
                 {
 
                     _players[HUMAN_PLAYER_IDX].Dipl.Peace_Interest[m_diplomac_player_idx] -= (50 + Random(50));
 
                 }
 
-                if(word_42E8C == 48)
+                if(m_IDK_diplomatic_order == do_IDK_exchange)
                 {
 
-                    _players[HUMAN_PLAYER_IDX].Dipl.Trade_Interest[m_diplomac_player_idx] -= (20 + Random(30));
+                    _players[HUMAN_PLAYER_IDX].Dipl.temporary_exchange_modifier[m_diplomac_player_idx] -= (20 + Random(30));
 
                 }
 
@@ -2463,10 +2785,10 @@ static void IDK_Dipl_s72690(void)
             }
 
         }
-        else if(word_42E8E == 6)
+        else if(m_IDK_diplomatic_flag == 6)
         {
 
-            IDK_Diplo_Response(word_42E8C, 3);
+            Diplomacy_Display_Response(m_IDK_diplomatic_order, 3);
 
             leave_screen = ST_TRUE;
 
@@ -2477,11 +2799,11 @@ static void IDK_Dipl_s72690(void)
         full_screen_field = INVALID_FIELD;
 
         if(
-            (word_42E8E == 0)
+            (m_IDK_diplomatic_flag == 0)
             ||
-            (word_42E8E == 1)
+            (m_IDK_diplomatic_flag == 1)
             ||
-            (word_42E8E == 2)
+            (m_IDK_diplomatic_flag == 2)
         )
         {
 
@@ -2525,7 +2847,33 @@ static void IDK_Dipl_s72690(void)
 // DIPL_AI_To_AI()
 
 // WZD o86p03
-// DIPL_sub_72DB6()
+static int16_t DIPL_sub_72DB6(void)
+{
+    int16_t string = 0;
+    int16_t var_A = 0;
+    int16_t var_8 = 0;
+    int16_t full_screen_field = 0;
+    int16_t var_4 = 0;
+    int16_t _variable = 0;
+    int16_t si = 0;  // _SI_
+
+    Get_Diplomacy_Statement(m_IDK_diplomatic_order, m_diplomac_player_idx);
+
+    var_8 = INVALID_FIELD;
+
+    for(si = 0; si < 7; si++)
+    {
+
+        
+        strcpy(G_Some_DIPL_Allocs_7[si], asc_3B9DB);
+
+
+    }
+
+
+
+
+}
 
 // WZD o86p04
 // DIPL_sub_72DB6_Draw()
@@ -2693,7 +3041,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             m_diplomacy_message[pos] = 0;
 
-                            strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.IDK_MoO1_attack_bounty[player_idx]].name);
+                            strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.field_6C[player_idx]].name);
 
                             pos = strlen(m_diplomacy_message);
 
@@ -2717,7 +3065,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             m_diplomacy_message[pos] = 0;
 
-                            _fstrcpy(string, spell_data_table[_players[HUMAN_PLAYER_IDX].Dipl.UU_MoO1_field_9C[player_idx]].name);
+                            _fstrcpy(string, spell_data_table[_players[HUMAN_PLAYER_IDX].Dipl.field_9C[player_idx]].name);
 
                             strcat(m_diplomacy_message, string);
 
@@ -2945,7 +3293,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 /*
 OON XREF:  Next_Turn_Calc()
 */
-static void Resolve_Delayed_Diplomacy_Orders(void)
+void Resolve_Delayed_Diplomacy_Orders(void)
 {
     int16_t itr = 0;  // _SI_
     
@@ -2955,12 +3303,12 @@ static void Resolve_Delayed_Diplomacy_Orders(void)
         for(itr = 1; itr < _num_players; itr++)
         {
 
-            if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[itr] != 0)
+            if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[itr] != do_None)
             {
 
                 m_diplomac_player_idx = itr;
 
-                IDK_Dipl_s72690();
+                Npc_Diplomacy_Screen();
 
             }
 

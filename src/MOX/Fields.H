@@ -712,7 +712,7 @@ void Clear_Fields(void);
 // UU_GUI_ScrollableTxtDlg();
 
 // WZD s36p60
-int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, char * title_string, char * text_string, int16_t string_width, int16_t variable, int16_t * active_flag, int16_t select_fill_type, int16_t sfill1, int16_t sfill2, int16_t sfill3, int16_t sfill4, int16_t help_entry);
+int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, char * title_string, char * text_string[], int16_t string_width, int16_t * variable, int16_t * active_flag, int16_t select_fill_type, int16_t sfill1, int16_t sfill2, int16_t sfill3, int16_t sfill4, int16_t help_entry);
 
 // WZD s36p61
 // UU_GUI_NoMouseHighlight();

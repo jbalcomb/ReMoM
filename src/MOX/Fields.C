@@ -1226,14 +1226,16 @@ void Clear_Fields(void)
 /*
 
 */
-int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, char * title_string, char * text_string, int16_t string_width, int16_t variable, int16_t * active_flag, int16_t select_fill_type, int16_t sfill1, int16_t sfill2, int16_t sfill3, int16_t sfill4, int16_t help_entry)
+int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, char * title_string, char * text_string[], int16_t string_width, int16_t * variable, int16_t * active_flag, int16_t select_fill_type, int16_t sfill1, int16_t sfill2, int16_t sfill3, int16_t sfill4, int16_t help_entry)
 {
-    int16_t buffer[6] = { 0, 0, 0, 0, 0, 0 };
+    // int16_t buffer[6] = { 0, 0, 0, 0, 0, 0 };
+    int64_t buffer[6] = { 0, 0, 0, 0, 0, 0 };
     int16_t active = 0;
     int16_t title_var = 0;
     int16_t item_track = 0;
     int16_t copy_flag = 0;
-    char * string_address = 0;
+    // char * string_address = 0;
+    int64_t string_address = 0;
     int16_t title_field = 0;
     int16_t title_x2 = 0;
     int16_t ymin = 0;
@@ -1262,7 +1264,7 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
 
     total_items = 0;
 
-    string_address = text_string;
+    string_address = (int64_t)&text_string[0];
 
     ymin = title_y1;
 
@@ -1271,7 +1273,9 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
     while(esc == ST_FALSE)
     {
 
-        Copy_Memory_Near((uint8_t *)&buffer[0], (uint8_t *)string_address, 2);
+        // copying the memory address?
+        // Copy_Memory_Near((uint8_t *)&buffer[0], (uint8_t *)string_address, 2);
+        Copy_Memory_Near((uint8_t *)&buffer[0], (uint8_t *)string_address, 8);
 
         if(buffer[0] == 0)
         {
@@ -1318,9 +1322,9 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
                 title_x1,
                 ymin,
                 fill_width,
-                string_address,
+                (char *)string_address,
                 active,
-                &variable,
+                variable,
                 itr,
                 select_fill_type,
                 sfill1,
@@ -1363,11 +1367,11 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
     );
 
     if(
-        (variable < 0)
+        (*variable < 0)
         ||
-        (variable >= total_items)
+        (*variable >= total_items)
         ||
-        (variable < choice)
+        (*variable < choice)
     )
     {
 
@@ -1378,13 +1382,13 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
         )
         {
 
-            variable = ST_UNDEFINED;
+            *variable = ST_UNDEFINED;
 
         }
         else
         {
 
-            variable = p_fields[(choice + 1)].Param1;
+            *variable = p_fields[(choice + 1)].Param1;
 
         }
 

@@ -30,10 +30,10 @@ void Build_Research_List(int16_t player_idx, int16_t research_list[]);
 int16_t WIZ_RollSpellReward(int16_t player_idx, int16_t rarity);
 
 // WZD o128p04
-// WIZ_GetSpellValue()
+int16_t Calc_Spell_Value(int16_t player_idx, int16_t spell_idx);
 
 // WZD o128p05
-// WIZ_SpellTradeList()
+int16_t Get_Differential_Spell_List(int16_t player1, int16_t player2, int16_t min_value, int16_t spell_list[]);
 
 // WZD o128p06
 void Change_Relations_For_Bad_City_Spell(int16_t player_idx, int16_t spell_idx, int16_t city_idx);

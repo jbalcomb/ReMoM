@@ -9,11 +9,16 @@ Get_Text_Message()
 
 
 
+
+like 'Selection Box', array of strings, last string is empty string
+
+
+
 ## Get_Diplomacy_Statement()
 
-Get_Diplomacy_Statement(word_42E8C, m_diplomac_player_idx)
+Get_Diplomacy_Statement(m_IDK_diplomatic_order, m_diplomac_player_idx)
 
-word_42E8C gets used as diplomsg_0_record_number
+m_IDK_diplomatic_order gets used as diplomsg_0_record_number
 
 
 
