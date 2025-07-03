@@ -18,6 +18,7 @@
 #include "MOX/MOX_TYPE.H"
 #include "MOX/SOUND.H"
 
+#include "DIPLOMAC.H"
 #include "LVLMAKE.H"
 #include "CityScr.H"  /* City_Screen__WIP(); */
 #include "MainScr.H"
@@ -784,25 +785,34 @@ Check_Cities_Data();
 Check_Cities_Data();
 
 
-    // call    j_DIPL_Gravitation
+        /*
+            BEGIN:  NPC Diplomacy
+        */
 
-    // call    j_DIPL_ContactProgress
+        // call    j_DIPL_Gravitation
+
+        // call    j_DIPL_ContactProgress
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
-    // call    j_DIPL_AI_To_AI                 ; many BUGs and INCONSISTENCIES inside ; RE-EXPLORE in more context!
+        // call    j_DIPL_AI_To_AI                 ; many BUGs and INCONSISTENCIES inside ; RE-EXPLORE in more context!
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
-    // call    j_IDK_Dipl_s7373B
+        // call    j_IDK_Dipl_s7373B
 
-    Resolve_Delayed_Diplomacy_Orders();
+        Resolve_Delayed_Diplomacy_Orders();
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
         // TODO  End_Of_Turn_Diplomacy_Adjustments_
 
         // TODO  Modifier_Diplomacy_Adjustments()
+
+        /*
+            END:  NPC Diplomacy
+        */
+
 
 Check_Cities_Data();
         Cool_Off_Volcanoes();

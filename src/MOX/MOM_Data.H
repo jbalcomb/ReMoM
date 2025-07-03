@@ -1116,24 +1116,24 @@ struct s_WIZ_DIPL
     /* 0066 */ int8_t Broken_Treaty[NUM_PLAYERS];       /* 1oom: broken_treaty */
     // /* 006C */ int16_t Unknown_194h[NUM_PLAYERS];
     /* 006C */ int16_t field_6C[NUM_PLAYERS];           /* 1oom:  attack_bounty */
-    /* 0078 */ int8_t Hidden_Rel[NUM_PLAYERS];          /* 1oom:  trust */
-    /* 007E */ int8_t field_7E[NUM_PLAYERS];
+    /* 0078 */ int8_t Hidden_Rel[NUM_PLAYERS];          /* 1oom:  trust  moo2x: base_relations */
+    /* 007E */ int8_t field_7E[NUM_PLAYERS];            /* target player_idx for a request/deman to break a treaty  moo2x: diplomacy_proposal_war_player */
     /* 0084 */ int8_t field_84[NUM_PLAYERS];
     /* 008A */ int8_t field_8A[NUM_PLAYERS];
     /* 0090 */ int8_t field_90[NUM_PLAYERS];
     /* 0096 */ int8_t Tribute_Spell[NUM_PLAYERS];
     /* 009C */ uint8_t field_9C[NUM_PLAYERS];
     /* 00A2 */ uint8_t field_A2[NUM_PLAYERS];
-    /* 00A8 */ uint8_t field_A8[(NUM_PLAYERS * 6 * 2)]; /* spell_idx? for exchange and tribute? definitely something sizeof(12) * player_idx */
-    /* 00F0 */ uint8_t field_F0[NUM_PLAYERS];
+    /* 00A8 */ int16_t field_A8[(NUM_PLAYERS * 6)];     /* 2-byte, signed  spell_idx  ¿ NPC Exchange Spell - Spell List ?  for exchange and tribute?  NUM_PLAYERS * default string list item count */
+    /* 00F0 */ int8_t field_F0[NUM_PLAYERS];            /* 1-byte, signed  ¿ NPC Exchange Spell - Spell Count ? */
     /* 00F6 */ int16_t Tribute_Gold[NUM_PLAYERS];
     /* 0102 */ int8_t field_102[NUM_PLAYERS];
     /* 0108 */ int8_t field_108[NUM_PLAYERS];
     /* 010E */ int8_t field_10E[NUM_PLAYERS];
     /* 0114 */ int8_t field_114[NUM_PLAYERS];
     /* 011A */ int8_t field_11A[NUM_PLAYERS];
-    /* 0120 */ int8_t Unknown_248h[NUM_PLAYERS];
-    /* 0126 */ int8_t Unknown_24Eh[NUM_PLAYERS];
+    /* 0120 */ int8_t field_120[NUM_PLAYERS];
+    /* 0126 */ int8_t field_126[NUM_PLAYERS];
     /* 012C */ int8_t G_Warning_Progress[NUM_PLAYERS];
     /* 0132 */
 };
@@ -3510,7 +3510,7 @@ extern SAMB_ptr item_view_background_seg;
 extern SAMB_ptr item_power_icons_seg[22];
 
 // WZD dseg:979A
-extern SAMB_ptr IMG_MOODWIZPortrait;
+extern SAMB_ptr m_diplomac_mood_portrait_seg;
 
 // WZD dseg:979C
 // drake178: IMG_USW_WaterBase@

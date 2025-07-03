@@ -77,7 +77,7 @@ void Diplomacy_Screen__WIP(void);
 // static void Diplomacy_Break_Treaty__STUB(void);
 
 // WZD o84p10
-// static void IDK_Diplomacy_Background_Music__STUB(int16_t IDK);
+// static void Start_Diplomacy_Music(int16_t IDK);
 
 // WZD o84p11
 // static void IDK_DiplAnim_s6FDA1(void);
@@ -113,7 +113,7 @@ static void Diplomacy_Greeting(void);
 // DIPL_Gravitation()
 
 // WZD o85p03
-// int16_t IDK_Dipl_PorposeBreakTreaty(void)
+// static int16_t Npc_Proposal__WIP(void);
 
 // WZD o85p04
 // sub_70AFE()
@@ -173,7 +173,7 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx);
 // DIPL_AI_To_AI()
 
 // WZD o86p03
-// static int16_t DIPL_sub_72DB6(void);
+// static int16_t DIPL_sub_72DB6__STUB(void);
 
 // WZD o86p04
 // DIPL_sub_72DB6_Draw()

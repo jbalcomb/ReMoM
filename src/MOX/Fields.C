@@ -1400,7 +1400,7 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
 
     choice = 0;
 
-    while(esc == 0)
+    while(esc == ST_FALSE)
     {
 
         Mark_Time();
@@ -1410,7 +1410,7 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
         if(choice != 0)
         {
 
-            esc = 1;
+            esc = ST_TRUE;
 
         }
 
@@ -1428,9 +1428,9 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
 
     Clear_Fields();
 
-    list_field_on = 0;
+    list_field_on = ST_FALSE;
 
-    list_field_scan_flag = 1;
+    list_field_scan_flag = ST_TRUE;
 
     Mouse_Buffer();
 

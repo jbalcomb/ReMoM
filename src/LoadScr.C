@@ -689,6 +689,7 @@ Capture_Cities_Data();
 
 
     Reset_City_Road_Connection_Bitfields();
+Capture_Cities_Data();
 
 
     Delete_Dead_Units();
