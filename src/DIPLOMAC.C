@@ -783,7 +783,7 @@ void _sub_6ED5D_Draw(void)
 
     }
 
-    Print_Paragraph(38, 140, 245, m_diplomacy_message, 0);
+    Print_Paragraph(38, 138, 245, m_diplomacy_message, 0);
 
 
 }
@@ -884,6 +884,7 @@ static void Get_Main_Diplomacy_Choices(void)
             {
 
                 case -1:
+                case 4:
                 {
 
                     leave_screen = ST_TRUE;
@@ -1237,7 +1238,7 @@ static void Start_Diplomacy_Music(int16_t diplomacy_music)
 
 // WZD o84p11
 /*
-draws IMG_DIPL_TalkAnim or IMG_MOODWIZPortrait
+draws m_diplomac_talk_portrait_seg or m_diplomac_mood_portrait_seg
 checks and updates m_diplomacy_message_IDK_group
 
 XREF:
@@ -2611,6 +2612,58 @@ static int16_t Get_Exchange_Spell_List(int16_t player1, int16_t player2, int16_t
 */
 static void Diplomacy_Offer_Tribute__STUB(void)
 {
+    char string[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t var_34[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t active_flag[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int32_t gold = 0;
+    int16_t var_8 = 0;
+    int16_t var_6 = 0;
+    int16_t var_4 = 0;
+    int16_t _variable = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t gold_cap = 0;  // _DI_
+    
+    for(itr = 0; itr < 10; itr++)
+    {
+
+        active_flag[itr] = ST_TRUE;
+
+    }
+
+    gold = _players[m_diplomac_player_idx].gold_reserve;
+
+    SETMAX(gold, MAX_GOLD_RESERVE);
+
+    gold_cap = ((gold / 25) * 25);
+
+    if(gold_cap < 100)
+    {
+
+        var_4 = 4;
+
+// mov     ax, gold_cap
+// mov     bx, 4
+// cwd
+// idiv    bx
+// mov     bx, 25
+// cwd
+// idiv    bx
+// mov     dx, 25
+// imul    dx
+// mov     [bp+var_34], ax
+
+    }
+    else
+    {
+
+        var_4 = (gold_cap / 25);
+
+        var_34[0] = 25;
+        var_34[1] = 50;
+        var_34[2] = 75;
+        var_34[3] = 100;
+
+    }
 
 
 

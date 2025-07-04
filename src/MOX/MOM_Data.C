@@ -2014,7 +2014,7 @@ SAMB_ptr item_view_background_seg;
 SAMB_ptr item_power_icons_seg[22];
 
 // WZD dseg:979A
-SAMB_ptr IMG_MOODWIZPortrait;
+SAMB_ptr m_diplomac_mood_portrait_seg;
 
 // WZD dseg:979C
 // drake178: IMG_USW_WaterBase@

@@ -265,7 +265,13 @@ int16_t auto_input_variable = 0;
 int16_t list_field_scan_flag = ST_TRUE;
 
 // WZD dseg:826C GUI_NoDialogWrap dw 0                   
-// WZD dseg:826E GUI_NoTxtSelectColor dw 0               
+
+// WZD dseg:826E
+/*
+used as color2 for call to Set_Font_Style()
+*/
+int16_t GUI_NoTxtSelectColor = 0;
+
 // WZD dseg:8270 GUI_OnLastDialogLine dw 0               
 
 // WZD dseg:8272
@@ -728,10 +734,6 @@ int16_t Add_Continuous_String_Input_Field(int16_t xmin, int16_t ymin, int16_t wi
 */
 static int16_t Add_String_List_Field(int16_t x1, int16_t y1, int16_t width, char * string, int16_t active_flag, int16_t * variable, int16_t set_value, int16_t fill_type, int16_t fill_param1, int16_t fill_param2, int16_t fill_param3, int16_t fill_param4, char * hotkey, int16_t help_entry)
 {
-    char hotkey_string[LEN_STRING];
-    int16_t itr_string_length = 0;
-    strcpy(hotkey_string, string);
-    while(hotkey_string[itr_string_length] != '\0' && itr_string_length < LEN_STRING) itr_string_length++;
 
     p_fields[fields_count].x1 = x1;
     p_fields[fields_count].y1 = (y1 - 1);
@@ -762,13 +764,13 @@ static int16_t Add_String_List_Field(int16_t x1, int16_t y1, int16_t width, char
 
     p_fields[fields_count].Rect_FX = fill_type;
 
-    p_fields[fields_count].Param3 = fill_param1;
+    p_fields[fields_count].fill_param1 = fill_param1;
 
-    p_fields[fields_count].Param4 = fill_param2;
+    p_fields[fields_count].fill_param2 = fill_param2;
 
-    p_fields[fields_count].Param5 = fill_param3;
+    p_fields[fields_count].fill_param3 = fill_param3;
 
-    p_fields[fields_count].Param6 = fill_param4;
+    p_fields[fields_count].fill_param4 = fill_param4;
 
     p_fields[fields_count].type = ft_StringList;
 
@@ -1200,6 +1202,29 @@ MoO2
 */
 void Clear_Fields(void)
 {
+    int16_t itr = 0;
+    for(itr = 0; itr < fields_count; itr++)
+    {
+    /* 00 */  p_fields[itr].x1 = 0;
+    /* 02 */  p_fields[itr].y1 = 0;
+    /* 04 */  p_fields[itr].x2 = 0;
+    /* 06 */  p_fields[itr].y2 = 0;
+    /* 08 */  p_fields[itr].type = 0;
+    /* 0A */  p_fields[itr].help = 0;
+    /* 0C */  p_fields[itr].font_style_num = 0;
+    /* 0E */  p_fields[itr].font_normal_color = 0;
+    /* 10 */  p_fields[itr].Rect_FX = 0;
+    /* 12 */  p_fields[itr].Selectable = 0;
+    /* 14 */  p_fields[itr].font_highlight_color = 0;
+    /* 16 */  p_fields[itr].Param0 = 0;
+    /* 18 */  p_fields[itr].Param1 = 0;
+    /* 1A */  p_fields[itr].Param2 = 0;
+    /* 1C */  p_fields[itr].Param3 = 0;
+    /* 1E */  p_fields[itr].Param4 = 0;
+    /* 20 */  p_fields[itr].Param5 = 0;
+    /* 22 */  p_fields[itr].Param6 = 0;
+    /* 24 */  p_fields[itr].hotkey = 0;
+    }   
     fields_count = 1;
     down_mouse_button = ST_UNDEFINED;
     auto_input_variable = 0;
@@ -1245,7 +1270,7 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
     int16_t itr = 0;
     int16_t esc = 0;
     int16_t choice = 0;  // _DI_
-
+    
     list_field_on = ST_TRUE;
 
     Set_Input_Delay(1);
@@ -1264,7 +1289,7 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
 
     total_items = 0;
 
-    string_address = (int64_t)&text_string[0];
+    string_address = (int64_t)text_string[0];
 
     ymin = title_y1;
 
@@ -1276,6 +1301,7 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
         // copying the memory address?
         // Copy_Memory_Near((uint8_t *)&buffer[0], (uint8_t *)string_address, 2);
         Copy_Memory_Near((uint8_t *)&buffer[0], (uint8_t *)string_address, 8);
+        // memcpy(buffer[0], string_address, 8);
 
         if(buffer[0] == 0)
         {
@@ -1290,9 +1316,9 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
                 (total_items == 0)
                 &&
                 (
-                    (active_flag[itr] != 0)
+                    (active_flag[itr] != ST_FALSE)
                     ||
-                    (active_flag == 0)
+                    (active_flag == ST_FALSE)
                 )
             )
             {
@@ -1305,10 +1331,10 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
 
             ymin += vertical_space;
             
-            if(active_flag == 0)
+            if(active_flag[0] == ST_FALSE)
             {
 
-                active = 1;
+                active = ST_TRUE;
 
             }
             else
@@ -1388,15 +1414,15 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
         else
         {
 
-            *variable = p_fields[(choice + 1)].Param1;
+            *variable = p_fields[(choice + 1)].set_value;
 
         }
 
     }
 
-    esc = 0;
+    esc = ST_FALSE;
 
-    copy_flag = 0;
+    copy_flag = ST_FALSE;
 
     choice = 0;
 
@@ -1417,10 +1443,58 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
         if(choice > 0)
         {
 
-            if(active_flag[(choice - 1)])
+            if(
+                (
+                    (active_flag[(choice - 1)] > 0)
+                    &&
+                    (active_flag[(choice - 1)] == ST_FALSE)
+                    &&
+                    (active_flag == ST_FALSE)
+                )
+                ||
+                (choice == title_field)
+            )
             {
 
+                esc = ST_FALSE;
+
             }
+
+        }
+
+        if(esc == ST_FALSE)
+        {
+
+            Invoke_Auto_Function();
+
+            if(list_field_scan_flag  != ST_FALSE)
+            {
+
+                item_track = Scan_Input();
+
+                if(item_track > 0)
+                {
+
+                    *variable = p_fields[item_track].set_value;
+
+                }
+
+            }
+
+            Apply_Palette();
+
+            Toggle_Pages();
+
+            if(copy_flag == ST_FALSE)
+            {
+
+                Copy_On_To_Off_Page();
+
+                copy_flag = ST_TRUE;
+
+            }
+
+            Release_Time(auto_function_delay);
 
         }
 
@@ -1633,6 +1707,52 @@ void Draw_Fields()
                 case ft_StringList:             /* 10  0x0A */  // drake178: DialogLine
                 {
 
+                    Set_Font_Style(p_fields[itr_fields_count].font_style_num, p_fields[itr_fields_count].font_normal_color, GUI_NoTxtSelectColor, ST_NULL);
+
+                    Half_V_Spacing = (Get_Font_Vertical_Spacing() / 2);
+
+                    if(Half_V_Spacing == 0)
+                    {
+
+                        Half_V_Spacing = 1;
+
+                    }
+
+                    Half_Font_Height = Get_Font_Height();
+
+                    if(*p_fields[itr_fields_count].variable1 == p_fields[itr_fields_count].set_value)
+                    {
+
+                        Gradient_Fill(
+                            (p_fields[itr_fields_count].x1 - 1), 
+                            (p_fields[itr_fields_count].y1 + Half_V_Spacing + 1), 
+                            p_fields[itr_fields_count].x2, 
+                            (p_fields[itr_fields_count].y1 + Half_Font_Height + 1), 
+                            p_fields[itr_fields_count].Rect_FX, 
+                            p_fields[itr_fields_count].fill_param1, 
+                            p_fields[itr_fields_count].fill_param2, 
+                            p_fields[itr_fields_count].fill_param3, 
+                            p_fields[itr_fields_count].fill_param4
+                        );
+
+                        Print(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].string);
+
+                    }
+                    else
+                    {
+
+                        if(p_fields[itr_fields_count].Selectable == ST_FALSE)
+                        {
+
+                            Set_Font_Style(p_fields[itr_fields_count].font_style_num, p_fields[itr_fields_count].font_highlight_color, GUI_NoTxtSelectColor, ST_NULL);
+
+                        }
+
+                        Print(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].string);
+
+                    }
+
+
                 } break;
                 case ft_ContinuousStringInput:  /* 11  0x0B */  // drake178: EditSelect
                 {
@@ -1828,13 +1948,14 @@ up_down_flag    {0: Up, 1: Down}  ~== Down: {F,T}
 */
 void Draw_Field(int16_t field_num, int16_t up_down_flag)
 {
-    int16_t Half_Font_Height;
-    int16_t screen_x;
-    int16_t screen_y;
-    int16_t field_x;
-    int16_t field_y;
-    int16_t grid_x;
-    int16_t grid_y;
+    int16_t Half_V_Spacing = 0;
+    int16_t Half_Font_Height = 0;
+    int16_t screen_x = 0;
+    int16_t screen_y = 0;
+    int16_t field_x = 0;
+    int16_t field_y = 0;
+    int16_t grid_x = 0;
+    int16_t grid_y = 0;
 
     switch(p_fields[field_num].type)
     {
@@ -1918,6 +2039,77 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
         } break;
         case ft_StringList:             /* 10  0x0A */  // drake178: DialogLine
         {
+
+            if(up_down_flag == 0)
+            {
+
+                *p_fields[field_num].variable1 = 0;
+
+            }
+            else
+            {
+
+                if(p_fields[field_num].Selectable != ST_FALSE)
+                {
+
+                    *p_fields[field_num].variable1 = p_fields[field_num].set_value;
+
+                }
+
+            }
+
+            Set_Font_Style(p_fields[field_num].font_style_num, p_fields[field_num].font_normal_color, GUI_NoTxtSelectColor, ST_NULL);
+
+            Half_V_Spacing = (Get_Font_Vertical_Spacing() / 2);
+
+            if(Half_V_Spacing == 0)
+            {
+
+                Half_V_Spacing = 1;
+
+            }
+
+            Half_Font_Height = Get_Font_Height();
+
+            if(*p_fields[field_num].variable1 == p_fields[field_num].set_value)
+            {
+
+                Gradient_Fill(
+                    (p_fields[field_num].x1 - 1), 
+                    (p_fields[field_num].y1 + Half_V_Spacing + 1), 
+                    p_fields[field_num].x2, 
+                    (p_fields[field_num].y1 + Half_Font_Height + 1), 
+                    p_fields[field_num].Rect_FX, 
+                    p_fields[field_num].fill_param1, 
+                    p_fields[field_num].fill_param2, 
+                    p_fields[field_num].fill_param3, 
+                    p_fields[field_num].fill_param4
+                );
+
+                Print(p_fields[field_num].x1, p_fields[field_num].y1, p_fields[field_num].string);
+
+            }
+            else
+            {
+
+                if(p_fields[field_num].Selectable != ST_FALSE)
+                {
+
+                    Print(p_fields[field_num].x1, p_fields[field_num].y1, p_fields[field_num].string);
+                    
+                }
+                else
+                {
+
+                    Set_Font_Style(p_fields[field_num].font_style_num, p_fields[field_num].font_highlight_color, GUI_NoTxtSelectColor, ST_NULL);
+
+                    Print(p_fields[field_num].x1, p_fields[field_num].y1, p_fields[field_num].string);
+
+                    Set_Normal_Colors_On();
+                    
+                }
+
+            }
 
         } break;
         case ft_ContinuousStringInput:  /* 11  0x0B */  // drake178: EditSelect

@@ -618,7 +618,7 @@ MoO2
                             if(
                                 (p_fields[alt_field_num].type == ft_StringList)
                                 &&
-                                (p_fields[alt_field_num].Param2 == p_fields[alt_field_num].Param1)
+                                (*p_fields[alt_field_num].variable1 == p_fields[alt_field_num].set_value)
                                 &&
                                 (p_fields[alt_field_num].Selectable != ST_FALSE)
                             )

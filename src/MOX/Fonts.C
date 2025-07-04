@@ -1411,10 +1411,18 @@ void String_Copy_Far_To_Near(int offset, char * src)
 // drake178: VGA_GetVertSpacing()
 int16_t Get_Font_Vertical_Spacing(void)
 {
-    int16_t return_value;
+    int16_t return_value = 0;
+//     int16_t font_height = 0;
+//     int16_t font_base_height = 0;
+// 
+//     font_height = FONT_GET_HEIGHT(font_style_data);
+//     font_base_height = FONT_GET_CURRENT_BASE_HEIGHT(font_style_data);
+// 
+//     // return_value = (farpeekw(font_style_data, FONT_HDR_POS_HEIGHT) - farpeekb(font_style_data, FONT_HDR_POS_CURRENT_BASE_HEIGHT))
+//     // return_value = (FONT_GET_HEIGHT(font_style_data) - FONT_GET_CURRENT_BASE_HEIGHT(font_style_data));
+//     return_value = (font_base_height - font_height);
 
-    // return_value = (farpeekw(font_style_data, FONT_HDR_POS_HEIGHT) - farpeekb(font_style_data, FONT_HDR_POS_CURRENT_BASE_HEIGHT))
-    return_value = (FONT_GET_HEIGHT(font_style_data) - FONT_GET_CURRENT_BASE_HEIGHT(font_style_data));
+    /* HACK */  return_value = font_header->current_vertical_spacing;
 
     return return_value;
 
@@ -1861,7 +1869,7 @@ style num
 */
 void Set_Font_Style(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3)
 {
-    int16_t itr;
+    int16_t itr = 0;
 
     color1 = (color1 < COLOR_SET_COUNT) ? color1 : 0;
     color2 = (color2 < COLOR_SET_COUNT) ? color2 : 0;
@@ -1893,10 +1901,14 @@ void Set_Font_Style(int16_t font_idx, int16_t color1, int16_t color2, int16_t co
     }
 
     font_header->height = font_header->base_height[font_idx];
+
     font_header->current_vertical_spacing = font_header->vertical_spacing[font_idx];
+
     font_header->current_base_height = font_header->height;
+
     font_header->current_horizontal_spacing = font_header->horizontal_spacing[font_idx];
-    font_header->shadow_flag = 0;
+
+    font_header->shadow_flag = ST_FALSE;
 
     for(itr = 0; itr < 96; itr++)
     {

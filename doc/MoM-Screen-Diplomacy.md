@@ -2,6 +2,10 @@
 
 IDK_DIPLOMSG_s732D9()  ==>  Get_Diplomacy_Statement()
 IDK_Dipl_s72690()  ==>  Npc_Diplomacy_Screen()
+¿ ?  ==>  Diplomacy_Screen_Draw_Portrait_Mouth_Animation()
+
+IMG_MOODWIZPortrait  =>  m_diplomac_mood_portrait_seg
+IMG_DIPL_TalkAnim  ==>  m_diplomac_talk_portrait_seg
 
 
 

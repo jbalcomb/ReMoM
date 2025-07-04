@@ -123,18 +123,21 @@ struct s_Field
         int64_t Param3;             //  ft_Grid  &xpos
         int16_t justification;      //  4  ft_Input
         int16_t min_value;          //  6  ft_scroll
+        int16_t fill_param1;        // 10 ft_StringList
     };
     union {
             int64_t Param4;         // MaxSlide      CStyle                                               ypos
                                     //  ft_Grid  &ypos
             int16_t cursor_type;    //  4  ft_Input
             int16_t max_value;      //  6  ft_scroll
+            int16_t fill_param2;        // 10 ft_StringList
     };
     union {
         int16_t  Param5;
         SAMB_ptr pict_seg;          //  1 ft_Button
         int16_t  max_characters;    //  4 ft_Input  11 ft_ContinuousStringInput
         int16_t  orientation;       //  6 ft_Scroll enum e_Scroll_Field_Orientation {H,V}
+        int16_t fill_param3;        // 10 ft_StringList
     };
     union {
         int16_t Param6;
@@ -142,6 +145,7 @@ struct s_Field
         // uint16_t var_offset;  // ft_Scroll  ... MoO2 Draw_Visible_Fields_Back()
         int16_t * variable;         //  6  ft_Scroll
         int16_t shadow;             // 11  ft_ContinuousStringInput
+        int16_t fill_param4;        // 10 ft_StringList
     };
 
     /* 24 */ int16_t hotkey;     // ASCII Character *Code*
