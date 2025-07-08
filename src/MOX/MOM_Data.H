@@ -1119,7 +1119,7 @@ struct s_WIZ_DIPL
     /* 0078 */ int8_t Hidden_Rel[NUM_PLAYERS];          /* 1oom:  trust  moo2x: base_relations */
     /* 007E */ int8_t field_7E[NUM_PLAYERS];            /* target player_idx for a request/deman to break a treaty  moo2x: diplomacy_proposal_war_player */
     /* 0084 */ int8_t field_84[NUM_PLAYERS];
-    /* 008A */ int8_t field_8A[NUM_PLAYERS];
+    /* 008A */ int8_t field_8A[NUM_PLAYERS];            /* only used by gift spell messages? spell_idx selected for 'Offer Tribute' - 'Spell' */
     /* 0090 */ int8_t field_90[NUM_PLAYERS];
     /* 0096 */ int8_t Tribute_Spell[NUM_PLAYERS];
     /* 009C */ uint8_t field_9C[NUM_PLAYERS];

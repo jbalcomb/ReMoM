@@ -42,7 +42,7 @@ XREF:
     j_Player_Research_Spells()
         Player_Research_Spells()
         PreInit_Overland()
-        WIZ_LearnSpell__WIP()
+        Player_Gets_Spell()
 */
 int16_t Player_Research_Spells(int16_t player_idx)
 {
@@ -453,7 +453,7 @@ int16_t Calc_Spell_Value(int16_t player_idx, int16_t spell_idx)
 
 // WZD o128p05
 // MoO2  Module: NPCDIPLO  Get_Exchange_Tech_List_();  Get_Differential_Tech_List_();
-int16_t Get_Differential_Spell_List(int16_t player1, int16_t player2, int16_t min_value, int16_t spell_list[])
+int16_t Get_Differential_Spell_List(int16_t player1, int16_t player2, int16_t min_value, uint8_t spell_list[])
 {
     /* ¿ BUGBUG  6 * 10 ? */
     uint8_t candidate_list[60] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -484,6 +484,7 @@ int16_t Get_Differential_Spell_List(int16_t player1, int16_t player2, int16_t mi
 
     candidate_count = 0;
 
+    // spl_Detect_Magic        = 206,
     for(itr = spl_Earth_To_Mud; itr < spl_Spell_Of_Return; itr++)
     {
 
@@ -495,12 +496,16 @@ int16_t Get_Differential_Spell_List(int16_t player1, int16_t player2, int16_t mi
             (
                 (magic_realm != sbr_Arcane)
                 &&
-                (_players[player1].spellranks[magic_realm] == 0)
+                (
+                    (_players[player1].spellranks[magic_realm] == 0)
+                    ||
+                    (_players[player2].spellranks[magic_realm] == 0)
+                )
             )
         )
         {
 
-            itr += 39;
+            itr += (NUM_SPELLS_PER_MAGIC_REALM - 1);
 
         }
         else
@@ -533,11 +538,11 @@ int16_t Get_Differential_Spell_List(int16_t player1, int16_t player2, int16_t mi
 
             candidate_idx = (Random(candidate_count) - 1);
 
-            spell_idx = candidate_idx[candidate_list];
+            spell_idx = candidate_list[candidate_idx];
 
             candidate_list[candidate_idx] = 0;
             
-            if(spell_idx != 0)
+            if(spell_idx != spl_NONE)
             {
 
                 spell_value = Calc_Spell_Value(player1, spell_idx);
@@ -561,9 +566,6 @@ int16_t Get_Differential_Spell_List(int16_t player1, int16_t player2, int16_t mi
         }
 
     }
-
-
-
 
     return spell_count;
 

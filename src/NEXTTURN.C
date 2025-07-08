@@ -3815,7 +3815,7 @@ void Players_Check_Spell_Research(void)
         )
         {
 
-            WIZ_LearnSpell__WIP(itr_players, _players[itr_players].researching_spell_idx, 1);  // learned from research
+            Player_Gets_Spell(itr_players, _players[itr_players].researching_spell_idx, 1);  // learned from research
 
             IDK = ST_TRUE;
 
@@ -3877,13 +3877,14 @@ void Players_Check_Spell_Research(void)
 
 
 // WZD o140p21
+// MoO2  Module: COLCALC  Player_Gets_Tech_App_()
 /*
     WIP: needs GAME_LearnSpellAnim() and AI_Research_Picker()
 
 handles researched spell, traded/gifted spell, treasure spell, and conquest spell
 
 */
-void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Research)
+void Player_Gets_Spell(int16_t player_idx, int16_t spell_idx, int16_t New_Research)
 {
     int16_t spells_cnt;
     int16_t Was_Research_Target;

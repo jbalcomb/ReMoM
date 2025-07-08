@@ -57,7 +57,7 @@ enum e_DIPLOMATIC_ORDERS
     // 51
     // 52
     // 53
-    // 54
+    do_IDK_gift_spell = 54,
     // 55
     // 56
 

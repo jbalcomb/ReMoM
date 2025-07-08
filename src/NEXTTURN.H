@@ -177,7 +177,7 @@ void Determine_Offer(void);
 void Players_Check_Spell_Research(void);
 
 // WZD o140p21
-void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Research);
+void Player_Gets_Spell(int16_t player_idx, int16_t spell_idx, int16_t New_Research);
 
 // WZD o140p22
 void Heal_Unit(int16_t unit_idx, int16_t fraction, int16_t flag);

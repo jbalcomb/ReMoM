@@ -428,7 +428,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
 
         if(Reward_Spell > -1)
         {
-            WIZ_LearnSpell__WIP(player_idx, Reward_Spell, 1);
+            Player_Gets_Spell(player_idx, Reward_Spell, 1);
         }
         /*
             END:  Spell Treasure

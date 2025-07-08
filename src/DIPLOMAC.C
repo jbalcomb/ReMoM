@@ -35,6 +35,7 @@ MoO2
 #include "LOADER.H"
 #include "MainScr.H"
 #include "MOM_SCR.H"
+#include "NEXTTURN.H"
 #include "STU/STU_DBG.H"
 #include "Spellbook.H"
 #include "Spells128.H"
@@ -97,7 +98,7 @@ static int16_t Find_Worst_Modifier(void);
 // WZD o85p06
 static void Limit_Temporary_Peace_Modifier(void);
 // WZD o85p07
-static void WIZ_DIPL_TeachSpell__STUB(int16_t player_idx, int16_t spell_idx);
+static void Diplomacy_Player_Gets_Spell(int16_t player_idx, int16_t spell_idx);
 // WZD o85p08
 // G_DIPL_PickSides()
 // WZD o85p09
@@ -139,18 +140,28 @@ static void Get_Diplomacy_Statement(int16_t IDK, int16_t player_idx);
 */
 // WZD o87p01
 // DIPL_ContactProgress()
+
 // WZD o87p02
+/*
+OON XREF:  Next_Turn_Calc()
+
+*/
 // IDK_Dipl_s7373B()
+
 // WZD o87p03
 // G_DIPL_NeedForWar()
+
 // WZD o87p04
 // G_DIPL_SuperiorityWar()
+
 // WZD o87p05
 // IDK_Dipl_s73F1C()
+
 // WZD o87p06
 void Resolve_Delayed_Diplomacy_Orders(void);
 // WZD o87p07
 // DIPL_GetOffMyLawn()
+
 // WZD o87p08
 void Decrease_Peace_Duration(void);
 // WZD o87p09
@@ -381,7 +392,8 @@ byte_ptr G_Some_DIPL_Allocs_6[6];
 byte_ptr G_Some_DIPL_Alloc_3;
 // WZD dseg:C320 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IDK_DIPLO_NIU db 78h dup(0)
 // WZD dseg:C398 00                                              byte_42E38 db 0                         ; DATA XREF: sub_72131+CAw ...
-// WZD dseg:C399 00 00 00 00 00 00 00 00 00 00                   byte_42E39 db 0Ah dup(0)                ; DATA XREF: sub_74420+36Aw ...
+// WZD dseg:C399
+uint8_t byte_42E39[10];
 // WZD dseg:C3A3 00 00 00 00 00 00 00 00 00 00                   byte_42E43 db 0Ah dup(0)                ; DATA XREF: sub_74420+347w ...
 // WZD dseg:C3AD 00                                              byte_42E4D db 0                         ; DATA XREF: sub_72131+A9w ...
 
@@ -966,7 +978,7 @@ IDK_Diplo_Response(71, 3);
 IDK == 3:
     some spell specific business
     no idea what the 25% chance is for
-    didn't see where spells got put in to_players[].Dipl.field_8A[]
+    field_8A gets used for 'Offer Tribute'
 */
 static void Diplomacy_Display_Response(int16_t diplomatic_order, int16_t IDK2)
 {
@@ -1009,6 +1021,7 @@ static void Diplomacy_Display_Response(int16_t diplomatic_order, int16_t IDK2)
 
     if(di != 1)
     {
+        // So, ... NOT {51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66}
 
         switch(IDK2)
         {
@@ -1067,11 +1080,13 @@ static void Diplomacy_Display_Response(int16_t diplomatic_order, int16_t IDK2)
                 )
                 {
 
+                    /* spell_idx selected for 'Offer Tribute' - 'Spell' */
                     Spell_Index = _players[HUMAN_PLAYER_IDX].Dipl.field_8A[m_diplomac_player_idx];
+                    assert(Spell_Index >= 1 && Spell_Index <= 214);
 
                     _players[HUMAN_PLAYER_IDX].Dipl.field_8A[m_diplomac_player_idx] = 0;
 
-                    m_IDK_diplomatic_order = 54;
+                    m_IDK_diplomatic_order = do_IDK_treaty1;  // 54: 4 messages specfic to gift spell
 
                 }
                 else
@@ -1995,11 +2010,26 @@ static void Limit_Temporary_Peace_Modifier(void)
 }
 
 // WZD o85p07
-// WIZ_DIPL_TeachSpell()
-static void WIZ_DIPL_TeachSpell__STUB(int16_t player_idx, int16_t spell_idx)
+// drake178: WIZ_DIPL_TeachSpell()
+/*
+; a wrapper for WIZ_LearnSpell that, if called for the
+; human player, will also execute DIPL_LoadTalkGFX
+; afterward to (re)load the diplomacy talk graphics
+*/
+/*
+
+*/
+static void Diplomacy_Player_Gets_Spell(int16_t player_idx, int16_t spell_idx)
 {
 
+    Player_Gets_Spell(player_idx, spell_idx, ST_FALSE);
 
+    if(player_idx == _human_player_idx)
+    {
+
+        DIPL_LoadTalkGFX();
+
+    }
 
 }
 
@@ -2575,6 +2605,11 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx)
 */
 /*
 
+Get_Main_Diplomacy_Choices()
+    Get_Exchange_Spell_List(_human_player_idx, m_diplomac_player_idx, 0);
+Diplomacy_Offer_Tribute()
+    Get_Exchange_Spell_List(HUMAN_PLAYER_IDX, m_diplomac_player_idx, byte_42E39[itr]);
+
 */
 static int16_t Get_Exchange_Spell_List(int16_t player1, int16_t player2, int16_t min_value)
 {
@@ -2585,7 +2620,7 @@ static int16_t Get_Exchange_Spell_List(int16_t player1, int16_t player2, int16_t
 
     spell_count = 0;
 
-    spell_count = Get_Differential_Spell_List(player2, player1, min_value, (int16_t *)&m_exchange_spell_list[0]);
+    spell_count = Get_Differential_Spell_List(player2, player1, min_value, (uint8_t *)&m_exchange_spell_list[0]);
 
     if(spell_count < 1)
     {
@@ -2596,8 +2631,15 @@ static int16_t Get_Exchange_Spell_List(int16_t player1, int16_t player2, int16_t
     else
     {
 
-        // ; BUG: value doesn't fit into a byte
-        m_exchange_spell_values[itr] = Calc_Spell_Value(player2, m_exchange_spell_list[itr]);
+        m_exchange_spell_count = spell_count;
+
+        for(itr = 0; m_exchange_spell_count > itr; itr++)
+        {
+
+            // ; BUG: value doesn't fit into a byte
+            m_exchange_spell_values[itr] = Calc_Spell_Value(player2, m_exchange_spell_list[itr]);
+
+        }
 
     }
 
@@ -2609,16 +2651,24 @@ static int16_t Get_Exchange_Spell_List(int16_t player1, int16_t player2, int16_t
 // WZD o85p16
 /*
 
+clear active flags
+set count and list for gold
+build string list
+
+XREF:
+    j_Diplomacy_Offer_Tribute__STUB()
+        Get_Main_Diplomacy_Choices_()
+
 */
 static void Diplomacy_Offer_Tribute__STUB(void)
 {
     char string[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t var_34[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t active_flag[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t gold_amounts[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t list_item_active_flags[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int32_t gold = 0;
     int16_t var_8 = 0;
     int16_t var_6 = 0;
-    int16_t var_4 = 0;
+    int16_t list_count = 0;
     int16_t _variable = 0;
     int16_t itr = 0;  // _SI_
     int16_t gold_cap = 0;  // _DI_
@@ -2626,10 +2676,13 @@ static void Diplomacy_Offer_Tribute__STUB(void)
     for(itr = 0; itr < 10; itr++)
     {
 
-        active_flag[itr] = ST_TRUE;
+        list_item_active_flags[itr] = ST_TRUE;
 
     }
 
+    /*
+        BEGIN: gold
+    */
     gold = _players[m_diplomac_player_idx].gold_reserve;
 
     SETMAX(gold, MAX_GOLD_RESERVE);
@@ -2639,33 +2692,229 @@ static void Diplomacy_Offer_Tribute__STUB(void)
     if(gold_cap < 100)
     {
 
-        var_4 = 4;
+        list_count = (gold_cap / 25);
 
-// mov     ax, gold_cap
-// mov     bx, 4
-// cwd
-// idiv    bx
-// mov     bx, 25
-// cwd
-// idiv    bx
-// mov     dx, 25
-// imul    dx
-// mov     [bp+var_34], ax
+        gold_amounts[0] = 25;
+        gold_amounts[1] = 50;
+        gold_amounts[2] = 75;
+        gold_amounts[3] = 100;
 
     }
     else
     {
 
-        var_4 = (gold_cap / 25);
+        list_count = 4;
 
-        var_34[0] = 25;
-        var_34[1] = 50;
-        var_34[2] = 75;
-        var_34[3] = 100;
+        gold_amounts[0] = ((( gold_cap / 4)      / 25) * 25);  //  25%
+        gold_amounts[1] = ((( gold_cap / 2)      / 25) * 25);  //  50%
+        gold_amounts[2] = ((((gold_cap * 3) / 4) / 25) * 25);  //  75%
+        gold_amounts[3] = ((  gold_cap           / 25) * 25);  // 100%
+
+    }
+    /*
+        END: gold
+    */
+
+    _variable = 0;
+
+    strcpy(m_diplomacy_message, off_3B95A);  // "What do you offer as tribute?"
+
+
+    /*
+        BEGIN: Build String List
+    */
+
+    for(itr = 0; itr < list_count; itr++)
+    {
+
+        itoa(gold_amounts[itr], string, 10);
+
+        strcpy(G_Some_DIPL_Allocs_7[itr], lstr_gold);
+
+        strcat(G_Some_DIPL_Allocs_7[itr], string);
+
+        strcat(G_Some_DIPL_Allocs_7[itr], aGold_0);
+
+        if(gold_amounts[itr] < _players[_human_player_idx].gold_reserve)
+        {
+
+            list_item_active_flags[itr] = ST_FALSE;
+
+        }
 
     }
 
+    strcpy(G_Some_DIPL_Allocs_7[itr], aSpells);
 
+    strcpy(G_Some_DIPL_Allocs_7[(1 + itr)], aForgetIt_0);
+
+    *G_Some_DIPL_Allocs_7[(2 + itr)] = '\0';
+
+    /*
+        END: Build String List
+    */
+
+
+    Set_Font_Style(1, 4, 3, ST_NULL);
+
+    Set_Alias_Color(187);
+
+    Set_Font_LF(2);
+
+    _variable = Get_List_Field(38, 142, 245, &aWhatDoYouOffer[29], G_Some_DIPL_Allocs_7, 100, &_variable, &list_item_active_flags[0], 15, 11, 0, 0, 0, ST_UNDEFINED);
+
+    if(
+        (_variable != ST_UNDEFINED)
+        &&
+        ((list_count + 1) != _variable)  /* ¿ ? */
+    )
+    {
+
+        if(_variable >= list_count)
+        {
+
+            Get_Exchange_Spell_List(HUMAN_PLAYER_IDX, m_diplomac_player_idx, byte_42E39[itr]);
+
+            if(m_exchange_spell_count > 0)
+            {
+
+                _variable = 0;
+
+                for(itr = 0; ((m_exchange_spell_count > itr) && (itr < 4)); itr++)
+                {
+                    assert(m_exchange_spell_list[itr] != 0);
+
+                    strcpy(G_Some_DIPL_Allocs_7[itr], lstr_gold);
+
+                    _fstrcpy(string, spell_data_table[m_exchange_spell_list[itr]].name);
+
+                    strcat(G_Some_DIPL_Allocs_7[itr], string);
+
+                }
+
+                strcpy(G_Some_DIPL_Allocs_7[itr], aForgetIt_0);
+
+                *G_Some_DIPL_Allocs_7[1] = '\0';
+
+                strcpy(m_diplomacy_message, off_3B95A);
+
+                Set_Font_Style(1, 4, 3, ST_NULL);
+
+                Set_Alias_Color(187);
+
+                _variable = Get_List_Field(38, 142, 245, &aWhatDoYouOffer[29], G_Some_DIPL_Allocs_7, 100, &_variable, 0, 15, 11, 0, 0, 0, ST_UNDEFINED);
+
+                if(_variable != ST_UNDEFINED)
+                {
+                            
+                    if(
+                        (m_exchange_spell_count > _variable)
+                        &&
+                        (_variable < 4)
+                    )
+                    {
+
+                        Diplomacy_Player_Gets_Spell(m_diplomac_player_idx, m_exchange_spell_list[_variable]);
+
+                        if(_players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] < 0)
+                        {
+
+                            var_6 = 20;
+
+                        }
+                        else
+                        {
+                                    
+                            var_6 = ((100 - _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]) / 10);
+
+                        }
+
+                        var_8 = ((var_6 * (Random(8) + Random(8))) / 10);
+
+                        _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] += var_8;
+
+                        SETMAX(_players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx], 100);
+
+                        _players[m_diplomac_player_idx].Dipl.Visible_Rel[HUMAN_PLAYER_IDX] = _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx];
+
+                        // BUGBUG  improvement should be added to CP, not HP
+                        _players[HUMAN_PLAYER_IDX].Dipl.Peace_Interest[m_diplomac_player_idx] += var_8;
+
+                        SETMAX(_players[HUMAN_PLAYER_IDX].Dipl.Peace_Interest[m_diplomac_player_idx], 100);
+
+                        // BUGBUG  improvement should be added to CP, not HP
+                        _players[HUMAN_PLAYER_IDX].Dipl.Hidden_Rel[m_diplomac_player_idx] += (2 + Random(8));
+
+                        SETMAX(_players[HUMAN_PLAYER_IDX].Dipl.Hidden_Rel[m_diplomac_player_idx], 30);
+
+                        assert(m_exchange_spell_list[_variable] >= 1 && m_exchange_spell_list[_variable] <= 214);
+                        _players[HUMAN_PLAYER_IDX].Dipl.field_8A[m_diplomac_player_idx] = m_exchange_spell_list[_variable];
+
+                        Diplomacy_Display_Response(1, 3);
+
+                    }
+
+                }
+
+            }
+            else  /* (m_exchange_spell_count <= 0) */
+            {
+
+                Diplomacy_Display_Response(do_IDK_exchange_spell_goodbye, 3);
+
+            }
+
+        }
+        else  /* (_variable < var_4) */
+        {
+
+            if(_players[m_diplomac_player_idx].Astr.Army_Strength != 0)
+            {
+
+                var_6 = ((_variable + 1) * 4);
+
+            }
+            else
+            {
+
+                var_6 = 8;
+
+            }
+
+            itr = Random(3);
+
+            var_8 = ((var_6 * itr) / 10);
+
+            _players[HUMAN_PLAYER_IDX].gold_reserve -= gold_amounts[_variable];
+
+            Player_Add_Gold(m_diplomac_player_idx, gold_amounts[_variable]);
+
+            SETMAX(var_8, 100);
+
+            _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] += var_8;
+
+            if(_players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] > 100)
+            {
+
+                _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] = 100;
+
+            }
+            else
+            {
+
+                _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] += var_8;
+
+            }
+
+            SETMAX(_players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx], 100);
+
+            _players[m_diplomac_player_idx].Dipl.Visible_Rel[HUMAN_PLAYER_IDX] = _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx];
+
+            Diplomacy_Display_Response(1, 3);
+
+        }
+        
+    }
 
 }
 
@@ -2903,7 +3152,7 @@ static void Npc_Diplomacy_Screen(void)
                             if(_players[HUMAN_PLAYER_IDX].Dipl.Tribute_Spell[m_diplomac_player_idx] != spl_NONE)
                             {
 
-                                WIZ_DIPL_TeachSpell__STUB(HUMAN_PLAYER_IDX, _players[HUMAN_PLAYER_IDX].Dipl.Tribute_Spell[m_diplomac_player_idx]);
+                                Diplomacy_Player_Gets_Spell(HUMAN_PLAYER_IDX, _players[HUMAN_PLAYER_IDX].Dipl.Tribute_Spell[m_diplomac_player_idx]);
 
                             }
 
@@ -2918,7 +3167,7 @@ static void Npc_Diplomacy_Screen(void)
                     )
                     {
 
-                        WIZ_DIPL_TeachSpell__STUB(HUMAN_PLAYER_IDX, _players[HUMAN_PLAYER_IDX].Dipl.field_A8[((m_diplomac_player_idx * 12) + input_field_idx)]);
+                        Diplomacy_Player_Gets_Spell(HUMAN_PLAYER_IDX, _players[HUMAN_PLAYER_IDX].Dipl.field_A8[((m_diplomac_player_idx * 12) + input_field_idx)]);
 
                     }
 
@@ -3126,7 +3375,7 @@ static int16_t DIPL_sub_72DB6__STUB(void)
 */
 void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_idx)
 {
-    char string[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char string[(LEN_STRING + 1)] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t diplomsg_1_record_number = 0;
     int16_t var_4 = 0;
     int16_t itr = 0;
@@ -3304,6 +3553,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
                             m_diplomacy_message[pos] = 0;
 
                             itoa(_players[HUMAN_PLAYER_IDX].Dipl.field_114[player_idx], string, 10);
+                            assert(string[30] == 0);
 
                             strcat(m_diplomacy_message, string);
 
@@ -3317,6 +3567,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
                             m_diplomacy_message[pos] = 0;
 
                             _fstrcpy(string, spell_data_table[_players[HUMAN_PLAYER_IDX].Dipl.field_9C[player_idx]].name);
+                            assert(string[30] == 0);
 
                             strcat(m_diplomacy_message, string);
 
@@ -3330,6 +3581,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
                             m_diplomacy_message[pos] = 0;
 
                             itoa(_players[HUMAN_PLAYER_IDX].Dipl.field_114[player_idx], string, 10);
+                            assert(string[30] == 0);
 
                             strcat(m_diplomacy_message, string);
 
@@ -3373,6 +3625,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
                             m_diplomacy_message[pos] = 0;
 
                             _fstrcpy(string, spell_data_table[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name);
+                            assert(string[30] == 0);
 
                             strcat(m_diplomacy_message, string);
 
@@ -3436,6 +3689,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
                             m_diplomacy_message[pos] = 0;
 
                             itoa((1400 + (_turn / 12)), string, 10);
+                            assert(string[30] == 0);
 
                             strcat(m_diplomacy_message, string);
 
@@ -3449,6 +3703,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
                             m_diplomacy_message[pos] = 0;
 
                             _fstrcpy(string, spell_data_table[Spell_Index].name);
+                            assert(string[30] == 0);
 
                             strcat(m_diplomacy_message, string);
 
@@ -3484,6 +3739,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
                             m_diplomacy_message[pos] = 0;
 
                             itoa(word_42E66, string, 10);
+                            assert(string[30] == 0);
 
                             strcat(m_diplomacy_message, string);
 
@@ -3623,11 +3879,17 @@ void Decrease_Peace_Duration(void)
     WIZARDS.EXE  ovr088
 */
 
-// WZD o88p0
-
+// WZD o88p01
 // sub_74420()
+// IDK_Dipl_Npc_Demand__STUB()
+
+// WZD o88p02
 // DIPL_HumanWarOrPeace()
+// WZD o88p03
 // IDK_Dipl_s74B68()
+// WZD o88p04
 // sub_74E2F()
+// WZD o88p05
 // sub_74E38()
+// WZD o88p06
 // sub_74F4A()

@@ -1253,8 +1253,7 @@ void Clear_Fields(void)
 */
 int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, char * title_string, char * text_string[], int16_t string_width, int16_t * variable, int16_t * active_flag, int16_t select_fill_type, int16_t sfill1, int16_t sfill2, int16_t sfill3, int16_t sfill4, int16_t help_entry)
 {
-    // int16_t buffer[6] = { 0, 0, 0, 0, 0, 0 };
-    int64_t buffer[6] = { 0, 0, 0, 0, 0, 0 };
+    char buffer[6] = { 0, 0, 0, 0, 0, 0 };
     int16_t active = 0;
     int16_t title_var = 0;
     int16_t item_track = 0;
@@ -1270,7 +1269,9 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
     int16_t itr = 0;
     int16_t esc = 0;
     int16_t choice = 0;  // _DI_
-    
+    int64_t * DBG_buffer_ptr = 0;
+    char * DBG_string_ptr = 0;
+
     list_field_on = ST_TRUE;
 
     Set_Input_Delay(1);
@@ -1298,12 +1299,10 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
     while(esc == ST_FALSE)
     {
 
-        // copying the memory address?
-        // Copy_Memory_Near((uint8_t *)&buffer[0], (uint8_t *)string_address, 2);
-        Copy_Memory_Near((uint8_t *)&buffer[0], (uint8_t *)string_address, 8);
-        // memcpy(buffer[0], string_address, 8);
+        // copy two characters of the string, to test if the first one is not null
+        Copy_Memory_Near((uint8_t *)&buffer[0], (uint8_t *)string_address, 2);
 
-        if(buffer[0] == 0)
+        if(buffer[0] == '\0')
         {
 
             esc = ST_TRUE;
@@ -1312,13 +1311,14 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
         else
         {
             
+            /* NOTE:  active_flags can be NULL, so these conditions can't be as seen in the Dasm */
             if(
                 (total_items == 0)
                 &&
                 (
-                    (active_flag[itr] != ST_FALSE)
+                    (active_flag == ST_NULL)
                     ||
-                    (active_flag == ST_FALSE)
+                    (active_flag[itr] != ST_FALSE)
                 )
             )
             {
@@ -1331,7 +1331,7 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
 
             ymin += vertical_space;
             
-            if(active_flag[0] == ST_FALSE)
+            if(active_flag == ST_NULL)
             {
 
                 active = ST_TRUE;
@@ -1443,13 +1443,12 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
         if(choice > 0)
         {
 
+            /* NOTE:  active_flags can be NULL, so these conditions can't be as seen in the Dasm */
             if(
                 (
-                    (active_flag[(choice - 1)] > 0)
+                    (active_flag != ST_NULL)
                     &&
                     (active_flag[(choice - 1)] == ST_FALSE)
-                    &&
-                    (active_flag == ST_FALSE)
                 )
                 ||
                 (choice == title_field)

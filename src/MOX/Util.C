@@ -113,19 +113,23 @@ void String_To_Lower(char * string)
 void Copy_Memory_Near(uint8_t * dst, uint8_t * src, int16_t count)
 {
 
-    if(count != 0)
+    if(count == 0)
     {
-
-        while(count != 0)
-        {
-
-            *dst++ = *src++;
-
-            count--;
-
-        }
-
+        return;
     }
+/*
+push    es
+push    si
+push    di
+mov     ax, ds
+mov     es, ax
+assume es:dseg
+mov     di, [bp+dst]
+mov     si, [bp+src]
+mov     cx, [bp+count]
+rep movsb
+*/
+    memcpy(dst, src, count);
 
 }
 /*
