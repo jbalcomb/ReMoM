@@ -12,6 +12,9 @@ ninja compile_commands VSC
 
 
 
+// TODO  DIPLO ROUND 2
+e.g., no NPC demand/offer
+¿ Next_Turn_Calc() stuff ?
 
 
 DOME_RIGHTMEOW

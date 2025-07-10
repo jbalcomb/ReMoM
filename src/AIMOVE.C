@@ -8170,4 +8170,30 @@ void AI_Pick_Action_Conts__WIP(int16_t player_idx)
 
 
 // WZD o162p38
-// WIZ_UNIT_ResetOrders()
+void Player_Clear_All_Unit_Orders(int16_t player_idx)
+{
+    int16_t itr = 0;  // _SI_
+
+    if(player_idx == HUMAN_PLAYER_IDX)
+    {
+
+        return;
+
+    }
+
+    for(itr = 0; itr < _units; itr++)
+    {
+
+        if(
+            (_UNITS[itr].owner_idx == player_idx)
+            &&
+            (_unit_type_table[_UNITS[itr].type].Construction == 0)
+        )
+        {
+
+            _UNITS[itr].Status = us_Ready;
+
+        }
+    }
+
+}

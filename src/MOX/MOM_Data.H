@@ -1102,9 +1102,9 @@ struct s_DIPLOMSG_RECORD
 struct s_WIZ_DIPL
 {
     /* 0000 */ int8_t Contacted[NUM_PLAYERS];  /* ¿ BOOLVEC_DECLARE(contact, PLAYER_NUM); ? */
-    /* 0006 */ int16_t Treaty_Interest[NUM_PLAYERS];
-    /* 0012 */ int16_t Peace_Interest[NUM_PLAYERS];
-    /* 001E */ int16_t temporary_exchange_modifier[NUM_PLAYERS];  // drake178: Trade_Interest
+    /* 0006 */ int16_t treaty_modifier[NUM_PLAYERS];
+    /* 0012 */ int16_t peace_modifier[NUM_PLAYERS];
+    /* 001E */ int16_t exchange_modifier[NUM_PLAYERS];  // drake178: Trade_Interest
     /* 002A */ int8_t Visible_Rel[NUM_PLAYERS];  /* 1-byte, signed; "'Diplomatic Relations Scale' position"  ¿ -100 to 120 ?  1oom: relation1 */
     /* 0030 */ int8_t Dipl_Status[NUM_PLAYERS];  /* 1-byte, signed;  1oom: treaty;  enum DIPL_Status { DIPL_NoTreaty, DIPL_WizardPact, DIPL_Alliance, DIPL_War, DIPL_Crusade } */
     /* 0036 */ int16_t DA_Strength[NUM_PLAYERS];
@@ -1218,7 +1218,7 @@ struct s_WIZARD
     /* 0264 */ uint8_t  spells_list[NUM_SPELLS];   /* "Spell Library" TODO should be [6][40] or [6][4][10] or some odd, equivalent struct */ /* enum? known, knowable, ? */
     /* 0354 */ uint16_t Defeated_Wizards;  /* ¿ bifield of bit_num == play_num ? */
     /* 0356 */ uint16_t gold_reserve;       /*  */
-    /* 0358 */ uint16_t Unknown_358h;
+    /* 0358 */ uint16_t field_358;
     /* 035A */ struct s_Astr_Data Astr;     /* populated in Record_History() */
     /* 0360 */ uint16_t Pop_div_10k;        /* ¿ mini-pops ?  onlu used for history? */
     /* 0362 */ uint8_t  Historian[288];     /* ¿ Wizard's Power ? */
@@ -1237,7 +1237,7 @@ struct s_WIZARD
     /* 04BA */ uint16_t OVL_TargetWiz;
     /* 04BC */ uint8_t  field_4BC;
     /* 04BD */ uint8_t  field_4BD;
-    /* 04BE */ uint8_t  Unknown_4BEh[6];
+    /* 04BE */ uint8_t  field_4BE[NUM_PLAYERS];
     /* 04C4 */ uint16_t Prim_Realm;
     /* 04C6 */ uint16_t Sec_Realm;
 };

@@ -62,13 +62,13 @@ void Diplomacy_Screen__WIP(void);
 // static void Diplomacy_Propose_Treaty__STUB(void);
 
 // WZD o84p05
-// sub_6F3E4()
+// static int16_t IDK_Npc_Target_Player__STUB(int16_t player_idx);
 
 // WZD o84p06
 // static void IDK_Diplo_Response(int16_t diplomatic_order, int16_t IDK2);
 
 // WZD o84p07
-// sub_6F6BB()
+// static int16_t IDK_Npc_Counteroffer__STUB(int16_t arg_0);
 
 // WZD o84p08
 // static void _sub_6F90E_Draw(void);
@@ -98,7 +98,7 @@ void Diplomacy_Screen__WIP(void);
 // sub_7038D()
 
 // WZD o84p17
-// DIPL_GetInvasionStr()
+// static int16_t DIPL_GetInvasionStr(int16_t player1, int16_t player2, int32_t * value1, int32_t * value2);
 
 
 
@@ -116,7 +116,7 @@ static void Diplomacy_Greeting(void);
 // static int16_t Npc_Proposal__WIP(void);
 
 // WZD o85p04
-// sub_70AFE()
+// static int16_t Diplomacy_Test(int16_t type_modifier, int16_t type);
 
 // WZD o85p05
 // static int16_t DIPL_LowestInterest(void);
@@ -131,7 +131,7 @@ static void Diplomacy_Greeting(void);
 // G_DIPL_PickSides()
 
 // WZD o85p09
-// static void DIPL_SignTreaty__STUB(int16_t player1, int16_t player2, int16_t type);
+// static void Start_Treaty(int16_t player1, int16_t player2, int16_t type);;
 
 // WZD o85p10
 // static void DIPL_SignPeaceTreaty__STUB(int16_t player1, int16_t player2);
@@ -158,7 +158,7 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx);
 // static void Diplomacy_Exchange_Spell__STUB(void);
 
 // WZD o85p18
-// DIPL_DropCityCurses()
+// static int16_t IDK_Npc_Target_Player__STUB(int16_t player_idx, int16_t type);
 
 
 

@@ -256,7 +256,7 @@ void AI_SetEnemyStrMaps(int16_t player_idx);
 void AI_Pick_Action_Conts__WIP(int16_t player_idx);
 
 // WZD o162p38
-// WIZ_UNIT_ResetOrders()
+void Player_Clear_All_Unit_Orders(int16_t player_idx);
 
 
 
