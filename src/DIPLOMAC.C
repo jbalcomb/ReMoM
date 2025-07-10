@@ -68,7 +68,7 @@ static int16_t IDK_Npc_Counteroffer__STUB(int16_t arg_0);
 // WZD o84p08
 static void Diplomacy_Display_Response_Draw(void);
 // WZD o84p09
-static void Diplomacy_Break_Treaty__WIP(void);
+static void Diplomacy_Break_Treaty(void);
 // WZD o84p10
 static void Start_Diplomacy_Music(int16_t IDK);
 // WZD o84p11
@@ -121,7 +121,7 @@ static int16_t Get_Exchange_Spell_List(int16_t player1, int16_t player2, int16_t
 // WZD o85p16
 static void Diplomacy_Offer_Tribute(void);
 // WZD o85p17
-static void Diplomacy_Exchange_Spell__STUB(void);
+static void Diplomacy_Exchange_Spell__WIP(void);
 // WZD o85p18
 static void Cancel_Players_City_Enchantments(int16_t player1, int16_t player2);
 /*
@@ -409,12 +409,20 @@ int16_t m_diplomacy_test_value;
 byte_ptr G_Some_DIPL_Allocs_6[6];
 // WZD dseg:C31E
 byte_ptr G_Some_DIPL_Alloc_3;
-// WZD dseg:C320 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IDK_DIPLO_NIU db 78h dup(0)
-// WZD dseg:C398 00                                              byte_42E38 db 0                         ; DATA XREF: sub_72131+CAw ...
+// WZD dseg:C320
+uint8_t IDK_DIPLO_NIU[100];
+// WZD dseg:C384
+uint8_t byte_42E24[10];
+// WZD dseg:C38E
+uint8_t byte_42E2E[10];
+// WZD dseg:C398
+uint8_t byte_42E38;
 // WZD dseg:C399
 uint8_t byte_42E39[10];
-// WZD dseg:C3A3 00 00 00 00 00 00 00 00 00 00                   byte_42E43 db 0Ah dup(0)                ; DATA XREF: sub_74420+347w ...
-// WZD dseg:C3AD 00                                              byte_42E4D db 0                         ; DATA XREF: sub_72131+A9w ...
+// WZD dseg:C3A3
+uint8_t byte_42E43[10];
+// WZD dseg:C3AD
+uint8_t byte_42E4D;
 
 /*
     MoO2
@@ -938,7 +946,7 @@ static void Get_Main_Diplomacy_Choices(void)
                 case 1:
                 {
 
-                    Diplomacy_Break_Treaty__WIP();
+                    Diplomacy_Break_Treaty();
 
                 } break;
                 
@@ -959,7 +967,7 @@ static void Get_Main_Diplomacy_Choices(void)
                 case 3:
                 {
 
-                    Diplomacy_Exchange_Spell__STUB();
+                    Diplomacy_Exchange_Spell__WIP();
 
                 } break;
 
@@ -1672,7 +1680,7 @@ static void Diplomacy_Display_Response_Draw(void)
 /*
 
 */
-static void Diplomacy_Break_Treaty__WIP(void)
+static void Diplomacy_Break_Treaty(void)
 {
     int16_t active_flag[6] = {0, 0, 0, 0, 0, 0 };
     int16_t var_24 = 0;
@@ -3983,10 +3991,216 @@ static void Diplomacy_Offer_Tribute(void)
 /*
 
 */
-static void Diplomacy_Exchange_Spell__STUB(void)
+static void Diplomacy_Exchange_Spell__WIP(void)
 {
+    char string[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t final_value = 0;
+    int16_t relations = 0;
+    int16_t var_10 = 0;
+    int16_t var_E = 0;
+    int16_t var_C = 0;
+    int16_t Spell_Index = 0;
+    int16_t spell_idx = 0;
+    int16_t var_6 = 0;
+    int16_t var_4 = 0;
+    int16_t _variable = 0;
+    int16_t temporary_modifier = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
+
+    var_10 = 0;
+
+    temporary_modifier = _players[HUMAN_PLAYER_IDX].Dipl.exchange_modifier[m_diplomac_player_idx];
+
+    if(temporary_modifier > 0)
+    {
+
+        temporary_modifier /= 5;
+
+    }
+
+    SETMAX(temporary_modifier, 30);
+
+    if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[m_diplomac_player_idx] == DIPL_Alliance)
+    {
+
+        temporary_modifier += 35;
+
+    }
 
 
+    relations = (-125
+        + _players[HUMAN_PLAYER_IDX].Dipl.Hidden_Rel[m_diplomac_player_idx]
+        + (_players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] / 2)
+        + var_10
+        + TBL_AI_PRS_IDK_Mod[_players[m_diplomac_player_idx].Personality]);
+
+    final_value = relations + Random(100);
+
+    Get_Exchange_Spell_List(m_diplomac_player_idx, HUMAN_PLAYER_IDX, 0);
+
+    if(m_exchange_spell_count > 0)
+    {
+
+        byte_42E4D = m_exchange_spell_count;
+
+        for(itr = 0; m_exchange_spell_count > itr; itr++)
+        {
+
+            byte_42E43[itr] = m_exchange_spell_list[itr];
+
+            // ; BUG: these don't fit into a byte variable!
+
+            byte_42E39[itr] = m_exchange_spell_values[itr];
+
+        }
+
+        byte_42E38 = 0;
+
+        for(itr = 0; byte_42E4D > itr; itr++)
+        {
+
+            Get_Exchange_Spell_List(HUMAN_PLAYER_IDX, m_diplomac_player_idx, byte_42E39[itr]);
+
+            if(m_exchange_spell_count > 0)
+            {
+
+                byte_42E24[byte_42E38] = m_exchange_spell_count;
+
+                for(var_4 = 0; m_exchange_spell_count > var_4; var_4++)
+                {
+
+                    IDK_DIPLO_NIU[((byte_42E38 * 10) + var_4)] = m_exchange_spell_list[var_4];
+
+                }
+
+                byte_42E2E[byte_42E38] = byte_42E43[itr];
+
+                byte_42E38++;
+
+            }
+
+        }
+
+        Assign_Auto_Function(_sub_6ED5D_Draw, 3);
+
+        if(byte_42E38 > 0)
+        {
+
+            Adjust_Diplomat_Modifiers(HUMAN_PLAYER_IDX, m_diplomac_player_idx);
+
+            _players[HUMAN_PLAYER_IDX].Dipl.exchange_modifier[m_diplomac_player_idx] -= (20 + Random(50));
+
+            _variable = 0;
+
+            for(itr = 0; ((byte_42E38 > itr) && (itr < 5)); itr++)
+            {
+
+                strcpy(G_Some_DIPL_Allocs_7[itr], lstr_gold);
+
+                _fstrcpy(string, spell_data_table[byte_42E2E[itr]].name);
+
+                strcat(G_Some_DIPL_Allocs_7[itr], string);
+
+            }
+
+            *G_Some_DIPL_Allocs_7[itr] = '\0';
+
+            strcpy(m_diplomacy_message, off_3B95C);
+
+            Set_Font_Style(1, 4, 3, ST_NULL);
+
+            Set_Alias_Color(187);
+
+            // DNE Set_Font_LF(2);
+
+            _variable = Get_List_Field(38, 142, 245, &aWhatDoYouOffer[29], G_Some_DIPL_Allocs_7, 100, &_variable, ST_NULL, 15, 11, 0, 0, 0, ST_UNDEFINED);
+
+            if(_variable != ST_UNDEFINED)
+            {
+
+                spell_idx = byte_42E2E[_variable];
+
+                var_C = byte_42E24[_variable];
+
+                var_E = _variable;
+
+                for(itr = 0;  ((itr < var_C) && (itr < 4)); itr++)
+                {
+
+                    strcpy(G_Some_DIPL_Allocs_7[itr], lstr_gold);
+
+                    _fstrcpy(string, spell_data_table[IDK_DIPLO_NIU[((var_E * 10) + itr)]].name);
+
+                    strcat(G_Some_DIPL_Allocs_7[itr], string);
+
+                }
+
+                strcat(G_Some_DIPL_Allocs_7[itr], aForgetIt_0);
+
+                var_6 = itr;
+
+                *G_Some_DIPL_Allocs_7[(1 + var_6)] = '\0';
+
+                _variable = 0;
+
+                strcpy(m_diplomacy_message, off_3B95E);
+
+                Set_Font_Style(1, 4, 3, ST_NULL);
+
+                Set_Alias_Color(187);
+
+                // DNE Set_Font_LF(2);
+
+                _variable = Get_List_Field(38, 142, 245, &aWhatDoYouOffer[29], G_Some_DIPL_Allocs_7, 100, &_variable, ST_NULL, 15, 11, 0, 0, 0, ST_UNDEFINED);
+
+                if(
+                    (_variable != ST_UNDEFINED)
+                    &&
+                    (_variable != var_6)
+                )
+                {
+
+                    Spell_Index = IDK_DIPLO_NIU[((var_E * 10) + _variable)];
+
+                    Diplomacy_Player_Gets_Spell(_human_player_idx, spell_idx);
+
+                    Diplomacy_Player_Gets_Spell(m_diplomac_player_idx, Spell_Index);
+
+                    if(spell_data_table[spell_idx].research_cost < spell_data_table[Spell_Index].research_cost)
+                    {
+
+                        Adjust_Diplomat_Modifiers(HUMAN_PLAYER_IDX, m_diplomac_player_idx);
+                        Adjust_Diplomat_Modifiers(HUMAN_PLAYER_IDX, m_diplomac_player_idx);
+
+                        Change_Relations__WIP(5, HUMAN_PLAYER_IDX, m_diplomac_player_idx, 0, ST_NULL, ST_NULL);
+
+                    }
+
+                }
+
+            }
+
+        }
+        else
+        {
+
+            Diplomacy_Display_Response(72, 3);
+
+        }
+
+    }
+    else
+    {
+
+        Diplomacy_Display_Response(72, 3);
+
+    }
+
+    Adjust_Diplomat_Modifiers(HUMAN_PLAYER_IDX, m_diplomac_player_idx);
+    Adjust_Diplomat_Modifiers(HUMAN_PLAYER_IDX, m_diplomac_player_idx);
+    Adjust_Diplomat_Modifiers(HUMAN_PLAYER_IDX, m_diplomac_player_idx);
+
+    SETMAX(_players[HUMAN_PLAYER_IDX].Dipl.exchange_modifier[m_diplomac_player_idx], 50);
 
 }
 
