@@ -38,11 +38,20 @@ enum DIPL_Status
 _players[].Dipl.Dipl_Action[]
 cleared/reset to 0
 
+for 'First Contact
+    _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = (15 + _players[player_idx].Personality);
+
 */
 
 enum e_DIPLOMATIC_ORDERS
 {
     do_None = 0,
+
+    // do_first_contact_  15,  /* 15 + 0 personality1 */
+    // do_first_contact_  16,  /* 15 + 0 personality1 */
+    // do_first_contact_  17,  /* 15 + 0 personality1 */
+    // do_first_contact_  18,  /* 15 + 0 personality1 */
+    // do_first_contact_  19,  /* 15 + 0 personality1 */
 
     do_IDK_greeting_positive  = 42,
     do_IDK_greeting_neutral   = 43,

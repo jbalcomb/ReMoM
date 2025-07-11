@@ -144,7 +144,7 @@ static void Get_Diplomacy_Statement(int16_t IDK, int16_t player_idx);
 // WZD o87p01
 void Determine_First_Contacts(void);
 // WZD o87p02
-// IDK_Dipl_s7373B()
+void NPC_To_Human_Diplomacy(void);
 // WZD o87p03
 // G_DIPL_NeedForWar()
 // WZD o87p04
@@ -5420,7 +5420,191 @@ void Determine_First_Contacts(void)
 
 
 // WZD o87p02
-// IDK_Dipl_s7373B()
+// MoO2  Module: NPCDIPLO  NPC_To_Human_Diplomacy_()
+/*
+
+*/
+void NPC_To_Human_Diplomacy(void)
+{
+    int16_t Total_Score = 0;
+    int16_t Lowest_Interest = 0;
+    int16_t player_idx = 0;  // _SI_
+    int16_t di = 0;  // _DI_
+
+    if(_players[_human_player_idx].casting_spell_idx == spl_Spell_Of_Return)\
+    {
+
+        return;
+
+    }
+
+    Limit_Temporary_Peace_Modifier();
+
+    for(player_idx = 1; player_idx < _num_players; player_idx++)
+    {
+
+        if(_FORTRESSES[player_idx].active == ST_FALSE)
+        {
+
+            _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = do_None;
+
+        }
+        else if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[player_idx] == DIPL_Crusade)
+        {
+
+            _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = do_None;
+
+        }
+        else if(_players[HUMAN_PLAYER_IDX].Dipl.Contact_Progress[player_idx] == 1)  /* ¿ New Contact ? */
+        {
+
+            _players[HUMAN_PLAYER_IDX].Dipl.Contact_Progress[player_idx] = 2;
+
+            _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = (15 + _players[player_idx].Personality);
+
+        }
+        else if(_players[HUMAN_PLAYER_IDX].Dipl.field_120[player_idx] != 0)
+        {
+
+            _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = 2;
+
+        }
+        else
+        {
+
+            if(
+                (_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] != 39)
+                &&
+                (_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] != 30)
+                &&
+                (_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] != 40)
+                &&
+                (_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] != 41)
+            )
+            {
+
+                m_diplomac_player_idx = player_idx;
+
+                Lowest_Interest = Find_Worst_Modifier();
+                Total_Score = (
+                    _players[HUMAN_PLAYER_IDX].Dipl.Hidden_Rel[m_diplomac_player_idx]
+                    + _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]
+                    + Lowest_Interest
+                    + TBL_AI_PRS_IDK_Mod[_players[m_diplomac_player_idx].Personality]
+                );
+
+                if((Total_Score + _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]) >= -100)
+                {
+
+                    _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = do_None;
+
+                }
+                else
+                {
+
+                    di = _players[HUMAN_PLAYER_IDX].Dipl.DA_Strength[player_idx];
+
+                    if(_players[HUMAN_PLAYER_IDX].Dipl.DA_Strength[player_idx] < 0)
+                    {
+
+                        if(
+                            (_players[HUMAN_PLAYER_IDX].Dipl.field_126[player_idx] > 0)
+                            ||
+                            (Random(75) < abs(di))
+                        )
+                        {
+
+                            // TODO  DIPL_HumanWarOrPeace(player_idx);
+
+                        }
+                        else
+                        {
+
+                            _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = do_None;
+
+                        }
+
+                    }
+                    else
+                    {
+
+                        if(
+                            (_players[_human_player_idx].Dipl.Dipl_Status[player_idx] == DIPL_War)
+                            &&
+                            ((30 + Random(100)) < _players[HUMAN_PLAYER_IDX].Dipl.peace_modifier[player_idx])
+                        )
+                        {
+
+                            // TODO  DIPL_HumanWarOrPeace(player_idx);
+
+                        }
+                        else
+                        {
+
+                            if(_players[HUMAN_PLAYER_IDX].Dipl.field_126[player_idx] == 0)
+                            {
+
+                                di += 3;
+
+                            }
+
+                            if(
+                                (Random(100) < di)
+                                &&
+                                (Random(4) == 1)
+                            )
+                            {
+
+                                if(_players[HUMAN_PLAYER_IDX].Dipl.field_126[player_idx] > 0)
+                                {
+
+                                    // ¿ BUGBUG  doesn't set a diplomatic order ?
+                                    _players[HUMAN_PLAYER_IDX].Dipl.field_126[player_idx] = 0;
+
+                                }
+                                else
+                                {
+
+                                    // TODO  sub_34C10(player_idx);
+
+                                }
+
+                            }
+                            else
+                            {
+
+                                // TODO  IDK_Dipl_s73F1C(player_idx);
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] == do_None)
+        {
+
+            // TODO  G_DIPL_NeedForWar(HUMAN_PLAYER_IDX, player_idx);
+
+        }
+
+        if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] == do_None)
+        {
+
+            // TODO  DIPL_GetOffMyLawn(player_idx, HUMAN_PLAYER_IDX);
+
+        }
+
+    }
+
+}
+
 
 // WZD o87p03
 // G_DIPL_NeedForWar()

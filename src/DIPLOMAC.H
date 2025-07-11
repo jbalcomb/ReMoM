@@ -191,7 +191,7 @@ void NPC_To_NPC_Treaty_Negotiations__STUB(void);
 void Determine_First_Contacts(void);
 
 // WZD o87p02
-// IDK_Dipl_s7373B()
+void NPC_To_Human_Diplomacy(void);
 
 // WZD o87p03
 // G_DIPL_NeedForWar()
