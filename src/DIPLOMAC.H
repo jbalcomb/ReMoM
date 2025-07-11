@@ -170,7 +170,7 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx);
 // static void Npc_Diplomacy_Screen(void);
 
 // WZD o86p02
-// DIPL_AI_To_AI()
+void NPC_To_NPC_Treaty_Negotiations__STUB(void);
 
 // WZD o86p03
 // static int16_t DIPL_sub_72DB6__STUB(void);

@@ -130,7 +130,7 @@ static void Cancel_Players_City_Enchantments(int16_t player1, int16_t player2);
 // WZD o86p01
 static void Npc_Diplomacy_Screen(void);
 // WZD o86p02
-// DIPL_AI_To_AI()
+void NPC_To_NPC_Treaty_Negotiations__STUB(void);
 // WZD o86p03
 static int16_t DIPL_sub_72DB6__STUB(void);
 // DIPL_sub_72DB6()
@@ -4843,7 +4843,30 @@ static void Npc_Diplomacy_Screen(void)
 
 
 // WZD o86p02
-// DIPL_AI_To_AI()
+// drake178: DIPL_AI_To_AI()
+// MoO2  Module: NPCDIPLO  NPC_To_NPC_Treaty_Negotiations_()
+/*
+; many BUGs and INCONSISTENCIES inside
+; RE-EXPLORE in more context!
+*/
+/*
+
+*/
+void NPC_To_NPC_Treaty_Negotiations__STUB(void)
+{
+
+    // ; BUG: what does this have to do with AI-AI diplomacy?
+    if(_players[_human_player_idx].casting_spell_idx == spl_Spell_Of_Return)
+    {
+
+        return;
+
+    }
+
+    
+
+}
+
 
 // WZD o86p03
 /*
