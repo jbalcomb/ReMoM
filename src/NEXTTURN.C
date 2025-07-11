@@ -719,13 +719,13 @@ void Next_Turn_Calc(void)
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
-        // call    j_IDK_Dipl_s7373B
+        NPC_To_Human_Diplomacy__WIP();
 
         Resolve_Delayed_Diplomacy_Orders();
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
-        // TODO  End_Of_Turn_Diplomacy_Adjustments_
+        End_Of_Turn_Diplomacy_Adjustments();
 
         // TODO  Modifier_Diplomacy_Adjustments()
 

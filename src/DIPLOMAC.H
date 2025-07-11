@@ -191,7 +191,7 @@ void NPC_To_NPC_Treaty_Negotiations__STUB(void);
 void Determine_First_Contacts(void);
 
 // WZD o87p02
-void NPC_To_Human_Diplomacy(void);
+void NPC_To_Human_Diplomacy__WIP(void);
 
 // WZD o87p03
 // G_DIPL_NeedForWar()
@@ -212,7 +212,7 @@ void Resolve_Delayed_Diplomacy_Orders(void);
 void Decrease_Peace_Duration(void);
 
 // WZD o87p09
-// IDK_Dipl_s7436F()
+void End_Of_Turn_Diplomacy_Adjustments(void);
 
 
 

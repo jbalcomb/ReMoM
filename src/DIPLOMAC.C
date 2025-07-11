@@ -144,7 +144,7 @@ static void Get_Diplomacy_Statement(int16_t IDK, int16_t player_idx);
 // WZD o87p01
 void Determine_First_Contacts(void);
 // WZD o87p02
-void NPC_To_Human_Diplomacy(void);
+void NPC_To_Human_Diplomacy__WIP(void);
 // WZD o87p03
 // G_DIPL_NeedForWar()
 // WZD o87p04
@@ -158,7 +158,7 @@ void Resolve_Delayed_Diplomacy_Orders(void);
 // WZD o87p08
 void Decrease_Peace_Duration(void);
 // WZD o87p09
-// IDK_Dipl_s7436F()
+void End_Of_Turn_Diplomacy_Adjustments(void);
 /*
     WIZARDS.EXE  ovr088
 */
@@ -5424,7 +5424,7 @@ void Determine_First_Contacts(void)
 /*
 
 */
-void NPC_To_Human_Diplomacy(void)
+void NPC_To_Human_Diplomacy__WIP(void)
 {
     int16_t Total_Score = 0;
     int16_t Lowest_Interest = 0;
@@ -5690,8 +5690,48 @@ void Decrease_Peace_Duration(void)
 
 
 // WZD o87p09
-// IDK_Dipl_s7436F()
+void End_Of_Turn_Diplomacy_Adjustments(void)
+{
+    int16_t itr1 = 0;  // _CX_
+    int16_t itr2 = 0;  // _SI_
 
+    for(itr1 = 0; itr1 < _num_players; itr1++)
+    {
+
+        for(itr2 = 0; itr2 < _num_players; itr2++)
+        {
+
+            if(itr1 != itr2)
+            {
+
+                if(_players[itr1].Dipl.treaty_modifier[itr2] < 100)
+                {
+
+                    _players[itr1].Dipl.treaty_modifier[itr2] += 10;
+
+                }
+
+                if(_players[itr1].Dipl.exchange_modifier[itr2] < 100)
+                {
+
+                    _players[itr1].Dipl.exchange_modifier[itr2] += 10;
+
+                }
+
+                if(_players[itr1].Dipl.peace_modifier[itr2] < 100)
+                {
+
+                    _players[itr1].Dipl.peace_modifier[itr2] += 10;
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
 
 
 
