@@ -711,11 +711,11 @@ void Next_Turn_Calc(void)
 
         Diplomacy_Growth();
 
-        // call    j_DIPL_ContactProgress
+        Determine_First_Contacts();
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
-        // call    j_DIPL_AI_To_AI                 ; many BUGs and INCONSISTENCIES inside ; RE-EXPLORE in more context!
+        // TODO  NPC_To_NPC_Treaty_Negotiations__STUB();
 
         Set_Mouse_List(1, mouse_list_hourglass);
 

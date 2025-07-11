@@ -142,29 +142,19 @@ static void Get_Diplomacy_Statement(int16_t IDK, int16_t player_idx);
     WIZARDS.EXE  ovr087
 */
 // WZD o87p01
-// DIPL_ContactProgress()
-
+void Determine_First_Contacts(void);
 // WZD o87p02
-/*
-OON XREF:  Next_Turn_Calc()
-
-*/
 // IDK_Dipl_s7373B()
-
 // WZD o87p03
 // G_DIPL_NeedForWar()
-
 // WZD o87p04
 // G_DIPL_SuperiorityWar()
-
 // WZD o87p05
 // IDK_Dipl_s73F1C()
-
 // WZD o87p06
 void Resolve_Delayed_Diplomacy_Orders(void);
 // WZD o87p07
 // DIPL_GetOffMyLawn()
-
 // WZD o87p08
 void Decrease_Peace_Duration(void);
 // WZD o87p09
@@ -5369,7 +5359,42 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 */
 
 // WZD o87p01
-// DIPL_ContactProgress()
+// drake178: DIPL_ContactProgress()
+// MoO2  Module: DIPLOMAC  Determine_First_Contacts_()
+/*
+progress the human player's contact with other
+wizards - if progress is 0, but contacted is 1,
+set progress to 1 and relations to no treaty
+*/
+/*
+
+*/
+void Determine_First_Contacts(void)
+{
+    int16_t itr = 0;  // _CX_
+
+    for(itr = 1; itr < _num_players; itr++)
+    {
+
+        if(
+            (_players[_human_player_idx].Dipl.Contact_Progress[itr] == 0)
+            ||
+            (_players[_human_player_idx].Dipl.Contact_Progress[itr] == 1)
+        )
+        {
+
+            _players[_human_player_idx].Dipl.Contact_Progress[itr] = 1;
+
+            _players[_human_player_idx].Dipl.Dipl_Status[itr] = DIPL_NoTreaty;
+
+            _players[itr].Dipl.Dipl_Status[_human_player_idx] = DIPL_NoTreaty;
+
+        }
+
+    }
+
+}
+
 
 // WZD o87p02
 // IDK_Dipl_s7373B()

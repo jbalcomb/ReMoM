@@ -188,7 +188,7 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx);
 */
 
 // WZD o87p01
-// DIPL_ContactProgress()
+void Determine_First_Contacts(void);
 
 // WZD o87p02
 // IDK_Dipl_s7373B()
