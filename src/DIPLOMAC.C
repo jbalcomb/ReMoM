@@ -162,12 +162,17 @@ void End_Of_Turn_Diplomacy_Adjustments(void);
 /*
     WIZARDS.EXE  ovr088
 */
-// WZD o88p0
+// WZD o88p01
 // sub_74420()
+// WZD o88p02
 // DIPL_HumanWarOrPeace()
-// IDK_Dipl_s74B68()
+// WZD o88p03
+void Modifier_Diplomacy_Adjustments(void);
+// WZD o88p04
 // sub_74E2F()
+// WZD o88p05
 // sub_74E38()
+// WZD o88p06
 // sub_74F4A()
 
 
@@ -5745,8 +5750,125 @@ void End_Of_Turn_Diplomacy_Adjustments(void)
 
 // WZD o88p02
 // DIPL_HumanWarOrPeace()
+
+
 // WZD o88p03
-// IDK_Dipl_s74B68()
+// MoO2  Module: DIPLOMAC  Modifier_Diplomacy_Adjustments_()
+// 1oom  game_turn.c  game_turn_update_mood_blunder()
+/*
+
+*/
+void Modifier_Diplomacy_Adjustments(void)
+{
+    int16_t itr3 = 0;
+    int16_t IDK_Dipl_Action = 0;
+    int16_t itr2 = 0;  // _DI_
+    int16_t itr1 = 0;  // _SI_
+
+    for(itr1 = 0; itr1 < _num_players; itr1++)
+    {
+
+        for(itr2 = 1; itr2 < _num_players; itr2++)
+        {
+
+            if(itr2 != itr1)
+            {
+
+                IDK_Dipl_Action = _players[itr1].Dipl.Dipl_Action[itr2];
+
+                if(_players[itr1].Dipl.Dipl_Status[itr2] != DIPL_Crusade)
+                {
+
+                    if(_players[itr1].Dipl.treaty_modifier[itr2] < 0)
+                    {
+
+                        _players[itr1].Dipl.treaty_modifier[itr2] += Random(5);
+
+                    }
+
+                    if(_players[itr1].Dipl.treaty_modifier[itr2] < 50)
+                    {
+
+                        _players[itr1].Dipl.treaty_modifier[itr2] += Random(5);
+
+                    }
+
+                                        if(_players[itr1].Dipl.exchange_modifier[itr2] < 0)
+                    {
+
+                        _players[itr1].Dipl.exchange_modifier[itr2] += Random(5);
+
+                    }
+
+                    if(_players[itr1].Dipl.exchange_modifier[itr2] < 50)
+                    {
+
+                        _players[itr1].Dipl.exchange_modifier[itr2] += Random(5);
+
+                    }
+                    
+                    if(_players[itr1].Dipl.peace_modifier[itr2] < 0)
+                    {
+
+                        _players[itr1].Dipl.peace_modifier[itr2] += Random(5);
+
+                    }
+
+                    if(_players[itr1].Dipl.peace_modifier[itr2] < 50)
+                    {
+
+                        _players[itr1].Dipl.peace_modifier[itr2] += Random(5);
+
+                    }
+
+                    SETMIN(_players[itr1].Dipl.peace_modifier[itr2], -200);
+
+                    SETMAX(_players[itr1].Dipl.peace_modifier[itr2], 200);
+
+                }
+
+            }
+
+        }
+
+    }
+
+    // Hereafter, DNE in MoO2
+
+    for(itr3 = 0; itr3 < _num_players; itr3++)
+    {
+
+        for(itr2 = 0; itr2 < _num_players; itr2++)
+        {
+
+            _players[itr2].Dipl.DA_Strength[itr3] = 0;
+
+            _players[itr2].Dipl.Dipl_Action[itr3] = do_None;
+
+            if(_players[itr2].Dipl.field_120[itr3] != 0) // ¿ e_1oom_PLAYER_NONE ?
+            {
+
+                _players[itr2].Dipl.field_6C[itr3] = 0;
+
+                _players[itr2].Dipl.field_120[itr3] = 0;
+
+            }
+
+            _players[itr2].Dipl.field_F0[itr3] = 0;
+
+            _players[itr2].Dipl.Tribute_Spell[itr3] = 0;
+
+            _players[itr2].Dipl.field_9C[itr3] = 0;
+
+            _players[itr2].Dipl.Tribute_Gold[itr3] = 0;
+
+        }
+
+    }
+
+}
+
+
 // WZD o88p04
 // sub_74E2F()
 // WZD o88p05

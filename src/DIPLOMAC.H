@@ -221,15 +221,23 @@ void End_Of_Turn_Diplomacy_Adjustments(void);
     WIZARDS.EXE  ovr088
 */
 
-// WZD o88p0
-
+// WZD o88p01
 // sub_74420()
-// DIPL_HumanWarOrPeace()
-// IDK_Dipl_s74B68()
-// sub_74E2F()
-// sub_74E38()
-// sub_74F4A()
 
+// WZD o88p02
+// DIPL_HumanWarOrPeace()
+
+// WZD o88p03
+void Modifier_Diplomacy_Adjustments(void);
+
+// WZD o88p04
+// sub_74E2F()
+
+// WZD o88p05
+// sub_74E38()
+
+// WZD o88p06
+// sub_74F4A()
 
 
 

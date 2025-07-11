@@ -727,7 +727,7 @@ void Next_Turn_Calc(void)
 
         End_Of_Turn_Diplomacy_Adjustments();
 
-        // TODO  Modifier_Diplomacy_Adjustments()
+        Modifier_Diplomacy_Adjustments();
 
         /*
             END:  NPC Diplomacy
