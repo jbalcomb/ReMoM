@@ -174,6 +174,15 @@ https://chris3606.github.io/GoRogue/articles/grid_components/measuring-distance.
 #define I2N(_value_)          ( (_value_) + 1 )
 
 
+
+
+/*
+    Player / Wizard
+*/
+#define PLAYER_NUM(_player_idx_)      ( (_player_idx_) + 1 )
+#define PLAYER_IDX(_player_num_)      ( (_player_num_) - 1 )
+
+
 /*/
     _FORTRESS accessor macros
     FORT ~== _FORTRESS

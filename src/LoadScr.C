@@ -732,12 +732,12 @@ Capture_Cities_Data();
     */
 
 
-    g_TimeStop_PlayerNum = ST_NONE;
+    g_timestop_player_num = ST_NONE;
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
         if(_players[itr_players].Globals[TIME_STOP] > 0)
         {
-            g_TimeStop_PlayerNum = (itr_players + 1);
+            g_timestop_player_num = (itr_players + 1);
         }
     }
 

@@ -612,7 +612,7 @@ void Magic_Screen(void)
                     }
                     if(spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr)]].Param0 == TIME_STOP)
                     {
-                        g_TimeStop_PlayerNum = 0;  // NONE
+                        g_timestop_player_num = 0;  // NONE
                     }
                     magic_ovl_ench_list_first_item = 0;
                     Build_Overland_Enchantment_List();

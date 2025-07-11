@@ -91,7 +91,7 @@ static int16_t Invader_Army_Strength_Comparison(int16_t player1, int16_t player2
 // WZD o85p01
 static void Diplomacy_Greeting(void);
 // WZD o85p02
-// DIPL_Gravitation()
+void Diplomacy_Growth(void);
 // WZD o85p03
 static int16_t Npc_Proposal__WIP(void);
 // WZD o85p04
@@ -2637,7 +2637,258 @@ static void Diplomacy_Greeting(void)
 
 
 // WZD o85p02
-// DIPL_Gravitation()
+// drake178: DIPL_Gravitation()
+// MoO2  Module: DIPLOMAC  Diplomacy_Growth_()
+/*
+; process wizard pact and alliance relation
+; gravitation, military and city overextension, and
+; gravitation towards default relation
+; RE-EXPLORE!
+*/
+/*
+
+*/
+void Diplomacy_Growth(void)
+{
+    int16_t Too_Strong_Treshold = 0;
+    int16_t human_army_strength = 0;
+    int16_t Gravitation = 0;
+    int16_t human_player_city_count = 0;
+    int16_t Dipl_182h_Field = 0;
+    int16_t Reaction_Value = 0;
+    int16_t itr1 = 0;  // _SI_
+    int16_t itr2 = 0;  // _DI_
+
+    // ; for each wizard, generate a +1-3 diplomatic reaction
+    // ; towards pacted wizards, or a +1-6 one towards allied
+    // ; wizards with a 50% chance
+    for(itr1 = 0; itr1 < _num_players; itr1++)
+    {
+
+        for(itr2 = (itr1 + 1); itr2 < _num_players; itr2++)
+        {
+
+            if(Random(2) == 1)
+            {
+
+                if(_players[itr1].Dipl.Dipl_Status[itr2] == DIPL_WizardPact)
+                {
+
+                    Change_Relations__WIP(Random(3), itr1, itr2, 0, ST_NULL, ST_NULL);
+
+                }
+
+                if(_players[itr1].Dipl.Dipl_Status[itr2] == DIPL_Alliance)
+                {
+
+                    Change_Relations__WIP(Random(6), itr1, itr2, 0, ST_NULL, ST_NULL);
+
+                }
+
+            }
+
+        }
+
+    }
+
+    /*
+        OSG  Page 374  (PDG Page 375)
+            Human Threat: Milityary Build Up
+                Every turn each computer player separately rolls a d20.
+                If she rolls a 1, she compares the size of her military to yours.
+                If your total army strength is double hers, you instantly take a -10 DP hit in your relations with her.
+                If your forces are equal, there is a 50 percent chance of suffering this -10 DP penalty.
+                When you have half her strength, there is only a 25 percent chance of this same negative reaction, etc.
+                Thus, the percentage chance of suffering this penalty with a particular wizard
+                    is based on a sliding scale depending on the strength ratio of your two armed forces.
+    */
+    human_army_strength = _players[HUMAN_PLAYER_IDX].Astr.Army_Strength;
+
+    if(human_army_strength > 0)
+    {
+
+        for(itr1 = 0; itr1 < _num_players; itr1++)
+        {
+
+            if(
+                (_players[itr1].Astr.Army_Strength < human_army_strength)
+                &&
+                (_players[itr1].Astr.Army_Strength > 0)
+            )
+            {
+
+                Too_Strong_Treshold = ((human_army_strength * 50) / _players[itr1].Astr.Army_Strength);
+
+                if(
+                    (Random(100) >= Too_Strong_Treshold)
+                    &&
+                    (Random(20) == 1)  /* 5% chance */
+                )
+                {
+
+                    Change_Relations__WIP(-10, HUMAN_PLAYER_IDX, itr1, 7, ST_NULL, ST_NULL);
+
+                }
+
+            }
+
+        }
+
+    }
+
+    // ; trigger overextension reactions towards all other
+    // ; wizards based on the human player's city count?
+    if((_turn % 2) == 0)
+    {
+
+        for(itr1 = 0; itr1 < _num_players; itr1++)
+        {
+
+            human_player_city_count = 0;
+
+            for(itr2 = 0; itr2 < _cities; itr2++)
+            {
+
+                if(_CITIES[itr2].owner_idx == HUMAN_PLAYER_IDX)
+                {
+
+                    human_player_city_count++;
+
+                }
+
+            }
+
+            if(
+                (((_landsize + 1) * 3) < human_player_city_count)
+                &&
+                (Random(4) == 1)
+            )
+            {
+
+                Reaction_Value = (((-(human_player_city_count - ((_landsize + 1) * 3)) / ((_landsize + 6) - _difficulty)) * Random(4)) / 3);
+
+                Reaction_Value *= 2;
+
+                if(itr1 != HUMAN_PLAYER_IDX)
+                {
+
+                    Reaction_Value /= 2;
+
+                }
+
+                SETMIN(Reaction_Value, -15);
+
+                for(itr2 = 1; itr2 < _num_players; itr2++)
+                {
+
+                    if(
+                        (_players[itr1].Dipl.Contacted[itr2] == ST_TRUE)
+                        &&
+                        (_players[itr1].Dipl.Dipl_Status[itr2] != DIPL_Alliance)
+                    )
+                    {
+
+                        Change_Relations__WIP(Reaction_Value, itr1, itr2, 14, ST_NULL, ST_NULL);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    // ; gravitate visible relations toward default relations
+    for(itr1 = 1; itr1 < _num_players; itr1++)
+    {
+
+        for(itr2 = 1; itr2 < _num_players; itr2++)
+        {
+
+            if(Random(105) > abs(_players[itr1].Dipl.Visible_Rel[itr2]))
+            {
+
+                Gravitation = Random(2);
+
+            }
+            else
+            {
+
+                Gravitation = 0;
+
+            }
+
+            if(
+                (itr2 != itr1)
+                &&
+                (_players[itr1].Dipl.DA_Strength[itr2] == 0)
+            )
+            {
+
+                Dipl_182h_Field = _players[itr1].Dipl.Default_Rel[itr2];
+
+                if(_players[itr1].Dipl.Visible_Rel[itr2] < Dipl_182h_Field)
+                {
+                    
+                    _players[itr1].Dipl.Visible_Rel[itr2] += Gravitation;
+
+                    SETMAX(_players[itr1].Dipl.Visible_Rel[itr2], Dipl_182h_Field);
+
+                }
+                else
+                {
+
+                    if((_turn % 10) == 0)
+                    {
+                    
+                        _players[itr1].Dipl.Visible_Rel[itr2] -= Gravitation;
+
+                        SETMIN(_players[itr1].Dipl.Visible_Rel[itr2], Dipl_182h_Field);
+
+                    }
+
+                }
+
+                SETMIN(_players[itr1].Dipl.Visible_Rel[itr2], -100);
+
+                SETMAX(_players[itr1].Dipl.Visible_Rel[itr2], 100);
+
+            }
+
+        }
+
+    }
+
+    // ; make visible relations symmetrical, and self fields
+    // ; zero
+    for(itr1 = 1; itr1 < _num_players; itr1++)
+    {
+
+        for(itr2 = 1; itr2 < _num_players; itr2++)
+        {
+
+            if(itr2 == itr1)
+            {
+
+                _players[itr1].Dipl.Visible_Rel[itr2] = 0;
+
+            }
+            else
+            {
+
+                _players[itr2].Dipl.Visible_Rel[itr1] = _players[itr1].Dipl.Visible_Rel[itr2];
+
+            }
+
+        }
+        
+    }
+
+
+}
+
 
 // WZD o85p03
 /*

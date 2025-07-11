@@ -1542,9 +1542,9 @@ void Next_Turn_Process_Purify(void)
         {
             time_stop_flag = ST_FALSE;
             if(
-                (g_TimeStop_PlayerNum > 0)
+                (g_timestop_player_num > 0)
                 &&
-                ((_UNITS[itr_units].owner_idx + 1) != g_TimeStop_PlayerNum)
+                ((_UNITS[itr_units].owner_idx + 1) != g_timestop_player_num)
             )
             {
                 time_stop_flag = ST_TRUE;

@@ -408,7 +408,7 @@ void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int1
     mana_expense = 0;
 
 
-    if((g_TimeStop_PlayerNum - 1) == player_idx)
+    if((g_timestop_player_num - 1) == player_idx)
     {
 
         *food_total = 0;
@@ -3239,7 +3239,12 @@ void Record_History(void)
         _players[itr_players].Astr.Spell_Research  = WIZ_Get_Astr_Resrch__STUB(itr_players);
         _players[itr_players].Pop_div_10k          = WIZ_Get_Nation_Size__STUB(itr_players);
 
-        power_of_a_wizard[itr_players] = (_players[itr_players].Astr.Magic_Power + _players[itr_players].Astr.Army_Strength + _players[itr_players].Astr.Spell_Research + _players[itr_players].Pop_div_10k);
+        power_of_a_wizard[itr_players] = (
+            _players[itr_players].Astr.Magic_Power
+            + _players[itr_players].Astr.Army_Strength
+            + _players[itr_players].Astr.Spell_Research
+            + _players[itr_players].Pop_div_10k
+        );
     }
 
     max_curr_magic = 0;

@@ -155,9 +155,9 @@ Check_Cities_Data();
     {
 
         if(
-            (g_TimeStop_PlayerNum == 0)
+            (g_timestop_player_num == 0)
             ||
-            ((g_TimeStop_PlayerNum - 1) == itr_players)
+            ((g_timestop_player_num - 1) == itr_players)
         )
         {
 
@@ -350,9 +350,9 @@ Check_Cities_Data();
     {
 
         if(
-            (g_TimeStop_PlayerNum == 0)
+            (g_timestop_player_num == 0)
             ||
-            ((g_TimeStop_PlayerNum - 1) == itr_players)
+            ((g_timestop_player_num - 1) == itr_players)
         )
         {
 

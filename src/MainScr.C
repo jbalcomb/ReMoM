@@ -1425,7 +1425,7 @@ void Main_Screen(void)
 
         if(
             (input_field_idx == _next_turn_button) ||
-            ((g_TimeStop_PlayerNum > 0) && ((_human_player_idx + 1) != g_TimeStop_PlayerNum)) ||
+            ((g_timestop_player_num > 0) && ((_human_player_idx + 1) != g_timestop_player_num)) ||
             ((all_units_moved == ST_TRUE) && (IDK_EoT_flag == ST_FALSE) && (magic_set.end_of_turn_wait == ST_FALSE) && (Any_Units_Not_Busy() == ST_TRUE))
         )
         {
@@ -1440,7 +1440,7 @@ void Main_Screen(void)
             {
                 if( (input_field_idx == _next_turn_button) || (IDK_EoT_flag == ST_TRUE) )
                 {
-                    if( (g_TimeStop_PlayerNum > 0) && ((_human_player_idx + 1) != g_TimeStop_PlayerNum) )
+                    if( (g_timestop_player_num > 0) && ((_human_player_idx + 1) != g_timestop_player_num) )
                     {
                         allow_units_to_die = ST_TRUE;
                     }

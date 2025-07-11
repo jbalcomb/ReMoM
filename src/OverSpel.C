@@ -1858,7 +1858,7 @@ Capture_Cities_Data();
                     if(spell_idx == spl_Time_Stop)
                     {
 
-                        g_TimeStop_PlayerNum = (player_idx + 1);
+                        g_timestop_player_num = (player_idx + 1);
 
                     }
 

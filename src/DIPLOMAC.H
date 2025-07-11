@@ -110,7 +110,7 @@ void Diplomacy_Screen__WIP(void);
 static void Diplomacy_Greeting(void);
 
 // WZD o85p02
-// DIPL_Gravitation()
+void Diplomacy_Growth(void);
 
 // WZD o85p03
 // static int16_t Npc_Proposal__WIP(void);

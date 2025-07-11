@@ -1071,7 +1071,7 @@ int16_t * AI_Own_City_Values;
 
 // WZD dseg:912A
 // index of the Time Stop wizard plus 1 (0 if none)
-int16_t g_TimeStop_PlayerNum;
+int16_t g_timestop_player_num;
 
 // WZD dseg:912C
 struct s_SPELL_DATA * spell_data_table;

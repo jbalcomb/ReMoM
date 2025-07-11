@@ -111,9 +111,9 @@ void AI_MoveUnits__WIP(int16_t player_idx)
 
 
     if(
-        (g_TimeStop_PlayerNum > 0)
+        (g_timestop_player_num > 0)
         &&
-        ((player_idx + 1) != g_TimeStop_PlayerNum)
+        ((player_idx + 1) != g_timestop_player_num)
     )
     {
 

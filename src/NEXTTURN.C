@@ -603,84 +603,44 @@ void Next_Turn_Calc(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Next_Turn_Calc()\n", __FILE__, __LINE__);
 #endif
 
-
-Check_Cities_Data();
     Set_Random_Seed(RNG_AI_Turn_Seed);
-Check_Cities_Data();
 
-Check_Cities_Data();
     Set_Mouse_List(1, mouse_list_hourglass);
-Check_Cities_Data();
 
-
-//     for(DBG_itr_cities = 0; DBG_itr_cities < _cities; DBG_itr_cities++)
-//     {
-//         if(_CITIES[DBG_itr_cities].owner_idx == HUMAN_PLAYER_IDX)
-//         {
-//             dbg_prn("DEBUG: [%s, %d]: city_idx: %d()\n", __FILE__, __LINE__, DBG_itr_cities);
-//             dbg_prn("DEBUG: [%s, %d]: name: %s()\n", __FILE__, __LINE__, _CITIES[DBG_itr_cities].name);
-//             dbg_prn("DEBUG: [%s, %d]: food_units: %d()\n", __FILE__, __LINE__, _CITIES[DBG_itr_cities].food_units);
-//             dbg_prn("DEBUG: [%s, %d]: farmer_count: %d()\n", __FILE__, __LINE__, _CITIES[DBG_itr_cities].farmer_count);
-//             dbg_prn("DEBUG: [%s, %d]: population: %d()\n", __FILE__, __LINE__, _CITIES[DBG_itr_cities].population);
-//             dbg_prn("DEBUG: [%s, %d]: City_Minimum_Farmers(): %d()\n", __FILE__, __LINE__, City_Minimum_Farmers(DBG_itr_cities));
-//             dbg_prn("DEBUG: [%s, %d]: City_Rebel_Count(): %d()\n", __FILE__, __LINE__, City_Rebel_Count(DBG_itr_cities));
-//             dbg_prn("DEBUG: [%s, %d]: Player_Armies_Food_Upkeep(): %d()\n", __FILE__, __LINE__, Player_Armies_Food_Upkeep(HUMAN_PLAYER_IDX));
-//         }
-//     }
-
-Check_Cities_Data();
     All_City_Calculations();
-// Check_Cities_Data();
-Capture_Cities_Data();
 
-
-
-Check_Cities_Data();
     AI_Kill_Lame_Units();  // ¿ BUGBUG  leaves dead/deleteable units lying around ?
-Check_Cities_Data();
 
-Check_Cities_Data();
     Delete_Dead_Units();  // DNE in Dasm
-Check_Cities_Data();
 
-Check_Cities_Data();
     AI_Next_Turn__WIP();
-// Check_Cities_Data();
-Capture_Cities_Data();
 
-Check_Cities_Data();
     Delete_Dead_Units();  // DNE in Dasm
-Check_Cities_Data();
 
-
-
-Check_Cities_Data();
     Next_Turn_Process_Purify();
-Check_Cities_Data();
 
-
-Check_Cities_Data();
     Initialize_Reports();
-Check_Cities_Data();
 
-    if(g_TimeStop_PlayerNum != 0)
+    if(g_timestop_player_num != 0)
     {
 
-        _players[(g_TimeStop_PlayerNum - 1)].mana_reserve -= 200;  // manual says 150
+        _players[PLAYER_IDX(g_timestop_player_num)].mana_reserve -= 200;  // manual says 150
 
-        if(_players[(g_TimeStop_PlayerNum - 1)].mana_reserve < 0)
+        if(_players[PLAYER_IDX(g_timestop_player_num)].mana_reserve < 0)
         {
 
-            _players[(g_TimeStop_PlayerNum - 1)].mana_reserve = 0;
+            _players[PLAYER_IDX(g_timestop_player_num)].mana_reserve = 0;
 
-            _players[(g_TimeStop_PlayerNum - 1)].Globals[TIME_STOP] = 0;
+            _players[PLAYER_IDX(g_timestop_player_num)].Globals[TIME_STOP] = 0;
 
-            if((g_TimeStop_PlayerNum - 1) == HUMAN_PLAYER_IDX)
+            if(PLAYER_IDX(g_timestop_player_num) == HUMAN_PLAYER_IDX)
             {
+
                 MSG_GEs_Lost = 1;
+
             }
 
-            g_TimeStop_PlayerNum = 0;
+            g_timestop_player_num = 0;
 
         }
 
@@ -688,33 +648,17 @@ Check_Cities_Data();
     else
     {
 
-Check_Cities_Data();
         Decrease_Peace_Duration();
-Check_Cities_Data();
 
-
-Check_Cities_Data();
         Update_Players_Gold_Reserve();
-Check_Cities_Data();
 
-
-Check_Cities_Data();
         Players_Update_Magic_Power();
-Check_Cities_Data();
 
-Check_Cities_Data();
         Players_Apply_Magic_Power();
-Check_Cities_Data();
 
-Check_Cities_Data();
         Players_Check_Spell_Research();
-Check_Cities_Data();
 
-
-Check_Cities_Data();
         OVL_DisableIncmBlink();
-Check_Cities_Data();
-
 
         if(
             (DBG_Alt_A_State == ST_FALSE)
@@ -723,41 +667,21 @@ Check_Cities_Data();
         )
         {
 
-Check_Cities_Data();
             Determine_Event();
-Check_Cities_Data();
 
         }
 
-
-Check_Cities_Data();
         Event_Twiddle();
-Check_Cities_Data();
 
-
-Check_Cities_Data();
         Players_Apply_Upkeeps__WIP();
-Check_Cities_Data();
-
 
         // DONT  EMM_Map_DataH()
 
-
-Check_Cities_Data();
         All_Outpost_Population_Growth();
-// Check_Cities_Data();
-Capture_Cities_Data();
 
-
-Check_Cities_Data();
         Apply_City_Changes();
-// Check_Cities_Data();
-Capture_Cities_Data();
 
-
-Check_Cities_Data();
         Diplomacy_Growth_For_Enchantments__WIP();
-Check_Cities_Data();
 
 
         /*
@@ -772,24 +696,20 @@ Check_Cities_Data();
         */
 
 
-Check_Cities_Data();
         Determine_Offer();
-Check_Cities_Data();
 
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
 
-Check_Cities_Data();
         All_City_Nightshade_Count();
-Check_Cities_Data();
 
 
         /*
             BEGIN:  NPC Diplomacy
         */
 
-        // call    j_DIPL_Gravitation
+        Diplomacy_Growth();
 
         // call    j_DIPL_ContactProgress
 
@@ -814,54 +734,35 @@ Check_Cities_Data();
         */
 
 
-Check_Cities_Data();
         Cool_Off_Volcanoes();
-Check_Cities_Data();
 
     }
 
 
-Check_Cities_Data();
     All_Players_Apply_Spell_Casting();
-Check_Cities_Data();
 
 
-Check_Cities_Data();
     Delete_Dead_Units();  // ¿ here, because we may have killed units with a spell, just above ?
-Check_Cities_Data();
 
 
-Check_Cities_Data();
     Set_Unit_Draw_Priority();
-Check_Cities_Data();
+
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-Check_Cities_Data();
 
 
-Check_Cities_Data();
     All_City_Removed_Buildings();
-// Check_Cities_Data();
-Capture_Cities_Data();
 
 
-Check_Cities_Data();
     Do_All_Units_XP_Check_();
-Check_Cities_Data();
 
 
-Check_Cities_Data();
     Heal_All_Units();
-Check_Cities_Data();
 
 
-Check_Cities_Data();
     Record_History();
-Check_Cities_Data();
 
 
-Check_Cities_Data();
     Increment_Background_Music();
-Check_Cities_Data();
 
 
     _turn++;
@@ -877,30 +778,19 @@ Check_Cities_Data();
     }
 
 
-Check_Cities_Data();
     OVL_EnableIncmBlink();
-Check_Cities_Data();
     
 
-Check_Cities_Data();
     Do_Autosave();
-Check_Cities_Data();
 
 
-Check_Cities_Data();
     All_City_Calculations();
-// Check_Cities_Data();
-Capture_Cities_Data();
 
 
-Check_Cities_Data();
     RNG_AI_Turn_Seed = Get_Random_Seed();
-Check_Cities_Data();
 
 
-Check_Cities_Data();
     Set_Mouse_List(1, mouse_list_default);
-Check_Cities_Data();
 
 
 #ifdef STU_DEBUG
@@ -3390,9 +3280,9 @@ void All_Players_Apply_Spell_Casting(void)
     {
 
         if(
-            (g_TimeStop_PlayerNum == 0)
+            (g_timestop_player_num == 0)
             ||
-            (itr_players + 1) == g_TimeStop_PlayerNum
+            (itr_players + 1) == g_timestop_player_num
         )
         {
 
@@ -3541,7 +3431,7 @@ void Determine_Offer(void)
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
 
-        if(_players[itr_players].casting_spell_idx == 214)  /* Spell_Of_Return */
+        if(_players[itr_players].casting_spell_idx == spl_Spell_Of_Return)
         {
             continue;
         }
@@ -4134,9 +4024,9 @@ void Heal_All_Units(void)
         }
 
         if(
-            (g_TimeStop_PlayerNum == 0)
+            (g_timestop_player_num == 0)
             ||
-            (_UNITS[itr_units].owner_idx == g_TimeStop_PlayerNum)
+            (_UNITS[itr_units].owner_idx == g_timestop_player_num)
         )
         {
 
@@ -4651,9 +4541,9 @@ void Do_All_Units_XP_Check_(void)
             ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
             &&
             (
-                (g_TimeStop_PlayerNum == 0)
+                (g_timestop_player_num == 0)
                 ||
-                (_UNITS[itr_units].owner_idx == g_TimeStop_PlayerNum)
+                (_UNITS[itr_units].owner_idx == g_timestop_player_num)
             )
         )
         {
@@ -4700,9 +4590,9 @@ void Do_All_Units_XP_Check_(void)
         }
 
         if(
-            (g_TimeStop_PlayerNum == 0)
+            (g_timestop_player_num == 0)
             ||
-            (g_TimeStop_PlayerNum == itr_players)
+            (g_timestop_player_num == itr_players)
         )
         {
 

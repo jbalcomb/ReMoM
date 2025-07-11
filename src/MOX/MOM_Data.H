@@ -1021,9 +1021,9 @@ struct s_DIFFICULTY_MODIFIERS
 #pragma pack(2)
 struct s_Astr_Data
 {
-    /* 00 */ int16_t Magic_Power;       /* populated in Record_History(), by WIZ_Get_Astr_Power() */
-    /* 02 */ int16_t Spell_Research;    /* populated in Record_History(), by WIZ_Get_Astr_ArmyStr() */
-    /* 04 */ int16_t Army_Strength;     /* populated in Record_History(), by WIZ_Get_Astr_Resrch() */
+    /* 00 */ int16_t Magic_Power;       /* populated in Record_History(), by WIZ_Get_Astr_Power(), in CITYCALC.c   */
+    /* 02 */ int16_t Spell_Research;    /* populated in Record_History(), by WIZ_Get_Astr_ArmyStr(), in CITYCALC.c */
+    /* 04 */ int16_t Army_Strength;     /* populated in Record_History(), by WIZ_Get_Astr_Resrch(), in CITYCALC.c  */
 };
 #pragma pack(pop)
 
@@ -2789,7 +2789,7 @@ extern int16_t * AI_Own_City_Values;
 
 // WZD dseg:912A
 // index of the Time Stop wizard plus 1 (0 if none)
-extern int16_t g_TimeStop_PlayerNum;
+extern int16_t g_timestop_player_num;
 
 // WZD dseg:912C
 extern struct s_SPELL_DATA * spell_data_table;
