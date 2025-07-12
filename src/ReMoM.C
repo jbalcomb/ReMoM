@@ -6,7 +6,6 @@
 #ifndef STU_DEBUG
 #define STU_DEBUG
 #endif
-#include "STU/STU_SND.H"
 
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_BASE.H"
@@ -18,7 +17,6 @@
 #include "MOX/Graphics.H"
 #include "MOX/LBX_Load.H"
 #include "MOX/MOX_SET.H"
-#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 #include "MOX/Timer.H"
 
@@ -27,7 +25,6 @@
 #include "Init.H"
 #include "INTRO.H"
 #include "LOADER.H"
-#include "MOM_DBG.H"
 #include "MOM_SCR.H"
 #include "Settings.H"
 
@@ -108,8 +105,8 @@ int SDL_main(int argc, char* argv[])
 
 int MOM_main(int argc, char** argv)
 {
-    char found_file[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    char file_name[40] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char found_file[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char file_name[LEN_MAIN_SAVE_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t DIGI_ID = 0;
     int16_t MIDI_ID = 0;
     int16_t DIGI_DMA = 0;
@@ -308,7 +305,8 @@ int MOM_main(int argc, char** argv)
     {
         magic_set.sound_channels = 0;
     }
-    magic_set.input_type = 1;
+
+    magic_set.input_type = 1;  // NOTE:  OG-MoM v1.31 is hard-coded to 'keyboard and mouse'
 
     // ¿ MoO2  Check_For_Saved_Games() ?
     for(itr_savegams = 1; itr_savegams < 9; itr_savegams++)
@@ -320,7 +318,7 @@ int MOM_main(int argc, char** argv)
             strcat(file_name, found_file);
             strcat(file_name, str_SAVE_EXT);
             DIR(file_name, found_file);
-            if(found_file == 0)
+            if(found_file[0] == '\0')
             {
                 magic_set.Have_Save[(itr_savegams - 1)] = ST_FALSE;
                 strcpy(magic_set.Save_Names[(itr_savegams - 1)], empty_string__MAIN);
@@ -358,7 +356,7 @@ int MOM_main(int argc, char** argv)
     Load_Palette(0, ST_UNDEFINED, 0);
     Apply_Palette();
     // if(!((argv[1][0] == 'J') && (argv[1][1] == 'E') && (argv[1][1] == 'N') && (argv[1][1] == 'N') && (argv[1][1] == 'Y')))
-    if(strcmp(argv, "JENNY") != 0)
+    if(strcmp(argv[0], "JENNY") != 0)
     {
         /* HACK */  magic_set.sound_effects = ST_TRUE;
         Draw_Logos();

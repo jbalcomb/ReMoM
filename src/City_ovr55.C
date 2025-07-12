@@ -6,17 +6,20 @@
 
 */
 
-#include "Help.H"
+#include "City_ovr55.H"
+
+#include "MOX/MOX_BASE.H"
+#include "STU/STU_CHK.H"
+
 #include "MOX/Fields.H"
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
-
-#include "City_ovr55.H"
-#include "CityScr.H"
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_T4.H"
+
+#include "CityScr.H"
+#include "Help.H"
 #include "ProdScr.H"
-#include "STU/STU_CHK.H"
 #include "WZD_o059.H"
 
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
@@ -473,19 +476,19 @@ void Enemy_City_Screen_Load(void)
 
     GUI_String_2 = (char *)Near_Allocate_Next(80);
 
-    city_enchantment_list = (int16_t *)Near_Allocate_Next(52);
+    city_enchantment_list = (int16_t *)Near_Allocate_Next(52);  // 26 2-byte values
 
-    city_enchantment_owner_list = (int16_t *)Near_Allocate_Next(52);
+    city_enchantment_owner_list = (int16_t *)Near_Allocate_Next(52);  // 26 2-byte values
 
-    city_enchantment_fields = (int16_t *)Near_Allocate_Next(52);
+    city_enchantment_fields = (int16_t *)Near_Allocate_Next(52);  // 26 2-byte values
 
     city_cityscape_fields = (byte_ptr)Near_Allocate_Next(72);  // 36 2-byte values
 
-    city_population_row_fields = (int16_t *)Near_Allocate_Next(40);
+    city_population_row_fields = (int16_t *)Near_Allocate_Next(40);  // 20 2-byte values
 
-    m_troops = (int16_t *)Near_Allocate_Next(18);
+    m_troops = (int16_t *)Near_Allocate_Next(18);  // 9 2-byte values
 
-    m_troop_fields = (int16_t *)Near_Allocate_Next(18);
+    m_troop_fields = (int16_t *)Near_Allocate_Next(18);  // 9 2-byte values
 
 }
 
@@ -493,10 +496,10 @@ void Enemy_City_Screen_Load(void)
 // WZD o55p04
 void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start, int16_t owner_idx)
 {
-    char string[26];
-    int16_t x2;
-    int16_t itr;  // _SI_
-    int16_t x1;  // _DI_
+    char string[LEN_BUILDING_NAME_26];
+    int16_t x2 = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t x1 = 0;  // _DI_
 
     if(owner_idx == ST_UNDEFINED)
     {
@@ -624,12 +627,12 @@ int16_t Init_Outpost(void)
     _CITIES[_cities].owner_idx = ST_UNDEFINED;
     _CITIES[_cities].size = 0;
     _CITIES[_cities].population = 0;
-    _CITIES[_cities].did_sell_building = ST_FALSE;
+    _CITIES[_cities].sold_building = ST_FALSE;
     _CITIES[_cities].Pop_10s = 0;
     _CITIES[_cities].contacts = 0;
     _CITIES[_cities].construction = bt_Housing;
     _CITIES[_cities].bldg_cnt = 0;
-
+Capture_Cities_Data();
 
     for(itr = 0; itr < NUM_BUILDINGS; itr++)
     {
@@ -762,7 +765,7 @@ void Change_City_Ownership(int16_t city_idx, int16_t player_idx)
 
     _CITIES[city_idx].Prod_Accu = 0;
 
-    _CITIES[city_idx].did_sell_building = ST_FALSE;
+    _CITIES[city_idx].sold_building = ST_FALSE;
 
     Do_City_Calculations(city_idx);
 
@@ -1058,19 +1061,19 @@ int16_t City_Remove_Building(int16_t city_idx, int16_t bldg_idx)
 // drake178: N/A
 int16_t City_Sell_Building(int16_t city_idx, int16_t bldg_idx, int16_t gold_amount)
 {
-    int16_t did_sell_building;  // DNE in Dasm
+    int16_t sold_building;  // DNE in Dasm
 
     if(City_Remove_Building(city_idx, bldg_idx) != ST_TRUE)
     {
-        did_sell_building = ST_FALSE;
+        sold_building = ST_FALSE;
     }
     else
     {
         Player_Add_Gold(_CITIES[city_idx].owner_idx, gold_amount);
-        did_sell_building = ST_TRUE;
+        sold_building = ST_TRUE;
     }
 
-    return did_sell_building;
+    return sold_building;
 }
 
 
@@ -1086,7 +1089,7 @@ int16_t City_Sell_Building(int16_t city_idx, int16_t bldg_idx, int16_t gold_amou
     checks if any prerequisites are missing
 
     XREF: City Screen - Sell Building
-        after valid bldg_idx, did_sell_building == ST_FALSE
+        after valid bldg_idx, sold_building == ST_FALSE
         if this returns ST_TRUE
             it calls City_Building_Is_Currently_Required()
 
@@ -1161,7 +1164,7 @@ int16_t City_Building_Has_Requirement(int16_t bldg_idx, int16_t city_idx, int16_
 // drake178: N/A
 /*
     OOX XREF: City Screen - Sell Building
-        after valid bldg_idx, did_sell_building == ST_FALSE, and Bldg_PreChk() == ST_TRUE
+        after valid bldg_idx, sold_building == ST_FALSE, and Bldg_PreChk() == ST_TRUE
         if returns ST_FALSE, Warning_Message() of "Selling back your " " will cease production of your " "."
 
 the building you are trying to sell is a required building for the building you are currently constructing
@@ -2062,13 +2065,13 @@ void City_Add_Fields_City_Enchantments(int16_t xstart, int16_t ystart)
 // drake178: ¿ ?
 void City_Screen_Draw_Population_Row(int16_t city_idx, int16_t xstart, int16_t ystart)
 {
-    int16_t rebel_count;
-    int16_t did_min_farmers;
-    int16_t icon_space;
-    int16_t min_farmer_count;
-    int16_t farmer_count;
-    int16_t itr_townsfolk;
-    int16_t xadd;  // _DI_
+    int16_t rebel_count = 0;
+    int16_t did_min_farmers = 0;
+    int16_t icon_space = 0;
+    int16_t min_farmer_count = 0;
+    int16_t farmer_count = 0;
+    int16_t itr_townsfolk = 0;
+    int16_t xadd = 0;  // _DI_
 
     min_farmer_count = City_Minimum_Farmers(city_idx);
 
@@ -2077,14 +2080,14 @@ void City_Screen_Draw_Population_Row(int16_t city_idx, int16_t xstart, int16_t y
     if(_CITIES[city_idx].farmer_count < min_farmer_count)
     {
 
-        _CITIES[city_idx].farmer_count = min_farmer_count;
+        CITIES_FARMER_COUNT(city_idx, min_farmer_count);
 
     }
 
     if(_CITIES[city_idx].farmer_count > (_CITIES[city_idx].population - rebel_count))
     {
 
-        _CITIES[city_idx].farmer_count = (_CITIES[city_idx].population - rebel_count);
+        CITIES_FARMER_COUNT(city_idx, (_CITIES[city_idx].population - rebel_count));
 
     }
 
@@ -2141,20 +2144,21 @@ void City_Screen_Draw_Population_Row(int16_t city_idx, int16_t xstart, int16_t y
 
 // WZD o55p31
 // drake178: ¿ ?
+// MoO2  Module: COLONY  Add_Job_Fields_()
+// MoO2  Module: COLONY  Add_Move_Colonist_Job_Field_For_()
 void City_Screen_Add_Fields_Population_Row(int16_t city_idx, int16_t xstart, int16_t ystart)
 {
-    int16_t rebel_count;
-    int16_t farmer_count;
-    int16_t skip_xadd;
-    int16_t figure_space;
-    int16_t min_farmer_count;
-    int16_t y2;
-    int16_t x2;
-    int16_t y1;
-    int16_t x1;
-    int16_t itr_figures;
-
-    int16_t xadd;  // _DI_
+    int16_t rebel_count = 0;
+    int16_t farmer_count = 0;
+    int16_t skip_xadd = 0;
+    int16_t figure_space = 0;
+    int16_t min_farmer_count = 0;
+    int16_t y2 = 0;
+    int16_t x2 = 0;
+    int16_t y1 = 0;
+    int16_t x1 = 0;
+    int16_t itr_figures = 0;
+    int16_t xadd = 0;  // _DI_
 
     min_farmer_count = City_Minimum_Farmers(city_idx);
 
@@ -2163,14 +2167,14 @@ void City_Screen_Add_Fields_Population_Row(int16_t city_idx, int16_t xstart, int
     if(_CITIES[city_idx].farmer_count < min_farmer_count)
     {
 
-        _CITIES[city_idx].farmer_count = min_farmer_count;
+        CITIES_FARMER_COUNT(city_idx, min_farmer_count);
 
     }
 
     if(_CITIES[city_idx].farmer_count > (_CITIES[city_idx].population - rebel_count))
     {
 
-        _CITIES[city_idx].farmer_count = (_CITIES[city_idx].population - rebel_count);
+        CITIES_FARMER_COUNT(city_idx, (_CITIES[city_idx].population - rebel_count));
 
     }
 
@@ -2192,9 +2196,10 @@ void City_Screen_Add_Fields_Population_Row(int16_t city_idx, int16_t xstart, int
         skip_xadd = ST_TRUE;
     }
 
-    itr_figures = 0;
-    while((_CITIES[city_idx].population - rebel_count) > itr_figures)
+    
+    for(itr_figures = 0; ((_CITIES[city_idx].population - rebel_count) > itr_figures); itr_figures++)
     {
+
         if((itr_figures == min_farmer_count) && (skip_xadd == ST_FALSE) )
         {
             xadd += 4;
@@ -2207,17 +2212,16 @@ void City_Screen_Add_Fields_Population_Row(int16_t city_idx, int16_t xstart, int
             skip_xadd = ST_TRUE;
         }
 
-        x1 = xstart+ xadd;
+        x1 = xstart + xadd;
         y1 = ystart;
         x2 = x1 + 9;  // BUGBUG: ¿ should use figure_space ?
         y2 = y1 + 14;
 
         // Add_Hidden_Field(x1, y1, x2, y2, cnst_ZeroString_30, 0xFFFF);
-        city_population_row_fields[itr_figures] = Add_Hidden_Field(x1, y1, x2, y2, 0, ST_UNDEFINED);
+        city_population_row_fields[itr_figures] = Add_Hidden_Field(x1, y1, x2, y2, str_empty_string__ovr055[0], ST_UNDEFINED);
 
         xadd += figure_space;
-
-        itr_figures++;
+        
     }
 
 }
@@ -2256,7 +2260,7 @@ void All_City_Removed_Buildings(void)
 
         if(_CITIES[itr_cities].owner_idx == _human_player_idx)
         {
-            _CITIES[itr_cities].did_sell_building = ST_FALSE;
+            _CITIES[itr_cities].sold_building = ST_FALSE;
         }
 
         for(itr_buildings = 0; itr_buildings < NUM_BUILDINGS; itr_buildings++)

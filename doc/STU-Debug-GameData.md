@@ -27,7 +27,7 @@ immediately crashes on changing city name from "Keltok" to "Fa-rul"
     size                    1
     population              4
     farmer_count            3
-    did_sell_building       1
+    sold_building       1
     pad2B_17h               0
     Pop_10s                 0
     PlayerBits              0

@@ -41,10 +41,12 @@
 #define LEN_TEMP_STRING       20
 #define LEN_TEMP_BUFFER       10
 #define LEN_FILE_NAME         20
+#define LEN_MAIN_SAVE_FILE_NAME 40
 
 #define LEN_WIZARD_NAME       20
 #define LEN_HOF_NAME          20
 #define LEN_BUILDING_NAME     20
+#define LEN_BUILDING_NAME_26     26  /* WTF, Mate? */
 #define LEN_SPELL_NAME        20
 #define LEN_SPELLDAT_NAME        19
 #define LEN_SPELL_DESCRIPTION   110

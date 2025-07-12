@@ -1,6 +1,8 @@
 
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_DEF.H"
 #include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/MOX_T4.H"
 #include "MOX/SOUND.H"
 
 #include "City_ovr55.H"
@@ -15,6 +17,7 @@
 #include "ProdScr.H"
 #include "RACETYPE.H"
 #include "SBookScr.H"
+#include "STU/STU_CHK.H"
 #include "UNITTYPE.H"   // WTFMATE
 #include "UnitView.H"
 #include "WZD_o143.H"
@@ -154,29 +157,30 @@ SAMB_ptr city_change_button_seg;
 
 void City_Screen__WIP(void)
 {
-    int16_t zz_active_stack_flag;
-    int16_t city_rebel_count;
-    int16_t required_farmer_count;
-    int16_t uv_y2;
-    int16_t uv_x2;
-    int16_t uv_y1;
-    int16_t uv_x1;
-    int16_t cityscape_bldg_idx;
-    int16_t building_value;
-    int16_t hotkey_X;
-    int16_t city_wy;
-    int16_t city_wx;
+    int16_t zz_active_stack_flag = 0;
+    int16_t city_rebel_count = 0;
+    int16_t required_farmer_count = 0;
+    int16_t uv_y2 = 0;
+    int16_t uv_x2 = 0;
+    int16_t uv_y1 = 0;
+    int16_t uv_x1 = 0;
+    int16_t cityscape_bldg_idx = 0;
+    int16_t building_value = 0;
+    int16_t hotkey_X = 0;
+    int16_t city_wy = 0;
+    int16_t city_wx = 0;
     // IDK_Row__prod_idx
-    int16_t Row;
-    int16_t unit_type;
-    int16_t reqd_bldg_idx;  // IDK_Row__prod_idx
+    int16_t Row = 0;
+    int16_t unit_type = 0;
+    int16_t reqd_bldg_idx = 0;  // IDK_Row__prod_idx
     // IDK_Col__unit_stack_idx
-    int16_t Col;  // IDK_Col__unit_stack_idx
-    int16_t itr_stack;  // IDK_Col__unit_stack_idx
-    int16_t itr_cityscape; // IDK_Col__unit_stack_idx
-    int16_t screen_changed;
-    int16_t leave_screen;
-    int16_t input_field_idx;  // _DI_
+    int16_t Col = 0;  // IDK_Col__unit_stack_idx
+    int16_t itr_stack = 0;  // IDK_Col__unit_stack_idx
+    int16_t itr_cityscape = 0; // IDK_Col__unit_stack_idx
+    int16_t itr_job_fields = 0; // IDK_Col__unit_stack_idx
+    int16_t screen_changed = 0;
+    int16_t leave_screen = 0;
+    int16_t input_field_idx = 0;  // _DI_
 
     Set_City_Screen_Help_List();
 
@@ -235,10 +239,7 @@ void City_Screen__WIP(void)
     if(_CITIES[_city_idx].farmer_count < required_farmer_count)
     {
 
-Check_Cities_Data();
-        _CITIES[_city_idx].farmer_count = required_farmer_count;
-// Check_Cities_Data();
-Capture_Cities_Data();
+        CITIES_FARMER_COUNT(_city_idx, required_farmer_count);
 
     }
 
@@ -247,10 +248,7 @@ Capture_Cities_Data();
     if(_CITIES[_city_idx].farmer_count > (_CITIES[_city_idx].population - city_rebel_count))
     {
 
-Check_Cities_Data();
-        _CITIES[_city_idx].farmer_count = (_CITIES[_city_idx].population - city_rebel_count);
-// Check_Cities_Data();
-Capture_Cities_Data();
+        CITIES_FARMER_COUNT(_city_idx, (_CITIES[_city_idx].population - city_rebel_count));
 
     }
 
@@ -507,7 +505,7 @@ Capture_Cities_Data();
                 if(cityscape_bldg_idx <= NUM_BUILDINGS)
                 {
 
-                    if(_CITIES[_city_idx].did_sell_building == ST_TRUE)
+                    if(_CITIES[_city_idx].sold_building == ST_TRUE)
                     {
                         Warn0(aYouCanOnlySellBackO);  // "You can only sell back one building each turn."
                     }
@@ -575,7 +573,7 @@ Capture_Cities_Data();
                                     strcpy(m_city_screen_product_name, *_unit_type_table[reqd_bldg_idx].name);
                                 }
 
-                                _CITIES[_city_idx].did_sell_building = ST_TRUE;
+                                CITIES_SOLD_BUILDING(_city_idx, ST_TRUE);
 
                             }
 
@@ -612,11 +610,9 @@ Capture_Cities_Data();
                 Set_City_Screen_Help_List();
             }
         }
-
         /*
             END:  Left-Click Cityscape - Sell Building
         */
-
 
         /*
             BEGIN:  Left-Click Unit Window
@@ -642,7 +638,6 @@ Capture_Cities_Data();
         /*
             END:  Left-Click Unit Window
         */
-
 
         /*
             BEGIN:  Right-Click Unit Window
@@ -683,25 +678,103 @@ Capture_Cities_Data();
             END:  Right-Click Unit Window
         */
 
-
         /*
             BEGIN:  Left-Click Population Row
         */
+        for(itr_job_fields = 0; ((_CITIES[_city_idx].population - City_Rebel_Count(_city_idx)) > itr_job_fields); itr_job_fields++)
+        {
+
+            if(city_population_row_fields[itr_job_fields] == input_field_idx)
+            {
+
+                Play_Left_Click();
+
+                required_farmer_count = City_Minimum_Farmers(_city_idx);
+
+                city_rebel_count = City_Rebel_Count(_city_idx);  // BUGBUG unused
+
+                if(required_farmer_count == 0)
+                {
+
+                    if(_CITIES[_city_idx].farmer_count == 0)
+                    {
+
+                        CITIES_FARMER_COUNT(_city_idx, (itr_job_fields + 1));
+
+                    }
+                    else
+                    {
+
+                        if(itr_job_fields == 0)
+                        {
+
+                            CITIES_FARMER_COUNT(_city_idx, 0);
+
+                        }
+                        else
+                        {
+
+                            CITIES_FARMER_COUNT(_city_idx, (itr_job_fields + 1));
+
+                        }
+
+                    }
+
+                }
+                else
+                {
+
+                    if(itr_job_fields < required_farmer_count)
+                    {
+
+                        CITIES_FARMER_COUNT(_city_idx, required_farmer_count);
+
+                    }
+                    else
+                    {
+
+                        CITIES_FARMER_COUNT(_city_idx, (itr_job_fields + 1));
+
+                    }
+
+                }
+
+Check_Cities_Data();
+                Do_City_Calculations(_city_idx);
+Check_Cities_Data();
+
+                m_city_production_cost = City_Production_Cost(_CITIES[_city_idx].construction, _city_idx);
+
+                m_city_n_turns_to_produce = City_N_Turns_To_Produce(m_city_production_cost, _city_idx);
+
+                Do_City_Calculations(_city_idx);
+
+                City_Can_Buy_Product();
+
+            }
+
+        }
+
         /*
             END:  Left-Click Population Row
         */
 
 
-
-        if( (leave_screen == ST_FALSE) && (screen_changed == ST_FALSE) )
+        if((leave_screen == ST_FALSE) && (screen_changed == ST_FALSE))
         {
+
             City_Screen_Draw__WIP();
+
             // DONT  j_o146p05_Empty_pFxn
+
             PageFlip_FX();
+
             Release_Time(1);
+
         }
 
         screen_changed = ST_FALSE;
+
     }
 
 
@@ -1043,21 +1116,26 @@ void City_Screen_Draw2__WIP(void)
 
 
 // WZD o54p04
+// MoO2  Module: COLONY  Add_Fields_()
 // MoO2  Module: COLONY  Add_Screen_Fields_()
+// MoO2  Module: COLONY  Add_Job_Fields_()
+// MoO2  Module: COLONY  Add_Move_Colonist_Job_Field_For_()
 void City_Screen_Add_Fields__WIP(void)
 {
-    int16_t y2;
-    int16_t x2;
-    int16_t y1;
-    int16_t x1;
-    int16_t itr;  // _SI_
-    int16_t itr_stack;  // _SI_
+    int16_t y2 = 0;
+    int16_t x2 = 0;
+    int16_t y1 = 0;
+    int16_t x1 = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t itr_stack = 0;  // _SI_
 
     Clear_Fields();
 
     city_cityscape_field_count = 0;
+
     _main_map_grid_field = INVALID_FIELD;
     _minimap_grid_field = INVALID_FIELD;
+
     UU_CityScreen_Field_Something = 0;
 
     for(itr = 0; itr < MAX_STACK; itr++)
@@ -1299,7 +1377,7 @@ void Change_Home_City_Name_Popup(int16_t city_idx)
     int16_t UU_RetVal_TextEditDialog = 0;
 #pragma clang diagnostic push
 
-    _page_flip_effect = 0;
+    _page_flip_effect = pfe_None;
 
     color_array[0]  =  97;
     color_array[1]  =  97;
@@ -1353,7 +1431,7 @@ void Change_Home_City_Name_Popup(int16_t city_idx)
 
     strcpy(_CITIES[city_idx].name, Text);
 
-    _page_flip_effect = 3;
+    _page_flip_effect = pfe_Dissolve;
 
 }
 
@@ -1427,12 +1505,12 @@ void City_Screen_Required_Buildings_List(int16_t city_idx)
 // WZD o54p12
 void City_Screen_Draw_Garrison_Window(void)
 {
-    int16_t itr_stack;
-    int16_t unit_idx;
-    int16_t x1;
-    int16_t y1;
-    int16_t x2;
-    int16_t y2;
+    int16_t itr_stack = 0;
+    int16_t unit_idx = 0;
+    int16_t x1 = 0;
+    int16_t y1 = 0;
+    int16_t x2 = 0;
+    int16_t y2 = 0;
 
     if(_unit != ST_UNDEFINED)
     {
@@ -1450,7 +1528,7 @@ void City_Screen_Draw_Garrison_Window(void)
 // WZD o54p13
 void City_Screen_Load(void)
 {
-    int16_t IDK_size_city_cityscape_fields;
+    int16_t IDK_size_city_cityscape_fields = 0;
 
     GUI_String_1 = (char *)Near_Allocate_First(100);
     GUI_String_2 = (char *)Near_Allocate_Next(100);

@@ -62,7 +62,7 @@ void Copy_City_Struct(struct s_CITY * dst, struct s_CITY * src)
     dst->size = src->size;
     dst->population = src->population;
     dst->farmer_count = src->farmer_count;
-    dst->did_sell_building = src->did_sell_building;
+    dst->sold_building = src->sold_building;
     dst->pad2B_17h = src->pad2B_17h;
     dst->Pop_10s = src->Pop_10s;
     dst->contacts = src->contacts;
@@ -105,7 +105,7 @@ int16_t Check_City_Struct(struct s_CITY * dst, struct s_CITY * src)
         STU_DEBUG_BREAK();
     if(dst->farmer_count != src->farmer_count)
         STU_DEBUG_BREAK();
-    if(dst->did_sell_building != src->did_sell_building)
+    if(dst->sold_building != src->sold_building)
         STU_DEBUG_BREAK();
     if(dst->pad2B_17h != src->pad2B_17h)
         STU_DEBUG_BREAK();

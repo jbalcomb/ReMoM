@@ -9,6 +9,8 @@
 #ifndef CITYSCR_H
 #define CITYSCR_H
 
+#include "MOX/MOX_TYPE.H"
+
 
 
 // WZD dseg:9936

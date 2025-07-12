@@ -75,6 +75,7 @@
     <ClInclude Include="..\..\..\src\MOX\MOX_SND.H" />
     <ClInclude Include="..\..\..\src\MoX\MOX_T4.H" />
     <ClInclude Include="..\..\..\src\MOX\MOX_TYPE.H" />
+    <ClInclude Include="..\..\..\src\MOX\MOX_UPD.H" />
     <ClInclude Include="..\..\..\src\MoX\paragrph.H" />
     <ClInclude Include="..\..\..\src\MoX\random.H" />
     <ClInclude Include="..\..\..\src\MOX\sdl2_Audio.H" />

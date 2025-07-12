@@ -2134,7 +2134,7 @@ void AI_Update_Gold_Income_And_Food_Income(int16_t player_idx)
             if(_CITIES[city_idx].farmer_count < _CITIES[city_idx].population)
             {
 
-                _CITIES[city_idx].farmer_count += 1;
+                CITIES_FARMER_COUNT(city_idx, (_CITIES[city_idx].farmer_count + 1));
 
                 // ; BUG: not all farmers generate 2 food
                 food_income -= 2;

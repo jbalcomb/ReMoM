@@ -1044,7 +1044,7 @@ void Event_Twiddle(void)
         _CITIES[city_idx].owner_idx = player_idx;
         _CITIES[city_idx].construction = bt_TradeGoods;
         _CITIES[city_idx].Prod_Accu = 0;
-        _CITIES[city_idx].did_sell_building = ST_FALSE;
+        _CITIES[city_idx].sold_building = ST_FALSE;
         if(player_idx == _human_player_idx)  /* ¿ current player ? */
         {
             Set_Map_Square_Explored_Flags_XYP_Range(CITYX(), CITYY(), CITYP(), 3);

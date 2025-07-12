@@ -240,30 +240,6 @@ void Next_Turn_Proc(void)
 #endif
 
 
-// #ifdef STU_DEBUG
-
-//     for(DBG_itr_cities = 0; DBG_itr_cities < _cities; DBG_itr_cities++)
-//     {
-//         if(_CITIES[DBG_itr_cities].owner_idx == HUMAN_PLAYER_IDX)
-//         {
-//             dbg_prn("DEBUG: [%s, %d]: city_idx: %d()\n", __FILE__, __LINE__, DBG_itr_cities);
-//             dbg_prn("DEBUG: [%s, %d]: city_idx: %s()\n", __FILE__, __LINE__, _CITIES[DBG_itr_cities].name);
-//             dbg_prn("DEBUG: [%s, %d]: city_idx: %d()\n", __FILE__, __LINE__, _CITIES[DBG_itr_cities].food_units);
-//             dbg_prn("DEBUG: [%s, %d]: city_idx: %d()\n", __FILE__, __LINE__, _CITIES[DBG_itr_cities].farmer_count);
-//             dbg_prn("DEBUG: [%s, %d]: city_idx: %d()\n", __FILE__, __LINE__, _CITIES[DBG_itr_cities].population);
-//             dbg_prn("DEBUG: [%s, %d]: City_Minimum_Farmers(): %d()\n", __FILE__, __LINE__, City_Minimum_Farmers(DBG_itr_cities));
-//             dbg_prn("DEBUG: [%s, %d]: City_Rebel_Count(): %d()\n", __FILE__, __LINE__, City_Rebel_Count(DBG_itr_cities));
-//             dbg_prn("DEBUG: [%s, %d]: Player_Armies_Food_Upkeep(): %d()\n", __FILE__, __LINE__, Player_Armies_Food_Upkeep(HUMAN_PLAYER_IDX));
-//         }
-//     }
-
-//  prints food from Player_Resource_Income_Total()...
-// ...food_expense = Player_Armies_Food_Upkeep(player_idx)...
-// ...food_income += (_CITIES[itr_cities].food_units - _CITIES[itr_cities].population)...
-
-// #endif
-
-
     Delete_Dead_Units();
     All_Units_In_Towers();
 
@@ -274,7 +250,6 @@ void Next_Turn_Proc(void)
 
 
     Next_Turn_Calc();
-Check_Cities_Data();
 
 
     Cache_Graphics_Overland();
@@ -359,7 +334,6 @@ Check_Cities_Data();
     /*
         END: Messages
     */
-Check_Cities_Data();
 
     current_screen = scr_Main_Screen;
 
@@ -368,7 +342,6 @@ Check_Cities_Data();
 
 
     Update_Units_MvsSts();
-Check_Cities_Data();
 
     o62p01_empty_function(_human_player_idx);
 
@@ -385,7 +358,6 @@ Check_Cities_Data();
     {
 
         Cast_Spell_Overland__WIP(_human_player_idx);
-Check_Cities_Data();
 
     }
 
@@ -393,10 +365,8 @@ Check_Cities_Data();
     all_units_moved = ST_FALSE;
 
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
-Check_Cities_Data();
 
     Reset_Draw_Active_Stack();
-Check_Cities_Data();
 
 
 #ifdef STU_DEBUG
@@ -603,23 +573,32 @@ void Next_Turn_Calc(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Next_Turn_Calc()\n", __FILE__, __LINE__);
 #endif
 
+Check_Cities_Data();
+
     Set_Random_Seed(RNG_AI_Turn_Seed);
 
     Set_Mouse_List(1, mouse_list_hourglass);
 
     All_City_Calculations();
+Check_Cities_Data();
 
     AI_Kill_Lame_Units();  // ¿ BUGBUG  leaves dead/deleteable units lying around ?
+Check_Cities_Data();
 
     Delete_Dead_Units();  // DNE in Dasm
+Check_Cities_Data();
 
     AI_Next_Turn__WIP();
+Check_Cities_Data();
 
     Delete_Dead_Units();  // DNE in Dasm
+Check_Cities_Data();
 
     Next_Turn_Process_Purify();
+Check_Cities_Data();
 
     Initialize_Reports();
+Check_Cities_Data();
 
     if(g_timestop_player_num != 0)
     {
@@ -667,21 +646,33 @@ void Next_Turn_Calc(void)
         )
         {
 
+Check_Cities_Data();
             Determine_Event();
+Check_Cities_Data();
 
         }
 
+Check_Cities_Data();
         Event_Twiddle();
+Check_Cities_Data();
 
+Check_Cities_Data();
         Players_Apply_Upkeeps__WIP();
+Check_Cities_Data();
 
         // DONT  EMM_Map_DataH()
 
+Check_Cities_Data();
         All_Outpost_Population_Growth();
+Check_Cities_Data();
 
+Check_Cities_Data();
         Apply_City_Changes();
+Check_Cities_Data();
 
+Check_Cities_Data();
         Diplomacy_Growth_For_Enchantments__WIP();
+Check_Cities_Data();
 
 
         /*
@@ -823,7 +814,7 @@ void All_Colony_Calculations(void)
         if(_CITIES[itr_cities].farmer_count < minimum_farmer_count)
         {
 
-            _CITIES[itr_cities].farmer_count = minimum_farmer_count;
+            CITIES_FARMER_COUNT(itr_cities, minimum_farmer_count);
 
         }
 
@@ -2954,13 +2945,16 @@ void Apply_City_Changes(void)
     int16_t New_Min_Farmers = 0;
     int16_t Population_Growth = 0;
     int16_t itr_cities = 0;
+Check_Cities_Data();
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
+Check_Cities_Data();
 
         // if 'City' is 'Outpost'
         if(_CITIES[itr_cities].population == 0)  /* assume "City" is 'Outpost' */
         {
+Check_Cities_Data();
 
             // 'Outpost' failed
             if(_CITIES[itr_cities].Pop_10s <= 0)
@@ -2985,17 +2979,11 @@ Check_Cities_Data();
             if(_CITIES[itr_cities].Pop_10s >= 10)
             {
 
-Check_Cities_Data();
-                _CITIES[itr_cities].population = 1;
-Check_Cities_Data();
+                CITIES_POPULATION(itr_cities, 1);
 
-Check_Cities_Data();
-                _CITIES[itr_cities].size = 1;  /* CTY_Hamlet */
-Check_Cities_Data();
+                CITIES_SIZE(itr_cities, 1);  /* CTY_Hamlet */
 
-Check_Cities_Data();
-                _CITIES[itr_cities].farmer_count = City_Minimum_Farmers(itr_cities);
-Check_Cities_Data();
+                CITIES_FARMER_COUNT(itr_cities, City_Minimum_Farmers(itr_cities));
 
 Check_Cities_Data();
                 Do_City_Calculations(itr_cities);
@@ -3020,13 +3008,12 @@ Check_Cities_Data();
         else  /* (_CITIES[itr_cities].population != 0) */
         {
 
+Check_Cities_Data();
             // apply population growth
             Population_Growth = City_Growth_Rate(itr_cities);
 
 Check_Cities_Data();
-            _CITIES[itr_cities].Pop_10s += Population_Growth;
-// Check_Cities_Data();
-Capture_Cities_Data();
+            CITIES_POP_10S(itr_cities, (_CITIES[itr_cities].Pop_10s + Population_Growth));
 
             // increase population
             if((_CITIES[itr_cities].Pop_10s >= 100) && (_CITIES[itr_cities].population < 25))
@@ -3036,53 +3023,40 @@ Capture_Cities_Data();
 
                 excess_farmer_count = (_CITIES[itr_cities].farmer_count - excess_farmer_count);
 
-Check_Cities_Data();
-                _CITIES[itr_cities].population += 1;
-// Check_Cities_Data();
-Capture_Cities_Data();
+                CITIES_POPULATION(itr_cities, (_CITIES[itr_cities].population + 1));
 
-Check_Cities_Data();
-                _CITIES[itr_cities].Pop_10s = 0;  /* ; BUG: discards excess population */
-// Check_Cities_Data();
-Capture_Cities_Data();
+                CITIES_POP_10S(itr_cities, 0);  /* ; BUG: discards excess population */
 
-Check_Cities_Data();
                 New_Min_Farmers = City_Minimum_Farmers(itr_cities);
-Check_Cities_Data();
 
-Check_Cities_Data();
-                _CITIES[itr_cities].farmer_count = (New_Min_Farmers + excess_farmer_count);  // new minimum farmers +/- too many/few
-// Check_Cities_Data();
-Capture_Cities_Data();
+                CITIES_FARMER_COUNT(itr_cities, (New_Min_Farmers + excess_farmer_count));  /* new minimum farmers +/- too many/few */
 
                 if(_CITIES[itr_cities].farmer_count > _CITIES[itr_cities].population)
                 {
 
-Check_Cities_Data();
-                    _CITIES[itr_cities].farmer_count = _CITIES[itr_cities].population;
-Check_Cities_Data();
+                    CITIES_FARMER_COUNT(itr_cities, _CITIES[itr_cities].population);
 
                 }
 
-Check_Cities_Data();
-                _CITIES[itr_cities].size = ((_CITIES[itr_cities].population + 3) / 4);  // {0, ..., 24} {3, ..., 27} {0, 1, 2, 3, 4, 5, 6}
-                // _CITIES[itr_cities].size = BUCKET(_CITIES[itr_cities].population, 4);
-// Check_Cities_Data();
-Capture_Cities_Data();
+                CITIES_SIZE(itr_cities, ((_CITIES[itr_cities].population + 3) / 4));  /* {0, ..., 24} {3, ..., 27} {0, 1, 2, 3, 4, 5, 6} */
 
-Check_Cities_Data();
-                SETMAX(_CITIES[itr_cities].size, MAX_CITY_SIZE);  // CTY_Capital
-// Check_Cities_Data();
-Capture_Cities_Data();
+                if(_CITIES[itr_cities].size > MAX_CITY_SIZE)
+                {
+
+                    CITIES_SIZE(itr_cities, MAX_CITY_SIZE);  /* CTY_Capital */
+
+                }
 
                 if(_CITIES[itr_cities].owner_idx == NEUTRAL_PLAYER_IDX)
                 {
 
                     // BUGBUG:  In City_Growth_Rate(), uses `if(_CITIES[city_idx].population >= ((_difficulty + 1) * 2))`
-Check_Cities_Data();
-                    SETMAX(_CITIES[itr_cities].population, MAX_CITY_POPULATION_NEUTRAL_PLAYER);
-// Check_Cities_Data();
-Capture_Cities_Data();
+                    if(_CITIES[itr_cities].population > MAX_CITY_POPULATION_NEUTRAL_PLAYER)
+                    {
+
+                        CITIES_POPULATION(itr_cities, MAX_CITY_POPULATION_NEUTRAL_PLAYER);
+
+                    }
 
                 }
 
@@ -3108,23 +3082,15 @@ Capture_Cities_Data();
                 if(_CITIES[itr_cities].population <= 1)  /* cant be 0 in this branch, so must be == 1 or <= -1 */
                 {
 
-Check_Cities_Data();
-                    _CITIES[itr_cities].Pop_10s = 5;
-Check_Cities_Data();
+                    CITIES_POP_10S(itr_cities, 5);
 
                 }
                 else
                 {
 
-Check_Cities_Data();
-                    _CITIES[itr_cities].population -= 1;
-// Check_Cities_Data();
-Capture_Cities_Data();
+                    CITIES_POPULATION(itr_cities, (_CITIES[itr_cities].population - 1));
 
-Check_Cities_Data();
-                    _CITIES[itr_cities].size = ((_CITIES[itr_cities].population + 3) / 4);
-// Check_Cities_Data();
-Capture_Cities_Data();
+                    CITIES_SIZE(itr_cities, ((_CITIES[itr_cities].population + 3) / 4));
 
                     if((
                         _CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX)
@@ -3139,10 +3105,7 @@ Capture_Cities_Data();
 
                     }
 
-Check_Cities_Data();
-                    _CITIES[itr_cities].Pop_10s += 100;
-// Check_Cities_Data();
-Capture_Cities_Data();
+                    CITIES_POP_10S(itr_cities, (_CITIES[itr_cities].Pop_10s + 100));
 
                 }
 
@@ -3155,10 +3118,7 @@ Capture_Cities_Data();
                 if(_CITIES[itr_cities].population > Random(10))
                 {
 
-Check_Cities_Data();
-                    _CITIES[itr_cities].population -= 1;
-// Check_Cities_Data();
-Capture_Cities_Data();
+                    CITIES_POPULATION(itr_cities, (_CITIES[itr_cities].population - 1));
 
                     if((
                         _CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX)

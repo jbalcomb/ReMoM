@@ -1447,7 +1447,7 @@ struct s_CITY
     /* 13 */ int8_t size;
     /* 14 */ int8_t population;  // 1-byte, signed;  in Units of 1000 (1K)
     /* 15 */ int8_t farmer_count;
-    /* 16 */ int8_t did_sell_building;  // {F/T} sold a building a this turn  // TODO  rename did_sell/just_sold_building
+    /* 16 */ int8_t sold_building;  // {F/T} sold a building a this turn  // TODO  rename did_sell/just_sold_building
     /* 17 */ int8_t pad2B_17h;  /* 2-byte aligment padding */
     /* 18 */ int16_t Pop_10s;
     /* 1A */ uint8_t contacts;  /* bit per player_idx {F,T} in-contact */

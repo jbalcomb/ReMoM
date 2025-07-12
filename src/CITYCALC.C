@@ -57,12 +57,12 @@ void Do_City_Calculations(int16_t city_idx)
 
     // DONT  EMM_Map_DataH();
 
-    _CITIES[city_idx].food_units            = City_Food_Production(city_idx);
-    _CITIES[city_idx].production_units      = City_Production_Production(city_idx);
-    _CITIES[city_idx].gold_units            = City_Gold_Production(city_idx);
-    _CITIES[city_idx].building_maintenance  = City_Gold_Mainanence(city_idx);
-    _CITIES[city_idx].research_units        = City_Research_Production(city_idx);
-    _CITIES[city_idx].mana_units            = City_Mana_Production(city_idx);
+    CITIES_FOOD_UNITS(city_idx, City_Food_Production(city_idx));
+    CITIES_PRODUCTION_UNITS(city_idx, City_Production_Production(city_idx));
+    CITIES_GOLD_UNITS(city_idx, City_Gold_Production(city_idx));
+    CITIES_BUILDING_MAINTENANCE(city_idx, City_Gold_Mainanence(city_idx));
+    CITIES_RESEARCH_UNITS(city_idx, City_Research_Production(city_idx));
+    CITIES_MANA_UNITS(city_idx, City_Mana_Production(city_idx));
 
     if(
         (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
@@ -71,7 +71,7 @@ void Do_City_Calculations(int16_t city_idx)
     )
     {
 
-        _CITIES[city_idx].food_units = ((_CITIES[city_idx].food_units * difficulty_modifiers_table[_difficulty].food) / 100);
+        CITIES_FOOD_UNITS(city_idx, ((_CITIES[city_idx].food_units * difficulty_modifiers_table[_difficulty].food) / 100));
 
     }
 
@@ -1749,7 +1749,7 @@ int16_t City_Food_Production(int16_t city_idx)
         if(_CITIES[city_idx].farmer_count > _CITIES[city_idx].population)
         {
 
-            _CITIES[city_idx].farmer_count = _CITIES[city_idx].population;
+            CITIES_FARMER_COUNT(city_idx, _CITIES[city_idx].population);
 
         }
 
@@ -1919,11 +1919,11 @@ int16_t City_Production_Production(int16_t city_idx)
         if(_CITIES[city_idx].farmer_count > _CITIES[city_idx].population)
         {
 
-            _CITIES[city_idx].farmer_count = _CITIES[city_idx].population;
+            CITIES_FARMER_COUNT(city_idx, _CITIES[city_idx].population);
 
         }
 
-        worker_count = _CITIES[city_idx].population - _CITIES[city_idx].farmer_count - City_Rebel_Count(city_idx);
+        worker_count = (_CITIES[city_idx].population - _CITIES[city_idx].farmer_count - City_Rebel_Count(city_idx));
 
         if(
             (_CITIES[city_idx].race == rt_Dwarf)
@@ -3189,12 +3189,12 @@ void All_Outpost_Population_Growth(void)
 
         if(Random(100) <= grow)
         {
-            _CITIES[itr_cities].Pop_10s += Random(3);
+            CITIES_POP_10S(itr_cities, (_CITIES[itr_cities].Pop_10s + Random(3)));
         }
 
         if(Random(100) <= shrink)
         {
-            _CITIES[itr_cities].Pop_10s += Random(2);
+            CITIES_POP_10S(itr_cities, (_CITIES[itr_cities].Pop_10s - Random(3)));
         }
         
     }
@@ -3653,14 +3653,14 @@ int16_t City_Rebel_Count(int16_t city_idx)
     if((_CITIES[city_idx].farmer_count + rebel_count) > _CITIES[city_idx].population)
     {
 
-        _CITIES[city_idx].farmer_count = _CITIES[city_idx].population;
+        CITIES_FARMER_COUNT(city_idx, _CITIES[city_idx].population);
 
     }
 
     if(_CITIES[city_idx].farmer_count < 0)
     {
 
-        _CITIES[city_idx].farmer_count = 0;
+        CITIES_FARMER_COUNT(city_idx, 0);
 
     }
 
