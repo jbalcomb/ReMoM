@@ -173,11 +173,12 @@ void City_Screen__WIP(void)
     int16_t Row = 0;
     int16_t unit_type = 0;
     int16_t reqd_bldg_idx = 0;  // IDK_Row__prod_idx
-    // IDK_Col__unit_stack_idx
-    int16_t Col = 0;  // IDK_Col__unit_stack_idx
-    int16_t itr_stack = 0;  // IDK_Col__unit_stack_idx
-    int16_t itr_cityscape = 0; // IDK_Col__unit_stack_idx
-    int16_t itr_job_fields = 0; // IDK_Col__unit_stack_idx
+    // int16_t itr = 0;
+    int16_t Col = 0;  // itr
+    int16_t itr_stack = 0;  // itr
+    int16_t itr_cityscape = 0; // itr
+    int16_t itr_job_fields = 0; // itr
+    int16_t itr_ench_fields = 0; // itr
     int16_t screen_changed = 0;
     int16_t leave_screen = 0;
     int16_t input_field_idx = 0;  // _DI_
@@ -275,7 +276,6 @@ Capture_Cities_Data();
     if(_CITIES[_city_idx].construction < 100)
     {
         _fstrcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
-        // strcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
     }
     else
     {
@@ -342,15 +342,21 @@ Capture_Cities_Data();
         }
 
 
+        /*
+            BEGIN:  Left-Click Up Button - City Enchantment List
+        */
 
         /*
-            Left-Click Up Button
+            END:  Left-Click Up Button - City Enchantment List
         */
 
 
+        /*
+            BEGIN: Left-Click Down Button - City Enchantment List
+        */
 
         /*
-            Left-Click Down Button
+            BEGIN: Left-Click Down Button - City Enchantment List
         */
 
 
@@ -377,8 +383,7 @@ Capture_Cities_Data();
                 City_Can_Buy_Product();
                 if(_CITIES[_city_idx].construction < 100)
                 {
-                    // TODO  _fstrcpy(IDK_production_title, bldg_data_table[_CITIES[_city_idx].construction]);
-                    strcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
+                    _fstrcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
                 }
                 else
                 {
@@ -480,6 +485,71 @@ Capture_Cities_Data();
             Confirmation_Box()
             "Do you wish to turn off the " ... " spell?"
         */
+        for(itr_ench_fields = 0; itr_ench_fields < city_enchantment_display_count; itr_ench_fields++)
+        {
+
+            if(
+                (city_enchantment_fields[itr_ench_fields] == input_field_idx)
+                &&
+                (city_enchantment_owner_list[(city_enchantment_display_first + itr_ench_fields)] == _human_player_idx)
+            )
+            {
+
+                Play_Left_Click();
+
+                Deactivate_Help_List();
+
+                strcpy(GUI_String_1, cnst_SpellCancel_Msg);  // "Do you wish to turn off the \x02"
+
+                strcat(GUI_String_1, _city_enchantment_names[city_enchantment_list[(city_enchantment_display_first + itr_ench_fields)]]);
+
+                strcat(GUI_String_1, cnst_SpellCnclMsg_12);
+
+                if(Confirmation_Box(GUI_String_1) == ST_TRUE)
+                {
+
+                    Turn_Off_City_Enchantment(_city_idx, city_enchantment_list[(city_enchantment_display_first + itr_ench_fields)]);
+
+                    Build_City_Enchantment_List(_city_idx, city_enchantment_list, city_enchantment_owner_list, &city_enchantment_list_count);
+
+                    city_enchantment_display_scroll_flag = ST_FALSE;
+
+                    if(city_enchantment_list_count > 6)
+                    {
+
+                        city_enchantment_display_scroll_flag = ST_TRUE;
+
+                    }
+                    else
+                    {
+
+                        city_enchantment_display_scroll_flag = ST_FALSE;
+
+                    }
+
+                    Do_City_Calculations(_city_idx);
+
+                    m_city_production_cost = City_Production_Cost(_CITIES[_city_idx].construction, _city_idx);
+
+                    m_city_n_turns_to_produce = City_N_Turns_To_Produce(m_city_production_cost, _city_idx);
+
+                }
+
+                Deactivate_Auto_Function();
+
+                Assign_Auto_Function(City_Screen_Draw__WIP, 1);
+
+                screen_changed = ST_TRUE;
+
+                Reset_Map_Draw();
+
+                Deactivate_Help_List();
+
+                Set_City_Screen_Help_List();
+
+            }
+
+        }
         /*
             END:  Left-Click City Enchantment
         */
@@ -618,7 +688,7 @@ Capture_Cities_Data();
             BEGIN:  Left-Click Unit Window
         */
         {
-            // IDK_Col__unit_stack_idx
+            // itr
             for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
             {
                 if(g_unit_window_fields[itr_stack] == input_field_idx)
@@ -643,7 +713,7 @@ Capture_Cities_Data();
             BEGIN:  Right-Click Unit Window
         */
         {
-            // IDK_Col__unit_stack_idx
+            // itr
             for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
             {
                 if(-(g_unit_window_fields[itr_stack]) == input_field_idx)

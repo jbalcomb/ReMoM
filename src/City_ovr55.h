@@ -53,6 +53,12 @@ void Destroy_City(int16_t city_idx);
 void Print_City_Enchantment_List(int16_t start_x, int16_t start_y, int16_t * city_enchantment_list, int16_t * city_enchantment_owner_list, int16_t city_enchantment_list_count);
 
 // WZD o55p10
+void Turn_Off_City_Enchantment(int16_t city_idx, int16_t ench_idx);
+
+// WZD o55p11
+// sub_4B9BF()
+
+// WZD o55p12
 int16_t City_Remove_Building(int16_t city_idx, int16_t bldg_idx);
 
 // WZD o55p13

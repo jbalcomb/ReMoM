@@ -289,7 +289,9 @@ void Enemy_City_Screen(void)
                     strcat(GUI_String_1, str_TurnOffSpell_2__ovr055);
                     if(Confirmation_Box(GUI_String_1) == ST_TRUE)
                     {
-                        // SPELLY  CTY_ClearEnchant(_city_idx, city_enchantment_list[(city_enchantment_display_first + itr)]);
+                        
+                        Turn_Off_City_Enchantment(_city_idx, city_enchantment_list[(city_enchantment_display_first + itr)]);
+
                         Build_City_Enchantment_List(_city_idx, &city_enchantment_list[0], &city_enchantment_owner_list[0], &city_enchantment_list_count);
                         city_enchantment_display_scroll_flag = ST_FALSE;
                         if(city_enchantment_list_count > 6)
@@ -996,24 +998,32 @@ void Print_City_Enchantment_List(int16_t start_x, int16_t start_y, int16_t * cit
 
 // WZD o55p10
 // drake178: CTY_ClearEnchant()
+/*
+; clears the selected enchantment from the city record
+*/
+/*
+
+*/
+void Turn_Off_City_Enchantment(int16_t city_idx, int16_t ench_idx)
+{
+    uint8_t * echantments = 0;
+
+    echantments = _CITIES[city_idx].enchantments;
+
+    echantments[ench_idx] = 0;
+
+}
+
 
 // WZD o55p11
 // drake178: N/A
 // sub_4B9BF()
+
 
 // WZD o55p12
 // drake178: CTY_DestroyBuilding()
 // MoO2  Module: ERICNET  Remove_Building_()
 /*
-// drake178: CTY_ClearEnchant()
-
-// WZD o55p11
-// drake178: N/A
-// sub_4B9BF()
-
-// WZD o55p12
-// drake178: CTY_DestroyBuilding()
-// MoO2  Module: ERICNET  Remove_Building_()
 */
 /*
 
