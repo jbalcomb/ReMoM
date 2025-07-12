@@ -24,7 +24,7 @@ win_PFL.cpp
     #include <Windows.h>
     #include "windowsx.h"   /* GET_X_LPARAM(), GET_Y_LPARAM() */
     #include "win_PFL.hpp"
-    #include "MOM_PFL.H"
+    #include "MOM_PFL.h"
     uint8_t PFL_Palette[1024];  // Platform's Shadow Palette: 256 colors * bits/bytes/components per color as required by the platform  e.g., RGB, XBGR, RGBA
     /* translate MWA Virtual Key Code to Scan Code / Character Code */
     uint16_t VK_to_SCCS[256] = { };

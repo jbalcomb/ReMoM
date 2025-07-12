@@ -239,7 +239,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\EVENTS.H"
+				RelativePath="..\..\src\EVENTS.h"
 				>
 			</File>
 			<File
@@ -489,199 +489,199 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\src\AdvsrScr.H"
+				RelativePath="..\..\src\AdvsrScr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\AIBUILD.H"
+				RelativePath="..\..\src\AIBUILD.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\AIDATA.H"
+				RelativePath="..\..\src\AIDATA.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\AIDUDES.H"
+				RelativePath="..\..\src\AIDUDES.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ALLOC.H"
+				RelativePath="..\..\src\ALLOC.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Allocate.H"
+				RelativePath="..\..\src\Allocate.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ArmyList.H"
+				RelativePath="..\..\src\ArmyList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\City_ovr55.H"
+				RelativePath="..\..\src\City_ovr55.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\CITYCALC.H"
+				RelativePath="..\..\src\CITYCALC.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\CityList.H"
+				RelativePath="..\..\src\CityList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\CITYSCAP.H"
+				RelativePath="..\..\src\CITYSCAP.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\CityScr.H"
+				RelativePath="..\..\src\CityScr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Combat.H"
+				RelativePath="..\..\src\Combat.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\DebugSrc.H"
+				RelativePath="..\..\src\DebugSrc.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\DIPLOMAC.H"
+				RelativePath="..\..\src\DIPLOMAC.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Exit.H"
+				RelativePath="..\..\src\Exit.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Explore.H"
+				RelativePath="..\..\src\Explore.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\FLIC_Draw.H"
+				RelativePath="..\..\src\FLIC_Draw.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\FLIC_Draw2.H"
+				RelativePath="..\..\src\FLIC_Draw2.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Help.H"
+				RelativePath="..\..\src\Help.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\HIRE.H"
+				RelativePath="..\..\src\HIRE.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Init.H"
+				RelativePath="..\..\src\Init.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Input.H"
+				RelativePath="..\..\src\Input.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ItemMake.H"
+				RelativePath="..\..\src\ItemMake.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Items.H"
+				RelativePath="..\..\src\Items.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ItemScrn.H"
+				RelativePath="..\..\src\ItemScrn.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ItemView.H"
+				RelativePath="..\..\src\ItemView.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Lair.H"
+				RelativePath="..\..\src\Lair.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\LBX_Load.H"
+				RelativePath="..\..\src\LBX_Load.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\LOADER.H"
+				RelativePath="..\..\src\LOADER.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\LoadScr.H"
+				RelativePath="..\..\src\LoadScr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\LVLMAKE.H"
+				RelativePath="..\..\src\LVLMAKE.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MagicScr.H"
+				RelativePath="..\..\src\MagicScr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MAIN_LBX_000.H"
+				RelativePath="..\..\src\MAIN_LBX_000.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MAIN_LBX_000_00.H"
+				RelativePath="..\..\src\MAIN_LBX_000_00.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MainMenu.H"
+				RelativePath="..\..\src\MainMenu.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MainScr.H"
+				RelativePath="..\..\src\MainScr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MainScr_Maps.H"
+				RelativePath="..\..\src\MainScr_Maps.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoM.H"
+				RelativePath="..\..\src\MoM.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MOM_Data.H"
+				RelativePath="..\..\src\MOM_Data.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoM_DBG.H"
+				RelativePath="..\..\src\MoM_DBG.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MOM_DEF.H"
+				RelativePath="..\..\src\MOM_DEF.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoM_PFL.H"
+				RelativePath="..\..\src\MoM_PFL.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MovePath.H"
+				RelativePath="..\..\src\MovePath.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\NewGame.H"
+				RelativePath="..\..\src\NewGame.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\NEXTTURN.H"
+				RelativePath="..\..\src\NEXTTURN.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Outpost.H"
+				RelativePath="..\..\src\Outpost.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\PNG_Draw.H"
+				RelativePath="..\..\src\PNG_Draw.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\PNG_Load.H"
+				RelativePath="..\..\src\PNG_Load.h"
 				>
 			</File>
 			<File
@@ -689,111 +689,111 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\PoC_PFL.H"
+				RelativePath="..\..\src\PoC_PFL.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\PoC_Screen.H"
+				RelativePath="..\..\src\PoC_Screen.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ProdScr.H"
+				RelativePath="..\..\src\ProdScr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\RACETYPE.H"
+				RelativePath="..\..\src\RACETYPE.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\REPORT.H"
+				RelativePath="..\..\src\REPORT.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Roads.H"
+				RelativePath="..\..\src\Roads.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SBookScr.H"
+				RelativePath="..\..\src\SBookScr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SCastScr.H"
+				RelativePath="..\..\src\SCastScr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SCORE.H"
+				RelativePath="..\..\src\SCORE.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Settings.H"
+				RelativePath="..\..\src\Settings.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SETTLE.H"
+				RelativePath="..\..\src\SETTLE.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SOUND.H"
+				RelativePath="..\..\src\SOUND.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\special.H"
+				RelativePath="..\..\src\special.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Spellbook.H"
+				RelativePath="..\..\src\Spellbook.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SPLMASTR.H"
+				RelativePath="..\..\src\SPLMASTR.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Surveyor.H"
+				RelativePath="..\..\src\Surveyor.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Terrain.H"
+				RelativePath="..\..\src\Terrain.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\TEXTBOX.H"
+				RelativePath="..\..\src\TEXTBOX.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Timer.H"
+				RelativePath="..\..\src\Timer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\TST_GameData.H"
+				RelativePath="..\..\src\TST_GameData.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\TST_GameState.H"
+				RelativePath="..\..\src\TST_GameState.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\UnitList.H"
+				RelativePath="..\..\src\UnitList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\UnitMove.H"
+				RelativePath="..\..\src\UnitMove.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\UnitStat.H"
+				RelativePath="..\..\src\UnitStat.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\UNITSTK.H"
+				RelativePath="..\..\src\UNITSTK.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\UNITTYPE.H"
+				RelativePath="..\..\src\UNITTYPE.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\UnitView.H"
+				RelativePath="..\..\src\UnitView.h"
 				>
 			</File>
 			<File
@@ -801,19 +801,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\WIZVIEW.H"
+				RelativePath="..\..\src\WIZVIEW.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\WZD_o059.H"
+				RelativePath="..\..\src\WZD_o059.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\WZD_o129.H"
+				RelativePath="..\..\src\WZD_o129.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\WZD_o143.H"
+				RelativePath="..\..\src\WZD_o143.h"
 				>
 			</File>
 		</Filter>
@@ -827,7 +827,7 @@
 			Name="STU"
 			>
 			<File
-				RelativePath="..\..\src\stu\STU.H"
+				RelativePath="..\..\src\stu\STU.h"
 				>
 			</File>
 			<File
@@ -835,7 +835,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\stu\STU_CHK.H"
+				RelativePath="..\..\src\stu\STU_CHK.h"
 				>
 			</File>
 			<File
@@ -843,19 +843,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\stu\STU_DBG.H"
+				RelativePath="..\..\src\stu\STU_DBG.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\stu\STU_DEF.H"
+				RelativePath="..\..\src\stu\STU_DEF.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\stu\STU_TST.H"
+				RelativePath="..\..\src\stu\STU_TST.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\stu\STU_TYPE.H"
+				RelativePath="..\..\src\stu\STU_TYPE.h"
 				>
 			</File>
 			<File
@@ -863,7 +863,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\stu\STU_UTIL.H"
+				RelativePath="..\..\src\stu\STU_UTIL.h"
 				>
 			</File>
 		</Filter>
@@ -875,7 +875,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\Allocate.H"
+				RelativePath="..\..\src\MoX\Allocate.h"
 				>
 			</File>
 			<File
@@ -883,7 +883,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\CFG.H"
+				RelativePath="..\..\src\MoX\CFG.h"
 				>
 			</File>
 			<File
@@ -891,11 +891,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\DBG.H"
+				RelativePath="..\..\src\MoX\DBG.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\DIR.H"
+				RelativePath="..\..\src\MoX\DIR.h"
 				>
 			</File>
 			<File
@@ -903,7 +903,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\DOS.H"
+				RelativePath="..\..\src\MoX\DOS.h"
 				>
 			</File>
 			<File
@@ -911,7 +911,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\EMM.H"
+				RelativePath="..\..\src\MoX\EMM.h"
 				>
 			</File>
 			<File
@@ -919,7 +919,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\Exit.H"
+				RelativePath="..\..\src\MoX\Exit.h"
 				>
 			</File>
 			<File
@@ -927,7 +927,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\Fields.H"
+				RelativePath="..\..\src\MoX\Fields.h"
 				>
 			</File>
 			<File
@@ -935,7 +935,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\file_ani.H"
+				RelativePath="..\..\src\MoX\file_ani.h"
 				>
 			</File>
 			<File
@@ -943,7 +943,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\FLIC_Draw.H"
+				RelativePath="..\..\src\MoX\FLIC_Draw.h"
 				>
 			</File>
 			<File
@@ -951,7 +951,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\Fonts.H"
+				RelativePath="..\..\src\MoX\Fonts.h"
 				>
 			</File>
 			<File
@@ -959,7 +959,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\GENDRAW.H"
+				RelativePath="..\..\src\MoX\GENDRAW.h"
 				>
 			</File>
 			<File
@@ -967,7 +967,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\Graphics.H"
+				RelativePath="..\..\src\MoX\Graphics.h"
 				>
 			</File>
 			<File
@@ -975,7 +975,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\Input.H"
+				RelativePath="..\..\src\MoX\Input.h"
 				>
 			</File>
 			<File
@@ -983,7 +983,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\IO_Buffer.H"
+				RelativePath="..\..\src\MoX\IO_Buffer.h"
 				>
 			</File>
 			<File
@@ -991,7 +991,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\Keyboard.H"
+				RelativePath="..\..\src\MoX\Keyboard.h"
 				>
 			</File>
 			<File
@@ -999,7 +999,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\LBX_Load.H"
+				RelativePath="..\..\src\MoX\LBX_Load.h"
 				>
 			</File>
 			<File
@@ -1007,7 +1007,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\LOADSAVE.H"
+				RelativePath="..\..\src\MoX\LOADSAVE.h"
 				>
 			</File>
 			<File
@@ -1015,23 +1015,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\Mouse.H"
+				RelativePath="..\..\src\MoX\Mouse.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\MoX_BASE.H"
+				RelativePath="..\..\src\MoX\MoX_BASE.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\MoX_BITS.H"
+				RelativePath="..\..\src\MoX\MoX_BITS.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\MoX_DEF.H"
+				RelativePath="..\..\src\MoX\MoX_DEF.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\MoX_Lib.H"
+				RelativePath="..\..\src\MoX\MoX_Lib.h"
 				>
 			</File>
 			<File
@@ -1039,7 +1039,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\MOX_T4.H"
+				RelativePath="..\..\src\MoX\MOX_T4.h"
 				>
 			</File>
 			<File
@@ -1047,11 +1047,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\MoX_Temp.H"
+				RelativePath="..\..\src\MoX\MoX_Temp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\MoX_TYPE.H"
+				RelativePath="..\..\src\MoX\MoX_TYPE.h"
 				>
 			</File>
 			<File
@@ -1059,7 +1059,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\paragrph.H"
+				RelativePath="..\..\src\MoX\paragrph.h"
 				>
 			</File>
 			<File
@@ -1067,11 +1067,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\random.H"
+				RelativePath="..\..\src\MoX\random.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\Timer.H"
+				RelativePath="..\..\src\MoX\Timer.h"
 				>
 			</File>
 			<File
@@ -1079,7 +1079,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\Util.H"
+				RelativePath="..\..\src\MoX\Util.h"
 				>
 			</File>
 			<File
@@ -1087,7 +1087,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\Video.H"
+				RelativePath="..\..\src\MoX\Video.h"
 				>
 			</File>
 			<File
@@ -1095,7 +1095,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\Video2.H"
+				RelativePath="..\..\src\MoX\Video2.h"
 				>
 			</File>
 		</Filter>

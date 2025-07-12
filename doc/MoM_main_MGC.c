@@ -1,9 +1,9 @@
-#include "MOX/MOX_CFG.H"
-#include "MOX/MOX_DEF.H"
-#include "MOX/MOX_SET.H"
-#include "MOX/MOX_SND.H"
-#include "MOX/MOX_TYPE.H"
-int WZD_main(int argc, char * argv[])
+#include "MOX/MOX_CFG.h"
+#include "MOX/MOX_DEF.h"
+#include "MOX/MOX_SET.h"
+#include "MOX/MOX_SND.h"
+#include "MOX/MOX_TYPE.h"
+int MGC_main(int argc, char * argv[])
 {
     int16_t found_file = 0;
     int16_t file_name = 0;
@@ -224,34 +224,36 @@ int WZD_main(int argc, char * argv[])
     Init_Drivers(magic_set.input_type, magic_set.sound_channels, fonts_lbx_file, MIDI_DRV, MIDI_IO, MIDI_IRQ, MIDI_DMA, DIGI_DRV, DIGI_IO, DIGI_IRQ, DIGI_DMA);
     Release_Version();
     // HERE: MGC === WZD
+    Allocate_Data_Space(6100);
     Enable_Cancel();
-    Allocate_Data_Space(4600);
     // HERE: MGC ~== WZD
-    Load_SAVE_GAM(8);
-    Load_WZD_Resources();
-    EMS_Pages_Left = STU_INT(0x67, 5901);
-    if(EMS_Pages_Left != 0)
+    Load_Palette(0, ST_UNDEFINED);
+    Apply_Palette();
+    if(!((argv[0] = 'J') && (argv[1] = 'E') && (argv[1] = 'N') && (argv[1] = 'N') && (argv[1] = 'Y')))
     {
-        g_EmmHndl_OVERXYZ = EMM_MakeNamedHandle(EMS_Pages_Left, ehn_OVERXYZ);
-        EMM_ReleaseHandle(g_EmmHndl_OVERXYZ);
-        __OvrInitEms(0, 0, EMS_Pages_Left);
+        GAME_PlayIntro();
     }
-    else
+    Load_MGC_Resources();
+    // BEGIN: ~== New Game Screen
+    Load_TERRSTAT();  // ; ~== Newgame_Screen
+    Load_SPELLDAT();  // ; ~== Newgame_Screen
+    // END: ~== New Game Screen
+    // BEGIN: ~== Main Menu Screen
+    Init_Credits();
+    Fill(0, 0, SCREEN_XMAX, SCREEN_YMAX, 0);
+    Set_Page_On();
+    Fill(0, 0, SCREEN_XMAX, SCREEN_YMAX, 0);
+    Set_Page_Off();
+    Stop_Music__STUB();
+    main_menu_music_seg = LBX_Load(music_lbx__main, MUSIC_Main_Menu);
+    if(magic_set.background_music == ST_TRUE)
     {
-        g_EmmHndl_OVERXYZ = 0;  // ¿ NULLL ?
+        Play_Sound__STUB(main_menu_music_seg);
     }
     Load_Palette(0, ST_UNDEFINED);
-    Calculate_Remap_Colors();
-    Set_Button_Down_Offsets(1, 1,);
-    Cycle_Palette_Color__STUB(198, 40, 0, 0, 63, 0, 0, 1);  // (color_num, red_min, green_min, blue_min, red_max, green_max, blue_max, step_value)
     Apply_Palette();
-    Fade_In();
-    current_screen = scr_Main_Screen
-    _players[NEUTRAL_PLAYER_IDX].banner_id = 5;  // enum Banner_Color {BNR_Brown = 5 }
-    Clear_Fields();
-    Loaded_Game_Update_WZD();
-    GAME_SoM_Cast_By = ST_UNDEFINED;
-    Screen_Control();
-    s01p16_empty_function();
+    // END: ~== Main Menu Screen
+    Menu_Screen_Control();
+    Save_SAVE_GAM(8);
     Exit_With_Size();
 }

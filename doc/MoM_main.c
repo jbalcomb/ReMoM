@@ -1,8 +1,8 @@
-#include "MOX/MOX_CFG.H"
-#include "MOX/MOX_DEF.H"
-#include "MOX/MOX_SET.H"
-#include "MOX/MOX_SND.H"
-#include "MOX/MOX_TYPE.H"
+#include "MOX/MOX_CFG.h"
+#include "MOX/MOX_DEF.h"
+#include "MOX/MOX_SET.h"
+#include "MOX/MOX_SND.h"
+#include "MOX/MOX_TYPE.h"
 int MOM_main(int argc, char * argv[])
 {
     int16_t found_file = 0;
