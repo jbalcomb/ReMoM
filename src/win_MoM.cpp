@@ -3,32 +3,32 @@
 
 #include "win_PFL.hpp"
 
-#include "STU/STU.H"
+#include "STU/STU.h"
 
-#include "MOX/MOM_Data.H"
-#include "MOX/MOX_BASE.H"
-#include "MOX/MOX_TYPE.H"
-#include "MOX/CFG.H"
-#include "MOX/EMM.H"
-#include "MOX/EXIT.H"
-#include "MOX/Fields.H"
-#include "MOX/Fonts.H"
-#include "MOX/Graphics.H"
-#include "MOX/MOX_SET.H"
-#include "MOX/SOUND.H"
-#include "MOX/Timer.H"
+#include "MOX/MOM_Data.h"
+#include "MOX/MOX_BASE.h"
+#include "MOX/MOX_TYPE.h"
+#include "MOX/CFG.h"
+#include "MOX/EMM.h"
+#include "MOX/EXIT.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/Graphics.h"
+#include "MOX/MOX_SET.h"
+#include "MOX/SOUND.h"
+#include "MOX/Timer.h"
 
-#include "ALLOC.H"
-/* NEWCODE */  // #include "CREDITS.H"
-#include "Init.H"
-/* NEWCODE */  // #include "INTRO.H"
-#include "LOADER.H"
-#include "MOM_DBG.H"
-#include "MOM_SCR.H"
-#include "Settings.H"
+#include "ALLOC.h"
+/* NEWCODE */  // #include "CREDITS.h"
+#include "Init.h"
+/* NEWCODE */  // #include "INTRO.h"
+#include "LOADER.h"
+#include "MOM_DBG.h"
+#include "MOM_SCR.h"
+#include "Settings.h"
 
 #ifdef STU_DEBUG
-#include "STU/STU_DBG.H"    /* DLOG() */
+#include "STU/STU_DBG.h"    /* DLOG() */
 #endif
 
 

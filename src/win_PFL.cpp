@@ -4,10 +4,10 @@
 
 #include "win_PFL.hpp"
 
-#include "MOX/Input.H"
+#include "MOX/Input.h"
 
-#include "MOM_PFL.H"
-#include "MOM_SCR.H"
+#include "MOM_PFL.h"
+#include "MOM_SCR.h"
 
 
 

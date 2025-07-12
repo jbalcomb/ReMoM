@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MOX/MOX_TYPE.H"
+#include "MOX/MOX_TYPE.h"
 
 #include <Windows.h>
 
