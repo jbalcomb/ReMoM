@@ -69,7 +69,6 @@ void TILE_ReplaceMinerals__STUB(int16_t wx, int16_t wy, int16_t wp, int16_t tera
 void Clear_Terrain_Specials(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o143p17
-// drake178: CTY_ResetRoadConns()
 void Reset_City_Road_Connection_Bitfields(void);
 
 // WZD o143p18

@@ -324,13 +324,16 @@ Capture_Cities_Data();
 
 
         /*
-            Left-Click Resource Row
+            BEGIN:  Left-Click Resource Row
         */
         /*
             loop 6 resources
             IDK_CityScr_RsrcBrkdn(rsrc)
         */
 
+        /*
+            END:  Left-Click Resource Row
+        */
 
 
         /*
@@ -345,7 +348,30 @@ Capture_Cities_Data();
         /*
             BEGIN:  Left-Click Up Button - City Enchantment List
         */
+        if(input_field_idx == city_up_button)
+        {
 
+            Play_Left_Click();
+
+            city_enchantment_display_first -= 6;
+
+            if(city_enchantment_display_first < 0)
+            {
+
+                city_enchantment_display_first = ((city_enchantment_list_count * 6) / 6);
+
+            }
+
+            if(city_enchantment_display_first >= city_enchantment_list_count)
+            {
+
+                city_enchantment_display_first = (city_enchantment_list_count - 6);
+
+            }
+
+            screen_changed = ST_TRUE;
+
+        }
         /*
             END:  Left-Click Up Button - City Enchantment List
         */
@@ -354,7 +380,23 @@ Capture_Cities_Data();
         /*
             BEGIN: Left-Click Down Button - City Enchantment List
         */
+        if(input_field_idx == city_dn_button)
+        {
 
+            Play_Left_Click();
+
+            city_enchantment_display_first += 6;
+
+            if(city_enchantment_display_first >= city_enchantment_list_count)
+            {
+
+                city_enchantment_display_first = 0;
+
+            }
+
+            screen_changed = ST_TRUE;
+
+        }
         /*
             BEGIN: Left-Click Down Button - City Enchantment List
         */
@@ -835,7 +877,7 @@ Check_Cities_Data();
 
             City_Screen_Draw__WIP();
 
-            // DONT  j_o146p05_Empty_pFxn
+            s146p5_empty_function();
 
             PageFlip_FX();
 
