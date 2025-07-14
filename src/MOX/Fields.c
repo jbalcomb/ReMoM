@@ -574,22 +574,27 @@ void UU_GUI_ExtClear(void);
 
 // WZD s36p08
 // TODO  void Set_Global_Esc(void);
-void Enable_Cancel(void)
-{
-    mouse_cancel_disabled = ST_FALSE;
-}
-// WZD s36p09
-// drake178: UU_GUI_ClearEscOverride
 void Disable_Cancel(void)
 {
     mouse_cancel_disabled = ST_TRUE;
 }
+
+
+// WZD s36p09
+// drake178: UU_GUI_ClearEscOverride
+void Enable_Cancel(void)
+{
+    mouse_cancel_disabled = ST_FALSE;
+}
+
 
 // WZD s36p10
 void Disable_Mouse_Wait(void)
 {
     mouse_auto_exit = ST_TRUE;
 }
+
+
 // WZD s36p11
 void Enable_Mouse_Wait(void)
 {

@@ -346,15 +346,15 @@ int MOM_main(int argc, char** argv)
     magic_set.input_type = 1;
     magic_set.sound_channels = 2;
     Init_Drivers(magic_set.input_type, magic_set.sound_channels, MOM_FONT_FILE, MIDI_DRV, MIDI_IO, MIDI_IRQ, MIDI_DMA, DIGI_DRV, DIGI_IO, DIGI_IRQ, DIGI_DMA);
-    // ALPHA  Release_Version();
+    Release_Version();
 
     // HERE: MGC === WZD
 
     // MGC Allocate_Data_Space(6100);
-    // MGC Enable_Cancel();
-    // WZD Enable_Cancel();
+    // MGC Disable_Cancel();
+    // WZD Disable_Cancel();
     // WZD Allocate_Data_Space(4600);
-    Enable_Cancel();
+    Disable_Cancel();
 
     Allocate_Data_Space(6100);
 

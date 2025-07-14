@@ -576,6 +576,7 @@ extern struct s_Field * p_fields;  // "p_fields dd 0" ? Far Pointer?
 // Num elements:  250, Type:        unsigned integer (4 bytes) 
 // 13750 / 250 = 55  sizeof(struct field)
 // Why the pointer `p_fields` if `sfields` is statically-allocated?
+// ...just couldn't statically-allocated under MS-DOS and didn't want to change more code?
 
 
 /*
@@ -594,10 +595,11 @@ extern struct s_Field * p_fields;  // "p_fields dd 0" ? Far Pointer?
 
 // WZD s36p08
 // TODO  void Set_Global_Esc(void);
-void Enable_Cancel(void);
+void Disable_Cancel(void);
+
 // WZD s36p09
 // drake178: UU_GUI_ClearEscOverride
-void Disable_Cancel(void);
+void Enable_Cancel(void);
 
 // WZD s36p10
 // Disable_Mouse_Wait()

@@ -794,41 +794,59 @@ MoO2
 
         if(Mouse_Button() != ST_FALSE)
         {
+
             mouse_button = Mouse_Button();
 
-/*
-    BEGIN: Right-Click
-*/
+            /*
+                BEGIN:  Right-Click Help OR Right-Click Cancel
+            */
             {
-// NEWCODE                if(mouse_button == ST_RIGHT_BUTTON)
-// NEWCODE                {
-// NEWCODE                    if(
-// NEWCODE                        (help_list_active == ST_TRUE)
-// NEWCODE                        &&
-// NEWCODE                        Check_Help_List() == 0
-// NEWCODE                    )
-// NEWCODE                    {
-// NEWCODE                        Mouse_Buffer();
-// NEWCODE                        Mouse_Buffer2();
-// NEWCODE                        return 0;
-// NEWCODE                    }
-// NEWCODE                    else
-// NEWCODE                    {
-// NEWCODE                        if(mouse_cancel_disabled == ST_FALSE)
-// NEWCODE                        {
-// NEWCODE                            while(Mouse_Button() == ST_RIGHT_BUTTON)
-// NEWCODE                            {
-// NEWCODE                                Quick_Call_Auto_Function();
-// NEWCODE                            }
-// NEWCODE                            return ST_UNDEFINED;
-// NEWCODE                        } 
-// NEWCODE                    }
-// NEWCODE                }
-            }
-/*
-    END: Right-Click
-*/
 
+                // seg036:0758 83 7E FA 02                                     cmp     [bp+mouse_button], e_ST_RIGHT_BUTTON ; Right Button Pressed
+                // 000197B8  00026DB8  Interpret_Mouse_Input+74C
+                // HERE: right click on movement map
+                if(mouse_button == ST_RIGHT_BUTTON)
+                {
+
+                    if(
+                        (help_list_active == ST_TRUE)
+                        &&
+                        Check_Help_List() == 0
+                    )
+                    {
+
+                        Mouse_Buffer();
+
+                        Mouse_Buffer2();
+
+                        return 0;
+
+                    }
+                    else
+                    {
+
+                        if(mouse_cancel_disabled == ST_FALSE)
+                        {
+
+                            while(Mouse_Button() == ST_RIGHT_BUTTON)
+                            {
+
+                                Quick_Call_Auto_Function();
+
+                            }
+
+                            return ST_UNDEFINED;
+
+                        }
+
+                    }
+
+                }
+
+            }
+            /*
+                END:  Right-Click Help OR Right-Click Cancel
+            */
             
 /*
     BEGIN: Loop Mouse_Button()
@@ -874,6 +892,7 @@ MoO2
                                 )
                             )
                             {
+                                
                                 // BUGBUG  down_mouse_button can be -1 here  AVRL  how to avoid?  shouldn't happen? conditions should be ||?
                                 if(p_fields[down_mouse_button].type == ft_Scroll)
                                 {
@@ -1132,28 +1151,43 @@ MoO2
 
             mouse_button = Mouse_Buffer_Button();
             
-// NEWCODE            if(mouse_button == ST_RIGHT_BUTTON)
-// NEWCODE            {
-// NEWCODE
-// NEWCODE                if(
-// NEWCODE                    (help_list_active != ST_FALSE)
-// NEWCODE                    &&
-// NEWCODE                    (Check_Help_List() == 0)
-// NEWCODE                )
-// NEWCODE                {
-// NEWCODE                    Mouse_Buffer();
-// NEWCODE                    Mouse_Buffer2();
-// NEWCODE                    return 0;
-// NEWCODE                }
-// NEWCODE
-// NEWCODE                if(mouse_cancel_disabled == ST_FALSE)
-// NEWCODE                {
-// NEWCODE                    Mouse_Buffer();
-// NEWCODE                    Mouse_Buffer2();
-// NEWCODE                    return ST_UNDEFINED;
-// NEWCODE                }
-// NEWCODE
-// NEWCODE            }
+            /*
+                BEGIN:  Right-Click Help OR Right-Click Cancel
+            */
+            if(mouse_button == ST_RIGHT_BUTTON)
+            {
+
+
+                if(
+                    (help_list_active != ST_FALSE)
+                    &&
+                    (Check_Help_List() == 0)
+                )
+                {
+
+                    Mouse_Buffer();
+
+                    Mouse_Buffer2();
+
+                    return 0;
+
+                }
+
+                if(mouse_cancel_disabled == ST_FALSE)
+                {
+
+                    Mouse_Buffer();
+
+                    Mouse_Buffer2();
+
+                    return ST_UNDEFINED;
+
+                }
+
+            }
+            /*
+                END:  Right-Click Help OR Right-Click Cancel
+            */
 
             l_mx = Mouse_Buffer_X();
 
@@ -1564,7 +1598,7 @@ int16_t Check_Help_List(void)
     int16_t i = 0;  // _DI_
     int16_t j = 0;  // _SI_
 
-    help_entry_found = ST_FALSE;
+    help_entry_found = 0;
 
     mouse_x = Pointer_X();
 
@@ -1573,7 +1607,7 @@ int16_t Check_Help_List(void)
     if(help_list_count == 0)
     {
 
-        help_entry_found = 1;
+        return 1;
 
     }
     else
@@ -1600,9 +1634,9 @@ int16_t Check_Help_List(void)
 
                     Draw_Help_Entry__WIP(help_struct_pointer[j + 0]);
 
-                    i = help_list_count;
+                    i = help_list_count;  // BUGBUG  useless
 
-                    help_entry_found = 0;
+                    return 0;
                     
                 }
 
@@ -1612,7 +1646,7 @@ int16_t Check_Help_List(void)
 
     }
 
-    return help_entry_found;
+    return 1;
 }
 
 // UU_GUI_GetControlWidth                         seg036     000011C1 0000004D R F . . B T .
