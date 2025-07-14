@@ -7,11 +7,16 @@
 #define STU_DEBUG
 #endif
 
+#include "MOX/DIR.h"
+#include "MOX/MOX_DEF.h"
+#include "MOX/capture.h"
+#include "MOX/MOX_T4.h"
+#include "MOX/EMM.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_BASE.h"
 #include "MOX/MOX_TYPE.h"
 #include "MOX/CFG.h"
-/* NEWCODE */  // #include "MOX/EMM.h"
+#include "MOX/EMM.h"
 #include "MOX/Fields.h"
 #include "MOX/Fonts.h"
 #include "MOX/Graphics.h"
@@ -27,6 +32,8 @@
 #include "LOADER.h"
 #include "MOM_SCR.h"
 #include "Settings.h"
+
+#include "STU/STU_DBG.h"
 
 #define SDL_MAIN_HANDLED
 // #include <SDL.h>
@@ -339,7 +346,7 @@ int MOM_main(int argc, char** argv)
     magic_set.input_type = 1;
     magic_set.sound_channels = 2;
     Init_Drivers(magic_set.input_type, magic_set.sound_channels, MOM_FONT_FILE, MIDI_DRV, MIDI_IO, MIDI_IRQ, MIDI_DMA, DIGI_DRV, DIGI_IO, DIGI_IRQ, DIGI_DMA);
-    Release_Version();
+    // ALPHA  Release_Version();
 
     // HERE: MGC === WZD
 

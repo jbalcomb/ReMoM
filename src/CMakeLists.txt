@@ -1,101 +1,100 @@
 
 set(WIN32_SOURCES
-    win_CLK.C
-    win_DIR.C
-    win_EMS.C
-    win_Fonts.C
-    win_Input.C
-    win_KD.C
-    win_MD.C
+    win_CLK.c
+    win_DIR.c
+    win_EMS.c
+    win_Fonts.c
+    win_Input.c
+    win_KD.c
+    win_MD.c
     win_MoM.cpp
     win_PFL.cpp
-    win_Video.C
+    win_Video.c
 )
 
 set(SDL2_SOURCES
-    sdl2_DIR.C
-    sdl2_EMM.C
-    sdl2_Input.C
-    sdl2_KD.C
-    sdl2_MD.C
-    sdl2_MOM.C
-    sdl2_PFL.C
-    sdl2_Timer.C
+    sdl2_DIR.c
+    sdl2_EMM.c
+    sdl2_Input.c
+    sdl2_KD.c
+    sdl2_MD.c
+    sdl2_MOM.c
+    sdl2_PFL.c
+    sdl2_Timer.c
 )
 
 set(MOMLIB_SOURCES
-    AdvsrScr.C
-    AIBUILD.C
-    AIDATA.C
-    AIDUDES.C
-    AIMOVE.C
-    AISPELL.C
-    ALLOC.C
-    ArmyList.C
-    CITYCALC.C
-    CityList.C
-    CITYSCAP.C
-    CityScr.C
-    City_ovr55.C
-    Combat.C
-    CREDITS.C
-    DIPLOMAC.C
-    EVENTS.C
-    Explore.C
-    Help.C
-    HIRE.C
-    Init.C
-    INITGAME.C
-    INTRO.C
-    ItemMake.C
-    Items.C
-    ItemScrn.C
-    ItemView.C
-    Lair.C
-    LOADER.C
-    LoadScr.C
-    LVLMAKE.C
-    MagicScr.C
-    MainMenu.C
-    MainScr.C
-    MainScr_Maps.C
-    MAPGEN.C
-    MGC_Data.C
-    MOM.C
-    MOM_SCR.C
-    MOM_DBG.C
-    MOM_PFL.C
-    MovePath.C
-    NEWGAME.C
-    NEXTTURN.C
-    Outpost.C
-    OverSpel.C
-    ProdScr.C
-    RACETYPE.C
-    REPORT.C
-    Roads.C
-    SBookScr.C
-    SCastScr.C
-    SCORE.C
-    Settings.C
-    SETTLE.C
-    special.C
-    Spellbook.C
-    Spells132.C
-    SPLMASTR.C
-    Surveyor.C
-    Terrain.C
-    UnitList.C
-    UnitMove.C
-    UnitStat.C
-    UNITSTK.C
-    UNITTYPE.C
-    UnitView.C
-    WIZVIEW.C
-    WZD_o059.C
-    WZD_o129.C
-    WZD_o143.C
-
+    AdvsrScr.c
+    AIBUILD.c
+    AIDATA.c
+    AIDUDES.c
+    AIMOVE.c
+    AISPELL.c
+    ALLOC.c
+    ArmyList.c
+    CITYCALC.c
+    CityList.c
+    CITYSCAP.c
+    CityScr.c
+    City_ovr55.c
+    Combat.c
+    CREDITS.c
+    DIPLOMAC.c
+    EVENTS.c
+    Explore.c
+    Help.c
+    HIRE.c
+    Init.c
+    INITGAME.c
+    INTRO.c
+    ItemMake.c
+    Items.c
+    ItemScrn.c
+    ItemView.c
+    Lair.c
+    LOADER.c
+    LoadScr.c
+    LVLMAKE.c
+    MagicScr.c
+    MainMenu.c
+    MainScr.c
+    MainScr_Maps.c
+    MAPGEN.c
+    MGC_Data.c
+    MOM.c
+    MOM_SCR.c
+    MOM_DBG.c
+    MOM_PFL.c
+    MovePath.c
+    NEWGAME.c
+    NEXTTURN.c
+    Outpost.c
+    OverSpel.c
+    ProdScr.c
+    RACETYPE.c
+    REPORT.c
+    Roads.c
+    SBookScr.c
+    SCastScr.c
+    SCORE.c
+    Settings.c
+    SETTLE.c
+    special.c
+    Spellbook.c
+    Spells132.c
+    SPLMASTR.c
+    Surveyor.c
+    Terrain.c
+    UnitList.c
+    UnitMove.c
+    UnitStat.c
+    UNITSTK.c
+    UNITTYPE.c
+    UnitView.c
+    WIZVIEW.c
+    WZD_o059.c
+    WZD_o143.c
+    WZD_o146.c
 )
 
 # if(_STU_WIN32)
@@ -135,7 +134,7 @@ add_compile_definitions(STU_DEBUG)
 
 
 
-add_executable(sdl2_ReMoM ReMoM.C ${SDL2_SOURCES})
+add_executable(sdl2_ReMoM ReMoM.c ${SDL2_SOURCES})
 set_target_properties(sdl2_ReMoM PROPERTIES LINKER_LANGUAGE C)
 # target_link_libraries(sdl2_ReMoM PUBLIC momlib MOX STU SDL2 SDL2main)
 # target_link_libraries(sdl2_ReMoM PUBLIC momlib MOX STU C:/devellib/SDL2-2.32.2/lib/x64/SDL2.lib C:/devellib/SDL2-2.32.2/lib/x64/SDL2main.lib)

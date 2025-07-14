@@ -29,9 +29,11 @@
 
 #include "Allocate.h"
 
-#include "DBG.h"  /* Check_Release_Version() */
-#include "MOX_DEF.h"
+#include "capture.h"  /* Check_Release_Version() */
+#include "EXIT.h"
+#include "MOX_BASE.h"
 #include "MOX_TYPE.h"
+#include "capture.h"
 
 #include <stdlib.h>     /* abs(); itoa(); */
 #include <string.h>     /* memset(), strcat(), strcpy(); */

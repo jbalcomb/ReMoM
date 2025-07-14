@@ -3,17 +3,15 @@
         ovr137  ¿ ~ Spell Animation(s) ?
 */
 
-#include "MOM_DEF.h"
+#include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/GENDRAW.h"
+#include "MOX/Graphics.h"
 #include "MOX/MOX_T4.h"
 #include "MOX/Timer.h"
 #include "MOX/Video.h"
-#include "NEXTTURN.h"
-#include "Spells129.h"
-#include "Spells130.h"
-#include "Spells137.h"
-
-
 #include "MOX/LBX_Load.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_DAT.h"
@@ -21,13 +19,28 @@
 #include "MOX/MOX_SET.h"
 #include "MOX/MOX_TYPE.h"
 #include "MOX/SOUND.h"
+#include "MOX/paragrph.h"
 
+#include "Help.h"
+#include "MOM_DEF.h"
+#include "NEXTTURN.h"
+#include "SCastScr.h"
+#include "Spells129.h"
+#include "Spells130.h"
 #include "CITYSCAP.h"
 #include "MainScr.h"
 #include "RACETYPE.h"
 #include "SBookScr.h"
 #include "Spellbook.h"
 #include "UNITTYPE.h"
+#include "WIZVIEW.h"
+
+#include "STU/STU_DBG.h"
+
+#include <assert.h>
+#include <string.h>
+
+#include "Spells137.h"
 
 
 

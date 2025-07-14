@@ -5,12 +5,16 @@
 #include "INTRO.h"
 
 #include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/Graphics.h"
 #include "MOX/MOX_DAT.h"
 #include "MOX/LBX_Load.h"
 #include "MOX/MOX_DEF.h"
 #include "MOX/MOX_SET.h"
 #include "MOX/MOX_TYPE.h"
-#include "MOX/sdl2_Audio.h"
+#include "MOX/Timer.h"
 #include "MOX/SOUND.h"
 
 #include "MGC_DATA.h"

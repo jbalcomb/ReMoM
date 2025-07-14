@@ -10,7 +10,9 @@ MoO2
 #ifndef FILE_ANI_H
 #define FILE_ANI_H
 
-#include "MOX_Lib.h"
+#include "MOX_TYPE.h"
+
+
 
 #ifdef __cplusplus
 extern "C" {

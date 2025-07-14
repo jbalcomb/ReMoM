@@ -1,5 +1,16 @@
 
-#include "MOX_Lib.h"
+#include "Allocate.h"
+#include "EXIT.h"
+#include "MOM_Data.h"
+#include "MOX_BASE.h"
+#include "MOX_TYPE.h"
+
+#include <stdio.h>
+#include <string.h>
+
+#include "LBX_Load.h"
+
+
 
 int16_t lbxload_lbx_header_flag = ST_FALSE;
 FILE * lbxload_fptr;

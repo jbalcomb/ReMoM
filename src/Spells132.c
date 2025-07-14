@@ -3,14 +3,17 @@
         ovr132
 */
 
-#include "Spells132.h"
-
-#include "STU/STU_CHK.h"
-
+#include "AISPELL.h"
+#include "CITYCALC.h"
+#include "HIRE.h"
 #include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fonts.h"
+#include "MOX/GENDRAW.h"
 #include "MOX/MOX_BASE.h"
 #include "MOX/MOX_DAT.h"
 #include "MOX/MOX_DEF.h"
+#include "MOX/MOX_SET.h"
 #include "MOX/MOX_T4.h"
 #include "MOX/LBX_Load.h"
 #include "MOX/MOM_Data.h"
@@ -21,6 +24,7 @@
 #include "MOM_DEF.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
+#include "SCastScr.h"
 #include "SPELLDEF.h"
 #include "Spells130.h"
 #include "SPLMASTR.h"
@@ -28,7 +32,14 @@
 #include "SBookScr.h"
 #include "Spellbook.h"
 #include "Spells137.h"
+#include "Terrain.h"
 #include "UNITTYPE.h"
+#include "UnitMove.h"
+
+#include "STU/STU_CHK.h"
+#include "STU/STU_DBG.h"
+
+#include "Spells132.h"
 
 
 

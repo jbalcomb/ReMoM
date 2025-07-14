@@ -7,8 +7,12 @@
 
 #include "SCastScr.h"
 
+#include "City_ovr55.h"
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
 #include "MOX/Fonts.h"
+#include "MOX/Graphics.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_DAT.h"
 #include "MOX/MOX_DEF.h"
@@ -22,8 +26,10 @@
 #include "MOM_DEF.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"  /* Add_Nodes_To_Entities_On_Map_Window() */
+#include "STU/STU_DBG.h"
 #include "Spellbook.h"
 #include "SPELLDEF.h"
+#include "UnitList.h"
 #include "WZD_o059.h"
 
 #include <assert.h>
@@ -85,7 +91,7 @@ int16_t word_42BE4;
 // WZD dseg:C146 00                                              db    0
 // WZD dseg:C147 00                                              db    0
 // WZD dseg:C148
-byte_ptr _osc_panel_title;
+char * _osc_panel_title;
 // WZD dseg:C14A 00                                              db    0
 // WZD dseg:C14B 00                                              db    0
 // WZD dseg:C14C 00                                              db    0
@@ -913,7 +919,7 @@ void Spell_Casting_Screen_Allocate(void)
 {
     _reduced_map_seg = Allocate_First_Block(_screen_seg, 303);
     _current_mouse_list = (struct s_mouse_list *)Near_Allocate_First(1560);  // mouse lists?  1560 / 12 = 130 ...targets?
-    _osc_panel_title = Near_Allocate_Next(100);
+    _osc_panel_title = (char *)Near_Allocate_Next(100);
 }
 
 // WZD o70p06
@@ -930,7 +936,7 @@ e.g.,
 void Build_Select_Target_String(int16_t spell_target_type, char * spell_name)
 {
 
-    strcpy(_osc_panel_title, str_SelectA);  // "Select a"
+    strcpy((char *)_osc_panel_title, str_SelectA);  // "Select a"
 
     switch(spell_target_type)
     {

@@ -3,14 +3,24 @@
         ovr059
 */
 
-#include "WZD_o059.h"
-
+#include "CITYCALC.h"
+#include "Explore.h"
+#include "Lair.h"
 #include "MOX/MOX_DAT.h"  /* _players[] */
+#include "MOX/MOX_BASE.h"
+#include "MOX/MOX_DEF.h"
+#include "MOX/MOX_TYPE.h"
+#include "MOX/GENDRAW.h"
 
 #include "MOM_DEF.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"  /* TILE_Explore(); */
+#include "Outpost.h"
+#include "Terrain.h"
+#include "UNITTYPE.h"
+#include "UnitMove.h"
 
+#include "WZD_o059.h"
 
 
 /*

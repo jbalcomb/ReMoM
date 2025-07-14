@@ -6,18 +6,31 @@
 
 #include "NEWGAME.h"
 
+#include "MOX/MOX_SET.h"
+#include "MOX/Graphics.h"
+#include "MOX/LOADSAVE.h"
+#include "MOX/MOX_T4.h"
+#include "MOX/random.h"
+#include "MOX/LBX_Load.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/DIR.h"
 #include "MOX/Fonts.h"
 #include "MOX/Mouse.h"
 #include "MOX/MOX_DAT.h"
 #include "MOX/MOX_DEF.h"
 #include "MOX/MOX_SET.h"
 #include "MOX/MOX_TYPE.h"
-#include "MOX/MOM_DATA.h"  /* _difficulty, _magic, _landsize, _num_players */
+#include "MOX/MOM_Data.h"  /* _difficulty, _magic, _landsize, _num_players */
 #include "MOX/Timer.h"
 
+#include "Settings.h"
 #include "Spellbook.h"
 
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), frite(), fseek(); */
+#include <string.h>
+
+#include "NEWGAME.h"
 
 
 
@@ -987,7 +1000,7 @@ void Newgame_Control(void)
             case 6:
             {
                 newgame_state = Newgame_Screen6__WIP();
-                if(newgame_state = ST_UNDEFINED)
+                if(newgame_state == ST_UNDEFINED)
                 {
                     if(custom_game_flag != ST_FALSE)
                     {
@@ -1119,7 +1132,9 @@ int16_t Newgame_Screen0(void)
         (LOF(str_MAGIC_SET__ovr050) == 0)
     )
     {
+
         Set_Default_Game_Settings();
+
     }
     else
     {
@@ -1310,6 +1325,9 @@ int16_t Newgame_Screen0(void)
         }
 
     }
+
+// Non-void function does not return a value in all control paths
+    /* HACK */  return 0;
 
 }
 

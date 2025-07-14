@@ -14,7 +14,7 @@
     <ClInclude Include="..\..\..\src\MOX\AIL.h" />
     <ClInclude Include="..\..\..\src\MOX\Allocate.h" />
     <ClInclude Include="..\..\..\src\MOX\CFG.h" />
-    <ClInclude Include="..\..\..\src\MOX\DBG.h" />
+    <ClInclude Include="..\..\..\src\MOX\capture.h" />
     <ClInclude Include="..\..\..\src\MOX\DIR.h" />
     <ClInclude Include="..\..\..\src\MOX\DOS.h" />
     <ClInclude Include="..\..\..\src\MOX\EMM.h" />
@@ -59,7 +59,7 @@
     <ClCompile Include="..\..\..\src\MOX\AIL.c" />
     <ClCompile Include="..\..\..\src\MOX\Allocate.c" />
     <ClCompile Include="..\..\..\src\MOX\CFG.c" />
-    <ClCompile Include="..\..\..\src\MOX\DBG.c" />
+    <ClCompile Include="..\..\..\src\MOX\capture.c" />
     <ClCompile Include="..\..\..\src\MOX\DOS.c" />
     <ClCompile Include="..\..\..\src\MOX\EMM.c" />
     <ClCompile Include="..\..\..\src\MOX\EXIT.c" />

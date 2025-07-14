@@ -3,7 +3,14 @@
     ~== MoO2 Module: video
     SimTex progression to supporting multiple video modes and pixel formats
 */
-#include "MOX_Lib.h"
+
+#include "Allocate.h"
+#include "MOX_TYPE.h"
+#include "Video.h"
+
+#include "Video2.h"
+
+#include <string.h>
 
 
 

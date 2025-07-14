@@ -1,9 +1,29 @@
 
+#include "MOM_PFL.h"
+
+#include "CREDITS.h"
+#include "Help.h"
+#include "MOM_DBG.h"
+#include "MOX/DIR.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/Graphics.h"
+#include "MOX/LBX_Load.h"
+#include "MOX/MOM_Data.h"
+#include "MOX/MOX_BASE.h"
+#include "MOX/MOX_DEF.h"
+#include "MOX/MOX_T4.h"
 #include "MOX/MOX_TYPE.h"
 
 #include "MainMenu.h"
 #include "MOM_SCR.h"
+#include "MOX/Mouse.h"
+#include "MOX/Timer.h"
+#include "MOX/Video.h"
 #include "Settings.h"
+
+#include <string.h>
 
 
 
@@ -439,6 +459,7 @@ int16_t Main_Menu_Screen(void)
 
         input_field_idx = Get_Input();
 
+        // HACK?  NOTE(JimBalcomb,20250713): I don't recall this arrangement ... Need to quit if they close the platform window?
         if(quit_game_flag == ST_TRUE)
         {
             current_screen = scr_Quit_To_DOS;

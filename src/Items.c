@@ -5,7 +5,11 @@
         ovr109
 */
 
+#include "MOX/GENDRAW.h"
+#include "MOX/LBX_Load.h"
+#include "MOX/MOM_Data.h"
 #include "MOX/MOX_DEF.h"
+#include "MOX/MOX_T4.h"
 #include "MOX/MOX_TYPE.h"
 
 #include "Items.h"
@@ -46,15 +50,21 @@ void Player_Process_Item_Pool(int16_t player_idx, int16_t item_count, int16_t it
     {
         if(player_idx == HUMAN_PLAYER_IDX)
         {
+
             Allocate_Reduced_Map();
+
             Full_Draw_Main_Screen();
+
             LBX_Load_Data_Static(cnst_MESSAGE_File, 0, (SAMB_ptr)GUI_NearMsgString, 67, 1, 150);
+
             Warn0(GUI_NearMsgString);
+            
             /* TODO */  OVL_MosaicFlip__STUB();
 
             Process_Item_Pool(item_count, item_list);
 
             current_screen = scr_Main_Screen;
+
             /* TODO */  OVL_MosaicFlip__STUB();
         }
         else

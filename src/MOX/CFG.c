@@ -1,5 +1,17 @@
+/*
+    WIZARDS.EXE
 
-#include "MOX_Lib.h"
+DNE
+WZD just fread()'s 18 bytes in _main()
+
+MoO2
+    Module: FILEDEF
+    Module: INITGAME
+*/
+
+#include <stdio.h>
+
+#include "CFG.h"
 
 
 

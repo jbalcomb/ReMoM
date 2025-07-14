@@ -20,6 +20,12 @@ MoO2  Module: LOADSAVE
 
 #include "LoadScr.h"
 
+#include "MOX/DIR.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/Graphics.h"
+#include "MOX/LBX_Load.h"
 #include "MOX/LOADSAVE.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
 #include "MOX/MOX_SET.h"  /* magic_set */
@@ -29,14 +35,24 @@ MoO2  Module: LOADSAVE
 #include "Combat.h"
 #include "Explore.h"
 #include "LOADER.h"
+#include "MOX/MOX_T4.h"
+#include "MOX/Timer.h"
+#include "MOX/capture.h"
+#include "MOX/random.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 #include "MOM_SCR.h"
 #include "NEXTTURN.h"
+#include "STU/STU_CHK.h"
 #include "Settings.h"
 #include "Spellbook.h"
+#include "Spells128.h"
 #include "UNITSTK.h"
 #include "WZD_o143.h"
+
+#include <string.h>
+
+#include "STU/STU_TST.h"
 
 
 
@@ -863,7 +879,7 @@ Capture_Cities_Data();
 
     if(Check_Release_Version() == ST_FALSE)
     {
-        __debugbreak();
+        // __debugbreak();  NOTE(JimBalcomb,20250713): I don't why I though I should break on this; I just did all the PSTR stuff and I'm testing it
         Set_Random_Seed(10039);  // 0x2737
     }
 

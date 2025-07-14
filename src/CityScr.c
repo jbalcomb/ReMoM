@@ -1,4 +1,12 @@
 
+#include "MOX/MOX_ITOA.h"
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/GENDRAW.h"
+#include "MOX/Graphics.h"
+#include "MOX/LBX_Load.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
 #include "MOX/MOX_DEF.h"
 #include "MOX/MOX_SET.h"  /* magic_set */
@@ -11,6 +19,10 @@
 #include "CityScr.h"
 #include "Help.h"
 #include "Lair.h"
+#include "MOX/Timer.h"
+#include "MOX/Util.h"
+#include "MOX/Video.h"
+#include "MOX/paragrph.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 #include "MOM_SCR.h"
@@ -21,10 +33,14 @@
 #include "UNITTYPE.h"   // WTFMATE
 #include "UnitView.h"
 #include "WZD_o143.h"
+#include "WZD_o146.h"
 
 #ifdef STU_DEBUG
 #include "STU/STU_DBG.h"    /* DLOG() */
 #endif
+
+#include <assert.h>
+#include <string.h>
 
 
 
@@ -176,18 +192,24 @@ void City_Screen__WIP(void)
     // int16_t itr = 0;
     int16_t Col = 0;  // itr
     int16_t itr_stack = 0;  // itr
-    int16_t itr_cityscape = 0; // itr
-    int16_t itr_job_fields = 0; // itr
-    int16_t itr_ench_fields = 0; // itr
+    int16_t itr_cityscape = 0;  // itr
+    int16_t itr_job_fields = 0;  // itr
+    int16_t itr_ench_fields = 0;  // itr
+    int16_t itr1_x = 0;  // IDK_Row__prod_idx
+    int16_t itr2_x = 0;  // itr
     int16_t screen_changed = 0;
     int16_t leave_screen = 0;
     int16_t input_field_idx = 0;  // _DI_
+    int16_t si = 0;  // _SI_
+    int16_t itr;  // DNE in Dasm
+
 
     Set_City_Screen_Help_List();
 
-    if((_page_flip_effect != 0) && (_page_flip_effect != 3))
+
+    if((_page_flip_effect != pfe_None) && (_page_flip_effect != pfe_Dissolve))
     {
-        _page_flip_effect = 0;
+        _page_flip_effect = pfe_None;
     }
 
 
@@ -195,6 +217,7 @@ void City_Screen__WIP(void)
 
 
     Deactivate_Auto_Function();
+    
     Assign_Auto_Function(City_Screen_Draw__WIP, 1);
 
 
@@ -256,10 +279,7 @@ void City_Screen__WIP(void)
     if(_CITIES[_city_idx].construction == bt_NONE)
     {
 
-Check_Cities_Data();
-        _CITIES[_city_idx].construction = bt_Housing;
-// Check_Cities_Data();
-Capture_Cities_Data();
+        CITIES_CONSTRUCTION(_city_idx, bt_Housing);
 
     }
 
@@ -337,12 +357,78 @@ Capture_Cities_Data();
 
 
         /*
-            Hot-Key X
+            BEGIN:  Hot-Key X
         */
         if(input_field_idx == hotkey_X)
         {
 
+            Clear_Screens();
+
+            si = 5;
+
+            si ++;
+
+            ST_PSTRM(0, si, _CITIES[_city_idx].population, aPopulation);  // "population"
+
+            si++;
+
+            ST_PSTRM(0, si, _CITIES[_city_idx].production_units, aProduction);  // "production"
+
+            si++;
+
+            for(itr = 0; itr < 20; itr++)
+            {
+
+                ST_PSTR(itr, si, _CITIES[_city_idx].bldg_status[itr]);
+
+            }
+
+            si++;
+
+            for(itr = 20; itr < NUM_BUILDINGS; itr++)
+            {
+
+                ST_PSTR((itr - 20), si, _CITIES[_city_idx].bldg_status[itr]);
+
+            }
+
+            si++;
+
+            ST_PSTR(0, si, _CITIES[_city_idx].wx);
+
+            ST_PSTR(5, si, _CITIES[_city_idx].wy);
+
+            ST_PSTR(10, si , _CITIES[_city_idx].wp);
+
+            si++;
+
+            ST_PSTRM(0, si, _city_idx, aCity_0);  // "city"
+
+            si++;
+
+            ST_PSTRM(0, si, _CITIES[_city_idx].bldg_status[35], aWalls);  // "walls"
+
+            for(itr1_x = 0; itr1_x < 5; itr1_x++)
+            {
+
+                for(itr2_x = 0; itr2_x < 5; itr2_x++)
+                {
+
+                    ST_PSTR(itr2_x, itr1_x, entities_on_movement_map[((itr1_x * MAP_WIDTH) + itr2_x)]);
+
+                }
+
+            }
+
+            // TODO  DOMSDOS  getch();  BCPP30 library function
+            Wait_For_Input();
+            Reset_Map_Draw();
+
+
         }
+        /*
+            END:  Hot-Key X
+        */
 
 
         /*

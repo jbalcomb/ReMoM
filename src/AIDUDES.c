@@ -5,14 +5,29 @@
         ¿ ovr145 ?
 */
 
+#include "AIBUILD.h"
+#include "AIDATA.h"
+#include "AIDUDES.h"
+#include "AIMOVE.h"
+#include "AISPELL.h"
+#include "CITYCALC.h"
+#include "MOX/EMM.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_DAT.h"  /* _players[] */
-#include "MOX/MOX_DEF.h"
+#include "MOX/MOX_BASE.h"
 #include "MOX/MOX_TYPE.h"
 
+#include "MOX/random.h"
+#include "NEXTTURN.h"
 #include "RACETYPE.h"
+#include "SETTLE.h"
+#include "STU/STU_CHK.h"
 #include "Spellbook.h"
+#include "Terrain.h"
 #include "UNITTYPE.h"
+#include "UnitMove.h"
+
+#include <assert.h>
 
 
 

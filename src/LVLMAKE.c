@@ -7,18 +7,30 @@
 
 #include "LVLMAKE.h"
 
+#include "Combat.h"
+#include "LOADER.h"
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/Graphics.h"
 #include "MOX/LBX_Load.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
+#include "MOX/MOX_DEF.h"
 #include "MOX/MOX_SET.h"  /* magic_set */
+#include "MOX/MOX_T4.h"
 #include "MOX/MOX_TYPE.h"
 #include "MOX/SOUND.h"
 
 #include "Help.h"
+#include "MOX/Timer.h"
 #include "MainScr.h"
 #include "SBookScr.h"
 #include "UnitStat.h"
 #include "UnitView.h"
+
+#include <string.h>
 
 
 

@@ -1,7 +1,7 @@
 #ifndef RACETYPE_H
 #define RACETYPE_H
 
-#include "MOM.h"
+#include "MOX/MOX_TYPE.h"
 
 
 

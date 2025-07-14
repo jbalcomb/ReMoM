@@ -20,6 +20,8 @@
 #include "Terrain.h"
 #include "TerrType.h"
 
+#include <string.h>
+
 
 
 // WZD dseg:6EAC BEGIN:  ovr143 - Initialized Data

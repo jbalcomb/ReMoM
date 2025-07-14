@@ -15,6 +15,21 @@
 
 #include "MainScr.h"
 
+#include "CITYCALC.h"
+#include "CityScr.h"
+#include "City_ovr55.h"
+#include "Combat.h"
+#include "Explore.h"
+#include "Lair.h"
+#include "MOM_PFL.h"
+
+#include "MOX/Allocate.h"
+#include "MOX/GENDRAW.h"
+#include "MOX/LBX_Load.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/Graphics.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/LOADSAVE.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
@@ -22,19 +37,35 @@
 #include "MOX/SOUND.h"
 #include "MOX/MOX_T4.h"
 
+#include "Outpost.h"
+#include "STU/STU_CHK.h"
+#include "TerrType.h"
+#include "Terrain.h"
+#include "UNITTYPE.h"
 #include "AdvsrScr.h"
 #include "LOADER.h"
 #include "MOM_DBG.h"
 #include "MOM_SCR.h"
+#include "MOX/Timer.h"
 #include "MainScr_Maps.h"
 #include "SCastScr.h"  /* World_To_Screen() */
+#include "SETTLE.h"
 #include "Spellbook.h"
 #include "UNITSTK.h"
+#include "UnitList.h"
+#include "UnitMove.h"
+#include "UnitStat.h"
+#include "UnitView.h"
 #include "WZD_o059.h"
+#include "WZD_o143.h"
+#include "special.h"
 
 #ifdef STU_DEBUG
 #include "STU/STU_DBG.h"    /* DLOG() */
 #endif
+
+#include <assert.h>
+#include <string.h>
 
 
 

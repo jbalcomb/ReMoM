@@ -7,13 +7,23 @@
 
 #include "CITYSCAP.h"
 
+#include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
+#include "MOX/Fonts.h"
+#include "MOX/Graphics.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_BITS.h"
 #include "MOX/MOX_DAT.h"
+#include "MOX/MOX_DEF.h"
 #include "MOX/MOX_TYPE.h"
 
+#include "MOX/random.h"
 #include "RACETYPE.h"
+
+#include "STU/STU_DBG.h"
+#include "Terrain.h"
+
+#include <assert.h>
 
 
 

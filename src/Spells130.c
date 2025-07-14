@@ -3,31 +3,35 @@
         ovr130
 */
 
-#include "CITYCALC.h"
+#include "MOX/FLIC_Draw.h"
 #include "MOX/Fonts.h"
-#include "MainScr_Maps.h"
-#include "Spells130.h"
-
-#include "STU/STU_CHK.h"
-
 #include "MOX/Allocate.h"
+#include "MOX/Graphics.h"
 #include "MOX/LBX_Load.h"
 #include "MOX/MOX_BASE.h"
 #include "MOX/MOX_DAT.h"
+#include "MOX/MOX_SET.h"
 #include "MOX/MOX_T4.h"
 #include "MOX/GENDRAW.h"
 #include "MOX/SOUND.h"
+#include "MOX/Timer.h"
 #include "MOX/Video.h"
 #include "MOX/random.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_DEF.h"
 #include "MOX/MOX_TYPE.h"
 
+#include "City_ovr55.h"
+#include "DIPLOMAC.h"
+#include "Explore.h"
+#include "CITYCALC.h"
+#include "MainScr_Maps.h"
 #include "MOM_DEF.h"
 #include "AISPELL.h"
 #include "MainScr.h"
 #include "OverSpel.h"
 #include "SBookScr.h"
+#include "SCastScr.h"
 #include "Spells128.h"
 #include "Spells129.h"
 #include "SPELLDEF.h"
@@ -40,6 +44,10 @@
 #include "UNITTYPE.h"
 #include "WZD_o059.h"
 #include "WZD_o143.h"
+
+#include "STU/STU_CHK.h"
+
+#include "Spells130.h"
 
 
 

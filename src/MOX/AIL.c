@@ -19,7 +19,9 @@ void far cdecl AIL_shutdown(char far *signoff_msg)
 
 HTIMER far cdecl AIL_register_timer(void (far cdecl *callback_fn)())
 {
-   
+
+    return 0;
+
 }
 
 void far cdecl AIL_set_timer_period(HTIMER timer, unsigned long microseconds)
@@ -39,6 +41,8 @@ void far cdecl AIL_set_timer_divisor(HTIMER timer, unsigned PIT_divisor)
 
 unsigned far cdecl AIL_interrupt_divisor(void)
 {
+
+    return 0;
    
 }
 
@@ -82,6 +86,8 @@ void far cdecl AIL_release_all_timers(void)
 HDRIVER far cdecl AIL_register_driver(void far *driver_base_addr)
 {
 
+    return 0;
+
 }
 
 void far cdecl AIL_release_driver_handle(HDRIVER driver)
@@ -92,10 +98,14 @@ void far cdecl AIL_release_driver_handle(HDRIVER driver)
 drvr_desc far * cdecl far AIL_describe_driver(HDRIVER driver)
 {
 
+    return 0;
+
 }
 
 unsigned far cdecl AIL_detect_device(HDRIVER driver, unsigned IO_addr, unsigned IRQ, unsigned DMA, unsigned DRQ)
 {
+
+    return 0;
 
 }
 
@@ -119,6 +129,8 @@ void far cdecl AIL_shutdown_driver(HDRIVER driver, char far *signoff_msg)
 unsigned far cdecl AIL_index_VOC_block(HDRIVER driver, void far *VOC_file, unsigned block_marker, sound_buff far *buff)
 {
 
+    return 0;
+
 }
 
 void far cdecl AIL_register_sound_buffer(HDRIVER driver, unsigned buffer_num, sound_buff far *buff)
@@ -134,6 +146,8 @@ void far cdecl AIL_format_sound_buffer(HDRIVER driver, sound_buff far *buff)
 unsigned far cdecl AIL_sound_buffer_status(HDRIVER driver, unsigned buffer_num)
 {
 
+    return 0;
+
 }
 
 void far cdecl AIL_format_VOC_file(HDRIVER driver, void far *VOC_file, int block_marker)
@@ -148,6 +162,8 @@ void far cdecl AIL_play_VOC_file(HDRIVER driver, void far *VOC_file, int block_m
 
 unsigned far cdecl AIL_VOC_playback_status(HDRIVER driver)
 {
+
+    return 0;
 
 }
 
@@ -180,6 +196,8 @@ void far cdecl AIL_set_digital_playback_volume(HDRIVER driver, unsigned volume)
 unsigned far cdecl AIL_digital_playback_volume(HDRIVER driver)
 {
 
+    return 0;
+
 }
 
 void far cdecl AIL_set_digital_playback_panpot(HDRIVER driver, unsigned panpot)
@@ -189,6 +207,8 @@ void far cdecl AIL_set_digital_playback_panpot(HDRIVER driver, unsigned panpot)
 
 unsigned far cdecl AIL_digital_playback_panpot(HDRIVER driver)
 {
+
+    return 0;
 
 }
 
@@ -202,10 +222,14 @@ unsigned far cdecl AIL_digital_playback_panpot(HDRIVER driver)
 unsigned far cdecl AIL_state_table_size(HDRIVER driver)
 {
 
+    return 0;
+
 }
 
 HSEQUENCE far cdecl AIL_register_sequence(HDRIVER driver, void far *FORM_XMID, unsigned sequence_num, void far *state_table, void far *controller_table)
 {
+
+    return 0;
 
 }
 
@@ -218,6 +242,8 @@ void far cdecl AIL_release_sequence_handle(HDRIVER driver, HSEQUENCE sequence)
 unsigned far cdecl AIL_default_timbre_cache_size(HDRIVER driver)
 {
 
+    return 0;
+
 }
 
 void far cdecl AIL_define_timbre_cache(HDRIVER driver, void far *cache_addr, unsigned cache_size)
@@ -228,10 +254,14 @@ void far cdecl AIL_define_timbre_cache(HDRIVER driver, void far *cache_addr, uns
 unsigned far cdecl AIL_timbre_request(HDRIVER driver, HSEQUENCE sequence)
 {
 
+    return 0;
+
 }
 
 unsigned far cdecl AIL_timbre_status(HDRIVER driver, int bank, int patch)
 {
+
+    return 0;
 
 }
 
@@ -269,15 +299,21 @@ void far cdecl AIL_resume_sequence(HDRIVER driver, HSEQUENCE sequence)
 unsigned far cdecl AIL_sequence_status(HDRIVER driver, HSEQUENCE sequence)
 {
 
+    return 0;
+
 }
 
 unsigned far cdecl AIL_relative_volume(HDRIVER driver, HSEQUENCE sequence)
 {
 
+    return 0;
+
 }
 
 unsigned far cdecl AIL_relative_tempo(HDRIVER driver, HSEQUENCE sequence)
 {
+
+    return 0;
 
 }
 
@@ -294,6 +330,8 @@ void far cdecl AIL_set_relative_tempo(HDRIVER driver, HSEQUENCE sequence, unsign
 int far cdecl AIL_controller_value(HDRIVER driver, HSEQUENCE sequence, unsigned channel, unsigned controller_num)
 {
 
+    return 0;
+
 }
 
 void far cdecl AIL_set_controller_value(HDRIVER driver, HSEQUENCE sequence, unsigned channel, unsigned controller_num, unsigned value)
@@ -304,15 +342,21 @@ void far cdecl AIL_set_controller_value(HDRIVER driver, HSEQUENCE sequence, unsi
 unsigned far cdecl AIL_channel_notes(HDRIVER driver, HSEQUENCE sequence, unsigned channel)
 {
 
+    return 0;
+
 }
 
 unsigned far cdecl AIL_beat_count(HDRIVER driver, HSEQUENCE sequence)
 {
 
+    return 0;
+
 }
 
 unsigned far cdecl AIL_measure_count(HDRIVER driver, HSEQUENCE sequence)
 {
+
+    return 0;
 
 }
 
@@ -351,6 +395,8 @@ void far cdecl AIL_cancel_callback(HDRIVER driver)
 unsigned far cdecl AIL_lock_channel(HDRIVER driver)
 {
 
+    return 0;
+
 }
 
 void far cdecl AIL_map_sequence_channel(HDRIVER driver, HSEQUENCE sequence, unsigned sequence_channel, unsigned physical_channel)
@@ -360,6 +406,8 @@ void far cdecl AIL_map_sequence_channel(HDRIVER driver, HSEQUENCE sequence, unsi
 
 unsigned far cdecl AIL_true_sequence_channel(HDRIVER driver, HSEQUENCE sequence, unsigned sequence_channel)
 {
+
+    return 0;
 
 }
 

@@ -9,7 +9,9 @@
 #ifndef FIELDS_H
 #define FIELDS_H
 
-#include "MOX_Lib.h"
+#include "MOX_TYPE.h"
+#include "Mouse.h"
+
 
 #ifdef __cplusplus
 extern "C" {

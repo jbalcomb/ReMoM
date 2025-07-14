@@ -1,7 +1,9 @@
 
 #include <Windows.h>
 
-#include "MOM.h"
+#include "MOX/MOX_TYPE.h"
+#include "MOX/Mouse.h"
+#include "MOX/SOUND.h"
 
 extern HWND g_Window;
 

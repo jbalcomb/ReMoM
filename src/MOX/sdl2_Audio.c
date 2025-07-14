@@ -1,17 +1,17 @@
 
-#include "sdl2_Audio.h"
-
 #include "MOX_BITS.h"
 #include "MOX_DEF.h"
 #include "SOUND.h"
 
-#include "STU/STU_DBG.h"
-#include "STU/STU_SND.h"
+#include "../STU/STU_DBG.h"
 
 // #include "SDL_mixer.h"
 #include "C:\devellib\SDL2_mixer-2.8.1\include\SDL_mixer.h"
 
 #include <stdbool.h>
+#include <stdio.h>
+
+#include "sdl2_Audio.h"
 
 // SOUND.C
 // WZD dseg:82AC

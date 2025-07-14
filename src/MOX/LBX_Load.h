@@ -1,8 +1,9 @@
 #ifndef MOX_LBX_H
 #define MOX_LBX_H
 
+#include "MOX_TYPE.h"
+
 #include <stdio.h>
-#include "MOX_Lib.h"
 
 
 

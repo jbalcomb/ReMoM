@@ -7,19 +7,36 @@
 
 */
 
-#include "Outpost.h"
-
+#include "CITYSCAP.h"
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
 #include "MOX/GENDRAW.h"
+#include "MOX/Graphics.h"
 #include "MOX/LBX_Load.h"
 #include "MOX/MOX_T4.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
 #include "MOX/MOX_SET.h"  /* magic_set */
 #include "MOX/SOUND.h"
+#include "MOX/Timer.h"
+#include "MOX/Util.h"
+#include "MOX/Video.h"
 
+#include "Help.h"
 #include "City_ovr55.h"
 #include "MainScr.h"
 #include "CITYCALC.h"
+#include "MainScr_Maps.h"
+#include "RACETYPE.h"
+#include "Terrain.h"
 #include "WZD_o059.h"
+#include "WZD_o143.h"
+#include "special.h"
+
+#include "Outpost.h"
+
+#include <string.h>
 
 
 

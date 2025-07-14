@@ -13,6 +13,8 @@ extern "C" {
 #endif
 
 
+void sdl2_Audio_Init(void);
+void sdl2_Audio_Deinit(void);
 
 // int Convert_VOC_To_WAV(const uint8_t* voc_buf, uint32_t voc_len, int16_t** out_wav_buf, uint32_t* out_wav_len);
 // void sdl2_Audio_Init(void);

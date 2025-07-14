@@ -8,11 +8,13 @@ MoO2
     ~ Science Room?
 */
 
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fonts.h"
+#include "MOX/GENDRAW.h"
 #include "MOX/Graphics.h"
 #include "MOX/MOX_BASE.h"
 #include "MOX/MOX_T4.h"
-#include "SPLMASTR.h"
-
 #include "MOM_DEF.h"
 #include "MOX/Fields.h"
 #include "MOX/LBX_Load.h"
@@ -24,11 +26,21 @@ MoO2
 #include "MOX/SOUND.h"
 
 #include "Combat.h"
+#include "MOX/Timer.h"
+#include "MOX/random.h"
 #include "MagicScr.h"
 #include "MainScr.h"
 #include "NEXTTURN.h"
+#include "OverSpel.h"
 #include "SBookScr.h"
 #include "Spellbook.h"
+#include "UNITTYPE.h"
+
+#include <string.h>
+
+#include "SPLMASTR.h"
+
+
 
 // GENDRAW.C
 // WZD dseg:CB12

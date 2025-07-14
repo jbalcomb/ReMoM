@@ -3,22 +3,33 @@
         ovr131
 */
 
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
 #include "MOX/GENDRAW.h"
-#include "MOM_DEF.h"
 #include "MOX/Fonts.h"
+#include "MOX/LBX_Load.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_DAT.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/SOUND.h"
+#include "MOX/Timer.h"
+#include "MOX/Util.h"
 #include "MOX/Video.h"
+#include "MOX/random.h"
 
+#include "CITYCALC.h"
+#include "MOM_DEF.h"
 #include "CMBTDEF.h"
 #include "Combat.h"
+#include "OverSpel.h"
 #include "SBookScr.h"
 #include "Spells133.h"
 #include "UNITTYPE.h"
 #include "RACETYPE.h"
 #include "Spellbook.h"
+
+#include "STU/STU_DBG.h"
+
 #include "Spells131.h"
 
 

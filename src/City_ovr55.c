@@ -6,9 +6,25 @@
 
 */
 
+#include "CITYCALC.h"
+#include "CITYSCAP.h"
 #include "City_ovr55.h"
 
+#include "Explore.h"
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fonts.h"
+#include "MOX/GENDRAW.h"
+#include "MOX/Graphics.h"
+#include "MOX/LBX_Load.h"
 #include "MOX/MOX_BASE.h"
+#include "MOX/Timer.h"
+#include "MOX/Util.h"
+#include "MOX/random.h"
+#include "MainScr.h"
+#include "MainScr_Maps.h"
+#include "NEXTTURN.h"
+#include "RACETYPE.h"
 #include "STU/STU_CHK.h"
 
 #include "MOX/Fields.h"
@@ -17,11 +33,15 @@
 #include "MOX/MOX_DEF.h"
 #include "MOX/MOX_T4.h"
 
+#include "UNITTYPE.h"
 #include "CityScr.h"
 #include "Help.h"
 #include "ProdScr.h"
+#include "UnitMove.h"
 #include "WZD_o059.h"
+#include "WZD_o143.h"
 
+#include <assert.h>
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 
 
@@ -130,15 +150,15 @@ int16_t x_start;
 // WZD o55p01
 void Enemy_City_Screen(void)
 {
-    int16_t y1;
-    int16_t x1;
-    int16_t hotkey_X;
-    int16_t full_screen_ESC_field;
-    int16_t screen_changed;
-    int16_t leave_screen;
-    int16_t itr_troops;  // _SI_
-    int16_t itr;  // _SI_
-    int16_t input_field_idx;  // _DI_
+    int16_t y1 = 0;
+    int16_t x1 = 0;
+    int16_t hotkey_X = 0;
+    int16_t full_screen_ESC_field = 0;
+    int16_t screen_changed = 0;
+    int16_t leave_screen = 0;
+    int16_t itr_troops = 0;  // _SI_
+    int16_t itr = 0;  // _SI_
+    int16_t input_field_idx = 0;  // _DI_
 
     Clear_Fields();
 
@@ -226,20 +246,29 @@ void Enemy_City_Screen(void)
 
         if(input_field_idx == hotkey_X)
         {
-            // ; draws a name-value pair using DBG_DrawTableCell if debug is enabled, or does nothing otherwise
-            // TODO  RP_DBG_TblDrawValue(0, 0, _city_idx, str_City);  // "city"
-            // TODO  RP_DBG_TblDrawValue(0, 1, _CITIES[_city_idx].wx, str_hotkey_X__ovr055);  // "X"
-            // TODO  RP_DBG_TblDrawValue(0, 2, _CITIES[_city_idx].wy, str_hotkey_Y__ovr055);  // "Y"
-            // TODO  RP_DBG_TblDrawValue(0, 2, _CITIES[_city_idx].wp, str_Plane);  // "plane"
+
+            ST_PSTRM(0, 0, _city_idx, str_City);  // "city"
+
+            ST_PSTRM(0, 1, _CITIES[_city_idx].wx, str_hotkey_X__ovr055);  // "X"
+
+            ST_PSTRM(0, 2, _CITIES[_city_idx].wy, str_hotkey_Y__ovr055);  // "Y"
+
+            ST_PSTRM(0, 2, _CITIES[_city_idx].wp, str_Plane);  // "plane"
+
             for(itr = 0; itr < 20; itr++)
             {
-                // TODO  DBG_TblDrawS16(itr, 4, _CITIES[_city_idx].bldg_status[itr]);
+
+                ST_PSTR(itr, 4, _CITIES[_city_idx].bldg_status[itr]);
                 
             }
+
             for(itr = 20; itr < 36; itr++)
             {
-                // TODO  DBG_TblDrawS16((itr - 20), 5, _CITIES[_city_idx].bldg_status[itr]);
+
+                ST_PSTR((itr - 20), 5, _CITIES[_city_idx].bldg_status[itr]);
+
             }
+
         }
 
 
@@ -363,11 +392,11 @@ void Enemy_City_Screen(void)
 // WZD o55p02
 void Enemy_City_Screen_Draw(void)
 {
-    int16_t unit_window_y;
-    int16_t unit_window_x;
-    uint8_t colors[6];
-    int16_t unit_type;
-    int16_t itr;  // _SI_
+    int16_t unit_window_y = 0;
+    int16_t unit_window_x = 0;
+    uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t unit_type = 0;
+    int16_t itr = 0;  // _SI_
 
     // TODO  mov     [_help_entries.help_01.entry_idx], (HLP_BARBARIAN_TOWNSFOLK + _CITIES[_city_idx].race)
     // TODO  mov     [_help_entries.help_02.entry_idx], HLP_ENCHANTMENTS_City
@@ -498,7 +527,7 @@ void Enemy_City_Screen_Load(void)
 // WZD o55p04
 void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start, int16_t owner_idx)
 {
-    char string[LEN_BUILDING_NAME_26];
+    char string[LEN_BUILDING_NAME_26] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t x2 = 0;
     int16_t itr = 0;  // _SI_
     int16_t x1 = 0;  // _DI_
@@ -884,8 +913,8 @@ Capture_Cities_Data();
 // ~ MoO2 Destroy_Colony_()
 void Destroy_City(int16_t city_idx)
 {
-    int16_t did_destroy_city;
-    int16_t itr_cities;  // _DI_
+    int16_t did_destroy_city = 0;
+    int16_t itr_cities = 0;  // _DI_
 
     did_destroy_city = ST_FALSE;
 
@@ -926,17 +955,17 @@ CityList_Screen_Draw()
 */
 void Print_City_Enchantment_List(int16_t start_x, int16_t start_y, int16_t * city_enchantment_list, int16_t * city_enchantment_owner_list, int16_t city_enchantment_list_count)
 {
-    uint8_t player_banner_id;
-    int16_t y;
-    int16_t x;
-    uint8_t banner_colors[6];
-    uint8_t colors[6];
+    uint8_t player_banner_id = 0;
+    int16_t y = 0;
+    int16_t x = 0;
+    uint8_t banner_colors[6] = { 0, 0, 0, 0, 0, 0 };
+    uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-but-set-variable"
-    int16_t var_2;
+    int16_t var_2 = 0;
 #pragma clang diagnostic push
-    int16_t itr;  // _DI_
-    int16_t itr_colors;  // _SI_
+    int16_t itr = 0;  // _DI_
+    int16_t itr_colors = 0;  // _SI_
 
     banner_colors[0] = 221;
     banner_colors[1] = 218;
@@ -1030,9 +1059,9 @@ void Turn_Off_City_Enchantment(int16_t city_idx, int16_t ench_idx)
 */
 int16_t City_Remove_Building(int16_t city_idx, int16_t bldg_idx)
 {
-    int16_t has_reqd_bldg;
-    int16_t itr_buildings;  // _CX_
-    int16_t did_remove_building;  // DNE in Dasm
+    int16_t has_reqd_bldg = 0;
+    int16_t itr_buildings = 0;  // _CX_
+    int16_t did_remove_building = 0;  // DNE in Dasm
 
     has_reqd_bldg = ST_FALSE;
 
@@ -1071,7 +1100,7 @@ int16_t City_Remove_Building(int16_t city_idx, int16_t bldg_idx)
 // drake178: N/A
 int16_t City_Sell_Building(int16_t city_idx, int16_t bldg_idx, int16_t gold_amount)
 {
-    int16_t sold_building;  // DNE in Dasm
+    int16_t sold_building = 0;  // DNE in Dasm
 
     if(City_Remove_Building(city_idx, bldg_idx) != ST_TRUE)
     {
@@ -1126,9 +1155,9 @@ But, sets ST_FALSE and the in/out reqd_bldg_idx
 */
 int16_t City_Building_Has_Requirement(int16_t bldg_idx, int16_t city_idx, int16_t * reqd_bldg_idx)
 {
-    int16_t has_reqd_bldg;  // _DI_
-    int16_t itr_all;  // _CX_
-    int16_t itr_reqd;  // _SI_
+    int16_t has_reqd_bldg = 0;  // _DI_
+    int16_t itr_all = 0;  // _CX_
+    int16_t itr_reqd = 0;  // _SI_
 
     if(_CITIES[city_idx].bldg_status[bldg_idx] != bs_Removed)
     {
@@ -1182,8 +1211,8 @@ the building you are trying to sell is a required building for the building you 
 */
 int16_t City_Building_Is_Currently_Required(int16_t city_idx, int16_t bldg_idx)
 {
-    int16_t product_idx;  // _CX_
-    int16_t building_is_required;  // DNE in Dasm
+    int16_t product_idx = 0;  // _CX_
+    int16_t building_is_required = 0;  // DNE in Dasm
 
     product_idx = _CITIES[city_idx].construction;
 
@@ -1225,7 +1254,7 @@ int16_t City_Building_Is_Currently_Required(int16_t city_idx, int16_t bldg_idx)
 void City_Check_Production(int16_t city_idx)
 {
     // int16_t city_idx;  // _SI_
-    int16_t production_idx;  // _DI_
+    int16_t production_idx = 0;  // _DI_
 
     production_idx = _CITIES[city_idx].construction;
 
@@ -1342,7 +1371,7 @@ Capture_Cities_Data();
 // MoO2  Module: MAINTAIN  Building_Worth_()
 int16_t City_Sell_Building_Value(int16_t bldg_idx)
 {
-    int16_t building_value;
+    int16_t building_value = 0;
 
     building_value = (bldg_data_table[bldg_idx].construction_cost / 3);
 
@@ -1367,7 +1396,7 @@ int16_t City_Sell_Building_Value(int16_t bldg_idx)
 // 1oom  
 void Player_City_Buy_Production(int16_t player_idx, int16_t city_idx)
 {
-    int16_t cost;
+    int16_t cost = 0;
 
 Check_Cities_Data();
     cost = City_Cost_To_Buy_Product(city_idx);
@@ -1394,7 +1423,7 @@ Capture_Cities_Data();
 */
 int16_t City_Cost_To_Buy_Product(int16_t city_idx)
 {
-    int16_t production_cost;  // _SI_
+    int16_t production_cost = 0;  // _SI_
 
     production_cost = City_Production_Cost(_CITIES[city_idx].construction, city_idx);
 
@@ -1427,19 +1456,19 @@ int16_t City_Cost_To_Buy_Product(int16_t city_idx)
 */
 void City_Screen_Add_Fields_Resource_Window(int16_t city_idx, int16_t xstart, int16_t ystart)
 {
-    int16_t group_amount;
-    int16_t xpos;
-//     int16_t food_units_p1;
-//     int16_t production_units;
-//     int16_t var_C;
-//     int16_t mana_units;
-//     int16_t research_units;
-    int16_t resources[5];
-    int16_t abs_diff_gold;
-    int16_t abs_diff_food;
-    int16_t city_resource_row_field_idx;
-    int16_t itr_resource_types;  // _SI_
-    int16_t group_two_x1;  // DNE in Dasm, uses city_resource_row_field_idx
+    int16_t group_amount = 0;
+    int16_t xpos = 0;
+//     int16_t food_units_p1 = 0;
+//     int16_t production_units = 0;
+//     int16_t var_C = 0;
+//     int16_t mana_units = 0;
+//     int16_t research_units = 0;
+    int16_t resources[5] = { 0, 0, 0, 0, 0 };
+    int16_t abs_diff_gold = 0;
+    int16_t abs_diff_food = 0;
+    int16_t city_resource_row_field_idx = 0;
+    int16_t itr_resource_types = 0;  // _SI_
+    int16_t group_two_x1 = 0;  // DNE in Dasm, uses city_resource_row_field_idx
 
     abs_diff_food = abs(_CITIES[city_idx].food_units - _CITIES[city_idx].population);
 #pragma clang diagnostic push
@@ -1581,12 +1610,12 @@ void City_Screen_Add_Fields_Resource_Window(int16_t city_idx, int16_t xstart, in
 // drake178: ¿ ?
 void City_Screen_Draw_Resource_Icons(int16_t city_idx, int16_t xstart, int16_t ystart)
 {
-    int16_t group_amount;
-    int16_t xpos;
-    int16_t resources[5];
-    int16_t abs_diff_gold;
-    int16_t abs_diff_food;
-    int16_t itr_resource_types;  // _SI_
+    int16_t group_amount = 0;
+    int16_t xpos = 0;
+    int16_t resources[5] = { 0, 0, 0, 0, 0 };
+    int16_t abs_diff_gold = 0;
+    int16_t abs_diff_food = 0;
+    int16_t itr_resource_types = 0;  // _SI_
 
     abs_diff_food = abs(_CITIES[city_idx].food_units - _CITIES[city_idx].population);
 #pragma clang diagnostic push
@@ -1735,14 +1764,14 @@ y2  91  (52 + resource type * 8 + 7 = 52 + 4 * 8 + 7 = 52 + 32 + 7 = 52 + 39 = 9
 */
 void Draw_Resource_Icons(int16_t * xstart, int16_t ystart, int16_t total_amount, int16_t group_amount, SAMB_ptr big_icon_pict, SAMB_ptr lil_icon_pict)
 {
-    int16_t icon_space_remainder;
-    int16_t big_icon_space;
-    int16_t itr_icon_count;
-    int16_t icon_count;
-    int16_t space_is_set;
-    int16_t curr_xstart;
-    int16_t icon_space;  //_SI_
-    int16_t group_big_amount;  // DNE in Dasm
+    int16_t icon_space_remainder = 0;
+    int16_t big_icon_space = 0;
+    int16_t itr_icon_count = 0;
+    int16_t icon_count = 0;
+    int16_t space_is_set = 0;
+    int16_t curr_xstart = 0;
+    int16_t icon_space = 0;  //_SI_
+    int16_t group_big_amount = 0;  // DNE in Dasm
 
     curr_xstart = *xstart;
     icon_space_remainder = 0;
@@ -1831,17 +1860,17 @@ void Draw_Resource_Icons(int16_t * xstart, int16_t ystart, int16_t total_amount,
 // drake178: ¿ ?
 void City_Screen_Draw_Production_Coins(int16_t city_idx)
 {
-    int16_t coins_per_row;
-    int16_t points_per_coin;
-    int16_t accumulated_partial_coin;
-    int16_t accumulated_whole_coins;
-    int16_t product_coin_count;
-    int16_t ypos;
-    int16_t icon_space;
-    int16_t ystart;
-    int16_t xstart;
-    int16_t itr;  // _SI_
-    int16_t xpos;  // _DI_
+    int16_t coins_per_row = 0;
+    int16_t points_per_coin = 0;
+    int16_t accumulated_partial_coin = 0;
+    int16_t accumulated_whole_coins = 0;
+    int16_t product_coin_count = 0;
+    int16_t ypos = 0;
+    int16_t icon_space = 0;
+    int16_t ystart = 0;
+    int16_t xstart = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t xpos = 0;  // _DI_
 
     xstart = 262;
     ystart = 151;
@@ -1905,12 +1934,12 @@ void City_Screen_Draw_Production_Coins(int16_t city_idx)
 // drake178: ¿ ?
 void Build_City_Enchantment_List(int16_t city_idx, int16_t city_enchantment_list[], int16_t city_enchantment_owner_list[], int16_t * city_enchantment_list_count)
 {
-    uint8_t * city_enchantments;
-    int16_t city_owner_idx;
-    int16_t itr1_city_enchantment_count;
-    int16_t itr_city_enchantments;  // _SI_
-    int16_t itr2_city_enchantment_count;  // _SI_
-    int16_t city_enchantment_count;  // _DI_
+    uint8_t * city_enchantments = 0;
+    int16_t city_owner_idx = 0;
+    int16_t itr1_city_enchantment_count = 0;
+    int16_t itr_city_enchantments = 0;  // _SI_
+    int16_t itr2_city_enchantment_count = 0;  // _SI_
+    int16_t city_enchantment_count = 0;  // _DI_
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
 
@@ -1981,11 +2010,11 @@ void Do_Build_City_Enchantment_List(void)
 // drake178: ¿ ?
 void City_Screen_Draw_City_Enchantments(int16_t xstart, int16_t ystart)
 {
-    uint8_t banner_id;
-    uint8_t banner_colors[6];
-    uint8_t colors[6];
-    int16_t itr;  // _DI_
-    int16_t itr_colors;  // _SI_
+    uint8_t banner_id = 0;
+    uint8_t banner_colors[6] = { 0, 0, 0, 0, 0, 0 };
+    uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t itr = 0;  // _DI_
+    int16_t itr_colors = 0;  // _SI_
     
     banner_colors[0] = 222;
     banner_colors[1] =  79;
@@ -2035,7 +2064,7 @@ void City_Screen_Draw_City_Enchantments(int16_t xstart, int16_t ystart)
 // drake178: CTY_CreateEnchCtrls()
 void City_Add_Fields_City_Enchantments(int16_t xstart, int16_t ystart)
 {
-    int16_t itr;  // _SI_
+    int16_t itr = 0;  // _SI_
 
     city_up_button = -1000;
     city_dn_button = -1000;
@@ -2262,8 +2291,8 @@ void City_Screen_Garrison_Window_Picture_Coords(int16_t stack_idx, int16_t * x1,
 // drake178: N/A
 void All_City_Removed_Buildings(void)
 {
-    int16_t itr_buildings;  // _SI_
-    int16_t itr_cities;  // _CX_
+    int16_t itr_buildings = 0;  // _SI_
+    int16_t itr_cities = 0;  // _CX_
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
@@ -2367,7 +2396,7 @@ void Player_Add_Mana(int16_t player_idx, int16_t amount)
 */
 void Possessive(char * string)
 {
-    int16_t string_length;  // _DI_
+    int16_t string_length = 0;  // _DI_
 
     string_length = strlen(string);
 

@@ -7,7 +7,7 @@ MoO2
 
 */
 
-#include "MOX_Lib.h"
+#include "MOX_TYPE.h"
 
 
 

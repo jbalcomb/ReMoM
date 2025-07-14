@@ -7,8 +7,16 @@ MoO2
     Module: fields
 
 */
+#include "DIR.h"
+#include "MOX_DEF.h"
+#include "MOX_TYPE.h"
+#include "Mouse.h"
+#include "Video.h"
 
-#include "MOX_Lib.h"
+#include <stdio.h>
+#include <string.h>
+
+#include "capture.h"
 
 
 
@@ -126,6 +134,7 @@ void Screen_Flic_Capture__STUB(void)
     }
 
     Set_Page_On();
+    
     Save_Mouse_State();
 
     Scrdmp_File_Number = 0;

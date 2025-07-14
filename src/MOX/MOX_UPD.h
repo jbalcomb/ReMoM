@@ -122,3 +122,10 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
         Capture_Cities_Data();                                      \
     } while(0);                                                     \
 }
+
+#define CITIES_CONSTRUCTION(_city_idx_,_construction_)  {       \
+    do {                                                        \
+        _CITIES[(_city_idx_)].construction = (_construction_);  \
+        Capture_Cities_Data();                                  \
+    } while(0);                                                 \
+}

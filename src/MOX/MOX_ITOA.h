@@ -13,6 +13,8 @@ extern "C" {
 #ifndef _WIN32
 void itoa(int value, char * string, int radix);
 void ltoa(long value, char * string, int radix);
+#else
+#include <stdlib.h>
 #endif
 
 

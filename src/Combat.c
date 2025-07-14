@@ -24,10 +24,17 @@
 
 */
 
-#include "CMBTDEF.h"
-#include "Combat.h"
 
+#include "MOX/EXIT.h"
+#include "MOX/paragrph.h"
+#include "MOX/Timer.h"
+#include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/GENDRAW.h"
+#include "MOX/Graphics.h"
+#include "MOX/LBX_Load.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_BASE.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
@@ -44,6 +51,8 @@
 #include "Items.h"
 #include "Lair.h"
 #include "LOADER.h"
+#include "MOX/Util.h"
+#include "MOX/random.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 #include "MOM_DBG.h"
@@ -51,6 +60,7 @@
 #include "NEXTTURN.h"
 #include "RACETYPE.h"
 #include "SBookScr.h"
+#include "STU/STU_DBG.h"
 #include "special.h"
 #include "Spellbook.h"  /* Combat_Spellbook_Build__WIP() */
 #include "SPELLDEF.h"
@@ -65,8 +75,14 @@
 #include "UnitView.h"
 #include "WZD_o059.h"
 
+#include <assert.h>
 #include <stdlib.h>     /* abs(); itoa(); */
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
+
+#include "Combat.h"
+#include "CMBTDEF.h"
+
+
 
 int16_t DBG_Ignore_Computer_Player = ST_FALSE; // {ST_FALSE, ST_TRUE} skips computer player's turn - AI_MoveBattleUnits__WIP()
 int16_t DBG_player_idx = HUMAN_PLAYER_IDX;

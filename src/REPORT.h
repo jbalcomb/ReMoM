@@ -10,6 +10,10 @@
 #ifndef SUMMARY_H
 #define SUMMARY_H
 
+#include "MOX/MOX_TYPE.h"
+
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif

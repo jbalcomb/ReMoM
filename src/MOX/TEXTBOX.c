@@ -6,12 +6,20 @@
     Confirmation, Warn, Selection, Notify, Help
 
 */
+#include "Allocate.h"
+#include "FLIC_Draw.h"
 #include "Fields.h"
+#include "Fonts.h"
+#include "GENDRAW.h"
+#include "Graphics.h"
+#include "LBX_Load.h"
 #include "MOX_DAT.h"
-#include "MOX_DEF.h"
+#include "MOX_BASE.h"
 #include "MOX_TYPE.h"
 
 #include "../Help.h"
+#include "Video.h"
+#include "paragrph.h"
 
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 
@@ -243,7 +251,7 @@ void Draw_Help_Entry__WIP(int16_t help_entry_idx)
 
         LBX_Load_Data_Static(help_lbx_file__ovr159, 2, (SAMB_ptr)&help_data_near_buffer[0], itr, 1, sizeof(struct s_HELP_DATA));
         
-        if(help_data_near_buffer->help_text == ST_NULL)
+        if(help_data_near_buffer->help_text[0] == '\0')
         {
 
             IDK += (Title_Height + 4);
@@ -348,7 +356,7 @@ void Draw_Help_Entry__WIP(int16_t help_entry_idx)
 
         Print_Paragraph((Scroll_Display_Left + 20), IDK, 180, help_data_near_buffer->help_text, 0);
 
-        if(help_data_near_buffer->help_text == ST_NULL)
+        if(help_data_near_buffer->help_text[0] == '\0')
         {
             IDK += 4;
         }

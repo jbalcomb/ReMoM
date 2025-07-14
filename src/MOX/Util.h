@@ -37,7 +37,10 @@ extern "C" {
 // WZD s22p01 UU_VGA_Bleep()
 // WZD s22p02 UU_KBD_GetKey()
 // WZD s22p03 UU_Clock_Wait30()
-// WZD s22p04 VGA_FlushFrames()
+
+// WZD s22p04
+void Clear_Screens(void);
+
 // WZD s22p05 Set_Random_Seed()
 // WZD s22p06 Get_Random_Seed()
 // WZD s22p07 Randomize()

@@ -13,6 +13,7 @@
 #include "MOX/MOX_BITS.h"
 #include "MOX/MOX_DAT.h"  /* _players[] */
 #include "MOX/MOX_DEF.h"
+#include "MOX/MOX_UPD.h"
 #include "MOX/random.h"
 #include "MOX/Util.h"
 
@@ -26,9 +27,11 @@
 #include "Terrain.h"
 #include "UNITTYPE.h"   // WTFMATE
 
-#ifdef STU_DEBUG
+// #ifdef STU_DEBUG
+#include "STU/STU_CHK.h"
 #include "STU/STU_DBG.h"
-#endif
+// #endif
+
 
 #include <assert.h>
 #include <math.h>       /* sqrt() */

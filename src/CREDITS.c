@@ -5,6 +5,9 @@
 #include "CREDITS.h"
 
 #include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fonts.h"
+#include "MOX/Graphics.h"
 #include "MOX/LBX_Load.h"
 #include "MOX/MOX_DAT.h"
 #include "MOX/MOX_DEF.h"

@@ -1,6 +1,11 @@
 
-#include "MOX_Lib.h"
+#include "Fields.h"
+#include "MOX_DEF.H"
+#include "MOX_TYPE.h"
 
+#include <string.h>
+
+#include "Keyboard.h"
 
 
 // WZD dseg:8240                                                 ? BEGIN: Mouse Buffer - Initialized Data ?

@@ -1,9 +1,15 @@
 
 add_library(STU STATIC
-    STU_CHK.C
-    STU_DBG.C
-    STU_JSON.C
-    STU_UTIL.C
+    STU_CHK.c
+    STU_DBG.c
+    STU_DRAW.c
+    STU_EMS.c
+    STU_INT.c
+    STU_JSON.c
+    STU_SND.c
+    STU_TST.c
+    STU_UTIL.c
+    STU_WAV.c
 )
 
 set_target_properties(STU PROPERTIES LINKER_LANGUAGE C)

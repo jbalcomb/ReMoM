@@ -1,5 +1,7 @@
 
-#include "MOM.h"
+#include "MOX/EMM.h"
+#include "MOX/MOX_TYPE.h"
+
 #include <windows.h>
 
 #include <memory.h>

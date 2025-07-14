@@ -11,11 +11,17 @@
 
 #include "ItemView.h"
 #include "MOM_DEF.h"
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/GENDRAW.h"
+#include "MOX/LBX_Load.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_BASE.h"
 #include "MOX/MOX_DAT.h"
 #include "MOX/MOX_T4.h"
+#include "MOX/random.h"
 
 #include "MOX/Util.h"
 #include "NEXTTURN.h"

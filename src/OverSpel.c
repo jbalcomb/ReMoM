@@ -5,21 +5,35 @@
         ovr135
 */
 
+#include "AISPELL.h"
+#include "CITYCALC.h"
 #include "Explore.h"
+#include "ItemMake.h"
+#include "ItemScrn.h"
+#include "Items.h"
 #include "MOM_DEF.h"
+#include "MOM_SCR.h"
+#include "MOX/Allocate.h"
+#include "MOX/GENDRAW.h"
 #include "MOX/LBX_Load.h"
 #include "MOX/MOM_Data.h"
+#include "MOX/MOX_BITS.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
 #include "MOX/MOX_DEF.h"
 #include "MOX/MOX_SET.h"  /* magic_set */
+#include "MOX/MOX_T4.h"
 #include "MOX/MOX_TYPE.h"
+#include "MOX/random.h"
 
+#include "MainScr.h"
 #include "SBookScr.h"
+#include "SCastScr.h"
 #include "SPELLDEF.h"
 
 #include "DIPLOMAC.h"
 #include "NEXTTURN.h"
 #include "Outpost.h"
+#include "STU/STU_DBG.h"
 #include "Spellbook.h"
 #include "Spells128.h"
 #include "Spells129.h"
@@ -27,6 +41,12 @@
 #include "Spells132.h"
 #include "Spells137.h"
 #include "SPLMASTR.h"
+#include "UNITTYPE.h"
+#include "WZD_o059.h"
+
+#include <string.h>
+
+#include "OverSpel.h"
 
 
 

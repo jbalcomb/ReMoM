@@ -10,6 +10,13 @@
         Module: ¿  ?
 */
 
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/GENDRAW.h"
+#include "MOX/Graphics.h"
+#include "MOX/LBX_Load.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
 
 #include "City_ovr55.h"
@@ -19,6 +26,7 @@
 #include "Help.h"
 #include "MagicScr.h"
 #include "MOM_SCR.h"
+#include "MOX/Timer.h"
 #include "NEXTTURN.h"
 #include "Spellbook.h"
 #include "WIZVIEW.h"

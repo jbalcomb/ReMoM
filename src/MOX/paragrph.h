@@ -9,7 +9,9 @@
 #ifndef PARAGRPH_H
 #define PARAGRPH_H
 
-#include "MOX_Lib.h"
+#include "MOX_TYPE.h"
+
+
 
 #ifdef __cplusplus
 extern "C" {

@@ -7,13 +7,28 @@
 
 */
 
+#include "MOX/Allocate.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/Graphics.h"
+#include "MOX/GENDRAW.h"
+#include "MOX/LBX_Load.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
+#include "MOX/FLIC_Draw.h"
 
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_T4.h"
+#include "MOX/Util.h"
+#include "MOX/Video.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 #include "REPORT.h"
 #include "SBookScr.h"
 #include "UNITTYPE.h"
+
+#include <string.h>
+
+#include "REPORT.h"
 
 
 

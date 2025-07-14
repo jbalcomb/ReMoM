@@ -18,7 +18,7 @@ MoO2
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include "MOM.h"
+#include "MOX/MOX_TYPE.h"
 
 
 

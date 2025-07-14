@@ -5,9 +5,15 @@
 
 #include "MAPGEN.h"
 
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/Graphics.h"
+#include "MOX/LBX_Load.h"
 #include "MOX/Mouse.h"
 #include "MOX/MOM_DATA.h"
 #include "MOX/MOX_TYPE.h"
+#include "MOX/Video.h"
 
 
 
@@ -384,7 +390,7 @@ void Draw_Building_The_Worlds(int16_t percent)
 {
     int16_t width = 0;
     Set_Page_Off();
-    if(percent = 0)
+    if(percent == 0)
     {
         return;
     }

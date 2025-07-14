@@ -9,6 +9,8 @@
 #include "AIMOVE.h"
 
 #include "MOX/random.h"
+#include "Outpost.h"
+#include "SETTLE.h"
 #include "STU/STU_CHK.h"
 
 #include "MOX/MOM_Data.h"
@@ -25,6 +27,7 @@
 #include "NEXTTURN.h"
 #include "RACETYPE.h"
 #include "Spellbook.h"
+#include "Terrain.h"
 #include "UNITTYPE.h"
 #include "UnitMove.h"
 #include "special.h"

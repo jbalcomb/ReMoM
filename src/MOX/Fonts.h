@@ -350,19 +350,25 @@ void Set_Special_Colors_On(void);
 void Set_Color_Set(int16_t color_set_idx);
 
 // WZD s17p43
-// RP_DBG_TblDrawValue()
+void ST_PSTRM(int16_t x, int16_t y, int16_t val, char * string);
+
 // WZD s17p44
-// UU_DBG_TblCellWrapper()
+void Disp_PSTR_Wrapper(int16_t x, int16_t y, char * buffer);
+
 // WZD s17p45
-// UU_DBG_TblDrawString()
+void PSTRS(int16_t x, int16_t y, char * string);
+
 // WZD s17p46
-// UU_DBG_TblDrawS16()
+void ST_PSTR(int x, int y, int val);
+
 // WZD s17p47
-// UU_DBG_TblDrawS32()
+void PSTRL(int16_t x, int16_t y, int32_t val);
+
 // WZD s17p48
-// UU_DBG_TblDrawU32()
+void PSTRU(int16_t x, int16_t y, uint32_t value);
+
 // WZD s17p49
-// DBG_DrawTableCell()
+void Disp_PSTR(int16_t x, int16_t y, char * buffer);
 
 // WZD s17p50
 // drake178: VGA_WndDrawSString()

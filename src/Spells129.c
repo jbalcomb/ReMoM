@@ -3,18 +3,15 @@
         ovr129
 */
 
-#include "Combat.h"
-#include "RACETYPE.h"
-#include "Spells129.h"
-
 #include "MOX/Allocate.h"
+#include "MOX/GENDRAW.h"
+#include "MOX/LBX_Load.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_DAT.h"
 #include "MOX/MOX_DEF.h"
 #include "MOX/random.h"
 #include "MOX/MOX_BASE.h"
 #include "MOX/MOX_SET.h"
-#include "STU/STU_CHK.h"
 
 #include "MOM_DEF.h"
 #include "MainScr.h"
@@ -31,6 +28,17 @@
 #include "Spells137.h"
 #include "Terrain.h"
 #include "UNITTYPE.h"
+#include "Combat.h"
+#include "RACETYPE.h"
+#include "AISPELL.h"
+#include "Explore.h"
+#include "Items.h"
+
+#include "STU/STU_CHK.h"
+#include "STU/STU_DBG.h"
+#include "WZD_o059.h"
+
+#include "Spells129.h"
 
 int16_t * _battlefield_holybonus;
 

@@ -44,7 +44,7 @@ mov  ax, 5901h; int  67h;
 uint16_t STU_INT_67(uint16_t _AX_)
 {
 
-
+    return 0;
 
 }
 
@@ -57,6 +57,6 @@ on return:
 uint16_t STU_INT_67_59(uint8_t _AL_)
 {
 
-
+    return 0;
 
 }

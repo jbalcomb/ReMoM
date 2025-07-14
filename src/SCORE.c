@@ -11,10 +11,23 @@
         Module: SCORE
 */
 
+#include "MOX/Timer.h"
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/Graphics.h"
+#include "MOX/LBX_Load.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
+#include "MOX/MOX_DEF.h"
 #include "MOX/MOX_SET.h"
+#include "MOX/MOX_T4.h"
+#include "MOX/MOX_TYPE.h"
+#include "MOX/Video.h"
 
-#include "MOM.h"
+#include <string.h>
+
+#include "SCORE.h"
 
 
 

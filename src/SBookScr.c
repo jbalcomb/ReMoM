@@ -7,21 +7,32 @@
     SPELLSCR.LBX
 */
 
-#include "ItemMake.h"
+#include "Items.h"
+#include "MOM_SCR.h"
+#include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
 #include "MOX/MOX_DEF.h"
 #include "MOX/MOX_SET.h"  /* magic_set */
 #include "MOX/SOUND.h"
+#include "MOX/LBX_Load.h"
+#include "MOX/Graphics.h"
+#include "MOX/Fonts.h"
+#include "MOX/Fields.h"
+#include "MOX/GENDRAW.h"
 
+#include "ItemMake.h"
+#include "MOX/Timer.h"
 #include "NEXTTURN.h"
-#include "SBookScr.h"
+#include "OverSpel.h"
+#include "SCastScr.h"
 #include "Spellbook.h"
 #include "Spells128.h"
 #include "SPLMASTR.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 
+#include "SBookScr.h"
 
 
 // WZD dseg:6994                                                 BEGIN:  ovr134 - Initialized Data

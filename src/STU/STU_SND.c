@@ -2,13 +2,14 @@
 #include "STU_SND.h"
 
 #include "../MOX/MOX_BITS.h"
-#include "../MOX/MOX_DEF.h"
+#include "../MOX/MOX_BASE.h"
 #include "../MOX/LBX_Load.h"
 #include "../MOX/MOX_TYPE.h"
 
 #include "STU_DBG.h"
 
 #include <stdlib.h>     /* abs(); itoa(); malloc(); */
+#include <string.h>
 
 
 

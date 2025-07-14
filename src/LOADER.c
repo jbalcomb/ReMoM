@@ -1,15 +1,22 @@
 
 #include "LOADER.h"
 
+#include "CityScr.h"
+#include "Combat.h"
+#include "MOX/Allocate.h"
 #include "MOX/LBX_Load.h"
+#include "MOX/MOM_Data.h"
 #include "MOX/MOX_TYPE.h"
 #include "MOX/MOX_SND.h"
 
 #include "CITYSCAP.h"
 #include "MGC_DATA.h"
 #include "MainMenu.h"
+#include "MainScr.h"
+#include "MainScr_Maps.h"
 #include "Settings.h"
 #include "Spellbook.h"
+#include "UNITTYPE.h"
 
 
 

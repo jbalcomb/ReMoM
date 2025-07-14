@@ -6,7 +6,9 @@
 #include <tchar.h>
 #include <stdio.h>
 
-#include "MOM.h"
+#include "MOX/MOX_BASE.h"
+#include "MOX/MOX_TYPE.h"
+#include "MOX/Mouse.h"
 
 #ifdef STU_DEBUG
 #include "STU/STU_DBG.h"    /* DLOG() */

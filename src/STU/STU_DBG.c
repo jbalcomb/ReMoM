@@ -11,8 +11,8 @@ https://olegkutkov.me/2019/03/25/simple-logger-with-stdout-files-and-syslog-supp
 // C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\ucrt\corecrt_wstdio.h
 // C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h
 #endif
-#include <stdarg.h>  /* va_list; va_arg(), va_end(), va_start() */
-#include <stdlib.h>  /* exit() */
+#include <STDARG.H>  /* va_list; va_arg(), va_end(), va_start() */
+#include <STDLIB.H>  /* exit() */
 
 #include "STU_TYPE.h"
 #include "STU_DBG.h"

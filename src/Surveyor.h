@@ -6,7 +6,7 @@
 #ifndef SURVEYOR_H
 #define SURVEYOR_H
 
-#include "MOM.h"
+#include "MOX/MOX_TYPE.h"
 
 
 

@@ -10,7 +10,9 @@
 #ifndef IO_BUFFER_H
 #define IO_BUFFER_H
 
-#include "MOX_Lib.h"
+#include "MOX_TYPE.h"
+
+
 
 #ifdef __cplusplus
 extern "C" {

@@ -8,8 +8,15 @@
 
 #include "AdvsrScr.h"
 
+#include "MOX/Fields.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Timer.h"
+#include "MOX/GENDRAW.h"
+#include "MOX/Graphics.h"
+#include "MOX/LBX_Load.h"
+#include "MOX/Fonts.h"
+#include "MOX/Allocate.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
-#include "MOX/MOX_ITOA.h" /* mox_itoa() */
 
 #include "Explore.h"
 #include "Help.h"
@@ -21,6 +28,7 @@
 #include "UnitMove.h"   // WTFMATE
 #include "WIZVIEW.h"
 
+#include <assert.h>
 #include <stdlib.h>     /* abs(); itoa(); */
 
 

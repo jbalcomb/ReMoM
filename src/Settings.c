@@ -15,11 +15,19 @@ MoO2
 
 */
 
+#include "MOX/DIR.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/Graphics.h"
+#include "MOX/LBX_Load.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
 #include "MOX/MOX_SET.h"  /* magic_set */
 
 #include "MOM_SCR.h"
 #include "Settings.h"
+#include "MOX/MOX_T4.h"
+#include "MOX/Timer.h"
 #include "Spellbook.h"
 
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), frite(), fseek(); */

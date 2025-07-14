@@ -9,21 +9,25 @@ MoO2
 
 */
 
+#include "MOX/GENDRAW.h"
+#include "MOX/MOM_Data.h"
+#include "MOX/MOX_DEF.h"
 #include "MOX/MOX_TYPE.h"
 
 #include "CITYCALC.h"
+#include "MOX/random.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
-#include "special.h"
+#include "STU/STU_CHK.h"
 #include "Terrain.h"
-#include "UnitMove.h"   // WTFMATE
-#include "UNITSTK.h"
-#include "UNITTYPE.h"   // WTFMATE
+#include "UNITTYPE.h"
+#include "UnitMove.h"
 #include "WZD_o059.h"
+#include "special.h"
 
-#ifdef STU_DEBUG
-#include "STU/STU_DBG.h"    /* DLOG() */
-#endif
+#include <assert.h>
+
+#include "UNITSTK.h"
 
 
 

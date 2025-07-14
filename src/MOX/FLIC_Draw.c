@@ -15,13 +15,18 @@ MoO2 Module: shear
 
 */
 
-#include "FLIC_Draw.h"
-
 #include "Fonts.h"
 #include "Graphics.h"
+#include "LBX_Load.h"
+#include "MOX_DEF.H"
 #include "MOX_TYPE.h"
+#include "MOX_BASE.h"
+#include "file_ani.h"
 
-#include "malloc.h"
+#include <assert.h>
+#include <string.h>
+
+#include "FLIC_Draw.h"
 
 
 

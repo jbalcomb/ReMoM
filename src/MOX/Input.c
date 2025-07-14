@@ -5,14 +5,26 @@
         seg034
 */
 
+#include "Allocate.h"
 #include "Fields.h"
+#include "Fonts.h"
+#include "Graphics.h"
+#include "Keyboard.h"
 #include "MOX_DEF.h"
+#include "MOX_KEYS.h"
 #include "MOX_TYPE.h"
 #include "TEXTBOX.h"
+#include "Timer.h"
+#include "capture.h"
+
+#include <string.h>
 
 #ifdef _STU_SDL2
 #include "../sdl2_PFL.h"
 #endif
+
+#include "Input.h"
+
 
 
 #ifdef STU_DEBUG

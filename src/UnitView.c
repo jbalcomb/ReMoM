@@ -30,13 +30,24 @@ USW_Attributes_1
 
 */
 
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/GENDRAW.h"
+#include "MOX/LBX_Load.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
+#include "MOX/MOX_DEF.h"
+#include "MOX/MOX_TYPE.h"
 
-#include "MOM.h"
-
-#include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
-
+#include "MainScr.h"
+#include "Terrain.h"
+#include "UNITTYPE.h"
+#include "UnitMove.h"
 #include "UnitStat.h"
+#include "WZD_o059.h"
+
+#include <assert.h>
+#include <string.h>
+
 #include "UnitView.h"
 
 // TODO  WTF  SRSLY #include <intrin.h>

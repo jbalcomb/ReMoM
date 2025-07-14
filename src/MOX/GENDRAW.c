@@ -22,9 +22,9 @@ Notify
 */
 
 #include "MOX_DAT.h"  /* _screen_seg */
+#include "MOX_DEF.H"
 #include "MOX_SET.h"  /* magic_set */
 #include "MOX_TYPE.h"
-#include "EMM.h"
 #include "Fields.h"
 #include "FLIC_Draw.h"
 #include "Fonts.h"
@@ -35,8 +35,6 @@ Notify
 #include "paragrph.h"
 #include "Util.h"
 #include "Video.h"
-
-#include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 
 
 

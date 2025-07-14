@@ -8,7 +8,9 @@
 #ifndef WIZVIEW_H
 #define WIZVIEW_H
 
-#include "MOM.h"
+#include "MOX/MOX_TYPE.h"
+
+
 
 #ifdef __cplusplus
 extern "C" {

@@ -18,6 +18,13 @@ MoO2
 #include "DIPLOMAC.h"
 
 #include "MOM_DEF.h"
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fonts.h"
+#include "MOX/Graphics.h"
+#include "MOX/Timer.h"
+#include "MOX/paragrph.h"
+#include "MOX/random.h"
 #include "STU/STU_DBG.h"
 
 #include "MOX/Fields.h"
@@ -43,6 +50,11 @@ MoO2
 #include "Spellbook.h"
 #include "Spells128.h"
 #include "UNITTYPE.h"
+
+#include <assert.h>
+#include <string.h>
+
+
 
 /*
     WIZARDS.EXE  ovr084

@@ -1,5 +1,7 @@
 #ifndef STU_TST_H
-#define STU_UTIL_H
+#define STU_TST_H
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,4 +15,4 @@ void TST_Patch_Game_Data(void);
 }
 #endif
 
-#endif /* STU_UTIL_H */
+#endif /* STU_TST_H */

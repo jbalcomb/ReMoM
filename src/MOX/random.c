@@ -15,7 +15,6 @@ MoO2
 
 #include "EXIT.h"
 #include "random.h"
-
 #include "MOX_BITS.h"
 #include "MOX_TYPE.h"
 

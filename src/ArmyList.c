@@ -8,7 +8,17 @@
         Module: ¿ Fleet Screen ?
 */
 
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/Graphics.h"
+#include "MOX/LBX_Load.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
+#include "MOX/MOX_DEF.h"
+#include "MOX/MOX_T4.h"
+#include "MOX/Timer.h"
+#include "MOX/Util.h"
 
 #include "ArmyList.h"
 #include "CITYCALC.h"
@@ -20,6 +30,8 @@
 #include "RACETYPE.h"
 #include "UNITTYPE.h"   // WTFMATE
 #include "UnitView.h"
+
+#include <string.h>
 
 
 
@@ -223,7 +235,9 @@ void ArmyList_Screen(void)
 
     while(leave_screen_flag == ST_FALSE)
     {
+
         Mark_Time();
+        
         Clear_Fields();
 
         ArmyList_Add_List_Fields();

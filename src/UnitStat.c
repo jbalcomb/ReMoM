@@ -5,15 +5,28 @@
         ovr072
 */
 
-#include "LOADER.h"
 #include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/GENDRAW.h"
+#include "MOX/Graphics.h"
 #include "MOX/LBX_Load.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_T4.h"
 #include "MOX/MOX_TYPE.h"
 
+#include "CITYCALC.h"
+#include "Combat.h"
+#include "LOADER.h"
+#include "MOX/Timer.h"
+#include "MOX/Video.h"
+#include "MOX/paragrph.h"
+#include "STU/STU_DBG.h"
+#include "Terrain.h"
 #include "UNITSTK.h"
 #include "UNITTYPE.h"
-#include "UnitStat.h"
 #include "CityScr.h"
 #include "Lair.h"
 #include "MainScr.h"
@@ -22,6 +35,11 @@
 #include "City_ovr55.h"
 #include "ItemView.h"
 #include "RACETYPE.h"
+#include "WZD_o059.h"
+
+#include <string.h>
+
+#include "UnitStat.h"
 
 
 

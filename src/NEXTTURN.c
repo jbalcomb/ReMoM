@@ -9,15 +9,32 @@
         ovr141
 */
 
-#include "NEXTTURN.h"
-
 #include "MOX/LOADSAVE.h"
 #include "MOX/MOX_DEF.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
 #include "MOX/MOX_SET.h"  /* magic_set */
 #include "MOX/MOX_TYPE.h"
 #include "MOX/SOUND.h"
+#include "MOX/Allocate.h"
+#include "MOX/GENDRAW.h"
+#include "MOX/LBX_Load.h"
+#include "MOX/Util.h"
+#include "MOX/random.h"
 
+#include "AIBUILD.h"
+#include "AIDUDES.h"
+#include "AISPELL.h"
+#include "CITYCALC.h"
+#include "City_ovr55.h"
+#include "Combat.h"
+#include "EVENTS.h"
+#include "Explore.h"
+#include "HIRE.h"
+#include "ItemMake.h"
+#include "Items.h"
+#include "LOADER.h"
+#include "Lair.h"
+#include "OverSpel.h"
 #include "DIPLOMAC.h"
 #include "LVLMAKE.h"
 #include "CityScr.h"  /* City_Screen__WIP(); */
@@ -26,14 +43,26 @@
 #include "MOM_DBG.h"
 #include "MOM_DEF.h"
 #include "MOM_SCR.h"
+#include "RACETYPE.h"
+#include "REPORT.h"
 #include "Spellbook.h"
 #include "Spells128.h"
 #include "Spells130.h"
+#include "TerrType.h"
+#include "Terrain.h"
+#include "UNITSTK.h"
+#include "UNITTYPE.h"
+#include "UnitView.h"
 #include "WZD_o059.h"
+#include "WZD_o143.h"
 
-#ifdef STU_DEBUG
+// #ifdef STU_DEBUG
 #include "STU/STU_DBG.h"    /* DLOG() */
-#endif
+// #endif
+
+#include <string.h>
+
+#include "NEXTTURN.h"
 
 
 

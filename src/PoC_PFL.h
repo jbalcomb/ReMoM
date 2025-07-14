@@ -1,8 +1,11 @@
 #ifndef POC_PFL_H
 #define POC_PFL_H
 
-#include "MOM.h"
+#include "MOX/MOX_TYPE.h"
+
 #include <windows.h>
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,7 +36,8 @@ extern uint8_t g_Palette_XBGR[];
 
 
 extern int16_t platform_mouse_button_status;
-extern int16_t lock_mouse_button_status_flag;
+// Eh?  extern int16_t lock_mouse_button_status_flag;  NOTE(JimBalcomb,20250713): in MOM_PFL, this is an int; don't even remember what any of this is
+extern int lock_mouse_button_status_flag;
 
 void Pump_Events(void);
 void Pump_Paints(void);

@@ -12,8 +12,18 @@
         ...
 */
 
-#include "MOX_Lib.h"
-#include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
+#include "FLIC_Draw.h"
+#include "Fields.h"
+#include "Graphics.h"
+#include "Input.h"
+#include "MOX_DEF.h"
+#include "MOX_TYPE.h"
+#include "Timer.h"
+
+#include <malloc.h>  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
+#include <string.h>
+
+#include "Util.h"
 
 
 
@@ -39,7 +49,32 @@ uint16_t bit_field_test_bits[8] = {
 // WZD s22p01 UU_VGA_Bleep()
 // WZD s22p02 UU_KBD_GetKey()
 // WZD s22p03 UU_Clock_Wait30()
-// WZD s22p04 VGA_FlushFrames()
+
+// WZD s22p04
+// drake178: VGA_FlushFrames()
+// MoO2  DNE
+/*
+; zeroes out both the display and draw frames by
+; drawing fullscreen color #00 rectangles into them
+*/
+/*
+OON XREF:  City_Screen__WIP()
+
+*/
+void Clear_Screens(void)
+{
+
+    Set_Page_On();
+
+    Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
+
+    Set_Page_Off();
+
+    Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
+
+}
+
+
 // WZD s22p05 Set_Random_Seed()
 // WZD s22p06 Get_Random_Seed()
 // WZD s22p07 Randomize()

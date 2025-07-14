@@ -7,12 +7,19 @@
 
 #include "ItemView.h"
 
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/GENDRAW.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
+#include "MOX/MOX_T4.h"
 #include "MOX/MOX_TYPE.h"
 
 #include "ItemScrn.h"
+#include "MOX/Timer.h"
+#include "MOX/Video.h"
 #include "MainScr.h"  /* enchantment_outline_colors */
 #include "UnitView.h"
 

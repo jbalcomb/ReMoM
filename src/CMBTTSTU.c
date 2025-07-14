@@ -29,7 +29,10 @@ BU_UnitLoadToBattle__SEGRAX()
 
 #include "CMBTTSTU.h"
 
+#include "MOX/Allocate.h"
 #include "MOX/EMM.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Graphics.h"
 #include "MOX/MOX_TYPE.h"
 
 #include "CMBTDEF.h"

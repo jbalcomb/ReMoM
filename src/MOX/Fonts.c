@@ -18,8 +18,12 @@
 #include "MOX_TYPE.h"
 #include "Util.h"
 #include "Video.h"
+#include "capture.h"
 
 #include "../MOM_PFL.h"
+
+#include <assert.h>
+#include <string.h>
 
 
 
@@ -105,6 +109,13 @@ int16_t m_current_highlight_color;
 // WZD dseg:E818
 int16_t m_current_normal_color;
 // WZD dseg:E81A
+/*
+XREF:
+    PSTRM+25   mov     ax, [m_current_font_style]                              
+    Disp_PSTR+54     mov     ax, [m_current_font_style]                              
+    Get_Current_Font_Style+6 mov     ax, [m_current_font_style]                              
+    Set_Font_Style+4E        mov     [m_current_font_style], ax      ; ? current_font_style ?
+*/
 int16_t m_current_font_style;
 
 // WZD dseg:E81C
@@ -1032,21 +1043,269 @@ void Set_Color_Set(int16_t color_set_idx)
 }
 
 
-// TODO  matches these up with MoO2's Disp_PSTR(), PSTRM(), PSTRS(), PSTR(), PSTRL(), PSTRU(), ...
+/*
+MoO2
+Module: fonts
+
+... Disp_PSTR(), PSTRM(), PSTRS(), PSTR(), PSTRL(), PSTRU(), ...
+all debug stuff
+looks to be all Ken
+
+
+MoO2 moved the Check_Release_Version() to Disp_PSTR(), removing it from all the wrapper functions.
+
+MoO2 does not have the function that wraps Disp_PSTR() in Check_Release_Version().
+
+
+
+Disp_PSTR_Wrapper()
+OON XREF: UU_DBG_GetKnownSpells()
+
+*/
+
 // WZD s17p43
-// RP_DBG_TblDrawValue()
+// drake178: RP_DBG_TblDrawValue()
+// MoO2  Module: fonts  PSTRM()
+/*
+; draws a name-value pair using DBG_DrawTableCell if
+; debug is enabled, or does nothing otherwise
+*/
+// ¿  ?
+/*
+*/
+void ST_PSTRM(int16_t x, int16_t y, int16_t val, char * string)
+{
+    char buffer[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t old_style = 0;
+    int16_t old_color = 0;
+    int16_t j = 0;
+    int16_t i = 0;  // _DI_
+
+    if(Check_Release_Version() != ST_TRUE)
+    {
+
+        i = 0;
+        while(string[i++] != '\0') { }
+
+        old_style = m_current_font_style;
+
+        old_color = m_current_normal_color;
+
+        Set_Font_Style(0, 0, ST_NULL, ST_NULL);
+
+        Disp_PSTR(x, y, string);
+
+        j = ((Get_String_Width(string) + 2) * 10);
+
+        itoa(val ,buffer, 10);
+
+        Disp_PSTR((x + j + 1), y, buffer);
+
+        Set_Font_Style(old_style, old_color, ST_NULL, ST_NULL);
+        
+    }
+
+}
+
+
 // WZD s17p44
-// UU_DBG_TblCellWrapper()
+// drake178: UU_DBG_TblCellWrapper()
+// MoO2  DNE
+/*
+; Unused in MoM
+; a wrapper for DBG_DrawTableCell that avoids the call
+; if No_Debug is set to 1
+*/
+/*
+
+*/
+void Disp_PSTR_Wrapper(int16_t x, int16_t y, char * buffer)
+{
+
+    if(Check_Release_Version() != ST_TRUE)
+    {
+
+        Disp_PSTR(x, y, buffer);
+        
+    }
+
+}
+
+
 // WZD s17p45
-// UU_DBG_TblDrawString()
+// drake178: UU_DBG_TblDrawString()
+/*
+; Unused in MoM
+; draws the passed string onto the screen using
+; DBG_DrawTableCell
+*/
+/*
+
+*/
+void PSTRS(int16_t x, int16_t y, char * string)
+{
+
+    if(Check_Release_Version() != ST_TRUE)
+    {
+
+        _fstrcpy(near_buffer, string);
+
+        Disp_PSTR(x, y, near_buffer);
+
+    }
+
+}
+
+
 // WZD s17p46
-// UU_DBG_TblDrawS16()
+// drake178: UU_DBG_TblDrawS16()
+/*
+; draws the passed value as a signed 16bit integer
+; onto the screen using DBG_DrawTableCell
+; Attributes: bp-based frame
+*/
+/*
+
+FTW  winnt.h  typedef _Null_terminated_ CHAR *NPSTR, *LPSTR, *PSTR;
+
+*/
+void ST_PSTR(int x, int y, int val)
+{
+    char buffer[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+    if(Check_Release_Version() != ST_TRUE)
+    {
+
+        itoa(val, buffer, 10);
+
+        Disp_PSTR(x, y, buffer);
+
+    }
+
+}
+
 // WZD s17p47
-// UU_DBG_TblDrawS32()
+// drake178: UU_DBG_TblDrawS32()
+/*
+; Unused in MoM
+; draws the passed value as a signed 32bit integer
+; onto the screen using DBG_DrawTableCell
+*/
+/*
+
+*/
+void PSTRL(int16_t x, int16_t y, int32_t val)
+{
+    char buffer[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+    if(Check_Release_Version() != ST_TRUE)
+    {
+
+        ltoa(val, buffer, 10);
+
+        Disp_PSTR(x, y, buffer);
+
+    }
+
+}
+
+
 // WZD s17p48
-// UU_DBG_TblDrawU32()
+// drake178: UU_DBG_TblDrawU32()
+/*
+; Unused in MoM
+; draws the passed value as an unsigned 32bit integer
+; onto the screen using DBG_DrawTableCell
+*/
+/*
+
+*/
+void PSTRU(int16_t x, int16_t y, uint32_t value)
+{
+    char buffer[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint32_t val = 0;
+
+    if(Check_Release_Version() != ST_TRUE)
+    {
+
+// IDGI  mov     ax, [bp+value]
+// IDGI  mov     [word ptr bp+val+2], 0
+// IDGI  mov     [word ptr bp+val], ax
+        val = value;
+
+        ultoa(val, buffer, 10);
+
+        Disp_PSTR(x, y, buffer);
+
+    }
+
+}
+
+
 // WZD s17p49
-// DBG_DrawTableCell()
+// drake178: DBG_DrawTableCell()
+// MoO2  Module: fonts  Disp_PSTR()
+/*
+; draws a table cell into both the display and draw
+; segments using a base 10 by 10 cell size, black
+; background, and the default palette colors of the
+; first (smallest) font
+*/
+/*
+
+*/
+void Disp_PSTR(int16_t x, int16_t y, char * buffer)
+{
+    uint8_t * old_page = 0;
+    int16_t old_y2 = 0;
+    int16_t old_x2 = 0;
+    int16_t old_y1 = 0;
+    int16_t old_x1 = 0;
+    int16_t old_style = 0;
+    int16_t old_color = 0;
+
+    old_page = current_video_page;
+
+    x *= 10;  // Why?
+    y *= 10;  // Why?
+
+    old_x1 = screen_window_x1;
+    old_y1 = screen_window_y1;
+    old_x2 = screen_window_x2;
+    old_y2 = screen_window_y2;
+
+    Set_Window(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX);
+
+    old_style = m_current_font_style;
+
+    old_color = m_current_normal_color;
+
+    Set_Font_Style(0, 0, ST_NULL, ST_NULL);
+
+    Set_Page_On();
+
+    // TODO  Clipped_Fill((x - 3), (y - 3), (x + Get_String_Width(buffer) + 4), (y + farpeekb(font_style_data, FONT_HDR_POS_HEIGHT) + 5), ST_TRANSPARENT);
+    Clipped_Fill((x - 3), (y - 3), (x + Get_String_Width(buffer) + 4), (y + GET_1B_OFS(font_style_data, FONT_HDR_POS_HEIGHT) + 5), ST_TRANSPARENT);
+
+    Clipped_Print((x + 1), (y + 1), buffer);
+
+    Platform_Video_Update();
+
+    Set_Page_Off();
+
+    // TODO  Clipped_Fill((x - 3), (y - 3), (x + Get_String_Width(buffer) + 4), (y + farpeekb(font_style_data, FONT_HDR_POS_HEIGHT) + 5), ST_TRANSPARENT);
+    Clipped_Fill((x - 3), (y - 3), (x + Get_String_Width(buffer) + 4), (y + GET_1B_OFS(font_style_data, FONT_HDR_POS_HEIGHT) + 5), ST_TRANSPARENT);
+
+    Clipped_Print((x + 1), (y + 1), buffer);
+
+    Set_Window(old_x1, old_y1, old_x2, old_y2);
+
+    Set_Font_Style(old_style, old_color, ST_NULL, ST_NULL);
+
+    current_video_page = old_page;
+
+}
+
 
 // WZD s17p50
 // drake178: VGA_WndDrawSString()
@@ -2936,7 +3195,7 @@ Module: palette
 // PLATFORM  }
 #ifdef _STU_WIN
 
-#include "MOM.h"
+#include "MOX/MOX_TYPE.h"
 
 // TODO  turn this into MoX64 or somesuch; not PFL, just not OG/DOS/16-bit/6-bpp (VGA)
 

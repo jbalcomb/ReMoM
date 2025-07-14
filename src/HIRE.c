@@ -5,7 +5,12 @@
         ovr127
 */
 
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
+#include "MOX/LBX_Load.h"
 
 #include "CITYCALC.h"
 #include "Combat.h"
@@ -15,6 +20,8 @@
 #include "ItemView.h"
 #include "LOADER.h"
 #include "MOX/MOX_T4.h"
+#include "MOX/Timer.h"
+#include "MOX/paragrph.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 #include "MOM_SCR.h"
@@ -25,6 +32,8 @@
 #include "UnitStat.h"
 #include "UNITTYPE.h"   // WTFMATE
 #include "UnitView.h"
+
+#include <string.h>
 
 
 
@@ -294,7 +303,9 @@ void Merchant_Popup(void)
     }
 
     Release_Block(_screen_seg);
+
     Clear_Fields();
+
     Deactivate_Auto_Function();
 
 }

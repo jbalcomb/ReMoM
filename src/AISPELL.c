@@ -11,10 +11,14 @@ Module: AITECH
 #include "AISPELL.h"
 #include "CITYCALC.h"
 #include "MOX/Allocate.h"
+#include "MOX/EXIT.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_DAT.h"
 #include "MOX/MOX_DEF.h"
 
+#include "MOX/MOX_T4.h"
+#include "MOX/Util.h"
+#include "MOX/capture.h"
 #include "MOX/random.h"
 #include "SBookScr.h"
 #include "STU/STU_DBG.h"
@@ -25,6 +29,8 @@ Module: AITECH
 #ifdef STU_DEBUG
 #include "STU/STU_DBG.h"
 #endif
+
+#include <string.h>
 
 
 

@@ -1,6 +1,7 @@
-#include "sdl2_KD.h"
 
 #include "sdl2_boolvec.h"
+
+#include "sdl2_KD.h"
 
 
 
@@ -13,7 +14,7 @@ static struct {
     int tail;
     uint32_t mod;
     uint32_t buf[KBD_BUFSIZE];
-    BOOLVEC_DECLARE(pressed, MOO_KEY_LAST);
+    BOOLVEC_DECLARE(pressed, MOX_KEY_OVERRUN);
 } kbd = { 0 };
 
 /* -------------------------------------------------------------------------- */
@@ -24,13 +25,13 @@ void kbd_clear(void)
     kbd.head = 0;
     kbd.tail = 0;
     kbd.mod = 0;
-    BOOLVEC_CLEAR(kbd.pressed, MOO_KEY_LAST);
+    BOOLVEC_CLEAR(kbd.pressed, MOX_KEY_OVERRUN);
 }
 
-void kbd_add_keypress(mookey_t key, uint32_t mod, char c)
+void kbd_add_keypress(int key, uint32_t mod, char c)
 {
     uint32_t value = ((uint32_t)key) | mod | (((uint32_t)c) << 8);
-    if (key == MOO_KEY_LAST) {
+    if (key == MOX_KEY_OVERRUN) {
         return;
     }
     if (kbd.full) {
@@ -53,24 +54,24 @@ bool Keyboard_Status(void)
 // kbd_get_keypress()
 uint32_t Read_Key(void)
 {
-    mookey_t key = MOO_KEY_UNKNOWN;
+    int key = MOX_KEY_UNKNOWN;
     if (Keyboard_Status()) {
-        key = (mookey_t)kbd.buf[kbd.tail];
+        key = (int)kbd.buf[kbd.tail];
         if (++kbd.tail == KBD_BUFSIZE) { kbd.tail = 0; }
         kbd.full = false;
     }
     return key;
 }
 
-void kbd_set_pressed(mookey_t key, uint32_t mod, bool pressed)
+void kbd_set_pressed(int key, uint32_t mod, bool pressed)
 {
     kbd.mod = mod;
-    if ((key != MOO_KEY_UNKNOWN) && (key < MOO_KEY_LAST)) {
+    if ((key != MOX_KEY_UNKNOWN) && (key < MOX_KEY_OVERRUN)) {
         BOOLVEC_SET(kbd.pressed, key, pressed);
     }
 }
 
-bool kbd_is_pressed(mookey_t key, uint32_t modon, uint32_t modoff)
+bool kbd_is_pressed(int key, uint32_t modon, uint32_t modoff)
 {
     return (((kbd.mod & modon) == modon) && ((kbd.mod & modoff) == 0) && BOOLVEC_IS1(kbd.pressed, key));
 }

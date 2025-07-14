@@ -5,9 +5,29 @@
         ovr079
 */
 
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/Graphics.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
+#include "MOX/MOX_DEF.h"
+#include "MOX/MOX_T4.h"
+#include "MOX/MOX_TYPE.h"
+#include "MOX/Video.h"
+#include "MOX/Timer.h"
 
-#include "MOM.h"
+#include "Combat.h"
+#include "Help.h"
+#include "LOADER.h"
+#include "UNITTYPE.h"
+#include "UnitMove.h"
+#include "UnitStat.h"
+#include "MainScr.h"
+
+#include <string.h>
+
+#include "UnitList.h"
 
 
 

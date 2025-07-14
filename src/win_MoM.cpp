@@ -1,6 +1,9 @@
 
 #include <Windows.h>
 
+#include "MOX/LBX_Load.h"
+#include "MOX/MOX_T4.h"
+#include "MOX/capture.h"
 #include "win_PFL.hpp"
 
 #include "STU/STU.h"
@@ -356,7 +359,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     main_menu_music_seg = LBX_Load(music_lbx__main, MUSIC_Main_Menu);
     if(magic_set.background_music == ST_TRUE)
     {
-        Play_Sound__WIP(main_menu_music_seg);
+        Play_Sound__MSDOS(main_menu_music_seg);
     }
 
 

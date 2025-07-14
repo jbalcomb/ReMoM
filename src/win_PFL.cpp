@@ -1,10 +1,17 @@
+
 #include <Windows.h>
+#include "MOX/MOX_T4.h"
+#include "MOX/Mouse.h"
 #include "windowsx.h"   /* GET_X_LPARAM(), GET_Y_LPARAM() */
 #include <stdint.h>
 
 #include "win_PFL.hpp"
 
+#include "MOX/Video.h"
+#include "MOX/Video2.h"
 #include "MOX/Input.h"
+#include "MOX/MOX_TYPE.h"
+#include "MOX/MOX_BASE.h"
 
 #include "MOM_PFL.h"
 #include "MOM_SCR.h"

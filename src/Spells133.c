@@ -4,25 +4,36 @@
 */
 
 
-#include "MOM_DEF.h"
+#include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/GENDRAW.h"
+#include "MOX/Graphics.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/LBX_Load.h"
 #include "MOX/MOX_DAT.h"
 #include "MOX/MOX_DEF.h"
 #include "MOX/MOX_SET.h"
+#include "MOX/MOX_T4.h"
 #include "MOX/MOX_TYPE.h"
 #include "MOX/SOUND.h"
+#include "MOX/Timer.h"
+#include "MOX/random.h"
 
+#include "MOM_DEF.h"
 #include "CMBTDEF.h"
 #include "Combat.h"
 #include "NEXTTURN.h"
+#include "RACETYPE.h"
 #include "SBookScr.h"
 #include "Spellbook.h"
 #include "Spells129.h"
-#include "Spells133.h"
 
 #include "STU/STU_DBG.h"
+
+#include <assert.h>
+
+#include "Spells133.h"
 
 
 

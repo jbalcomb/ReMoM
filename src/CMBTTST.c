@@ -5,10 +5,15 @@
 
 #include "CMBTDEF.h"
 
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Graphics.h"
 #include "MOX/MOX_DAT.h"
 #include "MOX/MOX_DEF.h"
 #include "MOX/MOX_T4.h"  /* PageFlipEffect */
 #include "MOX/MOX_TYPE.h"
+#include "MOX/Timer.h"
 #include "MOX/Video.h"
 
 
@@ -154,6 +159,7 @@ int16_t Combat_Screen_TST_002(int16_t combat_attacker_player_idx, int16_t combat
 
     while(leave_screen == ST_FALSE)
     {
+
         Mark_Time();
 
         Clear_Fields();
@@ -169,9 +175,13 @@ int16_t Combat_Screen_TST_002(int16_t combat_attacker_player_idx, int16_t combat
 
         if(leave_screen == ST_FALSE)
         {
+
             Combat_Screen_TST_002_Draw();
+
             PageFlip_FX();
+
             Release_Time(1);
+
         }
 
     }
@@ -322,15 +332,24 @@ int16_t Combat_Screen_TST_004(int16_t combat_attacker_player_idx, int16_t combat
     _page_flip_effect = pfe_None;
 
     // CMB_BaseAllocs__WIP()
+
     battlefield = (struct s_BATTLEFIELD *)Allocate_First_Block(_screen_seg, 348);  // 348 PR, 5568 B
+
     combat_grid_entities = (struct s_COMBAT_ENTITY *)Allocate_Next_Block(_screen_seg, 482);  // 482 PR, 7712 B
+
     // CMB_LoadResources__WIP()
+
     battle_units = (struct s_BATTLE_UNIT *)Allocate_Next_Block(_screen_seg, 249);
+
     Mark_Block(_screen_seg);
+
     for(itr = 0; itr < MAX_BATTLE_UNIT_COUNT; itr++)
     {
+
         battle_unit_picts_seg[itr] = Allocate_Next_Block(_screen_seg, 55);  // 55 PR  880 B
+
     }
+    
     Release_Block(_screen_seg);
 
     _combat_wx = wx;

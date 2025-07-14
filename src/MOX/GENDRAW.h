@@ -10,6 +10,7 @@
 #define GENDRAW_H
 
 #include "EMM.h"
+#include "MOX_T4.h"
 #include "MOX_TYPE.h"
 #include "TEXTBOX.h"
 

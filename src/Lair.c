@@ -12,16 +12,35 @@ BACKGRND.LBX
 NOTE: IDGI, but the FanDom MoM Wiki uses the term "Encounter Zone"
 */
 
+#include "CITYCALC.h"
+#include "City_ovr55.h"
+#include "Combat.h"
+#include "HIRE.h"
+#include "ItemMake.h"
+#include "ItemScrn.h"
+#include "MOX/Allocate.h"
+#include "MOX/FLIC_Draw.h"
+#include "MOX/Fields.h"
+#include "MOX/Fonts.h"
+#include "MOX/GENDRAW.h"
+#include "MOX/Graphics.h"
+#include "MOX/LBX_Load.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
 #include "MOX/MOX_SET.h"  /* magic_set */
-#include "MOX/sdl2_Audio.h"
+#include "MOX/Util.h"
+#include "MOX/paragrph.h"
+#include "MOX/random.h"
 #include "MOX/SOUND.h"
 
-#include "MOM.h"
-
+#include "MainScr.h"
+#include "MainScr_Maps.h"
 #include "NEXTTURN.h"
 #include "Spellbook.h"
 #include "Spells128.h"
+#include "UNITTYPE.h"
+#include "WZD_o059.h"
+
+#include "Lair.h"
 
 
 

@@ -7,10 +7,8 @@ MoO2
     Module: fields
 
 */
-#ifndef MOX_DBG_H
-#define MOX_DBG_H
-
-#include "MOX_Lib.h"
+#ifndef CAPTURE_H
+#define CAPTURE_H
 
 
 
@@ -54,4 +52,4 @@ int Check_Release_Version(void);
 }
 #endif
 
-#endif /* MOX_DBG_H */
+#endif /* CAPTURE_H */

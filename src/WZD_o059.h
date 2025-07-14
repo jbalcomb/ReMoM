@@ -6,7 +6,8 @@
 #ifndef WZD_O059_H
 #define WZD_O059_H
 
-#include "MOM.h"
+#include "MOX/MOX_TYPE.h"
+
 
 
 #ifdef __cplusplus
