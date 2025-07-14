@@ -11,6 +11,7 @@
 #include "City_ovr55.h"
 
 #include "Explore.h"
+#include "MOM_DEF.h"
 #include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fonts.h"
@@ -2417,12 +2418,208 @@ void Possessive(char * string)
 
 
 // WZD o55p38
-// drake178: N/A
-// sub_4D5EA()
+// drake178: N/A  sub_4D5EA()
+/*
+
+Resource window
+breakdown
+
+*/
+void Resource_Breakdown__STUB(int16_t resource_id)
+{
+    int16_t var_A = 0;
+    int16_t var_8 = 0;
+    int16_t var_6 = 0;
+    int16_t input_field_idx = 0;
+    int16_t leave_screen = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t di = 0;  // _DI_
+
+    m_resource_id = resource_id;
+
+    GUI_String_1 = (char *)Near_Allocate_First(80);
+
+    GUI_String_2 = (char *)Near_Allocate_Next(80);
+
+    Retn_Struct = Near_Allocate_Next(100);  // 15 2-byte values
+
+    for(itr = 0; itr < 15; itr++)
+    {
+
+        IDK_CityScr_15x50_tmpbuf[itr] = Near_Allocate_Next(50);  // 15 2-byte values
+
+    }
+
+    IMG_Seg = LBX_Reload(help_lbx_file__ovr055, 0, _screen_seg);
+
+    word_42A82 = LBX_Reload_Next(help_lbx_file__ovr055, 1, _screen_seg);
+
+    Clear_Fields();
+
+    Deactivate_Help_List();
+
+    Deactivate_Auto_Function();
+
+    Assign_Auto_Function(Resource_Breakdown_Draw__STUB, 0);
+
+    Copy_On_To_Off_Page();
+
+    Copy_Off_To_Back();
+
+    var_A = 0;
+
+    word_42A80 = 0;
+
+    word_42A7E = 0;
+
+    switch(m_resource_id)
+    {
+
+        case 0:
+        {
+
+            di = 0;
+
+            for(itr = 0; itr < 15; itr++)
+            {
+
+                LBX_Load_Data_Static(str_listdat_lbx_file__ovr055, 0, (SAMB_ptr)GUI_String_1[0], (di + itr), 1, 200);
+
+                strcpy((char *)IDK_CityScr_15x50_tmpbuf[itr], GUI_String_1);
+
+            }
+
+            CTY_Food_Breakdown(_city_idx, (struct s_FOOD_BREAKDOWN *)Retn_Struct);
+
+            for(itr = 0; itr < 15; itr++)
+            {
+
+                if(Retn_Struct[itr] != 0)
+                {
+
+                    word_42A7E++;
+
+                }
+                
+            }
+
+        } break;
+
+    }
+
+    if(m_resource_id == 3)
+    {
+
+        word_42A7E = 0;
+
+        for(itr = 1; itr < NUM_BUILDINGS; itr++)
+        {
+
+            if(
+                (_CITIES[_city_idx].bldg_status[itr] == bs_Built)
+                ||
+                (_CITIES[_city_idx].bldg_status[itr] == bs_Replaced)
+            )
+            {
+
+                Retn_Struct[word_42A7E] = itr;
+
+                word_42A7E++;
+
+            }
+
+        }
+
+        if(word_42A7E > 17)
+        {
+
+            var_A = 1;
+
+        }
+
+    }
+
+    leave_screen = ST_FALSE;
+
+    while(leave_screen == ST_FALSE)
+    {
+
+        Mark_Time();
+
+        Clear_Fields();
+
+        var_8 = INVALID_FIELD;
+
+        if(var_A == 1)
+        {
+
+            var_8 = Add_Hidden_Field(217, 166, 240, 175, str_hotkey_M__ovr055[0], ST_UNDEFINED);
+
+        }
+
+        var_6 = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr055[0], ST_UNDEFINED);
+
+        input_field_idx = Get_Input();
+
+        if(input_field_idx == var_6)
+        {
+
+            leave_screen = ST_TRUE;
+
+        }
+
+        if(input_field_idx == var_8)
+        {
+
+            if(word_42A80 == 0)
+            {
+
+                word_42A80 = 17;
+
+            }
+            else
+            {
+
+                word_42A80 = 0;
+
+            }
+
+        }
+
+        if(leave_screen == ST_FALSE)
+        {
+
+            Resource_Breakdown_Draw__STUB();
+
+            PageFlip_FX();
+
+            Release_Time(1);
+
+        }
+
+    }
+
+    Clear_Fields();
+
+    Deactivate_Help_List();
+
+    Deactivate_Auto_Function();
+
+}
+
 
 // WZD o55p39
-// drake178: N/A
-// sub_4DA19()
+// drake178: N/A  sub_4DA19()
+/*
+
+*/
+void Resource_Breakdown_Draw__STUB(void)
+{
+
+
+
+}
+
 
 // WZD o55p40
 // drake178: N/A

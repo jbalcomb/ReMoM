@@ -35,9 +35,7 @@
 #include "WZD_o143.h"
 #include "WZD_o146.h"
 
-#ifdef STU_DEBUG
 #include "STU/STU_DBG.h"    /* DLOG() */
-#endif
 
 #include <assert.h>
 #include <string.h>
@@ -284,9 +282,8 @@ void City_Screen__WIP(void)
     }
 
 
-Check_Cities_Data();
     Do_City_Calculations(_city_idx);
-Capture_Cities_Data();
+
 
     m_city_production_cost = City_Production_Cost(_CITIES[_city_idx].construction, _city_idx);
 
@@ -295,12 +292,17 @@ Capture_Cities_Data();
 
     if(_CITIES[_city_idx].construction < 100)
     {
+
         _fstrcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
+
     }
     else
     {
+
         Row = (_CITIES[_city_idx].construction - 100);
+
         strcpy(m_city_screen_product_name, *_unit_type_table[Row].name);
+        
     }
 
     cityscape_bldg_count = 0;
@@ -325,11 +327,14 @@ Capture_Cities_Data();
     Set_Input_Delay(2);
 
     screen_changed = ST_FALSE;
+
     leave_screen = ST_FALSE;
+
     city_screen_scanned_field = ST_UNDEFINED;
 
     while(leave_screen == ST_FALSE)
     {
+
         Mark_Time();
 
         City_Screen_Add_Fields__WIP();
@@ -350,7 +355,58 @@ Capture_Cities_Data();
             loop 6 resources
             IDK_CityScr_RsrcBrkdn(rsrc)
         */
-
+// TODO          for(itr = 0; itr < 7; itr++)
+// TODO          {
+// TODO  
+// TODO              if(city_resources_rows_fields[itr] == input_field_idx)
+// TODO              {
+// TODO  
+// TODO                  Resource_Breakdown__STUB(itr);
+// TODO  
+// TODO                  screen_changed = ST_TRUE;
+// TODO  
+// TODO                  City_Screen_Load();
+// TODO  
+// TODO                  Deactivate_Help_List();
+// TODO  
+// TODO                  Set_City_Screen_Help_List();
+// TODO  
+// TODO                  Assign_Auto_Function(City_Screen_Draw__WIP, 1);
+// TODO  
+// TODO                  City_Can_Buy_Product();
+// TODO  
+// TODO                  if(_CITIES[_city_idx].construction >= 100)  // bt_MAX_BLDG_IDX
+// TODO                  {
+// TODO  
+// TODO                      unit_type = (_CITIES[_city_idx].construction - 100);
+// TODO  
+// TODO                      strcpy(m_city_screen_product_name, *_unit_type_table[unit_type].name);
+// TODO  
+// TODO                  }
+// TODO                  else
+// TODO                  {
+// TODO  
+// TODO                      _fstrcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
+// TODO  
+// TODO                  }
+// TODO  
+// TODO                  City_Screen_Allocate_First_Block();
+// TODO  
+// TODO                  Do_Build_City_Enchantment_List();
+// TODO  
+// TODO                  city_screen_scanned_field = ST_UNDEFINED;
+// TODO  
+// TODO                  screen_changed = ST_TRUE;
+// TODO  
+// TODO                  Clear_Fields();
+// TODO  
+// TODO                  cityscape_bldg_count = 0;
+// TODO  
+// TODO                  Set_Input_Delay(2);
+// TODO  
+// TODO              }
+// TODO  
+// TODO          }
         /*
             END:  Left-Click Resource Row
         */
@@ -492,36 +548,52 @@ Capture_Cities_Data();
             BEGIN:  Left-Click Change Button
         */
         {
-            if(input_field_idx == city_sceen_change_button)
+            if(input_field_idx == city_screen_change_button)
             {
+
                 Play_Left_Click();
+
                 production_screen_return_screen = 2;  // {1: CityList Screen, 2: City Screen}
+
                 Production_Screen();
 
                 City_Screen_Load();
+
                 Deactivate_Help_List();
+
                 Set_City_Screen_Help_List();
+
                 Assign_Auto_Function(City_Screen_Draw__WIP, 1);
-Check_Cities_Data();
+
                 Do_City_Calculations(_city_idx);
-// Check_Cities_Data();
-Capture_Cities_Data();
+
                 m_city_production_cost = City_Production_Cost(_CITIES[_city_idx].construction, _city_idx);
+
                 m_city_n_turns_to_produce = City_N_Turns_To_Produce(m_city_production_cost, _city_idx);
+                
                 City_Can_Buy_Product();
+
                 if(_CITIES[_city_idx].construction < 100)
                 {
+
                     _fstrcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
+
                 }
                 else
                 {
+
                     Row = (_CITIES[_city_idx].construction - 100);
+
                     strcpy(m_city_screen_product_name, *_unit_type_table[Row].name);
+
                 }
+
                 City_Screen_Allocate_First_Block();
 
                 production_screen_return_screen = 2;
+
                 screen_changed = ST_TRUE;
+
             }
         }
         /*
@@ -1342,7 +1414,7 @@ void City_Screen_Add_Fields__WIP(void)
     }
 
     city_screen_buy_button = INVALID_FIELD;
-    city_sceen_change_button = INVALID_FIELD;
+    city_screen_change_button = INVALID_FIELD;
     city_screen_ok_button = INVALID_FIELD;
     UU_CityScreen_Field = INVALID_FIELD;
 
@@ -1410,7 +1482,7 @@ void City_Screen_Add_Fields_Production_Window(void)
     }
 
     // city_sceen_change_button = Add_Button_Field(214, 188, cnst_ZeroString_25, IMG_CTY_BUY_Btn, cnst_HOTKEY_C, 0xFFFF);
-    city_sceen_change_button = Add_Button_Field(247, 188, "", city_change_button_seg, 'C', ST_UNDEFINED);
+    city_screen_change_button = Add_Button_Field(247, 188, "", city_change_button_seg, 'C', ST_UNDEFINED);
 
     // city_screen_ok_button = Add_Button_Field(214, 188, cnst_ZeroString_25, IMG_CTY_BUY_Btn, cnst_HOTKEY_O, 0xFFFF);
     city_screen_ok_button = Add_Button_Field(286, 188, "", city_ok_button_seg, 'O', ST_UNDEFINED);
@@ -1592,7 +1664,6 @@ void Change_Home_City_Name_Popup(int16_t city_idx)
     color_array[12] = 103;
     color_array[13] = 103;
 
-
     start_x = 60;
     start_y = 30;
 
@@ -1637,8 +1708,8 @@ void Change_Home_City_Name_Popup(int16_t city_idx)
 // WZD o54p10
 void Draw_NameStartingCity_Background(void)
 {
-    int16_t start_x;  // _SI_
-    int16_t start_y;  // _DI_
+    int16_t start_x = 0;  // _SI_
+    int16_t start_y = 0;  // _DI_
 
     start_x = 60;
     start_y = 30;
@@ -1682,21 +1753,28 @@ PoI?
 */
 void City_Screen_Required_Buildings_List(int16_t city_idx)
 {
-    int16_t reqd_bldg_idx;
-    int16_t itr;  // _SI_
+    int16_t reqd_bldg_idx = 0;
+    int16_t itr = 0;  // _SI_
 
     for(itr = 1; itr < NUM_BUILDINGS; itr++)
     {
+
         city_screen_required_buildings_list[itr] = ST_TRUE;
 
         if(_CITIES[city_idx].bldg_status[itr] >= 1)  // ¿ testing for Built and Removed, but not Replaced ?
         {
+
             if(City_Building_Has_Requirement(itr, city_idx, &reqd_bldg_idx) == ST_FALSE)
             {
+
                 city_screen_required_buildings_list[itr] = ST_FALSE;
+
             }
+
         }
+
     }
+
 }
 
 
@@ -1757,14 +1835,17 @@ void City_Screen_Load(void)
 */
 void City_Screen_Allocate_First_Block(void)
 {
-    int16_t unit_type;
+    int16_t unit_type = 0;
 
     _reduced_map_seg = Allocate_First_Block(_screen_seg, 303);  // 303 PR  4848 B
 
     if(_CITIES[_city_idx].construction >= 100)
     {
+
         unit_type = (_CITIES[_city_idx].construction - 100);
+
         Load_Unit_Figure(unit_type, 1);
+
     }
 
 }
@@ -1776,17 +1857,17 @@ void City_Screen_Allocate_First_Block(void)
 // MoO2  Module: CMBTDRW1 Get_Ship_Anim_Dimensions_()
 void Draw_Building_Picture_To_Bitmap(int16_t city_idx, int16_t bldg_idx, int16_t * x1, int16_t * y1, int16_t * width, int16_t * height, SAMB_ptr bitmap)
 {
-    int16_t itr_frames;
-    int16_t l_width;
-    int16_t l_height;
-    int16_t l_y1;
-    int16_t l_x1;
-    int16_t max_height;
-    int16_t max_width;
-    int16_t min_y1;
-    int16_t min_x1;
-    int16_t frame_count;
-    int16_t current_frame;
+    int16_t itr_frames = 0;
+    int16_t l_width = 0;
+    int16_t l_height = 0;
+    int16_t l_y1 = 0;
+    int16_t l_x1 = 0;
+    int16_t max_height = 0;
+    int16_t max_width = 0;
+    int16_t min_y1 = 0;
+    int16_t min_x1 = 0;
+    int16_t frame_count = 0;
+    int16_t current_frame = 0;
 
     if(bldg_idx == bt_TradeGoods)
     {

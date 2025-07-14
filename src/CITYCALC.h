@@ -26,6 +26,74 @@ enum e_KILL_TYPE
     kt_Disappeared  = 2     // disappear - killed by damage[2] (doom/chaos damage); banish, cracks call, disintegrate, dispel evil, holy word, petrify, unsummon
 };
 
+//  ; (sizeof=0x10, standard type)
+struct s_FOOD_BREAKDOWN
+{
+    /* 0x00 */  int16_t Farmers;
+    /* 0x02 */  int16_t Animists_Guild;
+    /* 0x04 */  int16_t Granary;
+    /* 0x06 */  int16_t Farmers_Market;
+    /* 0x08 */  int16_t Foresters_Guild;
+    /* 0x0A */  int16_t Wild_Games;
+    /* 0x0C */  int16_t Gaias_Blessing;
+    /* 0x0E */  int16_t Famine_POS;
+    /* 0x10 */
+};
+
+//  ; (sizeof=0x16, standard type)
+struct s_GOLD_BREAKDOWN
+{
+    /* 0x00 */  int16_t Taxes;
+    /* 0x02 */  int16_t Trade_Goods;
+    /* 0x04 */  int16_t Silver_Ores;
+    /* 0x06 */  int16_t Gold_Ores;
+    /* 0x08 */  int16_t Gems;
+    /* 0x0A */  int16_t Miners_Guild;
+    /* 0x0C */  int16_t Road_River_Ocean;
+    /* 0x0E */  int16_t Marketplace;
+    /* 0x10 */  int16_t Bank;
+    /* 0x12 */  int16_t Merchants_Guild;
+    /* 0x14 */  int16_t Prosperity;
+    /* 0x16 */
+};
+
+//  ; (sizeof=0x14, standard type)
+struct s_PRODUCTION_BREAKDOWN
+{
+    /* 0x00 */  int16_t Workers;
+    /* 0x02 */  int16_t Farmers;
+    /* 0x04 */  int16_t Terrain;
+    /* 0x06 */  int16_t Sawmill;
+    /* 0x08 */  int16_t Foresters_Gld;
+    /* 0x0A */  int16_t Miners_Guild;
+    /* 0x0C */  int16_t Mechanicians;
+    /* 0x0E */  int16_t Gaias_Blessing;
+    /* 0x10 */  int16_t Inspirations;
+    /* 0x12 */  int16_t CursedLnds_POS;
+    /* 0x14 */
+};
+
+//  ; (sizeof=0x1E, standard type)
+struct s_POWER_BREAKDOWN
+{
+    /* 0x00 */  int16_t Fortress;
+    /* 0x02 */  int16_t Townsfolk;
+    /* 0x04 */  int16_t Shrine;
+    /* 0x06 */  int16_t Temple;
+    /* 0x08 */  int16_t Parthenon;
+    /* 0x0A */  int16_t Cathedral;
+    /* 0x0C */  int16_t Alchemists_Gld;
+    /* 0x0E */  int16_t Wizards_Guild;
+    /* 0x10 */  int16_t Mithril;
+    /* 0x12 */  int16_t Adamantium;
+    /* 0x14 */  int16_t Quork;
+    /* 0x16 */  int16_t Crysx;
+    /* 0x18 */  int16_t Miners_Guild;
+    /* 0x1A */  int16_t Dark_Rituals;
+    /* 0x1C */  int16_t Evil_Prs_POS;
+    /* 0x1E */
+};
+
 
 
 /*
@@ -225,7 +293,7 @@ int16_t City_Area_Square_Is_Shared(int16_t city_area_square_wx, int16_t city_are
 void City_Remove_Road(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o142p32
-// CTY_Food_Breakdown()
+void CTY_Food_Breakdown(int16_t city_idx, struct s_FOOD_BREAKDOWN * Retn_Struct);
 
 // WZD o142p33
 // CTY_Gold_Breakdown()

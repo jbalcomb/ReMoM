@@ -4065,7 +4065,7 @@ extern int16_t city_screen_esc_hotkey;
 extern int16_t city_screen_ok_button;
 
 // WZD dseg:BFAA
-extern int16_t city_sceen_change_button;
+extern int16_t city_screen_change_button;
 
 // WZD dseg:BFAC
 extern int16_t city_screen_buy_button;
@@ -4095,12 +4095,26 @@ extern char * GUI_String_1;
 
 
 // WZD dseg:BFBE 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+word_42A5E dw 0Fh dup(0)                ; DATA XREF: sub_4D5EA+47w
-// WZD dseg:BFDC 00 00                                           Retn_Struct@ dw 0  // ; FOOD_BRKDN *Retn_Struct
-// WZD dseg:BFDE 00 00                                           word_42A7E dw 0                         ; DATA XREF: sub_4D5EA+B1w ...
-// WZD dseg:BFE0 00 00                                           word_42A80 dw 0                         ; DATA XREF: sub_4D5EA+ABw ...
-// WZD dseg:BFE2 00 00                                           word_42A82 dw 0                         ; DATA XREF: sub_4D5EA+7Bw ...
-// WZD dseg:BFE4 00 00                                           IMG_Seg dw 0                            ; DATA XREF: sub_4D5EA+64w ...
-// WZD dseg:BFE6 00 00                                           word_42A86 dw 0                         ; DATA XREF: sub_4D5EA+Bw ...
+// WZD dseg:BFBE 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IDK_CityScr_15x50_tmpbuf dw 0Fh dup(0)  ; DATA XREF: IDK_CityScr_RsrcBrkdn+47w
+extern byte_ptr IDK_CityScr_15x50_tmpbuf[15];
+
+// WZD dseg:BFDC
+extern byte_ptr Retn_Struct;
+
+// WZD dseg:BFDE
+extern int16_t word_42A7E;
+// WZD dseg:BFE0
+extern int16_t word_42A80;
+
+// WZD dseg:BFE2
+extern SAMB_ptr word_42A82;
+
+// WZD dseg:BFE4
+extern SAMB_ptr IMG_Seg;
+
+// WZD dseg:BFE6
+extern int16_t m_resource_id;
+
 // WZD dseg:BFE8 00 00                                           m_troop_fields dw 0    ; DATA XREF: Enemy_City_Screen+1D3r ...
 // WZD dseg:BFEA 00 00                                           IDK_EnemyCityScreen_UnitStack_1 dw 0    ; DATA XREF: Enemy_City_Screen:loc_4A454r ...
 // WZD dseg:BFEC 00 00                                           RecTotal dw 0                           ; DATA XREF: Enemy_City_Screen+68o ...

@@ -4188,7 +4188,195 @@ void City_Remove_Road(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD o142p32
-// CTY_Food_Breakdown()
+// drake178: CTY_Food_Breakdown()
+/*
+; fills the passed return structure with the food
+; income breakdown values of the city
+; contains multiple bugs related to Gaia's Blessing,
+; Famine, and the Foresters' Guild
+*/
+/*
+City Screen
+Resource Window
+Food Breakdown
+
+*/
+void CTY_Food_Breakdown(int16_t city_idx, struct s_FOOD_BREAKDOWN * Retn_Struct)
+{
+    int16_t Farmed_Food_Total = 0;
+    int16_t Tile_Food = 0;
+    int16_t itr = 0;
+    int16_t Food_Sub_Sum = 0;
+
+    // DONT  EMM_Map_DataH();
+
+    for(itr = 0; itr < 15; itr++)
+    {
+
+        ((int16_t *)Retn_Struct)[itr] = 0;
+
+    }
+
+    if(_CITIES[city_idx].population == 0)
+    {
+
+        return;
+
+    }
+
+    Tile_Food = City_Food_Terrain(city_idx);
+
+    if(_CITIES[city_idx].farmer_count > _CITIES[city_idx].population)
+    {
+
+        CITIES_FARMER_COUNT(city_idx, _CITIES[city_idx].population);
+        
+    }
+
+    if(
+        (_CITIES[city_idx].race == rt_Halfling)
+        ||
+        (
+            (_CITIES[city_idx].bldg_status[bt_AnimistsGuild] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[bt_AnimistsGuild] == bs_Replaced)
+        )
+    )
+    {
+
+        Food_Sub_Sum = (_CITIES[city_idx].farmer_count * 3);
+
+    }
+    else
+    {
+
+        Food_Sub_Sum = (_CITIES[city_idx].farmer_count * 2);
+
+    }
+
+    if(_CITIES[city_idx].enchantments[GAIAS_BLESSING] != 0)
+    {
+
+        Tile_Food = ((Tile_Food * 2) / 3);
+
+    }
+
+    if(Food_Sub_Sum > Tile_Food)
+    {
+
+        Food_Sub_Sum = (Tile_Food + (Food_Sub_Sum - Tile_Food));
+
+    }
+
+    Farmed_Food_Total = Food_Sub_Sum;
+
+
+    if(_CITIES[city_idx].race == rt_Halfling)
+    {
+
+        Food_Sub_Sum = (_CITIES[city_idx].farmer_count / 3);
+
+    }
+    else
+    {
+
+        Food_Sub_Sum = (_CITIES[city_idx].farmer_count / 2);
+
+    }
+
+    if(Food_Sub_Sum > Tile_Food)
+    {
+
+        Food_Sub_Sum = (Tile_Food + (Food_Sub_Sum - Tile_Food));
+
+    }
+
+    Retn_Struct->Farmers = Food_Sub_Sum;
+
+    Retn_Struct->Animists_Guild = (Farmed_Food_Total - Food_Sub_Sum);
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_ForestersGuild] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_ForestersGuild] == bs_Replaced)
+    )
+    {
+
+        if(Food_Sub_Sum > Tile_Food)
+        {
+
+            Retn_Struct->Foresters_Guild = 1;
+
+        }
+        else
+        {
+
+            Retn_Struct->Foresters_Guild = 2;
+
+        }
+
+        Food_Sub_Sum += 2;
+
+    }
+
+    if(_CITIES[city_idx].enchantments[GAIAS_BLESSING] != 0)
+    {
+
+        Tile_Food = City_Food_Terrain(city_idx);
+
+        if(
+            (_CITIES[city_idx].race == rt_Halfling)
+            ||
+            (
+                (_CITIES[city_idx].bldg_status[bt_AnimistsGuild] == bs_Built)
+                ||
+                (_CITIES[city_idx].bldg_status[bt_AnimistsGuild] == bs_Replaced)
+            )
+        )
+        {
+
+            Food_Sub_Sum = (_CITIES[city_idx].farmer_count * 3);
+
+        }
+        else
+        {
+
+            Food_Sub_Sum = (_CITIES[city_idx].farmer_count * 2);
+
+        }
+
+        if(Food_Sub_Sum > Tile_Food)
+        {
+
+            Food_Sub_Sum = (Tile_Food + (Food_Sub_Sum - Tile_Food));
+
+        }
+
+        Retn_Struct->Gaias_Blessing = (Food_Sub_Sum - Retn_Struct->Farmers - Retn_Struct->Animists_Guild);
+
+    }
+
+    if(_CITIES[city_idx].enchantments[FAMINE] > 0)
+    {
+
+        Retn_Struct->Famine_POS = (Food_Sub_Sum / 2);
+
+    }
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_ForestersGuild] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_ForestersGuild] == bs_Replaced)
+    )
+    {
+
+        Retn_Struct->Farmers_Market = 3;
+
+    }
+
+    Retn_Struct->Wild_Games = City_Food_WildGame(city_idx);
+
+}
 
 // WZD o142p33
 // CTY_Gold_Breakdown()

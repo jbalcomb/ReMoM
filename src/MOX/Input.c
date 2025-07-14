@@ -2358,7 +2358,8 @@ ST_KEY_ENTER            = 0x0C
 ; -1 if the Esc key was pressed, or 0 otherwise
 */
 /*
-
+    returns?
+    
 NameStartingCity_Dialog_Popup()
     start_x = 60;
     start_y = 30;

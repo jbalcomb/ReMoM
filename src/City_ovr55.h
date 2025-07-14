@@ -137,10 +137,10 @@ void Player_Add_Mana(int16_t player_idx, int16_t mana);
 void Possessive(char * string);
 
 // WZD o55p38
-// sub_4D5EA()
+void Resource_Breakdown__STUB(int16_t IDK);
 
 // WZD o55p39
-// sub_4DA19()
+void Resource_Breakdown_Draw__STUB(void);
 
 // WZD o55p40
 // sub_4E507()
