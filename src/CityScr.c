@@ -1,4 +1,5 @@
 
+#include "MOX/MOX_BASE.h"
 #include "MOX/MOX_ITOA.h"
 #include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
@@ -12,6 +13,7 @@
 #include "MOX/MOX_SET.h"  /* magic_set */
 #include "MOX/MOX_T4.h"
 #include "MOX/SOUND.h"
+#include "MOX/MOM_Data.h"
 
 #include "City_ovr55.h"
 #include "CITYCALC.h"
@@ -1070,9 +1072,60 @@ void City_Screen_Draw__WIP(void)
         BEGIN:  Help Entries
     */
 
+    _help_entries[1].help_idx = (HLP_BARBARIAN_TOWNSFOLK + _CITIES[_city_idx].race);
+
+    _help_entries[2].help_idx = ST_UNDEFINED;
+
+    if(_CITIES[_city_idx].food_units > 0)
+    {
+
+        _help_entries[2].help_idx = HLP_FOOD;
+
+    }
+
+    _help_entries[3].help_idx = ST_UNDEFINED;
+
+    if(_CITIES[_city_idx].production_units > 0)
+    {
+
+        _help_entries[3].help_idx = HLP_PRODUCTION;
+
+    }
+
+    _help_entries[4].help_idx = ST_UNDEFINED;
+
+    if(_CITIES[_city_idx].gold_units > 0)
+    {
+
+        _help_entries[4].help_idx = HLP_GOLD_City;
+
+    }
+
+    _help_entries[5].help_idx = ST_UNDEFINED;
+
+    if(_CITIES[_city_idx].mana_units > 0)
+    {
+
+        _help_entries[5].help_idx = HLP_MAGICAL_POWER;
+
+    }
+
+    _help_entries[6].help_idx = ST_UNDEFINED;
+
+    if(_CITIES[_city_idx].research_units > 0)
+    {
+
+        _help_entries[6].help_idx = HLP_SPELL_RESEARCH_City;
+
+    }
+
+    _help_entries[7].help_idx = HLP_ENCHANTMENTS_City;
+
     for(itr = 0; itr < 6; itr++)
     {
+
         _help_entries[(16 + itr)].help_idx = ST_UNDEFINED;
+
     }
 
     if(city_enchantment_display_count > 0)
@@ -1083,7 +1136,7 @@ void City_Screen_Draw__WIP(void)
         for(itr = 0; itr < city_enchantment_display_count; itr++)
         {
 
-            // TODO  _help_entries[(16 + itr)].help_idx = City_Enchantment_HelpIdx(city_enchantment_list[(city_enchantment_display_first + itr)]);
+            _help_entries[(16 + itr)].help_idx = City_Enchantment_HelpIdx(city_enchantment_list[(city_enchantment_display_first + itr)]);
 
         }
 
@@ -1091,7 +1144,30 @@ void City_Screen_Draw__WIP(void)
 
     _help_entries[9].help_idx = HLP_CITY_SCAPE;
 
-    // TODO  cityscape help fields
+    for(itr = 0; itr < city_cityscape_field_count; itr++)
+    {
+
+        if(city_cityscape_fields[itr] == city_screen_scanned_field)
+        {
+
+            if(cityscape_bldg_fields[itr].field_bldg_idx >= 100)
+            {
+
+                _help_entries[9].help_idx = (HLP_SUMMONING_CIRCLE + (cityscape_bldg_fields[itr].field_bldg_idx - 100));
+
+            }
+            else
+            {
+
+                _help_entries[9].help_idx = (HLP_TRADE_GOODS + (cityscape_bldg_fields[itr].field_bldg_idx - 1));
+
+            }
+
+        }
+
+    }
+
+    _help_entries[14].help_idx = ST_UNDEFINED;
 
     /*
         END:  Help Entries
@@ -1135,7 +1211,8 @@ void City_Screen_Draw__WIP(void)
         Set_Outline_Color(4);
         Set_Alias_Color(26);
         Set_Font_LF(0);
-        if(_CITIES[_city_idx].construction != 0x01)  /* _Trade_Goods */
+
+        if(_CITIES[_city_idx].construction == bt_TradeGoods)
         {
             Print_Paragraph(262, 159, 50, proddescr_tradegoods, 2);
         }
@@ -1143,6 +1220,7 @@ void City_Screen_Draw__WIP(void)
         {
             Print_Paragraph(262, 159, 50, proddescr_housing, 2);
         }
+
     }
     else
     {

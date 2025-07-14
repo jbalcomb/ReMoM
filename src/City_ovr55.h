@@ -131,7 +131,7 @@ void Player_Add_Gold(int16_t player_idx, int16_t gold_amount);
 void Player_Add_Mana(int16_t player_idx, int16_t mana);
 
 // WZD o55p36
-// City_Enchantment_HelpIdx()
+int16_t City_Enchantment_HelpIdx(int16_t city_enchantment_idx);
 
 // WZD o55p37
 void Possessive(char * string);

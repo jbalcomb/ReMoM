@@ -1597,6 +1597,11 @@ int16_t Check_Help_List(void)
     int16_t help_entry_found = 0;
     int16_t i = 0;  // _DI_
     int16_t j = 0;  // _SI_
+    int16_t DBG_help_idx = 0;  // enum HELP_TXT
+    int16_t DBG_x1 = 0;
+    int16_t DBG_y1 = 0;
+    int16_t DBG_x2 = 0;
+    int16_t DBG_y2 = 0;
 
     help_entry_found = 0;
 
@@ -1616,7 +1621,14 @@ int16_t Check_Help_List(void)
         for(i = 0; i < help_list_count; i++)
         {
 
-            j = (i * sizeof(struct s_HELP_FIELD));
+            // j = (i * sizeof(struct s_HELP_FIELD));
+            j = (i * 5);
+
+            DBG_help_idx = help_struct_pointer[j + 0];
+            DBG_x1 = help_struct_pointer[j + 1];
+            DBG_x2 = help_struct_pointer[j + 3];
+            DBG_y1 = help_struct_pointer[j + 2];
+            DBG_y2 = help_struct_pointer[j + 4];
 
             if(help_struct_pointer[j + 0] != ST_UNDEFINED)
             {

@@ -81,7 +81,7 @@ void Set_Magic_Screen_Help_List(void)
 void Set_City_Screen_Help_List(void)
 {
     LBX_Load_Data_Static(hlpentry_lbx_file, 6, (SAMB_ptr)_help_entries, 0, 22, 10);
-    Set_Help_List((char *)&_help_entries[0], 22);
+    Set_Help_List(&_help_entries[0], 22);
 }
 
 // WZD o104p07

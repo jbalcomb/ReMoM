@@ -2382,7 +2382,42 @@ void Player_Add_Mana(int16_t player_idx, int16_t amount)
 
 // WZD o55p36
 // drake178: ¿ ?
-// City_Enchantment_HelpIdx()
+int16_t City_Enchantment_HelpIdx(int16_t city_enchantment_idx)
+{
+
+    switch(city_enchantment_idx)
+    {
+        case  0: { return 87; } break;
+        case  1: { return 110; } break;
+        case  2: { return 163; } break;
+        case  3: { return 183; } break;
+        case  4: { return 190; } break;
+        case  5: { return 196; } break;
+        case  6: { return 185; } break;
+        case  7: { return 189; } break;
+        case  8: { return 77; } break;
+        case  9: { return 72; } break;
+        case 10: { return 72; } break;
+        case 11: { return 72; } break;
+        case 12: { return 72; } break;
+        case 13: { return 72; } break;
+        case 14: { return 12; } break;
+        case 15: { return 37; } break;
+        case 16: { return 148; } break;
+        case 17: { return 29; } break;
+        case 18: { return 152; } break;
+        case 19: { return 145; } break;
+        case 20: { return 153; } break;
+        case 21: { return 139; } break;
+        case 22: { return 155; } break;
+        case 23: { return 178; } break;
+        case 24: { return 146; } break;
+        case 25: { return HLP_NIGHTSHADE; } break;
+        default: { return ST_UNDEFINED; } break;
+    }
+
+}
+
 
 // WZD o55p37
 // drake178: STR_GenitiveCase()
