@@ -60,7 +60,7 @@ set(MOMLIB_SOURCES
     MainScr.c
     MainScr_Maps.c
     MAPGEN.c
-    MGC_Data.c
+    MGC_DATA.c
     MOM_SCR.c
     MOM_DBG.c
     MOM_PFL.c
