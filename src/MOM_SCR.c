@@ -1,8 +1,4 @@
 
-#include "MOM_SCR.h"
-
-#include "STU/STU_CHK.h"
-
 #include "MOX/MOX_BASE.h"
 #include "MOX/MOX_T4.h"  // ~ MOX & MOX2 //MoO2
 #include "MOX/Fields.h"
@@ -33,9 +29,13 @@
 #include "SCORE.h"      // Hall Of Fame (HoF)
 #include "SPLMASTR.h"
 
-// #ifdef STU_DEBUG
-#include "STU/STU_DBG.h"    /* DLOG() */
-#// endif
+#ifdef STU_DEBUG
+#include "STU/STU_CHK.h"
+#include "STU/STU_DBG.h"
+#include "STU/STU_PRN.h"
+#endif
+
+#include "MOM_SCR.h"
 
 
 
@@ -87,6 +87,7 @@ void Screen_Control(void)
                 /* WZD  GameState_01:  ; case 0x1 */
                 prev__Settings_BG_Music = magic_set.background_music;
                 Load_Screen();  /* ... |-> Loaded_Game_Update() */
+                Print_Unit_Structure(0);
                 GAME_SoM_Cast_By = ST_UNDEFINED;
                 GAME_RazeCity = ST_FALSE;
                 if(prev__Settings_BG_Music != magic_set.background_music)

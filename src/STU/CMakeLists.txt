@@ -4,8 +4,11 @@ add_library(STU STATIC
     STU_DBG.c
     STU_DRAW.c
     STU_EMS.c
+    STU_FMT.c
     STU_INT.c
     STU_JSON.c
+    STU_MSG.c
+    STU_PRN.c
     STU_SND.c
     STU_TST.c
     STU_UTIL.c
@@ -13,6 +16,9 @@ add_library(STU STATIC
 )
 
 set_target_properties(STU PROPERTIES LINKER_LANGUAGE C)
+
+target_compile_definitions(STU PRIVATE STU_DEBUG=TRUE)
+target_compile_definitions(STU PRIVATE STU_TRACE=TRUE)
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
     target_compile_options(STU PRIVATE

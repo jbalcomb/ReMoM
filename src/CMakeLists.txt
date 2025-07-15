@@ -200,6 +200,9 @@ message(STATUS "Include directories for momlib: ${include_dirs}")
 # target_compile_options(ReMoM PUBLIC /W4 /WX /Debug /Od /Z7)
 # target_compile_options(ReMoM PUBLIC "-Wall")
 
+target_compile_definitions(momlib PRIVATE STU_DEBUG=TRUE)
+target_compile_definitions(momlib PRIVATE STU_TRACE=TRUE)
+
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
     target_compile_options(momlib PRIVATE
         "-Wall"
