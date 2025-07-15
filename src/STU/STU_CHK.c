@@ -1,3 +1,44 @@
+/*
+
+First Capture?
+First Check?
+
+scr_Continue
+scr_Load_Screen
+
+Load_SAVE_GAM()
+Loaded_Game_Update()
+    |-> Reset_City_Area_Bitfields();  Init_Overland();  Patch_Units_Upkeep_And_Sound();  All_Colony_Calculations();  Reset_City_Road_Connection_Bitfields();  Delete_Dead_Units();  All_AI_Refresh_Units_Movement();  GAME_NextHumanStack();  TST_Validate_GameData();  TST_Patch_Game_Data();
+TST_Patch_Game_Data()
+
+...absolute earliest option is after Load_SAVE_GAM()
+
+¿ Capture_Game_Data() should just be in Load_SAVE_GAM() ?
+¿ Loaded_Game_Update() is not optional ?
+¿ Capture_Game_Data() should just be in Loaded_Game_Update() ?
+...that's where I thought TST_Patch_Game_Data() should be...
+Yeah? Cause, multiple locations... SPF, bruv.
+...same for Loaded_Game_Update()
+Then, nothing in 'Load Screen', nothing in 'Screen Control'.
+
+
+
+_CITIES[]
+_players[]
+_UNITS[]
+
+SEEALSO:  MOX_UPD
+
+Capture_Cities_Data()
+    |-> Copy_City_Struct()
+Check_City_Struct()
+    |-> Check_City_Struct()
+    checks current versus previous values
+    breaks on *unexpected* changes
+Release_Cities_Data()
+    turns off data checking ... feels pointless
+
+*/
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "STU_CHK.h"
@@ -8,11 +49,35 @@
 
 #include "../MOX/MOM_Data.h"
 
-#include <string.h>     /* memcpy() memset(), strcat(), strcpy(); */
+#include <string.h>
+
+static void Copy_City_Struct(struct s_CITY * dst, struct s_CITY * src);
+static int16_t Check_City_Struct(struct s_CITY * dst, struct s_CITY * src);
+void Capture_Cities_Data(void);
+static void Check_Cities_Data(void);
+void Release_Cities_Data(void);
+
+static void Copy_Unit_Struct(struct s_UNIT * dst, struct s_UNIT * src);
+static int16_t Check_Unit_Struct(struct s_UNIT * dst, struct s_UNIT * src);
+void Capture_Units_Data(void);
+static void Check_Units_Data(void);
+void Release_Units_Data(void);
+
+void Capture_World_Map_Data(void);
+static void Check_World_Map_Data(void);
+void Release_World_Map_Data(void);
+
+void Capture_Game_Data(void);
+void Check_Game_Data(void);
+void Release_Game_Data(void);
+
+// void Capture_Map_Data(void)
+// void Sanity_Check_Game_Data(void);
 
 
 
 int16_t game_data_captured = STU_FALSE;
+int16_t world_map_data_captured = STU_FALSE;
 int16_t cities_data_captured = STU_FALSE;
 int16_t units_data_captured = STU_FALSE;
 
@@ -39,15 +104,33 @@ Allocate_Data_Space()
 
 */
 
+int16_t STU_CHK___cities = 0;
+int16_t STU_CHK___num_players = 0;
+int16_t STU_CHK___units = 0;
+
 uint8_t STU_CHK__world_maps[(NUM_PLANES * WORLD_WIDTH * WORLD_HEIGHT)];
 
 struct s_CITY STU_CHK__CITIES[NUM_CITIES];
 
 struct s_UNIT STU_CHK__UNITS[UNIT_COUNT_MAX];
 
+void Capture_City_Count(void)
+{
+    STU_CHK___cities = _cities;
+}
+
+void Capture_Player_Count(void)
+{
+    STU_CHK___num_players = _num_players;
+}
+
+void Capture_Unit_Count(void)
+{
+    STU_CHK___units = _units;
+}
 
 
-void Copy_City_Struct(struct s_CITY * dst, struct s_CITY * src)
+static void Copy_City_Struct(struct s_CITY * dst, struct s_CITY * src)
 {
     int16_t itr;
     strcpy(dst->name, src->name);
@@ -81,7 +164,7 @@ void Copy_City_Struct(struct s_CITY * dst, struct s_CITY * src)
         dst->road_connections[itr] = src->road_connections[itr];
 }
 
-int16_t Check_City_Struct(struct s_CITY * dst, struct s_CITY * src)
+static int16_t Check_City_Struct(struct s_CITY * dst, struct s_CITY * src)
 {
     int16_t itr = 0xBB;
     if(strcmp(dst->name, src->name) != 0)
@@ -167,7 +250,7 @@ void Release_Cities_Data(void)
     cities_data_captured = STU_FALSE;
 }
 
-void Copy_Unit_Struct(struct s_UNIT * dst, struct s_UNIT * src)
+static void Copy_Unit_Struct(struct s_UNIT * dst, struct s_UNIT * src)
 {
     int16_t itr;
     dst->wx = src->wx;
@@ -199,7 +282,7 @@ void Copy_Unit_Struct(struct s_UNIT * dst, struct s_UNIT * src)
     /* 1F */  /* int8_t  Unknown_1Fh; */  /* ¿ 2-byte alignment padding ? */
 }
 
-int16_t Check_Unit_Struct(struct s_UNIT * dst, struct s_UNIT * src)
+static int16_t Check_Unit_Struct(struct s_UNIT * dst, struct s_UNIT * src)
 {
     int16_t itr;
     if(dst->wx != src->wx)
@@ -263,7 +346,6 @@ void Capture_Units_Data(void)
         Copy_Unit_Struct(&STU_CHK__UNITS[unit_idx], &_UNITS[unit_idx]);
     units_data_captured = STU_TRUE;
 }
-
 void Check_Units_Data(void)
 {
     int16_t unit_idx = 0;
@@ -273,18 +355,16 @@ void Check_Units_Data(void)
         if(!Check_Unit_Struct(&STU_CHK__UNITS[unit_idx], &_UNITS[unit_idx]))
             STU_DEBUG_BREAK();
 }
-
 void Release_Units_Data(void)
 {
     units_data_captured = STU_FALSE;
 }
 
-void Capture_Game_Data(void)
+void Capture_World_Map_Data(void)
 {
     int16_t x = 0;
     int16_t y = 0;
     int16_t p = 0;
-
     for(p = 0; p < NUM_PLANES; p++)
     {
         for(y = 0; y < WORLD_HEIGHT; y++)
@@ -295,17 +375,14 @@ void Capture_Game_Data(void)
             }
         }
     }
-
-    game_data_captured = STU_TRUE;
-
+    world_map_data_captured = STU_TRUE;
 }
-
-void Check_Game_Data(void)
+void Check_World_Map_Data(void)
 {
     int16_t x = 0;
     int16_t y = 0;
     int16_t p = 0;
-    if(!game_data_captured)
+    if(!world_map_data_captured)
         return;
     for(p = 0; p < NUM_PLANES; p++) {
         for(y = 0; y < WORLD_HEIGHT; y++) {
@@ -317,11 +394,39 @@ void Check_Game_Data(void)
         }
     }
 }
+void Release_World_Map_Data(void)
+{
+    world_map_data_captured = STU_FALSE;
+}
+
+void Capture_Game_Data(void)
+{
+    Capture_Cities_Data();
+    Capture_Units_Data();
+    // Capture_World_Map_Data();
+    game_data_captured = STU_TRUE;
+
+}
+
+void Check_Game_Data(void)
+{
+    if(!game_data_captured)
+        return;
+    Check_Cities_Data();
+    Check_Units_Data();
+    // Check_World_Map_Data();
+}
 
 void Release_Game_Data(void)
 {
     game_data_captured = STU_FALSE;
+    cities_data_captured = STU_FALSE;
+    units_data_captured = STU_FALSE;
+    world_map_data_captured = STU_FALSE;
 }
+
+// void Capture_Map_Data(void)
+
 
 // void Sanity_Check_Game_Data(void)
 // {

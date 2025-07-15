@@ -154,9 +154,9 @@ void AI_Next_Turn__WIP(void)
     // DONT  EMM_Map_DataH();
 
 
-Check_Cities_Data();
+Check_Game_Data();
     Allocate_AI_Data();
-Check_Cities_Data();
+Check_Game_Data();
 
 
 // process a planning phase for each AI in turn,
@@ -187,37 +187,37 @@ Check_Cities_Data();
                 AI_SCircle_Reevals[itr_players] -= 1;
 
 
-Check_Cities_Data();
+Check_Game_Data();
                 AI_Evaluate_Hostility(itr_players);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
                 AI_Magic_Strategy__WIP(itr_players);
-Check_Cities_Data();
+Check_Game_Data();
 
 
                 CRP_AI_Turn_Var = 0;
 
 
-Check_Cities_Data();
+Check_Game_Data();
                 Player_Hostile_Opponents(itr_players);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
                 AI_Player_Calculate_Target_Values(itr_players);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
                 AI_Continent_Eval__WIP(itr_players);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
                 AI_Pick_Action_Conts__WIP(itr_players);
-Check_Cities_Data();
+Check_Game_Data();
 
 
 // TODO                  if(
@@ -264,24 +264,24 @@ Check_Cities_Data();
                 // DONT  EMM_Map_DataH();
 
 
-Check_Cities_Data();
+Check_Game_Data();
                 AI_Update_Magic_Power(itr_players);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
                 AI_Sanity_Check_Overland_Enchantments(itr_players);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
                 AI_Update_Gold_And_Mana_Reserves(itr_players);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
                 AI_Update_Gold_Income_And_Food_Income(itr_players);
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
 
@@ -303,33 +303,33 @@ Capture_Cities_Data();
                 }
 
 
-Check_Cities_Data();
+Check_Game_Data();
                 Player_All_Colony_Autobuild(itr_players);
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
                 AI_SetEnemyStrMaps(itr_players);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
                 AI_Continent_Reeval__WIP(itr_players);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
                 AI_SetUnitOrders__WIP(itr_players);
-Check_Cities_Data();
+Check_Game_Data();
 
 
                 // DONT  EMM_Map_DataH();                   ; just called this at the end of the previous function
 
 
-Check_Cities_Data();
+Check_Game_Data();
                 AI_Kill_Excess_Settlers_And_Engineers(itr_players);
-Check_Cities_Data();
+Check_Game_Data();
 
 
             }
@@ -382,9 +382,9 @@ Check_Cities_Data();
                 // ; units
                 // ;
                 // ; unclear, BUGgy, RE-EXPLORE!
-Check_Cities_Data();
+Check_Game_Data();
                 AI_MoveUnits__WIP(itr_players);
-Check_Cities_Data();
+Check_Game_Data();
 
             }
 
@@ -399,9 +399,9 @@ Check_Cities_Data();
 
     // DONT  EMM_Map_DataH();                   ; maps the EMM Data block into the page frame
 
-Check_Cities_Data();
+Check_Game_Data();
     Player_All_Colony_Autobuild(NEUTRAL_PLAYER_IDX);
-Check_Cities_Data();
+Check_Game_Data();
 
     // ; sets the amount of farmers in all neutral cities
     // ;

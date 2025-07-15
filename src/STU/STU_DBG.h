@@ -131,6 +131,7 @@ extern "C" {
 
 
 extern FILE * Debug_Log_File;
+extern FILE * Trace_Log_File;
 
 #ifdef STU_DEBUG
 #define DLOG(_str_) { do { fprintf(Debug_Log_File, "DEBUG: [%s, %d]: %s\n", __FILE__, __LINE__, (_str_)); fflush(Debug_Log_File); } while(0); }
@@ -144,7 +145,12 @@ extern FILE * Debug_Log_File;
 void Debug_Log_Startup(void);
 void Debug_Log_Shutdown(void);
 
+void Trace_Log_Startup(void);
+void Trace_Log_Shutdown(void);
+
 void dbg_prn(const char * fmt, ...);
+void trc_prn(const char * fmt, ...);
+
 
 
 #ifdef __cplusplus

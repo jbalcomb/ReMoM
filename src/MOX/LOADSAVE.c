@@ -5,23 +5,23 @@
     MoO2: Module: LOADSAVE
 */
 
-#include "LOADSAVE.h"
 
 #include "MOM_Data.h"
 #include "MOX_DAT.h"  /* _players[]; _screen_seg; */
 #include "MOX_SET.h"  /* magic_set */
 
+#include "../STU/STU_DBG.h"
+#include "../STU/STU_TST.h"
+
 #include "../MOM_PFL.h"
 
-#include <assert.h>
+#include <assert.h>     /* assert() */
 #include <math.h>       /* sqrt() */
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
-#include <stdlib.h>     /* abs(); itoa(); */
+#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
 #include <string.h>     /* memset(), strcat(), strcpy(); */
 
-#ifdef STU_DEBUG
-#include "../STU/STU_DBG.h"
-#endif
+#include "LOADSAVE.h"
 
 
 
@@ -43,7 +43,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     }
     else
     {
-        itoa((save_gam_idx + 1), temp_string, 10);
+        _itoa((save_gam_idx + 1), temp_string, 10);
         strcpy(file_name, "SAVE");
         strcat(file_name, temp_string);
         strcat(file_name,".GAM");
@@ -200,12 +200,16 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
 // WZD o50p02
 void Load_SAVE_GAM(int16_t save_gam_idx)
 {
-    char file_name[LEN_FILE_NAME];
-    char temp_string[LEN_TEMP_STRING];
-    FILE * file_pointer;
-    int32_t file_size;
-    int16_t file_size_flag;
-    long file_pointer_position;
+    char file_name[LEN_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char temp_string[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    FILE * file_pointer = 0;
+    int32_t file_size = 0;
+    int16_t file_size_flag = 0;
+    long file_pointer_position = 0;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Delete_Dead_Units()\n", __FILE__, __LINE__);
+#endif
 
     if(save_gam_idx == ST_UNDEFINED)
     {
@@ -213,7 +217,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     }
     else
     {
-        itoa((save_gam_idx + 1), temp_string, 10);
+        _itoa((save_gam_idx + 1), temp_string, 10);
         strcpy(file_name, "SAVE");
         strcat(file_name, temp_string);
         strcat(file_name,".GAM");
@@ -362,6 +366,12 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     assert(file_pointer_position == 123300);
 
     fclose(file_pointer);
+
+Capture_Game_Data();
+// NOTE(JimBalcomb,20250714): This totally, definitely works as expected - _CITIES[0].wp = -128; Check_Cities_Data();
+// NOTE(JimBalcomb,20250714): This totally, definitely works as expected - _UNITS[0].wp  = -128; Check_Units_Data();
+// NOTE(JimBalcomb,20250714): This totally, definitely works as expected - _CITIES[0].wp = -128; Check_Game_Data();
+// NOTE(JimBalcomb,20250714): This totally, definitely works as expected - _UNITS[0].wp =  -128; Check_Game_Data();
 
 }
 

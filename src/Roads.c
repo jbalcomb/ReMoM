@@ -27,6 +27,7 @@
 #include "UNITSTK.h"
 #include "UNITTYPE.h"   // WTFMATE
 
+#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
 #include <string.h>
 
 #include "Roads.h"
@@ -425,7 +426,7 @@ void Draw_Road_Building_Window(void)
         if(m_turns_to_build_road > 0)
         {
             strcpy(GUI_String_1, str_ItWillTake);  // "It will take "
-            itoa(m_turns_to_build_road, GUI_String_2, 10);
+            _itoa(m_turns_to_build_road, GUI_String_2, 10);
             strcat(GUI_String_1, GUI_String_2);
             strcat(GUI_String_1, str_Turn_2);  // " turn"
             if(m_turns_to_build_road > 1)

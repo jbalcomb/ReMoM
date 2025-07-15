@@ -22,8 +22,6 @@
 
 */
 
-#include "MOX_T4.h"
-
 #include "Fonts.h"
 #include "Input.h"
 #include "MOM_Data.h"
@@ -35,6 +33,8 @@
 #include "Timer.h"
 #include "Util.h"
 #include "Video.h"
+
+#include "MOX_T4.h"
 
 
 

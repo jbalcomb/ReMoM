@@ -38,6 +38,7 @@
 #include "STU/STU_DBG.h"
 
 #include <assert.h>
+#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
 #include <string.h>
 
 #include "Spells137.h"
@@ -1551,7 +1552,7 @@ static void Target_Wizard_Screen_Draw(void)
                 {
                     Set_Outline_Color(254);
                     Set_Font_Colors_15(4, &colors[0]);
-                    itoa((_players[(1 + itr)].casting_cost_original - _players[(1 + itr)].casting_cost_remaining), string, 10);
+                    _itoa((_players[(1 + itr)].casting_cost_original - _players[(1 + itr)].casting_cost_remaining), string, 10);
                     strcat(string, cnst_Space_MP_3);
                     Print_Centered((x_start + 39), (y_start + 149), string);
                 }
@@ -1602,14 +1603,14 @@ static void Target_Wizard_Screen_Draw(void)
             case 1:
             {
                 strcat(GUI_NearMsgString, aLoses);  // " loses "
-                itoa(GAME_MP_SpellVar_1, buffer, 10);
+                _itoa(GAME_MP_SpellVar_1, buffer, 10);
                 strcat(GUI_NearMsgString, buffer);
                 strcat(GUI_NearMsgString, aPointsOfCastin);  // " points of casting ability"
             } break;
             case 2:
             {
                 strcat(GUI_NearMsgString, aLoses);  // " loses "
-                itoa(GAME_MP_SpellVar_1, buffer, 10);
+                _itoa(GAME_MP_SpellVar_1, buffer, 10);
                 strcat(GUI_NearMsgString, buffer);
                 strcat(GUI_NearMsgString, aPointsOfMana);  // " points of mana"
             } break;

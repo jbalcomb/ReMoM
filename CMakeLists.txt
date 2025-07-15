@@ -21,13 +21,20 @@ project(
     LANGUAGES C
 )
 
-
+set(BUILD_SHARED_LIBS OFF)
 
 # downloaded SDL2-devel-2.32.2-VC.zip; unzipped into C:\devellib\SDL2-2.32.2\; added SDL2_DIR as "C:\devellib\SDL2-2.32.2"
 set(SDL2_DIR "$ENV{SDL2DIR}")
 find_package(SDL2 REQUIRED)
 
 include_directories(SYSTEM ${SDL2_INCLUDE_DIR})
+
+# include_directories(SYSTEM C:/devellib/SDL2-2.32.2/include)
+# include_directories(SYSTEM C:/devellib/SDL2_mixer-2.8.1/include)
+include_directories(C:/devellib/SDL2-2.32.2/include)
+include_directories(C:/devellib/SDL2_mixer-2.8.1/include)
+#include "C:\devellib\SDL2-2.32.2\include\SDL.h"
+#include "C:\devellib\SDL2_mixer-2.8.1\include\SDL_mixer.h"
 
 # get_target_property(include_dirs ${PROJECT_NAME} INCLUDE_DIRECTORIES)
 # get_target_property(include_dirs SYSTEM INCLUDE_DIRECTORIES)
@@ -102,12 +109,27 @@ add_subdirectory(src)
 # add_subdirectory(platform)
 
 
+## TODO  change to target_compile_definitions()
+# e.g.,  # Define DEBUG for MyTarget when building in Debug configuration
+# e.g.,  target_compile_definitions(MyTarget PRIVATE
+# e.g.,      $<$<CONFIG:Debug>:DEBUG>
+# e.g.,  )
+add_compile_definitions(WIN32_LEAN_AND_MEAN)
+# This is the most precise and recommended way, applying the definition only to the targets that need it.
+#     add_executable(MyApplication main.cpp)
+#     target_compile_definitions(MyApplication PRIVATE WIN32_LEAN_AND_MEAN)
+# Or, if you have a library:
+#     add_library(MyLibrary STATIC library.cpp)
+#     target_compile_definitions(MyLibrary PUBLIC WIN32_LEAN_AND_MEAN)
+# Using PUBLIC or INTERFACE will propagate the definition to targets that link against MyLibrary.
+add_compile_definitions(STU_DEBUG=TRUE)
+add_compile_definitions(STU_TRACE=TRUE)
 # if ( WIN32 )
 #     add_compile_definitions(_STU_Win32)
 # else ()
 #     add_compile_definitions(_STU_SDL2)
 # endif ()
-add_compile_definitions(_STU_SDL2)
+add_compile_definitions(_STU_SDL2=TRUE)
 
 
 

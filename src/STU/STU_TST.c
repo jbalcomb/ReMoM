@@ -12,9 +12,6 @@
 #include "../Spellbook.h"
 #include "../NEXTTURN.h"
 
-#ifdef STU_DEBUG
-#include "STU/STU_DBG.h"
-#endif
 
 
 void TST_Cheat_Power(int16_t player_idx)

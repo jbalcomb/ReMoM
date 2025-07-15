@@ -84,7 +84,7 @@ Date and time in UTC
 
 #include "STU_UTIL.h"
 
-#include <stdlib.h>  /* putenv */
+#include <stdlib.h>  /* putenv() */
 #include <stdio.h>   /* printf() */
 #include <time.h>    /* time(), tzset() */
 /*
@@ -123,9 +123,9 @@ void get_datetime(char * datatime)
     char ISO8601_DateTime[21] = "1583-01-01T00:00:00Z";
 
 #pragma warning(suppress : 4996)
-    putenv(tzstr);
+    _putenv(tzstr);
 #pragma warning(suppress : 4996)
-    tzset();
+    _tzset();
     edtt = time(NULL);
     edt = localtime(&edtt);
     // printf("EST5EDT: %s", asctime(edt));

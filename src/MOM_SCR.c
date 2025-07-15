@@ -76,36 +76,19 @@ void Screen_Control(void)
 
             case scr_Continue:
             {
-
                 Load_SAVE_GAM(-1);  // SAVETEST.GAM
-
-                // TODO DEEP DEBUG  TST_Validate_GameData();  ...per Debug/Text game-save file
-
-                // moved in to Loaded_Game_Update()  TST_Patch_Game_Data();
-                
                 Loaded_Game_Update();
-
                 current_screen = scr_Main_Screen;
             } break;
 
             case scr_Load_Screen:
             {
                 // TODO  WZD vs. MGC
-                /*
-                    WZD
-                        GameState_01:                           ; case 0x1
-                */
+                /* WZD  GameState_01:  ; case 0x1 */
                 prev__Settings_BG_Music = magic_set.background_music;
-
-Capture_Cities_Data();
-                Load_Screen();
-Check_Cities_Data();
-Release_Cities_Data();
-
+                Load_Screen();  /* ... |-> Loaded_Game_Update() */
                 GAME_SoM_Cast_By = ST_UNDEFINED;
-
                 GAME_RazeCity = ST_FALSE;
-
                 if(prev__Settings_BG_Music != magic_set.background_music)
                 {
                     if(magic_set.background_music == ST_TRUE)
@@ -118,7 +101,6 @@ Release_Cities_Data();
                         // DOMSDOS  Stop_Music__STUB();
                     }
                 }
-
             } break;
 
             case scr_New_Game_Screen:
@@ -156,25 +138,22 @@ Release_Cities_Data();
             // scr_City = 100,
             case scr_City_Screen: /* WZD 0x00 */
             {
-Capture_Cities_Data();
+
                 City_Screen__WIP();
-Check_Cities_Data();
-Release_Cities_Data();
+
             } break;
             // scr_Load = 101,
             case scr_Armies_Screen: /* WZD 0x02 */
             {
-Capture_Cities_Data();
+
                 ArmyList_Screen();
-Check_Cities_Data();
-Release_Cities_Data();
+
             } break;
             case scr_Cities_Screen:  /* WZD 0x03 */
             {
-Capture_Cities_Data();
+
                 CityList_Screen();
-Check_Cities_Data();
-Release_Cities_Data();
+
             } break;
             // scr_Quit = 104,
             case scr_Main_Screen:
@@ -202,74 +181,64 @@ Release_Cities_Data();
                 Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 5);
                 Set_Page_Off();
 
-Capture_Cities_Data();
                 Main_Screen();
-Check_Cities_Data();
-Release_Cities_Data();
+
                 // MoO2  previous_screen = scr_Main_Screen
                 previous_screen = scr_Main_Screen;
             } break;
             // scr_Magic = 106,
             case scr_Magic_Screen:
             {
-Capture_Cities_Data();
+
                 Magic_Screen();
-Check_Cities_Data();
-Release_Cities_Data();
+
             } break;
             case scr_Road_Build:
             {
-Capture_Cities_Data();
+
                 Road_Build_Screen();
-Check_Cities_Data();
-Release_Cities_Data();
+
             } break;
             case scr_Production_Screen:
             {
-Capture_Cities_Data();
+
                 Production_Screen();
-Check_Cities_Data();
-Release_Cities_Data();
+
             } break;
 
             case scr_Item_Screen:  /* 109 */
             {
-Capture_Cities_Data();
+
                 Item_Screen();
-Check_Cities_Data();
-Release_Cities_Data();
+
             } break;
             // scr_NextTurn = 110,
             case scr_NextTurn:
             {
-Capture_Cities_Data();
+
                 Next_Turn_Proc();
-Check_Cities_Data();
-Release_Cities_Data();
+
             } break;
             // /* ?default? */
             case scr_Spellbook_Screen:
             {
-Capture_Cities_Data();
+
                 Spellbook_Screen();
-Check_Cities_Data();
-Release_Cities_Data();
+
             } break;
             // /* ?default? */
             case scr_Advisor_Screen:
             {
-Capture_Cities_Data();
+
                 Advisor_Screen(ST_UNDEFINED);
-Check_Cities_Data();
-Release_Cities_Data();
+
             } break;
 
             case scr_Diplomacy_Screen:
             {
-Capture_Cities_Data();
+
                 Diplomacy_Screen__WIP();
-Check_Cities_Data();
-Release_Cities_Data();
+
             } break;
 
             case scr_Test_Screen:

@@ -61,7 +61,6 @@ set(MOMLIB_SOURCES
     MainScr_Maps.c
     MAPGEN.c
     MGC_Data.c
-    MOM.c
     MOM_SCR.c
     MOM_DBG.c
     MOM_PFL.c
@@ -81,7 +80,13 @@ set(MOMLIB_SOURCES
     SETTLE.c
     special.c
     Spellbook.c
+    Spells128.c
+    Spells129.c
+    Spells130.c
+    Spells131.c
     Spells132.c
+    Spells133.c
+    Spells137.c
     SPLMASTR.c
     Surveyor.c
     Terrain.c
@@ -122,9 +127,9 @@ message(STATUS "SDL2_LIBDIR: ${SDL2_LIBDIR}")
 message(STATUS "SDL2_LIBRARY: ${SDL2_LIBRARY}")
 message(STATUS "SDL2MAIN_LIBRARY: ${SDL2MAIN_LIBRARY}")
 #   set(_sdl2_implib "${SDL2_LIBDIR}/${CMAKE_STATIC_LIBRARY_PREFIX}SDL2${CMAKE_SHARED_LIBRARY_SUFFIX}${CMAKE_STATIC_LIBRARY_SUFFIX}")
-message(STATUS "CMAKE_STATIC_LIBRARY_PREFIX: ${CMAKE_STATIC_LIBRARY_PREFIX}")
-message(STATUS "CMAKE_SHARED_LIBRARY_SUFFIX: ${CMAKE_SHARED_LIBRARY_SUFFIX}")
-message(STATUS "CMAKE_STATIC_LIBRARY_SUFFIX: ${CMAKE_STATIC_LIBRARY_SUFFIX}")
+# message(STATUS "CMAKE_STATIC_LIBRARY_PREFIX: ${CMAKE_STATIC_LIBRARY_PREFIX}")
+# message(STATUS "CMAKE_SHARED_LIBRARY_SUFFIX: ${CMAKE_SHARED_LIBRARY_SUFFIX}")
+# message(STATUS "CMAKE_STATIC_LIBRARY_SUFFIX: ${CMAKE_STATIC_LIBRARY_SUFFIX}")
 message(STATUS "CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
 
 
@@ -141,7 +146,7 @@ set_target_properties(sdl2_ReMoM PROPERTIES LINKER_LANGUAGE C)
 # target_link_libraries(sdl2_ReMoM PUBLIC momlib MOX STU ${SDL2_LIBRARIES})
 # target_link_libraries(sdl2_ReMoM PUBLIC momlib MOX STU SDL2 SDL2main)
 # target_link_libraries(sdl2_ReMoM PUBLIC momlib MOX STU ${SDL2_LIBRARY} ${SDL2MAIN_LIBRARY})
-target_link_libraries(sdl2_ReMoM PUBLIC momlib MOX STU C:/devellib/SDL2-2.32.2/lib/x64/SDL2.lib C:/devellib/SDL2-2.32.2/lib/x64/SDL2main.lib)
+target_link_libraries(sdl2_ReMoM PUBLIC momlib MOX STU C:/devellib/SDL2-2.32.2/lib/x64/SDL2.lib C:/devellib/SDL2-2.32.2/lib/x64/SDL2main.lib C:/devellib/SDL2_mixer-2.8.1/lib/x64/SDL2_mixer.lib)
 target_include_directories(sdl2_ReMoM PUBLIC
     ${PROJECT_SOURCE_DIR}
     ${PROJECT_SOURCE_DIR}/src

@@ -146,24 +146,24 @@ void AI_SetUnitOrders__WIP(int16_t player_idx)
     }
 
 
-Check_Cities_Data();
+Check_Game_Data();
     AI_Disband_To_Balance_Budget(player_idx);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
     AI_Shift_Off_Home_Plane(player_idx);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
     AI_Move_Out_Boats();
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
     AI_Find_Opportunity_City_Target(wp, player_idx);
-Check_Cities_Data();
+Check_Game_Data();
 
 
     for(wp = 0; wp < NUM_PLANES; wp++)
@@ -178,49 +178,49 @@ Check_Cities_Data();
         for(landmass_idx = 1; landmass_idx < NUM_LANDMASSES; landmass_idx++)
         {
 
-Check_Cities_Data();
+Check_Game_Data();
             AI_Build_Stacks_Find_Targets_Order_Moves(player_idx, landmass_idx, wp);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
             AI_GarrBuilderPush__WIP(wp);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
             AI_sEFBD6__WIP();
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
             AI_Do_Meld(player_idx);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
             AI_Do_Settle(player_idx, landmass_idx);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
             AI_Do_Purify(landmass_idx, wp);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
             AI_Do_RoadBuild(landmass_idx);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
             AI_Build_Target_List(player_idx, landmass_idx, wp);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
             AI_ProcessRoamers__WIP(landmass_idx, wp, player_idx);
-Check_Cities_Data();
+Check_Game_Data();
 
 
             // ; should just test for 2...
@@ -235,9 +235,9 @@ Check_Cities_Data();
             )
             {
 
-Check_Cities_Data();
+Check_Game_Data();
                 AI_PullForMainWar__WIP(player_idx, wp);
-Check_Cities_Data();
+Check_Game_Data();
 
             }
 
@@ -249,16 +249,16 @@ Check_Cities_Data();
             )
             {
 
-Check_Cities_Data();
+Check_Game_Data();
                 G_AI_HomeRallyFill__WIP(landmass_idx, wp, player_idx);
-Check_Cities_Data();
+Check_Game_Data();
 
             }
 
 
-Check_Cities_Data();
+Check_Game_Data();
             G_AI_RallyFill__WIP(landmass_idx, wp, player_idx);
-Check_Cities_Data();
+Check_Game_Data();
 
 
             if(
@@ -270,9 +270,9 @@ Check_Cities_Data();
             )
             {
 
-Check_Cities_Data();
+Check_Game_Data();
                 AI_FillGarrisons__WIP(player_idx, wp, landmass_idx);
-Check_Cities_Data();
+Check_Game_Data();
 
             }
 
@@ -280,14 +280,14 @@ Check_Cities_Data();
         }
 
 
-Check_Cities_Data();
+Check_Game_Data();
         AI_ProcessOcean__WIP(player_idx, wp);
-Check_Cities_Data();
+Check_Game_Data();
 
 
-Check_Cities_Data();
+Check_Game_Data();
         G_AI_ProcessTransports__WIP(player_idx, wp);
-Check_Cities_Data();
+Check_Game_Data();
 
 
     }
@@ -4913,7 +4913,7 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                                                         (have_shore * 50)
                                                     )
                                                     /
-                                                    Tile_Distance
+                                                    Tile_Distance  /* JIMBUG: divide by 0? */
                                                 );
 
                                             EMM_Map_CONTXXX__WIP();

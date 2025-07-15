@@ -1,7 +1,27 @@
-
+# NOTE: --- delimits fragments
+# Fragment common to C and C++ source files
 CompileFlags:
-  Add: [
-    # VERY new warning. Active in C, where it can't be fixed. A bug?
-    -Wno-unsafe-buffer-usage,
-    -Wno-writable-strings
-]
+    Add:
+        - "--include-directory=C:/devellib/SDL2-2.32.2/include"
+        - "--include-directory=C:/devellib/SDL2_mixer-2.8.1/include"
+        - "-D"
+        - "SOME_MACRO_TO_DEFINE"
+        - "-include"
+        - "some/file/to/force/inclusion/of.h"
+        - "-Wno-unsafe-buffer-usage"
+        - "-Wno-writable-strings"
+
+---
+# Fragment specific to C++ source files
+If:
+    PathExclude: [.*\.c, .*\.h]
+CompileFlags:
+    Add:
+        - "-std=c++17"
+---
+# Fragment specific to C++ source files
+If:
+    PathMatch: [.*\.cpp, .*\.hpp]
+CompileFlags:
+    Add:
+        - "-std=c++17"

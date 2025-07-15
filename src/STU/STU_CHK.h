@@ -8,23 +8,20 @@ extern "C" {
 #endif
 
 
-
 void Capture_Cities_Data(void);
-
-void Check_Cities_Data(void);
-
+// void Check_Cities_Data(void);
 void Release_Cities_Data(void);
 
 void Capture_Units_Data(void);
-
-void Check_Units_Data(void);
-
+// void Check_Units_Data(void);
 void Release_Units_Data(void);
 
+void Capture_World_Map_Data(void);
+void Check_World_Map_Data(void);
+void Release_World_Map_Data(void);
+
 void Capture_Game_Data(void);
-
 void Check_Game_Data(void);
-
 void Release_Game_Data(void);
 
 // void Sanity_Check_Game_Data(void);

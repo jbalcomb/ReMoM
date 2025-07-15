@@ -14,11 +14,10 @@
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
 #include "MOX/MOX_SET.h"  /* magic_set */
 #include "MOX/MOX_TYPE.h"
-#include "MOX/SOUND.h"
 #include "MOX/Allocate.h"
 #include "MOX/GENDRAW.h"
 #include "MOX/LBX_Load.h"
-#include "MOX/Util.h"
+#include "MOX/Util.h"       /* Clear_Structure(); Delete_Structure() */
 #include "MOX/random.h"
 
 #include "AIBUILD.h"
@@ -56,9 +55,7 @@
 #include "WZD_o059.h"
 #include "WZD_o143.h"
 
-// #ifdef STU_DEBUG
-#include "STU/STU_DBG.h"    /* DLOG() */
-// #endif
+#include "STU/STU_DBG.h"
 
 #include <string.h>
 
@@ -147,10 +144,14 @@ j_Delete_Dead_Units()
 */
 void Delete_Dead_Units(void)
 {
-    int16_t unit_type;
-    int16_t itr_heroes;
-    int16_t itr_units; // _SI_
-    int16_t itr_players; // _DI_
+    int16_t unit_type = 0;
+    int16_t itr_heroes = 0;
+    int16_t itr_units = 0; // _SI_
+    int16_t itr_players = 0; // _DI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Delete_Dead_Units()\n", __FILE__, __LINE__);
+#endif
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
@@ -163,26 +164,41 @@ void Delete_Dead_Units(void)
             (_UNITS[itr_units].owner_idx > NEUTRAL_PLAYER_IDX)
         )
         {
+
             Delete_Structure(itr_units, (uint8_t *)&_UNITS[0], sizeof(struct s_UNIT), _units);
 
             for(itr_players = 0; itr_players < _num_players; itr_players++)
             {
+
                 for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
                 {
+
                     if(
                         (_players[itr_players].Heroes[itr_heroes].unit_idx != ST_UNDEFINED)
                         &&
                         (_players[itr_players].Heroes[itr_heroes].unit_idx > itr_units)
                     )
                     {
+
                         _players[itr_players].Heroes[itr_heroes].unit_idx -= 1;
+
                     }
+
                 }
+
             }
 
+            dbg_prn("DEBUG: [%s, %d]: Delete_Dead_Units(): _units: %d\n", __FILE__, __LINE__, _units);
             _units -= 1;
+            dbg_prn("DEBUG: [%s, %d]: Delete_Dead_Units(): _units: %d\n", __FILE__, __LINE__, _units);
+
         }
+
     }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Delete_Dead_Units()\n", __FILE__, __LINE__);
+#endif
 
 }
 
@@ -602,32 +618,32 @@ void Next_Turn_Calc(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Next_Turn_Calc()\n", __FILE__, __LINE__);
 #endif
 
-Check_Cities_Data();
+Check_Game_Data();
 
     Set_Random_Seed(RNG_AI_Turn_Seed);
 
     Set_Mouse_List(1, mouse_list_hourglass);
 
     All_City_Calculations();
-Check_Cities_Data();
+Check_Game_Data();
 
     AI_Kill_Lame_Units();  // ¿ BUGBUG  leaves dead/deleteable units lying around ?
-Check_Cities_Data();
+Check_Game_Data();
 
     Delete_Dead_Units();  // DNE in Dasm
-Check_Cities_Data();
+Check_Game_Data();
 
     AI_Next_Turn__WIP();
-Check_Cities_Data();
+Check_Game_Data();
 
     Delete_Dead_Units();  // DNE in Dasm
-Check_Cities_Data();
+Check_Game_Data();
 
     Next_Turn_Process_Purify();
-Check_Cities_Data();
+Check_Game_Data();
 
     Initialize_Reports();
-Check_Cities_Data();
+Check_Game_Data();
 
     if(g_timestop_player_num != 0)
     {
@@ -675,33 +691,33 @@ Check_Cities_Data();
         )
         {
 
-Check_Cities_Data();
+Check_Game_Data();
             Determine_Event();
-Check_Cities_Data();
+Check_Game_Data();
 
         }
 
-Check_Cities_Data();
+Check_Game_Data();
         Event_Twiddle();
-Check_Cities_Data();
+Check_Game_Data();
 
-Check_Cities_Data();
+Check_Game_Data();
         Players_Apply_Upkeeps__WIP();
-Check_Cities_Data();
+Check_Game_Data();
 
         // DONT  EMM_Map_DataH()
 
-Check_Cities_Data();
+Check_Game_Data();
         All_Outpost_Population_Growth();
-Check_Cities_Data();
+Check_Game_Data();
 
-Check_Cities_Data();
+Check_Game_Data();
         Apply_City_Changes();
-Check_Cities_Data();
+Check_Game_Data();
 
-Check_Cities_Data();
+Check_Game_Data();
         Diplomacy_Growth_For_Enchantments__WIP();
-Check_Cities_Data();
+Check_Game_Data();
 
 
         /*
@@ -980,9 +996,9 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
                     if((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) != 0)
                     {
 
-Check_Cities_Data();
+Check_Game_Data();
                         _CITIES[R_Param].population -= 1;
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
                         if(_CITIES[R_Param].population == 0)
@@ -2116,9 +2132,9 @@ void City_Apply_Production(int16_t city_idx)
     int16_t uu_troop_count;
     int16_t product_cost;  // _SI_
 
-Check_Cities_Data();
+Check_Game_Data();
     product_cost = City_Current_Product_Cost(city_idx);
-Check_Cities_Data();
+Check_Game_Data();
 
     if(_CITIES[city_idx].population <= 0)
     {
@@ -2130,9 +2146,9 @@ Check_Cities_Data();
     if(_CITIES[city_idx].construction >= 100)  /* *Product* is 'Unit' */
     {
 
-Check_Cities_Data();
+Check_Game_Data();
         _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
         if(_CITIES[city_idx].Prod_Accu >= product_cost)
@@ -2141,17 +2157,17 @@ Capture_Cities_Data();
             if((_units + 1) < MAX_UNIT_COUNT)
             {
 
-Check_Cities_Data();
+Check_Game_Data();
                 Create_Unit__WIP((_CITIES[city_idx].construction - 100), _CITIES[city_idx].owner_idx, _CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, city_idx);
-Check_Cities_Data();
+Check_Game_Data();
 
-Check_Cities_Data();
+Check_Game_Data();
                 UNIT_RemoveExcess((_units - 1));
-Check_Cities_Data();
+Check_Game_Data();
 
-Check_Cities_Data();
+Check_Game_Data();
                 Army_At_City(city_idx, &uu_troop_count, &uu_troops[0]);
-Check_Cities_Data();
+Check_Game_Data();
 
                 if(
                     (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
@@ -2160,9 +2176,9 @@ Check_Cities_Data();
                 )
                 {
 
-Check_Cities_Data();
+Check_Game_Data();
                     _CITIES[city_idx].construction = bt_AUTOBUILD;
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
                 }
@@ -2174,33 +2190,33 @@ Capture_Cities_Data();
                 if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
                 {
 
-Check_Cities_Data();
+Check_Game_Data();
                     _CITIES[city_idx].construction = bt_AUTOBUILD;
-Check_Cities_Data();
+Check_Game_Data();
 
                 }
                 else
                 {
 
-Check_Cities_Data();
+Check_Game_Data();
                     LBX_Load_Data_Static(message_lbx_file, 0, (SAMB_ptr)GUI_NearMsgString, 66, 1, 150);  // "Maximum number of units exceeded"
-Check_Cities_Data();
+Check_Game_Data();
 
-Check_Cities_Data();
+Check_Game_Data();
                     strcpy(city_name, _CITIES[city_idx].name);
-Check_Cities_Data();
+Check_Game_Data();
 
-Check_Cities_Data();
+Check_Game_Data();
                     strcat(GUI_NearMsgString, city_name);
-Check_Cities_Data();
+Check_Game_Data();
 
-Check_Cities_Data();
+Check_Game_Data();
                     strcat(GUI_NearMsgString, cnst_TooManyUnits);  // ". You must disband some units if you wish to build or summon any more."
-Check_Cities_Data();
+Check_Game_Data();
 
-Check_Cities_Data();
+Check_Game_Data();
                     Warn0(GUI_NearMsgString);
-Check_Cities_Data();
+Check_Game_Data();
 
                     if(
                         (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
@@ -2209,17 +2225,17 @@ Check_Cities_Data();
                     )
                     {
 
-Check_Cities_Data();
+Check_Game_Data();
                         _CITIES[city_idx].construction = bt_AUTOBUILD;
-Check_Cities_Data();
+Check_Game_Data();
 
                     }
                     else
                     {
 
-Check_Cities_Data();
+Check_Game_Data();
                         _CITIES[city_idx].construction = bt_TradeGoods;
-Check_Cities_Data();
+Check_Game_Data();
 
                     }
                 }
@@ -2227,9 +2243,9 @@ Check_Cities_Data();
             }
 
 
-Check_Cities_Data();
+Check_Game_Data();
             _CITIES[city_idx].Prod_Accu = 0;  // BUGBUG ¿ drake178: discards excess ? not actually a bug, just prescribed behavior? "surplus production units will be lost"
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
         }
@@ -2244,9 +2260,9 @@ Capture_Cities_Data();
             if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
             {
 
-Check_Cities_Data();
+Check_Game_Data();
                 _CITIES[city_idx].construction = bt_AUTOBUILD;
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
             }
@@ -2258,18 +2274,18 @@ Capture_Cities_Data();
             if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
             {
 
-Check_Cities_Data();
+Check_Game_Data();
                 _CITIES[city_idx].Prod_Accu += (_CITIES[city_idx].production_units / 2);
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
             }
             else
             {
 
-Check_Cities_Data();
+Check_Game_Data();
                 _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
             }
@@ -2287,26 +2303,26 @@ Capture_Cities_Data();
                 if(_CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] >= 0)  /* bs_Replaced, bs_Built, bs_Removed */
                 {
 
-Check_Cities_Data();
+Check_Game_Data();
                     _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] += 1;
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
                 }
                 else
                 {
 
-Check_Cities_Data();
+Check_Game_Data();
                     _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] = bs_Built;
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
                     if(bldg_data_table[_CITIES[city_idx].construction].replace_bldg != ST_UNDEFINED)
                     {
 
-Check_Cities_Data();
+Check_Game_Data();
                         _CITIES[city_idx].bldg_status[bldg_data_table[_CITIES[city_idx].construction].replace_bldg] = bs_Replaced;
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
                     }
@@ -2318,28 +2334,28 @@ Capture_Cities_Data();
                     )
                     {
 
-Check_Cities_Data();
+Check_Game_Data();
                         Set_Map_Square_Explored_Flags_XYP_Range(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 6);
-Check_Cities_Data();
+Check_Game_Data();
 
                     }
 
-Check_Cities_Data();
+Check_Game_Data();
                     _CITIES[city_idx].bldg_cnt += 1;
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
-Check_Cities_Data();
+Check_Game_Data();
                     _CITIES[city_idx].Prod_Accu = 0;
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
                     if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
                     {
 
-Check_Cities_Data();
+Check_Game_Data();
                         _CITIES[city_idx].construction = bt_AUTOBUILD;
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
                     }
@@ -2360,17 +2376,17 @@ Capture_Cities_Data();
                         if(grand_vizier == ST_TRUE)
                         {
 
-Check_Cities_Data();
+Check_Game_Data();
                             _CITIES[city_idx].construction = bt_AUTOBUILD;
-Check_Cities_Data();
+Check_Game_Data();
 
                         }
                         else
                         {
 
-Check_Cities_Data();
+Check_Game_Data();
                             _CITIES[city_idx].construction = bt_Housing;
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
                         }
@@ -2393,13 +2409,13 @@ Capture_Cities_Data();
     )
     {
 
-Check_Cities_Data();
+Check_Game_Data();
         Player_Colony_Autobuild_HP(city_idx);
-Check_Cities_Data();
+Check_Game_Data();
 
     }
 
-Check_Cities_Data();
+Check_Game_Data();
 
 }
 
@@ -2974,16 +2990,16 @@ void Apply_City_Changes(void)
     int16_t New_Min_Farmers = 0;
     int16_t Population_Growth = 0;
     int16_t itr_cities = 0;
-Check_Cities_Data();
+Check_Game_Data();
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-Check_Cities_Data();
+Check_Game_Data();
 
         // if 'City' is 'Outpost'
         if(_CITIES[itr_cities].population == 0)  /* assume "City" is 'Outpost' */
         {
-Check_Cities_Data();
+Check_Game_Data();
 
             // 'Outpost' failed
             if(_CITIES[itr_cities].Pop_10s <= 0)
@@ -2998,9 +3014,9 @@ Check_Cities_Data();
 
                 }
 
-Check_Cities_Data();
+Check_Game_Data();
                 Destroy_City(itr_cities);
-Check_Cities_Data();
+Check_Game_Data();
 
             }
 
@@ -3014,9 +3030,9 @@ Check_Cities_Data();
 
                 CITIES_FARMER_COUNT(itr_cities, City_Minimum_Farmers(itr_cities));
 
-Check_Cities_Data();
+Check_Game_Data();
                 Do_City_Calculations(itr_cities);
-Check_Cities_Data();
+Check_Game_Data();
 
                 if(
                     (_CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX)
@@ -3037,11 +3053,11 @@ Check_Cities_Data();
         else  /* (_CITIES[itr_cities].population != 0) */
         {
 
-Check_Cities_Data();
+Check_Game_Data();
             // apply population growth
             Population_Growth = City_Growth_Rate(itr_cities);
 
-Check_Cities_Data();
+Check_Game_Data();
             CITIES_POP_10S(itr_cities, (_CITIES[itr_cities].Pop_10s + Population_Growth));
 
             // increase population
@@ -3173,9 +3189,9 @@ Check_Cities_Data();
                         else  / * (_CITIES[itr_cities].population != 0) * /
             */
 
-Check_Cities_Data();
+Check_Game_Data();
             City_Apply_Production(itr_cities);
-Check_Cities_Data();
+Check_Game_Data();
 
         }
 
@@ -3206,9 +3222,9 @@ Check_Cities_Data();
         }
     }
 
-Check_Cities_Data();
+Check_Game_Data();
     Volcano_Counts();
-Check_Cities_Data();
+Check_Game_Data();
 
 }
 
@@ -3631,9 +3647,9 @@ void Determine_Offer(void)
 
                     Set_Mouse_List(1, mouse_list_default);
 
-Check_Cities_Data();
+Check_Game_Data();
                     Hire_Hero_Popup(Hero_Slot, unit_type, 0);
-Check_Cities_Data();
+Check_Game_Data();
 
                     Set_Mouse_List(1, mouse_list_hourglass);
 

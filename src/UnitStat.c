@@ -16,14 +16,13 @@
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_T4.h"
 #include "MOX/MOX_TYPE.h"
+#include "MOX/Timer.h"
+#include "MOX/Video.h"
+#include "MOX/paragrph.h"
 
 #include "CITYCALC.h"
 #include "Combat.h"
 #include "LOADER.h"
-#include "MOX/Timer.h"
-#include "MOX/Video.h"
-#include "MOX/paragrph.h"
-#include "STU/STU_DBG.h"
 #include "Terrain.h"
 #include "UNITSTK.h"
 #include "UNITTYPE.h"
@@ -37,6 +36,10 @@
 #include "RACETYPE.h"
 #include "WZD_o059.h"
 
+#include "STU/STU_CHK.h"
+#include "STU/STU_DBG.h"
+
+#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
 #include <string.h>
 
 #include "UnitStat.h"
@@ -896,14 +899,14 @@ if(_CITIES[_city_idx].construction > 298)
 
         Print((UV_x_start + UV_x_start_offset + 51), (UV_y_start + 34), "Cost");
 
-        itoa(product_cost, GUI_NearMsgString, 10);
+        _itoa(product_cost, GUI_NearMsgString, 10);
 
         if(View_Type == 1)  /* Product is Unit */
         {
             
             strcat(GUI_NearMsgString, "(");
 
-            itoa(_unit_type_table[unit_type_idx].cost, temp_string, 10);  // Full Cost
+            _itoa(_unit_type_table[unit_type_idx].cost, temp_string, 10);  // Full Cost
 
             strcat(GUI_NearMsgString, temp_string);
 

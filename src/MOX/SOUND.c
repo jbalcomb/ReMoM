@@ -7,18 +7,19 @@ MoO2
 
 */
 
-#include "SOUND.h"
 
 #include "AIL.h"
-
 #include "Allocate.h"
+#include "EXIT.h"
 #include "GFILE.h"
 #include "LBX_Load.h"
 #include "MOX_DEF.h"
+#include "MOX_T4.h"
 #include "MOX_TYPE.h"
 
 #include <string.h>     /* memset(), strcat(), strcpy(); */
 
+#include "SOUND.h"
 
 
 // // C:\STU\devel\Audio Interface Library (AIL)\AIL2\A214_D3\AIL.H
@@ -228,8 +229,8 @@ C:\STU\devel\Audio Interface Library (AIL)\AIL2\A214_D3\MIXDEMO.C
 
 void far *load_global_timbre(FILE *GTL, unsigned bank, unsigned patch)
 {
-    unsigned far * timb_ptr;
-    static unsigned len;
+    unsigned far * timb_ptr = 0;
+    static unsigned len = 0;
 
     static struct                   // GTL file header entry structure
     {
@@ -772,7 +773,7 @@ int16_t Play_Sound__MSDOS(SAMB_ptr sound_buffer)
     
                 // if ((hseq[i] = AIL_register_sequence(hdriver,buffer,i,state[i],NULL)) == -1)
                 // if ((hseq = AIL_register_sequence(hdriver,buffer,seqnum,state,NULL)) == -1)
-                if(sequence_handle = AIL_register_sequence(midi_driver_handle, midi_sound_buffer, 0, state_table_pointer, NULL) == -1)
+                if(sequence_handle == AIL_register_sequence(midi_driver_handle, midi_sound_buffer, 0, state_table_pointer, NULL) == -1)
                 {
                     Audio_Error__STUB(SND_Sequence_Failure);
                 }
@@ -780,7 +781,7 @@ int16_t Play_Sound__MSDOS(SAMB_ptr sound_buffer)
                 if(AIL_mdi_driver != SND_GMIDI)
                 {
                     GTL = gfopen(GTL_filename, "rb");
-                    while((timbre_required = AIL_timbre_request(midi_driver_handle,sequence_handle)) != 0xffff)
+                    while((timbre_required = AIL_timbre_request(midi_driver_handle,sequence_handle)) != -1)
                     {
                         bank = timbre_required / 256;
                         patch = timbre_required % 256;
@@ -887,7 +888,7 @@ int16_t Play_Sound__MSDOS(SAMB_ptr sound_buffer)
         }
     }
 
-
+    /* HACK */ return -1;
 
 }
 

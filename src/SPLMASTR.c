@@ -36,6 +36,7 @@ MoO2
 #include "Spellbook.h"
 #include "UNITTYPE.h"
 
+#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
 #include <string.h>
 
 #include "SPLMASTR.h"
@@ -428,7 +429,7 @@ void Spellbook_Mana_Adder_Draw(void)
 
     strcpy(string, str_PLUS_SIGN__ovr136);
 
-    itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
+    _itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
 
     strcat(string, buffer);  // extra mana amount
 
@@ -640,7 +641,7 @@ void Combat_Spellbook_Mana_Adder_Draw(void)
 
     strcpy(string, str_PLUS_SIGN__ovr136);
 
-    itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
+    _itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
 
     strcat(string, buffer);  // extra mana amount
 

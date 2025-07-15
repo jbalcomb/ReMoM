@@ -23,6 +23,7 @@
 #include "../MOM_PFL.h"
 
 #include <assert.h>
+#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
 #include <string.h>
 
 
@@ -513,8 +514,7 @@ int16_t Print_Integer(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[10];
 
-#pragma warning(suppress : 4996)
-    itoa(val, buffer, 10);
+    _itoa(val, buffer, 10);
 
     next_x = Print(x, y, buffer);
 
@@ -529,8 +529,7 @@ int16_t Print_Long(int16_t x, int16_t y, int32_t val)
     int16_t next_x;
     char buffer[10];
 
-#pragma warning(suppress : 4996)
-    ltoa(val, buffer, 10);
+    _ltoa(val, buffer, 10);
 
     next_x = Print(x, y, buffer);
 
@@ -575,7 +574,7 @@ int16_t Print_Integer_Right(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    itoa(val, buffer, 10);
+    _itoa(val, buffer, 10);
 
     next_x = Print_Right(x, y, buffer);
 
@@ -589,7 +588,7 @@ int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    itoa(val, buffer, 10);
+    _itoa(val, buffer, 10);
 
     next_x = Print_Centered(x, y, buffer);
 
@@ -604,7 +603,7 @@ int16_t Print_Long_Right(int16_t x, int16_t y, int32_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    itoa(val, buffer, 10);
+    _itoa(val, buffer, 10);
 
     next_x = Print_Right(x, y, buffer);
 
@@ -618,7 +617,7 @@ int16_t Clipped_Print_Integer(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    itoa(val, buffer, 10);
+    _itoa(val, buffer, 10);
 
     next_x = Clipped_Print(x, y, buffer);
 
@@ -632,7 +631,7 @@ int16_t Clipped_Print_Long(int16_t x, int16_t y, int32_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    ltoa(val, buffer, 10);
+    _ltoa(val, buffer, 10);
 
     next_x = Clipped_Print(x, y, buffer);
 
@@ -689,7 +688,7 @@ int16_t Clipped_Print_Integer_Right(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[10];
 
-    itoa(val, buffer, 10);
+    _itoa(val, buffer, 10);
 
     next_x = Clipped_Print_Right(x, y, buffer);
 
@@ -704,7 +703,7 @@ int16_t Clipped_Print_Long_Right(int16_t x, int16_t y, int32_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    ltoa(val, buffer, 10);
+    _ltoa(val, buffer, 10);
 
     next_x = Clipped_Print_Right(x, y, buffer);
 
@@ -1097,7 +1096,7 @@ void ST_PSTRM(int16_t x, int16_t y, int16_t val, char * string)
 
         j = ((Get_String_Width(string) + 2) * 10);
 
-        itoa(val ,buffer, 10);
+        _itoa(val ,buffer, 10);
 
         Disp_PSTR((x + j + 1), y, buffer);
 
@@ -1176,7 +1175,7 @@ void ST_PSTR(int x, int y, int val)
     if(Check_Release_Version() != ST_TRUE)
     {
 
-        itoa(val, buffer, 10);
+        _itoa(val, buffer, 10);
 
         Disp_PSTR(x, y, buffer);
 
@@ -1201,7 +1200,7 @@ void PSTRL(int16_t x, int16_t y, int32_t val)
     if(Check_Release_Version() != ST_TRUE)
     {
 
-        ltoa(val, buffer, 10);
+        _ltoa(val, buffer, 10);
 
         Disp_PSTR(x, y, buffer);
 
@@ -1233,7 +1232,7 @@ void PSTRU(int16_t x, int16_t y, uint32_t value)
 // IDGI  mov     [word ptr bp+val], ax
         val = value;
 
-        ultoa(val, buffer, 10);
+        _ultoa(val, buffer, 10);
 
         Disp_PSTR(x, y, buffer);
 
@@ -3193,49 +3192,54 @@ Module: palette
 // PLATFORM      }
 // PLATFORM  
 // PLATFORM  }
-#ifdef _STU_WIN
 
-#include "MOX/MOX_TYPE.h"
+// #ifdef _STU_WIN
+// 
+// #include "MOX/MOX_TYPE.h"
+// 
+// // TODO  turn this into MoX64 or somesuch; not PFL, just not OG/DOS/16-bit/6-bpp (VGA)
+// 
+// /*
+//     WIZARDS.EXE  seg021
+// */
+// 
+// // WZD s21p01
+// // MoO2: Refresh_Palette |-> Store_Palette_Block_
+// // 1oom :: uipal.c :: void ui_palette_set_n(void)
+// // AKA VGA_DAC_Write()
+// // IBM-PC, VGA, MS-DOS: write to the VGA-DAC
+// // MS-Windows: write to PFL-provded palette buffer
+// /*
+//     copy current_palette to PFL_palette
+// 
+// */
+// void Apply_Palette(void)
+// {
+// 
+//     int16_t itr;
+// 
+//     for (itr = 0; itr < 256; itr++)  // TODO  ~ #define Color Count
+//     {
+//         if (*(current_palette + 768 + itr) == 1)  // TODO  ~ #define Palette Flags Offset
+//         {
+//             // ¿ XBGR pixel format ?
+//             *(platform_palette_buffer + (itr * 4) + 3) = 0x00;
+//             *(platform_palette_buffer + (itr * 4) + 2) = (*(current_palette + (itr * 3) + 0) << 2);
+//             *(platform_palette_buffer + (itr * 4) + 1) = (*(current_palette + (itr * 3) + 1) << 2);
+//             *(platform_palette_buffer + (itr * 4) + 0) = (*(current_palette + (itr * 3) + 2) << 2);
+//         }
+//     }
+// 
+//     // Here, in MoO1 and MoM, it clears the palette change flags - REP STOSW of 0 128 times
+// 
+// }
+// 
+// #endif
 
-// TODO  turn this into MoX64 or somesuch; not PFL, just not OG/DOS/16-bit/6-bpp (VGA)
 
-/*
-    WIZARDS.EXE  seg021
-*/
 
-// WZD s21p01
-// MoO2: Refresh_Palette |-> Store_Palette_Block_
-// 1oom :: uipal.c :: void ui_palette_set_n(void)
-// AKA VGA_DAC_Write()
-// IBM-PC, VGA, MS-DOS: write to the VGA-DAC
-// MS-Windows: write to PFL-provded palette buffer
-/*
-    copy current_palette to PFL_palette
+// #ifdef _STU_SDL2
 
-*/
-void Apply_Palette(void)
-{
-
-    int16_t itr;
-
-    for (itr = 0; itr < 256; itr++)  // TODO  ~ #define Color Count
-    {
-        if (*(current_palette + 768 + itr) == 1)  // TODO  ~ #define Palette Flags Offset
-        {
-            // ¿ XBGR pixel format ?
-            *(platform_palette_buffer + (itr * 4) + 3) = 0x00;
-            *(platform_palette_buffer + (itr * 4) + 2) = (*(current_palette + (itr * 3) + 0) << 2);
-            *(platform_palette_buffer + (itr * 4) + 1) = (*(current_palette + (itr * 3) + 1) << 2);
-            *(platform_palette_buffer + (itr * 4) + 0) = (*(current_palette + (itr * 3) + 2) << 2);
-        }
-    }
-
-    // Here, in MoO1 and MoM, it clears the palette change flags - REP STOSW of 0 128 times
-
-}
-
-#endif
-#ifdef _STU_SDL2
 // WZD s21p01
 void Apply_Palette(void)
 {
@@ -3277,7 +3281,10 @@ void Apply_Palette(void)
     // HERE: in MoO1 and MoM, it clears the palette change flags - REP STOSW of 0 128 times
 
 }
-#endif
+
+// #endif
+
+
 
 // WZD s21p02
 // drake178: VGA_DAC_DimWrite()

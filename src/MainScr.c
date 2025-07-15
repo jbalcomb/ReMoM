@@ -13,16 +13,6 @@
 
 */
 
-#include "MainScr.h"
-
-#include "CITYCALC.h"
-#include "CityScr.h"
-#include "City_ovr55.h"
-#include "Combat.h"
-#include "Explore.h"
-#include "Lair.h"
-#include "MOM_PFL.h"
-
 #include "MOX/Allocate.h"
 #include "MOX/GENDRAW.h"
 #include "MOX/LBX_Load.h"
@@ -36,6 +26,7 @@
 #include "MOX/MOX_SET.h"  /* magic_set */
 #include "MOX/SOUND.h"
 #include "MOX/MOX_T4.h"
+#include "MOX/Timer.h"
 
 #include "Outpost.h"
 #include "STU/STU_CHK.h"
@@ -46,7 +37,6 @@
 #include "LOADER.h"
 #include "MOM_DBG.h"
 #include "MOM_SCR.h"
-#include "MOX/Timer.h"
 #include "MainScr_Maps.h"
 #include "SCastScr.h"  /* World_To_Screen() */
 #include "SETTLE.h"
@@ -59,13 +49,24 @@
 #include "WZD_o059.h"
 #include "WZD_o143.h"
 #include "special.h"
+#include "CITYCALC.h"
+#include "CityScr.h"
+#include "City_ovr55.h"
+#include "Combat.h"
+#include "Explore.h"
+#include "Lair.h"
 
 #ifdef STU_DEBUG
 #include "STU/STU_DBG.h"    /* DLOG() */
 #endif
 
 #include <assert.h>
+#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
 #include <string.h>
+
+#include "MOM_PFL.h"
+
+#include "MainScr.h"
 
 
 
@@ -1206,7 +1207,7 @@ void Main_Screen(void)
             if(_players[_human_player_idx].casting_spell_idx == spl_Spell_Of_Return)
             {
                 turns_til_return = _players[HUMAN_PLAYER_IDX].casting_cost_remaining / _players[HUMAN_PLAYER_IDX].Nominal_Skill;
-                itoa(turns_til_return, temp_string, 10);
+                _itoa(turns_til_return, temp_string, 10);
                 strcpy(GUI_NearMsgString, aYouMayNotThrowAnySp);  // "You may not throw any spells while you are banished.  There are at least "
                 strcat(GUI_NearMsgString, temp_string);
                 strcat(GUI_NearMsgString, aTurnsRemainingUntil);  // " turns remaining until you may return."
@@ -1847,6 +1848,7 @@ void Main_Screen(void)
 
         }
 
+
         /*
             END: Reduced Map Grid Field
         */
@@ -1881,10 +1883,9 @@ void Main_Screen(void)
             )
             {
 
-Check_Cities_Data();
+Check_Game_Data();
                 Change_Home_City_Name_Popup(0);
-// Check_Cities_Data();
-Capture_Cities_Data();
+Check_Game_Data();
 
                 Assign_Auto_Function(Main_Screen_Draw, 1);
 
@@ -2639,14 +2640,20 @@ void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
     reset_active_stack = ST_TRUE;
 
+Check_Game_Data();
     Build_Unit_Stack(player_idx, map_plane, unit_wx, unit_wy);  // sets _unit_stack_count
+Check_Game_Data();
 
     if(_unit_stack_count == 0)
     {
+
         return;
+
     }
 
+Check_Game_Data();
     Sort_Unit_Stack();
+Check_Game_Data();
 
     _active_stack_has_path = ST_FALSE;
 
@@ -2654,43 +2661,67 @@ void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
     if(player_idx == _human_player_idx)
     {
+
         for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
         {
+
             unit_idx = _unit_stack[itr_stack].unit_idx;
+
             if(_UNITS[unit_idx].Status == us_GOTO)
             {
+
                 goto_unit_idx = unit_idx;
+
             }
             else
             {
+
                 goto_unit_idx = ST_UNDEFINED;
+
                 break;
+
             }
+
         }
+
     }
 
     if(goto_unit_idx != ST_UNDEFINED)
     {
+
+Check_Game_Data();
         Set_Active_Stack_Movement_Path(goto_unit_idx);
+Check_Game_Data();
+
     }
 
     unit_idx = _unit;
     unit_wx = _UNITS[unit_idx].wx;
     unit_wy = _UNITS[unit_idx].wy;
 
+Check_Game_Data();
     OVL_BringIntoView(map_x, map_y, unit_wx, unit_wy, map_plane);
+Check_Game_Data();
         
+Check_Game_Data();
     Set_Unit_Action_Special();
+Check_Game_Data();
         
+Check_Game_Data();
     Active_Unit_Stack(&troop_count, &troops[0]);
+Check_Game_Data();
 
     // DONT  o62p07_Empty_pFxn(unit_array_count, &unit_array[0]);
 
+Check_Game_Data();
     Units_In_Tower(troop_count, &troops[0], map_plane);
+Check_Game_Data();
 
     if(_unit_stack_count < 1)
     {
+
         _active_stack_has_path = ST_FALSE;
+
     }
 
 }
@@ -2701,66 +2732,85 @@ OON XREF: Select_Unit_Stack()
 */
 void Sort_Unit_Stack(void)
 {
-    int16_t itr_stack_outer;
-    int16_t itr_stack_inner;
-    int16_t itr_stack;
-    int16_t unit_idx_1;
-    int16_t unit_idx_2;
-    int16_t unit_1_priority;
-    int16_t unit_2_priority;
-    int16_t tmp_stack_unit_idx;
-    int16_t tmp_stack_active_flag;
+    int16_t itr_stack_outer = 0;
+    int16_t itr_stack_inner = 0;
+    int16_t itr_stack = 0;
+    int16_t unit_idx_1 = 0;
+    int16_t unit_idx_2 = 0;
+    int16_t unit_1_priority = 0;
+    int16_t unit_2_priority = 0;
+    int16_t tmp_stack_unit_idx = 0;
+    int16_t tmp_stack_active_flag = 0;
 
     for(itr_stack_outer = 0; itr_stack_outer < _unit_stack_count; itr_stack_outer++)
     {
+
         for(itr_stack_inner = 0; itr_stack_inner < (_unit_stack_count - 1); itr_stack_inner++)
         {
 
             unit_idx_1 = _unit_stack[itr_stack_inner].unit_idx;
+
             unit_idx_2 = _unit_stack[itr_stack_inner + 1].unit_idx;
 
             // ¿ Melee Attack Strength + Ranged Attack Strength ?
             // ...index into the _unit_type_table[] based on the _UNITS[].type
 
-            unit_1_priority = _unit_type_table[_UNITS[unit_idx_1].type].Melee + _unit_type_table[_UNITS[unit_idx_1].type].Ranged;
+            unit_1_priority = (_unit_type_table[_UNITS[unit_idx_1].type].Melee + _unit_type_table[_UNITS[unit_idx_1].type].Ranged);
 
-            unit_2_priority = _unit_type_table[_UNITS[unit_idx_2].type].Melee + _unit_type_table[_UNITS[unit_idx_2].type].Ranged;
+            unit_2_priority = (_unit_type_table[_UNITS[unit_idx_2].type].Melee + _unit_type_table[_UNITS[unit_idx_2].type].Ranged);
 
             if(_unit_type_table[_UNITS[unit_idx_1].type].Transport > 0)
             {
+
                 unit_1_priority = 50;  // ¿ Maximum Stack Sort Priority ?
+
             }
 
             if(_unit_type_table[_UNITS[unit_idx_2].type].Transport > 0)
             {
+
                 unit_2_priority = 50;  // ¿ Maximum Stack Sort Priority ?
+
             }
 
             if(unit_1_priority < unit_2_priority)
             {
+
                 // ; exchanges an amount of bytes between near addresses
                 // MEM_SwapBytes(_unit_stack[unit_idx_2], _unit_stack[unit_idx_2 + 1], 4);
 
                 tmp_stack_unit_idx = _unit_stack[itr_stack_inner].unit_idx;
+
                 tmp_stack_active_flag = _unit_stack[itr_stack_inner].active;
+
                 _unit_stack[itr_stack_inner].unit_idx = _unit_stack[itr_stack_inner + 1].unit_idx;
+
                 _unit_stack[itr_stack_inner].active = _unit_stack[itr_stack_inner + 1].active;
+
                 _unit_stack[itr_stack_inner + 1].unit_idx = tmp_stack_unit_idx;
+
                 _unit_stack[itr_stack_inner + 1].active = tmp_stack_active_flag;
 
             }
 
         }
+
     }
 
     _unit = _unit_stack[0].unit_idx;
+
     for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
     {
+
         if(_unit_stack[itr_stack].active == ST_TRUE)
         {
+
             _unit = _unit_stack[itr_stack].unit_idx;
+
             break;
+
         }
+
     }
 
 }
@@ -2785,11 +2835,14 @@ void Build_Unit_Stack(int16_t player_idx, int16_t wp, int16_t wx, int16_t wy)
 
     for(itr = 0; itr < MAX_STACK; itr++)
     {
+
         _unit_stack[itr].active = ST_FALSE;
+
     }
 
     for (itr_units = 0; itr_units < _units; itr_units++)
     {
+
         unit_idx = itr_units;
 
         // ¿ if NOT then continue ?
@@ -2811,23 +2864,35 @@ void Build_Unit_Stack(int16_t player_idx, int16_t wp, int16_t wx, int16_t wy)
         {
             _unit_stack[unit_stack_idx].unit_idx = unit_idx;
 
-            if((_UNITS[unit_idx].moves2 > 0) && (_UNITS[unit_idx].Finished == ST_FALSE))
+            if(
+                (_UNITS[unit_idx].moves2 > 0)
+                &&
+                (_UNITS[unit_idx].Finished == ST_FALSE)
+            )
             {
+
                 _unit_stack[unit_stack_idx].active = ST_TRUE;
 
                 if(_UNITS[unit_idx].Status == us_Wait)
                 {
+
                     _UNITS[unit_idx].Status = us_Ready;
+
                 }
+
             }
 
             if(_UNITS[unit_idx].Status == us_Purify)
             {
+
                 _unit_stack[unit_stack_idx].active = ST_FALSE;
+
             }
 
             unit_stack_idx++;
+
             assert(unit_stack_idx <= MAX_STACK);
+
         }
 
     }
@@ -2930,9 +2995,14 @@ void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t u
         OVL_TileOffScrnEdge(map_x, map_y, unit_x, unit_y, MAP_WIDTH, MAP_HEIGHT);
     }
 
+Check_Game_Data();
     Set_Unit_Draw_Priority();
+Check_Game_Data();
     Reset_Stack_Draw_Priority();
+Capture_Units_Data();
+Check_Game_Data();
     Set_Entities_On_Map_Window(*map_x, *map_y, map_plane);
+Check_Game_Data();
 
 }
 
@@ -6699,7 +6769,7 @@ void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t moves2, int16_
 
     if(moves > 0)
     {
-        itoa(moves, buffer, 10);
+        _itoa(moves, buffer, 10);
         strcat(string, buffer);
     }
 

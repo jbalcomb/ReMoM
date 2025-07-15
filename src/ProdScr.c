@@ -366,9 +366,9 @@ void Production_Screen(void)
         if(input_field_idx == production_screen_ok_button)
         {
             // Play_Left_Click();
-Check_Cities_Data();
+Check_Game_Data();
             _CITIES[_city_idx].construction = product_indexes[current_item];
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
     if(_CITIES[_city_idx].construction < 0)
     {
@@ -779,9 +779,9 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
 
     product_count = 0;
 
-Check_Cities_Data();
+Check_Game_Data();
     _CITIES[city_idx].bldg_cnt = 0;
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
     UU_bldg_built_count = 0;
@@ -792,9 +792,9 @@ Capture_Cities_Data();
         if(_CITIES[city_idx].bldg_status[itr] != bs_NotBuilt)
         {
 
-Check_Cities_Data();
+Check_Game_Data();
             _CITIES[city_idx].bldg_cnt++;
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
         }
@@ -1047,9 +1047,9 @@ int16_t City_Production_Cost(int16_t production_idx, int16_t city_idx)
 
     tmp_production_idx = _CITIES[city_idx].construction;
 
-Check_Cities_Data();
+Check_Game_Data();
     _CITIES[city_idx].construction = production_idx;
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
 if(_CITIES[city_idx].construction < 0)
@@ -1061,9 +1061,9 @@ if(_CITIES[city_idx].construction > 298)
     STU_DEBUG_BREAK();
 }
 
-Check_Cities_Data();
+Check_Game_Data();
     production_cost = City_Current_Product_Cost(city_idx);
-Check_Cities_Data();
+Check_Game_Data();
 
     production_cost -= _CITIES[city_idx].Prod_Accu;
 
@@ -1072,9 +1072,9 @@ Check_Cities_Data();
         production_cost = 0;
     }
 
-Check_Cities_Data();
+Check_Game_Data();
     _CITIES[city_idx].construction = tmp_production_idx;
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
     if(_CITIES[city_idx].construction < -4)
     {

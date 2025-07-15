@@ -13,6 +13,7 @@ MoO2
 #include "Mouse.h"
 #include "Video.h"
 
+#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
 #include <stdio.h>
 #include <string.h>
 
@@ -148,12 +149,12 @@ void Screen_Flic_Capture__STUB(void)
         if (Scrdmp_File_Number < 10)
         {
             strcpy(scanline_buffer, cnst_Scrdmp_0);  // "0"
-            itoa(Scrdmp_File_Number, Conversion_String, 10);
+            _itoa(Scrdmp_File_Number, Conversion_String, 10);
             strcat(scanline_buffer, Conversion_String);
         }
         else
         {
-            itoa(Scrdmp_File_Number, scanline_buffer, 10);
+            _itoa(Scrdmp_File_Number, scanline_buffer, 10);
 
         }
         strcpy(file_name, cnst_Scrdmp_Base);  // "SCRDMP"

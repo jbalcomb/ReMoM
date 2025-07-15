@@ -1,5 +1,6 @@
 
 add_library(MOX STATIC
+    AIL.c
     Allocate.c
     capture.c
     CFG.c
@@ -10,6 +11,7 @@ add_library(MOX STATIC
     file_ani.c
     Fonts.c
     GENDRAW.c
+    GFILE.c
     Graphics.c
     FLIC_Draw.c
     Input.c
@@ -25,6 +27,7 @@ add_library(MOX STATIC
     MOX_T4.c
     paragrph.c
     random.c
+    sdl2_Audio.c
     SOUND.c
     TEXTBOX.c
     Util.c
@@ -33,6 +36,8 @@ add_library(MOX STATIC
 )
 
 set_target_properties(MOX PROPERTIES LINKER_LANGUAGE C)
+
+target_link_libraries(MOX PUBLIC C:/devellib/SDL2_mixer-2.8.1/lib/x64/SDL2_mixer.lib)
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
     target_compile_options(MOX PRIVATE

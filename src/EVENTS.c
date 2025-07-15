@@ -38,6 +38,7 @@
 #include "WZD_o059.h"
 #include "WZD_o143.h"
 
+#include <stdlib.h>     /* abs(); itoa(); ltoa(); */
 #include <string.h>
 
 
@@ -1764,7 +1765,7 @@ void Get_Event_Message(void)
             case 3:
             {
                 m_event_message[IDK] = 0;
-                itoa(EVNT_MsgDataValue, temp_string, 10);
+                _itoa(EVNT_MsgDataValue, temp_string, 10);
                 strcat(m_event_message, temp_string);
                 IDK = strlen(m_event_message);
             } break;
@@ -1801,7 +1802,7 @@ void Get_Event_Message(void)
                 if(EVNT_LostUnitCount > 0)
                 {
                     m_event_message[IDK] = 0;
-                    itoa(EVNT_LostUnitCount, temp_string, 10);
+                    _itoa(EVNT_LostUnitCount, temp_string, 10);
                     strcat(&m_event_message[0], temp_string);
                 }
                 else
@@ -1816,7 +1817,7 @@ void Get_Event_Message(void)
                 if(EVNT_LostPopulation > 0)
                 {
                     m_event_message[IDK] = 0;
-                    itoa(EVNT_LostPopulation, temp_string, 10);
+                    _itoa(EVNT_LostPopulation, temp_string, 10);
                     strcat(&m_event_message[0], temp_string);
                     strcpy(&m_event_message[0], cnst_EventMsg_2);  // " thousand"
                 }
@@ -1832,7 +1833,7 @@ void Get_Event_Message(void)
                 if(EVNT_DestroyedBldngs > 0)
                 {
                     m_event_message[IDK] = 0;
-                    itoa(EVNT_DestroyedBldngs, temp_string, 10);
+                    _itoa(EVNT_DestroyedBldngs, temp_string, 10);
                     strcat(&m_event_message[0], temp_string);
                 }
                 else

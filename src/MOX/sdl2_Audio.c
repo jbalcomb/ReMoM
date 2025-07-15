@@ -304,6 +304,8 @@ int16_t sdl2_Play_Sound__WIP(void* sound_buffer, uint32_t sound_buffer_size)
         } break;
     }
 
+    /* HACK */  return -1;
+    
 }
 
 void sdl2_Play_Sound_WAV(Mix_Chunk * wav_sound_chunk)
@@ -494,7 +496,7 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
         } break;
         default:
         {
-            DLOG("FIXME - BAD/UNKNOWN VOC BLOCK TYPE")
+            DLOG("FIXME - BAD/UNKNOWN VOC BLOCK TYPE");
             voc_len = 0;
             // STU_DEBUG_BREAK();
         } break;

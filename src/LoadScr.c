@@ -18,8 +18,6 @@ MoO2  Module: LOADSAVE
 
 */
 
-#include "LoadScr.h"
-
 #include "MOX/DIR.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
@@ -50,9 +48,13 @@ MoO2  Module: LOADSAVE
 #include "UNITSTK.h"
 #include "WZD_o143.h"
 
+#include "STU/STU_CHK.h"
+#include "STU/STU_TST.h"
+
+#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
 #include <string.h>
 
-#include "STU/STU_TST.h"
+#include "LoadScr.h"
 
 
 
@@ -213,20 +215,20 @@ void GAME_NextHumanStack(void)
     _combat_wx = ST_UNDEFINED;
     _combat_wy = ST_UNDEFINED;
 
-Check_Cities_Data();
+Check_Game_Data();
     Update_Scouted_And_Contacted__WIP();
-Check_Cities_Data();
+Check_Game_Data();
 
     // ; does nothing and returns zero; at some point must have been some wizard data refresh function
     // DONT  o62p01_Empty_pFxn(_human_player_idx);
 
-Check_Cities_Data();
+Check_Game_Data();
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
-Check_Cities_Data();
+Check_Game_Data();
 
-Check_Cities_Data();
+Check_Game_Data();
     Update_Scouted_And_Contacted__WIP();
-Check_Cities_Data();
+Check_Game_Data();
 
 }
 
@@ -307,7 +309,7 @@ void Load_Screen(void)
     for(itr = 1; itr < NUM_SAVE_GAME_FILES; itr++)
     {
         strcpy(match_string, cnst_SAVE3);
-        itoa(itr, buffer2, 10);
+        _itoa(itr, buffer2, 10);
         strcat(match_string, buffer2);
         strcat(match_string, cnst_SAVE_ext3);
         if(DIR(match_string, found_file) == 0)  /* File Not Found */
@@ -664,6 +666,7 @@ void Loaded_Game_Update(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()\n", __FILE__, __LINE__);
 #endif
 
+Check_Game_Data();
 
     /* seg001 */ GAME_RazeCity = ST_FALSE;
 
@@ -674,13 +677,19 @@ void Loaded_Game_Update(void)
     _page_flip_effect = pfe_None;
     
 
+Check_Game_Data();
     Reset_City_Area_Bitfields();
+Check_Game_Data();
 
 
+Check_Game_Data();
     Init_Overland();
+Check_Game_Data();
 
 
+Check_Game_Data();
     Patch_Units_Upkeep_And_Sound();
+Check_Game_Data();
 
 
     // DONT  o142p04  NOOP_Current_Player_All_City_Areas() |-> empty_fxn_o142p03()
@@ -689,9 +698,9 @@ void Loaded_Game_Update(void)
     // DONT  o142p19  LD_MAP_TFUnk40_Eval()
 
 
-Check_Cities_Data();
+Check_Game_Data();
     All_Colony_Calculations();
-Capture_Cities_Data();
+Check_Game_Data();
 
 
     _unit_stack_count = 0;
@@ -701,17 +710,24 @@ Capture_Cities_Data();
     sdl2_Play_Background_Music__WIP();
 
 
+Check_Game_Data();
     Cache_Graphics_Overland();
+Check_Game_Data();
 
 
+Check_Game_Data();
     Reset_City_Road_Connection_Bitfields();
-Capture_Cities_Data();
+Check_Game_Data();
 
 
+Check_Game_Data();
     Delete_Dead_Units();
+Check_Game_Data();
 
 
+Check_Game_Data();
     All_AI_Refresh_Units_Movement();
+Check_Game_Data();
 
 
     /* seg001 */  for(itr = 1; itr < NUM_PLAYERS; itr++)
@@ -720,7 +736,9 @@ Capture_Cities_Data();
     /* seg001 */  }
 
 
+Check_Game_Data();
     GAME_NextHumanStack();
+Check_Game_Data();
 
 
     if(_difficulty == god_Intro)
@@ -765,7 +783,9 @@ Capture_Cities_Data();
 
         // TST_Validate_GameData();
 
+Check_Game_Data();
         TST_Patch_Game_Data();
+Check_Game_Data();
 
     /*
         END:  STU Debug
@@ -798,14 +818,16 @@ void Init_Overland(void)
 #endif
 
 
+Check_Game_Data();
     PreInit_Overland();
+Check_Game_Data();
 
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
         _CITIES[itr_cities].bldg_status[NONE] = bs_Built;
     }
-
+Capture_Cities_Data();
     
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
@@ -819,21 +841,22 @@ void Init_Overland(void)
         // TODO  if(IsPassableTower(_UNITS[itr_units].wx, _UNITS[itr_units].wy, _UNITS[itr_units].wp) == ST_TRUE)
         if(IsPassableTower(_UNITS[itr_units].wx, _UNITS[itr_units].wy) == ST_TRUE)
         {
-            _UNITS[itr_units].in_tower = ST_TRUE;
+            // DELETEME  _UNITS[itr_units].in_tower = ST_TRUE;
+            UNITS_IN_TOWER(itr_units, ST_TRUE);
         }
         else
         {
-            _UNITS[itr_units].in_tower = ST_FALSE;
+            // DELETEME  _UNITS[itr_units].in_tower = ST_FALSE;
+            UNITS_IN_TOWER(itr_units, ST_FALSE);
         }
 
     }
-
+Capture_Units_Data();
 
     skill_staff_locked = 0;
     mana_staff_locked = 0;
     research_staff_locked = 0;
     _players[HUMAN_PLAYER_IDX].Nominal_Skill = Player_Base_Casting_Skill(HUMAN_PLAYER_IDX);
-    
 
     // NIU?  CRP_OVL_MapWindowX = 0;
     // NIU?  CRP_OVL_MapWindowY = 0;
@@ -854,32 +877,47 @@ void Init_Overland(void)
 
     _map_plane = _FORTRESSES[HUMAN_PLAYER_IDX].wp;
 
+Check_Game_Data();
     All_AI_Players_Contacted();
+Check_Game_Data();
 
+Check_Game_Data();
     Allocate_Reduced_Map();
+Check_Game_Data();
 
+Check_Game_Data();
     Center_Map(&_map_x, &_map_y, _FORTRESSES[HUMAN_PLAYER_IDX].wx, _FORTRESSES[HUMAN_PLAYER_IDX].wy, _map_plane);
+Check_Game_Data();
 
+Check_Game_Data();
     Set_Unit_Draw_Priority();
+Check_Game_Data();
 
+Check_Game_Data();
     Reset_Stack_Draw_Priority();
+Check_Game_Data();
 
+Check_Game_Data();
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+Check_Game_Data();
 
+Check_Game_Data();
     Cache_Graphics_Overland();
+Check_Game_Data();
 
-Capture_Cities_Data();
+Check_Game_Data();
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
-Check_Cities_Data();
+Check_Game_Data();
 
     // DONT  j_o108p02_empty_function()
 
+Check_Game_Data();
     All_City_Calculations();
-Capture_Cities_Data();
+Check_Game_Data();
 
     if(Check_Release_Version() == ST_FALSE)
     {
-        // __debugbreak();  NOTE(JimBalcomb,20250713): I don't why I though I should break on this; I just did all the PSTR stuff and I'm testing it
+        // __debugbreak();  NOTE(JimBalcomb,20250713): I don't why I thought I should break on this...  (I just did all the PSTR stuff and I'm testing it)
         Set_Random_Seed(10039);  // 0x2737
     }
 
@@ -920,24 +958,32 @@ void PreInit_Overland(void)
 
     all_units_moved = ST_FALSE;
     reset_active_stack = ST_TRUE;
+Check_Game_Data();
     Reset_Draw_Active_Stack();
+Check_Game_Data();
 
 
     _map_plane = ARCANUS_PLANE;
     // === All_City_Calculations()
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
+Check_Game_Data();
         Do_City_Calculations(itr_cities);
+Check_Game_Data();
     }
 
 
+Check_Game_Data();
     Players_Update_Magic_Power();
+Check_Game_Data();
     SBK_SomePageSaveVar = 0;
     CMB_SpellBookPage = 0;
     SBK_Candidate_Page = 0;
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
+Check_Game_Data();
         Player_Research_Spells(itr_players);
+Check_Game_Data();
     }
 
 

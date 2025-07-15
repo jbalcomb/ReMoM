@@ -1,9 +1,8 @@
 
-#include "MOM_PFL.h"
 
-#include "CREDITS.h"
-#include "Help.h"
-#include "MOM_DBG.h"
+#include "MOX/Mouse.h"
+#include "MOX/Timer.h"
+#include "MOX/Video.h"
 #include "MOX/DIR.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
@@ -16,14 +15,18 @@
 #include "MOX/MOX_T4.h"
 #include "MOX/MOX_TYPE.h"
 
-#include "MainMenu.h"
 #include "MOM_SCR.h"
-#include "MOX/Mouse.h"
-#include "MOX/Timer.h"
-#include "MOX/Video.h"
 #include "Settings.h"
+#include "CREDITS.h"
+#include "Help.h"
+#include "MOM_DBG.h"
 
+#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
 #include <string.h>
+
+#include "MOM_PFL.h"
+
+#include "MainMenu.h"
 
 
 
@@ -328,7 +331,7 @@ int16_t Main_Menu_Screen(void)
     {
         strcpy(File_Name, "SAVE");
 #pragma warning(suppress : 4996)
-        itoa(itr_saves__retval, Conversion_String, 10);
+        _itoa(itr_saves__retval, Conversion_String, 10);
         strcat(File_Name, Conversion_String);
         strcat(File_Name, ".GAM");
         if(DIR(File_Name, Found_File_Name) != ST_FAILURE)

@@ -18,12 +18,13 @@ MoO2
 #include "MOX/random.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
-#include "STU/STU_CHK.h"
 #include "Terrain.h"
 #include "UNITTYPE.h"
 #include "UnitMove.h"
 #include "WZD_o059.h"
 #include "special.h"
+
+#include "STU/STU_CHK.h"
 
 #include <assert.h>
 
@@ -288,9 +289,9 @@ int16_t RdBd_UNIT_MoveStack__WIP(int16_t player_idx, int16_t unit_idx, int16_t d
     int16_t itr_troops = 0;  // _SI_
 
 
-Check_Cities_Data();
+Check_Game_Data();
     Build_RoadBuilder_Stack(&troop_count, &troops[0], dst_wx, dst_wy, player_idx, unit_idx);
-Check_Cities_Data();
+Check_Game_Data();
 
 
     if(troop_count < 1)
@@ -333,9 +334,9 @@ Check_Cities_Data();
 
 
     // HERE: as-is, except Special_Move is '2' if all 'road builder', rather than *normal* '0'
-Check_Cities_Data();
+Check_Game_Data();
     did_move_stack = Move_Units(player_idx, dst_wx, dst_wy, Special_Move, map_x, map_y, map_p, troop_count, &troops[0]);
-Check_Cities_Data();
+Check_Game_Data();
 
 
     // purple
@@ -418,7 +419,7 @@ Check_Cities_Data();
 
         // DONT  o62p01_Empty_pFxn(player_idx);
 
-Check_Cities_Data();
+Check_Game_Data();
 
         Set_Unit_Draw_Priority();
 
@@ -428,7 +429,7 @@ Check_Cities_Data();
 
         Reset_Draw_Active_Stack();
 
-Check_Cities_Data();
+Check_Game_Data();
 
     }
 
@@ -458,9 +459,9 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
     done = ST_FALSE;
 
-Check_Cities_Data();
+Check_Game_Data();
     Reset_Map_Draw();
-Check_Cities_Data();
+Check_Game_Data();
 
     // TODO  o62p01_Empty_pFxn(player_idx);
 
@@ -468,9 +469,9 @@ Check_Cities_Data();
     {
         // TODO  CRP_OverlandVar_3 = ST_FALSE;
 
-Check_Cities_Data();
+Check_Game_Data();
         all_done_none_available = Next_Unit_Nearest_Available(player_idx, map_p);  // updates `_unit`
-Check_Cities_Data();
+Check_Game_Data();
 
         if(all_done_none_available == ST_TRUE)
         {
@@ -483,9 +484,9 @@ Check_Cities_Data();
             next_unit_idx = _unit;  // just updated by Next_Unit_Nearest_Available()
             next_unit_wx = _UNITS[next_unit_idx].wx;
             next_unit_wy = _UNITS[next_unit_idx].wy;
-Check_Cities_Data();
+Check_Game_Data();
             Select_Unit_Stack(player_idx, map_x, map_y, *map_p, next_unit_wx, next_unit_wy);  // calls Build_Unit_Stack() & Sort_Unit_Stack(); Sort_Unit_Stack() updates `_unit`;
-Check_Cities_Data();
+Check_Game_Data();
         }
 
         // HERE: Found a Unit;  `_unit` has been updated;  and ?
@@ -513,17 +514,20 @@ Check_Cities_Data();
                     (_UNITS[_unit].Rd_Constr_Left == ST_UNDEFINED)
                 )
                 {
+
                     _UNITS[_unit].Status = us_Ready;
+Capture_Units_Data();
+
                 }
                 else
                 {
-Check_Cities_Data();
+Check_Game_Data();
                     Allocate_Reduced_Map();
-Check_Cities_Data();
+Check_Game_Data();
                     RdBd_UNIT_MoveStack__WIP(player_idx, _unit, next_unit_dst_wx, next_unit_dst_wy, map_x, map_y, *map_p);
-Check_Cities_Data();
+Check_Game_Data();
                     Allocate_Reduced_Map();
-Check_Cities_Data();
+Check_Game_Data();
                 }
 
                 done = ST_FALSE;
@@ -538,18 +542,18 @@ Check_Cities_Data();
         next_unit_idx = _unit;
         next_unit_wx = _UNITS[next_unit_idx].wx;
         next_unit_wy = _UNITS[next_unit_idx].wy;
-Check_Cities_Data();
+Check_Game_Data();
         Select_Unit_Stack(player_idx, map_x, map_y, *map_p, next_unit_wx, next_unit_wy);  // ...calls Build_Unit_Stack() & Sort_Unit_Stack(); Sort_Unit_Stack() updates `_unit`;
-Check_Cities_Data();
+Check_Game_Data();
     }
     else
     {
         _unit_stack_count = 0;
-Check_Cities_Data();
+Check_Game_Data();
         Set_Draw_Active_Stack_Always();
-Check_Cities_Data();
+Check_Game_Data();
         Set_Entities_On_Map_Window(*map_x, *map_y, *map_p);
-Check_Cities_Data();
+Check_Game_Data();
     }
 
     // TODO  OVL_MapVar3 = ST_TRUE;

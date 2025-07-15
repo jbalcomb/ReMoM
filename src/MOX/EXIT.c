@@ -225,7 +225,7 @@ void Quit_With_Message(char * string)
     // ~== //MoO2
     // ORION2.LE  dseg02:00172670 25 73 0A 00                                     printf_fmt_string_newline db '%s',0Ah,0
     printf("%s\n", string);
-    getch();
+    _getch();
     exit(EXIT_FAILURE);
 
 }

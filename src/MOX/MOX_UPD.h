@@ -12,6 +12,13 @@ _players[]
 _TOWERS[]
 _UNITS[]
 
+¿ Goals ?
+...validate
+...log
+...profile / catalog / heuristics
+
+
+
 jbalcomb@Velociraptor MINGW64 /c/STU/devel/ReMoM/src (current)
 $ grep -I -E "_CITIES\[.*\]\.farmer_count += +" -r
 
@@ -44,6 +51,12 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
 [ ] grep -I -P "_CITIES\[.*\]\.population\s*=\s*(?!=)" -r
 [ ] grep -I -P "_CITIES\[.*\]\.size\s*=\s*(?!=)" -r
 [ ] grep -I -P "_CITIES\[.*\]\.Pop_10s\s*=\s*(?!=)" -r
+*/
+
+
+
+/*
+    BEGIN:  _CITIES[]
 */
 
 #define CITIES_FARMER_COUNT(_city_idx_,_farmer_count_)  {       \
@@ -129,3 +142,32 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
         Capture_Cities_Data();                                  \
     } while(0);                                                 \
 }
+
+/*
+    END:  _CITIES[]
+*/
+
+
+
+/*
+    BEGIN:  _UNITS[]
+*/
+
+#define UNITS_DRAW_PRIORITY(_unit_idx_,_priority_)  {       \
+    do {                                                    \
+        trc_prn("TRACE: [%s, %d]: UNITS_DRAW_PRIORITY(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].Draw_Priority, (_priority_));   \
+        _UNITS[(_unit_idx_)].Draw_Priority = (_priority_);  \
+        Capture_Units_Data();                               \
+    } while(0);                                             \
+}
+
+#define UNITS_IN_TOWER(_unit_idx_,_in_tower_)  {            \
+    do {                                                    \
+        _UNITS[(_unit_idx_)].in_tower = (_in_tower_);       \
+        Capture_Units_Data();                               \
+    } while(0);                                             \
+}
+
+/*
+    END:  _UNITS[]
+*/

@@ -20,7 +20,6 @@
 #include "MOX/Timer.h"
 #include "MOX/Util.h"
 
-#include "ArmyList.h"
 #include "CITYCALC.h"
 #include "Help.h"
 #include "ItemScrn.h"
@@ -32,6 +31,8 @@
 #include "UnitView.h"
 
 #include <string.h>
+
+#include "ArmyList.h"
 
 
 
@@ -215,7 +216,9 @@ void ArmyList_Screen(void)
 
     Load_Palette_From_Animation(armylist_up_button_seg);
 
+
     Apply_Palette();
+
 
     Clear_Palette_Changes(0, 243);
 

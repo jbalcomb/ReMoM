@@ -890,11 +890,12 @@ void Add_Nodes_To_Entities_On_Map_Window(int16_t wx, int16_t wy, int16_t wp)
 */
 void Set_Unit_Draw_Priority(void)
 {
-    int16_t draw_priority;
-    int16_t itr_units;
+    int16_t draw_priority = 0;
+    int16_t itr_units = 0;
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
+
         draw_priority = _unit_type_table[_UNITS[itr_units].type].Melee + _unit_type_table[_UNITS[itr_units].type].Ranged;
 
         if(draw_priority == 0)
@@ -907,7 +908,7 @@ void Set_Unit_Draw_Priority(void)
             draw_priority = 50;
         }
 
-        if(_UNITS[itr_units].owner_idx == -1)
+        if(_UNITS[itr_units].owner_idx == ST_UNDEFINED)
         {
             draw_priority = ST_UNDEFINED;
         }
@@ -921,7 +922,8 @@ void Set_Unit_Draw_Priority(void)
             draw_priority = ST_UNDEFINED;
         }
 
-        _UNITS[itr_units].Draw_Priority = draw_priority;
+        // DELETEME  _UNITS[itr_units].Draw_Priority = draw_priority;
+        UNITS_DRAW_PRIORITY(itr_units, draw_priority);
 
     }
 

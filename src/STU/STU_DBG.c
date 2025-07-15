@@ -150,9 +150,13 @@ int16_t DBG_TST_entities_on_movement_map[120] =
 
 
 
+char Log_ISO8601_DateTime[21] = "1583-01-01T00:00:00Z";  // earliest possible, compliant ISO-8601 DateTime/timestamp
+
 char Debug_Log_FileName[] = "DEBUG.LOG";
 FILE * Debug_Log_File = NULL;
-char Debug_Log_ISO8601_DateTime[21] = "1583-01-01T00:00:00Z";  // earliest possible, compliant ISO-8601 DateTime/timestamp
+
+char Trace_Log_FileName[] = "TRACE.LOG";
+FILE * Trace_Log_File = NULL;
 
 
 void Debug_Log_Startup(void)
@@ -165,17 +169,40 @@ void Debug_Log_Startup(void)
         exit(1);
 #endif
     }
-    get_datetime(&Debug_Log_ISO8601_DateTime[0]);
-    fprintf(Debug_Log_File, "[%s] DEBUG: %s\n", Debug_Log_ISO8601_DateTime, "BEGIN: Debug Log");
+    get_datetime(&Log_ISO8601_DateTime[0]);
+    fprintf(Debug_Log_File, "[%s] DEBUG: %s\n", Log_ISO8601_DateTime, "BEGIN: Debug Log");
     fflush(Debug_Log_File);
 }
 
 void Debug_Log_Shutdown(void)
 {
-    get_datetime(&Debug_Log_ISO8601_DateTime[0]);
-    fprintf(Debug_Log_File, "[%s] DEBUG: %s\n", Debug_Log_ISO8601_DateTime, "END: Debug Log");
+    get_datetime(&Log_ISO8601_DateTime[0]);
+    fprintf(Debug_Log_File, "[%s] DEBUG: %s\n", Log_ISO8601_DateTime, "END: Debug Log");
     fflush(Debug_Log_File);
     fclose(Debug_Log_File);
+}
+
+void Trace_Log_Startup(void)
+{
+    Trace_Log_File = fopen(Trace_Log_FileName, "w");
+    if(Trace_Log_File == NULL)
+    {
+        printf("TRACE [FATAL]: Unable to open log file: %s", Trace_Log_FileName);
+#ifdef _WIN32
+        exit(1);
+#endif
+    }
+    get_datetime(&Log_ISO8601_DateTime[0]);
+    fprintf(Trace_Log_File, "[%s] TRACE: %s\n", Log_ISO8601_DateTime, "BEGIN: Trace Log");
+    fflush(Trace_Log_File);
+}
+
+void Trace_Log_Shutdown(void)
+{
+    get_datetime(&Log_ISO8601_DateTime[0]);
+    fprintf(Trace_Log_File, "[%s] TRACE: %s\n", Log_ISO8601_DateTime, "END: Trace Log");
+    fflush(Trace_Log_File);
+    fclose(Trace_Log_File);
 }
 
 // "dbg" as in "debug"; "prn" as in "print"/"printf";
@@ -191,4 +218,19 @@ void dbg_prn(const char * fmt, ...)
         fysnc() flush kernel buffers, as well as userspace buffers, on a POSIX system (i.e., NOT Windows)
     */
    fflush(Debug_Log_File);
+}
+
+// "trc" as in "trace"; "prn" as in "print"/"printf";
+void trc_prn(const char * fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(Trace_Log_File, fmt, args);
+    va_end(args);
+    /*
+        flush output buffer to disk, in case of crash
+
+        fysnc() flush kernel buffers, as well as userspace buffers, on a POSIX system (i.e., NOT Windows)
+    */
+   fflush(Trace_Log_File);
 }

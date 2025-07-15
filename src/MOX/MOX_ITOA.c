@@ -24,6 +24,7 @@ Line 799
     mox_itoa((1400 + WTF__turns_years), GUI_String_2);
 */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 /* reverse:  reverse string s in place */

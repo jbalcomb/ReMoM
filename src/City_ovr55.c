@@ -1399,15 +1399,15 @@ void Player_City_Buy_Production(int16_t player_idx, int16_t city_idx)
 {
     int16_t cost = 0;
 
-Check_Cities_Data();
+Check_Game_Data();
     cost = City_Cost_To_Buy_Product(city_idx);
-Check_Cities_Data();
+Check_Game_Data();
 
     _players[player_idx].gold_reserve -= cost;
 
-Check_Cities_Data();
+Check_Game_Data();
     _CITIES[city_idx].Prod_Accu += City_Production_Cost(_CITIES[city_idx].construction, city_idx);
-// Check_Cities_Data();
+// Check_Game_Data();
 Capture_Cities_Data();
 
 }
