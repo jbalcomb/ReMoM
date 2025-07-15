@@ -51,6 +51,19 @@ Release_Cities_Data()
 
 #include <string.h>
 
+
+
+void Capture_City_Count(void);
+static void Check_City_Count(void);
+void Capture_Player_Count(void);
+static void Check_Player_Count(void);
+void Capture_Unit_Count(void);
+static void Check_Unit_Count(void);
+
+void Capture_World_Map_Data(void);
+static void Check_World_Map_Data(void);
+void Release_World_Map_Data(void);
+
 static void Copy_City_Struct(struct s_CITY * dst, struct s_CITY * src);
 static int16_t Check_City_Struct(struct s_CITY * dst, struct s_CITY * src);
 void Capture_Cities_Data(void);
@@ -63,10 +76,6 @@ void Capture_Units_Data(void);
 static void Check_Units_Data(void);
 void Release_Units_Data(void);
 
-void Capture_World_Map_Data(void);
-static void Check_World_Map_Data(void);
-void Release_World_Map_Data(void);
-
 void Capture_Game_Data(void);
 void Check_Game_Data(void);
 void Release_Game_Data(void);
@@ -76,10 +85,13 @@ void Release_Game_Data(void);
 
 
 
-int16_t game_data_captured = STU_FALSE;
+int16_t city_count_capture = STU_FALSE;
+int16_t player_count_capture = STU_FALSE;
+int16_t unit_count_capture = STU_FALSE;
 int16_t world_map_data_captured = STU_FALSE;
 int16_t cities_data_captured = STU_FALSE;
 int16_t units_data_captured = STU_FALSE;
+int16_t game_data_captured = STU_FALSE;
 
 
 
@@ -107,16 +119,22 @@ Allocate_Data_Space()
 int16_t STU_CHK___cities = 0;
 int16_t STU_CHK___num_players = 0;
 int16_t STU_CHK___units = 0;
-
 uint8_t STU_CHK__world_maps[(NUM_PLANES * WORLD_WIDTH * WORLD_HEIGHT)];
-
 struct s_CITY STU_CHK__CITIES[NUM_CITIES];
-
 struct s_UNIT STU_CHK__UNITS[UNIT_COUNT_MAX];
 
 void Capture_City_Count(void)
 {
     STU_CHK___cities = _cities;
+    city_count_capture = STU_TRUE;
+}
+
+static void Check_City_Count(void)
+{
+    if(!city_count_capture)
+        return;
+    if(STU_CHK___cities != _cities)
+        STU_DEBUG_BREAK();
 }
 
 void Capture_Player_Count(void)
@@ -124,11 +142,26 @@ void Capture_Player_Count(void)
     STU_CHK___num_players = _num_players;
 }
 
+static void Check_Player_Count(void)
+{
+    if(!city_count_capture)
+        return;
+    if(STU_CHK___num_players != _num_players)
+        STU_DEBUG_BREAK();
+}
+
 void Capture_Unit_Count(void)
 {
     STU_CHK___units = _units;
 }
 
+static void Check_Unit_Count(void)
+{
+    if(!unit_count_capture)
+        return;
+    if(STU_CHK___units != _units)
+        STU_DEBUG_BREAK();
+}
 
 static void Copy_City_Struct(struct s_CITY * dst, struct s_CITY * src)
 {

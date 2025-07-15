@@ -65,7 +65,7 @@ set(MOMLIB_SOURCES
     MOM_DBG.c
     MOM_PFL.c
     MovePath.c
-    NEWGAME.c
+    NewGame.c
     NEXTTURN.c
     Outpost.c
     OverSpel.c

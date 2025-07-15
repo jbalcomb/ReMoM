@@ -4,8 +4,6 @@
         ovr050
 */
 
-#include "NEWGAME.h"
-
 #include "MOX/MOX_SET.h"
 #include "MOX/Graphics.h"
 #include "MOX/LOADSAVE.h"
@@ -30,7 +28,7 @@
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), frite(), fseek(); */
 #include <string.h>
 
-#include "NEWGAME.h"
+#include "NewGame.h"
 
 
 

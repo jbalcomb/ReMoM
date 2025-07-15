@@ -1,0 +1,12 @@
+cross-platform - ensure failure on case-sensitive filenames
+
+enable case-sensitivity for the directories on your Windows file system
+
+Enable Case Sensitivity for the Directory:
+PowerShell or Command Prompt, as Administrator
+Navigate to the directory
+    fsutil.exe file setCaseSensitiveInfo <path> enable
+Replace <path> with the absolute path
+Verify Case Sensitivity (Optional):
+check if the directory is now case-sensitive:
+    fsutil.exe file queryCaseSensitiveInfo <path>
