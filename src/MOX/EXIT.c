@@ -12,9 +12,12 @@
 #include "Mouse.h"
 #include "SOUND.h"
 
-#include <conio.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+#ifdef _WIN32
+#include <conio.h>
+#endif
 
 
 
@@ -225,7 +228,9 @@ void Quit_With_Message(char * string)
     // ~== //MoO2
     // ORION2.LE  dseg02:00172670 25 73 0A 00                                     printf_fmt_string_newline db '%s',0Ah,0
     printf("%s\n", string);
-    _getch();
+#ifdef _WIN32
+    getch();
+#endif
     exit(EXIT_FAILURE);
 
 }
