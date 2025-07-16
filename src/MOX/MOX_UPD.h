@@ -153,9 +153,25 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
     BEGIN:  _UNITS[]
 */
 
+#define UNITS_WX(_unit_idx_,_wx_)  {       \
+    do {                                                    \
+        /* trc_prn("TRACE: [%s, %d]: UNITS_WX(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].wx, (_wx_)); */ \
+        _UNITS[(_unit_idx_)].wx = (_wx_);  \
+        Capture_Units_Data();                               \
+    } while(0);                                             \
+}
+
+#define UNITS_WY(_unit_idx_,_wy_)  {       \
+    do {                                                    \
+        /* trc_prn("TRACE: [%s, %d]: UNITS_WY(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].wy, (_wy_)); */ \
+        _UNITS[(_unit_idx_)].wy = (_wy_);  \
+        Capture_Units_Data();                               \
+    } while(0);                                             \
+}
+
 #define UNITS_DRAW_PRIORITY(_unit_idx_,_priority_)  {       \
     do {                                                    \
-        trc_prn("TRACE: [%s, %d]: UNITS_DRAW_PRIORITY(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].Draw_Priority, (_priority_));   \
+        /* trc_prn("TRACE: [%s, %d]: UNITS_DRAW_PRIORITY(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].Draw_Priority, (_priority_)); */ \
         _UNITS[(_unit_idx_)].Draw_Priority = (_priority_);  \
         Capture_Units_Data();                               \
     } while(0);                                             \

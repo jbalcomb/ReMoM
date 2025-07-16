@@ -3461,9 +3461,8 @@ extern SAMB_ptr UnitDraw_WorkArea;
 // WZD dseg:964B 00                                              db    0
 
 // WZD dseg:964C
-// MoO2: ~== _ship_node
-extern int16_t entities_on_movement_map[];
-
+// DELETEME  extern int16_t entities_on_movement_map[];
+extern int16_t entities_on_movement_map[(MAP_WIDTH * MAP_HEIGHT)];
 
 // dseg:973C 00 00                                           gsa_BACKGRND_3_IMG_CMB_Bottom_BG dw 0   ; DATA XREF: Load_Combat_Background_Bottom+12w ...
 extern SAMB_ptr combat_background_bottom;

@@ -13,8 +13,10 @@
 
 */
 
+#include "MOM_DEF.h"
 #include "MOX/Allocate.h"
 #include "MOX/GENDRAW.h"
+#include "MOX/Input.h"
 #include "MOX/LBX_Load.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
@@ -23,6 +25,7 @@
 #include "MOX/MOM_Data.h"
 #include "MOX/LOADSAVE.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
+#include "MOX/MOX_DEF.h"
 #include "MOX/MOX_SET.h"  /* magic_set */
 #include "MOX/SOUND.h"
 #include "MOX/MOX_T4.h"
@@ -2997,9 +3000,10 @@ void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t u
 
 Check_Game_Data();
     Set_Unit_Draw_Priority();
-Check_Game_Data();
     Reset_Stack_Draw_Priority();
 Capture_Units_Data();
+Check_Game_Data();
+
 Check_Game_Data();
     Set_Entities_On_Map_Window(*map_x, *map_y, map_plane);
 Check_Game_Data();
@@ -4443,6 +4447,7 @@ int16_t Stack_Moves(void)
                 {
                     _UNITS[unit_idx].moves2 = 1;
                     _UNITS[unit_idx].Finished = ST_FALSE;
+Capture_Units_Data();
                 }
             }
         }
@@ -5201,26 +5206,49 @@ Prep_Road_Path:
 
         if(_UNITS[troops[itr_troops]].Rd_Constr_Left > 0)
         {
+
             Current_Step = 0;
+
+Check_Game_Data();
             _UNITS[troops[itr_troops]].Finished = ST_TRUE;
             _UNITS[troops[itr_troops]].Rd_Constr_Left -= 1;
+Capture_Units_Data();
+Check_Game_Data();
+
         }
         else
         {
+
             if(path_length == 0)
             {
+
                 Current_Step = 0;
+
+Check_Game_Data();
                 _UNITS[troops[itr_troops]].Rd_Constr_Left = ST_UNDEFINED;
                 _UNITS[troops[itr_troops]].Status = us_Ready;
+Capture_Units_Data();
+
+Check_Game_Data();
                 Make_Road(_UNITS[troops[itr_troops]].wx, _UNITS[troops[itr_troops]].wy, map_p);
+Check_Game_Data();
                 TILE_ResetRoadConns(_UNITS[troops[itr_troops]].wx, _UNITS[troops[itr_troops]].wy, map_p);
 Capture_Cities_Data();
+Check_Game_Data();
+
             }
             else
             {
+
+Check_Game_Data();
                 _UNITS[troops[itr_troops]].Rd_Constr_Left = movepath_cost_array[0];
+Capture_Units_Data();
+Check_Game_Data();
+
                 Current_Step = 1;
+
             }
+
         }
 
         // Where is this?
@@ -5328,7 +5356,9 @@ Start_Path:
         assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
         assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
+Check_Game_Data();
         Move_Units_Draw(player_idx, map_p, path_length, map_x, map_y, troops, troop_count);
+Check_Game_Data();
     }
 
     // BUGBUG  can't be get spell warded and also go into combat
@@ -5360,10 +5390,14 @@ Combat_Handlers:
     // {0: Enemy Stack, 1: Enemy City, 5: Lair}
     if(_combat_environ == cnv_Lair)
     {
+
+Check_Game_Data();
         lair_combat_result = Lair_Combat__WIP(_combat_environ_idx, player_idx);
+Check_Game_Data();
 
         if(lair_combat_result == 0)  // ~ Winner == False / Combat - Lose
         {
+Check_Game_Data();
             for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
             {
                 if(
@@ -5375,6 +5409,8 @@ Combat_Handlers:
                     _UNITS[troops[itr_troops]].wy = OVL_Action_OriginY;
                 }
             }
+Capture_Units_Data();
+Check_Game_Data();
         }
         else if(lair_combat_result == 1)  // ~ Winner == True / Combat - Win
         {
@@ -5383,11 +5419,14 @@ Combat_Handlers:
         }
         else if(lair_combat_result == 99)  // ~ Combat - Cancel
         {
+Check_Game_Data();
             for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
             {
                 _UNITS[troops[itr_troops]].wx = OVL_Action_OriginX;
                 _UNITS[troops[itr_troops]].wy = OVL_Action_OriginY;
             }
+Capture_Units_Data();
+Check_Game_Data();
         }
     }
     else
@@ -5416,17 +5455,26 @@ End_Of_Moving:
         unit_idx = troops[itr_units];
         if(_UNITS[unit_idx].Rd_Constr_Left == 99)
         {
+Check_Game_Data();
             _UNITS[unit_idx].Rd_Constr_Left = ST_UNDEFINED;
+Capture_Units_Data();
+Check_Game_Data();
         }
 
         if((_UNITS[unit_idx].Finished == ST_FALSE) && (_UNITS[unit_idx].Status != PATROL))
         {
+Check_Game_Data();
             _UNITS[unit_idx].moves2 -= Total_Move_Cost;
+Capture_Units_Data();
+Check_Game_Data();
 
             if(_UNITS[unit_idx].moves2 < 1)
             {
+Check_Game_Data();
                 _UNITS[unit_idx].Finished = ST_TRUE; 
                 _UNITS[unit_idx].moves2 = 0;
+Capture_Units_Data();
+Check_Game_Data();
             }
 
             if(
@@ -5435,10 +5483,13 @@ End_Of_Moving:
                 (_UNITS[unit_idx].owner_idx == _human_player_idx)
             )
             {
+Check_Game_Data();
                 _UNITS[unit_idx].Status = us_Ready;
                 _UNITS[unit_idx].dst_wx = 0;
                 _UNITS[unit_idx].dst_wy = 0;
                 Out_Of_Moves = ST_FALSE;
+Capture_Units_Data();
+Check_Game_Data();
             }
             
             if(
@@ -5446,10 +5497,13 @@ End_Of_Moving:
                 (_UNITS[unit_idx].Status != us_Move)
             )
             {
+Check_Game_Data();
                 _UNITS[unit_idx].Status = us_GOTO;
                 _UNITS[unit_idx].dst_wx = destination_x;
                 _UNITS[unit_idx].dst_wy = destination_y;
                 _UNITS[unit_idx].Finished = ST_TRUE;
+Capture_Units_Data();
+Check_Game_Data();
             }
 
             if(
@@ -5460,12 +5514,18 @@ End_Of_Moving:
             {
                 if(_UNITS[unit_idx].Rd_Constr_Left == -1)
                 {
+Check_Game_Data();
                     _UNITS[unit_idx].Status = us_Ready;
                     _UNITS[unit_idx].dst_wx = 0;
                     _UNITS[unit_idx].dst_wy = 0;
+Capture_Units_Data();
+Check_Game_Data();
                     if(_UNITS[unit_idx].moves2 > 0)
                     {
+Check_Game_Data();
                         _UNITS[unit_idx].Finished = ST_FALSE;
+Capture_Units_Data();
+Check_Game_Data();
                     }
                 }
                 Out_Of_Moves = ST_FALSE;
@@ -5473,7 +5533,10 @@ End_Of_Moving:
 
             if(_UNITS[unit_idx].Status == us_GOTO)
             {
+Check_Game_Data();
                 _UNITS[unit_idx].Finished = ST_TRUE;
+Capture_Units_Data();
+Check_Game_Data();
             }
         }
     }
@@ -5682,7 +5745,11 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 
     Highest_Priority = _UNITS[unit_array[0]].Draw_Priority;
     Highest_Priority_Unit__Loop_Var = 0;
-    _UNITS[unit_array[0]].Draw_Priority = 0;
+    // DELETEME  _UNITS[unit_array[0]].Draw_Priority = 0;
+Check_Game_Data();
+    UNITS_DRAW_PRIORITY(unit_array[0], 0);
+Capture_Units_Data();
+
     for(itr_unit_array_count = 1; itr_unit_array_count < unit_array_count; itr_unit_array_count++)
     {
         if(_UNITS[unit_array[itr_unit_array_count]].Draw_Priority > Highest_Priority)
@@ -5690,7 +5757,10 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
             Highest_Priority = _UNITS[unit_array[itr_unit_array_count]].Draw_Priority;
             Highest_Priority_Unit__Loop_Var = itr_unit_array_count;
         }
-        _UNITS[unit_array[itr_unit_array_count]].Draw_Priority = 0;
+        // DELETEME  _UNITS[unit_array[itr_unit_array_count]].Draw_Priority = 0;
+Check_Game_Data();
+        UNITS_DRAW_PRIORITY(unit_array[itr_unit_array_count], 0);
+Capture_Units_Data();
     }
     unit_idx = unit_array[Highest_Priority_Unit__Loop_Var];
     unit_x = _UNITS[unit_idx].wx;
@@ -5699,11 +5769,15 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
     destination_x = movepath_x_array[(1 + movepath_length)];
     destination_y = movepath_y_array[(1 + movepath_length)];
 
+Check_Game_Data();
     for(itr_units = 0; itr_units < unit_array_count; itr_units++)
     {
-        _UNITS[unit_array[itr_units]].wx = destination_x;
-        _UNITS[unit_array[itr_units]].wy = destination_y;
+        // DELETEME  _UNITS[unit_array[itr_units]].wx = destination_x;
+        UNITS_WX(unit_array[itr_units], destination_x);
+        // DELETEME  _UNITS[unit_array[itr_units]].wy = destination_y;
+        UNITS_WY(unit_array[itr_units], destination_y);
     }
+Capture_Units_Data();
 
 
     build_road = ST_FALSE;
@@ -6801,17 +6875,18 @@ world_x,y
 */
 void Main_Screen_Draw_Debug_Information(void)
 {
-    int16_t mouse_x;
-    int16_t mouse_y;
-    int16_t screen_x;
-    int16_t screen_y;
-    int16_t field_x;
-    int16_t field_y;
-    int16_t grid_x;
-    int16_t grid_y;
-    int16_t world_x;
-    int16_t world_y;
-    int pos;
+    int16_t mouse_x = 0;
+    int16_t mouse_y = 0;
+    int16_t screen_x = 0;
+    int16_t screen_y = 0;
+    int16_t field_x = 0;
+    int16_t field_y = 0;
+    int16_t grid_x = 0;
+    int16_t grid_y = 0;
+    int16_t world_x = 0;
+    int16_t world_y = 0;
+    int pos = 0;
+    int16_t scanned_field = 0;
 
     Set_Outline_Color(0);
     // Set_Font_Style_Shadow_Down(0, 0, 0, 0);
@@ -6842,8 +6917,8 @@ void Main_Screen_Draw_Debug_Information(void)
     field_x = screen_x -  0;  // always  0
     field_y = screen_y - 20;  // always 20
     // ~ translate field coordinates to grid coordinates  (from pixels to squares)
-    grid_x = field_x / MOVEMENT_MAP_WIDTH;
-    grid_y = field_y / MOVEMENT_MAP_HEIGHT;
+    grid_x = field_x / SQUARE_WIDTH;
+    grid_y = field_y / SQUARE_HEIGHT;
     // ~ translate field coordinates to world coordinates  (from pixels to squares)
     world_x = field_x / WORLD_WIDTH;
     world_y = field_y / WORLD_HEIGHT;
@@ -6883,6 +6958,24 @@ void Main_Screen_Draw_Debug_Information(void)
         // UNIT WY
         Print(2, (22+(8*pos)), "UNIT WY");
         Print_Integer(46, (22+(8*pos)), _UNITS[_unit_stack[0].unit_idx].wy);
+        pos++;
+    }
+
+    // scanned_field = Scan_Field();
+    // if(scanned_field)
+    {
+        //   U   N   I   T       I   D   X
+        // ~ ? + ? + ? + ? + 4 + ? + 6 + 6 = 
+        Print(2, (22+(8*pos)), "UNIT IDX");
+        Print_Integer(46, (22+(8*pos)), GET_MAP_ENTITY(grid_x, grid_y));
+        pos++;
+        // UNIT WX
+        Print(2, (22+(8*pos)), "UNIT WX");
+        Print_Integer(46, (22+(8*pos)), _UNITS[GET_MAP_ENTITY(grid_x, grid_y)].wx);
+        pos++;
+        // UNIT WY
+        Print(2, (22+(8*pos)), "UNIT WY");
+        Print_Integer(46, (22+(8*pos)), _UNITS[GET_MAP_ENTITY(grid_x, grid_y)].wy);
         pos++;
     }
 

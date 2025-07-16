@@ -212,7 +212,9 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
         assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
         assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
+Check_Game_Data();
         Move_Units(player_idx, move_x, move_y, move_type, map_x, map_y, *map_p, unit_array_count, &unit_array[0]);
+Check_Game_Data();
 
 
         unit_idx = _unit;
@@ -226,7 +228,9 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 
 
         // TODO  o62p01_Empty_pFxn(player_idx);
+Check_Game_Data();
         Select_Unit_Stack(player_idx, map_x, map_y, *map_p, unit_x, unit_y);
+Check_Game_Data();
         movement_points_available = Stack_Moves();
 
 
@@ -239,6 +243,7 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
                 {
                     _UNITS[unit_array[itr_units]].Finished = ST_TRUE;
                     _UNITS[unit_array[itr_units]].Status = us_ReachedDest;
+Capture_Units_Data();
                 }
             }
 
@@ -339,6 +344,7 @@ Check_Game_Data();
 Check_Game_Data();
 
 
+Check_Game_Data();
     // purple
     for(itr_units = 0; itr_units < troop_count; itr_units++)
     {
@@ -360,7 +366,7 @@ Check_Game_Data();
         )
         {
 
-            _UNITS[troops[itr_units]].Move_Failed = ST_TRUE;
+            _UNITS[troops[itr_units]].Move_Failed = ST_TRUE;  // DEDU  What is Move_Failed even?
 
             _UNITS[troops[itr_units]].Status = us_Ready;
 
@@ -371,6 +377,8 @@ Check_Game_Data();
         }
 
     }
+Capture_Units_Data();
+Check_Game_Data();
 
 
     // dark gold
@@ -411,7 +419,7 @@ Check_Game_Data();
         }
 
     }
-
+Check_Game_Data();
 
 
     if(player_idx == _human_player_idx)

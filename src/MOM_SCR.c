@@ -1,4 +1,5 @@
 
+#include "MOX/MOM_Data.h"
 #include "MOX/MOX_BASE.h"
 #include "MOX/MOX_T4.h"  // ~ MOX & MOX2 //MoO2
 #include "MOX/Fields.h"
@@ -12,6 +13,7 @@
 
 #include "AdvsrScr.h"
 #include "ArmyList.h"
+#include "CITYCALC.h"   /* Player_Resource_Income_Total() */
 #include "CityList.h"
 #include "CityScr.h"
 #include "Combat.h"
@@ -29,11 +31,13 @@
 #include "SCORE.h"      // Hall Of Fame (HoF)
 #include "SPLMASTR.h"
 
-#ifdef STU_DEBUG
+// #ifdef STU_DEBUG
 #include "STU/STU_CHK.h"
 #include "STU/STU_DBG.h"
 #include "STU/STU_PRN.h"
-#endif
+// #endif
+
+#include <stdio.h>
 
 #include "MOM_SCR.h"
 
@@ -51,6 +55,10 @@ void Screen_Control(void)
     struct s_LAIR * lair_ptr = 0;
     /*  END:  DEBUG */
     int quit_flag = 0;
+    int16_t DBG_player_idx = 0;
+    int16_t DBG_gold_total = 0;
+    int16_t DBG_food_total = 0;
+    int16_t DBG_mana_total = 0;
 
     quit_flag = ST_FALSE;
 
@@ -87,7 +95,21 @@ void Screen_Control(void)
                 /* WZD  GameState_01:  ; case 0x1 */
                 prev__Settings_BG_Music = magic_set.background_music;
                 Load_Screen();  /* ... |-> Loaded_Game_Update() */
+#ifdef STU_DEBUG
                 Print_Unit_Structure(0);
+#endif
+#ifdef STU_DEBUG
+                printf("_num_players: %d\n", _num_players);
+                dbg_prn("_num_players: %d\n", _num_players);
+                // Meh. ~random AVRL in Player_Magic_Power_Distribution()
+                // for(DBG_player_idx = 0; DBG_player_idx < (_num_players + 1); DBG_player_idx++)
+                for(DBG_player_idx = 0; DBG_player_idx < _num_players; DBG_player_idx++)
+                {
+                    Player_Resource_Income_Total(DBG_player_idx, &DBG_gold_total, &DBG_food_total, &DBG_mana_total);
+                    dbg_prn("DBG_player_idx: %d, DBG_gold_total: %d, DBG_food_total: %d, DBG_mana_total: %d\n", DBG_player_idx, DBG_gold_total, DBG_food_total, DBG_mana_total);
+                }
+#endif
+
                 GAME_SoM_Cast_By = ST_UNDEFINED;
                 GAME_RazeCity = ST_FALSE;
                 if(prev__Settings_BG_Music != magic_set.background_music)

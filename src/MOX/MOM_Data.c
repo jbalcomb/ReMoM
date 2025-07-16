@@ -1965,7 +1965,11 @@ SAMB_ptr UnitDraw_WorkArea;  // alloc in MoM_Init_Tables(), 60 PR, 960 DB
 
 // WZD dseg:964C
 // MoO2: ~== _ship_node
-int16_t entities_on_movement_map[120];  //  12 * 10  MAP_WIDTH * MAP_HEIGHT
+/*
+ST_UNDEFINED or unit_idx or (city_idx + MAX_UNIT_COUNT)
+*/
+// DELETEME  int16_t entities_on_movement_map[120];  //  12 * 10  MAP_WIDTH * MAP_HEIGHT
+int16_t entities_on_movement_map[(MAP_WIDTH * MAP_HEIGHT)];
 
 // dseg:973C
 SAMB_ptr combat_background_bottom;

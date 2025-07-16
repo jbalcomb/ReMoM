@@ -2019,6 +2019,7 @@ void Apply_Consecration(int16_t city_idx)
     _CITIES[city_idx].enchantments[FAMINE] = 0;
     _CITIES[city_idx].enchantments[PESTILENCE] = 0;
     _CITIES[city_idx].enchantments[CHAOS_RIFT] = 0;
+Capture_Cities_Data();
 
     city_wp = _CITIES[city_idx].wp;
 

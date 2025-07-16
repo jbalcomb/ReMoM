@@ -165,7 +165,10 @@ void Delete_Dead_Units(void)
         )
         {
 
+Check_Game_Data();
             Delete_Structure(itr_units, (uint8_t *)&_UNITS[0], sizeof(struct s_UNIT), _units);
+// Check_Game_Data();
+Capture_Units_Data();  // TODO  Delete_Structure() changes all of the unit data
 
             for(itr_players = 0; itr_players < _num_players; itr_players++)
             {
@@ -285,23 +288,37 @@ void Next_Turn_Proc(void)
 #endif
 
 
+Check_Game_Data();
     Delete_Dead_Units();
+Check_Game_Data();
     All_Units_In_Towers();
+Check_Game_Data();
 
 
+Check_Game_Data();
     Set_Unit_Draw_Priority();
+Check_Game_Data();
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+Check_Game_Data();
     Reset_Map_Draw();
+Check_Game_Data();
 
 
+Check_Game_Data();
     Next_Turn_Calc();
+Check_Game_Data();
 
 
+Check_Game_Data();
     Cache_Graphics_Overland();
+Check_Game_Data();
 
 
+Check_Game_Data();
     Delete_Dead_Units();
+Check_Game_Data();
     All_Units_In_Towers();
+Check_Game_Data();
 
 
 
@@ -386,7 +403,10 @@ void Next_Turn_Proc(void)
 
 
 
+Check_Game_Data();
     Update_Units_MvsSts();
+Capture_Units_Data();
+Check_Game_Data();
 
     o62p01_empty_function(_human_player_idx);
 
@@ -402,16 +422,22 @@ void Next_Turn_Proc(void)
         (_players[_human_player_idx].casting_spell_idx > spl_NONE))
     {
 
+Check_Game_Data();
         Cast_Spell_Overland__WIP(_human_player_idx);
+Check_Game_Data();
 
     }
 
 
     all_units_moved = ST_FALSE;
 
+Check_Game_Data();
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+Check_Game_Data();
 
+Check_Game_Data();
     Reset_Draw_Active_Stack();
+Check_Game_Data();
 
 
 #ifdef STU_DEBUG
@@ -505,7 +531,7 @@ updates Finished, Status, moves2_max, moves2
 */
 void Update_Units_MvsSts(void)
 {
-    int16_t itr_units;
+    int16_t itr_units = 0;
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
@@ -624,24 +650,31 @@ Check_Game_Data();
 
     Set_Mouse_List(1, mouse_list_hourglass);
 
+Check_Game_Data();
     All_City_Calculations();
 Check_Game_Data();
 
+Check_Game_Data();
     AI_Kill_Lame_Units();  // ¿ BUGBUG  leaves dead/deleteable units lying around ?
 Check_Game_Data();
 
+Check_Game_Data();
     Delete_Dead_Units();  // DNE in Dasm
 Check_Game_Data();
 
+Check_Game_Data();
     AI_Next_Turn__WIP();
 Check_Game_Data();
 
+Check_Game_Data();
     Delete_Dead_Units();  // DNE in Dasm
 Check_Game_Data();
 
+Check_Game_Data();
     Next_Turn_Process_Purify();
 Check_Game_Data();
 
+Check_Game_Data();
     Initialize_Reports();
 Check_Game_Data();
 
@@ -672,17 +705,29 @@ Check_Game_Data();
     else
     {
 
+Check_Game_Data();
         Decrease_Peace_Duration();
+Check_Game_Data();
 
+Check_Game_Data();
         Update_Players_Gold_Reserve();
+Check_Game_Data();
 
+Check_Game_Data();
         Players_Update_Magic_Power();
+Check_Game_Data();
 
+Check_Game_Data();
         Players_Apply_Magic_Power();
+Check_Game_Data();
 
+Check_Game_Data();
         Players_Check_Spell_Research();
+Check_Game_Data();
 
+Check_Game_Data();
         OVL_DisableIncmBlink();
+Check_Game_Data();
 
         if(
             (DBG_Alt_A_State == ST_FALSE)
@@ -732,22 +777,30 @@ Check_Game_Data();
         */
 
 
+Check_Game_Data();
         Determine_Offer();
+Check_Game_Data();
 
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
 
+Check_Game_Data();
         All_City_Nightshade_Count();
+Check_Game_Data();
 
 
         /*
             BEGIN:  NPC Diplomacy
         */
 
+Check_Game_Data();
         Diplomacy_Growth();
+Check_Game_Data();
 
+Check_Game_Data();
         Determine_First_Contacts();
+Check_Game_Data();
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
@@ -755,50 +808,80 @@ Check_Game_Data();
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
+Check_Game_Data();
         NPC_To_Human_Diplomacy__WIP();
+Check_Game_Data();
 
+Check_Game_Data();
         Resolve_Delayed_Diplomacy_Orders();
+Check_Game_Data();
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
+Check_Game_Data();
         End_Of_Turn_Diplomacy_Adjustments();
+Check_Game_Data();
 
+Check_Game_Data();
         Modifier_Diplomacy_Adjustments();
+Check_Game_Data();
 
         /*
             END:  NPC Diplomacy
         */
 
 
+Check_Game_Data();
         Cool_Off_Volcanoes();
+Check_Game_Data();
 
     }
 
 
+Check_Game_Data();
     All_Players_Apply_Spell_Casting();
+Check_Game_Data();
 
 
+Check_Game_Data();
     Delete_Dead_Units();  // ¿ here, because we may have killed units with a spell, just above ?
+Capture_Units_Data();
+Check_Game_Data();
 
 
+Check_Game_Data();
     Set_Unit_Draw_Priority();
+Check_Game_Data();
 
+Check_Game_Data();
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+Check_Game_Data();
 
 
+Check_Game_Data();
     All_City_Removed_Buildings();
+Capture_Cities_Data();
+Check_Game_Data();
 
 
+Check_Game_Data();
     Do_All_Units_XP_Check_();
+Check_Game_Data();
 
 
+Check_Game_Data();
     Heal_All_Units();
+Check_Game_Data();
 
 
+Check_Game_Data();
     Record_History();
+Check_Game_Data();
 
 
+Check_Game_Data();
     Increment_Background_Music();
+Check_Game_Data();
 
 
     _turn++;
@@ -814,13 +897,19 @@ Check_Game_Data();
     }
 
 
+Check_Game_Data();
     OVL_EnableIncmBlink();
+Check_Game_Data();
     
 
+Check_Game_Data();
     Do_Autosave();
+Check_Game_Data();
 
 
+Check_Game_Data();
     All_City_Calculations();
+Check_Game_Data();
 
 
     RNG_AI_Turn_Seed = Get_Random_Seed();
@@ -2159,10 +2248,12 @@ Capture_Cities_Data();
 
 Check_Game_Data();
                 Create_Unit__WIP((_CITIES[city_idx].construction - 100), _CITIES[city_idx].owner_idx, _CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, city_idx);
+Capture_Units_Data();
 Check_Game_Data();
 
 Check_Game_Data();
                 UNIT_RemoveExcess((_units - 1));
+Capture_Units_Data();
 Check_Game_Data();
 
 Check_Game_Data();
@@ -2602,7 +2693,9 @@ void Players_Apply_Upkeeps__WIP(void)
         )
         {
 
+Check_Game_Data();
             WIZ_MatchFoodUpkeep__WIP(itr, excess_foods[itr], food_upkeep);
+Check_Game_Data();
 
         }
 
@@ -2615,7 +2708,9 @@ void Players_Apply_Upkeeps__WIP(void)
         )
         {
 
+Check_Game_Data();
             gold_upkeeps[itr] = WIZ_MatchGoldUpkeep(itr, gold_upkeeps[itr]);
+Check_Game_Data();
 
         }
 
@@ -2628,7 +2723,9 @@ void Players_Apply_Upkeeps__WIP(void)
 
         }
 
+Check_Game_Data();
         mana_upkeeps[itr] = Player_Armies_And_Enchantments_Mana_Upkeep(itr);
+Check_Game_Data();
 
         if(
             (mana_upkeeps[itr] > _players[itr].mana_reserve)
@@ -2637,7 +2734,9 @@ void Players_Apply_Upkeeps__WIP(void)
         )
         {
 
+Check_Game_Data();
             mana_upkeeps[itr] = WIZ_MatchManaUpkeep__WIP(itr, mana_upkeeps[itr]);
+Check_Game_Data();
 
         }
 
@@ -2695,7 +2794,9 @@ void WIZ_MatchFoodUpkeep__WIP(int16_t player_idx, int16_t food_excess, int16_t f
 
             food_upkeep--;
 
+Check_Game_Data();
             UNIT_GetDependants__WIP(itr_units, &troop_count, &troops[0]);
+Check_Game_Data();
 
             if(troop_count > 0)
             {
@@ -2727,7 +2828,10 @@ void WIZ_MatchFoodUpkeep__WIP(int16_t player_idx, int16_t food_excess, int16_t f
 
                         }
 
-                        Kill_Unit(troops[itr_troops], 0);
+Check_Game_Data();
+                        Kill_Unit(troops[itr_troops], kt_Normal);
+// TODO  Check_Game_Data();
+Capture_Units_Data();
 
                     }
 
@@ -2752,7 +2856,10 @@ void WIZ_MatchFoodUpkeep__WIP(int16_t player_idx, int16_t food_excess, int16_t f
 
         }
 
-        Kill_Unit(itr_units, 1);
+Check_Game_Data();
+        Kill_Unit(itr_units, kt_Dismissed);
+// TODO  Check_Game_Data();
+Capture_Units_Data();
 
     }
 
@@ -2785,7 +2892,9 @@ int16_t WIZ_MatchGoldUpkeep(int16_t player_idx, int16_t gold_upkeep)
             {
                 gold_upkeep -= unit_gold_upkeep;
 
+Check_Game_Data();
                 UNIT_GetDependants__WIP(itr_units, &troop_count, &troops[0]);
+Check_Game_Data();
 
                 if(troop_count > 0)
                 {
@@ -2803,7 +2912,11 @@ int16_t WIZ_MatchGoldUpkeep(int16_t player_idx, int16_t gold_upkeep)
                             MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 4;
                             MSG_UnitLost_Count++;
                         }
-                        Kill_Unit(troops[itr_troops], 0);
+Check_Game_Data();
+                        Kill_Unit(troops[itr_troops], kt_Normal);
+// TODO  Check_Game_Data();
+Capture_Units_Data();
+
                     }
                 }
 
@@ -2816,7 +2929,12 @@ int16_t WIZ_MatchGoldUpkeep(int16_t player_idx, int16_t gold_upkeep)
                     MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 1;
                     MSG_UnitLost_Count++;
                 }
-                Kill_Unit(itr_units, 1);
+
+Check_Game_Data();
+                Kill_Unit(itr_units, kt_Dismissed);
+// TODO  Check_Game_Data();
+Capture_Units_Data();
+
             }
         }
     }
@@ -2910,7 +3028,9 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
             
             mana_upkeep -= (Unit_Mana_Upkeep(itr_units) / Channeler_Divisor);
 
+Check_Game_Data();
             UNIT_GetDependants__WIP(itr_units, &troop_count, &troops[0]);
+Check_Game_Data();
 
             if(troop_count > 0)
             {
@@ -2928,7 +3048,10 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
                         MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 4;
                         MSG_UnitLost_Count++;
                     }
-                    Kill_Unit(troops[itr_troops], 0);
+Check_Game_Data();
+                    Kill_Unit(troops[itr_troops], kt_Normal);
+// TODO  Check_Game_Data();
+Capture_Units_Data();
                 }
             }
 
@@ -2941,8 +3064,11 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
                 MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 2;
                 MSG_UnitLost_Count++;
             }
-            Kill_Unit(itr_units, 1);
-            
+Check_Game_Data();
+            Kill_Unit(itr_units, kt_Dismissed);
+// TODO  Check_Game_Data();
+Capture_Units_Data();
+
         }
     }
 
@@ -3198,7 +3324,9 @@ Check_Game_Data();
 
         if(_CITIES[itr_cities].enchantments[CONSECRATION] > 0)
         {
+Check_Game_Data();
             Apply_Consecration(itr_cities);
+Check_Game_Data();
         }
 
         if(_CITIES[itr_cities].enchantments[STREAM_OF_LIFE] > 0)
@@ -3530,7 +3658,9 @@ void Determine_Offer(void)
 
             unit_type = 0;
 
+Check_Game_Data();
             Generate_Mercenaries(itr_players, &wx, &wy, &wp, &Merc_Amount, &unit_type, &Merc_Cost, &Merc_Level);
+Check_Game_Data();
 
             wx = _FORTRESSES[itr_players].wx;
             wy = _FORTRESSES[itr_players].wy;
@@ -3554,7 +3684,9 @@ void Determine_Offer(void)
 
                         Set_Mouse_List(1, mouse_list_default);
 
+Check_Game_Data();
                         Hire_Response = Hire_Merc_Popup(unit_type, Merc_Amount, Merc_Level, Merc_Cost);
+Check_Game_Data();
 
                         Set_Mouse_List(1, mouse_list_hourglass);
 
@@ -3565,6 +3697,7 @@ void Determine_Offer(void)
 
                         _players[itr_players].gold_reserve -= Merc_Cost;
 
+Check_Game_Data();
                         for(itr = 0; itr < Merc_Amount; itr++)
                         {
 
@@ -3581,6 +3714,8 @@ void Determine_Offer(void)
                             UNIT_RemoveExcess((_units - 1));
 
                         }
+Capture_Units_Data();
+Check_Game_Data();
 
                         if(itr_players == HUMAN_PLAYER_IDX)
                         {
@@ -3657,7 +3792,9 @@ Check_Game_Data();
                 else
                 {
 
+Check_Game_Data();
                     AI_Accept_Hero(itr_players, Hero_Slot, unit_type);
+Check_Game_Data();
 
                 }
 
@@ -4001,7 +4138,10 @@ void Heal_All_Units(void)
             // BUGBUG  ; conflicting condition: will always jump  ; (the function filling the array won't return enemies)
             if(_UNITS[troops[itr_troops]].owner_idx != _CITIES[itr_cities].owner_idx)
             {
-                Kill_Unit(troops[itr_troops], 2);
+Check_Game_Data();
+                Kill_Unit(troops[itr_troops], kt_Disappeared);
+Capture_Units_Data();
+Check_Game_Data();
             }
         }
 
@@ -4041,7 +4181,10 @@ void Heal_All_Units(void)
                 ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
             )
             {
+Check_Game_Data();
                 Heal_Unit(itr_units, UNIT_HealArray[itr_units], ST_FALSE);
+Capture_Units_Data();
+Check_Game_Data();
             }
 
             if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_HEALER) != 0)
@@ -4059,7 +4202,11 @@ void Heal_All_Units(void)
 
                         if(_UNITS[itr_troops].owner_idx == NEUTRAL_PLAYER_IDX)
                         {
-                            Kill_Unit(troops[itr_troops], 2);
+Check_Game_Data();
+                            Kill_Unit(troops[itr_troops], kt_Disappeared);
+Capture_Units_Data();
+Check_Game_Data();
+
                         }
 
                         if(_UNITS[itr_troops].owner_idx == HUMAN_PLAYER_IDX)
@@ -4077,7 +4224,10 @@ void Heal_All_Units(void)
 
                             if(_UNITS[itr_troops].owner_idx != HUMAN_PLAYER_IDX)
                             {
-                                Kill_Unit(troops[itr_troops], 2);
+Check_Game_Data();
+                                Kill_Unit(troops[itr_troops], kt_Disappeared);
+Capture_Units_Data();
+Check_Game_Data();
                             }
 
                         }
@@ -4100,7 +4250,10 @@ void Heal_All_Units(void)
                         (UNIT_HealArray[troops[itr_troops]] != 66)  // TODO  DEDU  IDGI
                     )
                     {
+Check_Game_Data();
                         Heal_Unit(itr_units, UNIT_HealArray[itr_units], ST_FALSE);
+Capture_Units_Data();
+Check_Game_Data();
                     }
 
                 }
@@ -4504,7 +4657,10 @@ void Do_All_Units_XP_Check_(void)
         )
         {
 
+Check_Game_Data();
             _UNITS[itr_units].Damage = 0;
+Capture_Units_Data();
+Check_Game_Data();
 
         }
 
@@ -4528,9 +4684,12 @@ void Do_All_Units_XP_Check_(void)
         if((_UNITS[itr_units].mutations & C_STASISINIT) != 0)
         {
 
+Check_Game_Data();
             _UNITS[itr_units].mutations |= C_STASISLINGER;
 
             _UNITS[itr_units].mutations ^= C_STASISINIT;
+Capture_Units_Data();
+Check_Game_Data();
 
         }
         /*
@@ -4553,7 +4712,10 @@ void Do_All_Units_XP_Check_(void)
         )
         {
 
+Check_Game_Data();
             _UNITS[itr_units].XP += 1;
+Capture_Units_Data();
+Check_Game_Data();
 
             hero_level = Calc_Unit_Level(itr_units);
 
@@ -4574,7 +4736,10 @@ void Do_All_Units_XP_Check_(void)
 
             }
 
+Check_Game_Data();
             _UNITS[itr_units].Level = Calc_Unit_Level(itr_units);
+Capture_Units_Data();
+Check_Game_Data();
 
         }
         /*
@@ -4673,9 +4838,12 @@ void Do_All_Units_XP_Check_(void)
                             if(_UNITS[troop_list[itr_troops]].Hero_Slot == -1)
                             {
 
+Check_Game_Data();
                                 _UNITS[troop_list[itr_troops]].XP += Highest_Armsmaster_XP;
 
                                 _UNITS[troop_list[itr_troops]].Level = Calc_Unit_Level(troop_list[itr_troops]);
+Capture_Units_Data();
+Check_Game_Data();
 
                             }
 
@@ -4831,7 +4999,10 @@ void AI_Kill_Lame_Units(void)
                     if(_unit_type_table[_UNITS[troops[itr_troops]].type].cost < (_players[_CITIES[itr_cities].owner_idx].average_unit_cost / 2))
                     {
 
-                        Kill_Unit(troops[itr_troops], 0);  // kill type 0 does not remove hero's items
+Check_Game_Data();
+                        Kill_Unit(troops[itr_troops], kt_Normal);
+Capture_Units_Data();
+Check_Game_Data();
 
                         did_remove_unit = ST_TRUE;
 
@@ -4881,7 +5052,10 @@ void AI_Kill_Lame_Units(void)
             )
             {
 
-                Kill_Unit(itr_units, 0);  // kill type 0 does not remove hero's items
+Check_Game_Data();
+                Kill_Unit(itr_units, kt_Normal);
+Capture_Units_Data();
+Check_Game_Data();
 
                 GUI_Multipurpose_Int++;
 

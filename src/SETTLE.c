@@ -134,44 +134,58 @@ void AI_MoveUnits__WIP(int16_t player_idx)
                 case us_BuildRoad:
                 {
 
+Check_Game_Data();
                     AI_UNIT_BuildRoad__WIP(itr_units);
+Check_Game_Data();
 
+Check_Game_Data();
                     AI_UNIT_Move__WIP(itr_units);
+Check_Game_Data();
 
                 } break;
 
                 case us_GOTO:
                 {
 
+Check_Game_Data();
                     AI_UNIT_Move__WIP(itr_units);
+Check_Game_Data();
 
                 } break;
 
                 case us_Meld:
                 {
 
+Check_Game_Data();
                     AI_UNIT_Meld__WIP(itr_units);
+Check_Game_Data();
 
                 } break;
 
                 case us_Settle:
                 {
 
+Check_Game_Data();
                     AI_UNIT_Settle__WIP(itr_units);
+Check_Game_Data();
 
                 } break;
 
                 case us_SeekTransport:
                 {
 
+Check_Game_Data();
                     AI_UNIT_SeekTransprt__WIP(itr_units);
+Check_Game_Data();
 
                 } break;
 
                 case us_Move:
                 {
 
+Check_Game_Data();
                     AI_UNIT_Move__WIP(itr_units);
+Check_Game_Data();
 
                 } break;
 
@@ -364,7 +378,9 @@ void AI_UNIT_Move__WIP(int16_t unit_idx)
 
     _map_y = Dummy_OVL_Map_TopY;
 
+Check_Game_Data();
     UU_Result = RdBd_UNIT_MoveStack__WIP(Unit_Owner, unit_idx, Target_X, Target_Y, &Dummy_OVL_Map_LeftX, &Dummy_OVL_Map_TopY, Plane);
+Check_Game_Data();
 
 }
 

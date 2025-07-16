@@ -509,11 +509,14 @@ void All_Units_In_Towers(void)
 // WZD o59p15
 // MoO2  Module: OFFICER  Dismiss_Officer_()
 /*
-    calls Kill_Unit() with 1 - 'dismiss'
+
 */
 void Dismiss_Unit(int16_t unit_idx)
 {
-    Kill_Unit(unit_idx, 1);
+Check_Game_Data();
+    Kill_Unit(unit_idx, kt_Dismissed);
+Capture_Units_Data();
+Check_Game_Data();
 }
 
 

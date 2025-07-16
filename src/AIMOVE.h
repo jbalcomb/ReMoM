@@ -124,7 +124,7 @@ int16_t AI_Enemy_Unit_In_Range(int16_t wx, int16_t wy, int16_t wp, int16_t radiu
 
 // WZD o158p34
 // AI_CanSettleOffPlane()
-int16_t AI_CanSettleOffPlane__WIP(int16_t player_idx, int16_t unit_idx, int16_t * Tower_X, int16_t * Tower_Y, int16_t unit_wp);
+int16_t AI_CanSettleOffPlane__STUB(int16_t player_idx, int16_t unit_idx, int16_t * Tower_X, int16_t * Tower_Y, int16_t unit_wp);
 
 // WZD o158p35
 void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t unit_list_idx, int16_t list_unit_idx);

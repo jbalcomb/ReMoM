@@ -495,7 +495,12 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 /*
 entities_on_movement_map
 
-loc_5C6B6:
+Are there any other "entities"?
+Combat Map?
+So, just 'Overland' vs. 'Combat'?
+GET/SET_ENTITY() vs. GET/SET_COMBAT_ENTITY()?
+
+
 mov     ax, [_main_map_grid_y]
 mov     dx, e_MAP_WIDTH_DB
 imul    dx
@@ -504,6 +509,32 @@ shl     dx, 1
 add     ax, dx
 mov     bx, ax
 mov     _SI_entity_idx, [entities_on_movement_map+bx]
+
+mov     ax, [bp+entity_wy]
+sub     ax, [bp+wy]
+mov     dx, e_MAP_WIDTH_DB
+imul    dx
+mov     dx, [bp+entity_wx]
+sub     dx, [bp+wx]
+shl     dx, 1
+add     ax, dx
+mov     bx, ax
+mov     [entities_on_movement_map+bx], itr
+
+
+entity_map_x = entity_wx - wx;
+entity_map_y = entity_wy - wy;
+entity_table_idx = (entity_map_y * MAP_WIDTH) + entity_map_x;
+entities_on_movement_map[entity_table_idx] = itr_units;
+
+entity_table_idx = (entity_map_y * MAP_WIDTH) + entity_map_x;
+entities_on_movement_map[entity_table_idx] = (itr_cities + MAX_UNIT_COUNT);
+
+NO-WORKIE   prior_entity_idx = { entities_on_movement_map[((entity_map_y * MAP_WIDTH) + entity_map_x)]; }
+NO-WORKIE   prior_entity_idx = { entities_on_movement_map[((entity_map_y * MAP_WIDTH) + entity_map_x)] };
+NO-WORKIE   prior_entity_idx = ( entities_on_movement_map[((entity_map_y * MAP_WIDTH) + entity_map_x)]; )
+NO-WORKIE   prior_entity_idx = ( entities_on_movement_map[((entity_map_y * MAP_WIDTH) + entity_map_x)] );
+WORKIE      prior_entity_idx = ( entities_on_movement_map[((entity_map_y * MAP_WIDTH) + entity_map_x)] );
 
 */
 // #define GET_MOVEMENT_MAP_ENTITY(_wx_, _wy_, _wp_)         ( entities_on_movement_map[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ]             )
@@ -514,14 +545,28 @@ mov     _SI_entity_idx, [entities_on_movement_map+bx]
 #define GET_MAIN_MAP_ENTITY()              ( entities_on_movement_map[ ( ( (_main_map_grid_y) * MAP_WIDTH ) + (_main_map_grid_x) ) ]                  )
 #define SET_MAIN_MAP_ENTITY(_entity_idx_)  ( entities_on_movement_map[ ( ( (_main_map_grid_y) * MAP_WIDTH ) + (_main_map_grid_x) ) ] = (_entity_idx_) )
 
+#define GET_MAP_ENTITY(_mx_,_my_)               ( entities_on_movement_map[ ( ( (_my_) * MAP_WIDTH ) + (_mx_) ) ]                  )
+#define SET_MAP_ENTITY(_mx_,_my_,_entity_idx_)  ( entities_on_movement_map[ ( ( (_my_) * MAP_WIDTH ) + (_mx_) ) ] = (_entity_idx_) )
 
+/*
 
+entity_my = (entity_wy - wy);
+entity_mx = (entity_wx - wx);
+world to map
+ENTITY_MX(_entity_wx_,_wx_)
+...feels pointless
 
+if(
+( (entity_wx >= wx) && (entity_wx < wx + MAP_WIDTH) ) ||
+( (entity_wx + WORLD_WIDTH >= wx) && (entity_wx + WORLD_WIDTH < wx + MAP_WIDTH) )
+)
 
+if( (entity_wx + WORLD_WIDTH >= wx) && (entity_wx + WORLD_WIDTH < wx + MAP_WIDTH) )
+{
+entity_wx = (entity_wx + WORLD_WIDTH);
+}
 
-
-
-
+*/
 
 
 

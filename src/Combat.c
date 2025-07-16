@@ -18908,14 +18908,34 @@ int16_t Unit_Hit_Points(int16_t unit_idx)
             hit_points += 1;
         }
 
-        if(HERO_CONSTITUTION(_UNITS[unit_idx].owner_idx, _UNITS[unit_idx].type))
+        if(_UNITS[unit_idx].owner_idx == ST_UNDEFINED)
         {
-            hit_points += unit_level + 1;
+            if(HERO_CONSTITUTION((Random(_num_players + 1) - 1), _UNITS[unit_idx].type))
+            {
+                hit_points += unit_level + 1;
+            }
+        }
+        else
+        {
+            if(HERO_CONSTITUTION(_UNITS[unit_idx].owner_idx, _UNITS[unit_idx].type))
+            {
+                hit_points += unit_level + 1;
+            }
         }
 
-        if(HERO_CONSTITUTION2(_UNITS[unit_idx].owner_idx, _UNITS[unit_idx].type))
+        if(_UNITS[unit_idx].owner_idx == ST_UNDEFINED)
         {
-            hit_points += (((unit_level + 1) * 3) / 2);
+            if(HERO_CONSTITUTION2((Random(_num_players + 1) - 1), _UNITS[unit_idx].type))
+            {
+                hit_points += (((unit_level + 1) * 3) / 2);
+            }
+        }
+        else
+        {
+            if(HERO_CONSTITUTION2(_UNITS[unit_idx].owner_idx, _UNITS[unit_idx].type))
+            {
+                hit_points += (((unit_level + 1) * 3) / 2);
+            }
         }
 
         if(unit_level > 1)
@@ -18958,14 +18978,29 @@ int16_t Unit_Hit_Points(int16_t unit_idx)
         hit_points += 1;
     }
 
-    if(_players[_UNITS[unit_idx].owner_idx].Globals[CHARM_OF_LIFE] > 0)
+    if(_UNITS[unit_idx].owner_idx == ST_UNDEFINED)
     {
-        Charm_of_Life_Bonus = hit_points / 4;
-        if(Charm_of_Life_Bonus < 1)
+        if(_players[(Random(_num_players + 1) - 1)].Globals[CHARM_OF_LIFE] > 0)
         {
-            Charm_of_Life_Bonus = 1;
+            Charm_of_Life_Bonus = hit_points / 4;
+            if(Charm_of_Life_Bonus < 1)
+            {
+                Charm_of_Life_Bonus = 1;
+            }
+            hit_points += Charm_of_Life_Bonus;
         }
-        hit_points += Charm_of_Life_Bonus;
+    }
+    else
+    {
+        if(_players[_UNITS[unit_idx].owner_idx].Globals[CHARM_OF_LIFE] > 0)
+        {
+            Charm_of_Life_Bonus = hit_points / 4;
+            if(Charm_of_Life_Bonus < 1)
+            {
+                Charm_of_Life_Bonus = 1;
+            }
+            hit_points += Charm_of_Life_Bonus;
+        }
     }
 
     return hit_points;
@@ -19859,7 +19894,11 @@ void BU_Init_Hero_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     int16_t hero_type;  // _DI_
 
     hero_owner_idx = UNITOWNER();
-    hero_type = UNITTYPE();
+    
+    /* HACK */  if(hero_owner_idx == ST_UNDEFINED) { hero_owner_idx = (Random((_num_players + 1)) - 1); }
+    // Meh.  Should be Random() for hero_type, actually
+
+    hero_type = UNITTYPE();  /* BUGBUG  from back in AI_sEFC92__WIP(), cause AVRL here */
     
     if(
         (HERO_NOBLE(hero_owner_idx, hero_type))

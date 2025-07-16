@@ -1221,7 +1221,10 @@ Capture_Cities_Data();
         {
             m_event_message_type = emt_Elsewhere;
         }
+
         Army_At_City(m_event_city_idx, &post_event_troop_count, &troops[0]);
+
+Check_Game_Data();
         for(itr_players = 0; itr_players < post_event_troop_count; itr_players++)
         {
             if(_unit_type_table[_UNITS[troops[itr_players]].type].Race < rt_Arcane)
@@ -1233,7 +1236,14 @@ Capture_Cities_Data();
                 Dismiss_Unit(troops[itr_players]);
             }
         }
+Capture_Units_Data();
+Check_Game_Data();
+
+Check_Game_Data();
         Change_City_Ownership(m_event_city_idx, NEUTRAL_PLAYER_IDX);
+Capture_Cities_Data();
+Check_Game_Data();
+
         Show_Event_Message();
     }
     /*

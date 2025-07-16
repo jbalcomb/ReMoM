@@ -445,9 +445,12 @@ void Check_Game_Data(void)
 {
     if(!game_data_captured)
         return;
+    Check_City_Count();
+    Check_Player_Count();
+    Check_Unit_Count();
+    // Check_World_Map_Data();
     Check_Cities_Data();
     Check_Units_Data();
-    // Check_World_Map_Data();
 }
 
 void Release_Game_Data(void)

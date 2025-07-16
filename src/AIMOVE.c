@@ -351,7 +351,9 @@ void G_AI_RallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx)
 
                 unit_idx = G_Pushout_Unit_Indices[itr];
 
+Check_Game_Data();
                 AI_Set_Move_Or_Goto_Target(unit_idx, AI_Continent_X_Ptr[landmass_idx], AI_Continent_Y_Ptr[landmass_idx], unit_list_idx, list_unit_idx);
+Check_Game_Data();
 
             }
 
@@ -1132,10 +1134,14 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
 
 
     // ; just did this in the previous function
+Check_Game_Data();
     AI_Build_Stacks_Find_Targets_Order_Moves(player_idx, 0, wp);
+Check_Game_Data();
 
 
+Check_Game_Data();
     AI_Do_Meld(player_idx);
+Check_Game_Data();
 
 
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
@@ -1262,7 +1268,9 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
 
                             Transport_Stack_Room -= (_unit_type_table[_UNITS[itr_units].type].Transport + 1);
 
+Check_Game_Data();
                             AI_Set_Move_Or_Goto_Target(itr_units, target_wx, target_wy, itr_stacks, itr_list_units);
+Check_Game_Data();
 
                         }
 
@@ -1504,13 +1512,17 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
                             if(_unit_type_table[unit_type].Transport > 0)
                             {
 
+Check_Game_Data();
                                 AI_Order_SeekTransport(itr_units, itr_stacks, itr_list_units);
+Check_Game_Data();
 
                             }
                             else
                             {
 
+Check_Game_Data();
                                 AI_Set_Move_Or_Goto_Target(itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
+Check_Game_Data();
 
                             }
 
@@ -1562,7 +1574,9 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
 
                                 itr_units = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
 
+Check_Game_Data();
                                 AI_Set_Move_Or_Goto_Target(itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
+Check_Game_Data();
 
                             }
 
@@ -1649,7 +1663,9 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
 
                                         itr_units = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
 
+Check_Game_Data();
                                         AI_Set_Move_Or_Goto_Target(itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
+Check_Game_Data();
 
                                     }
 
@@ -1759,7 +1775,9 @@ void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx
 
                         unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
 
+Check_Game_Data();
                         AI_Set_Move_Or_Goto_Target(unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
+Check_Game_Data();
 
                     }
 
@@ -3282,7 +3300,9 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
                     for(itr_stacks2 = 0; _ai_own_stack_unit_count[itr_stacks1] > itr_stacks2; itr_stacks2++)
                     {
 
+Check_Game_Data();
                         AI_Set_Move_Or_Goto_Target(_ai_own_stack_unit_list[itr_stacks1][itr_stacks2], target_wx, target_wy, itr_stacks1, itr_stacks2);
+Check_Game_Data();
 
                     }
 
@@ -3293,7 +3313,10 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
                     for(itr_stacks2 = 0; _ai_own_stack_unit_count[itr_stacks1] > itr_stacks2; itr_stacks2++)
                     {
 
+Check_Game_Data();
                         _UNITS[_ai_own_stack_unit_list[itr_stacks1][itr_stacks2]].Status = us_Ready;
+Capture_Units_Data();
+Check_Game_Data();
 
                     }
 
@@ -3335,7 +3358,7 @@ int16_t AI_Find_Nearest_Target_Unit(int16_t stack_idx, int16_t landmass_idx, int
     int16_t closest_distance = 0;
     int16_t distance = 0;
     int16_t Tile_Strength_Value = 0;
-    int16_t Next_Tile_ChainIndex;  // _DI_
+    int16_t Next_Tile_ChainIndex = 0;  // _DI_
 
     closest_distance = 1000;
 
@@ -3535,7 +3558,10 @@ void AI_Find_Opportunity_City_Target(int16_t wp, int16_t player_idx)
                 )
                 {
 
+Check_Game_Data();
                     _UNITS[itr_units].Status = us_Ready;
+Capture_Units_Data();
+Check_Game_Data();
 
                 }
 
@@ -3571,109 +3597,91 @@ AI_SetUnitOrders__WIP(itr_players)
 */
 void AI_Disband_To_Balance_Budget(int16_t player_idx)
 {
-    int16_t UU_Local_0 = 0;
-    int16_t Upkeep = 0;
-    int16_t Unit_Landmass = 0;
-    int16_t Unit_Plane = 0;
-    int16_t Mana_Needed = 0;
-    int16_t Gold_Needed = 0;
-    int16_t Food_Needed = 0;
-    int16_t Lowest_Value_Index = 0;
-    int16_t Unit_Value = 0;
-    int16_t Lowest_Value = 0;
-    int16_t Tries = 0;
-    int16_t Mana_Income = 0;
-    int16_t Food_Income = 0;
-    int16_t Gold_Income = 0;
+    int16_t niu_var_1C = 0;
+    int16_t lowest_value_unit_upkeep = 0;
+    int16_t unit_landmass_idx = 0;
+    int16_t unit_wp = 0;
+    int16_t mana_deficit = 0;
+    int16_t gold_deficit = 0;
+    int16_t food_deficit = 0;
+    int16_t lowest_value_unit_idx = 0;
+    int16_t unit_value = 0;
+    int16_t lowest_unit_value = 0;
+    int16_t tries = 0;
+    int16_t mana_income = 0;
+    int16_t food_income = 0;
+    int16_t gold_income = 0;
     int16_t itr_units = 0;  // _DI_
 
+    Player_Resource_Income_Total(player_idx, &gold_income, &food_income, &mana_income);
 
-    Player_Resource_Income_Total(player_idx, &Gold_Income, &Food_Income, &Mana_Income);
+    mana_deficit = 0;
+    food_deficit = 0;
+    gold_deficit = 0;
 
+    niu_var_1C = 0;  // was total?  MoO1 artifact?  myserious fourth resource?  wasn't there something like this elsewhere?
 
-    Mana_Needed = 0;
-    Food_Needed = 0;
-    Gold_Needed = 0;
-
-
-    UU_Local_0 = 0;
-
-
-    if(Food_Income < 0)
+    if(food_income < 0)
     {
 
-        Food_Needed += -(Food_Income);
+        food_deficit += -(food_income);
 
     }
 
-    if(Gold_Income < 0)
+    if(gold_income < 0)
     {
 
-        Gold_Needed += -(Gold_Income);
+        gold_deficit += -(gold_income);
 
     }
 
-    if(Mana_Income < 0)
+    if(mana_income < 0)
     {
 
-        Mana_Needed += -(Mana_Income);
+        mana_deficit += -(mana_income);
 
     }
 
 
-    for(Tries = 0; ((Tries < 200) && ((Food_Needed > 0) || (Gold_Needed > 0))); Tries++)
+    for(tries = 0; ((tries < 200) && ((food_deficit > 0) || (gold_deficit > 0))); tries++)
     {
 
-        // ; find and remove the lowest value non-fantastic unit
-        // ; from play
-        // ; 
-        // ; BUG? resets the unit's plane to 0 afterward
+        lowest_unit_value = 10000;
 
-        Lowest_Value = 10000;
-
-        Lowest_Value_Index = ST_UNDEFINED;
+        lowest_value_unit_idx = ST_UNDEFINED;
 
         for(itr_units = 0; itr_units < _units; itr_units++)
         {
 
-            /* HACK */  if(
-            /* HACK */      (_UNITS[itr_units].owner_idx == ST_UNDEFINED)
-            /* HACK */      ||
-            /* HACK */      (_UNITS[itr_units].wp == ST_UNDEFINED)
-            /* HACK */  )
-            /* HACK */  {
-            /* HACK */      continue;
-            /* HACK */  }
-
             if(
                 (_UNITS[itr_units].type < ut_Magic_Spirit)
-                ||
+                &&
                 (_UNITS[itr_units].owner_idx == player_idx)
             )
             {
 
-                Unit_Plane = _UNITS[itr_units].wp;
+                unit_wp = _UNITS[itr_units].wp;
 
-                Unit_Landmass = _landmasses[((Unit_Plane * WORLD_SIZE) + (_UNITS[itr_units].wy * WORLD_WIDTH) + _UNITS[itr_units].wx)];
+                unit_landmass_idx = _landmasses[((unit_wp * WORLD_SIZE) + (_UNITS[itr_units].wy * WORLD_WIDTH) + _UNITS[itr_units].wx)];
 
-                if(Unit_Landmass > 0)
+                if(unit_landmass_idx > 0)
                 {
 
-                    Unit_Value = (Effective_Unit_Strength(itr_units) / 10);
+                    unit_value = (Effective_Unit_Strength(itr_units) / 10);
 
-                    if(AI_ContBalances[Unit_Plane][Unit_Landmass] == 0)
+                    if(AI_ContBalances[unit_wp][unit_landmass_idx] == 0)
                     {
 
-                        Unit_Value *= 2;
+                        unit_value *= 2;
 
                     }
 
-                    if(Unit_Value < Lowest_Value)
+                    if(unit_value < lowest_unit_value)
                     {
 
-                        Lowest_Value = Unit_Value;
+                        lowest_unit_value = unit_value;
 
-                        Lowest_Value_Index = itr_units;
+                        lowest_value_unit_idx = itr_units;
 
                     }
 
@@ -3683,88 +3691,82 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
 
         }
 
-        if(Lowest_Value_Index != ST_UNDEFINED)
+        if(lowest_value_unit_idx != ST_UNDEFINED)
         {
 
-            Food_Needed--;
+            food_deficit--;
 
-            Upkeep = ((_unit_type_table[_UNITS[Lowest_Value_Index].type].Upkeep * difficulty_modifiers_table[_difficulty].maintenance) / 100);
+            lowest_value_unit_upkeep = ((_unit_type_table[_UNITS[lowest_value_unit_idx].type].Upkeep * difficulty_modifiers_table[_difficulty].maintenance) / 100);
 
-            if(Upkeep == 0)
+            if(lowest_value_unit_upkeep == 0)
             {
 
-                Upkeep = 1;
+                lowest_value_unit_upkeep = 1;
 
             }
 
-            Gold_Needed -= Upkeep;
+            gold_deficit -= lowest_value_unit_upkeep;
 
-            Kill_Unit(Lowest_Value_Index, 0);
+Check_Game_Data();
+            Kill_Unit(lowest_value_unit_idx, kt_Normal);
+Capture_Units_Data();
+// TODO  Check_Game_Data();
 
-            _UNITS[Lowest_Value_Index].wp = 0;
+            // ; BUG? resets the unit's plane to 0 afterward
+Check_Game_Data();
+            _UNITS[lowest_value_unit_idx].wp = 0;  // BUGBUG?  ...because, Kill_Unit() sets ST_UNDEFINED  ...but, why?
+Capture_Units_Data();
+// TODO  Check_Game_Data();
 
         }
 
     }
 
 
-    for(Tries = 0; ((Tries < 200) && (Mana_Needed > 0)); Tries++)
+    for(tries = 0; ((tries < 200) && (mana_deficit > 0)); tries++)
     {
 
-        // ; find and remove the lowest value fantastic unit
-        // ; from play
-        // ; 
         // ; BUG: uses unit type instead of unit index when trying
         // ;  to determine threat value
-        // ; BUG? resets the unit's plane to 0 afterward
 
-        Lowest_Value = 10000;
+        lowest_unit_value = 10000;
 
-        Lowest_Value_Index = ST_UNDEFINED;
+        lowest_value_unit_idx = ST_UNDEFINED;
 
         for(itr_units = 0; itr_units < _units; itr_units++)
         {
-            
-            /* HACK */  if(
-            /* HACK */      (_UNITS[itr_units].owner_idx == ST_UNDEFINED)
-            /* HACK */      ||
-            /* HACK */      (_UNITS[itr_units].wp == ST_UNDEFINED)
-            /* HACK */  )
-            /* HACK */  {
-            /* HACK */      continue;
-            /* HACK */  }
 
             if(
                 (_UNITS[itr_units].type >= ut_Magic_Spirit)
-                ||
+                &&
                 (_UNITS[itr_units].owner_idx == player_idx)
             )
             {
 
-                Unit_Plane = _UNITS[itr_units].wp;
+                unit_wp = _UNITS[itr_units].wp;
 
-                Unit_Landmass = _landmasses[((Unit_Plane * WORLD_SIZE) + (_UNITS[itr_units].wy * WORLD_WIDTH) + _UNITS[itr_units].wx)];
+                unit_landmass_idx = _landmasses[((unit_wp * WORLD_SIZE) + (_UNITS[itr_units].wy * WORLD_WIDTH) + _UNITS[itr_units].wx)];
 
-                if(Unit_Landmass > 0)
+                if(unit_landmass_idx > 0)
                 {
 
                     // ; BUG: parameter mismatch
                     // BUGBUG ¿ should use Effective_Unit_Type_Strength() or pass itr_units ?
-                    Unit_Value = (Effective_Unit_Strength(_UNITS[itr_units].type) / 10);
+                    unit_value = (Effective_Unit_Strength(_UNITS[itr_units].type) / 10);
 
-                    if(AI_ContBalances[Unit_Plane][Unit_Landmass] == 0)
+                    if(AI_ContBalances[unit_wp][unit_landmass_idx] == 0)
                     {
 
-                        Unit_Value *= 2;
+                        unit_value *= 2;
 
                     }
 
-                    if(Unit_Value < Lowest_Value)
+                    if(unit_value < lowest_unit_value)
                     {
 
-                        Lowest_Value = Unit_Value;
+                        lowest_unit_value = unit_value;
 
-                        Lowest_Value_Index = itr_units;
+                        lowest_value_unit_idx = itr_units;
 
                     }
 
@@ -3774,23 +3776,30 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
 
         }
 
-        if(Lowest_Value_Index != ST_UNDEFINED)
+        if(lowest_value_unit_idx != ST_UNDEFINED)
         {
 
-            Upkeep = ((_unit_type_table[_UNITS[Lowest_Value_Index].type].Upkeep * difficulty_modifiers_table[_difficulty].maintenance) / 100);
+            lowest_value_unit_upkeep = ((_unit_type_table[_UNITS[lowest_value_unit_idx].type].Upkeep * difficulty_modifiers_table[_difficulty].maintenance) / 100);
 
-            if(Upkeep == 0)
+            if(lowest_value_unit_upkeep == 0)
             {
 
-                Upkeep = 1;
+                lowest_value_unit_upkeep = 1;
 
             }
 
-            Mana_Needed -= Upkeep;
+            mana_deficit -= lowest_value_unit_upkeep;
 
-            Kill_Unit(Lowest_Value_Index, 0);
+Check_Game_Data();
+            Kill_Unit(lowest_value_unit_idx, kt_Normal);
+Capture_Units_Data();
+// TODO  Check_Game_Data();
 
-            _UNITS[Lowest_Value_Index].wp = 0;
+            // ; BUG? resets the unit's plane to 0 afterward
+Check_Game_Data();
+            _UNITS[lowest_value_unit_idx].wp = 0;  // BUGBUG?  ...because, Kill_Unit() sets ST_UNDEFINED  ...but, why?
+Capture_Units_Data();
+// TODO  Check_Game_Data();
 
         }
 
@@ -4028,7 +4037,9 @@ void AI_Move_Out_Boats(void)
                 if(Can_Sail_Off == ST_TRUE)
                 {
 
+Check_Game_Data();
                     AI_Stack_Set_Boats_Goto(itr_stack, Sailable_Tile_X, Sailable_Tile_Y);
+Check_Game_Data();
 
                 }
 
@@ -4853,10 +4864,12 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                     )
                     {
 
-                        if(AI_CanSettleOffPlane__WIP(player_idx, unit_idx, &Tower_X, &Tower_Y, unit_wp) == ST_TRUE)
+                        if(AI_CanSettleOffPlane__STUB(player_idx, unit_idx, &Tower_X, &Tower_Y, unit_wp) == ST_TRUE)
                         {
 
+Check_Game_Data();
                             AI_Set_Move_Or_Goto_Target(unit_idx, Tower_X, Tower_Y, itr_stacks, itr_list_units);
+Check_Game_Data();
 
                         }
                         else
@@ -4943,13 +4956,16 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                             if(Best_Tile_Value == ST_UNDEFINED)
                             {
 
+Check_Game_Data();
                                 AI_SendToColonize__WIP(unit_idx, unit_wx, unit_wy, unit_wp, player_idx, itr_stacks, itr_list_units);
+Check_Game_Data();
 
                             }
                             else
                             {
-
+Check_Game_Data();
                                 AI_Set_Move_Or_Goto_Target(unit_idx, Best_Tile_X, Best_Tile_Y, itr_stacks, itr_list_units);
+Check_Game_Data();
 
                             }
 
@@ -4959,7 +4975,9 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                     else
                     {
                         
+Check_Game_Data();
                         AI_Order_Settle(unit_idx, itr_stacks, itr_list_units);
+Check_Game_Data();
 
                     }
 
@@ -5224,7 +5242,9 @@ void AI_Do_RoadBuild(int16_t landmass_idx)
                     if(closest_distance > 1)
                     {
 
+Check_Game_Data();
                         AI_Set_Move_Or_Goto_Target(unit_idx, _CITIES[nearest_city_idx].wx, _CITIES[nearest_city_idx].wy, itr_stacks, itr_list_units);
+Check_Game_Data();
 
                     }
                     else
@@ -5270,7 +5290,9 @@ void AI_Do_RoadBuild(int16_t landmass_idx)
                         if(RoadTo_City != ST_UNDEFINED)
                         {
 
+Check_Game_Data();
                             AI_Order_RoadBuild(unit_idx, _CITIES[RoadTo_City].wx, _CITIES[RoadTo_City].wy, itr_stacks, itr_list_units);
+Check_Game_Data();
 
                         }
 
@@ -5326,21 +5348,29 @@ void AI_Set_Move_Or_Goto_Target(int16_t unit_idx, int16_t target_wx, int16_t tar
     )
     {
 
+Check_Game_Data();
         _UNITS[unit_idx].Status = us_Move;  // DEDU  What does this status mean?
+Capture_Units_Data();
+Check_Game_Data();
 
     }
     else
     {
 
+Check_Game_Data();
         _UNITS[unit_idx].Status = us_GOTO;
+Capture_Units_Data();
+Check_Game_Data();
 
     }
 
-        _UNITS[unit_idx].dst_wx = target_wx;
+Check_Game_Data();
+    _UNITS[unit_idx].dst_wx = target_wx;
+    _UNITS[unit_idx].dst_wy = target_wy;
+Capture_Units_Data();
+Check_Game_Data();
 
-        _UNITS[unit_idx].dst_wy = target_wy;
-
-        _ai_own_stack_unit_list[CX_ID][list_unit_idx] = ST_UNDEFINED;
+    _ai_own_stack_unit_list[CX_ID][list_unit_idx] = ST_UNDEFINED;
 
 }
 
@@ -5369,7 +5399,9 @@ void AI_Order_Settle(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_
 
     }
 
+Check_Game_Data();
     _UNITS[unit_idx].Status = us_Settle;
+Capture_Units_Data();
 
     _ai_own_stack_unit_list[unit_list_idx][list_unit_idx] = ST_UNDEFINED;
 
@@ -5401,15 +5433,18 @@ void AI_Order_RoadBuild(int16_t unit_idx, int16_t wx, int16_t wy, int16_t unit_l
 
     }
 
-    _UNITS[unit_idx].Rd_From_X = _UNITS[unit_idx].wx;
+Check_Game_Data();
 
+    _UNITS[unit_idx].Rd_From_X = _UNITS[unit_idx].wx;
     _UNITS[unit_idx].Rd_From_Y = _UNITS[unit_idx].wy;
 
     _UNITS[unit_idx].Status = us_BuildRoad;
 
     _UNITS[unit_idx].dst_wx = wx;
-
     _UNITS[unit_idx].dst_wy = wy;
+
+Capture_Units_Data();
+Check_Game_Data();
 
     _ai_own_stack_unit_list[unit_list_idx][list_unit_idx] = ST_UNDEFINED;
 
@@ -5444,9 +5479,10 @@ void AI_Order_SeekTransport(int16_t unit_idx, int16_t unit_list_idx, int16_t lis
 
     _UNITS[unit_idx].Status = us_SeekTransport;
 
-    _UNITS[unit_idx].dst_wx = 10;
+    _UNITS[unit_idx].dst_wx = 10;  // DEDU  WTF?
+Capture_Units_Data();
 
-    _ai_own_stack_unit_list[unit_list_idx][list_unit_idx] = ST_UNDEFINED;
+    _ai_own_stack_unit_list[unit_list_idx][list_unit_idx] = ST_UNDEFINED;  // ~ remove it from the list
 
 }
 
@@ -5642,10 +5678,10 @@ int16_t AI_Enemy_Unit_In_Range(int16_t wx, int16_t wy, int16_t wp, int16_t range
 /*
 
 */
-int16_t AI_CanSettleOffPlane__WIP(int16_t player_idx, int16_t unit_idx, int16_t * Tower_X, int16_t * Tower_Y, int16_t unit_wp)
+int16_t AI_CanSettleOffPlane__STUB(int16_t player_idx, int16_t unit_idx, int16_t * Tower_X, int16_t * Tower_Y, int16_t unit_wp)
 {
 
-    return ST_FALSE;
+    /* HACK TODO ALPHA */  return ST_FALSE;
 
 }
 
@@ -6416,6 +6452,7 @@ void AI_Stack_Set_Boats_Goto(int16_t ai_stack_idx, int16_t wx, int16_t wy)
 
     stack_wp = AI_Own_Stacks[ai_stack_idx].wp;
 
+Check_Game_Data();
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
 
@@ -6438,6 +6475,8 @@ void AI_Stack_Set_Boats_Goto(int16_t ai_stack_idx, int16_t wx, int16_t wy)
         }
 
     }
+Capture_Units_Data();
+Check_Game_Data();
 
     AI_Own_Stacks[ai_stack_idx].value = ST_UNDEFINED;
 

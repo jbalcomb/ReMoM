@@ -105,6 +105,7 @@ void AI_Next_Turn__WIP(void)
     int16_t itr_players2 = 0;  // _DI_
 
 
+Check_Game_Data();
     // sanity check all unit coordinates
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
@@ -149,6 +150,8 @@ void AI_Next_Turn__WIP(void)
         }
 
     }
+Capture_Units_Data();
+Check_Game_Data();
 
 
     // DONT  EMM_Map_DataH();
@@ -355,6 +358,7 @@ Check_Game_Data();
         }
 
     }
+Capture_Units_Data();
 
 
     // ; attempt to execute the orders of all units for each

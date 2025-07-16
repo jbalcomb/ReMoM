@@ -23,6 +23,64 @@ BETA
 
 
 
+disappearing units?
+werewolves
+unit_idx 79
+19,15
+stag beetle, on my node
+unit_idx 696
+18,12
+
+
+
+int16_t WIZ_MatchManaUpkeep__WIP(int16_t player_idx, int16_t mana_upkeep)
+
+
+
+            // SPELLY  CTY_StreamOfLife(itr_cities);
+            // SPELLY  CTY_ChaosRift(itr_cities);
+            // SPELLY  CTY_GaiasBlessing(itr_cities);
+            // SPELLY  CTY_NightshadeDispel(itr_cities);
+
+
+FUCK
+    // DEMO  Fix_Patrol_On_Boats(troop_count, troops);
+MainScr.c
+
+
+
+        // TODO  WIZ_Conquer(city_owner_idx, player_idx, city_idx);
+        // |-> WIZ_Banishment()
+        // MoO2 Module: COLCALC Eliminate_Player_
+
+
+
+        /* TODO */  itr_players = EVNT_FindNewMineral__STUB(player_idx, &wx, &wy, &wp, &terrain_special);
+        /* TODO */  TILE_ReplaceMinerals__STUB(wx, wy, wp, terrain_special);
+
+
+
+Rebellion Event
+    player name and city name did not print
+
+
+
+'Next Turn'
+    clicked choose a new spell to research, screen didn't change, crashed in Next_Turn_Calc()
+    something should happen to screen following/in between?
+
+
+
+TODO 
+How do we land in...
+MainScr.c
+    _UNITS[troops[itr_units]].Move_Failed = ST_TRUE;
+What is Move_Failed even?
+
+¿ MoO2 ~== NEXTTURN  Update_Units_MvsSts() ?
+
+
+
 // TODO  DIPLO ROUND 2
 e.g., no NPC demand/offer
 ¿ Next_Turn_Calc() stuff ?

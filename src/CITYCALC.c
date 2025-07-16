@@ -212,6 +212,8 @@ int16_t Unit_Gold_Upkeep(int16_t unit_idx)
 
     unit_owner_idx = _UNITS[unit_idx].owner_idx;
 
+    /* HACK */  if(unit_owner_idx == ST_UNDEFINED) { return 0; }
+
     unit_gold_upkeep = 0;
 
     if( (_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_FANTASTIC) == 0)
@@ -222,9 +224,10 @@ int16_t Unit_Gold_Upkeep(int16_t unit_idx)
         }
         else
         {
+            
             // Yay Hero, Nay Noble, Nay Toren The Chosen
             if(
-                (!HERO_NOBLE(unit_owner_idx, _UNITS[unit_idx].type))
+                (!HERO_NOBLE(unit_owner_idx, _UNITS[unit_idx].type))  /* BUGBUG  from back in AI_sEFC92__WIP(), uses unit_type instead of unit_idx, causes AVRL here */
                 &&
                 (_UNITS[unit_idx].type != ut_Chosen)
             )
@@ -401,6 +404,7 @@ void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int1
     int16_t gold_expense = 0;
     int16_t itr_cities = 0;
     int16_t itr_heroes = 0;
+    int16_t difficulty_modifier = 0;  // DNE in Dasm
 
     Player_Magic_Power_Income_Total(&mana_income, &food_income, &gold_income, player_idx);
 
@@ -433,11 +437,13 @@ void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int1
         if(player_idx != HUMAN_PLAYER_IDX)
         {
 
-            mana_expense = ((difficulty_modifiers_table[_difficulty].maintenance * mana_expense) / 100);
-
-            gold_expense = ((difficulty_modifiers_table[_difficulty].maintenance * gold_expense) / 100);
-
-            food_expense = ((difficulty_modifiers_table[_difficulty].maintenance * food_expense) / 100);
+            // mana_expense = ((difficulty_modifiers_table[_difficulty].maintenance * mana_expense) / 100);
+            // gold_expense = ((difficulty_modifiers_table[_difficulty].maintenance * gold_expense) / 100);
+            // food_expense = ((difficulty_modifiers_table[_difficulty].maintenance * food_expense) / 100);
+            difficulty_modifier = difficulty_modifiers_table[_difficulty].maintenance;
+            mana_expense = ((difficulty_modifier * mana_expense) / 100);
+            gold_expense = ((difficulty_modifier * gold_expense) / 100);
+            food_expense = ((difficulty_modifier * food_expense) / 100);
 
         }
 
@@ -473,13 +479,14 @@ void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int1
 
         }
 
-        *food_total = food_income - food_expense;
+        *food_total = (food_income - food_expense);
 
         // mov bx, [bp+food]; mov ax, [bx]; cwd; sub ax, dx; sar ax, 1; add [bp+gold_income], ax
-        gold_income += (*food_total > 0) ? *food_total / 2 : 0;
-        *gold_total = gold_income - gold_expense;
+        gold_income += (*food_total > 0) ? (*food_total / 2) : 0;
 
-        *mana_total = mana_income - mana_expense;
+        *gold_total = (gold_income - gold_expense);
+
+        *mana_total = (mana_income - mana_expense);
 
     }
 
