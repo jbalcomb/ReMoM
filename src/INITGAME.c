@@ -7,7 +7,7 @@
 
 #include "NewGame.h"
 
-#include "MOX/MOM_DATA.h"
+#include "MOX/MOM_Data.h"
 #include "MOX/MOX_DAT.h"
 #include "MOX/MOX_DEF.h"
 #include "MOX/random.h"
