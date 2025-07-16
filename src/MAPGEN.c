@@ -11,7 +11,7 @@
 #include "MOX/Graphics.h"
 #include "MOX/LBX_Load.h"
 #include "MOX/Mouse.h"
-#include "MOX/MOM_DATA.h"
+#include "MOX/MOM_Data.h"
 #include "MOX/MOX_TYPE.h"
 #include "MOX/Video.h"
 
