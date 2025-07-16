@@ -43,7 +43,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     }
     else
     {
-        _itoa((save_gam_idx + 1), temp_string, 10);
+        itoa((save_gam_idx + 1), temp_string, 10);
         strcpy(file_name, "SAVE");
         strcat(file_name, temp_string);
         strcat(file_name,".GAM");
@@ -217,7 +217,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     }
     else
     {
-        _itoa((save_gam_idx + 1), temp_string, 10);
+        itoa((save_gam_idx + 1), temp_string, 10);
         strcpy(file_name, "SAVE");
         strcat(file_name, temp_string);
         strcat(file_name,".GAM");

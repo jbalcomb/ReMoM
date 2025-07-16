@@ -429,7 +429,7 @@ void Spellbook_Mana_Adder_Draw(void)
 
     strcpy(string, str_PLUS_SIGN__ovr136);
 
-    _itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
+    itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
 
     strcat(string, buffer);  // extra mana amount
 
@@ -641,7 +641,7 @@ void Combat_Spellbook_Mana_Adder_Draw(void)
 
     strcpy(string, str_PLUS_SIGN__ovr136);
 
-    _itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
+    itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
 
     strcat(string, buffer);  // extra mana amount
 

@@ -899,14 +899,14 @@ if(_CITIES[_city_idx].construction > 298)
 
         Print((UV_x_start + UV_x_start_offset + 51), (UV_y_start + 34), "Cost");
 
-        _itoa(product_cost, GUI_NearMsgString, 10);
+        itoa(product_cost, GUI_NearMsgString, 10);
 
         if(View_Type == 1)  /* Product is Unit */
         {
             
             strcat(GUI_NearMsgString, "(");
 
-            _itoa(_unit_type_table[unit_type_idx].cost, temp_string, 10);  // Full Cost
+            itoa(_unit_type_table[unit_type_idx].cost, temp_string, 10);  // Full Cost
 
             strcat(GUI_NearMsgString, temp_string);
 

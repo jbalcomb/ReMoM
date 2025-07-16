@@ -1141,7 +1141,7 @@ void Magic_Screen_Draw(void)
     Set_Outline_Color(19);
     Set_Alias_Color(185);
 
-    _itoa(mana, GUI_String_1, 10);
+    itoa(mana, GUI_String_1, 10);
     strcat(GUI_String_1, cnst_Space_MP);
     Print_Right(54, 160, GUI_String_1);
 
@@ -1151,12 +1151,12 @@ void Magic_Screen_Draw(void)
     }
     else
     {
-        _itoa(research, GUI_String_1, 10);
+        itoa(research, GUI_String_1, 10);
         strcat(GUI_String_1, aRp_0);
         Print_Right(101, 160, GUI_String_1);
     }
 
-    _itoa(skill, GUI_String_1, 10);
+    itoa(skill, GUI_String_1, 10);
     strcat(GUI_String_1, aSp);
     Print_Right(148, 160, GUI_String_1);
 
@@ -1170,8 +1170,8 @@ void Magic_Screen_Draw(void)
         "Casting Skill:"
     */
     Print(5, 177, aCastingSkill);
-    _itoa((Player_Base_Casting_Skill(_human_player_idx) + Player_Hero_Casting_Skill(_human_player_idx)), GUI_String_1, 10);
-    _itoa(Player_Base_Casting_Skill(_human_player_idx), GUI_String_2, 10);
+    itoa((Player_Base_Casting_Skill(_human_player_idx) + Player_Hero_Casting_Skill(_human_player_idx)), GUI_String_1, 10);
+    itoa(Player_Base_Casting_Skill(_human_player_idx), GUI_String_2, 10);
     strcat(GUI_String_1, cnst_OpeningBrace_2);
     strcat(GUI_String_1, GUI_String_2);
     strcat(GUI_String_1, cnst_ClosingBrace_2);

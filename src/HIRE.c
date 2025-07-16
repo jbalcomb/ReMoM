@@ -210,7 +210,7 @@ void Merchant_Popup_Draw(void)
 
     strcat(GUI_NearMsgString, cnst_Merchant_Msg_2);
 
-    _itoa(GAME_AssetCost, item_name, 10);
+    itoa(GAME_AssetCost, item_name, 10);
 
     strcat(GUI_NearMsgString, item_name);
 
@@ -383,7 +383,7 @@ void Hire_Hero_Popup_Draw(void)
     if(GAME_HeroHireType == 0)  // ; 0: random, 1: summon, 2: prisoner, 3: champion
     {
         strcpy(GUI_NearMsgString, cnst_Hire_Msg_1);
-        _itoa(GAME_AssetCost, temp_string, 10);
+        itoa(GAME_AssetCost, temp_string, 10);
         strcat(GUI_NearMsgString, temp_string);
         strcat(GUI_NearMsgString, cnst_Hire_Msg_2);
     }
@@ -746,12 +746,12 @@ void Hire_Merc_Popup_Draw(void)
     }
     else
     {
-        _itoa(EVNT_MercUnitCount, temp_string, 10);
+        itoa(EVNT_MercUnitCount, temp_string, 10);
         strcpy(GUI_NearMsgString, temp_string);
         strcat(GUI_NearMsgString, cnst_Hire_Msg_A);
     }
 
-    _itoa(GAME_AssetCost, temp_string, 10);
+    itoa(GAME_AssetCost, temp_string, 10);
 
     strcat(GUI_NearMsgString, temp_string);
 

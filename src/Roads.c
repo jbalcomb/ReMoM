@@ -426,7 +426,7 @@ void Draw_Road_Building_Window(void)
         if(m_turns_to_build_road > 0)
         {
             strcpy(GUI_String_1, str_ItWillTake);  // "It will take "
-            _itoa(m_turns_to_build_road, GUI_String_2, 10);
+            itoa(m_turns_to_build_road, GUI_String_2, 10);
             strcat(GUI_String_1, GUI_String_2);
             strcat(GUI_String_1, str_Turn_2);  // " turn"
             if(m_turns_to_build_road > 1)

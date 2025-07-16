@@ -423,7 +423,7 @@ void Hero_LevelUp_Popup_Draw(void)
     if(value != ST_UNDEFINED)
     {
         FLIC_Draw((lvlmake_base_x + 139), (lvlmake_base_y + 35), item_view_bullet_seg);
-        _itoa(value, temp_string, 10);
+        itoa(value, temp_string, 10);
         strcpy(GUI_String_1, str_Plus__ovr102);  // "+"
         strcat(GUI_String_1, temp_string);
         strcat(GUI_String_1, str_SPACE_Defense__ovr102);  // " Defense"
@@ -507,7 +507,7 @@ void Hero_Build_Specials_List(int16_t unit_idx, struct s_UV_List * specials_list
     {
         strcpy(specials_list->names[specials_index], str_Plus__ovr102);
         ability_value = 1;
-        _itoa(ability_value, temp_string, 10);
+        itoa(ability_value, temp_string, 10);
         strcat(specials_list->names[specials_index], temp_string);
         strcat(specials_list->names[specials_index], str_SPACE_ToHit__ovr102);  // " To Hit"
         specials_list->flags[specials_index] = ST_UNDEFINED;
@@ -619,7 +619,7 @@ void Hero_Build_Specials_List(int16_t unit_idx, struct s_UV_List * specials_list
                         strcpy(specials_list->names[specials_index], str_Sage__ovr102);
                         strcat(specials_list->names[specials_index], str_SPACE__ovr102);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 3);
-                        _itoa(ability_value, temp_string, 10);
+                        itoa(ability_value, temp_string, 10);
                         strcat(specials_list->names[specials_index], temp_string);
                         strcat(specials_list->names[specials_index], str_SPACE_rp__ovr102);
                         ability_has_plus = ST_FALSE;
@@ -630,7 +630,7 @@ void Hero_Build_Specials_List(int16_t unit_idx, struct s_UV_List * specials_list
                         strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
                         strcat(specials_list->names[specials_index], str_SPACE__ovr102);
                         ability_value = (((_UNITS[unit_idx].Level + 1) * 9) / 2);
-                        _itoa(ability_value, temp_string, 10);
+                        itoa(ability_value, temp_string, 10);
                         strcat(specials_list->names[specials_index], temp_string);
                         strcat(specials_list->names[specials_index], str_SPACE_rp__ovr102);
                         ability_has_plus = ST_FALSE;
@@ -674,7 +674,7 @@ void Hero_Build_Specials_List(int16_t unit_idx, struct s_UV_List * specials_list
             {
                 if(ability_has_plus == ST_TRUE)
                 {
-                    _itoa(ability_value, temp_string, 10);
+                    itoa(ability_value, temp_string, 10);
                     strcat(specials_list->names[specials_index], str_SPACE_Plus__ovr102);
                     strcat(specials_list->names[specials_index], temp_string);
                 }
@@ -703,18 +703,18 @@ void Hero_Build_Specials_List(int16_t unit_idx, struct s_UV_List * specials_list
             if(global_battle_unit->mana_max > global_battle_unit->mana)
             {
                     ability_value = global_battle_unit->mana;
-                    _itoa(ability_value, temp_string, 10);
+                    itoa(ability_value, temp_string, 10);
                     strcat(specials_list->names[specials_index], temp_string);
                     strcat(specials_list->names[specials_index], str_SPACE_OpenParen__ovr102);
                     ability_value = global_battle_unit->mana_max;
-                    _itoa(ability_value, temp_string, 10);
+                    itoa(ability_value, temp_string, 10);
                     strcat(specials_list->names[specials_index], temp_string);
                     strcat(specials_list->names[specials_index], str_CloseParen__ovr102);
             }
             else
             {
                 ability_value = global_battle_unit->mana_max;
-                _itoa(ability_value, temp_string, 10);
+                itoa(ability_value, temp_string, 10);
                 strcat(specials_list->names[specials_index], temp_string);
             }
             strcat(specials_list->names[specials_index], str_SPACE_mp__ovr102);

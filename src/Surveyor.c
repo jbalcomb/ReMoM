@@ -517,14 +517,14 @@ void Surveyor_Window_Display(void)
                 Print_Integer_Right(306, 151, val);
 
                 Print(245, 158, str_ProdBonus);
-                _itoa(production_bonus, GUI_String_1, 10);
+                itoa(production_bonus, GUI_String_1, 10);
                 strcpy(GUI_String_2, str_PlusSign);
                 strcat(GUI_String_2, GUI_String_1);
                 strcat(GUI_String_2, str_PercentSign);
                 Print_Right(312, 158, GUI_String_2);
 
                 Print(245, 165, str_GoldBonus);
-                _itoa(gold_bonus, GUI_String_1, 10);
+                itoa(gold_bonus, GUI_String_1, 10);
                 strcpy(GUI_String_2, str_PlusSign);
                 strcat(GUI_String_2, GUI_String_1);
                 strcat(GUI_String_2, str_PercentSign);

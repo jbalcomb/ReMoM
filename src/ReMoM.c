@@ -339,7 +339,7 @@ int MOM_main(int argc, char** argv)
     {
         if(magic_set.Have_Save[itr_savegams] != ST_FALSE)
         {
-            _itoa(itr_savegams, found_file, 10);
+            itoa(itr_savegams, found_file, 10);
             strcpy(file_name, str_SAVE_NAME);
             strcat(file_name, found_file);
             strcat(file_name, str_SAVE_EXT);

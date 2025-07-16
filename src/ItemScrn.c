@@ -806,7 +806,7 @@ void Destroy_Item(void)
     strcpy(GUI_String_2, _ITEMS[m_cursor_item_idx].name);
     strcat(GUI_String_1, GUI_String_2);
     strcat(GUI_String_1, cnst_ItemDestroyMsg2);  // "\x01 and gain "
-    _itoa(item_cost_mana, GUI_String_2, 10);
+    itoa(item_cost_mana, GUI_String_2, 10);
     strcat(GUI_String_1, GUI_String_2);
     strcat(GUI_String_1, cnst_ItemDestroyMsg3);  // " mana crystals?"
     Set_Mouse_List(1, mouse_list_default);
@@ -1008,7 +1008,7 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
                         Set_Mouse_List(1, mouse_list_default);
                         PageFlip_FX();
                         strcpy(GUI_String_1, cnst_ItemPort_Msg_1);  /* "Do you wish to make this transfer at a cost of " */
-                        _itoa(20, GUI_String_2, 10);
+                        itoa(20, GUI_String_2, 10);
                         strcat(GUI_String_1, GUI_String_2);
                         strcat(GUI_String_1, cnst_ItemPort_Msg_2);  /* " mana crystals?" */
 

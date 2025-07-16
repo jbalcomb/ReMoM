@@ -330,7 +330,7 @@ void Near_Allocation_Error(int16_t size)
     strcpy(near_buffer, "Near Allocation too large by ");  // cnst_Alloc_Error01[] = "Near Allocation too large by "
     // itoa(size, Tmp_Conv_Str_1, 10);
 #pragma warning(suppress : 4996)
-    _itoa(size, &near_buffer[100], 10);
+    itoa(size, &near_buffer[100], 10);
     // strcat(near_buffer, Tmp_Conv_Str_1);
     strcat(near_buffer, &near_buffer[100]);
     strcat(near_buffer, " bytes");  // cnst_Alloc_Error02[] = " bytes"
@@ -587,7 +587,7 @@ void Allocation_Error(uint16_t error_num, uint16_t blocks)
     if(Check_Release_Version() == ST_TRUE)
     {
         strcpy(buffer, "Insufficient memory. You need at least ");
-        _itoa(640, buffer2, 10);
+        itoa(640, buffer2, 10);
         strcat(buffer, buffer2);
         strcat(buffer, "K free. Try removing all TSR's.");
     }
@@ -616,7 +616,7 @@ void Allocation_Error(uint16_t error_num, uint16_t blocks)
                 strcat(buffer, str_allocation_errors[9]);
                 break;
         }
-        _itoa(blocks, buffer2, 10);
+        itoa(blocks, buffer2, 10);
         strcat(buffer, buffer2);
         strcat(buffer, str_allocation_errors[6]);
     }

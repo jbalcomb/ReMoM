@@ -648,7 +648,7 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
 
     strcpy(buffer, file_name);
 #pragma warning(suppress : 4996)
-    _itoa(entry_num, buffer2, 10);
+    itoa(entry_num, buffer2, 10);
     strcat(buffer, str_error_handler[0]);
     strcat(buffer, buffer2);
     strcat(buffer, str_error_handler[1]);
@@ -665,7 +665,7 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
             strcpy(buffer, str_error_handler[4]);
             
 #pragma warning(suppress : 4996)
-            _itoa(640, buffer2, 10);
+            itoa(640, buffer2, 10);
             strcat(buffer, buffer2);
             strcat(buffer, str_error_handler[5]);
             break;
@@ -675,7 +675,7 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
         case le_reload_fail:
             strcat(buffer, str_error_handler[7]);
 #pragma warning(suppress : 4996)
-            _itoa(pages, buffer2, 10);
+            itoa(pages, buffer2, 10);
             strcat(buffer, buffer2);
             strcat(buffer, str_error_handler[8]);
             break;

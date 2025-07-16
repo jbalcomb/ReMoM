@@ -4054,7 +4054,7 @@ static void Diplomacy_Offer_Tribute(void)
     for(itr = 0; itr < list_count; itr++)
     {
 
-        _itoa(gold_amounts[itr], string, 10);
+        itoa(gold_amounts[itr], string, 10);
 
         strcpy(G_Some_DIPL_Allocs_7[itr], lstr_gold);
 
@@ -5171,7 +5171,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             m_diplomacy_message[pos] = 0;
 
-                            _itoa(_players[HUMAN_PLAYER_IDX].Dipl.field_114[player_idx], string, 10);
+                            itoa(_players[HUMAN_PLAYER_IDX].Dipl.field_114[player_idx], string, 10);
                             assert(string[30] == 0);
 
                             strcat(m_diplomacy_message, string);
@@ -5199,7 +5199,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             m_diplomacy_message[pos] = 0;
 
-                            _itoa(_players[HUMAN_PLAYER_IDX].Dipl.field_114[player_idx], string, 10);
+                            itoa(_players[HUMAN_PLAYER_IDX].Dipl.field_114[player_idx], string, 10);
                             assert(string[30] == 0);
 
                             strcat(m_diplomacy_message, string);
@@ -5307,7 +5307,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             m_diplomacy_message[pos] = 0;
 
-                            _itoa((1400 + (_turn / 12)), string, 10);
+                            itoa((1400 + (_turn / 12)), string, 10);
                             assert(string[30] == 0);
 
                             strcat(m_diplomacy_message, string);
@@ -5357,7 +5357,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             m_diplomacy_message[pos] = 0;
 
-                            _itoa(word_42E66, string, 10);
+                            itoa(word_42E66, string, 10);
                             assert(string[30] == 0);
 
                             strcat(m_diplomacy_message, string);

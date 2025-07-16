@@ -1210,7 +1210,7 @@ void Main_Screen(void)
             if(_players[_human_player_idx].casting_spell_idx == spl_Spell_Of_Return)
             {
                 turns_til_return = _players[HUMAN_PLAYER_IDX].casting_cost_remaining / _players[HUMAN_PLAYER_IDX].Nominal_Skill;
-                _itoa(turns_til_return, temp_string, 10);
+                itoa(turns_til_return, temp_string, 10);
                 strcpy(GUI_NearMsgString, aYouMayNotThrowAnySp);  // "You may not throw any spells while you are banished.  There are at least "
                 strcat(GUI_NearMsgString, temp_string);
                 strcat(GUI_NearMsgString, aTurnsRemainingUntil);  // " turns remaining until you may return."
@@ -6843,7 +6843,7 @@ void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t moves2, int16_
 
     if(moves > 0)
     {
-        _itoa(moves, buffer, 10);
+        itoa(moves, buffer, 10);
         strcat(string, buffer);
     }
 

@@ -123,9 +123,9 @@ void get_datetime(char * datatime)
     char ISO8601_DateTime[21] = "1583-01-01T00:00:00Z";
 
 #pragma warning(suppress : 4996)
-    _putenv(tzstr);
+    putenv(tzstr);
 #pragma warning(suppress : 4996)
-    _tzset();
+    tzset();
     edtt = time(NULL);
     edt = localtime(&edtt);
     // printf("EST5EDT: %s", asctime(edt));

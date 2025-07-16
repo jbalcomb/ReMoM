@@ -647,7 +647,7 @@ void City_Screen__WIP(void)
                     Deactivate_Help_List();
                     Set_Mouse_List(1, mouse_list_default);
                     strcpy(GUI_String_1, aDoYouWishToSpend);  // "Do you wish to spend \x02"
-                    _itoa(City_Cost_To_Buy_Product(_city_idx), GUI_String_2, 10);
+                    itoa(City_Cost_To_Buy_Product(_city_idx), GUI_String_2, 10);
                     strcat(GUI_String_1, GUI_String_2);
                     strcat(GUI_String_1, aGold_3);  // " Gold"
                     strcat(GUI_String_1, aByPurchasing);  // "\x01 by purchasing"
@@ -818,7 +818,7 @@ void City_Screen__WIP(void)
                             strcpy(GUI_String_2, bldg_data_table[cityscape_bldg_idx].name);
                             strcat(GUI_String_1, GUI_String_2);
                             strcat(GUI_String_1, str_sell_back_2);  // "\x01 for "
-                            _itoa(building_value, GUI_String_2, 10);
+                            itoa(building_value, GUI_String_2, 10);
                             strcat(GUI_String_1, GUI_String_2);
                             strcat(GUI_String_1, str_sell_back_3);  // " gold?"
 
@@ -1296,11 +1296,11 @@ void City_Screen_Draw2__WIP(void)
 
     if(pops > 999)
     {
-        _itoa((pops / 1000), GUI_String_2, 10);
+        itoa((pops / 1000), GUI_String_2, 10);
         strcat(GUI_String_1, GUI_String_2);
         strcat(GUI_String_1, ",");
         pops = (pops - ((pops / 1000) * 1000));
-        _itoa(pops, GUI_String_2, 10);
+        itoa(pops, GUI_String_2, 10);
         if(pops < 10)
         {
             strcat(GUI_String_1, "00");
@@ -1315,7 +1315,7 @@ void City_Screen_Draw2__WIP(void)
     }
     else
     {
-        _itoa(pops, GUI_String_2, 10);
+        itoa(pops, GUI_String_2, 10);
     }
 
     strcat(GUI_String_1, GUI_String_2);
@@ -1326,7 +1326,7 @@ void City_Screen_Draw2__WIP(void)
 
     pops = (City_Growth_Rate(_city_idx) * 10);
 
-    _itoa(pops, GUI_String_2, 10);
+    itoa(pops, GUI_String_2, 10);
 
     if(pops > -1)
     {

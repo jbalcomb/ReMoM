@@ -309,7 +309,7 @@ void Load_Screen(void)
     for(itr = 1; itr < NUM_SAVE_GAME_FILES; itr++)
     {
         strcpy(match_string, cnst_SAVE3);
-        _itoa(itr, buffer2, 10);
+        itoa(itr, buffer2, 10);
         strcat(match_string, buffer2);
         strcat(match_string, cnst_SAVE_ext3);
         if(DIR(match_string, found_file) == 0)  /* File Not Found */
