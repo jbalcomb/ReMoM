@@ -45,7 +45,9 @@
 #include "MOM_SCR.h"
 #include "Settings.h"
 
+#ifdef STU_DEBUG
 #include "STU/STU_DBG.h"
+#endif
 
 #include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
 
@@ -92,10 +94,12 @@ int SDL_main(int argc, char* argv[])
     dbg_prn("DEBUG: [%s, %d]: BEGIN: SDL_main()\n", __FILE__, __LINE__);
 #endif
 
+#ifdef _WIN32
     AllocConsole();
     AttachConsole(GetCurrentProcessId());
     HWND Handle = GetConsoleWindow();
     freopen("CON", "w", stdout);
+#endif
     printf("Hello from the console!\n");
 
     Startup_Platform();
@@ -108,7 +112,9 @@ int SDL_main(int argc, char* argv[])
 
     Shudown_Platform();
 
+#ifdef _WIN32
     FreeConsole();
+#endif
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: SDL_main()\n", __FILE__, __LINE__);
