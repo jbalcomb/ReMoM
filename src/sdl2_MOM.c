@@ -13,10 +13,8 @@
 #include "sdl2_PFL.h"
 #include "sdl2_SDLK.h"
 
-// #include "SDL.h"
-#include "C:\devellib\SDL2-2.32.2\include\SDL.h"
-// #include "SDL_mixer.h"
-#include "C:\devellib\SDL2_mixer-2.8.1\include\SDL_mixer.h"
+#include <SDL.h>
+#include <SDL_mixer.h>
 
 /*
     Platform-Layer Screen Buffer / Window Surface

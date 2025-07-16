@@ -9,8 +9,8 @@
 
 #include "SDL2_PFL.h"
 
-// #include "SDL.h"
-#include "C:\devellib\SDL2-2.32.2\include\SDL.h"
+#include <SDL.h>
+
 
 
 char * sdl2_get_key_code_name(int32_t virtual_key_code);

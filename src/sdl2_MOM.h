@@ -3,8 +3,7 @@
 
 #include "MOX/MOX_TYPE.h"
 
-// #include "SDL.h"
-#include "C:\devellib\SDL2-2.32.2\include\SDL.h"
+#include <SDL.h>
 
 
 

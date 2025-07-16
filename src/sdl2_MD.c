@@ -7,8 +7,7 @@
 
 #include "sdl2_PFL.h"
 
-// #include "SDL.h"
-#include "C:\devellib\SDL2-2.32.2\include\SDL.h"
+#include <SDL.h>
 
 #include "MOX/sdl2_Audio.h"
 

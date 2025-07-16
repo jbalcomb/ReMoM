@@ -5,11 +5,10 @@
 #include "MOX/Video.h"
 #include "MOX/Video2.h"
 
-// #ifdef _STU_SDL2
+#ifdef _STU_SDL2
 #include "sdl2_PFL.h"
 #include <SDL.h>
-// #include "C:\devellib\SDL2-2.32.2\include\SDL.h"
-// #endif
+#endif
 
 /*
     non-OG-MoM

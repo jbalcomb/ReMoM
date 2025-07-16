@@ -3,10 +3,9 @@
 
 #include "MOX/MOX_TYPE.h"
 
-// #ifdef _STU_SDL2
+#ifdef _STU_SDL2
 #include <SDL.h>
-// #include "C:\devellib\SDL2-2.32.2\include\SDL.h"
-// #endif
+#endif
 
 
 
