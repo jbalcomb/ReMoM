@@ -1,6 +1,6 @@
 
 #include "Fields.h"
-#include "MOX_DEF.H"
+#include "MOX_DEF.h"
 #include "MOX_TYPE.h"
 
 #include <string.h>

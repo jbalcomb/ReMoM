@@ -13,7 +13,7 @@ _UNITS[]
 
 */
 
-#include "STU_TYPE.H"
+#include "STU_TYPE.h"
 
 #include "../MOX/MOM_Data.h"
 

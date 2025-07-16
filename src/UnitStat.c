@@ -13,7 +13,7 @@
 #include "MOX/Graphics.h"
 #include "MOX/LBX_Load.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
-#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_DEF.h"
 #include "MOX/MOX_T4.h"
 #include "MOX/MOX_TYPE.h"
 #include "MOX/Timer.h"

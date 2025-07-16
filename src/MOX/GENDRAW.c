@@ -22,7 +22,7 @@ Notify
 */
 
 #include "MOX_DAT.h"  /* _screen_seg */
-#include "MOX_DEF.H"
+#include "MOX_DEF.h"
 #include "MOX_SET.h"  /* magic_set */
 #include "MOX_TYPE.h"
 #include "Fields.h"

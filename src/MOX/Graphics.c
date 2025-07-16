@@ -11,7 +11,7 @@ Module: shear
 */
 
 #include "Fonts.h"
-#include "MOX_DEF.H"
+#include "MOX_DEF.h"
 #include "MOX_TYPE.h"
 
 #include "Graphics.h"

@@ -18,7 +18,7 @@ MoO2 Module: shear
 #include "Fonts.h"
 #include "Graphics.h"
 #include "LBX_Load.h"
-#include "MOX_DEF.H"
+#include "MOX_DEF.h"
 #include "MOX_TYPE.h"
 #include "MOX_BASE.h"
 #include "file_ani.h"

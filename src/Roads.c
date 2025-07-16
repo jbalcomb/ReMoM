@@ -12,7 +12,7 @@
 #include "MOX/Fonts.h"
 #include "MOX/Graphics.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
-#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_DEF.h"
 #include "MOX/MOX_T4.h"
 #include "MOX/Timer.h"
 #include "MOX/paragrph.h"
