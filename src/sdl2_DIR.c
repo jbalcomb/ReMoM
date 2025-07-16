@@ -9,8 +9,11 @@
 // minwinbase.h  WIN32_FIND_DATAA
 // winnt.h  HANDLE
 // fileapi.h  GetFileSize()
+#ifdef _WIN32
 #include <windows.h>
 #include <tchar.h>
+#endif
+
 #include <stdio.h>
 
 #include <SDL.h>
