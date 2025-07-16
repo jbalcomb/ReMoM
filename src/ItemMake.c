@@ -7,10 +7,6 @@
         ovr115
 */
 
-#include "ItemMake.h"
-
-#include "ItemView.h"
-#include "MOM_DEF.h"
 #include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
@@ -22,14 +18,19 @@
 #include "MOX/MOX_DAT.h"
 #include "MOX/MOX_T4.h"
 #include "MOX/random.h"
-
 #include "MOX/Util.h"
+
+#include "ItemView.h"
+#include "MOM_DEF.h"
 #include "NEXTTURN.h"
-#include "STU/STU_DBG.h"
 #include "Spellbook.h"
 
 #include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
 #include <string.h>
+
+#include "STU/STU_DBG.h"
+
+#include "ItemMake.h"
 
 
 
@@ -69,7 +70,7 @@ static void Item_Make_Screen_Spellbook_Popup_Draw(void);
 // WZD o115p13
 static int16_t Item_Make_Screen_Spellbook_Popup(void);
 // WZD o115p14
-int16_t Add_Item(int16_t itemdata_idx);
+static int16_t Add_Item(int16_t itemdata_idx);
 // WZD o115p15
 int16_t Activate_Item(int16_t old_item_idx);
 // WZD o115p16

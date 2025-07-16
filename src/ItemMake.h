@@ -61,7 +61,7 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type);
 // static int16_t Item_Make_Screen_Spellbook_Popup(void);
 
 // WZD o115p14
-// PRIVATE  int16_t Add_Item(int16_t itemdata_idx);
+// static int16_t Add_Item(int16_t itemdata_idx);
 
 // WZD o115p15
 int16_t Activate_Item(int16_t old_item_idx);
