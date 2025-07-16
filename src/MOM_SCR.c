@@ -23,7 +23,7 @@
 #include "MainMenu.h"
 #include "MagicScr.h"
 #include "MainScr.h"
-#include "NEWGAME.h"
+#include "NewGame.h"
 #include "NEXTTURN.h"
 #include "ProdScr.h"
 #include "Roads.h"

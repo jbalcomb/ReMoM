@@ -5,7 +5,7 @@
 
 #include "INITGAME.h"
 
-#include "NEWGAME.h"
+#include "NewGame.h"
 
 #include "MOX/MOM_DATA.h"
 #include "MOX/MOX_DAT.h"
