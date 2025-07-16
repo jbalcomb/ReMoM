@@ -203,7 +203,7 @@ message(STATUS "Include directories for momlib: ${include_dirs}")
 target_compile_definitions(momlib PRIVATE STU_DEBUG=TRUE)
 target_compile_definitions(momlib PRIVATE STU_TRACE=TRUE)
 
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
+if(CMAKE_COMPILER_IS_CLANG)
     target_compile_options(momlib PRIVATE
         "-Wall"
         "-Wno-missing-braces"
@@ -214,6 +214,18 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
         "-Wno-unused-variable"
         "-Wno-unused-function"
         "-Wno-writable-strings"
+    )
+endif()
+if(CMAKE_COMPILER_IS_GNUCC)
+    target_compile_options(momlib PRIVATE
+        "-Wall"
+        "-Wno-missing-braces"
+        "-Wno-tautological-compare"
+        "-Wno-unknown-pragmas"
+        "-Wno-unused-but-set-variable"
+        "-Wno-unused-label"
+        "-Wno-unused-variable"
+        "-Wno-unused-function"
     )
 endif()
 if(MSVC)
