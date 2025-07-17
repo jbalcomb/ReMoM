@@ -110,6 +110,7 @@ int16_t init_pointer_y = 100;
 int16_t mouse_state = ST_FALSE;
 
 // WZD dseg:78DE
+// HACK WTF gcc says multiple definition, between Mouse.c and SCastScr.c
 struct s_mouse_list * _current_mouse_list;
 
 // WZD dseg:78E0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+Cursor_Save_Main Cursor_Area_Copy <0>

@@ -5,9 +5,8 @@
         ovr070
 */
 
-#include "SCastScr.h"
+#include "STU/STU_DBG.h"
 
-#include "City_ovr55.h"
 #include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
@@ -21,12 +20,12 @@
 #include "MOX/paragrph.h"
 #include "MOX/Timer.h"
 
+#include "City_ovr55.h"
 #include "Help.h"
 #include "Lair.h"
 #include "MOM_DEF.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"  /* Add_Nodes_To_Entities_On_Map_Window() */
-#include "STU/STU_DBG.h"
 #include "Spellbook.h"
 #include "SPELLDEF.h"
 #include "UnitList.h"
@@ -34,6 +33,8 @@
 
 #include <assert.h>
 #include <string.h>
+
+#include "SCastScr.h"
 
 
 
@@ -134,7 +135,9 @@ int16_t _osc_wx;
 // WZD dseg:C16C
 int16_t _osc_mouse_image_num;
 // WZD dseg:C16E
-struct s_mouse_list * _current_mouse_list;
+// HACK WTF gcc says multiple definition, between Mouse.c and SCastScr.c
+// struct s_mouse_list * _current_mouse_list;
+struct s_mouse_list * _scastscr_mouse_list;
 // WZD dseg:C170
 int16_t word_42C10;
 // WZD dseg:C172
@@ -918,7 +921,7 @@ int16_t World_To_Screen(int16_t map_wx, int16_t map_wy, int16_t * unit_wx, int16
 void Spell_Casting_Screen_Allocate(void)
 {
     _reduced_map_seg = Allocate_First_Block(_screen_seg, 303);
-    _current_mouse_list = (struct s_mouse_list *)Near_Allocate_First(1560);  // mouse lists?  1560 / 12 = 130 ...targets?
+    /* HACK */  _scastscr_mouse_list = (struct s_mouse_list *)Near_Allocate_First(1560);  // mouse lists?  1560 / 12 = 130 ...targets?
     _osc_panel_title = (char *)Near_Allocate_Next(100);
 }
 
@@ -1159,12 +1162,12 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
         Add_Nodes_To_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
     }
 
-    _current_mouse_list->image_num = crsr_Finger;
-    _current_mouse_list->center_offset = 0;
-    _current_mouse_list->x1 = SCREEN_XMIN;
-    _current_mouse_list->y1 = SCREEN_YMIN;
-    _current_mouse_list->x2 = SCREEN_XMAX;
-    _current_mouse_list->y2 = SCREEN_YMAX;
+    /* HACK */  _scastscr_mouse_list->image_num = crsr_Finger;
+    /* HACK */  _scastscr_mouse_list->center_offset = 0;
+    /* HACK */  _scastscr_mouse_list->x1 = SCREEN_XMIN;
+    /* HACK */  _scastscr_mouse_list->y1 = SCREEN_YMIN;
+    /* HACK */  _scastscr_mouse_list->x2 = SCREEN_XMAX;
+    /* HACK */  _scastscr_mouse_list->y2 = SCREEN_YMAX;
 
     _osc_mouse_image_num = (crsr_CastAnim1 + _osc_mouse_image_cycle);
 
@@ -1184,15 +1187,15 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
 
             my_y2 = (my_y1 + (SQUARE_HEIGHT - 1));
 
-            _current_mouse_list[mouse_list_count].center_offset = 0;
-            _current_mouse_list[mouse_list_count].x1 = mx_x1;
-            _current_mouse_list[mouse_list_count].y1 = my_y1;
-            _current_mouse_list[mouse_list_count].x2 = mx_x2;
-            _current_mouse_list[mouse_list_count].y2 = my_y2;
+            /* HACK */  _scastscr_mouse_list[mouse_list_count].center_offset = 0;
+            /* HACK */  _scastscr_mouse_list[mouse_list_count].x1 = mx_x1;
+            /* HACK */  _scastscr_mouse_list[mouse_list_count].y1 = my_y1;
+            /* HACK */  _scastscr_mouse_list[mouse_list_count].x2 = mx_x2;
+            /* HACK */  _scastscr_mouse_list[mouse_list_count].y2 = my_y2;
 
             if(_osc_spell_target_type == stt_Map_Square)
             {
-                _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                /* HACK */ _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
                 wx = (_map_x + itr_mx);
                 if(wx >= WORLD_WIDTH)
                 {
@@ -1205,12 +1208,12 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                     (_osc_spell_idx == spl_Earth_Lore)
                 )
                 {
-                    _current_mouse_list[mouse_list_count].image_num = crsr_RedCross;
+                    /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = crsr_RedCross;
                 }
             }
             else  /* (_osc_spell_target_type != stt_Map_Square) */
             {
-                _current_mouse_list[mouse_list_count].image_num = crsr_RedCross;
+                /* HACK */ _scastscr_mouse_list[mouse_list_count].image_num = crsr_RedCross;
                 entity_idx = entities_on_movement_map[((itr_my * MAP_WIDTH) + itr_mx)];
                 if(entity_idx != ST_UNDEFINED)
                 {
@@ -1224,11 +1227,11 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                             {
                                 if(_UNITS[entity_idx].owner_idx == _human_player_idx)
                                 {
-                                    _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                                    /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
                                 }
                                 else
                                 {
-                                    _current_mouse_list[mouse_list_count].image_num = crsr_RedCross;
+                                    /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = crsr_RedCross;
                                 }
                             } break;
                             case stt_Enemy_Unit:
@@ -1236,11 +1239,11 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                             {
                                 if(_UNITS[entity_idx].owner_idx != _human_player_idx)
                                 {
-                                    _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                                    /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
                                 }
                                 else
                                 {
-                                    _current_mouse_list[mouse_list_count].image_num = crsr_RedCross;
+                                    /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = crsr_RedCross;
                                 }
                             } break;
                             case stt_Map_Square:
@@ -1277,7 +1280,7 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                                     Army_At_City(entity_idx, &troop_count, &troops[0]);
                                     if(troop_count > 0)
                                     {
-                                        _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                                        /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
                                     }
                                 }
                             } break;
@@ -1292,7 +1295,7 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                                     Army_At_City(entity_idx, &troop_count, &troops[0]);
                                     if(troop_count > 0)
                                     {
-                                        _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                                        /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
                                     }
                                 }
                             } break;
@@ -1308,14 +1311,14 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                             {
                                 if(_CITIES[entity_idx].owner_idx == _human_player_idx)
                                 {
-                                    _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                                    /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
                                 }
                             } break;
                             case stt_Enemy_City:
                             {
                                 if(_CITIES[entity_idx].owner_idx != _human_player_idx)
                                 {
-                                    _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                                    /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
                                 }
                             } break;
                             case stt_Node:
@@ -1332,7 +1335,7 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                     {
                         if(_osc_spell_target_type == stt_Node)
                         {
-                            _current_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                            /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
                         }
                     }
                 }
@@ -1344,7 +1347,7 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
 
     }
 
-    Set_Mouse_List(mouse_list_count, &_current_mouse_list[0]);
+    Set_Mouse_List(mouse_list_count, &/* HACK */  _scastscr_mouse_list[0]);
 
     if(_osc_spell_target_type == stt_Node)
     {

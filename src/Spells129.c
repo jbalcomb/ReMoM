@@ -40,7 +40,7 @@
 
 #include "Spells129.h"
 
-int16_t * _battlefield_holybonus;
+extern int16_t * _battlefield_holybonus;
 
 
 

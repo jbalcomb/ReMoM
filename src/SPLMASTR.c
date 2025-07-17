@@ -45,24 +45,25 @@ MoO2
 
 // GENDRAW.C
 // WZD dseg:CB12
-SAMB_ptr selectbk_bottom_arrow_seg;
+extern SAMB_ptr selectbk_bottom_arrow_seg;
 // WZD dseg:CB14
-SAMB_ptr selectbk_top_arrow_seg;
+extern SAMB_ptr selectbk_top_arrow_seg;
 
 // MagicScr.C
 // WZD dseg:958E
-SAMB_ptr lilwiz_gem_segs[5];
+extern SAMB_ptr lilwiz_gem_segs[5];
 // WZD dseg:95C0
-SAMB_ptr grey_gem_seg;
+extern SAMB_ptr grey_gem_seg;
 // WZD dseg:95C2
-SAMB_ptr broken_grey_gem_seg;
+extern SAMB_ptr broken_grey_gem_seg;
 // WZD dseg:C238
-int16_t ovl_ench_cnt; // overland_enchantment_count
+extern int16_t ovl_ench_cnt; // overland_enchantment_count
 // WZD dseg:C23A
-int8_t * ovl_ench_list_players;
+extern int8_t * ovl_ench_list_players;
 // WZD dseg:C23C
 // SAMB_ptr ovl_ench_list_spells;
-int16_t * ovl_ench_list_spells;
+extern int16_t * ovl_ench_list_spells;
+
 
 
 // Spellbook.C
