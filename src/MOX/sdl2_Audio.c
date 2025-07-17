@@ -9,6 +9,8 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "sdl2_Audio.h"
 
@@ -162,7 +164,9 @@ void sdl2_Audio_Init(void)
     // // Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 512);
     // // Mix_OpenAudio(22050, AUDIO_S16SYS, 2, 8192);  // workie?
     // Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 1024);
-    if(Mix_Init((MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID | MIX_INIT_OPUS | MIX_INIT_WAVPACK)) == 0)
+    // HACK  gcc on WSL can't find MIX_INIT_WAVPACK
+    // if(Mix_Init((MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID | MIX_INIT_OPUS | MIX_INIT_WAVPACK)) == 0)
+    if(Mix_Init((MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID | MIX_INIT_OPUS | 0x00000080)) == 0)
     {
         dbg_prn("ERROR:  Mix_Init():  %s\n", Mix_GetError());
         printf("ERROR:  Mix_Init():  %s\n", Mix_GetError());
@@ -307,20 +311,20 @@ int16_t sdl2_Play_Sound__WIP(void* sound_buffer, uint32_t sound_buffer_size)
     
 }
 
-void sdl2_Play_Sound_WAV(Mix_Chunk * wav_sound_chunk)
-{
-    int result;
-
-    result = Mix_PlayChannel(0, wav_sound_chunk, 0);
-
-    if(result == -1)
-    {
-#ifdef STU_DEBUG
-        dbg_prn("ERROR:  SOUND:  Mix_PlayChannel()  %s\n", SDL_GetError());
-#endif
-    }
-
-}
+// void sdl2_Play_Sound_WAV(Mix_Chunk * wav_sound_chunk)
+// {
+//     int result;
+// 
+//     result = Mix_PlayChannel(0, wav_sound_chunk, 0);
+// 
+//     if(result == -1)
+//     {
+// #ifdef STU_DEBUG
+//         dbg_prn("ERROR:  SOUND:  Mix_PlayChannel()  %s\n", SDL_GetError());
+// #endif
+//     }
+// 
+// }
 
 
 /*
@@ -575,7 +579,7 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
 // }
 
 // C:\STU\developp\1oom\src\ui\classic\uisound.c
-void ui_sound_stop_music(void)
+static void ui_sound_stop_music(void)
 {
     hw_audio_music_stop();
 }
@@ -621,7 +625,7 @@ void ui_sound_stop_music(void)
 //         (GET_2B_OFS(data, 2) != LBX_ENTRY_TYPE_SOUND_XMI)
 //     )
 //     {
-//         __debugbreak();
+//         STU_DEBUG_BREAK();
 //     }
 //     
 //     fmt_mus_convert_xmid(data_in, len_in, &buf, &len, &m->loops);
@@ -1055,6 +1059,7 @@ fail:
 bool fmt_mus_convert_xmid(const uint8_t *data_in, uint32_t len_in, uint8_t **data_out_ptr, uint32_t *len_out_ptr, bool *tune_loops)
 {
     uint8_t *data = NULL;
+    uint8_t *temp_data = NULL;
     const uint8_t *timbre_tbl;
     uint32_t len_timbre, len_evnt;
     uint16_t timbre_num;
@@ -1083,6 +1088,11 @@ bool fmt_mus_convert_xmid(const uint8_t *data_in, uint32_t len_in, uint8_t **dat
     /* max. len_out/len_in ratio for MOO1 data is about 1.8 */
     // 1oom  data = lib_malloc(HDR_MIDI_LEN + len_evnt * 2);
     data = malloc(HDR_MIDI_LEN + len_evnt * 2);
+    if(data == NULL)
+    {
+        STU_DEBUG_BREAK();
+        return false;
+    }
     {
         uint8_t hdr[] = {
             /*00*/ 'M', 'T', 'h', 'd',
@@ -1095,6 +1105,7 @@ bool fmt_mus_convert_xmid(const uint8_t *data_in, uint32_t len_in, uint8_t **dat
         memcpy(data, hdr, sizeof(hdr));
     }
 
+    // C6011 Dereferencing NULL pointer 'data'. 
     len = xmid_convert_evnt(data_in, len_evnt, timbre_tbl, timbre_num, &data[HDR_MIDI_LEN], tune_loops);
     /* LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: lene %i len %i (%f) %s\n", len_evnt, len, (double)len / (double)len_evnt, *tune_loops ? "loop" : "once")); */
     if(len < 0)
@@ -1104,7 +1115,20 @@ bool fmt_mus_convert_xmid(const uint8_t *data_in, uint32_t len_in, uint8_t **dat
     SET_BE_32(&data[0x12], len);
     len += HDR_MIDI_LEN;
     // 1oom  data = lib_realloc(data, len);
-    data = realloc(data, len);
+    // data = realloc(data, len);
+    // C6308 'realloc' might return null pointer: assigning null pointer to 'data', which is passed as an argument to 'realloc', will cause the original memory block to be leaked.
+    temp_data = realloc(data, len);
+    if(data == NULL)
+    {
+        STU_DEBUG_BREAK();
+        return false;
+    }
+    else
+    {
+
+        data = temp_data;
+    
+    }
 
     if (data_out_ptr) {
         *data_out_ptr = data;

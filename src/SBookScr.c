@@ -7,7 +7,6 @@
     SPELLSCR.LBX
 */
 
-#include "MOM_SCR.h"
 #include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
@@ -21,6 +20,7 @@
 #include "MOX/GENDRAW.h"
 #include "MOX/Timer.h"
 
+#include "MOM_SCR.h"
 #include "ItemMake.h"
 #include "Items.h"
 #include "NEXTTURN.h"
@@ -32,7 +32,10 @@
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 
+#include <stdlib.h>
+
 #include "SBookScr.h"
+
 
 
 // WZD dseg:6994                                                 BEGIN:  ovr134 - Initialized Data
@@ -101,7 +104,7 @@ char soundfx_lbx_file__ovr134__2of2[] = "soundfx";
 */
 
 // WZD o134p01
-void Spell_Screen_Load(void)
+static void Spell_Screen_Load(void)
 {
     Allocate_Reduced_Map();
     Set_Page_Off();

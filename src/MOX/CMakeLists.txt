@@ -1,5 +1,4 @@
-
-add_library(MOX STATIC
+set(MOX_SOURCES
     AIL.c
     Allocate.c
     capture.c
@@ -35,27 +34,23 @@ add_library(MOX STATIC
     Video2.c
 )
 
+add_library(MOX STATIC ${MOX_SOURCES})
+
+get_target_property(inc_dir MOX INCLUDE_DIRECTORIES)
+message(STATUS "MOX INCLUDE_DIRECTORIES: ${inc_dir}")
+
 set_target_properties(MOX PROPERTIES LINKER_LANGUAGE C)
 
-target_link_libraries(MOX PUBLIC C:/devellib/SDL2_mixer-2.8.1/lib/x64/SDL2_mixer.lib)
+target_include_directories(MOX PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${SDL2_INCLUDE_DIR}
+    ${SDL2_MIXER_INCLUDE_DIR}
+)
 
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
-    target_compile_options(MOX PRIVATE
-        "-Wall"
-        "-Wno-char-subscripts"
-        "-Wno-unknown-pragmas"
-        "-Wno-unused-but-set-variable"
-        "-Wno-unused-function"
-        "-Wno-unused-label"
-        "-Wno-unused-variable"
-        "-Wno-writable-strings"
-    )
-endif()
-if(MSVC)
-    target_compile_options(momlib PRIVATE
-        "/W0"
-        "/wd4068"   # "unknown pragma"
-        "/wd4365"
-        "/wd4820"
-    )
-endif()
+target_link_libraries(MOX
+    SDL2::Core
+    SDL2::Mixer
+)
+
+get_target_property(inc_dir MOX INCLUDE_DIRECTORIES)
+message(STATUS "MOX INCLUDE_DIRECTORIES: ${inc_dir}")

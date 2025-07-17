@@ -11,6 +11,10 @@
 #define STU_TRACE
 #endif
 
+#ifndef _WINDLL
+#define HAVE_LIBC
+#endif
+
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -49,13 +53,11 @@
 #include "STU/STU_DBG.h"
 #endif
 
-#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
+#include <stdlib.h>
 
-#ifndef _WINDLL
-#define HAVE_LIBC
-#endif
+#include <SDL_stdinc.h>
 
-#define SDL_MAIN_HANDLED
+// #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <SDL_mixer.h>
 
@@ -81,8 +83,8 @@ char CONFIG_FILE[] = "CONFIG.MOM";
 
 
 
-// int main(int argc, char * argv[])
-int SDL_main(int argc, char* argv[])
+int main(int argc, char * argv[])
+// int SDL_main(int argc, char* argv[])
 {
 #ifdef STU_DEBUG
     Debug_Log_Startup();
@@ -342,7 +344,7 @@ int MOM_main(int argc, char** argv)
     {
         if(magic_set.Have_Save[itr_savegams] != ST_FALSE)
         {
-            itoa(itr_savegams, found_file, 10);
+            SDL_itoa(itr_savegams, found_file, 10);
             strcpy(file_name, str_SAVE_NAME);
             strcat(file_name, found_file);
             strcat(file_name, str_SAVE_EXT);

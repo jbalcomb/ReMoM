@@ -38,8 +38,10 @@
 #include "WIZVIEW.h"
 
 #include <assert.h>
-#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
+#include <stdlib.h>
 #include <string.h>
+
+#include <SDL_stdinc.h>
 
 #include "Spells137.h"
 
@@ -201,6 +203,14 @@ SAMB_ptr ge_anim_moodwiz_seg;
 // WZD dseg:CA50 00 00                                           _osc_player_idx dw 0                 ; DATA XREF: SBK_SliderRedraw+8r ...
 // WZD dseg:CA50                                                                                         ; clicked spell label index during combat sliders
 // WZD dseg:CA50                                                                                         ; player_idx during global cast anims
+// MOX/MOM_Data.c  // WZD dseg:CA50
+// MOX/MOM_Data.c  
+int16_t _temp_sint_1;
+#define _osc_player_idx _temp_sint_1
+#define _osc_spell_idx _temp_sint_1
+#define _osc_city_idx _temp_sint_1
+#define _osc_bldg_idx _temp_sint_1
+
 // WZD dseg:CA50                                                                                         ; city_idx during ¿ ?
 // WZD dseg:CA52 00 00                                           word_434F2 dw 0                         ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+25Fr ...
 // WZD dseg:CA52
@@ -1552,7 +1562,7 @@ static void Target_Wizard_Screen_Draw(void)
                 {
                     Set_Outline_Color(254);
                     Set_Font_Colors_15(4, &colors[0]);
-                    itoa((_players[(1 + itr)].casting_cost_original - _players[(1 + itr)].casting_cost_remaining), string, 10);
+                    SDL_itoa((_players[(1 + itr)].casting_cost_original - _players[(1 + itr)].casting_cost_remaining), string, 10);
                     strcat(string, cnst_Space_MP_3);
                     Print_Centered((x_start + 39), (y_start + 149), string);
                 }
@@ -1603,14 +1613,14 @@ static void Target_Wizard_Screen_Draw(void)
             case 1:
             {
                 strcat(GUI_NearMsgString, aLoses);  // " loses "
-                itoa(GAME_MP_SpellVar_1, buffer, 10);
+                SDL_itoa(GAME_MP_SpellVar_1, buffer, 10);
                 strcat(GUI_NearMsgString, buffer);
                 strcat(GUI_NearMsgString, aPointsOfCastin);  // " points of casting ability"
             } break;
             case 2:
             {
                 strcat(GUI_NearMsgString, aLoses);  // " loses "
-                itoa(GAME_MP_SpellVar_1, buffer, 10);
+                SDL_itoa(GAME_MP_SpellVar_1, buffer, 10);
                 strcat(GUI_NearMsgString, buffer);
                 strcat(GUI_NearMsgString, aPointsOfMana);  // " points of mana"
             } break;

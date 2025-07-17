@@ -5,6 +5,7 @@
 */
 
 #include "STU_CHK.h"
+#include "STU_DBG.h"
 
 #include "../MOX/MOX_DAT.h"
 

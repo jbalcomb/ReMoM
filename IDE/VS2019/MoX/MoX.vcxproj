@@ -36,7 +36,6 @@
     <ClInclude Include="..\..\..\src\MOX\MOX_BITS.h" />
     <ClInclude Include="..\..\..\src\MOX\MOX_DAT.h" />
     <ClInclude Include="..\..\..\src\MOX\MOX_DEF.h" />
-    <ClInclude Include="..\..\..\src\MOX\MOX_ITOA.h" />
     <ClInclude Include="..\..\..\src\MOX\MOX_KEYS.h" />
     <ClInclude Include="..\..\..\src\MOX\MOX_Lib.h" />
     <ClInclude Include="..\..\..\src\MOX\MOX_SET.h" />
@@ -77,7 +76,6 @@
     <ClCompile Include="..\..\..\src\MOX\MOM_Data.c" />
     <ClCompile Include="..\..\..\src\MOX\Mouse.c" />
     <ClCompile Include="..\..\..\src\MOX\MOX_DAT.c" />
-    <ClCompile Include="..\..\..\src\MOX\MOX_ITOA.c" />
     <ClCompile Include="..\..\..\src\MOX\MOX_KEYS.c" />
     <ClCompile Include="..\..\..\src\MOX\MOX_SET.c" />
     <ClCompile Include="..\..\..\src\MOX\MOX_SND.c" />

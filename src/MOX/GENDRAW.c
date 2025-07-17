@@ -36,6 +36,8 @@ Notify
 #include "Util.h"
 #include "Video.h"
 
+#include <stdlib.h>
+
 
 
 // WZD dseg:6F78

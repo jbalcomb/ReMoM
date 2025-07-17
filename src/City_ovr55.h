@@ -101,7 +101,7 @@ void Draw_Resource_Icons(int16_t * xstart, int16_t ystart, int16_t total_amount,
 void City_Screen_Draw_Production_Coins(int16_t city_idx);
 
 // WZD o55p26
-void Build_City_Enchantment_List(int16_t city_idx, int16_t * EList, int16_t * EOwners, int16_t * ECount);
+void Build_City_Enchantment_List(int16_t city_idx, int16_t city_enchantment_list[], int16_t city_enchantment_owner_list[], int16_t * city_enchantment_list_count);
 
 // WZD o55p27
 void Do_Build_City_Enchantment_List(void);

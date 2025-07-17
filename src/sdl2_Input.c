@@ -1,5 +1,6 @@
 
 #include "MOX/Fields.h"
+#include "MOX/Input.h"
 #include "MOX/MOX_DEF.h"
 #include "MOX/MOX_TYPE.h"
 #include "MOX/Video.h"

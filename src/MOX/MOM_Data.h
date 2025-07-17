@@ -3786,7 +3786,7 @@ extern int8_t MSG_GEs_Lost;
 extern SAMB_ptr TBL_OvlMovePaths_EMS;
 
 // WZD dseg:9C94
-extern SAMB_ptr CONTX_NmeStrMap[2];
+extern uint16_t * CONTX_NmeStrMap[2];
 
 // WZD dseg:9C9C
 // drake178: TBL_Catchments_EMS
@@ -4556,11 +4556,11 @@ AKA  _osc_spell_Idx
 SmlBook XtraMana & CmbBook XtraMana
     spellbook field index; used to position the popup window
 */
-extern int16_t _temp_sint_1;
-#define _osc_player_idx _temp_sint_1
-#define _osc_spell_idx _temp_sint_1
-#define _osc_city_idx _temp_sint_1
-#define _osc_bldg_idx _temp_sint_1
+// Spells137.c  extern int16_t _temp_sint_1;
+// #define _osc_player_idx _temp_sint_1
+// #define _osc_spell_idx _temp_sint_1
+// #define _osc_city_idx _temp_sint_1
+// #define _osc_bldg_idx _temp_sint_1
 
 // WZD dseg:CA52
 extern int16_t _ce_bldg_idx;

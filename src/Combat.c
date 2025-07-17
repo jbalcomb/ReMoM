@@ -76,8 +76,10 @@
 #include "WZD_o059.h"
 
 #include <assert.h>
-#include <stdlib.h>     /* abs(); itoa(); ltoa(); */
+#include <stdlib.h>
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
+
+#include <SDL_stdinc.h>
 
 #include "Combat.h"
 #include "CMBTDEF.h"
@@ -5974,7 +5976,7 @@ BU_UnitLoadToBattle__SEGRAX()
     OON XREF:  UNIT_SummonToBattle__SEGRAX()
     ...which is only used for scc_Summoning and USA 'Summon Demon'
 */
-void UNIT_SummonToBattle__SEGRAX(int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy)
+static void UNIT_SummonToBattle__SEGRAX(int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy)
 {
     int16_t itr = 0;
 
@@ -7236,7 +7238,7 @@ void Draw_Spell_Information_Window(void)
 
     value = Combat_Casting_Cost_Multiplier(_human_player_idx);
 
-    itoa(value, Range_Number_String, 10);
+    SDL_itoa(value, Range_Number_String, 10);
 
     Print(200, 190, cnst_CMB_Range);
 
@@ -16917,6 +16919,7 @@ void AI_MoveBattleUnits__WIP(int16_t player_idx)
 
         BU_SortSlowestFirst__WIP(&Melee_Unit_List[0], Melee_Unit_Count);
 
+        // Reading invalid data from 'Melee_Unit_List':  the readable size is '72' bytes, but '-2' bytes may be read.
         AI_GetCombatRallyPt__WIP(Melee_Unit_List[(Melee_Unit_Count - 1)], &Rally_X, &Rally_Y);
 
     }
@@ -20021,11 +20024,11 @@ They may increase (by one) the attack strengths (swords and ranged weapons), def
 */
 void BU_Apply_Battlefield_Effects__WIP(struct s_BATTLE_UNIT * battle_unit)
 {
-    int16_t Node_Aura_Applies;
-    int16_t Item_Index;
-    int16_t Mutation_Flags;
-    uint32_t enchantments;
-    int16_t unit_idx;
+    int16_t Node_Aura_Applies = 0;
+    int16_t Item_Index = 0;
+    int16_t Mutation_Flags = 0;
+    uint32_t enchantments = 0;
+    int16_t unit_idx = 0;
 
     unit_idx = battle_unit->unit_idx;
 
@@ -20297,7 +20300,7 @@ int16_t Combat_Effective_Resistance(struct s_BATTLE_UNIT battle_unit, int16_t ma
 /*
 
 */
-int16_t Battle_Unit_Attack_Immunities(int16_t battle_unit_idx, int16_t attack_mode)
+static int16_t Battle_Unit_Attack_Immunities(int16_t battle_unit_idx, int16_t attack_mode)
 {
     int16_t attack_immunities = 0;  // _CX_
 
@@ -23411,7 +23414,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
     {
         if(Zombies_Raised > 0)
         {
-            itoa(Zombies_Raised, temp_buffer, 10);
+            SDL_itoa(Zombies_Raised, temp_buffer, 10);
 
             strcpy(GUI_NearMsgString, temp_buffer);
 
@@ -23431,7 +23434,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
         if(Undead_Created > 0)
         {
-            itoa(Undead_Created, temp_buffer, 10);
+            SDL_itoa(Undead_Created, temp_buffer, 10);
 
             strcpy(GUI_NearMsgString, temp_buffer);
 
@@ -23823,7 +23826,7 @@ int16_t Combat_Results_Scroll_Text(void)
         {
             strcat(message, cnst_ScrlFame_Msg_3);  /* "gained " */
         }
-        itoa(abs(GUI_Multipurpose_Int), temp_string, 10);
+        SDL_itoa(abs(GUI_Multipurpose_Int), temp_string, 10);
         strcat(message, temp_string);
         strcat(message, cnst_ScrlFame_Msg_4);  /* " fame." */
         Print_Centered(160, (_scroll_text_top + text_height), message);
@@ -23835,7 +23838,7 @@ int16_t Combat_Results_Scroll_Text(void)
     {
         Set_Font_Colors_15(1, &colors2[0]);
         Set_Font_Spacing_Width(2);
-        itoa(CMB_Gold_Reward, temp_string, 10);
+        SDL_itoa(CMB_Gold_Reward, temp_string, 10);
         strcpy(message, temp_string);
         strcat(message, cnst_ScrlGold_Msg);  /* " gold pieces were looted." */
         Print_Centered(160, (_scroll_text_top + text_height), message);
@@ -23857,7 +23860,7 @@ int16_t Combat_Results_Scroll_Text(void)
         {
             Set_Font_Colors_15(1, &colors2[0]);
             Set_Font_Spacing_Width(2);
-            itoa(CMB_Population_Lost, temp_string, 10);
+            SDL_itoa(CMB_Population_Lost, temp_string, 10);
             strcpy(message, temp_string);
             strcat(message, cnst_ScrlPop_Msg);  /* " thousand inhabitants killed." */
             Print_Centered(160, (_scroll_text_top + text_height), message);
@@ -29181,7 +29184,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
 
 }
 
-void Combat_Move_Path_Find__v02(int16_t source_cgx, int16_t source_cgy, int16_t destination_cgx, int16_t destination_cgy)
+static void Combat_Move_Path_Find__v02(int16_t source_cgx, int16_t source_cgy, int16_t destination_cgx, int16_t destination_cgy)
 {
     int16_t move_cost = 0;
     int16_t potential_path_cost = 0;
@@ -29233,6 +29236,8 @@ void Combat_Move_Path_Find__v02(int16_t source_cgx, int16_t source_cgy, int16_t 
                 }
                 for(itr_adjacent = 4; itr_adjacent < 8; itr_adjacent++)
                 {
+                    // DEDU  invalid read ... adjacent_offsets[36] ... ctr + 7 * 8 + 7?
+                    //       ... adjacent_idx = (ctr + adjacent_offsets[(((_value_) * 8) + itr_adjacent)]); ...
                     NEW_PATH_COST_ANY(itr_adjacent)
                 }
             }
@@ -29305,7 +29310,7 @@ void Combat_Move_Path_Find__v02(int16_t source_cgx, int16_t source_cgy, int16_t 
 
 }
 
-void Combat_Move_Path_Find__v01(int16_t source_cgx, int16_t source_cgy, int16_t destination_cgx, int16_t destination_cgy)
+static void Combat_Move_Path_Find__v01(int16_t source_cgx, int16_t source_cgy, int16_t destination_cgx, int16_t destination_cgy)
 {
     int16_t move_cost = 0;
     int16_t potential_path_cost = 0;
@@ -29947,7 +29952,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
 
 }
 
-void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, int16_t moves2)
+static void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, int16_t moves2)
 {
     int16_t move_cost = 0;
     int16_t potential_path_cost = 0;
@@ -30261,7 +30266,7 @@ void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, int16_t
 
 }
 
-void Combat_Move_Path_Valid__v01(int16_t source_cgx, int16_t source_cgy, int16_t moves2)
+static void Combat_Move_Path_Valid__v01(int16_t source_cgx, int16_t source_cgy, int16_t moves2)
 {
     int16_t move_cost = 0;
     int16_t potential_path_cost = 0;
@@ -30992,7 +30997,7 @@ int16_t Combat_Figure_Load(int16_t unit_type, int16_t bufpi)
     FIGUREX_OFFSET
     FIGUREX_POINTER
 
-    itoa(((unit_type / 15) + 1), buffer, 10);
+    SDL_itoa(((unit_type / 15) + 1), buffer, 10);
 
     strcpy(file_name, figure_lbx_file__ovr163);
 

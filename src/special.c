@@ -14,9 +14,11 @@
 
 */
 
-#include "special.h"
-
 #include "MOX/MOX_TYPE.h"
+
+#include <stdlib.h>
+
+#include "special.h"
 
 
 
@@ -177,7 +179,7 @@ Unused in MoM
 essentially, MoO1 ~== to Path_Wrap()
 
 */
-int Path(int x1, int y1, int x2, int y2, int *tblx, int *tbly)
+static int Path(int x1, int y1, int x2, int y2, int *tblx, int *tbly)
 {
     int16_t distance;
 
@@ -191,7 +193,7 @@ int Path(int x1, int y1, int x2, int y2, int *tblx, int *tbly)
 
 }
 
-int util_math_line_plot(int x1, int y1, int x2, int y2, int *tblx, int *tbly)
+static int util_math_line_plot(int x1, int y1, int x2, int y2, int *tblx, int *tbly)
 {
     int len = 0, delta_x, delta_y, dirx, diry, delta_add, zerr = 0x8000;
 
@@ -473,13 +475,13 @@ int16_t Path_Wrap(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t * path_
 }
 
 // __forceinline static int util_math_route_step_len(int adx, int ady)
-int util_math_route_step_len(int adx, int ady)
+static int util_math_route_step_len(int adx, int ady)
 {
     int v = adx + ady;
     return v ? (v + 1) : 3;
 }
 
-int util_math_get_route_len(int x0, int y0, const int *tblx, const int *tbly, int len)
+static int util_math_get_route_len(int x0, int y0, const int *tblx, const int *tbly, int len)
 {
     int l = util_math_route_step_len(abs(x0 - tblx[0]), abs(y0 - tbly[0])), i;
     for (i = 1; i < len; ++i) {

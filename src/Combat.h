@@ -1357,7 +1357,7 @@ void Add_Combat_Enchantment_Fields(void);
 int16_t Battle_Unit_Movement_Icon(int16_t battle_unit_idx);
 
 // WZD o98p14
-void UNIT_SummonToBattle__WIP(int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy);
+// static void UNIT_SummonToBattle__SEGRAX(int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy);
 
 // WZD o98p15
 void BU_UnitLoadToBattle__SEGRAX(int16_t battle_unit_idx, int8_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy);
@@ -1670,10 +1670,15 @@ int16_t Check_For_Winner(void);
 /*
     WIZARDS.EXE  ovr114
 */
-int16_t AI_BU_ProcessAction(int16_t battle_unit_idx, int16_t Rally_X, int16_t Rally_Y);
-int16_t G_AI_BU_MoveOrRampage(int16_t battle_unit_idx, int16_t Dest_X, int16_t	Dest_Y, int16_t Target, int16_t	Rally_X, int16_t Rally_Y);
-void AI_BU_AssignAction(int16_t battle_unit_idx, int16_t NoSpells);
-int16_t BU_Attack(int16_t battle_unit_idx, int16_t Target_Index, int16_t Target_X, int16_t Target_Y);
+// WZD o114p02
+void AI_BU_ProcessAction__WIP(int16_t battle_unit_idx, int16_t Rally_X, int16_t Rally_Y);
+
+// WZD o114p06
+int16_t AI_BU_AssignAction__WIP(int16_t battle_unit_idx, int16_t no_spells_flag);
+
+// WZD o114p08
+void G_AI_BU_MoveOrRampage__WIP(int16_t battle_unit_idx, int16_t Dest_X, int16_t Dest_Y, int16_t target_battle_unit_idx, int16_t Rally_X, int Rally_Y);
+
 
 
 /*
@@ -1796,7 +1801,9 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
 
 // WZD o122p12
 int16_t Range_To_Battle_Unit(int16_t BU_1, int16_t BU_2);
-int16_t BU_GetDistanceFrom(int BU_1, int BU_2);
+
+// WZD o122p12
+int16_t Range_To_Battle_Unit(int16_t BU_1, int16_t BU_2);
 
 // WZD o122p13
 int16_t AI_BU_GetAttackValue__STUB(int16_t battle_unit_idx, int16_t target_battle_unit_idx, int16_t has_ranged_attack);
@@ -1806,6 +1813,7 @@ int16_t Battle_Unit_Has_Ranged_Attack(int16_t battle_unit_idx);
 
 // WZD o122p15
 int16_t BU_CauseFear__NOOP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx);
+
 
 
 

@@ -104,7 +104,7 @@ void Print_Example(void)
 {
 
     // Create an instance of the struct
-    struct Person person1 = {"Alice", 30, 1.65};
+    struct Person person1 = {"Alice", 30, 1.65f};
 
     // Declare a buffer to store the formatted string
     char buffer[200]; // Ensure buffer is large enough for the formatted string

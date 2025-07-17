@@ -10,7 +10,7 @@
 #include <assert.h>
 #include <math.h>       /* sqrt() */
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
-#include <stdlib.h>     /* abs(); itoa(); */
+#include <stdlib.h>     /* abs(); SDL_itoa(); */
 #include <string.h>     /* memset(), strcat(), strcpy(); */
 
 

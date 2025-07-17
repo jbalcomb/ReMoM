@@ -6,19 +6,17 @@
         ovr162
 */
 
-#include "AIMOVE.h"
-
-#include "MOX/random.h"
-#include "Outpost.h"
-#include "SETTLE.h"
 #include "STU/STU_CHK.h"
 
+#include "MOX/random.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_DAT.h"  /* _players[] */
 #include "MOX/MOX_DEF.h"
 #include "MOX/MOX_TYPE.h"
 #include "MOX/Util.h"
 
+#include "Outpost.h"
+#include "SETTLE.h"
 #include "AIDATA.h"
 #include "AIDUDES.h"
 #include "CITYCALC.h"
@@ -33,6 +31,9 @@
 #include "special.h"
 #include "DIPLODEF.h"
 
+#include <stdlib.h>
+
+#include "AIMOVE.h"
 
 
 // WZD dseg:D3EC                                                 BEGIN:  ovr158 - Uninitialized Data
@@ -6728,13 +6729,13 @@ int16_t TILE_NextFreeLand__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
             if(Square_Is_Land((wx + itr2 - 1), (wy + itr1 - 1), wp) == ST_FALSE)
             {
 
-                map_square_area[((itr1 * 6) + itr2)] = ST_FALSE;
+                map_square_area[((itr1 * 3) + itr2)] = ST_FALSE;
 
             }
             else
             {
 
-                map_square_area[((itr1 * 6) + itr2)] = ST_TRUE;
+                map_square_area[((itr1 * 3) + itr2)] = ST_TRUE;
 
             }
 
@@ -6763,7 +6764,7 @@ int16_t TILE_NextFreeLand__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
             )
             {
 
-                map_square_area[(4 + (((Checked_Y - wy) * 6) + (Checked_X - wx)))] = 0;
+                map_square_area[(4 + (((Checked_Y - wy) * 3) + (Checked_X - wx)))] = 0;
 
             }
 
@@ -6794,7 +6795,7 @@ int16_t TILE_NextFreeLand__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
             )
             {
 
-                map_square_area[(4 + ((Checked_Y - wy) * 6) + (Checked_X - wx))] = 0;
+                map_square_area[(4 + ((Checked_Y - wy) * 3) + (Checked_X - wx))] = 0;
 
             }
 
@@ -6821,7 +6822,7 @@ int16_t TILE_NextFreeLand__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
             )
             {
 
-                map_square_area[(4 + ((Checked_Y - wy) * 6) + (Checked_X - wx))] = 0;
+                map_square_area[(4 + ((Checked_Y - wy) * 3) + (Checked_X - wx))] = 0;
 
             }
 
@@ -6836,7 +6837,7 @@ int16_t TILE_NextFreeLand__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
         for(itr1 = 0; itr1 < 3; itr1++)
         {
 
-            if(map_square_area[((itr1 * 6) + itr2)] == ST_TRUE)
+            if(map_square_area[((itr1 * 3) + itr2)] == ST_TRUE)
             {
 
                 *RetX = (wx + itr2 - 1);

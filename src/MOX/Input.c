@@ -343,21 +343,21 @@ l_mx= word ptr -2
 _SI_alt_field_num = si
 _DI_itr_continuous_string = di
 */
-    int16_t field_num;
-    int16_t character;
+    int16_t field_num = 0;
+    int16_t character = 0;
     int16_t Unused_Local = 0;
     int16_t ymax = 0;
     int16_t xmax = 0;
     int16_t ymin = 0;
     int16_t xmin = 0;
-    int16_t l_mx;
-    int16_t l_my;
-    int16_t pointer_offset;
-    int16_t down_mouse_button;
-    int16_t mouse_field;
-    int16_t mouse_button;
-    uint16_t itr_continuous_string;
-    int16_t Accepted_Char;
+    int16_t l_mx = 0;
+    int16_t l_my = 0;
+    int16_t pointer_offset = 0;
+    int16_t down_mouse_button = 0;
+    int16_t mouse_field = 0;
+    int16_t mouse_button = 0;
+    uint16_t itr_continuous_string = 0;
+    int16_t Accepted_Char = 0;
     /*
         _SI_YNM_itr_fields_count__scanned_field
             return by @@UnsetDownMouseButton_Return_ITR
@@ -368,9 +368,9 @@ _DI_itr_continuous_string = di
             3)
             4) 
     */
-    int16_t alt_field_num;  // _SI_
-    int16_t scanned_field;  // _SI_
-    int16_t return_value;  // _AX_  MoO2: return _EAX_ = return_value = maybe__field_num__scanned_field = itr_fields_count
+    int16_t alt_field_num = 0;  // _SI_
+    int16_t scanned_field = 0;  // _SI_
+    int16_t return_value = 0;  // _AX_  MoO2: return _EAX_ = return_value = maybe__field_num__scanned_field = itr_fields_count
 
 /*
 MoO1
@@ -1761,10 +1761,10 @@ int16_t Scan_Field(void)
 // WZD s36p26
 int16_t Scan_Input(void)
 {
-    int16_t mx;
-    int16_t my;
-    int16_t itr;
-    int16_t current_field;
+    int16_t mx = 0;
+    int16_t my = 0;
+    int16_t itr = 0;
+    int16_t current_field = 0;
 
     mx = Pointer_X();
     my = Pointer_Y();
@@ -1801,6 +1801,7 @@ int16_t Scan_Input(void)
         )
     )
     {
+        // A sub-expression may overflow before being assigned to a wider type.
         *((int64_t *)p_fields[current_field].Param3) = ((Pointer_X() - p_fields[current_field].x1) / p_fields[current_field].Param1);
         *((int64_t *)p_fields[current_field].Param4) = ((Pointer_Y() - p_fields[current_field].y1) / p_fields[current_field].Param2);
     }
@@ -2760,16 +2761,16 @@ ST_KEY_ENTER            = 0x0C
 */
 void Draw_Input_Box_Popup(int16_t field_num, char * string)
 {
-    uint8_t ibeam_color_array[16];
-    char input_string[62];
-    int16_t Box_Width;
-    int16_t Cursor_Bottom;
-    int16_t Cursor_Height;
-    int16_t cursor_x1;
-    int16_t Cursor_Width;
-    int16_t Lines_Drawn;
-    char Edit_Char[2];
-    int16_t anim_stage;  // _DI_
+    uint8_t ibeam_color_array[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char input_string[62] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Box_Width = 0;
+    int16_t Cursor_Bottom = 0;
+    int16_t Cursor_Height = 0;
+    int16_t cursor_x1 = 0;
+    int16_t Cursor_Width = 0;
+    int16_t Lines_Drawn = 0;
+    char Edit_Char[2] = { 0, 0 };
+    int16_t anim_stage = 0;  // _DI_
 
     Mark_Time();
 

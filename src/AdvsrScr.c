@@ -29,7 +29,9 @@
 #include "WIZVIEW.h"
 
 #include <assert.h>
-#include <stdlib.h>     /* abs(); itoa(); ltoa(); */
+#include <stdlib.h>
+
+#include "SDL_stdinc.h"
 
 
 
@@ -806,7 +808,7 @@ void Powergraph_Screen_Draw(void)
     // strcpy(GUI_String_1, &months[0]);
     strcpy(GUI_String_1, (char *)&months[8]);
 
-    itoa((1400 + WTF__turns_years), GUI_String_2, 10);
+    SDL_itoa((1400 + WTF__turns_years), GUI_String_2, 10);
 
     strcat(GUI_String_1, dest);
 

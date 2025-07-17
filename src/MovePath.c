@@ -3,6 +3,8 @@
         ovr147
 */
 
+#include "STU/STU_DBG.h"
+
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_BASE.h"
 #include "MOX/MOX_TYPE.h"
@@ -56,7 +58,7 @@ int16_t curr_wx;
 int16_t curr_wy;
 
 
-void Check_Cost(void)
+static void Check_Cost(void)
 {
     adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
     // if (adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
@@ -74,7 +76,7 @@ void Check_Cost(void)
     }
 }
 // Handle Special Case:  (x = 0)  wrap around backward
-void Do_Costs_Fst(void)
+static void Do_Costs_Fst(void)
 {
     // if(ofst_movepath_cost == (((wy - 1) * WORLD_WIDTH) + (wx + 1))) { MOX_DBG_BREAK; }
     move_cost = *movepath_cost++;
@@ -113,7 +115,7 @@ void Do_Costs_Fst(void)
     movepath_reach_from++;
 }
 // Handle Normal Cases:  x = {1, ..., 59}
-void Do_Costs_Mid(void)
+static void Do_Costs_Mid(void)
 {
     // if(ofst_movepath_cost == (((wy - 1) * WORLD_WIDTH) + (wx + 1))) { MOX_DBG_BREAK; }
     move_cost = *movepath_cost++;
@@ -151,7 +153,7 @@ void Do_Costs_Mid(void)
     movepath_reach_from++;
 }
 // Handle Special Case:  (x = 59)  wrap around forward
-void Do_Costs_Lst(void)
+static void Do_Costs_Lst(void)
 {
     // if(ofst_movepath_cost == (((wy - 1) * WORLD_WIDTH) + (wx + 1))) { MOX_DBG_BREAK; }
     move_cost = *movepath_cost++;
@@ -416,7 +418,7 @@ loop over balance of row
 
 ???
 */
-void Move_Path_Find__MEH(int16_t wx, int16_t wy, struct s_MOVE_PATH * movepath_cost_map)
+static void Move_Path_Find__MEH(int16_t wx, int16_t wy, struct s_MOVE_PATH * movepath_cost_map)
 {
     int8_t  reach_costs_changed = ST_TRUE;  // WZD ovr147:0000  Code-Segment Variable
     int16_t CS_Row_Start = 0;           // WZD ovr147:0002  Code-Segment Variable

@@ -21,20 +21,26 @@ project(
     LANGUAGES C
 )
 
+# Add SDL2 CMake modules
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
+
 set(BUILD_SHARED_LIBS OFF)
 
-# downloaded SDL2-devel-2.32.2-VC.zip; unzipped into C:\devellib\SDL2-2.32.2\; added SDL2_DIR as "C:\devellib\SDL2-2.32.2"
-set(SDL2_DIR "$ENV{SDL2DIR}")
-find_package(SDL2 REQUIRED)
+# # downloaded SDL2-devel-2.32.2-VC.zip; unzipped into C:\devellib\SDL2-2.32.2\; added SDL2_DIR as "C:\devellib\SDL2-2.32.2"
+# set(SDL2_DIR "$ENV{SDL2DIR}")
+# set(SDL2_BUILDING_LIBRARY ON)
+# find_package(SDL2 REQUIRED)
+# # find_package(SDL2_mixer REQUIRED)
 
-include_directories(SYSTEM ${SDL2_INCLUDE_DIR})
+# include_directories(SYSTEM ${SDL2_INCLUDE_DIR})
+# message(STATUS "SDL2_INCLUDE_DIR: ${SDL2_INCLUDE_DIR}")
 
-# include_directories(SYSTEM C:/devellib/SDL2-2.32.2/include)
-# include_directories(SYSTEM C:/devellib/SDL2_mixer-2.8.1/include)
-include_directories(C:/devellib/SDL2-2.32.2/include)
-include_directories(C:/devellib/SDL2_mixer-2.8.1/include)
-#include "C:\devellib\SDL2-2.32.2\include\SDL.h"
-#include "C:\devellib\SDL2_mixer-2.8.1\include\SDL_mixer.h"
+# # include_directories(SYSTEM C:/devellib/SDL2-2.32.2/include)
+# # include_directories(SYSTEM C:/devellib/SDL2_mixer-2.8.1/include)
+# include_directories(C:/devellib/SDL2-2.32.2/include)
+# include_directories(C:/devellib/SDL2_mixer-2.8.1/include)
+# #include "C:\devellib\SDL2-2.32.2\include\SDL.h"
+# #include "C:\devellib\SDL2_mixer-2.8.1\include\SDL_mixer.h"
 
 # get_target_property(include_dirs ${PROJECT_NAME} INCLUDE_DIRECTORIES)
 # get_target_property(include_dirs SYSTEM INCLUDE_DIRECTORIES)
@@ -114,6 +120,7 @@ add_subdirectory(src)
 # e.g.,  target_compile_definitions(MyTarget PRIVATE
 # e.g.,      $<$<CONFIG:Debug>:DEBUG>
 # e.g.,  )
+# add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 add_compile_definitions(WIN32_LEAN_AND_MEAN)
 # This is the most precise and recommended way, applying the definition only to the targets that need it.
 #     add_executable(MyApplication main.cpp)

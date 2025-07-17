@@ -7,6 +7,7 @@ MoO2
 
 */
 
+#include "../STU/STU_DBG.h"
 
 #include "AIL.h"
 #include "Allocate.h"
@@ -17,6 +18,7 @@ MoO2
 #include "MOX_T4.h"
 #include "MOX_TYPE.h"
 
+#include <stdlib.h>
 #include <string.h>     /* memset(), strcat(), strcpy(); */
 
 #include "SOUND.h"
@@ -227,7 +229,7 @@ C:\STU\devel\Audio Interface Library (AIL)\AIL2\A214_D3\MIXDEMO.C
 // Standard C routine for Global Timbre Library access
 //
 
-void far *load_global_timbre(FILE *GTL, unsigned bank, unsigned patch)
+static void far *load_global_timbre(FILE *GTL, unsigned bank, unsigned patch)
 {
     unsigned far * timb_ptr = 0;
     static unsigned len = 0;
@@ -240,7 +242,7 @@ void far *load_global_timbre(FILE *GTL, unsigned bank, unsigned patch)
     }
     GTL_hdr;
 
-    if (GTL==NULL) return NULL;     // if no GTL, return failure
+    if(GTL == NULL) return NULL;     // if no GTL, return failure
 
     // rewind(GTL);                    // else rewind to GTL header
     gfseek(GTL, 0L, SEEK_SET);
@@ -258,6 +260,14 @@ void far *load_global_timbre(FILE *GTL, unsigned bank, unsigned patch)
     gfread(&len,2,1,GTL);           // timbre found, read its length
 
     // timb_ptr = farmalloc(len);      // allocate memory for timbre ..
+    // C6011 Dereferencing NULL pointer 'timb_ptr'. 
+    timb_ptr = malloc(len);
+    if(timb_ptr == NULL)
+    {
+        STU_DEBUG_BREAK();
+        return timb_ptr;
+    }
+
     *timb_ptr = len;
                                     // and load it
     gfread((timb_ptr+1),len-2,1,GTL);       
@@ -773,7 +783,7 @@ int16_t Play_Sound__MSDOS(SAMB_ptr sound_buffer)
     
                 // if ((hseq[i] = AIL_register_sequence(hdriver,buffer,i,state[i],NULL)) == -1)
                 // if ((hseq = AIL_register_sequence(hdriver,buffer,seqnum,state,NULL)) == -1)
-                if(sequence_handle == AIL_register_sequence(midi_driver_handle, midi_sound_buffer, 0, state_table_pointer, NULL) == -1)
+                if((sequence_handle = AIL_register_sequence(midi_driver_handle, midi_sound_buffer, 0, state_table_pointer, NULL)) == -1)
                 {
                     Audio_Error__STUB(SND_Sequence_Failure);
                 }
@@ -1203,7 +1213,7 @@ void Audio_Error__STUB(int16_t error)
     char string[120];
 
     // YOU SHOULD NOT BE HERE
-    __debugbreak();
+    STU_DEBUG_BREAK();
 
     switch(error)
     {

@@ -8,7 +8,7 @@
 
 #include "STU_DBG.h"
 
-#include <stdlib.h>     /* abs(); itoa(); malloc(); */
+#include <stdlib.h>     /* abs(); SDL_itoa(); malloc(); */
 #include <string.h>
 
 
@@ -284,7 +284,7 @@ void Parse_VOC_LBX_Entry(char * lbx_file_name, int16_t lbx_entry_num)
         default:
         {
             dbg_prn("ERROR:  bad VOC type");
-            __debugbreak();
+            STU_DEBUG_BREAK();
         }
 
     }
@@ -407,7 +407,7 @@ int STU_Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t **
                 // wav_frequency = voc_block_frequency;
                 if(voc_block_codec_id != 0)
                 {
-                    __debugbreak();
+                    STU_DEBUG_BREAK();
                 }
                 wav_sample_count += voc_block_size;
                 voc_len -= voc_block_size;
@@ -419,7 +419,7 @@ int STU_Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t **
             } break;
             default:
             {
-                __debugbreak();
+                STU_DEBUG_BREAK();
             } break;
         }
     }
@@ -540,7 +540,7 @@ int FUU_Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, int16_t **
     wav_data = (void *)malloc(curr_wav_buf_size);
     if(wav_data == NULL)
     {
-        __debugbreak();
+        STU_DEBUG_BREAK();
     }
     memset(wav_data, 0, curr_wav_buf_size);
     wav_ptr = wav_data;
@@ -580,7 +580,7 @@ int FUU_Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, int16_t **
 
                 if(voc_block_codec_id != 0)
                 {
-                    __debugbreak();
+                    STU_DEBUG_BREAK();
                 }
                 
                 // maybe, reallocate memory for the WAV data buffer
@@ -592,7 +592,7 @@ int FUU_Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, int16_t **
                     tmp_wav_data = realloc(wav_data, new_wav_buf_size);
                     if(tmp_wav_data == NULL)
                     {
-                        __debugbreak();
+                        STU_DEBUG_BREAK();
                     }
                     wav_data = tmp_wav_data;
                 
@@ -618,12 +618,12 @@ int FUU_Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, int16_t **
             } break;
             case VOC_TYPE_VOICE_DATA_CONT:
             {
-                __debugbreak();
+                STU_DEBUG_BREAK();
                 
             } break;
             case VOC_TYPE_SILENCE:
             {
-                __debugbreak();
+                STU_DEBUG_BREAK();
 
                 uint16_t len_silence;  // sample count
 
@@ -646,7 +646,7 @@ int FUU_Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, int16_t **
                     tmp_wav_data = realloc(wav_data, new_wav_buf_size);
                     if (tmp_wav_data == NULL)
                     {
-                        __debugbreak();
+                        STU_DEBUG_BREAK();
                     }
                     wav_data = tmp_wav_data;
 
@@ -668,14 +668,14 @@ int FUU_Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, int16_t **
 
             default:
             {
-                __debugbreak();
+                STU_DEBUG_BREAK();
             } break;
 
         }  /* switch(voc_block_type) */
 
     }  /* while(voc_len) */
 
-    __debugbreak();
+    STU_DEBUG_BREAK();
 
 success:
     dbg_prn("Convert_VOC_To_WAV()  success:\n");
@@ -709,7 +709,7 @@ success:
     tmp_wav_data = realloc(wav_data, new_wav_buf_size);
     if (tmp_wav_data == NULL)
     {
-        __debugbreak();
+        STU_DEBUG_BREAK();
     }
     wav_data = tmp_wav_data;
 

@@ -4,7 +4,7 @@
 
 #include "MOM_PFL.h"
 
-#include <stdlib.h>     /* abs(); itoa(); malloc(); */
+#include <stdlib.h>     /* abs(); SDL_itoa(); malloc(); */
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 
 

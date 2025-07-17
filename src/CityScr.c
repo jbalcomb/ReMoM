@@ -1,6 +1,7 @@
 
+#include "STU/STU_DBG.h"
+
 #include "MOX/MOX_BASE.h"
-#include "MOX/MOX_ITOA.h"
 #include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
@@ -14,17 +15,16 @@
 #include "MOX/MOX_T4.h"
 #include "MOX/SOUND.h"
 #include "MOX/MOM_Data.h"
-
-#include "City_ovr55.h"
-#include "CITYCALC.h"
-#include "CITYSCAP.h"
-#include "CityScr.h"
-#include "Help.h"
-#include "Lair.h"
 #include "MOX/Timer.h"
 #include "MOX/Util.h"
 #include "MOX/Video.h"
 #include "MOX/paragrph.h"
+
+#include "City_ovr55.h"
+#include "CITYCALC.h"
+#include "CITYSCAP.h"
+#include "Help.h"
+#include "Lair.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 #include "MOM_SCR.h"
@@ -37,11 +37,13 @@
 #include "WZD_o143.h"
 #include "WZD_o146.h"
 
-#include "STU/STU_DBG.h"    /* DLOG() */
-
 #include <assert.h>
-#include <stdlib.h>     /* abs(); itoa(); ltoa(); */
+#include <stdlib.h>
 #include <string.h>
+
+#include <SDL_stdinc.h>
+
+#include "CityScr.h"
 
 
 
@@ -647,7 +649,7 @@ void City_Screen__WIP(void)
                     Deactivate_Help_List();
                     Set_Mouse_List(1, mouse_list_default);
                     strcpy(GUI_String_1, aDoYouWishToSpend);  // "Do you wish to spend \x02"
-                    itoa(City_Cost_To_Buy_Product(_city_idx), GUI_String_2, 10);
+                    SDL_itoa(City_Cost_To_Buy_Product(_city_idx), GUI_String_2, 10);
                     strcat(GUI_String_1, GUI_String_2);
                     strcat(GUI_String_1, aGold_3);  // " Gold"
                     strcat(GUI_String_1, aByPurchasing);  // "\x01 by purchasing"
@@ -818,7 +820,7 @@ void City_Screen__WIP(void)
                             strcpy(GUI_String_2, bldg_data_table[cityscape_bldg_idx].name);
                             strcat(GUI_String_1, GUI_String_2);
                             strcat(GUI_String_1, str_sell_back_2);  // "\x01 for "
-                            itoa(building_value, GUI_String_2, 10);
+                            SDL_itoa(building_value, GUI_String_2, 10);
                             strcat(GUI_String_1, GUI_String_2);
                             strcat(GUI_String_1, str_sell_back_3);  // " gold?"
 
@@ -1234,20 +1236,20 @@ void City_Screen_Draw__WIP(void)
 // WZD o54p03
 void City_Screen_Draw2__WIP(void)
 {
-    uint8_t colors[6];
-    int16_t y;
-    int16_t x;
-    int16_t bitm_h;
-    int16_t bitm_w;
-    int16_t bitm_y;
-    int16_t bitm_x;
-    SAMB_ptr bitmap;
-    int16_t product_idx;
-    int16_t pops;  // _SI_
-    int16_t unit_type;  // _DI_
-    int16_t para_width;  // _DI_
-    int16_t para_height;  // _DI_
-    int16_t print_y;  // _DI_
+    uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t y = 0;
+    int16_t x = 0;
+    int16_t bitm_h = 0;
+    int16_t bitm_w = 0;
+    int16_t bitm_y = 0;
+    int16_t bitm_x = 0;
+    SAMB_ptr bitmap = 0;
+    int16_t product_idx = 0;
+    int16_t pops = 0;  // _SI_
+    int16_t unit_type = 0;  // _DI_
+    int16_t para_width = 0;  // _DI_
+    int16_t para_height = 0;  // _DI_
+    int16_t print_y = 0;  // _DI_
 
     strcpy(GUI_String_1, _city_size_names[_CITIES[_city_idx].size]);
     strcat(GUI_String_1, " of ");
@@ -1296,11 +1298,11 @@ void City_Screen_Draw2__WIP(void)
 
     if(pops > 999)
     {
-        itoa((pops / 1000), GUI_String_2, 10);
+        SDL_itoa((pops / 1000), GUI_String_2, 10);
         strcat(GUI_String_1, GUI_String_2);
         strcat(GUI_String_1, ",");
         pops = (pops - ((pops / 1000) * 1000));
-        itoa(pops, GUI_String_2, 10);
+        SDL_itoa(pops, GUI_String_2, 10);
         if(pops < 10)
         {
             strcat(GUI_String_1, "00");
@@ -1315,7 +1317,7 @@ void City_Screen_Draw2__WIP(void)
     }
     else
     {
-        itoa(pops, GUI_String_2, 10);
+        SDL_itoa(pops, GUI_String_2, 10);
     }
 
     strcat(GUI_String_1, GUI_String_2);
@@ -1326,7 +1328,7 @@ void City_Screen_Draw2__WIP(void)
 
     pops = (City_Growth_Rate(_city_idx) * 10);
 
-    itoa(pops, GUI_String_2, 10);
+    SDL_itoa(pops, GUI_String_2, 10);
 
     if(pops > -1)
     {

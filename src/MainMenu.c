@@ -21,7 +21,7 @@
 #include "Help.h"
 #include "MOM_DBG.h"
 
-#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
+#include <stdlib.h>
 #include <string.h>
 
 #include "MOM_PFL.h"
@@ -331,7 +331,7 @@ int16_t Main_Menu_Screen(void)
     {
         strcpy(File_Name, "SAVE");
 #pragma warning(suppress : 4996)
-        itoa(itr_saves__retval, Conversion_String, 10);
+        SDL_itoa(itr_saves__retval, Conversion_String, 10);
         strcat(File_Name, Conversion_String);
         strcat(File_Name, ".GAM");
         if(DIR(File_Name, Found_File_Name) != ST_FAILURE)

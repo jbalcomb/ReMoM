@@ -51,8 +51,10 @@ MoO2  Module: LOADSAVE
 #include "STU/STU_CHK.h"
 #include "STU/STU_TST.h"
 
-#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
+#include <stdlib.h>
 #include <string.h>
+
+#include <SDL_stdinc.h>
 
 #include "LoadScr.h"
 
@@ -309,7 +311,7 @@ void Load_Screen(void)
     for(itr = 1; itr < NUM_SAVE_GAME_FILES; itr++)
     {
         strcpy(match_string, cnst_SAVE3);
-        itoa(itr, buffer2, 10);
+        SDL_itoa(itr, buffer2, 10);
         strcat(match_string, buffer2);
         strcat(match_string, cnst_SAVE_ext3);
         if(DIR(match_string, found_file) == ST_FAILURE)  /* File Not Found */
@@ -917,7 +919,7 @@ Check_Game_Data();
 
     if(Check_Release_Version() == ST_FALSE)
     {
-        // __debugbreak();  NOTE(JimBalcomb,20250713): I don't why I thought I should break on this...  (I just did all the PSTR stuff and I'm testing it)
+        // STU_DEBUG_BREAK();  NOTE(JimBalcomb,20250713): I don't why I thought I should break on this...  (I just did all the PSTR stuff and I'm testing it)
         Set_Random_Seed(10039);  // 0x2737
     }
 

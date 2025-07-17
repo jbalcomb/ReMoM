@@ -8,6 +8,8 @@ MoO2
     Module: SHIPMOVE
 
 */
+#include "STU/STU_CHK.h"
+#include "STU/STU_DBG.h"
 
 #include "MOX/GENDRAW.h"
 #include "MOX/MOM_Data.h"
@@ -23,8 +25,6 @@ MoO2
 #include "UnitMove.h"
 #include "WZD_o059.h"
 #include "special.h"
-
-#include "STU/STU_CHK.h"
 
 #include <assert.h>
 
@@ -1704,9 +1704,9 @@ void Next_Turn_Process_Purify(void)
 */
 int16_t Any_Units_Not_Busy(void)
 {
-    int16_t unit_count;
-    int16_t itr_units;
-    int16_t return_value;
+    int16_t unit_count = 0;
+    int16_t itr_units = 0;
+    int16_t return_value = 0;
 
     unit_count = 0;
 

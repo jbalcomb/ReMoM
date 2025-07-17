@@ -36,8 +36,10 @@ MoO2
 #include "Spellbook.h"
 #include "UNITTYPE.h"
 
-#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
+#include <stdlib.h>
 #include <string.h>
+
+#include <SDL_stdinc.h>
 
 #include "SPLMASTR.h"
 
@@ -75,6 +77,8 @@ extern SAMB_ptr wizlab_familiar_seg;
 extern SAMB_ptr wizlab_blue_column_seg;
 
 // Spells137.C
+// WZD dseg:CA50
+extern int16_t _temp_sint_1;
 // WZD dseg:CA54
 extern SAMB_ptr IDK_wizard_id_thing_seg;
 
@@ -191,8 +195,9 @@ int16_t cast_spell_of_mastery_player_idx;
 // WZD dseg:C9FA
 /*
 count of elements in the player's subset of the ovl_ench_list_spells array
+multiple definition - MagicScr.c and SPLMASTR.c
 */
-int16_t ovl_ench_list_cnt[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+int16_t ovl_ench_list_cnt2[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
 
 // WZD dseg:CA06
 // int16_t IDK_list_count_end[(NUM_PLAYERS - 1)];
@@ -430,7 +435,7 @@ void Spellbook_Mana_Adder_Draw(void)
 
     strcpy(string, str_PLUS_SIGN__ovr136);
 
-    itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
+    SDL_itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
 
     strcat(string, buffer);  // extra mana amount
 
@@ -642,7 +647,7 @@ void Combat_Spellbook_Mana_Adder_Draw(void)
 
     strcpy(string, str_PLUS_SIGN__ovr136);
 
-    itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
+    SDL_itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
 
     strcat(string, buffer);  // extra mana amount
 
@@ -955,7 +960,7 @@ void Spell_Target_Global_Enchantment_Screen_Load(int16_t spell_idx)
 
     for(itr2 = 0; itr2 < _num_players; itr2++)
     {
-        ovl_ench_list_cnt[itr2] = 0;
+        ovl_ench_list_cnt2[itr2] = 0;
     }
 
     for(itr2 = 0; itr2 < 144; itr2++)
@@ -967,13 +972,13 @@ void Spell_Target_Global_Enchantment_Screen_Load(int16_t spell_idx)
 
     for(itr2 = 0; itr2 < ovl_ench_cnt; itr2++)
     {
-        ovl_ench_list_cnt[ovl_ench_list_players[itr2]] += 1;
+        ovl_ench_list_cnt2[ovl_ench_list_players[itr2]] += 1;
     }
 
-    ovl_ench_list_ptr[0] = (ovl_ench_list_spells + (ovl_ench_list_cnt[0]));
-    ovl_ench_list_ptr[1] = (ovl_ench_list_spells + (ovl_ench_list_cnt[0] + ovl_ench_list_cnt[1]));
-    ovl_ench_list_ptr[2] = (ovl_ench_list_spells + (ovl_ench_list_cnt[0] + ovl_ench_list_cnt[1] + ovl_ench_list_cnt[2]));
-    ovl_ench_list_ptr[3] = (ovl_ench_list_spells + (ovl_ench_list_cnt[0] + ovl_ench_list_cnt[1] + ovl_ench_list_cnt[2] + ovl_ench_list_cnt[3]));
+    ovl_ench_list_ptr[0] = (ovl_ench_list_spells + (ovl_ench_list_cnt2[0]));
+    ovl_ench_list_ptr[1] = (ovl_ench_list_spells + (ovl_ench_list_cnt2[0] + ovl_ench_list_cnt2[1]));
+    ovl_ench_list_ptr[2] = (ovl_ench_list_spells + (ovl_ench_list_cnt2[0] + ovl_ench_list_cnt2[1] + ovl_ench_list_cnt2[2]));
+    ovl_ench_list_ptr[3] = (ovl_ench_list_spells + (ovl_ench_list_cnt2[0] + ovl_ench_list_cnt2[1] + ovl_ench_list_cnt2[2] + ovl_ench_list_cnt2[3]));
     
     for(itr2 = 0; (_num_players - 1) > itr2; itr2++)
     {
@@ -1040,7 +1045,7 @@ void Spell_Target_Global_Enchantment_Screen_Draw(void)
                 (_players[_human_player_idx].Dipl.Contacted[itr2] == ST_TRUE)
             )
             ||
-            (ovl_ench_list_cnt[itr2] > 0)
+            (ovl_ench_list_cnt2[itr2] > 0)
         )
         {
 
@@ -1065,7 +1070,7 @@ void Spell_Target_Global_Enchantment_Screen_Draw(void)
 
         }
 
-        if(ovl_ench_list_cnt[itr2] > 0)
+        if(ovl_ench_list_cnt2[itr2] > 0)
         {
 
             x = (x_start + 76);
@@ -1075,7 +1080,7 @@ void Spell_Target_Global_Enchantment_Screen_Draw(void)
             for(itr1 = 0; itr1 < 3; itr1++)
             {
 
-                if(ovl_ench_list_cnt[itr2] > (ovl_ench_list_fst[(itr2 - 1)] + itr1))
+                if(ovl_ench_list_cnt2[itr2] > (ovl_ench_list_fst[(itr2 - 1)] + itr1))
                 {
 
                     Set_Font_Style(2, 1, 0, 0);
@@ -1187,14 +1192,16 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
     int16_t input_field_idx = 0;
     int16_t itr = 0;
 
-// #define UIOBJ_CLEAR_LOCAL() \
-//     do { \
-//         STARMAP_UIOBJ_CLEAR_COMMON(); \
-//         oi_accept = UIOBJI_INVALID; \
-//         oi_cancel = UIOBJI_INVALID; \
-//     } while (0)
-// 
-//     UIOBJ_CLEAR_LOCAL();
+/*
+#define UIOBJ_CLEAR_LOCAL() \
+    do { \
+        STARMAP_UIOBJ_CLEAR_COMMON(); \
+        oi_accept = UIOBJI_INVALID; \
+        oi_cancel = UIOBJI_INVALID; \
+    } while (0)
+
+    UIOBJ_CLEAR_LOCAL();
+*/
 #define ADD_SPELL_FIELDS_LOCAL()  \
     do {  \
         for(itr = 0; ((_num_players - 1) * 3) > itr; itr++)  \
@@ -1216,7 +1223,7 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
             {  \
                 top_arrow_fields[itr] = INVALID_FIELD;  \
             }  \
-            if((ovl_ench_list_fst[itr] + 3) < ovl_ench_list_cnt[(itr + 1)])  \
+            if((ovl_ench_list_fst[itr] + 3) < ovl_ench_list_cnt2[(itr + 1)])  \
             {  \
                 bot_arrow_fields[itr] = Add_Button_Field((x_start + 61), (y_start + 43 + (itr * 46)), str_empty_string__ovr136, selectbk_bottom_arrow_seg, (int16_t)str_empty_string__ovr136[0], ST_UNDEFINED);  \
             }  \
@@ -1246,7 +1253,7 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
     Spell_Target_Global_Enchantment_Screen_Load(spell_idx);
 
     // total count - human player count ... you might, but they don't
-    if((ovl_ench_cnt - ovl_ench_list_cnt[0]) <= 0)
+    if((ovl_ench_cnt - ovl_ench_list_cnt2[0]) <= 0)
     {
         strcpy(GUI_NearMsgString, aThereAreNoGlob);  // "There are no global spells to "
         if(spell_idx != spl_Spell_Binding)
@@ -1280,7 +1287,7 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
 
             _osc_scanned_field = Scan_Input();
 
-            if(((_osc_scanned_field - 1) % 3) >= ovl_ench_list_cnt[(1 + ((_osc_scanned_field - 1) / 3))])
+            if(((_osc_scanned_field - 1) % 3) >= ovl_ench_list_cnt2[(1 + ((_osc_scanned_field - 1) / 3))])
             {
                 
                 _osc_scanned_field = 0;
@@ -1323,7 +1330,7 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
                 }
                 if(bot_arrow_fields[itr] == input_field_idx)
                 {
-                    if((ovl_ench_list_fst[itr] + 3) < ovl_ench_list_cnt[(1 + itr)])
+                    if((ovl_ench_list_fst[itr] + 3) < ovl_ench_list_cnt2[(1 + itr)])
                     {
                         Play_Left_Click__DUPE();
                         ovl_ench_list_fst[itr] += 1;
@@ -2066,7 +2073,7 @@ void SoM_Started__STUB(int16_t player_idx)
     Fade_Out();
 
     // SPELLY  Load_Palette(0, -1);  // ; EMPERATO - main game palette
-    Load_Palette(0, ST_UNDEFINED, NULL);
+    Load_Palette(0, ST_UNDEFINED, ST_NULL);
 
     Allocate_Reduced_Map();
 

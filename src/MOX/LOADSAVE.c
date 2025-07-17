@@ -21,7 +21,7 @@
 #include <assert.h>     /* assert() */
 #include <math.h>       /* sqrt() */
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
-#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
+#include <stdlib.h>
 #include <string.h>     /* memset(), strcat(), strcpy(); */
 
 #include "LOADSAVE.h"
@@ -46,7 +46,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     }
     else
     {
-        itoa((save_gam_idx + 1), temp_string, 10);
+        SDL_itoa((save_gam_idx + 1), temp_string, 10);
         strcpy(file_name, "SAVE");
         strcat(file_name, temp_string);
         strcat(file_name,".GAM");
@@ -220,7 +220,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     }
     else
     {
-        itoa((save_gam_idx + 1), temp_string, 10);
+        SDL_itoa((save_gam_idx + 1), temp_string, 10);
         strcpy(file_name, "SAVE");
         strcat(file_name, temp_string);
         strcat(file_name,".GAM");

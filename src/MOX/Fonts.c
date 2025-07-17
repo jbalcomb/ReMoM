@@ -23,8 +23,10 @@
 #include "../MOM_PFL.h"
 
 #include <assert.h>
-#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
+#include <stdlib.h>
 #include <string.h>
+
+#include <SDL_stdinc.h>
 
 
 
@@ -514,7 +516,7 @@ int16_t Print_Integer(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[10];
 
-    itoa(val, buffer, 10);
+    SDL_itoa(val, buffer, 10);
 
     next_x = Print(x, y, buffer);
 
@@ -529,7 +531,7 @@ int16_t Print_Long(int16_t x, int16_t y, int32_t val)
     int16_t next_x;
     char buffer[10];
 
-    ltoa(val, buffer, 10);
+    SDL_ltoa(val, buffer, 10);
 
     next_x = Print(x, y, buffer);
 
@@ -574,7 +576,7 @@ int16_t Print_Integer_Right(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    itoa(val, buffer, 10);
+    SDL_itoa(val, buffer, 10);
 
     next_x = Print_Right(x, y, buffer);
 
@@ -588,7 +590,7 @@ int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    itoa(val, buffer, 10);
+    SDL_itoa(val, buffer, 10);
 
     next_x = Print_Centered(x, y, buffer);
 
@@ -603,7 +605,7 @@ int16_t Print_Long_Right(int16_t x, int16_t y, int32_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    itoa(val, buffer, 10);
+    SDL_itoa(val, buffer, 10);
 
     next_x = Print_Right(x, y, buffer);
 
@@ -617,7 +619,7 @@ int16_t Clipped_Print_Integer(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    itoa(val, buffer, 10);
+    SDL_itoa(val, buffer, 10);
 
     next_x = Clipped_Print(x, y, buffer);
 
@@ -631,7 +633,7 @@ int16_t Clipped_Print_Long(int16_t x, int16_t y, int32_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    ltoa(val, buffer, 10);
+    SDL_ltoa(val, buffer, 10);
 
     next_x = Clipped_Print(x, y, buffer);
 
@@ -688,7 +690,7 @@ int16_t Clipped_Print_Integer_Right(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[10];
 
-    itoa(val, buffer, 10);
+    SDL_itoa(val, buffer, 10);
 
     next_x = Clipped_Print_Right(x, y, buffer);
 
@@ -703,7 +705,7 @@ int16_t Clipped_Print_Long_Right(int16_t x, int16_t y, int32_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    ltoa(val, buffer, 10);
+    SDL_ltoa(val, buffer, 10);
 
     next_x = Clipped_Print_Right(x, y, buffer);
 
@@ -1096,7 +1098,7 @@ void ST_PSTRM(int16_t x, int16_t y, int16_t val, char * string)
 
         j = ((Get_String_Width(string) + 2) * 10);
 
-        itoa(val ,buffer, 10);
+        SDL_itoa(val ,buffer, 10);
 
         Disp_PSTR((x + j + 1), y, buffer);
 
@@ -1175,7 +1177,7 @@ void ST_PSTR(int x, int y, int val)
     if(Check_Release_Version() != ST_TRUE)
     {
 
-        itoa(val, buffer, 10);
+        SDL_itoa(val, buffer, 10);
 
         Disp_PSTR(x, y, buffer);
 
@@ -1200,7 +1202,7 @@ void PSTRL(int16_t x, int16_t y, int32_t val)
     if(Check_Release_Version() != ST_TRUE)
     {
 
-        ltoa(val, buffer, 10);
+        SDL_ltoa(val, buffer, 10);
 
         Disp_PSTR(x, y, buffer);
 
@@ -1232,7 +1234,7 @@ void PSTRU(int16_t x, int16_t y, uint32_t value)
 // IDGI  mov     [word ptr bp+val], ax
         val = value;
 
-        ultoa(val, buffer, 10);
+        SDL_ultoa(val, buffer, 10);
 
         Disp_PSTR(x, y, buffer);
 

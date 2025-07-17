@@ -57,6 +57,7 @@
 
 #include "STU/STU_DBG.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "NEXTTURN.h"
@@ -258,7 +259,7 @@ GARBAGE
 XREF:
     NX_j_o060p03_empty_function()
 */
-void o060p03_empty_function(void)
+static void o060p03_empty_function(void)
 {
 /*
 push    bp
@@ -1379,7 +1380,7 @@ int16_t Player_Hero_Count(int16_t player_idx)
 /*
 ; returns the amount of dead, but not disintegrated heroes formerly in the player's service
 */
-int16_t Player_Dead_Hero_Count(int16_t player_idx)
+static int16_t Player_Dead_Hero_Count(int16_t player_idx)
 {
     int16_t itr_hero_types;  // _SI_
     int16_t hero_count;  // _DI_
@@ -2384,13 +2385,11 @@ Capture_Cities_Data();
             if(_CITIES[city_idx].Prod_Accu >= product_cost)
             {
 
-// Severity	Code	Description	Project	File	Line	Suppression State	Details
-// Warning	C6385	Reading invalid data from '_CITIES[city_idx].bldg_status'.ReMoM	C : \STU\devel\ReMoM\src\NEXTTURN.C	1934
                 // NOTE(JimBalcomb,20250221):  just got triggered, don't recall why I had this here...  assert((_CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] < 0));
-
                 // IDGI:  ¿ impossible state - unreachable code ?
                 // #CRASHME
                 // BUGBUG
+                // C6385  Reading invalid data from '_CITIES[city_idx].bldg_status':  the readable size is '36' bytes, but '_CITIES[city_idx].construction' bytes may be read.
                 if(_CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] >= 0)  /* bs_Replaced, bs_Built, bs_Removed */
                 {
 
@@ -2404,6 +2403,7 @@ Capture_Cities_Data();
                 {
 
 Check_Game_Data();
+                    // C6386  Buffer overrun while writing to '_CITIES[city_idx].bldg_status':  the writable size is '36' bytes, but '_CITIES[city_idx].construction' bytes might be written.
                     _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] = bs_Built;
 // Check_Game_Data();
 Capture_Cities_Data();
@@ -2870,11 +2870,11 @@ Capture_Units_Data();
 // drake178: WIZ_MatchGoldUpkeep()
 int16_t WIZ_MatchGoldUpkeep(int16_t player_idx, int16_t gold_upkeep)
 {
-    int16_t troops[MAX_STACK];
-    int16_t itr_troops;
-    int16_t troop_count;
-    int16_t unit_gold_upkeep;
-    int16_t itr_units;  // _SI_
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t itr_troops = 0;
+    int16_t troop_count = 0;
+    int16_t unit_gold_upkeep = 0;
+    int16_t itr_units = 0;  // _SI_
 
     for(itr_units = (_units - 1); ((itr_units > -1) && (_players[player_idx].gold_reserve < gold_upkeep)); itr_units--)
     {
@@ -2947,10 +2947,10 @@ Capture_Units_Data();
 // drake178: WIZ_MatchManaUpkeep()
 int16_t WIZ_MatchManaUpkeep__WIP(int16_t player_idx, int16_t mana_upkeep)
 {
-    int16_t Asset_Type;
-    int16_t Asset_Types_Checked;
-    int16_t mana_expense_type[4];
-    int16_t itr;
+    int16_t Asset_Type = 0;
+    int16_t Asset_Types_Checked = 0;
+    int16_t mana_expense_type[4] = { 0, 0, 0, 0 };
+    int16_t itr = 0;
 
     Asset_Types_Checked = 0;
 
@@ -3003,11 +3003,11 @@ int16_t WIZ_MatchManaUpkeep__WIP(int16_t player_idx, int16_t mana_upkeep)
 // drake178: WIZ_DisbandSummons()
 int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
 {
-    int16_t troops[MAX_STACK];
-    int16_t Channeler_Divisor;
-    int16_t itr_troops;
-    int16_t troop_count;
-    int16_t itr_units;  // _SI_
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Channeler_Divisor = 0;
+    int16_t itr_troops = 0;
+    int16_t troop_count = 0;
+    int16_t itr_units = 0;  // _SI_
 
     if(_players[player_idx].channeler > 0)
     {
@@ -4104,14 +4104,14 @@ Finally, when units occupy map squares with Natural Healers (see Special Unit Ab
 */
 void Heal_All_Units(void)
 {
-    int16_t troops[MAX_STACK];
-    int16_t var_16[MAX_STACK];
-    int16_t Human_Player_Units;
-    int16_t troop_count;
-    int16_t itr_troops;  // _SI_
-    int16_t itr;  // _DI_
-    int16_t itr_units;  // _DI_
-    int16_t itr_cities;  // _DI_
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t var_16[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Human_Player_Units = 0;
+    int16_t troop_count = 0;
+    int16_t itr_troops = 0;  // _SI_
+    int16_t itr = 0;  // _DI_
+    int16_t itr_units = 0;  // _DI_
+    int16_t itr_cities = 0;  // _DI_
 
     // DONT  UNIT_HealArray = SA_MK_FP0(Allocate_First_Block(_screen_seg, (4 + (_units_ / 16))););
     UNIT_HealArray = Allocate_First_Block(_screen_seg, (4 + (_units / 16)));  // calculate allocation in 16-byte paragraphs/memory segments
@@ -5169,7 +5169,7 @@ void AI_Calculate_Average_Unit_Cost(void)
 */
 void Do_Autosave(void)
 {
-    struct s_mouse_list mouse_list[1];
+    struct s_mouse_list mouse_list[1] = { 0, 0, 0, 0, 0, 0 };
 
     if((_turn % 4) != 0)
     {

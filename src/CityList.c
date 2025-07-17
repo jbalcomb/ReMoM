@@ -16,14 +16,12 @@
 #include "MOX/LBX_Load.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
 #include "MOX/MOX_DEF.h"
-#include "MOX/MOX_ITOA.h"  /* mox_itoa() */
-
-#include "City_ovr55.h"
-#include "CityList.h"
-#include "Help.h"
 #include "MOX/MOX_T4.h"
 #include "MOX/Timer.h"
 #include "MOX/Util.h"
+
+#include "City_ovr55.h"
+#include "Help.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 #include "MOM_SCR.h"
@@ -32,8 +30,12 @@
 #include "UNITTYPE.h"   // WTFMATE
 #include "WZD_o059.h"
 
-#include <stdlib.h>     /* abs(); itoa(); ltoa(); */
+#include <stdlib.h>
 #include <string.h>
+
+#include <SDL_stdinc.h>
+
+#include "CityList.h"
 
 
 
@@ -517,11 +519,11 @@ void CityList_Screen_Draw(void)
     Print(197, 17, aProducing);   /* "Producing" */
     Print(272, 17, aTime);        /* "Time"      */
 
-    itoa(_players[_human_player_idx].gold_reserve, GUI_String_1, 10);
+    SDL_itoa(_players[_human_player_idx].gold_reserve, GUI_String_1, 10);
     strcat(GUI_String_1, cnst_GP_2);
     Print_Centered(242, 172, GUI_String_1);
 
-    itoa(_players[_human_player_idx].mana_reserve, GUI_String_1, 10);
+    SDL_itoa(_players[_human_player_idx].mana_reserve, GUI_String_1, 10);
     strcat(GUI_String_1, cnst_MP_2);
     Print_Centered(276, 172, GUI_String_1);
 

@@ -39,6 +39,8 @@
 #include "UNITTYPE.h"
 #include "UnitMove.h"
 
+#include <stdlib.h>
+
 #include "Spells132.h"
 
 
@@ -953,7 +955,7 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
                     if(player_idx == HUMAN_PLAYER_IDX)
                     {
 
-                        for(itr = 50; itr >= 100; itr += 10)
+                        for(itr = 50; itr <= 100; itr += 10)
                         {
 
                             Copy_Bitmap_To_Bitmap(bitmap, spell_animation_seg);

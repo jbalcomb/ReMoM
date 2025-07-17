@@ -3,7 +3,7 @@
         ovr143
 */
 
-#include "WZD_o143.h"
+#include "STU/STU_CHK.h"
 
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_BASE.h"
@@ -21,6 +21,8 @@
 #include "TerrType.h"
 
 #include <string.h>
+
+#include "WZD_o143.h"
 
 
 
@@ -158,7 +160,7 @@ void Set_Terrain_Type_Forest(int16_t wx, int16_t wy, int16_t wp)
 
 // WZD o143p05
 // drake178: RP_TILE_MakeDesert()
-void Set_Terrain_Type_Desert(int16_t wx, int16_t wy, int16_t wp)
+static void Set_Terrain_Type_Desert(int16_t wx, int16_t wy, int16_t wp)
 {
 
     SET_TERRAIN_TYPE(wx, wy, wp, rnd_deserts[(Random(3) - 1)]);

@@ -41,10 +41,9 @@ Release_Cities_Data()
 */
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "STU_CHK.h"
-
 #include "STU_DEF.h"
 #include "STU_DBG.h"
+
 #include "STU_CHK.h"
 
 #include "../MOX/MOM_Data.h"
@@ -285,7 +284,7 @@ void Release_Cities_Data(void)
 
 static void Copy_Unit_Struct(struct s_UNIT * dst, struct s_UNIT * src)
 {
-    int16_t itr;
+    int16_t itr = 0;
     dst->wx = src->wx;
     dst->wy = src->wy;
     dst->wp = src->wp;
@@ -317,7 +316,8 @@ static void Copy_Unit_Struct(struct s_UNIT * dst, struct s_UNIT * src)
 
 static int16_t Check_Unit_Struct(struct s_UNIT * dst, struct s_UNIT * src)
 {
-    int16_t itr;
+    int16_t itr = 0;
+
     if(dst->wx != src->wx)
         STU_DEBUG_BREAK();
     if(dst->wy != src->wy)

@@ -2397,7 +2397,7 @@ AIDATA.H
 #define AI_TARGET_SITE          0x8000
 
 */
-SAMB_ptr CONTX_NmeStrMap[2];
+uint16_t * CONTX_NmeStrMap[2];
 
 // WZD dseg:9C9C
 // drake178: TBL_Catchments_EMS
@@ -3410,8 +3410,8 @@ int16_t _osc_leave_screen;
 */
 int16_t _osc_need_target_flag;
 
-// WZD dseg:CA50
-int16_t _temp_sint_1;
+// Spells137.c  // WZD dseg:CA50
+// Spells137.c  int16_t _temp_sint_1;
 
 // WZD dseg:CA52
 // AKA word_434F2

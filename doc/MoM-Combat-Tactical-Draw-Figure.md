@@ -240,7 +240,7 @@ ut_Nagas      = 197   FIGURE14.LBX,  16    NAGA
 
 
 Load_Unit_Figure()  UnitView.C
-    itoa(((figure_num / 15) + 1), buffer, 10);
+    SDL_itoa(((figure_num / 15) + 1), buffer, 10);
     ...
     entry_num = (((figure_num % 15) * 8) + 2);
     unit_figure_seg = LBX_Reload_Next(file_name, entry_num, _screen_seg);

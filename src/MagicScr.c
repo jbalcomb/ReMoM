@@ -31,7 +31,9 @@
 #include "WIZVIEW.h"
 #include "WZD_o059.h"
 
-#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
+#include <stdlib.h>
+
+#include <SDL_stdinc.h>
 
 #include "MagicScr.h"
 
@@ -366,7 +368,10 @@ int16_t m_alchemy_popup_start_x;
 SAMB_ptr m_alchemy_bar_bitm_seg;
 
 // WZD dseg:C22C
-int16_t ovl_ench_list_cnt;
+/*
+multiple definition - MagicScr.c and SPLMASTR.c
+*/
+int16_t ovl_ench_list_cnt1;
 
 // WZD dseg:C22E
 SAMB_ptr magic_gem_fields;
@@ -604,7 +609,7 @@ void Magic_Screen(void)
             leave_screen_flag = ST_UNDEFINED;
        }
 
-        for(itr = 0; itr < ovl_ench_list_cnt; itr++)
+        for(itr = 0; itr < ovl_ench_list_cnt1; itr++)
         {
             if((magic_ovl_ench_flds[itr] == input_field_idx) && (ovl_ench_list_players[(magic_ovl_ench_list_first_item + itr)] == _human_player_idx))
             {
@@ -782,47 +787,49 @@ if( (mana_stave_pct_pos     + IDK  ) < 0) { research_stave_pct_pos = (mana_stave
 
 */
 
-// #define ADJUST_STAVES(_staff1_,_staff2_,_staff3_) { \
-//     if(skill_stave_pct != skill_stave_pct_pos) { \
-//         IDK = skill_stave_pct - skill_stave_pct_pos; \
-//         if(research_staff_locked + mana_staff_locked == 2) { \
-//                 skill_stave_pct_pos = skill_stave_pct; \
-//         } else { \
-//             if((research_staff_locked != ST_FALSE) && (mana_staff_locked == ST_FALSE)) { \
-//                 if((mana_stave_pct_pos + IDK) < 0) { \
-//                     skill_stave_pct_pos = (skill_stave_pct + mana_stave_pct_pos); \
-//                     mana_stave_pct_pos = 0; \
-//                 } else { \
-//                     mana_stave_pct_pos += IDK; \
-//                 } \
-//             } else if( (mana_staff_locked != ST_FALSE) && (research_staff_locked == ST_FALSE)) { \
-//                 if((research_stave_pct_pos + IDK) < 0) { \
-//                     skill_stave_pct_pos = (skill_stave_pct + research_stave_pct_pos); \
-//                     research_stave_pct_pos = 0; \
-//                 } else { \
-//                     research_stave_pct_pos += IDK; \
-//                 } \
-//             } else { /* skill changed, neither mana nor research are locked */ \
-//                 skill_stave_pct_pos += (IDK % 2); \
-//                 var_2 = (IDK / 2); \
-//                 IDK = var_2; \
-//                 if((research_stave_pct_pos + var_2) < 0) { \
-//                     IDK = (research_stave_pct_pos + var_2); \
-//                     research_stave_pct_pos = 0; \
-//                 } else { \
-//                     research_stave_pct_pos += var_2; \
-//                 } \
-//                 if((mana_stave_pct_pos + IDK) < 0) \
-//                 { \
-//                     research_stave_pct_pos = (mana_stave_pct_pos + IDK); \
-//                     mana_stave_pct_pos = 0; \
-//                 } else { \
-//                     mana_stave_pct_pos += IDK; \
-//                 } \
-//             } \
-//         } \
-//     } \
-// }
+/*
+#define ADJUST_STAVES(_staff1_,_staff2_,_staff3_) { \
+    if(skill_stave_pct != skill_stave_pct_pos) { \
+        IDK = skill_stave_pct - skill_stave_pct_pos; \
+        if(research_staff_locked + mana_staff_locked == 2) { \
+                skill_stave_pct_pos = skill_stave_pct; \
+        } else { \
+            if((research_staff_locked != ST_FALSE) && (mana_staff_locked == ST_FALSE)) { \
+                if((mana_stave_pct_pos + IDK) < 0) { \
+                    skill_stave_pct_pos = (skill_stave_pct + mana_stave_pct_pos); \
+                    mana_stave_pct_pos = 0; \
+                } else { \
+                    mana_stave_pct_pos += IDK; \
+                } \
+            } else if( (mana_staff_locked != ST_FALSE) && (research_staff_locked == ST_FALSE)) { \
+                if((research_stave_pct_pos + IDK) < 0) { \
+                    skill_stave_pct_pos = (skill_stave_pct + research_stave_pct_pos); \
+                    research_stave_pct_pos = 0; \
+                } else { \
+                    research_stave_pct_pos += IDK; \
+                } \
+            } else { / * skill changed, neither mana nor research are locked * / \
+                skill_stave_pct_pos += (IDK % 2); \
+                var_2 = (IDK / 2); \
+                IDK = var_2; \
+                if((research_stave_pct_pos + var_2) < 0) { \
+                    IDK = (research_stave_pct_pos + var_2); \
+                    research_stave_pct_pos = 0; \
+                } else { \
+                    research_stave_pct_pos += var_2; \
+                } \
+                if((mana_stave_pct_pos + IDK) < 0) \
+                { \
+                    research_stave_pct_pos = (mana_stave_pct_pos + IDK); \
+                    mana_stave_pct_pos = 0; \
+                } else { \
+                    mana_stave_pct_pos += IDK; \
+                } \
+            } \
+        } \
+    } \
+}
+*/
 
 // WZD o73p02
 /*
@@ -1141,7 +1148,7 @@ void Magic_Screen_Draw(void)
     Set_Outline_Color(19);
     Set_Alias_Color(185);
 
-    itoa(mana, GUI_String_1, 10);
+    SDL_itoa(mana, GUI_String_1, 10);
     strcat(GUI_String_1, cnst_Space_MP);
     Print_Right(54, 160, GUI_String_1);
 
@@ -1151,12 +1158,12 @@ void Magic_Screen_Draw(void)
     }
     else
     {
-        itoa(research, GUI_String_1, 10);
+        SDL_itoa(research, GUI_String_1, 10);
         strcat(GUI_String_1, aRp_0);
         Print_Right(101, 160, GUI_String_1);
     }
 
-    itoa(skill, GUI_String_1, 10);
+    SDL_itoa(skill, GUI_String_1, 10);
     strcat(GUI_String_1, aSp);
     Print_Right(148, 160, GUI_String_1);
 
@@ -1170,8 +1177,8 @@ void Magic_Screen_Draw(void)
         "Casting Skill:"
     */
     Print(5, 177, aCastingSkill);
-    itoa((Player_Base_Casting_Skill(_human_player_idx) + Player_Hero_Casting_Skill(_human_player_idx)), GUI_String_1, 10);
-    itoa(Player_Base_Casting_Skill(_human_player_idx), GUI_String_2, 10);
+    SDL_itoa((Player_Base_Casting_Skill(_human_player_idx) + Player_Hero_Casting_Skill(_human_player_idx)), GUI_String_1, 10);
+    SDL_itoa(Player_Base_Casting_Skill(_human_player_idx), GUI_String_2, 10);
     strcat(GUI_String_1, cnst_OpeningBrace_2);
     strcat(GUI_String_1, GUI_String_2);
     strcat(GUI_String_1, cnst_ClosingBrace_2);
@@ -1262,6 +1269,7 @@ void Magic_Screen_Draw(void)
         {
             FLIC_Draw((24 + (77 * itr_gems)), 4, lilwiz_gem_segs[itr_gems]);
 
+            // C6385  Reading invalid data from '_players':  the readable size is '7344' bytes, but 'gem_player_nums[itr_gems]' bytes may be read.
             diplomatic_relations_idx = ((_players[gem_player_nums[itr_gems]].Dipl.Visible_Rel[_human_player_idx] + 100) / 20);
             Print_Centered(45 + (77 * itr_gems), 53, diplo_state[diplomatic_relations_idx]);
 
@@ -1353,7 +1361,7 @@ void Magic_Screen_Draw(void)
         {
             // TODO  _help_entries[(25 + itr)].entry_idx = ST_UNDEFINED;
         }
-        for(itr_ovl_enchs = 0; itr_ovl_enchs < ovl_ench_list_cnt; itr_ovl_enchs++)
+        for(itr_ovl_enchs = 0; itr_ovl_enchs < ovl_ench_list_cnt1; itr_ovl_enchs++)
         {
             if(ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr_ovl_enchs)] > 0)
             {
@@ -1414,12 +1422,12 @@ void Magic_Screen_Add_Fields(void)
         magic_gem_fields[itr_gem_count] = Add_Hidden_Field(x1, y1, (x1 + 30), (y1 + 32), str_empty_string__ovr073[0], ST_UNDEFINED);
     }
 
-    ovl_ench_list_cnt = 0;
+    ovl_ench_list_cnt1 = 0;
     x1 = 169;
     y1 = 80;
     if(ovl_ench_cnt < 10)
     {
-        ovl_ench_list_cnt = ovl_ench_cnt;
+        ovl_ench_list_cnt1 = ovl_ench_cnt;
         for(itr_ovl_ench_cnt = 0; itr_ovl_ench_cnt < ovl_ench_cnt; itr_ovl_ench_cnt++)
         {
             magic_ovl_ench_flds[itr_ovl_ench_cnt] = Add_Hidden_Field(x1, (y1 + (10 * itr_ovl_ench_cnt)), (x1 + 120), (y1 + 9 + (10 * itr_ovl_ench_cnt)), str_empty_string__ovr073[0], ST_UNDEFINED);
@@ -1427,9 +1435,9 @@ void Magic_Screen_Add_Fields(void)
     }
     else
     {
-        ovl_ench_list_cnt = ovl_ench_cnt - magic_ovl_ench_list_first_item;
-        SETMAX(ovl_ench_list_cnt, 18);
-        for(itr_ovl_ench_list_cnt = 0; itr_ovl_ench_list_cnt < ovl_ench_list_cnt; itr_ovl_ench_list_cnt++)
+        ovl_ench_list_cnt1 = ovl_ench_cnt - magic_ovl_ench_list_first_item;
+        SETMAX(ovl_ench_list_cnt1, 18);
+        for(itr_ovl_ench_list_cnt = 0; itr_ovl_ench_list_cnt < ovl_ench_list_cnt1; itr_ovl_ench_list_cnt++)
         {
             magic_ovl_ench_flds[itr_ovl_ench_list_cnt] = Add_Hidden_Field((x1 + (70 * (itr_ovl_ench_list_cnt % 2))), (y1 + (9 * (itr_ovl_ench_list_cnt / 2))), (63 + (x1 + (70 * (itr_ovl_ench_list_cnt % 2)))), (6 + (y1 + (9 * (itr_ovl_ench_list_cnt / 2)))), str_empty_string__ovr073[0], ST_UNDEFINED);
         }

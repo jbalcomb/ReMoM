@@ -226,6 +226,8 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
 
                 /* BUGBUG:  drake178: this jump is supposed to skip all 4 of the following blocks, not just the first one (misplaced parentheses in the original code) */
                 // warning: '&&' within '||' [-Wlogical-op-parentheses]
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wparentheses"
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wlogical-op-parentheses"
                 if(
@@ -241,7 +243,7 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
                     Swimming_Units--;
                 }
 #pragma clang diagnostic pop
-
+#pragma GCC diagnostic pop
             }
 
             if

@@ -31,6 +31,7 @@
 #include "Spells129.h"
 
 #include <assert.h>
+#include <stdlib.h>
 
 #include "Spells133.h"
 

@@ -6,7 +6,6 @@
         ¿ ovr164 ?
 */
 
-#include "AIDATA.h"
 
 #include "MOX/Allocate.h"
 #include "MOX/MOX_DAT.h"  /* _players[] */
@@ -15,10 +14,11 @@
 
 #include "AIDUDES.h"
 #include "CITYCALC.h"
-#include "DIPLOMAC.h"
 #include "NEXTTURN.h"
 #include "Spellbook.h"
 #include "DIPLODEF.h"
+
+#include "AIDATA.h"
 
 
 

@@ -27,8 +27,10 @@
 #include "UNITTYPE.h"   // WTFMATE
 #include "WZD_o059.h"
 
-#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
+#include <stdlib.h>
 #include <string.h>
+
+#include <SDL_stdinc.h>
 
 #include "Surveyor.h"
 
@@ -517,14 +519,14 @@ void Surveyor_Window_Display(void)
                 Print_Integer_Right(306, 151, val);
 
                 Print(245, 158, str_ProdBonus);
-                itoa(production_bonus, GUI_String_1, 10);
+                SDL_itoa(production_bonus, GUI_String_1, 10);
                 strcpy(GUI_String_2, str_PlusSign);
                 strcat(GUI_String_2, GUI_String_1);
                 strcat(GUI_String_2, str_PercentSign);
                 Print_Right(312, 158, GUI_String_2);
 
                 Print(245, 165, str_GoldBonus);
-                itoa(gold_bonus, GUI_String_1, 10);
+                SDL_itoa(gold_bonus, GUI_String_1, 10);
                 strcpy(GUI_String_2, str_PlusSign);
                 strcat(GUI_String_2, GUI_String_1);
                 strcat(GUI_String_2, str_PercentSign);

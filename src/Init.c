@@ -24,6 +24,8 @@ MoO2  Module: fonts     Load_Font_File()
 #include "MOM_PFL.h"
 #include "MOX/Video2.h"
 
+#include <SDL_stdinc.h>
+
 
 
 char DEFAULT_FONT_FILE[] = "FONTS.LBX";

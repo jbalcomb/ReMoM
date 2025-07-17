@@ -6,12 +6,8 @@
 
 */
 
-#include "CITYCALC.h"
-#include "CITYSCAP.h"
-#include "City_ovr55.h"
+#include "STU/STU_CHK.h"
 
-#include "Explore.h"
-#include "MOM_DEF.h"
 #include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fonts.h"
@@ -22,18 +18,18 @@
 #include "MOX/Timer.h"
 #include "MOX/Util.h"
 #include "MOX/random.h"
-#include "MainScr.h"
-#include "MainScr_Maps.h"
-#include "NEXTTURN.h"
-#include "RACETYPE.h"
-#include "STU/STU_CHK.h"
-
 #include "MOX/Fields.h"
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
 #include "MOX/MOX_DEF.h"
 #include "MOX/MOX_T4.h"
 
+#include "MainScr.h"
+#include "MainScr_Maps.h"
+#include "NEXTTURN.h"
+#include "RACETYPE.h"
+#include "Explore.h"
+#include "MOM_DEF.h"
 #include "UNITTYPE.h"
 #include "CityScr.h"
 #include "Help.h"
@@ -41,9 +37,16 @@
 #include "UnitMove.h"
 #include "WZD_o059.h"
 #include "WZD_o143.h"
+#include "CITYCALC.h"
+#include "CITYSCAP.h"
 
 #include <assert.h>
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
+#include <stdlib.h>
+
+#include <SDL_stdinc.h>
+
+#include "City_ovr55.h"
 
 
 
@@ -1220,8 +1223,9 @@ int16_t City_Building_Is_Currently_Required(int16_t city_idx, int16_t bldg_idx)
     if(product_idx < bt_NUM_BUILDINGS)
     {
         if(
-            (bldg_data_table[product_idx].reqd_bldg_1 == bldg_idx) ||
             (bldg_data_table[product_idx].reqd_bldg_1 == bldg_idx)
+            ||
+            (bldg_data_table[product_idx].reqd_bldg_2 == bldg_idx)
         )
         {
             building_is_required = ST_TRUE;
@@ -1235,7 +1239,8 @@ int16_t City_Building_Is_Currently_Required(int16_t city_idx, int16_t bldg_idx)
     {
         product_idx -= bt_NUM_BUILDINGS;  // translate to unit_type_idx
         if(
-            (_unit_type_table[product_idx].reqd_bldg_1 == bldg_idx) ||
+            (_unit_type_table[product_idx].reqd_bldg_1 == bldg_idx)
+            ||
             (_unit_type_table[product_idx].reqd_bldg_2 == bldg_idx)
         )
         {
@@ -1280,6 +1285,7 @@ void City_Check_Production(int16_t city_idx)
         else  /* if(bldg_data_table[production_idx].reqd_bldg_1 > bt_NUM_BUILDINGS) */
         {
 
+            // C6385  Reading invalid data from '_CITIES[city_idx].bldg_status':  the readable size is '36' bytes, but 'bldg_data_table[production_idx].reqd_bldg_1' bytes may be read.
             if(
                 (
                     (_CITIES[city_idx].bldg_status[bldg_data_table[production_idx].reqd_bldg_1] != bs_Built)

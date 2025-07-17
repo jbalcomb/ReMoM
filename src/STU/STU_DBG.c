@@ -1,16 +1,21 @@
+
+// ERROR:  C4996  'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
 #define _CRT_SECURE_NO_WARNINGS
 
 /*
 https://olegkutkov.me/2019/03/25/simple-logger-with-stdout-files-and-syslog-support-for-c-projects-in-linux/
 */
 
-#ifdef _WIN32
-#include <STDARG.H>     /* va_list; va_arg(), va_end(), va_start() */
-#include <STDIO.H>      /* FILE; fclose(), fopen() */
-#include <STDLIB.H>     /* exit() */
-// C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\ucrt\corecrt_wstdio.h
-// C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h
-#endif
+// #ifdef _WIN32
+// #include <STDARG.H>     /* va_list; va_arg(), va_end(), va_start() */
+// #include <STDIO.H>      /* FILE; fclose(), fopen() */
+// #include <STDLIB.H>     /* exit() */
+// // C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\ucrt\corecrt_wstdio.h
+// // C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h
+// #endif
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "STU_TYPE.h"
 #include "STU_DBG.h"

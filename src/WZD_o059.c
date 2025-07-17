@@ -3,15 +3,18 @@
         ovr059
 */
 
-#include "CITYCALC.h"
-#include "Explore.h"
-#include "Lair.h"
+#include "STU/STU_CHK.h"
+#include "STU/STU_DBG.h"
+
 #include "MOX/MOX_DAT.h"  /* _players[] */
 #include "MOX/MOX_BASE.h"
 #include "MOX/MOX_DEF.h"
 #include "MOX/MOX_TYPE.h"
 #include "MOX/GENDRAW.h"
 
+#include "CITYCALC.h"
+#include "Explore.h"
+#include "Lair.h"
 #include "MOM_DEF.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"  /* TILE_Explore(); */

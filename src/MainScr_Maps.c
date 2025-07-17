@@ -17,7 +17,7 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 
 */
 
-#include "MainScr_Maps.h"
+#include "STU/STU_CHK.h"
 
 #include "MOX/Fonts.h"
 #include "MOX/Graphics.h"
@@ -26,9 +26,9 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 #include "MOX/FLIC_Draw.h"
 #include "MOX/MOX_DAT.h"  /* _players[] */
 #include "MOX/MOX_SET.h"  /* magic_set */
+#include "MOX/MOX_T4.h"
 
 #include "Explore.h"
-#include "MOX/MOX_T4.h"
 #include "MainScr.h"
 #include "MOM_SCR.h"
 #include "SCastScr.h"  /* World_To_Screen() */
@@ -38,6 +38,8 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 
 #include <assert.h>
 #include <string.h>
+
+#include "MainScr_Maps.h"
 
 
 
@@ -1551,42 +1553,42 @@ void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
     Match_Array[0].Mark_Tile = 9;
     Match_Array[0].Mark_Adj = 9;
     Match_Array[0].Adj_Direction = 0;
-    Match_Array[1].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_BottomRight;
-    Match_Array[1].Adj_Scouting = SCT_BottomLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[1].Tile_Value = SCT_BottomLeft | SCT_TopLeft | SCT_BottomRight;
+    Match_Array[1].Adj_Scouting = SCT_BottomLeft | SCT_TopRight | SCT_BottomRight;
     Match_Array[1].Mark_Tile = 15;
     Match_Array[1].Mark_Adj = 15;
     Match_Array[1].Adj_Direction = 0;
-    Match_Array[2].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight;
-    Match_Array[2].Adj_Scouting = SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[2].Tile_Value = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight;
+    Match_Array[2].Adj_Scouting = SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
     Match_Array[2].Mark_Tile = 15;
     Match_Array[2].Mark_Adj = 15;
     Match_Array[2].Adj_Direction = 0;
     Match_Array[3].Tile_Value = SCT_TopLeft;
-    Match_Array[3].Adj_Scouting = SCT_TopRight || SCT_BottomRight;
+    Match_Array[3].Adj_Scouting = SCT_TopRight | SCT_BottomRight;
     Match_Array[3].Mark_Tile = 6;
     Match_Array[3].Mark_Adj = 15;  // ; BUG: should be 0Eh
     Match_Array[3].Adj_Direction = 0;
-    Match_Array[4].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight;
-    Match_Array[4].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft || SCT_BottomRight;
+    Match_Array[4].Tile_Value = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight;
+    Match_Array[4].Adj_Scouting = SCT_BottomLeft | SCT_TopLeft | SCT_BottomRight;
     Match_Array[4].Mark_Tile = 15;
     Match_Array[4].Mark_Adj = 15;
     Match_Array[4].Adj_Direction = 1;
     Match_Array[5].Tile_Value = SCT_TopLeft;
-    Match_Array[5].Adj_Scouting = SCT_BottomLeft || SCT_BottomRight;
+    Match_Array[5].Adj_Scouting = SCT_BottomLeft | SCT_BottomRight;
     Match_Array[5].Mark_Tile = 3;
     Match_Array[5].Mark_Adj = 11;
     Match_Array[5].Adj_Direction = 1;
-    Match_Array[6].Tile_Value = SCT_TopLeft || SCT_TopRight;
-    Match_Array[6].Adj_Scouting = SCT_BottomLeft || SCT_BottomRight;
+    Match_Array[6].Tile_Value = SCT_TopLeft | SCT_TopRight;
+    Match_Array[6].Adj_Scouting = SCT_BottomLeft | SCT_BottomRight;
     Match_Array[6].Mark_Tile = 15;
     Match_Array[6].Mark_Adj = 15;
     Match_Array[6].Adj_Direction = 1;
-    Match_Array[7].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
-    Match_Array[7].Adj_Scouting = SCT_BottomLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[7].Tile_Value = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
+    Match_Array[7].Adj_Scouting = SCT_BottomLeft | SCT_TopRight | SCT_BottomRight;
     Match_Array[7].Mark_Tile = 15;
     Match_Array[7].Mark_Adj = 15;
     Match_Array[7].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
-    Match_Array[8].Tile_Value = SCT_BottomLeft || SCT_TopLeft;
+    Match_Array[8].Tile_Value = SCT_BottomLeft | SCT_TopLeft;
     Match_Array[8].Adj_Scouting = SCT_BottomRight;
     Match_Array[8].Mark_Tile = 11;
     Match_Array[8].Mark_Adj = 9;
@@ -1596,68 +1598,68 @@ void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
     Match_Array[9].Mark_Tile = 6;
     Match_Array[9].Mark_Adj = 9;
     Match_Array[9].Adj_Direction = 0;  // ; concept flaw, this should not yield extra scouting
-    Match_Array[10].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight;
-    Match_Array[10].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft;
+    Match_Array[10].Tile_Value = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight;
+    Match_Array[10].Adj_Scouting = SCT_BottomLeft | SCT_TopLeft;
     Match_Array[10].Mark_Tile = 15;
     Match_Array[10].Mark_Adj = 3;
     Match_Array[10].Adj_Direction = 0;  // ; bogus configuration, should be fixed elsewhere
-    Match_Array[11].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
-    Match_Array[11].Adj_Scouting = SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[11].Tile_Value = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
+    Match_Array[11].Adj_Scouting = SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
     Match_Array[11].Mark_Tile = 15;
     Match_Array[11].Mark_Adj = 15;
     Match_Array[11].Adj_Direction = 0;  // ; bogus configuration, should be fixed elsewhere
-    Match_Array[12].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
-    Match_Array[12].Adj_Scouting = SCT_BottomLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[12].Tile_Value = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
+    Match_Array[12].Adj_Scouting = SCT_BottomLeft | SCT_TopRight | SCT_BottomRight;
     Match_Array[12].Mark_Tile = 15;
     Match_Array[12].Mark_Adj = 15;
     Match_Array[12].Adj_Direction = 0;  // ; bogus configuration, should be fixed elsewhere
-    Match_Array[13].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_BottomRight;
-    Match_Array[13].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft || SCT_BottomRight;
+    Match_Array[13].Tile_Value = SCT_BottomLeft | SCT_TopLeft | SCT_BottomRight;
+    Match_Array[13].Adj_Scouting = SCT_BottomLeft | SCT_TopLeft | SCT_BottomRight;
     Match_Array[13].Mark_Tile = 11;
     Match_Array[13].Mark_Adj = 15;
     Match_Array[13].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
-    Match_Array[14].Tile_Value = SCT_BottomLeft || SCT_BottomRight;
-    Match_Array[14].Adj_Scouting = SCT_BottomLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[14].Tile_Value = SCT_BottomLeft | SCT_BottomRight;
+    Match_Array[14].Adj_Scouting = SCT_BottomLeft | SCT_TopRight | SCT_BottomRight;
     Match_Array[14].Mark_Tile = 9;
     Match_Array[14].Mark_Adj = 15;
     Match_Array[14].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
-    Match_Array[15].Tile_Value = SCT_BottomLeft || SCT_TopLeft;
-    Match_Array[15].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[15].Tile_Value = SCT_BottomLeft | SCT_TopLeft;
+    Match_Array[15].Adj_Scouting = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
     Match_Array[15].Mark_Tile = 15;
     Match_Array[15].Mark_Adj = 15;
     Match_Array[15].Adj_Direction = 0;  // ; bogus configuration, should be fixed elsewhere
     Match_Array[16].Tile_Value = SCT_TopRight;
-    Match_Array[16].Adj_Scouting = SCT_BottomLeft || SCT_BottomRight;
+    Match_Array[16].Adj_Scouting = SCT_BottomLeft | SCT_BottomRight;
     Match_Array[16].Mark_Tile = 15;  // ; BUG: should be 12
     Match_Array[16].Mark_Adj = 15;  // ; BUG: should be 0Dh
     Match_Array[16].Adj_Direction = 1;
-    Match_Array[17].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
-    Match_Array[17].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight;
+    Match_Array[17].Tile_Value = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
+    Match_Array[17].Adj_Scouting = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight;
     Match_Array[17].Mark_Tile = 15;
     Match_Array[17].Mark_Adj = 15;
     Match_Array[17].Adj_Direction = 2;  // ; bogus configuration, should be fixed elsewhere
-    Match_Array[18].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
-    Match_Array[18].Adj_Scouting = SCT_BottomLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[18].Tile_Value = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
+    Match_Array[18].Adj_Scouting = SCT_BottomLeft | SCT_TopRight | SCT_BottomRight;
     Match_Array[18].Mark_Tile = 15;
     Match_Array[18].Mark_Adj = 15;
     Match_Array[18].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
-    Match_Array[19].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
-    Match_Array[19].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft || SCT_BottomRight;
+    Match_Array[19].Tile_Value = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
+    Match_Array[19].Adj_Scouting = SCT_BottomLeft | SCT_TopLeft | SCT_BottomRight;
     Match_Array[19].Mark_Tile = 15;
     Match_Array[19].Mark_Adj = 15;
     Match_Array[19].Adj_Direction = 2;  // ; bogus configuration, should be fixed elsewhere
-    Match_Array[20].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
-    Match_Array[20].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft;
+    Match_Array[20].Tile_Value = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
+    Match_Array[20].Adj_Scouting = SCT_BottomLeft | SCT_TopLeft;
     Match_Array[20].Mark_Tile = 15;
     Match_Array[20].Mark_Adj = 15;
     Match_Array[20].Adj_Direction = 2;  // ; bogus configuration, should be fixed elsewhere
-    Match_Array[21].Tile_Value = SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
-    Match_Array[21].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[21].Tile_Value = SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
+    Match_Array[21].Adj_Scouting = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
     Match_Array[21].Mark_Tile = 15;
     Match_Array[21].Mark_Adj = 15;
     Match_Array[21].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
-    Match_Array[22].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight;
-    Match_Array[22].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[22].Tile_Value = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight;
+    Match_Array[22].Adj_Scouting = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
     Match_Array[22].Mark_Tile = 15;
     Match_Array[22].Mark_Adj = 15;
     Match_Array[22].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
@@ -1666,13 +1668,13 @@ void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
     Match_Array[23].Mark_Tile = 3;
     Match_Array[23].Mark_Adj = 3;
     Match_Array[23].Adj_Direction = 1;
-    Match_Array[24].Tile_Value = SCT_TopLeft || SCT_TopRight;
+    Match_Array[24].Tile_Value = SCT_TopLeft | SCT_TopRight;
     Match_Array[24].Adj_Scouting = SCT_BottomLeft;
     Match_Array[24].Mark_Tile = 15;  // ; BUG: should be 07h
     Match_Array[24].Mark_Adj = 3;
     Match_Array[24].Adj_Direction = 1;
-    Match_Array[25].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_BottomRight;
-    Match_Array[25].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft;
+    Match_Array[25].Tile_Value = SCT_BottomLeft | SCT_TopLeft | SCT_BottomRight;
+    Match_Array[25].Adj_Scouting = SCT_BottomLeft | SCT_TopLeft;
     Match_Array[25].Mark_Tile = 15;
     Match_Array[25].Mark_Adj = 3;
     Match_Array[25].Adj_Direction = 0;  // ; bogus configuration, should be fixed elsewhere
@@ -1681,7 +1683,7 @@ void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
     Match_Array[26].Mark_Tile = 6;
     Match_Array[26].Mark_Adj = 6;
     Match_Array[26].Adj_Direction = 0;
-    Match_Array[27].Tile_Value = SCT_TopLeft || SCT_TopRight;
+    Match_Array[27].Tile_Value = SCT_TopLeft | SCT_TopRight;
     Match_Array[27].Adj_Scouting = SCT_BottomRight;
     Match_Array[27].Mark_Tile = 14;
     Match_Array[27].Mark_Adj = 12;
@@ -1691,48 +1693,48 @@ void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
     Match_Array[28].Mark_Tile = 12;
     Match_Array[28].Mark_Adj = 12;
     Match_Array[28].Adj_Direction = 1;
-    Match_Array[29].Tile_Value = SCT_TopRight || SCT_BottomRight;
-    Match_Array[29].Adj_Scouting = SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[29].Tile_Value = SCT_TopRight | SCT_BottomRight;
+    Match_Array[29].Adj_Scouting = SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
     Match_Array[29].Mark_Tile = 12;
     Match_Array[29].Mark_Adj = 15;
     Match_Array[29].Adj_Direction = 0;  // ; bogus configuration, should be fixed elsewhere
-    Match_Array[30].Tile_Value = SCT_TopRight || SCT_BottomRight;
-    Match_Array[30].Adj_Scouting = SCT_BottomLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[30].Tile_Value = SCT_TopRight | SCT_BottomRight;
+    Match_Array[30].Adj_Scouting = SCT_BottomLeft | SCT_TopRight | SCT_BottomRight;
     Match_Array[30].Mark_Tile = 12;
     Match_Array[30].Mark_Adj = 15;
     Match_Array[30].Adj_Direction = 0;  // ; bogus configuration, should be fixed elsewhere
-    Match_Array[31].Tile_Value = SCT_BottomLeft || SCT_TopLeft;
+    Match_Array[31].Tile_Value = SCT_BottomLeft | SCT_TopLeft;
     Match_Array[31].Adj_Scouting = SCT_TopRight;
     Match_Array[31].Mark_Tile = 7;
     Match_Array[31].Mark_Adj = 6;
     Match_Array[31].Adj_Direction = 0;
     Match_Array[32].Tile_Value = SCT_BottomLeft;
-    Match_Array[32].Adj_Scouting = SCT_TopRight || SCT_BottomRight;
+    Match_Array[32].Adj_Scouting = SCT_TopRight | SCT_BottomRight;
     Match_Array[32].Mark_Tile = 9;
     Match_Array[32].Mark_Adj = 14;  // BUG: should be 0Dh;
     Match_Array[32].Adj_Direction = 0;
-    Match_Array[33].Tile_Value = SCT_TopLeft || SCT_TopRight;
-    Match_Array[33].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[33].Tile_Value = SCT_TopLeft | SCT_TopRight;
+    Match_Array[33].Adj_Scouting = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
     Match_Array[33].Mark_Tile = 15;
     Match_Array[33].Mark_Adj = 15;
     Match_Array[33].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
-    Match_Array[34].Tile_Value = SCT_BottomLeft || SCT_BottomRight;
-    Match_Array[34].Adj_Scouting = SCT_TopRight || SCT_BottomRight;
+    Match_Array[34].Tile_Value = SCT_BottomLeft | SCT_BottomRight;
+    Match_Array[34].Adj_Scouting = SCT_TopRight | SCT_BottomRight;
     Match_Array[34].Mark_Tile = 9;
     Match_Array[34].Mark_Adj = 15;
     Match_Array[34].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
-    Match_Array[35].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
-    Match_Array[35].Adj_Scouting = SCT_TopRight || SCT_BottomRight;
+    Match_Array[35].Tile_Value = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
+    Match_Array[35].Adj_Scouting = SCT_TopRight | SCT_BottomRight;
     Match_Array[35].Mark_Tile = 15;
     Match_Array[35].Mark_Adj = 15;
     Match_Array[35].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
-    Match_Array[36].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[36].Tile_Value = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
     Match_Array[36].Adj_Scouting = SCT_TopLeft;
     Match_Array[36].Mark_Tile = 15;
     Match_Array[36].Mark_Adj = 6;
     Match_Array[36].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
-    Match_Array[37].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
-    Match_Array[37].Adj_Scouting = SCT_BottomLeft || SCT_TopRight;
+    Match_Array[37].Tile_Value = SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight;
+    Match_Array[37].Adj_Scouting = SCT_BottomLeft | SCT_TopRight;
     Match_Array[37].Mark_Tile = 15;
     Match_Array[37].Mark_Adj = 15;
     Match_Array[37].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere

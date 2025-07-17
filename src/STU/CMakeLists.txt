@@ -1,5 +1,4 @@
-
-add_library(STU STATIC
+set(STU_SOURCES
     STU_CHK.c
     STU_DBG.c
     STU_DRAW.c
@@ -15,25 +14,20 @@ add_library(STU STATIC
     STU_WAV.c
 )
 
+add_library(STU STATIC ${STU_SOURCES})
+
+get_target_property(inc_dir STU INCLUDE_DIRECTORIES)
+message(STATUS "STU INCLUDE_DIRECTORIES: ${inc_dir}")
+
 set_target_properties(STU PROPERTIES LINKER_LANGUAGE C)
 
-# target_compile_definitions(STU PRIVATE STU_DEBUG=TRUE)
-# target_compile_definitions(STU PRIVATE STU_TRACE=TRUE)
+target_include_directories(STU PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${SDL2_INCLUDE_DIR}
+    ${SDL2_MIXER_INCLUDE_DIR}
+)
 
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
-    target_compile_options(STU PRIVATE
-        "-Wall"
-        "-Wno-unknown-pragmas"
-        "-Wno-unused-but-set-variable"
-        "-Wno-unused-variable"
-        "-Wno-writable-strings"
-    )
-endif()
-if(MSVC)
-    target_compile_options(momlib PRIVATE
-        "/W0"
-        "/wd4068"   # "unknown pragma"
-        "/wd4365"
-        "/wd4820"
-    )
-endif()
+target_link_libraries(STU SDL2::Core SDL2::Mixer)
+
+get_target_property(inc_dir STU INCLUDE_DIRECTORIES)
+message(STATUS "STU INCLUDE_DIRECTORIES: ${inc_dir}")

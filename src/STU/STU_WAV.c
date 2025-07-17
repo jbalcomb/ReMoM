@@ -47,7 +47,7 @@ void Export_WAV_File(void * wav_sound_buffer, int wav_sound_buffer_size)
     file_handle = fopen(filename, mode);
     if(file_handle == NULL)
     {
-        __debugbreak();
+        STU_DEBUG_BREAK();
     }
     dbg_prn("END:  fopen()\n");
 

@@ -3,6 +3,8 @@
         ovr130
 */
 
+#include "STU/STU_CHK.h"
+
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fonts.h"
 #include "MOX/Allocate.h"
@@ -45,7 +47,7 @@
 #include "WZD_o059.h"
 #include "WZD_o143.h"
 
-#include "STU/STU_CHK.h"
+#include <stdlib.h>
 
 #include "Spells130.h"
 
@@ -872,9 +874,9 @@ int16_t Cast_Raise_Volcano(int16_t player_idx)
 
                     if(
                         (terrain_type == tt_ChaosNode)
-                        &&
+                        ||
                         (terrain_type == tt_SorceryNode)
-                        &&
+                        ||
                         (terrain_type = tt_NatureNode)
                     )
                     {
@@ -1122,6 +1124,9 @@ int16_t Cast_Transmute(int16_t player_idx)
     if(return_value == ST_TRUE)
     {
 
+        // IDGI  gcc says warning: suggest parentheses around ‘&&’ within ‘||’ [-Wparentheses]
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wparentheses"
         if(
             (player_idx == HUMAN_PLAYER_IDX)
             ||
@@ -1135,6 +1140,7 @@ int16_t Cast_Transmute(int16_t player_idx)
             &&
             (magic_set.spell_animations == ST_TRUE)
         )
+#pragma GCC diagnostic push
         {
 
             Spell_Animation_Load_Sound_Effect__WIP(spl_Change_Terrain);

@@ -27,8 +27,10 @@
 #include "NEXTTURN.h"
 #include "Spellbook.h"
 
-#include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
+#include <stdlib.h>
 #include <string.h>
+
+#include <SDL_stdinc.h>
 
 #include "ItemMake.h"
 
@@ -783,7 +785,7 @@ static const char * Get_Item_Name(int16_t item_idx)
         )
         {
             strcpy(item_name, cnst_Plus_4);
-            itoa((Unprocessed_Powers[itr] + 1), temp_buffer, 10);
+            SDL_itoa((Unprocessed_Powers[itr] + 1), temp_buffer, 10);
             strcat(item_name, temp_buffer);
             strcat(item_name, cnst_Space_4);
             strcat(item_name, Get_Item_Type_Name(item_idx));  // Sword, Mace, Axe, Bow, Staff, Wand, Misc, Shield, Chain, Plate, Amulet, Ring, Cloak, Gauntlet, Helm, Orb
@@ -834,7 +836,7 @@ static const char * Get_Item_Name(int16_t item_idx)
             if(strlen(item_name) < 26)
             {
                 strcat(item_name, cnst_TimesSign_2);
-                itoa(_ITEMS[item_idx].embed_spell_cnt, temp_buffer, 10);
+                SDL_itoa(_ITEMS[item_idx].embed_spell_cnt, temp_buffer, 10);
                 strcat(item_name, temp_buffer);
             }
         }
