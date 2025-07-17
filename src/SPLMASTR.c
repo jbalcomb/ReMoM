@@ -24,10 +24,10 @@ MoO2
 #include "MOX/MOX_SET.h"  /* magic_set */
 #include "MOX/MOX_TYPE.h"
 #include "MOX/SOUND.h"
-
-#include "Combat.h"
 #include "MOX/Timer.h"
 #include "MOX/random.h"
+
+#include "Combat.h"
 #include "MagicScr.h"
 #include "MainScr.h"
 #include "NEXTTURN.h"

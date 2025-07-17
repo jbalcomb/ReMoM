@@ -15,7 +15,7 @@ MoO2
     Module: DIPLOMAC
 */
 
-#include "DIPLOMAC.h"
+#include "STU/STU_DBG.h"
 
 #include "MOM_DEF.h"
 #include "MOX/Allocate.h"
@@ -25,8 +25,6 @@ MoO2
 #include "MOX/Timer.h"
 #include "MOX/paragrph.h"
 #include "MOX/random.h"
-#include "STU/STU_DBG.h"
-
 #include "MOX/Fields.h"
 #include "MOX/Input.h"
 #include "MOX/LBX_Load.h"
@@ -54,6 +52,8 @@ MoO2
 #include <assert.h>
 #include <stdlib.h>     /* abs(); itoa(); ltoa(); */
 #include <string.h>
+
+#include "DIPLOMAC.h"
 
 
 

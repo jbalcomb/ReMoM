@@ -3,6 +3,9 @@
         ovr129
 */
 
+#include "STU/STU_CHK.h"
+#include "STU/STU_DBG.h"
+
 #include "MOX/Allocate.h"
 #include "MOX/GENDRAW.h"
 #include "MOX/LBX_Load.h"
@@ -33,9 +36,6 @@
 #include "AISPELL.h"
 #include "Explore.h"
 #include "Items.h"
-
-#include "STU/STU_CHK.h"
-#include "STU/STU_DBG.h"
 #include "WZD_o059.h"
 
 #include "Spells129.h"

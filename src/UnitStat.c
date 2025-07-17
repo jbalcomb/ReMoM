@@ -5,6 +5,9 @@
         ovr072
 */
 
+#include "STU/STU_CHK.h"
+#include "STU/STU_DBG.h"
+
 #include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
@@ -35,9 +38,6 @@
 #include "ItemView.h"
 #include "RACETYPE.h"
 #include "WZD_o059.h"
-
-#include "STU/STU_CHK.h"
-#include "STU/STU_DBG.h"
 
 #include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
 #include <string.h>

@@ -1,4 +1,10 @@
 
+// #ifdef STU_DEBUG
+#include "STU/STU_CHK.h"
+#include "STU/STU_DBG.h"
+#include "STU/STU_PRN.h"
+// #endif
+
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_BASE.h"
 #include "MOX/MOX_T4.h"  // ~ MOX & MOX2 //MoO2
@@ -30,12 +36,6 @@
 #include "SBookScr.h"
 #include "SCORE.h"      // Hall Of Fame (HoF)
 #include "SPLMASTR.h"
-
-// #ifdef STU_DEBUG
-#include "STU/STU_CHK.h"
-#include "STU/STU_DBG.h"
-#include "STU/STU_PRN.h"
-// #endif
 
 #include <stdio.h>
 

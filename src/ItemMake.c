@@ -7,6 +7,8 @@
         ovr115
 */
 
+#include "STU/STU_DBG.h"
+
 #include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
@@ -27,8 +29,6 @@
 
 #include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
 #include <string.h>
-
-#include "STU/STU_DBG.h"
 
 #include "ItemMake.h"
 

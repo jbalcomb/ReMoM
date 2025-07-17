@@ -7,7 +7,6 @@
     SPELLSCR.LBX
 */
 
-#include "Items.h"
 #include "MOM_SCR.h"
 #include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
@@ -20,9 +19,10 @@
 #include "MOX/Fonts.h"
 #include "MOX/Fields.h"
 #include "MOX/GENDRAW.h"
+#include "MOX/Timer.h"
 
 #include "ItemMake.h"
-#include "MOX/Timer.h"
+#include "Items.h"
 #include "NEXTTURN.h"
 #include "OverSpel.h"
 #include "SCastScr.h"

@@ -15,6 +15,8 @@ MoO2
 
 */
 
+#include "STU/STU_DBG.h"
+
 #include "MOX/DOS.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
@@ -590,7 +592,7 @@ void Load_MAGIC_SET(void)
         (LOF("MAGIC.SET") != 466)
     )
     {
-        // STU_DEBUG_BREAK();
+        STU_DEBUG_BREAK();
         Set_Default_Game_Settings();
         file_pointer = fopen("MAGIC.SET","wb");
         fwrite(&magic_set, 466, 1, file_pointer);

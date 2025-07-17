@@ -3,6 +3,7 @@
         ovr133
 */
 
+#include "STU/STU_DBG.h"
 
 #include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
@@ -28,8 +29,6 @@
 #include "SBookScr.h"
 #include "Spellbook.h"
 #include "Spells129.h"
-
-#include "STU/STU_DBG.h"
 
 #include <assert.h>
 

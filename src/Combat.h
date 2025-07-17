@@ -28,6 +28,8 @@
 #ifndef COMBAT_H
 #define COMBAT_H
 
+#include "STU/STU_DBG.h"
+
 #include "MOX/MOM_Data.h"
 #include "MOX/MOX_TYPE.h"
 

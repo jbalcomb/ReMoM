@@ -3,6 +3,8 @@
         ovr131
 */
 
+#include "STU/STU_DBG.h"
+
 #include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/GENDRAW.h"
@@ -27,8 +29,6 @@
 #include "UNITTYPE.h"
 #include "RACETYPE.h"
 #include "Spellbook.h"
-
-#include "STU/STU_DBG.h"
 
 #include "Spells131.h"
 

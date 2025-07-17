@@ -4,9 +4,8 @@
         ovr118
 */
 
-#include "CITYCALC.h"
-#include "Combat.h"
-#include "Help.h"
+#include "STU/STU_DBG.h"
+
 #include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
@@ -20,17 +19,21 @@
 #include "MOX/MOX_SET.h"  /* magic_set */
 #include "MOX/MOX_T4.h"
 #include "MOX/SOUND.h"
-
 #include "MOX/Timer.h"
 #include "MOX/paragrph.h"
+
+#include "CITYCALC.h"
+#include "Combat.h"
+#include "Help.h"
 #include "MainScr.h"   /* Allocate_Reduced_Map(); */
 #include "NEXTTURN.h"
 #include "SBookScr.h"  /* Spellbook_Screen_Draw(); */
 #include "UNITTYPE.h"
-#include "Spellbook.h"
 
 #include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */
 #include <string.h>
+
+#include "Spellbook.h"
 
 // Combat.C
 // WZD dseg:C520

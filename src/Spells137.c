@@ -3,6 +3,8 @@
         ovr137  ¿ ~ Spell Animation(s) ?
 */
 
+#include "STU/STU_DBG.h"
+
 #include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
@@ -34,8 +36,6 @@
 #include "Spellbook.h"
 #include "UNITTYPE.h"
 #include "WIZVIEW.h"
-
-#include "STU/STU_DBG.h"
 
 #include <assert.h>
 #include <stdlib.h>     /* abs(); itoa(); ltoa(); ultoa(); */

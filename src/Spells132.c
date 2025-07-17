@@ -3,9 +3,9 @@
         ovr132
 */
 
-#include "AISPELL.h"
-#include "CITYCALC.h"
-#include "HIRE.h"
+#include "STU/STU_CHK.h"
+#include "STU/STU_DBG.h"
+
 #include "MOX/Allocate.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fonts.h"
@@ -20,6 +20,9 @@
 #include "MOX/MOX_TYPE.h"
 #include "MOX/SOUND.h"
 
+#include "AISPELL.h"
+#include "CITYCALC.h"
+#include "HIRE.h"
 #include "Explore.h"
 #include "MOM_DEF.h"
 #include "MainScr.h"
@@ -35,9 +38,6 @@
 #include "Terrain.h"
 #include "UNITTYPE.h"
 #include "UnitMove.h"
-
-#include "STU/STU_CHK.h"
-#include "STU/STU_DBG.h"
 
 #include "Spells132.h"
 
