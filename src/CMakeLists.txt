@@ -1,7 +1,6 @@
 
 set(WIN32_SOURCES
     win_CLK.c
-    win_DIR.c
     win_EMS.c
     win_Fonts.c
     win_Input.c
@@ -13,7 +12,6 @@ set(WIN32_SOURCES
 )
 
 set(SDL2_SOURCES
-    sdl2_DIR.c
     sdl2_EMM.c
     sdl2_Input.c
     sdl2_KD.c

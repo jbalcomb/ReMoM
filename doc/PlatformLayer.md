@@ -7,6 +7,44 @@ SDLPoP
 
 
 
+¿ OS-Specific File I/O ?
+
+
+
+https://learn.microsoft.com/en-us/cpp/preprocessor/predefined-macros?view=msvc-170
+_WIN32 Defined as 1 when the compilation target is 32-bit ARM, 64-bit ARM, x86, x64, or ARM64EC. Otherwise, undefined.
+_WIN64 Defined as 1 when the compilation target is 64-bit ARM, x64, or ARM64EC. Otherwise, undefined.
+
+https://github.com/Unidata/netcdf-c/issues/1105
+https://github.com/Unidata/netcdf-c/issues/1108
+https://github.com/Unidata/netcdf-c/blob/c844e5bab912f42553f0a60c39f5d22ef4d48123/libdispatch/dfile.c#L2522-L2526
+https://github.com/Unidata/netcdf-c/blob/c844e5bab912f42553f0a60c39f5d22ef4d48123/libdispatch/dutil.c#L171-L175
+
+https://www.vitoshacademy.com/file-finder-tiny-c-projects/
+
+https://www.reddit.com/r/cpp/comments/10tt5nw/is_there_a_good_crossplatform_windows_linux_c_or/
+
+https://github.com/VioletGiraffe/thin_io
+
+https://www.google.com/search?q=CMake+use+different+source+file+for+Linux+and+Windows&oq=CMake+use+different+source+file+for+Linux+and+Windows&gs_lcrp=EgZjaHJvbWUyBggAEEUYQDIHCAEQIRigATIHCAIQIRigATIHCAMQIRigATIHCAQQIRigATIHCAUQIRigATIHCAYQIRirAtIBCTEzMzQzajBqN6gCCLACAfEFLNZAxKrjNgk&sourceid=chrome&ie=UTF-8
+ CMakeLists.txt
+    set(COMMON_SOURCES
+        common_file1.cpp
+        common_file2.cpp
+    )
+    if(WIN32)
+        set(PLATFORM_SPECIFIC_SOURCES
+            windows_only_file.cpp
+        )
+    else() # Assuming Linux for non-Windows
+        set(PLATFORM_SPECIFIC_SOURCES
+            linux_only_file.cpp
+        )
+    endif()
+    add_executable(my_application ${COMMON_SOURCES} ${PLATFORM_SPECIFIC_SOURCES})
+
+https://github.com/open-watcom/open-watcom-v2/discussions/528
+
 
 
 *Platform-Layer* for IBM-PC/MS-DOS

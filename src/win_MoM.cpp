@@ -1,5 +1,11 @@
 
-#include <Windows.h>
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#endif
+
+#ifdef WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
 
 #include "MOX/LBX_Load.h"
 #include "MOX/MOX_T4.h"
@@ -22,9 +28,9 @@
 #include "MOX/Timer.h"
 
 #include "ALLOC.h"
-/* NEWCODE */  // #include "CREDITS.h"
+#include "CREDITS.h"
 #include "Init.h"
-/* NEWCODE */  // #include "INTRO.h"
+#include "INTRO.h"
 #include "LOADER.h"
 #include "MOM_DBG.h"
 #include "MOM_SCR.h"

@@ -5,13 +5,16 @@
     MoO2: Module: LOADSAVE
 */
 
+// #ifdef STU_DEBUG
+#include "../STU/STU_CHK.h"
+#include "../STU/STU_DBG.h"
+#include "../STU/STU_TST.h"
+// #endif
 
+#include "DOS.h"
 #include "MOM_Data.h"
 #include "MOX_DAT.h"  /* _players[]; _screen_seg; */
 #include "MOX_SET.h"  /* magic_set */
-
-#include "../STU/STU_DBG.h"
-#include "../STU/STU_TST.h"
 
 #include "../MOM_PFL.h"
 

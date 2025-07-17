@@ -1,14 +1,14 @@
 
 #include "MOX/Fonts.h"
-#include "MOX/MOX_DEF.h"
+#include "MOX/MOX_BASE.h"
 #include "MOX/MOX_TYPE.h"
 #include "MOX/Video.h"
 #include "MOX/Video2.h"
 
-#ifdef _STU_SDL2
+// #ifdef _STU_SDL2
 #include "sdl2_PFL.h"
 #include <SDL.h>
-#endif
+// #endif
 
 /*
     non-OG-MoM

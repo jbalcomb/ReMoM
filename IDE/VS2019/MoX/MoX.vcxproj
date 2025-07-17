@@ -15,7 +15,6 @@
     <ClInclude Include="..\..\..\src\MOX\Allocate.h" />
     <ClInclude Include="..\..\..\src\MOX\CFG.h" />
     <ClInclude Include="..\..\..\src\MOX\capture.h" />
-    <ClInclude Include="..\..\..\src\MOX\DIR.h" />
     <ClInclude Include="..\..\..\src\MOX\DOS.h" />
     <ClInclude Include="..\..\..\src\MOX\EMM.h" />
     <ClInclude Include="..\..\..\src\MOX\EXIT.h" />

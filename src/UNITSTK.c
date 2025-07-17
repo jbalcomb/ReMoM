@@ -69,31 +69,43 @@ void Update_Stack_Active(int16_t stack_idx)
     stack_unit_idx = _unit_stack[stack_idx].unit_idx;
 
     if(
-        (_UNITS[stack_unit_idx].Status != us_ReachedDest)  /* "DONE" */ &&
+        (_UNITS[stack_unit_idx].Status != us_ReachedDest)  /* "DONE" */
+        &&
         (_UNITS[stack_unit_idx].moves2 >= 1)
     )
     {
 
         if(
-            (reset_active_stack == ST_TRUE) &&
-            (_unit_stack_count > 1) &&
+            (reset_active_stack == ST_TRUE)
+            &&
+            (_unit_stack_count > 1)
+            &&
             (_UNITS[stack_unit_idx].Status != us_Casting)
         )
         {
+
             active_unit_stack_count = 0;
+
             for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
             {
+
                 if(_unit_stack[itr_stack].active == ST_TRUE)
                 {
+
                     active_unit_stack_count++;
+
                 }
+
             }
 
             if(active_unit_stack_count > 1)
             {
+
                 for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
                 {
+
                     _unit_stack[itr_stack].active = ST_FALSE;
+
                 }
             }
 
@@ -101,69 +113,102 @@ void Update_Stack_Active(int16_t stack_idx)
         }
 
         reset_active_stack = ST_FALSE;
+
         stack_unit_idx = _unit_stack[stack_idx].unit_idx;
 
         if(_unit_stack[stack_idx].active == ST_FALSE)
         {
-            if(_UNITS[stack_unit_idx].Status > 0 /* us_Ready */)
+
+            if(_UNITS[stack_unit_idx].Status > us_Ready)
             {
+
                 if(_UNITS[stack_unit_idx].moves2 > 0)
                 {
+
                     DEPR_Local_Flag = ST_TRUE;
 
                     if(DEPR_Local_Flag == ST_TRUE)
                     {
+
                         _unit_stack[stack_idx].active = ST_TRUE;
 
                         if(_UNITS[stack_unit_idx].Status == us_GOTO)
                         {
-                            _active_stack_has_path = ST_FALSE;
-                        }
 
+                            _active_stack_has_path = ST_FALSE;
+
+                        }
+Check_Game_Data();
                         _UNITS[stack_unit_idx].Status = us_Ready;
                         _UNITS[stack_unit_idx].Finished = ST_FALSE;
                         _UNITS[stack_unit_idx].Rd_Constr_Left = ST_UNDEFINED;
+Capture_Units_Data();
+Check_Game_Data();
 
                         if(_UNITS[stack_unit_idx].moves2 >= 1)
                         {
+
                             all_units_moved = ST_FALSE;
+
                             Reset_Draw_Active_Stack(); 
+
                         }
                         else
                         {
+
                             _unit_stack[stack_idx].active = ST_FALSE;
+
+Check_Game_Data();
                             _UNITS[stack_unit_idx].Finished = ST_TRUE;
+Capture_Units_Data();
+Check_Game_Data();
+
                         }
 
                     }
+
                 }
+
             }
             else
             {
+
                 if(_UNITS[stack_unit_idx].moves2 <= 0)
                 {
+
                     _unit_stack[stack_idx].active = ST_FALSE;
+
                 }
                 else
                 {
+
                     _unit_stack[stack_idx].active = ST_TRUE;
+
                 }
+
             }
+
         }
         else
         {
+
             _unit_stack[stack_idx].active = ST_FALSE;
+
         }
 
 
 
         if(_UNITS[stack_unit_idx].Finished == ST_TRUE)
         {
+
             _unit_stack[stack_idx].active = ST_FALSE;
+
         }
 
         Stack_Moves_Active();
+
         Set_Unit_Action_Special();
+
     }
 
 #ifdef STU_DEBUG
@@ -195,7 +240,9 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 
     if(move_y != WORLD_YMIN && move_y != WORLD_YMAX)
     {
+Check_Game_Data();
         Build_Moveable_Stack(&unit_array_count, &unit_array[0]);
+Check_Game_Data();
 
         _unit = unit_array[0];
 

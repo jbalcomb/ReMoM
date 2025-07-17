@@ -1549,6 +1549,7 @@ void Main_Screen(void)
         // hotkey_idx_End   NumPad 1    ↙
         // hotkey_idx_Down  NumPad 2    ↓
         // hotkey_idx_PgDn  NumPad 3    ↘
+Check_Game_Data();
         if(input_field_idx == hotkey_idx_Up)         { Move_Stack_DirKey(8); screen_changed = ST_TRUE; }
         if(input_field_idx == hotkey_idx_LeftUp)     { Move_Stack_DirKey(7); screen_changed = ST_TRUE; }
         if(input_field_idx == hotkey_idx_RightUp)    { Move_Stack_DirKey(9); screen_changed = ST_TRUE; }
@@ -1557,6 +1558,7 @@ void Main_Screen(void)
         if(input_field_idx == hotkey_idx_LeftDown)   { Move_Stack_DirKey(1); screen_changed = ST_TRUE; }
         if(input_field_idx == hotkey_idx_Down)       { Move_Stack_DirKey(2); screen_changed = ST_TRUE; }
         if(input_field_idx == hotkey_idx_RightDown)  { Move_Stack_DirKey(3); screen_changed = ST_TRUE; }
+Check_Game_Data();
 
         /*
             END: Direction Keys
@@ -2268,7 +2270,10 @@ void Move_Stack_DirKey(int16_t movement_direction)
             assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
             assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
 
+Check_Game_Data();
             Move_Stack(move_x, move_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
+Check_Game_Data();
+
         }
         else
         {
@@ -2277,7 +2282,10 @@ void Move_Stack_DirKey(int16_t movement_direction)
                 assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
                 assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
 
+Check_Game_Data();
                 Move_Stack(move_x, move_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
+Check_Game_Data();
+
             }
             else
             {
@@ -5401,7 +5409,8 @@ Check_Game_Data();
             for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
             {
                 if(
-                    (_UNITS[troops[itr_troops]].wx == _combat_wx) &&
+                    (_UNITS[troops[itr_troops]].wx == _combat_wx)
+                    &&
                     (_UNITS[troops[itr_troops]].wy == _combat_wy)
                 )
                 {
@@ -5419,6 +5428,7 @@ Check_Game_Data();
         }
         else if(lair_combat_result == 99)  // ~ Combat - Cancel
         {
+
 Check_Game_Data();
             for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
             {
@@ -5427,16 +5437,24 @@ Check_Game_Data();
             }
 Capture_Units_Data();
 Check_Game_Data();
+
         }
+
     }
     else
     {
+
+Check_Game_Data();
         combat_result = Combat__WIP(player_idx, defender_idx, troop_count, &troops[0]);
+Check_Game_Data();
 
         if(combat_result == ST_TRUE)  /* Winner == Attacker */
         {
+
             Player_Army_At_Square(_combat_wx, _combat_wy, _combat_wp, player_idx, &troop_count, troops);
+
         }
+
     }
 
 }
@@ -5452,17 +5470,26 @@ End_Of_Moving:
 
     for(itr_units = 0; itr_units < troop_count; itr_units++)
     {
+
         unit_idx = troops[itr_units];
+
         if(_UNITS[unit_idx].Rd_Constr_Left == 99)
         {
+
 Check_Game_Data();
             _UNITS[unit_idx].Rd_Constr_Left = ST_UNDEFINED;
 Capture_Units_Data();
 Check_Game_Data();
+
         }
 
-        if((_UNITS[unit_idx].Finished == ST_FALSE) && (_UNITS[unit_idx].Status != PATROL))
+        if(
+            (_UNITS[unit_idx].Finished == ST_FALSE)
+            &&
+            (_UNITS[unit_idx].Status != PATROL)
+        )
         {
+
 Check_Game_Data();
             _UNITS[unit_idx].moves2 -= Total_Move_Cost;
 Capture_Units_Data();
@@ -5470,19 +5497,24 @@ Check_Game_Data();
 
             if(_UNITS[unit_idx].moves2 < 1)
             {
+
 Check_Game_Data();
                 _UNITS[unit_idx].Finished = ST_TRUE; 
                 _UNITS[unit_idx].moves2 = 0;
 Capture_Units_Data();
 Check_Game_Data();
+
             }
 
             if(
-                (_UNITS[unit_idx].Status != us_GOTO) &&
-                (attack_flag == ST_TRUE) &&
+                (_UNITS[unit_idx].Status != us_GOTO)
+                &&
+                (attack_flag == ST_TRUE)
+                &&
                 (_UNITS[unit_idx].owner_idx == _human_player_idx)
             )
             {
+
 Check_Game_Data();
                 _UNITS[unit_idx].Status = us_Ready;
                 _UNITS[unit_idx].dst_wx = 0;
@@ -5490,13 +5522,16 @@ Check_Game_Data();
                 Out_Of_Moves = ST_FALSE;
 Capture_Units_Data();
 Check_Game_Data();
+
             }
             
             if(
-                (Out_Of_Moves == ST_TRUE) &&
+                (Out_Of_Moves == ST_TRUE)
+                &&
                 (_UNITS[unit_idx].Status != us_Move)
             )
             {
+
 Check_Game_Data();
                 _UNITS[unit_idx].Status = us_GOTO;
                 _UNITS[unit_idx].dst_wx = destination_x;
@@ -5504,41 +5539,56 @@ Check_Game_Data();
                 _UNITS[unit_idx].Finished = ST_TRUE;
 Capture_Units_Data();
 Check_Game_Data();
+
             }
 
             if(
-                (_UNITS[unit_idx].Status == us_GOTO) &&
-                (_UNITS[unit_idx].wx == _UNITS[unit_idx].dst_wx) &&
+                (_UNITS[unit_idx].Status == us_GOTO)
+                &&
+                (_UNITS[unit_idx].wx == _UNITS[unit_idx].dst_wx)
+                &&
                 (_UNITS[unit_idx].wy == _UNITS[unit_idx].dst_wy)
             )
             {
+
                 if(_UNITS[unit_idx].Rd_Constr_Left == -1)
                 {
+
 Check_Game_Data();
                     _UNITS[unit_idx].Status = us_Ready;
                     _UNITS[unit_idx].dst_wx = 0;
                     _UNITS[unit_idx].dst_wy = 0;
 Capture_Units_Data();
 Check_Game_Data();
+
                     if(_UNITS[unit_idx].moves2 > 0)
                     {
+
 Check_Game_Data();
                         _UNITS[unit_idx].Finished = ST_FALSE;
 Capture_Units_Data();
 Check_Game_Data();
+
                     }
+
                 }
+
                 Out_Of_Moves = ST_FALSE;
+
             }
 
             if(_UNITS[unit_idx].Status == us_GOTO)
             {
+
 Check_Game_Data();
                 _UNITS[unit_idx].Finished = ST_TRUE;
 Capture_Units_Data();
 Check_Game_Data();
+
             }
+
         }
+
     }
 
     // DEMO  Fix_Patrol_On_Boats(troop_count, troops);

@@ -18,30 +18,30 @@ MoO2  Module: LOADSAVE
 
 */
 
-#include "MOX/DIR.h"
+#include "MOX/DOS.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
 #include "MOX/Fonts.h"
 #include "MOX/Graphics.h"
 #include "MOX/LBX_Load.h"
 #include "MOX/LOADSAVE.h"
+#include "MOX/MOX_BASE.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
 #include "MOX/MOX_SET.h"  /* magic_set */
+#include "MOX/MOX_T4.h"
+#include "MOX/Timer.h"
+#include "MOX/capture.h"
+#include "MOX/random.h"
 
 #include "AIDUDES.h"
 #include "CITYCALC.h"
 #include "Combat.h"
 #include "Explore.h"
 #include "LOADER.h"
-#include "MOX/MOX_T4.h"
-#include "MOX/Timer.h"
-#include "MOX/capture.h"
-#include "MOX/random.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 #include "MOM_SCR.h"
 #include "NEXTTURN.h"
-#include "STU/STU_CHK.h"
 #include "Settings.h"
 #include "Spellbook.h"
 #include "Spells128.h"
@@ -312,7 +312,7 @@ void Load_Screen(void)
         itoa(itr, buffer2, 10);
         strcat(match_string, buffer2);
         strcat(match_string, cnst_SAVE_ext3);
-        if(DIR(match_string, found_file) == 0)  /* File Not Found */
+        if(DIR(match_string, found_file) == ST_FAILURE)  /* File Not Found */
         {
             save_game_slots__ovr160[save_game_count__ovr160] = ST_UNDEFINED;
         }

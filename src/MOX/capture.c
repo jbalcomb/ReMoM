@@ -7,7 +7,7 @@ MoO2
     Module: fields
 
 */
-#include "DIR.h"
+#include "DOS.h"
 #include "MOX_DEF.h"
 #include "MOX_TYPE.h"
 #include "Mouse.h"

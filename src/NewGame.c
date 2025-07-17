@@ -12,7 +12,7 @@
 #include "MOX/LBX_Load.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
-#include "MOX/DIR.h"
+#include "MOX/DOS.h"
 #include "MOX/Fonts.h"
 #include "MOX/Mouse.h"
 #include "MOX/MOX_DAT.h"

@@ -3,9 +3,9 @@
 
 #include "MOX/MOX_TYPE.h"
 
-#ifdef _STU_SDL2
+// #ifdef _STU_SDL2
 #include <SDL.h>
-#endif
+// #endif
 
 
 
@@ -97,13 +97,10 @@ void Pump_Paints(void);
 void MWA_Set_Mouse_Position(int16_t x, int16_t y);
 #endif
 
-// win_DIR.C
-int32_t LOF(char * file_name);
 
 
 // win_EMS.C
 void EMS_Startup(void);
-
 
 // win_MD.C
 void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y);

@@ -1,4 +1,12 @@
 /*
+    MAGIC.EXE
+        seg004
+    WIZARDS.EXE
+        seg004
+
+MoO2  Module: dos
+*/
+/*
     ¿ ?
 
     WIZARDS.EXE
@@ -9,10 +17,17 @@
 
 */
 
-#ifndef MOX_DOS_H
-#define MOX_DOS_H
+#ifndef DOS_H
+#define DOS_H
 
 #include "MOX_TYPE.h"
+
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+    /* C and Asm Function Prototypes */
 
 
 
@@ -29,17 +44,20 @@
 // UU_DISK_CheckDrive()
 // UU_DISK_GetCurrentDir()
 
+// WZD s03p05
+int32_t LOF(char * file_name);
+
 
 
 /*
-    WIZARDS.EXE  seg004
+    WZD  seg004
 */
 
 // WZD s04p01
-// DIR()
+int16_t DIR(char * match_string, char * found_file);
 
 // WZD s04p02
-// // int32_t UU_DISK_GetFreeSpace()
+// int32_t Disk_Free(void)
 
 
 
@@ -74,4 +92,9 @@ void DBG_Open_ERROR_LOG(void);
 void DBG_Close_ERROR_LOG(void);
 
 
-#endif /* MOX_DOS_H */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* DOS_H */

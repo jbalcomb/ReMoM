@@ -3,7 +3,7 @@
 #include "MOX/Mouse.h"
 #include "MOX/Timer.h"
 #include "MOX/Video.h"
-#include "MOX/DIR.h"
+#include "MOX/DOS.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
 #include "MOX/Fonts.h"

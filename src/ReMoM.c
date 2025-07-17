@@ -19,7 +19,7 @@
 #include <windows.h>
 #endif
 
-#include "MOX/DIR.h"
+#include "MOX/DOS.h"
 #include "MOX/MOX_DEF.h"
 #include "MOX/capture.h"
 #include "MOX/MOX_T4.h"
@@ -352,11 +352,7 @@ int MOM_main(int argc, char** argv)
                 magic_set.Have_Save[(itr_savegams - 1)] = ST_FALSE;
                 strcpy(magic_set.Save_Names[(itr_savegams - 1)], empty_string__MAIN);
                 file_handle = fopen(str_MAGIC_SET, str_WB);
-                // // // // // fwrite(&magic_set[0], sizeof(struct s_MAGIC_SET), 1, file_handle);
-                // // // // fwrite((uint8_t *)&magic_set[0], sizeof(struct s_MAGIC_SET), 1, file_handle);
-                // // // fwrite(magic_set, 466, 1, file_handle);
-                // // fwrite((uint8_t *)magic_set, 466, 1, file_handle);
-                // fwrite((void *)magic_set, 466, 1, file_handle);
+                // TODO  fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_handle);
                 fwrite(&magic_set, 466, 1, file_handle);
                 fclose(file_handle);
             }

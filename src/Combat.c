@@ -678,6 +678,9 @@ char figure_lbx_file__ovr163[] = "FIGURE";
 // WZD dseg:C406                                                 ¿ BEGIN:  ?
 
 // WZD dseg:C406
+/*
+DEDU is this just an 'end of turn wait'?
+*/
 int16_t CMB_ImmobileCanAct;
 
 // WZD dseg:C408
@@ -2359,7 +2362,9 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
                     if(CMB_WizCastAvailable == ST_TRUE)
                     {
 
+Check_Game_Data();
                         cast_status = Combat_Cast_Spell__WIP((CASTER_IDX_BASE + _human_player_idx), _combat_wx, _combat_wy, _combat_wp);
+Check_Game_Data();
 
                         switch(cast_status)
                         {
@@ -2624,9 +2629,13 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
             CMB_HumanUnitsDone = ST_FALSE;  // Where does this get used after this?
 
+Check_Game_Data();
             CMB_ProgressTurnFlow__WIP();
+Check_Game_Data();
 
+Check_Game_Data();
             Next_Battle_Unit(_human_player_idx);
+Check_Game_Data();
 
             Assign_Combat_Grids();
 
@@ -2636,7 +2645,9 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
             CRP_CMB_NeverChecked1 = ST_TRUE;
 
+Check_Game_Data();
             Combat_Winner = Check_For_Winner__WIP();
+Check_Game_Data();
 
             if(Combat_Winner != ST_UNDEFINED)
             {
@@ -4040,11 +4051,14 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
     combat_attacker_player_idx = attacker_player_idx;
     defender_idx = defender_player_idx;  // unit_idx or player_idx
 
+Check_Game_Data();
     for(itr = 0; itr < troop_count; itr++)
     {
         _UNITS[troops[itr]].wx = OVL_Action_OriginX;
         _UNITS[troops[itr]].wy = OVL_Action_OriginY;
     }
+Capture_Units_Data();
+Check_Game_Data();
 
     if(combat_attacker_player_idx == NEUTRAL_PLAYER_IDX)
     {
@@ -4125,10 +4139,13 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
     }
 
     if(
-        (combat_attacker_player_idx < NEUTRAL_PLAYER_IDX) &&
-        (defender_idx < NEUTRAL_PLAYER_IDX) &&
+        (combat_attacker_player_idx < NEUTRAL_PLAYER_IDX)
+        &&
+        (defender_idx < NEUTRAL_PLAYER_IDX)
+        &&
         (
-            (_combat_environ == 1) ||
+            (_combat_environ == 1)
+            ||
             (_combat_environ == 0)
         )
     )
@@ -4199,20 +4216,28 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
 
             // DOMSDOS  Stop_All_Sounds__STUB();
 
+Check_Game_Data();
             Battle_Outcome = Combat_Screen__WIP(combat_attacker_player_idx, defender_idx, troops, troop_count, _combat_wx, _combat_wy, _combat_wp, &Item_Count, &Item_List[0]);
             // Battle_Outcome = Combat_Screen_TST_001();
             // Battle_Outcome = Combat_Screen_TST_002();
             // Battle_Outcome = Combat_Screen_TST_003();
             // Battle_Outcome = Combat_Screen_TST_004(combat_attacker_player_idx, defender_idx, troops, troop_count, _combat_wx, _combat_wy, _combat_wp, &Item_Count, &Item_List[0]);
+/* HACK */  Capture_Units_Data();
+Check_Game_Data();
 
             // DOMSDOS  Play_Background_Music__STUB();
             sdl2_Play_Background_Music__WIP();
+
         }
         else
         {
+
             Battle_Outcome = Strategic_Combat__WIP(troops, troop_count, _combat_wx, _combat_wy, _combat_wp, &Item_Count, &Item_List[0]);
+
             Item_Count = 0;
+
         }
+
     }
 
 

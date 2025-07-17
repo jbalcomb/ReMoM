@@ -15,7 +15,7 @@ MoO2
 
 */
 
-#include "MOX/DIR.h"
+#include "MOX/DOS.h"
 #include "MOX/FLIC_Draw.h"
 #include "MOX/Fields.h"
 #include "MOX/Fonts.h"
@@ -23,15 +23,16 @@ MoO2
 #include "MOX/LBX_Load.h"
 #include "MOX/MOX_DAT.h"  /* _screen_seg */
 #include "MOX/MOX_SET.h"  /* magic_set */
-
-#include "MOM_SCR.h"
-#include "Settings.h"
 #include "MOX/MOX_T4.h"
 #include "MOX/Timer.h"
+
+#include "MOM_SCR.h"
 #include "Spellbook.h"
 
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), frite(), fseek(); */
 #include <string.h>     /* memcpy(), memset(), strcat(), strcpy(); */
+
+#include "Settings.h"
 
 
 
@@ -287,6 +288,7 @@ void Settings_Screen(void)
     else
     {
         file_pointer = fopen(settings_file__ovr125, str_RB__ovr125);  // "MAGIC.SET", "rb"
+        // TODO  fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_handle);
         fwrite(&magic_set, 466, 1, file_pointer);
         fclose(file_pointer);
     }
@@ -578,12 +580,17 @@ void Settings_Screen_Draw(void)
 // WZD o125p03
 void Load_MAGIC_SET(void)
 {
-    char found_file[LEN_STRING] = {0};
-    FILE * file_pointer;
-    int itr;
+    char found_file[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    FILE * file_pointer = 0;
+    int16_t itr = 0;
 
-    if((DIR("MAGIC.SET", found_file) == ST_FAILURE) || (LOF("MAGIC.SET") != 466))
+    if(
+        (DIR("MAGIC.SET", found_file) == ST_FAILURE)
+        ||
+        (LOF("MAGIC.SET") != 466)
+    )
     {
+        // STU_DEBUG_BREAK();
         Set_Default_Game_Settings();
         file_pointer = fopen("MAGIC.SET","wb");
         fwrite(&magic_set, 466, 1, file_pointer);
