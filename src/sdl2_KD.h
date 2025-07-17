@@ -3,7 +3,7 @@
 
 #include "MOX/MOX_TYPE.h"
 
-#include "SDL2_PFL.h"
+#include "sdl2_PFL.h"
 
 #include <SDL.h>
 
