@@ -5,13 +5,15 @@
         ovr157
 */
 
-#include "AIDUDES.h"
-#include "City_ovr55.h"
+#include "STU/STU_CHK.h"
+
 #include "MOX/MOX_DAT.h"  /* _players[] */
 #include "MOX/MOX_DEF.h"
 #include "MOX/random.h"
+
+#include "AIDUDES.h"
+#include "City_ovr55.h"
 #include "ProdScr.h"
-#include "STU/STU_CHK.h"
 #include "UNITTYPE.h"
 
 #include <assert.h>

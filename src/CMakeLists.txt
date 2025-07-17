@@ -132,11 +132,6 @@ message(STATUS "CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
 
 
 
-add_compile_definitions(_STU_SDL2)
-add_compile_definitions(STU_DEBUG)
-
-
-
 add_executable(sdl2_ReMoM ReMoM.c ${SDL2_SOURCES})
 set_target_properties(sdl2_ReMoM PROPERTIES LINKER_LANGUAGE C)
 # target_link_libraries(sdl2_ReMoM PUBLIC momlib MOX STU SDL2 SDL2main)
@@ -197,9 +192,8 @@ message(STATUS "Include directories for momlib: ${include_dirs}")
 # target_compile_definitions(ReMoM PUBLIC -DNOMINMAX)
 # target_compile_options(ReMoM PUBLIC /W4 /WX /Debug /Od /Z7)
 # target_compile_options(ReMoM PUBLIC "-Wall")
-
-target_compile_definitions(momlib PRIVATE STU_DEBUG=TRUE)
-target_compile_definitions(momlib PRIVATE STU_TRACE=TRUE)
+# target_compile_definitions(momlib PRIVATE STU_DEBUG=TRUE)
+# target_compile_definitions(momlib PRIVATE STU_TRACE=TRUE)
 
 if(CMAKE_COMPILER_IS_CLANG)
     target_compile_options(momlib PRIVATE

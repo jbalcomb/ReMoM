@@ -17,8 +17,8 @@ add_library(STU STATIC
 
 set_target_properties(STU PROPERTIES LINKER_LANGUAGE C)
 
-target_compile_definitions(STU PRIVATE STU_DEBUG=TRUE)
-target_compile_definitions(STU PRIVATE STU_TRACE=TRUE)
+# target_compile_definitions(STU PRIVATE STU_DEBUG=TRUE)
+# target_compile_definitions(STU PRIVATE STU_TRACE=TRUE)
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
     target_compile_options(STU PRIVATE
