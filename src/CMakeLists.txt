@@ -109,7 +109,7 @@ find_package(SDL2_mixer REQUIRED)
 
 add_library(momlib STATIC ${MOMLIB_SOURCES})
 
-set_target_properties(momlib PROPERTIES LINKER_LANGUAGE C)
+# set_target_properties(momlib PROPERTIES LINKER_LANGUAGE C)
 
 target_link_libraries(momlib PUBLIC
     MOX

@@ -1,11 +1,11 @@
 
-#include "Fields.h"
+#ifdef STU_DEBUG
+#include "../STU/STU_DBG.h"    /* DLOG() */
+#endif
 
 #include "MOX_BASE.h"
 #include "MOX_DEF.h"
 #include "MOX_TYPE.h"
-#include "../MOM_DEF.h"
-#include "FLIC_Draw.h"
 #include "Fonts.h"
 #include "Graphics.h"
 #include "Input.h"
@@ -13,14 +13,15 @@
 #include "Timer.h"
 #include "Video.h"
 #include "Util.h"
+#include "FLIC_Draw.h"
 
-#ifdef STU_DEBUG
-#include "../STU/STU_DBG.h"    /* DLOG() */
-#endif
+#include "../MOM_DEF.h"
 
 #include <assert.h>
 #include <malloc.h>     /* malloc() */
 #include <string.h>     /* strcat(), strcpy() */
+
+#include "Fields.h"
 
 
 

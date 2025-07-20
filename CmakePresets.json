@@ -23,5 +23,38 @@
             "configurePreset": "MSVC_x64",
             "configuration": "Debug"
         }
+    ],
+    "packagePresets": [
+        {
+            "name": "MSVC_x64-debug",
+            "displayName": "Visual Studio Community 2022 Release - amd64 - Debug",
+            "configurePreset": "MSVC_x64",
+            "configurations": [
+                "Debug"
+            ]
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "MSVC_x64-debug",
+            "displayName": "Visual Studio Community 2022 Release - amd64 - Debug",
+            "configurePreset": "MSVC_x64"
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "MSVC_x64-debug",
+            "displayName": "Visual Studio Community 2022 Release - amd64 - Debug",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "MSVC_x64"
+                },
+                {
+                    "type": "build",
+                    "name": "MSVC_x64"
+                }
+            ]
+        }
     ]
 }

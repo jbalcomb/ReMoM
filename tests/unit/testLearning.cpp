@@ -9,7 +9,10 @@ https://cfd.university/learn/the-complete-guide-to-software-testing-for-cfd-appl
 
 #include "gtest/gtest.h"
 
-#include "../../src/MainScr_Maps.h"
+extern "C"
+{
+#include "MainScr_Maps.h"
+}
 
 
 
@@ -17,7 +20,11 @@ TEST(Learning_Test, Test_Center_Map)
 {
     // Arrange
     // ComplexNumber a(3.0, 4.0);
-    int16_t _map_wx, _map_wy, _prev_wx, _prev_wy, _map_wp;
+    int16_t _map_wx = 0;
+    int16_t _map_wy = 0;
+    int16_t _prev_wx = 0;
+    int16_t _prev_wy = 0;
+    int16_t _map_wp = 0;
 
     // Act
     // auto magnitude = a.magnitude();

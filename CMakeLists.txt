@@ -7,8 +7,18 @@ project(
     DESCRIPTION "Reassembly of Master of Magic v1.31 (Simtex, 1995)"
     LANGUAGES C
 )
+# TODO  set(CMAKE_C_STANDARD 99)
+# TODO  set(CMAKE_C_STANDARD_REQUIRED ON) # Make the standard mandatory
+# TODO  set(C_EXTENSIONS OFF)
 
+# if(DO_TEST)
+# GoogleTest requires at least C++17
+enable_language(CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# ¿ TODO  set(CXX_EXTENSIONS OFF) ?
 enable_testing()
+# endif()
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/sdl2)
 
@@ -21,3 +31,5 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 add_subdirectory(src)
+
+add_subdirectory(tests)

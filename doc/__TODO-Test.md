@@ -1,6 +1,12 @@
 
 
 
+https://google.github.io/googletest/quickstart-cmake.html
+
+https://www.labri.fr/perso/fleury/posts/programming/using-cmake-googletests-and-gcovr-in-a-c-project.html
+
+
+
 MainScr_Maps.c
 MainScr_Maps.h
 ## Center_Map()
