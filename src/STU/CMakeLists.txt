@@ -1,3 +1,4 @@
+
 set(STU_SOURCES
     STU_CHK.c
     STU_DBG.c
@@ -16,9 +17,6 @@ set(STU_SOURCES
 
 add_library(STU STATIC ${STU_SOURCES})
 
-get_target_property(inc_dir STU INCLUDE_DIRECTORIES)
-message(STATUS "STU INCLUDE_DIRECTORIES: ${inc_dir}")
-
 set_target_properties(STU PROPERTIES LINKER_LANGUAGE C)
 
 target_include_directories(STU PRIVATE
@@ -28,6 +26,3 @@ target_include_directories(STU PRIVATE
 )
 
 target_link_libraries(STU SDL2::Core SDL2::Mixer)
-
-get_target_property(inc_dir STU INCLUDE_DIRECTORIES)
-message(STATUS "STU INCLUDE_DIRECTORIES: ${inc_dir}")

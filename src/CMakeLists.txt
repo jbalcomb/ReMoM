@@ -100,35 +100,13 @@ set(MOMLIB_SOURCES
     WZD_o146.c
 )
 
-# set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
-# Add SDL2 CMake modules
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
 
 
-# set(SDL2_DIR "$ENV{SDL2DIR}")
-message(STATUS "ENV{SDL2DIR}: $ENV{SDL2DIR}")
-message(STATUS "ENV{SDL2MIXERDIR}: $ENV{SDL2MIXERDIR}")
-# set(SDL2_BUILDING_LIBRARY ON)
 find_package(SDL2 REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 
-message(STATUS "SDL2_INCLUDE_DIR: ${SDL2_INCLUDE_DIR}")
-message(STATUS "SDL2_LIBDIR: ${SDL2_LIBDIR}")
-message(STATUS "SDL2_LIBRARY: ${SDL2_LIBRARY}")
-message(STATUS "SDL2MAIN_LIBRARY: ${SDL2MAIN_LIBRARY}")
 
 
-
-message(STATUS "CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
-
-
-
-# if(_STU_WIN32)
-#     add_library(momlib STATIC ${MOMLIB_SOURCES} ${WIN32_SOURCES})
-# endif()
-# if(_STU_SDL2)
-#     add_library(momlib STATIC ${MOMLIB_SOURCES} ${SDL2_SOURCES})
-# endif()
 add_library(momlib STATIC ${MOMLIB_SOURCES})
 
 set_target_properties(momlib PROPERTIES LINKER_LANGUAGE C)
@@ -147,6 +125,18 @@ target_include_directories(momlib PUBLIC
     ${SDL2_INCLUDE_DIR}
     ${SDL2_MIXER_INCLUDE_DIR}
 )
+
+target_compile_definitions(momlib PRIVATE
+    $<$<CONFIG:Debug>:STU_DEBUG=TRUE>
+)
+target_compile_definitions(momlib PRIVATE
+    $<$<CONFIG:Debug>:STU_TRACE=TRUE>
+)
+target_compile_definitions(momlib PRIVATE
+    $<$<CONFIG:Debug>:_STU_SDL2=TRUE>
+)
+
+
 
 add_executable(sdl2_ReMoM ReMoM.c ${SDL2_SOURCES})
 
@@ -168,50 +158,17 @@ target_include_directories(sdl2_ReMoM PUBLIC
     ${SDL2_MIXER_INCLUDE_DIR}
 )
 
-add_subdirectory(MOX)
+target_compile_definitions(sdl2_ReMoM PRIVATE
+    $<$<CONFIG:Debug>:STU_DEBUG=TRUE>
+)
+target_compile_definitions(sdl2_ReMoM PRIVATE
+    $<$<CONFIG:Debug>:STU_TRACE=TRUE>
+)
+target_compile_definitions(sdl2_ReMoM PRIVATE
+    $<$<CONFIG:Debug>:_STU_SDL2=TRUE>
+)
 
-add_subdirectory(STU)
 
-
-
-# if ( WIN32 )
-#     set_target_properties(ReMoM PROPERTIES WIN32_EXECUTABLE TRUE)
-# else ()
-#     
-# endif ()
-
-# # if ( WIN32 )
-# #     target_link_libraries(ReMoM PUBLIC momlib MOX STU winmm)
-# #     target_include_directories(ReMoM PUBLIC ${PROJECT_SOURCE_DIR})
-# # else ()
-# #     target_link_libraries(ReMoM PUBLIC momlib MOX STU SDL2 SDL2main)
-# #     target_include_directories(ReMoM PUBLIC ${PROJECT_SOURCE_DIR} ${SDL_INCLUDE_DIR})
-# # endif ()
-# # target_include_directories(ReMoM PUBLIC ${PROJECT_SOURCE_DIR} ${SDL_INCLUDE_DIR})
-# message("PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
-# # include_directories ( SYSTEM ${SDLIMAGE_INCLUDE_DIR} )
-# include_directories(SYSTEM ${PROJECT_SOURCE_DIR} )
-# # get_target_property(include_dirs ${PROJECT_NAME} INCLUDE_DIRECTORIES)
-# # message(STATUS "Include directories for ${PROJECT_NAME}: ${include_dirs}")
-# 
-# set(REMOM_INCLUDE_DIRS ${PROJECT_SOURCE_DIR})
-# message(DEBUG "REMOM_INCLUDE_DIRS: ${REMOM_INCLUDE_DIRS}")
-# list(APPEND REMOM_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/src)
-# message(DEBUG "REMOM_INCLUDE_DIRS: ${REMOM_INCLUDE_DIRS}")
-
-get_target_property(momlib_include_dirs momlib INCLUDE_DIRECTORIES)
-message(STATUS "momlib INCLUDE_DIRECTORIES: ${momlib_include_dirs}")
-get_target_property(sdl2_ReMoM_include_dirs sdl2_ReMoM INCLUDE_DIRECTORIES)
-message(STATUS "sdl2_ReMoM INCLUDE_DIRECTORIES: ${sdl2_ReMoM_include_dirs}")
-# get_target_property(include_dirs ${PROJECT_NAME} INCLUDE_DIRECTORIES)
-# message(STATUS "Include directories for ${PROJECT_NAME}: ${include_dirs}")
-
-# target_compile_features(ReMoM PUBLIC cxx_std_23)
-# target_compile_definitions(ReMoM PUBLIC -DNOMINMAX)
-# target_compile_options(ReMoM PUBLIC /W4 /WX /Debug /Od /Z7)
-# target_compile_options(ReMoM PUBLIC "-Wall")
-# target_compile_definitions(momlib PRIVATE STU_DEBUG=TRUE)
-# target_compile_definitions(momlib PRIVATE STU_TRACE=TRUE)
 
 if(CMAKE_COMPILER_IS_CLANG)
     target_compile_options(momlib PRIVATE
@@ -247,3 +204,9 @@ if(MSVC)
         "/wd4820"
     )
 endif()
+
+
+
+add_subdirectory(MOX)
+
+add_subdirectory(STU)

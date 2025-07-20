@@ -23,13 +23,13 @@ BETA
 
 
 
-disappearing units?
-werewolves
-unit_idx 79
-19,15
-stag beetle, on my node
-unit_idx 696
-18,12
+ReMoM.c  MoM_main()
+
+~ if(argv[2][0] == 'J' && argv[2][1] == 'E' && argv[2][2] == 'N' && argv[2][3] == 'N' && argv[2][4] == 'Y')
+
+https://www.google.com/search?q=C+code+test+argv+string+character+by+character+in+C%3F&oq=C+code+test+argv+string+character+by+character+in+C%3F&gs_lcrp=EgZjaHJvbWUyBggAEEUYQDIHCAEQIRigATIHCAIQIRigATIHCAMQIRigATIHCAQQIRigATIHCAUQIRigAdIBCTExNjg3ajBqN6gCCLACAfEF8LPJMOcKrCI&sourceid=chrome&ie=UTF-8
+
+https://pages.cs.wisc.edu/~markhill/cs354/Fall2008/onyourown/C.argv.html
 
 
 

@@ -1,3 +1,4 @@
+
 set(MOX_SOURCES
     AIL.c
     Allocate.c
@@ -36,9 +37,6 @@ set(MOX_SOURCES
 
 add_library(MOX STATIC ${MOX_SOURCES})
 
-get_target_property(inc_dir MOX INCLUDE_DIRECTORIES)
-message(STATUS "MOX INCLUDE_DIRECTORIES: ${inc_dir}")
-
 set_target_properties(MOX PROPERTIES LINKER_LANGUAGE C)
 
 target_include_directories(MOX PRIVATE
@@ -51,6 +49,3 @@ target_link_libraries(MOX
     SDL2::Core
     SDL2::Mixer
 )
-
-get_target_property(inc_dir MOX INCLUDE_DIRECTORIES)
-message(STATUS "MOX INCLUDE_DIRECTORIES: ${inc_dir}")
