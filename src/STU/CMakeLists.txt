@@ -18,6 +18,7 @@ set(STU_SOURCES
 add_library(STU STATIC ${STU_SOURCES})
 
 # set_target_properties(STU PROPERTIES LINKER_LANGUAGE C)
+set_target_properties(STU PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_include_directories(STU PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}

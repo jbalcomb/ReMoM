@@ -110,6 +110,7 @@ find_package(SDL2_mixer REQUIRED)
 add_library(momlib STATIC ${MOMLIB_SOURCES})
 
 # set_target_properties(momlib PROPERTIES LINKER_LANGUAGE C)
+set_target_properties(momlib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_link_libraries(momlib PUBLIC
     MOX
@@ -140,7 +141,8 @@ target_compile_definitions(momlib PRIVATE
 
 add_executable(sdl2_ReMoM ReMoM.c ${SDL2_SOURCES})
 
-set_target_properties(sdl2_ReMoM PROPERTIES LINKER_LANGUAGE C)
+# set_target_properties(sdl2_ReMoM PROPERTIES LINKER_LANGUAGE C)
+set_target_properties(sdl2_ReMoM PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_link_libraries(sdl2_ReMoM PUBLIC
     momlib

@@ -38,6 +38,7 @@ set(MOX_SOURCES
 add_library(MOX STATIC ${MOX_SOURCES})
 
 # set_target_properties(MOX PROPERTIES LINKER_LANGUAGE C)
+set_target_properties(MOX PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_include_directories(MOX PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}

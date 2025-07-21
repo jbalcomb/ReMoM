@@ -4,6 +4,8 @@ include(GoogleTest)
 add_executable(testLearning testLearning.cpp)
 # add_executable(testLearning testLearning.cpp ${CMAKE_SOURCE_DIR}/src/MainScr_Maps.c)
 
+set_target_properties(testLearning PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 # target_include_directories(testLearning PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_include_directories(testLearning PRIVATE ${CMAKE_SOURCE_DIR}/src)
 

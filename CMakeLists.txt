@@ -11,6 +11,8 @@ project(
 # TODO  set(CMAKE_C_STANDARD_REQUIRED ON) # Make the standard mandatory
 # TODO  set(C_EXTENSIONS OFF)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 # if(DO_TEST)
 # GoogleTest requires at least C++17
 enable_language(CXX)
