@@ -1,34 +1,74 @@
 {
-    "version": 8,
+    "version": 6,
     "configurePresets": [
         {
-            "name": "MSVC_x64",
-            "displayName": "Visual Studio Community 2022 Release - amd64",
+            "name": "base",
+            "displayName": "Base: Ninja, Clang",
+            "description": "Base: Ninja (MinGW x64), Clang (LLVM)",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "installDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
+                "CMAKE_MAKE_PROGRAM": "C:/mingw64/bin/ninja.exe",
+                "CMAKE_C_COMPILER": "C:/Program Files/LLVM/bin/clang.exe",
+                "CMAKE_CXX_COMPILER": "C:/Program Files/LLVM/bin/clang++.exe"
+            }
+        },
+        {
+            "name": "MSVC-debug",
+            "displayName": "VS2022 amd64 Debug",
             "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)",
             "generator": "Visual Studio 17 2022",
             "toolset": "host=x64",
             "architecture": "x64",
             "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
                 "CMAKE_C_COMPILER": "cl.exe",
                 "CMAKE_CXX_COMPILER": "cl.exe"
             }
+        },
+        {
+            "name": "Clang-Ninja-debug",
+            "displayName": "VS202 amd64",
+            "description": "Ninja Muli-Config, Clang (GNU-style)",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_MAKE_PROGRAM": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja\\ninja.exe",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++"
+            }
         }
     ],
     "buildPresets": [
         {
-            "name": "MSVC_x64-debug",
-            "displayName": "Visual Studio Community 2022 Release - amd64 - Debug",
-            "configurePreset": "MSVC_x64",
-            "configuration": "Debug"
+            "name": "base",
+            "displayName": "Base: Ninja, Clang",
+            "configurePreset": "base",
+            "configuration": "Debug",
+            "targets": [
+                "all"
+            ]
+        },
+        {
+            "name": "MSVC-debug",
+            "displayName": "VS2022 amd64 Debug",
+            "configurePreset": "MSVC-debug",
+            "configuration": "Debug",
+            "targets": [
+                "ALL_BUILD"
+            ]
         }
     ],
     "packagePresets": [
         {
-            "name": "MSVC_x64-debug",
-            "displayName": "Visual Studio Community 2022 Release - amd64 - Debug",
-            "configurePreset": "MSVC_x64",
+            "name": "MSVC-debug",
+            "displayName": "VS2022 amd64 Debug",
+            "configurePreset": "MSVC-debug",
             "configurations": [
                 "Debug"
             ]
@@ -36,23 +76,31 @@
     ],
     "testPresets": [
         {
-            "name": "MSVC_x64-debug",
-            "displayName": "Visual Studio Community 2022 Release - amd64 - Debug",
-            "configurePreset": "MSVC_x64"
+            "name": "MSVC-debug",
+            "displayName": "VS2022 amd64 Debug",
+            "configurePreset": "MSVC-debug"
         }
     ],
     "workflowPresets": [
         {
-            "name": "MSVC_x64-debug",
-            "displayName": "Visual Studio Community 2022 Release - amd64 - Debug",
+            "name": "MSVC-debug",
+            "displayName": "VS2022 amd64 Debug",
             "steps": [
                 {
                     "type": "configure",
-                    "name": "MSVC_x64"
+                    "name": "MSVC-debug"
                 },
                 {
                     "type": "build",
-                    "name": "MSVC_x64"
+                    "name": "MSVC-debug"
+                },
+                {
+                    "type": "test",
+                    "name": "MSVC-debug"
+                },
+                {
+                    "type": "package",
+                    "name": "MSVC-debug"
                 }
             ]
         }

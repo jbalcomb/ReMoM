@@ -57,6 +57,7 @@ misc/
 
 # SDL2
 SDL2.dll
+SDL2_mixer.dll
 
 
 # MoM
