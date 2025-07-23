@@ -26,6 +26,19 @@ BETA
 ReMoM.c  MoM_main()
 
 ~ if(argv[2][0] == 'J' && argv[2][1] == 'E' && argv[2][2] == 'N' && argv[2][3] == 'N' && argv[2][4] == 'Y')
+if(!(argv[2][0] == 'J' && argv[2][1] == 'E' && argv[2][2] == 'N' && argv[2][3] == 'N' && argv[2][4] == 'Y'))
+C:\STU\devel\ReMoM\IDE\VS2019\x64\Debug\sdl2_ReMoM.exe
+C:\STU\devel\ReMoM\IDE\VS2019\x64\Debug\sdl2_ReMoM.exe JENNY
+NAY jenny
+YAY JENNY
+    // if(strcmp(argv[0], "JENNY") != 0)
+        if(!argv[1][0] == 'J')
+             if(!argv[1][1] == 'E')
+                 if(!argv[1][2] == 'N')
+                     if(!argv[1][3] == 'N')
+                         if(!argv[1][4] == 'Y')
+
+
 
 https://www.google.com/search?q=C+code+test+argv+string+character+by+character+in+C%3F&oq=C+code+test+argv+string+character+by+character+in+C%3F&gs_lcrp=EgZjaHJvbWUyBggAEEUYQDIHCAEQIRigATIHCAIQIRigATIHCAMQIRigATIHCAQQIRigATIHCAUQIRigAdIBCTExNjg3ajBqN6gCCLACAfEF8LPJMOcKrCI&sourceid=chrome&ie=UTF-8
 

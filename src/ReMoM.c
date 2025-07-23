@@ -86,6 +86,9 @@ char CONFIG_FILE[] = "CONFIG.MOM";
 int main(int argc, char * argv[])
 // int SDL_main(int argc, char* argv[])
 {
+#ifdef _WIN32
+    int itr = 0;
+#endif
 #ifdef STU_DEBUG
     Debug_Log_Startup();
 #endif
@@ -104,13 +107,17 @@ int main(int argc, char * argv[])
 #endif
     printf("Hello from the console!\n");
 
+#ifdef _WIN32
+    printf("argc: %d\n", argc);
+    for(itr = 0; itr < argc; itr++)
+    {
+        printf("argv[%d]: %s\n", itr, argv[itr]);
+    }
+#endif
+
     Startup_Platform();
 
-
-
     MOM_main(argc, argv);
-
-
 
     Shudown_Platform();
 
@@ -382,10 +389,10 @@ int MOM_main(int argc, char** argv)
 
     Load_Palette(0, ST_UNDEFINED, 0);
     Apply_Palette();
-    // if(!((argv[1][0] == 'J') && (argv[1][1] == 'E') && (argv[1][1] == 'N') && (argv[1][1] == 'N') && (argv[1][1] == 'Y')))
-    if(strcmp(argv[0], "JENNY") != 0)
+
+    // DOMSDOS  MS-DOS has some area for the program execution that lets you get away with the AVRL here?  ... why argv[1] instead of argv[2]?
+    if(!((argc > 1) && (argv[1][0] == 'J' && argv[1][1] == 'E' && argv[1][2] == 'N' && argv[1][3] == 'N' && argv[1][4] == 'Y')))
     {
-        /* HACK */  magic_set.sound_effects = ST_TRUE;
         Draw_Logos();
     }
 
