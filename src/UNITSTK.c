@@ -752,7 +752,7 @@ int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane)
                     {
                         if(_UNITS[itr_wait_units].Status == us_Wait)
                         {
-                            _UNITS[itr_wait_units].Status = us_Ready;
+                            UNITS_STATUS(itr_wait_units, us_Ready);
                         }
                     }
                 }

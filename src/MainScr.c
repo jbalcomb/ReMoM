@@ -5516,7 +5516,7 @@ Check_Game_Data();
             {
 
 Check_Game_Data();
-                _UNITS[unit_idx].Status = us_Ready;
+                UNITS_STATUS(unit_idx, us_Ready);
                 _UNITS[unit_idx].dst_wx = 0;
                 _UNITS[unit_idx].dst_wy = 0;
                 Out_Of_Moves = ST_FALSE;
@@ -5591,13 +5591,17 @@ Check_Game_Data();
 
     }
 
-    // DEMO  Fix_Patrol_On_Boats(troop_count, troops);
+Check_Game_Data();
+    Fix_Patrol_On_Boats(troop_count, troops);
+Check_Game_Data();
     
     Reset_Draw_Active_Stack();
 
     if(player_idx == _human_player_idx)
     {
+Check_Game_Data();
         Update_Scouted_And_Contacted__WIP();
+Check_Game_Data();
     }
 
     goto Done_Return_TRUE;
@@ -5609,7 +5613,9 @@ Check_Game_Data();
 
 
 Done_Return_FALSE:
+Check_Game_Data();
     Reset_Draw_Active_Stack();
+Check_Game_Data();
     return_value = ST_FALSE;
     goto Done;
 
@@ -6350,6 +6356,7 @@ OON XREF:  Move_Units()
 (re-)sets units on boats to patrol status
 if the stack has a boat that still has movement points
 ¿ because the boat will get selected again before the 'Next Turn' process does its own thing ?
+NOTE(JimBalcomb,20250723):  don't remember or understand why I had this DEMO'd out
 */
 void Fix_Patrol_On_Boats(int16_t troop_count, int16_t troops[])
 {
@@ -6361,20 +6368,15 @@ void Fix_Patrol_On_Boats(int16_t troop_count, int16_t troops[])
     int16_t Stack_Count = 0;
     int16_t Carry_Stack = 0;
     int16_t itr_troops = 0;  // _SI_
-    int16_t * troops_ptr = 0;  // _DI_
 
-    troops_ptr = &troops[0];
-
-    unit_wx = _UNITS[troops_ptr[0]].wx;
-    unit_wy = _UNITS[troops_ptr[0]].wy;
-    unit_wp = _UNITS[troops_ptr[0]].wp;
+    unit_wx = _UNITS[troops[0]].wx;
+    unit_wy = _UNITS[troops[0]].wy;
+    unit_wp = _UNITS[troops[0]].wp;
 
     // get owner from first non-dead troop
-    unit_owner_idx = ST_UNDEFINED;
-    itr_troops = 0;
-    while((unit_owner_idx == ST_UNDEFINED) && (itr_troops++ < troop_count))
+    for(itr_troops = 0, unit_owner_idx = ST_UNDEFINED; ((itr_troops < troop_count) && (unit_owner_idx == ST_UNDEFINED)); itr_troops++)
     {
-        unit_owner_idx = _UNITS[troops_ptr[itr_troops]].owner_idx;
+        unit_owner_idx = _UNITS[troops[itr_troops]].owner_idx;
     }
 
     if(unit_owner_idx == ST_UNDEFINED)
@@ -6405,8 +6407,8 @@ void Fix_Patrol_On_Boats(int16_t troop_count, int16_t troops[])
         {
             if(_unit_type_table[_UNITS[Stack_Units[itr_troops]].type].Transport < 1)
             {
-                _UNITS[Stack_Units[itr_troops]].Status = us_Patrol;
-                _UNITS[Stack_Units[itr_troops]].Finished = ST_TRUE;
+                UNITS_STATUS(Stack_Units[itr_troops], us_Patrol);
+                UNITS_FINISHED(Stack_Units[itr_troops], ST_TRUE);
             }
         }
     }

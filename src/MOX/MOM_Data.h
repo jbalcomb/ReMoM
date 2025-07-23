@@ -1548,7 +1548,7 @@ struct s_UNIT
     /* 08 */  int8_t  moves2;       /* Movement Points, as half-points */
     /* 09 */  int8_t  dst_wx;       /* 1-byte, signed; ...used as Pruify progress?;  Go-To Destination World X */  /* AI_Order_SeekTransport() uses this as some timer value */
     /* 0A */  int8_t  dst_wy;       /* 1-byte, signed;  Go-To Destination World Y */
-    /* 0B */  int8_t  Status;  // Build_Unit_Stack() resets us_WAIT to us_Ready
+    /* 0B */  int8_t  Status;
     /* 0C */  int8_t  Level;
     /* 0D */  uint8_t pad2B_0Dh;    /* 2-byte alignment padding */
     /* 0E */  int16_t XP;  // should be `"ep"

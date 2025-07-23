@@ -179,7 +179,26 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
 
 #define UNITS_IN_TOWER(_unit_idx_,_in_tower_)  {            \
     do {                                                    \
+        /* trc_prn("TRACE: [%s, %d]: UNITS_IN_TOWER(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].in_tower, (_in_tower_)); */ \
         _UNITS[(_unit_idx_)].in_tower = (_in_tower_);       \
+        Capture_Units_Data();                               \
+    } while(0);                                             \
+}
+
+#define UNITS_STATUS(_unit_idx_,_status_)  {                \
+    do {                                                    \
+        /* trc_prn("TRACE: [%s, %d]: UNITS_STATUS(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].Status, (_status_)); */ \
+        /* Validate_Units_Status() */                       \
+        _UNITS[(_unit_idx_)].Status = (_status_);           \
+        Capture_Units_Data();                               \
+    } while(0);                                             \
+}
+
+#define UNITS_FINISHED(_unit_idx_,_finished_)  {            \
+    do {                                                    \
+        /* trc_prn("TRACE: [%s, %d]: UNITS_FINISHED(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].Finished, (_finished_)); */ \
+        /* Validate_Units_Finished() */                     \
+        _UNITS[(_unit_idx_)].Finished = (_finished_);       \
         Capture_Units_Data();                               \
     } while(0);                                             \
 }
