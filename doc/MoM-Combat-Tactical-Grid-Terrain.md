@@ -1,6 +1,47 @@
 
 
 
+## Draw Combat Terrain
+Load_Combat_Terrain_Pictures()
+    for(itr = 0; itr < 48; itr++)
+        _combat_terrain_pict_segs[itr] = LBX_Reload_Next(combat_terrain_set_lbx_filename, itr, EMS_PFBA);
+CMB_ComposeBackgrnd__WIP()
+    Clipped_Draw(screen_x, screen_y, _combat_terrain_pict_segs[combat_terrain_type]);
+Combat_Screen_Map_Draw__WIP()
+    battlefield_terrain_type = battlefield->terrain_type[((cgy * COMBAT_GRID_WIDTH) + cgx)];
+
+
+
+## CMB_TileGen__WIP()
+
+Generate_Combat_Map__WIP()
+    |-> CMB_TileGen__WIP()
+
+CMB_TileGen__WIP(cts);
+...ctt...cts...combat terrain type/set
+
+    if(cts != cts_Water)
+        for(itr_cgy = 0; itr_cgy < COMBAT_GRID_HEIGHT; itr_cgy++)
+            for(itr_cgx = 0; itr_cgx < COMBAT_GRID_WIDTH; itr_cgx++)
+                battlefield->terrain_group[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = CTG_Grass;
+    else  /* cts == cts_Water */
+        for(itr_cgy = 0; itr_cgy < COMBAT_GRID_HEIGHT; itr_cgy++)
+            for(itr_cgx = 0; itr_cgx < COMBAT_GRID_WIDTH; itr_cgx++)
+                battlefield->terrain_group[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = CTG_DeepWater;
+
+So, ...
+    ¿ Generate_Combat_Map__WIP() populates battlefield->terrain_group[] ?
+    ¿ CMB_TileGen__WIP uses battlefield->terrain_group[] to populate battlefield->terrain_type[] ?
+
+
+
+Generate_Combat_Map__WIP()
+    ...
+    Patch_Terrain_Group(CTG_Rough, Rough_PatchCount, 8, 3);
+    Patch_Terrain_Group(CTG_Dirt, Dirt_PatchCount, 4, 0);
+    ...
+
+
 
 
 Terrain Movement Points Per Square  

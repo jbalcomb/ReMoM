@@ -682,13 +682,90 @@ enum e_COMBAT_TERRAIN_SET
 enum Combat_TileGroup
 {
     CTG_Grass       = 0, 
-    CTG_Rough       = 1, 
+    CTG_Rough       = 1,  /* Rough (Dirt) */
     CTG_Dirt        = 2, 
     CTG_River       = 3, 
     CTG_DeepWater   = 4, 
     CTG_IDK         = 5  // not used in Set_Movement_Cost_Maps()
 };
 
+enum CTILE_GFX
+{
+    CTILE_Base1  = 0,
+    CTILE_Base2  = 1,
+    CTILE_Base3  = 2,
+    CTILE_Base4  = 3,
+
+    CTILE_Dirt1  = 4,
+    CTILE_Dirt2  = 5,
+    CTILE_Dirt3  = 6,
+    CTILE_Dirt4  = 7,
+
+    CTILE_DownRightD1  = 8,
+    CTILE_DownRightD2  = 9,
+    CTILE_DownD1  = 10,
+    CTILE_DownD2  = 11,
+    CTILE_DownD_RightD1  = 12,
+    CTILE_DownD_RightD2  = 13,
+    CTILE_DownLeftD1  = 14,
+    CTILE_DownLeftD2  = 15,
+    CTILE_DownD_LeftD1  = 16,
+    CTILE_DownD_LeftD2  = 17,
+    CTILE_LeftD1  = 18,
+    CTILE_LeftD2  = 19,
+    CTILE_UpLeftD1  = 20,
+    CTILE_UpLeftD2  = 21,
+    CTILE_UpD_LeftD1  = 22,
+    CTILE_UpD_LeftD2  = 23,
+    CTILE_UpD1  = 24,
+    CTILE_UpD2  = 25,
+    CTILE_UpRightD1  = 26,
+    CTILE_UpRightD2  = 27,
+    CTILE_UpD_RightD1  = 28,
+    CTILE_UpD_RightD2  = 29,
+    CTILE_RightD1  = 30,
+    CTILE_RightD2  = 31,
+
+    CTILE_DownRough  = 32,  /* starting index for when middle is CTG_Dirt */
+    CTILE_UpDownRough  = 33,
+    CTILE_RightRough  = 34,
+    CTILE_LeftRightRough  = 35,
+    CTILE_CrossRough  = 36,
+    CTILE_UpRough  = 37,
+    CTILE_LeftRough  = 38,
+    CTILE_DownRightRough  = 39,
+    CTILE_DownLeftRightRough  = 40,
+    CTILE_DownLeftRough  = 41,
+    CTILE_UpDownRightRough  = 42,
+    CTILE_UpDownLeftRough  = 43,
+    CTILE_UpRightRough  = 44,
+    CTILE_UpLeftRightRough  = 45,
+    CTILE_UpLeftRough  = 46,
+    CTILE_SingleRough  = 47,
+
+    CTILE_Ocean1  = 48,
+    CTILE_Ocean2  = 49,
+    CTILE_Ocean3  = 50,
+    CTILE_Ocean4  = 51,
+    
+    CTILE_Type5_1  = 52,
+    CTILE_Type5_2  = 53,
+    CTILE_Type5_3  = 54,
+    CTILE_Type5_4  = 55,
+
+    CTILE_LeftRightRiver1  = 56,
+    CTILE_UpDownRiver1  = 57,
+    CTILE_UpLeftRiver1  = 58,
+    CTILE_UpRightRiver1  = 59,
+    CTILE_DownRightRiver1  = 60,
+    CTILE_DownLeftRiver1  = 61,
+    CTILE_LeftRightRiver2  = 62,
+    CTILE_UpDownRiver2  = 63,
+    CTILE_UpLeftRiver2  = 64,
+    CTILE_UpRightRiver2  = 65,
+    CTILE_DownRightRiver2  = 66,
+    CTILE_DownLeftRiver2  = 67
+};
 /*
     END: Combat Terrain
 */

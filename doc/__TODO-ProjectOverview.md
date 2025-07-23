@@ -29,6 +29,36 @@ https://pages.cs.wisc.edu/~markhill/cs354/Fall2008/onyourown/C.argv.html
 
 
 
+grep 
+DEMOHACK
+DEMO
+HACK
+STUB
+
+
+
+if(strcmp(dst->name, src->name) != 0)
+shows that "Banbury" got changes to "Creative Voice File"
+¿ need to release city data before going into combat ?
+...whatever gets dumped into COMBAT.TMP
+
+
+
+When?
+    if(remap_flag == ST_FALSE)
+    {
+        Clipped_Draw_Frame(start_x, start_y, actual_width, actual_height, skip_x, skip_y, frame_data);
+    }
+    else
+    {
+        // MoO2  Module: animate  Remap_Draw_Animated_Sprite(x_start, y_start, frame_data)
+        // TODO  VGA_DrawPartImage_R(start_x, start_y, FLIC_GET_WIDTH(picture), p_FLIC_Frame);
+        // TODO  Clipped_Remap_Draw_Frame__NOP(start_x, start_y, actual_width, actual_height, skip_x, skip_y, frame_data);
+        Clipped_Draw_Frame(start_x, start_y, actual_width, actual_height, skip_x, skip_y, frame_data);
+    }
+
+
+
 int16_t WIZ_MatchManaUpkeep__WIP(int16_t player_idx, int16_t mana_upkeep)
 
 
@@ -39,9 +69,10 @@ int16_t WIZ_MatchManaUpkeep__WIP(int16_t player_idx, int16_t mana_upkeep)
             // SPELLY  CTY_NightshadeDispel(itr_cities);
 
 
-FUCK
-    // DEMO  Fix_Patrol_On_Boats(troop_count, troops);
-MainScr.c
+
+Combat.c
+Strategic_Combat__WIP()
+    /* DEMOHACK */ if(_combat_environ == 5) { IDK_health_attacker__2 = IDK_health_attacker = 0x7FFFFFFF /*0b01111111111111111111111111111111*/; }
 
 
 

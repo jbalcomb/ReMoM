@@ -1992,6 +1992,8 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
                 input_field_idx = 0;
             }
 
+Check_Game_Data();
+
         }
         /*
             END:  ¿ what is going on here ?
@@ -2027,6 +2029,8 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
                 input_field_idx = 0;
 
             }
+
+Check_Game_Data();
 
         }
 
@@ -2147,6 +2151,8 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
             screen_changed = ST_TRUE;
 
+Check_Game_Data();
+
         }
         /*
             END:  Left-Click Flee Button
@@ -2191,6 +2197,9 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
                 }
 
             }
+
+Check_Game_Data();
+
         }
         /*
             END:  Left-Click Combat Grid
@@ -2322,6 +2331,9 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
                 }
 
             }
+
+Check_Game_Data();
+
         }
         /*
             END:  Right-Click Combat Grid
@@ -2424,6 +2436,9 @@ Check_Game_Data();
                 }
 
             }
+
+Check_Game_Data();
+
         }
         /*
             END:  Left-Click Spell Button
@@ -2450,6 +2465,9 @@ Check_Game_Data();
                 CRP_CMB_NeverChecked1 = ST_TRUE;
 
             }
+
+Check_Game_Data();
+
         }
         /*
             END:  Left-Click Wait Button
@@ -2488,6 +2506,9 @@ Check_Game_Data();
                 CRP_CMB_NeverChecked1 = ST_TRUE;
 
             }
+
+Check_Game_Data();
+
         }
         /*
             END:  Left-Click Info Button
@@ -2536,6 +2557,9 @@ Check_Game_Data();
                 }
 
             }
+
+Check_Game_Data();
+
         }
         /*
             END:  Left-Click Done Button
@@ -2583,6 +2607,8 @@ Check_Game_Data();
             Set_Combat_Help_List();
 
             CRP_CMB_NeverChecked1 = ST_TRUE;
+
+Check_Game_Data();
 
         }
         /*
@@ -25444,7 +25470,7 @@ void Combat_Screen_Map_Draw__WIP(void)
     int16_t IDK_base_cgc2 = 0;
     int16_t itr_x = 0;
     int16_t itr_y = 0;  // _SI_
-    int16_t battlefield_terrain = 0;  // _DI_
+    int16_t battlefield_terrain_type = 0;  // _DI_
 
     Copy_Back_To_Off();  // 'combat background' from Combat_Screen_Compose_Background()
 
@@ -25493,25 +25519,29 @@ void Combat_Screen_Map_Draw__WIP(void)
                     /*
                         Update/Redraw Animated Terrains
                     */
-                    battlefield_terrain = battlefield->terrain_type[((cgy * COMBAT_GRID_WIDTH) + cgx)];
+                    battlefield_terrain_type = battlefield->terrain_type[((cgy * COMBAT_GRID_WIDTH) + cgx)];
 
-                    if(battlefield_terrain >= 56)
+                    // CTILE_LeftRightRiver1  = 56, CTILE_UpDownRiver1  = 57, CTILE_UpLeftRiver1  = 58, CTILE_UpRightRiver1  = 59, CTILE_DownRightRiver1  = 60, CTILE_DownLeftRiver1  = 61, CTILE_LeftRightRiver2  = 62, CTILE_UpDownRiver2  = 63, CTILE_UpLeftRiver2  = 64, CTILE_UpRightRiver2  = 65, CTILE_DownRightRiver2  = 66, CTILE_DownLeftRiver2  = 67
+                    if(battlefield_terrain_type >= 56)
                     {
 
-                        if(battlefield->wp == 0)
+                        STU_DEBUG_BREAK();  // congratulations - you've got river
+
+                        if(battlefield->wp == ARCANUS_PLANE)
                         {
 
                             // push    [CMB_WaterAnimStage]            ; frame_num
                             // mov     bx, _DI_battlefield_terrain
                             // push    (IMG_CMB_RiverTile@-70h)[bx]    ; pict_seg
-                            // call    Set_Animation_Frame
+                            // Set_Animation_Frame();
                             // mov     bx, _DI_battlefield_terrain
                             // push    (IMG_CMB_RiverTile@-70h)[bx]    ; array of 12 appended reserved EMM headers in
                             //                                         ; GFX_Swap_Seg; the first 6 are empty, the other 6
                             //                                         ; have 5 frame animations for rivers
+                            // Clipped_Draw(screen_x, screen_y);
                             
                         }
-                        else
+                        else  /* MYRROR_PLANE */
                         {
 
                             // push    [CMB_WaterAnimStage]
@@ -25520,20 +25550,18 @@ void Combat_Screen_Map_Draw__WIP(void)
                             // call    Set_Animation_Frame
                             // mov     bx, _DI_battlefield_terrain
                             // push    (IMG_CMB_RivrNULLs@-70h)[bx]    ; picture
+                            // Clipped_Draw(screen_x, screen_y);
 
                         }
 
-//                         Clipped_Draw(screen_x, screen_y);
 
                     }
-                    else if(
-                        (battlefield_terrain >= 48)
-                        &&
-                        (battlefield_terrain < 52)
-                    )
+                    else if((battlefield_terrain_type >= 48) && (battlefield_terrain_type < 52))  // CTILE_Ocean1  = 48, CTILE_Ocean2  = 49, CTILE_Ocean3  = 50, CTILE_Ocean4  = 51,
                     {
 
-                        if(battlefield->wp == 0)
+                        STU_DEBUG_BREAK();  // congratulations - you've got ocean
+
+                        if(battlefield->wp == ARCANUS_PLANE)
                         {
 
                             // push    [CMB_WaterAnimStage]            ; frame_num
@@ -25543,9 +25571,10 @@ void Combat_Screen_Map_Draw__WIP(void)
                             // mov     bx, _DI_battlefield_terrain
                             // push    (IMG_CMB_OceanTile@-60h)[bx]    ; array of 4 appended reserved EMM headers in
                             //                                         ; GFX_Swap_Seg, each with a 5 frame animation
+                            // Clipped_Draw(screen_x, screen_y);
 
                         }
-                        else
+                        else  /* MYRROR_PLANE */
                         {
 
                             // push    [CMB_WaterAnimStage]
@@ -25555,6 +25584,7 @@ void Combat_Screen_Map_Draw__WIP(void)
                             // mov     bx, _DI_battlefield_terrain
                             // shl     bx, 1
                             // push    (IMG_CMB_ChaosOcn@-60h)[bx]     ; picture
+                            // Clipped_Draw(screen_x, screen_y);
 
                         }
 
@@ -25564,17 +25594,13 @@ void Combat_Screen_Map_Draw__WIP(void)
                         // call    Set_Animation_Frame
                         // mov     bx, _DI_battlefield_terrain
                         // push    (IMG_CMB_Cloud@-68h)[bx]        ; picture
-                        // push    [bp+screen_y]                        ; y
-                        // push    [bp+screen_x]                       ; x
-                        // call    Clipped_Draw
+                        // Clipped_Draw(screen_x, screen_y);
 
                     }
-                    else if(
-                        (battlefield_terrain >= 52)
-                        &&
-                        (battlefield_terrain < 56)
-                    )
+                    else if((battlefield_terrain_type >= 52) && (battlefield_terrain_type < 56))  // CTILE_Type5_1  = 52, CTILE_Type5_2  = 53, CTILE_Type5_3  = 54, CTILE_Type5_4  = 55,
                     {
+
+                        STU_DEBUG_BREAK();  // congratulations - you've got IDK
 
                         // push    [CMB_WaterAnimStage]            ; frame_num
                         // mov     bx, _DI_battlefield_terrain
@@ -25582,14 +25608,12 @@ void Combat_Screen_Map_Draw__WIP(void)
                         // call    Set_Animation_Frame
                         // mov     bx, _DI_battlefield_terrain
                         // push    (IMG_CMB_Cloud@-68h)[bx]        ; picture
-                        // push    [bp+screen_y]                        ; y
-                        // push    [bp+screen_x]                       ; x
-                        // call    Clipped_Draw
+                        // Clipped_Draw(screen_x, screen_y);
 
                     }
 
                 }
-            
+
                 if(
                     (battlefield->Central_Structure == CS_SorceryNode)
                     &&
@@ -27692,9 +27716,9 @@ void Generate_Combat_Map__WIP(
         }
 
 
-        // Patch_Terrain_Group(CTG_Rough, Rough_PatchCount, 8, 3);
+        Patch_Terrain_Group(CTG_Rough, Rough_PatchCount, 8, 3);
 
-        // Patch_Terrain_Group(CTG_Dirt, Dirt_PatchCount, 4, 0);
+        Patch_Terrain_Group(CTG_Dirt, Dirt_PatchCount, 4, 0);
 
 
         if(cts == cts_Plains)
@@ -27890,14 +27914,16 @@ void Generate_Combat_Map__WIP(
 */
 /*
 
+translates terrain_group into terrain_type
+
 */
 void CMB_TileGen__WIP(int16_t ctt)
 {
     int16_t UU_RoughTiles_Index = 0;
     int16_t uu_1C = 0;
-    int16_t UU_Dirt_Trans_Index = 0;
+    int16_t dirt_terrain_type_base_idx = 0;
     int16_t UU_DirtTiles_Index = 0;
-    int16_t UU_BaseTiles_Index = 0;
+    int16_t grass_terrain_type_base_idx = 0;
     int16_t Tileset_Index = 0;
     int16_t ctg_3 = 0;
     int16_t ctg_2 = 0;
@@ -27916,9 +27942,9 @@ void CMB_TileGen__WIP(int16_t ctt)
     int8_t * DBG_ptr_battlefield_terrain_group = 0;
     
 
-    UU_BaseTiles_Index = 0;
+    grass_terrain_type_base_idx = 0;
     UU_DirtTiles_Index = 0;
-    UU_Dirt_Trans_Index = 0;
+    dirt_terrain_type_base_idx = 0;
     uu_1C = 0;
     UU_RoughTiles_Index = 0;
 
@@ -27981,6 +28007,9 @@ void CMB_TileGen__WIP(int16_t ctt)
 
 
 
+            /*
+                BEGIN: Perimeter
+            */
             if(itr_cgy == COMBAT_GRID_YMIN)
             {
                 ctg_7 = CTG_Grass;
@@ -28008,156 +28037,149 @@ void CMB_TileGen__WIP(int16_t ctt)
                 ctg_6 = CTG_Grass;
                 ctg_3 = CTG_Grass;
             }
+            /*
+                END: Perimeter
+            */
+
 
 
             /*
                 BEGIN:  TerrGroup_Middle == CTG_Grass
+
+                sets grass
+                or one of 12 pairs of grass/plain edges
             */
             if(ctg_5 == CTG_Grass)
             {
 
-                if(ctg_6 == CTG_Dirt)
+                if(ctg_6 == CTG_Dirt)  /* right is dirt */
                 {
-
-                    STU_DEBUG_BREAK();
 
                     if(ctg_8 == CTG_Dirt)
                     {
 
-                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 27);
-
-                    }
-                    else
-                    {
-
-                        if(ctg_2 == CTG_Dirt)
-                        {
-
-                            battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 11);
-
-                        }
-                        else
-                        {
-
-                            battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 29);
-
-                        }
-
-                    }
-
-                }
-                else if(ctg_8 == CTG_Dirt)
-                {
-
-                    STU_DEBUG_BREAK();
-
-                    if(ctg_4 == CTG_Dirt)
-                    {
-
-                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 21);
-
-                    }
-                    else
-                    {
-
-                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 23);
-
-                    }
-
-                }
-                else if(ctg_4 == CTG_Dirt)
-                {
-
-                    STU_DEBUG_BREAK();
-
-                    if(ctg_8 == CTG_Dirt)
-                    {
-
-                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 21);
+                        // grass with dirt right and up
+                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ((dirt_terrain_type_base_idx + 27) + Random(2));
 
                     }
                     else if(ctg_2 == CTG_Dirt)
                     {
 
-                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 15);
+                        // grass with dirt right and down
+                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ((dirt_terrain_type_base_idx + 11) + Random(2));
 
                     }
                     else
                     {
 
-                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 17);
+                        // grass with dirt right
+                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ((dirt_terrain_type_base_idx + 29) + Random(2));
 
                     }
 
                 }
-                else if(ctg_2 == CTG_Dirt)
+                else if(ctg_8 == CTG_Dirt)  /* up is dirt */
                 {
 
-                    STU_DEBUG_BREAK();
+                    if(ctg_4 == CTG_Dirt)
+                    {
+
+                        // grass with dirt up and left
+                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ((dirt_terrain_type_base_idx + 21) + Random(2));
+
+                    }
+                    else
+                    {
+
+                        // grass with dirt up
+                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ((dirt_terrain_type_base_idx + 23) + Random(2));
+
+                    }
+
+                }
+                else if(ctg_4 == CTG_Dirt)  /* left is dirt */
+                {
+
+                    if(ctg_8 == CTG_Dirt)
+                    {
+
+                        // grass with dirt left and up
+                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ((dirt_terrain_type_base_idx + 21) + Random(2));
+
+                    }
+                    else if(ctg_2 == CTG_Dirt)
+                    {
+
+                        // grass with dirt left and down
+                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ((dirt_terrain_type_base_idx + 15) + Random(2));
+
+                    }
+                    else
+                    {
+
+                        // grass with dirt left
+                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ((dirt_terrain_type_base_idx + 17) + Random(2));
+
+                    }
+
+                }
+                else if(ctg_2 == CTG_Dirt)  /* down is dirt */
+                {
 
                     if(ctg_6 == CTG_Dirt)
                     {
 
-                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 11);
+                        // grass with dirt down and right
+                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ((dirt_terrain_type_base_idx + 11) + Random(2));
 
                     }
                     else if(ctg_4 == CTG_Dirt)
                     {
 
-                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 15);
+                        // grass with dirt down and left
+                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ((dirt_terrain_type_base_idx + 15) + Random(2));
 
                     }
                     else
                     {
 
-                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 9);
+                        // grass with dirt down
+                        battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ((dirt_terrain_type_base_idx + 9) + Random(2));
 
                     }
                 }
-                else if(ctg_3 == CTG_Dirt)
+                else if(ctg_3 == CTG_Dirt)  /* down-right is dirt */
                 {
 
-                    STU_DEBUG_BREAK();
-
-                    battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 7);
+                    // CTILE_DownRightD1  = 8, CTILE_DownRightD2  = 9,
+                    battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ((dirt_terrain_type_base_idx + 7) + Random(2));
 
                 }
-                else if(ctg_9 == CTG_Dirt)
+                else if(ctg_9 == CTG_Dirt)  /* up-right is dirt */
                 {
 
-                    STU_DEBUG_BREAK();
-
-                    battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 25);
+                    battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ((dirt_terrain_type_base_idx + 25) + Random(2));
 
                 }
-                else if(ctg_7 == CTG_Dirt)
+                else if(ctg_7 == CTG_Dirt)  /* up-left is dirt */
                 {
 
-                    STU_DEBUG_BREAK();
-
-                    battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 19);
+                    battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ((dirt_terrain_type_base_idx + 19) + Random(2));
 
                 }
-                else if(ctg_1 == CTG_Dirt)
+                else if(ctg_1 == CTG_Dirt)  /* down-left is dirt */
                 {
 
-                    STU_DEBUG_BREAK();
-
-                    battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 13);
+                    battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ((dirt_terrain_type_base_idx + 13) + Random(2));
 
                 }
-                else
+                else  /* there is no adjacent dirt */
                 {
 
-                    battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(4) + UU_BaseTiles_Index - 1);
+                    // terrain type is grass {0,1,2,3}
+                    battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (grass_terrain_type_base_idx + (Random(4) - 1));
 
                 }
-
-            }
-            else
-            {
-
-                STU_DEBUG_BREAK();
 
             }
             /*
@@ -28171,30 +28193,28 @@ void CMB_TileGen__WIP(int16_t ctt)
             if(battlefield->terrain_group[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] == CTG_River)
             {
 
-                STU_DEBUG_BREAK();
-
-                if(itr_cgy == 0)
+                if(itr_cgy == COMBAT_GRID_YMIN)
                 {
                     ctg_7 = CTG_River;
                     ctg_8 = CTG_River;
                     ctg_9 = CTG_River;
                 }
 
-                if(itr_cgy == COMBAT_GRID_WIDTH)
+                if(itr_cgy == (COMBAT_GRID_YMAX - 1))
                 {
                     ctg_1 = CTG_River;
                     ctg_2 = CTG_River;
                     ctg_3 = CTG_River;
                 }
 
-                if(itr_cgx == 0)
+                if(itr_cgx == COMBAT_GRID_XMIN)
                 {
                     ctg_7 = CTG_River;
                     ctg_4 = CTG_River;
                     ctg_1 = CTG_River;
                 }
 
-                if(itr_cgx == 20)
+                if(itr_cgx == (COMBAT_GRID_XMAX - 1))
                 {
                     ctg_9 = CTG_River;
                     ctg_6 = CTG_River;
@@ -28262,28 +28282,28 @@ void CMB_TileGen__WIP(int16_t ctt)
                 }
 
 
-                if(itr_cgy == 0)
+                if(itr_cgy == COMBAT_GRID_YMIN)
                 {
                     ctg_7 = CTG_Grass;
                     ctg_8 = CTG_Grass;
                     ctg_9 = CTG_Grass;
                 }
 
-                if(itr_cgy == COMBAT_GRID_WIDTH)
+                if(itr_cgy == (COMBAT_GRID_YMAX - 1))
                 {
                     ctg_1 = CTG_Grass;
                     ctg_2 = CTG_Grass;
                     ctg_3 = CTG_Grass;
                 }
 
-                if(itr_cgx == 0)
+                if(itr_cgx == COMBAT_GRID_XMIN)
                 {
                     ctg_7 = CTG_Grass;
                     ctg_4 = CTG_Grass;
                     ctg_1 = CTG_Grass;
                 }
 
-                if(itr_cgx == 20)
+                if(itr_cgx == (COMBAT_GRID_XMAX - 1))
                 {
                     ctg_9 = CTG_Grass;
                     ctg_6 = CTG_Grass;
@@ -28302,9 +28322,8 @@ void CMB_TileGen__WIP(int16_t ctt)
             if(ctg_5 == CTG_Dirt)
             {
 
-                STU_DEBUG_BREAK();
-
-                battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(4) + UU_DirtTiles_Index + 3);
+                // CTILE_Dirt1  = 4, CTILE_Dirt2  = 5, CTILE_Dirt3  = 6, CTILE_Dirt4  = 7,
+                battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = ((UU_DirtTiles_Index + 3) + Random(4));
 
             }
             /*
@@ -28319,8 +28338,9 @@ void CMB_TileGen__WIP(int16_t ctt)
             {
 
                 STU_DEBUG_BREAK();
-
-                battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(4) + 47);
+                
+                // CTILE_Ocean1  = 48, CTILE_Ocean2  = 49, CTILE_Ocean3  = 50, CTILE_Ocean4  = 51,
+                battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (47 + Random(4));
 
             }
             /*
@@ -28335,8 +28355,9 @@ void CMB_TileGen__WIP(int16_t ctt)
             {
 
                 STU_DEBUG_BREAK();
-
-                battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(4) + 51);
+                
+                // CTILE_Type5_1  = 52, CTILE_Type5_2  = 53, CTILE_Type5_3  = 54, CTILE_Type5_4  = 55,
+                battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (51 + Random(4));
 
             }
             /*
@@ -28347,10 +28368,52 @@ void CMB_TileGen__WIP(int16_t ctt)
             /*
                 BEGIN:  CTG_Rough
             */
-            if(ctg_5 == CTG_IDK)
+            if(ctg_5 == CTG_Rough)
             {
 
-                STU_DEBUG_BREAK();
+                if(ctg_8 == CTG_Rough)
+                {
+
+                    if(ctg_6 == CTG_Rough)
+                    {
+
+                        if(ctg_2 == CTG_Rough)
+                        {
+
+                            if(ctg_4 == CTG_Rough)
+                            {
+
+                                // rough middle, rough up, right, down, left
+                                Tileset_Index = 4;  // CTILE_CrossRough  = 36
+
+                            }
+                            else
+                            {
+
+                                // rough middle, rough up, right, down
+                                Tileset_Index = 10;  // CTILE_UpDownRightRough  = 42
+                                
+                            }
+
+                        }
+                        else
+                        {
+                            
+                        }
+
+                    }
+                    else
+                    {
+
+                    }
+
+                }
+                else
+                {
+                
+                }
+
+                battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (CTILE_DownRough + UU_RoughTiles_Index + Tileset_Index);
 
             }
             /*
@@ -28373,6 +28436,14 @@ void CMB_TileGen__WIP(int16_t ctt)
 /*
 
     location_type and city_walls pushed like parameters, but do not get used
+
+Terrain Movement Points Per Square  
+Cities          1/2  
+Hills           2  
+Rivers          2  
+Roads           1/2  
+Rough (Dirt)    2  
+Tree            2  
 
 */
 void Set_Movement_Cost_Maps(int16_t location_type, int16_t city_walls)
@@ -28401,7 +28472,7 @@ void Set_Movement_Cost_Maps(int16_t location_type, int16_t city_walls)
                     battlefield->MoveCost_Sailing[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = -1;  // INF
                 } break;
 
-                case CTG_Rough:  // 2
+                case CTG_Rough:  /* "Rough (Dirt)" ... ¿ also, "Tree" ? */
                 {
                     battlefield->MoveCost_Ground[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]   = 4;
                     battlefield->MoveCost_Teleport[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = 2;
@@ -28554,6 +28625,8 @@ void Set_Movement_Cost_Maps(int16_t location_type, int16_t city_walls)
 /*
 
 updates battlefield->terrain_group
+
+OON XREF:  Generate_Combat_Map__WIP()
 
 */
 void Patch_Terrain_Group(int16_t ctg, int16_t count, int16_t max, int16_t min)
@@ -30609,13 +30682,13 @@ void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp)
         )
         {
 
-            if(wp == 0)  /* Arcanus */
+            if(wp == ARCANUS_PLANE)
             {
 
                 strcpy(combat_terrain_set_lbx_filename, cmbgrass_lbx_file__ovr163);
 
             }
-            else
+            else  /* MYRROR_PLANE */
             {
 
                 strcpy(combat_terrain_set_lbx_filename, cmbgrasc_lbx_file__ovr163);
@@ -30626,13 +30699,13 @@ void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp)
         else if(cts == cts_Desert)
         {
             
-            if(wp == 0)  /* Arcanus */
+            if(wp == ARCANUS_PLANE)
             {
 
                 strcpy(combat_terrain_set_lbx_filename, cmbdesrt_lbx_file__ovr163);
 
             }
-            else
+            else  /* MYRROR_PLANE */
             {
 
                 strcpy(combat_terrain_set_lbx_filename, cmbdesrc_lbx_file__ovr163);
@@ -30643,13 +30716,13 @@ void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp)
         else if(cts == cts_Mountains)
         {
             
-            if(wp == 0)  /* Arcanus */
+            if(wp == ARCANUS_PLANE)
             {
 
                 strcpy(combat_terrain_set_lbx_filename, cmbmount_lbx_file__ovr163);
 
             }
-            else
+            else  /* MYRROR_PLANE */
             {
 
                 strcpy(combat_terrain_set_lbx_filename, cmbmounc_lbx_file__ovr163);
@@ -30660,13 +30733,13 @@ void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp)
         else if(cts == cts_Tundra)
         {
             
-            if(wp == 0)  /* Arcanus */
+            if(wp == ARCANUS_PLANE)
             {
 
                 strcpy(combat_terrain_set_lbx_filename, cmbtundr_lbx_file__ovr163);
 
             }
-            else
+            else  /* MYRROR_PLANE */
             {
 
                 strcpy(combat_terrain_set_lbx_filename, cmbtundc_lbx_file__ovr163);
@@ -30683,7 +30756,7 @@ void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp)
     {
 
         // _combat_terrain_pict_segs[itr] = LBX_Reload_Next(combat_terrain_set_lbx_filename, itr, EMS_PFBA);
-        _combat_terrain_pict_segs[itr] = LBX_Reload_Next(combat_terrain_set_lbx_filename, 0, EMS_PFBA);
+        _combat_terrain_pict_segs[itr] = LBX_Reload_Next(combat_terrain_set_lbx_filename, itr, EMS_PFBA);
 
     }
 
@@ -30721,7 +30794,7 @@ CMB_ComposeBackgrnd__WIP();
 */
 void CMB_ComposeBackgrnd__WIP(void)
 {
-    int16_t combat_terrain_type = 0;
+    int16_t battlefield_terrain_type = 0;
     int16_t cgy = 0;
     int16_t cgx = 0;
     int16_t screen_y = 0;
@@ -30731,7 +30804,9 @@ void CMB_ComposeBackgrnd__WIP(void)
     int16_t itr_x = 0;  // _DI_
     int16_t itr_y = 0;  // _SI_
 
+#ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: CMB_ComposeBackgrnd__WIP()\n", __FILE__, __LINE__);
+#endif
 
     Set_Page_Off();
 
@@ -30751,20 +30826,34 @@ void CMB_ComposeBackgrnd__WIP(void)
             CALC_CGY;
             CALC_SCREEN_X;
             CALC_SCREEN_Y;
-            combat_terrain_type = battlefield->terrain_type[((cgy * COMBAT_GRID_WIDTH) + cgx)];
-            assert(combat_terrain_type >= 0);
-            assert(combat_terrain_type < 48);
-            // if(screen_x > 0 && screen_y > 0 && screen_x < 320 - 32 && screen_y < 200 - 16)
-            //     FLIC_Draw(screen_x, screen_y, _combat_terrain_pict_segs[combat_terrain_type]);
-            if(combat_terrain_type >= 56)
+
+            battlefield_terrain_type = battlefield->terrain_type[((cgy * COMBAT_GRID_WIDTH) + cgx)];
+            assert(battlefield_terrain_type >= 0);
+            assert(battlefield_terrain_type < 48);
+
+            if((battlefield_terrain_type >= CTILE_Dirt1) && (battlefield_terrain_type <= CTILE_Dirt4))
             {
-                STU_DEBUG_BREAK();
-                combat_terrain_type = ((cgy + cgx) & 0x3);  // ¿ " base tile" ?
+                // [x] STU_DEBUG_BREAK();  // congratulations - you've got dirt
             }
-            if(combat_terrain_type < 48)
+            if((battlefield_terrain_type >= CTILE_DownRightD1) && (battlefield_terrain_type <= CTILE_RightD2))
             {
-                // Clipped_Draw(screen_x, screen_y, _combat_terrain_pict_segs[combat_terrain_type]);
-                // nope, can't handle negative sx,sy  FLIC_Draw(screen_x, screen_y, _combat_terrain_pict_segs[combat_terrain_type]);
+                // [x] STU_DEBUG_BREAK();  // congratulations - you've got grass/plains
+            }
+            if((battlefield_terrain_type >= CTILE_DownRough) && (battlefield_terrain_type <= CTILE_SingleRough))
+            {
+                // [x] STU_DEBUG_BREAK();  // congratulations - you've got rough
+            }
+
+            if(battlefield_terrain_type >= CTILE_LeftRightRiver1)  // River
+            {
+                STU_DEBUG_BREAK();  // congratulations - you've got river
+                battlefield_terrain_type = ((cgy + cgx) & 0x3);  // mask on first two bits  {0,1,2,3}  ¿ " base tile" ?  ...(56 & 0x3) == 0, ..., (67 & 0x3) == 3
+            }
+            if(battlefield_terrain_type < 48)
+            {
+
+                Clipped_Draw(screen_x, screen_y, _combat_terrain_pict_segs[battlefield_terrain_type]);
+
             }
         }
     }
@@ -30834,7 +30923,9 @@ void CMB_ComposeBackgrnd__WIP(void)
 
     Copy_Off_To_Back();
 
+#ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: CMB_ComposeBackgrnd__WIP()\n", __FILE__, __LINE__);
+#endif
 
 }
 

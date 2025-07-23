@@ -5445,7 +5445,8 @@ Check_Game_Data();
     {
 
 Check_Game_Data();
-        combat_result = Combat__WIP(player_idx, defender_idx, troop_count, &troops[0]);
+Release_Cities_Data();
+combat_result = Combat__WIP(player_idx, defender_idx, troop_count, &troops[0]);
 Check_Game_Data();
 
         if(combat_result == ST_TRUE)  /* Winner == Attacker */
