@@ -11,7 +11,8 @@
 # rm -rf build/*
 # cmake -S . --preset base
 # cmake --build --preset base --target all
-
+# cmake --build build --config Debug --verbose > _cmake_build.txt
+# ctest --test-dir build -C Debug --rerun-failed --output-on-failure -VV
 
 cmake_minimum_required(VERSION 3.22)
 
@@ -33,6 +34,14 @@ project(
 
 
 
+set(CMAKE_INSTALL_LOCAL_ONLY TRUE)
+# CMAKE_INSTALL_PREFIX to a location within your user directory (e.g., C:\Users\<YourUser>\Install).
+# # Use this snippet *after* PROJECT(xxx):
+# IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+#   SET(CMAKE_INSTALL_PREFIX <path> CACHE PATH <comment> FORCE)
+# ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+
+
 # if(DO_TEST)
 # GoogleTest requires at least C++17
 enable_language(CXX)
@@ -51,6 +60,8 @@ FetchContent_Declare(googletest GIT_REPOSITORY https://github.com/google/googlet
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
+message(STATUS "GTEST_INCLUDE_DIR='${GTEST_INCLUDE_DIR}'")
+message(STATUS "GTEST_INCLUDE_DIRS='${GTEST_INCLUDE_DIRS}'")
 
 add_subdirectory(src)
 

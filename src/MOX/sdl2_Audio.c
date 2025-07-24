@@ -168,7 +168,9 @@ void sdl2_Audio_Init(void)
     // if(Mix_Init((MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID | MIX_INIT_OPUS | MIX_INIT_WAVPACK)) == 0)
     if(Mix_Init((MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID | MIX_INIT_OPUS | 0x00000080)) == 0)
     {
+#ifdef STU_DEBUG
         dbg_prn("ERROR:  Mix_Init():  %s\n", Mix_GetError());
+#endif
         printf("ERROR:  Mix_Init():  %s\n", Mix_GetError());
     }
     else
@@ -177,7 +179,9 @@ void sdl2_Audio_Init(void)
     }
     if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
     {
+#ifdef STU_DEBUG
         dbg_prn("ERROR:  Mix_OpenAudio():  %s\n", Mix_GetError());
+#endif
         printf("ERROR:  Mix_OpenAudio():  %s\n", Mix_GetError());
     }
     else

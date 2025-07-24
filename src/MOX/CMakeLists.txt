@@ -50,3 +50,5 @@ target_link_libraries(MOX
     SDL2::Core
     SDL2::Mixer
 )
+
+add_subdirectory(tests)

@@ -6,6 +6,25 @@ https://google.github.io/googletest/quickstart-cmake.html
 https://www.labri.fr/perso/fleury/posts/programming/using-cmake-googletests-and-gcovr-in-a-c-project.html
 
 
+C:/STU/devel/ReMoM/build/src/MOX/tests/Debug/MOX_tests.exe --gtest_list_tests
+
+C:\STU\devel\ReMoM>C:/STU/devel/ReMoM/build/src/MOX/tests/Debug/MOX_tests.exe --gtest_list_tests
+Running main() from C:\STU\devel\ReMoM\build\_deps\googletest-src\googletest\src\gtest_main.cc
+MOX_test.
+  MOX_One_Plus_One
+  MOX_String_To_Upper
+  MOX_String_To_Lower
+
+
+Use this program to figure that out: https://github.com/lucasg/Dependencies – 
+drescherjm
+ CommentedApr 1, 2023 at 21:07
+MSYS2 env ldd.exe and ntldd.exe both can be used to trace DLL dependencies. So far, I think the problem should come from CTest ... – 
+KCC
+ CommentedApr 2, 2023 at 6:34
+
+
+
 
 MainScr_Maps.c
 MainScr_Maps.h

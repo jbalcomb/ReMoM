@@ -1,0 +1,646 @@
+Change Dir: 'C:/STU/devel/ReMoM/build'
+
+Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" ALL_BUILD.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+MSBuild version 17.14.14+a129329f1 for .NET Framework
+Build started 7/24/2025 12:02:37 AM.
+
+Project "C:\STU\devel\ReMoM\build\ALL_BUILD.vcxproj" on node 1 (default targets).
+Project "C:\STU\devel\ReMoM\build\ALL_BUILD.vcxproj" (1) is building "C:\STU\devel\ReMoM\build\ZERO_CHECK.vcxproj" (2) on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "x64\Debug\ZERO_CHECK\".
+  Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+  Creating directory "x64\Debug\ZERO_CHECK\ZERO_CHECK.tlog\".
+InitializeBuildStatus:
+  Creating "x64\Debug\ZERO_CHECK\ZERO_CHECK.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+  Touching "x64\Debug\ZERO_CHECK\ZERO_CHECK.tlog\unsuccessfulbuild".
+CustomBuild:
+  1>Checking Build System
+FinalizeBuildStatus:
+  Deleting file "x64\Debug\ZERO_CHECK\ZERO_CHECK.tlog\unsuccessfulbuild".
+  Touching "x64\Debug\ZERO_CHECK\ZERO_CHECK.tlog\ZERO_CHECK.lastbuildstate".
+Done Building Project "C:\STU\devel\ReMoM\build\ZERO_CHECK.vcxproj" (default targets).
+Project "C:\STU\devel\ReMoM\build\ALL_BUILD.vcxproj" (1) is building "C:\STU\devel\ReMoM\build\src\MOX\MOX.vcxproj" (3) on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "MOX.dir\Debug\".
+  Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+  Creating directory "C:\STU\devel\ReMoM\build\src\MOX\Debug\".
+  Creating directory "MOX.dir\Debug\MOX.tlog\".
+InitializeBuildStatus:
+  Creating "MOX.dir\Debug\MOX.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+  Touching "MOX.dir\Debug\MOX.tlog\unsuccessfulbuild".
+CustomBuild:
+  Building Custom Rule C:/STU/devel/ReMoM/src/MOX/CMakeLists.txt
+VcpkgTripletSelection:
+  Using triplet "x64-windows" from "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\"
+  Using normalized configuration "Release"
+ClCompile:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\CL.exe /c /IC:\STU\devel\ReMoM\src\MOX /I"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\include" /Zi /nologo /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"MOX.dir\Debug\\" /Fd"C:\STU\devel\ReMoM\build\src\MOX\Debug\MOX.pdb" /external:W0 /Gd /TC /errorReport:queue  /external:I "C:/devellib/SDL2-2.32.2/include" /external:I "C:/devellib/SDL2_mixer-2.8.1/include" C:\STU\devel\ReMoM\src\MOX\AIL.c C:\STU\devel\ReMoM\src\MOX\Allocate.c C:\STU\devel\ReMoM\src\MOX\capture.c C:\STU\devel\ReMoM\src\MOX\CFG.c C:\STU\devel\ReMoM\src\MOX\DOS.c C:\STU\devel\ReMoM\src\MOX\EMM.c C:\STU\devel\ReMoM\src\MOX\EXIT.c C:\STU\devel\ReMoM\src\MOX\Fields.c C:\STU\devel\ReMoM\src\MOX\file_ani.c C:\STU\devel\ReMoM\src\MOX\Fonts.c C:\STU\devel\ReMoM\src\MOX\GENDRAW.c C:\STU\devel\ReMoM\src\MOX\GFILE.c C:\STU\devel\ReMoM\src\MOX\Graphics.c C:\STU\devel\ReMoM\src\MOX\FLIC_Draw.c C:\STU\devel\ReMoM\src\MOX\Input.c C:\STU\devel\ReMoM\src\MOX\IO_Buffer.c C:\STU\devel\ReMoM\src\MOX\Keyboard.c C:\STU\devel\ReMoM\src\MOX\LBX_Load.c C:\STU\devel\ReMoM\src\MOX\LOADSAVE.c C:\STU\devel\ReMoM\src\MOX\Mouse.c C:\STU\devel\ReMoM\src\MOX\MOM_Data.c C:\STU\devel\ReMoM\src\MOX\MOX_DAT.c C:\STU\devel\ReMoM\src\MOX\MOX_SET.c C:\STU\devel\ReMoM\src\MOX\MOX_SND.c C:\STU\devel\ReMoM\src\MOX\MOX_T4.c C:\STU\devel\ReMoM\src\MOX\paragrph.c C:\STU\devel\ReMoM\src\MOX\random.c C:\STU\devel\ReMoM\src\MOX\sdl2_Audio.c C:\STU\devel\ReMoM\src\MOX\SOUND.c C:\STU\devel\ReMoM\src\MOX\TEXTBOX.c C:\STU\devel\ReMoM\src\MOX\Util.c C:\STU\devel\ReMoM\src\MOX\Video.c C:\STU\devel\ReMoM\src\MOX\Video2.c
+  AIL.c
+  Allocate.c
+  capture.c
+  CFG.c
+  DOS.c
+  EMM.c
+  EXIT.c
+  Fields.c
+  file_ani.c
+  Fonts.c
+  GENDRAW.c
+  GFILE.c
+  Graphics.c
+  FLIC_Draw.c
+  Input.c
+  IO_Buffer.c
+  Keyboard.c
+  LBX_Load.c
+  LOADSAVE.c
+  Mouse.c
+  Generating Code...
+  Compiling...
+  MOM_Data.c
+  MOX_DAT.c
+  MOX_SET.c
+  MOX_SND.c
+  MOX_T4.c
+  paragrph.c
+  random.c
+  sdl2_Audio.c
+  SOUND.c
+  TEXTBOX.c
+  Util.c
+  Video.c
+  Video2.c
+  Generating Code...
+Lib:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\Lib.exe /OUT:"C:\STU\devel\ReMoM\build\src\MOX\Debug\MOX.lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib\manual-link" /NOLOGO /MACHINE:X64  /machine:x64 MOX.dir\Debug\AIL.obj
+  MOX.dir\Debug\Allocate.obj
+  MOX.dir\Debug\capture.obj
+  MOX.dir\Debug\CFG.obj
+  MOX.dir\Debug\DOS.obj
+  MOX.dir\Debug\EMM.obj
+  MOX.dir\Debug\EXIT.obj
+  MOX.dir\Debug\Fields.obj
+  MOX.dir\Debug\file_ani.obj
+  MOX.dir\Debug\Fonts.obj
+  MOX.dir\Debug\GENDRAW.obj
+  MOX.dir\Debug\GFILE.obj
+  MOX.dir\Debug\Graphics.obj
+  MOX.dir\Debug\FLIC_Draw.obj
+  MOX.dir\Debug\Input.obj
+  MOX.dir\Debug\IO_Buffer.obj
+  MOX.dir\Debug\Keyboard.obj
+  MOX.dir\Debug\LBX_Load.obj
+  MOX.dir\Debug\LOADSAVE.obj
+  MOX.dir\Debug\Mouse.obj
+  MOX.dir\Debug\MOM_Data.obj
+  MOX.dir\Debug\MOX_DAT.obj
+  MOX.dir\Debug\MOX_SET.obj
+  MOX.dir\Debug\MOX_SND.obj
+  MOX.dir\Debug\MOX_T4.obj
+  MOX.dir\Debug\paragrph.obj
+  MOX.dir\Debug\random.obj
+  MOX.dir\Debug\sdl2_Audio.obj
+  MOX.dir\Debug\SOUND.obj
+  MOX.dir\Debug\TEXTBOX.obj
+  MOX.dir\Debug\Util.obj
+  MOX.dir\Debug\Video.obj
+  MOX.dir\Debug\Video2.obj
+  MOX.vcxproj -> C:\STU\devel\ReMoM\build\src\MOX\Debug\MOX.lib
+FinalizeBuildStatus:
+  Deleting file "MOX.dir\Debug\MOX.tlog\unsuccessfulbuild".
+  Touching "MOX.dir\Debug\MOX.tlog\MOX.lastbuildstate".
+Done Building Project "C:\STU\devel\ReMoM\build\src\MOX\MOX.vcxproj" (default targets).
+Project "C:\STU\devel\ReMoM\build\ALL_BUILD.vcxproj" (1) is building "C:\STU\devel\ReMoM\build\src\MOX\tests\MOX_tests.vcxproj" (4) on node 1 (default targets).
+Project "C:\STU\devel\ReMoM\build\src\MOX\tests\MOX_tests.vcxproj" (4) is building "C:\STU\devel\ReMoM\build\src\STU\STU.vcxproj" (5) on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "STU.dir\Debug\".
+  Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+  Creating directory "C:\STU\devel\ReMoM\build\src\STU\Debug\".
+  Creating directory "STU.dir\Debug\STU.tlog\".
+InitializeBuildStatus:
+  Creating "STU.dir\Debug\STU.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+  Touching "STU.dir\Debug\STU.tlog\unsuccessfulbuild".
+CustomBuild:
+  Building Custom Rule C:/STU/devel/ReMoM/src/STU/CMakeLists.txt
+VcpkgTripletSelection:
+  Using triplet "x64-windows" from "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\"
+  Using normalized configuration "Release"
+ClCompile:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\CL.exe /c /IC:\STU\devel\ReMoM\src\STU /I"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\include" /Zi /nologo /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"STU.dir\Debug\\" /Fd"C:\STU\devel\ReMoM\build\src\STU\Debug\STU.pdb" /external:W0 /Gd /TC /errorReport:queue  /external:I "C:/devellib/SDL2-2.32.2/include" /external:I "C:/devellib/SDL2_mixer-2.8.1/include" C:\STU\devel\ReMoM\src\STU\STU_CHK.c C:\STU\devel\ReMoM\src\STU\STU_DBG.c C:\STU\devel\ReMoM\src\STU\STU_DRAW.c C:\STU\devel\ReMoM\src\STU\STU_EMS.c C:\STU\devel\ReMoM\src\STU\STU_FMT.c C:\STU\devel\ReMoM\src\STU\STU_INT.c C:\STU\devel\ReMoM\src\STU\STU_JSON.c C:\STU\devel\ReMoM\src\STU\STU_MSG.c C:\STU\devel\ReMoM\src\STU\STU_PRN.c C:\STU\devel\ReMoM\src\STU\STU_SND.c C:\STU\devel\ReMoM\src\STU\STU_TST.c C:\STU\devel\ReMoM\src\STU\STU_UTIL.c C:\STU\devel\ReMoM\src\STU\STU_WAV.c
+  STU_CHK.c
+  STU_DBG.c
+  STU_DRAW.c
+  STU_EMS.c
+  STU_FMT.c
+  STU_INT.c
+  STU_JSON.c
+  STU_MSG.c
+  STU_PRN.c
+  STU_SND.c
+  STU_TST.c
+  STU_UTIL.c
+  STU_WAV.c
+  Generating Code...
+Lib:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\Lib.exe /OUT:"C:\STU\devel\ReMoM\build\src\STU\Debug\STU.lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib\manual-link" /NOLOGO /MACHINE:X64  /machine:x64 STU.dir\Debug\STU_CHK.obj
+  STU.dir\Debug\STU_DBG.obj
+  STU.dir\Debug\STU_DRAW.obj
+  STU.dir\Debug\STU_EMS.obj
+  STU.dir\Debug\STU_FMT.obj
+  STU.dir\Debug\STU_INT.obj
+  STU.dir\Debug\STU_JSON.obj
+  STU.dir\Debug\STU_MSG.obj
+  STU.dir\Debug\STU_PRN.obj
+  STU.dir\Debug\STU_SND.obj
+  STU.dir\Debug\STU_TST.obj
+  STU.dir\Debug\STU_UTIL.obj
+  STU.dir\Debug\STU_WAV.obj
+  STU.vcxproj -> C:\STU\devel\ReMoM\build\src\STU\Debug\STU.lib
+FinalizeBuildStatus:
+  Deleting file "STU.dir\Debug\STU.tlog\unsuccessfulbuild".
+  Touching "STU.dir\Debug\STU.tlog\STU.lastbuildstate".
+Done Building Project "C:\STU\devel\ReMoM\build\src\STU\STU.vcxproj" (default targets).
+Project "C:\STU\devel\ReMoM\build\src\MOX\tests\MOX_tests.vcxproj" (4) is building "C:\STU\devel\ReMoM\build\_deps\googletest-build\googletest\gtest.vcxproj" (6) on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "gtest.dir\Debug\".
+  Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+  Creating directory "C:\STU\devel\ReMoM\build\lib\Debug\".
+  Creating directory "gtest.dir\Debug\gtest.tlog\".
+InitializeBuildStatus:
+  Creating "gtest.dir\Debug\gtest.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+  Touching "gtest.dir\Debug\gtest.tlog\unsuccessfulbuild".
+CustomBuild:
+  Building Custom Rule C:/STU/devel/ReMoM/build/_deps/googletest-src/googletest/CMakeLists.txt
+VcpkgTripletSelection:
+  Using triplet "x64-windows" from "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\"
+  Using normalized configuration "Release"
+ClCompile:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\CL.exe /c /I"C:\STU\devel\ReMoM\build\_deps\googletest-src\googletest\include" /I"C:\STU\devel\ReMoM\build\_deps\googletest-src\googletest" /I"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\include" /Zi /nologo /W4 /WX /diagnostics:column /Od /Ob0 /D _UNICODE /D UNICODE /D WIN32 /D _WINDOWS /D _UNICODE /D UNICODE /D _WIN32 /D STRICT /D WIN32_LEAN_AND_MEAN /D GTEST_HAS_PTHREAD=0 /D _HAS_EXCEPTIONS=1 /D "CMAKE_INTDIR=\"Debug\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Fo"gtest.dir\Debug\\" /Fd"C:\STU\devel\ReMoM\build\lib\Debug\gtestpdb_debug_postfix-NOTFOUND.pdb" /external:W4 /Gd /TP /wd4251 /wd4275 /wd4702 /errorReport:queue  -J -utf-8 "C:\STU\devel\ReMoM\build\_deps\googletest-src\googletest\src\gtest-all.cc"
+  gtest-all.cc
+Lib:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\Lib.exe /OUT:"C:\STU\devel\ReMoM\build\lib\Debug\gtest.lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib\manual-link" /NOLOGO /MACHINE:X64  /machine:x64 "gtest.dir\Debug\gtest-all.obj"
+  Copying file from "C:\STU\devel\ReMoM\build\lib\Debug\gtestpdb_debug_postfix-NOTFOUND.pdb" to "C:\STU\devel\ReMoM\build\lib\Debug\gtest.pdb".
+  gtest.vcxproj -> C:\STU\devel\ReMoM\build\lib\Debug\gtest.lib
+FinalizeBuildStatus:
+  Deleting file "gtest.dir\Debug\gtest.tlog\unsuccessfulbuild".
+  Touching "gtest.dir\Debug\gtest.tlog\gtest.lastbuildstate".
+Done Building Project "C:\STU\devel\ReMoM\build\_deps\googletest-build\googletest\gtest.vcxproj" (default targets).
+Project "C:\STU\devel\ReMoM\build\src\MOX\tests\MOX_tests.vcxproj" (4) is building "C:\STU\devel\ReMoM\build\_deps\googletest-build\googletest\gtest_main.vcxproj" (7) on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "gtest_main.dir\Debug\".
+  Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+  Creating directory "gtest_main.dir\Debug\gtest_main.tlog\".
+InitializeBuildStatus:
+  Creating "gtest_main.dir\Debug\gtest_main.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+  Touching "gtest_main.dir\Debug\gtest_main.tlog\unsuccessfulbuild".
+CustomBuild:
+  Building Custom Rule C:/STU/devel/ReMoM/build/_deps/googletest-src/googletest/CMakeLists.txt
+VcpkgTripletSelection:
+  Using triplet "x64-windows" from "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\"
+  Using normalized configuration "Release"
+ClCompile:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\CL.exe /c /I"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\include" /Zi /nologo /W4 /WX /diagnostics:column /Od /Ob0 /D _UNICODE /D UNICODE /D WIN32 /D _WINDOWS /D _UNICODE /D UNICODE /D _WIN32 /D STRICT /D WIN32_LEAN_AND_MEAN /D GTEST_HAS_PTHREAD=0 /D _HAS_EXCEPTIONS=1 /D "CMAKE_INTDIR=\"Debug\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Fo"gtest_main.dir\Debug\\" /Fd"C:\STU\devel\ReMoM\build\lib\Debug\gtest_mainpdb_debug_postfix-NOTFOUND.pdb" /external:W0 /Gd /TP /wd4251 /wd4275 /wd4702 /errorReport:queue  /external:I "C:/STU/devel/ReMoM/build/_deps/googletest-src/googletest/include" /external:I "C:/STU/devel/ReMoM/build/_deps/googletest-src/googletest" -J -utf-8 "C:\STU\devel\ReMoM\build\_deps\googletest-src\googletest\src\gtest_main.cc"
+  gtest_main.cc
+Lib:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\Lib.exe /OUT:"C:\STU\devel\ReMoM\build\lib\Debug\gtest_main.lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib\manual-link" /NOLOGO /MACHINE:X64  /machine:x64 gtest_main.dir\Debug\gtest_main.obj
+  Copying file from "C:\STU\devel\ReMoM\build\lib\Debug\gtest_mainpdb_debug_postfix-NOTFOUND.pdb" to "C:\STU\devel\ReMoM\build\lib\Debug\gtest_main.pdb".
+  gtest_main.vcxproj -> C:\STU\devel\ReMoM\build\lib\Debug\gtest_main.lib
+FinalizeBuildStatus:
+  Deleting file "gtest_main.dir\Debug\gtest_main.tlog\unsuccessfulbuild".
+  Touching "gtest_main.dir\Debug\gtest_main.tlog\gtest_main.lastbuildstate".
+Done Building Project "C:\STU\devel\ReMoM\build\_deps\googletest-build\googletest\gtest_main.vcxproj" (default targets).
+Project "C:\STU\devel\ReMoM\build\src\MOX\tests\MOX_tests.vcxproj" (4) is building "C:\STU\devel\ReMoM\build\src\momlib.vcxproj" (8) on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "momlib.dir\Debug\".
+  Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+  Creating directory "C:\STU\devel\ReMoM\build\src\Debug\".
+  Creating directory "momlib.dir\Debug\momlib.tlog\".
+InitializeBuildStatus:
+  Creating "momlib.dir\Debug\momlib.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+  Touching "momlib.dir\Debug\momlib.tlog\unsuccessfulbuild".
+CustomBuild:
+  Building Custom Rule C:/STU/devel/ReMoM/src/CMakeLists.txt
+VcpkgTripletSelection:
+  Using triplet "x64-windows" from "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\"
+  Using normalized configuration "Release"
+ClCompile:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\CL.exe /c /IC:\STU\devel\ReMoM /IC:\STU\devel\ReMoM\src /IC:\STU\devel\ReMoM\src\MOX /IC:\STU\devel\ReMoM\src\STU /I"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\include" /Zi /nologo /W0 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _CRT_SECURE_NO_WARNINGS=TRUE /D STU_DEBUG=TRUE /D STU_TRACE=TRUE /D _STU_SDL2=TRUE /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"momlib.dir\Debug\\" /Fd"C:\STU\devel\ReMoM\build\src\Debug\momlib.pdb" /external:W0 /Gd /TC /wd4068 /wd4365 /wd4820 /errorReport:queue  /external:I "C:/devellib/SDL2-2.32.2/include" /external:I "C:/devellib/SDL2_mixer-2.8.1/include" C:\STU\devel\ReMoM\src\AdvsrScr.c C:\STU\devel\ReMoM\src\AIBUILD.c C:\STU\devel\ReMoM\src\AIDATA.c C:\STU\devel\ReMoM\src\AIDUDES.c C:\STU\devel\ReMoM\src\AIMOVE.c C:\STU\devel\ReMoM\src\AISPELL.c C:\STU\devel\ReMoM\src\ALLOC.c C:\STU\devel\ReMoM\src\ArmyList.c C:\STU\devel\ReMoM\src\CITYCALC.c C:\STU\devel\ReMoM\src\CityList.c C:\STU\devel\ReMoM\src\CITYSCAP.c C:\STU\devel\ReMoM\src\CityScr.c C:\STU\devel\ReMoM\src\City_ovr55.c C:\STU\devel\ReMoM\src\Combat.c C:\STU\devel\ReMoM\src\CREDITS.c C:\STU\devel\ReMoM\src\DIPLOMAC.c C:\STU\devel\ReMoM\src\EVENTS.c C:\STU\devel\ReMoM\src\Explore.c C:\STU\devel\ReMoM\src\Help.c C:\STU\devel\ReMoM\src\HIRE.c C:\STU\devel\ReMoM\src\Init.c C:\STU\devel\ReMoM\src\INITGAME.c C:\STU\devel\ReMoM\src\INTRO.c C:\STU\devel\ReMoM\src\ItemMake.c C:\STU\devel\ReMoM\src\Items.c C:\STU\devel\ReMoM\src\ItemScrn.c C:\STU\devel\ReMoM\src\ItemView.c C:\STU\devel\ReMoM\src\Lair.c C:\STU\devel\ReMoM\src\LOADER.c C:\STU\devel\ReMoM\src\LoadScr.c C:\STU\devel\ReMoM\src\LVLMAKE.c C:\STU\devel\ReMoM\src\MagicScr.c C:\STU\devel\ReMoM\src\MainMenu.c C:\STU\devel\ReMoM\src\MainScr.c C:\STU\devel\ReMoM\src\MainScr_Maps.c C:\STU\devel\ReMoM\src\MAPGEN.c C:\STU\devel\ReMoM\src\MGC_DATA.c C:\STU\devel\ReMoM\src\MOM_SCR.c C:\STU\devel\ReMoM\src\MOM_DBG.c C:\STU\devel\ReMoM\src\MOM_PFL.c C:\STU\devel\ReMoM\src\MovePath.c C:\STU\devel\ReMoM\src\NewGame.c C:\STU\devel\ReMoM\src\NEXTTURN.c C:\STU\devel\ReMoM\src\Outpost.c C:\STU\devel\ReMoM\src\OverSpel.c C:\STU\devel\ReMoM\src\ProdScr.c C:\STU\devel\ReMoM\src\RACETYPE.c C:\STU\devel\ReMoM\src\REPORT.c C:\STU\devel\ReMoM\src\Roads.c C:\STU\devel\ReMoM\src\SBookScr.c C:\STU\devel\ReMoM\src\SCastScr.c C:\STU\devel\ReMoM\src\SCORE.c C:\STU\devel\ReMoM\src\Settings.c C:\STU\devel\ReMoM\src\SETTLE.c C:\STU\devel\ReMoM\src\special.c C:\STU\devel\ReMoM\src\Spellbook.c C:\STU\devel\ReMoM\src\Spells128.c C:\STU\devel\ReMoM\src\Spells129.c C:\STU\devel\ReMoM\src\Spells130.c C:\STU\devel\ReMoM\src\Spells131.c C:\STU\devel\ReMoM\src\Spells132.c C:\STU\devel\ReMoM\src\Spells133.c C:\STU\devel\ReMoM\src\Spells137.c C:\STU\devel\ReMoM\src\SPLMASTR.c C:\STU\devel\ReMoM\src\Surveyor.c C:\STU\devel\ReMoM\src\Terrain.c C:\STU\devel\ReMoM\src\UnitList.c C:\STU\devel\ReMoM\src\UnitMove.c C:\STU\devel\ReMoM\src\UnitStat.c C:\STU\devel\ReMoM\src\UNITSTK.c C:\STU\devel\ReMoM\src\UNITTYPE.c C:\STU\devel\ReMoM\src\UnitView.c C:\STU\devel\ReMoM\src\WIZVIEW.c C:\STU\devel\ReMoM\src\WZD_o059.c C:\STU\devel\ReMoM\src\WZD_o143.c C:\STU\devel\ReMoM\src\WZD_o146.c C:\STU\devel\ReMoM\src\sdl2_EMM.c C:\STU\devel\ReMoM\src\sdl2_Input.c C:\STU\devel\ReMoM\src\sdl2_KD.c C:\STU\devel\ReMoM\src\sdl2_MD.c C:\STU\devel\ReMoM\src\sdl2_MOM.c C:\STU\devel\ReMoM\src\sdl2_PFL.c C:\STU\devel\ReMoM\src\sdl2_Timer.c
+  AdvsrScr.c
+  AIBUILD.c
+  AIDATA.c
+  AIDUDES.c
+  AIMOVE.c
+  AISPELL.c
+  ALLOC.c
+  ArmyList.c
+  CITYCALC.c
+  CityList.c
+  CITYSCAP.c
+  CityScr.c
+  City_ovr55.c
+  Combat.c
+  CREDITS.c
+  DIPLOMAC.c
+  EVENTS.c
+  Explore.c
+  Help.c
+  HIRE.c
+  Generating Code...
+  Compiling...
+  Init.c
+  INITGAME.c
+  INTRO.c
+  ItemMake.c
+  Items.c
+  ItemScrn.c
+  ItemView.c
+  Lair.c
+  LOADER.c
+  LoadScr.c
+  LVLMAKE.c
+  MagicScr.c
+  MainMenu.c
+  MainScr.c
+  MainScr_Maps.c
+  MAPGEN.c
+  MGC_DATA.c
+  MOM_SCR.c
+  MOM_DBG.c
+  MOM_PFL.c
+  Generating Code...
+  Compiling...
+  MovePath.c
+  NewGame.c
+  NEXTTURN.c
+  Outpost.c
+  OverSpel.c
+  ProdScr.c
+  RACETYPE.c
+  REPORT.c
+  Roads.c
+  SBookScr.c
+  SCastScr.c
+  SCORE.c
+  Settings.c
+  SETTLE.c
+  special.c
+  Spellbook.c
+  Spells128.c
+  Spells129.c
+  Spells130.c
+  Spells131.c
+  Generating Code...
+  Compiling...
+  Spells132.c
+  Spells133.c
+  Spells137.c
+  SPLMASTR.c
+  Surveyor.c
+  Terrain.c
+  UnitList.c
+  UnitMove.c
+  UnitStat.c
+  UNITSTK.c
+  UNITTYPE.c
+  UnitView.c
+  WIZVIEW.c
+  WZD_o059.c
+  WZD_o143.c
+  WZD_o146.c
+  sdl2_EMM.c
+  sdl2_Input.c
+  sdl2_KD.c
+  sdl2_MD.c
+  Generating Code...
+  Compiling...
+  sdl2_MOM.c
+  sdl2_PFL.c
+  sdl2_Timer.c
+  Generating Code...
+Lib:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\Lib.exe /OUT:"C:\STU\devel\ReMoM\build\src\Debug\momlib.lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib\manual-link" /NOLOGO /MACHINE:X64  /machine:x64 momlib.dir\Debug\AdvsrScr.obj
+  momlib.dir\Debug\AIBUILD.obj
+  momlib.dir\Debug\AIDATA.obj
+  momlib.dir\Debug\AIDUDES.obj
+  momlib.dir\Debug\AIMOVE.obj
+  momlib.dir\Debug\AISPELL.obj
+  momlib.dir\Debug\ALLOC.obj
+  momlib.dir\Debug\ArmyList.obj
+  momlib.dir\Debug\CITYCALC.obj
+  momlib.dir\Debug\CityList.obj
+  momlib.dir\Debug\CITYSCAP.obj
+  momlib.dir\Debug\CityScr.obj
+  momlib.dir\Debug\City_ovr55.obj
+  momlib.dir\Debug\Combat.obj
+  momlib.dir\Debug\CREDITS.obj
+  momlib.dir\Debug\DIPLOMAC.obj
+  momlib.dir\Debug\EVENTS.obj
+  momlib.dir\Debug\Explore.obj
+  momlib.dir\Debug\Help.obj
+  momlib.dir\Debug\HIRE.obj
+  momlib.dir\Debug\Init.obj
+  momlib.dir\Debug\INITGAME.obj
+  momlib.dir\Debug\INTRO.obj
+  momlib.dir\Debug\ItemMake.obj
+  momlib.dir\Debug\Items.obj
+  momlib.dir\Debug\ItemScrn.obj
+  momlib.dir\Debug\ItemView.obj
+  momlib.dir\Debug\Lair.obj
+  momlib.dir\Debug\LOADER.obj
+  momlib.dir\Debug\LoadScr.obj
+  momlib.dir\Debug\LVLMAKE.obj
+  momlib.dir\Debug\MagicScr.obj
+  momlib.dir\Debug\MainMenu.obj
+  momlib.dir\Debug\MainScr.obj
+  momlib.dir\Debug\MainScr_Maps.obj
+  momlib.dir\Debug\MAPGEN.obj
+  momlib.dir\Debug\MGC_DATA.obj
+  momlib.dir\Debug\MOM_SCR.obj
+  momlib.dir\Debug\MOM_DBG.obj
+  momlib.dir\Debug\MOM_PFL.obj
+  momlib.dir\Debug\MovePath.obj
+  momlib.dir\Debug\NewGame.obj
+  momlib.dir\Debug\NEXTTURN.obj
+  momlib.dir\Debug\Outpost.obj
+  momlib.dir\Debug\OverSpel.obj
+  momlib.dir\Debug\ProdScr.obj
+  momlib.dir\Debug\RACETYPE.obj
+  momlib.dir\Debug\REPORT.obj
+  momlib.dir\Debug\Roads.obj
+  momlib.dir\Debug\SBookScr.obj
+  momlib.dir\Debug\SCastScr.obj
+  momlib.dir\Debug\SCORE.obj
+  momlib.dir\Debug\Settings.obj
+  momlib.dir\Debug\SETTLE.obj
+  momlib.dir\Debug\special.obj
+  momlib.dir\Debug\Spellbook.obj
+  momlib.dir\Debug\Spells128.obj
+  momlib.dir\Debug\Spells129.obj
+  momlib.dir\Debug\Spells130.obj
+  momlib.dir\Debug\Spells131.obj
+  momlib.dir\Debug\Spells132.obj
+  momlib.dir\Debug\Spells133.obj
+  momlib.dir\Debug\Spells137.obj
+  momlib.dir\Debug\SPLMASTR.obj
+  momlib.dir\Debug\Surveyor.obj
+  momlib.dir\Debug\Terrain.obj
+  momlib.dir\Debug\UnitList.obj
+  momlib.dir\Debug\UnitMove.obj
+  momlib.dir\Debug\UnitStat.obj
+  momlib.dir\Debug\UNITSTK.obj
+  momlib.dir\Debug\UNITTYPE.obj
+  momlib.dir\Debug\UnitView.obj
+  momlib.dir\Debug\WIZVIEW.obj
+  momlib.dir\Debug\WZD_o059.obj
+  momlib.dir\Debug\WZD_o143.obj
+  momlib.dir\Debug\WZD_o146.obj
+  momlib.dir\Debug\sdl2_EMM.obj
+  momlib.dir\Debug\sdl2_Input.obj
+  momlib.dir\Debug\sdl2_KD.obj
+  momlib.dir\Debug\sdl2_MD.obj
+  momlib.dir\Debug\sdl2_MOM.obj
+  momlib.dir\Debug\sdl2_PFL.obj
+  momlib.dir\Debug\sdl2_Timer.obj
+  momlib.vcxproj -> C:\STU\devel\ReMoM\build\src\Debug\momlib.lib
+FinalizeBuildStatus:
+  Deleting file "momlib.dir\Debug\momlib.tlog\unsuccessfulbuild".
+  Touching "momlib.dir\Debug\momlib.tlog\momlib.lastbuildstate".
+Done Building Project "C:\STU\devel\ReMoM\build\src\momlib.vcxproj" (default targets).
+PrepareForBuild:
+  Creating directory "MOX_tests.dir\Debug\".
+  Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+  Creating directory "C:\STU\devel\ReMoM\build\src\MOX\tests\Debug\".
+  Creating directory "MOX_tests.dir\Debug\MOX_tests.tlog\".
+InitializeBuildStatus:
+  Creating "MOX_tests.dir\Debug\MOX_tests.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+  Touching "MOX_tests.dir\Debug\MOX_tests.tlog\unsuccessfulbuild".
+CustomBuild:
+  Building Custom Rule C:/STU/devel/ReMoM/src/MOX/tests/CMakeLists.txt
+VcpkgTripletSelection:
+  Using triplet "x64-windows" from "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\"
+  Using normalized configuration "Release"
+ClCompile:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\CL.exe /c /IC:\STU\devel\ReMoM\src\MOX\tests /IC:\STU\devel\ReMoM\src\MOX /IC:\STU\devel\ReMoM /IC:\STU\devel\ReMoM\src /IC:\STU\devel\ReMoM\src\STU /I"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\include" /Zi /nologo /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Fo"MOX_tests.dir\Debug\\" /Fd"MOX_tests.dir\Debug\vc143.pdb" /external:W0 /Gd /TP /errorReport:queue  /external:I "C:/STU/devel/ReMoM/build/_deps/googletest-src/googletest/include" /external:I "C:/STU/devel/ReMoM/build/_deps/googletest-src/googletest" /external:I "C:/devellib/SDL2-2.32.2/include" /external:I "C:/devellib/SDL2_mixer-2.8.1/include" C:\STU\devel\ReMoM\src\MOX\tests\MOX_tests.cpp
+  MOX_tests.cpp
+Link:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\link.exe /ERRORREPORT:QUEUE /OUT:"C:\STU\devel\ReMoM\build\src\MOX\tests\Debug\MOX_tests.exe" /INCREMENTAL /ILK:"MOX_tests.dir\Debug\MOX_tests.ilk" /NOLOGO /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib\manual-link" ..\..\..\lib\Debug\gtest.lib ..\..\..\lib\Debug\gtest_main.lib ..\..\Debug\momlib.lib ..\Debug\MOX.lib ..\..\..\lib\Debug\gtest.lib ..\..\STU\Debug\STU.lib "C:\devellib\SDL2_mixer-2.8.1\lib\x64\SDL2_mixer.lib" "C:\devellib\SDL2-2.32.2\lib\x64\SDL2main.lib" "C:\devellib\SDL2-2.32.2\lib\x64\SDL2.lib" kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/STU/devel/ReMoM/build/src/MOX/tests/Debug/MOX_tests.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/STU/devel/ReMoM/build/src/MOX/tests/Debug/MOX_tests.lib" /MACHINE:X64  /machine:x64 MOX_tests.dir\Debug\MOX_tests.obj
+  MOX_tests.vcxproj -> C:\STU\devel\ReMoM\build\src\MOX\tests\Debug\MOX_tests.exe
+AppLocalFromInstalled:
+  pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\scripts\buildsystems\msbuild\applocal.ps1" "C:\STU\devel\ReMoM\build\src\MOX\tests\Debug\MOX_tests.exe" "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\bin" "MOX_tests.dir\Debug\MOX_tests.tlog\MOX_tests.write.1u.tlog" "MOX_tests.dir\Debug\vcpkg.applocal.log"
+  C:\STU\devel\ReMoM\build\src\MOX\tests\Debug\SDL2.dll
+FinalizeBuildStatus:
+  Deleting file "MOX_tests.dir\Debug\MOX_tests.tlog\unsuccessfulbuild".
+  Touching "MOX_tests.dir\Debug\MOX_tests.tlog\MOX_tests.lastbuildstate".
+Done Building Project "C:\STU\devel\ReMoM\build\src\MOX\tests\MOX_tests.vcxproj" (default targets).
+Project "C:\STU\devel\ReMoM\build\ALL_BUILD.vcxproj" (1) is building "C:\STU\devel\ReMoM\build\src\TootLib\TootLib.vcxproj" (9) on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "TootLib.dir\Debug\".
+  Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+  Creating directory "C:\STU\devel\ReMoM\build\src\TootLib\Debug\".
+  Creating directory "TootLib.dir\Debug\TootLib.tlog\".
+InitializeBuildStatus:
+  Creating "TootLib.dir\Debug\TootLib.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+  Touching "TootLib.dir\Debug\TootLib.tlog\unsuccessfulbuild".
+CustomBuild:
+  Building Custom Rule C:/STU/devel/ReMoM/src/TootLib/CMakeLists.txt
+VcpkgTripletSelection:
+  Using triplet "x64-windows" from "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\"
+  Using normalized configuration "Release"
+ClCompile:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\CL.exe /c /IC:\STU\devel\ReMoM\TootLib /I"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\include" /Zi /nologo /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"TootLib.dir\Debug\\" /Fd"C:\STU\devel\ReMoM\build\src\TootLib\Debug\TootLib.pdb" /external:W1 /Gd /TC /errorReport:queue C:\STU\devel\ReMoM\src\TootLib\TootLib.c
+  TootLib.c
+Lib:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\Lib.exe /OUT:"C:\STU\devel\ReMoM\build\src\TootLib\Debug\TootLib.lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib\manual-link" /NOLOGO /MACHINE:X64  /machine:x64 TootLib.dir\Debug\TootLib.obj
+  TootLib.vcxproj -> C:\STU\devel\ReMoM\build\src\TootLib\Debug\TootLib.lib
+FinalizeBuildStatus:
+  Deleting file "TootLib.dir\Debug\TootLib.tlog\unsuccessfulbuild".
+  Touching "TootLib.dir\Debug\TootLib.tlog\TootLib.lastbuildstate".
+Done Building Project "C:\STU\devel\ReMoM\build\src\TootLib\TootLib.vcxproj" (default targets).
+Project "C:\STU\devel\ReMoM\build\ALL_BUILD.vcxproj" (1) is building "C:\STU\devel\ReMoM\build\src\TootLib\tests\TootLib_tests.vcxproj" (10) on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "TootLib_tests.dir\Debug\".
+  Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+  Creating directory "C:\STU\devel\ReMoM\build\src\TootLib\tests\Debug\".
+  Creating directory "TootLib_tests.dir\Debug\TootLib_tests.tlog\".
+InitializeBuildStatus:
+  Creating "TootLib_tests.dir\Debug\TootLib_tests.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+  Touching "TootLib_tests.dir\Debug\TootLib_tests.tlog\unsuccessfulbuild".
+CustomBuild:
+  Building Custom Rule C:/STU/devel/ReMoM/src/TootLib/tests/CMakeLists.txt
+VcpkgTripletSelection:
+  Using triplet "x64-windows" from "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\"
+  Using normalized configuration "Release"
+ClCompile:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\CL.exe /c /IC:\STU\devel\ReMoM\src\TootLib /I"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\include" /Zi /nologo /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Fo"TootLib_tests.dir\Debug\\" /Fd"TootLib_tests.dir\Debug\vc143.pdb" /external:W0 /Gd /TP /errorReport:queue  /external:I "C:/STU/devel/ReMoM/build/_deps/googletest-src/googletest/include" /external:I "C:/STU/devel/ReMoM/build/_deps/googletest-src/googletest" C:\STU\devel\ReMoM\src\TootLib\tests\TootLib_tests.cpp
+  TootLib_tests.cpp
+Link:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\link.exe /ERRORREPORT:QUEUE /OUT:"C:\STU\devel\ReMoM\build\src\TootLib\tests\Debug\TootLib_tests.exe" /INCREMENTAL /ILK:"TootLib_tests.dir\Debug\TootLib_tests.ilk" /NOLOGO /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib\manual-link" ..\..\..\lib\Debug\gtest_main.lib ..\Debug\TootLib.lib ..\..\..\lib\Debug\gtest.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/STU/devel/ReMoM/build/src/TootLib/tests/Debug/TootLib_tests.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/STU/devel/ReMoM/build/src/TootLib/tests/Debug/TootLib_tests.lib" /MACHINE:X64  /machine:x64 TootLib_tests.dir\Debug\TootLib_tests.obj
+  TootLib_tests.vcxproj -> C:\STU\devel\ReMoM\build\src\TootLib\tests\Debug\TootLib_tests.exe
+AppLocalFromInstalled:
+  pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\scripts\buildsystems\msbuild\applocal.ps1" "C:\STU\devel\ReMoM\build\src\TootLib\tests\Debug\TootLib_tests.exe" "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\bin" "TootLib_tests.dir\Debug\TootLib_tests.tlog\TootLib_tests.write.1u.tlog" "TootLib_tests.dir\Debug\vcpkg.applocal.log"
+PostBuildEvent:
+  setlocal
+  "C:\Program Files\CMake\bin\cmake.exe" -D TEST_TARGET=TootLib_tests -D TEST_EXECUTABLE=C:/STU/devel/ReMoM/build/src/TootLib/tests/Debug/TootLib_tests.exe -D TEST_EXECUTOR= -D TEST_WORKING_DIR=C:/STU/devel/ReMoM/build/src/TootLib/tests -D TEST_EXTRA_ARGS= -D TEST_PROPERTIES= -D TEST_PREFIX= -D TEST_SUFFIX= -D TEST_FILTER= -D NO_PRETTY_TYPES=FALSE -D NO_PRETTY_VALUES=FALSE -D TEST_LIST=TootLib_tests_TESTS -D CTEST_FILE=C:/STU/devel/ReMoM/build/src/TootLib/tests/TootLib_tests[1]_tests.cmake -D TEST_DISCOVERY_TIMEOUT=5 -D TEST_XML_OUTPUT_DIR= -P "C:/Program Files/CMake/share/cmake-3.27/Modules/GoogleTestAddTests.cmake"
+  if %errorlevel% neq 0 goto :cmEnd
+  :cmEnd
+  endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+  :cmErrorLevel
+  exit /b %1
+  :cmDone
+  if %errorlevel% neq 0 goto :VCEnd
+  :VCEnd
+  -- _TEST_EXECUTOR: 
+  -- _TEST_EXECUTABLE: C:/STU/devel/ReMoM/build/src/TootLib/tests/Debug/TootLib_tests.exe
+  -- filter: 
+  -- _TEST_WORKING_DIR: C:/STU/devel/ReMoM/build/src/TootLib/tests
+  -- _TEST_DISCOVERY_TIMEOUT: 5
+  'C:/STU/devel/ReMoM/build/src/TootLib/tests/Debug/TootLib_tests.exe' '--gtest_list_tests'
+FinalizeBuildStatus:
+  Deleting file "TootLib_tests.dir\Debug\TootLib_tests.tlog\unsuccessfulbuild".
+  Touching "TootLib_tests.dir\Debug\TootLib_tests.tlog\TootLib_tests.lastbuildstate".
+Done Building Project "C:\STU\devel\ReMoM\build\src\TootLib\tests\TootLib_tests.vcxproj" (default targets).
+Project "C:\STU\devel\ReMoM\build\ALL_BUILD.vcxproj" (1) is building "C:\STU\devel\ReMoM\build\_deps\googletest-build\googlemock\gmock.vcxproj" (11) on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "gmock.dir\Debug\".
+  Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+  Creating directory "gmock.dir\Debug\gmock.tlog\".
+InitializeBuildStatus:
+  Creating "gmock.dir\Debug\gmock.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+  Touching "gmock.dir\Debug\gmock.tlog\unsuccessfulbuild".
+CustomBuild:
+  Building Custom Rule C:/STU/devel/ReMoM/build/_deps/googletest-src/googlemock/CMakeLists.txt
+VcpkgTripletSelection:
+  Using triplet "x64-windows" from "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\"
+  Using normalized configuration "Release"
+ClCompile:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\CL.exe /c /I"C:\STU\devel\ReMoM\build\_deps\googletest-src\googlemock\include" /I"C:\STU\devel\ReMoM\build\_deps\googletest-src\googlemock" /I"C:\STU\devel\ReMoM\build\_deps\googletest-src\googletest\include" /I"C:\STU\devel\ReMoM\build\_deps\googletest-src\googletest" /I"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\include" /Zi /nologo /W4 /WX /diagnostics:column /Od /Ob0 /D _UNICODE /D UNICODE /D WIN32 /D _WINDOWS /D _UNICODE /D UNICODE /D _WIN32 /D STRICT /D WIN32_LEAN_AND_MEAN /D GTEST_HAS_PTHREAD=0 /D _HAS_EXCEPTIONS=1 /D "CMAKE_INTDIR=\"Debug\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Fo"gmock.dir\Debug\\" /Fd"C:\STU\devel\ReMoM\build\lib\Debug\gmockpdb_debug_postfix-NOTFOUND.pdb" /external:W4 /Gd /TP /wd4251 /wd4275 /wd4702 /errorReport:queue  -J -utf-8 "C:\STU\devel\ReMoM\build\_deps\googletest-src\googletest\src\gtest-all.cc" "C:\STU\devel\ReMoM\build\_deps\googletest-src\googlemock\src\gmock-all.cc"
+  gtest-all.cc
+  gmock-all.cc
+  Generating Code...
+Lib:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\Lib.exe /OUT:"C:\STU\devel\ReMoM\build\lib\Debug\gmock.lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib\manual-link" /NOLOGO /MACHINE:X64  /machine:x64 "gmock.dir\Debug\gtest-all.obj"
+  "gmock.dir\Debug\gmock-all.obj"
+  Copying file from "C:\STU\devel\ReMoM\build\lib\Debug\gmockpdb_debug_postfix-NOTFOUND.pdb" to "C:\STU\devel\ReMoM\build\lib\Debug\gmock.pdb".
+  gmock.vcxproj -> C:\STU\devel\ReMoM\build\lib\Debug\gmock.lib
+FinalizeBuildStatus:
+  Deleting file "gmock.dir\Debug\gmock.tlog\unsuccessfulbuild".
+  Touching "gmock.dir\Debug\gmock.tlog\gmock.lastbuildstate".
+Done Building Project "C:\STU\devel\ReMoM\build\_deps\googletest-build\googlemock\gmock.vcxproj" (default targets).
+Project "C:\STU\devel\ReMoM\build\ALL_BUILD.vcxproj" (1) is building "C:\STU\devel\ReMoM\build\_deps\googletest-build\googlemock\gmock_main.vcxproj" (12) on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "gmock_main.dir\Debug\".
+  Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+  Creating directory "gmock_main.dir\Debug\gmock_main.tlog\".
+InitializeBuildStatus:
+  Creating "gmock_main.dir\Debug\gmock_main.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+  Touching "gmock_main.dir\Debug\gmock_main.tlog\unsuccessfulbuild".
+CustomBuild:
+  Building Custom Rule C:/STU/devel/ReMoM/build/_deps/googletest-src/googlemock/CMakeLists.txt
+VcpkgTripletSelection:
+  Using triplet "x64-windows" from "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\"
+  Using normalized configuration "Release"
+ClCompile:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\CL.exe /c /I"C:\STU\devel\ReMoM\build\_deps\googletest-src\googlemock\include" /I"C:\STU\devel\ReMoM\build\_deps\googletest-src\googlemock" /I"C:\STU\devel\ReMoM\build\_deps\googletest-src\googletest\include" /I"C:\STU\devel\ReMoM\build\_deps\googletest-src\googletest" /I"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\include" /Zi /nologo /W4 /WX /diagnostics:column /Od /Ob0 /D _UNICODE /D UNICODE /D WIN32 /D _WINDOWS /D _UNICODE /D UNICODE /D _WIN32 /D STRICT /D WIN32_LEAN_AND_MEAN /D GTEST_HAS_PTHREAD=0 /D _HAS_EXCEPTIONS=1 /D "CMAKE_INTDIR=\"Debug\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Fo"gmock_main.dir\Debug\\" /Fd"C:\STU\devel\ReMoM\build\lib\Debug\gmock_mainpdb_debug_postfix-NOTFOUND.pdb" /external:W4 /Gd /TP /wd4251 /wd4275 /wd4702 /errorReport:queue  -J -utf-8 "C:\STU\devel\ReMoM\build\_deps\googletest-src\googletest\src\gtest-all.cc" "C:\STU\devel\ReMoM\build\_deps\googletest-src\googlemock\src\gmock-all.cc" "C:\STU\devel\ReMoM\build\_deps\googletest-src\googlemock\src\gmock_main.cc"
+  gtest-all.cc
+  gmock-all.cc
+  gmock_main.cc
+  Generating Code...
+Lib:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\Lib.exe /OUT:"C:\STU\devel\ReMoM\build\lib\Debug\gmock_main.lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib\manual-link" /NOLOGO /MACHINE:X64  /machine:x64 "gmock_main.dir\Debug\gtest-all.obj"
+  "gmock_main.dir\Debug\gmock-all.obj"
+  gmock_main.dir\Debug\gmock_main.obj
+  Copying file from "C:\STU\devel\ReMoM\build\lib\Debug\gmock_mainpdb_debug_postfix-NOTFOUND.pdb" to "C:\STU\devel\ReMoM\build\lib\Debug\gmock_main.pdb".
+  gmock_main.vcxproj -> C:\STU\devel\ReMoM\build\lib\Debug\gmock_main.lib
+FinalizeBuildStatus:
+  Deleting file "gmock_main.dir\Debug\gmock_main.tlog\unsuccessfulbuild".
+  Touching "gmock_main.dir\Debug\gmock_main.tlog\gmock_main.lastbuildstate".
+Done Building Project "C:\STU\devel\ReMoM\build\_deps\googletest-build\googlemock\gmock_main.vcxproj" (default targets).
+Project "C:\STU\devel\ReMoM\build\ALL_BUILD.vcxproj" (1) is building "C:\STU\devel\ReMoM\build\tests\hello_test.vcxproj" (13) on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "hello_test.dir\Debug\".
+  Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+  Creating directory "C:\STU\devel\ReMoM\build\tests\Debug\".
+  Creating directory "hello_test.dir\Debug\hello_test.tlog\".
+InitializeBuildStatus:
+  Creating "hello_test.dir\Debug\hello_test.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+  Touching "hello_test.dir\Debug\hello_test.tlog\unsuccessfulbuild".
+CustomBuild:
+  Building Custom Rule C:/STU/devel/ReMoM/tests/CMakeLists.txt
+VcpkgTripletSelection:
+  Using triplet "x64-windows" from "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\"
+  Using normalized configuration "Release"
+ClCompile:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\CL.exe /c /I"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\include" /Zi /nologo /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Fo"hello_test.dir\Debug\\" /Fd"hello_test.dir\Debug\vc143.pdb" /external:W0 /Gd /TP /errorReport:queue  /external:I "C:/STU/devel/ReMoM/build/_deps/googletest-src/googletest/include" /external:I "C:/STU/devel/ReMoM/build/_deps/googletest-src/googletest" C:\STU\devel\ReMoM\tests\hello_test.cpp
+  hello_test.cpp
+Link:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\link.exe /ERRORREPORT:QUEUE /OUT:"C:\STU\devel\ReMoM\build\tests\Debug\hello_test.exe" /INCREMENTAL /ILK:"hello_test.dir\Debug\hello_test.ilk" /NOLOGO /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib\manual-link" ..\lib\Debug\gtest_main.lib ..\lib\Debug\gtest.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/STU/devel/ReMoM/build/tests/Debug/hello_test.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/STU/devel/ReMoM/build/tests/Debug/hello_test.lib" /MACHINE:X64  /machine:x64 hello_test.dir\Debug\hello_test.obj
+  hello_test.vcxproj -> C:\STU\devel\ReMoM\build\tests\Debug\hello_test.exe
+AppLocalFromInstalled:
+  pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\scripts\buildsystems\msbuild\applocal.ps1" "C:\STU\devel\ReMoM\build\tests\Debug\hello_test.exe" "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\bin" "hello_test.dir\Debug\hello_test.tlog\hello_test.write.1u.tlog" "hello_test.dir\Debug\vcpkg.applocal.log"
+PostBuildEvent:
+  setlocal
+  "C:\Program Files\CMake\bin\cmake.exe" -D TEST_TARGET=hello_test -D TEST_EXECUTABLE=C:/STU/devel/ReMoM/build/tests/Debug/hello_test.exe -D TEST_EXECUTOR= -D TEST_WORKING_DIR=C:/STU/devel/ReMoM/build/tests -D TEST_EXTRA_ARGS= -D TEST_PROPERTIES= -D TEST_PREFIX= -D TEST_SUFFIX= -D TEST_FILTER= -D NO_PRETTY_TYPES=FALSE -D NO_PRETTY_VALUES=FALSE -D TEST_LIST=hello_test_TESTS -D CTEST_FILE=C:/STU/devel/ReMoM/build/tests/hello_test[1]_tests.cmake -D TEST_DISCOVERY_TIMEOUT=5 -D TEST_XML_OUTPUT_DIR= -P "C:/Program Files/CMake/share/cmake-3.27/Modules/GoogleTestAddTests.cmake"
+  if %errorlevel% neq 0 goto :cmEnd
+  :cmEnd
+  endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+  :cmErrorLevel
+  exit /b %1
+  :cmDone
+  if %errorlevel% neq 0 goto :VCEnd
+  :VCEnd
+  -- _TEST_EXECUTOR: 
+  -- _TEST_EXECUTABLE: C:/STU/devel/ReMoM/build/tests/Debug/hello_test.exe
+  -- filter: 
+  -- _TEST_WORKING_DIR: C:/STU/devel/ReMoM/build/tests
+  -- _TEST_DISCOVERY_TIMEOUT: 5
+  'C:/STU/devel/ReMoM/build/tests/Debug/hello_test.exe' '--gtest_list_tests'
+FinalizeBuildStatus:
+  Deleting file "hello_test.dir\Debug\hello_test.tlog\unsuccessfulbuild".
+  Touching "hello_test.dir\Debug\hello_test.tlog\hello_test.lastbuildstate".
+Done Building Project "C:\STU\devel\ReMoM\build\tests\hello_test.vcxproj" (default targets).
+Project "C:\STU\devel\ReMoM\build\ALL_BUILD.vcxproj" (1) is building "C:\STU\devel\ReMoM\build\src\sdl2_ReMoM.vcxproj" (14) on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "sdl2_ReMoM.dir\Debug\".
+  Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+  Creating directory "sdl2_ReMoM.dir\Debug\sdl2_ReMoM.tlog\".
+InitializeBuildStatus:
+  Creating "sdl2_ReMoM.dir\Debug\sdl2_ReMoM.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+  Touching "sdl2_ReMoM.dir\Debug\sdl2_ReMoM.tlog\unsuccessfulbuild".
+CustomBuild:
+  Building Custom Rule C:/STU/devel/ReMoM/src/CMakeLists.txt
+VcpkgTripletSelection:
+  Using triplet "x64-windows" from "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\"
+  Using normalized configuration "Release"
+ClCompile:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\CL.exe /c /IC:\STU\devel\ReMoM /IC:\STU\devel\ReMoM\src /IC:\STU\devel\ReMoM\src\MOX /IC:\STU\devel\ReMoM\src\STU /I"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\include" /Zi /nologo /W0 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _CRT_SECURE_NO_WARNINGS=TRUE /D STU_DEBUG=TRUE /D STU_TRACE=TRUE /D _STU_SDL2=TRUE /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"sdl2_ReMoM.dir\Debug\\" /Fd"sdl2_ReMoM.dir\Debug\vc143.pdb" /external:W0 /Gd /TC /wd4068 /wd4365 /wd4820 /errorReport:queue  /external:I "C:/devellib/SDL2-2.32.2/include" /external:I "C:/devellib/SDL2_mixer-2.8.1/include" C:\STU\devel\ReMoM\src\ReMoM.c
+  ReMoM.c
+Link:
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\link.exe /ERRORREPORT:QUEUE /OUT:"C:\STU\devel\ReMoM\build\src\Debug\sdl2_ReMoM.exe" /INCREMENTAL /ILK:"sdl2_ReMoM.dir\Debug\sdl2_ReMoM.ilk" /NOLOGO /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib" /LIBPATH:"C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib\manual-link" Debug\momlib.lib MOX\Debug\MOX.lib STU\Debug\STU.lib "C:\devellib\SDL2_mixer-2.8.1\lib\x64\SDL2_mixer.lib" "C:\devellib\SDL2-2.32.2\lib\x64\SDL2main.lib" "C:\devellib\SDL2-2.32.2\lib\x64\SDL2.lib" kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\lib\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/STU/devel/ReMoM/build/src/Debug/sdl2_ReMoM.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/STU/devel/ReMoM/build/src/Debug/sdl2_ReMoM.lib" /MACHINE:X64  /machine:x64 sdl2_ReMoM.dir\Debug\ReMoM.obj
+  sdl2_ReMoM.vcxproj -> C:\STU\devel\ReMoM\build\src\Debug\sdl2_ReMoM.exe
+AppLocalFromInstalled:
+  pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\scripts\buildsystems\msbuild\applocal.ps1" "C:\STU\devel\ReMoM\build\src\Debug\sdl2_ReMoM.exe" "C:\Python311\Lib\site-packages\vcpkgpip\vcpkg\installed\x64-windows\bin" "sdl2_ReMoM.dir\Debug\sdl2_ReMoM.tlog\sdl2_ReMoM.write.1u.tlog" "sdl2_ReMoM.dir\Debug\vcpkg.applocal.log"
+  C:\STU\devel\ReMoM\build\src\Debug\SDL2.dll
+FinalizeBuildStatus:
+  Deleting file "sdl2_ReMoM.dir\Debug\sdl2_ReMoM.tlog\unsuccessfulbuild".
+  Touching "sdl2_ReMoM.dir\Debug\sdl2_ReMoM.tlog\sdl2_ReMoM.lastbuildstate".
+Done Building Project "C:\STU\devel\ReMoM\build\src\sdl2_ReMoM.vcxproj" (default targets).
+PrepareForBuild:
+  Creating directory "x64\Debug\ALL_BUILD\".
+  Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+  Creating directory "x64\Debug\ALL_BUILD\ALL_BUILD.tlog\".
+InitializeBuildStatus:
+  Creating "x64\Debug\ALL_BUILD\ALL_BUILD.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+  Touching "x64\Debug\ALL_BUILD\ALL_BUILD.tlog\unsuccessfulbuild".
+CustomBuild:
+  Building Custom Rule C:/STU/devel/ReMoM/CMakeLists.txt
+FinalizeBuildStatus:
+  Deleting file "x64\Debug\ALL_BUILD\ALL_BUILD.tlog\unsuccessfulbuild".
+  Touching "x64\Debug\ALL_BUILD\ALL_BUILD.tlog\ALL_BUILD.lastbuildstate".
+Done Building Project "C:\STU\devel\ReMoM\build\ALL_BUILD.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:42.97
+

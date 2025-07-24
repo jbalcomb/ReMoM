@@ -107,7 +107,7 @@ find_package(SDL2_mixer REQUIRED)
 
 
 
-add_library(momlib STATIC ${MOMLIB_SOURCES})
+add_library(momlib STATIC ${MOMLIB_SOURCES} ${SDL2_SOURCES})
 
 # set_target_properties(momlib PROPERTIES LINKER_LANGUAGE C)
 set_target_properties(momlib PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -143,7 +143,7 @@ target_compile_definitions(momlib PRIVATE
 
 
 
-add_executable(sdl2_ReMoM ReMoM.c ${SDL2_SOURCES})
+add_executable(sdl2_ReMoM ReMoM.c)
 
 # set_target_properties(sdl2_ReMoM PROPERTIES LINKER_LANGUAGE C)
 set_target_properties(sdl2_ReMoM PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -153,6 +153,7 @@ target_link_libraries(sdl2_ReMoM PUBLIC
     MOX
     STU
     SDL2::Main
+    SDL2::Mixer
 )
 
 target_include_directories(sdl2_ReMoM PUBLIC
@@ -269,3 +270,5 @@ endif()
 add_subdirectory(MOX)
 
 add_subdirectory(STU)
+
+add_subdirectory(TootLib)
