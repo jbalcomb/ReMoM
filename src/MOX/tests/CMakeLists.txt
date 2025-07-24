@@ -63,22 +63,35 @@ get_target_property(imported_location SDL2::Core IMPORTED_LOCATION)
 get_filename_component(imported_location_dir ${imported_location} DIRECTORY)
 message(STATUS "imported_location_dir: ${imported_location_dir}")
 # file(COPY "${imported_location_dir}/SDL2.dll" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
-add_custom_command(
-    TARGET MOX_tests POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy 
-        ${imported_location_dir}/SDL2.dll
-        $<TARGET_FILE_DIR:MOX_tests>
-)
+if(WIN32)
+    add_custom_command(
+        TARGET MOX_tests POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy 
+            ${imported_location_dir}/SDL2.dll
+            $<TARGET_FILE_DIR:MOX_tests>
+    )
+endif()
 get_target_property(imported_location SDL2::Mixer IMPORTED_LOCATION)
 get_filename_component(imported_location_dir ${imported_location} DIRECTORY)
 message(STATUS "imported_location_dir: ${imported_location_dir}")
 # file(COPY "${imported_location_dir}/SDL2_mixer.dll" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
-add_custom_command(
-    TARGET MOX_tests POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy 
-        ${imported_location_dir}/SDL2_mixer.dll
-        $<TARGET_FILE_DIR:MOX_tests>
-)
+if(WIN32)
+    add_custom_command(
+        TARGET MOX_tests POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy 
+            ${imported_location_dir}/SDL2_mixer.dll
+            $<TARGET_FILE_DIR:MOX_tests>
+    )
+endif()
+# if(WIN32)
+#     add_custom_command(
+#         TARGET MOX_tests POST_BUILD
+#         COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#         $<TARGET_RUNTIME_DLLS:MOX_tests>
+#         $<TARGET_FILE_DIR:MOX_tests>
+#         COMMAND_EXPAND_LISTS
+#     )
+# endif()
 
 # add_compile_options("$<$<CONFIG:Release,MinSizeRel>:-fmacro-prefix-map=${CMAKE_SOURCE_DIR}=;-fomit-frame-pointer>" "$<$<CONFIG:Debug>:-Og;-fnoinline>")
 

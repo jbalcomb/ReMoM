@@ -53,7 +53,8 @@ enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/sdl2)
 
-# set(BUILD_SHARED_LIBS OFF)
+set(BUILD_SHARED_LIBS OFF)
+# set(BUILD_SHARED_LIBS ON)
 
 include(FetchContent)
 FetchContent_Declare(googletest GIT_REPOSITORY https://github.com/google/googletest.git GIT_TAG v1.14.0)
@@ -63,11 +64,18 @@ FetchContent_MakeAvailable(googletest)
 message(STATUS "GTEST_INCLUDE_DIR='${GTEST_INCLUDE_DIR}'")
 message(STATUS "GTEST_INCLUDE_DIRS='${GTEST_INCLUDE_DIRS}'")
 
+find_package(SDL2 REQUIRED)
+find_package(SDL2_mixer REQUIRED)
+
 add_subdirectory(src)
 
 add_subdirectory(tests)
 
 install(TARGETS sdl2_ReMoM)
+# install(FILES $<TARGET_FILE:SDL2::SDL2> DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES $<TARGET_FILE:SDL2::Core> DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES $<TARGET_FILE:SDL2::Mixer> DESTINATION ${CMAKE_INSTALL_BINDIR})
+message(STATUS "CMAKE_INSTALL_BINDIR='${CMAKE_INSTALL_BINDIR}'")
 
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_NAME "MoM v1.31 Reassembly")

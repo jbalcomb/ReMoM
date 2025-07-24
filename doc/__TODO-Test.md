@@ -24,6 +24,67 @@ KCC
  CommentedApr 2, 2023 at 6:34
 
 
+Code Coverage
+https://www.labri.fr/perso/fleury/posts/programming/using-cmake-googletests-and-gcovr-in-a-c-project.html
+
+install SDL2 for CPack
+https://martin-fieber.de/blog/cmake-cpack-cross-platform-distributables/#setup-cpack
+# src/platform/windows/CMakeLists.txt
+# Copy .dll files on Windows to the target MyApp build folder.
+# For development:
+add_custom_command(TARGET MyApp POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+  $<TARGET_FILE:SDL2::SDL2>
+  $<TARGET_FILE_DIR:MyApp>)
+# For distribution:
+install(FILES $<TARGET_FILE:SDL2::SDL2>
+  DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+Error copying file "C:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/gtest_main.dll;C:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/gtest.dll
+CMake Error copying file gtest.dll
+
+
+https://stackoverflow.com/questions/69978314/cmake-with-gtest-on-windows-build-starts-test-but-shared-libs-cannot-be-found
+Now, the real meat that makes testing work for the various shared libraries is this:
+if (WIN32)
+    add_custom_command(
+        TARGET unittest POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:unittest> $<TARGET_FILE_DIR:unittest>
+        COMMAND_EXPAND_LISTS
+    )
+endif ()
+This uses a new feature in CMake 3.21: the $<TARGET_RUNTIME_DLLS:> generator expression. On DLL platforms, it expands to the transitive list of DLLs on which the given target depends. In this case, it will be Google Test's two libraries (gtest.dll, gtest_main.dll), TinyXml2's library (tinyxml2.dll), and the internal myLib.dll.
+This is passed to cmake -E copy_if_different to place these DLLs next to the unittest binary. The destination directory is given by $<TARGET_FILE_DIR:unittest>.
+The custom command is guarded by if (WIN32) because $<TARGET_RUNTIME_DLLS:unittest> will be empty otherwise. In that case, the cmake -E copy_if_different command won't get enough arguments and will fail at build time.
+Finally COMMAND_EXPAND_LISTS makes sure that the semicolon-delimited list returned by $<TARGET_RUNTIME_DLLS:unittest> is split into multiple arguments, rather than being passed as a single argument with escaped semicolons.
+https://github.com/alexreinking/so69978314/blob/main/CMakeLists.txt
+
+
+https://alexreinking.com/blog/building-a-dual-shared-and-static-library-with-cmake.html
+https://github.com/alexreinking/SharedStaticStarter/
+
+
+
+https://discourse.cmake.org/t/librarys-cmake-generates-dll-applications-cmake-wants-lib/408
+
+# install(
+#     TARGETS MyLib
+#     LIBRARY DESTINATION ${destination}/lib
+#     RUNTIME DESTINATION ${destination}/lib
+#     COMPONENT Libraries)
+# install(
+#     FILES mylib.h
+#     DESTINATION ${destination}/include
+#     COMPONENT Headers)
+Probably an even better solution would be for MyLib to produce the appropriate config files. In any case: in typical scenario on windows you need *.lib for linking and *.dll for running.
+.lib files are installed as ARCHIVE targets, not as LIBRARY targets. So adding an ARCHIVE DESTINATION ${destination}/lib argument to your install() command should help.
+https://crascit.com/2019/10/16/cppcon-2019-deep-cmake-for-library-authors/
+
+¿ DLL ?
+https://batuhankoc.medium.com/use-cmake-to-create-and-use-dynamic-libraries-5f6498417b3c
+
+
+
 
 
 MainScr_Maps.c

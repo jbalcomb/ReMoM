@@ -102,26 +102,26 @@ set(MOMLIB_SOURCES
 
 
 
-find_package(SDL2 REQUIRED)
-# get_target_property(imported_location SDL2::Core IMPORTED_LOCATION)
-# message(STATUS "IMPORTED_LOCATION: ${imported_location}")
-# get_target_property(imported_location SDL2::Main IMPORTED_LOCATION)
-# message(STATUS "IMPORTED_LOCATION: ${imported_location}")
-# get_target_property(interface_include_directories SDL2::Main INTERFACE_INCLUDE_DIRECTORIES)
-# message(STATUS "INTERFACE_INCLUDE_DIRECTORIES: ${interface_include_directories}")
-# get_target_property(interface_include_directories SDL2::Main INTERFACE_INCLUDE_DIRECTORIES)
-# message(STATUS "INTERFACE_INCLUDE_DIRECTORIES: ${interface_include_directories}")
-find_package(SDL2_mixer REQUIRED)
-# get_target_property(imported_location SDL2::Mixer IMPORTED_LOCATION)
-# message(STATUS "IMPORTED_LOCATION: ${imported_location}")
-# get_target_property(interface_include_directories SDL2::Mixer INTERFACE_INCLUDE_DIRECTORIES)
-# message(STATUS "INTERFACE_INCLUDE_DIRECTORIES: ${interface_include_directories}")
-# >>> [cmake] -- IMPORTED_LOCATION: C:/devellib/SDL2-2.32.2/lib/x64/SDL2.lib
-# >>> [cmake] -- IMPORTED_LOCATION: imported_location-NOTFOUND
-# >>> [cmake] -- INTERFACE_INCLUDE_DIRECTORIES: interface_include_directories-NOTFOUND
-# >>> [cmake] -- INTERFACE_INCLUDE_DIRECTORIES: interface_include_directories-NOTFOUND
-# >>> [cmake] -- IMPORTED_LOCATION: C:/devellib/SDL2_mixer-2.8.1/lib/x64/SDL2_mixer.lib
-# >>> [cmake] -- INTERFACE_INCLUDE_DIRECTORIES: C:/devellib/SDL2_mixer-2.8.1/include
+# find_package(SDL2 REQUIRED)
+# # get_target_property(imported_location SDL2::Core IMPORTED_LOCATION)
+# # message(STATUS "IMPORTED_LOCATION: ${imported_location}")
+# # get_target_property(imported_location SDL2::Main IMPORTED_LOCATION)
+# # message(STATUS "IMPORTED_LOCATION: ${imported_location}")
+# # get_target_property(interface_include_directories SDL2::Main INTERFACE_INCLUDE_DIRECTORIES)
+# # message(STATUS "INTERFACE_INCLUDE_DIRECTORIES: ${interface_include_directories}")
+# # get_target_property(interface_include_directories SDL2::Main INTERFACE_INCLUDE_DIRECTORIES)
+# # message(STATUS "INTERFACE_INCLUDE_DIRECTORIES: ${interface_include_directories}")
+# find_package(SDL2_mixer REQUIRED)
+# # get_target_property(imported_location SDL2::Mixer IMPORTED_LOCATION)
+# # message(STATUS "IMPORTED_LOCATION: ${imported_location}")
+# # get_target_property(interface_include_directories SDL2::Mixer INTERFACE_INCLUDE_DIRECTORIES)
+# # message(STATUS "INTERFACE_INCLUDE_DIRECTORIES: ${interface_include_directories}")
+# # >>> [cmake] -- IMPORTED_LOCATION: C:/devellib/SDL2-2.32.2/lib/x64/SDL2.lib
+# # >>> [cmake] -- IMPORTED_LOCATION: imported_location-NOTFOUND
+# # >>> [cmake] -- INTERFACE_INCLUDE_DIRECTORIES: interface_include_directories-NOTFOUND
+# # >>> [cmake] -- INTERFACE_INCLUDE_DIRECTORIES: interface_include_directories-NOTFOUND
+# # >>> [cmake] -- IMPORTED_LOCATION: C:/devellib/SDL2_mixer-2.8.1/lib/x64/SDL2_mixer.lib
+# # >>> [cmake] -- INTERFACE_INCLUDE_DIRECTORIES: C:/devellib/SDL2_mixer-2.8.1/include
 
 add_library(momlib STATIC ${MOMLIB_SOURCES} ${SDL2_SOURCES})
 
