@@ -4566,153 +4566,127 @@ void MainScr_Create_Reduced_Map_Picture(void)
 // WZD o064p04
 void Main_Screen_Draw_Summary_Window(void)
 {
-    int16_t gold = 0;
-    int16_t food = 0;
+    int16_t uu_array[6] = { 0, 0, 0, 0, 0, 0 };
+    uint8_t colors[4] = { 0, 0, 0, 0 };
     int16_t mana = 0;
-    uint8_t colors[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t active_event_id = 0;
+    int16_t food = 0;
+    int16_t gold = 0;
+    int16_t active_event_id = 0;  // _SI_
+    int16_t itr = 0;  // _DI_
     uint8_t color_index = 0;
 
     gold = 0;  // DNE in Dasm
     food = 0;  // DNE in Dasm
     mana = 0;  // DNE in Dasm
 
+    _help_entries[15].help_idx = ST_UNDEFINED;
+    _help_entries[16].help_idx = ST_UNDEFINED;
+    _help_entries[24].help_idx = ST_UNDEFINED;
 
+    if(_unit_stack_count >= 1)
+    {
+        return;
+    }
 
-// mov     [_help_entries.Entry_Index+96h], -1
-// mov     [_help_entries.Entry_Index+0A0h], -1
-// mov     [_help_entries.Entry_Index+0F0h], -1
+    _help_entries[7].help_idx = ST_UNDEFINED;
+    _help_entries[8].help_idx = ST_UNDEFINED;
+    _help_entries[9].help_idx = ST_UNDEFINED;
+    _help_entries[10].help_idx = ST_UNDEFINED;
 
-// TODO      // if(g_ActiveStack_UnitCount > 0)
-// TODO      if(_unit_stack_count > 0)
-// TODO      {
-// TODO          goto Done;
-// TODO      }
-
-// mov     [_help_entries.Entry_Index+46h], -1
-// mov     [_help_entries.Entry_Index+50h], -1
-// mov     [_help_entries.Entry_Index+5Ah], -1
-// mov     [_help_entries.Entry_Index+64h], -1
-// mov     [_help_entries.Entry_Index+96h], HLP_GOLD_INCOME
-// mov     [_help_entries.Entry_Index+0A0h], HLP_FOOD_RESERVE
-// mov     [_help_entries.Entry_Index+0F0h], HLP_MANA_INCOME
-
+    _help_entries[15].help_idx = HLP_GOLD_INCOME;
+    _help_entries[16].help_idx = HLP_FOOD_RESERVE;
+    _help_entries[24].help_idx = HLP_MANA_INCOME;
+    
     FLIC_Draw(240, 76, deselect_background);
 
-
-
     Player_Resource_Income_Total(_human_player_idx, &gold, &food, &mana);
-
 
     colors[0] = 198;
     colors[1] = 198;
     colors[2] = 198;
+
     Set_Font_Colors_15(0, colors);
-    // ¿ this only impacts gold < 0 and cycle_incomes != ST_UNDEFINED ?
 
     Set_Outline_Color(ST_BLACK);
 
-
-
-    if(gold >= 0)
+    if(gold < 0)
+    {
+        if(cycle_incomes > ST_UNDEFINED)
+        {
+            Set_Font_Style_Outline(0, 15, 0, 0);
+        }
+        else
+        {
+            Set_Font_Style_Outline(0, 2, 0, 0);
+        }
+        Set_Alias_Color(ST_TRANSPARENT);
+    }
+    else
     {
         Set_Font_Style_Outline(0, 4, 0, 0);
         Set_Alias_Color(184);  // 184d  B8h  ~"dark gold"
     }
-    else
+    Print_Integer_Right(273, 101, gold);
+    Print(278, 101, cstr_Gold);
+
+    if(food < 0)
     {
-        if(cycle_incomes == ST_UNDEFINED)
-        {
-            Set_Font_Style_Outline(0, 2, 0, 0);
-        }
-        else
+        if(cycle_incomes > ST_UNDEFINED)
         {
             Set_Font_Style_Outline(0, 15, 0, 0);
         }
+        else
+        {
+            Set_Font_Style_Outline(0, 2, 0, 0);
+        }
+        Set_Alias_Color(ST_TRANSPARENT);
     }
-
-    Print_Integer_Right(273, 101, gold);
-
-    Print(278, 101, cstr_Gold);
-
-
-    if(food >= 0)
+    else
     {
         Set_Font_Style_Outline(0, 4, 0, 0);
         Set_Alias_Color(184);
-    }
-    else
-    {
-        if(cycle_incomes == ST_UNDEFINED)
-        {
-            Set_Font_Style_Outline(0, 2, 0, 0);
-        }
-        else
-        {
-            Set_Font_Style_Outline(0, 15, 0, 0);
-        }
     }
     Print_Integer_Right(273, 133, food);
     Print(278, 133, cstr_Food);
 
 
-    if(mana >= 0)
+    if(mana < 0)
+    {
+        if(cycle_incomes > ST_UNDEFINED)
+        {
+            Set_Font_Style_Outline(0, 15, 0, 0);
+        }
+        else
+        {
+            Set_Font_Style_Outline(0, 2, 0, 0);
+        }
+        Set_Alias_Color(ST_TRANSPARENT);
+    }
+    else
     {
         Set_Font_Style_Outline(0, 4, 0, 0);
         Set_Alias_Color(184);
     }
-    else
-    {
-        if(cycle_incomes == ST_UNDEFINED)
-        {
-            Set_Font_Style_Outline(0, 2, 0, 0);
-        }
-        else
-        {
-            Set_Font_Style_Outline(0, 15, 0, 0);
-        }
-    }
     Print_Integer_Right(273, 165, mana);
     Print(278, 165, cstr_Mana);
 
-
-
     Set_Font_Spacing_Width(1);
 
-    // ?
     active_event_id = 0;
 
-    // ?
-    // for(itr = 0; itr < 6; itr++) { /* int16_t array[6] */ array[itr] = ST}_UNDEFINED; }
+    for(itr = 0; itr < 6; itr++)
+    {
+        uu_array[itr] = ST_UNDEFINED;
+    }
+
+    _help_entries[18].help_idx = ST_UNDEFINED;
+    _help_entries[19].help_idx = ST_UNDEFINED;
+    _help_entries[20].help_idx = ST_UNDEFINED;
+    _help_entries[21].help_idx = ST_UNDEFINED;
+    _help_entries[22].help_idx = ST_UNDEFINED;
+    _help_entries[23].help_idx = ST_UNDEFINED;
 
     active_event_id = ST_UNDEFINED;
-
-// mov     [_help_entries.Entry_Index+0B4h], 0FFFFh
-// mov     [_help_entries.Entry_Index+0BEh], 0FFFFh
-// mov     [_help_entries.Entry_Index+0C8h], 0FFFFh
-// mov     [_help_entries.Entry_Index+0D2h], 0FFFFh
-// mov     [_help_entries.Entry_Index+0DCh], 0FFFFh
-// mov     [_help_entries.Entry_Index+0E6h], 0FFFFh
-
-
-
-    // TBL_Events
-    // s_EVENT_DATA.Conjunction_Sorcery.Status], 2
-    // s_EVENT_DATA.Conjunction_Chaos.Status], 2
-    // s_EVENT_DATA.Conjunction_Nature.Status], 2
-    // s_EVENT_DATA.Bad_Moon.Status], 2
-    // s_EVENT_DATA.Good_Moon.Status], 2
-    // s_EVENT_DATA.Mana_Short.Status], 2
-
-    // TODO  Access Violation  if(_events_table[92] == 2)
-    // TODO  Access Violation  if(_events_table[84] == 2)
-    // TODO  Access Violation  if(_events_table[88] == 2)
-    // TODO  Access Violation  if(_events_table[80] == 2)
-    // TODO  Access Violation  if(_events_table[76] == 2)
-    // TODO  Access Violation  if(_events_table[96] == 2)
-
-
-
 
     /*
         BEGIN: Conjunction - Sorcery, Chaos, Nature
@@ -4786,47 +4760,20 @@ void Main_Screen_Draw_Summary_Window(void)
         active_event_id = 5;
     }
 
-    // ? if(_SI > -1 ) ?
-    if(active_event_id == ST_UNDEFINED)
+    if(active_event_id > ST_UNDEFINED)
     {
-// mov     ax, si
-// mov     dx, 10
-// imul    dx
-// mov     dx, si
-// add     dx, HLP_BLUE_CONJUNCTION
-// mov     bx, ax
-// mov     [(_help_entries.Entry_Index+0B4h)+bx], dx
-// mov     ax, si
-// mov     dx, 10
-// imul    dx
-// mov     bx, ax
-// mov     [(_help_entries.Left+0B4h)+bx], 260
-// mov     ax, si
-// mov     dx, 10
-// imul    dx
-// mov     bx, ax
-// mov     [(_help_entries.Top+0B4h)+bx], 157
-// mov     ax, si
-// mov     dx, 10
-// imul    dx
-// mov     bx, ax
-// mov     [(_help_entries.Right+0B4h)+bx], 300
-// mov     ax, si
-// mov     dx, 10
-// imul    dx
-// mov     bx, ax
-// mov     [(_help_entries.Bottom+0B4h)+bx], 163
+        _help_entries[(18 + active_event_id)].help_idx = (HLP_BLUE_CONJUNCTION + active_event_id);
+        _help_entries[(18 + active_event_id)].x1 = 260;
+        _help_entries[(18 + active_event_id)].y1 = 157;
+        _help_entries[(18 + active_event_id)].x2 = 300;
+        _help_entries[(18 + active_event_id)].y2 = 163;
     }
 
-
     // cycles reds for negative values
-    if(cycle_incomes != ST_UNDEFINED)
+    if(cycle_incomes > ST_UNDEFINED)
     {
         Cycle_Palette_Color__STUB(198, 40, 0, 0, 63, 0, 0, 3);
     }
-
-
-// ? Error if alone or unsued/unreferenced ? Done:
 
 }
 
