@@ -3,8 +3,8 @@
 AI_CMB_PlayTurn__WIP()
     |-> AI_MoveBattleUnits__WIP()
         |-> AI_BU_ProcessAction__WIP()
-            |-> G_AI_BU_MoveOrRampage__WIP()
-                |-> Auto_Move_Ship()
+            |-> Do_Auto_Ship_Turn()
+                |-> Auto_Move_Unit()
                     |-> Combat_Move_Path_Find()
 
 ¿¿¿
@@ -17,10 +17,15 @@ AI_CMB_PlayTurn__WIP()
 
 
 
+AI_MoveBattleUnits__WIP()
+    AI_GetCombatRallyPt__WIP(Melee_Unit_List[(Melee_Unit_Count - 1)], &Rally_X, &Rally_Y);
+    AI_BU_AssignAction__WIP(battle_unit_idx, bua_Ready);
+    AI_BU_ProcessAction__WIP(battle_unit_idx, Rally_X, Rally_Y);
 
 
 
-Auto_Move_Ship()
+
+Auto_Move_Unit()
     Set_Movement_Cost_Map(battle_unit_idx);
     ...
     ...updates CMB_ActiveMoveMap[] with INF's
@@ -56,7 +61,7 @@ Battle_Unit_Move__WIP()
 
 
 
-## Auto_Move_Ship()
+## Auto_Move_Unit()
 
 Origin_X, Origin_Y
 Last_Target_X, Last_Target_Y
@@ -90,9 +95,9 @@ sets Rally_X,Rally_Y for the sake of AI_MoveBattleUnits__WIP(), which gets them 
 ...but, can also just pass 0,0 or Rally_X,Rally_Y could have been set to 0,0
 What does AI_BU_ProcessAction__WIP() do with them?
 ...if Rally_X,Rally_Y == 0, uses target cgx,cgy
-...passes them to G_AI_BU_MoveOrRampage__WIP()
-What does G_AI_BU_MoveOrRampage__WIP() do with them?
-...nothing, just passes them through to Auto_Move_Ship()
+...passes them to Do_Auto_Ship_Turn()
+What does Do_Auto_Ship_Turn() do with them?
+...nothing, just passes them through to Auto_Move_Unit()
 
 
 
@@ -126,7 +131,7 @@ update battle unit cgx,cgy
 
 `battle_units[battle_unit_idx].cgx =`
 
-    Auto_Move_Ship()
+    Auto_Move_Unit()
         battle_units[battle_unit_idx].cgx = CMB_Path_Xs[itr_grid];
         battle_units[battle_unit_idx].cgy = CMB_Path_Ys[itr_grid];
 

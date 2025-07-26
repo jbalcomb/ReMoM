@@ -285,10 +285,7 @@ int16_t Player_Armies_Gold_Upkeep(int16_t player_idx)
 
     gold_upkeep_cost -= fame_points;
 
-    if(gold_upkeep_cost < 0)
-    {
-        gold_upkeep_cost = 0;
-    }
+    SETMIN(gold_upkeep_cost, 0);
 
     return gold_upkeep_cost;
 }
@@ -393,6 +390,8 @@ void Players_Normal_Units(int16_t normal_units[])
     sets inouts to (income - expense)
 
     these are the values that get displayed in the 'Summary Window' on the 'Main Screen'
+
+    SEEALSO:  MoM-Calculations.md, MoM-Calculations-Resources.md
 */
 void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int16_t * food_total, int16_t * mana_total)
 {
@@ -406,6 +405,7 @@ void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int1
     int16_t itr_heroes = 0;
     int16_t difficulty_modifier = 0;  // DNE in Dasm
 
+    // just to get mana_income
     Player_Magic_Power_Income_Total(&mana_income, &food_income, &gold_income, player_idx);
 
     gold_expense = 0;
@@ -414,81 +414,72 @@ void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int1
     food_income = 0;  // clear the bogus value we just got from Player_Magic_Power_Income_Total()
     mana_expense = 0;
 
-
     if((g_timestop_player_num - 1) == player_idx)
     {
-
         *food_total = 0;
-
         *gold_total = 0;
-
         *mana_total = -200;
-
+        return;
     }
-    else
+
+    mana_expense = Player_Armies_And_Enchantments_Mana_Upkeep(player_idx);
+
+    gold_expense = Player_Armies_Gold_Upkeep(player_idx);
+
+    food_expense = Player_Armies_Food_Upkeep(player_idx);
+
+    if(player_idx != HUMAN_PLAYER_IDX)
     {
 
-        mana_expense = Player_Armies_And_Enchantments_Mana_Upkeep(player_idx);
-
-        gold_expense = Player_Armies_Gold_Upkeep(player_idx);
-
-        food_expense = Player_Armies_Food_Upkeep(player_idx);
-
-        if(player_idx != HUMAN_PLAYER_IDX)
-        {
-
-            // mana_expense = ((difficulty_modifiers_table[_difficulty].maintenance * mana_expense) / 100);
-            // gold_expense = ((difficulty_modifiers_table[_difficulty].maintenance * gold_expense) / 100);
-            // food_expense = ((difficulty_modifiers_table[_difficulty].maintenance * food_expense) / 100);
-            difficulty_modifier = difficulty_modifiers_table[_difficulty].maintenance;
-            mana_expense = ((difficulty_modifier * mana_expense) / 100);
-            gold_expense = ((difficulty_modifier * gold_expense) / 100);
-            food_expense = ((difficulty_modifier * food_expense) / 100);
-
-        }
-
-
-        for(itr_cities = 0; itr_cities < _cities; itr_cities++)
-        {
-
-            if(_CITIES[itr_cities].owner_idx == player_idx)
-            {
-
-                gold_income += (_CITIES[itr_cities].gold_units - _CITIES[itr_cities].building_maintenance);
-
-                food_income += (_CITIES[itr_cities].food_units - _CITIES[itr_cities].population);
-
-            }
-
-        }
-
-        for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
-        {
-
-            if(_players[player_idx].Heroes[itr_heroes].unit_idx > -1)
-            {
-
-                if((_HEROES2[player_idx]->heroes[_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].type].abilities & HSA_NOBLE) != 0)
-                {
-
-                    gold_income += 10;
-
-                }
-
-            }
-
-        }
-
-        *food_total = (food_income - food_expense);
-
-        // mov bx, [bp+food]; mov ax, [bx]; cwd; sub ax, dx; sar ax, 1; add [bp+gold_income], ax
-        gold_income += (*food_total > 0) ? (*food_total / 2) : 0;
-
-        *gold_total = (gold_income - gold_expense);
-
-        *mana_total = (mana_income - mana_expense);
+        // mana_expense = ((difficulty_modifiers_table[_difficulty].maintenance * mana_expense) / 100);
+        // gold_expense = ((difficulty_modifiers_table[_difficulty].maintenance * gold_expense) / 100);
+        // food_expense = ((difficulty_modifiers_table[_difficulty].maintenance * food_expense) / 100);
+        difficulty_modifier = difficulty_modifiers_table[_difficulty].maintenance;
+        mana_expense = ((difficulty_modifier * mana_expense) / 100);
+        gold_expense = ((difficulty_modifier * gold_expense) / 100);
+        food_expense = ((difficulty_modifier * food_expense) / 100);
 
     }
+
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+
+        if(_CITIES[itr_cities].owner_idx == player_idx)
+        {
+
+            gold_income += (_CITIES[itr_cities].gold_units - _CITIES[itr_cities].building_maintenance);
+
+            food_income += (_CITIES[itr_cities].food_units - _CITIES[itr_cities].population);
+
+        }
+
+    }
+
+    for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
+    {
+
+        if(_players[player_idx].Heroes[itr_heroes].unit_idx > -1)
+        {
+
+            if((_HEROES2[player_idx]->heroes[_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].type].abilities & HSA_NOBLE) != 0)
+            {
+
+                gold_income += 10;
+
+            }
+
+        }
+
+    }
+
+    *food_total = (food_income - food_expense);
+
+    gold_income += (*food_total > 0) ? (*food_total / 2) : 0;
+
+    *gold_total = (gold_income - gold_expense);
+
+    *mana_total = (mana_income - mana_expense);
 
 }
 
@@ -770,7 +761,7 @@ void Kill_Unit(int16_t unit_idx, int16_t kill_type)
     else  /* ((kill_type != 1) && (_UNITS[unit_idx].type != ut_Chosen)) */
     {
 
-        _UNITS[unit_idx].Finished = ST_TRUE;
+        UNITS_FINISHED(unit_idx,ST_TRUE );
 
         if(_UNITS[unit_idx].Hero_Slot > -1)
         {
@@ -808,9 +799,9 @@ void Kill_Unit(int16_t unit_idx, int16_t kill_type)
 
     }
 
-    _UNITS[unit_idx].owner_idx = ST_UNDEFINED;
+    UNITS_OWNER(unit_idx, ST_UNDEFINED);
 
-    _UNITS[unit_idx].wp = ST_UNDEFINED;  // ¿ here because `wp = 9` is used for dead combat summon units ?
+    UNITS_WP(unit_idx, ST_UNDEFINED);  // ¿ here because `wp = 9` is used for dead combat summon units ?
 
 }
 

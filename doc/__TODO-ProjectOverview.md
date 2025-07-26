@@ -59,6 +59,27 @@ When?
 
 
 
+// TODO  BU_Teleport(battle_unit_idx, target_cgx, target_cgy);
+// TODO  BU_TunnelTo(battle_unit_idx, target_cgx, target_cgy);
+
+
+Turn 0
+Research Spells
+all eight are same - Summon Champion
+
+opponent made contact without any known connection
+
+unexplored darkness still not right - see screen-shot
+
+bad text on CityList
+bad text on ArmyList
+
+
+
+
+
+
+
 int16_t WIZ_MatchManaUpkeep__WIP(int16_t player_idx, int16_t mana_upkeep)
 
 

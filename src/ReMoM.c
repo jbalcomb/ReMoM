@@ -23,21 +23,20 @@
 #include <windows.h>
 #endif
 
-#include "MOX/DOS.h"
-#include "MOX/MOX_DEF.h"
 #include "MOX/capture.h"
-#include "MOX/MOX_T4.h"
-#include "MOX/EMM.h"
-#include "MOX/MOM_Data.h"
-#include "MOX/MOX_BASE.h"
-#include "MOX/MOX_TYPE.h"
 #include "MOX/CFG.h"
+#include "MOX/DOS.h"
 #include "MOX/EMM.h"
 #include "MOX/Fields.h"
 #include "MOX/Fonts.h"
 #include "MOX/Graphics.h"
 #include "MOX/LBX_Load.h"
+#include "MOX/MOX_BASE.h"
+#include "MOX/MOM_Data.h"
+#include "MOX/MOX_DEF.h"
 #include "MOX/MOX_SET.h"
+#include "MOX/MOX_T4.h"
+#include "MOX/MOX_TYPE.h"
 #include "MOX/SOUND.h"
 #include "MOX/Timer.h"
 

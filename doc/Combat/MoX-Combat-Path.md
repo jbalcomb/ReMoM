@@ -6,6 +6,16 @@ Move-Map
 Move-Path
 
 
+Combat vs. Overland
+CMB_Path_Costs[]    ~==  mvpth_c[]
+CMB_Path_Xs[]       ~==  mvpth_x[]
+CMB_Path_Ys[]       ~==  mvpth_y[]
+CMB_ActiveMoveMap   ~==  movepath_cost_map->moves2[]
+
+CMB_Path_Xs  ==>  _cmbt_mvpth_x
+CMB_Path_Ys  ==>  _cmbt_mvpth_y
+CMB_Path_Costs  ==>  _cmbt_mvpth_c
+CMB_ActiveMoveMap   ~==  _cmbt_movepath_cost_map
 
 
 

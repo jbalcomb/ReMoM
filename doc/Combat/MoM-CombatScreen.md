@@ -1,5 +1,15 @@
 
 
+
+Active Unit Window
+Spell Information Window
+Defender Enchantment Window
+Attacker Enchantment Window
+Combat Unit Display
+Combat Information Window
+
+
+
 ..."DEF"..."ATK"...
 MoO2
 Module: COLGCBT
@@ -243,7 +253,183 @@ EZ_Resolve()
 
 
 
+
+
+
+
+
+
+Tactical_Combat__WIP()
+    |-> CMB_Units_Init__WIP()
+        |-> Deploy_Battle_Units()
+            |-> Undeployable_Battle_Units_On_Water()
+
+
+## CMB_Units_Init__WIP()
+OON XREF:  Tactical_Combat__WIP()
+
+    Load_Battle_Unit(); Combat_Figure_Load(); Deploy_Battle_Units();
+    inits battle units, load figure picts, sets position & orientation
+
+
+XREF:
+    j_CMB_Units_Init__WIP()
+        Tactical_Combat__WIP()
+
+
+
+
+
+selected unit vs. scanned unit
+selected/active unit is shown in the "active unit window"
+scanned unit is shown in the "combat unit display"
+    ..."if you have toggled on the additional unit information button in your game settings window"
+
+
+
+
+
+## CMB_SelectedUnit
+
+XREF:  (112)
+    Tactical_Combat__WIP()
+    CMB_PrepareTurn__WIP()
+    G_BU_SelectUnit()
+    Assign_Combat_Grids()
+    CMB_SetActionCursor__WIP()
+    Tactical_Combat_Draw()
+    CMB_DrawActiveUnitW()
+    Tactical_Combat_Draw_Buttons()
+    CMB_DrawAUWStats()
+    Next_Battle_Unit()
+    WIZ_BU_SelectClosest()
+    AI_BU_ProcessAction()
+    End_Of_Combat__WIP()
+    Combat_Results_Scroll_Text()
+    STK_CaptureCity()
+    CMB_VortexPlayerMove()
+
+
+
+
+
+
+
+## CMB_CursorBattleUnit
+
+    CMB_SetTargetCursor()
+        CMB_CursorBattleUnit = ST_UNDEFINED
+
+    CMB_SetActionCursor__WIP()
+        CMB_CursorBattleUnit = ST_UNDEFINED
+        CMB_CursorBattleUnit = scanned_battle_unit_idx
+
+
+
+## CMB_ActiveUnitFrame
+
+
+
+
+## CMB_SetActionCursor__WIP()
+
+CMB_ActiveUnitFrame = 0;
+CMB_TargetFrame = 0;
+
+
+GUI_CombatWindow.image_num
+    GUI_CombatWindow.center_offset = 0;
+    GUI_CombatWindow.x1 = SCREEN_XMIN;
+    GUI_CombatWindow.y1 = SCREEN_YMIN;
+    GUI_CombatWindow.x2 = SCREEN_XMAX;
+    GUI_CombatWindow.y2 = SCREEN_YMAX;
+
+
+            CMB_TargetFrame = 1;
+
+            CMB_TargetFrame_X = Tile_X;
+
+            CMB_TargetFrame_Y = Tile_Y;
+
+            CMB_TargetFrameStage = ((CMB_TargetFrameStage + 1) % 3);
+
+
+
+
+
 ##### Naming Things is Hard
+
+Combat unit display
+a combat unit display
+upper right corner of the combat screen
+active unit
+
+standard city walls
+magic walls
+a magic wall
+Wall Crusher ability
+
+Settings Screen
+
+Auto Unit Information
+
+
+
+Page 90  (PDF Page 95)
+
+Combat unit display
+
+
+Page 92  (PDF Page 97)
+
+Finally,  
+  if you have toggled on the additional unit information button in your game settings window (see Settings),  
+  you have a combat unit display open in the upper right corner of the combat screen.  
+This window can be toggled on and off by pressing L on the keyboard.  
+The combat unit display contains some useful information to have available during battle,  
+  including the remaining ammunition (if relevant) of the active unit,   
+  mana and health of the "front" figure in the active unit.
+
+Page 57  (PDF Page 62)
+
+CITY ENCHANTMENTS AND CITY WALLS
+
+Some specific city enchantments create magic walls around the city  
+  (wall of darkness and wall of fire; see Spellbook supplement).  
+Only one magic wall can encircle a city at any one time;  
+  however, a city can have standard city walls (an option in the production screen; see Buildings)  
+  in addition to a magic wall.  
+The Wall Crusher ability that some units have only applies to the standard city walls,  
+  not to magic ones (see Special Unit Abilities).
+
+
+Page 85  (PDF Page 90)
+
+Wall Crusher . . . . . . .  
+Ability to destroy a section of stone wall 50% of the time if unit is adjacent to the target wall section.  
+This probability falls to 25% if the target wall section is attacked at range.  
+Units with this ability melee attack adjacent enemy units across wall sections that they destroy that turn.  
+When conducting ranged attacks, wall crushers also attack an enemy unit that is in the targeted wall square.  
+If the wall is not crushed, the defenders receive the wall’s full benefit against the attack.  
+If the wall crumbles, they don’t.  
+
+
+Page 98  (PDF Page 103)
+
+STRUCTURES INFLUENCING COMBAT
+
+City Walls
+
+City walls prevent all nonflying creatures from entering a city except through the city gates.  
+Ranged attacks can be used on garrisoned units cowering behind the walls, but nonflying defenders gain a +3 bonus to their defense (shields) against such attacks.  
+Flyers cannot really cower as well and are more exposed to ranged attacks, so they only receive a defense bonus of one shield when "behind" a wall.  
+Units that have the special ability Wall Crusher (see Special Unit Abilities) can systematically destroy city walls, allowing attackers greater access to any garrisoned units.  
+In addition, nonflying defenders behind destroyed city wall sections only get a +1 bonus to their defense against ranged attacks.  
+Note that both magic and city walls can exist concurrently.  
+They also have different effects (see Building Types and Spellbook supplement).  
+Magic walls may not be crushed; they may only be dispelled.  
+
+
 
 MoO2
 

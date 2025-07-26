@@ -10,14 +10,21 @@ value iteration algorithm  (+stochastic movement)
 
 
 
-CMB_GetPath() ==> CMB_GetPath__WIP()
-CMB_GetPath__WIP() ==> Combat_Move_Path_Find()
-CMB_FillReachMap() ==> CMB_FillReachMap__WIP()
-CMB_FillReachMap__WIP() ==> Combat_Move_Path_Valid()
-Adj_Tile_Cost ==> adjacent_path_cost
-Cost_As_Origin ==> potential_path_cost
+Set_Movement_Cost_Map() sets CMB_ActiveMoveMap[] from battlefield->MoveCost_Ground[], MoveCost_Teleport[], MoveCost_Ground2[], MoveCost_Sailing[]
 
-Current_Origin ==> old_next_cell_index
+Combat_Move_Path_Find()
+
+movement_path_grid_cell_count
+CMB_Path_Costs[]
+CMB_NearBuffer_3[]
+CMB_Path_Xs[]
+CMB_Path_Ys[]
+
+
+
+
+
+
 
 existing_path_cost ==> DNE in Dasm
 if(CMB_Path_Costs[ctr] > potential_path_cost)

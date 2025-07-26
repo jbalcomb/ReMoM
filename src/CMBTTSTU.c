@@ -137,7 +137,7 @@ void Create_Entity(int16_t draw_x, int16_t draw_y, int64_t pict, int16_t draw_x_
 /*
     battle unit specific wrapper for Create_Entity()
 ~ CMB_SpawnFigure__WIP()
-CMB_SpawnFigure__WIP(battle_units[itr].bufpi, battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+CMB_SpawnFigure__WIP(battle_units[itr].bufpi, battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
 */
 void Create_Battle_Unit_Entity(int64_t bufpi, int16_t cgx, int16_t cgy, int16_t target_cgx, int16_t target_cgy, int16_t MoveStage, int16_t current_figure, int16_t figure_count, int16_t controller_idx)
 {
@@ -197,7 +197,7 @@ void Make_Combat_Grid_Battle_Unit_Entities(void)
                 battle_units[itr].cgy,
                 battle_units[itr].target_cgx,
                 battle_units[itr].target_cgy,
-                battle_units[itr].MoveStage,
+                battle_units[itr].move_anim_ctr,
                 cur_fig,
                 fig_max,
                 battle_units[itr].controller_idx

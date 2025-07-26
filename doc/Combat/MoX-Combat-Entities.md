@@ -62,7 +62,7 @@ Tactical_Combat_Draw()
             battle_units[itr].cgy,
             battle_units[itr].target_cgx,
             battle_units[itr].target_cgy,
-            battle_units[itr].MoveStage,
+            battle_units[itr].move_anim_ctr,
             itr_figures,
             unit_figure_maximum,
             battle_units[itr].controller_idx,
@@ -99,12 +99,12 @@ Up   r BU_IsVisible+97                   cmp     [CMB_ATKR_TrueSight], e_ST_TRUE
 Down w CMB_UpdateTrueSight+3             mov     [CMB_ATKR_TrueSight], e_ST_FALSE
 Down w CMB_UpdateTrueSight+54            mov     [CMB_ATKR_TrueSight], e_ST_TRUE 
 Down r BU_SetVisibility__WIP+9E          cmp     [CMB_ATKR_TrueSight], e_ST_TRUE 
-Down r Auto_Move_Ship+3C4                cmp     [CMB_ATKR_TrueSight], e_ST_TRUE 
+Down r Auto_Move_Unit+3C4                cmp     [CMB_ATKR_TrueSight], e_ST_TRUE 
 Up   r BU_IsVisible+AA          cmp     [CMB_DEFR_TrueSight], e_ST_TRUE 
      w CMB_UpdateTrueSight+9    mov     [CMB_DEFR_TrueSight], e_ST_FALSE
 Down w CMB_UpdateTrueSight+89   mov     [CMB_DEFR_TrueSight], e_ST_TRUE 
 Down r BU_SetVisibility__WIP+C6 cmp     [CMB_DEFR_TrueSight], e_ST_TRUE 
-Down r Auto_Move_Ship+3E3       cmp     [CMB_DEFR_TrueSight], e_ST_TRUE 
+Down r Auto_Move_Unit+3E3       cmp     [CMB_DEFR_TrueSight], e_ST_TRUE 
 
 
 

@@ -283,6 +283,25 @@ endif()
 
 
 
+# if(WIN32)
+#     add_custom_command(
+#         TARGET "sdl2_ReMoM" POST_BUILD
+#         COMMAND "${CMAKE_COMMAND}" -E copy -t "$<TARGET_FILE_DIR:sdl2_ReMoM>"
+#         "$<TARGET_RUNTIME_DLLS:sdl2_ReMoM>" USES_TERMINAL COMMAND_EXPAND_LISTS
+#     )
+# endif()
+
+# # [build]   TARGET 'SDL2::Main' is IMPORTED and does not build here.
+# if(WIN32)
+#     add_custom_command(
+#         TARGET "SDL2::Main" POST_BUILD
+#         COMMAND "${CMAKE_COMMAND}" -E copy -t "$<TARGET_FILE_DIR:SDL2::Main>"
+#         "$<TARGET_RUNTIME_DLLS:SDL2::Main>" USES_TERMINAL COMMAND_EXPAND_LISTS
+#     )
+# endif()
+
+
+
 add_subdirectory(MOX)
 
 add_subdirectory(STU)

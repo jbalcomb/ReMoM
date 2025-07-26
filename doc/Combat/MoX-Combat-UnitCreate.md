@@ -121,7 +121,7 @@ CMB_CreateEntities__WIP()
                 battle_units[itr].cgy, 
                 battle_units[itr].target_cgx, 
                 battle_units[itr].target_cgy, 
-                battle_units[itr].MoveStage, 
+                battle_units[itr].move_anim_ctr, 
                 itr_figures, 
                 unit_figure_maximum, 
                 battle_units[itr].controller_idx, 
@@ -224,9 +224,9 @@ CMB_CreateEntities__WIP()
         Curse_Anim = BU_GetCombatEffect__WIP(itr);
         BU_SetVisibility__WIP(itr);
         for(itr_figures = 0; itr_figures < unit_figure_count; itr_figures++)
-            CMB_SpawnFigure__WIP(battle_units[itr].bufpi, battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+            CMB_SpawnFigure__WIP(battle_units[itr].bufpi, battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
         if(Curse_Anim != ST_UNDEFINED)
-            // TODO  CMB_SpawnUnitCurse(battle_units[itr].cgx, battle_units[itr].position_cgc1, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].MoveStage, Curse_Anim);
+            // TODO  CMB_SpawnUnitCurse(battle_units[itr].cgx, battle_units[itr].position_cgc1, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].move_anim_ctr, Curse_Anim);
     // TODO  CMB_SpawnProjectiles();
     // TODO  CMB_SpawnVortices();
     // TODO  CMB_SpawnStructures();

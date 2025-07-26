@@ -16,11 +16,11 @@ Main_Screen()
             Main_Screen_Draw_Summary_Window()  
                 Player_Resource_Income_Total()  
                     Player_Magic_Power_Income_Total()  
-                    WIZ_TotalUpkeep_Mana()  
+                    Player_Armies_And_Enchantments_Mana_Upkeep()  
                     Player_Armies_Gold_Upkeep()  
-                        WIZ_GetFame()  
-                        UNIT_GetGoldUpkeep()  
-                    WIZ_ArmyUpkeep_Food()  
+                        Player_Fame()  
+                        Unit_Gold_Upkeep()  
+                    Player_Armies_Food_Upkeep()  
             Main_Screen_Draw_Status_Window()  
                 _players[_human_player_idx].gold_reserve  
                 _players[_human_player_idx].mana_reserve  
@@ -435,3 +435,17 @@ struct s_DIFFICULTY_MODIFIERS
 
 
 https://masterofmagic.fandom.com/wiki/Forum:Infos_from_Official_Strategy_Guide#Game_difficulty
+
+
+
+
+
+
+Help: "TOTAL GOLD": "This is the total amount of gold in your treasury."
+Help: "TOTAL MANA": "This is the total number of mana crystals in your reserve that you can draw from to cast spells."
+
+Help: "GOLD INCOME": "The amount of gold you have as profitable income each turn."
+Help: "FOOD RESERVE": "The amount of food in excess of that needed to support yours troops. If negative, units will starve to death."
+Help: "MANA INCOME": "The number of mana crystals that are being saved/spent each turn."
+
+Help: "UPKEEP": "This is the total that you are spending on food, gold, and mana each turn to support your armies."

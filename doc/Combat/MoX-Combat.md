@@ -1,24 +1,60 @@
 
+# MoX - Combat - Overview
+
+(Tactical) Combat vs. Strategic Combat
+
+¿ MoX vs. MoM ?
+
+w/w/o 'Combat Structure'
+
+Combat vs. Overland
+Map/Grid
+movement cost
+move-path
+
+
+MoX-Combat-Move.md          Move/Movement besides Move-Path and Move-Path-Find
+MoX-Combat-Path.md          everything but the Path Finding Algorithm  ¿ anything that touches Set_Movement_Cost_Map(), Combat_Move_Path_Find() ?
+MoX-Combat-PathFindAlgo.md  all and only the Path Finding Algorithm
+    Overland:
+        MoM-MovePath.md
+        MoM-MovePathFind.md
+        MoM-MovePathMap.md
+"mvpth" === "move-path"
+
+combat_grid_target[]
+
+
+MainScr.c
+Update_MovePathMap()
+
+
+MovePath.c
+void Move_Path_Find(int16_t arg_wx, int16_t arg_wy, struct s_MOVE_PATH * arg_movepath_cost_map)
+
+WZD_o143.c
+Reset_City_Road_Connection_Bitfields()
+hacks movepath_cost_map[] to use Move_Path_Find() to determine if cities are connected
+
+UnitMove.c
+Init_MovePathMap()
+sets movepath_cost_map->moves2[] from movement_mode_cost_maps->UU_MvMd, walking, forester, mountaineer, swimming, sailing
+
+Combat Movement and Terrain
+All terrain not listed in this chart costs one movement point per square.
+Terrain Movement Points Per Square
+Cities 1⁄2
+Hills 2
+Rivers 2
+Roads 1⁄2
+Rough (Dirt) 2
+Tree 2
+
+
+
 Elsewhere, ...
     BattleUnit / strategic_unit / 'Combat Ship'
     MoM-BattleUnit.md
-
-
-
-battle_unit_figure_idx  ==>  bufpi
-bufpi  Battle Unit Figure Picture Index
-TODO  rename bufpi to pict_idx or some such, after your're done feeling confused about all the the mix-ups you made
-
-CMB_BU_Figure_GFX  ==>  battle_unit_picts_seg
-
-ptr_figure_pointer_seg  ==>  figure_pict_seg
-figure_pointer_seg  ==>  figure_pict_seg
-
-CMB_EntitiesReset()  ==>  Clear_Combat_Grid_Entities()
-
-CMB_GetFigDrawPos__SEGRAX()  ==>  Battle_Unit_Figure_Position()
-
-combat_entity_draw_order_array  ==>  combat_grid_entities_draw_order
 
 
 
@@ -355,3 +391,8 @@ Module: HOMEGEN
     code (0 bytes) Make_System_Monsters_
     Address: 01:0007CDC5
 
+
+
+OSG
+Page 308  (PDF Page 313)
+Note, however, if you do this, enemy units deprived of a target will stomp on your city and try to destroy its buildings and people.  

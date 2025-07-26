@@ -2551,7 +2551,9 @@ void Select_Stack_At_Unit(int16_t unit_idx)
 
     o62p01_empty_function(_human_player_idx);
 
+Check_Game_Data();
     Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _UNITS[unit_idx].wp, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy);
+Check_Game_Data();
 
     Set_Unit_Draw_Priority();
 
@@ -3437,6 +3439,9 @@ void Main_Unit_Statistics_Window(int16_t unit_idx, int16_t x1, int16_t y1, int16
 
 // WZD o063p01
 // MoO2: ~Print_Main_Screen_Data_()
+/*
+    draws Gold Reserve and Mana Reserve
+*/
 void Main_Screen_Draw_Status_Window(void)
 {
 

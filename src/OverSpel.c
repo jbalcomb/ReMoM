@@ -850,15 +850,21 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                             AI_Eval_After_Spell = ST_TRUE;
 
+Check_Game_Data();
                             Cast_Floating_Island(player_idx);
+Check_Game_Data();
 
                         }
                         else
                         {
 
+Check_Game_Data();
                             Create_Unit__WIP(spell_data_table[spell_idx].Param0, player_idx, _players[player_idx].summon_wx, _players[player_idx].summon_wy, _players[player_idx].summon_wp, ST_UNDEFINED);
+Check_Game_Data();
 
+Check_Game_Data();
                             UNIT_RemoveExcess((_units - 1));
+Check_Game_Data();
 
                         }
 
@@ -889,17 +895,20 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                                 // DBG_spell_data_table__Param0 = GET_1B_OFS(DBG_spell_data_table, (0x20 - 1));
 
+Check_Game_Data();
                                 // IDK_SummonAnim(spell_data_table[spell_idx].Param0, MultiPurpose_Local_Var, player_idx);
                                 IDK_SummonAnim(DBG_spell_data_table__Param0, MultiPurpose_Local_Var, player_idx);
+Check_Game_Data();
 
                                 AI_Eval_After_Spell = ST_TRUE;
 
                             }
 
                         }
-
-                        _UNITS[(_units - 1)].Finished = ST_FALSE;
+Check_Game_Data();
+                        UNITS_FINISHED((_units - 1), ST_FALSE);
                         _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;
+Check_Game_Data();
 
                         if(player_idx == HUMAN_PLAYER_IDX)
                         {
@@ -908,8 +917,10 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                             _active_world_y = _UNITS[_units].wy;
                             _map_plane = _UNITS[_units].wp;
 
+Check_Game_Data();
                             // ; BUG: this function has a parameter!
-                            /* WASBUG */ Select_Stack_At_Unit((_units - 1));  // how to reproduce calling this without the unit_idx parameter?
+                            /* HACK */ /* WASBUG */ Select_Stack_At_Unit((_units - 1));  // how to reproduce calling this without the unit_idx parameter?
+Check_Game_Data();
 
                         }
 

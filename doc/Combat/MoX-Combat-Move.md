@@ -1,7 +1,12 @@
 
 
 
-BU_GetMoveMap__WIP() ==> Set_Movement_Cost_Map()
+## CMB_ActiveMoveMap
+
+
+
+Teleporting . . . . . . . . Unit can move to any free square on the combat map for a cost of two movement points.
+Teleport under Movement refers to the ability to teleport during combat, a special ability (see Special Unit Abilities).
 
 
 
@@ -9,42 +14,6 @@ BU_GetMoveMap__WIP() ==> Set_Movement_Cost_Map()
 
 Left-Click Combat Grid
 
-_active_battle_unit is 0
-CMB_TargetFrame_X is 13
-CMB_TargetFrame_Y is 13
-...
-BU_CombatAction__WIP()
-combat_grid_target[] is -1
-movement_points is 2
-...
-        if(
-            (combat_grid_target == -1)  /* ¿ empty and reachable ? */
-            &&
-            (battle_units[battle_unit_idx].movement_points > 0)
-        )
-BU_Move__WIP()
-...
-BU_GetMoveMap__WIP()
-movement_type is 1
-instant_movement_type is 0
-    switch(movement_type)
-        case 1:
-            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Ground[0], COMBAT_GRID_CELL_COUNT);
-&battlefield->MoveCost_Ground[0]
-
-CMB_ActiveMoveMap[]
-    0x00007ff717ee5c00
-CMB_Path_Costs[]
-
-Combat_Move_Path_Find(battle_units[battle_unit_idx].cgx, battle_units[battle_unit_idx].cgy, target_cgx, target_cgy);
-{14,12}
-{13,13}
-
-
-
-_combat_total_unit_count is 5
-battle_units[0].Status is bus_Active
-Teleport_Type is 0
 
 
 
@@ -312,6 +281,12 @@ void Move_Path_Find(int16_t arg_wx, int16_t arg_wy, struct s_MOVE_PATH * arg_mov
 
 ## CMB_ActiveMoveMap
 
+~== Overland movepath_cost_map->moves2[]
+
+"Terrain Movement Points Per Square"
+
+
+
 504 byte array of ...
 -1 means impassible  (same as in Overland's ¿...?)
 
@@ -378,62 +353,63 @@ BU_GetMoveMap__WIP()
 
 
 BU_Move__WIP()
-AI_GetCombatRallyPt()
-G_AI_BU_MoveOrRampage()
+AI_GetCombatRallyPt()   goes through the move-path process to get the next cgx,cgy on its way to its target
+Do_Auto_Unit_Turn()     sets other units and vortexes as impassible, checks if target is impassible
 G_AI_BU_Move()
-BU_SetCityMovement()
-AI_RestrictToCity()
+BU_SetCityMovement()    sets city area as impassible
+AI_RestrictToCity()     sets city area perimeter as impassible
 CMB_GetPath__WIP()
 
 
 XREF:  (50)
-BU_GetMoveMap__WIP+48        push    [CMB_ActiveMoveMap]             ; dst                          
-BU_GetMoveMap__WIP+DA        add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_Move__WIP+66              add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_Move__WIP+A2              add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_Move__WIP+BE              mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-Assign_Combat_Grids+58   add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-Assign_Combat_Grids+9E   add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-Assign_Combat_Grids+BF   mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-CMB_SetNearAllocs__WIP+E     mov     [CMB_ActiveMoveMap], ax         ; 504 LBX_NearAlloc_First bytes
-AI_GetCombatRallyPt+AC       add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-AI_GetCombatRallyPt+F4       add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-AI_GetCombatRallyPt+133      add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-G_AI_BU_MoveOrRampage+58     add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-G_AI_BU_MoveOrRampage+E3     add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-G_AI_BU_MoveOrRampage+134    add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-G_AI_BU_Move+74              add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-G_AI_BU_Move+109             add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_SetCityMovement+1D        mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_SetCityMovement+32        mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_SetCityMovement+47        mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_SetCityMovement+5C        mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_SetCityMovement+71        mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_SetCityMovement+160       add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_SetCityMovement+16E       mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_SetCityMovement+17C       mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_SetCityMovement:loc_A789D mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_SetCityMovement+1A1       add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_SetCityMovement+1AF       mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_SetCityMovement+1BD       mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_SetCityMovement+1CB       mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_SetCityMovement+23A       add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-BU_SetCityMovement+2BD       add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-AI_RestrictToCity+1C         add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-AI_RestrictToCity+2A         mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-AI_RestrictToCity+38         mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-AI_RestrictToCity+45         mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-AI_RestrictToCity+5D         add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-AI_RestrictToCity+6B         mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-AI_RestrictToCity+79         mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-AI_RestrictToCity+87         mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-CMB_GetPath__WIP+19          add     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-CMB_GetPath__WIP:loc_E2A6A   mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-CMB_GetPath__WIP:loc_E2B87   mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-CMB_GetPath__WIP:loc_E2CAA   mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-CMB_GetPath__WIP:loc_E2DD6   mov     ax, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-CMB_FillReachMap:loc_E2EFE   mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-CMB_FillReachMap:loc_E2FA1   mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-CMB_FillReachMap:loc_E304A   mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-CMB_FillReachMap+2B1         mov     bx, [CMB_ActiveMoveMap]         ; 504 LBX_NearAlloc_First bytes
-CMB_BaseAllocs__WIP+81       mov     [CMB_ActiveMoveMap], ax         ; 504 LBX_NearAlloc_First bytes
+CMB_BaseAllocs__WIP+81       mov     [CMB_ActiveMoveMap], ax
+CMB_SetNearAllocs__WIP+E     mov     [CMB_ActiveMoveMap], ax
+
+BU_GetMoveMap__WIP+48        push    [CMB_ActiveMoveMap]
+BU_GetMoveMap__WIP+DA        add     ax, [CMB_ActiveMoveMap]
+BU_Move__WIP+66              add     ax, [CMB_ActiveMoveMap]
+BU_Move__WIP+A2              add     ax, [CMB_ActiveMoveMap]
+BU_Move__WIP+BE              mov     bx, [CMB_ActiveMoveMap]
+Assign_Combat_Grids+58   add     ax, [CMB_ActiveMoveMap]
+Assign_Combat_Grids+9E   add     ax, [CMB_ActiveMoveMap]
+Assign_Combat_Grids+BF   mov     bx, [CMB_ActiveMoveMap]
+AI_GetCombatRallyPt+AC       add     ax, [CMB_ActiveMoveMap]
+AI_GetCombatRallyPt+F4       add     ax, [CMB_ActiveMoveMap]
+AI_GetCombatRallyPt+133      add     ax, [CMB_ActiveMoveMap]
+Do_Auto_Unit_Turn+58     add     ax, [CMB_ActiveMoveMap]
+Do_Auto_Unit_Turn+E3     add     ax, [CMB_ActiveMoveMap]
+Do_Auto_Unit_Turn+134    add     ax, [CMB_ActiveMoveMap]
+G_AI_BU_Move+74              add     ax, [CMB_ActiveMoveMap]
+G_AI_BU_Move+109             add     ax, [CMB_ActiveMoveMap]
+BU_SetCityMovement+1D        mov     bx, [CMB_ActiveMoveMap]
+BU_SetCityMovement+32        mov     bx, [CMB_ActiveMoveMap]
+BU_SetCityMovement+47        mov     bx, [CMB_ActiveMoveMap]
+BU_SetCityMovement+5C        mov     bx, [CMB_ActiveMoveMap]
+BU_SetCityMovement+71        mov     bx, [CMB_ActiveMoveMap]
+BU_SetCityMovement+160       add     ax, [CMB_ActiveMoveMap]
+BU_SetCityMovement+16E       mov     bx, [CMB_ActiveMoveMap]
+BU_SetCityMovement+17C       mov     bx, [CMB_ActiveMoveMap]
+BU_SetCityMovement:loc_A789D mov     bx, [CMB_ActiveMoveMap]
+BU_SetCityMovement+1A1       add     ax, [CMB_ActiveMoveMap]
+BU_SetCityMovement+1AF       mov     bx, [CMB_ActiveMoveMap]
+BU_SetCityMovement+1BD       mov     bx, [CMB_ActiveMoveMap]
+BU_SetCityMovement+1CB       mov     bx, [CMB_ActiveMoveMap]
+BU_SetCityMovement+23A       add     ax, [CMB_ActiveMoveMap]
+BU_SetCityMovement+2BD       add     ax, [CMB_ActiveMoveMap]
+AI_RestrictToCity+1C         add     ax, [CMB_ActiveMoveMap]
+AI_RestrictToCity+2A         mov     bx, [CMB_ActiveMoveMap]
+AI_RestrictToCity+38         mov     bx, [CMB_ActiveMoveMap]
+AI_RestrictToCity+45         mov     bx, [CMB_ActiveMoveMap]
+AI_RestrictToCity+5D         add     ax, [CMB_ActiveMoveMap]
+AI_RestrictToCity+6B         mov     bx, [CMB_ActiveMoveMap]
+AI_RestrictToCity+79         mov     bx, [CMB_ActiveMoveMap]
+AI_RestrictToCity+87         mov     bx, [CMB_ActiveMoveMap]
+CMB_GetPath__WIP+19          add     ax, [CMB_ActiveMoveMap]
+CMB_GetPath__WIP:loc_E2A6A   mov     bx, [CMB_ActiveMoveMap]
+CMB_GetPath__WIP:loc_E2B87   mov     bx, [CMB_ActiveMoveMap]
+CMB_GetPath__WIP:loc_E2CAA   mov     bx, [CMB_ActiveMoveMap]
+CMB_GetPath__WIP:loc_E2DD6   mov     ax, [CMB_ActiveMoveMap]
+CMB_FillReachMap:loc_E2EFE   mov     bx, [CMB_ActiveMoveMap]
+CMB_FillReachMap:loc_E2FA1   mov     bx, [CMB_ActiveMoveMap]
+CMB_FillReachMap:loc_E304A   mov     bx, [CMB_ActiveMoveMap]
+CMB_FillReachMap+2B1         mov     bx, [CMB_ActiveMoveMap]

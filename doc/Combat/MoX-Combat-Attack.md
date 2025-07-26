@@ -405,7 +405,7 @@ XREF:
     AI_BU_ProcessAction__WIP+47B call    j_Battle_Unit_Attack__WIP
     AI_BU_ProcessAction__WIP+64E call    j_Battle_Unit_Attack__WIP
     AI_BU_ProcessAction__WIP+991 call    j_Battle_Unit_Attack__WIP
-    Auto_Move_Ship+5E8           call    j_Battle_Unit_Attack__WIP
+    Auto_Move_Unit+5E8           call    j_Battle_Unit_Attack__WIP
 
 
 

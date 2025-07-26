@@ -85,6 +85,31 @@ https://batuhankoc.medium.com/use-cmake-to-create-and-use-dynamic-libraries-5f64
 
 
 
+Main_Screen_Draw_Summary_Window()
+    int16_t mana = 0;
+    int16_t food = 0;
+    int16_t gold = 0;
+    Player_Resource_Income_Total(_human_player_idx, &gold, &food, &mana);
+        Player_Magic_Power_Income_Total(&mana_income, &food_income, &gold_income, player_idx);
+
+        mana_expense = Player_Armies_And_Enchantments_Mana_Upkeep(player_idx);
+        gold_expense = Player_Armies_Gold_Upkeep(player_idx);
+        food_expense = Player_Armies_Food_Upkeep(player_idx);
+
+
+
+...getting insane value...
+Auto_Move_Ship()
+    battle_units[battle_unit_idx].target_cgx = (Last_Target_X + Facing_X_Offset);
+    battle_units[battle_unit_idx].target_cgy = (Last_Target_Y + Facing_Y_Offset);
+    ...negative...
+    CMB_Path_Xs,Ys looks sane
+    Origin_X,Y looks sane
+    Last_Target_X,Y seems bad
+    ...come from passed in Dest_X,Y
+    ...if target, updated from battle_units[target_battle_unit_idx].cgx,cgy
+origin 14,10
+
 
 
 MainScr_Maps.c

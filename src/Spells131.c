@@ -1816,7 +1816,7 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
         battle_units[battle_unit_idx].cgy = cgy;
         battle_units[battle_unit_idx].target_cgx = cgx;
         battle_units[battle_unit_idx].target_cgy = cgy;
-        battle_units[battle_unit_idx].MoveStage = 0;
+        battle_units[battle_unit_idx].move_anim_ctr = 0;
         battle_units[battle_unit_idx].outline_magic_realm = 0;
         battle_units[battle_unit_idx].Atk_FigLoss = 0;
         battle_units[battle_unit_idx].Moving = 0;
@@ -1949,7 +1949,7 @@ void Cast_Animate_Dead(int16_t player_idx, int16_t caster_idx)
     battle_units[battle_unit_idx].front_figure_damage = 0;
     battle_units[battle_unit_idx].Combat_Effects = 0;
     battle_units[battle_unit_idx].enchantments = 0;
-    battle_units[battle_unit_idx].MoveStage = 0;
+    battle_units[battle_unit_idx].move_anim_ctr = 0;
     battle_units[battle_unit_idx].outline_magic_realm = 0;
     battle_units[battle_unit_idx].Atk_FigLoss = 0;
     battle_units[battle_unit_idx].Moving = 0;

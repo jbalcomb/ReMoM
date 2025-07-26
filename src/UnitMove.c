@@ -800,9 +800,10 @@ Calc_Move_Path:
             }
         }
 
+        // sets movepath_cost_map->moves2[] from movement_mode_cost_maps->UU_MvMd, walking, forester, mountaineer, swimming, sailing
         Update_MovePathMap(&movepath_cost_map->moves2[0], boatrider_count, troop_count, wp, player_idx, dst_wx, dst_wy, src_wx, src_wy);
 
-        if(movepath_cost_map->moves2[((dst_wy * WORLD_WIDTH) + dst_wx)] == -1)  /* ¿ cost of -1 means impassible ? */
+        if(movepath_cost_map->moves2[((dst_wy * WORLD_WIDTH) + dst_wx)] == -1)  /* INF  cost of -1 means impassible */
         {
             goto Done_Return_Zero;
         }

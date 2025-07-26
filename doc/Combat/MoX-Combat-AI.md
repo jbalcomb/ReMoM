@@ -55,9 +55,9 @@ AI_BU_ProcessAction()
 
 AI_BU_AssignAction()
 
-G_AI_BU_MoveOrRampage()
+Do_Auto_Ship_Turn()
 
-Auto_Move_Ship()
+Auto_Move_Unit()
 
 
 
@@ -81,8 +81,8 @@ AI_MoveBattleUnits__WIP()
 
 
 
-G_AI_BU_MoveOrRampage()
-    |-> Auto_Move_Ship()
+Do_Auto_Ship_Turn()
+    |-> Auto_Move_Unit()
 
 
 
@@ -101,7 +101,7 @@ AI_BU_ProcessAction()
     |-> AI_BU_AssignAction()
         |-> AI_BU_SelectAction__WIP()
     ...
-    |-> G_AI_BU_MoveOrRampage__WIP()
+    |-> Do_Auto_Ship_Turn()
 
 AI_MoveBattleUnits()
     |-> AI_BU_AssignAction()
@@ -126,7 +126,7 @@ jt_bua_02:                              ; case 0x66
 
 
 
-## G_AI_BU_MoveOrRampage()
+## Do_Auto_Ship_Turn()
 
 
 

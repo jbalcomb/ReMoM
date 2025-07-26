@@ -169,6 +169,14 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
     } while(0);                                             \
 }
 
+#define UNITS_WP(_unit_idx_,_wp_)  {       \
+    do {                                                    \
+        /* trc_prn("TRACE: [%s, %d]: UNITS_WP(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].wp, (_wp_)); */ \
+        _UNITS[(_unit_idx_)].wp = (_wp_);  \
+        Capture_Units_Data();                               \
+    } while(0);                                             \
+}
+
 #define UNITS_DRAW_PRIORITY(_unit_idx_,_priority_)  {       \
     do {                                                    \
         /* trc_prn("TRACE: [%s, %d]: UNITS_DRAW_PRIORITY(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].Draw_Priority, (_priority_)); */ \
@@ -199,6 +207,15 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
         /* trc_prn("TRACE: [%s, %d]: UNITS_FINISHED(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].Finished, (_finished_)); */ \
         /* Validate_Units_Finished() */                     \
         _UNITS[(_unit_idx_)].Finished = (_finished_);       \
+        Capture_Units_Data();                               \
+    } while(0);                                             \
+}
+
+#define UNITS_OWNER(_unit_idx_,_owner_idx_)  {            \
+    do {                                                    \
+        /* trc_prn("TRACE: [%s, %d]: UNITS_OWNER(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].owner_idx, (_owner_idx_)); */ \
+        /* Validate_Units_Owner() */                     \
+        _UNITS[(_unit_idx_)].owner_idx = (_owner_idx_);       \
         Capture_Units_Data();                               \
     } while(0);                                             \
 }

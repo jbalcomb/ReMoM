@@ -507,6 +507,7 @@ void Reset_City_Road_Connection_Bitfields(void)
                         // set the road connect bits from boths sides
                         Set_Bit_Field(candidate_list[candidate_index], (uint8_t *)&_CITIES[itr_cities].road_connections[0]);
                         Set_Bit_Field(itr_cities, (uint8_t *)&_CITIES[candidate_list[candidate_index]].road_connections[0]);
+Capture_Cities_Data();
                     }
 
                 }

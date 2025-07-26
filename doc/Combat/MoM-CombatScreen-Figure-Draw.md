@@ -193,7 +193,7 @@ CMB_CreateEntities__WIP()
         DBG_position_cgc1 = battle_units[itr].position_cgc1;
         DBG_target_cgc2 = battle_units[itr].target_cgc2;
         DBG_target_cgc1 = battle_units[itr].target_cgc1;
-        DBG_MoveStage = battle_units[itr].MoveStage;
+        DBG_MoveStage = battle_units[itr].move_anim_ctr;
         DBG_itr_figures = itr_figures;
         DBG_unit_figure_maximum = unit_figure_maximum;
         DBG_controller_idx = battle_units[itr].controller_idx;
@@ -232,7 +232,7 @@ CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t position_cgc2, int16_t position
 
 CMB_SpawnFigure__WIP(
     battle_units[itr].bufpi, battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].target_cgc2, battle_units[itr].target_cgc1, 
-    battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, 
+    battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, 
     battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0
 )
 

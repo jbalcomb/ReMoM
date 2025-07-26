@@ -15,14 +15,18 @@ battlefield->terrain_group[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = CTG_Gras
 */
 
 
-#define MAX_ENTITIES  256
+#define COMBAT_MOVE_ANIMATION_FRAME_MAX      7
+#define COMBAT_MOVE_ANIMATION_FRAME_COUNT    8
+#define MOVE_ANIM_MAX    7
+#define MOVE_ANIM_CNT    8
 
 
 
+#define MAX_ENTITIES        256
 
 
-#define NUM_DAMAGE_TYPES  3
 
+#define NUM_DAMAGE_TYPES      3
 
 enum e_DAMAGE_TYPES
 {
@@ -90,6 +94,72 @@ Magic Vortex
 #define MAX_CGX_CITY  8
 #define MIN_CGY_CITY 10
 #define MAX_CGY_CITY 13
+/*
+BU_SetCityMovement__WIP()
+    if(battlefield->Central_Structure != CS_City)
+        _cmbt_movepath_cost_map[((11 * COMBAT_GRID_WIDTH) + 6)] = INF;
+*/
+#define CGX_LAIR  6
+#define CGY_LAIR 11
+
+/*
+Deploy_Battle_Units()
+    if(player_idx == _combat_defender_player)
+    {
+        starting_cgx[ 0] = 8;
+        starting_cgx[ 1] = 8;
+        starting_cgx[ 2] = 8;
+        starting_cgx[ 3] = 8;
+        starting_cgx[ 4] = 7;
+        starting_cgx[ 5] = 7;
+        starting_cgx[ 6] = 7;
+        starting_cgx[ 7] = 7;
+        starting_cgx[ 8] = 6;
+        starting_cgx[ 9] = 6;
+        starting_cgx[10] = 6;
+        starting_cgx[11] = 6;
+    }
+    else
+    {
+        starting_cgx[ 0] = 14;
+        starting_cgx[ 1] = 14;
+        starting_cgx[ 2] = 14;
+        starting_cgx[ 3] = 14;
+        starting_cgx[ 4] = 15;
+        starting_cgx[ 5] = 15;
+        starting_cgx[ 6] = 15;
+        starting_cgx[ 7] = 15;
+        starting_cgx[ 8] = 16;
+        starting_cgx[ 9] = 16;
+        starting_cgx[10] = 16;
+        starting_cgx[11] = 16;
+    }
+
+    starting_cgy[ 0] = 12;
+    starting_cgy[ 1] = 11;
+    starting_cgy[ 2] = 13;
+    starting_cgy[ 3] = 10;
+    starting_cgy[ 4] = 12;
+    starting_cgy[ 5] = 11;
+    starting_cgy[ 6] = 13;
+    starting_cgy[ 7] = 10;
+    starting_cgy[ 8] = 12;
+    starting_cgy[ 9] = 11;
+    starting_cgy[10] = 13;
+    starting_cgy[11] = 10;
+
+*/
+#define DEPLOY_DFNDR_ROW1  8
+#define DEPLOY_DFNDR_ROW2  7
+#define DEPLOY_DFNDR_ROW3  6
+#define DEPLOY_ATTKR_ROW1 14
+#define DEPLOY_ATTKR_ROW2 15
+#define DEPLOY_ATTKR_ROW3 16
+#define DEPLOY_COL1 12
+#define DEPLOY_COL2 11
+#define DEPLOY_COL3 13
+#define DEPLOY_COL4 10
+
 
 
 /*
