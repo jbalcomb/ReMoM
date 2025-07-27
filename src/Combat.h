@@ -1953,7 +1953,7 @@ void BU_LoadMeleeSound__WIP(int16_t battle_unit_idx, SAMB_ptr * sound_seg, uint3
 void Combat_Load_Spell_Sound_Effect(int16_t spell_idx);
 
 // WZD o124p10
-void BU_WallofFire__NOOP(int16_t battle_unit_idx);
+void Check_Wall_Of_Fire_Attack(int16_t battle_unit_idx);
 
 // WZD o124p11
 // BU_SetBloodAnim()

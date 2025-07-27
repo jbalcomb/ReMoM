@@ -3382,7 +3382,7 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
             }
 
 
-            // TODO  BU_WallofFire(battle_unit_idx);
+            Check_Wall_Of_Fire_Attack(battle_unit_idx);
 
 
             if(battle_units[battle_unit_idx].status != bus_Active)
@@ -20514,7 +20514,7 @@ void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_bat
         if(SpFx != 0)
         {
 
-            BU_WallofFire__NOOP(attacker_battle_unit_idx);
+            Check_Wall_Of_Fire_Attack(attacker_battle_unit_idx);
 
         }
 
@@ -24673,10 +24673,36 @@ void Combat_Load_Spell_Sound_Effect(int16_t spell_idx)
 
 
 */
-void BU_WallofFire__NOOP(int16_t battle_unit_idx)
+void Check_Wall_Of_Fire_Attack(int16_t battle_unit_idx)
 {
+    int16_t damage_array[3] = { 0, 0, 0};
 
+    if(
+        (battlefield->wall_of_fire > ST_FALSE)
+        &&
+        ((battle_units[battle_unit_idx].Move_Flags & MV_FLYING) == 0)
+        &&
+        ((battle_units[battle_unit_idx].Move_Flags & MV_TELEPORT) == 0)
+        &&
+        ((battle_units[battle_unit_idx].Move_Flags & MV_MERGING) == 0)
+        &&
+        (Battle_Unit_Is_Within_City(battle_unit_idx) == ST_FALSE)
+        &&
+        (battle_units[battle_unit_idx].target_cgx >= MIN_CGX_CITY)
+        &&
+        (battle_units[battle_unit_idx].target_cgx <= MAX_CGX_CITY)
+        &&
+        (battle_units[battle_unit_idx].target_cgy >= MIN_CGY_CITY)
+        &&
+        (battle_units[battle_unit_idx].target_cgy <= MAX_CGY_CITY)
+    )
+    {
 
+        Apply_Battle_Unit_Damage_From_Spell(spl_Fireball, battle_unit_idx, &damage_array[0], 0);
+
+        BU_ApplyDamage__WIP(battle_unit_idx, &damage_array[0]);
+
+    }
 
 }
 
