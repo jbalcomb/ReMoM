@@ -2028,7 +2028,7 @@ void Combat_Screen_Map_Draw__WIP(void);
 void Combat_Screen_Map_Draw_Entities__WIP(void);
 
 // WZD ovr153p04
-// drake178: sub_DD536()
+// drake178: NX_IDK_CMB_BloodFrames()
 
 // WZD ovr153p05
 // drake178: CMB_SpawnTrees()
@@ -2037,16 +2037,16 @@ void Combat_Screen_Map_Draw_Entities__WIP(void);
 // drake178: CMB_SpawnRocks()
 
 // WZD ovr153p07
-// drake178: CMB_SpawnStructures()
+void CMB_SpawnStructures__WIP(void);
 
 // WZD ovr153p08
-// drake178: CMB_SpawnStoneWall()
+void CMB_SpawnStoneWall__WIP(int16_t flag);
 
 // WZD ovr153p09
-// drake178: CMB_SpawnDarkWall()
+void CMB_SpawnDarkWall__WIP(int16_t flag);
 
 // WZD ovr153p10
-// drake178: CMB_SpawnFireWall()
+void CMB_SpawnFireWall__WIP(int16_t flag);
 
 // WZD ovr153p11
 void Combat_Grid_Entity_Create_Vortexes(void);

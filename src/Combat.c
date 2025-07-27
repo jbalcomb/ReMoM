@@ -7501,7 +7501,7 @@ void Combat_Grid_Entities__WIP(void)
     Combat_Grid_Entity_Create_Vortexes();
 
 
-    // TODO  CMB_SpawnStructures();
+    CMB_SpawnStructures__WIP();
 
 
     Cycle_Unit_Enchantment_Animation();
@@ -26039,6 +26039,7 @@ void Combat_Screen_Map_Draw_Entities__WIP(void)
 
 // WZD ovr153p04
 // drake178: sub_DD536()
+// NX_IDK_CMB_BloodFrames()
 
 // WZD ovr153p05
 // drake178: CMB_SpawnTrees()
@@ -26048,15 +26049,800 @@ void Combat_Screen_Map_Draw_Entities__WIP(void)
 
 // WZD ovr153p07
 // drake178: CMB_SpawnStructures()
+void CMB_SpawnStructures__WIP(void)
+{
+    int16_t screen_y = 0;
+    int16_t screen_x = 0;
+    SAMB_ptr structure_pict_seg = 0;  // _SI_
+    int16_t itr = 0;
+
+    if(battlefield->Central_Structure == CS_None)
+    {
+        return;
+    }
+
+    Combat_Grid_Screen_Coordinates(6, 11, 0, 0, &screen_x, &screen_y);
+
+    switch(battlefield->Central_Structure)
+    {
+
+        // DNE  case CS_None:
+        // DNE  {
+        // DNE          
+        // DNE  } break;
+
+        case CS_Outpost:
+        {
+            structure_pict_seg = IMG_CMB_Outpost;
+        } break;
+
+        case CS_City:
+        {
+            structure_pict_seg = ST_NULL;
+        } break;
+
+        case CS_Fortress:
+        {
+            structure_pict_seg = IMG_CMB_Fortress;
+        } break;
+
+        case CS_Dungeon:
+        {
+            structure_pict_seg = IMG_CMB_Dungeon;
+        } break;
+
+        case CS_Tower:
+        {
+            structure_pict_seg = IMG_CMB_Tower;
+        } break;
+
+        case CS_Cave:
+        {
+            structure_pict_seg = IMG_CMB_Cave;
+        } break;
+
+        case CS_Temple:
+        {
+            structure_pict_seg = IMG_CMB_Temple;
+        } break;
+
+        case CS_Fort:
+        {
+            structure_pict_seg = IMG_CMB_Fort;
+        } break;
+
+        case CS_SorceryNode:
+        {
+            structure_pict_seg = ST_NULL;
+        } break;
+
+        case CS_ChaosNode:
+        {
+            structure_pict_seg = ST_NULL;
+        } break;
+
+        case CS_NatureNode:
+        {
+            structure_pict_seg = IMG_CMB_NatNode;
+        } break;
+
+        case CS_Ruins:
+        {
+            structure_pict_seg = IMG_CMB_Ruins;
+        } break;
+
+        default:
+        {
+            STU_DEBUG_BREAK();
+        } break;
+
+    }
+
+    if(structure_pict_seg != ST_NULL)
+    {
+
+        if(battlefield->Central_Structure == CS_NatureNode)
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)structure_pict_seg, 16, 15, 0, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)structure_pict_seg, 15, (FLIC_Get_Height(structure_pict_seg) - 21), 0, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+
+    }
+	
+    if(
+        (battlefield->Central_Structure == CS_City)
+        ||
+        (battlefield->Central_Structure == CS_Fortress)
+    )
+    {
+
+        for(itr = 0; battlefield->House_Count > itr; itr++)
+        {
+
+            Combat_Grid_Screen_Coordinates(battlefield->House_TileXs[itr], battlefield->House_TileYs[itr], 0, 0, &screen_x, &screen_y);
+
+            screen_y += 2;
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)battlefield->House_IMG_Segs[itr], (FLIC_Get_Width(battlefield->House_IMG_Segs[itr]) / 2), (FLIC_Get_Height(battlefield->House_IMG_Segs[itr]) - 14), 0, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+
+    }
+
+    if(battlefield->walled == ST_TRUE)
+    {
+
+        CMB_SpawnStoneWall__WIP(0);
+
+    }
+
+    if(battlefield->wall_of_darkness == ST_TRUE)
+    {
+
+        CMB_SpawnDarkWall__WIP(0);
+
+    }
+
+    if(battlefield->wall_of_fire == ST_TRUE)
+    {
+
+        CMB_SpawnFireWall__WIP(0);
+
+    }
+
+    if(battlefield->wall_of_fire == ST_TRUE)
+    {
+
+        CMB_SpawnFireWall__WIP(1);
+
+    }
+
+    if(battlefield->wall_of_darkness == ST_TRUE)
+    {
+
+        CMB_SpawnDarkWall__WIP(1);
+
+    }
+
+    if(battlefield->walled == ST_TRUE)
+    {
+
+        CMB_SpawnStoneWall__WIP(1);
+
+    }
+
+}
 
 // WZD ovr153p08
 // drake178: CMB_SpawnStoneWall()
+void CMB_SpawnStoneWall__WIP(int16_t flag)
+{
+    int16_t screen_y = 0;
+    int16_t screen_x = 0;
+    int16_t itr = 0;  // _SI_
+
+    // north-west corner
+    for(itr = 0; ((itr < 1) && (flag == 0)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates(MIN_CGX_CITY, (MIN_CGY_CITY + itr), 0, 0, &screen_x, &screen_y);
+
+        screen_y += 1;
+        screen_x += 1;
+
+        if(
+            (_wall_rise_type == 0)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 15, 18, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            if(battlefield->walls[(itr * 4)] == 1)
+            {
+
+                Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_StoneWalls[CMB_StoneWallType][itr], (FLIC_Get_Width(IMG_CMB_StoneWalls[CMB_StoneWallType][itr]) / 2), 18, 0, 0, 0, 0, 0, 0, 0, 0);
+
+            }
+
+            if(battlefield->walls[(itr * 4)] == 2)
+            {
+
+                Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_StoneWalls[CMB_StoneWallType][itr], (FLIC_Get_Width(IMG_CMB_StoneWalls[CMB_StoneWallType][itr]) / 2), 18, 1, 0, 0, 0, 0, 0, 0, 0);
+
+            }
+
+        }
+
+    }
+
+    // west
+    for(itr = 1; ((itr < 4) && (flag == 0)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates(MIN_CGX_CITY, (MIN_CGY_CITY + itr), 0, 0, &screen_x, &screen_y);
+
+        screen_x += 1;
+        if(itr > 0)
+        {
+            screen_y += 1;
+        }
+
+        if(
+            (_wall_rise_type == 0)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 17, 17, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            if(battlefield->walls[(itr * 4)] == 1)
+            {
+
+                Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_StoneWalls[CMB_StoneWallType][itr], 17, 17, 0, 0, 0, 0, 0, 0, 0, 0);
+
+            }
+
+            if(battlefield->walls[(itr * 4)] == 2)
+            {
+
+                Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_StoneWalls[CMB_StoneWallType][itr], 17, 17, 1, 0, 0, 0, 0, 0, 0, 0);
+
+            }
+
+        }
+
+    }
+    
+    // south
+    for(itr = 4; ((itr < 7) && (flag == 0)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates((2 + itr), MIN_CGY_CITY, 0, 0, &screen_x, &screen_y);
+
+        screen_x += 1;
+
+        if(
+            (_wall_rise_type == 0)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 17, 17, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            if(battlefield->walls[(itr - 3)] == 1)
+            {
+
+                Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_StoneWalls[CMB_StoneWallType][itr], 17, 17, 0, 0, 0, 0, 0, 0, 0, 0);
+
+            }
+
+            if(battlefield->walls[(itr - 3)] == 2)
+            {
+
+                Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_StoneWalls[CMB_StoneWallType][itr], 17, 17, 1, 0, 0, 0, 0, 0, 0, 0);
+
+            }
+
+        }
+
+    }
+    
+    // north
+    for(itr = 7; ((itr < 10) && (flag == 1)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates((itr - 1), MAX_CGY_CITY, 0, 0, &screen_x, &screen_y);
+
+        screen_y += 14;
+
+        if(
+            (_wall_rise_type == 0)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 16, 30, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            if(battlefield->walls[(itr - 6)] == 1)
+            {
+
+                Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_StoneWalls[CMB_StoneWallType][itr], 16, 30, 0, 0, 0, 0, 0, 0, 0, 0);
+
+            }
+
+            if(battlefield->walls[(itr - 6)] == 2)
+            {
+
+                Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_StoneWalls[CMB_StoneWallType][itr], 16, 30, 1, 0, 0, 0, 0, 0, 0, 0);
+
+            }
+
+        }
+
+    }
+
+    // east
+    for(itr = MIN_CGY_CITY; ((itr < (MAX_CGY_CITY - 1)) && (flag == 1)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates(MAX_CGX_CITY, (itr + 1), 0, 0, &screen_x, &screen_y);
+
+        screen_y += 14;
+
+        if(
+            (_wall_rise_type == 0)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 16, 30, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            if(battlefield->walls[(itr - 9)] == 1)
+            {
+
+                Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_StoneWalls[CMB_StoneWallType][itr], 16, 30, 0, 0, 0, 0, 0, 0, 0, 0);
+
+            }
+
+            if(battlefield->walls[(itr - 9)] == 2)
+            {
+
+                Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_StoneWalls[CMB_StoneWallType][itr], 16, 30, 1, 0, 0, 0, 0, 0, 0, 0);
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // WZD ovr153p09
 // drake178: CMB_SpawnDarkWall()
+void CMB_SpawnDarkWall__WIP(int16_t flag)
+{
+    int16_t screen_y = 0;
+    int16_t screen_x = 0;
+    int16_t itr = 0;  // _SI_
+
+    // north-west corner
+    for(itr = 0; ((itr < 1) && (flag == 0)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates(5, (10 + itr), 0, 0, &screen_x, &screen_y);
+
+        screen_y += 1;
+        screen_x += 1;
+
+        if(
+            (_wall_rise_type == 2)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 15, 19, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_DarkWall[itr], (FLIC_Get_Width(IMG_CMB_DarkWall[itr]) / 2), 19, G_CMB_MWallAnimStage, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+
+    }
+
+    // west
+    for(itr = 1; ((itr < 4) && (flag == 0)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates(5, (10 + itr), 0, 0, &screen_x, &screen_y);
+
+        screen_x += 1;
+        if(itr > 0)
+        {
+            screen_y += 1;
+        }
+
+        if(
+            (_wall_rise_type == 2)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 15, 19, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_DarkWall[itr], (FLIC_Get_Width(IMG_CMB_DarkWall[itr]) / 2), 19, G_CMB_MWallAnimStage, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+
+    }
+    
+    // south
+    for(itr = 4; ((itr < 7) && (flag == 0)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates((2 + itr), 10, 0, 0, &screen_x, &screen_y);
+
+        screen_x += 1;
+
+        if(
+            (_wall_rise_type == 2)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 17, 17, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_DarkWall[itr], 17, 17, G_CMB_MWallAnimStage, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+
+    }
+    
+    // north
+    for(itr = 7; ((itr < 10) && (flag == 1)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates((itr - 1), 13, 0, 0, &screen_x, &screen_y);
+
+        screen_y += 14;
+
+        if(
+            (_wall_rise_type == 2)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 16, 29, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_DarkWall[itr], 16, 29, G_CMB_MWallAnimStage, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+
+    }
+
+    // east
+    for(itr = 10; ((itr < 12) && (flag == 1)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates(8, (itr + 1), 0, 0, &screen_x, &screen_y);
+
+        screen_y += 14;
+
+        if(
+            (_wall_rise_type == 2)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 16, 29, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_DarkWall[itr], 16, 29, G_CMB_MWallAnimStage, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+
+    }
+
+    // 
+    for(itr = 12; ((itr < 13) && (flag == 1)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates(MIN_CGX_CITY, MAX_CGY_CITY, 0, 0, &screen_x, &screen_y);
+
+        screen_y += 14;
+
+        if(
+            (_wall_rise_type == 2)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 16, 30, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_DarkWall[itr], 16, 30, G_CMB_MWallAnimStage, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+
+    }
+    
+    // south-west corner  {8,10}
+    for(itr = 13; ((itr < 14) && (flag == 1)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates(8, 10, 0, 0, &screen_x, &screen_y);
+
+        screen_y += 14;
+
+        if(
+            (_wall_rise_type == 2)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 16, 30, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_DarkWall[itr], 16, 30, G_CMB_MWallAnimStage, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+
+    }
+
+}
+
 
 // WZD ovr153p10
 // drake178: CMB_SpawnFireWall()
+void CMB_SpawnFireWall__WIP(int16_t flag)
+{
+    int16_t screen_y = 0;
+    int16_t screen_x = 0;
+    int16_t itr = 0;  // _SI_
+
+    // north-west corner
+    for(itr = 0; ((itr < 1) && (flag == 0)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates(MIN_CGX_CITY, (MIN_CGY_CITY + itr), 0, 0, &screen_x, &screen_y);
+
+        screen_y += 1;
+        screen_x += 1;
+
+        if(
+            (_wall_rise_type == 1)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 15, 19, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_FireWall[itr], (FLIC_Get_Width(IMG_CMB_FireWall[itr]) / 2), 19, G_CMB_MWallAnimStage, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+
+    }
+
+    // west
+    for(itr = 1; ((itr < 4) && (flag == 0)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates(MIN_CGX_CITY, (MIN_CGY_CITY + itr), 0, 0, &screen_x, &screen_y);
+
+        screen_x += 1;
+        if(itr > 0)
+        {
+            screen_y += 1;
+        }
+
+        if(
+            (_wall_rise_type == 1)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 15, 19, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_FireWall[itr], (FLIC_Get_Width(IMG_CMB_FireWall[itr]) / 2), 19, G_CMB_MWallAnimStage, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+
+    }
+    
+    // south
+    for(itr = 4; ((itr < 7) && (flag == 0)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates((2 + itr), MIN_CGY_CITY, 0, 0, &screen_x, &screen_y);
+
+        screen_x += 1;
+
+        if(
+            (_wall_rise_type == 1)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 17, 17, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_FireWall[itr], 17, 17, G_CMB_MWallAnimStage, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+
+    }
+    
+    // north
+    for(itr = 7; ((itr < 10) && (flag == 1)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates((itr - 1), MAX_CGY_CITY, 0, 0, &screen_x, &screen_y);
+
+        screen_y += 14;
+
+        if(
+            (_wall_rise_type == 1)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 16, 29, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_FireWall[itr], 16, 29, G_CMB_MWallAnimStage, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+
+    }
+
+    // east {{8,11},{8,12}}
+    for(itr = 10; ((itr < 12) && (flag == 1)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates(MAX_CGX_CITY, (1 + itr), 0, 0, &screen_x, &screen_y);
+
+        screen_y += 14;
+
+        if(
+            (_wall_rise_type == 1)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 16, 29, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_FireWall[itr], 16, 29, G_CMB_MWallAnimStage, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+
+    }
+
+    // south-west corner  {5,13}
+    for(itr = 12; ((itr < 13) && (flag == 1)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates(MIN_CGX_CITY, MAX_CGY_CITY, 0, 0, &screen_x, &screen_y);
+
+        screen_y += 14;
+
+        if(
+            (_wall_rise_type == 1)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 16, 30, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_FireWall[itr], 16, 30, G_CMB_MWallAnimStage, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+
+    }
+
+    
+    // south-west corner  {8,10}
+    for(itr = 13; ((itr < 14) && (flag == 1)); itr++)
+    {
+
+        Combat_Grid_Screen_Coordinates(8, 10, 0, 0, &screen_x, &screen_y);
+
+        screen_y += 14;
+
+        if(
+            (_wall_rise_type == 1)
+            &&
+            (_wall_rise_on == ST_TRUE)
+        )
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)_wallrise_seg[itr], 16, 30, _wall_rise_frame, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+        else
+        {
+
+            Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)IMG_CMB_FireWall[itr], 16, 30, G_CMB_MWallAnimStage, 0, 0, 0, 0, 0, 0, 0);
+
+        }
+
+    }
+
+}
+
 
 // WZD ovr153p11
 // drake178: CMB_SpawnVortices()
@@ -26652,7 +27438,7 @@ void Set_Entity_Draw_Order(void)
     for(itr_up = 0; itr_up < combat_grid_entity_count; itr_up++)
     {
 
-        if(combat_grid_entities[combat_grid_entities_draw_order[itr_up]].draw_order_value > draw_order_value)
+        if(combat_grid_entities[combat_grid_entities_draw_order[itr_up]].draw_order_value >= draw_order_value)
         {
             break;
         }
@@ -26668,7 +27454,8 @@ void Set_Entity_Draw_Order(void)
 
     // ; should be jg (or ja) instead
     // ¿ maybe was `entity_idx < itr_dn` ?
-    for(itr_dn = combat_grid_entity_count; itr_dn >= entity_idx; itr_dn--)
+    // for(itr_dn = combat_grid_entity_count; itr_dn >= entity_idx; itr_dn--)
+    for(itr_dn = combat_grid_entity_count; entity_idx < itr_dn; itr_dn--)
     {
 
         combat_grid_entities_draw_order[itr_dn] = combat_grid_entities_draw_order[(itr_dn - 1)];
