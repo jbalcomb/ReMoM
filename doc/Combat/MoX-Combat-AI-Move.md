@@ -105,7 +105,7 @@ updates CMB_ActiveMoveMap[]
 sets move cost to 2 for target battle unit
 sets move cost to INF for all non-target battle units
 
-Combat_Move_Path_Find(battle_units[battle_unit_idx].cgx, battle_units[battle_unit_idx].cgy, battle_units[battle_units[battle_unit_idx].Target_BU].cgx, battle_units[battle_units[battle_unit_idx].Target_BU].cgy);
+Combat_Move_Path_Find(battle_units[battle_unit_idx].cgx, battle_units[battle_unit_idx].cgy, battle_units[battle_units[battle_unit_idx].target_battle_unit_idx].cgx, battle_units[battle_units[battle_unit_idx].target_battle_unit_idx].cgy);
 
 XREF:
     NX_j_AI_GetCombatRallyPt__WIP()

@@ -1671,12 +1671,12 @@ struct s_BATTLE_UNIT
     /* 0x40 */  int8_t   mana;
     /* 0x41 */  int8_t   Item_Charges;
     /* 0x42 */  int8_t   Poison_Strength;
-    /* 0x43 */  int8_t   Target_BU;             /* 1-byte, signed */
+    /* 0x43 */  int8_t   target_battle_unit_idx;    /* 1-byte, signed */
     /* 0x44 */  int16_t  cgx;                   /* combat grid x coordinate */
     /* 0x46 */  int16_t  cgy;                   /* combat grid y coordinate */
     /* 0x48 */  int16_t  target_cgx;            /* set by Deploy_Battle_Units()  ¿ used for facing direction ? */
     /* 0x4A */  int16_t  target_cgy;            /* set by Deploy_Battle_Units()  ¿ used for facing direction ? */
-    /* 0x4C */  int16_t  move_anim_ctr;             /* movement animation counter/increment  {0,1,2,3,4,5,6,7} */
+    /* 0x4C */  int16_t  move_anim_ctr;         /* ¿ ~ MoO2 ship_frame ?  movement animation counter/increment  {0,1,2,3,4,5,6,7} */
     /* 0x4E */  int16_t  Atk_FigLoss;
     /* 0x50 */  int16_t  outline_magic_realm;   /* enchantment_magic_realm ... enum e_MAGIC_REALM{} ... index into enchantment_outline_colors[], used for unit outline color */
     /* 0x52 */  int16_t  Moving;                // set to ST_FALSE in Switch_Active_Battle_Unit()

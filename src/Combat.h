@@ -1940,7 +1940,7 @@ int16_t Combat_Structure(int16_t wx, int16_t wy, int16_t wp, int16_t set_city_fl
 int16_t Undeployable_Battle_Units_On_Water(int16_t player_idx);
 
 // WZD o124p06
-int16_t AI_CompareArmies__STUB(int16_t player_idx);
+int16_t Get_Player_Mode(int16_t player_idx);
 
 // WZD o124p07
 SAMB_ptr Reload_Battle_Unit_Move_Sound(int16_t battle_unit_idx, /* HACK */ uint32_t * sound_seg_size);

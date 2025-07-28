@@ -1813,6 +1813,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
                 continue;
 
             }
+
         }
         /*
             END: Auto Combat
@@ -1909,9 +1910,9 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
             frame_scanned_flag = 0;
 
-            _auto_combat_flag = (1 - _auto_combat_flag);
+            TOGGLE(_auto_combat_flag);
 
-            CMB_HumanUnitsDone = 0;
+            CMB_HumanUnitsDone = ST_FALSE;
 
             Clear_Fields();
 
@@ -16138,7 +16139,7 @@ void AI_SetBasicAttacks__WIP(int16_t player_idx)
     }
 
 
-    Safety_Level = AI_CompareArmies__STUB(player_idx);
+    Safety_Level = Get_Player_Mode(player_idx);
 
     Ranged_Difference = (IDK_ranged_strength - Enemy_Mana_Div_4);
 
@@ -16256,9 +16257,9 @@ void AI_BU_ProcessAction__WIP(int16_t battle_unit_idx, int16_t Rally_X, int16_t 
     )
     {
 
-        Rally_X = (battle_units[battle_units[battle_unit_idx].Target_BU].cgx);
+        Rally_X = (battle_units[battle_units[battle_unit_idx].target_battle_unit_idx].cgx);
 
-        Rally_Y = (battle_units[battle_units[battle_unit_idx].Target_BU].cgy);
+        Rally_Y = (battle_units[battle_units[battle_unit_idx].target_battle_unit_idx].cgy);
 
     }
 
@@ -16295,6 +16296,9 @@ jt_bua_07_08
 jt_bua_09
 jt_bua_10
 */
+
+    // MoO2  switch(_new_message) ... handles multi-player
+
     switch(battle_units[battle_unit_idx].action)
     {
 
@@ -16307,7 +16311,7 @@ jt_bua_10
                 if(
                     ((_battlefield_city_walls & BATTLEFIELD_CITY_WALL_STONE) != 0)
                     ||
-                    (battle_units[battle_unit_idx].Target_BU != ST_UNDEFINED)
+                    (battle_units[battle_unit_idx].target_battle_unit_idx != ST_UNDEFINED)
                 )
                 {
 
@@ -16328,7 +16332,7 @@ jt_bua_10
                     if(
                         (battle_units[battle_unit_idx].controller_idx != _combat_attacker_player)
                         ||
-                        (battle_units[battle_unit_idx].Target_BU == ST_UNDEFINED)
+                        (battle_units[battle_unit_idx].target_battle_unit_idx == ST_UNDEFINED)
                     )
                     {
 
@@ -16352,7 +16356,7 @@ jt_bua_10
                             )
                             {
 
-                                battle_units[battle_unit_idx].Target_BU = some_variable;
+                                battle_units[battle_unit_idx].target_battle_unit_idx = some_variable;
 
                                 No_Override = ST_TRUE;
 
@@ -16378,7 +16382,7 @@ jt_bua_10
                     some_variable = 220;
 
                     if(
-                        (battle_units[battle_unit_idx].Target_BU == ST_UNDEFINED)
+                        (battle_units[battle_unit_idx].target_battle_unit_idx == ST_UNDEFINED)
                         &&
                         (battle_units[battle_unit_idx].controller_idx == NEUTRAL_PLAYER_IDX)
                         &&
@@ -16397,7 +16401,7 @@ jt_bua_10
                         if(
                             (battle_units[battle_unit_idx].movement_points < some_variable)
                             &&
-                            (battle_units[battle_unit_idx].Target_BU > ST_UNDEFINED)
+                            (battle_units[battle_unit_idx].target_battle_unit_idx > ST_UNDEFINED)
                         )
                         {
 
@@ -16414,14 +16418,14 @@ jt_bua_10
                                 ; BUG: will read outside of the array bounds with this
                                 ; jump
                                 */
-                                if(battle_units[battle_unit_idx].Target_BU >= 0)
+                                if(battle_units[battle_unit_idx].target_battle_unit_idx >= 0)
                                 {
 
-                                    Do_Auto_Unit_Turn(battle_unit_idx, battle_units[battle_units[battle_unit_idx].Target_BU].cgx, battle_units[battle_units[battle_unit_idx].Target_BU].cgy, battle_units[battle_unit_idx].Target_BU, Rally_X, Rally_Y);
+                                    Do_Auto_Unit_Turn(battle_unit_idx, battle_units[battle_units[battle_unit_idx].target_battle_unit_idx].cgx, battle_units[battle_units[battle_unit_idx].target_battle_unit_idx].cgy, battle_units[battle_unit_idx].target_battle_unit_idx, Rally_X, Rally_Y);
 
                                 }
 
-                                if(battle_units[battle_units[battle_unit_idx].Target_BU].status != bus_Active)
+                                if(battle_units[battle_units[battle_unit_idx].target_battle_unit_idx].status != bus_Active)
                                 {
 
                                     AI_BU_AssignAction__WIP(battle_unit_idx, ST_FALSE);
@@ -16459,32 +16463,32 @@ jt_bua_10
         {
             STU_DEBUG_BREAK();
 
-            if(battle_units[battle_unit_idx].Target_BU < 0)
+            if(battle_units[battle_unit_idx].target_battle_unit_idx < 0)
             {
                 break;
             }
 
-            if(Range_To_Battle_Unit(battle_unit_idx, battle_units[battle_unit_idx].Target_BU) != 1)
+            if(Range_To_Battle_Unit(battle_unit_idx, battle_units[battle_unit_idx].target_battle_unit_idx) != 1)
             {
 
                 some_variable = battle_units[battle_unit_idx].movement_points;
 
                 battle_units[battle_unit_idx].movement_points = 1;
 
-                Do_Auto_Unit_Turn(battle_unit_idx, battle_units[battle_units[battle_unit_idx].Target_BU].cgx, battle_units[battle_units[battle_unit_idx].Target_BU].cgy, battle_units[battle_unit_idx].Target_BU, Rally_X, Rally_Y);
+                Do_Auto_Unit_Turn(battle_unit_idx, battle_units[battle_units[battle_unit_idx].target_battle_unit_idx].cgx, battle_units[battle_units[battle_unit_idx].target_battle_unit_idx].cgy, battle_units[battle_unit_idx].target_battle_unit_idx, Rally_X, Rally_Y);
 
             }
 
             while(
                 (battle_units[battle_unit_idx].movement_points > 0)
                 &&
-                (battle_units[battle_unit_idx].Target_BU > -1)
+                (battle_units[battle_unit_idx].target_battle_unit_idx > -1)
             )
             {
 
-                Battle_Unit_Attack__WIP(battle_unit_idx, battle_units[battle_unit_idx].Target_BU, 0, 0);
+                Battle_Unit_Attack__WIP(battle_unit_idx, battle_units[battle_unit_idx].target_battle_unit_idx, 0, 0);
 
-                if(battle_units[battle_units[battle_unit_idx].Target_BU].status == bus_Active)
+                if(battle_units[battle_units[battle_unit_idx].target_battle_unit_idx].status == bus_Active)
                 {
                     continue;
                 }
@@ -16660,7 +16664,7 @@ void AI_GetCombatRallyPt__WIP(int16_t battle_unit_idx, int16_t * Rally_X, int16_
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
 
-        if(battle_units[battle_unit_idx].Target_BU == itr)
+        if(battle_units[battle_unit_idx].target_battle_unit_idx == itr)
         {
 
             _cmbt_movepath_cost_map[((battle_units[itr].cgy * COMBAT_GRID_WIDTH) + battle_units[itr].cgx)] = 2;
@@ -16693,7 +16697,7 @@ void AI_GetCombatRallyPt__WIP(int16_t battle_unit_idx, int16_t * Rally_X, int16_
 
 
     /* BEGIN:  HACK */
-    if(battle_units[battle_unit_idx].Target_BU == ST_UNDEFINED)
+    if(battle_units[battle_unit_idx].target_battle_unit_idx == ST_UNDEFINED)
     {
         *Rally_X = 0;
         *Rally_Y = 0;
@@ -16702,9 +16706,9 @@ void AI_GetCombatRallyPt__WIP(int16_t battle_unit_idx, int16_t * Rally_X, int16_
     /* END:  HACK */
 
 
-    // battle_units[battle_units[battle_unit_idx].Target_BU].cgx
-    // battle_units[battle_units[battle_unit_idx].Target_BU].cgy
-    Combat_Move_Path_Find(battle_units[battle_unit_idx].cgx, battle_units[battle_unit_idx].cgy, battle_units[battle_units[battle_unit_idx].Target_BU].cgx, battle_units[battle_units[battle_unit_idx].Target_BU].cgy);
+    // battle_units[battle_units[battle_unit_idx].target_battle_unit_idx].cgx
+    // battle_units[battle_units[battle_unit_idx].target_battle_unit_idx].cgy
+    Combat_Move_Path_Find(battle_units[battle_unit_idx].cgx, battle_units[battle_unit_idx].cgy, battle_units[battle_units[battle_unit_idx].target_battle_unit_idx].cgx, battle_units[battle_units[battle_unit_idx].target_battle_unit_idx].cgy);
 
     for(itr = 0; itr < movement_path_grid_cell_count; itr++)
     {
@@ -16843,7 +16847,7 @@ void AI_MoveBattleUnits__WIP(int16_t player_idx)
             for(itr = 0; itr < _vortex_count; itr++)
             {
 
-                if (_vortexes[itr].owner_idx == _combat_attacker_player)
+                if(_vortexes[itr].owner_idx == _combat_attacker_player)
                 {
 
                     attacker_vortex_count++;
@@ -16973,41 +16977,35 @@ void AI_MoveBattleUnits__WIP(int16_t player_idx)
             (battle_units[battle_unit_idx].controller_idx == player_idx)
             &&
             (battle_units[battle_unit_idx].status == bus_Active)
+            &&
+            (battle_units[battle_unit_idx].movement_points > 0)
+            &&
+            ((battle_units[battle_unit_idx].Combat_Effects & bue_Black_Sleep) == 0)
         )
         {
 
-            if(battle_units[battle_unit_idx].movement_points > 0)
+            Switch_Active_Battle_Unit(battle_unit_idx);
+
+            Assign_Combat_Grids();
+
+            AI_BU_AssignAction__WIP(battle_unit_idx, bua_Ready);
+
+            if(
+                (battle_units[battle_unit_idx].controller_idx == _combat_defender_player)
+                &&
+                (_battlefield_city_walls > 0)
+                &&
+                (Battle_Unit_Is_Within_City(battle_unit_idx) == ST_FALSE)
+            )
             {
 
-                if((battle_units[battle_unit_idx].Combat_Effects & bue_Black_Sleep) == 0)
-                {
+                AI_BU_ProcessAction__WIP(battle_unit_idx, 0, 0);
 
-                    Switch_Active_Battle_Unit(battle_unit_idx);
+            }
+            else
+            {
 
-                    Assign_Combat_Grids();
-
-                    AI_BU_AssignAction__WIP(battle_unit_idx, bua_Ready);
-
-                    if(
-                        (battle_units[battle_unit_idx].controller_idx == _combat_defender_player)
-                        &&
-                        (_battlefield_city_walls > 0)
-                        &&
-                        (Battle_Unit_Is_Within_City(battle_unit_idx) == ST_FALSE)
-                    )
-                    {
-
-                        AI_BU_ProcessAction__WIP(battle_unit_idx, 0, 0);
-
-                    }
-                    else
-                    {
-
-                        AI_BU_ProcessAction__WIP(battle_unit_idx, Rally_X, Rally_Y);
-
-                    }
-
-                }
+                AI_BU_ProcessAction__WIP(battle_unit_idx, Rally_X, Rally_Y);
 
             }
 
@@ -17041,31 +17039,22 @@ void AI_MoveBattleUnits__WIP(int16_t player_idx)
             (battle_units[battle_unit_idx].controller_idx == player_idx)
             &&
             (battle_units[battle_unit_idx].status == bus_Active)
+            &&
+            (battle_units[battle_unit_idx].movement_points > 0)
+            &&
+            (_UNITS[battle_units[battle_unit_idx].unit_idx].Hero_Slot > -1)
+            &&
+            ((battle_units[battle_unit_idx].Combat_Effects & bue_Black_Sleep) == 0)
         )
         {
 
-            if(battle_units[battle_unit_idx].movement_points > 0)
-            {
+            Switch_Active_Battle_Unit(battle_unit_idx);
 
-                if(_UNITS[battle_units[battle_unit_idx].unit_idx].Hero_Slot > -1)
-                {
+            Assign_Combat_Grids();
 
-                    if((battle_units[battle_unit_idx].Combat_Effects & bue_Black_Sleep) == 0)
-                    {
+            AI_BU_AssignAction__WIP(battle_unit_idx, bua_Ready);
 
-                        Switch_Active_Battle_Unit(battle_unit_idx);
-
-                        Assign_Combat_Grids();
-
-                        AI_BU_AssignAction__WIP(battle_unit_idx, bua_Ready);
-
-                        AI_BU_ProcessAction__WIP(battle_unit_idx, Rally_X, Rally_Y);
-
-                    }
-
-                }
-
-            }
+            AI_BU_ProcessAction__WIP(battle_unit_idx, Rally_X, Rally_Y);
 
         }
 
@@ -17274,28 +17263,28 @@ int16_t AI_BU_AssignAction__WIP(int16_t battle_unit_idx, int16_t no_spells_flag)
                 continue;
             }
 
-            if(_UNITS[battle_units[battle_units[itr_battle_units].Target_BU].unit_idx].type != _UNITS[battle_units[target_battle_unit_idx].unit_idx].type)
+            if(_UNITS[battle_units[battle_units[itr_battle_units].target_battle_unit_idx].unit_idx].type != _UNITS[battle_units[target_battle_unit_idx].unit_idx].type)
             {
                 continue;
             }
 
-            if(battle_units[battle_units[itr_battle_units].Target_BU].status != bus_Active)
+            if(battle_units[battle_units[itr_battle_units].target_battle_unit_idx].status != bus_Active)
             {
                 continue;
             }
 
-            if(battle_units[battle_units[itr_battle_units].Target_BU].defense != battle_units[target_battle_unit_idx].defense)
+            if(battle_units[battle_units[itr_battle_units].target_battle_unit_idx].defense != battle_units[target_battle_unit_idx].defense)
             {
                 continue;
             }
 
-            target_battle_unit_idx = battle_units[itr_battle_units].Target_BU;
+            target_battle_unit_idx = battle_units[itr_battle_units].target_battle_unit_idx;
 
         }
 
     }
 
-    battle_units[battle_unit_idx].Target_BU = target_battle_unit_idx;
+    battle_units[battle_unit_idx].target_battle_unit_idx = target_battle_unit_idx;
 
     return target_battle_unit_idx;
 
@@ -19205,7 +19194,7 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     battle_unit->mana_max = 0;
     battle_unit->Item_Charges = 0;
 
-    battle_unit->Target_BU = ST_UNDEFINED;
+    battle_unit->target_battle_unit_idx = ST_UNDEFINED;
 
     battle_unit->Poison_Strength = 0;
 
@@ -24511,6 +24500,7 @@ int16_t Undeployable_Battle_Units_On_Water(int16_t player_idx)
 
 // WZD o124p06
 // drake178: AI_CompareArmies()
+// ¿ MoO2  Fleet_Strength_Comparison_() ... Get_Player_Mode_()?!? ?
 /*
 ; calculates the threat levels of both own and enemy
 ; units, and returns a value ranging from 0
@@ -24521,12 +24511,122 @@ int16_t Undeployable_Battle_Units_On_Water(int16_t player_idx)
 ;  target set don't count into the army strength!
 */
 /*
-
+    returns {0,1,2,3,4,5}
+...some sort of *mode* for making decisions? more/less offensive/defensive?
 */
-int16_t AI_CompareArmies__STUB(int16_t player_idx)
+int16_t Get_Player_Mode(int16_t player_idx)
 {
+    int16_t enemy_attack_strength = 0;
+    int16_t own_attack_strength = 0;
+    int16_t effective_strength = 0;
+    int16_t Threat_Ratio_Level = 0;
+    int16_t enemy_effective_strength = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t own_effective_strength = 0;  // _DI_
 
-    return 4;
+    own_effective_strength = 0;
+    enemy_effective_strength = 0;
+    own_attack_strength = 0;
+    enemy_attack_strength = 0;
+
+    for(itr = 0; itr < _combat_total_unit_count; itr++)
+    {
+
+        if(
+            (battle_units[itr].status == bus_Active)
+            &&
+            (
+                (_combat_turn < 2)
+                ||
+                (battle_units[itr].target_battle_unit_idx != ST_UNDEFINED)
+                ||
+                (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
+            )
+        )
+        {
+
+            effective_strength = Effective_Battle_Unit_Strength(itr);
+
+            if(battle_units[itr].controller_idx == player_idx)
+            {
+
+                own_effective_strength += effective_strength;
+
+                own_attack_strength += (battle_units[itr].melee + battle_units[itr].ranged);
+
+            }
+            else
+            {
+
+                enemy_effective_strength += effective_strength;
+
+                enemy_attack_strength += (battle_units[itr].melee + battle_units[itr].ranged);
+
+            }
+
+        }
+
+    }
+
+    if(
+        (own_effective_strength == 0)
+        ||
+        (own_attack_strength == 0)
+    )
+    {
+
+        return 0;
+
+    }
+
+    if(
+        (enemy_effective_strength == 0)
+        &&
+        (enemy_attack_strength == 0)
+    )
+    {
+
+        return 5;
+
+    }
+
+    if((enemy_effective_strength / own_effective_strength) > 3)
+    {
+        
+        Threat_Ratio_Level = 0;
+
+    }
+    else if((enemy_effective_strength / own_effective_strength) > 2)
+    {
+        
+        Threat_Ratio_Level = 1;
+
+    }
+    else if((enemy_effective_strength * 2) > (own_effective_strength * 3))
+    {
+        
+        Threat_Ratio_Level = 2;
+
+    }
+    else if((own_effective_strength / enemy_effective_strength) > 3)
+    {
+        
+        Threat_Ratio_Level = 5;
+
+    }
+    else if((own_effective_strength / enemy_effective_strength) > 2)
+    {
+        
+        Threat_Ratio_Level = 4;
+
+    }
+    else
+    {
+
+        Threat_Ratio_Level = 3;
+    }
+
+    return Threat_Ratio_Level;
 
 }
 
