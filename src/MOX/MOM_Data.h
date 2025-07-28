@@ -2859,6 +2859,7 @@ extern struct s_HEROES * _HEROES2[NUM_PLAYERS];                  // alloc in All
 
 
 // WZD dseg:924A
+// ¿ MoO2  Module: MOX  _ai_retreat_flag ?
 extern int16_t CMB_AI_Fled;
 
 // WZD dseg:924C

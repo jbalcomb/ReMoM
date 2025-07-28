@@ -1922,7 +1922,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
             Combat_Winner = Check_For_Winner__WIP();
 
-            if(Combat_Winner == ST_UNDEFINED)
+            if(Combat_Winner != ST_UNDEFINED)
             {
                 leave_screen = ST_UNDEFINED;
                 input_field_idx = 0;
