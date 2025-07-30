@@ -5,6 +5,36 @@
 
 ## CMB_ProgressTurnFlow__WIP()
 
+called twice in 'Auto Combat'
+OR
+once right before screen redraw in screen-loop
+
+    if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
+        CMB_HumanUnitsDone = ST_TRUE;
+        CMB_ImmobileCanAct = ST_FALSE;
+
+    if((leave_screen == ST_FALSE) && (CMB_HumanUnitsDone == ST_TRUE) && (CMB_ImmobileCanAct == ST_FALSE))
+        CMB_HumanUnitsDone = ST_FALSE;  // Where does this get used after this?
+        CMB_ProgressTurnFlow__WIP();
+        Next_Battle_Unit(_human_player_idx);
+        Assign_Combat_Grids();
+        input_field_idx = ST_UNDEFINED;
+        screen_changed = ST_TRUE;
+        CRP_CMB_NeverChecked1 = ST_TRUE;
+        winner = Check_For_Winner__WIP();
+        if(Combat_Winner != ST_UNDEFINED)
+            leave_screen = ST_UNDEFINED;
+            input_field_idx = 0;
+
+
+
+XREF:
+    j_CMB_ProgressTurnFlow__WIP()
+        Combat_Screen__WIP+3B9       call    j_CMB_ProgressTurnFlow__WIP
+        Combat_Screen__WIP:loc_76281 call    j_CMB_ProgressTurnFlow__WIP
+        Combat_Screen__WIP+1180      call    j_CMB_ProgressTurnFlow__WIP
+
+
 
 
 ## CMB_PrepareTurn__WIP()

@@ -67,6 +67,46 @@ message(STATUS "GTEST_INCLUDE_DIRS='${GTEST_INCLUDE_DIRS}'")
 find_package(SDL2 REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 
+
+# # SDL2::Main  SDL2::Core  SDL2::Mixer
+# get_target_property(imported_implib SDL2::Main IMPORTED_IMPLIB)
+# message(STATUS "imported_implib: ${imported_implib}")
+# get_target_property(imported_implib SDL2::Core IMPORTED_IMPLIB)
+# message(STATUS "imported_implib: ${imported_implib}")
+# get_target_property(imported_implib SDL2::Mixer IMPORTED_IMPLIB)
+# message(STATUS "imported_implib: ${imported_implib}")
+# # >>> [cmake] -- imported_implib: imported_implib-NOTFOUND
+# # >>> [cmake] -- imported_implib: imported_implib-NOTFOUND
+# # >>> [cmake] -- imported_implib: imported_implib-NOTFOUND
+# # ...SDL provides package configuration files which create imported targets, defining the DLL location(s) via IMPORTED_LOCATION_RELEASE or IMPORTED_LOCATION_DEBUG.
+# get_target_property(imported_location_debug SDL2::Main IMPORTED_LOCATION_DEBUG)
+# message(STATUS "imported_location_debug: ${imported_location_debug}")
+# get_target_property(imported_location_debug SDL2::Core IMPORTED_LOCATION_DEBUG)
+# message(STATUS "imported_location_debug: ${imported_location_debug}")
+# get_target_property(imported_location_debug SDL2::Mixer IMPORTED_LOCATION_DEBUG)
+# message(STATUS "imported_location_debug: ${imported_location_debug}")
+# # >>> [cmake] -- imported_location_debug: imported_location_debug-NOTFOUND
+# # >>> [cmake] -- imported_location_debug: imported_location_debug-NOTFOUND
+# # >>> [cmake] -- imported_location_debug: imported_location_debug-NOTFOUND
+# get_target_property(imported_location_release SDL2::Main IMPORTED_LOCATION_RELEASE)
+# message(STATUS "imported_location_release: ${imported_location_release}")
+# get_target_property(imported_location_release SDL2::Core IMPORTED_LOCATION_RELEASE)
+# message(STATUS "imported_location_release: ${imported_location_release}")
+# get_target_property(imported_location_release SDL2::Mixer IMPORTED_LOCATION_RELEASE)
+# message(STATUS "imported_location_release: ${imported_location_release}")
+# # >>> [cmake] -- imported_location_release: imported_location_release-NOTFOUND
+# # >>> [cmake] -- imported_location_release: imported_location_release-NOTFOUND
+# # >>> [cmake] -- imported_location_release: imported_location_release-NOTFOUND
+# get_target_property(imported_location SDL2::Main IMPORTED_LOCATION)
+# message(STATUS "imported_location: ${imported_location}")
+# get_target_property(imported_location SDL2::Core IMPORTED_LOCATION)
+# message(STATUS "imported_location: ${imported_location}")
+# get_target_property(imported_location SDL2::Mixer IMPORTED_LOCATION)
+# message(STATUS "imported_location: ${imported_location}")
+# # >>> [cmake] -- imported_location: imported_location-NOTFOUND
+# # >>> [cmake] -- imported_location: C:/devellib/SDL2-2.32.2/lib/x64/SDL2.lib
+# # >>> [cmake] -- imported_location: C:/devellib/SDL2_mixer-2.8.1/lib/x64/SDL2_mixer.lib
+
 add_subdirectory(src)
 
 add_subdirectory(tests)

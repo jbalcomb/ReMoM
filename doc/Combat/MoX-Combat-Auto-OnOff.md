@@ -1,6 +1,39 @@
 
 
 
+## Order of Operation
+Off, On, End
+[Off, On], Off, End
+...can be turned on partially through the human player turn, so...
+...
+human is attacker
+...computer turn, human turn, ...
+human is defender
+...human turn, computer turn, ...
+
+
+
+
+
+_auto_combat_flag {F,T}
+initialized to off in Combat_Screen__WIP()
+checked for 'Auto Combat' in screen-loop
+...set to off if cancelled
+set to on for 'Left-Click Auto Button'
+...
+    TOGGLE(_auto_combat_flag);
+    CMB_HumanUnitsDone = ST_FALSE;
+    AI_CMB_PlayTurn__WIP(combat_human_player);
+    Combat_Winner = Check_For_Winner__WIP();
+...loop around screen-loop
+    CMB_ProgressTurnFlow__WIP();
+
+
+
+
+
+
+
 Combat.c
 Combat_Screen__WIP()
 

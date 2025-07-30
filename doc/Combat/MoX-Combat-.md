@@ -9,6 +9,133 @@ BU_GetEffectiveDEF()  ==>  Battle_Unit_Defense_Special()
 
 
 
+Variables?
+Raison d'etre?
+CMB_HumanTurn
+CMB_AIGoesFirst
+CMB_ImmobileCanAct
+CRP_CMB_NeverChecked1
+
+## CMB_AIGoesFirst
+In Combat_Screen__WIP(), ...
+    CMB_AIGoesFirst = ST_FALSE;
+    if(_combat_defender_player == combat_computer_player)
+        AI_CMB_PlayTurn__WIP(_combat_defender_player);
+        CMB_PrepareTurn__WIP();
+        CMB_AIGoesFirst = ST_TRUE;
+...
+    ...nothing in AI_CMB_PlayTurn__WIP()
+    ...nothing in AI_CMB_PlayTurn__WIP() |-> CMB_CE_Refresh__WIP()
+    ...nothing in AI_CMB_PlayTurn__WIP() |-> AI_MoveBattleUnits__WIP()
+    CMB_PrepareTurn__WIP()
+        CMB_AIGoesFirst = ST_FALSE;
+
+
+
+## CMB_ImmobileCanAct
+
+
+
+## CMB_HumanUnitsDone
+
+
+¿ ***when CMB_HumanUnitsDone is TRUE, the human player's turn is over*** ?
+
+
+Is there something here with the current/human player?
+Does it matter that it is the 'Human Player'?
+
+What's the relationship with CMB_ImmobileCanAct?
+
+Where is the first place it gets used?  (starts from Combat_Screen__WIP())
+
+
+...sets to ST_TRUE
+    Combat_Screen__WIP+115A      mov     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
+    Next_Battle_Unit+23          mov     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
+...
+    Combat_Screen__WIP()
+        if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
+            CMB_HumanUnitsDone = ST_TRUE;
+            CMB_ImmobileCanAct = ST_FALSE;
+    ...but, I have a debug-break in there and it has never been hit
+    Next_Battle_Unit()
+        all_done_none_available = Next_Battle_Unit_Nearest_Available(player_idx);
+        if(all_done_none_available == ST_TRUE)
+            CMB_HumanUnitsDone = ST_TRUE;
+        else
+            CMB_ImmobileCanAct = ST_FALSE;
+
+...sets to ST_FALSE
+    Combat_Screen__WIP+12C       mov     [CMB_HumanUnitsDone], e_ST_FALSE
+        ...just initializing it to FALSE  (right before _combat_turn is initialized to zero)
+    Combat_Screen__WIP:loc_761A1 mov     [CMB_HumanUnitsDone], e_ST_FALSE; BUG: second time clearing this without using it
+        ...just initializing it to FALSE  (right before setting _active_battle_unit)
+    Combat_Screen__WIP+5EB       mov     [CMB_HumanUnitsDone], e_ST_FALSE
+        ...in 'Cancel Auto Combat', before calling AI_CMB_PlayTurn__WIP(combat_human_player)
+    Combat_Screen__WIP+117A      mov     [CMB_HumanUnitsDone], e_ST_FALSE
+        ...in the block for Non-Auto Combat
+        ...subsequent usage?
+        ...Eh? ...only happens if it's TRUE, so how/why would it be true here/there?
+        ...backwards? ...when we get here, it's only true if it's been set by Next_Battle_Unit()
+
+XREF:
+    Combat_Screen__WIP+12C       mov     [CMB_HumanUnitsDone], e_ST_FALSE                                                 
+    Combat_Screen__WIP:loc_761A1 mov     [CMB_HumanUnitsDone], e_ST_FALSE; BUG: second time clearing this without using it
+    Combat_Screen__WIP+5EB       mov     [CMB_HumanUnitsDone], e_ST_FALSE                                                 
+    Combat_Screen__WIP+F68       cmp     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
+    Combat_Screen__WIP+115A      mov     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
+    Combat_Screen__WIP+116C      cmp     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
+    Combat_Screen__WIP+117A      mov     [CMB_HumanUnitsDone], e_ST_FALSE                                                 
+    Next_Battle_Unit+23          mov     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
+
+
+## _combat_turn
+
+In MoO2, ...
+    _combat_turn++;
+    End_Of_Turn_Bookeeping_();
+
+XREF:
+    Auto_Move_Ship_:loc_2AA10    cmp _combat_turn, 1
+    Check_For_Winner_+68         cmp _combat_turn, 50
+    Combat_Ship_Class_:loc_2A633 cmp _combat_turn, 1
+    End_Of_Turn_Bookeeping_+17   movsx eax, _combat_turn
+    Strategic_Combat_+312        cmp _combat_turn, 50
+    Strategic_Combat_+320        inc _combat_turn
+    Strategic_Combat_+39C        cmp _combat_turn, 4
+    Strategic_Combat_+3F5        cmp _combat_turn, 2
+    Strategic_Combat_+417        cmp _combat_turn, 2
+    Strategic_Combat_+73         mov _combat_turn, 0
+    Strategic_Combat_:loc_40579  cmp _combat_turn, 3
+    Strategic_Combat_:loc_40612  cmp _combat_turn, 50
+    Tactical_Combat_+55          mov _combat_turn, 0
+    Tactical_Combat_:loc_48D11   inc _combat_turn
+
+Auto_Move_Ship_()
+
+Check_For_Winner_()
+    if(_combat_turn > 50)
+
+Combat_Ship_Class_()
+
+End_Of_Turn_Bookeeping_()
+
+Strategic_Combat_()
+
+Tactical_Combat_()
+    initializes _combat_turn to 0
+    increments _combat_turn
+
+
+
+
+
+
+
+
+
+
 Wall Crushers
     Catapult
     Engineers

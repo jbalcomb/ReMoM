@@ -909,7 +909,7 @@ SAMB_ptr _cmbt_spell_button_seg;
 
 // WZD dseg:C582
 // drake178: _active_battle_unit
-// MoO2  Module: MOX  _cur_ship
+// MoO2  Module: MOX  _cur_ship  (not _cur_ptr?)
 /*
 ; active battle unit in combat?
 ;
@@ -1451,7 +1451,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     int16_t Battle_Result = 0;
     int16_t defender_unit_count = 0;
     int16_t Player_Fled = 0;
-    int16_t Combat_Winner = 0;
+    int16_t winner = 0;
     int16_t auto_combat_cancel_ESC_field = 0;
     int16_t cast_status = 0;
     int16_t temp_movement_points = 0;
@@ -1699,17 +1699,16 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
         AI_CMB_PlayTurn__WIP(_combat_defender_player);
 
         // ; BUG: the defending AI gets an extra turn?
-
         CMB_PrepareTurn__WIP();
 
         CMB_AIGoesFirst = ST_TRUE;
 
     }
 
-    Combat_Winner = Check_For_Winner__WIP();
+    winner = Check_For_Winner__WIP();
 
     // ; BUG: second time clearing this without using it
-    if(Combat_Winner != ST_UNDEFINED)
+    if(winner != ST_UNDEFINED)
     {
         leave_screen = ST_UNDEFINED;
     }
@@ -1799,9 +1798,9 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
                 }
 
 
-                Combat_Winner = Check_For_Winner__WIP();
+                winner = Check_For_Winner__WIP();
 
-                if(Combat_Winner != ST_UNDEFINED)
+                if(winner != ST_UNDEFINED)
                 {
 
                     leave_screen = ST_UNDEFINED;
@@ -1920,9 +1919,9 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
             AI_CMB_PlayTurn__WIP(combat_human_player);
 
-            Combat_Winner = Check_For_Winner__WIP();
+            winner = Check_For_Winner__WIP();
 
-            if(Combat_Winner != ST_UNDEFINED)
+            if(winner != ST_UNDEFINED)
             {
                 leave_screen = ST_UNDEFINED;
                 input_field_idx = 0;
@@ -1991,9 +1990,9 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
             CRP_CMB_NeverChecked1 = ST_TRUE;
 
-            Combat_Winner = Check_For_Winner__WIP();
+            winner = Check_For_Winner__WIP();
 
-            if(Combat_Winner != ST_UNDEFINED)
+            if(winner != ST_UNDEFINED)
             {
                 leave_screen = ST_UNDEFINED;
                 input_field_idx = 0;
@@ -2026,9 +2025,9 @@ Check_Game_Data();
 
             CRP_CMB_NeverChecked1 = ST_TRUE;
 
-            Combat_Winner = Check_For_Winner__WIP();
+            winner = Check_For_Winner__WIP();
 
-            if(Combat_Winner != ST_UNDEFINED)
+            if(winner != ST_UNDEFINED)
             {
 
                 leave_screen = ST_UNDEFINED;
@@ -2148,7 +2147,7 @@ Check_Game_Data();
 
                 }
 
-                Combat_Winner = combat_computer_player;
+                winner = combat_computer_player;
                 Player_Fled = ST_TRUE;
                 leave_screen = ST_UNDEFINED;
 
@@ -2192,9 +2191,9 @@ Check_Game_Data();
 
                 CRP_CMB_NeverChecked1 = ST_TRUE;
 
-                Combat_Winner = Check_For_Winner__WIP();
+                winner = Check_For_Winner__WIP();
 
-                if(Combat_Winner != ST_UNDEFINED)  /* invalid / no winner / none / neither */
+                if(winner != ST_UNDEFINED)  /* invalid / no winner / none / neither */
                 {
 
                     leave_screen = ST_UNDEFINED;
@@ -2434,9 +2433,9 @@ Check_Game_Data();
 
                 CRP_CMB_NeverChecked1 = ST_TRUE;
 
-                Combat_Winner = Check_For_Winner__WIP();  // ¿ because your spell may have just killed the last enemy unit ?
+                winner = Check_For_Winner__WIP();  // ¿ because your spell may have just killed the last enemy unit ?
 
-                if(Combat_Winner != ST_UNDEFINED)
+                if(winner != ST_UNDEFINED)
                 {
                     leave_screen = ST_UNDEFINED;
                     input_field_idx = 0;
@@ -2552,9 +2551,9 @@ Check_Game_Data();
 
                 CRP_CMB_NeverChecked1 = ST_TRUE;
 
-                Combat_Winner = Check_For_Winner__WIP();
+                winner = Check_For_Winner__WIP();
 
-                if(Combat_Winner != ST_UNDEFINED)
+                if(winner != ST_UNDEFINED)
                 {
                     
                     leave_screen = ST_UNDEFINED;
@@ -2640,7 +2639,9 @@ Check_Game_Data();
 
         }
 
-
+        // NOTE(JimBalcomb,20250729): this debug-break still has never been hit
+        // What is this?  ~debug catch-call?  should actually never happen?
+        // When does _active_battle_unit ever get set to a battle_unit_idx that is not created/owner/controlled by the human player?
         if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
         {
 
@@ -2653,6 +2654,8 @@ Check_Game_Data();
         }
 
 
+        // What is this block?
+        // ¿ only call to CMB_ProgressTurnFlow__WIP() outside of 'Auto Combat' ?
         if(
             (leave_screen == ST_FALSE)
             &&
@@ -2669,6 +2672,7 @@ Check_Game_Data();
 Check_Game_Data();
 
 Check_Game_Data();
+            // maybe, sets CMB_HumanUnitsDone = ST_TRUE and/or CMB_ImmobileCanAct = ST_FALSE
             Next_Battle_Unit(_human_player_idx);
 Check_Game_Data();
 
@@ -2681,10 +2685,10 @@ Check_Game_Data();
             CRP_CMB_NeverChecked1 = ST_TRUE;
 
 Check_Game_Data();
-            Combat_Winner = Check_For_Winner__WIP();
+            winner = Check_For_Winner__WIP();
 Check_Game_Data();
 
-            if(Combat_Winner != ST_UNDEFINED)
+            if(winner != ST_UNDEFINED)
             {
 
                 leave_screen = ST_UNDEFINED;
@@ -2737,7 +2741,7 @@ Check_Game_Data();
     {
         Battle_Result = 5;
     }
-    else if(Combat_Winner == _human_player_idx)
+    else if(winner == _human_player_idx)
     {
         Battle_Result = 1;
     }
@@ -2771,9 +2775,9 @@ Check_Game_Data();
     // DOMSDOS  Play_Background_Music__STUB();
     sdl2_Play_Background_Music__WIP();
 
-    End_Of_Combat__WIP(Combat_Winner, item_count, item_list, Battle_Result);
+    End_Of_Combat__WIP(winner, item_count, item_list, Battle_Result);
 
-    if(Combat_Winner == _combat_attacker_player)
+    if(winner == _combat_attacker_player)
     {
         return ST_TRUE;
     }
@@ -2805,6 +2809,8 @@ Check_Game_Data();
 ; called functions
 */
 /*
+
+    increments _combat_turn
 
     calls BU_Init_Battle_Unit() on all battle units
     then, manually sets movement_points via Battle_Unit_Moves2()
@@ -3462,6 +3468,7 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
 
 // WZD s91p05
 // drake178: G_BU_SelectUnit()
+// ¿ MoO2  Module: COMBAT1  Set_Cur_Ship_To_() ?
 /*
 ; BUG: should set the selected unit manually!
 ; corrupts memory is the last value is invalid
@@ -4678,18 +4685,18 @@ int16_t BU_HasSpellAbility__WIP(int16_t battle_unit_idx)
 */
 void AI_CMB_PlayTurn__WIP(int16_t player_idx)
 {
-    int16_t Combat_Winner = 0;
+    int16_t winner = 0;
 
-    if(player_idx == combat_human_player)
+    if(player_idx != combat_human_player)
     {
 
         // SPELLY  G_CMB_CastSpell((player_idx + 20), _combat_wx, _combat_wy, _combat_wp);
 
     }
 
-    Combat_Winner = Check_For_Winner__WIP();  // ¿ because spell cast may resulted in a win/loss ?
+    winner = Check_For_Winner__WIP();  // ¿ because spell cast may resulted in a win/loss ?
 
-    if(Combat_Winner == ST_UNDEFINED)
+    if(winner == ST_UNDEFINED)
     {
 
         CMB_CE_Refresh__WIP();  // ¿ because spell cast may been an enchantment ?
@@ -8724,6 +8731,7 @@ void Next_Battle_Unit(int16_t player_idx)
 ¿ ~== UNITSTK.C  int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane) ?
 
 */
+/* [Pure-Function] */
 int16_t Next_Battle_Unit_Nearest_Available(int16_t player_idx)
 {
     int16_t Selected_Unit_Y = 0;
@@ -16765,7 +16773,7 @@ void AI_MoveBattleUnits__WIP(int16_t player_idx)
         &&
         (player_idx == _combat_attacker_player)
         &&
-        (AI_ImmobileCounter > 3)
+        (AI_ImmobileCounter > 3)  /* WTF? */
     )
     {
 
