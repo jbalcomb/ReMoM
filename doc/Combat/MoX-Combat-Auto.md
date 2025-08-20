@@ -21,7 +21,7 @@ Used in Auto-Combat, but also used elsewhere
 
 PoI's?
 'Human Player' clicks 'Auto'
-    CMB_HumanUnitsDone = ST_FALSE;
+    _human_out_of_moves = ST_FALSE;
     AI_CMB_PlayTurn__WIP(combat_human_player);
     winner = Check_For_Winner__WIP();
     if(winner != ST_UNDEFINED)

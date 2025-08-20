@@ -6,6 +6,8 @@ OVL_Action_Plane  ==>  _combat_wp
 OVL_Action_YPos  ==>  _combat_wy
 OVL_Action_XPos  ==>  _combat_wx
 BU_GetEffectiveDEF()  ==>  Battle_Unit_Defense_Special()
+CMB_HumanUnitsDone  ==>  _human_out_of_moves
+CMB_ImmobileCanAct  ==>  _human_handle_immobile
 
 
 
@@ -13,7 +15,7 @@ Variables?
 Raison d'etre?
 CMB_HumanTurn
 CMB_AIGoesFirst
-CMB_ImmobileCanAct
+_human_handle_immobile
 CRP_CMB_NeverChecked1
 
 ## CMB_AIGoesFirst
@@ -30,67 +32,222 @@ In Combat_Screen__WIP(), ...
     CMB_PrepareTurn__WIP()
         CMB_AIGoesFirst = ST_FALSE;
 
+initialized to false in Combat_Screen__WIP()
+...promptly set to false in CMB_PrepareTurn__WIP() and set to true right after
+controls if CMB_ProgressTurnFlow__WIP() calls AI_CMB_PlayTurn__WIP(combat_computer_player);
+...then same logic of 'if computer is defender' to call AI_CMB_PlayTurn__WIP(_combat_defender_player) and set CMB_AIGoesFirst to true
 
 
-## CMB_ImmobileCanAct
+
+MoO2
+_combat_turn is incremented at the end of the screen-loop in Tactical_Combat_(), right be calling End_Of_Turn_Bookeeping_()
+
+End_Of_Turn_Bookeeping_()
+...Recharge_Shields_(), Repair_All_Combat_Ships_(), if not retreat, 
+...
+vs. CMB_PrepareTurn__WIP()
+...some parts feel like 'begin', some parts feel like 'end'
 
 
 
-## CMB_HumanUnitsDone
 
 
-¿ ***when CMB_HumanUnitsDone is TRUE, the human player's turn is over*** ?
+
+## CMB_HumanTurn
+
+initialized to true in Combat_Screen__WIP()
+
+sets to false in CMB_ProgressTurnFlow__WIP()
+...then, set to true after the computer player turn
+
+...controls if "All units are immobilized. Select an action." is printed
+
+¿ could be side 0 or side 1 ?  ...left/right?  ...attacker/defender?
+
+
+
+## _human_out_of_moves && _human_handle_immobile
+
+Something like...
+    _human_out_of_moves means no units left to move/attack
+    _human_handle_immobile means no units immobilized
+    ((_human_out_of_moves == ST_TRUE) && (_human_handle_immobile == ST_FALSE)) means the human player's turn is definitely over
+if _human_out_of_moves isn't true, then _human_handle_immobile shouldn't matter?
+    ...as evidence by rge either or in Next_Battle_Unit()
+
+
+    Combat_Screen__WIP()
+        if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
+            _human_out_of_moves = ST_TRUE;  // human turn is over
+            _human_handle_immobile = ST_FALSE;  // don't draw target frames or all immobilized message
+
+        if(
+            (leave_screen == ST_FALSE)
+            &&
+            (_human_out_of_moves == ST_TRUE)  // human player's turn is over
+            &&
+            (_human_handle_immobile == ST_FALSE)  // 
+        )
+        {
+            _human_out_of_moves = ST_FALSE;  // Where does this get used after this?
+            CMB_ProgressTurnFlow__WIP();
+            Next_Battle_Unit(_human_player_idx);    // maybe, sets _human_out_of_moves = ST_TRUE and/or _human_handle_immobile = ST_FALSE
+            Assign_Combat_Grids();
+            ...
+        }
+
+
+
+## _human_handle_immobile
+
+¿ 'End Of Turn' ... ~ MoO2  _side_end_of_turn ?
+    Next_Battle_Unit() sets false if any units are available for move/action
+    So, ...
+        means NOT end of turn?
+    But, ...
+        set back to true in CMB_PrepareTurn__WIP()
+
+
+
+defaults to false, but set to true in CMB_PrepareTurn__WIP()
+
+if _human_out_of_moves is false, then _human_handle_immobile is false
+_human_handle_immobile can only be true, if _human_out_of_moves is true
+
+
+Next_Battle_Unit()
+...this gets set to ST_FALSE if another unit was found, instead of setting _human_out_of_moves to ST_TRUE to make the end of turn
+
+...gets used to override _human_out_of_moves, in the Non-Auto Combat screen-loop block
+
+...controls whether the grid cell box/"frame" is turned off, even when there's an active battle unit
+
+...controls "All units are immobilized. Select an action."
+...if true, not auto, active unit, is human unit and human turn
+
+Assign_Mouse_Images()
+    turn off active unit combat grid highlight frame
+        ...if active battle unit, but immobile flag, not auto-combat, and human controller
+    mouse image(s) when it's not the human player's turn?
+
+
+...sets to ST_TRUE
+    CMB_PrepareTurn__WIP+7       mov     [_human_handle_immobile], e_ST_TRUE 
+
+...sets to ST_FALSE
+    Combat_Screen__WIP:loc_76080 mov     [_human_handle_immobile], e_ST_FALSE
+        ...initialization
+    Combat_Screen__WIP+27E       mov     [_human_handle_immobile], e_ST_FALSE
+        ...reinitialized after call to j_CMB_PrepareTurn__WIP()
+    Combat_Screen__WIP+3C9       mov     [_human_handle_immobile], e_ST_FALSE
+        ...reinitialized after cancel auto-combat
+    Combat_Screen__WIP:loc_766E9 mov     [_human_handle_immobile], e_ST_FALSE
+        ...IDGI - on left-click flee button
+    Combat_Screen__WIP:loc_767AA mov     [_human_handle_immobile], e_ST_FALSE
+        ...IDGI - on left-click combat grid
+    Combat_Screen__WIP+E22       mov     [_human_handle_immobile], e_ST_FALSE
+        ...IDGI - after spell button, but only for cast_status == 2
+    Combat_Screen__WIP+E8E       mov     [_human_handle_immobile], e_ST_FALSE
+        ...IDGI - on left-click wait button
+    Combat_Screen__WIP+ECA       mov     [_human_handle_immobile], e_ST_FALSE
+    Combat_Screen__WIP:loc_76DD7 mov     [_human_handle_immobile], e_ST_FALSE
+        ...IDGI - on left-click info button
+    Combat_Screen__WIP+1160      mov     [_human_handle_immobile], e_ST_FALSE
+        ...IDGI - on left-click done button / space hotkey
+    Next_Battle_Unit:loc_84BA5   mov     [_human_handle_immobile], e_ST_FALSE
+        ...if all units are 'done'
+    Next_Battle_Unit+6D          mov     [_human_handle_immobile], e_ST_FALSE
+        bogus?
+
+XREF:
+    Combat_Screen__WIP:loc_76080 mov     [_human_handle_immobile], e_ST_FALSE
+    Combat_Screen__WIP+27E       mov     [_human_handle_immobile], e_ST_FALSE
+    Combat_Screen__WIP+3C9       mov     [_human_handle_immobile], e_ST_FALSE
+    Combat_Screen__WIP:loc_766E9 mov     [_human_handle_immobile], e_ST_FALSE
+    Combat_Screen__WIP:loc_767AA mov     [_human_handle_immobile], e_ST_FALSE
+    Combat_Screen__WIP+E22       mov     [_human_handle_immobile], e_ST_FALSE
+    Combat_Screen__WIP+E8E       mov     [_human_handle_immobile], e_ST_FALSE
+    Combat_Screen__WIP+ECA       mov     [_human_handle_immobile], e_ST_FALSE
+    Combat_Screen__WIP:loc_76DD7 mov     [_human_handle_immobile], e_ST_FALSE
+    Combat_Screen__WIP+1160      mov     [_human_handle_immobile], e_ST_FALSE
+    Combat_Screen__WIP+1173      cmp     [_human_handle_immobile], e_ST_FALSE
+    CMB_PrepareTurn__WIP+7       mov     [_human_handle_immobile], e_ST_TRUE 
+    Assign_Mouse_Images+4B       cmp     [_human_handle_immobile], e_ST_TRUE 
+    Assign_Mouse_Images+216      cmp     [_human_handle_immobile], e_ST_TRUE 
+    Combat_Screen_Draw+4BB       cmp     [_human_handle_immobile], e_ST_TRUE 
+    Next_Battle_Unit:loc_84BA5   mov     [_human_handle_immobile], e_ST_FALSE
+    Next_Battle_Unit+6D          mov     [_human_handle_immobile], e_ST_FALSE
+
+
+
+
+## _human_out_of_moves
+
+
+¿ ***when _human_out_of_moves is TRUE, the human player's turn is over*** ?
+...not quite, but definitely means all battle units have moved or attacked
+...what's left? webbed but can cast spell?
+...something about disenchanting wind walking during combat over water
+...so, more like 'active(current/last?) unit can not move'?
 
 
 Is there something here with the current/human player?
 Does it matter that it is the 'Human Player'?
+combat_human_player = _human_player_idx = HUMAN_PLAYER_IDX = 0
 
-What's the relationship with CMB_ImmobileCanAct?
+What's the relationship with _human_handle_immobile?
+
 
 Where is the first place it gets used?  (starts from Combat_Screen__WIP())
 
 
 ...sets to ST_TRUE
-    Combat_Screen__WIP+115A      mov     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
-    Next_Battle_Unit+23          mov     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
+    Combat_Screen__WIP+115A      mov     [_human_out_of_moves], e_ST_TRUE                                                  
+    Next_Battle_Unit+23          mov     [_human_out_of_moves], e_ST_TRUE                                                  
 ...
     Combat_Screen__WIP()
         if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
-            CMB_HumanUnitsDone = ST_TRUE;
-            CMB_ImmobileCanAct = ST_FALSE;
+            _human_out_of_moves = ST_TRUE;
+            _human_handle_immobile = ST_FALSE;
     ...but, I have a debug-break in there and it has never been hit
     Next_Battle_Unit()
         all_done_none_available = Next_Battle_Unit_Nearest_Available(player_idx);
         if(all_done_none_available == ST_TRUE)
-            CMB_HumanUnitsDone = ST_TRUE;
+            _human_out_of_moves = ST_TRUE;
         else
-            CMB_ImmobileCanAct = ST_FALSE;
+            _human_handle_immobile = ST_FALSE;
 
 ...sets to ST_FALSE
-    Combat_Screen__WIP+12C       mov     [CMB_HumanUnitsDone], e_ST_FALSE
+    Combat_Screen__WIP+12C       mov     [_human_out_of_moves], e_ST_FALSE
         ...just initializing it to FALSE  (right before _combat_turn is initialized to zero)
-    Combat_Screen__WIP:loc_761A1 mov     [CMB_HumanUnitsDone], e_ST_FALSE; BUG: second time clearing this without using it
+    Combat_Screen__WIP:loc_761A1 mov     [_human_out_of_moves], e_ST_FALSE; BUG: second time clearing this without using it
         ...just initializing it to FALSE  (right before setting _active_battle_unit)
-    Combat_Screen__WIP+5EB       mov     [CMB_HumanUnitsDone], e_ST_FALSE
+    Combat_Screen__WIP+5EB       mov     [_human_out_of_moves], e_ST_FALSE
         ...in 'Cancel Auto Combat', before calling AI_CMB_PlayTurn__WIP(combat_human_player)
-    Combat_Screen__WIP+117A      mov     [CMB_HumanUnitsDone], e_ST_FALSE
+    Combat_Screen__WIP+117A      mov     [_human_out_of_moves], e_ST_FALSE
         ...in the block for Non-Auto Combat
         ...subsequent usage?
         ...Eh? ...only happens if it's TRUE, so how/why would it be true here/there?
         ...backwards? ...when we get here, it's only true if it's been set by Next_Battle_Unit()
 
 XREF:
-    Combat_Screen__WIP+12C       mov     [CMB_HumanUnitsDone], e_ST_FALSE                                                 
-    Combat_Screen__WIP:loc_761A1 mov     [CMB_HumanUnitsDone], e_ST_FALSE; BUG: second time clearing this without using it
-    Combat_Screen__WIP+5EB       mov     [CMB_HumanUnitsDone], e_ST_FALSE                                                 
-    Combat_Screen__WIP+F68       cmp     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
-    Combat_Screen__WIP+115A      mov     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
-    Combat_Screen__WIP+116C      cmp     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
-    Combat_Screen__WIP+117A      mov     [CMB_HumanUnitsDone], e_ST_FALSE                                                 
-    Next_Battle_Unit+23          mov     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
+    Combat_Screen__WIP+12C       mov     [_human_out_of_moves], e_ST_FALSE                                                 
+    Combat_Screen__WIP:loc_761A1 mov     [_human_out_of_moves], e_ST_FALSE; BUG: second time clearing this without using it
+    Combat_Screen__WIP+5EB       mov     [_human_out_of_moves], e_ST_FALSE                                                 
+    Combat_Screen__WIP+F68       cmp     [_human_out_of_moves], e_ST_TRUE                                                  
+    Combat_Screen__WIP+115A      mov     [_human_out_of_moves], e_ST_TRUE                                                  
+    Combat_Screen__WIP+116C      cmp     [_human_out_of_moves], e_ST_TRUE                                                  
+    Combat_Screen__WIP+117A      mov     [_human_out_of_moves], e_ST_FALSE                                                 
+    Next_Battle_Unit+23          mov     [_human_out_of_moves], e_ST_TRUE                                                  
 
 
 ## _combat_turn
+
+incremented in CMB_PrepareTurn__WIP()
+...which gets called early in Combat_Screen__WIP()
+...and a second time if defender is computer
+
+
 
 In MoO2, ...
     _combat_turn++;
@@ -295,8 +452,8 @@ Tactical_Combat__WIP()
         input_field_idx == done_button_field
             j_Next_Battle_Unit(_human_player_idx)
     Closing The Loop
-        if leave_screen == ST_FALSE && CMB_HumanUnitsDone == ST_TRUE && CMB_ImmobileCanAct == ST_FALSE
-            CMB_HumanUnitsDone = ST_FALSE
+        if leave_screen == ST_FALSE && _human_out_of_moves == ST_TRUE && _human_handle_immobile == ST_FALSE
+            _human_out_of_moves = ST_FALSE
             j_CMB_ProgressTurnFlow__WIP()
             j_Next_Battle_Unit(_human_player_idx)
 
@@ -312,13 +469,13 @@ OON XREF:  Next_Battle_Unit()
 UNITSTK.C Next_Unit_Nearest_Available()
 OON XREF:  WIZ_NextIdleStack()
 
-CMB_HumanUnitsDone
-CMB_ImmobileCanAct
+_human_out_of_moves
+_human_handle_immobile
 in Next_Battle_Unit()
     if(all_done_none_available == ST_TRUE)
-        CMB_HumanUnitsDone = ST_TRUE;
+        _human_out_of_moves = ST_TRUE;
     else
-        CMB_ImmobileCanAct = ST_FALSE;
+        _human_handle_immobile = ST_FALSE;
 
 
 

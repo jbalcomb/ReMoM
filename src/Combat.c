@@ -688,8 +688,11 @@ char figure_lbx_file__ovr163[] = "FIGURE";
 // WZD dseg:C406
 /*
 DEDU is this just an 'end of turn wait'?
+
+¿ ~ NOT {F,T} no units left of status active, player controller, movement points ?
+
 */
-int16_t CMB_ImmobileCanAct;
+int16_t _human_handle_immobile;
 
 // WZD dseg:C408
 int16_t CMB_WizardCitySiege;
@@ -748,6 +751,13 @@ SAMB_ptr _cmbt_lock_wait_button_seg;
 SAMB_ptr _cmbt_lock_spell_button_seg;
 
 // WZD dseg:C430
+/*
+bad naming
+maybe, more like computer player already went?
+
+something *odd* with 'computer' vs. 'defender'
+
+*/
 int16_t CMB_AIGoesFirst;
 
 // WZD dseg:C432
@@ -828,7 +838,10 @@ SAMB_ptr combat_enchantment_icon_segs[NUM_COMBAT_ENCHANTMENTS];
 int16_t _combat_turn;
 
 // WZD dseg:C51E
-int16_t CMB_HumanUnitsDone;
+/*
+{F,T} no units left of status active, player controller, movement points
+*/
+int16_t _human_out_of_moves;
 
 // WZD dseg:C520
 /*
@@ -854,7 +867,7 @@ struct s_mouse_list * _combat_mouse_grid;
 
 // WZD dseg:C524
 // drake178: CMB_TargetRows
-// MoO2  Module: MOX  _combat_mouse_grid
+// MoO2  Module: MOX  _combat_grid  ..._combat_mouse_grid
 /*
 ; array of 22 pointers to LBX_NearAlloc_Next
 ; allocations of 21 bytes each
@@ -1561,7 +1574,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
     Combat_Node_Type();
 
-    CMB_HumanUnitsDone = ST_FALSE;
+    _human_out_of_moves = ST_FALSE;
 
     _combat_turn = 0;
 
@@ -1608,7 +1621,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     }
 
 
-    CMB_ImmobileCanAct = ST_FALSE;
+    _human_handle_immobile = ST_FALSE;
 
     _cp_stay_in_city = ST_TRUE;
 
@@ -1663,7 +1676,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     CMB_PrepareTurn__WIP();
 
 
-    CMB_ImmobileCanAct = ST_FALSE;
+    _human_handle_immobile = ST_FALSE;
 
     // ; NONE of the above functions change the focus unit
     if(_combat_attacker_player == _human_player_idx)
@@ -1713,7 +1726,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
         leave_screen = ST_UNDEFINED;
     }
 
-    CMB_HumanUnitsDone = ST_FALSE;
+    _human_out_of_moves = ST_FALSE;
 
     if(_combat_attacker_player == _human_player_idx)
     {
@@ -1789,7 +1802,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
                     CRP_CMB_NeverChecked1 = ST_TRUE;
 
-                    CMB_ImmobileCanAct = ST_FALSE;
+                    _human_handle_immobile = ST_FALSE;
 
                 }
                 else  /* do 'Auto Combat' */
@@ -1911,7 +1924,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
             TOGGLE(_auto_combat_flag);
 
-            CMB_HumanUnitsDone = ST_FALSE;
+            _human_out_of_moves = ST_FALSE;
 
             Clear_Fields();
 
@@ -2115,7 +2128,7 @@ Check_Game_Data();
         if(input_field_idx == flee_button_field)
         {
 
-            CMB_ImmobileCanAct = ST_FALSE;
+            _human_handle_immobile = ST_FALSE;
 
             Play_Left_Click();
 
@@ -2173,7 +2186,7 @@ Check_Game_Data();
             if(input_field_idx == combat_grid_field)
             {
 
-                CMB_ImmobileCanAct = ST_FALSE;
+                _human_handle_immobile = ST_FALSE;
 
                 frame_scanned_cgx = Get_Combat_Grid_Cell_X((grid_sx + 4), (grid_sy + 4));
                 frame_scanned_cgy = Get_Combat_Grid_Cell_Y((grid_sx + 4), (grid_sy + 4));
@@ -2399,7 +2412,7 @@ Check_Game_Data();
                             case 2:
                             {
                                 CMB_WizCastAvailable = ST_FALSE;
-                                CMB_ImmobileCanAct = ST_FALSE;
+                                _human_handle_immobile = ST_FALSE;
                             } break;
                             default:
                             {
@@ -2458,7 +2471,7 @@ Check_Game_Data();
             if(input_field_idx == wait_button_field)
             {
 
-                CMB_ImmobileCanAct = ST_FALSE;
+                _human_handle_immobile = ST_FALSE;
 
                 Play_Left_Click();
 
@@ -2487,7 +2500,7 @@ Check_Game_Data();
             if(input_field_idx == info_button_field)
             {
 
-                CMB_ImmobileCanAct = 0;
+                _human_handle_immobile = ST_FALSE;
 
                 Play_Left_Click();
 
@@ -2532,7 +2545,7 @@ Check_Game_Data();
             )
             {
 
-                CMB_ImmobileCanAct = ST_FALSE;
+                _human_handle_immobile = ST_FALSE;
 
                 Play_Left_Click();
 
@@ -2540,11 +2553,12 @@ Check_Game_Data();
 
                 battle_units[_active_battle_unit].movement_points = 0;
 
+                // maybe, sets _human_out_of_moves = ST_TRUE and/or _human_handle_immobile = ST_FALSE
                 Next_Battle_Unit(_human_player_idx);
 
                 Assign_Combat_Grids();
 
-                if(CMB_HumanUnitsDone == ST_TRUE)
+                if(_human_out_of_moves == ST_TRUE)  // human player's turn is over
                 {
                     screen_changed = ST_TRUE;
                 }
@@ -2640,16 +2654,16 @@ Check_Game_Data();
         }
 
         // NOTE(JimBalcomb,20250729): this debug-break still has never been hit
-        // What is this?  ~debug catch-call?  should actually never happen?
+        // What is this?  sanity check? hack bug-fix?  should actually never happen?
         // When does _active_battle_unit ever get set to a battle_unit_idx that is not created/owner/controlled by the human player?
         if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
         {
 
             STU_DEBUG_BREAK();
             
-            CMB_HumanUnitsDone = ST_TRUE;
+            _human_out_of_moves = ST_TRUE;  // human turn is over
 
-            CMB_ImmobileCanAct = ST_FALSE;
+            _human_handle_immobile = ST_FALSE;  // don't draw target frames or all immobilized message
 
         }
 
@@ -2659,20 +2673,20 @@ Check_Game_Data();
         if(
             (leave_screen == ST_FALSE)
             &&
-            (CMB_HumanUnitsDone == ST_TRUE)
+            (_human_out_of_moves == ST_TRUE)  // human player's turn is over
             &&
-            (CMB_ImmobileCanAct == ST_FALSE)
+            (_human_handle_immobile == ST_FALSE)  // 
         )
         {
 
-            CMB_HumanUnitsDone = ST_FALSE;  // Where does this get used after this?
+            _human_out_of_moves = ST_FALSE;  // Where does this get used after this?
 
 Check_Game_Data();
             CMB_ProgressTurnFlow__WIP();
 Check_Game_Data();
 
 Check_Game_Data();
-            // maybe, sets CMB_HumanUnitsDone = ST_TRUE and/or CMB_ImmobileCanAct = ST_FALSE
+            // maybe, sets _human_out_of_moves = ST_TRUE and/or _human_handle_immobile = ST_FALSE
             Next_Battle_Unit(_human_player_idx);
 Check_Game_Data();
 
@@ -2810,11 +2824,15 @@ Check_Game_Data();
 */
 /*
 
-    increments _combat_turn
+    increments _combat_turn  [MoO2: incremented at wend of Tactical_Combat_()]
 
     calls BU_Init_Battle_Unit() on all battle units
     then, manually sets movement_points via Battle_Unit_Moves2()
     PS. BU_Init_Battle_Unit() does battle_unit->movement_points = Unit_Moves2(unit_idx);
+
+    MoO2
+    End_Of_Turn_Bookeeping_()
+        Recharge_Shields_();  Repair_All_Combat_Ships_();  check retreat;  reset weapons;
 
 */
 void CMB_PrepareTurn__WIP(void)
@@ -2823,7 +2841,7 @@ void CMB_PrepareTurn__WIP(void)
     int16_t resist_fails = 0;
     int16_t itr = 0;  // _SI_
 
-    CMB_ImmobileCanAct = ST_TRUE;
+    _human_handle_immobile = ST_TRUE;
 
     AI_ImmobileCounter++;
 
@@ -4718,16 +4736,18 @@ void AI_CMB_PlayTurn__WIP(int16_t player_idx)
 */
 /*
 
+looks like MoO2's tail of the screen-loop in Tactical_Combat_()
+
 */
 void CMB_ProgressTurnFlow__WIP(void)
 {
-    int16_t Winner = 0;
+    int16_t winner = 0;
 
     _scanned_battle_unit = ST_UNDEFINED;
 
-    frame_active_flag = 0;
+    frame_active_flag = ST_FALSE;
 
-    frame_scanned_flag = 0;
+    frame_scanned_flag = ST_FALSE;
 
     Set_Mouse_List(1, mouse_list_default);
 
@@ -4736,17 +4756,17 @@ void CMB_ProgressTurnFlow__WIP(void)
     if(CMB_AIGoesFirst == ST_FALSE)
     {
 
-        frame_active_flag = 0;
+        frame_active_flag = ST_FALSE;
 
-        frame_scanned_flag = 0;
+        frame_scanned_flag = ST_FALSE;
 
         AI_CMB_PlayTurn__WIP(combat_computer_player);
 
     }
 
-    Winner =  Check_For_Winner__WIP();
+    winner = Check_For_Winner__WIP();
 
-    if(Winner == ST_UNDEFINED)
+    if(winner == ST_UNDEFINED)
     {
 
         CMB_PrepareTurn__WIP();
@@ -4756,7 +4776,7 @@ void CMB_ProgressTurnFlow__WIP(void)
 
             AI_CMB_PlayTurn__WIP(_combat_defender_player);
 
-            CMB_AIGoesFirst = ST_TRUE;
+            CMB_AIGoesFirst = ST_TRUE;  // Why?  Only checked here above, so only matters the next time this function is called?
 
         }
 
@@ -5616,8 +5636,8 @@ void Assign_Mouse_Images(void)
     int16_t cgy = 0;
     int16_t screen_y = 0;
     int16_t screen_x = 0;
-    int16_t Y_Distance = 0;
-    int16_t X_Distance = 0;
+    int16_t range_y = 0;
+    int16_t range_x = 0;
     int16_t scanned_battle_unit_idx = 0;  // _SI_
     int16_t cgx = 0;  // _DI_
 
@@ -5635,18 +5655,15 @@ void Assign_Mouse_Images(void)
         frame_active_cgy = battle_units[_active_battle_unit].cgy;
 
         if(
-            (CMB_ImmobileCanAct == ST_TRUE)
+            (_human_handle_immobile == ST_TRUE)
             &&
             (_auto_combat_flag == ST_FALSE)
+            &&
+            (battle_units[_active_battle_unit].controller_idx == combat_human_player)
         )
         {
 
-            if(battle_units[_active_battle_unit].controller_idx == combat_human_player)
-            {
-                
-                frame_active_flag = ST_FALSE;
-
-            }
+            frame_active_flag = ST_FALSE;
 
         }
 
@@ -5698,9 +5715,9 @@ void Assign_Mouse_Images(void)
 
             scanned_battle_unit_idx = CMB_TargetRows[cgy][cgx];
 
-            X_Distance = abs((cgx - battle_units[_active_battle_unit].cgx));
+            range_x = abs((cgx - battle_units[_active_battle_unit].cgx));
 
-            Y_Distance = abs((cgy - battle_units[_active_battle_unit].cgy));
+            range_y = abs((cgy - battle_units[_active_battle_unit].cgy));
 
             _combat_mouse_grid->image_num = crsr_RedCross;
 
@@ -5709,9 +5726,9 @@ void Assign_Mouse_Images(void)
 
                 // ; BUG: ranged units will still make this as a ranged attack?
                 if(
-                    (X_Distance <= 1)
+                    (range_x <= 1)
                     &&
-                    (Y_Distance <= 1)
+                    (range_y <= 1)
                 )
                 {
 
@@ -5758,47 +5775,43 @@ void Assign_Mouse_Images(void)
 
             _scanned_battle_unit = scanned_battle_unit_idx;  // ; the combat unit display is based on this
 
+            // Eh? Opposite conditions as above for turning off the active unit highlight frame?
+            // Just human mousing around while it's not their turn?
+            // ...MoO2 uses net_flag and clock mouse image?
             if(
-                (CMB_ImmobileCanAct != ST_TRUE)
-                ||
-                (_auto_combat_flag != ST_FALSE)
+                (
+                    (_human_handle_immobile != ST_TRUE)
+                    ||
+                    (_auto_combat_flag != ST_FALSE)
+                )
+                &&
+                (battle_units[scanned_battle_unit_idx].controller_idx != _human_player_idx)
             )
             {
 
-                if(battle_units[scanned_battle_unit_idx].controller_idx != _human_player_idx)
+                range_x = abs(battle_units[scanned_battle_unit_idx].cgx - battle_units[_active_battle_unit].cgx);
+
+                range_y = abs(battle_units[scanned_battle_unit_idx].cgy - battle_units[_active_battle_unit].cgy);
+
+                _combat_mouse_grid->image_num = crsr_RedCross;
+
+                if(battle_units[_active_battle_unit].movement_points > 0)
                 {
 
-                    X_Distance = abs(battle_units[scanned_battle_unit_idx].cgx - battle_units[_active_battle_unit].cgx);
-
-                    Y_Distance = abs(battle_units[scanned_battle_unit_idx].cgy - battle_units[_active_battle_unit].cgy);
-
-                    _combat_mouse_grid->image_num = crsr_RedCross;
-
-                    if(battle_units[_active_battle_unit].movement_points > 0)
+                    if(Check_Attack_Melee(_active_battle_unit, scanned_battle_unit_idx) == ST_TRUE)
                     {
 
-                        if(Check_Attack_Melee(_active_battle_unit, scanned_battle_unit_idx) == ST_TRUE)
+                        if(
+                            (range_x <= 1)
+                            &&
+                            (range_y <= 1)
+                        )
                         {
 
-                            if(
-                                (X_Distance <= 1)
-                                &&
-                                (Y_Distance <= 1)
-                            )
+                            if(BU_MeleeWallCheck__WIP(_active_battle_unit, scanned_battle_unit_idx) == ST_TRUE)
                             {
 
-                                if(BU_MeleeWallCheck__WIP(_active_battle_unit, scanned_battle_unit_idx) == ST_TRUE)
-                                {
-
-                                    _combat_mouse_grid->image_num = crsr_Melee;
-
-                                }
-                                else
-                                {
-
-                                    _combat_mouse_grid->image_num = BU_GetRangedCursor__WIP(_active_battle_unit, scanned_battle_unit_idx);
-
-                                }
+                                _combat_mouse_grid->image_num = crsr_Melee;
 
                             }
                             else
@@ -5807,6 +5820,12 @@ void Assign_Mouse_Images(void)
                                 _combat_mouse_grid->image_num = BU_GetRangedCursor__WIP(_active_battle_unit, scanned_battle_unit_idx);
 
                             }
+
+                        }
+                        else
+                        {
+
+                            _combat_mouse_grid->image_num = BU_GetRangedCursor__WIP(_active_battle_unit, scanned_battle_unit_idx);
 
                         }
 
@@ -6929,7 +6948,7 @@ void Combat_Screen_Draw(void)
     Cycle_Palette_Color__STUB(198, 0, 0, 0, 55, 0, 0, 11);
 
     if(
-        (CMB_ImmobileCanAct == ST_TRUE)
+        (_human_handle_immobile == ST_TRUE)
         &&
         (_auto_combat_flag == ST_FALSE)
         &&
@@ -6946,6 +6965,7 @@ void Combat_Screen_Draw(void)
         else
         {
 
+            // ¿ ~== if current turn is human/current player's turn ?
             if(CMB_HumanTurn == ST_TRUE)
             {
 
@@ -8655,16 +8675,20 @@ void Next_Battle_Unit(int16_t player_idx)
     while(done == ST_FALSE)
     {
 
+        // ...status active, player controller, movement points
         all_done_none_available = Next_Battle_Unit_Nearest_Available(player_idx);
 
         if(all_done_none_available == ST_TRUE)
         {
-            
-            CMB_HumanUnitsDone = ST_TRUE;
+
+            _human_out_of_moves = ST_TRUE;   // all out of movement points
+
         }
         else
         {
-            CMB_ImmobileCanAct = ST_FALSE;
+
+            _human_handle_immobile = ST_FALSE;  // have moves, so ... don't trigger ???
+
         }
 
         done = ST_TRUE;
@@ -8686,7 +8710,7 @@ void Next_Battle_Unit(int16_t player_idx)
         )
         {
 
-            CMB_ImmobileCanAct = ST_FALSE;
+            _human_handle_immobile = ST_FALSE;
 
         }
 
@@ -8725,8 +8749,8 @@ void Next_Battle_Unit(int16_t player_idx)
 ; made either)
 */
 /*
+    returns {F,T} any active, controlled, moveable unit
     sets _active_battle_unit, via Switch_Active_Battle_Unit()
-    returns ST_TRUE if all done / none available
 
 ¿ ~== UNITSTK.C  int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane) ?
 
@@ -8738,7 +8762,7 @@ int16_t Next_Battle_Unit_Nearest_Available(int16_t player_idx)
     int16_t Selected_Unit_X = 0;
     int16_t Processed_Units = 0;
     int16_t uu_flag = 0;
-    int16_t Unit_Count = 0;
+    int16_t Unit_Count = 0; // active status, current player
     int16_t Closest_Active_Unit = 0;
     int16_t Closest_Active_Dist = 0;
     int16_t Closest_Waiting_Unit = 0;

@@ -26,9 +26,9 @@ AI_MoveBattleUnits__WIP()
 
 
 ...towards the end of the screen-loop, right before the screen re-draw...
-    if((leave_screen == ST_FALSE) && (CMB_HumanUnitsDone == ST_TRUE) && (CMB_ImmobileCanAct == ST_FALSE))
+    if((leave_screen == ST_FALSE) && (_human_out_of_moves == ST_TRUE) && (_human_handle_immobile == ST_FALSE))
     {
-        CMB_HumanUnitsDone = ST_FALSE;
+        _human_out_of_moves = ST_FALSE;
         CMB_ProgressTurnFlow__WIP();
         Next_Battle_Unit(_human_player_idx);
         // ...

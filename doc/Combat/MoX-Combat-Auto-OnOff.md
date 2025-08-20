@@ -22,7 +22,7 @@ checked for 'Auto Combat' in screen-loop
 set to on for 'Left-Click Auto Button'
 ...
     TOGGLE(_auto_combat_flag);
-    CMB_HumanUnitsDone = ST_FALSE;
+    _human_out_of_moves = ST_FALSE;
     AI_CMB_PlayTurn__WIP(combat_human_player);
     Combat_Winner = Check_For_Winner__WIP();
 ...loop around screen-loop
@@ -59,7 +59,7 @@ CMB_ProgressTurnFlow__WIP()
                 CMB_ProgressTurnFlow__WIP();
                 Turn_Off_Auto_Combat();
                 CRP_CMB_NeverChecked1 = ST_TRUE;
-                CMB_ImmobileCanAct = ST_FALSE;
+                _human_handle_immobile = ST_FALSE;
             else  /* do 'Auto Combat' */
                 CMB_ProgressTurnFlow__WIP();
             Combat_Winner = Check_For_Winner__WIP();
@@ -77,7 +77,7 @@ CMB_ProgressTurnFlow__WIP()
             frame_active_flag = 0;
             frame_scanned_flag = 0;
             TOGGLE(_auto_combat_flag);
-            CMB_HumanUnitsDone = ST_FALSE;
+            _human_out_of_moves = ST_FALSE;
             Clear_Fields();
             input_field_idx = 0;
             AI_CMB_PlayTurn__WIP(combat_human_player);

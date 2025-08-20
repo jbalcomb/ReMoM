@@ -123,13 +123,13 @@ Player_Fled = ST_FALSE;
     CMB_combat_structure = Combat_Structure(wx, wy, wp, 0);
     CMB_CE_Refresh__WIP();
     Combat_Node_Type();
-    CMB_HumanUnitsDone = ST_FALSE;
+    _human_out_of_moves = ST_FALSE;
     _combat_turn = 0;
     CMB_WizCastAvailable = ST_TRUE;
     _combat_total_battle_effect_count = Combat_Info_Effects_Count();
     Init_Battlefield_Effects(CMB_combat_structure);
     Combat_Cache_Write();
-    CMB_ImmobileCanAct = ST_FALSE;
+    _human_handle_immobile = ST_FALSE;
     G_AI_StayInTownProper = ST_TRUE;
     _scanned_battle_unit = ST_UNDEFINED;
     frame_active_flag = 0;
@@ -139,7 +139,7 @@ Player_Fled = ST_FALSE;
     CMB_HumanTurn = ST_TRUE;
     _auto_combat_flag = ST_FALSE;
     CMB_PrepareTurn__WIP();
-    CMB_ImmobileCanAct = ST_FALSE;
+    _human_handle_immobile = ST_FALSE;
 
     Assign_Combat_Grids();
 

@@ -1,6 +1,32 @@
 
 
 
+Starts from?
+Attacker is {HP,CP|NP}
+Defender is {HP,CP|NP}
+{HP,CP}
+{CP,HP}
+
+Human attacks Computer
+    Combat_Screen__WIP()
+    CMB_AIGoesFirst = ST_FALSE;
+    if(_combat_defender_player == combat_computer_player)
+        AI_CMB_PlayTurn__WIP(_combat_defender_player);
+        CMB_PrepareTurn__WIP();
+        CMB_AIGoesFirst = ST_TRUE;
+    if(_combat_attacker_player == _human_player_idx)
+        Next_Battle_Unit(0);  /* first attacker battle_unit_idx */
+
+Computer attacks Human
+    Combat_Screen__WIP()
+    CMB_AIGoesFirst = ST_FALSE;
+    NOT if(_combat_defender_player == combat_computer_player)
+    _human_out_of_moves = ST_FALSE;
+    NOT if(_combat_attacker_player == _human_player_idx)
+        Switch_Active_Battle_Unit((_combat_total_unit_count - defender_unit_count));  /* first defender battle_unit_idx */
+
+
+
 
 
 ## CMB_ProgressTurnFlow__WIP()
@@ -10,11 +36,11 @@ OR
 once right before screen redraw in screen-loop
 
     if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
-        CMB_HumanUnitsDone = ST_TRUE;
-        CMB_ImmobileCanAct = ST_FALSE;
+        _human_out_of_moves = ST_TRUE;
+        _human_handle_immobile = ST_FALSE;
 
-    if((leave_screen == ST_FALSE) && (CMB_HumanUnitsDone == ST_TRUE) && (CMB_ImmobileCanAct == ST_FALSE))
-        CMB_HumanUnitsDone = ST_FALSE;  // Where does this get used after this?
+    if((leave_screen == ST_FALSE) && (_human_out_of_moves == ST_TRUE) && (_human_handle_immobile == ST_FALSE))
+        _human_out_of_moves = ST_FALSE;  // Where does this get used after this?
         CMB_ProgressTurnFlow__WIP();
         Next_Battle_Unit(_human_player_idx);
         Assign_Combat_Grids();
@@ -42,6 +68,19 @@ XREF:
 ~ 'Combat Turn Update' ?
     ...battlefield bonuses is more begin-turn?
     ...city damage is more end-turn?
+
+encompasses MoO2's End_Of_Turn_Bookeeping_()
+
+NOTE  doesn't touch CMB_HumanTurn
+
+reinitializes
+    _human_handle_immobile = ST_TRUE
+    CMB_WizCastAvailable = ST_TRUE
+    _scanned_battle_unit = ST_UNDEFINED
+    CMB_AIGoesFirst = ST_FALSE
+increments
+    AI_ImmobileCounter
+    _combat_turn
 
 
 
@@ -95,7 +134,7 @@ CMB_ProgressTurnFlow__WIP() does the turn for the computer player and the auto c
 ...calls AI_CMB_PlayTurn__WIP()
 
 At the end of Tactical_Combat__WIP()
-    if((leave_screen == ST_FALSE) && (CMB_HumanUnitsDone == ST_TRUE) && (CMB_ImmobileCanAct == ST_FALSE))
+    if((leave_screen == ST_FALSE) && (_human_out_of_moves == ST_TRUE) && (_human_handle_immobile == ST_FALSE))
         CMB_ProgressTurnFlow__WIP()
             CMB_PrepareTurn__WIP()
                 Battle_Unit_Moves2()
@@ -116,7 +155,7 @@ battle_units[itr].action = bua_Finished;
 
 ...
 no movement points triggers setting all_done_none_available
-all_done_none_available triggers setting CMB_HumanUnitsDone
+all_done_none_available triggers setting _human_out_of_moves
 does not hit `if(battle_units[_active_battle_unit].controller_idx != combat_human_player)`
 hits Next_Battle_Unit() again
 Hrrrmm..._active_battle_unit didn't get its movement_points used up
@@ -127,13 +166,13 @@ so, ...
     if(
         (leave_screen == ST_FALSE)
         &&
-        (CMB_HumanUnitsDone == ST_TRUE)
+        (_human_out_of_moves == ST_TRUE)
         &&
-        (CMB_ImmobileCanAct == ST_FALSE)
+        (_human_handle_immobile == ST_FALSE)
     )
     {
 
-        CMB_HumanUnitsDone = ST_TRUE;
+        _human_out_of_moves = ST_TRUE;
 
         CMB_ProgressTurnFlow__WIP();
 ...got there
@@ -151,9 +190,9 @@ so, it's getting called when it shouldn't?
 ¿ order in the code ?
     Tactical_Combat__WIP()
         ...
-        CMB_HumanUnitsDone = ST_FALSE;
+        _human_out_of_moves = ST_FALSE;
         ...
-        CMB_ImmobileCanAct = ST_FALSE;
+        _human_handle_immobile = ST_FALSE;
         G_AI_StayInTownProper = ST_TRUE;
         ...
         Switch_Active_Battle_Unit();
@@ -162,7 +201,7 @@ so, it's getting called when it shouldn't?
         _auto_combat_flag = ST_FALSE;
         ...
         *** CMB_PrepareTurn__WIP(); ***  |-> 
-        CMB_ImmobileCanAct = ST_FALSE;
+        _human_handle_immobile = ST_FALSE;
         Switch_Active_Battle_Unit();
         ...
         CMB_AIGoesFirst = ST_FALSE;
@@ -171,7 +210,7 @@ so, it's getting called when it shouldn't?
             CMB_PrepareTurn__WIP();
             CMB_AIGoesFirst = ST_TRUE;
         Combat_Winner = Check_For_Winner__WIP();
-        CMB_HumanUnitsDone = ST_FALSE;
+        _human_out_of_moves = ST_FALSE;
         Next_Battle_Unit()
         ...
         while(leave_screen == ST_FALSE)
@@ -192,7 +231,7 @@ so, it's getting called when it shouldn't?
 
 
 
-## CMB_HumanUnitsDone
+## _human_out_of_moves
 
 set to ST_TRUE in Tactical_Combat__WIP()
     if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
@@ -202,17 +241,17 @@ set to ST_TRUE in Next_Battle_Unit()
 
 
 XREF:
-    Tactical_Combat__WIP+12C       mov     [CMB_HumanUnitsDone], e_ST_FALSE                                                 
-    Tactical_Combat__WIP:loc_761A1 mov     [CMB_HumanUnitsDone], e_ST_FALSE; BUG: second time clearing this without using it
-    Tactical_Combat__WIP+5EB       mov     [CMB_HumanUnitsDone], e_ST_FALSE                                                 
-    Tactical_Combat__WIP+F68       cmp     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
-    Tactical_Combat__WIP+115A      mov     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
-    Tactical_Combat__WIP+116C      cmp     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
-    Tactical_Combat__WIP+117A      mov     [CMB_HumanUnitsDone], e_ST_FALSE                                                 
-    Next_Battle_Unit+23            mov     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
+    Tactical_Combat__WIP+12C       mov     [_human_out_of_moves], e_ST_FALSE                                                 
+    Tactical_Combat__WIP:loc_761A1 mov     [_human_out_of_moves], e_ST_FALSE; BUG: second time clearing this without using it
+    Tactical_Combat__WIP+5EB       mov     [_human_out_of_moves], e_ST_FALSE                                                 
+    Tactical_Combat__WIP+F68       cmp     [_human_out_of_moves], e_ST_TRUE                                                  
+    Tactical_Combat__WIP+115A      mov     [_human_out_of_moves], e_ST_TRUE                                                  
+    Tactical_Combat__WIP+116C      cmp     [_human_out_of_moves], e_ST_TRUE                                                  
+    Tactical_Combat__WIP+117A      mov     [_human_out_of_moves], e_ST_FALSE                                                 
+    Next_Battle_Unit+23            mov     [_human_out_of_moves], e_ST_TRUE                                                  
 
 
-## CMB_ImmobileCanAct
+## _human_handle_immobile
 
 
 ## CMB_HumanTurn
@@ -355,12 +394,12 @@ Tactical_Combat__WIP()
     CMB_combat_structure = Combat_Structure(wx, wy, wp, 0);
     CMB_CE_Refresh__WIP();
     Combat_Node_Type();
-    CMB_HumanUnitsDone = ST_FALSE;
+    _human_out_of_moves = ST_FALSE;
     _combat_turn = 0;
     CMB_WizCastAvailable = ST_TRUE;
     _combat_total_battle_effect_count = Combat_Info_Effects_Count();
     Init_Battlefield_Effects(CMB_combat_structure);
-    CMB_ImmobileCanAct = 0;
+    _human_handle_immobile = 0;
     G_AI_StayInTownProper = 1;
     _scanned_battle_unit = ST_UNDEFINED;
     if(_combat_attacker_player == _human_player_idx)
@@ -374,7 +413,7 @@ Tactical_Combat__WIP()
     CMB_HumanTurn = ST_TRUE;
     _auto_combat_flag = ST_FALSE;
     CMB_PrepareTurn__WIP();
-    CMB_ImmobileCanAct = 0;
+    _human_handle_immobile = 0;
     if(_combat_attacker_player == _human_player_idx)
         Switch_Active_Battle_Unit(0);
     else
@@ -390,7 +429,7 @@ Tactical_Combat__WIP()
     Combat_Winner = Check_For_Winner__WIP();
     if(Combat_Winner != ST_UNDEFINED)
         leave_screen = ST_UNDEFINED;
-    CMB_HumanUnitsDone = ST_FALSE;
+    _human_out_of_moves = ST_FALSE;
     if(_combat_attacker_player == _human_player_idx)
         Next_Battle_Unit(_human_player_idx);
     else

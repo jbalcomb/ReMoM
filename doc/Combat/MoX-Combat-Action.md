@@ -18,7 +18,7 @@ Tactical_Combat__WIP()
 Tactical_Combat__WIP()
     /* BEGIN:  Left-Click Combat Grid */
     if(input_field_idx == combat_grid_field)
-        CMB_ImmobileCanAct = ST_FALSE;
+        _human_handle_immobile = ST_FALSE;
         CMB_TargetFrame_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
         CMB_TargetFrame_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
         Battle_Unit_Action__WIP(_active_battle_unit, CMB_TargetFrame_X, CMB_TargetFrame_Y);
