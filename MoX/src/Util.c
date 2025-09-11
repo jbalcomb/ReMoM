@@ -42,6 +42,11 @@ uint16_t bit_field_test_bits[8] = {
 
 
 
+void Ridiculous(void)
+{
+    return;
+}
+
 /*
     WZD seg022
 */

@@ -28,6 +28,7 @@ extern "C" {
 #endif
     /* C and Asm Function Prototypes */
 
+void Ridiculous(void);
 
 /*
     WZD seg022
