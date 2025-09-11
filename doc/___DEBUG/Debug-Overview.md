@@ -7,7 +7,7 @@
 STU_DEBUG
 
 // e.g.,  #ifdef STU_DEBUG
-// e.g.,  #include "STU/STU_DBG.h"
+// e.g.,  #include "../../STU/src/STU_DBG.h"
 // e.g.,  #endif
 
 CMake vs. VSC vs. VS  ...(VSC w/wo CMAKE), (VSC w/wo clangd), (VSC w/wo CMAKE)

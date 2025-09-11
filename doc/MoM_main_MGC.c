@@ -1,8 +1,8 @@
-#include "MOX/MOX_CFG.h"
-#include "MOX/MOX_DEF.h"
-#include "MOX/MOX_SET.h"
-#include "MOX/MOX_SND.h"
-#include "MOX/MOX_TYPE.h"
+#include "../../MoX/src/MOX_CFG.h"
+#include "../../MoX/src/MOX_DEF.h"
+#include "../../MoX/src/MOX_SET.h"
+#include "../../MoX/src/MOX_SND.h"
+#include "../../MoX/src/MOX_TYPE.h"
 int MGC_main(int argc, char * argv[])
 {
     int16_t found_file = 0;

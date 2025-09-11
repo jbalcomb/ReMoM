@@ -107,7 +107,9 @@ find_package(SDL2_mixer REQUIRED)
 # # >>> [cmake] -- imported_location: C:/devellib/SDL2-2.32.2/lib/x64/SDL2.lib
 # # >>> [cmake] -- imported_location: C:/devellib/SDL2_mixer-2.8.1/lib/x64/SDL2_mixer.lib
 
-add_subdirectory(src)
+add_subdirectory(STU)
+add_subdirectory(MoX)
+add_subdirectory(MoM)
 
 add_subdirectory(tests)
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -11,83 +11,95 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\MOX\AIL.h" />
-    <ClInclude Include="..\..\..\src\MOX\Allocate.h" />
-    <ClInclude Include="..\..\..\src\MOX\CFG.h" />
-    <ClInclude Include="..\..\..\src\MOX\capture.h" />
-    <ClInclude Include="..\..\..\src\MOX\DOS.h" />
-    <ClInclude Include="..\..\..\src\MOX\EMM.h" />
-    <ClInclude Include="..\..\..\src\MOX\EXIT.h" />
-    <ClInclude Include="..\..\..\src\MOX\Fields.h" />
-    <ClInclude Include="..\..\..\src\MOX\file_ani.h" />
-    <ClInclude Include="..\..\..\src\MOX\FLIC_Draw.h" />
-    <ClInclude Include="..\..\..\src\MOX\Fonts.h" />
-    <ClInclude Include="..\..\..\src\MOX\GENDRAW.h" />
-    <ClInclude Include="..\..\..\src\MOX\GFILE.h" />
-    <ClInclude Include="..\..\..\src\MOX\Graphics.h" />
-    <ClInclude Include="..\..\..\src\MOX\Input.h" />
-    <ClInclude Include="..\..\..\src\MOX\IO_Buffer.h" />
-    <ClInclude Include="..\..\..\src\MOX\Keyboard.h" />
-    <ClInclude Include="..\..\..\src\MOX\LBX_Load.h" />
-    <ClInclude Include="..\..\..\src\MOX\LOADSAVE.h" />
-    <ClInclude Include="..\..\..\src\MOX\MOM_Data.h" />
-    <ClInclude Include="..\..\..\src\MOX\Mouse.h" />
-    <ClInclude Include="..\..\..\src\MOX\MOX_BASE.h" />
-    <ClInclude Include="..\..\..\src\MOX\MOX_BITS.h" />
-    <ClInclude Include="..\..\..\src\MOX\MOX_DAT.h" />
-    <ClInclude Include="..\..\..\src\MOX\MOX_DEF.h" />
-    <ClInclude Include="..\..\..\src\MOX\MOX_KEYS.h" />
-    <ClInclude Include="..\..\..\src\MOX\MOX_Lib.h" />
-    <ClInclude Include="..\..\..\src\MOX\MOX_SET.h" />
-    <ClInclude Include="..\..\..\src\MOX\MOX_SND.h" />
-    <ClInclude Include="..\..\..\src\MOX\MOX_T4.h" />
-    <ClInclude Include="..\..\..\src\MOX\MOX_TYPE.h" />
-    <ClInclude Include="..\..\..\src\MOX\MOX_UPD.h" />
-    <ClInclude Include="..\..\..\src\MOX\paragrph.h" />
-    <ClInclude Include="..\..\..\src\MOX\random.h" />
-    <ClInclude Include="..\..\..\src\MOX\sdl2_Audio.h" />
-    <ClInclude Include="..\..\..\src\MOX\SOUND.h" />
-    <ClInclude Include="..\..\..\src\MOX\TEXTBOX.h" />
-    <ClInclude Include="..\..\..\src\MOX\Timer.h" />
-    <ClInclude Include="..\..\..\src\MOX\Util.h" />
-    <ClInclude Include="..\..\..\src\MOX\Video.h" />
-    <ClInclude Include="..\..\..\src\MOX\Video2.h" />
+    <ClInclude Include="..\..\..\MoX\src\AIL.h" />
+    <ClInclude Include="..\..\..\MoX\src\Allocate.h" />
+    <ClInclude Include="..\..\..\MoX\src\capture.h" />
+    <ClInclude Include="..\..\..\MoX\src\CFG.h" />
+    <ClInclude Include="..\..\..\MoX\src\DOS.h" />
+    <ClInclude Include="..\..\..\MoX\src\EMM.h" />
+    <ClInclude Include="..\..\..\MoX\src\EXIT.h" />
+    <ClInclude Include="..\..\..\MoX\src\Fields.h" />
+    <ClInclude Include="..\..\..\MoX\src\file_ani.h" />
+    <ClInclude Include="..\..\..\MoX\src\FLIC_Draw.h" />
+    <ClInclude Include="..\..\..\MoX\src\Fonts.h" />
+    <ClInclude Include="..\..\..\MoX\src\GENDRAW.h" />
+    <ClInclude Include="..\..\..\MoX\src\GFILE.h" />
+    <ClInclude Include="..\..\..\MoX\src\Graphics.h" />
+    <ClInclude Include="..\..\..\MoX\src\Help.h" />
+    <ClInclude Include="..\..\..\MoX\src\Input.h" />
+    <ClInclude Include="..\..\..\MoX\src\IO_Buffer.h" />
+    <ClInclude Include="..\..\..\MoX\src\Keyboard.h" />
+    <ClInclude Include="..\..\..\MoX\src\LBX_Load.h" />
+    <ClInclude Include="..\..\..\MoX\src\LOADSAVE.h" />
+    <ClInclude Include="..\..\..\MoX\src\MOM_Data.h" />
+    <ClInclude Include="..\..\..\MoX\src\MOM_DEF.h" />
+    <ClInclude Include="..\..\..\MoX\src\MOM_PFL.h" />
+    <ClInclude Include="..\..\..\MoX\src\Mouse.h" />
+    <ClInclude Include="..\..\..\MoX\src\MOX_BASE.h" />
+    <ClInclude Include="..\..\..\MoX\src\MOX_BITS.h" />
+    <ClInclude Include="..\..\..\MoX\src\MOX_DAT.h" />
+    <ClInclude Include="..\..\..\MoX\src\MOX_DEF.h" />
+    <ClInclude Include="..\..\..\MoX\src\MOX_KEYS.h" />
+    <ClInclude Include="..\..\..\MoX\src\MOX_SET.h" />
+    <ClInclude Include="..\..\..\MoX\src\MOX_SND.h" />
+    <ClInclude Include="..\..\..\MoX\src\MOX_T4.h" />
+    <ClInclude Include="..\..\..\MoX\src\MOX_TYPE.h" />
+    <ClInclude Include="..\..\..\MoX\src\MOX_UPD.h" />
+    <ClInclude Include="..\..\..\MoX\src\paragrph.h" />
+    <ClInclude Include="..\..\..\MoX\src\random.h" />
+    <ClInclude Include="..\..\..\MoX\src\sdl2_Audio.h" />
+    <ClInclude Include="..\..\..\MoX\src\SOUND.h" />
+    <ClInclude Include="..\..\..\MoX\src\TEXTBOX.h" />
+    <ClInclude Include="..\..\..\MoX\src\Timer.h" />
+    <ClInclude Include="..\..\..\MoX\src\Util.h" />
+    <ClInclude Include="..\..\..\MoX\src\Video.h" />
+    <ClInclude Include="..\..\..\MoX\src\Video2.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\MOX\AIL.c" />
-    <ClCompile Include="..\..\..\src\MOX\Allocate.c" />
-    <ClCompile Include="..\..\..\src\MOX\CFG.c" />
-    <ClCompile Include="..\..\..\src\MOX\capture.c" />
-    <ClCompile Include="..\..\..\src\MOX\DOS.c" />
-    <ClCompile Include="..\..\..\src\MOX\EMM.c" />
-    <ClCompile Include="..\..\..\src\MOX\EXIT.c" />
-    <ClCompile Include="..\..\..\src\MOX\Fields.c" />
-    <ClCompile Include="..\..\..\src\MOX\file_ani.c" />
-    <ClCompile Include="..\..\..\src\MOX\FLIC_Draw.c" />
-    <ClCompile Include="..\..\..\src\MOX\Fonts.c" />
-    <ClCompile Include="..\..\..\src\MOX\GENDRAW.c" />
-    <ClCompile Include="..\..\..\src\MOX\GFILE.c" />
-    <ClCompile Include="..\..\..\src\MOX\Graphics.c" />
-    <ClCompile Include="..\..\..\src\MOX\Input.c" />
-    <ClCompile Include="..\..\..\src\MOX\IO_Buffer.c" />
-    <ClCompile Include="..\..\..\src\MOX\Keyboard.c" />
-    <ClCompile Include="..\..\..\src\MOX\LBX_Load.c" />
-    <ClCompile Include="..\..\..\src\MOX\LOADSAVE.c" />
-    <ClCompile Include="..\..\..\src\MOX\MOM_Data.c" />
-    <ClCompile Include="..\..\..\src\MOX\Mouse.c" />
-    <ClCompile Include="..\..\..\src\MOX\MOX_DAT.c" />
-    <ClCompile Include="..\..\..\src\MOX\MOX_KEYS.c" />
-    <ClCompile Include="..\..\..\src\MOX\MOX_SET.c" />
-    <ClCompile Include="..\..\..\src\MOX\MOX_SND.c" />
-    <ClCompile Include="..\..\..\src\MOX\MOX_T4.c" />
-    <ClCompile Include="..\..\..\src\MOX\paragrph.c" />
-    <ClCompile Include="..\..\..\src\MOX\random.c" />
-    <ClCompile Include="..\..\..\src\MOX\sdl2_Audio.c" />
-    <ClCompile Include="..\..\..\src\MOX\SOUND.c" />
-    <ClCompile Include="..\..\..\src\MOX\TEXTBOX.c" />
-    <ClCompile Include="..\..\..\src\MOX\Util.c" />
-    <ClCompile Include="..\..\..\src\MOX\Video.c" />
-    <ClCompile Include="..\..\..\src\MOX\Video2.c" />
+    <ClCompile Include="..\..\..\MoX\src\AIL.c" />
+    <ClCompile Include="..\..\..\MoX\src\Allocate.c" />
+    <ClCompile Include="..\..\..\MoX\src\capture.c" />
+    <ClCompile Include="..\..\..\MoX\src\CFG.c" />
+    <ClCompile Include="..\..\..\MoX\src\DOS.c" />
+    <ClCompile Include="..\..\..\MoX\src\EMM.c" />
+    <ClCompile Include="..\..\..\MoX\src\EXIT.c" />
+    <ClCompile Include="..\..\..\MoX\src\Fields.c" />
+    <ClCompile Include="..\..\..\MoX\src\file_ani.c" />
+    <ClCompile Include="..\..\..\MoX\src\FLIC_Draw.c" />
+    <ClCompile Include="..\..\..\MoX\src\Fonts.c" />
+    <ClCompile Include="..\..\..\MoX\src\GENDRAW.c" />
+    <ClCompile Include="..\..\..\MoX\src\GFILE.c" />
+    <ClCompile Include="..\..\..\MoX\src\Graphics.c" />
+    <ClCompile Include="..\..\..\MoX\src\Help.c" />
+    <ClCompile Include="..\..\..\MoX\src\Input.c" />
+    <ClCompile Include="..\..\..\MoX\src\IO_Buffer.c" />
+    <ClCompile Include="..\..\..\MoX\src\Keyboard.c" />
+    <ClCompile Include="..\..\..\MoX\src\LBX_Load.c" />
+    <ClCompile Include="..\..\..\MoX\src\LOADSAVE.c" />
+    <ClCompile Include="..\..\..\MoX\src\MOM_Data.c" />
+    <ClCompile Include="..\..\..\MoX\src\MOM_PFL.c" />
+    <ClCompile Include="..\..\..\MoX\src\Mouse.c" />
+    <ClCompile Include="..\..\..\MoX\src\MOX_DAT.c" />
+    <ClCompile Include="..\..\..\MoX\src\MOX_KEYS.c" />
+    <ClCompile Include="..\..\..\MoX\src\MOX_SET.c" />
+    <ClCompile Include="..\..\..\MoX\src\MOX_SND.c" />
+    <ClCompile Include="..\..\..\MoX\src\MOX_T4.c" />
+    <ClCompile Include="..\..\..\MoX\src\paragrph.c" />
+    <ClCompile Include="..\..\..\MoX\src\random.c" />
+    <ClCompile Include="..\..\..\MoX\src\sdl2_Audio.c" />
+    <ClCompile Include="..\..\..\MoX\src\sdl2_EMM.c" />
+    <ClCompile Include="..\..\..\MoX\src\sdl2_Input.c" />
+    <ClCompile Include="..\..\..\MoX\src\sdl2_KD.c" />
+    <ClCompile Include="..\..\..\MoX\src\sdl2_MD.c" />
+    <ClCompile Include="..\..\..\MoX\src\sdl2_MOM.c" />
+    <ClCompile Include="..\..\..\MoX\src\sdl2_PFL.c" />
+    <ClCompile Include="..\..\..\MoX\src\sdl2_SDLK.c" />
+    <ClCompile Include="..\..\..\MoX\src\sdl2_Timer.c" />
+    <ClCompile Include="..\..\..\MoX\src\SOUND.c" />
+    <ClCompile Include="..\..\..\MoX\src\TEXTBOX.c" />
+    <ClCompile Include="..\..\..\MoX\src\Util.c" />
+    <ClCompile Include="..\..\..\MoX\src\Video.c" />
+    <ClCompile Include="..\..\..\MoX\src\Video2.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -137,7 +149,7 @@
       <PreprocessorDefinitions>_STU_SDL2;STU_DEBUG;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories>C:\devellib\SDL2-2.32.2\include;C:\devellib\SDL2_mixer-2.8.1\include;C:\STU\devel\ReMoM\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\devellib\SDL2-2.32.2\include;C:\devellib\SDL2_mixer-2.8.1\include;C:\STU\devel\ReMoM\MoX\src;C:\STU\devel\ReMoM\STU\src;C:\STU\devel\ReMoM\MoM\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
@@ -162,7 +174,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>C:\devellib\SDL2-2.32.2\include;C:\devellib\SDL2_mixer-2.8.1\include;C:\STU\devel\ReMoM\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\devellib\SDL2-2.32.2\include;C:\devellib\SDL2_mixer-2.8.1\include;C:\STU\devel\ReMoM\MoX\src;C:\STU\devel\ReMoM\STU\src;C:\STU\devel\ReMoM\MoM\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
