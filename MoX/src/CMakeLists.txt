@@ -29,6 +29,7 @@ set(PFL_SOURCES
 set(MOX_SOURCES
     AIL.c
     Allocate.c
+    angle.c
     capture.c
     CFG.c
     DOS.c

@@ -86,7 +86,49 @@ else
 #define BATTLEFIELD_CITY_WALL_FIRE      0x2 /* 0b00000010 */
 #define BATTLEFIELD_CITY_WALL_DARKNESS  0x4 /* 0b00000100 */
 
+enum e_Missiles
+{
+    msl_Lightning   =  0,
+    msl_Arrow       =  1,
+    msl_Fireball    =  2,
+    msl_Illusion    =  3,
+    msl_Rocks       =  4,
+    msl_Sling       =  5,
+    msl_Deathbolt   =  6,
+    msl_Icebolt     =  7,
+    msl_Scatter     =  8,
+    msl_Priest      =  9,
+    msl_Drow        = 10,
+    msl_Shimmer     = 11,
+    msl_Web         = 12,
+    msl_Green       = 13,
+    msl_Cloud       = 14
+};
 
+enum e_msl__dir
+{
+    Proj_Up         = 0,
+    Proj_UpRight    = 1,
+    Proj_Right      = 2,
+    Proj_DnRight    = 3,
+    Proj_Down       = 4,
+    Proj_DnLeft     = 5,
+    Proj_Left       = 6,
+    Proj_UpLeft     = 7
+};
+
+//  ; (sizeof=0xE)
+struct s_MISSILE
+{
+    /* 00 */ int16_t Src_Scr_X;
+    /* 02 */ int16_t Src_Scr_Y;
+    /* 04 */ int16_t Tgt_Scr_X;
+    /* 06 */ int16_t Tgt_Scr_Y;
+    /* 08 */ int16_t Type;  //  ; enum Missiles
+    /* 0A */ int16_t Travel_Percent;
+    /* 0C */ int16_t Proj_Direction;  //  ; enum Proj_Dirs
+    /* 0E */
+};
 
 // WHERE IS THIS COMING FROM!?!  Unterminated '#pragma pack (push, ...)' at end of file
 // #pragma pack(push)
@@ -1296,7 +1338,7 @@ extern struct s_MAGIC_VORTEX * _vortexes;
 extern int16_t _vortex_count;
 
 // WZD dseg:D154
-extern SAMB_ptr CMB_Projectiles;
+// Y U EXPOSE ME !?!  extern SAMB_ptr _missiles;
 
 // WZD dseg:D15A
 extern struct s_COMBAT_ENTITY * combat_grid_entities;
@@ -1717,7 +1759,7 @@ void Combat_Spell_Target_Screen_Draw(void);
 int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx, int16_t * target_cgy);
 
 // WZD o113p04
-void CMB_RangedAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t Target_Damage_Sum, int16_t cgx, int16_t cgy);
+void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t Target_Damage_Sum, int16_t cgx, int16_t cgy);
 
 // WZD o113p05
 void CMB_MeleeAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t attacker_damage, int16_t defender_damage, int16_t cgx, int16_t cgy);
@@ -2197,7 +2239,7 @@ void Wall_Rise_Load(int16_t wall_type);
 void CMB_BaseAllocs__WIP(void);
 
 // WZD ovr163p05
-// CMB_SetProjectiles()
+void CMB_SetProjectiles__WIP(int16_t missile_count, int16_t Targets, int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t TgtY, int16_t Type);
 
 // WZD ovr163p06
 int16_t Combat_Figure_Load(int16_t unit_type, int16_t figure_index);

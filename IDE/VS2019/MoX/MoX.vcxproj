@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\MoX\src\AIL.h" />
     <ClInclude Include="..\..\..\MoX\src\Allocate.h" />
+    <ClInclude Include="..\..\..\MoX\src\angle.h" />
     <ClInclude Include="..\..\..\MoX\src\capture.h" />
     <ClInclude Include="..\..\..\MoX\src\CFG.h" />
     <ClInclude Include="..\..\..\MoX\src\DOS.h" />
@@ -58,6 +59,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\MoX\src\AIL.c" />
     <ClCompile Include="..\..\..\MoX\src\Allocate.c" />
+    <ClCompile Include="..\..\..\MoX\src\angle.c" />
     <ClCompile Include="..\..\..\MoX\src\capture.c" />
     <ClCompile Include="..\..\..\MoX\src\CFG.c" />
     <ClCompile Include="..\..\..\MoX\src\DOS.c" />

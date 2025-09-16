@@ -25,6 +25,7 @@
 */
 
 
+#include "../../MoX/src/angle.h"
 #include "../../MoX/src/EXIT.h"
 #include "../../MoX/src/paragrph.h"
 #include "../../MoX/src/Timer.h"
@@ -370,7 +371,8 @@ char message_lbx_file__ovr113__1of2[] = "message";
 // WZD dseg:5B5F 20 63 61 73 74 20 6F 6E 20 69 74 00             cnst_SpellError_2 db ' cast on it',0    ; DATA XREF: CMB_TargetSpell+5CBo ...
 // WZD dseg:5B6B 54 68 61 74 20 75 6E 69 74 20 69 73 20 69 6D 6D+cnst_SpellError_3 db 'That unit is immune to Death spells',0
 // WZD dseg:5B8F 6D 65 73 73 61 67 65 2E 6C 62 78 00             message_lbx_file__ovr113__2of2 db 'message.lbx',0
-// WZD dseg:5B9B 73 6F 75 6E 64 66 78 00                         soundfx_lbx_file__ovr113 db 'soundfx',0 ; DATA XREF: CMB_RangedAnim__STUB+14Bo ...
+// WZD dseg:5B9B
+char soundfx_lbx_file__ovr113[] = "soundfx";
 // WZD dseg:5BA3
 char cnst_CombatCast_1[] = " has cast ";
 // WZD dseg:5BAE
@@ -547,8 +549,9 @@ Auto_Move_Unit+1C4   mov     [RP_CMB_Movement_Var], 0        ; cleared before mo
 */
 int16_t uu_combat_movement_variable;
 // WZD dseg:7082                                                                                         ; cleared before movement, never used for anything
-// WZD dseg:7084 00 00                                           RP_CMB_ProjectileFrame2 dw 0            ; DATA XREF: CMB_RangedAnim+3ADw ...
-// WZD dseg:7086 00 00                                           
+// WZD dseg:7084
+int16_t RP_CMB_ProjectileFrame2;
+// WZD dseg:7086
 int16_t CMB_ProjectileFrame = 0;
 // WZD dseg:7086                                                                                         ; used with entity drawing type 3, steps 0 to 2
 // WZD dseg:7088
@@ -1366,9 +1369,9 @@ int16_t _vortex_count;
 /*
 ; (up to 11 records of 14 bytes each)
 */
-SAMB_ptr CMB_Projectiles;
+struct s_MISSILE * _missiles;
 // WZD dseg:D158
-int16_t CMB_ProjectileCount;
+int16_t _missile_count;
 
 // WZD dseg:D15A
 /*
@@ -3541,6 +3544,8 @@ passed in ~x,y of combat grid cell that qualifies for the left-click
 *action* deduced from *unit* in target grid cell
 
 
+...in Vortex_Move_Screen(), same as for Vortex_Move_And_Attack(), 
+
 Tactical_Combat__WIP()
     frame_scanned_cgx = Get_Combat_Grid_Cell_X((grid_sx + 4), (grid_sy + 4));
     frame_scanned_cgy = Get_Combat_Grid_Cell_Y((grid_sx + 4), (grid_sy + 4));
@@ -3549,13 +3554,30 @@ Tactical_Combat__WIP()
 */
 void Battle_Unit_Action__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
 {
-    int16_t Target_Y = 0;
-    int16_t Target_X = 0;
+    int16_t target_cgy = 0;
+    int16_t target_cgx = 0;
     int16_t ranged_group = 0;  /* ~ "ranged attack type" */
     int16_t Unused_Local = 0;
-    int16_t Y_Distance = 0;
-    int16_t X_Distance = 0;
+    int16_t delta_y = 0;
+    int16_t delta_x = 0;
     int16_t combat_grid_target = 0;  // _DI_
+
+#define LOCAL_ATTACK() { \
+    Battle_Unit_Attack__WIP(battle_unit_idx, combat_grid_target, target_cgx, target_cgy); \
+}
+#define LOCAL_TRY_RANGED_ATTACK() { \
+                ranged_group = (battle_units[battle_unit_idx].ranged_type / 10);    \
+                if( \
+                    (ranged_group == rag_Boulder)   \
+                    ||  \
+                    (ranged_group == rag_Missile)   \
+                    ||  \
+                    (ranged_group == rag_Magic) \
+                )   \
+                {   \
+                    LOCAL_ATTACK(); \
+                }   \
+}
 
     combat_grid_target = CMB_TargetRows[cgy][cgx];
 
@@ -3565,163 +3587,115 @@ void Battle_Unit_Action__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
 
     */
     if(
-        (combat_grid_target == 99)  /* City Wall */
-        ||
+        (combat_grid_target != 99)  /* City Wall */
+        &&
         (
-            (combat_grid_target >= 0)
-            &&
-            (battle_units[combat_grid_target].controller_idx != battle_units[battle_unit_idx].controller_idx)
-            &&
-            (battle_units[combat_grid_target].status == bus_Active)
+            (combat_grid_target < 0)
+            ||
+            (battle_units[combat_grid_target].controller_idx == battle_units[battle_unit_idx].controller_idx)
+            ||
+            (battle_units[combat_grid_target].status != bus_Active)
         )
     )
     {
-
-        if(combat_grid_target == 99)  /* City Wall */
-        {
-
-            Target_X = cgx;  // passed in - frame_scanned_cgx = Get_Combat_Grid_Cell_X((grid_sx + 4), (grid_sy + 4));
-
-            Target_Y = cgy;  // passed in - frame_scanned_cgy = Get_Combat_Grid_Cell_Y((grid_sx + 4), (grid_sy + 4));
-
-        }
-        else
-        {
-
-            Target_X = battle_units[combat_grid_target].cgx;
-
-            Target_Y = battle_units[combat_grid_target].cgy;
-
-        }
-
-        X_Distance = abs(Target_X - battle_units[battle_unit_idx].cgx);  // passed in - _active_battle_unit
-
-        Y_Distance = abs(Target_Y - battle_units[battle_unit_idx].cgy);  // passed in - _active_battle_unit
-
-        Unused_Local = -2;  // ¿ -2 as in invalid target ?  ...can't think of any reason this would be here, not even as legacy debug code
-
-        if(battle_units[battle_unit_idx].movement_points > 0)
-        {
-
-            if(combat_grid_target == 99)  /* City Wall */
-            {
-
-                // if "ranged attack" else "melee attack"
-                if(
-                    (X_Distance > 1)
-                    ||
-                    (Y_Distance > 1)
-                )
-                {
-
-                    ranged_group = (battle_units[battle_unit_idx].ranged_type / 10);
-
-                    if(
-                        (ranged_group == rag_Boulder)
-                        ||
-                        (ranged_group == rag_Missile)
-                        ||
-                        (ranged_group == rag_Magic)
-                    )
-                    {
-
-                        Battle_Unit_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
-
-                    }
-
-                }
-                else
-                {
-
-                    Battle_Unit_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
-
-                }
-
-            }
-            else  /* (combat_grid_target != 99) */
-            {
-
-                // ¿ can attack, if attacker has flight or both do ?
-                if(Check_Attack_Melee(battle_unit_idx, combat_grid_target) == ST_TRUE)
-                {
-
-                    if(
-                        (X_Distance > 1)
-                        ||
-                        (Y_Distance > 1)
-                    )
-                    {
-
-                        ranged_group = (battle_units[battle_unit_idx].ranged_type / 10);
-
-                        if(
-                            (ranged_group == rag_Boulder)
-                            ||
-                            (ranged_group == rag_Missile)
-                            ||
-                            (ranged_group == rag_Magic)
-                        )
-                        {
-
-                            Battle_Unit_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
-
-                        }
-
-                    }
-                    else  /* (X_Distance <= 0) && (Y_Distance <= ) */
-                    {
-
-                        if(BU_MeleeWallCheck__WIP(battle_unit_idx, combat_grid_target) == ST_TRUE)
-                        {
-
-                            Battle_Unit_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
-
-                        }
-                        else
-                        {
-
-                            ranged_group = (battle_units[battle_unit_idx].ranged_type / 10);
-
-                            if(
-                                (ranged_group == rag_Boulder)
-                                ||
-                                (ranged_group == rag_Missile)
-                                ||
-                                (ranged_group == rag_Magic)
-                            )
-                            {
-
-                                Battle_Unit_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    }
-    else
-    {
-
         if(
             (combat_grid_target == -1)  /* ¿ empty and reachable ? */
             &&
             (battle_units[battle_unit_idx].movement_points > 0)
         )
         {
-
             Move_Battle_Unit__WIP(battle_unit_idx, cgx, cgy);
+        }
+        else
+        {
+            return;  // Eh? criteria for invalid action input?
+        }
+    }
+
+    /*
+        not move or invalid, so try attack
+    */
+    if(combat_grid_target == 99)  /* City Wall */
+    {
+        target_cgx = cgx;  // passed in - frame_scanned_cgx = Get_Combat_Grid_Cell_X((grid_sx + 4), (grid_sy + 4));
+        target_cgy = cgy;  // passed in - frame_scanned_cgy = Get_Combat_Grid_Cell_Y((grid_sx + 4), (grid_sy + 4));
+    }
+    else
+    {
+        target_cgx = battle_units[combat_grid_target].cgx;
+        target_cgy = battle_units[combat_grid_target].cgy;
+    }
+
+    delta_x = abs(target_cgx - battle_units[battle_unit_idx].cgx);  // passed in - _active_battle_unit
+    delta_y = abs(target_cgy - battle_units[battle_unit_idx].cgy);  // passed in - _active_battle_unit
+
+    Unused_Local = -2;  // ¿ -2 as in invalid target ?  ...can't think of any reason this would be here, not even as legacy debug code
+
+    if(battle_units[battle_unit_idx].movement_points <= 0)
+    {
+        return;
+    }
+
+    if(combat_grid_target == 99)  /* City Wall */
+    {
+
+        // if "ranged attack" else "melee attack"
+        if(
+            (delta_x > 1)
+            ||
+            (delta_y > 1)
+        )
+        {
+
+            LOCAL_TRY_RANGED_ATTACK();
+
+        }
+        else
+        {
+
+            LOCAL_ATTACK();
 
         }
 
     }
+    else  /* (combat_grid_target != 99) */
+    {
 
+        // ¿ can attack, if attacker has flight or both do ?
+        if(Check_Attack_Melee(battle_unit_idx, combat_grid_target) != ST_TRUE)
+        {
+            return;
+        }
+
+        if(
+            (delta_x > 1)
+            ||
+            (delta_y > 1)
+        )
+        {
+
+            LOCAL_TRY_RANGED_ATTACK();
+
+        }
+        else  /* (delta_x <= 1) && (delta_y <= 1) */
+        {
+
+            if(BU_MeleeWallCheck__WIP(battle_unit_idx, combat_grid_target) == ST_TRUE)
+            {
+
+                LOCAL_ATTACK();
+
+            }
+            else
+            {
+
+                LOCAL_TRY_RANGED_ATTACK();
+
+            }
+
+        }
+
+    }
 
 }
 
@@ -14062,9 +14036,9 @@ int16_t Spell_Resistance_Modifier(int16_t spell_idx)
 */
 int16_t Combat_Casting_Cost_Multiplier(int16_t player_idx)
 {
-    int16_t Y_Distance;
+    int16_t delta_y;
     int16_t modifier;  // _SI_
-    int16_t X_Distance;  // _SI_  DNE in Dasm
+    int16_t delta_x;  // _SI_  DNE in Dasm
     int16_t distance;  // _DI_
 
     if(player_idx == NEUTRAL_PLAYER_IDX)
@@ -14080,27 +14054,27 @@ int16_t Combat_Casting_Cost_Multiplier(int16_t player_idx)
         }
         else
         {
-            Y_Distance = abs(_FORTRESSES[player_idx].wy - _combat_wy);
+            delta_y = abs(_FORTRESSES[player_idx].wy - _combat_wy);
 
-            X_Distance = abs(_FORTRESSES[player_idx].wx - _combat_wx);
+            delta_x = abs(_FORTRESSES[player_idx].wx - _combat_wx);
 
-            if(X_Distance > (WORLD_WIDTH / 2))
+            if(delta_x > (WORLD_WIDTH / 2))
             {
-                X_Distance = (WORLD_WIDTH - X_Distance);
+                delta_x = (WORLD_WIDTH - delta_x);
             }
 
-            if(X_Distance > (WORLD_WIDTH / 2))
+            if(delta_x > (WORLD_WIDTH / 2))
             {
-                X_Distance = (WORLD_WIDTH - X_Distance);
+                delta_x = (WORLD_WIDTH - delta_x);
             }
 
-            if(X_Distance < Y_Distance)
+            if(delta_x < delta_y)
             {
-                distance = X_Distance;
+                distance = delta_x;
             }
             else
             {
-                distance = Y_Distance;
+                distance = delta_y;
             }
         }
 
@@ -14817,10 +14791,216 @@ Nowhere. It doesn't use a target, never even gets to that code.
 /*
 
 */
-void CMB_RangedAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t defender_damage_total, int16_t cgx, int16_t cgy)
+void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t defender_damage_total, int16_t cgx, int16_t cgy)
 {
+    int16_t Travel_Distance = 0;
+    int16_t range = 0;
+    int16_t missile_type = 0;
+    int16_t itr_msl = 0;
+    int16_t Progress_Counter = 0;
+    int16_t dist_x = 0;  // DNE in Dasm
+    int16_t dist_y = 0;  // DNE in Dasm
+    SAMB_ptr sound_buffer = 0;  // _DI_
+    uint32_t sound_buffer_length;  // HACK
 
-    return;
+    if(defender_battle_unit_idx != 99)
+    {
+
+        range = Range_To_Battle_Unit(attacker_battle_unit_idx, defender_battle_unit_idx);
+
+        battle_units[attacker_battle_unit_idx].target_cgx = battle_units[defender_battle_unit_idx].cgx;
+        battle_units[attacker_battle_unit_idx].target_cgy = battle_units[defender_battle_unit_idx].cgy;
+
+    }
+    else
+    {
+
+        battle_units[attacker_battle_unit_idx].target_cgx = cgx;
+        battle_units[attacker_battle_unit_idx].target_cgy = cgy;
+
+        dist_x = abs(battle_units[attacker_battle_unit_idx].cgx - cgx);
+        dist_y = abs(battle_units[attacker_battle_unit_idx].cgx - cgx);
+
+        range = dist_y;  // DNE in Dasm
+
+        if(dist_x > dist_y)
+        {
+            range = dist_x;
+        }
+
+    }
+
+    if(
+        (range >= 3)
+        &&
+        (magic_set.movement_animations != ST_FALSE)
+    )
+    {
+
+        Travel_Distance = 33;  // ¿ DEDU  99 / 3 ?
+
+    }
+    else
+    {
+
+        Travel_Distance = 49;  // ¿ DEDU  99 / 2 ?
+
+    }
+
+    if(magic_set.sound_effects == ST_TRUE)
+    {
+
+        sdl2_Play_Sound__WIP(SND_CMB_Silence, SND_CMB_Silence_size);
+
+        Mark_Block(World_Data);
+
+    }
+
+    // NIU: ...,12,13,14,15,16,17,18,...,20,23,24,25,26,27,28,29,30,...,39
+    switch(battle_units[attacker_battle_unit_idx].ranged_type)
+    {
+        case 10:
+        {
+            missile_type = msl_Rocks;
+            if(magic_set.sound_effects == ST_TRUE)
+            {
+                sound_buffer = LBX_Reload_Next(soundfx_lbx_file__ovr113, SFX_ATK_Catapult, World_Data);
+                sound_buffer_length = lbxload_entry_length;
+            }
+        } break;
+        case 11:
+        {
+            missile_type = msl_Cloud;
+            if(magic_set.sound_effects == ST_TRUE)
+            {
+                sound_buffer = LBX_Reload_Next(soundfx_lbx_file__ovr113, SFX_ATK_Cannon, World_Data);
+                sound_buffer_length = lbxload_entry_length;
+            }
+        } break;
+
+        case 31:
+        {
+            missile_type = msl_Fireball;
+            if(magic_set.sound_effects == ST_TRUE)
+            {
+                sound_buffer = LBX_Reload_Next(soundfx_lbx_file__ovr113, SFX_ATK_Fire, World_Data);
+                sound_buffer_length = lbxload_entry_length;
+            }
+        } break;
+
+        case 32:
+        {
+            missile_type = msl_Illusion;
+            if(magic_set.sound_effects == ST_TRUE)
+            {
+                sound_buffer = LBX_Reload_Next(soundfx_lbx_file__ovr113, SFX_ATK_Illusion, World_Data);
+                sound_buffer_length = lbxload_entry_length;
+            }
+        } break;
+
+    }
+
+    if(magic_set.sound_effects != ST_FALSE)
+    {
+
+        sound_buffer = ST_UNDEFINED;
+        
+    }
+
+
+    if(defender_battle_unit_idx != 99)
+    {
+// ; overwrites the _missiles@ array using the
+// ; passed parameters, creating the specified amount of
+// ; projectiles of the selected type heading towards the
+// ; target
+// ; returns and sets the count into _missile_count
+        CMB_SetProjectiles__WIP(battle_units[attacker_battle_unit_idx].Cur_Figures, battle_units[defender_battle_unit_idx].Cur_Figures, battle_units[attacker_battle_unit_idx].cgx, battle_units[attacker_battle_unit_idx].cgy, battle_units[defender_battle_unit_idx].cgx, battle_units[defender_battle_unit_idx].cgy, missile_type);
+    }
+    else
+    {
+        CMB_SetProjectiles__WIP(battle_units[attacker_battle_unit_idx].Cur_Figures, 1, battle_units[attacker_battle_unit_idx].cgx, battle_units[attacker_battle_unit_idx].cgy, cgx, cgy, missile_type);
+    }
+
+
+    CMB_ProjectileFrame = 0;  // ; used with entity drawing type 3, steps 0 to 2
+    RP_CMB_ProjectileFrame2 = 0;
+
+    if(sound_buffer != ST_UNDEFINED)
+    {
+
+        sdl2_Play_Sound__WIP(sound_buffer, sound_buffer_length);
+
+    }
+
+    for(Progress_Counter = 0; Progress_Counter < 100; Progress_Counter += Travel_Distance)
+    {
+     
+        if((Progress_Counter + Travel_Distance) > 99)
+        {
+
+            CMB_ProjectileFrame = 4;  // ; used with entity drawing type 3, steps 0 to 2
+
+            RP_CMB_ProjectileFrame2 = 4;
+
+            if(defender_battle_unit_idx != 99)
+            {
+
+                // TODO  BU_SetBloodAnim(defender_battle_unit_idx, defender_damage_total);
+                // ; calculates and sets the animation figure loss and
+                // ; blood amount fields of for the target unit based on
+                // ; a ratio of damage per remaining figure, and
+                // ; randomizes the CMB_BloodFrames array to 0-3s
+
+            }
+
+        }
+        else
+        {
+
+            CMB_ProjectileFrame = ((CMB_ProjectileFrame + 1) % 3);  // ; used with entity drawing type 3, steps 0 to 2
+
+            RP_CMB_ProjectileFrame2 = ((RP_CMB_ProjectileFrame2 + 1) % 3);
+
+        }
+
+        Combat_Screen_Draw();
+
+        PageFlip_FX();
+
+        for(itr_msl = 0; itr_msl < _missile_count; itr_msl++)
+        {
+
+            _missiles[itr_msl].Travel_Percent += Travel_Distance;
+
+            if(_missiles[itr_msl].Travel_Percent > 100)
+            {
+
+                _missiles[itr_msl].Travel_Percent = 100;
+
+            }
+
+        }
+
+    }
+
+    _missile_count = 0;
+
+    if(defender_battle_unit_idx != 99)
+    {
+
+        // TODO  BU_ClearBlood(defender_battle_unit_idx);
+        // ; clears the battle unit structure fields associated
+        // ; with the display of blood on the unit
+
+    }
+
+    if(magic_set.sound_effects == ST_TRUE)
+    {
+
+        Release_Block(World_Data);
+
+    }
 
 }
 
@@ -17986,8 +18166,8 @@ int16_t Auto_Move_Unit(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy
     int16_t First_Step_Index = 0;
     SAMB_ptr move_sound_seg = 0;  // TODO  SAMB_INT move_sound_seg = 0;
     int16_t Move_Visible = 0;
-    int16_t Y_Distance = 0;
-    int16_t X_Distance = 0;
+    int16_t delta_y = 0;
+    int16_t delta_x = 0;
     int16_t Min_Y = 0;
     int16_t Min_X = 0;
     int16_t RP_Origin_Y_2 = 0;
@@ -18141,9 +18321,9 @@ BUG: this has just been done in the parent function
     }
     else
     {
-        X_Distance = abs(RP_Origin_X_2 - dst_cgx);
-        Y_Distance = abs(RP_Origin_Y_2 - dst_cgy);
-        if(X_Distance < Y_Distance)
+        delta_x = abs(RP_Origin_X_2 - dst_cgx);
+        delta_y = abs(RP_Origin_Y_2 - dst_cgy);
+        if(delta_x < delta_y)
         {
             Min_X = COMBAT_GRID_XMIN;
             Max_X = COMBAT_GRID_XMAX;
@@ -18157,7 +18337,7 @@ BUG: this has just been done in the parent function
                 Max_Y = COMBAT_GRID_YMAX;
             }
         }
-        if(X_Distance > Y_Distance)
+        if(delta_x > delta_y)
         {
             Min_Y = COMBAT_GRID_YMIN;
             Max_Y = COMBAT_GRID_YMAX;
@@ -18171,7 +18351,7 @@ BUG: this has just been done in the parent function
                 Max_X = COMBAT_GRID_XMAX;
             }
         }
-        if(X_Distance == Y_Distance)
+        if(delta_x == delta_y)
         {
             if(RP_Origin_X_2 < dst_cgx)
             {
@@ -20788,7 +20968,6 @@ SpFx:  {F,T}  as compiled, hard-coded to ST_TRUE
 */
 void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_count, int16_t defender_battle_unit_idx, int16_t attack_mode, int16_t damage_types[], int16_t Counter, int16_t SpFx)
 {
-
     int16_t Save_Mod = 0;
     int16_t defender_enchantments = 0;
     int16_t new_damage_array[NUM_DAMAGE_TYPES] = { 0, 0, 0 };  // regular, drain, irreversible
@@ -22048,11 +22227,11 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
 
     }
 
-    if(defender_battle_unit_idx != 99)
+    if(defender_battle_unit_idx != 99)  /* City Wall */
     {
 
+        // WTF? same as was passed in?
         cgx = battle_units[defender_battle_unit_idx].cgx;
-
         cgy = battle_units[defender_battle_unit_idx].cgy;
 
         // {0: allow; 1: disallow (Invisibility); 2: disallow (Wall of Darkness)}
@@ -22108,13 +22287,13 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
         else  /* (range_to_target > 1) */
         {
 
-            if(ranged_attack_check == 0)
+            if(ranged_attack_check == 0)  /* 0: allow */
             {
 
                 ranged_attack_flag = ST_TRUE;
 
             }
-            else if(ranged_attack_check == 1)
+            else if(ranged_attack_check == 1)  /* 1: disallow (Invisibility) */
             {
 
                 if(
@@ -22133,7 +22312,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
                 }
 
             }
-            else if(ranged_attack_check == 2)
+            else if(ranged_attack_check == 2) /* 2: disallow (Wall of Darkness) */
             {
                 
                 if(
@@ -22165,7 +22344,6 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
 
 
         battle_units[attacker_battle_unit_idx].target_cgx = battle_units[defender_battle_unit_idx].cgx;
-
         battle_units[attacker_battle_unit_idx].target_cgy = battle_units[defender_battle_unit_idx].cgy;
 
 
@@ -22200,7 +22378,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
         else  /* (ranged_attack_flag == ST_TRUE) */
         {
 
-            CMB_RangedAnim__STUB(attacker_battle_unit_idx, defender_battle_unit_idx, defender_damage_total, cgx, cgy);
+            CMB_RangedAnim__WIP(attacker_battle_unit_idx, defender_battle_unit_idx, defender_damage_total, cgx, cgy);
 
             // ; BUG: performing a ranged attack is supposed to
             // ; always end the unit's turn
@@ -22327,14 +22505,10 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
                     Wall_Destroyed = ST_TRUE;
                 }
 
-                // perform a ranged attack animation, expend movement,
-                // and expend the attacker's ammo or mana as
-                // appropriate, removing their ranged attack if they
-                // don't have enough left to perform another one
                 // BUG: only expends 10 movement points instead of all
                 // of them, as stated in the v1.2 patch notes
 
-                CMB_RangedAnim__STUB(attacker_battle_unit_idx, defender_battle_unit_idx, defender_damage_total, cgx, cgy);
+                CMB_RangedAnim__WIP(attacker_battle_unit_idx, defender_battle_unit_idx, defender_damage_total, cgx, cgy);
 
                 // ; BUG: performing a ranged attack is supposed to
                 // ; always end the unit's turn
@@ -22417,6 +22591,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
 
 // WZD o122p12
 // drake178: BU_GetDistanceFrom()
+// MoO2  Module: CMBTAI  Range_To_Ship_()
 /*
 ; returns the simple distance (largest of X and Y)
 ; between the two specified battle units
@@ -22426,32 +22601,20 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
 */
 int16_t Range_To_Battle_Unit(int16_t BU_1, int16_t BU_2)
 {
-    int16_t Y_Distance = 0;
-    int16_t X_Distance = 0;
+    int16_t delta_y = 0;
+    int16_t delta_x = 0;
     int16_t distance = 0;  // DNE in Dasm
-
-
-    X_Distance = abs(battle_units[BU_1].cgx - battle_units[BU_2].cgx);
-
-    Y_Distance = abs(battle_units[BU_1].cgy - battle_units[BU_2].cgy);
-
-
-    if(X_Distance > Y_Distance)
+    delta_x = abs(battle_units[BU_1].cgx - battle_units[BU_2].cgx);
+    delta_y = abs(battle_units[BU_1].cgy - battle_units[BU_2].cgy);
+    if(delta_x > delta_y)
     {
-
-        distance = Y_Distance;
-
+        distance = delta_y;
     }
     else
     {
-
-        distance = X_Distance;
-
+        distance = delta_x;
     }
-
-
     return distance;
-
 }
 
 
@@ -31899,7 +32062,7 @@ void CMB_BaseAllocs__WIP(void)
 
     combat_grid_entities = (struct s_COMBAT_ENTITY *)Allocate_Next_Block(_screen_seg, 482);  // 482 PR, 7712 B
 
-    CMB_Projectiles = Allocate_Next_Block(_screen_seg, 10);  // 10 PR, 160 B
+    _missiles = (struct s_MISSILE *)Allocate_Next_Block(_screen_seg, 10);  // 10 PR, 160 B
 
     _vortexes = (struct s_MAGIC_VORTEX *)Allocate_Next_Block(_screen_seg, 9);  // 9 PR, 144 B
 
@@ -31915,6 +32078,115 @@ void CMB_BaseAllocs__WIP(void)
 
 // WZD ovr163p05
 // drake178: CMB_SetProjectiles()
+/*
+; overwrites the CMB_Projectiles@ array using the
+; passed parameters, creating the specified amount of
+; projectiles of the selected type heading towards the
+; target
+; returns and sets the count into CMB_ProjectileCount
+*/
+/*
+
+
+
+*/
+void CMB_SetProjectiles__WIP(int16_t missile_count, int16_t Targets, int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t TgtY, int16_t Type)
+{
+    int16_t Origin_Y = 0;
+    int16_t Origin_X = 0;
+    int16_t Tgt_Screen_Y = 0;
+    int16_t Tgt_Screen_X = 0;
+    int16_t Src_Screen_Y = 0;
+    int16_t Src_Screen_X = 0;
+    int16_t Tgt_Fig_Y = 0;
+    int16_t Tgt_Fig_X = 0;
+    int16_t Src_Fig_Y = 0;
+    int16_t Src_Fig_X = 0;
+    int16_t Firing_Angle = 0;
+    int16_t itr_msl = 0;  // _SI_
+    int16_t direction = 0;  // _DI_
+
+    for(itr_msl = 0; itr_msl < missile_count; itr_msl++)
+    {
+
+        Battle_Unit_Figure_Position(missile_count, itr_msl, &Src_Fig_X, &Src_Fig_Y);
+
+        Battle_Unit_Figure_Position(missile_count, (itr_msl / Targets), &Tgt_Fig_X, &Tgt_Fig_Y);
+
+        Combat_Grid_Screen_Coordinates(SrcX, SrcY, 0, 0, &Src_Screen_X, &Src_Screen_Y);
+
+        Combat_Grid_Screen_Coordinates(TgtX, TgtY, 0, 0, &Tgt_Screen_X, &Tgt_Screen_Y);
+
+        Src_Fig_Y -= 8;
+        Tgt_Fig_Y -= 8;
+
+        Origin_X = Src_Screen_X;
+        Origin_Y = (Src_Screen_Y + 8);
+
+        Src_Screen_X = Src_Fig_X;
+        Src_Screen_Y = Src_Fig_Y;
+
+        Tgt_Screen_X = Tgt_Fig_X;
+        Tgt_Screen_Y += Tgt_Fig_Y;
+
+        // Firing_Angle = MATH_Inverse_Tangent((Tgt_Screen_X - Origin_X), (Tgt_Screen_Y - Origin_Y));
+        Firing_Angle = Get_Angle((Tgt_Screen_X - Origin_X), (Tgt_Screen_Y - Origin_Y));
+
+        if(
+            (Firing_Angle < 22)
+            ||
+            (Firing_Angle > 337)
+        )
+        {
+            direction = Proj_Right;
+        }
+        else if(Firing_Angle < 69)
+        {
+            direction = Proj_DnRight;
+        }
+        else if(Firing_Angle < 112)
+        {
+            direction = Proj_Down;
+        }
+        else if(Firing_Angle < 158)
+        {
+            direction = Proj_DnLeft;
+        }
+        else if(Firing_Angle < 202)
+        {
+            direction = Proj_Left;
+        }
+        else if(Firing_Angle < 248)
+        {
+            direction = Proj_UpLeft;
+        }
+        else if(Firing_Angle < 292)
+        {
+            direction = Proj_Up;
+        }
+        else
+        {
+            direction = Proj_UpRight;
+        }
+
+        _missiles[itr_msl].Src_Scr_X = Src_Screen_X;
+        _missiles[itr_msl].Src_Scr_Y = Src_Screen_Y;
+
+        _missiles[itr_msl].Tgt_Scr_X = Tgt_Screen_X;
+        _missiles[itr_msl].Tgt_Scr_Y = Tgt_Screen_Y;
+
+        _missiles[itr_msl].Type = Type;
+
+        _missiles[itr_msl].Travel_Percent = 10;
+
+        _missiles[itr_msl].Proj_Direction = direction;
+        
+    }
+
+    _missile_count = missile_count;
+
+}
+
 
 // WZD ovr163p06
 // drake178: EMM_LoadFigureGFX()

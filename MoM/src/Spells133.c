@@ -1128,8 +1128,8 @@ void Vortex_Move_Screen_Assign_Mouse_Images(int vortex_idx)
     int16_t screen_x = 0;
     int16_t cgx = 0;  // _DI_
     int16_t movement_cost = 0;  // DNE in DAsm
-    int16_t dist_x = 0;        // DNE in DAsm
-    int16_t dist_y = 0;         // DNE in DAsm
+    int16_t delta_x = 0;        // DNE in DAsm
+    int16_t delta_y = 0;         // DNE in DAsm
 
     pointer_offset = 4;
 
@@ -1161,8 +1161,8 @@ void Vortex_Move_Screen_Assign_Mouse_Images(int vortex_idx)
         {
 
             movement_cost = battlefield->MoveCost_Teleport[((cgy * COMBAT_GRID_WIDTH) + cgx)];
-            dist_x = (cgx - _vortexes[vortex_idx].cgx);
-            dist_y = (cgy - _vortexes[vortex_idx].cgy);
+            delta_x = (cgx - _vortexes[vortex_idx].cgx);
+            delta_y = (cgy - _vortexes[vortex_idx].cgy);
 
 //             if (
 //                 (battlefield->MoveCost_Teleport[cgx] != -1) // INF
@@ -1174,9 +1174,9 @@ void Vortex_Move_Screen_Assign_Mouse_Images(int vortex_idx)
             if(
                 (movement_cost != -1) // INF
                 &&
-                (abs(dist_x) <= 1)
+                (abs(delta_x) <= 1)
                 &&
-                (abs(dist_y) <= 1)
+                (abs(delta_y) <= 1)
             )
             {
 
@@ -1426,8 +1426,8 @@ void Vortex_Move_And_Attack(int vortex_idx, int next_cgx, int next_cgy)
     int16_t prev_cgy = 0;
     uint32_t enchantments = 0;
     int16_t damage_types[3] = { 0, 0, 0 };
-    int16_t y_dist = 0;
-    int16_t x_dist = 0;
+    int16_t delta_y = 0;
+    int16_t delta_x = 0;
     int16_t itr = 0;  // _SI_
     int16_t battle_unit_idx = 0;  // _SI_
     struct s_MAGIC_VORTEX * vortex = 0;  // DNE in Dasm
@@ -1505,15 +1505,15 @@ void Vortex_Move_And_Attack(int vortex_idx, int next_cgx, int next_cgy)
 
         }
 
-        x_dist = abs(battle_units[battle_unit_idx].cgx - next_cgx);
-        y_dist = abs(battle_units[battle_unit_idx].cgy - next_cgy);
+        delta_x = abs(battle_units[battle_unit_idx].cgx - next_cgx);
+        delta_y = abs(battle_units[battle_unit_idx].cgy - next_cgy);
 
         if(
-            (x_dist <= 1)
+            (delta_x <= 1)
             &&
-            (y_dist <= 1)
+            (delta_y <= 1)
             &&
-            (x_dist + y_dist != 0)
+            (delta_x + delta_y != 0)
             &&
             (Random(3) == 1)
         )

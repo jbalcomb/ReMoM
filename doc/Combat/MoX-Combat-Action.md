@@ -1,10 +1,10 @@
 
 
 
-
 BU_Attack__WIP() ==> Battle_Unit_Attack__WIP()
 BU_MeleeFlightCheck__WIP() ==> Check_Attack_Melee()
 BU_RangedValidate__WIP() ==> Check_Attack_Ranged()
+
 
 
 Tactical_Combat__WIP()
@@ -32,6 +32,18 @@ Tactical_Combat__WIP()
 void Battle_Unit_Action__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
 
 ## Battle_Unit_Action__WIP()
+
+...
+Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t cgx, int16_t cgy)
+...
+cgx, cgy is the target's cgx, cgy
+...
+BU_AttackTarget__WIP(attacker_battle_unit_idx, defender_battle_unit_idx, &defender_damage_array[0], &attacker_damage_array[0], ranged_attack_flag, 1);
+void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t defender_damage_types[], int16_t attacker_damage_types[], int16_t ranged_attack_flag, int16_t SpFx)
+...
+BU_ProcessAttack__WIP(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].Cur_Figures, defender_battle_unit_idx, am_Ranged, &damage_types[0], 0, SpFx);
+void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_count, int16_t defender_battle_unit_idx, int16_t attack_mode, int16_t damage_types[], int16_t Counter, int16_t SpFx)
+
 
 branching?
 
@@ -89,10 +101,10 @@ Target_X, Target_Y
         Target_X = battle_units[combat_grid_target].cgx;
         Target_Y = battle_units[combat_grid_target].cgy;
 
-    X_Distance = abs(Target_X - battle_units[battle_unit_idx].cgx);  // passed in - _active_battle_unit
-    Y_Distance = abs(Target_Y - battle_units[battle_unit_idx].cgy);  // passed in - _active_battle_unit
+    delta_x = abs(Target_X - battle_units[battle_unit_idx].cgx);  // passed in - _active_battle_unit
+    delta_y = abs(Target_Y - battle_units[battle_unit_idx].cgy);  // passed in - _active_battle_unit
 So, ...
-    X_Distance will be
+    delta_x will be
         (battle_units[combat_grid_target].cgx - battle_units[_active_battle_unit].cgx)
         or
         (Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4)) - battle_units[_active_battle_unit].cgx)

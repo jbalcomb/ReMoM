@@ -42,8 +42,8 @@ Origin_X = battle_units[battle_unit_idx].cgx;
 Origin_Y = battle_units[battle_unit_idx].cgy;
 
 
-X_Distance = abs(RP_Origin_X_2 - dst_cgx);
-Y_Distance = abs(RP_Origin_Y_2 - dst_cgy);
+delta_x = abs(RP_Origin_X_2 - dst_cgx);
+delta_y = abs(RP_Origin_Y_2 - dst_cgy);
 
 dst_cgx,cgy
     passed in
@@ -57,8 +57,8 @@ dst_cgx,cgy
 RP_Origin_X_2,RP_Origin_Y_2
     RP_Origin_X_2 = battle_units[battle_unit_idx].cgx;
     RP_Origin_Y_2 = battle_units[battle_unit_idx].cgy;
-    X_Distance = abs(RP_Origin_X_2 - dst_cgx);
-    Y_Distance = abs(RP_Origin_Y_2 - dst_cgy);
+    delta_x = abs(RP_Origin_X_2 - dst_cgx);
+    delta_y = abs(RP_Origin_Y_2 - dst_cgy);
 
 What is the point of the bounding box/move area limit?
 
