@@ -7497,7 +7497,7 @@ void Combat_Grid_Entities__WIP(void)
     }
 
 
-    // TODO  CMB_SpawnProjectiles();
+    Spawn_Missile_Entities();  // MoO! Missiles
 
 
     Combat_Grid_Entity_Create_Vortexes();
@@ -26212,149 +26212,81 @@ void Combat_Screen_Map_Draw_Entities__WIP(void)
 
     for(itr = 0; itr < combat_grid_entity_count; itr++)
     {
-
         // get combat_grid_entity_idx, in order of draw_order_value
         combat_grid_entity_idx = combat_grid_entities_draw_order[itr];
-
-        if(combat_grid_entities[combat_grid_entity_idx].entity_type == 1)  /* Battle Unit Figure */
+        switch(combat_grid_entities[combat_grid_entity_idx].entity_type)
         {
-
-            if(combat_grid_entities[combat_grid_entity_idx].Blood_Amt == 0)
+            case 1:  /* Battle Unit Figure */
             {
-                // Draw_Picture_Windowed(
-                //     (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
-                //     (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
-                //     battle_unit_picts_seg[combat_grid_entities[combat_grid_entity_idx].index]
-                // );
-                ptr_combat_grid_entity = &combat_grid_entities[combat_grid_entity_idx];
-                // index into battle unit figure pictures array  [2 * MAX_STACK]
-                // ¿ all 8 entity figures should have the same index ?
-                // 
-                // Draw_Picture_Windowed(
-                //     (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
-                //     (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
-                //     battle_unit_picts_seg[ptr_combat_grid_entity->index]
-                // );
-                pict_seg = battle_unit_picts_seg[combat_grid_entities[combat_grid_entity_idx].index];
-                Draw_Picture_Windowed(
-                    (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
-                    (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
-                    pict_seg
-                );
-
-            }
-            else
-            {
-                if(combat_grid_entities[combat_grid_entity_idx].Blood_Frame != 3)
+                if(combat_grid_entities[combat_grid_entity_idx].Blood_Amt == 0)
                 {
-
-                    Draw_Picture_Windowed(
-                        (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
-                        (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
-                        battle_unit_picts_seg[combat_grid_entities[combat_grid_entity_idx].index]
-                    );
-
-                    if(combat_grid_entities[combat_grid_entity_idx].Blood_Frame >= 0)
-                    {
-
-                        Set_Animation_Frame(
-                            IMG_CMB_Blood[(combat_grid_entities[combat_grid_entity_idx].Blood_Amt - 1)],
-                            combat_grid_entities[combat_grid_entity_idx].Blood_Frame
-                        );
-
-                        Blood_Offset_Y = 11;
-                        Blood_Offset_X = 3;
-
-                        Clipped_Draw(
-                            (combat_grid_entities[combat_grid_entity_idx].draw_x - Blood_Offset_X), 
-                            (combat_grid_entities[combat_grid_entity_idx].draw_y - Blood_Offset_Y), 
-                            IMG_CMB_Blood[(combat_grid_entities[combat_grid_entity_idx].Blood_Amt - 1)]
-                        );
-
-                    }
-
+                    // Draw_Picture_Windowed(
+                    //     (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
+                    //     (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
+                    //     battle_unit_picts_seg[combat_grid_entities[combat_grid_entity_idx].index]
+                    // );
+                    ptr_combat_grid_entity = &combat_grid_entities[combat_grid_entity_idx];
+                    // index into battle unit figure pictures array  [2 * MAX_STACK]
+                    // ¿ all 8 entity figures should have the same index ?
+                    // 
+                    // Draw_Picture_Windowed(
+                    //     (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
+                    //     (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
+                    //     battle_unit_picts_seg[ptr_combat_grid_entity->index]
+                    // );
+                    pict_seg = battle_unit_picts_seg[combat_grid_entities[combat_grid_entity_idx].index];
+                    Draw_Picture_Windowed((combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift), (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift), pict_seg);
                 }
-
-            }
-
+                else
+                {
+                    if(combat_grid_entities[combat_grid_entity_idx].Blood_Frame != 3)
+                    {
+                        Draw_Picture_Windowed((combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift), (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift), battle_unit_picts_seg[combat_grid_entities[combat_grid_entity_idx].index]);
+                        if(combat_grid_entities[combat_grid_entity_idx].Blood_Frame >= 0)
+                        {
+                            Set_Animation_Frame(IMG_CMB_Blood[(combat_grid_entities[combat_grid_entity_idx].Blood_Amt - 1)], combat_grid_entities[combat_grid_entity_idx].Blood_Frame);
+                            Blood_Offset_Y = 11;
+                            Blood_Offset_X = 3;
+                            Clipped_Draw((combat_grid_entities[combat_grid_entity_idx].draw_x - Blood_Offset_X), (combat_grid_entities[combat_grid_entity_idx].draw_y - Blood_Offset_Y), IMG_CMB_Blood[(combat_grid_entities[combat_grid_entity_idx].Blood_Amt - 1)]);
+                        }
+                    }
+                }
+            } break;
+            case 0:  /* 'Magic Vortex' */
+            {
+                Set_Animation_Frame(combat_grid_entities[combat_grid_entity_idx].pict_seg, combat_grid_entities[combat_grid_entity_idx].frame_num);
+                Clipped_Draw((combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift), (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift), combat_grid_entities[combat_grid_entity_idx].pict_seg);
+            } break;
+            case 4:  /* */
+            {
+                EMM_TILEX_Init__HACK();
+                Clipped_Draw((combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift), (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift), combat_grid_entities[combat_grid_entity_idx].pict_seg);
+            } break;
         }
-        else if(combat_grid_entities[combat_grid_entity_idx].entity_type == 0)  /* 'Magic Vortex' */
-        {
-
-            Set_Animation_Frame(
-                combat_grid_entities[combat_grid_entity_idx].pict_seg,
-                combat_grid_entities[combat_grid_entity_idx].frame_num
-            );
-
-            Clipped_Draw(
-                (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
-                (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
-                combat_grid_entities[combat_grid_entity_idx].pict_seg
-            );
-
-        }
-        else if(combat_grid_entities[combat_grid_entity_idx].entity_type == 4)
-        {
-
-            EMM_TILEX_Init__HACK();
-
-            Clipped_Draw(
-                (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
-                (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
-                combat_grid_entities[combat_grid_entity_idx].pict_seg
-            );
-
-        }
-
     }
 
-
     /*
-        ~== draw next layer up
-        ¿ projectiles ?
+        ~== draw next layer up  ¿ projectiles ?
     */
-// REDO     for(itr_combat_grid_entities = 0; itr_combat_grid_entities < combat_grid_entity_count; itr_combat_grid_entities++)
-// REDO     {
-// REDO 
-// REDO         if(combat_grid_entities[combat_grid_entity_idx].entity_type == 3)
-// REDO         {
-// REDO 
-// REDO 
-// REDO             Set_Animation_Frame(
-// REDO                 combat_grid_entities[combat_grid_entity_idx].pict_seg,
-// REDO                 CMB_ProjectileFrame
-// REDO             );
-// REDO 
-// REDO             Clipped_Draw(
-// REDO                 (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
-// REDO                 (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
-// REDO                 combat_grid_entities[combat_grid_entity_idx].pict_seg
-// REDO             );
-// REDO 
-// REDO         }
-// REDO         else if(combat_grid_entities[combat_grid_entity_idx].entity_type == 2)
-// REDO         {
-// REDO 
-// REDO             Set_Animation_Frame(
-// REDO                 combat_grid_entities[combat_grid_entity_idx].pict_seg,
-// REDO                 CMB_CurseAnimStage
-// REDO             );
-// REDO 
-// REDO             Clipped_Draw(
-// REDO                 (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
-// REDO                 (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
-// REDO                 combat_grid_entities[combat_grid_entity_idx].pict_seg
-// REDO             );
-// REDO 
-// REDO         }
-// REDO 
-// REDO     }
-
-
+    for(itr = 0; itr < combat_grid_entity_count; itr++)
+    {
+        combat_grid_entity_idx = combat_grid_entities_draw_order[itr];
+        switch(combat_grid_entities[combat_grid_entity_idx].entity_type)
+        {
+            case 3:  /* Missiles */
+            {
+                Set_Animation_Frame(combat_grid_entities[combat_grid_entity_idx].pict_seg, CMB_ProjectileFrame);
+                Clipped_Draw(combat_grid_entities[combat_grid_entity_idx].pict_seg, (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift), (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift));
+            } break;
+            case 2:  /*  */
+            {
+                Set_Animation_Frame(combat_grid_entities[combat_grid_entity_idx].pict_seg, CMB_CurseAnimStage);
+                Clipped_Draw(combat_grid_entities[combat_grid_entity_idx].pict_seg, (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift), (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift));
+            } break;
+        }
+    }
     Screen_To_Combat_Grid_Cell_X_And_Offset(Pointer_X(), Pointer_Y(), &combat_grid_cell_x, &combat_grid_cell_x_offset);
-
     Screen_To_Combat_Grid_Cell_Y_And_Offset(Pointer_X(), Pointer_Y(), &combat_grid_cell_y, &combat_grid_cell_y_offset);
-
 }
 
 
@@ -27453,7 +27385,68 @@ void USELESS_Combat_Figure_Load_Compose(int16_t bufpi, int16_t figure_set_idx, i
 
 // WZD ovr153p16
 // drake178: CMB_SpawnProjectiles()
+/*
+; creates combat entities for each projectile currently
+; traveling across the screen
+*/
+/*
 
+Combat Grid Entity Type 3
+
+*/
+void Spawn_Missile_Entities(void)
+{
+    int16_t Firing_Curve_Y = 0;
+    int16_t Origin_Y = 0;
+    int16_t Origin_X = 0;
+    int16_t itr_msl = 0;  // _DI_
+
+    for(itr_msl = 0; itr_msl < _missile_count; itr_msl++)
+    {
+
+        Origin_X = (_missiles[itr_msl].Src_Scr_X + (((_missiles[itr_msl].Tgt_Scr_X - _missiles[itr_msl].Src_Scr_X) * _missiles[itr_msl].Travel_Percent) / 100));
+        Origin_Y = (_missiles[itr_msl].Src_Scr_Y + (((_missiles[itr_msl].Tgt_Scr_Y - _missiles[itr_msl].Src_Scr_Y) * _missiles[itr_msl].Travel_Percent) / 100));
+
+        if(
+            (_missiles[itr_msl].Type == msl_Arrow)
+            ||
+            (_missiles[itr_msl].Type == msl_Rocks)
+            ||
+            (_missiles[itr_msl].Type == msl_Sling)
+        )
+        {
+
+            Firing_Curve_Y = (((_missiles[itr_msl].Travel_Percent - 50) / 2) / 2);
+
+        }
+        else
+        {
+            Firing_Curve_Y = 0;
+        }
+
+        if(Firing_Curve_Y < 0)
+        {
+            Firing_Curve_Y = -(Firing_Curve_Y);
+        }
+
+        Combat_Grid_Entity_Create__WIP(
+            Origin_X,
+            (Origin_Y + Firing_Curve_Y),
+            CMB_RangedAtx_GFX[_missiles[itr_msl].Type][_missiles[itr_msl].Proj_Direction],
+            14,
+            22,
+            0,
+            3,  /* Entity Type */
+            0,
+            0,
+            0,
+            0,
+            0,
+            0);
+
+    }
+
+}
 
 
 // segrax

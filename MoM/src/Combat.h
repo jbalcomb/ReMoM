@@ -117,7 +117,7 @@ enum e_msl__dir
     Proj_UpLeft     = 7
 };
 
-//  ; (sizeof=0xE)
+// sizeof:   Eh  14d
 struct s_MISSILE
 {
     /* 00 */ int16_t Src_Scr_X;
@@ -2106,7 +2106,7 @@ void Clear_Combat_Grid_Entities(void);
 void USELESS_Combat_Figure_Load_Compose(int16_t figure_index, int16_t figure_set_idx, int16_t player_idx, int16_t enchantment_magic_realm, int16_t Frame);
 
 // WZD ovr153p16
-// drake178: CMB_SpawnProjectiles()
+void Spawn_Missile_Entities(void);
 
 // WZD ovr153p17
 void Battle_Unit_Figure_Position(int16_t figure_count, int16_t current_figure, int16_t * figure_x, int16_t * figure_y);

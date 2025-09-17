@@ -216,7 +216,7 @@ CMB_CreateEntities__WIP()
     CMB_EntitiesReset();
     // TODO  CMB_SpawnTrees();
     // TODO  CMB_SpawnRocks();
-    // TODO  CMB_UpdateTrueSight();
+    CMB_UpdateTrueSight();
     for(itr = 0; itr < _combat_total_unit_count; itr++)
         battle_units[itr].Image_Effect = 0;
         Combat_Unit_Enchantment_Outline_Set(itr);
@@ -227,9 +227,9 @@ CMB_CreateEntities__WIP()
             CMB_SpawnFigure__WIP(battle_units[itr].bufpi, battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
         if(Curse_Anim != ST_UNDEFINED)
             // TODO  CMB_SpawnUnitCurse(battle_units[itr].cgx, battle_units[itr].position_cgc1, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].move_anim_ctr, Curse_Anim);
-    // TODO  CMB_SpawnProjectiles();
-    // TODO  CMB_SpawnVortices();
-    // TODO  CMB_SpawnStructures();
+        Spawn_Missile_Entities();
+        CMB_SpawnVortices();
+        CMB_SpawnStructures();
     Cycle_Unit_Enchantment_Animation();
 
 

@@ -1,4 +1,10 @@
 
+
+
+CMB_SpawnProjectiles()  ==>  Spawn_Missile_Entities()
+
+
+
 MoM / MoX
 'Tactical Combat' / 'Combat Screen'
 Battlefield / Combat Grid
@@ -40,7 +46,7 @@ CMB_DrawFullScreen__WIP()
         CMB_SpawnVortices()
         CMB_SpawnFigure__WIP() passes battle_units[itr].bufpi
         CMB_SpawnUnitCurse()
-        CMB_SpawnProjectiles()
+        Spawn_Missile_Entities()
 
 Trees, Rocks, Structures, StoneWall, DarkWall, FireWall, Vortices, UnitCurse, Projectiles
 

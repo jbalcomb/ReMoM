@@ -76,7 +76,7 @@ bad text on ArmyList
 
 
 
-
+NEW TEST CASE - illusion ranged attack ... Aerie (Anskiy) ... Artifact (Suppanut)
 
 
 
