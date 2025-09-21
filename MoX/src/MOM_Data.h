@@ -466,8 +466,9 @@ enum AI_Objective
 
 enum e_NODE_FLAGS
 {
-    NF_WARPED,
-    NF_GUARDIAN
+    NF_NONE     = 0,
+    NF_WARPED   = 1,
+    NF_GUARDIAN = 2
 };
 
 // drake178: EZ_Types
@@ -1433,7 +1434,7 @@ struct s_WIZARD
     /* 025E */ int32_t  spell_casting_skill;  /* stored as powers of 2?  "spell casting skill" */
     /* 0262 */ int16_t researching_spell_idx;  /* spells_list[] spell_idx of the spell currently being researched */
     /* 0264 */ uint8_t  spells_list[NUM_SPELLS];   /* "Spell Library" TODO should be [6][40] or [6][4][10] or some odd, equivalent struct */ /* enum? known, knowable, ? */
-    /* 0354 */ uint16_t Defeated_Wizards;  /* ¿ bifield of bit_num == play_num ? */
+    /* 0354 */ uint16_t Defeated_Wizards;  /* in WZD_093 WIZ_Conquest();  bifield of bit_idx == player_idx */
     /* 0356 */ uint16_t gold_reserve;       /*  */
     /* 0358 */ uint16_t field_358;
     /* 035A */ struct s_Astr_Data Astr;     /* populated in Record_History() */

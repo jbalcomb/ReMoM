@@ -42,11 +42,6 @@ uint16_t bit_field_test_bits[8] = {
 
 
 
-void Ridiculous(void)
-{
-    return;
-}
-
 /*
     WZD seg022
 */
@@ -497,10 +492,10 @@ void Set_Bit_Field(int16_t bit_idx, uint8_t * bit_field)
     // mov     ax, dx
     // mov     cl, 3
     // sar     ax, cl                          ; ~ divide by 8 (bits per byte) ; to get index into byte array
+    // mov     si, ax
 
     byte_idx = (bit_idx >> 3);
 
-    // mov     si, ax
     // les     bx, [bp+bit_field]
     // add     bx, si
     // mov     al, [es:bx]                     ; AL = bit_field[byte_idx]
@@ -561,8 +556,84 @@ void Clear_Bit_Field(int16_t bit_idx, uint8_t * bit_field)
 
 
 // WZD s22p26 MEM_TestBit_Near()
-// WZD s22p27 MEM_SetBit_Near()
-// WZD s22p28 UU_MEM_ClearBit_Near()
+
+// WZD s22p27
+// drake178: MEM_SetBit_Near()
+/*
+; sets a bit in a target near bitfield
+*/
+/*
+¿ ~== Set_Bit_Field() ?
+
+curious differences from Set_Bit_Field()
+*/
+void Set_Bit_Field_Near(int bit_idx, char * bit_field)
+{
+// void Set_Bit_Field(int16_t bit_idx, uint8_t * bit_field)
+    int16_t byte_idx;
+    uint16_t bit_field_byte;
+    int16_t byte_bit_idx;
+    byte_idx = (bit_idx >> 3);
+    bit_field_byte = (uint16_t)bit_field[byte_idx];
+    byte_bit_idx = (bit_idx & 0x07);
+    bit_field[byte_idx] = (bit_field_byte | bit_field_test_bits[byte_bit_idx]);
+
+// mov     bx, [bp+bit_field]
+// mov     ax, [bp+bit_idx]
+// mov     cx, ax
+// shr     ax, 1
+// shr     ax, 1
+// shr     ax, 1                          ; ~ divide by 8 (bits per byte) to get index into byte array
+// add     bx, ax
+// and     cx, 7
+// mov     al, 1
+// cmp     cx, 0
+// jz      short @@Done
+// loc_1DA86:
+// shl     al, 1
+// loop    loc_1DA86                    ~ (1 << _CX_) ... bit count
+// @@Done:
+// mov     cl, [bx]
+// or      al, cl                       ~ bit_field |= _AL_
+// mov     [bx], al
+
+}
+
+// WZD s22p28
+// drake178: UU_MEM_ClearBit_Near()
+/*
+; Unused in MoM
+; clears a bit in a target near bitfield
+*/
+/*
+only difference
+Set_Bit_Field_Near      // or      al, cl   ~ bit_field |= _AL_
+Clear_Bit_Field_Near    // xor     al, cl   ~ bit_field ^= _AL_
+
+*/
+void UU_MEM_ClearBit_Near(int bit_idx, char * bit_field)
+{
+// mov     bx, [bp+bit_field]
+// mov     ax, [bp+bit_idx]
+// mov     cx, ax
+// shr     ax, 1
+// shr     ax, 1
+// shr     ax, 1
+// add     bx, ax
+// and     cx, 7
+// mov     al, 1
+// cmp     cx, 0
+// jz      short @@Done
+// loc_1DAB0:
+// shl     al, 1
+// loop    loc_1DAB0
+// @@Done:
+// mov     cl, [bx]
+// xor     al, cl                      ~ bit_field ^= _AL_
+// mov     [bx], al
+}
+
+
 // WZD s22p29 UU_DBG_SetSelectSetting()
 // WZD s22p30 UU_DBG_SelectDialog()
 

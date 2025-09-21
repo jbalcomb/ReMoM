@@ -1,4 +1,5 @@
 
+CTY_TakeOver()  ==>  Change_City_Ownership()
 OVL_Action_Type  ==>  _combat_environ
 OVL_Action_Structure  ==> _combat_environ_idx
 CMB_combat_structure  ==>  _combat_structure

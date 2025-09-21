@@ -13,6 +13,8 @@ MoO2
 
 #include "MOX_TYPE.h"
 
+#include "sdl2_Audio.h"
+
 
 
 #ifdef __cplusplus

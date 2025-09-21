@@ -4306,7 +4306,8 @@ Check_Game_Data();
             if(_CITIES[_combat_environ_idx].size != 0)
             {
                 if(
-                    (combat_attacker_player_idx < NUM_PLAYERS) &&
+                    (combat_attacker_player_idx < NUM_PLAYERS)
+                    &&
                     (defender_idx < NUM_PLAYERS)
                 )
                 {
@@ -26276,12 +26277,12 @@ void Combat_Screen_Map_Draw_Entities__WIP(void)
             case 3:  /* Missiles */
             {
                 Set_Animation_Frame(combat_grid_entities[combat_grid_entity_idx].pict_seg, CMB_ProjectileFrame);
-                Clipped_Draw(combat_grid_entities[combat_grid_entity_idx].pict_seg, (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift), (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift));
+                Clipped_Draw((combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift), (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift), combat_grid_entities[combat_grid_entity_idx].pict_seg);
             } break;
             case 2:  /*  */
             {
                 Set_Animation_Frame(combat_grid_entities[combat_grid_entity_idx].pict_seg, CMB_CurseAnimStage);
-                Clipped_Draw(combat_grid_entities[combat_grid_entity_idx].pict_seg, (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift), (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift));
+                Clipped_Draw((combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift), (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift), combat_grid_entities[combat_grid_entity_idx].pict_seg);
             } break;
         }
     }

@@ -1078,5 +1078,17 @@ void WIZ_AddSpellRank__WIP(int16_t player_idx, int16_t magic_realm)
 // WZD o128p10
 // sub_ACACC()
 
+
 // WZD o128p11
-// WIZ_ConquestSpells()
+// drake178: WIZ_ConquestSpells()
+/*
+*/
+/*
+
+*/
+void WIZ_ConquestSpells__STUB(int16_t player_idx, int16_t city_owner_idx)
+{
+
+
+
+}

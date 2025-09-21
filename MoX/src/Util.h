@@ -95,8 +95,13 @@ void Set_Bit_Field(int16_t bit_idx, uint8_t * bit_field);
 void Clear_Bit_Field(int16_t bit_idx, uint8_t * bit_field);
 
 // WZD s22p26 MEM_TestBit_Near()
-// WZD s22p27 MEM_SetBit_Near()
-// WZD s22p28 UU_MEM_ClearBit_Near()
+
+// WZD s22p27
+void Set_Bit_Field_Near(int bit_idx, char * bit_field);
+
+// WZD s22p28
+void UU_MEM_ClearBit_Near(int bit_idx, char * bit_field);
+
 // WZD s22p29 UU_DBG_SetSelectSetting()
 // WZD s22p30 UU_DBG_SelectDialog()
 

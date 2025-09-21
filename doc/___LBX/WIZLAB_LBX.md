@@ -1,7 +1,7 @@
 
 
 
-SPELLSCR.LBX
+WIZLAB.LBX
 Entries:     24
 Type:         0
 
@@ -9,30 +9,30 @@ Type:         0
 
 
 
-000    "MERLIN"      ""
-001    "RAVEN"       ""
-002    "SHAREE"      ""
-003    "LOPAN"       ""
-004    "JAFAR"       ""
-005    "OBERIC"      ""
-006    "RJAK"        ""
-007    "SSSRA"       ""
-008    "TAURON"      ""
-009    "FREYA"       ""
-010    "HORUS"       ""
-011    "ARIEL"       ""
-012    "TLALOC"      ""
-013    "KALI"        ""
-014    "FAMILIAR"    "green"
-015    "FAMILIAR"    "blue"
-016    "FAMILIAR"    "red"
-017    "FAMILIAR"    "white"
-018    "FAMILIAR"    "black"
-019    "WIZLAB"      ""
-020    "PODIUM"      ""
-021    "BLUECOL"     ""
-022    "SMNFLAM2"    "back flame"
-023    "SMNFLAM2"    "front flame"
+// WIZLAB.LBX, 000    "MERLIN"      ""
+// WIZLAB.LBX, 001    "RAVEN"       ""
+// WIZLAB.LBX, 002    "SHAREE"      ""
+// WIZLAB.LBX, 003    "LOPAN"       ""
+// WIZLAB.LBX, 004    "JAFAR"       ""
+// WIZLAB.LBX, 005    "OBERIC"      ""
+// WIZLAB.LBX, 006    "RJAK"        ""
+// WIZLAB.LBX, 007    "SSSRA"       ""
+// WIZLAB.LBX, 008    "TAURON"      ""
+// WIZLAB.LBX, 009    "FREYA"       ""
+// WIZLAB.LBX, 010    "HORUS"       ""
+// WIZLAB.LBX, 011    "ARIEL"       ""
+// WIZLAB.LBX, 012    "TLALOC"      ""
+// WIZLAB.LBX, 013    "KALI"        ""
+// WIZLAB.LBX, 014    "FAMILIAR"    "green"
+// WIZLAB.LBX, 015    "FAMILIAR"    "blue"
+// WIZLAB.LBX, 016    "FAMILIAR"    "red"
+// WIZLAB.LBX, 017    "FAMILIAR"    "white"
+// WIZLAB.LBX, 018    "FAMILIAR"    "black"
+// WIZLAB.LBX, 019    "WIZLAB"      ""
+// WIZLAB.LBX, 020    "PODIUM"      ""
+// WIZLAB.LBX, 021    "BLUECOL"     ""
+// WIZLAB.LBX, 022    "SMNFLAM2"    "back flame"
+// WIZLAB.LBX, 023    "SMNFLAM2"    "front flame"
 
 
 

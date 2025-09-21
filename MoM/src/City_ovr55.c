@@ -24,6 +24,7 @@
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_T4.h"
 
+#include "CONQUEST.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 #include "NEXTTURN.h"
@@ -772,9 +773,9 @@ void Change_City_Ownership(int16_t city_idx, int16_t player_idx)
         )
     )
     {
-        // TODO  WIZ_Conquer(city_owner_idx, player_idx, city_idx);
-        // |-> WIZ_Banishment()
-        // MoO2 Module: COLCALC Eliminate_Player_
+
+        WIZ_Conquer__WIP(city_owner_idx, player_idx, city_idx);
+
     }
 
     if(

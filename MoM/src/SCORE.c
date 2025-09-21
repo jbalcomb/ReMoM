@@ -1,12 +1,13 @@
 /*
     Hall of Fame Screen
 
-    WIZARDS.EXE
-        ovr106
-    
     MAGIC.EXE
         ovr061
     
+    WIZARDS.EXE
+        ovr106
+        ovr107
+
     MoO2:
         Module: SCORE
 */
@@ -164,7 +165,8 @@ char cnst_HoF_String_E[] = "%)";
 
 
 
-// MGC o61p01
+// MGC o061p01
+// WZD o106p01
 void Hall_Of_Fame_Screen(void)
 {
     int16_t full_screen_ESC_field;
@@ -254,7 +256,8 @@ void Hall_Of_Fame_Screen(void)
 
 }
 
-// MGC o61p02
+// MGC o061p02
+// WZD o106p02
 void Hall_Of_Fame_Screen_Draw(void)
 {
     uint8_t color_array[16];
@@ -349,5 +352,44 @@ void Hall_Of_Fame_Screen_Draw(void)
             print_y += 13;
         }
     }
+
+}
+
+
+
+/*
+    MAGIC.EXE   061
+    WIZARDS.EXE 106
+*/
+
+// WZD o107p01
+// drake178: GAME_OVER()
+/*
+; ends the game, calculating and displaying first the
+; player's final score then, when that is clicked away,
+; the Hall of Fame
+*/
+/*
+
+*/
+void GAME_OVER__STUB(void)
+{
+
+}
+
+
+// WZD o107p02
+// drake178: GAME_DrawScoreBrkdwn()
+/*
+; draws the detailed score breakdown screen using only
+; global variables into the current draw frame, on top
+; of a background loaded from frame 3
+; saves the calculated total score into GUI_Total_Score
+*/
+/*
+
+*/
+void GAME_DrawScoreBrkdwn__STUB(void)
+{
 
 }

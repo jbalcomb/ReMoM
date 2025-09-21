@@ -128,8 +128,8 @@ Combat()
     |-> Tactical_Combat()
 
 Combat()
-    |-> CTY_TakeOver()
-        |-> WIZ_Conquer()
+    |-> Change_City_Ownership()
+        |-> WIZ_Conquer__WIP()
 
 Combat() |-> STK_CaptureCity()
     |-> CTY_RampageVictory()
@@ -144,19 +144,19 @@ Combat() |-> Strategic_Combat()
 Combat() |-> Tactical_Combat()
 
 
-WIZ_Conquer
-    |-> WIZ_Banishment()
-    |-> WIZ_Conquest()
-    |-> WIZ_ConquestSpells()
+WIZ_Conquer__WIP
+    |-> WIZ_Banishment__STUB()
+    |-> WIZ_Conquest__WIP()
+    |-> WIZ_ConquestSpells__STUB()
     ...
-    |-> GAME_LimboFallAnim()
-    |-> GAME_OVER()
-    |-> GAME_EXE_Swap()
+    |-> GAME_LimboFallAnim__STUB()
+    |-> GAME_OVER__STUB()
+    |-> GAME_EXE_Swap__STUB()
     ...
-    |-> GAME_IsWon()
-    |-> GAME_PlayVictoryAnim()
-    |-> GAME_OVER()
-    |-> GAME_EXE_Swap()
+    |-> GAME_IsWon__STUB()
+    |-> GAME_PlayVictoryAnim__STUB()
+    |-> GAME_OVER__STUB()
+    |-> GAME_EXE_Swap__STUB()
 
 
 

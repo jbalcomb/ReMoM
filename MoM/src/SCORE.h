@@ -3,7 +3,11 @@
 
     MAGIC.EXE
         ovr061
-    
+
+    WIZARDS.EXE
+        ovr106
+        ovr107
+
     MoO2:
         Module: SCORE
 */
@@ -42,11 +46,29 @@ extern "C" {
 
 
 
-// MGC o61p01
+/*
+    MAGIC.EXE   061
+    WIZARDS.EXE 106
+*/
+
+// MGC o061p01
+// WZD o106p01
 void Hall_Of_Fame_Screen(void);
 
-// MGC o61p02
+// MGC o061p02
+// WZD o106p02
 void Hall_Of_Fame_Screen_Draw(void);
+
+
+
+/*
+    MAGIC.EXE   061
+    WIZARDS.EXE 106
+*/
+
+// WZD o107p01
+// WZD o107p02
+
 
 
 #ifdef __cplusplus
