@@ -10,6 +10,7 @@
 */
 
 #include "../../MoX/src/LOADSAVE.h"
+#include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _screen_seg */
 #include "../../MoX/src/MOX_SET.h"  /* magic_set */
@@ -40,7 +41,6 @@
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 #include "MOM_DBG.h"
-#include "../../MoX/src/MOM_DEF.h"
 #include "MOM_SCR.h"
 #include "RACETYPE.h"
 #include "REPORT.h"
@@ -1117,7 +1117,9 @@ Capture_Cities_Data();
                                     }
                                 }
                             }
-                            // TODO  Destroy_City(R_Param);
+                            
+                            Destroy_City(R_Param);
+
                         }
                     }
 

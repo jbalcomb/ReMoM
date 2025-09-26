@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "STU", "STU\STU.vcxproj", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sdl2_ReMoM", "sdl2_ReMoM\sdl2_ReMoM.vcxproj", "{8050C5BF-11DD-45F0-AC2B-27D8421C8A89}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sample-Test0", "Sample-Test0\Sample-Test0.vcxproj", "{F4F0BD30-239C-4B8C-899A-7B2458FCC966}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -33,6 +35,10 @@ Global
 		{8050C5BF-11DD-45F0-AC2B-27D8421C8A89}.Debug|x64.Build.0 = Debug|x64
 		{8050C5BF-11DD-45F0-AC2B-27D8421C8A89}.Release|x64.ActiveCfg = Release|x64
 		{8050C5BF-11DD-45F0-AC2B-27D8421C8A89}.Release|x64.Build.0 = Release|x64
+		{F4F0BD30-239C-4B8C-899A-7B2458FCC966}.Debug|x64.ActiveCfg = Debug|x64
+		{F4F0BD30-239C-4B8C-899A-7B2458FCC966}.Debug|x64.Build.0 = Debug|x64
+		{F4F0BD30-239C-4B8C-899A-7B2458FCC966}.Release|x64.ActiveCfg = Release|x64
+		{F4F0BD30-239C-4B8C-899A-7B2458FCC966}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

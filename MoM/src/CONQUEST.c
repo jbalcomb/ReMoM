@@ -21,7 +21,7 @@ Module: ERIC
 #include "../../MoX/src/Timer.h"
 #include "../../MoX/src/Util.h"
 
-#include "../../MoX/src/MOM_Data.h"  /* _cities[] */
+#include "../../MoX/src/MOM_Data.h"  /* _cities[], _UNITS[] */
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
 #include "../../MoX/src/MOM_DEF.h"  /* NEUTRAL_PLAYER_IDX */
 #include "../../MoX/src/MOX_DEF.h"  /* NEUTRAL_PLAYER_IDX */

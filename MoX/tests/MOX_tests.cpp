@@ -6,11 +6,6 @@
 
 
 
-TEST(MOX_test, MOX_Ridiculous)
-{
-    Ridiculous();
-}
-
 TEST(MOX_test, MOX_One_Plus_One)
 {
     ASSERT_EQ(1+1, 2);

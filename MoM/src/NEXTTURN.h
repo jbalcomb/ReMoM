@@ -32,7 +32,7 @@ void Delete_Dead_Units(void);
 int16_t Player_Units_Max_Range(int16_t player_idx, int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o60p03
-void empty_function__o060p03(void);
+// static void o060p03_empty_function(void);
 
 // WZD o60p04
 void Next_Turn_Proc(void);

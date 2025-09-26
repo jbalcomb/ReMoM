@@ -709,6 +709,7 @@ e.g.,
 /*
 kill_type
     e_KILL_TYPE
+        kt_Normal, kt_Dismissed, kt_Disappeared
 */
 void Kill_Unit(int16_t unit_idx, int16_t kill_type)
 {
@@ -724,7 +725,7 @@ void Kill_Unit(int16_t unit_idx, int16_t kill_type)
     if((kill_type == kt_Dismissed) || (_UNITS[unit_idx].type == ut_Chosen))
     {
 
-        _UNITS[unit_idx].Finished = ST_TRUE;
+        UNITS_FINISHED(unit_idx, ST_TRUE);
 
         if(_UNITS[unit_idx].Hero_Slot > -1)
         {
@@ -732,7 +733,7 @@ void Kill_Unit(int16_t unit_idx, int16_t kill_type)
             for(itr = 0; itr < NUM_HERO_ITEMS; itr++)
             {
 
-                if(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] > -1)
+                if(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] > ST_UNDEFINED)
                 {
 
                     Remove_Item(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr]);
@@ -761,7 +762,7 @@ void Kill_Unit(int16_t unit_idx, int16_t kill_type)
     else  /* ((kill_type != 1) && (_UNITS[unit_idx].type != ut_Chosen)) */
     {
 
-        UNITS_FINISHED(unit_idx,ST_TRUE );
+        UNITS_FINISHED(unit_idx, ST_TRUE);
 
         if(_UNITS[unit_idx].Hero_Slot > -1)
         {
@@ -1290,7 +1291,7 @@ int16_t Unit_Base_Level(int16_t unit_idx)
     // 201 * 36 = 7236
     // 7268 - 7236 = 32d  20h
     // ¿ s_SPELL_DATA.Param0 ?  ; unit type, base damage, UE flag, or CE index
-    if(_UNITS[unit_idx].type < spell_data_table[201].Param0)
+    if(_UNITS[unit_idx].type < spell_data_table[spl_Magic_Spirit].unit_type)
     {
         for(itr = 0; itr < 4; itr++)
         {
@@ -1321,7 +1322,6 @@ int16_t Unit_Base_Level(int16_t unit_idx)
                 _UNITS[unit_idx].XP = TBL_Experience[HL_DEMIGOD];
             }
         }
-
 
     }
 

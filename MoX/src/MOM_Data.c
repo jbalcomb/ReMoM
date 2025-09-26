@@ -1074,6 +1074,10 @@ int16_t * AI_Own_City_Values;
 int16_t g_timestop_player_num;
 
 // WZD dseg:912C
+/*
+ALLOC.c
+Allocate_Data_Space()
+*/
 struct s_SPELL_DATA * spell_data_table;
 
 // WZD dseg:9130
@@ -1154,6 +1158,14 @@ int8_t * combat_enchantments;
 
 // WZD dseg:9232
 /*
+ALLOC.c
+Allocate_Data_Space()
+_HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 PR, 448 B
+_HEROES2[1] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+_HEROES2[2] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+_HEROES2[3] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+_HEROES2[4] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+_HEROES2[5] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
 
 e.g.,
     _HEROES2[HUMAN_PLAYER_IDX]->heroes[unit_type].Spells[itr1]
@@ -2655,9 +2667,23 @@ SAMB_ptr EmmHndl_CONTXXX;
 // SAMB_ptr TBL_Units;
 // struct s_UNIT _UNITS[UNIT_COUNT_MAX];  // 1009 * sizeof(32)
 // struct s_UNIT _UNITS[];
+/*
+ALLOC.c
+Allocate_Data_Space()
+_UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 PR, 32448 B
+*/
 struct s_UNIT * _UNITS;
 
 // WZD dseg:9EC6
+/*
+ALLOC.c
+Allocate_Data_Space()
+hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);  // 37 PR, 592 B  ... ~ (36) 16-byte structs
+LOADSAVE.c
+fwrite(hero_names_table, 16, NUM_HERO_TYPES, file_pointer);
+// TODO  DEDU  if (file_size_flag == ST_TRUE) { MEM_Clear_Far(hero_names_table, 545); } else { ... }
+fread(hero_names_table, 16, NUM_HERO_TYPES, file_pointer);
+*/
 struct s_INACTV_HERO * hero_names_table;
 
 

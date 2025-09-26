@@ -1,6 +1,15 @@
 
 
 
+
+Run One GTest, for de-bugging
+cd /c/STU/devel/ReMoM/out/build/MSVC-debug
+ctest -R MOM_Kill_Unit_1 -VV
+
+
+
+
+
 https://google.github.io/googletest/quickstart-cmake.html
 
 https://www.labri.fr/perso/fleury/posts/programming/using-cmake-googletests-and-gcovr-in-a-c-project.html

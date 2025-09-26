@@ -103,12 +103,6 @@ Move_Units()
 
 
 
-        // TODO  WIZ_Conquer(city_owner_idx, player_idx, city_idx);
-        // |-> WIZ_Banishment()
-        // MoO2 Module: COLCALC Eliminate_Player_
-
-
-
         /* TODO */  itr_players = EVNT_FindNewMineral__STUB(player_idx, &wx, &wy, &wp, &terrain_special);
         /* TODO */  TILE_ReplaceMinerals__STUB(wx, wy, wp, terrain_special);
 
@@ -138,6 +132,9 @@ What is Move_Failed even?
 // TODO  DIPLO ROUND 2
 e.g., no NPC demand/offer
 ¿ Next_Turn_Calc() stuff ?
+
+
+
 
 
 DOME_RIGHTMEOW
