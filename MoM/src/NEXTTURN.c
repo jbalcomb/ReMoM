@@ -149,57 +149,28 @@ void Delete_Dead_Units(void)
     int16_t itr_heroes = 0;
     int16_t itr_units = 0; // _SI_
     int16_t itr_players = 0; // _DI_
-
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Delete_Dead_Units()\n", __FILE__, __LINE__);
 #endif
-
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-
         unit_type = _UNITS[itr_units].type;
-
         if(
             (_UNITS[itr_units].owner_idx < HUMAN_PLAYER_IDX)
             ||
             (_UNITS[itr_units].owner_idx > NEUTRAL_PLAYER_IDX)
         )
         {
-
-Check_Game_Data();
             Delete_Structure(itr_units, (uint8_t *)&_UNITS[0], sizeof(struct s_UNIT), _units);
-// Check_Game_Data();
-Capture_Units_Data();  // TODO  Delete_Structure() changes all of the unit data
 
             for(itr_players = 0; itr_players < _num_players; itr_players++)
-            {
-
                 for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
-                {
-
-                    if(
-                        (_players[itr_players].Heroes[itr_heroes].unit_idx != ST_UNDEFINED)
-                        &&
-                        (_players[itr_players].Heroes[itr_heroes].unit_idx > itr_units)
-                    )
-                    {
-
+                    if((_players[itr_players].Heroes[itr_heroes].unit_idx != ST_UNDEFINED) && (_players[itr_players].Heroes[itr_heroes].unit_idx > itr_units))
                         _players[itr_players].Heroes[itr_heroes].unit_idx -= 1;
 
-                    }
-
-                }
-
-            }
-
-            dbg_prn("DEBUG: [%s, %d]: Delete_Dead_Units(): _units: %d\n", __FILE__, __LINE__, _units);
             _units -= 1;
-            dbg_prn("DEBUG: [%s, %d]: Delete_Dead_Units(): _units: %d\n", __FILE__, __LINE__, _units);
-
         }
-
     }
-
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Delete_Dead_Units()\n", __FILE__, __LINE__);
 #endif
@@ -1031,7 +1002,7 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
                 _UNITS[_units].owner_idx = owner_idx;
                 _UNITS[_units].moves2_max = _unit_type_table[unit_type].Move_Halves;
                 _UNITS[_units].type = unit_type;
-                _UNITS[_units].Hero_Slot = -1;
+                _UNITS[_units].Hero_Slot = ST_UNDEFINED;
                 _UNITS[_units].in_tower = ST_FALSE;
                 _UNITS[_units].Finished = ST_TRUE;
                 _UNITS[_units].moves2 = 0;
@@ -1046,7 +1017,7 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
                 _UNITS[_units].enchantments = 0;
                 _UNITS[_units].mutations = 0;
                 _UNITS[_units].Move_Failed = ST_FALSE;
-                _UNITS[_units].Rd_Constr_Left = -1;
+                _UNITS[_units].Rd_Constr_Left = ST_UNDEFINED;
 
                 if((R_Param < 0) || R_Param >= 2000)
                 {
@@ -1124,7 +1095,8 @@ Capture_Cities_Data();
                     }
 
                     if(
-                        (_players[owner_idx].alchemy > 0) &&
+                        (_players[owner_idx].alchemy > 0)
+                        &&
                         (_UNITS[_units].mutations == 0)
                     )
                     {
@@ -1132,7 +1104,8 @@ Capture_Cities_Data();
                     }
 
                     if(
-                        (_players[owner_idx].Globals[CHAOS_SURGE] > 0) &&
+                        (_players[owner_idx].Globals[CHAOS_SURGE] > 0)
+                        &&
                         ((_unit_type_table[unit_type].Abilities & UA_FANTASTIC) == 0)
                     )
                     {

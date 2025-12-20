@@ -385,7 +385,7 @@ void Cast_Incarnation(int16_t player_idx)
 
     assumes (_units - 1)
 
-unit_type_idx is passed over all the wzay from Hire_Hero_Popup()
+unit_type_idx is passed over all the way from Hire_Hero_Popup()
 so, not quite 'Generate Random Hero'
 
 
@@ -404,18 +404,17 @@ e.g.,
         Hero_Hired = WIZ_HireHero(player_idx, unit_type_idx, hero_slot_idx, 0);
 
 "Hire" as in "Summon"
+...except "Summon" uses 'Summoning Circle', rather than 'Fortress City'
 */
 int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slot_idx, int16_t saved_flag)
 {
-    int16_t itr;
+    int16_t itr = 0;
 
-    Create_Unit__WIP(unit_type_idx, player_idx, FORTX(), FORTY(), FORTP(), -1);
+    Create_Unit__WIP(unit_type_idx, player_idx, FORTX(), FORTY(), FORTP(), ST_UNDEFINED);
 
-    _UNITS[(_units - 1)].Finished = ST_FALSE;
-
-    _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;
-
-    _UNITS[(_units - 1)].Hero_Slot = hero_slot_idx;
+    _UNITS[(_units - 1)].Finished = ST_FALSE;  // default is ST_TRUE
+    _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;  // default is 0
+    _UNITS[(_units - 1)].Hero_Slot = hero_slot_idx;  // default is ST_UNDEFINED
 
     _players[player_idx].Heroes[hero_slot_idx].unit_idx = (_units - 1);
 

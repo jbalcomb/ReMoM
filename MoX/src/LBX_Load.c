@@ -532,6 +532,7 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
         lbxload_fptr = fopen(lbx_file_name, "rb");
 
         // if(lbxload_fptr == NULL) { if(secondary_drive_path == NULL) { Error_Handler(LBXErr_not_found) } else { ... secondary_drive_path full_file_path lbx_open() ... }
+        if(lbxload_fptr == NULL) { Error_Handler(lbx_name, le_not_found, entry_num, ST_NULL); }
 
         // DNE  if UU_farload_hdr_fmt ... file_hdr_ofst  512 or 0
 
@@ -548,7 +549,7 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
             END: Current != Previous
         */
     }
-    if(lbxload_num_entries < entry_num) { Error_Handler(lbx_name, 8, entry_num, ST_NULL); }  // " exceeds number of LBX entries"
+    if(lbxload_num_entries < entry_num) { Error_Handler(lbx_name, le_entries_exceeded, entry_num, ST_NULL); }  // " exceeds number of LBX entries"
     /*
         END: Current vs. Previous
     */

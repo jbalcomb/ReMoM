@@ -109,6 +109,7 @@
     <ProjectGuid>{da90c873-d83f-4cdf-963d-7b733fe10997}</ProjectGuid>
     <RootNamespace>MoX</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>002_MoX</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

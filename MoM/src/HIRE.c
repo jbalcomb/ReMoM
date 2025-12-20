@@ -526,7 +526,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
         }
 
-        Kill_Unit((_units - 1), 1);
+        Kill_Unit((_units - 1), kt_Dismissed);
 
         Cache_Graphics_Overland();
 
@@ -930,7 +930,7 @@ void AI_Accept_Hero(int16_t player_idx, int16_t hero_slot_idx, int16_t unit_type
 
     if(allowance >= unit_cost)
     {
-        Hero_Hired = WIZ_HireHero(player_idx, unit_type_idx, hero_slot_idx, 0);
+        Hero_Hired = WIZ_HireHero(player_idx, unit_type_idx, hero_slot_idx, ST_FALSE);
 
         if(Hero_Hired == ST_FALSE)
         {

@@ -39,8 +39,9 @@ endif()
 
 if(WIN32)
     add_custom_command(
-        TARGET MOM_tests POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy 
+        TARGET MOM_tests
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${SDL2_dll}
             $<TARGET_FILE_DIR:MOM_tests>
         COMMAND_EXPAND_LISTS
@@ -78,8 +79,19 @@ if(WIN32)
     )
 endif()
 
-add_custom_command(TARGET MOM_tests POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:MOM_tests> $<TARGET_RUNTIME_DLLS:MOM_tests> $<TARGET_FILE_DIR:MOM_tests>
+## WTF  add_custom_command(TARGET MOM_tests POST_BUILD
+## WTF      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:MOM_tests> $<TARGET_RUNTIME_DLLS:MOM_tests> $<TARGET_FILE_DIR:MOM_tests>
+## WTF  )
+
+file(GLOB LBX_FILE_LIST "${CMAKE_SOURCE_DIR}/*.lbx")
+add_custom_command(
+    TARGET MOM_tests
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${LBX_FILE_LIST}
+        $<TARGET_FILE_DIR:MOM_tests>
+    COMMAND_EXPAND_LISTS
+    COMMENT "Copying LBX files..."
 )
 
 gtest_discover_tests(MOM_tests)

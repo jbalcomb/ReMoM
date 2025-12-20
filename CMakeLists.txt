@@ -110,10 +110,12 @@ find_package(SDL2_mixer REQUIRED)
 add_subdirectory(STU)
 add_subdirectory(MoX)
 add_subdirectory(MoM)
-
 add_subdirectory(tests)
+add_subdirectory(src)
 
-install(TARGETS sdl2_ReMoM)
+
+
+install(TARGETS ReMoMber)
 # install(FILES $<TARGET_FILE:SDL2::SDL2> DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES $<TARGET_FILE:SDL2::Core> DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES $<TARGET_FILE:SDL2::Mixer> DESTINATION ${CMAKE_INSTALL_BINDIR})

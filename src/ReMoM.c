@@ -23,33 +23,33 @@
 #include <windows.h>
 #endif
 
-#include "../../MoX/src/capture.h"
-#include "../../MoX/src/CFG.h"
-#include "../../MoX/src/DOS.h"
-#include "../../MoX/src/EMM.h"
-#include "../../MoX/src/Fields.h"
-#include "../../MoX/src/Fonts.h"
-#include "../../MoX/src/Graphics.h"
-#include "../../MoX/src/LBX_Load.h"
-#include "../../MoX/src/MOX_BASE.h"
-#include "../../MoX/src/MOM_Data.h"
-#include "../../MoX/src/MOX_DEF.h"
-#include "../../MoX/src/MOX_SET.h"
-#include "../../MoX/src/MOX_T4.h"
-#include "../../MoX/src/MOX_TYPE.h"
-#include "../../MoX/src/SOUND.h"
-#include "../../MoX/src/Timer.h"
+#include "../MoX/src/capture.h"
+#include "../MoX/src/CFG.h"
+#include "../MoX/src/DOS.h"
+#include "../MoX/src/EMM.h"
+#include "../MoX/src/Fields.h"
+#include "../MoX/src/Fonts.h"
+#include "../MoX/src/Graphics.h"
+#include "../MoX/src/LBX_Load.h"
+#include "../MoX/src/MOX_BASE.h"
+#include "../MoX/src/MOM_Data.h"
+#include "../MoX/src/MOX_DEF.h"
+#include "../MoX/src/MOX_SET.h"
+#include "../MoX/src/MOX_T4.h"
+#include "../MoX/src/MOX_TYPE.h"
+#include "../MoX/src/SOUND.h"
+#include "../MoX/src/Timer.h"
 
-#include "ALLOC.h"
-#include "CREDITS.h"
-#include "Init.h"
-#include "INTRO.h"
-#include "LOADER.h"
-#include "MOM_SCR.h"
-#include "Settings.h"
+#include "../MoM/src/ALLOC.h"
+#include "../MoM/src/CREDITS.h"
+#include "../MoM/src/Init.h"
+#include "../MoM/src/INTRO.h"
+#include "../MoM/src/LOADER.h"
+#include "../MoM/src/MOM_SCR.h"
+#include "../MoM/src/Settings.h"
 
 #ifdef STU_DEBUG
-#include "../../STU/src/STU_DBG.h"
+#include "../STU/src/STU_DBG.h"
 #endif
 
 #include <stdlib.h>
@@ -108,9 +108,39 @@ int main(int argc, char * argv[])
 
 #ifdef _WIN32
     printf("argc: %d\n", argc);
+    dbg_prn("argc: %d\n", argc);
     for(itr = 0; itr < argc; itr++)
     {
         printf("argv[%d]: %s\n", itr, argv[itr]);
+        dbg_prn("argv[%d]: %s\n", itr, argv[itr]);
+    }
+#endif
+#ifdef _WIN32
+    char buffer[MAX_PATH] = { 0 };
+    if(GetCurrentDirectoryA(MAX_PATH, buffer) != 0)
+    {
+        printf("GetCurrentDirectoryA(): %s\n", buffer);
+        dbg_prn("CWD: %s\n", buffer);
+    }
+    else
+    {
+        printf("FATAL: GetCurrentDirectoryA()\n");
+        dbg_prn("FATAL: GetCurrentDirectoryA()\n");
+        __debugbreak();
+    }
+#endif
+#ifdef _WIN32
+    char path[MAX_PATH] = { 0 };
+    if(_getcwd(path, sizeof(path)) != NULL)
+    {
+        printf("_getcwd(): %s\n", path);
+        dbg_prn("_getcwd(): %s\n", path);
+    }
+    else
+    {
+        printf("FATAL: _getcwd()\n");
+        dbg_prn("FATAL: _getcwd()\n");
+        __debugbreak();
     }
 #endif
 

@@ -77,8 +77,6 @@ set(MOMLIB_SOURCES
     WZD_o146.c
 )
 
-
-
 # find_package(SDL2 REQUIRED)
 # # get_target_property(imported_location SDL2::Core IMPORTED_LOCATION)
 # # message(STATUS "IMPORTED_LOCATION: ${imported_location}")
@@ -119,7 +117,6 @@ target_include_directories(momlib PUBLIC
     ${SDL2_MIXER_INCLUDE_DIR}
 )
 
-
 target_compile_definitions(momlib PRIVATE
     _CRT_SECURE_NO_WARNINGS=TRUE
 )
@@ -132,45 +129,6 @@ target_compile_definitions(momlib PRIVATE
 target_compile_definitions(momlib PRIVATE
     $<$<CONFIG:Debug>:_STU_SDL2=TRUE>
 )
-
-
-
-add_executable(sdl2_ReMoM ReMoM.c)
-
-# set_target_properties(sdl2_ReMoM PROPERTIES LINKER_LANGUAGE C)
-set_target_properties(sdl2_ReMoM PROPERTIES POSITION_INDEPENDENT_CODE ON)
-
-target_link_libraries(sdl2_ReMoM PUBLIC
-    momlib
-    MOX
-    STU
-    SDL2::Main
-    SDL2::Mixer
-)
-
-target_include_directories(sdl2_ReMoM PUBLIC
-    ${PROJECT_SOURCE_DIR}
-    ${PROJECT_SOURCE_DIR}/src
-    ${PROJECT_SOURCE_DIR}/src/MOX
-    ${PROJECT_SOURCE_DIR}/src/STU
-    ${SDL2_INCLUDE_DIR}
-    ${SDL2_MIXER_INCLUDE_DIR}
-)
-
-target_compile_definitions(sdl2_ReMoM PRIVATE
-    _CRT_SECURE_NO_WARNINGS=TRUE
-)
-target_compile_definitions(sdl2_ReMoM PRIVATE
-    $<$<CONFIG:Debug>:STU_DEBUG=TRUE>
-)
-target_compile_definitions(sdl2_ReMoM PRIVATE
-    $<$<CONFIG:Debug>:STU_TRACE=TRUE>
-)
-target_compile_definitions(sdl2_ReMoM PRIVATE
-    $<$<CONFIG:Debug>:_STU_SDL2=TRUE>
-)
-
-
 
 # Deprecated since version 3.24: Use the CMAKE_C_COMPILER_ID variable instead.
 # Starting with CMake 2.6, the CMAKE_C_COMPILER_ID variable should be used instead:
@@ -219,64 +177,3 @@ if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
         "/wd4820"
     )
 endif()
-if(CMAKE_COMPILER_IS_CLANG)
-    target_compile_options(sdl2_ReMoM PRIVATE
-        "-Wall"
-        "-Wno-deprecated-declarations"
-        "-Wno-int-to-pointer-cast"
-        "-Wno-missing-braces"
-        "-Wno-tautological-compare"
-        "-Wno-unknown-pragmas"
-        "-Wno-unused-but-set-variable"
-        "-Wno-unused-label"
-        "-Wno-unused-variable"
-        "-Wno-unused-function"
-        "-Wno-writable-strings"
-    )
-endif()
-if(CMAKE_COMPILER_IS_GNUCC)
-    target_compile_options(sdl2_ReMoM PRIVATE
-        "-Wall"
-        "-Wno-deprecated-declarations"
-        "-Wno-int-to-pointer-cast"
-        "-Wno-missing-braces"
-        "-Wno-tautological-compare"
-        "-Wno-unknown-pragmas"
-        "-Wno-unused-but-set-variable"
-        "-Wno-unused-label"
-        "-Wno-unused-variable"
-        "-Wno-unused-function"
-    )
-endif()
-if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-    target_compile_options(sdl2_ReMoM PRIVATE
-        "/W0"
-        "/wd4068"  # "unknown pragma"
-        "/wd4365"
-        "/wd4820"
-    )
-endif()
-
-
-
-# if(WIN32)
-#     add_custom_command(
-#         TARGET "sdl2_ReMoM" POST_BUILD
-#         COMMAND "${CMAKE_COMMAND}" -E copy -t "$<TARGET_FILE_DIR:sdl2_ReMoM>"
-#         "$<TARGET_RUNTIME_DLLS:sdl2_ReMoM>" USES_TERMINAL COMMAND_EXPAND_LISTS
-#     )
-# endif()
-
-# # [build]   TARGET 'SDL2::Main' is IMPORTED and does not build here.
-# if(WIN32)
-#     add_custom_command(
-#         TARGET "SDL2::Main" POST_BUILD
-#         COMMAND "${CMAKE_COMMAND}" -E copy -t "$<TARGET_FILE_DIR:SDL2::Main>"
-#         "$<TARGET_RUNTIME_DLLS:SDL2::Main>" USES_TERMINAL COMMAND_EXPAND_LISTS
-#     )
-# endif()
-
-
-
-
-# ¿ add_subdirectory(TootLib) ?

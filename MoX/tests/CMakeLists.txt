@@ -70,7 +70,7 @@ message(STATUS "imported_location_dir: ${imported_location_dir}")
 if(WIN32)
     add_custom_command(
         TARGET MOX_tests POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy 
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${imported_location_dir}/SDL2.dll
             $<TARGET_FILE_DIR:MOX_tests>
     )
@@ -82,7 +82,7 @@ message(STATUS "imported_location_dir: ${imported_location_dir}")
 if(WIN32)
     add_custom_command(
         TARGET MOX_tests POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy 
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
             ${imported_location_dir}/SDL2_mixer.dll
             $<TARGET_FILE_DIR:MOX_tests>
     )
@@ -127,6 +127,17 @@ add_custom_command(TARGET MOX_tests POST_BUILD
 #     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${CMAKE_PROJECT_NAME}> $<TARGET_RUNTIME_DLLS:${CMAKE_PROJECT_NAME}> $<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>.
 # )
 
+# copy LBX files for tests
+file(GLOB LBX_FILE_LIST "${CMAKE_SOURCE_DIR}/*.lbx")
+add_custom_command(
+    TARGET MOX_tests
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${LBX_FILE_LIST}
+        $<TARGET_FILE_DIR:MOX_tests>
+    COMMAND_EXPAND_LISTS
+    COMMENT "Copying LBX files..."
+)
 
 gtest_discover_tests(MOX_tests)
 # add_test(NAME MOX_tests COMMAND MOX_tests)

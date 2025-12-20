@@ -16,7 +16,7 @@
     <ProjectGuid>{4851fd01-1e05-46f8-8088-88ffc7d23cbd}</ProjectGuid>
     <RootNamespace>ReMoM</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>MWA_ReMoM</ProjectName>
+    <ProjectName>012_MWA_ReMoM</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

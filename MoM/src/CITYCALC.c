@@ -789,7 +789,7 @@ void Kill_Unit(int16_t unit_idx, int16_t kill_type)
                 _HEROES2[_UNITS[unit_idx].owner_idx]->heroes[_UNITS[unit_idx].type].Level = _UNITS[unit_idx].Level;
 
             }
-            else
+            else  /* type 2 */
             {
 
                 _HEROES2[_UNITS[unit_idx].owner_idx]->heroes[_UNITS[unit_idx].type].Level = -20;

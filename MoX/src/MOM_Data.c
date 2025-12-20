@@ -2529,7 +2529,7 @@ struct s_TOWER * _TOWERS;
 /*
 array of struct s_FORTRESS
 3 PR = 48 B;  actual: 6 * sizeof(struct s_FORTRESS) = 24
-allocated in Allocate_Data_Space()
+ALLOC.c Allocate_Data_Space()
 populated in Load_SAVE_GAM()
 */
 struct s_FORTRESS * _FORTRESSES;

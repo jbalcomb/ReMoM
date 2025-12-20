@@ -1,3 +1,20 @@
+/*
+
+NOTE(JimBalcomb,202510091924): was to be some normal and hero units kill tests, but lost track, and create hero wont work :(..
+
+MOM_Create_Unit()       twice, diff params, test those and all defaults
+MOM_Kill_Unit_kt0()     
+MOM_Kill_Unit_kt1()
+MOM_Kill_Unit_kt2()
+
+HIRE.c
+    int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hire_type)
+        Hire_Success = WIZ_HireHero(HUMAN_PLAYER_IDX, unit_type_idx, hero_slot_idx, ST_FALSE);
+Spells132.c
+    int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slot_idx, int16_t saved_flag)
+        Create_Unit__WIP(unit_type_idx, player_idx, FORTX(), FORTY(), FORTP(), -1);
+
+*/
 #include <gtest/gtest.h>
 
 // #include "MOM_Test_Helpers.hpp"
@@ -7,6 +24,7 @@
 extern "C" {
 #endif
 #include "../../MoX/src/Allocate.h" /* _cities[], _UNITS[] */
+#include "../../MoX/src/LBX_Load.h" /* LBX_Load_Data_Static() */
 #include "../../MoX/src/MOM_Data.h" /* _cities[], _UNITS[] */
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
 #include "../../MoX/src/MOX_DEF.h"  /* HUMAN_PLAYER_IDX */
@@ -14,10 +32,49 @@ extern "C" {
 
 #include "../src/CITYCALC.h"
 #include "../src/NEXTTURN.h"
+#include "../src/Spells130.h"       /* Hero_Slot_Types () */
+#include "../src/Spells132.h"       /* WIZ_HireHero() */
 #include "../src/UNITTYPE.h"
+
+/*
+    Forward Declare, Private
+*/
+// Spells132.c
+// WZD dseg:68A8
+char names_lbx_file__ovr132[];
+
 #ifdef __cplusplus
 }
 #endif
+
+void Set_Up(void)
+{
+    _units = 0;
+    _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 PR, 32448 B
+    _HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 PR, 448 B
+    _HEROES2[1] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+    _HEROES2[2] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+    _HEROES2[3] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+    _HEROES2[4] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+    _HEROES2[5] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+    hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);  // 37 PR, 592 B  ... ~ (36) 16-byte structs
+    spell_data_table = (struct s_SPELL_DATA *)Allocate_Space(485);  // 485 PR, 7760 B; actual: 215 * 36 = 7740
+    _FORTRESSES = (struct s_FORTRESS *)Allocate_Space(3);
+}
+void Tear_Down(void)
+{
+    free(_FORTRESSES);
+    free(spell_data_table);
+    free(hero_names_table);
+    free(_HEROES2[5]);
+    free(_HEROES2[4]);
+    free(_HEROES2[3]);
+    free(_HEROES2[2]);
+    free(_HEROES2[1]);
+    free(_HEROES2[0]);
+    free(_UNITS);
+    _units = 0;
+}
 
 /*
 
@@ -30,49 +87,61 @@ TEST(MOM_test, MOM_Create_Unit)
     _units = 0;
     _UNITS = (struct s_UNIT * )Allocate_Space((sizeof(struct s_UNIT) * 2) / SZ_PARAGRAPH_B);
 
-    ASSERT_EQ(_units, 0);
+    EXPECT_EQ(_units, 0);
 
     Create_Unit__WIP(ut_LizSettlers, 0, 1, 1, 0, 2000);
 
-    ASSERT_EQ(_units, 1);
+    EXPECT_EQ(_units, 1);
 
-    ASSERT_EQ(_UNITS[0].type, ut_LizSettlers);
-    ASSERT_EQ(_UNITS[0].owner_idx, 0);
-    ASSERT_EQ(_UNITS[0].wx, 1);
-    ASSERT_EQ(_UNITS[0].wy, 1);
-    ASSERT_EQ(_UNITS[0].wp, 0);
-    // _UNITS[_units].wx = wx;
-    // _UNITS[_units].wy = wy;
-    // _UNITS[_units].wp = wp;
-    // _UNITS[_units].owner_idx = owner_idx;
+    EXPECT_EQ(_UNITS[0].wx, 1);                     // _UNITS[_units].wx = wx;
+    EXPECT_EQ(_UNITS[0].wy, 1);                     // _UNITS[_units].wy = wy;
+    EXPECT_EQ(_UNITS[0].wp, 0);                     // _UNITS[_units].wp = wp;
+    EXPECT_EQ(_UNITS[0].owner_idx, 0);              // _UNITS[_units].owner_idx = owner_idx;
     // _UNITS[_units].moves2_max = _unit_type_table[unit_type].Move_Halves;
-    // _UNITS[_units].type = unit_type;
-    // _UNITS[_units].Hero_Slot = -1;
-    // _UNITS[_units].in_tower = ST_FALSE;
-    // _UNITS[_units].Finished = ST_TRUE;
-    // _UNITS[_units].moves2 = 0;
+    EXPECT_EQ(_UNITS[0].type, ut_LizSettlers);      // _UNITS[_units].type = unit_type;
+    EXPECT_EQ(_UNITS[0].Hero_Slot, ST_UNDEFINED);             // _UNITS[_units].Hero_Slot = -1;
+    EXPECT_EQ(_UNITS[0].in_tower, ST_FALSE);        // _UNITS[_units].in_tower = ST_FALSE;
+    EXPECT_EQ(_UNITS[0].Finished, ST_TRUE);         // _UNITS[_units].Finished = ST_TRUE;
+    EXPECT_EQ(_UNITS[0].moves2, 0);                 // _UNITS[_units].moves2 = 0;
     // _UNITS[_units].Sight_Range = _unit_type_table[unit_type].Sight;
-    // _UNITS[_units].dst_wx = 0;
-    // _UNITS[_units].dst_wy = 0;
-    // _UNITS[_units].Status = us_Ready;
-    // _UNITS[_units].Level = 0;
-    // _UNITS[_units].XP = 0;
-    // _UNITS[_units].Damage = 0;
-    // _UNITS[_units].Draw_Priority = 0;
-    // _UNITS[_units].enchantments = 0;
-    // _UNITS[_units].mutations = 0;
-    // _UNITS[_units].Move_Failed = ST_FALSE;
-    // _UNITS[_units].Rd_Constr_Left = -1;
+    EXPECT_EQ(_UNITS[0].dst_wx, 0);                 // _UNITS[_units].dst_wx = 0;
+    EXPECT_EQ(_UNITS[0].dst_wy, 0);                 // _UNITS[_units].dst_wy = 0;
+    EXPECT_EQ(_UNITS[0].Status, us_Ready);          // _UNITS[_units].Status = us_Ready;
+    EXPECT_EQ(_UNITS[0].Level, 0);                  // _UNITS[_units].Level = 0;
+    EXPECT_EQ(_UNITS[0].XP, 0);                     // _UNITS[_units].XP = 0;
+    EXPECT_EQ(_UNITS[0].Damage, 0);                 // _UNITS[_units].Damage = 0;
+    EXPECT_EQ(_UNITS[0].Draw_Priority, 0);          // _UNITS[_units].Draw_Priority = 0;
+    EXPECT_EQ(_UNITS[0].enchantments, 0);           // _UNITS[_units].enchantments = 0;
+    EXPECT_EQ(_UNITS[0].mutations, 0);              // _UNITS[_units].mutations = 0;
+    EXPECT_EQ(_UNITS[0].Move_Failed, ST_FALSE);     // _UNITS[_units].Move_Failed = ST_FALSE;
+    EXPECT_EQ(_UNITS[0].Rd_Constr_Left, -1);        // _UNITS[_units].Rd_Constr_Left = -1;
 
     Create_Unit__WIP(ut_LizHalberdiers, 1, 2, 2, 1, 2000);
 
-    ASSERT_EQ(_units, 2);
+    EXPECT_EQ(_units, 2);
 
-    ASSERT_EQ(_UNITS[1].type, ut_LizHalberdiers);
-    ASSERT_EQ(_UNITS[1].owner_idx, 1);
-    ASSERT_EQ(_UNITS[1].wx, 2);
-    ASSERT_EQ(_UNITS[1].wy, 2);
-    ASSERT_EQ(_UNITS[1].wp, 1);
+    EXPECT_EQ(_UNITS[1].wx, 2);                         // _UNITS[_units].wx = wx;
+    EXPECT_EQ(_UNITS[1].wy, 2);                         // _UNITS[_units].wy = wy;
+    EXPECT_EQ(_UNITS[1].wp, 1);                         // _UNITS[_units].wp = wp;
+    EXPECT_EQ(_UNITS[1].owner_idx, 1);                  // _UNITS[_units].owner_idx = owner_idx;
+    // _UNITS[_units].moves2_max = _unit_type_table[unit_type].Move_Halves;
+    EXPECT_EQ(_UNITS[1].type, ut_LizHalberdiers);       // _UNITS[_units].type = unit_type;
+    EXPECT_EQ(_UNITS[1].Hero_Slot, ST_UNDEFINED);       // _UNITS[_units].Hero_Slot = ST_UNDEFINED;
+    EXPECT_EQ(_UNITS[1].in_tower, ST_FALSE);            // _UNITS[_units].in_tower = ST_FALSE;
+    EXPECT_EQ(_UNITS[1].Finished, ST_TRUE);             // _UNITS[_units].Finished = ST_TRUE;
+    EXPECT_EQ(_UNITS[1].moves2, 0);                     // _UNITS[_units].moves2 = 0;
+    // _UNITS[_units].Sight_Range = _unit_type_table[unit_type].Sight;
+    EXPECT_EQ(_UNITS[1].dst_wx, 0);                     // _UNITS[_units].dst_wx = 0;
+    EXPECT_EQ(_UNITS[1].dst_wy, 0);                     // _UNITS[_units].dst_wy = 0;
+    EXPECT_EQ(_UNITS[1].Status, us_Ready);              // _UNITS[_units].Status = us_Ready;
+    EXPECT_EQ(_UNITS[1].Level, 0);                      // _UNITS[_units].Level = 0;
+    EXPECT_EQ(_UNITS[1].XP, 0);                         // _UNITS[_units].XP = 0;
+    EXPECT_EQ(_UNITS[1].Damage, 0);                     // _UNITS[_units].Damage = 0;
+    EXPECT_EQ(_UNITS[1].Draw_Priority, 0);              // _UNITS[_units].Draw_Priority = 0;
+    EXPECT_EQ(_UNITS[1].enchantments, 0);               // _UNITS[_units].enchantments = 0;
+    EXPECT_EQ(_UNITS[1].mutations, 0);                  // _UNITS[_units].mutations = 0;
+    EXPECT_EQ(_UNITS[1].Move_Failed, ST_FALSE);         // _UNITS[_units].Move_Failed = ST_FALSE;
+    EXPECT_EQ(_UNITS[1].Rd_Constr_Left, ST_UNDEFINED);  // _UNITS[_units].Rd_Constr_Left = ST_UNDEFINED;
 
     /*
         Tear-Down
@@ -80,6 +149,136 @@ TEST(MOM_test, MOM_Create_Unit)
     free(_UNITS);
     _units = 0;
 }
+
+
+
+// NOTE(JimBalcomb,202510091913): locks up the exe; not sure why, gave up quick; debug tests as regular code? fix this and add the other kill units tests!
+// /*
+// Spells132.c int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slot_idx, int16_t saved_flag)
+// */
+// TEST(MOM_test, MOM_WIZ_HireHero)
+// {
+//     _units = 0;
+//     _UNITS = (struct s_UNIT * )Allocate_Space((sizeof(struct s_UNIT) * 2) / SZ_PARAGRAPH_B);
+//     _HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 PR, 448 B
+//     // struct s_FORTRESS * _FORTRESSES;
+//     // _FORTRESSES = (struct s_FORTRESS *)Allocate_Space(3);
+//     _FORTRESSES = (struct s_FORTRESS *)Allocate_Space(3);
+// 
+//     _FORTRESSES[0].wx = 0;
+//     _FORTRESSES[0].wy = 0;
+//     _FORTRESSES[0].wp = 0;
+//     _FORTRESSES[0].active = ST_TRUE;
+// 
+//     EXPECT_EQ(_units, 0);
+//     
+//     WIZ_HireHero(0, ut_Warlock, 0, ST_FALSE);
+//     // int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slot_idx, int16_t saved_flag)
+//     int16_t player_idx = 0;
+//     int16_t unit_type_idx = ut_Warlock;
+//     int16_t hero_slot_idx = 0;
+//     int16_t saved_flag = ST_FALSE;
+//     int16_t itr = 0;
+//     Create_Unit__WIP(unit_type_idx, player_idx, FORTX(), FORTY(), FORTP(), ST_UNDEFINED);
+//     _UNITS[(_units - 1)].Finished = ST_FALSE;  // default is ST_TRUE
+//     _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;  // default is 0
+//     _UNITS[(_units - 1)].Hero_Slot = hero_slot_idx;  // default is ST_UNDEFINED
+//     _players[player_idx].Heroes[hero_slot_idx].unit_idx = (_units - 1);
+//     Hero_Slot_Types(unit_type_idx, _players[player_idx].Heroes[hero_slot_idx].Item_Slots);
+//     for(itr = 0; itr < NUM_HERO_ITEM_SLOTS; itr++)
+//     {
+//         _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].Items[itr] = ST_UNDEFINED;
+//     }
+//     if(saved_flag == ST_TRUE)
+//     {
+//         if(player_idx == HUMAN_PLAYER_IDX)
+//         {
+//             strcpy(_players[player_idx].Heroes[hero_slot_idx].name, hero_names_table[unit_type_idx].name);
+//             _UNITS[(_units - 1)].XP = hero_names_table[unit_type_idx].experience_points;
+//             _UNITS[(_units - 1)].Level = Calc_Unit_Level((_units - 1));
+//         }
+//         else
+//         {
+//             LBX_Load_Data_Static(names_lbx_file__ovr132, 0, (SAMB_ptr)_players[player_idx].Heroes[hero_slot_idx].name, ((player_idx * 35) + unit_type_idx), 1, 13);
+//             _UNITS[(_units - 1)].Level = abs(_HEROES2[player_idx]->heroes[unit_type_idx].Level);
+//             _UNITS[(_units - 1)].XP = TBL_Experience[_UNITS[(_units - 1)].Level];
+//         }
+//     }
+//     else
+//     {
+//         LBX_Load_Data_Static(names_lbx_file__ovr132, 0, (SAMB_ptr)_players[player_idx].Heroes[hero_slot_idx].name, ((player_idx * 35) + unit_type_idx), 1, 13);
+//         SETMAX(_HEROES2[player_idx]->heroes[unit_type_idx].Level, HL_GRANDLORD);
+//     }
+//     _UNITS[(_units - 1)].Level = _HEROES2[player_idx]->heroes[unit_type_idx].Level;
+//     _UNITS[(_units - 1)].XP = TBL_Experience[_HEROES2[player_idx]->heroes[unit_type_idx].Level];
+//     // return ST_TRUE;
+// 
+// 
+// 
+//     EXPECT_EQ(_units, 1);
+// 
+//     EXPECT_EQ(_UNITS[0].wx, 2);                     // _UNITS[_units].wx = wx;
+//     EXPECT_EQ(_UNITS[0].wy, 2);                     // _UNITS[_units].wy = wy;
+//     EXPECT_EQ(_UNITS[0].wp, 1);                     // _UNITS[_units].wp = wp;
+//     EXPECT_EQ(_UNITS[0].owner_idx, 1);              // _UNITS[_units].owner_idx = owner_idx;
+//     // _UNITS[_units].moves2_max = _unit_type_table[unit_type].Move_Halves;
+//     EXPECT_EQ(_UNITS[0].type, ut_Warlock);   // _UNITS[_units].type = unit_type;
+//     // DIFF  EXPECT_EQ(_UNITS[1].Hero_Slot, ST_UNDEFINED);       // _UNITS[_units].Hero_Slot = ST_UNDEFINED;
+//     EXPECT_EQ(_UNITS[0].in_tower, ST_FALSE);        // _UNITS[_units].in_tower = ST_FALSE;
+//     // DIFF  EXPECT_EQ(_UNITS[1].Finished, ST_TRUE);             // _UNITS[_units].Finished = ST_TRUE;
+//     // DIFF  EXPECT_EQ(_UNITS[1].moves2, 0);                     // _UNITS[_units].moves2 = 0;
+//     // _UNITS[_units].Sight_Range = _unit_type_table[unit_type].Sight;
+//     EXPECT_EQ(_UNITS[0].dst_wx, 0);                 // _UNITS[_units].dst_wx = 0;
+//     EXPECT_EQ(_UNITS[0].dst_wy, 0);                 // _UNITS[_units].dst_wy = 0;
+//     EXPECT_EQ(_UNITS[0].Status, us_Ready);          // _UNITS[_units].Status = us_Ready;
+//     EXPECT_EQ(_UNITS[0].Level, 0);                  // _UNITS[_units].Level = 0;
+//     EXPECT_EQ(_UNITS[0].XP, 0);                     // _UNITS[_units].XP = 0;
+//     EXPECT_EQ(_UNITS[0].Damage, 0);                 // _UNITS[_units].Damage = 0;
+//     EXPECT_EQ(_UNITS[0].Draw_Priority, 0);          // _UNITS[_units].Draw_Priority = 0;
+//     EXPECT_EQ(_UNITS[0].enchantments, 0);           // _UNITS[_units].enchantments = 0;
+//     EXPECT_EQ(_UNITS[0].mutations, 0);              // _UNITS[_units].mutations = 0;
+//     EXPECT_EQ(_UNITS[0].Move_Failed, ST_FALSE);     // _UNITS[_units].Move_Failed = ST_FALSE;
+//     EXPECT_EQ(_UNITS[0].Rd_Constr_Left, ST_UNDEFINED);        // _UNITS[_units].Rd_Constr_Left = ST_UNDEFINED;
+// 
+//     EXPECT_NE(_UNITS[(_units - 1)].Hero_Slot, ST_UNDEFINED);  // _UNITS[(_units - 1)].Hero_Slot = hero_slot_idx;  // default is ST_UNDEFINED
+//     EXPECT_EQ(_UNITS[0].Finished, ST_FALSE);        // _UNITS[(_units - 1)].Finished = ST_FALSE;  // default is ST_TRUE
+//     EXPECT_EQ(_UNITS[0].moves2, 0);                 // _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;  // default is 0
+// 
+//     // EXPECT_EQ(_players[0].Heroes[0].unit_idx = (_units - 1));
+//     EXPECT_EQ(_players[0].Heroes[0].unit_idx, 0);
+// 
+//     // Hero_Slot_Types(unit_type_idx, _players[player_idx].Heroes[hero_slot_idx].Item_Slots);
+//     EXPECT_EQ(_players[0].Heroes[0].Item_Slots[0], ist_Sword_Slot);  // 1
+//     EXPECT_EQ(_players[0].Heroes[0].Item_Slots[1], ist_Armor_Slot);  // 5
+//     EXPECT_EQ(_players[0].Heroes[0].Item_Slots[2], ist_Misc_Slot);   // 6
+// 
+//     // for(itr = 0; itr < NUM_HERO_ITEM_SLOTS; itr++)
+//     //     _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].Items[itr] = ST_UNDEFINED;
+//     EXPECT_EQ(_players[0].Heroes[0].Items[0], ST_UNDEFINED);
+//     EXPECT_EQ(_players[0].Heroes[0].Items[1], ST_UNDEFINED);
+//     EXPECT_EQ(_players[0].Heroes[0].Items[2], ST_UNDEFINED);
+// 
+//     //     LBX_Load_Data_Static(names_lbx_file__ovr132, 0, (SAMB_ptr)_players[player_idx].Heroes[hero_slot_idx].name, ((player_idx * 35) + unit_type_idx), 1, 13);
+// 
+//     EXPECT_EQ(_HEROES2[0]->heroes[ut_Warlock].Level, HL_GRANDLORD);
+// 
+//     // _UNITS[(_units - 1)].Level = _HEROES2[player_idx]->heroes[unit_type_idx].Level;
+//     EXPECT_EQ(_UNITS[0].Level, 999);
+// 
+//     // _UNITS[(_units - 1)].XP = TBL_Experience[_HEROES2[player_idx]->heroes[unit_type_idx].Level];
+//     EXPECT_EQ(_UNITS[0].XP, 999);
+// 
+// 
+// 
+//     free(_FORTRESSES);
+//     free(_HEROES2[0]);
+//     free(_UNITS);
+//     _units = 0;
+// 
+// }
+
+
+
 
 /*
 3 tests, one including hero with items
@@ -149,7 +348,7 @@ CITYCALC    int16_t Unit_Base_Level(int16_t unit_idx)
 // 
 //     Create_Unit__WIP(ut_LizSettlers, 0, 1, 1, 0, 2000);
 // 
-//     ASSERT_EQ(Unit_Base_Level(0), 0);
+//     EXPECT_EQ(Unit_Base_Level(0), 0);
 // 
 // }
 // TEST(MOM_test, MOM_Remove_Item)
@@ -203,18 +402,18 @@ TEST(MOM_test, MOM_Kill_Unit_kt0)
     
     Kill_Unit(0, kt_Normal);
 
-    ASSERT_EQ(_UNITS[0].owner_idx, ST_UNDEFINED);
-    ASSERT_EQ(_UNITS[0].wp, ST_UNDEFINED);
+    EXPECT_EQ(_UNITS[0].owner_idx, ST_UNDEFINED);
+    EXPECT_EQ(_UNITS[0].wp, ST_UNDEFINED);
 
     Kill_Unit(1, kt_Dismissed);
 
-    ASSERT_EQ(_UNITS[1].owner_idx, ST_UNDEFINED);
-    ASSERT_EQ(_UNITS[1].wp, ST_UNDEFINED);
+    EXPECT_EQ(_UNITS[1].owner_idx, ST_UNDEFINED);
+    EXPECT_EQ(_UNITS[1].wp, ST_UNDEFINED);
 
     Kill_Unit(2, kt_Disappeared);
 
-    ASSERT_EQ(_UNITS[2].owner_idx, ST_UNDEFINED);
-    ASSERT_EQ(_UNITS[2].wp, ST_UNDEFINED);
+    EXPECT_EQ(_UNITS[2].owner_idx, ST_UNDEFINED);
+    EXPECT_EQ(_UNITS[2].wp, ST_UNDEFINED);
  
     /*
         Tear-Down
@@ -280,8 +479,8 @@ TEST(MOM_test, MOM_Kill_Unit_kt1)
     
     Kill_Unit(0, kt_Dismissed);
 
-    ASSERT_EQ(_UNITS[0].owner_idx, ST_UNDEFINED);
-    ASSERT_EQ(_UNITS[0].wp, ST_UNDEFINED);
+    EXPECT_EQ(_UNITS[0].owner_idx, ST_UNDEFINED);
+    EXPECT_EQ(_UNITS[0].wp, ST_UNDEFINED);
 
     /*
         Tear-Down
@@ -344,8 +543,8 @@ TEST(MOM_test, MOM_Kill_Unit_kt2)
 //             {
 //                 _HEROES2[_UNITS[unit_idx].owner_idx]->heroes[_UNITS[unit_idx].type].Level = -20;
 
-    ASSERT_EQ(_UNITS[0].owner_idx, ST_UNDEFINED);
-    ASSERT_EQ(_UNITS[0].wp, ST_UNDEFINED);
+    EXPECT_EQ(_UNITS[0].owner_idx, ST_UNDEFINED);
+    EXPECT_EQ(_UNITS[0].wp, ST_UNDEFINED);
 
     /*
         Tear-Down
@@ -361,6 +560,41 @@ TEST(MOM_test, MOM_Kill_Unit_kt2)
     free(_UNITS);
     _units = 0;
 }
+
+
+
+/*
+
+_units
+
+_UNITS[]
+_players[]
+
+Delete_Structure()
+
+*/
+TEST(MOM_test, MOM_Delete_Dead_Units)
+{
+    Set_Up();
+
+    EXPECT_EQ(_units, 0);
+
+    Create_Unit__WIP(ut_LizSettlers, 0, 1, 1, 0, 2000);
+
+    EXPECT_EQ(_units, 1);
+    
+    Kill_Unit(0, kt_Normal);
+
+    EXPECT_EQ(_units, 1);
+
+    Delete_Dead_Units();  // decrements _units
+    
+    EXPECT_EQ(_units, 0);
+
+    Tear_Down();
+}
+
+
 
 /*
 
