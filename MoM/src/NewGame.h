@@ -124,13 +124,13 @@ void Randomize_Book_Heights(void);
 int16_t Newgame_Screen1__WIP(void);
 
 // o50p09
-void Newgame_Screen1_Draw__WIP(void);
+void Newgame_Screen_1_2_Draw(void);
 
 // o50p10
 int16_t Newgame_Screen2__WIP(void);
 
 // o50p11
-int16_t Newgame_Screen3__WIP(void);
+int16_t Newgame_Screen_3__WIP(void);
 
 // o50p12
 // GAME_Draw_NewScr3()
@@ -190,7 +190,7 @@ void Set_Newgame_Screen0_Help_List(void);
 // HLP_Load_BannerSel()
 
 // o50p31
-// HLP_Load_PortraitSel()
+void Set_Newgame_Screen2_Help_List(void);
 
 // o50p32
 void Set_Newgame_Screen1_Help_List(int16_t Can_Customize);

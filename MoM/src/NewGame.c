@@ -1000,7 +1000,7 @@ void Newgame_Control__WIP(void)
             } break;
             case 3:
             {
-                newgame_state = Newgame_Screen3__WIP();
+                newgame_state = Newgame_Screen_3__WIP();
                 if(custom_game_flag != ST_FALSE)
                 {
                     if(newgame_state == ST_UNDEFINED)
@@ -1659,7 +1659,7 @@ int16_t Newgame_Screen1__WIP(void)
 
     Escape_Hotkey_Control = Add_Hot_Key(str_ESC__ovr050);
 
-    Assign_Auto_Function(Newgame_Screen1_Draw__WIP, 1);
+    Assign_Auto_Function(Newgame_Screen_1_2_Draw, 1);
 
     if(magic_set.Difficulty < god_Easy)
     {
@@ -1704,7 +1704,7 @@ int16_t Newgame_Screen1__WIP(void)
 
         if(leave_screen == ST_FALSE)
         {
-            Newgame_Screen1_Draw__WIP();
+            Newgame_Screen_1_2_Draw();
             Apply_Palette();
             Toggle_Pages();
             if(First_Draw_Done == ST_FALSE)
@@ -1731,7 +1731,7 @@ int16_t Newgame_Screen1__WIP(void)
 /*
 unresolved external symbol Set_Newgame_Screen1_Help_List referenced in function Newgame_Screen1__WIP
 */
-void Newgame_Screen1_Draw__WIP(void)
+void Newgame_Screen_1_2_Draw(void)
 {
     char Retort_String[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     uint8_t * Retort_Text_Color = 0;
@@ -1909,21 +1909,151 @@ void Newgame_Screen1_Draw__WIP(void)
 // o50p10
 /*
 
+"Select Picture"
+
 */
 int16_t Newgame_Screen2__WIP(void)
 {
+    int16_t Escape_Hotkey_Control = 0;
+    int16_t itr = 0;
+    int16_t input_field_idx = 0;
+    int16_t leave_screen = 0;  // _SI_
+    int16_t First_Draw_Done = 0;  // _DI_
 
+    newgame_background_seg = LBX_Reload(newgame_lbx_file__ovr050, 0, _screen_seg);
 
+    /*
+    NEWGAME.LBX, 009  NEWGMWBT    Wizards button1
+    NEWGAME.LBX, 010  NEWGMWBT     Wizards button2
+    NEWGAME.LBX, 011  NEWGMWBT     Wizards button3
+    NEWGAME.LBX, 012  NEWGMWBT     Wizards button4
+    NEWGAME.LBX, 013  NEWGMWBT     Wizards button5
+    NEWGAME.LBX, 014  NEWGMWBT     Wizards button6
+    NEWGAME.LBX, 015  NEWGMWBT     Wizards button7
+    NEWGAME.LBX, 016  NEWGMWBT     Wizards button8
+    NEWGAME.LBX, 017  NEWGMWBT     Wizards button9
+    NEWGAME.LBX, 018  NEWGMWBT     Wizards button10
+    NEWGAME.LBX, 019  NEWGMWBT     Wizards button11
+    NEWGAME.LBX, 020  NEWGMWBT     Wizards button12
+    NEWGAME.LBX, 021  NEWGMWBT     Wizards button13
+    NEWGAME.LBX, 022  NEWGMWBT     Wizards button14
+    NEWGAME.LBX, 023  NEWGMWBT     Wizards button15
+    */
+    for(itr = 0; itr < 15; itr++)
+    {
+        IMG_NewG_ButtonBGs[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (9 + itr), _screen_seg);
+    }
 
-    return 0;
+    // NEWGAME.LBX, 039  NEWPICS     
+    IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 39, _screen_seg);
+
+    Set_Mouse_List(1, mouse_list_newgame_0_1);
+
+    Clear_Fields();
+
+    leave_screen = ST_FALSE;
+
+    First_Draw_Done = ST_FALSE;
+
+    NEWG_Moused_Wizard = 0;
+
+    NEWG_PortraitSelType = 7;
+
+    // ; create the click label controls for the left column
+    for(itr = 0; itr < 7; itr++)
+    {
+
+        NEWG_Select_Labels[itr] = Add_Hidden_Field(168, (26 + (22 * itr)), 237, (42 + (22 * itr)), empty_string__ovr050, ST_UNDEFINED);
+
+    }
+
+    // ; create the click label controls for the right column
+    for(itr = 0; itr < 7; itr++)
+    {
+
+        NEWG_Select_Labels[(7 + itr)] = Add_Hidden_Field(244, (26 + (22 * itr)), 313, (42 + (22 * itr)), empty_string__ovr050, ST_UNDEFINED);
+
+    }
+
+    Escape_Hotkey_Control = Add_Hot_Key(str_ESC__ovr050);
+
+    Assign_Auto_Function(Newgame_Screen_1_2_Draw, 1);
+
+    Set_Newgame_Screen2_Help_List();
+
+    Set_Input_Delay(2);
+
+    while(leave_screen == ST_FALSE)
+    {
+
+        input_field_idx = Get_Input();
+
+        Mark_Time();
+
+        if(input_field_idx == Escape_Hotkey_Control)
+        {
+            return 1;  // go back to game options
+        }
+
+        // ; check if any of the control labels were clicked, and
+        // ; if so, copy the corresponding default wizard name to
+        // ; the player's profile, and set si to 1
+        for(itr = 0; itr < 14; itr++)
+        {
+            if(NEWG_Select_Labels[itr] == input_field_idx)
+            {
+                Deactivate_Auto_Function();
+                Deactivate_Help_List();
+
+                _players[0].wizard_id = itr;
+
+                strcpy(_players[0].name, TBL_Default_Wizards[itr].Name);
+
+                leave_screen = ST_TRUE;
+
+            }
+        }
+
+        if(input_field_idx == NEWG_Select_Labels[14])  // "Custom"
+        {
+            Deactivate_Auto_Function();
+            Deactivate_Help_List();
+            return 2;
+        }
+
+        if(leave_screen == ST_FALSE)
+        {
+            Newgame_Screen_1_2_Draw();
+            Apply_Palette();
+            Toggle_Pages();
+            if(First_Draw_Done == ST_FALSE)
+            {
+                First_Draw_Done = ST_TRUE;
+                Copy_On_To_Off_Page();
+            }
+            Release_Time(2);
+        }
+
+    }
+
+    return 3; // move forward to custom wizard creation
 
 }
 
+
 // o50p11
+/*
+; displays and processes the wizard name input screen
+; of new game creation, starting with the default name
+; for the selected portrait, and reverting to it if the
+; final input string is empty
+; returns 0 if a valid name was entered, or -1 if the
+; edit control was escaped out of with the Esc key
+*/
 /*
 
 */
-int16_t Newgame_Screen3__WIP(void)
+int16_t Newgame_Screen_3__WIP(void)
 {
 
     return 1;
@@ -2267,6 +2397,20 @@ void Set_Newgame_Screen0_Help_List(void)
 
 // o50p31
 // HLP_Load_PortraitSel()
+/* 
+; loads and sets the GUI help entry area array for the
+; wizard portrait selection screen
+*/
+void Set_Newgame_Screen2_Help_List(void)
+{
+
+    // HLPENTRY.LBX, 031  ""  "Wizard Picture Select"
+    LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 31, _help_entries, 0, 1, 10);
+
+    Set_Help_List(_help_entries, 1);
+
+}
+
 
 // o50p32
 /*
