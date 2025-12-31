@@ -12,6 +12,43 @@ ninja compile_commands VSC
 
 
 
+New Game
+[x] New Game Screen 0 - Game Options
+[x] New Game Screen 1 - Wizard Selection;   Title: "Select Wizard";     // HLPENTRY.LBX, 032  ""  "Wizard Selection Help"
+[x] New Game Screen 2 - Wizard Portrait;    Title: "Select Portrait";   // HLPENTRY.LBX, 031  ""  "Wizard Picture Select"
+[x] New Game Screen 3 - Wizards Name;       Title: "Wizard's Name";     N/A
+[ ] New Game Screen 4 - ...custom wizard creation                       // HLPENTRY.LBX, 033  ""  "Wizard Creation Help"
+[ ] New Game Screen 5 - ...custom ¿ ?                                   // HLPENTRY.LBX, 036  ""  "Select Spells Help"
+[ ] New Game Screen 6 - Wizards Race        Title: "Select Race";   // HLPENTRY.LBX, 035  ""  "Wizard Race Help"
+[ ] New Game Screen 7 - Wizards Banner      Title: "Select Banner"; // HLPENTRY.LBX, 030  ""  "Banner Selection Help"
+
+// HLPENTRY.LBX, 029  ""  "Options Screen Help"
+// HLPENTRY.LBX, 030  ""  "Banner Selection Help"
+// HLPENTRY.LBX, 031  ""  "Wizard Picture Select"
+// HLPENTRY.LBX, 032  ""  "Wizard Selection Help"
+// HLPENTRY.LBX, 033  ""  "Wizard Creation Help"
+// HLPENTRY.LBX, 034  ""  "settings Help"
+// HLPENTRY.LBX, 035  ""  "Wizard Race Help"
+// HLPENTRY.LBX, 036  ""  "Select Spells Help"
+
+Module: COLONY
+    data (0 bytes) _NEWGAME_LBX
+        Address: 02:0017AA6E
+Module: NEWGAME
+    code (0 bytes) Draw_Newgame_Screen_
+        Address: 01:000CCD3C
+    code (0 bytes) Newgame_Screen_
+        Address: 01:000CD435
+Module: RACESEL
+    code (0 bytes) Race_Selection_Screen_
+        Address: 01:0005C510
+    code (0 bytes) Flag_Screen_
+        Address: 01:0005D03C
+    code (0 bytes) Naming_Popup_
+        Address: 01:0005D2BB
+
+
+
 
 
 ¿¿¿

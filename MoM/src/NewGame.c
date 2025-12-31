@@ -23,6 +23,7 @@
 #include "../../MoX/src/MOM_Data.h"  /* _difficulty, _magic, _landsize, _num_players */
 #include "../../MoX/src/Timer.h"
 
+#include "RACETYPE.h"
 #include "Settings.h"
 #include "Spellbook.h"
 
@@ -30,6 +31,25 @@
 #include <string.h>
 
 #include "NewGame.h"
+
+
+
+// MGC dseg:90C6 00 00                                           m_warning_box_bottom_seg dw 0
+// MGC dseg:90C8 00 00                                           m_warning_box_top_seg dw 0
+// WZD dseg:CB06
+extern SAMB_ptr m_warning_box_bottom_seg;
+// WZD dseg:CB08
+extern SAMB_ptr m_warning_box_top_seg;
+
+// WZD o149p04
+// drake178: GUI_WarningType0()
+void Warn0(char * msg);
+
+// paragrph.c
+// WZD s19p01
+void Print_Paragraph(int16_t x, int16_t y, int16_t max_width, char * string, int16_t print_type);
+
+
 
 
 
@@ -611,49 +631,53 @@ uint8_t RP_COL_NEWG_FontShadow2[8] = { 31, 31, 31, 31, 31, 31, 31, 0 };
 uint8_t RP_COL_NEWG_Font2[8] = { 187, 187, 187, 187, 187, 187, 187, 187 };
 
 // MGC dseg:2EC5 BB BB BB BB BB BB BB BB                         RP_COL_NEWG_Font3 db 8 dup(0BBh)        ; DATA XREF: GAME_New_Screen_7+Do
-// MGC dseg:2EC5                                                                                         ; redirected to dseg:2eab and repurposed in the
-// MGC dseg:2EC5                                                                                         ; worldgen customizer / last profile loader
+
 // MGC dseg:2ECD 1F 1F 1F 1F 1F                                  RP_COL_NEWG_5Shadow db 5 dup(1Fh)       ; DATA XREF: GAME_Draw_NewScr7+Do
-// MGC dseg:2ECD                                                                                         ; redirected to dseg:2ea3 and repurposed in the
-// MGC dseg:2ECD                                                                                         ; worldgen customizer / last profile loader
+
 // MGC dseg:2ED2 BB BB BB BB BB                                  RP_COL_NEWG_5Font db 5 dup(0BBh)        ; DATA XREF: GAME_Draw_NewScr7+1Fo
-// MGC dseg:2ED2                                                                                         ; redirected to dseg:2eab and repurposed in the
-// MGC dseg:2ED2                                                                                         ; worldgen customizer / last profile loader
 
 // MGC dseg:2ED7 00                                              align 2                                 ; 2ed6 is still free
 
-// MGC dseg:2ED8 00 00 05 00 06 00 07 00 08 00 09 00 0A 00 0B 00+TBL_Arcanian_Races dw R_Barbarian, R_Gnoll, R_Halfling, R_High_Elf, R_High_Man, R_Klackon, R_Lizardman, R_Nomad, R_Orc
-// MGC dseg:2ED8 0C 00                                                                                   ; DATA XREF: GAME_New_Screen_6+Do
-// MGC dseg:2EEA 01 00 02 00 03 00 04 00 0D 00                   TBL_Myrran_Races dw R_Beastman, R_Dark_Elf, R_Draconian, R_Dwarf, R_Troll
-// MGC dseg:2EEA                                                                                         ; DATA XREF: GAME_New_Screen_6+1Fo
-// MGC dseg:2EF4 BB BB BB BB BB BB BB BB                         RP_COL_NEWG_Font4 db 8 dup(0BBh)        ; DATA XREF: GAME_New_Screen_6+31o
-// MGC dseg:2EF4                                                                                         ; redirected to dseg:2eab and repurposed in the
-// MGC dseg:2EF4                                                                                         ; worldgen customizer / last profile loader
-// MGC dseg:2EFC 14 B0                                           COL_NEWG_Highlight dw 0B014h            ; DATA XREF: GAME_New_Screen_6+3Er
-// MGC dseg:2EFE 19 32                                           COL_Available dw 3219h                  ; DATA XREF: GAME_New_Screen_6+44r
-// MGC dseg:2F00 02 02                                           COL_NEWG_RacesShadow dw 202h            ; DATA XREF: GAME_New_Screen_6+4Ar
-// MGC dseg:2F02 00 00 05 00 06 00 07 00 08 00 09 00 0A 00 0B 00+RP_TBL_Arcanian_Races_2 dw R_Barbarian, R_Gnoll, R_Halfling, R_High_Elf, R_High_Man, R_Klackon, R_Lizardman, R_Nomad, R_Orc
-// MGC dseg:2F02 0C 00                                                                                   ; DATA XREF: GAME_Draw_NewScr6+Do
-// MGC dseg:2F02                                                                                         ; redirected to dseg:2ed8 and repurposed in the
-// MGC dseg:2F02                                                                                         ; worldgen customizer / last profile loader
-// MGC dseg:2F14 01 00 02 00 03 00 04 00 0D 00                   RP_TBL_Myrran_Races_2 dw R_Beastman, R_Dark_Elf, R_Draconian, R_Dwarf, R_Troll
-// MGC dseg:2F14                                                                                         ; DATA XREF: GAME_Draw_NewScr6+1Fo
-// MGC dseg:2F14                                                                                         ; redirected to dseg:2eea and repurposed in the
-// MGC dseg:2F14                                                                                         ; worldgen customizer / last profile loader
-// MGC dseg:2F1E 1F 1F 1F 1F 1F                                  RP_COL_NEWG_5Shadow2 db 5 dup(1Fh)      ; DATA XREF: GAME_Draw_NewScr6+31o
-// MGC dseg:2F1E                                                                                         ; redirected to dseg:2ea3 and repurposed in the
-// MGC dseg:2F1E                                                                                         ; worldgen customizer / last profile loader
-// MGC dseg:2F23 BB BB BB BB BB                                  RP_COL_NEWG_5Font2 db 5 dup(0BBh)       ; DATA XREF: GAME_Draw_NewScr6+43o
-// MGC dseg:2F23                                                                                         ; redirected to dseg:2eab and repurposed in the
-// MGC dseg:2F23                                                                                         ; worldgen customizer / last profile loader
-// MGC dseg:2F28 B4 B4 B4 B4 B4                                  COL_NEWG_RaceTitles db 5 dup(0B4h)      ; DATA XREF: GAME_Draw_NewScr6+55o
-// MGC dseg:2F2D 14 B0                                           COL_NEWG_Highlight2 dw 0B014h           ; DATA XREF: GAME_Draw_NewScr6+62r
-// MGC dseg:2F2D                                                                                         ; should use dseg:2efc
-// MGC dseg:2F2F 19 32                                           COL_Available_2 dw 3219h                ; DATA XREF: GAME_Draw_NewScr6+68r
-// MGC dseg:2F2F                                                                                         ; should use dseg:2efe
-// MGC dseg:2F31 19 16                                           COL_NEWG_NA dw 1619h                    ; DATA XREF: GAME_Draw_NewScr6+6Er
-// MGC dseg:2F33 02 02                                           COL_NEWG_RacesShdw2 dw 202h             ; DATA XREF: GAME_Draw_NewScr6+74r
-// MGC dseg:2F33                                                                                         ; should use dseg:2f00
+// MGC dseg:2ED8
+int16_t TBL_Arcanian_Races[9] = { R_Barbarian, R_Gnoll, R_Halfling, R_High_Elf, R_High_Man, R_Klackon, R_Lizardman, R_Nomad, R_Orc };
+
+// MGC dseg:2EEA
+int16_t TBL_Myrran_Races[5] = { R_Beastman, R_Dark_Elf, R_Draconian, R_Dwarf, R_Troll };
+
+// MGC dseg:2EF4
+uint8_t RP_COL_NEWG_Font4[8] = { 187, 187, 187, 187, 187, 187, 187, 187 };
+
+// MGC dseg:2EFC
+uint8_t COL_NEWG_Highlight[2] = { 20, 176 };
+// MGC dseg:2EFE
+uint8_t COL_Available[2] = { 25, 50 };
+// MGC dseg:2F00
+uint8_t COL_NEWG_RacesShadow[2] = { 2, 2 };
+
+// MGC dseg:2F02
+int16_t RP_TBL_Arcanian_Races_2[9] = { R_Barbarian, R_Gnoll, R_Halfling, R_High_Elf, R_High_Man, R_Klackon, R_Lizardman, R_Nomad, R_Orc };
+
+// MGC dseg:2F14
+int16_t RP_TBL_Myrran_Races_2[5] = { R_Beastman, R_Dark_Elf, R_Draconian, R_Dwarf, R_Troll };
+
+// MGC dseg:2F1E
+uint8_t RP_COL_NEWG_5Shadow2[5] = { 31, 31, 31, 31, 31 };
+
+// MGC dseg:2F23
+uint8_t RP_COL_NEWG_5Font2[5] = {187, 187, 187, 187, 187};
+
+// MGC dseg:2F28
+uint8_t COL_NEWG_RaceTitles[5] = { 180, 180, 180, 180, 180 };
+
+// MGC dseg:2F2D
+uint8_t COL_NEWG_Highlight2[2] = { 20, 176 };
+
+// MGC dseg:2F2F
+uint8_t COL_Available_2[2] = { 25, 50 };
+// MGC dseg:2F31
+uint8_t COL_NEWG_NA[2] = { 25, 22 };
+// MGC dseg:2F33
+uint8_t COL_NEWG_RacesShdw2[2] = { 2, 2};
 
 // MGC dseg:2F35
 uint8_t COL_NEWG_4Font2[4] = { 187, 187, 187, 187 };
@@ -758,10 +782,14 @@ char cnst_DOT__ovr050[] = ".";
 char cnst_Name_Select[] = "Wizard's Name";
 
 // MGC dseg:30D9 53 65 6C 65 63 74 20 42 61 6E 6E 65 72 00       cnst_Banner_Select db 'Select Banner',0 ; DATA XREF: GAME_Draw_NewScr7+60o
-// MGC dseg:30E7 59 6F 75 20 63 61 6E 20 6E 6F 74 20 73 65 6C 65+cnst_Race_Error db 'You can not select a Myrran race unless you have the Myrran special.',0
-// MGC dseg:312C 53 65 6C 65 63 74 20 52 61 63 65 00             cnst_Race_Select db 'Select Race',0     ; DATA XREF: GAME_Draw_NewScr6+C3o
-// MGC dseg:3138 41 72 63 61 6E 69 61 6E 20 52 61 63 65 73 3A 00 cnst_Arcanian_Races db 'Arcanian Races:',0
-// MGC dseg:3148 4D 79 72 72 61 6E 20 52 61 63 65 73 3A 00       cnst_Myrran_Races db 'Myrran Races:',0  ; DATA XREF: GAME_Draw_NewScr6+337o
+// MGC dseg:30E7
+char cnst_Race_Error[] = "You can not select a Myrran race unless you have the Myrran special.";
+// MGC dseg:312C
+char cnst_Race_Select[] = "Select Race";
+// MGC dseg:3138
+char cnst_Arcanian_Races[] = "Arcanian Races:";
+// MGC dseg:3148
+char cnst_Myrran_Races[] = "Myrran Races:";
 // MGC dseg:3156 59 6F 75 20 6E 65 65 64 20 74 6F 20 6D 61 6B 65+cnst_Pick_Error_0 db 'You need to make all your picks before you can continue',0
 // MGC dseg:318E 59 6F 75 20 6D 61 79 20 6E 6F 74 20 73 65 6C 65+cnst_Pick_Error_1 db 'You may not select more than 6 special abilities',0
 // MGC dseg:31BF 54 6F 20 73 65 6C 65 63 74 20 00                cnst_Pick_Error_20 db 'To select ',0    ; DATA XREF: GAME_New_Screen_4:loc_40AA3o
@@ -863,7 +891,7 @@ SAMB_ptr IMG_NEWG_MapBuildBG = 0;
 
 // MGC dseg:8DE2
 /*
-set to 8 in Newgame_Screen1__WIP() set-up portion
+set to 8 in Newgame_Screen_1__WIP() set-up portion
 
 "Select Wizard" vs. "Select Picture"
 
@@ -889,6 +917,12 @@ int16_t newgame_opponents_button_field = 0;
 int16_t newgame_difficulty_button_field = 0;
 
 // MGC dseg:8E0C
+/*
+MoO2  _race_button_seg
+
+used for Wizard and Race
+
+*/
 int16_t NEWG_Select_Labels[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 int16_t NEWG_Moused_Wizard = 0;
 
@@ -896,6 +930,16 @@ int16_t NEWG_Moused_Wizard = 0;
 SAMB_ptr IMG_NewG_ButtonBGs[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 // MGC dseg:8E68
+/*
+
+Newgame_Screen_0()
+NEWGAME.LBX, 001  NEWGAMP2    New game border
+IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 1, _screen_seg);
+
+Newgame_Screen_3__WIP()
+NEWGAME.LBX, 040  NEWGMNAM   Name box
+IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 40, _screen_seg);
+*/
 SAMB_ptr IMG_NewG_RgtOverlay = 0;
 
 // MGC dseg:8E6A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_Retort_Labels dw 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -911,7 +955,13 @@ SAMB_ptr IMG_NewG_RgtOverlay = 0;
 // MGC dseg:8E9E 00 00                                           _settings_button dw 0                   ; DATA XREF: Load_Screen+2D5w ...
 // MGC dseg:8EA0 00 00                                           _settings_button_seg dw 0               ; DATA XREF: Load_Screen+BCw ...
 // MGC dseg:8EA2 00 00                                           _text_fill_seg dw 0                     ; DATA XREF: Load_Screen+A5w ...
-// MGC dseg:8EA4 00 00                                           NEWG_Clicked_Race dw 0                  ; DATA XREF: GAME_New_Screen_6+1EDw ...
+
+// MGC dseg:8EA4
+/*
+NEWG_Clicked_Race = Arcanus_Races[itr];
+
+*/
+int16_t NEWG_Clicked_Race;
 // MGC dseg:8EA6 00 00                                           dw 0
 // MGC dseg:8EA8 00 00                                           dw 0
 // MGC dseg:8EAA 00 00                                           NEWG_ProfileComplete dw 0               ; DATA XREF: GAME_New_Screen_4+114w ...
@@ -936,6 +986,113 @@ SAMB_ptr IMG_NewG_RgtOverlay = 0;
 
 
 
+// MGC dseg:904E                                                 BEGIN:  ovr053 - Uninitialized Data
+
+// MGC dseg:904E 00 00                                           HLP_ExpandLines dw 0                    ; DATA XREF: UU_HLP_DrawExpanding+Bw ...
+// MGC dseg:9050 00 00                                           HLP_ExpandOrigBottom dw 0               ; DATA XREF: UU_HLP_DrawExpanding+3Bw ...
+// MGC dseg:9052 00 00                                           HLP_ExpandOrigRight dw 0                ; DATA XREF: UU_HLP_DrawExpanding+35w ...
+// MGC dseg:9054 00 00                                           HLP_ExpandOrigTop dw 0                  ; DATA XREF: UU_HLP_DrawExpanding+2Fw ...
+// MGC dseg:9056 00 00                                           HLP_ExpandOrigLeft dw 0                 ; DATA XREF: UU_HLP_DrawExpanding+29w ...
+// MGC dseg:9058 00 00                                           HLP_ExpandTgtBottom dw 0                ; DATA XREF: UU_HLP_DrawExpanding+23w ...
+// MGC dseg:905A 00 00                                           HLP_ExpandTgtRight dw 0                 ; DATA XREF: UU_HLP_DrawExpanding+1Dw ...
+// MGC dseg:905C 00 00                                           HLP_ExpandTgtTop dw 0                   ; DATA XREF: UU_HLP_DrawExpanding+17w ...
+// MGC dseg:905E 00 00                                           HLP_ExpandTgtLeft dw 0                  ; DATA XREF: UU_HLP_DrawExpanding+11w ...
+// MGC dseg:9060 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+GUI_ListSel_Buttons dw 0Ah dup(     0)  ; DATA XREF: UU_GUI_ListSelect_Dlg+217w ...
+// MGC dseg:9074 00 00                                           GUI_ListSel_Title@ dw 0                 ; DATA XREF: UU_GUI_ListSelect_Dlg+1CBw ...
+// MGC dseg:9076 00 00                                           GUI_ListSel_Strings@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+1C5w ...
+// MGC dseg:9078 00 00                                           GUI_ListSel_DispCnt dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+1BFw ...
+// MGC dseg:907A 00 00                                           GUI_ListSel_Disp1st dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+1CEw ...
+// MGC dseg:907C 00 00                                           GUI_ListSelHighlight dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+1D4w ...
+// MGC dseg:907E 00 00                                           dw 0
+// MGC dseg:9080 00 00                                           GUI_ListSel_Bottom dw 0                 ; DATA XREF: UU_GUI_ListSelect_Dlg+441r ...
+// MGC dseg:9082 00 00                                           GUI_ListSel_Right dw 0                  ; DATA XREF: UU_GUI_ListSelect_Dlg+2EFr ...
+// MGC dseg:9084 00 00                                           GUI_ListSel_Top dw 0                    ; DATA XREF: UU_GUI_ListSelect_Dlg+2DAr ...
+// MGC dseg:9086 00 00                                           GUI_ListSel_Left dw 0                   ; DATA XREF: UU_GUI_ListSelect_Dlg+321r ...
+// MGC dseg:9088 00 00                                           GUI_ListSel_MultiPg dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+1B9w ...
+// MGC dseg:908A 00 00                                           GUI_ListSel_Count dw 0                  ; DATA XREF: UU_GUI_ListSelect_Dlg+264r ...
+// MGC dseg:908C 00 00                                           IMG_GUI_NoButton@ dw 0                  ; DATA XREF: UU_GUI_Confirm_Dialog+78w ...
+// MGC dseg:908C                                                                                         ; 2 frame image appended in the LBX_Sandbox_Segment
+// MGC dseg:908E 00 00                                           IMG_GUI_YesButton@ dw 0                 ; DATA XREF: UU_GUI_Confirm_Dialog+61w ...
+// MGC dseg:908E                                                                                         ; 2 frame image appended in the LBX_Sandbox_Segment
+// MGC dseg:9090 00 00                                           IMG_GUI_Confirm_Btm@ dw 0               ; DATA XREF: UU_GUI_Confirm_Dialog:loc_4D5FAw ...
+// MGC dseg:9090                                                                                         ; single image appended in the LBX_Sandbox_Segment
+// MGC dseg:9092 00 00                                           IMG_GUI_Confirm_BG@ dw 0                ; DATA XREF: UU_GUI_Confirm_Dialog+33w ...
+// MGC dseg:9092                                                                                         ; LBXE_LoadReplace into the LBX_Sandbox_Segment
+// MGC dseg:9094 00 00                                           GUI_Notify_IMG2_Left dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+11Cw ...
+// MGC dseg:9096 00 00                                           GUI_Notify_IMG2_Top dw 0                ; DATA XREF: UU_GUI_Notify_Dialog+122w ...
+// MGC dseg:9098 00 00                                           GUI_Notify_IMG_Top dw 0                 ; DATA XREF: UU_GUI_Notify_Dialog+116w ...
+// MGC dseg:909A 00 00                                           GUI_Notify_IMG_Left dw 0                ; DATA XREF: UU_GUI_Notify_Dialog+110w ...
+// MGC dseg:909C 00 00                                           GUI_Notify_GemBorder dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+10Aw ...
+// MGC dseg:909E 00 00                                           IMG_GUI_Dialog_Pic2@ dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+100w ...
+// MGC dseg:90A0 00 00                                           IMG_GUI_Dialog_Pic@ dw 0                ; DATA XREF: UU_GUI_Notify_Dialog+F9w ...
+// MGC dseg:90A2 00 00                                           GUI_Notify_Color dw 0                   ; DATA XREF: UU_GUI_Notify_Dialog+103w ...
+// MGC dseg:90A2                                                                                         ; blue - red - green - brown
+// MGC dseg:90A4 00 00                                           dw 0
+// MGC dseg:90A6 00 00                                           IMG_GUI_BlueNtfyGem@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+81w ...
+// MGC dseg:90A8 00 00                                           IMG_GUI_RedNtfyGem@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+C9w
+// MGC dseg:90AA 00 00                                           IMG_GUI_GrnNtfyGem@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+111w
+// MGC dseg:90AC 00 00                                           IMG_GUI_BrwnNtfyGem@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+158w
+// MGC dseg:90AE 00 00                                           IMG_GUI_BlueNtfyPic@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+6Aw ...
+// MGC dseg:90B0 00 00                                           IMG_GUI_RedNtfyPic@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+B2w
+// MGC dseg:90B2 00 00                                           IMG_GUI_GrnNtfyPic@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+FAw
+// MGC dseg:90B4 00 00                                           IMG_GUI_BrwnNtfyPic@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+141w
+// MGC dseg:90B6 00 00                                           IMG_GUI_BlueNotify@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+53w ...
+// MGC dseg:90B8 00 00                                           IMG_GUI_RedNotify@ dw 0                 ; DATA XREF: UU_GUI_LoadNotifyGfx+9Bw
+// MGC dseg:90BA 00 00                                           IMG_GUI_GrnNotify@ dw 0                 ; DATA XREF: UU_GUI_LoadNotifyGfx+E3w
+// MGC dseg:90BC 00 00                                           IMG_GUI_BrwnNotify@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+12Aw
+// MGC dseg:90BE 00 00                                           GUI_ColorSlideType dw 0                 ; DATA XREF: UU_GUI_Notify_Dialog+AFw ...
+// MGC dseg:90C0                                                 ; int GUI_ColorSlide_State
+// MGC dseg:90C0 00 00                                           GUI_ColorSlide_State dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+B2w ...
+/*
+    BEGIN:  Warning Box
+*/
+// MGC dseg:90C2 00 00                                           m_warning2_box_bottom_seg dw 0          ; DATA XREF: Warning_Message+68w ...
+// MGC dseg:90C2                                                                                         ; appended into the LBX_Sandbox_Segment
+// MGC dseg:90C4 00 00                                           m_warning2_box_top_seg dw 0             ; DATA XREF: Warning_Message+51w ...
+// MGC dseg:90C4                                                                                         ; appended into the LBX_Sandbox_Segment
+// MGC dseg:90C6 00 00                                           m_warning_box_bottom_seg dw 0           ; DATA XREF: Newgame_Screen_6__WIP+BFw ...
+// MGC dseg:90C6                                                                                         ; appended into the LBX_Sandbox_Segment
+// MGC dseg:90C8 00 00                                           m_warning_box_top_seg dw 0              ; DATA XREF: Newgame_Screen_6__WIP+A8w ...
+// MGC dseg:90C8                                                                                         ; LBXE_LoadReplace into the LBX_Sandbox_Segment
+/*
+    END:  Warning Box
+*/
+/*
+    BEGIN:  Selection Box
+*/
+// MGC dseg:90CA 00 00                                           IMG_GUI_ListSelLkDn@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+144w ...
+// MGC dseg:90CC 00 00                                           IMG_GUI_ListSelLkUp@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+12Dw ...
+// MGC dseg:90CE 00 00                                           IMG_GUI_ListS_BScrl@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+116w ...
+// MGC dseg:90D0 00 00                                           IMG_GUI_ListS_TScrl@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+FFw ...
+// MGC dseg:90D2 00 00                                           IMG_GUI_ListSelDnAr@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+E8w ...
+// MGC dseg:90D4 00 00                                           IMG_GUI_ListSelUpAr@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+D1w ...
+// MGC dseg:90D6 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_GUI_ListS_IBGRs@ dw 0Ah dup(     0) ; DATA XREF: UU_GUI_ListSelect_Dlg+181w ...
+// MGC dseg:90D6 00 00 00 00                                                                             ; array of 5 2-frame images appended into the sandbox
+// MGC dseg:90EA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_GUI_ListS_IBGs@ dw 0Ah dup(     0)  ; DATA XREF: UU_GUI_ListSelect_Dlg+165w ...
+// MGC dseg:90EA 00 00 00 00                                                                             ; array of 5 2-frame images appended into the sandbox
+// MGC dseg:90FE 00 00                                           IMG_GUI_ListSelScrl@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+BAw ...
+// MGC dseg:9100 00 00                                           IMG_GUI_ListSel_BR@ dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+A3w ...
+// MGC dseg:9102 00 00                                           IMG_GUI_ListSelRght@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+8Cw ...
+// MGC dseg:9104 00 00                                           IMG_GUI_ListSel_Btm@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+75w ...
+// MGC dseg:9106 00 00                                           IMG_GUI_ListSel_Top@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+5Ew ...
+// MGC dseg:9108 00 00                                           IMG_GUI_ListSel_BL@ dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+47w ...
+// MGC dseg:910A 00 00                                           IMG_GUI_ListSelLeft@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+30w ...
+// MGC dseg:910C 00 00                                           GUI_FamiliarIMGIndex dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+16w ...
+// MGC dseg:910E 00 00                                           GUI_Dialog_Text@ dw 0                   ; DATA XREF: UU_GUI_Confirm_Dialog+83w ...
+// MGC dseg:9110 00 00                                           GUI_Dialog_Top dw 0                     ; DATA XREF: UU_GUI_Confirm_Dialog+CAw ...
+// MGC dseg:9112 00 00                                           GUI_Dialog_Left dw 0                    ; DATA XREF: UU_GUI_Confirm_Dialog+B8w ...
+// MGC dseg:9114 00 00                                           m_warning_type dw 0                        ; DATA XREF: UU_GUI_WarningType1+3w ...
+// MGC dseg:9114                                                                                         ; determines whether to use the first or the second
+// MGC dseg:9114                                                                                         ; of the two different warning message backgrounds
+// MGC dseg:9114                                                                                         ; (both of which are red, but slightly different and
+// MGC dseg:9114                                                                                         ; use a different font color)
+// MGC dseg:9116 00 00                                           align 4
+
+// MGC dseg:9116                                                 END:  ovr053 - Uninitialized Data
+
+
+
+
 
 
 /*
@@ -957,7 +1114,7 @@ SAMB_ptr IMG_NewG_RgtOverlay = 0;
 /*
 Newgame_Control__WIP();  // MAGIC.EXE  ovr050  o050p001
 
-Newgame_Screen0();  // returns 1 on input field is ok button
+Newgame_Screen_0();  // returns 1 on input field is ok button
 
 NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
 */
@@ -992,11 +1149,11 @@ void Newgame_Control__WIP(void)
             } break;
             case 0:
             {
-                newgame_state = Newgame_Screen0();  // returns 1 on input field is ok button
+                newgame_state = Newgame_Screen_0();  // returns 1 on input field is ok button
             } break;
             case 1:
             {
-                newgame_state = Newgame_Screen1__WIP();  // returns {0,2,3} - {0:cancel,2:custom,3:prefab}
+                newgame_state = Newgame_Screen_1__WIP();  // returns {0,2,3} - {0:cancel,2:custom,3:prefab}
                 if(newgame_state == 2)
                 {
                     custom_game_flag = ST_TRUE;
@@ -1008,31 +1165,31 @@ void Newgame_Control__WIP(void)
             } break;
             case 2:
             {
-                newgame_state = Newgame_Screen2__WIP();
+                newgame_state = Newgame_Screen_2__WIP();
             } break;
-            case 3:
+            case 3:  // Wizards Name
             {
                 newgame_state = Newgame_Screen_3__WIP();
                 if(custom_game_flag != ST_FALSE)
                 {
                     if(newgame_state == ST_UNDEFINED)  // cancelled, go back a screen
                     {
-                        newgame_state = 2;
+                        newgame_state = 2;  // 
                     }
                     else
                     {
-                        newgame_state = 4;
+                        newgame_state = 4;  // custom wizard creation
                     }
                 }
-                else
+                else  // standard / non-custom
                 {
                     if(newgame_state == ST_UNDEFINED)  // cancelled, go back a screen
                     {
-                        newgame_state = 1;
+                        newgame_state = 1;  // 
                     }
                     else
                     {
-                        newgame_state = 4;
+                        newgame_state = 6;  // Wizards Race
                     }
                 }
             } break;
@@ -1044,10 +1201,10 @@ void Newgame_Control__WIP(void)
             {
                 Newgame_Screen5__WIP();
             } break;
-            case 6:
+            case 6:  // Wizard's Race
             {
-                newgame_state = Newgame_Screen6__WIP();
-                if(newgame_state == ST_UNDEFINED)
+                newgame_state = Newgame_Screen_6__WIP();
+                if(newgame_state == ST_UNDEFINED)  // Cancel Wizards Race
                 {
                     if(custom_game_flag != ST_FALSE)
                     {
@@ -1055,7 +1212,7 @@ void Newgame_Control__WIP(void)
                     }
                     else
                     {
-                        newgame_state = 3;
+                        newgame_state = 3;  // Wizards Name
                     }
                 }
             } break;
@@ -1065,7 +1222,7 @@ void Newgame_Control__WIP(void)
             } break;
             case 99:
             {
-
+                Can_Create = ST_UNDEFINED;  // ¿ force an early exit of the new game creation process ?
             } break;
 
         }
@@ -1130,7 +1287,7 @@ without saving if the Esc key is pressed
 /*
 returns 1 on input field is ok button
 */
-int16_t Newgame_Screen0(void)
+int16_t Newgame_Screen_0(void)
 {
     char file_found[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t leave_screen = 0;
@@ -1260,9 +1417,9 @@ int16_t Newgame_Screen0(void)
 
     First_Draw_Done = ST_FALSE;
 
-    Assign_Auto_Function(Newgame_Screen0_Draw, 1);
+    Assign_Auto_Function(Newgame_Screen_0_Draw, 1);
 
-    Set_Newgame_Screen0_Help_List();
+    Set_Newgame_Screen_0_Help_List();
 
     while(leave_screen == ST_FALSE)
     {
@@ -1355,7 +1512,7 @@ int16_t Newgame_Screen0(void)
         if(leave_screen == ST_FALSE)
         {
 
-            Newgame_Screen0_Draw();
+            Newgame_Screen_0_Draw();
 
             Toggle_Pages();
 
@@ -1398,7 +1555,7 @@ options into the current draw segment
 /*
 
 */
-void Newgame_Screen0_Draw(void)
+void Newgame_Screen_0_Draw(void)
 {
     struct s_OPPONENT_COUNT_NAMES l_opponent_count_names[4] = { 0, 0, 0, 0 };
     struct s_MAGIC_STRENGTH_NAMES l_magic_strength_names[3] = { 0, 0, 0 };
@@ -1561,7 +1718,7 @@ void Randomize_Book_Heights(void)
 /*
 returns {0,2,3} - {0:cancel,2:custom,3:prefab}
 */
-int16_t Newgame_Screen1__WIP(void)
+int16_t Newgame_Screen_1__WIP(void)
 {
     int16_t Escape_Hotkey_Control = 0;
     int16_t input_field_idx = 0;
@@ -1675,11 +1832,11 @@ int16_t Newgame_Screen1__WIP(void)
 
     if(magic_set.Difficulty < god_Easy)
     {
-        Set_Newgame_Screen1_Help_List(ST_FALSE);
+        Set_Newgame_Screen_1_Help_List(ST_FALSE);
     }
     else
     {
-        Set_Newgame_Screen1_Help_List(ST_TRUE);
+        Set_Newgame_Screen_1_Help_List(ST_TRUE);
     }
 
     Set_Input_Delay(2);
@@ -1741,7 +1898,7 @@ int16_t Newgame_Screen1__WIP(void)
 ; the "Custom" button, all based on global variables
 */
 /*
-unresolved external symbol Set_Newgame_Screen1_Help_List referenced in function Newgame_Screen1__WIP
+unresolved external symbol Set_Newgame_Screen_1_Help_List referenced in function Newgame_Screen_1__WIP
 */
 void Newgame_Screen_1_2_Draw(void)
 {
@@ -1924,7 +2081,7 @@ void Newgame_Screen_1_2_Draw(void)
 "Select Picture"
 
 */
-int16_t Newgame_Screen2__WIP(void)
+int16_t Newgame_Screen_2__WIP(void)
 {
     int16_t Escape_Hotkey_Control = 0;
     int16_t itr = 0;
@@ -1991,7 +2148,7 @@ int16_t Newgame_Screen2__WIP(void)
 
     Assign_Auto_Function(Newgame_Screen_1_2_Draw, 1);
 
-    Set_Newgame_Screen2_Help_List();
+    Set_Newgame_Screen_2_Help_List();
 
     Set_Input_Delay(2);
 
@@ -2070,8 +2227,10 @@ int16_t Newgame_Screen_3__WIP(void)
     char Edit_Text[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t input_box_return_value = 0;
 
+    // NEWGAME.LBX, 000  BACKGRND    Main screen back
     newgame_background_seg = LBX_Reload(newgame_lbx_file__ovr050, 0, _screen_seg);
 
+    // NEWGAME.LBX, 040  NEWGMNAM   Name box
     IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 40, _screen_seg);
 
     Set_Mouse_List(1, mouse_list_newgame_0_1_2_3);
@@ -2187,17 +2346,468 @@ void Newgame_Screen7__WIP(void)
 // o50p15
 /*
 
-*/
-int16_t Newgame_Screen6__WIP(void)
-{
+Module: MOX
+    data (0 bytes) _race_names
+    Address: 02:0018A630
+Module: RACEOPT
+    data (0 bytes) _cur_race_name
+    Address: 02:00193772
+Module: RACESEL
+    data (0 bytes) _race_name_list
+    Address: 02:0019383C
+    data (0 bytes) _last_race_seg
+    Address: 02:00193840
+    data (0 bytes) _race_flag
+    Address: 02:00193848
+    data (0 bytes) _old_race
+    Address: 02:00193858
+    data (0 bytes) _displayed_race
+    Address: 02:0019385A
+    data (0 bytes) _last_race_name
+    Address: 02:0019385C
 
-    return 0;
+*/
+int16_t Newgame_Screen_6__WIP(void)
+{
+    char Arcanus_Races[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Escape_Hotkey_Control = 0;
+    int8_t * Retorts_Pointer = 0;
+    uint8_t * Shadow_Color = 0;
+    uint8_t * Available_Color = 0;
+    uint8_t * Not_Available_Color = 0;
+    uint8_t Font_Colors[8] = {0, 0, 0, 0, 0, 0, 0, 0 };
+    char Myrran_Races[5] = { 0, 0, 0, 0, 0 };
+    int16_t input_field_idx = 0;
+    int16_t leave_screen = 0;
+    int16_t First_Draw_Done = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t itr2 = 0;  // _DI_
+
+    memcpy(Arcanus_Races, TBL_Arcanian_Races, 9);
+
+    memcpy(Myrran_Races, TBL_Myrran_Races, 5);
+
+    memcpy(Font_Colors, RP_COL_NEWG_Font4, 8);
+
+    Not_Available_Color = COL_NEWG_Highlight;
+
+    Available_Color = COL_Available;
+
+    Shadow_Color = COL_NEWG_RacesShadow;
+
+    // NEWGAME.LBX, 000  BACKGRND    Main screen back
+    newgame_background_seg = LBX_Reload(newgame_lbx_file__ovr050, 0, _screen_seg);
+    // NEWGAME.LBX, 054  NEWGMWZ2   Wizards border
+    IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 54, _screen_seg);
+    // NEWGAME.LBX, 055  RACES      Races dark region
+    IMG_NewG_ButtonBGs[0] = LBX_Reload_Next(newgame_lbx_file__ovr050, 55, _screen_seg);
+    // NEWGAME.LBX, 044  WARNBACK   Warning box top
+    m_warning_box_top_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 44, _screen_seg);
+    // NEWGAME.LBX, 045  WARNBACK   Warning box buttom
+    m_warning_box_bottom_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 45, _screen_seg);
+
+    // ; load the spellbook binder images
+    // ; 5 groups of 3 images each (L - S - N - D - C)
+    for(itr = 0; itr < 15; itr++)
+    {
+        IMG_NewG_Books[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (24 + itr), _screen_seg);
+    }
+
+    Set_Mouse_List(1, mouse_list_newgame_0_1_2_3);
+
+    Clear_Fields();
+
+    leave_screen = ST_FALSE;
+
+    First_Draw_Done = ST_NULL;
+
+    Retorts_Pointer = &_players[0].alchemy;
+
+    // ; create the click labels for the arcanus races
+    for(itr = 0; itr < 9; itr++)
+    {
+        NEWG_Select_Labels[itr] = Add_Hidden_Field(211, (38 + (itr * 10)), 270, (45 + (itr * 10)), empty_string__ovr050, ST_UNDEFINED);
+    }
+
+    // ; create the click labels for the myrran races
+    for(itr = 0; itr < 5; itr++)
+    {
+        NEWG_Select_Labels[(9 + itr)] = Add_Hidden_Field(211, (147 + (itr * 10)), 270, (154 + (itr * 10)), empty_string__ovr050, ST_UNDEFINED);
+    }
+
+    Escape_Hotkey_Control = Add_Hot_Key(str_ESC__ovr050);
+
+    Assign_Auto_Function(Newgame_Screen_6_Draw__WIP, 1);
+
+    Set_Newgame_Screen_6_Help_List();
+
+    while(leave_screen == ST_FALSE)
+    {
+
+        Mark_Time();
+
+        input_field_idx = Get_Input();
+
+        if(input_field_idx == Escape_Hotkey_Control)
+        {
+
+            return ST_UNDEFINED;
+
+        }
+
+        // ; if an arcanus race label was clicked, mark and save
+        // ; the selection
+        for(itr = 0; itr < 9; itr++)
+        {
+            if(NEWG_Select_Labels[itr] == input_field_idx)
+            {
+                NEWG_Clicked_Race = Arcanus_Races[itr];
+                leave_screen = ST_TRUE;
+            }
+        }
+
+        // ; if a myrran race label was clicked, check if the
+        // ; player is myrran, and either mark and save the
+        // ; selection if they are, or display an error if not
+        for(itr = 9; itr < 14; itr++)
+        {
+
+            // if(Retorts_Pointer[RETORTS.Myrran] == 1)
+            if(Retorts_Pointer[rtt_Myrran] == 1)
+            {
+
+                if(NEWG_Select_Labels[itr] == input_field_idx)
+                {
+                    NEWG_Clicked_Race = Myrran_Races[(itr - 9)];
+                    leave_screen = ST_TRUE;
+                }
+
+            }
+            else
+            {
+
+                if(NEWG_Select_Labels[itr] == input_field_idx)
+                {
+                    
+                    Deactivate_Auto_Function();
+                    
+                    Deactivate_Help_List();
+
+                    Warn0(cnst_Race_Error);  // "You can not select a Myrran race unless you have the Myrran special."
+
+                    Assign_Auto_Function(Newgame_Screen_6_Draw__WIP, 1);
+
+                    Set_Help_List(_help_entries, 14);
+
+                }
+
+            }
+
+        }
+
+        if(leave_screen == ST_FALSE)
+        {
+
+            Newgame_Screen_6_Draw__WIP();
+
+            Apply_Palette();
+
+            Toggle_Pages();
+
+            if(First_Draw_Done == ST_FALSE)
+            {
+                
+                First_Draw_Done = ST_TRUE;
+
+                Copy_On_To_Off_Page();
+
+            }
+ 
+            Release_Time(2);
+
+        }
+
+    }
+
+    // ; blink the label if the selected race by redrawing it
+    // ; with different colors 4 times
+    for(itr = 0; itr < 4; itr++)
+    {
+
+        // ; if the selected race is acranian, redraw its label in
+        // ; a different color based on the value of si
+        for(itr2 = 0; itr2 < 9; itr2++)
+        {
+
+            if(Arcanus_Races[itr2] == NEWG_Clicked_Race)
+            {
+
+                Set_Font_Colors_15(2, &Shadow_Color[0]);
+
+                Print(221, (39 + (itr2 * 10)), _race_type_table[Arcanus_Races[itr2]].name);
+
+                if(
+                    (itr == 0)
+                    ||
+                    (itr == 2)
+                )
+                {
+                    Set_Font_Colors_15(2, &Available_Color[0]);
+
+                }
+                else
+                {
+                    
+                    Set_Font_Colors_15(2, &Not_Available_Color[0]);
+
+                }
+
+                Print(220, (38 + (itr2 * 10)), _race_type_table[Arcanus_Races[itr2]].name);
+
+                itr2 = 9;
+
+            }
+
+        }
+
+        // ; if the selected race is myrran, redraw its label in
+        // ; a different color based on the value of si
+        for(itr2 = 9; itr2 < 14; itr2++)
+        {
+
+            if(Arcanus_Races[itr2] == NEWG_Clicked_Race)
+            {
+
+                Set_Font_Colors_15(2, &Shadow_Color[0]);
+
+                Print(221, (148 + ((itr2 - 9) * 10)), _race_type_table[Myrran_Races[(itr2 - 9)]].name);
+
+                if(
+                    (itr == 0)
+                    ||
+                    (itr == 2)
+                )
+                {
+                    Set_Font_Colors_15(2, &Available_Color[0]);
+
+                }
+                else
+                {
+                    
+                    Set_Font_Colors_15(2, &Not_Available_Color[0]);
+
+                }
+
+                Print(220, (147 + ((itr2 - 9) * 10)), _race_type_table[Myrran_Races[(itr2 - 9)]].name);
+
+                itr2 = 14;
+
+            }
+
+        }
+
+
+    }
+
+    Deactivate_Auto_Function();
+
+    Deactivate_Help_List();
+
+    return 7;  // Title: "Select Banner"
 
 }
 
 
 // o50p16
-// GAME_Draw_NewScr6()
+void Newgame_Screen_6_Draw__WIP(void)
+{
+    int16_t Arcanus_Races[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int8_t * Retorts_Pointer = 0;
+    uint8_t * Shadow_Color = 0;
+    uint8_t * Not_Available_Color = 0;
+    uint8_t * Available_Color = 0;
+    uint8_t * Race_Highlight_Color = 0;
+    uint8_t Race_Title_Colors[5] = { 0, 0, 0, 0, 0 };
+    uint8_t Font_Colors[5] = { 0, 0, 0, 0, 0 };
+    uint8_t FontShadow_Colors[5] = { 0, 0, 0, 0, 0 };
+    int16_t Myrran_Races[5] = { 0, 0, 0, 0, 0 };
+    int16_t Moused_Control = 0;
+    int16_t BookBinder_Left = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t itr2 = 0;  // _DI_
+    int16_t DBG_race_type = 0;
+    char * DBG_race_name_string = 0;
+
+    memcpy(Arcanus_Races, RP_TBL_Arcanian_Races_2, 18);
+
+    memcpy(Myrran_Races, RP_TBL_Myrran_Races_2, 10);
+
+    memcpy(FontShadow_Colors, RP_COL_NEWG_5Shadow2, 5);
+
+    memcpy(Font_Colors, RP_COL_NEWG_5Font2, 5);
+
+    memcpy(Race_Title_Colors, COL_NEWG_RaceTitles, 5);
+
+    Race_Highlight_Color = COL_NEWG_Highlight2;
+
+    Available_Color = COL_Available_2;
+
+    Not_Available_Color = COL_NEWG_NA;
+
+    Shadow_Color = COL_NEWG_RacesShdw2;
+
+    FLIC_Draw(0, 0, newgame_background_seg);
+
+    FLIC_Draw(164, 18, IMG_NewG_RgtOverlay);
+
+    FLIC_Draw(208, 34, IMG_NewG_ButtonBGs[0]);  // IDGI
+
+    Set_Font_Style_Shadow_Down(5, 5, ST_NULL, ST_NULL);
+
+    Print_Centered(242, 1, cnst_Race_Select);  // "Select Race"
+
+    FLIC_Draw(24, 10, wizard_portrait_segs[_players[0].wizard_id]);
+
+    Set_Font_Style(4, 15, ST_NULL, ST_NULL);
+
+    Set_Font_Colors_15(4, &FontShadow_Colors[0]);
+
+    Print_Centered(78, 120, _players[0].name);
+
+    Print_Centered(77, 120, _players[0].name);
+
+    Set_Font_Colors_15(4, &Font_Colors[0]);
+
+    Print_Centered(77, 119, _players[0].name);
+
+    Moused_Control = Scan_Input();
+
+    Retorts_Pointer = &_players[0].alchemy;
+
+    BookBinder_Left = 36;
+
+    for(itr = 0; itr < _players[0].spellranks[3]; itr++)
+    {
+        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(0 + TBL_Bookshelf_Books[itr])]);
+        BookBinder_Left += 8;
+    }
+
+    for(itr = 0; itr < _players[0].spellranks[1]; itr++)
+    {
+        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(3 + TBL_Bookshelf_Books[itr])]);
+        BookBinder_Left += 8;
+    }
+
+    for(itr = 0; itr < _players[0].spellranks[0]; itr++)
+    {
+        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(6 + TBL_Bookshelf_Books[itr])]);
+        BookBinder_Left += 8;
+    }
+
+    for(itr = 0; itr < _players[0].spellranks[4]; itr++)
+    {
+        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(9 + TBL_Bookshelf_Books[itr])]);
+        BookBinder_Left += 8;
+    }
+
+    for(itr = 0; itr < _players[0].spellranks[2]; itr++)
+    {
+        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(12 + TBL_Bookshelf_Books[itr])]);
+        BookBinder_Left += 8;
+    }
+
+    GAME_DrawRetortsStr();
+
+    Set_Font_Colors_15(3, &Race_Title_Colors[0]);
+
+    Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
+
+    Print(198, 25, cnst_Arcanian_Races);  // "Arcanian Races:"
+
+    // ; draw the arcanian race labels, using a different
+    // ; color if the mouse is over one
+    for(itr2 = 0; itr2 < 9; itr2++)
+    {
+
+        Set_Font_Colors_15(2, Shadow_Color);
+
+        // Print(221, (39 + (10 * itr2)), _race_type_table[Arcanus_Races[itr2]].name);
+        DBG_race_type = Arcanus_Races[itr2];
+        DBG_race_name_string = *_race_type_table[DBG_race_type].name;
+        Print(221, (39 + (10 * itr2)), DBG_race_name_string);
+
+        if(NEWG_Select_Labels[itr2] == Moused_Control)
+        {
+
+            Set_Font_Colors_15(2, Race_Highlight_Color);
+
+        }
+        else
+        {
+
+            Set_Font_Colors_15(2, Available_Color);
+
+        }
+
+        // Print(220, (38 + (10 * itr2)), _race_type_table[Arcanus_Races[itr2]].name);
+        DBG_race_type = Arcanus_Races[itr2];
+        DBG_race_name_string = *_race_type_table[DBG_race_type].name;
+        Print(220, (38 + (10 * itr2)), DBG_race_name_string);
+
+    }
+
+    Set_Font_Colors_15(3, &Race_Title_Colors[0]);
+
+    Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
+
+    Print(202, 134, cnst_Myrran_Races);  // "Myrran Races:"
+
+    // ; draw the myrran race labels, using the NA color if
+    // ; the corresponding retort was not taken, and otherwise
+    // ; a different color if the mouse is over one
+    for(itr2 = 0; itr2 < 5; itr2++)
+    {
+
+        Set_Font_Colors_15(2, Shadow_Color);
+
+        // Print(221, (148 + (10 * itr2)), _race_type_table[Myrran_Races[itr2]].name);
+        DBG_race_type = Myrran_Races[itr2];
+        DBG_race_name_string = *_race_type_table[DBG_race_type].name;
+        Print(221, (148 + (10 * itr2)), DBG_race_name_string);
+
+        if(Retorts_Pointer[rtt_Myrran] == 1)
+        {
+
+            if(NEWG_Select_Labels[(9 + itr2)] == Moused_Control)
+            {
+
+                Set_Font_Colors_15(2, Race_Highlight_Color);
+
+            }
+            else
+            {
+
+                Set_Font_Colors_15(2, Available_Color);
+
+            }
+
+        }
+        else
+        {
+
+            Set_Font_Colors_15(2, Not_Available_Color);
+
+        }
+
+        // Print(220, (147 + (10 * itr2)), _race_type_table[Myrran_Races[itr2]].name);
+        DBG_race_type = Myrran_Races[itr2];
+        DBG_race_name_string = *_race_type_table[DBG_race_type].name;
+        Print(220, (147 + (10 * itr2)), DBG_race_name_string);
+
+    }
+
+}
+
 
 // o50p17
 /*
@@ -2216,7 +2826,7 @@ void GAME_DrawRetortsStr(void)
     int16_t Text_Top = 0;
     int16_t Retorts_Added = 0;
     int16_t Local_Zero = 0;
-    int8_t * Retorts_Offset = 0;
+    int8_t * Retorts_Pointer = 0;
     // int16_t Retort_Colors = 0;
     uint8_t * Retort_Colors = 0;
     // uint8_t Text_Colors[4] = { 0, 0, 0, 0 };
@@ -2237,14 +2847,14 @@ void GAME_DrawRetortsStr(void)
 
     Retorts_String[0] = 0;
 
-    Retorts_Offset = _players[0].alchemy;
+    Retorts_Pointer = &_players[0].alchemy;
 
     retort_count = 0;
 
     // ; count the number of retorts into di
     for(itr = 0; itr < 18; itr++)
     {
-        if(Retorts_Offset[itr] == 1)
+        if(Retorts_Pointer[itr] == 1)
         {
             retort_count++;
         }
@@ -2257,9 +2867,9 @@ void GAME_DrawRetortsStr(void)
     // ; create a string listing the retort names
     for(itr = 0; itr < 18; itr++)
     {
-        if(Retorts_Offset[itr] == 1)
+        if(Retorts_Pointer[itr] == 1)
         {
-            STR_ListSeparator(Retorts_Added, retort_count, Retorts_String);
+            STR_ListSeparator(&Retorts_Added, retort_count, &Retorts_String[0]);
             strcat(Retorts_String, STR_Retorts[itr]);
         }
     }
@@ -2284,13 +2894,13 @@ void GAME_DrawRetortsStr(void)
 
     Set_Font_LF(1);
 
-    Print_Paragraph(13, (Text_Top + 1), Retorts_String, 0);
+    Print_Paragraph(13, (Text_Top + 1), 138, &Retorts_String[0], 0);
 
     Set_Font_Colors_15(0, &Retort_Colors[0]);
 
     Set_Font_LF(1);
 
-    Print_Paragraph(12, 138, Retorts_String, 0);
+    Print_Paragraph(12, Text_Top, 138, &Retorts_String[0], 0);
 
 }
 
@@ -2579,7 +3189,7 @@ new game options selection screen
 ¿ Set_Options_Screen_Help_List ?
 
 */
-void Set_Newgame_Screen0_Help_List(void)
+void Set_Newgame_Screen_0_Help_List(void)
 {
 
     // HLPENTRY.LBX, 29  Options Screen Help
@@ -2599,7 +3209,7 @@ void Set_Newgame_Screen0_Help_List(void)
 ; loads and sets the GUI help entry area array for the
 ; wizard portrait selection screen
 */
-void Set_Newgame_Screen2_Help_List(void)
+void Set_Newgame_Screen_2_Help_List(void)
 {
 
     // HLPENTRY.LBX, 031  ""  "Wizard Picture Select"
@@ -2618,7 +3228,7 @@ void Set_Newgame_Screen2_Help_List(void)
 /*
 
 */
-void Set_Newgame_Screen1_Help_List(int16_t has_custom)
+void Set_Newgame_Screen_1_Help_List(int16_t has_custom)
 {
 
     // HLPENTRY.LBX, 032  ""  "Wizard Selection Help"
@@ -2639,6 +3249,15 @@ void Set_Newgame_Screen1_Help_List(int16_t has_custom)
 
 // o50p34
 // HLP_Load_RaceSel()
+void Set_Newgame_Screen_6_Help_List(void)
+{
+
+    // HLPENTRY.LBX, 035  ""  "Wizard Race Help"
+    LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 35, _help_entries, 0, 14, 10);
+
+    Set_Help_List(_help_entries, 14);
+
+}
 
 // o50p35
 void STR_ListSeparator(int16_t * List_Size, int16_t Total, char * Dest)

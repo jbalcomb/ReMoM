@@ -2300,7 +2300,7 @@ int16_t City_Mana_Production(int16_t city_idx)
 
         if(
             (_CITIES[city_idx].race == rt_High_Elf) ||
-            (_CITIES[city_idx].race == rt_Beastman) ||
+            (_CITIES[city_idx].race == rt_Beastmen) ||
             (_CITIES[city_idx].race == rt_Draconian)
         )
         {
@@ -2874,7 +2874,7 @@ void Generate_Mercenaries(int16_t player_idx, int16_t * wx, int16_t * wy, int16_
         }
 
         if(
-            (_unit_type_table[unit_type].Race == rt_Beastman)
+            (_unit_type_table[unit_type].Race == rt_Beastmen)
             ||
             (_unit_type_table[unit_type].Race == rt_Dark_Elf)
             ||

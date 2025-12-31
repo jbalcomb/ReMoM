@@ -271,14 +271,26 @@ int16_t notify_color_slide;
 // WZD dseg:CB00
 int16_t notify_color_slide_cycle;  // {0, ..., 7}
 
+/*
+NEWGAME.LBX, 044  WARNBACK   Warning box top
+NEWGAME.LBX, 045  WARNBACK   Warning box buttom
+// MGC  dseg:90C2 00 00                                           _warning2_bottom_seg dw 0               ; DATA XREF: Warning_Message+68w ...
+// MGC  dseg:90C2                                                                                         ; appended into the LBX_Sandbox_Segment
+// MGC  dseg:90C4 00 00                                           _warning2_top_seg dw 0                  ; DATA XREF: Warning_Message+51w ...
+// MGC  dseg:90C4                                                                                         ; appended into the LBX_Sandbox_Segment
+// MGC  dseg:90C6 00 00                                           _warning_bottom_seg dw 0                ; DATA XREF: Newgame_Screen_6__WIP+BFw ...
+// MGC  dseg:90C6                                                                                         ; appended into the LBX_Sandbox_Segment
+// MGC  dseg:90C8 00 00                                           _warning_top_seg dw 0                   ; DATA XREF: Newgame_Screen_6__WIP+A8w ...
+// MGC  dseg:90C8                                                                                         ; LBXE_LoadReplace into the LBX_Sandbox_Segment
+*/
 // WZD dseg:CB02
-SAMB_ptr IMG_GUI_RedMsg2Btm;
+SAMB_ptr m_warning2_box_bottom_seg;
 // WZD dseg:CB04
-SAMB_ptr IMG_GUI_RedMessage2;
+SAMB_ptr m_warning2_box_top_seg;
 // WZD dseg:CB06
-SAMB_ptr IMG_GUI_RedMsg1Btm;
+SAMB_ptr m_warning_box_bottom_seg;
 // WZD dseg:CB08
-SAMB_ptr IMG_GUI_RedMessage1;
+SAMB_ptr m_warning_box_top_seg;
 
 /*
     BEGIN:  Selection Box
@@ -332,10 +344,11 @@ int16_t message_box_x;
 
 // WZD dseg:CB54
 // drake178: GUI_RedMsg_Type
+// AKA m_warn_type
 /*
 ; determines whether to use the first or the second of the two different warning message backgrounds (both of which are red, but slightly different and use a different font color)
 */
-int16_t m_warn_type;
+int16_t m_warning_type;
 
 // WZD dseg:CB54                                                 END:  ovr149  GENDRAW - Uninitialized Data ; 
 
@@ -472,7 +485,7 @@ void Confirmation_Box_Draw(void)
 // drake178: GUI_WarningType1()
 void Warn1(char * msg)
 {
-    m_warn_type = 1;
+    m_warning_type = 1;
     Warn(msg);
 }
 
@@ -480,7 +493,7 @@ void Warn1(char * msg)
 // drake178: GUI_WarningType0()
 void Warn0(char * msg)
 {
-    m_warn_type = 0;
+    m_warning_type = 0;
     Warn(msg);
 }
 
@@ -505,10 +518,10 @@ void Warn(char * msg)
     // RESOURCE.LBX,  49  WARNBCK2    warning top
     // RESOURCE.LBX,  50  WARNBCK2    warning bottom
 
-    IMG_GUI_RedMessage1  = LBX_Reload(resource_lbx_file__ovr149, 38, _screen_seg);
-    IMG_GUI_RedMsg1Btm   = LBX_Reload_Next(resource_lbx_file__ovr149, 39, _screen_seg);
-    IMG_GUI_RedMessage2  = LBX_Reload_Next(resource_lbx_file__ovr149, 49, _screen_seg);
-    IMG_GUI_RedMsg2Btm   = LBX_Reload_Next(resource_lbx_file__ovr149, 50, _screen_seg);
+    m_warning_box_top_seg  = LBX_Reload(resource_lbx_file__ovr149, 38, _screen_seg);
+    m_warning_box_bottom_seg   = LBX_Reload_Next(resource_lbx_file__ovr149, 39, _screen_seg);
+    m_warning2_box_top_seg  = LBX_Reload_Next(resource_lbx_file__ovr149, 49, _screen_seg);
+    m_warning2_box_bottom_seg   = LBX_Reload_Next(resource_lbx_file__ovr149, 50, _screen_seg);
 
     Save_Auto_Function();
 
@@ -561,18 +574,18 @@ void Warn_Draw(void)
 
     Set_Window(0, 0, SCREEN_XMAX, (message_box_y + max_para_height + 12));
 
-    if(m_warn_type == 0)
+    if(m_warning_type == 0)
     {
-        Clipped_Draw(message_box_x, message_box_y, IMG_GUI_RedMessage1);
+        Clipped_Draw(message_box_x, message_box_y, m_warning_box_top_seg);
     }
     else
     {
-        Clipped_Draw(message_box_x, message_box_y, IMG_GUI_RedMessage2);
+        Clipped_Draw(message_box_x, message_box_y, m_warning2_box_top_seg);
     }
 
     Reset_Window();
 
-    if(m_warn_type == 0)
+    if(m_warning_type == 0)
     {
         Set_Font_Colors_15(4, COL_Warning1);
     }
@@ -591,13 +604,13 @@ void Warn_Draw(void)
 
     Print_Paragraph((message_box_x + 10), (message_box_y + 10), 166, message_box_text, 2);
 
-    if(m_warn_type == 0)
+    if(m_warning_type == 0)
     {
-        FLIC_Draw(message_box_x, (message_box_y + max_para_height + 10), IMG_GUI_RedMsg1Btm);
+        FLIC_Draw(message_box_x, (message_box_y + max_para_height + 10), m_warning_box_bottom_seg);
     }
     else
     {
-        FLIC_Draw(message_box_x, (message_box_y + max_para_height + 10), IMG_GUI_RedMsg2Btm);
+        FLIC_Draw(message_box_x, (message_box_y + max_para_height + 10), m_warning2_box_bottom_seg);
     }
 
 }

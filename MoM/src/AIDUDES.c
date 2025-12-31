@@ -1118,7 +1118,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
                 AI_Enemy_City_Values[itr_cities] = _CITIES[itr_cities].population;
 
                 if(
-                    (_CITIES[itr_cities].race == rt_Beastman)
+                    (_CITIES[itr_cities].race == rt_Beastmen)
                     ||
                     (_CITIES[itr_cities].race == rt_Dark_Elf)
                     ||
@@ -1167,7 +1167,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
             AI_Own_City_Values[itr_cities] = _CITIES[itr_cities].population;
 
             if(
-                (_CITIES[itr_cities].race == rt_Beastman)
+                (_CITIES[itr_cities].race == rt_Beastmen)
                 ||
                 (_CITIES[itr_cities].race == rt_Dark_Elf)
                 ||

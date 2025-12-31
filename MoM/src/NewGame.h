@@ -86,6 +86,30 @@ struct Default_Spells
     /* 1A */
 };
 
+enum enum_RACE_BYTE
+{
+    R_Barbarian  = 0,
+    R_Beastman  = 1,
+    R_Dark_Elf  = 2,
+    R_Draconian  = 3,
+    R_Dwarf  = 4,
+    R_Gnoll  = 5,
+    R_Halfling  = 6,
+    R_High_Elf  = 7,
+    R_High_Man  = 8,
+    R_Klackon  = 9,
+    R_Lizardman  = 10,
+    R_Nomad  = 11,
+    R_Orc  = 12,
+    R_Troll  = 13,
+    Race_Generic  = 14,
+    Race_Arcane  = 15,
+    Race_Nature  = 16,
+    Race_Sorcery  = 17,
+    Race_Chaos  = 18,
+    Race_Life  = 19,
+    Race_Death  = 20
+};
 
 
 #ifdef __cplusplus
@@ -112,22 +136,22 @@ void GAME_WizardsLaunch__WIP(int16_t save_gam_idx);
 // Load_Screen_Draw()
 
 // o50p05
-int16_t Newgame_Screen0(void);
+int16_t Newgame_Screen_0(void);
 
 // o50p06
-void Newgame_Screen0_Draw(void);
+void Newgame_Screen_0_Draw(void);
 
 // o50p07
 void Randomize_Book_Heights(void);
 
 // o50p08
-int16_t Newgame_Screen1__WIP(void);
+int16_t Newgame_Screen_1__WIP(void);
 
 // o50p09
 void Newgame_Screen_1_2_Draw(void);
 
 // o50p10
-int16_t Newgame_Screen2__WIP(void);
+int16_t Newgame_Screen_2__WIP(void);
 
 // o50p11
 int16_t Newgame_Screen_3__WIP(void);
@@ -142,10 +166,10 @@ void Newgame_Screen7__WIP(void);
 // GAME_Draw_NewScr7()
 
 // o50p15
-int16_t Newgame_Screen6__WIP(void);
+int16_t Newgame_Screen_6__WIP(void);
 
 // o50p16
-// GAME_Draw_NewScr6()
+void Newgame_Screen_6_Draw__WIP(void);
 
 // o50p17
 void GAME_DrawRetortsStr(void);
@@ -184,22 +208,22 @@ void WIZ_CopyDefault__WIP(int16_t Portrait_Index);
 // Set_Load_Screen_Help_List_MGC()
 
 // o50p29
-void Set_Newgame_Screen0_Help_List(void);
+void Set_Newgame_Screen_0_Help_List(void);
 
 // o50p30
 // HLP_Load_BannerSel()
 
 // o50p31
-void Set_Newgame_Screen2_Help_List(void);
+void Set_Newgame_Screen_2_Help_List(void);
 
 // o50p32
-void Set_Newgame_Screen1_Help_List(int16_t Can_Customize);
+void Set_Newgame_Screen_1_Help_List(int16_t Can_Customize);
 
 // o50p33
 // HLP_Load_WizCreate()
 
 // o50p34
-// HLP_Load_RaceSel()
+void Set_Newgame_Screen_6_Help_List(void);
 
 // o50p35
 void STR_ListSeparator(int16_t * List_Size, int16_t Total, char * Dest);

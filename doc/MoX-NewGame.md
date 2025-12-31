@@ -26,6 +26,19 @@ MAGIC.EXE
 
 
 
+Module: MOX
+
+    data (0 bytes) _first_time
+    Address: 02:00191F00
+
+    data (0 bytes) _first_time_drawn
+    Address: 02:00191F1A
+
+
+
+
+
+
 
 current_menu_screen AKA auto_input_field_idx
 

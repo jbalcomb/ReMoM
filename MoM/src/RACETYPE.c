@@ -1,5 +1,6 @@
 
 #include "../../MoX/src/MOX_TYPE.h"
+#include "../../MoX/src/MOM_DATA.h"
 
 #include "RACETYPE.h"
 
@@ -60,9 +61,9 @@ char * _race_type_names[21] =
 struct s_RACE_TYPE _race_type_table[14] =
 {
     /*                D9 21   03 00  14 00  0A 00  19 00  00 00  00 00  00 00  00 00  0F 00  02 00  00 00 */
-    { &_race_type_names[ 0],      3,    { 20,    10,    25,     0,     0,     0,     0 },    15,     2,     0 },
+    { &_race_type_names[ rt_Barbarian],     3,    {      bt_University,    bt_AnimistsGuild,    bt_Cathedral,     bt_NONE,     bt_NONE,     bt_NONE,     bt_NONE },    15,     2,     0 },
     /*                81 26   02 00  0B 00  0D 00  00 00  00 00  00 00  00 00  00 00  05 00  00 00  00 00 */
-    { &_race_type_names[ 1],      2,    { 11,    13,     0,     0,     0,     0,     0 } ,     5,     0,     0 },
+    { &_race_type_names[ rt_Beastmen],      2,    { bt_FantasticStable,         bt_ShipYard,         bt_NONE,     bt_NONE,     bt_NONE,     bt_NONE,     bt_NONE },     5,     0,     0 },
     /*                8A 26   02 00  19 00  0E 00  00 00  00 00  00 00  00 00  00 00  02 00  FE FF  01 00 */
     { &_race_type_names[ 2],      2,    { 25,    14,     0,     0,     0,     0,     0 },     2,    -2,     1 },
     /*                62 22   03 00  21 00  0B 00  0E 00  00 00  00 00  00 00  00 00  05 00  FF FF  00 00 */

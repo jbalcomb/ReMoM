@@ -16,7 +16,7 @@ but, the names and descriptions are incongruent/misaligned
 enum e_RACE_TYPE
 {
     rt_Barbarian  = 0,
-    rt_Beastman   = 1,
+    rt_Beastmen   = 1,
     rt_Dark_Elf   = 2,
     rt_Draconian  = 3,
     rt_Dwarf      = 4,
