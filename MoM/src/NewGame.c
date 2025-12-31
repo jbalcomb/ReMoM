@@ -14,6 +14,7 @@
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/DOS.h"
 #include "../../MoX/src/Fonts.h"
+#include "../../MoX/src/Help.h"
 #include "../../MoX/src/Mouse.h"
 #include "../../MoX/src/MOX_DAT.h"
 #include "../../MoX/src/MOX_DEF.h"
@@ -29,6 +30,72 @@
 #include <string.h>
 
 #include "NewGame.h"
+
+
+
+// MGC dseg:1F96 34 27 3C 27 44 27 52 27 61 27 71 27 80 27 8D 27+
+// STR_Retorts@ dw offset cnst_Alchemy, offset cnst_Warlord, offset cnst_ChaosMastery, offset cnst_NatureMastery, offset cnst_SorceryMastery, offset cnst_InfernalPower, offset cnst_DivinePower, offset cnst_SageMaster, offset cnst_Channeler, offset cnst_Myrran, offset cnst_Archmage, offset cnst_ManaFocusing, offset cnst_NodeMastery, offset cnst_Famous, offset cnst_Runemaster, offset cnst_Conjurer, offset cnst_Charismatic, offset cnst_Artificer
+// MGC dseg:2734 41 6C 63 68 65 6D 79 00                         cnst_Alchemy db 'Alchemy',0             
+// MGC dseg:273C 57 61 72 6C 6F 72 64 00                         cnst_Warlord db 'Warlord',0             
+// MGC dseg:2744 43 68 61 6F 73 20 4D 61 73 74 65 72 79 00       cnst_ChaosMastery db 'Chaos Mastery',0  
+// MGC dseg:2752 4E 61 74 75 72 65 20 4D 61 73 74 65 72 79 00    cnst_NatureMastery db 'Nature Mastery',0
+// MGC dseg:2761 53 6F 72 63 65 72 79 20 4D 61 73 74 65 72 79 00 cnst_SorceryMastery db 'Sorcery Mastery',0
+// MGC dseg:2771 49 6E 66 65 72 6E 61 6C 20 50 6F 77 65 72 00    cnst_InfernalPower db 'Infernal Power',0
+// MGC dseg:2780 44 69 76 69 6E 65 20 50 6F 77 65 72 00          cnst_DivinePower db 'Divine Power',0    
+// MGC dseg:278D 53 61 67 65 20 4D 61 73 74 65 72 00             cnst_SageMaster db 'Sage Master',0      
+// MGC dseg:2799 43 68 61 6E 6E 65 6C 65 72 00                   cnst_Channeler db 'Channeler',0         
+// MGC dseg:27A3 4D 79 72 72 61 6E 00                            cnst_Myrran db 'Myrran',0               
+// MGC dseg:27AA 41 72 63 68 6D 61 67 65 00                      cnst_Archmage db 'Archmage',0           
+// MGC dseg:27B3 4D 61 6E 61 20 46 6F 63 75 73 69 6E 67 00       cnst_ManaFocusing db 'Mana Focusing',0  
+// MGC dseg:27C1 4E 6F 64 65 20 4D 61 73 74 65 72 79 00          cnst_NodeMastery db 'Node Mastery',0    
+// MGC dseg:27CE 46 61 6D 6F 75 73 00                            cnst_Famous db 'Famous',0               
+// MGC dseg:27D5 52 75 6E 65 6D 61 73 74 65 72 00                cnst_Runemaster db 'Runemaster',0       
+// MGC dseg:27E0 43 6F 6E 6A 75 72 65 72 00                      cnst_Conjurer db 'Conjurer',0           
+// MGC dseg:27E9 43 68 61 72 69 73 6D 61 74 69 63 00             cnst_Charismatic db 'Charismatic',0     
+// MGC dseg:27F5 41 72 74 69 66 69 63 65 72 00                   cnst_Artificer db 'Artificer',0       
+
+// cnst_Warlord already defined in 003_MoM.lib(NewGame.obj)
+
+char cnst_Alchemy__NEWGAME[] = "Alchemy";
+char cnst_Warlord__NEWGAME[] = "Warlord";
+char cnst_ChaosMastery__NEWGAME[] = "Chaos Mastery";
+char cnst_NatureMastery__NEWGAME[] = "Nature Mastery";
+char cnst_SorceryMastery__NEWGAME[] = "Sorcery Mastery";
+char cnst_InfernalPower__NEWGAME[] = "Infernal Power";
+char cnst_DivinePower__NEWGAME[] = "Divine Power";
+char cnst_SageMaster__NEWGAME[] = "Sage Master";
+char cnst_Channeler__NEWGAME[] = "Channeler";
+char cnst_Myrran__NEWGAME[] = "Myrran";
+char cnst_Archmage__NEWGAME[] = "Archmage";
+char cnst_ManaFocusing__NEWGAME[] = "Mana Focusing";
+char cnst_NodeMastery__NEWGAME[] = "Node Mastery";
+char cnst_Famous__NEWGAME[] = "Famous";
+char cnst_Runemaster__NEWGAME[] = "Runemaster";
+char cnst_Conjurer__NEWGAME[] = "Conjurer";
+char cnst_Charismatic__NEWGAME[] = "Charismatic";
+char cnst_Artificer__NEWGAME[] = "Artificer";
+
+char * STR_Retorts[NUM_RETORTS] =
+{
+cnst_Alchemy__NEWGAME,
+cnst_Warlord__NEWGAME,
+cnst_ChaosMastery__NEWGAME,
+cnst_NatureMastery__NEWGAME,
+cnst_SorceryMastery__NEWGAME,
+cnst_InfernalPower__NEWGAME,
+cnst_DivinePower__NEWGAME,
+cnst_SageMaster__NEWGAME,
+cnst_Channeler__NEWGAME,
+cnst_Myrran__NEWGAME,
+cnst_Archmage__NEWGAME,
+cnst_ManaFocusing__NEWGAME,
+cnst_NodeMastery__NEWGAME,
+cnst_Famous__NEWGAME,
+cnst_Runemaster__NEWGAME,
+cnst_Conjurer__NEWGAME,
+cnst_Charismatic__NEWGAME,
+cnst_Artificer__NEWGAME
+};
 
 
 
@@ -367,149 +434,75 @@ int16_t auto_input_field_idx = 0;
 // MGC dseg:2ABC                                                 BEGIN:  ovr050 - Initialized Data
 
 // MGC dseg:2ABC
-struct s_mouse_list mouse_list_newgame0[1] = {
-    { crsr_None, 0, SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX }
+struct s_mouse_list mouse_list_newgame_0_1[1] = {
+    { crsr_Finger, 0, SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX }
 };
 
 // MGC dseg:2AC8 1F 1E 1D 1C 1B 1A 19 18                         COL_NEWG_NameEdit db 31, 30, 29, 28, 27, 26, 25, 24
-// MGC dseg:2AC8                                                                                         ; DATA XREF: GAME_New_Screen_3+91o
-// MGC dseg:2AD0 4D 65 72 6C 69 6E 00 00 00 00 05 00 00 00 05 00+TBL_Default_Wizards  = WIZARD_Preset ptr $
-// MGC dseg:2AD0 00 00 00 00 07 00 52 61 76 65 6E 00 00 00 00 00+                                        ; DATA XREF: Draw_NewGame_Screen1+2B7t ...
-// MGC dseg:2AD0 00 00 06 00 05 00 00 00 00 00 FF FF 53 68 61 72+db 4Dh, 65h, 72h, 6Ch, 69h, 6Eh, 4 dup(0); Name
-// MGC dseg:2AD0 65 65 00 00 00 00 00 00 00 00 00 00 05 00 05 00+dw 5                                    ; Life
-// MGC dseg:2AD0 0F 00 4C 6F 20 50 61 6E 00 00 00 00 00 00 05 00+dw 0                                    ; Sorcery
-// MGC dseg:2AD0 00 00 00 00 05 00 08 00 4A 61 66 61 72 00 00 00+dw 5                                    ; Nature
-// MGC dseg:2AD0 00 00 00 00 0A 00 00 00 00 00 00 00 00 00 4F 62+dw 0                                    ; Death
-// MGC dseg:2AD0 65 72 69 63 00 00 00 00 00 00 00 00 05 00 00 00+dw 0                                    ; Chaos
-// MGC dseg:2AD0 05 00 0B 00 52 6A 61 6B 00 00 00 00 00 00 00 00+dw _Sage_Master                         ; Retort
-// MGC dseg:2AD0 00 00 00 00 09 00 00 00 05 00 53 73 73 27 72 61+db 52h, 61h, 76h, 65h, 6Eh, 5 dup(0)    ; Name
-// MGC dseg:2AD0 00 00 00 00 04 00 00 00 00 00 00 00 04 00 09 00+dw 0                                    ; Life
-// MGC dseg:2AD0 54 61 75 72 6F 6E 00 00 00 00 00 00 00 00 00 00+dw 6                                    ; Sorcery
-// MGC dseg:2AD0 00 00 0A 00 02 00 46 72 65 79 61 00 00 00 00 00+dw 5                                    ; Nature
-// MGC dseg:2AD0 00 00 00 00 0A 00 00 00 00 00 03 00 48 6F 72 75+dw 0                                    ; Death
-// MGC dseg:2AD0 73 00 00 00 00 00 05 00 05 00 00 00 00 00 00 00+dw 0                                    ; Chaos
-// MGC dseg:2AD0 0A 00 41 72 69 65 6C 00 00 00 00 00 0A 00 00 00+dw _No_Retort                           ; Retort
-// MGC dseg:2AD0 00 00 00 00 00 00 10 00 54 6C 61 6C 6F 63 00 00+db 53h, 68h, 61h, 72h, 2 dup(65h), 4 dup(0); Name
-// MGC dseg:2AD0 00 00 00 00 00 00 04 00 05 00 00 00 01 00 4B 61+dw 0                                    ; Life
-// MGC dseg:2AD0 6C 69 00 00 00 00 00 00 00 00 05 00 00 00 05 00+dw 0                                    ; Sorcery
-// MGC dseg:2AD0 00 00 11 00 43 75 73 74 6F 6D 00 00 00 00 00 00+dw 0                                    ; Nature
-// MGC dseg:2AD0 00 00 00 00 00 00 00 00 FF FF                   dw 5                                    ; Death
-// MGC dseg:2AD0                                                 dw 5                                    ; Chaos
-// MGC dseg:2AD0                                                 dw _Conjurer                            ; Retort
-// MGC dseg:2AD0                                                 db 4Ch, 6Fh, 20h, 50h, 61h, 6Eh, 4 dup(0); Name
-// MGC dseg:2AD0                                                 dw 0                                    ; Life
-// MGC dseg:2AD0                                                 dw 5                                    ; Sorcery
-// MGC dseg:2AD0                                                 dw 0                                    ; Nature
-// MGC dseg:2AD0                                                 dw 0                                    ; Death
-// MGC dseg:2AD0                                                 dw 5                                    ; Chaos
-// MGC dseg:2AD0                                                 dw _Channeller                          ; Retort
-// MGC dseg:2AD0                                                 db 4Ah, 61h, 66h, 61h, 72h, 5 dup(0)    ; Name
-// MGC dseg:2AD0                                                 dw 0                                    ; Life
-// MGC dseg:2AD0                                                 dw 0Ah                                  ; Sorcery
-// MGC dseg:2AD0                                                 dw 0                                    ; Nature
-// MGC dseg:2AD0                                                 dw 0                                    ; Death
-// MGC dseg:2AD0                                                 dw 0                                    ; Chaos
-// MGC dseg:2AD0                                                 dw _Alchemy                             ; Retort
-// MGC dseg:2AD0                                                 db 4Fh, 62h, 65h, 72h, 69h, 63h, 4 dup(0); Name
-// MGC dseg:2AD0                                                 dw 0                                    ; Life
-// MGC dseg:2AD0                                                 dw 0                                    ; Sorcery
-// MGC dseg:2AD0                                                 dw 5                                    ; Nature
-// MGC dseg:2AD0                                                 dw 0                                    ; Death
-// MGC dseg:2AD0                                                 dw 5                                    ; Chaos
-// MGC dseg:2AD0                                                 dw _Mana_Focusing                       ; Retort
-// MGC dseg:2AD0                                                 db 52h, 6Ah, 61h, 6Bh, 6 dup(0)         ; Name
-// MGC dseg:2AD0                                                 dw 0                                    ; Life
-// MGC dseg:2AD0                                                 dw 0                                    ; Sorcery
-// MGC dseg:2AD0                                                 dw 0                                    ; Nature
-// MGC dseg:2AD0                                                 dw 9                                    ; Death
-// MGC dseg:2AD0                                                 dw 0                                    ; Chaos
-// MGC dseg:2AD0                                                 dw _Infernal_Power                      ; Retort
-// MGC dseg:2AD0                                                 db 53h, 2 dup(73h), 27h, 72h, 61h, 4 dup(0); Name
-// MGC dseg:2AD0                                                 dw 4                                    ; Life
-// MGC dseg:2AD0                                                 dw 0                                    ; Sorcery
-// MGC dseg:2AD0                                                 dw 0                                    ; Nature
-// MGC dseg:2AD0                                                 dw 0                                    ; Death
-// MGC dseg:2AD0                                                 dw 4                                    ; Chaos
-// MGC dseg:2AD0                                                 dw _Myrran                              ; Retort
-// MGC dseg:2AD0                                                 db 54h, 61h, 75h, 72h, 6Fh, 6Eh, 4 dup(0); Name
-// MGC dseg:2AD0                                                 dw 0                                    ; Life
-// MGC dseg:2AD0                                                 dw 0                                    ; Sorcery
-// MGC dseg:2AD0                                                 dw 0                                    ; Nature
-// MGC dseg:2AD0                                                 dw 0                                    ; Death
-// MGC dseg:2AD0                                                 dw 0Ah                                  ; Chaos
-// MGC dseg:2AD0                                                 dw _Chaos_Mastery                       ; Retort
-// MGC dseg:2AD0                                                 db 46h, 72h, 65h, 79h, 61h, 5 dup(0)    ; Name
-// MGC dseg:2AD0                                                 dw 0                                    ; Life
-// MGC dseg:2AD0                                                 dw 0                                    ; Sorcery
-// MGC dseg:2AD0                                                 dw 0Ah                                  ; Nature
-// MGC dseg:2AD0                                                 dw 0                                    ; Death
-// MGC dseg:2AD0                                                 dw 0                                    ; Chaos
-// MGC dseg:2AD0                                                 dw _Nature_Mastery                      ; Retort
-// MGC dseg:2AD0                                                 db 48h, 6Fh, 72h, 75h, 73h, 5 dup(0)    ; Name
-// MGC dseg:2AD0                                                 dw 5                                    ; Life
-// MGC dseg:2AD0                                                 dw 5                                    ; Sorcery
-// MGC dseg:2AD0                                                 dw 0                                    ; Nature
-// MGC dseg:2AD0                                                 dw 0                                    ; Death
-// MGC dseg:2AD0                                                 dw 0                                    ; Chaos
-// MGC dseg:2AD0                                                 dw _Archmage                            ; Retort
-// MGC dseg:2AD0                                                 db 41h, 72h, 69h, 65h, 6Ch, 5 dup(0)    ; Name
-// MGC dseg:2AD0                                                 dw 0Ah                                  ; Life
-// MGC dseg:2AD0                                                 dw 0                                    ; Sorcery
-// MGC dseg:2AD0                                                 dw 0                                    ; Nature
-// MGC dseg:2AD0                                                 dw 0                                    ; Death
-// MGC dseg:2AD0                                                 dw 0                                    ; Chaos
-// MGC dseg:2AD0                                                 dw _Charismatic                         ; Retort
-// MGC dseg:2AD0                                                 db 54h, 6Ch, 61h, 6Ch, 6Fh, 63h, 4 dup(0); Name
-// MGC dseg:2AD0                                                 dw 0                                    ; Life
-// MGC dseg:2AD0                                                 dw 0                                    ; Sorcery
-// MGC dseg:2AD0                                                 dw 4                                    ; Nature
-// MGC dseg:2AD0                                                 dw 5                                    ; Death
-// MGC dseg:2AD0                                                 dw 0                                    ; Chaos
-// MGC dseg:2AD0                                                 dw _Warlord                             ; Retort
-// MGC dseg:2AD0                                                 db 4Bh, 61h, 6Ch, 69h, 6 dup(0)         ; Name
-// MGC dseg:2AD0                                                 dw 0                                    ; Life
-// MGC dseg:2AD0                                                 dw 5                                    ; Sorcery
-// MGC dseg:2AD0                                                 dw 0                                    ; Nature
-// MGC dseg:2AD0                                                 dw 5                                    ; Death
-// MGC dseg:2AD0                                                 dw 0                                    ; Chaos
-// MGC dseg:2AD0                                                 dw _Artificer                           ; Retort
-// MGC dseg:2AD0                                                 db 43h, 75h, 73h, 74h, 6Fh, 6Dh, 4 dup(0); Name
-// MGC dseg:2AD0                                                 dw 0                                    ; Life
-// MGC dseg:2AD0                                                 dw 0                                    ; Sorcery
-// MGC dseg:2AD0                                                 dw 0                                    ; Nature
-// MGC dseg:2AD0                                                 dw 0                                    ; Death
-// MGC dseg:2AD0                                                 dw 0                                    ; Chaos
-// MGC dseg:2AD0                                                 dw _No_Retort                           ; Retort
+
+// MGC dseg:2AD0
+struct WIZARD_Preset TBL_Default_Wizards[15] = {
+    {"Merlin",  5,  0,  5, 0,  0, _Sage_Master },
+    {"Raven",   0,  6,  5, 0,  0, _No_Retort},
+    {"Sharee",  0,  0,  0, 5,  5, _Conjurer},
+    {"Lo Pan",  0,  5,  0, 0,  5, _Channeller},
+    {"Jafar",   0, 10,  0, 0,  0, _Alchemy},
+    {"Oberic",  0,  0,  5, 0,  5, _Mana_Focusing},
+    {"Rjak",    0,  0,  0, 9,  0, _Infernal_Power},
+    {"Sss'ra",  4,  0,  0, 0,  4, _Myrran},
+    {"Tauron",  0,  0,  0, 0, 10, _Chaos_Mastery},
+    {"Freya",   0,  0, 10, 0,  0, _Nature_Mastery},
+    {"Horus",   5,  5,  0, 0,  0, _Archmage},
+    {"Ariel",  10,  0,  0, 0,  0, _Charismatic},
+    {"Tlaloc",  0,  0,  4, 5,  0, _Warlord},
+    {"Kali",    0,  5,  0, 5,  0, _Artificer},
+    {"Custom",  0,  0,  0, 0,  0, _No_Retort}
+};
+
 // MGC dseg:2C1A 02 00 03 00 04 00 05 00 06 00 07 00 08 00 09 00+RP_Book_Table dw 2, 3, 4, 5, 6, 7, 8, 9, 0Ah, 0Bh ; repurposed in the worldgen customizer
-// MGC dseg:2C2E 01 00 02 00 03 00 04 00 05 00 06 00 07 00 08 00+TBL_SpellsPerBook_C dw 1, 2, 3, 4, 5, 6, 7, 8, 9, 0Ah
-// MGC dseg:2C2E 09 00 0A 00                                                                             ; DATA XREF: GAME_New_Screen_5+2E7r ...
-// MGC dseg:2C42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_SpellsPerBook_U dw 9 dup(0), 2      ; DATA XREF: GAME_New_Screen_5+313r ...
-// MGC dseg:2C56 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_SpellsPerBook_R dw 9 dup(0), 1      ; DATA XREF: GAME_New_Screen_5+33Fr ...
-// MGC dseg:2C6A 06 00 07 00 09 00 08 00 04 00 05 00 01 00 03 00+TBL_Def_Spl_Nature  = Default_Spells ptr $
-// MGC dseg:2C6A 02 00 0A 00 11 00 0F 00 1B 00                                                           ; DATA XREF: GAME_New_Screen_5+27Co ...
-// MGC dseg:2C6A                                                 dw War_Bears, Stone_Skin, Sprites, Water_Walking, Giant_Strength, Web, Earth_to_Mud, Wall_of_Stone, Resist_Elements, Earth_Lore; Common
-// MGC dseg:2C6A                                                 dw Cockatrice, Change_Terrain           ; Uncommon
-// MGC dseg:2C6A                                                 dw Gorgons                              ; Rare
-// MGC dseg:2C84 31 00 32 00 2D 00 2B 00 2E 00 30 00 2F 00 2A 00+TBL_Def_Spl_Sorcery  = Default_Spells ptr $
-// MGC dseg:2C84 29 00 2C 00 38 00 3C 00 41 00                                                           ; DATA XREF: GAME_New_Screen_5+266o ...
-// MGC dseg:2C84                                                 dw Nagas, Psionic_Blast, Phantom_Warriors, Floating_Island, Confusion, Counter_Magic, Word_of_Recall, Dispel_Magic_True, Resist_Magic, Guardian_Wind; Common
-// MGC dseg:2C84                                                 dw Flight, Phantom_Beast                ; Uncommon
-// MGC dseg:2C84                                                 dw Storm_Giant                          ; Rare
-// MGC dseg:2C9E 53 00 5A 00 56 00 54 00 55 00 59 00 58 00 57 00+TBL_Def_Spl_Chaos  = Default_Spells ptr $
-// MGC dseg:2C9E 52 00 51 00 5B 00 61 00 6A 00                                                           ; DATA XREF: GAME_New_Screen_5+250o ...
-// MGC dseg:2C9E                                                 dw Fire_Bolt, Fire_Elemental, Eldritch_Weapon, Hell_Hounds, Corruption, Warp_Creature, Shatter, Wall_of_Fire, Disrupt, Warp_Wood; Common
-// MGC dseg:2C9E                                                 dw Lightning_Bolt, Doombat              ; Uncommon
-// MGC dseg:2C9E                                                 dw Efreet                               ; Rare
-// MGC dseg:2CB8 82 00 81 00 7E 00 7F 00 7D 00 7C 00 7A 00 7B 00+TBL_Def_Spl_Life  = Default_Spells ptr $
-// MGC dseg:2CB8 80 00 79 00 85 00 88 00 93 00                                                           ; DATA XREF: GAME_New_Screen_5+292o ...
-// MGC dseg:2CB8                                                 dw Heroism, Guardian_Spirit, Holy_Armor, Just_Cause, Healing, Holy_Weapon, Star_Fires, Endurance, True_Light, Bless; Common
-// MGC dseg:2CB8                                                 dw Resurrection, Unicorns               ; Uncommon
-// MGC dseg:2CB8                                                 dw Angel                                ; Rare
-// MGC dseg:2CD2 A7 00 A6 00 A2 00 A3 00 A5 00 A9 00 A8 00 A1 00+TBL_Def_Spl_Death  = Default_Spells ptr $
-// MGC dseg:2CD2 AA 00 A4 00 AE 00 AF 00 B8 00                                                           ; DATA XREF: GAME_New_Screen_5:loc_41D07o ...
-// MGC dseg:2CD2                                                 dw Life_Drain, Ghouls, Weakness, Dark_Rituals, Black_Sleep, Darkness, Terror, Skeletons, Mana_Leak, Cloak_of_Fear; Common
-// MGC dseg:2CD2                                                 dw Black_Prayer, Black_Channels         ; Uncommon
-// MGC dseg:2CD2                                                 dw Wraiths                              ; Rare
+// MGC dseg:2C2E
+int16_t TBL_SpellsPerBook_C[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+// MGC dseg:2C42
+int16_t TBL_SpellsPerBook_U[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 };
+// MGC dseg:2C56
+int16_t TBL_SpellsPerBook_R[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+// MGC dseg:2C6A
+// Statically define a variable named 'player_spells'
+struct Default_Spells player_spells = {
+    {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},  // Common spells initialization
+    {20, 21},                         // Uncommon spells initialization
+    50                                // Rare spell initialization
+};
+struct Default_Spells TBL_Def_Spl_Nature = {
+    { spl_War_Bears, spl_Stone_Skin, spl_Sprites, spl_Water_Walking, spl_Giant_Strength, spl_Web, spl_Earth_To_Mud, spl_Wall_Of_Stone, spl_Resist_Elements, spl_Earth_Lore }, 
+    { spl_Cockatrices, spl_Change_Terrain },
+    spl_Gorgons
+};
+// MGC dseg:2C84
+struct Default_Spells TBL_Def_Spl_Sorcery = {
+    { spl_Nagas, spl_Psionic_Blast, spl_Phantom_Warriors, spl_Floating_Island, spl_Confusion, spl_Counter_Magic, spl_Word_Of_Recall, spl_Dispel_Magic_True, spl_Resist_Magic, spl_Guardian_Wind },
+    { spl_Flight, spl_Phantom_Beast },
+    spl_Storm_Giant
+};
+// MGC dseg:2C9E
+struct Default_Spells TBL_Def_Spl_Chaos = {
+    { spl_Fire_Bolt, spl_Fire_Elemental, spl_Eldritch_Weapon, spl_Hell_Hounds, spl_Corruption, spl_Warp_Creature, spl_Shatter, spl_Wall_Of_Fire, spl_Disrupt, spl_Warp_Wood },
+    { spl_Lightning_Bolt, spl_Doom_Bat },
+    spl_Efreet
+};
+// MGC dseg:2CB8
+struct Default_Spells TBL_Def_Spl_Life = {
+    { spl_Heroism, spl_Guardian_Spirit, spl_Holy_Armor, spl_Just_Cause, spl_Healing, spl_Holy_Weapon, spl_Star_Fires, spl_Endurance, spl_True_Light, spl_Bless },
+    { spl_Resurrection, spl_Unicorns },
+    spl_Angel
+};
+// MGC dseg:2CD2
+struct Default_Spells TBL_Def_Spl_Death = {
+{ spl_Life_Drain, spl_Ghouls, spl_Weakness, spl_Dark_Rituals, spl_Black_Sleep, spl_Darkness, spl_Terror, spl_Skeletons, spl_Mana_Leak, spl_Cloak_Of_Fear},
+{ spl_Black_Prayer, spl_Black_Channels },
+spl_Wraiths
+};
+
 // MGC dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Retort_Reqs Retort_Req 2 dup(<0, 0, 0, 0, 0, 0, 0>)
 // MGC dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00+                                        ; DATA XREF: GAME_New_Screen_4+167o ...
 // MGC dseg:2CEC 00 00 00 00 04 00 00 00 00 00 00 00 01 00 00 00+Retort_Req <0, 1, 0, 0, 4, 0, 0>
@@ -605,9 +598,12 @@ struct s_OPPONENT_COUNT_NAMES _opponent_count_names[4] =
     { 'F', 'o', 'u', 'r',  '\0', '\0', '\0', '\0' }
 };
 
-// MGC dseg:2EA3 1F 1F 1F 1F 1F 1F 1F 00                         COL_NEWG_FontShadow db 7 dup(1Fh), 0    ; DATA XREF: Draw_NewGame_Screen1+Do
-// MGC dseg:2EAB BB BB BB BB BB BB BB BB                         COL_NEWG_Font db 8 dup(0BBh)            ; DATA XREF: Draw_NewGame_Screen1+1Fo
-// MGC dseg:2EB3 B7 B2                                           COL_NEWG_Retorts dw 0B2B7h              ; DATA XREF: Draw_NewGame_Screen1+2Cr
+// MGC dseg:2EA3
+uint8_t COL_NEWG_FontShadow[8] = { 31, 31, 31, 31, 31, 31, 31, 0 };
+// MGC dseg:2EAB
+uint8_t COL_NEWG_Font[8] = { 187, 187, 187, 187, 187, 187, 187, 187 };
+// MGC dseg:2EB3
+uint8_t COL_NEWG_Retorts[2] = {183, 178};
 // MGC dseg:2EB5 1F 1F 1F 1F 1F 1F 1F 00                         RP_COL_NEWG_FontShadow2 db 7 dup(1Fh), 0
 // MGC dseg:2EB5                                                                                         ; DATA XREF: GAME_Draw_NewScr3+Bo
 // MGC dseg:2EB5                                                                                         ; redirected to dseg:2ea3 and repurposed in the
@@ -747,9 +743,12 @@ char str_rb__ovr050[] = "rb";
 // MGC dseg:30A9
 char str_wb__ovr050[] = "wb";
 
-// MGC dseg:30AC 53 65 6C 65 63 74 20 57 69 7A 61 72 64 00       cnst_Wiz_Select db 'Select Wizard',0    ; DATA XREF: Draw_NewGame_Screen1+87o
-// MGC dseg:30BA 53 65 6C 65 63 74 20 50 69 63 74 75 72 65 00    cnst_Pic_Select db 'Select Picture',0   ; DATA XREF: Draw_NewGame_Screen1:loc_3EE5Do
-// MGC dseg:30C9 2E 00                                           cnst_DOT db '.',0                       ; DATA XREF: Draw_NewGame_Screen1+50Eo ...
+// MGC dseg:30AC
+char cnst_Wiz_Select[] = "Select Wizard";
+// MGC dseg:30BA
+char cnst_Pic_Select[] = "Select Picture";
+// MGC dseg:30C9
+char cnst_DOT[] = ".";
 // MGC dseg:30CB 57 69 7A 61 72 64 27 73 20 4E 61 6D 65 00       cnst_Name_Select db 'Wizard',27h,'s Name',0
 // MGC dseg:30D9 53 65 6C 65 63 74 20 42 61 6E 6E 65 72 00       cnst_Banner_Select db 'Select Banner',0 ; DATA XREF: GAME_Draw_NewScr7+60o
 // MGC dseg:30E7 59 6F 75 20 63 61 6E 20 6E 6F 74 20 73 65 6C 65+cnst_Race_Error db 'You can not select a Myrran race unless you have the Myrran special.',0
@@ -797,16 +796,28 @@ char hlpentry_lbx_file__MGC_ovr050[] = "hlpentry.lbx";
 
 // MGC dseg:8A42                                                 BEGIN:  ovr050 - Uninitialized Data
 
-// MGC dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Spells_Nature Default_Spells <0>    ; DATA XREF: GAME_New_Screen_5+171w ...
-// MGC dseg:8A5C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Spells_Sorcery Default_Spells <0>   ; DATA XREF: GAME_New_Screen_5+17Bw ...
-// MGC dseg:8A76 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Spells_Chaos Default_Spells <0>     ; DATA XREF: GAME_New_Screen_5+167w ...
-// MGC dseg:8A90 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Spells_Life Default_Spells <0>      ; DATA XREF: GAME_New_Screen_5+185w ...
-// MGC dseg:8AAA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Spells_Death Default_Spells <0>     ; DATA XREF: GAME_New_Screen_5+18Fw ...
-// MGC dseg:8AC4 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Spells_P1 Default_Spells 5 dup(<0>)
-// MGC dseg:8B46 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Spells_P2 Default_Spells 5 dup(<0>)
-// MGC dseg:8BC8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Spells_P3 Default_Spells 5 dup(<0>)
-// MGC dseg:8C4A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Spells_P4 Default_Spells 5 dup(<0>)
-// MGC dseg:8CCC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+UU_TBL_Spells_P5 Default_Spells 5 dup(<0>)
+// MGC dseg:8A42
+struct Default_Spells TBL_Spells_Nature;
+// MGC dseg:8A5C
+struct Default_Spells TBL_Spells_Sorcery;
+// MGC dseg:8A76
+struct Default_Spells TBL_Spells_Chaos;
+// MGC dseg:8A90
+struct Default_Spells TBL_Spells_Life;
+// MGC dseg:8AAA
+struct Default_Spells TBL_Spells_Death;
+
+// MGC dseg:8AC4
+struct Default_Spells TBL_Spells_P1;
+// MGC dseg:8B46
+struct Default_Spells TBL_Spells_P2;
+// MGC dseg:8BC8
+struct Default_Spells TBL_Spells_P3;
+// MGC dseg:8C4A
+struct Default_Spells TBL_Spells_P4;
+// MGC dseg:8CCC
+struct Default_Spells UU_TBL_Spells_P5;
+
 // MGC dseg:8D4E 00 00                                           NEWG_PickAttempt dw 0                   ; DATA XREF: GAME_New_Screen_4+436r ...
 // MGC dseg:8D50 00 00                                           NEWG_PickError dw 0                     ; DATA XREF: GAME_New_Screen_4+15Bw ...
 
@@ -830,18 +841,31 @@ int16_t TBL_Realm4_Books[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     loaded in GAME_New_Screen_7()
     used in NEWG_CreateWorld__WIP()
 */
-SAMB_ptr IMG_NEWG_MapBuildBG;
+SAMB_ptr IMG_NEWG_MapBuildBG = 0;
 
 // MGC dseg:8DD8 00 00                                           NEWG_SliderPos_Sorc dw 0                ; DATA XREF: GAME_New_Screen_4+155w ...
 // MGC dseg:8DDA 00 00                                           NEWG_SliderPos_Nat dw 0                 ; DATA XREF: GAME_New_Screen_4+14Fw ...
 // MGC dseg:8DDC 00 00                                           NEWG_SliderPos_Chaos dw 0               ; DATA XREF: GAME_New_Screen_4+149w ...
 // MGC dseg:8DDE 00 00                                           NEWG_SliderPos_Death dw 0               ; DATA XREF: GAME_New_Screen_4+143w ...
 // MGC dseg:8DE0 00 00                                           NEWG_SliderPos_Life dw 0                ; DATA XREF: GAME_New_Screen_4+13Dw ...
-// MGC dseg:8DE2 00 00                                           NEWG_PortraitSelType dw 0               ; DATA XREF: GAME_New_Screen_1+C7w ...
+
+// MGC dseg:8DE2
+/*
+set to 8 in Newgame_Screen1__WIP() set-up portion
+
+"Select Wizard" vs. "Select Picture"
+
+WTF?
+init'd to 0, defaulted to 8, never changed
+
+*/
+int16_t NEWG_PortraitSelType = 0;
+
 // MGC dseg:8DE4 00                                              db    0
 // MGC dseg:8DE5 00                                              db    0
-// MGC dseg:8DE6 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_NewG_Books@ dw 0Fh dup(0)           ; DATA XREF: GAME_New_Screen_1+99w ...
-// MGC dseg:8DE6 00 00 00 00 00 00 00 00 00 00 00 00 00 00                                               ; 5 groups of 3 images each (L - S - N - D - C)
+// MGC dseg:8DE6
+// ; 5 groups of 3 images each (L - S - N - D - C)
+SAMB_ptr IMG_NewG_Books[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 // MGC dseg:8E04
 int16_t newgame_landsize_button_field = 0;
@@ -852,14 +876,15 @@ int16_t newgame_opponents_button_field = 0;
 // MGC dseg:8E0A
 int16_t newgame_difficulty_button_field = 0;
 
-// MGC dseg:8E0C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_Select_Labels dw 1Eh dup(0)        ; DATA XREF: GAME_New_Screen_1+109w ...
-// MGC dseg:8E48 00 00                                           NEWG_Moused_Wizard dw 0                 ; DATA XREF: GAME_New_Screen_1+C1w ...
+// MGC dseg:8E0C
+int16_t NEWG_Select_Labels[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+int16_t NEWG_Moused_Wizard = 0;
 
 // MGC dseg:8E4A
-SAMB_ptr IMG_NewG_ButtonBGs[15];
+SAMB_ptr IMG_NewG_ButtonBGs[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 // MGC dseg:8E68
-SAMB_ptr IMG_NewG_RgtOverlay;
+SAMB_ptr IMG_NewG_RgtOverlay = 0;
 
 // MGC dseg:8E6A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_Retort_Labels dw 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 // MGC dseg:8E6A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; DATA XREF: GAME_New_Screen_4+2BEw ...
@@ -918,9 +943,13 @@ SAMB_ptr IMG_NewG_RgtOverlay;
 ; continue slot (index 8), and launching WIZARDS.EXE
 */
 /*
+Newgame_Control__WIP();  // MAGIC.EXE  ovr050  o050p001
 
+Newgame_Screen0();  // returns 1 on input field is ok button
+
+NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
 */
-void Newgame_Control(void)
+void Newgame_Control__WIP(void)
 {
     int16_t Create_State = 0;
     int16_t Can_Create = 0;
@@ -943,7 +972,7 @@ void Newgame_Control(void)
         
         Create_State = newgame_state;
 
-        switch(newgame_state)
+        switch(Create_State)
         {
             case -1:
             {
@@ -951,15 +980,23 @@ void Newgame_Control(void)
             } break;
             case 0:
             {
-                Newgame_Screen0();
+                newgame_state = Newgame_Screen0();  // returns 1 on input field is ok button
             } break;
             case 1:
             {
-                Newgame_Screen1__WIP();
+                newgame_state = Newgame_Screen1__WIP();  // returns {0,2,3} - {0:cancel,2:custom,3:prefab}
+                if(newgame_state == 2)
+                {
+                    custom_game_flag = ST_TRUE;
+                }
+                else
+                {
+                    custom_game_flag = ST_FALSE;
+                }
             } break;
             case 2:
             {
-                Newgame_Screen2__WIP();
+                newgame_state = Newgame_Screen2__WIP();
             } break;
             case 3:
             {
@@ -1079,7 +1116,7 @@ memory if the OK button is clicked, or returns -1
 without saving if the Esc key is pressed
 */
 /*
-
+returns 1 on input field is ok button
 */
 int16_t Newgame_Screen0(void)
 {
@@ -1092,36 +1129,38 @@ int16_t Newgame_Screen0(void)
     screen_changed = ST_TRUE;
     
     // ; conflicting condition - will never jump
-    if(screen_changed == ST_FALSE)
+    if(screen_changed != ST_FALSE)
     {
         Fade_Out();
     }
 
-    Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_BLACK);
+    Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
 
     Set_Page_On();
 
-    Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_BLACK);
+    Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
 
     Set_Page_Off();
 
     Load_Palette(0, -1, ST_NULL);
 
-    // _background_seg = LBX_Reload_Next(newgame_lbx_file, 0, _screen_seg);
-    newgame_background_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 0, _screen_seg);
-
+    /*
+    NEWGAME.LBX, 000  BACKGRND    Main screen back
+    NEWGAME.LBX, 001  NEWGAMP2    New game border
+    NEWGAME.LBX, 002  NEWGMBT2    OK button
+    NEWGAME.LBX, 003  NEWGMBT2    Cancel button
+    NEWGAME.LBX, 004  NEWGMBT3    Difficulty button
+    NEWGAME.LBX, 005  NEWGMBT3    Opponents button
+    NEWGAME.LBX, 006  NEWGMBT3    Land Size button
+    NEWGAME.LBX, 007  NEWGMBT3    Magic buton
+    */
+    newgame_background_seg = LBX_Reload(newgame_lbx_file__ovr050, 0, _screen_seg);
     IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 1, _screen_seg);
-
     newgame_ok_button_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 2, _screen_seg);
-
     _quit_active_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 3, _screen_seg);
-
     IMG_NewG_ButtonBGs[0] = LBX_Reload_Next(newgame_lbx_file__ovr050, 4, _screen_seg);
-
     IMG_NewG_ButtonBGs[1] = LBX_Reload_Next(newgame_lbx_file__ovr050, 5, _screen_seg);
-
     IMG_NewG_ButtonBGs[2] = LBX_Reload_Next(newgame_lbx_file__ovr050, 6, _screen_seg);
-
     IMG_NewG_ButtonBGs[3] = LBX_Reload_Next(newgame_lbx_file__ovr050, 7, _screen_seg);
 
     if(
@@ -1181,15 +1220,17 @@ int16_t Newgame_Screen0(void)
         magic_set.MagicPower = 0;
     }
 
-    Set_Mouse_List(1, mouse_list_newgame0);
+    Set_Mouse_List(1, mouse_list_newgame_0_1);
 
     Clear_Fields();
 
     Set_Page_On();
 
-    Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_BLACK);
+    Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
 
     Set_Page_Off();
+
+    Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
 
     _ok_button = Add_Button_Field(252, 179, &empty_string__ovr050[0], newgame_ok_button_seg, empty_string__ovr050[0], ST_UNDEFINED);
 
@@ -1209,8 +1250,8 @@ int16_t Newgame_Screen0(void)
 
     Assign_Auto_Function(Newgame_Screen0_Draw, 1);
 
-    
     Set_Newgame_Screen0_Help_List();
+
     while(leave_screen == ST_FALSE)
     {
 
@@ -1248,7 +1289,7 @@ int16_t Newgame_Screen0(void)
             
             _difficulty = magic_set.Difficulty;
             
-            return 1;            
+            return 1;  // 
         }
         
         if(input_field_idx == newgame_difficulty_button_field)
@@ -1307,14 +1348,19 @@ int16_t Newgame_Screen0(void)
             Toggle_Pages();
 
             // ; conflicting condition - will never jump
-            if(screen_changed == ST_FALSE)
+            if(screen_changed != ST_FALSE)
             {
-
-                Copy_On_To_Off_Page();
-
-                Fade_In();
                 
-                First_Draw_Done = ST_TRUE;
+                if(First_Draw_Done == ST_FALSE)
+                {
+
+                    Copy_On_To_Off_Page();
+
+                    Fade_In();
+                    
+                    First_Draw_Done = ST_TRUE;
+                    
+                }
                 
             }
 
@@ -1325,7 +1371,7 @@ int16_t Newgame_Screen0(void)
     }
 
 // Non-void function does not return a value in all control paths
-    /* HACK */  return 0;
+/* HACK */  return 0;
 
 }
 
@@ -1366,17 +1412,17 @@ void Newgame_Screen0_Draw(void)
     // FLIC_Draw(0, 0, _background_seg);
     FLIC_Draw(0, 0, newgame_background_seg);
 
-    Fill(250, 38, 315, 54, ST_BLACK);
+    Fill(250, 38, 315, 54, ST_TRANSPARENT);
     
-    Fill(250, 65, 315, 82, ST_BLACK);
+    Fill(250, 65, 315, 82, ST_TRANSPARENT);
 
-    Fill(250, 92, 315, 107, ST_BLACK);
+    Fill(250, 92, 315, 107, ST_TRANSPARENT);
     
-    Fill(250, 119, 315, 134, ST_BLACK);
+    Fill(250, 119, 315, 134, ST_TRANSPARENT);
 
-    Fill(251, 178, 315, 193, ST_BLACK);
+    Fill(251, 178, 315, 193, ST_TRANSPARENT);
 
-    Fill(170, 178, 234, 193, ST_BLACK);
+    Fill(170, 178, 234, 193, ST_TRANSPARENT);
 
     FLIC_Draw(165, 0, IMG_NewG_RgtOverlay);
 
@@ -1493,26 +1539,383 @@ void Randomize_Book_Heights(void)
 // o50p08
 // drake178: GAME_New_Screen_1()
 /*
-
+; displays and processes the second screen of new game
+; creation: choosing a wizard, enabling custom creation
+; only on the Easy and higher difficulties
+; returns 2 if the Custom button is clicked, 0 if the
+; Esc key is pressed, or 3 after copying default wizard
+; data if a pre-defined character is selected
 */
-void Newgame_Screen1__WIP(void)
+/*
+returns {0,2,3} - {0:cancel,2:custom,3:prefab}
+*/
+int16_t Newgame_Screen1__WIP(void)
 {
+    int16_t Escape_Hotkey_Control = 0;
+    int16_t input_field_idx = 0;
+    int16_t leave_screen = 0;
+    int16_t First_Draw_Done = 0;
+    int16_t IDK = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
 
+    IDK = 0;
 
+    if(magic_set.Difficulty < 1)
+    {
+        IDK = 7;
+    }
+    else
+    {
+        IDK = 8;
+    }
+
+    newgame_background_seg = LBX_Reload(newgame_lbx_file__ovr050, 0, _screen_seg);
+
+    /*
+    NEWGAME.LBX, 009  NEWGMWBT    Wizards button1
+    NEWGAME.LBX, 010  NEWGMWBT     Wizards button2
+    NEWGAME.LBX, 011  NEWGMWBT     Wizards button3
+    NEWGAME.LBX, 012  NEWGMWBT     Wizards button4
+    NEWGAME.LBX, 013  NEWGMWBT     Wizards button5
+    NEWGAME.LBX, 014  NEWGMWBT     Wizards button6
+    NEWGAME.LBX, 015  NEWGMWBT     Wizards button7
+    NEWGAME.LBX, 016  NEWGMWBT     Wizards button8
+    NEWGAME.LBX, 017  NEWGMWBT     Wizards button9
+    NEWGAME.LBX, 018  NEWGMWBT     Wizards button10
+    NEWGAME.LBX, 019  NEWGMWBT     Wizards button11
+    NEWGAME.LBX, 020  NEWGMWBT     Wizards button12
+    NEWGAME.LBX, 021  NEWGMWBT     Wizards button13
+    NEWGAME.LBX, 022  NEWGMWBT     Wizards button14
+    NEWGAME.LBX, 023  NEWGMWBT     Wizards button15
+    */
+    for(itr = 0; itr < 15; itr++)
+    {
+        IMG_NewG_ButtonBGs[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (9 + itr), _screen_seg);
+    }
+
+    if(IDK == 0)
+    {
+        // NEWGAME.LBX, 008  NEWGMWZ2    Wizards border
+        IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 8, _screen_seg);
+    }
+    else
+    {
+        // NEWGAME.LBX, 039  NEWPICS     
+        IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 39, _screen_seg);
+    }
+
+    // ; load the spellbook binder images
+    // ; PATCHED here for realm reordering
+    /*
+    NEWGAME.LBX, 024  BOOKS      White book 1
+    NEWGAME.LBX, 025  BOOKS      White book 2
+    NEWGAME.LBX, 026  BOOKS      White book 3
+    NEWGAME.LBX, 027  BOOKS      Blue book 1
+    NEWGAME.LBX, 028  BOOKS      Blue book 2
+    NEWGAME.LBX, 029  BOOKS      Blue book 3
+    NEWGAME.LBX, 030  BOOKS      Green book 1
+    NEWGAME.LBX, 031  BOOKS      Green book 2
+    NEWGAME.LBX, 032  BOOKS      Green book 3
+    NEWGAME.LBX, 033  BOOKS      Black book 1
+    NEWGAME.LBX, 034  BOOKS      Black book 2
+    NEWGAME.LBX, 035  BOOKS      Black book 3
+    NEWGAME.LBX, 036  BOOKS      Red book 1
+    NEWGAME.LBX, 037  BOOKS      Red book 2
+    NEWGAME.LBX, 038  BOOKS      Red book 3
+    */
+    for(itr = 0; itr < 15; itr++)
+    {
+        IMG_NewG_Books[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (24 + itr), _screen_seg);
+    }
+
+    Set_Mouse_List(1, mouse_list_newgame_0_1);  // ; should use Normal_Fullscreen
+
+    Clear_Fields();
+
+    leave_screen = ST_FALSE;
+    
+    First_Draw_Done = ST_FALSE;
+    
+    NEWG_Moused_Wizard = 0;
+
+    NEWG_PortraitSelType = 8;  // Default: "Select Wizard"
+
+    NEWG_Select_Labels[14] = INVALID_FIELD;
+
+    // ; create the necessary amount of click label controls
+    for(itr = 0; itr < 7; itr++)
+    {
+
+        NEWG_Select_Labels[itr] = Add_Hidden_Field(168, (26 + (22 * itr)), 237, (42 + (22 * itr)), empty_string__ovr050, ST_UNDEFINED);
+
+    }
+
+    for(itr = 0; itr < IDK; itr++)
+    {
+
+        NEWG_Select_Labels[(7+itr)] = Add_Hidden_Field(244, (26 + (22 * itr)), 313, (42 + (22 * itr)), empty_string__ovr050, ST_UNDEFINED);
+
+    }
+
+    Escape_Hotkey_Control = Add_Hot_Key(str_ESC__ovr050);
+
+    Assign_Auto_Function(Newgame_Screen1_Draw__WIP, 1);
+
+    if(magic_set.Difficulty < god_Easy)
+    {
+        Set_Newgame_Screen1_Help_List(ST_FALSE);
+    }
+    else
+    {
+        Set_Newgame_Screen1_Help_List(ST_TRUE);
+    }
+
+    Set_Input_Delay(2);
+
+    while(leave_screen == ST_FALSE)
+    {
+
+        input_field_idx = Get_Input();
+
+        Mark_Time();
+
+        if(input_field_idx == Escape_Hotkey_Control)
+        {
+            return 0;
+        }
+
+        for(itr = 0; itr < 14; itr++)
+        {
+            if(NEWG_Select_Labels[itr] == input_field_idx)
+            {
+                Deactivate_Auto_Function();
+                Deactivate_Help_List();
+                WIZ_CopyDefault__WIP(itr);
+                return 3;
+            }
+        }
+
+        if(input_field_idx == NEWG_Select_Labels[14])  // "Custom"
+        {
+            Deactivate_Auto_Function();
+            Deactivate_Help_List();
+            return 2;
+        }
+
+        if(leave_screen == ST_FALSE)
+        {
+            Newgame_Screen1_Draw__WIP();
+            Apply_Palette();
+            Toggle_Pages();
+            if(First_Draw_Done == ST_FALSE)
+            {
+                First_Draw_Done = ST_TRUE;
+                Copy_On_To_Off_Page();
+            }
+            Release_Time(2);
+        }
+
+    }
+
+    return 0;
 
 }
 
 // o50p09
-// Draw_NewGame_Screen1()
+/*
+; draws the new game wizard portrait selection screen
+; into the current draw frame, with or without retort
+; and bookshelf display, and with or without showing
+; the "Custom" button, all based on global variables
+*/
+/*
+unresolved external symbol Set_Newgame_Screen1_Help_List referenced in function Newgame_Screen1__WIP
+*/
+void Newgame_Screen1_Draw__WIP(void)
+{
+    char Retort_String[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint8_t * Retort_Text_Color = 0;
+    uint8_t Font_Colors[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint8_t Shadow_Colors[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Right_Column_Count = 0;
+    int16_t l_auto_input_field_idx = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
+
+// lea     ax, [bp+Shadow_Colors]
+// push    ss
+// push    ax                                ; Dest_Struct
+// mov     ax, offset COL_NEWG_FontShadow
+// push    ds
+// push    ax                                ; src
+// mov     cx, 8
+// call    SCOPY@                            ; compiler generate - copy struct to struct
+    memcpy(Shadow_Colors, COL_NEWG_FontShadow, 8);
+
+// lea     ax, [bp+Font_Colors]
+// push    ss
+// push    ax                                ; Dest_Struct
+// mov     ax, offset COL_NEWG_Font
+// push    ds                                ; Color_3
+// push    ax                                ; Color_2
+// mov     cx, 8
+// call    SCOPY@                            ; compiler generate - copy struct to struct
+    memcpy(Font_Colors, COL_NEWG_Font, 8);
+
+    Retort_Text_Color = COL_NEWG_Retorts;
+
+    l_auto_input_field_idx = Auto_Input();
+
+    if(Scan_Input() != ST_NULL)
+    {
+        NEWG_Moused_Wizard = (Scan_Input() - 1);
+    }
+
+    FLIC_Draw(0, 0, newgame_background_seg);
+
+    FLIC_Draw(165, 17, IMG_NewG_RgtOverlay);
+
+    // FTW  Set_Font_Style1(5, 5);
+    Set_Font_Style_Shadow_Down(5, 5, ST_NULL, ST_NULL);
+
+    if(NEWG_PortraitSelType == 8)
+    {
+        Print_Centered(242, 1, cnst_Wiz_Select);  // "Select Wizard"
+    }
+    else
+    {
+        Print_Centered(242, 1, cnst_Pic_Select);  // "Select Picture"
+    }
+
+    Fill(168,  27, 237,  42, ST_TRANSPARENT);
+    Fill(168,  48, 237,  64, ST_TRANSPARENT);
+    Fill(168,  70, 237,  86, ST_TRANSPARENT);
+    Fill(168,  92, 237, 108, ST_TRANSPARENT);
+    Fill(168, 114, 237, 130, ST_TRANSPARENT);
+    Fill(168, 136, 237, 152, ST_TRANSPARENT);
+    Fill(168, 158, 237, 174, ST_TRANSPARENT);
+    Fill(244,  26, 313,  42, ST_TRANSPARENT);
+    Fill(244,  48, 313,  64, ST_TRANSPARENT);
+    Fill(244,  70, 313,  86, ST_TRANSPARENT);
+    Fill(244,  92, 313, 108, ST_TRANSPARENT);
+    Fill(244, 114, 313, 130, ST_TRANSPARENT);
+    Fill(244, 136, 313, 152, ST_TRANSPARENT);
+    Fill(244, 158, 313, 174, ST_TRANSPARENT);
+
+    if(
+        (NEWG_PortraitSelType == 8)
+        &&
+        (magic_set.Difficulty > god_Intro)
+    )
+    {
+        Fill(244, 180, 313, 196, ST_TRANSPARENT);
+    }
+
+    // draws the blank portrait
+    if(NEWG_Moused_Wizard < 14)  // "Custom"
+    {
+        FLIC_Draw(24, 10, wizard_portrait_segs[NEWG_Moused_Wizard]);
+    }
+
+    Set_Font_Style(3, 15, ST_NULL, ST_NULL);
+
+    // ; draw the wizard selection buttons of the left column
+    for(itr = 0; itr < 7; itr++)
+    {
+
+        if(NEWG_Select_Labels[itr] != l_auto_input_field_idx)
+        {
+            FLIC_Draw(169, (27 + (22 * itr)), IMG_NewG_ButtonBGs[itr]);
+            Set_Font_Colors_15(3, &Shadow_Colors[0]);
+            Print_Centered(203, (31 + (22 * itr)), TBL_Default_Wizards[itr].Name);
+            Set_Font_Colors_15(3, &Font_Colors[0]);
+            Print_Centered(202, (30 + (22 * itr)), TBL_Default_Wizards[itr].Name);
+        }
+        else
+        {
+            FLIC_Draw(170, (28 + (22 * itr)), IMG_NewG_ButtonBGs[itr]);
+            Set_Font_Colors_15(3, &Shadow_Colors[0]);
+            Print_Centered(204, (32 + (22 * itr)), TBL_Default_Wizards[itr].Name);
+            Set_Font_Colors_15(3, &Font_Colors[0]);
+            Print_Centered(203, (31 + (22 * itr)), TBL_Default_Wizards[itr].Name);
+        }
+
+    }
+
+    Right_Column_Count = NEWG_PortraitSelType;
+
+    if(magic_set.Difficulty < god_Easy)
+    {
+        Right_Column_Count = 7;
+    }
+
+    for(itr = 0; itr < Right_Column_Count; itr++)
+    {
+
+        if(NEWG_Select_Labels[(7+itr)] == l_auto_input_field_idx)
+        {
+            FLIC_Draw(246, (28 + (22 * itr)), IMG_NewG_ButtonBGs[(7 + itr)]);
+            Set_Font_Colors_15(3, &Shadow_Colors[0]);
+            Print_Centered(280, (32 + (22 * itr)), TBL_Default_Wizards[(7 + itr)].Name);
+            Set_Font_Colors_15(3, &Font_Colors[0]);
+            Print_Centered(279, (31 + (22 * itr)), TBL_Default_Wizards[(7 + itr)].Name);
+        }
+        else
+        {
+            FLIC_Draw(245, (27 + (22 * itr)), IMG_NewG_ButtonBGs[(7 + itr)]);
+            Set_Font_Colors_15(3, &Shadow_Colors[0]);
+            Print_Centered(279, (31 + (22 * itr)), TBL_Default_Wizards[(7 + itr)].Name);
+            Set_Font_Colors_15(3, &Font_Colors[0]);
+            Print_Centered(278, (30 + (22 * itr)), TBL_Default_Wizards[(7 + itr)].Name);
+        }
+
+    }
+
+    /* Print Retort Name */
+    if(
+        (TBL_Default_Wizards[NEWG_Moused_Wizard].Retort != ST_UNDEFINED)
+        &&
+        (NEWG_PortraitSelType == 8)  // defaulted to 8 and god is not Intro so didn't get reduced to 7  second has 7 wizards + custom
+        &&
+        (NEWG_Moused_Wizard < 14)  // "Custom" is not the mouse-over
+    )
+    {
+        Set_Font_Style(0, 15, ST_NULL, ST_NULL);
+        Set_Font_Colors_15(0, &Font_Colors[0]);
+        strcpy(Retort_String, STR_Retorts[TBL_Default_Wizards[NEWG_Moused_Wizard].Retort]);  // 1 + {-1,0,1,2,...}
+        strcat(Retort_String, cnst_DOT);
+        Print(13, 101, Retort_String);
+        Set_Font_Colors_15(0, &Retort_Text_Color[0]);
+        Print(12, 180, Retort_String);
+    }
+
+    if(NEWG_PortraitSelType == 8)
+    {
+        NEWG_DrawDefShelf__WIP(NEWG_Moused_Wizard);
+    }
+
+    /* Print Wizard Name */
+    if(NEWG_Moused_Wizard < 14)  // "Custom"
+    {
+        Set_Font_Style(4, 15, ST_NULL, ST_NULL);
+        Set_Font_Colors_15(4, &Shadow_Colors[0]);
+        Print_Centered(78, 120, TBL_Default_Wizards[NEWG_Moused_Wizard].Name);
+        Print_Centered(77, 120, TBL_Default_Wizards[NEWG_Moused_Wizard].Name);
+        Set_Font_Colors_15(4, &Font_Colors[0]);
+        Print_Centered(77, 119, TBL_Default_Wizards[NEWG_Moused_Wizard].Name);
+    }
+
+}
 
 // o50p10
 /*
 
 */
-void Newgame_Screen2__WIP(void)
+int16_t Newgame_Screen2__WIP(void)
 {
 
 
+
+    return 0;
 
 }
 
@@ -1523,7 +1926,7 @@ void Newgame_Screen2__WIP(void)
 int16_t Newgame_Screen3__WIP(void)
 {
 
-    return 0;
+    return 1;
 
 }
 
@@ -1565,7 +1968,82 @@ int16_t Newgame_Screen6__WIP(void)
 // GAME_DrawRetortsStr()
 
 // o50p18
-// NEWG_DrawDefShelf()
+/*
+
+; PATCHED / rewritten in the realm reordering patch
+;
+; draws the bookshelf of the selected default profile
+; into the current draw segment under the large wizard
+; portait location on the left side of the new game
+; creation screen
+;
+; WARNING: limited to only two realms of books
+*/
+/*
+
+*/
+void NEWG_DrawDefShelf__WIP(int16_t Portrait_Index)
+{
+    int16_t Second_Book_Realm = 0;
+    int16_t First_Book_Realm = 0;
+    int16_t Second_Book_Count = 0;
+    int16_t First_Book_Count = 0;
+    int16_t * Profile_Books_Offset = 0;
+    int16_t Second_Realm_Books_Index = 0;
+    int16_t First_Realm_Books_Index = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t IDK = 0;  // _DI_
+
+    First_Realm_Books_Index = ST_UNDEFINED;
+    Second_Realm_Books_Index = ST_UNDEFINED;
+    First_Book_Count = 0;
+    Second_Book_Count = 0;
+    IDK = 36;
+    First_Book_Realm = ST_UNDEFINED;
+    Second_Book_Realm = ST_UNDEFINED;
+
+    Profile_Books_Offset = &TBL_Default_Wizards[Portrait_Index].Life;
+
+    for(itr = 0; itr < 5; itr++)
+    {
+        if(Profile_Books_Offset[itr] > 0)
+        {
+            if(First_Realm_Books_Index == ST_UNDEFINED)
+            {
+                First_Realm_Books_Index = (itr * 3);
+                First_Book_Count += Profile_Books_Offset[itr];
+                First_Book_Realm = itr;
+            }
+            else
+            {
+                Second_Realm_Books_Index = (itr * 3);
+                Second_Book_Count += Profile_Books_Offset[itr];
+                Second_Book_Realm = itr;
+            }
+        }
+    }
+
+    if(First_Realm_Books_Index != ST_UNDEFINED)
+    {
+        for(itr = 0; itr < First_Book_Count; itr++)
+        {
+            // ; initialized to random values of 0, 1, or 2
+            FLIC_Draw(IDK, 135, IMG_NewG_Books[(First_Realm_Books_Index + TBL_Bookshelf_Books[itr])]);
+            IDK += 8;
+        }
+    }
+
+    if(Second_Realm_Books_Index != ST_UNDEFINED)
+    {
+        for(itr = 0; itr < Second_Book_Count; itr++)
+        {
+            // ; initialized to random values of 0, 1, or 2
+            FLIC_Draw(IDK, 135, IMG_NewG_Books[(Second_Realm_Books_Index + TBL_Bookshelf_Books[itr])]);
+            IDK += 8;
+        }
+    }
+
+}
 
 // o50p19
 /*
@@ -1604,7 +2082,154 @@ void Newgame_Screen5__WIP(void)
 // SCRN_Draw_NewScr5_2()
 
 // o50p25
-// WIZ_CopyDefault()
+/*
+; copies the name and profile traits of the selected
+; default wizard to the human player's wizard record,
+; and their default spells to the new game spell
+; selection array, clearing any previous data in these
+; fields
+*/
+/*
+
+*/
+void WIZ_CopyDefault__WIP(int16_t Portrait_Index)
+{
+    int8_t * Retorts_Pointer = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t spellranks = 0;  // _DI_
+
+    _players[0].wizard_id = Portrait_Index;
+
+    _players[0].spellranks[0] = TBL_Default_Wizards[Portrait_Index].Nature;
+    _players[0].spellranks[1] = TBL_Default_Wizards[Portrait_Index].Sorcery;
+    _players[0].spellranks[2] = TBL_Default_Wizards[Portrait_Index].Chaos;
+    _players[0].spellranks[3] = TBL_Default_Wizards[Portrait_Index].Life;
+    _players[0].spellranks[4] = TBL_Default_Wizards[Portrait_Index].Death;
+
+    Retorts_Pointer = &_players[0].alchemy;
+
+    // ; clear all retorts in the human player's wizard record
+    // ; while copying any that are in the preset profile
+    for(itr = 0; itr < NUM_RETORTS; itr++)
+    {
+
+        if(TBL_Default_Wizards[Portrait_Index].Retort == itr)
+        {
+            Retorts_Pointer[itr] = 1;
+        }
+        else
+        {
+            Retorts_Pointer[itr] = 0;
+        }
+
+    }
+
+    // ; clear the spell selection list
+    for(itr = 0; itr < 13; itr++)
+    {
+
+        TBL_Spells_Nature.Common[itr] = 0;
+        TBL_Spells_Sorcery.Common[itr] = 0;
+        TBL_Spells_Chaos.Common[itr] = 0;
+        TBL_Spells_Life.Common[itr] = 0;
+        TBL_Spells_Death.Common[itr] = 0;
+
+    }
+
+    spellranks = _players[0].spellranks[0];
+    // ; PATCHED here to fix 11-book default wizard spells
+    if(spellranks > 1)
+    {
+        for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
+        {
+            TBL_Spells_Nature.Common[itr] = TBL_Def_Spl_Nature.Common[itr];
+        }
+        for(itr = 0; (TBL_SpellsPerBook_U[spellranks] - 2) > itr; itr++)
+        {
+            TBL_Spells_Nature.Uncommon[itr] = TBL_Def_Spl_Nature.Uncommon[itr];
+        }
+        if((TBL_SpellsPerBook_U[spellranks] - 2) > 0)
+        {
+            TBL_Spells_Nature.Rare = TBL_Def_Spl_Nature.Rare;
+        }
+    }
+
+    spellranks = _players[0].spellranks[1];
+    // ; PATCHED here to fix 11-book default wizard spells
+    if(spellranks > 1)
+    {
+        for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
+        {
+            TBL_Spells_Sorcery.Common[itr] = TBL_Def_Spl_Nature.Common[itr];
+        }
+        for(itr = 0; (TBL_SpellsPerBook_U[spellranks] - 2) > itr; itr++)
+        {
+            TBL_Spells_Sorcery.Uncommon[itr] = TBL_Def_Spl_Nature.Uncommon[itr];
+        }
+        if((TBL_SpellsPerBook_U[spellranks] - 2) > 0)
+        {
+            TBL_Spells_Sorcery.Rare = TBL_Def_Spl_Nature.Rare;
+        }
+    }
+
+    spellranks = _players[0].spellranks[2];
+    // ; PATCHED here to fix 11-book default wizard spells
+    if(spellranks > 1)
+    {
+        for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
+        {
+            TBL_Spells_Chaos.Common[itr] = TBL_Def_Spl_Nature.Common[itr];
+        }
+        for(itr = 0; (TBL_SpellsPerBook_U[spellranks] - 2) > itr; itr++)
+        {
+            TBL_Spells_Chaos.Uncommon[itr] = TBL_Def_Spl_Nature.Uncommon[itr];
+        }
+        if((TBL_SpellsPerBook_U[spellranks] - 2) > 0)
+        {
+            TBL_Spells_Chaos.Rare = TBL_Def_Spl_Nature.Rare;
+        }
+    }
+
+    spellranks = _players[0].spellranks[3];
+    // ; PATCHED here to fix 11-book default wizard spells
+    if(spellranks > 1)
+    {
+        for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
+        {
+            TBL_Spells_Life.Common[itr] = TBL_Def_Spl_Nature.Common[itr];
+        }
+        for(itr = 0; (TBL_SpellsPerBook_U[spellranks] - 2) > itr; itr++)
+        {
+            TBL_Spells_Life.Uncommon[itr] = TBL_Def_Spl_Nature.Uncommon[itr];
+        }
+        if((TBL_SpellsPerBook_U[spellranks] - 2) > 0)
+        {
+            TBL_Spells_Life.Rare = TBL_Def_Spl_Nature.Rare;
+        }
+    }
+
+    spellranks = _players[0].spellranks[4];
+    // ; PATCHED here to fix 11-book default wizard spells
+    if(spellranks > 1)
+    {
+        for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
+        {
+            TBL_Spells_Death.Common[itr] = TBL_Def_Spl_Nature.Common[itr];
+        }
+        for(itr = 0; (TBL_SpellsPerBook_U[spellranks] - 2) > itr; itr++)
+        {
+            TBL_Spells_Death.Uncommon[itr] = TBL_Def_Spl_Nature.Uncommon[itr];
+        }
+        if((TBL_SpellsPerBook_U[spellranks] - 2) > 0)
+        {
+            TBL_Spells_Death.Rare = TBL_Def_Spl_Nature.Rare;
+        }
+    }
+
+    strcpy(_players[0].name, TBL_Default_Wizards[Portrait_Index].Name);
+
+}
+
 
 // o50p26
 // Fade_Out()
@@ -1644,7 +2269,28 @@ void Set_Newgame_Screen0_Help_List(void)
 // HLP_Load_PortraitSel()
 
 // o50p32
-// HLP_Load_WizardSel()
+/*
+; loads and sets the GUI help entry area array for the
+; wizard selection screen
+*/
+/*
+
+*/
+void Set_Newgame_Screen1_Help_List(int16_t has_custom)
+{
+
+    // HLPENTRY.LBX, 032  ""  "Wizard Selection Help"
+    LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 32, _help_entries, 0, 15, 10);
+
+    if(has_custom != ST_FALSE)
+    {
+        _help_entries[140].help_idx = HLP_CUSTOM;
+    }
+
+    Set_Help_List(_help_entries, 15);
+
+}
+
 
 // o50p33
 // HLP_Load_WizCreate()

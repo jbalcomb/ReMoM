@@ -59,6 +59,7 @@ ITEM_MAX_POWERS
 
 #define NUM_MAGIC_TYPES             5
 #define NUM_MAGIC_REALMS            6
+#define NUM_RETORTS                18
 
 // #define MAX_BATTLE_UNIT_COUNT      18
 #define MAX_BATTLE_UNIT_COUNT      18

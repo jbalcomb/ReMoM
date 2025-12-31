@@ -46,6 +46,17 @@
 // WZD s01p02
 // ~== MGC s01p03  Menu_Screen_Control()
 // MoO2 Module: MOX2
+/*
+
+main_menu_selection = Main_Menu_Screen()
+switch(main_menu_selection)
+    0 case scr_Continue
+    1 case scr_LoadGame
+    2 case scr_NewGame
+    3 case scr_QuitToDos
+    4 case scr_HallOfFame
+
+*/
 void Screen_Control(void)
 {
     int16_t prev__Settings_BG_Music = 0;
@@ -128,7 +139,7 @@ void Screen_Control(void)
 
             case scr_New_Game_Screen:
             {
-                // BJORKED  Newgame_Control();
+                Newgame_Control__WIP();  // MAGIC.EXE  ovr050  o050p001
             } break;
 
             case scr_Quit_To_DOS:

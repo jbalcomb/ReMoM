@@ -488,12 +488,12 @@ int16_t Main_Menu_Screen(void)
                 current_menu_screen = 1;
                 /* HACK */  current_screen = scr_Load_Screen;
             }
-            // if((input_field_idx == _new_hotkey) || (input_field_idx == _new_button))
-            // {
-            //     leave_screen_flag = ST_TRUE;
-            //     current_menu_screen = 2;
-            //     /* HACK */  current_screen = scr_New_Game_Screen;
-            // }
+            if((input_field_idx == _new_hotkey) || (input_field_idx == _new_button))
+            {
+                leave_screen_flag = ST_TRUE;
+                current_menu_screen = 2;
+                /* HACK */  current_screen = scr_New_Game_Screen;
+            }
             if((input_field_idx == _quit_hotkey) || (input_field_idx == _quit_button) || (input_field_idx == _esc_hotkey))
             {
                 leave_screen_flag = ST_TRUE;

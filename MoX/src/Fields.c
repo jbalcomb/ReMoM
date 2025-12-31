@@ -607,6 +607,11 @@ void Enable_Mouse_Wait(void)
 // drake178: GUI_GetMouseFocus()
 // AKA Get_Mouse_Field()
 // MoO2  Module: fields  Auto_Input()
+/*
+
+What does this do on New Game Screen 1?
+
+*/
 int16_t Auto_Input(void)
 {
     return auto_input_variable;

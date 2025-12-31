@@ -42,6 +42,50 @@ enum e_RANDOM_PICK_TYPES
     Any_Picks      = 2
 };
 
+// sizeof=0x16
+struct WIZARD_Preset
+{
+    /* 00 */  char Name[10];
+    /* 0A */  int16_t Life;
+    /* 0C */  int16_t Sorcery;
+    /* 0E */  int16_t Nature;
+    /* 10 */  int16_t Death;
+    /* 12 */  int16_t Chaos;
+    /* 14 */  int16_t Retort;  // ; enum RET_Enum
+    /* 16 */
+};
+enum RET_Enum
+{
+    _No_Retort  = -1,
+    _Alchemy  = 0,
+    _Warlord  = 1,
+    _Chaos_Mastery  = 2,
+    _Nature_Mastery  = 3,
+    _Sorcery_Mastery  = 4,
+    _Infernal_Power  = 5,
+    _Divine_Power  = 6,
+    _Sage_Master  = 7,
+    _Channeller  = 8,
+    _Myrran  = 9,
+    _Archmage  = 10,
+    _Mana_Focusing  = 11,
+    _Node_Mastery  = 12,
+    _Famous  = 13,
+    _Runemaster  = 14,
+    _Conjurer  = 15,
+    _Charismatic  = 16,
+    _Artificer  = 17
+};
+
+// sizeof=0x1A
+struct Default_Spells
+{
+    /* 00 */    int16_t Common[10];
+    /* 14 */    int16_t Uncommon[2];
+    /* 18 */    int16_t Rare;
+    /* 1A */
+};
+
 
 
 #ifdef __cplusplus
@@ -56,7 +100,7 @@ extern "C" {
 */
 
 // o50p01
-void Newgame_Control(void);
+void Newgame_Control__WIP(void);
 
 // o50p02
 void GAME_WizardsLaunch__WIP(int16_t save_gam_idx);
@@ -77,13 +121,13 @@ void Newgame_Screen0_Draw(void);
 void Randomize_Book_Heights(void);
 
 // o50p08
-void Newgame_Screen1__WIP(void);
+int16_t Newgame_Screen1__WIP(void);
 
 // o50p09
-// Draw_NewGame_Screen1()
+void Newgame_Screen1_Draw__WIP(void);
 
 // o50p10
-void Newgame_Screen2__WIP(void);
+int16_t Newgame_Screen2__WIP(void);
 
 // o50p11
 int16_t Newgame_Screen3__WIP(void);
@@ -107,7 +151,7 @@ int16_t Newgame_Screen6__WIP(void);
 // GAME_DrawRetortsStr()
 
 // o50p18
-// NEWG_DrawDefShelf()
+void NEWG_DrawDefShelf__WIP(int16_t Portrait_Index);
 
 // o50p19
 void Newgame_Screen4__WIP(void);
@@ -128,7 +172,7 @@ void Newgame_Screen5__WIP(void);
 // SCRN_Draw_NewScr5_2()
 
 // o50p25
-// WIZ_CopyDefault()
+void WIZ_CopyDefault__WIP(int16_t Portrait_Index);
 
 // o50p26
 // Fade_Out()
@@ -149,7 +193,7 @@ void Set_Newgame_Screen0_Help_List(void);
 // HLP_Load_PortraitSel()
 
 // o50p32
-// HLP_Load_WizardSel()
+void Set_Newgame_Screen1_Help_List(int16_t Can_Customize);
 
 // o50p33
 // HLP_Load_WizCreate()

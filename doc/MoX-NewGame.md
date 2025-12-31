@@ -11,11 +11,18 @@ MAPGEN
 HOMEGEN
 
 
-
-main()
+MAGIC.EXE
+_main()
 Main_Menu_Control()
 Newgame_Control()
 Init_New_Game()
+
+MAGIC.EXE
+    _main()
+        Menu_Screen_Control()
+            main_menu_selection = Main_Menu_Screen()
+            switch(main_menu_selection)
+
 
 
 
@@ -53,7 +60,6 @@ Prefab Wizard vs. Custom
         Select ... Spells
         Select ... Spells
         Select Race
-
 
 
 
@@ -115,6 +121,15 @@ MGC dseg:4D3A 00 00                                           auto_input_variabl
     if(auto_input_field_idx != newgame_landsize_button_field)
     if(auto_input_field_idx != newgame_magic_button_field)
 
+
+## Newgame_Screen1()
+some difficulty setting variable, also chooses background
+mouse_list_newgame0
+
+
+## WIZ_CopyDefault__WIP()
+14 prefab wizards
+Portrait_Index AKA wizard_id
 
 
 
