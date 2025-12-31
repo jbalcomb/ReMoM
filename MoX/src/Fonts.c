@@ -224,6 +224,11 @@ void Load_Font_File(char * font_file)
 */
 
 // WZD s17p01
+// drake178: VGA_SetFont_Style1()
+/*
+; calls VGA_SetFont with the passed parameters, then
+; sets the outline style to 1 (bottom right)
+*/
 // AKA Set_Font_Style1()
 // MoO2  Module: fonts  Set_Font_Style_Shadow_Down()
 /*
@@ -278,7 +283,8 @@ void Set_Outline_Color(int16_t color_num)
 }
 
 // WZD s17p07
-// ? MoO2 Set_Font_LF ?
+// drake178: VGA_SetVertSpacing()
+// ¿ MoO2 Set_Font_LF ?
 void Set_Font_LF(int16_t spacing)
 {
     font_header->current_base_height = font_header->height + spacing;
@@ -1689,6 +1695,7 @@ int16_t Get_Font_Vertical_Spacing(void)
 }
 
 // WZD s17p59
+// drake178: STR_TrimWhiteSpace()
 /*
 MoO2
 Module: strings

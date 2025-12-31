@@ -133,7 +133,7 @@ int16_t Newgame_Screen2__WIP(void);
 int16_t Newgame_Screen_3__WIP(void);
 
 // o50p12
-// GAME_Draw_NewScr3()
+void Newgame_Screen_3_Draw__WIP(void);
 
 // o50p13
 void Newgame_Screen7__WIP(void);
@@ -148,7 +148,7 @@ int16_t Newgame_Screen6__WIP(void);
 // GAME_Draw_NewScr6()
 
 // o50p17
-// GAME_DrawRetortsStr()
+void GAME_DrawRetortsStr(void);
 
 // o50p18
 void NEWG_DrawDefShelf__WIP(int16_t Portrait_Index);
@@ -202,7 +202,7 @@ void Set_Newgame_Screen1_Help_List(int16_t Can_Customize);
 // HLP_Load_RaceSel()
 
 // o50p35
-// STR_ListSeparator()
+void STR_ListSeparator(int16_t * List_Size, int16_t Total, char * Dest);
 
 // o50p36
 // CRP_Empty_Dialog_Fn2()

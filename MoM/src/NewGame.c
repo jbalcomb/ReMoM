@@ -434,11 +434,12 @@ int16_t auto_input_field_idx = 0;
 // MGC dseg:2ABC                                                 BEGIN:  ovr050 - Initialized Data
 
 // MGC dseg:2ABC
-struct s_mouse_list mouse_list_newgame_0_1[1] = {
+struct s_mouse_list mouse_list_newgame_0_1_2_3[1] = {
     { crsr_Finger, 0, SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX }
 };
 
-// MGC dseg:2AC8 1F 1E 1D 1C 1B 1A 19 18                         COL_NEWG_NameEdit db 31, 30, 29, 28, 27, 26, 25, 24
+// MGC dseg:2AC8
+uint8_t wziards_name_colors[8] = { 31, 30, 29, 28, 27, 26, 25, 24 };
 
 // MGC dseg:2AD0
 struct WIZARD_Preset TBL_Default_Wizards[15] = {
@@ -604,13 +605,11 @@ uint8_t COL_NEWG_FontShadow[8] = { 31, 31, 31, 31, 31, 31, 31, 0 };
 uint8_t COL_NEWG_Font[8] = { 187, 187, 187, 187, 187, 187, 187, 187 };
 // MGC dseg:2EB3
 uint8_t COL_NEWG_Retorts[2] = {183, 178};
-// MGC dseg:2EB5 1F 1F 1F 1F 1F 1F 1F 00                         RP_COL_NEWG_FontShadow2 db 7 dup(1Fh), 0
-// MGC dseg:2EB5                                                                                         ; DATA XREF: GAME_Draw_NewScr3+Bo
-// MGC dseg:2EB5                                                                                         ; redirected to dseg:2ea3 and repurposed in the
-// MGC dseg:2EB5                                                                                         ; worldgen customizer / last profile loader
-// MGC dseg:2EBD BB BB BB BB BB BB BB BB                         RP_COL_NEWG_Font2 db 8 dup(0BBh)        ; DATA XREF: GAME_Draw_NewScr3+1Do
-// MGC dseg:2EBD                                                                                         ; redirected to dseg:2eab and repurposed in the
-// MGC dseg:2EBD                                                                                         ; worldgen customizer / last profile loader
+// MGC dseg:2EB5
+uint8_t RP_COL_NEWG_FontShadow2[8] = { 31, 31, 31, 31, 31, 31, 31, 0 };
+// MGC dseg:2EBD
+uint8_t RP_COL_NEWG_Font2[8] = { 187, 187, 187, 187, 187, 187, 187, 187 };
+
 // MGC dseg:2EC5 BB BB BB BB BB BB BB BB                         RP_COL_NEWG_Font3 db 8 dup(0BBh)        ; DATA XREF: GAME_New_Screen_7+Do
 // MGC dseg:2EC5                                                                                         ; redirected to dseg:2eab and repurposed in the
 // MGC dseg:2EC5                                                                                         ; worldgen customizer / last profile loader
@@ -655,14 +654,17 @@ uint8_t COL_NEWG_Retorts[2] = {183, 178};
 // MGC dseg:2F31 19 16                                           COL_NEWG_NA dw 1619h                    ; DATA XREF: GAME_Draw_NewScr6+6Er
 // MGC dseg:2F33 02 02                                           COL_NEWG_RacesShdw2 dw 202h             ; DATA XREF: GAME_Draw_NewScr6+74r
 // MGC dseg:2F33                                                                                         ; should use dseg:2f00
-// MGC dseg:2F35 BB BB BB BB                                     COL_NEWG_4Font2 db 4 dup(0BBh)          ; DATA XREF: GAME_DrawRetortsStr+Cr ...
-// MGC dseg:2F35                                                                                         ; should use dseg:2eab
-// MGC dseg:2F39 B7 B2                                           COL_NEWG_Retorts2 dw 0B2B7h             ; DATA XREF: GAME_DrawRetortsStr+16r
-// MGC dseg:2F39                                                                                         ; should use dseg:2eb3
+
+// MGC dseg:2F35
+uint8_t COL_NEWG_4Font2[4] = { 187, 187, 187, 187 };
+// MGC dseg:2F39
+uint8_t COL_NEWG_Retorts2[2] = { 183, 178 };
 
 // MGC dseg:2F3B 00                                              align 2
 
-// MGC dseg:2F3C FF FF FF FF FF FF FF FF FF FF FF FF             CRP_Unused_Array db 0Ch dup(0FFh)       ; DATA XREF: GAME_DrawRetortsStr+22o
+// MGC dseg:2F3C
+uint8_t CRP_Unused_Array[12] = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
+
 // MGC dseg:2F48 4C 69 66 65 00 00 00 00 00 00                   cnst_Realm0_Text_10b db 'Life',0,0,0,0,0,0
 // MGC dseg:2F48                                                                                         ; DATA XREF: GAME_New_Screen_4+Fo
 // MGC dseg:2F52 44 65 61 74 68 00 00 00 00 00                   cnst_Realm1_Text_10b db 'Death',0,0,0,0,0
@@ -745,11 +747,16 @@ char str_wb__ovr050[] = "wb";
 
 // MGC dseg:30AC
 char cnst_Wiz_Select[] = "Select Wizard";
+
 // MGC dseg:30BA
 char cnst_Pic_Select[] = "Select Picture";
+
 // MGC dseg:30C9
-char cnst_DOT[] = ".";
-// MGC dseg:30CB 57 69 7A 61 72 64 27 73 20 4E 61 6D 65 00       cnst_Name_Select db 'Wizard',27h,'s Name',0
+char cnst_DOT__ovr050[] = ".";
+
+// MGC dseg:30CB
+char cnst_Name_Select[] = "Wizard's Name";
+
 // MGC dseg:30D9 53 65 6C 65 63 74 20 42 61 6E 6E 65 72 00       cnst_Banner_Select db 'Select Banner',0 ; DATA XREF: GAME_Draw_NewScr7+60o
 // MGC dseg:30E7 59 6F 75 20 63 61 6E 20 6E 6F 74 20 73 65 6C 65+cnst_Race_Error db 'You can not select a Myrran race unless you have the Myrran special.',0
 // MGC dseg:312C 53 65 6C 65 63 74 20 52 61 63 65 00             cnst_Race_Select db 'Select Race',0     ; DATA XREF: GAME_Draw_NewScr6+C3o
@@ -768,7 +775,10 @@ char cnst_DOT[] = ".";
 // MGC dseg:31FA 00                                                                                      ; DATA XREF: GAME_New_Screen_4+5DFo
 // MGC dseg:320B 52 65 61 6C 6D 20 6F 66 20 4D 61 67 69 63 00    cnst_Pick_Error_28 db 'Realm of Magic',0
 // MGC dseg:320B                                                                                         ; DATA XREF: GAME_New_Screen_4:loc_40C61o
-// MGC dseg:321A 2C 20 00                                        cnst_Pick_Error_29 db ', ',0            ; DATA XREF: GAME_New_Screen_4+623o ...
+
+// MGC dseg:321A
+char cnst_Pick_Error_29[] = ", ";
+
 // MGC dseg:321D 20 70 69 63 6B 20 69 6E 20 00                   cnst_Pick_Error_2A db ' pick in ',0     ; DATA XREF: GAME_New_Screen_4+669o
 // MGC dseg:3227 59 6F 75 20 63 61 6E 20 6E 6F 74 20 73 65 6C 65+cnst_Pick_Error_3 db 'You can not select both Life and Death magic',0
 // MGC dseg:3227 63 74 20 62 6F 74 68 20 4C 69 66 65 20 61 6E 64+                                        ; DATA XREF: GAME_New_Screen_4:loc_40D2Eo
@@ -786,7 +796,9 @@ char hlpentry_lbx_file__MGC_ovr050[] = "hlpentry.lbx";
 // MGC dseg:331A 53 65 6C 65 63 74 20 00                         cnst_Spell_Select_0 db 'Select ',0      ; DATA XREF: SCRN_Draw_NewScr5_2+DDo
 // MGC dseg:3322 20 53 70 65 6C 6C 73 00                         cnst_Spell_Select_1 db ' Spells',0      ; DATA XREF: SCRN_Draw_NewScr5_2+108o
 // MGC dseg:332A 3A 20 00                                        cnst_Spell_Select_2 db ': ',0           ; DATA XREF: SCRN_Draw_NewScr5_2+22Bo ...
-// MGC dseg:332D 20 61 6E 64 20 00                               cnst_And db ' and ',0                   ; DATA XREF: STR_ListSeparator+1Co
+
+// MGC dseg:332D
+char cnst_And__ovr050[] = " and ";
 
 // MGC dseg:3333 00                                              align 2
 
@@ -1003,7 +1015,7 @@ void Newgame_Control__WIP(void)
                 newgame_state = Newgame_Screen_3__WIP();
                 if(custom_game_flag != ST_FALSE)
                 {
-                    if(newgame_state == ST_UNDEFINED)
+                    if(newgame_state == ST_UNDEFINED)  // cancelled, go back a screen
                     {
                         newgame_state = 2;
                     }
@@ -1014,7 +1026,7 @@ void Newgame_Control__WIP(void)
                 }
                 else
                 {
-                    if(newgame_state == ST_UNDEFINED)
+                    if(newgame_state == ST_UNDEFINED)  // cancelled, go back a screen
                     {
                         newgame_state = 1;
                     }
@@ -1220,7 +1232,7 @@ int16_t Newgame_Screen0(void)
         magic_set.MagicPower = 0;
     }
 
-    Set_Mouse_List(1, mouse_list_newgame_0_1);
+    Set_Mouse_List(1, mouse_list_newgame_0_1_2_3);
 
     Clear_Fields();
 
@@ -1628,7 +1640,7 @@ int16_t Newgame_Screen1__WIP(void)
         IMG_NewG_Books[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (24 + itr), _screen_seg);
     }
 
-    Set_Mouse_List(1, mouse_list_newgame_0_1);  // ; should use Normal_Fullscreen
+    Set_Mouse_List(1, mouse_list_newgame_0_1_2_3);  // ; should use Normal_Fullscreen
 
     Clear_Fields();
 
@@ -1882,7 +1894,7 @@ void Newgame_Screen_1_2_Draw(void)
         Set_Font_Style(0, 15, ST_NULL, ST_NULL);
         Set_Font_Colors_15(0, &Font_Colors[0]);
         strcpy(Retort_String, STR_Retorts[TBL_Default_Wizards[NEWG_Moused_Wizard].Retort]);  // 1 + {-1,0,1,2,...}
-        strcat(Retort_String, cnst_DOT);
+        strcat(Retort_String, cnst_DOT__ovr050);
         Print(13, 101, Retort_String);
         Set_Font_Colors_15(0, &Retort_Text_Color[0]);
         Print(12, 180, Retort_String);
@@ -1947,7 +1959,7 @@ int16_t Newgame_Screen2__WIP(void)
     // NEWGAME.LBX, 039  NEWPICS     
     IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 39, _screen_seg);
 
-    Set_Mouse_List(1, mouse_list_newgame_0_1);
+    Set_Mouse_List(1, mouse_list_newgame_0_1_2_3);
 
     Clear_Fields();
 
@@ -2051,18 +2063,111 @@ int16_t Newgame_Screen2__WIP(void)
 ; edit control was escaped out of with the Esc key
 */
 /*
-
+"Wizard's Name"
 */
 int16_t Newgame_Screen_3__WIP(void)
 {
+    char Edit_Text[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t input_box_return_value = 0;
 
-    return 1;
+    newgame_background_seg = LBX_Reload(newgame_lbx_file__ovr050, 0, _screen_seg);
+
+    IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 40, _screen_seg);
+
+    Set_Mouse_List(1, mouse_list_newgame_0_1_2_3);
+
+    Clear_Fields();
+
+    Assign_Auto_Function(Newgame_Screen_3_Draw__WIP, 1);
+
+    Newgame_Screen_3_Draw__WIP();
+
+    Apply_Palette();
+
+    Toggle_Pages();
+
+    Set_Font_Style(3, 8, 8, ST_NULL);
+
+    strcpy(Edit_Text, _players[0].name);
+
+    input_box_return_value = Setup_Input_Box_Popup(195, 36, 80, Edit_Text, 10, 0, 0, 1, wziards_name_colors, ST_UNDEFINED);
+
+    Trim(Edit_Text);
+
+    if(strlen(Edit_Text) < 1)
+    {
+        strcpy(Edit_Text, _players[0].name);
+    }
+
+    strcpy(_players[0].name, Edit_Text);
+
+    Deactivate_Auto_Function();
+
+    if(input_box_return_value == -1)  // cancelled
+    {
+        return -1;  // cancelled, go back a screen
+    }
+    else
+    {
+        return 0;  // ok
+    }
 
 }
 
 
 // o50p12
-// GAME_Draw_NewScr3()
+/*
+; draws the wizard name entry screen into the current
+; draw frame, showing bookshelf and retorts only if
+; a default wizard was selected
+*/
+/*
+
+*/
+void Newgame_Screen_3_Draw__WIP(void)
+{
+    uint8_t Text_Colors[8] = { 0, 0, 0, 0, 0, 0, 0, 0, };
+    uint8_t Shadow_Colors[8] = { 0, 0, 0, 0, 0, 0, 0, 0, };
+
+    memcpy(Shadow_Colors, RP_COL_NEWG_FontShadow2, 8);
+
+    memcpy(Text_Colors, RP_COL_NEWG_Font2, 8);
+
+    FLIC_Draw(0, 0, newgame_background_seg);
+
+    FLIC_Draw(181, 17, IMG_NewG_RgtOverlay);
+
+    Set_Font_Style_Shadow_Down(5, 5, ST_NULL, ST_NULL);
+
+    Print_Centered(242, 1, cnst_Name_Select);
+
+    FLIC_Draw(24, 10, wizard_portrait_segs[_players[0].wizard_id]);
+
+    Set_Font_Style(4, 15, ST_NULL, ST_NULL);
+
+    Set_Font_Colors_15(4, &Shadow_Colors[0]);
+
+    Print_Centered(78, 120, _players[0].name);
+
+    Print_Centered(77, 120, _players[0].name);
+
+    Set_Font_Colors_15(4, &Text_Colors[0]);
+
+    Print_Centered(77, 119, _players[0].name);
+
+    if(NEWG_PortraitSelType == 7)
+    {
+
+        NEWG_PortraitSelType = 0;
+
+        NEWG_DrawDefShelf__WIP(_players[0].wizard_id);
+
+        GAME_DrawRetortsStr();
+                                    
+    }
+
+}
+
 
 // o50p13
 /*
@@ -2095,7 +2200,100 @@ int16_t Newgame_Screen6__WIP(void)
 // GAME_Draw_NewScr6()
 
 // o50p17
-// GAME_DrawRetortsStr()
+/*
+; draws a list of the human player's retorts as a
+; string into the current draw frame, on the left side,
+; under where the portrait and the bookshelf normally
+; are
+*/
+/*
+
+*/
+void GAME_DrawRetortsStr(void)
+{
+    uint8_t Unused_Local_Array[12];
+    char Retorts_String[126] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Text_Top = 0;
+    int16_t Retorts_Added = 0;
+    int16_t Local_Zero = 0;
+    int8_t * Retorts_Offset = 0;
+    // int16_t Retort_Colors = 0;
+    uint8_t * Retort_Colors = 0;
+    // uint8_t Text_Colors[4] = { 0, 0, 0, 0 };
+    uint8_t * Text_Colors = 0;
+    int16_t retort_count = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
+
+    // far pointer address? via assignment ?!?
+    Text_Colors = COL_NEWG_4Font2;
+
+    Retort_Colors = COL_NEWG_Retorts2;
+
+    memcpy(CRP_Unused_Array, Unused_Local_Array, 12);
+
+    Local_Zero = 0;
+
+    Retorts_Added = 0;
+
+    Retorts_String[0] = 0;
+
+    Retorts_Offset = _players[0].alchemy;
+
+    retort_count = 0;
+
+    // ; count the number of retorts into di
+    for(itr = 0; itr < 18; itr++)
+    {
+        if(Retorts_Offset[itr] == 1)
+        {
+            retort_count++;
+        }
+    }
+
+    strcpy(Retorts_String, empty_string__ovr050);
+
+    Retorts_Added = 0;
+
+    // ; create a string listing the retort names
+    for(itr = 0; itr < 18; itr++)
+    {
+        if(Retorts_Offset[itr] == 1)
+        {
+            STR_ListSeparator(Retorts_Added, retort_count, Retorts_String);
+            strcat(Retorts_String, STR_Retorts[itr]);
+        }
+    }
+
+    if(retort_count > 0)
+    {
+        strcat(Retorts_String, cnst_DOT__ovr050);
+    }
+
+    if(retort_count > 5)
+    {
+        Text_Top = 178;
+    }
+    else
+    {
+        Text_Top = 180;
+    }
+
+    Set_Font_Style(0, 15, ST_NULL, ST_NULL);
+
+    Set_Font_Colors_15(0, &Text_Colors[0]);
+
+    Set_Font_LF(1);
+
+    Print_Paragraph(13, (Text_Top + 1), Retorts_String, 0);
+
+    Set_Font_Colors_15(0, &Retort_Colors[0]);
+
+    Set_Font_LF(1);
+
+    Print_Paragraph(12, 138, Retorts_String, 0);
+
+}
+
 
 // o50p18
 /*
@@ -2443,7 +2641,30 @@ void Set_Newgame_Screen1_Help_List(int16_t has_custom)
 // HLP_Load_RaceSel()
 
 // o50p35
-// STR_ListSeparator()
+void STR_ListSeparator(int16_t * List_Size, int16_t Total, char * Dest)
+{
+
+    *List_Size += 1;
+
+    if(*List_Size == Total)
+    {
+        if(*List_Size > 1)
+        {
+            strcat(*Dest, cnst_And__ovr050);
+        }
+
+    }
+    else
+    {
+        if(*List_Size > 1)
+        {
+            strcat(*Dest, cnst_Pick_Error_29);
+        }
+
+    }
+
+}
+
 
 // o50p36
 // CRP_Empty_Dialog_Fn2()
