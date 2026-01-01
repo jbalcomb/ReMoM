@@ -14,13 +14,13 @@ ninja compile_commands VSC
 
 New Game
 [x] New Game Screen 0 - Game Options
-[x] New Game Screen 1 - Wizard Selection;   Title: "Select Wizard";     // HLPENTRY.LBX, 032  ""  "Wizard Selection Help"
-[x] New Game Screen 2 - Wizard Portrait;    Title: "Select Portrait";   // HLPENTRY.LBX, 031  ""  "Wizard Picture Select"
-[x] New Game Screen 3 - Wizards Name;       Title: "Wizard's Name";     N/A
-[ ] New Game Screen 4 - ...custom wizard creation                       // HLPENTRY.LBX, 033  ""  "Wizard Creation Help"
-[ ] New Game Screen 5 - ...custom ¿ ?                                   // HLPENTRY.LBX, 036  ""  "Select Spells Help"
-[ ] New Game Screen 6 - Wizards Race        Title: "Select Race";   // HLPENTRY.LBX, 035  ""  "Wizard Race Help"
-[ ] New Game Screen 7 - Wizards Banner      Title: "Select Banner"; // HLPENTRY.LBX, 030  ""  "Banner Selection Help"
+[x] New Game Screen 1 - Wizard Selection;   Title: "Select Wizard";         // HLPENTRY.LBX, 032  ""  "Wizard Selection Help"
+[x] New Game Screen 2 - Wizard Portrait;    Title: "Select Portrait";       // HLPENTRY.LBX, 031  ""  "Wizard Picture Select"
+[x] New Game Screen 3 - Wizards Name;       Title: "Wizard's Name";         N/A
+[ ] New Game Screen 4 - ...custom wizard creation                           // HLPENTRY.LBX, 033  ""  "Wizard Creation Help"
+[ ] New Game Screen 5 - ...custom ¿ ?                                       // HLPENTRY.LBX, 036  ""  "Select Spells Help"
+[x] New Game Screen 6 - Wizards Race        Title: "Select Race";           // HLPENTRY.LBX, 035  ""  "Wizard Race Help"
+[x] New Game Screen 7 - Wizards Banner      Title: "Select Banner";     // NEWGAME.LBX, 046  FLAGSNEW   // HLPENTRY.LBX, 030  ""  "Banner Selection Help"
 
 // HLPENTRY.LBX, 029  ""  "Options Screen Help"
 // HLPENTRY.LBX, 030  ""  "Banner Selection Help"
@@ -46,6 +46,41 @@ Module: RACESEL
         Address: 01:0005D03C
     code (0 bytes) Naming_Popup_
         Address: 01:0005D2BB
+
+MoO2
+Module: MAPGEN
+    data (0 bytes) _fill_msg_bitmap
+        Address: 02:001942E4
+    data (0 bytes) _fill_msg_ctr
+        Address: 02:001942F0
+    data (0 bytes) _fill_msg
+        Address: 02:001942F4
+
+Module: HOMEGEN
+    code (0 bytes) Set_Up_Home_Gen_Msg_
+    Address: 01:0007C78E
+
+Module: MISC
+    code (0 bytes) Draw_Advancing_Fill_Message_
+        Address: 01:0008EFE1
+
+## _fill_msg_bitmap
+XREF
+    Build_Home_Star_List_()
+    Generate_Home_Worlds_()
+    Set_Up_Home_Gen_Msg_()
+    Set_Star_XYs_()
+    Universe_Generation_()
+
+## _fill_msg
+
+## _fill_msg_ctr
+
+movsx   eax, _fill_msg_ctr
+cmp     eax, _HOME_WORLD_GEN_MAX_CTR
+
+if(_NUM_STARS > 54)
+    _HOME_WORLD_GEN_MAX_CTR = 372
 
 
 

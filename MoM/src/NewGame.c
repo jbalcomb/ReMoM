@@ -454,7 +454,7 @@ int16_t auto_input_field_idx = 0;
 // MGC dseg:2ABC                                                 BEGIN:  ovr050 - Initialized Data
 
 // MGC dseg:2ABC
-struct s_mouse_list mouse_list_newgame_0_1_2_3[1] = {
+struct s_mouse_list mouse_list_newgame[1] = {
     { crsr_Finger, 0, SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX }
 };
 
@@ -630,11 +630,13 @@ uint8_t RP_COL_NEWG_FontShadow2[8] = { 31, 31, 31, 31, 31, 31, 31, 0 };
 // MGC dseg:2EBD
 uint8_t RP_COL_NEWG_Font2[8] = { 187, 187, 187, 187, 187, 187, 187, 187 };
 
-// MGC dseg:2EC5 BB BB BB BB BB BB BB BB                         RP_COL_NEWG_Font3 db 8 dup(0BBh)        ; DATA XREF: GAME_New_Screen_7+Do
+// MGC dseg:2EC5
+uint8_t RP_COL_NEWG_Font3[8] = { 187, 187, 187, 187, 187, 187, 187, 187 };
 
-// MGC dseg:2ECD 1F 1F 1F 1F 1F                                  RP_COL_NEWG_5Shadow db 5 dup(1Fh)       ; DATA XREF: GAME_Draw_NewScr7+Do
-
-// MGC dseg:2ED2 BB BB BB BB BB                                  RP_COL_NEWG_5Font db 5 dup(0BBh)        ; DATA XREF: GAME_Draw_NewScr7+1Fo
+// MGC dseg:2ECD
+uint8_t RP_COL_NEWG_5Shadow[5] = { 31, 31, 31, 31, 31 };
+// MGC dseg:2ED2
+uint8_t RP_COL_NEWG_5Font[5] = { 187, 187, 187, 187, 187 };
 
 // MGC dseg:2ED7 00                                              align 2                                 ; 2ed6 is still free
 
@@ -781,7 +783,9 @@ char cnst_DOT__ovr050[] = ".";
 // MGC dseg:30CB
 char cnst_Name_Select[] = "Wizard's Name";
 
-// MGC dseg:30D9 53 65 6C 65 63 74 20 42 61 6E 6E 65 72 00       cnst_Banner_Select db 'Select Banner',0 ; DATA XREF: GAME_Draw_NewScr7+60o
+// MGC dseg:30D9
+char cnst_Banner_Select[] = "Select Banner";
+
 // MGC dseg:30E7
 char cnst_Race_Error[] = "You can not select a Myrran race unless you have the Myrran special.";
 // MGC dseg:312C
@@ -880,8 +884,10 @@ int16_t TBL_Realm4_Books[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 /*
     loaded in GAME_New_Screen_7()
     used in NEWG_CreateWorld__WIP()
+MoO2  Module: MAPGEN  _fill_msg_bitmap  <-|  Module: MISC  Draw_Advancing_Fill_Message_()
+
 */
-SAMB_ptr IMG_NEWG_MapBuildBG = 0;
+SAMB_ptr newgame_BUILDWOR_map_build_bar_seg = 0;
 
 // MGC dseg:8DD8 00 00                                           NEWG_SliderPos_Sorc dw 0                ; DATA XREF: GAME_New_Screen_4+155w ...
 // MGC dseg:8DDA 00 00                                           NEWG_SliderPos_Nat dw 0                 ; DATA XREF: GAME_New_Screen_4+14Fw ...
@@ -924,7 +930,12 @@ used for Wizard and Race
 
 */
 int16_t NEWG_Select_Labels[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-int16_t NEWG_Moused_Wizard = 0;
+// drake178: NEWG_Moused_Wizard
+/*
+~== MoO2 _displayed_race
+
+*/
+int16_t m_displayed_wizard = 0;
 
 // MGC dseg:8E4A
 SAMB_ptr IMG_NewG_ButtonBGs[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -1218,7 +1229,7 @@ void Newgame_Control__WIP(void)
             } break;
             case 7:
             {
-                Newgame_Screen7__WIP();
+                newgame_state = Newgame_Screen_7__WIP();
             } break;
             case 99:
             {
@@ -1229,6 +1240,7 @@ void Newgame_Control__WIP(void)
         
     }
 
+    // MoO2  Module: HOMEGEN  Generate_Home_Worlds_()
     NEWG_CreateWorld__WIP();
 
     Initialize_Events();
@@ -1389,7 +1401,7 @@ int16_t Newgame_Screen_0(void)
         magic_set.MagicPower = 0;
     }
 
-    Set_Mouse_List(1, mouse_list_newgame_0_1_2_3);
+    Set_Mouse_List(1, mouse_list_newgame);
 
     Clear_Fields();
 
@@ -1797,7 +1809,7 @@ int16_t Newgame_Screen_1__WIP(void)
         IMG_NewG_Books[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (24 + itr), _screen_seg);
     }
 
-    Set_Mouse_List(1, mouse_list_newgame_0_1_2_3);  // ; should use Normal_Fullscreen
+    Set_Mouse_List(1, mouse_list_newgame);  // ; should use Normal_Fullscreen
 
     Clear_Fields();
 
@@ -1805,7 +1817,7 @@ int16_t Newgame_Screen_1__WIP(void)
     
     First_Draw_Done = ST_FALSE;
     
-    NEWG_Moused_Wizard = 0;
+    m_displayed_wizard = 0;
 
     NEWG_PortraitSelType = 8;  // Default: "Select Wizard"
 
@@ -1936,7 +1948,7 @@ void Newgame_Screen_1_2_Draw(void)
 
     if(Scan_Input() != ST_NULL)
     {
-        NEWG_Moused_Wizard = (Scan_Input() - 1);
+        m_displayed_wizard = (Scan_Input() - 1);
     }
 
     FLIC_Draw(0, 0, newgame_background_seg);
@@ -1980,9 +1992,9 @@ void Newgame_Screen_1_2_Draw(void)
     }
 
     // draws the blank portrait
-    if(NEWG_Moused_Wizard < 14)  // "Custom"
+    if(m_displayed_wizard < 14)  // "Custom"
     {
-        FLIC_Draw(24, 10, wizard_portrait_segs[NEWG_Moused_Wizard]);
+        FLIC_Draw(24, 10, wizard_portrait_segs[m_displayed_wizard]);
     }
 
     Set_Font_Style(3, 15, ST_NULL, ST_NULL);
@@ -2041,16 +2053,16 @@ void Newgame_Screen_1_2_Draw(void)
 
     /* Print Retort Name */
     if(
-        (TBL_Default_Wizards[NEWG_Moused_Wizard].Retort != ST_UNDEFINED)
+        (TBL_Default_Wizards[m_displayed_wizard].Retort != ST_UNDEFINED)
         &&
         (NEWG_PortraitSelType == 8)  // defaulted to 8 and god is not Intro so didn't get reduced to 7  second has 7 wizards + custom
         &&
-        (NEWG_Moused_Wizard < 14)  // "Custom" is not the mouse-over
+        (m_displayed_wizard < 14)  // "Custom" is not the mouse-over
     )
     {
         Set_Font_Style(0, 15, ST_NULL, ST_NULL);
         Set_Font_Colors_15(0, &Font_Colors[0]);
-        strcpy(Retort_String, STR_Retorts[TBL_Default_Wizards[NEWG_Moused_Wizard].Retort]);  // 1 + {-1,0,1,2,...}
+        strcpy(Retort_String, STR_Retorts[TBL_Default_Wizards[m_displayed_wizard].Retort]);  // 1 + {-1,0,1,2,...}
         strcat(Retort_String, cnst_DOT__ovr050);
         Print(13, 101, Retort_String);
         Set_Font_Colors_15(0, &Retort_Text_Color[0]);
@@ -2059,18 +2071,18 @@ void Newgame_Screen_1_2_Draw(void)
 
     if(NEWG_PortraitSelType == 8)
     {
-        NEWG_DrawDefShelf__WIP(NEWG_Moused_Wizard);
+        NEWG_DrawDefShelf__WIP(m_displayed_wizard);
     }
 
     /* Print Wizard Name */
-    if(NEWG_Moused_Wizard < 14)  // "Custom"
+    if(m_displayed_wizard < 14)  // "Custom"
     {
         Set_Font_Style(4, 15, ST_NULL, ST_NULL);
         Set_Font_Colors_15(4, &Shadow_Colors[0]);
-        Print_Centered(78, 120, TBL_Default_Wizards[NEWG_Moused_Wizard].Name);
-        Print_Centered(77, 120, TBL_Default_Wizards[NEWG_Moused_Wizard].Name);
+        Print_Centered(78, 120, TBL_Default_Wizards[m_displayed_wizard].Name);
+        Print_Centered(77, 120, TBL_Default_Wizards[m_displayed_wizard].Name);
         Set_Font_Colors_15(4, &Font_Colors[0]);
-        Print_Centered(77, 119, TBL_Default_Wizards[NEWG_Moused_Wizard].Name);
+        Print_Centered(77, 119, TBL_Default_Wizards[m_displayed_wizard].Name);
     }
 
 }
@@ -2116,7 +2128,7 @@ int16_t Newgame_Screen_2__WIP(void)
     // NEWGAME.LBX, 039  NEWPICS     
     IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 39, _screen_seg);
 
-    Set_Mouse_List(1, mouse_list_newgame_0_1_2_3);
+    Set_Mouse_List(1, mouse_list_newgame);
 
     Clear_Fields();
 
@@ -2124,7 +2136,7 @@ int16_t Newgame_Screen_2__WIP(void)
 
     First_Draw_Done = ST_FALSE;
 
-    NEWG_Moused_Wizard = 0;
+    m_displayed_wizard = 0;
 
     NEWG_PortraitSelType = 7;
 
@@ -2233,7 +2245,7 @@ int16_t Newgame_Screen_3__WIP(void)
     // NEWGAME.LBX, 040  NEWGMNAM   Name box
     IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 40, _screen_seg);
 
-    Set_Mouse_List(1, mouse_list_newgame_0_1_2_3);
+    Set_Mouse_List(1, mouse_list_newgame);
 
     Clear_Fields();
 
@@ -2330,18 +2342,257 @@ void Newgame_Screen_3_Draw__WIP(void)
 
 // o50p13
 /*
+; displays and processes the banner selection screen
+; of new game creation
+; returns 99 if a banner is chosen, or 6 if the Esc key
+; is pressed instead
+;
+; PATCHED in the last profile loader to save the
+; profile after a banner was selected
+*/
+/*
 
 */
-void Newgame_Screen7__WIP(void)
+int16_t Newgame_Screen_7__WIP(void)
 {
+    int16_t Escape_Hotkey_Control = 0;
+    uint8_t Dest_Struct[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t input_field_idx = 0;
+    int16_t First_Draw_Done = 0;
+    int16_t leave_screen = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
+
+    memcpy(Dest_Struct, RP_COL_NEWG_Font3, 8);
+
+    // NEWGAME.LBX, 000  BACKGRND    Main screen back
+    newgame_background_seg = LBX_Reload(newgame_lbx_file__ovr050, 0, _screen_seg);
+
+    // NEWGAME.LBX, 046  FLAGSNEW
+    IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 46, _screen_seg);
+
+    // ; load the spellbook binder images
+    for(itr = 0; itr < 15; itr++)
+    {
+
+        /*
+        NEWGAME.LBX, 024  BOOKS      White book 1
+        NEWGAME.LBX, 025  BOOKS      White book 2
+        NEWGAME.LBX, 026  BOOKS      White book 3
+        NEWGAME.LBX, 027  BOOKS      Blue book 1
+        NEWGAME.LBX, 028  BOOKS      Blue book 2
+        NEWGAME.LBX, 029  BOOKS      Blue book 3
+        NEWGAME.LBX, 030  BOOKS      Green book 1
+        NEWGAME.LBX, 031  BOOKS      Green book 2
+        NEWGAME.LBX, 032  BOOKS      Green book 3
+        NEWGAME.LBX, 033  BOOKS      Black book 1
+        NEWGAME.LBX, 034  BOOKS      Black book 2
+        NEWGAME.LBX, 035  BOOKS      Black book 3
+        NEWGAME.LBX, 036  BOOKS      Red book 1
+        NEWGAME.LBX, 037  BOOKS      Red book 2
+        NEWGAME.LBX, 038  BOOKS      Red book 3
+        */
+        // ; 5 groups of 3 images each (L - S - N - D - C)
+        IMG_NewG_Books[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (24 + itr), _screen_seg);
+
+    }
+
+    // odd? this gets drawn in NEWG_CreateWorld__WIP()
+    // NEWGAME.LBX, 053  BUILDWOR   map build bar
+    newgame_BUILDWOR_map_build_bar_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 53, _screen_seg);
+
+    Set_Mouse_List(1, mouse_list_newgame);
+
+    Clear_Fields();
+
+    leave_screen = ST_FALSE;
+
+    First_Draw_Done = ST_FALSE;
+
+    NEWG_Select_Labels[0] = Add_Hidden_Field(175, 21, 313, 55, empty_string__ovr050, ST_UNDEFINED);
+
+    NEWG_Select_Labels[1] = Add_Hidden_Field(175, 56, 313, 93, empty_string__ovr050, ST_UNDEFINED);
+
+    NEWG_Select_Labels[2] = Add_Hidden_Field(175, 94, 313, 128, empty_string__ovr050, ST_UNDEFINED);
+
+    NEWG_Select_Labels[3] = Add_Hidden_Field(175, 129, 313, 162, empty_string__ovr050, ST_UNDEFINED);
+
+    NEWG_Select_Labels[4] = Add_Hidden_Field(175, 163, 313, 199, empty_string__ovr050, ST_UNDEFINED);
+
+    Escape_Hotkey_Control = Add_Hot_Key(str_ESC__ovr050);
+
+    Assign_Auto_Function(Newgame_Screen_7_Draw__WIP, 1);
+
+    Set_Newgame_Screen_7_Help_List();
+
+    while(leave_screen == ST_FALSE)
+    {
+
+        Mark_Time();
+
+        input_field_idx = Get_Input();
+
+        if(input_field_idx == Escape_Hotkey_Control)
+        {
+
+            return 6;
+
+        }
+
+        // ; check if the click occurred on a banner label, and if
+        // ; so, set the corresponding color into the player's
+        // ; profile and mark the process as finished
+        for(itr = 0; itr < NUM_BANNER_SELECTIONS; itr++)
+        {
+
+            if(NEWG_Select_Labels[itr] == input_field_idx)
+            {
+
+                switch(itr)
+                {
+                    case 0:
+                    {
+                        _players[0].banner_id = BNR_Green;
+                    } break;
+                    case 1:
+                    {
+                        _players[0].banner_id = BNR_Blue;
+
+                    } break;
+                    case 2:
+                    {
+                        _players[0].banner_id = BNR_Red;
+
+                    } break;
+                    case 3:
+                    {
+                        _players[0].banner_id = BNR_Purple;
+
+                    } break;
+                    case 4:
+                    {
+                        _players[0].banner_id = BNR_Yellow;
+
+                    } break;
+
+                }
+                    
+                leave_screen = ST_TRUE;
+
+            }
+
+        }
 
 
+        if(leave_screen == ST_FALSE)
+        {
+
+            Newgame_Screen_7_Draw__WIP();
+
+            Apply_Palette();
+
+            Toggle_Pages();
+
+            if(First_Draw_Done == ST_FALSE)
+            {
+                
+                First_Draw_Done = ST_TRUE;
+
+                Copy_On_To_Off_Page();
+
+            }
+
+            Release_Time(1);
+
+        }
+
+    }
+
+    Deactivate_Auto_Function();
+
+    Deactivate_Help_List();
+
+    return 99;  // ¿ force Cancel New Game ?
 
 }
 
 
 // o50p14
 // GAME_Draw_NewScr7()
+void Newgame_Screen_7_Draw__WIP(void)
+{
+    uint8_t FontColor_Array[5] = { 0, 0, 0, 0, 0 };
+    uint8_t FontShadow_Array[5] = { 0, 0, 0, 0, 0 };
+    int16_t BookBinder_Left = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
+
+    memcpy(FontShadow_Array, RP_COL_NEWG_5Shadow, 5);
+
+    memcpy(FontColor_Array, RP_COL_NEWG_5Font, 5);
+
+    FLIC_Draw(0, 0, newgame_background_seg);
+
+    FLIC_Draw(158, 0, IMG_NewG_RgtOverlay);
+
+    Set_Font_Style_Shadow_Down(5, 5, ST_NULL, ST_NULL);
+
+    Print_Centered(242, 1, cnst_Banner_Select);  // "Select Banner"
+
+    FLIC_Draw(24, 10, wizard_portrait_segs[_players[0].wizard_id]);
+
+    Set_Font_Style(4, 15, ST_NULL, ST_NULL);
+
+    Set_Font_Colors_15(4, &FontShadow_Array[0]);
+    Print_Centered(78, 120, _players[0].name);
+    Print_Centered(77, 120, _players[0].name);
+
+    Set_Font_Colors_15(4, &FontColor_Array[0]);
+    Print_Centered(77, 119, _players[0].name);
+    Print_Centered(77, 120, _players[0].name);
+
+    /*
+        BEGIN: same on Screen 6 & 7
+    */
+
+    BookBinder_Left = 36;
+
+    for(itr = 0; itr < _players[0].spellranks[3]; itr++)
+    {
+        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(0 + TBL_Bookshelf_Books[itr])]);
+        BookBinder_Left += 8;
+    }
+
+    for(itr = 0; itr < _players[0].spellranks[1]; itr++)
+    {
+        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(3 + TBL_Bookshelf_Books[itr])]);
+        BookBinder_Left += 8;
+    }
+
+    for(itr = 0; itr < _players[0].spellranks[0]; itr++)
+    {
+        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(6 + TBL_Bookshelf_Books[itr])]);
+        BookBinder_Left += 8;
+    }
+
+    for(itr = 0; itr < _players[0].spellranks[4]; itr++)
+    {
+        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(9 + TBL_Bookshelf_Books[itr])]);
+        BookBinder_Left += 8;
+    }
+
+    for(itr = 0; itr < _players[0].spellranks[2]; itr++)
+    {
+        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(12 + TBL_Bookshelf_Books[itr])]);
+        BookBinder_Left += 8;
+    }
+
+    GAME_DrawRetortsStr();
+
+    /*
+        END: same on Screen 6 & 7
+    */
+
+}
+
 
 // o50p15
 /*
@@ -2413,7 +2664,7 @@ int16_t Newgame_Screen_6__WIP(void)
         IMG_NewG_Books[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (24 + itr), _screen_seg);
     }
 
-    Set_Mouse_List(1, mouse_list_newgame_0_1_2_3);
+    Set_Mouse_List(1, mouse_list_newgame);
 
     Clear_Fields();
 
@@ -2684,6 +2935,10 @@ void Newgame_Screen_6_Draw__WIP(void)
 
     Retorts_Pointer = &_players[0].alchemy;
 
+    /*
+        BEGIN: same on Screen 6 & 7
+    */
+
     BookBinder_Left = 36;
 
     for(itr = 0; itr < _players[0].spellranks[3]; itr++)
@@ -2717,6 +2972,10 @@ void Newgame_Screen_6_Draw__WIP(void)
     }
 
     GAME_DrawRetortsStr();
+
+    /*
+        END: same on Screen 6 & 7
+    */
 
     Set_Font_Colors_15(3, &Race_Title_Colors[0]);
 
@@ -3202,6 +3461,18 @@ void Set_Newgame_Screen_0_Help_List(void)
 
 // o50p30
 // HLP_Load_BannerSel()
+/*
+
+*/
+void Set_Newgame_Screen_7_Help_List(void)
+{
+
+    // HLPENTRY.LBX, 030  ""  "Banner Selection Help"
+    LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 30, (SAMB_ptr)_help_entries, 0, 1, 10);
+
+    Set_Help_List(_help_entries, 1);
+
+}
 
 // o50p31
 // HLP_Load_PortraitSel()

@@ -160,10 +160,10 @@ int16_t Newgame_Screen_3__WIP(void);
 void Newgame_Screen_3_Draw__WIP(void);
 
 // o50p13
-void Newgame_Screen7__WIP(void);
+int16_t Newgame_Screen_7__WIP(void);
 
 // o50p14
-// GAME_Draw_NewScr7()
+void Newgame_Screen_7_Draw__WIP(void);
 
 // o50p15
 int16_t Newgame_Screen_6__WIP(void);
@@ -211,13 +211,13 @@ void WIZ_CopyDefault__WIP(int16_t Portrait_Index);
 void Set_Newgame_Screen_0_Help_List(void);
 
 // o50p30
-// HLP_Load_BannerSel()
+void Set_Newgame_Screen_7_Help_List(void);
 
 // o50p31
 void Set_Newgame_Screen_2_Help_List(void);
 
 // o50p32
-void Set_Newgame_Screen_1_Help_List(int16_t Can_Customize);
+void Set_Newgame_Screen_1_Help_List(int16_t has_custom);
 
 // o50p33
 // HLP_Load_WizCreate()

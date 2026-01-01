@@ -1,6 +1,11 @@
 /*
     MAGIC.EXE
     ovr051
+
+MoO2
+    Module: HOMEGEN
+    Module: INITGAME
+    Module: MAPGEN
 */
 
 #include "MAPGEN.h"
@@ -24,7 +29,7 @@
     loaded in GAME_New_Screen_7()
     used in NEWG_CreateWorld__WIP()
 */
-extern SAMB_ptr IMG_NEWG_MapBuildBG;
+extern SAMB_ptr newgame_BUILDWOR_map_build_bar_seg;
 
 
 
@@ -123,7 +128,7 @@ void NEWG_CreateWorld__WIP(void)
     
     Set_Page_Off();
     
-    FLIC_Draw(75, 67, IMG_NEWG_MapBuildBG);
+    FLIC_Draw(75, 67, newgame_BUILDWOR_map_build_bar_seg);
 
     Set_Font_Style(3, 3, ST_NULL, ST_NULL);
 

@@ -1366,7 +1366,7 @@ struct s_WIZARD
     /* 0000 */ uint8_t wizard_id;               /* 1-byte, signed;  player_idx  MoO2: player_num, player_id */
     /* 0001 */ char name[LEN_WIZARD_NAME];
     /* 0015 */ uint8_t capital_race;            /* race type of wizard's fortress city */
-    /* 0016 */ uint8_t banner_id;               /* 1-byte, signed */
+    /* 0016 */ uint8_t banner_id;               /* 1-byte, signed; enum_BANNER_COLOR_ID */
     /* 0017 */ uint8_t pad2B_17h;               /* ¿ 2-byte alignment padding ? */
     /* 0018 */ uint16_t Personality;            /* enum AI_Personality */
     /* 001A */ uint16_t Objective;              /* enum AI_Objective */

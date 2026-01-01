@@ -580,6 +580,7 @@ entity_wx = (entity_wx + WORLD_WIDTH);
 #define NEUTRAL_PLAYER_IDX                 5
 #define MOO_MONSTER_PLAYER_IDX             6
 
+#define NUM_BANNER_SELECTIONS              5  // Newgame
 #define NUM_BANNER_COLORS                  6
 #define NEUTRAL_PLAYER_BANNER_COLOR_IDX    5
 #define NEUTRAL_PLAYER_BANNER_COLOR       50
@@ -625,6 +626,17 @@ uint8_t COL_Banners2[36] = {
 };
 
 */
+// MGC; 1-byte, signed;
+enum enum_BANNER_COLOR_ID
+{
+    BNR_Blue  = 0,
+    BNR_Green  = 1,
+    BNR_Purple  = 2,
+    BNR_Red  = 3,
+    BNR_Yellow  = 4,
+    BNR_Brown  = 5
+};
+
 #define BANNER_COLOR_BLUE                172
 #define BANNER_COLOR_GREEN               216
 #define BANNER_COLOR_PURPLE              124
