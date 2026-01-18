@@ -44,10 +44,10 @@ void AI_WIZ_StrategyReset__WIP(void);
 void Init_Players(void);
 
 // MGC o56p9
-// AI_CreateWizards()
+void AI_CreateWizards__STUB(void);
 
 // MGC o56p10
-// WIZ_SetSpells()
+void WIZ_SetSpells__WIP(void);
 
 // MGC o56p11
 void Initialize_Events(void);

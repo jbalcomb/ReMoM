@@ -131,6 +131,8 @@ int main(int argc, char * argv[])
 #endif
 #ifdef _WIN32
     char path[MAX_PATH] = { 0 };
+    // warning C4013: '_getcwd' undefined; assuming extern returning int
+    // warning C4047: '!=': 'int' differs in levels of indirection from 'void *'
     if(_getcwd(path, sizeof(path)) != NULL)
     {
         printf("_getcwd(): %s\n", path);

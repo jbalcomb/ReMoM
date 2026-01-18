@@ -43,20 +43,20 @@ enum e_RANDOM_PICK_TYPES
 };
 
 // sizeof=0x16
-struct WIZARD_Preset
+struct s_WIZARD_PRESET
 {
-    /* 00 */  char Name[10];
-    /* 0A */  int16_t Life;
-    /* 0C */  int16_t Sorcery;
-    /* 0E */  int16_t Nature;
-    /* 10 */  int16_t Death;
-    /* 12 */  int16_t Chaos;
-    /* 14 */  int16_t Retort;  // ; enum RET_Enum
+    /* 00 */  char name[10];
+    /* 0A */  int16_t life;  // book count
+    /* 0C */  int16_t sorcery;
+    /* 0E */  int16_t nature;
+    /* 10 */  int16_t death;
+    /* 12 */  int16_t chaos;
+    /* 14 */  int16_t special;  // wizard special skill  (AKA retort) ; enum RET_Enum
     /* 16 */
 };
 enum RET_Enum
 {
-    _No_Retort  = -1,
+    _No_Special  = -1,
     _Alchemy  = 0,
     _Warlord  = 1,
     _Chaos_Mastery  = 2,
@@ -77,15 +77,15 @@ enum RET_Enum
     _Artificer  = 17
 };
 
-// sizeof=0x1A
-struct Default_Spells
-{
-    /* 00 */    int16_t Common[10];
-    /* 14 */    int16_t Uncommon[2];
-    /* 18 */    int16_t Rare;
-    /* 1A */
-};
-
+// // sizeof=0x1A
+// struct Default_Spells
+// {
+//     /* 00 */    int16_t Common[10];
+//     /* 14 */    int16_t Uncommon[2];
+//     /* 18 */    int16_t Rare;
+//     /* 1A */
+// };
+// 
 enum enum_RACE_BYTE
 {
     R_Barbarian  = 0,
@@ -110,6 +110,34 @@ enum enum_RACE_BYTE
     Race_Life  = 19,
     Race_Death  = 20
 };
+
+
+// MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_start_spells s_Init_Spells_Table <0>   ; DATA XREF: GAME_New_Screen_5+171w ...
+// ...needed by INITGAME.c
+// ; (sizeof=0x1A)
+struct s_Init_Base_Spells
+{
+    /* 0000 */  int16_t spells[13];
+    /* 001A */
+};
+// ; (sizeof=0x82)
+struct s_Init_Base_Realms
+{
+    /* 0000 */  struct s_Init_Base_Spells realms[5];
+    /* 0082 */
+};
+// ...oops...  // ; (sizeof=0x30C)
+// ...oops...  struct s_Init_Spells_Table
+// ...oops...  {
+// ...oops...      /* 030C */
+// ...oops...      /* 0000 */  struct s_Init_Base_Realms players_starting_spells[PLAYER_COUNT_MAX];
+// ...oops...  };
+struct s_DEFAULT_SPELLS
+{
+    /* 0000 */  int16_t spells[13];
+    /* */
+};
+
 
 
 #ifdef __cplusplus
@@ -175,7 +203,7 @@ void Newgame_Screen_6_Draw__WIP(void);
 void GAME_DrawRetortsStr(void);
 
 // o50p18
-void NEWG_DrawDefShelf__WIP(int16_t Portrait_Index);
+void NEWG_DrawDefShelf__WIP(int16_t wizard_id);
 
 // o50p19
 void Newgame_Screen4__WIP(void);
@@ -196,7 +224,7 @@ void Newgame_Screen5__WIP(void);
 // SCRN_Draw_NewScr5_2()
 
 // o50p25
-void WIZ_CopyDefault__WIP(int16_t Portrait_Index);
+void WIZ_CopyDefault__WIP(int16_t wizard_id);
 
 // o50p26
 // Fade_Out()

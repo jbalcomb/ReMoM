@@ -1,6 +1,9 @@
 /*
     MAGIC.EXE
     ovr056
+
+MoO2
+Module: INITGAME
 */
 
 #include "INITGAME.h"
@@ -12,6 +15,7 @@
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/random.h"
 
+#include "NewGame.h"
 #include "Spellbook.h"
 #include "UNITTYPE.h"
 
@@ -24,6 +28,15 @@ extern int16_t TBL_AI_Realm_OBJ[6][5];
 // MGC dseg:35D0
 extern struct S_HERO_TEMPLATE _hero_premade_table[NUM_HERO_TYPES];
 
+// MGC  dseg:2C6A
+extern struct s_DEFAULT_SPELLS _default_spells[5];
+
+// ...oops... MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_start_spells s_Init_Spells_Table <0>   ; DATA XREF: GAME_New_Screen_5+171w ...
+// MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_player_start_spells s_Init_Base_Realms 6 dup(<0>)
+// ...needed by INITGAME.c, so defn in NewGame.h
+struct s_Init_Base_Realms _player_start_spells[PLAYER_COUNT_MAX];
+
+
 // o51p36
 void Draw_Building_The_Worlds(int16_t percent);
 
@@ -32,11 +45,50 @@ void Draw_Building_The_Worlds(int16_t percent);
 // MGC o56p1
 // drake178: WIZ_SetProfiles()
 /*
+; creates the AI wizards and sets the known and
+; researchable spells for all players
 */
 /*
 
 */
-// WIZ_SetProfiles__WIP()
+void WIZ_SetProfiles__WIP(void)
+{
+    int16_t itr_num_players = 0;  // _DI_
+    int16_t itr2 = 0;  // _SI_
+
+AI_CreateWizards__STUB();
+// ; generates the main traits of the AI wizards by
+// ; randomly selecting and then modifying default
+// ; profiles to an extent specified by the difficulty
+// ; setting
+
+    for(itr_num_players = 1; itr_num_players < _num_players; itr_num_players++)
+    {
+
+        for(itr2 = 0; itr2 < 13; itr2++)
+        {
+
+            _player_start_spells[itr_num_players].realms[sbr_Nature].spells[itr2] = _default_spells[sbr_Nature].spells[itr2];
+            _player_start_spells[itr_num_players].realms[sbr_Sorcery].spells[itr2] = _default_spells[sbr_Sorcery].spells[itr2];
+            _player_start_spells[itr_num_players].realms[sbr_Chaos].spells[itr2] = _default_spells[sbr_Chaos].spells[itr2];
+            _player_start_spells[itr_num_players].realms[sbr_Life].spells[itr2] = _default_spells[sbr_Life].spells[itr2];
+            _player_start_spells[itr_num_players].realms[sbr_Death].spells[itr2] = _default_spells[sbr_Death].spells[itr2];
+
+        }
+
+    }
+
+WIZ_SetSpells__WIP();
+// ; sets the known and researchable spells for all
+// ; wizards based on their books and spell selection
+// ; tables
+
+    _players[NEUTRAL_PLAYER_IDX].Defeated_Wizards = 0;
+
+    _players[NEUTRAL_PLAYER_IDX].average_unit_cost = 0;
+
+}
+
 
 // MGC o56p2
 // drake178: NEWG_FinalizeTables()
@@ -705,11 +757,536 @@ void Init_Players(void)
 
 // MGC o56p9
 // drake178: AI_CreateWizards()
-// AI_CreateWizards()
+/*
+; generates the main traits of the AI wizards by
+; randomly selecting and then modifying default
+; profiles to an extent specified by the difficulty
+; setting
+*/
+/*
+
+*/
+void AI_CreateWizards__STUB(void)
+{
+
+
+
+}
+
 
 // MGC o56p10
 // drake178: WIZ_SetSpells()
-// WIZ_SetSpells()
+/*
+; sets the known and researchable spells for all
+; wizards based on their books and spell selection
+; tables
+*/
+/*
+iter over players
+iter over realms
+...
+per rarity
+    clear temp array
+    switch on book count, set knowable limit
+    randomly select spells into the temp array
+    transfer the temp array to the player's spell library
+
+*/
+void WIZ_SetSpells__WIP(void)
+{
+    int16_t Availability_Array[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };  // 2-byte, signed, sizeof 10
+    int16_t Available_Spells = 0;
+    int16_t Common_Index = 0;
+    int16_t InRarity_Index = 0;
+    int16_t Availability_Limit = 0;
+    int16_t sri = 0;
+    int16_t sbr = 0;
+    int16_t itr = 0;
+    int16_t IDK_itr_10 = 0;  // _DI_
+
+    for(itr = 0; itr < _num_players; itr++)
+    {
+
+        // clear the wizard's entire spell array
+        for(sbr = 0; sbr < NUM_MAGIC_REALMS; sbr++)
+        {
+            for(sri = 0; sri < NUM_SPELLS_PER_MAGIC_REALM; sri++)
+            {
+                _players[itr].spells_list[((sbr * 40) + sri)] = 0;
+            }
+        }
+
+        for(sbr = 0; sbr < NUM_MAGIC_REALMS; sbr++)
+        {
+
+            if(sbr != sbr_Arcane)
+            {
+
+                if(_players[itr].spellranks[sbr] != 0)
+                {
+
+                    if(_players[itr].spellranks[sbr] != 11)
+                    {
+
+                        // ; clear the availability array (not used for commons)
+
+                        for(IDK_itr_10 = 0; IDK_itr_10 < 10; IDK_itr_10++)
+                        {
+
+                            Availability_Array[IDK_itr_10] = 0;
+
+                        }
+
+                        // ; set the availability limit for the common spells of
+                        // ; the realm based on the book count
+                        
+                        switch(_players[itr].spellranks[sbr])  // - 1; <= 9
+                        {
+                            /* DNE  case 0: { } break; */
+                            case  1: { Availability_Limit =  3; } break;
+                            case  2: { Availability_Limit =  5; } break;
+                            case  3: { Availability_Limit =  6; } break;
+                            case  4: { Availability_Limit =  7; } break;
+                            case  5: { Availability_Limit =  8; } break;
+                            case  6: { Availability_Limit =  9; } break;
+                            case  7: { Availability_Limit = 10; } break;
+                            case  8: { Availability_Limit = 10; } break;
+                            case  9: { Availability_Limit = 10; } break;
+                            case 10: { Availability_Limit = 10; } break;
+                        }
+
+                        // ; copy up to one less common spell from their
+                        // ; selection than the wizard has nature books
+                        switch(sbr)
+                        {
+                            case sbr_Nature:
+                            {
+                                for(IDK_itr_10 = 0; (_players[itr].spellranks[sbr] - 1) > IDK_itr_10; IDK_itr_10++)
+                                {
+                                    _players[itr].spells_list[((_player_start_spells[itr].realms[sbr].spells[((sbr_Nature * 13) + IDK_itr_10)] - 1) / NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                                }
+                            } break;
+                            case sbr_Sorcery:
+                            {
+                                for(IDK_itr_10 = 0; (_players[itr].spellranks[sbr] - 1) > IDK_itr_10; IDK_itr_10++)
+                                {
+                                    _players[itr].spells_list[((_player_start_spells[itr].realms[sbr].spells[((sbr_Sorcery * 13) + IDK_itr_10)] - 1) / NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                                }
+                            } break;
+                            case sbr_Chaos:
+                            {
+                                for(IDK_itr_10 = 0; (_players[itr].spellranks[sbr] - 1) > IDK_itr_10; IDK_itr_10++)
+                                {
+                                    _players[itr].spells_list[((_player_start_spells[itr].realms[sbr].spells[((sbr_Chaos * 13) + IDK_itr_10)] - 1) / NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                                }
+                            } break;
+                            case sbr_Life:
+                            {
+                                for(IDK_itr_10 = 0; (_players[itr].spellranks[sbr] - 1) > IDK_itr_10; IDK_itr_10++)
+                                {
+                                    _players[itr].spells_list[((_player_start_spells[itr].realms[sbr].spells[((sbr_Life * 13) + IDK_itr_10)] - 1) / NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                                }
+                            } break;
+                            case sbr_Death:
+                            {
+                                for(IDK_itr_10 = 0; (_players[itr].spellranks[sbr] - 1) > IDK_itr_10; IDK_itr_10++)
+                                {
+                                    _players[itr].spells_list[((_player_start_spells[itr].realms[sbr].spells[((sbr_Death * 13) + IDK_itr_10)] - 1) / NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                                }
+                            } break;
+                        }
+
+                        Available_Spells = (_players[itr].spellranks[sbr] - 1);
+
+                        // ; mark random common spells from the realm as
+                        // ; researchable until the availability limit is reached
+
+                        while(Available_Spells < Availability_Limit)
+                        {
+
+                            IDK_itr_10 = (Random(10) - 1);
+
+                            if(_players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + IDK_itr_10)] == sls_Unknown)
+                            {
+
+                                _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + IDK_itr_10)] == sls_Knowable;
+
+                            }
+
+                            Available_Spells = 0;
+
+                            for(IDK_itr_10 = 0; IDK_itr_10 < 10; IDK_itr_10++)
+                            {
+
+                                if(_players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + IDK_itr_10)] == sls_Unknown)
+                                {
+
+                                    Available_Spells++;
+
+                                }
+
+                            }
+
+                        }
+
+/*
+    BEGIN: Knowable - Uncommon
+*/
+
+                        if(_players[itr].spellranks[sbr] > 7)
+                        {
+
+                            // ; mark all uncommon spells of the realm as researchable
+
+                            for(IDK_itr_10 = 0; IDK_itr_10 < 10; IDK_itr_10++)
+                            {
+
+                                _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 10 + IDK_itr_10)] == sls_Knowable;
+
+                            }
+
+                        }
+                        else
+                        {
+
+                            // ; clear the availability array
+                            for(IDK_itr_10 = 0; IDK_itr_10 < NUM_SPELLS_PER_MAGIC_RARITY; IDK_itr_10++)
+                            {
+
+                                Availability_Array[IDK_itr_10] = 0;
+
+                            }
+
+                            // ; set the availability limit for the uncommon spells of
+                            // ; the realm based on the book count
+                            switch(_players[itr].spellranks[sbr])  // - 1; <= 9
+                            {
+                                /* DNE  case 0: { } break; */
+                                case  1: { Availability_Limit =  1; } break;
+                                case  2: { Availability_Limit =  2; } break;
+                                case  3: { Availability_Limit =  3; } break;
+                                case  4: { Availability_Limit =  4; } break;
+                                case  5: { Availability_Limit =  5; } break;
+                                case  6: { Availability_Limit =  6; } break;
+                                case  7: { Availability_Limit =  8; } break;
+                                case  8: { Availability_Limit = 10; } break;
+                                case  9: { Availability_Limit = 10; } break;
+                                case 10: { Availability_Limit = 10; } break;
+                            }
+
+                            // ; fill the availability array with random uncommon
+                            // ; spells up to the limit
+                            for(IDK_itr_10 = 0; IDK_itr_10 < Availability_Limit; IDK_itr_10++)
+                            {
+
+                                InRarity_Index = (Random(NUM_SPELLS_PER_MAGIC_RARITY) - 1);
+
+                                if(Availability_Array[InRarity_Index] != 1)
+                                {
+
+                                    Availability_Array[InRarity_Index] = 1;
+
+                                }
+
+                            }
+
+                            // ; copy the array into the wizard's profile as uncommon
+                            // ; researchable spells
+
+                            for(IDK_itr_10 = 0; IDK_itr_10 < NUM_SPELLS_PER_MAGIC_RARITY; IDK_itr_10++)
+                            {
+
+                                if(Availability_Array[IDK_itr_10] == 1)
+                                {
+
+                                    _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 10 + IDK_itr_10)] == sls_Knowable;
+
+                                }
+
+                            }
+
+                        }
+
+/*
+    END: Knowable - Uncommon
+*/
+
+/*
+    BEGIN: Knowable - Rare
+*/
+                        
+                        if(_players[itr].spellranks[sbr] > 9)
+                        {
+
+                            // ; mark all rare spells of the realm as researchable
+
+                            for(IDK_itr_10 = 0; IDK_itr_10 < NUM_SPELLS_PER_MAGIC_REALM; IDK_itr_10++)
+                            {
+
+                                _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 20 + IDK_itr_10)] == sls_Knowable;
+
+                            }
+
+                        }
+                        else
+                        {
+
+                            // ; clear the availability array
+                            for(IDK_itr_10 = 0; IDK_itr_10 < NUM_SPELLS_PER_MAGIC_RARITY; IDK_itr_10++)
+                            {
+
+                                Availability_Array[IDK_itr_10] = 0;
+
+                            }
+
+                            // ; set the availability limit for the rare spells of
+                            // ; the realm based on the book count
+                            switch(_players[itr].spellranks[sbr])  // - 1; <= 8
+                            {
+                                /* DNE  case 0: { } break; */
+                                case  1: { Availability_Limit = 0; } break;
+                                case  2: { Availability_Limit = 1; } break;
+                                case  3: { Availability_Limit = 2; } break;
+                                case  4: { Availability_Limit = 3; } break;
+                                case  5: { Availability_Limit = 4; } break;
+                                case  6: { Availability_Limit = 5; } break;
+                                case  7: { Availability_Limit = 6; } break;
+                                case  8: { Availability_Limit = 7; } break;
+                                case  9: { Availability_Limit = 9; } break;
+                                // WTF  DNE  case 10: { Availability_Limit = ; } break;
+                            }
+
+                            // ; fill the availability array with random rare
+                            // ; spells up to the limit
+                            for(IDK_itr_10 = 0; IDK_itr_10 < Availability_Limit; IDK_itr_10++)
+                            {
+
+                                InRarity_Index = (Random(NUM_SPELLS_PER_MAGIC_RARITY) - 1);
+
+                                if(Availability_Array[InRarity_Index] != 1)
+                                {
+
+                                    Availability_Array[InRarity_Index] = 1;
+
+                                }
+
+                            }
+
+                            // ; copy the array into the wizard's profile as rare
+                            // ; researchable spells
+
+                            for(IDK_itr_10 = 0; IDK_itr_10 < NUM_SPELLS_PER_MAGIC_RARITY; IDK_itr_10++)
+                            {
+
+                                if(Availability_Array[IDK_itr_10] == 1)
+                                {
+
+                                    _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 20 + IDK_itr_10)] == sls_Knowable;
+
+                                }
+
+                            }
+
+                        }
+
+/*
+    END: Knowable - Rare
+*/
+
+/*
+    BEGIN: Knowable - Very Rare
+*/
+                        
+                        if(_players[itr].spellranks[sbr] > 9)
+                        {
+
+                            // ; mark all very rare spells of the realm as researchable
+
+                            for(IDK_itr_10 = 0; IDK_itr_10 < NUM_SPELLS_PER_MAGIC_REALM; IDK_itr_10++)
+                            {
+
+                                _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 30 + IDK_itr_10)] == sls_Knowable;
+
+                            }
+
+                        }
+                        else
+                        {
+
+                            // ; clear the availability array
+                            for(IDK_itr_10 = 0; IDK_itr_10 < NUM_SPELLS_PER_MAGIC_RARITY; IDK_itr_10++)
+                            {
+
+                                Availability_Array[IDK_itr_10] = 0;
+
+                            }
+
+                            // ; set the availability limit for the very rare spells of
+                            // ; the realm based on the book count
+                            switch(_players[itr].spellranks[sbr])  // - 1; <= 8
+                            {
+                                /* DNE  case 0: { } break; */
+                                case  1: { Availability_Limit = 0; } break;
+                                case  2: { Availability_Limit = 0; } break;
+                                case  3: { Availability_Limit = 1; } break;
+                                case  4: { Availability_Limit = 2; } break;
+                                case  5: { Availability_Limit = 3; } break;
+                                case  6: { Availability_Limit = 4; } break;
+                                case  7: { Availability_Limit = 5; } break;
+                                case  8: { Availability_Limit = 6; } break;
+                                case  9: { Availability_Limit = 7; } break;
+                                // WTF  DNE  case 10: { Availability_Limit = ; } break;
+                            }
+
+                            // ; fill the availability array with random very rare
+                            // ; spells up to the limit
+                            for(IDK_itr_10 = 0; IDK_itr_10 < Availability_Limit; IDK_itr_10++)
+                            {
+
+                                InRarity_Index = (Random(NUM_SPELLS_PER_MAGIC_RARITY) - 1);
+
+                                if(Availability_Array[InRarity_Index] != 1)
+                                {
+
+                                    Availability_Array[InRarity_Index] = 1;
+
+                                }
+
+                            }
+
+                            // ; copy the array into the wizard's profile as very rare
+                            // ; researchable spells
+
+                            for(IDK_itr_10 = 0; IDK_itr_10 < NUM_SPELLS_PER_MAGIC_RARITY; IDK_itr_10++)
+                            {
+
+                                if(Availability_Array[IDK_itr_10] == 1)
+                                {
+
+                                    _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 30 + IDK_itr_10)] == sls_Knowable;
+
+                                }
+
+                            }
+
+                        }
+
+/*
+    END: Knowable - Very Rare
+*/
+
+                    }
+                    else
+                    {
+
+                        // ; mark all spells of the realm as researchable
+                        for(IDK_itr_10 = 0; IDK_itr_10 < NUM_SPELLS_PER_MAGIC_REALM; IDK_itr_10++)
+                        {
+
+                            _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + IDK_itr_10)] = 1;
+
+                        }
+
+                        switch(sbr)
+                        {
+                            case 0:
+                            {
+                                for(Common_Index = 0; Common_Index < 10; Common_Index++)
+                                {
+                                    _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + Common_Index)] = sls_Known;
+                                }
+                                // IDGI
+                                // TODO  _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + _player_start_spells[itr].realms[sbr].spells[])] = sls_Known;
+                                // TODO  _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + _player_start_spells[itr].realms[sbr].spells[])] = sls_Known;
+                                // TODO  _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + _player_start_spells[itr].realms[sbr].spells[])] = sls_Known;
+                            } break;
+                            case 1:
+                            {
+                                for(Common_Index = 0; Common_Index < 10; Common_Index++)
+                                {
+                                    _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + Common_Index)] = sls_Known;
+                                }
+                                // IDGI
+                                // TODO  _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + _player_start_spells[itr].realms[sbr].spells[])] = sls_Known;
+                                // TODO  _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + _player_start_spells[itr].realms[sbr].spells[])] = sls_Known;
+                                // TODO  _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + _player_start_spells[itr].realms[sbr].spells[])] = sls_Known;
+                            } break;
+                            case 2:
+                            {
+                                for(Common_Index = 0; Common_Index < 10; Common_Index++)
+                                {
+                                    _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + Common_Index)] = sls_Known;
+                                }
+                                // IDGI
+                                // TODO  _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + _player_start_spells[itr].realms[sbr].spells[])] = sls_Known;
+                                // TODO  _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + _player_start_spells[itr].realms[sbr].spells[])] = sls_Known;
+                                // TODO  _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + _player_start_spells[itr].realms[sbr].spells[])] = sls_Known;
+                            } break;
+                            case 3:
+                            {
+                                for(Common_Index = 0; Common_Index < 10; Common_Index++)
+                                {
+                                    _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + Common_Index)] = sls_Known;
+                                }
+                                // IDGI
+                                // TODO  _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + _player_start_spells[itr].realms[sbr].spells[])] = sls_Known;
+                                // TODO  _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + _player_start_spells[itr].realms[sbr].spells[])] = sls_Known;
+                                // TODO  _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + _player_start_spells[itr].realms[sbr].spells[])] = sls_Known;
+                            } break;
+                            case 4:
+                            {
+                                for(Common_Index = 0; Common_Index < 10; Common_Index++)
+                                {
+                                    _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + Common_Index)] = sls_Known;
+                                }
+                                // IDGI
+                                // TODO  _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + _player_start_spells[itr].realms[sbr].spells[])] = sls_Known;
+                                // TODO  _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + _player_start_spells[itr].realms[sbr].spells[])] = sls_Known;
+                                // TODO  _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + _player_start_spells[itr].realms[sbr].spells[])] = sls_Known;
+                            } break;
+                        }
+
+                    }
+
+                }
+
+            }
+            else
+            {
+
+                _players[itr].spells_list[((sbr * 40) +  0)] = sls_Knowable;  // spl_Demon_Lord
+                _players[itr].spells_list[((sbr * 40) +  1)] = sls_Knowable;
+                _players[itr].spells_list[((sbr * 40) +  2)] = sls_Knowable;
+                _players[itr].spells_list[((sbr * 40) +  3)] = sls_Knowable;
+                _players[itr].spells_list[((sbr * 40) +  4)] = sls_Knowable;
+                _players[itr].spells_list[((sbr * 40) +  5)] = sls_Knowable;
+                _players[itr].spells_list[((sbr * 40) +  6)] = sls_Knowable;
+                _players[itr].spells_list[((sbr * 40) +  7)] = sls_Knowable;
+                _players[itr].spells_list[((sbr * 40) +  8)] = sls_Knowable;
+                _players[itr].spells_list[((sbr * 40) +  9)] = sls_Knowable;
+                _players[itr].spells_list[((sbr * 40) + 10)] = sls_Knowable;
+                _players[itr].spells_list[((sbr * 40) + 11)] = sls_Knowable;
+                // WTF. Why not 0x0C?  ¿ spl_Summon_Champion ?  _players[itr].spells_list[((sbr * 40) + 12)] = 1;
+                _players[itr].spells_list[((sbr * 40) + 13)] = sls_Known;  // spl_Spell_Of_Mastery
+
+            }
+
+        }
+
+        _players[itr].spells_list[spl_Demon_Lord] = sls_Known;
+
+        if(_players[itr].artificer != 0)
+        {
+
+            _players[itr].spells_list[spl_Detect_Magic] = sls_Known;
+
+            _players[itr].spells_list[spl_Disjunction] = sls_Known;
+            
+        }
+
+    }
+
+}
 
 
 // MGC o56p11

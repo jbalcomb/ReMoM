@@ -13,6 +13,61 @@ ninja compile_commands VSC
 
 
 New Game
+
+[ ] j_NEWG_CreateWorld__WIP()
+[X] j_Initialize_Events()
+[ ] j_NEWG_FinalizeTables()
+[x] j_Save_SAVE_GAM()
+[ ] GAME_WizardsLaunch()
+
+[ ] j_NEWG_CreateWorld__WIP()
+
+[ ] j_NEWG_FinalizeTables()
+    [ ] Initialize_Items
+    [ ] Init_Heroes
+    [ ] Init_Players
+    [ ] AI_WIZ_StrategyReset__WIP
+    [ ] Init_Magic_Personalities_Objectives
+    [ ] Init_Summoning_Circle_And_Spell_Of_Mastery
+    [ ] Initialize_Messages
+    [ ] _players.capital_race
+    [ ] _players.gold_reserve
+    [ ] Wiz5_Spell_E0h@[itr_players] = (80 + Random(40))  WTF is this?  ; 80 + rnd(40) is stored here for each AI wizard (word array pointer, human excluded) when setting initial gold
+
+MoO2
+Init_New_Game_()
+|-> Init_Players_()
+
+
+
+[x] Draw_Building_The_Worlds()
+[x] WIZ_SetProfiles__WIP();
+[ ] NEWG_ClearLandmasses()
+[ ] NEWG_CreateLands()
+[ ] NEWG_SetBaseLands()
+[ ] NEWG_SetSpecLands()
+[ ] NEWG_CreateNodes()
+[ ] NEWG_EqualizeNodes()
+[ ] NEWG_CreateTowers()
+[ ] NEWG_TileIsleExtend()
+[ ] NEWG_CreateEZs()
+[ ] NEWG_CreateCapitals()
+[ ] NEWG_CreateNeutrals()
+[ ] NEWG_CreateSpecials()
+[ ] NEWG_CreateRoads()
+[ ] NEWG_CreateShores()
+[ ] NEWG_CreateRiver()
+[ ] NEWG_SetRiverTiles()
+[ ] NEWG_SetDeserts()
+[ ] NEWG_RandomizeTiles()
+[ ] NEWG_SetMoveMaps()
+[ ] CRP_NEWG_CreatePathGrids()
+[ ] NEWG_SetScoutingMaps()
+[ ] NEWG_AnimateOceans()
+[ ] NEWG_EZ_MarkHadnLeft()
+
+
+
 [x] New Game Screen 0 - Game Options
 [x] New Game Screen 1 - Wizard Selection;   Title: "Select Wizard";         // HLPENTRY.LBX, 032  ""  "Wizard Selection Help"
 [x] New Game Screen 2 - Wizard Portrait;    Title: "Select Portrait";       // HLPENTRY.LBX, 031  ""  "Wizard Picture Select"

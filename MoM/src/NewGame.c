@@ -462,9 +462,9 @@ struct s_mouse_list mouse_list_newgame[1] = {
 uint8_t wziards_name_colors[8] = { 31, 30, 29, 28, 27, 26, 25, 24 };
 
 // MGC dseg:2AD0
-struct WIZARD_Preset TBL_Default_Wizards[15] = {
+struct s_WIZARD_PRESET _wizard_presets_table[15] = {
     {"Merlin",  5,  0,  5, 0,  0, _Sage_Master },
-    {"Raven",   0,  6,  5, 0,  0, _No_Retort},
+    {"Raven",   0,  6,  5, 0,  0, _No_Special},
     {"Sharee",  0,  0,  0, 5,  5, _Conjurer},
     {"Lo Pan",  0,  5,  0, 0,  5, _Channeller},
     {"Jafar",   0, 10,  0, 0,  0, _Alchemy},
@@ -477,7 +477,7 @@ struct WIZARD_Preset TBL_Default_Wizards[15] = {
     {"Ariel",  10,  0,  0, 0,  0, _Charismatic},
     {"Tlaloc",  0,  0,  4, 5,  0, _Warlord},
     {"Kali",    0,  5,  0, 5,  0, _Artificer},
-    {"Custom",  0,  0,  0, 0,  0, _No_Retort}
+    {"Custom",  0,  0,  0, 0,  0, _No_Special}
 };
 
 // MGC dseg:2C1A 02 00 03 00 04 00 05 00 06 00 07 00 08 00 09 00+RP_Book_Table dw 2, 3, 4, 5, 6, 7, 8, 9, 0Ah, 0Bh ; repurposed in the worldgen customizer
@@ -487,42 +487,126 @@ int16_t TBL_SpellsPerBook_C[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 int16_t TBL_SpellsPerBook_U[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 };
 // MGC dseg:2C56
 int16_t TBL_SpellsPerBook_R[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
-// MGC dseg:2C6A
-// Statically define a variable named 'player_spells'
-struct Default_Spells player_spells = {
-    {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},  // Common spells initialization
-    {20, 21},                         // Uncommon spells initialization
-    50                                // Rare spell initialization
+
+// // MGC dseg:2C6A
+// // Statically define a variable named 'player_spells'
+// struct Default_Spells player_spells = {
+//     {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},        // Common spells initialization
+//     {spl_Basilisk, spl_Elemental_Armor},    // Uncommon spells initialization
+//     spl_Psionic_Blast                       // Rare spell initialization
+// };
+// // MGC  dseg:2C6A
+// struct Default_Spells TBL_Def_Spl_Nature = {
+//     { spl_War_Bears, spl_Stone_Skin, spl_Sprites, spl_Water_Walking, spl_Giant_Strength, spl_Web, spl_Earth_To_Mud, spl_Wall_Of_Stone, spl_Resist_Elements, spl_Earth_Lore }, 
+//     { spl_Cockatrices, spl_Change_Terrain },
+//     spl_Gorgons
+// };
+// // MGC dseg:2C84
+// struct Default_Spells TBL_Def_Spl_Sorcery = {
+//     { spl_Nagas, spl_Psionic_Blast, spl_Phantom_Warriors, spl_Floating_Island, spl_Confusion, spl_Counter_Magic, spl_Word_Of_Recall, spl_Dispel_Magic_True, spl_Resist_Magic, spl_Guardian_Wind },
+//     { spl_Flight, spl_Phantom_Beast },
+//     spl_Storm_Giant
+// };
+// // MGC dseg:2C9E
+// struct Default_Spells TBL_Def_Spl_Chaos = {
+//     { spl_Fire_Bolt, spl_Fire_Elemental, spl_Eldritch_Weapon, spl_Hell_Hounds, spl_Corruption, spl_Warp_Creature, spl_Shatter, spl_Wall_Of_Fire, spl_Disrupt, spl_Warp_Wood },
+//     { spl_Lightning_Bolt, spl_Doom_Bat },
+//     spl_Efreet
+// };
+// // MGC dseg:2CB8
+// struct Default_Spells TBL_Def_Spl_Life = {
+//     { spl_Heroism, spl_Guardian_Spirit, spl_Holy_Armor, spl_Just_Cause, spl_Healing, spl_Holy_Weapon, spl_Star_Fires, spl_Endurance, spl_True_Light, spl_Bless },
+//     { spl_Resurrection, spl_Unicorns },
+//     spl_Angel
+// };
+// // MGC dseg:2CD2
+// struct Default_Spells TBL_Def_Spl_Death = {
+// { spl_Life_Drain, spl_Ghouls, spl_Weakness, spl_Dark_Rituals, spl_Black_Sleep, spl_Darkness, spl_Terror, spl_Skeletons, spl_Mana_Leak, spl_Cloak_Of_Fear},
+// { spl_Black_Prayer, spl_Black_Channels },
+// spl_Wraiths
+// };
+
+// /*
+//     BEGIN: take 2 - defaults spells and wizard profiles
+// 
+// WIZ_CopyDefault__WIP()
+// iters over 13 ... TBL_Spells_Nature.Common[itr] = 0
+// so, just an array of 13
+// uses `word ptr`
+// so, 2-byte values
+// */
+// 
+// // MGC  dseg:2C6A
+// int16_t _default_spells_nature[13] = {
+//     spl_War_Bears, spl_Stone_Skin, spl_Sprites, spl_Water_Walking, spl_Giant_Strength, spl_Web, spl_Earth_To_Mud, spl_Wall_Of_Stone, spl_Resist_Elements, spl_Earth_Lore,
+//     spl_Cockatrices, spl_Change_Terrain,
+//     spl_Gorgons
+// };
+// // MGC dseg:2C84
+// int16_t _default_spells_sorcery[13] = {
+//     spl_Nagas, spl_Psionic_Blast, spl_Phantom_Warriors, spl_Floating_Island, spl_Confusion, spl_Counter_Magic, spl_Word_Of_Recall, spl_Dispel_Magic_True, spl_Resist_Magic, spl_Guardian_Wind,
+//     spl_Flight, spl_Phantom_Beast,
+//     spl_Storm_Giant
+// };
+// // MGC dseg:2C9E
+// int16_t _default_spells_chaos[13] = {
+//     spl_Fire_Bolt, spl_Fire_Elemental, spl_Eldritch_Weapon, spl_Hell_Hounds, spl_Corruption, spl_Warp_Creature, spl_Shatter, spl_Wall_Of_Fire, spl_Disrupt, spl_Warp_Wood,
+//     spl_Lightning_Bolt, spl_Doom_Bat,
+//     spl_Efreet
+// };
+// // MGC dseg:2CB8
+// int16_t _default_spells_life[13] = {
+//     spl_Heroism, spl_Guardian_Spirit, spl_Holy_Armor, spl_Just_Cause, spl_Healing, spl_Holy_Weapon, spl_Star_Fires, spl_Endurance, spl_True_Light, spl_Bless,
+//     spl_Resurrection, spl_Unicorns,
+//     spl_Angel
+// };
+// // MGC dseg:2CD2
+// int16_t _default_spells_death[13] = {
+//     spl_Life_Drain, spl_Ghouls, spl_Weakness, spl_Dark_Rituals, spl_Black_Sleep, spl_Darkness, spl_Terror, spl_Skeletons, spl_Mana_Leak, spl_Cloak_Of_Fear,
+//     spl_Black_Prayer, spl_Black_Channels,
+//     spl_Wraiths
+// };
+// 
+// /*
+//     END:  take 2 - defaults spells and wizard profiles
+// */
+
+/*
+    BEGIN: take 3 - 
+*/
+
+// MGC  dseg:2C6A
+struct s_DEFAULT_SPELLS _default_spells[5] = {
+    {
+        spl_War_Bears, spl_Stone_Skin, spl_Sprites, spl_Water_Walking, spl_Giant_Strength, spl_Web, spl_Earth_To_Mud, spl_Wall_Of_Stone, spl_Resist_Elements, spl_Earth_Lore,
+        spl_Cockatrices, spl_Change_Terrain,
+        spl_Gorgons
+    },
+    {
+        spl_Nagas, spl_Psionic_Blast, spl_Phantom_Warriors, spl_Floating_Island, spl_Confusion, spl_Counter_Magic, spl_Word_Of_Recall, spl_Dispel_Magic_True, spl_Resist_Magic, spl_Guardian_Wind,
+        spl_Flight, spl_Phantom_Beast,
+        spl_Storm_Giant
+    },
+    {
+        spl_Fire_Bolt, spl_Fire_Elemental, spl_Eldritch_Weapon, spl_Hell_Hounds, spl_Corruption, spl_Warp_Creature, spl_Shatter, spl_Wall_Of_Fire, spl_Disrupt, spl_Warp_Wood,
+        spl_Lightning_Bolt, spl_Doom_Bat,
+        spl_Efreet
+    },
+    {
+        spl_Heroism, spl_Guardian_Spirit, spl_Holy_Armor, spl_Just_Cause, spl_Healing, spl_Holy_Weapon, spl_Star_Fires, spl_Endurance, spl_True_Light, spl_Bless,
+        spl_Resurrection, spl_Unicorns,
+        spl_Angel
+    },
+    {
+        spl_Life_Drain, spl_Ghouls, spl_Weakness, spl_Dark_Rituals, spl_Black_Sleep, spl_Darkness, spl_Terror, spl_Skeletons, spl_Mana_Leak, spl_Cloak_Of_Fear,
+        spl_Black_Prayer, spl_Black_Channels,
+        spl_Wraiths
+    }
 };
-struct Default_Spells TBL_Def_Spl_Nature = {
-    { spl_War_Bears, spl_Stone_Skin, spl_Sprites, spl_Water_Walking, spl_Giant_Strength, spl_Web, spl_Earth_To_Mud, spl_Wall_Of_Stone, spl_Resist_Elements, spl_Earth_Lore }, 
-    { spl_Cockatrices, spl_Change_Terrain },
-    spl_Gorgons
-};
-// MGC dseg:2C84
-struct Default_Spells TBL_Def_Spl_Sorcery = {
-    { spl_Nagas, spl_Psionic_Blast, spl_Phantom_Warriors, spl_Floating_Island, spl_Confusion, spl_Counter_Magic, spl_Word_Of_Recall, spl_Dispel_Magic_True, spl_Resist_Magic, spl_Guardian_Wind },
-    { spl_Flight, spl_Phantom_Beast },
-    spl_Storm_Giant
-};
-// MGC dseg:2C9E
-struct Default_Spells TBL_Def_Spl_Chaos = {
-    { spl_Fire_Bolt, spl_Fire_Elemental, spl_Eldritch_Weapon, spl_Hell_Hounds, spl_Corruption, spl_Warp_Creature, spl_Shatter, spl_Wall_Of_Fire, spl_Disrupt, spl_Warp_Wood },
-    { spl_Lightning_Bolt, spl_Doom_Bat },
-    spl_Efreet
-};
-// MGC dseg:2CB8
-struct Default_Spells TBL_Def_Spl_Life = {
-    { spl_Heroism, spl_Guardian_Spirit, spl_Holy_Armor, spl_Just_Cause, spl_Healing, spl_Holy_Weapon, spl_Star_Fires, spl_Endurance, spl_True_Light, spl_Bless },
-    { spl_Resurrection, spl_Unicorns },
-    spl_Angel
-};
-// MGC dseg:2CD2
-struct Default_Spells TBL_Def_Spl_Death = {
-{ spl_Life_Drain, spl_Ghouls, spl_Weakness, spl_Dark_Rituals, spl_Black_Sleep, spl_Darkness, spl_Terror, spl_Skeletons, spl_Mana_Leak, spl_Cloak_Of_Fear},
-{ spl_Black_Prayer, spl_Black_Channels },
-spl_Wraiths
-};
+
+/*
+    END: take 3 - 
+*/
 
 // MGC dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Retort_Reqs Retort_Req 2 dup(<0, 0, 0, 0, 0, 0, 0>)
 // MGC dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00+                                        ; DATA XREF: GAME_New_Screen_4+167o ...
@@ -840,27 +924,44 @@ char cnst_And__ovr050[] = " and ";
 
 // MGC dseg:8A42                                                 BEGIN:  ovr050 - Uninitialized Data
 
-// MGC dseg:8A42
-struct Default_Spells TBL_Spells_Nature;
-// MGC dseg:8A5C
-struct Default_Spells TBL_Spells_Sorcery;
-// MGC dseg:8A76
-struct Default_Spells TBL_Spells_Chaos;
-// MGC dseg:8A90
-struct Default_Spells TBL_Spells_Life;
-// MGC dseg:8AAA
-struct Default_Spells TBL_Spells_Death;
+// // // // MGC dseg:8A42
+// // // struct Default_Spells TBL_Spells_Nature;
+// // // // MGC dseg:8A5C
+// // // struct Default_Spells TBL_Spells_Sorcery;
+// // // // MGC dseg:8A76
+// // // struct Default_Spells TBL_Spells_Chaos;
+// // // // MGC dseg:8A90
+// // // struct Default_Spells TBL_Spells_Life;
+// // // // MGC dseg:8AAA
+// // // struct Default_Spells TBL_Spells_Death;
+// // // MGC dseg:8A42
+// // int16_t _start_spells_nature[13];
+// // // MGC dseg:8A5C
+// // int16_t _start_spells_sorcery[13];
+// // // MGC dseg:8A76
+// // int16_t _start_spells_chaos[13];
+// // // MGC dseg:8A90
+// // int16_t _start_spells_life[13];
+// // // MGC dseg:8AAA
+// // int16_t _start_spells_death[13];
+// // MGC dseg:8AC4
+// struct Default_Spells TBL_Spells_P1;
+// // MGC dseg:8B46
+// struct Default_Spells TBL_Spells_P2;
+// // MGC dseg:8BC8
+// struct Default_Spells TBL_Spells_P3;
+// // MGC dseg:8C4A
+// struct Default_Spells TBL_Spells_P4;
+// // MGC dseg:8CCC
+// struct Default_Spells UU_TBL_Spells_P5;
 
-// MGC dseg:8AC4
-struct Default_Spells TBL_Spells_P1;
-// MGC dseg:8B46
-struct Default_Spells TBL_Spells_P2;
-// MGC dseg:8BC8
-struct Default_Spells TBL_Spells_P3;
-// MGC dseg:8C4A
-struct Default_Spells TBL_Spells_P4;
-// MGC dseg:8CCC
-struct Default_Spells UU_TBL_Spells_P5;
+// ...oops... // MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_start_spells s_Init_Spells_Table <0>   ; DATA XREF: GAME_New_Screen_5+171w ...
+// ...oops... // ...needed by INITGAME.c, so defn in NewGame.h
+// ...oops... struct s_Init_Spells_Table _start_spells;
+// ...oops... // ...oops... MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_start_spells s_Init_Spells_Table <0>   ; DATA XREF: GAME_New_Screen_5+171w ...
+// ...oops... // MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_player_start_spells s_Init_Base_Realms 6 dup(<0>)
+// ...oops... // ...needed by INITGAME.c, so defn in NewGame.h
+struct s_Init_Base_Realms _player_start_spells[PLAYER_COUNT_MAX];
 
 // MGC dseg:8D4E 00 00                                           NEWG_PickAttempt dw 0                   ; DATA XREF: GAME_New_Screen_4+436r ...
 // MGC dseg:8D50 00 00                                           NEWG_PickError dw 0                     ; DATA XREF: GAME_New_Screen_4+15Bw ...
@@ -2007,17 +2108,17 @@ void Newgame_Screen_1_2_Draw(void)
         {
             FLIC_Draw(169, (27 + (22 * itr)), IMG_NewG_ButtonBGs[itr]);
             Set_Font_Colors_15(3, &Shadow_Colors[0]);
-            Print_Centered(203, (31 + (22 * itr)), TBL_Default_Wizards[itr].Name);
+            Print_Centered(203, (31 + (22 * itr)), _wizard_presets_table[itr].name);
             Set_Font_Colors_15(3, &Font_Colors[0]);
-            Print_Centered(202, (30 + (22 * itr)), TBL_Default_Wizards[itr].Name);
+            Print_Centered(202, (30 + (22 * itr)), _wizard_presets_table[itr].name);
         }
         else
         {
             FLIC_Draw(170, (28 + (22 * itr)), IMG_NewG_ButtonBGs[itr]);
             Set_Font_Colors_15(3, &Shadow_Colors[0]);
-            Print_Centered(204, (32 + (22 * itr)), TBL_Default_Wizards[itr].Name);
+            Print_Centered(204, (32 + (22 * itr)), _wizard_presets_table[itr].name);
             Set_Font_Colors_15(3, &Font_Colors[0]);
-            Print_Centered(203, (31 + (22 * itr)), TBL_Default_Wizards[itr].Name);
+            Print_Centered(203, (31 + (22 * itr)), _wizard_presets_table[itr].name);
         }
 
     }
@@ -2036,24 +2137,24 @@ void Newgame_Screen_1_2_Draw(void)
         {
             FLIC_Draw(246, (28 + (22 * itr)), IMG_NewG_ButtonBGs[(7 + itr)]);
             Set_Font_Colors_15(3, &Shadow_Colors[0]);
-            Print_Centered(280, (32 + (22 * itr)), TBL_Default_Wizards[(7 + itr)].Name);
+            Print_Centered(280, (32 + (22 * itr)), _wizard_presets_table[(7 + itr)].name);
             Set_Font_Colors_15(3, &Font_Colors[0]);
-            Print_Centered(279, (31 + (22 * itr)), TBL_Default_Wizards[(7 + itr)].Name);
+            Print_Centered(279, (31 + (22 * itr)), _wizard_presets_table[(7 + itr)].name);
         }
         else
         {
             FLIC_Draw(245, (27 + (22 * itr)), IMG_NewG_ButtonBGs[(7 + itr)]);
             Set_Font_Colors_15(3, &Shadow_Colors[0]);
-            Print_Centered(279, (31 + (22 * itr)), TBL_Default_Wizards[(7 + itr)].Name);
+            Print_Centered(279, (31 + (22 * itr)), _wizard_presets_table[(7 + itr)].name);
             Set_Font_Colors_15(3, &Font_Colors[0]);
-            Print_Centered(278, (30 + (22 * itr)), TBL_Default_Wizards[(7 + itr)].Name);
+            Print_Centered(278, (30 + (22 * itr)), _wizard_presets_table[(7 + itr)].name);
         }
 
     }
 
     /* Print Retort Name */
     if(
-        (TBL_Default_Wizards[m_displayed_wizard].Retort != ST_UNDEFINED)
+        (_wizard_presets_table[m_displayed_wizard].special != ST_UNDEFINED)
         &&
         (NEWG_PortraitSelType == 8)  // defaulted to 8 and god is not Intro so didn't get reduced to 7  second has 7 wizards + custom
         &&
@@ -2062,7 +2163,7 @@ void Newgame_Screen_1_2_Draw(void)
     {
         Set_Font_Style(0, 15, ST_NULL, ST_NULL);
         Set_Font_Colors_15(0, &Font_Colors[0]);
-        strcpy(Retort_String, STR_Retorts[TBL_Default_Wizards[m_displayed_wizard].Retort]);  // 1 + {-1,0,1,2,...}
+        strcpy(Retort_String, STR_Retorts[_wizard_presets_table[m_displayed_wizard].special]);  // 1 + {-1,0,1,2,...}
         strcat(Retort_String, cnst_DOT__ovr050);
         Print(13, 101, Retort_String);
         Set_Font_Colors_15(0, &Retort_Text_Color[0]);
@@ -2079,10 +2180,10 @@ void Newgame_Screen_1_2_Draw(void)
     {
         Set_Font_Style(4, 15, ST_NULL, ST_NULL);
         Set_Font_Colors_15(4, &Shadow_Colors[0]);
-        Print_Centered(78, 120, TBL_Default_Wizards[m_displayed_wizard].Name);
-        Print_Centered(77, 120, TBL_Default_Wizards[m_displayed_wizard].Name);
+        Print_Centered(78, 120, _wizard_presets_table[m_displayed_wizard].name);
+        Print_Centered(77, 120, _wizard_presets_table[m_displayed_wizard].name);
         Set_Font_Colors_15(4, &Font_Colors[0]);
-        Print_Centered(77, 119, TBL_Default_Wizards[m_displayed_wizard].Name);
+        Print_Centered(77, 119, _wizard_presets_table[m_displayed_wizard].name);
     }
 
 }
@@ -2188,7 +2289,7 @@ int16_t Newgame_Screen_2__WIP(void)
 
                 _players[0].wizard_id = itr;
 
-                strcpy(_players[0].name, TBL_Default_Wizards[itr].Name);
+                strcpy(_players[0].name, _wizard_presets_table[itr].name);
 
                 leave_screen = ST_TRUE;
 
@@ -2622,7 +2723,7 @@ int16_t Newgame_Screen_6__WIP(void)
 {
     char Arcanus_Races[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Escape_Hotkey_Control = 0;
-    int8_t * Retorts_Pointer = 0;
+    int8_t * wss_ptr = 0;
     uint8_t * Shadow_Color = 0;
     uint8_t * Available_Color = 0;
     uint8_t * Not_Available_Color = 0;
@@ -2672,7 +2773,7 @@ int16_t Newgame_Screen_6__WIP(void)
 
     First_Draw_Done = ST_NULL;
 
-    Retorts_Pointer = &_players[0].alchemy;
+    wss_ptr = &_players[0].alchemy;
 
     // ; create the click labels for the arcanus races
     for(itr = 0; itr < 9; itr++)
@@ -2723,8 +2824,8 @@ int16_t Newgame_Screen_6__WIP(void)
         for(itr = 9; itr < 14; itr++)
         {
 
-            // if(Retorts_Pointer[RETORTS.Myrran] == 1)
-            if(Retorts_Pointer[rtt_Myrran] == 1)
+            // if(wss_ptr[RETORTS.Myrran] == 1)
+            if(wss_ptr[rtt_Myrran] == 1)
             {
 
                 if(NEWG_Select_Labels[itr] == input_field_idx)
@@ -2873,7 +2974,7 @@ int16_t Newgame_Screen_6__WIP(void)
 void Newgame_Screen_6_Draw__WIP(void)
 {
     int16_t Arcanus_Races[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int8_t * Retorts_Pointer = 0;
+    int8_t * wss_ptr = 0;
     uint8_t * Shadow_Color = 0;
     uint8_t * Not_Available_Color = 0;
     uint8_t * Available_Color = 0;
@@ -2933,7 +3034,7 @@ void Newgame_Screen_6_Draw__WIP(void)
 
     Moused_Control = Scan_Input();
 
-    Retorts_Pointer = &_players[0].alchemy;
+    wss_ptr = &_players[0].alchemy;
 
     /*
         BEGIN: same on Screen 6 & 7
@@ -3034,7 +3135,7 @@ void Newgame_Screen_6_Draw__WIP(void)
         DBG_race_name_string = *_race_type_table[DBG_race_type].name;
         Print(221, (148 + (10 * itr2)), DBG_race_name_string);
 
-        if(Retorts_Pointer[rtt_Myrran] == 1)
+        if(wss_ptr[rtt_Myrran] == 1)
         {
 
             if(NEWG_Select_Labels[(9 + itr2)] == Moused_Control)
@@ -3085,7 +3186,7 @@ void GAME_DrawRetortsStr(void)
     int16_t Text_Top = 0;
     int16_t Retorts_Added = 0;
     int16_t Local_Zero = 0;
-    int8_t * Retorts_Pointer = 0;
+    int8_t * wss_ptr = 0;
     // int16_t Retort_Colors = 0;
     uint8_t * Retort_Colors = 0;
     // uint8_t Text_Colors[4] = { 0, 0, 0, 0 };
@@ -3106,14 +3207,14 @@ void GAME_DrawRetortsStr(void)
 
     Retorts_String[0] = 0;
 
-    Retorts_Pointer = &_players[0].alchemy;
+    wss_ptr = &_players[0].alchemy;
 
     retort_count = 0;
 
     // ; count the number of retorts into di
     for(itr = 0; itr < 18; itr++)
     {
-        if(Retorts_Pointer[itr] == 1)
+        if(wss_ptr[itr] == 1)
         {
             retort_count++;
         }
@@ -3126,7 +3227,7 @@ void GAME_DrawRetortsStr(void)
     // ; create a string listing the retort names
     for(itr = 0; itr < 18; itr++)
     {
-        if(Retorts_Pointer[itr] == 1)
+        if(wss_ptr[itr] == 1)
         {
             STR_ListSeparator(&Retorts_Added, retort_count, &Retorts_String[0]);
             strcat(Retorts_String, STR_Retorts[itr]);
@@ -3179,7 +3280,7 @@ void GAME_DrawRetortsStr(void)
 /*
 
 */
-void NEWG_DrawDefShelf__WIP(int16_t Portrait_Index)
+void NEWG_DrawDefShelf__WIP(int16_t wizard_id)
 {
     int16_t Second_Book_Realm = 0;
     int16_t First_Book_Realm = 0;
@@ -3199,7 +3300,7 @@ void NEWG_DrawDefShelf__WIP(int16_t Portrait_Index)
     First_Book_Realm = ST_UNDEFINED;
     Second_Book_Realm = ST_UNDEFINED;
 
-    Profile_Books_Offset = &TBL_Default_Wizards[Portrait_Index].Life;
+    Profile_Books_Offset = &_wizard_presets_table[wizard_id].life;
 
     for(itr = 0; itr < 5; itr++)
     {
@@ -3289,34 +3390,34 @@ void Newgame_Screen5__WIP(void)
 /*
 
 */
-void WIZ_CopyDefault__WIP(int16_t Portrait_Index)
+void WIZ_CopyDefault__WIP(int16_t wizard_id)
 {
-    int8_t * Retorts_Pointer = 0;
+    int8_t * wss_ptr = 0;
     int16_t itr = 0;  // _SI_
     int16_t spellranks = 0;  // _DI_
 
-    _players[0].wizard_id = Portrait_Index;
+    _players[0].wizard_id = wizard_id;
 
-    _players[0].spellranks[0] = TBL_Default_Wizards[Portrait_Index].Nature;
-    _players[0].spellranks[1] = TBL_Default_Wizards[Portrait_Index].Sorcery;
-    _players[0].spellranks[2] = TBL_Default_Wizards[Portrait_Index].Chaos;
-    _players[0].spellranks[3] = TBL_Default_Wizards[Portrait_Index].Life;
-    _players[0].spellranks[4] = TBL_Default_Wizards[Portrait_Index].Death;
+    _players[0].spellranks[sbr_Nature] = _wizard_presets_table[wizard_id].nature;
+    _players[0].spellranks[sbr_Sorcery]= _wizard_presets_table[wizard_id].sorcery;
+    _players[0].spellranks[sbr_Chaos] = _wizard_presets_table[wizard_id].chaos;
+    _players[0].spellranks[sbr_Life] = _wizard_presets_table[wizard_id].life;
+    _players[0].spellranks[sbr_Death] = _wizard_presets_table[wizard_id].death;
 
-    Retorts_Pointer = &_players[0].alchemy;
+    wss_ptr = &_players[0].alchemy;
 
     // ; clear all retorts in the human player's wizard record
     // ; while copying any that are in the preset profile
     for(itr = 0; itr < NUM_RETORTS; itr++)
     {
 
-        if(TBL_Default_Wizards[Portrait_Index].Retort == itr)
+        if(_wizard_presets_table[wizard_id].special == itr)
         {
-            Retorts_Pointer[itr] = 1;
+            wss_ptr[itr] = 1;
         }
         else
         {
-            Retorts_Pointer[itr] = 0;
+            wss_ptr[itr] = 0;
         }
 
     }
@@ -3324,106 +3425,104 @@ void WIZ_CopyDefault__WIP(int16_t Portrait_Index)
     // ; clear the spell selection list
     for(itr = 0; itr < 13; itr++)
     {
-
-        TBL_Spells_Nature.Common[itr] = 0;
-        TBL_Spells_Sorcery.Common[itr] = 0;
-        TBL_Spells_Chaos.Common[itr] = 0;
-        TBL_Spells_Life.Common[itr] = 0;
-        TBL_Spells_Death.Common[itr] = 0;
-
+        _player_start_spells[0].realms[sbr_Nature].spells[itr] = 0;
+        _player_start_spells[0].realms[sbr_Sorcery].spells[itr] = 0;
+        _player_start_spells[0].realms[sbr_Chaos].spells[itr] = 0;
+        _player_start_spells[0].realms[sbr_Life].spells[itr] = 0;
+        _player_start_spells[0].realms[sbr_Death].spells[itr] = 0;
     }
 
-    spellranks = _players[0].spellranks[0];
+    spellranks = _players[0].spellranks[sbr_Nature];
     // ; PATCHED here to fix 11-book default wizard spells
     if(spellranks > 1)
     {
         for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
         {
-            TBL_Spells_Nature.Common[itr] = TBL_Def_Spl_Nature.Common[itr];
+            _player_start_spells[0].realms[sbr_Nature].spells[( 0 + itr)] = _default_spells[sbr_Nature].spells[(0 + itr)];
         }
         for(itr = 0; (TBL_SpellsPerBook_U[spellranks] - 2) > itr; itr++)
         {
-            TBL_Spells_Nature.Uncommon[itr] = TBL_Def_Spl_Nature.Uncommon[itr];
+            _player_start_spells[0].realms[sbr_Nature].spells[(10 + itr)] = _default_spells[sbr_Nature].spells[(10 + itr)];
         }
         if((TBL_SpellsPerBook_U[spellranks] - 2) > 0)
         {
-            TBL_Spells_Nature.Rare = TBL_Def_Spl_Nature.Rare;
+            _player_start_spells[0].realms[sbr_Nature].spells[(12 + itr)] = _default_spells[sbr_Nature].spells[(12 + itr)];
         }
     }
 
-    spellranks = _players[0].spellranks[1];
+    spellranks = _players[0].spellranks[sbr_Sorcery];
     // ; PATCHED here to fix 11-book default wizard spells
     if(spellranks > 1)
     {
         for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
         {
-            TBL_Spells_Sorcery.Common[itr] = TBL_Def_Spl_Nature.Common[itr];
+            _player_start_spells[0].realms[sbr_Sorcery].spells[( 0 + itr)] = _default_spells[sbr_Sorcery].spells[(0 + itr)];
         }
         for(itr = 0; (TBL_SpellsPerBook_U[spellranks] - 2) > itr; itr++)
         {
-            TBL_Spells_Sorcery.Uncommon[itr] = TBL_Def_Spl_Nature.Uncommon[itr];
+            _player_start_spells[0].realms[sbr_Sorcery].spells[(10 + itr)] = _default_spells[sbr_Sorcery].spells[(10 + itr)];
         }
         if((TBL_SpellsPerBook_U[spellranks] - 2) > 0)
         {
-            TBL_Spells_Sorcery.Rare = TBL_Def_Spl_Nature.Rare;
+            _player_start_spells[0].realms[sbr_Sorcery].spells[(12 + itr)] = _default_spells[sbr_Sorcery].spells[(12 + itr)];
         }
     }
 
-    spellranks = _players[0].spellranks[2];
+    spellranks = _players[0].spellranks[sbr_Chaos];
     // ; PATCHED here to fix 11-book default wizard spells
     if(spellranks > 1)
     {
         for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
         {
-            TBL_Spells_Chaos.Common[itr] = TBL_Def_Spl_Nature.Common[itr];
+            _player_start_spells[0].realms[sbr_Chaos].spells[( 0 + itr)] = _default_spells[sbr_Chaos].spells[(0 + itr)];
         }
         for(itr = 0; (TBL_SpellsPerBook_U[spellranks] - 2) > itr; itr++)
         {
-            TBL_Spells_Chaos.Uncommon[itr] = TBL_Def_Spl_Nature.Uncommon[itr];
+            _player_start_spells[0].realms[sbr_Chaos].spells[(10 + itr)] = _default_spells[sbr_Chaos].spells[(10 + itr)];
         }
         if((TBL_SpellsPerBook_U[spellranks] - 2) > 0)
         {
-            TBL_Spells_Chaos.Rare = TBL_Def_Spl_Nature.Rare;
+            _player_start_spells[0].realms[sbr_Chaos].spells[(12 + itr)] = _default_spells[sbr_Chaos].spells[(12 + itr)];
         }
     }
 
-    spellranks = _players[0].spellranks[3];
+    spellranks = _players[0].spellranks[sbr_Life];
     // ; PATCHED here to fix 11-book default wizard spells
     if(spellranks > 1)
     {
         for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
         {
-            TBL_Spells_Life.Common[itr] = TBL_Def_Spl_Nature.Common[itr];
+            _player_start_spells[0].realms[sbr_Life].spells[( 0 + itr)] = _default_spells[sbr_Life].spells[(0 + itr)];
         }
         for(itr = 0; (TBL_SpellsPerBook_U[spellranks] - 2) > itr; itr++)
         {
-            TBL_Spells_Life.Uncommon[itr] = TBL_Def_Spl_Nature.Uncommon[itr];
+            _player_start_spells[0].realms[sbr_Life].spells[(10 + itr)] = _default_spells[sbr_Life].spells[(10 + itr)];
         }
         if((TBL_SpellsPerBook_U[spellranks] - 2) > 0)
         {
-            TBL_Spells_Life.Rare = TBL_Def_Spl_Nature.Rare;
+            _player_start_spells[0].realms[sbr_Life].spells[(12 + itr)] = _default_spells[sbr_Life].spells[(12 + itr)];
         }
     }
 
-    spellranks = _players[0].spellranks[4];
+    spellranks = _players[0].spellranks[sbr_Death];
     // ; PATCHED here to fix 11-book default wizard spells
     if(spellranks > 1)
     {
         for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
         {
-            TBL_Spells_Death.Common[itr] = TBL_Def_Spl_Nature.Common[itr];
+            _player_start_spells[0].realms[sbr_Death].spells[( 0 + itr)] = _default_spells[sbr_Death].spells[(0 + itr)];
         }
         for(itr = 0; (TBL_SpellsPerBook_U[spellranks] - 2) > itr; itr++)
         {
-            TBL_Spells_Death.Uncommon[itr] = TBL_Def_Spl_Nature.Uncommon[itr];
+            _player_start_spells[0].realms[sbr_Death].spells[(10 + itr)] = _default_spells[sbr_Death].spells[(10 + itr)];
         }
         if((TBL_SpellsPerBook_U[spellranks] - 2) > 0)
         {
-            TBL_Spells_Death.Rare = TBL_Def_Spl_Nature.Rare;
+            _player_start_spells[0].realms[sbr_Death].spells[(12 + itr)] = _default_spells[sbr_Death].spells[(12 + itr)];
         }
     }
 
-    strcpy(_players[0].name, TBL_Default_Wizards[Portrait_Index].Name);
+    strcpy(_players[0].name, _wizard_presets_table[wizard_id].name);
 
 }
 

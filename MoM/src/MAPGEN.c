@@ -142,7 +142,7 @@ void NEWG_CreateWorld__WIP(void)
     
     Copy_On_To_Off_Page();
     
-    // TODO  WIZ_SetProfiles();
+    WIZ_SetProfiles__WIP();
 
     Draw_Building_The_Worlds(5);
 
