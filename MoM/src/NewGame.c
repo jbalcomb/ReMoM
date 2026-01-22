@@ -34,8 +34,8 @@
 
 
 
-// MGC dseg:90C6 00 00                                           m_warning_box_bottom_seg dw 0
-// MGC dseg:90C8 00 00                                           m_warning_box_top_seg dw 0
+// MGC  dseg:90C6 00 00                                           m_warning_box_bottom_seg dw 0
+// MGC  dseg:90C8 00 00                                           m_warning_box_top_seg dw 0
 // WZD dseg:CB06
 extern SAMB_ptr m_warning_box_bottom_seg;
 // WZD dseg:CB08
@@ -53,26 +53,26 @@ void Print_Paragraph(int16_t x, int16_t y, int16_t max_width, char * string, int
 
 
 
-// MGC dseg:1F96 34 27 3C 27 44 27 52 27 61 27 71 27 80 27 8D 27+
+// MGC  dseg:1F96 34 27 3C 27 44 27 52 27 61 27 71 27 80 27 8D 27+
 // STR_Retorts@ dw offset cnst_Alchemy, offset cnst_Warlord, offset cnst_ChaosMastery, offset cnst_NatureMastery, offset cnst_SorceryMastery, offset cnst_InfernalPower, offset cnst_DivinePower, offset cnst_SageMaster, offset cnst_Channeler, offset cnst_Myrran, offset cnst_Archmage, offset cnst_ManaFocusing, offset cnst_NodeMastery, offset cnst_Famous, offset cnst_Runemaster, offset cnst_Conjurer, offset cnst_Charismatic, offset cnst_Artificer
-// MGC dseg:2734 41 6C 63 68 65 6D 79 00                         cnst_Alchemy db 'Alchemy',0             
-// MGC dseg:273C 57 61 72 6C 6F 72 64 00                         cnst_Warlord db 'Warlord',0             
-// MGC dseg:2744 43 68 61 6F 73 20 4D 61 73 74 65 72 79 00       cnst_ChaosMastery db 'Chaos Mastery',0  
-// MGC dseg:2752 4E 61 74 75 72 65 20 4D 61 73 74 65 72 79 00    cnst_NatureMastery db 'Nature Mastery',0
-// MGC dseg:2761 53 6F 72 63 65 72 79 20 4D 61 73 74 65 72 79 00 cnst_SorceryMastery db 'Sorcery Mastery',0
-// MGC dseg:2771 49 6E 66 65 72 6E 61 6C 20 50 6F 77 65 72 00    cnst_InfernalPower db 'Infernal Power',0
-// MGC dseg:2780 44 69 76 69 6E 65 20 50 6F 77 65 72 00          cnst_DivinePower db 'Divine Power',0    
-// MGC dseg:278D 53 61 67 65 20 4D 61 73 74 65 72 00             cnst_SageMaster db 'Sage Master',0      
-// MGC dseg:2799 43 68 61 6E 6E 65 6C 65 72 00                   cnst_Channeler db 'Channeler',0         
-// MGC dseg:27A3 4D 79 72 72 61 6E 00                            cnst_Myrran db 'Myrran',0               
-// MGC dseg:27AA 41 72 63 68 6D 61 67 65 00                      cnst_Archmage db 'Archmage',0           
-// MGC dseg:27B3 4D 61 6E 61 20 46 6F 63 75 73 69 6E 67 00       cnst_ManaFocusing db 'Mana Focusing',0  
-// MGC dseg:27C1 4E 6F 64 65 20 4D 61 73 74 65 72 79 00          cnst_NodeMastery db 'Node Mastery',0    
-// MGC dseg:27CE 46 61 6D 6F 75 73 00                            cnst_Famous db 'Famous',0               
-// MGC dseg:27D5 52 75 6E 65 6D 61 73 74 65 72 00                cnst_Runemaster db 'Runemaster',0       
-// MGC dseg:27E0 43 6F 6E 6A 75 72 65 72 00                      cnst_Conjurer db 'Conjurer',0           
-// MGC dseg:27E9 43 68 61 72 69 73 6D 61 74 69 63 00             cnst_Charismatic db 'Charismatic',0     
-// MGC dseg:27F5 41 72 74 69 66 69 63 65 72 00                   cnst_Artificer db 'Artificer',0       
+// MGC  dseg:2734 41 6C 63 68 65 6D 79 00                         cnst_Alchemy db 'Alchemy',0             
+// MGC  dseg:273C 57 61 72 6C 6F 72 64 00                         cnst_Warlord db 'Warlord',0             
+// MGC  dseg:2744 43 68 61 6F 73 20 4D 61 73 74 65 72 79 00       cnst_ChaosMastery db 'Chaos Mastery',0  
+// MGC  dseg:2752 4E 61 74 75 72 65 20 4D 61 73 74 65 72 79 00    cnst_NatureMastery db 'Nature Mastery',0
+// MGC  dseg:2761 53 6F 72 63 65 72 79 20 4D 61 73 74 65 72 79 00 cnst_SorceryMastery db 'Sorcery Mastery',0
+// MGC  dseg:2771 49 6E 66 65 72 6E 61 6C 20 50 6F 77 65 72 00    cnst_InfernalPower db 'Infernal Power',0
+// MGC  dseg:2780 44 69 76 69 6E 65 20 50 6F 77 65 72 00          cnst_DivinePower db 'Divine Power',0    
+// MGC  dseg:278D 53 61 67 65 20 4D 61 73 74 65 72 00             cnst_SageMaster db 'Sage Master',0      
+// MGC  dseg:2799 43 68 61 6E 6E 65 6C 65 72 00                   cnst_Channeler db 'Channeler',0         
+// MGC  dseg:27A3 4D 79 72 72 61 6E 00                            cnst_Myrran db 'Myrran',0               
+// MGC  dseg:27AA 41 72 63 68 6D 61 67 65 00                      cnst_Archmage db 'Archmage',0           
+// MGC  dseg:27B3 4D 61 6E 61 20 46 6F 63 75 73 69 6E 67 00       cnst_ManaFocusing db 'Mana Focusing',0  
+// MGC  dseg:27C1 4E 6F 64 65 20 4D 61 73 74 65 72 79 00          cnst_NodeMastery db 'Node Mastery',0    
+// MGC  dseg:27CE 46 61 6D 6F 75 73 00                            cnst_Famous db 'Famous',0               
+// MGC  dseg:27D5 52 75 6E 65 6D 61 73 74 65 72 00                cnst_Runemaster db 'Runemaster',0       
+// MGC  dseg:27E0 43 6F 6E 6A 75 72 65 72 00                      cnst_Conjurer db 'Conjurer',0           
+// MGC  dseg:27E9 43 68 61 72 69 73 6D 61 74 69 63 00             cnst_Charismatic db 'Charismatic',0     
+// MGC  dseg:27F5 41 72 74 69 66 69 63 65 72 00                   cnst_Artificer db 'Artificer',0       
 
 // cnst_Warlord already defined in 003_MoM.lib(NewGame.obj)
 
@@ -194,20 +194,20 @@ spell_data_table    = SA_MK_FP0( LBXR_LoadSingle("SPELLDAT", 0, 0, 215, 36) )
 
 
 
-// MGC dseg:354C 00 00 01 00 01 00 01 00 05 00 02 00 01 00 02 00+TBL_AI_Realm_PER AI_PERS_Modifiers <0, 1, 1, 1, 5, 2>    ; 0
-// MGC dseg:354C 03 00 01 00 02 00 01 00 01 00 02 00 02 00 05 00+                                        ; DATA XREF: WIZ_SetPersonalities__WIP+2A7r
-// MGC dseg:354C 00 00 00 00 00 00 01 00 02 00 00 00 02 00 05 00+AI_PERS_Modifiers <1, 2, 3, 1, 2, 1>    ; 1
-// MGC dseg:354C 03 00 03 00 02 00 01 00 01 00 00 00 00 00 00 00+AI_PERS_Modifiers <1, 2, 2, 5, 0, 0>    ; 2
-// MGC dseg:354C 00 00 00 00 00 00 00 00                         AI_PERS_Modifiers <0, 1, 2, 0, 2, 5>    ; 3
-// MGC dseg:354C                                                 AI_PERS_Modifiers <3, 3, 2, 1, 1, 0>    ; 4
-// MGC dseg:354C                                                 AI_PERS_Modifiers  <0>
-// MGC dseg:3594 00 00 02 00 02 00 04 00 02 00 00 00 01 00 04 00+TBL_AI_Realm_OBJ AI_OBJ_Modifiers <0, 2, 2, 4, 2>        ; 0
-// MGC dseg:3594 02 00 03 00 00 00 03 00 02 00 02 00 03 00 00 00+                                        ; DATA XREF: WIZ_SetPersonalities__WIP+2D0r
-// MGC dseg:3594 02 00 03 00 04 00 01 00 00 00 04 00 01 00 01 00+AI_OBJ_Modifiers <0, 1, 4, 2, 3>        ; 1
-// MGC dseg:3594 04 00 00 00 00 00 00 00 00 00 00 00             AI_OBJ_Modifiers <0, 3, 2, 2, 3>        ; 2
-// MGC dseg:3594                                                 AI_OBJ_Modifiers <0, 2, 3, 4, 1>        ; 3
-// MGC dseg:3594                                                 AI_OBJ_Modifiers <0, 4, 1, 1, 4>        ; 4
-// MGC dseg:3594                                                 AI_OBJ_Modifiers  <0>
+// MGC  dseg:354C 00 00 01 00 01 00 01 00 05 00 02 00 01 00 02 00+TBL_AI_Realm_PER AI_PERS_Modifiers <0, 1, 1, 1, 5, 2>    ; 0
+// MGC  dseg:354C 03 00 01 00 02 00 01 00 01 00 02 00 02 00 05 00+                                        ; DATA XREF: WIZ_SetPersonalities__WIP+2A7r
+// MGC  dseg:354C 00 00 00 00 00 00 01 00 02 00 00 00 02 00 05 00+AI_PERS_Modifiers <1, 2, 3, 1, 2, 1>    ; 1
+// MGC  dseg:354C 03 00 03 00 02 00 01 00 01 00 00 00 00 00 00 00+AI_PERS_Modifiers <1, 2, 2, 5, 0, 0>    ; 2
+// MGC  dseg:354C 00 00 00 00 00 00 00 00                         AI_PERS_Modifiers <0, 1, 2, 0, 2, 5>    ; 3
+// MGC  dseg:354C                                                 AI_PERS_Modifiers <3, 3, 2, 1, 1, 0>    ; 4
+// MGC  dseg:354C                                                 AI_PERS_Modifiers  <0>
+// MGC  dseg:3594 00 00 02 00 02 00 04 00 02 00 00 00 01 00 04 00+TBL_AI_Realm_OBJ AI_OBJ_Modifiers <0, 2, 2, 4, 2>        ; 0
+// MGC  dseg:3594 02 00 03 00 00 00 03 00 02 00 02 00 03 00 00 00+                                        ; DATA XREF: WIZ_SetPersonalities__WIP+2D0r
+// MGC  dseg:3594 02 00 03 00 04 00 01 00 00 00 04 00 01 00 01 00+AI_OBJ_Modifiers <0, 1, 4, 2, 3>        ; 1
+// MGC  dseg:3594 04 00 00 00 00 00 00 00 00 00 00 00             AI_OBJ_Modifiers <0, 3, 2, 2, 3>        ; 2
+// MGC  dseg:3594                                                 AI_OBJ_Modifiers <0, 2, 3, 4, 1>        ; 3
+// MGC  dseg:3594                                                 AI_OBJ_Modifiers <0, 4, 1, 1, 4>        ; 4
+// MGC  dseg:3594                                                 AI_OBJ_Modifiers  <0>
 // struct AI_PERS_Modifiers
 // {
 //     /* 00 */  int16_t Maniacal;
@@ -326,169 +326,169 @@ struct S_HERO_TEMPLATE _hero_premade_table[NUM_HERO_TYPES] = {
 // dseg:35D0 00 00 12 10 00 20 00 00 00 00 00 00 00 00 00 00+s_HERO_TEMPLATE <2, 2, 1011002h, 5, 128, 125, 126, 141>
 
 
-// MGC dseg:52C0
+// MGC  dseg:52C0
 int16_t _quit_button = 0;
 
-// MGC dseg:5CB0
+// MGC  dseg:5CB0
 SAMB_ptr newgame_ok_button_seg = 0;
 
-// MGC dseg:64AE
+// MGC  dseg:64AE
 int16_t screen_changed = 0;
 
-// MGC dseg:8E8E
+// MGC  dseg:8E8E
 SAMB_ptr _quit_active_seg = 0;
 
-// MGC dseg:8E92
+// MGC  dseg:8E92
 int16_t _ok_button = 0;
 
 
 
 
-// MGC dseg:52B2                                                 ? BEGIN: Main Menu Screen ?
-// MGC dseg:52B2
-// MGC dseg:52B2                                                 ; char *GUI_String_2
-// MGC dseg:52B2 00 00                                           GUI_String_2 dw 0                       ; DATA XREF: start+C7o ...
-// MGC dseg:52B2                                                                                         ; _bdata_start
-// MGC dseg:52B2                                                                                         ; 100 LBX_NearAlloc_Next bytes
-// MGC dseg:52B4                                                 ; char *GUI_String_1
-// MGC dseg:52B4 00 00                                           GUI_String_1 dw 0                       ; DATA XREF: Hall_Of_Fame_Screen+8Dw ...
-// MGC dseg:52B4                                                                                         ; 100 LBX_NearAlloc_First bytes
-// MGC dseg:52B6 00 00                                           _load_button dw 0                       ; DATA XREF: Main_Menu_Screen+19Fw ...
-// MGC dseg:52B8 00 00                                           _background_seg dw 0                    ; DATA XREF: Load_Screen+1Bw ...
+// MGC  dseg:52B2                                                 ? BEGIN: Main Menu Screen ?
+// MGC  dseg:52B2
+// MGC  dseg:52B2                                                 ; char *GUI_String_2
+// MGC  dseg:52B2 00 00                                           GUI_String_2 dw 0                       ; DATA XREF: start+C7o ...
+// MGC  dseg:52B2                                                                                         ; _bdata_start
+// MGC  dseg:52B2                                                                                         ; 100 LBX_NearAlloc_Next bytes
+// MGC  dseg:52B4                                                 ; char *GUI_String_1
+// MGC  dseg:52B4 00 00                                           GUI_String_1 dw 0                       ; DATA XREF: Hall_Of_Fame_Screen+8Dw ...
+// MGC  dseg:52B4                                                                                         ; 100 LBX_NearAlloc_First bytes
+// MGC  dseg:52B6 00 00                                           _load_button dw 0                       ; DATA XREF: Main_Menu_Screen+19Fw ...
+// MGC  dseg:52B8 00 00                                           _background_seg dw 0                    ; DATA XREF: Load_Screen+1Bw ...
 SAMB_ptr newgame_background_seg = 0;
-// MGC dseg:52BA 00 00                                           menu_quit_button dw 0                   ; DATA XREF: Load_MGC_Resources+76w ...
-// MGC dseg:52BA                                                                                         ; single-loaded 2-frame image
-// MGC dseg:52BC 00 00                                           _halloffame_button dw 0                 ; DATA XREF: Main_Menu_Screen+29Ew ...
-// MGC dseg:52BE 00 00                                           menu_hof_button dw 0                    ; DATA XREF: Load_MGC_Resources+40w ...
-// MGC dseg:52BE                                                                                         ; single-loaded 2-frame image
-// MGC dseg:52C0 00 00                                           _quit_button dw 0                       ; DATA XREF: Main_Menu_Screen+2DFw ...
-// MGC dseg:52C2 00 00                                           menu_load_button dw 0                   ; DATA XREF: Load_MGC_Resources+52w ...
+// MGC  dseg:52BA 00 00                                           menu_quit_button dw 0                   ; DATA XREF: Load_MGC_Resources+76w ...
+// MGC  dseg:52BA                                                                                         ; single-loaded 2-frame image
+// MGC  dseg:52BC 00 00                                           _halloffame_button dw 0                 ; DATA XREF: Main_Menu_Screen+29Ew ...
+// MGC  dseg:52BE 00 00                                           menu_hof_button dw 0                    ; DATA XREF: Load_MGC_Resources+40w ...
+// MGC  dseg:52BE                                                                                         ; single-loaded 2-frame image
+// MGC  dseg:52C0 00 00                                           _quit_button dw 0                       ; DATA XREF: Main_Menu_Screen+2DFw ...
+// MGC  dseg:52C2 00 00                                           menu_load_button dw 0                   ; DATA XREF: Load_MGC_Resources+52w ...
 
-// MGC dseg:52C4 00 00                                           current_menu_screen dw 0                ; DATA XREF: Main_Menu_Screen+32w ...
+// MGC  dseg:52C4 00 00                                           current_menu_screen dw 0                ; DATA XREF: Main_Menu_Screen+32w ...
 int16_t auto_input_field_idx = 0;
 
-// MGC dseg:52C4                                                                                         ; 0 - continue, 1 -load, 2 - new, 3 - quit, 4 - HoF
-// MGC dseg:52C4                                                                                         ; holds the mouse focus control instead during the
-// MGC dseg:52C4                                                                                         ;  redraw functions of other screens
-// MGC dseg:52C6 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+wizard_portrait_segs dw 14 dup(    0)   ; DATA XREF: Load_MGC_Resources+A9w ...
-// MGC dseg:52C6 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 single-loaded images
-// MGC dseg:52E2 00 00                                           IMG_NewG_BtnBorder@ dw 0                ; used by the map customizer and profile reloader
-// MGC dseg:52E4 00 00                                           load_flag dw 0                          ; DATA XREF: Main_Menu_Screen+38w ...
-// MGC dseg:52E4                                                                                         ; OXRB:Menu,MenuDraw.:.static?module-scoped?private?
-// MGC dseg:52E4                                                                                         ; Da-Funk? "OXRB"? "only x-ref'd by"? if so, nowadays, use "OON XREF"
-// MGC dseg:52E6 00 00                                           NEWG_HaveLastProfile dw 0               ; used by the profile reloader
-// MGC dseg:52E8 00 00                                           mainmenu_top dw 0                       ; DATA XREF: Load_MGC_Resources+1Cw ...
-// MGC dseg:52E8                                                                                         ; single-loaded 20 frame animation
-// MGC dseg:52E8                                                                                         ; includes the background for the top of the screen too
-// MGC dseg:52EA 00 00                                           _newgame_button dw 0                    ; DATA XREF: Main_Menu_Screen+25Dw ...
-// MGC dseg:52EC 00 00                                           menu_new_button dw 0                    ; DATA XREF: Load_MGC_Resources+64w ...
-// MGC dseg:52EC                                                                                         ; single-loaded 2-frame image
-// MGC dseg:52EE 00 00                                           _continue_button dw 0                   ; DATA XREF: Main_Menu_Screen+204w ...
-// MGC dseg:52F0 00 00                                           menu_continue_button dw 0               ; DATA XREF: Load_MGC_Resources+2Ew ...
-// MGC dseg:52F0                                                                                         ; single-loaded 2-frame image
-// MGC dseg:52F2 00 00                                           cont_flag dw 0                          ; DATA XREF: Main_Menu_Screen+2Cw ...
-// MGC dseg:52F2                                                                                         ; OXRB:Menu,MenuDraw.:.static?module-scoped?private?
-// MGC dseg:52F4 00 00                                           mainmenu_bottom dw 0                    ; DATA XREF: Load_MGC_Resources+88w ...
-// MGC dseg:52F4                                                                                         ; single-loaded image
-// MGC dseg:52F6 00 00                                           mainmenu_bot dw 0                       ; used by the map customizer to indicate which screen
-// MGC dseg:52F6                                                                                         ; is currently active (basic/patch/world/world2)
-// MGC dseg:52F8 00 00                                           _load_inactive_seg dw 0                 ; DATA XREF: Load_Screen+60w ...
-// MGC dseg:52FA 00 00                                           NEWG_LastRetorts@ dw 0                  ; used by the profile reloader
-// MGC dseg:52FC 00 00                                           g_GUI_MainScreenJump dw 0               ; DATA XREF: Menu_Screen_Control+5Aw ...
-// MGC dseg:52FE 00 00                                           save_game_count dw 0                    ; DATA XREF: Main_Menu_Screen+C6w ...
-// MGC dseg:5300 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 save_game_slots dw 8 dup(     0)        ; DATA XREF: Main_Menu_Screen+137w ...
-// MGC dseg:5300
-// MGC dseg:5300                                                 ? END: Main Menu Screen ?
-// MGC dseg:5300
-// MGC dseg:5310
-// MGC dseg:5310                                                 ? Begin: New Game Screen ?
-// MGC dseg:5310
-// MGC dseg:5310 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_WorldgenSet dw 40h dup(0)          ; extended worldgen settings are loaded here by the
-// MGC dseg:5310 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; worldgen customizer
-// MGC dseg:5390 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_LastProfile db 0B6h dup(0)         ; the last saved wizard profile is loaded here by
-// MGC dseg:5390 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; the profile reloader
-// MGC dseg:5446 00 00                                           IMG_NewG_ValueBox@ dw 0                 ; NEWGAME.LBX entry 51, used by the world generator
-// MGC dseg:5446                                                                                         ; customizer to display the setting values
-// MGC dseg:5446                                                                                         ; (number, On/Off, Low/Norm/High, or Rand)
-// MGC dseg:5448 00 00                                           IMG_NewG_CheckMark@ dw 0
-// MGC dseg:544A 00 00                                           IMG_NewG_ScrollUp@ dw 0
-// MGC dseg:544C 00 00                                           IMG_NewG_ScrollDown@ dw 0
-// MGC dseg:544E 00 00                                           NEWG_WGP_OK_Label dw 0
-// MGC dseg:5450 00 00                                           NEWG_WGP_Reset_Lbl dw 0
-// MGC dseg:5452 00 00                                           NEWG_WGP_ScrollUp dw 0
-// MGC dseg:5454 00 00                                           NEWG_WGP_ScrollDn dw 0
-// MGC dseg:5456 00 00                                           NEWG_FirstPatchSet dw 0
-// MGC dseg:5458 00 00                                           NEWG_FirstWorldSet dw 0
-// MGC dseg:545A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_WGP_SetCtrls dw 24h dup(0)
-// MGC dseg:54A2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_WGPSliderStates dw 12h dup(0)
-// MGC dseg:54C6 00 00                                           NEWG_ConnMap_Seg dw 0                   ; a 9600 byte buffer in GFX_Swap_Seg
-// MGC dseg:54C8 00                                              NEWG_CustomWorld db 0
-// MGC dseg:54C9 00                                              NEWG_CustomPlanes db 0
-// MGC dseg:54CA 00                                              NEWG_SliderDragged db 0
-// MGC dseg:54CB 00                                              align 2
-// MGC dseg:54CC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+UU_Some_AI_Array db 54Eh dup(0)
-// MGC dseg:5A1A 00 00                                           Wiz5_Spell_E0h@ dw 0                    ; DATA XREF: NEWG_FinalizeTables+95r ...
-// MGC dseg:5A1A                                                                                         ; 80 + rnd(40) is stored here for each AI wizard (word
-// MGC dseg:5A1A                                                                                         ; array pointer, human excluded) when setting initial
-// MGC dseg:5A1A                                                                                         ; gold
-// MGC dseg:5A1C 00 00                                           Wiz5_Spell_C8h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3F6w
-// MGC dseg:5A1E 00 00                                           Wiz5_Spell_D4h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3FCw
-// MGC dseg:5A20 00 00                                           Wiz5_Spell_A0h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3EAw
-// MGC dseg:5A22 00 00                                           Wiz5_Spell_B4h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3F0w
-// MGC dseg:5A24 00 00                                           Wiz5_Spell_50h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3D2w
-// MGC dseg:5A26 00 00                                           Wiz5_Spell_64h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3D8w
-// MGC dseg:5A28 00 00                                           Wiz5_Spell_28h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3C6w
-// MGC dseg:5A2A 00 00                                           Wiz5_Spell_3Ch@ dw 0                    ; DATA XREF: Allocate_Data_Space+3CCw
-// MGC dseg:5A2C 00 00                                           Wiz5_Spell_18h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3C0w
-// MGC dseg:5A2E 00 00                                           Wiz5_Spell_78h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3DEw
-// MGC dseg:5A30 00 00                                           Wiz5_Spell_8Ch@ dw 0                    ; DATA XREF: Allocate_Data_Space+3E4w
-// MGC dseg:5A32 00 00                                           Wiz5_Spell_00h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3B4w
-// MGC dseg:5A34 00 00                                           Wiz5_Spell_0Ch@ dw 0                    ; DATA XREF: Allocate_Data_Space+3BAw
-// MGC dseg:5A36 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+G_UU_Some_AI_Array_2 db 176h dup(0)
-// MGC dseg:5BAC 00 00 00 00                                     terrain_stats_table dd 0                ; DATA XREF: Load_TERRSTAT+28w ...
+// MGC  dseg:52C4                                                                                         ; 0 - continue, 1 -load, 2 - new, 3 - quit, 4 - HoF
+// MGC  dseg:52C4                                                                                         ; holds the mouse focus control instead during the
+// MGC  dseg:52C4                                                                                         ;  redraw functions of other screens
+// MGC  dseg:52C6 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+wizard_portrait_segs dw 14 dup(    0)   ; DATA XREF: Load_MGC_Resources+A9w ...
+// MGC  dseg:52C6 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 single-loaded images
+// MGC  dseg:52E2 00 00                                           IMG_NewG_BtnBorder@ dw 0                ; used by the map customizer and profile reloader
+// MGC  dseg:52E4 00 00                                           load_flag dw 0                          ; DATA XREF: Main_Menu_Screen+38w ...
+// MGC  dseg:52E4                                                                                         ; OXRB:Menu,MenuDraw.:.static?module-scoped?private?
+// MGC  dseg:52E4                                                                                         ; Da-Funk? "OXRB"? "only x-ref'd by"? if so, nowadays, use "OON XREF"
+// MGC  dseg:52E6 00 00                                           NEWG_HaveLastProfile dw 0               ; used by the profile reloader
+// MGC  dseg:52E8 00 00                                           mainmenu_top dw 0                       ; DATA XREF: Load_MGC_Resources+1Cw ...
+// MGC  dseg:52E8                                                                                         ; single-loaded 20 frame animation
+// MGC  dseg:52E8                                                                                         ; includes the background for the top of the screen too
+// MGC  dseg:52EA 00 00                                           _newgame_button dw 0                    ; DATA XREF: Main_Menu_Screen+25Dw ...
+// MGC  dseg:52EC 00 00                                           menu_new_button dw 0                    ; DATA XREF: Load_MGC_Resources+64w ...
+// MGC  dseg:52EC                                                                                         ; single-loaded 2-frame image
+// MGC  dseg:52EE 00 00                                           _continue_button dw 0                   ; DATA XREF: Main_Menu_Screen+204w ...
+// MGC  dseg:52F0 00 00                                           menu_continue_button dw 0               ; DATA XREF: Load_MGC_Resources+2Ew ...
+// MGC  dseg:52F0                                                                                         ; single-loaded 2-frame image
+// MGC  dseg:52F2 00 00                                           cont_flag dw 0                          ; DATA XREF: Main_Menu_Screen+2Cw ...
+// MGC  dseg:52F2                                                                                         ; OXRB:Menu,MenuDraw.:.static?module-scoped?private?
+// MGC  dseg:52F4 00 00                                           mainmenu_bottom dw 0                    ; DATA XREF: Load_MGC_Resources+88w ...
+// MGC  dseg:52F4                                                                                         ; single-loaded image
+// MGC  dseg:52F6 00 00                                           mainmenu_bot dw 0                       ; used by the map customizer to indicate which screen
+// MGC  dseg:52F6                                                                                         ; is currently active (basic/patch/world/world2)
+// MGC  dseg:52F8 00 00                                           _load_inactive_seg dw 0                 ; DATA XREF: Load_Screen+60w ...
+// MGC  dseg:52FA 00 00                                           NEWG_LastRetorts@ dw 0                  ; used by the profile reloader
+// MGC  dseg:52FC 00 00                                           g_GUI_MainScreenJump dw 0               ; DATA XREF: Menu_Screen_Control+5Aw ...
+// MGC  dseg:52FE 00 00                                           save_game_count dw 0                    ; DATA XREF: Main_Menu_Screen+C6w ...
+// MGC  dseg:5300 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 save_game_slots dw 8 dup(     0)        ; DATA XREF: Main_Menu_Screen+137w ...
+// MGC  dseg:5300
+// MGC  dseg:5300                                                 ? END: Main Menu Screen ?
+// MGC  dseg:5300
+// MGC  dseg:5310
+// MGC  dseg:5310                                                 ? Begin: New Game Screen ?
+// MGC  dseg:5310
+// MGC  dseg:5310 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_WorldgenSet dw 40h dup(0)          ; extended worldgen settings are loaded here by the
+// MGC  dseg:5310 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; worldgen customizer
+// MGC  dseg:5390 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_LastProfile db 0B6h dup(0)         ; the last saved wizard profile is loaded here by
+// MGC  dseg:5390 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; the profile reloader
+// MGC  dseg:5446 00 00                                           IMG_NewG_ValueBox@ dw 0                 ; NEWGAME.LBX entry 51, used by the world generator
+// MGC  dseg:5446                                                                                         ; customizer to display the setting values
+// MGC  dseg:5446                                                                                         ; (number, On/Off, Low/Norm/High, or Rand)
+// MGC  dseg:5448 00 00                                           IMG_NewG_CheckMark@ dw 0
+// MGC  dseg:544A 00 00                                           IMG_NewG_ScrollUp@ dw 0
+// MGC  dseg:544C 00 00                                           IMG_NewG_ScrollDown@ dw 0
+// MGC  dseg:544E 00 00                                           NEWG_WGP_OK_Label dw 0
+// MGC  dseg:5450 00 00                                           NEWG_WGP_Reset_Lbl dw 0
+// MGC  dseg:5452 00 00                                           NEWG_WGP_ScrollUp dw 0
+// MGC  dseg:5454 00 00                                           NEWG_WGP_ScrollDn dw 0
+// MGC  dseg:5456 00 00                                           NEWG_FirstPatchSet dw 0
+// MGC  dseg:5458 00 00                                           NEWG_FirstWorldSet dw 0
+// MGC  dseg:545A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_WGP_SetCtrls dw 24h dup(0)
+// MGC  dseg:54A2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_WGPSliderStates dw 12h dup(0)
+// MGC  dseg:54C6 00 00                                           NEWG_ConnMap_Seg dw 0                   ; a 9600 byte buffer in GFX_Swap_Seg
+// MGC  dseg:54C8 00                                              NEWG_CustomWorld db 0
+// MGC  dseg:54C9 00                                              NEWG_CustomPlanes db 0
+// MGC  dseg:54CA 00                                              NEWG_SliderDragged db 0
+// MGC  dseg:54CB 00                                              align 2
+// MGC  dseg:54CC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+UU_Some_AI_Array db 54Eh dup(0)
+// MGC  dseg:5A1A 00 00                                           Wiz5_Spell_E0h@ dw 0                    ; DATA XREF: NEWG_FinalizeTables+95r ...
+// MGC  dseg:5A1A                                                                                         ; 80 + rnd(40) is stored here for each AI wizard (word
+// MGC  dseg:5A1A                                                                                         ; array pointer, human excluded) when setting initial
+// MGC  dseg:5A1A                                                                                         ; gold
+// MGC  dseg:5A1C 00 00                                           Wiz5_Spell_C8h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3F6w
+// MGC  dseg:5A1E 00 00                                           Wiz5_Spell_D4h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3FCw
+// MGC  dseg:5A20 00 00                                           Wiz5_Spell_A0h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3EAw
+// MGC  dseg:5A22 00 00                                           Wiz5_Spell_B4h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3F0w
+// MGC  dseg:5A24 00 00                                           Wiz5_Spell_50h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3D2w
+// MGC  dseg:5A26 00 00                                           Wiz5_Spell_64h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3D8w
+// MGC  dseg:5A28 00 00                                           Wiz5_Spell_28h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3C6w
+// MGC  dseg:5A2A 00 00                                           Wiz5_Spell_3Ch@ dw 0                    ; DATA XREF: Allocate_Data_Space+3CCw
+// MGC  dseg:5A2C 00 00                                           Wiz5_Spell_18h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3C0w
+// MGC  dseg:5A2E 00 00                                           Wiz5_Spell_78h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3DEw
+// MGC  dseg:5A30 00 00                                           Wiz5_Spell_8Ch@ dw 0                    ; DATA XREF: Allocate_Data_Space+3E4w
+// MGC  dseg:5A32 00 00                                           Wiz5_Spell_00h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3B4w
+// MGC  dseg:5A34 00 00                                           Wiz5_Spell_0Ch@ dw 0                    ; DATA XREF: Allocate_Data_Space+3BAw
+// MGC  dseg:5A36 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+G_UU_Some_AI_Array_2 db 176h dup(0)
+// MGC  dseg:5BAC 00 00 00 00                                     terrain_stats_table dd 0                ; DATA XREF: Load_TERRSTAT+28w ...
 
 
 
 
 
-// MGC dseg:2ABC                                                 BEGIN:  ovr050 - Initialized Data
+// MGC  dseg:2ABC                                                 BEGIN:  ovr050 - Initialized Data
 
-// MGC dseg:2ABC
+// MGC  dseg:2ABC
 struct s_mouse_list mouse_list_newgame[1] = {
     { crsr_Finger, 0, SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX }
 };
 
-// MGC dseg:2AC8
+// MGC  dseg:2AC8
 uint8_t wziards_name_colors[8] = { 31, 30, 29, 28, 27, 26, 25, 24 };
 
-// MGC dseg:2AD0
+// MGC  dseg:2AD0
 struct s_WIZARD_PRESET _wizard_presets_table[15] = {
-    {"Merlin",  5,  0,  5, 0,  0, _Sage_Master },
-    {"Raven",   0,  6,  5, 0,  0, _No_Special},
-    {"Sharee",  0,  0,  0, 5,  5, _Conjurer},
-    {"Lo Pan",  0,  5,  0, 0,  5, _Channeller},
-    {"Jafar",   0, 10,  0, 0,  0, _Alchemy},
-    {"Oberic",  0,  0,  5, 0,  5, _Mana_Focusing},
-    {"Rjak",    0,  0,  0, 9,  0, _Infernal_Power},
-    {"Sss'ra",  4,  0,  0, 0,  4, _Myrran},
-    {"Tauron",  0,  0,  0, 0, 10, _Chaos_Mastery},
-    {"Freya",   0,  0, 10, 0,  0, _Nature_Mastery},
-    {"Horus",   5,  5,  0, 0,  0, _Archmage},
-    {"Ariel",  10,  0,  0, 0,  0, _Charismatic},
-    {"Tlaloc",  0,  0,  4, 5,  0, _Warlord},
-    {"Kali",    0,  5,  0, 5,  0, _Artificer},
-    {"Custom",  0,  0,  0, 0,  0, _No_Special}
+    {"Merlin",  5,  0,  5, 0,  0, wsa_Sage_Master },
+    {"Raven",   0,  6,  5, 0,  0, wsa_NONE},
+    {"Sharee",  0,  0,  0, 5,  5, wsa_Conjurer},
+    {"Lo Pan",  0,  5,  0, 0,  5, wsa_Channeller},
+    {"Jafar",   0, 10,  0, 0,  0, wsa_Alchemy},
+    {"Oberic",  0,  0,  5, 0,  5, wsa_Mana_Focusing},
+    {"Rjak",    0,  0,  0, 9,  0, wsa_Infernal_Power},
+    {"Sss'ra",  4,  0,  0, 0,  4, wsa_Myrran},
+    {"Tauron",  0,  0,  0, 0, 10, wsa_Chaos_Mastery},
+    {"Freya",   0,  0, 10, 0,  0, wsa_Nature_Mastery},
+    {"Horus",   5,  5,  0, 0,  0, wsa_Archmage},
+    {"Ariel",  10,  0,  0, 0,  0, wsa_Charismatic},
+    {"Tlaloc",  0,  0,  4, 5,  0, wsa_Warlord},
+    {"Kali",    0,  5,  0, 5,  0, wsa_Artificer},
+    {"Custom",  0,  0,  0, 0,  0, wsa_NONE}
 };
 
-// MGC dseg:2C1A 02 00 03 00 04 00 05 00 06 00 07 00 08 00 09 00+RP_Book_Table dw 2, 3, 4, 5, 6, 7, 8, 9, 0Ah, 0Bh ; repurposed in the worldgen customizer
-// MGC dseg:2C2E
+// MGC  dseg:2C1A 02 00 03 00 04 00 05 00 06 00 07 00 08 00 09 00+RP_Book_Table dw 2, 3, 4, 5, 6, 7, 8, 9, 0Ah, 0Bh ; repurposed in the worldgen customizer
+// MGC  dseg:2C2E
 int16_t TBL_SpellsPerBook_C[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-// MGC dseg:2C42
+// MGC  dseg:2C42
 int16_t TBL_SpellsPerBook_U[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 };
-// MGC dseg:2C56
+// MGC  dseg:2C56
 int16_t TBL_SpellsPerBook_R[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 
-// // MGC dseg:2C6A
+// // MGC  dseg:2C6A
 // // Statically define a variable named 'player_spells'
 // struct Default_Spells player_spells = {
 //     {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},        // Common spells initialization
@@ -501,25 +501,25 @@ int16_t TBL_SpellsPerBook_R[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 //     { spl_Cockatrices, spl_Change_Terrain },
 //     spl_Gorgons
 // };
-// // MGC dseg:2C84
+// // MGC  dseg:2C84
 // struct Default_Spells TBL_Def_Spl_Sorcery = {
 //     { spl_Nagas, spl_Psionic_Blast, spl_Phantom_Warriors, spl_Floating_Island, spl_Confusion, spl_Counter_Magic, spl_Word_Of_Recall, spl_Dispel_Magic_True, spl_Resist_Magic, spl_Guardian_Wind },
 //     { spl_Flight, spl_Phantom_Beast },
 //     spl_Storm_Giant
 // };
-// // MGC dseg:2C9E
+// // MGC  dseg:2C9E
 // struct Default_Spells TBL_Def_Spl_Chaos = {
 //     { spl_Fire_Bolt, spl_Fire_Elemental, spl_Eldritch_Weapon, spl_Hell_Hounds, spl_Corruption, spl_Warp_Creature, spl_Shatter, spl_Wall_Of_Fire, spl_Disrupt, spl_Warp_Wood },
 //     { spl_Lightning_Bolt, spl_Doom_Bat },
 //     spl_Efreet
 // };
-// // MGC dseg:2CB8
+// // MGC  dseg:2CB8
 // struct Default_Spells TBL_Def_Spl_Life = {
 //     { spl_Heroism, spl_Guardian_Spirit, spl_Holy_Armor, spl_Just_Cause, spl_Healing, spl_Holy_Weapon, spl_Star_Fires, spl_Endurance, spl_True_Light, spl_Bless },
 //     { spl_Resurrection, spl_Unicorns },
 //     spl_Angel
 // };
-// // MGC dseg:2CD2
+// // MGC  dseg:2CD2
 // struct Default_Spells TBL_Def_Spl_Death = {
 // { spl_Life_Drain, spl_Ghouls, spl_Weakness, spl_Dark_Rituals, spl_Black_Sleep, spl_Darkness, spl_Terror, spl_Skeletons, spl_Mana_Leak, spl_Cloak_Of_Fear},
 // { spl_Black_Prayer, spl_Black_Channels },
@@ -542,25 +542,25 @@ int16_t TBL_SpellsPerBook_R[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 //     spl_Cockatrices, spl_Change_Terrain,
 //     spl_Gorgons
 // };
-// // MGC dseg:2C84
+// // MGC  dseg:2C84
 // int16_t _default_spells_sorcery[13] = {
 //     spl_Nagas, spl_Psionic_Blast, spl_Phantom_Warriors, spl_Floating_Island, spl_Confusion, spl_Counter_Magic, spl_Word_Of_Recall, spl_Dispel_Magic_True, spl_Resist_Magic, spl_Guardian_Wind,
 //     spl_Flight, spl_Phantom_Beast,
 //     spl_Storm_Giant
 // };
-// // MGC dseg:2C9E
+// // MGC  dseg:2C9E
 // int16_t _default_spells_chaos[13] = {
 //     spl_Fire_Bolt, spl_Fire_Elemental, spl_Eldritch_Weapon, spl_Hell_Hounds, spl_Corruption, spl_Warp_Creature, spl_Shatter, spl_Wall_Of_Fire, spl_Disrupt, spl_Warp_Wood,
 //     spl_Lightning_Bolt, spl_Doom_Bat,
 //     spl_Efreet
 // };
-// // MGC dseg:2CB8
+// // MGC  dseg:2CB8
 // int16_t _default_spells_life[13] = {
 //     spl_Heroism, spl_Guardian_Spirit, spl_Holy_Armor, spl_Just_Cause, spl_Healing, spl_Holy_Weapon, spl_Star_Fires, spl_Endurance, spl_True_Light, spl_Bless,
 //     spl_Resurrection, spl_Unicorns,
 //     spl_Angel
 // };
-// // MGC dseg:2CD2
+// // MGC  dseg:2CD2
 // int16_t _default_spells_death[13] = {
 //     spl_Life_Drain, spl_Ghouls, spl_Weakness, spl_Dark_Rituals, spl_Black_Sleep, spl_Darkness, spl_Terror, spl_Skeletons, spl_Mana_Leak, spl_Cloak_Of_Fear,
 //     spl_Black_Prayer, spl_Black_Channels,
@@ -608,31 +608,31 @@ struct s_DEFAULT_SPELLS _default_spells[5] = {
     END: take 3 - 
 */
 
-// MGC dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Retort_Reqs Retort_Req 2 dup(<0, 0, 0, 0, 0, 0, 0>)
-// MGC dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00+                                        ; DATA XREF: GAME_New_Screen_4+167o ...
-// MGC dseg:2CEC 00 00 00 00 04 00 00 00 00 00 00 00 01 00 00 00+Retort_Req <0, 1, 0, 0, 4, 0, 0>
-// MGC dseg:2CEC 00 00 00 00 04 00 00 00 00 00 01 00 00 00 00 00+Retort_Req <0, 1, 0, 0, 0, 4, 0>
-// MGC dseg:2CEC 00 00 00 00 04 00 00 00 01 00 00 00 04 00 00 00+Retort_Req <0, 1, 0, 0, 0, 0, 4>
-// MGC dseg:2CEC 00 00 00 00 00 00 01 00 04 00 00 00 00 00 00 00+Retort_Req <0, 1, 0, 4, 0, 0, 0>
-// MGC dseg:2CEC 00 00 01 00 02 00 00 00 00 00 00 00 00 00 00 00+Retort_Req <0, 1, 4, 0, 0, 0, 0>
-// MGC dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+Retort_Req <1, 2, 0, 0, 0, 0, 0>
-// MGC dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 04 00 01 00+Retort_Req 2 dup(<0, 0, 0, 0, 0, 0, 0>)
-// MGC dseg:2CEC 00 00 00 00 00 00 00 00 00 00 04 00 01 00 00 00+Retort_Req 2 dup(<4, 1, 0, 0, 0, 0, 0>)
-// MGC dseg:2CEC 00 00 00 00 00 00 00 00 00 00 03 00 00 00 00 00+Retort_Req <0, 3, 0, 0, 1, 1, 1>
-// MGC dseg:2CEC 01 00 01 00 01 00 00 00 00 00 00 00 00 00 00 00+Retort_Req <0, 0, 0, 0, 0, 0, 0>
-// MGC dseg:2CEC 00 00 00 00 02 00 03 00 00 00 00 00 00 00 00 00+Retort_Req <2, 3, 0, 0, 0, 0, 0>
-// MGC dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+Retort_Req  3 dup(<0>)
-// MGC dseg:2DE8 00 00 01 00 08 00 0A 00 11 00 0F 00 07 00 09 00+TBL_Retort_Offsets dw RETORTS, RETORTS.Warlord, RETORTS.Channeler, RETORTS.Archmage, RETORTS.Artificer, RETORTS.Conjurer, RETORTS.Sage_Master, RETORTS.Myrran, RETORTS.Divine_Power, RETORTS.Famous, RETORTS.Runemaster, RETORTS.Charismatic, RETORTS.Chaos_Mastery, RETORTS.Nature_Mastery, RETORTS.Sorcery_Mastery, RETORTS.Infernal_Power, RETORTS.Mana_Focusing, RETORTS.Node_Mastery
-// MGC dseg:2DE8 06 00 0D 00 0E 00 10 00 02 00 03 00 04 00 05 00+                                        ; DATA XREF: GAME_New_Screen_4+71Fr ...
-// MGC dseg:2E0C 66 66 66 66                                     COL_SaveLoad1 db 4 dup( 66h)            ; DATA XREF: Load_Screen_Draw+Br ...
-// MGC dseg:2E10 60 61 60 61                                     COL_SaveLoad2 db  60h, 61h, 60h, 61h    ; DATA XREF: Load_Screen_Draw+18r ...
+// MGC  dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Retort_Reqs Retort_Req 2 dup(<0, 0, 0, 0, 0, 0, 0>)
+// MGC  dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00+                                        ; DATA XREF: GAME_New_Screen_4+167o ...
+// MGC  dseg:2CEC 00 00 00 00 04 00 00 00 00 00 00 00 01 00 00 00+Retort_Req <0, 1, 0, 0, 4, 0, 0>
+// MGC  dseg:2CEC 00 00 00 00 04 00 00 00 00 00 01 00 00 00 00 00+Retort_Req <0, 1, 0, 0, 0, 4, 0>
+// MGC  dseg:2CEC 00 00 00 00 04 00 00 00 01 00 00 00 04 00 00 00+Retort_Req <0, 1, 0, 0, 0, 0, 4>
+// MGC  dseg:2CEC 00 00 00 00 00 00 01 00 04 00 00 00 00 00 00 00+Retort_Req <0, 1, 0, 4, 0, 0, 0>
+// MGC  dseg:2CEC 00 00 01 00 02 00 00 00 00 00 00 00 00 00 00 00+Retort_Req <0, 1, 4, 0, 0, 0, 0>
+// MGC  dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+Retort_Req <1, 2, 0, 0, 0, 0, 0>
+// MGC  dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 04 00 01 00+Retort_Req 2 dup(<0, 0, 0, 0, 0, 0, 0>)
+// MGC  dseg:2CEC 00 00 00 00 00 00 00 00 00 00 04 00 01 00 00 00+Retort_Req 2 dup(<4, 1, 0, 0, 0, 0, 0>)
+// MGC  dseg:2CEC 00 00 00 00 00 00 00 00 00 00 03 00 00 00 00 00+Retort_Req <0, 3, 0, 0, 1, 1, 1>
+// MGC  dseg:2CEC 01 00 01 00 01 00 00 00 00 00 00 00 00 00 00 00+Retort_Req <0, 0, 0, 0, 0, 0, 0>
+// MGC  dseg:2CEC 00 00 00 00 02 00 03 00 00 00 00 00 00 00 00 00+Retort_Req <2, 3, 0, 0, 0, 0, 0>
+// MGC  dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+Retort_Req  3 dup(<0>)
+// MGC  dseg:2DE8 00 00 01 00 08 00 0A 00 11 00 0F 00 07 00 09 00+TBL_Retort_Offsets dw RETORTS, RETORTS.Warlord, RETORTS.Channeler, RETORTS.Archmage, RETORTS.Artificer, RETORTS.Conjurer, RETORTS.Sage_Master, RETORTS.Myrran, RETORTS.Divine_Power, RETORTS.Famous, RETORTS.Runemaster, RETORTS.Charismatic, RETORTS.Chaos_Mastery, RETORTS.Nature_Mastery, RETORTS.Sorcery_Mastery, RETORTS.Infernal_Power, RETORTS.Mana_Focusing, RETORTS.Node_Mastery
+// MGC  dseg:2DE8 06 00 0D 00 0E 00 10 00 02 00 03 00 04 00 05 00+                                        ; DATA XREF: GAME_New_Screen_4+71Fr ...
+// MGC  dseg:2E0C 66 66 66 66                                     COL_SaveLoad1 db 4 dup( 66h)            ; DATA XREF: Load_Screen_Draw+Br ...
+// MGC  dseg:2E10 60 61 60 61                                     COL_SaveLoad2 db  60h, 61h, 60h, 61h    ; DATA XREF: Load_Screen_Draw+18r ...
 
-// MGC dseg:2E14
+// MGC  dseg:2E14
 uint8_t RP_COL_NEWG_4Shadow[4] = { 31, 31, 31, 31 };
-// MGC dseg:2E18
+// MGC  dseg:2E18
 uint8_t RP_COL_NEWG_4Font[4] = { 187, 187, 187, 187 };
 
-// MGC dseg:2E1C
+// MGC  dseg:2E1C
 /*
 ¿ struct ?
 55 bytes
@@ -656,7 +656,7 @@ struct s_DIFFICULTY_NAMES _difficulty_names[5] =
     { 'I', 'm', 'p', 'o', 's',  's',  'i',  'b',  'l',  'e',  '\0' }
 };
 
-// MGC dseg:2E53
+// MGC  dseg:2E53
 // cnst_LandS0_Text_7b db 'Small',0,0
 // cnst_LandS1_Text_7b db 'Medium',0
 // cnst_LandS2_Text_7b db 'Large',0,0
@@ -671,7 +671,7 @@ struct s_LAND_SIZE_NAMES _land_size_names[3] =
     { 'L', 'a', 'r', 'g', 'e', '\0', '\0' }
 };
 
-// MGC dseg:2E68
+// MGC  dseg:2E68
 // cnst_Magic0_Text_9b db 'Weak',0,0,0,0,0
 // cnst_Magic1_Text_9b db 'Normal',0,0,0
 // cnst_Magic2_Text_9b db 'Powerful',0
@@ -686,7 +686,7 @@ struct s_MAGIC_STRENGTH_NAMES _magic_strength_names[3] =
     { 'P', 'o', 'w', 'e', 'r',  'f',  'u',  'l',  '\0' }
 };
 
-// MGC dseg:2E83
+// MGC  dseg:2E83
 // cnst_Opnts0_Text_8b db 'One',0,0,0,0,0
 // cnst_Opnts1_Text_8b db 'Two',0,0,0,0,0
 // cnst_Opnts2_Text_8b db 'Three',0,0,0
@@ -703,256 +703,256 @@ struct s_OPPONENT_COUNT_NAMES _opponent_count_names[4] =
     { 'F', 'o', 'u', 'r',  '\0', '\0', '\0', '\0' }
 };
 
-// MGC dseg:2EA3
+// MGC  dseg:2EA3
 uint8_t COL_NEWG_FontShadow[8] = { 31, 31, 31, 31, 31, 31, 31, 0 };
-// MGC dseg:2EAB
+// MGC  dseg:2EAB
 uint8_t COL_NEWG_Font[8] = { 187, 187, 187, 187, 187, 187, 187, 187 };
-// MGC dseg:2EB3
+// MGC  dseg:2EB3
 uint8_t COL_NEWG_Retorts[2] = {183, 178};
-// MGC dseg:2EB5
+// MGC  dseg:2EB5
 uint8_t RP_COL_NEWG_FontShadow2[8] = { 31, 31, 31, 31, 31, 31, 31, 0 };
-// MGC dseg:2EBD
+// MGC  dseg:2EBD
 uint8_t RP_COL_NEWG_Font2[8] = { 187, 187, 187, 187, 187, 187, 187, 187 };
 
-// MGC dseg:2EC5
+// MGC  dseg:2EC5
 uint8_t RP_COL_NEWG_Font3[8] = { 187, 187, 187, 187, 187, 187, 187, 187 };
 
-// MGC dseg:2ECD
+// MGC  dseg:2ECD
 uint8_t RP_COL_NEWG_5Shadow[5] = { 31, 31, 31, 31, 31 };
-// MGC dseg:2ED2
+// MGC  dseg:2ED2
 uint8_t RP_COL_NEWG_5Font[5] = { 187, 187, 187, 187, 187 };
 
-// MGC dseg:2ED7 00                                              align 2                                 ; 2ed6 is still free
+// MGC  dseg:2ED7 00                                              align 2                                 ; 2ed6 is still free
 
-// MGC dseg:2ED8
+// MGC  dseg:2ED8
 int16_t TBL_Arcanian_Races[9] = { R_Barbarian, R_Gnoll, R_Halfling, R_High_Elf, R_High_Man, R_Klackon, R_Lizardman, R_Nomad, R_Orc };
 
-// MGC dseg:2EEA
+// MGC  dseg:2EEA
 int16_t TBL_Myrran_Races[5] = { R_Beastman, R_Dark_Elf, R_Draconian, R_Dwarf, R_Troll };
 
-// MGC dseg:2EF4
+// MGC  dseg:2EF4
 uint8_t RP_COL_NEWG_Font4[8] = { 187, 187, 187, 187, 187, 187, 187, 187 };
 
-// MGC dseg:2EFC
+// MGC  dseg:2EFC
 uint8_t COL_NEWG_Highlight[2] = { 20, 176 };
-// MGC dseg:2EFE
+// MGC  dseg:2EFE
 uint8_t COL_Available[2] = { 25, 50 };
-// MGC dseg:2F00
+// MGC  dseg:2F00
 uint8_t COL_NEWG_RacesShadow[2] = { 2, 2 };
 
-// MGC dseg:2F02
+// MGC  dseg:2F02
 int16_t RP_TBL_Arcanian_Races_2[9] = { R_Barbarian, R_Gnoll, R_Halfling, R_High_Elf, R_High_Man, R_Klackon, R_Lizardman, R_Nomad, R_Orc };
 
-// MGC dseg:2F14
+// MGC  dseg:2F14
 int16_t RP_TBL_Myrran_Races_2[5] = { R_Beastman, R_Dark_Elf, R_Draconian, R_Dwarf, R_Troll };
 
-// MGC dseg:2F1E
+// MGC  dseg:2F1E
 uint8_t RP_COL_NEWG_5Shadow2[5] = { 31, 31, 31, 31, 31 };
 
-// MGC dseg:2F23
+// MGC  dseg:2F23
 uint8_t RP_COL_NEWG_5Font2[5] = {187, 187, 187, 187, 187};
 
-// MGC dseg:2F28
+// MGC  dseg:2F28
 uint8_t COL_NEWG_RaceTitles[5] = { 180, 180, 180, 180, 180 };
 
-// MGC dseg:2F2D
+// MGC  dseg:2F2D
 uint8_t COL_NEWG_Highlight2[2] = { 20, 176 };
 
-// MGC dseg:2F2F
+// MGC  dseg:2F2F
 uint8_t COL_Available_2[2] = { 25, 50 };
-// MGC dseg:2F31
+// MGC  dseg:2F31
 uint8_t COL_NEWG_NA[2] = { 25, 22 };
-// MGC dseg:2F33
+// MGC  dseg:2F33
 uint8_t COL_NEWG_RacesShdw2[2] = { 2, 2};
 
-// MGC dseg:2F35
+// MGC  dseg:2F35
 uint8_t COL_NEWG_4Font2[4] = { 187, 187, 187, 187 };
-// MGC dseg:2F39
+// MGC  dseg:2F39
 uint8_t COL_NEWG_Retorts2[2] = { 183, 178 };
 
-// MGC dseg:2F3B 00                                              align 2
+// MGC  dseg:2F3B 00                                              align 2
 
-// MGC dseg:2F3C
+// MGC  dseg:2F3C
 uint8_t CRP_Unused_Array[12] = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
 
-// MGC dseg:2F48 4C 69 66 65 00 00 00 00 00 00                   cnst_Realm0_Text_10b db 'Life',0,0,0,0,0,0
-// MGC dseg:2F48                                                                                         ; DATA XREF: GAME_New_Screen_4+Fo
-// MGC dseg:2F52 44 65 61 74 68 00 00 00 00 00                   cnst_Realm1_Text_10b db 'Death',0,0,0,0,0
-// MGC dseg:2F5C 43 68 61 6F 73 00 00 00 00 00                   cnst_Realm2_Text_10b db 'Chaos',0,0,0,0,0
-// MGC dseg:2F66 4E 61 74 75 72 65 00 00 00 00                   cnst_Realm3_Text_10b db 'Nature',0,0,0,0
-// MGC dseg:2F70 53 6F 72 63 65 72 79 00 00 00                   cnst_Realm4_Text_10b db 'Sorcery',0,0,0
-// MGC dseg:2F7A 01 00 02 00 08 00 09 00 0F 00                   TBL_2pickRetort_Lbls dw RETORT_Labels.Warlord, RETORT_Labels.Channeler, RETORT_Labels.Divine_Power, RETORT_Labels.Famous, RETORT_Labels.Infernal_Power
-// MGC dseg:2F7A                                                                                         ; DATA XREF: GAME_New_Screen_4+21o
-// MGC dseg:2F84 01 00 02 00 08 00 09 00 0F 00                   RP_TBL_2pickRet_Lbls dw RETORT_Labels.Warlord, RETORT_Labels.Channeler, RETORT_Labels.Divine_Power, RETORT_Labels.Famous, RETORT_Labels.Infernal_Power
-// MGC dseg:2F84                                                                                         ; DATA XREF: GAME_Draw_NewScr4+Do
-// MGC dseg:2F84                                                                                         ; redirected to dseg:2f7a and re-purposed in the realm
-// MGC dseg:2F84                                                                                         ; ordering patch
-// MGC dseg:2F8E 1F 1F 1F 1F 1F                                  COL_NEWG_5Shadow3 db 5 dup(1Fh)         ; DATA XREF: GAME_Draw_NewScr4+1Fo
-// MGC dseg:2F8E                                                                                         ; should use dseg:2ea3
-// MGC dseg:2F93 BB BB BB BB BB                                  COL_NEWG_5Font3 db 5 dup(0BBh)          ; DATA XREF: GAME_Draw_NewScr4+31o
-// MGC dseg:2F93                                                                                         ; should use dseg:2eab
-// MGC dseg:2F98 19 32                                           COL_Available_3 dw 3219h                ; DATA XREF: GAME_Draw_NewScr4+3Er
-// MGC dseg:2F98                                                                                         ; should use dseg:2efe
-// MGC dseg:2F9A 19 16                                           COL_NEWG_NA2 dw 1619h                   ; DATA XREF: GAME_Draw_NewScr4+44r
-// MGC dseg:2F9A                                                                                         ; should use dseg:2f31
-// MGC dseg:2F9C 16 B2                                           COL_NewG_Ret_Known dw 0B216h            ; DATA XREF: GAME_Draw_NewScr4+4Ar
-// MGC dseg:2F9E 10 10                                           COL_NewG_Ret_Shdw dw 1010h              ; DATA XREF: GAME_Draw_NewScr4+50r
-// MGC dseg:2FA0 01 01 01 00 01 01 00 01 00 01 00 01 00 00 00 00+TBL_Retort_Lbl_Init RETORT_Labels <1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0>
-// MGC dseg:2FA0 00 00                                                                                   ; DATA XREF: GAME_Draw_NewScr4+5Bo
-// MGC dseg:2FB2 03 00 04 00 02 00 00 00 01 00                   TBL_Realm_Order dw _Life, _Death, _Chaos, _Nature, _Sorcery
-// MGC dseg:2FB2                                                                                         ; DATA XREF: GAME_New_Screen_5+Eo
-// MGC dseg:2FBC 1A 00 4D 00 80 00                               UU_Label_Box_TitleTops dw 26, 77, 128   ; DATA XREF: GAME_SpellSel_GUI+Do
-// MGC dseg:2FC2 25 00 58 00 8B 00                               UU_Label_Box_TextTops dw 37, 88, 139    ; DATA XREF: GAME_SpellSel_GUI+1Fo
-// MGC dseg:2FC8 1F 1F 1F 1F 1F                                  COL_NEWG_5Shadow4 db 5 dup(1Fh)         ; DATA XREF: SCRN_Draw_NewScr5+Do
-// MGC dseg:2FC8                                                                                         ; should use dseg:2ea3
-// MGC dseg:2FCD BB BB BB BB BB                                  COL_NEWG_5Font4 db 5 dup(0BBh)          ; DATA XREF: SCRN_Draw_NewScr5+1Fo
-// MGC dseg:2FCD                                                                                         ; should use dseg:2eab
-// MGC dseg:2FD2 1A 00 4D 00 80 00                               Label_Box_TitleTops2 dw 26, 77, 128     ; DATA XREF: SCRN_Draw_NewScr5_2+Eo
-// MGC dseg:2FD2                                                                                         ; should use dseg:2fbc
-// MGC dseg:2FD8 25 00 58 00 8B 00                               Label_Box_TextTops2 dw 37, 88, 139      ; DATA XREF: SCRN_Draw_NewScr5_2+20o
-// MGC dseg:2FD8                                                                                         ; should use dseg:2fc2
-// MGC dseg:2FDE 19 32                                           COL_Available_4 dw 3219h                ; DATA XREF: SCRN_Draw_NewScr5_2+2Dr
-// MGC dseg:2FDE                                                                                         ; should use dseg:2efe
-// MGC dseg:2FE0 16 B2                                           COL_NewG_Spl_Known dw 0B216h            ; DATA XREF: SCRN_Draw_NewScr5_2+33r
-// MGC dseg:2FE0                                                                                         ; should use dseg:2f9c
-// MGC dseg:2FE2 10 10                                           COL_NewG_Spl_Shdw dw 1010h              ; DATA XREF: SCRN_Draw_NewScr5_2+39r
-// MGC dseg:2FE2                                                                                         ; should use dseg:2f9e
-// MGC dseg:2FE4 43 6F 6D 6D 6F 6E 00 00 00 00                   cnst_Rarity0_10b db 'Common',0,0,0,0    ; DATA XREF: SCRN_Draw_NewScr5_2+44o
-// MGC dseg:2FEE 55 6E 63 6F 6D 6D 6F 6E 00 00                   cnst_Rarity1_10b db 'Uncommon',0,0
-// MGC dseg:2FF8 52 61 72 65 00 00 00 00 00 00                   cnst_Rarity2_10b db 'Rare',0,0,0,0,0,0
-// MGC dseg:3002 56 65 72 79 20 52 61 72 65 00                   cnst_Rarity3_10b db 'Very Rare',0
-// MGC dseg:300C 4E 61 74 75 72 65 00 00 00 00                   cnst_Realm0_10b db 'Nature',0,0,0,0     ; DATA XREF: SCRN_Draw_NewScr5_2+57o
-// MGC dseg:300C                                                                                         ; should use / convert dseg:2f48
-// MGC dseg:3016 53 6F 72 63 65 72 79 00 00 00                   cnst_Realm1_10b db 'Sorcery',0,0,0
-// MGC dseg:3020 43 68 61 6F 73 00 00 00 00 00                   cnst_Realm2_10b db 'Chaos',0,0,0,0,0
-// MGC dseg:302A 4C 69 66 65 00 00 00 00 00 00                   cnst_Realm3_10b db 'Life',0,0,0,0,0,0
-// MGC dseg:3034 44 65 61 74 68 00 00 00 00 00                   cnst_Realm4_10b db 'Death',0,0,0,0,0
-// MGC dseg:303E 57 49 5A 41 52 44 53 2E 45 58 45                cnst_EXESwap_File db 'WIZARDS.EXE'      ; DATA XREF: GAME_WizardsLaunch+38o
+// MGC  dseg:2F48 4C 69 66 65 00 00 00 00 00 00                   cnst_Realm0_Text_10b db 'Life',0,0,0,0,0,0
+// MGC  dseg:2F48                                                                                         ; DATA XREF: GAME_New_Screen_4+Fo
+// MGC  dseg:2F52 44 65 61 74 68 00 00 00 00 00                   cnst_Realm1_Text_10b db 'Death',0,0,0,0,0
+// MGC  dseg:2F5C 43 68 61 6F 73 00 00 00 00 00                   cnst_Realm2_Text_10b db 'Chaos',0,0,0,0,0
+// MGC  dseg:2F66 4E 61 74 75 72 65 00 00 00 00                   cnst_Realm3_Text_10b db 'Nature',0,0,0,0
+// MGC  dseg:2F70 53 6F 72 63 65 72 79 00 00 00                   cnst_Realm4_Text_10b db 'Sorcery',0,0,0
+// MGC  dseg:2F7A 01 00 02 00 08 00 09 00 0F 00                   TBL_2pickRetort_Lbls dw RETORT_Labels.Warlord, RETORT_Labels.Channeler, RETORT_Labels.Divine_Power, RETORT_Labels.Famous, RETORT_Labels.Infernal_Power
+// MGC  dseg:2F7A                                                                                         ; DATA XREF: GAME_New_Screen_4+21o
+// MGC  dseg:2F84 01 00 02 00 08 00 09 00 0F 00                   RP_TBL_2pickRet_Lbls dw RETORT_Labels.Warlord, RETORT_Labels.Channeler, RETORT_Labels.Divine_Power, RETORT_Labels.Famous, RETORT_Labels.Infernal_Power
+// MGC  dseg:2F84                                                                                         ; DATA XREF: GAME_Draw_NewScr4+Do
+// MGC  dseg:2F84                                                                                         ; redirected to dseg:2f7a and re-purposed in the realm
+// MGC  dseg:2F84                                                                                         ; ordering patch
+// MGC  dseg:2F8E 1F 1F 1F 1F 1F                                  COL_NEWG_5Shadow3 db 5 dup(1Fh)         ; DATA XREF: GAME_Draw_NewScr4+1Fo
+// MGC  dseg:2F8E                                                                                         ; should use dseg:2ea3
+// MGC  dseg:2F93 BB BB BB BB BB                                  COL_NEWG_5Font3 db 5 dup(0BBh)          ; DATA XREF: GAME_Draw_NewScr4+31o
+// MGC  dseg:2F93                                                                                         ; should use dseg:2eab
+// MGC  dseg:2F98 19 32                                           COL_Available_3 dw 3219h                ; DATA XREF: GAME_Draw_NewScr4+3Er
+// MGC  dseg:2F98                                                                                         ; should use dseg:2efe
+// MGC  dseg:2F9A 19 16                                           COL_NEWG_NA2 dw 1619h                   ; DATA XREF: GAME_Draw_NewScr4+44r
+// MGC  dseg:2F9A                                                                                         ; should use dseg:2f31
+// MGC  dseg:2F9C 16 B2                                           COL_NewG_Ret_Known dw 0B216h            ; DATA XREF: GAME_Draw_NewScr4+4Ar
+// MGC  dseg:2F9E 10 10                                           COL_NewG_Ret_Shdw dw 1010h              ; DATA XREF: GAME_Draw_NewScr4+50r
+// MGC  dseg:2FA0 01 01 01 00 01 01 00 01 00 01 00 01 00 00 00 00+TBL_Retort_Lbl_Init RETORT_Labels <1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0>
+// MGC  dseg:2FA0 00 00                                                                                   ; DATA XREF: GAME_Draw_NewScr4+5Bo
+// MGC  dseg:2FB2 03 00 04 00 02 00 00 00 01 00                   TBL_Realm_Order dw _Life, _Death, _Chaos, _Nature, _Sorcery
+// MGC  dseg:2FB2                                                                                         ; DATA XREF: GAME_New_Screen_5+Eo
+// MGC  dseg:2FBC 1A 00 4D 00 80 00                               UU_Label_Box_TitleTops dw 26, 77, 128   ; DATA XREF: GAME_SpellSel_GUI+Do
+// MGC  dseg:2FC2 25 00 58 00 8B 00                               UU_Label_Box_TextTops dw 37, 88, 139    ; DATA XREF: GAME_SpellSel_GUI+1Fo
+// MGC  dseg:2FC8 1F 1F 1F 1F 1F                                  COL_NEWG_5Shadow4 db 5 dup(1Fh)         ; DATA XREF: SCRN_Draw_NewScr5+Do
+// MGC  dseg:2FC8                                                                                         ; should use dseg:2ea3
+// MGC  dseg:2FCD BB BB BB BB BB                                  COL_NEWG_5Font4 db 5 dup(0BBh)          ; DATA XREF: SCRN_Draw_NewScr5+1Fo
+// MGC  dseg:2FCD                                                                                         ; should use dseg:2eab
+// MGC  dseg:2FD2 1A 00 4D 00 80 00                               Label_Box_TitleTops2 dw 26, 77, 128     ; DATA XREF: SCRN_Draw_NewScr5_2+Eo
+// MGC  dseg:2FD2                                                                                         ; should use dseg:2fbc
+// MGC  dseg:2FD8 25 00 58 00 8B 00                               Label_Box_TextTops2 dw 37, 88, 139      ; DATA XREF: SCRN_Draw_NewScr5_2+20o
+// MGC  dseg:2FD8                                                                                         ; should use dseg:2fc2
+// MGC  dseg:2FDE 19 32                                           COL_Available_4 dw 3219h                ; DATA XREF: SCRN_Draw_NewScr5_2+2Dr
+// MGC  dseg:2FDE                                                                                         ; should use dseg:2efe
+// MGC  dseg:2FE0 16 B2                                           COL_NewG_Spl_Known dw 0B216h            ; DATA XREF: SCRN_Draw_NewScr5_2+33r
+// MGC  dseg:2FE0                                                                                         ; should use dseg:2f9c
+// MGC  dseg:2FE2 10 10                                           COL_NewG_Spl_Shdw dw 1010h              ; DATA XREF: SCRN_Draw_NewScr5_2+39r
+// MGC  dseg:2FE2                                                                                         ; should use dseg:2f9e
+// MGC  dseg:2FE4 43 6F 6D 6D 6F 6E 00 00 00 00                   cnst_Rarity0_10b db 'Common',0,0,0,0    ; DATA XREF: SCRN_Draw_NewScr5_2+44o
+// MGC  dseg:2FEE 55 6E 63 6F 6D 6D 6F 6E 00 00                   cnst_Rarity1_10b db 'Uncommon',0,0
+// MGC  dseg:2FF8 52 61 72 65 00 00 00 00 00 00                   cnst_Rarity2_10b db 'Rare',0,0,0,0,0,0
+// MGC  dseg:3002 56 65 72 79 20 52 61 72 65 00                   cnst_Rarity3_10b db 'Very Rare',0
+// MGC  dseg:300C 4E 61 74 75 72 65 00 00 00 00                   cnst_Realm0_10b db 'Nature',0,0,0,0     ; DATA XREF: SCRN_Draw_NewScr5_2+57o
+// MGC  dseg:300C                                                                                         ; should use / convert dseg:2f48
+// MGC  dseg:3016 53 6F 72 63 65 72 79 00 00 00                   cnst_Realm1_10b db 'Sorcery',0,0,0
+// MGC  dseg:3020 43 68 61 6F 73 00 00 00 00 00                   cnst_Realm2_10b db 'Chaos',0,0,0,0,0
+// MGC  dseg:302A 4C 69 66 65 00 00 00 00 00 00                   cnst_Realm3_10b db 'Life',0,0,0,0,0,0
+// MGC  dseg:3034 44 65 61 74 68 00 00 00 00 00                   cnst_Realm4_10b db 'Death',0,0,0,0,0
+// MGC  dseg:303E 57 49 5A 41 52 44 53 2E 45 58 45                cnst_EXESwap_File db 'WIZARDS.EXE'      ; DATA XREF: GAME_WizardsLaunch+38o
 
-// MGC dseg:3049
+// MGC  dseg:3049
 char empty_string__ovr050[] = "";
 
-// MGC dseg:304A 4A 45 4E 4E 59 00                               cnst_EXESwap_Arg db 'JENNY',0           ; DATA XREF: GAME_WizardsLaunch+30o ...
-// MGC dseg:3050 4C 4F 41 44 2E 4C 42 58 00                      load_lbx_file db 'LOAD.LBX',0           ; DATA XREF: Load_Screen+Fo ...
+// MGC  dseg:304A 4A 45 4E 4E 59 00                               cnst_EXESwap_Arg db 'JENNY',0           ; DATA XREF: GAME_WizardsLaunch+30o ...
+// MGC  dseg:3050 4C 4F 41 44 2E 4C 42 58 00                      load_lbx_file db 'LOAD.LBX',0           ; DATA XREF: Load_Screen+Fo ...
 
-// MGC dseg:3059
+// MGC  dseg:3059
 char str_ESC__ovr050[] = "\x1B";
 
-// MGC dseg:305B 4C 00                                           cnst_HOTKEY_L_2 db 'L',0                ; DATA XREF: Load_Screen+196o
-// MGC dseg:305D 53 41 56 45 00                                  cnst_SAVE3 db 'SAVE',0                  ; DATA XREF: Load_Screen:@@Loop_SaveSlotso
-// MGC dseg:3062 2E 47 41 4D 00                                  cnst_SAVE_ext3 db '.GAM',0              ; DATA XREF: Load_Screen+1FDo
-// MGC dseg:3067 43 6F 70 79 72 69 67 68 74 20 20 53 69 6D 74 65+load_screen_copyright db 'Copyright  Simtex Software, 1995   V1.31',0
+// MGC  dseg:305B 4C 00                                           cnst_HOTKEY_L_2 db 'L',0                ; DATA XREF: Load_Screen+196o
+// MGC  dseg:305D 53 41 56 45 00                                  cnst_SAVE3 db 'SAVE',0                  ; DATA XREF: Load_Screen:@@Loop_SaveSlotso
+// MGC  dseg:3062 2E 47 41 4D 00                                  cnst_SAVE_ext3 db '.GAM',0              ; DATA XREF: Load_Screen+1FDo
+// MGC  dseg:3067 43 6F 70 79 72 69 67 68 74 20 20 53 69 6D 74 65+load_screen_copyright db 'Copyright  Simtex Software, 1995   V1.31',0
 
-// MGC dseg:3090
+// MGC  dseg:3090
 char newgame_lbx_file__ovr050[] = "NEWGAME.LBX";
 
-// MGC dseg:309C
+// MGC  dseg:309C
 char str_MAGIC_SET__ovr050[] = "MAGIC.SET";
 
-// MGC dseg:30A6
+// MGC  dseg:30A6
 char str_rb__ovr050[] = "rb";
 
-// MGC dseg:30A9
+// MGC  dseg:30A9
 char str_wb__ovr050[] = "wb";
 
-// MGC dseg:30AC
+// MGC  dseg:30AC
 char cnst_Wiz_Select[] = "Select Wizard";
 
-// MGC dseg:30BA
+// MGC  dseg:30BA
 char cnst_Pic_Select[] = "Select Picture";
 
-// MGC dseg:30C9
+// MGC  dseg:30C9
 char cnst_DOT__ovr050[] = ".";
 
-// MGC dseg:30CB
+// MGC  dseg:30CB
 char cnst_Name_Select[] = "Wizard's Name";
 
-// MGC dseg:30D9
+// MGC  dseg:30D9
 char cnst_Banner_Select[] = "Select Banner";
 
-// MGC dseg:30E7
+// MGC  dseg:30E7
 char cnst_Race_Error[] = "You can not select a Myrran race unless you have the Myrran special.";
-// MGC dseg:312C
+// MGC  dseg:312C
 char cnst_Race_Select[] = "Select Race";
-// MGC dseg:3138
+// MGC  dseg:3138
 char cnst_Arcanian_Races[] = "Arcanian Races:";
-// MGC dseg:3148
+// MGC  dseg:3148
 char cnst_Myrran_Races[] = "Myrran Races:";
-// MGC dseg:3156 59 6F 75 20 6E 65 65 64 20 74 6F 20 6D 61 6B 65+cnst_Pick_Error_0 db 'You need to make all your picks before you can continue',0
-// MGC dseg:318E 59 6F 75 20 6D 61 79 20 6E 6F 74 20 73 65 6C 65+cnst_Pick_Error_1 db 'You may not select more than 6 special abilities',0
-// MGC dseg:31BF 54 6F 20 73 65 6C 65 63 74 20 00                cnst_Pick_Error_20 db 'To select ',0    ; DATA XREF: GAME_New_Screen_4:loc_40AA3o
-// MGC dseg:31CA 20 79 6F 75 20 6E 65 65 64 3A 20 20 20 00       cnst_Pick_Error_21 db ' you need:   ',0 ; DATA XREF: GAME_New_Screen_4+44Co
-// MGC dseg:31D8 20 70 69 63 6B 73 20 69 6E 20 00                cnst_Pick_Error_22 db ' picks in ',0    ; DATA XREF: GAME_New_Screen_4+4D8o
-// MGC dseg:31E3 20 4D 61 67 69 63 00                            cnst_Pick_Error_23 db ' Magic',0        ; DATA XREF: GAME_New_Screen_4+502o ...
-// MGC dseg:31EA 20 70 69 63 6B 00                               cnst_Pick_Error_24 db ' pick',0         ; DATA XREF: GAME_New_Screen_4+561o
-// MGC dseg:31F0 73                                              cnst_Pick_Error_25 db 's'               ; DATA XREF: GAME_New_Screen_4+583o
-// MGC dseg:31F1 20 69 6E 20 61 6E 79 20 00                      cnst_Pick_Error_26 db ' in any ',0      ; DATA XREF: GAME_New_Screen_4:loc_40C05o
-// MGC dseg:31FA 20 52 65 61 6C 6D 73 20 6F 66 20 4D 61 67 69 63+cnst_Pick_Error_27 db ' Realms of Magic',0
-// MGC dseg:31FA 00                                                                                      ; DATA XREF: GAME_New_Screen_4+5DFo
-// MGC dseg:320B 52 65 61 6C 6D 20 6F 66 20 4D 61 67 69 63 00    cnst_Pick_Error_28 db 'Realm of Magic',0
-// MGC dseg:320B                                                                                         ; DATA XREF: GAME_New_Screen_4:loc_40C61o
+// MGC  dseg:3156 59 6F 75 20 6E 65 65 64 20 74 6F 20 6D 61 6B 65+cnst_Pick_Error_0 db 'You need to make all your picks before you can continue',0
+// MGC  dseg:318E 59 6F 75 20 6D 61 79 20 6E 6F 74 20 73 65 6C 65+cnst_Pick_Error_1 db 'You may not select more than 6 special abilities',0
+// MGC  dseg:31BF 54 6F 20 73 65 6C 65 63 74 20 00                cnst_Pick_Error_20 db 'To select ',0    ; DATA XREF: GAME_New_Screen_4:loc_40AA3o
+// MGC  dseg:31CA 20 79 6F 75 20 6E 65 65 64 3A 20 20 20 00       cnst_Pick_Error_21 db ' you need:   ',0 ; DATA XREF: GAME_New_Screen_4+44Co
+// MGC  dseg:31D8 20 70 69 63 6B 73 20 69 6E 20 00                cnst_Pick_Error_22 db ' picks in ',0    ; DATA XREF: GAME_New_Screen_4+4D8o
+// MGC  dseg:31E3 20 4D 61 67 69 63 00                            cnst_Pick_Error_23 db ' Magic',0        ; DATA XREF: GAME_New_Screen_4+502o ...
+// MGC  dseg:31EA 20 70 69 63 6B 00                               cnst_Pick_Error_24 db ' pick',0         ; DATA XREF: GAME_New_Screen_4+561o
+// MGC  dseg:31F0 73                                              cnst_Pick_Error_25 db 's'               ; DATA XREF: GAME_New_Screen_4+583o
+// MGC  dseg:31F1 20 69 6E 20 61 6E 79 20 00                      cnst_Pick_Error_26 db ' in any ',0      ; DATA XREF: GAME_New_Screen_4:loc_40C05o
+// MGC  dseg:31FA 20 52 65 61 6C 6D 73 20 6F 66 20 4D 61 67 69 63+cnst_Pick_Error_27 db ' Realms of Magic',0
+// MGC  dseg:31FA 00                                                                                      ; DATA XREF: GAME_New_Screen_4+5DFo
+// MGC  dseg:320B 52 65 61 6C 6D 20 6F 66 20 4D 61 67 69 63 00    cnst_Pick_Error_28 db 'Realm of Magic',0
+// MGC  dseg:320B                                                                                         ; DATA XREF: GAME_New_Screen_4:loc_40C61o
 
-// MGC dseg:321A
+// MGC  dseg:321A
 char cnst_Pick_Error_29[] = ", ";
 
-// MGC dseg:321D 20 70 69 63 6B 20 69 6E 20 00                   cnst_Pick_Error_2A db ' pick in ',0     ; DATA XREF: GAME_New_Screen_4+669o
-// MGC dseg:3227 59 6F 75 20 63 61 6E 20 6E 6F 74 20 73 65 6C 65+cnst_Pick_Error_3 db 'You can not select both Life and Death magic',0
-// MGC dseg:3227 63 74 20 62 6F 74 68 20 4C 69 66 65 20 61 6E 64+                                        ; DATA XREF: GAME_New_Screen_4:loc_40D2Eo
-// MGC dseg:3254 59 6F 75 20 68 61 76 65 20 61 6C 72 65 61 64 79+cnst_Pick_Error_4 db 'You have already made all your'
-// MGC dseg:3254 20 6D 61 64 65 20 61 6C 6C 20 79 6F 75 72                                               ; DATA XREF: GAME_New_Screen_4:loc_40D34o
-// MGC dseg:3272 20 70 69 63 6B 73 00                            cnst_Picks db ' picks',0                ; DATA XREF: GAME_Draw_NewScr4+AA9o ...
-// MGC dseg:3279 59 6F 75 20 64 6F 6E 27 74 20 68 61 76 65 20 65+cnst_Pick_Error_5 db 'You don',27h,'t have enough picks left to make this selection. You need 2 picks',0
-// MGC dseg:3279 6E 6F 75 67 68 20 70 69 63 6B 73 20 6C 65 66 74+                                        ; DATA XREF: GAME_New_Screen_4:loc_40D3Ao
+// MGC  dseg:321D 20 70 69 63 6B 20 69 6E 20 00                   cnst_Pick_Error_2A db ' pick in ',0     ; DATA XREF: GAME_New_Screen_4+669o
+// MGC  dseg:3227 59 6F 75 20 63 61 6E 20 6E 6F 74 20 73 65 6C 65+cnst_Pick_Error_3 db 'You can not select both Life and Death magic',0
+// MGC  dseg:3227 63 74 20 62 6F 74 68 20 4C 69 66 65 20 61 6E 64+                                        ; DATA XREF: GAME_New_Screen_4:loc_40D2Eo
+// MGC  dseg:3254 59 6F 75 20 68 61 76 65 20 61 6C 72 65 61 64 79+cnst_Pick_Error_4 db 'You have already made all your'
+// MGC  dseg:3254 20 6D 61 64 65 20 61 6C 6C 20 79 6F 75 72                                               ; DATA XREF: GAME_New_Screen_4:loc_40D34o
+// MGC  dseg:3272 20 70 69 63 6B 73 00                            cnst_Picks db ' picks',0                ; DATA XREF: GAME_Draw_NewScr4+AA9o ...
+// MGC  dseg:3279 59 6F 75 20 64 6F 6E 27 74 20 68 61 76 65 20 65+cnst_Pick_Error_5 db 'You don',27h,'t have enough picks left to make this selection. You need 2 picks',0
+// MGC  dseg:3279 6E 6F 75 67 68 20 70 69 63 6B 73 20 6C 65 66 74+                                        ; DATA XREF: GAME_New_Screen_4:loc_40D3Ao
 
-// MGC dseg:32C3
+// MGC  dseg:32C3
 char hlpentry_lbx_file__MGC_ovr050[] = "hlpentry.lbx";
 
-// MGC dseg:32D0 59 6F 75 20 68 61 76 65 20 6E 6F 20 70 69 63 6B+cnst_Pick_Error_6 db 'You have no picks left in this area, to deselect click on a selected item',0
-// MGC dseg:32D0 73 20 6C 65 66 74 20 69 6E 20 74 68 69 73 20 61+                                        ; DATA XREF: GAME_New_Screen_5:loc_42154o
-// MGC dseg:331A 53 65 6C 65 63 74 20 00                         cnst_Spell_Select_0 db 'Select ',0      ; DATA XREF: SCRN_Draw_NewScr5_2+DDo
-// MGC dseg:3322 20 53 70 65 6C 6C 73 00                         cnst_Spell_Select_1 db ' Spells',0      ; DATA XREF: SCRN_Draw_NewScr5_2+108o
-// MGC dseg:332A 3A 20 00                                        cnst_Spell_Select_2 db ': ',0           ; DATA XREF: SCRN_Draw_NewScr5_2+22Bo ...
+// MGC  dseg:32D0 59 6F 75 20 68 61 76 65 20 6E 6F 20 70 69 63 6B+cnst_Pick_Error_6 db 'You have no picks left in this area, to deselect click on a selected item',0
+// MGC  dseg:32D0 73 20 6C 65 66 74 20 69 6E 20 74 68 69 73 20 61+                                        ; DATA XREF: GAME_New_Screen_5:loc_42154o
+// MGC  dseg:331A 53 65 6C 65 63 74 20 00                         cnst_Spell_Select_0 db 'Select ',0      ; DATA XREF: SCRN_Draw_NewScr5_2+DDo
+// MGC  dseg:3322 20 53 70 65 6C 6C 73 00                         cnst_Spell_Select_1 db ' Spells',0      ; DATA XREF: SCRN_Draw_NewScr5_2+108o
+// MGC  dseg:332A 3A 20 00                                        cnst_Spell_Select_2 db ': ',0           ; DATA XREF: SCRN_Draw_NewScr5_2+22Bo ...
 
-// MGC dseg:332D
+// MGC  dseg:332D
 char cnst_And__ovr050[] = " and ";
 
-// MGC dseg:3333 00                                              align 2
+// MGC  dseg:3333 00                                              align 2
 
-// MGC dseg:3333                                                 END:  ovr050 - Initialized Data
+// MGC  dseg:3333                                                 END:  ovr050 - Initialized Data
 
 
 
-// MGC dseg:8A42                                                 BEGIN:  ovr050 - Uninitialized Data
+// MGC  dseg:8A42                                                 BEGIN:  ovr050 - Uninitialized Data
 
-// // // // MGC dseg:8A42
+// // // // MGC  dseg:8A42
 // // // struct Default_Spells TBL_Spells_Nature;
-// // // // MGC dseg:8A5C
+// // // // MGC  dseg:8A5C
 // // // struct Default_Spells TBL_Spells_Sorcery;
-// // // // MGC dseg:8A76
+// // // // MGC  dseg:8A76
 // // // struct Default_Spells TBL_Spells_Chaos;
-// // // // MGC dseg:8A90
+// // // // MGC  dseg:8A90
 // // // struct Default_Spells TBL_Spells_Life;
-// // // // MGC dseg:8AAA
+// // // // MGC  dseg:8AAA
 // // // struct Default_Spells TBL_Spells_Death;
-// // // MGC dseg:8A42
+// // // MGC  dseg:8A42
 // // int16_t _start_spells_nature[13];
-// // // MGC dseg:8A5C
+// // // MGC  dseg:8A5C
 // // int16_t _start_spells_sorcery[13];
-// // // MGC dseg:8A76
+// // // MGC  dseg:8A76
 // // int16_t _start_spells_chaos[13];
-// // // MGC dseg:8A90
+// // // MGC  dseg:8A90
 // // int16_t _start_spells_life[13];
-// // // MGC dseg:8AAA
+// // // MGC  dseg:8AAA
 // // int16_t _start_spells_death[13];
-// // MGC dseg:8AC4
+// // MGC  dseg:8AC4
 // struct Default_Spells TBL_Spells_P1;
-// // MGC dseg:8B46
+// // MGC  dseg:8B46
 // struct Default_Spells TBL_Spells_P2;
-// // MGC dseg:8BC8
+// // MGC  dseg:8BC8
 // struct Default_Spells TBL_Spells_P3;
-// // MGC dseg:8C4A
+// // MGC  dseg:8C4A
 // struct Default_Spells TBL_Spells_P4;
-// // MGC dseg:8CCC
+// // MGC  dseg:8CCC
 // struct Default_Spells UU_TBL_Spells_P5;
 
 // ...oops... // MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_start_spells s_Init_Spells_Table <0>   ; DATA XREF: GAME_New_Screen_5+171w ...
@@ -963,24 +963,24 @@ char cnst_And__ovr050[] = " and ";
 // ...oops... // ...needed by INITGAME.c, so defn in NewGame.h
 struct s_Init_Base_Realms _player_start_spells[PLAYER_COUNT_MAX];
 
-// MGC dseg:8D4E 00 00                                           NEWG_PickAttempt dw 0                   ; DATA XREF: GAME_New_Screen_4+436r ...
-// MGC dseg:8D50 00 00                                           NEWG_PickError dw 0                     ; DATA XREF: GAME_New_Screen_4+15Bw ...
+// MGC  dseg:8D4E 00 00                                           NEWG_PickAttempt dw 0                   ; DATA XREF: GAME_New_Screen_4+436r ...
+// MGC  dseg:8D50 00 00                                           NEWG_PickError dw 0                     ; DATA XREF: GAME_New_Screen_4+15Bw ...
 
-// MGC dseg:8D52
+// MGC  dseg:8D52
 // ; initialized to random values of 0, 1, or 2
 int16_t TBL_Bookshelf_Books[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-// MGC dseg:8D68
+// MGC  dseg:8D68
 int16_t TBL_Realm0_Books[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-// MGC dseg:8D7E
+// MGC  dseg:8D7E
 int16_t TBL_Realm1_Books[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-// MGC dseg:8D94
+// MGC  dseg:8D94
 int16_t TBL_Realm2_Books[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-// MGC dseg:8DAA
+// MGC  dseg:8DAA
 int16_t TBL_Realm3_Books[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-// MGC dseg:8DC0
+// MGC  dseg:8DC0
 int16_t TBL_Realm4_Books[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-// MGC dseg:8DD6
+// MGC  dseg:8DD6
 // drake78: IMG_NEWG_MapBuildBG
 /*
     loaded in GAME_New_Screen_7()
@@ -990,13 +990,13 @@ MoO2  Module: MAPGEN  _fill_msg_bitmap  <-|  Module: MISC  Draw_Advancing_Fill_M
 */
 SAMB_ptr newgame_BUILDWOR_map_build_bar_seg = 0;
 
-// MGC dseg:8DD8 00 00                                           NEWG_SliderPos_Sorc dw 0                ; DATA XREF: GAME_New_Screen_4+155w ...
-// MGC dseg:8DDA 00 00                                           NEWG_SliderPos_Nat dw 0                 ; DATA XREF: GAME_New_Screen_4+14Fw ...
-// MGC dseg:8DDC 00 00                                           NEWG_SliderPos_Chaos dw 0               ; DATA XREF: GAME_New_Screen_4+149w ...
-// MGC dseg:8DDE 00 00                                           NEWG_SliderPos_Death dw 0               ; DATA XREF: GAME_New_Screen_4+143w ...
-// MGC dseg:8DE0 00 00                                           NEWG_SliderPos_Life dw 0                ; DATA XREF: GAME_New_Screen_4+13Dw ...
+// MGC  dseg:8DD8 00 00                                           NEWG_SliderPos_Sorc dw 0                ; DATA XREF: GAME_New_Screen_4+155w ...
+// MGC  dseg:8DDA 00 00                                           NEWG_SliderPos_Nat dw 0                 ; DATA XREF: GAME_New_Screen_4+14Fw ...
+// MGC  dseg:8DDC 00 00                                           NEWG_SliderPos_Chaos dw 0               ; DATA XREF: GAME_New_Screen_4+149w ...
+// MGC  dseg:8DDE 00 00                                           NEWG_SliderPos_Death dw 0               ; DATA XREF: GAME_New_Screen_4+143w ...
+// MGC  dseg:8DE0 00 00                                           NEWG_SliderPos_Life dw 0                ; DATA XREF: GAME_New_Screen_4+13Dw ...
 
-// MGC dseg:8DE2
+// MGC  dseg:8DE2
 /*
 set to 8 in Newgame_Screen_1__WIP() set-up portion
 
@@ -1008,22 +1008,22 @@ init'd to 0, defaulted to 8, never changed
 */
 int16_t NEWG_PortraitSelType = 0;
 
-// MGC dseg:8DE4 00                                              db    0
-// MGC dseg:8DE5 00                                              db    0
-// MGC dseg:8DE6
+// MGC  dseg:8DE4 00                                              db    0
+// MGC  dseg:8DE5 00                                              db    0
+// MGC  dseg:8DE6
 // ; 5 groups of 3 images each (L - S - N - D - C)
 SAMB_ptr IMG_NewG_Books[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-// MGC dseg:8E04
+// MGC  dseg:8E04
 int16_t newgame_landsize_button_field = 0;
-// MGC dseg:8E06
+// MGC  dseg:8E06
 int16_t newgame_magic_button_field = 0;
-// MGC dseg:8E08
+// MGC  dseg:8E08
 int16_t newgame_opponents_button_field = 0;
-// MGC dseg:8E0A
+// MGC  dseg:8E0A
 int16_t newgame_difficulty_button_field = 0;
 
-// MGC dseg:8E0C
+// MGC  dseg:8E0C
 /*
 MoO2  _race_button_seg
 
@@ -1038,10 +1038,10 @@ int16_t NEWG_Select_Labels[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 */
 int16_t m_displayed_wizard = 0;
 
-// MGC dseg:8E4A
+// MGC  dseg:8E4A
 SAMB_ptr IMG_NewG_ButtonBGs[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-// MGC dseg:8E68
+// MGC  dseg:8E68
 /*
 
 Newgame_Screen_0()
@@ -1054,153 +1054,153 @@ IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 40, _screen_seg)
 */
 SAMB_ptr IMG_NewG_RgtOverlay = 0;
 
-// MGC dseg:8E6A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_Retort_Labels dw 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-// MGC dseg:8E6A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; DATA XREF: GAME_New_Screen_4+2BEw ...
-// MGC dseg:8E8E 00 00                                           _quit_active_seg dw 0                   ; DATA XREF: Load_Screen+32w ...
-// MGC dseg:8E90 00 00                                           _load_active_seg dw 0                   ; DATA XREF: Load_Screen+49w ...
-// MGC dseg:8E92 00 00                                           _ok_button dw 0                         ; DATA XREF: Load_Screen+1BDw ...
-// MGC dseg:8E94 00 00                                           NEWG_Picks_Remaining dw 0               ; DATA XREF: GAME_New_Screen_4+10Ew ...
-// MGC dseg:8E96 00 00                                           _selection_marker_seg dw 0              ; DATA XREF: Load_Screen+D3w ...
-// MGC dseg:8E98 00 00                                           selected_load_game_slot_idx dw 0        ; DATA XREF: Load_Screen+2D8w ...
-// MGC dseg:8E9A 00 00                                           MAY__selected_save_game_slot_idx dw 0
-// MGC dseg:8E9C 00 00                                           NEWG_SpellSel_Realm dw 0                ; DATA XREF: GAME_New_Screen_5+1D3w ...
-// MGC dseg:8E9E 00 00                                           _settings_button dw 0                   ; DATA XREF: Load_Screen+2D5w ...
-// MGC dseg:8EA0 00 00                                           _settings_button_seg dw 0               ; DATA XREF: Load_Screen+BCw ...
-// MGC dseg:8EA2 00 00                                           _text_fill_seg dw 0                     ; DATA XREF: Load_Screen+A5w ...
+// MGC  dseg:8E6A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_Retort_Labels dw 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+// MGC  dseg:8E6A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; DATA XREF: GAME_New_Screen_4+2BEw ...
+// MGC  dseg:8E8E 00 00                                           _quit_active_seg dw 0                   ; DATA XREF: Load_Screen+32w ...
+// MGC  dseg:8E90 00 00                                           _load_active_seg dw 0                   ; DATA XREF: Load_Screen+49w ...
+// MGC  dseg:8E92 00 00                                           _ok_button dw 0                         ; DATA XREF: Load_Screen+1BDw ...
+// MGC  dseg:8E94 00 00                                           NEWG_Picks_Remaining dw 0               ; DATA XREF: GAME_New_Screen_4+10Ew ...
+// MGC  dseg:8E96 00 00                                           _selection_marker_seg dw 0              ; DATA XREF: Load_Screen+D3w ...
+// MGC  dseg:8E98 00 00                                           selected_load_game_slot_idx dw 0        ; DATA XREF: Load_Screen+2D8w ...
+// MGC  dseg:8E9A 00 00                                           MAY__selected_save_game_slot_idx dw 0
+// MGC  dseg:8E9C 00 00                                           NEWG_SpellSel_Realm dw 0                ; DATA XREF: GAME_New_Screen_5+1D3w ...
+// MGC  dseg:8E9E 00 00                                           _settings_button dw 0                   ; DATA XREF: Load_Screen+2D5w ...
+// MGC  dseg:8EA0 00 00                                           _settings_button_seg dw 0               ; DATA XREF: Load_Screen+BCw ...
+// MGC  dseg:8EA2 00 00                                           _text_fill_seg dw 0                     ; DATA XREF: Load_Screen+A5w ...
 
-// MGC dseg:8EA4
+// MGC  dseg:8EA4
 /*
 NEWG_Clicked_Race = Arcanus_Races[itr];
 
 */
 int16_t NEWG_Clicked_Race;
-// MGC dseg:8EA6 00 00                                           dw 0
-// MGC dseg:8EA8 00 00                                           dw 0
-// MGC dseg:8EAA 00 00                                           NEWG_ProfileComplete dw 0               ; DATA XREF: GAME_New_Screen_4+114w ...
-// MGC dseg:8EAC 00 00                                           _ok_inactive_seg dw 0                   ; DATA XREF: Load_Screen+8Ew ...
-// MGC dseg:8EAE 00 00                                           _save_inactive_seg dw 0                 ; DATA XREF: Load_Screen+77w ...
+// MGC  dseg:8EA6 00 00                                           dw 0
+// MGC  dseg:8EA8 00 00                                           dw 0
+// MGC  dseg:8EAA 00 00                                           NEWG_ProfileComplete dw 0               ; DATA XREF: GAME_New_Screen_4+114w ...
+// MGC  dseg:8EAC 00 00                                           _ok_inactive_seg dw 0                   ; DATA XREF: Load_Screen+8Ew ...
+// MGC  dseg:8EAE 00 00                                           _save_inactive_seg dw 0                 ; DATA XREF: Load_Screen+77w ...
 
-// MGC dseg:8EAE                                                 END:  ovr050 - Uninitialized Data
-
-
-
-// MGC dseg:8EB0                                                 BEGIN:  ovr051 - Uninitialized Data
-
-// MGC dseg:8EB0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_Landmass_Races dw 200 dup(0)       ; DATA XREF: NEWG_CreateNeutrals+39w ...
-// MGC dseg:9040 00 00                                           NEWG_LandmassCount dw 0                 ; DATA XREF: NEWG_ClearLandmasses+4w ...
-// MGC dseg:9042 00 00                                           dw 0
-// MGC dseg:9044 00 00                                           dw 0
-// MGC dseg:9046 00 00                                           dw 0
-// MGC dseg:9048 00 00                                           dw 0
-// MGC dseg:904A 00 00                                           dw 0
-
-// MGC dseg:904A                                                 END:  ovr051 - Uninitialized Data
+// MGC  dseg:8EAE                                                 END:  ovr050 - Uninitialized Data
 
 
 
-// MGC dseg:904E                                                 BEGIN:  ovr053 - Uninitialized Data
+// MGC  dseg:8EB0                                                 BEGIN:  ovr051 - Uninitialized Data
 
-// MGC dseg:904E 00 00                                           HLP_ExpandLines dw 0                    ; DATA XREF: UU_HLP_DrawExpanding+Bw ...
-// MGC dseg:9050 00 00                                           HLP_ExpandOrigBottom dw 0               ; DATA XREF: UU_HLP_DrawExpanding+3Bw ...
-// MGC dseg:9052 00 00                                           HLP_ExpandOrigRight dw 0                ; DATA XREF: UU_HLP_DrawExpanding+35w ...
-// MGC dseg:9054 00 00                                           HLP_ExpandOrigTop dw 0                  ; DATA XREF: UU_HLP_DrawExpanding+2Fw ...
-// MGC dseg:9056 00 00                                           HLP_ExpandOrigLeft dw 0                 ; DATA XREF: UU_HLP_DrawExpanding+29w ...
-// MGC dseg:9058 00 00                                           HLP_ExpandTgtBottom dw 0                ; DATA XREF: UU_HLP_DrawExpanding+23w ...
-// MGC dseg:905A 00 00                                           HLP_ExpandTgtRight dw 0                 ; DATA XREF: UU_HLP_DrawExpanding+1Dw ...
-// MGC dseg:905C 00 00                                           HLP_ExpandTgtTop dw 0                   ; DATA XREF: UU_HLP_DrawExpanding+17w ...
-// MGC dseg:905E 00 00                                           HLP_ExpandTgtLeft dw 0                  ; DATA XREF: UU_HLP_DrawExpanding+11w ...
-// MGC dseg:9060 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+GUI_ListSel_Buttons dw 0Ah dup(     0)  ; DATA XREF: UU_GUI_ListSelect_Dlg+217w ...
-// MGC dseg:9074 00 00                                           GUI_ListSel_Title@ dw 0                 ; DATA XREF: UU_GUI_ListSelect_Dlg+1CBw ...
-// MGC dseg:9076 00 00                                           GUI_ListSel_Strings@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+1C5w ...
-// MGC dseg:9078 00 00                                           GUI_ListSel_DispCnt dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+1BFw ...
-// MGC dseg:907A 00 00                                           GUI_ListSel_Disp1st dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+1CEw ...
-// MGC dseg:907C 00 00                                           GUI_ListSelHighlight dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+1D4w ...
-// MGC dseg:907E 00 00                                           dw 0
-// MGC dseg:9080 00 00                                           GUI_ListSel_Bottom dw 0                 ; DATA XREF: UU_GUI_ListSelect_Dlg+441r ...
-// MGC dseg:9082 00 00                                           GUI_ListSel_Right dw 0                  ; DATA XREF: UU_GUI_ListSelect_Dlg+2EFr ...
-// MGC dseg:9084 00 00                                           GUI_ListSel_Top dw 0                    ; DATA XREF: UU_GUI_ListSelect_Dlg+2DAr ...
-// MGC dseg:9086 00 00                                           GUI_ListSel_Left dw 0                   ; DATA XREF: UU_GUI_ListSelect_Dlg+321r ...
-// MGC dseg:9088 00 00                                           GUI_ListSel_MultiPg dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+1B9w ...
-// MGC dseg:908A 00 00                                           GUI_ListSel_Count dw 0                  ; DATA XREF: UU_GUI_ListSelect_Dlg+264r ...
-// MGC dseg:908C 00 00                                           IMG_GUI_NoButton@ dw 0                  ; DATA XREF: UU_GUI_Confirm_Dialog+78w ...
-// MGC dseg:908C                                                                                         ; 2 frame image appended in the LBX_Sandbox_Segment
-// MGC dseg:908E 00 00                                           IMG_GUI_YesButton@ dw 0                 ; DATA XREF: UU_GUI_Confirm_Dialog+61w ...
-// MGC dseg:908E                                                                                         ; 2 frame image appended in the LBX_Sandbox_Segment
-// MGC dseg:9090 00 00                                           IMG_GUI_Confirm_Btm@ dw 0               ; DATA XREF: UU_GUI_Confirm_Dialog:loc_4D5FAw ...
-// MGC dseg:9090                                                                                         ; single image appended in the LBX_Sandbox_Segment
-// MGC dseg:9092 00 00                                           IMG_GUI_Confirm_BG@ dw 0                ; DATA XREF: UU_GUI_Confirm_Dialog+33w ...
-// MGC dseg:9092                                                                                         ; LBXE_LoadReplace into the LBX_Sandbox_Segment
-// MGC dseg:9094 00 00                                           GUI_Notify_IMG2_Left dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+11Cw ...
-// MGC dseg:9096 00 00                                           GUI_Notify_IMG2_Top dw 0                ; DATA XREF: UU_GUI_Notify_Dialog+122w ...
-// MGC dseg:9098 00 00                                           GUI_Notify_IMG_Top dw 0                 ; DATA XREF: UU_GUI_Notify_Dialog+116w ...
-// MGC dseg:909A 00 00                                           GUI_Notify_IMG_Left dw 0                ; DATA XREF: UU_GUI_Notify_Dialog+110w ...
-// MGC dseg:909C 00 00                                           GUI_Notify_GemBorder dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+10Aw ...
-// MGC dseg:909E 00 00                                           IMG_GUI_Dialog_Pic2@ dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+100w ...
-// MGC dseg:90A0 00 00                                           IMG_GUI_Dialog_Pic@ dw 0                ; DATA XREF: UU_GUI_Notify_Dialog+F9w ...
-// MGC dseg:90A2 00 00                                           GUI_Notify_Color dw 0                   ; DATA XREF: UU_GUI_Notify_Dialog+103w ...
-// MGC dseg:90A2                                                                                         ; blue - red - green - brown
-// MGC dseg:90A4 00 00                                           dw 0
-// MGC dseg:90A6 00 00                                           IMG_GUI_BlueNtfyGem@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+81w ...
-// MGC dseg:90A8 00 00                                           IMG_GUI_RedNtfyGem@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+C9w
-// MGC dseg:90AA 00 00                                           IMG_GUI_GrnNtfyGem@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+111w
-// MGC dseg:90AC 00 00                                           IMG_GUI_BrwnNtfyGem@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+158w
-// MGC dseg:90AE 00 00                                           IMG_GUI_BlueNtfyPic@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+6Aw ...
-// MGC dseg:90B0 00 00                                           IMG_GUI_RedNtfyPic@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+B2w
-// MGC dseg:90B2 00 00                                           IMG_GUI_GrnNtfyPic@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+FAw
-// MGC dseg:90B4 00 00                                           IMG_GUI_BrwnNtfyPic@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+141w
-// MGC dseg:90B6 00 00                                           IMG_GUI_BlueNotify@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+53w ...
-// MGC dseg:90B8 00 00                                           IMG_GUI_RedNotify@ dw 0                 ; DATA XREF: UU_GUI_LoadNotifyGfx+9Bw
-// MGC dseg:90BA 00 00                                           IMG_GUI_GrnNotify@ dw 0                 ; DATA XREF: UU_GUI_LoadNotifyGfx+E3w
-// MGC dseg:90BC 00 00                                           IMG_GUI_BrwnNotify@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+12Aw
-// MGC dseg:90BE 00 00                                           GUI_ColorSlideType dw 0                 ; DATA XREF: UU_GUI_Notify_Dialog+AFw ...
-// MGC dseg:90C0                                                 ; int GUI_ColorSlide_State
-// MGC dseg:90C0 00 00                                           GUI_ColorSlide_State dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+B2w ...
+// MGC  dseg:8EB0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_Landmass_Races dw 200 dup(0)       ; DATA XREF: NEWG_CreateNeutrals+39w ...
+// MGC  dseg:9040 00 00                                           NEWG_LandmassCount dw 0                 ; DATA XREF: NEWG_ClearLandmasses+4w ...
+// MGC  dseg:9042 00 00                                           dw 0
+// MGC  dseg:9044 00 00                                           dw 0
+// MGC  dseg:9046 00 00                                           dw 0
+// MGC  dseg:9048 00 00                                           dw 0
+// MGC  dseg:904A 00 00                                           dw 0
+
+// MGC  dseg:904A                                                 END:  ovr051 - Uninitialized Data
+
+
+
+// MGC  dseg:904E                                                 BEGIN:  ovr053 - Uninitialized Data
+
+// MGC  dseg:904E 00 00                                           HLP_ExpandLines dw 0                    ; DATA XREF: UU_HLP_DrawExpanding+Bw ...
+// MGC  dseg:9050 00 00                                           HLP_ExpandOrigBottom dw 0               ; DATA XREF: UU_HLP_DrawExpanding+3Bw ...
+// MGC  dseg:9052 00 00                                           HLP_ExpandOrigRight dw 0                ; DATA XREF: UU_HLP_DrawExpanding+35w ...
+// MGC  dseg:9054 00 00                                           HLP_ExpandOrigTop dw 0                  ; DATA XREF: UU_HLP_DrawExpanding+2Fw ...
+// MGC  dseg:9056 00 00                                           HLP_ExpandOrigLeft dw 0                 ; DATA XREF: UU_HLP_DrawExpanding+29w ...
+// MGC  dseg:9058 00 00                                           HLP_ExpandTgtBottom dw 0                ; DATA XREF: UU_HLP_DrawExpanding+23w ...
+// MGC  dseg:905A 00 00                                           HLP_ExpandTgtRight dw 0                 ; DATA XREF: UU_HLP_DrawExpanding+1Dw ...
+// MGC  dseg:905C 00 00                                           HLP_ExpandTgtTop dw 0                   ; DATA XREF: UU_HLP_DrawExpanding+17w ...
+// MGC  dseg:905E 00 00                                           HLP_ExpandTgtLeft dw 0                  ; DATA XREF: UU_HLP_DrawExpanding+11w ...
+// MGC  dseg:9060 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+GUI_ListSel_Buttons dw 0Ah dup(     0)  ; DATA XREF: UU_GUI_ListSelect_Dlg+217w ...
+// MGC  dseg:9074 00 00                                           GUI_ListSel_Title@ dw 0                 ; DATA XREF: UU_GUI_ListSelect_Dlg+1CBw ...
+// MGC  dseg:9076 00 00                                           GUI_ListSel_Strings@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+1C5w ...
+// MGC  dseg:9078 00 00                                           GUI_ListSel_DispCnt dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+1BFw ...
+// MGC  dseg:907A 00 00                                           GUI_ListSel_Disp1st dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+1CEw ...
+// MGC  dseg:907C 00 00                                           GUI_ListSelHighlight dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+1D4w ...
+// MGC  dseg:907E 00 00                                           dw 0
+// MGC  dseg:9080 00 00                                           GUI_ListSel_Bottom dw 0                 ; DATA XREF: UU_GUI_ListSelect_Dlg+441r ...
+// MGC  dseg:9082 00 00                                           GUI_ListSel_Right dw 0                  ; DATA XREF: UU_GUI_ListSelect_Dlg+2EFr ...
+// MGC  dseg:9084 00 00                                           GUI_ListSel_Top dw 0                    ; DATA XREF: UU_GUI_ListSelect_Dlg+2DAr ...
+// MGC  dseg:9086 00 00                                           GUI_ListSel_Left dw 0                   ; DATA XREF: UU_GUI_ListSelect_Dlg+321r ...
+// MGC  dseg:9088 00 00                                           GUI_ListSel_MultiPg dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+1B9w ...
+// MGC  dseg:908A 00 00                                           GUI_ListSel_Count dw 0                  ; DATA XREF: UU_GUI_ListSelect_Dlg+264r ...
+// MGC  dseg:908C 00 00                                           IMG_GUI_NoButton@ dw 0                  ; DATA XREF: UU_GUI_Confirm_Dialog+78w ...
+// MGC  dseg:908C                                                                                         ; 2 frame image appended in the LBX_Sandbox_Segment
+// MGC  dseg:908E 00 00                                           IMG_GUI_YesButton@ dw 0                 ; DATA XREF: UU_GUI_Confirm_Dialog+61w ...
+// MGC  dseg:908E                                                                                         ; 2 frame image appended in the LBX_Sandbox_Segment
+// MGC  dseg:9090 00 00                                           IMG_GUI_Confirm_Btm@ dw 0               ; DATA XREF: UU_GUI_Confirm_Dialog:loc_4D5FAw ...
+// MGC  dseg:9090                                                                                         ; single image appended in the LBX_Sandbox_Segment
+// MGC  dseg:9092 00 00                                           IMG_GUI_Confirm_BG@ dw 0                ; DATA XREF: UU_GUI_Confirm_Dialog+33w ...
+// MGC  dseg:9092                                                                                         ; LBXE_LoadReplace into the LBX_Sandbox_Segment
+// MGC  dseg:9094 00 00                                           GUI_Notify_IMG2_Left dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+11Cw ...
+// MGC  dseg:9096 00 00                                           GUI_Notify_IMG2_Top dw 0                ; DATA XREF: UU_GUI_Notify_Dialog+122w ...
+// MGC  dseg:9098 00 00                                           GUI_Notify_IMG_Top dw 0                 ; DATA XREF: UU_GUI_Notify_Dialog+116w ...
+// MGC  dseg:909A 00 00                                           GUI_Notify_IMG_Left dw 0                ; DATA XREF: UU_GUI_Notify_Dialog+110w ...
+// MGC  dseg:909C 00 00                                           GUI_Notify_GemBorder dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+10Aw ...
+// MGC  dseg:909E 00 00                                           IMG_GUI_Dialog_Pic2@ dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+100w ...
+// MGC  dseg:90A0 00 00                                           IMG_GUI_Dialog_Pic@ dw 0                ; DATA XREF: UU_GUI_Notify_Dialog+F9w ...
+// MGC  dseg:90A2 00 00                                           GUI_Notify_Color dw 0                   ; DATA XREF: UU_GUI_Notify_Dialog+103w ...
+// MGC  dseg:90A2                                                                                         ; blue - red - green - brown
+// MGC  dseg:90A4 00 00                                           dw 0
+// MGC  dseg:90A6 00 00                                           IMG_GUI_BlueNtfyGem@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+81w ...
+// MGC  dseg:90A8 00 00                                           IMG_GUI_RedNtfyGem@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+C9w
+// MGC  dseg:90AA 00 00                                           IMG_GUI_GrnNtfyGem@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+111w
+// MGC  dseg:90AC 00 00                                           IMG_GUI_BrwnNtfyGem@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+158w
+// MGC  dseg:90AE 00 00                                           IMG_GUI_BlueNtfyPic@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+6Aw ...
+// MGC  dseg:90B0 00 00                                           IMG_GUI_RedNtfyPic@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+B2w
+// MGC  dseg:90B2 00 00                                           IMG_GUI_GrnNtfyPic@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+FAw
+// MGC  dseg:90B4 00 00                                           IMG_GUI_BrwnNtfyPic@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+141w
+// MGC  dseg:90B6 00 00                                           IMG_GUI_BlueNotify@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+53w ...
+// MGC  dseg:90B8 00 00                                           IMG_GUI_RedNotify@ dw 0                 ; DATA XREF: UU_GUI_LoadNotifyGfx+9Bw
+// MGC  dseg:90BA 00 00                                           IMG_GUI_GrnNotify@ dw 0                 ; DATA XREF: UU_GUI_LoadNotifyGfx+E3w
+// MGC  dseg:90BC 00 00                                           IMG_GUI_BrwnNotify@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+12Aw
+// MGC  dseg:90BE 00 00                                           GUI_ColorSlideType dw 0                 ; DATA XREF: UU_GUI_Notify_Dialog+AFw ...
+// MGC  dseg:90C0                                                 ; int GUI_ColorSlide_State
+// MGC  dseg:90C0 00 00                                           GUI_ColorSlide_State dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+B2w ...
 /*
     BEGIN:  Warning Box
 */
-// MGC dseg:90C2 00 00                                           m_warning2_box_bottom_seg dw 0          ; DATA XREF: Warning_Message+68w ...
-// MGC dseg:90C2                                                                                         ; appended into the LBX_Sandbox_Segment
-// MGC dseg:90C4 00 00                                           m_warning2_box_top_seg dw 0             ; DATA XREF: Warning_Message+51w ...
-// MGC dseg:90C4                                                                                         ; appended into the LBX_Sandbox_Segment
-// MGC dseg:90C6 00 00                                           m_warning_box_bottom_seg dw 0           ; DATA XREF: Newgame_Screen_6__WIP+BFw ...
-// MGC dseg:90C6                                                                                         ; appended into the LBX_Sandbox_Segment
-// MGC dseg:90C8 00 00                                           m_warning_box_top_seg dw 0              ; DATA XREF: Newgame_Screen_6__WIP+A8w ...
-// MGC dseg:90C8                                                                                         ; LBXE_LoadReplace into the LBX_Sandbox_Segment
+// MGC  dseg:90C2 00 00                                           m_warning2_box_bottom_seg dw 0          ; DATA XREF: Warning_Message+68w ...
+// MGC  dseg:90C2                                                                                         ; appended into the LBX_Sandbox_Segment
+// MGC  dseg:90C4 00 00                                           m_warning2_box_top_seg dw 0             ; DATA XREF: Warning_Message+51w ...
+// MGC  dseg:90C4                                                                                         ; appended into the LBX_Sandbox_Segment
+// MGC  dseg:90C6 00 00                                           m_warning_box_bottom_seg dw 0           ; DATA XREF: Newgame_Screen_6__WIP+BFw ...
+// MGC  dseg:90C6                                                                                         ; appended into the LBX_Sandbox_Segment
+// MGC  dseg:90C8 00 00                                           m_warning_box_top_seg dw 0              ; DATA XREF: Newgame_Screen_6__WIP+A8w ...
+// MGC  dseg:90C8                                                                                         ; LBXE_LoadReplace into the LBX_Sandbox_Segment
 /*
     END:  Warning Box
 */
 /*
     BEGIN:  Selection Box
 */
-// MGC dseg:90CA 00 00                                           IMG_GUI_ListSelLkDn@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+144w ...
-// MGC dseg:90CC 00 00                                           IMG_GUI_ListSelLkUp@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+12Dw ...
-// MGC dseg:90CE 00 00                                           IMG_GUI_ListS_BScrl@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+116w ...
-// MGC dseg:90D0 00 00                                           IMG_GUI_ListS_TScrl@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+FFw ...
-// MGC dseg:90D2 00 00                                           IMG_GUI_ListSelDnAr@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+E8w ...
-// MGC dseg:90D4 00 00                                           IMG_GUI_ListSelUpAr@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+D1w ...
-// MGC dseg:90D6 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_GUI_ListS_IBGRs@ dw 0Ah dup(     0) ; DATA XREF: UU_GUI_ListSelect_Dlg+181w ...
-// MGC dseg:90D6 00 00 00 00                                                                             ; array of 5 2-frame images appended into the sandbox
-// MGC dseg:90EA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_GUI_ListS_IBGs@ dw 0Ah dup(     0)  ; DATA XREF: UU_GUI_ListSelect_Dlg+165w ...
-// MGC dseg:90EA 00 00 00 00                                                                             ; array of 5 2-frame images appended into the sandbox
-// MGC dseg:90FE 00 00                                           IMG_GUI_ListSelScrl@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+BAw ...
-// MGC dseg:9100 00 00                                           IMG_GUI_ListSel_BR@ dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+A3w ...
-// MGC dseg:9102 00 00                                           IMG_GUI_ListSelRght@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+8Cw ...
-// MGC dseg:9104 00 00                                           IMG_GUI_ListSel_Btm@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+75w ...
-// MGC dseg:9106 00 00                                           IMG_GUI_ListSel_Top@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+5Ew ...
-// MGC dseg:9108 00 00                                           IMG_GUI_ListSel_BL@ dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+47w ...
-// MGC dseg:910A 00 00                                           IMG_GUI_ListSelLeft@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+30w ...
-// MGC dseg:910C 00 00                                           GUI_FamiliarIMGIndex dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+16w ...
-// MGC dseg:910E 00 00                                           GUI_Dialog_Text@ dw 0                   ; DATA XREF: UU_GUI_Confirm_Dialog+83w ...
-// MGC dseg:9110 00 00                                           GUI_Dialog_Top dw 0                     ; DATA XREF: UU_GUI_Confirm_Dialog+CAw ...
-// MGC dseg:9112 00 00                                           GUI_Dialog_Left dw 0                    ; DATA XREF: UU_GUI_Confirm_Dialog+B8w ...
-// MGC dseg:9114 00 00                                           m_warning_type dw 0                        ; DATA XREF: UU_GUI_WarningType1+3w ...
-// MGC dseg:9114                                                                                         ; determines whether to use the first or the second
-// MGC dseg:9114                                                                                         ; of the two different warning message backgrounds
-// MGC dseg:9114                                                                                         ; (both of which are red, but slightly different and
-// MGC dseg:9114                                                                                         ; use a different font color)
-// MGC dseg:9116 00 00                                           align 4
+// MGC  dseg:90CA 00 00                                           IMG_GUI_ListSelLkDn@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+144w ...
+// MGC  dseg:90CC 00 00                                           IMG_GUI_ListSelLkUp@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+12Dw ...
+// MGC  dseg:90CE 00 00                                           IMG_GUI_ListS_BScrl@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+116w ...
+// MGC  dseg:90D0 00 00                                           IMG_GUI_ListS_TScrl@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+FFw ...
+// MGC  dseg:90D2 00 00                                           IMG_GUI_ListSelDnAr@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+E8w ...
+// MGC  dseg:90D4 00 00                                           IMG_GUI_ListSelUpAr@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+D1w ...
+// MGC  dseg:90D6 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_GUI_ListS_IBGRs@ dw 0Ah dup(     0) ; DATA XREF: UU_GUI_ListSelect_Dlg+181w ...
+// MGC  dseg:90D6 00 00 00 00                                                                             ; array of 5 2-frame images appended into the sandbox
+// MGC  dseg:90EA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_GUI_ListS_IBGs@ dw 0Ah dup(     0)  ; DATA XREF: UU_GUI_ListSelect_Dlg+165w ...
+// MGC  dseg:90EA 00 00 00 00                                                                             ; array of 5 2-frame images appended into the sandbox
+// MGC  dseg:90FE 00 00                                           IMG_GUI_ListSelScrl@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+BAw ...
+// MGC  dseg:9100 00 00                                           IMG_GUI_ListSel_BR@ dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+A3w ...
+// MGC  dseg:9102 00 00                                           IMG_GUI_ListSelRght@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+8Cw ...
+// MGC  dseg:9104 00 00                                           IMG_GUI_ListSel_Btm@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+75w ...
+// MGC  dseg:9106 00 00                                           IMG_GUI_ListSel_Top@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+5Ew ...
+// MGC  dseg:9108 00 00                                           IMG_GUI_ListSel_BL@ dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+47w ...
+// MGC  dseg:910A 00 00                                           IMG_GUI_ListSelLeft@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+30w ...
+// MGC  dseg:910C 00 00                                           GUI_FamiliarIMGIndex dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+16w ...
+// MGC  dseg:910E 00 00                                           GUI_Dialog_Text@ dw 0                   ; DATA XREF: UU_GUI_Confirm_Dialog+83w ...
+// MGC  dseg:9110 00 00                                           GUI_Dialog_Top dw 0                     ; DATA XREF: UU_GUI_Confirm_Dialog+CAw ...
+// MGC  dseg:9112 00 00                                           GUI_Dialog_Left dw 0                    ; DATA XREF: UU_GUI_Confirm_Dialog+B8w ...
+// MGC  dseg:9114 00 00                                           m_warning_type dw 0                        ; DATA XREF: UU_GUI_WarningType1+3w ...
+// MGC  dseg:9114                                                                                         ; determines whether to use the first or the second
+// MGC  dseg:9114                                                                                         ; of the two different warning message backgrounds
+// MGC  dseg:9114                                                                                         ; (both of which are red, but slightly different and
+// MGC  dseg:9114                                                                                         ; use a different font color)
+// MGC  dseg:9116 00 00                                           align 4
 
-// MGC dseg:9116                                                 END:  ovr053 - Uninitialized Data
+// MGC  dseg:9116                                                 END:  ovr053 - Uninitialized Data
 
 
 
@@ -2723,7 +2723,7 @@ int16_t Newgame_Screen_6__WIP(void)
 {
     char Arcanus_Races[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Escape_Hotkey_Control = 0;
-    int8_t * wss_ptr = 0;
+    int8_t * wsa_ptr = 0;  // Pointer to 'Wizard Special Abilities'
     uint8_t * Shadow_Color = 0;
     uint8_t * Available_Color = 0;
     uint8_t * Not_Available_Color = 0;
@@ -2773,7 +2773,7 @@ int16_t Newgame_Screen_6__WIP(void)
 
     First_Draw_Done = ST_NULL;
 
-    wss_ptr = &_players[0].alchemy;
+    wsa_ptr = &_players[0].alchemy;
 
     // ; create the click labels for the arcanus races
     for(itr = 0; itr < 9; itr++)
@@ -2824,8 +2824,8 @@ int16_t Newgame_Screen_6__WIP(void)
         for(itr = 9; itr < 14; itr++)
         {
 
-            // if(wss_ptr[RETORTS.Myrran] == 1)
-            if(wss_ptr[rtt_Myrran] == 1)
+            // if(wsa_ptr[RETORTS.Myrran] == 1)
+            if(wsa_ptr[rtt_Myrran] == 1)
             {
 
                 if(NEWG_Select_Labels[itr] == input_field_idx)
@@ -2974,7 +2974,7 @@ int16_t Newgame_Screen_6__WIP(void)
 void Newgame_Screen_6_Draw__WIP(void)
 {
     int16_t Arcanus_Races[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int8_t * wss_ptr = 0;
+    int8_t * wsa_ptr = 0;
     uint8_t * Shadow_Color = 0;
     uint8_t * Not_Available_Color = 0;
     uint8_t * Available_Color = 0;
@@ -3034,7 +3034,7 @@ void Newgame_Screen_6_Draw__WIP(void)
 
     Moused_Control = Scan_Input();
 
-    wss_ptr = &_players[0].alchemy;
+    wsa_ptr = &_players[0].alchemy;
 
     /*
         BEGIN: same on Screen 6 & 7
@@ -3135,7 +3135,7 @@ void Newgame_Screen_6_Draw__WIP(void)
         DBG_race_name_string = *_race_type_table[DBG_race_type].name;
         Print(221, (148 + (10 * itr2)), DBG_race_name_string);
 
-        if(wss_ptr[rtt_Myrran] == 1)
+        if(wsa_ptr[rtt_Myrran] == 1)
         {
 
             if(NEWG_Select_Labels[(9 + itr2)] == Moused_Control)
@@ -3186,7 +3186,7 @@ void GAME_DrawRetortsStr(void)
     int16_t Text_Top = 0;
     int16_t Retorts_Added = 0;
     int16_t Local_Zero = 0;
-    int8_t * wss_ptr = 0;
+    int8_t * wsa_ptr = 0;
     // int16_t Retort_Colors = 0;
     uint8_t * Retort_Colors = 0;
     // uint8_t Text_Colors[4] = { 0, 0, 0, 0 };
@@ -3207,14 +3207,14 @@ void GAME_DrawRetortsStr(void)
 
     Retorts_String[0] = 0;
 
-    wss_ptr = &_players[0].alchemy;
+    wsa_ptr = &_players[0].alchemy;
 
     retort_count = 0;
 
     // ; count the number of retorts into di
     for(itr = 0; itr < 18; itr++)
     {
-        if(wss_ptr[itr] == 1)
+        if(wsa_ptr[itr] == 1)
         {
             retort_count++;
         }
@@ -3227,7 +3227,7 @@ void GAME_DrawRetortsStr(void)
     // ; create a string listing the retort names
     for(itr = 0; itr < 18; itr++)
     {
-        if(wss_ptr[itr] == 1)
+        if(wsa_ptr[itr] == 1)
         {
             STR_ListSeparator(&Retorts_Added, retort_count, &Retorts_String[0]);
             strcat(Retorts_String, STR_Retorts[itr]);
@@ -3392,7 +3392,7 @@ void Newgame_Screen5__WIP(void)
 */
 void WIZ_CopyDefault__WIP(int16_t wizard_id)
 {
-    int8_t * wss_ptr = 0;
+    int8_t * wsa_ptr = 0;
     int16_t itr = 0;  // _SI_
     int16_t spellranks = 0;  // _DI_
 
@@ -3404,7 +3404,7 @@ void WIZ_CopyDefault__WIP(int16_t wizard_id)
     _players[0].spellranks[sbr_Life] = _wizard_presets_table[wizard_id].life;
     _players[0].spellranks[sbr_Death] = _wizard_presets_table[wizard_id].death;
 
-    wss_ptr = &_players[0].alchemy;
+    wsa_ptr = &_players[0].alchemy;
 
     // ; clear all retorts in the human player's wizard record
     // ; while copying any that are in the preset profile
@@ -3413,11 +3413,11 @@ void WIZ_CopyDefault__WIP(int16_t wizard_id)
 
         if(_wizard_presets_table[wizard_id].special == itr)
         {
-            wss_ptr[itr] = 1;
+            wsa_ptr[itr] = 1;
         }
         else
         {
-            wss_ptr[itr] = 0;
+            wsa_ptr[itr] = 0;
         }
 
     }

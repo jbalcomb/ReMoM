@@ -39,9 +39,15 @@ Init_New_Game_()
 |-> Init_Players_()
 
 
+...something like create computer players...profile...spell library...
 
 [x] Draw_Building_The_Worlds()
-[x] WIZ_SetProfiles__WIP();
+[x] Init_Computer_Players()
+[x] |-> Init_Computer_Players_Wizard_Profile()
+[x] |-> |-> Consolidate_Spell_Book_Realms
+[x] |-> |-> Get_Weighted_Choice
+[x] |-> Init_Computer_Players_Spell_Library()
+
 [ ] NEWG_ClearLandmasses()
 [ ] NEWG_CreateLands()
 [ ] NEWG_SetBaseLands()

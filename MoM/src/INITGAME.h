@@ -44,10 +44,10 @@ void AI_WIZ_StrategyReset__WIP(void);
 void Init_Players(void);
 
 // MGC o56p9
-void AI_CreateWizards__STUB(void);
+void Init_Computer_Players_Wizard_Profile(void);
 
 // MGC o56p10
-void WIZ_SetSpells__WIP(void);
+void Init_Computer_Players_Spell_Library(void);
 
 // MGC o56p11
 void Initialize_Events(void);
@@ -63,6 +63,7 @@ void Initialize_Messages(void);
 
 // MGC o56p15
 // WIZ_ConsolidateBooks()
+void Consolidate_Spell_Book_Realms(int16_t player_idx);
 
 // MGC o56p16
 int16_t Player_Nominal_Skill(int16_t player_idx);

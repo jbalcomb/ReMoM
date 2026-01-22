@@ -115,58 +115,80 @@ char cnst_RND_Error[] = "RND no 0's";
 */
 
 // WZD s01p07
+// drake178: RNG_WeightedPick16()
+// MoO2  Module: KEN  Get_Weighted_Choice_()
 /*
-drake178: RNG_WeightedPick16()
 chooses a random item from a list of 16-bit weighted chances
 condensing the weights such that the total fits into a single call of the 9-bit PRNG (max 512),
 using repeated divisions by 2 if necessary
 */
-// MoO2  Module: KEN  Get_Weighted_Choice_()
+/*
+202601212046: I hit a key and broke the shit out of Get_Weighted_Choice() in MGC.
+
+*/
 int16_t Get_Weighted_Choice(int16_t * weight_array, int16_t weight_count)
 {
-    int16_t Condense_Loop_Var;
-    int16_t Picked_List_Item;
-    int16_t Weights_Remainder;
-    int16_t itr;
-    int16_t tmp_pick;  // _DI_
-    int16_t return_value;  // _AX_  DNE in Dasm
-
-    itr = 0;  // ¿ DNE in Dasm ?
+    int16_t Condense_Loop_Var = 0;
+    int16_t Picked_List_Item = 0;
+    int16_t Weights_Remainder = 0;
+    int16_t itr = 0;
+    int16_t tmp_pick = 0;  // _DI_
+    int16_t return_value = 0;  // _AX_  DNE in Dasm
     
     do
     {
+
         tmp_pick = 0;
 
         tmp_pick += weight_array[itr];
 
         if(tmp_pick < 512)
         {
+
             itr++;
+
         }
         else
         {
+
             for(Condense_Loop_Var = 0; Condense_Loop_Var < weight_count; Condense_Loop_Var++)
             {
+
                 weight_array[Condense_Loop_Var] = (weight_array[Condense_Loop_Var] / 2);
+
             }
+
         }
 
     } while (itr < weight_count);
 
     if(tmp_pick == 0)
     {
+
         return_value = 0;
+
     }
     else
     {
+
         Weights_Remainder = (Random(tmp_pick) - weight_array[0]);
+
         Picked_List_Item = 0;
-        while((Weights_Remainder > 0) && (weight_count - 1) > Picked_List_Item)
+
+        while(
+            (Weights_Remainder > 0)
+            &&
+            (weight_count - 1) > Picked_List_Item)
         {
+
             Picked_List_Item++;
+
             Weights_Remainder -= weight_array[Picked_List_Item];
+            
         }
+
         return_value = Picked_List_Item;
+
     }
 
     return return_value;

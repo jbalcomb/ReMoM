@@ -51,30 +51,32 @@ struct s_WIZARD_PRESET
     /* 0E */  int16_t nature;
     /* 10 */  int16_t death;
     /* 12 */  int16_t chaos;
-    /* 14 */  int16_t special;  // wizard special skill  (AKA retort) ; enum RET_Enum
+    /* 14 */  int16_t special;  // wizard special skill  (AKA retort) ; enum e_WIZARD_SPECIAL_ABILITY
     /* 16 */
 };
-enum RET_Enum
+enum e_WIZARD_SPECIAL_ABILITY
 {
-    _No_Special  = -1,
-    _Alchemy  = 0,
-    _Warlord  = 1,
-    _Chaos_Mastery  = 2,
-    _Nature_Mastery  = 3,
-    _Sorcery_Mastery  = 4,
-    _Infernal_Power  = 5,
-    _Divine_Power  = 6,
-    _Sage_Master  = 7,
-    _Channeller  = 8,
-    _Myrran  = 9,
-    _Archmage  = 10,
-    _Mana_Focusing  = 11,
-    _Node_Mastery  = 12,
-    _Famous  = 13,
-    _Runemaster  = 14,
-    _Conjurer  = 15,
-    _Charismatic  = 16,
-    _Artificer  = 17
+    wsa_NONE             = -1,
+    wsa_Alchemy          =  0,
+    wsa_Warlord          =  1,
+
+    wsa_Chaos_Mastery    =  2,  // >=
+    wsa_Nature_Mastery   =  3,
+    wsa_Sorcery_Mastery  =  4,
+    wsa_Infernal_Power   =  5,
+    wsa_Divine_Power     =  6,  // <=
+
+    wsa_Sage_Master      =  7,
+    wsa_Channeller       =  8,
+    wsa_Myrran           =  9,
+    wsa_Archmage         = 10,
+    wsa_Mana_Focusing    = 11,
+    wsa_Node_Mastery     = 12,
+    wsa_Famous           = 13,
+    wsa_Runemaster       = 14,
+    wsa_Conjurer         = 15,
+    wsa_Charismatic      = 16,
+    wsa_Artificer        = 17
 };
 
 // // sizeof=0x1A

@@ -21,21 +21,23 @@ Module: INITGAME
 
 
 
-// MGC dseg:354C
-extern int16_t TBL_AI_Realm_PRS[6][6];
-// MGC dseg:3594
-extern int16_t TBL_AI_Realm_OBJ[6][5];
-// MGC dseg:35D0
-extern struct S_HERO_TEMPLATE _hero_premade_table[NUM_HERO_TYPES];
+// MGC  dseg:2AD0
+struct s_WIZARD_PRESET _wizard_presets_table[15];
 
 // MGC  dseg:2C6A
 extern struct s_DEFAULT_SPELLS _default_spells[5];
+
+// MGC  dseg:354C
+extern int16_t TBL_AI_Realm_PRS[6][6];
+// MGC  dseg:3594
+extern int16_t TBL_AI_Realm_OBJ[6][5];
+// MGC  dseg:35D0
+extern struct S_HERO_TEMPLATE _hero_premade_table[NUM_HERO_TYPES];
 
 // ...oops... MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_start_spells s_Init_Spells_Table <0>   ; DATA XREF: GAME_New_Screen_5+171w ...
 // MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_player_start_spells s_Init_Base_Realms 6 dup(<0>)
 // ...needed by INITGAME.c, so defn in NewGame.h
 struct s_Init_Base_Realms _player_start_spells[PLAYER_COUNT_MAX];
-
 
 // o51p36
 void Draw_Building_The_Worlds(int16_t percent);
@@ -49,18 +51,21 @@ void Draw_Building_The_Worlds(int16_t percent);
 ; researchable spells for all players
 */
 /*
+MoO2
+Init_New_Game_()
+|-> Init_Players_()
+So, ...
+~== Init_Computer_Players()
+
+OON XREF j_Init_Computer_Players() <-| NEWG_CreateWorld__WIP()
 
 */
-void WIZ_SetProfiles__WIP(void)
+void Init_Computer_Players(void)
 {
     int16_t itr_num_players = 0;  // _DI_
     int16_t itr2 = 0;  // _SI_
 
-AI_CreateWizards__STUB();
-// ; generates the main traits of the AI wizards by
-// ; randomly selecting and then modifying default
-// ; profiles to an extent specified by the difficulty
-// ; setting
+    Init_Computer_Players_Wizard_Profile();
 
     for(itr_num_players = 1; itr_num_players < _num_players; itr_num_players++)
     {
@@ -68,20 +73,17 @@ AI_CreateWizards__STUB();
         for(itr2 = 0; itr2 < 13; itr2++)
         {
 
-            _player_start_spells[itr_num_players].realms[sbr_Nature].spells[itr2] = _default_spells[sbr_Nature].spells[itr2];
-            _player_start_spells[itr_num_players].realms[sbr_Sorcery].spells[itr2] = _default_spells[sbr_Sorcery].spells[itr2];
-            _player_start_spells[itr_num_players].realms[sbr_Chaos].spells[itr2] = _default_spells[sbr_Chaos].spells[itr2];
-            _player_start_spells[itr_num_players].realms[sbr_Life].spells[itr2] = _default_spells[sbr_Life].spells[itr2];
-            _player_start_spells[itr_num_players].realms[sbr_Death].spells[itr2] = _default_spells[sbr_Death].spells[itr2];
+            _player_start_spells[itr_num_players].realms[sbr_Nature].spells[itr2]   = _default_spells[sbr_Nature].spells[itr2];
+            _player_start_spells[itr_num_players].realms[sbr_Sorcery].spells[itr2]  = _default_spells[sbr_Sorcery].spells[itr2];
+            _player_start_spells[itr_num_players].realms[sbr_Chaos].spells[itr2]    = _default_spells[sbr_Chaos].spells[itr2];
+            _player_start_spells[itr_num_players].realms[sbr_Life].spells[itr2]     = _default_spells[sbr_Life].spells[itr2];
+            _player_start_spells[itr_num_players].realms[sbr_Death].spells[itr2]    = _default_spells[sbr_Death].spells[itr2];
 
         }
 
     }
 
-WIZ_SetSpells__WIP();
-// ; sets the known and researchable spells for all
-// ; wizards based on their books and spell selection
-// ; tables
+    Init_Computer_Players_Spell_Library();
 
     _players[NEUTRAL_PLAYER_IDX].Defeated_Wizards = 0;
 
@@ -764,12 +766,746 @@ void Init_Players(void)
 ; setting
 */
 /*
+OON XREF WIZ_SetProfiles()
 
 */
-void AI_CreateWizards__STUB(void)
+void Init_Computer_Players_Wizard_Profile(void)
 {
+    int16_t Realm_Retort_Available = 0;
+    int16_t Realm_Index = 0;
+    int16_t Bookshelf[5] = { 0, 0, 0, 0, 0 };
+    int16_t Myrran_AI_Count = 0;
+    int16_t Picks_Left = 0;
+    int16_t Banners_Taken[5] = { 0, 0, 0, 0, 0 };
+    int8_t * wsa_ptr = 0;  // Pointer to 'Wizard Special Abilities'
+    int16_t Book_Count = 0;
+    int16_t Random_Banner = 0;
+    int16_t Trait_Value = 0;  // NOTE: used to index wsa_ptr[]
+    int16_t Picks_Used = 0;
+    int16_t Trait_Type = 0;
+    int16_t Erasure_Dice = 0;
+    int16_t Random_Result = 0;
+    int16_t Portrait_Taken = 0;
+    int16_t itr3 = 0;
+    int16_t itr1 = 0;  // _DI_
+    int16_t itr2 = 0;  // _SI_
+
+    // ; clear the taken banner indicators
+    for(itr1 = 0; itr1 < NUM_BANNER_SELECTIONS; itr1++)
+    {
+        Banners_Taken[itr1] = ST_FALSE;
+    }
+
+    Banners_Taken[_players[0].banner_id] = ST_TRUE;
+
+    // ; choose a different random portrait for each AI wizard
+    for(itr2 = 1; itr2 < _num_players; itr2++)
+    {
+
+        Portrait_Taken = ST_FALSE;
+
+        Random_Result = Random(14);
+
+        // ; check if the rolled portrait is already taken
+        for(itr3 = 0; itr3 < itr2; itr3++)
+        {
+
+            if(_players[itr3].wizard_id == Random_Result)
+            {
+
+                Portrait_Taken = ST_TRUE;
+
+            }
+
+        }
+
+        if(Portrait_Taken != ST_TRUE)
+        {
+
+            _players[itr2].wizard_id == Random_Result;
+
+        }
+    }
+
+    // ; copy the names corresponding to the chosen portraits
+    // ; into the wizard records of each AI player
+    for(itr2 = 1; itr2 < _num_players; itr2++)
+    {
+
+        strcpy(_players[itr2].name, _wizard_presets_table[_players[itr2].wizard_id].name);
+
+    }
+
+    // ; copy the default profile traits into each AI wizard's
+    // ; record, and if the difficulty is above normal, roll
+    // ; a 20% chance to combine the books of any 2-realm
+    // ; wizard into a single realm
+    for(itr2 = 1; itr2 < _num_players; itr2++)
+    {
+        
+        _players[itr2].spellranks[sbr_Life] = _wizard_presets_table[_players[itr2].wizard_id].life;
+        _players[itr2].spellranks[sbr_Death] = _wizard_presets_table[_players[itr2].wizard_id].death;
+        _players[itr2].spellranks[sbr_Chaos] = _wizard_presets_table[_players[itr2].wizard_id].chaos;
+        _players[itr2].spellranks[sbr_Nature] = _wizard_presets_table[_players[itr2].wizard_id].nature;
+        _players[itr2].spellranks[sbr_Sorcery] = _wizard_presets_table[_players[itr2].wizard_id].sorcery;
+
+        if(
+            (Random(5) == 1)  // 1:5, 20%
+            &&
+            (_difficulty > god_Normal)
+        )
+        {
+
+            Consolidate_Spell_Book_Realms(itr2);
+
+        }
+
+        wsa_ptr = &_players[itr2].alchemy;
+
+        // ; clear the wizard's retorts
+        for(itr1 = 0; itr1 < NUM_WIZARD_SPECIAL_ABILITIES; itr1++)
+        {
+
+            wsa_ptr[itr1] = 0;
+
+        }
+
+        if(_wizard_presets_table[_players[itr2].wizard_id].special != ST_UNDEFINED)
+        {
+
+            wsa_ptr[_wizard_presets_table[_players[itr2].wizard_id].special] == ST_TRUE;
+
+        }
+
+    }
+
+    // ; if the difficulty is normal or above, roll to try and
+    // ; remove some of the default profile traits
+    for(itr2 = 0; itr2 < _num_players; itr2++)
+    {
+
+        switch(_difficulty)
+        {
+            case 0:
+            case 1:
+            {
+                Erasure_Dice = 0;
+            } break;
+            case 2:
+            {
+                Erasure_Dice = Random(3);
+            } break;
+            case 3:
+            {
+                Erasure_Dice = (Random(3) + Random(3));
+            } break;
+            case 4:
+            {
+                Erasure_Dice = (Random(5) + Random(5));
+            } break;
+            case 5:
+            {
+                Erasure_Dice = (Random(8) + Random(8));
+            } break;
+            
+        }
+
+        wsa_ptr = &_players[itr2].alchemy;
+
+        // ; for each erasure die, roll a type (N-C-S-L-D book or
+        // ; retort), and if the wizard has such an asset, remove
+        // ; one of them
+        for(itr1 = 0; itr1 < Erasure_Dice; itr1++)
+        {
+
+            Trait_Type = Random(6);
+
+            switch(Trait_Type)  // - 1; <= 5;
+            {
+                case 1: { if(_players[itr2].spellranks[sbr_Life]    > 1) { _players[itr2].spellranks[sbr_Life]    -= 1; } } break;
+                case 2: { if(_players[itr2].spellranks[sbr_Death]   > 1) { _players[itr2].spellranks[sbr_Death]   -= 1; } } break;
+                case 3: { if(_players[itr2].spellranks[sbr_Chaos]   > 1) { _players[itr2].spellranks[sbr_Chaos]   -= 1; } } break;
+                case 4: { if(_players[itr2].spellranks[sbr_Nature]  > 1) { _players[itr2].spellranks[sbr_Nature]  -= 1; } } break;
+                case 5: { if(_players[itr2].spellranks[sbr_Sorcery] > 1) { _players[itr2].spellranks[sbr_Sorcery] -= 1; } } break;
+                case 6: {
+                    wsa_ptr = &_players[itr2].alchemy;
+                    for(itr3 = 0; itr3 < NUM_WIZARD_SPECIAL_ABILITIES; itr3++)
+                    {
+                        wsa_ptr[itr1] = ST_FALSE;
+                    }
+                } break;
+            }
+
+        }
+
+    }
+
+    // ; if the AI wizards have any picks left, spend them on
+    // ; random profile traits, up to the predefined maximum
+    // ; of 11 on Normal and below, 13 on Hard, or 15 on the
+    // ; Impossible difficulty
+    for(itr2 = 0; itr2 < _num_players; itr2++)
+    {
+
+        wsa_ptr = &_players[itr2].alchemy;
+
+        Picks_Used = (
+            _players[itr2].spellranks[sbr_Life]
+            +
+            _players[itr2].spellranks[sbr_Death]
+            +
+            _players[itr2].spellranks[sbr_Nature]
+            +
+            _players[itr2].spellranks[sbr_Chaos]
+            +
+            _players[itr2].spellranks[sbr_Sorcery]
+        );
+
+        Book_Count = Picks_Used;
+
+        // ; calculate the total cost of the retorts in the
+        // ; wizard's profile
+        for(itr1 = 0; itr1 < NUM_WIZARD_SPECIAL_ABILITIES; itr1++)
+        {
+
+            if(wsa_ptr[itr1] != 0)
+            {
+
+                if(itr1 == wsa_Myrran)
+                {
+
+                    Picks_Used += 3;
+
+                }
+                else if(
+                    (itr1 == wsa_Warlord)
+                    ||
+                    (itr1 == wsa_Infernal_Power)
+                    ||
+                    (itr1 == wsa_Divine_Power)
+                    ||
+                    (itr1 == wsa_Famous)
+                    ||
+                    (itr1 == wsa_Channeller)
+                )
+                {
+
+                    Picks_Used += 2;
+
+                }
+                else
+                {
+
+                    Picks_Used += 1;
+
+                }
+
+            }
+
+        }
+
+        Picks_Left = 11;
+
+        if(_difficulty == god_Hard)
+        {
+            Picks_Left = 13;
+        }
+
+        if(_difficulty == god_Impossible)
+        {
+            Picks_Left = 15;
+        }
+
+        // ; spend any remaining picks on random profile traits
+        while(Picks_Used < Picks_Left)
+        {
+
+            Trait_Type = Random(8);
+
+            Trait_Value = Random(4);  // NOTE: used to index wsa_ptr[]
+
+            if((Trait_Value + Picks_Used) > Picks_Left)
+            {
+
+                Trait_Value = (Picks_Left - Picks_Used);
+
+            }
+
+            if((Trait_Value + Book_Count) > 12)
+            {
+
+                Trait_Value = (12 - Book_Count);
+
+            }
+
+            if(Trait_Value <= 0)
+            {
+
+                Trait_Type = 6;
+
+            }
+
+            if(Trait_Type == 6)
+            {
+
+                Trait_Value = 1;
+
+            }
+
+            switch(Trait_Type)  // - 1; <= 7
+            {
+
+                // DNE  case 0:
+
+                case 1:  // add books to Life
+                {
+
+                    if(
+                        (_players[itr2].spellranks[sbr_Life] < 11)
+                        &&
+                        (_players[itr2].spellranks[sbr_Death] == 0)
+                    )
+                    {
+
+                        _players[itr2].spellranks[sbr_Life] += Trait_Value;
+
+                    }
+
+                    if(_players[itr2].spellranks[sbr_Life] > 11)
+                    {
+
+                        _players[itr2].spellranks[sbr_Life] = 11;
+
+                    }
+
+                } break;
+
+                case 2:  // add books to Death
+                {
+
+                    if(
+                        (_players[itr2].spellranks[sbr_Death] < 11)
+                        &&
+                        (_players[itr2].spellranks[sbr_Life] == 0)
+                    )
+                    {
+
+                        _players[itr2].spellranks[sbr_Death] += Trait_Value;
+
+                    }
+
+                    if(_players[itr2].spellranks[sbr_Death] > 11)
+                    {
+
+                        _players[itr2].spellranks[sbr_Death] = 11;
+
+                    }
+
+                } break;
+
+                case 3:  // add books to Nature
+                {
+
+                    if(
+                        (_players[itr2].spellranks[sbr_Nature] < 11)
+                    )
+                    {
+
+                        _players[itr2].spellranks[sbr_Nature] += Trait_Value;
+
+                    }
+
+                    if(_players[itr2].spellranks[sbr_Nature] > 11)
+                    {
+
+                        _players[itr2].spellranks[sbr_Nature] = 11;
+
+                    }
+
+                } break;
+
+                case 4:  // add books to Sorcery
+                {
+
+                    if(
+                        (_players[itr2].spellranks[sbr_Sorcery] < 11)
+                    )
+                    {
+
+                        _players[itr2].spellranks[sbr_Sorcery] += Trait_Value;
+
+                    }
+
+                    if(_players[itr2].spellranks[sbr_Sorcery] > 11)
+                    {
+
+                        _players[itr2].spellranks[sbr_Sorcery] = 11;
+
+                    }
+
+                } break;
+
+                case 5:  // add books to Chaos
+                {
+
+                    if(
+                        (_players[itr2].spellranks[sbr_Chaos] < 11)
+                    )
+                    {
+
+                        _players[itr2].spellranks[sbr_Chaos] += Trait_Value;
+
+                    }
+
+                    if(_players[itr2].spellranks[sbr_Chaos] > 11)
+                    {
+
+                        _players[itr2].spellranks[sbr_Chaos] = 11;
+
+                    }
+
+                } break;
+
+                case 6:
+                case 7:
+                case 8:
+                {
+
+                    Trait_Value = (Random(NUM_WIZARD_SPECIAL_ABILITIES) - 1);
+
+                    if(
+                        (Trait_Value >= wsa_Chaos_Mastery)
+                        &&
+                        (Trait_Value <= wsa_Divine_Power)
+                    )
+                    {
+
+                        // ; copy the wizard's bookshelf into the local array
+                        for(Realm_Index = 0; Realm_Index < 4; Realm_Index++)
+                        {
+
+                            Bookshelf[Realm_Index] = _players[itr2].spellranks[Realm_Index];
+
+                        }
+
+                        if(_players[itr2].chaos_mastery > 0)
+                        {
+
+                            Bookshelf[sbr_Chaos] = 0;
+
+                        }
+
+                        if(_players[itr2].nature_mastery > 0)
+                        {
+
+                            Bookshelf[sbr_Nature] = 0;
+
+                        }
+
+                        if(_players[itr2].sorcery_mastery > 0)
+                        {
+
+                            Bookshelf[sbr_Sorcery] = 0;
+
+                        }
+
+                        if(_players[itr2].divine_power <= 0)
+                        {
+
+                            if((Picks_Left - 2) < Picks_Used)
+                            {
+
+                                Bookshelf[sbr_Life] = 0;
+
+                            }
+
+                        }
+
+                        if(_players[itr2].infernal_power <= 0)
+                        {
+
+                            if((Picks_Left - 2) < Picks_Used)
+                            {
+
+                                Bookshelf[sbr_Death] = 0;
+
+                            }
+
+                        }
+
+                        Realm_Retort_Available = 0;
+
+                        for(Realm_Index = 0; Realm_Index < 4; Realm_Index++)
+                        {
+
+                            Realm_Retort_Available += Bookshelf[Realm_Index];
+
+                        }
+
+                        if(Realm_Retort_Available != 0)
+                        {
+
+                            Trait_Value = Get_Weighted_Choice(Bookshelf, 5);
+
+                            if(Trait_Value == 2)
+                            {
+                                
+                                Trait_Value = wsa_Nature_Mastery;
+
+                            }
+                            else if(Trait_Value == 3)
+                            {
+
+                                Trait_Value = wsa_Sorcery_Mastery;
+
+                            }
+                            else if(Trait_Value == 4)
+                            {
+
+                                Trait_Value = wsa_Chaos_Mastery;
+
+                            }
+                            else if(Trait_Value == 5)
+                            {
+
+                                Trait_Value = wsa_Divine_Power;
+
+                            }
+                            else if(Trait_Value == 6)
+                            {
+
+                                Trait_Value = wsa_Infernal_Power;
+
+                            }
+
+                            wsa_ptr[Trait_Value] = ST_TRUE;
+
+                        }
+
+                    }
+                    else
+                    {
+
+                        if(
+                            (Trait_Value == wsa_Warlord)
+                            ||
+                            (Trait_Value == wsa_Channeller)
+                            ||
+                            (Trait_Value == wsa_Famous)
+                        )
+                        {
+
+                            if((Picks_Left - 1) > Picks_Used)
+                            {
+
+                                wsa_ptr[Trait_Value] = ST_TRUE;
+
+                            }
+
+                        }
+                        else if(Trait_Value == wsa_Myrran)
+                        {
+
+                            if((Picks_Left - 2) > Picks_Used)
+                            {
+
+                                wsa_ptr[Trait_Value] = ST_TRUE;
+
+                            }
+
+                        }
+
+                    }
 
 
+                } break;
+
+            }
+
+            // after ... switch(Trait_Type)  // - 1; <= 7 ```dasm @@AfterSwitchTrait_Type:                  ; default ```
+
+            Picks_Used = (
+                _players[itr2].spellranks[sbr_Life]
+                +
+                _players[itr2].spellranks[sbr_Death]
+                +
+                _players[itr2].spellranks[sbr_Nature]
+                +
+                _players[itr2].spellranks[sbr_Chaos]
+                +
+                _players[itr2].spellranks[sbr_Sorcery]
+            );
+
+            Book_Count = Picks_Used;
+
+            for(itr1 = 0; itr1 < NUM_WIZARD_SPECIAL_ABILITIES; itr1++)
+            {
+
+                if(wsa_ptr[itr1] != ST_FALSE)
+                {
+
+                    if(itr1 == wsa_Myrran)
+                    {
+
+                        Picks_Used += 3;
+
+                    }
+                    else if(
+                            (Trait_Value == wsa_Warlord)
+                            ||
+                            (Trait_Value == wsa_Infernal_Power)
+                            ||
+                            (Trait_Value == wsa_Divine_Power)
+                            ||
+                            (Trait_Value == wsa_Famous)
+                            ||
+                            (Trait_Value == wsa_Channeller)
+                    )
+                    {
+
+                        Picks_Used += 3;
+
+                    }
+                    else
+                    {
+
+                        Picks_Used += 1;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+
+// WTF?!?
+        if(
+            !(
+                (
+                    (Myrran_AI_Count < 1)
+                    ||
+                    (Myrran_AI_Count > 2)
+                )
+                &&
+                (_difficulty > god_Normal)
+                &&
+                (_num_players > 3)
+            )
+        )
+        {
+            
+        }
+        else
+        {
+            // @@BeginTopLevelPlayerLoop
+        }
+
+    }
+/*
+END:  ¿ jmp     @@BeginTopLevelPlayerLoop ?
+*/
+
+    // ; count the AI wizards with the Myrran retort
+    Myrran_AI_Count = 0;
+    for(itr1 = 1; itr1 < _num_players; itr1++)
+    {
+
+        if(_players[itr1].myrran != ST_FALSE)
+        {
+        
+            Myrran_AI_Count++;
+
+        }
+
+    }
+
+// ovr056:15E7 83 3E D2 87 03                                  cmp     [_num_players], 3               ; NewGame: magic.opponents + 1
+// ovr056:15EC 7E 0F                                           jle     short loc_538DD
+// ovr056:15EC
+// ovr056:15EE E9 7D F7                                        jmp     loc_5304E
+// ovr056:15EE
+// ovr056:15F1                                                 ; ---------------------------------------------------------------------------
+// ovr056:15F1 C7 06 7E 2B FF FF                               mov     [_wizard_presets_table.special+9Ah], -1
+// ovr056:15F7 C7 06 7C 2B 07 00                               mov     [_wizard_presets_table.chaos+9Ah], 7
+// ovr056:15F7
+// ovr056:15FD
+// ovr056:15FD                                                 loc_538DD:                              ; CODE XREF: Init_Computer_Players_Wizard_Profile+8A0j ...
+// ovr056:15FD BE 01 00                                        mov     si, 1
+// ovr056:1600 E9 EC 00                                        jmp     loc_539CF
+
+    // ; assign a banner to each wizard, trying first the
+    // ; color corresponding to the first realm they have at
+    // ; least 4 books in, and choosing randomly if that one
+    // ; is already taken
+    for(itr2 = 1; itr2 < _num_players; itr2++)
+    {
+
+        if(_players[itr2].spellranks[sbr_Nature] > 3)
+        {
+
+            if(Banners_Taken[1] == ST_FALSE)
+            {
+
+                _players[itr2].banner_id = BNR_Green;
+
+                Banners_Taken[1] = ST_TRUE;
+
+            }
+
+        }
+        else if(_players[itr2].spellranks[sbr_Chaos] > 3)
+        {
+
+            if(Banners_Taken[3] == ST_FALSE)
+            {
+
+                _players[itr2].banner_id = BNR_Red;
+
+                Banners_Taken[3] = ST_TRUE;
+
+            }
+
+        }
+        else if(_players[itr2].spellranks[sbr_Sorcery] > 3)
+        {
+
+            if(Banners_Taken[0] == ST_FALSE)
+            {
+
+                _players[itr2].banner_id = BNR_Blue;
+
+                Banners_Taken[0] = ST_TRUE;
+
+            }
+
+        }
+        else if(_players[itr2].spellranks[sbr_Death] > 3)
+        {
+
+            if(Banners_Taken[2] == ST_FALSE)
+            {
+
+                _players[itr2].banner_id = BNR_Purple;
+
+                Banners_Taken[2] = ST_TRUE;
+
+            }
+
+        }
+        else
+        {
+
+            Random_Banner = (Random(5) - 1);
+
+            Banners_Taken[Random_Banner] = ST_TRUE;
+
+        }
+
+    }
+
+    // @@Done
 
 }
 
@@ -782,6 +1518,8 @@ void AI_CreateWizards__STUB(void)
 ; tables
 */
 /*
+OON XREF WIZ_SetProfiles()
+
 iter over players
 iter over realms
 ...
@@ -792,7 +1530,7 @@ per rarity
     transfer the temp array to the player's spell library
 
 */
-void WIZ_SetSpells__WIP(void)
+void Init_Computer_Players_Spell_Library(void)
 {
     int16_t Availability_Array[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };  // 2-byte, signed, sizeof 10
     int16_t Available_Spells = 0;
@@ -1507,7 +2245,192 @@ void Initialize_Messages(void)
 
 // MGC o56p15
 // drake178: WIZ_ConsolidateBooks()
-// WIZ_ConsolidateBooks()
+/*
+; PATCHED / rewritten
+;
+; if the wizard has two different realms of spellbooks,
+; consolidates them into a single realm, chosen
+; randomly from the two they have
+;
+; INCONSISTENT: ignores the Chaos + Nature combination
+; WARNING: will not work properly if defaults are
+;  altered to have 3 realms or Life + Death
+*/
+/*
+  Death & Chaos
+  Death & Nature
+  Death & Sorcery
+   Life & Chaos
+   Life & Nature
+   Life & Sorcery
+Sorcery & Chaos
+Sorcery & Nature
+*/
+void Consolidate_Spell_Book_Realms(int16_t player_idx)
+{
+
+    /*
+        BEGIN:  Death & Chaos
+    */
+    if((_players[player_idx].spellranks[sbr_Death] != 0) && (_players[player_idx].spellranks[sbr_Chaos] != 0))
+    {
+        if(Random(2) == 1)
+        {
+            _players[player_idx].spellranks[sbr_Death] += _players[player_idx].spellranks[sbr_Chaos];
+            _players[player_idx].spellranks[sbr_Chaos] = 0;
+        }
+        else
+        {
+            _players[player_idx].spellranks[sbr_Chaos] += _players[player_idx].spellranks[sbr_Death];
+            _players[player_idx].spellranks[sbr_Death] = 0;
+        }
+    }
+    /*
+        END:  Death & Chaos
+    */
+
+    /*
+        BEGIN:  Death & Nature
+    */
+    if((_players[player_idx].spellranks[sbr_Death] != 0) && (_players[player_idx].spellranks[sbr_Nature] != 0))
+    {
+        if(Random(2) == 1)
+        {
+            _players[player_idx].spellranks[sbr_Death] += _players[player_idx].spellranks[sbr_Nature];
+            _players[player_idx].spellranks[sbr_Nature] = 0;
+        }
+        else
+        {
+            _players[player_idx].spellranks[sbr_Nature] += _players[player_idx].spellranks[sbr_Death];
+            _players[player_idx].spellranks[sbr_Death] = 0;
+        }
+    }
+    /*
+        END:  Death & Nature
+    */
+   
+    /*
+        BEGIN:  Death & Sorcery
+    */
+    if((_players[player_idx].spellranks[sbr_Death] != 0) && (_players[player_idx].spellranks[sbr_Sorcery] != 0))
+    {
+        if(Random(2) == 1)
+        {
+            _players[player_idx].spellranks[sbr_Death] += _players[player_idx].spellranks[sbr_Sorcery];
+            _players[player_idx].spellranks[sbr_Sorcery] = 0;
+        }
+        else
+        {
+            _players[player_idx].spellranks[sbr_Sorcery] += _players[player_idx].spellranks[sbr_Death];
+            _players[player_idx].spellranks[sbr_Death] = 0;
+        }
+    }
+    /*
+        END:  Death & Sorcery
+    */
+   
+    /*
+        BEGIN:  Life & Chaos
+    */
+    if((_players[player_idx].spellranks[sbr_Life] != 0) && (_players[player_idx].spellranks[sbr_Chaos] != 0))
+    {
+        if(Random(2) == 1)
+        {
+            _players[player_idx].spellranks[sbr_Life] += _players[player_idx].spellranks[sbr_Chaos];
+            _players[player_idx].spellranks[sbr_Chaos] = 0;
+        }
+        else
+        {
+            _players[player_idx].spellranks[sbr_Chaos] += _players[player_idx].spellranks[sbr_Life];
+            _players[player_idx].spellranks[sbr_Life] = 0;
+        }
+    }
+    /*
+        END:  Life & Chaos
+    */
+   
+    /*
+        BEGIN:  Life & Nature
+    */
+    if((_players[player_idx].spellranks[sbr_Life] != 0) && (_players[player_idx].spellranks[sbr_Nature] != 0))
+    {
+        if(Random(2) == 1)
+        {
+            _players[player_idx].spellranks[sbr_Life] += _players[player_idx].spellranks[sbr_Nature];
+            _players[player_idx].spellranks[sbr_Nature] = 0;
+        }
+        else
+        {
+            _players[player_idx].spellranks[sbr_Nature] += _players[player_idx].spellranks[sbr_Life];
+            _players[player_idx].spellranks[sbr_Life] = 0;
+        }
+    }
+    /*
+        END:  Life & Nature
+    */
+   
+    /*
+        BEGIN:  Life & Sorcery
+    */
+    if((_players[player_idx].spellranks[sbr_Life] != 0) && (_players[player_idx].spellranks[sbr_Sorcery] != 0))
+    {
+        if(Random(2) == 1)
+        {
+            _players[player_idx].spellranks[sbr_Life] += _players[player_idx].spellranks[sbr_Sorcery];
+            _players[player_idx].spellranks[sbr_Sorcery] = 0;
+        }
+        else
+        {
+            _players[player_idx].spellranks[sbr_Sorcery] += _players[player_idx].spellranks[sbr_Life];
+            _players[player_idx].spellranks[sbr_Life] = 0;
+        }
+    }
+    /*
+        END:  Life & Sorcery
+    */
+   
+    /*
+        BEGIN:  Sorcery & Chaos
+    */
+    if((_players[player_idx].spellranks[sbr_Sorcery] != 0) && (_players[player_idx].spellranks[sbr_Chaos] != 0))
+    {
+        if(Random(2) == 1)
+        {
+            _players[player_idx].spellranks[sbr_Sorcery] += _players[player_idx].spellranks[sbr_Chaos];
+            _players[player_idx].spellranks[sbr_Chaos] = 0;
+        }
+        else
+        {
+            _players[player_idx].spellranks[sbr_Chaos] += _players[player_idx].spellranks[sbr_Sorcery];
+            _players[player_idx].spellranks[sbr_Sorcery] = 0;
+        }
+    }
+    /*
+        END:  Sorcery & Chaos
+    */
+   
+    /*
+        BEGIN:  Sorcery & Nature
+    */
+    if((_players[player_idx].spellranks[sbr_Sorcery] != 0) && (_players[player_idx].spellranks[sbr_Nature] != 0))
+    {
+        if(Random(2) == 1)
+        {
+            _players[player_idx].spellranks[sbr_Sorcery] += _players[player_idx].spellranks[sbr_Nature];
+            _players[player_idx].spellranks[sbr_Nature] = 0;
+        }
+        else
+        {
+            _players[player_idx].spellranks[sbr_Nature] += _players[player_idx].spellranks[sbr_Sorcery];
+            _players[player_idx].spellranks[sbr_Sorcery] = 0;
+        }
+    }
+    /*
+        END:  Sorcery & Nature
+    */
+
+}
+
 
 // MGC o56p16
 // drake178: WIZ_GetNominalSkill()
