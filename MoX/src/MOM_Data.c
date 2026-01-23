@@ -2540,6 +2540,8 @@ struct s_NODE * _NODES;
 /*
 1-byte, unsigned
 302 PR, 4832 B, in World_Data
+¿ GET/SET MACRO ?
+
 */
 uint8_t * _landmasses;
 

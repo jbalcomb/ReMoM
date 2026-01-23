@@ -48,8 +48,9 @@ Init_New_Game_()
 [x] |-> |-> Get_Weighted_Choice
 [x] |-> Init_Computer_Players_Spell_Library()
 
-[ ] NEWG_ClearLandmasses()
-[ ] NEWG_CreateLands()
+[x] NEWG_ClearLandmasses()
+[x] NEWG_CreateLands()
+[x] |-> TILE_SetLandMass__WIP
 [ ] NEWG_SetBaseLands()
 [ ] NEWG_SetSpecLands()
 [ ] NEWG_CreateNodes()

@@ -23,7 +23,7 @@ MoO2
 
 
 
-// MGC dseg:8DD6
+// MGC  dseg:8DD6
 // drake78: IMG_NEWG_MapBuildBG
 /*
     loaded in GAME_New_Screen_7()
@@ -33,68 +33,96 @@ extern SAMB_ptr newgame_BUILDWOR_map_build_bar_seg;
 
 
 
-// MGC dseg:3334                                                 BEGIN:  ovr051 - Initialized Data
+// MGC  dseg:3334                                                 BEGIN:  ovr051 - Initialized Data
 
-// MGC dseg:3334 00 00 FF FF 00 00 01 00 00 00                   TILE_Cardinal_XMod dw 0, 0FFFFh, 0, 1, 0
-// MGC dseg:3334                                                                                         ; DATA XREF: NEWG_CreateLands+240r ...
-// MGC dseg:333E 01 00 00 00 FF FF 00 00 00 00                   TILE_Cardinal_YMod dw 1, 0, 0FFFFh, 0, 0
-// MGC dseg:333E                                                                                         ; DATA XREF: NEWG_CreateLands+24Fr ...
-// MGC dseg:3348 02 00 03 00 00 00 01 00                         TILE_OppositeDirs dw 2, 3, 0, 1         ; DATA XREF: NEWG_CreateRiver+1F8r
-// MGC dseg:3350 00 00 FF FF 00 00 01 00 00 00                   TILE_Cardinal_XMod2 dw 0, 0FFFFh, 0, 1, 0
-// MGC dseg:3350                                                                                         ; DATA XREF: NEWG_SetSpecLands+1A3r ...
-// MGC dseg:3350                                                                                         ; should use dseg:3334
-// MGC dseg:335A 01 00 00 00 FF FF 00 00 00 00                   TILE_Cardinal_YMod2 dw 1, 0, 0FFFFh, 0, 0
-// MGC dseg:335A                                                                                         ; DATA XREF: NEWG_SetSpecLands+1B2r ...
-// MGC dseg:335A                                                                                         ; should use dseg:333e
+// MGC  dseg:3334
+int16_t TILE_Cardinal_XMod[5] = { 0, -1, 0, 1, 0 };
+// MGC  dseg:333E
+int16_t TILE_Cardinal_YMod[5] = { 1, 0, -1, 0, 0 };
 
-// MGC dseg:3364
+// MGC  dseg:3348
+int16_t TILE_OppositeDirs[4] = { 2, 3, 0, 1 };
+
+// MGC  dseg:3350
+int16_t TILE_Cardinal_XMod2[5] = { 0, -1, 0, 1, 0 };
+// MGC  dseg:335A
+int16_t TILE_Cardinal_YMod2[5] = { 1, 0, -1, 0, 0 };
+
+// MGC  dseg:3364
 struct s_mouse_list mouselist_mapgen[1] =
 {
     { crsr_Hourglass, 0, SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX }
 };
 
-// MGC dseg:3370 26 34 2C 34 37 34 43 34 50 34 60 34 68 34 77 34+UU_EZ_Names@_Array dw offset UU_cnst_Tower, offset UU_cnst_ChaosNode, offset UU_cnst_NatureNode, offset UU_cnst_SorceryNode, offset UU_cnst_Cave, offset UU_cnst_Dungeon, offset UU_cnst_AncientTmpl, offset UU_cnst_Keep, offset UU_cnst_Lair, offset UU_cnst_Ruins, offset UU_cnst_FallenTmpl ; "tower"
-// MGC dseg:3386 A2 00 A2 00 A2 00 A2 00 BB 00 BB 00 BB 00 BB 00+TILE_River_Types dw _Grasslands1, _Grasslands1, _Grasslands1, _Grasslands1
-// MGC dseg:3386 BC 00 BC 00 BC 00 BC 00 BD 00 C1 00 E9 00 BD 00+                                        ; DATA XREF: NEWG_SetRiverTiles+127t
-// MGC dseg:3386 B9 00 B9 00 B9 00 B9 00 ED 00 EE 00 EF 00 ED 00+dw _River1000, _River1000, _River1000, _River1000
-// MGC dseg:3386 BF 00 C3 00 EB 00 BF 00 FB 00 FC 00 FD 00 FE 00+dw _River0100, _River0100, _River0100, _River0100
-// MGC dseg:3386 BA 00 BA 00 BA 00 BA 00 C0 00 C4 00 EC 00 C0 00+dw _River1100_1, _River1100_2, _River1100_3, _River1100_1
-// MGC dseg:3386 F0 00 F1 00 F2 00 F0 00 F3 00 F4 00 F5 00 F6 00+dw _River0010, _River0010, _River0010, _River0010
-// MGC dseg:3386 BE 00 C2 00 EA 00 BE 00 FF 00 00 01 01 01 02 01+dw _River1010_1, _River1010_2, _River1010_3, _River1010_1
-// MGC dseg:3386 F7 00 F8 00 F9 00 FA 00 D4 01 D5 01 D6 01 D7 01 dw _River0110_1, _River0110_2, _River0110_3, _River0110_1
-// MGC dseg:3386                                                 dw _River1110_1, _River1110_2, _River1110_3, _River1110_4
-// MGC dseg:3386                                                 dw _River0001, _River0001, _River0001, _River0001
-// MGC dseg:3386                                                 dw _River1001_1, _River1001_2, _River1001_3, _River1001_1
-// MGC dseg:3386                                                 dw _River0101_1, _River0101_2, _River0101_3, _River0101_1
-// MGC dseg:3386                                                 dw _River1101_1, _River1101_2, _River1101_3, _River1101_4
-// MGC dseg:3386                                                 dw _River0011_1, _River0011_2, _River0011_3, _River0011_1
-// MGC dseg:3386                                                 dw _River1011_1, _River1011_2, _River1011_3, _River1011_4
-// MGC dseg:3386                                                 dw _River0111_1, _River0111_2, _River0111_3, _River0111_4
-// MGC dseg:3386                                                 dw _River1111_1, _River1111_2, _River1111_3, _River1111_4
+// MGC  dseg:3370 26 34 2C 34 37 34 43 34 50 34 60 34 68 34 77 34+UU_EZ_Names@_Array dw offset UU_cnst_Tower, offset UU_cnst_ChaosNode, offset UU_cnst_NatureNode, offset UU_cnst_SorceryNode, offset UU_cnst_Cave, offset UU_cnst_Dungeon, offset UU_cnst_AncientTmpl, offset UU_cnst_Keep, offset UU_cnst_Lair, offset UU_cnst_Ruins, offset UU_cnst_FallenTmpl ; "tower"
+// MGC  dseg:3386 A2 00 A2 00 A2 00 A2 00 BB 00 BB 00 BB 00 BB 00+TILE_River_Types dw _Grasslands1, _Grasslands1, _Grasslands1, _Grasslands1
+// MGC  dseg:3386 BC 00 BC 00 BC 00 BC 00 BD 00 C1 00 E9 00 BD 00+                                        ; DATA XREF: NEWG_SetRiverTiles+127t
+// MGC  dseg:3386 B9 00 B9 00 B9 00 B9 00 ED 00 EE 00 EF 00 ED 00+dw _River1000, _River1000, _River1000, _River1000
+// MGC  dseg:3386 BF 00 C3 00 EB 00 BF 00 FB 00 FC 00 FD 00 FE 00+dw _River0100, _River0100, _River0100, _River0100
+// MGC  dseg:3386 BA 00 BA 00 BA 00 BA 00 C0 00 C4 00 EC 00 C0 00+dw _River1100_1, _River1100_2, _River1100_3, _River1100_1
+// MGC  dseg:3386 F0 00 F1 00 F2 00 F0 00 F3 00 F4 00 F5 00 F6 00+dw _River0010, _River0010, _River0010, _River0010
+// MGC  dseg:3386 BE 00 C2 00 EA 00 BE 00 FF 00 00 01 01 01 02 01+dw _River1010_1, _River1010_2, _River1010_3, _River1010_1
+// MGC  dseg:3386 F7 00 F8 00 F9 00 FA 00 D4 01 D5 01 D6 01 D7 01 dw _River0110_1, _River0110_2, _River0110_3, _River0110_1
+// MGC  dseg:3386                                                 dw _River1110_1, _River1110_2, _River1110_3, _River1110_4
+// MGC  dseg:3386                                                 dw _River0001, _River0001, _River0001, _River0001
+// MGC  dseg:3386                                                 dw _River1001_1, _River1001_2, _River1001_3, _River1001_1
+// MGC  dseg:3386                                                 dw _River0101_1, _River0101_2, _River0101_3, _River0101_1
+// MGC  dseg:3386                                                 dw _River1101_1, _River1101_2, _River1101_3, _River1101_4
+// MGC  dseg:3386                                                 dw _River0011_1, _River0011_2, _River0011_3, _River0011_1
+// MGC  dseg:3386                                                 dw _River1011_1, _River1011_2, _River1011_3, _River1011_4
+// MGC  dseg:3386                                                 dw _River0111_1, _River0111_2, _River0111_3, _River0111_4
+// MGC  dseg:3386                                                 dw _River1111_1, _River1111_2, _River1111_3, _River1111_4
 
-// MGC dseg:3406
+// MGC  dseg:3406
 char builddat_lbx_file__MGC_ovr051[] = "BUILDDAT";
 
-// MGC dseg:340F
+// MGC  dseg:340F
 char str_BuildingTheWorlds[] = "Building The Worlds...";
 
-// MGC dseg:3426 74 6F 77 65 72 00                               UU_cnst_Tower db 'tower',0              ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:342C 63 68 61 6F 73 20 6E 6F 64 65 00                UU_cnst_ChaosNode db 'chaos node',0     ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:3437 6E 61 74 75 72 65 20 6E 6F 64 65 00             UU_cnst_NatureNode db 'nature node',0   ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:3443 73 6F 72 63 65 72 79 20 6E 6F 64 65 00          UU_cnst_SorceryNode db 'sorcery node',0 ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:3450 6D 79 73 74 65 72 69 6F 75 73 20 63 61 76 65 00 UU_cnst_Cave db 'mysterious cave',0     ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:3460 64 75 6E 67 65 6F 6E 00                         UU_cnst_Dungeon db 'dungeon',0          ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:3468 61 6E 63 69 65 6E 74 20 74 65 6D 70 6C 65 00    UU_cnst_AncientTmpl db 'ancient temple',0
-// MGC dseg:3477 61 62 61 6E 64 6F 6E 65 64 20 6B 65 65 70 00    UU_cnst_Keep db 'abandoned keep',0      ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:3486 6D 6F 6E 73 74 65 72 20 6C 61 69 72 00          UU_cnst_Lair db 'monster lair',0        ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:3493 61 6E 63 69 65 6E 74 20 72 75 69 6E 73 00       UU_cnst_Ruins db 'ancient ruins',0      ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:34A1 66 61 6C 6C 65 6E 20 74 65 6D 70 6C 65 00       UU_cnst_FallenTmpl db 'fallen temple',0 ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:34AF 54 45 52 52 54 59 50 45 00                      cnst_TERRTYPE_File db 'TERRTYPE',0      ; DATA XREF: NEWG_SetDeserts+26o ...
-// MGC dseg:34B8 43 49 54 59 4E 41 4D 45 00                      cnst_CITYNAME_File db 'CITYNAME',0      ; DATA XREF: CTY_SetDefaultName+23o
+// MGC  dseg:3426 74 6F 77 65 72 00                               UU_cnst_Tower db 'tower',0              ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
+// MGC  dseg:342C 63 68 61 6F 73 20 6E 6F 64 65 00                UU_cnst_ChaosNode db 'chaos node',0     ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
+// MGC  dseg:3437 6E 61 74 75 72 65 20 6E 6F 64 65 00             UU_cnst_NatureNode db 'nature node',0   ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
+// MGC  dseg:3443 73 6F 72 63 65 72 79 20 6E 6F 64 65 00          UU_cnst_SorceryNode db 'sorcery node',0 ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
+// MGC  dseg:3450 6D 79 73 74 65 72 69 6F 75 73 20 63 61 76 65 00 UU_cnst_Cave db 'mysterious cave',0     ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
+// MGC  dseg:3460 64 75 6E 67 65 6F 6E 00                         UU_cnst_Dungeon db 'dungeon',0          ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
+// MGC  dseg:3468 61 6E 63 69 65 6E 74 20 74 65 6D 70 6C 65 00    UU_cnst_AncientTmpl db 'ancient temple',0
+// MGC  dseg:3477 61 62 61 6E 64 6F 6E 65 64 20 6B 65 65 70 00    UU_cnst_Keep db 'abandoned keep',0      ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
+// MGC  dseg:3486 6D 6F 6E 73 74 65 72 20 6C 61 69 72 00          UU_cnst_Lair db 'monster lair',0        ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
+// MGC  dseg:3493 61 6E 63 69 65 6E 74 20 72 75 69 6E 73 00       UU_cnst_Ruins db 'ancient ruins',0      ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
+// MGC  dseg:34A1 66 61 6C 6C 65 6E 20 74 65 6D 70 6C 65 00       UU_cnst_FallenTmpl db 'fallen temple',0 ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
+// MGC  dseg:34AF 54 45 52 52 54 59 50 45 00                      cnst_TERRTYPE_File db 'TERRTYPE',0      ; DATA XREF: NEWG_SetDeserts+26o ...
+// MGC  dseg:34B8 43 49 54 59 4E 41 4D 45 00                      cnst_CITYNAME_File db 'CITYNAME',0      ; DATA XREF: CTY_SetDefaultName+23o
 
-// MGC dseg:34C1 00 00 00                                        align 4
+// MGC  dseg:34C1 00 00 00                                        align 4
 
-// MGC dseg:34C1                                                 END:  ovr051 - Initialized Data
+// MGC  dseg:34C1                                                 END:  ovr051 - Initialized Data
+
+
+
+
+
+// MGC  dseg:8EB0                                                 BEGIN:  ovr051 - Uninitialized Data  (MAPGEN)
+// MGC  dseg:8EB0
+// MGC  dseg:8EB0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_Landmass_Races dw 200 dup(0)       ; DATA XREF: NEWG_CreateNeutrals+39w ...
+
+// MGC  dseg:9040
+/*
+set 1 in NEWG_ClearLandmasses__WIP(), both times
+incd in TILE_SetLandMass()
+otherwise NIU
+¿ MoO2  Module: MAPGEN  _num_maps_to_generate ?
+*/
+int16_t NEWG_LandmassCount;
+
+// MGC  dseg:9042 00 00                                           dw 0
+// MGC  dseg:9044 00 00                                           dw 0
+// MGC  dseg:9046 00 00                                           dw 0
+// MGC  dseg:9048 00 00                                           dw 0
+// MGC  dseg:904A 00 00                                           dw 0
+// MGC  dseg:904A
+// MGC  dseg:904A                                                 END:  ovr051 - Uninitialized Data  (MAPGEN)
+
+
 
 
 
@@ -146,27 +174,27 @@ void NEWG_CreateWorld__WIP(void)
 
     Draw_Building_The_Worlds(5);
 
-    // TODO  NEWG_ClearLandmasses(0);
+    NEWG_ClearLandmasses__WIP(0);
 
     Draw_Building_The_Worlds(10);
 
-    // TODO  NEWG_ClearLandmasses(1);
+    NEWG_ClearLandmasses__WIP(1);
 
     Draw_Building_The_Worlds(15);
 
-    // TODO  NEWG_CreateLands(0);
+    NEWG_CreateLands__WIP(0);
 
     Draw_Building_The_Worlds(20);
 
-    // TODO  NEWG_CreateLands(1);
+    NEWG_CreateLands__WIP(1);
 
     Draw_Building_The_Worlds(25);
 
-    // TODO  NEWG_SetBaseLands(0);
+    NEWG_SetBaseLands__WIP(0);
 
     Draw_Building_The_Worlds(30);
 
-    // TODO  NEWG_SetBaseLands(1);
+    NEWG_SetBaseLands__WIP(1);
 
     Draw_Building_The_Worlds(35);
 
@@ -275,109 +303,563 @@ void NEWG_CreateWorld__WIP(void)
 
 }
 
-// o51p02
-// NEWG_EZ_MarkHadnLeft()
+// MGC o51p02
+// drake178: NEWG_EZ_MarkHadnLeft()
 
-// o51p03
-// NEWG_TileIsleExtend()
+// MGC o51p03
+// drake178: NEWG_TileIsleExtend()
 
-// o51p04
-// NEWG_CreateTowers()
+// MGC o51p04
+// drake178: NEWG_CreateTowers()
 
-// o51p05
-// NEWG_CreateCapitals()
+// MGC o51p05
+// drake178: NEWG_CreateCapitals()
 
-// o51p06
-// NEWG_ClearLandmasses()
+// MGC o51p06
+// drake178: NEWG_ClearLandmasses()
+/*
 
-// o51p07
+; PATCHED / rewritten in the worldgen customizer to
+; block clear both planes at once
+;
+; clears the landmass array for the selected plane
+*/
+/*
+_landmasses[((wp * WORLD_SIZE) + (itr_wy * WORLD_WIDTH) + itr_wx)] = 0; 
+*/
+void NEWG_ClearLandmasses__WIP(int16_t wp)
+{
+    int16_t wy = 0;  // _SI_
+    int16_t wx = 0;  // _CX_
+
+    NEWG_LandmassCount = 1;
+
+    for(wy = 0; wy < WORLD_HEIGHT; wy++)
+    {
+        
+        for(wx = 0; wx < WORLD_WIDTH; wx++)
+        {
+
+            // _landmasses[((wp * WORLD_SIZE) + (itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
+            SET_LANDMASS(wx,wy,wp,0);
+
+        }
+
+    }
+}
+
+
+// MGC o51p07
+// drake178: NEWG_EqualizeNodes()
 // NEWG_EqualizeNodes()
 
-// o51p08
+// MGC o51p08
+// drake178: NEWG_SetSpecLands()
 // NEWG_SetSpecLands()
 
-// o51p09
-// NEWG_SetBaseLands()
+// MGC o51p09
+// drake178: NEWG_SetBaseLands()
+/*
 
-// o51p10
-// NEWG_CreateLands()
+*/
+/*
 
-// o51p11
+*/
+void NEWG_SetBaseLands__WIP(int16_t wp)
+{
+
+
+
+}
+
+
+// MGC o51p10
+// drake178: NEWG_CreateLands()
+/*
+; PATCHED / rewritten in the worldgen customizer to
+; allow fine tuning the desired land tiles and set
+; continent size limits, as well as to override the
+; origin coordinate constraints to support more
+; combinations of those two settings
+;
+; clears the tile map of the selected plane, and then
+; generates continents according to the land size
+; settings
+*/
+/*
+¿ populates _landmass[] ?
+per plane
+~ MoO2 "map"
+*/
+void NEWG_CreateLands__WIP(int16_t wp)
+{
+    int16_t Used_Map_Sections[5][5] = { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
+    int16_t Origin_Y = 0;
+    int16_t Origin_X = 0;
+    int16_t Origin_Direction = 0;
+    int16_t Max_Direction = 0;
+    int16_t Section_Height = 0;
+    int16_t Section_Width = 0;
+    int16_t Origins_Remaining = 0;
+    int16_t Same_Dir_Steps = 0;
+    int16_t Last_Direction = 0;
+    int16_t Direction = 0;
+    int16_t Steps_Taken = 0;
+    int16_t Steps_To_Take = 0;
+    int16_t Next_Tile_Y = 0;
+    int16_t Next_Tile_X = 0;
+    int16_t Processed_Tile_Y = 0;
+    int16_t Processed_Tile_X = 0;
+    int16_t Desired_Land_Tiles = 0;
+    int16_t Generated_Land_Tiles = 0;
+    int16_t itr_wy = 0;  // _DI_
+    int16_t itr_wx = 0;  // _SI_
+
+    // ; clear the map tile array of the plane
+    for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
+    {
+
+        for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
+        {
+
+            _world_maps[((wp * WORLD_SIZE) + (itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
+
+        }
+
+    }
+
+    // ; clear the map section array
+    // ; 
+    // ; INCONSISTENT: the array is 5 by 5 in size, yet the
+    // ; divisions result in only 4 by 3 being used
+    for(itr_wy = 0; itr_wy < 5; itr_wy++)
+    {
+
+        for(itr_wx = 0; itr_wx < 5; itr_wx++)
+        {
+
+            Used_Map_Sections[itr_wy][itr_wx] = 0;
+
+        }
+
+    }
+
+    Origins_Remaining = 8;
+
+    Section_Width = 16;
+
+    Section_Height = 11;
+
+    Generated_Land_Tiles = 0;
+
+    // ~ galaxy size, _NUM_STARS
+    switch(_landsize)
+    {
+        case gol_Small:  { Desired_Land_Tiles = 360; } break;
+        case gol_Medium: { Desired_Land_Tiles = 480; } break;
+        case gol_Large:  { Desired_Land_Tiles = 720; } break;
+    }
+
+    // ~ _num_maps_to_generate, _n_maps_generated
+    while(Generated_Land_Tiles <= Desired_Land_Tiles)
+    {
+
+        Last_Direction = ST_UNDEFINED;
+
+        Same_Dir_Steps = 1;
+
+        Origin_X = (6 + Random(46));
+
+        Origin_Y = (6 + Random(26));
+
+        while(Origins_Remaining > 0)
+        {
+
+            if(Used_Map_Sections[((Origin_Y / Section_Height) * 5)][(Origin_X / Section_Width)] == 1)
+            {
+
+                continue;
+
+            }
+            else
+            {
+
+                Used_Map_Sections[((Origin_Y / Section_Height) * 5)][(Origin_X / Section_Width)] = 1;
+
+                Origins_Remaining--;
+                
+            }
+
+        }
+
+        Max_Direction = 2 + Random(3);
+
+        Origin_Direction = 0;
+
+        while(Origin_Direction < Max_Direction)
+        {
+
+            switch(_landsize)
+            {
+
+                case gol_Small:  { Steps_To_Take = ( 5 + Random(10)); } break;
+                case gol_Medium: { Steps_To_Take = (10 + Random(10)); } break;
+                case gol_Large:  { Steps_To_Take = (20 + Random(10)); } break;
+
+            }
+
+            Processed_Tile_X = (Origin_X = TILE_Cardinal_XMod2[Origin_Direction]);
+
+            Processed_Tile_Y = (Origin_Y = TILE_Cardinal_YMod2[Origin_Direction]);
+
+            while((Steps_Taken < Steps_To_Take) && (Generated_Land_Tiles <= Desired_Land_Tiles))
+            {
+
+                if(_world_maps[((wp * WORLD_SIZE) + (Processed_Tile_Y * WORLD_WIDTH) + Processed_Tile_X)] == 0)
+                {
+
+                    Generated_Land_Tiles++;
+
+                }
+
+                _world_maps[((wp * WORLD_SIZE) + (Processed_Tile_Y * WORLD_WIDTH) + Processed_Tile_X)] += 1;
+
+                TILE_SetLandMass__WIP(wp, Processed_Tile_X, Processed_Tile_Y);
+
+                /*
+                
+                    WTF  DEDU  What is the loop here?
+                    ...looks like `Last_Direction = ST_UNDEFINED;` should be a breaking condition
+
+                */
+                while(1)
+                {
+
+                    Direction = (Random(4) - 1);
+
+                    if(Direction == Last_Direction)
+                    {
+
+                        if(Random(Same_Dir_Steps) == 1)
+                        {
+
+                            Same_Dir_Steps++;
+
+                        }
+                        else
+                        {
+
+                            break;
+
+                        }
+
+                    }
+                    else
+                    {
+
+                        Same_Dir_Steps = 1;
+                        
+                    }
+
+                    Last_Direction = Direction;
+
+                    Next_Tile_X = (Processed_Tile_X + TILE_Cardinal_XMod[Direction]);
+                    
+                    Next_Tile_Y = (Processed_Tile_Y + TILE_Cardinal_YMod[Direction]);
+
+                    if(
+                        (Next_Tile_X < 2)
+                        ||
+                        (Next_Tile_X < 4)
+                        ||
+                        (Next_Tile_X >= 58)
+                        ||
+                        (Next_Tile_X >= 36)
+                    )
+                    {
+                        
+                        Last_Direction = ST_UNDEFINED;
+
+                    }
+                    else
+                    {
+
+                        Processed_Tile_X = Next_Tile_X;
+
+                        Processed_Tile_Y = Next_Tile_Y;
+
+                        Steps_Taken++;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
+
+// MGC o51p11
+// drake178: NEWG_CreateNodes()
 // NEWG_CreateNodes()
 
-// o51p12
+// MGC o51p12
+// drake178: NEWG_CreateNodeAura()
 // NEWG_CreateNodeAura()
 
-// o51p13
+// MGC o51p13
+// drake178: NODE_IsAuraUnique()
 // NODE_IsAuraUnique()
 
-// o51p14
+// MGC o51p14
+// drake178: NEWG_SetNodeType()
 // NEWG_SetNodeType()
 
-// o51p15
-// TILE_SetLandMass()
+// MGC o51p15
+// drake178: TILE_SetLandMass()
+/*
+; sets the landmass for the tile - either a new one if
+; all surrounding tiles are ocean, or that of the first
+; neighbouring one, consolidating continents if the
+; tile is adjacent to more than one
+*/
+/*
+sets landmass_idx in _landmass[]
 
-// o51p16
+*/
+void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy)
+{
+    int16_t Landmass_ID_Array[5] = { 0, 0, 0, 0, 0 };
+    int16_t Conflicting_ID = 0;
+    int16_t itr_wy = 0;
+    int16_t itr_wx = 0;
+    int16_t Next_Adjacent_Index = 0;
+    int16_t Array_Index = 0;
+    int16_t First_Found_Landmass = 0;
+    int16_t IDK = 0;  // _CX_
+
+    First_Found_Landmass = 0;
+
+    IDK = 0;
+
+    // ; center tile
+    if(GET_LANDMASS(wx,wy,wp) != 0)
+    {
+        Landmass_ID_Array[IDK] = GET_LANDMASS(wx,wy,wp);
+        IDK++;
+    }
+
+    // ; tile up to the left
+    if(GET_LANDMASS((wx - 1), (wy - 1), wp) != 0)
+    {
+        Landmass_ID_Array[IDK] = GET_LANDMASS((wx - 1), (wy - 1), wp);
+        IDK++;
+    }
+
+    // ; tile up
+    if(GET_LANDMASS(wx,(wy - 1),wp) != 0)
+    {
+        Landmass_ID_Array[IDK] = GET_LANDMASS(wx, (wy - 1), wp);
+        IDK++;
+    }
+
+    // ; tile up to the right
+    if(GET_LANDMASS((wx + 1), (wy - 1), wp) != 0)
+    {
+        Landmass_ID_Array[IDK] = GET_LANDMASS((wx + 1), (wy - 1), wp);
+        IDK++;
+    }
+
+    // ; tile to the left
+    if(GET_LANDMASS((wx - 1), wy, wp) != 0)
+    {
+        Landmass_ID_Array[IDK] = GET_LANDMASS((wx - 1), wy, wp);
+        IDK++;
+    }
+
+    // ; tile to the right
+    if(GET_LANDMASS((wx + 1), wy, wp) != 0)
+    {
+        Landmass_ID_Array[IDK] = GET_LANDMASS((wx + 1), wy, wp);
+        IDK++;
+    }
+
+    // ; tile down to the left
+    if(GET_LANDMASS((wx - 1), (wy + 1), wp) != 0)
+    {
+        Landmass_ID_Array[IDK] = GET_LANDMASS((wx - 1), (wy + 1), wp);
+        IDK++;
+    }
+
+    // ; tile down
+    if(GET_LANDMASS(wx, (wy + 1), wp) != 0)
+    {
+        Landmass_ID_Array[IDK] = GET_LANDMASS(wx, (wy + 1), wp);
+        IDK++;
+    }
+
+    // ; tile down to the right
+    if(GET_LANDMASS((wx + 1), (wy + 1), wp) != 0)
+    {
+        Landmass_ID_Array[IDK] = GET_LANDMASS((wx + 1), (wy + 1), wp);
+        IDK++;
+    }
+
+    if(IDK != 0)
+    {
+
+        // ; if the tile is bordered by multiple different land
+        // ; masses, consolidate them all into one
+
+        SET_LANDMASS((wx - 1), wy, wp, NEWG_LandmassCount);
+
+        NEWG_LandmassCount++;
+
+    }
+    else
+    {
+
+        First_Found_Landmass = Landmass_ID_Array;
+
+        for(Array_Index = 1; Array_Index < IDK; Array_Index++)
+        {
+
+            if(Landmass_ID_Array[Array_Index] != First_Found_Landmass)
+            {
+
+                // ; convert all instances of the conflicting ID in the
+                // ; local array into the first found one
+
+                Conflicting_ID = Landmass_ID_Array[Array_Index];
+
+                for(Next_Adjacent_Index = Array_Index; Next_Adjacent_Index < IDK; Next_Adjacent_Index++)
+                {
+
+                    if(Landmass_ID_Array[Next_Adjacent_Index] == Conflicting_ID)
+                    {
+
+                        Landmass_ID_Array[Next_Adjacent_Index] = First_Found_Landmass;
+
+                    }
+
+                }
+
+                // ; convert all instances of the conflicting ID on the
+                // ; world map into the first found one
+
+                for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
+                {
+
+                    for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
+                    {
+
+                        if(GET_LANDMASS((itr_wx + 1), (itr_wy + 1), wp) == Conflicting_ID)
+                        {
+
+                            SET_LANDMASS((itr_wx + 1), (itr_wy + 1), wp, First_Found_Landmass);
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        SET_LANDMASS((wx - 1), wy, wp, First_Found_Landmass);
+
+    }
+
+}
+
+
+// MGC o51p16
+// drake178: NEWG_CreateEZs()
 // NEWG_CreateEZs()
 
-// o51p17
+// MGC o51p17
+// drake178: NEWG_CreateEncounter()
 // NEWG_CreateEncounter()
 
-// o51p18
+// MGC o51p18
+// drake178: UU_UNIT_RandomRacial()
 // UU_UNIT_RandomRacial()
 
-// o51p19
+// MGC o51p19
+// drake178: NEWG_SetDeserts()
 // NEWG_SetDeserts()
 
-// o51p20
+// MGC o51p20
+// drake178: NEWG_CreateShores()
 // NEWG_CreateShores()
 
-// o51p21
+// MGC o51p21
+// drake178: NEWG_RandomizeTiles()
 // NEWG_RandomizeTiles()
 
-// o51p22
+// MGC o51p22
+// drake178: NEWG_CreateRiver()
 // NEWG_CreateRiver()
 
-// o51p23
+// MGC o51p23
+// drake178: NEWG_SetRiverTiles()
 // NEWG_SetRiverTiles()
 
-// o51p24
+// MGC o51p24
+// drake178: NEWG_CreateNeutrals()
 // NEWG_CreateNeutrals()
 
-// o51p25
+// MGC o51p25
+// drake178: CTY_SetDefaultName()
 // CTY_SetDefaultName()
 
-// o51p26
+// MGC o51p26
+// drake178: NEWG_CreateRoads()
 // NEWG_CreateRoads()
 
-// o51p27
+// MGC o51p27
+// drake178: CRP_NEWG_CreatePathGrids()
 // CRP_NEWG_CreatePathGrids()
 
-// o51p28
+// MGC o51p28
+// drake178: NEWG_CreateSpecials()
 // NEWG_CreateSpecials()
 
-// o51p29
+// MGC o51p29
+// drake178: NEWG_DesertSpecials()
 // NEWG_DesertSpecials()
 
-// o51p30
+// MGC o51p30
+// drake178: NEWG_HillSpecials()
 // NEWG_HillSpecials()
 
-// o51p31
+// MGC o51p31
+// drake178: NEWG_MntnSpecials()
 // NEWG_MntnSpecials()
 
-// o51p32
+// MGC o51p32
+// drake178: NEWG_SetScoutingMaps()
 // NEWG_SetScoutingMaps()
 
-// o51p33
+// MGC o51p33
+// drake178: TILE_SetScouting()
 // TILE_SetScouting()
 
-// o51p34
+// MGC o51p34
+// drake178: NEWG_SetMoveMaps()
 // NEWG_SetMoveMaps()
 
-// o51p35
+// MGC o51p35
+// drake178: TILE_InvalidOutflow()
 // TILE_InvalidOutflow()
 
-// o51p36
+// MGC o51p36
 // drake178: NEWG_UpdateProgress()
 // ~ MoO2  Module: MISC  Draw_Advancing_Fill_Message_()
 /*
@@ -411,56 +893,74 @@ void Draw_Building_The_Worlds(int16_t percent)
     Toggle_Pages();
 }
 
-// o51p37
+// MGC o51p37
+// drake178: UNIT_Create()
 // UNIT_Create()
 
-// o51p38
+// MGC o51p38
+// drake178: NEWG_AnimateOceans()
 // NEWG_AnimateOceans()
 
-// o51p39
+// MGC o51p39
+// drake178: TILE_IsOcean()
 // TILE_IsOcean()
 
-// o51p40
+// MGC o51p40
+// drake178: TILE_HasNode()
 // TILE_HasNode()
 
-// o51p41
+// MGC o51p41
+// drake178: TILE_HasTower()
 // TILE_HasTower()
 
-// o51p42
+// MGC o51p42
+// drake178: TILE_IsForest()
 // TILE_IsForest()
 
-// o51p43
+// MGC o51p43
+// drake178: TILE_IsRiver()
 // TILE_IsRiver()
 
-// o51p44
+// MGC o51p44
+// drake178: UU_TILE_IsRiverOutlet()
 // UU_TILE_IsRiverOutlet()
 
-// o51p45
+// MGC o51p45
+// drake178: UU_TILE_IsShore()
 // UU_TILE_IsShore()
 
-// o51p46
+// MGC o51p46
+// drake178: TILE_IsMountains()
 // TILE_IsMountains()
 
-// o51p47
+// MGC o51p47
+// drake178: TILE_IsHills()
 // TILE_IsHills()
 
-// o51p48
+// MGC o51p48
+// drake178: TILE_IsSwamp()
 // TILE_IsSwamp()
 
-// o51p49
+// MGC o51p49
+// drake178: TILE_IsDesert()
 // TILE_IsDesert()
 
-// o51p50
+// MGC o51p50
+// drake178: TILE_IsGrasslands()
 // TILE_IsGrasslands()
 
-// o51p51
+// MGC o51p51
+// drake178: TILE_GetFood()
 // TILE_GetFood()
 
-// o51p52
+// MGC o51p52
+// drake178: TILE_GetMaxPop()
 // TILE_GetMaxPop()
 
-// o51p53
+// MGC o51p53
+// drake178: TILE_GetCatchment()
 // TILE_GetCatchment()
 
-// o51p54
+// MGC o51p54
+// drake178: UU_Empty_Tile_Fn()
 // UU_Empty_Tile_Fn()

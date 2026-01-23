@@ -19,166 +19,166 @@ extern "C" {
     ovr051
 */
 
-// o51p01
+// MGC o51p01
 void NEWG_CreateWorld__WIP(void);
 
-// o51p02
+// MGC o51p02
 // NEWG_EZ_MarkHadnLeft()
 
-// o51p03
+// MGC o51p03
 // NEWG_TileIsleExtend()
 
-// o51p04
+// MGC o51p04
 // NEWG_CreateTowers()
 
-// o51p05
+// MGC o51p05
 // NEWG_CreateCapitals()
 
-// o51p06
-// NEWG_ClearLandmasses()
+// MGC o51p06
+void NEWG_ClearLandmasses__WIP(int16_t wp);
 
-// o51p07
+// MGC o51p07
 // NEWG_EqualizeNodes()
 
-// o51p08
+// MGC o51p08
 // NEWG_SetSpecLands()
 
-// o51p09
-// NEWG_SetBaseLands()
+// MGC o51p09
+void NEWG_SetBaseLands__WIP(int16_t wp);
 
-// o51p10
-// NEWG_CreateLands()
+// MGC o51p10
+void NEWG_CreateLands__WIP(int16_t wp);
 
-// o51p11
+// MGC o51p11
 // NEWG_CreateNodes()
 
-// o51p12
+// MGC o51p12
 // NEWG_CreateNodeAura()
 
-// o51p13
+// MGC o51p13
 // NODE_IsAuraUnique()
 
-// o51p14
+// MGC o51p14
 // NEWG_SetNodeType()
 
-// o51p15
-// TILE_SetLandMass()
+// MGC o51p15
+void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy);
 
-// o51p16
+// MGC o51p16
 // NEWG_CreateEZs()
 
-// o51p17
+// MGC o51p17
 // NEWG_CreateEncounter()
 
-// o51p18
+// MGC o51p18
 // UU_UNIT_RandomRacial()
 
-// o51p19
+// MGC o51p19
 // NEWG_SetDeserts()
 
-// o51p20
+// MGC o51p20
 // NEWG_CreateShores()
 
-// o51p21
+// MGC o51p21
 // NEWG_RandomizeTiles()
 
-// o51p22
+// MGC o51p22
 // NEWG_CreateRiver()
 
-// o51p23
+// MGC o51p23
 // NEWG_SetRiverTiles()
 
-// o51p24
+// MGC o51p24
 // NEWG_CreateNeutrals()
 
-// o51p25
+// MGC o51p25
 // CTY_SetDefaultName()
 
-// o51p26
+// MGC o51p26
 // NEWG_CreateRoads()
 
-// o51p27
+// MGC o51p27
 // CRP_NEWG_CreatePathGrids()
 
-// o51p28
+// MGC o51p28
 // NEWG_CreateSpecials()
 
-// o51p29
+// MGC o51p29
 // NEWG_DesertSpecials()
 
-// o51p30
+// MGC o51p30
 // NEWG_HillSpecials()
 
-// o51p31
+// MGC o51p31
 // NEWG_MntnSpecials()
 
-// o51p32
+// MGC o51p32
 // NEWG_SetScoutingMaps()
 
-// o51p33
+// MGC o51p33
 // TILE_SetScouting()
 
-// o51p34
+// MGC o51p34
 // NEWG_SetMoveMaps()
 
-// o51p35
+// MGC o51p35
 // TILE_InvalidOutflow()
 
-// o51p36
+// MGC o51p36
 void Draw_Building_The_Worlds(int16_t percent);
 
-// o51p37
+// MGC o51p37
 // UNIT_Create()
 
-// o51p38
+// MGC o51p38
 // NEWG_AnimateOceans()
 
-// o51p39
+// MGC o51p39
 // TILE_IsOcean()
 
-// o51p40
+// MGC o51p40
 // TILE_HasNode()
 
-// o51p41
+// MGC o51p41
 // TILE_HasTower()
 
-// o51p42
+// MGC o51p42
 // TILE_IsForest()
 
-// o51p43
+// MGC o51p43
 // TILE_IsRiver()
 
-// o51p44
+// MGC o51p44
 // UU_TILE_IsRiverOutlet()
 
-// o51p45
+// MGC o51p45
 // UU_TILE_IsShore()
 
-// o51p46
+// MGC o51p46
 // TILE_IsMountains()
 
-// o51p47
+// MGC o51p47
 // TILE_IsHills()
 
-// o51p48
+// MGC o51p48
 // TILE_IsSwamp()
 
-// o51p49
+// MGC o51p49
 // TILE_IsDesert()
 
-// o51p50
+// MGC o51p50
 // TILE_IsGrasslands()
 
-// o51p51
+// MGC o51p51
 // TILE_GetFood()
 
-// o51p52
+// MGC o51p52
 // TILE_GetMaxPop()
 
-// o51p53
+// MGC o51p53
 // TILE_GetCatchment()
 
-// o51p54
+// MGC o51p54
 // UU_Empty_Tile_Fn()
 
 

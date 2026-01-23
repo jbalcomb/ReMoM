@@ -569,6 +569,14 @@ entity_wx = (entity_wx + WORLD_WIDTH);
 */
 
 
+/*
+World Map - Landmass
+
+*/
+#define GET_LANDMASS(_wx_,_wy_,_wp_)                 ( _landmasses[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ]                    )
+#define SET_LANDMASS(_wx_,_wy_,_wp_,_landmass_idx_)  ( _landmasses[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ] = (_landmass_idx_) )
+
+
 
 
 // something or other for color difference/distance
