@@ -41,7 +41,7 @@ void NEWG_ClearLandmasses__WIP(int16_t wp);
 // NEWG_EqualizeNodes()
 
 // MGC o51p08
-// NEWG_SetSpecLands()
+void NEWG_SetSpecLands__WIP(int16_t wp);
 
 // MGC o51p09
 void NEWG_SetBaseLands__WIP(int16_t wp);

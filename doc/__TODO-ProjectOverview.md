@@ -47,12 +47,11 @@ Init_New_Game_()
 [x] |-> |-> Consolidate_Spell_Book_Realms
 [x] |-> |-> Get_Weighted_Choice
 [x] |-> Init_Computer_Players_Spell_Library()
-
 [x] NEWG_ClearLandmasses()
 [x] NEWG_CreateLands()
 [x] |-> TILE_SetLandMass__WIP
-[ ] NEWG_SetBaseLands()
-[ ] NEWG_SetSpecLands()
+[x] NEWG_SetBaseLands()
+[x] NEWG_SetSpecLands()
 [ ] NEWG_CreateNodes()
 [ ] NEWG_EqualizeNodes()
 [ ] NEWG_CreateTowers()
@@ -160,6 +159,11 @@ BETA
 https://www.google.com/search?q=C+code+test+argv+string+character+by+character+in+C%3F&oq=C+code+test+argv+string+character+by+character+in+C%3F&gs_lcrp=EgZjaHJvbWUyBggAEEUYQDIHCAEQIRigATIHCAIQIRigATIHCAMQIRigATIHCAQQIRigATIHCAUQIRigAdIBCTExNjg3ajBqN6gCCLACAfEF8LPJMOcKrCI&sourceid=chrome&ie=UTF-8
 
 https://pages.cs.wisc.edu/~markhill/cs354/Fall2008/onyourown/C.argv.html
+
+
+
+
+1>SDL2_mixer.lib(SDL2_mixer.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in SDL2.lib(SDL2.dll); second definition ignored
 
 
 

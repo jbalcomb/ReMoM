@@ -6137,7 +6137,7 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
             &&
             (_UNITS[itr_units].wy == src_wy)
             &&
-            (_landmasses[((dst_wy * WORLD_WIDTH) + dst_wx)] == TT_Ocean1)
+            (_landmasses[((dst_wy * WORLD_WIDTH) + dst_wx)] == tt_Ocean1)
         )
         {
             dst_troops_carry_capacity = 0;
@@ -6192,7 +6192,7 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
         }
         else
         {
-            if(_landmasses[((dst_wy * WORLD_WIDTH) + dst_wx)] == TT_Ocean1)
+            if(_landmasses[((dst_wy * WORLD_WIDTH) + dst_wx)] == tt_Ocean1)
             {
                 dst_troops_carry_capacity = 0;
                 Player_Army_At_Square(dst_wx, dst_wy, wp, player_idx, &dst_troop_count, &dst_troops[0]);

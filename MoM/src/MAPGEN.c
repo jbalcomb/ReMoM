@@ -10,6 +10,7 @@ MoO2
 
 #include "MAPGEN.h"
 
+#include "../../MoM/src/INITGAME.h"
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/Fonts.h"
@@ -17,9 +18,14 @@ MoO2
 #include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/Mouse.h"
 #include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_TYPE.h"
+#include "../../MoX/src/random.h"
 #include "../../MoX/src/Video.h"
 
+#include "TerrType.h"
+
+#include <assert.h>
 
 
 
@@ -36,6 +42,9 @@ extern SAMB_ptr newgame_BUILDWOR_map_build_bar_seg;
 // MGC  dseg:3334                                                 BEGIN:  ovr051 - Initialized Data
 
 // MGC  dseg:3334
+/*
+    down, left, up, right, center
+*/
 int16_t TILE_Cardinal_XMod[5] = { 0, -1, 0, 1, 0 };
 // MGC  dseg:333E
 int16_t TILE_Cardinal_YMod[5] = { 1, 0, -1, 0, 0 };
@@ -198,11 +207,11 @@ void NEWG_CreateWorld__WIP(void)
 
     Draw_Building_The_Worlds(35);
 
-    // TODO  NEWG_SetSpecLands(0);
+    NEWG_SetSpecLands__WIP(0);
 
     Draw_Building_The_Worlds(40);
 
-    // TODO  NEWG_SetSpecLands(1);
+    NEWG_SetSpecLands__WIP(1);
 
     Draw_Building_The_Worlds(45);
 
@@ -355,7 +364,256 @@ void NEWG_ClearLandmasses__WIP(int16_t wp)
 
 // MGC o51p08
 // drake178: NEWG_SetSpecLands()
-// NEWG_SetSpecLands()
+/*
+; PATCHED / rewritten in the worldgen customizer to
+; include the inland lake fill inherited from v1.50
+; (except with non-grassland-only terrain), and allow
+; customizing both max tundra reach and desert and
+; swamp creation attempts
+;
+; creates random patches of Tundra, Desert, and Swamp,
+; converting existing land based on various conditions
+*/
+/*
+
+*/
+void NEWG_SetSpecLands__WIP(int16_t wp)
+{
+    int16_t UU_Prev_Dir = 0;
+    int16_t Max_Tries = 0;
+    int16_t Direction = 0;
+    int16_t Origin_Direction = 0;
+    int16_t Processing_Y = 0;
+    int16_t Processing_X = 0;
+    int16_t itr = 0;
+    int16_t Origin_Y = 0;
+    int16_t Origin_X = 0;
+    int16_t Tries = 0;
+    int16_t itr_wx = 0;  // _DI_
+    int16_t itr_wy = 0;  // _SI_
+
+    // ; randomly convert Grassland and Forest tiles in the
+    // ; top and bottom 10 rows of the map into Tundra with
+    // ; the chance decreasing the further away the tile is
+    // ; from the corresponding edge
+
+    for(itr_wy = 2; itr_wy < 8; itr_wy++)
+    {
+
+        for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
+        {
+
+            // top 2 thru 7
+            if(
+                (_world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] == tt_Grasslands1)
+                ||
+                (_world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] == tt_Forest1)
+            )
+            {
+
+                if((2 + Random(8)) >= itr_wy)
+                {
+
+                    _world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] = tt_Tundra1;
+                    
+                }
+
+            }
+
+            // bottom 32 thru 37
+            if(
+                (_world_maps[(wp * WORLD_SIZE + ((39 - itr_wy) * WORLD_WIDTH) + itr_wx)] == tt_Grasslands1)
+                ||
+                (_world_maps[(wp * WORLD_SIZE + ((39 - itr_wy) * WORLD_WIDTH) + itr_wx)] == tt_Forest1)
+            )
+            {
+
+                if((2 + Random(8)) >= itr_wy)
+                {
+
+                    // { (39-2), (39-3), (39-4), (39-5), (39-6), (39-7) } = { 37, 36, 35, 34, 33, 32 } 
+                    _world_maps[(wp * WORLD_SIZE + ((39 - itr_wy) * WORLD_WIDTH) + itr_wx)] = tt_Tundra1;
+                    
+                }
+
+            }
+
+        }
+
+    }
+
+    // ; randomly create up to 8 patches of Desert
+    for(itr = 0; itr < 8; itr++)
+    {
+
+        Origin_X = (2 + Random(54));
+
+        Origin_Y = (8 + Random(24));
+
+        if(_world_maps[(wp * WORLD_SIZE + (Origin_Y * WORLD_WIDTH) + Origin_X)] == tt_Forest1)
+        {
+
+            _world_maps[(wp * WORLD_SIZE + (Origin_Y * WORLD_WIDTH) + Origin_X)] = tt_Desert1;
+
+            for(Origin_Direction = 0; Origin_Direction < 5; Origin_Direction++)
+            {
+
+                Processing_X = (Origin_X + TILE_Cardinal_XMod2[Origin_Direction]);
+
+                Processing_Y = (Origin_Y + TILE_Cardinal_YMod2[Origin_Direction]);
+
+                UU_Prev_Dir = ST_UNDEFINED;
+
+                Max_Tries = (4 + Random(6));
+
+                for(Tries = 0; Tries < Max_Tries; Tries++)
+                {
+
+                    Direction = (Random(4) - 1);
+
+                    itr_wx = (Processing_X + TILE_Cardinal_XMod2[Direction]);
+
+                    itr_wy = (Processing_Y + TILE_Cardinal_YMod2[Direction]);
+
+                    if(itr_wx >= WORLD_WIDTH)
+                    {
+
+                        itr_wx -= WORLD_WIDTH;
+
+                    }
+
+                    if(itr_wy >= WORLD_HEIGHT)
+                    {
+
+                        itr_wy -= WORLD_HEIGHT;
+
+                    }
+
+                    if(itr_wx < 0)
+                    {
+
+                        itr_wx += WORLD_WIDTH;
+
+                    }
+
+                    if(itr_wy < 0)
+                    {
+
+                        itr_wy += WORLD_HEIGHT;
+
+                    }
+
+                    Processing_X = itr_wx;
+
+                    Processing_Y = itr_wy;
+
+                    if(_world_maps[(wp * WORLD_SIZE + (Processing_Y * WORLD_WIDTH) + Processing_X)] != tt_Ocean1)
+                    {
+
+                        _world_maps[(wp * WORLD_SIZE + (Processing_Y * WORLD_WIDTH) + Processing_X)] = tt_Desert1;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    // ; randomly create up to 8 patches of Swamps, converting
+    // ; only Forest tiles in the patch
+    for(itr = 0; itr < 8; itr++)
+    {
+
+        Origin_X = (1 + Random(56));
+
+        Origin_Y = (10 + Random(20));
+
+        if(
+            (Origin_Y < 35)
+            ||
+            (Origin_Y > 45)
+        )
+        {
+
+            if(_world_maps[(wp * WORLD_SIZE + (Origin_Y * WORLD_WIDTH) + Origin_X)] == tt_Forest1)
+            {
+
+                _world_maps[(wp * WORLD_SIZE + (Origin_Y * WORLD_WIDTH) + Origin_X)] = tt_Swamp1;
+
+                for(Origin_Direction = 0; Origin_Direction < 5; Origin_Direction++)
+                {
+
+                    Processing_X = (Origin_X + TILE_Cardinal_XMod2[Origin_Direction]);
+
+                    Processing_Y = (Origin_Y + TILE_Cardinal_YMod2[Origin_Direction]);
+
+                    UU_Prev_Dir = ST_UNDEFINED;
+
+                    Max_Tries = (2 + Random(3));
+
+                    for(Tries = 0; Tries < Max_Tries; Tries++)
+                    {
+
+                        Direction = (Random(4) - 1);
+
+                        itr_wx = (Processing_X + TILE_Cardinal_XMod2[Direction]);
+
+                        itr_wy = (Processing_Y + TILE_Cardinal_YMod2[Direction]);
+
+                        if(itr_wx >= WORLD_WIDTH)
+                        {
+
+                            itr_wx -= WORLD_WIDTH;
+
+                        }
+
+                        if(itr_wy >= WORLD_HEIGHT)
+                        {
+
+                            itr_wy -= WORLD_HEIGHT;
+
+                        }
+
+                        if(itr_wx < 0)
+                        {
+
+                            itr_wx += WORLD_WIDTH;
+
+                        }
+
+                        if(itr_wy < 0)
+                        {
+
+                            itr_wy += WORLD_HEIGHT;
+
+                        }
+
+                        Processing_X = itr_wx;
+
+                        Processing_Y = itr_wy;
+
+                        if(_world_maps[(wp * WORLD_SIZE + (Processing_Y * WORLD_WIDTH) + Processing_X)] == tt_Forest1)
+                        {
+
+                            _world_maps[(wp * WORLD_SIZE + (Processing_Y * WORLD_WIDTH) + Processing_X)] = tt_Swamp1;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // MGC o51p09
 // drake178: NEWG_SetBaseLands()
@@ -367,8 +625,132 @@ void NEWG_ClearLandmasses__WIP(int16_t wp)
 */
 void NEWG_SetBaseLands__WIP(int16_t wp)
 {
+    int16_t Tiles_To_Add = 0;
+    int16_t Tiles_Added = 0;
+    int16_t itr_wy = 0;
+    int16_t itr_wx = 0;  // _SI_
 
+    // ; convert each non-ocean tile into a basic land based
+    // ; on the amount of "hits" it got during the continent
+    // ; generation
+    // ;    1: Grassland ($A2) with 3/4 chance, or Forest
+    // ;  2-3: Forest ($A3)
+    // ;  4-5: Hills ($AB)
+    // ;   6+: Mountains ($A4)
 
+    for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
+    {
+
+        for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
+        {
+
+            if(_world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] != 0)
+            {
+
+                // ; convert the tile into a grassland, forest, hill, or
+                // ; mountain tile based on the amount of "hits" it got
+                // ; during the continent generation
+                // ;    1: Grassland ($A2) with 3/4 chance, or Forest
+                // ;  2-3: Forest ($A3)
+                // ;  4-5: Hills ($AB)
+                // ;   6+: Mountains ($A4)
+
+// tt_Ocean1      = 0x0,
+// TT_BugGrass    = 0x1,
+// TT_Shore1_1st  = 0x2,
+// DEDU what is terrain type 3? ...TT_Shore1_Lst>
+
+                if(_world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] <= 3)
+                {
+
+                    if(_world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] > 1)
+                    {
+
+                        _world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] = tt_Forest1;
+
+                    }
+                    else
+                    {
+
+                        if(Random(4) == 1)
+                        {
+
+                            _world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] = tt_Grasslands1;
+
+                        }
+
+                    }
+
+                }
+                else if(
+                    (_world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] == 4)
+                    ||
+                    (_world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] == 5)
+                )
+                {
+
+                    _world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] = tt_Hills1;
+
+                }
+                else
+                {
+                    
+                    _world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] = tt_Mountain1;
+
+                }
+
+            }
+
+        }
+
+    }
+
+    for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
+    {
+
+        _world_maps[(wp * WORLD_SIZE + (WORLD_YMIN * WORLD_WIDTH) + itr_wx)] = tt_Tundra1;
+
+        _world_maps[(wp * WORLD_SIZE + (WORLD_YMAX * WORLD_WIDTH) + itr_wx)] = tt_Tundra1;
+
+        // ; convert a horizontal strip of 1-4 (random) tiles in
+        // ; the row below the top one into tundra, starting at
+        // ; the current X coordinate (in si), and aborting if
+        // ; the right edge of the map is reached
+
+        if(Random(4) == 1)
+        {
+
+            Tiles_To_Add = Random(4);
+
+            for(Tiles_Added = 0; ((Tiles_Added < Tiles_To_Add) & ((itr_wx + Tiles_Added) < WORLD_WIDTH)); Tiles_Added++)
+            {
+
+                _world_maps[(wp * WORLD_SIZE + ((WORLD_YMIN + 1) * WORLD_WIDTH) + itr_wx + Tiles_Added)] = tt_Tundra1;                
+
+            }
+
+        }
+
+        // ; convert a horizontal strip of 1-4 (random) tiles in
+        // ; the row above the bottom one into tundra, starting
+        // ; at the current X coordinate (in si), and aborting if
+        // ; the right edge of the map is reached
+
+        if(Random(4) == 1)
+        {
+
+            Tiles_To_Add = Random(4);
+
+            for(Tiles_Added = 0; ((Tiles_Added < Tiles_To_Add) & ((itr_wx + Tiles_Added) < WORLD_WIDTH)); Tiles_Added++)
+            {
+
+                _world_maps[(wp * WORLD_SIZE + ((WORLD_YMAX - 1) * WORLD_WIDTH) + itr_wx + Tiles_Added)] = tt_Tundra1;                
+
+            }
+
+        }
+
+    }
 
 }
 
@@ -468,23 +850,22 @@ void NEWG_CreateLands__WIP(int16_t wp)
 
         Same_Dir_Steps = 1;
 
-        Origin_X = (6 + Random(46));
-
-        Origin_Y = (6 + Random(26));
-
         while(Origins_Remaining > 0)
         {
 
-            if(Used_Map_Sections[((Origin_Y / Section_Height) * 5)][(Origin_X / Section_Width)] == 1)
+            // Origin_X = (6 + Random(46));
+            // Origin_Y = (6 + Random(26));
+            Origin_X = 6;
+            Origin_X += Random(46);
+            Origin_Y = 6;
+            Origin_Y += Random(26);
+            assert(Origin_X >= 7);
+            assert(Origin_Y >= 7);
+
+            if(Used_Map_Sections[(Origin_Y / Section_Height)][(Origin_X / Section_Width)] != 1)
             {
 
-                continue;
-
-            }
-            else
-            {
-
-                Used_Map_Sections[((Origin_Y / Section_Height) * 5)][(Origin_X / Section_Width)] = 1;
+                Used_Map_Sections[(Origin_Y / Section_Height)][(Origin_X / Section_Width)] = 1;
 
                 Origins_Remaining--;
                 
@@ -492,7 +873,7 @@ void NEWG_CreateLands__WIP(int16_t wp)
 
         }
 
-        Max_Direction = 2 + Random(3);
+        Max_Direction = (2 + Random(3));
 
         Origin_Direction = 0;
 
@@ -508,9 +889,14 @@ void NEWG_CreateLands__WIP(int16_t wp)
 
             }
 
-            Processed_Tile_X = (Origin_X = TILE_Cardinal_XMod2[Origin_Direction]);
+            assert(Origin_X >= 7);
+            assert(Origin_Y >= 7);
+            Processed_Tile_X = (Origin_X + TILE_Cardinal_XMod2[Origin_Direction]);
+            Processed_Tile_Y = (Origin_Y + TILE_Cardinal_YMod2[Origin_Direction]);
+            assert(Processed_Tile_X >= 6);
+            assert(Processed_Tile_Y >= 6);
 
-            Processed_Tile_Y = (Origin_Y = TILE_Cardinal_YMod2[Origin_Direction]);
+            Steps_Taken = 0;
 
             while((Steps_Taken < Steps_To_Take) && (Generated_Land_Tiles <= Desired_Land_Tiles))
             {
@@ -540,16 +926,16 @@ void NEWG_CreateLands__WIP(int16_t wp)
                     if(Direction == Last_Direction)
                     {
 
-                        if(Random(Same_Dir_Steps) == 1)
+                        if(Random((Same_Dir_Steps * 2)) != 1)
                         {
 
-                            Same_Dir_Steps++;
+                            continue;
 
                         }
                         else
                         {
 
-                            break;
+                            Same_Dir_Steps++;
 
                         }
 
@@ -563,18 +949,21 @@ void NEWG_CreateLands__WIP(int16_t wp)
 
                     Last_Direction = Direction;
 
+                    assert(Processed_Tile_X >= 6);
+                    assert(Processed_Tile_Y >= 6);
                     Next_Tile_X = (Processed_Tile_X + TILE_Cardinal_XMod[Direction]);
-                    
                     Next_Tile_Y = (Processed_Tile_Y + TILE_Cardinal_YMod[Direction]);
+                    assert(Next_Tile_X >= 5);
+                    assert(Next_Tile_Y >= 5);
 
                     if(
                         (Next_Tile_X < 2)
                         ||
-                        (Next_Tile_X < 4)
+                        (Next_Tile_Y < 4)
                         ||
                         (Next_Tile_X >= 58)
                         ||
-                        (Next_Tile_X >= 36)
+                        (Next_Tile_Y >= 36)
                     )
                     {
                         
@@ -584,19 +973,25 @@ void NEWG_CreateLands__WIP(int16_t wp)
                     else
                     {
 
-                        Processed_Tile_X = Next_Tile_X;
-
-                        Processed_Tile_Y = Next_Tile_Y;
-
-                        Steps_Taken++;
-
+                        break;
+                        
                     }
 
                 }
 
+                Processed_Tile_X = Next_Tile_X;
+
+                Processed_Tile_Y = Next_Tile_Y;
+
+                Steps_Taken++;
+
             }
 
+            Origin_Direction++;
+
         }
+
+        // printf("Generated_Land_Tiles: %d\n", Generated_Land_Tiles);
 
     }
 
@@ -715,7 +1110,7 @@ void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy)
         // ; if the tile is bordered by multiple different land
         // ; masses, consolidate them all into one
 
-        SET_LANDMASS((wx - 1), wy, wp, NEWG_LandmassCount);
+        SET_LANDMASS((wx - 1), wy, wp, (uint8_t)NEWG_LandmassCount);
 
         NEWG_LandmassCount++;
 
@@ -723,7 +1118,7 @@ void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy)
     else
     {
 
-        First_Found_Landmass = Landmass_ID_Array;
+        First_Found_Landmass = Landmass_ID_Array[0];
 
         for(Array_Index = 1; Array_Index < IDK; Array_Index++)
         {
@@ -760,7 +1155,7 @@ void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy)
                         if(GET_LANDMASS((itr_wx + 1), (itr_wy + 1), wp) == Conflicting_ID)
                         {
 
-                            SET_LANDMASS((itr_wx + 1), (itr_wy + 1), wp, First_Found_Landmass);
+                            SET_LANDMASS((itr_wx + 1), (itr_wy + 1), wp, (uint8_t)First_Found_Landmass);
 
                         }
 
@@ -772,7 +1167,7 @@ void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy)
 
         }
 
-        SET_LANDMASS((wx - 1), wy, wp, First_Found_Landmass);
+        SET_LANDMASS((wx - 1), wy, wp, (uint8_t)First_Found_Landmass);
 
     }
 

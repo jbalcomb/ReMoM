@@ -41,6 +41,7 @@
     <ClInclude Include="..\..\..\MoX\src\MOX_DAT.h" />
     <ClInclude Include="..\..\..\MoX\src\MOX_DEF.h" />
     <ClInclude Include="..\..\..\MoX\src\MOX_KEYS.h" />
+    <ClInclude Include="..\..\..\MoX\src\MOX_MAC.h" />
     <ClInclude Include="..\..\..\MoX\src\MOX_SET.h" />
     <ClInclude Include="..\..\..\MoX\src\MOX_SND.h" />
     <ClInclude Include="..\..\..\MoX\src\MOX_T4.h" />

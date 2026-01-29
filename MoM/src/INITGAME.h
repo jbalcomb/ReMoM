@@ -20,7 +20,7 @@ extern "C" {
 */
 
 // MGC o56p1
-// WIZ_SetProfiles()
+void Init_Computer_Players(void);
 
 // MGC o56p2
 void NEWG_FinalizeTables__WIP(void);

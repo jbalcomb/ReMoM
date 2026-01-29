@@ -48,7 +48,7 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
 
     terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
-    if(terrain_type != TT_Ocean1)
+    if(terrain_type != tt_Ocean1)
     {
         // HERE:  >= 1 && <= ??
         if(terrain_type < TT_Ocean2)
@@ -83,7 +83,7 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
                                                 // HERE:  > 'Shore1 Range' && 'RiverM, Lake, Shore2, Rivers Range' < 'Mountain Range' < 'Hills Range' < 'Desert Range' < 'Shore2 Range'  < '4WRiver Range' < 'Shore3 Range < 'Tundra Range'
                                                 // HERE:  ¿ 'RiverM, Lake, Shore2, Rivers Range' ?
 
-                                                // IDGI  terrain_type_switch_value = terrain_type - e_TT_Grass1;  /* enum TER_TYPES */
+                                                // IDGI  terrain_type_switch_value = terrain_type - e_TT_Grass1;  /* enum e_TERRAIN_TYPES */
 //  ; DATA XREF: TILE_GetFood+B5
 //  ; jump table for switch statement
 // ovr161:01AC
@@ -306,7 +306,7 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
     }
     else
     {
-        // 0x0000  _Ocean  TT_Ocean1
+        // 0x0000  _Ocean  tt_Ocean1
         food_units = 0;
     }
 
@@ -973,7 +973,7 @@ int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
         return 2;
     }
 
-    // TT_Ocean1, TT_BugGrass, TT_Shore1_1st, TT_Lake, TT_Shore1_end
+    // tt_Ocean1, TT_BugGrass, TT_Shore1_1st, TT_Lake, TT_Shore1_end
     if(terrain_type < tt_Grasslands1)
     {
         return ST_UNDEFINED;

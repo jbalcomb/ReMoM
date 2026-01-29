@@ -59,9 +59,30 @@ enum Terrain_Type
     e_TT_Count          = 762   /* 0x02FA */
 };
 
-enum TER_TYPES
+/*
+something with base/basic types?
+used in NEWG_SetBaseLands__WIP()
+
+    tt_Grasslands1 = 0x0A2,
+    tt_Forest1     = 0x0A3,
+    tt_Mountain1   = 0x0A4,
+    tt_Hills1      = 0x0AB,
+    tt_Tundra1     = 0x0A7,
+
+NOT
+    tt_Desert1     = 0x0A5,
+    tt_Swamp1      = 0x0A6,
+    tt_Volcano     = 0x0B3,
+    tt_SorceryNode = 0x0A8,
+    tt_NatureNode  = 0x0A9,
+    tt_ChaosNode   = 0x0AA,
+
+used in NEWG_SetSpecLands()
+
+*/
+enum e_TERRAIN_TYPES
 {
-    TT_Ocean1      = 0x0,
+    tt_Ocean1      = 0x0,
     TT_BugGrass    = 0x1,
     TT_Shore1_1st  = 0x2,
     TT_Lake        = 0x12,
