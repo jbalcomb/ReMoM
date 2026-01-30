@@ -38,7 +38,7 @@ void NEWG_CreateWorld__WIP(void);
 void NEWG_ClearLandmasses__WIP(int16_t wp);
 
 // MGC o51p07
-// NEWG_EqualizeNodes()
+void NEWG_EqualizeNodes__WIP(int16_t wp);
 
 // MGC o51p08
 void NEWG_SetSpecLands__WIP(int16_t wp);
@@ -50,16 +50,16 @@ void NEWG_SetBaseLands__WIP(int16_t wp);
 void NEWG_CreateLands__WIP(int16_t wp);
 
 // MGC o51p11
-// NEWG_CreateNodes()
+void NEWG_CreateNodes__WIP(void);
 
 // MGC o51p12
-// NEWG_CreateNodeAura()
+void NEWG_CreateNodeAura__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, int16_t wx, int16_t wy);
 
 // MGC o51p13
-// NODE_IsAuraUnique()
+int16_t NODE_IsAuraUnique__WIP(int16_t node_idx);
 
 // MGC o51p14
-// NEWG_SetNodeType()
+void NEWG_SetNodeType__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, int16_t wp, int8_t * type);
 
 // MGC o51p15
 void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy);

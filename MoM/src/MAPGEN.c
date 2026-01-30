@@ -23,6 +23,7 @@ MoO2
 #include "../../MoX/src/random.h"
 #include "../../MoX/src/Video.h"
 
+#include "special.h"
 #include "TerrType.h"
 
 #include <assert.h>
@@ -215,13 +216,13 @@ void NEWG_CreateWorld__WIP(void)
 
     Draw_Building_The_Worlds(45);
 
-    // TODO  NEWG_CreateNodes();
+    NEWG_CreateNodes__WIP();
 
     Draw_Building_The_Worlds(50);
 
-    // TODO  NEWG_EqualizeNodes(0);
+    NEWG_EqualizeNodes__WIP(0);
 
-    // TODO  NEWG_EqualizeNodes(1);
+    NEWG_EqualizeNodes__WIP(1);
 
     Draw_Building_The_Worlds(55);
 
@@ -360,7 +361,207 @@ void NEWG_ClearLandmasses__WIP(int16_t wp)
 
 // MGC o51p07
 // drake178: NEWG_EqualizeNodes()
-// NEWG_EqualizeNodes()
+/*
+; reduces the amount of sorcery nodes on the plane if
+; there are too many, converting random ones to chaos
+; and nature until there's at least a set amount of
+; each of those
+;
+; INCONSISTENT: will almost always yield a fixed
+;  configuration (4-6-6 or 8-3-3) if there are excess
+;  sorcery nodes, due to ignoring their actual amount
+*/
+/*
+
+*/
+void NEWG_EqualizeNodes__WIP(int16_t wp)
+{
+    int16_t Excess_Sorcery = 0;
+    int16_t Nature_Convert = 0;
+    int16_t Chaos_Convert = 0;
+    int16_t node_idx = 0;
+    int16_t Nature_Count = 0;
+    int16_t Sorcery_Count = 0;
+    int16_t Chaos_Count = 0;
+    int16_t random_node_idx = 0;  // _DI_
+
+    Chaos_Count = 0;
+    Sorcery_Count = 0;
+    Nature_Count = 0;
+
+    // ; count the node types on the selected plane
+
+    for(node_idx = 0; node_idx < NUM_NODES; node_idx++)
+    {
+
+        if(_NODES[node_idx].wp == wp)
+        {
+
+            switch(_NODES[node_idx].type)
+            {
+
+                case nt_Sorcery: { Sorcery_Count++; } break;
+
+                case nt_Nature:  { Nature_Count++;  } break;
+
+                case nt_Chaos:   { Chaos_Count++;   } break;
+
+            }
+
+        }
+
+    }
+
+    Chaos_Convert = 0;
+    Nature_Convert = 0;
+
+    if(wp == ARCANUS_PLANE)
+    {
+        // ; if there are more than 9 sorcery nodes, set the
+        // ; convert amounts such that there will be at least 6
+        // ; each of chaos and nature ones
+        // ; 
+        // ; INCONSISTENT: does not decrement the excess sorcery
+        // ;  count despite setting up the value, so 1 has the
+        // ;  same result as 7
+
+        if(Sorcery_Count > 9)
+        {
+
+            Excess_Sorcery = (Sorcery_Count - 9);
+
+        }
+        else
+        {
+
+            Excess_Sorcery = 0;
+
+        }
+
+        while((Chaos_Count < 6) && (Excess_Sorcery > 0))
+        {
+
+            Chaos_Count++;
+
+            Chaos_Convert++;
+
+        }
+
+        while((Nature_Count < 6) && (Excess_Sorcery > 0))
+        {
+
+            Nature_Count++;
+
+            Nature_Convert++;
+
+        }
+
+    }
+    else  /* MYRROR_PLANE */
+    {
+        // ; if there are more than 4 sorcery nodes, set the
+        // ; convert amounts such that there will be at least 3
+        // ; each of chaos and nature ones
+        // ; 
+        // ; INCONSISTENT: does not decrement the excess sorcery
+        // ;  count despite setting up the value, so 1 has the
+        // ;  same result as 10
+
+        if(Sorcery_Count > 4)
+        {
+
+            Excess_Sorcery = (Sorcery_Count - 4);
+
+        }
+        else
+        {
+
+            Excess_Sorcery = 0;
+
+        }
+
+        while((Chaos_Count < 3) && (Excess_Sorcery > 0))
+        {
+
+            Chaos_Count++;
+
+            Chaos_Convert++;
+
+        }
+
+        while((Nature_Count < 3) && (Excess_Sorcery > 0))
+        {
+
+            Nature_Count++;
+
+            Nature_Convert++;
+
+        }
+
+    }
+
+    // ; convert the specified amount of random sorcery nodes
+    // ; on the plane to chaos
+
+    while(Chaos_Convert > 0)
+    {
+        
+        random_node_idx = (Random(30) - 1);
+
+        if(_NODES[random_node_idx].wp == wp)
+        {
+
+            if(_NODES[random_node_idx].type == nt_Sorcery)
+            {
+
+                _NODES[random_node_idx].type = nt_Chaos;
+
+                _world_maps[((wp * WORLD_SIZE) + (_NODES[random_node_idx].wy * WORLD_WIDTH) + _NODES[random_node_idx].wx)] = tt_ChaosNode;
+
+                // ; entirely unnecessary, already done before
+
+                TILE_SetLandMass__WIP(wp, _NODES[random_node_idx].wx, _NODES[random_node_idx].wy);
+
+                Chaos_Convert--;
+
+            }
+
+        }
+
+    }
+
+    // ; convert the specified amount of random sorcery nodes
+    // ; on the plane to nature
+
+    while(Nature_Convert > 0)
+    {
+        
+        random_node_idx = (Random(30) - 1);
+
+        if(_NODES[random_node_idx].wp == wp)
+        {
+
+            if(_NODES[random_node_idx].type == nt_Sorcery)
+            {
+
+                _NODES[random_node_idx].type = nt_Nature;
+
+                _world_maps[((wp * WORLD_SIZE) + (_NODES[random_node_idx].wy * WORLD_WIDTH) + _NODES[random_node_idx].wx)] = tt_NatureNode;
+
+                // ; entirely unnecessary, already done before
+
+                TILE_SetLandMass__WIP(wp, _NODES[random_node_idx].wx, _NODES[random_node_idx].wy);
+
+                Nature_Convert--;
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // MGC o51p08
 // drake178: NEWG_SetSpecLands()
@@ -949,12 +1150,12 @@ void NEWG_CreateLands__WIP(int16_t wp)
 
                     Last_Direction = Direction;
 
-                    assert(Processed_Tile_X >= 6);
-                    assert(Processed_Tile_Y >= 6);
+                    // assert(Processed_Tile_X >= 6);
+                    // assert(Processed_Tile_Y >= 6);
                     Next_Tile_X = (Processed_Tile_X + TILE_Cardinal_XMod[Direction]);
                     Next_Tile_Y = (Processed_Tile_Y + TILE_Cardinal_YMod[Direction]);
-                    assert(Next_Tile_X >= 5);
-                    assert(Next_Tile_Y >= 5);
+                    // assert(Next_Tile_X >= 5);
+                    // assert(Next_Tile_Y >= 5);
 
                     if(
                         (Next_Tile_X < 2)
@@ -1000,19 +1201,557 @@ void NEWG_CreateLands__WIP(int16_t wp)
 
 // MGC o51p11
 // drake178: NEWG_CreateNodes()
-// NEWG_CreateNodes()
+/*
+; PATCHED / rewritten in the worldgen customizer to
+; create nodes after capitals and towers
+;
+; generates 30 magical nodes with non-overlapping power
+; auras across the two planes, and sets their tiles to
+; the unique node terrain types
+;
+; BUG: when checking for land, the Myrran nodes look at
+;  the Arcanus tile instead
+*/
+/*
+
+*/
+void NEWG_CreateNodes__WIP(void)
+{
+    int16_t wy = 0;
+    int16_t wx = 0;
+    int16_t Y_Section_Base = 0;
+    int16_t X_Section_Base = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t itr2 = 0;  // _DI_
+
+    // ; generate 16 arcanian nodes, complete with auras and
+    // ; terrain type setting
+
+    for(itr = 0; itr < 16; itr++)
+    {
+
+        while(1)
+        {
+somehow1:
+            // X_Section_Base = ((itr / 5) * 12);
+            X_Section_Base = ((itr % 5) * 12);
+
+            Y_Section_Base = ((itr / 5) * 10);
+
+            wx = (X_Section_Base + (Random(24) - 1));
+
+            wy = (Y_Section_Base + (Random(20) - 1));
+
+            if(wx >= WORLD_WIDTH)
+            {
+
+                wx -= WORLD_WIDTH;
+
+            }
+
+            if(wy >= WORLD_HEIGHT)
+            {
+
+                wy -= WORLD_HEIGHT;
+
+            }
+
+            if(wx < 0)
+            {
+
+                wx += WORLD_WIDTH;
+
+            }
+
+            if(wy < 0)
+            {
+
+                wy += WORLD_HEIGHT;
+
+            }
+
+            if(
+                (wx >= 3)
+                &&
+                (wy >= 2)
+                &&
+                (wx < 57)
+                &&
+                (wy < 37)
+                &&
+                (
+                    (_world_maps[((0 * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] != tt_Ocean1)
+                    ||
+                    (Random(40) == 1)
+                )
+            )
+            {
+                
+                for(itr2 = 0; itr2 < itr; itr2++)
+                {
+                    
+                    if(Delta_XY_With_Wrap(wx, wy, _NODES[itr2].wx, _NODES[itr2].wy, WORLD_WIDTH) < 3)
+                    {
+
+                        goto somehow1;
+
+                    }
+
+                }
+
+                _NODES[itr].wx = wx;
+                _NODES[itr].wy = wy;
+                _NODES[itr].wp = ARCANUS_PLANE;
+                _NODES[itr].flags = 0;
+                _NODES[itr].owner_idx = ST_UNDEFINED;
+                _NODES[itr].power = (4 + Random(6));
+
+                NEWG_CreateNodeAura__WIP(_NODES[itr].power, &_NODES[itr].Aura_Xs[0], &_NODES[itr].Aura_Ys[0], wx, wy);
+
+                if(NODE_IsAuraUnique__WIP(itr) != ST_TRUE)
+                {
+
+                    NEWG_SetNodeType__WIP(_NODES[itr].power, &_NODES[itr].Aura_Xs[0], &_NODES[itr].Aura_Ys[0], _NODES[itr].wp, &_NODES[itr].type);
+
+                    break;
+
+                }
+
+            }
+
+        }
+
+    }
+
+    // ; generate 14 myrran nodes, complete with auras and
+    // ; terrain type setting
+    // ; 
+    // ; BUG: checks the Arcanus tile for land instead
+
+    for(itr = 16; itr < NUM_NODES; itr++)
+    {
+
+        while(1)
+        {
+somehow2:
+            // X_Section_Base = ((itr / 5) * 12);
+            X_Section_Base = (((itr - 20) % 5) * 12);
+
+            Y_Section_Base = (((itr - 20) / 5) * 10);
+
+            wx = (X_Section_Base + (Random(24) - 1));
+
+            wy = (Y_Section_Base + (Random(40) - 1));
+
+            if(wx >= WORLD_WIDTH)
+            {
+
+                wx -= WORLD_WIDTH;
+
+            }
+
+            if(wy >= WORLD_HEIGHT)
+            {
+
+                wy -= WORLD_HEIGHT;
+
+            }
+
+            if(wx < 0)
+            {
+
+                wx += WORLD_WIDTH;
+
+            }
+
+            if(wy < 0)
+            {
+
+                wy += WORLD_HEIGHT;
+
+            }
+
+            // ; ensure a minimum distance of 2 from top and bottom,
+            // ; and 3 from the left and right map edges
+
+            if(
+                (wx >= 3)
+                &&
+                (wy >= 2)
+                &&
+                (wx < 57)
+                &&
+                (wy < 37)
+                &&
+                (
+                    (_world_maps[((0 * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] != tt_Ocean1)  // ; BUG: this is the Arcanus tile
+                    ||
+                    (Random(25) == 1)
+                )
+            )
+            {
+                
+                for(itr2 = 0; itr2 < itr; itr2++)
+                {
+                    
+                    if(Delta_XY_With_Wrap(wx, wy, _NODES[itr2].wx, _NODES[itr2].wy, WORLD_WIDTH) < 3)
+                    {
+
+                        goto somehow2;
+
+                    }
+
+                }
+
+                _NODES[itr].wx = (int8_t)wx;
+                _NODES[itr].wy = (int8_t)wy;
+                _NODES[itr].wp = MYRROR_PLANE;
+                _NODES[itr].flags = 0;
+                _NODES[itr].owner_idx = ST_UNDEFINED;
+                _NODES[itr].power = (9 + Random(11));
+
+                NEWG_CreateNodeAura__WIP(_NODES[itr].power, &_NODES[itr].Aura_Xs[0], &_NODES[itr].Aura_Ys[0], wx, wy);
+
+                if(NODE_IsAuraUnique__WIP(itr) != ST_TRUE)
+                {
+
+                    NEWG_SetNodeType__WIP(_NODES[itr].power, &_NODES[itr].Aura_Xs[0], &_NODES[itr].Aura_Ys[0], _NODES[itr].wp, &_NODES[itr].type);
+
+                    break;
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // MGC o51p12
 // drake178: NEWG_CreateNodeAura()
-// NEWG_CreateNodeAura()
+/*
+; PATCHED / functionality moved into the node generator
+; in the worldgen customizer
+;
+; generates and fills the passed byte arrays with the
+; X and Y coordinates of the node's power aura
+*/
+/*
+
+*/
+void NEWG_CreateNodeAura__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, int16_t wx, int16_t wy)
+{
+    int16_t Invalid_Tile = 0;
+    int16_t Random_Y = 0;
+    int16_t Random_X = 0;
+    int16_t Aura_Tile_Y = 0;
+    int16_t Aura_Tile_X = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t itr2 = 0;  // _DI_
+
+    Aura_Xs[0] = (int8_t)wx;
+    Aura_Ys[0] = (int8_t)wy;
+
+    // ; pick tiles 2 to 8 from those adjacent to the node
+    for(itr = 1; ((itr < power) && (itr < 9)); itr++)
+    {
+
+        while(1)
+        {
+
+            Random_X = (Random(4) - 1);
+
+            Random_Y = (Random(4) - 1);
+
+            Aura_Tile_X = (wx + TILE_Cardinal_XMod[Random_X]);
+
+            Aura_Tile_Y = (wy + TILE_Cardinal_YMod[Random_Y]);
+
+            Invalid_Tile = ST_FALSE;
+
+            // ; invalidate the tile if it's already in the array
+
+            for(itr2 = 0; itr2 < itr; itr2++)
+            {
+
+                if(
+                    (Aura_Xs[itr2] == Aura_Tile_X)
+                    &&
+                    (Aura_Ys[itr2] == Aura_Tile_Y)
+                )
+                {
+
+                    Invalid_Tile = ST_TRUE;
+
+                }
+
+            }
+
+            // ; invalidate the tile if it's out of bounds
+
+            if(
+                (Aura_Tile_X <= 0)
+                ||
+                (Aura_Tile_Y <= 0)
+                ||
+                (Aura_Tile_X >= 59)
+                ||
+                (Aura_Tile_Y >= 39)
+            )
+            {
+
+                Invalid_Tile = ST_TRUE;
+
+            }
+
+            if(Invalid_Tile != ST_TRUE)
+            {
+
+                break;
+
+            }
+
+        }
+
+        Aura_Xs[itr] = (int8_t)Aura_Tile_X;
+
+        Aura_Ys[itr] = (int8_t)Aura_Tile_Y;
+
+    }
+
+    for(itr = 9; itr < power; itr++)
+    {
+
+        while(1)
+        {
+
+            Random_X = (Random(4) - 1);
+
+            Random_Y = (Random(4) - 1);
+
+            Aura_Tile_X = (wx + (TILE_Cardinal_XMod[Random_X] * Random(2)));
+
+            Aura_Tile_Y = (wy + (TILE_Cardinal_YMod[Random_Y] * Random(2)));
+
+            Invalid_Tile = ST_FALSE;
+
+            // ; invalidate the tile if it's already in the array
+
+            for(itr2 = 0; itr2 < itr; itr2++)
+            {
+
+                if(
+                    (Aura_Xs[itr2] == Aura_Tile_X)
+                    &&
+                    (Aura_Ys[itr2] == Aura_Tile_Y)
+                )
+                {
+
+                    Invalid_Tile = ST_TRUE;
+
+                }
+
+            }
+
+            // ; invalidate the tile if it's out of bounds
+
+            if(
+                (Aura_Tile_X <= 0)
+                ||
+                (Aura_Tile_Y <= 0)
+                ||
+                (Aura_Tile_X >= 59)
+                ||
+                (Aura_Tile_Y >= 39)
+            )
+            {
+
+                Invalid_Tile = ST_TRUE;
+
+            }
+
+            if(Invalid_Tile != ST_TRUE)
+            {
+
+                break;
+
+            }
+
+        }
+
+        Aura_Xs[itr] = (int8_t)Aura_Tile_X;
+
+        Aura_Ys[itr] = (int8_t)Aura_Tile_Y;
+
+    }
+
+}
+
 
 // MGC o51p13
 // drake178: NODE_IsAuraUnique()
-// NODE_IsAuraUnique()
+int16_t NODE_IsAuraUnique__WIP(int16_t node_idx)
+{
+    int16_t Aura_Ys[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Aura_Xs[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t power = 0;
+    int16_t itr2 = 0;  // _SI_
+    int16_t itr3 = 0;  // _DI_
+    int16_t itr1 = 0;  // _CX_
+
+    power = _NODES[node_idx].power;
+
+    // ; copy the aura coordinates into the local array
+
+    for(itr1 = 0; itr1 < power; itr1++)
+    {
+
+        Aura_Xs[itr1] = _NODES[node_idx].Aura_Xs[itr1];
+        Aura_Ys[itr1] = _NODES[node_idx].Aura_Ys[itr1];
+
+    }
+
+    for(itr1 = 0; itr1 < node_idx; itr1++)
+    {
+
+        for(itr2 = 0; _NODES[itr1].power > itr2; itr2++)
+        {
+            
+            for(itr3 = 0; itr3 < power; itr3++)
+            {
+
+                if(
+                    (Aura_Xs[itr3] == _NODES[itr1].Aura_Xs[itr2])
+                    &&
+                    (Aura_Ys[itr3] == _NODES[itr1].Aura_Ys[itr2])
+                )
+                {
+
+                    return ST_TRUE;
+
+                }
+
+            }
+
+        }
+
+    }
+
+    return ST_FALSE;
+
+}
+
 
 // MGC o51p14
 // drake178: NEWG_SetNodeType()
-// NEWG_SetNodeType()
+/*
+; determines the type of the node using a series of
+; random rolls, then sets it into the passed pointer,
+; and changes the tile type of the first aura tile to
+; the terrain associated with the node type
+;
+; before v1.1, this function used to consider the types
+; of terrain in the node's aura, but now the calculated
+; bias values are simply re-randomized instead
+*/
+/*
+
+*/
+void NEWG_SetNodeType__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, int16_t wp, int8_t * type)
+{
+    int16_t Nature_Bias = 0;
+    int16_t Chaos_Bias = 0;
+    int16_t Sorcery_Bias = 0;
+    int16_t itr = 0;  // _DI_
+
+    Sorcery_Bias = 0;
+    Chaos_Bias = 0;
+    Nature_Bias = 0;
+
+    for(itr = 0; itr < power; itr++)
+    {
+
+        if(_world_maps[((wp * WORLD_SIZE) + (Aura_Ys[itr] * WORLD_WIDTH) + Aura_Xs[itr])] == tt_Ocean1)
+        {
+
+            Sorcery_Bias++;
+
+        }
+
+        if(
+            (_world_maps[((wp * WORLD_SIZE) + (Aura_Ys[itr] * WORLD_WIDTH) + Aura_Xs[itr])] == tt_Mountain1)
+            ||
+            (_world_maps[((wp * WORLD_SIZE) + (Aura_Ys[itr] * WORLD_WIDTH) + Aura_Xs[itr])] == tt_Desert1)
+        )
+        {
+
+            Chaos_Bias++;
+
+        }
+
+
+        if(
+            (_world_maps[((wp * WORLD_SIZE) + (Aura_Ys[itr] * WORLD_WIDTH) + Aura_Xs[itr])] == tt_Grasslands1)
+            ||
+            (_world_maps[((wp * WORLD_SIZE) + (Aura_Ys[itr] * WORLD_WIDTH) + Aura_Xs[itr])] == tt_Forest1)
+        )
+        {
+
+            Chaos_Bias++;
+
+        }
+
+    }
+
+    Sorcery_Bias = Random(25);
+
+    Chaos_Bias = Random(15);
+
+    Nature_Bias = Random(15);
+        
+    if(
+        (Chaos_Bias > Sorcery_Bias)
+        &&
+        (Chaos_Bias > Nature_Bias)
+    )
+    {
+
+        _world_maps[((wp * WORLD_SIZE) + (Aura_Ys[itr] * WORLD_WIDTH) + Aura_Xs[itr])] = tt_ChaosNode;
+
+        *type = nt_Chaos;
+
+        TILE_SetLandMass__WIP(wp, Aura_Xs[0], Aura_Ys[0]);
+
+    }
+    else
+    {
+
+        if(Sorcery_Bias > Nature_Bias)
+        {
+
+            _world_maps[((wp * WORLD_SIZE) + (Aura_Ys[itr] * WORLD_WIDTH) + Aura_Xs[itr])] = tt_SorceryNode;
+
+            *type = nt_Sorcery;
+
+        }
+        else
+        {
+
+            _world_maps[((wp * WORLD_SIZE) + (Aura_Ys[itr] * WORLD_WIDTH) + Aura_Xs[itr])] = tt_NatureNode;
+
+            *type = nt_Nature;
+
+        }
+
+        TILE_SetLandMass__WIP(wp, Aura_Xs[0], Aura_Ys[0]);
+
+    }
+
+}
+
 
 // MGC o51p15
 // drake178: TILE_SetLandMass()
