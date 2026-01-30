@@ -132,9 +132,9 @@ ITEM_MAX_POWERS
 
 #define FST_HERO                    0
 #define LST_HERO                   34
-#define FST_NORM                   35
+#define FST_NORM                   35  // Normal Unit
 #define LST_NORM                  153
-#define FST_FANT                  154
+#define FST_FANT                  154  // Fantastic Unit
 #define LST_FANT                  192
 
 #define UNIT_LEVEL_MAX              8
