@@ -23,10 +23,13 @@ MoO2
 #include "../../MoX/src/random.h"
 #include "../../MoX/src/Video.h"
 
+#include "RACETYPE.h"
 #include "special.h"
 #include "TerrType.h"
+#include "UNITTYPE.h"
 
-#include <assert.h>
+#include <assert.h>     /* assert() */
+#include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 
 
 
@@ -234,7 +237,7 @@ void NEWG_CreateWorld__WIP(void)
 
     NEWG_TileIsleExtend__WIP(1);
 
-    // TODO  NEWG_CreateEZs();
+    NEWG_CreateEZs__WIP();
 
     Draw_Building_The_Worlds(65);
 
@@ -2283,11 +2286,826 @@ void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy)
 
 // MGC o51p16
 // drake178: NEWG_CreateEZs()
-// NEWG_CreateEZs()
+/*
+; populates the encounter zone table
+*/
+/*
+
+*/
+void NEWG_CreateEZs__WIP(void)
+{
+    int16_t wy = 0;
+    int16_t wx = 0;
+    int16_t itr2 = 0;
+    int16_t wp = 0;
+    int16_t Strong_Lair_Amt = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t IDK = 0;  // _DI_
+
+    Strong_Lair_Amt = 25;
+
+    // create the 6 Tower of Wizardry encounters on Arcanus
+
+    for(itr = 0; itr < NUM_TOWERS; itr++)
+    {
+
+        NEWG_CreateEncounter__WIP(itr, ARCANUS_PLANE, _TOWERS[itr].wx, _TOWERS[itr].wy, 3, 0, (650 + (50 * Random(11))));
+
+    }
+
+    // ; copy the Arcanus tower encounters into a separate set
+    // ; on Myrror (same records otherwise)
+
+    for(itr = NUM_TOWERS; itr < (2 * NUM_TOWERS); itr++)
+    {
+
+        memcpy(&_LAIRS[itr], &_LAIRS[(itr - NUM_TOWERS)], sizeof(struct s_LAIR));
+
+        _LAIRS[itr].wp = MYRROR_PLANE;
+
+    }
+
+    // ; create the 30 node encounters
+
+    for(itr = 0; itr < NUM_NODES; itr++)
+    {
+
+        IDK = (((((_NODES[itr].power - 1) * _magic) / 2) / 6) + 1);
+
+        SETMAX(IDK, 4);
+
+        SETMIN(IDK, 1);
+
+        NEWG_CreateEncounter__WIP(((2 * NUM_TOWERS) + itr), _NODES[itr].wp, _NODES[itr].wx, _NODES[itr].wy, IDK, (_NODES[itr].type + 1), ((((_NODES[itr].power * _NODES[itr].power) * (4 + Random(11))) * (_magic + 1)) / 2));
+
+    }
+
+    // ; create 25 random strong encounters on non-ocean tiles
+
+    for(itr = 0; itr < Strong_Lair_Amt; itr++)
+    {
+
+        wp = (Random(2) - 1);
+
+        wx = (2 + Random(54));
+
+        wy = (2 + Random(34));
+
+        if(TILE_IsOcean(wx, wy, wp) != ST_TRUE)
+        {
+
+            for(itr2 = 0; ((itr + 42) > itr2); itr2++)
+            {
+
+                if(Delta_XY_With_Wrap(wx, wy, _LAIRS[itr2].wx, _LAIRS[itr2].wy, WORLD_WIDTH) < 2)
+                {
+                    break;
+                }
+
+            }
+
+            if(wp == ARCANUS_PLANE)
+            {
+
+                IDK = (50 + (Random(29) * 50));
+
+            }
+            else
+            {
+
+                IDK = (100 + (Random(24) * 100));
+
+            }
+
+            NEWG_CreateEncounter__WIP((((2 * NUM_TOWERS) + NUM_NODES) + itr), wp, wx, wy, IDK, 4, IDK);
+
+        }
+
+    }
+
+    // ; create 32 weak random encounters on non-ocean tiles
+
+    for(itr = 0; itr < 32; itr++)
+    {
+
+        wp = (Random(2) - 1);
+
+        wx = (2 + Random(54));
+
+        wy = (2 + Random(34));
+
+        if(TILE_IsOcean(wx, wy, wp) != ST_TRUE)
+        {
+
+            for(itr2 = 0; ((itr + (((2 * NUM_TOWERS) + NUM_NODES) + Strong_Lair_Amt)) > itr2); itr2++)
+            {
+
+                if(Delta_XY_With_Wrap(wx, wy, _LAIRS[itr2].wx, _LAIRS[itr2].wy, WORLD_WIDTH) < 2)
+                {
+                    break;
+                }
+
+            }
+
+            if(wp == ARCANUS_PLANE)
+            {
+
+                IDK = (Random(10) * 10);
+
+            }
+            else
+            {
+
+                IDK = (Random(20) * 10);
+
+            }
+
+            NEWG_CreateEncounter__WIP((((2 * NUM_TOWERS) + NUM_NODES + Strong_Lair_Amt) + itr), wp, wx, wy, IDK, 4, IDK);
+
+        }
+
+    }
+
+    // ; mark the last 3 records in the table as empty
+
+    for(itr = ((2 * NUM_TOWERS) + NUM_NODES + Strong_Lair_Amt + 32); itr < ((2 * NUM_TOWERS) + NUM_NODES + Strong_Lair_Amt + 32 + 3); itr++)
+    {
+
+        _LAIRS[itr].intact = ST_FALSE;
+
+    }
+
+}
+
 
 // MGC o51p17
 // drake178: NEWG_CreateEncounter()
-// NEWG_CreateEncounter()
+/*
+; clears and then populates the specified encounter
+; record with guardians and treasure based on zone
+; type, altering the passed budget based on the plane
+; and the difficulty setting
+;
+; BUG: has multiple smaller bugs and inconsistencies
+*/
+/*
+
+*/
+void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t UU, int16_t lair_type, int16_t budget)
+{
+    int16_t Tries = 0;
+    int16_t Divided_Budget = 0;
+    int16_t Highest_Cost = 0;
+    int16_t Picked_Unit_Type = 0;
+    int16_t Price = 0;
+    int16_t race_type = 0;
+    int16_t unit_type = 0;
+    int16_t IDK;  // _DI_
+
+    budget = ((budget * (_difficulty + 1)) / 4);  // 
+
+    _LAIRS[lair_idx].wx = wx;
+
+    _LAIRS[lair_idx].wy = wy;
+
+    _LAIRS[lair_idx].wp = wp;
+
+    _LAIRS[lair_idx].intact = ST_TRUE;
+
+// FFFFFFFF ; enum EZ_Types
+// FFFFFFFF EZ_Tower  = 0
+// FFFFFFFF EZ_Chaos_Node  = 1
+// FFFFFFFF EZ_Nature_Node  = 2
+// FFFFFFFF EZ_Sorcery_Node  = 3
+// FFFFFFFF EZ_Cave  = 4
+// FFFFFFFF EZ_Dungeon  = 5
+// FFFFFFFF EZ_Ancient_Temple  = 6
+// FFFFFFFF EZ_Keep  = 7
+// FFFFFFFF EZ_Monster_Lair  = 8
+// FFFFFFFF EZ_Ruins  = 9
+// FFFFFFFF EZ_Fallen_Temple  = 10
+// enum e_LAIR_TYPE
+// {
+//     lt_Tower            =  1,
+//     lt_Chaos_Node       =  2,
+//     lt_Nature_Node      =  3,
+//     lt_Sorcery_Node     =  4,
+//     lt_Cave             =  5,
+//     lt_Dungeon          =  6,
+//     lt_Ancient_Temple   =  7,
+//     lt_Keep             =  8,
+//     lt_Monster_Lair     =  9,
+//     lt_Ruins            = 10,
+//     lt_Fallen_Temple    = 11
+// };
+
+    switch(lair_type)
+    {
+        case 0:
+        {
+
+            _LAIRS[lair_idx].type = lt_Tower;
+
+        } break;
+        case 1:
+        {
+
+            _LAIRS[lair_idx].type = lt_Sorcery_Node;
+
+        } break;
+        case 2:
+        {
+
+            _LAIRS[lair_idx].type = lt_Nature_Node;
+
+        } break;
+        case 3:
+        {
+
+            _LAIRS[lair_idx].type = lt_Chaos_Node;
+
+        } break;
+        default:
+        {
+
+            _LAIRS[lair_idx].type = (lt_Cave + (Random(7) - 1));
+
+        } break;
+
+    }
+
+    _LAIRS[lair_idx].Loot_Gold = 0;
+
+    _LAIRS[lair_idx].Loot_Mana = 0;
+
+    _LAIRS[lair_idx].Spell_n_Special = 0;
+
+    _LAIRS[lair_idx].Item_Count = 0;
+
+    _LAIRS[lair_idx].Misc_Flags = 0;
+
+    _LAIRS[lair_idx].guard1_unit_type = 0;
+
+    _LAIRS[lair_idx].guard2_unit_type = 0;
+
+    _LAIRS[lair_idx].guard1_count = 0;
+
+    _LAIRS[lair_idx].guard2_count = 0;
+
+    if(lair_type == 1)
+    {
+
+            race_type = rt_Sorcery;
+
+    }
+    else if(lair_type == 3)
+    {
+
+            race_type = rt_Chaos;
+
+    }
+    else if(lair_type == 2)
+    {
+
+            race_type = rt_Nature;
+        
+    }
+    else if(lair_type == 0)  // New Game Lair Type - Tower
+    {
+
+        // ; assign a race based on a random roll of 6, with 1
+        // ; and 2 corresponding to Death, and the rest of the
+        // ; numbers to one other realm each
+
+        switch((Random(6) - 1))
+        {
+            case 0:
+            case 1:
+            {
+
+                race_type = rt_Death;
+
+            } break;
+            case 2:
+            {
+
+                race_type = rt_Chaos;
+
+            } break;
+            case 3:
+            {
+                
+                race_type = rt_Life;
+
+            } break;
+            case 4:
+            {
+
+                race_type = rt_Nature;
+
+            }
+            case 5:
+            {
+                
+                race_type = rt_Sorcery;
+
+            } break;
+        }
+
+    }
+    else if(
+        (_LAIRS[lair_idx].type = lt_Ancient_Temple)
+        ||
+        (_LAIRS[lair_idx].type = lt_Ruins)
+        ||
+        (_LAIRS[lair_idx].type = lt_Fallen_Temple)
+    )
+    {
+        
+        // ; assign a race based on a random roll of 4, with 1
+        // ; to 3 corresponding to Death, and 4 to Life
+
+        switch((Random(4) - 1))
+        {
+            case 0:
+            case 1:
+            case 2:
+            {
+                race_type = rt_Death;
+            } break;
+            case 3:
+            {
+                race_type = rt_Life;
+            } break;
+
+        }
+
+    }
+    else
+    {
+
+        // ; assign a race based on a random roll of 5, with 1
+        // ; and 2 corresponding to Death, 3 and 4 to Chaos, and
+        // ; 5 to Nature
+        // ; 
+        // ; BUG: the first four cases all fall through to the
+        // ; final one, resulting in 100% Nature creatures
+
+        switch((Random(5) - 1))
+        {
+            case 0: { race_type = rt_Death;  }  // ; BUG: falls through all the way to the last case
+            case 1: { race_type = rt_Death;  }  // ; BUG: falls through all the way to the last case
+            case 2: { race_type = rt_Chaos;  }  // ; BUG: falls through all the way to the last case
+            case 3: { race_type = rt_Chaos;  }  // ; BUG: falls through all the way to the last case
+            case 4: { race_type = rt_Nature; }  // ; BUG: falls through all the way to the last case
+        }
+
+    }
+
+    Tries = 0;
+    while(Tries < 200)
+    {
+
+        Divided_Budget = (budget / Random(4));
+
+        Highest_Cost = 0;
+
+        Picked_Unit_Type = ST_UNDEFINED;
+
+        // ; loop through the units to try and find the one with
+        // ; the highest cost that is under the divided budget,
+        // ; ignoring those that do not match the realm or have
+        // ; transport capability
+
+        for(unit_type = 150; unit_type < NUM_UNIT_TYPES; unit_type++)
+        {
+
+            if(
+                (_unit_type_table[unit_type].race_type == race_type)
+                &&
+                (_unit_type_table[unit_type].Transport == 0)
+                &&
+                (_unit_type_table[unit_type].cost > Highest_Cost)
+                &&
+                (_unit_type_table[unit_type].cost < Divided_Budget)
+            )
+            {
+
+                Highest_Cost = _unit_type_table[unit_type].cost;
+
+                Picked_Unit_Type = unit_type;
+
+            }
+
+        }
+
+        Tries++;
+
+        if(
+            (Picked_Unit_Type != ST_UNDEFINED)
+            ||
+            (Tries >= 200)
+        )
+        {
+
+            if(Tries < 200)
+            {
+
+                _LAIRS[lair_idx].guard1_unit_type = Picked_Unit_Type;
+
+                _LAIRS[lair_idx].guard1_count = (budget / _unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost);
+
+                if(
+                    (_LAIRS[lair_idx].guard1_count > 1)
+                    &&
+                    (Random(2) == 1)
+                )
+                {
+
+                    _LAIRS[lair_idx].guard1_count -= 1;
+
+                }
+
+                SETMAX(_LAIRS[lair_idx].guard1_count, 8);
+
+                budget -= (_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost * _LAIRS[lair_idx].guard1_count);
+
+            }
+        }
+
+    }  /* while(Tries < 200) */
+
+
+
+    Tries = 0;
+
+    if(
+        (_LAIRS[lair_idx].guard1_count != 9)  // ; conflicting condition - will always jump
+        &&
+        (_LAIRS[lair_idx].guard1_count != 0)
+    )
+    {
+
+        while(Tries < 200)
+        {
+
+            Divided_Budget = (budget / Random((10 - _LAIRS[lair_idx].guard1_count)));
+
+            Highest_Cost = 0;
+
+            Picked_Unit_Type = ST_UNDEFINED;
+
+            // ; loop through the units to try and find the one with
+            // ; the highest cost that is under the divided budget,
+            // ; ignoring those that do not match the realm, have
+            // ; transport capability, or are already featured as the
+            // ; primary guardians
+
+            for(unit_type = 150; unit_type < NUM_UNIT_TYPES; unit_type++)
+            {
+
+                if(
+                    (_unit_type_table[unit_type].race_type == race_type)
+                    &&
+                    (_unit_type_table[unit_type].Transport == 0)
+                    &&
+                    (_unit_type_table[unit_type].cost > Highest_Cost)
+                    &&
+                    (_unit_type_table[unit_type].cost < Divided_Budget)
+                )
+                {
+
+                    if(_LAIRS[lair_idx].guard1_unit_type != unit_type)
+                    {
+
+                        Highest_Cost = _unit_type_table[unit_type].cost;
+
+                        Picked_Unit_Type = unit_type;
+
+                    }
+
+                }
+
+            }
+
+            Tries++;
+
+            if(
+                (Picked_Unit_Type != ST_UNDEFINED)
+                ||
+                (Tries >= 200)
+            )
+            {
+
+                if(Tries < 200)
+                {
+
+                    _LAIRS[lair_idx].guard2_unit_type = Picked_Unit_Type;
+
+                    _LAIRS[lair_idx].guard2_count = (budget / _unit_type_table[_LAIRS[lair_idx].guard2_unit_type].cost);
+
+                    if((_LAIRS[lair_idx].guard1_count + _LAIRS[lair_idx].guard2_count) > 9)
+                    {
+
+                        _LAIRS[lair_idx].guard2_count = (9 - _LAIRS[lair_idx].guard1_count);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }  /* while(Tries < 200) */
+
+
+
+    if(_LAIRS[lair_idx].guard1_unit_type == 0)
+    {
+
+        _LAIRS[lair_idx].guard1_count = 0;
+
+    }
+
+    if(_LAIRS[lair_idx].guard2_unit_type == 0)
+    {
+
+        _LAIRS[lair_idx].guard2_count = 0;
+
+    }
+
+    // ; PATCHED here to make the more expensive creature
+    // ; always be the primary guardian
+
+    IDK = (_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost * _LAIRS[lair_idx].guard1_count);
+
+    // ; BUG: this is not always the smaller part of the
+    // ; treasure budget
+
+    IDK += ((_unit_type_table[_LAIRS[lair_idx].guard2_unit_type].cost * _LAIRS[lair_idx].guard2_count) / 2);
+
+    if(_difficulty != god_Impossible)
+    {
+
+        IDK = ((IDK * (_difficulty + 1)) / 4);
+
+    }
+
+    if(wp == ARCANUS_PLANE)
+    {
+
+        IDK = ((IDK * (49 + Random(76))) / 100);
+
+    }
+    else
+    {
+
+        IDK = ((IDK * (75 + Random(100))) / 100);
+
+    }
+
+    SETMIN(IDK, 50);
+
+    // ; PATCHED here to prevent high-budget sites from
+    // ; awarding only a single special pick (NOT included in
+    // ; the Community Patch)
+
+    if(lair_type == 0)  // New Game Lair Type - Temple
+    {
+
+        Price = Random(4);
+
+        IDK -= (((Price * Price) * 50) - 100);
+
+        _LAIRS[lair_idx].Spell_n_Special = Price;
+
+    }
+
+    // ; PATCHED here to prevent high-budget sites from
+    // ; awarding only a single special pick (NOT included in
+    // ; the Community Patch)
+
+    if(IDK >= 50)
+    {
+
+        switch(Random(15))
+        {
+            case 0:
+            {
+                // DNE
+            } break;
+            case 1:
+            {
+                Price = (Random(20) * 10);
+                SETMAX(Price, IDK);
+                Price = ((Price / 10) * 10);
+                IDK -= 200;
+                _LAIRS[lair_idx].Loot_Gold = Price;
+            }
+            case 2:
+            {
+
+            } break;
+            case 3:
+            {
+                Price = (Random(20) * 10);
+                SETMAX(Price, IDK);
+                Price = ((Price / 10) * 10);
+                IDK -= 200;
+                _LAIRS[lair_idx].Loot_Mana = Price;
+            } break;
+            case 4:
+            {
+
+            } break;
+            case 5:
+            {
+
+                // ; magical item
+                // ; 
+                // ; qualify:  300
+                // ; value:    400 - 3000
+                // ; max:      3
+                // ; rounded down to the nearest 10 that fits the budget
+
+                if(
+                    (_LAIRS[lair_idx].Item_Count < 3)
+                    &&
+                    (IDK >= 300)
+                )
+                {
+
+                    Price = (300 + (Random(27) * 100));
+
+                    SETMAX(Price, IDK);
+
+                    Price = ((Price / 10) * 10);
+
+                    IDK -= Price;
+
+                    _LAIRS[lair_idx].Item_Values[_LAIRS[lair_idx].Item_Count] = Price;
+
+                    _LAIRS[lair_idx].Item_Count += 1;
+
+                }
+
+            } break;
+            case 6:
+            {
+
+            } break;
+            case 7:
+            {
+
+            } break;
+            case 8:
+            {
+
+            } break;
+            case 9:
+            {
+
+            } break;
+            case 10:
+            {
+
+                // ; prisoner hero
+                // ; 
+                // ; qualify:  400
+                // ; value:    1000
+                // ; max:      1
+
+                if(
+                    (IDK >= 400)
+                    &&
+                    (_LAIRS[lair_idx].Misc_Flags == 0)
+                )
+                {
+
+                    _LAIRS[lair_idx].Misc_Flags = 1;
+
+                    IDK -= 1000;
+
+                }
+
+            } break;
+            case 11:
+            {
+
+                // ; spell
+                // ; 
+                // ; qualify:  rarity * rarity * 50
+                // ; value:    rarity * rarity * 50
+                // ; max:      1
+                // ; if there is already a spell in the hoard, the new
+                // ; rarity is added to the old one, allowing higher
+                // ; rarities to be awarded cheaper than they should be
+
+                // ; PATCHED here to upgrade spell treasure properly and
+                // ; award the highest possible rarity instead of
+                // ; discarding if the rolled price is too high
+
+                Price = Random(4);
+
+                if(
+                    (((Price * Price) * 50) < IDK)
+                    &&
+                    (_LAIRS[lair_idx].Spell_n_Special < 4)
+                )
+                {
+
+                    IDK -= ((Price * Price) * 50);
+
+                    _LAIRS[lair_idx].Spell_n_Special += Price;
+
+                    SETMAX(_LAIRS[lair_idx].Spell_n_Special, 4);
+                    
+                }
+
+            } break;
+            case 12:
+            {
+
+            } break;
+            case 13:
+            {
+
+            } break;
+            case 14:
+            {
+
+                // ; spellbook / retort
+                // ; 
+                // ; qualify:  1000
+                // ; value:    3000
+                // ; max:      2
+                // ; always 2 if there's at least 2k budget remaining
+                // ; (discards all other treasure in the end)
+
+                Price = Random(4);
+
+                if(
+                    (Price == 1)
+                    &&
+                    (IDK >= 3000)
+                )
+                {
+
+                    _LAIRS[lair_idx].Spell_n_Special = 6;
+
+                    IDK -= 3000;
+
+                }
+                else if(IDK >= 2000)
+                {
+
+                    _LAIRS[lair_idx].Spell_n_Special = 6;
+
+                    IDK -= 3000;
+
+                }
+                else if(IDK >= 1000)
+                {
+
+                    _LAIRS[lair_idx].Spell_n_Special = 5;
+
+                    IDK -= 3000;
+
+                }
+
+            } break;
+            case 15:
+            {
+
+            } break;
+
+
+        }
+
+    }
+
+    // ; discard all other treasure if there is a spellbook /
+    // ; retort
+    // ; 
+    // ; INCONSISTENT: can result in a single special instead
+    // ; of 2 if enough of the total has been wasted on these
+
+    if(_LAIRS[lair_idx].Spell_n_Special > 4)
+    {
+
+        _LAIRS[lair_idx].Loot_Gold = 0;
+        
+        _LAIRS[lair_idx].Loot_Mana = 0;
+        
+        _LAIRS[lair_idx].Item_Count = 0;
+        
+        _LAIRS[lair_idx].Misc_Flags = 0;  // clear Prisoner
+
+    }
+
+}
+
 
 // MGC o51p18
 // drake178: UU_UNIT_RandomRacial()

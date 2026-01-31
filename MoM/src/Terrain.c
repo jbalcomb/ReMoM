@@ -2091,6 +2091,7 @@ int16_t Square_Is_OceanLike(int16_t wx, int16_t wy, int16_t wp)
 
     if( (wy >= 0) && (wy < WORLD_HEIGHT) )
     {
+        
         terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
         if(terrain_type <= _Tundra00001000)

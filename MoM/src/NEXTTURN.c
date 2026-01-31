@@ -4154,7 +4154,7 @@ Check_Game_Data();
         {
 
             if(
-                (_unit_type_table[_UNITS[itr_units].type].Race != rt_Death)
+                (_unit_type_table[_UNITS[itr_units].type].race_type != rt_Death)
                 &&
                 ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
             )
@@ -4221,7 +4221,7 @@ Check_Game_Data();
                 {
 
                     if(
-                        (_unit_type_table[_UNITS[itr_units].type].Race != rt_Death)
+                        (_unit_type_table[_UNITS[itr_units].type].race_type != rt_Death)
                         &&
                         ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
                         &&
@@ -4629,7 +4629,7 @@ void Do_All_Units_XP_Check_(void)
         if(
             (_players[_UNITS[itr_units].owner_idx].Globals[HERB_MASTERY] > 0)
             &&
-            (_unit_type_table[_UNITS[itr_units].type].Race != rt_Death)
+            (_unit_type_table[_UNITS[itr_units].type].race_type != rt_Death)
             &&
             ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
         )

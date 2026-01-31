@@ -473,21 +473,37 @@ enum e_NODE_FLAGS
 
 // drake178: EZ_Types
 /*
+FFFFFFFF ; enum EZ_Types
+FFFFFFFF EZ_Tower  = 0
+FFFFFFFF EZ_Chaos_Node  = 1
+FFFFFFFF EZ_Nature_Node  = 2
+FFFFFFFF EZ_Sorcery_Node  = 3
+FFFFFFFF EZ_Cave  = 4
+FFFFFFFF EZ_Dungeon  = 5
+FFFFFFFF EZ_Ancient_Temple  = 6
+FFFFFFFF EZ_Keep  = 7
+FFFFFFFF EZ_Monster_Lair  = 8
+FFFFFFFF EZ_Ruins  = 9
+FFFFFFFF EZ_Fallen_Temple  = 10
+*/
+/*
     {0,...}
+NOTE(JimBalcomb,20250131): Working on NewGame, just realized these are all off by +1. No idea how.
 */
 enum e_LAIR_TYPE
 {
-    lt_Tower            =  1,
-    lt_Chaos_Node       =  2,
-    lt_Nature_Node      =  3,
-    lt_Sorcery_Node     =  4,
-    lt_Cave             =  5,
-    lt_Dungeon          =  6,
-    lt_Ancient_Temple   =  7,
-    lt_Keep             =  8,
-    lt_Monster_Lair     =  9,
-    lt_Ruins            = 10,
-    lt_Fallen_Temple    = 11
+    lt_NONE             = -1,   // N/A
+    lt_Tower            =  0,   // N/A
+    lt_Chaos_Node       =  1,   // Node, sbr_Chaos
+    lt_Nature_Node      =  2,   // Node, sbr_Nature
+    lt_Sorcery_Node     =  3,   // Node, sbr_Sorcery
+    lt_Cave             =  4,   // ..., Random(5)
+    lt_Dungeon          =  5,   // ..., sbr_Death
+    lt_Ancient_Temple   =  6,   // Temple, Life
+    lt_Keep             =  7,   // ..., sbr_Death
+    lt_Monster_Lair     =  8,   // ..., Random(5)
+    lt_Ruins            =  9,   // ..., sbr_Death
+    lt_Fallen_Temple    = 10    // Temple, Life
 };
 
 
@@ -1699,7 +1715,7 @@ struct s_LAIR
     /* 00 */  int8_t   wx;
     /* 01 */  int8_t   wy;
     /* 02 */  int8_t   wp;
-    /* 03 */  int8_t   Intact;  // {F,T} ... set to false by Lair_Clear() ... Draw_Map_Lairs() only *draws* if true
+    /* 03 */  int8_t   intact;  // {F,T} ... set to false by Lair_Clear() ... Draw_Map_Lairs() only *draws* if true
     /* 04 */  int8_t   type;    // {0,...,} ... Draw_Map_Lairs() only *draws* if > 3 {0,...3} are tower and nodes
     /* 05 */  uint8_t  guard1_unit_type;
     /* 06 */  uint8_t  guard1_count;       // ¿ code only checks low-nibble for count != 0 ?
@@ -1709,7 +1725,7 @@ struct s_LAIR
     /* 0A */  int16_t  Loot_Gold;   // 2-byte, signed
     /* 0C */  int16_t  Loot_Mana;   // 2-byte, signed
     /* 0E */  int8_t   Spell_n_Special;
-    /* 0F */  uint8_t  Misc_Flags; // 7: 6: 5: 4: 3: 2: ¿ attacked ? 1: ¿ visited ? 0: Prisoner {F,T}
+    /* 0F */  uint8_t  Misc_Flags; // 7: 6: 5: 4: 3: 2: ¿ attacked ? 1: ¿ visited ? 0: Prisoner {F,T}  ... NEWG_CreateEncounter__WIP() sets 1 for prisoner, Lair_Generate_Treasure() does Test_Bit_Field()
     /* 10 */  int8_t   Item_Count;
     /* 11 */  int8_t   pad2B_11h;  /* 2-byte alignment padding */
     /* 12 */  int16_t  Item_Values[3];

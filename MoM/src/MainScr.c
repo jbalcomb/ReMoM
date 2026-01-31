@@ -6240,7 +6240,7 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
         if(
             (_LAIRS[itr_lairs].wp == wp)
             &&
-            (_LAIRS[itr_lairs].Intact == ST_TRUE)
+            (_LAIRS[itr_lairs].intact == ST_TRUE)
             &&
             ((_LAIRS[itr_lairs].wx != dst_wx) || (_LAIRS[itr_lairs].wy != dst_wy))
         )

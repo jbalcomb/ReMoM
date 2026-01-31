@@ -2865,7 +2865,7 @@ void Generate_Mercenaries(int16_t player_idx, int16_t * wx, int16_t * wy, int16_
         }
 
         if(
-            (_unit_type_table[unit_type].Race == rt_Draconian)
+            (_unit_type_table[unit_type].race_type == rt_Draconian)
             &&
             (_unit_type_table[unit_type].Construction > 0)
         )
@@ -2874,15 +2874,15 @@ void Generate_Mercenaries(int16_t player_idx, int16_t * wx, int16_t * wy, int16_
         }
 
         if(
-            (_unit_type_table[unit_type].Race == rt_Beastmen)
+            (_unit_type_table[unit_type].race_type == rt_Beastmen)
             ||
-            (_unit_type_table[unit_type].Race == rt_Dark_Elf)
+            (_unit_type_table[unit_type].race_type == rt_Dark_Elf)
             ||
-            (_unit_type_table[unit_type].Race == rt_Draconian)
+            (_unit_type_table[unit_type].race_type == rt_Draconian)
             ||
-            (_unit_type_table[unit_type].Race == rt_Dwarf)
+            (_unit_type_table[unit_type].race_type == rt_Dwarf)
             ||
-            (_unit_type_table[unit_type].Race == rt_Troll)
+            (_unit_type_table[unit_type].race_type == rt_Troll)
         )
         {
             if(Myrror_Available == ST_FALSE)

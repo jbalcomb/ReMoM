@@ -281,7 +281,7 @@ struct s_UNIT_TYPE
     /* 09 */  int8_t   Move_Halves;
     /* 0A */  int16_t  cost;                    /* Unit Cost */
     /* 0C */  int8_t   Upkeep;
-    /* 0D */  int8_t   Race;
+    /* 0D */  int8_t   race_type;    /* enum e_RACE_TYPE */
     /* 0E */  // int8_t   Bldng1_or_Portrait;   /* enum BLD_TYPE */
     union
     {

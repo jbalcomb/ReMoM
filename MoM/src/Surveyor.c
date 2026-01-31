@@ -987,7 +987,7 @@ int16_t Surveyor_Lairs(int16_t wx, int16_t wy, int16_t wp)
         if(
             (_LAIRS[itr_lairs].wp == wp)
             &&
-            (_LAIRS[itr_lairs].Intact == ST_TRUE)
+            (_LAIRS[itr_lairs].intact == ST_TRUE)
             &&
             (
                 (_LAIRS[itr_lairs].type == 0)
@@ -1143,7 +1143,7 @@ int16_t Surveyor_Nodes(int16_t wx, int16_t wy, int16_t wp)
                     if(
                         (_LAIRS[itr_lairs].wp == wp)
                         &&
-                        (_LAIRS[itr_lairs].Intact == ST_TRUE)
+                        (_LAIRS[itr_lairs].intact == ST_TRUE)
                         &&
                         (_LAIRS[itr_lairs].wx == wx)
                         &&

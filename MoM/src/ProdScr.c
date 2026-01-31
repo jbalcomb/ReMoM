@@ -813,9 +813,9 @@ Capture_Cities_Data();
     {
 
         if(
-            (_unit_type_table[itr].Race == city_race)
+            (_unit_type_table[itr].race_type == city_race)
             ||
-            (_unit_type_table[itr].Race == rt_Standard)
+            (_unit_type_table[itr].race_type == rt_Standard)
         )
         {
 
@@ -865,9 +865,9 @@ Capture_Cities_Data();
         {
 
             if(
-                (_unit_type_table[itr].Race == city_race)
+                (_unit_type_table[itr].race_type == city_race)
                 ||
-                (_unit_type_table[itr].Race == rt_Standard)
+                (_unit_type_table[itr].race_type == rt_Standard)
             )
             {
 

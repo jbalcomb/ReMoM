@@ -305,7 +305,7 @@ int16_t STK_SettleTile(int16_t troop_count, int16_t troops[])
 
     unit_owner = _UNITS[unit_idx].owner_idx;
 
-    unit_race = _unit_type_table[unit_type].Race;
+    unit_race = _unit_type_table[unit_type].race_type;
 
     if(Create_Outpost(unit_wx, unit_wy, unit_wp, unit_race, unit_owner, unit_idx) == ST_TRUE)
     {

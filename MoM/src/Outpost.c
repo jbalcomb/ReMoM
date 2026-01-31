@@ -738,7 +738,7 @@ int16_t Map_Square_Survey(int16_t wx, int16_t wy, int16_t wp)
         if(
             (_LAIRS[itr].wp == wp)
             &&
-            (_LAIRS[itr].Intact == ST_TRUE)
+            (_LAIRS[itr].intact == ST_TRUE)
             &&
             (_LAIRS[itr].wy == wy)
             &&
@@ -754,7 +754,7 @@ int16_t Map_Square_Survey(int16_t wx, int16_t wy, int16_t wp)
         if(
             (_LAIRS[itr].wp == wp)
             &&
-            (_LAIRS[itr].Intact == ST_TRUE)
+            (_LAIRS[itr].intact == ST_TRUE)
             &&
             (_LAIRS[itr].wy == wy)
             &&

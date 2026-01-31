@@ -1400,7 +1400,7 @@ int16_t Cast_Natures_Cures(int16_t player_idx)
         {
 
             if(
-                (_unit_type_table[_UNITS[unit_idx].type].Race != rt_Death)
+                (_unit_type_table[_UNITS[unit_idx].type].race_type != rt_Death)
                 &&
                 ((_UNITS[unit_idx].mutations & UM_UNDEAD) == 0)
             )
