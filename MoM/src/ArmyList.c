@@ -708,7 +708,7 @@ void ArmyList_Screen_Draw(void)
                 else
                 {
                     /* Race-Specific Units */
-                    unit_race = _unit_type_table[unit_type].Race;
+                    unit_race = _unit_type_table[unit_type].race_type;
                     // TODO  if(unit_race < 15)
                     if(unit_race < 14)
                     {

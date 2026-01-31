@@ -2362,7 +2362,7 @@ void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
     {
         if(_LAIRS[itr_lairs].wp == wp)
         {
-            if(_LAIRS[itr_lairs].Intact == ST_TRUE)
+            if(_LAIRS[itr_lairs].intact == ST_TRUE)
             {
                 if(_LAIRS[itr_lairs].type > lt_Sorcery_Node)
                 {

@@ -57,10 +57,12 @@ Init_New_Game_()
 [x] |-> NODE_IsAuraUnique__WIP()
 [x] |-> NEWG_SetNodeType__WIP()
 [x] NEWG_EqualizeNodes()
-[ ] ...move special.c/h from MoM to MoX
 [x] NEWG_CreateTowers()
 [x] NEWG_TileIsleExtend()
-[ ] NEWG_CreateEZs()
+[x] NEWG_CreateEZs()
+
+[ ] ...move special.c/h from MoM to MoX
+
 [ ] NEWG_CreateCapitals()
 [ ] NEWG_CreateNeutrals()
 [ ] NEWG_CreateSpecials()

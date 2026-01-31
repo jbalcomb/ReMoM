@@ -65,10 +65,10 @@ void NEWG_SetNodeType__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, in
 void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy);
 
 // MGC o51p16
-// NEWG_CreateEZs()
+void NEWG_CreateEZs__WIP(void);
 
 // MGC o51p17
-// NEWG_CreateEncounter()
+void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t UU, int16_t lair_type, int16_t budget);
 
 // MGC o51p18
 // UU_UNIT_RandomRacial()

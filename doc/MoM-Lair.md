@@ -1,5 +1,7 @@
 
 
+SEEALSO: New Game Generate Lairs
+
 
 
 Lair_Combat()

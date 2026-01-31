@@ -205,7 +205,7 @@ int16_t Square_Has_Lair(int16_t wx, int16_t wy, int16_t wp)
         if(
             (_LAIRS[itr_lairs].wp == wp)
             &&
-            (_LAIRS[itr_lairs].Intact == ST_TRUE)
+            (_LAIRS[itr_lairs].intact == ST_TRUE)
             &&
             (_LAIRS[itr_lairs].wy == wy)
             &&
@@ -225,7 +225,7 @@ void Lair_Clear(int16_t lair_idx)
     int16_t status;  // _DI_
     int16_t itr_lairs;  // _CX_
 
-    _LAIRS[lair_idx].Intact = ST_FALSE;
+    _LAIRS[lair_idx].intact = ST_FALSE;
 
     // For Towers, clear the other side, as well.
     if(_LAIRS[lair_idx].type == lt_Tower)
@@ -233,7 +233,7 @@ void Lair_Clear(int16_t lair_idx)
         status = ST_UNDEFINED;
         for(itr_lairs = 0; ((itr_lairs < NUM_LAIRS) && (status == ST_UNDEFINED)); itr_lairs++)
         {
-            if(_LAIRS[itr_lairs].Intact == ST_TRUE)
+            if(_LAIRS[itr_lairs].intact == ST_TRUE)
             {
                 if(
                     (_LAIRS[itr_lairs].wy == _LAIRS[lair_idx].wy)
@@ -241,7 +241,7 @@ void Lair_Clear(int16_t lair_idx)
                     (_LAIRS[itr_lairs].wx == _LAIRS[lair_idx].wx)
                 )
                 {
-                    _LAIRS[itr_lairs].Intact = ST_FALSE;
+                    _LAIRS[itr_lairs].intact = ST_FALSE;
                     status = ST_FALSE;
                 }
             }
@@ -543,8 +543,9 @@ int16_t Do_Lair_Confirm(int16_t lair_idx)
     // {chaos node, nature node, sorcery node}
     lair_is_node = ST_FALSE;
     if(
-        (lair_type > 0) &&
-        (lair_type < 4)
+        (lair_type > lt_Tower)
+        &&
+        (lair_type < lt_Cave)
     )
     {
         lair_is_node = ST_TRUE;
@@ -1190,21 +1191,23 @@ e.g.,
     EZ_SpecialTreasure(player_idx, lair_idx, 1, reward_special_count, reward_specials)
     EZ_SpecialTreasure(player_idx, lair_idx, 2, reward_special_count, reward_specials)
 
+Wizard Special Abilities
+
 */
 void EZ_SpecialTreasure(int16_t player_idx, int16_t lair_idx, int16_t points, int16_t * reward_special_count, int16_t reward_specials[])
 {
-    int16_t EZ_Book_Realm;
-    int16_t Tries;
-    int16_t Valid_Reward;
-    int16_t Finished;
-    int16_t DoublePick_Retorts[5];
-    int16_t Book_Count;
-    int16_t Random_Result;
-    int16_t Retort_Count;
-    int8_t * wizard_retorts;
-    int16_t Points_Spent;
-    int16_t retort_idx;
-    int16_t itr;  // _DI_
+    int16_t EZ_Book_Realm = 0;
+    int16_t Tries = 0;
+    int16_t Valid_Reward = 0;
+    int16_t Finished = 0;
+    int16_t DoublePick_Retorts[5] = { 0, 0, 0, 0, 0 };
+    int16_t Book_Count = 0;
+    int16_t Random_Result = 0;
+    int16_t Retort_Count = 0;
+    int8_t * wsa_ptr = NULL;
+    int16_t Points_Spent = 0;
+    int16_t retort_idx = 0;
+    int16_t itr = 0;  // _DI_
 
     // all 5 retorts that cost 2 spell-picks
     DoublePick_Retorts[0] = rtt_Warlord;
@@ -1222,10 +1225,10 @@ void EZ_SpecialTreasure(int16_t player_idx, int16_t lair_idx, int16_t points, in
     while((Points_Spent < points) && (Finished == ST_FALSE))
     {
         Retort_Count = 0;
-        wizard_retorts = &_players[player_idx].alchemy;  // DEDU  ¿ taking a pointer *means* it is not array in the struct ?
-        for(itr = 0; itr < 18; itr++)
+        wsa_ptr = &_players[player_idx].alchemy;  // DEDU  ¿ taking a pointer *means* it is not array in the struct ?
+        for(itr = 0; itr < NUM_WIZARD_SPECIAL_ABILITIES; itr++)
         {
-            if(wizard_retorts[itr] == 1)
+            if(wsa_ptr[itr] == 1)
             {
                 Retort_Count++;
             }
@@ -1247,7 +1250,7 @@ void EZ_SpecialTreasure(int16_t player_idx, int16_t lair_idx, int16_t points, in
             (Book_Count > 12)
         )
         {
-            Finished = -1;
+            Finished = ST_UNDEFINED;
         }
 
 
@@ -1285,8 +1288,8 @@ void EZ_SpecialTreasure(int16_t player_idx, int16_t lair_idx, int16_t points, in
             {
                 for(Tries = 0; Tries < 100; Tries++)
                 {
-                    retort_idx = (Random(18) - 1);
-                    if(wizard_retorts[retort_idx] == 0)
+                    retort_idx = (Random(NUM_WIZARD_SPECIAL_ABILITIES) - 1);
+                    if(wsa_ptr[retort_idx] == 0)
                     {
                         Valid_Reward = ST_FALSE;
                         for(itr = 0; ((itr < 5) && (Valid_Reward == ST_FALSE)); itr++)
@@ -1308,7 +1311,7 @@ void EZ_SpecialTreasure(int16_t player_idx, int16_t lair_idx, int16_t points, in
                                 (points == 2)
                             )
                             {
-                                wizard_retorts[retort_idx] = 1;
+                                wsa_ptr[retort_idx] = 1;
                                 Tries = 1000;
                                 reward_specials[*reward_special_count] = (100 + retort_idx);
                                 *reward_special_count = 1;
@@ -1343,7 +1346,7 @@ void EZ_SpecialTreasure(int16_t player_idx, int16_t lair_idx, int16_t points, in
                             }
                             if(Valid_Reward == ST_TRUE)
                             {
-                                wizard_retorts[retort_idx] = 1;
+                                wsa_ptr[retort_idx] = 1;
                                 reward_specials[*reward_special_count] = (100 + retort_idx);
                                 *reward_special_count += 1;
                                 // ¿ drake178: ; BUG: not a single pick reward ?
@@ -1354,7 +1357,7 @@ void EZ_SpecialTreasure(int16_t player_idx, int16_t lair_idx, int16_t points, in
                                 Tries = 1000;
                             }
                         }  /* if(Valid_Reward == ST_TRUE) {} else {} */
-                    }  /* if(wizard_retorts[retort_idx] == 0) */
+                    }  /* if(wsa_ptr[retort_idx] == 0) */
                 }  /* for(Tries = 0; Tries < 100; Tries++) */
             }  /* if(Random_Result < 75) {} else {} */
         }  /* if(Finished == ST_FALSE) */
@@ -1366,35 +1369,39 @@ void EZ_SpecialTreasure(int16_t player_idx, int16_t lair_idx, int16_t points, in
 // WZD o83p14
 int16_t Lair_Magic_Realm(int16_t lair_idx)
 {
-    int16_t magic_realm;  // _SI_
+    int16_t magic_realm = 0;  // _SI_
 
-    switch((_LAIRS[lair_idx].type - 1))  // {0,...,9}
+    switch(_LAIRS[lair_idx].type)
     {
-        case 0:
+        case lt_Tower:
+        {
+            // DNE
+        } break;
+        case lt_Chaos_Node:
         {
             magic_realm = sbr_Chaos;
         } break;
-        case 1:
+        case lt_Nature_Node:
         {
             magic_realm = sbr_Nature;
         } break;
-        case 2:
+        case lt_Sorcery_Node:
         {
             magic_realm = sbr_Sorcery;
         } break;
-        case 3:
-        case 7:
+        case lt_Cave:
+        case lt_Monster_Lair:
         {
             magic_realm = Random(5);
         } break;
-        case 4:
-        case 6:
-        case 8:
+        case lt_Dungeon:
+        case lt_Keep:
+        case lt_Ruins:
         {
             magic_realm = sbr_Death;
         } break;
-        case 5:
-        case 9:
+        case lt_Ancient_Temple:
+        case lt_Fallen_Temple:
         {
             magic_realm = sbr_Life;
         } break;

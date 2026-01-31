@@ -2710,7 +2710,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
         if(
             (_LAIRS[itr_players].wp == wp)
             &&
-            (_LAIRS[itr_players].Intact == ST_TRUE)
+            (_LAIRS[itr_players].intact == ST_TRUE)
         )
         {
 
@@ -6778,7 +6778,7 @@ int16_t TILE_NextFreeLand__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
     {
 
         if(
-            (_LAIRS[itr1].Intact == ST_TRUE)
+            (_LAIRS[itr1].intact == ST_TRUE)
             &&
             (_LAIRS[itr1].wp == wp)
         )
@@ -7650,7 +7650,7 @@ void AI_SetEnemyStrMaps(int16_t player_idx)
     {
 
         if(
-            (_LAIRS[itr].Intact == ST_TRUE)
+            (_LAIRS[itr].intact == ST_TRUE)
             &&
             (_LAIRS[itr].guard1_count > 0)
         )
@@ -7689,7 +7689,7 @@ void AI_SetEnemyStrMaps(int16_t player_idx)
     for(itr = 0; itr < NUM_LAIRS; itr++)
     {
 
-        if(_LAIRS[itr].Intact != ST_FALSE)
+        if(_LAIRS[itr].intact != ST_FALSE)
         {
 
             wp = _LAIRS[itr].wp;

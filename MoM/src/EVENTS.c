@@ -567,7 +567,7 @@ void Determine_Event(void)
                 for(itr_troops = 0; ((itr_troops < troop_count) && (event_type == et_Rebellion)); itr_troops++)
                 {
 
-                    if(_unit_type_table[_UNITS[troops[itr_troops]].type].Race < rt_Arcane)
+                    if(_unit_type_table[_UNITS[troops[itr_troops]].type].race_type < rt_Arcane)
                     {
 
                         Normal_Units++;
@@ -1229,7 +1229,7 @@ Capture_Cities_Data();
 Check_Game_Data();
         for(itr_players = 0; itr_players < post_event_troop_count; itr_players++)
         {
-            if(_unit_type_table[_UNITS[troops[itr_players]].type].Race < rt_Arcane)
+            if(_unit_type_table[_UNITS[troops[itr_players]].type].race_type < rt_Arcane)
             {
                 _UNITS[troops[itr_players]].owner_idx = NEUTRAL_PLAYER_IDX;
             }

@@ -24135,7 +24135,7 @@ int16_t CTY_RampageVictory(void)
     idx = ST_UNDEFINED;
     for(itr = 0; ((itr < NUM_LAIRS) && (idx == ST_UNDEFINED)); itr++)
     {
-        if(_LAIRS[itr].Intact == ST_FALSE)
+        if(_LAIRS[itr].intact == ST_FALSE)
         {
             idx = itr;
         }
@@ -24243,7 +24243,7 @@ int16_t CTY_RampageVictory(void)
         _LAIRS[idx].wx = _combat_wx;
         _LAIRS[idx].wy = _combat_wy;
         _LAIRS[idx].wp = _combat_wp;
-        _LAIRS[idx].Intact = ST_TRUE;
+        _LAIRS[idx].intact = ST_TRUE;
         _LAIRS[idx].type = lt_Ruins;
         _LAIRS[idx].Loot_Gold = CMB_Gold_Reward;
         _LAIRS[idx].Loot_Mana = 0;
@@ -28176,7 +28176,7 @@ void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp)
             &&
             (_LAIRS[itr].wp == wp)
             &&
-            (_LAIRS[itr].Intact == ST_TRUE)
+            (_LAIRS[itr].intact == ST_TRUE)
         )
         {
 

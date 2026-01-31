@@ -1509,7 +1509,7 @@ void Cartograph_Screen_Draw_Map__WIP(int16_t flag)
     {
         if(_LAIRS[itr_lairs].wp == flag)
         {
-            if(_LAIRS[itr_lairs].Intact == ST_TRUE)
+            if(_LAIRS[itr_lairs].intact == ST_TRUE)
             {
                 if(GET_SQUARE_EXPLORED(_LAIRS[itr_lairs].wx, _LAIRS[itr_lairs].wy, _LAIRS[itr_lairs].wp) != UNEXPLORED)
                 {

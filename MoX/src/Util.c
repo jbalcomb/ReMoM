@@ -437,6 +437,16 @@ void Swap_Short(int16_t * word1, int16_t * word2)
 
 // WZD s22p22 _fmemcpy()
 // Copy_Memory()
+// AKA ST_MoveData()
+// SEEALSO: doc/MoM-BattleUnit.md
+// SEEALSO: doc/MoX-Help.md
+/*
+; compiler selected substitution for memcpy()
+;
+; drake178: MEM_Copy_Far()
+; copies bytes from one memory area to another,
+; replacing any zero segments with ds beforehand
+*/
 
 // WZD s22p23
 int16_t Test_Bit_Field(int16_t bit_idx, uint8_t * bit_field)
