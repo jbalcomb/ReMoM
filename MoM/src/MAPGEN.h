@@ -26,10 +26,10 @@ void NEWG_CreateWorld__WIP(void);
 // NEWG_EZ_MarkHadnLeft()
 
 // MGC o51p03
-// NEWG_TileIsleExtend()
+void NEWG_TileIsleExtend__WIP(int16_t wp);
 
 // MGC o51p04
-// NEWG_CreateTowers()
+void NEWG_CreateTowers__WIP(void);
 
 // MGC o51p05
 // NEWG_CreateCapitals()
@@ -134,13 +134,13 @@ void Draw_Building_The_Worlds(int16_t percent);
 // NEWG_AnimateOceans()
 
 // MGC o51p39
-// TILE_IsOcean()
+int16_t TILE_IsOcean(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p40
-// TILE_HasNode()
+int16_t TILE_HasNode(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p41
-// TILE_HasTower()
+int16_t TILE_HasTower(int16_t wx, int16_t wy);
 
 // MGC o51p42
 // TILE_IsForest()

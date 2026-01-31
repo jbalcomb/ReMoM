@@ -226,13 +226,13 @@ void NEWG_CreateWorld__WIP(void)
 
     Draw_Building_The_Worlds(55);
 
-    // TODO  NEWG_CreateTowers();
+    NEWG_CreateTowers__WIP();
 
     Draw_Building_The_Worlds(60);
 
-    // TODO  NEWG_TileIsleExtend(0);
+    NEWG_TileIsleExtend__WIP(0);
 
-    // TODO  NEWG_TileIsleExtend(1);
+    NEWG_TileIsleExtend__WIP(1);
 
     // TODO  NEWG_CreateEZs();
 
@@ -318,9 +318,377 @@ void NEWG_CreateWorld__WIP(void)
 
 // MGC o51p03
 // drake178: NEWG_TileIsleExtend()
+/*
+; PATCHED / rewritten in the worldgen customizer
+;
+; attempts to extend some of the single tile islands
+; created by the node and tower generator functions
+;
+; BUG: the switch values are botched, resulting in
+; significantly less added tiles
+*/
+/*
+
+*/
+void NEWG_TileIsleExtend__WIP(int16_t wp)
+{
+    int16_t Grid_Index = 0;
+    int16_t Can_Convert = 0;
+    int16_t Random_Y_Modifier = 0;
+    int16_t Random_X_Modifier = 0;
+    int16_t Convert_Attempts = 0;
+    int16_t square_has_tower = 0;
+    int16_t itr_towers = 0;
+    int16_t terrain_type = 0;
+    int16_t itr_wy = 0;  // _DI_
+    int16_t itr_wx = 0;  // _SI_
+
+    for(itr_wy = 1; itr_wy < 39; itr_wy++)
+    {
+
+        for(itr_wx = 1; itr_wx < 59; itr_wx++)
+        {
+
+            // ; check if there is a tower of wizardry on the tile
+
+            terrain_type = _world_maps[((wp * WORLD_SIZE) + (itr_wy * WORLD_WIDTH) + itr_wx )];
+
+            square_has_tower = ST_FALSE;
+
+            for(itr_towers = 0; itr_towers < NUM_TOWERS; itr_towers++)
+            {
+
+                if(
+                    (_TOWERS[itr_towers].wy == itr_wy)
+                    &&
+                    (_TOWERS[itr_towers].wx == itr_wx)
+                )
+                {
+
+                    square_has_tower = ST_TRUE;
+
+                }
+
+            }
+
+            // ; skip if the tile does not have Ocean in all cardinal
+            // ; directions (diagonals are not checked)
+
+            if(
+                (terrain_type == tt_SorceryNode)
+                ||
+                (terrain_type == tt_NatureNode)
+                ||
+                (terrain_type == tt_ChaosNode)
+                ||
+                (square_has_tower == ST_TRUE)
+            )
+            {
+
+                if(
+                    (TILE_IsOcean(itr_wx, (itr_wy - 1), wp) == ST_TRUE)  // ; tile above
+                    &&
+                    (TILE_IsOcean((itr_wx - 1), itr_wy, wp) == ST_TRUE)  // ; tile to the left
+                    &&
+                    (TILE_IsOcean((itr_wx + 1), itr_wy, wp) == ST_TRUE)  // ; tile to the right
+                    &&
+                    (TILE_IsOcean(itr_wx, (itr_wy + 1), wp) == ST_TRUE)  // ; tile below
+                )
+                {
+
+                    if(Random(3) > 1)
+                    {
+
+                        Convert_Attempts = (1 + Random(8));
+
+                        for(itr_towers = 0; itr_towers < Convert_Attempts; itr_towers++)
+                        {
+
+                            Random_X_Modifier = (Random(3) - 2);
+                            
+                            Random_Y_Modifier = (Random(3) - 2);
+
+                            if(
+                                (Random_X_Modifier != 0)
+                                ||
+                                (Random_Y_Modifier != 0)
+                            )
+                            {
+
+                                if(
+                                    (TILE_HasTower((itr_wx + Random_X_Modifier), (itr_wy + Random_Y_Modifier)) == ST_FALSE)
+                                    &&
+                                    (TILE_HasNode((itr_wx + Random_X_Modifier), (itr_wy + Random_Y_Modifier), wp) == ST_FALSE)
+                                )
+                                {
+
+                                    // ; PATCHED here previously to fix the BUG below
+
+                                    Grid_Index = ((Random_Y_Modifier * 3) + Random_X_Modifier + 1);
+
+                                    Can_Convert = ST_FALSE;
+
+                                    // ; BUG: the actual range is -3 to +5, not 1 to 9
+
+                                    switch(Grid_Index)
+                                    {
+                                        case 0:
+                                        {
+
+                                            // DNE
+
+                                        } break;
+                                        case 1:
+                                        {
+
+                                            if(
+                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier + 1) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier))] == tt_Ocean1)
+                                                &&
+                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier + 1))] == tt_Ocean1)
+                                            )
+                                            {
+
+                                                Can_Convert = ST_FALSE;
+
+                                            }
+                                            else
+                                            {
+
+                                                Can_Convert = ST_TRUE;
+
+                                            }
+
+                                        } break;
+                                        case 2:
+                                        {
+
+                                            Can_Convert = ST_TRUE;
+
+                                        }
+                                        case 3:
+                                        {
+
+                                            if(
+                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier + 1) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier))] == tt_Ocean1)
+                                                &&
+                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier - 1))] == tt_Ocean1)
+                                            )
+                                            {
+
+                                                Can_Convert = ST_FALSE;
+
+                                            }
+                                            else
+                                            {
+
+                                                Can_Convert = ST_TRUE;
+
+                                            }
+
+                                        } break;
+                                        case 4:
+                                        {
+
+                                            Can_Convert = ST_TRUE;
+
+                                        }
+                                        case 5:
+                                        {
+
+                                            Can_Convert = ST_FALSE;
+
+                                        }
+                                        case 6:
+                                        {
+
+                                            Can_Convert = ST_TRUE;
+
+                                        }
+                                        case 7:
+                                        {
+
+                                            if(
+                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier - 1) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier))] == tt_Ocean1)
+                                                &&
+                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier + 1))] == tt_Ocean1)
+                                            )
+                                            {
+
+                                                Can_Convert = ST_FALSE;
+
+                                            }
+                                            else
+                                            {
+
+                                                Can_Convert = ST_TRUE;
+
+                                            }
+
+                                        } break;
+                                        case 8:
+                                        {
+
+                                            Can_Convert = ST_TRUE;
+
+                                        }
+                                        case 9:
+                                        {
+
+                                            if(
+                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier - 1) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier))] == tt_Ocean1)
+                                                &&
+                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier - 1))] == tt_Ocean1)
+                                            )
+                                            {
+
+                                                Can_Convert = ST_FALSE;
+
+                                            }
+                                            else
+                                            {
+
+                                                Can_Convert = ST_TRUE;
+
+                                            }
+
+                                        } break;
+
+                                    }
+
+                                    if(Can_Convert == ST_TRUE)
+                                    {
+
+                                        TILE_SetLandMass__WIP(wp, (itr_wx + Random_X_Modifier), (itr_wy + Random_Y_Modifier));
+
+                                        _world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier))] = tt_Grasslands1;
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+                    
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // MGC o51p04
 // drake178: NEWG_CreateTowers()
+/*
+; PATCHED / rewritten in the worldgen customizer
+;
+; creates the six towers of wizardry connecting the
+; planes, which need to be at least 4 tiles away from
+; any nodes, and at least 10 tiles away from each other
+; if possible
+;
+; BUG: fails to initialize the attempt counter,
+;  effectively resulting in the first 500 tries being
+;  either discarded or becoming more than 500
+*/
+/*
+
+*/
+void NEWG_CreateTowers__WIP(void)
+{
+    int16_t Tries = 0;
+    int16_t Min_Distance = 0;
+    int16_t YPos = 0;
+    int16_t XPos = 0;
+    int16_t itr1 = 0;  // _DI_
+    int16_t itr2 = 0;  // _SI_
+
+    Min_Distance = 10;
+
+    for(itr1 = 0; itr1 < NUM_TOWERS; itr1++)
+    {
+
+        while(1)
+        {
+
+            Tries++;  // BUGBUG uninitialized!
+
+            if(Tries > 500)
+            {
+
+                Tries = 450;
+
+                Min_Distance--;
+
+            }
+
+            XPos = (2 + Random(54));
+
+            YPos = (2 + Random(34));
+
+            if(
+                (_world_maps[((ARCANUS_PLANE * WORLD_SIZE) + (YPos * WORLD_WIDTH) + XPos)] != tt_Ocean1)
+                ||
+                (_world_maps[((MYRROR_PLANE * WORLD_SIZE) + (YPos * WORLD_WIDTH) + XPos)] != tt_Ocean1)
+                ||
+                (Random(40) == 1)
+            )
+            {
+
+                for(itr2 = 0; itr2 < itr1; itr2++)
+                {
+
+                    if(Delta_XY_With_Wrap(XPos, YPos, _TOWERS[itr2].wx, _TOWERS[itr2].wy, WORLD_WIDTH) < Min_Distance)
+                    {
+
+                        break;
+
+                    }
+
+                }
+
+                for(itr2 = 0; itr2 < NUM_NODES; itr2++)
+                {
+
+                    if(Delta_XY_With_Wrap(XPos, YPos, _NODES[itr2].wx, _NODES[itr2].wy, WORLD_WIDTH) < 4)
+                    {
+
+                        break;
+
+                    }
+
+                }
+
+                _TOWERS[itr1].wx = (int8_t)XPos;
+
+                _TOWERS[itr1].wy = (int8_t)YPos;
+
+                _TOWERS[itr1].owner_idx = ST_UNDEFINED;
+
+                TILE_SetLandMass__WIP(ARCANUS_PLANE, XPos, YPos);
+
+                TILE_SetLandMass__WIP(MYRROR_PLANE, XPos, YPos);
+
+                _world_maps[((ARCANUS_PLANE * WORLD_SIZE) + (YPos * WORLD_WIDTH) + XPos)] = _Grasslands1;
+
+                _world_maps[((MYRROR_PLANE * WORLD_SIZE) + (YPos * WORLD_WIDTH) + XPos)] = _Grasslands1;
+
+                break;
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // MGC o51p05
 // drake178: NEWG_CreateCapitals()
@@ -1299,8 +1667,8 @@ somehow1:
 
                 }
 
-                _NODES[itr].wx = wx;
-                _NODES[itr].wy = wy;
+                _NODES[itr].wx = (int8_t)wx;
+                _NODES[itr].wy = (int8_t)wy;
                 _NODES[itr].wp = ARCANUS_PLANE;
                 _NODES[itr].flags = 0;
                 _NODES[itr].owner_idx = ST_UNDEFINED;
@@ -2037,15 +2405,107 @@ void Draw_Building_The_Worlds(int16_t percent)
 
 // MGC o51p39
 // drake178: TILE_IsOcean()
-// TILE_IsOcean()
+int16_t TILE_IsOcean(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;  // _CX_
+
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    if(
+        (terrain_type != TT_BugGrass)
+        &&
+        (
+            (terrain_type < tt_Grasslands1)
+            ||
+            (
+                (terrain_type > TT_RiverM_end)
+                &&
+                (terrain_type < TT_Rivers_1st)
+            )
+            ||
+            (
+                (terrain_type > TT_Desert_end)
+                &&
+                (terrain_type < TT_4WRiver1)
+            )
+            ||
+            (
+                (terrain_type > TT_4WRiver5)
+                &&
+                (terrain_type < tt_Tundra_1st)
+            )
+        )
+    )
+    {
+
+        return ST_TRUE;
+
+    }
+    else
+    {
+
+        return ST_FALSE;
+
+    }
+
+}
+
 
 // MGC o51p40
 // drake178: TILE_HasNode()
-// TILE_HasNode()
+int16_t TILE_HasNode(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t itr_nodes = 0;  // _CX_
+    
+    for(itr_nodes = 0; itr_nodes < NUM_NODES; itr_nodes++)
+    {
+
+        if(
+            (_NODES[itr_nodes].wx == wx)
+            &&
+            (_NODES[itr_nodes].wy == wy)
+            &&
+            (_NODES[itr_nodes].wp == wp)
+        )
+        {
+
+            return ST_TRUE;
+
+        }
+
+    }
+
+    return ST_FALSE;
+
+}
+
 
 // MGC o51p41
 // drake178: TILE_HasTower()
-// TILE_HasTower()
+int16_t TILE_HasTower(int16_t wx, int16_t wy)
+{
+    int16_t itr_towers = 0;  // _DX_
+    
+    for(itr_towers = 0; itr_towers < NUM_TOWERS; itr_towers++)
+    {
+
+        if(
+            (_TOWERS[itr_towers].wx == wx)
+            &&
+            (_TOWERS[itr_towers].wy == wy)
+        )
+        {
+
+            return ST_TRUE;
+
+        }
+
+    }
+
+    return ST_FALSE;
+
+}
+
 
 // MGC o51p42
 // drake178: TILE_IsForest()
