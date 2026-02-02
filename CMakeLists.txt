@@ -22,9 +22,9 @@ project(
     DESCRIPTION "Reassembly of Master of Magic v1.31 (Simtex, 1995)"
     LANGUAGES C
 )
-# TODO  set(CMAKE_C_STANDARD 99)
-# TODO  set(CMAKE_C_STANDARD_REQUIRED ON) # Make the standard mandatory
-# TODO  set(C_EXTENSIONS OFF)
+# set(CMAKE_C_STANDARD 99)
+# set(CMAKE_C_STANDARD_REQUIRED ON) # Make the standard mandatory
+# set(C_EXTENSIONS OFF)
 
 
 
@@ -64,8 +64,31 @@ FetchContent_MakeAvailable(googletest)
 message(STATUS "GTEST_INCLUDE_DIR='${GTEST_INCLUDE_DIR}'")
 message(STATUS "GTEST_INCLUDE_DIRS='${GTEST_INCLUDE_DIRS}'")
 
+
+# Coverage support
+option(ENABLE_COVERAGE "Enable code coverage instrumentation and targets" OFF)
+if(ENABLE_COVERAGE)
+    message(STATUS "Code coverage enabled")
+    if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+        message(STATUS "Using Clang coverage flags")
+        add_compile_options(-g -O0 -fprofile-instr-generate -fcoverage-mapping)
+        add_link_options(-fprofile-instr-generate)
+    elseif(CMAKE_C_COMPILER_ID STREQUAL "GNU")
+        message(STATUS "Using GCC coverage flags")
+        add_compile_options(-g -O0 --coverage)
+        add_link_options(--coverage)
+    else()
+        message(WARNING "Coverage enabled but unsupported compiler (${CMAKE_C_COMPILER_ID}); coverage targets may fail")
+    endif()
+endif()
+
+# https://wiki.libsdl.org/SDL2/README-cmake
+# Append the custom path to CMAKE_PREFIX_PATH
+list(APPEND CMAKE_PREFIX_PATH "C:/devellib/SDL2-2.32.2")
+list(APPEND CMAKE_PREFIX_PATH "C:/devellib/SDL2_mixer-2.8.1")
 find_package(SDL2 REQUIRED)
 find_package(SDL2_mixer REQUIRED)
+
 
 
 # # SDL2::Main  SDL2::Core  SDL2::Mixer
@@ -113,6 +136,26 @@ add_subdirectory(MoM)
 add_subdirectory(tests)
 add_subdirectory(src)
 
+# Simple coverage helper target: runs tests (requires tests to be configured)
+if(ENABLE_COVERAGE)
+    if(WIN32)
+        add_custom_target(coverage
+            COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -j $<NUMBER_OF_PROCESSORS>
+            COMMAND powershell -NoProfile -ExecutionPolicy Bypass -File "${CMAKE_SOURCE_DIR}/cmake/generate_coverage.ps1" -BuildDir "${CMAKE_BINARY_DIR}" -OutDir "${CMAKE_BINARY_DIR}/coverage"
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            COMMENT "Run tests and generate coverage HTML (Windows: uses llvm-profdata/llvm-cov if available)"
+            VERBATIM
+        )
+    else()
+        add_custom_target(coverage
+            COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -j $<NUMBER_OF_PROCESSORS>
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            COMMENT "Run tests for coverage data collection (use llvm-profdata/llvm-cov or lcov/genhtml to generate reports)"
+            VERBATIM
+        )
+    endif()
+endif()
+
 
 
 install(TARGETS ReMoMber)
@@ -127,4 +170,9 @@ set(CPACK_PACKAGE_VERSION "0.0.1")
 set(CPACK_PACKAGE_FILE_NAME "ReMoMv131")
 set(CPACK_GENERATOR "ZIP")
 set(CPACK_SOURCE_GENERATOR "ZIP")
+# Include optional test data staging helper (defines `stage_test_data` target)
+if(EXISTS "${CMAKE_SOURCE_DIR}/cmake/stage_test_data.cmake")
+    include("${CMAKE_SOURCE_DIR}/cmake/stage_test_data.cmake")
+endif()
+
 include(CPack)

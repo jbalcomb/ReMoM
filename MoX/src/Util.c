@@ -299,6 +299,31 @@ void Clear_Structure(int16_t record_index, uint8_t * records, int16_t record_siz
             // does not zero the last record (which should be invalidated by a table count already)
 int RecIndex, char far *Table@, int RecSize, int RecTotal)
 */
+/*
+//GithubCopilot
+Prompt:
+Delete_Structure() is meant to delete a record from a structure and then shift down all the following records. Does it look like good C code that should work just fine?
+Response:
+Delete_Structure() mostly implements the intended byte-wise down-shift, but it has a correctness / safety hole and a few improvements you should consider:
+Issues
+No bounds check for record_num: if record_num < 0 or record_num >= total_records the computed byte_count can become negative and the while(byte_count--) loop misbehaves (possibly infinite/UB) and the pointers go out-of-bounds.
+It doesn't zero the last record after shifting. That may be intentional (comments indicate the table count should invalidate the last slot), but if you expect the slot cleared you should explicitly memset it.
+Uses signed 16-bit for offsets/counts; multiplication can overflow for larger sizes. Safer to use a wider (or unsigned) type for byte counts/offsets.
+You can simplify and make it safer using memmove (handles overlap) and memset.
+Suggested safe replacement (concise):
+void Delete_Structure(int16_t record_num, uint8_t *address, int16_t struct_size, int16_t total_records)
+{
+    if (record_num < 0 || record_num >= total_records) return;
+    int32_t byte_count = ((int32_t)total_records - record_num - 1) * (int32_t)struct_size;
+    if (byte_count > 0) {
+        uint8_t *dst = address + (int32_t)record_num * struct_size;
+        uint8_t *src = dst + struct_size;
+        memmove(dst, src, (size_t)byte_count);
+    }
+    // Optional: clear last record if you want it zeroed
+    // memset(address + (total_records - 1) * struct_size, 0, struct_size);
+}
+*/
 void Delete_Structure(int16_t record_num, uint8_t * address, int16_t struct_size, int16_t total_records)
 {
     int16_t byte_count;

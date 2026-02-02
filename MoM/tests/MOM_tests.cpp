@@ -1,4 +1,17 @@
 /*
+GoogleTest FAQ
+Why should test suite names and test names not contain underscore?
+Note: GoogleTest reserves underscore (_) for special-purpose keywords, such as the DISABLED_ prefix, in addition to the following rationale.
+
+Underscore (_) is special, as C++ reserves the following to be used by the compiler and the standard library:
+
+any identifier that starts with an _ followed by an upper-case letter, and
+any identifier that contains two consecutive underscores (i.e. __) anywhere in its name.
+User code is prohibited from using such identifiers.
+
+So for simplicity, we just ask the users to avoid _ in TestSuiteName and TestName. The rule is more constraining than necessary, but it’s simple and easy to remember. It also gives GoogleTest some wiggle room in case its implementation needs to change in the future.
+*/
+/*
 
 NOTE(JimBalcomb,202510091924): was to be some normal and hero units kill tests, but lost track, and create hero wont work :(..
 
@@ -29,12 +42,17 @@ extern "C" {
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
 #include "../../MoX/src/MOX_DEF.h"  /* HUMAN_PLAYER_IDX */
 #include "../../MoX/src/MOX_UPD.h"  /* UNITS_FINISHED */
+#include "../../MoX/src/Util.h"  /* Delete_Structure() */
 
 #include "../src/CITYCALC.h"
 #include "../src/NEXTTURN.h"
 #include "../src/Spells130.h"       /* Hero_Slot_Types () */
 #include "../src/Spells132.h"       /* WIZ_HireHero() */
 #include "../src/UNITTYPE.h"
+
+#include "../../STU/src/STU_DBG.h"  /* Debug_Log_Startup(), Debug_Log_Shutdown() */
+
+
 
 /*
     Forward Declare, Private
@@ -49,6 +67,7 @@ char names_lbx_file__ovr132[];
 
 void Set_Up(void)
 {
+    Debug_Log_Startup();
     _units = 0;
     _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 PR, 32448 B
     _HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 PR, 448 B
@@ -74,7 +93,44 @@ void Tear_Down(void)
     free(_HEROES2[0]);
     free(_UNITS);
     _units = 0;
+    Debug_Log_Shutdown();
 }
+
+class MOM_test2 : public testing::Test
+ {
+
+    void SetUp()
+    {
+        _units = 0;
+        _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 PR, 32448 B
+        _HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 PR, 448 B
+        _HEROES2[1] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+        _HEROES2[2] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+        _HEROES2[3] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+        _HEROES2[4] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+        _HEROES2[5] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+        hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);  // 37 PR, 592 B  ... ~ (36) 16-byte structs
+        spell_data_table = (struct s_SPELL_DATA *)Allocate_Space(485);  // 485 PR, 7760 B; actual: 215 * 36 = 7740
+        _FORTRESSES = (struct s_FORTRESS *)Allocate_Space(3);
+    }
+    
+    void TearDown()
+    {
+        free(_FORTRESSES);
+        free(spell_data_table);
+        free(hero_names_table);
+        free(_HEROES2[5]);
+        free(_HEROES2[4]);
+        free(_HEROES2[3]);
+        free(_HEROES2[2]);
+        free(_HEROES2[1]);
+        free(_HEROES2[0]);
+        free(_UNITS);
+        _units = 0;
+
+    }
+
+ };
 
 /*
 
@@ -355,18 +411,18 @@ CITYCALC    int16_t Unit_Base_Level(int16_t unit_idx)
 // {
 //     
 // }
-TEST(MOM_test, MOM_Kill_Unit_kt0)
+TEST_F(MOM_test2, MOM_Kill_Unit_kt0)
 {
-    _units = 0;
-    _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 PR, 32448 B
-    _HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 PR, 448 B
-    _HEROES2[1] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-    _HEROES2[2] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-    _HEROES2[3] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-    _HEROES2[4] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-    _HEROES2[5] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-    hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);  // 37 PR, 592 B  ... ~ (36) 16-byte structs
-    spell_data_table = (struct s_SPELL_DATA *)Allocate_Space(485);  // 485 PR, 7760 B; actual: 215 * 36 = 7740
+//     _units = 0;
+//     _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 PR, 32448 B
+//     _HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 PR, 448 B
+//     _HEROES2[1] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+//     _HEROES2[2] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+//     _HEROES2[3] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+//     _HEROES2[4] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+//     _HEROES2[5] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+//     hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);  // 37 PR, 592 B  ... ~ (36) 16-byte structs
+//     spell_data_table = (struct s_SPELL_DATA *)Allocate_Space(485);  // 485 PR, 7760 B; actual: 215 * 36 = 7740
 
     EXPECT_EQ(_units, 0);
 
@@ -414,44 +470,44 @@ TEST(MOM_test, MOM_Kill_Unit_kt0)
 
     EXPECT_EQ(_UNITS[2].owner_idx, ST_UNDEFINED);
     EXPECT_EQ(_UNITS[2].wp, ST_UNDEFINED);
- 
-    /*
-        Tear-Down
-    */
-    free(spell_data_table);
-    free(hero_names_table);
-    free(_HEROES2[5]);
-    free(_HEROES2[4]);
-    free(_HEROES2[3]);
-    free(_HEROES2[2]);
-    free(_HEROES2[1]);
-    free(_HEROES2[0]);
-    free(_UNITS);
-    _units = 0;
-// _units = 0;
-// _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 PR, 32448 B
-// _HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 PR, 448 B
-// _HEROES2[1] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-// _HEROES2[2] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-// _HEROES2[3] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-// _HEROES2[4] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-// _HEROES2[5] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-// hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);  // 37 PR, 592 B  ... ~ (36) 16-byte structs
-// spell_data_table = (struct s_SPELL_DATA *)Allocate_Space(485);  // 485 PR, 7760 B; actual: 215 * 36 = 7740
+
+//     /*
+//         Tear-Down
+//     */
+//     free(spell_data_table);
+//     free(hero_names_table);
+//     free(_HEROES2[5]);
+//     free(_HEROES2[4]);
+//     free(_HEROES2[3]);
+//     free(_HEROES2[2]);
+//     free(_HEROES2[1]);
+//     free(_HEROES2[0]);
+//     free(_UNITS);
+//     _units = 0;
+// // _units = 0;
+// // _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 PR, 32448 B
+// // _HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 PR, 448 B
+// // _HEROES2[1] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+// // _HEROES2[2] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+// // _HEROES2[3] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+// // _HEROES2[4] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+// // _HEROES2[5] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+// // hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);  // 37 PR, 592 B  ... ~ (36) 16-byte structs
+// // spell_data_table = (struct s_SPELL_DATA *)Allocate_Space(485);  // 485 PR, 7760 B; actual: 215 * 36 = 7740
 }
 
-TEST(MOM_test, MOM_Kill_Unit_kt1)
+TEST_F(MOM_test2, MOM_Kill_Unit_kt1)
 {
-    _units = 0;
-    _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 PR, 32448 B
-    _HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 PR, 448 B
-    _HEROES2[1] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-    _HEROES2[2] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-    _HEROES2[3] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-    _HEROES2[4] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-    _HEROES2[5] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-    hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);  // 37 PR, 592 B  ... ~ (36) 16-byte structs
-    spell_data_table = (struct s_SPELL_DATA *)Allocate_Space(485);  // 485 PR, 7760 B; actual: 215 * 36 = 7740
+//     _units = 0;
+//     _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 PR, 32448 B
+//     _HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 PR, 448 B
+//     _HEROES2[1] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+//     _HEROES2[2] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+//     _HEROES2[3] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+//     _HEROES2[4] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+//     _HEROES2[5] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+//     hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);  // 37 PR, 592 B  ... ~ (36) 16-byte structs
+//     spell_data_table = (struct s_SPELL_DATA *)Allocate_Space(485);  // 485 PR, 7760 B; actual: 215 * 36 = 7740
 
     EXPECT_EQ(_units, 0);
 
@@ -482,33 +538,33 @@ TEST(MOM_test, MOM_Kill_Unit_kt1)
     EXPECT_EQ(_UNITS[0].owner_idx, ST_UNDEFINED);
     EXPECT_EQ(_UNITS[0].wp, ST_UNDEFINED);
 
-    /*
-        Tear-Down
-    */
-    free(spell_data_table);
-    free(hero_names_table);
-    free(_HEROES2[5]);
-    free(_HEROES2[4]);
-    free(_HEROES2[3]);
-    free(_HEROES2[2]);
-    free(_HEROES2[1]);
-    free(_HEROES2[0]);
-    free(_UNITS);
-    _units = 0;
+//     /*
+//         Tear-Down
+//     */
+//     free(spell_data_table);
+//     free(hero_names_table);
+//     free(_HEROES2[5]);
+//     free(_HEROES2[4]);
+//     free(_HEROES2[3]);
+//     free(_HEROES2[2]);
+//     free(_HEROES2[1]);
+//     free(_HEROES2[0]);
+//     free(_UNITS);
+//     _units = 0;
 }
 
-TEST(MOM_test, MOM_Kill_Unit_kt2)
+TEST_F(MOM_test2, MOM_Kill_Unit_kt2)
 {
-    _units = 0;
-    _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 PR, 32448 B
-    _HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 PR, 448 B
-    _HEROES2[1] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-    _HEROES2[2] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-    _HEROES2[3] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-    _HEROES2[4] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-    _HEROES2[5] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
-    hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);  // 37 PR, 592 B  ... ~ (36) 16-byte structs
-    spell_data_table = (struct s_SPELL_DATA *)Allocate_Space(485);  // 485 PR, 7760 B; actual: 215 * 36 = 7740
+//     _units = 0;
+//     _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 PR, 32448 B
+//     _HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 PR, 448 B
+//     _HEROES2[1] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+//     _HEROES2[2] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+//     _HEROES2[3] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+//     _HEROES2[4] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+//     _HEROES2[5] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+//     hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);  // 37 PR, 592 B  ... ~ (36) 16-byte structs
+//     spell_data_table = (struct s_SPELL_DATA *)Allocate_Space(485);  // 485 PR, 7760 B; actual: 215 * 36 = 7740
 
     EXPECT_EQ(_units, 0);
 
@@ -546,19 +602,19 @@ TEST(MOM_test, MOM_Kill_Unit_kt2)
     EXPECT_EQ(_UNITS[0].owner_idx, ST_UNDEFINED);
     EXPECT_EQ(_UNITS[0].wp, ST_UNDEFINED);
 
-    /*
-        Tear-Down
-    */
-    free(spell_data_table);
-    free(hero_names_table);
-    free(_HEROES2[5]);
-    free(_HEROES2[4]);
-    free(_HEROES2[3]);
-    free(_HEROES2[2]);
-    free(_HEROES2[1]);
-    free(_HEROES2[0]);
-    free(_UNITS);
-    _units = 0;
+//     /*
+//         Tear-Down
+//     */
+//     free(spell_data_table);
+//     free(hero_names_table);
+//     free(_HEROES2[5]);
+//     free(_HEROES2[4]);
+//     free(_HEROES2[3]);
+//     free(_HEROES2[2]);
+//     free(_HEROES2[1]);
+//     free(_HEROES2[0]);
+//     free(_UNITS);
+//     _units = 0;
 }
 
 
@@ -573,9 +629,9 @@ _players[]
 Delete_Structure()
 
 */
-TEST(MOM_test, MOM_Delete_Dead_Units)
+TEST_F(MOM_test2, MOM_Delete_Dead_Units)
 {
-    Set_Up();
+    // Set_Up();
 
     EXPECT_EQ(_units, 0);
 
@@ -588,10 +644,34 @@ TEST(MOM_test, MOM_Delete_Dead_Units)
     EXPECT_EQ(_units, 1);
 
     Delete_Dead_Units();  // decrements _units
-    
+    // ... [ctest] minkernel\crts\ucrt\src\appcrt\stdio\output.cpp(34) : Assertion failed: stream != nullptr
+//     int itr_units;
+//     int unit_type;
+//     int itr_players;
+//     int itr_heroes;
+//     for(itr_units = 0; itr_units < _units; itr_units++)
+//     {
+//         unit_type = _UNITS[itr_units].type;
+//         if(
+//             (_UNITS[itr_units].owner_idx < HUMAN_PLAYER_IDX)
+//             ||
+//             (_UNITS[itr_units].owner_idx > NEUTRAL_PLAYER_IDX)
+//         )
+//         {
+//             Delete_Structure(itr_units, (uint8_t *)&_UNITS[0], sizeof(struct s_UNIT), _units);
+// 
+//             for(itr_players = 0; itr_players < _num_players; itr_players++)
+//                 for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
+//                     if((_players[itr_players].Heroes[itr_heroes].unit_idx != ST_UNDEFINED) && (_players[itr_players].Heroes[itr_heroes].unit_idx > itr_units))
+//                         _players[itr_players].Heroes[itr_heroes].unit_idx -= 1;
+// 
+//             _units -= 1;
+//         }
+//     }
+
     EXPECT_EQ(_units, 0);
 
-    Tear_Down();
+    // Tear_Down();
 }
 
 

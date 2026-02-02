@@ -149,9 +149,11 @@ void Delete_Dead_Units(void)
     int16_t itr_heroes = 0;
     int16_t itr_units = 0; // _SI_
     int16_t itr_players = 0; // _DI_
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Delete_Dead_Units()\n", __FILE__, __LINE__);
-#endif
+
+// breaks gtest  #ifdef STU_DEBUG
+// breaks gtest      dbg_prn("DEBUG: [%s, %d]: BEGIN: Delete_Dead_Units()\n", __FILE__, __LINE__);
+// breaks gtest  #endif
+
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
         unit_type = _UNITS[itr_units].type;
@@ -171,9 +173,10 @@ void Delete_Dead_Units(void)
             _units -= 1;
         }
     }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Delete_Dead_Units()\n", __FILE__, __LINE__);
-#endif
+
+// breaks gtest  #ifdef STU_DEBUG
+// breaks gtest      dbg_prn("DEBUG: [%s, %d]: END: Delete_Dead_Units()\n", __FILE__, __LINE__);
+// breaks gtest  #endif
 
 }
 

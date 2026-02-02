@@ -17,6 +17,7 @@ target_link_libraries(MOM_tests PUBLIC
     SDL2::Mixer
     momlib
     MOX
+    STU
 )
 
 get_target_property(imported_location SDL2::Core IMPORTED_LOCATION)
