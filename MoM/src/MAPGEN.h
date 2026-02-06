@@ -32,7 +32,7 @@ void NEWG_TileIsleExtend__WIP(int16_t wp);
 void NEWG_CreateTowers__WIP(void);
 
 // MGC o51p05
-// NEWG_CreateCapitals()
+void Generate_Home_City(void);
 
 // MGC o51p06
 void NEWG_ClearLandmasses__WIP(int16_t wp);
@@ -92,7 +92,7 @@ void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t
 // NEWG_CreateNeutrals()
 
 // MGC o51p25
-// CTY_SetDefaultName()
+void Random_City_Name_By_Race_NewGame(int16_t race_type, char * name);
 
 // MGC o51p26
 // NEWG_CreateRoads()
@@ -128,7 +128,7 @@ void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t
 void Draw_Building_The_Worlds(int16_t percent);
 
 // MGC o51p37
-// UNIT_Create()
+void Create_Unit_NewGame(int16_t unit_type, int16_t player_idx, int16_t wx, int16_t wy, int16_t wp, int16_t city_idx);
 
 // MGC o51p38
 // NEWG_AnimateOceans()
@@ -143,7 +143,7 @@ int16_t TILE_HasNode(int16_t wx, int16_t wy, int16_t wp);
 int16_t TILE_HasTower(int16_t wx, int16_t wy);
 
 // MGC o51p42
-// TILE_IsForest()
+int16_t Square_Is_Forest_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p43
 // TILE_IsRiver()
@@ -170,16 +170,16 @@ int16_t TILE_HasTower(int16_t wx, int16_t wy);
 // TILE_IsGrasslands()
 
 // MGC o51p51
-// TILE_GetFood()
+int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p52
-// TILE_GetMaxPop()
+int16_t City_Maximum_Size_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p53
-// TILE_GetCatchment()
+int16_t Get_Useable_City_Area_NewGame(int16_t city_wx, int16_t city_wy, int16_t city_wp, int16_t * wx_array, int16_t * wy_array);
 
 // MGC o51p54
-// UU_Empty_Tile_Fn()
+void o51p54_empty_function(void);
 
 
 

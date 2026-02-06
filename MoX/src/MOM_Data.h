@@ -1725,7 +1725,7 @@ struct s_LAIR
     /* 0A */  int16_t  Loot_Gold;   // 2-byte, signed
     /* 0C */  int16_t  Loot_Mana;   // 2-byte, signed
     /* 0E */  int8_t   Spell_n_Special;
-    /* 0F */  uint8_t  Misc_Flags; // 7: 6: 5: 4: 3: 2: ¿ attacked ? 1: ¿ visited ? 0: Prisoner {F,T}  ... NEWG_CreateEncounter__WIP() sets 1 for prisoner, Lair_Generate_Treasure() does Test_Bit_Field()
+    /* 0F */  uint8_t  Misc_Flags; // 7: 6: 5: 4: 3: 2: ¿ attacked ? 1: ¿ visited ? 0: Surveyor {"Unexplored", }Prisoner {F,T}  ... NEWG_CreateEncounter__WIP() sets 1 for prisoner, Lair_Generate_Treasure() does Test_Bit_Field()
     /* 10 */  int8_t   Item_Count;
     /* 11 */  int8_t   pad2B_11h;  /* 2-byte alignment padding */
     /* 12 */  int16_t  Item_Values[3];

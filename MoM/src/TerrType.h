@@ -83,7 +83,7 @@ used in NEWG_SetSpecLands()
 enum e_TERRAIN_TYPES
 {
     tt_Ocean1      = 0x0,
-    TT_BugGrass    = 0x1,
+    tt_BugGrass    = 0x1,
     TT_Shore1_1st  = 0x2,
     TT_Lake        = 0x12,
     TT_Shore1_end  = 0x0A1,  /* 161 */
@@ -135,7 +135,7 @@ enum e_TERRAIN_TYPES
     TT_4WRiver5    = 0x1D8,
     TT_Shore3_1st  = 0x1D9,
     TT_Shore3_end  = 0x258,
-    TT_Ocean2      = 0x259,
+    tt_Ocean2      = 0x259,
     tt_Tundra_1st  = 0x25A,
     TT_Tundra_Last = 0x2F9,
     TerType_Count  = 0x2F
@@ -218,7 +218,7 @@ Square_Is_Sailable()
     if(terrain_type > 0xE8)     / * _Shore000R0000 * /
     if(terrain_type > 0xC4)     / * _River1001_2 * /
     if(terrain_type > 0xA1)     / * _Shore10101111 * /
-    if(terrain_type == 0x1  e_TT_BugGrass AKA TT_BugGrass
+    if(terrain_type == 0x1  e_TT_BugGrass AKA tt_BugGrass
 
 
 enum OVL_Tiles_Extended

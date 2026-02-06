@@ -1889,7 +1889,7 @@ Check_Game_Data();
             {
 
 Check_Game_Data();
-                Change_Home_City_Name_Popup(0);
+                Change_Home_City_Name_Popup(HUMAN_PLAYER_IDX);
 Check_Game_Data();
 
                 Assign_Auto_Function(Main_Screen_Draw, 1);

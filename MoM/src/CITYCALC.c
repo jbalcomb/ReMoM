@@ -1497,7 +1497,7 @@ void Make_Road_Enchanted(int16_t wx, int16_t wy, int16_t wp)
 ; would update some aspect of some resource on a tile
 ; by tile basis with no return value
 */
-void empty_fxn_o142p03(int16_t wx, int16_t wy, int16_t wp)
+void o142p03_empty_function(int16_t wx, int16_t wy, int16_t wp)
 {
     return;
 }
@@ -1553,7 +1553,7 @@ void NOOP_Current_Player_All_City_Areas(void)
                         {
                             city_area_square_wx = WORLD_WIDTH;
                         }
-                        empty_fxn_o142p03(city_area_square_wx, city_area_square_wy, city_wp);
+                        o142p03_empty_function(city_area_square_wx, city_area_square_wy, city_wp);
                     }
                 }
             }
@@ -1569,6 +1569,10 @@ int16_t City_House_Count(int16_t city_idx)
 
 // WZD o142p06
 // drake178: CTY_GetTileFood()
+/*
+why the `/ 4` on food2_units?
+food, food2, pop?
+*/
 int16_t City_Food_Terrain(int16_t city_idx)
 {
     int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -1666,34 +1670,41 @@ int16_t City_Food_WildGame(int16_t city_idx)
 */
 int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp, int16_t *wx_array, int16_t *wy_array)
 {
-    uint8_t * terrain_flags_table_row;
-    int16_t square_y;
-    int16_t itr_world_x;
-    int16_t square_x_max;
-    int16_t square_x_min;
-    int16_t map_square_count;
-
-    int16_t itr_city_area_squares;  // _DI_
-    int16_t square_x;  // _SI_
+    uint8_t * terrain_flags_table_row = 0;
+    int16_t square_y = 0;
+    int16_t itr_world_x = 0;
+    int16_t square_x_max = 0;
+    int16_t square_x_min = 0;
+    int16_t map_square_count = 0;
+    int16_t itr_city_area_squares = 0;  // _DI_
+    int16_t square_x = 0;  // _SI_
 
     map_square_count = 0;
 
     for(itr_city_area_squares = -2; itr_city_area_squares <= 2; itr_city_area_squares++)
     {
-        square_y = city_wy + itr_city_area_squares;
+        square_y = (city_wy + itr_city_area_squares);
 
-        if( (square_y >= 0) && (square_y < WORLD_HEIGHT) )
+        if(
+            (square_y >= 0)
+            &&
+            (square_y < WORLD_HEIGHT)
+        )
         {
+
             square_x_min = -2;
-            square_x_max = 2;
+            square_x_max =  2;
 
             if(
-                (itr_city_area_squares == -2) ||
+                (itr_city_area_squares == -2)
+                ||
                 (itr_city_area_squares ==  2)
             )
             {
+
                 square_x_min = -1;
                 square_x_max =  1;
+
             }
 
             terrain_flags_table_row = (uint8_t *)&_map_square_flags[(city_wp * WORLD_SIZE) + (square_y * WORLD_WIDTH)];
@@ -1702,29 +1713,44 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
 
             while(itr_world_x <= square_x_max)
             {
+
                 square_x = city_wx + itr_world_x;
+
                 if(square_x < 0)
                 {
+
                     square_x += WORLD_WIDTH;
-                }
-                if(square_x > WORLD_WIDTH)
-                {
-                    square_x -= WORLD_WIDTH;
+
                 }
 
-                if( (*(terrain_flags_table_row + square_x) & 0x20) == 0 ) /* MSF_CORRUPTION */
+                if(square_x > WORLD_WIDTH)
                 {
+
+                    square_x -= WORLD_WIDTH;
+
+                }
+
+                if((*(terrain_flags_table_row + square_x) & MSF_CORRUPTION) == 0)
+                {
+
                     wx_array[map_square_count] = square_x;
+
                     wy_array[map_square_count] = square_y;
+
                     map_square_count++;
+
                 }
 
                 itr_world_x++;
+
             }
+
         }
+
     }
 
     return map_square_count;
+
 }
 
 
