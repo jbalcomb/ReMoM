@@ -120,24 +120,33 @@ enum e_TERRAIN_TYPES
     TT_Shore2F_end = 0xE8,
     TT_Rivers_1st  = 0x0E9,
     tt_Rivers_end  = 0x102,
-    TT_Mntns_1st   = 0x103,
-    tt_Mntns_end   = 0x112,
-    tt_Hills_1st   = 0x113,
-    tt_Hills_end   = 0x123,
-    tt_Desert_1st  = 0x124,
-    TT_Desert_end  = 0x1C3,
+
+    tt_Mountains_Fst = 0x103,
+    tt_Mountains_Lst = 0x112,
+
+    tt_Hills_Fst   = 0x113,
+    tt_Hills_Lst   = 0x123,
+
+    tt_Desert_Fst  = 0x124,  // 292
+    tt_Desert_Lst  = 0x1C3,  // 451
+
     tt_Shore2_1st  = 0x1C4,
     TT_Shore2_end  = 0x1D3,
+
     TT_4WRiver1    = 0x1D4,
     TT_4WRiver2    = 0x1D5,
     TT_4WRiver3    = 0x1D6,
     TT_4WRiver4    = 0x1D7,
     TT_4WRiver5    = 0x1D8,
+
     TT_Shore3_1st  = 0x1D9,
     TT_Shore3_end  = 0x258,
+
     tt_Ocean2      = 0x259,
+
     tt_Tundra_1st  = 0x25A,
     TT_Tundra_Last = 0x2F9,
+    
     TerType_Count  = 0x2F
 };
 
@@ -182,10 +191,10 @@ enum e_TERRAIN_TYPES
 //     tt_Rivers_1st     = 233,
 //     tt_Rivers_end     = 258,
 //     tt_Mntns_1st      = 259,
-//     tt_Mntns_end      = 274,
-//     tt_Hills_1st      = 275,
-//     tt_Hills_end      = 291,
-//     tt_Desert_1st     = 292,
+//     tt_Mountains_Lst      = 274,
+//     tt_Hills_Fst      = 275,
+//     tt_Hills_Lst      = 291,
+//     tt_Desert_Fst     = 292,
 //     tt_Desert_end     = 451,
 //     tt_Shore2_1st     = 452,
 //     tt_Shore2_end     = 467,
