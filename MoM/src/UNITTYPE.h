@@ -224,7 +224,7 @@ attake type 0 is Melee
 */
 enum e_RANGED_ATTACK_TYPE
 {
-    rat_None         =  -1,     /* ¿ out of ammo / not enough mana ? Battle_unit_attack__WIP() */
+    rat_UNDEF         =  -1,     /* ¿ out of ammo / not enough mana ? Battle_unit_attack__WIP() */
     rat_NONE         =   0,     /* sbr_ NONE   */
         /* BU_IsRangedUnit() checks ranged_type > 0 */
         /* BU_MeleeFlightCheck__WIP() checks ranged_type > 0 */

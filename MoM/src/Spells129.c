@@ -876,7 +876,7 @@ void Apply_Chaos_Channels(int16_t unit_idx)
                 (_unit_type_table[unit_type].Ranged_Type > rag_Magic)
                 ||
                 (
-                    (_unit_type_table[unit_type].Ranged_Type != rat_None)
+                    (_unit_type_table[unit_type].Ranged_Type != rat_UNDEF)
                     &&
                     (_unit_type_table[unit_type].Ranged_Type != srat_Thrown)
                 )
