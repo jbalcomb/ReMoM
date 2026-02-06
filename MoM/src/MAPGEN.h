@@ -32,7 +32,7 @@ void NEWG_TileIsleExtend__WIP(int16_t wp);
 void NEWG_CreateTowers__WIP(void);
 
 // MGC o51p05
-void Generate_Home_City(void);
+void Generate_Home_City__WIP(void);
 
 // MGC o51p06
 void NEWG_ClearLandmasses__WIP(int16_t wp);
@@ -89,7 +89,7 @@ void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t
 // NEWG_SetRiverTiles()
 
 // MGC o51p24
-// NEWG_CreateNeutrals()
+void Generate_Neutral_Cities__WIP(int16_t wp);
 
 // MGC o51p25
 void Random_City_Name_By_Race_NewGame(int16_t race_type, char * name);

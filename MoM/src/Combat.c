@@ -11965,7 +11965,7 @@ case scc_Disjunction_Spell:  // 20
             if(spell_idx == spl_Warp_Wood)
             {
                 battle_units[target_idx].ammo = 0;
-                battle_units[target_idx].ranged_type = rat_None;
+                battle_units[target_idx].ranged_type = rat_UNDEF;
                 REINIT_BATTLEUNIT();
             }
             if(spell_idx == spl_Healing)
@@ -15964,7 +15964,7 @@ void Apply_Mana_Leak(void)
                 )
                 {
 
-                    battle_units[battle_unit_idx].ranged_type = rat_None;
+                    battle_units[battle_unit_idx].ranged_type = rat_UNDEF;
 
                     battle_units[battle_unit_idx].ranged = 0;
 
@@ -22414,7 +22414,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
                 if(battle_units[attacker_battle_unit_idx].mana < 3)
                 {
 
-                    battle_units[attacker_battle_unit_idx].ranged_type = rat_None;
+                    battle_units[attacker_battle_unit_idx].ranged_type = rat_UNDEF;
 
                     battle_units[attacker_battle_unit_idx].ranged = 0;
 
@@ -22429,7 +22429,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
                 if(battle_units[attacker_battle_unit_idx].ammo <= 0)
                 {
 
-                    battle_units[attacker_battle_unit_idx].ranged_type = rat_None;
+                    battle_units[attacker_battle_unit_idx].ranged_type = rat_UNDEF;
 
                     battle_units[attacker_battle_unit_idx].ranged = 0;
 
@@ -22538,7 +22538,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
                     if(battle_units[attacker_battle_unit_idx].mana < 5)
                     {
 
-                        battle_units[attacker_battle_unit_idx].ranged_type = rat_None;
+                        battle_units[attacker_battle_unit_idx].ranged_type = rat_UNDEF;
 
                         battle_units[attacker_battle_unit_idx].ranged = 0;
 
@@ -22553,7 +22553,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
                     if(battle_units[attacker_battle_unit_idx].ammo <= 0)
                     {
 
-                        battle_units[attacker_battle_unit_idx].ranged_type = rat_None;
+                        battle_units[attacker_battle_unit_idx].ranged_type = rat_UNDEF;
 
                         battle_units[attacker_battle_unit_idx].ranged = 0;
 
@@ -22664,7 +22664,7 @@ int16_t Battle_Unit_Has_Ranged_Attack(int16_t battle_unit_idx)
     is_ranged = ST_FALSE;
 
     if(
-        (battle_units[battle_unit_idx].ranged_type > rat_None)
+        (battle_units[battle_unit_idx].ranged_type > rat_UNDEF)
         &&
         (battle_units[battle_unit_idx].ranged_type < srat_Thrown)
     )

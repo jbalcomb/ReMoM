@@ -127,8 +127,9 @@ char cityname_lbx_file__MGC_ovr051[] = "CITYNAME";
 
 
 // MGC  dseg:8EB0                                                 BEGIN:  ovr051 - Uninitialized Data  (MAPGEN)
+
 // MGC  dseg:8EB0
-// MGC  dseg:8EB0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_Landmass_Races dw 200 dup(0)       ; DATA XREF: NEWG_CreateNeutrals+39w ...
+int16_t NEWG_Landmass_Races[200];
 
 // MGC  dseg:9040
 /*
@@ -255,13 +256,13 @@ void NEWG_CreateWorld__WIP(void)
 
     _units = 0;
 
-    Generate_Home_City();
+    Generate_Home_City__WIP();
 
     Draw_Building_The_Worlds(70);
 
-    // TODO  NEWG_CreateNeutrals(0);
+    Generate_Neutral_Cities__WIP(0);
 
-    // TODO  NEWG_CreateNeutrals(1);
+    Generate_Neutral_Cities__WIP(1);
 
     Draw_Building_The_Worlds(75);
 
@@ -774,7 +775,7 @@ main movement view. Here you can see a small town with a flag on top
 that represents your starting city (aka “enchanted fortress”).
 
 */
-void Generate_Home_City(void)
+void Generate_Home_City__WIP(void)
 {
     int16_t max_pop_failures = 0;
     int16_t Min_Node_Distance_Double = 0;
@@ -831,7 +832,7 @@ Loop_MaxPopTries:
                 {
 // jump back here if the location is invalid
 // jump back here if the max pop is too low
-Loop_Location:
+Loop_Location_1:
                     Tries_Per_Distance++;
                     wp = ARCANUS_PLANE;
                     if(_players[player_idx].myrran != ST_FALSE)
@@ -877,7 +878,7 @@ Loop_Location:
                         (Invalid == ST_TRUE)
                     )
                     {
-                        goto Loop_Location;
+                        goto Loop_Location_1;
                     }
 
                     if((8 - (player_idx / 3)) < City_Maximum_Size_NewGame(wx, wy, wp))
@@ -889,7 +890,7 @@ Loop_Location:
                         }
                         else
                         {
-                            goto Loop_Location;
+                            goto Loop_Location_1;
                         }
                     }
                     else
@@ -965,7 +966,7 @@ Loop_Location:
                                 case 1: { _CITIES[_cities].race = rt_Gnoll;     } break;
                                 case 2: { _CITIES[_cities].race = rt_Halfling;  } break;
                                 case 3: { _CITIES[_cities].race = rt_High_Elf;  } break;
-                                case 4: { _CITIES[_cities].race = rt_High_Man;  } break;
+                                case 4: { _CITIES[_cities].race = rt_High_Men;  } break;
                                 case 5: { _CITIES[_cities].race = rt_Klackon;   } break;
                                 case 6: { _CITIES[_cities].race = rt_Lizardman; } break;
                                 case 7: { _CITIES[_cities].race = rt_Nomad;     } break;
@@ -981,7 +982,7 @@ Loop_Location:
                                 case 0: { _CITIES[_cities].race = rt_Klackon;  } break;
                                 case 1: { _CITIES[_cities].race = rt_High_Elf; } break;
                                 case 2: { _CITIES[_cities].race = rt_Halfling; } break;
-                                case 3: { _CITIES[_cities].race = rt_High_Man; } break;
+                                case 3: { _CITIES[_cities].race = rt_High_Men; } break;
                                 case 4: { _CITIES[_cities].race = rt_Nomad;    } break;
                             }
 
@@ -1002,7 +1003,7 @@ Loop_Location:
                     )
                     {
 
-                        goto Loop_Location;
+                        goto Loop_Location_1;
 
                     }
 
@@ -1015,7 +1016,7 @@ Loop_Location:
                 _CITIES[_cities].wy = _FORTRESSES[itr].wy;
                 _CITIES[_cities].wp = _FORTRESSES[itr].wp;
                 _CITIES[_cities].owner_idx = itr;
-                _CITIES[_cities].size = 1;  // CTY_Hamlet
+                _CITIES[_cities].size = 1;  // CTY_Hamlet ... ~== (4 / 4)
                 _CITIES[_cities].population = 4;
                 _CITIES[_cities].bldg_cnt = 0;
                 _CITIES[_cities].Prod_Accu = 0;
@@ -1096,7 +1097,7 @@ Done_Done:
             case rt_Gnoll:     { unit_type = ut_GnollSpearmen;  } break;
             case rt_Halfling:  { unit_type = ut_HflngSpearmen;  } break;
             case rt_High_Elf:  { unit_type = ut_HElfSpearmen;   } break;
-            case rt_High_Man:  { unit_type = ut_HMenSpearmen;   } break;
+            case rt_High_Men:  { unit_type = ut_HMenSpearmen;   } break;
             case rt_Klackon:   { unit_type = ut_KlckSpearmen;   } break;
             case rt_Lizardman: { unit_type = ut_LizSpearmen;    } break;
             case rt_Nomad:     { unit_type = ut_NmdSpearmen;    } break;
@@ -1131,7 +1132,7 @@ Done_Done:
             case rt_Gnoll:     { unit_type = ut_GnollSwordsmen; } break;
             case rt_Halfling:  { unit_type = ut_HflngSwordsmen; } break;
             case rt_High_Elf:  { unit_type = ut_HElfSwordsmen;  } break;
-            case rt_High_Man:  { unit_type = ut_HMenSwordsmen;  } break;
+            case rt_High_Men:  { unit_type = ut_HMenSwordsmen;  } break;
             case rt_Klackon:   { unit_type = ut_KlckSwordsmen;  } break;
             case rt_Lizardman: { unit_type = ut_LizSwordsmen;   } break;
             case rt_Nomad:     { unit_type = ut_NmdSwordsmen;   } break;
@@ -3592,7 +3593,541 @@ void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t
 
 // MGC o51p24
 // drake178: NEWG_CreateNeutrals()
-// NEWG_CreateNeutrals()
+/*
+; creates up to 15 neutral cities on the selected
+; plane
+;
+; BUG: contains a number of minor errors and
+;  inconsistencies, most of which have no impact at all
+*/
+/*
+similar mess as Generate_Home_City()
+
+*/
+void Generate_Neutral_Cities__WIP(int16_t wp)
+{
+    int16_t location_is_forest_square = 0;
+    int16_t Tries = 0;
+    int16_t Best_Ranged_Unit = 0;
+    int16_t Best_Melee_Unit = 0;
+    int16_t itr3 = 0;
+    int16_t Invalid = 0;
+    int16_t wy = 0;
+    int16_t wx = 0;
+    int16_t itr2 = 0;  // _SI_
+    int16_t itr1 = 0;  // _DI_
+
+    Tries = 0;
+
+    // ; fill the default continental race table with random
+    // ; values corresponding to the selected plane,
+    // ; excluding high elves from Arcanus and giving high
+    // ; men a double chance instead
+
+    for(itr1 = 1; itr1 < 200; itr1++)
+    {
+
+        if(wp == ARCANUS_PLANE)
+        {
+
+            // ; select a random Arcanian race except high elves, with
+            // ; high men having double chance, and save its index
+            // ; into the element of the array corresponding to di
+
+            // BUGBUG  cmp     bx, 12                            ; switch 13 cases
+            switch((Random(9) - 1))
+            {
+                case 0: { NEWG_Landmass_Races[itr1] = rt_Barbarian; } break;
+                case 1: { NEWG_Landmass_Races[itr1] = rt_Gnoll;     } break;
+                case 2: { NEWG_Landmass_Races[itr1] = rt_Halfling;  } break;
+                case 3: { NEWG_Landmass_Races[itr1] = rt_High_Men;  } break;  // no forest check, no High Elves
+                case 4: { NEWG_Landmass_Races[itr1] = rt_High_Men;  } break;
+                case 5: { NEWG_Landmass_Races[itr1] = rt_Klackon;   } break;
+                case 6: { NEWG_Landmass_Races[itr1] = rt_Lizardman; } break;
+                case 7: { NEWG_Landmass_Races[itr1] = rt_Nomad;     } break;
+                case 8: { NEWG_Landmass_Races[itr1] = rt_Orc;       } break;
+                // WTF?
+                case  9: { NEWG_Landmass_Races[itr1] = rt_Barbarian; } break;
+                case 10: { NEWG_Landmass_Races[itr1] = rt_High_Men;  } break;
+                case 11: { NEWG_Landmass_Races[itr1] = rt_Nomad;     } break;
+                case 12: { NEWG_Landmass_Races[itr1] = rt_High_Men;  } break;
+            }
+
+        }
+        else  /* MYRROR_PLANE */
+        {
+
+            // ; select a random Myrran race and save its index into
+            // ; the element of the array corresponding to di
+
+            switch((Random(5) - 1))
+            {
+                case 0: { NEWG_Landmass_Races[itr1] = rt_Beastmen;  } break;
+                case 1: { NEWG_Landmass_Races[itr1] = rt_Dark_Elf;  } break;
+                case 2: { NEWG_Landmass_Races[itr1] = rt_Draconian; } break;
+                case 3: { NEWG_Landmass_Races[itr1] = rt_Dwarf;     } break;
+                case 4: { NEWG_Landmass_Races[itr1] = rt_Troll;     } break;
+            }
+
+        }
+
+    }
+
+    for(itr1 = 0; itr1 < 15; itr1++)
+    {
+
+        if(Tries < 1000)
+        {
+
+// jump back here if the location is invalid
+Loop_Location_2:
+// ...same as in Generate_Home_City()
+
+            Tries++;
+
+            wx = (3 + Random(54));
+
+            wy = (3 + Random(34));
+
+            Invalid = ST_FALSE;
+
+            if(TERRAIN_TYPE(wx, wy, wp) == tt_Ocean1)
+            {
+
+                Invalid = ST_TRUE;
+
+            }
+
+            if(
+                (TERRAIN_TYPE(wx, wy, wp) >= TT_Shore1_1st)  // ; there are no such tiles yet at this stage
+                ||
+                (TERRAIN_TYPE(wx, wy, wp) <= TT_Shore1_end)  // ; there are no such tiles yet at this stage
+            )
+            {
+
+                Invalid = ST_TRUE;
+
+            }
+
+            // ; invalidate if less than 5 tiles away from a capital
+
+            // ; invalidate if less than 4 tiles away from an already
+            // ; created city
+
+            // ; invalidate of less than 4 tiles away from a node
+            // ; 
+            // ; the encounter exclusion below would also catch these
+
+            // ; invalidate if less than 4 tiles away from a tower
+            // ; 
+            // ; the encounter exclusion below would also catch these
+
+            // ; invalidate if less than 4 tiles away from an
+            // ; encounter zone - including nodes and towers
+
+            if(
+                (Tries < 1000)
+                &&
+                (Invalid == ST_TRUE)
+            )
+            {
+
+                goto Loop_Location_2;
+
+            }
+
+            location_is_forest_square = Square_Is_Forest_NewGame(wx, wy, wp);
+
+            if(wp == ARCANUS_PLANE)
+            {
+
+                // ; select a random Arcanian race, and assign it to the
+                // ; next record in the city table, replacing high elves
+                // ; with high men if the tile is not a forest
+
+                // BUGBUG  cmp     bx, 12                            ; switch 13 cases
+                switch((Random(9) - 1))
+                {
+                    case 0: { _CITIES[_cities].race = rt_Barbarian; } break;
+                    case 1: { _CITIES[_cities].race = rt_Gnoll;     } break;
+                    case 2: { _CITIES[_cities].race = rt_Halfling;  } break;
+                    // case 3: { _CITIES[_cities].race = rt_High_Elf;  } break;
+                    case 3: {
+                        if(location_is_forest_square == ST_TRUE)
+                        {
+                            _CITIES[_cities].race = rt_High_Elf;
+                        }
+                        else
+                        {
+                            _CITIES[_cities].race = rt_High_Men;
+                        }
+                    } break;
+                    case 4: { _CITIES[_cities].race = rt_High_Men;  } break;
+                    case 5: { _CITIES[_cities].race = rt_Klackon;   } break;
+                    case 6: { _CITIES[_cities].race = rt_Lizardman; } break;
+                    case 7: { _CITIES[_cities].race = rt_Nomad;     } break;
+                    case 8: { _CITIES[_cities].race = rt_Orc;       } break;
+                    // WTF?
+                    case  9: { _CITIES[_cities].race = rt_Barbarian; } break;
+                    case 10: { _CITIES[_cities].race = rt_High_Men;  } break;
+                    case 11: { _CITIES[_cities].race = rt_Nomad;     } break;
+                    case 12: { _CITIES[_cities].race = rt_High_Men;  } break;
+                }
+
+            }
+            else
+            {
+
+                // ; select a random Myrran race, and assign it to the
+                // ; next record in the city table
+
+                switch((Random(5) - 1))
+                {
+                    case 0: { _CITIES[_cities].race = rt_Beastmen;  } break;
+                    case 1: { _CITIES[_cities].race = rt_Dark_Elf;  } break;
+                    case 2: { _CITIES[_cities].race = rt_Draconian; } break;
+                    case 3: { _CITIES[_cities].race = rt_Dwarf;     } break;
+                    case 4: { _CITIES[_cities].race = rt_Troll;     } break;
+                }
+
+            }
+
+            if(Random(4) > 1)
+            {
+
+                _CITIES[_cities].race = NEWG_Landmass_Races[(_landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) +wx)])];
+
+            }
+
+            _CITIES[_cities].wx = wx;
+
+            _CITIES[_cities].wy = wy;
+            
+            _CITIES[_cities].wp = wp;
+            
+            _CITIES[_cities].owner_idx = NEUTRAL_PLAYER_IDX;
+
+            // ; BUG: ignores terrain
+            _CITIES[_cities].population = (1 +  ((_difficulty + 1) / 3) + Random(4));
+
+            if(
+                (_difficulty > god_Normal)
+                &&
+                (Random(5) == 1)
+            )
+            {
+
+                // ; BUG: ignores terrain
+                _CITIES[_cities].population = (((_difficulty + 1) / 3) + Random(10));
+
+            }
+
+            _CITIES[_cities].size = (_CITIES[_cities].population / 4);
+
+            _CITIES[_cities].bldg_cnt = 0;
+
+            _CITIES[_cities].enchantments[WALL_OF_DARKNESS] = ST_FALSE;
+            _CITIES[_cities].enchantments[WALL_OF_FIRE] = ST_FALSE;
+            _CITIES[_cities].enchantments[CHAOS_RIFT] = ST_FALSE;
+            _CITIES[_cities].enchantments[DARK_RITUALS] = ST_FALSE;
+            _CITIES[_cities].enchantments[EVIL_PRESENCE] = ST_FALSE;
+            _CITIES[_cities].enchantments[CURSED_LANDS] = ST_FALSE;
+            _CITIES[_cities].enchantments[PESTILENCE] = ST_FALSE;
+            _CITIES[_cities].enchantments[CLOUD_OF_SHADOW] = ST_FALSE;
+            _CITIES[_cities].enchantments[ALTAR_OF_BATTLE] = ST_FALSE;
+            _CITIES[_cities].enchantments[FAMINE] = ST_FALSE;
+            _CITIES[_cities].enchantments[FLYING_FORTRESS] = ST_FALSE;
+            _CITIES[_cities].enchantments[DEATH_WARD] = ST_FALSE;
+            _CITIES[_cities].enchantments[CHAOS_WARD] = ST_FALSE;
+            _CITIES[_cities].enchantments[LIFE_WARD] = ST_FALSE;
+            _CITIES[_cities].enchantments[SORCERY_WARD] = ST_FALSE;
+            _CITIES[_cities].enchantments[NATURE_WARD] = ST_FALSE;
+            _CITIES[_cities].enchantments[NATURES_EYE] = ST_FALSE;
+            _CITIES[_cities].enchantments[EARTH_GATE] = ST_FALSE;
+            _CITIES[_cities].enchantments[STREAM_OF_LIFE] = ST_FALSE;
+            _CITIES[_cities].enchantments[GAIAS_BLESSING] = ST_FALSE;
+            _CITIES[_cities].enchantments[INSPIRATIONS] = ST_FALSE;
+            _CITIES[_cities].enchantments[PROSPERITY] = ST_FALSE;
+            _CITIES[_cities].enchantments[ASTRAL_GATE] = ST_FALSE;
+            _CITIES[_cities].enchantments[HEAVENLY_LIGHT] = ST_FALSE;
+            _CITIES[_cities].enchantments[CONSECRATION] = ST_FALSE;
+            _CITIES[_cities].enchantments[NIGHTSHADE] = ST_FALSE;
+
+            _CITIES[_cities].construction = bt_AUTOBUILD;
+
+            // mark all buildings as not built
+
+            for(itr2 = 0; itr2 < NUM_BUILDINGS; itr2++)
+            {
+                _CITIES[_cities].bldg_status[itr2] = bs_NotBuilt;
+            }
+
+
+            // ; add buildings based on population
+            _CITIES[_cities].bldg_status[bt_NONE] = bs_Replaced;
+
+            switch(_CITIES[_cities].population)  // - 2;  switch 24 cases
+            {
+                case 24:
+                case 23:
+                case 22:
+                case 21:
+                case 20:
+                case 19:
+                case 18:
+                case 17:
+                case 16:
+                case 15:
+                case 14:
+                case 13:
+                case 12: { _CITIES[_cities].bldg_status[bt_Shrine] = bs_Built; }
+                case 11: { _CITIES[_cities].bldg_status[bt_ArmorersGuild] = bs_Built; }
+                case 10: { _CITIES[_cities].bldg_status[bt_FightersGuild] = bs_Built; }
+                case  9:
+                case  8: { _CITIES[_cities].bldg_status[bt_CityWalls] = bs_Built; }
+                case  7:
+                case  6: { _CITIES[_cities].bldg_status[bt_Stable] = bs_Built; }
+                case  5: { _CITIES[_cities].bldg_status[bt_Granary] = bs_Built; }
+                case  4:
+                case  3: { _CITIES[_cities].bldg_status[bt_Armory] = bs_Built; }
+                case  2: { _CITIES[_cities].bldg_status[bt_BuildersHall] = bs_Built; }
+                case  1: { _CITIES[_cities].bldg_status[bt_Smithy] = bs_Built; }
+                case  0: { _CITIES[_cities].bldg_status[bt_Barracks] = bs_Built; }
+            }
+
+            // ; remove any buildings prohibited by race
+
+            for(itr3 = 0; itr3 <= _race_type_table[_CITIES[_cities].race].cant_build_count; itr3++)
+            {
+
+                _CITIES[_cities].bldg_status[_race_type_table[_CITIES[_cities].race].cant_build[itr3]] = bs_NotBuilt;
+
+            }
+
+            // ; remove any buildings with unbuilt prerequisites
+            // ; 
+            // ; BUG: buildings with a terrain requirement will be
+            // ; randomly removed through a read out of the structure
+            // ; bounds, whereas if they also have a building req,
+            // ; that will be ignored completely
+
+            for(itr2 = 1; itr2 < (NUM_BUILDINGS - 1); itr2++)
+            {
+
+                if(_CITIES[_cities].bldg_status[bt_NONE] == bs_Built)
+                {
+
+                    // ¿ BUGBUG  code should not be same on both branches ?  maybe, was two different fields, then got merged into a union?
+                    // ...or, should just be checking reqd_bldg_2, because the first one is reqd_terrain and not reqd_bldg_1
+                    if(bldg_data_table[itr2].reqd_bldg_1 > 100)  // bldg_idx  >= 100 is Terrain Type
+                    {
+
+                        if(_CITIES[_cities].bldg_status[bldg_data_table[itr2].reqd_terrain] == bs_NotBuilt)  // ; BUG: out of bounds
+                        {
+
+                            _CITIES[_cities].bldg_status[itr2] = bs_NotBuilt;
+
+                        }
+
+                    }
+                    else
+                    {
+
+                        if(
+                            (_CITIES[_cities].bldg_status[bldg_data_table[itr2].reqd_bldg_1] == bs_NotBuilt)
+                            ||
+                            (_CITIES[_cities].bldg_status[bldg_data_table[itr2].reqd_bldg_2] == bs_NotBuilt)
+                        )
+                        {
+
+                            _CITIES[_cities].bldg_status[itr2] = bs_NotBuilt;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            // ; mark any buildings that have been replaced as such
+            // ; 
+            // ; WARNING: only considers buildings whose replacer is
+            // ; built, but not replaced itself, which means that the
+            // ; bottom of a chain may get ignored
+
+            for(itr2 = 1; itr2 < (NUM_BUILDINGS - 1); itr2++)
+            {
+
+                if(
+                    (bldg_data_table[itr2].replace_bldg > bt_NONE)
+                    &&
+                    (_CITIES[_cities].bldg_status[itr2] == bs_Built)  // ; ignores replaced buildings
+                    &&
+                    (_CITIES[_cities].bldg_status[bldg_data_table[itr2].replace_bldg] == bs_Built)
+                )
+                {
+
+                    _CITIES[_cities].bldg_status[bldg_data_table[itr2].replace_bldg] = bs_Replaced;
+
+                }
+
+            }
+
+            // ; find the highest level (by unit type index) close
+            // ; combat unit that can be recruited in the city
+
+            Best_Melee_Unit = 0;
+
+            for(itr2 = ut_BarbSwordsmen; itr2 < ut_Magic_Spirit; itr2++)
+            {
+
+                if(
+                    (_unit_type_table[itr2].race_type == _CITIES[_cities].race)
+                    &&
+                    (_unit_type_table[itr2].reqd_bldg_1 != 0)
+                    &&
+                    (
+                        (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_1] == bs_Built)
+                        ||
+                        (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_1] == bs_Replaced)
+                    )
+                    &&
+                    (_unit_type_table[itr2].reqd_bldg_2 != 0)
+                    &&
+                    (
+                        (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_2] == bs_Built)
+                        ||
+                        (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_2] == bs_Replaced)
+                    )
+                    &&
+                    ((_unit_type_table[itr2].Abilities & UA_CREATEOUTPOST) == 0)
+                    &&
+                    (_unit_type_table[itr2].Construction == 0)
+                    &&
+                    (_unit_type_table[itr2].Transport == 0)
+                    &&
+                    (
+                        (_unit_type_table[itr2].Ranged_Type == rat_NONE)
+                        ||
+                        (_unit_type_table[itr2].Ranged_Type >= srat_Thrown)
+                    )
+                )
+                {
+
+                    Best_Melee_Unit = itr2;
+
+                }
+
+            }
+
+            // ; find the highest level (by unit type index) ranged
+            // ; attack unit that can be recruited in the city
+
+            Best_Ranged_Unit = 0;
+
+            for(itr2 = ut_BarbSwordsmen; itr2 < ut_Magic_Spirit; itr2++)
+            {
+
+                if(
+                    (_unit_type_table[itr2].race_type == _CITIES[_cities].race)
+                    &&
+                    (_unit_type_table[itr2].reqd_bldg_1 != 0)
+                    &&
+                    (
+                        (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_1] == bs_Built)
+                        ||
+                        (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_1] == bs_Replaced)
+                    )
+                    &&
+                    (_unit_type_table[itr2].reqd_bldg_2 != 0)
+                    &&
+                    (
+                        (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_2] == bs_Built)
+                        ||
+                        (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_2] == bs_Replaced)
+                    )
+                    &&
+                    ((_unit_type_table[itr2].Abilities & UA_CREATEOUTPOST) == 0)
+                    &&
+                    (_unit_type_table[itr2].Construction == 0)
+                    &&
+                    (_unit_type_table[itr2].Transport == 0)
+                    &&
+                    (
+                        (_unit_type_table[itr2].Ranged_Type > rat_NONE)
+                        ||
+                        (_unit_type_table[itr2].Ranged_Type < srat_Thrown)
+                    )
+                )
+                {
+
+                    Best_Ranged_Unit = itr2;
+
+                }
+
+            }
+
+            // ; create up to population / 4 (rounded down) close
+            // ; combat units to garrison the city
+            // ; 
+            // ; WARNING: dark elves will have no such units,
+            // ;  resulting in half the intended starting garrison
+
+            for(itr2 = 0; (((_CITIES[_cities].population / 4) > itr2) && (itr2 < MAX_STACK)); itr2++)
+            {
+
+                Create_Unit_NewGame(Best_Melee_Unit, NEUTRAL_PLAYER_IDX, _CITIES[_cities].wx, _CITIES[_cities].wy, _CITIES[_cities].wp, _cities);
+
+            }
+
+            if(Best_Ranged_Unit == 0)
+            {
+
+                // ; create another up to population / 4 (rounded down)
+                // ; close combat units for the garrison, up to at most
+                // ; 9 units total
+                // ; 
+                // ; WARNING: dark elves will have no such units
+
+                for(itr2 = 0; (((_CITIES[_cities].population / 4) > itr2) && (itr2 < MAX_STACK)); itr2++)
+                {
+
+                    Create_Unit_NewGame(Best_Melee_Unit, NEUTRAL_PLAYER_IDX, _CITIES[_cities].wx, _CITIES[_cities].wy, _CITIES[_cities].wp, _cities);
+
+                }
+
+            }
+            else
+            {
+
+                // ; create up to population / 4 (rounded down) ranged
+                // ; attack units for the garrison, up to at most 9 units
+                // ; total
+                // ; 
+                // ; WARNING: the sawmill is not included in the default
+                // ;  building list, and the shrine can't be reached with
+                // ;  the generated populations, so there won't ever be
+                // ;  a ranged attack unit for any race other than dark
+                // ;  elves, who only have these and no close combat ones
+
+                for(itr2 = 0; (((_CITIES[_cities].population / 4) > itr2) && (itr2 < MAX_STACK)); itr2++)
+                {
+
+                    Create_Unit_NewGame(Best_Ranged_Unit, NEUTRAL_PLAYER_IDX, _CITIES[_cities].wx, _CITIES[_cities].wy, _CITIES[_cities].wp, _cities);
+
+                }
+
+            }
+
+            Random_City_Name_By_Race_NewGame(_CITIES[_cities].race, _CITIES[_cities].name);
+
+        }
+
+    }
+
+}
+
 
 // MGC o51p25
 // drake178: CTY_SetDefaultName()

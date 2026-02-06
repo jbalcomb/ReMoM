@@ -23,7 +23,7 @@ enum e_RACE_TYPE
     rt_Gnoll      = 5,
     rt_Halfling   = 6,
     rt_High_Elf   = 7,
-    rt_High_Man   = 8,
+    rt_High_Men   = 8,
     rt_Klackon    = 9,
     rt_Lizardman  = 10,
     rt_Nomad      = 11,

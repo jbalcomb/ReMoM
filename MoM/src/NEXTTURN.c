@@ -1789,7 +1789,7 @@ int16_t Effective_Unit_Strength(int16_t unit_idx)
     if(
         ((global_battle_unit->ranged_type / 10) <= rag_Magic)
         ||
-        (global_battle_unit->ranged_type != rat_None)
+        (global_battle_unit->ranged_type != rat_UNDEF)
     )
     {
 

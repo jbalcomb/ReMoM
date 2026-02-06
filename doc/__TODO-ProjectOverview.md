@@ -60,7 +60,7 @@ Init_New_Game_()
 [x] NEWG_CreateTowers()
 [x] NEWG_TileIsleExtend()
 [x] NEWG_CreateEZs()
-[x] Generate_Home_City()
+[x] Generate_Home_City__WIP()
 [x] |-> City_Maximum_Size_NewGame()
 [x] |-> |-> Get_Useable_City_Area_NewGame()
 [x] |-> |-> Square_Food2_NewGame()
@@ -68,9 +68,10 @@ Init_New_Game_()
 [x] |-> Random_City_Name_By_Race_NewGame()
 [x] |-> Create_Unit_NewGame()
 
+[x] Generate_Neutral_Cities__WIP()
+
 [ ] ...move special.c/h from MoM to MoX
 
-[ ] NEWG_CreateNeutrals()
 [ ] NEWG_CreateSpecials()
 [ ] NEWG_CreateRoads()
 [ ] NEWG_CreateShores()
