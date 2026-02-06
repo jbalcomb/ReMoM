@@ -266,9 +266,9 @@ void NEWG_CreateWorld__WIP(void)
 
     Draw_Building_The_Worlds(75);
 
-    // TODO  NEWG_CreateSpecials(0);
+    Generate_Terrain_Specials(0);
 
-    // TODO  NEWG_CreateSpecials(1);
+    Generate_Terrain_Specials(1);
 
     // TODO  NEWG_CreateRoads(0);
 
@@ -4269,19 +4269,420 @@ void Random_City_Name_By_Race_NewGame(int16_t race_idx, char * name)
 
 // MGC o51p28
 // drake178: NEWG_CreateSpecials()
-// NEWG_CreateSpecials()
+/*
+; generates terrain specials for the selected plane,
+; and also clears out its terrain flags table
+;
+; WARNING: alters tile types, which may have an adverse
+;  effect on previously used maximum populations
+*/
+/*
+*/
+void Generate_Terrain_Specials(int16_t wp)
+{
+    int16_t Create_Radius = 0;
+    int16_t City_Present = 0;
+    int16_t EZ_Present = 0;
+    int16_t itr_wy = 0;
+    int16_t itr_wx = 0;
+    int16_t itr = 0;
+    int16_t wy = 0;  // _DI_
+    int16_t wx = 0;  // _SI_
+    
+    // ; clear the terrain flag and terrain special map of the
+    // ; plane
+    for(wy = 0; wy < WORLD_HEIGHT; wy++)
+    {
+
+        for(wx = 0; wx < WORLD_WIDTH; wx++)
+        {
+
+            SET_TERRAIN_SPECIAL(wx, wy, wp, 0);
+
+            SET_MAP_SQUARE_FLAG(wx, wy, wp, 0);
+
+        }
+
+    }
+
+    if(wp == ARCANUS_PLANE)
+    {
+
+        Create_Radius = 4;
+
+    }
+    else
+    {
+
+        Create_Radius = 3;
+
+    }
+
+    for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy += Create_Radius)
+    {
+
+        for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx += Create_Radius)
+        {
+
+            wy = (itr_wy + Random((Create_Radius * 2)));
+
+            wx = (itr_wx + Random((Create_Radius * 2)));
+
+            City_Present = ST_FALSE;
+
+            EZ_Present = ST_FALSE;
+
+            // ; check if there's an encounter on the tile
+
+            for(itr = 0; itr < NUM_LAIRS; itr++)
+            {
+
+                if(
+                    (_LAIRS[itr].wp == wp)
+                    &&
+                    (_LAIRS[itr].wx == wx)
+                    &&
+                    (_LAIRS[itr].wy == wy)
+                )
+                {
+
+                    EZ_Present = ST_TRUE;
+
+                }
+
+            }
+
+            // ; check if there's a tower on the tile
+            // ; 
+            // ; the above loop will already catch these
+
+            for(itr = 0; itr < NUM_TOWERS; itr++)
+            {
+
+                if(
+                    (_TOWERS[itr].wx == wx)
+                    &&
+                    (_TOWERS[itr].wy == wy)
+                )
+                {
+
+                    EZ_Present = ST_TRUE;
+
+                }
+
+            }
+
+            // ; check if there is a city on the tile
+
+            for(itr = 0; itr < _cities; itr++)
+            {
+
+                if(
+                    (_CITIES[itr].wp == wp)
+                    &&
+                    (_CITIES[itr].wx == wx)
+                    &&
+                    (_CITIES[itr].wy == wy)
+                )
+                {
+
+                    City_Present = ST_TRUE;
+
+                }
+
+            }
+
+            if(
+                (GET_TERRAIN_SPECIAL(wx, wy, wp) != 0)
+                ||
+                (City_Present != ST_FALSE)
+                ||
+                (EZ_Present != ST_FALSE)
+                ||
+                (
+                    (wy <= 2)  // BUGBUG  should be || not &&
+                    &&
+                    (wy >= 38)
+                    &&
+                    (wx <= 2)
+                    &&
+                    (wx >= 58)
+                )
+            )
+            {
+
+                continue;
+
+            }
+
+            // ; this may reduce maximum population
+
+            if(
+                (Square_Is_Grassland_NewGame(wx, wy, wp) == ST_TRUE)
+                ||
+                (
+                    (Square_Is_Forest_NewGame(wx, wy, wp) == ST_TRUE)
+                    &&
+                    (Random(2) == 1)
+                )
+            )
+            {
+
+                switch((Random(7) - 1))
+                {
+                    case 0:
+                    case 1:
+                    case 2:
+                    {
+                        SET_TERRAIN_TYPE(wx, wy, wp, tt_Mountain1);
+                    } break;
+                    case 3:
+                    case 4:
+                    case 5:
+                    {
+                        SET_TERRAIN_TYPE(wx, wy, wp, tt_Hills1);
+                    } break;
+                    case 6:
+                    {
+                        SET_TERRAIN_TYPE(wx, wy, wp, tt_Swamp1);
+                    } break;
+                }
+
+            }
+
+            if(Square_Is_Forest_NewGame(wx, wy, wp) == ST_TRUE)
+            {
+
+                SET_TERRAIN_SPECIAL(wx, wy, wp, TS_WILDGAME);
+
+            }
+
+            if(Square_Is_Mountain_NewGame(wx, wy, wp) == ST_TRUE)
+            {
+
+                SET_TERRAIN_SPECIAL(wx, wy, wp, Mountain_Terrain_Special(wp));
+
+            }
+
+            if(Square_Is_Hills_NewGame(wx, wy, wp) == ST_TRUE)
+            {
+
+                SET_TERRAIN_SPECIAL(wx, wy, wp, Hills_Terrain_Special(wp));
+
+            }
+
+            if(Square_Is_Swamp_NewGame(wx, wy, wp) == ST_TRUE)
+            {
+
+                SET_TERRAIN_SPECIAL(wx, wy, wp, ts_Nightshade);
+
+            }
+
+            if(Square_Is_Desert_NewGame(wx, wy, wp) == ST_TRUE)
+            {
+
+                SET_TERRAIN_SPECIAL(wx, wy, wp, Desert_Terrain_Special(wp));
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // MGC o51p29
 // drake178: NEWG_DesertSpecials()
-// NEWG_DesertSpecials()
+/*
+; returns a random desert tile terrain special based on
+; the plane
+; Arcanus         Myrror
+;   2:3    gems    1:5
+;   1:3    quork   3:5
+;   -      crysx   1:5
+*/
+/*
+
+*/
+int16_t Desert_Terrain_Special(int16_t wp)
+{
+    int16_t _DI_ = 0;  // _DI_
+    int16_t terrain_special = 0;  // _SI_
+
+    if(wp == ARCANUS_PLANE)
+    {
+        _DI_ = Random(9);
+    }
+    else
+    {
+        _DI_ = (5 + Random(5));
+    }
+
+    switch((_DI_ - 1))  // - 1;  switch 10 cases
+    {
+        case  0:
+        case  1:
+        case  2:
+        case  3:
+        case  4:
+        case  5: { terrain_special = ts_Gems; } break;   // min Myrror roll
+        case  6: 
+        case  7: 
+        case  8: { terrain_special = ts_QuorkCrystals; } break;  // max Arcanus roll 
+        case  9: { terrain_special = ts_CrysxCrystals; } break;
+
+    }
+
+    return terrain_special;
+
+}
+
 
 // MGC o51p30
 // drake178: NEWG_HillSpecials()
-// NEWG_HillSpecials()
+/*
+; returns a random hill tile terrain special based on
+; the plane
+; Arcanus          Myrror
+;   6:18    iron    1:10
+;   4:18   silver   1:10
+;   4:18    gold    4:10
+;   3:18    coal    1:10
+;   1:18   mithril  2:10
+;   -    adamantium 1:10
+*/
+/*
+pg 182  (PDF Page 191)
+Hills
+-----------------------
+Iron        33.3    10
+Coal        16.7    10
+Silver      22.2    10
+Gold        22.2    40
+Mithril      5.6    20
+Adamantium   0      10
+
+Arcanus:
+{0, ..., 17}
+Iron    = (5 + 1):18 = 6:18 6/18 = 33.3
+Silver  = (3 + 1):18 = 4:18 4/18 = 22.2
+Coal    = (2 + 1):18 = 3:18 3/18 = 16.7
+Gold    =              4:18 4/18 = 22.2
+Mithril =              1:18 1/18 =  5.6
+Adamantium  N/A
+
+Myrror:
+{10, ..., 19}
+Iron       = 1:10  10
+Silver     = 1:10  10
+Coal       = 1:10  10
+Gold       = 4:10  40
+Mithril    = 2:10  20
+Adamantium = 1:10  10
+
+*/
+int16_t Hills_Terrain_Special(int16_t wp)
+{
+    int16_t _DI_ = 0;  // _DI_
+    int16_t terrain_special = 0;  // _SI_
+
+    if(wp == ARCANUS_PLANE)
+    {
+        _DI_ = Random(18);
+    }
+    else
+    {
+        _DI_ = (10 + Random(10));
+    }
+
+    switch((_DI_ - 1))  // - 1;  switch 20 cases
+    {
+        case  0:
+        case  1:
+        case  2:
+        case  3:
+        case  4: { terrain_special = ts_Iron; } break;
+        case  5:
+        case  6:
+        case  7: { terrain_special = ts_Silver; } break;
+        case  8:
+        case  9: { terrain_special = ts_Coal; } break;
+        case 10: { terrain_special = ts_Iron; } break;  // min Myrror roll
+        case 11: { terrain_special = ts_Coal; } break;
+        case 12: { terrain_special = ts_Silver; } break;
+        case 13: 
+        case 14: 
+        case 15: 
+        case 16: { terrain_special = ts_Gold; } break;
+        case 17:
+        case 18: { terrain_special = ts_Mithril; } break;  // max Arcanus roll 
+        case 19: { terrain_special = ts_Adamantium; } break;
+    }
+
+    return terrain_special;
+
+}
+
 
 // MGC o51p31
 // drake178: NEWG_MntnSpecials()
-// NEWG_MntnSpecials()
+/*
+; returns a random mountain tile terrain special based
+; on the plane
+; Arcanus          Myrror
+;   5:18    coal    1:10
+;   4:18    iron    1:10
+;   3:18   silver   1:10
+;   3:18    gold    2:10
+;   3:18   mithril  3:10
+;   -    adamantium 2:10
+*/
+/*
+
+*/
+int16_t Mountain_Terrain_Special(int16_t wp)
+{
+    int16_t _DI_ = 0;  // _DI_
+    int16_t terrain_special = 0;  // _SI_
+
+    if(wp == ARCANUS_PLANE)
+    {
+        _DI_ = Random(18);
+    }
+    else
+    {
+        _DI_ = (10 + Random(10));
+    }
+
+    switch((_DI_ - 1))  // - 1;  switch 20 cases
+    {
+        case  0:
+        case  1:
+        case  2: { terrain_special = ts_Iron; } break;
+        case  3:
+        case  4: { terrain_special = ts_Silver; } break;
+        case  5: 
+        case  6: 
+        case  7: 
+        case  8: { terrain_special = ts_Coal; } break;
+        case  9: { terrain_special = ts_Gold; } break;
+        case 10: { terrain_special = ts_Iron; } break;  // min Myrror roll
+        case 11: { terrain_special = ts_Silver; } break;
+        case 12: { terrain_special = ts_Coal; } break;
+        case 13: 
+        case 14: { terrain_special = ts_Gold; } break;
+        case 15: 
+        case 16: 
+        case 17: { terrain_special = ts_Mithril; } break;  // max Arcanus roll
+        case 18: 
+        case 19: { terrain_special = ts_Adamantium; } break;
+    }
+
+    return terrain_special;
+
+}
+
 
 // MGC o51p32
 // drake178: NEWG_SetScoutingMaps()
@@ -4454,7 +4855,7 @@ int16_t TILE_IsOcean(int16_t wx, int16_t wy, int16_t wp)
             )
             ||
             (
-                (terrain_type > TT_Desert_end)
+                (terrain_type > tt_Desert_Lst)
                 &&
                 (terrain_type < TT_4WRiver1)
             )
@@ -4594,23 +4995,171 @@ int16_t Square_Is_Forest_NewGame(int16_t wx, int16_t wy, int16_t wp)
 
 // MGC o51p46
 // drake178: TILE_IsMountains()
-// TILE_IsMountains()
+int16_t Square_Is_Mountain_NewGame(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;  // _CX_
+
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    if(
+        (terrain_type == tt_Mountain1)
+        ||
+        (
+            (terrain_type >= tt_Mountains_Fst)
+            &&
+            (terrain_type <= tt_Mountains_Lst)
+        )
+    )
+    {
+
+        return ST_TRUE;
+
+    }
+    else
+    {
+
+        return ST_FALSE;
+
+    }
+
+}
 
 // MGC o51p47
 // drake178: TILE_IsHills()
-// TILE_IsHills()
+int16_t Square_Is_Hills_NewGame(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;  // _CX_
+
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    if(
+        (terrain_type == tt_Hills1)
+        ||
+        (
+            (terrain_type >= tt_Mountains_Fst)
+            &&
+            (terrain_type <= tt_Mountains_Lst)
+        )
+    )
+    {
+
+        return ST_TRUE;
+
+    }
+    else
+    {
+
+        return ST_FALSE;
+
+    }
+
+}
+
 
 // MGC o51p48
 // drake178: TILE_IsSwamp()
-// TILE_IsSwamp()
+int16_t Square_Is_Swamp_NewGame(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;  // _CX_
+
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    if(
+        (terrain_type == tt_Swamp2)
+        ||
+        (terrain_type == tt_Swamp3)
+        ||
+        (terrain_type == tt_Swamp1)
+    )
+    {
+
+        return ST_TRUE;
+
+    }
+    else
+    {
+
+        return ST_FALSE;
+
+    }
+
+}
 
 // MGC o51p49
 // drake178: TILE_IsDesert()
-// TILE_IsDesert()
+int16_t Square_Is_Desert_NewGame(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;  // _CX_
+
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    if(
+        (terrain_type == tt_Desert1)
+        ||
+        (terrain_type == tt_Desert2)
+        ||
+        (terrain_type == tt_Desert3)
+        ||
+        (terrain_type == tt_Desert4)
+        ||
+        (
+            (terrain_type >= tt_Desert_Fst)
+            &&
+            (terrain_type <= tt_Desert_Lst)
+        )
+    )
+    {
+
+        return ST_TRUE;
+
+    }
+    else
+    {
+
+        return ST_FALSE;
+
+    }
+
+}
+
 
 // MGC o51p50
 // drake178: TILE_IsGrasslands()
-// TILE_IsGrasslands()
+/*
+*/
+/*
+*/
+int16_t Square_Is_Grassland_NewGame(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;  // _CX_
+
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    if(
+        (terrain_type == tt_Grasslands1)
+        ||
+        (terrain_type == tt_Grasslands2)
+        ||
+        (terrain_type == tt_Grasslands3)
+        ||
+        (terrain_type == tt_Grasslands4)
+        ||
+        (terrain_type == tt_BugGrass)
+    )
+    {
+
+        return ST_TRUE;
+
+    }
+    else
+    {
+
+        return ST_FALSE;
+
+    }
+
+}
+
 
 // MGC o51p51
 // drake178: TILE_GetFood()
@@ -4660,19 +5209,19 @@ int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp)
     {
         return 4;
     }
-    else if(terrain_type > TT_Desert_end)  // >= tt_Shore2_1st
+    else if(terrain_type > tt_Desert_Lst)  // >= tt_Shore2_1st
     {
         return 1;
     }
-    else if(terrain_type > tt_Hills_end)  // >= tt_Desert_1st
+    else if(terrain_type > tt_Hills_Lst)  // >= tt_Desert_Fst
     {
         return 0;
     }
-    else if(terrain_type > tt_Mntns_end)  // >= tt_Hills_1st
+    else if(terrain_type > tt_Mountains_Lst)  // >= tt_Hills_Fst
     {
         return 1;
     }
-    else if(terrain_type > tt_Rivers_end)  // >= TT_Mntns_1st
+    else if(terrain_type > tt_Rivers_end)  // >= tt_Mountains_Fst
     {
         return 0;
     }

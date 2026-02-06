@@ -67,12 +67,20 @@ Init_New_Game_()
 [x] |-> Square_Is_Forest_NewGame()
 [x] |-> Random_City_Name_By_Race_NewGame()
 [x] |-> Create_Unit_NewGame()
-
 [x] Generate_Neutral_Cities__WIP()
+
+[x] Generate_Terrain_Specials()
+[x] |-> Square_Is_Grassland_NewGame()
+[x] |-> Square_Is_Mountain_NewGame()
+[x] |-> Mountain_Terrain_Special()
+[x] |-> Square_Is_Hills_NewGame()
+[x] |-> Hills_Terrain_Special()
+[x] |-> Square_Is_Swamp_NewGame()
+[x] |-> Square_Is_Desert_NewGame()
+[x] |-> Desert_Terrain_Special()
 
 [ ] ...move special.c/h from MoM to MoX
 
-[ ] NEWG_CreateSpecials()
 [ ] NEWG_CreateRoads()
 [ ] NEWG_CreateShores()
 [ ] NEWG_CreateRiver()

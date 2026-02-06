@@ -101,16 +101,16 @@ void Random_City_Name_By_Race_NewGame(int16_t race_type, char * name);
 // CRP_NEWG_CreatePathGrids()
 
 // MGC o51p28
-// NEWG_CreateSpecials()
+void Generate_Terrain_Specials(int16_t wp);
 
 // MGC o51p29
-// NEWG_DesertSpecials()
+int16_t Desert_Terrain_Special(int16_t wp);
 
 // MGC o51p30
-// NEWG_HillSpecials()
+int16_t Hills_Terrain_Special(int16_t wp);
 
 // MGC o51p31
-// NEWG_MntnSpecials()
+int16_t Mountain_Terrain_Special(int16_t wp);
 
 // MGC o51p32
 // NEWG_SetScoutingMaps()
@@ -155,19 +155,19 @@ int16_t Square_Is_Forest_NewGame(int16_t wx, int16_t wy, int16_t wp);
 // UU_TILE_IsShore()
 
 // MGC o51p46
-// TILE_IsMountains()
+int16_t Square_Is_Mountain_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p47
-// TILE_IsHills()
+int16_t Square_Is_Hills_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p48
-// TILE_IsSwamp()
+int16_t Square_Is_Swamp_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p49
-// TILE_IsDesert()
+int16_t Square_Is_Desert_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p50
-// TILE_IsGrasslands()
+int16_t Square_Is_Grassland_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p51
 int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp);

@@ -107,6 +107,8 @@ ITEM_MAX_POWERS
 #define NUM_NODES                  30
 // #define NUM_LAIRS                 102
 /* HACK */  #define NUM_LAIRS                 99
+// NOTE(JimBalcomb,20260206): Why/When did I hack this?
+
 #define MAX_STACK                   9
 #define NUM_SPELLS                      240  // 6 reals, 40 spells each
 #define NUM_SPELLS_PER_MAGIC_REALM       40

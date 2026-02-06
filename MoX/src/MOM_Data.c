@@ -2450,6 +2450,7 @@ uint8_t * _square_explored;                     // load in Load_SAVE_GAM()
 
 
 // WZD dseg:9CB4
+// AKA p_Terrain_Flags
 /*
 8 bit bitfield
 0 0 0 0 0 0 0 0
@@ -2485,7 +2486,8 @@ Volcano_Counts()
 */
 uint8_t * _map_square_flags;                // load in Load_SAVE_GAM()
 
-// WZD dseg:9CB8  
+// WZD dseg:9CB8
+// drake178: TBL_Terr_Specials
 /*
 1-byte, unsigned
 2 nibbles
