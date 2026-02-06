@@ -51,10 +51,10 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
     if(terrain_type != tt_Ocean1)
     {
         // HERE:  >= 1 && <= ??
-        if(terrain_type < TT_Ocean2)
+        if(terrain_type < tt_Ocean2)
         {
             // HERE:  >= 1 && < 'Tundra Range'
-            if(terrain_type != TT_BugGrass)
+            if(terrain_type != tt_BugGrass)
             {
                 // HERE:  >= 2 && < 'Tundra Range'
                 if(terrain_type >= _Grasslands1)  /* enum OVL_Tiles_Extended */
@@ -200,9 +200,9 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
                                                     {
                                                         food_units = 0;
                                                     } break;
-                                                    case tt_Swamp1:
-                                                    case tt_Swamp2:
-                                                    case tt_Swamp3:
+                                                    case tt_Swamp1:  // BUGBUG: manual says 1/2 food
+                                                    case tt_Swamp2:  // BUGBUG: manual says 1/2 food
+                                                    case tt_Swamp3:  // BUGBUG: manual says 1/2 food
                                                     {
                                                         food_units = 0;
                                                     } break;
@@ -218,7 +218,7 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
                                                     } break;
                                                     case tt_NatureNode:
                                                     {
-                                                        food_units = 5;
+                                                        food_units = 5;  // MGC NewGame version has 4
                                                     } break;
                                                     case tt_ChaosNode:
                                                     {
@@ -286,7 +286,7 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
             }
             else
             {
-                // 0x0001  _Land  TT_BugGrass
+                // 0x0001  _Land  tt_BugGrass
                 food_units = 3;
             }
 
@@ -300,7 +300,7 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
         }
         else
         {
-            // 0x0259  tt_AnimOcean  TT_Ocean2  && 'Tundra Range'
+            // 0x0259  tt_AnimOcean  tt_Ocean2  && 'Tundra Range'
             food_units = 0;
         }
     }
@@ -968,12 +968,12 @@ int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
         return 6;
     }
 
-    if(terrain_type == TT_BugGrass)
+    if(terrain_type == tt_BugGrass)
     {
         return 2;
     }
 
-    // tt_Ocean1, TT_BugGrass, TT_Shore1_1st, TT_Lake, TT_Shore1_end
+    // tt_Ocean1, tt_BugGrass, TT_Shore1_1st, TT_Lake, TT_Shore1_end
     if(terrain_type < tt_Grasslands1)
     {
         return ST_UNDEFINED;
@@ -1235,7 +1235,7 @@ int16_t Square_Is_Shoreline(int16_t wx, int16_t wy, int16_t wp)
                             else
                             {
 
-                                if(terrain_type == TT_BugGrass)
+                                if(terrain_type == tt_BugGrass)
                                 {
 
                                     is_shoreline = ST_FALSE;
@@ -1349,7 +1349,7 @@ int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
     }
     else
     {
-        // <= TT_Ocean2      = 0x259,
+        // <= tt_Ocean2      = 0x259,
         if(terrain_type > 0x1D8)  /* _River1111_5 */
         {
             goto Return_True;
@@ -1396,7 +1396,7 @@ int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
                             else
                             {
                                 // <= TT_Shore1_end  = 0x0A1,
-                                if(terrain_type == e_TT_BugGrass)  /* TT_BugGrass */
+                                if(terrain_type == e_TT_BugGrass)  /* tt_BugGrass */
                                 {
                                     goto Return_False;
                                 }
@@ -1477,7 +1477,7 @@ int16_t Map_Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp)
 
     terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
-    if(terrain_type == TT_BugGrass)
+    if(terrain_type == tt_BugGrass)
     {
 
         is_emarkable = ST_FALSE;
@@ -1985,7 +1985,7 @@ int16_t Square_Is_Land(int16_t wx, int16_t wy, int16_t wp)
     else
     {
         
-        if(terrain_type == TT_BugGrass)
+        if(terrain_type == tt_BugGrass)
         {
             is_land = ST_TRUE;
         }
@@ -2108,7 +2108,7 @@ int16_t Square_Is_OceanLike(int16_t wx, int16_t wy, int16_t wp)
                             {
                                 if(terrain_type <= _Shore10101111)
                                 {
-                                    if(terrain_type != TT_BugGrass)
+                                    if(terrain_type != tt_BugGrass)
                                     {
                                         if(terrain_type != _1Lake)
                                         {
@@ -2191,7 +2191,7 @@ int16_t UU_Square_Provides_Some_Amount(int16_t wx, int16_t wy, int16_t wp)
     terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
     if(terrain_type >= tt_Tundra_1st)  { amount =  0; }
-    if(terrain_type == TT_BugGrass)    { amount =  0; }
+    if(terrain_type == tt_BugGrass)    { amount =  0; }
     if(terrain_type < tt_Grasslands1)  { amount = 10; }
     if(terrain_type > TT_4WRiver5)     { amount = 10; }
     if(terrain_type > TT_Shore2_end)   { amount = 25; }

@@ -206,7 +206,7 @@ void Make_Road(int16_t wx, int16_t wy, int16_t wp);
 void Make_Road_Enchanted(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o142p03
-void empty_fxn_o142p03(int16_t wx, int16_t wy, int16_t wp);
+void o142p03_empty_function(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o142p04
 void NOOP_Current_Player_All_City_Areas(void);

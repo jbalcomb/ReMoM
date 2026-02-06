@@ -1364,7 +1364,7 @@ Spell_Of_Return  = 214
 #define CHAOS_RIFT          0x01
 #define DARK_RITUALS        0x02
 #define EVIL_PRESENCE       0x03
-#define CURSED_LANDS         0x04
+#define CURSED_LANDS        0x04
 #define PESTILENCE          0x05
 #define CLOUD_OF_SHADOW     0x06
 #define FAMINE              0x07

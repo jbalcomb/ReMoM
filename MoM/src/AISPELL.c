@@ -1241,7 +1241,7 @@ int16_t Square_Is_Legal_For_Floating_Island(int16_t wx, int16_t wy, int16_t wp)
         ||
         ((terrain_type <= _Shore000R0000) && (terrain_type > _1LakeRiv_S))
         ||
-        ((terrain_type <= _Shore10101111) && (terrain_type != TT_BugGrass) && (terrain_type != _1Lake))
+        ((terrain_type <= _Shore10101111) && (terrain_type != tt_BugGrass) && (terrain_type != _1Lake))
     )
     {
         return ST_TRUE;

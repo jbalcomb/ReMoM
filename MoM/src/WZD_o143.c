@@ -241,8 +241,8 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
     int16_t attempts = 0;
     char * city_names_buffer = 0;  // _DI_
     int16_t itr_cities = 0;  // _SI_
-    /* hack */ char hack_new_name[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    /* hack */ char * city_names_buffer_ptr = 0;
+    /* HACK */ char hack_new_name[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    /* HACK */ char * city_names_buffer_ptr = 0;
 
     city_names_buffer = (char *)Near_Allocate_First(280);
 
@@ -286,8 +286,8 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
     
     // strcpy(name, city_names_buffer[(city_name_idx * 14)]);
     city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
-
     strcpy(name, city_names_buffer_ptr);
+    
 Capture_Cities_Data();
 
 }
