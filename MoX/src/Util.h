@@ -69,7 +69,8 @@ void Delete_Structure(int16_t record_index, uint8_t * records, int16_t record_si
 // WZD s22p17
 void Copy_Memory_Less_Than(int8_t * src, int8_t * dst, int16_t n);
 
-// WZD s22p18 MEM_Clear_Far()
+// WZD s22p18
+void Clear_Memory(int8_t * s, int32_t n);
 
 // WZD s22p19
 void Set_Memory(int8_t * s, int32_t n, int16_t c);

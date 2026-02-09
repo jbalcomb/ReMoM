@@ -610,7 +610,7 @@ void Restore_Mouse_On_Page(void)
     {
         for(itr_width = 0; itr_width < width; itr_width++)
         {
-            *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width) = *mouse_buffer++;
+            *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width) = (uint8_t)*mouse_buffer++;
         }
     }
 
@@ -638,7 +638,7 @@ void Restore_Mouse_Off_Page(void)
     {
         for(itr_width = 0; itr_width < width; itr_width++)
         {
-            *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width) = *mouse_buffer++;
+            *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width) = (uint8_t)*mouse_buffer++;
         }
     }
 

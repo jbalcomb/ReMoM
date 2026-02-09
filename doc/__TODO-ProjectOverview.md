@@ -68,7 +68,6 @@ Init_New_Game_()
 [x] |-> Random_City_Name_By_Race_NewGame()
 [x] |-> Create_Unit_NewGame()
 [x] Generate_Neutral_Cities__WIP()
-
 [x] Generate_Terrain_Specials()
 [x] |-> Square_Is_Grassland_NewGame()
 [x] |-> Square_Is_Mountain_NewGame()
@@ -79,9 +78,10 @@ Init_New_Game_()
 [x] |-> Square_Is_Desert_NewGame()
 [x] |-> Desert_Terrain_Special()
 
+[x] Generate_Roads()
+
 [ ] ...move special.c/h from MoM to MoX
 
-[ ] NEWG_CreateRoads()
 [ ] NEWG_CreateShores()
 [ ] NEWG_CreateRiver()
 [ ] NEWG_SetRiverTiles()
@@ -164,6 +164,12 @@ cmp     eax, _HOME_WORLD_GEN_MAX_CTR
 if(_NUM_STARS > 54)
     _HOME_WORLD_GEN_MAX_CTR = 372
 
+
+
+TODO  add test for WIZ_Conquest()
+
+TODO  review CMB_TileGen__WIP() and friends
+CMB_Units_Init__WIP()
 
 
 

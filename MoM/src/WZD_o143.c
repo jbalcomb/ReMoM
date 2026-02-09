@@ -3,9 +3,8 @@
         ovr143
 */
 
-#include "../../STU/src/STU_CHK.h"
-
 #include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_BASE.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
 #include "../../MoX/src/MOX_DEF.h"
@@ -15,7 +14,6 @@
 #include "../../MoX/src/random.h"
 #include "../../MoX/src/Util.h"
 
-#include "../../MoX/src/MOM_DEF.h"
 #include "MovePath.h"
 #include "Terrain.h"
 #include "TerrType.h"
@@ -288,8 +286,6 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
     city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
     strcpy(name, city_names_buffer_ptr);
     
-Capture_Cities_Data();
-
 }
 
 
@@ -507,7 +503,6 @@ void Reset_City_Road_Connection_Bitfields(void)
                         // set the road connect bits from boths sides
                         Set_Bit_Field(candidate_list[candidate_index], (uint8_t *)&_CITIES[itr_cities].road_connections[0]);
                         Set_Bit_Field(itr_cities, (uint8_t *)&_CITIES[candidate_list[candidate_index]].road_connections[0]);
-Capture_Cities_Data();
                     }
 
                 }
@@ -740,8 +735,8 @@ int16_t OVL_GetRoadPath(int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t 
     {
         itr_world_width = (movepath_cost_map->Reverse_Path[(itr1 - 1 - itr2)] % WORLD_WIDTH);
         itr_world_height = (movepath_cost_map->Reverse_Path[(itr1 - 1 - itr2)] / WORLD_WIDTH);
-        path_string_x[itr2] = itr_world_width;
-        path_string_y[itr2] = itr_world_height;
+        path_string_x[itr2] = (int8_t)itr_world_width;
+        path_string_y[itr2] = (int8_t)itr_world_height;
     }
 
     return itr1;

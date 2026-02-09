@@ -297,7 +297,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                 if(_osc_spell_target_type == stt_Map_Square)
                 {
 
-                    leave_screen = Map_Square_Is_Targetable(_main_map_grid_x, _main_map_grid_y);
+                    leave_screen = Map_Square_Is_Targetable((int16_t)_main_map_grid_x, (int16_t)_main_map_grid_y);
 
                 }
 
@@ -308,7 +308,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                 if(_osc_spell_target_type == stt_Map_Square)
                 {
 
-                    leave_screen = Map_Square_Is_Targetable(_main_map_grid_x, _main_map_grid_y);
+                    leave_screen = Map_Square_Is_Targetable((int16_t)_main_map_grid_x, (int16_t)_main_map_grid_y);
 
                 }
                 else
@@ -435,9 +435,9 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                     if(have_valid_target == ST_TRUE)
                     {
 
-                        _osc_main_map_grid_x = _main_map_grid_x;
+                        _osc_main_map_grid_x = (int16_t)_main_map_grid_x;
 
-                        _osc_main_map_grid_y = _main_map_grid_y;
+                        _osc_main_map_grid_y = (int16_t)_main_map_grid_y;
 
                         if(_osc_main_map_grid_x == 0)
                         {
@@ -461,8 +461,8 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
                             case stt_Friendly_Unit:
                             {
-                                x_screen_or_map = (_main_map_grid_x * SQUARE_WIDTH);
-                                y_screen_or_map = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
+                                x_screen_or_map = (int16_t)(_main_map_grid_x * SQUARE_WIDTH);
+                                y_screen_or_map = (int16_t)(MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
                                 _osc_wx = Unit_List_Window(entity_idx, 1, x_screen_or_map, y_screen_or_map);
                                 if(_osc_wx != ST_UNDEFINED)
                                 {
@@ -492,8 +492,8 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
                             case stt_Enemy_Unit:
                             {
-                                x_screen_or_map = (_main_map_grid_x * SQUARE_WIDTH);
-                                y_screen_or_map = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
+                                x_screen_or_map = (int16_t)(_main_map_grid_x * SQUARE_WIDTH);
+                                y_screen_or_map = (int16_t)(MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
                                 _osc_wx = Unit_List_Window(entity_idx, 1, x_screen_or_map, y_screen_or_map);
                                 if(_osc_wx != ST_UNDEFINED)
                                 {
@@ -523,7 +523,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
                             case stt_Map_Square:
                             {
-                                Map_Square_Is_Targetable(_main_map_grid_x, _main_map_grid_y);
+                                Map_Square_Is_Targetable((int16_t)_main_map_grid_x, (int16_t)_main_map_grid_y);
                                 leave_screen = ST_TRUE;
                             } break;
 
@@ -568,8 +568,8 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
         {
             Play_Left_Click();
             Reduced_Map_Coords(&x_screen_or_map, &y_screen_or_map, (((12 / 2) + _map_x) % WORLD_WIDTH), ((10 / 2) + _map_y), 58, 30);
-            _prev_world_x = (x_screen_or_map + _minimap_grid_x);
-            _prev_world_y = (y_screen_or_map + _minimap_grid_y);
+            _prev_world_x = (int16_t)(x_screen_or_map + _minimap_grid_x);
+            _prev_world_y = (int16_t)(y_screen_or_map + _minimap_grid_y);
             IDK_CheckSet_MapDisplay_XY();
             Center_Map(&_map_x, &_map_y, _prev_world_x, _prev_world_y, _map_plane);
             MainScr_Create_Reduced_Map_Picture();
@@ -589,8 +589,8 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
             entity_idx = GET_MAIN_MAP_ENTITY();
             if(entity_idx == ST_UNDEFINED)
             {
-                _prev_world_x += (_main_map_grid_x - (12 / 2));
-                _prev_world_y += (_main_map_grid_y - (10 / 2));
+                _prev_world_x += (int16_t)(_main_map_grid_x - (12 / 2));
+                _prev_world_y += (int16_t)(_main_map_grid_y - (10 / 2));
                 IDK_CheckSet_MapDisplay_XY();  // ; updates _prev_world_x,y and _map_x
             }
             else
@@ -605,8 +605,8 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                             (_osc_spell_target_type == stt_Friendly_Group)
                         )
                         {
-                            x_screen_or_map = (_main_map_grid_x * SQUARE_WIDTH);
-                            y_screen_or_map = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
+                            x_screen_or_map = (int16_t)(_main_map_grid_x * SQUARE_WIDTH);
+                            y_screen_or_map = (int16_t)(MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
                             Deactivate_Help_List();
                             _osc_wx = Unit_List_Window(entity_idx, 0, x_screen_or_map, y_screen_or_map);
                             Assign_Auto_Function(Spell_Casting_Screen_Draw, 1);
@@ -628,8 +628,8 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                             (_osc_spell_target_type == stt_Enemy_Group)
                         )
                         {
-                            x_screen_or_map = (_main_map_grid_x * SQUARE_WIDTH);
-                            y_screen_or_map = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
+                            x_screen_or_map = (int16_t)(_main_map_grid_x * SQUARE_WIDTH);
+                            y_screen_or_map = (int16_t)(MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
                             Deactivate_Help_List();
                             _osc_wx = Unit_List_Window(entity_idx, 0, x_screen_or_map, y_screen_or_map);
                             Assign_Auto_Function(Spell_Casting_Screen_Draw, 1);

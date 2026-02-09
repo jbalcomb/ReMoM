@@ -1467,7 +1467,7 @@ void Spell_Target_Global_Enchantment_Bind__WIP(int16_t field_idx, int16_t player
 
     _fstrcpy(string, spell_data_table[spell_idx].name);
 
-    character_count = strlen(string);
+    character_count = (int16_t)strlen(string);
 
     half_width = ((character_count * 5) / 2);
 

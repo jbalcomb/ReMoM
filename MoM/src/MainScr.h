@@ -572,7 +572,7 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
 int16_t Square_Has_City(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o97p04
-int16_t Units_Moves(int16_t unit_array[], int16_t unit_array_count);
+int16_t Army_Moves2(int16_t troops[], int16_t troops_count);
 
 // WZD o97p05
 int16_t RP_CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * stack_size, int16_t * stack_array);

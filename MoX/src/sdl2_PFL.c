@@ -57,7 +57,7 @@ uint64_t Platform_Get_Millies(void)
 
 void Platform_Sleep_Millies(uint64_t millies)
 {
-    SDL_Delay(millies);
+    SDL_Delay((Uint32)millies);
 }
 
 void Platform_Get_Mouse_Position_XY(int * mx, int * my)

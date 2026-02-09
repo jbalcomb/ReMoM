@@ -1,6 +1,5 @@
 
 set(STU_SOURCES
-    STU_CHK.c
     STU_DBG.c
     STU_DRAW.c
     STU_EMS.c

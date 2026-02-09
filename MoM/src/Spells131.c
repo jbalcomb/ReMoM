@@ -11,8 +11,8 @@
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_DAT.h"
-#include "../../MoX/src/MOM_Data.h"
 #include "../../MoX/src/SOUND.h"
 #include "../../MoX/src/Timer.h"
 #include "../../MoX/src/Util.h"
@@ -20,7 +20,6 @@
 #include "../../MoX/src/random.h"
 
 #include "CITYCALC.h"
-#include "../../MoX/src/MOM_DEF.h"
 #include "CMBTDEF.h"
 #include "Combat.h"
 #include "OverSpel.h"
@@ -656,7 +655,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                                 if(Flag_Loop_Var == 24)
                                 {
 
-                                    _UNITS[battle_units[battle_unit_idx].unit_idx].Level = Calc_Unit_Level(battle_units[battle_unit_idx].unit_idx);
+                                    _UNITS[battle_units[battle_unit_idx].unit_idx].Level = (int8_t)Calc_Unit_Level(battle_units[battle_unit_idx].unit_idx);
 
                                 }
                                 
@@ -767,7 +766,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                                     if(Flag_Loop_Var == 24)  // CMB_NearDispel_UEs[24] = spl_Heroism;
                                     {
 
-                                        _UNITS[battle_units[battle_unit_idx].unit_idx].Level = Calc_Unit_Level(battle_units[battle_unit_idx].unit_idx);
+                                        _UNITS[battle_units[battle_unit_idx].unit_idx].Level = (int8_t)Calc_Unit_Level(battle_units[battle_unit_idx].unit_idx);
 
                                     }
                                     
@@ -899,13 +898,13 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                         if(battle_units[battle_unit_idx].controller_idx == _combat_attacker_player)
                         {
 
-                            battle_units[battle_unit_idx].controller_idx = _combat_defender_player;
+                            battle_units[battle_unit_idx].controller_idx = (int8_t)_combat_defender_player;
 
                         }
                         else
                         {
 
-                            battle_units[battle_unit_idx].controller_idx = _combat_attacker_player;
+                            battle_units[battle_unit_idx].controller_idx = (int8_t)_combat_attacker_player;
 
                         }
 
@@ -1944,7 +1943,7 @@ void Cast_Animate_Dead(int16_t player_idx, int16_t caster_idx)
     if(Picked_Target > ST_UNDEFINED)
         battle_unit_idx = Target_BU_List[Picked_Target];
 
-    battle_units[battle_unit_idx].controller_idx = player_idx;  // ; BUG: fails to set the overland owner of the unit
+    battle_units[battle_unit_idx].controller_idx = (int8_t)player_idx;  // ; BUG: fails to set the overland owner of the unit
     battle_units[battle_unit_idx].Cur_Figures = battle_units[battle_unit_idx].Max_Figures;
     battle_units[battle_unit_idx].front_figure_damage = 0;
     battle_units[battle_unit_idx].Combat_Effects = 0;

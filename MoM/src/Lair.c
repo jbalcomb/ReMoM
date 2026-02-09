@@ -400,9 +400,9 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
             if(Hire_Hero_Popup(Hero_Slot, Reward_Hero, 2) == ST_TRUE)
             {
                 // drake178: ; BUG: this needs to be done when hiring the hero
-                _UNITS[(_units - 1)].wx = _combat_wx;
-                _UNITS[(_units - 1)].wy = _combat_wy;
-                _UNITS[(_units - 1)].wp = _combat_wp;
+                _UNITS[(_units - 1)].wx = (int8_t)_combat_wx;
+                _UNITS[(_units - 1)].wy = (int8_t)_combat_wy;
+                _UNITS[(_units - 1)].wp = (int8_t)_combat_wp;
             }
             Reset_Draw_Active_Stack();
         }

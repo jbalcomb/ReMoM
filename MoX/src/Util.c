@@ -380,7 +380,42 @@ void Copy_Memory_Less_Than(int8_t * src, int8_t * dst, int16_t n)
 }
 
 
-// WZD s22p18 MEM_Clear_Far()
+// WZD s22p18
+// drake178: MEM_Clear_Far()
+/*
+; zeroes out the specified memory area, in the data
+; segment if the segment passed is 0
+*/
+/*
+Elsewhere, seg033 Clear_Bitmap_Pixels() had been named Clear_Memory_Far()
+...it assumes a far pointer and doesn't early-exit
+
+if the segment portion of the far pointer is 0, it uses the data segment
+
+*/
+void Clear_Memory(int8_t * s, int32_t n)
+{
+    if(n == 0) { return; }
+    while(n--) { *s++ = 0; }
+}
+/*
+WZD seg033
+
+; zeroes out a memory area
+; the only difference between it and the MEM_Clear_Far
+; function is that the latter substitutes the data
+; segment for near pointers (seg = 0)
+proc Clear_Memory_Far far
+dst= dword ptr  6
+n= word ptr  0Ah
+mov     cx, [bp+n]
+mov     di, [word ptr bp+dst]
+mov     ax, [word ptr bp+dst+2]
+mov     es, ax
+xor     al, al
+rep stosb
+*/
+
 
 // WZD s22p19
 // MoO2  Module: struct  Set_Memory_()
@@ -392,8 +427,7 @@ void Copy_Memory_Less_Than(int8_t * src, int8_t * dst, int16_t n)
 void Set_Memory(int8_t * s, int32_t n, int16_t c)
 {
     if(n == 0) { return; }
-
-    while(n--) { *s++ = c; }
+    while(n--) { *s++ = (int8_t)c; }
 }
 // void Set_Memory_(int8_t * s, int16_t n, uint8_t c)
 // {

@@ -62,84 +62,72 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
 #define CITIES_FARMER_COUNT(_city_idx_,_farmer_count_)  {       \
     do {                                                        \
         _CITIES[(_city_idx_)].farmer_count = (_farmer_count_);  \
-        Capture_Cities_Data();                                  \
     } while(0);                                                 \
 }
 
 #define CITIES_POPULATION(_city_idx_,_population_)  {           \
     do {                                                        \
         _CITIES[(_city_idx_)].population = (_population_);      \
-        Capture_Cities_Data();                                  \
     } while(0);                                                 \
 }
 
 #define CITIES_SIZE(_city_idx_,_size_)  {                       \
     do {                                                        \
         _CITIES[(_city_idx_)].size = (_size_);                  \
-        Capture_Cities_Data();                                  \
     } while(0);                                                 \
 }
 
 #define CITIES_POP_10S(_city_idx_,_Pop_10s_)  {                 \
     do {                                                        \
         _CITIES[(_city_idx_)].Pop_10s = (_Pop_10s_);            \
-        Capture_Cities_Data();                                  \
     } while(0);                                                 \
 }
 
 #define CITIES_FOOD_UNITS(_city_idx_,_food_units_)  {           \
     do {                                                        \
         _CITIES[(_city_idx_)].food_units = (_food_units_);      \
-        Capture_Cities_Data();                                  \
     } while(0);                                                 \
 }
 
 #define CITIES_PRODUCTION_UNITS(_city_idx_,_production_units_)  {       \
     do {                                                                \
         _CITIES[(_city_idx_)].production_units = (_production_units_);  \
-        Capture_Cities_Data();                                          \
     } while(0);                                                         \
 }
 
 #define CITIES_GOLD_UNITS(_city_idx_,_gold_units_)  {           \
     do {                                                        \
         _CITIES[(_city_idx_)].gold_units = (_gold_units_);      \
-        Capture_Cities_Data();                                  \
     } while(0);                                                 \
 }
 
 #define CITIES_BUILDING_MAINTENANCE(_city_idx_,_building_maintenance_)  {       \
     do {                                                                        \
         _CITIES[(_city_idx_)].building_maintenance = (_building_maintenance_);  \
-        Capture_Cities_Data();                                                  \
     } while(0);                                                                 \
 }
 
 #define CITIES_RESEARCH_UNITS(_city_idx_,_research_units_)  {       \
     do {                                                            \
         _CITIES[(_city_idx_)].research_units = (_research_units_);  \
-        Capture_Cities_Data();                                      \
     } while(0);                                                     \
 }
 
 #define CITIES_MANA_UNITS(_city_idx_,_mana_units_)  {           \
     do {                                                        \
         _CITIES[(_city_idx_)].mana_units = (_mana_units_);      \
-        Capture_Cities_Data();                                  \
     } while(0);                                                 \
 }
 
 #define CITIES_SOLD_BUILDING(_city_idx_,_sold_building_)  {         \
     do {                                                            \
         _CITIES[(_city_idx_)].sold_building = (_sold_building_);    \
-        Capture_Cities_Data();                                      \
     } while(0);                                                     \
 }
 
 #define CITIES_CONSTRUCTION(_city_idx_,_construction_)  {       \
     do {                                                        \
         _CITIES[(_city_idx_)].construction = (_construction_);  \
-        Capture_Cities_Data();                                  \
     } while(0);                                                 \
 }
 
@@ -157,7 +145,6 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
     do {                                                    \
         /* trc_prn("TRACE: [%s, %d]: UNITS_WX(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].wx, (_wx_)); */ \
         _UNITS[(_unit_idx_)].wx = (_wx_);  \
-        Capture_Units_Data();                               \
     } while(0);                                             \
 }
 
@@ -165,7 +152,6 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
     do {                                                    \
         /* trc_prn("TRACE: [%s, %d]: UNITS_WY(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].wy, (_wy_)); */ \
         _UNITS[(_unit_idx_)].wy = (_wy_);  \
-        Capture_Units_Data();                               \
     } while(0);                                             \
 }
 
@@ -173,7 +159,6 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
     do {                                                    \
         /* trc_prn("TRACE: [%s, %d]: UNITS_WP(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].wp, (_wp_)); */ \
         _UNITS[(_unit_idx_)].wp = (_wp_);  \
-        Capture_Units_Data();                               \
     } while(0);                                             \
 }
 
@@ -181,7 +166,6 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
     do {                                                    \
         /* trc_prn("TRACE: [%s, %d]: UNITS_DRAW_PRIORITY(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].Draw_Priority, (_priority_)); */ \
         _UNITS[(_unit_idx_)].Draw_Priority = (_priority_);  \
-        Capture_Units_Data();                               \
     } while(0);                                             \
 }
 
@@ -189,7 +173,6 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
     do {                                                    \
         /* trc_prn("TRACE: [%s, %d]: UNITS_IN_TOWER(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].in_tower, (_in_tower_)); */ \
         _UNITS[(_unit_idx_)].in_tower = (_in_tower_);       \
-        Capture_Units_Data();                               \
     } while(0);                                             \
 }
 
@@ -198,7 +181,6 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
         /* trc_prn("TRACE: [%s, %d]: UNITS_STATUS(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].Status, (_status_)); */ \
         /* Validate_Units_Status() */                       \
         _UNITS[(_unit_idx_)].Status = (_status_);           \
-        Capture_Units_Data();                               \
     } while(0);                                             \
 }
 
@@ -207,7 +189,6 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
         /* trc_prn("TRACE: [%s, %d]: UNITS_FINISHED(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].Finished, (_finished_)); */ \
         /* Validate_Units_Finished() */                     \
         _UNITS[(_unit_idx_)].Finished = (_finished_);       \
-        Capture_Units_Data();                               \
     } while(0);                                             \
 }
 
@@ -216,7 +197,6 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
         /* trc_prn("TRACE: [%s, %d]: UNITS_OWNER(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].owner_idx, (_owner_idx_)); */ \
         /* Validate_Units_Owner() */                     \
         _UNITS[(_unit_idx_)].owner_idx = (_owner_idx_);       \
-        Capture_Units_Data();                               \
     } while(0);                                             \
 }
 

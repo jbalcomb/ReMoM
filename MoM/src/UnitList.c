@@ -410,7 +410,7 @@ void Unit_List_Window_Draw(void)
 
         Load_Battle_Unit(m_ulw_troops[itr], global_battle_unit);
 
-        _UNITS[m_ulw_troops[itr]].type = temp_unit_type;
+        _UNITS[m_ulw_troops[itr]].type = (uint8_t)temp_unit_type;
 
         colors[0] = 250;
         colors[1] = 252;

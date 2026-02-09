@@ -9,6 +9,7 @@
 #include "CITYCALC.h"
 
 #include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_BASE.h"
 #include "../../MoX/src/MOX_BITS.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
@@ -19,7 +20,6 @@
 
 #include "AIDUDES.h"
 #include "Items.h"
-#include "../../MoX/src/MOM_DEF.h"
 #include "MovePath.h"
 #include "RACETYPE.h"
 #include "SETTLE.h"
@@ -28,10 +28,8 @@
 #include "UNITTYPE.h"   // WTFMATE
 
 // #ifdef STU_DEBUG
-#include "../../STU/src/STU_CHK.h"
 #include "../../STU/src/STU_DBG.h"
 // #endif
-
 
 #include <assert.h>
 #include <math.h>       /* sqrt() */
@@ -60,12 +58,12 @@ void Do_City_Calculations(int16_t city_idx)
 
     // DONT  EMM_Map_DataH();
 
-    CITIES_FOOD_UNITS(city_idx, City_Food_Production(city_idx));
-    CITIES_PRODUCTION_UNITS(city_idx, City_Production_Production(city_idx));
-    CITIES_GOLD_UNITS(city_idx, City_Gold_Production(city_idx));
-    CITIES_BUILDING_MAINTENANCE(city_idx, City_Gold_Mainanence(city_idx));
-    CITIES_RESEARCH_UNITS(city_idx, City_Research_Production(city_idx));
-    CITIES_MANA_UNITS(city_idx, City_Mana_Production(city_idx));
+    CITIES_FOOD_UNITS(city_idx, (int8_t)City_Food_Production(city_idx));
+    CITIES_PRODUCTION_UNITS(city_idx, (int8_t)City_Production_Production(city_idx));
+    CITIES_GOLD_UNITS(city_idx, (uint8_t)City_Gold_Production(city_idx));
+    CITIES_BUILDING_MAINTENANCE(city_idx, (int8_t)City_Gold_Mainanence(city_idx));
+    CITIES_RESEARCH_UNITS(city_idx, (int8_t)City_Research_Production(city_idx));
+    CITIES_MANA_UNITS(city_idx, (int8_t)City_Mana_Production(city_idx));
 
     if(
         (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
@@ -99,11 +97,11 @@ void Do_City_Calculations(int16_t city_idx)
 */
 void Players_Update_Magic_Power(void)
 {
-    int16_t NIU_players_power_base_array[NUM_PLAYERS];
-    int16_t node_owner_idx;
+    int16_t NIU_players_power_base_array[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int16_t node_owner_idx = 0;
 
-    int16_t itr;  // _SI_
-    int16_t node_magic_power_points;  // _DI_
+    int16_t itr = 0;  // _SI_
+    int16_t node_magic_power_points = 0;  // _DI_
 
     for(itr = 0; itr < _num_players; itr++)
     {
@@ -718,7 +716,7 @@ void Kill_Unit(int16_t unit_idx, int16_t kill_type)
 
     unit_owner_idx = _UNITS[unit_idx].owner_idx;
 
-    _UNITS[unit_idx].Level = Unit_Base_Level(unit_idx);
+    _UNITS[unit_idx].Level = (int8_t)Unit_Base_Level(unit_idx);
 
     // ¿ removal type 1 is "Dismiss" ?
     // ...can be resurected or reincarnated
@@ -2762,19 +2760,19 @@ int16_t City_Current_Product_Cost(int16_t city_idx)
 */
 void Generate_Mercenaries(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * amount, int16_t * type, int16_t * cost, int16_t * level)
 {
-    int16_t G_Tries;
-    int16_t Myrror_Available;
-    int16_t Arcanus_Available;
-    int16_t Unit_Count;
-    int16_t Total_Cost;
-    int16_t Roll_Total;
-    int16_t Merc_Level;
-    int16_t player_fame;
-    int16_t itr_units;  // _SI_
-    int16_t itr_cities;  // _SI_
-    int16_t itr_towers;  // _SI_
-    int16_t unit_type;  // _DI_
-    int16_t return_value;  // _AX_
+    int16_t G_Tries = 0;
+    int16_t Myrror_Available = 0;
+    int16_t Arcanus_Available = 0;
+    int16_t Unit_Count = 0;
+    int16_t Total_Cost = 0;
+    int16_t Roll_Total = 0;
+    int16_t Merc_Level = 0;
+    int16_t player_fame = 0;
+    int16_t itr_units = 0;  // _SI_
+    int16_t itr_cities = 0;  // _SI_
+    int16_t itr_towers = 0;  // _SI_
+    int16_t unit_type = 0;  // _DI_
+    int16_t return_value = 0;  // _AX_
 
     Total_Cost = 0;  // HACK:  DNE in Dasm
 
@@ -3362,7 +3360,7 @@ void Record_History(void)
         // record the total progress values into the historian
         for(itr_players = 0; itr_players < _num_players; itr_players++)
         {
-            _players[itr_players].Historian[_turn] = power_of_a_wizard[itr_players];
+            _players[itr_players].Historian[_turn] = (uint8_t)power_of_a_wizard[itr_players];
         }
     }
     else
@@ -3375,7 +3373,7 @@ void Record_History(void)
                 _players[itr_players].Historian[(itr_history + 1)] = _players[itr_players].Historian[itr_history];
             }
 
-            _players[itr_players].Historian[287] = power_of_a_wizard[itr_players];
+            _players[itr_players].Historian[287] = (uint8_t)power_of_a_wizard[itr_players];
         }
     }
 

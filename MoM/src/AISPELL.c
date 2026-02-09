@@ -326,7 +326,7 @@ void AI_Compute_Spells_Info(int16_t player_idx)
 
                 // ; redundant - filled out but never used
                 // ; redundant - calculated but never used
-                CRP_AI_OVL_SpellList[CRP_AI_OVL_SpellCount] = spell_idx;
+                CRP_AI_OVL_SpellList[CRP_AI_OVL_SpellCount] = (unsigned char)spell_idx;
 
                 AI_OVL_Spell_Cats[ai_spell_group] = 1;
 

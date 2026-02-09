@@ -850,21 +850,15 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                             AI_Eval_After_Spell = ST_TRUE;
 
-Check_Game_Data();
                             Cast_Floating_Island(player_idx);
-Check_Game_Data();
 
                         }
                         else
                         {
 
-Check_Game_Data();
                             Create_Unit__WIP(spell_data_table[spell_idx].Param0, player_idx, _players[player_idx].summon_wx, _players[player_idx].summon_wy, _players[player_idx].summon_wp, ST_UNDEFINED);
-Check_Game_Data();
 
-Check_Game_Data();
                             UNIT_RemoveExcess((_units - 1));
-Check_Game_Data();
 
                         }
 
@@ -895,20 +889,16 @@ Check_Game_Data();
 
                                 // DBG_spell_data_table__Param0 = GET_1B_OFS(DBG_spell_data_table, (0x20 - 1));
 
-Check_Game_Data();
                                 // IDK_SummonAnim(spell_data_table[spell_idx].Param0, MultiPurpose_Local_Var, player_idx);
                                 IDK_SummonAnim(DBG_spell_data_table__Param0, MultiPurpose_Local_Var, player_idx);
-Check_Game_Data();
 
                                 AI_Eval_After_Spell = ST_TRUE;
 
                             }
 
                         }
-Check_Game_Data();
                         UNITS_FINISHED((_units - 1), ST_FALSE);
                         _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;
-Check_Game_Data();
 
                         if(player_idx == HUMAN_PLAYER_IDX)
                         {
@@ -917,10 +907,8 @@ Check_Game_Data();
                             _active_world_y = _UNITS[_units].wy;
                             _map_plane = _UNITS[_units].wp;
 
-Check_Game_Data();
                             // ; BUG: this function has a parameter!
                             /* HACK */ /* WASBUG */ Select_Stack_At_Unit((_units - 1));  // how to reproduce calling this without the unit_idx parameter?
-Check_Game_Data();
 
                         }
 
@@ -1205,7 +1193,7 @@ Check_Game_Data();
                     if(spell_idx == spl_Heroism)
                     {
 
-                        _UNITS[spell_target_idx].Level = Calc_Unit_Level(spell_target_idx);
+                        _UNITS[spell_target_idx].Level = (int8_t)Calc_Unit_Level(spell_target_idx);
 
                     }
 
@@ -1334,7 +1322,6 @@ Check_Game_Data();
                             enchantments_idx = spell_data_table[spell_idx].ce_idx;
 
                             ptr_enchantments[enchantments_idx] = (player_idx + 1);
-Capture_Cities_Data();
                         }
 
                         if(
@@ -1459,7 +1446,6 @@ Capture_Cities_Data();
                         ptr_enchantments = (uint8_t *)&_CITIES[spell_target_idx].enchantments[0];
                         enchantments_idx = spell_data_table[spell_idx].ce_idx;
                         ptr_enchantments[enchantments_idx] = (player_idx + 1);  // PLAYER_NUM();
-Capture_Cities_Data();
                         if(
                             (player_idx == HUMAN_PLAYER_IDX)
                             ||
@@ -1916,7 +1902,7 @@ Capture_Cities_Data();
                             if(_UNITS[itr_units].owner_idx == player_idx)
                             {
 
-                                _UNITS[itr_units].Level = Calc_Unit_Level(itr_units);
+                                _UNITS[itr_units].Level = (int8_t)Calc_Unit_Level(itr_units);
 
                             }
 

@@ -7,7 +7,7 @@
 
 
 #define SETTINGS_FILE_NAME "MAGIC.SET"
-#define SETTINGS_FILE_SIZE 466
+#define SETTINGS_FILE_SIZE 466  // sizeof(struct s_MAGIC_SET)
 
 
 

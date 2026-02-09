@@ -17,7 +17,8 @@ MoO2
 
 
 /*
-NOTE(JimBalcomb,20250302): Why do I have two config mom structures?
+NOTE(JimBalcomb,20250302):  Why do I have two config mom structures?
+NOTE(JimBalcomb,20260208):  The file that comes out of INSTALL.EXE is 20 bytes, but MGC and WZD both definitely read 18 bytes into a structure that is sizeof 18 bytes
 */
 //  ; (sizeof=0x12)
 #pragma pack(push)

@@ -973,7 +973,7 @@ int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
         return 2;
     }
 
-    // tt_Ocean1, tt_BugGrass, TT_Shore1_1st, TT_Lake, TT_Shore1_end
+    // tt_Ocean1, tt_BugGrass, tt_Shore1_Fst, TT_Lake, tt_Shore1_Lst
     if(terrain_type < tt_Grasslands1)
     {
         return ST_UNDEFINED;
@@ -1395,7 +1395,7 @@ int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
                             }
                             else
                             {
-                                // <= TT_Shore1_end  = 0x0A1,
+                                // <= tt_Shore1_Lst  = 0x0A1,
                                 if(terrain_type == e_TT_BugGrass)  /* tt_BugGrass */
                                 {
                                     goto Return_False;
@@ -1916,10 +1916,9 @@ void All_City_Nightshade_Count(void)
         }
 
         if(
+            #pragma warning(suppress : 6287)  // TODO  Redundant code
             (_CITIES[itr_cities].bldg_status[ SHRINE           ] != bs_NotBuilt)
             ||
-            /* Severity	Code	Description	Project	File	Line	Suppression State                                                                   */
-            /* Warning	C6287	Redundant code : the left and right sub - expressions are identical.ReMoM	C : \STU\devel\ReMoM\src\Terrain.C	1402    */
             (_CITIES[itr_cities].bldg_status[ SHRINE           ] != bs_NotBuilt)  /* NOTE: actually, definitely duplicated */
             ||
             (_CITIES[itr_cities].bldg_status[ TEMPLE           ] != bs_NotBuilt)
@@ -1952,7 +1951,7 @@ void All_City_Nightshade_Count(void)
 
             }
 
-            _CITIES[itr_cities].enchantments[NIGHTSHADE] = nightshade_count;
+            _CITIES[itr_cities].enchantments[NIGHTSHADE] = (uint8_t)nightshade_count;
 
         }
 

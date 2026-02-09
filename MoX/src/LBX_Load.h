@@ -123,8 +123,7 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
 void File_Name_Base(char * file_name);
 
 // WZD s10p17
-void RAM_SetMinKB(int16_t amount);
-
+void RAM_Set_Minimum(int16_t amount);
 
 
 #ifdef __cplusplus

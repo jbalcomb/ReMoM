@@ -378,7 +378,7 @@ void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte
         bbuff = bbuff_pos++;
 
         packet_op = *frame_data++;  // Frame Byte #1: Op/Count
-        DBG_frame_data_pos = (frame_data - DBG_frame_data);
+        DBG_frame_data_pos = (uint16_t)(frame_data - DBG_frame_data);  // NOTE pointers, so __int64
         // assert(frame_data <= DBG_frame_data_end);
 
         if(packet_op == 0xFF)  /* Type: skip */
@@ -656,16 +656,16 @@ picture
 */
 void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
 {
-    struct s_FLIC_HDR animation_header;
-    int16_t current_frame;
-    int16_t next_frame;
-    unsigned int frame_offset;
-    unsigned short flic_frame_offset_sgmt;
-    unsigned short flic_frame_offset_ofst;
-    byte_ptr source_start;
-    uint8_t remap_flag;
-    int16_t DBG_width;
-    int16_t DBG_height;
+    struct s_FLIC_HDR animation_header = { 0 };
+    int16_t current_frame = 0;
+    int16_t next_frame = 0;
+    unsigned int frame_offset = 0;
+    unsigned short flic_frame_offset_sgmt = 0;
+    unsigned short flic_frame_offset_ofst = 0;
+    byte_ptr source_start = 0;
+    uint8_t remap_flag = 0;
+    int16_t DBG_width = 0;
+    int16_t DBG_height = 0;
 
     assert(picture != NULL);
     assert(x_start >= SCREEN_XMIN);
@@ -871,16 +871,16 @@ void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
 // NOTE: Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg) ~== FLIC_Draw(SAMB_ptr p_FLIC_File)
 void Draw_Picture_To_Bitmap(SAMB_ptr source_picture, SAMB_ptr destination_bitmap)
 {
-    struct s_FLIC_HDR animation_header;
-    int16_t current_frame;
-    int8_t full_store_flag;
-    int16_t frame_start;
-    int16_t frame_idx;
-    int16_t itr_frames;
-    uint32_t frame_offset;
-    byte_ptr source_start;
-    int16_t loop_frame_index;  // DNE in Dasm
-    int16_t frame_count;  // DNE in Dasm
+    struct s_FLIC_HDR animation_header = { 0 };
+    int16_t current_frame = 0;
+    int8_t full_store_flag = 0;
+    int16_t frame_start = 0;
+    int16_t frame_idx = 0;
+    int16_t itr_frames = 0;
+    uint32_t frame_offset = 0;
+    byte_ptr source_start = 0;
+    int16_t loop_frame_index = 0;  // DNE in Dasm
+    int16_t frame_count = 0;  // DNE in Dasm
 
     /*
         BEGIN: same as FLIC_Draw()
@@ -2272,19 +2272,19 @@ int16_t CS031_width;
 // 1oom  lbxgfx.c  lbxgfx_draw_pixels_offs_fmt0()
 void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, SAMB_ptr frame_data)
 {
-    unsigned char * bbuff_pos;
-    unsigned char * bbuff;
-    unsigned char data_byte;
+    unsigned char * bbuff_pos = 0;
+    unsigned char * bbuff = 0;
+    unsigned char data_byte = 0;
 
-    unsigned char packet_op;
-    unsigned char packet_byte_count;
+    unsigned char packet_op = 0;
+    unsigned char packet_byte_count = 0;
 
-    unsigned char data_count;  // sequence_byte_count
-    unsigned char skip_count;  // delta_byte_count
-    unsigned char itr_op_repeat;
+    unsigned char data_count = 0;  // sequence_byte_count
+    unsigned char skip_count = 0;  // delta_byte_count
+    unsigned char itr_op_repeat = 0;
 
-    int16_t line_count;  // height
-    int16_t line_skip_count;  // skip_y ... skip_count
+    int16_t line_count = 0;  // height
+    int16_t line_skip_count = 0;  // skip_y ... skip_count
 
     CS031_skip_y = skip_y;
     CS031_width  = width;   // actual_width;
@@ -2863,7 +2863,7 @@ void Add_Picture_To_Bitmap(byte_ptr source_picture, byte_ptr destination_bitmap)
 
     dst_base = dst;
     dst_curr = dst;
-    dst_diff = dst_curr - dst_base;
+    dst_diff = (uint16_t)(dst_curr - dst_base);
     dst_w = width;
     dst_h = height;
     // ? x = diff / height ?
@@ -3512,7 +3512,7 @@ void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start)
         // value /= 16
         value = value >> 4;  // ¿ reduce 2^8 to 2^4 ? map 256 to 16
         value += color_start;  // ~== where to start block in color-map?
-        *(dst_sgmt + dst_ofst++) = value;
+        *(dst_sgmt + dst_ofst++) = (uint8_t)value;
     }
 
     src_sgmt = (uint8_t *)Intensity_Scale_Tbl;

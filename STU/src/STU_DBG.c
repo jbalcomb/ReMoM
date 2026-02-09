@@ -1,7 +1,4 @@
 
-// ERROR:  C4996  'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-#define _CRT_SECURE_NO_WARNINGS
-
 /*
 https://olegkutkov.me/2019/03/25/simple-logger-with-stdout-files-and-syslog-support-for-c-projects-in-linux/
 */

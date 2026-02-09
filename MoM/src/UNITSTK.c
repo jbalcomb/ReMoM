@@ -8,7 +8,7 @@ MoO2
     Module: SHIPMOVE
 
 */
-#include "../../STU/src/STU_CHK.h"
+
 #include "../../STU/src/STU_DBG.h"
 
 #include "../../MoX/src/GENDRAW.h"
@@ -54,17 +54,13 @@ MoO2
 */
 void Update_Stack_Active(int16_t stack_idx)
 {
-    int16_t DEPR_Local_Flag;
-    int16_t itr_unit_stack_count;
-    int16_t active_unit_stack_count;
+    int16_t DEPR_Local_Flag = 0;
+    int16_t itr_unit_stack_count = 0;
+    int16_t active_unit_stack_count = 0;
 // stack_idx= word ptr  6
 
-    int16_t stack_unit_idx;
-    int16_t itr_stack;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Update_Stack_Active()\n", __FILE__, __LINE__);
-#endif
+    int16_t stack_unit_idx = 0;
+    int16_t itr_stack = 0;
 
     stack_unit_idx = _unit_stack[stack_idx].unit_idx;
 
@@ -138,12 +134,9 @@ void Update_Stack_Active(int16_t stack_idx)
                             _active_stack_has_path = ST_FALSE;
 
                         }
-Check_Game_Data();
                         _UNITS[stack_unit_idx].Status = us_Ready;
                         _UNITS[stack_unit_idx].Finished = ST_FALSE;
                         _UNITS[stack_unit_idx].Rd_Constr_Left = ST_UNDEFINED;
-Capture_Units_Data();
-Check_Game_Data();
 
                         if(_UNITS[stack_unit_idx].moves2 >= 1)
                         {
@@ -158,10 +151,7 @@ Check_Game_Data();
 
                             _unit_stack[stack_idx].active = ST_FALSE;
 
-Check_Game_Data();
                             _UNITS[stack_unit_idx].Finished = ST_TRUE;
-Capture_Units_Data();
-Check_Game_Data();
 
                         }
 
@@ -211,9 +201,6 @@ Check_Game_Data();
 
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Update_Stack_Active()\n", __FILE__, __LINE__);
-#endif
 }
 
 
@@ -240,9 +227,7 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 
     if(move_y != WORLD_YMIN && move_y != WORLD_YMAX)
     {
-Check_Game_Data();
         Build_Moveable_Stack(&unit_array_count, &unit_array[0]);
-Check_Game_Data();
 
         _unit = unit_array[0];
 
@@ -259,9 +244,7 @@ Check_Game_Data();
         assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
         assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
-Check_Game_Data();
         Move_Units(player_idx, move_x, move_y, move_type, map_x, map_y, *map_p, unit_array_count, &unit_array[0]);
-Check_Game_Data();
 
 
         unit_idx = _unit;
@@ -275,9 +258,7 @@ Check_Game_Data();
 
 
         // TODO  o62p01_Empty_pFxn(player_idx);
-Check_Game_Data();
         Select_Unit_Stack(player_idx, map_x, map_y, *map_p, unit_x, unit_y);
-Check_Game_Data();
         movement_points_available = Stack_Moves();
 
 
@@ -290,7 +271,6 @@ Check_Game_Data();
                 {
                     _UNITS[unit_array[itr_units]].Finished = ST_TRUE;
                     _UNITS[unit_array[itr_units]].Status = us_ReachedDest;
-Capture_Units_Data();
                 }
             }
 
@@ -326,6 +306,8 @@ Capture_Units_Data();
 */
 /*
 
+Where does the road building actually happen?
+
 */
 int16_t RdBd_UNIT_MoveStack__WIP(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int16_t dst_wy, int16_t * map_x, int16_t * map_y, int16_t map_p)
 {
@@ -341,9 +323,7 @@ int16_t RdBd_UNIT_MoveStack__WIP(int16_t player_idx, int16_t unit_idx, int16_t d
     int16_t itr_troops = 0;  // _SI_
 
 
-Check_Game_Data();
     Build_RoadBuilder_Stack(&troop_count, &troops[0], dst_wx, dst_wy, player_idx, unit_idx);
-Check_Game_Data();
 
 
     if(troop_count < 1)
@@ -386,12 +366,9 @@ Check_Game_Data();
 
 
     // HERE: as-is, except Special_Move is '2' if all 'road builder', rather than *normal* '0'
-Check_Game_Data();
     did_move_stack = Move_Units(player_idx, dst_wx, dst_wy, Special_Move, map_x, map_y, map_p, troop_count, &troops[0]);
-Check_Game_Data();
 
 
-Check_Game_Data();
     // purple
     for(itr_units = 0; itr_units < troop_count; itr_units++)
     {
@@ -424,8 +401,6 @@ Check_Game_Data();
         }
 
     }
-Capture_Units_Data();
-Check_Game_Data();
 
 
     // dark gold
@@ -466,7 +441,6 @@ Check_Game_Data();
         }
 
     }
-Check_Game_Data();
 
 
     if(player_idx == _human_player_idx)
@@ -474,7 +448,6 @@ Check_Game_Data();
 
         // DONT  o62p01_Empty_pFxn(player_idx);
 
-Check_Game_Data();
 
         Set_Unit_Draw_Priority();
 
@@ -484,7 +457,6 @@ Check_Game_Data();
 
         Reset_Draw_Active_Stack();
 
-Check_Game_Data();
 
     }
 
@@ -514,9 +486,7 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
     done = ST_FALSE;
 
-Check_Game_Data();
     Reset_Map_Draw();
-Check_Game_Data();
 
     // TODO  o62p01_Empty_pFxn(player_idx);
 
@@ -524,9 +494,7 @@ Check_Game_Data();
     {
         // TODO  CRP_OverlandVar_3 = ST_FALSE;
 
-Check_Game_Data();
         all_done_none_available = Next_Unit_Nearest_Available(player_idx, map_p);  // updates `_unit`
-Check_Game_Data();
 
         if(all_done_none_available == ST_TRUE)
         {
@@ -539,9 +507,7 @@ Check_Game_Data();
             next_unit_idx = _unit;  // just updated by Next_Unit_Nearest_Available()
             next_unit_wx = _UNITS[next_unit_idx].wx;
             next_unit_wy = _UNITS[next_unit_idx].wy;
-Check_Game_Data();
             Select_Unit_Stack(player_idx, map_x, map_y, *map_p, next_unit_wx, next_unit_wy);  // calls Build_Unit_Stack() & Sort_Unit_Stack(); Sort_Unit_Stack() updates `_unit`;
-Check_Game_Data();
         }
 
         // HERE: Found a Unit;  `_unit` has been updated;  and ?
@@ -571,21 +537,19 @@ Check_Game_Data();
                 {
 
                     _UNITS[_unit].Status = us_Ready;
-Capture_Units_Data();
 
                 }
                 else
                 {
-Check_Game_Data();
+
                     Allocate_Reduced_Map();
-Check_Game_Data();
                     RdBd_UNIT_MoveStack__WIP(player_idx, _unit, next_unit_dst_wx, next_unit_dst_wy, map_x, map_y, *map_p);
-Check_Game_Data();
                     Allocate_Reduced_Map();
-Check_Game_Data();
+
                 }
 
                 done = ST_FALSE;
+
             }
         }
 
@@ -597,18 +561,13 @@ Check_Game_Data();
         next_unit_idx = _unit;
         next_unit_wx = _UNITS[next_unit_idx].wx;
         next_unit_wy = _UNITS[next_unit_idx].wy;
-Check_Game_Data();
         Select_Unit_Stack(player_idx, map_x, map_y, *map_p, next_unit_wx, next_unit_wy);  // ...calls Build_Unit_Stack() & Sort_Unit_Stack(); Sort_Unit_Stack() updates `_unit`;
-Check_Game_Data();
     }
     else
     {
         _unit_stack_count = 0;
-Check_Game_Data();
         Set_Draw_Active_Stack_Always();
-Check_Game_Data();
         Set_Entities_On_Map_Window(*map_x, *map_y, *map_p);
-Check_Game_Data();
     }
 
     // TODO  OVL_MapVar3 = ST_TRUE;
@@ -1014,24 +973,24 @@ OON XREF:  RdBd_UNIT_MoveStack_WIP()
 */
 void Build_RoadBuilder_Stack(int16_t * troop_count, int16_t troops[], int16_t dst_wx, int16_t dst_wy, int16_t player_idx, int16_t unit_idx)
 {
-    int16_t entire_stack_copy[MAX_STACK];
-    int16_t boatriders[MAX_STACK];
-    int16_t entire_stack[MAX_STACK];
-    int16_t unit_roadbuild_count;
-    int16_t Unused_Local;
-    int16_t passenger_count;
-    int16_t boatrider_idx;
-    int16_t transport_capacity;
-    int16_t boatrider_count;
-    int16_t stack_has_transport;
-    int16_t unit_wp;
-    int16_t unit_wy;
-    int16_t unit_wx;
-    int16_t entire_stack_count;
-    int16_t boat_count;
-    int16_t l_troop_count;
-    int16_t itr_units;  // _SI_
-    int16_t itr;  // _SI_
+    int16_t entire_stack_copy[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t boatriders[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t entire_stack[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t unit_roadbuild_count = 0;
+    int16_t Unused_Local = 0;
+    int16_t passenger_count = 0;
+    int16_t boatrider_idx = 0;
+    int16_t transport_capacity = 0;
+    int16_t boatrider_count = 0;
+    int16_t stack_has_transport = 0;
+    int16_t unit_wp = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t entire_stack_count = 0;
+    int16_t boat_count = 0;
+    int16_t l_troop_count = 0;
+    int16_t itr_units = 0;  // _SI_
+    int16_t itr = 0;  // _SI_
 
 
     unit_wx = _UNITS[unit_idx].wx;
@@ -1567,7 +1526,7 @@ void STK_DoMeldWithNode(int16_t troop_count, int16_t troops[])
 
     if(Can_Meld == ST_TRUE)
     {
-        _NODES[node_idx].owner_idx = unit_owner;
+        _NODES[node_idx].owner_idx = (int8_t)unit_owner;
 
         if(Guardian == ST_TRUE)
         {

@@ -247,7 +247,7 @@ Generate_Combat_Map__WIP()
 
 #define INF                     0xFF
 
-#define IS_INF(_value_)         ((uint8_t)(_value_) == INF)
+#define IS_INF(_value_)         ((uint8_t)(_value_) == (uint8_t)INF)
 
 //  Combat_Move_Path_Find()
 //     // MovePath.C  Move_Path_Find()
@@ -285,7 +285,7 @@ Generate_Combat_Map__WIP()
 // 
 //     }
 //     _cmbt_mvpth_c[((destination_cgy * COMBAT_GRID_WIDTH) + destination_cgx)] = 0;  /* manually set the current cell's cost to zero */
-#define SET_LENGTH              { for(itr = 0; itr < COMBAT_GRID_CELL_COUNT; itr++) { _cmbt_mvpth_c[itr] = INF;  _cmbt_mvpth_c[((source_cgy * COMBAT_GRID_WIDTH) + source_cgx)] = 0; } }
+#define SET_LENGTH              { for(itr = 0; itr < COMBAT_GRID_CELL_COUNT; itr++) { _cmbt_mvpth_c[itr] = (uint8_t)INF;  _cmbt_mvpth_c[((source_cgy * COMBAT_GRID_WIDTH) + source_cgx)] = (uint8_t)0; } }
 
 /*
     reduce the loops over the adjacent cells to a single macro
@@ -328,14 +328,14 @@ NEW_PATH_COST_ALL()
 #define NEW_PATH_COST() {                                               \
     if((adjacent_idx >= 0) && (adjacent_idx < COMBAT_GRID_CELL_COUNT))  \
     {                                                                   \
-        adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx];              \
+        adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx];               \
         if(adjacent_path_cost != 255)                                   \
         {                                                               \
             potential_path_cost = adjacent_path_cost + move_cost;       \
-            if(_cmbt_mvpth_c[ctr] > potential_path_cost)               \
+            if(_cmbt_mvpth_c[ctr] > potential_path_cost)                \
             {                                                           \
                 CMB_NearBuffer_3[ctr] = adjacent_idx;                   \
-                _cmbt_mvpth_c[ctr] = potential_path_cost;              \
+                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;      \
                 if(CMB_NearBuffer_3[ctr] != old_next_cell_index)        \
                 {                                                       \
                     Map_Changed = ST_TRUE;                              \
@@ -350,14 +350,14 @@ NEW_PATH_COST_ALL()
     adjacent_idx = adjacent_offsets[((0 * 8) + itr_adjacent)];          \
     if((adjacent_idx >= 0) && (adjacent_idx < COMBAT_GRID_CELL_COUNT))  \
     {                                                                   \
-        adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx];              \
+        adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx];               \
         if(adjacent_path_cost != 255)                                   \
         {                                                               \
             potential_path_cost = adjacent_path_cost + move_cost;       \
-            if(_cmbt_mvpth_c[ctr] > potential_path_cost)               \
+            if(_cmbt_mvpth_c[ctr] > potential_path_cost)                \
             {                                                           \
                 CMB_NearBuffer_3[ctr] = adjacent_idx;                   \
-                _cmbt_mvpth_c[ctr] = potential_path_cost;              \
+                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;      \
                 if(CMB_NearBuffer_3[ctr] != old_next_cell_index)        \
                 {                                                       \
                     Map_Changed = ST_TRUE;                              \
@@ -371,14 +371,14 @@ NEW_PATH_COST_ALL()
     adjacent_idx = adjacent_offsets[((1 * 8) + itr_adjacent)];          \
     if((adjacent_idx >= 0) && (adjacent_idx < COMBAT_GRID_CELL_COUNT))  \
     {                                                                   \
-        adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx];              \
+        adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx];               \
         if(adjacent_path_cost != 255)                                   \
         {                                                               \
             potential_path_cost = adjacent_path_cost + move_cost;       \
-            if(_cmbt_mvpth_c[ctr] > potential_path_cost)               \
+            if(_cmbt_mvpth_c[ctr] > potential_path_cost)                \
             {                                                           \
                 CMB_NearBuffer_3[ctr] = adjacent_idx;                   \
-                _cmbt_mvpth_c[ctr] = potential_path_cost;              \
+                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;      \
                 if(CMB_NearBuffer_3[ctr] != old_next_cell_index)        \
                 {                                                       \
                     Map_Changed = ST_TRUE;                              \
@@ -392,14 +392,14 @@ NEW_PATH_COST_ALL()
     adjacent_idx = adjacent_offsets[((2 * 8) + itr_adjacent)];          \
     if((adjacent_idx >= 0) && (adjacent_idx < COMBAT_GRID_CELL_COUNT))  \
     {                                                                   \
-        adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx];              \
+        adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx];               \
         if(adjacent_path_cost != 255)                                   \
         {                                                               \
             potential_path_cost = adjacent_path_cost + move_cost;       \
-            if(_cmbt_mvpth_c[ctr] > potential_path_cost)               \
+            if(_cmbt_mvpth_c[ctr] > potential_path_cost)                \
             {                                                           \
                 CMB_NearBuffer_3[ctr] = adjacent_idx;                   \
-                _cmbt_mvpth_c[ctr] = potential_path_cost;              \
+                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;      \
                 if(CMB_NearBuffer_3[ctr] != old_next_cell_index)        \
                 {                                                       \
                     Map_Changed = ST_TRUE;                              \
@@ -413,19 +413,19 @@ NEW_PATH_COST_ALL()
     adjacent_idx = (ctr + adjacent_offsets[(((_value_) * 8) + itr_adjacent)]);  \
     if(adjacent_idx == ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx))               \
     {                                                                           \
-        STU_DEBUG_BREAK();                                                         \
+        STU_DEBUG_BREAK();                                                      \
     }                                                                           \
     if(GTELT(adjacent_idx, 0, COMBAT_GRID_CELL_COUNT))                          \
     {                                                                           \
-        adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx];                      \
+        adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx];                       \
         if(!IS_INF(adjacent_path_cost))                                         \
         {                                                                       \
             potential_path_cost = adjacent_path_cost + move_cost;               \
-            existing_path_cost = _cmbt_mvpth_c[ctr];                           \
+            existing_path_cost = _cmbt_mvpth_c[ctr];                            \
             if(existing_path_cost > potential_path_cost)                        \
             {                                                                   \
                 CMB_NearBuffer_3[ctr] = adjacent_idx;                           \
-                _cmbt_mvpth_c[ctr] = potential_path_cost;                      \
+                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;              \
                 new_next_cell_index = CMB_NearBuffer_3[ctr];                    \
                 if(new_next_cell_index != old_next_cell_index)                  \
                 {                                                               \
@@ -1491,7 +1491,7 @@ int16_t Battle_Unit_Movement_Icon(int16_t battle_unit_idx);
 // static void UNIT_SummonToBattle__SEGRAX(int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy);
 
 // WZD o98p15
-void BU_UnitLoadToBattle__SEGRAX(int16_t battle_unit_idx, int8_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy);
+void BU_UnitLoadToBattle__SEGRAX(int16_t battle_unit_idx, int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy);
 
 // WZD o98p16
 int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[]);

@@ -1252,16 +1252,16 @@ void Cartographer_Screen__WIP(void)
 
             _map_plane = m_cartograph_plane;
 
-            _map_x = grid_column;
+            _map_x = (int16_t)grid_column;
 
-            _map_y = grid_row;
+            _map_y = (int16_t)grid_row;
 
             _unit_stack_count = 0;
 
             /* MainScr.C@L1333  Main_Screen() */  // Center_Map(&_map_x, &_map_y, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
             assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
             assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
-            Center_Map(&_map_x, &_map_y, grid_column, grid_row, _map_plane);
+            Center_Map(&_map_x, &_map_y, (int16_t)grid_column, (int16_t)grid_row, _map_plane);
 
             Set_Draw_Active_Stack_Always();
             Set_Unit_Draw_Priority();
@@ -1371,7 +1371,7 @@ void Cartographer_Screen_Draw__WIP(void)
 
                 colors[0] = ST_BLACK;
 
-                colors[1] = banner_colors[_players[_CITIES[itr_cities].owner_idx].banner_id];
+                colors[1] = (uint8_t)banner_colors[_players[_CITIES[itr_cities].owner_idx].banner_id];
 
                 Set_Font_Colors_15(0, &colors[0]);
 
@@ -1547,7 +1547,7 @@ void Cartograph_Screen_Draw_Map__WIP(int16_t flag)
                 {
                     if(_UNITS[itr_units].owner_idx == HUMAN_PLAYER_IDX)
                     {
-                        Dot(x, y, banner_colors[_players[_UNITS[itr_units].owner_idx].banner_id]);
+                        Dot(x, y, (uint8_t)banner_colors[_players[_UNITS[itr_units].owner_idx].banner_id]);
                     }
                     else if(_UNITS[itr_units].owner_idx == NEUTRAL_PLAYER_IDX)
                     {
@@ -1557,7 +1557,7 @@ void Cartograph_Screen_Draw_Map__WIP(int16_t flag)
                     {
                         if(Unit_Has_Invisibility(itr_units) != ST_TRUE)
                         {
-                            Dot(x, y, banner_colors[_players[_UNITS[itr_units].owner_idx].banner_id]);
+                            Dot(x, y, (uint8_t)banner_colors[_players[_UNITS[itr_units].owner_idx].banner_id]);
                         }
                     }
                 }
@@ -1581,7 +1581,7 @@ void Cartograph_Screen_Draw_Map__WIP(int16_t flag)
                 Fill((x + 1), (y + 1), (x + 3), (y + 3), ST_BLACK);
                 if(_CITIES[itr_cities].owner_idx != NEUTRAL_PLAYER_IDX)
                 {
-                    Fill(x, y, (x + 2), (y + 2), banner_colors[_players[_CITIES[itr_cities].owner_idx].banner_id]);
+                    Fill(x, y, (x + 2), (y + 2), (uint8_t)banner_colors[_players[_CITIES[itr_cities].owner_idx].banner_id]);
                 }
                 else
                 {

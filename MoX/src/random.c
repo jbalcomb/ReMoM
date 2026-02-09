@@ -232,7 +232,7 @@ uint32_t Get_Random_Seed(void)
 void Randomize(void)
 {
     uint32_t Clock_Ticks;
-    Clock_Ticks = Read_System_Clock_Timer();
+    Clock_Ticks = (uint32_t)Read_System_Clock_Timer();
     // MoO2  timer_value = time();
     random_seed = Clock_Ticks;
 }

@@ -826,7 +826,7 @@ void ArmyList_Add_List_Fields(void)
         y1 = armylist_start_y + (22 * itr_list_item_count) + 1;
         x2 = x1 + 162;  /* armies list row width  (9 * 18) (MAX_STACK * unit figure icon width) */
         y2 = y1 + 15;   /* armies list row height (unit figure icon height) */
-        IDK_armylist_row_fields[IDK_armylist_row_count] = Add_Hidden_Field(x1, y1, x2, y2, armylist_hotkey_NUL, ST_UNDEFINED);
+        IDK_armylist_row_fields[IDK_armylist_row_count] = (unsigned char)Add_Hidden_Field(x1, y1, x2, y2, armylist_hotkey_NUL, ST_UNDEFINED);
         IDK_armylist_row_count++;
     }
 

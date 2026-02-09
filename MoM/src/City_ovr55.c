@@ -6,8 +6,6 @@
 
 */
 
-#include "../../STU/src/STU_CHK.h"
-
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Fonts.h"
@@ -668,7 +666,6 @@ int16_t Init_Outpost(void)
     _CITIES[_cities].contacts = 0;
     _CITIES[_cities].construction = bt_Housing;
     _CITIES[_cities].bldg_cnt = 0;
-Capture_Cities_Data();
 
     for(itr = 0; itr < NUM_BUILDINGS; itr++)
     {
@@ -795,7 +792,7 @@ void Change_City_Ownership(int16_t city_idx, int16_t player_idx)
         Set_Map_Square_Explored_Flags_XYP_Range(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 2);  // TODO  manifest constant for default scout range
     }
 
-    _CITIES[city_idx].owner_idx = player_idx;
+    _CITIES[city_idx].owner_idx = (int8_t)player_idx;
 
     _CITIES[city_idx].construction = bt_TradeGoods;
 
@@ -886,11 +883,9 @@ void Apply_Damage_To_City(int16_t city_idx, int16_t population_lost, int16_t bld
     {
 
         _CITIES[city_idx].population -= population_lost;
-Capture_Cities_Data();
     }
 
     _CITIES[city_idx].size = ((_CITIES[city_idx].population + 3) / 4);
-Capture_Cities_Data();
 
     SETMAX(_CITIES[city_idx].size, 5);
 
@@ -1348,7 +1343,7 @@ void City_Cancel_Production(int16_t city_idx)
         if(g_bldg_msg_ctr < 20)
         {
 
-            MSG_Building_Complete[g_bldg_msg_ctr].city_idx = city_idx;
+            MSG_Building_Complete[g_bldg_msg_ctr].city_idx = (int8_t)city_idx;
 
             MSG_Building_Complete[g_bldg_msg_ctr].bldg_type_idx = -(_CITIES[city_idx].construction);  // DEDU  negative means?  ("...can no longer produce...")
 
@@ -1359,7 +1354,6 @@ void City_Cancel_Production(int16_t city_idx)
         {
 
             _CITIES[city_idx].construction = bt_Housing;
-Capture_Cities_Data();
 
         }
         
@@ -1368,7 +1362,6 @@ Capture_Cities_Data();
     {
 
         _CITIES[city_idx].construction = bt_AUTOBUILD;
-Capture_Cities_Data();
 
     }
 
@@ -1406,16 +1399,11 @@ void Player_City_Buy_Production(int16_t player_idx, int16_t city_idx)
 {
     int16_t cost = 0;
 
-Check_Game_Data();
     cost = City_Cost_To_Buy_Product(city_idx);
-Check_Game_Data();
 
     _players[player_idx].gold_reserve -= cost;
 
-Check_Game_Data();
     _CITIES[city_idx].Prod_Accu += City_Production_Cost(_CITIES[city_idx].construction, city_idx);
-// Check_Game_Data();
-Capture_Cities_Data();
 
 }
 
@@ -2127,7 +2115,7 @@ void City_Screen_Draw_Population_Row(int16_t city_idx, int16_t xstart, int16_t y
     if(_CITIES[city_idx].farmer_count < min_farmer_count)
     {
 
-        CITIES_FARMER_COUNT(city_idx, min_farmer_count);
+        CITIES_FARMER_COUNT(city_idx, (int8_t)min_farmer_count);
 
     }
 
@@ -2214,7 +2202,7 @@ void City_Screen_Add_Fields_Population_Row(int16_t city_idx, int16_t xstart, int
     if(_CITIES[city_idx].farmer_count < min_farmer_count)
     {
 
-        CITIES_FARMER_COUNT(city_idx, min_farmer_count);
+        CITIES_FARMER_COUNT(city_idx, (int8_t)min_farmer_count);
 
     }
 
@@ -2441,7 +2429,7 @@ void Possessive(char * string)
 {
     int16_t string_length = 0;  // _DI_
 
-    string_length = strlen(string);
+    string_length = (int16_t)strlen(string);
 
     if(
         (string[(string_length - 1)] == 's')
@@ -2564,7 +2552,7 @@ void Resource_Breakdown__STUB(int16_t resource_id)
             )
             {
 
-                Retn_Struct[word_42A7E] = itr;
+                Retn_Struct[word_42A7E] = (unsigned char)itr;
 
                 word_42A7E++;
 
