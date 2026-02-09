@@ -295,7 +295,7 @@ int16_t sdl2_Play_Sound__WIP(void* sound_buffer, uint32_t sound_buffer_size)
                 dbg_prn("ERROR:  Mix_LoadWAV_RW()  %s\n", SDL_GetError());
 #endif
             }
-            Mix_VolumeChunk(sdl2_audio_data_chunk, MIX_MAX_VOLUME * 0.75);
+            Mix_VolumeChunk(sdl2_audio_data_chunk, (int)(MIX_MAX_VOLUME * 0.75));
             sdl2_play_channel_result = Mix_PlayChannel(0, sdl2_audio_data_chunk, 0);
             if(sdl2_play_channel_result == -1)
             {
@@ -413,15 +413,21 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
         STU_DEBUG_BREAK();
     }
     wav_buffer = wav_buffers[wav_buffer_idx];
-    wav_buffer_idx += 1;
-
-    memset(wav_buffer, 0, WAV_BUFFER_SIZE);
-
-    memcpy(wav_buffer, wav_header, sizeof(wav_header));
-
+    if(NULL == wav_buffer)
+    {
+        STU_DEBUG_BREAK();
+    }
+    if(NULL != wav_buffer)
+    {
+        wav_buffer_idx += 1;
+        // Warning	C6387	'wav_buffer' could be '0':  this does not adhere to the specification for the function 'memset'.
+        memset(wav_buffer, 0, WAV_BUFFER_SIZE);
+        // Warning	C6387	'wav_buffer' could be '0':  this does not adhere to the specification for the function 'memcpy'.
+        memcpy(wav_buffer, wav_header, sizeof(wav_header));
+        wav_rvr = &wav_buffer[LEN_WAV_HDR];
+    }
 
     voc_rvr = voc_buf;
-    wav_rvr = &wav_buffer[LEN_WAV_HDR];
 
     voc_rvr += LEN_LBX_SND_HDR;
     voc_len -= LEN_LBX_SND_HDR;
@@ -490,7 +496,11 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
             while(voc_block_size)
             {
                 sample_8bit_unsigned = *voc_rvr++;
-                *wav_rvr++ = sample_8bit_unsigned;
+                // Warning	C6011	Dereferencing NULL pointer 'wav_rvr'. 	002_MoX	C:\STU\devel\ReMoM\MoX\src\sdl2_Audio.c	499		
+                if(NULL != wav_rvr)
+                {
+                    *wav_rvr++ = sample_8bit_unsigned;
+                }
                 voc_block_size--;
 #ifdef STU_DEBUG
             if(voc_len >= (128 * 1024))
@@ -529,25 +539,45 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
     // wav_header[0x2A] = ((wav_data_size >> 16) & 0x000000FF);
     // wav_header[0x2B] = ((wav_data_size >> 24) & 0x000000FF);
 
-    wav_buffer[0x04] = ((((LEN_WAV_HDR - 8) + wav_data_size) >> 0) & 0x000000FF);
-    wav_buffer[0x05] = ((((LEN_WAV_HDR - 8) + wav_data_size) >> 8) & 0x000000FF);
-    wav_buffer[0x06] = ((((LEN_WAV_HDR - 8) + wav_data_size) >> 16) & 0x000000FF);
-    wav_buffer[0x07] = ((((LEN_WAV_HDR - 8) + wav_data_size) >> 24) & 0x000000FF);
-    // Format Chunk :: Samples per second
-    wav_buffer[0x18] = ((wav_samples_per_second >> 0) & 0x000000FF);
-    wav_buffer[0x19] = ((wav_samples_per_second >> 8) & 0x000000FF);
-    wav_buffer[0x1A] = ((wav_samples_per_second >> 16) & 0x000000FF);
-    wav_buffer[0x1B] = ((wav_samples_per_second >> 24) & 0x000000FF);
-    // Format Chunk :: Average Bytes per Second
-    wav_buffer[0x1C] = ((wav_bytes_per_second >> 0) & 0x000000FF);
-    wav_buffer[0x1D] = ((wav_bytes_per_second >> 8) & 0x000000FF);
-    wav_buffer[0x1E] = ((wav_bytes_per_second >> 16) & 0x000000FF);
-    wav_buffer[0x1F] = ((wav_bytes_per_second >> 24) & 0x000000FF);
-    // Data Chunk :: Chunk Body Size
-    wav_buffer[0x28] = ((wav_data_size >> 0) & 0x000000FF);
-    wav_buffer[0x29] = ((wav_data_size >> 8) & 0x000000FF);
-    wav_buffer[0x2A] = ((wav_data_size >> 16) & 0x000000FF);
-    wav_buffer[0x2B] = ((wav_data_size >> 24) & 0x000000FF);
+
+
+    /*
+        IntelliSense keeps giving a VCR102 for line 545
+    */
+
+    if(NULL == wav_buffer)
+    {
+        STU_DEBUG_BREAK();
+    }
+
+    if(NULL != wav_buffer)
+    {
+        // // Message VCR102 Browsing operations around this macro may fail. Consider adding it to a hint file.
+        // wav_buffer[0x04] = ((((LEN_WAV_HDR - 8) + wav_data_size) >> 0) & 0x000000FF);
+        // wav_buffer[0x05] = ((((LEN_WAV_HDR - 8) + wav_data_size) >> 8) & 0x000000FF);
+        // wav_buffer[0x06] = ((((LEN_WAV_HDR - 8) + wav_data_size) >> 16) & 0x000000FF);
+        // wav_buffer[0x07] = ((((LEN_WAV_HDR - 8) + wav_data_size) >> 24) & 0x000000FF);
+
+        wav_buffer[0x04] = ((((44 - 8) + wav_data_size) >> 0) & 0x000000FF);
+        wav_buffer[0x05] = ((((44 - 8) + wav_data_size) >> 8) & 0x000000FF);
+        wav_buffer[0x06] = ((((44 - 8) + wav_data_size) >> 16) & 0x000000FF);
+        wav_buffer[0x07] = ((((44 - 8) + wav_data_size) >> 24) & 0x000000FF);
+        // Format Chunk :: Samples per second
+        wav_buffer[0x18] = ((wav_samples_per_second >> 0) & 0x000000FF);
+        wav_buffer[0x19] = ((wav_samples_per_second >> 8) & 0x000000FF);
+        wav_buffer[0x1A] = ((wav_samples_per_second >> 16) & 0x000000FF);
+        wav_buffer[0x1B] = ((wav_samples_per_second >> 24) & 0x000000FF);
+        // Format Chunk :: Average Bytes per Second
+        wav_buffer[0x1C] = ((wav_bytes_per_second >> 0) & 0x000000FF);
+        wav_buffer[0x1D] = ((wav_bytes_per_second >> 8) & 0x000000FF);
+        wav_buffer[0x1E] = ((wav_bytes_per_second >> 16) & 0x000000FF);
+        wav_buffer[0x1F] = ((wav_bytes_per_second >> 24) & 0x000000FF);
+        // Data Chunk :: Chunk Body Size
+        wav_buffer[0x28] = ((wav_data_size >> 0) & 0x000000FF);
+        wav_buffer[0x29] = ((wav_data_size >> 8) & 0x000000FF);
+        wav_buffer[0x2A] = ((wav_data_size >> 16) & 0x000000FF);
+        wav_buffer[0x2B] = ((wav_data_size >> 24) & 0x000000FF);
+    }
 
     // memcpy(wav_buffer[sizeof(wav_header)], wav_data, wav_data_size);
 
@@ -813,8 +843,10 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
     s->top = -1;
 
     while ((len_in > 0) && (!end_found)) {
-        uint32_t len_event, add_extra_bytes, skip_extra_bytes;
-        uint8_t buf_extra[4];
+        uint32_t len_event = 0;
+        uint32_t add_extra_bytes = 0;
+        uint32_t skip_extra_bytes = 0;
+        uint8_t buf_extra[4] = { 0, 0, 0, 0 };
         bool add_event;
 
         add_event = true;
@@ -824,8 +856,8 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
         switch (*data_in & 0xf0) {
             case 0x90:
                 {
-                    uint32_t dt_off;
-                    uint8_t b;
+                    uint32_t dt_off = 0;
+                    uint8_t b = 0;
                     dt_off = 0;
                     skip_extra_bytes = 1;
                     while (((b = data_in[2 + skip_extra_bytes]) & 0x80) != 0) {
@@ -969,7 +1001,9 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                 noteoff_t *n = &(s->tbl[s->top]);
                 uint32_t delay_noff = n->t - t_now;
                 len_delta_time = xmid_encode_delta_time(buf_delta_time, delay_noff);
-                for (int i = 0; i < len_delta_time; ++i) {
+                #pragma warning(suppress : 4018)  // TODO  signed/unsigned mismatch
+                for (int i = 0; i < len_delta_time; ++i)
+                {
                     *p++ = buf_delta_time[i];
                 }
                 len_out += len_delta_time;
@@ -987,6 +1021,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
             len_delta_time = xmid_encode_delta_time(buf_delta_time, delta_time);
             delta_time = 0;
 
+            #pragma warning(suppress : 4018)  // TODO  signed/unsigned mismatch
             for(int i = 0; i < len_delta_time; ++i)
             {
                 *p++ = buf_delta_time[i];
@@ -1009,11 +1044,13 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                 s->num = 0;
             }
 
+            #pragma warning(suppress : 4018)  // TODO  signed/unsigned mismatch
             for(int i = 0; i < add_extra_bytes; ++i)
             {
                 *p++ = buf_extra[i];
             }
 
+            #pragma warning(suppress : 4018)  // TODO  signed/unsigned mismatch
             for(int i = 0; i < len_event; ++i)
             {
                 uint8_t c;

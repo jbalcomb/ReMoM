@@ -48,7 +48,6 @@ MoO2  Module: LOADSAVE
 #include "UNITSTK.h"
 #include "WZD_o143.h"
 
-#include "../../STU/src/STU_CHK.h"
 #include "../../STU/src/STU_TST.h"
 
 #include <stdlib.h>
@@ -217,20 +216,14 @@ void GAME_NextHumanStack(void)
     _combat_wx = ST_UNDEFINED;
     _combat_wy = ST_UNDEFINED;
 
-Check_Game_Data();
     Update_Scouted_And_Contacted__WIP();
-Check_Game_Data();
 
     // ; does nothing and returns zero; at some point must have been some wizard data refresh function
     // DONT  o62p01_Empty_pFxn(_human_player_idx);
 
-Check_Game_Data();
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
-Check_Game_Data();
 
-Check_Game_Data();
     Update_Scouted_And_Contacted__WIP();
-Check_Game_Data();
 
 }
 
@@ -668,7 +661,6 @@ void Loaded_Game_Update(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()\n", __FILE__, __LINE__);
 #endif
 
-Check_Game_Data();
 
     /* seg001 */ GAME_RazeCity = ST_FALSE;
 
@@ -679,19 +671,13 @@ Check_Game_Data();
     _page_flip_effect = pfe_None;
     
 
-Check_Game_Data();
     Reset_City_Area_Bitfields();
-Check_Game_Data();
 
 
-Check_Game_Data();
     Init_Overland();
-Check_Game_Data();
 
 
-Check_Game_Data();
     Patch_Units_Upkeep_And_Sound();
-Check_Game_Data();
 
 
     // DONT  o142p04  NOOP_Current_Player_All_City_Areas() |-> empty_fxn_o142p03()
@@ -700,9 +686,7 @@ Check_Game_Data();
     // DONT  o142p19  LD_MAP_TFUnk40_Eval()
 
 
-Check_Game_Data();
     All_Colony_Calculations();
-Check_Game_Data();
 
 
     _unit_stack_count = 0;
@@ -712,24 +696,16 @@ Check_Game_Data();
     sdl2_Play_Background_Music__WIP();
 
 
-Check_Game_Data();
     Cache_Graphics_Overland();
-Check_Game_Data();
 
 
-Check_Game_Data();
     Reset_City_Road_Connection_Bitfields();
-Check_Game_Data();
 
 
-Check_Game_Data();
     Delete_Dead_Units();
-Check_Game_Data();
 
 
-Check_Game_Data();
     All_AI_Refresh_Units_Movement();
-Check_Game_Data();
 
 
     /* seg001 */  for(itr = 1; itr < NUM_PLAYERS; itr++)
@@ -738,9 +714,7 @@ Check_Game_Data();
     /* seg001 */  }
 
 
-Check_Game_Data();
     GAME_NextHumanStack();
-Check_Game_Data();
 
 
     if(_difficulty == god_Intro)
@@ -785,9 +759,7 @@ Check_Game_Data();
 
         // TST_Validate_GameData();
 
-Check_Game_Data();
         TST_Patch_Game_Data();
-Check_Game_Data();
 
     /*
         END:  STU Debug
@@ -820,16 +792,13 @@ void Init_Overland(void)
 #endif
 
 
-Check_Game_Data();
     PreInit_Overland();
-Check_Game_Data();
 
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
         _CITIES[itr_cities].bldg_status[NONE] = bs_Built;
     }
-Capture_Cities_Data();
     
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
@@ -853,7 +822,6 @@ Capture_Cities_Data();
         }
 
     }
-Capture_Units_Data();
 
     skill_staff_locked = 0;
     mana_staff_locked = 0;
@@ -879,43 +847,25 @@ Capture_Units_Data();
 
     _map_plane = _FORTRESSES[HUMAN_PLAYER_IDX].wp;
 
-Check_Game_Data();
     All_AI_Players_Contacted();
-Check_Game_Data();
 
-Check_Game_Data();
     Allocate_Reduced_Map();
-Check_Game_Data();
 
-Check_Game_Data();
     Center_Map(&_map_x, &_map_y, _FORTRESSES[HUMAN_PLAYER_IDX].wx, _FORTRESSES[HUMAN_PLAYER_IDX].wy, _map_plane);
-Check_Game_Data();
 
-Check_Game_Data();
     Set_Unit_Draw_Priority();
-Check_Game_Data();
 
-Check_Game_Data();
     Reset_Stack_Draw_Priority();
-Check_Game_Data();
 
-Check_Game_Data();
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-Check_Game_Data();
 
-Check_Game_Data();
     Cache_Graphics_Overland();
-Check_Game_Data();
 
-Check_Game_Data();
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
-Check_Game_Data();
 
     // DONT  j_o108p02_empty_function()
 
-Check_Game_Data();
     All_City_Calculations();
-Check_Game_Data();
 
     if(Check_Release_Version() == ST_FALSE)
     {
@@ -960,32 +910,24 @@ void PreInit_Overland(void)
 
     all_units_moved = ST_FALSE;
     reset_active_stack = ST_TRUE;
-Check_Game_Data();
     Reset_Draw_Active_Stack();
-Check_Game_Data();
 
 
     _map_plane = ARCANUS_PLANE;
     // === All_City_Calculations()
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-Check_Game_Data();
         Do_City_Calculations(itr_cities);
-Check_Game_Data();
     }
 
 
-Check_Game_Data();
     Players_Update_Magic_Power();
-Check_Game_Data();
     SBK_SomePageSaveVar = 0;
     CMB_SpellBookPage = 0;
     SBK_Candidate_Page = 0;
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-Check_Game_Data();
         Player_Research_Spells(itr_players);
-Check_Game_Data();
     }
 
 

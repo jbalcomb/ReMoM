@@ -633,6 +633,12 @@ uint8_t COL_Banners2[36] = {
     105,  0, 106,  0, 107,  0
 };
 
+
+void Alchemy_Popup_Draw(void)
+    colors[0] = 192;
+    colors[1] = 179;
+which palette?
+
 */
 // MGC; 1-byte, signed;
 enum enum_BANNER_COLOR_ID

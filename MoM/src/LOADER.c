@@ -1,4 +1,6 @@
 
+#pragma warning(disable: 4068)
+
 #include "LOADER.h"
 
 #include "CityScr.h"
@@ -1305,7 +1307,7 @@ void Reload_Cityscape_Graphics_Cache(void)
 
 
 // WZD o52p26
-void o52p26_empty_function(void)
+static void o52p26_empty_function(void)
 {
 // push    bp
 // mov     bp, sp

@@ -1,15 +1,15 @@
 
-#ifndef _STU_SDL2
-#define _STU_SDL2
-#endif
+// #ifndef _STU_SDL2
+// #define _STU_SDL2
+// #endif
 
-#ifndef STU_DEBUG
-#define STU_DEBUG
-#endif
+// #ifndef STU_DEBUG
+// #define STU_DEBUG
+// #endif
 
-#ifndef STU_TRACE
-#define STU_TRACE
-#endif
+// #ifndef STU_TRACE
+// #define STU_TRACE
+// #endif
 
 #ifndef _WINDLL
 #define HAVE_LIBC
@@ -27,6 +27,7 @@
 #include "../MoX/src/CFG.h"
 #include "../MoX/src/DOS.h"
 #include "../MoX/src/EMM.h"
+#include "../MoX/src/Exit.h"
 #include "../MoX/src/Fields.h"
 #include "../MoX/src/Fonts.h"
 #include "../MoX/src/Graphics.h"
@@ -52,6 +53,16 @@
 #include "../STU/src/STU_DBG.h"
 #endif
 
+// Reassigns a file pointer. More secure versions of the functions are available; see freopen_s, _wfreopen_s.
+#include <stdio.h>
+// #define _CRT_SECURE_NO_WARNINGS  // '_CRT_SECURE_NO_WARNINGS' previously declared on the command line
+// #define _CRT_SECURE_NO_DEPRECATE
+// #define _CRT_NONSTDC_NO_DEPRECATE
+// #include <stdio.h>
+// 4>C:\STU\devel\ReMoM\src\ReMoM.c(57,9): warning C4005: '_CRT_SECURE_NO_WARNINGS': macro redefinition
+
+
+
 #include <stdlib.h>
 
 #include <SDL_stdinc.h>
@@ -60,6 +71,9 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
 
+#ifdef _WIN32
+#include <direct.h>
+#endif
 
 
 int MOM_main(int argc, char** argv);
@@ -85,8 +99,10 @@ char CONFIG_FILE[] = "CONFIG.MOM";
 int main(int argc, char * argv[])
 // int SDL_main(int argc, char* argv[])
 {
+#ifdef STU_DEBUG
 #ifdef _WIN32
     int itr = 0;
+#endif
 #endif
 #ifdef STU_DEBUG
     Debug_Log_Startup();
@@ -98,14 +114,35 @@ int main(int argc, char * argv[])
     dbg_prn("DEBUG: [%s, %d]: BEGIN: SDL_main()\n", __FILE__, __LINE__);
 #endif
 
+#ifdef STU_DEBUG
 #ifdef _WIN32
     AllocConsole();
     AttachConsole(GetCurrentProcessId());
     HWND Handle = GetConsoleWindow();
+    #pragma warning(suppress : 6031)
     freopen("CON", "w", stdout);
-#endif
-    printf("Hello from the console!\n");
 
+//     // https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/freopen-wfreopen?view=msvc-170
+//     FILE *stream;
+//     // Reassign "stderr" to "freopen.out":
+//     stream = freopen( "freopen.out", "w", stderr ); // C4996
+//     // Note: freopen is deprecated; consider using freopen_s instead
+//     if( stream == NULL )
+//         fprintf( stdout, "error on freopen\n" );
+//     else
+//     {
+//         fprintf( stdout, "successfully reassigned\n" );
+//         fflush( stdout );
+//         fprintf( stream, "This will go to the file 'freopen.out'\n" );
+//         fclose( stream );
+//     }
+//     system( "type freopen.out" );
+
+    printf("Hello from the console!\n");
+#endif
+#endif
+
+#ifdef STU_DEBUG
 #ifdef _WIN32
     printf("argc: %d\n", argc);
     dbg_prn("argc: %d\n", argc);
@@ -115,6 +152,8 @@ int main(int argc, char * argv[])
         dbg_prn("argv[%d]: %s\n", itr, argv[itr]);
     }
 #endif
+#endif
+#ifdef STU_DEBUG
 #ifdef _WIN32
     char buffer[MAX_PATH] = { 0 };
     if(GetCurrentDirectoryA(MAX_PATH, buffer) != 0)
@@ -129,10 +168,10 @@ int main(int argc, char * argv[])
         __debugbreak();
     }
 #endif
+#endif
+#ifdef STU_DEBUG
 #ifdef _WIN32
     char path[MAX_PATH] = { 0 };
-    // warning C4013: '_getcwd' undefined; assuming extern returning int
-    // warning C4047: '!=': 'int' differs in levels of indirection from 'void *'
     if(_getcwd(path, sizeof(path)) != NULL)
     {
         printf("_getcwd(): %s\n", path);
@@ -145,6 +184,7 @@ int main(int argc, char * argv[])
         __debugbreak();
     }
 #endif
+#endif
 
     Startup_Platform();
 
@@ -152,8 +192,10 @@ int main(int argc, char * argv[])
 
     Shudown_Platform();
 
+#ifdef STU_DEBUG
 #ifdef _WIN32
     FreeConsole();
+#endif
 #endif
 
 #ifdef STU_DEBUG
@@ -197,7 +239,7 @@ int MOM_main(int argc, char** argv)
     if(DIR(str_CONFIG_MOM, found_file) == 0)
     {
         
-        /* NEWCODE */  // Exit_With_Message(str_CONFIG_MOM_ERROR);
+        Exit_With_Message(str_CONFIG_MOM_ERROR);
 
     }
 
@@ -399,8 +441,8 @@ int MOM_main(int argc, char** argv)
         }
     }
 
-    /* NEWCODE */  // EMM_Set_Minimum(2700);
-    /* NEWCODE */  // RAM_SetMinKB(583);
+    EMM_Set_Minimum(2700);
+    RAM_Set_Minimum(583);
     magic_set.input_type = 1;
     magic_set.sound_channels = 2;
     Init_Drivers(magic_set.input_type, magic_set.sound_channels, MOM_FONT_FILE, MIDI_DRV, MIDI_IO, MIDI_IRQ, MIDI_DMA, DIGI_DRV, DIGI_IO, DIGI_IRQ, DIGI_DMA);

@@ -673,9 +673,9 @@ Sword, Mace, Axe, Bow, Staff, Wand, Misc, Shield, Chain, Plate, Amulet, Ring, Cl
 */
 char * Get_Item_Type_Name(int16_t item_idx)
 {
-    char * Misc_Item_Names[6];
-    char * Base_Item_Names[10];
-    int16_t item_icon_idx;  // _SI_
+    char * Misc_Item_Names[6] = { 0, 0, 0, 0, 0, 0 };
+    char * Base_Item_Names[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t item_icon_idx = 0;  // _SI_
 
     Misc_Item_Names[0] = cnst_Amulet;
     Misc_Item_Names[1] = cnst_Ring;
@@ -737,16 +737,16 @@ char * Get_Item_Type_Name(int16_t item_idx)
 */
 static const char * Get_Item_Name(int16_t item_idx)
 {
-    char spell_name[LEN_SPELL_NAME];
-    char * Attrib_Suffixes[7];
-    static char item_name[LEN_ITEM_NAME];
-    char temp_buffer[LEN_TEMP_BUFFER];
-    int16_t Have_Prefix;
-    int16_t Unprocessed_Powers[NUM_ITEM_POWERS];
-    int16_t Highest_Index_Power;
-    int16_t item_type;
-    int16_t item_type_bit_idx;  // _DI_
-    int16_t itr;  // _DI_
+    char spell_name[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char * Attrib_Suffixes[7] = { 0, 0, 0, 0, 0, 0, 0 };
+    static char item_name[LEN_ITEM_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char temp_buffer[LEN_TEMP_BUFFER] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Have_Prefix = 0;
+    int16_t Unprocessed_Powers[NUM_ITEM_POWERS] = { 0, 0, 0, 0 };
+    int16_t Highest_Index_Power = 0;
+    int16_t item_type = 0;
+    int16_t item_type_bit_idx = 0;  // _DI_
+    int16_t itr = 0;  // _DI_
 
 
     Attrib_Suffixes[0] = cnst_Strength_2;
@@ -866,11 +866,11 @@ static const char * Get_Item_Name(int16_t item_idx)
 */
 static int16_t Get_Item_Cost(int16_t item_idx)
 {
-    int16_t item_type_base_cost[10];
-    int16_t item_type;
-    int16_t item_type_bit_idx;
-    int16_t itr;  // _SI_
-    int16_t item_cost;  // _DI_
+    int16_t item_type_base_cost[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t item_type = 0;
+    int16_t item_type_bit_idx = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t item_cost = 0;  // _DI_
 
     memcpy(item_type_base_cost, m_item_type_base_cost, 20);
 
@@ -1332,7 +1332,7 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
                             if(itr2 > 0)
                             {
 
-                                _ITEMS[137].embed_spell_idx = itr2;
+                                _ITEMS[137].embed_spell_idx = (int8_t)itr2;
 
                                 niu_did_select_spell = ST_TRUE;
 
@@ -1400,7 +1400,7 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
 
                 m_itemmake_item_icon_idx = Item_Type_Icon_Ranges[weapon_type_num].start;
 
-                _ITEMS[137].icon_idx = m_itemmake_item_icon_idx;
+                _ITEMS[137].icon_idx = (int8_t)m_itemmake_item_icon_idx;
 
                 Itam_Make_Screen_Build_Weapon_Powers_List(player_idx, max_power_cost);
 
@@ -1587,7 +1587,7 @@ static void Create_Item_Record(int16_t item_idx)
 
     strcpy(_ITEMS[item_idx].name, GUI_NearMsgString);
 
-    _ITEMS[item_idx].embed_spell_idx = embed_spell_idx;
+    _ITEMS[item_idx].embed_spell_idx = (int8_t)embed_spell_idx;
 
     _ITEMS[item_idx].embed_spell_cnt = embed_spell_cnt;
 
@@ -1604,9 +1604,9 @@ static void Create_Item_Record(int16_t item_idx)
 
     }
 
-    _ITEMS[item_idx].icon_idx = m_itemmake_item_icon_idx;
+    _ITEMS[item_idx].icon_idx = (int8_t)m_itemmake_item_icon_idx;
 
-    _ITEMS[item_idx].type = weapon_type_num;
+    _ITEMS[item_idx].type = (int8_t)weapon_type_num;
 
     _ITEMS[item_idx].cost = m_itemmake_item_cost;
 
@@ -2184,10 +2184,11 @@ static int16_t Item_Make_Screen_Spellbook_Popup(void)
 ; index 88h (136) to the active table (0-131)
 ; returns the item index if successful, or -1 otherwise
 */
+// TODO  struct s_ITEM_DATA itemdata
 static int16_t Add_Item(int16_t itemdata_idx)
 {
-    struct s_ITEM_DATA itemdata;
-    int16_t item_idx;
+    struct s_ITEM_DATA itemdata = { 0 };
+    int16_t item_idx = 0;
 
     if(itemdata_idx != -1)
     {
@@ -2317,9 +2318,9 @@ static void Create_Random_Item(int16_t Power, int16_t Value)
 
     _ITEMS[136].embed_spell_cnt = 0;
 
-    _ITEMS[136].type = weapon_type;
+    _ITEMS[136].type = (int8_t)weapon_type;
 
-    _ITEMS[136].icon_idx = m_itemmake_item_icon_idx;
+    _ITEMS[136].icon_idx = (int8_t)m_itemmake_item_icon_idx;
 
     // allocate for and load all of the item power data records
     _ITEM_POWERS = (struct s_ITEM_POWER * )Near_Allocate_First(2010);  // 2010 B;  67 * 30 = 2010
@@ -2412,14 +2413,15 @@ e.g.,
             j_ITEM_Generate(2, &_players[].spellranks, 30000)
 
 */
+// TODO  initialize struct s_ITEM_DATA itemdata
 int16_t Make_Item(int16_t Power, int16_t spellranks[], int16_t Value)
 {
-    struct s_ITEM_DATA itemdata;
-    int8_t magic[5];
-    int16_t Artifact;
-    int16_t Tries;
-    int16_t itr;  // _DI_
-    int16_t item_idx;  // _SI_
+    struct s_ITEM_DATA itemdata = { 0 };
+    int8_t magic[5] = { 0, 0, 0, 0, 0 };
+    int16_t Artifact = 0;
+    int16_t Tries = 0;
+    int16_t itr = 0;  // _DI_
+    int16_t item_idx = 0;  // _SI_
 
     item_idx = -1;
 

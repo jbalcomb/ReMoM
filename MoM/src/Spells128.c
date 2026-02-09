@@ -476,7 +476,6 @@ int16_t Get_Differential_Spell_List(int16_t player1, int16_t player2, int16_t mi
 // create a list of spells that are in a realm that both
 // wizards have at least one book of, and are known by
 // the second wizard but not the first
-// 
 // BUG: if there are more than 60 possible spells,
 // wrong ones may be awarded, and if there are more than
 // 74, the game will crash if the 74th has an index of
@@ -518,7 +517,7 @@ int16_t Get_Differential_Spell_List(int16_t player1, int16_t player2, int16_t mi
             )
             {
 
-                candidate_list[candidate_count] = itr;
+                candidate_list[candidate_count] = (uint8_t)itr;
 
                 candidate_count++;
 
@@ -555,7 +554,7 @@ int16_t Get_Differential_Spell_List(int16_t player1, int16_t player2, int16_t mi
 
                     spell_realm_idx = ((spell_idx - 1) / NUM_SPELLS_PER_MAGIC_REALM);  // ¿ thinks it's getting spell_num, rather than spell_idx ?
 
-                    spell_list[spell_count] = spell_idx;
+                    spell_list[spell_count] = (uint8_t)spell_idx;
 
                     spell_count++;
 

@@ -158,18 +158,19 @@ void Release_Time_Seconds(uint32_t delay)
     mx = pointer_x;
     my = pointer_y;
 
-    mouse_time = Read_System_Clock_Timer();
+    mouse_time = (uint32_t)Read_System_Clock_Timer();
     
     while(1)
     {
 
-        now = Read_System_Clock_Timer();
+        now = (uint32_t)Read_System_Clock_Timer();
 
-        diff = now - delay_start;
+        diff = (int32_t)(now - delay_start);  // TODO  DEDU  why/how diff data type of mouse_time, now, diff, delay, Read_System_Clock_Timer() 
 
         if(
             (diff < 0)
             ||
+#pragma warning(suppress : 4018)  // TODO  signed/unsigned mismatch
             (diff >= delay)
         )
         {

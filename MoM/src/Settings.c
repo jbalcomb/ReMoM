@@ -580,6 +580,8 @@ void Settings_Screen_Draw(void)
 
 
 // WZD o125p03
+// TODO  use settings_file__ovr125
+// TODO use sizeof(struct s_MAGIC_SET)
 void Load_MAGIC_SET(void)
 {
     char found_file[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -592,7 +594,7 @@ void Load_MAGIC_SET(void)
         (LOF("MAGIC.SET") != 466)
     )
     {
-        STU_DEBUG_BREAK();
+        // STU_DEBUG_BREAK();
         Set_Default_Game_Settings();
         file_pointer = fopen("MAGIC.SET","wb");
         fwrite(&magic_set, 466, 1, file_pointer);
@@ -659,6 +661,7 @@ void Set_Default_Game_Settings(void)
     magic_set.input_type = 1;  // ¿ Keyboard & Mouse ?
     magic_set.sound_channels = 2;
 
+    // TODO  add check for game-save files
     for(itr = 0; itr < NUM_SAVES; itr++)
     {
         magic_set.Have_Save[itr] = ST_FALSE;

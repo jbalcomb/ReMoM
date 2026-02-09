@@ -50,10 +50,14 @@ void Startup_Platform(void)
     SDL_Init(SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER | SDL_INIT_VIDEO);
 
     sdl2_ticks_startup = SDL_GetTicks64();  // the number of milliseconds since SDL library initialization
+#ifdef STU_DEBUG
     dbg_prn("sdl2_ticks_startup: %llu\n", sdl2_ticks_startup);
+#endif
 
     sdl2_performance_counter = SDL_GetPerformanceCounter();
+#ifdef STU_DEBUG
     dbg_prn("sdl2_performance_counter: %llu\n", sdl2_performance_counter);
+#endif
 
     x = SDL_WINDOWPOS_CENTERED;
     y = SDL_WINDOWPOS_CENTERED;

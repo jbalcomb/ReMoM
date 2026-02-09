@@ -157,14 +157,14 @@ SAMB_ptr IMG_GAME_WizHandsUp;
 // WZD dseg:C5C0
 SAMB_ptr IMG_GAME_RedSparkle;
 // WZD dseg:C5C2
-SAMB_ptr GAME_Conquering_Wiz;
+int16_t GAME_Conquering_Wiz;
 // WZD dseg:C5C4
-SAMB_ptr GAME_Conquered_Wiz;
+int16_t GAME_Conquered_Wiz;
 // WZD dseg:C5C6
 SAMB_ptr SND_GAME_Scream;
 uint32_t SND_GAME_Scream_size;  // DNE in Dasm
 // WZD dseg:C5C8
-SAMB_ptr m_conquest_anim_stage;
+int16_t m_conquest_anim_stage;
 // WZD dseg:C5CA
 SAMB_ptr IMG_GAME_ZappedWiz;
 // WZD dseg:C5CC
@@ -207,8 +207,12 @@ void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_i
     int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Forfeited = 0;
     int16_t City_Count = 0;
-    uint32_t * city_enchantments = 0;
-    uint32_t * overland_enchantments = 0;
+    // uint32_t * city_enchantments = 0;
+    // uint8_t city_enchantments[NUM_CITY_ENCHANTMENTS];
+    uint8_t * city_enchantments;
+    // uint32_t * overland_enchantments = 0;
+    // uint8_t overland_enchantments[NUM_OVERLAND_ENCHANTMENTS];
+    uint8_t * overland_enchantments;
     int16_t troop_count = 0;
     int16_t itr_cench = 0;
     int16_t itr_troops = 0;  // uses itr_cench
@@ -254,7 +258,7 @@ void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_i
     if(city_idx != ST_UNDEFINED)
     {
 
-        _CITIES[city_idx].owner_idx = player_idx;
+        _CITIES[city_idx].owner_idx = (int8_t)player_idx;
 
     }
 
@@ -270,6 +274,7 @@ void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_i
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
 
+        // TODO  Warning	C4133	'=': incompatible types - from 'uint8_t *' to 'uint32_t *'	003_MoM	C:\STU\devel\ReMoM\MoM\src\CONQUEST.c	273		
         city_enchantments = &_CITIES[itr_cities].enchantments[0];
 
         // ; remove all city enchantments owned by the defeated
@@ -377,7 +382,8 @@ void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_i
     }
 
     // ; remove all of the target's global enchantments
-    overland_enchantments = &_players[city_owner_idx].Globals;
+    // TODO  Warning	C4047	'=': 'uint32_t *' differs in levels of indirection from 'uint8_t (*)[24]'	003_MoM	C:\STU\devel\ReMoM\MoM\src\CONQUEST.c	380		
+    overland_enchantments = &_players[city_owner_idx].Globals[0];
 
     for(itr_oench = 0; itr_oench < NUM_OVERLAND_ENCHANTMENTS; itr_oench++)
     {
@@ -455,23 +461,24 @@ void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_i
 ; bit in their Defeated_Wizard bitfield
 */
 /*
-
+"baniches", "defeats", "destroy", "fortress"
 WIZ_Conquer__WIP()
     WIZ_Conquest__WIP(city_owner_idx, player_idx);
 
 */
 void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
 {
-    int16_t Space_String[4] = { 0, 0, 0, 0 };
+    char Space_String[4] = { 0, 0, 0, 0 };
     int16_t City_Count = 0;
-    int16_t Music_Data_Seg = 0;
+    SAMB_ptr Music_Data_Seg = 0;
     uint32_t Music_Data_Seg_size = 0;  // HACK  DNE in Dasm
     int16_t Esc_Hotkey_Index = 0;
     int16_t input_field_idx = 0;
     int16_t leave_screen = 0;
     int16_t itr_cities = 0;  // _SI_
+    SAMB_ptr wizlab_seg = 0;  // _SI_
 
-    strcpy(Space_String, cnst_Conquest_Msg0__ovr093);
+    strcpy(Space_String, cnst_Conquest_Msg0__ovr093);  // char cnst_Conquest_Msg0__ovr093[] = " ";
 
     if(
         (player_idx != NEUTRAL_PLAYER_IDX)
@@ -485,7 +492,7 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
     if(player_idx == _human_player_idx)
     {
 
-        Set_Bit_Field_Near(city_owner_idx, &_players[_human_player_idx].Defeated_Wizards);
+        Set_Bit_Field_Near(city_owner_idx, (char *)&_players[_human_player_idx].Defeated_Wizards);
 
     }
 
@@ -522,9 +529,9 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
     Set_Page_Off();
 
     // WIZLAB.LBX, 019    "WIZLAB"      ""
-    itr_cities = LBX_Reload(wizlab_lbx_file__ovr093, 19, _screen_seg);
+    wizlab_seg = LBX_Reload(wizlab_lbx_file__ovr093, 19, _screen_seg);
 
-    FLIC_Draw(0, 0, itr_cities);
+    FLIC_Draw(0, 0, wizlab_seg);
 
     Copy_Off_To_Back();
 
@@ -537,7 +544,7 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
     if(GAME_Conquering_Wiz != NEUTRAL_PLAYER_IDX)
     {
         strcpy(GUI_String_1, _players[player_idx].name);
-        strcat(GUI_String_1, Space_String);
+        strcat(GUI_String_1, &Space_String[0]);
         if(City_Count > 1)
         {
             strcat(GUI_String_1, cnst_Conquest_Msg3);  // "banishes"
@@ -658,7 +665,7 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
 
         Clear_Fields();
 
-        Esc_Hotkey_Index = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc10, ST_UNDEFINED);
+        Esc_Hotkey_Index = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)cnst_HOTKEY_Esc10[0], ST_UNDEFINED);
 
         input_field_idx = Get_Input();
 
@@ -923,6 +930,8 @@ void sub_79907__WIP(void)
 // WZD 093p09
 // drake178: GAME_IsWon()
 /*
+; returns 1 if there are no active AI players left in
+; the game, or 0 otherwise
 */
 /*
 
@@ -930,7 +939,7 @@ void sub_79907__WIP(void)
 int16_t GAME_IsWon__STUB(void)
 {
 
-
+    return ST_FALSE;
 
 }
 
@@ -976,6 +985,14 @@ void GAME_LimboFallAnim__STUB(int16_t player_idx)
 // WZD 093p14
 // drake178: WIZ_Banishment()
 /*
+; banishes the target player, handles the decision for
+; casting the spell of return, and if cast, plays the
+; banishment animations and awards spells to the human
+; player if they are the conqueror
+; returns 1 or 99 if the player forfeits, 0 if not
+;
+; BUG: fails to award spells to the AI if they banish
+; the human player
 */
 /*
 
@@ -983,7 +1000,7 @@ void GAME_LimboFallAnim__STUB(int16_t player_idx)
 int16_t WIZ_Banishment__STUB(int16_t loser_idx, int16_t winner_idx)
 {
 
-
+    return ST_FALSE;
 
 }
 

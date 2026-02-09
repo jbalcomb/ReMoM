@@ -738,8 +738,9 @@ void SBK_BuildSpellbook__WIP(int16_t spell_list_type, int16_t page_spell_count)
     Total_Pages += ((SBK_Group_6_Count + page_spell_count - 1) / page_spell_count);
 
     // Severity	Code	Description	Project	File	Line	Suppression State
-    // Message	lnt - arithmetic - overflow	A sub - expression may overflow before being assigned to a wider type.ReMoM	C : \STU\devel\ReMoM\src\Spellbook.C	558
-    m_spellbook_pages = (struct s_SPELL_BOOK_PAGE *)Near_Allocate_Next(((Total_Pages + 3) * sizeof(struct s_SPELL_BOOK_PAGE)));
+    // TODO  Message	lnt - arithmetic - overflow	A sub - expression may overflow before being assigned to a wider type.ReMoM	C : \STU\devel\ReMoM\src\Spellbook.C	558
+    // m_spellbook_pages = (struct s_SPELL_BOOK_PAGE *)Near_Allocate_Next(((Total_Pages + 3) * sizeof(struct s_SPELL_BOOK_PAGE)));
+    m_spellbook_pages = (struct s_SPELL_BOOK_PAGE *)Near_Allocate_Next( (Total_Pages + 3) * 30 );
 
     for(itr1 = 0; (Total_Pages + 3) > itr1; itr1++)
     {
@@ -1823,7 +1824,7 @@ void Spellbook_Add_Page(int16_t group_spell_count, int16_t group_idx, char * tit
             // ¿ page is full ?
             if((page_spell_count + 1) == page_spell_counter)
             {
-                m_spellbook_pages[m_spellbook_page_count].count = page_spell_count;
+                m_spellbook_pages[m_spellbook_page_count].count = (int8_t)page_spell_count;
 
                 page_spell_counter = 1;
 
@@ -1874,7 +1875,7 @@ void Spellbook_Add_Page(int16_t group_spell_count, int16_t group_idx, char * tit
 
     }
 
-    m_spellbook_pages[m_spellbook_page_count].count = page_spell_counter;
+    m_spellbook_pages[m_spellbook_page_count].count = (int8_t)page_spell_counter;
 
     m_spellbook_page_count++;
     

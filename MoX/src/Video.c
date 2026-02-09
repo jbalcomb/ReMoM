@@ -305,10 +305,10 @@ void Page_Flip(void)
 #ifdef _STU_MAC
 
 #endif
-#ifdef _STU_SDL2
+// #ifdef _STU_SDL2
     Platform_Palette_Update();
     Platform_Video_Update();
-#endif
+// #endif
 #ifdef _STU_WIN
     Pump_Paints();
 #endif

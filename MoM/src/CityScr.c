@@ -31,7 +31,6 @@
 #include "ProdScr.h"
 #include "RACETYPE.h"
 #include "SBookScr.h"
-#include "../../STU/src/STU_CHK.h"
 #include "UNITTYPE.h"   // WTFMATE
 #include "UnitView.h"
 #include "WZD_o143.h"
@@ -266,7 +265,7 @@ void City_Screen__WIP(void)
     if(_CITIES[_city_idx].farmer_count < required_farmer_count)
     {
 
-        CITIES_FARMER_COUNT(_city_idx, required_farmer_count);
+        CITIES_FARMER_COUNT(_city_idx, (int8_t)required_farmer_count);
 
     }
 
@@ -1002,7 +1001,7 @@ void City_Screen__WIP(void)
                     if(itr_job_fields < required_farmer_count)
                     {
 
-                        CITIES_FARMER_COUNT(_city_idx, required_farmer_count);
+                        CITIES_FARMER_COUNT(_city_idx, (int8_t)required_farmer_count);
 
                     }
                     else
@@ -1014,9 +1013,7 @@ void City_Screen__WIP(void)
 
                 }
 
-Check_Game_Data();
                 Do_City_Calculations(_city_idx);
-Check_Game_Data();
 
                 m_city_production_cost = City_Production_Cost(_CITIES[_city_idx].construction, _city_idx);
 
@@ -1543,7 +1540,7 @@ void Cityscape_Add_Fields(void)
         x2 = cityscape_bldg_fields[itr].field_x2;
         y2 = cityscape_bldg_fields[itr].field_y2;
 
-        city_cityscape_fields[city_cityscape_field_count] = Add_Hidden_Field(x1, y1, x2, y2, emptystring__ovr054[0], ST_UNDEFINED);
+        city_cityscape_fields[city_cityscape_field_count] = (unsigned char)Add_Hidden_Field(x1, y1, x2, y2, emptystring__ovr054[0], ST_UNDEFINED);
 
         city_cityscape_field_count++;
     }
@@ -1652,7 +1649,7 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
     strcat(GUI_String_1, " ");
     if(city_built_bldg_idx == bt_CityWalls)
     {
-        tmp_strlen = strlen(GUI_String_2);
+        tmp_strlen = (int16_t)strlen(GUI_String_2);
         GUI_String_2[(tmp_strlen - 1)] = 0;
     }
     strcat(GUI_String_1, GUI_String_2);

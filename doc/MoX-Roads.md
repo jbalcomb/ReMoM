@@ -1,8 +1,41 @@
 
+MoM/src/Roads.c
+
+TF_Road  ==>  MSF_ROAD
+TF_Enc_Road  ==>  MSF_EROAD
 
 
 
+_UNITS[unit_idx].Rd_Constr_Left
 
+_UNITS[unit_idx].Rd_From_X
+_UNITS[unit_idx].Rd_From_Y
+
+
+
+Where do TF_Road and TF_Enc_Road get appalied?
+Nowhere, they no longer exist!
+Try MSF_ROAD and MSF_EROAD.
+
+Set_Army_Road_Building()
+    sets Status, dst_wx, dst_wy, Rd_Constr_Left, Rd_From_X, Rd_From_Y, wp
+
+Road_Build_Screen()
+    |-> Set_Army_Road_Building(roadbuilder_count, &roadbuilders[0], m_road_dst_x, m_road_dst_y);
+
+void Make_Road(int16_t wx, int16_t wy, int16_t wp)
+    movement_mode_cost_maps[wp].UU_MvMd.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+    movement_mode_cost_maps[wp].walking.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+    movement_mode_cost_maps[wp].forester.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+    movement_mode_cost_maps[wp].mountaineer.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+    movement_mode_cost_maps[wp].swimming.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+    _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] |= MSF_ROAD;
+    _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= ~(MSF_EROAD);
+    if(wp == MYRROR_PLANE)
+        Make_Road_Enchanted(wx, wy, wp);
+
+Move_Units()
+    |-> Make_Road(_UNITS[troops[itr_troops]].wx, _UNITS[troops[itr_troops]].wy, map_p);
 
 
 ## Road Building Effect
@@ -172,7 +205,7 @@ uint8_t * _map_square_flags;                // load in Load_SAVE_GAM()
 
 
 
-##### Naming Things Is HArd
+##### Naming Things Is Hard
 
 CITYSCAP_LBX
      5  BACKS       roads

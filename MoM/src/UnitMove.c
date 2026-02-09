@@ -22,6 +22,8 @@ Elsewhere, ...
 
 */
 
+#pragma warning(disable: 4068)
+
 #include "../../MoX/src/Util.h"
 #include "MainScr.h"
 #include "UNITTYPE.h"
@@ -872,8 +874,8 @@ Calc_Move_Path:
         {
             itr_wx = (movepath_cost_map->Reverse_Path[((path_length - 1) - itr)] % WORLD_WIDTH);
             itr_wy = (movepath_cost_map->Reverse_Path[((path_length - 1) - itr)] / WORLD_WIDTH);
-            mvpth_x[itr] = itr_wx;
-            mvpth_y[itr] = itr_wy;
+            mvpth_x[itr] = (int8_t)itr_wx;
+            mvpth_y[itr] = (int8_t)itr_wy;
             mvpth_c[itr] = movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)];
         }
 
@@ -915,14 +917,14 @@ Done:
 // drake178: STK_SetOvlMoveMap()
 void Init_MovePathMap(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t wp)
 {
-    int8_t * movemap_ptr;
-    int8_t * terrain_flags_ptr;
-    int16_t map_squares;
-    int16_t var_6;
-    int16_t road_bits;
-    int16_t itr_squares;
-    int16_t itr_wy;
-    int16_t itr_wx;  // _DI_
+    int8_t * movemap_ptr = 0;
+    int8_t * terrain_flags_ptr = 0;
+    int16_t map_squares = 0;
+    int16_t var_6 = 0;
+    int16_t road_bits = 0;
+    int16_t itr_squares = 0;
+    int16_t itr_wy = 0;
+    int16_t itr_wx = 0;  // _DI_
 
     // TODO  EMM_Map_DataH()
 

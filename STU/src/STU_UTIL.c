@@ -1,6 +1,4 @@
 
-#define _CRT_SECURE_NO_WARNINGS
-
 /*
 asctime .............................. 22
 biostime ............................ 57
@@ -122,10 +120,15 @@ void get_datetime(char * datatime)
     struct tm *edt;
     char ISO8601_DateTime[21] = "1583-01-01T00:00:00Z";
 
-#pragma warning(suppress : 4996)
-    putenv(tzstr);
-#pragma warning(suppress : 4996)
-    tzset();
+#pragma warning(suppress : 6031)  // return value ignored
+// #pragma warning(suppress : 4996)
+    // putenv(tzstr);  // ~== `set TZ EST5EDT`
+    _putenv(tzstr);
+    // Replace putenv("VAR=value") with _putenv("VAR=value") or _putenv_s("VAR", "value").
+    _putenv_s("TZ", "EST5EDT");
+// #pragma warning(suppress : 4996)  // 
+    // tzset();                      // initializes timezone and daylight from TZ environment variable
+    _tzset();
     edtt = time(NULL);
     edt = localtime(&edtt);
     // printf("EST5EDT: %s", asctime(edt));

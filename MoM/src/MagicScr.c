@@ -374,10 +374,10 @@ multiple definition - MagicScr.c and SPLMASTR.c
 int16_t ovl_ench_list_cnt1;
 
 // WZD dseg:C22E
-SAMB_ptr magic_gem_fields;
+int16_t * magic_gem_fields;
 
 // WZD dseg:C230
-SAMB_ptr magic_ovl_ench_flds;
+int16_t * magic_ovl_ench_flds;
 
 // WZD dseg:C232
 int16_t magic_ovl_ench_list_down;
@@ -838,24 +838,24 @@ NOTE(JimBalcomb,20240622):  should be all done now, except for HELP and constant
 */
 void Magic_Screen_Draw(void)
 {
-    int16_t y_start;
-    int16_t x_start;
-    int16_t diplomatic_treaties;
-    int16_t itr_players_help;
-    uint8_t colors1[NUM_PLAYERS];
-    uint8_t colors2[NUM_PLAYERS];
-    int16_t diplomatic_relations_idx;
-    int16_t itr_treaties;
-    int16_t research;
-    int16_t skill;
-    int16_t mana;
-    int16_t var_2;
-    int16_t itr;  // _SI_
-    int16_t IDK;  // _DI_
-    int16_t itr_help_entries;  // _SI_
-    int16_t itr_players;  // _SI_
-    int16_t itr_gems;  // _SI_
-    int16_t itr_ovl_enchs;  // _SI_
+    int16_t y_start = 0;
+    int16_t x_start = 0;
+    int16_t diplomatic_treaties = 0;
+    int16_t itr_players_help = 0;
+    uint8_t colors1[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    uint8_t colors2[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int16_t diplomatic_relations_idx = 0;
+    int16_t itr_treaties = 0;
+    int16_t research = 0;
+    int16_t skill = 0;
+    int16_t mana = 0;
+    int16_t var_2 = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t IDK = 0;  // _DI_
+    int16_t itr_help_entries = 0;  // _SI_
+    int16_t itr_players = 0;  // _SI_
+    int16_t itr_gems = 0;  // _SI_
+    int16_t itr_ovl_enchs = 0;  // _SI_
 
     // TODO  ¿ player banner colors ?  add manifest constants
     colors1[0] = BANNER_COLOR_BLUE;
@@ -1522,8 +1522,8 @@ void Magic_Screen_Load(void)
     GUI_String_2 = (char *)Near_Allocate_Next(30);
     ovl_ench_list_spells = (int16_t *)Near_Allocate_Next(192);  // 192 bytes ... ¿ 96 of ?
     ovl_ench_list_players = (int8_t *)Near_Allocate_Next(96);  // 96 bytes ... ¿ 96 of player_idx ?
-    magic_ovl_ench_flds = Near_Allocate_Next(40);  // 40 bytes ... ¿ 40 or 20 of ... ?
-    magic_gem_fields = Near_Allocate_Next(12);  // 12 bytes ... ¿ 12 or 6 of ... ?
+    magic_ovl_ench_flds = (int16_t *)Near_Allocate_Next(40);  // 40 bytes ... ¿ 40 or 20 of ... ?
+    magic_gem_fields = (int16_t *)Near_Allocate_Next(12);  // 12 bytes ... ¿ 12 or 6 of ... ?
 
     for(itr = 0; itr < 96; itr++)
     {
@@ -1734,11 +1734,12 @@ void Alchemy_Popup(int16_t start_x, int16_t y_start)
 */
 void Alchemy_Popup_Draw(void)
 {
-    int16_t conversion_rate;
-    uint8_t colors[6];
+    int16_t conversion_rate = 0;
+    uint8_t colors[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
 
     colors[0] = 192;
     colors[1] = 179;
+    colors[2] = BANNER_COLOR_BLUE;
 
     Set_Page_Off();
 

@@ -765,7 +765,7 @@ MoO2
 
                     if(((p_fields[active_input_field_number].max_characters - 1) > alt_field_num))
                     {
-                        continuous_string[alt_field_num] = character;
+                        continuous_string[alt_field_num] = (char)character;
                         continuous_string[(alt_field_num + 1)] = '\0';
                     }
                     else
@@ -1460,6 +1460,7 @@ Return_Type_Z11:
 /*
 return field_num;
 */
+#pragma warning(suppress : 4102)  // TODO  unreferenced label
 Return_Type_F00:
     return field_num;
 
@@ -1480,6 +1481,7 @@ Return_Type_F01:
 /*
 down_mouse_button = ST_UNDEFINED; Mouse_Button_Handler(); return field_num;
 */
+#pragma warning(suppress : 4102)  // TODO  unreferenced label
 Return_Type_F11:
     down_mouse_button = ST_UNDEFINED;
     Mouse_Button_Handler();
@@ -2793,7 +2795,7 @@ void Draw_Input_Box_Popup(int16_t field_num, char * string)
 
     if(p_fields[field_num].fill_color != 0)
     {
-        Fill(p_fields[field_num].x1, p_fields[field_num].y1, p_fields[field_num].x2, p_fields[field_num].y2, p_fields[field_num].fill_color);
+        Fill(p_fields[field_num].x1, p_fields[field_num].y1, p_fields[field_num].x2, p_fields[field_num].y2, (uint8_t)p_fields[field_num].fill_color);
     }
 
     Edit_Char[1] = '\0';

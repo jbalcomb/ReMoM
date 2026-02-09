@@ -58,14 +58,14 @@ message(STATUS "INCLUDE_DIRECTORIES: ${include_dirs}")
 # get_filename_component(EXE_OUTPUT_DIR ${EXE_PATH} DIRECTORY)
 # message(STATUS "EXE_OUTPUT_DIR: ${EXE_OUTPUT_DIR}")
 
-message(STATUS "CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}")
-message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
-message(STATUS "CMAKE_CONFIGURATION_TYPES: ${CMAKE_CONFIGURATION_TYPES}")
-message(STATUS "CMAKE_CONFIGURATION_TYPE: ${CMAKE_CONFIGURATION_TYPE}")
+message(STATUS "MoX tests: CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}")
+message(STATUS "MoX tests: CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+message(STATUS "MoX tests: CMAKE_CONFIGURATION_TYPES: ${CMAKE_CONFIGURATION_TYPES}")
+message(STATUS "MoX tests: CMAKE_CONFIGURATION_TYPE: ${CMAKE_CONFIGURATION_TYPE}")
 # Nope. message(STATUS "<CONFIG>: $<CONFIG>")
 get_target_property(imported_location SDL2::Core IMPORTED_LOCATION)
 get_filename_component(imported_location_dir ${imported_location} DIRECTORY)
-message(STATUS "imported_location_dir: ${imported_location_dir}")
+message(STATUS "MoX tests: imported_location_dir: ${imported_location_dir}")
 # file(COPY "${imported_location_dir}/SDL2.dll" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 if(WIN32)
     add_custom_command(
@@ -77,7 +77,7 @@ if(WIN32)
 endif()
 get_target_property(imported_location SDL2::Mixer IMPORTED_LOCATION)
 get_filename_component(imported_location_dir ${imported_location} DIRECTORY)
-message(STATUS "imported_location_dir: ${imported_location_dir}")
+message(STATUS "MoX tests: imported_location_dir: ${imported_location_dir}")
 # file(COPY "${imported_location_dir}/SDL2_mixer.dll" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 if(WIN32)
     add_custom_command(
@@ -96,6 +96,27 @@ endif()
 #         COMMAND_EXPAND_LISTS
 #     )
 # endif()
+
+
+
+# test code from ReMoMber
+# # if(WIN32)
+# #     add_custom_command(
+# #         TARGET "ReMoMber" POST_BUILD
+# #         COMMAND "${CMAKE_COMMAND}" -E copy -t "$<TARGET_FILE_DIR:ReMoMber>"
+# #         "$<TARGET_RUNTIME_DLLS:ReMoMber>" USES_TERMINAL COMMAND_EXPAND_LISTS
+# #     )
+# # endif()
+# # # [build]   TARGET 'SDL2::Main' is IMPORTED and does not build here.
+# # if(WIN32)
+# #     add_custom_command(
+# #         TARGET "SDL2::Main" POST_BUILD
+# #         COMMAND "${CMAKE_COMMAND}" -E copy -t "$<TARGET_FILE_DIR:SDL2::Main>"
+# #         "$<TARGET_RUNTIME_DLLS:SDL2::Main>" USES_TERMINAL COMMAND_EXPAND_LISTS
+# #     )
+# # endif()
+
+
 
 # add_compile_options("$<$<CONFIG:Release,MinSizeRel>:-fmacro-prefix-map=${CMAKE_SOURCE_DIR}=;-fomit-frame-pointer>" "$<$<CONFIG:Debug>:-Og;-fnoinline>")
 
@@ -127,7 +148,6 @@ add_custom_command(TARGET MOX_tests POST_BUILD
 #     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${CMAKE_PROJECT_NAME}> $<TARGET_RUNTIME_DLLS:${CMAKE_PROJECT_NAME}> $<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>.
 # )
 
-# copy LBX files for tests
 file(GLOB LBX_FILE_LIST "${CMAKE_SOURCE_DIR}/*.lbx")
 add_custom_command(
     TARGET MOX_tests
@@ -136,7 +156,7 @@ add_custom_command(
         ${LBX_FILE_LIST}
         $<TARGET_FILE_DIR:MOX_tests>
     COMMAND_EXPAND_LISTS
-    COMMENT "Copying LBX files..."
+    COMMENT "MoX tests: Copying LBX files..."
 )
 
 gtest_discover_tests(MOX_tests)

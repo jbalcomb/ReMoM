@@ -57,7 +57,12 @@ set(BUILD_SHARED_LIBS OFF)
 # set(BUILD_SHARED_LIBS ON)
 
 include(FetchContent)
-FetchContent_Declare(googletest GIT_REPOSITORY https://github.com/google/googletest.git GIT_TAG v1.14.0)
+FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG v1.14.0
+    EXCLUDE_FROM_ALL
+)
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
@@ -67,6 +72,26 @@ message(STATUS "GTEST_INCLUDE_DIRS='${GTEST_INCLUDE_DIRS}'")
 find_package(SDL2 REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 
+get_target_property(imported_location SDL2::Core IMPORTED_LOCATION)
+get_filename_component(imported_location_dir ${imported_location} DIRECTORY)
+set(SDL2_DLL_FILE_PATH ${imported_location_dir})
+string(APPEND SDL2_DLL_FILE_PATH "/SDL2.dll")
+message(CHECK_START "Finding SDL2.dll")
+if(EXISTS "${SDL2_DLL_FILE_PATH}")
+    message(CHECK_PASS "The file exists: ${SDL2_DLL_FILE_PATH}")
+else()
+    message(CHECK_FAIL "The file does not exist: ${SDL2_DLL_FILE_PATH}")
+endif()
+get_target_property(imported_location SDL2::Mixer IMPORTED_LOCATION)
+get_filename_component(imported_location_dir ${imported_location} DIRECTORY)
+set(SDL2_MIXER_DLL_FILE_PATH ${imported_location_dir})
+string(APPEND SDL2_MIXER_DLL_FILE_PATH "/SDL2_mixer.dll")
+message(CHECK_START "Finding SDL2_mixer.dll")
+if(EXISTS "${SDL2_MIXER_DLL_FILE_PATH}")
+    message(CHECK_PASS "The file exists: ${SDL2_MIXER_DLL_FILE_PATH}")
+else()
+    message(CHECK_FAIL "The file does not exist: ${SDL2_MIXER_DLL_FILE_PATH}")
+endif()
 
 # # SDL2::Main  SDL2::Core  SDL2::Mixer
 # get_target_property(imported_implib SDL2::Main IMPORTED_IMPLIB)
@@ -116,10 +141,23 @@ add_subdirectory(src)
 
 
 install(TARGETS ReMoMber)
+# install(
+#     TARGETS ReMoMber
+#     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+#     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+# )
 # install(FILES $<TARGET_FILE:SDL2::SDL2> DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES $<TARGET_FILE:SDL2::Core> DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES $<TARGET_FILE:SDL2::Mixer> DESTINATION ${CMAKE_INSTALL_BINDIR})
 message(STATUS "CMAKE_INSTALL_BINDIR='${CMAKE_INSTALL_BINDIR}'")
+
+# $<TARGET_RUNTIME_DLLS:MOX_tests>
+
+# $<TARGET_FILE_DIR:ReMoMber>
+
+install(FILES ${SDL2_DLL_FILE_PATH} DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES ${SDL2_MIXER_DLL_FILE_PATH} DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_NAME "MoM v1.31 Reassembly")

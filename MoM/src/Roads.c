@@ -122,16 +122,16 @@ int16_t unit_wx;
 // WZD o069p01
 void Road_Build_Screen(void)
 {
-    int16_t roadbuilders[MAX_STACK];
-    int16_t turns_to_build_road;
-    int16_t roadbuilder_count;
-    int16_t target_wy;
-    int16_t target_wx;
-    int16_t itr_stack;
-    int16_t scanned_field;
-    int16_t leave_screen;
-    int16_t input_field_idx;  // _DI_
-    int16_t unit_idx;  // _SI_
+    int16_t roadbuilders[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t turns_to_build_road = 0;
+    int16_t roadbuilder_count = 0;
+    int16_t target_wy = 0;
+    int16_t target_wx = 0;
+    int16_t itr_stack = 0;
+    int16_t scanned_field = 0;
+    int16_t leave_screen = 0;
+    int16_t input_field_idx = 0;  // _DI_
+    int16_t unit_idx = 0;  // _SI_
 
     m_road_path_length = 0;
 
@@ -254,8 +254,8 @@ void Road_Build_Screen(void)
         if(input_field_idx == _main_map_grid_field)
         {
             Play_Left_Click();
-            target_wx = ((_map_x + _main_map_grid_x) % WORLD_WIDTH);
-            target_wy = (_map_y + _main_map_grid_y);
+            target_wx = (int16_t)((_map_x + _main_map_grid_x) % WORLD_WIDTH);
+            target_wy = (int16_t)(_map_y + _main_map_grid_y);
             Reset_Map_Draw();
             Road_Build_Path(target_wx, target_wy);
         }
@@ -275,8 +275,8 @@ void Road_Build_Screen(void)
             */
             Play_Left_Click();
             Reduced_Map_Coords(&target_wx, &target_wy, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
-            _prev_world_x = (_minimap_grid_x + target_wx);
-            _prev_world_y = (_minimap_grid_y + target_wy);
+            _prev_world_x = (int16_t)(_minimap_grid_x + target_wx);
+            _prev_world_y = (int16_t)(_minimap_grid_y + target_wy);
             _map_x = _prev_world_x;
             _map_y = _prev_world_y;
             Center_Map(&_map_x, &_map_y, _prev_world_x, _prev_world_y, _map_plane);
@@ -288,8 +288,8 @@ void Road_Build_Screen(void)
 
         if(-(_main_map_grid_field) == input_field_idx)
         {
-            _prev_world_x = (_main_map_grid_x - (MAP_WIDTH / 2));
-            _prev_world_y = (_main_map_grid_y - (MAP_HEIGHT / 2));
+            _prev_world_x = (int16_t)(_main_map_grid_x - (MAP_WIDTH / 2));
+            _prev_world_y = (int16_t)(_main_map_grid_y - (MAP_HEIGHT / 2));
             IDK_CheckSet_MapDisplay_XY();
         }
 
@@ -380,7 +380,7 @@ void Road_Build_Screen_Draw(void)
 // drake178: sub_5BDCE()
 void Draw_Road_Building_Window(void)
 {
-    uint8_t colors[4];
+    uint8_t colors[4] = { 0, 0, 0, 0 };
 
     FLIC_Draw(242, 173, deselect_button_blockout);
 
@@ -448,22 +448,22 @@ void Draw_Road_Building_Window(void)
 // sub_5BF7F()
 void Draw_Road_Build_Path_Line(void)
 {
-    int16_t skip_draw_path_line;
-    int16_t map_square_center_y_offset;
-    int16_t map_square_center_x_offset;
-    uint8_t color_start_palette_idx;  /* Dasm shows cast */
+    int16_t skip_draw_path_line = 0;
+    int16_t map_square_center_y_offset = 0;
+    int16_t map_square_center_x_offset = 0;
+    uint8_t color_start_palette_idx = 0;  /* Dasm shows cast */
     // 2-byte aligment padding
-    int16_t color_count;
-    uint8_t color_array[8];  /* MoO2  8 words */
-    int16_t screen_squares_y;
-    int16_t screen_squares_x;
-    int16_t cur_y;
-    int16_t y1;
-    int16_t x1;
-    int16_t y2;
-    int16_t itr;
-    int16_t cur_x;  // _SI_
-    int16_t x2;  // _DI_
+    int16_t color_count = 0;
+    uint8_t color_array[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };  /* MoO2  8 words */
+    int16_t screen_squares_y = 0;
+    int16_t screen_squares_x = 0;
+    int16_t cur_y = 0;
+    int16_t y1 = 0;
+    int16_t x1 = 0;
+    int16_t y2 = 0;
+    int16_t itr = 0;
+    int16_t cur_x = 0;  // _SI_
+    int16_t x2 = 0;  // _DI_
 
     Set_Window(MAP_SCREEN_X1, MAP_SCREEN_Y1, MAP_SCREEN_X2, MAP_SCREEN_Y2);
 
@@ -731,12 +731,12 @@ void Set_Army_Road_Building(int16_t troop_count, int16_t troops[], int16_t dst_w
 
         _UNITS[unit_idx].Status = us_GOTO;
 
-        _UNITS[unit_idx].dst_wx = dst_wx;
-        _UNITS[unit_idx].dst_wy = dst_wy;
+        _UNITS[unit_idx].dst_wx = (int8_t)dst_wx;
+        _UNITS[unit_idx].dst_wy = (int8_t)dst_wy;
 
         if(_unit_type_table[_UNITS[unit_idx].type].Construction > 0)
         {
-            _UNITS[unit_idx].Rd_Constr_Left = Turns_To_Build_Road(_UNITS[unit_idx].wx, _UNITS[unit_idx].wx, _map_plane);
+            _UNITS[unit_idx].Rd_Constr_Left = (int8_t)Turns_To_Build_Road(_UNITS[unit_idx].wx, _UNITS[unit_idx].wx, _map_plane);
 
             if(m_construction_points > 0)
             {
@@ -748,7 +748,7 @@ void Set_Army_Road_Building(int16_t troop_count, int16_t troops[], int16_t dst_w
             _UNITS[unit_idx].Rd_From_X = _UNITS[unit_idx].wx;
             _UNITS[unit_idx].Rd_From_Y = _UNITS[unit_idx].wy;
 
-            _UNITS[unit_idx].wp = _map_plane;
+            _UNITS[unit_idx].wp = (int8_t)_map_plane;
         }
 
     }

@@ -24,7 +24,6 @@ MoO2
 #include "../../MoX/src/random.h"
 #include "../../MoX/src/Video.h"
 
-
 #include "INITGAME.h"
 #include "NEXTTURN.h"
 #include "RACETYPE.h"
@@ -270,9 +269,9 @@ void NEWG_CreateWorld__WIP(void)
 
     Generate_Terrain_Specials(1);
 
-    // TODO  NEWG_CreateRoads(0);
+    Generate_Roads(0);
 
-    // TODO  NEWG_CreateRoads(1);
+    Generate_Roads(1);
 
     Draw_Building_The_Worlds(80);
 
@@ -897,10 +896,10 @@ Loop_Location_1:
                     {
                         // ; create a fortress record for the player, then
                         // ; increase the loop variable
-                        _FORTRESSES[player_idx].wx = wx;
-                        _FORTRESSES[player_idx].wy = wy;
-                        _FORTRESSES[player_idx].wp = wp;
-                        _FORTRESSES[player_idx].wx = wx;
+                        _FORTRESSES[player_idx].wx = (int8_t)wx;
+                        _FORTRESSES[player_idx].wy = (int8_t)wy;
+                        _FORTRESSES[player_idx].wp = (int8_t)wp;
+                        _FORTRESSES[player_idx].wx = (int8_t)wx;
                         _FORTRESSES[player_idx].active = ST_TRUE;
                         UU_Fortresses[wp]++;
                         player_idx++;
@@ -935,7 +934,7 @@ Loop_Location_1:
                 if(itr == 0)
                 {
 
-                    _CITIES[_cities].race = NEWG_Clicked_Race;
+                    _CITIES[_cities].race = (int8_t)NEWG_Clicked_Race;
 
                 }
                 else
@@ -1015,7 +1014,7 @@ Loop_Location_1:
                 _CITIES[_cities].wx = _FORTRESSES[itr].wx;
                 _CITIES[_cities].wy = _FORTRESSES[itr].wy;
                 _CITIES[_cities].wp = _FORTRESSES[itr].wp;
-                _CITIES[_cities].owner_idx = itr;
+                _CITIES[_cities].owner_idx = (int8_t)itr;
                 _CITIES[_cities].size = 1;  // CTY_Hamlet ... ~== (4 / 4)
                 _CITIES[_cities].population = 4;
                 _CITIES[_cities].bldg_cnt = 0;
@@ -1689,7 +1688,7 @@ void NEWG_SetBaseLands__WIP(int16_t wp)
 
 // tt_Ocean1      = 0x0,
 // tt_BugGrass    = 0x1,
-// TT_Shore1_1st  = 0x2,
+// tt_Shore1_Fst  = 0x2,
 // DEDU what is terrain type 3? ...TT_Shore1_Lst>
 
                 if(_world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] <= 3)
@@ -2924,11 +2923,11 @@ void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t
 
     budget = ((budget * (_difficulty + 1)) / 4);  // 
 
-    _LAIRS[lair_idx].wx = wx;
+    _LAIRS[lair_idx].wx = (int8_t)wx;
 
-    _LAIRS[lair_idx].wy = wy;
+    _LAIRS[lair_idx].wy = (int8_t)wy;
 
-    _LAIRS[lair_idx].wp = wp;
+    _LAIRS[lair_idx].wp = (int8_t)wp;
 
     _LAIRS[lair_idx].intact = ST_TRUE;
 
@@ -3171,7 +3170,7 @@ void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t
             if(Tries < 200)
             {
 
-                _LAIRS[lair_idx].guard1_unit_type = Picked_Unit_Type;
+                _LAIRS[lair_idx].guard1_unit_type = (uint8_t)Picked_Unit_Type;
 
                 _LAIRS[lair_idx].guard1_count = (budget / _unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost);
 
@@ -3260,7 +3259,7 @@ void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t
                 if(Tries < 200)
                 {
 
-                    _LAIRS[lair_idx].guard2_unit_type = Picked_Unit_Type;
+                    _LAIRS[lair_idx].guard2_unit_type = (uint8_t)Picked_Unit_Type;
 
                     _LAIRS[lair_idx].guard2_count = (budget / _unit_type_table[_LAIRS[lair_idx].guard2_unit_type].cost);
 
@@ -3338,7 +3337,7 @@ void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t
 
         IDK -= (((Price * Price) * 50) - 100);
 
-        _LAIRS[lair_idx].Spell_n_Special = Price;
+        _LAIRS[lair_idx].Spell_n_Special = (int8_t)Price;
 
     }
 
@@ -3699,9 +3698,9 @@ Loop_Location_2:
             }
 
             if(
-                (TERRAIN_TYPE(wx, wy, wp) >= TT_Shore1_1st)  // ; there are no such tiles yet at this stage
+                (TERRAIN_TYPE(wx, wy, wp) >= tt_Shore1_Fst)  // ; there are no such tiles yet at this stage
                 ||
-                (TERRAIN_TYPE(wx, wy, wp) <= TT_Shore1_end)  // ; there are no such tiles yet at this stage
+                (TERRAIN_TYPE(wx, wy, wp) <= tt_Shore1_Lst)  // ; there are no such tiles yet at this stage
             )
             {
 
@@ -3795,15 +3794,15 @@ Loop_Location_2:
             if(Random(4) > 1)
             {
 
-                _CITIES[_cities].race = NEWG_Landmass_Races[(_landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) +wx)])];
+                _CITIES[_cities].race = (int8_t)NEWG_Landmass_Races[(_landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) +wx)])];
 
             }
 
-            _CITIES[_cities].wx = wx;
+            _CITIES[_cities].wx = (int8_t)wx;
 
-            _CITIES[_cities].wy = wy;
+            _CITIES[_cities].wy = (int8_t)wy;
             
-            _CITIES[_cities].wp = wp;
+            _CITIES[_cities].wp = (int8_t)wp;
             
             _CITIES[_cities].owner_idx = NEUTRAL_PLAYER_IDX;
 
@@ -4255,13 +4254,238 @@ void Random_City_Name_By_Race_NewGame(int16_t race_idx, char * name)
     city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
     strcpy(name, city_names_buffer_ptr);
 
-// Capture_Cities_Data();
-
 }
 
 // MGC o51p26
 // drake178: NEWG_CreateRoads()
-// NEWG_CreateRoads()
+/*
+; creates roads on the tiles of every city, as well as
+; between neutral ones on the same continents that are
+; closer to each other than 11 tiles with no water
+; tiles on the most direct path
+;
+; BUG: creates normal roads instead of enchanted ones
+;  on the tiles of Myrran cities
+*/
+/*
+
+*/
+void Generate_Roads(int16_t wp)
+{
+    int8_t Road_Ys[70] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int8_t Road_Xs[70] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t dst_wy = 0;
+    int16_t dst_wx = 0;
+    int16_t src_wy = 0;
+    int16_t src_wx = 0;
+    int16_t city_idx = 0;
+    int16_t wy = 0;
+    int16_t wx = 0;
+    int16_t Line_Index = 0;
+    int16_t Road_Length = 0;
+    int16_t Invalid_Road = 0;
+    int16_t dst_city_idx = 0;
+    int16_t src_city_idx = 0;
+
+    // ; clear out the terrain flags tables
+    // ; 
+    // ; already done by the terrain special function
+
+    for(wy = 0; wy < WORLD_HEIGHT; wy++)
+    {
+
+        for(wx = 0; wx < WORLD_WIDTH; wx++)
+        {
+
+            SET_MAP_SQUARE_FLAG(wx, wy, wp, 0);
+
+        }
+
+    }
+
+    for(src_city_idx = 0; src_city_idx < _cities; src_city_idx++)
+    {
+
+        src_wx = _CITIES[src_city_idx].wx;
+
+        src_wy = _CITIES[src_city_idx].wy;
+
+        for(dst_city_idx = (src_city_idx + 1); dst_city_idx < _cities; dst_city_idx++)
+        {
+
+            dst_wx = _CITIES[dst_city_idx].wx;
+
+            dst_wy = _CITIES[dst_city_idx].wy;
+
+            if(
+                (_CITIES[src_city_idx].wp != wp)
+                ||
+                (_CITIES[dst_city_idx].wp != wp)
+                ||
+                (_CITIES[src_city_idx].owner_idx != NEUTRAL_PLAYER_IDX)
+                ||
+                (_CITIES[dst_city_idx].owner_idx != NEUTRAL_PLAYER_IDX)
+                ||
+                (_landmasses[((wp * WORLD_SIZE) + (src_wy * WORLD_WIDTH) + src_wx)] != _landmasses[((wp * WORLD_SIZE) + (dst_wy * WORLD_WIDTH) + dst_wx)])
+                ||
+                (Range(src_wx, src_wy, dst_wx, dst_wy) >= 11)
+            )
+            {
+
+                continue;
+
+            }
+
+            Road_Length = Path_Wrap(src_wx, src_wy, dst_wx, dst_wy, &Road_Xs[0], &Road_Ys[0], WORLD_WIDTH);
+
+            Invalid_Road = 0;
+
+            Line_Index = 0;
+
+            // ; invalidate the road if it would pass through an ocean
+            // ; or shore tile
+            // ; 
+            // ; contains exclusions for tile types that will never be
+            // ; present on the map at this stage of the process
+
+            while(((Road_Length - 1) > Line_Index) && (Invalid_Road == ST_FALSE))
+            {
+
+                wx = Road_Xs[Line_Index];
+
+                wy = Road_Ys[Line_Index];
+
+                if(
+                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] >= tt_Shore1_Fst)
+                    &&
+                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] <= tt_Shore1_Lst)
+                )
+                {
+
+                    Invalid_Road = ST_TRUE;
+
+                }
+
+                if(_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] == tt_Ocean1)
+                {
+
+                    Invalid_Road = ST_TRUE;
+
+                }
+
+                // ; BUG: this batch should start at $C5 (not that any of
+                // ; these can be present on the map at this stage)
+                if(
+                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] >= _Shore00001R10)
+                    &&
+                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] <= TT_Shore2F_end)
+                )
+                {
+
+                    Invalid_Road = ST_TRUE;
+
+                }
+
+                if(
+                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] >= tt_Shore2_1st)
+                    &&
+                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] <= tt_Ocean2)
+                )
+                {
+
+                    Invalid_Road = ST_TRUE;
+
+                }
+
+                Line_Index++;
+
+            }
+
+            if(Invalid_Road == ST_FALSE)
+            {
+
+                // ; create a road or enchanted road along the specified
+                // ; line depending on the plane
+
+                for(Line_Index = 0; ((Road_Length - 1) > Line_Index); Line_Index++)
+                {
+
+                    wx = Road_Xs[Line_Index];
+
+                    wy = Road_Ys[Line_Index];
+
+                    SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) | MSF_ROAD));
+
+                    if(wp == MYRROR_PLANE)
+                    {
+
+                        SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) | MSF_EROAD));
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }  /* for(src_city_idx = 0; src_city_idx < _cities; src_city_idx++) */
+
+
+
+    // ; create roads under each city
+    // ; 
+    // ; BUG: ignores the passed plane value, and instead
+    // ;  processes every city
+    // ; BUG: Myrran roads will have normal roads as the tile
+    // ;  coordinates upgraded are not set up before doing so
+
+    for(city_idx = 0; city_idx < _cities; city_idx++)
+    {
+
+        // ; PATCHED here to fix the normal roads under Myrran
+        // ; Cities BUG
+
+        SET_MAP_SQUARE_FLAG(
+            _CITIES[city_idx].wx,
+            _CITIES[city_idx].wy,
+            _CITIES[city_idx].wp,
+            (
+                GET_MAP_SQUARE_FLAG(
+                    _CITIES[city_idx].wx,
+                    _CITIES[city_idx].wy,
+                    _CITIES[city_idx].wp
+                )
+                |
+                MSF_ROAD
+            )
+        );
+
+        if(wp == MYRROR_PLANE)
+        {
+
+            // ; BUG: these are not the city coordinates
+            SET_MAP_SQUARE_FLAG(
+                wx,
+                wy,
+                wp,
+                (
+                    GET_MAP_SQUARE_FLAG(
+                        wx,
+                        wy,
+                        wp
+                    )
+                    |
+                    MSF_EROAD
+                )
+            );
+
+        }
+
+    }
+
+}
+
 
 // MGC o51p27
 // drake178: CRP_NEWG_CreatePathGrids()
@@ -4752,12 +4976,12 @@ void Create_Unit_NewGame(int16_t unit_type, int16_t player_idx, int16_t wx, int1
 
     }
 
-    _UNITS[_units].wx = wx;
-    _UNITS[_units].wy = wy;
-    _UNITS[_units].wp = wp;
-    _UNITS[_units].owner_idx = player_idx;
+    _UNITS[_units].wx = (int8_t)wx;
+    _UNITS[_units].wy = (int8_t)wy;
+    _UNITS[_units].wp = (int8_t)wp;
+    _UNITS[_units].owner_idx = (int8_t)player_idx;
     _UNITS[_units].moves2_max = _unit_type_table[unit_type].Move_Halves;
-    _UNITS[_units].type = unit_type;
+    _UNITS[_units].type = (uint8_t)unit_type;
     _UNITS[_units].Hero_Slot = ST_UNDEFINED;
     // DNE  _UNITS[_units].in_tower = ST_FALSE;
     // _UNITS[_units].Finished = ST_TRUE;
@@ -5197,7 +5421,7 @@ int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp)
     {
         return 3;
     }
-    else if(terrain_type < tt_Grasslands1)  // >= TT_Shore1_1st  <= TT_Shore1_end
+    else if(terrain_type < tt_Grasslands1)  // >= tt_Shore1_Fst  <= tt_Shore1_Lst
     {
         return 1;
     }

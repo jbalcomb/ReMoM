@@ -327,8 +327,8 @@ void Surveyor_Screen(void)
         {
             Play_Left_Click();
             Reduced_Map_Coords(&reduced_map_window_wx, &reduced_map_window_wy, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
-            _prev_world_x = (reduced_map_window_wx + _minimap_grid_x);  // ...is the 'wx' of the clicked square
-            _prev_world_y = (reduced_map_window_wy + _minimap_grid_y);  // ...is the 'wy' of the clicked square
+            _prev_world_x = (int16_t)(reduced_map_window_wx + _minimap_grid_x);  // ...is the 'wx' of the clicked square
+            _prev_world_y = (int16_t)(reduced_map_window_wy + _minimap_grid_y);  // ...is the 'wy' of the clicked square
             _map_x = _prev_world_x;
             _map_y = _prev_world_y;
             Center_Map(&_map_x, &_map_y, _prev_world_x, _prev_world_y, _map_plane);
@@ -339,8 +339,8 @@ void Surveyor_Screen(void)
 
         if(-(_main_map_grid_field) == input_field_idx)
         {
-            _prev_world_x += (_main_map_grid_x - (MAP_WIDTH  / 2));
-            _prev_world_y += (_main_map_grid_y - (MAP_HEIGHT / 2));
+            _prev_world_x += (int16_t)(_main_map_grid_x - (MAP_WIDTH  / 2));
+            _prev_world_y += (int16_t)(_main_map_grid_y - (MAP_HEIGHT / 2));
             IDK_CheckSet_MapDisplay_XY();
         }
 

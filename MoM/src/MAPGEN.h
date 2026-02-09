@@ -95,7 +95,7 @@ void Generate_Neutral_Cities__WIP(int16_t wp);
 void Random_City_Name_By_Race_NewGame(int16_t race_type, char * name);
 
 // MGC o51p26
-// NEWG_CreateRoads()
+void Generate_Roads(int16_t wp);
 
 // MGC o51p27
 // CRP_NEWG_CreatePathGrids()

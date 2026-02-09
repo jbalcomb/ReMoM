@@ -6,7 +6,6 @@
 #include "STU_TYPE.h"
 #include "STU_DEF.h"
 #include "STU_UTIL.h"   /* get_datetime() */
-#include "STU_CHK.h"
 
 
 
@@ -123,11 +122,33 @@ extern "C" {
 
 #ifdef STU_DEBUG
 #ifdef _WIN32
-#define STU_DEBUG_BREAK() __debugbreak()
+#define STU_DEBUG_BREAK()  ( __debugbreak() )
 #endif
 #else
-#define STU_DEBUG_BREAK() (void)0
+#define STU_DEBUG_BREAK()  ( (void)0 )
 #endif
+// Severity	Code	Description	Project	File	Line	Suppression State	Details
+// Message	VCR102	Browsing operations around this macro may fail. Consider adding it to a hint file.		C:\STU\devel\ReMoM\MoX\src\sdl2_Audio.c	545		
+// Github Copilot had this horrible idea, instead of adding a hints file
+// #if defined(__INTELLISENSE__) || defined(__cplusplus) && defined(_MSC_VER)
+// 
+// /* If the analyzer doesn't see a definition for STU_DEBUG_BREAK, provide
+//    a no-op that the analyzer can understand. This will not affect normal
+//    builds because it is only activated for IntelliSense / MSVC analysis. */
+// #ifndef STU_DEBUG_BREAK
+//   #ifdef _MSC_VER
+//     /* __noop is a MSVC builtin that expands to nothing */
+//     #ifndef __noop
+//       /* in very old toolchains __noop may not be available */
+//       #define __noop(...) ((void)0)
+//     #endif
+//     #define STU_DEBUG_BREAK() __noop()
+//   #else
+//     #define STU_DEBUG_BREAK() ((void)0)
+//   #endif
+// #endif /* STU_DEBUG_BREAK */
+// 
+// #endif /* __INTELLISENSE__ || _MSC_VER */
 
 
 extern FILE * Debug_Log_File;

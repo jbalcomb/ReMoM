@@ -380,8 +380,8 @@ int16_t Path_Wrap(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t * path_
                     cur_x++;  // move right
                 }
                 remainder &= 0xFFFF;
-                path_string_x[distance] = cur_x;
-                path_string_y[distance] = cur_y;
+                path_string_x[distance] = (int8_t)cur_x;
+                path_string_y[distance] = (int8_t)cur_y;
                 distance++;
             }
         }
@@ -397,8 +397,8 @@ int16_t Path_Wrap(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t * path_
                     cur_x--;  // move left
                 }
                 remainder &= 0xFFFF;
-                path_string_x[distance] = cur_x;
-                path_string_y[distance] = cur_y;
+                path_string_x[distance] = (int8_t)cur_x;
+                path_string_y[distance] = (int8_t)cur_y;
                 distance++;
             }
         }
@@ -419,8 +419,8 @@ int16_t Path_Wrap(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t * path_
                     cur_y++;  // move down
                 }
                 remainder &= 0xFFFF;
-                path_string_x[distance] = cur_x;
-                path_string_y[distance] = cur_y;
+                path_string_x[distance] = (int8_t)cur_x;
+                path_string_y[distance] = (int8_t)cur_y;
                 distance++;
             }
         }
@@ -436,8 +436,8 @@ int16_t Path_Wrap(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t * path_
                     cur_y--;  // move up
                 }
                 remainder &= 0xFFFF;
-                path_string_x[distance] = cur_x;
-                path_string_y[distance] = cur_y;
+                path_string_x[distance] = (int8_t)cur_x;
+                path_string_y[distance] = (int8_t)cur_y;
                 distance++;
             }
         }
@@ -449,8 +449,8 @@ int16_t Path_Wrap(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t * path_
         {
             cur_y += sign_y;
             cur_x += sign_x;
-            path_string_x[distance] = cur_x;
-            path_string_y[distance] = cur_y;
+            path_string_x[distance] = (int8_t)cur_x;
+            path_string_y[distance] = (int8_t)cur_y;
             distance++;
         }
     }
