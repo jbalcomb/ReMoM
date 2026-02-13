@@ -1481,6 +1481,10 @@ void Make_Road_Enchanted(int16_t wx, int16_t wy, int16_t wp)
         movement_mode_cost_maps[wp].forester.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
 
         movement_mode_cost_maps[wp].mountaineer.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
+
+        movement_mode_cost_maps[wp].swimming.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
+        
+        // NOT  movement_mode_cost_maps[wp].swimming.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
         
     }
 

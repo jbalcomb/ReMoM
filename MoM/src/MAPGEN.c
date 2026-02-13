@@ -1,6 +1,9 @@
 /*
     MAGIC.EXE
     ovr051
+    ...
+    ovr054
+    ovr055
 
 MoO2
     Module: HOMEGEN
@@ -18,6 +21,7 @@ MoO2
 #include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/Mouse.h"
 #include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_TYPE.h"
@@ -31,9 +35,25 @@ MoO2
 #include "Terrain.h"
 #include "TerrType.h"
 #include "UNITTYPE.h"
+#include "MGC_DATA.h"  /* terrain_stats_table[] */
 
 #include <assert.h>     /* assert() */
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
+
+#include "../../MoM/src/MovePath.h"  /* struct s_MOVE_MODE_COST_MAPS */
+// MOM_Data.c./h but also MovePath.h
+// WZD dseg:9CAC
+// drake178: TBL_MoveMaps_EMS
+extern struct s_MOVE_MODE_COST_MAPS * movement_mode_cost_maps;
+
+
+
+
+// forward declate to shut up VS can be made static, because NIU
+static void NEWG_SetDeserts__STUB(void);
+static void CRP_NEWG_CreatePathGrid__STUB(void * moves2, void * move_path_chunks);
+
+
 
 
 
@@ -44,7 +64,7 @@ extern int16_t NEWG_Clicked_Race;
 // drake78: IMG_NEWG_MapBuildBG
 /*
     loaded in GAME_New_Screen_7()
-    used in NEWG_CreateWorld__WIP()
+    used in Init_New_Game()
 */
 extern SAMB_ptr newgame_BUILDWOR_map_build_bar_seg;
 
@@ -156,6 +176,8 @@ int16_t NEWG_LandmassCount;
 /*
 NEWG_CreateWorld()
 ¿ ~ MoO2 Module MAPGEN ?
+¿ MoO2  Module: INITGAME  Init_New_Game_() ?
+¿ MoO2  Module: HOMEGEN  Generate_Home_Worlds_() ?
 creates the basic profiles of the AI wizards, then
 generates the game map for both planes, drawing and
 updating a progress bar in the process
@@ -167,7 +189,7 @@ and their order of execution
 /*
 
 */
-void NEWG_CreateWorld__WIP(void)
+void Init_New_Game(void)
 {
     int16_t IDK1 = 0;  // _DI_
     int16_t IDK2 = 0;  // _SI_
@@ -199,35 +221,35 @@ void NEWG_CreateWorld__WIP(void)
 
     Draw_Building_The_Worlds(5);
 
-    NEWG_ClearLandmasses__WIP(0);
+    NEWG_ClearLandmasses__WIP(ARCANUS_PLANE);
 
     Draw_Building_The_Worlds(10);
 
-    NEWG_ClearLandmasses__WIP(1);
+    NEWG_ClearLandmasses__WIP(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(15);
 
-    NEWG_CreateLands__WIP(0);
+    NEWG_CreateLands__WIP(ARCANUS_PLANE);
 
     Draw_Building_The_Worlds(20);
 
-    NEWG_CreateLands__WIP(1);
+    NEWG_CreateLands__WIP(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(25);
 
-    NEWG_SetBaseLands__WIP(0);
+    NEWG_SetBaseLands__WIP(ARCANUS_PLANE);
 
     Draw_Building_The_Worlds(30);
 
-    NEWG_SetBaseLands__WIP(1);
+    NEWG_SetBaseLands__WIP(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(35);
 
-    NEWG_SetSpecLands__WIP(0);
+    NEWG_SetSpecLands__WIP(ARCANUS_PLANE);
 
     Draw_Building_The_Worlds(40);
 
-    NEWG_SetSpecLands__WIP(1);
+    NEWG_SetSpecLands__WIP(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(45);
 
@@ -235,9 +257,9 @@ void NEWG_CreateWorld__WIP(void)
 
     Draw_Building_The_Worlds(50);
 
-    NEWG_EqualizeNodes__WIP(0);
+    NEWG_EqualizeNodes__WIP(ARCANUS_PLANE);
 
-    NEWG_EqualizeNodes__WIP(1);
+    NEWG_EqualizeNodes__WIP(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(55);
 
@@ -245,9 +267,9 @@ void NEWG_CreateWorld__WIP(void)
 
     Draw_Building_The_Worlds(60);
 
-    NEWG_TileIsleExtend__WIP(0);
+    NEWG_TileIsleExtend__WIP(ARCANUS_PLANE);
 
-    NEWG_TileIsleExtend__WIP(1);
+    NEWG_TileIsleExtend__WIP(MYRROR_PLANE);
 
     NEWG_CreateEZs__WIP();
 
@@ -259,64 +281,51 @@ void NEWG_CreateWorld__WIP(void)
 
     Draw_Building_The_Worlds(70);
 
-    Generate_Neutral_Cities__WIP(0);
+    Generate_Neutral_Cities__WIP(ARCANUS_PLANE);
 
-    Generate_Neutral_Cities__WIP(1);
+    Generate_Neutral_Cities__WIP(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(75);
 
-    Generate_Terrain_Specials(0);
+    Generate_Terrain_Specials(ARCANUS_PLANE);
 
-    Generate_Terrain_Specials(1);
+    Generate_Terrain_Specials(MYRROR_PLANE);
 
-    Generate_Roads(0);
+    Generate_Roads(ARCANUS_PLANE);
 
-    Generate_Roads(1);
+    Generate_Roads(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(80);
 
-    // TODO  NEWG_CreateShores();
+    NEWG_CreateShores__STUB();
 
     Draw_Building_The_Worlds(85);
                                           
     for(IDK1 = 0; IDK1 < 10; IDK1++)
     {
-        for(IDK2 = 0; IDK2 < 2000; IDK2++)
-        {
-            // TODO  if(NEWG_CreateRiver(0) != 0)
-            // TODO  {
-            // TODO      break;
-            // TODO  }
-        }
-        for(IDK2 = 0; IDK2 < 2000; IDK2++)
-        {
-            // if(NEWG_CreateRiver(1) != 0)
-            // {
-            //     break;
-            // }
-        }
-
+        for(IDK2 = 0; ((IDK2 < 2000) && (NEWG_CreateRiver__STUB(0) != 0)); IDK2++) { }
+        for(IDK2 = 0; ((IDK2 < 2000) && (NEWG_CreateRiver__STUB(1) != 0)); IDK2++) { }
     }
 
-    // TODO  NEWG_SetRiverTiles(0);
+    NEWG_SetRiverTiles__STUB(ARCANUS_PLANE);
 
-    // TODO  NEWG_SetRiverTiles(1);
+    NEWG_SetRiverTiles__STUB(MYRROR_PLANE);
 
-    // TODO  NEWG_SetDeserts();
+    NEWG_SetDeserts__STUB();
 
     Draw_Building_The_Worlds(85);
 
-    // TODO  NEWG_RandomizeTiles();
+    NEWG_RandomizeTiles__STUB();
 
-    // TODO  NEWG_SetMoveMaps(0);
+    Movement_Mode_Cost_Maps(ARCANUS_PLANE);
 
-    // TODO  NEWG_SetMoveMaps(1);
+    Movement_Mode_Cost_Maps(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(90);
 
-    // TODO  CRP_NEWG_CreatePathGrids(0);
+    CRP_NEWG_CreatePathGrids__WIP(ARCANUS_PLANE);
 
-    // TODO  CRP_NEWG_CreatePathGrids(1);
+    CRP_NEWG_CreatePathGrids__WIP(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(95);
 
@@ -3572,23 +3581,112 @@ void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t
 
 // MGC o51p19
 // drake178: NEWG_SetDeserts()
-// NEWG_SetDeserts()
+/*
+
+*/
+/*
+
+*/
+static void NEWG_SetDeserts__STUB(void)
+{
+
+
+
+}
+
 
 // MGC o51p20
 // drake178: NEWG_CreateShores()
-// NEWG_CreateShores()
+/*
+; creates shores based on the surrounding land type
+; tiles, then uses the same concept to consolidate
+; mountain and hill ranges, as well as replace tundra
+; tiles
+;
+; WARNING: the hills and mountains would generate a
+;  break at the X wrap boundary
+; BUG: turns certain single tile hills into grasslands
+*/
+/*
+
+*/
+void NEWG_CreateShores__STUB(void)
+{
+// TERRTYPE_Pointer= word ptr -0Ah
+// Adjacent_X= word ptr -8
+// Tile_Border_Flags= word ptr -6
+// wp= word ptr -4
+// X_Coord= word ptr -2
+// 
+// TERRTYPE_Pointer = Near_Allocate_First(2560);
+// 
+// LBX_Load_Data_Static(cnst_TERRTYPE_File, 0, TERRTYPE_Pointer, 0, 5, 512);
+// 
+// wp = 0;
+
+// ; create shore tiles based on the ocean - non-ocean
+// ; terrain borders using the first 512 byte record of
+// ; TERRTYPE.LBX
+
+// ; create tundra tiles based on the tundra - non-tundra
+// ; borders using the first record of TERRTYPE.LBX, and
+// ; adding 600 to the ocean tile type
+
+// ; consolidate neighbouring hill tiles into hill ranges
+// ; using the second record of TERRTYPE.LBX (+10h)
+// ; 
+// ; BUG: turns single tile hills into grasslands, as
+// ; _1Mountain1 + 10h = _Grasslands4 rather than _1Hills1
+// ; WARNING: would create breaks at the X wrap boundary
+// ; if land tiles would exist there
+
+}
 
 // MGC o51p21
 // drake178: NEWG_RandomizeTiles()
-// NEWG_RandomizeTiles()
+/*
+*/
+/*
+*/
+void NEWG_RandomizeTiles__STUB(void)
+{
+
+
+
+}
+
 
 // MGC o51p22
 // drake178: NEWG_CreateRiver()
-// NEWG_CreateRiver()
+/*
+
+*/
+/*
+
+*/
+int16_t NEWG_CreateRiver__STUB(int16_t wp)
+{
+
+    return ST_FALSE;
+
+}
+
 
 // MGC o51p23
 // drake178: NEWG_SetRiverTiles()
-// NEWG_SetRiverTiles()
+void NEWG_SetRiverTiles__STUB(int16_t wp)
+/*
+
+*/
+/*
+
+*/
+{
+
+
+
+}
+
 
 // MGC o51p24
 // drake178: NEWG_CreateNeutrals()
@@ -4489,7 +4587,30 @@ void Generate_Roads(int16_t wp)
 
 // MGC o51p27
 // drake178: CRP_NEWG_CreatePathGrids()
-// CRP_NEWG_CreatePathGrids()
+/*
+; the arrays created by this function are never used
+; by the game, and can be repurposed even though they
+; are part of the save game file
+;
+; creates the segmented pathing grids of the selected
+; plane for both land and sea exclusive movement types
+*/
+/*
+
+MGC  ovr055 OON function  CRP_NEWG_CreatePathGrid__STUB()
+
+*/
+void CRP_NEWG_CreatePathGrids__WIP(int16_t wp)
+{
+
+    // TODO  EMM_Map4_EMMDATAH()
+
+    CRP_NEWG_CreatePathGrid__STUB(&movement_mode_cost_maps[wp].walking.moves2[0], &UU_TBL_1[wp]);
+
+    CRP_NEWG_CreatePathGrid__STUB(&movement_mode_cost_maps[wp].sailing.moves2[0], &UU_TBL_2[wp]);
+
+}
+
 
 // MGC o51p28
 // drake178: NEWG_CreateSpecials()
@@ -4918,7 +5039,112 @@ int16_t Mountain_Terrain_Special(int16_t wp)
 
 // MGC o51p34
 // drake178: NEWG_SetMoveMaps()
-// NEWG_SetMoveMaps()
+/*
+; sets the movement map for the selected plane based
+; on tile types
+*/
+/*
+    populates movement_mode_cost_maps[]
+    from terrain_stats_table[], then roads and eroads
+
+SEEALSO:  CITYCALC.c  Make_Road()
+
+*/
+void Movement_Mode_Cost_Maps(int16_t wp)
+{
+    int16_t terrain_type_idx = 0;
+    int16_t itr_wy = 0;
+    int16_t itr_wx = 0;  //  _DI_
+
+    // TODO  EMM_Map4_EMMDATAH();
+
+    for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
+    {
+
+        for(itr_wy = 0; itr_wy < WORLD_WIDTH; itr_wy++)
+        {
+
+            terrain_type_idx = TERRAIN_TYPE_INDEX(itr_wx, itr_wy, wp);
+
+// void Make_Road(int16_t wx, int16_t wy, int16_t wp)
+//     movement_mode_cost_maps[wp].UU_MvMd.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+//     movement_mode_cost_maps[wp].walking.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+//     movement_mode_cost_maps[wp].forester.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+//     movement_mode_cost_maps[wp].mountaineer.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+//     movement_mode_cost_maps[wp].swimming.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+//     _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] |= MSF_ROAD;
+//     _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= ~(MSF_EROAD);
+//     if(wp == MYRROR_PLANE)
+//         Make_Road_Enchanted(wx, wy, wp);
+
+// struct s_MOVE_COST_MAP
+// {
+//     /* 0x0000 */ int8_t moves2[WORLD_SIZE];
+//     /* 0x0960 */
+// };
+// #pragma pack(pop)
+// 
+// 
+// // drake178: HMP_MAPS
+// // sizeof:  3840h  14,400
+// /*
+//     movement cost per movement mode, in moves2 units
+//     one *map* per movement mode, as world map - 60x40 - map squares
+// */
+// #pragma pack(push)
+// #pragma pack(2)
+// struct s_MOVE_MODE_COST_MAPS
+// {
+//     /* 0x0000 */ struct s_MOVE_COST_MAP UU_MvMd;
+//     /* 0x0960 */ struct s_MOVE_COST_MAP walking;
+
+            // ; AL = (byte *)(terrain_stats_table + (terrain_type * 6))
+            // [es:bx+HMP_MAPS.Walking.HalfMPCost], al
+            // movement_mode_cost_maps[((wp * 14400) + (itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[terrain_type_idx];
+            // terrain_stats_table[terrain_type_idx][]
+            // {1,0,2,3,4,5}
+            // {Walking,Unused_MoveType,Forester,Mountaineer,Swimming,Sailing}
+            movement_mode_cost_maps[wp].walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 1)];
+            movement_mode_cost_maps[wp].UU_MvMd.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 0)];
+            movement_mode_cost_maps[wp].forester.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 2)];
+            movement_mode_cost_maps[wp].mountaineer.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 3)];
+            movement_mode_cost_maps[wp].swimming.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 4)];
+            movement_mode_cost_maps[wp].sailing.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 5)];
+
+            if((MAP_SQUARE_FLAG(itr_wx,itr_wy,wp) & MSF_ROAD) != 0)
+            {
+
+                if(wp != ARCANUS_PLANE)
+                {
+
+                    movement_mode_cost_maps[wp].walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
+                    movement_mode_cost_maps[wp].UU_MvMd.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
+                    movement_mode_cost_maps[wp].forester.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
+                    movement_mode_cost_maps[wp].mountaineer.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
+                    movement_mode_cost_maps[wp].swimming.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
+
+                }
+                else
+                {
+
+                    movement_mode_cost_maps[wp].walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
+                    movement_mode_cost_maps[wp].UU_MvMd.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
+                    movement_mode_cost_maps[wp].forester.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
+                    movement_mode_cost_maps[wp].mountaineer.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
+                    movement_mode_cost_maps[wp].swimming.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
+
+                }
+
+                movement_mode_cost_maps[wp].sailing.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = ST_UNDEFINED;
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // MGC o51p35
 // drake178: TILE_InvalidOutflow()
@@ -5698,4 +5924,48 @@ void o51p54_empty_function(void)
 // mov     bp, sp
 // pop     bp
 // retf
+}
+
+
+
+/*
+
+    MAGIC.EXE  ovr054
+
+*/
+
+// MGC o54p01
+// drake178: CRP_SPATH_Arbitrary()
+// CRP_SPATH_Arbitrary()
+// MGC o54p02
+// drake178: UU_SPATH_Segmented()
+// UU_SPATH_Segmented()
+// MGC o54p03
+// drake178: UU_SPATH_15by15()
+// UU_SPATH_15by15()
+// MGC o54p04
+// drake178: UU_SPATH_Segments()
+// UU_SPATH_Segments()
+// MGC o54p05
+// drake178: UU_SPATH_GetBorderTiles()
+// UU_SPATH_GetBorderTiles()
+
+
+
+/*
+
+    MAGIC.EXE  ovr055
+
+*/
+
+// drake178: CRP_NEWG_CreatePathGrid()
+/*
+*/
+/*
+*/
+static void CRP_NEWG_CreatePathGrid__STUB(void * moves2, void * move_path_chunks)
+{
+
+
+
 }

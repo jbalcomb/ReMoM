@@ -54,10 +54,10 @@ Elsewhere, ...
 */
 void Active_Stack_Movement_Modes(int16_t movement_mode_flags[])
 {
-    int16_t troops[MAX_STACK];
-    int16_t stack_has_no_active_units;
-    int16_t troop_count;
-    int16_t itr;
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t stack_has_no_active_units = 0;
+    int16_t troop_count = 0;
+    int16_t itr = 0;
 
     stack_has_no_active_units = ST_TRUE;
 
@@ -802,7 +802,7 @@ Calc_Move_Path:
             }
         }
 
-        // sets movepath_cost_map->moves2[] from movement_mode_cost_maps->UU_MvMd, walking, forester, mountaineer, swimming, sailing
+        // sets movepath_cost_map->moves2[] from movement_mode_cost_maps[wp].UU_MvMd, walking, forester, mountaineer, swimming, sailing
         Update_MovePathMap(&movepath_cost_map->moves2[0], boatrider_count, troop_count, wp, player_idx, dst_wx, dst_wy, src_wx, src_wy);
 
         if(movepath_cost_map->moves2[((dst_wy * WORLD_WIDTH) + dst_wx)] == -1)  /* INF  cost of -1 means impassible */
@@ -915,6 +915,16 @@ Done:
 
 // WZD o148p06
 // drake178: STK_SetOvlMoveMap()
+/*
+; calculates the movement cost (in half MPs) map for
+; the selected plane from the passed movement type
+; matrix and stores it into Temp_MoveMap_EMS@
+;
+; shifted up the segment in the overland djikstra patch
+*/
+/*
+
+*/
 void Init_MovePathMap(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t wp)
 {
     int8_t * movemap_ptr = 0;
@@ -957,7 +967,7 @@ Flying:
 Sailing:
 {
 
-    memcpy(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->sailing.moves2[0], WORLD_SIZE);
+    memcpy(&movepath_cost_map->moves2[0], &movement_mode_cost_maps[wp].sailing.moves2[0], WORLD_SIZE);
 
     goto Done;
 
@@ -983,11 +993,11 @@ Yay_Pathfinding:
         {
             for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
             {
-                if(movement_mode_cost_maps->walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] == 0)
+                if(movement_mode_cost_maps[wp].walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] == 0)
                 {
                     movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
                 }
-                else if(movement_mode_cost_maps->walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] == -1)
+                else if(movement_mode_cost_maps[wp].walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] == -1)
                 {
                     movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = -1;
                 }
@@ -1010,36 +1020,36 @@ Nay_Pathfinding:
 
     if(MvMd_1 == ST_TRUE)
     {
-        memcpy(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->forester.moves2[0], WORLD_SIZE);
+        memcpy(&movepath_cost_map->moves2[0], &movement_mode_cost_maps[wp].forester.moves2[0], WORLD_SIZE);
         if(MvMd_3 == ST_TRUE)
         {
-            Copy_Memory_Less_Than(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->swimming.moves2[0], WORLD_SIZE);
+            Copy_Memory_Less_Than(&movepath_cost_map->moves2[0], &movement_mode_cost_maps[wp].swimming.moves2[0], WORLD_SIZE);
         }
         if(MvMd_2 == ST_TRUE)
         {
-            Copy_Memory_Less_Than(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->mountaineer.moves2[0], WORLD_SIZE);
+            Copy_Memory_Less_Than(&movepath_cost_map->moves2[0], &movement_mode_cost_maps[wp].mountaineer.moves2[0], WORLD_SIZE);
         }
     }
     else if(MvMd_2 == ST_TRUE)
     {
-        memcpy(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->mountaineer.moves2[0], WORLD_SIZE);
+        memcpy(&movepath_cost_map->moves2[0], &movement_mode_cost_maps[wp].mountaineer.moves2[0], WORLD_SIZE);
         if(MvMd_3 == ST_TRUE)
         {
-            Copy_Memory_Less_Than(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->swimming.moves2[0], WORLD_SIZE);
+            Copy_Memory_Less_Than(&movepath_cost_map->moves2[0], &movement_mode_cost_maps[wp].swimming.moves2[0], WORLD_SIZE);
         }
         if(MvMd_2 == ST_TRUE)
         {
-            Copy_Memory_Less_Than(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->mountaineer.moves2[0], WORLD_SIZE);
+            Copy_Memory_Less_Than(&movepath_cost_map->moves2[0], &movement_mode_cost_maps[wp].mountaineer.moves2[0], WORLD_SIZE);
         }
 
     }
     else if(MvMd_3 == ST_TRUE)
     {
-        memcpy(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->swimming.moves2[0], WORLD_SIZE);
+        memcpy(&movepath_cost_map->moves2[0], &movement_mode_cost_maps[wp].swimming.moves2[0], WORLD_SIZE);
     }
     else
     {
-        memcpy(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->walking.moves2[0], WORLD_SIZE);
+        memcpy(&movepath_cost_map->moves2[0], &movement_mode_cost_maps[wp].walking.moves2[0], WORLD_SIZE);
     }
 
     goto Done;

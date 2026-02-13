@@ -8,6 +8,8 @@
 
 #include "MOM_DEF.h"
 
+#include "../../MoM/src/MovePath.h"  /* struct s_MOVE_MODE_COST_MAPS */
+
 
 
 // // #include "../AIDATA.h"  /* struct s_AI_CONTINENTS */

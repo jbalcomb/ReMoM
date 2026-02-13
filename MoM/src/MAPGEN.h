@@ -20,7 +20,7 @@ extern "C" {
 */
 
 // MGC o51p01
-void NEWG_CreateWorld__WIP(void);
+void Init_New_Game(void);
 
 // MGC o51p02
 // NEWG_EZ_MarkHadnLeft()
@@ -74,19 +74,19 @@ void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t
 // UU_UNIT_RandomRacial()
 
 // MGC o51p19
-// NEWG_SetDeserts()
+void NEWG_SetDeserts__STUB(void);
 
 // MGC o51p20
-// NEWG_CreateShores()
+void NEWG_CreateShores__STUB(void);
 
 // MGC o51p21
-// NEWG_RandomizeTiles()
+void NEWG_RandomizeTiles__STUB(void);
 
 // MGC o51p22
-// NEWG_CreateRiver()
+int16_t NEWG_CreateRiver__STUB(int16_t wp);
 
 // MGC o51p23
-// NEWG_SetRiverTiles()
+void NEWG_SetRiverTiles__STUB(int16_t wp);
 
 // MGC o51p24
 void Generate_Neutral_Cities__WIP(int16_t wp);
@@ -98,7 +98,7 @@ void Random_City_Name_By_Race_NewGame(int16_t race_type, char * name);
 void Generate_Roads(int16_t wp);
 
 // MGC o51p27
-// CRP_NEWG_CreatePathGrids()
+void CRP_NEWG_CreatePathGrids__WIP(int16_t wp);
 
 // MGC o51p28
 void Generate_Terrain_Specials(int16_t wp);
@@ -119,7 +119,7 @@ int16_t Mountain_Terrain_Special(int16_t wp);
 // TILE_SetScouting()
 
 // MGC o51p34
-// NEWG_SetMoveMaps()
+void Movement_Mode_Cost_Maps(int16_t wp);
 
 // MGC o51p35
 // TILE_InvalidOutflow()
@@ -180,6 +180,36 @@ int16_t Get_Useable_City_Area_NewGame(int16_t city_wx, int16_t city_wy, int16_t 
 
 // MGC o51p54
 void o51p54_empty_function(void);
+
+
+
+/*
+
+    MAGIC.EXE  ovr054
+
+*/
+
+// MGC o54p01
+// CRP_SPATH_Arbitrary()
+// MGC o54p02
+// UU_SPATH_Segmented()
+// MGC o54p03
+// UU_SPATH_15by15()
+// MGC o54p04
+// UU_SPATH_Segments()
+// MGC o54p05
+// UU_SPATH_GetBorderTiles()
+
+
+
+/*
+
+    MAGIC.EXE  ovr055
+
+*/
+
+// MGC o55p01
+void CRP_NEWG_CreatePathGrid__STUB(void * moves2, void * move_path_chunks);
 
 
 
