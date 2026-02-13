@@ -57,7 +57,7 @@ Init_New_Game_()
 So, ...
 ~== Init_Computer_Players()
 
-OON XREF j_Init_Computer_Players() <-| NEWG_CreateWorld__WIP()
+OON XREF j_Init_Computer_Players() <-| Init_New_Game()
 
 */
 void Init_Computer_Players(void)
@@ -766,7 +766,8 @@ void Init_Players(void)
 ; setting
 */
 /*
-OON XREF WIZ_SetProfiles()
+
+OON XREF j_Init_Computer_Players() <-| Init_New_Game() <-| Init_Computer_Players()
 
 */
 void Init_Computer_Players_Wizard_Profile(void)
@@ -1518,7 +1519,8 @@ END:  ¿ jmp     @@BeginTopLevelPlayerLoop ?
 ; tables
 */
 /*
-OON XREF WIZ_SetProfiles()
+
+OON XREF Init_Computer_Players() <-| j_Init_Computer_Players() <-|  
 
 iter over players
 iter over realms
@@ -1550,7 +1552,7 @@ void Init_Computer_Players_Spell_Library(void)
         {
             for(sri = 0; sri < NUM_SPELLS_PER_MAGIC_REALM; sri++)
             {
-                _players[itr].spells_list[((sbr * 40) + sri)] = 0;
+                _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + sri)] = 0;
             }
         }
 
@@ -1636,13 +1638,14 @@ void Init_Computer_Players_Spell_Library(void)
 
                         Available_Spells = (_players[itr].spellranks[sbr] - 1);
 
+                        // purple #32
                         // ; mark random common spells from the realm as
                         // ; researchable until the availability limit is reached
 
                         while(Available_Spells < Availability_Limit)
                         {
 
-                            IDK_itr_10 = (Random(10) - 1);
+                            IDK_itr_10 = (Random(NUM_SPELLS_PER_MAGIC_REALM) - 1);
 
                             if(_players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + IDK_itr_10)] == sls_Unknown)
                             {
@@ -1651,12 +1654,13 @@ void Init_Computer_Players_Spell_Library(void)
 
                             }
 
+                            // why are we reseting Available_Spells here?
                             Available_Spells = 0;
 
-                            for(IDK_itr_10 = 0; IDK_itr_10 < 10; IDK_itr_10++)
+                            for(IDK_itr_10 = 0; IDK_itr_10 < NUM_SPELLS_PER_MAGIC_RARITY; IDK_itr_10++)
                             {
 
-                                if(_players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + IDK_itr_10)] == sls_Unknown)
+                                if(_players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + IDK_itr_10)] != sls_Unknown)
                                 {
 
                                     Available_Spells++;

@@ -119,7 +119,7 @@ cnst_Artificer__NEWGAME
 
 
 // MGC o51p01
-void NEWG_CreateWorld__WIP(void);
+void Init_New_Game(void);
 // MGC o56p2
 void NEWG_FinalizeTables__WIP(void);
 // MGC o56p11
@@ -444,7 +444,8 @@ int16_t auto_input_field_idx = 0;
 // MGC  dseg:5A32 00 00                                           Wiz5_Spell_00h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3B4w
 // MGC  dseg:5A34 00 00                                           Wiz5_Spell_0Ch@ dw 0                    ; DATA XREF: Allocate_Data_Space+3BAw
 // MGC  dseg:5A36 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+G_UU_Some_AI_Array_2 db 176h dup(0)
-// MGC  dseg:5BAC 00 00 00 00                                     terrain_stats_table dd 0                ; DATA XREF: Load_TERRSTAT+28w ...
+
+// MGC  dseg:5BAC  terrain_stats_table
 
 
 
@@ -980,7 +981,7 @@ int16_t TBL_Realm4_Books[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 // drake78: IMG_NEWG_MapBuildBG
 /*
     loaded in GAME_New_Screen_7()
-    used in NEWG_CreateWorld__WIP()
+    used in Init_New_Game()
 MoO2  Module: MAPGEN  _fill_msg_bitmap  <-|  Module: MISC  Draw_Advancing_Fill_Message_()
 
 */
@@ -1335,8 +1336,9 @@ void Newgame_Control__WIP(void)
         
     }
 
-    // MoO2  Module: HOMEGEN  Generate_Home_Worlds_()
-    NEWG_CreateWorld__WIP();
+    // ¿ MoO2  Module: HOMEGEN  Generate_Home_Worlds_() ?
+    // ¿ MoO2  Module: INITGAME  Init_New_Game_() ?
+    Init_New_Game();
 
     Initialize_Events();
 
@@ -2492,7 +2494,7 @@ int16_t Newgame_Screen_7__WIP(void)
 
     }
 
-    // odd? this gets drawn in NEWG_CreateWorld__WIP()
+    // odd? this gets drawn in Init_New_Game()
     // NEWGAME.LBX, 053  BUILDWOR   map build bar
     newgame_BUILDWOR_map_build_bar_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 53, _screen_seg);
 

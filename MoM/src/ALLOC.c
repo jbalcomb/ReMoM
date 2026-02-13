@@ -186,7 +186,7 @@ so, 300 PRs, + 1 for the SAMB header
 */
 
     movepath_cost_map = (struct s_MOVE_PATH *)Allocate_Space(632);
-    movement_mode_cost_maps = (struct s_MOVE_MODE_COST_MAPS *)Allocate_Space(1802);
+    movement_mode_cost_maps = (struct s_MOVE_MODE_COST_MAPS *)Allocate_Space(1802);  // 1802 PR; 28832 B; ~ 2 * 14400; 28800 / 16 = 1800 + 1 + 1
 
     city_area_shared_bits = (uint8_t *)Allocate_Space(WORLD_MAP_BITFIELD_SIZE + 1);
     city_area_bits = (uint8_t *)Allocate_Space(WORLD_MAP_BITFIELD_SIZE + 1);

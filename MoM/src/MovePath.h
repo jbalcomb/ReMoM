@@ -22,7 +22,7 @@ extern "C" {
 #pragma pack(2)
 struct s_MOVE_COST_MAP
 {
-    /* 0x0000 */ int8_t moves2[2400];
+    /* 0x0000 */ int8_t moves2[WORLD_SIZE];
     /* 0x0960 */
 };
 #pragma pack(pop)
@@ -55,9 +55,9 @@ struct s_MOVE_MODE_COST_MAPS
 #pragma pack(2)
 struct s_MOVE_PATH
 {
-/* 0000 */  int8_t   moves2[2400];
-/* 0960 */  uint8_t  Reach_Costs[2400];
-/* 12C0 */  int16_t  Reach_From[2400];
+/* 0000 */  int8_t   moves2[WORLD_SIZE];
+/* 0960 */  uint8_t  Reach_Costs[WORLD_SIZE];
+/* 12C0 */  int16_t  Reach_From[WORLD_SIZE];
 /* 2580 */  int16_t  Reverse_Path[256];
 /* 2780 */
 };

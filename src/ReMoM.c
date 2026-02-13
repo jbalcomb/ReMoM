@@ -472,8 +472,8 @@ int MOM_main(int argc, char** argv)
     Load_MGC_Resources();
 
     // BEGIN: ~== New Game Screen
-    Load_TERRSTAT();  // ; ~== Newgame_Screen
-    Load_SPELLDAT();  // ; ~== Newgame_Screen
+    Load_TERRSTAT();  // ; ~== NewGame  MAPGEN
+    Load_SPELLDAT();  // ; ~== NewGame
     // END: ~== New Game Screen
 
     Init_Credits();

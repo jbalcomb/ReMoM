@@ -14,13 +14,11 @@ ninja compile_commands VSC
 
 New Game
 
-[ ] j_NEWG_CreateWorld__WIP()
+[ ] Init_New_Game()
 [X] j_Initialize_Events()
 [ ] j_NEWG_FinalizeTables()
 [x] j_Save_SAVE_GAM()
 [ ] GAME_WizardsLaunch()
-
-[ ] j_NEWG_CreateWorld__WIP()
 
 [ ] j_NEWG_FinalizeTables()
     [ ] Initialize_Items
@@ -38,10 +36,10 @@ MoO2
 Init_New_Game_()
 |-> Init_Players_()
 
-
 ...something like create computer players...profile...spell library...
 
 [x] Draw_Building_The_Worlds()
+[ ] Init_New_Game()  
 [x] Init_Computer_Players()
 [x] |-> Init_Computer_Players_Wizard_Profile()
 [x] |-> |-> Consolidate_Spell_Book_Realms
@@ -77,21 +75,29 @@ Init_New_Game_()
 [x] |-> Square_Is_Swamp_NewGame()
 [x] |-> Square_Is_Desert_NewGame()
 [x] |-> Desert_Terrain_Special()
-
 [x] Generate_Roads()
+[-] NEWG_CreateShores__STUB()
+[-] NEWG_CreateRiver__STUB()
+[-] NEWG_SetRiverTiles__STUB()
+[-] NEWG_SetDeserts__STUB()
+[-] NEWG_RandomizeTiles__STUB()
 
-[ ] ...move special.c/h from MoM to MoX
+[x] Movement_Mode_Cost_Maps()
+[x] CRP_NEWG_CreatePathGrids__STUB()
+[x] |-> NIU  MGC  ovr054  CRP_SPATH_Arbitrary()
+[x] |-> NIU  MGC  ovr054  UU_SPATH_Segmented()
+[x] |-> NIU  MGC  ovr054  UU_SPATH_15by15()
+[x] |-> NIU  MGC  ovr054  UU_SPATH_Segments()
+[x] |-> NIU  MGC  ovr054  UU_SPATH_GetBorderTiles()
+[x] |-> NIU  MGC  ovr055  CRP_NEWG_CreatePathGrid()
 
-[ ] NEWG_CreateShores()
-[ ] NEWG_CreateRiver()
-[ ] NEWG_SetRiverTiles()
-[ ] NEWG_SetDeserts()
-[ ] NEWG_RandomizeTiles()
-[ ] NEWG_SetMoveMaps()
-[ ] CRP_NEWG_CreatePathGrids()
 [ ] NEWG_SetScoutingMaps()
 [ ] NEWG_AnimateOceans()
 [ ] NEWG_EZ_MarkHadnLeft()
+
+[ ] ...move special.c/h from MoM to MoX
+
+
 
 
 

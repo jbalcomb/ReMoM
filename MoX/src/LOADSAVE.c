@@ -152,6 +152,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 88788);
 
+    // TODO  sizeof(struct s_MOVE_MODE_COST_MAPS)
     fwrite(movement_mode_cost_maps, NUM_PLANES, 14400, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
@@ -334,7 +335,8 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 88788);
-
+    
+    // TODO  sizeof(struct s_MOVE_MODE_COST_MAPS)
     fread(movement_mode_cost_maps, NUM_PLANES, 14400, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
