@@ -153,118 +153,119 @@ extern "C" {
     ovr050
 */
 
-// o50p01
-void Newgame_Control__WIP(void);
+// MGC  o50p01
+// void Newgame_Control__WIP(void);
+/* HACK */  int16_t Newgame_Control__WIP(void);
 
 // o50p02
 void GAME_WizardsLaunch__WIP(int16_t save_gam_idx);
 
-// o50p03
+// MGC  o50p03
 // Load_Screen()
 
-// o50p04
+// MGC  o50p04
 // Load_Screen_Draw()
 
-// o50p05
+// MGC  o50p05
 int16_t Newgame_Screen_0(void);
 
-// o50p06
+// MGC  o50p06
 void Newgame_Screen_0_Draw(void);
 
-// o50p07
+// MGC  o50p07
 void Randomize_Book_Heights(void);
 
-// o50p08
+// MGC  o50p08
 int16_t Newgame_Screen_1__WIP(void);
 
-// o50p09
+// MGC  o50p09
 void Newgame_Screen_1_2_Draw(void);
 
-// o50p10
+// MGC  o50p10
 int16_t Newgame_Screen_2__WIP(void);
 
-// o50p11
+// MGC  o50p11
 int16_t Newgame_Screen_3__WIP(void);
 
-// o50p12
+// MGC  o50p12
 void Newgame_Screen_3_Draw__WIP(void);
 
-// o50p13
+// MGC  o50p13
 int16_t Newgame_Screen_7__WIP(void);
 
-// o50p14
+// MGC  o50p14
 void Newgame_Screen_7_Draw__WIP(void);
 
-// o50p15
+// MGC  o50p15
 int16_t Newgame_Screen_6__WIP(void);
 
-// o50p16
+// MGC  o50p16
 void Newgame_Screen_6_Draw__WIP(void);
 
-// o50p17
+// MGC  o50p17
 void GAME_DrawRetortsStr(void);
 
-// o50p18
+// MGC  o50p18
 void NEWG_DrawDefShelf__WIP(int16_t wizard_id);
 
-// o50p19
+// MGC  o50p19
 void Newgame_Screen4__WIP(void);
 
-// o50p20
+// MGC  o50p20
 // GAME_Draw_NewScr4()
 
-// o50p21
+// MGC  o50p21
 void Newgame_Screen5__WIP(void);
 
-// o50p22
+// MGC  o50p22
 // GAME_SpellSel_GUI()
 
-// o50p23
+// MGC  o50p23
 // SCRN_Draw_NewScr5()
 
-// o50p24
+// MGC  o50p24
 // SCRN_Draw_NewScr5_2()
 
-// o50p25
+// MGC  o50p25
 void WIZ_CopyDefault__WIP(int16_t wizard_id);
 
-// o50p26
+// MGC  o50p26
 // Fade_Out()
 
-// o50p27
+// MGC  o50p27
 // VGA_Fade_In()
 
-// o50p28
+// MGC  o50p28
 // Set_Load_Screen_Help_List_MGC()
 
-// o50p29
+// MGC  o50p29
 void Set_Newgame_Screen_0_Help_List(void);
 
-// o50p30
+// MGC  o50p30
 void Set_Newgame_Screen_7_Help_List(void);
 
-// o50p31
+// MGC  o50p31
 void Set_Newgame_Screen_2_Help_List(void);
 
-// o50p32
+// MGC  o50p32
 void Set_Newgame_Screen_1_Help_List(int16_t has_custom);
 
-// o50p33
+// MGC  o50p33
 // HLP_Load_WizCreate()
 
-// o50p34
+// MGC  o50p34
 void Set_Newgame_Screen_6_Help_List(void);
 
-// o50p35
+// MGC  o50p35
 void STR_ListSeparator(int16_t * List_Size, int16_t Total, char * Dest);
 
-// o50p36
+// MGC  o50p36
 // CRP_Empty_Dialog_Fn2()
 
-// o50p37
+// MGC  o50p37
 // CRP_Empty_Dialog_Fn1()
 
-// o50p38
+// MGC  o50p38
 // Do_Toggle_Pages()
 
 

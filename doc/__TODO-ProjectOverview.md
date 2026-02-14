@@ -39,7 +39,7 @@ Init_New_Game_()
 ...something like create computer players...profile...spell library...
 
 [x] Draw_Building_The_Worlds()
-[ ] Init_New_Game()  
+[x] Init_New_Game()  
 [x] Init_Computer_Players()
 [x] |-> Init_Computer_Players_Wizard_Profile()
 [x] |-> |-> Consolidate_Spell_Book_Realms
@@ -98,7 +98,12 @@ Init_New_Game_()
 
 [x] Set_Upper_Lair_Guardian_Count()
 
+[ ] BUG  starting city in middle of ocean, for human player; failed ocean check? failed max pop check?
+
 [ ] ...move special.c/h from MoM to MoX
+
+DIPLOMAC.LBX [entry 52]  was not properly allocated or has been corrupted.
+
 
 
 

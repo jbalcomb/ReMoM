@@ -26,13 +26,9 @@ project(
 # TODO  set(CMAKE_C_STANDARD_REQUIRED ON) # Make the standard mandatory
 # TODO  set(C_EXTENSIONS OFF)
 
-
-
 # add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 # add_compile_definitions(WIN32_LEAN_AND_MEAN)
 # set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-
 
 set(CMAKE_INSTALL_LOCAL_ONLY TRUE)
 # CMAKE_INSTALL_PREFIX to a location within your user directory (e.g., C:\Users\<YourUser>\Install).
@@ -40,7 +36,6 @@ set(CMAKE_INSTALL_LOCAL_ONLY TRUE)
 # IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 #   SET(CMAKE_INSTALL_PREFIX <path> CACHE PATH <comment> FORCE)
 # ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-
 
 # if(DO_TEST)
 # GoogleTest requires at least C++17
@@ -131,6 +126,8 @@ endif()
 # # >>> [cmake] -- imported_location: imported_location-NOTFOUND
 # # >>> [cmake] -- imported_location: C:/devellib/SDL2-2.32.2/lib/x64/SDL2.lib
 # # >>> [cmake] -- imported_location: C:/devellib/SDL2_mixer-2.8.1/lib/x64/SDL2_mixer.lib
+
+set(PLATFORM "SDL2")
 
 add_subdirectory(STU)
 add_subdirectory(MoX)
