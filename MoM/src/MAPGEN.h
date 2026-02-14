@@ -113,10 +113,10 @@ int16_t Hills_Terrain_Special(int16_t wp);
 int16_t Mountain_Terrain_Special(int16_t wp);
 
 // MGC o51p32
-// NEWG_SetScoutingMaps()
+void Init_Square_Explored(void);
 
 // MGC o51p33
-// TILE_SetScouting()
+void Set_Square_Explored_Bits(int16_t wp, int16_t wx, int16_t wy, int16_t bits);
 
 // MGC o51p34
 void Movement_Mode_Cost_Maps(int16_t wp);
@@ -131,7 +131,7 @@ void Draw_Building_The_Worlds(int16_t percent);
 void Create_Unit_NewGame(int16_t unit_type, int16_t player_idx, int16_t wx, int16_t wy, int16_t wp, int16_t city_idx);
 
 // MGC o51p38
-// NEWG_AnimateOceans()
+void NEWG_AnimateOceans__STUB(void);
 
 // MGC o51p39
 int16_t TILE_IsOcean(int16_t wx, int16_t wy, int16_t wp);

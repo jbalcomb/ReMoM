@@ -22,7 +22,7 @@ MoO2
 #include "../../MoX/src/Mouse.h"
 #include "../../MoX/src/MOM_Data.h"
 #include "../../MoX/src/MOM_DEF.h"
-#include "../../MoX/src/MOX_DAT.h"  /* _players[] */
+#include "../../MoX/src/MOX_DAT.h"  /* _players[]; enum e_SCOUT_BITS{} */
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_TYPE.h"
 #include "../../MoX/src/random.h"
@@ -329,9 +329,9 @@ void Init_New_Game(void)
 
     Draw_Building_The_Worlds(95);
 
-    // TODO  NEWG_SetScoutingMaps();
+    Init_Square_Explored();
 
-    // TODO  NEWG_AnimateOceans();
+    NEWG_AnimateOceans__STUB();
 
     // TODO  NEWG_EZ_MarkHadnLeft();
 
@@ -5031,11 +5031,137 @@ int16_t Mountain_Terrain_Special(int16_t wp)
 
 // MGC o51p32
 // drake178: NEWG_SetScoutingMaps()
-// NEWG_SetScoutingMaps()
+/*
+; clears the scouting maps, and marks the human
+; player's initial exploration around their fortress
+; city
+*/
+/*
+
+Init_New_Game() |-> 
+
+*/
+void Init_Square_Explored(void)
+{
+    int16_t X_Modifier = 0;
+    int16_t wp = 0;
+    int16_t wy = 0;  // _DI_
+    int16_t wx = 0;  // _SI_
+
+    for(wp = 0; wp < 2; wp++)
+    {
+
+        for(wy = 0; wy < WORLD_HEIGHT; wy++)
+        {
+
+            for(wx = 0; wx < WORLD_WIDTH; wx++)
+            {
+
+                SET_SQUARE_EXPLORED(wx,wy,wp,ST_FALSE);
+
+            }
+
+        }
+
+    }
+
+    /*
+        Wow...
+        Just, make explored around the human players starting city...
+    */
+    wp = _FORTRESSES[HUMAN_PLAYER_IDX].wp;
+    wx = _FORTRESSES[HUMAN_PLAYER_IDX].wx;
+    wy = _FORTRESSES[HUMAN_PLAYER_IDX].wy;
+
+    // ; mark the 3 by 3 area centered around the capital as
+    // ; fully explored
+    // ; 
+    // ; WARNING: the corners will be overwritten below too
+    for(X_Modifier = -1; X_Modifier <= 1; X_Modifier++)
+    {
+
+        Set_Square_Explored_Bits(wp, (wx + X_Modifier), wy, (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
+        
+    }
+    for(X_Modifier = -1; X_Modifier <= 1; X_Modifier++)
+    {
+
+        Set_Square_Explored_Bits(wp, (wx + X_Modifier), (wy - 1), (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
+        
+    }
+    for(X_Modifier = -1; X_Modifier <= 1; X_Modifier++)
+    {
+
+        Set_Square_Explored_Bits(wp, (wx + X_Modifier), (wy + 1), (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
+        
+    }
+
+    Set_Square_Explored_Bits(wp, (wx - 1), (wy - 2), SCT_BottomRight);
+
+    Set_Square_Explored_Bits(wp, wx, (wy - 2), (SCT_BottomLeft | SCT_BottomRight));
+
+    Set_Square_Explored_Bits(wp, (wx + 1), (wy - 2), SCT_BottomLeft);
+
+    Set_Square_Explored_Bits(wp, (wx - 1), (wy + 2), SCT_TopRight);
+
+    Set_Square_Explored_Bits(wp, wx, (wy + 2), (SCT_TopLeft | SCT_TopRight));
+
+    Set_Square_Explored_Bits(wp, (wx - 2), (wy - 1), SCT_BottomRight);
+
+    Set_Square_Explored_Bits(wp, (wx - 2), wy, (SCT_TopRight | SCT_BottomRight));
+
+    Set_Square_Explored_Bits(wp, (wx - 2), (wy + 1), SCT_TopRight);
+
+    Set_Square_Explored_Bits(wp, (wx + 2), (wy - 1), SCT_BottomLeft);
+
+    Set_Square_Explored_Bits(wp, (wx + 2), (wy + 1), SCT_TopLeft);
+
+    Set_Square_Explored_Bits(wp, (wx + 2), wy, (SCT_BottomLeft | SCT_TopLeft));
+
+    Set_Square_Explored_Bits(wp, (wx - 1), (wy - 1), (SCT_BottomLeft | SCT_TopRight | SCT_BottomRight));
+
+    Set_Square_Explored_Bits(wp, (wx - 1), (wy + 1), (SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
+
+    Set_Square_Explored_Bits(wp, (wx - 1), (wy + 1), (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight));
+
+    Set_Square_Explored_Bits(wp, (wx + 1), (wy - 1), (SCT_BottomLeft | SCT_TopLeft | SCT_BottomRight));
+
+}
+
 
 // MGC o51p33
 // drake178: TILE_SetScouting()
-// TILE_SetScouting()
+/*
+; sets the pased scouting flags for the specified tile,
+; or does nothing if the coordinates are out of range
+; (the plane is not boundary checked though)
+*/
+/*
+
+NOT Set_Map_Square_Explored_Flags_XYP_Range()
+NOT j_Set_Map_Square_Explored_Flags_XYP()
+
+*/
+void Set_Square_Explored_Bits(int16_t wp, int16_t wx, int16_t wy, int16_t bits)
+{
+
+    if(
+        (wx >= 0)
+        &&
+        (wx < WORLD_WIDTH)
+        &&
+        (wy >= 0)
+        &&
+        (wy < WORLD_HEIGHT)
+    )
+    {
+
+        SET_SQUARE_EXPLORED(wx,wy,wp,bits);
+
+    }
+
+}
+
 
 // MGC o51p34
 // drake178: NEWG_SetMoveMaps()
@@ -5282,7 +5408,19 @@ void Create_Unit_NewGame(int16_t unit_type, int16_t player_idx, int16_t wx, int1
 
 // MGC o51p38
 // drake178: NEWG_AnimateOceans()
-// NEWG_AnimateOceans()
+/*
+
+*/
+/*
+
+*/
+void NEWG_AnimateOceans__STUB(void)
+{
+
+
+
+}
+
 
 // MGC o51p39
 // drake178: TILE_IsOcean()

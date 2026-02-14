@@ -91,8 +91,11 @@ Init_New_Game_()
 [x] |-> NIU  MGC  ovr054  UU_SPATH_GetBorderTiles()
 [x] |-> NIU  MGC  ovr055  CRP_NEWG_CreatePathGrid()
 
-[ ] NEWG_SetScoutingMaps()
-[ ] NEWG_AnimateOceans()
+[x] Init_Square_Explored()
+[x] |-> Set_Square_Explored_Bits()
+
+[-] NEWG_AnimateOceans()
+
 [ ] NEWG_EZ_MarkHadnLeft()
 
 [ ] ...move special.c/h from MoM to MoX

@@ -41,16 +41,6 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 
 
 
-enum e_SCOUT_BITS
-{
-    SCT_BottomLeft   = 1,
-    SCT_TopLeft      = 2,
-    SCT_TopRight     = 4,
-    SCT_BottomRight  = 8
-};
-
-
-
 // WZD dseg:3278                                                 BEGIN:  ovr068 - Initialized Data
 
 // WZD dseg:3278

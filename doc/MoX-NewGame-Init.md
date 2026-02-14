@@ -33,6 +33,16 @@ Init_New_Game()
 
 
 
+MGC  dseg:89C6 00 00 00 00                                     TBL_Scouting dd 0                       ; DATA XREF: Save_SAVE_GAM+304r ...
+
+WZD  dseg:9CB0 00 00 00 00                                     _square_explored dd 0                   ; DATA XREF: Save_SAVE_GAM+304r ...
+
+
+
+
+
+
+
 Universe_Generation_()
 Generate_Home_Worlds_()
 
