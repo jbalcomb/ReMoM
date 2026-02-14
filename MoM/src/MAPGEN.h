@@ -23,7 +23,7 @@ extern "C" {
 void Init_New_Game(void);
 
 // MGC o51p02
-// NEWG_EZ_MarkHadnLeft()
+void Set_Upper_Lair_Guardian_Count(void);
 
 // MGC o51p03
 void NEWG_TileIsleExtend__WIP(int16_t wp);
