@@ -22,6 +22,7 @@
 #include "../../MoX/src/random.h"
 #include "../../MoX/src/Timer.h"
 
+#include "MOM_SCR.h"
 #include "RACETYPE.h"
 #include "Settings.h"
 #include "Spellbook.h"
@@ -1209,7 +1210,7 @@ int16_t NEWG_Clicked_Race;
     ovr050
 */
 
-// o50p01
+// MGC  o50p01
 // drake178: GAME_New_Create()
 /*
 ; displays and processes the series of screens that
@@ -1221,13 +1222,14 @@ int16_t NEWG_Clicked_Race;
 ; continue slot (index 8), and launching WIZARDS.EXE
 */
 /*
-Newgame_Control__WIP();  // MAGIC.EXE  ovr050  o050p001
+HACK returns {F,T} did create new game
 
-Newgame_Screen_0();  // returns 1 on input field is ok button
+Newgame_Control__WIP();  // MAGIC.EXE  ovr050  o050p001
 
 NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
 */
-void Newgame_Control__WIP(void)
+// void Newgame_Control__WIP(void)
+/* HACK */  int16_t Newgame_Control__WIP(void)
 {
     int16_t Create_State = 0;
     int16_t Can_Create = 0;
@@ -1252,13 +1254,14 @@ void Newgame_Control__WIP(void)
 
         switch(Create_State)
         {
-            case -1:
+            case ST_UNDEFINED:
             {
-                return;  // ¿ cancel ?
+                // return;  // ¿ cancel ?
+                /* HACK */  return ST_FALSE;
             } break;
             case 0:
             {
-                newgame_state = Newgame_Screen_0();  // returns 1 on input field is ok button
+                newgame_state = Newgame_Screen_0();  // returns 1 on input field is ok button, -1 on quit
             } break;
             case 1:  // "Select Wizard"
             {
@@ -1327,7 +1330,7 @@ void Newgame_Control__WIP(void)
             {
                 newgame_state = Newgame_Screen_7__WIP();
             } break;
-            case 99:
+            case 99:  /* What sets 99? */
             {
                 Can_Create = ST_UNDEFINED;  // ¿ force an early exit of the new game creation process ?
             } break;
@@ -1347,12 +1350,39 @@ void Newgame_Control__WIP(void)
     // save new game as continue save
     Save_SAVE_GAM(8);
 
-    // TODO  GAME_WizardsLaunch(8);
+    // printf("PLATFORM: %s\n", PLATFORM);
 
+    // // Helper macros to stringify the macro value
+    // #define STRINGIFY_(msg) #msg
+    // #define STRINGIFY(msg) STRINGIFY_(msg)
+    // // GCC output example: source.c: note: #pragma message: MY_VALUE=123
+    // #pragma message("PLATFORM=" STRINGIFY(PLATFORM))
+
+#ifdef PLATFORM
+    printf("SUCCESS: PLATFORM is #defined\n");
+#endif
+
+    /* HACK */  return ST_TRUE;
+
+#if   (PLATFORM == DOS16)
+    GAME_WizardsLaunch__WIP(8);
+#elif (PLATFORM == SDL2)
+    current_screen = scr_Main_Screen;
+#elif (PLATFORM == LIN64)
+    current_screen = scr_Main_Screen;
+#elif (PLATFORM == MAC64)
+    current_screen = scr_Main_Screen;
+#elif (PLATFORM == WIN64)
+    current_screen = scr_Main_Screen;
+#else
+    printf("FAILURE: BAD_PLATFORM_VALUE: Newgame_Control__WIP()\n");
+#endif
+
+    /* HACK */  return ST_UNDEFINED;
 }
 
 
-// o50p02
+// MGC  o50p02
 // drake178: GAME_WizardsLaunch()
 /*
 ; fades out the screen, if the passed save index is not
@@ -1361,6 +1391,11 @@ void Newgame_Control__WIP(void)
 ; WIZARDS.EXE (which always loads that save on startup)
 */
 /*
+
+Menu_Screen_Control()
+    fid0_Continue:                            ; case 0x0
+        Stop_Music__STUB()
+        j_GAME_WizardsLaunch__WIP(e_SAVE9GAM)
 
 */
 void GAME_WizardsLaunch__WIP(int16_t save_gam_idx)
@@ -1377,13 +1412,13 @@ void GAME_WizardsLaunch__WIP(int16_t save_gam_idx)
 }
 
 
-// o50p03
+// MGC  o50p03
 // Load_Screen()
 
-// o50p04
+// MGC  o50p04
 // Load_Screen_Draw()
 
-// o50p05
+// MGC  o50p05
 /*
 PATCHED - rewritten completely in the last profile
 loader/worldgen customizer/patch enabler
@@ -1653,7 +1688,7 @@ int16_t Newgame_Screen_0(void)
 
 }
 
-// o50p06
+// MGC  o50p06
 /*
 PATCHED - rewritten completely in the last profile
 loader/worldgen customizer/patch enabler
@@ -1778,7 +1813,7 @@ void Newgame_Screen_0_Draw(void)
 
 }
 
-// o50p07
+// MGC  o50p07
 // drake178: GAME_RandBookBinders()
 /*
 ; randomizes the spellbook binder image arrays used
@@ -1814,7 +1849,7 @@ void Randomize_Book_Heights(void)
 
 }
 
-// o50p08
+// MGC  o50p08
 // drake178: GAME_New_Screen_1()
 /*
 ; displays and processes the second screen of new game
@@ -2001,7 +2036,7 @@ int16_t Newgame_Screen_1__WIP(void)
 
 }
 
-// o50p09
+// MGC  o50p09
 /*
 ; draws the new game wizard portrait selection screen
 ; into the current draw frame, with or without retort
@@ -2186,7 +2221,7 @@ void Newgame_Screen_1_2_Draw(void)
 
 }
 
-// o50p10
+// MGC  o50p10
 /*
 
 "Select Picture"
@@ -2321,7 +2356,7 @@ int16_t Newgame_Screen_2__WIP(void)
 }
 
 
-// o50p11
+// MGC  o50p11
 /*
 ; displays and processes the wizard name input screen
 ; of new game creation, starting with the default name
@@ -2385,7 +2420,7 @@ int16_t Newgame_Screen_3__WIP(void)
 }
 
 
-// o50p12
+// MGC  o50p12
 /*
 ; draws the wizard name entry screen into the current
 ; draw frame, showing bookshelf and retorts only if
@@ -2439,7 +2474,7 @@ void Newgame_Screen_3_Draw__WIP(void)
 }
 
 
-// o50p13
+// MGC  o50p13
 /*
 ; displays and processes the banner selection screen
 ; of new game creation
@@ -2615,7 +2650,7 @@ int16_t Newgame_Screen_7__WIP(void)
 }
 
 
-// o50p14
+// MGC  o50p14
 // GAME_Draw_NewScr7()
 void Newgame_Screen_7_Draw__WIP(void)
 {
@@ -2693,7 +2728,7 @@ void Newgame_Screen_7_Draw__WIP(void)
 }
 
 
-// o50p15
+// MGC  o50p15
 /*
 
 Module: MOX
@@ -2971,7 +3006,7 @@ int16_t Newgame_Screen_6__WIP(void)
 }
 
 
-// o50p16
+// MGC  o50p16
 void Newgame_Screen_6_Draw__WIP(void)
 {
     int16_t Arcanus_Races[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -3170,7 +3205,7 @@ void Newgame_Screen_6_Draw__WIP(void)
 }
 
 
-// o50p17
+// MGC  o50p17
 /*
 ; draws a list of the human player's retorts as a
 ; string into the current draw frame, on the left side,
@@ -3269,7 +3304,7 @@ void GAME_DrawRetortsStr(void)
 }
 
 
-// o50p18
+// MGC  o50p18
 /*
 
 ; PATCHED / rewritten in the realm reordering patch
@@ -3347,7 +3382,7 @@ void NEWG_DrawDefShelf__WIP(int16_t wizard_id)
 
 }
 
-// o50p19
+// MGC  o50p19
 /*
 
 */
@@ -3359,10 +3394,10 @@ void Newgame_Screen4__WIP(void)
 }
 
 
-// o50p20
+// MGC  o50p20
 // GAME_Draw_NewScr4()
 
-// o50p21
+// MGC  o50p21
 /*
 
 */
@@ -3374,16 +3409,16 @@ void Newgame_Screen5__WIP(void)
 }
 
 
-// o50p22
+// MGC  o50p22
 // GAME_SpellSel_GUI()
 
-// o50p23
+// MGC  o50p23
 // SCRN_Draw_NewScr5()
 
-// o50p24
+// MGC  o50p24
 // SCRN_Draw_NewScr5_2()
 
-// o50p25
+// MGC  o50p25
 /*
 ; copies the name and profile traits of the selected
 ; default wizard to the human player's wizard record,
@@ -3531,16 +3566,16 @@ void WIZ_CopyDefault__WIP(int16_t wizard_id)
 }
 
 
-// o50p26
+// MGC  o50p26
 // Fade_Out()
 
-// o50p27
+// MGC  o50p27
 // VGA_Fade_In()
 
-// o50p28
+// MGC  o50p28
 // Set_Load_Screen_Help_List_MGC()
 
-// o50p29
+// MGC  o50p29
 // drake178: HLP_Load_NewGOptions()
 /*
 loads and sets the GUI help entry area array for the
@@ -3562,7 +3597,7 @@ void Set_Newgame_Screen_0_Help_List(void)
 }
 
 
-// o50p30
+// MGC  o50p30
 // HLP_Load_BannerSel()
 /*
 
@@ -3577,7 +3612,7 @@ void Set_Newgame_Screen_7_Help_List(void)
 
 }
 
-// o50p31
+// MGC  o50p31
 // HLP_Load_PortraitSel()
 /* 
 ; loads and sets the GUI help entry area array for the
@@ -3594,7 +3629,7 @@ void Set_Newgame_Screen_2_Help_List(void)
 }
 
 
-// o50p32
+// MGC  o50p32
 /*
 ; loads and sets the GUI help entry area array for the
 ; wizard selection screen
@@ -3618,10 +3653,10 @@ void Set_Newgame_Screen_1_Help_List(int16_t has_custom)
 }
 
 
-// o50p33
+// MGC  o50p33
 // HLP_Load_WizCreate()
 
-// o50p34
+// MGC  o50p34
 // HLP_Load_RaceSel()
 void Set_Newgame_Screen_6_Help_List(void)
 {
@@ -3633,7 +3668,7 @@ void Set_Newgame_Screen_6_Help_List(void)
 
 }
 
-// o50p35
+// MGC  o50p35
 void STR_ListSeparator(int16_t * List_Size, int16_t Total, char * Dest)
 {
 
@@ -3659,11 +3694,11 @@ void STR_ListSeparator(int16_t * List_Size, int16_t Total, char * Dest)
 }
 
 
-// o50p36
+// MGC  o50p36
 // CRP_Empty_Dialog_Fn2()
 
-// o50p37
+// MGC  o50p37
 // CRP_Empty_Dialog_Fn1()
 
-// o50p38
+// MGC  o50p38
 // Do_Toggle_Pages()

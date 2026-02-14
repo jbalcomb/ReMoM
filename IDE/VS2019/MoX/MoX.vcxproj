@@ -153,7 +153,7 @@
       <AdditionalIncludeDirectories>C:\devellib\SDL2-2.32.2\include;C:\devellib\SDL2_mixer-2.8.1\include;C:\STU\devel\ReMoM\MoX\src;C:\STU\devel\ReMoM\STU\src;C:\STU\devel\ReMoM\MoM\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4068;6385;6386</DisableSpecificWarnings>
-      <PreprocessorDefinitions>STU_DEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PLATFORM=SDL2;STU_DEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -172,7 +172,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>C:\devellib\SDL2-2.32.2\include;C:\devellib\SDL2_mixer-2.8.1\include;C:\STU\devel\ReMoM\MoX\src;C:\STU\devel\ReMoM\STU\src;C:\STU\devel\ReMoM\MoM\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4068;6385;6386</DisableSpecificWarnings>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PLATFORM=SDL2;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>
