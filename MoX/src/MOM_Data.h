@@ -1720,9 +1720,9 @@ struct s_LAIR
     /* 03 */  int8_t   intact;  // {F,T} ... set to false by Lair_Clear() ... Draw_Map_Lairs() only *draws* if true
     /* 04 */  int8_t   type;    // {0,...,} ... Draw_Map_Lairs() only *draws* if > 3 {0,...3} are tower and nodes
     /* 05 */  uint8_t  guard1_unit_type;
-    /* 06 */  uint8_t  guard1_count;       // ¿ code only checks low-nibble for count != 0 ?
+    /* 06 */  uint8_t  guard1_count;       // ¿ code only checks low-nibble for count != 0 ? ... 'New Game' copies low nibble into high nibble
     /* 07 */  uint8_t  guard2_unit_type;
-    /* 08 */  uint8_t  guard2_count;       // ¿ code only checks low-nibble for count != 0 ?
+    /* 08 */  uint8_t  guard2_count;       // ¿ code only checks low-nibble for count != 0 ? ... 'New Game' copies low nibble into high nibble
     /* 09 */  int8_t   pad2B_09h;  /* 2-byte alignment padding */
     /* 0A */  int16_t  Loot_Gold;   // 2-byte, signed
     /* 0C */  int16_t  Loot_Mana;   // 2-byte, signed

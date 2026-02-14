@@ -1342,8 +1342,9 @@ void Newgame_Control__WIP(void)
 
     Initialize_Events();
 
-    NEWG_FinalizeTables__WIP();
+    NEWG_FinalizeTables__WIP();  // ... wrap it up ... 100%!
 
+    // save new game as continue save
     Save_SAVE_GAM(8);
 
     // TODO  GAME_WizardsLaunch(8);

@@ -96,7 +96,7 @@ Init_New_Game_()
 
 [-] NEWG_AnimateOceans()
 
-[ ] NEWG_EZ_MarkHadnLeft()
+[x] Set_Upper_Lair_Guardian_Count()
 
 [ ] ...move special.c/h from MoM to MoX
 

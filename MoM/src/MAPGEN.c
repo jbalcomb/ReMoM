@@ -333,12 +333,37 @@ void Init_New_Game(void)
 
     NEWG_AnimateOceans__STUB();
 
-    // TODO  NEWG_EZ_MarkHadnLeft();
+    Set_Upper_Lair_Guardian_Count();
 
 }
 
 // MGC o51p02
 // drake178: NEWG_EZ_MarkHadnLeft()
+/*
+; copies the encounter guardian amounts into the upper
+; nibble of the same byte to create the had'n'left
+; structure marking both the initial and remaining
+; monsters in the records (not that it is actually used
+; for anything other than to complicate things)
+*/
+/*
+
+*/
+void Set_Upper_Lair_Guardian_Count(void)
+{
+    int16_t itr_lairs = 0;  // _SI_
+
+    for(itr_lairs = 0; itr_lairs < NUM_LAIRS; itr_lairs++)
+    {
+
+        _LAIRS[itr_lairs].guard1_count = (_LAIRS[itr_lairs].guard1_count | (_LAIRS[itr_lairs].guard1_count << 4));
+
+        _LAIRS[itr_lairs].guard2_count = (_LAIRS[itr_lairs].guard2_count | (_LAIRS[itr_lairs].guard2_count << 4));
+
+    }
+
+}
+
 
 // MGC o51p03
 // drake178: NEWG_TileIsleExtend()
