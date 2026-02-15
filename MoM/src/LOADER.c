@@ -166,6 +166,9 @@ void Load_MGC_Resources(void)
 // AKA Load_Init_MainGame
 // MoO2 ¿ ?
 // 1oom ¿ ?
+/*
+
+*/
 void Load_WZD_Resources(void)
 {
 
@@ -236,8 +239,7 @@ void Load_WZD_Resources(void)
 */
 void Units_Upkeeps(void)
 {
-
-    int16_t itr;  // _CX_
+    int16_t itr = 0;  // _CX_
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Units_Upkeeps()\n", __FILE__, __LINE__);
@@ -257,9 +259,9 @@ void Units_Upkeeps(void)
     // + 1C64
     // 912C + 1C64 = AD90  44,432
 
-    for(itr = 0; itr < 198; itr++)
+    for(itr = 0; itr < NUM_UNIT_TYPES; itr++)
     {
-        if(itr >= 0x23 /* Trireme */)
+        if(itr >= ut_Trireme)
         {
             _unit_type_table[itr].Upkeep = ((_unit_type_table[itr].cost + 49) / 50);  // Dasm is doing a ceil(), somehow?
         }

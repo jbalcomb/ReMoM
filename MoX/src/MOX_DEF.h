@@ -645,6 +645,17 @@ enum enum_BANNER_COLOR_ID
     BNR_Brown  = 5
 };
 
+// uint8_t COL_City_Banner_7x5[7][5] = 
+// {
+//     {  96,  97,  98,  99, 100 },
+//     {  72,  73,  74,  75,  76 },
+//     { 205, 206, 207, 208, 209 },
+//     { 201, 165, 203, 166,  45 },
+//     { 209, 210, 211, 212, 213 },
+//     {  13,  13,  12,  12,  11 },
+//     {  13,  13,  12,  12,  11 }
+// };
+
 #define BANNER_COLOR_BLUE                172
 #define BANNER_COLOR_GREEN               216
 #define BANNER_COLOR_PURPLE              124
@@ -656,8 +667,13 @@ enum enum_BANNER_COLOR_ID
 #define BANNER_COLOR_PURPLE_123          123
 #define BANNER_COLOR_PURPLE_124          124
 #define BANNER_COLOR_PURPLE_205          205
+#define BANNER_COLOR_YELLOW_209          209
 #define BANNER_COLOR_YELLOW_210          210
 #define BANNER_COLOR_YELLOW_211          211
+#define BANNER_COLOR_YELLOW_212          212
+#define BANNER_COLOR_YELLOW_213          213
+
+
 
 #define MAX_UNIT_COUNT                  1000    /* AKA MAX_UNITS  used by Create_Unit__WIP(); City_Apply_Production(); Determine_Offer(); */
 #define MAX_CITY_COUNT                   100
@@ -765,7 +781,7 @@ enum enum_BANNER_COLOR_ID
 #define ST_TRANSPARENT       0  /*  */
 #define ST_BLACK             1  /*  */
 
-#define ST_LIGHT_GRAY        7  /* used for {nodes, lairs, towers} on the Cartographer Screen */
+#define ST_LIGHT_GRAY        7  /* used for Sites {nodes, lairs, towers} on the Cartographer Screen */
 
 #define ST_GRAY              8
 

@@ -9,6 +9,7 @@ Purpose: help an AI coding agent be productive quickly in this reverse-engineere
   - `MK_MoM.BAT` — legacy, hand-crafted MSVC build steps showing source grouping and flags; useful for understanding target groupings and manual compiler flags. See [MK_MoM.BAT](MK_MoM.BAT#L1-L20).
   - `cmack.bat` — simple local helper that configures and builds via CMake; useful quick reference. See [cmack.bat](cmack.bat#L1-L10).
   - `doc/Devel-CMake.md` — notes and tips for configuring SDL2 and CMake on different platforms. See [doc/Devel-CMake.md](doc/Devel-CMake.md#L1-L20).
+  - `src/ReMoM.c` — main entry point for the game binary. See [src/ReMoM.c](src/ReMoM.c#L1-L20).
 
 - **Build / test / debug (explicit commands you can run):**
   - Configure (Windows, recommended preset):

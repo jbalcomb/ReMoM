@@ -17,13 +17,11 @@ MoO2
 
 
 /*
-NOTE(JimBalcomb,20250302Why do I have two config mom structures?
+NOTE(JimBalcomb,20250302): Why do I have two config mom structures?
 */
 //  ; (sizeof=0x12)
 #pragma pack(push)
-
 #pragma pack(2)
-
 struct s_CONFIG_MOM_18
 {
     /* 00 */ uint16_t MIDI_IO;
@@ -37,8 +35,11 @@ struct s_CONFIG_MOM_18
     /* 10 */ uint16_t NIU_10;
     /* 12 */
 };
+#pragma pack(pop)
 
 //  ; (sizeof=0x14)
+#pragma pack(push)
+#pragma pack(2)
 struct s_CONFIG_MOM
 {
     /* 00 */ uint16_t MIDI_IO;     // Sound Card Address / Music Card Address
@@ -53,7 +54,6 @@ struct s_CONFIG_MOM
     /* 12 */ uint16_t NIU_12;     //  ¿ MoO1 ?
     /* 14 */
 };
-
 #pragma pack(pop)
 
 

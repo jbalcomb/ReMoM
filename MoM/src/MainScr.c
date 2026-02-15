@@ -571,6 +571,9 @@ SAMB_ptr node_warped_seg;                // ; reserved EMM header pointer for a 
 
 // WZD dseg:CB60
 // AKA gsa_OVL_Tile_WorkArea
+/*
+DEDU  ¿ only used in Draw_Map_Cities() and Draw_Map_Towers() ?
+*/
 SAMB_ptr Map_Square_WorkArea;               // alloc in Terrain_Init  // ; 70 * 16 = 1120 bytes
 
 // WZD dseg:CB62
