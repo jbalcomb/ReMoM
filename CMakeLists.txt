@@ -64,6 +64,20 @@ FetchContent_MakeAvailable(googletest)
 message(STATUS "GTEST_INCLUDE_DIR='${GTEST_INCLUDE_DIR}'")
 message(STATUS "GTEST_INCLUDE_DIRS='${GTEST_INCLUDE_DIRS}'")
 
+find_package(Doxygen COMPONENTS doxygen dot)
+if (DOXYGEN_FOUND)
+    message(STATUS "Doxygen found. Generating documentation.")
+    set(DOXYGEN_GENERATE_HTML YES)
+    set(DOXYGEN_INPUT ${PROJECT_SOURCE_DIR}/src) # Adjust input path as needed
+    set(DOXYGEN_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/doc)
+    doxygen_add_docs(
+        docs
+        ${DOXYGEN_INPUT}
+        CONFIG_FILE_TEMPLATE ${PROJECT_SOURCE_DIR}/Doxyfile.in # Use if you created Doxyfile.in
+    )
+else()
+    message(STATUS "Doxygen not found. Documentation will not be generated.")
+endif()
 
 # Coverage support
 option(ENABLE_COVERAGE "Enable code coverage instrumentation and targets" OFF)
