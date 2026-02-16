@@ -170,3 +170,53 @@ gtest_discover_tests(MOX_tests)
 # #   COMMAND ${CMAKE_COMMAND} -E copy -t $<TARGET_FILE_DIR:exe> $<TARGET_RUNTIME_DLLS:exe>
 # #   COMMAND_EXPAND_LISTS
 # # )
+
+# ==============================================================================
+# Allocate Module Tests
+# ==============================================================================
+
+add_executable(test_Allocate test_Allocate.cpp)
+
+target_include_directories(test_Allocate PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${GTEST_INCLUDE_DIRS}
+)
+
+target_link_libraries(test_Allocate PUBLIC
+    GTest::gtest
+    GTest::gtest_main
+    SDL2::Core
+    SDL2::Mixer
+    MOX
+)
+
+# Copy required DLLs
+if(WIN32)
+    add_custom_command(
+        TARGET test_Allocate POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${imported_location_dir}/SDL2.dll
+            $<TARGET_FILE_DIR:test_Allocate>
+    )
+    get_target_property(mixer_location SDL2::Mixer IMPORTED_LOCATION)
+    get_filename_component(mixer_dir ${mixer_location} DIRECTORY)
+    add_custom_command(
+        TARGET test_Allocate POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+            ${mixer_dir}/SDL2_mixer.dll
+            $<TARGET_FILE_DIR:test_Allocate>
+    )
+endif()
+
+# Copy LBX files for tests
+add_custom_command(
+    TARGET test_Allocate
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${LBX_FILE_LIST}
+        $<TARGET_FILE_DIR:test_Allocate>
+    COMMAND_EXPAND_LISTS
+    COMMENT "Copying LBX files for test_Allocate..."
+)
+
+gtest_discover_tests(test_Allocate)
