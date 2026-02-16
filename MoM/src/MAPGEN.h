@@ -29,7 +29,7 @@ void Set_Upper_Lair_Guardian_Count(void);
 void NEWG_TileIsleExtend__WIP(int16_t wp);
 
 // MGC o51p04
-void NEWG_CreateTowers__WIP(void);
+void Generate_Towers(void);
 
 // MGC o51p05
 void Generate_Home_City__WIP(void);
@@ -50,7 +50,7 @@ void NEWG_SetBaseLands__WIP(int16_t wp);
 void NEWG_CreateLands__WIP(int16_t wp);
 
 // MGC o51p11
-void NEWG_CreateNodes__WIP(void);
+void Generate_Nodes(void);
 
 // MGC o51p12
 void NEWG_CreateNodeAura__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, int16_t wx, int16_t wy);
@@ -65,7 +65,7 @@ void NEWG_SetNodeType__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, in
 void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy);
 
 // MGC o51p16
-void NEWG_CreateEZs__WIP(void);
+void Generate_Lairs(void);
 
 // MGC o51p17
 void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t UU, int16_t lair_type, int16_t budget);

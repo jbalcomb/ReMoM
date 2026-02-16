@@ -33,6 +33,18 @@ Init_New_Game()
 
 
 
+
+    // ¿ MoO2  Module: HOMEGEN  Generate_Home_Worlds_() ?
+    // ¿ MoO2  Module: INITGAME  Init_New_Game_() ?
+    Init_New_Game();
+    Initialize_Events();
+    NEWG_FinalizeTables__WIP();  // ... wrap it up ... 100%!
+    Save_SAVE_GAM(8);
+    GAME_WizardsLaunch__WIP(8);
+
+
+
+
 MGC  dseg:89C6 00 00 00 00                                     TBL_Scouting dd 0                       ; DATA XREF: Save_SAVE_GAM+304r ...
 
 WZD  dseg:9CB0 00 00 00 00                                     _square_explored dd 0                   ; DATA XREF: Save_SAVE_GAM+304r ...

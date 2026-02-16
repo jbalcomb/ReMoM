@@ -2,6 +2,175 @@
 
 
 
+
+add gcov
+[ctest] No coverage info files for CMake project C:/STU/devel/ReMoM. No coverage data will be analyzed for this project.
+set(CMAKE_BUILD_TYPE "Debug")
+target_compile_options(your_target PRIVATE -g -O0 -coverage -fprofile-arcs -ftest-coverage)
+target_link_options(your_target PRIVATE -coverage -lgcov)
+
+
+
+add Doxygen
+
+
+
+
+
+text file of all function names
+...with filename/module
+...with signature
+...as csv,tsv,fixed-width
+...
+...non standard / edge cases
+...
+...as a markdown checklist
+...
+...as something that can be fed to GHCP to work through unit-test test-cases for every single function
+
+test file of chains of function calls
+graph semantic triples file of function calls
+
+list of all symbols in a source code file
+...yeild/generator
+
+What does VS GHCP mean by "Code search" in it's prompt responses?
+...`get_file()`, `run_in_terminal()`, `get_terminal_output()`, `get_output_window_logs()`
+
+
+
+
+
+
+
+TODO
+prompt each of the big four to write a github copilot instructions
+
+prompt each of the big four to write a guiderails document for a C project
+prompt each of the big four to write a guiderails document for a classic C project
+prompt each of the big four to write a guiderails document for a classic C game project
+...that uses CMake, CTest, GTest, CPack, SDL2, SDL2 Mixer
+...in both Visual studio and Visual Studio Code
+
+prompt each of the big four to write a prompt template for ...
+
+
+
+
+
+https://cmake.org/cmake/help/latest/manual/ctest.1.html
+
+ctest --list-presets
+Available test presets:
+  "MSVC-debug" - VS2022 amd64 Debug
+
+ctest --preset MSVC-debug --list-tests
+
+ctest --preset=MSVC-debug -R "STR_ListSeparator_test.SingleItem_NoSeparator"
+
+ctest --preset=MSVC-debug -R "STR_ListSeparator_test"
+
+cmake --workflow=MSVC-debug && ctest --preset=MSVC-debug -R "City_Maximum_Size_NewGame_test"
+
+
+
+
+
+$ ctest --preset MSVC-debug --list-tests
+Test project C:/STU/devel/ReMoM/out/build/MSVC-debug
+      Start  1: MOX_test.MOX_One_Plus_One
+ 1/17 Test  #1: MOX_test.MOX_One_Plus_One ................................   Passed    0.16 sec
+      Start  2: MOX_test.MOX_String_To_Upper
+ 2/17 Test  #2: MOX_test.MOX_String_To_Upper .............................   Passed    0.02 sec
+      Start  3: MOX_test.MOX_String_To_Lower
+ 3/17 Test  #3: MOX_test.MOX_String_To_Lower .............................   Passed    0.03 sec
+      Start  4: MOM_test.MOM_Create_Unit
+ 4/17 Test  #4: MOM_test.MOM_Create_Unit .................................   Passed    0.21 sec
+      Start  5: MOM_test.MOM_Kill_Unit_kt0
+ 5/17 Test  #5: MOM_test.MOM_Kill_Unit_kt0 ...............................   Passed    0.03 sec
+      Start  6: MOM_test.MOM_Kill_Unit_kt1
+ 6/17 Test  #6: MOM_test.MOM_Kill_Unit_kt1 ...............................   Passed    0.02 sec
+      Start  7: MOM_test.MOM_Kill_Unit_kt2
+ 7/17 Test  #7: MOM_test.MOM_Kill_Unit_kt2 ...............................   Passed    0.03 sec
+      Start  8: MOM_test.MOM_Delete_Dead_Units
+ 8/17 Test  #8: MOM_test.MOM_Delete_Dead_Units ...........................   Passed    0.03 sec
+      Start  9: STR_ListSeparator_test.SingleItem_NoSeparator
+ 9/17 Test  #9: STR_ListSeparator_test.SingleItem_NoSeparator ............   Passed    0.03 sec
+      Start 10: STR_ListSeparator_test.TwoItems_AndSeparator
+10/17 Test #10: STR_ListSeparator_test.TwoItems_AndSeparator .............   Passed    0.03 sec
+      Start 11: STR_ListSeparator_test.ThreeItems_CommaAndAnd
+11/17 Test #11: STR_ListSeparator_test.ThreeItems_CommaAndAnd ............   Passed    0.02 sec
+      Start 12: STR_ListSeparator_test.FourItems_MultipleCommasThenAnd
+12/17 Test #12: STR_ListSeparator_test.FourItems_MultipleCommasThenAnd ...   Passed    0.03 sec
+      Start 13: STR_ListSeparator_test.ListSizeIncrementsCorrectly
+13/17 Test #13: STR_ListSeparator_test.ListSizeIncrementsCorrectly .......   Passed    0.04 sec
+      Start 14: STR_ListSeparator_test.FirstItem_DestUnchanged
+14/17 Test #14: STR_ListSeparator_test.FirstItem_DestUnchanged ...........   Passed    0.03 sec
+      Start 15: STR_ListSeparator_test.MiddleItem_CommaAppended
+15/17 Test #15: STR_ListSeparator_test.MiddleItem_CommaAppended ..........   Passed    0.03 sec
+      Start 16: STR_ListSeparator_test.LastItem_AndAppended
+16/17 Test #16: STR_ListSeparator_test.LastItem_AndAppended ..............   Passed    0.03 sec
+      Start 17: HelloTest.BasicAssertions
+17/17 Test #17: HelloTest.BasicAssertions ................................   Passed    0.07 sec
+
+100% tests passed, 0 tests failed out of 17
+
+Total Test time (real) =   0.95 sec
+
+
+STR_ListSeparator_test
+
+ctest -C Debug -R "^YourTestExecutableName$"
+
+-R <regex>, --tests-regex <regex>
+Run tests matching regular expression.
+
+This option tells CTest to run only the tests whose names match the given regular expression.
+
+ctest --preset=MSVC-debug -R "MySuite.MyTest1"
+
+
+
+
+...
+[workflow] Running ctest for the MSVC-debug test preset of the workflow step.
+...
+[proc] Executing command: "C:\Program Files\CMake\bin\ctest.exe" -T test --output-on-failure -R ^MOX_test\.MOX_One_Plus_One$
+
+
+# Configure
+cmake -S . -B build
+
+# Build the test target
+cmake --build build --target test_STR_ListSeparator
+
+# Run with CTest
+cd build
+ctest -R STR_ListSeparator --output-on-failure
+
+
+
+Note: The test target test_STR_ListSeparator needs to be added to your CMakeLists.txt first, following the pattern in tests\unit\CMakeLists.txt:
+```
+add_executable(test_STR_ListSeparator test_STR_ListSeparator.cpp
+    ${MOMLIB_SOURCES}
+    ${SDL2_SOURCES}
+    ${MOX_SOURCES}
+    ${STU_SOURCES}
+)
+
+target_include_directories(test_STR_ListSeparator PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
+target_link_libraries(test_STR_ListSeparator GTest::gtest_main momlib MOX STU)
+
+gtest_discover_tests(test_STR_ListSeparator)
+```
+
+
+
+
+
+
 Run One GTest, for de-bugging
 cd /c/STU/devel/ReMoM/out/build/MSVC-debug
 ctest -R MOM_Kill_Unit_1 -VV

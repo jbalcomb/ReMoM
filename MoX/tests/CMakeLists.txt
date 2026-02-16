@@ -3,7 +3,10 @@ include(GoogleTest)
 
 set(CMAKE_EXECUTE_PROCESS_COMMAND_ECHO STDOUT) # Set default to echo to STDOUT
 
-add_executable(MOX_tests MOX_tests.cpp)
+add_executable(MOX_tests
+    MOX_tests.cpp
+    test_Util.cpp
+)
 
 # # target_include_directories(TootLib_tests PRIVATE "${PROJECT_SOURCE_DIR}")
 # # target_include_directories(TootLib_tests PRIVATE ${PROJECT_SOURCE_DIR}/TootLib)
