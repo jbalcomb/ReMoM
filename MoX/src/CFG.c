@@ -7,6 +7,8 @@ WZD just fread()'s 18 bytes in _main()
 MoO2
     Module: FILEDEF
     Module: INITGAME
+
+SEEALSO: MoX-CONFIG_MOM.md
 */
 
 #include <stdio.h>
@@ -21,6 +23,18 @@ struct s_CONFIG_MOM config_mom;
 
 
 
+/// @brief 
+/// @param  
+/**
+ * @brief Loads the configuration for MOM (Master Of Magic).
+ * 
+ * This function reads and initializes the MOM configuration settings
+ * from the configuration file or default values.
+ * 
+ * @return void
+ * 
+ * @note Ensure that necessary resources are initialized before calling this function.
+ */
 void Load_CONFIG_MOM(void)
 {
     FILE * file_pointer;

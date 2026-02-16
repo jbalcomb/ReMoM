@@ -170,6 +170,10 @@ void Delete_Dead_Units(void)
         }
     }
 
+// breaks gtest  #ifdef STU_DEBUG
+// breaks gtest      dbg_prn("DEBUG: [%s, %d]: END: Delete_Dead_Units()\n", __FILE__, __LINE__);
+// breaks gtest  #endif
+
 }
 
 

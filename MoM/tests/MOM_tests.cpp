@@ -1,4 +1,17 @@
 /*
+GoogleTest FAQ
+Why should test suite names and test names not contain underscore?
+Note: GoogleTest reserves underscore (_) for special-purpose keywords, such as the DISABLED_ prefix, in addition to the following rationale.
+
+Underscore (_) is special, as C++ reserves the following to be used by the compiler and the standard library:
+
+any identifier that starts with an _ followed by an upper-case letter, and
+any identifier that contains two consecutive underscores (i.e. __) anywhere in its name.
+User code is prohibited from using such identifiers.
+
+So for simplicity, we just ask the users to avoid _ in TestSuiteName and TestName. The rule is more constraining than necessary, but it’s simple and easy to remember. It also gives GoogleTest some wiggle room in case its implementation needs to change in the future.
+*/
+/*
 
 NOTE(JimBalcomb,202510091924): was to be some normal and hero units kill tests, but lost track, and create hero wont work :(..
 
@@ -29,12 +42,17 @@ extern "C" {
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
 #include "../../MoX/src/MOX_DEF.h"  /* HUMAN_PLAYER_IDX */
 #include "../../MoX/src/MOX_UPD.h"  /* UNITS_FINISHED */
+#include "../../MoX/src/Util.h"  /* Delete_Structure() */
 
 #include "../src/CITYCALC.h"
 #include "../src/NEXTTURN.h"
 #include "../src/Spells130.h"       /* Hero_Slot_Types () */
 #include "../src/Spells132.h"       /* WIZ_HireHero() */
 #include "../src/UNITTYPE.h"
+
+#include "../../STU/src/STU_DBG.h"  /* Debug_Log_Startup(), Debug_Log_Shutdown() */
+
+
 
 /*
     Forward Declare, Private

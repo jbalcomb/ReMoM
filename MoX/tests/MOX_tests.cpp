@@ -8,7 +8,7 @@
 
 TEST(MOX_test, MOX_One_Plus_One)
 {
-    ASSERT_EQ(1+1, 2);
+    ASSERT_EQ((1 + 1), 2);
 }
 
 TEST(MOX_test, MOX_String_To_Upper)

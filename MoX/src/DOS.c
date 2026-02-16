@@ -171,6 +171,7 @@ Module: dos
 
 // WZD s03p05
 /*
+Length Of File
 MoO2
 Module: dos
     function (0 bytes) LOF

@@ -137,7 +137,29 @@ uint8_t COL_MinimapNeutral = NEUTRAL_PLAYER_BANNER_COLOR;
 // WZD dseg:702A 1D 1D 1C 1C 1B                                  UU_COL_City_Banner5 db 1Dh, 1Dh, 1Ch, 1Ch, 1Bh
 // WZD dseg:702F 1D 1D 1C 1C 1B                                  UU_COL_City_Banner6 db 1Dh, 1Dh, 1Ch, 1Ch, 1Bh
 // WZD dseg:7011
- uint8_t COL_City_Banner[] = {
+/*
+DEDU  ¿ could be uint8_t COL_City_Banner[7][5] ?
+// MGC; 1-byte, signed;
+enum enum_BANNER_COLOR_ID
+    BNR_Blue  = 0,
+    BNR_Green  = 1,
+    BNR_Purple  = 2,
+    BNR_Red  = 3,
+    BNR_Yellow  = 4,
+    BNR_Brown  = 5
+
+*/
+uint8_t COL_City_Banner_7x5[7][5] = 
+{
+    {  96,  97,  98,  99, 100 },
+    {  72,  73,  74,  75,  76 },
+    { 205, 206, 207, 208, 209 },  // BANNER_COLOR_PURPLE_205
+    { 201, 165, 203, 166,  45 },  // BANNER_COLOR_RED
+    { 209, 210, 211, 212, 213 },  // BANNER_COLOR_YELLOW_209
+    {  13,  13,  12,  12,  11 },
+    {  13,  13,  12,  12,  11 }
+};
+uint8_t COL_City_Banner[] = {
     0x60, 0x61, 0x62, 0x63, 0x64, 
     0x48, 0x49, 0x4A, 0x4B, 0x4C, 
     0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 

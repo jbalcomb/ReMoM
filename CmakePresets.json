@@ -43,6 +43,21 @@
                 "CMAKE_CXX_COMPILER": "clang++"
             }
         }
+        ,
+        {
+            "name": "Clang-Ninja-coverage",
+            "displayName": "Clang+Ninja Coverage",
+            "description": "Ninja Multi-Config using Clang with coverage instrumentation",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_MAKE_PROGRAM": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja\\ninja.exe",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "ENABLE_COVERAGE": "ON"
+            }
+        }
     ],
     "buildPresets": [
         {

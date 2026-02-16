@@ -22,6 +22,7 @@ target_link_libraries(MOM_tests PUBLIC
     SDL2::Mixer
     momlib
     MOX
+    STU
 )
 
 if(WIN32)
