@@ -319,7 +319,7 @@ enum e_AI_SPELL_GROUP
 // #define UNIT_RECORD_SIZE 2
 
 // MAX_PLAYERS * sizeof(struct s_WIZARD)
-#define WIZARDS_RECORD_SIE              6*WIZARD_RECORD_SIZE
+#define WIZARDS_RECORD_SIZE             6*WIZARD_RECORD_SIZE
 #define WORLD_MAPS_RECORD_SIZE          2*2400*2
 #define UU_TBL_1_RECORD_SIZE            2*96
 #define UU_TBL_2_RECORD_SIZE            2*96

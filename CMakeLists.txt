@@ -14,6 +14,14 @@
 # cmake --build build --config Debug --verbose > _cmake_build.txt
 # ctest --test-dir build -C Debug --rerun-failed --output-on-failure -VV
 
+# cd C:\STU\devel\ReMoM\
+# cmake --workflow --preset=MSVC-debug
+# ctest --preset=MSVC-debug
+# Errors while running CTest
+# Output from these tests are in: C:/STU/devel/ReMoM/out/build/MSVC-debug/Testing/Temporary/LastTest.log
+# Use "--rerun-failed --output-on-failure" to re-run the failed cases verbosely.
+# ctest --preset=MSVC-debug --rerun-failed --output-on-failure
+
 cmake_minimum_required(VERSION 3.22)
 
 project(

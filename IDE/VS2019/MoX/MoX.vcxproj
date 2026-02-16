@@ -103,6 +103,7 @@
     <ClCompile Include="..\..\..\MoX\src\Util.c" />
     <ClCompile Include="..\..\..\MoX\src\Video.c" />
     <ClCompile Include="..\..\..\MoX\src\Video2.c" />
+    <ClCompile Include="tests\test_Util.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

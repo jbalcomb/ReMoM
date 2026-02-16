@@ -253,7 +253,7 @@ void Init_New_Game(void)
 
     Draw_Building_The_Worlds(45);
 
-    NEWG_CreateNodes__WIP();
+    Generate_Nodes();
 
     Draw_Building_The_Worlds(50);
 
@@ -263,7 +263,7 @@ void Init_New_Game(void)
 
     Draw_Building_The_Worlds(55);
 
-    NEWG_CreateTowers__WIP();
+    Generate_Towers();
 
     Draw_Building_The_Worlds(60);
 
@@ -271,7 +271,7 @@ void Init_New_Game(void)
 
     NEWG_TileIsleExtend__WIP(MYRROR_PLANE);
 
-    NEWG_CreateEZs__WIP();
+    Generate_Lairs();
 
     Draw_Building_The_Worlds(65);
 
@@ -649,7 +649,7 @@ void NEWG_TileIsleExtend__WIP(int16_t wp)
 /*
 
 */
-void NEWG_CreateTowers__WIP(void)
+void Generate_Towers(void)
 {
     int16_t Tries = 0;
     int16_t Min_Distance = 0;
@@ -811,22 +811,22 @@ that represents your starting city (aka “enchanted fortress”).
 void Generate_Home_City__WIP(void)
 {
     int16_t max_pop_failures = 0;
-    int16_t Min_Node_Distance_Double = 0;
-    int16_t Minimum_Fortress_Distance = 0;
+    int16_t minimum_site_distance = 0;  // used for _NODES[], _TOWERS[], _LAIRS[]
+    int16_t minimum_fortress_distance = 0;
     int16_t itr = 0;
     int16_t Invalid = 0;
     int16_t Tries_Per_Distance = 0;
     int16_t wy = 0;
     int16_t wx = 0;
     int16_t wp = 0;
-    int16_t UU_Fortresses[2] = { 0, 0 };
+    int16_t UU_Fortresses[NUM_PLANES] = { 0, 0 };  // tracks fortress record populations? 1:1 with player_idx in the players loop?
     int16_t player_idx = 0;
     int16_t unit_type = 0;  // _DI_
     int16_t bldg_idx = 0;  // _SI_
 
-    Minimum_Fortress_Distance = 16;
+    minimum_fortress_distance = 16;
 
-    Min_Node_Distance_Double = 8;
+    minimum_site_distance = 8;
 
 // ; generate capitals for each player, including choosing
 // ; a starting race for the AI wizards
@@ -838,13 +838,13 @@ void Generate_Home_City__WIP(void)
     {
 Loop_Distances:
 
-        Minimum_Fortress_Distance--;
+        minimum_fortress_distance--;
 
-        Min_Node_Distance_Double--;
+        minimum_site_distance--;
 
-        SETMIN(Min_Node_Distance_Double, 1);
+        SETMIN(minimum_site_distance, 1);
 
-        SETMIN(Minimum_Fortress_Distance, 10);
+        SETMIN(minimum_fortress_distance, 10);
 
         Tries_Per_Distance = 0;
 
@@ -858,7 +858,7 @@ Loop_Distances:
         {
 Loop_MaxPopTries:
 
-            for(player_idx = 0; player_idx < 6; player_idx++)  // ; BUG: there are only at most 5 players
+            for(player_idx = 0; player_idx < NUM_PLAYERS; player_idx++)  // ; BUG: there are only at most 5 players
             {
 
                 if(Tries_Per_Distance < 1000)
@@ -872,17 +872,36 @@ Loop_Location_1:
                     {
                         wp = MYRROR_PLANE;
                     }
-                    wx = (2 + Random(54));
-                    wy = (2 + Random(34));
+                    wx = (2 + Random((WORLD_WIDTH - 6)));  // { 3, ..., 56}
+                    wy = (2 + Random((WORLD_HEIGHT - 6)));  // { 3}
+
                     Invalid = ST_FALSE;
 
                     if(_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] == tt_Ocean1)
                     {
+
                         Invalid = ST_TRUE;
+                        
                     }
 
                     // ; invalidate the attempt if any other capital is
                     // ; closer than the minimum distance
+                    for(bldg_idx = 0; bldg_idx < player_idx; bldg_idx++)
+                    {
+
+                        if(_FORTRESSES[bldg_idx].wp == wp)
+                        {
+
+                            if(Delta_XY_With_Wrap(wx, wy, _FORTRESSES[bldg_idx].wx, _FORTRESSES[bldg_idx].wy, WORLD_WIDTH) < minimum_fortress_distance)
+                            {
+
+                                Invalid = ST_TRUE;
+
+                            }
+
+                        }
+
+                    }
 
                     // ; invalidate the attempt if any node is closer than the
                     // ; minimum distance
@@ -892,6 +911,23 @@ Loop_Location_1:
                     // ; BUG: because the distance is halved, same tile is not
                     // ; excluded
 
+                    for(bldg_idx = 0; bldg_idx < NUM_NODES; bldg_idx++)
+                    {
+
+                        if(_NODES[bldg_idx].wp == wp)
+                        {
+
+                            if(Delta_XY_With_Wrap(wx, wy, _NODES[bldg_idx].wx, _NODES[bldg_idx].wy, WORLD_WIDTH) < minimum_site_distance)
+                            {
+
+                                Invalid = ST_TRUE;
+
+                            }
+
+                        }
+
+                    }
+
                     // ; invalidate the attempt if any tower is closer than
                     // ; the minimum distance
                     // ; 
@@ -900,10 +936,39 @@ Loop_Location_1:
                     // ; BUG: because the distance is halved, same tile is not
                     // ; excluded
 
+                    for(bldg_idx = 0; bldg_idx < NUM_TOWERS; bldg_idx++)
+                    {
+
+                        if(Range(wx, wy, _TOWERS[bldg_idx].wx, _TOWERS[bldg_idx].wy) < minimum_site_distance)  // BUGBUG  should be Delta_XY_With_Wrap()
+                        {
+
+                            Invalid = ST_TRUE;
+
+                        }
+
+                    }
+
                     // ; invalidate the attempt if any encounter zone is
                     // ; closer than the minimum distance
                     // ; BUG: because the distance is halved, same tile is not
                     // ; excluded
+
+                    for(bldg_idx = 0; bldg_idx < NUM_LAIRS; bldg_idx++)
+                    {
+
+                        if(_LAIRS[bldg_idx].wp == wp)
+                        {
+
+                            if(Delta_XY_With_Wrap(wx, wy, _LAIRS[bldg_idx].wx, _LAIRS[bldg_idx].wy, WORLD_WIDTH) < minimum_site_distance)
+                            {
+
+                                Invalid = ST_TRUE;
+
+                            }
+
+                        }
+
+                    }
 
                     if(
                         (Tries_Per_Distance < 1000)
@@ -936,7 +1001,12 @@ Loop_Location_1:
                         _FORTRESSES[player_idx].wx = (int8_t)wx;
                         _FORTRESSES[player_idx].active = ST_TRUE;
                         UU_Fortresses[wp]++;
-                        player_idx++;
+
+#ifdef STU_DEBUG
+                        printf("player_idx: %d; terrain type index: %d;\n", player_idx, _world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)]);
+                        dbg_prn("player_idx: %d; terrain type index: %d;\n", player_idx, _world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)]);
+#endif
+
                     }
 
                 }
@@ -2079,7 +2149,7 @@ void NEWG_CreateLands__WIP(int16_t wp)
 /*
 
 */
-void NEWG_CreateNodes__WIP(void)
+void Generate_Nodes(void)
 {
     int16_t wy = 0;
     int16_t wx = 0;
@@ -2785,7 +2855,7 @@ void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy)
 /*
 
 */
-void NEWG_CreateEZs__WIP(void)
+void Generate_Lairs(void)
 {
     int16_t wy = 0;
     int16_t wx = 0;

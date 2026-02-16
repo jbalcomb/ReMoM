@@ -50,14 +50,14 @@ Init_New_Game_()
 [x] |-> TILE_SetLandMass__WIP
 [x] NEWG_SetBaseLands()
 [x] NEWG_SetSpecLands()
-[x] NEWG_CreateNodes()
+[x] Generate_Nodes()
 [x] |-> NEWG_CreateNodeAura__WIP()
 [x] |-> NODE_IsAuraUnique__WIP()
 [x] |-> NEWG_SetNodeType__WIP()
 [x] NEWG_EqualizeNodes()
-[x] NEWG_CreateTowers()
+[x] Generate_Towers()
 [x] NEWG_TileIsleExtend()
-[x] NEWG_CreateEZs()
+[x] Generate_Lairs()
 [x] Generate_Home_City__WIP()
 [x] |-> City_Maximum_Size_NewGame()
 [x] |-> |-> Get_Useable_City_Area_NewGame()
@@ -81,7 +81,6 @@ Init_New_Game_()
 [-] NEWG_SetRiverTiles__STUB()
 [-] NEWG_SetDeserts__STUB()
 [-] NEWG_RandomizeTiles__STUB()
-
 [x] Movement_Mode_Cost_Maps()
 [x] CRP_NEWG_CreatePathGrids__STUB()
 [x] |-> NIU  MGC  ovr054  CRP_SPATH_Arbitrary()
@@ -90,12 +89,9 @@ Init_New_Game_()
 [x] |-> NIU  MGC  ovr054  UU_SPATH_Segments()
 [x] |-> NIU  MGC  ovr054  UU_SPATH_GetBorderTiles()
 [x] |-> NIU  MGC  ovr055  CRP_NEWG_CreatePathGrid()
-
 [x] Init_Square_Explored()
 [x] |-> Set_Square_Explored_Bits()
-
 [-] NEWG_AnimateOceans()
-
 [x] Set_Upper_Lair_Guardian_Count()
 
 [ ] BUG  starting city in middle of ocean, for human player; failed ocean check? failed max pop check?

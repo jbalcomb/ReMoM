@@ -1,14 +1,13 @@
-
 # SEEALSO MoX/test/CMakeLists.txt ...notes, experimentation, etc.
 
 include(GoogleTest)
 
 add_executable(MOM_tests
     MOM_tests.cpp
+    test_STR_ListSeparator.cpp
     test_City_Maximum_Size_NewGame.cpp
     test_Square_Food2_NewGame.cpp
-    test_STR_ListSeparator.cpp
- )
+)
 
 target_include_directories(MOM_tests PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
