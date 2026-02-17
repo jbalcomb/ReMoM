@@ -272,7 +272,7 @@ void IDK_SummonAnim_Load(int16_t type_or_other, int16_t player_idx)
     }
     else
     {
-        unit_race = _unit_type_table[type_or_other].Race;
+        unit_race = _unit_type_table[type_or_other].race_type;
     }
 
     unit_race += 46;  // ¿ WTF ?  {0,...,20} + 46 = {46,...,66}
@@ -927,7 +927,7 @@ void Cast_Spell_City_Enchantment_Animation_2__WIP(int16_t city_idx, int16_t spel
         x2 = cityscape_bldg_fields[itr].field_x2;
         y2 = cityscape_bldg_fields[itr].field_y2;
 
-        city_cityscape_fields[city_cityscape_field_count] = Add_Hidden_Field(x1, y1, x2, y2, (int16_t)empty_string__ovr137[0], ST_UNDEFINED);
+        city_cityscape_fields[city_cityscape_field_count] = (unsigned char)Add_Hidden_Field(x1, y1, x2, y2, (int16_t)empty_string__ovr137[0], ST_UNDEFINED);
 
         city_cityscape_field_count++;
 

@@ -224,7 +224,7 @@ attake type 0 is Melee
 */
 enum e_RANGED_ATTACK_TYPE
 {
-    rat_None         =  -1,     /* ¿ out of ammo / not enough mana ? Battle_unit_attack__WIP() */
+    rat_UNDEF         =  -1,     /* ¿ out of ammo / not enough mana ? Battle_unit_attack__WIP() */
     rat_NONE         =   0,     /* sbr_ NONE   */
         /* BU_IsRangedUnit() checks ranged_type > 0 */
         /* BU_MeleeFlightCheck__WIP() checks ranged_type > 0 */
@@ -281,7 +281,7 @@ struct s_UNIT_TYPE
     /* 09 */  int8_t   Move_Halves;
     /* 0A */  int16_t  cost;                    /* Unit Cost */
     /* 0C */  int8_t   Upkeep;
-    /* 0D */  int8_t   Race;
+    /* 0D */  int8_t   race_type;    /* enum e_RACE_TYPE */
     /* 0E */  // int8_t   Bldng1_or_Portrait;   /* enum BLD_TYPE */
     union
     {

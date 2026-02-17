@@ -16,6 +16,7 @@
 #include <stdio.h>
 
 #ifdef _WIN32
+#define _CRT_NONSTDC_NO_DEPRECATE
 #include <conio.h>
 #endif
 
@@ -229,7 +230,11 @@ void Quit_With_Message(char * string)
     // ORION2.LE  dseg02:00172670 25 73 0A 00                                     printf_fmt_string_newline db '%s',0Ah,0
     printf("%s\n", string);
 #ifdef _WIN32
-    getch();
+    // getch();  not without _CRT_INTERNAL_NONSTDC_NAMES
+    // _getch();  // 6031 Return value ignored
+    // char ch = _getch();
+    #pragma warning(suppress : 6031)  // 6031 Return value ignored
+    _getch();
 #endif
     exit(EXIT_FAILURE);
 

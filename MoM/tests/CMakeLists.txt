@@ -1,9 +1,14 @@
 
-# SEEALSO MoX/test/CMakeLists.xtx ...notes, experimentation, etc.
+# SEEALSO MoX/test/CMakeLists.txt ...notes, experimentation, etc.
 
 include(GoogleTest)
 
-add_executable(MOM_tests MOM_tests.cpp)
+add_executable(MOM_tests
+    MOM_tests.cpp
+    test_City_Maximum_Size_NewGame.cpp
+    test_Square_Food2_NewGame.cpp
+    test_STR_ListSeparator.cpp
+ )
 
 target_include_directories(MOM_tests PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -20,52 +25,16 @@ target_link_libraries(MOM_tests PUBLIC
     STU
 )
 
-get_target_property(imported_location SDL2::Core IMPORTED_LOCATION)
-get_filename_component(imported_location_dir ${imported_location} DIRECTORY)
-message(STATUS "imported_location_dir: ${imported_location_dir}")
-# file(COPY "${imported_location_dir}/SDL2.dll" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
-
-set(SDL2_dll ${imported_location_dir})
-message(STATUS "SDL2_dll: ${SDL2_dll}")
-string(APPEND SDL2_dll "/SDL2.dll")
-message(STATUS "SDL2_dll: ${SDL2_dll}")
-
-if(EXISTS "${SDL2_dll}")
-    message("The file exists: ${SDL2_dll}")
-    # Perform actions if the file exists
-else()
-    message("The file does not exist: ${SDL2_dll}")
-    # Perform actions if the file does not exist
-endif()
-
 if(WIN32)
     add_custom_command(
         TARGET MOM_tests
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${SDL2_dll}
+            ${SDL2_DLL_FILE_PATH}
             $<TARGET_FILE_DIR:MOM_tests>
         COMMAND_EXPAND_LISTS
-        COMMENT "WTF ... copy SDL2.dll"
+        COMMENT "./MoM/tests: Copying SDL2.dll"
     )
-endif()
-
-get_target_property(imported_location SDL2::Mixer IMPORTED_LOCATION)
-get_filename_component(imported_location_dir ${imported_location} DIRECTORY)
-message(STATUS "imported_location_dir: ${imported_location_dir}")
-# file(COPY "${imported_location_dir}/SDL2_mixer.dll" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
-
-set(SDL2_mixer_dll ${imported_location_dir})
-message(STATUS "SDL2_mixer_dll: ${SDL2_mixer_dll}")
-string(APPEND SDL2_mixer_dll "/SDL2_mixer.dll")
-message(STATUS "SDL2_mixer_dll: ${SDL2_mixer_dll}")
-
-if(EXISTS "${SDL2_mixer_dll}")
-    message("The file exists: ${SDL2_mixer_dll}")
-    # Perform actions if the file exists
-else()
-    message("The file does not exist: ${SDL2_mixer_dll}")
-    # Perform actions if the file does not exist
 endif()
 
 if(WIN32)
@@ -73,26 +42,22 @@ if(WIN32)
         TARGET MOM_tests
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy 
-            ${SDL2_mixer_dll}
+            ${SDL2_MIXER_DLL_FILE_PATH}
             $<TARGET_FILE_DIR:MOM_tests>
         COMMAND_EXPAND_LISTS
-        COMMENT "WTF ... copy SDL2_mixer.dll"
+        COMMENT "./MoM/tests: Copying SDL2_mixer.dll"
     )
 endif()
-
-## WTF  add_custom_command(TARGET MOM_tests POST_BUILD
-## WTF      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:MOM_tests> $<TARGET_RUNTIME_DLLS:MOM_tests> $<TARGET_FILE_DIR:MOM_tests>
-## WTF  )
 
 file(GLOB LBX_FILE_LIST "${CMAKE_SOURCE_DIR}/*.lbx")
 add_custom_command(
     TARGET MOM_tests
     POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${LBX_FILE_LIST}
         $<TARGET_FILE_DIR:MOM_tests>
     COMMAND_EXPAND_LISTS
-    COMMENT "Copying LBX files..."
+    COMMENT "./MoM/tests: Copying LBX files..."
 )
 
 gtest_discover_tests(MOM_tests)

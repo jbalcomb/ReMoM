@@ -112,7 +112,7 @@ uint8_t Read_Key(void)
         key_num = kilgore_key_code;
     }
 
-    return key_num;
+    return (uint8_t)key_num;  // TODO  why/how key_num is diff from return or kilgore or KBD_GET
 }
 
 
@@ -348,9 +348,9 @@ uint16_t Platform_Translate_Virtual_Key_Code_To_MOX_Key_Num(int32_t virtual_key_
     key_num = 0;
 
     key_modifier_type = 0;  // no key modifier
-    if((key_modifiers = KMOD_LSHIFT) || (key_modifiers = KMOD_RSHIFT)) { key_modifier_type = 1; }
-    if((key_modifiers = KMOD_LCTRL ) || (key_modifiers = KMOD_RCTRL )) { key_modifier_type = 2; }
-    if((key_modifiers = KMOD_LALT  ) || (key_modifiers = KMOD_RALT  )) { key_modifier_type = 3; }
+    if((key_modifiers = KMOD_LSHIFT) | (key_modifiers = KMOD_RSHIFT)) { key_modifier_type = 1; }
+    if((key_modifiers = KMOD_LCTRL ) | (key_modifiers = KMOD_RCTRL )) { key_modifier_type = 2; }
+    if((key_modifiers = KMOD_LALT  ) | (key_modifiers = KMOD_RALT  )) { key_modifier_type = 3; }
 
     switch(key_modifier_type)
     {
@@ -450,14 +450,14 @@ translate IBM-PC/MS-DOS SCCC to MOX_KEY
 */
 void Platform_Keyboard_Event(SDL_Event * sdl2_event)
 {
-    SDL_Scancode sdl2_scan_code;
-    int32_t sdl2_key_code;
-    uint16_t sdl2_key_modifiers;
-    int mox_key;
-    uint32_t mox_mod;
-    char mox_character;
-    const char * sdl2_scan_code_name;
-    const char * sdl2_key_code_name;
+    SDL_Scancode sdl2_scan_code = 0;
+    int32_t sdl2_key_code = 0;
+    uint16_t sdl2_key_modifiers = 0;
+    int mox_key = 0;
+    uint32_t mox_mod = 0;
+    char mox_character = 0;
+    const char * sdl2_scan_code_name = 0;
+    const char * sdl2_key_code_name = 0;
 
     sdl2_scan_code = sdl2_event->key.keysym.scancode;
     sdl2_key_code = sdl2_event->key.keysym.sym;
@@ -472,7 +472,7 @@ void Platform_Keyboard_Event(SDL_Event * sdl2_event)
         {
             if((sdl2_key_modifiers & (KMOD_SHIFT | KMOD_CTRL | KMOD_ALT)) && (sdl2_key_code == SDLK_q))
             {
-                SDL_Event sdl2_push_event;
+                SDL_Event sdl2_push_event = { 0 };  // TODO  how to initalize and empty struct SDL_Event?
                 sdl2_push_event.type = SDL_QUIT;
                 SDL_PushEvent(&sdl2_push_event);
             }
@@ -570,10 +570,12 @@ void Platform_Keyboard_Buffer_Clear(void)
 // void Platform_Keyboard_Buffer_Add_Key_Press(SDL_Keysym * sdl2_keysym)
 void Platform_Keyboard_Buffer_Add_Key_Press(int mox_key, uint32_t mox_mod, char mox_character)
 {
-    uint16_t mox_key_num;
-    int32_t virtual_key_code;
-    uint16_t key_modifiers;
-    uint32_t kilgore_key = ((uint32_t)mox_key) | mox_mod | (((uint32_t)mox_character) << 8);
+    uint16_t mox_key_num = 0;
+    int32_t virtual_key_code = 0;
+    uint16_t key_modifiers = 0;
+    uint32_t kilgore_key = 0;
+
+    kilgore_key = ((uint32_t)mox_key) | mox_mod | (((uint32_t)mox_character) << 8);
 
     if(mox_key == MOX_KEY_OVERRUN)
     {

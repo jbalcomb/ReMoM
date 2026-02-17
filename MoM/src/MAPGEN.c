@@ -1,6 +1,9 @@
 /*
     MAGIC.EXE
     ovr051
+    ...
+    ovr054
+    ovr055
 
 MoO2
     Module: HOMEGEN
@@ -10,7 +13,7 @@ MoO2
 
 #include "MAPGEN.h"
 
-#include "../../MoM/src/INITGAME.h"
+#include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/Fonts.h"
@@ -18,23 +21,50 @@ MoO2
 #include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/Mouse.h"
 #include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DEF.h"
+#include "../../MoX/src/MOX_DAT.h"  /* _players[]; enum e_SCOUT_BITS{} */
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_TYPE.h"
 #include "../../MoX/src/random.h"
 #include "../../MoX/src/Video.h"
 
+#include "INITGAME.h"
+#include "NEXTTURN.h"
+#include "RACETYPE.h"
 #include "special.h"
+#include "Terrain.h"
 #include "TerrType.h"
+#include "UNITTYPE.h"
+#include "MGC_DATA.h"  /* terrain_stats_table[] */
 
-#include <assert.h>
+#include <assert.h>     /* assert() */
+#include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
+
+#include "../../MoM/src/MovePath.h"  /* struct s_MOVE_MODE_COST_MAPS */
+// MOM_Data.c./h but also MovePath.h
+// WZD dseg:9CAC
+// drake178: TBL_MoveMaps_EMS
+extern struct s_MOVE_MODE_COST_MAPS * movement_mode_cost_maps;
 
 
+
+
+// forward declate to shut up VS can be made static, because NIU
+static void NEWG_SetDeserts__STUB(void);
+static void CRP_NEWG_CreatePathGrid__STUB(void * moves2, void * move_path_chunks);
+
+
+
+
+
+// MGC  dseg:8EA4
+extern int16_t NEWG_Clicked_Race;
 
 // MGC  dseg:8DD6
 // drake78: IMG_NEWG_MapBuildBG
 /*
     loaded in GAME_New_Screen_7()
-    used in NEWG_CreateWorld__WIP()
+    used in Init_New_Game()
 */
 extern SAMB_ptr newgame_BUILDWOR_map_build_bar_seg;
 
@@ -101,7 +131,11 @@ char str_BuildingTheWorlds[] = "Building The Worlds...";
 // MGC  dseg:3493 61 6E 63 69 65 6E 74 20 72 75 69 6E 73 00       UU_cnst_Ruins db 'ancient ruins',0      ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
 // MGC  dseg:34A1 66 61 6C 6C 65 6E 20 74 65 6D 70 6C 65 00       UU_cnst_FallenTmpl db 'fallen temple',0 ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
 // MGC  dseg:34AF 54 45 52 52 54 59 50 45 00                      cnst_TERRTYPE_File db 'TERRTYPE',0      ; DATA XREF: NEWG_SetDeserts+26o ...
-// MGC  dseg:34B8 43 49 54 59 4E 41 4D 45 00                      cnst_CITYNAME_File db 'CITYNAME',0      ; DATA XREF: CTY_SetDefaultName+23o
+
+// MGC  dseg:34B8
+char cityname_lbx_file__MGC_ovr051[] = "CITYNAME";
+// // WZD dseg:6EC7
+// char cityname_lbx_file__ovr143[] = "CITYNAME";
 
 // MGC  dseg:34C1 00 00 00                                        align 4
 
@@ -112,8 +146,9 @@ char str_BuildingTheWorlds[] = "Building The Worlds...";
 
 
 // MGC  dseg:8EB0                                                 BEGIN:  ovr051 - Uninitialized Data  (MAPGEN)
+
 // MGC  dseg:8EB0
-// MGC  dseg:8EB0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_Landmass_Races dw 200 dup(0)       ; DATA XREF: NEWG_CreateNeutrals+39w ...
+int16_t NEWG_Landmass_Races[200];
 
 // MGC  dseg:9040
 /*
@@ -141,6 +176,8 @@ int16_t NEWG_LandmassCount;
 /*
 NEWG_CreateWorld()
 ¿ ~ MoO2 Module MAPGEN ?
+¿ MoO2  Module: INITGAME  Init_New_Game_() ?
+¿ MoO2  Module: HOMEGEN  Generate_Home_Worlds_() ?
 creates the basic profiles of the AI wizards, then
 generates the game map for both planes, drawing and
 updating a progress bar in the process
@@ -152,7 +189,7 @@ and their order of execution
 /*
 
 */
-void NEWG_CreateWorld__WIP(void)
+void Init_New_Game(void)
 {
     int16_t IDK1 = 0;  // _DI_
     int16_t IDK2 = 0;  // _SI_
@@ -184,146 +221,1043 @@ void NEWG_CreateWorld__WIP(void)
 
     Draw_Building_The_Worlds(5);
 
-    NEWG_ClearLandmasses__WIP(0);
+    NEWG_ClearLandmasses__WIP(ARCANUS_PLANE);
 
     Draw_Building_The_Worlds(10);
 
-    NEWG_ClearLandmasses__WIP(1);
+    NEWG_ClearLandmasses__WIP(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(15);
 
-    NEWG_CreateLands__WIP(0);
+    NEWG_CreateLands__WIP(ARCANUS_PLANE);
 
     Draw_Building_The_Worlds(20);
 
-    NEWG_CreateLands__WIP(1);
+    NEWG_CreateLands__WIP(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(25);
 
-    NEWG_SetBaseLands__WIP(0);
+    NEWG_SetBaseLands__WIP(ARCANUS_PLANE);
 
     Draw_Building_The_Worlds(30);
 
-    NEWG_SetBaseLands__WIP(1);
+    NEWG_SetBaseLands__WIP(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(35);
 
-    NEWG_SetSpecLands__WIP(0);
+    NEWG_SetSpecLands__WIP(ARCANUS_PLANE);
 
     Draw_Building_The_Worlds(40);
 
-    NEWG_SetSpecLands__WIP(1);
+    NEWG_SetSpecLands__WIP(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(45);
 
-    NEWG_CreateNodes__WIP();
+    Generate_Nodes();
 
     Draw_Building_The_Worlds(50);
 
-    NEWG_EqualizeNodes__WIP(0);
+    NEWG_EqualizeNodes__WIP(ARCANUS_PLANE);
 
-    NEWG_EqualizeNodes__WIP(1);
+    NEWG_EqualizeNodes__WIP(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(55);
 
-    // TODO  NEWG_CreateTowers();
+    Generate_Towers();
 
     Draw_Building_The_Worlds(60);
 
-    // TODO  NEWG_TileIsleExtend(0);
+    NEWG_TileIsleExtend__WIP(ARCANUS_PLANE);
 
-    // TODO  NEWG_TileIsleExtend(1);
+    NEWG_TileIsleExtend__WIP(MYRROR_PLANE);
 
-    // TODO  NEWG_CreateEZs();
+    Generate_Lairs();
 
     Draw_Building_The_Worlds(65);
 
     _units = 0;
 
-    // TODO  NEWG_CreateCapitals();
+    Generate_Home_City__WIP();
 
     Draw_Building_The_Worlds(70);
 
-    // TODO  NEWG_CreateNeutrals(0);
+    Generate_Neutral_Cities__WIP(ARCANUS_PLANE);
 
-    // TODO  NEWG_CreateNeutrals(1);
+    Generate_Neutral_Cities__WIP(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(75);
 
-    // TODO  NEWG_CreateSpecials(0);
+    Generate_Terrain_Specials(ARCANUS_PLANE);
 
-    // TODO  NEWG_CreateSpecials(1);
+    Generate_Terrain_Specials(MYRROR_PLANE);
 
-    // TODO  NEWG_CreateRoads(0);
+    Generate_Roads(ARCANUS_PLANE);
 
-    // TODO  NEWG_CreateRoads(1);
+    Generate_Roads(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(80);
 
-    // TODO  NEWG_CreateShores();
+    NEWG_CreateShores__STUB();
 
     Draw_Building_The_Worlds(85);
                                           
     for(IDK1 = 0; IDK1 < 10; IDK1++)
     {
-        for(IDK2 = 0; IDK2 < 2000; IDK2++)
-        {
-            // TODO  if(NEWG_CreateRiver(0) != 0)
-            // TODO  {
-            // TODO      break;
-            // TODO  }
-        }
-        for(IDK2 = 0; IDK2 < 2000; IDK2++)
-        {
-            // if(NEWG_CreateRiver(1) != 0)
-            // {
-            //     break;
-            // }
-        }
-
+        for(IDK2 = 0; ((IDK2 < 2000) && (NEWG_CreateRiver__STUB(0) != 0)); IDK2++) { }
+        for(IDK2 = 0; ((IDK2 < 2000) && (NEWG_CreateRiver__STUB(1) != 0)); IDK2++) { }
     }
 
-    // TODO  NEWG_SetRiverTiles(0);
+    NEWG_SetRiverTiles__STUB(ARCANUS_PLANE);
 
-    // TODO  NEWG_SetRiverTiles(1);
+    NEWG_SetRiverTiles__STUB(MYRROR_PLANE);
 
-    // TODO  NEWG_SetDeserts();
+    NEWG_SetDeserts__STUB();
 
     Draw_Building_The_Worlds(85);
 
-    // TODO  NEWG_RandomizeTiles();
+    NEWG_RandomizeTiles__STUB();
 
-    // TODO  NEWG_SetMoveMaps(0);
+    Movement_Mode_Cost_Maps(ARCANUS_PLANE);
 
-    // TODO  NEWG_SetMoveMaps(1);
+    Movement_Mode_Cost_Maps(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(90);
 
-    // TODO  CRP_NEWG_CreatePathGrids(0);
+    CRP_NEWG_CreatePathGrids__WIP(ARCANUS_PLANE);
 
-    // TODO  CRP_NEWG_CreatePathGrids(1);
+    CRP_NEWG_CreatePathGrids__WIP(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(95);
 
-    // TODO  NEWG_SetScoutingMaps();
+    Init_Square_Explored();
 
-    // TODO  NEWG_AnimateOceans();
+    NEWG_AnimateOceans__STUB();
 
-    // TODO  NEWG_EZ_MarkHadnLeft();
+    Set_Upper_Lair_Guardian_Count();
 
 }
 
 // MGC o51p02
 // drake178: NEWG_EZ_MarkHadnLeft()
+/*
+; copies the encounter guardian amounts into the upper
+; nibble of the same byte to create the had'n'left
+; structure marking both the initial and remaining
+; monsters in the records (not that it is actually used
+; for anything other than to complicate things)
+*/
+/*
+
+*/
+void Set_Upper_Lair_Guardian_Count(void)
+{
+    int16_t itr_lairs = 0;  // _SI_
+
+    for(itr_lairs = 0; itr_lairs < NUM_LAIRS; itr_lairs++)
+    {
+
+        _LAIRS[itr_lairs].guard1_count = (_LAIRS[itr_lairs].guard1_count | (_LAIRS[itr_lairs].guard1_count << 4));
+
+        _LAIRS[itr_lairs].guard2_count = (_LAIRS[itr_lairs].guard2_count | (_LAIRS[itr_lairs].guard2_count << 4));
+
+    }
+
+}
+
 
 // MGC o51p03
 // drake178: NEWG_TileIsleExtend()
+/*
+; PATCHED / rewritten in the worldgen customizer
+;
+; attempts to extend some of the single tile islands
+; created by the node and tower generator functions
+;
+; BUG: the switch values are botched, resulting in
+; significantly less added tiles
+*/
+/*
+
+*/
+void NEWG_TileIsleExtend__WIP(int16_t wp)
+{
+    int16_t Grid_Index = 0;
+    int16_t Can_Convert = 0;
+    int16_t Random_Y_Modifier = 0;
+    int16_t Random_X_Modifier = 0;
+    int16_t Convert_Attempts = 0;
+    int16_t square_has_tower = 0;
+    int16_t itr_towers = 0;
+    int16_t terrain_type = 0;
+    int16_t itr_wy = 0;  // _DI_
+    int16_t itr_wx = 0;  // _SI_
+
+    for(itr_wy = 1; itr_wy < 39; itr_wy++)
+    {
+
+        for(itr_wx = 1; itr_wx < 59; itr_wx++)
+        {
+
+            // ; check if there is a tower of wizardry on the tile
+
+            terrain_type = _world_maps[((wp * WORLD_SIZE) + (itr_wy * WORLD_WIDTH) + itr_wx )];
+
+            square_has_tower = ST_FALSE;
+
+            for(itr_towers = 0; itr_towers < NUM_TOWERS; itr_towers++)
+            {
+
+                if(
+                    (_TOWERS[itr_towers].wy == itr_wy)
+                    &&
+                    (_TOWERS[itr_towers].wx == itr_wx)
+                )
+                {
+
+                    square_has_tower = ST_TRUE;
+
+                }
+
+            }
+
+            // ; skip if the tile does not have Ocean in all cardinal
+            // ; directions (diagonals are not checked)
+
+            if(
+                (terrain_type == tt_SorceryNode)
+                ||
+                (terrain_type == tt_NatureNode)
+                ||
+                (terrain_type == tt_ChaosNode)
+                ||
+                (square_has_tower == ST_TRUE)
+            )
+            {
+
+                if(
+                    (TILE_IsOcean(itr_wx, (itr_wy - 1), wp) == ST_TRUE)  // ; tile above
+                    &&
+                    (TILE_IsOcean((itr_wx - 1), itr_wy, wp) == ST_TRUE)  // ; tile to the left
+                    &&
+                    (TILE_IsOcean((itr_wx + 1), itr_wy, wp) == ST_TRUE)  // ; tile to the right
+                    &&
+                    (TILE_IsOcean(itr_wx, (itr_wy + 1), wp) == ST_TRUE)  // ; tile below
+                )
+                {
+
+                    if(Random(3) > 1)
+                    {
+
+                        Convert_Attempts = (1 + Random(8));
+
+                        for(itr_towers = 0; itr_towers < Convert_Attempts; itr_towers++)
+                        {
+
+                            Random_X_Modifier = (Random(3) - 2);
+                            
+                            Random_Y_Modifier = (Random(3) - 2);
+
+                            if(
+                                (Random_X_Modifier != 0)
+                                ||
+                                (Random_Y_Modifier != 0)
+                            )
+                            {
+
+                                if(
+                                    (TILE_HasTower((itr_wx + Random_X_Modifier), (itr_wy + Random_Y_Modifier)) == ST_FALSE)
+                                    &&
+                                    (TILE_HasNode((itr_wx + Random_X_Modifier), (itr_wy + Random_Y_Modifier), wp) == ST_FALSE)
+                                )
+                                {
+
+                                    // ; PATCHED here previously to fix the BUG below
+
+                                    Grid_Index = ((Random_Y_Modifier * 3) + Random_X_Modifier + 1);
+
+                                    Can_Convert = ST_FALSE;
+
+                                    // ; BUG: the actual range is -3 to +5, not 1 to 9
+
+                                    switch(Grid_Index)
+                                    {
+                                        case 0:
+                                        {
+
+                                            // DNE
+
+                                        } break;
+                                        case 1:
+                                        {
+
+                                            if(
+                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier + 1) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier))] == tt_Ocean1)
+                                                &&
+                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier + 1))] == tt_Ocean1)
+                                            )
+                                            {
+
+                                                Can_Convert = ST_FALSE;
+
+                                            }
+                                            else
+                                            {
+
+                                                Can_Convert = ST_TRUE;
+
+                                            }
+
+                                        } break;
+                                        case 2:
+                                        {
+
+                                            Can_Convert = ST_TRUE;
+
+                                        }
+                                        case 3:
+                                        {
+
+                                            if(
+                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier + 1) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier))] == tt_Ocean1)
+                                                &&
+                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier - 1))] == tt_Ocean1)
+                                            )
+                                            {
+
+                                                Can_Convert = ST_FALSE;
+
+                                            }
+                                            else
+                                            {
+
+                                                Can_Convert = ST_TRUE;
+
+                                            }
+
+                                        } break;
+                                        case 4:
+                                        {
+
+                                            Can_Convert = ST_TRUE;
+
+                                        }
+                                        case 5:
+                                        {
+
+                                            Can_Convert = ST_FALSE;
+
+                                        }
+                                        case 6:
+                                        {
+
+                                            Can_Convert = ST_TRUE;
+
+                                        }
+                                        case 7:
+                                        {
+
+                                            if(
+                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier - 1) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier))] == tt_Ocean1)
+                                                &&
+                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier + 1))] == tt_Ocean1)
+                                            )
+                                            {
+
+                                                Can_Convert = ST_FALSE;
+
+                                            }
+                                            else
+                                            {
+
+                                                Can_Convert = ST_TRUE;
+
+                                            }
+
+                                        } break;
+                                        case 8:
+                                        {
+
+                                            Can_Convert = ST_TRUE;
+
+                                        }
+                                        case 9:
+                                        {
+
+                                            if(
+                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier - 1) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier))] == tt_Ocean1)
+                                                &&
+                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier - 1))] == tt_Ocean1)
+                                            )
+                                            {
+
+                                                Can_Convert = ST_FALSE;
+
+                                            }
+                                            else
+                                            {
+
+                                                Can_Convert = ST_TRUE;
+
+                                            }
+
+                                        } break;
+
+                                    }
+
+                                    if(Can_Convert == ST_TRUE)
+                                    {
+
+                                        TILE_SetLandMass__WIP(wp, (itr_wx + Random_X_Modifier), (itr_wy + Random_Y_Modifier));
+
+                                        _world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier))] = tt_Grasslands1;
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+                    
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // MGC o51p04
 // drake178: NEWG_CreateTowers()
+/*
+; PATCHED / rewritten in the worldgen customizer
+;
+; creates the six towers of wizardry connecting the
+; planes, which need to be at least 4 tiles away from
+; any nodes, and at least 10 tiles away from each other
+; if possible
+;
+; BUG: fails to initialize the attempt counter,
+;  effectively resulting in the first 500 tries being
+;  either discarded or becoming more than 500
+*/
+/*
+
+*/
+void Generate_Towers(void)
+{
+    int16_t Tries = 0;
+    int16_t Min_Distance = 0;
+    int16_t wy = 0;
+    int16_t wx = 0;
+    int16_t itr1 = 0;  // _DI_
+    int16_t itr2 = 0;  // _SI_
+
+    Min_Distance = 10;
+
+    for(itr1 = 0; itr1 < NUM_TOWERS; itr1++)
+    {
+
+        while(1)
+        {
+
+            Tries++;  // BUGBUG uninitialized!
+
+            if(Tries > 500)
+            {
+
+                Tries = 450;
+
+                Min_Distance--;
+
+            }
+
+            wx = (2 + Random(54));
+
+            wy = (2 + Random(34));
+
+            if(
+                (_world_maps[((ARCANUS_PLANE * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] != tt_Ocean1)
+                ||
+                (_world_maps[((MYRROR_PLANE * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] != tt_Ocean1)
+                ||
+                (Random(40) == 1)
+            )
+            {
+
+                for(itr2 = 0; itr2 < itr1; itr2++)
+                {
+
+                    if(Delta_XY_With_Wrap(wx, wy, _TOWERS[itr2].wx, _TOWERS[itr2].wy, WORLD_WIDTH) < Min_Distance)
+                    {
+
+                        break;
+
+                    }
+
+                }
+
+                for(itr2 = 0; itr2 < NUM_NODES; itr2++)
+                {
+
+                    if(Delta_XY_With_Wrap(wx, wy, _NODES[itr2].wx, _NODES[itr2].wy, WORLD_WIDTH) < 4)
+                    {
+
+                        break;
+
+                    }
+
+                }
+
+                _TOWERS[itr1].wx = (int8_t)wx;
+
+                _TOWERS[itr1].wy = (int8_t)wy;
+
+                _TOWERS[itr1].owner_idx = ST_UNDEFINED;
+
+                TILE_SetLandMass__WIP(ARCANUS_PLANE, wx, wy);
+
+                TILE_SetLandMass__WIP(MYRROR_PLANE, wx, wy);
+
+                _world_maps[((ARCANUS_PLANE * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = _Grasslands1;
+
+                _world_maps[((MYRROR_PLANE * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = _Grasslands1;
+
+                break;
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // MGC o51p05
 // drake178: NEWG_CreateCapitals()
+/*
+; PATCHED / rewritten in the worldgen customizer
+;
+; creates the fortress and corresponding capital city
+; records for each player, along with their basic
+; starting units
+;
+; BUG: the condition to allow AI high elves only on
+;  Forest tiles can restart the whole fortress
+;  generation process, yielding capitals closer to
+;  each other or other objects than intended
+*/
+/*
+SEEALSO: MoX-NewGame-Capitols.md
+
+MoO2
+MoDule: HOMEGEN
+Generate_Home_Worlds_()
+Generate_Home_Worlds_1_()
+
+Randomize_Home_Worlds_()
+Modify_Home_Worlds_()
+
+Assign_Home_Star_Names_()
+
+Init_Homeworld_Colony_()
+    |-> Init_Homeworld_Colony2_()
+        |-> Create_Ship_()
+
+Module: ERICNET
+    code (0 bytes) Init_Homeworld_Colony2_
+        Address: 01:00013A3D
+    code (0 bytes) Init_Homeworld_Colony_
+        Address: 01:00013FA7
+
+
+Init_New_Game_()
+
+movsx   eax, si
+push    eax
+push    offset aMapD                    ; "Map:  %d"
+push    17h
+push    0
+call    __wcpp_1_unwind_leave_
+add     esp, 10h
+
+
+push    dword ptr _settings.IDK_random_seed
+push    offset aSeedLd                  ; "Seed: %ld"
+push    24
+push    0
+mov     [ebp+IDK_Debug_Exit_Done], 1
+call    __wcpp_1_unwind_leave_
+add     esp, 10h
+
+
+xor     edi, edi
+inc     esi
+call    Screen_Flic_Capture
+
+Change_Home_City_Name_Popup(HUMAN_PLAYER_IDX);
+
+The largest section of the main movement screen is occupied by the
+main movement view. Here you can see a small town with a flag on top
+that represents your starting city (aka “enchanted fortress”).
+
+*/
+void Generate_Home_City__WIP(void)
+{
+    int16_t max_pop_failures = 0;
+    int16_t minimum_site_distance = 0;  // used for _NODES[], _TOWERS[], _LAIRS[]
+    int16_t minimum_fortress_distance = 0;
+    int16_t itr = 0;
+    int16_t Invalid = 0;
+    int16_t Tries_Per_Distance = 0;
+    int16_t wy = 0;
+    int16_t wx = 0;
+    int16_t wp = 0;
+    int16_t UU_Fortresses[NUM_PLANES] = { 0, 0 };  // tracks fortress record populations? 1:1 with player_idx in the players loop?
+    int16_t player_idx = 0;
+    int16_t unit_type = 0;  // _DI_
+    int16_t bldg_idx = 0;  // _SI_
+
+    minimum_fortress_distance = 16;
+
+    minimum_site_distance = 8;
+
+// ; generate capitals for each player, including choosing
+// ; a starting race for the AI wizards
+// ; 
+// ; contains multiple BUGs in addition to the methodology
+// ;  being utterly horrible
+
+    while(1)
+    {
+Loop_Distances:
+
+        minimum_fortress_distance--;
+
+        minimum_site_distance--;
+
+        SETMIN(minimum_site_distance, 1);
+
+        SETMIN(minimum_fortress_distance, 10);
+
+        Tries_Per_Distance = 0;
+
+        UU_Fortresses[ARCANUS_PLANE] = 0;
+
+        UU_Fortresses[MYRROR_PLANE] = 0;
+
+        max_pop_failures = 0;
+
+        while(1)
+        {
+Loop_MaxPopTries:
+
+            for(player_idx = 0; player_idx < NUM_PLAYERS; player_idx++)  // ; BUG: there are only at most 5 players
+            {
+
+                if(Tries_Per_Distance < 1000)
+                {
+// jump back here if the location is invalid
+// jump back here if the max pop is too low
+Loop_Location_1:
+                    Tries_Per_Distance++;
+                    wp = ARCANUS_PLANE;
+                    if(_players[player_idx].myrran != ST_FALSE)
+                    {
+                        wp = MYRROR_PLANE;
+                    }
+                    wx = (2 + Random((WORLD_WIDTH - 6)));  // { 3, ..., 56}
+                    wy = (2 + Random((WORLD_HEIGHT - 6)));  // { 3}
+
+                    Invalid = ST_FALSE;
+
+                    if(_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] == tt_Ocean1)
+                    {
+
+                        Invalid = ST_TRUE;
+                        
+                    }
+
+                    // ; invalidate the attempt if any other capital is
+                    // ; closer than the minimum distance
+                    for(bldg_idx = 0; bldg_idx < player_idx; bldg_idx++)
+                    {
+
+                        if(_FORTRESSES[bldg_idx].wp == wp)
+                        {
+
+                            if(Delta_XY_With_Wrap(wx, wy, _FORTRESSES[bldg_idx].wx, _FORTRESSES[bldg_idx].wy, WORLD_WIDTH) < minimum_fortress_distance)
+                            {
+
+                                Invalid = ST_TRUE;
+
+                            }
+
+                        }
+
+                    }
+
+                    // ; invalidate the attempt if any node is closer than the
+                    // ; minimum distance
+                    // ; 
+                    // ; BUG: the encounter zone check below will also catch
+                    // ;  these
+                    // ; BUG: because the distance is halved, same tile is not
+                    // ; excluded
+
+                    for(bldg_idx = 0; bldg_idx < NUM_NODES; bldg_idx++)
+                    {
+
+                        if(_NODES[bldg_idx].wp == wp)
+                        {
+
+                            if(Delta_XY_With_Wrap(wx, wy, _NODES[bldg_idx].wx, _NODES[bldg_idx].wy, WORLD_WIDTH) < minimum_site_distance)
+                            {
+
+                                Invalid = ST_TRUE;
+
+                            }
+
+                        }
+
+                    }
+
+                    // ; invalidate the attempt if any tower is closer than
+                    // ; the minimum distance
+                    // ; 
+                    // ; BUG: the encounter zone check below will also catch
+                    // ;  these
+                    // ; BUG: because the distance is halved, same tile is not
+                    // ; excluded
+
+                    for(bldg_idx = 0; bldg_idx < NUM_TOWERS; bldg_idx++)
+                    {
+
+                        if(Range(wx, wy, _TOWERS[bldg_idx].wx, _TOWERS[bldg_idx].wy) < minimum_site_distance)  // BUGBUG  should be Delta_XY_With_Wrap()
+                        {
+
+                            Invalid = ST_TRUE;
+
+                        }
+
+                    }
+
+                    // ; invalidate the attempt if any encounter zone is
+                    // ; closer than the minimum distance
+                    // ; BUG: because the distance is halved, same tile is not
+                    // ; excluded
+
+                    for(bldg_idx = 0; bldg_idx < NUM_LAIRS; bldg_idx++)
+                    {
+
+                        if(_LAIRS[bldg_idx].wp == wp)
+                        {
+
+                            if(Delta_XY_With_Wrap(wx, wy, _LAIRS[bldg_idx].wx, _LAIRS[bldg_idx].wy, WORLD_WIDTH) < minimum_site_distance)
+                            {
+
+                                Invalid = ST_TRUE;
+
+                            }
+
+                        }
+
+                    }
+
+                    if(
+                        (Tries_Per_Distance < 1000)
+                        &&
+                        (Invalid == ST_TRUE)
+                    )
+                    {
+                        goto Loop_Location_1;
+                    }
+
+                    if((8 - (player_idx / 3)) < City_Maximum_Size_NewGame(wx, wy, wp))
+                    {
+                        max_pop_failures++;
+                        if(max_pop_failures > 500)
+                        {
+                            goto Loop_MaxPopTries;
+                        }
+                        else
+                        {
+                            goto Loop_Location_1;
+                        }
+                    }
+                    else
+                    {
+                        // ; create a fortress record for the player, then
+                        // ; increase the loop variable
+                        _FORTRESSES[player_idx].wx = (int8_t)wx;
+                        _FORTRESSES[player_idx].wy = (int8_t)wy;
+                        _FORTRESSES[player_idx].wp = (int8_t)wp;
+                        _FORTRESSES[player_idx].wx = (int8_t)wx;
+                        _FORTRESSES[player_idx].active = ST_TRUE;
+                        UU_Fortresses[wp]++;
+
+#ifdef STU_DEBUG
+                        printf("player_idx: %d; terrain type index: %d;\n", player_idx, _world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)]);
+                        dbg_prn("player_idx: %d; terrain type index: %d;\n", player_idx, _world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)]);
+#endif
+
+                    }
+
+                }
+
+            }
+
+            if(Tries_Per_Distance >= 1000)
+            {
+
+                goto Loop_Distances;
+
+            }
+
+
+
+// @@Do_The_Cities:
+
+
+    
+            // ; select a random race for the AI player, and set it
+            // ; into the next city record - myrran wizards get a
+            // ; myrran race, while arcanians above normal difficulty
+            // ; can only pick halflings, high elves, high men,
+            // ; klackons, or nomads
+
+            for(_cities = 0, itr = 0; itr < _num_players; _cities++, itr++)
+            {
+
+                if(itr == 0)
+                {
+
+                    _CITIES[_cities].race = (int8_t)NEWG_Clicked_Race;
+
+                }
+                else
+                {
+                        
+                    if(_players[itr].myrran == ST_FALSE)
+                    {
+
+                        switch((Random(5) - 1))
+                        {
+                            case 0: { _CITIES[_cities].race = rt_Beastmen;  } break;
+                            case 1: { _CITIES[_cities].race = rt_Dark_Elf;  } break;
+                            case 2: { _CITIES[_cities].race = rt_Draconian; } break;
+                            case 3: { _CITIES[_cities].race = rt_Dwarf;     } break;
+                            case 4: { _CITIES[_cities].race = rt_Troll;     } break;
+                        }
+
+                    }
+                    else
+                    {
+
+                        if(_difficulty <= god_Normal)
+                        {
+
+                            switch((Random(9) - 1))
+                            {
+                                case 0: { _CITIES[_cities].race = rt_Barbarian; } break;
+                                case 1: { _CITIES[_cities].race = rt_Gnoll;     } break;
+                                case 2: { _CITIES[_cities].race = rt_Halfling;  } break;
+                                case 3: { _CITIES[_cities].race = rt_High_Elf;  } break;
+                                case 4: { _CITIES[_cities].race = rt_High_Men;  } break;
+                                case 5: { _CITIES[_cities].race = rt_Klackon;   } break;
+                                case 6: { _CITIES[_cities].race = rt_Lizardman; } break;
+                                case 7: { _CITIES[_cities].race = rt_Nomad;     } break;
+                                case 8: { _CITIES[_cities].race = rt_Orc;       } break;
+                            }
+
+                        }
+                        else
+                        {
+
+                            switch((Random(5) - 1))
+                            {
+                                case 0: { _CITIES[_cities].race = rt_Klackon;  } break;
+                                case 1: { _CITIES[_cities].race = rt_High_Elf; } break;
+                                case 2: { _CITIES[_cities].race = rt_Halfling; } break;
+                                case 3: { _CITIES[_cities].race = rt_High_Men; } break;
+                                case 4: { _CITIES[_cities].race = rt_Nomad;    } break;
+                            }
+
+                        }
+
+                    }
+
+                    /*
+                    HERE:
+                    fucks off because it requires a Forest square for High Elves
+                    definitely is not just falling through the loop
+                    otherwise, it does through the balance of the loop in a perfectly normal looking manner
+                    */
+                    if(
+                        (_CITIES[_cities].race == rt_High_Elf)
+                        &&
+                        (Square_Is_Forest_NewGame(wx, wy, wp) == ST_FALSE)
+                    )
+                    {
+
+                        goto Loop_Location_1;
+
+                    }
+
+                }
+
+                // ; create a capital city for the player based on their
+                // ; fortress record
+
+                _CITIES[_cities].wx = _FORTRESSES[itr].wx;
+                _CITIES[_cities].wy = _FORTRESSES[itr].wy;
+                _CITIES[_cities].wp = _FORTRESSES[itr].wp;
+                _CITIES[_cities].owner_idx = (int8_t)itr;
+                _CITIES[_cities].size = 1;  // CTY_Hamlet ... ~== (4 / 4)
+                _CITIES[_cities].population = 4;
+                _CITIES[_cities].bldg_cnt = 0;
+                _CITIES[_cities].Prod_Accu = 0;
+                _CITIES[_cities].Pop_10s = 0;
+                if(itr == HUMAN_PLAYER_IDX)
+                {
+                    _CITIES[_cities].construction = bt_Housing;
+                }
+                else
+                {
+                    _CITIES[_cities].construction = bt_AUTOBUILD;
+                }
+                _CITIES[_cities].enchantments[WALL_OF_FIRE] = ST_FALSE;
+                _CITIES[_cities].enchantments[WALL_OF_DARKNESS] = ST_FALSE;  // out of order
+                _CITIES[_cities].enchantments[CHAOS_RIFT] = ST_FALSE;
+                _CITIES[_cities].enchantments[DARK_RITUALS] = ST_FALSE;
+                _CITIES[_cities].enchantments[EVIL_PRESENCE] = ST_FALSE;
+                _CITIES[_cities].enchantments[CURSED_LANDS] = ST_FALSE;
+                _CITIES[_cities].enchantments[PESTILENCE] = ST_FALSE;
+                _CITIES[_cities].enchantments[CLOUD_OF_SHADOW] = ST_FALSE;
+                _CITIES[_cities].enchantments[ALTAR_OF_BATTLE] = ST_FALSE;  // out of order
+                _CITIES[_cities].enchantments[FAMINE] = ST_FALSE;
+                _CITIES[_cities].enchantments[FLYING_FORTRESS] = ST_FALSE;
+                _CITIES[_cities].enchantments[DEATH_WARD] = ST_FALSE;  // out of order
+                _CITIES[_cities].enchantments[CHAOS_WARD] = ST_FALSE;  // out of order
+                _CITIES[_cities].enchantments[LIFE_WARD] = ST_FALSE;  // out of order
+                _CITIES[_cities].enchantments[SORCERY_WARD] = ST_FALSE;  // out of order
+                _CITIES[_cities].enchantments[NATURE_WARD] = ST_FALSE;  // out of order
+                _CITIES[_cities].enchantments[NATURES_EYE] = ST_FALSE;
+                _CITIES[_cities].enchantments[EARTH_GATE] = ST_FALSE;
+                _CITIES[_cities].enchantments[STREAM_OF_LIFE] = ST_FALSE;
+                _CITIES[_cities].enchantments[GAIAS_BLESSING] = ST_FALSE;
+                _CITIES[_cities].enchantments[INSPIRATIONS] = ST_FALSE;
+                _CITIES[_cities].enchantments[PROSPERITY] = ST_FALSE;
+                _CITIES[_cities].enchantments[ASTRAL_GATE] = ST_FALSE;
+                _CITIES[_cities].enchantments[HEAVENLY_LIGHT] = ST_FALSE;
+                _CITIES[_cities].enchantments[CONSECRATION] = ST_FALSE;
+                _CITIES[_cities].enchantments[NIGHTSHADE] = ST_FALSE;
+                _CITIES[_cities].farmer_count = 3;
+                for(bldg_idx = 0; bldg_idx < NUM_BUILDINGS; bldg_idx++)
+                {
+                    _CITIES[_cities].bldg_status[bldg_idx] = bs_NotBuilt;
+                }
+                _CITIES[_cities].bldg_status[bt_NONE] = bs_Replaced;
+                _CITIES[_cities].bldg_status[bt_Smithy] = bs_Built;
+                _CITIES[_cities].bldg_status[bt_Barracks] = bs_Built;
+                _CITIES[_cities].bldg_status[bt_BuildersHall] = bs_Built;
+
+                // Random_City_Name_By_Race(_CITIES[city_idx].race, _CITIES[city_idx].name);
+                Random_City_Name_By_Race_NewGame(_CITIES[_cities].race, _CITIES[_cities].name);
+
+            }
+
+            // if we get here, we're Done-Done?!?
+            goto Done_Done;
+
+        }
+
+    }
+
+
+
+Done_Done:
+
+    // ; create a corresponding spearmen unit in the capital
+    // ; of each wizard whose starting race is not dwarf
+
+    for(itr = 0; itr < _num_players; itr++)
+    {
+    
+        switch(_CITIES[itr].race)
+        {
+            case rt_Barbarian: { unit_type = ut_BarbSpearmen;   } break;
+            case rt_Beastmen:  { unit_type = ut_BeastSpearmen;  } break;
+            case rt_Dark_Elf:  { unit_type = ut_DrowSpearmen;   } break;
+            case rt_Draconian: { unit_type = ut_DracSpearmen;   } break;
+            case rt_Dwarf:     { unit_type = ut_DwarfSwordsmen; } break;
+            case rt_Gnoll:     { unit_type = ut_GnollSpearmen;  } break;
+            case rt_Halfling:  { unit_type = ut_HflngSpearmen;  } break;
+            case rt_High_Elf:  { unit_type = ut_HElfSpearmen;   } break;
+            case rt_High_Men:  { unit_type = ut_HMenSpearmen;   } break;
+            case rt_Klackon:   { unit_type = ut_KlckSpearmen;   } break;
+            case rt_Lizardman: { unit_type = ut_LizSpearmen;    } break;
+            case rt_Nomad:     { unit_type = ut_NmdSpearmen;    } break;
+            case rt_Orc:       { unit_type = ut_OrcSpearmen;    } break;
+            case rt_Troll:     { unit_type = ut_TrlSpearmen;    } break;
+        }
+    
+        // Dwarves get two Swordsmen
+        if(_CITIES[itr].race != rt_Dwarf)
+        {
+
+            Create_Unit_NewGame(unit_type, itr, _CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, itr);
+
+        }
+
+    }
+
+    // ; create a corresponding swordsmen unit in the capital
+    // ; of each wizard, with an additional one if their
+    // ; starting race is dwarf
+
+    for(itr = 0; itr < _num_players; itr++)
+    {
+    
+        switch(_CITIES[itr].race)
+        {
+            case rt_Barbarian: { unit_type = ut_BarbSwordsmen;  } break;
+            case rt_Beastmen:  { unit_type = ut_BeastSwordsmen; } break;
+            case rt_Dark_Elf:  { unit_type = ut_DrowSwordsmen;  } break;
+            case rt_Draconian: { unit_type = ut_DracSwordsmen;  } break;
+            case rt_Dwarf:     { unit_type = ut_DwarfSwordsmen; } break;
+            case rt_Gnoll:     { unit_type = ut_GnollSwordsmen; } break;
+            case rt_Halfling:  { unit_type = ut_HflngSwordsmen; } break;
+            case rt_High_Elf:  { unit_type = ut_HElfSwordsmen;  } break;
+            case rt_High_Men:  { unit_type = ut_HMenSwordsmen;  } break;
+            case rt_Klackon:   { unit_type = ut_KlckSwordsmen;  } break;
+            case rt_Lizardman: { unit_type = ut_LizSwordsmen;   } break;
+            case rt_Nomad:     { unit_type = ut_NmdSwordsmen;   } break;
+            case rt_Orc:       { unit_type = ut_OrcSwordsmen;   } break;
+            case rt_Troll:     { unit_type = ut_TrlSwordsmen;   } break;
+        }
+    
+        if(_CITIES[itr].race == rt_Dwarf)
+        {
+
+            Create_Unit_NewGame(unit_type, itr, _CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, itr);
+
+        }
+
+        Create_Unit_NewGame(unit_type, itr, _CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, itr);
+
+    }
+
+    // @@Done
+
+}
+
 
 // MGC o51p06
 // drake178: NEWG_ClearLandmasses()
@@ -857,8 +1791,8 @@ void NEWG_SetBaseLands__WIP(int16_t wp)
                 // ;   6+: Mountains ($A4)
 
 // tt_Ocean1      = 0x0,
-// TT_BugGrass    = 0x1,
-// TT_Shore1_1st  = 0x2,
+// tt_BugGrass    = 0x1,
+// tt_Shore1_Fst  = 0x2,
 // DEDU what is terrain type 3? ...TT_Shore1_Lst>
 
                 if(_world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] <= 3)
@@ -1215,7 +2149,7 @@ void NEWG_CreateLands__WIP(int16_t wp)
 /*
 
 */
-void NEWG_CreateNodes__WIP(void)
+void Generate_Nodes(void)
 {
     int16_t wy = 0;
     int16_t wx = 0;
@@ -1299,8 +2233,8 @@ somehow1:
 
                 }
 
-                _NODES[itr].wx = wx;
-                _NODES[itr].wy = wy;
+                _NODES[itr].wx = (int8_t)wx;
+                _NODES[itr].wy = (int8_t)wy;
                 _NODES[itr].wp = ARCANUS_PLANE;
                 _NODES[itr].flags = 0;
                 _NODES[itr].owner_idx = ST_UNDEFINED;
@@ -1915,11 +2849,826 @@ void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy)
 
 // MGC o51p16
 // drake178: NEWG_CreateEZs()
-// NEWG_CreateEZs()
+/*
+; populates the encounter zone table
+*/
+/*
+
+*/
+void Generate_Lairs(void)
+{
+    int16_t wy = 0;
+    int16_t wx = 0;
+    int16_t itr2 = 0;
+    int16_t wp = 0;
+    int16_t Strong_Lair_Amt = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t IDK = 0;  // _DI_
+
+    Strong_Lair_Amt = 25;
+
+    // create the 6 Tower of Wizardry encounters on Arcanus
+
+    for(itr = 0; itr < NUM_TOWERS; itr++)
+    {
+
+        NEWG_CreateEncounter__WIP(itr, ARCANUS_PLANE, _TOWERS[itr].wx, _TOWERS[itr].wy, 3, 0, (650 + (50 * Random(11))));
+
+    }
+
+    // ; copy the Arcanus tower encounters into a separate set
+    // ; on Myrror (same records otherwise)
+
+    for(itr = NUM_TOWERS; itr < (2 * NUM_TOWERS); itr++)
+    {
+
+        memcpy(&_LAIRS[itr], &_LAIRS[(itr - NUM_TOWERS)], sizeof(struct s_LAIR));
+
+        _LAIRS[itr].wp = MYRROR_PLANE;
+
+    }
+
+    // ; create the 30 node encounters
+
+    for(itr = 0; itr < NUM_NODES; itr++)
+    {
+
+        IDK = (((((_NODES[itr].power - 1) * _magic) / 2) / 6) + 1);
+
+        SETMAX(IDK, 4);
+
+        SETMIN(IDK, 1);
+
+        NEWG_CreateEncounter__WIP(((2 * NUM_TOWERS) + itr), _NODES[itr].wp, _NODES[itr].wx, _NODES[itr].wy, IDK, (_NODES[itr].type + 1), ((((_NODES[itr].power * _NODES[itr].power) * (4 + Random(11))) * (_magic + 1)) / 2));
+
+    }
+
+    // ; create 25 random strong encounters on non-ocean tiles
+
+    for(itr = 0; itr < Strong_Lair_Amt; itr++)
+    {
+
+        wp = (Random(2) - 1);
+
+        wx = (2 + Random(54));
+
+        wy = (2 + Random(34));
+
+        if(TILE_IsOcean(wx, wy, wp) != ST_TRUE)
+        {
+
+            for(itr2 = 0; ((itr + 42) > itr2); itr2++)
+            {
+
+                if(Delta_XY_With_Wrap(wx, wy, _LAIRS[itr2].wx, _LAIRS[itr2].wy, WORLD_WIDTH) < 2)
+                {
+                    break;
+                }
+
+            }
+
+            if(wp == ARCANUS_PLANE)
+            {
+
+                IDK = (50 + (Random(29) * 50));
+
+            }
+            else
+            {
+
+                IDK = (100 + (Random(24) * 100));
+
+            }
+
+            NEWG_CreateEncounter__WIP((((2 * NUM_TOWERS) + NUM_NODES) + itr), wp, wx, wy, IDK, 4, IDK);
+
+        }
+
+    }
+
+    // ; create 32 weak random encounters on non-ocean tiles
+
+    for(itr = 0; itr < 32; itr++)
+    {
+
+        wp = (Random(2) - 1);
+
+        wx = (2 + Random(54));
+
+        wy = (2 + Random(34));
+
+        if(TILE_IsOcean(wx, wy, wp) != ST_TRUE)
+        {
+
+            for(itr2 = 0; ((itr + (((2 * NUM_TOWERS) + NUM_NODES) + Strong_Lair_Amt)) > itr2); itr2++)
+            {
+
+                if(Delta_XY_With_Wrap(wx, wy, _LAIRS[itr2].wx, _LAIRS[itr2].wy, WORLD_WIDTH) < 2)
+                {
+                    break;
+                }
+
+            }
+
+            if(wp == ARCANUS_PLANE)
+            {
+
+                IDK = (Random(10) * 10);
+
+            }
+            else
+            {
+
+                IDK = (Random(20) * 10);
+
+            }
+
+            NEWG_CreateEncounter__WIP((((2 * NUM_TOWERS) + NUM_NODES + Strong_Lair_Amt) + itr), wp, wx, wy, IDK, 4, IDK);
+
+        }
+
+    }
+
+    // ; mark the last 3 records in the table as empty
+
+    for(itr = ((2 * NUM_TOWERS) + NUM_NODES + Strong_Lair_Amt + 32); itr < ((2 * NUM_TOWERS) + NUM_NODES + Strong_Lair_Amt + 32 + 3); itr++)
+    {
+
+        _LAIRS[itr].intact = ST_FALSE;
+
+    }
+
+}
+
 
 // MGC o51p17
 // drake178: NEWG_CreateEncounter()
-// NEWG_CreateEncounter()
+/*
+; clears and then populates the specified encounter
+; record with guardians and treasure based on zone
+; type, altering the passed budget based on the plane
+; and the difficulty setting
+;
+; BUG: has multiple smaller bugs and inconsistencies
+*/
+/*
+
+*/
+void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t UU, int16_t lair_type, int16_t budget)
+{
+    int16_t Tries = 0;
+    int16_t Divided_Budget = 0;
+    int16_t Highest_Cost = 0;
+    int16_t Picked_Unit_Type = 0;
+    int16_t Price = 0;
+    int16_t race_type = 0;
+    int16_t unit_type = 0;
+    int16_t IDK;  // _DI_
+
+    budget = ((budget * (_difficulty + 1)) / 4);  // 
+
+    _LAIRS[lair_idx].wx = (int8_t)wx;
+
+    _LAIRS[lair_idx].wy = (int8_t)wy;
+
+    _LAIRS[lair_idx].wp = (int8_t)wp;
+
+    _LAIRS[lair_idx].intact = ST_TRUE;
+
+// FFFFFFFF ; enum EZ_Types
+// FFFFFFFF EZ_Tower  = 0
+// FFFFFFFF EZ_Chaos_Node  = 1
+// FFFFFFFF EZ_Nature_Node  = 2
+// FFFFFFFF EZ_Sorcery_Node  = 3
+// FFFFFFFF EZ_Cave  = 4
+// FFFFFFFF EZ_Dungeon  = 5
+// FFFFFFFF EZ_Ancient_Temple  = 6
+// FFFFFFFF EZ_Keep  = 7
+// FFFFFFFF EZ_Monster_Lair  = 8
+// FFFFFFFF EZ_Ruins  = 9
+// FFFFFFFF EZ_Fallen_Temple  = 10
+// enum e_LAIR_TYPE
+// {
+//     lt_Tower            =  1,
+//     lt_Chaos_Node       =  2,
+//     lt_Nature_Node      =  3,
+//     lt_Sorcery_Node     =  4,
+//     lt_Cave             =  5,
+//     lt_Dungeon          =  6,
+//     lt_Ancient_Temple   =  7,
+//     lt_Keep             =  8,
+//     lt_Monster_Lair     =  9,
+//     lt_Ruins            = 10,
+//     lt_Fallen_Temple    = 11
+// };
+
+    switch(lair_type)
+    {
+        case 0:
+        {
+
+            _LAIRS[lair_idx].type = lt_Tower;
+
+        } break;
+        case 1:
+        {
+
+            _LAIRS[lair_idx].type = lt_Sorcery_Node;
+
+        } break;
+        case 2:
+        {
+
+            _LAIRS[lair_idx].type = lt_Nature_Node;
+
+        } break;
+        case 3:
+        {
+
+            _LAIRS[lair_idx].type = lt_Chaos_Node;
+
+        } break;
+        default:
+        {
+
+            _LAIRS[lair_idx].type = (lt_Cave + (Random(7) - 1));
+
+        } break;
+
+    }
+
+    _LAIRS[lair_idx].Loot_Gold = 0;
+
+    _LAIRS[lair_idx].Loot_Mana = 0;
+
+    _LAIRS[lair_idx].Spell_n_Special = 0;
+
+    _LAIRS[lair_idx].Item_Count = 0;
+
+    _LAIRS[lair_idx].Misc_Flags = 0;
+
+    _LAIRS[lair_idx].guard1_unit_type = 0;
+
+    _LAIRS[lair_idx].guard2_unit_type = 0;
+
+    _LAIRS[lair_idx].guard1_count = 0;
+
+    _LAIRS[lair_idx].guard2_count = 0;
+
+    if(lair_type == 1)
+    {
+
+            race_type = rt_Sorcery;
+
+    }
+    else if(lair_type == 3)
+    {
+
+            race_type = rt_Chaos;
+
+    }
+    else if(lair_type == 2)
+    {
+
+            race_type = rt_Nature;
+        
+    }
+    else if(lair_type == 0)  // New Game Lair Type - Tower
+    {
+
+        // ; assign a race based on a random roll of 6, with 1
+        // ; and 2 corresponding to Death, and the rest of the
+        // ; numbers to one other realm each
+
+        switch((Random(6) - 1))
+        {
+            case 0:
+            case 1:
+            {
+
+                race_type = rt_Death;
+
+            } break;
+            case 2:
+            {
+
+                race_type = rt_Chaos;
+
+            } break;
+            case 3:
+            {
+                
+                race_type = rt_Life;
+
+            } break;
+            case 4:
+            {
+
+                race_type = rt_Nature;
+
+            }
+            case 5:
+            {
+                
+                race_type = rt_Sorcery;
+
+            } break;
+        }
+
+    }
+    else if(
+        (_LAIRS[lair_idx].type = lt_Ancient_Temple)
+        ||
+        (_LAIRS[lair_idx].type = lt_Ruins)
+        ||
+        (_LAIRS[lair_idx].type = lt_Fallen_Temple)
+    )
+    {
+        
+        // ; assign a race based on a random roll of 4, with 1
+        // ; to 3 corresponding to Death, and 4 to Life
+
+        switch((Random(4) - 1))
+        {
+            case 0:
+            case 1:
+            case 2:
+            {
+                race_type = rt_Death;
+            } break;
+            case 3:
+            {
+                race_type = rt_Life;
+            } break;
+
+        }
+
+    }
+    else
+    {
+
+        // ; assign a race based on a random roll of 5, with 1
+        // ; and 2 corresponding to Death, 3 and 4 to Chaos, and
+        // ; 5 to Nature
+        // ; 
+        // ; BUG: the first four cases all fall through to the
+        // ; final one, resulting in 100% Nature creatures
+
+        switch((Random(5) - 1))
+        {
+            case 0: { race_type = rt_Death;  }  // ; BUG: falls through all the way to the last case
+            case 1: { race_type = rt_Death;  }  // ; BUG: falls through all the way to the last case
+            case 2: { race_type = rt_Chaos;  }  // ; BUG: falls through all the way to the last case
+            case 3: { race_type = rt_Chaos;  }  // ; BUG: falls through all the way to the last case
+            case 4: { race_type = rt_Nature; }  // ; BUG: falls through all the way to the last case
+        }
+
+    }
+
+    Tries = 0;
+    while(Tries < 200)
+    {
+
+        Divided_Budget = (budget / Random(4));
+
+        Highest_Cost = 0;
+
+        Picked_Unit_Type = ST_UNDEFINED;
+
+        // ; loop through the units to try and find the one with
+        // ; the highest cost that is under the divided budget,
+        // ; ignoring those that do not match the realm or have
+        // ; transport capability
+
+        for(unit_type = 150; unit_type < NUM_UNIT_TYPES; unit_type++)
+        {
+
+            if(
+                (_unit_type_table[unit_type].race_type == race_type)
+                &&
+                (_unit_type_table[unit_type].Transport == 0)
+                &&
+                (_unit_type_table[unit_type].cost > Highest_Cost)
+                &&
+                (_unit_type_table[unit_type].cost < Divided_Budget)
+            )
+            {
+
+                Highest_Cost = _unit_type_table[unit_type].cost;
+
+                Picked_Unit_Type = unit_type;
+
+            }
+
+        }
+
+        Tries++;
+
+        if(
+            (Picked_Unit_Type != ST_UNDEFINED)
+            ||
+            (Tries >= 200)
+        )
+        {
+
+            if(Tries < 200)
+            {
+
+                _LAIRS[lair_idx].guard1_unit_type = (uint8_t)Picked_Unit_Type;
+
+                _LAIRS[lair_idx].guard1_count = (budget / _unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost);
+
+                if(
+                    (_LAIRS[lair_idx].guard1_count > 1)
+                    &&
+                    (Random(2) == 1)
+                )
+                {
+
+                    _LAIRS[lair_idx].guard1_count -= 1;
+
+                }
+
+                SETMAX(_LAIRS[lair_idx].guard1_count, 8);
+
+                budget -= (_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost * _LAIRS[lair_idx].guard1_count);
+
+            }
+        }
+
+    }  /* while(Tries < 200) */
+
+
+
+    Tries = 0;
+
+    if(
+        (_LAIRS[lair_idx].guard1_count != 9)  // ; conflicting condition - will always jump
+        &&
+        (_LAIRS[lair_idx].guard1_count != 0)
+    )
+    {
+
+        while(Tries < 200)
+        {
+
+            Divided_Budget = (budget / Random((10 - _LAIRS[lair_idx].guard1_count)));
+
+            Highest_Cost = 0;
+
+            Picked_Unit_Type = ST_UNDEFINED;
+
+            // ; loop through the units to try and find the one with
+            // ; the highest cost that is under the divided budget,
+            // ; ignoring those that do not match the realm, have
+            // ; transport capability, or are already featured as the
+            // ; primary guardians
+
+            for(unit_type = 150; unit_type < NUM_UNIT_TYPES; unit_type++)
+            {
+
+                if(
+                    (_unit_type_table[unit_type].race_type == race_type)
+                    &&
+                    (_unit_type_table[unit_type].Transport == 0)
+                    &&
+                    (_unit_type_table[unit_type].cost > Highest_Cost)
+                    &&
+                    (_unit_type_table[unit_type].cost < Divided_Budget)
+                )
+                {
+
+                    if(_LAIRS[lair_idx].guard1_unit_type != unit_type)
+                    {
+
+                        Highest_Cost = _unit_type_table[unit_type].cost;
+
+                        Picked_Unit_Type = unit_type;
+
+                    }
+
+                }
+
+            }
+
+            Tries++;
+
+            if(
+                (Picked_Unit_Type != ST_UNDEFINED)
+                ||
+                (Tries >= 200)
+            )
+            {
+
+                if(Tries < 200)
+                {
+
+                    _LAIRS[lair_idx].guard2_unit_type = (uint8_t)Picked_Unit_Type;
+
+                    _LAIRS[lair_idx].guard2_count = (budget / _unit_type_table[_LAIRS[lair_idx].guard2_unit_type].cost);
+
+                    if((_LAIRS[lair_idx].guard1_count + _LAIRS[lair_idx].guard2_count) > 9)
+                    {
+
+                        _LAIRS[lair_idx].guard2_count = (9 - _LAIRS[lair_idx].guard1_count);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }  /* while(Tries < 200) */
+
+
+
+    if(_LAIRS[lair_idx].guard1_unit_type == 0)
+    {
+
+        _LAIRS[lair_idx].guard1_count = 0;
+
+    }
+
+    if(_LAIRS[lair_idx].guard2_unit_type == 0)
+    {
+
+        _LAIRS[lair_idx].guard2_count = 0;
+
+    }
+
+    // ; PATCHED here to make the more expensive creature
+    // ; always be the primary guardian
+
+    IDK = (_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost * _LAIRS[lair_idx].guard1_count);
+
+    // ; BUG: this is not always the smaller part of the
+    // ; treasure budget
+
+    IDK += ((_unit_type_table[_LAIRS[lair_idx].guard2_unit_type].cost * _LAIRS[lair_idx].guard2_count) / 2);
+
+    if(_difficulty != god_Impossible)
+    {
+
+        IDK = ((IDK * (_difficulty + 1)) / 4);
+
+    }
+
+    if(wp == ARCANUS_PLANE)
+    {
+
+        IDK = ((IDK * (49 + Random(76))) / 100);
+
+    }
+    else
+    {
+
+        IDK = ((IDK * (75 + Random(100))) / 100);
+
+    }
+
+    SETMIN(IDK, 50);
+
+    // ; PATCHED here to prevent high-budget sites from
+    // ; awarding only a single special pick (NOT included in
+    // ; the Community Patch)
+
+    if(lair_type == 0)  // New Game Lair Type - Temple
+    {
+
+        Price = Random(4);
+
+        IDK -= (((Price * Price) * 50) - 100);
+
+        _LAIRS[lair_idx].Spell_n_Special = (int8_t)Price;
+
+    }
+
+    // ; PATCHED here to prevent high-budget sites from
+    // ; awarding only a single special pick (NOT included in
+    // ; the Community Patch)
+
+    if(IDK >= 50)
+    {
+
+        switch(Random(15))
+        {
+            case 0:
+            {
+                // DNE
+            } break;
+            case 1:
+            {
+                Price = (Random(20) * 10);
+                SETMAX(Price, IDK);
+                Price = ((Price / 10) * 10);
+                IDK -= 200;
+                _LAIRS[lair_idx].Loot_Gold = Price;
+            }
+            case 2:
+            {
+
+            } break;
+            case 3:
+            {
+                Price = (Random(20) * 10);
+                SETMAX(Price, IDK);
+                Price = ((Price / 10) * 10);
+                IDK -= 200;
+                _LAIRS[lair_idx].Loot_Mana = Price;
+            } break;
+            case 4:
+            {
+
+            } break;
+            case 5:
+            {
+
+                // ; magical item
+                // ; 
+                // ; qualify:  300
+                // ; value:    400 - 3000
+                // ; max:      3
+                // ; rounded down to the nearest 10 that fits the budget
+
+                if(
+                    (_LAIRS[lair_idx].Item_Count < 3)
+                    &&
+                    (IDK >= 300)
+                )
+                {
+
+                    Price = (300 + (Random(27) * 100));
+
+                    SETMAX(Price, IDK);
+
+                    Price = ((Price / 10) * 10);
+
+                    IDK -= Price;
+
+                    _LAIRS[lair_idx].Item_Values[_LAIRS[lair_idx].Item_Count] = Price;
+
+                    _LAIRS[lair_idx].Item_Count += 1;
+
+                }
+
+            } break;
+            case 6:
+            {
+
+            } break;
+            case 7:
+            {
+
+            } break;
+            case 8:
+            {
+
+            } break;
+            case 9:
+            {
+
+            } break;
+            case 10:
+            {
+
+                // ; prisoner hero
+                // ; 
+                // ; qualify:  400
+                // ; value:    1000
+                // ; max:      1
+
+                if(
+                    (IDK >= 400)
+                    &&
+                    (_LAIRS[lair_idx].Misc_Flags == 0)
+                )
+                {
+
+                    _LAIRS[lair_idx].Misc_Flags = 1;
+
+                    IDK -= 1000;
+
+                }
+
+            } break;
+            case 11:
+            {
+
+                // ; spell
+                // ; 
+                // ; qualify:  rarity * rarity * 50
+                // ; value:    rarity * rarity * 50
+                // ; max:      1
+                // ; if there is already a spell in the hoard, the new
+                // ; rarity is added to the old one, allowing higher
+                // ; rarities to be awarded cheaper than they should be
+
+                // ; PATCHED here to upgrade spell treasure properly and
+                // ; award the highest possible rarity instead of
+                // ; discarding if the rolled price is too high
+
+                Price = Random(4);
+
+                if(
+                    (((Price * Price) * 50) < IDK)
+                    &&
+                    (_LAIRS[lair_idx].Spell_n_Special < 4)
+                )
+                {
+
+                    IDK -= ((Price * Price) * 50);
+
+                    _LAIRS[lair_idx].Spell_n_Special += Price;
+
+                    SETMAX(_LAIRS[lair_idx].Spell_n_Special, 4);
+                    
+                }
+
+            } break;
+            case 12:
+            {
+
+            } break;
+            case 13:
+            {
+
+            } break;
+            case 14:
+            {
+
+                // ; spellbook / retort
+                // ; 
+                // ; qualify:  1000
+                // ; value:    3000
+                // ; max:      2
+                // ; always 2 if there's at least 2k budget remaining
+                // ; (discards all other treasure in the end)
+
+                Price = Random(4);
+
+                if(
+                    (Price == 1)
+                    &&
+                    (IDK >= 3000)
+                )
+                {
+
+                    _LAIRS[lair_idx].Spell_n_Special = 6;
+
+                    IDK -= 3000;
+
+                }
+                else if(IDK >= 2000)
+                {
+
+                    _LAIRS[lair_idx].Spell_n_Special = 6;
+
+                    IDK -= 3000;
+
+                }
+                else if(IDK >= 1000)
+                {
+
+                    _LAIRS[lair_idx].Spell_n_Special = 5;
+
+                    IDK -= 3000;
+
+                }
+
+            } break;
+            case 15:
+            {
+
+            } break;
+
+
+        }
+
+    }
+
+    // ; discard all other treasure if there is a spellbook /
+    // ; retort
+    // ; 
+    // ; INCONSISTENT: can result in a single special instead
+    // ; of 2 if enough of the total has been wasted on these
+
+    if(_LAIRS[lair_idx].Spell_n_Special > 4)
+    {
+
+        _LAIRS[lair_idx].Loot_Gold = 0;
+        
+        _LAIRS[lair_idx].Loot_Mana = 0;
+        
+        _LAIRS[lair_idx].Item_Count = 0;
+        
+        _LAIRS[lair_idx].Misc_Flags = 0;  // clear Prisoner
+
+    }
+
+}
+
 
 // MGC o51p18
 // drake178: UU_UNIT_RandomRacial()
@@ -1927,67 +3676,1696 @@ void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy)
 
 // MGC o51p19
 // drake178: NEWG_SetDeserts()
-// NEWG_SetDeserts()
+/*
+
+*/
+/*
+
+*/
+static void NEWG_SetDeserts__STUB(void)
+{
+
+
+
+}
+
 
 // MGC o51p20
 // drake178: NEWG_CreateShores()
-// NEWG_CreateShores()
+/*
+; creates shores based on the surrounding land type
+; tiles, then uses the same concept to consolidate
+; mountain and hill ranges, as well as replace tundra
+; tiles
+;
+; WARNING: the hills and mountains would generate a
+;  break at the X wrap boundary
+; BUG: turns certain single tile hills into grasslands
+*/
+/*
+
+*/
+void NEWG_CreateShores__STUB(void)
+{
+// TERRTYPE_Pointer= word ptr -0Ah
+// Adjacent_X= word ptr -8
+// Tile_Border_Flags= word ptr -6
+// wp= word ptr -4
+// X_Coord= word ptr -2
+// 
+// TERRTYPE_Pointer = Near_Allocate_First(2560);
+// 
+// LBX_Load_Data_Static(cnst_TERRTYPE_File, 0, TERRTYPE_Pointer, 0, 5, 512);
+// 
+// wp = 0;
+
+// ; create shore tiles based on the ocean - non-ocean
+// ; terrain borders using the first 512 byte record of
+// ; TERRTYPE.LBX
+
+// ; create tundra tiles based on the tundra - non-tundra
+// ; borders using the first record of TERRTYPE.LBX, and
+// ; adding 600 to the ocean tile type
+
+// ; consolidate neighbouring hill tiles into hill ranges
+// ; using the second record of TERRTYPE.LBX (+10h)
+// ; 
+// ; BUG: turns single tile hills into grasslands, as
+// ; _1Mountain1 + 10h = _Grasslands4 rather than _1Hills1
+// ; WARNING: would create breaks at the X wrap boundary
+// ; if land tiles would exist there
+
+}
 
 // MGC o51p21
 // drake178: NEWG_RandomizeTiles()
-// NEWG_RandomizeTiles()
+/*
+*/
+/*
+*/
+void NEWG_RandomizeTiles__STUB(void)
+{
+
+
+
+}
+
 
 // MGC o51p22
 // drake178: NEWG_CreateRiver()
-// NEWG_CreateRiver()
+/*
+
+*/
+/*
+
+*/
+int16_t NEWG_CreateRiver__STUB(int16_t wp)
+{
+
+    return ST_FALSE;
+
+}
+
 
 // MGC o51p23
 // drake178: NEWG_SetRiverTiles()
-// NEWG_SetRiverTiles()
+void NEWG_SetRiverTiles__STUB(int16_t wp)
+/*
+
+*/
+/*
+
+*/
+{
+
+
+
+}
+
 
 // MGC o51p24
 // drake178: NEWG_CreateNeutrals()
-// NEWG_CreateNeutrals()
+/*
+; creates up to 15 neutral cities on the selected
+; plane
+;
+; BUG: contains a number of minor errors and
+;  inconsistencies, most of which have no impact at all
+*/
+/*
+similar mess as Generate_Home_City()
+
+*/
+void Generate_Neutral_Cities__WIP(int16_t wp)
+{
+    int16_t location_is_forest_square = 0;
+    int16_t Tries = 0;
+    int16_t Best_Ranged_Unit = 0;
+    int16_t Best_Melee_Unit = 0;
+    int16_t itr3 = 0;
+    int16_t Invalid = 0;
+    int16_t wy = 0;
+    int16_t wx = 0;
+    int16_t itr2 = 0;  // _SI_
+    int16_t itr1 = 0;  // _DI_
+
+    Tries = 0;
+
+    // ; fill the default continental race table with random
+    // ; values corresponding to the selected plane,
+    // ; excluding high elves from Arcanus and giving high
+    // ; men a double chance instead
+
+    for(itr1 = 1; itr1 < 200; itr1++)
+    {
+
+        if(wp == ARCANUS_PLANE)
+        {
+
+            // ; select a random Arcanian race except high elves, with
+            // ; high men having double chance, and save its index
+            // ; into the element of the array corresponding to di
+
+            // BUGBUG  cmp     bx, 12                            ; switch 13 cases
+            switch((Random(9) - 1))
+            {
+                case 0: { NEWG_Landmass_Races[itr1] = rt_Barbarian; } break;
+                case 1: { NEWG_Landmass_Races[itr1] = rt_Gnoll;     } break;
+                case 2: { NEWG_Landmass_Races[itr1] = rt_Halfling;  } break;
+                case 3: { NEWG_Landmass_Races[itr1] = rt_High_Men;  } break;  // no forest check, no High Elves
+                case 4: { NEWG_Landmass_Races[itr1] = rt_High_Men;  } break;
+                case 5: { NEWG_Landmass_Races[itr1] = rt_Klackon;   } break;
+                case 6: { NEWG_Landmass_Races[itr1] = rt_Lizardman; } break;
+                case 7: { NEWG_Landmass_Races[itr1] = rt_Nomad;     } break;
+                case 8: { NEWG_Landmass_Races[itr1] = rt_Orc;       } break;
+                // WTF?
+                case  9: { NEWG_Landmass_Races[itr1] = rt_Barbarian; } break;
+                case 10: { NEWG_Landmass_Races[itr1] = rt_High_Men;  } break;
+                case 11: { NEWG_Landmass_Races[itr1] = rt_Nomad;     } break;
+                case 12: { NEWG_Landmass_Races[itr1] = rt_High_Men;  } break;
+            }
+
+        }
+        else  /* MYRROR_PLANE */
+        {
+
+            // ; select a random Myrran race and save its index into
+            // ; the element of the array corresponding to di
+
+            switch((Random(5) - 1))
+            {
+                case 0: { NEWG_Landmass_Races[itr1] = rt_Beastmen;  } break;
+                case 1: { NEWG_Landmass_Races[itr1] = rt_Dark_Elf;  } break;
+                case 2: { NEWG_Landmass_Races[itr1] = rt_Draconian; } break;
+                case 3: { NEWG_Landmass_Races[itr1] = rt_Dwarf;     } break;
+                case 4: { NEWG_Landmass_Races[itr1] = rt_Troll;     } break;
+            }
+
+        }
+
+    }
+
+    for(itr1 = 0; itr1 < 15; itr1++)
+    {
+
+        if(Tries < 1000)
+        {
+
+// jump back here if the location is invalid
+Loop_Location_2:
+// ...same as in Generate_Home_City()
+
+            Tries++;
+
+            wx = (3 + Random(54));
+
+            wy = (3 + Random(34));
+
+            Invalid = ST_FALSE;
+
+            if(TERRAIN_TYPE(wx, wy, wp) == tt_Ocean1)
+            {
+
+                Invalid = ST_TRUE;
+
+            }
+
+            if(
+                (TERRAIN_TYPE(wx, wy, wp) >= tt_Shore1_Fst)  // ; there are no such tiles yet at this stage
+                ||
+                (TERRAIN_TYPE(wx, wy, wp) <= tt_Shore1_Lst)  // ; there are no such tiles yet at this stage
+            )
+            {
+
+                Invalid = ST_TRUE;
+
+            }
+
+            // ; invalidate if less than 5 tiles away from a capital
+
+            // ; invalidate if less than 4 tiles away from an already
+            // ; created city
+
+            // ; invalidate of less than 4 tiles away from a node
+            // ; 
+            // ; the encounter exclusion below would also catch these
+
+            // ; invalidate if less than 4 tiles away from a tower
+            // ; 
+            // ; the encounter exclusion below would also catch these
+
+            // ; invalidate if less than 4 tiles away from an
+            // ; encounter zone - including nodes and towers
+
+            if(
+                (Tries < 1000)
+                &&
+                (Invalid == ST_TRUE)
+            )
+            {
+
+                goto Loop_Location_2;
+
+            }
+
+            location_is_forest_square = Square_Is_Forest_NewGame(wx, wy, wp);
+
+            if(wp == ARCANUS_PLANE)
+            {
+
+                // ; select a random Arcanian race, and assign it to the
+                // ; next record in the city table, replacing high elves
+                // ; with high men if the tile is not a forest
+
+                // BUGBUG  cmp     bx, 12                            ; switch 13 cases
+                switch((Random(9) - 1))
+                {
+                    case 0: { _CITIES[_cities].race = rt_Barbarian; } break;
+                    case 1: { _CITIES[_cities].race = rt_Gnoll;     } break;
+                    case 2: { _CITIES[_cities].race = rt_Halfling;  } break;
+                    // case 3: { _CITIES[_cities].race = rt_High_Elf;  } break;
+                    case 3: {
+                        if(location_is_forest_square == ST_TRUE)
+                        {
+                            _CITIES[_cities].race = rt_High_Elf;
+                        }
+                        else
+                        {
+                            _CITIES[_cities].race = rt_High_Men;
+                        }
+                    } break;
+                    case 4: { _CITIES[_cities].race = rt_High_Men;  } break;
+                    case 5: { _CITIES[_cities].race = rt_Klackon;   } break;
+                    case 6: { _CITIES[_cities].race = rt_Lizardman; } break;
+                    case 7: { _CITIES[_cities].race = rt_Nomad;     } break;
+                    case 8: { _CITIES[_cities].race = rt_Orc;       } break;
+                    // WTF?
+                    case  9: { _CITIES[_cities].race = rt_Barbarian; } break;
+                    case 10: { _CITIES[_cities].race = rt_High_Men;  } break;
+                    case 11: { _CITIES[_cities].race = rt_Nomad;     } break;
+                    case 12: { _CITIES[_cities].race = rt_High_Men;  } break;
+                }
+
+            }
+            else
+            {
+
+                // ; select a random Myrran race, and assign it to the
+                // ; next record in the city table
+
+                switch((Random(5) - 1))
+                {
+                    case 0: { _CITIES[_cities].race = rt_Beastmen;  } break;
+                    case 1: { _CITIES[_cities].race = rt_Dark_Elf;  } break;
+                    case 2: { _CITIES[_cities].race = rt_Draconian; } break;
+                    case 3: { _CITIES[_cities].race = rt_Dwarf;     } break;
+                    case 4: { _CITIES[_cities].race = rt_Troll;     } break;
+                }
+
+            }
+
+            if(Random(4) > 1)
+            {
+
+                _CITIES[_cities].race = (int8_t)NEWG_Landmass_Races[(_landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) +wx)])];
+
+            }
+
+            _CITIES[_cities].wx = (int8_t)wx;
+
+            _CITIES[_cities].wy = (int8_t)wy;
+            
+            _CITIES[_cities].wp = (int8_t)wp;
+            
+            _CITIES[_cities].owner_idx = NEUTRAL_PLAYER_IDX;
+
+            // ; BUG: ignores terrain
+            _CITIES[_cities].population = (1 +  ((_difficulty + 1) / 3) + Random(4));
+
+            if(
+                (_difficulty > god_Normal)
+                &&
+                (Random(5) == 1)
+            )
+            {
+
+                // ; BUG: ignores terrain
+                _CITIES[_cities].population = (((_difficulty + 1) / 3) + Random(10));
+
+            }
+
+            _CITIES[_cities].size = (_CITIES[_cities].population / 4);
+
+            _CITIES[_cities].bldg_cnt = 0;
+
+            _CITIES[_cities].enchantments[WALL_OF_DARKNESS] = ST_FALSE;
+            _CITIES[_cities].enchantments[WALL_OF_FIRE] = ST_FALSE;
+            _CITIES[_cities].enchantments[CHAOS_RIFT] = ST_FALSE;
+            _CITIES[_cities].enchantments[DARK_RITUALS] = ST_FALSE;
+            _CITIES[_cities].enchantments[EVIL_PRESENCE] = ST_FALSE;
+            _CITIES[_cities].enchantments[CURSED_LANDS] = ST_FALSE;
+            _CITIES[_cities].enchantments[PESTILENCE] = ST_FALSE;
+            _CITIES[_cities].enchantments[CLOUD_OF_SHADOW] = ST_FALSE;
+            _CITIES[_cities].enchantments[ALTAR_OF_BATTLE] = ST_FALSE;
+            _CITIES[_cities].enchantments[FAMINE] = ST_FALSE;
+            _CITIES[_cities].enchantments[FLYING_FORTRESS] = ST_FALSE;
+            _CITIES[_cities].enchantments[DEATH_WARD] = ST_FALSE;
+            _CITIES[_cities].enchantments[CHAOS_WARD] = ST_FALSE;
+            _CITIES[_cities].enchantments[LIFE_WARD] = ST_FALSE;
+            _CITIES[_cities].enchantments[SORCERY_WARD] = ST_FALSE;
+            _CITIES[_cities].enchantments[NATURE_WARD] = ST_FALSE;
+            _CITIES[_cities].enchantments[NATURES_EYE] = ST_FALSE;
+            _CITIES[_cities].enchantments[EARTH_GATE] = ST_FALSE;
+            _CITIES[_cities].enchantments[STREAM_OF_LIFE] = ST_FALSE;
+            _CITIES[_cities].enchantments[GAIAS_BLESSING] = ST_FALSE;
+            _CITIES[_cities].enchantments[INSPIRATIONS] = ST_FALSE;
+            _CITIES[_cities].enchantments[PROSPERITY] = ST_FALSE;
+            _CITIES[_cities].enchantments[ASTRAL_GATE] = ST_FALSE;
+            _CITIES[_cities].enchantments[HEAVENLY_LIGHT] = ST_FALSE;
+            _CITIES[_cities].enchantments[CONSECRATION] = ST_FALSE;
+            _CITIES[_cities].enchantments[NIGHTSHADE] = ST_FALSE;
+
+            _CITIES[_cities].construction = bt_AUTOBUILD;
+
+            // mark all buildings as not built
+
+            for(itr2 = 0; itr2 < NUM_BUILDINGS; itr2++)
+            {
+                _CITIES[_cities].bldg_status[itr2] = bs_NotBuilt;
+            }
+
+
+            // ; add buildings based on population
+            _CITIES[_cities].bldg_status[bt_NONE] = bs_Replaced;
+
+            switch(_CITIES[_cities].population)  // - 2;  switch 24 cases
+            {
+                case 24:
+                case 23:
+                case 22:
+                case 21:
+                case 20:
+                case 19:
+                case 18:
+                case 17:
+                case 16:
+                case 15:
+                case 14:
+                case 13:
+                case 12: { _CITIES[_cities].bldg_status[bt_Shrine] = bs_Built; }
+                case 11: { _CITIES[_cities].bldg_status[bt_ArmorersGuild] = bs_Built; }
+                case 10: { _CITIES[_cities].bldg_status[bt_FightersGuild] = bs_Built; }
+                case  9:
+                case  8: { _CITIES[_cities].bldg_status[bt_CityWalls] = bs_Built; }
+                case  7:
+                case  6: { _CITIES[_cities].bldg_status[bt_Stable] = bs_Built; }
+                case  5: { _CITIES[_cities].bldg_status[bt_Granary] = bs_Built; }
+                case  4:
+                case  3: { _CITIES[_cities].bldg_status[bt_Armory] = bs_Built; }
+                case  2: { _CITIES[_cities].bldg_status[bt_BuildersHall] = bs_Built; }
+                case  1: { _CITIES[_cities].bldg_status[bt_Smithy] = bs_Built; }
+                case  0: { _CITIES[_cities].bldg_status[bt_Barracks] = bs_Built; }
+            }
+
+            // ; remove any buildings prohibited by race
+
+            for(itr3 = 0; itr3 <= _race_type_table[_CITIES[_cities].race].cant_build_count; itr3++)
+            {
+
+                _CITIES[_cities].bldg_status[_race_type_table[_CITIES[_cities].race].cant_build[itr3]] = bs_NotBuilt;
+
+            }
+
+            // ; remove any buildings with unbuilt prerequisites
+            // ; 
+            // ; BUG: buildings with a terrain requirement will be
+            // ; randomly removed through a read out of the structure
+            // ; bounds, whereas if they also have a building req,
+            // ; that will be ignored completely
+
+            for(itr2 = 1; itr2 < (NUM_BUILDINGS - 1); itr2++)
+            {
+
+                if(_CITIES[_cities].bldg_status[bt_NONE] == bs_Built)
+                {
+
+                    // ¿ BUGBUG  code should not be same on both branches ?  maybe, was two different fields, then got merged into a union?
+                    // ...or, should just be checking reqd_bldg_2, because the first one is reqd_terrain and not reqd_bldg_1
+                    if(bldg_data_table[itr2].reqd_bldg_1 > 100)  // bldg_idx  >= 100 is Terrain Type
+                    {
+
+                        if(_CITIES[_cities].bldg_status[bldg_data_table[itr2].reqd_terrain] == bs_NotBuilt)  // ; BUG: out of bounds
+                        {
+
+                            _CITIES[_cities].bldg_status[itr2] = bs_NotBuilt;
+
+                        }
+
+                    }
+                    else
+                    {
+
+                        if(
+                            (_CITIES[_cities].bldg_status[bldg_data_table[itr2].reqd_bldg_1] == bs_NotBuilt)
+                            ||
+                            (_CITIES[_cities].bldg_status[bldg_data_table[itr2].reqd_bldg_2] == bs_NotBuilt)
+                        )
+                        {
+
+                            _CITIES[_cities].bldg_status[itr2] = bs_NotBuilt;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            // ; mark any buildings that have been replaced as such
+            // ; 
+            // ; WARNING: only considers buildings whose replacer is
+            // ; built, but not replaced itself, which means that the
+            // ; bottom of a chain may get ignored
+
+            for(itr2 = 1; itr2 < (NUM_BUILDINGS - 1); itr2++)
+            {
+
+                if(
+                    (bldg_data_table[itr2].replace_bldg > bt_NONE)
+                    &&
+                    (_CITIES[_cities].bldg_status[itr2] == bs_Built)  // ; ignores replaced buildings
+                    &&
+                    (_CITIES[_cities].bldg_status[bldg_data_table[itr2].replace_bldg] == bs_Built)
+                )
+                {
+
+                    _CITIES[_cities].bldg_status[bldg_data_table[itr2].replace_bldg] = bs_Replaced;
+
+                }
+
+            }
+
+            // ; find the highest level (by unit type index) close
+            // ; combat unit that can be recruited in the city
+
+            Best_Melee_Unit = 0;
+
+            for(itr2 = ut_BarbSwordsmen; itr2 < ut_Magic_Spirit; itr2++)
+            {
+
+                if(
+                    (_unit_type_table[itr2].race_type == _CITIES[_cities].race)
+                    &&
+                    (_unit_type_table[itr2].reqd_bldg_1 != 0)
+                    &&
+                    (
+                        (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_1] == bs_Built)
+                        ||
+                        (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_1] == bs_Replaced)
+                    )
+                    &&
+                    (_unit_type_table[itr2].reqd_bldg_2 != 0)
+                    &&
+                    (
+                        (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_2] == bs_Built)
+                        ||
+                        (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_2] == bs_Replaced)
+                    )
+                    &&
+                    ((_unit_type_table[itr2].Abilities & UA_CREATEOUTPOST) == 0)
+                    &&
+                    (_unit_type_table[itr2].Construction == 0)
+                    &&
+                    (_unit_type_table[itr2].Transport == 0)
+                    &&
+                    (
+                        (_unit_type_table[itr2].Ranged_Type == rat_NONE)
+                        ||
+                        (_unit_type_table[itr2].Ranged_Type >= srat_Thrown)
+                    )
+                )
+                {
+
+                    Best_Melee_Unit = itr2;
+
+                }
+
+            }
+
+            // ; find the highest level (by unit type index) ranged
+            // ; attack unit that can be recruited in the city
+
+            Best_Ranged_Unit = 0;
+
+            for(itr2 = ut_BarbSwordsmen; itr2 < ut_Magic_Spirit; itr2++)
+            {
+
+                if(
+                    (_unit_type_table[itr2].race_type == _CITIES[_cities].race)
+                    &&
+                    (_unit_type_table[itr2].reqd_bldg_1 != 0)
+                    &&
+                    (
+                        (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_1] == bs_Built)
+                        ||
+                        (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_1] == bs_Replaced)
+                    )
+                    &&
+                    (_unit_type_table[itr2].reqd_bldg_2 != 0)
+                    &&
+                    (
+                        (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_2] == bs_Built)
+                        ||
+                        (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_2] == bs_Replaced)
+                    )
+                    &&
+                    ((_unit_type_table[itr2].Abilities & UA_CREATEOUTPOST) == 0)
+                    &&
+                    (_unit_type_table[itr2].Construction == 0)
+                    &&
+                    (_unit_type_table[itr2].Transport == 0)
+                    &&
+                    (
+                        (_unit_type_table[itr2].Ranged_Type > rat_NONE)
+                        ||
+                        (_unit_type_table[itr2].Ranged_Type < srat_Thrown)
+                    )
+                )
+                {
+
+                    Best_Ranged_Unit = itr2;
+
+                }
+
+            }
+
+            // ; create up to population / 4 (rounded down) close
+            // ; combat units to garrison the city
+            // ; 
+            // ; WARNING: dark elves will have no such units,
+            // ;  resulting in half the intended starting garrison
+
+            for(itr2 = 0; (((_CITIES[_cities].population / 4) > itr2) && (itr2 < MAX_STACK)); itr2++)
+            {
+
+                Create_Unit_NewGame(Best_Melee_Unit, NEUTRAL_PLAYER_IDX, _CITIES[_cities].wx, _CITIES[_cities].wy, _CITIES[_cities].wp, _cities);
+
+            }
+
+            if(Best_Ranged_Unit == 0)
+            {
+
+                // ; create another up to population / 4 (rounded down)
+                // ; close combat units for the garrison, up to at most
+                // ; 9 units total
+                // ; 
+                // ; WARNING: dark elves will have no such units
+
+                for(itr2 = 0; (((_CITIES[_cities].population / 4) > itr2) && (itr2 < MAX_STACK)); itr2++)
+                {
+
+                    Create_Unit_NewGame(Best_Melee_Unit, NEUTRAL_PLAYER_IDX, _CITIES[_cities].wx, _CITIES[_cities].wy, _CITIES[_cities].wp, _cities);
+
+                }
+
+            }
+            else
+            {
+
+                // ; create up to population / 4 (rounded down) ranged
+                // ; attack units for the garrison, up to at most 9 units
+                // ; total
+                // ; 
+                // ; WARNING: the sawmill is not included in the default
+                // ;  building list, and the shrine can't be reached with
+                // ;  the generated populations, so there won't ever be
+                // ;  a ranged attack unit for any race other than dark
+                // ;  elves, who only have these and no close combat ones
+
+                for(itr2 = 0; (((_CITIES[_cities].population / 4) > itr2) && (itr2 < MAX_STACK)); itr2++)
+                {
+
+                    Create_Unit_NewGame(Best_Ranged_Unit, NEUTRAL_PLAYER_IDX, _CITIES[_cities].wx, _CITIES[_cities].wy, _CITIES[_cities].wp, _cities);
+
+                }
+
+            }
+
+            Random_City_Name_By_Race_NewGame(_CITIES[_cities].race, _CITIES[_cities].name);
+
+        }
+
+    }
+
+}
+
 
 // MGC o51p25
 // drake178: CTY_SetDefaultName()
-// CTY_SetDefaultName()
+/*
+; chooses one of the default names for the city based
+; on its race, ensures that it's unique, and then
+; copies it into the passed city record
+*/
+/*
+WZD_o143.c
+    for each name record
+    loops through every city
+    if it finds a match, it goes to the next name record
+void Random_City_Name_By_Race(int16_t race_idx, char * name)
+
+*/
+// void Random_City_Name_By_Race_NewGame(int16_t race_type, char * name)
+// {
+//     char Local_Name_String[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+//     int16_t city_name_idx = 0;
+//     int16_t Tries = 0;
+//     char * city_names_buffer = 0;  // _DI_
+//     int16_t itr_cities = 0;  // _SI_
+//     /* HACK */ char * city_names_buffer_ptr = 0;
+// 
+//     city_names_buffer = (char *)Near_Allocate_First(280);
+// 
+//     LBX_Load_Data_Static(cnst_CITYNAME_File, 0, (SAMB_ptr)city_names_buffer, race_type, 1, 280);
+// 
+//     Tries = 0;
+// 
+// Loop_Tries:
+// 
+//     Tries++;
+// 
+//     city_name_idx = (Random(20) - 1);
+// 
+//     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+//     {
+// 
+//         // TODO  MGC farstrcpy()
+//         strcpy(Local_Name_String, _CITIES[itr_cities].name);
+// 
+//         city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
+// 
+//         // if(_stricmp(Local_Name_String, cityname_buffer[(city_name_idx * LEN_CITY_NAME)]) == 0)
+//         if(strcmp(Local_Name_String, city_names_buffer_ptr) == 0)
+//         {
+// 
+//             if(Tries < 200)
+//             {
+// 
+//                 goto Loop_Tries;
+// 
+//             }
+//             else  /* give up, borrow one */
+//             {
+// 
+//                 LBX_Load_Data_Static(cnst_CITYNAME_File, 0, (SAMB_ptr)city_names_buffer, (Random(NUM_RACES) - 1), 1, 280);
+// 
+//             }
+// 
+//         }
+// 
+//     }
+// 
+//     // TODO  MGC farstrcpy()
+//     // strcpy(name, city_names_buffer[(city_name_idx * LEN_CITY_NAME)]);
+//     city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
+//     strcpy(name, city_names_buffer_ptr);
+// 
+// }
+// void Random_City_Name_By_Race(int16_t race_idx, char * name)
+void Random_City_Name_By_Race_NewGame(int16_t race_idx, char * name)
+{
+    char Local_Name_String[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t city_name_idx = 0;
+    int16_t attempts = 0;
+    char * city_names_buffer = 0;  // _DI_
+    int16_t itr_cities = 0;  // _SI_
+    /* HACK */ char hack_new_name[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    /* HACK */ char * city_names_buffer_ptr = 0;
+
+    city_names_buffer = (char *)Near_Allocate_First(280);
+
+    LBX_Load_Data_Static(cityname_lbx_file__MGC_ovr051, 0, (SAMB_ptr)city_names_buffer, race_idx, 1, 280);
+
+    for(attempts = 0; attempts < 200; attempts++)
+    {
+
+        city_name_idx = (Random(20) - 1);
+
+        for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+        {
+
+            strcpy(Local_Name_String, _CITIES[itr_cities].name);
+
+            strcpy(hack_new_name, _CITIES[itr_cities].name);
+
+            // if(stricmp(Local_Name_String, city_names_buffer[(city_name_idx * 14)]) != 0)
+            city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
+
+            // TODO  stricmp() vs. strcmp()  if(stricmp(Local_Name_String, city_names_buffer_ptr) != 0)
+            if(strcmp(Local_Name_String, city_names_buffer_ptr) != 0)
+            {
+
+                continue;
+
+            }
+
+            if(attempts < 200)
+            {
+
+                break;
+
+            }
+
+            LBX_Load_Data_Static(cityname_lbx_file__MGC_ovr051, 0, (SAMB_ptr)city_names_buffer, (Random(NUM_RACES) - 1), 1, 280);
+
+        }
+
+    }
+    
+    // strcpy(name, city_names_buffer[(city_name_idx * 14)]);
+    city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
+    strcpy(name, city_names_buffer_ptr);
+
+}
 
 // MGC o51p26
 // drake178: NEWG_CreateRoads()
-// NEWG_CreateRoads()
+/*
+; creates roads on the tiles of every city, as well as
+; between neutral ones on the same continents that are
+; closer to each other than 11 tiles with no water
+; tiles on the most direct path
+;
+; BUG: creates normal roads instead of enchanted ones
+;  on the tiles of Myrran cities
+*/
+/*
+
+*/
+void Generate_Roads(int16_t wp)
+{
+    int8_t Road_Ys[70] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int8_t Road_Xs[70] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t dst_wy = 0;
+    int16_t dst_wx = 0;
+    int16_t src_wy = 0;
+    int16_t src_wx = 0;
+    int16_t city_idx = 0;
+    int16_t wy = 0;
+    int16_t wx = 0;
+    int16_t Line_Index = 0;
+    int16_t Road_Length = 0;
+    int16_t Invalid_Road = 0;
+    int16_t dst_city_idx = 0;
+    int16_t src_city_idx = 0;
+
+    // ; clear out the terrain flags tables
+    // ; 
+    // ; already done by the terrain special function
+
+    for(wy = 0; wy < WORLD_HEIGHT; wy++)
+    {
+
+        for(wx = 0; wx < WORLD_WIDTH; wx++)
+        {
+
+            SET_MAP_SQUARE_FLAG(wx, wy, wp, 0);
+
+        }
+
+    }
+
+    for(src_city_idx = 0; src_city_idx < _cities; src_city_idx++)
+    {
+
+        src_wx = _CITIES[src_city_idx].wx;
+
+        src_wy = _CITIES[src_city_idx].wy;
+
+        for(dst_city_idx = (src_city_idx + 1); dst_city_idx < _cities; dst_city_idx++)
+        {
+
+            dst_wx = _CITIES[dst_city_idx].wx;
+
+            dst_wy = _CITIES[dst_city_idx].wy;
+
+            if(
+                (_CITIES[src_city_idx].wp != wp)
+                ||
+                (_CITIES[dst_city_idx].wp != wp)
+                ||
+                (_CITIES[src_city_idx].owner_idx != NEUTRAL_PLAYER_IDX)
+                ||
+                (_CITIES[dst_city_idx].owner_idx != NEUTRAL_PLAYER_IDX)
+                ||
+                (_landmasses[((wp * WORLD_SIZE) + (src_wy * WORLD_WIDTH) + src_wx)] != _landmasses[((wp * WORLD_SIZE) + (dst_wy * WORLD_WIDTH) + dst_wx)])
+                ||
+                (Range(src_wx, src_wy, dst_wx, dst_wy) >= 11)
+            )
+            {
+
+                continue;
+
+            }
+
+            Road_Length = Path_Wrap(src_wx, src_wy, dst_wx, dst_wy, &Road_Xs[0], &Road_Ys[0], WORLD_WIDTH);
+
+            Invalid_Road = 0;
+
+            Line_Index = 0;
+
+            // ; invalidate the road if it would pass through an ocean
+            // ; or shore tile
+            // ; 
+            // ; contains exclusions for tile types that will never be
+            // ; present on the map at this stage of the process
+
+            while(((Road_Length - 1) > Line_Index) && (Invalid_Road == ST_FALSE))
+            {
+
+                wx = Road_Xs[Line_Index];
+
+                wy = Road_Ys[Line_Index];
+
+                if(
+                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] >= tt_Shore1_Fst)
+                    &&
+                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] <= tt_Shore1_Lst)
+                )
+                {
+
+                    Invalid_Road = ST_TRUE;
+
+                }
+
+                if(_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] == tt_Ocean1)
+                {
+
+                    Invalid_Road = ST_TRUE;
+
+                }
+
+                // ; BUG: this batch should start at $C5 (not that any of
+                // ; these can be present on the map at this stage)
+                if(
+                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] >= _Shore00001R10)
+                    &&
+                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] <= TT_Shore2F_end)
+                )
+                {
+
+                    Invalid_Road = ST_TRUE;
+
+                }
+
+                if(
+                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] >= tt_Shore2_1st)
+                    &&
+                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] <= tt_Ocean2)
+                )
+                {
+
+                    Invalid_Road = ST_TRUE;
+
+                }
+
+                Line_Index++;
+
+            }
+
+            if(Invalid_Road == ST_FALSE)
+            {
+
+                // ; create a road or enchanted road along the specified
+                // ; line depending on the plane
+
+                for(Line_Index = 0; ((Road_Length - 1) > Line_Index); Line_Index++)
+                {
+
+                    wx = Road_Xs[Line_Index];
+
+                    wy = Road_Ys[Line_Index];
+
+                    SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) | MSF_ROAD));
+
+                    if(wp == MYRROR_PLANE)
+                    {
+
+                        SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) | MSF_EROAD));
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }  /* for(src_city_idx = 0; src_city_idx < _cities; src_city_idx++) */
+
+
+
+    // ; create roads under each city
+    // ; 
+    // ; BUG: ignores the passed plane value, and instead
+    // ;  processes every city
+    // ; BUG: Myrran roads will have normal roads as the tile
+    // ;  coordinates upgraded are not set up before doing so
+
+    for(city_idx = 0; city_idx < _cities; city_idx++)
+    {
+
+        // ; PATCHED here to fix the normal roads under Myrran
+        // ; Cities BUG
+
+        SET_MAP_SQUARE_FLAG(
+            _CITIES[city_idx].wx,
+            _CITIES[city_idx].wy,
+            _CITIES[city_idx].wp,
+            (
+                GET_MAP_SQUARE_FLAG(
+                    _CITIES[city_idx].wx,
+                    _CITIES[city_idx].wy,
+                    _CITIES[city_idx].wp
+                )
+                |
+                MSF_ROAD
+            )
+        );
+
+        if(wp == MYRROR_PLANE)
+        {
+
+            // ; BUG: these are not the city coordinates
+            SET_MAP_SQUARE_FLAG(
+                wx,
+                wy,
+                wp,
+                (
+                    GET_MAP_SQUARE_FLAG(
+                        wx,
+                        wy,
+                        wp
+                    )
+                    |
+                    MSF_EROAD
+                )
+            );
+
+        }
+
+    }
+
+}
+
 
 // MGC o51p27
 // drake178: CRP_NEWG_CreatePathGrids()
-// CRP_NEWG_CreatePathGrids()
+/*
+; the arrays created by this function are never used
+; by the game, and can be repurposed even though they
+; are part of the save game file
+;
+; creates the segmented pathing grids of the selected
+; plane for both land and sea exclusive movement types
+*/
+/*
+
+MGC  ovr055 OON function  CRP_NEWG_CreatePathGrid__STUB()
+
+*/
+void CRP_NEWG_CreatePathGrids__WIP(int16_t wp)
+{
+
+    // TODO  EMM_Map4_EMMDATAH()
+
+    CRP_NEWG_CreatePathGrid__STUB(&movement_mode_cost_maps[wp].walking.moves2[0], &UU_TBL_1[wp]);
+
+    CRP_NEWG_CreatePathGrid__STUB(&movement_mode_cost_maps[wp].sailing.moves2[0], &UU_TBL_2[wp]);
+
+}
+
 
 // MGC o51p28
 // drake178: NEWG_CreateSpecials()
-// NEWG_CreateSpecials()
+/*
+; generates terrain specials for the selected plane,
+; and also clears out its terrain flags table
+;
+; WARNING: alters tile types, which may have an adverse
+;  effect on previously used maximum populations
+*/
+/*
+*/
+void Generate_Terrain_Specials(int16_t wp)
+{
+    int16_t Create_Radius = 0;
+    int16_t City_Present = 0;
+    int16_t EZ_Present = 0;
+    int16_t itr_wy = 0;
+    int16_t itr_wx = 0;
+    int16_t itr = 0;
+    int16_t wy = 0;  // _DI_
+    int16_t wx = 0;  // _SI_
+    
+    // ; clear the terrain flag and terrain special map of the
+    // ; plane
+    for(wy = 0; wy < WORLD_HEIGHT; wy++)
+    {
+
+        for(wx = 0; wx < WORLD_WIDTH; wx++)
+        {
+
+            SET_TERRAIN_SPECIAL(wx, wy, wp, 0);
+
+            SET_MAP_SQUARE_FLAG(wx, wy, wp, 0);
+
+        }
+
+    }
+
+    if(wp == ARCANUS_PLANE)
+    {
+
+        Create_Radius = 4;
+
+    }
+    else
+    {
+
+        Create_Radius = 3;
+
+    }
+
+    for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy += Create_Radius)
+    {
+
+        for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx += Create_Radius)
+        {
+
+            wy = (itr_wy + Random((Create_Radius * 2)));
+
+            wx = (itr_wx + Random((Create_Radius * 2)));
+
+            City_Present = ST_FALSE;
+
+            EZ_Present = ST_FALSE;
+
+            // ; check if there's an encounter on the tile
+
+            for(itr = 0; itr < NUM_LAIRS; itr++)
+            {
+
+                if(
+                    (_LAIRS[itr].wp == wp)
+                    &&
+                    (_LAIRS[itr].wx == wx)
+                    &&
+                    (_LAIRS[itr].wy == wy)
+                )
+                {
+
+                    EZ_Present = ST_TRUE;
+
+                }
+
+            }
+
+            // ; check if there's a tower on the tile
+            // ; 
+            // ; the above loop will already catch these
+
+            for(itr = 0; itr < NUM_TOWERS; itr++)
+            {
+
+                if(
+                    (_TOWERS[itr].wx == wx)
+                    &&
+                    (_TOWERS[itr].wy == wy)
+                )
+                {
+
+                    EZ_Present = ST_TRUE;
+
+                }
+
+            }
+
+            // ; check if there is a city on the tile
+
+            for(itr = 0; itr < _cities; itr++)
+            {
+
+                if(
+                    (_CITIES[itr].wp == wp)
+                    &&
+                    (_CITIES[itr].wx == wx)
+                    &&
+                    (_CITIES[itr].wy == wy)
+                )
+                {
+
+                    City_Present = ST_TRUE;
+
+                }
+
+            }
+
+            if(
+                (GET_TERRAIN_SPECIAL(wx, wy, wp) != 0)
+                ||
+                (City_Present != ST_FALSE)
+                ||
+                (EZ_Present != ST_FALSE)
+                ||
+                (
+                    (wy <= 2)  // BUGBUG  should be || not &&
+                    &&
+                    (wy >= 38)
+                    &&
+                    (wx <= 2)
+                    &&
+                    (wx >= 58)
+                )
+            )
+            {
+
+                continue;
+
+            }
+
+            // ; this may reduce maximum population
+
+            if(
+                (Square_Is_Grassland_NewGame(wx, wy, wp) == ST_TRUE)
+                ||
+                (
+                    (Square_Is_Forest_NewGame(wx, wy, wp) == ST_TRUE)
+                    &&
+                    (Random(2) == 1)
+                )
+            )
+            {
+
+                switch((Random(7) - 1))
+                {
+                    case 0:
+                    case 1:
+                    case 2:
+                    {
+                        SET_TERRAIN_TYPE(wx, wy, wp, tt_Mountain1);
+                    } break;
+                    case 3:
+                    case 4:
+                    case 5:
+                    {
+                        SET_TERRAIN_TYPE(wx, wy, wp, tt_Hills1);
+                    } break;
+                    case 6:
+                    {
+                        SET_TERRAIN_TYPE(wx, wy, wp, tt_Swamp1);
+                    } break;
+                }
+
+            }
+
+            if(Square_Is_Forest_NewGame(wx, wy, wp) == ST_TRUE)
+            {
+
+                SET_TERRAIN_SPECIAL(wx, wy, wp, TS_WILDGAME);
+
+            }
+
+            if(Square_Is_Mountain_NewGame(wx, wy, wp) == ST_TRUE)
+            {
+
+                SET_TERRAIN_SPECIAL(wx, wy, wp, Mountain_Terrain_Special(wp));
+
+            }
+
+            if(Square_Is_Hills_NewGame(wx, wy, wp) == ST_TRUE)
+            {
+
+                SET_TERRAIN_SPECIAL(wx, wy, wp, Hills_Terrain_Special(wp));
+
+            }
+
+            if(Square_Is_Swamp_NewGame(wx, wy, wp) == ST_TRUE)
+            {
+
+                SET_TERRAIN_SPECIAL(wx, wy, wp, ts_Nightshade);
+
+            }
+
+            if(Square_Is_Desert_NewGame(wx, wy, wp) == ST_TRUE)
+            {
+
+                SET_TERRAIN_SPECIAL(wx, wy, wp, Desert_Terrain_Special(wp));
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // MGC o51p29
 // drake178: NEWG_DesertSpecials()
-// NEWG_DesertSpecials()
+/*
+; returns a random desert tile terrain special based on
+; the plane
+; Arcanus         Myrror
+;   2:3    gems    1:5
+;   1:3    quork   3:5
+;   -      crysx   1:5
+*/
+/*
+
+*/
+int16_t Desert_Terrain_Special(int16_t wp)
+{
+    int16_t _DI_ = 0;  // _DI_
+    int16_t terrain_special = 0;  // _SI_
+
+    if(wp == ARCANUS_PLANE)
+    {
+        _DI_ = Random(9);
+    }
+    else
+    {
+        _DI_ = (5 + Random(5));
+    }
+
+    switch((_DI_ - 1))  // - 1;  switch 10 cases
+    {
+        case  0:
+        case  1:
+        case  2:
+        case  3:
+        case  4:
+        case  5: { terrain_special = ts_Gems; } break;   // min Myrror roll
+        case  6: 
+        case  7: 
+        case  8: { terrain_special = ts_QuorkCrystals; } break;  // max Arcanus roll 
+        case  9: { terrain_special = ts_CrysxCrystals; } break;
+
+    }
+
+    return terrain_special;
+
+}
+
 
 // MGC o51p30
 // drake178: NEWG_HillSpecials()
-// NEWG_HillSpecials()
+/*
+; returns a random hill tile terrain special based on
+; the plane
+; Arcanus          Myrror
+;   6:18    iron    1:10
+;   4:18   silver   1:10
+;   4:18    gold    4:10
+;   3:18    coal    1:10
+;   1:18   mithril  2:10
+;   -    adamantium 1:10
+*/
+/*
+pg 182  (PDF Page 191)
+Hills
+-----------------------
+Iron        33.3    10
+Coal        16.7    10
+Silver      22.2    10
+Gold        22.2    40
+Mithril      5.6    20
+Adamantium   0      10
+
+Arcanus:
+{0, ..., 17}
+Iron    = (5 + 1):18 = 6:18 6/18 = 33.3
+Silver  = (3 + 1):18 = 4:18 4/18 = 22.2
+Coal    = (2 + 1):18 = 3:18 3/18 = 16.7
+Gold    =              4:18 4/18 = 22.2
+Mithril =              1:18 1/18 =  5.6
+Adamantium  N/A
+
+Myrror:
+{10, ..., 19}
+Iron       = 1:10  10
+Silver     = 1:10  10
+Coal       = 1:10  10
+Gold       = 4:10  40
+Mithril    = 2:10  20
+Adamantium = 1:10  10
+
+*/
+int16_t Hills_Terrain_Special(int16_t wp)
+{
+    int16_t _DI_ = 0;  // _DI_
+    int16_t terrain_special = 0;  // _SI_
+
+    if(wp == ARCANUS_PLANE)
+    {
+        _DI_ = Random(18);
+    }
+    else
+    {
+        _DI_ = (10 + Random(10));
+    }
+
+    switch((_DI_ - 1))  // - 1;  switch 20 cases
+    {
+        case  0:
+        case  1:
+        case  2:
+        case  3:
+        case  4: { terrain_special = ts_Iron; } break;
+        case  5:
+        case  6:
+        case  7: { terrain_special = ts_Silver; } break;
+        case  8:
+        case  9: { terrain_special = ts_Coal; } break;
+        case 10: { terrain_special = ts_Iron; } break;  // min Myrror roll
+        case 11: { terrain_special = ts_Coal; } break;
+        case 12: { terrain_special = ts_Silver; } break;
+        case 13: 
+        case 14: 
+        case 15: 
+        case 16: { terrain_special = ts_Gold; } break;
+        case 17:
+        case 18: { terrain_special = ts_Mithril; } break;  // max Arcanus roll 
+        case 19: { terrain_special = ts_Adamantium; } break;
+    }
+
+    return terrain_special;
+
+}
+
 
 // MGC o51p31
 // drake178: NEWG_MntnSpecials()
-// NEWG_MntnSpecials()
+/*
+; returns a random mountain tile terrain special based
+; on the plane
+; Arcanus          Myrror
+;   5:18    coal    1:10
+;   4:18    iron    1:10
+;   3:18   silver   1:10
+;   3:18    gold    2:10
+;   3:18   mithril  3:10
+;   -    adamantium 2:10
+*/
+/*
+
+*/
+int16_t Mountain_Terrain_Special(int16_t wp)
+{
+    int16_t _DI_ = 0;  // _DI_
+    int16_t terrain_special = 0;  // _SI_
+
+    if(wp == ARCANUS_PLANE)
+    {
+        _DI_ = Random(18);
+    }
+    else
+    {
+        _DI_ = (10 + Random(10));
+    }
+
+    switch((_DI_ - 1))  // - 1;  switch 20 cases
+    {
+        case  0:
+        case  1:
+        case  2: { terrain_special = ts_Iron; } break;
+        case  3:
+        case  4: { terrain_special = ts_Silver; } break;
+        case  5: 
+        case  6: 
+        case  7: 
+        case  8: { terrain_special = ts_Coal; } break;
+        case  9: { terrain_special = ts_Gold; } break;
+        case 10: { terrain_special = ts_Iron; } break;  // min Myrror roll
+        case 11: { terrain_special = ts_Silver; } break;
+        case 12: { terrain_special = ts_Coal; } break;
+        case 13: 
+        case 14: { terrain_special = ts_Gold; } break;
+        case 15: 
+        case 16: 
+        case 17: { terrain_special = ts_Mithril; } break;  // max Arcanus roll
+        case 18: 
+        case 19: { terrain_special = ts_Adamantium; } break;
+    }
+
+    return terrain_special;
+
+}
+
 
 // MGC o51p32
 // drake178: NEWG_SetScoutingMaps()
-// NEWG_SetScoutingMaps()
+/*
+; clears the scouting maps, and marks the human
+; player's initial exploration around their fortress
+; city
+*/
+/*
+
+Init_New_Game() |-> 
+
+*/
+void Init_Square_Explored(void)
+{
+    int16_t X_Modifier = 0;
+    int16_t wp = 0;
+    int16_t wy = 0;  // _DI_
+    int16_t wx = 0;  // _SI_
+
+    for(wp = 0; wp < 2; wp++)
+    {
+
+        for(wy = 0; wy < WORLD_HEIGHT; wy++)
+        {
+
+            for(wx = 0; wx < WORLD_WIDTH; wx++)
+            {
+
+                SET_SQUARE_EXPLORED(wx,wy,wp,ST_FALSE);
+
+            }
+
+        }
+
+    }
+
+    /*
+        Wow...
+        Just, make explored around the human players starting city...
+    */
+    wp = _FORTRESSES[HUMAN_PLAYER_IDX].wp;
+    wx = _FORTRESSES[HUMAN_PLAYER_IDX].wx;
+    wy = _FORTRESSES[HUMAN_PLAYER_IDX].wy;
+
+    // ; mark the 3 by 3 area centered around the capital as
+    // ; fully explored
+    // ; 
+    // ; WARNING: the corners will be overwritten below too
+    for(X_Modifier = -1; X_Modifier <= 1; X_Modifier++)
+    {
+
+        Set_Square_Explored_Bits(wp, (wx + X_Modifier), wy, (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
+        
+    }
+    for(X_Modifier = -1; X_Modifier <= 1; X_Modifier++)
+    {
+
+        Set_Square_Explored_Bits(wp, (wx + X_Modifier), (wy - 1), (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
+        
+    }
+    for(X_Modifier = -1; X_Modifier <= 1; X_Modifier++)
+    {
+
+        Set_Square_Explored_Bits(wp, (wx + X_Modifier), (wy + 1), (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
+        
+    }
+
+    Set_Square_Explored_Bits(wp, (wx - 1), (wy - 2), SCT_BottomRight);
+
+    Set_Square_Explored_Bits(wp, wx, (wy - 2), (SCT_BottomLeft | SCT_BottomRight));
+
+    Set_Square_Explored_Bits(wp, (wx + 1), (wy - 2), SCT_BottomLeft);
+
+    Set_Square_Explored_Bits(wp, (wx - 1), (wy + 2), SCT_TopRight);
+
+    Set_Square_Explored_Bits(wp, wx, (wy + 2), (SCT_TopLeft | SCT_TopRight));
+
+    Set_Square_Explored_Bits(wp, (wx - 2), (wy - 1), SCT_BottomRight);
+
+    Set_Square_Explored_Bits(wp, (wx - 2), wy, (SCT_TopRight | SCT_BottomRight));
+
+    Set_Square_Explored_Bits(wp, (wx - 2), (wy + 1), SCT_TopRight);
+
+    Set_Square_Explored_Bits(wp, (wx + 2), (wy - 1), SCT_BottomLeft);
+
+    Set_Square_Explored_Bits(wp, (wx + 2), (wy + 1), SCT_TopLeft);
+
+    Set_Square_Explored_Bits(wp, (wx + 2), wy, (SCT_BottomLeft | SCT_TopLeft));
+
+    Set_Square_Explored_Bits(wp, (wx - 1), (wy - 1), (SCT_BottomLeft | SCT_TopRight | SCT_BottomRight));
+
+    Set_Square_Explored_Bits(wp, (wx - 1), (wy + 1), (SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
+
+    Set_Square_Explored_Bits(wp, (wx - 1), (wy + 1), (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight));
+
+    Set_Square_Explored_Bits(wp, (wx + 1), (wy - 1), (SCT_BottomLeft | SCT_TopLeft | SCT_BottomRight));
+
+}
+
 
 // MGC o51p33
 // drake178: TILE_SetScouting()
-// TILE_SetScouting()
+/*
+; sets the pased scouting flags for the specified tile,
+; or does nothing if the coordinates are out of range
+; (the plane is not boundary checked though)
+*/
+/*
+
+NOT Set_Map_Square_Explored_Flags_XYP_Range()
+NOT j_Set_Map_Square_Explored_Flags_XYP()
+
+*/
+void Set_Square_Explored_Bits(int16_t wp, int16_t wx, int16_t wy, int16_t bits)
+{
+
+    if(
+        (wx >= 0)
+        &&
+        (wx < WORLD_WIDTH)
+        &&
+        (wy >= 0)
+        &&
+        (wy < WORLD_HEIGHT)
+    )
+    {
+
+        SET_SQUARE_EXPLORED(wx,wy,wp,bits);
+
+    }
+
+}
+
 
 // MGC o51p34
 // drake178: NEWG_SetMoveMaps()
-// NEWG_SetMoveMaps()
+/*
+; sets the movement map for the selected plane based
+; on tile types
+*/
+/*
+    populates movement_mode_cost_maps[]
+    from terrain_stats_table[], then roads and eroads
+
+SEEALSO:  CITYCALC.c  Make_Road()
+
+*/
+void Movement_Mode_Cost_Maps(int16_t wp)
+{
+    int16_t terrain_type_idx = 0;
+    int16_t itr_wy = 0;
+    int16_t itr_wx = 0;  //  _DI_
+
+    // TODO  EMM_Map4_EMMDATAH();
+
+    for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
+    {
+
+        for(itr_wy = 0; itr_wy < WORLD_WIDTH; itr_wy++)
+        {
+
+            terrain_type_idx = TERRAIN_TYPE_INDEX(itr_wx, itr_wy, wp);
+
+// void Make_Road(int16_t wx, int16_t wy, int16_t wp)
+//     movement_mode_cost_maps[wp].UU_MvMd.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+//     movement_mode_cost_maps[wp].walking.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+//     movement_mode_cost_maps[wp].forester.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+//     movement_mode_cost_maps[wp].mountaineer.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+//     movement_mode_cost_maps[wp].swimming.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+//     _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] |= MSF_ROAD;
+//     _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= ~(MSF_EROAD);
+//     if(wp == MYRROR_PLANE)
+//         Make_Road_Enchanted(wx, wy, wp);
+
+// struct s_MOVE_COST_MAP
+// {
+//     /* 0x0000 */ int8_t moves2[WORLD_SIZE];
+//     /* 0x0960 */
+// };
+// #pragma pack(pop)
+// 
+// 
+// // drake178: HMP_MAPS
+// // sizeof:  3840h  14,400
+// /*
+//     movement cost per movement mode, in moves2 units
+//     one *map* per movement mode, as world map - 60x40 - map squares
+// */
+// #pragma pack(push)
+// #pragma pack(2)
+// struct s_MOVE_MODE_COST_MAPS
+// {
+//     /* 0x0000 */ struct s_MOVE_COST_MAP UU_MvMd;
+//     /* 0x0960 */ struct s_MOVE_COST_MAP walking;
+
+            // ; AL = (byte *)(terrain_stats_table + (terrain_type * 6))
+            // [es:bx+HMP_MAPS.Walking.HalfMPCost], al
+            // movement_mode_cost_maps[((wp * 14400) + (itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[terrain_type_idx];
+            // terrain_stats_table[terrain_type_idx][]
+            // {1,0,2,3,4,5}
+            // {Walking,Unused_MoveType,Forester,Mountaineer,Swimming,Sailing}
+            movement_mode_cost_maps[wp].walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 1)];
+            movement_mode_cost_maps[wp].UU_MvMd.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 0)];
+            movement_mode_cost_maps[wp].forester.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 2)];
+            movement_mode_cost_maps[wp].mountaineer.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 3)];
+            movement_mode_cost_maps[wp].swimming.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 4)];
+            movement_mode_cost_maps[wp].sailing.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 5)];
+
+            if((MAP_SQUARE_FLAG(itr_wx,itr_wy,wp) & MSF_ROAD) != 0)
+            {
+
+                if(wp != ARCANUS_PLANE)
+                {
+
+                    movement_mode_cost_maps[wp].walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
+                    movement_mode_cost_maps[wp].UU_MvMd.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
+                    movement_mode_cost_maps[wp].forester.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
+                    movement_mode_cost_maps[wp].mountaineer.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
+                    movement_mode_cost_maps[wp].swimming.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
+
+                }
+                else
+                {
+
+                    movement_mode_cost_maps[wp].walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
+                    movement_mode_cost_maps[wp].UU_MvMd.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
+                    movement_mode_cost_maps[wp].forester.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
+                    movement_mode_cost_maps[wp].mountaineer.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
+                    movement_mode_cost_maps[wp].swimming.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
+
+                }
+
+                movement_mode_cost_maps[wp].sailing.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = ST_UNDEFINED;
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // MGC o51p35
 // drake178: TILE_InvalidOutflow()
@@ -2029,27 +5407,262 @@ void Draw_Building_The_Worlds(int16_t percent)
 
 // MGC o51p37
 // drake178: UNIT_Create()
-// UNIT_Create()
+/*
+*/
+/*
+
+*/
+void Create_Unit_NewGame(int16_t unit_type, int16_t player_idx, int16_t wx, int16_t wy, int16_t wp, int16_t city_idx)
+{
+    int16_t WTF = 0;
+
+    if(unit_type == 0)
+    {
+
+        return;
+
+    }
+
+    _UNITS[_units].wx = (int8_t)wx;
+    _UNITS[_units].wy = (int8_t)wy;
+    _UNITS[_units].wp = (int8_t)wp;
+    _UNITS[_units].owner_idx = (int8_t)player_idx;
+    _UNITS[_units].moves2_max = _unit_type_table[unit_type].Move_Halves;
+    _UNITS[_units].type = (uint8_t)unit_type;
+    _UNITS[_units].Hero_Slot = ST_UNDEFINED;
+    // DNE  _UNITS[_units].in_tower = ST_FALSE;
+    // _UNITS[_units].Finished = ST_TRUE;
+    _UNITS[_units].Finished = ST_FALSE;
+    // _UNITS[_units].moves2 = 0;
+    _UNITS[_units].moves2 = _unit_type_table[unit_type].Move_Halves;
+    _UNITS[_units].Sight_Range = _unit_type_table[unit_type].Sight;
+    _UNITS[_units].dst_wx = 0;
+    _UNITS[_units].dst_wy = 0;
+    _UNITS[_units].Status = us_Ready;
+    _UNITS[_units].Level = 0;
+    _UNITS[_units].XP = 0;
+    _UNITS[_units].Damage = 0;
+    _UNITS[_units].Draw_Priority = 0;
+    _UNITS[_units].enchantments = 0;
+    // DNE  _UNITS[_units].mutations = 0;
+    _UNITS[_units].Move_Failed = ST_FALSE;
+    _UNITS[_units].Rd_Constr_Left = ST_UNDEFINED;
+    _UNITS[_units].mutations = 0;
+
+    if(_players[player_idx].alchemy != ST_FALSE)
+    {
+        _UNITS[_units].mutations = wq_Magic;                        
+    }
+
+    // WTF?
+    if(city_idx >= 0)
+    {
+
+        // ; ; PATCHED here to prevent units starting with XP
+
+        if(_CITIES[WTF].bldg_status[bt_FightersGuild] > bs_Replaced)
+        {
+
+            _UNITS[_units].XP = TBL_Experience[UL_REGULAR];
+
+            _UNITS[_units].Level = 1;
+
+        }
+
+        if(_CITIES[WTF].bldg_status[bt_WarCollege] > bs_Replaced)
+        {
+
+            _UNITS[_units].XP = TBL_Experience[UL_VETERAN];
+
+            _UNITS[_units].Level = 2;
+
+        }
+
+        if(_UNITS[_units].Level > 3)
+        {
+
+            _UNITS[_units].XP = TBL_Experience[UL_ELITE];
+
+            _UNITS[_units].Level = 3;
+
+        }
+
+        if(_players[player_idx].warlord > ST_FALSE)
+        {
+
+            _UNITS[_units].Level += 1;
+
+        }
+
+    }
+
+    _units++;
+
+}
+
 
 // MGC o51p38
 // drake178: NEWG_AnimateOceans()
-// NEWG_AnimateOceans()
+/*
+
+*/
+/*
+
+*/
+void NEWG_AnimateOceans__STUB(void)
+{
+
+
+
+}
+
 
 // MGC o51p39
 // drake178: TILE_IsOcean()
-// TILE_IsOcean()
+int16_t TILE_IsOcean(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;  // _CX_
+
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    if(
+        (terrain_type != tt_BugGrass)
+        &&
+        (
+            (terrain_type < tt_Grasslands1)
+            ||
+            (
+                (terrain_type > TT_RiverM_end)
+                &&
+                (terrain_type < TT_Rivers_1st)
+            )
+            ||
+            (
+                (terrain_type > tt_Desert_Lst)
+                &&
+                (terrain_type < TT_4WRiver1)
+            )
+            ||
+            (
+                (terrain_type > TT_4WRiver5)
+                &&
+                (terrain_type < tt_Tundra_1st)
+            )
+        )
+    )
+    {
+
+        return ST_TRUE;
+
+    }
+    else
+    {
+
+        return ST_FALSE;
+
+    }
+
+}
+
 
 // MGC o51p40
 // drake178: TILE_HasNode()
-// TILE_HasNode()
+int16_t TILE_HasNode(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t itr_nodes = 0;  // _CX_
+    
+    for(itr_nodes = 0; itr_nodes < NUM_NODES; itr_nodes++)
+    {
+
+        if(
+            (_NODES[itr_nodes].wx == wx)
+            &&
+            (_NODES[itr_nodes].wy == wy)
+            &&
+            (_NODES[itr_nodes].wp == wp)
+        )
+        {
+
+            return ST_TRUE;
+
+        }
+
+    }
+
+    return ST_FALSE;
+
+}
+
 
 // MGC o51p41
 // drake178: TILE_HasTower()
-// TILE_HasTower()
+int16_t TILE_HasTower(int16_t wx, int16_t wy)
+{
+    int16_t itr_towers = 0;  // _DX_
+    
+    for(itr_towers = 0; itr_towers < NUM_TOWERS; itr_towers++)
+    {
+
+        if(
+            (_TOWERS[itr_towers].wx == wx)
+            &&
+            (_TOWERS[itr_towers].wy == wy)
+        )
+        {
+
+            return ST_TRUE;
+
+        }
+
+    }
+
+    return ST_FALSE;
+
+}
+
 
 // MGC o51p42
-// drake178: TILE_IsForest()
-// TILE_IsForest()
+// drake178: Square_Is_Forest_NewGame()
+/*
+
+*/
+/*
+
+~==
+Terrain.c
+// WZD s161p23
+// drake178: TILE_IsVisibleForest()
+// AKA Square_Is_Explored_Forest()
+int16_t Square_Is_Forest(int16_t wx, int16_t wy, int16_t wp)
+
+*/
+int16_t Square_Is_Forest_NewGame(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;  // _CX_
+
+    terrain_type = (TERRAIN_TYPE(wx, wy, wp) % NUM_TERRAIN_TYPES);
+
+    if(
+        (terrain_type == tt_Forest1)
+        ||
+        (terrain_type == tt_Forest2)
+        ||
+        (terrain_type == tt_Forest3)
+    )
+    {
+
+        return ST_TRUE;
+
+    }
+    else
+    {
+
+        return ST_FALSE;
+
+    }
+
+}
+
 
 // MGC o51p43
 // drake178: TILE_IsRiver()
@@ -2065,36 +5678,527 @@ void Draw_Building_The_Worlds(int16_t percent)
 
 // MGC o51p46
 // drake178: TILE_IsMountains()
-// TILE_IsMountains()
+int16_t Square_Is_Mountain_NewGame(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;  // _CX_
+
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    if(
+        (terrain_type == tt_Mountain1)
+        ||
+        (
+            (terrain_type >= tt_Mountains_Fst)
+            &&
+            (terrain_type <= tt_Mountains_Lst)
+        )
+    )
+    {
+
+        return ST_TRUE;
+
+    }
+    else
+    {
+
+        return ST_FALSE;
+
+    }
+
+}
 
 // MGC o51p47
 // drake178: TILE_IsHills()
-// TILE_IsHills()
+int16_t Square_Is_Hills_NewGame(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;  // _CX_
+
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    if(
+        (terrain_type == tt_Hills1)
+        ||
+        (
+            (terrain_type >= tt_Mountains_Fst)
+            &&
+            (terrain_type <= tt_Mountains_Lst)
+        )
+    )
+    {
+
+        return ST_TRUE;
+
+    }
+    else
+    {
+
+        return ST_FALSE;
+
+    }
+
+}
+
 
 // MGC o51p48
 // drake178: TILE_IsSwamp()
-// TILE_IsSwamp()
+int16_t Square_Is_Swamp_NewGame(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;  // _CX_
+
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    if(
+        (terrain_type == tt_Swamp2)
+        ||
+        (terrain_type == tt_Swamp3)
+        ||
+        (terrain_type == tt_Swamp1)
+    )
+    {
+
+        return ST_TRUE;
+
+    }
+    else
+    {
+
+        return ST_FALSE;
+
+    }
+
+}
 
 // MGC o51p49
 // drake178: TILE_IsDesert()
-// TILE_IsDesert()
+int16_t Square_Is_Desert_NewGame(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;  // _CX_
+
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    if(
+        (terrain_type == tt_Desert1)
+        ||
+        (terrain_type == tt_Desert2)
+        ||
+        (terrain_type == tt_Desert3)
+        ||
+        (terrain_type == tt_Desert4)
+        ||
+        (
+            (terrain_type >= tt_Desert_Fst)
+            &&
+            (terrain_type <= tt_Desert_Lst)
+        )
+    )
+    {
+
+        return ST_TRUE;
+
+    }
+    else
+    {
+
+        return ST_FALSE;
+
+    }
+
+}
+
 
 // MGC o51p50
 // drake178: TILE_IsGrasslands()
-// TILE_IsGrasslands()
+/*
+*/
+/*
+*/
+int16_t Square_Is_Grassland_NewGame(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;  // _CX_
+
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    if(
+        (terrain_type == tt_Grasslands1)
+        ||
+        (terrain_type == tt_Grasslands2)
+        ||
+        (terrain_type == tt_Grasslands3)
+        ||
+        (terrain_type == tt_Grasslands4)
+        ||
+        (terrain_type == tt_BugGrass)
+    )
+    {
+
+        return ST_TRUE;
+
+    }
+    else
+    {
+
+        return ST_FALSE;
+
+    }
+
+}
+
 
 // MGC o51p51
 // drake178: TILE_GetFood()
-// TILE_GetFood()
+/*
+; returns the amount of food provided by the tile based
+; on its type, in units of 1/2
+;
+; BUG: swamps do not yield the described amount of 1/2,
+;  while nature nodes yield less than in WIZARDS.EXE
+*/
+/*
+returns food, not food2
+
+Terrain.c
+// WZD s161p03
+int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
+
+*/
+int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;  // _SI_
+    int16_t food_units = 0;  // _CX_
+
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    if(
+        (terrain_type == tt_Ocean1)
+        ||
+        (terrain_type >= tt_Ocean2)
+    )
+    {
+        return 0;
+    }
+    else if(terrain_type == tt_BugGrass)  // NOTE: sames {tt_Grasslands1, ..., tt_Grasslands3}
+    {
+        return 3;
+    }
+    else if(terrain_type < tt_Grasslands1)  // >= tt_Shore1_Fst  <= tt_Shore1_Lst
+    {
+        return 1;
+    }
+    else if(terrain_type > TT_4WRiver5)  // >= TT_Shore3_1st
+    {
+        return 1;
+    }
+    else if(terrain_type > TT_Shore2_end)  // >= TT_4WRiver1
+    {
+        return 4;
+    }
+    else if(terrain_type > tt_Desert_Lst)  // >= tt_Shore2_1st
+    {
+        return 1;
+    }
+    else if(terrain_type > tt_Hills_Lst)  // >= tt_Desert_Fst
+    {
+        return 0;
+    }
+    else if(terrain_type > tt_Mountains_Lst)  // >= tt_Hills_Fst
+    {
+        return 1;
+    }
+    else if(terrain_type > tt_Rivers_end)  // >= tt_Mountains_Fst
+    {
+        return 0;
+    }
+    else if(terrain_type > tt_Forest3)  // >= TT_RiverM_1st
+    {
+        return 4;
+    }
+    else
+    {
+
+// switch(terrain_type - tt_Grasslands1)
+// ; switch 23 cases
+// jt_sq_ng_tt_fd_00_10_11_18
+// jt_sq_ng_tt_fd_01_21_22
+// jt_sq_ng_tt_fd_02
+// jt_sq_ng_tt_fd_03_12_13_14
+// jt_sq_ng_tt_fd_04_15_16
+// jt_sq_ng_tt_fd_05_19_20
+// jt_sq_ng_tt_fd_06
+// jt_sq_ng_tt_fd_07
+// jt_sq_ng_tt_fd_08
+// jt_sq_ng_tt_fd_09
+// jt_sq_ng_tt_fd_17
+        switch(terrain_type)
+        {
+
+            case tt_Grasslands1:
+            case tt_Grasslands2:
+            case tt_Grasslands3:
+            case tt_Grasslands4:
+            {
+                food_units = 3;
+            } break;
+
+            case tt_Forest1:
+            case tt_Forest2:
+            case tt_Forest3:
+            {
+                food_units = 1;
+            } break;
+
+            case tt_Mountain1:
+            {
+                food_units = 0;
+            } break;
+
+            case tt_Desert1:
+            case tt_Desert2:
+            case tt_Desert3:
+            case tt_Desert4:
+            {
+                food_units = 0;
+            } break;
+
+            case tt_Swamp1:  // BUGBUG: manual says 1/2 food
+            case tt_Swamp2:  // BUGBUG: manual says 1/2 food
+            case tt_Swamp3:  // BUGBUG: manual says 1/2 food
+            {
+                food_units = 0;
+            } break;
+
+            case tt_Tundra1:
+            case tt_Tundra2:
+            case tt_Tundra3:
+            {
+                food_units = 0;
+            } break;
+
+            case tt_SorceryNode:
+            {
+                food_units = 4;
+            } break;
+
+            case tt_NatureNode:
+            {
+                food_units = 4;  // BUGBUG  is 5 in Terrain.c // WZD s161p03  int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
+            } break;
+
+            case tt_ChaosNode:
+            {
+                food_units = 0;
+            } break;
+
+            case tt_Hills1:
+            {
+                food_units = 1;
+            } break;
+
+            case tt_Volcano:
+            {
+                food_units = 0;
+            } break;
+
+        }
+
+    }
+
+    return food_units;
+
+}
+
 
 // MGC o51p52
 // drake178: TILE_GetMaxPop()
-// TILE_GetMaxPop()
+/*
+; returns the amount of food found on the surrounding
+; tiles in a radius equal to a city's catchment area
+; (the base maximum population of a city built there)
+*/
+/*
+Surveyor.c
+    Surveyor_Window_Display()
+        Compute_Base_Values_For_Map_Square(l_mx, l_my, _map_plane, &val, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &is_unexplored);
+        Print(245, 151, str_MaximumPop);
+        Print_Integer_Right(306, 151, val);
+CITYCALC.c
+    void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int16_t *MaxPop, int16_t *production_bonus, int16_t *gold_bonus, int16_t *unit_cost_reduction, int16_t *gold_units, int16_t *magic_units, int16_t *have_nightshade, int16_t *have_mithril, int16_t *have_adamantium, int16_t *have_shore, int16_t *is_unexplored)
+        // HERE: *MaxPop is ...
+        // *MaxPop = Square_Food2(curr_wx, itr_wy, wp);
+        // *MaxPop += ((Tile_Food + food2_remainder) / 2);
+        *MaxPop = (*MaxPop / 4);  // ¿ 2 food2 per population unit ?
+        if(map_square_has_city == ST_TRUE)
+            *MaxPop = City_Maximum_Size(city_idx);
+CITYCALC.c
+    int16_t City_Maximum_Size(int16_t city_idx)
+
+¿ TILE_GetFood() ~== Square_Food2() ?
+
+could be considered the equivalent of City_Maximum_Size
+given that it's only missing City_Food_WildGame(), but that doesn't matter because we haven't done terrain specials yet
+
+*/
+int16_t City_Maximum_Size_NewGame(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t wx_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t city_area_squares = 0;  // AKA useable_map_squares
+    int16_t city_area_food_units = 0;  // _DI_  AKA food2_units
+    int16_t itr = 0;  // _SI_
+
+    city_area_squares = Get_Useable_City_Area_NewGame(wx, wy, wp, &wx_array[0], &wy_array[0]);
+
+    city_area_food_units = 0;
+
+    for(itr = 0; itr < city_area_squares; itr++)
+    {
+
+        city_area_food_units += Square_Food2_NewGame(wx_array[itr], wy_array[itr], wp);
+
+    }
+
+    return (city_area_food_units / 2);
+
+}
+
 
 // MGC o51p53
 // drake178: TILE_GetCatchment()
-// TILE_GetCatchment()
+/*
+*/
+/*
+CITYCALC.c
+// WZD o142p08
+int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp, int16_t *wx_array, int16_t *wy_array)
+
+*/
+int16_t Get_Useable_City_Area_NewGame(int16_t city_wx, int16_t city_wy, int16_t city_wp, int16_t * wx_array, int16_t * wy_array)
+{
+    // DNE  uint8_t * terrain_flags_table_row = 0;
+    int16_t square_y = 0;
+    int16_t square_x_max = 0;
+    int16_t square_x_min = 0;
+    int16_t map_square_count = 0;  // _SI_
+    int16_t itr_city_area_squares = 0;  // _CX_
+    int16_t itr_world_x = 0;  // _DI_
+    int16_t square_x = 0;  // _DX_
+
+    map_square_count = 0;
+
+    for(itr_city_area_squares = -2; itr_city_area_squares <= 2; itr_city_area_squares++)
+    {
+
+        square_y = (city_wy + itr_city_area_squares);
+
+        if(
+            (square_y >= 0)
+            &&
+            (square_y < WORLD_HEIGHT) )
+        {
+
+            square_x_min = -2;
+            square_x_max =  2;
+
+            if(
+                (itr_city_area_squares == -2)
+                ||
+                (itr_city_area_squares ==  2)
+            )
+            {
+
+                square_x_min = -1;
+                square_x_max =  1;
+
+            }
+
+            // DNE  terrain_flags_table_row = (uint8_t *)&_map_square_flags[(city_wp * WORLD_SIZE) + (square_y * WORLD_WIDTH)];
+
+            itr_world_x = square_x_min;
+
+            while(itr_world_x <= square_x_max)
+            {
+
+                square_x = city_wx + itr_world_x;
+
+                if(square_x < 0)
+                {
+                    square_x += WORLD_WIDTH;
+                }
+
+                if(square_x > WORLD_WIDTH)
+                {
+                    square_x -= WORLD_WIDTH;
+                }
+
+                // DNE  if( (*(terrain_flags_table_row + square_x) & MSF_CORRUPTION) == 0)
+                // DNE  {
+                    wx_array[map_square_count] = square_x;
+                    wy_array[map_square_count] = square_y;
+                    map_square_count++;
+                // DNE  }
+
+                itr_world_x++;
+
+            }
+
+        }
+
+    }
+
+    return map_square_count;
+
+}
+
 
 // MGC o51p54
 // drake178: UU_Empty_Tile_Fn()
-// UU_Empty_Tile_Fn()
+void o51p54_empty_function(void)
+{
+// push    bp
+// mov     bp, sp
+// pop     bp
+// retf
+}
+
+
+
+/*
+
+    MAGIC.EXE  ovr054
+
+*/
+
+// MGC o54p01
+// drake178: CRP_SPATH_Arbitrary()
+// CRP_SPATH_Arbitrary()
+// MGC o54p02
+// drake178: UU_SPATH_Segmented()
+// UU_SPATH_Segmented()
+// MGC o54p03
+// drake178: UU_SPATH_15by15()
+// UU_SPATH_15by15()
+// MGC o54p04
+// drake178: UU_SPATH_Segments()
+// UU_SPATH_Segments()
+// MGC o54p05
+// drake178: UU_SPATH_GetBorderTiles()
+// UU_SPATH_GetBorderTiles()
+
+
+
+/*
+
+    MAGIC.EXE  ovr055
+
+*/
+
+// drake178: CRP_NEWG_CreatePathGrid()
+/*
+*/
+/*
+*/
+static void CRP_NEWG_CreatePathGrid__STUB(void * moves2, void * move_path_chunks)
+{
+
+
+
+}

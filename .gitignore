@@ -22,7 +22,7 @@ CppProperties.json
 
 # ¿ CMake ?
 _deps/
-
+out/
 build/
 Debug/
 Release/
@@ -33,31 +33,10 @@ CMakeFiles/
 x64/
 cmake_install.cmake
 CMakeCache.txt
-game.sln
-ReMoM.sln
-src/CMakeFiles/
-src/Debug/
-src/game.dir/
-src/gamelib.dir/
-src/ReMoM.dir/
-src/cmake_install.cmake
-src/MOX/CMakeFiles/
-src/MOX/Debug
-src/MOX/MOX.dir
-src/MOX/cmake_install.cmake
-src/STU/CMakeFiles/
-src/STU/Debug
-src/STU/STU.dir
-src/STU/cmake_install.cmake
 
 
 # local debug  //Hand-Made Hero
 misc/
-
-
-# SDL2
-SDL2.dll
-SDL2_mixer.dll
 
 
 # MoM

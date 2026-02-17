@@ -807,7 +807,8 @@ void Diplomacy_Screen_Draw__WIP(void)
 // IDK_Diplo_Add_Spell_Or_Gold_To_Message()
 
 // WZD o84p02
-void _sub_6ED5D_Draw(void)
+// TODO  Message	VCR003	Function '_sub_6ED5D_Draw' can be made static		C:\STU\devel\ReMoM\MoM\src\DIPLOMAC.c	811		
+static void _sub_6ED5D_Draw(void)
 {
     int16_t si = 0;  // _SI_
 
@@ -1068,7 +1069,7 @@ static void Diplomacy_Propose_Treaty__WIP(void)
         )
         {
 
-            m_other_wizard_list_declare_war[m_other_wizard_count_declare_war] = itr;
+            m_other_wizard_list_declare_war[m_other_wizard_count_declare_war] = (unsigned char)itr;
 
             m_other_wizard_count_declare_war++;
 
@@ -1099,7 +1100,7 @@ static void Diplomacy_Propose_Treaty__WIP(void)
         )
         {
 
-            m_other_wizard_list_break_alliance[m_other_wizard_count_break_alliance] = itr;
+            m_other_wizard_list_break_alliance[m_other_wizard_count_break_alliance] = (unsigned char)itr;
 
             m_other_wizard_count_break_alliance++;
 
@@ -1859,7 +1860,7 @@ static void Diplomacy_Break_Treaty(void)
                         if(m_exchange_spell_count > 0)
                         {
 
-                            _players[HUMAN_PLAYER_IDX].peace_duration[m_diplomac_player_idx] = Random(15);
+                            _players[HUMAN_PLAYER_IDX].peace_duration[m_diplomac_player_idx] = (uint8_t)Random(15);
 
                             diplomacy_message_id = 70;
 
@@ -1899,7 +1900,7 @@ static void Diplomacy_Break_Treaty(void)
                             if(Amount != 0)
                             {
 
-                                _players[HUMAN_PLAYER_IDX].peace_duration[m_diplomac_player_idx] = Random(15);
+                                _players[HUMAN_PLAYER_IDX].peace_duration[m_diplomac_player_idx] = (uint8_t)Random(15);
 
                                 Player_Add_Gold(_human_player_idx, Amount);
 
@@ -2550,7 +2551,7 @@ static int16_t Invader_Army_Strength_Comparison(int16_t player1, int16_t player2
                 (_UNITS[itr].owner_idx == player2)
             )
             &&
-            (_UNITS[itr].wp = plane)
+            (_UNITS[itr].wp == plane)
             &&
             (_landmasses[((_UNITS[player2].wp * WORLD_SIZE) + (_UNITS[player2].wy * WORLD_WIDTH) + _UNITS[player2].wx)] == landmass)
         )
@@ -2846,7 +2847,7 @@ void Diplomacy_Growth(void)
                     
                     _players[itr1].Dipl.Visible_Rel[itr2] += Gravitation;
 
-                    SETMAX(_players[itr1].Dipl.Visible_Rel[itr2], Dipl_182h_Field);
+                    SETMAX(_players[itr1].Dipl.Visible_Rel[itr2], (int8_t)Dipl_182h_Field);
 
                 }
                 else
@@ -2857,7 +2858,7 @@ void Diplomacy_Growth(void)
                     
                         _players[itr1].Dipl.Visible_Rel[itr2] -= Gravitation;
 
-                        SETMIN(_players[itr1].Dipl.Visible_Rel[itr2], Dipl_182h_Field);
+                        SETMIN(_players[itr1].Dipl.Visible_Rel[itr2], (int8_t)Dipl_182h_Field);
 
                     }
 
@@ -2952,7 +2953,7 @@ static int16_t Npc_Proposal__WIP(void)
 
         m_IDK_diplomatic_order = do_IDK_war;
 
-        _players[HUMAN_PLAYER_IDX].Dipl.field_7E[m_diplomac_player_idx] = other_player;
+        _players[HUMAN_PLAYER_IDX].Dipl.field_7E[m_diplomac_player_idx] = (int8_t)other_player;
 
         m_diplomsg_1_record_sub_number = ST_UNDEFINED;
 
@@ -3301,8 +3302,8 @@ static void Diplomacy_Player_Gets_Spell(int16_t player_idx, int16_t spell_idx)
 static void Start_Treaty(int16_t player1, int16_t player2, int16_t type)
 {
 
-    _players[player1].Dipl.Dipl_Status[player2] = type;
-    _players[player2].Dipl.Dipl_Status[player1] = type;
+    _players[player1].Dipl.Dipl_Status[player2] = (int8_t)type;
+    _players[player2].Dipl.Dipl_Status[player1] = (int8_t)type;
 
     _players[player1].Hostility[player2] = 0;
     _players[player2].Hostility[player1] = 0;
@@ -3444,7 +3445,7 @@ void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender
                     _players[HUMAN_PLAYER_IDX].Dipl.DA_Strength[HUMAN_PLAYER_IDX] = 100;
                     _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[HUMAN_PLAYER_IDX] = 39;
                     _players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[HUMAN_PLAYER_IDX] = spell_idx;
-                    _players[HUMAN_PLAYER_IDX].Dipl.DA_City[HUMAN_PLAYER_IDX] = city_idx;
+                    _players[HUMAN_PLAYER_IDX].Dipl.DA_City[HUMAN_PLAYER_IDX] = (int8_t)city_idx;
                 }
             }
         }
@@ -3479,9 +3480,9 @@ void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender
                         )
                         {
                             _players[HUMAN_PLAYER_IDX].Dipl.DA_Strength[defender_idx] = 10000;
-                            _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[defender_idx] = type;
+                            _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[defender_idx] = (int8_t)type;
                             _players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[defender_idx] = spell_idx;
-                            _players[HUMAN_PLAYER_IDX].Dipl.DA_City[defender_idx] = city_idx;
+                            _players[HUMAN_PLAYER_IDX].Dipl.DA_City[defender_idx] = (int8_t)city_idx;
                         }
                     }
                     else
@@ -3685,9 +3686,9 @@ void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender
                             if(abs(value) > abs(_players[defender_idx].Dipl.DA_Strength[HUMAN_PLAYER_IDX]))
                             {
                                 _players[defender_idx].Dipl.DA_Strength[HUMAN_PLAYER_IDX] = value;
-                                _players[defender_idx].Dipl.Dipl_Action[HUMAN_PLAYER_IDX] = type;
+                                _players[defender_idx].Dipl.Dipl_Action[HUMAN_PLAYER_IDX] = (int8_t)type;
                                 _players[defender_idx].Dipl.DA_Spell[HUMAN_PLAYER_IDX] = spell_idx;
-                                _players[defender_idx].Dipl.DA_City[HUMAN_PLAYER_IDX] = city_idx;
+                                _players[defender_idx].Dipl.DA_City[HUMAN_PLAYER_IDX] = (int8_t)city_idx;
                             }
                         }
 
@@ -3968,7 +3969,7 @@ static int16_t Get_Exchange_Spell_List(int16_t player1, int16_t player2, int16_t
         {
 
             // ; BUG: value doesn't fit into a byte
-            m_exchange_spell_values[itr] = Calc_Spell_Value(player2, m_exchange_spell_list[itr]);
+            m_exchange_spell_values[itr] = (uint8_t)Calc_Spell_Value(player2, m_exchange_spell_list[itr]);
 
         }
 
@@ -4304,7 +4305,7 @@ static void Diplomacy_Exchange_Spell__WIP(void)
     if(m_exchange_spell_count > 0)
     {
 
-        byte_42E4D = m_exchange_spell_count;
+        byte_42E4D = (uint8_t)m_exchange_spell_count;
 
         for(itr = 0; m_exchange_spell_count > itr; itr++)
         {
@@ -4327,7 +4328,7 @@ static void Diplomacy_Exchange_Spell__WIP(void)
             if(m_exchange_spell_count > 0)
             {
 
-                byte_42E24[byte_42E38] = m_exchange_spell_count;
+                byte_42E24[byte_42E38] = (uint8_t)m_exchange_spell_count;
 
                 for(var_4 = 0; m_exchange_spell_count > var_4; var_4++)
                 {
@@ -5092,7 +5093,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             strcat(m_diplomacy_message, _players[HUMAN_PLAYER_IDX].name);
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5103,7 +5104,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             strcat(m_diplomacy_message, _players[player_idx].name);
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5114,7 +5115,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name);
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5125,7 +5126,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             _fstrcpy(&m_diplomacy_message[pos], _CITIES[_players[HUMAN_PLAYER_IDX].Dipl.DA_City[player_idx]].name);
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5136,7 +5137,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             strcpy(&m_diplomacy_message[pos], _city_size_names[_CITIES[_players[HUMAN_PLAYER_IDX].Dipl.DA_City[player_idx]].size]);
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5147,7 +5148,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.field_102[player_idx]].name);
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5166,7 +5167,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.field_6C[player_idx]].name);
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5180,7 +5181,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             strcat(m_diplomacy_message, string);
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5194,7 +5195,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             strcat(m_diplomacy_message, string);
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5210,7 +5211,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             strcat(m_diplomacy_message, aGold_2);
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5238,7 +5239,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             }
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5252,7 +5253,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             strcat(m_diplomacy_message, string);
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5263,7 +5264,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             strcat(m_diplomacy_message, *_unit_type_table[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name);
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5274,7 +5275,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
     
                             strcat(m_diplomacy_message, An(*_unit_type_table[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name));
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5302,7 +5303,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             }
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5316,7 +5317,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             strcat(m_diplomacy_message, string);
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5330,7 +5331,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             strcat(m_diplomacy_message, string);
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5341,7 +5342,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             strcat(m_diplomacy_message, _players[Target_Player].name);
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5352,7 +5353,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             strcat(m_diplomacy_message, _players[m_IDK_break_alliance_player3].name);
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 
@@ -5366,7 +5367,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             strcat(m_diplomacy_message, string);
 
-                            pos = strlen(m_diplomacy_message);
+                            pos = (int16_t)strlen(m_diplomacy_message);
 
                         } break;
 

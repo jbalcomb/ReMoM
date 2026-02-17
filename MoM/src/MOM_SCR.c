@@ -1,6 +1,5 @@
 
 // #ifdef STU_DEBUG
-#include "../../STU/src/STU_CHK.h"
 #include "../../STU/src/STU_DBG.h"
 #include "../../STU/src/STU_PRN.h"
 // #endif
@@ -95,7 +94,11 @@ void Screen_Control(void)
 
             case scr_Continue:
             {
-                Load_SAVE_GAM(-1);  // SAVETEST.GAM
+                // MGC  fid0_Continue:                            ; case 0x0
+                // MGC  Stop_Music__STUB()
+                // MGC  j_GAME_WizardsLaunch__WIP(e_SAVE9GAM)
+                // /* HACK */ Load_SAVE_GAM(-1);  // SAVETEST.GAM
+                Load_SAVE_GAM(8);
                 Loaded_Game_Update();
                 current_screen = scr_Main_Screen;
             } break;
@@ -139,7 +142,17 @@ void Screen_Control(void)
 
             case scr_New_Game_Screen:
             {
-                Newgame_Control__WIP();  // MAGIC.EXE  ovr050  o050p001
+                // MoO2  if(Newgame_Screen_() != ST_FALSE) { Init_New_Game() }
+                // Newgame_Control__WIP();  // MAGIC.EXE  ovr050  o050p001
+                /* HACK */  if(Newgame_Control__WIP())
+                /* HACK */  {
+                /* HACK */      current_screen = scr_Continue;
+                /* HACK */  }
+                /* HACK */  else
+                /* HACK */  {
+                /* HACK */      current_screen = scr_Main_Menu_Screen;
+                /* HACK */  }
+                // MoO2  _previous_screen = scr_New_Game
             } break;
 
             case scr_Quit_To_DOS:

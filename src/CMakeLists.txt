@@ -72,19 +72,37 @@ if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
     )
 endif()
 
-# if(WIN32)
-#     add_custom_command(
-#         TARGET "ReMoMber" POST_BUILD
-#         COMMAND "${CMAKE_COMMAND}" -E copy -t "$<TARGET_FILE_DIR:ReMoMber>"
-#         "$<TARGET_RUNTIME_DLLS:ReMoMber>" USES_TERMINAL COMMAND_EXPAND_LISTS
-#     )
-# endif()
+if(WIN32)
+    add_custom_command(
+        TARGET ReMoMber
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${SDL2_DLL_FILE_PATH}
+            $<TARGET_FILE_DIR:ReMoMber>
+        COMMAND_EXPAND_LISTS
+        COMMENT "./src: Copying SDL2.dll"
+    )
+endif()
 
-# # [build]   TARGET 'SDL2::Main' is IMPORTED and does not build here.
-# if(WIN32)
-#     add_custom_command(
-#         TARGET "SDL2::Main" POST_BUILD
-#         COMMAND "${CMAKE_COMMAND}" -E copy -t "$<TARGET_FILE_DIR:SDL2::Main>"
-#         "$<TARGET_RUNTIME_DLLS:SDL2::Main>" USES_TERMINAL COMMAND_EXPAND_LISTS
-#     )
-# endif()
+if(WIN32)
+    add_custom_command(
+        TARGET ReMoMber
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy 
+            ${SDL2_MIXER_DLL_FILE_PATH}
+            $<TARGET_FILE_DIR:ReMoMber>
+        COMMAND_EXPAND_LISTS
+        COMMENT "./src: Copying SDL2_mixer.dll"
+    )
+endif()
+
+file(GLOB LBX_FILE_LIST "${CMAKE_SOURCE_DIR}/*.lbx")
+add_custom_command(
+    TARGET ReMoMber
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${LBX_FILE_LIST}
+        $<TARGET_FILE_DIR:ReMoMber>
+    COMMAND_EXPAND_LISTS
+    COMMENT "./src: Copying MoMv131 LBX files"
+)

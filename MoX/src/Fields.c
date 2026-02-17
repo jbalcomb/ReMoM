@@ -1120,7 +1120,7 @@ void Increment_Scroll_Bar(int16_t field_num)
 
     if(percent > 100)
     {
-        value = p_fields[field_num].Param1;
+        value = p_fields[field_num].max_valid;
     }
     else
     {
@@ -1128,9 +1128,9 @@ void Increment_Scroll_Bar(int16_t field_num)
         value = (p_fields[field_num].min_value + bar_value);
     }
 
-    if(p_fields[field_num].Param1 < value)
+    if(p_fields[field_num].max_valid < value)
     {
-        value = p_fields[field_num].Param1;
+        value = p_fields[field_num].max_valid;
     }
 
     *p_fields[field_num].variable = value;
@@ -1155,34 +1155,34 @@ void Increment_Scroll_Bar(int16_t field_num)
 */
 void Decrement_Scroll_Bar(int16_t field_num)
 {
-    int32_t bar_value;
+    int32_t bar_value = 0;
     // uint16_t ofst_variable;
     // uint16_t sgmt_variable;
-    int16_t value;
-    int16_t width;
-    int16_t percent;
+    int16_t value = 0;
+    int16_t width = 0;
+    int16_t percent = 0;
     
     // sgmt_variable = p_fields[field_num].Param2
     // ofst_variable = p_fields[field_num].Param6
     value = *p_fields[field_num].variable;
 
-    width = (p_fields[field_num].Param4 - p_fields[field_num].Param3);
+    width = (p_fields[field_num].max_value - p_fields[field_num].min_value);
 
-    percent = ((((value - p_fields[field_num].Param3) * 100) / width) - 5);
+    percent = ((((value - p_fields[field_num].min_value) * 100) / width) - 5);
 
     if(percent < 0)
     {
-        value = p_fields[field_num].Param0;
+        value = p_fields[field_num].min_valid;
     }
     else
     {
         bar_value = ((percent * width) / 100);
-        value = (p_fields[field_num].Param3 + bar_value);
+        value = (p_fields[field_num].min_value + bar_value);
     }
 
-    if(p_fields[field_num].Param0 > value)
+    if(p_fields[field_num].min_valid > value)
     {
-        value = p_fields[field_num].Param0;
+        value = p_fields[field_num].min_valid;
     }
 
     *p_fields[field_num].variable = value;
@@ -1670,7 +1670,7 @@ void Draw_Fields()
                         if(p_fields[itr_fields_count].fill_color != 0)
                         {
 
-                            Fill(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].x2, p_fields[itr_fields_count].y2, p_fields[itr_fields_count].fill_color);
+                            Fill(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].x2, p_fields[itr_fields_count].y2, (uint8_t)p_fields[itr_fields_count].fill_color);
 
                         }
 
@@ -1786,7 +1786,7 @@ void Draw_Fields()
 
                         if(p_fields[itr_fields_count].fill_color != 0)
                         {
-                            Fill(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].x2, p_fields[itr_fields_count].y2, p_fields[itr_fields_count].fill_color);
+                            Fill(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].x2, p_fields[itr_fields_count].y2, (uint8_t)p_fields[itr_fields_count].fill_color);
                         }
                         
                         Text_Change = ST_FALSE;
@@ -1862,7 +1862,7 @@ void Draw_Fields()
 
                         if(p_fields[itr_fields_count].fill_color != 0)
                         {
-                            Fill(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].x2, p_fields[itr_fields_count].y2, p_fields[itr_fields_count].fill_color);
+                            Fill(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].x2, p_fields[itr_fields_count].y2, (uint8_t)p_fields[itr_fields_count].fill_color);
                         }
 
                         Print((p_fields[itr_fields_count].x1 + 10), p_fields[itr_fields_count].y1, p_fields[itr_fields_count].string);

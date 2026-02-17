@@ -29,6 +29,19 @@ extern struct s_WIZARD _players[NUM_PLAYERS];
 
 
 
+/*
+
+*/
+enum e_SCOUT_BITS
+{
+    SCT_BottomLeft   = 1,
+    SCT_TopLeft      = 2,
+    SCT_TopRight     = 4,
+    SCT_BottomRight  = 8
+};
+
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif

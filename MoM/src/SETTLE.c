@@ -134,58 +134,44 @@ void AI_MoveUnits__WIP(int16_t player_idx)
                 case us_BuildRoad:
                 {
 
-Check_Game_Data();
                     AI_UNIT_BuildRoad__WIP(itr_units);
-Check_Game_Data();
 
-Check_Game_Data();
                     AI_UNIT_Move__WIP(itr_units);
-Check_Game_Data();
 
                 } break;
 
                 case us_GOTO:
                 {
 
-Check_Game_Data();
                     AI_UNIT_Move__WIP(itr_units);
-Check_Game_Data();
 
                 } break;
 
                 case us_Meld:
                 {
 
-Check_Game_Data();
                     AI_UNIT_Meld__WIP(itr_units);
-Check_Game_Data();
 
                 } break;
 
                 case us_Settle:
                 {
 
-Check_Game_Data();
                     AI_UNIT_Settle__WIP(itr_units);
-Check_Game_Data();
 
                 } break;
 
                 case us_SeekTransport:
                 {
 
-Check_Game_Data();
                     AI_UNIT_SeekTransprt__WIP(itr_units);
-Check_Game_Data();
 
                 } break;
 
                 case us_Move:
                 {
 
-Check_Game_Data();
                     AI_UNIT_Move__WIP(itr_units);
-Check_Game_Data();
 
                 } break;
 
@@ -255,8 +241,8 @@ void AI_UNIT_Settle__WIP(int16_t unit_idx)
 // WZD o100p04
 int16_t Do_Build_Outpost(void)
 {
-    int16_t troops[MAX_STACK];
-    int16_t troop_count;
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t troop_count = 0;
 
     Active_Unit_Stack(&troop_count, &troops[0]);
 
@@ -305,7 +291,7 @@ int16_t STK_SettleTile(int16_t troop_count, int16_t troops[])
 
     unit_owner = _UNITS[unit_idx].owner_idx;
 
-    unit_race = _unit_type_table[unit_type].Race;
+    unit_race = _unit_type_table[unit_type].race_type;
 
     if(Create_Outpost(unit_wx, unit_wy, unit_wp, unit_race, unit_owner, unit_idx) == ST_TRUE)
     {
@@ -378,9 +364,7 @@ void AI_UNIT_Move__WIP(int16_t unit_idx)
 
     _map_y = Dummy_OVL_Map_TopY;
 
-Check_Game_Data();
     UU_Result = RdBd_UNIT_MoveStack__WIP(Unit_Owner, unit_idx, Target_X, Target_Y, &Dummy_OVL_Map_LeftX, &Dummy_OVL_Map_TopY, Plane);
-Check_Game_Data();
 
 }
 
@@ -397,21 +381,21 @@ Check_Game_Data();
 // drake178: UNIT_PushOffTile()
 void UNIT_PushOffTile(int16_t unit_idx)
 {
-    int16_t troops[2];
-    int16_t Target_Y;
-    int16_t Target_X;
-    int16_t unit_owner_idx;
-    int16_t unit_wp;
-    int16_t unit_wy;
-    int16_t unit_wx;
-    int16_t unit_spaces;
-    int16_t Found_Tile;
-    int16_t Checked_X;
-    int16_t Diameter;
-    int16_t Min_X;
-    int16_t Min_Y;
-    int16_t itr_x;
-    int16_t itr_y;  // _DI_
+    int16_t troops[2] = { 0, 0 };
+    int16_t Target_Y = 0;
+    int16_t Target_X = 0;
+    int16_t unit_owner_idx = 0;
+    int16_t unit_wp = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t unit_spaces = 0;
+    int16_t Found_Tile = 0;
+    int16_t Checked_X = 0;
+    int16_t Diameter = 0;
+    int16_t Min_X = 0;
+    int16_t Min_Y = 0;
+    int16_t itr_x = 0;
+    int16_t itr_y = 0;  // _DI_
 
     unit_wx = _UNITS[unit_idx].wx;
     unit_wy = _UNITS[unit_idx].wy;
@@ -480,8 +464,8 @@ void UNIT_PushOffTile(int16_t unit_idx)
 
     if(unit_spaces > 0)
     {
-        _UNITS[unit_idx].wx = Target_X;
-        _UNITS[unit_idx].wy = Target_Y;
+        _UNITS[unit_idx].wx = (int8_t)Target_X;
+        _UNITS[unit_idx].wy = (int8_t)Target_Y;
 
         troops[0] = unit_idx;
 

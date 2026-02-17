@@ -5,23 +5,21 @@
         ¿ ovr145 ?
 */
 
+#include "../../MoX/src/EMM.h"
+#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOX_BASE.h"
+#include "../../MoX/src/MOX_DAT.h"  /* _players[] */
+#include "../../MoX/src/MOX_TYPE.h"
+#include "../../MoX/src/random.h"
+
 #include "AIBUILD.h"
 #include "AIDATA.h"
-#include "AIDUDES.h"
 #include "AIMOVE.h"
 #include "AISPELL.h"
 #include "CITYCALC.h"
-#include "../../MoX/src/EMM.h"
-#include "../../MoX/src/MOM_Data.h"
-#include "../../MoX/src/MOX_DAT.h"  /* _players[] */
-#include "../../MoX/src/MOX_BASE.h"
-#include "../../MoX/src/MOX_TYPE.h"
-
-#include "../../MoX/src/random.h"
 #include "NEXTTURN.h"
 #include "RACETYPE.h"
 #include "SETTLE.h"
-#include "../../STU/src/STU_CHK.h"
 #include "Spellbook.h"
 #include "Terrain.h"
 #include "UNITTYPE.h"
@@ -29,6 +27,8 @@
 
 #include <assert.h>
 #include <stdlib.h>
+
+#include "AIDUDES.h"
 
 
 
@@ -106,7 +106,6 @@ void AI_Next_Turn__WIP(void)
     int16_t itr_players2 = 0;  // _DI_
 
 
-Check_Game_Data();
     // sanity check all unit coordinates
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
@@ -151,23 +150,18 @@ Check_Game_Data();
         }
 
     }
-Capture_Units_Data();
-Check_Game_Data();
 
 
     // DONT  EMM_Map_DataH();
 
 
-Check_Game_Data();
     Allocate_AI_Data();
-Check_Game_Data();
 
 
 // process a planning phase for each AI in turn,
 // evaluating the situation, casting a spell, setting
 // production and strategy, and giving orders to all
 // available units
-// 
 // many many many BUGs in here
 
     for(itr_players = 1; itr_players < _num_players; itr_players++)
@@ -191,37 +185,25 @@ Check_Game_Data();
                 AI_SCircle_Reevals[itr_players] -= 1;
 
 
-Check_Game_Data();
                 AI_Evaluate_Hostility(itr_players);
-Check_Game_Data();
 
 
-Check_Game_Data();
                 AI_Magic_Strategy__WIP(itr_players);
-Check_Game_Data();
 
 
                 CRP_AI_Turn_Var = 0;
 
 
-Check_Game_Data();
                 Player_Hostile_Opponents(itr_players);
-Check_Game_Data();
 
 
-Check_Game_Data();
                 AI_Player_Calculate_Target_Values(itr_players);
-Check_Game_Data();
 
 
-Check_Game_Data();
                 AI_Continent_Eval__WIP(itr_players);
-Check_Game_Data();
 
 
-Check_Game_Data();
                 AI_Pick_Action_Conts__WIP(itr_players);
-Check_Game_Data();
 
 
 // TODO                  if(
@@ -268,26 +250,16 @@ Check_Game_Data();
                 // DONT  EMM_Map_DataH();
 
 
-Check_Game_Data();
                 AI_Update_Magic_Power(itr_players);
-Check_Game_Data();
 
 
-Check_Game_Data();
                 AI_Sanity_Check_Overland_Enchantments(itr_players);
-Check_Game_Data();
 
 
-Check_Game_Data();
                 AI_Update_Gold_And_Mana_Reserves(itr_players);
-Check_Game_Data();
 
 
-Check_Game_Data();
                 AI_Update_Gold_Income_And_Food_Income(itr_players);
-// Check_Game_Data();
-Capture_Cities_Data();
-
 
                 Some_AI_Turn_Var_2 = 0;
 
@@ -307,33 +279,21 @@ Capture_Cities_Data();
                 }
 
 
-Check_Game_Data();
                 Player_All_Colony_Autobuild(itr_players);
-// Check_Game_Data();
-Capture_Cities_Data();
 
-
-Check_Game_Data();
                 AI_SetEnemyStrMaps(itr_players);
-Check_Game_Data();
 
 
-Check_Game_Data();
                 AI_Continent_Reeval__WIP(itr_players);
-Check_Game_Data();
 
 
-Check_Game_Data();
                 AI_SetUnitOrders__WIP(itr_players);
-Check_Game_Data();
 
 
                 // DONT  EMM_Map_DataH();                   ; just called this at the end of the previous function
 
 
-Check_Game_Data();
                 AI_Kill_Excess_Settlers_And_Engineers(itr_players);
-Check_Game_Data();
 
 
             }
@@ -359,7 +319,6 @@ Check_Game_Data();
         }
 
     }
-Capture_Units_Data();
 
 
     // ; attempt to execute the orders of all units for each
@@ -387,9 +346,7 @@ Capture_Units_Data();
                 // ; units
                 // ;
                 // ; unclear, BUGgy, RE-EXPLORE!
-Check_Game_Data();
                 AI_MoveUnits__WIP(itr_players);
-Check_Game_Data();
 
             }
 
@@ -404,9 +361,7 @@ Check_Game_Data();
 
     // DONT  EMM_Map_DataH();                   ; maps the EMM Data block into the page frame
 
-Check_Game_Data();
     Player_All_Colony_Autobuild(NEUTRAL_PLAYER_IDX);
-Check_Game_Data();
 
     // ; sets the amount of farmers in all neutral cities
     // ;
@@ -2445,9 +2400,9 @@ void CONTX_CreateChains__WIP(void)
 
                     *array_ptr = count[wp];
 
-                    CONTX_TileXs[wp][count[wp]] = wx;
+                    CONTX_TileXs[wp][count[wp]] = (int8_t)wx;
 
-                    CONTX_TileYs[wp][count[wp]] = wy;
+                    CONTX_TileYs[wp][count[wp]] = (int8_t)wy;
 
                     CONTX_TileChain[wp][count[wp]] = ST_UNDEFINED;
 
@@ -2570,9 +2525,9 @@ void CONTX_CreateLChains__WIP(void)
 
                         *array_ptr = count[wp];
 
-                        CONTX_LoadTileXs[wp][count[wp]] = wx;
+                        CONTX_LoadTileXs[wp][count[wp]] = (int8_t)wx;
 
-                        CONTX_LoadTileYs[wp][count[wp]] = wy;
+                        CONTX_LoadTileYs[wp][count[wp]] = (int8_t)wy;
 
                         CONTX_LoadTChain[wp][count[wp]] = ST_UNDEFINED;
 

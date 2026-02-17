@@ -17,8 +17,6 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 
 */
 
-#include "../../STU/src/STU_CHK.h"
-
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/Graphics.h"
 #include "../../MoX/src/MOX_BITS.h"
@@ -40,16 +38,6 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 #include <string.h>
 
 #include "MainScr_Maps.h"
-
-
-
-enum e_SCOUT_BITS
-{
-    SCT_BottomLeft   = 1,
-    SCT_TopLeft      = 2,
-    SCT_TopRight     = 4,
-    SCT_BottomRight  = 8
-};
 
 
 
@@ -668,14 +656,14 @@ void Draw_World_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t 
     line_x = line_x + start_x;
     line_y = line_y + start_y;
 
-    Line(line_x - 1            , line_y - 1         , line_x + 1            , line_y - 1             , color);  // top left
-    Line(line_x - 1            , line_y - 1         , line_x - 1            , line_y + 1             , color);  // left upper
-    Line(line_x + MAP_WIDTH - 2, line_y - 1         , line_x + MAP_WIDTH    , line_y - 1             , color);  // top right
-    Line(line_x + MAP_WIDTH    , line_y - 1         , line_x + MAP_WIDTH    , line_y + 1             , color);  // upper right
-    Line(line_x - 1            , line_y + MAP_HEIGHT, line_x - 1            , line_y + MAP_HEIGHT - 2, color);  // left lower
-    Line(line_x - 1            , line_y + MAP_HEIGHT, line_x + 1            , line_y + MAP_HEIGHT    , color);  // bottom left
-    Line(line_x + MAP_WIDTH    , line_y + MAP_HEIGHT, line_x + MAP_WIDTH    , line_y + MAP_HEIGHT - 2, color);  // right lower
-    Line(line_x + MAP_WIDTH    , line_y + MAP_HEIGHT, line_x + MAP_WIDTH - 2, line_y + MAP_HEIGHT    , color);  // bottom right
+    Line(line_x - 1            , line_y - 1         , line_x + 1            , line_y - 1             , (uint8_t)color);  // top left
+    Line(line_x - 1            , line_y - 1         , line_x - 1            , line_y + 1             , (uint8_t)color);  // left upper
+    Line(line_x + MAP_WIDTH - 2, line_y - 1         , line_x + MAP_WIDTH    , line_y - 1             , (uint8_t)color);  // top right
+    Line(line_x + MAP_WIDTH    , line_y - 1         , line_x + MAP_WIDTH    , line_y + 1             , (uint8_t)color);  // upper right
+    Line(line_x - 1            , line_y + MAP_HEIGHT, line_x - 1            , line_y + MAP_HEIGHT - 2, (uint8_t)color);  // left lower
+    Line(line_x - 1            , line_y + MAP_HEIGHT, line_x + 1            , line_y + MAP_HEIGHT    , (uint8_t)color);  // bottom left
+    Line(line_x + MAP_WIDTH    , line_y + MAP_HEIGHT, line_x + MAP_WIDTH    , line_y + MAP_HEIGHT - 2, (uint8_t)color);  // right lower
+    Line(line_x + MAP_WIDTH    , line_y + MAP_HEIGHT, line_x + MAP_WIDTH - 2, line_y + MAP_HEIGHT    , (uint8_t)color);  // bottom right
 
 }
 
@@ -966,7 +954,7 @@ void Set_Unit_Draw_Priority(void)
             draw_priority = ST_UNDEFINED;
         }
 
-        UNITS_DRAW_PRIORITY(unit_idx, draw_priority);
+        UNITS_DRAW_PRIORITY(unit_idx, (int8_t)draw_priority);
 
     }
 
@@ -1552,9 +1540,10 @@ struct Explore_Matching
     int16_t Adj_Direction;
    
 };
+// TODO  initialize struct Explore_Matching Match_Array[38]
 void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
 {
-    struct Explore_Matching Match_Array[38];
+    struct Explore_Matching Match_Array[38] = { 0 };
     uint8_t * ptr_square_explored;
     int16_t Adj_Tile_Scouting = 0;
     int16_t LoopTile_Scouting = 0;
@@ -2384,7 +2373,7 @@ void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
     {
         if(_LAIRS[itr_lairs].wp == wp)
         {
-            if(_LAIRS[itr_lairs].Intact == ST_TRUE)
+            if(_LAIRS[itr_lairs].intact == ST_TRUE)
             {
                 if(_LAIRS[itr_lairs].type > lt_Sorcery_Node)
                 {

@@ -6,8 +6,6 @@
         ovr162
 */
 
-#include "../../STU/src/STU_CHK.h"
-
 #include "../../MoX/src/random.h"
 #include "../../MoX/src/MOM_Data.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
@@ -147,24 +145,16 @@ void AI_SetUnitOrders__WIP(int16_t player_idx)
     }
 
 
-Check_Game_Data();
     AI_Disband_To_Balance_Budget(player_idx);
-Check_Game_Data();
 
 
-Check_Game_Data();
     AI_Shift_Off_Home_Plane(player_idx);
-Check_Game_Data();
 
 
-Check_Game_Data();
     AI_Move_Out_Boats();
-Check_Game_Data();
 
 
-Check_Game_Data();
     AI_Find_Opportunity_City_Target(wp, player_idx);
-Check_Game_Data();
 
 
     for(wp = 0; wp < NUM_PLANES; wp++)
@@ -179,49 +169,31 @@ Check_Game_Data();
         for(landmass_idx = 1; landmass_idx < NUM_LANDMASSES; landmass_idx++)
         {
 
-Check_Game_Data();
             AI_Build_Stacks_Find_Targets_Order_Moves(player_idx, landmass_idx, wp);
-Check_Game_Data();
 
 
-Check_Game_Data();
             AI_GarrBuilderPush__WIP(wp);
-Check_Game_Data();
 
 
-Check_Game_Data();
             AI_sEFBD6__WIP();
-Check_Game_Data();
 
 
-Check_Game_Data();
             AI_Do_Meld(player_idx);
-Check_Game_Data();
 
 
-Check_Game_Data();
             AI_Do_Settle(player_idx, landmass_idx);
-Check_Game_Data();
 
 
-Check_Game_Data();
             AI_Do_Purify(landmass_idx, wp);
-Check_Game_Data();
 
 
-Check_Game_Data();
             AI_Do_RoadBuild(landmass_idx);
-Check_Game_Data();
 
 
-Check_Game_Data();
             AI_Build_Target_List(player_idx, landmass_idx, wp);
-Check_Game_Data();
 
 
-Check_Game_Data();
             AI_ProcessRoamers__WIP(landmass_idx, wp, player_idx);
-Check_Game_Data();
 
 
             // ; should just test for 2...
@@ -236,9 +208,7 @@ Check_Game_Data();
             )
             {
 
-Check_Game_Data();
                 AI_PullForMainWar__WIP(player_idx, wp);
-Check_Game_Data();
 
             }
 
@@ -250,16 +220,12 @@ Check_Game_Data();
             )
             {
 
-Check_Game_Data();
                 G_AI_HomeRallyFill__WIP(landmass_idx, wp, player_idx);
-Check_Game_Data();
 
             }
 
 
-Check_Game_Data();
             G_AI_RallyFill__WIP(landmass_idx, wp, player_idx);
-Check_Game_Data();
 
 
             if(
@@ -271,9 +237,7 @@ Check_Game_Data();
             )
             {
 
-Check_Game_Data();
                 AI_FillGarrisons__WIP(player_idx, wp, landmass_idx);
-Check_Game_Data();
 
             }
 
@@ -281,14 +245,10 @@ Check_Game_Data();
         }
 
 
-Check_Game_Data();
         AI_ProcessOcean__WIP(player_idx, wp);
-Check_Game_Data();
 
 
-Check_Game_Data();
         G_AI_ProcessTransports__WIP(player_idx, wp);
-Check_Game_Data();
 
 
     }
@@ -352,9 +312,7 @@ void G_AI_RallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx)
 
                 unit_idx = G_Pushout_Unit_Indices[itr];
 
-Check_Game_Data();
                 AI_Set_Move_Or_Goto_Target(unit_idx, AI_Continent_X_Ptr[landmass_idx], AI_Continent_Y_Ptr[landmass_idx], unit_list_idx, list_unit_idx);
-Check_Game_Data();
 
             }
 
@@ -535,7 +493,7 @@ void AI_FillGarrisons__WIP(int16_t player_idx, int16_t wp, int16_t landmass_idx)
 
                         Garrison_Units_Needed[City_Arrays_Count] -= _ai_own_stack_unit_count[itr_stacks];
 
-                        City_Indices[City_Arrays_Count] = itr;
+                        City_Indices[City_Arrays_Count] = (int8_t)itr;
 
                         if(Garrison_Units_Needed[City_Arrays_Count] > 0)
                         {
@@ -553,7 +511,7 @@ void AI_FillGarrisons__WIP(int16_t player_idx, int16_t wp, int16_t landmass_idx)
                 if(site_added == ST_FALSE)
                 {
 
-                    City_Indices[City_Arrays_Count] = itr;
+                    City_Indices[City_Arrays_Count] = (int8_t)itr;
 
                     City_Arrays_Count++;
 
@@ -620,7 +578,7 @@ void AI_FillGarrisons__WIP(int16_t player_idx, int16_t wp, int16_t landmass_idx)
 
                             }
 
-                            Node_Indices[Node_Arrays_Count] = itr;
+                            Node_Indices[Node_Arrays_Count] = (int8_t)itr;
 
                             if(Node_Units_Needed[Node_Arrays_Count] > 0)
                             {
@@ -640,7 +598,7 @@ void AI_FillGarrisons__WIP(int16_t player_idx, int16_t wp, int16_t landmass_idx)
 
                         Node_Units_Needed[Node_Arrays_Count] = 8;  // ¿ BUGBUG  should if 4 else 8, as above ?
 
-                        Node_Indices[Node_Arrays_Count] = itr;
+                        Node_Indices[Node_Arrays_Count] = (int8_t)itr;
 
                         Node_Arrays_Count++;
 
@@ -927,9 +885,9 @@ void AI_ProcessOcean__WIP(int16_t player_idx, int16_t wp)
 
                         _UNITS[itr].Status = us_GOTO;
 
-                        _UNITS[itr].dst_wx = MainWar_Rally_X;
+                        _UNITS[itr].dst_wx = (int8_t)MainWar_Rally_X;
                         
-                        _UNITS[itr].dst_wy = MainWar_Rally_Y;
+                        _UNITS[itr].dst_wy = (int8_t)MainWar_Rally_Y;
 
                     }
                     
@@ -1135,14 +1093,10 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
 
 
     // ; just did this in the previous function
-Check_Game_Data();
     AI_Build_Stacks_Find_Targets_Order_Moves(player_idx, 0, wp);
-Check_Game_Data();
 
 
-Check_Game_Data();
     AI_Do_Meld(player_idx);
-Check_Game_Data();
 
 
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
@@ -1269,9 +1223,7 @@ Check_Game_Data();
 
                             Transport_Stack_Room -= (_unit_type_table[_UNITS[itr_units].type].Transport + 1);
 
-Check_Game_Data();
                             AI_Set_Move_Or_Goto_Target(itr_units, target_wx, target_wy, itr_stacks, itr_list_units);
-Check_Game_Data();
 
                         }
 
@@ -1513,17 +1465,13 @@ Check_Game_Data();
                             if(_unit_type_table[unit_type].Transport > 0)
                             {
 
-Check_Game_Data();
                                 AI_Order_SeekTransport(itr_units, itr_stacks, itr_list_units);
-Check_Game_Data();
 
                             }
                             else
                             {
 
-Check_Game_Data();
                                 AI_Set_Move_Or_Goto_Target(itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
-Check_Game_Data();
 
                             }
 
@@ -1575,9 +1523,7 @@ Check_Game_Data();
 
                                 itr_units = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
 
-Check_Game_Data();
                                 AI_Set_Move_Or_Goto_Target(itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
-Check_Game_Data();
 
                             }
 
@@ -1664,9 +1610,7 @@ Check_Game_Data();
 
                                         itr_units = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
 
-Check_Game_Data();
                                         AI_Set_Move_Or_Goto_Target(itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
-Check_Game_Data();
 
                                     }
 
@@ -1776,9 +1720,7 @@ void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx
 
                         unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
 
-Check_Game_Data();
                         AI_Set_Move_Or_Goto_Target(unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
-Check_Game_Data();
 
                     }
 
@@ -1877,9 +1819,9 @@ Check_Game_Data();
 
         _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] = CONT_Abandon;
 
-        _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = Best_LoadTile_X;
+        _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = (uint8_t)Best_LoadTile_X;
 
-        _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = Best_LoadTile_Y;
+        _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = (uint8_t)Best_LoadTile_Y;
 
     }
 
@@ -2710,7 +2652,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
         if(
             (_LAIRS[itr_players].wp == wp)
             &&
-            (_LAIRS[itr_players].Intact == ST_TRUE)
+            (_LAIRS[itr_players].intact == ST_TRUE)
         )
         {
 
@@ -3191,11 +3133,11 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
         else
         {
 
-            _ai_own_stack_wx[_ai_own_stack_count] = unit_wx;
+            _ai_own_stack_wx[_ai_own_stack_count] = (unsigned char)unit_wx;
 
-            _ai_own_stack_wy[_ai_own_stack_count] = unit_wy;
+            _ai_own_stack_wy[_ai_own_stack_count] = (unsigned char)unit_wy;
 
-            _ai_own_stack_wp[_ai_own_stack_count] = unit_wp;
+            _ai_own_stack_wp[_ai_own_stack_count] = (unsigned char)unit_wp;
 
             _ai_own_stack_unit_count[_ai_own_stack_count] = 1;
 
@@ -3301,9 +3243,7 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
                     for(itr_stacks2 = 0; _ai_own_stack_unit_count[itr_stacks1] > itr_stacks2; itr_stacks2++)
                     {
 
-Check_Game_Data();
                         AI_Set_Move_Or_Goto_Target(_ai_own_stack_unit_list[itr_stacks1][itr_stacks2], target_wx, target_wy, itr_stacks1, itr_stacks2);
-Check_Game_Data();
 
                     }
 
@@ -3314,10 +3254,7 @@ Check_Game_Data();
                     for(itr_stacks2 = 0; _ai_own_stack_unit_count[itr_stacks1] > itr_stacks2; itr_stacks2++)
                     {
 
-Check_Game_Data();
                         _UNITS[_ai_own_stack_unit_list[itr_stacks1][itr_stacks2]].Status = us_Ready;
-Capture_Units_Data();
-Check_Game_Data();
 
                     }
 
@@ -3559,10 +3496,7 @@ void AI_Find_Opportunity_City_Target(int16_t wp, int16_t player_idx)
                 )
                 {
 
-Check_Game_Data();
                     _UNITS[itr_units].Status = us_Ready;
-Capture_Units_Data();
-Check_Game_Data();
 
                 }
 
@@ -3708,17 +3642,11 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
 
             gold_deficit -= lowest_value_unit_upkeep;
 
-Check_Game_Data();
             Kill_Unit(lowest_value_unit_idx, kt_Normal);
-Capture_Units_Data();
-// TODO  Check_Game_Data();
-
+// TODO  
             // ; BUG? resets the unit's plane to 0 afterward
-Check_Game_Data();
             _UNITS[lowest_value_unit_idx].wp = 0;  // BUGBUG?  ...because, Kill_Unit() sets ST_UNDEFINED  ...but, why?
-Capture_Units_Data();
-// TODO  Check_Game_Data();
-
+// TODO  
         }
 
     }
@@ -3791,17 +3719,11 @@ Capture_Units_Data();
 
             mana_deficit -= lowest_value_unit_upkeep;
 
-Check_Game_Data();
             Kill_Unit(lowest_value_unit_idx, kt_Normal);
-Capture_Units_Data();
-// TODO  Check_Game_Data();
-
+// TODO  
             // ; BUG? resets the unit's plane to 0 afterward
-Check_Game_Data();
             _UNITS[lowest_value_unit_idx].wp = 0;  // BUGBUG?  ...because, Kill_Unit() sets ST_UNDEFINED  ...but, why?
-Capture_Units_Data();
-// TODO  Check_Game_Data();
-
+// TODO  
         }
 
     }
@@ -3883,7 +3805,7 @@ void AI_Shift_Off_Home_Plane(int16_t player_idx)
                         for(itr = 0; itr < _units; itr++)
                         {
 
-                            AI_Own_Stacks[itr2].wp = Opposite_Plane;
+                            AI_Own_Stacks[itr2].wp = (uint8_t)Opposite_Plane;
 
                         }
 
@@ -3914,13 +3836,13 @@ void AI_Shift_Off_Home_Plane(int16_t player_idx)
                             for(itr = 0; itr < _units; itr++)
                             {
                                 if(
-                                    (_UNITS[itr].wx = Stack_X)
+                                    (_UNITS[itr].wx = (int8_t)Stack_X)
                                     &&
-                                    (_UNITS[itr].wy = Stack_Y)
+                                    (_UNITS[itr].wy = (int8_t)Stack_Y)
                                 )
                                 {
 
-                                    _UNITS[itr].wp = Opposite_Plane;
+                                    _UNITS[itr].wp = (int8_t)Opposite_Plane;
 
                                 }
 
@@ -4038,9 +3960,7 @@ void AI_Move_Out_Boats(void)
                 if(Can_Sail_Off == ST_TRUE)
                 {
 
-Check_Game_Data();
                     AI_Stack_Set_Boats_Goto(itr_stack, Sailable_Tile_X, Sailable_Tile_Y);
-Check_Game_Data();
 
                 }
 
@@ -4868,9 +4788,7 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                         if(AI_CanSettleOffPlane__STUB(player_idx, unit_idx, &Tower_X, &Tower_Y, unit_wp) == ST_TRUE)
                         {
 
-Check_Game_Data();
                             AI_Set_Move_Or_Goto_Target(unit_idx, Tower_X, Tower_Y, itr_stacks, itr_list_units);
-Check_Game_Data();
 
                         }
                         else
@@ -4896,7 +4814,7 @@ Check_Game_Data();
                                         
                                         Tile_Distance = Range(unit_wx, unit_wy, wx, wy);
 
-                                        if(Tile_Distance == 0)
+                                        if(Tile_Distance != 0)
                                         {
 
                                             Compute_Base_Values_For_Map_Square(wx, wy, wp, &maximum_population, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &Unexplored);
@@ -4928,6 +4846,7 @@ Check_Game_Data();
                                                     )
                                                     /
                                                     Tile_Distance  /* JIMBUG: divide by 0? */
+                                                    // NOTE(JimBalcomb,20260207): double-checked the Dasm, it's definitely `if(Tile_Distance != 0)`, so I just got it backwards for some reason
                                                 );
 
                                             EMM_Map_CONTXXX__WIP();
@@ -4957,16 +4876,12 @@ Check_Game_Data();
                             if(Best_Tile_Value == ST_UNDEFINED)
                             {
 
-Check_Game_Data();
                                 AI_SendToColonize__WIP(unit_idx, unit_wx, unit_wy, unit_wp, player_idx, itr_stacks, itr_list_units);
-Check_Game_Data();
 
                             }
                             else
                             {
-Check_Game_Data();
                                 AI_Set_Move_Or_Goto_Target(unit_idx, Best_Tile_X, Best_Tile_Y, itr_stacks, itr_list_units);
-Check_Game_Data();
 
                             }
 
@@ -4976,9 +4891,7 @@ Check_Game_Data();
                     else
                     {
                         
-Check_Game_Data();
                         AI_Order_Settle(unit_idx, itr_stacks, itr_list_units);
-Check_Game_Data();
 
                     }
 
@@ -5243,9 +5156,7 @@ void AI_Do_RoadBuild(int16_t landmass_idx)
                     if(closest_distance > 1)
                     {
 
-Check_Game_Data();
                         AI_Set_Move_Or_Goto_Target(unit_idx, _CITIES[nearest_city_idx].wx, _CITIES[nearest_city_idx].wy, itr_stacks, itr_list_units);
-Check_Game_Data();
 
                     }
                     else
@@ -5291,9 +5202,7 @@ Check_Game_Data();
                         if(RoadTo_City != ST_UNDEFINED)
                         {
 
-Check_Game_Data();
                             AI_Order_RoadBuild(unit_idx, _CITIES[RoadTo_City].wx, _CITIES[RoadTo_City].wy, itr_stacks, itr_list_units);
-Check_Game_Data();
 
                         }
 
@@ -5349,27 +5258,18 @@ void AI_Set_Move_Or_Goto_Target(int16_t unit_idx, int16_t target_wx, int16_t tar
     )
     {
 
-Check_Game_Data();
         _UNITS[unit_idx].Status = us_Move;  // DEDU  What does this status mean?
-Capture_Units_Data();
-Check_Game_Data();
 
     }
     else
     {
 
-Check_Game_Data();
         _UNITS[unit_idx].Status = us_GOTO;
-Capture_Units_Data();
-Check_Game_Data();
 
     }
 
-Check_Game_Data();
-    _UNITS[unit_idx].dst_wx = target_wx;
-    _UNITS[unit_idx].dst_wy = target_wy;
-Capture_Units_Data();
-Check_Game_Data();
+    _UNITS[unit_idx].dst_wx = (int8_t)target_wx;
+    _UNITS[unit_idx].dst_wy = (int8_t)target_wy;
 
     _ai_own_stack_unit_list[CX_ID][list_unit_idx] = ST_UNDEFINED;
 
@@ -5400,9 +5300,7 @@ void AI_Order_Settle(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_
 
     }
 
-Check_Game_Data();
     _UNITS[unit_idx].Status = us_Settle;
-Capture_Units_Data();
 
     _ai_own_stack_unit_list[unit_list_idx][list_unit_idx] = ST_UNDEFINED;
 
@@ -5434,18 +5332,15 @@ void AI_Order_RoadBuild(int16_t unit_idx, int16_t wx, int16_t wy, int16_t unit_l
 
     }
 
-Check_Game_Data();
 
     _UNITS[unit_idx].Rd_From_X = _UNITS[unit_idx].wx;
     _UNITS[unit_idx].Rd_From_Y = _UNITS[unit_idx].wy;
 
     _UNITS[unit_idx].Status = us_BuildRoad;
 
-    _UNITS[unit_idx].dst_wx = wx;
-    _UNITS[unit_idx].dst_wy = wy;
+    _UNITS[unit_idx].dst_wx = (int8_t)wx;
+    _UNITS[unit_idx].dst_wy = (int8_t)wy;
 
-Capture_Units_Data();
-Check_Game_Data();
 
     _ai_own_stack_unit_list[unit_list_idx][list_unit_idx] = ST_UNDEFINED;
 
@@ -5481,7 +5376,6 @@ void AI_Order_SeekTransport(int16_t unit_idx, int16_t unit_list_idx, int16_t lis
     _UNITS[unit_idx].Status = us_SeekTransport;
 
     _UNITS[unit_idx].dst_wx = 10;  // DEDU  WTF?
-Capture_Units_Data();
 
     _ai_own_stack_unit_list[unit_list_idx][list_unit_idx] = ST_UNDEFINED;  // ~ remove it from the list
 
@@ -6269,9 +6163,9 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
         if(Best_Tile_Weight < 1000)
         {
 
-            _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = Rally_X;
+            _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = (uint8_t)Rally_X;
 
-            _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = Rally_Y;
+            _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = (uint8_t)Rally_Y;
 
         }
         else
@@ -6453,7 +6347,6 @@ void AI_Stack_Set_Boats_Goto(int16_t ai_stack_idx, int16_t wx, int16_t wy)
 
     stack_wp = AI_Own_Stacks[ai_stack_idx].wp;
 
-Check_Game_Data();
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
 
@@ -6469,15 +6362,13 @@ Check_Game_Data();
         {
             _UNITS[itr_units].Status = us_GOTO;
 
-            _UNITS[itr_units].dst_wx = wx;
+            _UNITS[itr_units].dst_wx = (int8_t)wx;
 
-            _UNITS[itr_units].dst_wy = wy;
+            _UNITS[itr_units].dst_wy = (int8_t)wy;
 
         }
 
     }
-Capture_Units_Data();
-Check_Game_Data();
 
     AI_Own_Stacks[ai_stack_idx].value = ST_UNDEFINED;
 
@@ -6778,7 +6669,7 @@ int16_t TILE_NextFreeLand__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
     {
 
         if(
-            (_LAIRS[itr1].Intact == ST_TRUE)
+            (_LAIRS[itr1].intact == ST_TRUE)
             &&
             (_LAIRS[itr1].wp == wp)
         )
@@ -7252,11 +7143,11 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
         if(Best_Tile_Weight < 1000)
         {
 
-            AI_NewColConts[wp][player_idx] = Target_Tile_Landmass;
+            AI_NewColConts[wp][player_idx] = (uint8_t)Target_Tile_Landmass;
 
-            AI_NewColTgtXs[wp][player_idx] = Target_Tile_X;
+            AI_NewColTgtXs[wp][player_idx] = (uint8_t)Target_Tile_X;
 
-            AI_NewColTgtYs[wp][player_idx] = Target_Tile_Y;
+            AI_NewColTgtYs[wp][player_idx] = (uint8_t)Target_Tile_Y;
 
         }
         else
@@ -7345,9 +7236,9 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
                     if(Best_Tile_Weight < 1000)
                     {
 
-                        _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = Target_Tile_X;
+                        _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = (uint8_t)Target_Tile_X;
 
-                        _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = Target_Tile_Y;
+                        _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = (uint8_t)Target_Tile_Y;
 
                     }
                     else
@@ -7428,9 +7319,9 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
                 if(Best_Tile_Weight < 1000)
                 {
 
-                    _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = Target_Tile_X;
+                    _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = (uint8_t)Target_Tile_X;
 
-                    _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = Target_Tile_Y;
+                    _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = (uint8_t)Target_Tile_Y;
 
                 }
                 else
@@ -7530,9 +7421,9 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
                     if(Best_Tile_Weight < 1000)
                     {
 
-                        _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = Target_Tile_X;
+                        _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = (uint8_t)Target_Tile_X;
 
-                        _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = Target_Tile_Y;
+                        _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = (uint8_t)Target_Tile_Y;
 
                     }
 
@@ -7650,7 +7541,7 @@ void AI_SetEnemyStrMaps(int16_t player_idx)
     {
 
         if(
-            (_LAIRS[itr].Intact == ST_TRUE)
+            (_LAIRS[itr].intact == ST_TRUE)
             &&
             (_LAIRS[itr].guard1_count > 0)
         )
@@ -7689,7 +7580,7 @@ void AI_SetEnemyStrMaps(int16_t player_idx)
     for(itr = 0; itr < NUM_LAIRS; itr++)
     {
 
-        if(_LAIRS[itr].Intact != ST_FALSE)
+        if(_LAIRS[itr].intact != ST_FALSE)
         {
 
             wp = _LAIRS[itr].wp;

@@ -3,7 +3,6 @@
         ovr129
 */
 
-#include "../../STU/src/STU_CHK.h"
 #include "../../STU/src/STU_DBG.h"
 
 #include "../../MoX/src/Allocate.h"
@@ -675,7 +674,7 @@ int16_t Apply_Call_The_Void(int16_t city_idx)
                 if(MSG_BldLost_Count < 20)
                 {
 
-                    MSG_BldLost_Array[MSG_BldLost_Count].city_idx = city_idx;
+                    MSG_BldLost_Array[MSG_BldLost_Count].city_idx = (int8_t)city_idx;
 
                     MSG_BldLost_Array[MSG_BldLost_Count].bldg_type_idx = bldg_list[bldg_idx];
 
@@ -876,7 +875,7 @@ void Apply_Chaos_Channels(int16_t unit_idx)
                 (_unit_type_table[unit_type].Ranged_Type > rag_Magic)
                 ||
                 (
-                    (_unit_type_table[unit_type].Ranged_Type != rat_None)
+                    (_unit_type_table[unit_type].Ranged_Type != rat_UNDEF)
                     &&
                     (_unit_type_table[unit_type].Ranged_Type != srat_Thrown)
                 )
@@ -1400,7 +1399,7 @@ int16_t Cast_Natures_Cures(int16_t player_idx)
         {
 
             if(
-                (_unit_type_table[_UNITS[unit_idx].type].Race != rt_Death)
+                (_unit_type_table[_UNITS[unit_idx].type].race_type != rt_Death)
                 &&
                 ((_UNITS[unit_idx].mutations & UM_UNDEAD) == 0)
             )
@@ -1617,8 +1616,7 @@ int16_t Cast_Earthquake(int16_t player_idx)
 
         city_population2 = _CITIES[city_idx].population;
 
-        _CITIES[city_idx].population = city_population1;
-Capture_Cities_Data();
+        _CITIES[city_idx].population = (int8_t)city_population1;
 
         Change_Relations_For_Bad_City_Spell(player_idx, spl_Earthquake, city_idx);
             
@@ -1773,7 +1771,7 @@ int16_t Apply_Earthquake(int16_t city_idx, int16_t * item_count, int16_t item_li
                 if(MSG_BldLost_Count < 20)
                 {
 
-                    MSG_BldLost_Array[MSG_BldLost_Count].city_idx = city_idx;
+                    MSG_BldLost_Array[MSG_BldLost_Count].city_idx = (int8_t)city_idx;
 
                     MSG_BldLost_Array[MSG_BldLost_Count].bldg_type_idx = bldg_list[bldg_idx];
 

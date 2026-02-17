@@ -32,7 +32,6 @@
 #include "../../MoX/src/Timer.h"
 
 #include "Outpost.h"
-#include "../../STU/src/STU_CHK.h"
 #include "TerrType.h"
 #include "Terrain.h"
 #include "UNITTYPE.h"
@@ -330,14 +329,14 @@ int16_t m_background_music_num;
     set by
         WZD o63p12 Stack_Moves_Active()
         WZD o63p13 Stack_Moves()
-        WZD o97p04 Units_Moves()
+        WZD o97p04 Army_Moves2()
 */
 // AKA STK_HMoves_Left
 int16_t stack_moves;
     // XREF  Stack_Moves_Active+D3      mov     ax, [stack_moves]                
     // XREF  Stack_Moves_Active:@@Done  mov     [stack_moves], _SI_MovementPoints
-    // XREF  Units_Moves+A3        mov     ax, [stack_moves]                
-    // XREF  Units_Moves:loc_7E717 mov     [stack_moves], si                
+    // XREF  Army_Moves2+A3        mov     ax, [stack_moves]                
+    // XREF  Army_Moves2:loc_7E717 mov     [stack_moves], si                
     // XREF  Stack_Moves+132              mov     [stack_moves], ax                
     // XREF  Stack_Moves+135              mov     ax, [stack_moves]                
 
@@ -532,7 +531,10 @@ int64_t _minimap_grid_y;
 // WZD dseg:974C
 // MoM_Data  int16_t _prev_world_x;
 
-// WZD dseg:974E 
+// WZD dseg:974E
+/*
+TODO  explain why int64_t here
+*/
 // int16_t _main_map_grid_x;
 int64_t _main_map_grid_x;
 // WZD dseg:9750 
@@ -1552,7 +1554,6 @@ void Main_Screen(void)
         // hotkey_idx_End   NumPad 1    ↙
         // hotkey_idx_Down  NumPad 2    ↓
         // hotkey_idx_PgDn  NumPad 3    ↘
-Check_Game_Data();
         if(input_field_idx == hotkey_idx_Up)         { Move_Stack_DirKey(8); screen_changed = ST_TRUE; }
         if(input_field_idx == hotkey_idx_LeftUp)     { Move_Stack_DirKey(7); screen_changed = ST_TRUE; }
         if(input_field_idx == hotkey_idx_RightUp)    { Move_Stack_DirKey(9); screen_changed = ST_TRUE; }
@@ -1561,7 +1562,6 @@ Check_Game_Data();
         if(input_field_idx == hotkey_idx_LeftDown)   { Move_Stack_DirKey(1); screen_changed = ST_TRUE; }
         if(input_field_idx == hotkey_idx_Down)       { Move_Stack_DirKey(2); screen_changed = ST_TRUE; }
         if(input_field_idx == hotkey_idx_RightDown)  { Move_Stack_DirKey(3); screen_changed = ST_TRUE; }
-Check_Game_Data();
 
         /*
             END: Direction Keys
@@ -1650,8 +1650,8 @@ Check_Game_Data();
                 // TODO  UU_MainScreen_flag = 1;
                 if(all_units_moved == ST_FALSE)
                 {
-                    target_world_x = ((_map_x + _main_map_grid_x) % WORLD_WIDTH);
-                    target_world_y =  (_map_y + _main_map_grid_y);
+                    target_world_x = (int16_t)((_map_x + _main_map_grid_x) % WORLD_WIDTH);
+                    target_world_y =  (int16_t)(_map_y + _main_map_grid_y);
                     if(EarthGateTeleport__WIP(target_world_x, target_world_y, _map_plane) == ST_FALSE)
                     {
                         if(
@@ -1703,8 +1703,8 @@ Check_Game_Data();
 
             if(entity_idx == ST_UNDEFINED)
             {
-                _prev_world_x += (_main_map_grid_x - (MAP_WIDTH  / 2));
-                _prev_world_y += (_main_map_grid_y - (MAP_HEIGHT / 2));
+                _prev_world_x += (int16_t)(_main_map_grid_x - (MAP_WIDTH  / 2));
+                _prev_world_y += (int16_t)(_main_map_grid_y - (MAP_HEIGHT / 2));
                 IDK_CheckSet_MapDisplay_XY();
             }
             else
@@ -1742,8 +1742,8 @@ Check_Game_Data();
                     else
                     {
                         /* #### Section 9.2.2.2      Right-Click Movement Map - Stack - Other */
-                        target_world_x = (_main_map_grid_x * SQUARE_WIDTH);
-                        target_world_y = (_main_map_grid_y * SQUARE_HEIGHT);
+                        target_world_x = (int16_t)(_main_map_grid_x * SQUARE_WIDTH);
+                        target_world_y = (int16_t)(_main_map_grid_y * SQUARE_HEIGHT);
                         Deactivate_Help_List();
                         Unit_List_Window(entity_idx, 0, target_world_x, target_world_y);
                         Assign_Auto_Function(Main_Screen_Draw, 1);
@@ -1767,12 +1767,12 @@ Check_Game_Data();
                         {
                             /* #### Section 9.2.3.1.1      Right-Click Movement Map - City - Own - Outpost */
                             _page_flip_effect = 4;
-                            GrowOutLeft = (_main_map_grid_x * SQUARE_WIDTH);
-                            GrowOutTop = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
+                            GrowOutLeft = (int16_t)(_main_map_grid_x * SQUARE_WIDTH);
+                            GrowOutTop = (int16_t)(MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
                             GrowOutFrames = 8;
                             Deactivate_Help_List();
-                            target_world_x = (_main_map_grid_x * SQUARE_WIDTH);
-                            target_world_y = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
+                            target_world_x = (int16_t)(_main_map_grid_x * SQUARE_WIDTH);
+                            target_world_y = (int16_t)(MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
                             // ; displays and processes the outpost screen - if the view type is 1, the header calls for naming the new outpost and does not display the units on the tile
                             // ; BUG: fails to draw the altered backgrounds of the Gaia's Blessing, Flying Fortress, Famine, and Cursed Lands enchantments
                             Outpost_Screen(ST_FALSE);
@@ -1794,8 +1794,8 @@ Check_Game_Data();
                         else  /* (_CITIES[_city_idx].size != 0) */
                         {
                             _page_flip_effect = 4;
-                            GrowOutLeft = (_main_map_grid_x * SQUARE_WIDTH);
-                            GrowOutTop = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
+                            GrowOutLeft = (int16_t)(_main_map_grid_x * SQUARE_WIDTH);
+                            GrowOutTop = (int16_t)(MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
                             GrowOutFrames = 8;
                             current_screen = scr_City_Screen;
                             leave_screen_flag = ST_TRUE;
@@ -1837,8 +1837,8 @@ Check_Game_Data();
             Play_Left_Click();
             // HERE: target_world_x,y are not *used*, just in-out'd to the x,y for the reduced map window, in world coordinates
             Reduced_Map_Coords(&reduced_map_window_wx, &reduced_map_window_wy, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
-            _prev_world_x = reduced_map_window_wx + _minimap_grid_x;  // ...is the 'wx' of the clicked square
-            _prev_world_y = reduced_map_window_wy + _minimap_grid_y;  // ...is the 'wy' of the clicked square
+            _prev_world_x = (int16_t)(reduced_map_window_wx + _minimap_grid_x);  // ...is the 'wx' of the clicked square
+            _prev_world_y = (int16_t)(reduced_map_window_wy + _minimap_grid_y);  // ...is the 'wy' of the clicked square
             _map_x = _prev_world_x;
             _map_y = _prev_world_y;
             Center_Map(&_map_x, &_map_y, _prev_world_x, _prev_world_y, _map_plane);
@@ -1891,9 +1891,7 @@ Check_Game_Data();
             )
             {
 
-Check_Game_Data();
-                Change_Home_City_Name_Popup(0);
-Check_Game_Data();
+                Change_Home_City_Name_Popup(HUMAN_PLAYER_IDX);
 
                 Assign_Auto_Function(Main_Screen_Draw, 1);
 
@@ -2273,9 +2271,7 @@ void Move_Stack_DirKey(int16_t movement_direction)
             assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
             assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
 
-Check_Game_Data();
             Move_Stack(move_x, move_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
-Check_Game_Data();
 
         }
         else
@@ -2285,9 +2281,7 @@ Check_Game_Data();
                 assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
                 assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
 
-Check_Game_Data();
                 Move_Stack(move_x, move_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
-Check_Game_Data();
 
             }
             else
@@ -2554,9 +2548,7 @@ void Select_Stack_At_Unit(int16_t unit_idx)
 
     o62p01_empty_function(_human_player_idx);
 
-Check_Game_Data();
     Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _UNITS[unit_idx].wp, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy);
-Check_Game_Data();
 
     Set_Unit_Draw_Priority();
 
@@ -2656,9 +2648,7 @@ void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
     reset_active_stack = ST_TRUE;
 
-Check_Game_Data();
     Build_Unit_Stack(player_idx, map_plane, unit_wx, unit_wy);  // sets _unit_stack_count
-Check_Game_Data();
 
     if(_unit_stack_count == 0)
     {
@@ -2667,9 +2657,7 @@ Check_Game_Data();
 
     }
 
-Check_Game_Data();
     Sort_Unit_Stack();
-Check_Game_Data();
 
     _active_stack_has_path = ST_FALSE;
 
@@ -2705,9 +2693,7 @@ Check_Game_Data();
     if(goto_unit_idx != ST_UNDEFINED)
     {
 
-Check_Game_Data();
         Set_Active_Stack_Movement_Path(goto_unit_idx);
-Check_Game_Data();
 
     }
 
@@ -2715,23 +2701,15 @@ Check_Game_Data();
     unit_wx = _UNITS[unit_idx].wx;
     unit_wy = _UNITS[unit_idx].wy;
 
-Check_Game_Data();
     OVL_BringIntoView(map_x, map_y, unit_wx, unit_wy, map_plane);
-Check_Game_Data();
         
-Check_Game_Data();
     Set_Unit_Action_Special();
-Check_Game_Data();
         
-Check_Game_Data();
     Active_Unit_Stack(&troop_count, &troops[0]);
-Check_Game_Data();
 
     // DONT  o62p07_Empty_pFxn(unit_array_count, &unit_array[0]);
 
-Check_Game_Data();
     Units_In_Tower(troop_count, &troops[0], map_plane);
-Check_Game_Data();
 
     if(_unit_stack_count < 1)
     {
@@ -2893,7 +2871,6 @@ void Build_Unit_Stack(int16_t player_idx, int16_t wp, int16_t wx, int16_t wy)
                 {
 
                     _UNITS[unit_idx].Status = us_Ready;
-
                 }
 
             }
@@ -3011,15 +2988,10 @@ void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t u
         OVL_TileOffScrnEdge(map_x, map_y, unit_x, unit_y, MAP_WIDTH, MAP_HEIGHT);
     }
 
-Check_Game_Data();
     Set_Unit_Draw_Priority();
     Reset_Stack_Draw_Priority();
-Capture_Units_Data();
-Check_Game_Data();
 
-Check_Game_Data();
     Set_Entities_On_Map_Window(*map_x, *map_y, map_plane);
-Check_Game_Data();
 
 }
 
@@ -3177,7 +3149,7 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
                     (_UNITS[unit_idx].Finished == ST_FALSE)
                 )
                 {
-                    _UNITS[unit_idx].Status = action;
+                    _UNITS[unit_idx].Status = (int8_t)action;
                     _UNITS[unit_idx].Finished = ST_TRUE;
                     _unit_stack[itr_stack].active = ST_FALSE;
                     _UNITS[unit_idx].dst_wx = 0;
@@ -3202,8 +3174,8 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
                 )
                 {
                     _UNITS[unit_idx].Status = 3;  /* "GOTO"  us_GOTO */
-                    _UNITS[unit_idx].dst_wx = destination_x;
-                    _UNITS[unit_idx].dst_wy = destination_y;
+                    _UNITS[unit_idx].dst_wx = (int8_t)destination_x;
+                    _UNITS[unit_idx].dst_wy = (int8_t)destination_y;
                 }
             }
         } break;
@@ -3401,7 +3373,8 @@ int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp)
 Failure:
     did_earthgate = ST_FALSE;
 
-
+// TODO  3>C:\STU\devel\ReMoM\MoM\src\MainScr.c(3402,1): warning C4102: 'Done': unreferenced label
+#pragma warning(suppress : 4102)
 Done:
 
     return did_earthgate;
@@ -4354,8 +4327,8 @@ j_Stack_Moves_Active()
 
 NOTE: you can have multiple transport units in a stack
 
-almost the same code as in WZD ovr097 Units_Moves()
-Units_Moves() breaks after Unit_Has_WindWalking(); does not have stack_has_windwalker or windwalker_unit_idx
+almost the same code as in WZD ovr097 Army_Moves2()
+Army_Moves2() breaks after Unit_Has_WindWalking(); does not have stack_has_windwalker or windwalker_unit_idx
 OON XREF STK_Move() WZD o95p01
 
 */
@@ -4463,7 +4436,6 @@ int16_t Stack_Moves(void)
                 {
                     _UNITS[unit_idx].moves2 = 1;
                     _UNITS[unit_idx].Finished = ST_FALSE;
-Capture_Units_Data();
                 }
             }
         }
@@ -5069,7 +5041,7 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
     Set_Draw_Active_Stack_Always();
     Reset_Map_Draw();
 
-    movement_points = Units_Moves(troops, troop_count);
+    movement_points = Army_Moves2(troops, troop_count);
 
     if(movement_points < 1)
     {
@@ -5153,7 +5125,7 @@ Prep_Road_Path:
 
     for(itr_path = 0; itr_path < path_length; itr_path++)
     {
-        movepath_cost_array[itr_path] = Turns_To_Build_Road(movepath_x_array[(2 + itr_path)], movepath_y_array[(2 + itr_path)], map_p);
+        movepath_cost_array[itr_path] = (int8_t)Turns_To_Build_Road(movepath_x_array[(2 + itr_path)], movepath_y_array[(2 + itr_path)], map_p);
         if(construction_points > 0)
         {
             movepath_cost_array[itr_path] /= construction_points;
@@ -5172,11 +5144,8 @@ Prep_Road_Path:
 
             Current_Step = 0;
 
-Check_Game_Data();
             _UNITS[troops[itr_troops]].Finished = ST_TRUE;
             _UNITS[troops[itr_troops]].Rd_Constr_Left -= 1;
-Capture_Units_Data();
-Check_Game_Data();
 
         }
         else
@@ -5187,26 +5156,17 @@ Check_Game_Data();
 
                 Current_Step = 0;
 
-Check_Game_Data();
                 _UNITS[troops[itr_troops]].Rd_Constr_Left = ST_UNDEFINED;
                 _UNITS[troops[itr_troops]].Status = us_Ready;
-Capture_Units_Data();
 
-Check_Game_Data();
                 Make_Road(_UNITS[troops[itr_troops]].wx, _UNITS[troops[itr_troops]].wy, map_p);
-Check_Game_Data();
                 TILE_ResetRoadConns(_UNITS[troops[itr_troops]].wx, _UNITS[troops[itr_troops]].wy, map_p);
-Capture_Cities_Data();
-Check_Game_Data();
 
             }
             else
             {
 
-Check_Game_Data();
                 _UNITS[troops[itr_troops]].Rd_Constr_Left = movepath_cost_array[0];
-Capture_Units_Data();
-Check_Game_Data();
 
                 Current_Step = 1;
 
@@ -5319,9 +5279,7 @@ Start_Path:
         assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
         assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
-Check_Game_Data();
         Move_Units_Draw(player_idx, map_p, path_length, map_x, map_y, troops, troop_count);
-Check_Game_Data();
     }
 
     // BUGBUG  can't be get spell warded and also go into combat
@@ -5354,13 +5312,10 @@ Combat_Handlers:
     if(_combat_environ == cnv_Lair)
     {
 
-Check_Game_Data();
         lair_combat_result = Lair_Combat__WIP(_combat_environ_idx, player_idx);
-Check_Game_Data();
 
         if(lair_combat_result == 0)  // ~ Winner == False / Combat - Lose
         {
-Check_Game_Data();
             for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
             {
                 if(
@@ -5369,12 +5324,10 @@ Check_Game_Data();
                     (_UNITS[troops[itr_troops]].wy == _combat_wy)
                 )
                 {
-                    _UNITS[troops[itr_troops]].wx = OVL_Action_OriginX;
-                    _UNITS[troops[itr_troops]].wy = OVL_Action_OriginY;
+                    _UNITS[troops[itr_troops]].wx = (int8_t)OVL_Action_OriginX;
+                    _UNITS[troops[itr_troops]].wy = (int8_t)OVL_Action_OriginY;
                 }
             }
-Capture_Units_Data();
-Check_Game_Data();
         }
         else if(lair_combat_result == 1)  // ~ Winner == True / Combat - Win
         {
@@ -5384,14 +5337,11 @@ Check_Game_Data();
         else if(lair_combat_result == 99)  // ~ Combat - Cancel
         {
 
-Check_Game_Data();
             for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
             {
-                _UNITS[troops[itr_troops]].wx = OVL_Action_OriginX;
-                _UNITS[troops[itr_troops]].wy = OVL_Action_OriginY;
+                _UNITS[troops[itr_troops]].wx = (int8_t)OVL_Action_OriginX;
+                _UNITS[troops[itr_troops]].wy = (int8_t)OVL_Action_OriginY;
             }
-Capture_Units_Data();
-Check_Game_Data();
 
         }
 
@@ -5399,19 +5349,14 @@ Check_Game_Data();
     else
     {
 
-Check_Game_Data();
-Release_Cities_Data();
 combat_result = Combat__WIP(player_idx, defender_idx, troop_count, &troops[0]);
 // ...units gets moved if they win
 if(combat_result == 1)
 {
-    Capture_Units_Data();
-    Check_Game_Data();
-}
+        }
 else
 {
-    Check_Game_Data();
-}
+    }
 
         if(combat_result == ST_TRUE)  /* Winner == Attacker */
         {
@@ -5441,10 +5386,7 @@ End_Of_Moving:
         if(_UNITS[unit_idx].Rd_Constr_Left == 99)
         {
 
-Check_Game_Data();
             _UNITS[unit_idx].Rd_Constr_Left = ST_UNDEFINED;
-Capture_Units_Data();
-Check_Game_Data();
 
         }
 
@@ -5455,19 +5397,13 @@ Check_Game_Data();
         )
         {
 
-Check_Game_Data();
             _UNITS[unit_idx].moves2 -= Total_Move_Cost;
-Capture_Units_Data();
-Check_Game_Data();
 
             if(_UNITS[unit_idx].moves2 < 1)
             {
 
-Check_Game_Data();
                 _UNITS[unit_idx].Finished = ST_TRUE; 
                 _UNITS[unit_idx].moves2 = 0;
-Capture_Units_Data();
-Check_Game_Data();
 
             }
 
@@ -5480,13 +5416,10 @@ Check_Game_Data();
             )
             {
 
-Check_Game_Data();
                 UNITS_STATUS(unit_idx, us_Ready);
                 _UNITS[unit_idx].dst_wx = 0;
                 _UNITS[unit_idx].dst_wy = 0;
                 Out_Of_Moves = ST_FALSE;
-Capture_Units_Data();
-Check_Game_Data();
 
             }
             
@@ -5497,13 +5430,10 @@ Check_Game_Data();
             )
             {
 
-Check_Game_Data();
                 _UNITS[unit_idx].Status = us_GOTO;
-                _UNITS[unit_idx].dst_wx = destination_x;
-                _UNITS[unit_idx].dst_wy = destination_y;
+                _UNITS[unit_idx].dst_wx = (int8_t)destination_x;
+                _UNITS[unit_idx].dst_wy = (int8_t)destination_y;
                 _UNITS[unit_idx].Finished = ST_TRUE;
-Capture_Units_Data();
-Check_Game_Data();
 
             }
 
@@ -5519,20 +5449,14 @@ Check_Game_Data();
                 if(_UNITS[unit_idx].Rd_Constr_Left == -1)
                 {
 
-Check_Game_Data();
                     _UNITS[unit_idx].Status = us_Ready;
                     _UNITS[unit_idx].dst_wx = 0;
                     _UNITS[unit_idx].dst_wy = 0;
-Capture_Units_Data();
-Check_Game_Data();
 
                     if(_UNITS[unit_idx].moves2 > 0)
                     {
 
-Check_Game_Data();
                         _UNITS[unit_idx].Finished = ST_FALSE;
-Capture_Units_Data();
-Check_Game_Data();
 
                     }
 
@@ -5545,10 +5469,7 @@ Check_Game_Data();
             if(_UNITS[unit_idx].Status == us_GOTO)
             {
 
-Check_Game_Data();
                 _UNITS[unit_idx].Finished = ST_TRUE;
-Capture_Units_Data();
-Check_Game_Data();
 
             }
 
@@ -5556,17 +5477,13 @@ Check_Game_Data();
 
     }
 
-Check_Game_Data();
     Fix_Patrol_On_Boats(troop_count, troops);
-Check_Game_Data();
     
     Reset_Draw_Active_Stack();
 
     if(player_idx == _human_player_idx)
     {
-Check_Game_Data();
         Update_Scouted_And_Contacted__WIP();
-Check_Game_Data();
     }
 
     goto Done_Return_TRUE;
@@ -5578,9 +5495,7 @@ Check_Game_Data();
 
 
 Done_Return_FALSE:
-Check_Game_Data();
     Reset_Draw_Active_Stack();
-Check_Game_Data();
     return_value = ST_FALSE;
     goto Done;
 
@@ -5767,9 +5682,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
     Highest_Priority = _UNITS[unit_array[0]].Draw_Priority;
     Highest_Priority_Unit__Loop_Var = 0;
     // DELETEME  _UNITS[unit_array[0]].Draw_Priority = 0;
-Check_Game_Data();
     UNITS_DRAW_PRIORITY(unit_array[0], 0);
-Capture_Units_Data();
 
     for(itr_unit_array_count = 1; itr_unit_array_count < unit_array_count; itr_unit_array_count++)
     {
@@ -5779,9 +5692,7 @@ Capture_Units_Data();
             Highest_Priority_Unit__Loop_Var = itr_unit_array_count;
         }
         // DELETEME  _UNITS[unit_array[itr_unit_array_count]].Draw_Priority = 0;
-Check_Game_Data();
         UNITS_DRAW_PRIORITY(unit_array[itr_unit_array_count], 0);
-Capture_Units_Data();
     }
     unit_idx = unit_array[Highest_Priority_Unit__Loop_Var];
     unit_x = _UNITS[unit_idx].wx;
@@ -5790,15 +5701,13 @@ Capture_Units_Data();
     destination_x = movepath_x_array[(1 + movepath_length)];
     destination_y = movepath_y_array[(1 + movepath_length)];
 
-Check_Game_Data();
     for(itr_units = 0; itr_units < unit_array_count; itr_units++)
     {
         // DELETEME  _UNITS[unit_array[itr_units]].wx = destination_x;
-        UNITS_WX(unit_array[itr_units], destination_x);
+        UNITS_WX(unit_array[itr_units], (int8_t)destination_x);
         // DELETEME  _UNITS[unit_array[itr_units]].wy = destination_y;
-        UNITS_WY(unit_array[itr_units], destination_y);
+        UNITS_WY(unit_array[itr_units], (int8_t)destination_y);
     }
-Capture_Units_Data();
 
 
     build_road = ST_FALSE;
@@ -6240,7 +6149,7 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
         if(
             (_LAIRS[itr_lairs].wp == wp)
             &&
-            (_LAIRS[itr_lairs].Intact == ST_TRUE)
+            (_LAIRS[itr_lairs].intact == ST_TRUE)
             &&
             ((_LAIRS[itr_lairs].wx != dst_wx) || (_LAIRS[itr_lairs].wy != dst_wy))
         )
@@ -6719,22 +6628,24 @@ int16_t Square_Has_City(int16_t wx, int16_t wy, int16_t wp)
 // ¿ vs. WZD o63p12  Stack_Moves_Active(void) ?
 // ¿ vs. WZD o63p13  Stack_Moves(void) ?
 /*
-    Units_Moves()
+    Army_Moves2()
         DOES NOT have windwalker_unit_idx or stack_has_windwalker
         DOES NOT test 'active'
     
 */
-int16_t Units_Moves(int16_t unit_array[], int16_t unit_array_count)
+int16_t Army_Moves2(int16_t troops[], int16_t troops_count)
 {
-    int16_t itr_unit_array_count;
+    int16_t itr_troops;
     int16_t movement_points; // _SI_
     int16_t unit_idx;  // _DI_
 
     movement_points = 1000;
 
-    for(itr_unit_array_count = 0; itr_unit_array_count < _unit_stack_count; itr_unit_array_count++)
+    // for(itr_unit_array_count = 0; itr_unit_array_count < _unit_stack_count; itr_unit_array_count++)
+    for(itr_troops = 0; itr_troops < troops_count; itr_troops++)
     {
-        unit_idx = _unit_stack[itr_unit_array_count].unit_idx;
+        // unit_idx = _unit_stack[itr_unit_array_count].unit_idx;
+        unit_idx = troops[itr_troops];
         
         if(_UNITS[unit_idx].moves2 < movement_points)
         {

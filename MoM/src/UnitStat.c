@@ -5,7 +5,6 @@
         ovr072
 */
 
-#include "../../STU/src/STU_CHK.h"
 #include "../../STU/src/STU_DBG.h"
 
 #include "../../MoX/src/Allocate.h"

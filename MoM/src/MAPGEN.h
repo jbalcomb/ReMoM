@@ -20,19 +20,19 @@ extern "C" {
 */
 
 // MGC o51p01
-void NEWG_CreateWorld__WIP(void);
+void Init_New_Game(void);
 
 // MGC o51p02
-// NEWG_EZ_MarkHadnLeft()
+void Set_Upper_Lair_Guardian_Count(void);
 
 // MGC o51p03
-// NEWG_TileIsleExtend()
+void NEWG_TileIsleExtend__WIP(int16_t wp);
 
 // MGC o51p04
-// NEWG_CreateTowers()
+void Generate_Towers(void);
 
 // MGC o51p05
-// NEWG_CreateCapitals()
+void Generate_Home_City__WIP(void);
 
 // MGC o51p06
 void NEWG_ClearLandmasses__WIP(int16_t wp);
@@ -50,7 +50,7 @@ void NEWG_SetBaseLands__WIP(int16_t wp);
 void NEWG_CreateLands__WIP(int16_t wp);
 
 // MGC o51p11
-void NEWG_CreateNodes__WIP(void);
+void Generate_Nodes(void);
 
 // MGC o51p12
 void NEWG_CreateNodeAura__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, int16_t wx, int16_t wy);
@@ -65,61 +65,61 @@ void NEWG_SetNodeType__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, in
 void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy);
 
 // MGC o51p16
-// NEWG_CreateEZs()
+void Generate_Lairs(void);
 
 // MGC o51p17
-// NEWG_CreateEncounter()
+void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t UU, int16_t lair_type, int16_t budget);
 
 // MGC o51p18
 // UU_UNIT_RandomRacial()
 
 // MGC o51p19
-// NEWG_SetDeserts()
+void NEWG_SetDeserts__STUB(void);
 
 // MGC o51p20
-// NEWG_CreateShores()
+void NEWG_CreateShores__STUB(void);
 
 // MGC o51p21
-// NEWG_RandomizeTiles()
+void NEWG_RandomizeTiles__STUB(void);
 
 // MGC o51p22
-// NEWG_CreateRiver()
+int16_t NEWG_CreateRiver__STUB(int16_t wp);
 
 // MGC o51p23
-// NEWG_SetRiverTiles()
+void NEWG_SetRiverTiles__STUB(int16_t wp);
 
 // MGC o51p24
-// NEWG_CreateNeutrals()
+void Generate_Neutral_Cities__WIP(int16_t wp);
 
 // MGC o51p25
-// CTY_SetDefaultName()
+void Random_City_Name_By_Race_NewGame(int16_t race_type, char * name);
 
 // MGC o51p26
-// NEWG_CreateRoads()
+void Generate_Roads(int16_t wp);
 
 // MGC o51p27
-// CRP_NEWG_CreatePathGrids()
+void CRP_NEWG_CreatePathGrids__WIP(int16_t wp);
 
 // MGC o51p28
-// NEWG_CreateSpecials()
+void Generate_Terrain_Specials(int16_t wp);
 
 // MGC o51p29
-// NEWG_DesertSpecials()
+int16_t Desert_Terrain_Special(int16_t wp);
 
 // MGC o51p30
-// NEWG_HillSpecials()
+int16_t Hills_Terrain_Special(int16_t wp);
 
 // MGC o51p31
-// NEWG_MntnSpecials()
+int16_t Mountain_Terrain_Special(int16_t wp);
 
 // MGC o51p32
-// NEWG_SetScoutingMaps()
+void Init_Square_Explored(void);
 
 // MGC o51p33
-// TILE_SetScouting()
+void Set_Square_Explored_Bits(int16_t wp, int16_t wx, int16_t wy, int16_t bits);
 
 // MGC o51p34
-// NEWG_SetMoveMaps()
+void Movement_Mode_Cost_Maps(int16_t wp);
 
 // MGC o51p35
 // TILE_InvalidOutflow()
@@ -128,22 +128,22 @@ void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy);
 void Draw_Building_The_Worlds(int16_t percent);
 
 // MGC o51p37
-// UNIT_Create()
+void Create_Unit_NewGame(int16_t unit_type, int16_t player_idx, int16_t wx, int16_t wy, int16_t wp, int16_t city_idx);
 
 // MGC o51p38
-// NEWG_AnimateOceans()
+void NEWG_AnimateOceans__STUB(void);
 
 // MGC o51p39
-// TILE_IsOcean()
+int16_t TILE_IsOcean(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p40
-// TILE_HasNode()
+int16_t TILE_HasNode(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p41
-// TILE_HasTower()
+int16_t TILE_HasTower(int16_t wx, int16_t wy);
 
 // MGC o51p42
-// TILE_IsForest()
+int16_t Square_Is_Forest_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p43
 // TILE_IsRiver()
@@ -155,31 +155,61 @@ void Draw_Building_The_Worlds(int16_t percent);
 // UU_TILE_IsShore()
 
 // MGC o51p46
-// TILE_IsMountains()
+int16_t Square_Is_Mountain_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p47
-// TILE_IsHills()
+int16_t Square_Is_Hills_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p48
-// TILE_IsSwamp()
+int16_t Square_Is_Swamp_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p49
-// TILE_IsDesert()
+int16_t Square_Is_Desert_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p50
-// TILE_IsGrasslands()
+int16_t Square_Is_Grassland_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p51
-// TILE_GetFood()
+int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p52
-// TILE_GetMaxPop()
+int16_t City_Maximum_Size_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p53
-// TILE_GetCatchment()
+int16_t Get_Useable_City_Area_NewGame(int16_t city_wx, int16_t city_wy, int16_t city_wp, int16_t * wx_array, int16_t * wy_array);
 
 // MGC o51p54
-// UU_Empty_Tile_Fn()
+void o51p54_empty_function(void);
+
+
+
+/*
+
+    MAGIC.EXE  ovr054
+
+*/
+
+// MGC o54p01
+// CRP_SPATH_Arbitrary()
+// MGC o54p02
+// UU_SPATH_Segmented()
+// MGC o54p03
+// UU_SPATH_15by15()
+// MGC o54p04
+// UU_SPATH_Segments()
+// MGC o54p05
+// UU_SPATH_GetBorderTiles()
+
+
+
+/*
+
+    MAGIC.EXE  ovr055
+
+*/
+
+// MGC o55p01
+void CRP_NEWG_CreatePathGrid__STUB(void * moves2, void * move_path_chunks);
 
 
 

@@ -631,7 +631,7 @@ void Build_City_List(void)
     {
         if(_CITIES[itr_cities].owner_idx == _human_player_idx)  /* MoO2  _PLAYER_NUM ~== _human_player_idx */
         {
-            m_city_list_array[m_city_list_count] = itr_cities;  /* MoO2  _g_colony_list_ptr -> l_colony_list[250] */
+            m_city_list_array[m_city_list_count] = (unsigned char)itr_cities;  /* MoO2  _g_colony_list_ptr -> l_colony_list[250] */
 
             m_city_list_count++;
 

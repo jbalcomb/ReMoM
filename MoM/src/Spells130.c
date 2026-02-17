@@ -3,8 +3,6 @@
         ovr130
 */
 
-#include "../../STU/src/STU_CHK.h"
-
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/Allocate.h"
@@ -964,7 +962,7 @@ int16_t Cast_Raise_Volcano(int16_t player_idx)
                             if(bldg_list[bldg_idx] > bs_Replaced)
                             {
 
-                                MSG_BldLost_Array[MSG_BldLost_Count].city_idx = scsv1;  // BUGBUG  should be city_idx, not wx
+                                MSG_BldLost_Array[MSG_BldLost_Count].city_idx = (int8_t)scsv1;  // BUGBUG  should be city_idx, not wx
 
                                 MSG_BldLost_Array[MSG_BldLost_Count].bldg_type_idx = bldg_list[bldg_idx];
 
@@ -1570,9 +1568,9 @@ int16_t Cast_Word_Of_Recall(int16_t player_idx)
 
         }
 
-        _UNITS[scsv1].wx = _players[player_idx].summon_wx;
-        _UNITS[scsv1].wy = _players[player_idx].summon_wy;
-        _UNITS[scsv1].wp = _players[player_idx].summon_wp;
+        _UNITS[scsv1].wx = (int8_t)_players[player_idx].summon_wx;
+        _UNITS[scsv1].wy = (int8_t)_players[player_idx].summon_wy;
+        _UNITS[scsv1].wp = (int8_t)_players[player_idx].summon_wp;
 
         UNIT_RemoveExcess(scsv1);
 
@@ -1935,7 +1933,6 @@ int16_t Cast_Spell_Ward(int16_t player_idx)
         ptr_enchantments = &_CITIES[city_idx].enchantments[0];
 
         ptr_enchantments[magic_type_ench_idx] = (player_idx + 1);
-Capture_Cities_Data();
 
         if(
             (player_idx == HUMAN_PLAYER_IDX)
@@ -2025,7 +2022,6 @@ void Apply_Consecration(int16_t city_idx)
     _CITIES[city_idx].enchantments[FAMINE] = 0;
     _CITIES[city_idx].enchantments[PESTILENCE] = 0;
     _CITIES[city_idx].enchantments[CHAOS_RIFT] = 0;
-Capture_Cities_Data();
 
     city_wp = _CITIES[city_idx].wp;
 

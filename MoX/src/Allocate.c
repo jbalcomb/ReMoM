@@ -241,7 +241,6 @@ char const * str_allocation_errors[] =
 // int a, b;
 // {
 //     p = malloc(sizeof(int));
-// 
 //     return a + b;
 // }
 
@@ -330,14 +329,16 @@ byte_ptr Near_Allocate_Next(int16_t size)
 void Near_Allocation_Error(int16_t size)
 {
     strcpy(near_buffer, "Near Allocation too large by ");  // cnst_Alloc_Error01[] = "Near Allocation too large by "
+
     // SDL_itoa(size, Tmp_Conv_Str_1, 10);
-#pragma warning(suppress : 4996)
     SDL_itoa(size, &near_buffer[100], 10);
+
     // strcat(near_buffer, Tmp_Conv_Str_1);
     strcat(near_buffer, &near_buffer[100]);
+
     strcat(near_buffer, " bytes");  // cnst_Alloc_Error02[] = " bytes"
 
-    // TODO  Exit_With_Message((char *)&near_buffer[0]);
+    Exit_With_Message((char *)&near_buffer[0]);
 }
 
 

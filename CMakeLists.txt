@@ -14,6 +14,14 @@
 # cmake --build build --config Debug --verbose > _cmake_build.txt
 # ctest --test-dir build -C Debug --rerun-failed --output-on-failure -VV
 
+# cd C:\STU\devel\ReMoM\
+# cmake --workflow --preset=MSVC-debug
+# ctest --preset=MSVC-debug
+# Errors while running CTest
+# Output from these tests are in: C:/STU/devel/ReMoM/out/build/MSVC-debug/Testing/Temporary/LastTest.log
+# Use "--rerun-failed --output-on-failure" to re-run the failed cases verbosely.
+# ctest --preset=MSVC-debug --rerun-failed --output-on-failure
+
 cmake_minimum_required(VERSION 3.22)
 
 project(
@@ -26,13 +34,9 @@ project(
 # set(CMAKE_C_STANDARD_REQUIRED ON) # Make the standard mandatory
 # set(C_EXTENSIONS OFF)
 
-
-
 # add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 # add_compile_definitions(WIN32_LEAN_AND_MEAN)
 # set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-
 
 set(CMAKE_INSTALL_LOCAL_ONLY TRUE)
 # CMAKE_INSTALL_PREFIX to a location within your user directory (e.g., C:\Users\<YourUser>\Install).
@@ -40,7 +44,6 @@ set(CMAKE_INSTALL_LOCAL_ONLY TRUE)
 # IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 #   SET(CMAKE_INSTALL_PREFIX <path> CACHE PATH <comment> FORCE)
 # ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-
 
 # if(DO_TEST)
 # GoogleTest requires at least C++17
@@ -57,7 +60,12 @@ set(BUILD_SHARED_LIBS OFF)
 # set(BUILD_SHARED_LIBS ON)
 
 include(FetchContent)
-FetchContent_Declare(googletest GIT_REPOSITORY https://github.com/google/googletest.git GIT_TAG v1.14.0)
+FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG v1.14.0
+    EXCLUDE_FROM_ALL
+)
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
@@ -103,6 +111,26 @@ list(APPEND CMAKE_PREFIX_PATH "C:/devellib/SDL2_mixer-2.8.1")
 find_package(SDL2 REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 
+get_target_property(imported_location SDL2::Core IMPORTED_LOCATION)
+get_filename_component(imported_location_dir ${imported_location} DIRECTORY)
+set(SDL2_DLL_FILE_PATH ${imported_location_dir})
+string(APPEND SDL2_DLL_FILE_PATH "/SDL2.dll")
+message(CHECK_START "Finding SDL2.dll")
+if(EXISTS "${SDL2_DLL_FILE_PATH}")
+    message(CHECK_PASS "The file exists: ${SDL2_DLL_FILE_PATH}")
+else()
+    message(CHECK_FAIL "The file does not exist: ${SDL2_DLL_FILE_PATH}")
+endif()
+get_target_property(imported_location SDL2::Mixer IMPORTED_LOCATION)
+get_filename_component(imported_location_dir ${imported_location} DIRECTORY)
+set(SDL2_MIXER_DLL_FILE_PATH ${imported_location_dir})
+string(APPEND SDL2_MIXER_DLL_FILE_PATH "/SDL2_mixer.dll")
+message(CHECK_START "Finding SDL2_mixer.dll")
+if(EXISTS "${SDL2_MIXER_DLL_FILE_PATH}")
+    message(CHECK_PASS "The file exists: ${SDL2_MIXER_DLL_FILE_PATH}")
+else()
+    message(CHECK_FAIL "The file does not exist: ${SDL2_MIXER_DLL_FILE_PATH}")
+endif()
 
 
 # # SDL2::Main  SDL2::Core  SDL2::Mixer
@@ -144,6 +172,8 @@ find_package(SDL2_mixer REQUIRED)
 # # >>> [cmake] -- imported_location: C:/devellib/SDL2-2.32.2/lib/x64/SDL2.lib
 # # >>> [cmake] -- imported_location: C:/devellib/SDL2_mixer-2.8.1/lib/x64/SDL2_mixer.lib
 
+set(PLATFORM "SDL2")
+
 add_subdirectory(STU)
 add_subdirectory(MoX)
 add_subdirectory(MoM)
@@ -173,10 +203,23 @@ endif()
 
 
 install(TARGETS ReMoMber)
+# install(
+#     TARGETS ReMoMber
+#     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+#     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+# )
 # install(FILES $<TARGET_FILE:SDL2::SDL2> DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES $<TARGET_FILE:SDL2::Core> DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES $<TARGET_FILE:SDL2::Mixer> DESTINATION ${CMAKE_INSTALL_BINDIR})
 message(STATUS "CMAKE_INSTALL_BINDIR='${CMAKE_INSTALL_BINDIR}'")
+
+# $<TARGET_RUNTIME_DLLS:MOX_tests>
+
+# $<TARGET_FILE_DIR:ReMoMber>
+
+install(FILES ${SDL2_DLL_FILE_PATH} DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES ${SDL2_MIXER_DLL_FILE_PATH} DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_NAME "MoM v1.31 Reassembly")

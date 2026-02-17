@@ -5,6 +5,8 @@
 
 #include "../../MoM/src/AIDATA.h"  /* struct s_AI_CONTINENTS */
 
+#include "../../MoM/src/MovePath.h"  /* struct s_MOVE_MODE_COST_MAPS */
+
 
 
 /*
@@ -2433,6 +2435,13 @@ struct s_MOVE_PATH * movepath_cost_map;
 
 // WZD dseg:9CAC
 // drake178: TBL_MoveMaps_EMS
+// AKA gfp_TBL_MoveMaps_EMM
+/*
+Movement Mode Cost for World Map per Plane
+
+movement_mode_cost_maps = (struct s_MOVE_MODE_COST_MAPS *)Allocate_Space(1802);  // 1802 PR; 28832 B; ~ 2 * 14400; 28800 / 16 = 1800 + 1 + 1
+
+*/
 struct s_MOVE_MODE_COST_MAPS * movement_mode_cost_maps;
 
 
@@ -2450,6 +2459,7 @@ uint8_t * _square_explored;                     // load in Load_SAVE_GAM()
 
 
 // WZD dseg:9CB4
+// AKA p_Terrain_Flags
 /*
 8 bit bitfield
 0 0 0 0 0 0 0 0
@@ -2485,7 +2495,8 @@ Volcano_Counts()
 */
 uint8_t * _map_square_flags;                // load in Load_SAVE_GAM()
 
-// WZD dseg:9CB8  
+// WZD dseg:9CB8
+// drake178: TBL_Terr_Specials
 /*
 1-byte, unsigned
 2 nibbles
@@ -2546,8 +2557,25 @@ struct s_NODE * _NODES;
 uint8_t * _landmasses;
 
 // WZD dseg:9CD4
+/*
+96 bytes per plane? 96 * 8 = 768?
+1-byte, signed
+
+    UU_TBL_1 = Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
+    UU_TBL_2 = Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
+
+MGC  dseg:89E6 00 00 00 00                                     _landmasses dd 0                        ; DATA XREF: Save_SAVE_GAM+223r ...
+MGC  dseg:89EA 00 00 00 00                                     UU_TBL_2 dd 0                           ; DATA XREF: Save_SAVE_GAM+20Ar ...
+MGC  dseg:89EE 00 00 00 00                                     UU_TBL_1 dd 0                           ; DATA XREF: Save_SAVE_GAM+1F1r ...
+MGC  dseg:89F2 00 00 00 00                                     _world_maps dd 0                        ; DATA XREF: Save_SAVE_GAM+1D8r ...
+
+MAPGEN.c
+void CRP_NEWG_CreatePathGrids__STUB(void)
+    |-> CRP_NEWG_CreatePathGrid(movement_mode_cost_maps[wp]->walking[0], UU_TBL_1[wp]);
+    |-> CRP_NEWG_CreatePathGrid(movement_mode_cost_maps[wp]->sailing[0], UU_TBL_2[wp]);
+
+*/
 SAMB_ptr UU_TBL_2;
-// WZD dseg:9CD8
 SAMB_ptr UU_TBL_1;
 
 // WZD dseg:9CDC
@@ -3479,9 +3507,11 @@ int16_t map_draw_full;
 
 
 // WZD dseg:E5CA 00 00 00 00                                     fp_tmpSAMB dd 0                         ; DATA XREF: Allocate_Space+28w ...
+// 
 // WZD dseg:E5CE
+// ; set to 583 in _main
 int16_t RAM_MinKbytes;
-// WZD dseg:E5CE                                                                                         ; set to 583 in _main
+
 // WZD dseg:E5D0 00 00                                           LBX_LastLoadECount dw 0                 ; DATA XREF: LBX_Load_Entry+1C6w ...
 // WZD dseg:E5D2 00 00                                           UU_farload_hdr_fmt dw 0                 ; DATA XREF: LBX_Load_Entry:loc_159F1r ...
 // WZD dseg:E5D4 00 00                                           farload_lbx_header dw 0                 ; DATA XREF: LBX_Load_Entry+37w ...

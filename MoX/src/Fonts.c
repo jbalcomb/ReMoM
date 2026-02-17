@@ -161,6 +161,7 @@ byte_ptr mouse_palette;                         // MGC dseg:A81A    set in Load_
 
 // WZD dseg:A81E
 // AKA gsa_Palette_Font_Colors
+// TODO  DEDU  should be uint_t *?
 byte_ptr font_colors;  // 300h into the palette entry, 16 arrays of 16 colors
 
 
@@ -294,7 +295,7 @@ void Set_Font_LF(int16_t spacing)
 // overrides the default width of the SPACE character
 void Set_Font_Spacing_Width(int16_t spacing)
 {
-    font_header->current_font_widths[0] = spacing;
+    font_header->current_font_widths[0] = (uint8_t)spacing;
 }
 
 // WZD s17p09
@@ -350,7 +351,7 @@ void Set_Alias_Color(int16_t color)
 
     for(itr = 0; itr < 16; itr++)
     {
-        font_colors[itr * 16] = color;
+        font_colors[itr * 16] = (char)color;
         // i.e., font_colors[0][0]; font_colors[1][0]; ...
     }
 
@@ -865,8 +866,17 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
 
         if(full_flag > 0)
         {
-            space_remainder = full_flag % space_count;
-            space_add = full_flag / space_count;
+            // Warning	C4724	potential mod by 0	010_ReMoMber	C:\STU\devel\ReMoM\MoX\src\Fonts.c	1883		
+            // Warning	C4723	potential divide by 0	010_ReMoMber	C:\STU\devel\ReMoM\MoX\src\Fonts.c	1884		
+            // cant actually happen, because the full_flag guards against it
+            if(space_count != 0)
+            {
+                space_remainder = (full_flag % space_count);
+            }
+            if(space_count != 0)
+            {
+                space_add = (full_flag / space_count);
+            }
         }
         else
         {
@@ -965,7 +975,11 @@ Done:
 // WZD s17p38
 // drake178: UU_VGA_DisableAAPixels
 // MoO2  No_Print_Alias()
-void No_Print_Alias(void)
+// Message	VCR003	Function 'No_Print_Alias' can be made static		C:\STU\devel\ReMoM\MoX\src\Fonts.c	978		
+/*
+NIU
+*/
+static void No_Print_Alias(void)
 {
     draw_alias_flag = ST_TRUE;
 }
@@ -1877,10 +1891,19 @@ int16_t Print_String_To_Bitmap(int16_t x, int16_t y, char * string, int16_t chan
 
         full_flag -= Get_String_Width(string);
 
+        // Warning	C4724	potential mod by 0	010_ReMoMber	C:\STU\devel\ReMoM\MoX\src\Fonts.c	1883		
+        // Warning	C4723	potential divide by 0	010_ReMoMber	C:\STU\devel\ReMoM\MoX\src\Fonts.c	1884		
+        // cant actually happen, because the full_flag guards against it
         if(full_flag > 0)
         {
-            space_remainder = full_flag % space_count;
-            space_add = full_flag / space_count;
+            if(space_count != 0)
+            {
+                space_remainder = (full_flag % space_count);
+            }
+            if(space_count != 0)
+            {
+                space_add = (full_flag / space_count);
+            }
         }
         else
         {
@@ -3305,15 +3328,15 @@ void Apply_Palette(void)
 */
 void Cycle_Palette(int16_t percent)
 {
-    int16_t vpercent;
-    uint16_t color_multiplier;
-    int16_t itr;
-    uint8_t palette_change_flag;
-    uint8_t * tmpcurrpal;
-    uint16_t ofst;
-    uint8_t color_red;
-    uint8_t color_grn;
-    uint8_t color_blu;
+    int16_t vpercent = 0;
+    uint16_t color_multiplier = 0;
+    int16_t itr = 0;
+    uint8_t palette_change_flag = 0;
+    uint8_t * tmpcurrpal = 0;
+    uint16_t ofst = 0;
+    uint8_t color_red = 0;
+    uint8_t color_grn = 0;
+    uint8_t color_blu = 0;
 
     vpercent = (100 - percent);
     
@@ -4001,7 +4024,7 @@ uint8_t Find_Closest_Color(uint8_t red, uint8_t green, uint8_t blue)
         if(current_dif < closest_dif)
         {
             closest_dif = current_dif;
-            closest = colormap_idx;
+            closest = (uint8_t)colormap_idx;
         }
         // Meh. colormap_idx++;
         // assert(ofst == ((colormap_idx * 3) + 3));

@@ -41,6 +41,7 @@
 #define LEN_TEMP_STRING       20
 #define LEN_TEMP_BUFFER       10
 #define LEN_FILE_NAME         20
+#define LEN_FILE_PATH         60
 #define LEN_MAIN_SAVE_FILE_NAME 40
 
 #define LEN_WIZARD_NAME       20
@@ -58,6 +59,7 @@
 #define LEN_ITEM_MAKE_NAME    26
 #define LEN_ITEM_POWER_NAME   18
 
+#define LEN_SAVE_GAM_FILE   123300
 
 
 

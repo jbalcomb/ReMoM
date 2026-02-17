@@ -6,10 +6,6 @@ MoO2
 Module: INITGAME
 */
 
-#include "INITGAME.h"
-
-#include "NewGame.h"
-
 #include "../../MoX/src/MOM_Data.h"
 #include "../../MoX/src/MOX_DAT.h"
 #include "../../MoX/src/MOX_DEF.h"
@@ -18,6 +14,10 @@ Module: INITGAME
 #include "NewGame.h"
 #include "Spellbook.h"
 #include "UNITTYPE.h"
+
+#include "INITGAME.h"
+
+#include <string.h>
 
 
 
@@ -57,7 +57,7 @@ Init_New_Game_()
 So, ...
 ~== Init_Computer_Players()
 
-OON XREF j_Init_Computer_Players() <-| NEWG_CreateWorld__WIP()
+OON XREF j_Init_Computer_Players() <-| Init_New_Game()
 
 */
 void Init_Computer_Players(void)
@@ -245,13 +245,13 @@ void Init_Diplomatic_Relations(void)
                 IDK = -90;
             }
 
-            _players[itr_players1].Dipl.Visible_Rel[itr_players2] = IDK;
+            _players[itr_players1].Dipl.Visible_Rel[itr_players2] = (int8_t)IDK;
 
-            _players[itr_players2].Dipl.Visible_Rel[itr_players1] = IDK;
+            _players[itr_players2].Dipl.Visible_Rel[itr_players1] = (int8_t)IDK;
 
-            _players[itr_players1].Dipl.Default_Rel[itr_players2] = IDK;
+            _players[itr_players1].Dipl.Default_Rel[itr_players2] = (int8_t)IDK;
 
-            _players[itr_players2].Dipl.Default_Rel[itr_players1] = IDK;
+            _players[itr_players2].Dipl.Default_Rel[itr_players1] = (int8_t)IDK;
 
             _players[itr_players1].peace_duration[itr_players2] = 0;
 
@@ -766,7 +766,8 @@ void Init_Players(void)
 ; setting
 */
 /*
-OON XREF WIZ_SetProfiles()
+
+OON XREF j_Init_Computer_Players() <-| Init_New_Game() <-| Init_Computer_Players()
 
 */
 void Init_Computer_Players_Wizard_Profile(void)
@@ -822,7 +823,7 @@ void Init_Computer_Players_Wizard_Profile(void)
         if(Portrait_Taken != ST_TRUE)
         {
 
-            _players[itr2].wizard_id == Random_Result;
+            _players[itr2].wizard_id = (uint8_t)Random_Result;
 
         }
     }
@@ -873,7 +874,7 @@ void Init_Computer_Players_Wizard_Profile(void)
         if(_wizard_presets_table[_players[itr2].wizard_id].special != ST_UNDEFINED)
         {
 
-            wsa_ptr[_wizard_presets_table[_players[itr2].wizard_id].special] == ST_TRUE;
+            wsa_ptr[_wizard_presets_table[_players[itr2].wizard_id].special] = ST_TRUE;
 
         }
 
@@ -1518,7 +1519,8 @@ END:  ¿ jmp     @@BeginTopLevelPlayerLoop ?
 ; tables
 */
 /*
-OON XREF WIZ_SetProfiles()
+
+OON XREF Init_Computer_Players() <-| j_Init_Computer_Players() <-|  
 
 iter over players
 iter over realms
@@ -1550,7 +1552,7 @@ void Init_Computer_Players_Spell_Library(void)
         {
             for(sri = 0; sri < NUM_SPELLS_PER_MAGIC_REALM; sri++)
             {
-                _players[itr].spells_list[((sbr * 40) + sri)] = 0;
+                _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + sri)] = 0;
             }
         }
 
@@ -1636,27 +1638,29 @@ void Init_Computer_Players_Spell_Library(void)
 
                         Available_Spells = (_players[itr].spellranks[sbr] - 1);
 
+                        // purple #32
                         // ; mark random common spells from the realm as
                         // ; researchable until the availability limit is reached
 
                         while(Available_Spells < Availability_Limit)
                         {
 
-                            IDK_itr_10 = (Random(10) - 1);
+                            IDK_itr_10 = (Random(NUM_SPELLS_PER_MAGIC_REALM) - 1);
 
                             if(_players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + IDK_itr_10)] == sls_Unknown)
                             {
 
-                                _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + IDK_itr_10)] == sls_Knowable;
+                                _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + IDK_itr_10)] = sls_Knowable;
 
                             }
 
+                            // why are we reseting Available_Spells here?
                             Available_Spells = 0;
 
-                            for(IDK_itr_10 = 0; IDK_itr_10 < 10; IDK_itr_10++)
+                            for(IDK_itr_10 = 0; IDK_itr_10 < NUM_SPELLS_PER_MAGIC_RARITY; IDK_itr_10++)
                             {
 
-                                if(_players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + IDK_itr_10)] == sls_Unknown)
+                                if(_players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + IDK_itr_10)] != sls_Unknown)
                                 {
 
                                     Available_Spells++;
@@ -1679,7 +1683,7 @@ void Init_Computer_Players_Spell_Library(void)
                             for(IDK_itr_10 = 0; IDK_itr_10 < 10; IDK_itr_10++)
                             {
 
-                                _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 10 + IDK_itr_10)] == sls_Knowable;
+                                _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 10 + IDK_itr_10)] = sls_Knowable;
 
                             }
 
@@ -1737,7 +1741,7 @@ void Init_Computer_Players_Spell_Library(void)
                                 if(Availability_Array[IDK_itr_10] == 1)
                                 {
 
-                                    _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 10 + IDK_itr_10)] == sls_Knowable;
+                                    _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 10 + IDK_itr_10)] = sls_Knowable;
 
                                 }
 
@@ -1761,7 +1765,7 @@ void Init_Computer_Players_Spell_Library(void)
                             for(IDK_itr_10 = 0; IDK_itr_10 < NUM_SPELLS_PER_MAGIC_REALM; IDK_itr_10++)
                             {
 
-                                _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 20 + IDK_itr_10)] == sls_Knowable;
+                                _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 20 + IDK_itr_10)] = sls_Knowable;
 
                             }
 
@@ -1819,7 +1823,7 @@ void Init_Computer_Players_Spell_Library(void)
                                 if(Availability_Array[IDK_itr_10] == 1)
                                 {
 
-                                    _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 20 + IDK_itr_10)] == sls_Knowable;
+                                    _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 20 + IDK_itr_10)] = sls_Knowable;
 
                                 }
 
@@ -1843,7 +1847,7 @@ void Init_Computer_Players_Spell_Library(void)
                             for(IDK_itr_10 = 0; IDK_itr_10 < NUM_SPELLS_PER_MAGIC_REALM; IDK_itr_10++)
                             {
 
-                                _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 30 + IDK_itr_10)] == sls_Knowable;
+                                _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 30 + IDK_itr_10)] = sls_Knowable;
 
                             }
 
@@ -1901,7 +1905,7 @@ void Init_Computer_Players_Spell_Library(void)
                                 if(Availability_Array[IDK_itr_10] == 1)
                                 {
 
-                                    _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 30 + IDK_itr_10)] == sls_Knowable;
+                                    _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 30 + IDK_itr_10)] = sls_Knowable;
 
                                 }
 
@@ -2202,11 +2206,11 @@ void Init_Heroes(void)
             }
 
             _HEROES2[itr_players]->heroes[itr_hero_types].abilities = abilities;
-            _HEROES2[itr_players]->heroes[itr_hero_types].Casting_Skill = casting_skill;
-            _HEROES2[itr_players]->heroes[itr_hero_types].Spells[0] = _hero_premade_table[itr_hero_types].spell_1;
-            _HEROES2[itr_players]->heroes[itr_hero_types].Spells[1] = _hero_premade_table[itr_hero_types].spell_2;
-            _HEROES2[itr_players]->heroes[itr_hero_types].Spells[2] = _hero_premade_table[itr_hero_types].spell_3;
-            _HEROES2[itr_players]->heroes[itr_hero_types].Spells[3] = _hero_premade_table[itr_hero_types].spell_4;
+            _HEROES2[itr_players]->heroes[itr_hero_types].Casting_Skill = (int8_t)casting_skill;
+            _HEROES2[itr_players]->heroes[itr_hero_types].Spells[0] = (uint8_t)_hero_premade_table[itr_hero_types].spell_1;
+            _HEROES2[itr_players]->heroes[itr_hero_types].Spells[1] = (uint8_t)_hero_premade_table[itr_hero_types].spell_2;
+            _HEROES2[itr_players]->heroes[itr_hero_types].Spells[2] = (uint8_t)_hero_premade_table[itr_hero_types].spell_3;
+            _HEROES2[itr_players]->heroes[itr_hero_types].Spells[3] = (uint8_t)_hero_premade_table[itr_hero_types].spell_4;
 
         }
 

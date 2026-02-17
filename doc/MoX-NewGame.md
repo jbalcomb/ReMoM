@@ -1,4 +1,41 @@
 
+OSG
+Page 182  (PDF Page 191)
+
+The Gcttcsis ofWorlt>s itt
+MMterof~sk
+Before the game begins, one of three land mass
+sizes is selected for the continents of both
+Arcanus and Myn-or: small, medium, and
+large. Small land masses cover approximately
+360 of the 2,400 squares (15 percent) of each
+map with land. Medium land masses will take
+up approxima tely 480 squares (20 percent)
+on each world, while large land masses will
+spread out over 720 squares (i.e., 30 percent)
+of each wor ld's area.
+
+
+
+Page 183  (PDF Page 192)
+
+Wizard's Starting City Locations
+Each wizard's Enchanted Fortress (i.e., start-
+ting) city has to be at least two squares away
+from the top and bottom map edges. The computer
+tries to start players at least 16 squares
+apart but will settle for as few as 10 squares
+apart if the geography simply won't work out.
+The computer prefers to start Enchanted For-
+tress cities at least eight squares from a node,
+but will settle for as little as one, if it has to. It
+also tries to place each player's starting city
+at least four squases from a tower or lair, but
+this could also be as low as one, if neccessary.
+
+
+
+
 MAGIC.EXE
 ovr050
 ovr051

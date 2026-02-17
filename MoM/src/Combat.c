@@ -1984,13 +1984,13 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
                 if(battle_units[_active_battle_unit].controller_idx == _combat_attacker_player)
                 {
 
-                    battle_units[_active_battle_unit].controller_idx = _combat_defender_player;
+                    battle_units[_active_battle_unit].controller_idx = (int8_t)_combat_defender_player;
 
                 }
                 else
                 {
 
-                    battle_units[_active_battle_unit].controller_idx = _combat_attacker_player;
+                    battle_units[_active_battle_unit].controller_idx = (int8_t)_combat_attacker_player;
 
                 }
 
@@ -2014,7 +2014,6 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
                 input_field_idx = 0;
             }
 
-Check_Game_Data();
 
         }
         /*
@@ -2052,7 +2051,6 @@ Check_Game_Data();
 
             }
 
-Check_Game_Data();
 
         }
 
@@ -2173,7 +2171,6 @@ Check_Game_Data();
 
             screen_changed = ST_TRUE;
 
-Check_Game_Data();
 
         }
         /*
@@ -2191,8 +2188,8 @@ Check_Game_Data();
 
                 _human_handle_immobile = ST_FALSE;
 
-                frame_scanned_cgx = Get_Combat_Grid_Cell_X((grid_sx + 4), (grid_sy + 4));
-                frame_scanned_cgy = Get_Combat_Grid_Cell_Y((grid_sx + 4), (grid_sy + 4));
+                frame_scanned_cgx = Get_Combat_Grid_Cell_X(((int16_t)grid_sx + 4), ((int16_t)grid_sy + 4));
+                frame_scanned_cgy = Get_Combat_Grid_Cell_Y(((int16_t)grid_sx + 4), ((int16_t)grid_sy + 4));
 
                 Battle_Unit_Action__WIP(_active_battle_unit, frame_scanned_cgx, frame_scanned_cgy);
 
@@ -2220,7 +2217,6 @@ Check_Game_Data();
 
             }
 
-Check_Game_Data();
 
         }
         /*
@@ -2235,9 +2231,9 @@ Check_Game_Data();
             if(-(combat_grid_field) == input_field_idx)
             {
 
-                RightClick_X = Get_Combat_Grid_Cell_X((grid_sx + 4), (grid_sy + 4));
+                RightClick_X = Get_Combat_Grid_Cell_X(((int16_t)grid_sx + 4), ((int16_t)grid_sy + 4));
 
-                RightClick_Y = Get_Combat_Grid_Cell_Y((grid_sx + 4), (grid_sy + 4));
+                RightClick_Y = Get_Combat_Grid_Cell_Y(((int16_t)grid_sx + 4), ((int16_t)grid_sy + 4));
 
                 battle_unit_idx = CMB_TargetRows[RightClick_Y][RightClick_X];
 
@@ -2262,7 +2258,7 @@ Check_Game_Data();
 
                         temp_movement_points = battle_units[battle_unit_idx].movement_points;
 
-                        battle_units[battle_unit_idx].movement_points = Battle_Unit_Moves2(battle_unit_idx);
+                        battle_units[battle_unit_idx].movement_points = (int8_t)Battle_Unit_Moves2(battle_unit_idx);
 
                         temp_unit_enchantments = _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
 
@@ -2315,7 +2311,7 @@ Check_Game_Data();
 
                             temp_movement_points = battle_units[battle_unit_idx].movement_points;
 
-                            battle_units[battle_unit_idx].movement_points = Battle_Unit_Moves2(battle_unit_idx);
+                            battle_units[battle_unit_idx].movement_points = (int8_t)Battle_Unit_Moves2(battle_unit_idx);
 
                             temp_unit_enchantments = _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
 
@@ -2326,7 +2322,7 @@ Check_Game_Data();
 
                             Combat_Unit_Statistics_Window(61, 6, 89, 174, 117, 194, 2, battle_units[battle_unit_idx].unit_idx);
 
-                            battle_units[battle_unit_idx].movement_points = temp_movement_points;
+                            battle_units[battle_unit_idx].movement_points = (int8_t)temp_movement_points;
 
                             _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = temp_unit_enchantments;
 
@@ -2354,7 +2350,6 @@ Check_Game_Data();
 
             }
 
-Check_Game_Data();
 
         }
         /*
@@ -2398,9 +2393,7 @@ Check_Game_Data();
                     if(CMB_WizCastAvailable == ST_TRUE)
                     {
 
-Check_Game_Data();
                         cast_status = Combat_Cast_Spell__WIP((CASTER_IDX_BASE + _human_player_idx), _combat_wx, _combat_wy, _combat_wp);
-Check_Game_Data();
 
                         switch(cast_status)
                         {
@@ -2459,7 +2452,6 @@ Check_Game_Data();
 
             }
 
-Check_Game_Data();
 
         }
         /*
@@ -2488,7 +2480,6 @@ Check_Game_Data();
 
             }
 
-Check_Game_Data();
 
         }
         /*
@@ -2529,7 +2520,6 @@ Check_Game_Data();
 
             }
 
-Check_Game_Data();
 
         }
         /*
@@ -2581,7 +2571,6 @@ Check_Game_Data();
 
             }
 
-Check_Game_Data();
 
         }
         /*
@@ -2601,7 +2590,7 @@ Check_Game_Data();
 
             temp_movement_points = battle_units[_active_battle_unit].movement_points;
 
-            battle_units[_active_battle_unit].movement_points = Battle_Unit_Moves2(_active_battle_unit);
+            battle_units[_active_battle_unit].movement_points = (int8_t)Battle_Unit_Moves2(_active_battle_unit);
 
             temp_unit_enchantments = _UNITS[battle_units[_active_battle_unit].unit_idx].enchantments;
 
@@ -2611,7 +2600,7 @@ Check_Game_Data();
 
             Combat_Unit_Statistics_Window(61, 6, 89, 174, 117, 194, uvt_Cmbt, battle_units[_active_battle_unit].unit_idx);
 
-            battle_units[_active_battle_unit].movement_points = temp_movement_points;
+            battle_units[_active_battle_unit].movement_points = (int8_t)temp_movement_points;
 
             _UNITS[battle_units[_active_battle_unit].unit_idx].enchantments = temp_unit_enchantments;
 
@@ -2631,7 +2620,6 @@ Check_Game_Data();
 
             CRP_CMB_NeverChecked1 = ST_TRUE;
 
-Check_Game_Data();
 
         }
         /*
@@ -2684,14 +2672,10 @@ Check_Game_Data();
 
             _human_out_of_moves = ST_FALSE;  // Where does this get used after this?
 
-Check_Game_Data();
             CMB_ProgressTurnFlow__WIP();
-Check_Game_Data();
 
-Check_Game_Data();
             // maybe, sets _human_out_of_moves = ST_TRUE and/or _human_handle_immobile = ST_FALSE
             Next_Battle_Unit(_human_player_idx);
-Check_Game_Data();
 
             Assign_Combat_Grids();
 
@@ -2701,9 +2685,7 @@ Check_Game_Data();
 
             CRP_CMB_NeverChecked1 = ST_TRUE;
 
-Check_Game_Data();
             winner = Check_For_Winner__WIP();
-Check_Game_Data();
 
             if(winner != ST_UNDEFINED)
             {
@@ -2931,7 +2913,7 @@ void CMB_PrepareTurn__WIP(void)
 
         BU_Apply_Battlefield_Effects__WIP(&battle_units[itr]);
 
-        battle_units[itr].movement_points = Battle_Unit_Moves2(itr);  // ¿ manually fix-up the value set in BU_Init_Battle_Unit() ?
+        battle_units[itr].movement_points = (int8_t)Battle_Unit_Moves2(itr);  // ¿ manually fix-up the value set in BU_Init_Battle_Unit() ?
 
         battle_units[itr].action = bus_Active;
 
@@ -3096,13 +3078,13 @@ void CMB_PrepareTurn__WIP(void)
                 if(battle_units[itr].controller_idx == _combat_attacker_player)
                 {
 
-                    battle_units[itr].controller_idx = _combat_defender_player;
+                    battle_units[itr].controller_idx = (int8_t)_combat_defender_player;
 
                 }
                 else
                 {
 
-                    battle_units[itr].controller_idx = _combat_attacker_player;
+                    battle_units[itr].controller_idx = (int8_t)_combat_attacker_player;
 
                 }
 
@@ -3872,7 +3854,7 @@ void Assign_Combat_Grids(void)
         )
         {
 
-            CMB_TargetRows[battle_units[itr].cgy][battle_units[itr].cgx] = itr;  // batle_unit_idx
+            CMB_TargetRows[battle_units[itr].cgy][battle_units[itr].cgx] = (int8_t)itr;  // batle_unit_idx
 
         }
 
@@ -3958,7 +3940,7 @@ void Assign_Combat_Grids(void)
     }
 
 
-    CMB_TargetRows[battle_units[_active_battle_unit].cgy][battle_units[_active_battle_unit].cgx] = _active_battle_unit;
+    CMB_TargetRows[battle_units[_active_battle_unit].cgy][battle_units[_active_battle_unit].cgx] = (int8_t)_active_battle_unit;
 
 }
 
@@ -4082,14 +4064,11 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
     combat_attacker_player_idx = attacker_player_idx;
     defender_idx = defender_player_idx;  // unit_idx or player_idx
 
-Check_Game_Data();
     for(itr = 0; itr < troop_count; itr++)
     {
-        _UNITS[troops[itr]].wx = OVL_Action_OriginX;
-        _UNITS[troops[itr]].wy = OVL_Action_OriginY;
+        _UNITS[troops[itr]].wx = (int8_t)OVL_Action_OriginX;
+        _UNITS[troops[itr]].wy = (int8_t)OVL_Action_OriginY;
     }
-Capture_Units_Data();
-Check_Game_Data();
 
     if(combat_attacker_player_idx == NEUTRAL_PLAYER_IDX)
     {
@@ -4247,14 +4226,11 @@ Check_Game_Data();
 
             // DOMSDOS  Stop_All_Sounds__STUB();
 
-Check_Game_Data();
             Battle_Outcome = Combat_Screen__WIP(combat_attacker_player_idx, defender_idx, troops, troop_count, _combat_wx, _combat_wy, _combat_wp, &Item_Count, &Item_List[0]);
             // Battle_Outcome = Combat_Screen_TST_001();
             // Battle_Outcome = Combat_Screen_TST_002();
             // Battle_Outcome = Combat_Screen_TST_003();
             // Battle_Outcome = Combat_Screen_TST_004(combat_attacker_player_idx, defender_idx, troops, troop_count, _combat_wx, _combat_wy, _combat_wp, &Item_Count, &Item_List[0]);
-/* HACK */  Capture_Units_Data();
-Check_Game_Data();
 
             // DOMSDOS  Play_Background_Music__STUB();
             sdl2_Play_Background_Music__WIP();
@@ -4279,13 +4255,13 @@ Check_Game_Data();
         {
             if(_UNITS[troops[itr]].owner_idx != 100)  // DEDU  ¿ another case of this field being a status, like 'dead' ?
             {
-                _UNITS[troops[itr]].wx = _combat_wx;
-                _UNITS[troops[itr]].wy = _combat_wy;
-                _UNITS[troops[itr]].wp = _combat_wp;
+                _UNITS[troops[itr]].wx = (int8_t)_combat_wx;
+                _UNITS[troops[itr]].wy = (int8_t)_combat_wy;
+                _UNITS[troops[itr]].wp = (int8_t)_combat_wp;
             }
             else
             {
-                _UNITS[troops[itr]].owner_idx = combat_attacker_player_idx;
+                _UNITS[troops[itr]].owner_idx = (int8_t)combat_attacker_player_idx;
                 _UNITS[troops[itr]].Finished = ST_TRUE;
             }
         }
@@ -4867,8 +4843,8 @@ void Retreat_From_Combat(int16_t player_idx)
         if(battle_units[itr_battle_units].status == bus_Fleeing)
         {
             unit_idx = battle_units[itr_battle_units].unit_idx;
-            _UNITS[unit_idx].wx = OVL_Action_OriginX;
-            _UNITS[unit_idx].wy = OVL_Action_OriginY;
+            _UNITS[unit_idx].wx = (int8_t)OVL_Action_OriginX;
+            _UNITS[unit_idx].wy = (int8_t)OVL_Action_OriginY;
             battle_units[itr_battle_units].status = bus_Active;
 
         }
@@ -5576,9 +5552,9 @@ int16_t Unit_Try_To_Move(int16_t wx, int16_t wy, int16_t wp, int16_t unit_idx, i
     }
     else
     {
-        _UNITS[unit_idx].wx = wx;
-        _UNITS[unit_idx].wy = wy;
-        _UNITS[unit_idx].wp = wp;
+        _UNITS[unit_idx].wx = (int8_t)wx;
+        _UNITS[unit_idx].wy = (int8_t)wy;
+        _UNITS[unit_idx].wp = (int8_t)wp;
 
         return_value = ST_TRUE;
     }
@@ -6056,7 +6032,7 @@ static void UNIT_SummonToBattle__SEGRAX(int16_t player_idx, int16_t unit_idx, in
 OON XREF:  UNIT_SummonToBattle__SEGRAX()
 ...which is only used for scc_Summoning and USA 'Summon Demon'
 */
-void BU_UnitLoadToBattle__SEGRAX(int16_t battle_unit_idx, int8_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy)
+void BU_UnitLoadToBattle__SEGRAX(int16_t battle_unit_idx, int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy)
 {
     int16_t bufpi;
     struct s_BATTLE_UNIT* battle_unit = &battle_units[battle_unit_idx];
@@ -6070,7 +6046,7 @@ void BU_UnitLoadToBattle__SEGRAX(int16_t battle_unit_idx, int8_t player_idx, int
     Combat_Figure_Load(_UNITS[unit_idx].type, bufpi);
 
     battle_unit->bufpi = bufpi;
-    battle_unit->controller_idx = player_idx;
+    battle_unit->controller_idx = (int8_t)player_idx;
 
     // ~ Deploy_Battle_Units()
     battle_unit->cgx = cgx;
@@ -6140,7 +6116,7 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
 
         battle_units[_combat_total_unit_count].bufpi = Combat_Figure_Load(_UNITS[troops[itr]].type, itr);
 
-        battle_units[_combat_total_unit_count].controller_idx = _combat_attacker_player;
+        battle_units[_combat_total_unit_count].controller_idx = (int8_t)_combat_attacker_player;
 
         if(battle_units[_combat_total_unit_count].controller_idx != _human_player_idx)
         {
@@ -6198,7 +6174,7 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
 
             battle_units[_combat_total_unit_count].bufpi = Combat_Figure_Load(_UNITS[itr].type, _combat_total_unit_count);
 
-            battle_units[_combat_total_unit_count].controller_idx = _combat_defender_player; // Why? Load_Battle_Unit() sets controller_idx = _UNITS[].owner_idx
+            battle_units[_combat_total_unit_count].controller_idx = (int8_t)_combat_defender_player; // Why? Load_Battle_Unit() sets controller_idx = _UNITS[].owner_idx
 
             count++;
 
@@ -7573,7 +7549,7 @@ void Draw_Active_Unit_Damage_Bar(int16_t battle_unit_idx, int16_t x, int16_t y)
 
         }
 
-        Line(x, y, (x + bar_length), y, bar_color);
+        Line(x, y, (x + bar_length), y, (uint8_t)bar_color);
 
     }
     /*
@@ -11305,7 +11281,7 @@ void Battle_Unit_Heal(int16_t battle_unit_idx, int16_t Healing, int16_t TempHits
         if(Top_Figure_Damage > 0)
         {
 
-            battle_units[battle_unit_idx].front_figure_damage = Top_Figure_Damage;
+            battle_units[battle_unit_idx].front_figure_damage = (int8_t)Top_Figure_Damage;
 
         }
 
@@ -11337,7 +11313,7 @@ void Battle_Unit_Heal(int16_t battle_unit_idx, int16_t Healing, int16_t TempHits
 
     BU_Apply_Battlefield_Effects__WIP(&battle_units[battle_unit_idx]);
 
-    battle_units[battle_unit_idx].movement_points = Moves_Left;
+    battle_units[battle_unit_idx].movement_points = (int8_t)Moves_Left;
 
 }
 
@@ -11793,16 +11769,16 @@ void Cast_Spell_On_Battle_Unit(int16_t spell_idx, int16_t target_idx, int16_t ca
         if(battle_units[itr].status == bus_Active)  \
         {  \
             Moves_Left = Battle_Unit_Moves2(itr);  \
-            if(battle_units[itr].movement_points == Moves_Left)  \
+            if(battle_units[itr].movement_points == (int8_t)Moves_Left)  \
                 Not_Moved_Yet = ST_TRUE;  \
             else  \
                 Moves_Left = battle_units[itr].movement_points;  \
             BU_Init_Battle_Unit(&battle_units[itr]);  \
             BU_Apply_Battlefield_Effects__WIP(&battle_units[itr]);  \
             if(Not_Moved_Yet == ST_TRUE)  \
-                battle_units[itr].movement_points = Battle_Unit_Moves2(itr);  \
+                battle_units[itr].movement_points = (int8_t)Battle_Unit_Moves2(itr);  \
             else  \
-                battle_units[itr].movement_points = Moves_Left;  \
+                battle_units[itr].movement_points = (int8_t)Moves_Left;  \
         }  \
     } while(0)
 
@@ -11965,7 +11941,7 @@ case scc_Disjunction_Spell:  // 20
             if(spell_idx == spl_Warp_Wood)
             {
                 battle_units[target_idx].ammo = 0;
-                battle_units[target_idx].ranged_type = rat_None;
+                battle_units[target_idx].ranged_type = rat_UNDEF;
                 REINIT_BATTLEUNIT();
             }
             if(spell_idx == spl_Healing)
@@ -11980,11 +11956,11 @@ case scc_Disjunction_Spell:  // 20
                     battle_units[target_idx].Combat_Effects |= bue_Creature_Binding;
                     if(battle_units[target_idx].controller_idx == _combat_attacker_player)
                     {
-                        battle_units[target_idx].controller_idx = _combat_defender_player;
+                        battle_units[target_idx].controller_idx = (int8_t)_combat_defender_player;
                     }
                     else
                     {
-                        battle_units[target_idx].controller_idx = _combat_attacker_player;
+                        battle_units[target_idx].controller_idx = (int8_t)_combat_attacker_player;
                     }
                 }
             }
@@ -12061,7 +12037,7 @@ case scc_Disjunction_Spell:  // 20
                 if(spell_idx == spl_Counter_Magic)
                 {
 
-                    combat_enchantments[combat_enchantment_index] = tscc;
+                    combat_enchantments[combat_enchantment_index] = (int8_t)tscc;
 
                 }
                 else
@@ -12204,13 +12180,13 @@ case scc_Disjunction_Spell:  // 20
                     if(battle_units[target_idx].controller_idx == _combat_attacker_player)
                     {
 
-                        battle_units[target_idx].controller_idx = _combat_defender_player;
+                        battle_units[target_idx].controller_idx = (int8_t)_combat_defender_player;
 
                     }
                     else
                     {
 
-                        battle_units[target_idx].controller_idx = _combat_attacker_player;
+                        battle_units[target_idx].controller_idx = (int8_t)_combat_attacker_player;
 
                     }
 
@@ -13287,7 +13263,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
     if(caster_idx < CASTER_IDX_BASE)
     {
 
-        battle_units[caster_idx].mana = battle_unit_mana;
+        battle_units[caster_idx].mana = (int8_t)battle_unit_mana;
 
         if(
             (battle_unit_mana < 3)
@@ -14600,9 +14576,9 @@ Nowhere. It doesn't use a target, never even gets to that code.
         if(input_field_idx == combat_grid_field)
         {
 
-            *target_cgx = Get_Combat_Grid_Cell_X((grid_sx + 4), (grid_sy + 4));
+            *target_cgx = Get_Combat_Grid_Cell_X(((int16_t)grid_sx + 4), ((int16_t)grid_sy + 4));
 
-            *target_cgy = Get_Combat_Grid_Cell_Y((grid_sx + 4), (grid_sy + 4));
+            *target_cgy = Get_Combat_Grid_Cell_Y(((int16_t)grid_sx + 4), ((int16_t)grid_sy + 4));
 
             if(
                 (_combat_spell_target_type == cstt_Wall)
@@ -14904,7 +14880,7 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
     if(magic_set.sound_effects != ST_FALSE)
     {
 
-        sound_buffer = ST_UNDEFINED;
+        sound_buffer = (SAMB_ptr)ST_UNDEFINED;
         
     }
 
@@ -14927,7 +14903,7 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
     CMB_ProjectileFrame = 0;  // ; used with entity drawing type 3, steps 0 to 2
     RP_CMB_ProjectileFrame2 = 0;
 
-    if(sound_buffer != ST_UNDEFINED)
+    if(sound_buffer != (SAMB_ptr)ST_UNDEFINED)
     {
 
         sdl2_Play_Sound__WIP(sound_buffer, sound_buffer_length);
@@ -15964,7 +15940,7 @@ void Apply_Mana_Leak(void)
                 )
                 {
 
-                    battle_units[battle_unit_idx].ranged_type = rat_None;
+                    battle_units[battle_unit_idx].ranged_type = rat_UNDEF;
 
                     battle_units[battle_unit_idx].ranged = 0;
 
@@ -16569,7 +16545,7 @@ jt_bua_10
                             )
                             {
 
-                                battle_units[battle_unit_idx].target_battle_unit_idx = some_variable;
+                                battle_units[battle_unit_idx].target_battle_unit_idx = (int8_t)some_variable;
 
                                 No_Override = ST_TRUE;
 
@@ -17497,7 +17473,7 @@ int16_t AI_BU_AssignAction__WIP(int16_t battle_unit_idx, int16_t no_spells_flag)
 
     }
 
-    battle_units[battle_unit_idx].target_battle_unit_idx = target_battle_unit_idx;
+    battle_units[battle_unit_idx].target_battle_unit_idx = (int8_t)target_battle_unit_idx;
 
     return target_battle_unit_idx;
 
@@ -19411,7 +19387,7 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
 
     battle_unit->Poison_Strength = 0;
 
-    battle_unit->upkeep = Unit_Gold_Upkeep(unit_idx);
+    battle_unit->upkeep = (int8_t)Unit_Gold_Upkeep(unit_idx);
 
     if((battle_unit->attack_attributes & 0x04 /* Att_Poison */) != 0)
     {
@@ -19470,7 +19446,7 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
 
         if(Item_Charges > 0)
         {
-            battle_unit->Item_Charges = Item_Charges;
+            battle_unit->Item_Charges = (int8_t)Item_Charges;
         }
     }
 
@@ -19680,7 +19656,7 @@ void BU_Init_Battle_Unit(struct s_BATTLE_UNIT * battle_unit)
     BU_Apply_Specials(battle_unit, battle_unit_enchantments, unit_mutations);
     
 
-    battle_unit->movement_points = Unit_Moves2(unit_idx);
+    battle_unit->movement_points = (int8_t)Unit_Moves2(unit_idx);
 
     battle_unit_enchantments = battle_unit->item_enchantments | _UNITS[unit_idx].enchantments;
 
@@ -19701,7 +19677,7 @@ void BU_Init_Battle_Unit(struct s_BATTLE_UNIT * battle_unit)
     }
 
 
-    battle_unit->hits = Unit_Hit_Points(unit_idx);
+    battle_unit->hits = (int8_t)Unit_Hit_Points(unit_idx);
 
 }
 
@@ -20282,7 +20258,7 @@ void BU_Apply_Battlefield_Effects__WIP(struct s_BATTLE_UNIT * battle_unit)
 
 
 
-    battle_unit[0].hits = Battle_Unit_Hit_Points(&battle_unit[0]);
+    battle_unit[0].hits = (int8_t)Battle_Unit_Hit_Points(&battle_unit[0]);
 
 }
 
@@ -22414,7 +22390,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
                 if(battle_units[attacker_battle_unit_idx].mana < 3)
                 {
 
-                    battle_units[attacker_battle_unit_idx].ranged_type = rat_None;
+                    battle_units[attacker_battle_unit_idx].ranged_type = rat_UNDEF;
 
                     battle_units[attacker_battle_unit_idx].ranged = 0;
 
@@ -22429,7 +22405,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
                 if(battle_units[attacker_battle_unit_idx].ammo <= 0)
                 {
 
-                    battle_units[attacker_battle_unit_idx].ranged_type = rat_None;
+                    battle_units[attacker_battle_unit_idx].ranged_type = rat_UNDEF;
 
                     battle_units[attacker_battle_unit_idx].ranged = 0;
 
@@ -22538,7 +22514,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
                     if(battle_units[attacker_battle_unit_idx].mana < 5)
                     {
 
-                        battle_units[attacker_battle_unit_idx].ranged_type = rat_None;
+                        battle_units[attacker_battle_unit_idx].ranged_type = rat_UNDEF;
 
                         battle_units[attacker_battle_unit_idx].ranged = 0;
 
@@ -22553,7 +22529,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
                     if(battle_units[attacker_battle_unit_idx].ammo <= 0)
                     {
 
-                        battle_units[attacker_battle_unit_idx].ranged_type = rat_None;
+                        battle_units[attacker_battle_unit_idx].ranged_type = rat_UNDEF;
 
                         battle_units[attacker_battle_unit_idx].ranged = 0;
 
@@ -22664,7 +22640,7 @@ int16_t Battle_Unit_Has_Ranged_Attack(int16_t battle_unit_idx)
     is_ranged = ST_FALSE;
 
     if(
-        (battle_units[battle_unit_idx].ranged_type > rat_None)
+        (battle_units[battle_unit_idx].ranged_type > rat_UNDEF)
         &&
         (battle_units[battle_unit_idx].ranged_type < srat_Thrown)
     )
@@ -22835,11 +22811,11 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             {
                 if(battle_units[itr_battle_units].controller_idx != _combat_attacker_player)
                 {
-                    battle_units[itr_battle_units].controller_idx = _combat_attacker_player;
+                    battle_units[itr_battle_units].controller_idx = (int8_t)_combat_attacker_player;
                 }
                 else
                 {
-                    battle_units[itr_battle_units].controller_idx = _combat_defender_player;
+                    battle_units[itr_battle_units].controller_idx = (int8_t)_combat_defender_player;
                 }
             }
             else
@@ -22873,9 +22849,9 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         {
             battle_unit_owner_idx = battle_units[itr_battle_units].controller_idx;
 
-            _UNITS[battle_units[itr_battle_units].unit_idx].wx = _players[battle_unit_owner_idx].summon_wx;
-            _UNITS[battle_units[itr_battle_units].unit_idx].wy = _players[battle_unit_owner_idx].summon_wy;
-            _UNITS[battle_units[itr_battle_units].unit_idx].wp = _players[battle_unit_owner_idx].summon_wp;
+            _UNITS[battle_units[itr_battle_units].unit_idx].wx = (int8_t)_players[battle_unit_owner_idx].summon_wx;
+            _UNITS[battle_units[itr_battle_units].unit_idx].wy = (int8_t)_players[battle_unit_owner_idx].summon_wy;
+            _UNITS[battle_units[itr_battle_units].unit_idx].wp = (int8_t)_players[battle_unit_owner_idx].summon_wp;
             _UNITS[battle_units[itr_battle_units].unit_idx].Finished = ST_TRUE;
             UNIT_RemoveExcess(battle_units[itr_battle_units].unit_idx);
             battle_units[itr_battle_units].status = bus_Active;
@@ -22933,12 +22909,12 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         {
             battle_units[itr_battle_units].Cur_Figures = battle_units[itr_battle_units].Max_Figures;
             battle_units[itr_battle_units].front_figure_damage = 0;
-            _UNITS[battle_units[itr_battle_units].unit_idx].wx = _combat_wx;
-            _UNITS[battle_units[itr_battle_units].unit_idx].wy = _combat_wy;
-            _UNITS[battle_units[itr_battle_units].unit_idx].wp = _combat_wp;
-            _UNITS[battle_units[itr_battle_units].unit_idx].owner_idx = player_idx;
+            _UNITS[battle_units[itr_battle_units].unit_idx].wx = (int8_t)_combat_wx;
+            _UNITS[battle_units[itr_battle_units].unit_idx].wy = (int8_t)_combat_wy;
+            _UNITS[battle_units[itr_battle_units].unit_idx].wp = (int8_t)_combat_wp;
+            _UNITS[battle_units[itr_battle_units].unit_idx].owner_idx = (int8_t)player_idx;
             _UNITS[battle_units[itr_battle_units].unit_idx].mutations |= UM_UNDEAD;
-            battle_units[itr_battle_units].controller_idx = player_idx;
+            battle_units[itr_battle_units].controller_idx = (int8_t)player_idx;
             battle_units[itr_battle_units].status = bus_Active;
             Undead_Created++;
             Surviving_Unit_Count++;
@@ -22965,12 +22941,12 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             Zombies_Raised++;
 
             _UNITS[battle_units[itr_battle_units].unit_idx].type = ut_Zombies;
-            _UNITS[battle_units[itr_battle_units].unit_idx].owner_idx = player_idx;
+            _UNITS[battle_units[itr_battle_units].unit_idx].owner_idx = (int8_t)player_idx;
             _UNITS[battle_units[itr_battle_units].unit_idx].XP = 0;
             _UNITS[battle_units[itr_battle_units].unit_idx].Level = 0;
-            _UNITS[battle_units[itr_battle_units].unit_idx].wx = _combat_wx;
-            _UNITS[battle_units[itr_battle_units].unit_idx].wy = _combat_wy;
-            _UNITS[battle_units[itr_battle_units].unit_idx].wp = _combat_wp;
+            _UNITS[battle_units[itr_battle_units].unit_idx].wx = (int8_t)_combat_wx;
+            _UNITS[battle_units[itr_battle_units].unit_idx].wy = (int8_t)_combat_wy;
+            _UNITS[battle_units[itr_battle_units].unit_idx].wp = (int8_t)_combat_wp;
             battle_units[itr_battle_units].Cur_Figures = _unit_type_table[ut_Zombies].Figures;
             battle_units[itr_battle_units].Max_Figures = _unit_type_table[ut_Zombies].Figures;
             battle_units[itr_battle_units].front_figure_damage = 0;
@@ -24135,7 +24111,7 @@ int16_t CTY_RampageVictory(void)
     idx = ST_UNDEFINED;
     for(itr = 0; ((itr < NUM_LAIRS) && (idx == ST_UNDEFINED)); itr++)
     {
-        if(_LAIRS[itr].Intact == ST_FALSE)
+        if(_LAIRS[itr].intact == ST_FALSE)
         {
             idx = itr;
         }
@@ -24236,14 +24212,14 @@ int16_t CTY_RampageVictory(void)
             }
         }
 
-        _LAIRS[idx].guard1_unit_type = Primary_Unit;
-        _LAIRS[idx].guard2_unit_type = Secondary_Unit;
-        _LAIRS[idx].guard1_count = Primary_Count;
-        _LAIRS[idx].guard2_count = Secondary_Count;
-        _LAIRS[idx].wx = _combat_wx;
-        _LAIRS[idx].wy = _combat_wy;
-        _LAIRS[idx].wp = _combat_wp;
-        _LAIRS[idx].Intact = ST_TRUE;
+        _LAIRS[idx].guard1_unit_type = (uint8_t)Primary_Unit;
+        _LAIRS[idx].guard2_unit_type = (uint8_t)Secondary_Unit;
+        _LAIRS[idx].guard1_count = (uint8_t)Primary_Count;
+        _LAIRS[idx].guard2_count = (uint8_t)Secondary_Count;
+        _LAIRS[idx].wx = (int8_t)_combat_wx;
+        _LAIRS[idx].wy = (int8_t)_combat_wy;
+        _LAIRS[idx].wp = (int8_t)_combat_wp;
+        _LAIRS[idx].intact = ST_TRUE;
         _LAIRS[idx].type = lt_Ruins;
         _LAIRS[idx].Loot_Gold = CMB_Gold_Reward;
         _LAIRS[idx].Loot_Mana = 0;
@@ -27350,7 +27326,7 @@ void Clear_Combat_Grid_Entities(void)
     combat_grid_entity_count = 0;
     for(itr = 0; itr < MAX_ENTITIES; itr++)
     {
-        combat_grid_entities_draw_order[itr] = itr;
+        combat_grid_entities_draw_order[itr] = (uint8_t)itr;
     }
 }
 
@@ -27430,10 +27406,11 @@ void Spawn_Missile_Entities(void)
             Firing_Curve_Y = -(Firing_Curve_Y);
         }
 
+        // TODO  fix need for casting (int64_t)CMB_RangedAtx_GFX[_missiles[itr_msl].Type][_missiles[itr_msl].Proj_Direction]
         Combat_Grid_Entity_Create__WIP(
             Origin_X,
             (Origin_Y + Firing_Curve_Y),
-            CMB_RangedAtx_GFX[_missiles[itr_msl].Type][_missiles[itr_msl].Proj_Direction],
+            (int64_t)CMB_RangedAtx_GFX[_missiles[itr_msl].Type][_missiles[itr_msl].Proj_Direction],
             14,
             22,
             0,
@@ -27777,7 +27754,7 @@ void Set_Entity_Draw_Order(void)
 
     }
 
-    combat_grid_entities_draw_order[entity_idx] = combat_grid_entity_count;  // combat_grid_entity_count is incremented in CMB_CreateEntity__WIP()
+    combat_grid_entities_draw_order[entity_idx] = (uint8_t)combat_grid_entity_count;  // combat_grid_entity_count is incremented in CMB_CreateEntity__WIP()
 
 }
 
@@ -28176,7 +28153,7 @@ void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp)
             &&
             (_LAIRS[itr].wp == wp)
             &&
-            (_LAIRS[itr].Intact == ST_TRUE)
+            (_LAIRS[itr].intact == ST_TRUE)
         )
         {
 
@@ -29016,7 +28993,8 @@ void CMB_TileGen__WIP(int16_t ctt)
             ctg_7 = *DBG_ptr_battlefield_terrain_group;
 
 // Severity Code Description Project File Line Suppression State Details
-//                 Warning C6385 Reading invalid data from 'battlefield->terrain_group'.sdl2_ReMoM C :\STU\devel\ReMoM\src\Combat.C 27223		
+// Warning C6385 Reading invalid data from 'battlefield->terrain_group'.sdl2_ReMoM C :\STU\devel\ReMoM\src\Combat.C 27223		
+// Reading invalid data from 'battlefield->terrain_group':  the readable size is '462' bytes, but '-21' bytes may be read.
 // ...
 // DBG_battlefield_terrain_group_idx may equal -21
             DBG_battlefield_terrain_group_idx = ((((itr_cgy - 1) * COMBAT_GRID_WIDTH) + itr_cgx)    );
@@ -29720,7 +29698,7 @@ void Patch_Terrain_Group(int16_t ctg, int16_t count, int16_t max, int16_t min)
             next_cgx = cgx;
             next_cgy = cgy;
 
-            battlefield->terrain_group[((cgy * COMBAT_GRID_WIDTH) + cgx)] = ctg;
+            battlefield->terrain_group[((cgy * COMBAT_GRID_WIDTH) + cgx)] = (int8_t)ctg;
 
         }
 
@@ -30130,7 +30108,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
                             if(existing_path_cost > potential_path_cost)
                             {
                                 CMB_NearBuffer_3[ctr] = adjacent_idx;
-                                _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
                                 new_next_cell_index = CMB_NearBuffer_3[ctr];
                                 if(new_next_cell_index != old_next_cell_index)
                                 {
@@ -30169,7 +30147,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
                                 if(existing_path_cost > potential_path_cost)
                                 {
                                     CMB_NearBuffer_3[ctr] = adjacent_idx;
-                                    _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                    _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
                                     new_next_cell_index = CMB_NearBuffer_3[ctr];
                                     if(new_next_cell_index != old_next_cell_index)
                                     {
@@ -30207,7 +30185,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
                             if(existing_path_cost > potential_path_cost)
                             {
                                 CMB_NearBuffer_3[ctr] = adjacent_idx;
-                                _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
                                 new_next_cell_index = CMB_NearBuffer_3[ctr];
                                 if(new_next_cell_index != old_next_cell_index)
                                 {
@@ -30271,7 +30249,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
         path_cgx = (RP_CMB_MoveMap[((movement_path_grid_cell_count - 1) - itr)] % COMBAT_GRID_WIDTH);
         assert(path_cgx >= COMBAT_GRID_XMIN);
         assert(path_cgx <= COMBAT_GRID_XMAX);
-        _cmbt_mvpth_x[itr] = path_cgx;
+        _cmbt_mvpth_x[itr] = (unsigned char)path_cgx;
 
         // CMB_Path_Ys[itr] = (RP_CMB_MoveMap[((movement_path_grid_cell_count - 1) - itr)] / COMBAT_GRID_WIDTH);
         // assert(CMB_Path_Ys[itr] >= COMBAT_GRID_YMIN);
@@ -30280,7 +30258,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
         path_cgy = (RP_CMB_MoveMap[((movement_path_grid_cell_count - 1) - itr)] / COMBAT_GRID_WIDTH);
         assert(path_cgy >= COMBAT_GRID_YMIN);
         assert(path_cgy <= COMBAT_GRID_YMAX);
-        _cmbt_mvpth_y[itr] = path_cgy;
+        _cmbt_mvpth_y[itr] = (unsigned char)path_cgy;
 
     }
 
@@ -30334,13 +30312,13 @@ static void Combat_Move_Path_Find__v02(int16_t source_cgx, int16_t source_cgy, i
                 old_next_cell_index = CMB_NearBuffer_3[ctr];
                 for(itr_adjacent = 0; itr_adjacent < 4; itr_adjacent++)
                 {
-                    NEW_PATH_COST_ANY(itr_adjacent)
+                    NEW_PATH_COST_ANY((uint8_t)itr_adjacent)
                 }
                 for(itr_adjacent = 4; itr_adjacent < 8; itr_adjacent++)
                 {
                     // DEDU  invalid read ... adjacent_offsets[36] ... ctr + 7 * 8 + 7?
                     //       ... adjacent_idx = (ctr + adjacent_offsets[(((_value_) * 8) + itr_adjacent)]); ...
-                    NEW_PATH_COST_ANY(itr_adjacent)
+                    NEW_PATH_COST_ANY((uint8_t)itr_adjacent)
                 }
             }
 
@@ -30353,11 +30331,11 @@ static void Combat_Move_Path_Find__v02(int16_t source_cgx, int16_t source_cgy, i
                     old_next_cell_index = CMB_NearBuffer_3[ctr];
                     for(itr_adjacent = 0; itr_adjacent < 4; itr_adjacent++)
                     {
-                        NEW_PATH_COST_ANY(itr_adjacent)
+                        NEW_PATH_COST_ANY((uint8_t)itr_adjacent)
                     }
                     for(itr_adjacent = 4; itr_adjacent < 8; itr_adjacent++)
                     {
-                        NEW_PATH_COST_ANY(itr_adjacent)
+                        NEW_PATH_COST_ANY((uint8_t)itr_adjacent)
                     }
                 }
             }
@@ -30369,11 +30347,11 @@ static void Combat_Move_Path_Find__v02(int16_t source_cgx, int16_t source_cgy, i
                 old_next_cell_index = CMB_NearBuffer_3[ctr];
                 for(itr_adjacent = 0; itr_adjacent < 4; itr_adjacent++)
                 {
-                    NEW_PATH_COST_ANY(itr_adjacent)
+                    NEW_PATH_COST_ANY((uint8_t)itr_adjacent)
                 }
                 for(itr_adjacent = 4; itr_adjacent < 8; itr_adjacent++)
                 {
-                    NEW_PATH_COST_ANY(itr_adjacent)
+                    NEW_PATH_COST_ANY((uint8_t)itr_adjacent)
                 }
             }
 
@@ -30541,7 +30519,7 @@ static void Combat_Move_Path_Find__v01(int16_t source_cgx, int16_t source_cgy, i
                                 CMB_NearBuffer_3[ctr] = adjacent_idx;
 
                                 // *movepath_reach_cost = new_reach_cost;
-                                _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
 
                                 if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
                                 {
@@ -30583,7 +30561,7 @@ static void Combat_Move_Path_Find__v01(int16_t source_cgx, int16_t source_cgy, i
 
                                 CMB_NearBuffer_3[ctr] = adjacent_idx;
 
-                                _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
 
                                 if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
                                 {
@@ -30638,7 +30616,7 @@ static void Combat_Move_Path_Find__v01(int16_t source_cgx, int16_t source_cgy, i
 
                                     CMB_NearBuffer_3[ctr] = adjacent_idx;
 
-                                    _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                    _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
 
                                     if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
                                     {
@@ -30678,7 +30656,7 @@ static void Combat_Move_Path_Find__v01(int16_t source_cgx, int16_t source_cgy, i
 
                                     CMB_NearBuffer_3[ctr] = adjacent_idx;
 
-                                    _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                    _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
 
                                     if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
                                     {
@@ -30733,7 +30711,7 @@ static void Combat_Move_Path_Find__v01(int16_t source_cgx, int16_t source_cgy, i
 
                                 CMB_NearBuffer_3[ctr] = adjacent_idx;
 
-                                _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
 
                                 if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
                                 {
@@ -30773,7 +30751,7 @@ static void Combat_Move_Path_Find__v01(int16_t source_cgx, int16_t source_cgy, i
 
                                 CMB_NearBuffer_3[ctr] = adjacent_idx;
 
-                                _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
 
                                 if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
                                 {
@@ -30910,7 +30888,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
                             if(existing_path_cost > potential_path_cost)
                             {
                                 CMB_NearBuffer_3[ctr] = adjacent_idx;
-                                _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
                                 new_next_cell_index = CMB_NearBuffer_3[ctr];
                                 if(new_next_cell_index != old_next_cell_index)
                                 {
@@ -30949,7 +30927,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
                                 if(existing_path_cost > potential_path_cost)
                                 {
                                     CMB_NearBuffer_3[ctr] = adjacent_idx;
-                                    _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                    _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
                                     new_next_cell_index = CMB_NearBuffer_3[ctr];
                                     if(new_next_cell_index != old_next_cell_index)
                                     {
@@ -30988,7 +30966,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
                             if(existing_path_cost > potential_path_cost)
                             {
                                 CMB_NearBuffer_3[ctr] = adjacent_idx;
-                                _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
                                 new_next_cell_index = CMB_NearBuffer_3[ctr];
                                 if(new_next_cell_index != old_next_cell_index)
                                 {
@@ -31132,7 +31110,7 @@ static void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, 
                 old_next_cell_index = CMB_NearBuffer_3[ctr];
                 for(itr_adjacent = 0; itr_adjacent < 8; itr_adjacent++)
                 {
-                    // NEW_PATH_COST_ANY(itr_adjacent)
+                    // NEW_PATH_COST_ANY((uint8_t)itr_adjacent)
                     // adjacent_idx = adjacent_offsets[(((_value_) * 8) + itr_adjacent)];
                     // adjacent_idx = adjacent_offsets[(((itr_adjacent) * 8) + itr_adjacent)];
                     // adjacent_idx = (ctr + adjacent_offsets[(((itr_adjacent) * 8) + itr_adjacent)]);
@@ -31153,7 +31131,7 @@ static void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, 
                             if(existing_path_cost > potential_path_cost)
                             {
                                 CMB_NearBuffer_3[ctr] = adjacent_idx;
-                                _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
                                 // if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
                                 new_next_cell_index = CMB_NearBuffer_3[ctr];
                                 if(new_next_cell_index != old_next_cell_index)
@@ -31200,7 +31178,7 @@ static void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, 
                     old_next_cell_index = CMB_NearBuffer_3[ctr];
                     for(itr_adjacent = 0; itr_adjacent < 8; itr_adjacent++)
                     {
-                        // NEW_PATH_COST_ANY(itr_adjacent)
+                        // NEW_PATH_COST_ANY((uint8_t)itr_adjacent)
                         // adjacent_idx = adjacent_offsets[(((_value_) * 8) + itr_adjacent)];
                         // adjacent_idx = adjacent_offsets[(((itr_adjacent) * 8) + itr_adjacent)];
                         // adjacent_idx = (ctr + adjacent_offsets[(((itr_adjacent) * 8) + itr_adjacent)]);
@@ -31228,7 +31206,7 @@ static void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, 
                                 if(existing_path_cost > potential_path_cost)
                                 {
                                     CMB_NearBuffer_3[ctr] = adjacent_idx;
-                                    _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                    _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
                                     // if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
                                     new_next_cell_index = CMB_NearBuffer_3[ctr];
                                     if(new_next_cell_index != old_next_cell_index)
@@ -31273,7 +31251,7 @@ static void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, 
                 old_next_cell_index = CMB_NearBuffer_3[ctr];
                 for(itr_adjacent = 0; itr_adjacent < 8; itr_adjacent++)
                 {
-                    // NEW_PATH_COST_ANY(itr_adjacent)
+                    // NEW_PATH_COST_ANY((uint8_t)itr_adjacent)
                     // adjacent_idx = adjacent_offsets[(((_value_) * 8) + itr_adjacent)];
                     // adjacent_idx = adjacent_offsets[(((itr_adjacent) * 8) + itr_adjacent)];
                     // adjacent_idx = (ctr + adjacent_offsets[(((itr_adjacent) * 8) + itr_adjacent)]);
@@ -31293,7 +31271,7 @@ static void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, 
                             if(existing_path_cost > potential_path_cost)
                             {
                                 CMB_NearBuffer_3[ctr] = adjacent_idx;
-                                _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
                                 // if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
                                 new_next_cell_index = CMB_NearBuffer_3[ctr];
                                 if(new_next_cell_index != old_next_cell_index)
@@ -31487,7 +31465,7 @@ static void Combat_Move_Path_Valid__v01(int16_t source_cgx, int16_t source_cgy, 
 
                                 CMB_NearBuffer_3[ctr] = adjacent_idx;
 
-                                _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
 
                                 if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
                                 {
@@ -31545,7 +31523,7 @@ static void Combat_Move_Path_Valid__v01(int16_t source_cgx, int16_t source_cgy, 
 
                                     CMB_NearBuffer_3[ctr] = adjacent_idx;
 
-                                    _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                    _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
 
                                     if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
                                     {
@@ -31603,7 +31581,7 @@ static void Combat_Move_Path_Valid__v01(int16_t source_cgx, int16_t source_cgy, 
 
                                 CMB_NearBuffer_3[ctr] = adjacent_idx;
 
-                                _cmbt_mvpth_c[ctr] = potential_path_cost;
+                                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;
 
                                 if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
                                 {

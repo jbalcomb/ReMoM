@@ -326,7 +326,7 @@ void AI_Compute_Spells_Info(int16_t player_idx)
 
                 // ; redundant - filled out but never used
                 // ; redundant - calculated but never used
-                CRP_AI_OVL_SpellList[CRP_AI_OVL_SpellCount] = spell_idx;
+                CRP_AI_OVL_SpellList[CRP_AI_OVL_SpellCount] = (unsigned char)spell_idx;
 
                 AI_OVL_Spell_Cats[ai_spell_group] = 1;
 
@@ -1241,7 +1241,7 @@ int16_t Square_Is_Legal_For_Floating_Island(int16_t wx, int16_t wy, int16_t wp)
         ||
         ((terrain_type <= _Shore000R0000) && (terrain_type > _1LakeRiv_S))
         ||
-        ((terrain_type <= _Shore10101111) && (terrain_type != TT_BugGrass) && (terrain_type != _1Lake))
+        ((terrain_type <= _Shore10101111) && (terrain_type != tt_BugGrass) && (terrain_type != _1Lake))
     )
     {
         return ST_TRUE;

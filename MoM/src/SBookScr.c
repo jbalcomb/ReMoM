@@ -740,7 +740,7 @@ void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t
 
         strcpy(GUI_NearMsgString, _players[counter_player_idx].name);
 
-        Name_Length = strlen(_players[counter_player_idx].name);
+        Name_Length = (int16_t)strlen(_players[counter_player_idx].name);
 
         if(_players[counter_player_idx].name[(Name_Length - 1)] == 's')
         {
@@ -769,7 +769,7 @@ void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t
 
         strcpy(GUI_NearMsgString, _players[player_idx].name);
 
-        Name_Length = strlen(_players[player_idx].name);
+        Name_Length = (int16_t)strlen(_players[player_idx].name);
 
         if(_players[player_idx].name[(Name_Length - 1)] == 's')
         {

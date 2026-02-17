@@ -651,11 +651,11 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
             if((GAME_HeroHireType % 2) != 0)  // ~== 1 or 3  Summon Hero or Champion
             {
 
-                _UNITS[(_units - 1)].wx = _players[HUMAN_PLAYER_IDX].summon_wx;
+                _UNITS[(_units - 1)].wx = (int8_t)_players[HUMAN_PLAYER_IDX].summon_wx;
 
-                _UNITS[(_units - 1)].wy = _players[HUMAN_PLAYER_IDX].summon_wy;
+                _UNITS[(_units - 1)].wy = (int8_t)_players[HUMAN_PLAYER_IDX].summon_wy;
 
-                _UNITS[(_units - 1)].wp = _players[HUMAN_PLAYER_IDX].summon_wp;
+                _UNITS[(_units - 1)].wp = (int8_t)_players[HUMAN_PLAYER_IDX].summon_wp;
 
             }
 
@@ -814,7 +814,7 @@ int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost
 
     Create_Unit__WIP(CRP_EVNT_MercUnitType, HUMAN_PLAYER_IDX, _FORTRESSES[HUMAN_PLAYER_IDX].wx, _FORTRESSES[HUMAN_PLAYER_IDX].wy, _FORTRESSES[HUMAN_PLAYER_IDX].wp, ST_UNDEFINED);
 
-    _UNITS[(_units - 1)].Level = level;
+    _UNITS[(_units - 1)].Level = (int8_t)level;
 
     _UNITS[(_units - 1)].XP = TBL_Experience[level];
 

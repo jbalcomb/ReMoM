@@ -5,8 +5,6 @@
         ovr157
 */
 
-#include "../../STU/src/STU_CHK.h"
-
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/random.h"
@@ -77,31 +75,24 @@ void Player_All_Colony_Autobuild(int16_t player_idx)
 
         }
 
-Check_Game_Data();
 
         if(assign_new_building == ST_TRUE)
         {
 
-Check_Game_Data();
 
             if(player_idx == NEUTRAL_PLAYER_IDX)
             {
 
-Check_Game_Data();
                 Player_Colony_Autobuild_NP(itr_cities);
-Check_Game_Data();
 
             }
             else
             {
 
-Check_Game_Data();
                 Player_Colony_Autobuild_CP(player_idx, itr_cities);
-Check_Game_Data();
 
             }
 
-Check_Game_Data();
 
         }
         else
@@ -116,9 +107,7 @@ Check_Game_Data();
             )
             {
 
-Check_Game_Data();
                 AI_Player_City_Buy_Production(player_idx, itr_cities);
-Check_Game_Data();
 
             }
 
@@ -170,7 +159,6 @@ void Player_Colony_Autobuild_CP(int16_t player_idx, int16_t city_idx)
     int16_t itr_units = 0;  // _DI_
     int16_t itr_cities = 0;  // _DI_
 
-Check_Game_Data();
 
     assert((player_idx >= 1) && (player_idx <= 4));
 
@@ -225,9 +213,7 @@ Check_Game_Data();
 
     city_wy = _CITIES[city_idx].wy;
 
-Check_Game_Data();
     Calculate_Product_Array(city_idx, &product_count, &uu_depr_count, &uu_unit_count, &product_array[0]);
-Check_Game_Data();
 
     city_landmass = _landmasses[((city_wp * WORLD_SIZE) + (city_wy * WORLD_WIDTH) + city_wx)];
 
@@ -310,9 +296,7 @@ Check_Game_Data();
 
     }
 
-Check_Game_Data();
     city_unit_count = Map_Square_Unit_Count(city_wx, city_wy, city_wp);
-Check_Game_Data();
 
     if(city_landmass == fortress_landmass)
     {
@@ -349,7 +333,6 @@ Check_Game_Data();
 
         /* DNE */ /* if((_turn < 20) && (city_unit_count > 1) ) { need_units = ST_FALSE; } */
 
-Check_Game_Data();
 
         if(
             (city_unit_count > 0)
@@ -358,11 +341,7 @@ Check_Game_Data();
         )
         {
 
-Check_Game_Data();
             _CITIES[city_idx].construction = bt_Barracks;
-// Check_Game_Data();
-Capture_Cities_Data();
-
             return;
 
         }
@@ -373,11 +352,7 @@ Capture_Cities_Data();
         )
         {
 
-Check_Game_Data();
             _CITIES[city_idx].construction = bt_BuildersHall;
-// Check_Game_Data();
-Capture_Cities_Data();
-
             return;
 
         }
@@ -388,11 +363,7 @@ Capture_Cities_Data();
         )
         {
 
-Check_Game_Data();
             _CITIES[city_idx].construction = bt_Shrine;
-// Check_Game_Data();
-Capture_Cities_Data();
-
             return;
 
         }
@@ -403,11 +374,7 @@ Capture_Cities_Data();
         )
         {
 
-Check_Game_Data();
             _CITIES[city_idx].construction = bt_Smithy;
-// Check_Game_Data();
-Capture_Cities_Data();
-
             return;
 
         }
@@ -418,16 +385,11 @@ Capture_Cities_Data();
         )
         {
 
-Check_Game_Data();
             _CITIES[city_idx].construction = bt_Granary;
-// Check_Game_Data();
-Capture_Cities_Data();
-
             return;
 
         }
 
-Check_Game_Data();
 
     }
 
@@ -435,9 +397,6 @@ Check_Game_Data();
     {
 
         _CITIES[city_idx].construction = bt_TradeGoods;
-// Check_Game_Data();
-Capture_Cities_Data();
-
         return;
 
     }
@@ -591,13 +550,9 @@ Capture_Cities_Data();
 
     }
 
-Check_Game_Data();
     product_choice = Get_Weighted_Choice(&Weights[0], product_count);
-Check_Game_Data();
 
-Check_Game_Data();
     _CITIES[city_idx].construction = product_array[product_choice];
-Capture_Cities_Data();
 
     assert(_CITIES[city_idx].construction >= -4);  // min -1 is grand vizier
     assert(_CITIES[city_idx].construction <= 298);  // 100 buildings + 198 units
@@ -632,9 +587,7 @@ void Player_Colony_Autobuild_NP(int16_t city_idx)
     int16_t uu_depr_count = 0;
     int16_t itr = 0;  // _DI_
 
-Check_Game_Data();
     Calculate_Product_Array(city_idx, &product_count, &uu_depr_count, &uu_unit_count, &product_array[0]);
-Check_Game_Data();
 
     uu_city_landmass = _landmasses[((_CITIES[city_idx].wp * WORLD_SIZE) + (_CITIES[city_idx].wy * WORLD_WIDTH) + _CITIES[city_idx].wx)];
 
@@ -743,13 +696,9 @@ Check_Game_Data();
     else
     {
 
-Check_Game_Data();
         product_choice = Get_Weighted_Choice(&Weights[0], product_count);
-Check_Game_Data();
 
-Check_Game_Data();
         _CITIES[city_idx].construction = product_choice;
-Capture_Cities_Data();
 
     }
 
@@ -780,9 +729,7 @@ void AI_Player_City_Buy_Production(int16_t player_idx, int16_t city_idx)
     if(_CITIES[city_idx].construction < 100)
     {
 
-Check_Game_Data();
         cost_to_buy_product = ((Random(4) + 1) * City_Cost_To_Buy_Product(city_idx));
-Check_Game_Data();
 
     }
     else
@@ -791,17 +738,13 @@ Check_Game_Data();
         if((_unit_type_table[(_CITIES[city_idx].construction - 100)].Abilities & UA_CREATEOUTPOST) != 0)  // Settler
         {
 
-Check_Game_Data();
             cost_to_buy_product = (Random(4) * City_Cost_To_Buy_Product(city_idx));
-Check_Game_Data();
 
         }
         else
         {
 
-Check_Game_Data();
             cost_to_buy_product = ((Random(5) + 3) * City_Cost_To_Buy_Product(city_idx));
-Check_Game_Data();
 
         }
     }
@@ -809,9 +752,7 @@ Check_Game_Data();
     if(_players[player_idx].gold_reserve > cost_to_buy_product)
     {
 
-Check_Game_Data();
         Player_City_Buy_Production(player_idx, city_idx);
-Check_Game_Data();
 
     }
 
@@ -869,9 +810,7 @@ void Player_Colony_Autobuild_HP(int16_t city_idx)
     city_wx = _CITIES[city_idx].wx;
     city_wy = _CITIES[city_idx].wy;
 
-Check_Game_Data();
     Calculate_Product_Array(city_idx, &product_count, &uu_depr_count, &uu_unit_count, &product_array[0]);
-Check_Game_Data();
 
     city_landmass = _landmasses[((city_wp * WORLD_SIZE) + (city_wy * WORLD_WIDTH) + city_wx)];
 

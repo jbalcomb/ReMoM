@@ -116,7 +116,7 @@ struct s_Field
     union {
         int16_t Param2;
         int16_t state;              //  1  ft_RadioButton    2  ft_LockedButton
-        int16_t fill_color;         //  4  ft_input         11  ft_ContinuousStringInput
+        int16_t fill_color;         //  4  ft_input         11  ft_ContinuousStringInput  DEDU should be uint8_t?
         // uint16_t var_segment;  //  6  ft_Scroll  ... MoO2 Draw_Visible_Fields_Back()
         int16_t string_len;         //  8  ft_MultiHotKey
         int16_t * variable1;        // 10  ft_StringList
@@ -128,11 +128,11 @@ struct s_Field
         int16_t fill_param1;        // 10 ft_StringList
     };
     union {
-            int64_t Param4;         // MaxSlide      CStyle                                               ypos
+        int64_t Param4;             // MaxSlide      CStyle                                               ypos
                                     //  ft_Grid  &ypos
-            int16_t cursor_type;    //  4  ft_Input
-            int16_t max_value;      //  6  ft_scroll
-            int16_t fill_param2;        // 10 ft_StringList
+        int16_t cursor_type;        //  4  ft_Input
+        int16_t max_value;          //  6  ft_scroll
+        int16_t fill_param2;        // 10 ft_StringList
     };
     union {
         int16_t  Param5;

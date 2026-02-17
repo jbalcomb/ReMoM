@@ -3,7 +3,6 @@
         ovr132
 */
 
-#include "../../STU/src/STU_CHK.h"
 #include "../../STU/src/STU_DBG.h"
 
 #include "../../MoX/src/Allocate.h"
@@ -414,7 +413,7 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
 
     _UNITS[(_units - 1)].Finished = ST_FALSE;  // default is ST_TRUE
     _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;  // default is 0
-    _UNITS[(_units - 1)].Hero_Slot = hero_slot_idx;  // default is ST_UNDEFINED
+    _UNITS[(_units - 1)].Hero_Slot = (int8_t)hero_slot_idx;  // default is ST_UNDEFINED
 
     _players[player_idx].Heroes[hero_slot_idx].unit_idx = (_units - 1);
 
@@ -437,7 +436,7 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
 
             _UNITS[(_units - 1)].XP = hero_names_table[unit_type_idx].experience_points;
 
-            _UNITS[(_units - 1)].Level = Calc_Unit_Level((_units - 1));
+            _UNITS[(_units - 1)].Level = (int8_t)Calc_Unit_Level((_units - 1));
 
         }
         else
@@ -461,7 +460,7 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
 
     }
 
-    _UNITS[(_units - 1)].Level = _HEROES2[player_idx]->heroes[unit_type_idx].Level;
+    _UNITS[(_units - 1)].Level = (int8_t)_HEROES2[player_idx]->heroes[unit_type_idx].Level;
 
     _UNITS[(_units - 1)].XP = TBL_Experience[_HEROES2[player_idx]->heroes[unit_type_idx].Level];
 
@@ -569,9 +568,9 @@ void Cast_Resurrection(int16_t player_idx)
 
                 WIZ_HireHero(player_idx, unit_type, hero_slot_idx, 1);
 
-                _UNITS[(_units - 1)].wx = _players[player_idx].summon_wx;
-                _UNITS[(_units - 1)].wy = _players[player_idx].summon_wy;
-                _UNITS[(_units - 1)].wp = _players[player_idx].summon_wp;
+                _UNITS[(_units - 1)].wx = (int8_t)_players[player_idx].summon_wx;
+                _UNITS[(_units - 1)].wy = (int8_t)_players[player_idx].summon_wy;
+                _UNITS[(_units - 1)].wp = (int8_t)_players[player_idx].summon_wp;
 
                 UNIT_RemoveExcess((_units - 1));
 
@@ -1380,7 +1379,7 @@ int16_t Cast_Lycantrophy(int16_t player_idx)
 
         }
 
-        _UNITS[unit_idx].type = spell_data_table[spl_Lycanthropy].unit_type;
+        _UNITS[unit_idx].type = (uint8_t)spell_data_table[spl_Lycanthropy].unit_type;
 
         _UNITS[unit_idx].XP = 0;
 
@@ -1470,7 +1469,6 @@ int16_t Cast_Wall_Of_Stone(int16_t player_idx)
         }
 
         _CITIES[city_idx].bldg_status[bt_CityWalls] = bs_Built;
-Capture_Cities_Data();
 
         if(
             (player_idx == HUMAN_PLAYER_IDX)

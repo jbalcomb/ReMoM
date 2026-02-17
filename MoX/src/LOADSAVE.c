@@ -6,7 +6,6 @@
 */
 
 // #ifdef STU_DEBUG
-#include "../../STU/src/STU_CHK.h"
 #include "../../STU/src/STU_DBG.h"
 #include "../../STU/src/STU_TST.h"
 // #endif
@@ -15,6 +14,7 @@
 #include "MOM_Data.h"
 #include "MOX_DAT.h"  /* _players[]; _screen_seg; */
 #include "MOX_SET.h"  /* magic_set */
+#include "Util.h"
 
 #include "MOM_PFL.h"
 
@@ -152,6 +152,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 88788);
 
+    // TODO  sizeof(struct s_MOVE_MODE_COST_MAPS)
     fwrite(movement_mode_cost_maps, NUM_PLANES, 14400, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
@@ -177,22 +178,21 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 122740);
 
-    fwrite(hero_names_table, 16, NUM_HERO_TYPES, file_pointer);
+    fwrite(hero_names_table, sizeof(struct s_INACTV_HERO), NUM_HERO_TYPES, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
-    assert(file_pointer_position == 123300);
+    assert(file_pointer_position == LEN_SAVE_GAM_FILE);
 
     fclose(file_pointer);
 
-    // HACK:
-    if(save_gam_idx != ST_UNDEFINED)
+    if(save_gam_idx != ST_UNDEFINED)  /* HACK */
     {
         // � don't save settings for continue/auto-save ?
-        if (save_gam_idx < 8)
+        if(save_gam_idx < 8)
         {
             magic_set.Have_Save[save_gam_idx] = ST_TRUE;
             file_pointer = fopen("MAGIC.SET", "wb");
-            fwrite(&magic_set, 466, 1, file_pointer);
+            fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
             fclose(file_pointer);
         }
     }
@@ -210,10 +210,6 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     int16_t file_size_flag = 0;
     long file_pointer_position = 0;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Delete_Dead_Units()\n", __FILE__, __LINE__);
-#endif
-
     if(save_gam_idx == ST_UNDEFINED)
     {
         strcpy(file_name, "SAVETEST.GAM");
@@ -227,13 +223,16 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     }
 
     file_size = LOF(file_name);
-    assert(file_size != 0);
-
-    if(file_size != 57764)
+    // DONT  assert(file_size != 0);  crashes if there are no game-save files, like on first run
+    
+    // dx 1, ax 57764 === 65536 + 57764 = 123300
+    if(file_size != LEN_SAVE_GAM_FILE)
     {
         file_size_flag = ST_TRUE;
     }
 
+
+    // TODO  gfile_pointer = gfopen(file_name, "rb");
     file_pointer = fopen(file_name, "rb");
     assert(file_pointer != NULL);
 
@@ -336,7 +335,8 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 88788);
-
+    
+    // TODO  sizeof(struct s_MOVE_MODE_COST_MAPS)
     fread(movement_mode_cost_maps, NUM_PLANES, 14400, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
@@ -362,19 +362,19 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 122740);
 
-    // TODO  DEDU  if (file_size_flag == ST_TRUE) { MEM_Clear_Far(hero_names_table, 545); } else { ... }
-    fread(hero_names_table, 16, NUM_HERO_TYPES, file_pointer);
+    if(file_size_flag == ST_FALSE)
+    {
+        fread(hero_names_table, sizeof(struct s_INACTV_HERO), NUM_HERO_TYPES, file_pointer);
+    }
+    else
+    {
+        Clear_Memory((int8_t *)hero_names_table, 545);
+    }
 
     file_pointer_position = ftell(file_pointer);
-    assert(file_pointer_position == 123300);
+    assert(file_pointer_position == LEN_SAVE_GAM_FILE);
 
     fclose(file_pointer);
-
-Capture_Game_Data();
-// NOTE(JimBalcomb,20250714): This totally, definitely works as expected - _CITIES[0].wp = -128; Check_Cities_Data();
-// NOTE(JimBalcomb,20250714): This totally, definitely works as expected - _UNITS[0].wp  = -128; Check_Units_Data();
-// NOTE(JimBalcomb,20250714): This totally, definitely works as expected - _CITIES[0].wp = -128; Check_Game_Data();
-// NOTE(JimBalcomb,20250714): This totally, definitely works as expected - _UNITS[0].wp =  -128; Check_Game_Data();
 
 }
 

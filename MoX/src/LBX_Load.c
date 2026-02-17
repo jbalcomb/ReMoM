@@ -16,7 +16,7 @@
 
 
 int16_t lbxload_lbx_header_flag = ST_FALSE;
-FILE * lbxload_fptr;
+FILE * lbxload_fptr = NULL;
 char lbxload_lbx_file_extension[] = ".LBX";
 int16_t lbxload_num_entries;
 SAMB_ptr lbxload_lbx_header;
@@ -24,14 +24,17 @@ char lbxload_lbx_name[16];
 /* HACK */  uint32_t lbxload_entry_length;  /* because. SDL Mixed needs the sound buffer size */
 
 
+/*
+same as Allocation Error for RAM_MinKbytes?
+*/
 char * str_error_handler[] =
 {
     ".LBX [entry ",
     "] ",
     " could not be found.",
     " has been corrupted.",
-    "Insufficient memory. You need at least ",
-    "K free. Try removing all TSR',27h,'s.",
+    "Insufficient memory. You need at least ", /* cnst_LBX_Error31, cnst_Alloc_Error51 */
+    "K free. Try removing all TSR',27h,'s.",   /* cnst_LBX_Error32, cnst_Alloc_Error52 */
     " was not properly allocated or has been corrupted.",
     " failed to reload. Allocation too small by ",
     " pages",
@@ -214,8 +217,8 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
             SAMB_data = SAMB_head + 16 + (SA_GET_USED(SAMB_head) * SZ_PARAGRAPH_B);
 
             num_blocks_used = num_blocks + SA_GET_USED(SAMB_head);
-            *( (SAMB_head) + (SAMB_USED) + 0 ) = ( (num_blocks_used)      );
-            *( (SAMB_head) + (SAMB_USED) + 1 ) = ( (num_blocks_used) >> 8 );
+            *( (SAMB_head) + (SAMB_USED) + 0 ) = (unsigned char)( (num_blocks_used)      );
+            *( (SAMB_head) + (SAMB_USED) + 1 ) = (unsigned char)( (num_blocks_used) >> 8 );
             // SET_2B_OFS(SAMB_head, SAMB_USED);
             // SA_SET_USED(SAMB_head, (num_blocks + 1));
 
@@ -269,22 +272,22 @@ Done:
 // MoO2  Module: farload  Farload_Data() |-> Farload_Library_Data()
 SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, int16_t allocation_type, uint16_t start_rec, uint16_t num_recs, uint16_t record_size)
 {
-    char full_file_path[60];
-    char lbx_file_name[20];
-    uint32_t entry_length;
-    uint32_t entry_end;
-    uint32_t entry_start;
-    // NIU  int16_t file_hdr_fmt;
-    int16_t rec_size;
-    uint16_t read_size;
-    SAMB_ptr rvr_SAMB_data;
-    uint16_t num_blocks;
-    int16_t max_records;
+    char full_file_path[LEN_FILE_PATH] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char lbx_file_name[LEN_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint32_t entry_length = 0;
+    uint32_t entry_end = 0;
+    uint32_t entry_start = 0;
+    // NIU  int16_t file_hdr_fmt = 0;
+    int16_t rec_size = 0;
+    uint16_t read_size = 0;
+    SAMB_ptr rvr_SAMB_data = NULL;
+    uint16_t num_blocks = 0;
+    int16_t max_records = 0;
 // current_extended_flag= word ptr -6
 // header_offset= word ptr -4
-    SAMB_ptr SAMB_data;
-    uint16_t num_blocks_used;  // DNE in Dasm
-    uint32_t record_start;  // DNE in Dasm; entry_start__record_start
+    SAMB_ptr SAMB_data = NULL;
+    uint16_t num_blocks_used = 0;  // DNE in Dasm
+    uint32_t record_start = 0;  // DNE in Dasm; entry_start__record_start
 
     // if(entry_num < 0) { LBX_Error(lbx_name, 1, entry_num, NULL); }  // "<lbx_name>.LBX [entry <entry_num>] could not be found."
 
@@ -405,8 +408,8 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
             SAMB_data = SAMB_head + 12 + (16 * SA_GET_USED(SAMB_head));
 
             num_blocks_used = num_blocks + SA_GET_USED(SAMB_head);
-            *( (SAMB_head) + (SAMB_USED) + 0 ) = ( (num_blocks_used)      );
-            *( (SAMB_head) + (SAMB_USED) + 1 ) = ( (num_blocks_used) >> 8 );
+            *( (SAMB_head) + (SAMB_USED) + 0 ) = (unsigned char)( (num_blocks_used)      );
+            *( (SAMB_head) + (SAMB_USED) + 1 ) = (unsigned char)( (num_blocks_used) >> 8 );
 
         } break;
     }
@@ -423,7 +426,10 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
     {
         entry_length -= read_size;
         // if ( lbx_read_sgmt(current_seg, read_size, lbxload_fhnd) == ST_FAILURE ) { Error_Handler(lbx_name, 2, entry_num, NULL); }
-        fread(rvr_SAMB_data, read_size, 1, lbxload_fptr);
+        if(NULL != rvr_SAMB_data)
+        {
+            fread(rvr_SAMB_data, read_size, 1, lbxload_fptr);
+        }
         rvr_SAMB_data += read_size;
     }
     if(entry_length > 0)
@@ -431,7 +437,10 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
         read_size = entry_length;
         // if ( lbx_read_sgmt(current_seg, read_size, lbxload_fhnd) == ST_FAILURE ) { Error_Handler(lbx_name, 2, entry_num, NULL); }
 
-        fread(rvr_SAMB_data, read_size, 1, lbxload_fptr);
+        if(NULL != rvr_SAMB_data)
+        {
+            fread(rvr_SAMB_data, read_size, 1, lbxload_fptr);
+        }
     }
     /*
         END: Read Data
@@ -483,16 +492,16 @@ Locals:
 */
 void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, uint16_t start_rec, uint16_t num_recs, uint16_t record_size)
 {
-    char full_file_path[60];
-    char lbx_file_name[20];
-    // NIU  int16_t file_hdr_fmt;
-    uint32_t entry_start;
-    uint32_t entry_end;
-    uint32_t entry_length;
-    int16_t max_records;
-    int16_t rec_size;
-    uint16_t read_size;
-    uint32_t record_start;  // DNE in Dasm; entry_start__record_start
+    char full_file_path[LEN_FILE_PATH] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char lbx_file_name[LEN_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    // NIU  int16_t file_hdr_fmt = 0;
+    uint32_t entry_start = 0;
+    uint32_t entry_end = 0;
+    uint32_t entry_length = 0;
+    int16_t max_records = 0;
+    int16_t rec_size = 0;
+    uint16_t read_size = 0;
+    uint32_t record_start = 0;  // DNE in Dasm; entry_start__record_start
 
     // if(entry_num < 0) { LBX_Error(lbx_name, 1, entry_num, NULL); }  // "<lbx_name>.LBX [entry <entry_num>] could not be found."
 
@@ -511,10 +520,9 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
     /*
         BEGIN: Current vs. Previous
     */
-// #pragma warning(suppress : 4996)
-    // if((lbxload_fptr == NULL) || (stricmp(lbx_name, lbxload_lbx_name) != 0))
+
     if(
-        (lbxload_fptr == NULL)
+        (NULL == lbxload_fptr)
         ||
         (strcmp(lbx_name, lbxload_lbx_name) != 0)
     )
@@ -523,7 +531,7 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
             BEGIN: Current != Previous
         */
 
-        if(lbxload_fptr != NULL) { fclose(lbxload_fptr); }
+        if(NULL != lbxload_fptr) { fclose(lbxload_fptr); }  // TODO  can't actually happen, right? cause wrapped in if(NULL == lbxload_fptr)
 
         strcpy(lbxload_lbx_name, lbx_name);
         strcpy(lbx_file_name, lbx_name);
@@ -532,13 +540,16 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
         lbxload_fptr = fopen(lbx_file_name, "rb");
 
         // if(lbxload_fptr == NULL) { if(secondary_drive_path == NULL) { Error_Handler(LBXErr_not_found) } else { ... secondary_drive_path full_file_path lbx_open() ... }
-        if(lbxload_fptr == NULL) { Error_Handler(lbx_name, le_not_found, entry_num, ST_NULL); }
+        if(NULL == lbxload_fptr) { Error_Handler(lbx_name, le_not_found, entry_num, ST_NULL); }
 
         // DNE  if UU_farload_hdr_fmt ... file_hdr_ofst  512 or 0
 
         // lbx_seek(file_hdr_ofst, farload_fptr)
 
-        fread(lbxload_lbx_header, 1, SZ_LBX_HDR_B, lbxload_fptr);
+        if(NULL != lbxload_fptr)
+        {
+            fread(lbxload_lbx_header, 1, SZ_LBX_HDR_B, lbxload_fptr);
+        }
 
         // if(LBX_GET_MAGIC_NUMBER(lbxload_lbx_header) != LBX_MAGSIG) { Error_Handler(lbx_name, 7, entry_num, NULL); }
 
@@ -565,14 +576,24 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
     entry_end   = ( GET_4B_OFS( (lbxload_lbx_header), ( 8 + ((entry_num) * 4) + 4) ) );
     entry_length = entry_end - entry_start;
 
-    fseek(lbxload_fptr, entry_start, 0);
+    // Warning	C6387	'lbxload_fptr' could be '0':  this does not adhere to the specification for the function 'fseek'.
+    if(NULL != lbxload_fptr)
+    {
+        fseek(lbxload_fptr, entry_start, 0);
+    }
     /*
         END: Entry - Offset Start, End, Length
     */
 
-
-    fread(&max_records, 2, 1, lbxload_fptr);
-    fread(&rec_size, 2, 1, lbxload_fptr);
+    if(NULL != lbxload_fptr)
+    {
+        fread(&max_records, 2, 1, lbxload_fptr);
+    }
+    
+    if(NULL != lbxload_fptr)
+    {
+        fread(&rec_size, 2, 1, lbxload_fptr);
+    }
 
     if(record_size != rec_size)
     {
@@ -587,7 +608,11 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
     // ¿ MoO2: foffset ?
     // record_start = entry_start + (start_rec * rec_size);
     record_start = entry_start + (start_rec * rec_size) + 4;
-    fseek(lbxload_fptr, record_start, 0);
+
+    if(NULL != lbxload_fptr)
+    {
+        fseek(lbxload_fptr, record_start, 0);
+    }
 
 
     // entry_length = num_recs * rec_size;
@@ -600,7 +625,10 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
         BEGIN: Read Data
     */
 
-    fread(SAMB_head, read_size, 1, lbxload_fptr);
+    if(NULL != lbxload_fptr)
+    {
+        fread(SAMB_head, read_size, 1, lbxload_fptr);
+    }
 
     /*
         END: Read Data
@@ -633,12 +661,18 @@ MoO2
 XREF: 
     Module: MOX2  Set_Mox_Alt_Path_()
         main__0()
+            |-> Set_Mox_Alt_Path_()
+                |-> Set_Alternate_Path()
+OON XREF; gets 60 characters from "orioncd.ini"
 
 */
 /*
+NIU
     sets secondary_drive_path to the alternate path
+
 */
-void Set_Alternate_Path(char * alternate)
+// Message	VCR003	Function 'Set_Alternate_Path' can be made static		C:\STU\devel\ReMoM\MoX\src\LBX_Load.c	674		
+static void Set_Alternate_Path(char * alternate)
 {
     strcpy(secondary_drive_path, alternate);
 }
@@ -748,7 +782,8 @@ void File_Name_Base(char * file_name)
 }
 
 // WZD s10p17
+// AKA  RAM_SetMinKB()
 void RAM_Set_Minimum(int16_t amount)
 {
-        RAM_MinKbytes = amount;
+    RAM_MinKbytes = amount;
 }

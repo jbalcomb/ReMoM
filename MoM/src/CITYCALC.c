@@ -9,6 +9,7 @@
 #include "CITYCALC.h"
 
 #include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_BASE.h"
 #include "../../MoX/src/MOX_BITS.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
@@ -19,7 +20,6 @@
 
 #include "AIDUDES.h"
 #include "Items.h"
-#include "../../MoX/src/MOM_DEF.h"
 #include "MovePath.h"
 #include "RACETYPE.h"
 #include "SETTLE.h"
@@ -28,10 +28,8 @@
 #include "UNITTYPE.h"   // WTFMATE
 
 // #ifdef STU_DEBUG
-#include "../../STU/src/STU_CHK.h"
 #include "../../STU/src/STU_DBG.h"
 // #endif
-
 
 #include <assert.h>
 #include <math.h>       /* sqrt() */
@@ -60,12 +58,12 @@ void Do_City_Calculations(int16_t city_idx)
 
     // DONT  EMM_Map_DataH();
 
-    CITIES_FOOD_UNITS(city_idx, City_Food_Production(city_idx));
-    CITIES_PRODUCTION_UNITS(city_idx, City_Production_Production(city_idx));
-    CITIES_GOLD_UNITS(city_idx, City_Gold_Production(city_idx));
-    CITIES_BUILDING_MAINTENANCE(city_idx, City_Gold_Mainanence(city_idx));
-    CITIES_RESEARCH_UNITS(city_idx, City_Research_Production(city_idx));
-    CITIES_MANA_UNITS(city_idx, City_Mana_Production(city_idx));
+    CITIES_FOOD_UNITS(city_idx, (int8_t)City_Food_Production(city_idx));
+    CITIES_PRODUCTION_UNITS(city_idx, (int8_t)City_Production_Production(city_idx));
+    CITIES_GOLD_UNITS(city_idx, (uint8_t)City_Gold_Production(city_idx));
+    CITIES_BUILDING_MAINTENANCE(city_idx, (int8_t)City_Gold_Mainanence(city_idx));
+    CITIES_RESEARCH_UNITS(city_idx, (int8_t)City_Research_Production(city_idx));
+    CITIES_MANA_UNITS(city_idx, (int8_t)City_Mana_Production(city_idx));
 
     if(
         (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
@@ -99,11 +97,11 @@ void Do_City_Calculations(int16_t city_idx)
 */
 void Players_Update_Magic_Power(void)
 {
-    int16_t NIU_players_power_base_array[NUM_PLAYERS];
-    int16_t node_owner_idx;
+    int16_t NIU_players_power_base_array[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int16_t node_owner_idx = 0;
 
-    int16_t itr;  // _SI_
-    int16_t node_magic_power_points;  // _DI_
+    int16_t itr = 0;  // _SI_
+    int16_t node_magic_power_points = 0;  // _DI_
 
     for(itr = 0; itr < _num_players; itr++)
     {
@@ -718,7 +716,7 @@ void Kill_Unit(int16_t unit_idx, int16_t kill_type)
 
     unit_owner_idx = _UNITS[unit_idx].owner_idx;
 
-    _UNITS[unit_idx].Level = Unit_Base_Level(unit_idx);
+    _UNITS[unit_idx].Level = (int8_t)Unit_Base_Level(unit_idx);
 
     // ¿ removal type 1 is "Dismiss" ?
     // ...can be resurected or reincarnated
@@ -1483,6 +1481,10 @@ void Make_Road_Enchanted(int16_t wx, int16_t wy, int16_t wp)
         movement_mode_cost_maps[wp].forester.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
 
         movement_mode_cost_maps[wp].mountaineer.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
+
+        movement_mode_cost_maps[wp].swimming.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
+        
+        // NOT  movement_mode_cost_maps[wp].swimming.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
         
     }
 
@@ -1497,7 +1499,7 @@ void Make_Road_Enchanted(int16_t wx, int16_t wy, int16_t wp)
 ; would update some aspect of some resource on a tile
 ; by tile basis with no return value
 */
-void empty_fxn_o142p03(int16_t wx, int16_t wy, int16_t wp)
+void o142p03_empty_function(int16_t wx, int16_t wy, int16_t wp)
 {
     return;
 }
@@ -1553,7 +1555,7 @@ void NOOP_Current_Player_All_City_Areas(void)
                         {
                             city_area_square_wx = WORLD_WIDTH;
                         }
-                        empty_fxn_o142p03(city_area_square_wx, city_area_square_wy, city_wp);
+                        o142p03_empty_function(city_area_square_wx, city_area_square_wy, city_wp);
                     }
                 }
             }
@@ -1569,6 +1571,10 @@ int16_t City_House_Count(int16_t city_idx)
 
 // WZD o142p06
 // drake178: CTY_GetTileFood()
+/*
+why the `/ 4` on food2_units?
+food, food2, pop?
+*/
 int16_t City_Food_Terrain(int16_t city_idx)
 {
     int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -1666,34 +1672,41 @@ int16_t City_Food_WildGame(int16_t city_idx)
 */
 int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp, int16_t *wx_array, int16_t *wy_array)
 {
-    uint8_t * terrain_flags_table_row;
-    int16_t square_y;
-    int16_t itr_world_x;
-    int16_t square_x_max;
-    int16_t square_x_min;
-    int16_t map_square_count;
-
-    int16_t itr_city_area_squares;  // _DI_
-    int16_t square_x;  // _SI_
+    uint8_t * terrain_flags_table_row = 0;
+    int16_t square_y = 0;
+    int16_t itr_world_x = 0;
+    int16_t square_x_max = 0;
+    int16_t square_x_min = 0;
+    int16_t map_square_count = 0;
+    int16_t itr_city_area_squares = 0;  // _DI_
+    int16_t square_x = 0;  // _SI_
 
     map_square_count = 0;
 
     for(itr_city_area_squares = -2; itr_city_area_squares <= 2; itr_city_area_squares++)
     {
-        square_y = city_wy + itr_city_area_squares;
+        square_y = (city_wy + itr_city_area_squares);
 
-        if( (square_y >= 0) && (square_y < WORLD_HEIGHT) )
+        if(
+            (square_y >= 0)
+            &&
+            (square_y < WORLD_HEIGHT)
+        )
         {
+
             square_x_min = -2;
-            square_x_max = 2;
+            square_x_max =  2;
 
             if(
-                (itr_city_area_squares == -2) ||
+                (itr_city_area_squares == -2)
+                ||
                 (itr_city_area_squares ==  2)
             )
             {
+
                 square_x_min = -1;
                 square_x_max =  1;
+
             }
 
             terrain_flags_table_row = (uint8_t *)&_map_square_flags[(city_wp * WORLD_SIZE) + (square_y * WORLD_WIDTH)];
@@ -1702,29 +1715,44 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
 
             while(itr_world_x <= square_x_max)
             {
+
                 square_x = city_wx + itr_world_x;
+
                 if(square_x < 0)
                 {
+
                     square_x += WORLD_WIDTH;
-                }
-                if(square_x > WORLD_WIDTH)
-                {
-                    square_x -= WORLD_WIDTH;
+
                 }
 
-                if( (*(terrain_flags_table_row + square_x) & 0x20) == 0 ) /* MSF_CORRUPTION */
+                if(square_x > WORLD_WIDTH)
                 {
+
+                    square_x -= WORLD_WIDTH;
+
+                }
+
+                if((*(terrain_flags_table_row + square_x) & MSF_CORRUPTION) == 0)
+                {
+
                     wx_array[map_square_count] = square_x;
+
                     wy_array[map_square_count] = square_y;
+
                     map_square_count++;
+
                 }
 
                 itr_world_x++;
+
             }
+
         }
+
     }
 
     return map_square_count;
+
 }
 
 
@@ -2736,19 +2764,19 @@ int16_t City_Current_Product_Cost(int16_t city_idx)
 */
 void Generate_Mercenaries(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * amount, int16_t * type, int16_t * cost, int16_t * level)
 {
-    int16_t G_Tries;
-    int16_t Myrror_Available;
-    int16_t Arcanus_Available;
-    int16_t Unit_Count;
-    int16_t Total_Cost;
-    int16_t Roll_Total;
-    int16_t Merc_Level;
-    int16_t player_fame;
-    int16_t itr_units;  // _SI_
-    int16_t itr_cities;  // _SI_
-    int16_t itr_towers;  // _SI_
-    int16_t unit_type;  // _DI_
-    int16_t return_value;  // _AX_
+    int16_t G_Tries = 0;
+    int16_t Myrror_Available = 0;
+    int16_t Arcanus_Available = 0;
+    int16_t Unit_Count = 0;
+    int16_t Total_Cost = 0;
+    int16_t Roll_Total = 0;
+    int16_t Merc_Level = 0;
+    int16_t player_fame = 0;
+    int16_t itr_units = 0;  // _SI_
+    int16_t itr_cities = 0;  // _SI_
+    int16_t itr_towers = 0;  // _SI_
+    int16_t unit_type = 0;  // _DI_
+    int16_t return_value = 0;  // _AX_
 
     Total_Cost = 0;  // HACK:  DNE in Dasm
 
@@ -2865,7 +2893,7 @@ void Generate_Mercenaries(int16_t player_idx, int16_t * wx, int16_t * wy, int16_
         }
 
         if(
-            (_unit_type_table[unit_type].Race == rt_Draconian)
+            (_unit_type_table[unit_type].race_type == rt_Draconian)
             &&
             (_unit_type_table[unit_type].Construction > 0)
         )
@@ -2874,15 +2902,15 @@ void Generate_Mercenaries(int16_t player_idx, int16_t * wx, int16_t * wy, int16_
         }
 
         if(
-            (_unit_type_table[unit_type].Race == rt_Beastmen)
+            (_unit_type_table[unit_type].race_type == rt_Beastmen)
             ||
-            (_unit_type_table[unit_type].Race == rt_Dark_Elf)
+            (_unit_type_table[unit_type].race_type == rt_Dark_Elf)
             ||
-            (_unit_type_table[unit_type].Race == rt_Draconian)
+            (_unit_type_table[unit_type].race_type == rt_Draconian)
             ||
-            (_unit_type_table[unit_type].Race == rt_Dwarf)
+            (_unit_type_table[unit_type].race_type == rt_Dwarf)
             ||
-            (_unit_type_table[unit_type].Race == rt_Troll)
+            (_unit_type_table[unit_type].race_type == rt_Troll)
         )
         {
             if(Myrror_Available == ST_FALSE)
@@ -3336,7 +3364,7 @@ void Record_History(void)
         // record the total progress values into the historian
         for(itr_players = 0; itr_players < _num_players; itr_players++)
         {
-            _players[itr_players].Historian[_turn] = power_of_a_wizard[itr_players];
+            _players[itr_players].Historian[_turn] = (uint8_t)power_of_a_wizard[itr_players];
         }
     }
     else
@@ -3349,7 +3377,7 @@ void Record_History(void)
                 _players[itr_players].Historian[(itr_history + 1)] = _players[itr_players].Historian[itr_history];
             }
 
-            _players[itr_players].Historian[287] = power_of_a_wizard[itr_players];
+            _players[itr_players].Historian[287] = (uint8_t)power_of_a_wizard[itr_players];
         }
     }
 

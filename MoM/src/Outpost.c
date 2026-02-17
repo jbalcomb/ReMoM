@@ -122,11 +122,11 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
             _city_idx = city_idx;
             _CITIES[city_idx].Pop_10s = 3;
 
-            _CITIES[city_idx].wx = outpost_wx;
-            _CITIES[city_idx].wy = outpost_wy;
-            _CITIES[city_idx].wp = outpost_wp;
-            _CITIES[city_idx].owner_idx = outpost_owner;
-            _CITIES[city_idx].race = outpost_race;
+            _CITIES[city_idx].wx = (int8_t)outpost_wx;
+            _CITIES[city_idx].wy = (int8_t)outpost_wy;
+            _CITIES[city_idx].wp = (int8_t)outpost_wp;
+            _CITIES[city_idx].owner_idx = (int8_t)outpost_owner;
+            _CITIES[city_idx].race = (int8_t)outpost_race;
 
 
             if(outpost_owner == _human_player_idx)
@@ -172,11 +172,11 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
         }
 
         // BUG  ; all of these have been set already
-        _CITIES[city_idx].wx = outpost_wx;
-        _CITIES[city_idx].wy = outpost_wy;
-        _CITIES[city_idx].wp = outpost_wp;
-        _CITIES[city_idx].owner_idx = outpost_owner;
-        _CITIES[city_idx].race = outpost_race;
+        _CITIES[city_idx].wx = (int8_t)outpost_wx;
+        _CITIES[city_idx].wy = (int8_t)outpost_wy;
+        _CITIES[city_idx].wp = (int8_t)outpost_wp;
+        _CITIES[city_idx].owner_idx = (int8_t)outpost_owner;
+        _CITIES[city_idx].race = (int8_t)outpost_race;
 
         NOOP_Current_Player_All_City_Areas();
 
@@ -446,16 +446,16 @@ void Outpost_Screen(int16_t flag)
 */
 void Outpost_Screen_Draw(void)
 {
-    uint8_t colors[6];
-    int16_t race_house_type;
-    int16_t house_count;
-    int16_t figure_y2;
-    int16_t figure_x2;
-    int16_t figure_y1;
-    int16_t figure_x1;
-    int16_t window_start_y;
-    int16_t window_start_x;  // _DI_
-    int16_t itr;  // _SI_
+    uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t race_house_type = 0;
+    int16_t house_count = 0;
+    int16_t figure_y2 = 0;
+    int16_t figure_x2 = 0;
+    int16_t figure_y1 = 0;
+    int16_t figure_x1 = 0;
+    int16_t window_start_y = 0;
+    int16_t window_start_x = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
 
     window_start_x = 30;
     window_start_y = 50;
@@ -597,12 +597,12 @@ void Outpost_Garrison_Picture_Coords(int16_t slot, int16_t * x1, int16_t * y1, i
 */
 void Change_City_Name_Popup(int16_t city_idx, int16_t player_idx)
 {
-    uint8_t colors[14];
-    char default_city_name[16];
-    char city_name[16];
-    int16_t y_start;
-    int16_t x_start;
-    int16_t input_box_result;
+    uint8_t colors[14] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char default_city_name[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char city_name[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t y_start = 0;
+    int16_t x_start = 0;
+    int16_t input_box_result = 0;
 
     _page_flip_effect = pfe_None;
 
@@ -738,7 +738,7 @@ int16_t Map_Square_Survey(int16_t wx, int16_t wy, int16_t wp)
         if(
             (_LAIRS[itr].wp == wp)
             &&
-            (_LAIRS[itr].Intact == ST_TRUE)
+            (_LAIRS[itr].intact == ST_TRUE)
             &&
             (_LAIRS[itr].wy == wy)
             &&
@@ -754,7 +754,7 @@ int16_t Map_Square_Survey(int16_t wx, int16_t wy, int16_t wp)
         if(
             (_LAIRS[itr].wp == wp)
             &&
-            (_LAIRS[itr].Intact == ST_TRUE)
+            (_LAIRS[itr].intact == ST_TRUE)
             &&
             (_LAIRS[itr].wy == wy)
             &&

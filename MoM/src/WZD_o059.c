@@ -3,7 +3,6 @@
         ovr059
 */
 
-#include "../../STU/src/STU_CHK.h"
 #include "../../STU/src/STU_DBG.h"
 
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
@@ -516,10 +515,7 @@ void All_Units_In_Towers(void)
 */
 void Dismiss_Unit(int16_t unit_idx)
 {
-Check_Game_Data();
     Kill_Unit(unit_idx, kt_Dismissed);
-Capture_Units_Data();
-Check_Game_Data();
 }
 
 

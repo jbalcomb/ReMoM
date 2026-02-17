@@ -4,25 +4,25 @@
         ovr050
 */
 
-#include "../../MoX/src/MOX_SET.h"
+#include "../../MoX/src/DOS.h"
+#include "../../MoX/src/Fields.h"
+#include "../../MoX/src/FLIC_Draw.h"
+#include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/Graphics.h"
+#include "../../MoX/src/Help.h"
+#include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/LOADSAVE.h"
 #include "../../MoX/src/MOX_T4.h"
-#include "../../MoX/src/random.h"
-#include "../../MoX/src/LBX_Load.h"
-#include "../../MoX/src/FLIC_Draw.h"
-#include "../../MoX/src/Fields.h"
-#include "../../MoX/src/DOS.h"
-#include "../../MoX/src/Fonts.h"
-#include "../../MoX/src/Help.h"
+#include "../../MoX/src/MOM_Data.h"  /* _difficulty, _magic, _landsize, _num_players */
 #include "../../MoX/src/Mouse.h"
 #include "../../MoX/src/MOX_DAT.h"
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_SET.h"
 #include "../../MoX/src/MOX_TYPE.h"
-#include "../../MoX/src/MOM_Data.h"  /* _difficulty, _magic, _landsize, _num_players */
+#include "../../MoX/src/random.h"
 #include "../../MoX/src/Timer.h"
 
+#include "MOM_SCR.h"
 #include "RACETYPE.h"
 #include "Settings.h"
 #include "Spellbook.h"
@@ -120,7 +120,7 @@ cnst_Artificer__NEWGAME
 
 
 // MGC o51p01
-void NEWG_CreateWorld__WIP(void);
+void Init_New_Game(void);
 // MGC o56p2
 void NEWG_FinalizeTables__WIP(void);
 // MGC o56p11
@@ -445,7 +445,8 @@ int16_t auto_input_field_idx = 0;
 // MGC  dseg:5A32 00 00                                           Wiz5_Spell_00h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3B4w
 // MGC  dseg:5A34 00 00                                           Wiz5_Spell_0Ch@ dw 0                    ; DATA XREF: Allocate_Data_Space+3BAw
 // MGC  dseg:5A36 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+G_UU_Some_AI_Array_2 db 176h dup(0)
-// MGC  dseg:5BAC 00 00 00 00                                     terrain_stats_table dd 0                ; DATA XREF: Load_TERRSTAT+28w ...
+
+// MGC  dseg:5BAC  terrain_stats_table
 
 
 
@@ -528,14 +529,12 @@ int16_t TBL_SpellsPerBook_R[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 
 // /*
 //     BEGIN: take 2 - defaults spells and wizard profiles
-// 
 // WIZ_CopyDefault__WIP()
 // iters over 13 ... TBL_Spells_Nature.Common[itr] = 0
 // so, just an array of 13
 // uses `word ptr`
 // so, 2-byte values
 // */
-// 
 // // MGC  dseg:2C6A
 // int16_t _default_spells_nature[13] = {
 //     spl_War_Bears, spl_Stone_Skin, spl_Sprites, spl_Water_Walking, spl_Giant_Strength, spl_Web, spl_Earth_To_Mud, spl_Wall_Of_Stone, spl_Resist_Elements, spl_Earth_Lore,
@@ -566,7 +565,6 @@ int16_t TBL_SpellsPerBook_R[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 //     spl_Black_Prayer, spl_Black_Channels,
 //     spl_Wraiths
 // };
-// 
 // /*
 //     END:  take 2 - defaults spells and wizard profiles
 // */
@@ -984,7 +982,7 @@ int16_t TBL_Realm4_Books[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 // drake78: IMG_NEWG_MapBuildBG
 /*
     loaded in GAME_New_Screen_7()
-    used in NEWG_CreateWorld__WIP()
+    used in Init_New_Game()
 MoO2  Module: MAPGEN  _fill_msg_bitmap  <-|  Module: MISC  Draw_Advancing_Fill_Message_()
 
 */
@@ -1212,7 +1210,7 @@ int16_t NEWG_Clicked_Race;
     ovr050
 */
 
-// o50p01
+// MGC  o50p01
 // drake178: GAME_New_Create()
 /*
 ; displays and processes the series of screens that
@@ -1224,13 +1222,14 @@ int16_t NEWG_Clicked_Race;
 ; continue slot (index 8), and launching WIZARDS.EXE
 */
 /*
-Newgame_Control__WIP();  // MAGIC.EXE  ovr050  o050p001
+HACK returns {F,T} did create new game
 
-Newgame_Screen_0();  // returns 1 on input field is ok button
+Newgame_Control__WIP();  // MAGIC.EXE  ovr050  o050p001
 
 NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
 */
-void Newgame_Control__WIP(void)
+// void Newgame_Control__WIP(void)
+/* HACK */  int16_t Newgame_Control__WIP(void)
 {
     int16_t Create_State = 0;
     int16_t Can_Create = 0;
@@ -1255,15 +1254,16 @@ void Newgame_Control__WIP(void)
 
         switch(Create_State)
         {
-            case -1:
+            case ST_UNDEFINED:
             {
-                return;  // ¿ cancel ?
+                // return;  // ¿ cancel ?
+                /* HACK */  return ST_FALSE;
             } break;
             case 0:
             {
-                newgame_state = Newgame_Screen_0();  // returns 1 on input field is ok button
+                newgame_state = Newgame_Screen_0();  // returns 1 on input field is ok button, -1 on quit
             } break;
-            case 1:
+            case 1:  // "Select Wizard"
             {
                 newgame_state = Newgame_Screen_1__WIP();  // returns {0,2,3} - {0:cancel,2:custom,3:prefab}
                 if(newgame_state == 2)
@@ -1275,7 +1275,7 @@ void Newgame_Control__WIP(void)
                     custom_game_flag = ST_FALSE;
                 }
             } break;
-            case 2:
+            case 2:  // "Select Picture"
             {
                 newgame_state = Newgame_Screen_2__WIP();
             } break;
@@ -1286,8 +1286,7 @@ void Newgame_Control__WIP(void)
                 {
                     if(newgame_state == ST_UNDEFINED)  // cancelled, go back a screen
                     {
-                        newgame_state = 2;  // 
-                    }
+                        newgame_state = 2;                      }
                     else
                     {
                         newgame_state = 4;  // custom wizard creation
@@ -1297,8 +1296,7 @@ void Newgame_Control__WIP(void)
                 {
                     if(newgame_state == ST_UNDEFINED)  // cancelled, go back a screen
                     {
-                        newgame_state = 1;  // 
-                    }
+                        newgame_state = 1;                      }
                     else
                     {
                         newgame_state = 6;  // Wizards Race
@@ -1332,7 +1330,7 @@ void Newgame_Control__WIP(void)
             {
                 newgame_state = Newgame_Screen_7__WIP();
             } break;
-            case 99:
+            case 99:  /* What sets 99? */
             {
                 Can_Create = ST_UNDEFINED;  // ¿ force an early exit of the new game creation process ?
             } break;
@@ -1341,21 +1339,50 @@ void Newgame_Control__WIP(void)
         
     }
 
-    // MoO2  Module: HOMEGEN  Generate_Home_Worlds_()
-    NEWG_CreateWorld__WIP();
+    // ¿ MoO2  Module: HOMEGEN  Generate_Home_Worlds_() ?
+    // ¿ MoO2  Module: INITGAME  Init_New_Game_() ?
+    Init_New_Game();
 
     Initialize_Events();
 
-    NEWG_FinalizeTables__WIP();
+    NEWG_FinalizeTables__WIP();  // ... wrap it up ... 100%!
 
+    // save new game as continue save
     Save_SAVE_GAM(8);
 
-    // TODO  GAME_WizardsLaunch(8);
+    // printf("PLATFORM: %s\n", PLATFORM);
 
+    // // Helper macros to stringify the macro value
+    // #define STRINGIFY_(msg) #msg
+    // #define STRINGIFY(msg) STRINGIFY_(msg)
+    // // GCC output example: source.c: note: #pragma message: MY_VALUE=123
+    // #pragma message("PLATFORM=" STRINGIFY(PLATFORM))
+
+#ifdef PLATFORM
+    printf("SUCCESS: PLATFORM is #defined\n");
+#endif
+
+    /* HACK */  return ST_TRUE;
+
+#if   (PLATFORM == DOS16)
+    GAME_WizardsLaunch__WIP(8);
+#elif (PLATFORM == SDL2)
+    current_screen = scr_Main_Screen;
+#elif (PLATFORM == LIN64)
+    current_screen = scr_Main_Screen;
+#elif (PLATFORM == MAC64)
+    current_screen = scr_Main_Screen;
+#elif (PLATFORM == WIN64)
+    current_screen = scr_Main_Screen;
+#else
+    printf("FAILURE: BAD_PLATFORM_VALUE: Newgame_Control__WIP()\n");
+#endif
+
+    /* HACK */  return ST_UNDEFINED;
 }
 
 
-// o50p02
+// MGC  o50p02
 // drake178: GAME_WizardsLaunch()
 /*
 ; fades out the screen, if the passed save index is not
@@ -1364,6 +1391,11 @@ void Newgame_Control__WIP(void)
 ; WIZARDS.EXE (which always loads that save on startup)
 */
 /*
+
+Menu_Screen_Control()
+    fid0_Continue:                            ; case 0x0
+        Stop_Music__STUB()
+        j_GAME_WizardsLaunch__WIP(e_SAVE9GAM)
 
 */
 void GAME_WizardsLaunch__WIP(int16_t save_gam_idx)
@@ -1380,13 +1412,13 @@ void GAME_WizardsLaunch__WIP(int16_t save_gam_idx)
 }
 
 
-// o50p03
+// MGC  o50p03
 // Load_Screen()
 
-// o50p04
+// MGC  o50p04
 // Load_Screen_Draw()
 
-// o50p05
+// MGC  o50p05
 /*
 PATCHED - rewritten completely in the last profile
 loader/worldgen customizer/patch enabler
@@ -1571,8 +1603,7 @@ int16_t Newgame_Screen_0(void)
             
             _difficulty = magic_set.Difficulty;
             
-            return 1;  // 
-        }
+            return 1;          }
         
         if(input_field_idx == newgame_difficulty_button_field)
         {
@@ -1657,7 +1688,7 @@ int16_t Newgame_Screen_0(void)
 
 }
 
-// o50p06
+// MGC  o50p06
 /*
 PATCHED - rewritten completely in the last profile
 loader/worldgen customizer/patch enabler
@@ -1782,7 +1813,7 @@ void Newgame_Screen_0_Draw(void)
 
 }
 
-// o50p07
+// MGC  o50p07
 // drake178: GAME_RandBookBinders()
 /*
 ; randomizes the spellbook binder image arrays used
@@ -1818,7 +1849,7 @@ void Randomize_Book_Heights(void)
 
 }
 
-// o50p08
+// MGC  o50p08
 // drake178: GAME_New_Screen_1()
 /*
 ; displays and processes the second screen of new game
@@ -1829,6 +1860,8 @@ void Randomize_Book_Heights(void)
 ; data if a pre-defined character is selected
 */
 /*
+"Select Wizard"
+
 returns {0,2,3} - {0:cancel,2:custom,3:prefab}
 */
 int16_t Newgame_Screen_1__WIP(void)
@@ -1928,18 +1961,18 @@ int16_t Newgame_Screen_1__WIP(void)
     for(itr = 0; itr < 7; itr++)
     {
 
-        NEWG_Select_Labels[itr] = Add_Hidden_Field(168, (26 + (22 * itr)), 237, (42 + (22 * itr)), empty_string__ovr050, ST_UNDEFINED);
+        NEWG_Select_Labels[itr] = Add_Hidden_Field(168, (26 + (22 * itr)), 237, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
 
     }
 
     for(itr = 0; itr < IDK; itr++)
     {
 
-        NEWG_Select_Labels[(7+itr)] = Add_Hidden_Field(244, (26 + (22 * itr)), 313, (42 + (22 * itr)), empty_string__ovr050, ST_UNDEFINED);
+        NEWG_Select_Labels[(7+itr)] = Add_Hidden_Field(244, (26 + (22 * itr)), 313, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
 
     }
 
-    Escape_Hotkey_Control = Add_Hot_Key(str_ESC__ovr050);
+    Escape_Hotkey_Control = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
 
     Assign_Auto_Function(Newgame_Screen_1_2_Draw, 1);
 
@@ -2003,7 +2036,7 @@ int16_t Newgame_Screen_1__WIP(void)
 
 }
 
-// o50p09
+// MGC  o50p09
 /*
 ; draws the new game wizard portrait selection screen
 ; into the current draw frame, with or without retort
@@ -2165,7 +2198,7 @@ void Newgame_Screen_1_2_Draw(void)
         Set_Font_Colors_15(0, &Font_Colors[0]);
         strcpy(Retort_String, STR_Retorts[_wizard_presets_table[m_displayed_wizard].special]);  // 1 + {-1,0,1,2,...}
         strcat(Retort_String, cnst_DOT__ovr050);
-        Print(13, 101, Retort_String);
+        Print(13, 181, Retort_String);
         Set_Font_Colors_15(0, &Retort_Text_Color[0]);
         Print(12, 180, Retort_String);
     }
@@ -2188,7 +2221,7 @@ void Newgame_Screen_1_2_Draw(void)
 
 }
 
-// o50p10
+// MGC  o50p10
 /*
 
 "Select Picture"
@@ -2245,7 +2278,7 @@ int16_t Newgame_Screen_2__WIP(void)
     for(itr = 0; itr < 7; itr++)
     {
 
-        NEWG_Select_Labels[itr] = Add_Hidden_Field(168, (26 + (22 * itr)), 237, (42 + (22 * itr)), empty_string__ovr050, ST_UNDEFINED);
+        NEWG_Select_Labels[itr] = Add_Hidden_Field(168, (26 + (22 * itr)), 237, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
 
     }
 
@@ -2253,11 +2286,11 @@ int16_t Newgame_Screen_2__WIP(void)
     for(itr = 0; itr < 7; itr++)
     {
 
-        NEWG_Select_Labels[(7 + itr)] = Add_Hidden_Field(244, (26 + (22 * itr)), 313, (42 + (22 * itr)), empty_string__ovr050, ST_UNDEFINED);
+        NEWG_Select_Labels[(7 + itr)] = Add_Hidden_Field(244, (26 + (22 * itr)), 313, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
 
     }
 
-    Escape_Hotkey_Control = Add_Hot_Key(str_ESC__ovr050);
+    Escape_Hotkey_Control = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
 
     Assign_Auto_Function(Newgame_Screen_1_2_Draw, 1);
 
@@ -2287,7 +2320,7 @@ int16_t Newgame_Screen_2__WIP(void)
                 Deactivate_Auto_Function();
                 Deactivate_Help_List();
 
-                _players[0].wizard_id = itr;
+                _players[0].wizard_id = (uint8_t)itr;
 
                 strcpy(_players[0].name, _wizard_presets_table[itr].name);
 
@@ -2323,7 +2356,7 @@ int16_t Newgame_Screen_2__WIP(void)
 }
 
 
-// o50p11
+// MGC  o50p11
 /*
 ; displays and processes the wizard name input screen
 ; of new game creation, starting with the default name
@@ -2387,7 +2420,7 @@ int16_t Newgame_Screen_3__WIP(void)
 }
 
 
-// o50p12
+// MGC  o50p12
 /*
 ; draws the wizard name entry screen into the current
 ; draw frame, showing bookshelf and retorts only if
@@ -2441,7 +2474,7 @@ void Newgame_Screen_3_Draw__WIP(void)
 }
 
 
-// o50p13
+// MGC  o50p13
 /*
 ; displays and processes the banner selection screen
 ; of new game creation
@@ -2497,7 +2530,7 @@ int16_t Newgame_Screen_7__WIP(void)
 
     }
 
-    // odd? this gets drawn in NEWG_CreateWorld__WIP()
+    // odd? this gets drawn in Init_New_Game()
     // NEWGAME.LBX, 053  BUILDWOR   map build bar
     newgame_BUILDWOR_map_build_bar_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 53, _screen_seg);
 
@@ -2509,17 +2542,17 @@ int16_t Newgame_Screen_7__WIP(void)
 
     First_Draw_Done = ST_FALSE;
 
-    NEWG_Select_Labels[0] = Add_Hidden_Field(175, 21, 313, 55, empty_string__ovr050, ST_UNDEFINED);
+    NEWG_Select_Labels[0] = Add_Hidden_Field(175, 21, 313, 55, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
 
-    NEWG_Select_Labels[1] = Add_Hidden_Field(175, 56, 313, 93, empty_string__ovr050, ST_UNDEFINED);
+    NEWG_Select_Labels[1] = Add_Hidden_Field(175, 56, 313, 93, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
 
-    NEWG_Select_Labels[2] = Add_Hidden_Field(175, 94, 313, 128, empty_string__ovr050, ST_UNDEFINED);
+    NEWG_Select_Labels[2] = Add_Hidden_Field(175, 94, 313, 128, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
 
-    NEWG_Select_Labels[3] = Add_Hidden_Field(175, 129, 313, 162, empty_string__ovr050, ST_UNDEFINED);
+    NEWG_Select_Labels[3] = Add_Hidden_Field(175, 129, 313, 162, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
 
-    NEWG_Select_Labels[4] = Add_Hidden_Field(175, 163, 313, 199, empty_string__ovr050, ST_UNDEFINED);
+    NEWG_Select_Labels[4] = Add_Hidden_Field(175, 163, 313, 199, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
 
-    Escape_Hotkey_Control = Add_Hot_Key(str_ESC__ovr050);
+    Escape_Hotkey_Control = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
 
     Assign_Auto_Function(Newgame_Screen_7_Draw__WIP, 1);
 
@@ -2617,7 +2650,7 @@ int16_t Newgame_Screen_7__WIP(void)
 }
 
 
-// o50p14
+// MGC  o50p14
 // GAME_Draw_NewScr7()
 void Newgame_Screen_7_Draw__WIP(void)
 {
@@ -2695,7 +2728,7 @@ void Newgame_Screen_7_Draw__WIP(void)
 }
 
 
-// o50p15
+// MGC  o50p15
 /*
 
 Module: MOX
@@ -2718,6 +2751,9 @@ Module: RACESEL
     data (0 bytes) _last_race_name
     Address: 02:0019385C
 
+*/
+/*
+New Game Screen 6 
 */
 int16_t Newgame_Screen_6__WIP(void)
 {
@@ -2778,16 +2814,16 @@ int16_t Newgame_Screen_6__WIP(void)
     // ; create the click labels for the arcanus races
     for(itr = 0; itr < 9; itr++)
     {
-        NEWG_Select_Labels[itr] = Add_Hidden_Field(211, (38 + (itr * 10)), 270, (45 + (itr * 10)), empty_string__ovr050, ST_UNDEFINED);
+        NEWG_Select_Labels[itr] = Add_Hidden_Field(211, (38 + (itr * 10)), 270, (45 + (itr * 10)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
     }
 
     // ; create the click labels for the myrran races
     for(itr = 0; itr < 5; itr++)
     {
-        NEWG_Select_Labels[(9 + itr)] = Add_Hidden_Field(211, (147 + (itr * 10)), 270, (154 + (itr * 10)), empty_string__ovr050, ST_UNDEFINED);
+        NEWG_Select_Labels[(9 + itr)] = Add_Hidden_Field(211, (147 + (itr * 10)), 270, (154 + (itr * 10)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
     }
 
-    Escape_Hotkey_Control = Add_Hot_Key(str_ESC__ovr050);
+    Escape_Hotkey_Control = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
 
     Assign_Auto_Function(Newgame_Screen_6_Draw__WIP, 1);
 
@@ -2896,7 +2932,7 @@ int16_t Newgame_Screen_6__WIP(void)
 
                 Set_Font_Colors_15(2, &Shadow_Color[0]);
 
-                Print(221, (39 + (itr2 * 10)), _race_type_table[Arcanus_Races[itr2]].name);
+                Print(221, (39 + (itr2 * 10)), *_race_type_table[Arcanus_Races[itr2]].name);
 
                 if(
                     (itr == 0)
@@ -2914,7 +2950,7 @@ int16_t Newgame_Screen_6__WIP(void)
 
                 }
 
-                Print(220, (38 + (itr2 * 10)), _race_type_table[Arcanus_Races[itr2]].name);
+                Print(220, (38 + (itr2 * 10)), *_race_type_table[Arcanus_Races[itr2]].name);
 
                 itr2 = 9;
 
@@ -2932,7 +2968,7 @@ int16_t Newgame_Screen_6__WIP(void)
 
                 Set_Font_Colors_15(2, &Shadow_Color[0]);
 
-                Print(221, (148 + ((itr2 - 9) * 10)), _race_type_table[Myrran_Races[(itr2 - 9)]].name);
+                Print(221, (148 + ((itr2 - 9) * 10)), *_race_type_table[Myrran_Races[(itr2 - 9)]].name);
 
                 if(
                     (itr == 0)
@@ -2950,7 +2986,7 @@ int16_t Newgame_Screen_6__WIP(void)
 
                 }
 
-                Print(220, (147 + ((itr2 - 9) * 10)), _race_type_table[Myrran_Races[(itr2 - 9)]].name);
+                Print(220, (147 + ((itr2 - 9) * 10)), *_race_type_table[Myrran_Races[(itr2 - 9)]].name);
 
                 itr2 = 14;
 
@@ -2970,7 +3006,7 @@ int16_t Newgame_Screen_6__WIP(void)
 }
 
 
-// o50p16
+// MGC  o50p16
 void Newgame_Screen_6_Draw__WIP(void)
 {
     int16_t Arcanus_Races[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -3169,7 +3205,7 @@ void Newgame_Screen_6_Draw__WIP(void)
 }
 
 
-// o50p17
+// MGC  o50p17
 /*
 ; draws a list of the human player's retorts as a
 ; string into the current draw frame, on the left side,
@@ -3181,7 +3217,7 @@ void Newgame_Screen_6_Draw__WIP(void)
 */
 void GAME_DrawRetortsStr(void)
 {
-    uint8_t Unused_Local_Array[12];
+    uint8_t Unused_Local_Array[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     char Retorts_String[126] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Text_Top = 0;
     int16_t Retorts_Added = 0;
@@ -3199,7 +3235,10 @@ void GAME_DrawRetortsStr(void)
 
     Retort_Colors = COL_NEWG_Retorts2;
 
-    memcpy(CRP_Unused_Array, Unused_Local_Array, 12);
+    // uninitialized local variable 'Unused_Local_Array' used
+    // backwards?  memcpy(CRP_Unused_Array, Unused_Local_Array, 12);
+    // Indeed. But, also, why I had I not initialized Unused_Local_Array[]?
+    memcpy(Unused_Local_Array, CRP_Unused_Array, 12);
 
     Local_Zero = 0;
 
@@ -3265,7 +3304,7 @@ void GAME_DrawRetortsStr(void)
 }
 
 
-// o50p18
+// MGC  o50p18
 /*
 
 ; PATCHED / rewritten in the realm reordering patch
@@ -3343,7 +3382,7 @@ void NEWG_DrawDefShelf__WIP(int16_t wizard_id)
 
 }
 
-// o50p19
+// MGC  o50p19
 /*
 
 */
@@ -3355,10 +3394,10 @@ void Newgame_Screen4__WIP(void)
 }
 
 
-// o50p20
+// MGC  o50p20
 // GAME_Draw_NewScr4()
 
-// o50p21
+// MGC  o50p21
 /*
 
 */
@@ -3370,16 +3409,16 @@ void Newgame_Screen5__WIP(void)
 }
 
 
-// o50p22
+// MGC  o50p22
 // GAME_SpellSel_GUI()
 
-// o50p23
+// MGC  o50p23
 // SCRN_Draw_NewScr5()
 
-// o50p24
+// MGC  o50p24
 // SCRN_Draw_NewScr5_2()
 
-// o50p25
+// MGC  o50p25
 /*
 ; copies the name and profile traits of the selected
 ; default wizard to the human player's wizard record,
@@ -3396,7 +3435,7 @@ void WIZ_CopyDefault__WIP(int16_t wizard_id)
     int16_t itr = 0;  // _SI_
     int16_t spellranks = 0;  // _DI_
 
-    _players[0].wizard_id = wizard_id;
+    _players[0].wizard_id = (uint8_t)wizard_id;
 
     _players[0].spellranks[sbr_Nature] = _wizard_presets_table[wizard_id].nature;
     _players[0].spellranks[sbr_Sorcery]= _wizard_presets_table[wizard_id].sorcery;
@@ -3527,16 +3566,16 @@ void WIZ_CopyDefault__WIP(int16_t wizard_id)
 }
 
 
-// o50p26
+// MGC  o50p26
 // Fade_Out()
 
-// o50p27
+// MGC  o50p27
 // VGA_Fade_In()
 
-// o50p28
+// MGC  o50p28
 // Set_Load_Screen_Help_List_MGC()
 
-// o50p29
+// MGC  o50p29
 // drake178: HLP_Load_NewGOptions()
 /*
 loads and sets the GUI help entry area array for the
@@ -3558,7 +3597,7 @@ void Set_Newgame_Screen_0_Help_List(void)
 }
 
 
-// o50p30
+// MGC  o50p30
 // HLP_Load_BannerSel()
 /*
 
@@ -3573,7 +3612,7 @@ void Set_Newgame_Screen_7_Help_List(void)
 
 }
 
-// o50p31
+// MGC  o50p31
 // HLP_Load_PortraitSel()
 /* 
 ; loads and sets the GUI help entry area array for the
@@ -3583,14 +3622,14 @@ void Set_Newgame_Screen_2_Help_List(void)
 {
 
     // HLPENTRY.LBX, 031  ""  "Wizard Picture Select"
-    LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 31, _help_entries, 0, 1, 10);
+    LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 31, (SAMB_ptr)_help_entries, 0, 1, 10);
 
     Set_Help_List(_help_entries, 1);
 
 }
 
 
-// o50p32
+// MGC  o50p32
 /*
 ; loads and sets the GUI help entry area array for the
 ; wizard selection screen
@@ -3602,7 +3641,7 @@ void Set_Newgame_Screen_1_Help_List(int16_t has_custom)
 {
 
     // HLPENTRY.LBX, 032  ""  "Wizard Selection Help"
-    LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 32, _help_entries, 0, 15, 10);
+    LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 32, (SAMB_ptr)_help_entries, 0, 15, 10);
 
     if(has_custom != ST_FALSE)
     {
@@ -3614,22 +3653,22 @@ void Set_Newgame_Screen_1_Help_List(int16_t has_custom)
 }
 
 
-// o50p33
+// MGC  o50p33
 // HLP_Load_WizCreate()
 
-// o50p34
+// MGC  o50p34
 // HLP_Load_RaceSel()
 void Set_Newgame_Screen_6_Help_List(void)
 {
 
     // HLPENTRY.LBX, 035  ""  "Wizard Race Help"
-    LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 35, _help_entries, 0, 14, 10);
+    LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 35, (SAMB_ptr)_help_entries, 0, 14, 10);
 
     Set_Help_List(_help_entries, 14);
 
 }
 
-// o50p35
+// MGC  o50p35
 void STR_ListSeparator(int16_t * List_Size, int16_t Total, char * Dest)
 {
 
@@ -3639,7 +3678,7 @@ void STR_ListSeparator(int16_t * List_Size, int16_t Total, char * Dest)
     {
         if(*List_Size > 1)
         {
-            strcat(*Dest, cnst_And__ovr050);
+            strcat(Dest, &cnst_And__ovr050[0]);
         }
 
     }
@@ -3647,7 +3686,7 @@ void STR_ListSeparator(int16_t * List_Size, int16_t Total, char * Dest)
     {
         if(*List_Size > 1)
         {
-            strcat(*Dest, cnst_Pick_Error_29);
+            strcat(Dest, &cnst_Pick_Error_29[0]);
         }
 
     }
@@ -3655,11 +3694,11 @@ void STR_ListSeparator(int16_t * List_Size, int16_t Total, char * Dest)
 }
 
 
-// o50p36
+// MGC  o50p36
 // CRP_Empty_Dialog_Fn2()
 
-// o50p37
+// MGC  o50p37
 // CRP_Empty_Dialog_Fn1()
 
-// o50p38
+// MGC  o50p38
 // Do_Toggle_Pages()

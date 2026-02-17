@@ -23,7 +23,7 @@ enum e_RACE_TYPE
     rt_Gnoll      = 5,
     rt_Halfling   = 6,
     rt_High_Elf   = 7,
-    rt_High_Man   = 8,
+    rt_High_Men   = 8,
     rt_Klackon    = 9,
     rt_Lizardman  = 10,
     rt_Nomad      = 11,
@@ -43,7 +43,7 @@ enum e_RACE_TYPE
 // sizeof=0x18  24
 struct s_RACE_TYPE
 {
-    /* 00 */ char ** name;
+    /* 00 */ char ** name;  // pass to Print(), etc. like `*_race_type_table[Arcanus_Races[itr2]].name` (deref ** to *), not `&_race_type_table[Arcanus_Races[itr2]].name[0]`, which is a char**
     /* 02 */ int16_t cant_build_count;
     /* 04 */ int16_t cant_build[7];  // enum BLD_TYPE
     /* 12 */ int16_t outpost_growth_rate;  // base 10

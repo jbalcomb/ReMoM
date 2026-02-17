@@ -20,8 +20,8 @@ everything after this is Tundra
 ~ < 'Tundra Range'
 
 >= _Grasslands1  0xA2
->= TT_Shore1_1st  = 2
-<  TT_Shore1_end  = 0A1h
+>= tt_Shore1_Fst  = 2
+<  tt_Shore1_Lst  = 0A1h
 ~ > 'Shore1 Range'
 
 ~ < 'Shore3 Range'
@@ -83,10 +83,10 @@ used in NEWG_SetSpecLands()
 enum e_TERRAIN_TYPES
 {
     tt_Ocean1      = 0x0,
-    TT_BugGrass    = 0x1,
-    TT_Shore1_1st  = 0x2,
+    tt_BugGrass    = 0x1,
+    tt_Shore1_Fst  = 0x2,
     TT_Lake        = 0x12,
-    TT_Shore1_end  = 0x0A1,  /* 161 */
+    tt_Shore1_Lst  = 0x0A1,  /* 161 */
     tt_Grasslands1 = 0x0A2,
     tt_Forest1     = 0x0A3,
     tt_Mountain1   = 0x0A4,
@@ -116,28 +116,39 @@ enum e_TERRAIN_TYPES
     TT_Lake2       = 0x0C6,
     TT_Lake3       = 0x0C7,
     TT_Lake4       = 0x0C8,
-    TT_Shore2F_1st = 0xC9,
+
+    TT_Shore2F_1st = 0xC9,  // 201
     TT_Shore2F_end = 0xE8,
+
     TT_Rivers_1st  = 0x0E9,
     tt_Rivers_end  = 0x102,
-    TT_Mntns_1st   = 0x103,
-    tt_Mntns_end   = 0x112,
-    tt_Hills_1st   = 0x113,
-    tt_Hills_end   = 0x123,
-    tt_Desert_1st  = 0x124,
-    TT_Desert_end  = 0x1C3,
-    tt_Shore2_1st  = 0x1C4,
+
+    tt_Mountains_Fst = 0x103,
+    tt_Mountains_Lst = 0x112,
+
+    tt_Hills_Fst   = 0x113,
+    tt_Hills_Lst   = 0x123,
+
+    tt_Desert_Fst  = 0x124,  // 292
+    tt_Desert_Lst  = 0x1C3,  // 451
+
+    tt_Shore2_1st  = 0x1C4,  // 452
     TT_Shore2_end  = 0x1D3,
+
     TT_4WRiver1    = 0x1D4,
     TT_4WRiver2    = 0x1D5,
     TT_4WRiver3    = 0x1D6,
     TT_4WRiver4    = 0x1D7,
     TT_4WRiver5    = 0x1D8,
+
     TT_Shore3_1st  = 0x1D9,
     TT_Shore3_end  = 0x258,
-    TT_Ocean2      = 0x259,
+
+    tt_Ocean2      = 0x259,  // 601
+
     tt_Tundra_1st  = 0x25A,
     TT_Tundra_Last = 0x2F9,
+    
     TerType_Count  = 0x2F
 };
 
@@ -182,10 +193,10 @@ enum e_TERRAIN_TYPES
 //     tt_Rivers_1st     = 233,
 //     tt_Rivers_end     = 258,
 //     tt_Mntns_1st      = 259,
-//     tt_Mntns_end      = 274,
-//     tt_Hills_1st      = 275,
-//     tt_Hills_end      = 291,
-//     tt_Desert_1st     = 292,
+//     tt_Mountains_Lst      = 274,
+//     tt_Hills_Fst      = 275,
+//     tt_Hills_Lst      = 291,
+//     tt_Desert_Fst     = 292,
 //     tt_Desert_end     = 451,
 //     tt_Shore2_1st     = 452,
 //     tt_Shore2_end     = 467,
@@ -218,7 +229,7 @@ Square_Is_Sailable()
     if(terrain_type > 0xE8)     / * _Shore000R0000 * /
     if(terrain_type > 0xC4)     / * _River1001_2 * /
     if(terrain_type > 0xA1)     / * _Shore10101111 * /
-    if(terrain_type == 0x1  e_TT_BugGrass AKA TT_BugGrass
+    if(terrain_type == 0x1  e_TT_BugGrass AKA tt_BugGrass
 
 
 enum OVL_Tiles_Extended

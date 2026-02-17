@@ -32,7 +32,6 @@
 #include "../../MoX/src/MOM_DEF.h"
 #include "RACETYPE.h"
 #include "SBookScr.h"
-#include "../../STU/src/STU_CHK.h"
 #include "Spells129.h"
 #include "UNITTYPE.h"   // WTFMATE
 #include "WZD_o059.h"
@@ -567,7 +566,7 @@ void Determine_Event(void)
                 for(itr_troops = 0; ((itr_troops < troop_count) && (event_type == et_Rebellion)); itr_troops++)
                 {
 
-                    if(_unit_type_table[_UNITS[troops[itr_troops]].type].Race < rt_Arcane)
+                    if(_unit_type_table[_UNITS[troops[itr_troops]].type].race_type < rt_Arcane)
                     {
 
                         Normal_Units++;
@@ -884,21 +883,21 @@ void Determine_Event(void)
 */
 void Event_Twiddle(void)
 {
-    int16_t item_list[18];
-    int16_t troops[MAX_STACK];
-    int16_t item_count;
-    int16_t troop_count;
-    int16_t city_population;
-    int16_t terrain_special;
-    int16_t wp;
-    int16_t wy;
-    int16_t wx;
-    int16_t post_event_troop_count;
-    uint8_t * ptr_players_globals;
-    int16_t player_idx;
-    int16_t itr_globals;
-    int16_t itr_players;  // _SI_
-    int16_t city_idx;  // _DI_
+    int16_t item_list[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t item_count = 0;
+    int16_t troop_count = 0;
+    int16_t city_population = 0;
+    int16_t terrain_special = 0;
+    int16_t wp = 0;
+    int16_t wy = 0;
+    int16_t wx = 0;
+    int16_t post_event_troop_count = 0;
+    uint8_t * ptr_players_globals = 0;
+    int16_t player_idx = 0;
+    int16_t itr_globals = 0;
+    int16_t itr_players = 0;  // _SI_
+    int16_t city_idx = 0;  // _DI_
 
 
 
@@ -1053,10 +1052,10 @@ void Event_Twiddle(void)
         {
             if(_UNITS[troops[itr_players]].owner_idx != ST_UNDEFINED)
             {
-                _UNITS[troops[itr_players]].owner_idx = player_idx;
+                _UNITS[troops[itr_players]].owner_idx = (int8_t)player_idx;
             }
         }
-        _CITIES[city_idx].owner_idx = player_idx;
+        _CITIES[city_idx].owner_idx = (int8_t)player_idx;
         _CITIES[city_idx].construction = bt_TradeGoods;
         _CITIES[city_idx].Prod_Accu = 0;
         _CITIES[city_idx].sold_building = ST_FALSE;
@@ -1167,7 +1166,6 @@ void Event_Twiddle(void)
             if(_CITIES[events_table->Plague_Data].population > 2)
             {
                 _CITIES[events_table->Plague_Data].population -= 1;
-Capture_Cities_Data();
             }
         }
         if(events_table->Plague_Status == 1)
@@ -1226,10 +1224,9 @@ Capture_Cities_Data();
 
         Army_At_City(m_event_city_idx, &post_event_troop_count, &troops[0]);
 
-Check_Game_Data();
         for(itr_players = 0; itr_players < post_event_troop_count; itr_players++)
         {
-            if(_unit_type_table[_UNITS[troops[itr_players]].type].Race < rt_Arcane)
+            if(_unit_type_table[_UNITS[troops[itr_players]].type].race_type < rt_Arcane)
             {
                 _UNITS[troops[itr_players]].owner_idx = NEUTRAL_PLAYER_IDX;
             }
@@ -1238,13 +1235,8 @@ Check_Game_Data();
                 Dismiss_Unit(troops[itr_players]);
             }
         }
-Capture_Units_Data();
-Check_Game_Data();
 
-Check_Game_Data();
         Change_City_Ownership(m_event_city_idx, NEUTRAL_PLAYER_IDX);
-Capture_Cities_Data();
-Check_Game_Data();
 
         Show_Event_Message();
     }
@@ -1762,24 +1754,24 @@ void Get_Event_Message(void)
             case 0:
             {
                 strcpy(&m_event_message[IDK], _CITIES[m_event_city_idx].name);
-                IDK = strlen(m_event_message);
+                IDK = (int16_t)strlen(m_event_message);
             } break;
             case 1:
             {
                 strcpy(&m_event_message[IDK], _CITIES[EVNT_MsgDataValue].name);
-                IDK = strlen(m_event_message);
+                IDK = (int16_t)strlen(m_event_message);
             } break;
             case 2:
             {
                 strcpy(&m_event_message[IDK], _city_size_names[_CITIES[EVNT_MsgDataValue].size]);
-                IDK = strlen(m_event_message);
+                IDK = (int16_t)strlen(m_event_message);
             } break;
             case 3:
             {
                 m_event_message[IDK] = 0;
                 SDL_itoa(EVNT_MsgDataValue, temp_string, 10);
                 strcat(m_event_message, temp_string);
-                IDK = strlen(m_event_message);
+                IDK = (int16_t)strlen(m_event_message);
             } break;
             // case 4:
             // case 5:
@@ -1790,22 +1782,22 @@ void Get_Event_Message(void)
             {
                 m_event_message[IDK] = 0;
                 strcat(m_event_message, TBL_EVNT_OreNames[EVNT_MsgDataValue]);
-                IDK = strlen(m_event_message);
+                IDK = (int16_t)strlen(m_event_message);
             } break;
             case 10:
             {
                 strcpy(&m_event_message[IDK], _ITEMS[EVNT_MsgDataValue].name);
-                IDK = strlen(m_event_message);
+                IDK = (int16_t)strlen(m_event_message);
             } break;
             case 11:
             {
                 strcpy(&m_event_message[IDK], _city_size_names[_CITIES[m_event_city_idx].size]);
-                IDK = strlen(m_event_message);
+                IDK = (int16_t)strlen(m_event_message);
             } break;
             case 12:
             {
                 strcpy(&m_event_message[IDK], _players[m_event_player_idx].name);
-                IDK = strlen(m_event_message);
+                IDK = (int16_t)strlen(m_event_message);
             } break;
             // case 13:
             // case 14:
@@ -1822,7 +1814,7 @@ void Get_Event_Message(void)
                     m_event_message[IDK] = 0;
                     strcat(&m_event_message[0], cnst_EventMsg_1);  // "no"
                 }
-                IDK = strlen(m_event_message);
+                IDK = (int16_t)strlen(m_event_message);
             } break;
             case 16:
             {
@@ -1838,7 +1830,7 @@ void Get_Event_Message(void)
                     m_event_message[IDK] = 0;
                     strcat(&m_event_message[0], cnst_EventMsg_1);  // "no"
                 }
-                IDK = strlen(m_event_message);
+                IDK = (int16_t)strlen(m_event_message);
             } break;
             case 17:
             {
@@ -1853,7 +1845,7 @@ void Get_Event_Message(void)
                     m_event_message[IDK] = 0;
                     strcat(&m_event_message[0], cnst_EventMsg_1);  // "no"
                 }
-                IDK = strlen(m_event_message);
+                IDK = (int16_t)strlen(m_event_message);
             } break;
             // case 18:
             case 19:
@@ -1866,7 +1858,7 @@ void Get_Event_Message(void)
                 {
                     m_event_message[IDK] = 0;
                     strcat(&m_event_message[0], cnst_EventMsg_3);
-                    IDK = strlen(m_event_message);
+                    IDK = (int16_t)strlen(m_event_message);
                 }
             } break;
             case 20:
@@ -1879,7 +1871,7 @@ void Get_Event_Message(void)
                 {
                     m_event_message[IDK] = 0;
                     strcat(&m_event_message[0], cnst_EventMsg_3);
-                    IDK = strlen(m_event_message);
+                    IDK = (int16_t)strlen(m_event_message);
                 }
             } break;
             default:
@@ -1909,12 +1901,12 @@ void Get_Event_Message(void)
 */
 int16_t Get_Event_Victim(int16_t event_type)
 {
-    int16_t wizard_power[NUM_PLAYERS];
-    int16_t In_RNG_Range;
-    int16_t victim_idx;
-    int16_t Weights_Remainder;
-    int16_t itr;  // _SI_
-    int16_t IDK;  // _DI_
+    int16_t wizard_power[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int16_t In_RNG_Range = 0;
+    int16_t victim_idx = 0;
+    int16_t Weights_Remainder = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t IDK = 0;  // _DI_
 
     for(itr = 0; itr < NUM_PLAYERS; itr++)
     {

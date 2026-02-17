@@ -18,8 +18,6 @@ input?
 
 */
 
-#define _CRT_SECURE_NO_WARNINGS
-
 #include "STU_DBG.h"
 #include "STU_WAV.h"
 

@@ -236,7 +236,7 @@ void Apply_Wrack(int16_t player_idx)
                 if(Combat_Resistance_Check(battle_units[itr1], 1, sbr_Death) > 0)
                 {
 
-                    Damaged_Unit_Array[figure_ctr] = itr1;
+                    Damaged_Unit_Array[figure_ctr] = (int8_t)itr1;
 
                     Damage_Per_Unit_Array[itr1] += 1;
 
@@ -1209,7 +1209,7 @@ void Vortex_Move_Screen_Assign_Mouse_Images(int vortex_idx)
 void Vortex_Move_Screen(int vortex_idx)
 {
     int16_t target_cgy = 0;
-    int64_t grid_sx = 0;
+    int64_t grid_sx = 0; // TODO  explain why int64_t here
     int64_t grid_sy = 0;
     int16_t combat_grid_field = 0;
     int16_t input_field_idx = 0;
@@ -1241,8 +1241,8 @@ void Vortex_Move_Screen(int vortex_idx)
             if(input_field_idx == combat_grid_field)
             {
 
-                target_cgx = Get_Combat_Grid_Cell_X(grid_sx + 4, grid_sy + 4);
-                target_cgy = Get_Combat_Grid_Cell_Y(grid_sx + 4, grid_sy + 4);
+                target_cgx = Get_Combat_Grid_Cell_X((int16_t)(grid_sx + 4), (int16_t)(grid_sy + 4));
+                target_cgy = Get_Combat_Grid_Cell_Y((int16_t)(grid_sx + 4), (int16_t)(grid_sy + 4));
 
                 if(
                     (_vortexes[vortex_idx].cgx != target_cgx)
