@@ -1,0 +1,9 @@
+{
+    "name": "(ctest) Launch",
+    "type": "cppvsdbg",
+    "request": "launch",
+    "presentation": { "hidden": true },
+    // Resolved by CMake Tools:
+    "program": "${cmake.testProgram}",
+    "args": [ "${cmake.testArgs}"],
+}

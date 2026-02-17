@@ -11,7 +11,9 @@ MoO2
     Module: MAPGEN
 */
 
-#include "MAPGEN.h"
+#ifdef STU_DEBUG
+#include "../../STU/src/STU_DBG.h"
+#endif
 
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
@@ -39,6 +41,8 @@ MoO2
 
 #include <assert.h>     /* assert() */
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
+
+#include "MAPGEN.h"
 
 #include "../../MoM/src/MovePath.h"  /* struct s_MOVE_MODE_COST_MAPS */
 // MOM_Data.c./h but also MovePath.h
@@ -5860,6 +5864,8 @@ Terrain.c
 // WZD s161p03
 int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
 
+traced with terrain_type == tt_Grasslands1
+
 */
 int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
@@ -5867,6 +5873,13 @@ int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp)
     int16_t food_units = 0;  // _CX_
 
     terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+// #ifdef STU_DEBUG
+//     if(terrain_type == tt_Grasslands1)
+//     {
+//         STU_DEBUG_BREAK();
+//     }
+// #endif
 
     if(
         (terrain_type == tt_Ocean1)
@@ -6044,6 +6057,19 @@ int16_t City_Maximum_Size_NewGame(int16_t wx, int16_t wy, int16_t wp)
     int16_t city_area_squares = 0;  // AKA useable_map_squares
     int16_t city_area_food_units = 0;  // _DI_  AKA food2_units
     int16_t itr = 0;  // _SI_
+
+#ifdef STU_DEBUG
+    if(
+        (wx == 30)
+        &&
+        (wx == 20)
+        &&
+        (wp ==  0)
+    )
+    {
+        STU_DEBUG_BREAK();
+    }
+#endif
 
     city_area_squares = Get_Useable_City_Area_NewGame(wx, wy, wp, &wx_array[0], &wy_array[0]);
 
