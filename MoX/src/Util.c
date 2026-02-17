@@ -85,7 +85,7 @@ void Clear_Screens(void)
 // MoO2  Module: strings  String_To_Upper()
 void String_To_Upper(char * string)
 {
-    int16_t itr;
+    int16_t itr = 0;
 
     itr = 0;
     while(string[itr] != '\0')
@@ -93,7 +93,7 @@ void String_To_Upper(char * string)
 
         if(
             (string[itr] >= 'a')
-            ||
+            &&
             (string[itr] <= 'z')
         )
         {
@@ -111,7 +111,7 @@ void String_To_Upper(char * string)
 // MoO2  Module: strings  String_To_Lower()
 void String_To_Lower(char * string)
 {
-    int16_t itr;
+    int16_t itr = 0;
 
     itr = 0;
     while(string[itr] != '\0')
@@ -119,7 +119,7 @@ void String_To_Lower(char * string)
 
         if(
             (string[itr] >= 'A')
-            ||
+            &&
             (string[itr] <= 'Z')
         )
         {

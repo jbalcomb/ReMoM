@@ -38,10 +38,6 @@ enum e_SA_Allocation_Type
     sa_Invalid
 };
 
-extern uint16_t _AAAA;  // 43690
-extern uint16_t _BBBB;  // 48059
-extern uint16_t _CCCC;  // 52428
-
 #define SAMB_RESERVED1   0
 #define SAMB_RESERVED2   2
 #define SAMB_MEMSIG1     4
@@ -50,11 +46,6 @@ extern uint16_t _CCCC;  // 52428
 #define SAMB_USED       10
 #define SAMB_unknown    12
 #define SAMB_MARK       14
-
-// #define SA_MEMSIG1      0x12FA
-// #define SA_MEMSIG2      0x4ECF
-extern uint16_t _SA_MEMSIG1;
-extern uint16_t _SA_MEMSIG2;
 
 #define SA_GET_MEMSIG1(_SAMB_head_) ( GET_2B_OFS((_SAMB_head_), SAMB_MEMSIG1) )
 #define SA_GET_MEMSIG2(_SAMB_head_) ( GET_2B_OFS((_SAMB_head_), SAMB_MEMSIG2) )
@@ -74,6 +65,19 @@ extern uint16_t _SA_MEMSIG2;
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+// Memory signature and marker variables (must have C linkage)
+extern uint16_t _AAAA;  // 43690
+extern uint16_t _BBBB;  // 48059
+extern uint16_t _CCCC;  // 52428
+
+// #define SA_MEMSIG1      0x12FA
+// #define SA_MEMSIG2      0x4ECF
+extern uint16_t _SA_MEMSIG1;
+extern uint16_t _SA_MEMSIG2;
+
+// for testing purposes only
+extern SAMB_ptr tmp_SAMB_head;  // rename - ?pTmpSAMB?, g_header, tmp_header_ptr, _header_ptr, ?!?
 
 
 
