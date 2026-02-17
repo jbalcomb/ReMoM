@@ -4,10 +4,32 @@
 include(GoogleTest)
 
 add_executable(hello_test hello_test.cpp)
-
 target_link_libraries(hello_test GTest::gtest_main)
-
 gtest_discover_tests(hello_test)
+
+if(WIN32)
+    add_custom_command(
+        TARGET hello_test
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${SDL2_DLL_FILE_PATH}
+            $<TARGET_FILE_DIR:hello_test>
+        COMMAND_EXPAND_LISTS
+        COMMENT "./MoX/tests: Copying SDL2.dll"
+    )
+endif()
+
+if(WIN32)
+    add_custom_command(
+        TARGET hello_test
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy 
+            ${SDL2_MIXER_DLL_FILE_PATH}
+            $<TARGET_FILE_DIR:hello_test>
+        COMMAND_EXPAND_LISTS
+        COMMENT "./MoX/tests: Copying SDL2_mixer.dll"
+    )
+endif()
 
 # Test mocks library (used by isolated unit tests that don't link whole MoM/MOX)
 add_library(test_mocks STATIC

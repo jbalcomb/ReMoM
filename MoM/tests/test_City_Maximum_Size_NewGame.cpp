@@ -77,7 +77,13 @@ protected:
 TEST_F(City_Maximum_Size_NewGame_test, AllOcean_ReturnsZero)
 {
     // Arrange
-    // _world_maps already zeroed to tt_Ocean1
+    for (int16_t wy = 0; wy < WORLD_HEIGHT; wy++)
+    {
+        for (int16_t wx = 0; wx < WORLD_WIDTH; wx++)
+        {
+            Set_Terrain(wx, wy, ARCANUS_PLANE, tt_Ocean1);
+        }
+    }
 
     // Act
     int16_t result = City_Maximum_Size_NewGame(30, 20, ARCANUS_PLANE);
@@ -90,6 +96,18 @@ TEST_F(City_Maximum_Size_NewGame_test, AllOcean_ReturnsZero)
 // All Grasslands: each city area square yields food2 = 3
 // At (30,20) on Arcanus, the full 21-square diamond is in bounds
 // max pop = (21 * 3) / 2 = 63 / 2 = 31
+/*
+All Grasslands
+wx              wy
+   17,18,19     33
+16,17,18,19,20  34
+16,17,18,19,20  36
+16,17,18,19,20  37
+   17,18,19     38
+3 + 5 + 5 + 5 + 3 = 21 squares
+21 map square at 3 food per tt_Grasslands1 = 63 food total
+63 / 2 = 31 max population
+*/
 TEST_F(City_Maximum_Size_NewGame_test, AllGrasslands_Returns31)
 {
     // Arrange
