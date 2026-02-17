@@ -9,16 +9,6 @@
 #include "../src/MOX_BASE.h"
 #include "../src/MOX_TYPE.h"
 
-// External declarations needed for testing
-extern uint16_t _SA_MEMSIG1;
-extern uint16_t _SA_MEMSIG2;
-extern uint16_t _AAAA;
-extern uint16_t _BBBB;
-extern uint16_t _CCCC;
-extern int16_t near_buffer_used;
-extern int16_t near_buffer_mark;
-extern char near_buffer[];
-
 // Test fixture for Allocate tests
 class AllocateTest : public ::testing::Test {
 protected:
@@ -36,25 +26,23 @@ protected:
 // Allocate_Space Tests
 // ==============================================================================
 
-TEST_F(AllocateTest, Allocate_Space_NormalAllocation) {
+TEST_F(AllocateTest, Allocate_Space_NormalAllocation)
+{
     uint16_t size = 100;
     SAMB_ptr block = Allocate_Space(size);
     
     // Verify allocation succeeded
     ASSERT_NE(block, nullptr);
     
-    // Verify memory signatures
+    // Verify block header fields
+    EXPECT_EQ(GET_2B_OFS((block), SAMB_RESERVED1), _AAAA);
+    EXPECT_EQ(GET_2B_OFS((block), SAMB_RESERVED2), _AAAA);
     EXPECT_EQ(SA_GET_MEMSIG1(block), _SA_MEMSIG1);
     EXPECT_EQ(SA_GET_MEMSIG2(block), _SA_MEMSIG2);
-    
-    // Verify size and used fields
     EXPECT_EQ(SA_GET_SIZE(block), size);
     EXPECT_EQ(SA_GET_USED(block), 1);
-    
-    // Verify AAAA markers at offsets 0-14
-    for (int i = 0; i < 16; i += 2) {
-        EXPECT_EQ(GET_2B_OFS(block, i), _AAAA) << "AAAA marker at offset " << i;
-    }
+    EXPECT_EQ(GET_2B_OFS((block), SAMB_unknown), _AAAA);
+    EXPECT_EQ(GET_2B_OFS((block), SAMB_MARK), _AAAA);
     
     free(block);
 }
@@ -150,32 +138,33 @@ TEST_F(AllocateTest, Check_Allocation_InvalidSignature2) {
 // Allocate_First_Block Tests
 // ==============================================================================
 
-TEST_F(AllocateTest, Allocate_First_Block_Success) {
+TEST_F(AllocateTest, Allocate_First_Block_Success)
+{
     uint16_t main_size = 100;
     uint16_t sub_size = 20;
     
     SAMB_ptr main_block = Allocate_Space(main_size);
+
     ASSERT_NE(main_block, nullptr);
     
     SAMB_ptr sub_block = Allocate_First_Block(main_block, sub_size);
+
     ASSERT_NE(sub_block, nullptr);
     
     // Verify main block was updated
     EXPECT_EQ(SA_GET_USED(main_block), 1 + (1 + sub_size));
     
     // Verify sub-block header (16 bytes before sub_block)
-    SAMB_ptr sub_header = sub_block - 16;
+    SAMB_ptr sub_header = sub_block - SZ_PARAGRAPH_B;
+    EXPECT_EQ(GET_2B_OFS((sub_header), SAMB_RESERVED1), _BBBB);
+    EXPECT_EQ(GET_2B_OFS((sub_header), SAMB_RESERVED2), _BBBB);
     EXPECT_EQ(SA_GET_MEMSIG1(sub_header), _SA_MEMSIG1);
     EXPECT_EQ(SA_GET_MEMSIG2(sub_header), _SA_MEMSIG2);
     EXPECT_EQ(SA_GET_SIZE(sub_header), sub_size);
     EXPECT_EQ(SA_GET_USED(sub_header), 1);
+    EXPECT_EQ(GET_2B_OFS((sub_header), SAMB_unknown), _BBBB);
     EXPECT_EQ(SA_GET_MARK(sub_header), 1);
-    
-    // Verify BBBB markers in sub-header
-    for (int i = 0; i < 16; i += 2) {
-        EXPECT_EQ(GET_2B_OFS(sub_header, i), _BBBB) << "BBBB marker at offset " << i;
-    }
-    
+
     free(main_block);
 }
 
@@ -222,16 +211,15 @@ TEST_F(AllocateTest, Allocate_Next_Block_AfterFirst) {
     
     // Verify next block header
     SAMB_ptr next_header = next_block - 16;
+    EXPECT_EQ(GET_2B_OFS((next_header), SAMB_RESERVED1), _CCCC);
+    EXPECT_EQ(GET_2B_OFS((next_header), SAMB_RESERVED2), _CCCC);
     EXPECT_EQ(SA_GET_MEMSIG1(next_header), _SA_MEMSIG1);
     EXPECT_EQ(SA_GET_MEMSIG2(next_header), _SA_MEMSIG2);
     EXPECT_EQ(SA_GET_SIZE(next_header), next_size);
     EXPECT_EQ(SA_GET_USED(next_header), 1);
-    
-    // Verify CCCC markers in next block header
-    for (int i = 0; i < 16; i += 2) {
-        EXPECT_EQ(GET_2B_OFS(next_header, i), _CCCC) << "CCCC marker at offset " << i;
-    }
-    
+    EXPECT_EQ(GET_2B_OFS((next_header), SAMB_unknown), _CCCC);
+    EXPECT_EQ(GET_2B_OFS((next_header), SAMB_MARK), _CCCC);
+
     free(main_block);
 }
 
@@ -411,16 +399,24 @@ TEST_F(AllocateTest, Near_Allocate_MultipleAllocations) {
 // Allocate_Space_No_Header Tests
 // ==============================================================================
 
-TEST_F(AllocateTest, Allocate_Space_No_Header_Success) {
+TEST_F(AllocateTest, Allocate_Space_No_Header_Success)
+{
     uint16_t size = 50;
+
     SAMB_ptr block = Allocate_Space_No_Header(size);
     
     ASSERT_NE(block, nullptr);
     
-    // This version returns data pointer, not header pointer
-    // Should have 12-byte offset from tmp_SAMB_head based on implementation
+    // Capture the base pointer immediately after allocation
+    // before tmp_SAMB_head could be overwritten by another call
+    SAMB_ptr base_ptr = tmp_SAMB_head;
     
-    free(block - 12);  // Need to free from actual malloc'd address
+    // This version returns data pointer at offset +12 from the allocated base
+    // Verify the offset is correct
+    EXPECT_EQ(block, base_ptr + 12);
+    
+    // Free from the actual malloc'd address
+    free(base_ptr);
 }
 
 // ==============================================================================

@@ -22,7 +22,8 @@
 # Use "--rerun-failed --output-on-failure" to re-run the failed cases verbosely.
 # ctest --preset=MSVC-debug --rerun-failed --output-on-failure
 
-cmake_minimum_required(VERSION 3.22)
+# cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 4.2)
 
 project(
     ReMoM
@@ -54,6 +55,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 enable_testing()
 # endif()
 
+# Modern CMake
+#"cacheVariables": {
+#    "TOTES_DEBUG": "TOTES_TRUE"
+#}
+# # Check if the variable was set by the preset
+# if(TOTES_DEBUG)
+#     target_compile_definitions(
+#         ReMoM
+#         PRIVATE
+#         "STU_DEBUG=TRUE"
+#     )
+# endif()
+
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/sdl2)
 
 set(BUILD_SHARED_LIBS OFF)
@@ -76,13 +90,7 @@ find_package(Doxygen COMPONENTS doxygen dot)
 if (DOXYGEN_FOUND)
     message(STATUS "Doxygen found. Generating documentation.")
     set(DOXYGEN_GENERATE_HTML YES)
-    set(DOXYGEN_INPUT ${PROJECT_SOURCE_DIR}/src) # Adjust input path as needed
-    set(DOXYGEN_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/doc)
-    doxygen_add_docs(
-        docs
-        ${DOXYGEN_INPUT}
-        CONFIG_FILE_TEMPLATE ${PROJECT_SOURCE_DIR}/Doxyfile.in # Use if you created Doxyfile.in
-    )
+    doxygen_add_docs(ReMoM)
 else()
     message(STATUS "Doxygen not found. Documentation will not be generated.")
 endif()

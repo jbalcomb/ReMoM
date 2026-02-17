@@ -271,13 +271,24 @@ int MOM_main(int argc, char** argv)
     if(DIR(str_CONFIG_MOM, found_file) == 0)
     {
         
-        Exit_With_Message(str_CONFIG_MOM_ERROR);
-
+        // TODO  if PLATFORM-MSDOS Exit_With_Message(str_CONFIG_MOM_ERROR);
+        config_mom.MIDI_IO = 0;
+        config_mom.MIDI_ID = 0; 
+        config_mom.MIDI_IRQ = 0;
+        config_mom.DIGI_IO = 0;
+        config_mom.DIGI_IRQ = 0;
+        config_mom.DIGI_DMA = 0;
+        config_mom.DIGI_ID = 0;
+        config_mom.NIU_0E = 0;
+        config_mom.NIU_10 = 0;
+        config_mom.NIU_12 = 0;
     }
-
-    file_handle = fopen(str_CONFIG_MOM, str_RB);
-    fread(&config_mom, sizeof(struct s_CONFIG_MOM_18), 1, file_handle);
-    fclose(file_handle);
+    else
+    {
+        file_handle = fopen(str_CONFIG_MOM, str_RB);
+        fread(&config_mom, sizeof(struct s_CONFIG_MOM_18), 1, file_handle);
+        fclose(file_handle);
+    }
 
     Load_MAGIC_SET();
 
