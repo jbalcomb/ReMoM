@@ -4539,6 +4539,7 @@ void Update_Defender_Hostility(int attacker_player_idx, int defender_player_idx)
 ; the Combat_Enchants@ allocation for both players
 */
 /*
+sets icon and help
 
 special treatment for 'Counter Magic'
 
@@ -21877,6 +21878,18 @@ srat_DeathGaze
 
 ¿ uses enum mr_ or enum sbr_ ?
 */
+/**
+ * @brief Determines the magic realm associated with a battle unit's attack type.
+ *
+ * Maps attack types (rock, lightning, fireball, etc.) to their corresponding magic realms.
+ * For non-magical attacks (rat_NONE), returns the magic realm based on the unit's racial affiliation.
+ * Physical attacks with no magical component return sbr_NONE.
+ *
+ * @param attack_type The attack type (e.g., rat_Lightning, rat_Fireball, rat_Sorcery).
+ * @param battle_unit_idx Index of the battle unit performing the attack.
+ *
+ * @return The spell school/magic realm (sbr_*) associated with the attack, or ST_UNDEFINED if unknown.
+ */
 int16_t Battle_Unit_Attack_Magic_Realm(int16_t attack_type, int16_t battle_unit_idx)
 {
     int16_t sw_attack_type = 0;
@@ -21997,6 +22010,19 @@ Drapes a shroud of darkness over the entire battlefield, inspiring creatures of 
     handles Cloud of Darkness, City Walls, Holy Bonus, Leadershipd, Prayer Master/Resistance to All
 
 */
+/**
+ * @brief Calculates and applies various battlefield bonuses and enchantment effects.
+ *
+ * Processes global enchantments (Eternal Night, Heavenly Light) and hero abilities (Prayer Master,
+ * Resistance to All, Leadership, Holy Bonus) to update battlefield bonuses for all players and units.
+ * Updates combat enchantment arrays and hero ability bonuses based on battle unit states and city conditions.
+ *
+ * @param combat_structure Combat structure type (e.g., cs_City for city combat).
+ *
+ * @note Updates global arrays: _battlefield_holybonus[], _battlefield_resistall[], _battlefield_leadership[].
+ * @note Updates global array: combat_enchantments[] for global enchantment effects.
+ * @note Also applies city wall defense bonus to defender units in city combat.
+ */
 void Calc_Battlefield_Bonuses(int16_t combat_structure)
 {
     int16_t leadership_level;

@@ -42,11 +42,7 @@ TEST(String_To_Upper_test, WithDigitsAndSymbols)
 {
     char buffer[] = "abc123!@#";
     String_To_Upper(buffer);
-    // NOTE: The original implementation uses || instead of &&,
-    // so non-alpha characters in certain ranges will also be shifted.
-    // This test documents the original behavior.
-    // EXPECT_STREQ("ABC123!@#", buffer);
-    (void)buffer;  // original logic may mangle non-alpha chars
+    EXPECT_STREQ("ABC123!@#", buffer);
 }
 
 

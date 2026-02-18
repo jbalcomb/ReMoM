@@ -9,6 +9,93 @@ plus 10% modifier to hit, plus 10% chance to block, plus 10% modifier resistance
 
 
 
+Combat Calculations?
+Combat Calculations - Attacker
+Combat Calculations - Defender
+...per effect, USA, HSA, Spell, etc.
+
+e.g., the Luck/Prayer BUGBUG -1 To-Hit for Attacker ~== Invisibility
+void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t cgx, int16_t cgy)
+    BU_AttackTarget__WIP(attacker_battle_unit_idx, defender_battle_unit_idx, &defender_damage_array[0], &attacker_damage_array[0], ranged_attack_flag, 1);
+        BEGIN: Melee
+        BEGIN: Attacker First-Strike
+        BU_ProcessAttack__WIP(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].Cur_Figures - Feared_Figures), defender_battle_unit_idx, am_Melee, &damage_types[0], 0, SpFx);
+            Battle_Unit_Attack_Immunities()
+            Battle_Unit_Attack_Magic_Realm()
+            attack_tohit = (battle_units[attacker_battle_unit_idx].melee_tohit - battle_units[defender_battle_unit_idx].toblock);
+            ...
+            Attack_Damage = CMB_AttackRoll__SEGRAX(attack_strength, attack_tohit);
+            ...
+            Attack_Damage -= CMB_DefenseRoll__SEGRAX(defense_special, defender_toblock);
+    BU_ApplyDamage__WIP(defender_battle_unit_idx, defender_damage_array);
+    BU_ApplyDamage__WIP(attacker_battle_unit_idx, attacker_damage_array);
+
+BU_ProcessAttack__WIP()
+Line 21098
+    if(
+        (
+            ((defender_enchantments & UE_INVISIBILITY) != 0)
+            ||
+            ((battle_units[defender_battle_unit_idx].Abilities & UA_INVISIBILITY) != 0)
+        )
+        &&
+        ((battle_units[attacker_battle_unit_idx].Attribs_1 & USA_IMMUNITY_ILLUSION) == 0)
+    )
+    {
+
+        attack_tohit -= 1;
+
+    }
+
+Battlefield Enchantments
+Prayer
+    combat_enchantment_index = spell_data_table[spell_idx].ce_idx;
+    combat_enchantments[combat_enchantment_index] = ST_TRUE;
+CMB_CE_Refresh__WIP()
+#define PRAYER_ATTKR 12
+#define PRAYER_DFNDR 13
+#define HIGH_PRAYER_ATTKR 14
+#define HIGH_PRAYER_DFNDR 15
+PRAYER_ATTKR|PRAYER_DFNDR
+
+BU_ProcessAttack__WIP()
+    attack_tohit = 0;
+    attack_tohit = battle_units[attacker_battle_unit_idx].tohit;
+    if(attack_mode <= am_Melee)
+        attack_tohit = (battle_units[attacker_battle_unit_idx].melee_tohit - battle_units[defender_battle_unit_idx].toblock);
+    if(
+        (
+            ((defender_enchantments & UE_INVISIBILITY) != 0)
+            ||
+            ((battle_units[defender_battle_unit_idx].Abilities & UA_INVISIBILITY) != 0)
+        )
+        &&
+        ((battle_units[attacker_battle_unit_idx].Attribs_1 & USA_IMMUNITY_ILLUSION) == 0)
+    )
+    {
+        attack_tohit -= 1;
+    }
+    if
+    else
+        Attack_Damage = CMB_AttackRoll__SEGRAX(attack_strength, attack_tohit);
+
+battle_units[].tohit, battle_units[].melee_tohit
+BU_Init_Battle_Unit()
+    battle_unit->tohit = _unit_type_table[_UNITS[battle_unit->unit_idx].type].To_Hit;
+    battle_unit->melee_tohit = 0;
+    battle_unit->Ranged_To_Hit = 0;
+    BU_Apply_Level(unit_idx, battle_unit);
+    if(_UNITS[unit_idx].Hero_Slot > -1)
+        if(battle_unit->Weapon_Plus1 == 0)
+            battle_unit->Weapon_Plus1 = 1;
+        BU_Init_Hero_Unit(unit_idx, battle_unit);
+        BU_Apply_Item_Powers()
+    BU_Apply_Specials(battle_unit, battle_unit_enchantments, unit_mutations);
+
+
+
+
+
 AType ==> attack_mode
 
 
