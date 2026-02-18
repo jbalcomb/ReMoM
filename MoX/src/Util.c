@@ -1,3 +1,44 @@
+/**
+ * @file Util.c
+ * @brief Utility functions for memory manipulation, string handling, bit operations, and screen effects.
+ *
+ * This module provides a collection of low-level utility functions used throughout the game engine,
+ * organized into several categories:
+ *
+ * **Screen Operations:**
+ * - Clear_Screens() - Clear both display and draw frames
+ * - PageFlip_GrowOut__WIP() - Animated grow-out effect with page flipping
+ * - PageFlip_GrowOut_CopyScreen() - Copy current video page data
+ *
+ * **String Operations:**
+ * - String_To_Upper() - Convert string to uppercase
+ * - String_To_Lower() - Convert string to lowercase
+ *
+ * **Memory Operations:**
+ * - Copy_Memory_Near() - Copy near memory blocks
+ * - Copy_Memory_Less_Than() - Copy memory with size less than threshold
+ * - Clear_Memory() - Zero-fill memory region
+ * - Set_Memory() - Fill memory region with value
+ * - Swap_Short() - Swap two 16-bit values
+ *
+ * **Structure Operations:**
+ * - Clear_Structure() - Zero a record in a structure array
+ * - Delete_Structure() - Delete a record from a structure array via memmove
+ *
+ * **Bit Field Operations:**
+ * - Test_Bit_Field() - Test bit in a bit field
+ * - Set_Bit_Field() - Set bit in a bit field
+ * - Clear_Bit_Field() - Clear bit in a bit field
+ * - Set_Bit_Field_Near() - Set bit in near bit field
+ * - UU_MEM_ClearBit_Near() - Clear bit in near bit field
+ *
+ * @note This module contains low-level operations originally from WIZARDS.EXE segment 022 (seg022).
+ *       Some functionality has been ported from MoO2 equivalents (random, struct, strings modules).
+ *
+ * @see MOX_DEF.h for macro definitions and constants
+ * @see MOX_TYPE.h for type definitions
+ */
+
 /*
     WIZARDS.EXE
     seg022

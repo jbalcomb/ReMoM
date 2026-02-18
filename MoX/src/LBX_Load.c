@@ -1,3 +1,44 @@
+/**
+ * @file LBX_Load.c
+ * @brief Resource loading from LBX library files (Master of Magic game archives).
+ *
+ * Handles loading, reloading, and management of entries from LBX (.LBX) archive files.
+ * These archives contain game resources such as graphics, data structures, and sound effects.
+ * Supports both full entry loading and partial data loading with record offset/count control.
+ *
+ * **Core Loading Functions:**
+ * - LBX_Load() - Load an entire LBX entry into freshly allocated memory
+ * - LBX_Reload() - Reload an entry into existing memory (first allocation)
+ * - LBX_Reload_Next() - Reload an entry into existing memory (next allocation)
+ *
+ * **Data Loading Functions (with record support):**
+ * - LBX_Load_Data() - Load specific records from an LBX entry
+ * - LBX_Reload_Data() - Reload records into existing memory (first allocation)
+ * - LBX_Reload_Next_Data() - Reload records into existing memory (next allocation)
+ * - LBX_Load_Data_Static() - Load records into a pre-allocated static buffer
+ *
+ * **Core Implementation:**
+ * - LBX_Load_Entry() - Primary entry loading engine
+ * - LBX_Load_Library_Data() - Primary data loading engine with record support
+ *
+ * **Utilities:**
+ * - File_Name_Base() - Extract base filename from path
+ * - Set_Alternate_Path() - Set alternate directory for LBX files   
+ * - Error_Handler() - Handle and report LBX loading errors
+ *
+ * **Features:**
+ * - Persistent file handle caching to avoid redundant file opens
+ * - Supports three allocation strategies (single, first, next)
+ * - Record-based partial loading for structured data
+ * - Comprehensive error reporting with detailed messages
+ * - SDL-compatible buffer handling
+ *
+ * @note Originally from WIZARDS.EXE segment 010 (s10).
+ *       Ported from MoO2 farload module with extensions for Master of Magic.
+ *
+ * @see Allocate.h for memory allocation interfaces
+ * @see MOX_TYPE.h for SAMB_ptr and other type definitions
+ */
 
 #include "Allocate.h"
 #include "EXIT.h"
