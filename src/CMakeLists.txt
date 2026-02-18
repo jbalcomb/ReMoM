@@ -21,16 +21,22 @@ target_include_directories(ReMoMber PUBLIC
     ${SDL2_MIXER_INCLUDE_DIR}
 )
 
+# target_compile_definitions(ReMoMber PRIVATE
+#     _CRT_SECURE_NO_WARNINGS=TRUE
+# )
+# target_compile_definitions(ReMoMber PRIVATE
+#     $<$<CONFIG:Debug>:STU_DEBUG=TRUE>
+# )
+# target_compile_definitions(ReMoMber PRIVATE
+#     $<$<CONFIG:Debug>:STU_TRACE=TRUE>
+# )
+# target_compile_definitions(ReMoMber PRIVATE
+#     $<$<CONFIG:Debug>:_STU_SDL2=TRUE>
+# )
 target_compile_definitions(ReMoMber PRIVATE
     _CRT_SECURE_NO_WARNINGS=TRUE
-)
-target_compile_definitions(ReMoMber PRIVATE
     $<$<CONFIG:Debug>:STU_DEBUG=TRUE>
-)
-target_compile_definitions(ReMoMber PRIVATE
     $<$<CONFIG:Debug>:STU_TRACE=TRUE>
-)
-target_compile_definitions(ReMoMber PRIVATE
     $<$<CONFIG:Debug>:_STU_SDL2=TRUE>
 )
 
