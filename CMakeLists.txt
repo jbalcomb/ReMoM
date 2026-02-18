@@ -67,6 +67,14 @@ enable_testing()
 #         "STU_DEBUG=TRUE"
 #     )
 # endif()
+# Optional: Explicitly add NDEBUG to the Release configuration if not already present
+# target_compile_definitions(
+#     ReMoMber
+#     PRIVATE
+#     "$<$<CONFIG:Release>:NDEBUG>"
+# )
+# [cmake]   Cannot specify compile definitions for target "ReMoMber" which is not built
+# [cmake]   by this project.
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/sdl2)
 
