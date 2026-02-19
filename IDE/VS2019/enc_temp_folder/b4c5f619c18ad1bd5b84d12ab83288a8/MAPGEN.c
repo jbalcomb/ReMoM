@@ -299,14 +299,12 @@ wx              wy
 21 map square at 3 food per tt_Grasslands1 = 63 food total
 63 / 2 = 31 max population
 */
-//     // TEST_F(City_Maximum_Size_NewGame_test, AllGrasslands_Returns31)
-//     Set_Terrain_All(ARCANUS_PLANE, tt_Grasslands1);
-//     int16_t result = City_Maximum_Size_NewGame(30, 20, ARCANUS_PLANE);
-//     // EXPECT_EQ(result, 31);
-// // uint8_t * _world_maps;
-// // -280  0xFEE8 as a WORD
-// // 1111111011101000
-// //         10100010
+    // TEST_F(City_Maximum_Size_NewGame_test, AllGrasslands_Returns31)
+    Set_Terrain_All(ARCANUS_PLANE, tt_Grasslands1);
+    int16_t result = City_Maximum_Size_NewGame(30, 20, ARCANUS_PLANE);
+    // EXPECT_EQ(result, 31);
+
+
 
     // must be the _world_map is done here
     Generate_Home_City__WIP();
@@ -5899,11 +5897,6 @@ int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;  // _SI_
     int16_t food_units = 0;  // _CX_
-    uint8_t terrain_type_00 = 0;
-    uint8_t terrain_type_01 = 0;
-
-    // terrain_type_00 = _world_maps[ ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )];
-    // terrain_type_01 = _world_maps[ ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )];
 
     terrain_type = TERRAIN_TYPE(wx, wy, wp);
 

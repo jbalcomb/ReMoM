@@ -27,7 +27,7 @@
 #include "../MoX/src/CFG.h"
 #include "../MoX/src/DOS.h"
 #include "../MoX/src/EMM.h"
-#include "../MoX/src/Exit.h"
+#include "../MoX/src/EXIT.h"
 #include "../MoX/src/Fields.h"
 #include "../MoX/src/Fonts.h"
 #include "../MoX/src/Graphics.h"
