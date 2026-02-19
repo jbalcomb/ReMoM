@@ -3,6 +3,9 @@
 
 #include "../../MoX/src/MOX_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
+#include "../../MoX/src/MOX_BITS.h"  /* SET_2B_OFS() */
+#include "../../MoX/src/MOX_DEF.h"  /* SET_TERRAIN_TYPE() */
+#include "../../MoX/src/MOX_TYPE.h"
 
 /**
  * @brief Set the terrain type at a specific world map tile.
@@ -17,7 +20,9 @@
  */
 void Set_Terrain(int16_t wx, int16_t wy, int16_t wp, int16_t terrain_type)
 {
-    _world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = (uint8_t)terrain_type;
+    // _world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = (uint8_t)terrain_type;
+    // MOX_DEF.h #define SET_TERRAIN_TYPE(_wx_, _wy_, _wp_, _terrain_type_)  ( SET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2)), (_terrain_type_)) )
+    SET_TERRAIN_TYPE(wx, wy, wp, terrain_type);
 }
 
 /**

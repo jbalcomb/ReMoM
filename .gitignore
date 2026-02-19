@@ -17,6 +17,7 @@ x86/
 *.ncb
 *.suo
 *.user
+enc_temp_folder/
 
 CppProperties.json
 
