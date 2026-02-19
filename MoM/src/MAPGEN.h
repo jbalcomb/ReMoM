@@ -74,7 +74,7 @@ void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t
 // UU_UNIT_RandomRacial()
 
 // MGC o51p19
-void NEWG_SetDeserts__STUB(void);
+// void NEWG_SetDeserts__STUB(void);
 
 // MGC o51p20
 void NEWG_CreateShores__STUB(void);
@@ -209,7 +209,7 @@ void o51p54_empty_function(void);
 */
 
 // MGC o55p01
-void CRP_NEWG_CreatePathGrid__STUB(void * moves2, void * move_path_chunks);
+// void CRP_NEWG_CreatePathGrid__STUB(void * moves2, void * move_path_chunks);
 
 
 

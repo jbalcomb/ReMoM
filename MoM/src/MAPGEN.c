@@ -52,10 +52,11 @@ extern struct s_MOVE_MODE_COST_MAPS * movement_mode_cost_maps;
 
 
 
-
 // forward declate to shut up VS can be made static, because NIU
 static void NEWG_SetDeserts__STUB(void);
 static void CRP_NEWG_CreatePathGrid__STUB(void * moves2, void * move_path_chunks);
+// forward declate to shut up VS can be made static, because NIU
+// fix 'static' on NEWG_SetDeserts__STUB() and CRP_NEWG_CreatePathGrid__STUB()
 
 
 
@@ -281,6 +282,31 @@ void Init_New_Game(void)
 
     _units = 0;
 
+
+
+// All Grasslands: each city area square yields food2 = 3
+// At (30,20) on Arcanus, the full 21-square diamond is in bounds
+// max pop = (21 * 3) / 2 = 63 / 2 = 31
+/*
+All Grasslands
+wx              wy
+   17,18,19     33
+16,17,18,19,20  34
+16,17,18,19,20  36
+16,17,18,19,20  37
+   17,18,19     38
+3 + 5 + 5 + 5 + 3 = 21 squares
+21 map square at 3 food per tt_Grasslands1 = 63 food total
+63 / 2 = 31 max population
+*/
+    // TEST_F(City_Maximum_Size_NewGame_test, AllGrasslands_Returns31)
+    Set_Terrain_All(ARCANUS_PLANE, tt_Grasslands1);
+    int16_t result = City_Maximum_Size_NewGame(30, 20, ARCANUS_PLANE);
+    // EXPECT_EQ(result, 31);
+
+
+
+    // must be the _world_map is done here
     Generate_Home_City__WIP();
 
     Draw_Building_The_Worlds(70);
