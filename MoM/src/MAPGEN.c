@@ -1,4 +1,14 @@
-/*
+/**
+ * @file MAPGEN.c
+ * @brief New-game world generation and map setup routines.
+ *
+ * Provides map construction logic used during game initialization,
+ * including landmass and terrain generation, node/lair placement,
+ * river/shore setup, neutral city and road generation, and related
+ * support utilities for initial world state.
+ */
+
+ /*
     MAGIC.EXE
     ovr051
     ...
@@ -441,7 +451,7 @@ void NEWG_TileIsleExtend__WIP(int16_t wp)
 
             // ; check if there is a tower of wizardry on the tile
 
-            terrain_type = _world_maps[((wp * WORLD_SIZE) + (itr_wy * WORLD_WIDTH) + itr_wx )];
+            terrain_type = GET_TERRAIN_TYPE(itr_wx,itr_wy,wp);
 
             square_has_tower = ST_FALSE;
 
@@ -532,9 +542,9 @@ void NEWG_TileIsleExtend__WIP(int16_t wp)
                                         {
 
                                             if(
-                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier + 1) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier))] == tt_Ocean1)
+                                                (GET_TERRAIN_TYPE((itr_wx + Random_X_Modifier),(itr_wy + Random_Y_Modifier + 1),wp) == tt_Ocean1)
                                                 &&
-                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier + 1))] == tt_Ocean1)
+                                                (GET_TERRAIN_TYPE((itr_wx + Random_X_Modifier + 1),(itr_wy + Random_Y_Modifier),wp) == tt_Ocean1)
                                             )
                                             {
 
@@ -559,9 +569,9 @@ void NEWG_TileIsleExtend__WIP(int16_t wp)
                                         {
 
                                             if(
-                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier + 1) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier))] == tt_Ocean1)
+                                                (GET_TERRAIN_TYPE((itr_wx + Random_X_Modifier),(itr_wy + Random_Y_Modifier + 1),wp) == tt_Ocean1)
                                                 &&
-                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier - 1))] == tt_Ocean1)
+                                                (GET_TERRAIN_TYPE((itr_wx + Random_X_Modifier - 1),(itr_wy + Random_Y_Modifier),wp) == tt_Ocean1)
                                             )
                                             {
 
@@ -598,9 +608,9 @@ void NEWG_TileIsleExtend__WIP(int16_t wp)
                                         {
 
                                             if(
-                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier - 1) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier))] == tt_Ocean1)
+                                                (GET_TERRAIN_TYPE((itr_wx + Random_X_Modifier),(itr_wy + Random_Y_Modifier - 1),wp) == tt_Ocean1)
                                                 &&
-                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier + 1))] == tt_Ocean1)
+                                                (GET_TERRAIN_TYPE((itr_wx + Random_X_Modifier + 1),(itr_wy + Random_Y_Modifier),wp) == tt_Ocean1)
                                             )
                                             {
 
@@ -625,9 +635,9 @@ void NEWG_TileIsleExtend__WIP(int16_t wp)
                                         {
 
                                             if(
-                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier - 1) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier))] == tt_Ocean1)
+                                                (GET_TERRAIN_TYPE((itr_wx + Random_X_Modifier),(itr_wy + Random_Y_Modifier - 1),wp) == tt_Ocean1)
                                                 &&
-                                                (_world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier - 1))] == tt_Ocean1)
+                                                (GET_TERRAIN_TYPE((itr_wx + Random_X_Modifier - 1),(itr_wy + Random_Y_Modifier),wp) == tt_Ocean1)
                                             )
                                             {
 
@@ -650,7 +660,7 @@ void NEWG_TileIsleExtend__WIP(int16_t wp)
 
                                         TILE_SetLandMass__WIP(wp, (itr_wx + Random_X_Modifier), (itr_wy + Random_Y_Modifier));
 
-                                        _world_maps[((wp * WORLD_SIZE) + ((itr_wy + Random_Y_Modifier) * WORLD_WIDTH) + (itr_wx + Random_X_Modifier))] = tt_Grasslands1;
+                                        SET_TERRAIN_TYPE((itr_wx + Random_X_Modifier), (itr_wy + Random_Y_Modifier), wp, tt_Grasslands1);
 
                                     }
 
@@ -723,9 +733,9 @@ void Generate_Towers(void)
             wy = (2 + Random(34));
 
             if(
-                (_world_maps[((ARCANUS_PLANE * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] != tt_Ocean1)
+                (GET_TERRAIN_TYPE(wx, wy, ARCANUS_PLANE) != tt_Ocean1)
                 ||
-                (_world_maps[((MYRROR_PLANE * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] != tt_Ocean1)
+                (GET_TERRAIN_TYPE(wx, wy, MYRROR_PLANE) != tt_Ocean1)
                 ||
                 (Random(40) == 1)
             )
@@ -765,9 +775,9 @@ void Generate_Towers(void)
 
                 TILE_SetLandMass__WIP(MYRROR_PLANE, wx, wy);
 
-                _world_maps[((ARCANUS_PLANE * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = _Grasslands1;
+                SET_TERRAIN_TYPE(wx, wy, ARCANUS_PLANE, tt_Grasslands1);
 
-                _world_maps[((MYRROR_PLANE * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = _Grasslands1;
+                SET_TERRAIN_TYPE(wx, wy, MYRROR_PLANE, tt_Grasslands1);
 
                 break;
 
@@ -849,6 +859,14 @@ main movement view. Here you can see a small town with a flag on top
 that represents your starting city (aka “enchanted fortress”).
 
 */
+/**
+ * @brief Generates starting home cities (fortresses) for all players.
+ *
+ * Selects candidate fortress locations on the appropriate plane for each
+ * wizard, applies minimum-distance constraints from other key world sites,
+ * retries placement under progressively relaxed distance limits, and then
+ * initializes the resulting starting city/fortress state.
+ */
 void Generate_Home_City__WIP(void)
 {
     int16_t max_pop_failures = 0;
@@ -864,6 +882,18 @@ void Generate_Home_City__WIP(void)
     int16_t player_idx = 0;
     int16_t unit_type = 0;  // _DI_
     int16_t bldg_idx = 0;  // _SI_
+    int16_t DBG_pop_min = 0;
+    int16_t DBG_pop_max = 0;
+// #ifdef STU_DEBUG
+    int16_t DBG_Invalid_Reason = 0;
+    int16_t DBG_Invalid_Reason_1_Count = 0;  // Ocean
+    int16_t DBG_Invalid_Reason_2_Count = 0;  // Fortress
+    int16_t DBG_Invalid_Reason_3_Count = 0;  // Node
+    int16_t DBG_Invalid_Reason_4_Count = 0;  // Tower
+    int16_t DBG_Invalid_Reason_5_Count = 0;  // Lair
+    int16_t DBG_Invalid_Reason_6_Count = 0;  // Max Pop
+    int16_t DBG_Loop_Location[6] = { 0, 0, 0, 0, 0, 0 };
+// #endif
 
     minimum_fortress_distance = 16;
 
@@ -918,10 +948,12 @@ Loop_Location_1:
 
                     Invalid = ST_FALSE;
 
-                    if(_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] == tt_Ocean1)
+                    if(GET_TERRAIN_TYPE(wx, wy, wp) == tt_Ocean1)
                     {
 
                         Invalid = ST_TRUE;
+                        DBG_Invalid_Reason = 1;
+                        DBG_Invalid_Reason_1_Count++;
                         
                     }
 
@@ -937,6 +969,8 @@ Loop_Location_1:
                             {
 
                                 Invalid = ST_TRUE;
+                                DBG_Invalid_Reason = 2;
+                                DBG_Invalid_Reason_2_Count++;
 
                             }
 
@@ -962,6 +996,8 @@ Loop_Location_1:
                             {
 
                                 Invalid = ST_TRUE;
+                                DBG_Invalid_Reason = 3;
+                                DBG_Invalid_Reason_3_Count++;
 
                             }
 
@@ -984,6 +1020,8 @@ Loop_Location_1:
                         {
 
                             Invalid = ST_TRUE;
+                            DBG_Invalid_Reason = 4;
+                            DBG_Invalid_Reason_4_Count++;
 
                         }
 
@@ -1004,6 +1042,8 @@ Loop_Location_1:
                             {
 
                                 Invalid = ST_TRUE;
+                                DBG_Invalid_Reason = 5;
+                                DBG_Invalid_Reason_5_Count++;
 
                             }
 
@@ -1017,18 +1057,26 @@ Loop_Location_1:
                         (Invalid == ST_TRUE)
                     )
                     {
+                        DBG_Loop_Location[DBG_Invalid_Reason]++;
                         goto Loop_Location_1;
                     }
 
-                    if((8 - (player_idx / 3)) < City_Maximum_Size_NewGame(wx, wy, wp))
+                    // if((8 - (player_idx / 3)) < City_Maximum_Size_NewGame(wx, wy, wp))
+                    DBG_pop_min = (8 - (player_idx / 3));
+                    DBG_pop_max = City_Maximum_Size_NewGame(wx, wy, wp);
+                    if(DBG_pop_min < DBG_pop_max)
                     {
+                        DBG_Invalid_Reason = 6;
+                        DBG_Invalid_Reason_6_Count++;
                         max_pop_failures++;
                         if(max_pop_failures > 500)
                         {
+                            STU_DEBUG_BREAK();
                             goto Loop_MaxPopTries;
                         }
                         else
                         {
+                            DBG_Loop_Location[DBG_Invalid_Reason]++;
                             goto Loop_Location_1;
                         }
                     }
@@ -1044,8 +1092,8 @@ Loop_Location_1:
                         UU_Fortresses[wp]++;
 
 #ifdef STU_DEBUG
-                        printf("player_idx: %d; terrain type index: %d;\n", player_idx, _world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)]);
-                        dbg_prn("player_idx: %d; terrain type index: %d;\n", player_idx, _world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)]);
+                        // printf("player_idx: %d; terrain type index: %d;\n", player_idx, GET_TERRAIN_TYPE(wx, wy, wp));
+                        // dbg_prn("player_idx: %d; terrain type index: %d;\n", player_idx, GET_TERRAIN_TYPE(wx, wy, wp));
 #endif
 
                     }
@@ -1491,7 +1539,7 @@ void NEWG_EqualizeNodes__WIP(int16_t wp)
 
                 _NODES[random_node_idx].type = nt_Chaos;
 
-                _world_maps[((wp * WORLD_SIZE) + (_NODES[random_node_idx].wy * WORLD_WIDTH) + _NODES[random_node_idx].wx)] = tt_ChaosNode;
+                SET_TERRAIN_TYPE(_NODES[random_node_idx].wx, _NODES[random_node_idx].wy, wp, tt_ChaosNode);
 
                 // ; entirely unnecessary, already done before
 
@@ -1521,7 +1569,7 @@ void NEWG_EqualizeNodes__WIP(int16_t wp)
 
                 _NODES[random_node_idx].type = nt_Nature;
 
-                _world_maps[((wp * WORLD_SIZE) + (_NODES[random_node_idx].wy * WORLD_WIDTH) + _NODES[random_node_idx].wx)] = tt_NatureNode;
+                SET_TERRAIN_TYPE(_NODES[random_node_idx].wx, _NODES[random_node_idx].wy, wp, tt_NatureNode);
 
                 // ; entirely unnecessary, already done before
 
@@ -1581,16 +1629,16 @@ void NEWG_SetSpecLands__WIP(int16_t wp)
 
             // top 2 thru 7
             if(
-                (_world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] == tt_Grasslands1)
+                (GET_TERRAIN_TYPE(itr_wx, itr_wy, wp) == tt_Grasslands1)
                 ||
-                (_world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] == tt_Forest1)
+                (GET_TERRAIN_TYPE(itr_wx, itr_wy, wp) == tt_Forest1)
             )
             {
 
                 if((2 + Random(8)) >= itr_wy)
                 {
 
-                    _world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] = tt_Tundra1;
+                    SET_TERRAIN_TYPE(itr_wx, itr_wy, wp, tt_Tundra1);
                     
                 }
 
@@ -1598,9 +1646,9 @@ void NEWG_SetSpecLands__WIP(int16_t wp)
 
             // bottom 32 thru 37
             if(
-                (_world_maps[(wp * WORLD_SIZE + ((39 - itr_wy) * WORLD_WIDTH) + itr_wx)] == tt_Grasslands1)
+                (GET_TERRAIN_TYPE(itr_wx, (39 - itr_wy), wp) == tt_Grasslands1)
                 ||
-                (_world_maps[(wp * WORLD_SIZE + ((39 - itr_wy) * WORLD_WIDTH) + itr_wx)] == tt_Forest1)
+                (GET_TERRAIN_TYPE(itr_wx, (39 - itr_wy), wp) == tt_Forest1)
             )
             {
 
@@ -1608,7 +1656,7 @@ void NEWG_SetSpecLands__WIP(int16_t wp)
                 {
 
                     // { (39-2), (39-3), (39-4), (39-5), (39-6), (39-7) } = { 37, 36, 35, 34, 33, 32 } 
-                    _world_maps[(wp * WORLD_SIZE + ((39 - itr_wy) * WORLD_WIDTH) + itr_wx)] = tt_Tundra1;
+                    SET_TERRAIN_TYPE(itr_wx, (39 - itr_wy), wp, tt_Tundra1);
                     
                 }
 
@@ -1626,10 +1674,10 @@ void NEWG_SetSpecLands__WIP(int16_t wp)
 
         Origin_Y = (8 + Random(24));
 
-        if(_world_maps[(wp * WORLD_SIZE + (Origin_Y * WORLD_WIDTH) + Origin_X)] == tt_Forest1)
+        if(GET_TERRAIN_TYPE(Origin_X, Origin_Y, wp) == tt_Forest1)
         {
 
-            _world_maps[(wp * WORLD_SIZE + (Origin_Y * WORLD_WIDTH) + Origin_X)] = tt_Desert1;
+            SET_TERRAIN_TYPE(Origin_X, Origin_Y, wp, tt_Desert1);
 
             for(Origin_Direction = 0; Origin_Direction < 5; Origin_Direction++)
             {
@@ -1683,10 +1731,10 @@ void NEWG_SetSpecLands__WIP(int16_t wp)
 
                     Processing_Y = itr_wy;
 
-                    if(_world_maps[(wp * WORLD_SIZE + (Processing_Y * WORLD_WIDTH) + Processing_X)] != tt_Ocean1)
+                    if(GET_TERRAIN_TYPE(Processing_X, Processing_Y, wp) != tt_Ocean1)
                     {
 
-                        _world_maps[(wp * WORLD_SIZE + (Processing_Y * WORLD_WIDTH) + Processing_X)] = tt_Desert1;
+                        SET_TERRAIN_TYPE(Processing_X, Processing_Y, wp, tt_Desert1);
 
                     }
 
@@ -1714,10 +1762,10 @@ void NEWG_SetSpecLands__WIP(int16_t wp)
         )
         {
 
-            if(_world_maps[(wp * WORLD_SIZE + (Origin_Y * WORLD_WIDTH) + Origin_X)] == tt_Forest1)
+            if(GET_TERRAIN_TYPE(Origin_X, Origin_Y, wp) == tt_Forest1)
             {
 
-                _world_maps[(wp * WORLD_SIZE + (Origin_Y * WORLD_WIDTH) + Origin_X)] = tt_Swamp1;
+                SET_TERRAIN_TYPE(Origin_X, Origin_Y, wp, tt_Desert1);
 
                 for(Origin_Direction = 0; Origin_Direction < 5; Origin_Direction++)
                 {
@@ -1771,10 +1819,10 @@ void NEWG_SetSpecLands__WIP(int16_t wp)
 
                         Processing_Y = itr_wy;
 
-                        if(_world_maps[(wp * WORLD_SIZE + (Processing_Y * WORLD_WIDTH) + Processing_X)] == tt_Forest1)
+                        if(GET_TERRAIN_TYPE(Processing_X, Processing_Y, wp) == tt_Forest1)
                         {
 
-                            _world_maps[(wp * WORLD_SIZE + (Processing_Y * WORLD_WIDTH) + Processing_X)] = tt_Swamp1;
+                            SET_TERRAIN_TYPE(Processing_X, Processing_Y, wp, tt_Swamp1);
 
                         }
 
@@ -1820,7 +1868,7 @@ void NEWG_SetBaseLands__WIP(int16_t wp)
         for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
         {
 
-            if(_world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] != 0)
+            if(GET_TERRAIN_TYPE(itr_wx, itr_wy, wp) != tt_Ocean1)
             {
 
                 // ; convert the tile into a grassland, forest, hill, or
@@ -1836,13 +1884,13 @@ void NEWG_SetBaseLands__WIP(int16_t wp)
 // tt_Shore1_Fst  = 0x2,
 // DEDU what is terrain type 3? ...TT_Shore1_Lst>
 
-                if(_world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] <= 3)
+                if(GET_TERRAIN_TYPE(itr_wx, itr_wy, wp) <= 3)
                 {
 
-                    if(_world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] > 1)
+                    if(GET_TERRAIN_TYPE(itr_wx, itr_wy, wp) > tt_BugGrass)
                     {
 
-                        _world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] = tt_Forest1;
+                        SET_TERRAIN_TYPE(itr_wx, itr_wy, wp, tt_Forest1);
 
                     }
                     else
@@ -1851,7 +1899,7 @@ void NEWG_SetBaseLands__WIP(int16_t wp)
                         if(Random(4) == 1)
                         {
 
-                            _world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] = tt_Grasslands1;
+                            SET_TERRAIN_TYPE(itr_wx, itr_wy, wp, tt_Grasslands1);
 
                         }
 
@@ -1859,19 +1907,19 @@ void NEWG_SetBaseLands__WIP(int16_t wp)
 
                 }
                 else if(
-                    (_world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] == 4)
+                    (GET_TERRAIN_TYPE(itr_wx, itr_wy, wp) == 4)
                     ||
-                    (_world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] == 5)
+                    (GET_TERRAIN_TYPE(itr_wx, itr_wy, wp) == 5)
                 )
                 {
 
-                    _world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] = tt_Hills1;
+                    SET_TERRAIN_TYPE(itr_wx, itr_wy, wp, tt_Hills1);
 
                 }
                 else
                 {
                     
-                    _world_maps[(wp * WORLD_SIZE + (itr_wy * WORLD_WIDTH) + itr_wx)] = tt_Mountain1;
+                    SET_TERRAIN_TYPE(itr_wx, itr_wy, wp, tt_Mountain1);
 
                 }
 
@@ -1884,9 +1932,9 @@ void NEWG_SetBaseLands__WIP(int16_t wp)
     for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
     {
 
-        _world_maps[(wp * WORLD_SIZE + (WORLD_YMIN * WORLD_WIDTH) + itr_wx)] = tt_Tundra1;
+        SET_TERRAIN_TYPE(itr_wx, WORLD_YMIN, wp, tt_Tundra1);
 
-        _world_maps[(wp * WORLD_SIZE + (WORLD_YMAX * WORLD_WIDTH) + itr_wx)] = tt_Tundra1;
+        SET_TERRAIN_TYPE(itr_wx, WORLD_YMAX, wp, tt_Tundra1);
 
         // ; convert a horizontal strip of 1-4 (random) tiles in
         // ; the row below the top one into tundra, starting at
@@ -1901,7 +1949,7 @@ void NEWG_SetBaseLands__WIP(int16_t wp)
             for(Tiles_Added = 0; ((Tiles_Added < Tiles_To_Add) & ((itr_wx + Tiles_Added) < WORLD_WIDTH)); Tiles_Added++)
             {
 
-                _world_maps[(wp * WORLD_SIZE + ((WORLD_YMIN + 1) * WORLD_WIDTH) + itr_wx + Tiles_Added)] = tt_Tundra1;                
+                SET_TERRAIN_TYPE((itr_wx + Tiles_Added), (WORLD_YMIN + 1), wp, tt_Tundra1);
 
             }
 
@@ -1920,7 +1968,7 @@ void NEWG_SetBaseLands__WIP(int16_t wp)
             for(Tiles_Added = 0; ((Tiles_Added < Tiles_To_Add) & ((itr_wx + Tiles_Added) < WORLD_WIDTH)); Tiles_Added++)
             {
 
-                _world_maps[(wp * WORLD_SIZE + ((WORLD_YMAX - 1) * WORLD_WIDTH) + itr_wx + Tiles_Added)] = tt_Tundra1;                
+                SET_TERRAIN_TYPE((itr_wx + Tiles_Added), (WORLD_YMAX - 1), wp, tt_Tundra1);
 
             }
 
@@ -1976,14 +2024,10 @@ void NEWG_CreateLands__WIP(int16_t wp)
     // ; clear the map tile array of the plane
     for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
     {
-
         for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
         {
-
-            _world_maps[((wp * WORLD_SIZE) + (itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
-
+            SET_TERRAIN_TYPE(itr_wx, itr_wy, wp, tt_Ocean1);
         }
-
     }
 
     // ; clear the map section array
@@ -1992,20 +2036,15 @@ void NEWG_CreateLands__WIP(int16_t wp)
     // ; divisions result in only 4 by 3 being used
     for(itr_wy = 0; itr_wy < 5; itr_wy++)
     {
-
         for(itr_wx = 0; itr_wx < 5; itr_wx++)
         {
-
             Used_Map_Sections[itr_wy][itr_wx] = 0;
-
         }
-
     }
 
     Origins_Remaining = 8;
 
     Section_Width = 16;
-
     Section_Height = 11;
 
     Generated_Land_Tiles = 0;
@@ -2077,14 +2116,14 @@ void NEWG_CreateLands__WIP(int16_t wp)
             while((Steps_Taken < Steps_To_Take) && (Generated_Land_Tiles <= Desired_Land_Tiles))
             {
 
-                if(_world_maps[((wp * WORLD_SIZE) + (Processed_Tile_Y * WORLD_WIDTH) + Processed_Tile_X)] == 0)
+                if(GET_TERRAIN_TYPE(Processed_Tile_X, Processed_Tile_Y, wp) == tt_Ocean1)
                 {
 
                     Generated_Land_Tiles++;
 
                 }
 
-                _world_maps[((wp * WORLD_SIZE) + (Processed_Tile_Y * WORLD_WIDTH) + Processed_Tile_X)] += 1;
+                SET_TERRAIN_TYPE(itr_wx, itr_wy, wp, (GET_TERRAIN_TYPE(itr_wx, itr_wy, wp) + 1));
 
                 TILE_SetLandMass__WIP(wp, Processed_Tile_X, Processed_Tile_Y);
 
@@ -2255,7 +2294,7 @@ somehow1:
                 (wy < 37)
                 &&
                 (
-                    (_world_maps[((0 * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] != tt_Ocean1)
+                    (GET_TERRAIN_TYPE(wx, wy, ARCANUS_PLANE) != tt_Ocean1)
                     ||
                     (Random(40) == 1)
                 )
@@ -2359,7 +2398,7 @@ somehow2:
                 (wy < 37)
                 &&
                 (
-                    (_world_maps[((0 * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] != tt_Ocean1)  // ; BUG: this is the Arcanus tile
+                    (GET_TERRAIN_TYPE(wx, wy, ARCANUS_PLANE) != tt_Ocean1)  // ; BUG: this is the Arcanus tile
                     ||
                     (Random(25) == 1)
                 )
@@ -2649,7 +2688,7 @@ void NEWG_SetNodeType__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, in
     for(itr = 0; itr < power; itr++)
     {
 
-        if(_world_maps[((wp * WORLD_SIZE) + (Aura_Ys[itr] * WORLD_WIDTH) + Aura_Xs[itr])] == tt_Ocean1)
+        if(GET_TERRAIN_TYPE(Aura_Xs[itr], Aura_Ys[itr], wp) == tt_Ocean1)
         {
 
             Sorcery_Bias++;
@@ -2657,9 +2696,9 @@ void NEWG_SetNodeType__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, in
         }
 
         if(
-            (_world_maps[((wp * WORLD_SIZE) + (Aura_Ys[itr] * WORLD_WIDTH) + Aura_Xs[itr])] == tt_Mountain1)
+            (GET_TERRAIN_TYPE(Aura_Xs[itr], Aura_Ys[itr], wp) == tt_Mountain1)
             ||
-            (_world_maps[((wp * WORLD_SIZE) + (Aura_Ys[itr] * WORLD_WIDTH) + Aura_Xs[itr])] == tt_Desert1)
+            (GET_TERRAIN_TYPE(Aura_Xs[itr], Aura_Ys[itr], wp) == tt_Desert1)
         )
         {
 
@@ -2669,9 +2708,9 @@ void NEWG_SetNodeType__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, in
 
 
         if(
-            (_world_maps[((wp * WORLD_SIZE) + (Aura_Ys[itr] * WORLD_WIDTH) + Aura_Xs[itr])] == tt_Grasslands1)
+            (GET_TERRAIN_TYPE(Aura_Xs[itr], Aura_Ys[itr], wp) == tt_Grasslands1)
             ||
-            (_world_maps[((wp * WORLD_SIZE) + (Aura_Ys[itr] * WORLD_WIDTH) + Aura_Xs[itr])] == tt_Forest1)
+            (GET_TERRAIN_TYPE(Aura_Xs[itr], Aura_Ys[itr], wp) == tt_Forest1)
         )
         {
 
@@ -2694,7 +2733,7 @@ void NEWG_SetNodeType__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, in
     )
     {
 
-        _world_maps[((wp * WORLD_SIZE) + (Aura_Ys[itr] * WORLD_WIDTH) + Aura_Xs[itr])] = tt_ChaosNode;
+        SET_TERRAIN_TYPE(Aura_Xs[itr], Aura_Ys[itr], wp, tt_ChaosNode);
 
         *type = nt_Chaos;
 
@@ -2707,7 +2746,7 @@ void NEWG_SetNodeType__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, in
         if(Sorcery_Bias > Nature_Bias)
         {
 
-            _world_maps[((wp * WORLD_SIZE) + (Aura_Ys[itr] * WORLD_WIDTH) + Aura_Xs[itr])] = tt_SorceryNode;
+            SET_TERRAIN_TYPE(Aura_Xs[itr], Aura_Ys[itr], wp, tt_SorceryNode);
 
             *type = nt_Sorcery;
 
@@ -2715,7 +2754,7 @@ void NEWG_SetNodeType__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, in
         else
         {
 
-            _world_maps[((wp * WORLD_SIZE) + (Aura_Ys[itr] * WORLD_WIDTH) + Aura_Xs[itr])] = tt_NatureNode;
+            SET_TERRAIN_TYPE(Aura_Xs[itr], Aura_Ys[itr], wp, tt_NatureNode);
 
             *type = nt_Nature;
 
@@ -4590,9 +4629,9 @@ void Generate_Roads(int16_t wp)
                 wy = Road_Ys[Line_Index];
 
                 if(
-                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] >= tt_Shore1_Fst)
+                    (GET_TERRAIN_TYPE(wx, wy, wp) >= tt_Shore1_Fst)
                     &&
-                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] <= tt_Shore1_Lst)
+                    (GET_TERRAIN_TYPE(wx, wy, wp) <= tt_Shore1_Lst)
                 )
                 {
 
@@ -4600,7 +4639,7 @@ void Generate_Roads(int16_t wp)
 
                 }
 
-                if(_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] == tt_Ocean1)
+                if(GET_TERRAIN_TYPE(wx, wy, wp) == tt_Ocean1)
                 {
 
                     Invalid_Road = ST_TRUE;
@@ -4610,9 +4649,9 @@ void Generate_Roads(int16_t wp)
                 // ; BUG: this batch should start at $C5 (not that any of
                 // ; these can be present on the map at this stage)
                 if(
-                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] >= _Shore00001R10)
+                    (GET_TERRAIN_TYPE(wx, wy, wp) >= _Shore00001R10)
                     &&
-                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] <= TT_Shore2F_end)
+                    (GET_TERRAIN_TYPE(wx, wy, wp) <= TT_Shore2F_end)
                 )
                 {
 
@@ -4621,9 +4660,9 @@ void Generate_Roads(int16_t wp)
                 }
 
                 if(
-                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] >= tt_Shore2_1st)
+                    (GET_TERRAIN_TYPE(wx, wy, wp) >= tt_Shore2_1st)
                     &&
-                    (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx )] <= tt_Ocean2)
+                    (GET_TERRAIN_TYPE(wx, wy, wp) <= tt_Ocean2)
                 )
                 {
 

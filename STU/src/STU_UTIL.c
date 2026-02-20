@@ -106,6 +106,22 @@ Date and time in UTC
 // int   tm_isdst; /* Nonzero if daylight saving time is in effect. */
 // };
 
+/**
+ * @brief Builds the current UTC date-time string in ISO 8601 basic extended format.
+ *
+ * Computes the current time, derives a UTC broken-down time via `gmtime()`, and
+ * writes the result as `YYYY-MM-DDTHH:MM:SSZ`.
+ *
+ * @param datatime Output buffer that receives the formatted timestamp.
+ *                 The buffer must be non-NULL and large enough for at least
+ *                 21 bytes (20 characters plus null terminator).
+ *
+ * @note This function updates process timezone environment settings (`TZ`) and
+ *       invokes `_tzset()` before generating the timestamp.
+ * @warning Uses `localtime()`/`gmtime()` and global environment mutation, so it
+ *          is not thread-safe in multi-threaded contexts without external
+ *          synchronization.
+ */
 void get_datetime(char * datatime)
 {
 
