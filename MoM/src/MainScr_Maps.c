@@ -31,6 +31,7 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 #include "MOM_SCR.h"
 #include "SCastScr.h"  /* World_To_Screen() */
 #include "Terrain.h"
+#include "TerrType.h"
 #include "UnitMove.h"
 #include "UNITTYPE.h"
 
@@ -2032,6 +2033,8 @@ void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width
             {
                 world_maps_offset = ((wp * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2));
                 terrain_001_index = GET_2B_OFS(_world_maps,world_maps_offset);
+                assert(terrain_001_index >= 0);
+                assert(terrain_001_index <= TerType_Count);
                 terrain_001_index += terrain_tile_base;
                 terrain_001_index *= 2;  // because, sizeof(int16_t)
                 l_terrain_001_0 = 0;
