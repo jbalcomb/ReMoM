@@ -6,6 +6,7 @@ extern "C" {
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/MOM_Data.h"
 #include "../../MoX/src/MOM_DEF.h"
+#include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_TYPE.h"
 #include "../src/MAPGEN.h"
 #include "../src/TerrType.h"
@@ -67,7 +68,8 @@ protected:
     // Helper: set a terrain type at (wx, wy, wp) in _world_maps
     void Set_Terrain(int16_t wx, int16_t wy, int16_t wp, int16_t terrain_type)
     {
-        _world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = (uint8_t)terrain_type;
+        // _world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = (uint8_t)terrain_type;
+        SET_TERRAIN_TYPE(wx,wy,wp,terrain_type);
     }
 };
 
