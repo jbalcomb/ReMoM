@@ -149,7 +149,7 @@ enum e_TERRAIN_TYPES
     tt_Tundra_1st  = 0x25A,
     TT_Tundra_Last = 0x2F9,
     
-    TerType_Count  = 0x2F
+    TerType_Count  = 0x02FA
 };
 
 // enum e_TERRAIN_TYPE
