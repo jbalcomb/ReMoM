@@ -85,7 +85,7 @@ include(FetchContent)
 FetchContent_Declare(
     googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG v1.14.0
+    GIT_TAG v1.17.0
     EXCLUDE_FROM_ALL
 )
 # For Windows: Prevent overriding the parent project's compiler/linker settings
@@ -93,6 +93,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 message(STATUS "GTEST_INCLUDE_DIR='${GTEST_INCLUDE_DIR}'")
 message(STATUS "GTEST_INCLUDE_DIRS='${GTEST_INCLUDE_DIRS}'")
+# set(CMAKE_GTEST_DISCOVER_TESTS_DISCOVERY_MODE PRE_TEST)
 
 find_package(Doxygen COMPONENTS doxygen dot)
 if (DOXYGEN_FOUND)
@@ -147,6 +148,25 @@ if(EXISTS "${SDL2_MIXER_DLL_FILE_PATH}")
 else()
     message(CHECK_FAIL "The file does not exist: ${SDL2_MIXER_DLL_FILE_PATH}")
 endif()
+set(SDL2D_DLL_FILE_PATH ${PROJECT_SOURCE_DIR})
+string(APPEND SDL2D_DLL_FILE_PATH "/bin")
+string(APPEND SDL2D_DLL_FILE_PATH "/SDL2d.dll")
+message(CHECK_START "Finding SDL2d.dll")
+if(EXISTS "${SDL2D_DLL_FILE_PATH}")
+    message(CHECK_PASS "The file exists: ${SDL2D_DLL_FILE_PATH}")
+else()
+    message(CHECK_FAIL "The file does not exist: ${SDL2D_DLL_FILE_PATH}")
+endif()
+set(GMOCK_DLL_FILE_PATH ${PROJECT_SOURCE_DIR})
+string(APPEND GMOCK_DLL_FILE_PATH "/bin")
+string(APPEND GMOCK_DLL_FILE_PATH "/gmock.dll")
+message(CHECK_START "Finding gmock.dll")
+if(EXISTS "${GMOCK_DLL_FILE_PATH}")
+    message(CHECK_PASS "The file exists: ${GMOCK_DLL_FILE_PATH}")
+else()
+    message(CHECK_FAIL "The file does not exist: ${GMOCK_DLL_FILE_PATH}")
+endif()
+
 
 
 # # SDL2::Main  SDL2::Core  SDL2::Mixer
@@ -193,8 +213,8 @@ set(PLATFORM "SDL2")
 add_subdirectory(STU)
 add_subdirectory(MoX)
 add_subdirectory(MoM)
-add_subdirectory(tests)
 add_subdirectory(src)
+add_subdirectory(tests)
 
 # Simple coverage helper target: runs tests (requires tests to be configured)
 if(ENABLE_COVERAGE)

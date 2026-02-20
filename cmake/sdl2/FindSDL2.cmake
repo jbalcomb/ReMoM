@@ -1,3 +1,9 @@
+
+# TODO  try it like this
+# https://git.libretro.com/libretro/skyemu/-/blob/v1/src/SDL2/SDL2Config.cmake
+
+
+
 # Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
 # file Copyright.txt or https://cmake.org/licensing for details.
 
@@ -175,6 +181,9 @@ find_path(SDL2_INCLUDE_DIR SDL.h
   DOC "Where the SDL2 headers can be found"
 )
 
+# message(STATUS "SDL2_INCLUDE_DIR:" "${SDL2_INCLUDE_DIR}")
+# # >>> SDL2_INCLUDE_DIR:C:/devellib/SDL2-2.32.2/include
+
 set(SDL2_INCLUDE_DIRS "${SDL2_INCLUDE_DIR}")
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -195,7 +204,13 @@ find_library(SDL2_LIBRARY
   DOC "Where the SDL2 Library can be found"
 )
 
+# message(STATUS "SDL2_LIBRARY:" "${SDL2_LIBRARY}")
+# # >>> SDL2_LIBRARY:C:/devellib/SDL2-2.32.2/lib/x64/SDL2.lib
+
 set(SDL2_LIBRARIES "${SDL2_LIBRARY}")
+
+# message(STATUS "SDL2_LIBRARIES:" "${SDL2_LIBRARIES}")
+# # >>> SDL2_LIBRARIES:C:/devellib/SDL2-2.32.2/lib/x64/SDL2.lib
 
 if(NOT SDL2_BUILDING_LIBRARY)
   if(NOT SDL2_INCLUDE_DIR MATCHES ".framework")
@@ -335,21 +350,38 @@ if(SDL2_FOUND)
 
   # SDL2::Core target
   if(SDL2_LIBRARY AND NOT TARGET SDL2::Core)
+
     add_library(SDL2::Core UNKNOWN IMPORTED)
+
+    get_filename_component(SDL2_LIBRARY_DIRECTORY ${SDL2_LIBRARY} DIRECTORY)
+    set(SDL2_DLL_FILE_PATH ${imported_location_dir})
+    string(APPEND SDL2_DLL_FILE_PATH "/SDL2.dll")
+
     set_target_properties(SDL2::Core PROPERTIES
-                          IMPORTED_LOCATION "${SDL2_LIBRARY}"
-                          INTERFACE_INCLUDE_DIRECTORIES "${SDL2_INCLUDE_DIR}")
+                          IMPORTED_LOCATION "${SDL2_LIBRARY}" # Run-time component (DLL, .so, .dylib, etc)
+                          IMPORTED_IMPLIB "${SDL2_LIBRARY}" # Link-time component (.lib, .a, etc)
+                          IMPORTED_LOCATION_DEBUG "${SDL2_LIBRARY_DIRECTORY}/SDL2.lib"
+                          IMPORTED_IMPLIB_DEBUG "${SDL2_LIBRARY}/SDL2.lib"
+                          INTERFACE_INCLUDE_DIRECTORIES "${SDL2_INCLUDE_DIR}"
+    )
+    set(SDL2_LIBRARIES $<IF:$<CONFIG:Debug>,"${SDL2_LIBRARY_DIRECTORY}/SDL2.lib","${SDL2_LIBRARY_DIRECTORY}/SDL2.dll">   $<IF:$<CONFIG:Debug>,"${SDL2_LIBRARY_DIRECTORY}/SDL2.lib","${SDL2_LIBRARY_DIRECTORY}/SDL2.dll">)
+#     set_target_properties(SDL2::Core PROPERTIES
+#                           IMPORTED_LOCATION "${SDL2_LIBRARY}"
+#                           INTERFACE_INCLUDE_DIRECTORIES "${SDL2_INCLUDE_DIR}"
+#                           IMPORTED_IMPLIB="SDL2.lib"
+#                           IMPORTED_IMPLIB_DEBUG="SDL2.lib"
+#     )
+#                          IMPORTED_IMPLIB_DEBUG "${SDL2_LIBRARY}/SDL2.lib"
+#                          IMPORTED_LOCATION_DEBUG "${SDL2_PATH}/SDL2.dll"
 
     if(APPLE)
       # For OS X, SDL2 uses Cocoa as a backend so it must link to Cocoa.
       # For more details, please see above.
-      set_property(TARGET SDL2::Core APPEND PROPERTY
-                   INTERFACE_LINK_OPTIONS -framework Cocoa)
+      set_property(TARGET SDL2::Core APPEND PROPERTY INTERFACE_LINK_OPTIONS -framework Cocoa)
     else()
       # For threads, as mentioned Apple doesn't need this.
       # For more details, please see above.
-      set_property(TARGET SDL2::Core APPEND PROPERTY
-                   INTERFACE_LINK_LIBRARIES Threads::Threads)
+      set_property(TARGET SDL2::Core APPEND PROPERTY INTERFACE_LINK_LIBRARIES Threads::Threads)
     endif()
   endif()
 
@@ -360,29 +392,22 @@ if(SDL2_FOUND)
 
     if(SDL2_INCLUDE_DIR MATCHES ".framework" OR NOT SDL2MAIN_LIBRARY)
       add_library(SDL2::Main INTERFACE IMPORTED)
-      set_property(TARGET SDL2::Main PROPERTY
-                   INTERFACE_LINK_LIBRARIES SDL2::Core)
+      set_property(TARGET SDL2::Main PROPERTY INTERFACE_LINK_LIBRARIES SDL2::Core)
     elseif(SDL2MAIN_LIBRARY)
-      # MinGW requires that the mingw32 library is specified before the
-      # libSDL2main.a static library when linking.
-      # The SDL2::MainInternal target is used internally to make sure that
-      # CMake respects this condition.
+      # MinGW requires that the mingw32 library is specified before the libSDL2main.a static library when linking.
+      # The SDL2::MainInternal target is used internally to make sure that CMake respects this condition.
       add_library(SDL2::MainInternal UNKNOWN IMPORTED)
-      set_property(TARGET SDL2::MainInternal PROPERTY
-                   IMPORTED_LOCATION "${SDL2MAIN_LIBRARY}")
-      set_property(TARGET SDL2::MainInternal PROPERTY
-                   INTERFACE_LINK_LIBRARIES SDL2::Core)
+      set_property(TARGET SDL2::MainInternal PROPERTY IMPORTED_LOCATION "${SDL2MAIN_LIBRARY}")
+      set_property(TARGET SDL2::MainInternal PROPERTY INTERFACE_LINK_LIBRARIES SDL2::Core)
 
       add_library(SDL2::Main INTERFACE IMPORTED)
 
       if(MINGW)
         # MinGW needs an additional link flag '-mwindows' and link to mingw32
-        set_property(TARGET SDL2::Main PROPERTY
-                     INTERFACE_LINK_LIBRARIES "mingw32" "-mwindows")
+        set_property(TARGET SDL2::Main PROPERTY INTERFACE_LINK_LIBRARIES "mingw32" "-mwindows")
       endif()
 
-      set_property(TARGET SDL2::Main APPEND PROPERTY
-                   INTERFACE_LINK_LIBRARIES SDL2::MainInternal)
+      set_property(TARGET SDL2::Main APPEND PROPERTY INTERFACE_LINK_LIBRARIES SDL2::MainInternal)
     endif()
 
   endif()
