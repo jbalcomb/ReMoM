@@ -87,11 +87,14 @@ extern SAMB_ptr newgame_BUILDWOR_map_build_bar_seg;
 
 
 
-// MGC  dseg:3334                                                 BEGIN:  ovr051 - Initialized Data
+// MGC  dseg:3334                                                 BEGIN:  ovr051 - Initialized Data  (MAPGEN)
 
 // MGC  dseg:3334
 /*
+Direction arrays (dx, dy): These define movement vectors for South, West, North, East, and none.
     down, left, up, right, center
+    South, West, North, East, None
+NOTE: both are used in NEWG_CreateLands__WIP()
 */
 int16_t TILE_Cardinal_XMod[5] = { 0, -1, 0, 1, 0 };
 // MGC  dseg:333E
@@ -156,7 +159,7 @@ char cityname_lbx_file__MGC_ovr051[] = "CITYNAME";
 
 // MGC  dseg:34C1 00 00 00                                        align 4
 
-// MGC  dseg:34C1                                                 END:  ovr051 - Initialized Data
+// MGC  dseg:34C1                                                 END:  ovr051 - Initialized Data  (MAPGEN)
 
 
 
@@ -165,16 +168,21 @@ char cityname_lbx_file__MGC_ovr051[] = "CITYNAME";
 // MGC  dseg:8EB0                                                 BEGIN:  ovr051 - Uninitialized Data  (MAPGEN)
 
 // MGC  dseg:8EB0
-int16_t NEWG_Landmass_Races[200];
+/*
+no idea why SimTex made this 200, when there are only 60 landmasses
+only used in Generate_Neutral_Cities__WIP()
+populated with enum e_RACE_TYPE values, randomly selected from the groups of races per plane
+used as the 'default race' per plane, with a three in four chance
+*/
+int16_t m_landmasses_default_race[200];
 
 // MGC  dseg:9040
 /*
-set 1 in NEWG_ClearLandmasses__WIP(), both times
-incd in TILE_SetLandMass()
-otherwise NIU
-¿ MoO2  Module: MAPGEN  _num_maps_to_generate ?
+set to 1 in Init_Landmasses(), because 0 means no landmass
+incremented in TILE_SetLandMass()
+is the landmass_idx assigned in _landmasses
 */
-int16_t NEWG_LandmassCount;
+int16_t m_landmasses_ctr;
 
 // MGC  dseg:9042 00 00                                           dw 0
 // MGC  dseg:9044 00 00                                           dw 0
@@ -206,6 +214,37 @@ and their order of execution
 /*
 
 */
+/**
+ * @brief Creates and initializes the new-game world state.
+ *
+ * @details
+ * Executes the full world-generation pipeline for both planes, including
+ * landmass setup, terrain base/special passes, node/tower/lair generation,
+ * home and neutral city creation, roads, river/desert/randomization passes,
+ * movement/path map setup, and initial exploration flags.
+ *
+ * During generation, this function updates the "Building The Worlds..."
+ * progress display and prepares map-generation resources such as
+ * `bldg_data_table`.
+ *
+ * Side effects include extensive mutation of global game data structures
+ * (map squares, sites, cities, units, movement costs, and exploration state).
+ *
+ * @note This is an orchestrator routine; it relies on many subordinate
+ *       generation functions and does not return an explicit status value.
+ *
+ * @warning Historical behavior notes indicate potential long-running or
+ *          stalled generation in edge cases when valid placement locations
+ *          are insufficient.
+ *
+ * @return void
+ *
+ * @see Generate_Home_City__WIP
+ * @see Generate_Neutral_Cities__WIP
+ * @see Generate_Terrain_Specials
+ * @see Generate_Roads
+ * @see Init_Square_Explored
+ */
 void Init_New_Game(void)
 {
     int16_t IDK1 = 0;  // _DI_
@@ -238,11 +277,11 @@ void Init_New_Game(void)
 
     Draw_Building_The_Worlds(5);
 
-    NEWG_ClearLandmasses__WIP(ARCANUS_PLANE);
+    Init_Landmasses(ARCANUS_PLANE);
 
     Draw_Building_The_Worlds(10);
 
-    NEWG_ClearLandmasses__WIP(MYRROR_PLANE);
+    Init_Landmasses(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(15);
 
@@ -293,39 +332,6 @@ void Init_New_Game(void)
     Draw_Building_The_Worlds(65);
 
     _units = 0;
-
-
-
-// // All Grasslands: each city area square yields food2 = 3
-// // At (30,20) on Arcanus, the full 21-square diamond is in bounds
-// // max pop = (21 * 3) / 2 = 63 / 2 = 31
-// /*
-// All Grasslands
-// wx              wy
-//    17,18,19     33
-// 16,17,18,19,20  34
-// 16,17,18,19,20  36
-// 16,17,18,19,20  37
-//    17,18,19     38
-// 3 + 5 + 5 + 5 + 3 = 21 squares
-// 21 map square at 3 food per tt_Grasslands1 = 63 food total
-// 63 / 2 = 31 max population
-// */
-    // TEST_F(City_Maximum_Size_NewGame_test, AllGrasslands_Returns31)
-//     Set_Terrain_All(ARCANUS_PLANE, tt_Grasslands1);
-//     int16_t result = City_Maximum_Size_NewGame(30, 20, ARCANUS_PLANE);
-//     // EXPECT_EQ(result, 31);
-//     if(result != 31)
-//     {
-//         dbg_prn("City_Maximum_Size_NewGame(30, 20, ARCANUS_PLANE) != 31", __FILE__, __LINE__);
-//         STU_DEBUG_BREAK();
-//     }
-// // uint8_t * _world_maps;
-// // -280  0xFEE8 as a WORD
-// // 1111111011101000
-// //         10100010
-
-
 
     // must be the _world_map is done here
     Generate_Home_City__WIP();
@@ -421,15 +427,39 @@ void Set_Upper_Lair_Guardian_Count(void)
 /*
 ; PATCHED / rewritten in the worldgen customizer
 ;
-; attempts to extend some of the single tile islands
+; attempts to extend some of the single map square islands
 ; created by the node and tower generator functions
 ;
 ; BUG: the switch values are botched, resulting in
-; significantly less added tiles
+; significantly less added map squares
 */
 /*
 
 */
+/**
+ * @brief Attempts to expand isolated node/tower island map squares into nearby land.
+ *
+ * @details
+ * Scans interior map squares of the selected plane and identifies qualifying origin
+ * map squares (sorcery/nature/chaos nodes or towers) that are surrounded by ocean in
+ * cardinal directions. For qualifying map squares, performs a randomized series of
+ * conversion attempts on nearby offsets to reduce one-map square island isolation.
+ *
+ * Candidate conversions are filtered by occupancy checks (no tower/node on the
+ * target), terrain-neighborhood checks, and internal conversion rules.
+ *
+ * @param wp World plane index to process.
+ *
+ * @return void
+ *
+ * @warning Historical notes indicate known switch/indexing defects in this
+ *          routine that can reduce the expected number of successful adds.
+ * @note Uses RNG-driven branching; results vary between runs and map states.
+ *
+ * @see TILE_IsOcean
+ * @see TILE_HasTower
+ * @see TILE_HasNode
+ */
 void NEWG_TileIsleExtend__WIP(int16_t wp)
 {
     int16_t Grid_Index = 0;
@@ -449,7 +479,7 @@ void NEWG_TileIsleExtend__WIP(int16_t wp)
         for(itr_wx = 1; itr_wx < 59; itr_wx++)
         {
 
-            // ; check if there is a tower of wizardry on the tile
+            // ; check if there is a tower of wizardry on the map square
 
             terrain_type = GET_TERRAIN_TYPE(itr_wx,itr_wy,wp);
 
@@ -471,7 +501,7 @@ void NEWG_TileIsleExtend__WIP(int16_t wp)
 
             }
 
-            // ; skip if the tile does not have Ocean in all cardinal
+            // ; skip if the map square does not have Ocean in all cardinal
             // ; directions (diagonals are not checked)
 
             if(
@@ -486,13 +516,13 @@ void NEWG_TileIsleExtend__WIP(int16_t wp)
             {
 
                 if(
-                    (TILE_IsOcean(itr_wx, (itr_wy - 1), wp) == ST_TRUE)  // ; tile above
+                    (TILE_IsOcean(itr_wx, (itr_wy - 1), wp) == ST_TRUE)  // ; map square above
                     &&
-                    (TILE_IsOcean((itr_wx - 1), itr_wy, wp) == ST_TRUE)  // ; tile to the left
+                    (TILE_IsOcean((itr_wx - 1), itr_wy, wp) == ST_TRUE)  // ; map square to the left
                     &&
-                    (TILE_IsOcean((itr_wx + 1), itr_wy, wp) == ST_TRUE)  // ; tile to the right
+                    (TILE_IsOcean((itr_wx + 1), itr_wy, wp) == ST_TRUE)  // ; map square to the right
                     &&
-                    (TILE_IsOcean(itr_wx, (itr_wy + 1), wp) == ST_TRUE)  // ; tile below
+                    (TILE_IsOcean(itr_wx, (itr_wy + 1), wp) == ST_TRUE)  // ; map square below
                 )
                 {
 
@@ -658,7 +688,7 @@ void NEWG_TileIsleExtend__WIP(int16_t wp)
                                     if(Can_Convert == ST_TRUE)
                                     {
 
-                                        TILE_SetLandMass__WIP(wp, (itr_wx + Random_X_Modifier), (itr_wy + Random_Y_Modifier));
+                                        Build_Landmass(wp, (itr_wx + Random_X_Modifier), (itr_wy + Random_Y_Modifier));
 
                                         SET_TERRAIN_TYPE((itr_wx + Random_X_Modifier), (itr_wy + Random_Y_Modifier), wp, tt_Grasslands1);
 
@@ -689,8 +719,8 @@ void NEWG_TileIsleExtend__WIP(int16_t wp)
 ; PATCHED / rewritten in the worldgen customizer
 ;
 ; creates the six towers of wizardry connecting the
-; planes, which need to be at least 4 tiles away from
-; any nodes, and at least 10 tiles away from each other
+; planes, which need to be at least 4 map squares away from
+; any nodes, and at least 10 map squares away from each other
 ; if possible
 ;
 ; BUG: fails to initialize the attempt counter,
@@ -771,9 +801,9 @@ void Generate_Towers(void)
 
                 _TOWERS[itr1].owner_idx = ST_UNDEFINED;
 
-                TILE_SetLandMass__WIP(ARCANUS_PLANE, wx, wy);
+                Build_Landmass(ARCANUS_PLANE, wx, wy);
 
-                TILE_SetLandMass__WIP(MYRROR_PLANE, wx, wy);
+                Build_Landmass(MYRROR_PLANE, wx, wy);
 
                 SET_TERRAIN_TYPE(wx, wy, ARCANUS_PLANE, tt_Grasslands1);
 
@@ -800,7 +830,7 @@ void Generate_Towers(void)
 ; starting units
 ;
 ; BUG: the condition to allow AI high elves only on
-;  Forest tiles can restart the whole fortress
+;  Forest map squares can restart the whole fortress
 ;  generation process, yielding capitals closer to
 ;  each other or other objects than intended
 */
@@ -892,7 +922,7 @@ void Generate_Home_City__WIP(void)
     int16_t DBG_Invalid_Reason_4_Count = 0;  // Tower
     int16_t DBG_Invalid_Reason_5_Count = 0;  // Lair
     int16_t DBG_Invalid_Reason_6_Count = 0;  // Max Pop
-    int16_t DBG_Loop_Location[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t DBG_Loop_Location[7] = { 0, 0, 0, 0, 0, 0, 0 };
 // #endif
 
     minimum_fortress_distance = 16;
@@ -983,7 +1013,7 @@ Loop_Location_1:
                     // ; 
                     // ; BUG: the encounter zone check below will also catch
                     // ;  these
-                    // ; BUG: because the distance is halved, same tile is not
+                    // ; BUG: because the distance is halved, same map square is not
                     // ; excluded
 
                     for(bldg_idx = 0; bldg_idx < NUM_NODES; bldg_idx++)
@@ -1010,7 +1040,7 @@ Loop_Location_1:
                     // ; 
                     // ; BUG: the encounter zone check below will also catch
                     // ;  these
-                    // ; BUG: because the distance is halved, same tile is not
+                    // ; BUG: because the distance is halved, same map square is not
                     // ; excluded
 
                     for(bldg_idx = 0; bldg_idx < NUM_TOWERS; bldg_idx++)
@@ -1029,7 +1059,7 @@ Loop_Location_1:
 
                     // ; invalidate the attempt if any encounter zone is
                     // ; closer than the minimum distance
-                    // ; BUG: because the distance is halved, same tile is not
+                    // ; BUG: because the distance is halved, same map square is not
                     // ; excluded
 
                     for(bldg_idx = 0; bldg_idx < NUM_LAIRS; bldg_idx++)
@@ -1351,33 +1381,39 @@ Done_Done:
 // MGC o51p06
 // drake178: NEWG_ClearLandmasses()
 /*
-
 ; PATCHED / rewritten in the worldgen customizer to
 ; block clear both planes at once
 ;
 ; clears the landmass array for the selected plane
 */
-/*
-_landmasses[((wp * WORLD_SIZE) + (itr_wy * WORLD_WIDTH) + itr_wx)] = 0; 
-*/
-void NEWG_ClearLandmasses__WIP(int16_t wp)
+/**
+ * @brief Clears all landmass identifiers for a single world plane.
+ *
+ * @details
+ * Resets `m_landmasses_ctr` to `1` and iterates over every map square on
+ * the selected plane, writing landmass id `0` via `SET_LANDMASS()`.
+ *
+ * This is an early world-generation step used before landmass assignment and
+ * consolidation passes.
+ *
+ * @param wp World plane index to clear (for example Arcanus or Myrror).
+ *
+ * @return void
+ *
+ * @note The function clears only the specified plane; callers are responsible
+ *       for invoking it separately per plane when needed.
+ */
+void Init_Landmasses(int16_t wp)
 {
     int16_t wy = 0;  // _SI_
     int16_t wx = 0;  // _CX_
-
-    NEWG_LandmassCount = 1;
-
+    m_landmasses_ctr = 1;
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
-        
         for(wx = 0; wx < WORLD_WIDTH; wx++)
         {
-
-            // _landmasses[((wp * WORLD_SIZE) + (itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
-            SET_LANDMASS(wx,wy,wp,0);
-
+            SET_LANDMASS(wx, wy, wp, 0);
         }
-
     }
 }
 
@@ -1543,7 +1579,7 @@ void NEWG_EqualizeNodes__WIP(int16_t wp)
 
                 // ; entirely unnecessary, already done before
 
-                TILE_SetLandMass__WIP(wp, _NODES[random_node_idx].wx, _NODES[random_node_idx].wy);
+                Build_Landmass(wp, _NODES[random_node_idx].wx, _NODES[random_node_idx].wy);
 
                 Chaos_Convert--;
 
@@ -1573,7 +1609,7 @@ void NEWG_EqualizeNodes__WIP(int16_t wp)
 
                 // ; entirely unnecessary, already done before
 
-                TILE_SetLandMass__WIP(wp, _NODES[random_node_idx].wx, _NODES[random_node_idx].wy);
+                Build_Landmass(wp, _NODES[random_node_idx].wx, _NODES[random_node_idx].wy);
 
                 Nature_Convert--;
 
@@ -1616,9 +1652,9 @@ void NEWG_SetSpecLands__WIP(int16_t wp)
     int16_t itr_wx = 0;  // _DI_
     int16_t itr_wy = 0;  // _SI_
 
-    // ; randomly convert Grassland and Forest tiles in the
+    // ; randomly convert Grassland and Forest map squares in the
     // ; top and bottom 10 rows of the map into Tundra with
-    // ; the chance decreasing the further away the tile is
+    // ; the chance decreasing the further away the map square is
     // ; from the corresponding edge
 
     for(itr_wy = 2; itr_wy < 8; itr_wy++)
@@ -1747,11 +1783,11 @@ void NEWG_SetSpecLands__WIP(int16_t wp)
     }
 
     // ; randomly create up to 8 patches of Swamps, converting
-    // ; only Forest tiles in the patch
+    // ; only Forest map squares in the patch
     for(itr = 0; itr < 8; itr++)
     {
 
-        Origin_X = (1 + Random(56));
+        Origin_X = ( 1 + Random(56));
 
         Origin_Y = (10 + Random(20));
 
@@ -1854,7 +1890,7 @@ void NEWG_SetBaseLands__WIP(int16_t wp)
     int16_t itr_wy = 0;
     int16_t itr_wx = 0;  // _SI_
 
-    // ; convert each non-ocean tile into a basic land based
+    // ; convert each non-ocean map square into a basic land based
     // ; on the amount of "hits" it got during the continent
     // ; generation
     // ;    1: Grassland ($A2) with 3/4 chance, or Forest
@@ -1871,8 +1907,8 @@ void NEWG_SetBaseLands__WIP(int16_t wp)
             if(GET_TERRAIN_TYPE(itr_wx, itr_wy, wp) != tt_Ocean1)
             {
 
-                // ; convert the tile into a grassland, forest, hill, or
-                // ; mountain tile based on the amount of "hits" it got
+                // ; convert the map square into a grassland, forest, hill, or
+                // ; mountain map square based on the amount of "hits" it got
                 // ; during the continent generation
                 // ;    1: Grassland ($A2) with 3/4 chance, or Forest
                 // ;  2-3: Forest ($A3)
@@ -1936,7 +1972,7 @@ void NEWG_SetBaseLands__WIP(int16_t wp)
 
         SET_TERRAIN_TYPE(itr_wx, WORLD_YMAX, wp, tt_Tundra1);
 
-        // ; convert a horizontal strip of 1-4 (random) tiles in
+        // ; convert a horizontal strip of 1-4 (random) map squares in
         // ; the row below the top one into tundra, starting at
         // ; the current X coordinate (in si), and aborting if
         // ; the right edge of the map is reached
@@ -1955,7 +1991,7 @@ void NEWG_SetBaseLands__WIP(int16_t wp)
 
         }
 
-        // ; convert a horizontal strip of 1-4 (random) tiles in
+        // ; convert a horizontal strip of 1-4 (random) map squares in
         // ; the row above the bottom one into tundra, starting
         // ; at the current X coordinate (in si), and aborting if
         // ; the right edge of the map is reached
@@ -1983,12 +2019,12 @@ void NEWG_SetBaseLands__WIP(int16_t wp)
 // drake178: NEWG_CreateLands()
 /*
 ; PATCHED / rewritten in the worldgen customizer to
-; allow fine tuning the desired land tiles and set
+; allow fine tuning the desired land map squares and set
 ; continent size limits, as well as to override the
 ; origin coordinate constraints to support more
 ; combinations of those two settings
 ;
-; clears the tile map of the selected plane, and then
+; clears the map square map of the selected plane, and then
 ; generates continents according to the land size
 ; settings
 */
@@ -1996,32 +2032,66 @@ void NEWG_SetBaseLands__WIP(int16_t wp)
 ¿ populates _landmass[] ?
 per plane
 ~ MoO2 "map"
+
+We aren't going to waste cycles on complex noise functions; we’re going to use a "Random Walk" or "Drunkard’s Walk" algorithm. It’s memory-efficient and creates organic-looking blobs.
+
+The Walk: For each of the 8 landmasses, pick a random starting $x, y$. For $N$ steps (your size parameter), move one square in a random cardinal direction.
+The Accumulation: Every time a walker lands on a square, increment its value in the array.
+The Render: Iterate through the array. Low counts stay Ocean; high counts become Mountains or Deserts.
+
+Terrain Logic Table
+By tracking the number of "hits," we are essentially creating a heightmap or a "density map." The more a walker revisits a spot, the more "significant" that terrain becomes.
+
 */
+/**
+ * @brief Creates base land distribution for the selected world plane.
+ *
+ * @details
+ * Initializes the target plane to ocean, partitions map space into coarse
+ * sections, and then generates continent shapes using randomized origin and
+ * directional growth logic until a target land amount is reached.
+ *
+ * During generation, map square state is updated through terrain/landmass helpers,
+ * and section tracking (`map_sections`) is used to spread origins.
+ *
+ * @param wp World plane index to generate (for example Arcanus or Myrror).
+ *
+ * @return void
+ *
+ * @note Target land quantity is influenced by global game settings (such as
+ *       `_landsize`) and random rolls.
+ * @warning This routine mutates global map buffers for the selected plane and
+ *          is intended for new-game map construction order.
+ *
+ * @see Init_Landmasses
+ * @see NEWG_SetBaseLands__WIP
+ * @see Build_Landmass
+ */
 void NEWG_CreateLands__WIP(int16_t wp)
 {
-    int16_t Used_Map_Sections[5][5] = { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
-    int16_t Origin_Y = 0;
-    int16_t Origin_X = 0;
-    int16_t Origin_Direction = 0;
-    int16_t Max_Direction = 0;
-    int16_t Section_Height = 0;
-    int16_t Section_Width = 0;
-    int16_t Origins_Remaining = 0;
+    int16_t map_sections[5][5] = { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
+    int16_t base_wy = 0;
+    int16_t base_wx = 0;
+    int16_t itr_direction_change_count = 0;
+    int16_t direction_change_count = 0;
+    int16_t section_height = 0;
+    int16_t section_width = 0;
+    int16_t n_sections = 0;
     int16_t Same_Dir_Steps = 0;
-    int16_t Last_Direction = 0;
+    int16_t new_direction = 0;
     int16_t Direction = 0;
     int16_t Steps_Taken = 0;
     int16_t Steps_To_Take = 0;
-    int16_t Next_Tile_Y = 0;
-    int16_t Next_Tile_X = 0;
-    int16_t Processed_Tile_Y = 0;
-    int16_t Processed_Tile_X = 0;
-    int16_t Desired_Land_Tiles = 0;
-    int16_t Generated_Land_Tiles = 0;
+    int16_t next_wy = 0;
+    int16_t next_wx = 0;
+    int16_t curr_wy = 0;
+    int16_t curr_wx = 0;
+    int16_t n_needed = 0;
+    int16_t n_generated = 0;
     int16_t itr_wy = 0;  // _DI_
     int16_t itr_wx = 0;  // _SI_
 
-    // ; clear the map tile array of the plane
+    // base-line, set the whole world to Ocean
     for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
     {
         for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
@@ -2038,61 +2108,54 @@ void NEWG_CreateLands__WIP(int16_t wp)
     {
         for(itr_wx = 0; itr_wx < 5; itr_wx++)
         {
-            Used_Map_Sections[itr_wy][itr_wx] = 0;
+            map_sections[itr_wy][itr_wx] = 0;
         }
     }
 
-    Origins_Remaining = 8;
+    n_sections = 8;
 
-    Section_Width = 16;
-    Section_Height = 11;
+    section_width  = 16;  // DEDU  shouldn't this be WORLD_WIDTH / 5 = 12 ?  alt. world map was 16 * 5 = 80 wide at some point?  or 48 or x / 2,3,4 32,48,64
+    section_height = 11;  // DEDU shouldn't this be WORLD_HEIGHT / 5 =  8 ?  alt. world map was 11 * 5 = 55 high at some point?  or 33 or y / 2,3,4 22,33,44
 
-    Generated_Land_Tiles = 0;
+    n_generated = 0;
 
     // ~ galaxy size, _NUM_STARS
     switch(_landsize)
     {
-        case gol_Small:  { Desired_Land_Tiles = 360; } break;
-        case gol_Medium: { Desired_Land_Tiles = 480; } break;
-        case gol_Large:  { Desired_Land_Tiles = 720; } break;
+        case gol_Small:  { n_needed = 360; } break;  // ¿ 3 * 120 ?            ¿ 360 of 2400 is 15% ?
+        case gol_Medium: { n_needed = 480; } break;  // ¿ 4 * 120 ?  + 1 of 3  ¿ 480 of 2400 is 20% ?
+        case gol_Large:  { n_needed = 720; } break;  // ¿ 6 * 120 ?  + 2 of 4  ¿ 720 of 2400 is 30% ?
     }
 
     // ~ _num_maps_to_generate, _n_maps_generated
-    while(Generated_Land_Tiles <= Desired_Land_Tiles)
+    while(n_generated <= n_needed)
     {
 
-        Last_Direction = ST_UNDEFINED;
+        new_direction = ST_UNDEFINED;
 
         Same_Dir_Steps = 1;
 
-        while(Origins_Remaining > 0)
+        while(1)
         {
-
-            // Origin_X = (6 + Random(46));
-            // Origin_Y = (6 + Random(26));
-            Origin_X = 6;
-            Origin_X += Random(46);
-            Origin_Y = 6;
-            Origin_Y += Random(26);
-            assert(Origin_X >= 7);
-            assert(Origin_Y >= 7);
-
-            if(Used_Map_Sections[(Origin_Y / Section_Height)][(Origin_X / Section_Width)] != 1)
+            base_wx = (6 + Random(46));  // { 7, ..., 52}
+            base_wy = (6 + Random(26));  // { 7, ..., 32}
+            assert(base_wx >= 7);
+            assert(base_wy >= 7);
+            if(n_sections <= 0)
             {
-
-                Used_Map_Sections[(Origin_Y / Section_Height)][(Origin_X / Section_Width)] = 1;
-
-                Origins_Remaining--;
-                
+                break;
             }
-
+            if(map_sections[(base_wy / section_height)][(base_wx / section_width)] != 1)  // { 7, ..., 32 } / 11 = { 0, ..., 2 }; { 7, ..., 52 } / 16 = { 0, ..., 3 }
+            {
+                map_sections[(base_wy / section_height)][(base_wx / section_width)] = 1;  // 8 of 12 sections? with portions unavailable?
+                n_sections--;
+                break;
+            }
         }
 
-        Max_Direction = (2 + Random(3));
+        direction_change_count = (2 + Random(3));  // {3, ..., 5}
 
-        Origin_Direction = 0;
-
-        while(Origin_Direction < Max_Direction)
+        for(itr_direction_change_count = 0; itr_direction_change_count < direction_change_count; itr_direction_change_count++)
         {
 
             switch(_landsize)
@@ -2104,41 +2167,42 @@ void NEWG_CreateLands__WIP(int16_t wp)
 
             }
 
-            assert(Origin_X >= 7);
-            assert(Origin_Y >= 7);
-            Processed_Tile_X = (Origin_X + TILE_Cardinal_XMod2[Origin_Direction]);
-            Processed_Tile_Y = (Origin_Y + TILE_Cardinal_YMod2[Origin_Direction]);
-            assert(Processed_Tile_X >= 6);
-            assert(Processed_Tile_Y >= 6);
+            assert(base_wx >= 7);
+            assert(base_wy >= 7);
+            curr_wx = (base_wx + TILE_Cardinal_XMod2[itr_direction_change_count]);
+            curr_wy = (base_wy + TILE_Cardinal_YMod2[itr_direction_change_count]);
+            assert(curr_wx >= 6);
+            assert(curr_wy >= 6);
 
-            Steps_Taken = 0;
+            
 
-            while((Steps_Taken < Steps_To_Take) && (Generated_Land_Tiles <= Desired_Land_Tiles))
+            for(Steps_Taken = 0; ((Steps_Taken < Steps_To_Take) && (n_generated <= n_needed)); Steps_Taken++)
             {
 
-                if(GET_TERRAIN_TYPE(Processed_Tile_X, Processed_Tile_Y, wp) == tt_Ocean1)
+                if(GET_TERRAIN_TYPE(curr_wx, curr_wy, wp) == tt_Ocean1)
                 {
 
-                    Generated_Land_Tiles++;
+                    n_generated++;
 
                 }
 
-                SET_TERRAIN_TYPE(itr_wx, itr_wy, wp, (GET_TERRAIN_TYPE(itr_wx, itr_wy, wp) + 1));
+                SET_TERRAIN_TYPE(curr_wx, curr_wy, wp, (GET_TERRAIN_TYPE(curr_wx, curr_wy, wp) + 1));  // ¿ this is the "hit" count increment that turns into terrain type ?
 
-                TILE_SetLandMass__WIP(wp, Processed_Tile_X, Processed_Tile_Y);
+                Build_Landmass(wp, curr_wx, curr_wy);
 
                 /*
                 
                     WTF  DEDU  What is the loop here?
-                    ...looks like `Last_Direction = ST_UNDEFINED;` should be a breaking condition
+                    ...looks like `new_direction = ST_UNDEFINED;` should be a breaking condition
 
                 */
                 while(1)
                 {
 
+                    // ¿ choose next direction with anti-straight-line bias ?
                     Direction = (Random(4) - 1);
 
-                    if(Direction == Last_Direction)
+                    if(Direction == new_direction)
                     {
 
                         if(Random((Same_Dir_Steps * 2)) != 1)
@@ -2158,31 +2222,28 @@ void NEWG_CreateLands__WIP(int16_t wp)
                     else
                     {
 
-                        Same_Dir_Steps = 1;
+                        Same_Dir_Steps = 1;  // different direction, reset bias weight
                         
                     }
 
-                    Last_Direction = Direction;
+                    new_direction = Direction;
 
-                    // assert(Processed_Tile_X >= 6);
-                    // assert(Processed_Tile_Y >= 6);
-                    Next_Tile_X = (Processed_Tile_X + TILE_Cardinal_XMod[Direction]);
-                    Next_Tile_Y = (Processed_Tile_Y + TILE_Cardinal_YMod[Direction]);
-                    // assert(Next_Tile_X >= 5);
-                    // assert(Next_Tile_Y >= 5);
+                    next_wx = (curr_wx + TILE_Cardinal_XMod[Direction]);
+                    next_wy = (curr_wy + TILE_Cardinal_YMod[Direction]);
 
+                    // too close to the edge
                     if(
-                        (Next_Tile_X < 2)
+                        (next_wx < (WORLD_XMIN + 2))
                         ||
-                        (Next_Tile_Y < 4)
+                        (next_wy < (WORLD_YMIN + 4))
                         ||
-                        (Next_Tile_X >= 58)
+                        (next_wx >= (WORLD_XMAX - 2))
                         ||
-                        (Next_Tile_Y >= 36)
+                        (next_wy >= (WORLD_YMAX - 4))
                     )
                     {
                         
-                        Last_Direction = ST_UNDEFINED;
+                        new_direction = ST_UNDEFINED;
 
                     }
                     else
@@ -2194,19 +2255,12 @@ void NEWG_CreateLands__WIP(int16_t wp)
 
                 }
 
-                Processed_Tile_X = Next_Tile_X;
-
-                Processed_Tile_Y = Next_Tile_Y;
-
-                Steps_Taken++;
+                curr_wx = next_wx;
+                curr_wy = next_wy;
 
             }
 
-            Origin_Direction++;
-
         }
-
-        // printf("Generated_Land_Tiles: %d\n", Generated_Land_Tiles);
 
     }
 
@@ -2220,11 +2274,11 @@ void NEWG_CreateLands__WIP(int16_t wp)
 ; create nodes after capitals and towers
 ;
 ; generates 30 magical nodes with non-overlapping power
-; auras across the two planes, and sets their tiles to
+; auras across the two planes, and sets their map squares to
 ; the unique node terrain types
 ;
 ; BUG: when checking for land, the Myrran nodes look at
-;  the Arcanus tile instead
+;  the Arcanus map square instead
 */
 /*
 
@@ -2340,7 +2394,7 @@ somehow1:
     // ; generate 14 myrran nodes, complete with auras and
     // ; terrain type setting
     // ; 
-    // ; BUG: checks the Arcanus tile for land instead
+    // ; BUG: checks the Arcanus map square for land instead
 
     for(itr = 16; itr < NUM_NODES; itr++)
     {
@@ -2398,7 +2452,7 @@ somehow2:
                 (wy < 37)
                 &&
                 (
-                    (GET_TERRAIN_TYPE(wx, wy, ARCANUS_PLANE) != tt_Ocean1)  // ; BUG: this is the Arcanus tile
+                    (GET_TERRAIN_TYPE(wx, wy, ARCANUS_PLANE) != tt_Ocean1)  // ; BUG: this is the Arcanus map square
                     ||
                     (Random(25) == 1)
                 )
@@ -2469,7 +2523,7 @@ void NEWG_CreateNodeAura__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys,
     Aura_Xs[0] = (int8_t)wx;
     Aura_Ys[0] = (int8_t)wy;
 
-    // ; pick tiles 2 to 8 from those adjacent to the node
+    // ; pick map squares 2 to 8 from those adjacent to the node
     for(itr = 1; ((itr < power) && (itr < 9)); itr++)
     {
 
@@ -2486,7 +2540,7 @@ void NEWG_CreateNodeAura__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys,
 
             Invalid_Tile = ST_FALSE;
 
-            // ; invalidate the tile if it's already in the array
+            // ; invalidate the map square if it's already in the array
 
             for(itr2 = 0; itr2 < itr; itr2++)
             {
@@ -2504,7 +2558,7 @@ void NEWG_CreateNodeAura__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys,
 
             }
 
-            // ; invalidate the tile if it's out of bounds
+            // ; invalidate the map square if it's out of bounds
 
             if(
                 (Aura_Tile_X <= 0)
@@ -2552,7 +2606,7 @@ void NEWG_CreateNodeAura__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys,
 
             Invalid_Tile = ST_FALSE;
 
-            // ; invalidate the tile if it's already in the array
+            // ; invalidate the map square if it's already in the array
 
             for(itr2 = 0; itr2 < itr; itr2++)
             {
@@ -2570,7 +2624,7 @@ void NEWG_CreateNodeAura__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys,
 
             }
 
-            // ; invalidate the tile if it's out of bounds
+            // ; invalidate the map square if it's out of bounds
 
             if(
                 (Aura_Tile_X <= 0)
@@ -2664,7 +2718,7 @@ int16_t NODE_IsAuraUnique__WIP(int16_t node_idx)
 /*
 ; determines the type of the node using a series of
 ; random rolls, then sets it into the passed pointer,
-; and changes the tile type of the first aura tile to
+; and changes the map square type of the first aura map square to
 ; the terrain associated with the node type
 ;
 ; before v1.1, this function used to consider the types
@@ -2737,7 +2791,7 @@ void NEWG_SetNodeType__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, in
 
         *type = nt_Chaos;
 
-        TILE_SetLandMass__WIP(wp, Aura_Xs[0], Aura_Ys[0]);
+        Build_Landmass(wp, Aura_Xs[0], Aura_Ys[0]);
 
     }
     else
@@ -2760,7 +2814,7 @@ void NEWG_SetNodeType__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, in
 
         }
 
-        TILE_SetLandMass__WIP(wp, Aura_Xs[0], Aura_Ys[0]);
+        Build_Landmass(wp, Aura_Xs[0], Aura_Ys[0]);
 
     }
 
@@ -2768,160 +2822,138 @@ void NEWG_SetNodeType__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, in
 
 
 // MGC o51p15
-// drake178: TILE_SetLandMass()
-/*
-; sets the landmass for the tile - either a new one if
-; all surrounding tiles are ocean, or that of the first
-; neighbouring one, consolidating continents if the
-; tile is adjacent to more than one
-*/
-/*
-sets landmass_idx in _landmass[]
-
-*/
-void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy)
+/**
+ * @brief Assigns a landmass id to a map square and merges overlapping landmasses.
+ *
+ * @details
+ * Inspects the center map square plus its 8 neighbors for existing non-zero
+ * landmass ids, collecting overlaps into a local scratch array.
+ *
+ * If no overlaps are found, assigns a new id from `m_landmasses_ctr` to the
+ * map square and increments the counter.
+ *
+ * If overlaps are found, uses the first collected id as the primary landmass,
+ * rewrites any conflicting overlapping ids in the local overlap list, then
+ * scans the entire selected plane and remaps all map squares that still carry each
+ * conflicting id to the primary id. Finally, sets the target map square to the
+ * primary id.
+ *
+ * This function is part of map-generation continent construction and updates
+ * global `_landmasses` data for the selected plane.
+ *
+ * @param wp World plane index (for example Arcanus or Myrror).
+ * @param wx World X coordinate of the map square.
+ * @param wy World Y coordinate of the map square.
+ *
+ * @return void
+ *
+ * @note Overlap resolution is deterministic for a given local neighborhood:
+ *       the first encountered overlap id becomes the merge target.
+ * @warning Merge resolution includes a full `WORLD_WIDTH * WORLD_HEIGHT`
+ *          scan of the plane for each conflicting id, which is costlier than
+ *          purely local updates.
+ */
+void Build_Landmass(int16_t wp, int16_t wx, int16_t wy)
 {
-    int16_t Landmass_ID_Array[5] = { 0, 0, 0, 0, 0 };
-    int16_t Conflicting_ID = 0;
+    int16_t overlap_landmasses[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t conflict_landmass_idx = 0;
     int16_t itr_wy = 0;
     int16_t itr_wx = 0;
-    int16_t Next_Adjacent_Index = 0;
-    int16_t Array_Index = 0;
-    int16_t First_Found_Landmass = 0;
-    int16_t IDK = 0;  // _CX_
+    int16_t itr2 = 0;
+    int16_t itr = 0;
+    int16_t overlap_landmass_first = 0;  /* landmass_idx of the first landmass added to the array */
+    int16_t overlap_ctr = 0;  // _CX_
 
-    First_Found_Landmass = 0;
+    overlap_landmass_first = 0;
 
-    IDK = 0;
+    overlap_ctr = 0;
 
-    // ; center tile
-    if(GET_LANDMASS(wx,wy,wp) != 0)
+    /*
+        check all nine map squares for a landmass, and add any found into a local scratch array
+        { center, left-up, up, right-up, left, right, left-down, down, right-down }
+    */
+    if(GET_LANDMASS(wx, wy, wp) != 0)
     {
-        Landmass_ID_Array[IDK] = GET_LANDMASS(wx,wy,wp);
-        IDK++;
+        overlap_landmasses[overlap_ctr] = GET_LANDMASS(wx, wy, wp);
+        overlap_ctr++;
     }
-
-    // ; tile up to the left
     if(GET_LANDMASS((wx - 1), (wy - 1), wp) != 0)
     {
-        Landmass_ID_Array[IDK] = GET_LANDMASS((wx - 1), (wy - 1), wp);
-        IDK++;
+        overlap_landmasses[overlap_ctr] = GET_LANDMASS((wx - 1), (wy - 1), wp);
+        overlap_ctr++;
     }
-
-    // ; tile up
-    if(GET_LANDMASS(wx,(wy - 1),wp) != 0)
+    if(GET_LANDMASS(wx, (wy - 1),wp) != 0)
     {
-        Landmass_ID_Array[IDK] = GET_LANDMASS(wx, (wy - 1), wp);
-        IDK++;
+        overlap_landmasses[overlap_ctr] = GET_LANDMASS(wx, (wy - 1), wp);
+        overlap_ctr++;
     }
-
-    // ; tile up to the right
     if(GET_LANDMASS((wx + 1), (wy - 1), wp) != 0)
     {
-        Landmass_ID_Array[IDK] = GET_LANDMASS((wx + 1), (wy - 1), wp);
-        IDK++;
+        overlap_landmasses[overlap_ctr] = GET_LANDMASS((wx + 1), (wy - 1), wp);
+        overlap_ctr++;
     }
-
-    // ; tile to the left
     if(GET_LANDMASS((wx - 1), wy, wp) != 0)
     {
-        Landmass_ID_Array[IDK] = GET_LANDMASS((wx - 1), wy, wp);
-        IDK++;
+        overlap_landmasses[overlap_ctr] = GET_LANDMASS((wx - 1), wy, wp);
+        overlap_ctr++;
     }
-
-    // ; tile to the right
     if(GET_LANDMASS((wx + 1), wy, wp) != 0)
     {
-        Landmass_ID_Array[IDK] = GET_LANDMASS((wx + 1), wy, wp);
-        IDK++;
+        overlap_landmasses[overlap_ctr] = GET_LANDMASS((wx + 1), wy, wp);
+        overlap_ctr++;
     }
-
-    // ; tile down to the left
     if(GET_LANDMASS((wx - 1), (wy + 1), wp) != 0)
     {
-        Landmass_ID_Array[IDK] = GET_LANDMASS((wx - 1), (wy + 1), wp);
-        IDK++;
+        overlap_landmasses[overlap_ctr] = GET_LANDMASS((wx - 1), (wy + 1), wp);
+        overlap_ctr++;
     }
-
-    // ; tile down
     if(GET_LANDMASS(wx, (wy + 1), wp) != 0)
     {
-        Landmass_ID_Array[IDK] = GET_LANDMASS(wx, (wy + 1), wp);
-        IDK++;
+        overlap_landmasses[overlap_ctr] = GET_LANDMASS(wx, (wy + 1), wp);
+        overlap_ctr++;
     }
-
-    // ; tile down to the right
     if(GET_LANDMASS((wx + 1), (wy + 1), wp) != 0)
     {
-        Landmass_ID_Array[IDK] = GET_LANDMASS((wx + 1), (wy + 1), wp);
-        IDK++;
+        overlap_landmasses[overlap_ctr] = GET_LANDMASS((wx + 1), (wy + 1), wp);
+        overlap_ctr++;
     }
 
-    if(IDK != 0)
+    /*
+        add new landmass if no overlaps, otherwise consolidate any overlapping landmasses into the primary landmass
+    */
+    if(overlap_ctr == 0)
     {
-
-        // ; if the tile is bordered by multiple different land
-        // ; masses, consolidate them all into one
-
-        SET_LANDMASS((wx - 1), wy, wp, (uint8_t)NEWG_LandmassCount);
-
-        NEWG_LandmassCount++;
-
+        SET_LANDMASS(wx, wy, wp, (uint8_t)m_landmasses_ctr);  // assign the landmass_idx to the map square
+        m_landmasses_ctr++;  // next landmass_idx
     }
     else
     {
-
-        First_Found_Landmass = Landmass_ID_Array[0];
-
-        for(Array_Index = 1; Array_Index < IDK; Array_Index++)
+        overlap_landmass_first = overlap_landmasses[0];  /* DEDU  Is there a more sophisticated option for selecting the primary landmass? */
+        for(itr = 1; itr < overlap_ctr; itr++)
         {
-
-            if(Landmass_ID_Array[Array_Index] != First_Found_Landmass)
+            if(overlap_landmasses[itr] != overlap_landmass_first)
             {
-
-                // ; convert all instances of the conflicting ID in the
-                // ; local array into the first found one
-
-                Conflicting_ID = Landmass_ID_Array[Array_Index];
-
-                for(Next_Adjacent_Index = Array_Index; Next_Adjacent_Index < IDK; Next_Adjacent_Index++)
+                conflict_landmass_idx = overlap_landmasses[itr];
+                for(itr2 = itr; itr2 < overlap_ctr; itr2++)
                 {
-
-                    if(Landmass_ID_Array[Next_Adjacent_Index] == Conflicting_ID)
+                    if(overlap_landmasses[itr2] == conflict_landmass_idx)
                     {
-
-                        Landmass_ID_Array[Next_Adjacent_Index] = First_Found_Landmass;
-
+                        overlap_landmasses[itr2] = overlap_landmass_first;
                     }
-
                 }
-
-                // ; convert all instances of the conflicting ID on the
-                // ; world map into the first found one
-
                 for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
                 {
-
                     for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
                     {
-
-                        if(GET_LANDMASS((itr_wx + 1), (itr_wy + 1), wp) == Conflicting_ID)
+                        if(GET_LANDMASS(itr_wx, itr_wy, wp) == conflict_landmass_idx)
                         {
-
-                            SET_LANDMASS((itr_wx + 1), (itr_wy + 1), wp, (uint8_t)First_Found_Landmass);
-
+                            SET_LANDMASS(itr_wx, itr_wy, wp, (uint8_t)overlap_landmass_first);
                         }
-
                     }
-
                 }
-
             }
-
         }
-
-        SET_LANDMASS((wx - 1), wy, wp, (uint8_t)First_Found_Landmass);
-
+        SET_LANDMASS(wx, wy, wp, (uint8_t)overlap_landmass_first);
     }
 
 }
@@ -2983,7 +3015,7 @@ void Generate_Lairs(void)
 
     }
 
-    // ; create 25 random strong encounters on non-ocean tiles
+    // ; create 25 random strong encounters on non-ocean map squares
 
     for(itr = 0; itr < Strong_Lair_Amt; itr++)
     {
@@ -3026,7 +3058,7 @@ void Generate_Lairs(void)
 
     }
 
-    // ; create 32 weak random encounters on non-ocean tiles
+    // ; create 32 weak random encounters on non-ocean map squares
 
     for(itr = 0; itr < 32; itr++)
     {
@@ -3774,13 +3806,13 @@ static void NEWG_SetDeserts__STUB(void)
 // drake178: NEWG_CreateShores()
 /*
 ; creates shores based on the surrounding land type
-; tiles, then uses the same concept to consolidate
+; map squares, then uses the same concept to consolidate
 ; mountain and hill ranges, as well as replace tundra
-; tiles
+; map squares
 ;
 ; WARNING: the hills and mountains would generate a
 ;  break at the X wrap boundary
-; BUG: turns certain single tile hills into grasslands
+; BUG: turns certain single map square hills into grasslands
 */
 /*
 
@@ -3799,21 +3831,21 @@ void NEWG_CreateShores__STUB(void)
 // 
 // wp = 0;
 
-// ; create shore tiles based on the ocean - non-ocean
+// ; create shore map squares based on the ocean - non-ocean
 // ; terrain borders using the first 512 byte record of
 // ; TERRTYPE.LBX
 
-// ; create tundra tiles based on the tundra - non-tundra
+// ; create tundra map squares based on the tundra - non-tundra
 // ; borders using the first record of TERRTYPE.LBX, and
-// ; adding 600 to the ocean tile type
+// ; adding 600 to the ocean map square type
 
-// ; consolidate neighbouring hill tiles into hill ranges
+// ; consolidate neighbouring hill map squares into hill ranges
 // ; using the second record of TERRTYPE.LBX (+10h)
 // ; 
-// ; BUG: turns single tile hills into grasslands, as
+// ; BUG: turns single map square hills into grasslands, as
 // ; _1Mountain1 + 10h = _Grasslands4 rather than _1Hills1
 // ; WARNING: would create breaks at the X wrap boundary
-// ; if land tiles would exist there
+// ; if land map squares would exist there
 
 }
 
@@ -3907,22 +3939,22 @@ void Generate_Neutral_Cities__WIP(int16_t wp)
             // ; into the element of the array corresponding to di
 
             // BUGBUG  cmp     bx, 12                            ; switch 13 cases
-            switch((Random(9) - 1))
+            switch((Random(NUM_RACES_ARCANUS) - 1))
             {
-                case 0: { NEWG_Landmass_Races[itr1] = rt_Barbarian; } break;
-                case 1: { NEWG_Landmass_Races[itr1] = rt_Gnoll;     } break;
-                case 2: { NEWG_Landmass_Races[itr1] = rt_Halfling;  } break;
-                case 3: { NEWG_Landmass_Races[itr1] = rt_High_Men;  } break;  // no forest check, no High Elves
-                case 4: { NEWG_Landmass_Races[itr1] = rt_High_Men;  } break;
-                case 5: { NEWG_Landmass_Races[itr1] = rt_Klackon;   } break;
-                case 6: { NEWG_Landmass_Races[itr1] = rt_Lizardman; } break;
-                case 7: { NEWG_Landmass_Races[itr1] = rt_Nomad;     } break;
-                case 8: { NEWG_Landmass_Races[itr1] = rt_Orc;       } break;
+                case 0: { m_landmasses_default_race[itr1] = rt_Barbarian; } break;
+                case 1: { m_landmasses_default_race[itr1] = rt_Gnoll;     } break;
+                case 2: { m_landmasses_default_race[itr1] = rt_Halfling;  } break;
+                case 3: { m_landmasses_default_race[itr1] = rt_High_Men;  } break;  // no Forest check, no High Elves
+                case 4: { m_landmasses_default_race[itr1] = rt_High_Men;  } break;
+                case 5: { m_landmasses_default_race[itr1] = rt_Klackon;   } break;
+                case 6: { m_landmasses_default_race[itr1] = rt_Lizardman; } break;
+                case 7: { m_landmasses_default_race[itr1] = rt_Nomad;     } break;
+                case 8: { m_landmasses_default_race[itr1] = rt_Orc;       } break;
                 // WTF?
-                case  9: { NEWG_Landmass_Races[itr1] = rt_Barbarian; } break;
-                case 10: { NEWG_Landmass_Races[itr1] = rt_High_Men;  } break;
-                case 11: { NEWG_Landmass_Races[itr1] = rt_Nomad;     } break;
-                case 12: { NEWG_Landmass_Races[itr1] = rt_High_Men;  } break;
+                case  9: { m_landmasses_default_race[itr1] = rt_Barbarian; } break;
+                case 10: { m_landmasses_default_race[itr1] = rt_High_Men;  } break;
+                case 11: { m_landmasses_default_race[itr1] = rt_Nomad;     } break;
+                case 12: { m_landmasses_default_race[itr1] = rt_High_Men;  } break;
             }
 
         }
@@ -3932,13 +3964,13 @@ void Generate_Neutral_Cities__WIP(int16_t wp)
             // ; select a random Myrran race and save its index into
             // ; the element of the array corresponding to di
 
-            switch((Random(5) - 1))
+            switch((Random(NUM_RACES_MYRROR) - 1))
             {
-                case 0: { NEWG_Landmass_Races[itr1] = rt_Beastmen;  } break;
-                case 1: { NEWG_Landmass_Races[itr1] = rt_Dark_Elf;  } break;
-                case 2: { NEWG_Landmass_Races[itr1] = rt_Draconian; } break;
-                case 3: { NEWG_Landmass_Races[itr1] = rt_Dwarf;     } break;
-                case 4: { NEWG_Landmass_Races[itr1] = rt_Troll;     } break;
+                case 0: { m_landmasses_default_race[itr1] = rt_Beastmen;  } break;
+                case 1: { m_landmasses_default_race[itr1] = rt_Dark_Elf;  } break;
+                case 2: { m_landmasses_default_race[itr1] = rt_Draconian; } break;
+                case 3: { m_landmasses_default_race[itr1] = rt_Dwarf;     } break;
+                case 4: { m_landmasses_default_race[itr1] = rt_Troll;     } break;
             }
 
         }
@@ -3971,9 +4003,9 @@ Loop_Location_2:
             }
 
             if(
-                (TERRAIN_TYPE(wx, wy, wp) >= tt_Shore1_Fst)  // ; there are no such tiles yet at this stage
+                (TERRAIN_TYPE(wx, wy, wp) >= tt_Shore1_Fst)  // ; there are no such map squares yet at this stage
                 ||
-                (TERRAIN_TYPE(wx, wy, wp) <= tt_Shore1_Lst)  // ; there are no such tiles yet at this stage
+                (TERRAIN_TYPE(wx, wy, wp) <= tt_Shore1_Lst)  // ; there are no such map squares yet at this stage
             )
             {
 
@@ -3981,20 +4013,20 @@ Loop_Location_2:
 
             }
 
-            // ; invalidate if less than 5 tiles away from a capital
+            // ; invalidate if less than 5 map squares away from a capital
 
-            // ; invalidate if less than 4 tiles away from an already
+            // ; invalidate if less than 4 map squares away from an already
             // ; created city
 
-            // ; invalidate of less than 4 tiles away from a node
+            // ; invalidate of less than 4 map squares away from a node
             // ; 
             // ; the encounter exclusion below would also catch these
 
-            // ; invalidate if less than 4 tiles away from a tower
+            // ; invalidate if less than 4 map squares away from a tower
             // ; 
             // ; the encounter exclusion below would also catch these
 
-            // ; invalidate if less than 4 tiles away from an
+            // ; invalidate if less than 4 map squares away from an
             // ; encounter zone - including nodes and towers
 
             if(
@@ -4015,10 +4047,10 @@ Loop_Location_2:
 
                 // ; select a random Arcanian race, and assign it to the
                 // ; next record in the city table, replacing high elves
-                // ; with high men if the tile is not a forest
+                // ; with high men if the map square is not a forest
 
                 // BUGBUG  cmp     bx, 12                            ; switch 13 cases
-                switch((Random(9) - 1))
+                switch((Random(NUM_RACES_ARCANUS) - 1))
                 {
                     case 0: { _CITIES[_cities].race = rt_Barbarian; } break;
                     case 1: { _CITIES[_cities].race = rt_Gnoll;     } break;
@@ -4053,7 +4085,7 @@ Loop_Location_2:
                 // ; select a random Myrran race, and assign it to the
                 // ; next record in the city table
 
-                switch((Random(5) - 1))
+                switch((Random(NUM_RACES_MYRROR) - 1))
                 {
                     case 0: { _CITIES[_cities].race = rt_Beastmen;  } break;
                     case 1: { _CITIES[_cities].race = rt_Dark_Elf;  } break;
@@ -4064,10 +4096,11 @@ Loop_Location_2:
 
             }
 
+            // 75% chance of default race
             if(Random(4) > 1)
             {
 
-                _CITIES[_cities].race = (int8_t)NEWG_Landmass_Races[(_landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) +wx)])];
+                _CITIES[_cities].race = (int8_t)m_landmasses_default_race[GET_LANDMASS(wx, wy, wp)];
 
             }
 
@@ -4080,7 +4113,7 @@ Loop_Location_2:
             _CITIES[_cities].owner_idx = NEUTRAL_PLAYER_IDX;
 
             // ; BUG: ignores terrain
-            _CITIES[_cities].population = (1 +  ((_difficulty + 1) / 3) + Random(4));
+            _CITIES[_cities].population = (1 + ((_difficulty + 1) / 3) + Random(4));
 
             if(
                 (_difficulty > god_Normal)
@@ -4532,13 +4565,13 @@ void Random_City_Name_By_Race_NewGame(int16_t race_idx, char * name)
 // MGC o51p26
 // drake178: NEWG_CreateRoads()
 /*
-; creates roads on the tiles of every city, as well as
+; creates roads on the map squares of every city, as well as
 ; between neutral ones on the same continents that are
-; closer to each other than 11 tiles with no water
-; tiles on the most direct path
+; closer to each other than 11 map squares with no water
+; map squares on the most direct path
 ;
 ; BUG: creates normal roads instead of enchanted ones
-;  on the tiles of Myrran cities
+;  on the map squares of Myrran cities
 */
 /*
 
@@ -4599,9 +4632,9 @@ void Generate_Roads(int16_t wp)
                 ||
                 (_CITIES[dst_city_idx].owner_idx != NEUTRAL_PLAYER_IDX)
                 ||
-                (_landmasses[((wp * WORLD_SIZE) + (src_wy * WORLD_WIDTH) + src_wx)] != _landmasses[((wp * WORLD_SIZE) + (dst_wy * WORLD_WIDTH) + dst_wx)])
+                (GET_LANDMASS(src_wx, src_wy, wp) != GET_LANDMASS(dst_wx, dst_wy, wp))
                 ||
-                (Range(src_wx, src_wy, dst_wx, dst_wy) >= 11)
+                (Range(src_wx, src_wy, dst_wx, dst_wy) >= 11)  // BUGBUG  should used Delta_XY_With_Wrap()
             )
             {
 
@@ -4616,9 +4649,9 @@ void Generate_Roads(int16_t wp)
             Line_Index = 0;
 
             // ; invalidate the road if it would pass through an ocean
-            // ; or shore tile
+            // ; or shore map square
             // ; 
-            // ; contains exclusions for tile types that will never be
+            // ; contains exclusions for map square types that will never be
             // ; present on the map at this stage of the process
 
             while(((Road_Length - 1) > Line_Index) && (Invalid_Road == ST_FALSE))
@@ -4710,7 +4743,7 @@ void Generate_Roads(int16_t wp)
     // ; 
     // ; BUG: ignores the passed plane value, and instead
     // ;  processes every city
-    // ; BUG: Myrran roads will have normal roads as the tile
+    // ; BUG: Myrran roads will have normal roads as the map square
     // ;  coordinates upgraded are not set up before doing so
 
     for(city_idx = 0; city_idx < _cities; city_idx++)
@@ -4793,7 +4826,7 @@ void CRP_NEWG_CreatePathGrids__WIP(int16_t wp)
 ; generates terrain specials for the selected plane,
 ; and also clears out its terrain flags table
 ;
-; WARNING: alters tile types, which may have an adverse
+; WARNING: alters map square types, which may have an adverse
 ;  effect on previously used maximum populations
 */
 /*
@@ -4852,7 +4885,7 @@ void Generate_Terrain_Specials(int16_t wp)
 
             EZ_Present = ST_FALSE;
 
-            // ; check if there's an encounter on the tile
+            // ; check if there's an encounter on the map square
 
             for(itr = 0; itr < NUM_LAIRS; itr++)
             {
@@ -4872,7 +4905,7 @@ void Generate_Terrain_Specials(int16_t wp)
 
             }
 
-            // ; check if there's a tower on the tile
+            // ; check if there's a tower on the map square
             // ; 
             // ; the above loop will already catch these
 
@@ -4892,7 +4925,7 @@ void Generate_Terrain_Specials(int16_t wp)
 
             }
 
-            // ; check if there is a city on the tile
+            // ; check if there is a city on the map square
 
             for(itr = 0; itr < _cities; itr++)
             {
@@ -5015,7 +5048,7 @@ void Generate_Terrain_Specials(int16_t wp)
 // MGC o51p29
 // drake178: NEWG_DesertSpecials()
 /*
-; returns a random desert tile terrain special based on
+; returns a random desert map square terrain special based on
 ; the plane
 ; Arcanus         Myrror
 ;   2:3    gems    1:5
@@ -5062,7 +5095,7 @@ int16_t Desert_Terrain_Special(int16_t wp)
 // MGC o51p30
 // drake178: NEWG_HillSpecials()
 /*
-; returns a random hill tile terrain special based on
+; returns a random hill map square terrain special based on
 ; the plane
 ; Arcanus          Myrror
 ;   6:18    iron    1:10
@@ -5148,7 +5181,7 @@ int16_t Hills_Terrain_Special(int16_t wp)
 // MGC o51p31
 // drake178: NEWG_MntnSpecials()
 /*
-; returns a random mountain tile terrain special based
+; returns a random mountain map square terrain special based
 ; on the plane
 ; Arcanus          Myrror
 ;   5:18    coal    1:10
@@ -5307,7 +5340,7 @@ void Init_Square_Explored(void)
 // MGC o51p33
 // drake178: TILE_SetScouting()
 /*
-; sets the pased scouting flags for the specified tile,
+; sets the pased scouting flags for the specified map square,
 ; or does nothing if the coordinates are out of range
 ; (the plane is not boundary checked though)
 */
@@ -5342,7 +5375,7 @@ void Set_Square_Explored_Bits(int16_t wp, int16_t wx, int16_t wy, int16_t bits)
 // drake178: NEWG_SetMoveMaps()
 /*
 ; sets the movement map for the selected plane based
-; on tile types
+; on map square types
 */
 /*
     populates movement_mode_cost_maps[]
@@ -5465,6 +5498,26 @@ WARNING: can't go backwards with this setup
 /*
 
 */
+/**
+ * @brief Updates and draws the world-generation progress bar.
+ *
+ * @details
+ * Renders progress into the "Building The Worlds" bar region on the offscreen
+ * page and then flips pages to present the updated frame. Progress is mapped
+ * to a fixed-width bar where `100` fills the full range and intermediate
+ * values fill proportionally.
+ *
+ * For `percent == 0`, the function returns early after setting the off page,
+ * performing no fill or page toggle.
+ *
+ * @param percent Progress percentage expected in the range `0..100`.
+ *
+ * @return void
+ *
+ * @note Values greater than or equal to `100` are clamped to full-bar fill.
+ * @warning This routine is designed for forward-progress updates; visual
+ *          behavior for regressions depends on caller sequencing.
+ */
 void Draw_Building_The_Worlds(int16_t percent)
 {
     int16_t width = 0;
@@ -5927,7 +5980,7 @@ int16_t Square_Is_Grassland_NewGame(int16_t wx, int16_t wy, int16_t wp)
 // MGC o51p51
 // drake178: TILE_GetFood()
 /*
-; returns the amount of food provided by the tile based
+; returns the amount of food provided by the map square based
 ; on its type, in units of 1/2
 ;
 ; BUG: swamps do not yield the described amount of 1/2,
@@ -6093,7 +6146,7 @@ int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp)
 // drake178: TILE_GetMaxPop()
 /*
 ; returns the amount of food found on the surrounding
-; tiles in a radius equal to a city's catchment area
+; map squares in a radius equal to a city's catchment area
 ; (the base maximum population of a city built there)
 */
 /*

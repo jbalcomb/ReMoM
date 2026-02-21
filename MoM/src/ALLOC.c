@@ -89,7 +89,7 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     UU_TBL_1 = Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
     UU_TBL_2 = Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
 
-    _landmasses    = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
+    _landmasses    = (uint8_t *)Allocate_Next_Block(World_Data, 302);  // 302 PR, 4832 B  ((2 * 60 * 40) / 16)
 
     _map_square_terrain_specials = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
 

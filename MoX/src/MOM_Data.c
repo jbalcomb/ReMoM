@@ -2551,8 +2551,7 @@ struct s_NODE * _NODES;
 /*
 1-byte, unsigned
 302 PR, 4832 B, in World_Data
-¿ GET/SET MACRO ?
-
+use GET_LANDMASS() and SET_LANDMASS() macros for access, in MOX_DEF.h
 */
 uint8_t * _landmasses;
 
@@ -2799,9 +2798,9 @@ int16_t _units;                             // MoO2 _NUM_SHIPS
 *always* use itr_cities
 */
 int16_t _cities;
-int16_t _difficulty;                        // enum e_Difficulty {Intro, Easy, Normal, Hard, Impossible}
-int16_t _magic;
-int16_t _landsize;
+int16_t _difficulty;                        /* enum e_Difficulty {Intro, Easy, Normal, Hard, Impossible} */
+int16_t _magic;                             /* enum e_MagicLevel {None, Low, Medium, High} */
+int16_t _landsize;                          /* enum e_LandSize {Tiny, Small, Medium, Large, Huge} */
 /*
 *always* use itr_players
 */

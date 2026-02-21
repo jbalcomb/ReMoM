@@ -5,7 +5,12 @@ include(GoogleTest)
 
 add_executable(MOM_tests
     MOM_tests.cpp
+    test_NEWG_ClearLandmasses__WIP.cpp
+    test_NEWG_TileIsleExtend__WIP.cpp
+    test_TILE_SetLandMass__WIP.cpp
     test_City_Maximum_Size_NewGame.cpp
+    test_Init_New_Game.cpp
+    test_Set_Upper_Lair_Guardian_Count.cpp
     test_Square_Food2_NewGame.cpp
     test_STR_ListSeparator.cpp
  )

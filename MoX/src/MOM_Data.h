@@ -1675,7 +1675,7 @@ struct s_CITY_ENCHANTMENTS
 struct s_CITY
 {
     /* 00 */ char name[LEN_CITY_NAME];  // pointer  2-byte in 16-bit DOS  8-byte in 64-bit Windows
-    /* 0E */ int8_t race;
+    /* 0E */ int8_t race;   /* 1-byte, signed */
     /* 0F */ int8_t wx;
     /* 10 */ int8_t wy;
     /* 11 */ int8_t wp;

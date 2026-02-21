@@ -1,6 +1,7 @@
 #ifndef MOX_DEF_H
 #define MOX_DEF_H
 
+#include "MOM_DATA.h"
 #include "MOX_BASE.h"
 #include "MOX_UPD.h"
 #include "Video.h"

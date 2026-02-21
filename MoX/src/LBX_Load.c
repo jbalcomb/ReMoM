@@ -110,6 +110,27 @@ SAMB_ptr LBX_Reload_Next(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head)
 
 // WZD s10p04
 // MoO2 Farload_Data
+/**
+ * @brief Loads a record range from an LBX entry into newly allocated memory.
+ *
+ * @details
+ * Wrapper around `LBX_Load_Library_Data()` using `sa_Single` allocation.
+ * Reads `num_recs` records of size `record_size` beginning at `start_rec`
+ * from `entry_num` in the LBX library named by `lbx_name`.
+ *
+ * @param lbx_name Base LBX file name (with or without extension).
+ * @param entry_num Zero-based LBX entry index to load from.
+ * @param start_rec Zero-based starting record index within the entry.
+ * @param num_recs Number of records to load.
+ * @param record_size Expected size of each record, in bytes.
+ *
+ * @return SAMB_ptr Pointer to the allocated buffer containing loaded data.
+ *
+ * @note Allocation, range validation, and LBX-format checks are performed by
+ *       `LBX_Load_Library_Data()` and its downstream helpers.
+ * @warning The loader pipeline normalizes file-name case via
+ *          `File_Name_Base()`, which mutates the provided `lbx_name` buffer.
+ */
 SAMB_ptr LBX_Load_Data(char * lbx_name, int16_t entry_num, int16_t start_rec, int16_t num_recs, int16_t record_size)
 {
     SAMB_ptr SAMB_data;

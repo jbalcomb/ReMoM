@@ -95,6 +95,8 @@ ITEM_MAX_POWERS
 #define NUM_CITIES                100
 #define NUM_UNITS                1009
 #define NUM_RACES                  14
+#define NUM_RACES_ARCANUS           9
+#define NUM_RACES_MYRROR            5
 #define NUM_HEROES                  6   // "Hero Slots"
 #define NUM_UNIT_TYPES            198
 #define NUM_UNIT_TYPE_NAMES       121
@@ -293,8 +295,8 @@ WIZARDS.LBX
 
 
 
-#define WORLD_XMIN          0  // in Squares
-#define WORLD_XMAX         (WORLD_WIDTH - 1)  // in Squares
+#define WORLD_XMIN          0  // in Squares  AKA WX_FST
+#define WORLD_XMAX         (WORLD_WIDTH - 1)  // in Squares  AKA WX_LST
 #define WORLD_YMIN          0  // in Squares
 #define WORLD_YMAX         (WORLD_HEIGHT - 1)  // in Squares
 

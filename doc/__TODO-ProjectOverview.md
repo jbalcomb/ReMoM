@@ -94,7 +94,11 @@ Init_New_Game_()
 [-] NEWG_AnimateOceans()
 [x] Set_Upper_Lair_Guardian_Count()
 
-[ ] BUG  starting city in middle of ocean, for human player; failed ocean check? failed max pop check?
+[x] BUG  starting city in middle of ocean, for human player; failed ocean check? failed max pop check?
+
+[ ] location validation for neutral cities generation
+
+[ ] add Set_Game_Random_Seed_() from MoO2, in Init_New_Game(), with _cmd_line_seed
 
 [ ] ...move special.c/h from MoM to MoX
 

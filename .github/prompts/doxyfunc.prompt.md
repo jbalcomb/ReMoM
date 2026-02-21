@@ -12,4 +12,5 @@ Your task is to generate comprehensive Doxygen documentation for the selected fu
 3. For each element, write detailed Doxygen comments describing its purpose, inputs (parameters), outputs (return values), and any usage notes.
 4. Use appropriate Doxygen tags such as @brief, @param, @return, and others as needed.
 5. Ensure comments are clear, concise, and provide meaningful context to users of the code.
-6.  Maintain the original code structure; only add the Doxygen comments immediately preceding the relevant code element.
+6. Maintain the original code structure; only add the Doxygen comments immediately preceding the relevant code element.
+Do not replace or change existing block comments.

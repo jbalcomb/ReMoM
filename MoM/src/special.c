@@ -1,3 +1,18 @@
+/**
+ * @file special.c
+ * @brief Geometry, distance, and wrapped path-plotting utilities.
+ *
+ * Provides low-level helper routines used by map and movement systems,
+ * including range/distance estimation, wrapped X-axis distance handling,
+ * and Bresenham-style tile-path generation with wrap correction.
+ *
+ * Key routine `Path_Wrap()` generates a tile-by-tile route between two map
+ * coordinates, writes the route into X/Y output buffers, and returns the
+ * number of generated steps.
+ *
+ * @note This module preserves behavior inherited from legacy WIZARDS.EXE /
+ *       MoO2-era implementations.
+ */
 /*
     WIZARDS.EXE
         seg023
@@ -313,6 +328,39 @@ mov     [bp+error_term], ax
 ; two separate return (byte) arrays
 ; returns the length of the array (tile distance)
 */
+/*
+
+TODO  double check MoO2 if "MAP_X" was what should have been used here instead of "length"
+
+*/
+/**
+ * @brief Plots a wrapped tile path between two map coordinates.
+ *
+ * @details
+ * Generates a stepwise line from `(x1, y1)` to `(x2, y2)` using a
+ * Bresenham-style integer rasterization. The X axis supports wrap-around via
+ * `length`; before plotting, the target X is adjusted to the shorter wrapped
+ * direction when appropriate.
+ *
+ * Generated path coordinates are written in order to `path_string_x` and
+ * `path_string_y`, one entry per step, excluding the start tile and including
+ * each traversed intermediate/endpoint step.
+ *
+ * @param x1 Start X coordinate.
+ * @param y1 Start Y coordinate.
+ * @param x2 Destination X coordinate.
+ * @param y2 Destination Y coordinate.
+ * @param path_string_x Output array receiving X coordinates for each path step.
+ * @param path_string_y Output array receiving Y coordinates for each path step.
+ * @param length Map width used for X-axis wrapping.
+ *
+ * @return int16_t Number of plotted path steps written to the output arrays.
+ *
+ * @note X coordinates in the output are normalized to `[0, length)` after
+ *       plotting.
+ * @warning Caller must provide output buffers large enough to hold the
+ *          returned path length.
+ */
 int16_t Path_Wrap(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t * path_string_x, int8_t * path_string_y, int16_t length)
 {
     int32_t remainder;  // int16_t in Dasm  (can't match JNB / `test Carry Flag`)

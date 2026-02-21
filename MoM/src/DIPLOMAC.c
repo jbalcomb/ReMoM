@@ -2534,7 +2534,7 @@ static int16_t Invader_Army_Strength_Comparison(int16_t player1, int16_t player2
 
     }
 
-    landmass = _landmasses[((_FORTRESSES[player2].wp * WORLD_SIZE) + (_FORTRESSES[player2].wy * WORLD_WIDTH) + _FORTRESSES[player2].wx)];
+    landmass = GET_LANDMASS(_FORTRESSES[player2].wx, _FORTRESSES[player2].wy, _FORTRESSES[player2].wp);
 
     plane = _FORTRESSES[player2].wp;
 
@@ -2553,7 +2553,7 @@ static int16_t Invader_Army_Strength_Comparison(int16_t player1, int16_t player2
             &&
             (_UNITS[itr].wp == plane)
             &&
-            (_landmasses[((_UNITS[player2].wp * WORLD_SIZE) + (_UNITS[player2].wy * WORLD_WIDTH) + _UNITS[player2].wx)] == landmass)
+            (GET_LANDMASS(_UNITS[itr].wx, _UNITS[itr].wy, _UNITS[itr].wp) == landmass)
         )
         {
 

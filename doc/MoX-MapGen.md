@@ -1,3 +1,30 @@
+MoX-MapGen.md
+SEEALSO: MoX-Landmasses.md
+SEEALSO: MoX-WorldMap.md
+
+
+
+Init_Landmasses()
+
+
+
+document the process that populates the map squares in @_world_maps with the terrain types
+@Init_Landmasses()
+
+
+
+
+
+
+## code that use world map sections
+NEWG_CreateLands__WIP()
+
+
+
+
+
+
+
 
 
 

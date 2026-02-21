@@ -35,7 +35,7 @@ void Generate_Towers(void);
 void Generate_Home_City__WIP(void);
 
 // MGC o51p06
-void NEWG_ClearLandmasses__WIP(int16_t wp);
+void Init_Landmasses(int16_t wp);
 
 // MGC o51p07
 void NEWG_EqualizeNodes__WIP(int16_t wp);
@@ -62,7 +62,7 @@ int16_t NODE_IsAuraUnique__WIP(int16_t node_idx);
 void NEWG_SetNodeType__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, int16_t wp, int8_t * type);
 
 // MGC o51p15
-void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy);
+void Build_Landmass(int16_t wp, int16_t wx, int16_t wy);
 
 // MGC o51p16
 void Generate_Lairs(void);

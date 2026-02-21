@@ -60,6 +60,29 @@ So, ...
 OON XREF j_Init_Computer_Players() <-| Init_New_Game()
 
 */
+/**
+ * @brief Initializes AI player profiles and their starting spell libraries.
+ *
+ * @details
+ * Builds non-human wizard setup data for a new game by first generating AI
+ * wizard profiles, then copying default realm spell selections into
+ * `_player_start_spells` for each computer player, and finally creating each
+ * AI wizard's known/knowable spell library.
+ *
+ * The neutral player record is also initialized with baseline values used by
+ * neutral units/cities in world simulation.
+ *
+ * Side effects include mutation of global game-state tables such as
+ * `_players[]` and `_player_start_spells[]`.
+ *
+ * @note Player index 0 (human) is skipped in the AI spell-copy loop; AI
+ *       initialization begins at player index 1 and runs to `_num_players - 1`.
+ *
+ * @return void
+ *
+ * @see Init_Computer_Players_Wizard_Profile
+ * @see Init_Computer_Players_Spell_Library
+ */
 void Init_Computer_Players(void)
 {
     int16_t itr_num_players = 0;  // _DI_
