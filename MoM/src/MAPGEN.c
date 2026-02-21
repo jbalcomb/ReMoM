@@ -41,11 +41,11 @@ MoO2
 #include "../../MoX/src/MOX_TYPE.h"
 #include "../../MoX/src/random.h"
 #include "../../MoX/src/Video.h"
+#include "../../MoX/src/special.h"
 
 #include "INITGAME.h"
 #include "NEXTTURN.h"
 #include "RACETYPE.h"
-#include "special.h"
 #include "Terrain.h"
 #include "TerrType.h"
 #include "UNITTYPE.h"

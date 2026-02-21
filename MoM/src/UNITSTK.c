@@ -15,6 +15,7 @@ MoO2
 #include "../../MoX/src/MOM_Data.h"
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_TYPE.h"
+#include "../../MoX/src/special.h"
 
 #include "CITYCALC.h"
 #include "../../MoX/src/random.h"
@@ -24,7 +25,6 @@ MoO2
 #include "UNITTYPE.h"
 #include "UnitMove.h"
 #include "WZD_o059.h"
-#include "special.h"
 
 #include <assert.h>
 

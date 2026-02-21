@@ -30,6 +30,7 @@
 #include "../../MoX/src/SOUND.h"
 #include "../../MoX/src/MOX_T4.h"
 #include "../../MoX/src/Timer.h"
+#include "../../MoX/src/special.h"
 
 #include "Outpost.h"
 #include "TerrType.h"
@@ -50,7 +51,6 @@
 #include "UnitView.h"
 #include "WZD_o059.h"
 #include "WZD_o143.h"
-#include "special.h"
 #include "CITYCALC.h"
 #include "CityScr.h"
 #include "City_ovr55.h"

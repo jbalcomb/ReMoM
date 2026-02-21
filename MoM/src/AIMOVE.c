@@ -6,11 +6,12 @@
         ovr162
 */
 
-#include "../../MoX/src/random.h"
 #include "../../MoX/src/MOM_Data.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_TYPE.h"
+#include "../../MoX/src/random.h"
+#include "../../MoX/src/special.h"
 #include "../../MoX/src/Util.h"
 
 #include "Outpost.h"
@@ -26,7 +27,6 @@
 #include "Terrain.h"
 #include "UNITTYPE.h"
 #include "UnitMove.h"
-#include "special.h"
 #include "DIPLODEF.h"
 
 #include <stdlib.h>

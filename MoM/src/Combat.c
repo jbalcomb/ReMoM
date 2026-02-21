@@ -43,6 +43,7 @@
 #include "../../MoX/src/MOX_SET.h"  /* magic_set */
 #include "../../MoX/src/MOX_T4.h"
 #include "../../MoX/src/SOUND.h"
+#include "../../MoX/src/special.h"
 
 #include "DIPLODEF.h"
 #include "City_ovr55.h"
@@ -62,7 +63,6 @@
 #include "RACETYPE.h"
 #include "SBookScr.h"
 #include "../../STU/src/STU_DBG.h"
-#include "special.h"
 #include "Spellbook.h"  /* Combat_Spellbook_Build__WIP() */
 #include "SPELLDEF.h"
 #include "Spells131.h"

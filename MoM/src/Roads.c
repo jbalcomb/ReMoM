@@ -16,12 +16,12 @@
 #include "../../MoX/src/MOX_T4.h"
 #include "../../MoX/src/Timer.h"
 #include "../../MoX/src/paragrph.h"
+#include "../../MoX/src/special.h"
 
 #include "MOM_SCR.h"
 #include "../../MoX/src/Help.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
-#include "special.h"
 #include "Terrain.h"
 #include "UnitMove.h"   // WTFMATE
 #include "UNITSTK.h"

@@ -53,7 +53,6 @@ set(MOMLIB_SOURCES
     SCORE.c
     Settings.c
     SETTLE.c
-    special.c
     Spellbook.c
     Spells128.c
     Spells129.c

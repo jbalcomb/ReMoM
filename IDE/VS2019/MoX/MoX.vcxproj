@@ -51,6 +51,7 @@
     <ClInclude Include="..\..\..\MoX\src\random.h" />
     <ClInclude Include="..\..\..\MoX\src\sdl2_Audio.h" />
     <ClInclude Include="..\..\..\MoX\src\SOUND.h" />
+    <ClInclude Include="..\..\..\MoX\src\special.h" />
     <ClInclude Include="..\..\..\MoX\src\TEXTBOX.h" />
     <ClInclude Include="..\..\..\MoX\src\Timer.h" />
     <ClInclude Include="..\..\..\MoX\src\Util.h" />
@@ -99,6 +100,7 @@
     <ClCompile Include="..\..\..\MoX\src\sdl2_SDLK.c" />
     <ClCompile Include="..\..\..\MoX\src\sdl2_Timer.c" />
     <ClCompile Include="..\..\..\MoX\src\SOUND.c" />
+    <ClCompile Include="..\..\..\MoX\src\special.c" />
     <ClCompile Include="..\..\..\MoX\src\TEXTBOX.c" />
     <ClCompile Include="..\..\..\MoX\src\Util.c" />
     <ClCompile Include="..\..\..\MoX\src\Video.c" />

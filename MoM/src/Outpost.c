@@ -22,6 +22,7 @@
 #include "../../MoX/src/Timer.h"
 #include "../../MoX/src/Util.h"
 #include "../../MoX/src/Video.h"
+#include "../../MoX/src/special.h"
 
 #include "../../MoX/src/Help.h"
 #include "City_ovr55.h"
@@ -32,7 +33,6 @@
 #include "Terrain.h"
 #include "WZD_o059.h"
 #include "WZD_o143.h"
-#include "special.h"
 
 #include "Outpost.h"
 
