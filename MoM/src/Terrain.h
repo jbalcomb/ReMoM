@@ -27,7 +27,7 @@ mixed-use bitfield
 4-bit value
 4 bits
 */
-enum enum_Terrain_Specials
+enum e_Terrain_Specials
 {
     ts_Iron           =   1,
     ts_Coal           =   2,
