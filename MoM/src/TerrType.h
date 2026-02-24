@@ -92,7 +92,7 @@ enum e_TERRAIN_TYPES
     tt_Mountain1   = 0x0A4,
     tt_Desert1     = 0x0A5,
     tt_Swamp1      = 0x0A6,
-    tt_Tundra1     = 0x0A7,
+    tt_Tundra1     = 0x0A7,  /* used by basic terrain generation */
     tt_SorceryNode = 0x0A8,
     tt_NatureNode  = 0x0A9,
     tt_ChaosNode   = 0x0AA,
