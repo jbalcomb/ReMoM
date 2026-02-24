@@ -104,7 +104,11 @@ Init_New_Game_()
 
 DIPLOMAC.LBX [entry 52]  was not properly allocated or has been corrupted.
 
-
+[ ] Clean the hot mess that is Play_Sound ... // DOMSDOS  Play_Sound__STUB(SND_Spell_Music);  Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
+sdl2_Play_Background_Music__WIP
+        // DOMSDOS  Play_Background_Music__STUB();
+[ ] Stop_All_Sounds__STUB();
+// DOMSDOS  Stop_Music__STUB();
 
 
 
