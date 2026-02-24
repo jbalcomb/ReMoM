@@ -7,7 +7,7 @@
 
 
 
-enum enum_LBX_ERROR
+enum e_LBX_ERROR
 {
     le_not_found          =  1,
     le_corrupted          =  2,
@@ -19,10 +19,10 @@ enum enum_LBX_ERROR
     le_recsize_mismatch   =  9,
     le_records_exceeded   = 10,
     le_load_reg_first     = 11,
-    le_low_EMS            = 12,
+    le_low_emm            = 12,
     le_cantload_reserved  = 13,
-    le_low_ResEM          = 14,
-    le_EM_swap_fail       = 15,
+    le_low_resv_emm       = 14,
+    le_emm_swap_fail      = 15,
     le_anim_over_64k      = 16
 };
 
@@ -57,7 +57,7 @@ extern FILE * lbxload_fptr;
 extern char lbxload_lbx_file_extension[];
 extern int16_t lbxload_num_entries;
 extern SAMB_ptr lbxload_lbx_header;
-extern char lbxload_lbx_name[];
+extern char lbxload_file_name[];
 /* HACK */  extern uint32_t lbxload_entry_length;  /* because. SDL Mixed needs the sound buffer size */
 
 
@@ -114,7 +114,7 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
 // LBX_GetEntryData()
 
 // WZD s10p14
-void UU_LBX_SetPath(char * path);
+static void Set_Alternate_Path(char * alternate);
 
 // WZD s10p15
 void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16_t pages);

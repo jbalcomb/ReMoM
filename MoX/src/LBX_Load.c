@@ -40,6 +40,10 @@
  * @see MOX_TYPE.h for SAMB_ptr and other type definitions
  */
 
+#ifdef STU_DEBUG
+#include "../../STU/src/STU_DBG.h"
+#endif
+
 #include "Allocate.h"
 #include "EXIT.h"
 #include "MOM_Data.h"
@@ -56,12 +60,21 @@
 
 
 
+// WZD  dseg:E5D0   BEGIN:  seg010 - Unitialized Data
+// WZD  dseg:E5D0   int16_t farload_num_entries
+// WZD  dseg:E5D2   int16_t farload_extended_flag
+// WZD  dseg:E5D4   int16_t farload_lbx_header
+// WZD  dseg:E5D6   char    farload_file_name[16]
+// WZD  dseg:E5D6   END:  seg010 - Unitialized Data
+
 int16_t lbxload_lbx_header_flag = ST_FALSE;
-FILE * lbxload_fptr = NULL;
+FILE * lbxload_fptr = NULL;  // MoO2  Module: farload  farload_fptr  ... MoO2 changed to farload_file_flag {F,T}
+FILE * DBG_lbxload_fptr = NULL;  // DEBUG  AVWL on fclose()
 char lbxload_lbx_file_extension[] = ".LBX";
 int16_t lbxload_num_entries;
+int16_t farload_extended_flag;
 SAMB_ptr lbxload_lbx_header;
-char lbxload_lbx_name[16];
+char lbxload_file_name[16];  // MoO2  Module: farload  farload_file_name
 /* HACK */  uint32_t lbxload_entry_length;  /* because. SDL Mixed needs the sound buffer size */
 
 
@@ -193,43 +206,78 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
         BEGIN: Current vs. Previous
     */
 // #pragma warning(suppress : 4996)
-    // if((lbxload_fptr == NULL) || (stricmp(lbx_name, lbxload_lbx_name) != 0))
+    // if((lbxload_fptr == NULL) || (stricmp(lbx_name, lbxload_file_name) != 0))
     if(
         (lbxload_fptr == NULL)
         ||
-        (strcmp(lbx_name, lbxload_lbx_name) != 0)
+        (strcmp(lbx_name, lbxload_file_name) != 0)
     )
     {
         /*
             BEGIN: Current != Previous
         */
 
-        if(lbxload_fptr != NULL) { fclose(lbxload_fptr); }
+        if(NULL != lbxload_fptr)
+        {
+            if(DBG_lbxload_fptr != lbxload_fptr)
+            {
+                STU_DEBUG_BREAK();
+            }
+            fclose(lbxload_fptr);
+            lbxload_fptr = ST_NULL;
+        }
 
-        strcpy(lbxload_lbx_name, lbx_name);
+        strcpy(lbxload_file_name, lbx_name);
         strcpy(lbx_file_name, lbx_name);
         strcat(lbx_file_name, ".LBX");
 
         lbxload_fptr = fopen(lbx_file_name, "rb");
 
-        // if(lbxload_fptr == NULL) { if(secondary_drive_path == NULL) { Error_Handler(LBXErr_not_found) } else { ... secondary_drive_path full_file_path lbx_open() ... }
+        if(NULL == lbxload_fptr)
+        {
+            Error_Handler(lbx_name, le_not_found, entry_num, ST_NULL);
+            // if(secondary_drive_path[0] == '\0')
+            // {
+            //     Error_Handler(lbx_name, le_not_found, entry_num, ST_NULL);
+            // }
+            // else
+            // {
+            //     strcpy(full_file_path, secondary_drive_path);
+            //     strcat(full_file_path, lbx_file_name);
+            //     lbxload_fptr = fopen(full_file_path, "rb");
+            //     if(NULL == lbxload_fptr)
+            //     {
+            //         Error_Handler(lbx_name, le_not_found, entry_num, ST_NULL);
+            //     }
+            //     else
+            //     {
+            //         DBG_lbxload_fptr = lbxload_fptr;
+            //     }
+            // }
+        }
+        else
+        {
+            DBG_lbxload_fptr = lbxload_fptr;
+        }
 
-        // if UU_farload_hdr_fmt ... file_hdr_ofst  512 or 0
+        // if farload_extended_flag ... file_hdr_ofst  512 or 0
 
         // lbx_seek(file_hdr_ofst, farload_fptr)
 
         fread(lbxload_lbx_header, 1, SZ_LBX_HDR_B, lbxload_fptr);
 
-        // if(LBX_GET_MAGIC_NUMBER(lbxload_lbx_header) != LBX_MAGSIG) { Error_Handler(lbx_name, 7, entry_num, NULL); }
+        if(LBX_GET_MAGIC_NUMBER(lbxload_lbx_header) != LBX_MAGSIG)
+        {
+            Error_Handler(lbx_name, le_bad_header, entry_num, ST_NULL);
+        }
 
         lbxload_num_entries = LBX_GET_NUM_ENTRIES(lbxload_lbx_header);
-
 
         /*
             END: Current != Previous
         */
     }
-    if(lbxload_num_entries < entry_num) { Error_Handler(lbx_name, 8, entry_num, ST_NULL); }
+    if(lbxload_num_entries < entry_num) { Error_Handler(lbx_name, le_entries_exceeded, entry_num, ST_NULL); }
     /*
         END: Current vs. Previous
     */
@@ -370,34 +418,70 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
         BEGIN: Current vs. Previous
     */
 
-    // if((lbxload_fptr == NULL) || (stricmp(lbx_name, lbxload_lbx_name) != 0))
+    // if((lbxload_fptr == NULL) || (stricmp(lbx_name, lbxload_file_name) != 0))
     if(
         (lbxload_fptr == NULL)
         ||
-        (strcmp(lbx_name, lbxload_lbx_name) != 0)
+        (strcmp(lbx_name, lbxload_file_name) != 0)
     )
     {
         /*
             BEGIN: Current != Previous
         */
 
-        if(lbxload_fptr != NULL) { fclose(lbxload_fptr); }
+        if(lbxload_fptr != NULL)
+        {
+            if(DBG_lbxload_fptr != lbxload_fptr)
+            {
+                STU_DEBUG_BREAK();
+            }
+            fclose(lbxload_fptr);
+            lbxload_fptr = NULL;
+        }
 
-        strcpy(lbxload_lbx_name, lbx_name);
+        strcpy(lbxload_file_name, lbx_name);
         strcpy(lbx_file_name, lbx_name);
         strcat(lbx_file_name, ".LBX");
 
         lbxload_fptr = fopen(lbx_file_name, "rb");
 
-        // if(lbxload_fptr == NULL) { if(secondary_drive_path == NULL) { Error_Handler(LBXErr_not_found) } else { ... secondary_drive_path full_file_path lbx_open() ... }
+        if(NULL == lbxload_fptr)
+        {
+            Error_Handler(lbx_name, le_not_found, entry_num, ST_NULL);
+            // if(secondary_drive_path[0] == '\0')
+            // {
+            //     Error_Handler(lbx_name, le_not_found, entry_num, ST_NULL);
+            // }
+            // else
+            // {
+            //     strcpy(full_file_path, secondary_drive_path);
+            //     strcat(full_file_path, lbx_file_name);
+            //     lbxload_fptr = fopen(full_file_path, "rb");
+            //     if(NULL == lbxload_fptr)
+            //     {
+            //         Error_Handler(lbx_name, le_not_found, entry_num, ST_NULL);
+            //     }
+            //     else
+            //     {
+            //         DBG_lbxload_fptr = lbxload_fptr;
+            //     }
+            // }
+        }
+        else
+        {
+            DBG_lbxload_fptr = lbxload_fptr;
+        }
 
-        // DNE  if UU_farload_hdr_fmt ... file_hdr_ofst  512 or 0
+        // DNE  if farload_extended_flag ... file_hdr_ofst  512 or 0
 
         // lbx_seek(file_hdr_ofst, farload_fptr)
 
         fread(lbxload_lbx_header, 1, SZ_LBX_HDR_B, lbxload_fptr);
 
-        // if(LBX_GET_MAGIC_NUMBER(lbxload_lbx_header) != LBX_MAGSIG) { Error_Handler(lbx_name, 7, entry_num, NULL); }
+        if(LBX_GET_MAGIC_NUMBER(lbxload_lbx_header) != LBX_MAGSIG)
+        {
+            Error_Handler(lbx_name, le_bad_header, entry_num, ST_NULL);
+        }
 
         lbxload_num_entries = LBX_GET_NUM_ENTRIES(lbxload_lbx_header);
 
@@ -406,7 +490,7 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
             END: Current != Previous
         */
     }
-    if(lbxload_num_entries < entry_num) { Error_Handler(lbx_name, 8, entry_num, ST_NULL); }  // " exceeds number of LBX entries"
+    if(lbxload_num_entries < entry_num) { Error_Handler(lbx_name, le_entries_exceeded, entry_num, ST_NULL); }  // " exceeds number of LBX entries"
     /*
         END: Current vs. Previous
     */
@@ -521,9 +605,9 @@ Done:
 
 
 // WZD s10p12
-    // Main_Screen_Help() LBXR_DirectLoader("helpentry", 1, &_help_entries, 0, 25, 10);
-// MoO2: Farload_Data_Static()
 /*
+MoO2  Module: farload  Farload_Data_Static() |-> Farload_Library_Data() ...hard-coded for allocation_type 3
+
 function (0 bytes) Farload_Library_Data
 Address: 01:00126F3B
 Return type: pointer (4 bytes) 
@@ -561,11 +645,17 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
     uint32_t entry_end = 0;
     uint32_t entry_length = 0;
     int16_t max_records = 0;
+    int16_t current_extended_flag = 0;
+    int16_t header_offset = 0;
     int16_t rec_size = 0;
     uint16_t read_size = 0;
+    int32_t foffset = 0;
     uint32_t record_start = 0;  // DNE in Dasm; entry_start__record_start
 
-    // if(entry_num < 0) { LBX_Error(lbx_name, 1, entry_num, NULL); }  // "<lbx_name>.LBX [entry <entry_num>] could not be found."
+    if(entry_num < 0)
+    {
+        Error_Handler(lbx_name, le_not_found, entry_num, NULL);
+    }
 
     if(lbxload_lbx_header_flag == ST_FALSE)
     {
@@ -575,73 +665,124 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
 
     File_Name_Base(lbx_name);
 
-    // UU_SAMB_data = EMM_LBXR_DirectLoad(file_name, entry_num, SAMB_head@, start_rec, num_recs, record_size)
-    // current_extended_flag = ST_FALSE;
-    // if(UU_SAMB_data == ST_NULL)
+    // TODO  UU_SAMB_data = EMM_LBXR_DirectLoad(file_name, entry_num, SAMB_head@, start_rec, num_recs, record_size)
+
+    current_extended_flag = ST_FALSE;
+
+    // TODO  if(UU_SAMB_data == ST_NULL) { ... } Update_MemFreeWorst_KB();
 
     /*
         BEGIN: Current vs. Previous
     */
 
     if(
-        (NULL == lbxload_fptr)
-        ||
-        (strcmp(lbx_name, lbxload_lbx_name) != 0)
+        !(
+            (NULL != lbxload_fptr)
+            &&
+            (_stricmp(lbx_name, lbxload_file_name) == 0)
+            &&
+            (farload_extended_flag == current_extended_flag)
+        )
     )
     {
         /*
             BEGIN: Current != Previous
         */
 
-        if(NULL != lbxload_fptr) { fclose(lbxload_fptr); }  // TODO  can't actually happen, right? cause wrapped in if(NULL == lbxload_fptr)
+        farload_extended_flag = current_extended_flag;
 
-        strcpy(lbxload_lbx_name, lbx_name);
+        if(NULL != lbxload_fptr)
+        {
+            if(DBG_lbxload_fptr != lbxload_fptr)
+            {
+                STU_DEBUG_BREAK();
+            }
+            fclose(lbxload_fptr);
+            lbxload_fptr = NULL;
+        }
+
+        strcpy(lbxload_file_name, lbx_name);
         strcpy(lbx_file_name, lbx_name);
         strcat(lbx_file_name, ".LBX");
 
         lbxload_fptr = fopen(lbx_file_name, "rb");
 
-        // if(lbxload_fptr == NULL) { if(secondary_drive_path == NULL) { Error_Handler(LBXErr_not_found) } else { ... secondary_drive_path full_file_path lbx_open() ... }
-        if(NULL == lbxload_fptr) { Error_Handler(lbx_name, le_not_found, entry_num, ST_NULL); }
+        if(NULL == lbxload_fptr)
+        {
+            if(secondary_drive_path[0] == '\0')
+            {
+                Error_Handler(lbx_name, le_not_found, entry_num, ST_NULL);
+            }
+            else
+            {
+                strcpy(full_file_path, secondary_drive_path);
+                strcat(full_file_path, lbx_file_name);
+                lbxload_fptr = fopen(full_file_path, "rb");
+                if(NULL == lbxload_fptr)
+                {
+                    Error_Handler(lbx_name, le_not_found, entry_num, ST_NULL);
+                }
+                else
+                {
+                    DBG_lbxload_fptr = lbxload_fptr;
+                }
+            }
+        }
+        else
+        {
+            DBG_lbxload_fptr = lbxload_fptr;
+        }
 
-        // DNE  if UU_farload_hdr_fmt ... file_hdr_ofst  512 or 0
+        // HERE:  doesn't have the `if farload_extended_flag` like the other 'LBX Load' functions
+        foffset = 0;
 
-        // lbx_seek(file_hdr_ofst, farload_fptr)
+        if(NULL != lbxload_fptr)
+        {
+            if(fseek(lbxload_fptr, foffset, 0) != 0)
+            {
+                Error_Handler(lbx_name, le_corrupted, entry_num, ST_NULL);
+            }
+        }
 
         if(NULL != lbxload_fptr)
         {
             fread(lbxload_lbx_header, 1, SZ_LBX_HDR_B, lbxload_fptr);
         }
 
-        // if(LBX_GET_MAGIC_NUMBER(lbxload_lbx_header) != LBX_MAGSIG) { Error_Handler(lbx_name, 7, entry_num, NULL); }
+        if(LBX_GET_MAGIC_NUMBER(lbxload_lbx_header) != LBX_MAGSIG)
+        {
+            Error_Handler(lbx_name, le_bad_header, entry_num, ST_NULL);
+        }
 
         lbxload_num_entries = LBX_GET_NUM_ENTRIES(lbxload_lbx_header);
-
 
         /*
             END: Current != Previous
         */
     }
-    if(lbxload_num_entries < entry_num) { Error_Handler(lbx_name, le_entries_exceeded, entry_num, ST_NULL); }  // " exceeds number of LBX entries"
+    if(lbxload_num_entries < entry_num)
+    {
+        Error_Handler(lbx_name, le_entries_exceeded, entry_num, ST_NULL);
+    }
     /*
         END: Current vs. Previous
     */
 
-
-
-
-
     /*
         BEGIN: Entry - Offset Start, End, Length
     */
-    entry_start = ( GET_4B_OFS( (lbxload_lbx_header), ( 8 + ((entry_num) * 4)    ) ) );
-    entry_end   = ( GET_4B_OFS( (lbxload_lbx_header), ( 8 + ((entry_num) * 4) + 4) ) );
-    entry_length = entry_end - entry_start;
 
-    // Warning	C6387	'lbxload_fptr' could be '0':  this does not adhere to the specification for the function 'fseek'.
+    header_offset = (8 + (entry_num * 4));
+    entry_start = GET_4B_OFS((lbxload_lbx_header), (header_offset + 0));
+    entry_end   = GET_4B_OFS((lbxload_lbx_header), (header_offset + 4));
+    entry_length = (entry_end - entry_start);
+
     if(NULL != lbxload_fptr)
     {
-        fseek(lbxload_fptr, entry_start, 0);
+        if(fseek(lbxload_fptr, entry_start, 0) != 0)
+        {
+            Error_Handler(lbx_name, le_corrupted, entry_num, ST_NULL);
+        }
     }
     /*
         END: Entry - Offset Start, End, Length
@@ -657,35 +798,41 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
         fread(&rec_size, 2, 1, lbxload_fptr);
     }
 
-    if(record_size != rec_size)
+    if(
+        (rec_size == 0)
+        ||
+        (record_size != rec_size)
+        )
     {
-        // TODO LBX_Error_Handler(LBXErr_recsize_mismatch)
+        Error_Handler(lbxload_file_name, le_recsize_mismatch, entry_num, ST_NULL);
     }
 
-    if(start_rec + num_recs > max_records)
+    if((start_rec + num_recs) > max_records)
     {
-        // TODO LBX_Error_Handler(LBXErr_records_exceeded)
+        Error_Handler(lbxload_file_name, le_recsize_mismatch, entry_num, ST_NULL);
     }
 
-    // ¿ MoO2: foffset ?
-    // record_start = entry_start + (start_rec * rec_size);
-    record_start = entry_start + (start_rec * rec_size) + 4;
+    record_start = (entry_start  + 4 + (start_rec * rec_size));
 
     if(NULL != lbxload_fptr)
     {
-        fseek(lbxload_fptr, record_start, 0);
+        if(fseek(lbxload_fptr, record_start, 0) != 0)
+        {
+            Error_Handler(lbxload_file_name, le_corrupted, entry_num, ST_NULL);
+        }
     }
 
+    entry_length = (num_recs * rec_size);
 
-    // entry_length = num_recs * rec_size;
-    // read_size = mod(entry_length, 60000);
-    // // num_recs = max_records - start_rec
-    read_size = num_recs * rec_size;
-
+    /*
+        END: Entry - Offset Start, End, Length
+    */
 
     /*
         BEGIN: Read Data
     */
+
+    read_size = entry_length % 60000;  // MAX_ALLOWED_SIZE to prevent buffer overflow
 
     if(NULL != lbxload_fptr)
     {
@@ -695,12 +842,6 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
     /*
         END: Read Data
     */
-
-
-
-
-
-
 
     // DOMSDOS  Update_MemFreeWorst_KB();
     // MoO2: Check_Free();
