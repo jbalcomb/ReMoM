@@ -4,7 +4,31 @@ SEEALSO: MoX-WorldMap.md
 
 
 
+NEWG_SetBaseLands__WIP()  ==>  Translate_Heightmap_To_Base_Terrain_Types() += Add_Tundra()
+NEWG_SetSpecLands__WIP()  ==>  ¿ ?
+
+
+
 Init_Landmasses()
+
+
+
+
+## Translate Drunkard's Walk Hight-Map to Terrain Types
+Translate_Heightmap_To_Base_Terrain_Types() += Add_Tundra()
+Ocean, Grasslands, Forest, Hills, Mountain
+-INF - 0.00  Ocean
+0.00 - 0.75  Grasslands
+0.75 - 3.00  Forest
+4.00 - 5.00  Hills
+6.00 -  INF  Mountain
+
+## then, ...
+NEWG_SetSpecLands__WIP()
+Swamp, Desert
+NOT Terrain Specials
+
+
 
 
 

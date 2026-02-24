@@ -1,6 +1,122 @@
 
 
 
+
+
+ask Claude about the random funciton LFSR
+
+
+
+Add a function to collect statistics for #_landmasses so we can assess how well the drunkards walk algorithm is work. Include trial count, hit count, and sum so we can calculate the average probability after the simulation completes. It's OK if we need to save to a local file. Suggest other ideas for validating the algorithm or heightmap.
+
+
+Here's a summary of the changes and the math behind them, followed by suggested validation ideas.
+
+What was added
+STU_WRLD.h
+Fixed the header guard (STU_VLD_H → STU_WRLD_H)
+Added struct s_Landmass_Walk_Stats with trial_count, hit_count, sum
+Declared Collect_Landmass_Walk_Stats and Write_Landmass_Walk_Stats
+STU_WRLD.c
+Added includes for TerrType.h (for tt_Ocean1), MOM_DEF.h (dimensions), MOX_DEF.h (GET_TERRAIN_TYPE), stdio.h, and STU_WRLD.h
+Collect_Landmass_Walk_Stats — scans the finished plane and derives all three fields from the heightmap
+Write_Landmass_Walk_Stats — appends a TSV row to landmass_walk_stats.txt; writes a header if the file is new
+Calls both from Simulate_World_Map_Generation right after Generate_Landmasses
+Why trial_count == sum
+Generate_Landmasses starts every square at tt_Ocean1 = 0 and does:
+SET_TERRAIN_TYPE(wx, wy, wp, GET_TERRAIN_TYPE(wx, wy, wp) + 1);
+unconditionally on every step. Each step adds exactly +1 to exactly one square, so summing all terrain values gives the total step count. This is a useful sanity check: if trial_count != sum, something is wrong.
+The output TSV columns are:
+column	meaning
+trial_count	total walker steps (= sum)
+hit_count	distinct land squares created
+sum	sum of per-square visit counts
+avg_prob	hit_count / trial_count — efficiency: how many steps produced new land
+avg_visits	sum / hit_count — mean revisit depth (heightmap mean over land)
+Other validation ideas for the walk / heightmap
+Land-to-target ratio — compare hit_count against n_needed (360 / 480 / 720). They should be very close; a big gap signals the termination condition is off.
+Heightmap histogram — bucket terrain-type values (1, 2, 3, …) and plot the frequency. A classic random walk produces a roughly Poisson distribution; a heavy tail means walkers are revisiting the same corridors (possibly a direction-bias bug).
+Distinct landmass count and size CDF — after Build_Landmass, count how many unique landmass IDs exist and sort their sizes. Should produce ~8 landmasses of varying area; a count of 1 means everything merged into one blob.
+Coast-to-interior ratio — for each land square, check whether any of its 4 cardinal neighbours is ocean. The fraction of "coastal" squares over total land is a shape indicator: high = thin archipelago, low = compact continent.
+Direction-bias histogram — instrument the direction-choice loop to tally North / South / East / West picks. Over thousands of steps the distribution should be near-uniform (25 % each); skew indicates the Random(4) - 1 mapping is wrong.
+Bounding-box compactness per landmass — for each landmass, record (land_squares / (bbox_width * bbox_height)). Compact blobs score near 1; thin, wandering fingers score near 0.
+Land / ocean adjacency ratio — measure what fraction of ocean squares are adjacent to land (the "shoreline density"). Helps tune how jagged coastlines look.
+Reproducibility with fixed seed — run Generate_Landmasses twice with the same PRNG seed and assert the heightmaps are identical. Confirms no hidden global state mutates between calls.
+
+
+
+
+
+...
+Want me to also add a third test for the randomized polar strip behavior (asserting only allowed outcomes, not exact RNG layout)?
+
+It seeds the inner polar rows (WORLD_YMIN + 1, WORLD_YMAX - 1) with a deterministic pre-conversion value (6 -> mountain).
+After calling NEWG_SetBaseLands__WIP, it asserts each inner-polar cell is only tt_Mountain1 or tt_Tundra1, which captures valid randomized strip behavior without depending on exact RNG layout.
+
+
+use #e_TERRAIN_TYPES to build a new symbol mapping string in #Print_Worldmap_Map, collapse the ranges that are the same type group (e.g., tt_Shore1_Fst thru tt_Shore1_Lst should just be Shore).
+
+as an expert oldschool C programmer, add a comment for #Get_Worldmap_Terrain_Type describing in minute detail what is doing and why it is doing it
+
+
+
+as an expert oldschool C programmer, add a comment for #NEWG_Clicked_Race describing in minute detail what is doing and why it is doing it
+
+Done. The comment at NewGame.c:1070 now documents:
+What it is -- the enum_RACE_BYTE value of the race the human player clicked on the "Select Race" screen (New Game Screen 6).
+How it gets written -- from Arcanus_Races[itr] for indices 0-8, or Myrran_Races[itr-9] for indices 9-13 (guarded by the Myrran retort check, with a warning dialog on rejection).
+The blink animation -- how the value is immediately read back to drive the four-pass highlight/dim redraw loop that gives visual click feedback.
+Downstream consumption -- how MAPGEN uses it to assign the race of the human player's starting city (_CITIES[_cities].race), and that AI players ignore it.
+Why it's int16_t -- the original executable stores it as a 16-bit word at dseg:8EA4, even though enum_RACE_BYTE values fit in a byte.
+Lifetime -- set once during new-game setup, read during map generation, not meaningful after gameplay begins.
+
+
+
+
+
+e.g.,
+Codex TODO prompt
+Please implement the code as described by the comment on STU/src/STU_WRLD.c:357
+
+The comment is:
+Worldmap_Statistics();
+
+Replace the comment with your implementation.
+Optimize for speed. Don't over-explore or over-check your work other than what is absolutely necessary to implement the comment.
+Once you are done, remove the comment.
+
+
+
+
+As an expert oldschool C programmer, add a comment describing, in minute detail, the difference between #Get_Useable_City_Area() in #CITYCALC.c and #Get_Useable_City_Area_NewGame in #MAPGEN.c.
+They are used for the same reason, so start with a short summary of their purpose, then, in the detail, focus only on their differences.
+This should be document in #MoM-CityArea.md in the doc directory.
+
+CITYCALC.c
+// WZD o142p08
+int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp, int16_t *wx_array, int16_t *wy_array)
+MAPGEN.c
+// MGC o51p53
+int16_t Get_Useable_City_Area_NewGame(int16_t city_wx, int16_t city_wy, int16_t city_wp, int16_t * wx_array, int16_t * wy_array)
+
+
+
+
+
+Random Seed?
+this is overwritten by Randomize() in Init_Drivers() in ReMoM.c, which sets the seed to the system clock timer value.
+
+commented out the call Randomize() in Init_Drivers, in Init.c
+    // MAP_TRACE
+    // Randomize();
+now, should get same map every time?
+
+
+
+
+
+
+
 Module: MAPGEN
 
     data (0 bytes) _MAPGEN_TRACE
