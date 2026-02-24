@@ -1814,8 +1814,8 @@ XREF:
 // 
 //     // if(_VGAFILEH_seg == ST_NULL)
 //     {
-//         // Error_Handler(file_animation_file_name, le_low_EMS, 0);
-//         Error_Handler(file_animation_file_name, le_low_EMS, 0, ST_NULL);
+//         // Error_Handler(file_animation_file_name, le_low_emm, 0);
+//         Error_Handler(file_animation_file_name, le_low_emm, 0, ST_NULL);
 //     }
 // 
 //     // ; finds and opens the LBX file if it wasn't already,
