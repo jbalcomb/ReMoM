@@ -90,7 +90,14 @@ Per drake178
 uint32_t random_seed = 0x35683568;
 uint16_t random_seed_LO = 0x3568;
 uint16_t random_seed_HI = 0x3568;
-
+// MGC  dseg:431E 68 35 68 35                                     random_seed dd 35683568h                ; DATA XREF: Set_Random_Seed+6w ...
+/*
+Hex 35683568
+Dec 896021864
+Oct 6532032550
+Bin 00110101011010000011010101101000
+this is overwritten by Randomize() in Init_Drivers() in ReMoM.c, which sets the seed to the system clock timer value.
+*/
 
 // WZD dseg:784A 01 00 02 00 04 00 08 00 10 00 20 00 40 00 80 00 Test_Bit_Words dw 1                     ; DATA XREF: MEM_TestBit_Far+1Cr ...
 // WZD dseg:784A                                                 dw 10b
