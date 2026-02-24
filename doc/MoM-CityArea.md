@@ -156,3 +156,81 @@ Set_Bit_Field(city_area_bit_index, &city_area_shared_bits[(city_wp * WORLD_SIZE)
 #define CITY_AREA(_wp_)         { &city_area_bits[        ((_wp_) * WORLD_SIZE) ] }
 #define CITY_AREA_SHARED(_wp_)  { &city_area_shared_bits[ ((_wp_) * WORLD_SIZE) ] }
 
+
+//ClaudeOpus46
+## Get_Useable_City_Area() vs Get_Useable_City_Area_NewGame()
+
+### Purpose (shared)
+
+Both functions build the coordinate list for a city's usable catchment area.  They iterate
+over the standard 21-square diamond footprint — a 5x5 grid centered on the city with the
+four corner squares trimmed (rows at y-offset -2 and +2 use x-offsets -1..+1 only).  Rows
+that fall outside the vertical map bounds (0..WORLD_HEIGHT-1) are skipped entirely.
+Horizontal coordinates that fall off either edge of the map are wrapped by adding or
+subtracting WORLD_WIDTH.  For every qualifying square, the world-X and world-Y are written
+into the caller-supplied output arrays at the next available index, and the total count of
+emitted squares is returned.
+
+### Differences
+
+| Aspect                      | `Get_Useable_City_Area` (CITYCALC.c)             | `Get_Useable_City_Area_NewGame` (MAPGEN.c)        |
+|-----------------------------|--------------------------------------------------|---------------------------------------------------|
+| **Overlay / object**        | WZD o142p08 (WIZARDS overlay)                    | MGC o51p53 (MAGIC overlay — map generation code)  |
+| **drake178 name**           | (not annotated here)                             | TILE_GetCatchment()                               |
+| **Corruption filter**       | Yes — reads `_map_square_flags` for the given    | No — the corruption check is commented out as     |
+|                             | plane/row, tests each candidate square against   | `// DNE`.  Every in-bounds candidate is emitted   |
+|                             | `MSF_CORRUPTION`, and only emits non-corrupted   | unconditionally.  This is correct: during new-    |
+|                             | squares.                                         | game map generation no corruption exists yet.     |
+| **terrain_flags_table_row** | Declared as a live `uint8_t *` local.  Set once  | Commented out (`// DNE`).  Never referenced.      |
+|                             | per row to point into `_map_square_flags` at the |                                                   |
+|                             | start of the plane+row, then indexed by          |                                                   |
+|                             | `square_x` inside the inner loop.                |                                                   |
+| **Register annotations**    | `itr_city_area_squares` = `_DI_`,                | `map_square_count` = `_SI_`,                      |
+|                             | `square_x` = `_SI_`                              | `itr_city_area_squares` = `_CX_`,                 |
+|                             |                                                  | `itr_world_x` = `_DI_`,                           |
+|                             |                                                  | `square_x` = `_DX_`                               |
+
+### Detail: the corruption filter
+
+This is the only behavioral difference.  In CITYCALC.c, immediately before writing a
+candidate square into the output arrays, the code does:
+
+```c
+terrain_flags_table_row = (uint8_t *)&_map_square_flags[(city_wp * WORLD_SIZE) + (square_y * WORLD_WIDTH)];
+...
+if((*(terrain_flags_table_row + square_x) & MSF_CORRUPTION) == 0)
+{
+    wx_array[map_square_count] = square_x;
+    wy_array[map_square_count] = square_y;
+    map_square_count++;
+}
+```
+
+The pointer `terrain_flags_table_row` is set once per row, at the top of the outer-loop
+body, to the start of the flags row for the current plane and y-coordinate.  Inside the
+inner loop it is indexed by `square_x` (already wrapped) and the flag byte is AND-masked
+with `MSF_CORRUPTION`.  Only squares whose corruption bit is clear are stored.
+
+In MAPGEN.c the same three lines are present but with the corruption guard removed:
+
+```c
+// DNE  terrain_flags_table_row = (uint8_t *)&_map_square_flags[...];
+// DNE  if( (*(terrain_flags_table_row + square_x) & MSF_CORRUPTION) == 0)
+// DNE  {
+    wx_array[map_square_count] = square_x;
+    wy_array[map_square_count] = square_y;
+    map_square_count++;
+// DNE  }
+```
+
+The stores and the increment are unconditional.  Because map generation runs before any
+spell or event can corrupt a square, the filter would always pass anyway, so SimTex
+(correctly) omitted it from the NewGame variant.
+
+### Practical consequence
+
+`Get_Useable_City_Area()` can return fewer than 21 squares if some catchment squares are
+corrupted (or fewer if the city is near the top or bottom map edge).
+`Get_Useable_City_Area_NewGame()` will always return exactly as many squares as fit within
+the vertical map bounds — corruption never reduces the count.
+
