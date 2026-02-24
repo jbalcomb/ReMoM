@@ -40,7 +40,7 @@ TEST_F(NEWG_SetBaseLands_test, OceanRemainsOcean)
     SET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE, tt_Ocean1);
 
     // Act
-    NEWG_SetBaseLands__WIP(ARCANUS_PLANE);
+    Translate_Heightmap_To_Base_Terrain_Types(ARCANUS_PLANE);
 
     // Assert
     EXPECT_EQ(GET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE), tt_Ocean1);
@@ -55,7 +55,7 @@ TEST_F(NEWG_SetBaseLands_test, TopRow_BecomesTundra)
     }
 
     // Act
-    NEWG_SetBaseLands__WIP(ARCANUS_PLANE);
+    Translate_Heightmap_To_Base_Terrain_Types(ARCANUS_PLANE);
 
     // Assert
     for (int x = 0; x < WORLD_WIDTH; x++)
@@ -74,7 +74,7 @@ TEST_F(NEWG_SetBaseLands_test, BottomRow_BecomesTundra)
     }
 
     // Act
-    NEWG_SetBaseLands__WIP(ARCANUS_PLANE);
+    Translate_Heightmap_To_Base_Terrain_Types(ARCANUS_PLANE);
 
     // Assert
     for (int x = 0; x < WORLD_WIDTH; x++)
@@ -90,7 +90,7 @@ TEST_F(NEWG_SetBaseLands_test, HitCount1_BecomesGrasslandOrForest)
     SET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE, 1); // tt_BugGrass
 
     // Act
-    NEWG_SetBaseLands__WIP(ARCANUS_PLANE);
+    Translate_Heightmap_To_Base_Terrain_Types(ARCANUS_PLANE);
 
     // Assert
     int16_t terrain = GET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE);
@@ -104,7 +104,7 @@ TEST_F(NEWG_SetBaseLands_test, HitCount2_BecomesForest)
     SET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE, 2);
 
     // Act
-    NEWG_SetBaseLands__WIP(ARCANUS_PLANE);
+    Translate_Heightmap_To_Base_Terrain_Types(ARCANUS_PLANE);
 
     // Assert
     EXPECT_EQ(GET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE), tt_Forest1);
@@ -116,7 +116,7 @@ TEST_F(NEWG_SetBaseLands_test, HitCount3_BecomesForest)
     SET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE, 3);
 
     // Act
-    NEWG_SetBaseLands__WIP(ARCANUS_PLANE);
+    Translate_Heightmap_To_Base_Terrain_Types(ARCANUS_PLANE);
 
     // Assert
     EXPECT_EQ(GET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE), tt_Forest1);
@@ -128,7 +128,7 @@ TEST_F(NEWG_SetBaseLands_test, HitCount4_BecomesHills)
     SET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE, 4);
 
     // Act
-    NEWG_SetBaseLands__WIP(ARCANUS_PLANE);
+    Translate_Heightmap_To_Base_Terrain_Types(ARCANUS_PLANE);
 
     // Assert
     EXPECT_EQ(GET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE), tt_Hills1);
@@ -140,7 +140,7 @@ TEST_F(NEWG_SetBaseLands_test, HitCount5_BecomesHills)
     SET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE, 5);
 
     // Act
-    NEWG_SetBaseLands__WIP(ARCANUS_PLANE);
+    Translate_Heightmap_To_Base_Terrain_Types(ARCANUS_PLANE);
 
     // Assert
     EXPECT_EQ(GET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE), tt_Hills1);
@@ -153,7 +153,7 @@ TEST_F(NEWG_SetBaseLands_test, HitCount6Plus_BecomesMountain)
     SET_TERRAIN_TYPE(31, 20, ARCANUS_PLANE, 10);
 
     // Act
-    NEWG_SetBaseLands__WIP(ARCANUS_PLANE);
+    Translate_Heightmap_To_Base_Terrain_Types(ARCANUS_PLANE);
 
     // Assert
     EXPECT_EQ(GET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE), tt_Mountain1);
@@ -166,7 +166,7 @@ TEST_F(NEWG_SetBaseLands_test, WorksOnMyrrorPlane)
     SET_TERRAIN_TYPE(30, 20, MYRROR_PLANE, 6);
 
     // Act
-    NEWG_SetBaseLands__WIP(MYRROR_PLANE);
+    Translate_Heightmap_To_Base_Terrain_Types(MYRROR_PLANE);
 
     // Assert
     EXPECT_EQ(GET_TERRAIN_TYPE(30, 20, MYRROR_PLANE), tt_Mountain1);
@@ -203,7 +203,7 @@ protected:
 TEST_F(NEWG_SetSpecLands_test, TopRows_ConvertToTundra)
 {
     // Act
-    NEWG_SetSpecLands__WIP(ARCANUS_PLANE);
+    Generate_Climate_Terrain_Types(ARCANUS_PLANE);
 
     // Assert - check that some squares in top rows became tundra
     int tundra_count = 0;
@@ -223,7 +223,7 @@ TEST_F(NEWG_SetSpecLands_test, TopRows_ConvertToTundra)
 TEST_F(NEWG_SetSpecLands_test, BottomRows_ConvertToTundra)
 {
     // Act
-    NEWG_SetSpecLands__WIP(ARCANUS_PLANE);
+    Generate_Climate_Terrain_Types(ARCANUS_PLANE);
 
     // Assert
     int tundra_count = 0;
@@ -252,7 +252,7 @@ TEST_F(NEWG_SetSpecLands_test, CreatesDesertPatches)
     }
 
     // Act
-    NEWG_SetSpecLands__WIP(ARCANUS_PLANE);
+    Generate_Climate_Terrain_Types(ARCANUS_PLANE);
 
     // Assert
     int desert_count = 0;
@@ -281,7 +281,7 @@ TEST_F(NEWG_SetSpecLands_test, CreatesSwampPatches)
     }
 
     // Act
-    NEWG_SetSpecLands__WIP(ARCANUS_PLANE);
+    Generate_Climate_Terrain_Types(ARCANUS_PLANE);
 
     // Assert
     int swamp_count = 0;
@@ -310,7 +310,7 @@ TEST_F(NEWG_SetSpecLands_test, WorksOnMyrrorPlane)
     }
 
     // Act
-    NEWG_SetSpecLands__WIP(MYRROR_PLANE);
+    Generate_Climate_Terrain_Types(MYRROR_PLANE);
 
     // Assert - check that tundra was created
     int tundra_count = 0;
