@@ -302,8 +302,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
         {
             sound_seg = LBX_Reload(music_lbx_file__ovr083, MUSIC_Site_Discovery, SND_Music_Segment);
             sound_seg_size = lbxload_entry_length;
-            // DOMSDOS  Play_Sound__WIP(sound_seg);
-            sdl2_Play_Sound__WIP(sound_seg, sound_seg_size);
+            Play_Sound(sound_seg, sound_seg_size);
         }
 
         Encounter_Outcome = Do_Lair_Confirm(lair_idx);

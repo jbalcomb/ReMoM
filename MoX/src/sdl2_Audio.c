@@ -1,3 +1,6 @@
+#ifndef NO_SOUND_LIBRARY
+
+
 
 #include "MOX_BITS.h"
 #include "MOX_DEF.h"
@@ -219,7 +222,6 @@ void sdl2_Audio_Deinit(void)
 
 
 
-// AKA Play_Sound__STUB()
 /*
 
 // DOMSDOS  Play_Sound__WIP(digi_sound_buffer3);
@@ -231,7 +233,7 @@ wav_sound_chunk3 = Mix_LoadWAV_RW(SDL_RWFromMem(wav_sound_buffer3, wav_sound_buf
 Mix_PlayChannel(0, wav_sound_chunk3, 0);
 
 */
-int16_t sdl2_Play_Sound__WIP(void* sound_buffer, uint32_t sound_buffer_size)
+int16_t Play_Sound_SDL2_Mixer(void* sound_buffer, uint32_t sound_buffer_size)
 {
     int16_t lbx_sound_type = 0;
     // char error[4096] = { 0 };
@@ -1192,3 +1194,7 @@ fail:
     }
     return false;
 }
+
+
+
+#endif

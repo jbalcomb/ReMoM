@@ -2514,8 +2514,7 @@ void sdl2_Play_Background_Music__WIP(void)
         sound_seg = LBX_Reload(music_lbx_file__ovr058, background_music_num, SND_Music_Segment);
         sound_seg_size = lbxload_entry_length;
 
-        // DOMSDOS  Play_Sound__WIP(sound_seg);
-        sdl2_Play_Sound__WIP(sound_seg, sound_seg_size);
+        Play_Sound(sound_seg, sound_seg_size);
 
     }
     else

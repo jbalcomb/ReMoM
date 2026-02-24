@@ -6,6 +6,7 @@ include(GoogleTest)
 add_executable(MOM_tests
     MOM_tests.cpp
     test_NEWG_ClearLandmasses__WIP.cpp
+    test_NEWG_SetBaseLands__WIP.cpp
     test_NEWG_TileIsleExtend__WIP.cpp
     test_TILE_SetLandMass__WIP.cpp
     test_City_Maximum_Size_NewGame.cpp
@@ -20,16 +21,27 @@ target_include_directories(MOM_tests PRIVATE
     ${GTEST_INCLUDE_DIRS}
 )
 
-target_link_libraries(MOM_tests PUBLIC
-    GTest::gtest
-    GTest::gtest_main
-    GTest::gmock
-    SDL2::Core
-    SDL2::Mixer
-    momlib
-    MOX
-    STU
-)
+if(NOT DISABLE_AUDIO)
+    target_link_libraries(MOM_tests PUBLIC
+        GTest::gtest
+        GTest::gtest_main
+        GTest::gmock
+        SDL2::Core
+        momlib
+        MOX
+        STU
+    )
+else()
+    target_link_libraries(MOM_tests PUBLIC
+        GTest::gtest
+        GTest::gtest_main
+        GTest::gmock
+        SDL2::Core
+        momlib
+        MOX
+        STU
+    )
+endif()
 
 if(WIN32)
     add_custom_command(
@@ -43,16 +55,18 @@ if(WIN32)
     )
 endif()
 
-if(WIN32)
-    add_custom_command(
-        TARGET MOM_tests
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-            ${SDL2_MIXER_DLL_FILE_PATH}
-            $<TARGET_FILE_DIR:MOM_tests>
-        COMMAND_EXPAND_LISTS
-        COMMENT "./MoM/tests: Copying SDL2_mixer.dll"
-    )
+if(NOT DISABLE_AUDIO)
+    if(WIN32)
+        add_custom_command(
+            TARGET MOM_tests
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+                ${SDL2_MIXER_DLL_FILE_PATH}
+                $<TARGET_FILE_DIR:MOM_tests>
+            COMMAND_EXPAND_LISTS
+            COMMENT "./MoM/tests: Copying SDL2_mixer.dll"
+        )
+    endif()
 endif()
 
 file(GLOB LBX_FILE_LIST "${CMAKE_SOURCE_DIR}/*.lbx")

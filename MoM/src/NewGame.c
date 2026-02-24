@@ -1068,10 +1068,32 @@ SAMB_ptr IMG_NewG_RgtOverlay = 0;
 
 // MGC  dseg:8EA4
 /*
-NEWG_Clicked_Race = Arcanus_Races[itr];
-
-*/
+ * NEWG_Clicked_Race
+ *
+ * Holds the enum_RACE_BYTE value of the race the human player (player 0) selected on New Game Screen 6 ("Select Race").
+ *
+ * Written by Newgame_Screen_6__WIP() when the player clicks one of the 14 race-name labels in the race list panel.  If the clicked
+ * label index falls in [0..8], the value is looked up from the local Arcanus_Races[9] table (Barbarian, Gnoll, Halfling, High Elf,
+ * High Man, Klackon, Lizardman, Nomad, Orc).  If the index falls in [9..13] AND the player has the Myrran retort, the value is
+ * looked up from the local Myrran_Races[5] table (Beastman, Dark Elf, Draconian, Dwarf, Troll); otherwise the click is rejected
+ * and a warning dialog is shown ("You can not select a Myrran race unless you have the Myrran special.").
+ *
+ * After the selection loop exits, Newgame_Screen_6__WIP() uses NEWG_Clicked_Race to drive the four-iteration "blink" animation:
+ * the chosen race name is redrawn in alternating highlight/dim colors so the player gets visual feedback before advancing to the
+ * next new-game screen (Screen 7 -- "Select Banner").
+ *
+ * Consumed downstream by MAPGEN's city-placement logic: when itr==0 (i.e. the human player), the race of the player's starting
+ * city is assigned directly from this variable (_CITIES[_cities].race = (int8_t)NEWG_Clicked_Race).  AI players do not use this
+ * variable; their starting-city races are chosen randomly from the Myrran or Arcanian race pools according to difficulty and the
+ * Myrran retort.
+ *
+ * Type is int16_t (matching the original 16-bit word at dseg:8EA4) even though enum_RACE_BYTE values fit in a byte, because the
+ * original compiled code stores and loads this as a full word in the data segment.
+ *
+ * Lifetime: set once during new-game setup, read during map generation, not meaningful after the game begins.
+ */
 int16_t NEWG_Clicked_Race;
+
 // MGC  dseg:8EA6 00 00                                           dw 0
 // MGC  dseg:8EA8 00 00                                           dw 0
 // MGC  dseg:8EAA 00 00                                           NEWG_ProfileComplete dw 0               ; DATA XREF: GAME_New_Screen_4+114w ...
@@ -1697,6 +1719,7 @@ draws the first screen of the new game creation
 options into the current draw segment
 */
 /*
+"Game Options"
 
 */
 void Newgame_Screen_0_Draw(void)
@@ -1764,17 +1787,17 @@ void Newgame_Screen_0_Draw(void)
     {
         FLIC_Draw(251, 66, IMG_NewG_ButtonBGs[1]);
         Set_Font_Colors_15(3, &colors1[0]);
-        Print_Centered(283, 71, l_opponent_count_names[magic_set.Opponents].name);
+        Print_Centered(283, 71, l_opponent_count_names[(magic_set.Opponents - 1)].name);
         Set_Font_Colors_15(3, &colors2[0]);
-        Print_Centered(282, 70, l_opponent_count_names[magic_set.Opponents].name);
+        Print_Centered(282, 70, l_opponent_count_names[(magic_set.Opponents - 1)].name);
     }
     else
     {
         FLIC_Draw(252, 67, IMG_NewG_ButtonBGs[1]);
         Set_Font_Colors_15(3, &colors1[0]);
-        Print_Centered(284, 72, l_opponent_count_names[magic_set.Opponents].name);
+        Print_Centered(284, 72, l_opponent_count_names[(magic_set.Opponents - 1)].name);
         Set_Font_Colors_15(3, &colors2[0]);
-        Print_Centered(283, 71, l_opponent_count_names[magic_set.Opponents].name);
+        Print_Centered(283, 71, l_opponent_count_names[(magic_set.Opponents - 1)].name);
     }
 
     if(auto_input_field_idx != newgame_landsize_button_field)
@@ -1800,7 +1823,7 @@ void Newgame_Screen_0_Draw(void)
         Set_Font_Colors_15(3, &colors1[0]);
         Print_Centered(283, 124, l_magic_strength_names[magic_set.MagicPower].name);
         Set_Font_Colors_15(3, &colors2[0]);
-        Print_Centered(282, 123,     l_magic_strength_names[magic_set.MagicPower].name);
+        Print_Centered(282, 123, l_magic_strength_names[magic_set.MagicPower].name);
     }
     else
     {

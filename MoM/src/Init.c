@@ -76,7 +76,8 @@ void Init_Drivers(int input_type, int sound_channels, char * font_file, int midi
 
     }
 
-    Randomize();
+    // MAP_TRACE
+    // Randomize();
 
     Set_Page_Off();  // initializes `current_video_page`
 

@@ -47,7 +47,11 @@ void Startup_Platform(void)
     int sdl2_window_flags;
     int sdl2_renderer_flags;
 
+#ifndef NO_SOUND_LIBRARY
     SDL_Init(SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER | SDL_INIT_VIDEO);
+#else
+    SDL_Init(                 SDL_INIT_EVENTS | SDL_INIT_TIMER | SDL_INIT_VIDEO);
+#endif
 
     sdl2_ticks_startup = SDL_GetTicks64();  // the number of milliseconds since SDL library initialization
 #ifdef STU_DEBUG
@@ -94,7 +98,9 @@ void Startup_Platform(void)
 
     build_key_xlat();
 
+#ifndef NO_SOUND_LIBRARY
     sdl2_Audio_Init();
+#endif
 
 }
 
@@ -102,7 +108,9 @@ void Shudown_Platform(void)
 {
     SDL_ShowCursor(SDL_ENABLE);
 
+#ifndef NO_SOUND_LIBRARY
     sdl2_Audio_Deinit();
+#endif
 
     SDL_DestroyRenderer(sdl2_renderer);
 

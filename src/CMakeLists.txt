@@ -4,13 +4,27 @@ add_executable(ReMoMber ReMoM.c)
 # set_target_properties(sdl2_ReMoM PROPERTIES LINKER_LANGUAGE C)
 set_target_properties(ReMoMber PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-target_link_libraries(ReMoMber PUBLIC
-    momlib
-    MOX
-    STU
-    SDL2::Main
-    SDL2::Mixer
-)
+if(NOT DISABLE_AUDIO)
+    target_compile_definitions(ReMoMber PRIVATE SOUND_ENABLED)
+else()
+    target_compile_definitions(ReMoMber PRIVATE SOUND_DISABLED)
+endif()
+
+if(NOT DISABLE_AUDIO)
+    target_link_libraries(ReMoMber PUBLIC
+        momlib
+        MOX
+        STU
+        SDL2::Main
+    )
+else()
+    target_link_libraries(ReMoMber PUBLIC
+        momlib
+        MOX
+        STU
+        SDL2::Main
+    )
+endif()
 
 target_include_directories(ReMoMber PUBLIC
     ${PROJECT_SOURCE_DIR}
@@ -90,16 +104,18 @@ if(WIN32)
     )
 endif()
 
-if(WIN32)
-    add_custom_command(
-        TARGET ReMoMber
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy 
-            ${SDL2_MIXER_DLL_FILE_PATH}
-            $<TARGET_FILE_DIR:ReMoMber>
-        COMMAND_EXPAND_LISTS
-        COMMENT "./src: Copying SDL2_mixer.dll"
-    )
+if(NOT DISABLE_AUDIO)
+    if(WIN32)
+        add_custom_command(
+            TARGET ReMoMber
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy 
+                ${SDL2_MIXER_DLL_FILE_PATH}
+                $<TARGET_FILE_DIR:ReMoMber>
+            COMMAND_EXPAND_LISTS
+            COMMENT "./src: Copying SDL2_mixer.dll"
+        )
+    endif()
 endif()
 
 file(GLOB LBX_FILE_LIST "${CMAKE_SOURCE_DIR}/*.lbx")

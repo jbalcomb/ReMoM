@@ -22,7 +22,7 @@ extern "C" {
 #endif
 
 // sdl2_Audio.C
-int16_t sdl2_Play_Sound__WIP(void * sound_buffer, uint32_t sound_buffer_size);
+int16_t Play_Sound(void * sound_buffer, uint32_t sound_buffer_size);
 
 
 
@@ -355,6 +355,7 @@ enum SOUND_FX
 int16_t Audio_Init__WIP(int16_t midi_driver, int16_t sound_channels, int16_t MIDI_IO, int16_t MIDI_IRQ, int16_t MIDI_DMA, int16_t digi_driver, int16_t Digi_IO, int16_t Digi_IRQ, int16_t Digi_DMA);
 
 // WZD s38p03
+int16_t Play_Sound(void* sound_buffer, uint32_t sound_buffer_size);
 int16_t Play_Sound__MSDOS(SAMB_ptr sound_buffer);
 
 // WZD s38p04

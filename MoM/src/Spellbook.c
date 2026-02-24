@@ -2275,13 +2275,12 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
         if(magic_set.background_music == ST_TRUE)
         {
-            // DOMSDOS  Stop_All_Sounds__STUB();
+            Stop_All_Sounds__STUB();
 
             SND_Spell_Music = LBX_Reload(music_lbx_file__ovr118, MUSIC_New_Spell, SND_Music_Segment);
             SND_Spell_Music_size = lbxload_entry_length;
 
-            // DOMSDOS  Play_Sound__WIP(SND_Spell_Music);
-            sdl2_Play_Sound__WIP(SND_Spell_Music, SND_Spell_Music_size);
+            Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
 
         }
 

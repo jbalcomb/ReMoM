@@ -912,6 +912,7 @@ void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, 
 
     if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
     {
+        // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
         Play_Sound(SND_SpellCast, SND_SpellCast_size);
     }
 
@@ -1042,6 +1043,7 @@ void Animate_Lightning_Bolt(int16_t cgx, int16_t cgy, int16_t caster_idx)
         {
             if(magic_set.sound_effects == ST_TRUE)
             {
+                // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
                 Play_Sound(SND_SpellCast, SND_SpellCast_size);
             }
         }
@@ -1310,6 +1312,7 @@ void Vortex_Combat_Round(void)
 
     if(magic_set.sound_effects == ST_TRUE)
     {
+        // DOMSDOS  Play_Sound__WIP(SND_CMB_Silence);
         Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
 
         Mark_Block(World_Data);
@@ -1439,6 +1442,7 @@ void Vortex_Move_And_Attack(int vortex_idx, int next_cgx, int next_cgy)
 
     if(magic_set.sound_effects == ST_TRUE)
     {
+        // DOMSDOS  Play_Sound__WIP(SND_SpellCast);
         Play_Sound(SND_SpellCast, SND_SpellCast_size);
     }
 
@@ -1649,6 +1653,7 @@ do {  \
             Combat_Load_Spell_Sound_Effect(spl_Call_Chaos);
             if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
             {
+                // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
                 Play_Sound(SND_SpellCast, SND_SpellCast_size);
             }
         }

@@ -730,6 +730,15 @@ int16_t Audio_Init__WIP(int16_t midi_driver, int16_t sound_channels, int16_t MID
 /*
 
 */
+int16_t Play_Sound(void* sound_buffer, uint32_t sound_buffer_size)
+{
+#ifndef NO_SOUND_LIBRARY
+    Play_Sound_SDL2_Mixer(sound_buffer, sound_buffer_size);
+    /* HACK */  return -1;
+#else
+    /* HACK */  return -1;
+#endif
+}
 int16_t Play_Sound__MSDOS(SAMB_ptr sound_buffer)
 {
     int16_t timbre_required = 0;

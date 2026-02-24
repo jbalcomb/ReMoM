@@ -206,7 +206,9 @@ so, 300 PRs, + 1 for the SAMB header
     _HEROES2[5] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
 
 
-    _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 PR, 32448 B
+    _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 PR, 32448 B  32 B each, 1014 units max in a save game, but 2028 PR
+    // NUM_UNITS 1009  32 * 1009 = 32288 B;  2028 PR would be 32448 B, so maybe the extra 14 units worth of PR is for COMBAT.TMP?
+    // / 16 = 2018 PR, + 1 for the SAMB header, + 9 for COMBAT.TMP?
 
     // MoO2  global_combat_data
     global_battle_unit = (struct s_BATTLE_UNIT *)Allocate_Space(8);  // 8 PR, 128 B

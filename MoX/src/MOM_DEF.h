@@ -298,7 +298,7 @@ WIZARDS.LBX
 #define WORLD_XMIN          0  // in Squares  AKA WX_FST
 #define WORLD_XMAX         (WORLD_WIDTH - 1)  // in Squares  AKA WX_LST
 #define WORLD_YMIN          0  // in Squares
-#define WORLD_YMAX         (WORLD_HEIGHT - 1)  // in Squares
+#define WORLD_YMAX         (WORLD_HEIGHT - 1)  // in Squares  e.g., 40 - 1 = 39
 
 #define MAP_X_MIN          0  // in Squares
 #define MAP_X_MAX         (MAP_WIDTH - 1)  // in Squares

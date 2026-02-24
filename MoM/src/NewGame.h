@@ -147,6 +147,9 @@ extern "C" {
 #endif
 
 
+// MGC  dseg:8EA4
+extern int16_t NEWG_Clicked_Race;
+
 
 /*
     MAGIC.EXE

@@ -52,6 +52,7 @@
 #define LEN_SPELLDAT_NAME        19
 #define LEN_SPELL_DESCRIPTION   110
 #define LEN_CITY_NAME         14    /* WTF, Mate? */
+#define SZ_CITY_NAME_RECORD  (20 * LEN_CITY_NAME)
 #define LEN_HERO_NAME         14    /* WTF, Mate? */  /* longest in NAMES is 12 */
 #define LEN_SAVE_DESCRIPTION  20
 #define LEN_RACE_NAME         20

@@ -1659,8 +1659,7 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
     {
         sound_seg = LBX_Reload(music_lbx_file__ovr054, MUSIC_Bldng_Finished, SND_Music_Segment);
         sound_seg_size = lbxload_entry_length;
-        // DOMSDOS  Play_Sound__WIP(sound_seg);
-        sdl2_Play_Sound__WIP(sound_seg, sound_seg_size);
+        Play_Sound(sound_seg, sound_seg_size);
     }
 
     bitm_x = 0;

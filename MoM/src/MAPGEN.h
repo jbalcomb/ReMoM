@@ -41,13 +41,14 @@ void Init_Landmasses(int16_t wp);
 void NEWG_EqualizeNodes__WIP(int16_t wp);
 
 // MGC o51p08
-void NEWG_SetSpecLands__WIP(int16_t wp);
+void Generate_Climate_Terrain_Types(int16_t wp);
 
 // MGC o51p09
-void NEWG_SetBaseLands__WIP(int16_t wp);
+void Translate_Heightmap_To_Base_Terrain_Types(int16_t wp);
+void Add_Tundra(int16_t wp);
 
 // MGC o51p10
-void NEWG_CreateLands__WIP(int16_t wp);
+void Generate_Landmasses(int16_t wp);
 
 // MGC o51p11
 void Generate_Nodes(void);

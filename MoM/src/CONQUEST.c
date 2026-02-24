@@ -629,7 +629,7 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
         Music_Data_Seg = LBX_Reload(music_lbx_file__ovr093, itr_cities, SND_Music_Segment);
         Music_Data_Seg_size = lbxload_entry_length;
 
-        sdl2_Play_Sound__WIP(Music_Data_Seg, Music_Data_Seg_size);
+        Play_Sound(Music_Data_Seg, Music_Data_Seg_size);
 
     }
 
@@ -793,7 +793,7 @@ void Conquest_Draw__WIP(void)
             )
             {
 
-                sdl2_Play_Sound__WIP(SND_GAME_Scream, SND_GAME_Scream_size);
+                Play_Sound(SND_GAME_Scream, SND_GAME_Scream_size);
 
             }
 

@@ -340,8 +340,7 @@ void Play_Left_Click(void)
 {
     if(magic_set.sound_effects == ST_TRUE)
     {
-        // DOMSDOS  Play_Sound__WIP(snd_left_button_click);
-        sdl2_Play_Sound__WIP(snd_left_button_click, snd_left_button_click_size);
+        Play_Sound(snd_left_button_click, snd_left_button_click_size);
     }
 }
 
@@ -355,8 +354,7 @@ void Play_Standard_Click(void)
 {
     if(magic_set.sound_effects == ST_TRUE)
     {
-        // DOMSDOS  Play_Sound__WIP(snd_standard_button_click);
-        sdl2_Play_Sound__WIP(snd_standard_button_click, snd_standard_button_click_size);
+        Play_Sound(snd_standard_button_click, snd_standard_button_click_size);
     }
 }
 
@@ -374,8 +372,7 @@ void Play_Left_Click__DUPE(void)
 {
     if(magic_set.sound_effects == ST_TRUE)
     {
-        // DOMSDOS  Play_Sound__WIP(snd_left_button_click);
-        sdl2_Play_Sound__WIP(snd_left_button_click, snd_left_button_click_size);
+        Play_Sound(snd_left_button_click, snd_left_button_click_size);
     }
 }
 

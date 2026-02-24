@@ -420,6 +420,7 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
     gets the uint16_t 'Terrain Type' from _world_maps
 */
 #define GET_TERRAIN_TYPE(_wx_, _wy_, _wp_)  ( (int16_t)GET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2))) )
+
 // terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
 // NOWORKIE  #define TERRAIN_TYPE(_wx_, _wy_, _wp_)      ( (*( (uint16_t *)(_world_maps + ( ((_wp_) * WORLD_SIZE) + ((_wy_) * WORLD_WIDTH) + (_wx_) )) ) % NUM_TERRAIN_TYPES) )
 #define TERRAIN_TYPE_INDEX(_wx_, _wy_, _wp_)  ( (int16_t)GET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2)))                     )
@@ -430,6 +431,18 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
     sets the uint16_t 'Terrain Type' in _world_maps
 */
 #define SET_TERRAIN_TYPE(_wx_, _wy_, _wp_, _terrain_type_)  ( SET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2)), (_terrain_type_)) )
+// #define SET_TERRAIN_TYPESET_2B_OFS(_ofs_,_val_) (                           \
+// *( (uint8_t *)(_world_maps)                                                 \
+//     +                                                                       \
+//     (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2)) \
+//     + 0                                                                     \
+// ) = ( (uint8_t)((_val_)     ) ),                                            \
+// *( (uint8_t *)(_world_maps)                                                 \
+//     +                                                                       \
+//     (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2)) \
+//     + 1                                                                     \
+// ) = ( (uint8_t)((_val_) >> 8) )                                             \
+// )
 
 
 /*

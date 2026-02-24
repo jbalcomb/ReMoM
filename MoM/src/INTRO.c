@@ -91,8 +91,7 @@ void Draw_Logos(void)
     if(magic_set.background_music == ST_TRUE)
     {
 
-        // DOMSDOS  Play_Sound__WIP(midi_sound_buffer);
-        sdl2_Play_Sound__WIP(midi_sound_buffer, midi_sound_buffer_size);
+        Play_Sound(midi_sound_buffer, midi_sound_buffer_size);
     }
 
     Set_Mouse_List(1, mouse_list_none);  // in MGC, second set of mouse list definitions?  mouse_list__MGC_HoF
@@ -180,8 +179,7 @@ void Draw_Logos(void)
             {
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer1);
-                    sdl2_Play_Sound__WIP(digi_sound_buffer1, sound_buffer_size1);
+                    Play_Sound(digi_sound_buffer1, sound_buffer_size1);
                 }
             }
 
@@ -202,8 +200,7 @@ void Draw_Logos(void)
 
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer1);
-                    sdl2_Play_Sound__WIP(digi_sound_buffer1, sound_buffer_size1);
+                    Play_Sound(digi_sound_buffer1, sound_buffer_size1);
                 }
             }
 
@@ -215,8 +212,7 @@ void Draw_Logos(void)
             {
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer2);
-                    sdl2_Play_Sound__WIP(digi_sound_buffer2, sound_buffer_size2);
+                    Play_Sound(digi_sound_buffer2, sound_buffer_size2);
                 }
             }
 
@@ -237,8 +233,7 @@ void Draw_Logos(void)
 
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer1);
-                    sdl2_Play_Sound__WIP(digi_sound_buffer1, sound_buffer_size1);
+                    Play_Sound(digi_sound_buffer1, sound_buffer_size1);
                 }
             }
 
@@ -259,8 +254,7 @@ void Draw_Logos(void)
 
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer1);
-                    sdl2_Play_Sound__WIP(digi_sound_buffer1, sound_buffer_size1);
+                    Play_Sound(digi_sound_buffer1, sound_buffer_size1);
                 }
             }
 
@@ -279,8 +273,7 @@ void Draw_Logos(void)
 
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer1);
-                    sdl2_Play_Sound__WIP(digi_sound_buffer1, sound_buffer_size1);
+                    Play_Sound(digi_sound_buffer1, sound_buffer_size1);
                 }
             }
 
@@ -292,8 +285,7 @@ void Draw_Logos(void)
             {
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer3);
-                    sdl2_Play_Sound__WIP(digi_sound_buffer3, sound_buffer_size3);
+                    Play_Sound(digi_sound_buffer3, sound_buffer_size3);
                 }
             }
 
@@ -305,8 +297,7 @@ void Draw_Logos(void)
             {
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer3);
-                    sdl2_Play_Sound__WIP(digi_sound_buffer3, sound_buffer_size3);
+                    Play_Sound(digi_sound_buffer3, sound_buffer_size3);
                 }
             }
 
@@ -318,8 +309,7 @@ void Draw_Logos(void)
             {
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer3);
-                    sdl2_Play_Sound__WIP(digi_sound_buffer3, sound_buffer_size3);
+                    Play_Sound(digi_sound_buffer3, sound_buffer_size3);
                 }
             }
 

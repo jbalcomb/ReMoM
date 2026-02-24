@@ -1897,8 +1897,7 @@ void Spell_Of_Mastery_Lose(void)
 
     if(magic_set.background_music == ST_TRUE)
     {
-        // DOMSDOS  Play_Sound__STUB(SND_Spell_Music);
-        sdl2_Play_Sound__WIP(SND_Spell_Music, SND_Spell_Music_size);
+        Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
     }
 
     Set_Mouse_List(1, mouse_list_none);
@@ -2031,8 +2030,7 @@ void SoM_Started__STUB(int16_t player_idx)
 
     if(magic_set.background_music == ST_TRUE)
     {
-        // DOMSDOS  Play_Sound__WIP(SND_Spell_Music);
-        sdl2_Play_Sound__WIP(SND_Spell_Music, SND_Spell_Music_size);
+        Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
     }
 
     Clear_Fields();
@@ -2065,7 +2063,7 @@ void SoM_Started__STUB(int16_t player_idx)
 
     }
 
-    // DOMSDOS  Stop_All_Sounds__STUB();
+    Stop_All_Sounds__STUB();
 
     // DOMSDOS  Play_Background_Music__STUB();
     sdl2_Play_Background_Music__WIP();
@@ -2249,8 +2247,7 @@ void Spell_Of_Mastery(int16_t player_idx)
 
     if(magic_set.background_music == ST_TRUE)
     {
-        // DOMSDOS  Play_Sound__STUB(SND_Spell_Music);
-        sdl2_Play_Sound__WIP(SND_Spell_Music, SND_Spell_Music_size);
+        Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
     }
 
     Clear_Fields();

@@ -43,7 +43,6 @@
 #include "../../MoX/src/MOX_SET.h"  /* magic_set */
 #include "../../MoX/src/MOX_T4.h"
 #include "../../MoX/src/SOUND.h"
-#include "../../MoX/src/special.h"
 
 #include "DIPLODEF.h"
 #include "City_ovr55.h"
@@ -63,6 +62,7 @@
 #include "RACETYPE.h"
 #include "SBookScr.h"
 #include "../../STU/src/STU_DBG.h"
+#include "special.h"
 #include "Spellbook.h"  /* Combat_Spellbook_Build__WIP() */
 #include "SPELLDEF.h"
 #include "Spells131.h"
@@ -1618,6 +1618,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     if(magic_set.background_music == ST_TRUE)
     {
 
+        // DOMSDOS  Play_Sound__WIP(SND_CMB_Music);
         Play_Sound(SND_CMB_Music, SND_CMB_Music_size);
 
     }
@@ -3386,6 +3387,7 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
 
             if(magic_set.sound_effects == ST_TRUE)
             {
+                // DOMSDOS  Play_Sound__WIP(SND_CMB_Silence);
                 Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
             }
 
@@ -18573,10 +18575,12 @@ BUG: this has just been done in the parent function
                             if(magic_set.sound_effects == ST_TRUE)
                             {
 
+                                // DOMSDOS  Play_Sound__WIP(SND_CMB_Silence);
                                 Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
 
                                 Mark_Block(World_Data);
 
+                                // DOMSDOS  move_sound_seg = BU_LoadMoveSound__WIP(battle_unit_idx);
                                 move_sound_seg = Reload_Battle_Unit_Move_Sound(battle_unit_idx, &move_sound_seg_size);
 
                                 Release_Block(World_Data);
@@ -18592,6 +18596,7 @@ BUG: this has just been done in the parent function
                             if(move_sound_seg != (SAMB_ptr)ST_UNDEFINED)
                             {
 
+                                // DOMSDOS  Play_Sound__WIP(move_sound_seg);
                                 Play_Sound(move_sound_seg, move_sound_seg_size);
 
                             }
@@ -18628,6 +18633,7 @@ BUG: this has just been done in the parent function
                             if(magic_set.sound_effects == ST_TRUE)
                             {
 
+                                // DOMSDOS  Play_Sound__WIP(SND_CMB_Silence);
                                 Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
 
                             }

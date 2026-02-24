@@ -31,9 +31,28 @@
             }
         },
         {
+            "name": "MSVC-nosound-debug",
+            "displayName": "VS2022 amd64 Debug (No Sound)",
+            "description": "Using compilers for Visual Studio 17 2022 (x64 architecture) with no sound library",
+            "generator": "Visual Studio 17 2022",
+            "toolset": "host=x64",
+            "architecture": "x64",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "DISABLE_AUDIO": {
+                    "type": "BOOL",
+                    "value": "TRUE"
+                }
+            }
+        },
+        {
             "name": "Clang-Ninja-debug",
-            "displayName": "VS202 amd64",
-            "description": "Ninja Muli-Config, Clang (GNU-style)",
+            "displayName": "Clang+Ninja Debug",
+            "description": "Ninja Multi-Config, Clang (GNU-style)",
             "generator": "Ninja Multi-Config",
             "binaryDir": "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
@@ -77,6 +96,15 @@
             "targets": [
                 "ALL_BUILD"
             ]
+        },
+        {
+            "name": "MSVC-nosound-debug",
+            "displayName": "VS2022 amd64 Debug (No Sound)",
+            "configurePreset": "MSVC-nosound-debug",
+            "configuration": "Debug",
+            "targets": [
+                "ALL_BUILD"
+            ]
         }
     ],
     "packagePresets": [
@@ -87,6 +115,14 @@
             "configurations": [
                 "Debug"
             ]
+        },
+        {
+            "name": "MSVC-nosound-debug",
+            "displayName": "VS2022 amd64 Debug (No Sound)",
+            "configurePreset": "MSVC-nosound-debug",
+            "configurations": [
+                "Debug"
+            ]
         }
     ],
     "testPresets": [
@@ -94,6 +130,11 @@
             "name": "MSVC-debug",
             "displayName": "VS2022 amd64 Debug",
             "configurePreset": "MSVC-debug"
+        },
+        {
+            "name": "MSVC-nosound-debug",
+            "displayName": "VS2022 amd64 Debug (No Sound)",
+            "configurePreset": "MSVC-nosound-debug"
         }
     ],
     "workflowPresets": [
@@ -116,6 +157,24 @@
                 {
                     "type": "package",
                     "name": "MSVC-debug"
+                }
+            ]
+        },
+        {
+            "name": "MSVC-nosound-debug",
+            "displayName": "VS2022 amd64 Debug (No Sound)",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "MSVC-nosound-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "MSVC-nosound-debug"
+                },
+                {
+                    "type": "test",
+                    "name": "MSVC-nosound-debug"
                 }
             ]
         }

@@ -1587,7 +1587,6 @@ int16_t City_Food_Terrain(int16_t city_idx)
     city_wp = _CITIES[city_idx].wp;
 
     // NOTE: Accounts for 'Corruption'
-    // useable_map_squares = Get_Useable_City_Area(_CITIES[city_idx].wx, _CITIES[city_idx].wy, city_wp, &wx_array[0], &wy_array[0]);
     useable_map_squares = Get_Useable_City_Area(CITYX(), CITYY(), city_wp, &wx_array[0], &wy_array[0]);
 
     food2_units = 0;
@@ -1658,18 +1657,33 @@ int16_t City_Food_WildGame(int16_t city_idx)
 
 
 // WZD o142p08
-// drake178: CTY_GetCatchment()
 // does like Draw_Map_Roads() with itr_world_x and curr_world_x
-/*
-    loops over city area 5x5
-    checks for corruption
 
-    in-out wx_array
-    in-out wy_array
-    returns count of elements in arrays  AKA map_square_count
-
-    NOTE: Accounts for 'Corruption'
-*/
+/**
+ * @brief Collects usable city catchment tiles, excluding corrupted squares.
+ *
+ * @details
+ * Builds the coordinate list for the city's standard work area centered at
+ * (city_wx, city_wy): a 5x5 footprint with trimmed corners on the top and
+ * bottom rows (x offsets -1..+1 when y offset is -2 or +2).
+ *
+ * Vertical bounds are clamped by skipping rows outside the world height.
+ * Horizontal coordinates wrap around world edges. Each candidate tile is
+ * checked against map-square flags for MSF_CORRUPTION; only non-corrupted
+ * tiles are emitted into the output arrays.
+ *
+ * @param city_wx City center world X coordinate.
+ * @param city_wy City center world Y coordinate.
+ * @param city_wp World plane index containing the city.
+ * @param wx_array Output array for accepted tile X coordinates.
+ * @param wy_array Output array for accepted tile Y coordinates.
+ *
+ * @return Number of usable catchment tiles written to the output arrays.
+ *
+ * @note Maximum output is bounded by CITY_AREA_SIZE for the catchment shape.
+ * @warning Preserves current boundary behavior, including the historical
+ *          square_x > WORLD_WIDTH wrap check.
+ */
 int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp, int16_t *wx_array, int16_t *wy_array)
 {
     uint8_t * terrain_flags_table_row = 0;
@@ -1725,7 +1739,7 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
 
                 }
 
-                if(square_x > WORLD_WIDTH)
+                if(square_x > WORLD_WIDTH)  // BUGBUG  should be >= ?
                 {
 
                     square_x -= WORLD_WIDTH;

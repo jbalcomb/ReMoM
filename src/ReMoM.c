@@ -23,6 +23,11 @@
 #include <windows.h>
 #endif
 
+#ifdef STU_DEBUG
+#include "../STU/src/STU_DBG.h"
+#include "../STU/src/STU_WRLD.h"
+#endif
+
 #include "../MoX/src/capture.h"
 #include "../MoX/src/CFG.h"
 #include "../MoX/src/DOS.h"
@@ -49,10 +54,6 @@
 #include "../MoM/src/MOM_SCR.h"
 #include "../MoM/src/Settings.h"
 
-#ifdef STU_DEBUG
-#include "../STU/src/STU_DBG.h"
-#endif
-
 // Reassigns a file pointer. More secure versions of the functions are available; see freopen_s, _wfreopen_s.
 #include <stdio.h>
 // #define _CRT_SECURE_NO_WARNINGS  // '_CRT_SECURE_NO_WARNINGS' previously declared on the command line
@@ -69,7 +70,9 @@
 
 // #define SDL_MAIN_HANDLED
 #include <SDL.h>
+#ifndef NO_SOUND_LIBRARY
 #include <SDL_mixer.h>
+#endif
 
 #ifdef _WIN32
 #include <direct.h>
@@ -197,7 +200,12 @@ int main(int argc, char * argv[])
 
     Startup_Platform();
 
+#ifdef STU_DEBUG
+    Simulate_World_Map_Generation();
+    Exit_With_Message("Simulated world map generation complete. Exiting.");
+#else
     MOM_main(argc, argv);
+#endif
 
     Shudown_Platform();
 
@@ -529,8 +537,7 @@ int MOM_main(int argc, char** argv)
     main_menu_music_seg_size = lbxload_entry_length;
     if(magic_set.background_music == ST_TRUE)
     {
-        // DOMSDOS  Play_Sound__WIP(main_menu_music_seg);
-        sdl2_Play_Sound__WIP(main_menu_music_seg, main_menu_music_seg_size);
+        Play_Sound(main_menu_music_seg, main_menu_music_seg_size);
     }
     Load_Palette(0, ST_UNDEFINED, 0);
     Apply_Palette();

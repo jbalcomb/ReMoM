@@ -21,6 +21,11 @@ set(SDL2_SOURCES
     sdl2_Timer.c
 )
 
+if(NOT DISABLE_AUDIO)
+set(SDL2_MIXER_SOURCES
+    sdl2_Audio.c
+)
+endif()
 
 set(PFL_SOURCES
     MOM_PFL.c
@@ -56,15 +61,19 @@ set(MOX_SOURCES
     MOX_T4.c
     paragrph.c
     random.c
-    sdl2_Audio.c
     SOUND.c
+    special.c
     TEXTBOX.c
     Util.c
     Video.c
     Video2.c
 )
 
-add_library(MOX STATIC ${MOX_SOURCES} ${PFL_SOURCES} ${SDL2_SOURCES})
+if(NOT DISABLE_AUDIO)
+    add_library(MOX STATIC ${MOX_SOURCES} ${PFL_SOURCES} ${SDL2_SOURCES} ${SDL2_MIXER_SOURCES})
+else()
+    add_library(MOX STATIC ${MOX_SOURCES} ${PFL_SOURCES} ${SDL2_SOURCES})
+endif()
 
 # set_target_properties(MOX PROPERTIES LINKER_LANGUAGE C)
 set_target_properties(MOX PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -82,7 +91,13 @@ target_include_directories(MOX PRIVATE
     ${SDL2_MIXER_INCLUDE_DIR}
 )
 
-target_link_libraries(MOX
-    SDL2::Core
-    SDL2::Mixer
-)
+if(NOT DISABLE_AUDIO)
+    target_link_libraries(MOX
+        SDL2::Core
+        SDL2::Mixer
+    )
+else()
+    target_link_libraries(MOX
+        SDL2::Core
+    )
+endif()

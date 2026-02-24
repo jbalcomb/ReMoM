@@ -499,8 +499,7 @@ void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t pl
     if(magic_set.background_music == ST_TRUE)
     {
 
-        // DOMSDOS  Play_Sound__WIP(SND_Spell_Music);
-        sdl2_Play_Sound__WIP(SND_Spell_Music, SND_Spell_Music_size);
+        Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
 
     }
 
@@ -741,8 +740,7 @@ void Cast_Spell_City_Enchantment_Animation_1__WIP(int16_t city_idx, int16_t spel
 
     if(magic_set.background_music == ST_TRUE)
     {
-        // DOMSDOS  Play_Sound__STUB(SND_Spell_Music);
-        sdl2_Play_Sound__WIP(SND_Spell_Music, SND_Spell_Music_size);
+        Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
 
     }
 
@@ -819,8 +817,7 @@ void Cast_Spell_City_Enchantment_Animation_1__WIP(int16_t city_idx, int16_t spel
 
             if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
             {
-                // DOMSDOS  Play_Sound__STUB(SND_SpellCast)
-                sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
+                Play_Sound(SND_SpellCast, SND_SpellCast_size);
             }
 
             for(itr = 35; itr > 5; itr--)
@@ -909,9 +906,8 @@ void Cast_Spell_City_Enchantment_Animation_2__WIP(int16_t city_idx, int16_t spel
         (SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
     )
     {
-
-        // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
-        sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
+        
+        Play_Sound(SND_SpellCast, SND_SpellCast_size);
 
     }
 
@@ -1311,8 +1307,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
     if(magic_set.background_music == ST_TRUE)
     {
 
-        // DOMSDOS  Play_Sound__WIP(SND_Spell_Music);
-        sdl2_Play_Sound__WIP(SND_Spell_Music, SND_Spell_Music_size);
+        Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
 
     }
 
@@ -1814,8 +1809,7 @@ int16_t Target_Wizard_Screen(int16_t spell_idx)
 
         if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
         {
-            // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
-            sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
+            Play_Sound(SND_SpellCast, SND_SpellCast_size);
         }
 
         Clear_Fields();

@@ -218,8 +218,7 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
     {
         sound_seg = LBX_Reload(music_lbx_file__ovr102, MUSIC_Fanfare, SND_Music_Segment);
         sound_seg_size = lbxload_entry_length;
-        // DOMSDOS  Play_Sound__WIP(sound_seg);
-        sdl2_Play_Sound__WIP(sound_seg, sound_seg_size);
+        Play_Sound(sound_seg, sound_seg_size);
     }
 
     GUI_String_1 = (char *)Near_Allocate_First(100);
