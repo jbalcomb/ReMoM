@@ -229,14 +229,25 @@ void Quit_With_Message(char * string)
     // ~== //MoO2
     // ORION2.LE  dseg02:00172670 25 73 0A 00                                     printf_fmt_string_newline db '%s',0Ah,0
     printf("%s\n", string);
+
 #ifdef _WIN32
     // getch();  not without _CRT_INTERNAL_NONSTDC_NAMES
     // _getch();  // 6031 Return value ignored
     // char ch = _getch();
     #pragma warning(suppress : 6031)  // 6031 Return value ignored
     _getch();
+
 #endif
+
     exit(EXIT_FAILURE);
+    // Exception thrown at 0x00007FF9012D698B (ntdll.dll) in 010_ReMoMber.exe: 
+    // 0xC0000005: Access violation reading location 0xFFFFFFFFFFFFFFF8.
+    
+    // PostQuitMessage();
+    // ...crashes SDL2
+
+    // return;
+    // exit(EXIT_SUCCESS);
 
 }
 
