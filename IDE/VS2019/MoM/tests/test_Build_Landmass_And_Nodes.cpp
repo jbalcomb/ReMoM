@@ -160,7 +160,7 @@ TEST_F(NODE_IsAuraUnique_test, FirstNode_ReturnsNotUnique)
     _NODES[0].Aura_Ys[0] = 20;
     
     // Act
-    int16_t result = NODE_IsAuraUnique__WIP(0);
+    int16_t result = Aura_Overlap(0);
 
     // Assert
     EXPECT_EQ(result, ST_FALSE) << "First node should always be unique (no previous nodes to overlap)";
@@ -182,7 +182,7 @@ TEST_F(NODE_IsAuraUnique_test, NoOverlap_ReturnsNotUnique)
     _NODES[1].Aura_Ys[1] = 20;
 
     // Act
-    int16_t result = NODE_IsAuraUnique__WIP(1);
+    int16_t result = Aura_Overlap(1);
 
     // Assert
     EXPECT_EQ(result, ST_FALSE) << "Non-overlapping auras should be unique";
@@ -204,7 +204,7 @@ TEST_F(NODE_IsAuraUnique_test, Overlap_ReturnsUnique)
     _NODES[1].Aura_Ys[1] = 20;
 
     // Act
-    int16_t result = NODE_IsAuraUnique__WIP(1);
+    int16_t result = Aura_Overlap(1);
 
     // Assert
     EXPECT_EQ(result, ST_TRUE) << "Overlapping auras should return TRUE (not unique)";
@@ -226,7 +226,7 @@ TEST_F(NODE_IsAuraUnique_test, PartialOverlap_ReturnsUnique)
     _NODES[1].Aura_Ys[1] = 20; // Overlaps with node 0's second square
 
     // Act
-    int16_t result = NODE_IsAuraUnique__WIP(1);
+    int16_t result = Aura_Overlap(1);
 
     // Assert
     EXPECT_EQ(result, ST_TRUE) << "Any overlap should return TRUE";
@@ -248,7 +248,7 @@ TEST_F(NODE_IsAuraUnique_test, ThirdNode_ChecksAllPrevious)
     _NODES[2].Aura_Ys[0] = 10; // Overlaps with node 0
 
     // Act
-    int16_t result = NODE_IsAuraUnique__WIP(2);
+    int16_t result = Aura_Overlap(2);
 
     // Assert
     EXPECT_EQ(result, ST_TRUE) << "Should detect overlap with any previous node";

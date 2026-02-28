@@ -108,6 +108,7 @@ ITEM_MAX_POWERS
 #define NUM_LANDMASSES             60
 #define NUM_NODES                  30
 // #define NUM_LAIRS                 102
+#define NUM_LAIRS_102                102
 /* HACK */  #define NUM_LAIRS                 99
 // NOTE(JimBalcomb,20260206): Why/When did I hack this?
 
@@ -358,7 +359,7 @@ WIZARDS.LBX
 
 
 
-#define NUM_TERRAIN_TYPES   762
+#define NUM_TERRAIN_TYPES   762  // TODO  move to Terrain Code/Data area ... logic: MoM has Terrain, and this is part of that domain/namespace
 
 #define STATFIG_WIDTH       18  // in Pixels
 #define STATFIG_HEIGHT      16  // in Pixels

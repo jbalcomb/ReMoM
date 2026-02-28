@@ -26,7 +26,7 @@ void Init_New_Game(void);
 void Set_Upper_Lair_Guardian_Count(void);
 
 // MGC o51p03
-void NEWG_TileIsleExtend__WIP(int16_t wp);
+void Extend_Islands(int16_t wp);
 
 // MGC o51p04
 void Generate_Towers(void);
@@ -38,7 +38,7 @@ void Generate_Home_City__WIP(void);
 void Init_Landmasses(int16_t wp);
 
 // MGC o51p07
-void NEWG_EqualizeNodes__WIP(int16_t wp);
+void Rebalance_Node_Types(int16_t wp);
 
 // MGC o51p08
 void Generate_Climate_Terrain_Types(int16_t wp);
@@ -54,13 +54,13 @@ void Generate_Landmasses(int16_t wp);
 void Generate_Nodes(void);
 
 // MGC o51p12
-void NEWG_CreateNodeAura__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, int16_t wx, int16_t wy);
+void Make_Aura(int16_t power, int8_t * wx_array, int8_t * wy_array, int16_t wx, int16_t wy);
 
 // MGC o51p13
-int16_t NODE_IsAuraUnique__WIP(int16_t node_idx);
+int16_t Aura_Overlap(int16_t node_idx);
 
 // MGC o51p14
-void NEWG_SetNodeType__WIP(int16_t power, int8_t * Aura_Xs, int8_t * Aura_Ys, int16_t wp, int8_t * type);
+void Set_Node_Type(int16_t power, int8_t * wx_array, int8_t * wy_array, int16_t wp, int8_t * type);
 
 // MGC o51p15
 void Build_Landmass(int16_t wp, int16_t wx, int16_t wy);
@@ -78,7 +78,7 @@ void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t
 // void NEWG_SetDeserts__STUB(void);
 
 // MGC o51p20
-void NEWG_CreateShores__STUB(void);
+void Simex_Autotiling(void);
 
 // MGC o51p21
 void NEWG_RandomizeTiles__STUB(void);
@@ -135,13 +135,13 @@ void Create_Unit_NewGame(int16_t unit_type, int16_t player_idx, int16_t wx, int1
 void NEWG_AnimateOceans__STUB(void);
 
 // MGC o51p39
-int16_t TILE_IsOcean(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Is_Ocean_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p40
-int16_t TILE_HasNode(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Has_Node_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p41
-int16_t TILE_HasTower(int16_t wx, int16_t wy);
+int16_t Square_Has_Tower_NewGame(int16_t wx, int16_t wy);
 
 // MGC o51p42
 int16_t Square_Is_Forest_NewGame(int16_t wx, int16_t wy, int16_t wp);

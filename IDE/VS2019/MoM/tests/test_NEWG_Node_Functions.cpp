@@ -71,7 +71,7 @@ TEST_F(NEWG_EqualizeNodes_test, BalancedDistribution_NoChange)
     }
 
     // Act
-    NEWG_EqualizeNodes__WIP(ARCANUS_PLANE);
+    Rebalance_Node_Types(ARCANUS_PLANE);
 
     // Assert - count node types
     int sorcery = 0, chaos = 0, nature = 0;
@@ -102,7 +102,7 @@ TEST_F(NEWG_EqualizeNodes_test, ExcessSorcery_ConvertsToOthers)
     }
 
     // Act
-    NEWG_EqualizeNodes__WIP(ARCANUS_PLANE);
+    Rebalance_Node_Types(ARCANUS_PLANE);
 
     // Assert - should have converted some to Chaos and Nature
     int sorcery = 0, chaos = 0, nature = 0;
@@ -134,7 +134,7 @@ TEST_F(NEWG_EqualizeNodes_test, Myrror_MinimumThreeEach)
     }
 
     // Act
-    NEWG_EqualizeNodes__WIP(MYRROR_PLANE);
+    Rebalance_Node_Types(MYRROR_PLANE);
 
     // Assert
     int chaos = 0, nature = 0;
@@ -172,7 +172,7 @@ TEST_F(NEWG_EqualizeNodes_test, DoesNotAffectOtherPlane)
     }
 
     // Act - only process Arcanus
-    NEWG_EqualizeNodes__WIP(ARCANUS_PLANE);
+    Rebalance_Node_Types(ARCANUS_PLANE);
 
     // Assert - Myrror nodes unchanged
     for (int i = 16; i < NUM_NODES; i++)
@@ -194,7 +194,7 @@ TEST_F(NEWG_EqualizeNodes_test, UpdatesTerrainType)
     }
 
     // Act
-    NEWG_EqualizeNodes__WIP(ARCANUS_PLANE);
+    Rebalance_Node_Types(ARCANUS_PLANE);
 
     // Assert - verify terrain types match node types
     for (int i = 0; i < 16; i++)
@@ -237,7 +237,7 @@ TEST_F(NEWG_CreateNodeAura_test, FirstAuraSquare_IsCenterNode)
     int8_t aura_ys[20];
 
     // Act
-    NEWG_CreateNodeAura__WIP(5, aura_xs, aura_ys, 30, 20);
+    Make_Aura(5, aura_xs, aura_ys, 30, 20);
 
     // Assert
     EXPECT_EQ(aura_xs[0], 30);
@@ -252,7 +252,7 @@ TEST_F(NEWG_CreateNodeAura_test, PowerDeterminesAuraSize)
     int16_t power = 8;
 
     // Act
-    NEWG_CreateNodeAura__WIP(power, aura_xs, aura_ys, 30, 20);
+    Make_Aura(power, aura_xs, aura_ys, 30, 20);
 
     // Assert - verify at least 'power' unique coordinates
     int unique_count = 1; // Center is always included
@@ -280,7 +280,7 @@ TEST_F(NEWG_CreateNodeAura_test, AuraSquares_AreAdjacentOrNearby)
     int16_t power = 5;
 
     // Act
-    NEWG_CreateNodeAura__WIP(power, aura_xs, aura_ys, 30, 20);
+    Make_Aura(power, aura_xs, aura_ys, 30, 20);
 
     // Assert - all aura squares should be within reasonable distance
     for (int i = 0; i < power; i++)
@@ -300,7 +300,7 @@ TEST_F(NEWG_CreateNodeAura_test, NoOverlap_WithinAura)
     int16_t power = 9;
 
     // Act
-    NEWG_CreateNodeAura__WIP(power, aura_xs, aura_ys, 30, 20);
+    Make_Aura(power, aura_xs, aura_ys, 30, 20);
 
     // Assert - no duplicates
     for (int i = 0; i < power; i++)
@@ -321,7 +321,7 @@ TEST_F(NEWG_CreateNodeAura_test, AuraSquares_WithinBounds)
     int16_t power = 15;
 
     // Act
-    NEWG_CreateNodeAura__WIP(power, aura_xs, aura_ys, 30, 20);
+    Make_Aura(power, aura_xs, aura_ys, 30, 20);
 
     // Assert
     for (int i = 0; i < power; i++)
@@ -341,7 +341,7 @@ TEST_F(NEWG_CreateNodeAura_test, SmallPower_Adjacent)
     int16_t power = 5;
 
     // Act
-    NEWG_CreateNodeAura__WIP(power, aura_xs, aura_ys, 30, 20);
+    Make_Aura(power, aura_xs, aura_ys, 30, 20);
 
     // Assert - all should be immediately adjacent (within 1 square)
     for (int i = 1; i < power; i++)

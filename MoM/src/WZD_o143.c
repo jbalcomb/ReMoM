@@ -27,7 +27,7 @@
 // WZD dseg:6EAC BEGIN:  ovr143 - Initialized Data
 
 // WZD dseg:6EAC
-int16_t rnd_grasslands[3] = { _Grasslands1, _Grasslands2, _Grasslands3 };
+int16_t rnd_grasslands[3] = { tte_Grasslands, _Grasslands2, _Grasslands3 };
 // WZD dseg:6EB2
 int16_t rnd_forests[3] = { _Forest1, _Forest2, _Forest3 };
 // WZD dseg:6EB8
@@ -179,7 +179,7 @@ static void Set_Terrain_Type_Desert(int16_t wx, int16_t wy, int16_t wp)
 void Set_Terrain_Type_Mountain(int16_t wx, int16_t wy, int16_t wp)
 {
 
-    SET_TERRAIN_TYPE(wx, wy, wp, tte_1Mountain1);
+    SET_TERRAIN_TYPE(wx, wy, wp, tte_Mountain);
 
     // TODO  TILE_AdjustMapFlow(wx, wy, wp);
 
@@ -192,7 +192,7 @@ void Set_Terrain_Type_Mountain(int16_t wx, int16_t wy, int16_t wp)
 void Set_Terrain_Type_Hills(int16_t wx, int16_t wy, int16_t wp)
 {
 
-    SET_TERRAIN_TYPE(wx, wy, wp, tte_1Hills1);
+    SET_TERRAIN_TYPE(wx, wy, wp, tte_Hills);
 
     // TODO  TILE_AdjustMapFlow(wx, wy, wp);
 

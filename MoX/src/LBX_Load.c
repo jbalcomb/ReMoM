@@ -69,7 +69,7 @@
 
 int16_t lbxload_lbx_header_flag = ST_FALSE;
 FILE * lbxload_fptr = NULL;  // MoO2  Module: farload  farload_fptr  ... MoO2 changed to farload_file_flag {F,T}
-FILE * DBG_lbxload_fptr = NULL;  // DEBUG  AVWL on fclose()
+int64_t DBG_lbxload_fptr = 0;  // DEBUG  AVWL on fclose()
 char lbxload_lbx_file_extension[] = ".LBX";
 int16_t lbxload_num_entries;
 int16_t farload_extended_flag;
@@ -148,7 +148,7 @@ SAMB_ptr LBX_Load_Data(char * lbx_name, int16_t entry_num, int16_t start_rec, in
 {
     SAMB_ptr SAMB_data;
 
-    SAMB_data = LBX_Load_Library_Data(lbx_name, entry_num, ST_NULL, sa_Single, start_rec, num_recs, record_size);
+    SAMB_data = LBX_Load_Library_Data(lbx_name, entry_num, (SAMB_ptr)ST_NULL, sa_Single, start_rec, num_recs, record_size);
 
     return SAMB_data;
 }
@@ -190,7 +190,7 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
 
     // Meh.
     // Error	C4703	potentially uninitialized local pointer variable 'SAMB_data' used	STU - MoM_Rasm	C : \devel\STU - MoM_Rasm\src\LBX_Load.C	255
-    SAMB_data = NULL;
+    SAMB_data = (SAMB_ptr)ST_NULL;
 
     // if(entry_num < 0) { LBX_Error(lbx_name, 1, entry_num, NULL); }
 
@@ -219,12 +219,13 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
 
         if(NULL != lbxload_fptr)
         {
-            if(DBG_lbxload_fptr != lbxload_fptr)
+            if(DBG_lbxload_fptr != (int64_t)(uintptr_t)lbxload_fptr)
             {
                 STU_DEBUG_BREAK();
             }
             fclose(lbxload_fptr);
-            lbxload_fptr = ST_NULL;
+            lbxload_fptr = NULL;
+            DBG_lbxload_fptr = 0;
         }
 
         strcpy(lbxload_file_name, lbx_name);
@@ -251,13 +252,13 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
             //     }
             //     else
             //     {
-            //         DBG_lbxload_fptr = lbxload_fptr;
+            //         DBG_lbxload_fptr = (int64_t)(uintptr_t)lbxload_fptr;
             //     }
             // }
         }
         else
         {
-            DBG_lbxload_fptr = lbxload_fptr;
+            DBG_lbxload_fptr = (int64_t)(uintptr_t)lbxload_fptr;
         }
 
         // if farload_extended_flag ... file_hdr_ofst  512 or 0
@@ -431,12 +432,13 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
 
         if(lbxload_fptr != NULL)
         {
-            if(DBG_lbxload_fptr != lbxload_fptr)
+            if(DBG_lbxload_fptr != (int64_t)(uintptr_t)lbxload_fptr)
             {
                 STU_DEBUG_BREAK();
             }
             fclose(lbxload_fptr);
             lbxload_fptr = NULL;
+            DBG_lbxload_fptr = 0;
         }
 
         strcpy(lbxload_file_name, lbx_name);
@@ -463,13 +465,13 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
             //     }
             //     else
             //     {
-            //         DBG_lbxload_fptr = lbxload_fptr;
+            //         DBG_lbxload_fptr = (int64_t)(uintptr_t)lbxload_fptr;
             //     }
             // }
         }
         else
         {
-            DBG_lbxload_fptr = lbxload_fptr;
+            DBG_lbxload_fptr = (int64_t)(uintptr_t)lbxload_fptr;
         }
 
         // DNE  if farload_extended_flag ... file_hdr_ofst  512 or 0
@@ -636,6 +638,7 @@ Locals:
     Num elements:   60, Type:                unsigned integer (4 bytes) 
     pointer (4 bytes) pointer
 */
+/* TODO  make SAMB_ptr SAMB_head to be a void pointer */
 void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, uint16_t start_rec, uint16_t num_recs, uint16_t record_size)
 {
     char full_file_path[LEN_FILE_PATH] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -654,7 +657,7 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
 
     if(entry_num < 0)
     {
-        Error_Handler(lbx_name, le_not_found, entry_num, NULL);
+        Error_Handler(lbx_name, le_not_found, entry_num, ST_NULL);
     }
 
     if(lbxload_lbx_header_flag == ST_FALSE)
@@ -693,12 +696,13 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
 
         if(NULL != lbxload_fptr)
         {
-            if(DBG_lbxload_fptr != lbxload_fptr)
+            if(DBG_lbxload_fptr != (int64_t)(uintptr_t)lbxload_fptr)
             {
                 STU_DEBUG_BREAK();
             }
             fclose(lbxload_fptr);
             lbxload_fptr = NULL;
+            DBG_lbxload_fptr = 0;
         }
 
         strcpy(lbxload_file_name, lbx_name);
@@ -724,13 +728,13 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
                 }
                 else
                 {
-                    DBG_lbxload_fptr = lbxload_fptr;
+                    DBG_lbxload_fptr = (int64_t)(uintptr_t)lbxload_fptr;
                 }
             }
         }
         else
         {
-            DBG_lbxload_fptr = lbxload_fptr;
+            DBG_lbxload_fptr = (int64_t)(uintptr_t)lbxload_fptr;
         }
 
         // HERE:  doesn't have the `if farload_extended_flag` like the other 'LBX Load' functions

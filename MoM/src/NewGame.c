@@ -1632,9 +1632,9 @@ int16_t Newgame_Screen_0(void)
 
             magic_set.Difficulty++;
 
-            if(magic_set.Difficulty > 4)
+            if(magic_set.Difficulty > god_Impossible)
             {
-                magic_set.Difficulty = 1;
+                magic_set.Difficulty = god_Intro;
             }
 
         }
@@ -1644,9 +1644,9 @@ int16_t Newgame_Screen_0(void)
 
             magic_set.Opponents++;
 
-            if(magic_set.Opponents > 4)
+            if(magic_set.Opponents > goo_Four)
             {
-                magic_set.Opponents = 1;
+                magic_set.Opponents = goo_One;
             }
 
         }
@@ -1656,9 +1656,9 @@ int16_t Newgame_Screen_0(void)
 
             magic_set.LandSize++;
 
-            if(magic_set.LandSize > 2)
+            if(magic_set.LandSize > gol_Large)
             {
-                magic_set.LandSize = 0;
+                magic_set.LandSize = gol_Small;
             }
 
         }
@@ -1668,9 +1668,9 @@ int16_t Newgame_Screen_0(void)
 
             magic_set.MagicPower++;
 
-            if(magic_set.MagicPower > 2)
+            if(magic_set.MagicPower > gom_Powerful)
             {
-                magic_set.MagicPower = 0;
+                magic_set.MagicPower = gom_Weak;
             }
 
         }

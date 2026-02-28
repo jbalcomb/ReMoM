@@ -19,7 +19,7 @@ everything after this is Tundra
 <= tt_AnimOcean  = 259h
 ~ < 'Tundra Range'
 
->= _Grasslands1  0xA2
+>= tt_Grasslands1  0xA2
 >= tt_Shore1_Fst  = 2
 <  tt_Shore1_Lst  = 0A1h
 ~ > 'Shore1 Range'
@@ -33,31 +33,21 @@ everything after this is Tundra
 */
 
 
-enum Terrain_Type
-{
-    e_TT_BugGrass       =   1,  /* 0x0001 */
-
-    e__Grasslands1      = 162,  /* 0x00A2 */
-    e_TT_Grass1         = 162,  /* 0x00A2 */
-
-    e_TT_Forest3        = 184,  /* 0x00B8 */
-
-    e_TT_Rivers_end     = 258,  /* 0x0102 */
-
-    e__Mount1001        = 274,  /* 0x0112 */
-
-    e__1Hills2          = 291,  /* 0x0123 */
-
-    e__Desert10101111   = 451,  /* 0x01C3 */
-
-    e__Shore111R1110    = 467,  /* 0x01D3 */
-
-    e__River1111_5      = 472,  /* 0x01D8 */
-
-    e_TT_Ocean2         = 601,  /* 0x0259 */
-
-    e_TT_Count          = 762   /* 0x02FA */
-};
+// DELETEME  enum Terrain_Type
+// DELETEME  {
+// DELETEME      e_TT_BugGrass       =   1,  /* 0x0001 */
+// DELETEME      e__Grasslands1      = 162,  /* 0x00A2 */
+// DELETEME      e_TT_Grass1         = 162,  /* 0x00A2 */
+// DELETEME      e_TT_Forest3        = 184,  /* 0x00B8 */
+// DELETEME      e_TT_Rivers_end     = 258,  /* 0x0102 */
+// DELETEME      e__Mount1001        = 274,  /* 0x0112 */
+// DELETEME      e__1Hills2          = 291,  /* 0x0123 */
+// DELETEME      e__Desert10101111   = 451,  /* 0x01C3 */
+// DELETEME      e__Shore111R1110    = 467,  /* 0x01D3 */
+// DELETEME      e__River1111_5      = 472,  /* 0x01D8 */
+// DELETEME      e_TT_Ocean2         = 601,  /* 0x0259 */
+// DELETEME      e_TT_Count          = 762   /* 0x02FA */
+// DELETEME  };
 
 /*
 something with base/basic types?
@@ -144,10 +134,10 @@ enum e_TERRAIN_TYPES
     TT_Shore3_1st  = 0x1D9,
     TT_Shore3_end  = 0x258,
 
-    tt_Ocean2      = 0x259,  // 601
+    tt_Ocean2      = 0x259,  // 601    tte_AnimOcean   = 0x259,  /* type used by Square_Is_Ocean() */
 
-    tt_Tundra_1st  = 0x25A,
-    TT_Tundra_Last = 0x2F9,
+    tt_Tundra_1st  = 0x25A,  // 602    should line up with mapping from TERRTYPE.LBX
+    TT_Tundra_Last = 0x2F9,  // 761 - 602 = 159 total tundra types?
     
     TerType_Count  = 0x02FA
 };
@@ -217,7 +207,7 @@ enum e_TERRAIN_TYPES
 
 /*
 
-    tte_1Mountain1   = 0xA4,  type used by Set_Terrain_Type_Mountain()
+    tte_Mountain   = 0xA4,  type used by Set_Terrain_Type_Mountain()
     tte_Volcano      = 0xB3,  type used by Set_Terrain_Type_Volcano()
     tte_AnimOcean      = 0x259,  type used by Square_Is_Ocean()
 
@@ -240,10 +230,10 @@ enum OVL_Tiles_Extended
     _Shore00001000  = 0x2,
     _Shore10101111  = 0xA1,
 
-    _Grasslands1    = 0xA2,
+    tte_Grasslands    = 0xA2,
     _Forest1        = 0xA3,
 
-    tte_1Mountain1   = 0xA4,  type used by Set_Terrain_Type_Mountain()
+    tte_Mountain   = 0xA4,  type used by Set_Terrain_Type_Mountain()
 
     _AllDesert1     = 0xA5,
     _Swamp1         = 0xA6,
@@ -288,25 +278,25 @@ enum OVL_Tiles_Extended
 */
 enum OVL_Tiles_Extended
 {
-    _Ocean          = 0x0,
-    _Land           = 0x1,
-    _Shore00001000  = 0x2,
-    _Shore00001100  = 0x3,
-    _Shore00001110  = 0x4,
-    _Shore00000110  = 0x5,
-    _Shore00000010  = 0x6,
-    _Shore00001010  = 0x7,
-    _Shore00100010  = 0x8,
-    _Shore10000010  = 0x9,
-    _Shore00011000  = 0x0A,
-    _Shore00000100  = 0x0B,
-    _Shore00000011  = 0x0C,
-    _Shore10100000  = 0x0D,
-    _Shore10001000  = 0x0E,
-    _Shore00101000  = 0x0F,
-    _Shore00111000  = 0x10,
-    _Shore00010000  = 0x11,
-    _1Lake          = 0x12,
+    tte_Ocean       = 0x0000,
+    _Land           = 0x0001,
+    _Shore00001000  = 0x0002,
+    _Shore00001100  = 0x0003,
+    _Shore00001110  = 0x0004,
+    _Shore00000110  = 0x0005,
+    _Shore00000010  = 0x0006,
+    _Shore00001010  = 0x0007,
+    _Shore00100010  = 0x0008,
+    _Shore10000010  = 0x0009,
+    _Shore00011000  = 0x000A,
+    _Shore00000100  = 0x000B,
+    _Shore00000011  = 0x000C,
+    _Shore10100000  = 0x000D,
+    _Shore10001000  = 0x000E,
+    _Shore00101000  = 0x000F,
+    _Shore00111000  = 0x0010,
+    _Shore00010000  = 0x0011,   /* 17d  Land to the East */
+    _1Lake          = 0x0012,   /* 18 */
     _Shore00000001  = 0x13,
     _Shore10000011  = 0x14,
     _Shore00110000  = 0x15,
@@ -319,7 +309,7 @@ enum OVL_Tiles_Extended
     _Shore01100000  = 0x1C,
     _Shore11100000  = 0x1D,
     _Shore11000000  = 0x1E,
-    _Shore10000000  = 0x1F,
+    _Shore10000000  = 0x1F,  /* AKA _Ocean with one adjacent land square - NW */
     _Shore10100010  = 0x20,
     _Shore10101010  = 0x21,
     _Shore11000001  = 0x22,
@@ -450,16 +440,16 @@ enum OVL_Tiles_Extended
     _Shore00101111  = 0x9F,
     _Shore10100111  = 0xA0,
     _Shore10101111  = 0xA1,
-    _Grasslands1    = 0xA2,
+    tte_Grasslands = 0xA2,  /* tt_Grasslands1  162  0xA2  0b10100010 */
     _Forest1        = 0xA3,
-    tte_1Mountain1  = 0xA4,  /* type used by Set_Terrain_Type_Mountain() */
+    tte_Mountain  = 0xA4,  /* type used by Set_Terrain_Type_Mountain() */
     _AllDesert1     = 0xA5,
     _Swamp1         = 0xA6,
-    _AllTundra1     = 0xA7,
+    tte_Tundra     = 0xA7,
     _SorceryLake    = 0xA8,
     _NatureForest   = 0xA9,
     _ChaosVolcano   = 0xAA,
-    tte_1Hills1     = 0xAB,
+    tte_Hills     = 0xAB,
     _Grasslands2    = 0xAC,
     _Grasslands3    = 0xAD,
     _AllDesert2     = 0xAE,
@@ -888,9 +878,9 @@ enum OVL_Tiles_Extended
     _Shore000R0001  = 0x255,
     _Shore000R1001  = 0x256,
     _Shore001R0001  = 0x257,
-    _Shore001R1001  = 0x258,
-    tte_AnimOcean      = 0x259,  /* type used by Square_Is_Ocean() */
-    _Tundra00001000 = 0x25A,
+    _Shore001R1001  = 0x258,  /* 600d  for Tundra smoothing, it uses 600 + terrtype[{1,...255}] */
+    tte_AnimOcean   = 0x259,  /* type used by Square_Is_Ocean() */
+    _Tundra00001000 = 0x25A,  /* start of range for Tundra autotiling */
     _Tundra00001100 = 0x25B,
     _Tundra00001110 = 0x25C,
     _Tundra00000110 = 0x25D,
@@ -1050,7 +1040,7 @@ enum OVL_Tiles_Extended
     _Tundra00101111 = 0x2F7,
     _Tundra10100111 = 0x2F8,
     _Tundra10101111 = 0x2F9,
-    _TerType_Count  = 0x2FA
+    _TerType_Count  = 0x2FA   /* start of range for Tundra autotiling */
 };
 
 

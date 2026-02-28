@@ -29,19 +29,20 @@ mixed-use bitfield
 */
 enum e_Terrain_Specials
 {
+    ts_NONE           =   0,
     ts_Iron           =   1,
     ts_Coal           =   2,
     ts_Silver         =   3,
     ts_Gold           =   4,
     ts_Gems           =   5,
-    ts_Mithril        =   6,  // "TERRAIN SPECIAL ... Mithril Ore"
-    ts_Adamantium     =   7,  // "TERRAIN SPECIAL ... Adamantium"
+    ts_Mithril        =   6,    /* "TERRAIN SPECIAL ... Mithril Ore" */
+    ts_Adamantium     =   7,    /* "TERRAIN SPECIAL ... Adamantium"  */
     ts_QuorkCrystals  =   8,
     ts_CrysxCrystals  =   9,
-    ts_HuntersLodge   =  16,    // 0x10
-    ts_Unknown_20     =  32,    // 0x20  corruption?
-    ts_Wild_Game      =  64,    // 0x40
-    ts_Nightshade     = 128     // 0x80
+    ts_HuntersLodge   =  16,    /* 0x10 */
+    ts_Unknown_20     =  32,    /* 0x20  DEDU was corruption, <v.131? */
+    ts_Wild_Game      =  64,    /* 0x40 */
+    ts_Nightshade     = 128     /* 0x80 */
 };
 
 #define TS_NONE             0  // 0000

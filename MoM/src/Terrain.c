@@ -57,7 +57,7 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
             if(terrain_type != tt_BugGrass)
             {
                 // HERE:  >= 2 && < 'Tundra Range'
-                if(terrain_type >= _Grasslands1)  /* enum OVL_Tiles_Extended */
+                if(terrain_type >= tte_Grasslands)  /* enum OVL_Tiles_Extended */
                 {
                     // HERE:  > 'Shore1 Range' && < 'Tundra Range'
                     if(terrain_type <= _River1111_5)
@@ -1226,7 +1226,7 @@ int16_t Square_Is_Shoreline(int16_t wx, int16_t wy, int16_t wp)
                         else
                         {
 
-                            if(terrain_type >= _Grasslands1)
+                            if(terrain_type >= tte_Grasslands)
                             {
 
                                 is_shoreline = ST_FALSE;
@@ -1333,7 +1333,8 @@ WZD s161p24
 TILE_IsSailable()
 WZD s161p39
 Square_Is_OceanLike()
-    ...only checks tt_AnimOcean
+BUGBUG  only checks tt_AnimOcean?
+TODO  DEDU  what 'water' squares not sailable?
 */
 int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
 {
@@ -1388,7 +1389,7 @@ int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
                         else
                         {
                             // <= TT_RiverM_end  = 0x0C4,
-                            if(terrain_type > 0xA1)  /* _Shore10101111 */
+                            if(terrain_type > _Shore10101111)  /* _Shore10101111 */
                             {
                                 // >= tt_Grasslands1      = 0x0A2,
                                 goto Return_False;
@@ -1396,7 +1397,7 @@ int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
                             else
                             {
                                 // <= tt_Shore1_Lst  = 0x0A1,
-                                if(terrain_type == e_TT_BugGrass)  /* tt_BugGrass */
+                                if(terrain_type == tt_BugGrass)  /* tt_BugGrass */
                                 {
                                     goto Return_False;
                                 }
@@ -1513,7 +1514,7 @@ int16_t Map_Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp)
                 else
                 {
 
-                    if(terrain_type < _Grasslands1)
+                    if(terrain_type < tte_Grasslands)
                     {
 
                         is_emarkable = ST_TRUE;

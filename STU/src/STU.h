@@ -5,7 +5,7 @@
 #include "STU_DEF.h"
 #include "STU_DBG.h"
 #include "STU_UTIL.h"   /* get_datetime() */
-#include "STU_CHK.h"
+// moved to repo backups #include "STU_CHK.h"
 
 #include <stdio.h>
 

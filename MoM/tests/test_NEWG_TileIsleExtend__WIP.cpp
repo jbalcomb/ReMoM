@@ -45,7 +45,7 @@ TEST_F(NEWG_TileIsleExtend__WIP_test, AllOcean_NoCandidates_LeavesMapUnchanged)
     std::vector<uint8_t> before(WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
     memcpy(before.data(), _world_maps, before.size());
 
-    NEWG_TileIsleExtend__WIP(ARCANUS_PLANE);
+    Extend_Islands(ARCANUS_PLANE);
 
     EXPECT_EQ(memcmp(before.data(), _world_maps, before.size()), 0);
 }
@@ -62,7 +62,7 @@ TEST_F(NEWG_TileIsleExtend__WIP_test, NodeWithNonOceanCardinalNeighbor_DoesNotAl
     std::vector<uint8_t> before(WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
     memcpy(before.data(), _world_maps, before.size());
 
-    NEWG_TileIsleExtend__WIP(wp);
+    Extend_Islands(wp);
 
     EXPECT_EQ(memcmp(before.data(), _world_maps, before.size()), 0);
 }

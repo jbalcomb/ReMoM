@@ -343,6 +343,7 @@ void Near_Allocation_Error(int16_t size)
 
 
 // WZD s08p07
+/* TODO  make Allocate_Space() return a void pointer */
 SAMB_ptr Allocate_Space(uint16_t size)
 {
     int32_t lsize;
@@ -351,7 +352,7 @@ SAMB_ptr Allocate_Space(uint16_t size)
     lsize = (size + 1) * 16;
 
     tmp_SAMB_head = (SAMB_ptr) malloc(lsize);
-    if(tmp_SAMB_head == NULL) { Allocation_Error(1, size); }
+    if(tmp_SAMB_head == NULL) { Allocation_Error(1, size); return NULL; }
     // SAMB_head = tmp_SAMB_head + 12;  // 16-byte paragraph - 4-byte malloc header
     SAMB_head = tmp_SAMB_head;
 
@@ -370,6 +371,9 @@ SAMB_ptr Allocate_Space(uint16_t size)
     SA_SET_USED(SAMB_head,1);
 
     // Update_MemFreeWorst_KB();
+
+// Severity	Code	Description	Project	File	Line	Suppression State	Details
+// Warning	C6011	Dereferencing NULL pointer '(uint8_t *)(SAMB_head)+((0))+0'. 	002_MoX	C:\STU\devel\ReMoM\MoX\src\Allocate.c	359		
 
     return SAMB_head;
 }
