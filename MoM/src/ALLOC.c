@@ -85,6 +85,7 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     _CITIES = (struct s_CITY*)Allocate_First_Block(World_Data, (((NUM_CITIES * sizeof(struct s_CITY)) / 16) + 1));  // 714 PR, 11424 B
 
     _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, 602);  // 602 PR, 9632 B
+    p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
 
     UU_TBL_1 = Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
     UU_TBL_2 = Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B

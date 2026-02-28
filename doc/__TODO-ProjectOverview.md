@@ -45,18 +45,18 @@ Init_New_Game_()
 [x] |-> |-> Consolidate_Spell_Book_Realms
 [x] |-> |-> Get_Weighted_Choice
 [x] |-> Init_Computer_Players_Spell_Library()
-[x] NEWG_ClearLandmasses()
-[x] NEWG_CreateLands()
+[x] Init_Landmasses()
+[x] Generate_Landmasses()
 [x] |-> TILE_SetLandMass__WIP
-[x] NEWG_SetBaseLands()
-[x] NEWG_SetSpecLands()
+[x] Translate_Heightmap_To_Base_Terrain_Types()
+[x] Generate_Climate_Terrain_Types()
 [x] Generate_Nodes()
 [x] |-> NEWG_CreateNodeAura__WIP()
 [x] |-> NODE_IsAuraUnique__WIP()
 [x] |-> NEWG_SetNodeType__WIP()
-[x] NEWG_EqualizeNodes()
+[x] Rebalance_Node_Types()
 [x] Generate_Towers()
-[x] NEWG_TileIsleExtend()
+[x] Extend_Islands()
 [x] Generate_Lairs()
 [x] Generate_Home_City__WIP()
 [x] |-> City_Maximum_Size_NewGame()
@@ -76,7 +76,7 @@ Init_New_Game_()
 [x] |-> Square_Is_Desert_NewGame()
 [x] |-> Desert_Terrain_Special()
 [x] Generate_Roads()
-[-] NEWG_CreateShores__STUB()
+[x] Simex_Autotiling()
 [-] NEWG_CreateRiver__STUB()
 [-] NEWG_SetRiverTiles__STUB()
 [-] NEWG_SetDeserts__STUB()
@@ -93,14 +93,15 @@ Init_New_Game_()
 [x] |-> Set_Square_Explored_Bits()
 [-] NEWG_AnimateOceans()
 [x] Set_Upper_Lair_Guardian_Count()
-
 [x] BUG  starting city in middle of ocean, for human player; failed ocean check? failed max pop check?
+[x] ...move special.c/h from MoM to MoX
 
 [ ] location validation for neutral cities generation
 
 [ ] add Set_Game_Random_Seed_() from MoO2, in Init_New_Game(), with _cmd_line_seed
 
-[ ] ...move special.c/h from MoM to MoX
+[ ] NewGame - Towers too close together
+
 
 DIPLOMAC.LBX [entry 52]  was not properly allocated or has been corrupted.
 

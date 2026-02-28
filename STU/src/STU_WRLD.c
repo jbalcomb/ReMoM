@@ -74,7 +74,11 @@ Module: MAPGEN
 
 */
 
-#include "../../MoM/src/MAPGEN.h"
+#ifdef STU_DEBUG
+#include "STU_DBG.h"
+#endif
+
+#include "../../MoM/src/MAPGEN.h"       /* Square_Has_Tower_NewGame() */
 #include "../../MoM/src/NewGame.h"      /* NEWG_Clicked_Race */
 #include "../../MoM/src/RACETYPE.h"     /* rt_High_Men */
 #include "../../MoM/src/Terrain.h"      /* TS_NONE, TS_IRON, TS_WILDGAME, ... */
@@ -86,14 +90,16 @@ Module: MAPGEN
 #include "../../MoX/src/MOM_Data.h"     /* _landmasses, _world_maps */
 #include "../../MoX/src/MOM_DEF.h"      /* WORLD_WIDTH, WORLD_HEIGHT */
 #include "../../MoX/src/MOX_DEF.h"      /* GET_TERRAIN_TYPE() */
+#include "../../MoX/src/MOX_SET.h"      /* magic_set */
 
 #include "STU_WRLD.h"
 
 #include <assert.h>  /* assert() */
 #include <stdio.h>   /* FILE, fopen, ftell, fprintf, fclose */
+#include <stdlib.h>  /* malloc, free */
 #include <memory.h>  /* memset() === vcruntime_string.h */
 #include <string.h>  /* memset() */
-
+// Routine  malloc; Required header  <stdlib.h> and <malloc.h>;
 
 
 // MGC  dseg:9040
@@ -101,13 +107,8 @@ extern int16_t m_landmasses_ctr;
 
 
 
-int max_hit_count_index;
-
-struct s_Landmass_Map_Square_Hit_Count * landmass_map_square_hit_count;
-
-struct s_Worldmap_Map_Square_Hit_Count * worldmap_map_square_hit_count;
-
-struct s_Terrain_Specials_Map_Square_Hit_Count * terrain_specials_map_square_hit_count;
+int32_t trial_run_count;
+struct s_Simulation_Data * simulation_data;
 
 static const char lm_chars[] =
     ".123456789"
@@ -127,68 +128,57 @@ static char Terrain_Type_To_Char(int16_t tt);
  * Helper Functions *
  ********************/
 
-/*
-Get_Landmass
+static uint8_t Get_Landmass(int16_t wx, int16_t wy, int16_t wp)         { return _landmasses[ (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx ];                  }
+static int16_t Get_Terrain(int16_t wx, int16_t wy, int16_t wp)          { return p_world_map[wp][wy][wx];                                                     }
+static uint8_t Get_Terrain_Special(int16_t wx, int16_t wy, int16_t wp)  { return _map_square_terrain_specials[ (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx ]; }
 
-Returns the landmass index for the world-map square at (wx, wy) on plane wp.
-*/
-static uint8_t Get_Landmass(int16_t wx, int16_t wy, int16_t wp)
+static const struct { int type; const char * name; } terrain_type_names[] =
 {
-    return _landmasses[ (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx ];
+    { tt_Ocean1,      "Ocean"      },
+    { tt_Grasslands1, "Grasslands" },
+    { tt_Forest1,     "Forest"     },
+    { tt_Hills1,      "Hills"      },
+    { tt_Mountain1,   "Mountain"   },
+    { tt_Desert1,     "Desert"     },
+    { tt_Swamp1,      "Swamp"      },
+    { tt_Tundra1,     "Tundra"     },
+    { tt_SorceryNode, "SorceryNode"},
+    { tt_NatureNode,  "NatureNode" },
+    { tt_ChaosNode,   "ChaosNode"  },
+};
+static const int terrain_type_names_count = (int)(sizeof(terrain_type_names) / sizeof(terrain_type_names[0]));
+
+static const char * Terrain_Type_Name(int type)
+{
+    int n = 0;
+    for(n = 0; n < terrain_type_names_count; n++)
+    {
+        if(terrain_type_names[n].type == type)
+            return terrain_type_names[n].name;
+    }
+    return "";
 }
 
-/*
-Get_Terrain
-
-_world_maps is a flat, packed byte array that holds one or more world planes laid out end-to-end.  Each map square is stored as a
-little-endian 16-bit terrain-type index, so each square occupies exactly 2 bytes.  A single plane is WORLD_WIDTH * WORLD_HEIGHT
-squares, which equals WORLD_SIZE squares total, or WORLD_SIZE * 2 bytes per plane.
-
-The byte offset of square (wx, wy) on plane wp is therefore:
-
-    ofs = (wp * WORLD_SIZE   * 2)   -- skip wp complete planes
-        + (wy * WORLD_WIDTH  * 2)   -- skip wy complete rows within the selected plane
-        + (wx                * 2)   -- skip wx individual squares within the selected row
-
-The factor of 2 appears at every level because each square is 2 bytes wide.
-
-We then read the two bytes at ofs and ofs+1 and reassemble the little-endian 16-bit value by hand:
-
-    lo  = _world_maps[ofs]       -- bits  7:0  of the terrain-type index (low byte, stored first)
-    hi  = _world_maps[ofs + 1]   -- bits 15:8  of the terrain-type index (high byte, stored second)
-    val = (uint16_t)lo | ((uint16_t)hi << 8)
-
-Both lo and hi must be widened to uint16_t before the shift and OR.  Shifting a uint8_t left by 8 promotes it to int first
-(via the usual integer promotions), and on a platform where int is 16 bits the shift would be undefined behaviour.  Casting to
-uint16_t first makes the shift well-defined on all conforming targets and keeps the arithmetic in the unsigned domain throughout,
-preventing any sign-extension side-effects before the OR.
-
-The final result is cast to int16_t because the rest of the codebase compares terrain-type values against signed enum members
-(e_TERRAIN_TYPES / OVL_Tiles_Extended).  Returning a signed value avoids spurious signed/unsigned comparison warnings at every
-call site and matches the type used by GET_TERRAIN_TYPE().
-*/
-static int16_t Get_Terrain(int16_t wx, int16_t wy, int16_t wp)
+static const char * terrain_group_names[] =
 {
-    int     ofs = (wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2);
-    uint8_t lo  = _world_maps[ofs];
-    uint8_t hi  = _world_maps[ofs + 1];
-    return (int16_t)((uint16_t)lo | ((uint16_t)hi << 8));
-}
+    "Ocean",       /* 0 */
+    "Grasslands",  /* 1 */
+    "Forest",      /* 2 */
+    "Hills",       /* 3 */
+    "Mountain",    /* 4 */
+    "Desert",      /* 5 */
+    "Swamp",       /* 6 */
+    "Tundra",      /* 7 */
+    "River",       /* 8 */
+    "Shore/Lake",  /* 9 */
+};
+static const int terrain_group_names_count = (int)(sizeof(terrain_group_names) / sizeof(terrain_group_names[0]));
 
-/*
-Get_Terrain_Special
-
-Returns the terrain-special byte for the world-map square at (wx, wy) on plane wp.
-_map_square_terrain_specials is a flat, packed byte array laid out identically to
-_landmasses: one byte per square, one plane after another.
-
-The byte offset is:
-
-    ofs = (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx
-*/
-static uint8_t Get_Terrain_Special(int16_t wx, int16_t wy, int16_t wp)
+static const char * Terrain_Group_Name(int group)
 {
-    return _map_square_terrain_specials[ (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx ];
+    if(group >= 0 && group < terrain_group_names_count)
+        return terrain_group_names[group];
+    return "";
 }
 
 static char Terrain_Type_To_Char(int16_t tt)
@@ -218,7 +208,7 @@ static char Terrain_Type_To_Char(int16_t tt)
     if(tt <= TT_Lake4)          return 'l';                        /* TT_Lake1 .. TT_Lake4 */
     if(tt <= TT_Shore2F_end)    return '#';                        /* TT_Shore2F_1st .. TT_Shore2F_end */
     if(tt <= tt_Rivers_end)     return '=';                        /* TT_Rivers_1st .. tt_Rivers_end */
-    if(tt <= tt_Mountains_Lst)  return 'm';                       /* tt_Mountains_Fst .. tt_Mountains_Lst */
+    if(tt <= tt_Mountains_Lst)  return 'm';                        /* tt_Mountains_Fst .. tt_Mountains_Lst */
     if(tt <= tt_Hills_Lst)      return 'h';                        /* tt_Hills_Fst .. tt_Hills_Lst */
     if(tt <= tt_Desert_Lst)     return 'd';                        /* tt_Desert_Fst .. tt_Desert_Lst */
     if(tt <= TT_Shore2_end)     return '#';                        /* tt_Shore2_1st .. TT_Shore2_end */
@@ -229,101 +219,81 @@ static char Terrain_Type_To_Char(int16_t tt)
     return '?';
 }
 
-/*
-Collect_Landmass_Walk_Stats
-
-Scans every square of world plane `wp` and accumulates walk statistics from the
-terrain-type heightmap left behind by Generate_Landmasses().
-
-Generate_Landmasses() initialises each square to tt_Ocean1 (== 0) and increments
-the terrain-type value by 1 each time the drunkard's walker lands on that square.
-The resulting terrain-type value is therefore a raw per-square visit count.
-
-  trial_count = sum of all visit counts = total walker steps (every step adds 1
-                to exactly one square, so the total equals the scan sum).
-  hit_count   = number of squares visited at least once (terrain > tt_Ocean1).
-  sum         = same accumulation; stored separately for caller cross-checking.
-*/
-void Collect_Landmass_Walk_Stats(int16_t wp, struct s_Landmass_Walk_Stats * stats_out)
+/* { 0:Oceans, 1:Grasslands, 2:Forests, 3:Hills, 4:Mountains, 5:Deserts, 6:Swamps, 7:Tundras, 8:River, 9:Shore } */
+static int16_t Get_Terrain_Group(int16_t tt)
 {
-    int16_t itr_wy = 0;
-    int16_t itr_wx = 0;
-    int16_t terrain = 0;
+    if(tt == tt_Ocean1)         return 0;
+    if(tt == tt_BugGrass)       return 1;
+    if(tt == TT_Lake)           return 9;                       /* 0x12 lake within Shore1 range */
+    if(tt <= tt_Shore1_Lst)     return 9;                       /* tt_Shore1_Fst .. tt_Shore1_Lst */
+    if(tt == tt_Grasslands1)    return 1;
+    if(tt == tt_Forest1)        return 2;
+    if(tt == tt_Mountain1)      return 4;
+    if(tt == tt_Desert1)        return 5;
+    if(tt == tt_Swamp1)         return 6;
+    if(tt == tt_Tundra1)        return 7;
+    if(tt == tt_SorceryNode)    return 1;
+    if(tt == tt_NatureNode)     return 1;
+    if(tt == tt_ChaosNode)      return 1;
+    if(tt == tt_Hills1)         return 3;
+    if(tt <= tt_Grasslands3)    return 1;                       /* tt_Grasslands2 .. tt_Grasslands3 */
+    if(tt <= tt_Desert4)        return 5;                       /* tt_Desert2 .. tt_Desert4 */
+    if(tt <= tt_Swamp3)         return 6;                       /* tt_Swamp2 .. tt_Swamp3 */
+    if(tt == tt_Volcano)        return 4;
+    if(tt == tt_Grasslands4)    return 1;
+    if(tt <= tt_Tundra3)        return 7;                       /* tt_Tundra2 .. tt_Tundra3 */
+    if(tt <= tt_Forest3)        return 2;                       /* tt_Forest2 .. tt_Forest3 */
+    if(tt <= TT_RiverM_end)     return 8;                       /* TT_RiverM_1st .. TT_RiverM_end */
+    if(tt <= TT_Lake4)          return 9;                       /* TT_Lake1 .. TT_Lake4 */
+    if(tt <= TT_Shore2F_end)    return 9;                       /* TT_Shore2F_1st .. TT_Shore2F_end */
+    if(tt <= tt_Rivers_end)     return 8;                       /* TT_Rivers_1st .. tt_Rivers_end */
+    if(tt <= tt_Mountains_Lst)  return 4;                       /* tt_Mountains_Fst .. tt_Mountains_Lst */
+    if(tt <= tt_Hills_Lst)      return 3;                       /* tt_Hills_Fst .. tt_Hills_Lst */
+    if(tt <= tt_Desert_Lst)     return 5;                       /* tt_Desert_Fst .. tt_Desert_Lst */
+    if(tt <= TT_Shore2_end)     return 9;                       /* tt_Shore2_1st .. TT_Shore2_end */
+    if(tt <= TT_4WRiver5)       return 8;                       /* TT_4WRiver1 .. TT_4WRiver5 */
+    if(tt <= TT_Shore3_end)     return 9;                       /* TT_Shore3_1st .. TT_Shore3_end */
+    if(tt == tt_Ocean2)         return 0;                       /* Animated Ocean */
+    if(tt <= TT_Tundra_Last)    return 7;                       /* tt_Tundra_1st .. TT_Tundra_Last */
+    return -1;
+}
 
-    stats_out->trial_count = 0;
-    stats_out->hit_count   = 0;
-    stats_out->sum         = 0;
+/*
+Terrain_Special_To_Char
 
-    for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
+Maps a terrain special byte to a single printable ASCII character for map display.
+
+Low nibble (bits 3:0) encodes the mineral type; high nibble holds flag bits.
+Mineral-only squares are shown in lowercase; mineral + flags are uppercased.
+Flag-only squares (no mineral) show the highest-priority flag letter.
+*/
+static char Terrain_Special_To_Char(uint8_t ts)
+{
+    static const char mineral_chars[] = ".icsgemaqqx";   /* index 0-9; index 10 unused */
+    uint8_t mineral = ts & 0x0Fu;
+    uint8_t flags   = ts & 0xF0u;
+    char    ch      = '\0';
+
+    ch = (mineral <= 9u) ? mineral_chars[mineral] : '?';
+
+    if(flags != 0u)
     {
-        for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
+        if(ch == '.')
         {
-            terrain = GET_TERRAIN_TYPE(itr_wx, itr_wy, wp);
-            if(terrain > tt_Ocean1)
-            {
-                stats_out->hit_count++;
-                stats_out->sum += (int32_t)terrain;
-            }
+            /* No mineral: show the highest-priority flag */
+            if     (flags & TS_NIGHTSHADE)   { ch = 'N'; }
+            else if(flags & TS_WILDGAME)     { ch = 'W'; }
+            else if(flags & TS_UNKNOWN_20H)  { ch = '?'; }
+            else                             { ch = 'H'; }   /* TS_HUNTERSLODGE */
+        }
+        else
+        {
+            /* Mineral present with flags: uppercase the mineral letter */
+            ch = (char)(ch - 'a' + 'A');
         }
     }
 
-    /* each walker step increments exactly one square by 1, so the total is the sum */
-    stats_out->trial_count = stats_out->sum;
-}
-
-
-/*
-Write_Landmass_Walk_Stats
-
-Appends one data row for plane `wp` to the TSV file at `filepath`.  If the file
-is new or empty a header row is written first so the output is ready for import
-into a spreadsheet or analysis script.
-
-Derived metrics written alongside the raw counts:
-  avg_prob    = hit_count  / trial_count  -- fraction of steps that created new land
-  avg_visits  = sum        / hit_count    -- mean visit count per land square (heightmap mean)
-*/
-void Write_Landmass_Walk_Stats(const char * filepath, int16_t wp, const struct s_Landmass_Walk_Stats * stats)
-{
-    FILE  * fp            = NULL;
-    long    file_pos      = 0L;
-    double  avg_prob      = 0.0;
-    double  avg_visits    = 0.0;
-
-    fp = fopen(filepath, "a");
-    if(fp == NULL)
-    {
-        return;
-    }
-
-    file_pos = ftell(fp);
-
-    if(file_pos == 0L)
-    {
-        /* new or empty file: write TSV header */
-        fprintf(fp, "plane\ttrial_count\thit_count\tsum\tavg_prob\tavg_visits\n");
-    }
-
-    if(stats->trial_count > 0)
-    {
-        avg_prob = (double)stats->hit_count / (double)stats->trial_count;
-    }
-
-    if(stats->hit_count > 0)
-    {
-        avg_visits = (double)stats->sum / (double)stats->hit_count;
-    }
-
-    fprintf(fp, "%d\t%d\t%d\t%d\t%.6f\t%.6f\n",
-        (int)wp,
-        (int)stats->trial_count,
-        (int)stats->hit_count,
-        (int)stats->sum,
-        avg_prob,
-        avg_visits
-    );
-
-    fclose(fp);
+    return ch;
 }
 
 /*
@@ -338,36 +308,35 @@ this is done by maintaining a list of landmass index values and their counts, an
 when we encounter a landmass index value, we check if it is already in the list, if it is, we increment its count, if it is not, we add it to the list with a count of 1
 
 */
-void Landmass_Statistics(int map_idx)
+void Landmass_Statistics(int sim_idx, int16_t wp)
 {
     int16_t wx = 0;
     int16_t wy = 0;
-    int16_t wp = 0;
     uint8_t hit_count = 0;
 
-    wp = 0;  // TODO: iterate over all planes generated by the simulation
+    memset(&simulation_data[sim_idx].landmass_stats[wp], 0, sizeof(struct s_Landmass_Squares_Stats));
 
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
         for(wx = 0; wx < WORLD_WIDTH; wx++)
         {
             hit_count = Get_Landmass(wx, wy, wp);
-            landmass_map_square_hit_count[map_idx].hit_count[hit_count]++;
-            landmass_map_square_hit_count[map_idx].total_count++;
-            if(hit_count > max_hit_count_index)
+            simulation_data[sim_idx].landmass_stats[wp].hit_count[hit_count]++;
+            simulation_data[sim_idx].landmass_stats[wp].total_count++;
+            if(hit_count > simulation_data[sim_idx].landmass_stats[wp].max_hit_count_index)
             {
-                max_hit_count_index = hit_count;
+                simulation_data[sim_idx].landmass_stats[wp].max_hit_count_index = hit_count;
             }
         }
     }
 
-    landmass_map_square_hit_count[map_idx].land_squares =
-        landmass_map_square_hit_count[map_idx].total_count
-        - landmass_map_square_hit_count[map_idx].hit_count[0];
+    simulation_data[sim_idx].landmass_stats[wp].land_squares =
+        simulation_data[sim_idx].landmass_stats[wp].total_count
+        - simulation_data[sim_idx].landmass_stats[wp].hit_count[0];
 
 }
 
-void Display_Landmass_Statistics(int map_idx)
+void Display_Landmass_Statistics(int sim_idx, int16_t wp)
 {
     int itr = 0;
 
@@ -375,14 +344,14 @@ void Display_Landmass_Statistics(int map_idx)
     printf("--------------  ---------\n");
     for(itr = 0; itr < LANDMASS_INDEX_MAX; itr++)
     {
-        if(itr <= max_hit_count_index)
+        if(itr <= simulation_data[sim_idx].landmass_stats[wp].max_hit_count_index)
         {
-            printf("%14d  %9d\n", itr, landmass_map_square_hit_count[map_idx].hit_count[itr]);
+            printf("%14d  %9d\n", itr, simulation_data[sim_idx].landmass_stats[wp].hit_count[itr]);
         }
     }
     printf("--------------  ---------\n");
-    printf("%-14s  %9d\n", "Total Count:",  landmass_map_square_hit_count[map_idx].total_count);
-    printf("%-14s  %9d\n", "Land Squares:", landmass_map_square_hit_count[map_idx].land_squares);
+    printf("%-14s  %9d\n", "Total Count:",  simulation_data[sim_idx].landmass_stats[wp].total_count);
+    printf("%-14s  %9d\n", "Land Squares:", simulation_data[sim_idx].landmass_stats[wp].land_squares);
 
 }
 
@@ -432,26 +401,27 @@ stage 4: final land terrain conversion
  - count of map squares for each terrain type
 
 */
-void Heightmap_Statistics(int map_idx)
+void Heightmap_Statistics(int sim_idx, int16_t wp)
 {
     int16_t wx = 0;
     int16_t wy = 0;
-    int16_t wp = map_idx;
     uint8_t terrain_idx = 0;
+
+    memset(&simulation_data[sim_idx].worldmap_stats[wp], 0, sizeof(struct s_Worldmap_Squares_Stats));
 
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
         for(wx = 0; wx < WORLD_WIDTH; wx++)
         {
             terrain_idx = Get_Terrain(wx, wy, wp);
-            worldmap_map_square_hit_count[map_idx].terrain_type_count[terrain_idx]++;
-            worldmap_map_square_hit_count[map_idx].total_count++;
+            simulation_data[sim_idx].worldmap_stats[wp].terrain_type_count[terrain_idx]++;
+            simulation_data[sim_idx].worldmap_stats[wp].total_count++;
         }
     }
 
 }
 
-void Display_Heightmap_Statistics(int map_idx)
+void Display_Heightmap_Statistics(int sim_idx, int16_t wp)
 {
     int    itr          = 0;
     int    count        = 0;
@@ -460,14 +430,14 @@ void Display_Heightmap_Statistics(int map_idx)
     double pct_total    = 0.0;
     double pct_land     = 0.0;
 
-    total_count  = worldmap_map_square_hit_count[map_idx].total_count;
-    land_squares = landmass_map_square_hit_count[map_idx].land_squares;
+    total_count  = simulation_data[sim_idx].worldmap_stats[wp].total_count;
+    land_squares = simulation_data[sim_idx].landmass_stats[wp].land_squares;
 
     printf("%12s  %9s  %7s  %7s\n", "Height", "Count", "% Total", "% Land");
     printf("------------  ---------  -------  -------\n");
     for(itr = 0; itr < TerType_Count; itr++)
     {
-        count = worldmap_map_square_hit_count[map_idx].terrain_type_count[itr];
+        count = simulation_data[sim_idx].worldmap_stats[wp].terrain_type_count[itr];
         if(count == 0)
             continue;
 
@@ -485,10 +455,11 @@ void Display_Heightmap_Statistics(int map_idx)
     }
     printf("------------  ---------  -------  -------\n");
     printf("%-12s  %9d\n", "Total Count:", total_count);
+    printf("%-12s  %9d\n", "Land Squares:", land_squares);
 
 }
 
-void Display_Heightmap_Histogram(int map_idx)
+void Display_Heightmap_Histogram(int sim_idx, int16_t wp)
 {
     const int bar_width = 40;
     int  itr       = 0;
@@ -501,7 +472,7 @@ void Display_Heightmap_Histogram(int map_idx)
 
     for(itr = 0; itr < TerType_Count; itr++)
     {
-        count = worldmap_map_square_hit_count[map_idx].terrain_type_count[itr];
+        count = simulation_data[sim_idx].worldmap_stats[wp].terrain_type_count[itr];
         if(count > max_count)
             max_count = count;
     }
@@ -514,7 +485,7 @@ void Display_Heightmap_Histogram(int map_idx)
 
     for(itr = 0; itr < TerType_Count; itr++)
     {
-        count = worldmap_map_square_hit_count[map_idx].terrain_type_count[itr];
+        count = simulation_data[sim_idx].worldmap_stats[wp].terrain_type_count[itr];
         if(count == 0)
             continue;
 
@@ -531,11 +502,10 @@ void Display_Heightmap_Histogram(int map_idx)
     }
 }
 
-void Print_Heightmap_Map(int map_idx)
+void Print_Heightmap_Map(int sim_idx, int16_t wp)
 {
     int16_t wx          = 0;
     int16_t wy          = 0;
-    int16_t wp          = map_idx;
     int16_t hit_count = 0;
     char    ch          = '\0';
 
@@ -553,61 +523,35 @@ void Print_Heightmap_Map(int map_idx)
     }
 }
 
-/*
-World Map Statistics
-at each stage of the map generation procedure, we want to collect statistics about the map generation process
-stage 1: landmass generation
- - count of map squares for each hit count
-stage 2: base land terrain conversion
- - count of map squares for each terrain type
-stage 3: special land terrain conversion
- - count of map squares for each terrain type
-stage 4: final land terrain conversion
- - count of map squares for each terrain type
-
-*/
-void Worldmap_Statistics(int map_idx)
+void Worldmap_Statistics(int sim_idx, int16_t wp)
 {
     int16_t wx = 0;
     int16_t wy = 0;
-    int16_t wp = map_idx;
     uint8_t terrain_idx = 0;
 
-    worldmap_map_square_hit_count[map_idx].terrain_type_count[terrain_idx] = 0;
-    worldmap_map_square_hit_count[map_idx].total_count = 0;
+    memset(&simulation_data[sim_idx].worldmap_stats[wp], 0, sizeof(struct s_Worldmap_Squares_Stats));
+    simulation_data[sim_idx].tower_stats[wp].tower_count = 0;
 
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
         for(wx = 0; wx < WORLD_WIDTH; wx++)
         {
+            if(Square_Has_Tower_NewGame(wx, wy) == ST_TRUE)
+            {
+                simulation_data[sim_idx].tower_stats[wp].tower_count++;
+            }
+
             terrain_idx = Get_Terrain(wx, wy, wp);
-            worldmap_map_square_hit_count[map_idx].terrain_type_count[terrain_idx]++;
-            worldmap_map_square_hit_count[map_idx].total_count++;
+            simulation_data[sim_idx].worldmap_stats[wp].terrain_type_count[terrain_idx]++;
+            simulation_data[sim_idx].worldmap_stats[wp].total_count++;
         }
     }
 
 }
 
-void Display_Worldmap_Statistics(int map_idx)
+void Display_Worldmap_Statistics(int sim_idx, int16_t wp)
 {
-    static const struct { int type; const char * name; } terrain_names[] =
-    {
-        { tt_Ocean1,      "Ocean"      },
-        { tt_Grasslands1, "Grasslands" },
-        { tt_Forest1,     "Forest"     },
-        { tt_Hills1,      "Hills"      },
-        { tt_Mountain1,   "Mountain"   },
-        { tt_Desert1,     "Desert"     },
-        { tt_Swamp1,      "Swamp"      },
-        { tt_Tundra1,     "Tundra"     },
-        { tt_SorceryNode, "SorceryNode"},
-        { tt_NatureNode,  "NatureNode" },
-        { tt_ChaosNode,   "ChaosNode"  },
-    };
-    static const int terrain_names_count = (int)(sizeof(terrain_names) / sizeof(terrain_names[0]));
-
     int          itr          = 0;
-    int          n            = 0;
     int          count        = 0;
     int          total_count  = 0;
     int          land_squares = 0;
@@ -615,26 +559,18 @@ void Display_Worldmap_Statistics(int map_idx)
     double       pct_land     = 0.0;
     const char * name         = NULL;
 
-    total_count  = worldmap_map_square_hit_count[map_idx].total_count;
-    land_squares = landmass_map_square_hit_count[map_idx].land_squares;
+    total_count  = simulation_data[sim_idx].worldmap_stats[wp].total_count;
+    land_squares = simulation_data[sim_idx].landmass_stats[wp].land_squares;
 
     printf("%3s  %-12s  %9s  %7s  %7s\n", "Idx", "Name", "Squares", "% Total", "% Land");
     printf("---  ------------  ---------  -------  -------\n");
     for(itr = 0; itr < TerType_Count; itr++)
     {
-        count = worldmap_map_square_hit_count[map_idx].terrain_type_count[itr];
+        count = simulation_data[sim_idx].worldmap_stats[wp].terrain_type_count[itr];
         if(count == 0)
             continue;
 
-        name = "";
-        for(n = 0; n < terrain_names_count; n++)
-        {
-            if(terrain_names[n].type == itr)
-            {
-                name = terrain_names[n].name;
-                break;
-            }
-        }
+        name = Terrain_Type_Name(itr);
 
         pct_total = (total_count  > 0) ? ((double)count / (double)total_count  * 100.0) : 0.0;
 
@@ -650,10 +586,11 @@ void Display_Worldmap_Statistics(int map_idx)
     }
     printf("---  ------------  ---------  -------  -------\n");
     printf("%-18s  %9d\n", "Total Count:", total_count);
+    printf("%-18s  %9d\n", "Land Squares:", land_squares);
 
 }
 
-void Display_Worldmap_Histogram(int map_idx)
+void Display_Worldmap_Histogram(int sim_idx, int16_t wp)
 {
     const int bar_width = 40;
     int  itr       = 0;
@@ -666,7 +603,7 @@ void Display_Worldmap_Histogram(int map_idx)
 
     for(itr = 0; itr < TerType_Count; itr++)
     {
-        count = worldmap_map_square_hit_count[map_idx].terrain_type_count[itr];
+        count = simulation_data[sim_idx].worldmap_stats[wp].terrain_type_count[itr];
         if(count > max_count)
             max_count = count;
     }
@@ -679,7 +616,7 @@ void Display_Worldmap_Histogram(int map_idx)
 
     for(itr = 0; itr < TerType_Count; itr++)
     {
-        count = worldmap_map_square_hit_count[map_idx].terrain_type_count[itr];
+        count = simulation_data[sim_idx].worldmap_stats[wp].terrain_type_count[itr];
         if(count == 0)
             continue;
 
@@ -696,11 +633,10 @@ void Display_Worldmap_Histogram(int map_idx)
     }
 }
 
-void Print_Worldmap_Map(int map_idx)
+void Print_Worldmap_Map(int sim_idx, int16_t wp)
 {
     int16_t wx          = 0;
     int16_t wy          = 0;
-    int16_t wp          = map_idx;
     int16_t terrain_idx = 0;
     char    ch          = '\0';
 
@@ -710,6 +646,10 @@ void Print_Worldmap_Map(int map_idx)
         {
             terrain_idx = Get_Terrain(wx, wy, wp);
             ch = Terrain_Type_To_Char(terrain_idx);
+            if(Square_Has_Tower_NewGame(wx, wy) == ST_TRUE)
+            {
+                ch = 'T';
+            }
             putchar(ch);
         }
         putchar('\n');
@@ -717,71 +657,32 @@ void Print_Worldmap_Map(int map_idx)
 }
 
 /*
-Terrain_Special_To_Char
-
-Maps a terrain special byte to a single printable ASCII character for map display.
-
-Low nibble (bits 3:0) encodes the mineral type; high nibble holds flag bits.
-Mineral-only squares are shown in lowercase; mineral + flags are uppercased.
-Flag-only squares (no mineral) show the highest-priority flag letter.
-*/
-static char Terrain_Special_To_Char(uint8_t ts)
-{
-    static const char mineral_chars[] = ".icsgemaqqx";   /* index 0-9; index 10 unused */
-    uint8_t mineral = ts & 0x0Fu;
-    uint8_t flags   = ts & 0xF0u;
-    char    ch      = '\0';
-
-    ch = (mineral <= 9u) ? mineral_chars[mineral] : '?';
-
-    if(flags != 0u)
-    {
-        if(ch == '.')
-        {
-            /* No mineral: show the highest-priority flag */
-            if     (flags & TS_NIGHTSHADE)   { ch = 'N'; }
-            else if(flags & TS_WILDGAME)     { ch = 'W'; }
-            else if(flags & TS_UNKNOWN_20H)  { ch = '?'; }
-            else                             { ch = 'H'; }   /* TS_HUNTERSLODGE */
-        }
-        else
-        {
-            /* Mineral present with flags: uppercase the mineral letter */
-            ch = (char)(ch - 'a' + 'A');
-        }
-    }
-
-    return ch;
-}
-
-/*
 Terrain_Specials_Statistics
 
 Scans every square of world plane `wp` and accumulates a frequency count of each
 raw terrain-special byte value encountered.  Results are stored in
-terrain_specials_map_square_hit_count[map_idx].
+simulation_data[sim_idx].specials_stats[wp].
 */
-void Terrain_Specials_Statistics(int map_idx)
+void Terrain_Specials_Statistics(int sim_idx, int wp)
 {
     int16_t wx          = 0;
     int16_t wy          = 0;
-    int16_t wp          = map_idx;
     uint8_t terrain_special_idx = 0;
 
-    terrain_specials_map_square_hit_count[map_idx].total_count     = 0;
-    terrain_specials_map_square_hit_count[map_idx].special_squares = 0;
+    simulation_data[sim_idx].specials_stats[wp].total_count     = 0;
+    simulation_data[sim_idx].specials_stats[wp].special_squares = 0;
 
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
         for(wx = 0; wx < WORLD_WIDTH; wx++)
         {
             terrain_special_idx = Get_Terrain_Special(wx, wy, wp);
-            
-            terrain_specials_map_square_hit_count[map_idx].special_value_count[terrain_special_idx]++;
-            terrain_specials_map_square_hit_count[map_idx].total_count++;
+
+            simulation_data[sim_idx].specials_stats[wp].terrain_special_square_count[terrain_special_idx]++;
+            simulation_data[sim_idx].specials_stats[wp].total_count++;
             if(terrain_special_idx != TS_NONE)
             {
-                terrain_specials_map_square_hit_count[map_idx].special_squares++;
+                simulation_data[sim_idx].specials_stats[wp].special_squares++;
             }
         }
     }
@@ -794,7 +695,7 @@ Prints two tables to stdout for world plane `map_idx`:
   1. Minerals  – aggregated counts per mineral type (low nibble of special byte).
   2. Flags     – aggregated counts per flag bit (high nibble of special byte).
 */
-void Display_Terrain_Specials_Statistics(int map_idx)
+void Display_Terrain_Specials_Statistics(int sim_idx, int16_t wp)
 {
     static const struct { uint8_t value; const char * name; } terrain_special_names[] =
     {
@@ -817,38 +718,37 @@ void Display_Terrain_Specials_Statistics(int map_idx)
 
     int     itr             = 0;
     int     spec_idx        = 0;
-    int     special_value_count = 0;
+    int     terrain_special_square_count = 0;
     int     total_count     = 0;
     int     special_squares = 0;
     double  pct_total       = 0.0;
     double  pct_special     = 0.0;
 
-    total_count     = terrain_specials_map_square_hit_count[map_idx].total_count;
-    special_squares = terrain_specials_map_square_hit_count[map_idx].special_squares;
+    total_count     = simulation_data[sim_idx].specials_stats[wp].total_count;
+    special_squares = simulation_data[sim_idx].specials_stats[wp].special_squares;
 
     /* Minerals table */
     printf("%-12s  %9s  %7s  %7s\n", "Special", "Squares", "% Total", "% Spcl");
     printf("------------  ---------  -------  -------\n");
     for(itr = 0; itr < terrain_special_names_count; itr++)
     {
-        special_value_count = 0;
+        terrain_special_square_count = 0;
         for(spec_idx = 0; spec_idx < 256; spec_idx++)
         {
             if(spec_idx == terrain_special_names[itr].value)
             {
-                // special_value_count += terrain_specials_map_square_hit_count[map_idx].special_value_count[spec_idx];
-                special_value_count = terrain_specials_map_square_hit_count[map_idx].special_value_count[spec_idx];
+                terrain_special_square_count = simulation_data[sim_idx].specials_stats[wp].terrain_special_square_count[spec_idx];
 
-                pct_total = (total_count > 0) ? ((double)special_value_count / (double)total_count * 100.0) : 0.0;
+                pct_total = (total_count > 0) ? ((double)terrain_special_square_count / (double)total_count * 100.0) : 0.0;
 
                 if(terrain_special_names[itr].value == TS_NONE)
                 {
-                    printf("%-12s  %9d  %6.2f%%  %7s\n", terrain_special_names[itr].name, special_value_count, pct_total, "---");
+                    printf("%-12s  %9d  %6.2f%%  %7s\n", terrain_special_names[itr].name, terrain_special_square_count, pct_total, "---");
                 }
                 else
                 {
-                    pct_special = (special_squares > 0) ? ((double)special_value_count / (double)special_squares * 100.0) : 0.0;
-                    printf("%-12s  %9d  %6.2f%%  %6.2f%%\n", terrain_special_names[itr].name, special_value_count, pct_total, pct_special);
+                    pct_special = (special_squares > 0) ? ((double)terrain_special_square_count / (double)special_squares * 100.0) : 0.0;
+                    printf("%-12s  %9d  %6.2f%%  %6.2f%%\n", terrain_special_names[itr].name, terrain_special_square_count, pct_total, pct_special);
                 }
 
             }
@@ -868,7 +768,7 @@ Prints a horizontal bar chart to stdout showing the distribution of mineral type
 across all squares in world plane `map_idx`.  Ocean-equivalent (TS_NONE) squares
 are omitted so the bars for actual specials are visible at a meaningful scale.
 */
-void Display_Terrain_Specials_Histogram(int map_idx)
+void Display_Terrain_Specials_Histogram(int sim_idx, int16_t wp)
 {
     static const char * mineral_labels[] =
     {
@@ -894,7 +794,7 @@ void Display_Terrain_Specials_Histogram(int map_idx)
         {
             if((itr & 0x0F) == m)
             {
-                mineral_counts[m] += terrain_specials_map_square_hit_count[map_idx].special_value_count[itr];
+                mineral_counts[m] += simulation_data[sim_idx].specials_stats[wp].terrain_special_square_count[itr];
             }
         }
         /* Skip None (m==0) for scale; find max among actual specials */
@@ -928,6 +828,518 @@ void Display_Terrain_Specials_Histogram(int map_idx)
 }
 
 /*
+Evaluate_Terrain_Special_Distribution
+
+Evaluates the distribution of terrain specials across the terrain types that
+can bear specials: Desert, Hills, Mountain, Forest, and Swamp.
+
+For each terrain category, counts the total number of squares and the number
+of those squares that have a non-zero terrain special.  Prints a table
+comparing the actual special frequency against the expected rate:
+  Arcanus: 1:17  (5.88%)
+  Myrror:  1:10  (10.00%)
+
+
+*/
+void Evaluate_Terrain_Special_Distribution(int sim_idx, int16_t wp)
+{
+    enum { CAT_DESERT, CAT_HILLS, CAT_MOUNTAIN, CAT_FOREST, CAT_SWAMP, CAT_COUNT };
+    static const char * cat_names[CAT_COUNT] =
+    {
+        "Desert", "Hills", "Mountain", "Forest", "Swamp"
+    };
+
+    int      cat_total[CAT_COUNT];
+    int      cat_special[CAT_COUNT];
+    int      all_total    = 0;
+    int      all_special  = 0;
+    int      cat          = -1;
+    int16_t  wx           = 0;
+    int16_t  wy           = 0;
+    int16_t  terrain      = 0;
+    uint8_t  ts           = 0;
+    char     tt_ch        = '\0';
+    int      i            = 0;
+    double   expected_pct = 0.0;
+    double   actual_pct   = 0.0;
+    int      expected_div = 0;
+    const char * plane_name = NULL;
+
+    if(wp == MYRROR_PLANE)
+    {
+        expected_pct = 10.0;
+        expected_div = 10;
+        plane_name   = "Myrror";
+    }
+    else
+    {
+        expected_pct = 100.0 / 17.0;
+        expected_div = 17;
+        plane_name   = "Arcanus";
+    }
+
+    memset(cat_total,   0, sizeof(cat_total));
+    memset(cat_special, 0, sizeof(cat_special));
+
+    for(wy = 0; wy < WORLD_HEIGHT; wy++)
+    {
+        for(wx = 0; wx < WORLD_WIDTH; wx++)
+        {
+            terrain = Get_Terrain(wx, wy, wp);
+            tt_ch   = Terrain_Type_To_Char(terrain);
+
+            switch(tt_ch)
+            {
+                case 'd': cat = CAT_DESERT;   break;
+                case 'h': cat = CAT_HILLS;    break;
+                case 'm': cat = CAT_MOUNTAIN; break;
+                case 'f': cat = CAT_FOREST;   break;
+                case 's': cat = CAT_SWAMP;    break;
+                default:  cat = -1;            break;
+            }
+
+            if(cat < 0)
+            {
+                continue;
+            }
+
+            cat_total[cat]++;
+            all_total++;
+
+            ts = Get_Terrain_Special(wx, wy, wp);
+            if(ts != TS_NONE)
+            {
+                cat_special[cat]++;
+                all_special++;
+            }
+        }
+    }
+
+    printf("\nTerrain Special Distribution (%s)  Expected: 1:%d (%.2f%%)\n",
+        plane_name, expected_div, expected_pct);
+    printf("%-10s  %9s  %8s  %7s  %8s  %8s\n",
+        "Terrain", "Squares", "Specials", "Ratio", "% Actual", "% Expect");
+    printf("----------  ---------  --------  -------  --------  --------\n");
+
+    for(i = 0; i < CAT_COUNT; i++)
+    {
+        if(cat_total[i] == 0)
+        {
+            printf("%-10s  %9d  %8d  %7s  %8s  %7.2f%%\n",
+                cat_names[i], 0, 0, "---", "---", expected_pct);
+            continue;
+        }
+
+        actual_pct = (double)cat_special[i] / (double)cat_total[i] * 100.0;
+
+        if(cat_special[i] > 0)
+        {
+            printf("%-10s  %9d  %8d   1:%-4.1f  %7.2f%%  %7.2f%%\n",
+                cat_names[i],
+                cat_total[i],
+                cat_special[i],
+                (double)cat_total[i] / (double)cat_special[i],
+                actual_pct,
+                expected_pct);
+        }
+        else
+        {
+            printf("%-10s  %9d  %8d  %7s  %7.2f%%  %7.2f%%\n",
+                cat_names[i], cat_total[i], 0, "---", actual_pct, expected_pct);
+        }
+    }
+
+    printf("----------  ---------  --------  -------  --------  --------\n");
+
+    if(all_total > 0 && all_special > 0)
+    {
+        actual_pct = (double)all_special / (double)all_total * 100.0;
+        printf("%-10s  %9d  %8d   1:%-4.1f  %7.2f%%  %7.2f%%\n",
+            "Total", all_total, all_special,
+            (double)all_total / (double)all_special,
+            actual_pct, expected_pct);
+    }
+    else
+    {
+        actual_pct = 0.0;
+        printf("%-10s  %9d  %8d  %7s  %7.2f%%  %7.2f%%\n",
+            "Total", all_total, all_special, "---", actual_pct, expected_pct);
+    }
+}
+
+/*
+Evaluate_Desert_Special_Distribution
+
+Evaluates which mineral types appear on Desert squares and their relative
+frequency among all desert specials.
+
+Expected distribution of specials among desert squares that received one:
+  Arcanus: 66.7% Gems, 33.3% Quork
+  Myrror:  20.0% Gems, 40.0% Quork, 20.0% Crysx
+*/
+void Evaluate_Desert_Special_Distribution(int sim_idx, int16_t wp)
+{
+    static const struct { uint8_t mineral; const char * name; } mineral_names[] =
+    {
+        { TS_IRON,       "Iron"       },
+        { TS_COAL,       "Coal"       },
+        { TS_SILVER,     "Silver"     },
+        { TS_GOLD,       "Gold"       },
+        { TS_GEMS,       "Gems"       },
+        { TS_MITHRIL,    "Mithril"    },
+        { TS_ADAMANTIUM, "Adamantium" },
+        { TS_QUORK,      "Quork"      },
+        { TS_CRYSX,      "Crysx"      },
+    };
+    static const int mineral_names_count = (int)(sizeof(mineral_names) / sizeof(mineral_names[0]));
+
+    int      mineral_count[10];
+    int      desert_total     = 0;
+    int      desert_special   = 0;
+    int16_t  wx               = 0;
+    int16_t  wy               = 0;
+    int16_t  terrain          = 0;
+    uint8_t  ts               = 0;
+    uint8_t  mineral          = 0;
+    int      i                = 0;
+    double   actual_pct       = 0.0;
+    double   expected_pct     = 0.0;
+    int      is_myrror        = 0;
+    const char * plane_name   = NULL;
+
+    is_myrror = (wp == MYRROR_PLANE);
+    plane_name = is_myrror ? "Myrror" : "Arcanus";
+
+    memset(mineral_count, 0, sizeof(mineral_count));
+
+    for(wy = 0; wy < WORLD_HEIGHT; wy++)
+    {
+        for(wx = 0; wx < WORLD_WIDTH; wx++)
+        {
+            terrain = Get_Terrain(wx, wy, wp);
+            if(Terrain_Type_To_Char(terrain) != 'd')
+            {
+                continue;
+            }
+
+            desert_total++;
+
+            ts = Get_Terrain_Special(wx, wy, wp);
+            if(ts == TS_NONE)
+            {
+                continue;
+            }
+
+            desert_special++;
+            mineral = ts & 0x0Fu;
+            if(mineral <= 9u)
+            {
+                mineral_count[mineral]++;
+            }
+        }
+    }
+
+    printf("\nDesert Special Distribution (%s)  Desert: %d  With Special: %d\n",
+        plane_name, desert_total, desert_special);
+    printf("%-12s  %6s  %8s  %8s\n", "Mineral", "Count", "% Actual", "% Expect");
+    printf("------------  ------  --------  --------\n");
+
+    for(i = 0; i < mineral_names_count; i++)
+    {
+        expected_pct = -1.0;
+        if(is_myrror)
+        {
+            if(mineral_names[i].mineral == TS_GEMS)  expected_pct = 20.0;
+            if(mineral_names[i].mineral == TS_QUORK) expected_pct = 40.0;
+            if(mineral_names[i].mineral == TS_CRYSX) expected_pct = 20.0;
+        }
+        else
+        {
+            if(mineral_names[i].mineral == TS_GEMS)  expected_pct = 66.7;
+            if(mineral_names[i].mineral == TS_QUORK) expected_pct = 33.3;
+            if(mineral_names[i].mineral == TS_CRYSX) expected_pct =  0.0;
+        }
+
+        if(mineral_count[mineral_names[i].mineral] == 0 && expected_pct < 0.0)
+        {
+            continue;
+        }
+
+        actual_pct = (desert_special > 0)
+            ? ((double)mineral_count[mineral_names[i].mineral] / (double)desert_special * 100.0)
+            : 0.0;
+
+        if(expected_pct >= 0.0)
+        {
+            printf("%-12s  %6d  %7.1f%%  %7.1f%%\n",
+                mineral_names[i].name,
+                mineral_count[mineral_names[i].mineral],
+                actual_pct, expected_pct);
+        }
+        else
+        {
+            printf("%-12s  %6d  %7.1f%%  %8s\n",
+                mineral_names[i].name,
+                mineral_count[mineral_names[i].mineral],
+                actual_pct, "---");
+        }
+    }
+
+}
+
+/*
+Evaluate_Hills_Special_Distribution
+
+Evaluates which mineral types appear on Hills squares and their relative
+frequency among all hills specials.
+
+Expected distribution of specials among hills squares that received one:
+  Arcanus: 33.3% Iron, 16.7% Coal, 22.2% Silver, 22.2% Gold, 5.6% Mithril, 0% Adamantium
+  Myrror:  10.0% Iron, 10.0% Coal, 10.0% Silver, 40.0% Gold, 20.0% Mithril, 10.0% Adamantium
+*/
+void Evaluate_Hills_Special_Distribution(int sim_idx, int16_t wp)
+{
+    static const struct { uint8_t mineral; const char * name; } mineral_names[] =
+    {
+        { TS_IRON,       "Iron"       },
+        { TS_COAL,       "Coal"       },
+        { TS_SILVER,     "Silver"     },
+        { TS_GOLD,       "Gold"       },
+        { TS_GEMS,       "Gems"       },
+        { TS_MITHRIL,    "Mithril"    },
+        { TS_ADAMANTIUM, "Adamantium" },
+        { TS_QUORK,      "Quork"      },
+        { TS_CRYSX,      "Crysx"      },
+    };
+    static const int mineral_names_count = (int)(sizeof(mineral_names) / sizeof(mineral_names[0]));
+
+    int      mineral_count[10];
+    int      hills_total      = 0;
+    int      hills_special    = 0;
+    int16_t  wx               = 0;
+    int16_t  wy               = 0;
+    int16_t  terrain          = 0;
+    uint8_t  ts               = 0;
+    uint8_t  mineral          = 0;
+    int      i                = 0;
+    double   actual_pct       = 0.0;
+    double   expected_pct     = 0.0;
+    int      is_myrror        = 0;
+    const char * plane_name   = NULL;
+
+    is_myrror = (wp == MYRROR_PLANE);
+    plane_name = is_myrror ? "Myrror" : "Arcanus";
+
+    memset(mineral_count, 0, sizeof(mineral_count));
+
+    for(wy = 0; wy < WORLD_HEIGHT; wy++)
+    {
+        for(wx = 0; wx < WORLD_WIDTH; wx++)
+        {
+            terrain = Get_Terrain(wx, wy, wp);
+            if(Terrain_Type_To_Char(terrain) != 'h')
+            {
+                continue;
+            }
+
+            hills_total++;
+
+            ts = Get_Terrain_Special(wx, wy, wp);
+            if(ts == TS_NONE)
+            {
+                continue;
+            }
+
+            hills_special++;
+            mineral = ts & 0x0Fu;
+            if(mineral <= 9u)
+            {
+                mineral_count[mineral]++;
+            }
+        }
+    }
+
+    printf("\nHills Special Distribution (%s)  Hills: %d  With Special: %d\n",
+        plane_name, hills_total, hills_special);
+    printf("%-12s  %6s  %8s  %8s\n", "Mineral", "Count", "% Actual", "% Expect");
+    printf("------------  ------  --------  --------\n");
+
+    for(i = 0; i < mineral_names_count; i++)
+    {
+        expected_pct = -1.0;
+        if(is_myrror)
+        {
+            if(mineral_names[i].mineral == TS_IRON)       expected_pct = 10.0;
+            if(mineral_names[i].mineral == TS_COAL)       expected_pct = 10.0;
+            if(mineral_names[i].mineral == TS_SILVER)     expected_pct = 10.0;
+            if(mineral_names[i].mineral == TS_GOLD)       expected_pct = 40.0;
+            if(mineral_names[i].mineral == TS_MITHRIL)    expected_pct = 20.0;
+            if(mineral_names[i].mineral == TS_ADAMANTIUM) expected_pct = 10.0;
+        }
+        else
+        {
+            if(mineral_names[i].mineral == TS_IRON)       expected_pct = 33.3;
+            if(mineral_names[i].mineral == TS_COAL)       expected_pct = 16.7;
+            if(mineral_names[i].mineral == TS_SILVER)     expected_pct = 22.2;
+            if(mineral_names[i].mineral == TS_GOLD)       expected_pct = 22.2;
+            if(mineral_names[i].mineral == TS_MITHRIL)    expected_pct =  5.6;
+            if(mineral_names[i].mineral == TS_ADAMANTIUM) expected_pct =  0.0;
+        }
+
+        if(mineral_count[mineral_names[i].mineral] == 0 && expected_pct < 0.0)
+        {
+            continue;
+        }
+
+        actual_pct = (hills_special > 0)
+            ? ((double)mineral_count[mineral_names[i].mineral] / (double)hills_special * 100.0)
+            : 0.0;
+
+        if(expected_pct >= 0.0)
+        {
+            printf("%-12s  %6d  %7.1f%%  %7.1f%%\n",
+                mineral_names[i].name,
+                mineral_count[mineral_names[i].mineral],
+                actual_pct, expected_pct);
+        }
+        else
+        {
+            printf("%-12s  %6d  %7.1f%%  %8s\n",
+                mineral_names[i].name,
+                mineral_count[mineral_names[i].mineral],
+                actual_pct, "---");
+        }
+    }
+
+}
+
+/*
+Evaluate_Mountain_Special_Distribution
+
+Evaluates which mineral types appear on Mountain squares and their relative
+frequency among all mountain specials.
+
+Expected distribution of specials among mountain squares that received one:
+  Arcanus: 22.2% Iron, 27.7% Coal, 16.7% Silver, 16.7% Gold, 16.7% Mithril, 0% Adamantium
+  Myrror:  10.0% Iron, 10.0% Coal, 10.0% Silver, 20.0% Gold, 30.0% Mithril, 20.0% Adamantium
+*/
+void Evaluate_Mountain_Special_Distribution(int sim_idx, int16_t wp)
+{
+    static const struct { uint8_t mineral; const char * name; } mineral_names[] =
+    {
+        { TS_IRON,       "Iron"       },
+        { TS_COAL,       "Coal"       },
+        { TS_SILVER,     "Silver"     },
+        { TS_GOLD,       "Gold"       },
+        { TS_GEMS,       "Gems"       },
+        { TS_MITHRIL,    "Mithril"    },
+        { TS_ADAMANTIUM, "Adamantium" },
+        { TS_QUORK,      "Quork"      },
+        { TS_CRYSX,      "Crysx"      },
+    };
+    static const int mineral_names_count = (int)(sizeof(mineral_names) / sizeof(mineral_names[0]));
+
+    int      mineral_count[10];
+    int      mountain_total    = 0;
+    int      mountain_special  = 0;
+    int16_t  wx               = 0;
+    int16_t  wy               = 0;
+    int16_t  terrain          = 0;
+    uint8_t  ts               = 0;
+    uint8_t  mineral          = 0;
+    int      i                = 0;
+    double   actual_pct       = 0.0;
+    double   expected_pct     = 0.0;
+    int      is_myrror        = 0;
+    const char * plane_name   = NULL;
+
+    is_myrror = (wp == MYRROR_PLANE);
+    plane_name = is_myrror ? "Myrror" : "Arcanus";
+
+    memset(mineral_count, 0, sizeof(mineral_count));
+
+    for(wy = 0; wy < WORLD_HEIGHT; wy++)
+    {
+        for(wx = 0; wx < WORLD_WIDTH; wx++)
+        {
+            terrain = Get_Terrain(wx, wy, wp);
+            if(Terrain_Type_To_Char(terrain) != 'm')
+            {
+                continue;
+            }
+
+            mountain_total++;
+
+            ts = Get_Terrain_Special(wx, wy, wp);
+            if(ts == TS_NONE)
+            {
+                continue;
+            }
+
+            mountain_special++;
+            mineral = ts & 0x0Fu;
+            if(mineral <= 9u)
+            {
+                mineral_count[mineral]++;
+            }
+        }
+    }
+
+    printf("\nMountain Special Distribution (%s)  Mountain: %d  With Special: %d\n",
+        plane_name, mountain_total, mountain_special);
+    printf("%-12s  %6s  %8s  %8s\n", "Mineral", "Count", "% Actual", "% Expect");
+    printf("------------  ------  --------  --------\n");
+
+    for(i = 0; i < mineral_names_count; i++)
+    {
+        expected_pct = -1.0;
+        if(is_myrror)
+        {
+            if(mineral_names[i].mineral == TS_IRON)       expected_pct = 10.0;
+            if(mineral_names[i].mineral == TS_COAL)       expected_pct = 10.0;
+            if(mineral_names[i].mineral == TS_SILVER)     expected_pct = 10.0;
+            if(mineral_names[i].mineral == TS_GOLD)       expected_pct = 20.0;
+            if(mineral_names[i].mineral == TS_MITHRIL)    expected_pct = 30.0;
+            if(mineral_names[i].mineral == TS_ADAMANTIUM) expected_pct = 20.0;
+        }
+        else
+        {
+            if(mineral_names[i].mineral == TS_IRON)       expected_pct = 22.2;
+            if(mineral_names[i].mineral == TS_COAL)       expected_pct = 27.7;
+            if(mineral_names[i].mineral == TS_SILVER)     expected_pct = 16.7;
+            if(mineral_names[i].mineral == TS_GOLD)       expected_pct = 16.7;
+            if(mineral_names[i].mineral == TS_MITHRIL)    expected_pct = 16.7;
+            if(mineral_names[i].mineral == TS_ADAMANTIUM) expected_pct =  0.0;
+        }
+
+        if(mineral_count[mineral_names[i].mineral] == 0 && expected_pct < 0.0)
+        {
+            continue;
+        }
+
+        actual_pct = (mountain_special > 0)
+            ? ((double)mineral_count[mineral_names[i].mineral] / (double)mountain_special * 100.0)
+            : 0.0;
+
+        if(expected_pct >= 0.0)
+        {
+            printf("%-12s  %6d  %7.1f%%  %7.1f%%\n",
+                mineral_names[i].name,
+                mineral_count[mineral_names[i].mineral],
+                actual_pct, expected_pct);
+        }
+        else
+        {
+            printf("%-12s  %6d  %7.1f%%  %8s\n",
+                mineral_names[i].name,
+                mineral_count[mineral_names[i].mineral],
+                actual_pct, "---");
+        }
+    }
+
+}
+
+/*
 Print_Terrain_Specials_Map
 
 Prints the _map_square_terrain_specials array for world plane `wp` as a 60 x 40
@@ -939,11 +1351,10 @@ Terrain_Special_To_Char():
   mineral + flag  uppercase letter
   flag only       N W ? H  (Nightshade, WildGame, Unknown, HuntersLodge)
 */
-void Print_Terrain_Specials_Map(int map_idx)
+void Print_Terrain_Specials_Map(int sim_idx, int16_t wp)
 {
     int16_t wx          = 0;
     int16_t wy          = 0;
-    int16_t wp          = map_idx;
     uint8_t terrain_special_idx = 0;
     char    ch          = '\0';
 
@@ -959,222 +1370,504 @@ void Print_Terrain_Specials_Map(int map_idx)
     }
 }
 
-void Simulate_World_Map_Generation(void)
+/*
+Record Outcomes:
+* total map square count
+* land map square count
+* map square count per terrain type
+* map square count per terrain type group
+* map square count per terrain special type
+
+Research Notes:
+need runs/trials/iterations of a simulation
+Average (Relative Frequency)
+divide the total number of successful outcomes by the total number of trials
+essentially calculating the arithmetic mean of the outcomes
+
+Quantitative Metrics
+* Standard Error and Confidence Intervals
+* Gelman-Rubin Statistic (R-hat)
+* Convergence Bands
+
+Which data?
+
+    uint8_t         landmasses[NUM_PLANES][WORLD_HEIGHT][WORLD_WIDTH];        
+    int16_t         world_map[NUM_PLANES][WORLD_HEIGHT][WORLD_WIDTH];         
+    uint8_t         terrain_specials[NUM_PLANES][WORLD_HEIGHT][WORLD_WIDTH];  
+    uint8_t         map_flags[NUM_PLANES][WORLD_HEIGHT][WORLD_WIDTH];         
+    struct s_TOWER  towers[NUM_PLANES][NUM_TOWERS];                           
+    struct s_NODE   nodes[NUM_PLANES][NUM_NODES];                             
+
+    struct s_Landmass_Squares_Stats                 landmass_stats[NUM_PLANES];
+    struct s_Worldmap_Squares_Stats                 worldmap_stats[NUM_PLANES];
+    struct s_Terrain_Special_Squares_Stats          specials_stats[NUM_PLANES];
+    struct s_Tower_Map_Square_Hit_Count             tower_stats[NUM_PLANES];
+
+*/
+static void Gather_Stats(int32_t sim_idx)
 {
-    struct s_Landmass_Walk_Stats walk_stats;
-    int simulations_to_run = 0;
-    int num_maps_to_generate = 0;
-    int itr = 0;
+    int16_t wx = 0;
+    int16_t wy = 0;
+    int16_t wp = 0;
+    int16_t tt = 0;
+    int16_t tg = 0;
+    uint8_t ts = 0;
+    int32_t total_square_count = 0;
+    int32_t land_square_count = 0;
+    int32_t tower_idx = 0;
 
-    simulations_to_run = 1;
-    num_maps_to_generate = (simulations_to_run * 2);
+    trial_run_count++;
 
-    landmass_map_square_hit_count = Allocate_Space(num_maps_to_generate * sizeof(struct s_Landmass_Map_Square_Hit_Count));
-    if(NULL == landmass_map_square_hit_count)
+    memset(&simulation_data[sim_idx].worldmap_stats[wp], 0, sizeof(struct s_Worldmap_Squares_Stats));
+    memset(&simulation_data[sim_idx].tower_stats[wp],    0, sizeof(struct s_Tower_Map_Square_Hit_Count));
+    memset(&simulation_data[sim_idx].specials_stats[wp], 0, sizeof(struct s_Terrain_Special_Squares_Stats));
+
+    tower_idx = 0;
+    for(wp = 0; wp < NUM_PLANES; wp++)
     {
-        Exit_With_Message("FATAL: Allocate_Space() failed for landmass_map_square_hit_count");
-        return;
+        for(wy = 0; wy < WORLD_HEIGHT; wy++)
+        {
+            for(wx = 0; wx < WORLD_WIDTH; wx++)
+            {
+                if(Square_Has_Tower_NewGame(wx, wy) == ST_TRUE)
+                {
+                    simulation_data[sim_idx].tower_stats[wp].wx[tower_idx] = wx;
+                    simulation_data[sim_idx].tower_stats[wp].wy[tower_idx] = wy;
+                    simulation_data[sim_idx].tower_stats[wp].tower_count = (tower_idx + 1);
+                    tower_idx++;
+                }
+                tt = Get_Terrain(wx, wy, wp);
+                simulation_data[sim_idx].worldmap_stats[wp].terrain_type_count[tt]++;
+                tg = Get_Terrain_Group(tt);
+#ifdef STU_DEBUG
+                if(tg == -1) { STU_DEBUG_BREAK(); }
+#endif
+                simulation_data[sim_idx].worldmap_stats[wp].terrain_group_count[tg]++;
+                simulation_data[sim_idx].worldmap_stats[wp].total_count++;
+            }
+        }
     }
-    memset(landmass_map_square_hit_count, 0, num_maps_to_generate * sizeof(struct s_Landmass_Map_Square_Hit_Count));
-
-    worldmap_map_square_hit_count = Allocate_Space(num_maps_to_generate * sizeof(struct s_Worldmap_Map_Square_Hit_Count));
-    if(NULL == worldmap_map_square_hit_count)
-    {
-        Exit_With_Message("FATAL: Allocate_Space() failed for worldmap_map_square_hit_count");
-        return;
-    }
-    memset(worldmap_map_square_hit_count, 0, num_maps_to_generate * sizeof(struct s_Worldmap_Map_Square_Hit_Count));
-
-    terrain_specials_map_square_hit_count = Allocate_Space(num_maps_to_generate * sizeof(struct s_Terrain_Specials_Map_Square_Hit_Count));
-    if(NULL == terrain_specials_map_square_hit_count)
-    {
-        Exit_With_Message("FATAL: Allocate_Space() failed for terrain_specials_map_square_hit_count");
-        return;
-    }
-    memset(terrain_specials_map_square_hit_count, 0, num_maps_to_generate * sizeof(struct s_Terrain_Specials_Map_Square_Hit_Count));
-
-    _landmasses = Allocate_Space(
-        num_maps_to_generate
-        *
-        (
-            ((WORLD_WIDTH * WORLD_HEIGHT) * 1)
-            / SZ_PARAGRAPH_B
-        )
-    );
-    if(NULL == _landmasses)
-    {
-        Exit_With_Message("FATAL: malloc() failed for _landmasses");
-        return;
-    }
-
-    _world_maps = Allocate_Space(
-        num_maps_to_generate
-        *
-        (
-            ((WORLD_WIDTH * WORLD_HEIGHT) * 2)
-            / SZ_PARAGRAPH_B
-        )
-    );
-    if(NULL == _world_maps)
-    {
-        Exit_With_Message("FATAL: malloc() failed for _world_maps");
-        return;
-    }
-
-    _map_square_terrain_specials = Allocate_Space(
-        num_maps_to_generate
-        *
-        ((WORLD_WIDTH * WORLD_HEIGHT) * 1)
-        / SZ_PARAGRAPH_B
-    );  // 150 PR, 2400 B  (1 byte per square, 1 plane)
-    if(NULL == _map_square_terrain_specials)
-    {
-        Exit_With_Message("FATAL: Allocate_Space() failed for _map_square_terrain_specials");
-        return;
-    }
-
-    _map_square_flags = Allocate_Space(
-        num_maps_to_generate
-        *
-        ((WORLD_WIDTH * WORLD_HEIGHT) * 1)
-        / SZ_PARAGRAPH_B
-    );  // 150 PR, 2400 B  (1 byte per square, 1 plane)
-    if(NULL == _map_square_flags)
-    {
-        Exit_With_Message("FATAL: Allocate_Space() failed for _map_square_flags");
-        return;
-    }
-
-    // transient? only used per-simulation? should be recleared prior?
-    _UNITS = (struct s_UNIT *)Allocate_Space(2028);
-    memset(_UNITS, 0, (2028 * SZ_PARAGRAPH_B));
-    _CITIES     = (struct s_CITY     *)Allocate_Space( ( ( ( NUM_CITIES     * sizeof(struct s_CITY     ) ) / SZ_PARAGRAPH_B ) + 1 ) );
-    memset(_CITIES, 0,                                       NUM_CITIES     * sizeof(struct s_CITY     )                            );
-    _NODES      = (struct s_NODE     *)Allocate_Space( ( ( ( NUM_NODES      * sizeof(struct s_NODE     ) ) / SZ_PARAGRAPH_B ) + 1 ) );
-    memset(_NODES, 0,                                        NUM_NODES      * sizeof(struct s_NODE     )                            );
-    _FORTRESSES = (struct s_FORTRESS *)Allocate_Space( ( ( ( NUM_FORTRESSES * sizeof(struct s_FORTRESS ) ) / SZ_PARAGRAPH_B ) + 1 ) );
-    memset(_FORTRESSES, 0,                                   NUM_FORTRESSES * sizeof(struct s_FORTRESS )                            );
-    _TOWERS     = (struct s_TOWER    *)Allocate_Space( ( ( ( NUM_TOWERS     * sizeof(struct s_TOWER    ) ) / SZ_PARAGRAPH_B ) + 1 ) );
-    memset(_TOWERS, 0,                                       NUM_TOWERS     * sizeof(struct s_TOWER    )                            );
-    _LAIRS      = (struct s_LAIR     *)Allocate_Space( ( ( ( NUM_LAIRS      * sizeof(struct s_LAIR     ) ) / SZ_PARAGRAPH_B ) + 1 ) );
-    memset(_LAIRS, 0,                                        NUM_LAIRS      * sizeof(struct s_LAIR     )                            );
     
-    // needed by Generate_Neutral_Cities__WIP()
-    // MGC dseg:3406 42 55 49 4C 44 44 41 54 00                      builddat_lbx_file__MGC_ovr051 db 'BUILDDAT',0
-    // Init_New_Game()
-    // bldg_data_table = (struct s_BLDG_DATA *)LBX_Load_Data(builddat_lbx_file__MGC_ovr051, 0, 0, 36, 52);
-    // WZD dseg:2A12
+    for(wp = 0; wp < NUM_PLANES; wp++)
+    {
+        total_square_count = simulation_data[sim_idx].worldmap_stats[wp].total_count;
+        land_square_count = 0;
+        for(tt = 0; tt < TerType_Count; tt++)
+        {
+            if(tt != tt_Ocean1)
+            {
+                land_square_count += simulation_data[sim_idx].worldmap_stats[wp].terrain_type_count[tt];
+            }
+        }
+    }
+
+    for(wp = 0; wp < NUM_PLANES; wp++)
+    {
+        for(wy = 0; wy < WORLD_HEIGHT; wy++)
+        {
+            for(wx = 0; wx < WORLD_WIDTH; wx++)
+            {
+                ts = Get_Terrain_Special(wx, wy, wp);
+                simulation_data[sim_idx].specials_stats[wp].terrain_special_square_count[ts]++;
+                simulation_data[sim_idx].specials_stats[wp].total_count++;
+                if(ts != ts_NONE)
+                {
+                    simulation_data[sim_idx].specials_stats[wp].special_squares++;
+                }
+            }
+        }
+    }
+
+}
+
+/*
+    Calculate_Average_Terrain_Probability
+
+    Sums terrain-type counts from worldmap_stats across all simulation runs
+    for plane `wp`, then prints the average count and average probability
+    (as a percentage of total squares) for each terrain type that appeared
+    at least once.
+*/
+static void Calculate_Average_Terrain_Probability(int num_simulations, int16_t wp)
+{
+    int32_t      sum_counts[TerType_Count];
+    int          itr            = 0;
+    int          sim_idx        = 0;
+    int32_t      total_squares  = 0;
+    double       avg_count      = 0.0;
+    double       avg_prob       = 0.0;
+    const char * name           = NULL;
+
+    memset(sum_counts, 0, sizeof(sum_counts));
+
+    for(sim_idx = 0; sim_idx < num_simulations; sim_idx++)
+    {
+        for(itr = 0; itr < TerType_Count; itr++)
+        {
+            sum_counts[itr] += simulation_data[sim_idx].worldmap_stats[wp].terrain_type_count[itr];
+        }
+    }
+
+    total_squares = num_simulations * WORLD_SIZE;
+
+    printf("\nAverage Terrain Probability (%s, %d simulations)\n", (wp == ARCANUS_PLANE) ? "Arcanus" : "Myrror", num_simulations);
+    printf("%3s  %-12s  %9s  %10s\n", "Idx", "Name", "Avg Count", "Avg Prob %");
+    printf("---  ------------  ---------  ----------\n");
+
+    for(itr = 0; itr < TerType_Count; itr++)
+    {
+        if(sum_counts[itr] == 0)
+            continue;
+
+        name = Terrain_Type_Name(itr);
+
+        avg_count = (double)sum_counts[itr] / (double)num_simulations;
+        avg_prob  = (total_squares > 0) ? ((double)sum_counts[itr] / (double)total_squares * 100.0) : 0.0;
+
+        printf("%3d  %-12s  %9.1f  %9.2f%%\n", itr, name, avg_count, avg_prob);
+    }
+
+    printf("---  ------------  ---------  ----------\n");
+    printf("%-24s  %9d\n", "Squares per sim:", WORLD_SIZE);
+    printf("%-24s  %9d\n", "Simulations:", num_simulations);
+}
+
+/*
+    Calculate_Average_Terrain_Group_Probability
+
+    Sums terrain-group counts from worldmap_stats across all simulation runs
+    for plane `wp`, then prints the average count and average probability
+    (as a percentage of total squares) for each terrain group that appeared
+    at least once.
+*/
+static void Calculate_Average_Terrain_Group_Probability(int num_simulations, int16_t wp)
+{
+    int32_t      sum_counts[NUM_TERRAIN_GROUPS];
+    int          itr            = 0;
+    int          sim_idx        = 0;
+    int32_t      total_squares  = 0;
+    int32_t      land_squares   = 0;
+    double       avg_count      = 0.0;
+    double       avg_prob       = 0.0;
+    double       avg_land_prob  = 0.0;
+    const char * name           = NULL;
+
+    memset(sum_counts, 0, sizeof(sum_counts));
+
+    for(sim_idx = 0; sim_idx < num_simulations; sim_idx++)
+    {
+        for(itr = 0; itr < terrain_group_names_count; itr++)
+        {
+            sum_counts[itr] += simulation_data[sim_idx].worldmap_stats[wp].terrain_group_count[itr];
+        }
+    }
+
+    total_squares = num_simulations * WORLD_SIZE;
+    land_squares = total_squares - sum_counts[0];
+
+    printf("\nAverage Terrain Group Probability (%s, %d simulations)\n", (wp == ARCANUS_PLANE) ? "Arcanus" : "Myrror", num_simulations);
+    printf("%3s  %-12s  %9s  %10s  %10s\n", "Grp", "Name", "Avg Count", "Avg Prob %", "Avg Land %");
+    printf("---  ------------  ---------  ----------  ----------\n");
+
+    for(itr = 0; itr < terrain_group_names_count; itr++)
+    {
+        if(sum_counts[itr] == 0)
+            continue;
+
+        name = Terrain_Group_Name(itr);
+
+        avg_count = (double)sum_counts[itr] / (double)num_simulations;
+        avg_prob  = (total_squares > 0) ? ((double)sum_counts[itr] / (double)total_squares * 100.0) : 0.0;
+
+        if(itr == 0)
+        {
+            printf("%3d  %-12s  %9.1f  %9.2f%%  %10s\n", itr, name, avg_count, avg_prob, "---");
+        }
+        else
+        {
+            avg_land_prob = (land_squares > 0) ? ((double)sum_counts[itr] / (double)land_squares * 100.0) : 0.0;
+            printf("%3d  %-12s  %9.1f  %9.2f%%  %9.2f%%\n", itr, name, avg_count, avg_prob, avg_land_prob);
+        }
+    }
+
+    printf("---  ------------  ---------  ----------  ----------\n");
+    printf("%-24s  %9d\n", "Squares per sim:", WORLD_SIZE);
+    printf("%-24s  %9d\n", "Simulations:", num_simulations);
+}
+
+/*
+    Calculate_Average_Terrain_Special_Probability
+
+    Sums terrain-special counts from specials_stats across all simulation runs
+    for plane `wp`, then prints the average count and average probability
+    for each known terrain special (minerals and flags).
+*/
+static void Calculate_Average_Terrain_Special_Probability(int num_simulations, int16_t wp)
+{
+    static const struct { uint8_t value; const char * name; } special_names[] =
+    {
+        { TS_NONE,         "None"         },
+        { TS_IRON,         "Iron"         },
+        { TS_COAL,         "Coal"         },
+        { TS_SILVER,       "Silver"       },
+        { TS_GOLD,         "Gold"         },
+        { TS_GEMS,         "Gems"         },
+        { TS_MITHRIL,      "Mithril"      },
+        { TS_ADAMANTIUM,   "Adamantium"   },
+        { TS_QUORK,        "Quork"        },
+        { TS_CRYSX,        "Crysx"        },
+        { TS_HUNTERSLODGE, "HuntersLodge" },
+        { TS_UNKNOWN_20H,  "Unknown_20h"  },
+        { TS_WILDGAME,     "WildGame"     },
+        { TS_NIGHTSHADE,   "Nightshade"   },
+    };
+    static const int special_names_count = (int)(sizeof(special_names) / sizeof(special_names[0]));
+
+    int32_t  sum_counts[NUM_TERRAIN_SPECIAL_TYPES];
+    int32_t  sum_special_squares = 0;
+    int      itr                 = 0;
+    int      sim_idx             = 0;
+    int32_t  total_squares       = 0;
+    int32_t  count               = 0;
+    double   avg_count           = 0.0;
+    double   avg_prob            = 0.0;
+    double   avg_spcl_prob       = 0.0;
+
+    memset(sum_counts, 0, sizeof(sum_counts));
+
+    for(sim_idx = 0; sim_idx < num_simulations; sim_idx++)
+    {
+        for(itr = 0; itr < NUM_TERRAIN_SPECIAL_TYPES; itr++)
+        {
+            sum_counts[itr] += simulation_data[sim_idx].specials_stats[wp].terrain_special_square_count[itr];
+        }
+        sum_special_squares += simulation_data[sim_idx].specials_stats[wp].special_squares;
+    }
+
+    total_squares = num_simulations * WORLD_SIZE;
+
+    printf("\nAverage Terrain Special Probability (%s, %d simulations)\n", (wp == ARCANUS_PLANE) ? "Arcanus" : "Myrror", num_simulations);
+    printf("%-12s  %9s  %10s  %10s\n", "Special", "Avg Count", "Avg Prob %", "Avg Spcl %");
+    printf("------------  ---------  ----------  ----------\n");
+
+    for(itr = 0; itr < special_names_count; itr++)
+    {
+        count = sum_counts[special_names[itr].value];
+
+        avg_count = (double)count / (double)num_simulations;
+        avg_prob  = (total_squares > 0) ? ((double)count / (double)total_squares * 100.0) : 0.0;
+
+        if(special_names[itr].value == TS_NONE)
+        {
+            printf("%-12s  %9.1f  %9.2f%%  %10s\n", special_names[itr].name, avg_count, avg_prob, "---");
+        }
+        else
+        {
+            avg_spcl_prob = (sum_special_squares > 0) ? ((double)count / (double)sum_special_squares * 100.0) : 0.0;
+            printf("%-12s  %9.1f  %9.2f%%  %9.2f%%\n", special_names[itr].name, avg_count, avg_prob, avg_spcl_prob);
+        }
+    }
+
+    printf("------------  ---------  ----------  ----------\n");
+    printf("%-24s  %9d\n", "Squares per sim:", WORLD_SIZE);
+    printf("%-24s  %9.1f\n", "Avg special squares:", (double)sum_special_squares / (double)num_simulations);
+    printf("%-24s  %9d\n", "Simulations:", num_simulations);
+}
+
+static void Allocate_Simulation(int simulations_to_run)
+{
+    size_t size;
+    // // simulation_data = (struct s_Simulation_Data *)Allocate_Space((simulations_to_run * sizeof(struct s_Simulation_Data)) / SZ_PARAGRAPH_B + 1);
+    // // if(NULL == simulation_data)     { Exit_With_Message("FATAL: Allocate_Space() failed for simulation_data"); return; }
+    // simulation_data = (struct s_Simulation_Data *)malloc(simulations_to_run * sizeof(struct s_Simulation_Data));
+    // memset(simulation_data, 0, simulations_to_run * sizeof(struct s_Simulation_Data));
+    size = (simulations_to_run * sizeof(struct s_Simulation_Data));
+    simulation_data = malloc(size);
+    if (!simulation_data)
+    {
+        Exit_With_Message("FATAL: malloc() failed for simulation_data");
+        return;
+    }
+    memset(simulation_data, 0, size);
+}
+
+static void Allocate_Game_Data(void)
+{
+    _landmasses                  = (uint8_t           *)Allocate_Space(NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 1) / SZ_PARAGRAPH_B));
+    _world_maps                  = (uint8_t           *)Allocate_Space(NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 2) / SZ_PARAGRAPH_B));
+    _map_square_terrain_specials = (uint8_t           *)Allocate_Space(NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 1) / SZ_PARAGRAPH_B));
+    _map_square_flags            = (uint8_t           *)Allocate_Space(NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 1) / SZ_PARAGRAPH_B));
+    _UNITS                       = (struct s_UNIT     *)Allocate_Space(2028);
+    _CITIES                      = (struct s_CITY     *)Allocate_Space((((NUM_CITIES     * sizeof(struct s_CITY    )) / SZ_PARAGRAPH_B) + 1));
+    _NODES                       = (struct s_NODE     *)Allocate_Space((((NUM_NODES      * sizeof(struct s_NODE    )) / SZ_PARAGRAPH_B) + 1));
+    _FORTRESSES                  = (struct s_FORTRESS *)Allocate_Space((((NUM_FORTRESSES * sizeof(struct s_FORTRESS)) / SZ_PARAGRAPH_B) + 1));
+    _TOWERS                      = (struct s_TOWER    *)Allocate_Space((((NUM_TOWERS     * sizeof(struct s_TOWER   )) / SZ_PARAGRAPH_B) + 1));
+    _LAIRS                       = (struct s_LAIR     *)Allocate_Space((((NUM_LAIRS_102  * sizeof(struct s_LAIR    )) / SZ_PARAGRAPH_B) + 1));
+    p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
+}
+
+static void Clear_Game_Data(void)
+{
+    memset(_landmasses,                   0,  (NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 1) / SZ_PARAGRAPH_B)));
+    memset(_world_maps,                   0,  (NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 2) / SZ_PARAGRAPH_B)));
+    memset(_map_square_terrain_specials,  0,  (NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 1) / SZ_PARAGRAPH_B)));
+    memset(_map_square_flags,             0,  (NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 1) / SZ_PARAGRAPH_B)));
+    memset(_UNITS,                        0,  (2028 * SZ_PARAGRAPH_B)                              );
+    memset(_CITIES,                       0,  (NUM_CITIES     * sizeof(struct s_CITY     ))        );
+    memset(_NODES,                        0,  (NUM_NODES      * sizeof(struct s_NODE     ))        );
+    memset(_FORTRESSES,                   0,  (NUM_FORTRESSES * sizeof(struct s_FORTRESS ))        );
+    memset(_TOWERS,                       0,  (NUM_TOWERS     * sizeof(struct s_TOWER    ))        );
+    memset(_LAIRS,                        0,  (NUM_LAIRS_102  * sizeof(struct s_LAIR     ))        );
+}
+
+void New_Game_Screen_Mock(void)
+{
+    FILE * file_pointer = 0;
     char builddat_lbx_file[] = "BUILDDAT.LBX";
-    // WZD o52p17
-    // void Load_BUILDDAT(void)
-    // MOM_Data  WZD dseg:938C
-    // MOM_Data  struct s_BLDG_DATA * bldg_data_table;
+
     bldg_data_table = (struct s_BLDG_DATA *)LBX_Load_Data(builddat_lbx_file, 0, 0, 36, 52);
     assert(bldg_data_table != NULL);
     assert(bldg_data_table[bt_NONE].name != NULL);
     assert(bldg_data_table[bt_NONE].maintenance_cost == 0);
+
+    magic_set.LandSize = gol_Large;
+    magic_set.MagicPower = gom_Normal;
+    magic_set.Opponents = goo_Two;
+    magic_set.Difficulty = god_Normal;
     
+    file_pointer = fopen("MAGIC.SET", "wb");
+    fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
+    fclose(file_pointer);
 
+    _landsize = magic_set.LandSize;
+    _magic = magic_set.MagicPower;
+    _num_players = (magic_set.Opponents + 1);
+    _difficulty = magic_set.Difficulty;
 
-    // ¿ DO NOT NEED  Init_Computer_Players() ?
+    NEWG_Clicked_Race = rt_Orc;
 
+}
 
+/* capture game data from transient globals into simulation_data[itr] */
+static void Capture_Game_Data(int sim_idx)
+{
+
+    memcpy(simulation_data[sim_idx].landmasses[ARCANUS_PLANE], (uint8_t *)_landmasses + (ARCANUS_PLANE * WORLD_SIZE), WORLD_SIZE);
+    memcpy(simulation_data[sim_idx].landmasses[MYRROR_PLANE],  (uint8_t *)_landmasses + (MYRROR_PLANE  * WORLD_SIZE), WORLD_SIZE);
+
+    memcpy(simulation_data[sim_idx].world_map[ARCANUS_PLANE], (uint8_t *)_world_maps + (ARCANUS_PLANE * WORLD_SIZE_DW), WORLD_SIZE_DW);
+    memcpy(simulation_data[sim_idx].world_map[MYRROR_PLANE],  (uint8_t *)_world_maps + (MYRROR_PLANE  * WORLD_SIZE_DW), WORLD_SIZE_DW);
+
+    memcpy(simulation_data[sim_idx].terrain_specials[ARCANUS_PLANE], (uint8_t *)_map_square_terrain_specials + (ARCANUS_PLANE * WORLD_SIZE), WORLD_SIZE);
+    memcpy(simulation_data[sim_idx].terrain_specials[MYRROR_PLANE],  (uint8_t *)_map_square_terrain_specials + (MYRROR_PLANE  * WORLD_SIZE), WORLD_SIZE);
+
+    memcpy(simulation_data[sim_idx].map_flags[ARCANUS_PLANE], (uint8_t *)_map_square_flags + (ARCANUS_PLANE * WORLD_SIZE), WORLD_SIZE);
+    memcpy(simulation_data[sim_idx].map_flags[MYRROR_PLANE],  (uint8_t *)_map_square_flags + (MYRROR_PLANE  * WORLD_SIZE), WORLD_SIZE);
+
+    memcpy(simulation_data[sim_idx].towers[ARCANUS_PLANE], _TOWERS, NUM_TOWERS * sizeof(struct s_TOWER));
+    memcpy(simulation_data[sim_idx].towers[MYRROR_PLANE],  _TOWERS, NUM_TOWERS * sizeof(struct s_TOWER));
+
+    memcpy(simulation_data[sim_idx].nodes[ARCANUS_PLANE], _NODES, NUM_NODES * sizeof(struct s_NODE));
+    memcpy(simulation_data[sim_idx].nodes[MYRROR_PLANE],  _NODES, NUM_NODES * sizeof(struct s_NODE));
+
+}
+
+static void Capture_Simulation_Data(int sim_idx)
+{
+
+    Capture_Game_Data(sim_idx);  // superflous?
+
+    Landmass_Statistics(sim_idx, ARCANUS_PLANE);
+    Landmass_Statistics(sim_idx, MYRROR_PLANE);
+
+    Worldmap_Statistics(sim_idx, ARCANUS_PLANE);
+    Worldmap_Statistics(sim_idx, MYRROR_PLANE);
+
+    Terrain_Specials_Statistics(sim_idx, ARCANUS_PLANE);
+    Terrain_Specials_Statistics(sim_idx, MYRROR_PLANE);
+
+};
+
+void Simulate_World_Map_Generation(void)
+{
+    int simulations_to_run = 0;
+    int num_maps_to_generate = 0;
+    int itr = 0;
+
+    simulations_to_run = 2;  // max is 32,767?
+    num_maps_to_generate = (simulations_to_run * 2);
+
+    Allocate_Simulation(simulations_to_run);
+    Allocate_Game_Data();
+    New_Game_Screen_Mock();
 
     for(itr = 0; itr < simulations_to_run; itr++)
     {
 
-        memset(_UNITS, 0, (2028 * SZ_PARAGRAPH_B));
-        memset(_CITIES, 0,                                       NUM_CITIES     * sizeof(struct s_CITY     )                            );
-        memset(_NODES, 0,                                        NUM_NODES      * sizeof(struct s_NODE     )                            );
-        memset(_FORTRESSES, 0,                                   NUM_FORTRESSES * sizeof(struct s_FORTRESS )                            );
-        memset(_TOWERS, 0,                                       NUM_TOWERS     * sizeof(struct s_TOWER    )                            );
-        memset(_LAIRS, 0,                                        NUM_LAIRS      * sizeof(struct s_LAIR     )                            );
+        Clear_Game_Data();
 
-        Init_Landmasses(itr + ARCANUS_PLANE);
+        Init_Landmasses(ARCANUS_PLANE);
+        Init_Landmasses(MYRROR_PLANE);
 
-        Init_Landmasses(itr + MYRROR_PLANE);
+        Generate_Landmasses(ARCANUS_PLANE);
+        Generate_Landmasses(MYRROR_PLANE);
 
-        Generate_Landmasses((itr + ARCANUS_PLANE));  // post: Landmass Index, Square Count
+        Translate_Heightmap_To_Base_Terrain_Types(ARCANUS_PLANE);
+        Translate_Heightmap_To_Base_Terrain_Types(MYRROR_PLANE);
 
-        Generate_Landmasses((itr + MYRROR_PLANE));  // post: Landmass Index, Square Count
-
-        // Landmass_Statistics((itr + ARCANUS_PLANE));
-        // Display_Landmass_Statistics((itr + ARCANUS_PLANE));
-        // // Display_Landmass_Histogram((itr + ARCANUS_PLANE));
-        // Print_Landmass_Map((itr + ARCANUS_PLANE));
-
-        // Heightmap_Statistics((itr + ARCANUS_PLANE));
-        // Display_Heightmap_Statistics((itr + ARCANUS_PLANE));
-        // // no useful information  Display_Heightmap_Histogram((itr + ARCANUS_PLANE));
-        // Print_Heightmap_Map((itr + ARCANUS_PLANE));
-
-        Translate_Heightmap_To_Base_Terrain_Types((itr + ARCANUS_PLANE));
-
-        Worldmap_Statistics((itr + ARCANUS_PLANE));
-        Display_Worldmap_Statistics((itr + ARCANUS_PLANE));
-        Display_Worldmap_Histogram((itr + ARCANUS_PLANE));
-        Print_Worldmap_Map((itr + ARCANUS_PLANE));
-
-        Generate_Climate_Terrain_Types((itr + ARCANUS_PLANE));
-
-        Worldmap_Statistics((itr + ARCANUS_PLANE));
-        Display_Worldmap_Statistics((itr + ARCANUS_PLANE));
-        Display_Worldmap_Histogram((itr + ARCANUS_PLANE));
-        Print_Worldmap_Map((itr + ARCANUS_PLANE));
-
-        // Generate_Nodes();
-        // NEWG_EqualizeNodes__WIP(MYRROR_PLANE);
-        // Generate_Towers();
-        // NEWG_TileIsleExtend__WIP(ARCANUS_PLANE);
-        // Generate_Lairs();
-        // DONT  Generate_Home_City__WIP();
-        // Generate_Neutral_Cities__WIP(MYRROR_PLANE);
-
-
+        Generate_Climate_Terrain_Types(ARCANUS_PLANE);
+        Generate_Climate_Terrain_Types(MYRROR_PLANE);
 
         Generate_Nodes();
+
+        Rebalance_Node_Types(ARCANUS_PLANE);
+        Rebalance_Node_Types(MYRROR_PLANE);
+
         Generate_Towers();
+
+        Extend_Islands(ARCANUS_PLANE);
+        Extend_Islands(MYRROR_PLANE);
+
         Generate_Lairs();
+        
         _units = 0;
-        _num_players = 1;
-        NEWG_Clicked_Race = rt_High_Men;
         Generate_Home_City__WIP();
-        Generate_Neutral_Cities__WIP((itr + ARCANUS_PLANE));
-        Generate_Neutral_Cities__WIP((itr + MYRROR_PLANE));
+        Generate_Neutral_Cities__WIP(ARCANUS_PLANE);
+        Generate_Neutral_Cities__WIP(MYRROR_PLANE);
 
+        Generate_Terrain_Specials(ARCANUS_PLANE);
+        Generate_Terrain_Specials(MYRROR_PLANE);
 
+        Worldmap_Statistics(itr, ARCANUS_PLANE);
+        Display_Worldmap_Statistics(itr, ARCANUS_PLANE);
+        Display_Worldmap_Histogram(itr, ARCANUS_PLANE);
+        Print_Worldmap_Map(itr, ARCANUS_PLANE);
 
-        Generate_Terrain_Specials((itr + ARCANUS_PLANE));
+        Generate_Roads(ARCANUS_PLANE);
+        Generate_Roads(MYRROR_PLANE);
 
-        Generate_Terrain_Specials((itr + MYRROR_PLANE));
-        
-        Worldmap_Statistics((itr + ARCANUS_PLANE));
-        Display_Worldmap_Statistics((itr + ARCANUS_PLANE));
-        Display_Worldmap_Histogram((itr + ARCANUS_PLANE));
-        Print_Worldmap_Map((itr + ARCANUS_PLANE));
-        
-        Worldmap_Statistics((itr + MYRROR_PLANE));
-        Display_Worldmap_Statistics((itr + MYRROR_PLANE));
-        Display_Worldmap_Histogram((itr + MYRROR_PLANE));
-        Print_Worldmap_Map((itr + MYRROR_PLANE));
+        Worldmap_Statistics(itr, ARCANUS_PLANE);
+        Display_Worldmap_Statistics(itr, ARCANUS_PLANE);
+        Display_Worldmap_Histogram(itr, ARCANUS_PLANE);
+        Print_Worldmap_Map(itr, ARCANUS_PLANE);
 
-        Terrain_Specials_Statistics((itr + ARCANUS_PLANE));
-        Display_Terrain_Specials_Statistics((itr + ARCANUS_PLANE));
-        // Display_Terrain_Specials_Histogram((itr + ARCANUS_PLANE));
-        // Print_Terrain_Specials_Map((itr + ARCANUS_PLANE));
+        Simex_Autotiling();
 
-        Terrain_Specials_Statistics((itr + MYRROR_PLANE));
-        Display_Terrain_Specials_Statistics((itr + MYRROR_PLANE));
-        // Display_Terrain_Specials_Histogram((itr + MYRROR_PLANE));
-        // Print_Terrain_Specials_Map((itr + MYRROR_PLANE));
+        Worldmap_Statistics(itr, ARCANUS_PLANE);
+        Display_Worldmap_Statistics(itr, ARCANUS_PLANE);
+        Display_Worldmap_Histogram(itr, ARCANUS_PLANE);
+        Print_Worldmap_Map(itr, ARCANUS_PLANE);
+        // Worldmap_Statistics(itr, MYRROR_PLANE);
+        // Display_Worldmap_Statistics(itr, MYRROR_PLANE);
+        // Display_Worldmap_Histogram(itr, MYRROR_PLANE);
+        // Print_Worldmap_Map(itr, MYRROR_PLANE);
 
-        // Generate_Roads(ARCANUS_PLANE);
-        // NEWG_CreateShores__STUB();
         // for(IDK1 = 0; IDK1 < 10; IDK1++)
         // {
         //     for(IDK2 = 0; ((IDK2 < 2000) && (NEWG_CreateRiver__STUB(0) != 0)); IDK2++) { }
         //     for(IDK2 = 0; ((IDK2 < 2000) && (NEWG_CreateRiver__STUB(1) != 0)); IDK2++) { }
         // }
+        
         // NEWG_SetRiverTiles__STUB(ARCANUS_PLANE);
         // NEWG_SetDeserts__STUB();
         // NEWG_RandomizeTiles__STUB();
@@ -1184,6 +1877,14 @@ void Simulate_World_Map_Generation(void)
         // NEWG_AnimateOceans__STUB();
         // Set_Upper_Lair_Guardian_Count();
 
+
+        
+        // Capture_Simulation_Data(itr);
+
+        // printf("Simulation # %d\n", (1 + itr));
+
+        // Gather_Stats(itr);
+
     }
 
     /*
@@ -1191,5 +1892,12 @@ void Simulate_World_Map_Generation(void)
          - average probability of each terrain type
          - histogram
     */
+
+    // Calculate_Average_Terrain_Probability(simulations_to_run, ARCANUS_PLANE);
+    // Calculate_Average_Terrain_Probability(simulations_to_run, MYRROR_PLANE);
+    // Calculate_Average_Terrain_Group_Probability(simulations_to_run, ARCANUS_PLANE);
+    // Calculate_Average_Terrain_Group_Probability(simulations_to_run, MYRROR_PLANE);
+    // Calculate_Average_Terrain_Special_Probability(simulations_to_run, ARCANUS_PLANE);
+    // Calculate_Average_Terrain_Special_Probability(simulations_to_run, MYRROR_PLANE);
 
 }

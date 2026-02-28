@@ -802,7 +802,7 @@ enum RETORTS
 
 /*
     Node Type - Magic Realm
-    s_NODE.type)
+    s_NODE.type
 */
 enum e_NODE_TYPE
 {
@@ -4065,17 +4065,11 @@ extern struct s_LAIR * _LAIRS;
 extern struct s_TOWER * _TOWERS;
 extern struct s_FORTRESS * _FORTRESSES;
 extern struct s_NODE * _NODES;
-
-// WZD dseg:9CD0
-extern uint8_t * _landmasses;  // 12Eh 302d PR 302*16=4832, in World_Data
-// WZD dseg:9CD4
+extern uint8_t * _landmasses;
 extern SAMB_ptr UU_TBL_2;
-// WZD dseg:9CD8
 extern SAMB_ptr UU_TBL_1;
-// WZD dseg:9CDC
-// AKA TBL_Maps;
-// extern SAMB_ptr _world_maps;
 extern uint8_t * _world_maps;
+extern int16_t (*p_world_map)[40][60];
 
 // WZD dseg:9CE0
 extern int8_t * TBL_Unrest[NUM_RACES];

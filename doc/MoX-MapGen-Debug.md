@@ -1,9 +1,63 @@
 
+OSG pg 182
+Table 14.4
+What Special Terrain Feature Appears?
+...
+The number is the percent chance of that particular special appearing when its parent terrain square receives a special terrain feature.
+
+OSG pg 183
+Special Terr aitt
+Feature Placemettt
+After the basic land squares are created, they
+are indjvidual ly examjned on both worlds to
+see if a special terrain featlu·e is added. Each
+desert, hill, moun tain. fo rest, and swamp
+square on Arcanus has a 1 in 17 chance of
+receiving a special terrain feature. These same
+squares on lp-ror have a 1 in 10 chance of
+bearing goodies. The chance of a particu lar
+type of pecial terrain feature appearing on
+that square is sho\\11 in Table 14.4.
+
+count all  of desert, hill, mountain, forest, swamp
+count each of desert, hill, mountain, forest, swamp
+count all specials for  desert, hill, mountain, forest, swamp
+count specials for each of desert, hill, mountain, forest, swamp
+arcanus - check for 1:17  0.05882352941176470588235294117647  5.88%
+myrror  - check for 1:10  0.10  10%
+Arcanus
+Desert      Gems, Quark
+Hills       Iron, Coal, Silver, Gold, Mithril
+Mountains   Iron, Coal, Silver, Gold, Mithril
+Forests     Wild Game
+Swamp       Nightshade
+Myrror
+Desert      Gems, Quark, Crysx
+Hills       Iron, Coal, Silver, Gold, Mithril, Adamantium
+Mountains   Iron, Coal, Silver, Gold, Mithril, Adamantium
+Forests     Wild Game
+Swamp       Nightshade
+
+Add another function just for the distribution specials on Desert squares. On Arcanus, they should be 66.7% Gems and 33.3% Quark, 0% Crysx. On Myrror, they should be 20% Gems, 40% Quark, 20% Crysx.
+
+Add another function just for the distribution specials on Hills squares. On Arcanus, they should be 33.3% Iron, 16.7% Coal, 22.2% Silver, 22.2% Gold, 5.6% Mithril, 0% Adamantium. On Myrror, they should be 10% Iron, 10% Coal, 10% Silver, 40% Gold, 20% Mithril, 10% Adamantium.
+
+Add another function just for the distribution specials on Mountain squares. On Arcanus, they should be 22.2% Iron, 27.7% Coal, 16.7% Silver, 16.7% Gold, 16.7% Mithril, 0% Adamantium. On Myrror, they should be 10% Iron, 10% Coal, 10% Silver, 20% Gold, 30% Mithril, 20% Adamantium.
+
+Update the evaluation functions for Desert, Hills, Mountain to show all of their terrain specific specials even if they have a count of zero.
+Update the evaluation functions for Desert, Hills, Mountain to show all of their terrain specific specials even if they have an expected count of zero.
+
+Update the evaluation functions for Desert, Hills, Mountain. Remove the total row from the table, since it's meaningless.
 
 
 
 
-ask Claude about the random funciton LFSR
+
+ask Claude Opus/Sonnet about the random function's LFSR assembly code
+ask GPT
+ask Gemini
+
+
 
 
 

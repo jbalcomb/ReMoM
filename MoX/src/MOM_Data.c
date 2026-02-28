@@ -2589,12 +2589,18 @@ STU_DBG.C
 
 */
 uint8_t * _world_maps;
+// int16_t * p_world_maps;
+/*
+Declare a pointer to a 2D array of the specified dimensions.
+The sizes for dim2 and dim3 must be visible to the compiler.
+int (*array_ptr)[dim2][dim3]; 
+*/
+int16_t (*p_world_map)[40][60];
 
 // WZD dseg:9CE0
 int8_t * TBL_Unrest[NUM_RACES];
 
 // WZD dseg:9D18
-// drake178: IMG_CTY_Bldngs_Wall@
 SAMB_ptr cityscape_big_city_wall_seg;
 
 // WZD dseg:9D1A
