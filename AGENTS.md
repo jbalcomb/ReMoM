@@ -20,7 +20,9 @@ Ignore the Register annotations. (e.g., `_DI_`, `_SI_`, `_CX_`, etc.) They are j
 - Always log errors with contextual information
 
 ## Glossary of Terms
+- Dasm stands for Disassembly  (the disassembley of the Borland C++ 3.0 code from IDA Pro 5.5)
+- DBG stands for Debug
+- DEDU stands for Deduce  (like a to-do list item where some code or logic needs figured out or validated and then documented)
 - DNE stands for Does Not Exist  (usually mean it seems like it should based on some similar code elsewhere or a bug or SimTex's coding style)
 - IDK stands for I don't know
 - IDGI stands for I don't get it
-- DEDU stands for Deduce  (like a to-do list item where some code or logic needs figured out or validated and then documented)
