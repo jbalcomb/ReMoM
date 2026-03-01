@@ -4,6 +4,10 @@ SEEALSO: MoX-WorldMap.md
 
 
 
+MapGen uses 1000 as temporary terrain type
+
+
+
 https://masterofmagic.fandom.com/wiki/Node#_Known_Bugs
 Drake178
 6/13/2017
@@ -142,6 +146,11 @@ Swamp
         {
             continue;
         }
+
+Rivers
+    base_wx = (4 + Random((WORLD_WIDTH - 8)));
+    base_wy = (4 + Random((WORLD_HEIGHT - 8)));
+
 
 ...node aura maker wont place on first or last on both axis
 ...node range: 0 distance, 1 map square; 1 distance, 9 map squares; 3 distance, 25 map squares

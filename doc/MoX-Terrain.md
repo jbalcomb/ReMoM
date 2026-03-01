@@ -1,6 +1,8 @@
 SEEALSO: MoX-MapGen-BitmaskAutotiling.md
 
 
+MapGen uses 1000 as temporary terrain type
+
 
 https://masterofmagic.fandom.com/wiki/Tundra#articleComments
 Drake178

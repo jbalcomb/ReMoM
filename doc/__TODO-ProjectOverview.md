@@ -77,8 +77,8 @@ Init_New_Game_()
 [x] |-> Desert_Terrain_Special()
 [x] Generate_Roads()
 [x] Simex_Autotiling()
-[-] NEWG_CreateRiver__STUB()
-[-] NEWG_SetRiverTiles__STUB()
+[x] River_Path()
+[-] River_Terrain()
 [-] NEWG_SetDeserts__STUB()
 [-] NEWG_RandomizeTiles__STUB()
 [x] Movement_Mode_Cost_Maps()
@@ -100,7 +100,8 @@ Init_New_Game_()
 
 [ ] add Set_Game_Random_Seed_() from MoO2, in Init_New_Game(), with _cmd_line_seed
 
-[ ] NewGame - Towers too close together
+[ ] MapGen - Towers too close together
+[ ] MapGen - missing SE corner Shore?
 
 
 DIPLOMAC.LBX [entry 52]  was not properly allocated or has been corrupted.

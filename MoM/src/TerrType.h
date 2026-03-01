@@ -70,13 +70,14 @@ NOT
 used in NEWG_SetSpecLands()
 
 */
+#define TT_RIVER_PLACEHOLDER 1000
 enum e_TERRAIN_TYPES
 {
     tt_Ocean1      = 0x0,
     tt_BugGrass    = 0x1,
     tt_Shore1_Fst  = 0x2,
     TT_Lake        = 0x12,
-    tt_Shore1_Lst  = 0x0A1,  /* 161 */
+    tt_Shore1_Lst  = 0x0A1,  /* 161  end of range for invalid river outflow */
     tt_Grasslands1 = 0x0A2,
     tt_Forest1     = 0x0A3,
     tt_Mountain1   = 0x0A4,
@@ -346,7 +347,7 @@ enum OVL_Tiles_Extended
     _Shore01000100  = 0x41,
     _Shore10010011  = 0x42,
     _Shore10011011  = 0x43,
-    _Shore10110011  = 0x44,
+    _Shore10110011  = 0x44,  /* */
     _Shore10111011  = 0x45,
     _Shore10010001  = 0x46,
     _Shore10011001  = 0x47,
@@ -376,7 +377,7 @@ enum OVL_Tiles_Extended
     _Shore11101111  = 0x5F,
     _Shore11111011  = 0x60,
     _Shore11111110  = 0x61,
-    _Shore10111000  = 0x62,
+    _Shore10111000  = 0x62,     /* 98  start of range for invalid river outflow */
     _Shore10110000  = 0x63,
     _Shore10011000  = 0x64,
     _Shore10010000  = 0x65,
@@ -439,7 +440,7 @@ enum OVL_Tiles_Extended
     _Shore00100111  = 0x9E,
     _Shore00101111  = 0x9F,
     _Shore10100111  = 0xA0,
-    _Shore10101111  = 0xA1,
+    _Shore10101111  = 0xA1,     /* 161  end of range for invalid river outflow */
     tte_Grasslands = 0xA2,  /* tt_Grasslands1  162  0xA2  0b10100010 */
     _Forest1        = 0xA3,
     tte_Mountain  = 0xA4,  /* type used by Set_Terrain_Type_Mountain() */

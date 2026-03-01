@@ -120,23 +120,27 @@ struct s_mouse_list mouselist_mapgen[1] =
 };
 
 // MGC  dseg:3370 26 34 2C 34 37 34 43 34 50 34 60 34 68 34 77 34+UU_EZ_Names@_Array dw offset UU_cnst_Tower, offset UU_cnst_ChaosNode, offset UU_cnst_NatureNode, offset UU_cnst_SorceryNode, offset UU_cnst_Cave, offset UU_cnst_Dungeon, offset UU_cnst_AncientTmpl, offset UU_cnst_Keep, offset UU_cnst_Lair, offset UU_cnst_Ruins, offset UU_cnst_FallenTmpl ; "tower"
-// MGC  dseg:3386 A2 00 A2 00 A2 00 A2 00 BB 00 BB 00 BB 00 BB 00+TILE_River_Types dw tte_Grasslands, tte_Grasslands, tte_Grasslands, tte_Grasslands
-// MGC  dseg:3386 BC 00 BC 00 BC 00 BC 00 BD 00 C1 00 E9 00 BD 00+                                        ; DATA XREF: NEWG_SetRiverTiles+127t
-// MGC  dseg:3386 B9 00 B9 00 B9 00 B9 00 ED 00 EE 00 EF 00 ED 00+dw _River1000, _River1000, _River1000, _River1000
-// MGC  dseg:3386 BF 00 C3 00 EB 00 BF 00 FB 00 FC 00 FD 00 FE 00+dw _River0100, _River0100, _River0100, _River0100
-// MGC  dseg:3386 BA 00 BA 00 BA 00 BA 00 C0 00 C4 00 EC 00 C0 00+dw _River1100_1, _River1100_2, _River1100_3, _River1100_1
-// MGC  dseg:3386 F0 00 F1 00 F2 00 F0 00 F3 00 F4 00 F5 00 F6 00+dw _River0010, _River0010, _River0010, _River0010
-// MGC  dseg:3386 BE 00 C2 00 EA 00 BE 00 FF 00 00 01 01 01 02 01+dw _River1010_1, _River1010_2, _River1010_3, _River1010_1
-// MGC  dseg:3386 F7 00 F8 00 F9 00 FA 00 D4 01 D5 01 D6 01 D7 01 dw _River0110_1, _River0110_2, _River0110_3, _River0110_1
-// MGC  dseg:3386                                                 dw _River1110_1, _River1110_2, _River1110_3, _River1110_4
-// MGC  dseg:3386                                                 dw _River0001, _River0001, _River0001, _River0001
-// MGC  dseg:3386                                                 dw _River1001_1, _River1001_2, _River1001_3, _River1001_1
-// MGC  dseg:3386                                                 dw _River0101_1, _River0101_2, _River0101_3, _River0101_1
-// MGC  dseg:3386                                                 dw _River1101_1, _River1101_2, _River1101_3, _River1101_4
-// MGC  dseg:3386                                                 dw _River0011_1, _River0011_2, _River0011_3, _River0011_1
-// MGC  dseg:3386                                                 dw _River1011_1, _River1011_2, _River1011_3, _River1011_4
-// MGC  dseg:3386                                                 dw _River0111_1, _River0111_2, _River0111_3, _River0111_4
-// MGC  dseg:3386                                                 dw _River1111_1, _River1111_2, _River1111_3, _River1111_4
+
+// MGC  dseg:3386
+int16_t TILE_River_Types[16][4] = 
+{
+    { tte_Grasslands, tte_Grasslands, tte_Grasslands, tte_Grasslands },
+    { _River1000,     _River1000,     _River1000,     _River1000     },
+    { _River0100,     _River0100,     _River0100,     _River0100     },
+    { _River1100_1,   _River1100_2,   _River1100_3,   _River1100_1   },
+    { _River0010,     _River0010,     _River0010,     _River0010     },
+    { _River1010_1,   _River1010_2,   _River1010_3,   _River1010_1   },
+    { _River0110_1,   _River0110_2,   _River0110_3,   _River0110_1   },
+    { _River1110_1,   _River1110_2,   _River1110_3,   _River1110_4   },
+    { _River0001,     _River0001,     _River0001,     _River0001     },
+    { _River1001_1,   _River1001_2,   _River1001_3,   _River1001_1   },
+    { _River0101_1,   _River0101_2,   _River0101_3,   _River0101_1   },
+    { _River1101_1,   _River1101_2,   _River1101_3,   _River1101_4   },
+    { _River0011_1,   _River0011_2,   _River0011_3,   _River0011_1   },
+    { _River1011_1,   _River1011_2,   _River1011_3,   _River1011_4   },
+    { _River0111_1,   _River0111_2,   _River0111_3,   _River0111_4   },
+    { _River1111_1,   _River1111_2,   _River1111_3,   _River1111_4   }
+};
 
 // MGC  dseg:3406
 char builddat_lbx_file__MGC_ovr051[] = "BUILDDAT";
@@ -254,10 +258,9 @@ and their order of execution
  */
 void Init_New_Game(void)
 {
-    int16_t IDK1 = 0;  // _DI_
-    int16_t IDK2 = 0;  // _SI_
+    int16_t rivers = 0;
+    int16_t tries = 0;
 
-    // bldg_data_table = SA_MK_FP0(LBX_Load_Data(cnst_BUILDDAT_File, 0, 0, 36, 52));
     bldg_data_table = (struct s_BLDG_DATA *)LBX_Load_Data(builddat_lbx_file__MGC_ovr051, 0, 0, 36, 52);
     
     Set_Mouse_List(1, mouselist_mapgen);
@@ -360,14 +363,14 @@ void Init_New_Game(void)
 
     Draw_Building_The_Worlds(85);
                                           
-    for(IDK1 = 0; IDK1 < 10; IDK1++)
+    for(rivers = 0; rivers < NUM_RIVERS; rivers++)
     {
-        for(IDK2 = 0; ((IDK2 < 2000) && (NEWG_CreateRiver__STUB(0) != 0)); IDK2++) { }
-        for(IDK2 = 0; ((IDK2 < 2000) && (NEWG_CreateRiver__STUB(1) != 0)); IDK2++) { }
+        for(tries = 0; ((tries < 2000) && (River_Path(0) != 0)); tries++) { }
+        for(tries = 0; ((tries < 2000) && (River_Path(1) != 0)); tries++) { }
     }
 
-    NEWG_SetRiverTiles__STUB(ARCANUS_PLANE);
-    NEWG_SetRiverTiles__STUB(MYRROR_PLANE);
+    River_Terrain(ARCANUS_PLANE);
+    River_Terrain(MYRROR_PLANE);
 
     NEWG_SetDeserts__STUB();
 
@@ -3992,31 +3995,701 @@ void NEWG_RandomizeTiles__STUB(void)
 // MGC o51p22
 // drake178: NEWG_CreateRiver()
 /*
-
+; attempts to create a river
+; returns 1 if successful, or 0 if not
+;
+; BUG? some shore types are excluded from becoming
+; a river outflow despite having the right surface
 */
 /*
 
 */
-int16_t NEWG_CreateRiver__STUB(int16_t wp)
+int16_t River_Path(int16_t wp)
 {
+    int16_t Directions[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Tile_Ys[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Tile_Xs[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Last_Tile_Y = 0;
+    int16_t Last_Tile_X = 0;
+    int16_t UU_PrevDir2 = 0;
+    int16_t Next_Y = 0;
+    int16_t Next_X = 0;
+    int16_t Direction_Attempts = 0;
+    int16_t Have_Outflow = 0;
+    int16_t Selected_Direction = 0;
+    int16_t itr = 0;
+    int16_t Prev_Direction = 0;
+    int16_t Main_Direction = 0;
+    int16_t base_wy = 0;
+    int16_t base_wx = 0;
+    int16_t Length = 0;
 
-    return ST_FALSE;
+    base_wx = (4 + Random((WORLD_WIDTH - 8)));
+    base_wy = (4 + Random((WORLD_HEIGHT - 8)));
+
+    if(_map_square_terrain_specials[((wp * WORLD_SIZE) + (base_wy * WORLD_WIDTH) + base_wx)] != 0) { return ST_FALSE; }
+
+    if(Square_Is_Ocean_NewGame((base_wx - 1), (base_wy - 1), wp) == ST_TRUE) { return ST_FALSE; }
+    if(Square_Is_Ocean_NewGame((base_wx - 1), (base_wy    ), wp) == ST_TRUE) { return ST_FALSE; }
+    if(Square_Is_Ocean_NewGame((base_wx - 1), (base_wy + 1), wp) == ST_TRUE) { return ST_FALSE; }
+    if(Square_Is_Ocean_NewGame((base_wx    ), (base_wy - 1), wp) == ST_TRUE) { return ST_FALSE; }
+    if(Square_Is_Ocean_NewGame((base_wx    ), (base_wy    ), wp) == ST_TRUE) { return ST_FALSE; }
+    if(Square_Is_Ocean_NewGame((base_wx    ), (base_wy + 1), wp) == ST_TRUE) { return ST_FALSE; }
+    if(Square_Is_Ocean_NewGame((base_wx + 1), (base_wy - 1), wp) == ST_TRUE) { return ST_FALSE; }
+    if(Square_Is_Ocean_NewGame((base_wx + 1), (base_wy    ), wp) == ST_TRUE) { return ST_FALSE; }
+    if(Square_Is_Ocean_NewGame((base_wx + 1), (base_wy + 1), wp) == ST_TRUE) { return ST_FALSE; }
+
+    if(Square_Is_Mountain_NewGame(base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
+
+    if(Square_Is_Hills_NewGame(base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
+
+    if(Square_Has_Node_NewGame(base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
+
+    if(Square_Is_River_NewGame(base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
+
+    Tile_Xs[0] = base_wx;
+    Tile_Ys[0] = base_wy;
+
+    Length = 1;
+
+    Have_Outflow = 0;
+
+    Direction_Attempts = 0;
+
+    Main_Direction = (Random(4) - 1);
+
+    Prev_Direction = ST_UNDEFINED;
+
+    Directions[0] = Main_Direction;
+
+    while(Have_Outflow == ST_FALSE)
+    {
+
+        // NOTE(drake178): reroll if the next tile is a mountain, hill, desert, or node, or has any terrain special
+
+        if(
+            (Random(2) > 1)
+            ||
+            (Prev_Direction ST_UNDEFINED)
+        )
+        {
+            Selected_Direction = Main_Direction;
+        }
+        else
+        {
+            /* NOTE(drake178): select a random direction that is not the opposite of the main one */
+            do
+            {
+                Selected_Direction = (Random(4) - 1);
+            } while(TILE_OppositeDirs[Main_Direction] == Selected_Direction);
+        }
+
+        Directions[Length] = Selected_Direction;
+
+        Prev_Direction = Selected_Direction;
+
+        Next_X = Tile_Xs[(Length - 1)] + dir_chg_tbl_wx[Selected_Direction];
+        Next_Y = Tile_Ys[(Length - 1)] + dir_chg_tbl_wy[Selected_Direction];
+
+        UU_PrevDir2 = Selected_Direction;
+
+        Direction_Attempts++;
+
+        if(Direction_Attempts > 30)
+        {
+            return ST_FALSE;
+        }
+
+        if(_map_square_terrain_specials[((wp * WORLD_SIZE) + (Next_Y * WORLD_WIDTH) + Next_X)] != 0) { continue; }
+        if(Square_Is_Mountain_NewGame(Next_X, Next_Y, wp) == ST_TRUE) { continue; }
+        if(Square_Is_Hills_NewGame(Next_X, Next_Y, wp)    == ST_TRUE) { continue; }
+        if(Square_Has_Node_NewGame(Next_X, Next_Y, wp)    == ST_TRUE) { continue; }
+        if(Square_Is_Desert_NewGame(Next_X, Next_Y, wp)   == ST_TRUE) { continue; }
+
+        if(Square_Is_River_NewGame(Next_X, Next_Y, wp) == ST_TRUE)
+        {
+            Have_Outflow = ST_TRUE;
+        }
+
+        Tile_Xs[Length] = Next_X;
+        Tile_Ys[Length] = Next_Y;
+
+        Length++;
+
+        if(Square_Is_Ocean_NewGame((Next_X    ), (Next_Y - 1), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
+        if(Square_Is_Ocean_NewGame((Next_X - 1), (Next_Y    ), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
+        if(Square_Is_Ocean_NewGame((Next_X    ), (Next_Y    ), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
+        if(Square_Is_Ocean_NewGame((Next_X + 1), (Next_Y    ), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
+        if(Square_Is_Ocean_NewGame((Next_X    ), (Next_Y + 1), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
+
+        if(Length > 28) { return ST_FALSE; }
+
+        Prev_Direction = Selected_Direction;
+
+    }
+
+
+    if((Have_Outflow != ST_FALSE) && (Length < 4)) { return ST_FALSE; }
+
+    Last_Tile_X = Tile_Xs[Length];
+    Last_Tile_Y = Tile_Ys[Length];
+
+    if(TILE_InvalidOutflow((Last_Tile_X    ), (Last_Tile_Y - 1), wp) == ST_TRUE) { return ST_FALSE; }  /* N */
+    if(TILE_InvalidOutflow((Last_Tile_X - 1), (Last_Tile_Y    ), wp) == ST_TRUE) { return ST_FALSE; }  /* W */
+    if(TILE_InvalidOutflow((Last_Tile_X    ), (Last_Tile_Y    ), wp) == ST_TRUE) { return ST_FALSE; }  /* C */
+    if(TILE_InvalidOutflow((Last_Tile_X + 1), (Last_Tile_Y    ), wp) == ST_TRUE) { return ST_FALSE; }  /* E*/
+    if(TILE_InvalidOutflow((Last_Tile_X    ), (Last_Tile_Y + 1), wp) == ST_TRUE) { return ST_FALSE; }  /* S */
+
+    for(itr = 0; itr < Length; itr++)
+    {
+        p_world_map[wp][Tile_Ys[itr]][Tile_Xs[itr]] = 1000;
+    }
+
+    return ST_TRUE;
 
 }
 
 
 // MGC o51p23
 // drake178: NEWG_SetRiverTiles()
-void NEWG_SetRiverTiles__STUB(int16_t wp)
+void River_Terrain(int16_t wp)
 /*
-
+; finalizes river tiles and generates the river outflow
+; ones at every river and shore intersection - since
+; not every combination has graphics, some rivers may
+; be shortened by this, turning their last tile into
+; grasslands, and no-inflow single tile lakes are also
+; turned into single tile deserts here
 */
 /*
 
 */
 {
+    int16_t terrain_type = 0;
+    int16_t river_mask = 0;
+    int16_t wy = 0;
+    int16_t wx = 0;
 
+    for(wy = 0; wy < WORLD_HEIGHT; wy++)
+    {
 
+        for(wx = 0; wx < WORLD_WIDTH; wx++)
+        {
+
+            terrain_type = p_world_map[wp][wy][wx];  // NOTE can't used the MOD version here because we have to check for the 1000 river placeholder value
+
+            if(Square_Is_River_NewGame(wx, wy, wp) == ST_TRUE)
+            {
+                terrain_type = TT_RIVER_PLACEHOLDER;
+            }
+
+            if(terrain_type == TT_RIVER_PLACEHOLDER)
+            {
+
+                river_mask = 0;
+
+                if((Square_Is_Ocean_NewGame((wx    ), (wy - 1), wp) == ST_TRUE) || (Square_Is_River_NewGame((wx    ), (wy - 1), wp) == ST_TRUE)) { river_mask += 1; }  /* N */
+                if((Square_Is_Ocean_NewGame((wx + 1), (wy    ), wp) == ST_TRUE) || (Square_Is_River_NewGame((wx + 1), (wy    ), wp) == ST_TRUE)) { river_mask += 2; }  /* E */
+                if((Square_Is_Ocean_NewGame((wx    ), (wy + 1), wp) == ST_TRUE) || (Square_Is_River_NewGame((wx    ), (wy + 1), wp) == ST_TRUE)) { river_mask += 4; }  /* S */
+                if((Square_Is_Ocean_NewGame((wx - 1), (wy    ), wp) == ST_TRUE) || (Square_Is_River_NewGame((wx - 1), (wy    ), wp) == ST_TRUE)) { river_mask += 8; }  /* W */
+
+                p_world_map[wp][wy][wx] = TILE_River_Types[river_mask][(Random(4) - 1)];
+
+            }
+
+            river_mask = 0;
+
+            if(Square_Is_River_NewGame((wx    ), (wy - 1), wp) == ST_TRUE) { river_mask += 1; }  /* N */
+            if(Square_Is_River_NewGame((wx + 1), (wy    ), wp) == ST_TRUE) { river_mask += 2; }  /* E */
+            if(Square_Is_River_NewGame((wx    ), (wy + 1), wp) == ST_TRUE) { river_mask += 4; }  /* S */
+            if(Square_Is_River_NewGame((wx - 1), (wy    ), wp) == ST_TRUE) { river_mask += 8; }  /* W */
+
+            if(terrain_type == _1Lake)
+            {
+// NOTE(drake178): if the tile has no river flowing into it, turn it into a desert ($134); if it has one, use the corresponding single lake tile; but if it has more than one, convert surrounding tiles to grasslands until only one river inflow remains, and backtrack the loop variables to compensate since previous river tiles may need adjusting
+                switch(river_mask)
+                {
+                    case 0:
+                    {
+                        p_world_map[wp][wy][wx] = _1Desert;
+                    } break;
+                    case 1:
+                    {
+                        p_world_map[wp][wy][wx] = _1LakeRiv_N;
+                    } break;
+                    case 2:
+                    {
+                        p_world_map[wp][wy][wx] = _1LakeRiv_E;
+                    } break;
+                    case 4:
+                    {
+                        p_world_map[wp][wy][wx] = _1LakeRiv_S;
+                    } break;
+                    case 8:
+                    {
+                        p_world_map[wp][wy][wx] = _1LakeRiv_W;
+                    } break;
+                    case 9:
+                    {
+                        p_world_map[wp][wy][wx] = _1LakeRiv_N;
+                        p_world_map[wp][wy][(wx - 1)] = tte_Grasslands;  // W
+                        wx -= 2;
+                        wy -= 1;
+                    } break;
+                    case 10:
+                    {
+                        p_world_map[wp][wy][wx] = _1LakeRiv_W;
+                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;  // E
+                        wx -= 1;
+                        wy -= 1;
+                    } break;
+                    case 11:
+                    {
+                        p_world_map[wp][wy][wx] = _1LakeRiv_N;
+                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;  // E
+                        p_world_map[wp][wy][(wx - 1)] = tte_Grasslands;  // W
+                        wx -= 2;
+                        wy -= 1;
+                    } break;
+                    case 12:
+                    {
+                        p_world_map[wp][wy][wx] = _1LakeRiv_W;
+                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;  // S
+                        wx -= 2;
+                        wy -= 1;
+                    } break;
+                    case 13:
+                    {
+                        p_world_map[wp][wy][wx] = _1LakeRiv_N;
+                        p_world_map[wp][wy][(wx - 1)] = tte_Grasslands;  // W
+                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;  // S
+                        wx -= 2;
+                        wy -= 1;
+                    } break;
+                    case 14:
+                    {
+                        p_world_map[wp][wy][wx] = _1LakeRiv_W;
+                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;  // E
+                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;  // S
+                        wx -= 2;
+                        wy -= 1;
+                    } break;
+                    case 15:
+                    {
+                        p_world_map[wp][wy][wx] = _1LakeRiv_N;
+                        p_world_map[wp][wy][(wx - 1)] = tte_Grasslands;  // W
+                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;  // S
+                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;  // E
+                        wx -= 2;
+                        wy -= 1;
+                    } break;
+                    
+                }
+            }
+
+            if(terrain_type < _Shore10000000)  // ¿ DEDU first Shore block/group except Lake? The game Civilation calls these a "watershed"
+            {
+// NOTE(drake178): if the tile has river inflow from its only valid cardinal direction, turn it into the corresponding river outlet shore tile
+                switch(terrain_type)  // Dasm (terrain_type - 3)
+                {
+                    case _Shore00000010:  /* 0x0006 */
+                    {
+                        if(river_mask == 4) { ( p_world_map[wp][wy][wx] = _Shore00001R00); }
+                    } break;
+                    case _Shore00001010:  /* 0x0007 */
+                    {
+                        if(river_mask == 4) { ( p_world_map[wp][wy][wx] = _Shore00001R10); }
+                    } break;
+                    case _Shore00100010:  /* 0x0008 */
+                    {
+                        if(river_mask == 4) { ( p_world_map[wp][wy][wx] = _Shore00000R10); }
+                    } break;
+                    case _Shore10000010:  /* 0x0009 */
+                    {
+
+                    } break;
+                    case _Shore00011000:  /* 0x000A */
+                    {
+
+                    } break;
+                    case _Shore00000100:  /* 0x000B */
+                    {
+
+                    } break;
+                    case _Shore00000011:  /* 0x000C */
+                    {
+
+                    } break;
+                    case _Shore10100000:  /* 0x000D */
+                    {
+
+                    } break;
+                    case _Shore10001000:  /* 0x000E */
+                    {
+
+                    } break;
+                    case _Shore00101000:  /* 0x000F */
+                    {
+
+                    } break;
+                    case _Shore00111000:  /* 0x0010 */
+                    {
+
+                    } break;
+                    case _Shore00010000:  /* 0x0011 */
+                    {
+
+                    } break;
+                    case _1Lake:          /* 0x0012 */
+                    {
+
+                    } break;
+                    case _Shore00000001:  /* 0x0013 */
+                    {
+
+                    } break;
+                    case _Shore10000011:  /* 0x0014 */
+                    {
+
+                    } break;
+                    case _Shore00110000:  /* 0x0015 */
+                    {
+
+                    } break;
+                    case _Shore01000000:  /* 0x0016 */
+                    {
+
+                    } break;
+                    case _Shore10000001:  /* 0x0017 */
+                    {
+
+                    } break;
+                    case _Shore10101000:  /* 0x0018 */
+                    {
+
+                    } break;
+                    case _Shore00101010:  /* 0x0019 */
+                    {
+
+                    } break;
+                    case _Shore10001010:  /* 0x001A */
+                    {
+
+                    } break;
+                    case _Shore00100000:  /* 0x001B */
+                    {
+
+                    } break;
+                    case _Shore01100000:  /* 0x001C */
+                    {
+
+                    } break;
+                    case _Shore11100000:  /* 0x001D */
+                    {
+
+                    } break;
+                    case _Shore11000000:  /* 0x001E */
+                    {
+
+                    } break;
+                    
+                }
+
+            }
+
+            if(
+                (terrain_type >= _Shore11000001)
+                &&
+                (terrain_type <= _Shore11101110)
+            )
+            {
+// NOTE(drake178): if the tile has a river inflow from either or both of its two valid sides, turn it into a corresponding single or double river outlet
+                switch(terrain_type)  // Dasm (terrain_type - 34)  ; switch 16 cases
+                {
+                    case _Shore10110011:
+                    {
+                        if(river_mask == 1)       { ( p_world_map[wp][wy][wx] = _Shore1R000001); }
+                        if(river_mask == 8)       { ( p_world_map[wp][wy][wx] = _Shore1100000R); }
+                        if(river_mask == (1 + 8)) { ( p_world_map[wp][wy][wx] = _Shore1R00000R); }
+                    } break;
+
+                }
+
+            }
+
+            if(
+                (terrain_type >= _Shore11101110)
+                &&
+                (terrain_type <= _Shore01000100)
+            )
+            {
+                switch(river_mask)
+                {
+                    case 1:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R101110 - 0x32));
+                    } break;
+                    case 4:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore11101R10 - 0x32));
+                    } break;
+                    case (1 + 4):
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R101110 - 0x32));
+                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;  // S
+                        wx--;
+                        wy--;
+                    } break;
+                }
+            }
+
+            if(
+                (terrain_type >= _Shore10010011)
+                &&
+                (terrain_type <= _Shore00111001)
+            )
+            {
+                switch(river_mask)
+                {
+                    case 2:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore100R0011 - 0x42));
+                    } break;
+                    case 8:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1001001R - 0x42));
+                    } break;
+                    case (2 + 8):
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1001001R - 0x42));
+                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;  // E
+                        wx--;
+                        wy--;
+                    } break;
+                }
+            }
+
+            if(
+                (terrain_type == _Shore00011111)
+                ||
+                (terrain_type == _Shore10011111)
+                ||
+                (terrain_type == _Shore00111111)
+                ||
+                (terrain_type == _Shore10111111)
+            )
+            {
+                switch(river_mask)  // Dasm (river_mask - 2)
+                {
+                    case 4:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore000R1111 - 0x52));
+                    } break;
+                    case 6:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore00011R11 - 0x52));
+                    } break;
+                    case 8:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore00011R11 - 0x52));
+                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
+                    } break;
+                    case 10:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore0001111R - 0x52));
+                        wx -= 1;
+                        wy -= 1;
+                    } break;
+                    case 12:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore0001111R - 0x52));
+                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
+                        wx -= 1;
+                        wy -= 1;
+                    } break;
+                    case 14:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore0001111R - 0x52));
+                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;
+                        wx -= 1;
+                        wy -= 1;
+                    } break;
+                    case 16:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore0001111R - 0x52));
+                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
+                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;
+                        wx -= 1;
+                        wy -= 1;
+                    } break;
+                }
+            }
+
+            if(
+                (terrain_type == _Shore11000111)
+                ||
+                (terrain_type == _Shore11100111)
+                ||
+                (terrain_type == _Shore11001111)
+                ||
+                (terrain_type == _Shore11101111)
+            )
+            {
+                switch(river_mask)  // Dasm (river_mask - 1)
+                {
+                    case 1:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R000111 - 0x53));
+                    } break;
+                    case 4:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore11000R11 - 0x53));
+                    } break;
+                    case 5:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R000111 - 0x53));
+                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;
+                        wy -= 1;
+                    } break;
+                    case 8:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1100011R - 0x53));
+                    } break;
+                    case 9:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R000111 - 0x53));
+                        p_world_map[wp][wy][(wx - 1)] = tte_Grasslands;
+                        wx -= 2;
+                        wy -= 1;
+                    } break;
+                    case 12:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1100011R - 0x53));
+                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;
+                        wy -= 1;
+                    } break;
+                    case 13:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R000111 - 0x53));
+                        p_world_map[wp][wy][(wx - 1)] = tte_Grasslands;
+                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;
+                        wx -= 2;
+                        wy -= 1;
+                    } break;
+                }
+            }
+
+            if(
+                (terrain_type == _Shore11110001)
+                ||
+                (terrain_type == _Shore11111001)
+                ||
+                (terrain_type == _Shore11110011)
+                ||
+                (terrain_type == _Shore11111011)
+            )
+            {
+                switch(river_mask)  // Dasm (river_mask - 1)
+                {
+                    case 1:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R110001 - 0x54));
+                    } break;
+                    case 2:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore111R0001 - 0x54));
+                    } break;
+                    case 3:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R110001 - 0x54));
+                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
+                        wx -= 1;
+                    } break;
+                    case 8:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1111000R - 0x54));
+                    } break;
+                    case 9:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R110001 - 0x54));
+                        p_world_map[wp][wy][(wx - 1)] = tte_Grasslands;
+                        wx -= 2;
+                    } break;
+                    case 10:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1111000R - 0x54));
+                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
+                        wx--;
+                    } break;
+                    case 11:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R110001 - 0x54));
+                        p_world_map[wp][wy][(wx - 1)] = tte_Grasslands;
+                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
+                        wx -= 2;
+                    } break;
+                }
+            }
+
+            if(
+                (terrain_type == _Shore01111100)
+                ||
+                (terrain_type == _Shore01111110)
+                ||
+                (terrain_type == _Shore11111100)
+                ||
+                (terrain_type == _Shore11111110)
+            )
+            {
+                switch(river_mask)  // Dasm (river_mask - 1)
+                {
+                    case 1:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore0R111100 - 0x55));
+                    } break;
+                    case 2:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore011R1100 - 0x55));
+                    } break;
+                    case 4:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore01111R00 - 0x55));
+                    } break;
+                    case 3:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore0R111100 - 0x55));
+                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
+                        wx -= 1;
+                        wy -= 1;
+                    } break;
+                    case 6:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore01111R00 - 0x55));
+                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
+                        wx -= 1;
+                        wy -= 1;
+                    } break;
+                    case 5:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore0R111100 - 0x55));
+                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;
+                        wx -= 1;
+                        wy -= 1;
+                    } break;
+                    case 7:
+                    {
+                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore0R111100 - 0x55));
+                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
+                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;
+                        wx -= 1;
+                        wy -= 1;
+                    } break;
+                }
+            }
+
+        }
+
+    }
 
 }
 
@@ -5402,7 +6075,27 @@ void Movement_Mode_Cost_Maps(int16_t wp)
 
 // MGC o51p35
 // drake178: TILE_InvalidOutflow()
-// TILE_InvalidOutflow()
+/*
+; returns 1 if the tile is not a valid river outflow
+; tile, or 0 otherwise
+;
+; BUG?: why are these shore tiles excluded, and why
+;  are land tiles included?
+*/
+/*
+Something with which directions rivers flow or just the random walker?
+
+_Shore10111000  0x062   98
+_Shore10101111  0x0A1  161
+*/
+int16_t TILE_InvalidOutflow(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;
+    terrain_type = (p_world_map[wp][wy][wx] % TerType_Count);
+    if((terrain_type >= _Shore10111000) && (terrain_type <= _Shore10101111)) { return ST_TRUE; }
+    return ST_FALSE;
+}
+
 
 // MGC o51p36
 // drake178: NEWG_UpdateProgress()
@@ -5575,11 +6268,11 @@ int16_t Square_Is_Ocean_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
     terrain_type = (p_world_map[wp][wy][wx] % TerType_Count);
-    if(terrain_type != tt_BugGrass) { return ST_FALSE; }
-    if(terrain_type < tt_Grasslands1) { return ST_TRUE; }
+    if(terrain_type  != tt_BugGrass)   { return ST_FALSE; }
+    if(terrain_type  < tt_Grasslands1) { return ST_TRUE;  }
     if((terrain_type > TT_RiverM_end) && (terrain_type < TT_Rivers_1st)) { return ST_TRUE; }
-    if((terrain_type > tt_Desert_Lst) && (terrain_type < TT_4WRiver1)) { ST_TRUE; }
-    if((terrain_type > TT_4WRiver5) && (terrain_type < tt_Tundra_1st)) { return ST_TRUE; }
+    if((terrain_type > tt_Desert_Lst) && (terrain_type < TT_4WRiver1))   { return ST_TRUE; }
+    if((terrain_type > TT_4WRiver5)   && (terrain_type < tt_Tundra_1st)) { return ST_TRUE; }
     return ST_FALSE;
 }
 
@@ -5670,7 +6363,25 @@ int16_t Square_Is_Forest_NewGame(int16_t wx, int16_t wy, int16_t wp)
 
 // MGC o51p43
 // drake178: TILE_IsRiver()
-// TILE_IsRiver()
+int16_t Square_Is_River_NewGame(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;
+
+    /* NOTE(drake178): converts the $3E8 used for temporariliy marking rivers into $EE - fortunately actually a river */
+    // 1000 mod 762 = 238  0xEE
+    terrain_type = (p_world_map[wp][wy][wx] % TerType_Count);
+
+    if((terrain_type > tt_Forest3) && (terrain_type < TT_Lake2)) { return ST_TRUE; }  /* NOTE(drake178): BUG: this should be TT_Lake1 ($C5) */
+
+    if((terrain_type > TT_Shore2F_end) && (terrain_type < tt_Mountains_Fst)) { return ST_TRUE; }
+
+    if((terrain_type > TT_Shore2_end) && (terrain_type < TT_Shore3_1st)) { return ST_TRUE; }
+
+    if(terrain_type == TT_RIVER_PLACEHOLDER) { return ST_TRUE; }
+
+    return ST_FALSE;
+}
+
 
 // MGC o51p44
 // drake178: UU_TILE_IsRiverOutlet()

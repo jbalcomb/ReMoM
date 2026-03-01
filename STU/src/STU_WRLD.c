@@ -204,7 +204,7 @@ static char Terrain_Type_To_Char(int16_t tt)
     if(tt == tt_Grasslands4)    return 'g';
     if(tt <= tt_Tundra3)        return 't';                        /* tt_Tundra2 .. tt_Tundra3 */
     if(tt <= tt_Forest3)        return 'f';                        /* tt_Forest2 .. tt_Forest3 */
-    if(tt <= TT_RiverM_end)     return '%';                        /* TT_RiverM_1st .. TT_RiverM_end */
+    if(tt <= TT_RiverM_end)     return '=';                        /* TT_RiverM_1st .. TT_RiverM_end */
     if(tt <= TT_Lake4)          return 'l';                        /* TT_Lake1 .. TT_Lake4 */
     if(tt <= TT_Shore2F_end)    return '#';                        /* TT_Shore2F_1st .. TT_Shore2F_end */
     if(tt <= tt_Rivers_end)     return '=';                        /* TT_Rivers_1st .. tt_Rivers_end */
@@ -1694,8 +1694,11 @@ static void Allocate_Simulation(int simulations_to_run)
 static void Allocate_Game_Data(void)
 {
     _landmasses                  = (uint8_t           *)Allocate_Space(NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 1) / SZ_PARAGRAPH_B));
-    _world_maps                  = (uint8_t           *)Allocate_Space(NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 2) / SZ_PARAGRAPH_B));
-    _map_square_terrain_specials = (uint8_t           *)Allocate_Space(NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 1) / SZ_PARAGRAPH_B));
+    // _world_maps               = (uint8_t           *)Allocate_Space( NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 2)                  / SZ_PARAGRAPH_B));
+    //_world_maps                = (uint8_t           *)Allocate_Space((NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 2) + WORLD_OVERRUN) / SZ_PARAGRAPH_B));
+    _world_maps                  = (uint8_t           *)Allocate_Space(( ((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERRUN) * sizeof(int16_t)) / SZ_PARAGRAPH_B) + 2) );
+    // _map_square_terrain_speci = (uint8_t           *)Allocate_Space(NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 1) / SZ_PARAGRAPH_B));
+    _map_square_terrain_specials = (uint8_t           *)Allocate_Space(((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERRUN) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);
     _map_square_flags            = (uint8_t           *)Allocate_Space(NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 1) / SZ_PARAGRAPH_B));
     _UNITS                       = (struct s_UNIT     *)Allocate_Space(2028);
     _CITIES                      = (struct s_CITY     *)Allocate_Space((((NUM_CITIES     * sizeof(struct s_CITY    )) / SZ_PARAGRAPH_B) + 1));
@@ -1790,6 +1793,8 @@ static void Capture_Simulation_Data(int sim_idx)
 
 void Simulate_World_Map_Generation(void)
 {
+    int16_t rivers = 0;
+    int16_t tries = 0;
     int simulations_to_run = 0;
     int num_maps_to_generate = 0;
     int itr = 0;
@@ -1838,20 +1843,19 @@ void Simulate_World_Map_Generation(void)
         Generate_Terrain_Specials(ARCANUS_PLANE);
         Generate_Terrain_Specials(MYRROR_PLANE);
 
-        Worldmap_Statistics(itr, ARCANUS_PLANE);
-        Display_Worldmap_Statistics(itr, ARCANUS_PLANE);
-        Display_Worldmap_Histogram(itr, ARCANUS_PLANE);
-        Print_Worldmap_Map(itr, ARCANUS_PLANE);
-
         Generate_Roads(ARCANUS_PLANE);
         Generate_Roads(MYRROR_PLANE);
 
-        Worldmap_Statistics(itr, ARCANUS_PLANE);
-        Display_Worldmap_Statistics(itr, ARCANUS_PLANE);
-        Display_Worldmap_Histogram(itr, ARCANUS_PLANE);
-        Print_Worldmap_Map(itr, ARCANUS_PLANE);
-
         Simex_Autotiling();
+
+        for(rivers = 0; rivers < NUM_RIVERS; rivers++)
+        {
+            for(tries = 0; ((tries < 2000) && (River_Path(ARCANUS_PLANE) != 0)); tries++) { }
+            for(tries = 0; ((tries < 2000) && (River_Path(MYRROR_PLANE)  != 0)); tries++) { }
+        }
+        
+        River_Terrain(ARCANUS_PLANE);
+        River_Terrain(MYRROR_PLANE);
 
         Worldmap_Statistics(itr, ARCANUS_PLANE);
         Display_Worldmap_Statistics(itr, ARCANUS_PLANE);
@@ -1862,19 +1866,18 @@ void Simulate_World_Map_Generation(void)
         // Display_Worldmap_Histogram(itr, MYRROR_PLANE);
         // Print_Worldmap_Map(itr, MYRROR_PLANE);
 
-        // for(IDK1 = 0; IDK1 < 10; IDK1++)
-        // {
-        //     for(IDK2 = 0; ((IDK2 < 2000) && (NEWG_CreateRiver__STUB(0) != 0)); IDK2++) { }
-        //     for(IDK2 = 0; ((IDK2 < 2000) && (NEWG_CreateRiver__STUB(1) != 0)); IDK2++) { }
-        // }
-        
-        // NEWG_SetRiverTiles__STUB(ARCANUS_PLANE);
         // NEWG_SetDeserts__STUB();
+
         // NEWG_RandomizeTiles__STUB();
+
         // Movement_Mode_Cost_Maps(ARCANUS_PLANE);
+
         // CRP_NEWG_CreatePathGrids__WIP(MYRROR_PLANE);
+
         // Init_Square_Explored();
+
         // NEWG_AnimateOceans__STUB();
+        
         // Set_Upper_Lair_Guardian_Count();
 
 

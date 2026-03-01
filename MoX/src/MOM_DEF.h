@@ -91,6 +91,7 @@ ITEM_MAX_POWERS
 // #define NODE_COUNT_MAX          30
 // #define LAIR_COUNT_MAX         102
 #define NUM_PLANES                  2
+#define NUM_RIVERS                 10
 #define NUM_PLAYERS                 6
 #define NUM_CITIES                100
 #define NUM_UNITS                1009
@@ -266,6 +267,7 @@ WIZARDS.LBX
 #define WORLD_SIZE          2400
 #define WORLD_SIZE_DB       2400  // 1-byte values
 #define WORLD_SIZE_DW       4800  // 2-byte values
+#define WORLD_OVERRUN       (4 * WORLD_WIDTH)  /* too many AVRL/AVWL and no way to duplicate the OG-MoM behavior; something somewhere does (wy + 4) */
 
 #define CITY_AREA_WIDTH        5
 #define CITY_AREA_HEIGHT       5

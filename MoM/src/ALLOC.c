@@ -84,7 +84,11 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     // _CITIES = (struct s_CITY*)Allocate_First_Block(World_Data, 714);  // 714 PR, 11424 B
     _CITIES = (struct s_CITY*)Allocate_First_Block(World_Data, (((NUM_CITIES * sizeof(struct s_CITY)) / 16) + 1));  // 714 PR, 11424 B
 
-    _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, 602);  // 602 PR, 9632 B
+    /*
+        ...make a better note somewhere...
+        WORLD_OVERRUN is for where OG-MoM does some bad math on the buffer
+    */
+    _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, ( ((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERRUN) * sizeof(int16_t)) / SZ_PARAGRAPH_B) + 2) );  // 602 PR, 9632 B  ... still don't know how they got the +2 for the headers. maybe header and subheader
     p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
 
     UU_TBL_1 = Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
@@ -92,7 +96,10 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
 
     _landmasses    = (uint8_t *)Allocate_Next_Block(World_Data, 302);  // 302 PR, 4832 B  ((2 * 60 * 40) / 16)
 
-    _map_square_terrain_specials = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
+    /*
+        same OVERRUN issue as _world_maps
+    */
+    _map_square_terrain_specials = (uint8_t *)Allocate_Next_Block(World_Data, ((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERRUN) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);   // 302 PR, 4832 B
 
     _map_square_flags = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
 

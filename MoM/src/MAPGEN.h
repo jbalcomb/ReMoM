@@ -84,10 +84,10 @@ void Simex_Autotiling(void);
 void NEWG_RandomizeTiles__STUB(void);
 
 // MGC o51p22
-int16_t NEWG_CreateRiver__STUB(int16_t wp);
+int16_t River_Path(int16_t wp);
 
 // MGC o51p23
-void NEWG_SetRiverTiles__STUB(int16_t wp);
+void River_Terrain(int16_t wp);
 
 // MGC o51p24
 void Generate_Neutral_Cities__WIP(int16_t wp);
@@ -123,7 +123,7 @@ void Set_Square_Explored_Bits(int16_t wp, int16_t wx, int16_t wy, int16_t bits);
 void Movement_Mode_Cost_Maps(int16_t wp);
 
 // MGC o51p35
-// TILE_InvalidOutflow()
+int16_t TILE_InvalidOutflow(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p36
 void Draw_Building_The_Worlds(int16_t percent);
@@ -147,7 +147,7 @@ int16_t Square_Has_Tower_NewGame(int16_t wx, int16_t wy);
 int16_t Square_Is_Forest_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p43
-// TILE_IsRiver()
+int16_t Square_Is_River_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p44
 // UU_TILE_IsRiverOutlet()
