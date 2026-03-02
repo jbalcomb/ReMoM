@@ -1,4 +1,84 @@
 
+
+# Rivers Debug
+build a test-case
+initial random wx,wy from the first successful run of River_Path(0)?
+
+base_wx  41
+base_wy  26
+
+length  5
+
+wx_array
+wx_array = 0x00000094af7ff328 {0x0029, 0x002a, 0x002a, 0x002b, 0x002c, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, ...}
+
+wy_array
+wy_array = 0x00000094af7ff2c8 {0x001a, 0x001a, 0x001b, 0x001b, 0x001b, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, ...}
+
+tt_Forest1     = 0xA3,
+
+River_Path(): base_wx = 41, base_wy = 26
+River_Path(): DBG_terrain_type: 163
+River_Path(): DBG_terrain_special: 0
+River_Path(): downstream: 3
+River_Path(): direction: 3
+River_Path(): next_wx = 42, next_wy = 26
+River_Path(): direction: 0
+River_Path(): next_wx = 42, next_wy = 27
+River_Path(): direction: 3
+River_Path(): next_wx = 43, next_wy = 27
+River_Path(): direction: 3
+River_Path(): next_wx = 44, next_wy = 27
+
+River_Path(): base_wx = 41, base_wy = 26
+River_Path(): DBG_terrain_type: 163 A3
+River_Path(): DBG_terrain_special: 0 0
+River_Path(): downstream: 3
+River_Path(): direction: 3
+River_Path(): next_wx = 42, next_wy = 26
+River_Path(): direction: 0
+River_Path(): next_wx = 42, next_wy = 27
+River_Path(): direction: 3
+River_Path(): next_wx = 43, next_wy = 27
+River_Path(): direction: 3
+River_Path(): next_wx = 44, next_wy = 27
+
+1000
+mask 2  E
+makes _River0100      = 0xBC,
+1000
+mask c  4 + 8  S & W
+DBG_river_type ea 234
+makes _River0011_3    = 0xEA,
+1000
+mask 3  1 + 2  N & E
+DBG_river_type  bd  189
+makes _River1100_1    = 0xBD,
+1000
+mask a  2 + 8  E & W
+DBG_river_type  f0  240
+makes _River0101_1    = 0xF0,
+1000
+mask c  4 + 8  S & W
+DBG_river_type be 190
+makes _River0011_1    = 0xBE,
+
+DBG_placeholder_river_count: 5
+DBG_river_group_count: 5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 OSG pg 182
 Table 14.4
 What Special Terrain Feature Appears?
