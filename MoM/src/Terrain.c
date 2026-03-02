@@ -544,15 +544,15 @@ int16_t Square_Is_River(int16_t wx, int16_t wy, int16_t wp)
     {
         terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
-        if(terrain_type <= TT_4WRiver5)
+        if(terrain_type <= tt_4WRiver5)
         {
-            if(terrain_type <= TT_Shore2_end)
+            if(terrain_type <= tt_Shore2_end)
             {
                 if(terrain_type <= tt_Rivers_end)
                 {
-                    if(terrain_type <= TT_Shore2F_end)
+                    if(terrain_type <= tt_Shore2F_end)
                     {
-                        if(terrain_type <= TT_RiverM_end)
+                        if(terrain_type <= tt_RiverM_end)
                         {
                             if(terrain_type <= tt_Forest3)
                             {
@@ -947,180 +947,50 @@ ROAD BUILDING
 TERRAIN TYPE OR SPECIAL
 TURNS TO BUILD
 */
-/*
-no idea how to make this look sensible
-maybe not actually a switch
 
-*/
 int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type;  // _CX_
-
-    if((_map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] & MSF_ROAD) != 0)
-    {
-        return 0;
-    }
-
+    int16_t terrain_type;
+    if((_map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] & MSF_ROAD) != 0) { return 0; }
     terrain_type = TERRAIN_TYPE(wx, wy, wp);
-
-    if(terrain_type >= tt_Tundra_1st)
-    {
-        return 6;
-    }
-
-    if(terrain_type == tt_BugGrass)
-    {
-        return 2;
-    }
-
-    // tt_Ocean1, tt_BugGrass, tt_Shore1_Fst, TT_Lake, tt_Shore1_Lst
-    if(terrain_type < tt_Grasslands1)
-    {
-        return ST_UNDEFINED;
-    }
-
-    if(terrain_type > TT_4WRiver5)
-    {
-        return ST_UNDEFINED;
-    }
-
-    if(terrain_type > TT_Shore2_end)
-    {
-        return 5;
-    }
-
-    if(terrain_type > tt_Desert_Lst)
-    {
-        return ST_UNDEFINED;
-    }
-
-    if(terrain_type > tt_Hills_Lst)
-    {
-        return 4;
-    }
-
-    if(terrain_type > tt_Mountains_Lst)
-    {
-        return 6;
-    }
-
-    if(terrain_type > tt_Rivers_end)
-    {
-        return 8;
-    }
-
-    if(terrain_type > TT_Shore2F_end)
-    {
-        return 5;
-    }
-
-    if(terrain_type > TT_RiverM_end)
-    {
-        return ST_UNDEFINED;
-    }
-
-    if(terrain_type > tt_Forest3)
-    {
-        return 5;
-    }
-
+    if(terrain_type >= tt_Tundra_1st)   { return 6; }
+    if(terrain_type == tt_BugGrass)     { return 2; }
+    if(terrain_type < tt_Grasslands1)   { return ST_UNDEFINED; }
+    if(terrain_type > tt_4WRiver5)      { return ST_UNDEFINED; }
+    if(terrain_type > tt_Shore2_end)    { return 5; }
+    if(terrain_type > tt_Desert_Lst)    { return ST_UNDEFINED; }
+    if(terrain_type > tt_Hills_Lst)     { return 4; }
+    if(terrain_type > tt_Mountains_Lst) { return 6; }
+    if(terrain_type > tt_Rivers_end)    { return 8; }
+    if(terrain_type > tt_Shore2F_end)   { return 5; }
+    if(terrain_type > tt_RiverM_end)    { return ST_UNDEFINED; }
+    if(terrain_type > tt_Forest3)       { return 5; }
     switch(terrain_type)
     {
-        case tt_Grasslands1:     /* 0x0A2 */
-        {
-            return 3;
-        } break;
-        case tt_Forest1:    /* 0x0A3 */
-        {
-            return 6;
-        } break;
-        case tt_Mountain1:  /* 0x0A4 */
-        {
-            return 8;
-        } break;
-        case tt_Desert1:    /* 0x0A5 */
-        {
-            return 4;
-        } break;
-        case tt_Swamp1:     /* 0x0A6 */
-        {
-            return 8;
-        } break;
-        case tt_Tundra1:    /* 0x0A7 */
-        {
-            return 6;
-        } break;
-        case tt_SorceryNode:   /* 0x0A8 */
-        {
-            return 4;
-        } break;
-        case tt_NatureNode:    /* 0x0A9 */
-        {
-            return 5;
-        } break;
-        case tt_ChaosNode:  /* 0x0AA */
-        {
-            return 5;
-        } break;
-        case tt_Hills1:     /* 0x0AB */
-        {
-            return 6;
-        } break;
-        case tt_Grasslands2:     /* 0x0AC */
-        {
-            return 3;
-        } break;
-        case tt_Grasslands3:     /* 0x0AD */
-        {
-            return 3;
-        } break;
-        case tt_Desert2:    /* 0x0AE */
-        {
-            return 4;
-        } break;
-        case tt_Desert3:    /* 0x0AF */
-        {
-            return 4;
-        } break;
-        case tt_Desert4:    /* 0x0B0 */
-        {
-            return 4;
-        } break;
-        case tt_Swamp2:     /* 0x0B1 */
-        {
-            return 8;
-        } break;
-        case tt_Swamp3:     /* 0x0B2 */
-        {
-            return 8;
-        } break;
-        case tt_Volcano:    /* 0x0B3 */
-        {
-            return 8;
-        } break;
-        case tt_Grasslands4:     /* 0x0B4 */
-        {
-            return 3;
-        } break;
-        case tt_Tundra2:    /* 0x0B5 */
-        {
-            return 6;
-        } break;
-        case tt_Tundra3:    /* 0x0B6 */
-        {
-            return 6;
-        } break;
-        case tt_Forest2:    /* 0x0B7 */
-        {
-            return 6;
-        } break;
-        case tt_Forest3:    /* 0x0B8 */
-        {
-            return 6;
-        } break;
-
+        case tt_Grasslands1: { return 3; }
+        case tt_Forest1:     { return 6; }
+        case tt_Mountain1:   { return 8; }
+        case tt_Desert1:     { return 4; }
+        case tt_Swamp1:      { return 8; }
+        case tt_Tundra1:     { return 6; }
+        case tt_SorceryNode: { return 4; }
+        case tt_NatureNode:  { return 5; }
+        case tt_ChaosNode:   { return 5; }
+        case tt_Hills1:      { return 6; }
+        case tt_Grasslands2: { return 3; }
+        case tt_Grasslands3: { return 3; }
+        case tt_Desert2:     { return 4; }
+        case tt_Desert3:     { return 4; }
+        case tt_Desert4:     { return 4; }
+        case tt_Swamp2:      { return 8; }
+        case tt_Swamp3:      { return 8; }
+        case tt_Volcano:     { return 8; }
+        case tt_Grasslands4: { return 3; }
+        case tt_Tundra2:     { return 6; }
+        case tt_Tundra3:     { return 6; }
+        case tt_Forest2:     { return 6; }
+        case tt_Forest3:     { return 6; }
     }
-
     return ST_UNDEFINED;
 }
 
@@ -1357,14 +1227,14 @@ int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
         }
         else
         {
-            // <= TT_4WRiver5    = 0x1D8,
+            // <= tt_4WRiver5    = 0x1D8,
             if(terrain_type > 0x1D3)  /* _Shore111R1110 */
             {
                 goto Return_False;
             }
             else
             {
-                // <= TT_Shore2_end  = 0x1D3,
+                // <= tt_Shore2_end  = 0x1D3,
                 if(terrain_type > 0x1C3)  /* _Desert10101111 */
                 {
                     // >= tt_Shore2_1st  = 0x1C4,
@@ -1375,20 +1245,20 @@ int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
                     // <= tt_Desert_Lst  = 0x1C3,
                     if(terrain_type > 0xE8)  /* _Shore000R0000 */
                     {
-                        // >= TT_Rivers_1st  = 0x0E9,
+                        // >= tt_Rivers_1st  = 0x0E9,
                         goto Return_False;
                     }
                     else
                     {
-                        // <= TT_Shore2F_end = 0xE8,
+                        // <= tt_Shore2F_end = 0xE8,
                         if(terrain_type > 0xC4)  /* _River1001_2 */
                         {
-                            // >= TT_Lake1       = 0x0C5,
+                            // >= tt_Lake1       = 0x0C5,
                             goto Return_True;
                         }
                         else
                         {
-                            // <= TT_RiverM_end  = 0x0C4,
+                            // <= tt_RiverM_end  = 0x0C4,
                             if(terrain_type > _Shore10101111)  /* _Shore10101111 */
                             {
                                 // >= tt_Grasslands1      = 0x0A2,
@@ -1487,7 +1357,7 @@ int16_t Map_Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp)
     else
     {
 
-        if(terrain_type == TT_Lake)
+        if(terrain_type == tt_Lake)
         {
 
             is_emarkable = ST_FALSE;
@@ -1993,15 +1863,15 @@ int16_t Square_Is_Land(int16_t wx, int16_t wy, int16_t wp)
         {
 
             if(
-                (terrain_type < TT_Rivers_1st)
+                (terrain_type < tt_Rivers_1st)
                 ||
-                (terrain_type > TT_Rivers_1st)
+                (terrain_type > tt_Rivers_1st)
             )
             {
                 if(
-                    (terrain_type < TT_4WRiver1)
+                    (terrain_type < tt_4WRiver1)
                     ||
-                    (terrain_type > TT_4WRiver5)
+                    (terrain_type > tt_4WRiver5)
                 )
                 {
 
@@ -2009,7 +1879,7 @@ int16_t Square_Is_Land(int16_t wx, int16_t wy, int16_t wp)
                     (
                         (terrain_type < tt_Grasslands1)
                         ||
-                        (terrain_type > TT_RiverM_end)
+                        (terrain_type > tt_RiverM_end)
                     )
                     {
 
@@ -2193,8 +2063,8 @@ int16_t UU_Square_Provides_Some_Amount(int16_t wx, int16_t wy, int16_t wp)
     if(terrain_type >= tt_Tundra_1st)  { amount =  0; }
     if(terrain_type == tt_BugGrass)    { amount =  0; }
     if(terrain_type < tt_Grasslands1)  { amount = 10; }
-    if(terrain_type > TT_4WRiver5)     { amount = 10; }
-    if(terrain_type > TT_Shore2_end)   { amount = 25; }
+    if(terrain_type > tt_4WRiver5)     { amount = 10; }
+    if(terrain_type > tt_Shore2_end)   { amount = 25; }
     if(terrain_type > tt_Desert_Lst)   { amount = 10; }
     if(terrain_type > tt_Hills_Lst)    { amount =  0; }
     if(terrain_type > tt_Mountains_Lst)    { amount =  0; }

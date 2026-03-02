@@ -414,7 +414,7 @@ TEST_F(Square_Food2_NewGame_test, Shore1_Returns1)
 TEST_F(Square_Food2_NewGame_test, RiverM_Returns4)
 {
     // Arrange
-    Set_Terrain(30, 20, ARCANUS_PLANE, TT_RiverM_1st);
+    Set_Terrain(30, 20, ARCANUS_PLANE, tt_RiverM_1st);
 
     // Act
     int16_t result = Square_Food2_NewGame(30, 20, ARCANUS_PLANE);
@@ -484,7 +484,7 @@ TEST_F(Square_Food2_NewGame_test, Shore2_Returns1)
 TEST_F(Square_Food2_NewGame_test, FourWayRiver_Returns4)
 {
     // Arrange
-    Set_Terrain(30, 20, ARCANUS_PLANE, TT_4WRiver1);
+    Set_Terrain(30, 20, ARCANUS_PLANE, tt_4WRiver1);
 
     // Act
     int16_t result = Square_Food2_NewGame(30, 20, ARCANUS_PLANE);
@@ -498,7 +498,7 @@ TEST_F(Square_Food2_NewGame_test, FourWayRiver_Returns4)
 TEST_F(Square_Food2_NewGame_test, Shore3_Returns1)
 {
     // Arrange
-    Set_Terrain(30, 20, ARCANUS_PLANE, TT_Shore3_1st);
+    Set_Terrain(30, 20, ARCANUS_PLANE, tt_Shore3_1st);
 
     // Act
     int16_t result = Square_Food2_NewGame(30, 20, ARCANUS_PLANE);
