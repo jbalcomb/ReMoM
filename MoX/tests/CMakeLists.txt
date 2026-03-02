@@ -40,6 +40,26 @@ if(WIN32)
         COMMAND_EXPAND_LISTS
         COMMENT "./MoX/tests: Copying SDL2.dll"
     )
+
+    add_custom_command(
+        TARGET test_Util
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${SDL2_DLL_FILE_PATH}
+            $<TARGET_FILE_DIR:test_Util>
+        COMMAND_EXPAND_LISTS
+        COMMENT "./MoX/tests: Copying SDL2.dll"
+    )
+
+    add_custom_command(
+        TARGET test_Allocate
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${SDL2_DLL_FILE_PATH}
+            $<TARGET_FILE_DIR:test_Allocate>
+        COMMAND_EXPAND_LISTS
+        COMMENT "./MoX/tests: Copying SDL2.dll"
+    )
 endif()
 
 if(NOT DISABLE_AUDIO)
@@ -74,6 +94,26 @@ if(WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
             ${SDL2D_DLL_FILE_PATH}
             $<TARGET_FILE_DIR:MOX_tests>
+        COMMAND_EXPAND_LISTS
+        COMMENT "./MoX/tests: Copying SDL2d.dll"
+    )
+
+    add_custom_command(
+        TARGET test_Util
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+            ${SDL2D_DLL_FILE_PATH}
+            $<TARGET_FILE_DIR:test_Util>
+        COMMAND_EXPAND_LISTS
+        COMMENT "./MoX/tests: Copying SDL2d.dll"
+    )
+
+    add_custom_command(
+        TARGET test_Allocate
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+            ${SDL2D_DLL_FILE_PATH}
+            $<TARGET_FILE_DIR:test_Allocate>
         COMMAND_EXPAND_LISTS
         COMMENT "./MoX/tests: Copying SDL2d.dll"
     )

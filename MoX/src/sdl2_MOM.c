@@ -14,7 +14,9 @@
 #include "sdl2_SDLK.h"
 
 #include <SDL.h>
+#ifndef NO_SOUND_LIBRARY
 #include <SDL_mixer.h>
+#endif
 
 /*
     Platform-Layer Screen Buffer / Window Surface
