@@ -75,7 +75,7 @@ void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t
 // UU_UNIT_RandomRacial()
 
 // MGC o51p19
-// void NEWG_SetDeserts__STUB(void);
+void Desert_Autotile(void);
 
 // MGC o51p20
 void Simex_Autotiling(void);
@@ -138,7 +138,7 @@ void NEWG_AnimateOceans__STUB(void);
 int16_t Square_Is_Ocean_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p40
-int16_t Square_Has_Node_NewGame(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Is_Node_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p41
 int16_t Square_Has_Tower_NewGame(int16_t wx, int16_t wy);

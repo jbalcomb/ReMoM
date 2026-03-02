@@ -65,10 +65,9 @@ extern struct s_MOVE_MODE_COST_MAPS * movement_mode_cost_maps;
 
 
 // forward declate to shut up VS can be made static, because NIU
-static void NEWG_SetDeserts__STUB(void);
 static void CRP_NEWG_CreatePathGrid__STUB(void * moves2, void * move_path_chunks);
 // forward declate to shut up VS can be made static, because NIU
-// fix 'static' on NEWG_SetDeserts__STUB() and CRP_NEWG_CreatePathGrid__STUB()
+// fix 'static' on Desert_Autotile() and CRP_NEWG_CreatePathGrid__STUB()
 
 
 
@@ -98,13 +97,15 @@ NOTE: both are used in Generate_Landmasses()
 
 dir_chg_tbl_wx__1()
 used for Node Auras
+used for River Paths
 
 */
 // int16_t dir_chg_tbl_wx[5] = { 0, -1, 0, 1, 0 };
 // int16_t dir_chg_tbl_wy[5] = { 1, 0, -1, 0, 0 };
 
 // MGC  dseg:3348
-int16_t TILE_OppositeDirs[4] = { 2, 3, 0, 1 };
+// {1:W,3:E}
+int16_t upstream[4] = { 2, 3, 0, 1 };  // ¿ N, E, S, W ?
 
 // MGC  dseg:3350
 // int16_t TILE_Cardinal_XMod2[5] = { 0, -1, 0, 1, 0 };
@@ -341,7 +342,6 @@ void Init_New_Game(void)
 
     _units = 0;
 
-    // must be the _world_map is done here
     Generate_Home_City__WIP();
 
     Draw_Building_The_Worlds(70);
@@ -362,17 +362,17 @@ void Init_New_Game(void)
     Simex_Autotiling();
 
     Draw_Building_The_Worlds(85);
-                                          
+                                        
     for(rivers = 0; rivers < NUM_RIVERS; rivers++)
     {
-        for(tries = 0; ((tries < 2000) && (River_Path(0) != 0)); tries++) { }
-        for(tries = 0; ((tries < 2000) && (River_Path(1) != 0)); tries++) { }
+        for(tries = 0; ((tries < 2000) && (River_Path(ARCANUS_PLANE) != 0)); tries++) { }
+        for(tries = 0; ((tries < 2000) && (River_Path(MYRROR_PLANE)  != 0)); tries++) { }
     }
 
     River_Terrain(ARCANUS_PLANE);
     River_Terrain(MYRROR_PLANE);
 
-    NEWG_SetDeserts__STUB();
+    Desert_Autotile();
 
     Draw_Building_The_Worlds(85);
 
@@ -460,7 +460,7 @@ void Set_Upper_Lair_Guardian_Count(void)
  *
  * @see Square_Is_Ocean_NewGame
  * @see Square_Has_Tower_NewGame
- * @see Square_Has_Node_NewGame
+ * @see Square_Is_Node_NewGame
  */
 void Extend_Islands(int16_t wp)
 {
@@ -528,7 +528,7 @@ void Extend_Islands(int16_t wp)
                                 if(
                                     (Square_Has_Tower_NewGame((itr_wx + rnd_wx), (itr_wy + rnd_wy)) == ST_FALSE)
                                     &&
-                                    (Square_Has_Node_NewGame((itr_wx + rnd_wx), (itr_wy + rnd_wy), wp) == ST_FALSE)
+                                    (Square_Is_Node_NewGame((itr_wx + rnd_wx), (itr_wy + rnd_wy), wp) == ST_FALSE)
                                 )
                                 {
                                     // NOTE(drake189): PATCHED here previously to fix the BUG below
@@ -1486,7 +1486,7 @@ sets tt_Tundra1, tt_Desert1, tt_Swamp1
 void Generate_Climate_Terrain_Types(int16_t wp)
 {
     int16_t new_direction = 0;  /* ¿ DEDU  c&p error ? */
-    int16_t direction_change_count = 0;
+    int16_t Steps_To_Take = 0;
     int16_t dir_chg = 0;  /* (Random(4) - 1), used to index dir_chg_tbl_wx/wy */
     int16_t direction = 0;
     int16_t curr_wy = 0;
@@ -1494,7 +1494,7 @@ void Generate_Climate_Terrain_Types(int16_t wp)
     int16_t itr = 0;
     int16_t base_wy = 0;
     int16_t base_wx = 0;
-    int16_t itr_direction_change_count = 0;
+    int16_t Steps_Taken = 0;
     int16_t next_wx = 0;  // _DI_
     int16_t next_wy = 0;  // _SI_
     int16_t itr_wx = 0;  // _DI_
@@ -1550,8 +1550,8 @@ void Generate_Climate_Terrain_Types(int16_t wp)
             curr_wx = (base_wx + dir_chg_tbl_wx[direction]);
             curr_wy = (base_wy + dir_chg_tbl_wy[direction]);
             new_direction = ST_UNDEFINED;  // Eh? c&p error?
-            direction_change_count = (4 + Random(6));  // {5, ..., 10}
-            for(itr_direction_change_count = 0; itr_direction_change_count < direction_change_count; itr_direction_change_count++)
+            Steps_To_Take = (4 + Random(6));  // {5, ..., 10}
+            for(Steps_Taken = 0; Steps_Taken < Steps_To_Take; Steps_Taken++)
             {
                 dir_chg = (Random(4) - 1);  // ¿ choose next direction with anti-straight-line bias ?
                 next_wx = (curr_wx + dir_chg_tbl_wx[dir_chg]);
@@ -1593,8 +1593,8 @@ void Generate_Climate_Terrain_Types(int16_t wp)
             curr_wx = (base_wx + dir_chg_tbl_wx[direction]);
             curr_wy = (base_wy + dir_chg_tbl_wy[direction]);
             new_direction = ST_UNDEFINED;  // Eh? c&p error?
-            direction_change_count = (2 + Random(3));  // {3, ..., 5}
-            for(itr_direction_change_count = 0; itr_direction_change_count < direction_change_count; itr_direction_change_count++)
+            Steps_To_Take = (2 + Random(3));  // {3, ..., 5}
+            for(Steps_Taken = 0; Steps_Taken < Steps_To_Take; Steps_Taken++)
             {
                 dir_chg = (Random(4) - 1);  // ¿ choose next direction with anti-straight-line bias ?
                 next_wx = (curr_wx + dir_chg_tbl_wx[dir_chg]);
@@ -1796,7 +1796,7 @@ void Generate_Landmasses(int16_t wp)
     int16_t map_sections[5][5] = { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
     int16_t base_wy = 0;
     int16_t base_wx = 0;
-    int16_t itr_direction_change_count = 0;
+    int16_t direction = 0;  /* used to index dir_chg_tbl_wx/wy */
     int16_t direction_change_count = 0;
     int16_t section_height = 0;
     int16_t section_width = 0;
@@ -1867,7 +1867,7 @@ void Generate_Landmasses(int16_t wp)
             }
         }
         direction_change_count = (2 + Random(3));  // {3, ..., 5}
-        for(itr_direction_change_count = 0; itr_direction_change_count < direction_change_count; itr_direction_change_count++)
+        for(direction = 0; direction < direction_change_count; direction++)
         {
             switch(_landsize)
             {
@@ -1875,15 +1875,15 @@ void Generate_Landmasses(int16_t wp)
                 case gol_Medium: { Steps_To_Take = (10 + Random(10)); } break;
                 case gol_Large:  { Steps_To_Take = (20 + Random(10)); } break;
             }
-            curr_wx = (base_wx + dir_chg_tbl_wx[itr_direction_change_count]);
-            curr_wy = (base_wy + dir_chg_tbl_wy[itr_direction_change_count]);
+            curr_wx = (base_wx + dir_chg_tbl_wx[direction]);
+            curr_wy = (base_wy + dir_chg_tbl_wy[direction]);
             for(Steps_Taken = 0; ((Steps_Taken < Steps_To_Take) && (n_generated <= n_needed)); Steps_Taken++)
             {
                 if(p_world_map[wp][curr_wy][curr_wx] == tt_Ocean1)
                 {
                     n_generated++;
                 }
-                p_world_map[wp][curr_wy][curr_wx] = (p_world_map[wp][curr_wy][curr_wx] + 1);  // ¿ this is the "hit" count increment that turns into terrain type ?
+                p_world_map[wp][curr_wy][curr_wx] = (p_world_map[wp][curr_wy][curr_wx] + 1);
                 Build_Landmass(wp, curr_wx, curr_wy);
                 /*
                 
@@ -3294,18 +3294,186 @@ void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t
 // drake178: UU_UNIT_RandomRacial()
 // UU_UNIT_RandomRacial()
 
+
 // MGC o51p19
-// drake178: NEWG_SetDeserts()
-/*
-
-*/
-/*
-
-*/
-static void NEWG_SetDeserts__STUB(void)
+/**
+ * @brief Finalizes desert tile variants during map generation.
+ *
+ * @details
+ * This routine performs desert autotiling using lookup data from the first
+ * record of TERRTYPE.LBX. It first assigns landmass ownership for single-tile
+ * deserts (`_1Desert`) by copying a neighboring non-ocean landmass when one is
+ * found. It then scans all desert-class tiles, computes an 8-neighbor bitmask
+ * (NW, N, NE, E, SE, S, SW, W), and translates that mask through the TERRTYPE
+ * table to choose the final desert subtype written to `p_world_map`.
+ *
+ * If no qualifying neighboring non-desert tiles are found (`mask == 0`), the
+ * square is normalized to `tt_Desert1`.
+ *
+ * @note
+ * This function has no parameters and no return value. It mutates global map
+ * generation state (`p_world_map` and `_landmasses`).
+ *
+ * @see Square_Is_Desert_NewGame
+ * @see LBX_Load_Data_Static
+ */
+void Desert_Autotile(void)
 {
+    int16_t * terrtype = 0;
+    int16_t Y_Mod = 0;
+    int16_t X_Mod = 0;
+    int16_t mask = 0;
+    int16_t wp = 0;
+    int16_t wx = 0;
+    int16_t wy = 0;
+    int16_t DBG_before_desert = 0;
+    int16_t DBG_terrtype_type = 0;
+    int16_t DBG_after_desert = 0;
 
+    terrtype = (int16_t *)Near_Allocate_First((5 * 512));
 
+    LBX_Load_Data_Static(terrtype_lbx_file__MGC_ovr051, 0, (SAMB_ptr)terrtype, 0, 5, 512);
+
+// ; set the landmass of single tile deserts ($134) to
+// ; that of the last non-ocean tile found among their
+// ; neighbouring tiles, if any
+// but, ...
+// Generate_Climate_Terrain_Types() only creates squares with tt_Desert1 (0x0A5)?
+    for(wp = 0; wp < NUM_PLANES; wp++)
+    {
+        for(wy = 0; wy < WORLD_HEIGHT; wy++)
+        {
+            for(wx = 0; wx < WORLD_WIDTH; wx++)
+            {
+                if(p_world_map[wp][wy][wx] == _1Desert)  /* these were created by the River maker */
+                {
+                    for(Y_Mod = -1; Y_Mod < 1; Y_Mod++)
+                    {
+                        for(X_Mod = -1; X_Mod < 1; X_Mod++)
+                        {
+                            if(_landmasses[((wp * WORLD_SIZE) + (Y_Mod * WORLD_WIDTH) + X_Mod)] != 0)  /* NO_LANDMASS */
+                            {   
+                                _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = _landmasses[((wp * WORLD_SIZE) + (Y_Mod * WORLD_WIDTH) + X_Mod)];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    for(wp = 0; wp < NUM_PLANES; wp++)
+    {
+        for(wy = 0; wy < WORLD_HEIGHT; wy++)
+        {
+            for(wx = 0; wx < WORLD_WIDTH; wx++)
+            {
+                if(
+                    (p_world_map[wp][wy][wx] == tt_Desert1)
+                    ||
+                    (p_world_map[wp][wy][wx] == tt_Desert2)
+                    ||
+                    (p_world_map[wp][wy][wx] == tt_Desert3)
+                    ||
+                    (p_world_map[wp][wy][wx] == tt_Desert4)
+                    ||
+                    (p_world_map[wp][wy][wx] == _1Desert)
+                )
+                {
+                    mask = 0;
+                    if(Square_Is_Desert_NewGame((wx - 1), (wy - 1), wp) == ST_FALSE)  /* NW */
+                    {
+                        if(((wx - 1) >= 0) && ((wy - 1) >= 0))
+                        {
+                            mask += 1;
+                        }
+                    }
+                    if(Square_Is_Desert_NewGame((wx    ), (wy - 1), wp) == ST_FALSE)  /* N */
+                    {
+                        if((wy - 1) >= 0)
+                        {
+                            mask += 2;
+                        }
+                    }
+                    if(Square_Is_Desert_NewGame((wx + 1), (wy - 1), wp) == ST_FALSE)  /* NE */
+                    {
+                        if(((wx + 1) < WORLD_WIDTH) && ((wy - 1) >= 0))
+                        {
+                            mask += 4;
+                        }
+                    }
+                    if(Square_Is_Desert_NewGame((wx + 1), (wy    ), wp) == ST_FALSE)  /* E */
+                    {
+                        if((wx + 1) < WORLD_WIDTH)
+                        {
+                            mask += 8;
+                        }
+                    }
+                    if(Square_Is_Desert_NewGame((wx + 1), (wy + 1), wp) == ST_FALSE)  /* SE */
+                    {
+                        if(((wx + 1) < WORLD_WIDTH) && ((wy + 1) < WORLD_HEIGHT))
+                        {
+                            mask += 16;
+                        }
+                    }
+                    if(Square_Is_Desert_NewGame((wx    ), (wy + 1), wp) == ST_FALSE)  /* S */
+                    {
+                        if((wy + 1) < WORLD_HEIGHT)
+                        {
+                            mask += 32;
+                        }
+                    }
+                    if(Square_Is_Desert_NewGame((wx - 1), (wy + 1), wp) == ST_FALSE)  /* SW */
+                    {
+                        if(((wx - 1) >= 0) && ((wy + 1) < WORLD_HEIGHT))
+                        {
+                            mask += 64;
+                        }
+                    }
+                    if(Square_Is_Desert_NewGame((wx - 1), (wy    ), wp) == ST_FALSE)  /* W */
+                    {
+                        if((wx - 1) >= 0)
+                        {
+                            mask += 128;
+                        }
+                    }
+
+                    if(mask > 0)
+                    {
+                        // Dasm looks like (_Desert00001000 - 2) ... I don't see an explanation
+                        // ((_Desert00001000 + terrtype[mask]) - 2)
+                        // (290 + terrtype[mask])
+                        DBG_before_desert = p_world_map[wp][wy][wx];
+                        DBG_terrtype_type = terrtype[mask];
+                        DBG_after_desert = (290 + terrtype[mask]);
+                        if(DBG_after_desert != DBG_before_desert)
+                        {
+                            // STU_DEBUG_BREAK();
+                        }
+                        if(
+                            (DBG_after_desert != tt_Desert1)
+                            &&
+                            (DBG_after_desert != tt_Desert2)
+                            &&
+                            (DBG_after_desert != tt_Desert3)
+                            &&
+                            (DBG_after_desert != tt_Desert4)
+                            &&
+                            !((DBG_after_desert >= tt_Desert_Fst) && (DBG_after_desert <= tt_Desert_Lst))
+                        )
+                        {
+                            STU_DEBUG_BREAK();
+                        }
+                    }
+                    else
+                    {
+                        p_world_map[wp][wy][wx] = tt_Desert1;
+                    }
+
+                }
+            }
+        }
+    }
 
 }
 
@@ -3993,156 +4161,169 @@ void NEWG_RandomizeTiles__STUB(void)
 
 
 // MGC o51p22
-// drake178: NEWG_CreateRiver()
-/*
-; attempts to create a river
-; returns 1 if successful, or 0 if not
-;
-; BUG? some shore types are excluded from becoming
-; a river outflow despite having the right surface
-*/
-/*
-
-*/
+/**
+ * @brief Attempts to generate one valid river path on the specified world plane.
+ *
+ * @param wp World plane index to modify.
+ *
+ * @return int16_t
+ * @retval ST_TRUE  River path generation succeeded and placeholder river tiles were written.
+ * @retval ST_FALSE River path generation failed due to invalid start tile, blocked routing,
+ *                  excessive retries, invalid outflow, or insufficient path length.
+ *
+ * @details
+ * Selects a random inland base tile, rejects unsuitable starts (ocean-adjacent,
+ * mountain, hills, desert, node, existing river, or terrain-special squares),
+ * then grows a path by selecting directions with a bias toward a main direction.
+ *
+ * The path terminates when it reaches an existing river or ocean-adjacent outflow
+ * condition. Additional validation rejects too-short paths and invalid shoreline
+ * outflow configurations. On success, each accepted path tile is marked with the
+ * temporary river placeholder value (`1000`) in `p_world_map`; final river tile
+ * shaping is performed later by `River_Terrain()`.
+ *
+ * @note
+ * This function mutates global map state (`p_world_map`) and relies on multiple
+ * global terrain-query helpers and direction tables.
+ *
+ * @see River_Terrain
+ */
 int16_t River_Path(int16_t wp)
 {
-    int16_t Directions[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Tile_Ys[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Tile_Xs[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Last_Tile_Y = 0;
-    int16_t Last_Tile_X = 0;
-    int16_t UU_PrevDir2 = 0;
-    int16_t Next_Y = 0;
-    int16_t Next_X = 0;
-    int16_t Direction_Attempts = 0;
+    int16_t niu_directions_array[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t wy_array[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t wx_array[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t end_wy = 0;
+    int16_t end_wx = 0;
+    int16_t niu_prev_dir = 0;  /* BUGBUG  as coded, completely useless */
+    int16_t next_wy = 0;
+    int16_t next_wx = 0;
+    int16_t attemps = 0;
     int16_t Have_Outflow = 0;
-    int16_t Selected_Direction = 0;
+    int16_t direction = 0;
     int16_t itr = 0;
-    int16_t Prev_Direction = 0;
-    int16_t Main_Direction = 0;
+    int16_t same_dir = 0;  /* BUGBUG  as coded, should just be a 'first run' flag; looks like new_direction from Generate_Landmasses(), c&p error? */
+    int16_t downstream = 0;
     int16_t base_wy = 0;
     int16_t base_wx = 0;
-    int16_t Length = 0;
-
-    base_wx = (4 + Random((WORLD_WIDTH - 8)));
+    int16_t length = 0;
+    int16_t DBG_terrain_type = 0;
+    int16_t DBG_terrain_special = 0;
+    int16_t DBG_post_terrain_type = 0;
+    
+    // 1. pick a random starting location
+    base_wx = (4 + Random((WORLD_WIDTH  - 8)));
     base_wy = (4 + Random((WORLD_HEIGHT - 8)));
+    printf("River_Path(): base_wx = %d, base_wy = %d\n", base_wx, base_wy);
 
+    DBG_terrain_type = p_world_map[wp][base_wy][base_wx];
+    printf("River_Path(): DBG_terrain_type: %d %X\n", DBG_terrain_type, DBG_terrain_type);
+    DBG_terrain_special = _map_square_terrain_specials[((wp * WORLD_SIZE) + (base_wy * WORLD_WIDTH) + base_wx)];
+    printf("River_Path(): DBG_terrain_special: %d %X\n", DBG_terrain_special, DBG_terrain_special);
+
+    // 2. validate location
     if(_map_square_terrain_specials[((wp * WORLD_SIZE) + (base_wy * WORLD_WIDTH) + base_wx)] != 0) { return ST_FALSE; }
-
-    if(Square_Is_Ocean_NewGame((base_wx - 1), (base_wy - 1), wp) == ST_TRUE) { return ST_FALSE; }
-    if(Square_Is_Ocean_NewGame((base_wx - 1), (base_wy    ), wp) == ST_TRUE) { return ST_FALSE; }
-    if(Square_Is_Ocean_NewGame((base_wx - 1), (base_wy + 1), wp) == ST_TRUE) { return ST_FALSE; }
-    if(Square_Is_Ocean_NewGame((base_wx    ), (base_wy - 1), wp) == ST_TRUE) { return ST_FALSE; }
-    if(Square_Is_Ocean_NewGame((base_wx    ), (base_wy    ), wp) == ST_TRUE) { return ST_FALSE; }
-    if(Square_Is_Ocean_NewGame((base_wx    ), (base_wy + 1), wp) == ST_TRUE) { return ST_FALSE; }
-    if(Square_Is_Ocean_NewGame((base_wx + 1), (base_wy - 1), wp) == ST_TRUE) { return ST_FALSE; }
-    if(Square_Is_Ocean_NewGame((base_wx + 1), (base_wy    ), wp) == ST_TRUE) { return ST_FALSE; }
-    if(Square_Is_Ocean_NewGame((base_wx + 1), (base_wy + 1), wp) == ST_TRUE) { return ST_FALSE; }
-
+    if(Square_Is_Ocean_NewGame((base_wx - 1), (base_wy - 1), wp) == ST_TRUE) { return ST_FALSE; } /* NW */
+    if(Square_Is_Ocean_NewGame((base_wx - 1), (base_wy    ), wp) == ST_TRUE) { return ST_FALSE; } /* W  */
+    if(Square_Is_Ocean_NewGame((base_wx - 1), (base_wy + 1), wp) == ST_TRUE) { return ST_FALSE; } /* SW */
+    if(Square_Is_Ocean_NewGame((base_wx    ), (base_wy - 1), wp) == ST_TRUE) { return ST_FALSE; } /* N */
+    if(Square_Is_Ocean_NewGame((base_wx    ), (base_wy    ), wp) == ST_TRUE) { return ST_FALSE; } /* C */
+    if(Square_Is_Ocean_NewGame((base_wx    ), (base_wy + 1), wp) == ST_TRUE) { return ST_FALSE; } /* S  */
+    if(Square_Is_Ocean_NewGame((base_wx + 1), (base_wy - 1), wp) == ST_TRUE) { return ST_FALSE; } /* NE */
+    if(Square_Is_Ocean_NewGame((base_wx + 1), (base_wy    ), wp) == ST_TRUE) { return ST_FALSE; } /* W */
+    if(Square_Is_Ocean_NewGame((base_wx + 1), (base_wy + 1), wp) == ST_TRUE) { return ST_FALSE; } /* SE */
     if(Square_Is_Mountain_NewGame(base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
-
     if(Square_Is_Hills_NewGame(base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
-
-    if(Square_Has_Node_NewGame(base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
-
+    if(Square_Is_Node_NewGame(base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
     if(Square_Is_River_NewGame(base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
 
-    Tile_Xs[0] = base_wx;
-    Tile_Ys[0] = base_wy;
+    // 3. initialize path finding, including random cardinal direction
+    wx_array[0] = base_wx;
+    wy_array[0] = base_wy;
+    length = 1;
+    Have_Outflow = ST_FALSE;
+    attemps = 0;
+    downstream = (Random(4) - 1);
+    same_dir = ST_UNDEFINED;
+    niu_directions_array[0] = downstream;
+    printf("River_Path(): downstream: %d\n", downstream);
 
-    Length = 1;
-
-    Have_Outflow = 0;
-
-    Direction_Attempts = 0;
-
-    Main_Direction = (Random(4) - 1);
-
-    Prev_Direction = ST_UNDEFINED;
-
-    Directions[0] = Main_Direction;
-
+    // 4. make 30 attempts at finding a valid path
     while(Have_Outflow == ST_FALSE)
     {
-
-        // NOTE(drake178): reroll if the next tile is a mountain, hill, desert, or node, or has any terrain special
 
         if(
             (Random(2) > 1)
             ||
-            (Prev_Direction ST_UNDEFINED)
+            (same_dir == ST_UNDEFINED)
         )
         {
-            Selected_Direction = Main_Direction;
+            direction = downstream;  // 2 is north or west, probably north given upstream[2] == 0
         }
         else
         {
-            /* NOTE(drake178): select a random direction that is not the opposite of the main one */
             do
             {
-                Selected_Direction = (Random(4) - 1);
-            } while(TILE_OppositeDirs[Main_Direction] == Selected_Direction);
+                direction = (Random(4) - 1);
+            } while(upstream[downstream] == direction);
         }
+        printf("River_Path(): direction: %d\n", direction);
 
-        Directions[Length] = Selected_Direction;
+        niu_directions_array[length] = direction;
 
-        Prev_Direction = Selected_Direction;
+        same_dir = direction;
 
-        Next_X = Tile_Xs[(Length - 1)] + dir_chg_tbl_wx[Selected_Direction];
-        Next_Y = Tile_Ys[(Length - 1)] + dir_chg_tbl_wy[Selected_Direction];
+        next_wx = wx_array[(length - 1)] + dir_chg_tbl_wx[direction];
+        next_wy = wy_array[(length - 1)] + dir_chg_tbl_wy[direction];
+        printf("River_Path(): next_wx = %d, next_wy = %d\n", next_wx, next_wy);
 
-        UU_PrevDir2 = Selected_Direction;
+        niu_prev_dir = direction;
 
-        Direction_Attempts++;
+        attemps++;
+        if(attemps > 30) { return ST_FALSE; }
 
-        if(Direction_Attempts > 30)
-        {
-            return ST_FALSE;
-        }
+        if(_map_square_terrain_specials[((wp * WORLD_SIZE) + (next_wy * WORLD_WIDTH) + next_wx)] != 0) { continue; }
+        if(Square_Is_Mountain_NewGame(next_wx, next_wy, wp) == ST_TRUE) { continue; }
+        if(Square_Is_Hills_NewGame(next_wx, next_wy, wp)    == ST_TRUE) { continue; }
+        if(Square_Is_Node_NewGame(next_wx, next_wy, wp)    == ST_TRUE) { continue; }
+        if(Square_Is_Desert_NewGame(next_wx, next_wy, wp)   == ST_TRUE) { continue; }
 
-        if(_map_square_terrain_specials[((wp * WORLD_SIZE) + (Next_Y * WORLD_WIDTH) + Next_X)] != 0) { continue; }
-        if(Square_Is_Mountain_NewGame(Next_X, Next_Y, wp) == ST_TRUE) { continue; }
-        if(Square_Is_Hills_NewGame(Next_X, Next_Y, wp)    == ST_TRUE) { continue; }
-        if(Square_Has_Node_NewGame(Next_X, Next_Y, wp)    == ST_TRUE) { continue; }
-        if(Square_Is_Desert_NewGame(Next_X, Next_Y, wp)   == ST_TRUE) { continue; }
+        if(Square_Is_River_NewGame(next_wx, next_wy, wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
 
-        if(Square_Is_River_NewGame(Next_X, Next_Y, wp) == ST_TRUE)
-        {
-            Have_Outflow = ST_TRUE;
-        }
+        wx_array[length] = next_wx;
+        wy_array[length] = next_wy;
 
-        Tile_Xs[Length] = Next_X;
-        Tile_Ys[Length] = Next_Y;
+        length++;
 
-        Length++;
+        if(Square_Is_Ocean_NewGame((next_wx    ), (next_wy - 1), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
+        if(Square_Is_Ocean_NewGame((next_wx - 1), (next_wy    ), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
+        if(Square_Is_Ocean_NewGame((next_wx    ), (next_wy    ), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
+        if(Square_Is_Ocean_NewGame((next_wx + 1), (next_wy    ), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
+        if(Square_Is_Ocean_NewGame((next_wx    ), (next_wy + 1), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
 
-        if(Square_Is_Ocean_NewGame((Next_X    ), (Next_Y - 1), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
-        if(Square_Is_Ocean_NewGame((Next_X - 1), (Next_Y    ), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
-        if(Square_Is_Ocean_NewGame((Next_X    ), (Next_Y    ), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
-        if(Square_Is_Ocean_NewGame((Next_X + 1), (Next_Y    ), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
-        if(Square_Is_Ocean_NewGame((Next_X    ), (Next_Y + 1), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
+        if(length > 28) { return ST_FALSE; }
 
-        if(Length > 28) { return ST_FALSE; }
-
-        Prev_Direction = Selected_Direction;
+        same_dir = direction;
 
     }
 
+    if((Have_Outflow != ST_FALSE) && (length < 4)) { return ST_FALSE; }
 
-    if((Have_Outflow != ST_FALSE) && (Length < 4)) { return ST_FALSE; }
+    end_wx = wx_array[(length - 1)];
+    end_wy = wy_array[(length - 1)];
 
-    Last_Tile_X = Tile_Xs[Length];
-    Last_Tile_Y = Tile_Ys[Length];
+    // NOTE(drake178): BUG? some shore types are excluded from becoming a river outflow despite having the right surface
+    if(TILE_InvalidOutflow((end_wx    ), (end_wy - 1), wp) == ST_TRUE) { return ST_FALSE; }  /* N */
+    if(TILE_InvalidOutflow((end_wx - 1), (end_wy    ), wp) == ST_TRUE) { return ST_FALSE; }  /* W */
+    if(TILE_InvalidOutflow((end_wx    ), (end_wy    ), wp) == ST_TRUE) { return ST_FALSE; }  /* C */
+    if(TILE_InvalidOutflow((end_wx + 1), (end_wy    ), wp) == ST_TRUE) { return ST_FALSE; }  /* E*/
+    if(TILE_InvalidOutflow((end_wx    ), (end_wy + 1), wp) == ST_TRUE) { return ST_FALSE; }  /* S */
 
-    if(TILE_InvalidOutflow((Last_Tile_X    ), (Last_Tile_Y - 1), wp) == ST_TRUE) { return ST_FALSE; }  /* N */
-    if(TILE_InvalidOutflow((Last_Tile_X - 1), (Last_Tile_Y    ), wp) == ST_TRUE) { return ST_FALSE; }  /* W */
-    if(TILE_InvalidOutflow((Last_Tile_X    ), (Last_Tile_Y    ), wp) == ST_TRUE) { return ST_FALSE; }  /* C */
-    if(TILE_InvalidOutflow((Last_Tile_X + 1), (Last_Tile_Y    ), wp) == ST_TRUE) { return ST_FALSE; }  /* E*/
-    if(TILE_InvalidOutflow((Last_Tile_X    ), (Last_Tile_Y + 1), wp) == ST_TRUE) { return ST_FALSE; }  /* S */
-
-    for(itr = 0; itr < Length; itr++)
+    for(itr = 0; itr < length; itr++)
     {
-        p_world_map[wp][Tile_Ys[itr]][Tile_Xs[itr]] = 1000;
+        DBG_post_terrain_type = 0;
+        p_world_map[wp][wy_array[itr]][wx_array[itr]] = 1000;
+        DBG_post_terrain_type = p_world_map[wp][wy_array[itr]][wx_array[itr]];  // 3e8
     }
 
     return ST_TRUE;
@@ -4151,8 +4332,6 @@ int16_t River_Path(int16_t wp)
 
 
 // MGC o51p23
-// drake178: NEWG_SetRiverTiles()
-void River_Terrain(int16_t wp)
 /*
 ; finalizes river tiles and generates the river outflow
 ; ones at every river and shore intersection - since
@@ -4161,14 +4340,39 @@ void River_Terrain(int16_t wp)
 ; grasslands, and no-inflow single tile lakes are also
 ; turned into single tile deserts here
 */
-/*
-
-*/
+/**
+ * @brief Finalizes river tiles and applies river/shore/lake post-processing for one plane.
+ *
+ * @param wp World plane index to process.
+ *
+ * @details
+ * Resolves temporary river placeholders into concrete river terrain variants by
+ * building a cardinal (N/E/S/W) connectivity mask against adjacent river or
+ * ocean squares, then selecting an entry from `TILE_River_Types`.
+ *
+ * Single-tile lakes (`_1Lake`) are also normalized based on river inflow:
+ * no inflow becomes `_1Desert`, one inflow becomes a directional lake-river
+ * tile, and multi-inflow cases are reduced by converting selected neighboring
+ * river tiles to grasslands while rewinding loop indices to re-evaluate local
+ * topology.
+ *
+ * Shore tiles are additionally checked for valid river outlet combinations and,
+ * where supported by available graphics, converted to shore-with-river variants.
+ *
+ * @note
+ * This function has no return value and mutates `p_world_map` in place.
+ * It is intended to run after river path placement has marked placeholder river
+ * squares.
+ *
+ * @see River_Path
+ */
+void River_Terrain(int16_t wp)
 {
     int16_t terrain_type = 0;
     int16_t river_mask = 0;
     int16_t wy = 0;
     int16_t wx = 0;
+    int16_t DBG_river_type = 0;
 
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
@@ -4193,7 +4397,9 @@ void River_Terrain(int16_t wp)
                 if((Square_Is_Ocean_NewGame((wx    ), (wy + 1), wp) == ST_TRUE) || (Square_Is_River_NewGame((wx    ), (wy + 1), wp) == ST_TRUE)) { river_mask += 4; }  /* S */
                 if((Square_Is_Ocean_NewGame((wx - 1), (wy    ), wp) == ST_TRUE) || (Square_Is_River_NewGame((wx - 1), (wy    ), wp) == ST_TRUE)) { river_mask += 8; }  /* W */
 
-                p_world_map[wp][wy][wx] = TILE_River_Types[river_mask][(Random(4) - 1)];
+                // p_world_map[wp][wy][wx] = TILE_River_Types[river_mask][(Random(4) - 1)];
+                DBG_river_type = TILE_River_Types[river_mask][(Random(4) - 1)];
+                p_world_map[wp][wy][wx] = DBG_river_type;
 
             }
 
@@ -5357,7 +5563,7 @@ void Generate_Roads(int16_t wp)
                 if(
                     (GET_TERRAIN_TYPE(wx, wy, wp) >= _Shore00001R10)
                     &&
-                    (GET_TERRAIN_TYPE(wx, wy, wp) <= TT_Shore2F_end)
+                    (GET_TERRAIN_TYPE(wx, wy, wp) <= tt_Shore2F_end)
                 )
                 {
                     Invalid_Road = ST_TRUE;
@@ -6268,18 +6474,17 @@ int16_t Square_Is_Ocean_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
     terrain_type = (p_world_map[wp][wy][wx] % TerType_Count);
-    if(terrain_type  != tt_BugGrass)   { return ST_FALSE; }
+    if(terrain_type  == tt_BugGrass)   { return ST_FALSE; }
     if(terrain_type  < tt_Grasslands1) { return ST_TRUE;  }
-    if((terrain_type > TT_RiverM_end) && (terrain_type < TT_Rivers_1st)) { return ST_TRUE; }
-    if((terrain_type > tt_Desert_Lst) && (terrain_type < TT_4WRiver1))   { return ST_TRUE; }
-    if((terrain_type > TT_4WRiver5)   && (terrain_type < tt_Tundra_1st)) { return ST_TRUE; }
+    if((terrain_type > tt_RiverM_end) && (terrain_type < tt_Rivers_1st)) { return ST_TRUE; }
+    if((terrain_type > tt_Desert_Lst) && (terrain_type < tt_4WRiver1))   { return ST_TRUE; }
+    if((terrain_type > tt_4WRiver5)   && (terrain_type < tt_Tundra_1st)) { return ST_TRUE; }
     return ST_FALSE;
 }
 
 
 // MGC o51p40
-// drake178: Square_Has_Node_NewGame()
-int16_t Square_Has_Node_NewGame(int16_t wx, int16_t wy, int16_t wp)
+int16_t Square_Is_Node_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t itr_nodes = 0;
     for(itr_nodes = 0; itr_nodes < NUM_NODES; itr_nodes++)
@@ -6371,11 +6576,11 @@ int16_t Square_Is_River_NewGame(int16_t wx, int16_t wy, int16_t wp)
     // 1000 mod 762 = 238  0xEE
     terrain_type = (p_world_map[wp][wy][wx] % TerType_Count);
 
-    if((terrain_type > tt_Forest3) && (terrain_type < TT_Lake2)) { return ST_TRUE; }  /* NOTE(drake178): BUG: this should be TT_Lake1 ($C5) */
+    if((terrain_type > tt_Forest3) && (terrain_type < tt_Lake2)) { return ST_TRUE; }  /* NOTE(drake178): BUG: this should be tt_Lake1 ($C5) */
 
-    if((terrain_type > TT_Shore2F_end) && (terrain_type < tt_Mountains_Fst)) { return ST_TRUE; }
+    if((terrain_type > tt_Shore2F_end) && (terrain_type < tt_Mountains_Fst)) { return ST_TRUE; }
 
-    if((terrain_type > TT_Shore2_end) && (terrain_type < TT_Shore3_1st)) { return ST_TRUE; }
+    if((terrain_type > tt_Shore2_end) && (terrain_type < tt_Shore3_1st)) { return ST_TRUE; }
 
     if(terrain_type == TT_RIVER_PLACEHOLDER) { return ST_TRUE; }
 
@@ -6601,11 +6806,11 @@ int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp)
     {
         return 1;
     }
-    else if(terrain_type > TT_4WRiver5)  // >= TT_Shore3_1st
+    else if(terrain_type > tt_4WRiver5)  // >= tt_Shore3_1st
     {
         return 1;
     }
-    else if(terrain_type > TT_Shore2_end)  // >= TT_4WRiver1
+    else if(terrain_type > tt_Shore2_end)  // >= tt_4WRiver1
     {
         return 4;
     }
@@ -6625,7 +6830,7 @@ int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp)
     {
         return 0;
     }
-    else if(terrain_type > tt_Forest3)  // >= TT_RiverM_1st
+    else if(terrain_type > tt_Forest3)  // >= tt_RiverM_1st
     {
         return 4;
     }
