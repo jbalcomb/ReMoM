@@ -185,7 +185,7 @@ static char Terrain_Type_To_Char(int16_t tt)
 {
     if(tt == tt_Ocean1)         return '.';
     if(tt == tt_BugGrass)       return 'B';
-    if(tt == TT_Lake)           return 'l';                        /* 0x12 lake within Shore1 range */
+    if(tt == tt_Lake)           return 'l';                        /* 0x12 lake within Shore1 range */
     if(tt <= tt_Shore1_Lst)     return '#';                        /* tt_Shore1_Fst .. tt_Shore1_Lst */
     if(tt == tt_Grasslands1)    return 'g';
     if(tt == tt_Forest1)        return 'f';
@@ -204,18 +204,18 @@ static char Terrain_Type_To_Char(int16_t tt)
     if(tt == tt_Grasslands4)    return 'g';
     if(tt <= tt_Tundra3)        return 't';                        /* tt_Tundra2 .. tt_Tundra3 */
     if(tt <= tt_Forest3)        return 'f';                        /* tt_Forest2 .. tt_Forest3 */
-    if(tt <= TT_RiverM_end)     return '=';                        /* TT_RiverM_1st .. TT_RiverM_end */
-    if(tt <= TT_Lake4)          return 'l';                        /* TT_Lake1 .. TT_Lake4 */
-    if(tt <= TT_Shore2F_end)    return '#';                        /* TT_Shore2F_1st .. TT_Shore2F_end */
-    if(tt <= tt_Rivers_end)     return '=';                        /* TT_Rivers_1st .. tt_Rivers_end */
+    if(tt <= tt_RiverM_end)     return '=';                        /* tt_RiverM_1st .. tt_RiverM_end */
+    if(tt <= tt_Lake4)          return 'l';                        /* tt_Lake1 .. tt_Lake4 */
+    if(tt <= tt_Shore2F_end)    return '#';                        /* tt_Shore2F_1st .. tt_Shore2F_end */
+    if(tt <= tt_Rivers_end)     return '=';                        /* tt_Rivers_1st .. tt_Rivers_end */
     if(tt <= tt_Mountains_Lst)  return 'm';                        /* tt_Mountains_Fst .. tt_Mountains_Lst */
     if(tt <= tt_Hills_Lst)      return 'h';                        /* tt_Hills_Fst .. tt_Hills_Lst */
     if(tt <= tt_Desert_Lst)     return 'd';                        /* tt_Desert_Fst .. tt_Desert_Lst */
-    if(tt <= TT_Shore2_end)     return '#';                        /* tt_Shore2_1st .. TT_Shore2_end */
-    if(tt <= TT_4WRiver5)       return '=';                        /* TT_4WRiver1 .. TT_4WRiver5 */
-    if(tt <= TT_Shore3_end)     return '#';                        /* TT_Shore3_1st .. TT_Shore3_end */
+    if(tt <= tt_Shore2_end)     return '#';                        /* tt_Shore2_1st .. tt_Shore2_end */
+    if(tt <= tt_4WRiver5)       return '=';                        /* tt_4WRiver1 .. tt_4WRiver5 */
+    if(tt <= tt_Shore3_end)     return '#';                        /* tt_Shore3_1st .. tt_Shore3_end */
     if(tt == tt_Ocean2)         return '~';
-    if(tt <= TT_Tundra_Last)    return 't';                        /* tt_Tundra_1st .. TT_Tundra_Last */
+    if(tt <= tt_Tundra_Last)    return 't';                        /* tt_Tundra_1st .. tt_Tundra_Last */
     return '?';
 }
 
@@ -224,7 +224,7 @@ static int16_t Get_Terrain_Group(int16_t tt)
 {
     if(tt == tt_Ocean1)         return 0;
     if(tt == tt_BugGrass)       return 1;
-    if(tt == TT_Lake)           return 9;                       /* 0x12 lake within Shore1 range */
+    if(tt == tt_Lake)           return 9;                       /* 0x12 lake within Shore1 range */
     if(tt <= tt_Shore1_Lst)     return 9;                       /* tt_Shore1_Fst .. tt_Shore1_Lst */
     if(tt == tt_Grasslands1)    return 1;
     if(tt == tt_Forest1)        return 2;
@@ -243,18 +243,18 @@ static int16_t Get_Terrain_Group(int16_t tt)
     if(tt == tt_Grasslands4)    return 1;
     if(tt <= tt_Tundra3)        return 7;                       /* tt_Tundra2 .. tt_Tundra3 */
     if(tt <= tt_Forest3)        return 2;                       /* tt_Forest2 .. tt_Forest3 */
-    if(tt <= TT_RiverM_end)     return 8;                       /* TT_RiverM_1st .. TT_RiverM_end */
-    if(tt <= TT_Lake4)          return 9;                       /* TT_Lake1 .. TT_Lake4 */
-    if(tt <= TT_Shore2F_end)    return 9;                       /* TT_Shore2F_1st .. TT_Shore2F_end */
-    if(tt <= tt_Rivers_end)     return 8;                       /* TT_Rivers_1st .. tt_Rivers_end */
+    if(tt <= tt_RiverM_end)     return 8;                       /* tt_RiverM_1st .. tt_RiverM_end */
+    if(tt <= tt_Lake4)          return 9;                       /* tt_Lake1 .. tt_Lake4 */
+    if(tt <= tt_Shore2F_end)    return 9;                       /* tt_Shore2F_1st .. tt_Shore2F_end */
+    if(tt <= tt_Rivers_end)     return 8;                       /* tt_Rivers_1st .. tt_Rivers_end */
     if(tt <= tt_Mountains_Lst)  return 4;                       /* tt_Mountains_Fst .. tt_Mountains_Lst */
     if(tt <= tt_Hills_Lst)      return 3;                       /* tt_Hills_Fst .. tt_Hills_Lst */
     if(tt <= tt_Desert_Lst)     return 5;                       /* tt_Desert_Fst .. tt_Desert_Lst */
-    if(tt <= TT_Shore2_end)     return 9;                       /* tt_Shore2_1st .. TT_Shore2_end */
-    if(tt <= TT_4WRiver5)       return 8;                       /* TT_4WRiver1 .. TT_4WRiver5 */
-    if(tt <= TT_Shore3_end)     return 9;                       /* TT_Shore3_1st .. TT_Shore3_end */
+    if(tt <= tt_Shore2_end)     return 9;                       /* tt_Shore2_1st .. tt_Shore2_end */
+    if(tt <= tt_4WRiver5)       return 8;                       /* tt_4WRiver1 .. tt_4WRiver5 */
+    if(tt <= tt_Shore3_end)     return 9;                       /* tt_Shore3_1st .. tt_Shore3_end */
     if(tt == tt_Ocean2)         return 0;                       /* Animated Ocean */
-    if(tt <= TT_Tundra_Last)    return 7;                       /* tt_Tundra_1st .. TT_Tundra_Last */
+    if(tt <= tt_Tundra_Last)    return 7;                       /* tt_Tundra_1st .. tt_Tundra_Last */
     return -1;
 }
 
@@ -1798,6 +1798,11 @@ void Simulate_World_Map_Generation(void)
     int simulations_to_run = 0;
     int num_maps_to_generate = 0;
     int itr = 0;
+    int16_t DBG_placeholder_river_count = 0;
+    int16_t DBG_river_group_count = 0;
+    int16_t wy = 0;
+    int16_t wx = 0;
+    int16_t terrain_type = 0;
 
     simulations_to_run = 2;  // max is 32,767?
     num_maps_to_generate = (simulations_to_run * 2);
@@ -1850,23 +1855,60 @@ void Simulate_World_Map_Generation(void)
 
         for(rivers = 0; rivers < NUM_RIVERS; rivers++)
         {
-            for(tries = 0; ((tries < 2000) && (River_Path(ARCANUS_PLANE) != 0)); tries++) { }
-            for(tries = 0; ((tries < 2000) && (River_Path(MYRROR_PLANE)  != 0)); tries++) { }
+            // for(tries = 0; ((tries < 2000) && (River_Path(ARCANUS_PLANE) != 0)); tries++) { }
+            // for(tries = 0; ((tries < 2000) && (River_Path(MYRROR_PLANE)  != 0)); tries++) { }
+            for(tries = 0; tries < 2000; tries++)
+            {
+                if(River_Path(ARCANUS_PLANE) != ST_FALSE)
+                {
+                    STU_DEBUG_BREAK();
+                }
+            }
         }
         
+        DBG_placeholder_river_count = 0;
+        for(wy = 0; wy < WORLD_HEIGHT; wy++)
+        {
+            for(wx = 0; wx < WORLD_WIDTH; wx++)
+            {
+                terrain_type = p_world_map[ARCANUS_PLANE][wy][wx];
+                if(terrain_type == TT_RIVER_PLACEHOLDER)
+                {
+                    DBG_placeholder_river_count++;
+                }
+            }
+        }
+        printf("DBG_placeholder_river_count: %d\n", DBG_placeholder_river_count);
+
         River_Terrain(ARCANUS_PLANE);
-        River_Terrain(MYRROR_PLANE);
+        // River_Terrain(MYRROR_PLANE);
+
+        DBG_river_group_count = 0;
+        for(wy = 0; wy < WORLD_HEIGHT; wy++)
+        {
+            for(wx = 0; wx < WORLD_WIDTH; wx++)
+            {
+                terrain_type = p_world_map[ARCANUS_PLANE][wy][wx];
+                if(
+                    (terrain_type >= _River0010)
+                    &&
+                    (terrain_type <= _River1011_4)
+                )
+                {
+                    DBG_river_group_count++;
+                }
+            }
+        }
+        printf("DBG_river_group_count: %d\n", DBG_river_group_count);
+
+
 
         Worldmap_Statistics(itr, ARCANUS_PLANE);
         Display_Worldmap_Statistics(itr, ARCANUS_PLANE);
         Display_Worldmap_Histogram(itr, ARCANUS_PLANE);
         Print_Worldmap_Map(itr, ARCANUS_PLANE);
-        // Worldmap_Statistics(itr, MYRROR_PLANE);
-        // Display_Worldmap_Statistics(itr, MYRROR_PLANE);
-        // Display_Worldmap_Histogram(itr, MYRROR_PLANE);
-        // Print_Worldmap_Map(itr, MYRROR_PLANE);
 
-        // NEWG_SetDeserts__STUB();
+        Desert_Autotile();
 
         // NEWG_RandomizeTiles__STUB();
 
@@ -1877,11 +1919,22 @@ void Simulate_World_Map_Generation(void)
         // Init_Square_Explored();
 
         // NEWG_AnimateOceans__STUB();
-        
+
         // Set_Upper_Lair_Guardian_Count();
 
 
-        
+
+        Worldmap_Statistics(itr, ARCANUS_PLANE);
+        Display_Worldmap_Statistics(itr, ARCANUS_PLANE);
+        Display_Worldmap_Histogram(itr, ARCANUS_PLANE);
+        Print_Worldmap_Map(itr, ARCANUS_PLANE);
+        // Worldmap_Statistics(itr, MYRROR_PLANE);
+        // Display_Worldmap_Statistics(itr, MYRROR_PLANE);
+        // Display_Worldmap_Histogram(itr, MYRROR_PLANE);
+        // Print_Worldmap_Map(itr, MYRROR_PLANE);
+
+        STU_DEBUG_BREAK();
+
         // Capture_Simulation_Data(itr);
 
         // printf("Simulation # %d\n", (1 + itr));
