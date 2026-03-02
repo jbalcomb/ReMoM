@@ -8,6 +8,8 @@
 #include "STU_TYPE.h"
 
 #include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOX_DEF.h"      /* GET_TERRAIN_TYPE() */
+#include "../../MoM/src/TerrType.h"
 
 #include "STU_VLD.h"
 
@@ -102,4 +104,29 @@ void Validate_Units_Status(int8_t status)
         STU_DEBUG_BREAK();
     }
 
+}
+
+/*
+should be no terrain type 1 - Landmass/Land?   AKA tt_BugGrass
+*/
+void Validate_Terrain_Types(void)
+{
+    int16_t wx = 0;
+    int16_t wy = 0;
+    int16_t wp = 0;
+    int16_t terrain_type = 0;
+    for(wp = 0; wp < NUM_PLANES; wp++)
+    {
+        for(wy = 0; wy < WORLD_HEIGHT; wy++)
+        {
+            for(wx = 0; wx < WORLD_WIDTH; wx++)
+            {
+                terrain_type = p_world_map[wp][wy][wx];
+                if(terrain_type == tt_BugGrass)
+                {
+                    STU_DEBUG_BREAK();
+                }
+            }
+        }
+    }
 }
