@@ -116,63 +116,6 @@ target_include_directories(momlib PUBLIC
     ${SDL2_MIXER_INCLUDE_DIR}
 )
 
-target_compile_definitions(momlib PRIVATE
-    _CRT_SECURE_NO_WARNINGS=TRUE
-)
-target_compile_definitions(momlib PRIVATE
-    $<$<CONFIG:Debug>:STU_DEBUG=TRUE>
-)
-target_compile_definitions(momlib PRIVATE
-    $<$<CONFIG:Debug>:STU_TRACE=TRUE>
-)
-target_compile_definitions(momlib PRIVATE
-    $<$<CONFIG:Debug>:_STU_SDL2=TRUE>
-)
+ReMoM_Apply_Common_Compile_Definitions(momlib)
 
-# Deprecated since version 3.24: Use the CMAKE_C_COMPILER_ID variable instead.
-# Starting with CMake 2.6, the CMAKE_C_COMPILER_ID variable should be used instead:
-# if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
-#   # GNU C compiler-specific logic.
-# endif()
-# # Targeting GNU, LCC, and QCC compilers for C:
-# if(CMAKE_C_COMPILER_ID MATCHES "^(GNU|LCC|QCC)$")
-#   # ...
-# endif()
-# https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER_ID.html#variable:CMAKE_%3CLANG%3E_COMPILER_ID
-if(CMAKE_COMPILER_IS_CLANG)
-    target_compile_options(momlib PRIVATE
-        "-Wall"
-        "-Wno-deprecated-declarations"
-        "-Wno-int-to-pointer-cast"
-        "-Wno-missing-braces"
-        "-Wno-tautological-compare"
-        "-Wno-unknown-pragmas"
-        "-Wno-unused-but-set-variable"
-        "-Wno-unused-label"
-        "-Wno-unused-variable"
-        "-Wno-unused-function"
-        "-Wno-writable-strings"
-    )
-endif()
-if(CMAKE_COMPILER_IS_GNUCC)
-    target_compile_options(momlib PRIVATE
-        "-Wall"
-        "-Wno-deprecated-declarations"
-        "-Wno-int-to-pointer-cast"
-        "-Wno-missing-braces"
-        "-Wno-tautological-compare"
-        "-Wno-unknown-pragmas"
-        "-Wno-unused-but-set-variable"
-        "-Wno-unused-label"
-        "-Wno-unused-variable"
-        "-Wno-unused-function"
-    )
-endif()
-if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-    target_compile_options(momlib PRIVATE
-        "/W0"
-        "/wd4068"  # "unknown pragma"
-        "/wd4365"
-        "/wd4820"
-    )
-endif()
+ReMoM_Apply_Common_Compile_Options(momlib)

@@ -9,5 +9,7 @@ target_link_libraries(test_STU
 	STU
 )
 
-gtest_discover_tests(test_STU)
-# gtest_discover_tests(test_STU     DISCOVERY_MODE PRE_TEST)
+gtest_discover_tests(test_STU
+	PROPERTIES
+		ENVIRONMENT "${REMOM_TEST_PATH_ENV}"
+)

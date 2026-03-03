@@ -23,6 +23,7 @@ protected:
     {
         _world_maps = static_cast<uint8_t *>(malloc(WORLD_SIZE * NUM_PLANES * sizeof(uint16_t)));
         ASSERT_NE(_world_maps, nullptr);
+        p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
         memset(_world_maps, tt_Ocean1, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
     }
 
@@ -30,6 +31,7 @@ protected:
     {
         free(_world_maps);
         _world_maps = nullptr;
+        p_world_map = nullptr;
     }
 };
 

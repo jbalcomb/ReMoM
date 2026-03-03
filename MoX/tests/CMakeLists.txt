@@ -30,106 +30,23 @@ else()
     target_link_libraries(test_Allocate PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL2::Core momlib MOX )
 endif()
 
-if(WIN32)
-    add_custom_command(
-        TARGET MOX_tests
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${SDL2_DLL_FILE_PATH}
-            $<TARGET_FILE_DIR:MOX_tests>
-        COMMAND_EXPAND_LISTS
-        COMMENT "./MoX/tests: Copying SDL2.dll"
-    )
-
-    add_custom_command(
-        TARGET test_Util
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${SDL2_DLL_FILE_PATH}
-            $<TARGET_FILE_DIR:test_Util>
-        COMMAND_EXPAND_LISTS
-        COMMENT "./MoX/tests: Copying SDL2.dll"
-    )
-
-    add_custom_command(
-        TARGET test_Allocate
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${SDL2_DLL_FILE_PATH}
-            $<TARGET_FILE_DIR:test_Allocate>
-        COMMAND_EXPAND_LISTS
-        COMMENT "./MoX/tests: Copying SDL2.dll"
-    )
-endif()
-
-if(NOT DISABLE_AUDIO)
-    if(WIN32)
-        add_custom_command(
-            TARGET MOX_tests
-            POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-                ${SDL2_MIXER_DLL_FILE_PATH}
-                $<TARGET_FILE_DIR:MOX_tests>
-            COMMAND_EXPAND_LISTS
-            COMMENT "./MoX/tests: Copying SDL2_mixer.dll"
-        )
-    endif()
-endif()
-
-file(GLOB LBX_FILE_LIST "${CMAKE_SOURCE_DIR}/*.lbx")
-    add_custom_command(
-        TARGET MOX_tests
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${LBX_FILE_LIST}
-            $<TARGET_FILE_DIR:MOX_tests>
-        COMMAND_EXPAND_LISTS
-        COMMENT "./MoX/tests: Copying LBX files..."
+ReMoM_Add_Target_Support_Files(MOX_tests
+    COPY_SDL2
+    COPY_SDL2_MIXER
+    COPY_LBX
+    COPY_SDL2D
+    COPY_GMOCK
 )
 
-if(WIN32)
-    add_custom_command(
-        TARGET MOX_tests
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-            ${SDL2D_DLL_FILE_PATH}
-            $<TARGET_FILE_DIR:MOX_tests>
-        COMMAND_EXPAND_LISTS
-        COMMENT "./MoX/tests: Copying SDL2d.dll"
-    )
+ReMoM_Add_Target_Support_Files(test_Util
+    COPY_SDL2
+    COPY_SDL2D
+)
 
-    add_custom_command(
-        TARGET test_Util
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-            ${SDL2D_DLL_FILE_PATH}
-            $<TARGET_FILE_DIR:test_Util>
-        COMMAND_EXPAND_LISTS
-        COMMENT "./MoX/tests: Copying SDL2d.dll"
-    )
-
-    add_custom_command(
-        TARGET test_Allocate
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-            ${SDL2D_DLL_FILE_PATH}
-            $<TARGET_FILE_DIR:test_Allocate>
-        COMMAND_EXPAND_LISTS
-        COMMENT "./MoX/tests: Copying SDL2d.dll"
-    )
-endif()
-
-if(WIN32)
-    add_custom_command(
-        TARGET MOX_tests
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-            ${GMOCK_DLL_FILE_PATH}
-            $<TARGET_FILE_DIR:MOX_tests>
-        COMMAND_EXPAND_LISTS
-        COMMENT "./MoX/tests: Copying gmock.dll"
-    )
-endif()
+ReMoM_Add_Target_Support_Files(test_Allocate
+    COPY_SDL2
+    COPY_SDL2D
+)
 
 # add_custom_command(
 #     TARGET MOX_tests
@@ -141,9 +58,15 @@ endif()
 # )
 # # error ... "C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different  C:/STU/devel/ReMoM/out/build/MSVC-debug/MoX/tests/Debug
 
-gtest_discover_tests(MOX_tests)
-gtest_discover_tests(test_Util)
-gtest_discover_tests(test_Allocate)
-# gtest_discover_tests(MOX_tests      DISCOVERY_MODE PRE_TEST)
-# gtest_discover_tests(test_Util      DISCOVERY_MODE PRE_TEST)
-# gtest_discover_tests(test_Allocate  DISCOVERY_MODE PRE_TEST)
+gtest_discover_tests(MOX_tests
+    PROPERTIES
+        ENVIRONMENT "${REMOM_TEST_PATH_ENV}"
+)
+gtest_discover_tests(test_Util
+    PROPERTIES
+        ENVIRONMENT "${REMOM_TEST_PATH_ENV}"
+)
+gtest_discover_tests(test_Allocate
+    PROPERTIES
+        ENVIRONMENT "${REMOM_TEST_PATH_ENV}"
+)

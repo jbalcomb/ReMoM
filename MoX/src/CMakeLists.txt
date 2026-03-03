@@ -78,12 +78,8 @@ endif()
 # set_target_properties(MOX PROPERTIES LINKER_LANGUAGE C)
 set_target_properties(MOX PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-target_compile_definitions(MOX PRIVATE
-    _CRT_SECURE_NO_WARNINGS=TRUE
-    $<$<CONFIG:Debug>:STU_DEBUG=TRUE>
-    $<$<CONFIG:Debug>:STU_TRACE=TRUE>
-    $<$<CONFIG:Debug>:_STU_SDL2=TRUE>
-)
+ReMoM_Apply_Common_Compile_Definitions(MOX)
+ReMoM_Apply_Common_Compile_Options(MOX)
 
 target_include_directories(MOX PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}

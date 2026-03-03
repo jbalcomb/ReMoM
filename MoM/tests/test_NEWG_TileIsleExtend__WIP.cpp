@@ -27,6 +27,8 @@ protected:
         ASSERT_NE(_world_maps, nullptr);
         ASSERT_NE(_TOWERS, nullptr);
 
+        p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
+
         memset(_world_maps, tt_Ocean1, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
         memset(_TOWERS, 0, sizeof(struct s_TOWER) * NUM_TOWERS);
     }
@@ -37,6 +39,7 @@ protected:
         _TOWERS = nullptr;
         free(_world_maps);
         _world_maps = nullptr;
+        p_world_map = nullptr;
     }
 };
 

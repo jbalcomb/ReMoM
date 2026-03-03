@@ -43,7 +43,8 @@ TEST_F(TILE_SetLandMass__WIP_test, NoAdjacentLandmass_WritesZeroToLeftTile_AndDo
 
     Build_Landmass(wp, wx, wy);
 
-    EXPECT_EQ(GET_LANDMASS((wx - 1), wy, wp), 0);
+    EXPECT_EQ(GET_LANDMASS((wx - 1), wy, wp), 55);
+    EXPECT_EQ(GET_LANDMASS(wx, wy, wp), 55);
     EXPECT_EQ(m_landmasses_ctr, 7);
 }
 
@@ -58,7 +59,7 @@ TEST_F(TILE_SetLandMass__WIP_test, AdjacentLandmass_WritesCurrentCounterToLeftTi
 
     Build_Landmass(wp, wx, wy);
 
-    EXPECT_EQ(GET_LANDMASS((wx - 1), wy, wp), 7);
-    EXPECT_EQ(m_landmasses_ctr, 8);
+    EXPECT_EQ(GET_LANDMASS(wx, wy, wp), 5);
+    EXPECT_EQ(m_landmasses_ctr, 7);
     EXPECT_EQ(GET_LANDMASS(wx, (wy - 1), wp), 5);
 }

@@ -77,6 +77,9 @@ enable_testing()
 # [cmake]   by this project.
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/sdl2)
+include(${PROJECT_SOURCE_DIR}/cmake/ReMoM_Common_Compile_Definitions.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/ReMoM_Common_Compile_Options.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/ReMoM_PostBuild_Copies.cmake)
 
 set(BUILD_SHARED_LIBS OFF)
 # set(BUILD_SHARED_LIBS ON)
@@ -93,7 +96,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 message(STATUS "GTEST_INCLUDE_DIR='${GTEST_INCLUDE_DIR}'")
 message(STATUS "GTEST_INCLUDE_DIRS='${GTEST_INCLUDE_DIRS}'")
-# set(CMAKE_GTEST_DISCOVER_TESTS_DISCOVERY_MODE PRE_TEST)
+# NOTE: Do not set global PRE_TEST discovery; configure per target where runtime file staging requires it.
 
 find_package(Doxygen COMPONENTS doxygen dot)
 if (DOXYGEN_FOUND)
@@ -172,6 +175,8 @@ if(EXISTS "${GMOCK_DLL_FILE_PATH}")
 else()
     message(CHECK_FAIL "The file does not exist: ${GMOCK_DLL_FILE_PATH}")
 endif()
+
+set(REMOM_TEST_PATH_ENV "PATH=${PROJECT_SOURCE_DIR}/bin\\;$ENV{PATH}")
 
 
 

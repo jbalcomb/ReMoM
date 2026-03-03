@@ -20,6 +20,9 @@ add_library(STU STATIC ${STU_SOURCES})
 # set_target_properties(STU PROPERTIES LINKER_LANGUAGE C)
 set_target_properties(STU PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
+ReMoM_Apply_Common_Compile_Definitions(STU)
+ReMoM_Apply_Common_Compile_Options(STU)
+
 # target_include_directories(STU PRIVATE
 #     ${CMAKE_CURRENT_SOURCE_DIR}
 #     ${SDL2_INCLUDE_DIR}
@@ -30,12 +33,6 @@ target_include_directories(STU PRIVATE
     ${SDL2_INCLUDE_DIR}
 )
 
-if(NOT DISABLE_AUDIO)
-    target_link_libraries(STU
-        SDL2::Core
-    )
-else()
-    target_link_libraries(STU
-        SDL2::Core
-    )
-endif()
+target_link_libraries(STU
+    SDL2::Core
+)
