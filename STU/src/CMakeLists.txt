@@ -36,3 +36,6 @@ target_include_directories(STU PRIVATE
 target_link_libraries(STU
     SDL2::Core
 )
+
+# list(APPEND ALL_DOC_TARGETS doxySTUlib)
+  

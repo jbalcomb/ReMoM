@@ -124,9 +124,16 @@ if (DOXYGEN_FOUND)
     set(DOXYGEN_INPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/STU/src)
     doxygen_add_docs(doxySTUlib
         ${DOXYGEN_INPUT_DIR}
-        DOXYGEN_PROJECT_NAME "STU Library"
+        DOXYGEN_PROJECT_NAME "MOX Library"
         DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doxy/STUlib/html
     )
+
+    # set(ALL_DOC_TARGETS)
+    add_custom_target(docs COMMENT "Building all project documentation")
+    # to rebuild everytime, add the ALL target add_custom_target(docs ALL COMMENT "Building all project documentation")
+    # add_dependencies(docs ${ALL_DOC_TARGETS})
+    add_dependencies(docs doxyReMoM doxyMOMlib doxyMOXlib doxySTUlib)
+
 else()
     message(STATUS "Doxygen not found. Documentation will not be generated.")
 endif()
