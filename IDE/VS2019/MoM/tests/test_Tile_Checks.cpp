@@ -34,7 +34,7 @@ protected:
 
 TEST_F(TILE_IsOcean_test, OceanTileReturnsTrue)
 {
-    SET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE, tt_Ocean1);
+    SET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE, tt_Ocean);
     EXPECT_EQ(TILE_IsOcean(30, 20, ARCANUS_PLANE), ST_TRUE);
 }
 

@@ -37,13 +37,13 @@ protected:
 TEST_F(NEWG_SetBaseLands_test, OceanRemainsOcean)
 {
     // Arrange
-    SET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE, tt_Ocean1);
+    SET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE, tt_Ocean);
 
     // Act
     Translate_Heightmap_To_Base_Terrain_Types(ARCANUS_PLANE);
 
     // Assert
-    EXPECT_EQ(GET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE), tt_Ocean1);
+    EXPECT_EQ(GET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE), tt_Ocean);
 }
 
 TEST_F(NEWG_SetBaseLands_test, TopRow_BecomesTundra)

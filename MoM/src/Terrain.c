@@ -48,10 +48,10 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
 
     terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
-    if(terrain_type != tt_Ocean1)
+    if(terrain_type != tt_Ocean)
     {
         // HERE:  >= 1 && <= ??
-        if(terrain_type < tt_Ocean2)
+        if(terrain_type < tt_OceanAnim)
         {
             // HERE:  >= 1 && < 'Tundra Range'
             if(terrain_type != tt_BugGrass)
@@ -300,7 +300,7 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
         }
         else
         {
-            // 0x0259  tt_AnimOcean  tt_Ocean2  && 'Tundra Range'
+            // 0x0259  tt_AnimOcean  tt_OceanAnim  && 'Tundra Range'
             food_units = 0;
         }
     }
@@ -1220,7 +1220,7 @@ int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
     }
     else
     {
-        // <= tt_Ocean2      = 0x259,
+        // <= tt_OceanAnim      = 0x259,
         if(terrain_type > 0x1D8)  /* _River1111_5 */
         {
             goto Return_True;
@@ -1314,7 +1314,7 @@ int16_t Square_Is_Ocean(int16_t wx, int16_t wy, int16_t wp)
 
     terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
-    if(terrain_type == tte_AnimOcean)
+    if(terrain_type == tt_OceanAnim)
     {
         is_ocean = ST_TRUE;
     }

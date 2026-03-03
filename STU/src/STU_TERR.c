@@ -13,7 +13,7 @@ char Terrain_Type_Name(int16_t terrain_type)
 {
     switch(terrain_type)
     {
-        case tt_Ocean1:      return "Ocean";            /*   0  0x0 */
+        case tt_Ocean:      return "Ocean";            /*   0  0x0 */
         case tt_BugGrass:    return "BugGrass";         /*   1  0x1 */
 
         case tt_Shore1_Fst:  return "Shore1_Fst";       /*   2  0x2 */
@@ -51,7 +51,7 @@ char Terrain_Group_Name(int16_t terrain_type)
 {
     switch(terrain_type)
     {
-        case tt_Ocean1:      return "Ocean";            /*   0  0x0 */
+        case tt_Ocean:      return "Ocean";            /*   0  0x0 */
         case tt_BugGrass:    return "BugGrass";         /*   1  0x1 */
 
         case tt_Shore1_Fst:  return "Shore1_Fst";       /*   2  0x2 */
@@ -88,7 +88,7 @@ char Terrain_Group_Name(int16_t terrain_type)
 /* { 0:Oceans, 1:Grasslands, 2:Forests, 3:Hills, 4:Mountains, 5:Deserts, 6:Swamps, 7:Tundras, 8:River, 9:Shore } */
 static int16_t Get_Terrain_Group(int16_t tt)
 {
-    if(tt == tt_Ocean1)         return 0;
+    if(tt == tt_Ocean)         return 0;
     if(tt == tt_BugGrass)       return 1;
     if(tt == tt_Lake)           return 9;                       /* 0x12 lake within Shore1 range */
     if(tt <= tt_Shore1_Lst)     return 9;                       /* tt_Shore1_Fst .. tt_Shore1_Lst */
@@ -119,7 +119,7 @@ static int16_t Get_Terrain_Group(int16_t tt)
     if(tt <= tt_Shore2_end)     return 9;                       /* tt_Shore2_1st .. tt_Shore2_end */
     if(tt <= tt_4WRiver5)       return 8;                       /* tt_4WRiver1 .. tt_4WRiver5 */
     if(tt <= tt_Shore3_end)     return 9;                       /* tt_Shore3_1st .. tt_Shore3_end */
-    if(tt == tt_Ocean2)         return 0;                       /* Animated Ocean */
+    if(tt == tt_OceanAnim)         return 0;                       /* Animated Ocean */
     if(tt <= tt_Tundra_Last)    return 7;                       /* tt_Tundra_1st .. tt_Tundra_Last */
     return -1;
 }

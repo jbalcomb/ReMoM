@@ -578,7 +578,7 @@ TEST_F(River_Path_test, TerrainSpecialAtStart_RejectsPathAndLeavesMapUnchanged)
             p_world_map[wp][step1_wy][step1_wx]         = tt_Grasslands1;   1st downstream step.
             p_world_map[wp][step2_wy][step2_wx]         = tt_Grasslands1;   2nd downstream step.
             p_world_map[wp][step3_wy][step3_wx]         = tt_Grasslands1;   3rd downstream step.
-            p_world_map[wp][ocean_wy][ocean_wx]         = tt_Ocean1;        The outflow ocean square.
+            p_world_map[wp][ocean_wy][ocean_wx]         = tt_Ocean;        The outflow ocean square.
 
         The step coordinates are computed from the plan:
             step1 = base + 1 * dir[downstream]
@@ -661,7 +661,7 @@ TEST_F(River_Path_test, ManufacturedCandidate_SucceedsAndWritesExpectedPath)
     p_world_map[wp][step1_wy][step1_wx] = tt_Grasslands1;
     p_world_map[wp][step2_wy][step2_wx] = tt_Grasslands1;
     p_world_map[wp][step3_wy][step3_wx] = tt_Grasslands1;
-    p_world_map[wp][ocean_wy][ocean_wx] = tt_Ocean1;
+    p_world_map[wp][ocean_wy][ocean_wx] = tt_Ocean;
 
     Set_Random_Seed(plan.seed);
 

@@ -4,7 +4,7 @@
 #define TT_RIVER_PLACEHOLDER 1000
 enum e_TERRAIN_TYPES
 {
-    tt_Ocean1      = 0x0,
+    tt_Ocean      = 0x0,
     tt_BugGrass    = 0x1,
     tt_Shore1_Fst  = 0x2,
     tt_Lake        = 0x12,
@@ -68,7 +68,7 @@ enum e_TERRAIN_TYPES
     tt_Shore3_1st  = 0x1D9,
     tt_Shore3_end  = 0x258,
 
-    tt_Ocean2      = 0x259,  // 601    tte_AnimOcean   = 0x259,  /* type used by Square_Is_Ocean() */
+    tt_OceanAnim   = 0x259,  // 601    tte_OceanAnim   = 0x259,  /* type used by Square_Is_Ocean() */
 
     tt_Tundra_1st  = 0x25A,  // 602    should line up with mapping from TERRTYPE.LBX
     tt_Tundra_Last = 0x2F9,  // 761 - 602 = 159 total tundra types?
@@ -680,7 +680,9 @@ enum OVL_Tiles_Extended
     _Shore000R1001  = 0x256,
     _Shore001R0001  = 0x257,
     _Shore001R1001  = 0x258,  /* 600d  for Tundra smoothing, it uses 600 + terrtype[{1,...255}] */
-    tte_AnimOcean   = 0x259,  /* type used by Square_Is_Ocean() */
+
+    tte_OceanAnim   = 0x259,  /* AKA tt_OceanAnim  type used by Square_Is_Ocean() */
+
     _Tundra00001000 = 0x25A,  /* start of range for Tundra autotiling */
     _Tundra00001100 = 0x25B,
     _Tundra00001110 = 0x25C,

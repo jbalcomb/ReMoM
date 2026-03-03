@@ -23,7 +23,7 @@ protected:
     void SetUp() override
     {
         _world_maps = (uint8_t *)Allocate_Space(602);
-        memset(_world_maps, tt_Ocean1, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
+        memset(_world_maps, tt_Ocean, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
         
         _landmasses = (uint8_t *)Allocate_Space(300);
         memset(_landmasses, 0, WORLD_SIZE * NUM_PLANES);

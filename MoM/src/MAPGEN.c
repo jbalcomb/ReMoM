@@ -548,9 +548,9 @@ void Extend_Islands(int16_t wp)
                                         case 1:
                                         {
                                             if(
-                                                (p_world_map[wp][(itr_wy + rnd_wy + 1)][(itr_wx + rnd_wx)] == tt_Ocean1)
+                                                (p_world_map[wp][(itr_wy + rnd_wy + 1)][(itr_wx + rnd_wx)] == tt_Ocean)
                                                 &&
-                                                (p_world_map[wp][(itr_wy + rnd_wy)][(itr_wx + rnd_wx + 1)] == tt_Ocean1)
+                                                (p_world_map[wp][(itr_wy + rnd_wy)][(itr_wx + rnd_wx + 1)] == tt_Ocean)
                                             )
                                             {
                                                 convert = ST_FALSE;
@@ -564,9 +564,9 @@ void Extend_Islands(int16_t wp)
                                         case 3:
                                         {
                                             if(
-                                                (p_world_map[wp][(itr_wy + rnd_wy + 1)][(itr_wx + rnd_wx)] == tt_Ocean1)
+                                                (p_world_map[wp][(itr_wy + rnd_wy + 1)][(itr_wx + rnd_wx)] == tt_Ocean)
                                                 &&
-                                                (p_world_map[wp][(itr_wy + rnd_wy)][(itr_wx + rnd_wx - 1)] == tt_Ocean1)
+                                                (p_world_map[wp][(itr_wy + rnd_wy)][(itr_wx + rnd_wx - 1)] == tt_Ocean)
                                             )
                                             {
                                                 convert = ST_FALSE;
@@ -582,9 +582,9 @@ void Extend_Islands(int16_t wp)
                                         case 7:
                                         {
                                             if(
-                                                (p_world_map[wp][(itr_wy + rnd_wy - 1)][(itr_wx + rnd_wx)] == tt_Ocean1)
+                                                (p_world_map[wp][(itr_wy + rnd_wy - 1)][(itr_wx + rnd_wx)] == tt_Ocean)
                                                 &&
-                                                (p_world_map[wp][(itr_wy + rnd_wy)][(itr_wx + rnd_wx + 1)] == tt_Ocean1)
+                                                (p_world_map[wp][(itr_wy + rnd_wy)][(itr_wx + rnd_wx + 1)] == tt_Ocean)
                                             )
                                             {
                                                 convert = ST_FALSE;
@@ -598,9 +598,9 @@ void Extend_Islands(int16_t wp)
                                         case 9:
                                         {
                                             if(
-                                                (p_world_map[wp][(itr_wy + rnd_wy - 1)][(itr_wx + rnd_wx)] == tt_Ocean1)
+                                                (p_world_map[wp][(itr_wy + rnd_wy - 1)][(itr_wx + rnd_wx)] == tt_Ocean)
                                                 &&
-                                                (p_world_map[wp][(itr_wy + rnd_wy)][(itr_wx + rnd_wx - 1)] == tt_Ocean1)
+                                                (p_world_map[wp][(itr_wy + rnd_wy)][(itr_wx + rnd_wx - 1)] == tt_Ocean)
                                             )
                                             {
                                                 convert = ST_FALSE;
@@ -676,9 +676,9 @@ void Generate_Towers(void)
             wy = (2 + Random(34));
 
             if(
-                (p_world_map[ARCANUS_PLANE][wy][wx] != tt_Ocean1)
+                (p_world_map[ARCANUS_PLANE][wy][wx] != tt_Ocean)
                 ||
-                (p_world_map[MYRROR_PLANE][wy][wx] != tt_Ocean1)
+                (p_world_map[MYRROR_PLANE][wy][wx] != tt_Ocean)
                 ||
                 (Random(40) == 1)
             )
@@ -887,7 +887,7 @@ Loop_Location_1:
 
                     Invalid = ST_FALSE;
 
-                    if(GET_TERRAIN_TYPE(wx, wy, wp) == tt_Ocean1)
+                    if(GET_TERRAIN_TYPE(wx, wy, wp) == tt_Ocean)
                     {
 
                         Invalid = ST_TRUE;
@@ -1562,7 +1562,7 @@ void Generate_Climate_Terrain_Types(int16_t wp)
                 if(next_wy < 0) { next_wy += WORLD_HEIGHT; }
                 curr_wx = next_wx;
                 curr_wy = next_wy;
-                if(p_world_map[wp][curr_wy][curr_wx] != tt_Ocean1)
+                if(p_world_map[wp][curr_wy][curr_wx] != tt_Ocean)
                 {
                     p_world_map[wp][curr_wy][curr_wx] = tt_Desert1;
                 }
@@ -1620,7 +1620,7 @@ void Generate_Climate_Terrain_Types(int16_t wp)
 // MGC o51p09
 // drake178: NEWG_SetBaseLands()
 /*
-sets tt_Ocean1, tt_Grasslands1, tt_Forest1, tt_Hills1, tt_Mountain1
+sets tt_Ocean, tt_Grasslands1, tt_Forest1, tt_Hills1, tt_Mountain1
 */
 /**
  * @brief Translates per-tile heightmap hit counts into base terrain types.
@@ -1657,7 +1657,7 @@ void Translate_Heightmap_To_Base_Terrain_Types(int16_t wp)
     {
         for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
         {
-            if(p_world_map[wp][itr_wy][itr_wx] == 0)  // HERE: 0 means NO_LANDMASS, which becomes tt_Ocean1
+            if(p_world_map[wp][itr_wy][itr_wx] == 0)  // HERE: 0 means NO_LANDMASS, which becomes tt_Ocean
             {
                 continue;
             }
@@ -1819,7 +1819,7 @@ void Generate_Landmasses(int16_t wp)
     {
         for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
         {
-            p_world_map[wp][itr_wy][itr_wx] = tt_Ocean1;
+            p_world_map[wp][itr_wy][itr_wx] = tt_Ocean;
         }
     }
     // ; clear the map section array
@@ -1879,7 +1879,7 @@ void Generate_Landmasses(int16_t wp)
             curr_wy = (base_wy + dir_chg_tbl_wy[direction]);
             for(Steps_Taken = 0; ((Steps_Taken < Steps_To_Take) && (n_generated <= n_needed)); Steps_Taken++)
             {
-                if(p_world_map[wp][curr_wy][curr_wx] == tt_Ocean1)
+                if(p_world_map[wp][curr_wy][curr_wx] == tt_Ocean)
                 {
                     n_generated++;
                 }
@@ -1976,7 +1976,7 @@ static void Generate_Nodes_AIgenerated(void)
             if (wx < 3 || wy < 2 || wx >= 57 || wy >= 37) continue;
 
             /* 5. Terrain Check (Ocean has 1/40 chance) */
-            if (p_world_map[ARCANUS_PLANE][wy][wx] == tt_Ocean1) {
+            if (p_world_map[ARCANUS_PLANE][wy][wx] == tt_Ocean) {
                 if (Random(40) != 1) continue;
             }
 
@@ -2052,7 +2052,7 @@ somehow1:
                 continue;
             }
             if(
-                (p_world_map[ARCANUS_PLANE][wy][wx] != tt_Ocean1)
+                (p_world_map[ARCANUS_PLANE][wy][wx] != tt_Ocean)
                 ||
                 (Random(40) == 1)  // 2.5%
             )
@@ -2106,7 +2106,7 @@ somehow2:
                 continue;
             }
             if(
-                (p_world_map[ARCANUS_PLANE][wy][wx] != tt_Ocean1)  // BUGBUG  should be MYRROR_PLANE, not ARCANUS_PLANE
+                (p_world_map[ARCANUS_PLANE][wy][wx] != tt_Ocean)  // BUGBUG  should be MYRROR_PLANE, not ARCANUS_PLANE
                 ||
                 (Random(25) == 1)  // 4.0%
             )
@@ -2277,7 +2277,7 @@ void Set_Node_Type(int16_t power, int8_t * wx_array, int8_t * wy_array, int16_t 
 
     for(itr = 0; itr < power; itr++)
     {
-        if(p_world_map[wp][wy_array[itr]][wx_array[itr]] == tt_Ocean1)
+        if(p_world_map[wp][wy_array[itr]][wx_array[itr]] == tt_Ocean)
         {
             sorcery_bias++;
         }
@@ -5153,7 +5153,7 @@ Loop_Location_2:
 
             Invalid = ST_FALSE;
 
-            if(TERRAIN_TYPE(wx, wy, wp) == tt_Ocean1)
+            if(TERRAIN_TYPE(wx, wy, wp) == tt_Ocean)
             {
 
                 Invalid = ST_TRUE;
@@ -5708,7 +5708,7 @@ void Generate_Roads(int16_t wp)
                 {
                     Invalid_Road = ST_TRUE;
                 }
-                if(GET_TERRAIN_TYPE(wx, wy, wp) == tt_Ocean1)
+                if(GET_TERRAIN_TYPE(wx, wy, wp) == tt_Ocean)
                 {
                     Invalid_Road = ST_TRUE;
                 }
@@ -5724,7 +5724,7 @@ void Generate_Roads(int16_t wp)
                 if(
                     (GET_TERRAIN_TYPE(wx, wy, wp) >= tt_Shore2_1st)
                     &&
-                    (GET_TERRAIN_TYPE(wx, wy, wp) <= tt_Ocean2)
+                    (GET_TERRAIN_TYPE(wx, wy, wp) <= tt_OceanAnim)
                 )
                 {
                     Invalid_Road = ST_TRUE;
@@ -6944,9 +6944,9 @@ int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp)
     terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
     if(
-        (terrain_type == tt_Ocean1)
+        (terrain_type == tt_Ocean)
         ||
-        (terrain_type >= tt_Ocean2)
+        (terrain_type >= tt_OceanAnim)
     )
     {
         return 0;

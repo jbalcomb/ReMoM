@@ -69,7 +69,7 @@ protected:
         _world_maps = (uint8_t *)Allocate_Space(602);
 
         // Clear to Ocean (food2 = 0)
-        memset(_world_maps, tt_Ocean1, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
+        memset(_world_maps, tt_Ocean, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
     }
 
     void TearDown() override
@@ -353,7 +353,7 @@ TEST_F(Square_Food2_NewGame_test, Volcano_Returns0)
 TEST_F(Square_Food2_NewGame_test, Ocean1_Returns0)
 {
     // Arrange
-    // _world_maps already zeroed to tt_Ocean1
+    // _world_maps already zeroed to tt_Ocean
 
     // Act
     int16_t result = Square_Food2_NewGame(30, 20, ARCANUS_PLANE);
@@ -367,7 +367,7 @@ TEST_F(Square_Food2_NewGame_test, Ocean1_Returns0)
 TEST_F(Square_Food2_NewGame_test, Ocean2_Returns0)
 {
     // Arrange
-    Set_Terrain(30, 20, ARCANUS_PLANE, tt_Ocean2);
+    Set_Terrain(30, 20, ARCANUS_PLANE, tt_OceanAnim);
 
     // Act
     int16_t result = Square_Food2_NewGame(30, 20, ARCANUS_PLANE);
@@ -508,7 +508,7 @@ TEST_F(Square_Food2_NewGame_test, Shore3_Returns1)
 }
 
 
-// Tundra range (0x25A..0x2F9): food2 = 0  (falls into >= tt_Ocean2 early return)
+// Tundra range (0x25A..0x2F9): food2 = 0  (falls into >= tt_OceanAnim early return)
 TEST_F(Square_Food2_NewGame_test, TundraRange_Returns0)
 {
     // Arrange

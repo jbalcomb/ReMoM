@@ -29,7 +29,7 @@ protected:
 
         p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
 
-        memset(_world_maps, tt_Ocean1, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
+        memset(_world_maps, tt_Ocean, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
         memset(_TOWERS, 0, sizeof(struct s_TOWER) * NUM_TOWERS);
     }
 

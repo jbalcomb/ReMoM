@@ -134,7 +134,7 @@ static uint8_t Get_Terrain_Special(int16_t wx, int16_t wy, int16_t wp)  { return
 
 static const struct { int type; const char * name; } terrain_type_names[] =
 {
-    { tt_Ocean1,      "Ocean"      },
+    { tt_Ocean,      "Ocean"      },
     { tt_Grasslands1, "Grasslands" },
     { tt_Forest1,     "Forest"     },
     { tt_Hills1,      "Hills"      },
@@ -183,7 +183,7 @@ static const char * Terrain_Group_Name(int group)
 
 static char Terrain_Type_To_Char(int16_t tt)
 {
-    if(tt == tt_Ocean1)         return '.';
+    if(tt == tt_Ocean)         return '.';
     if(tt == tt_BugGrass)       return 'B';
     if(tt == tt_Lake)           return 'l';                        /* 0x12 lake within Shore1 range */
     if(tt <= tt_Shore1_Lst)     return '#';                        /* tt_Shore1_Fst .. tt_Shore1_Lst */
@@ -214,7 +214,7 @@ static char Terrain_Type_To_Char(int16_t tt)
     if(tt <= tt_Shore2_end)     return '#';                        /* tt_Shore2_1st .. tt_Shore2_end */
     if(tt <= tt_4WRiver5)       return '=';                        /* tt_4WRiver1 .. tt_4WRiver5 */
     if(tt <= tt_Shore3_end)     return '#';                        /* tt_Shore3_1st .. tt_Shore3_end */
-    if(tt == tt_Ocean2)         return '~';
+    if(tt == tt_OceanAnim)         return '~';
     if(tt <= tt_Tundra_Last)    return 't';                        /* tt_Tundra_1st .. tt_Tundra_Last */
     return '?';
 }
@@ -222,7 +222,7 @@ static char Terrain_Type_To_Char(int16_t tt)
 /* { 0:Oceans, 1:Grasslands, 2:Forests, 3:Hills, 4:Mountains, 5:Deserts, 6:Swamps, 7:Tundras, 8:River, 9:Shore } */
 static int16_t Get_Terrain_Group(int16_t tt)
 {
-    if(tt == tt_Ocean1)         return 0;
+    if(tt == tt_Ocean)         return 0;
     if(tt == tt_BugGrass)       return 1;
     if(tt == tt_Lake)           return 9;                       /* 0x12 lake within Shore1 range */
     if(tt <= tt_Shore1_Lst)     return 9;                       /* tt_Shore1_Fst .. tt_Shore1_Lst */
@@ -253,7 +253,7 @@ static int16_t Get_Terrain_Group(int16_t tt)
     if(tt <= tt_Shore2_end)     return 9;                       /* tt_Shore2_1st .. tt_Shore2_end */
     if(tt <= tt_4WRiver5)       return 8;                       /* tt_4WRiver1 .. tt_4WRiver5 */
     if(tt <= tt_Shore3_end)     return 9;                       /* tt_Shore3_1st .. tt_Shore3_end */
-    if(tt == tt_Ocean2)         return 0;                       /* Animated Ocean */
+    if(tt == tt_OceanAnim)         return 0;                       /* Animated Ocean */
     if(tt <= tt_Tundra_Last)    return 7;                       /* tt_Tundra_1st .. tt_Tundra_Last */
     return -1;
 }
@@ -443,7 +443,7 @@ void Display_Heightmap_Statistics(int sim_idx, int16_t wp)
 
         pct_total = (total_count > 0) ? ((double)count / (double)total_count * 100.0) : 0.0;
 
-        if(itr == tt_Ocean1)
+        if(itr == tt_Ocean)
         {
             printf("%12d  %9d  %6.2f%%  %7s\n", itr, count, pct_total, "---");
         }
@@ -574,7 +574,7 @@ void Display_Worldmap_Statistics(int sim_idx, int16_t wp)
 
         pct_total = (total_count  > 0) ? ((double)count / (double)total_count  * 100.0) : 0.0;
 
-        if(itr == tt_Ocean1)
+        if(itr == tt_Ocean)
         {
             printf("%3d  %-12s  %9d  %6.2f%%  %7s\n", itr, name, count, pct_total, "---");
         }
@@ -1454,7 +1454,7 @@ static void Gather_Stats(int32_t sim_idx)
         land_square_count = 0;
         for(tt = 0; tt < TerType_Count; tt++)
         {
-            if(tt != tt_Ocean1)
+            if(tt != tt_Ocean)
             {
                 land_square_count += simulation_data[sim_idx].worldmap_stats[wp].terrain_type_count[tt];
             }

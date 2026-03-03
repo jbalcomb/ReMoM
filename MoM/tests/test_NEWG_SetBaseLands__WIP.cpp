@@ -24,7 +24,7 @@ protected:
         _world_maps = static_cast<uint8_t *>(malloc(WORLD_SIZE * NUM_PLANES * sizeof(uint16_t)));
         ASSERT_NE(_world_maps, nullptr);
         p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
-        memset(_world_maps, tt_Ocean1, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
+        memset(_world_maps, tt_Ocean, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
     }
 
     void TearDown() override
@@ -45,7 +45,7 @@ TEST_F(NEWG_SetBaseLands__WIP_test, ConvertsInteriorTilesToExpectedBaseTerrains)
     SET_TERRAIN_TYPE(12, wy, wp, 4);
     SET_TERRAIN_TYPE(13, wy, wp, 5);
     SET_TERRAIN_TYPE(14, wy, wp, 6);
-    SET_TERRAIN_TYPE(15, wy, wp, tt_Ocean1);
+    SET_TERRAIN_TYPE(15, wy, wp, tt_Ocean);
 
     Translate_Heightmap_To_Base_Terrain_Types(wp);
 
@@ -54,7 +54,7 @@ TEST_F(NEWG_SetBaseLands__WIP_test, ConvertsInteriorTilesToExpectedBaseTerrains)
     EXPECT_EQ(GET_TERRAIN_TYPE(12, wy, wp), tt_Hills1);
     EXPECT_EQ(GET_TERRAIN_TYPE(13, wy, wp), tt_Hills1);
     EXPECT_EQ(GET_TERRAIN_TYPE(14, wy, wp), tt_Mountain1);
-    EXPECT_EQ(GET_TERRAIN_TYPE(15, wy, wp), tt_Ocean1);
+    EXPECT_EQ(GET_TERRAIN_TYPE(15, wy, wp), tt_Ocean);
 }
 
 TEST_F(NEWG_SetBaseLands__WIP_test, TopAndBottomRowsAreAlwaysTundra)
@@ -86,7 +86,7 @@ TEST_F(NEWG_SetBaseLands__WIP_test, PolarAdjacentRowsStayWithinAllowedRandomized
     {
         for(int16_t wx = 0; wx < WORLD_WIDTH; wx++)
         {
-            SET_TERRAIN_TYPE(wx, wy, wp, tt_Ocean1);
+            SET_TERRAIN_TYPE(wx, wy, wp, tt_Ocean);
         }
     }
 

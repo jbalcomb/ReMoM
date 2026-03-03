@@ -56,7 +56,7 @@ protected:
         _world_maps = (uint8_t *)Allocate_Space(602);
 
         // Clear to Ocean (food2 = 0)
-        memset(_world_maps, tt_Ocean1, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
+        memset(_world_maps, tt_Ocean, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
     }
 
     void TearDown() override
@@ -83,7 +83,7 @@ TEST_F(City_Maximum_Size_NewGame_test, AllOcean_ReturnsZero)
     {
         for (int16_t wx = 0; wx < WORLD_WIDTH; wx++)
         {
-            Set_Terrain(wx, wy, ARCANUS_PLANE, tt_Ocean1);
+            Set_Terrain(wx, wy, ARCANUS_PLANE, tt_Ocean);
         }
     }
 

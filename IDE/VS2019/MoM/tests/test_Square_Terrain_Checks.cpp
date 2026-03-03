@@ -58,7 +58,7 @@ TEST_F(Square_Is_Forest_NewGame_test, GrasslandReturnsFalse)
 
 TEST_F(Square_Is_Forest_NewGame_test, OceanReturnsFalse)
 {
-    SET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE, tt_Ocean1);
+    SET_TERRAIN_TYPE(30, 20, ARCANUS_PLANE, tt_Ocean);
     EXPECT_EQ(Square_Is_Forest_NewGame(30, 20, ARCANUS_PLANE), ST_FALSE);
 }
 
