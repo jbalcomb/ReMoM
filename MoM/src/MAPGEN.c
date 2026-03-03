@@ -390,7 +390,7 @@ void Init_New_Game(void)
 
     Init_Square_Explored();
 
-    NEWG_AnimateOceans__STUB();
+    Animate_Oceans();
 
     Set_Upper_Lair_Guardian_Count();
 
@@ -6607,17 +6607,79 @@ void Create_Unit_NewGame(int16_t unit_type, int16_t player_idx, int16_t wx, int1
 
 
 // MGC o51p38
-// drake178: NEWG_AnimateOceans()
-/*
-
-*/
-/*
-
-*/
-void NEWG_AnimateOceans__STUB(void)
+/**
+ * @brief Applies randomized ocean animation tile swaps on both world planes.
+ *
+ * @details
+ * Iterates every map square on `ARCANUS_PLANE` and `MYRROR_PLANE` and performs
+ * a probabilistic conversion for ocean-type squares:
+ * - If a square equals `tt_Ocean`, then with a 1-in-5 chance (`Random(5) == 1`)
+ *   it is replaced with `tt_OceanAnim`.
+ * - If a square equals raw value `762`, then with a 1-in-5 chance it is
+ *   replaced with raw value `1363`.
+ *
+ * The second branch is a legacy/special-case path that uses hardcoded terrain
+ * indices and is retained as implemented.
+ *
+ * Key local variables:
+ * - `wp`: world plane iterator (`0 .. NUM_PLANES-1`).
+ * - `wy`: world Y coordinate iterator (`0 .. WORLD_HEIGHT-1`).
+ * - `wx`: world X coordinate iterator (`0 .. WORLD_WIDTH-1`).
+ *
+ * @param void This function takes no parameters.
+ *
+ * @return void
+ * No value is returned. The routine mutates `p_world_map` in place.
+ *
+ * @note This routine depends on global world-map storage and the global RNG
+ *       stream (`Random()`), so exact animated-square selection varies per run.
+ */
+void Animate_Oceans(void)
 {
+    int16_t wx = 0;
+    int16_t wy = 0;
+    int16_t wp = 0;
 
+    for(wp = 0; wp < NUM_PLANES; wp++)
+    {
 
+        for(wy = 0; wy < WORLD_HEIGHT; wy++)
+        {
+
+            for(wx = 0; wx < WORLD_WIDTH; wx++)
+            {
+
+                if(p_world_map[wp][wy][wx] == tt_Ocean)
+                {
+
+                    if(Random(5) == 1)
+                    {
+
+                        p_world_map[wp][wy][wx] = tt_OceanAnim;
+
+                    }
+                    
+                }
+
+                // NOTE(drake178): conflicting condition - will always jump (myrran tile types are only valid in graphics)
+                // BUGBUG  coded as if Myrror has its own terrain type indices
+                if(p_world_map[wp][wy][wx] == 762)
+                {
+
+                    if(Random(5) == 1)
+                    {
+
+                        p_world_map[wp][wy][wx] = 1363;  // 762 + tt_OceanAnim
+
+                    }
+                    
+                }
+
+            }
+
+        }
+
+    }
 
 }
 

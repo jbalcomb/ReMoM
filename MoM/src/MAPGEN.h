@@ -132,7 +132,7 @@ void Draw_Building_The_Worlds(int16_t percent);
 void Create_Unit_NewGame(int16_t unit_type, int16_t player_idx, int16_t wx, int16_t wy, int16_t wp, int16_t city_idx);
 
 // MGC o51p38
-void NEWG_AnimateOceans__STUB(void);
+void Animate_Oceans(void);
 
 // MGC o51p39
 int16_t Square_Is_Ocean_NewGame(int16_t wx, int16_t wy, int16_t wp);

@@ -1916,7 +1916,7 @@ void Simulate_World_Map_Generation(void)
 
         // Init_Square_Explored();
 
-        // NEWG_AnimateOceans__STUB();
+        Animate_Oceans();
 
         // Set_Upper_Lair_Guardian_Count();
 
