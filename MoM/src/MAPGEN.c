@@ -376,7 +376,7 @@ void Init_New_Game(void)
 
     Draw_Building_The_Worlds(85);
 
-    NEWG_RandomizeTiles__STUB();
+    Shuffle_Terrains();
 
     Movement_Mode_Cost_Maps(ARCANUS_PLANE);
     Movement_Mode_Cost_Maps(MYRROR_PLANE);
@@ -4149,14 +4149,141 @@ void Simex_Autotiling(void)
 // MGC o51p21
 // drake178: NEWG_RandomizeTiles()
 /*
+; randomizes the tile types of grasslands, forests,
+; swamps, and all-surround desert and tundra between
+; their multiple available graphics
+;
+; BUG: misses one of the tundra types due to an
+;  incorrect switch case
 */
 /*
+Grasslands, Forests, Swamps, Tundra
 */
-void NEWG_RandomizeTiles__STUB(void)
+void Shuffle_Terrains(void)
 {
-
-
-
+    int16_t * terrtype = 0;
+    int16_t shuffle = 0;
+    int16_t wp = 0;
+    int16_t wx = 0;
+    int16_t wy = 0;
+    terrtype = Near_Allocate_First(5 * 512);
+    LBX_Load_Data_Static(terrtype_lbx_file__MGC_ovr051, 0, terrtype, 0, 5, 512);
+    for(wp = 0; wp < NUM_PLANES; wp++)
+    {
+        for(wy = 0; wy < WORLD_HEIGHT; wy++)
+        {
+            for(wx = 0; wx < WORLD_WIDTH; wx++)
+            {
+                if(p_world_map[wp][wy][wx] == tte_Grasslands)
+                {
+                    shuffle = Random(4);
+                    switch(shuffle)
+                    {
+                        case 1:
+                        {
+                            p_world_map[wp][wy][wx] = tte_Grasslands;
+                        } break;
+                        case 2:
+                        {
+                            p_world_map[wp][wy][wx] = tte_Grasslands4;
+                        } break;
+                        case 3:
+                        {
+                            p_world_map[wp][wy][wx] = tte_Grasslands2;
+                        } break;
+                        case 4:
+                        {
+                            p_world_map[wp][wy][wx] = tte_Grasslands3;
+                        } break;
+                    }
+                }
+                if(p_world_map[wp][wy][wx] == tte_Forest1)
+                {
+                    shuffle = Random(3);
+                    switch(shuffle)
+                    {
+                        case 1:
+                        {
+                            p_world_map[wp][wy][wx] = tte_Forest1;
+                        } break;
+                        case 2:
+                        {
+                            p_world_map[wp][wy][wx] = tt_Forest2;
+                        } break;
+                        case 3:
+                        {
+                            p_world_map[wp][wy][wx] = tt_Forest3;
+                        } break;
+                    }
+                }
+                if(p_world_map[wp][wy][wx] == tt_Desert1)
+                {
+                    shuffle = Random(4);
+                    switch(shuffle)
+                    {
+                        case 1:
+                        {
+                            p_world_map[wp][wy][wx] = tt_Desert1;
+                        } break;
+                        case 2:
+                        {
+                            p_world_map[wp][wy][wx] = tt_Desert2;
+                        } break;
+                        case 3:
+                        {
+                            p_world_map[wp][wy][wx] = tt_Desert3;
+                        } break;
+                        case 4:
+                        {
+                            p_world_map[wp][wy][wx] = tt_Desert4;
+                        } break;
+                    }
+                }
+                if(p_world_map[wp][wy][wx] == tt_Swamp1)
+                {
+                    shuffle = Random(4);
+                    switch(shuffle)
+                    {
+                        case 1:
+                        {
+                            p_world_map[wp][wy][wx] = tt_Swamp1;
+                        } break;
+                        case 2:
+                        {
+                            p_world_map[wp][wy][wx] = tt_Swamp2;
+                        } break;
+                        case 3:
+                        {
+                            p_world_map[wp][wy][wx] = tt_Swamp3;
+                        } break;
+                    }
+                }
+                if(p_world_map[wp][wy][wx] == tt_Tundra1)  // BUGBUG  Tundra shuffle switch should be 1,2,3 not 1,3,4
+                {
+                    shuffle = Random(3);
+                    switch(shuffle)
+                    {
+                        case 1:
+                        {
+                            p_world_map[wp][wy][wx] = tt_Tundra1;
+                        } break;
+                        case 2:
+                        {
+                            // DNE in Dasm
+                        } break;
+                        case 3:
+                        {
+                            p_world_map[wp][wy][wx] = tt_Tundra2;
+                        } break;
+                        case 4:
+                        {
+                            p_world_map[wp][wy][wx] = tt_Tundra3;
+                        } break;
+                    }
+                }
+            }
+        }
+    }
 }
 
 

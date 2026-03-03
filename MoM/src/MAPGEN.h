@@ -81,7 +81,7 @@ void Desert_Autotile(void);
 void Simex_Autotiling(void);
 
 // MGC o51p21
-void NEWG_RandomizeTiles__STUB(void);
+void Shuffle_Terrains(void);
 
 // MGC o51p22
 int16_t River_Path(int16_t wp);

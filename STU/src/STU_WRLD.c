@@ -1901,16 +1901,14 @@ void Simulate_World_Map_Generation(void)
         }
         printf("DBG_river_group_count: %d\n", DBG_river_group_count);
 
+        Desert_Autotile();
 
+        Shuffle_Terrains();
 
         Worldmap_Statistics(itr, ARCANUS_PLANE);
         Display_Worldmap_Statistics(itr, ARCANUS_PLANE);
         Display_Worldmap_Histogram(itr, ARCANUS_PLANE);
         Print_Worldmap_Map(itr, ARCANUS_PLANE);
-
-        Desert_Autotile();
-
-        // NEWG_RandomizeTiles__STUB();
 
         // Movement_Mode_Cost_Maps(ARCANUS_PLANE);
 
