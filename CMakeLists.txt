@@ -103,10 +103,52 @@ find_package(Doxygen COMPONENTS doxygen dot)
 if (DOXYGEN_FOUND)
     message(STATUS "Doxygen found. Generating documentation.")
     set(DOXYGEN_GENERATE_HTML YES)
-    doxygen_add_docs(ReMoM)
+    set(DOXYGEN_INPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+    doxygen_add_docs(doxyReMoM
+        ${DOXYGEN_INPUT_DIR}
+        DOXYGEN_PROJECT_NAME "ReMoM"
+        DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doxy/ReMoM/html
+    )
+    set(DOXYGEN_INPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MoM/src)
+    doxygen_add_docs(doxyMOMlib
+        ${DOXYGEN_INPUT_DIR}
+        DOXYGEN_PROJECT_NAME "MOM Library"
+        DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doxy/MOMlib/html
+    )
+    set(DOXYGEN_INPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MoX/src)
+    doxygen_add_docs(doxyMOXlib
+        ${DOXYGEN_INPUT_DIR}
+        DOXYGEN_PROJECT_NAME "MOX Library"
+        DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doxy/MOXlib/html
+    )
+    set(DOXYGEN_INPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/STU/src)
+    doxygen_add_docs(doxySTUlib
+        ${DOXYGEN_INPUT_DIR}
+        DOXYGEN_PROJECT_NAME "STU Library"
+        DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doxy/STUlib/html
+    )
 else()
     message(STATUS "Doxygen not found. Documentation will not be generated.")
 endif()
+# # Locate Doxygen and related tools
+# find_package(Doxygen REQUIRED)
+# if (DOXYGEN_FOUND)
+#     # Define source directories to scan
+#     set(DOXYGEN_INPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+# 
+#     # Add a custom target named 'docs'
+#     doxygen_add_docs(docs ${DOXYGEN_INPUT_DIR}
+#         COMMENT "Generating API documentation with Doxygen"
+#         # Optional: set specific Doxygen options as CMake variables
+#         # DOXYGEN_PROJECT_NAME "My Awesome Project"
+#         # DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html
+#     )
+# 
+#     # Optional: make documentation part of the 'all' build target
+#     # add_custom_target(docs ALL ...) # The doxygen_add_docs handles ALL internally if you use the right arguments
+# endif()
+# cmake --build . --target docs
+# cmake --build . --target doxyReMoM
 
 # Coverage support
 option(ENABLE_COVERAGE "Enable code coverage instrumentation and targets" OFF)
