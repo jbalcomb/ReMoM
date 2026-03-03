@@ -220,8 +220,12 @@ else()
 endif()
 
 # so GTest can find the DLLs
-set(REMOM_TEST_PATH_ENV "PATH=${PROJECT_SOURCE_DIR}/bin;$ENV{PATH}")
-
+# # set(REMOM_TEST_PATH_ENV "PATH=${PROJECT_SOURCE_DIR}/bin;$ENV{PATH}")
+# # # -D "TEST_PROPERTIES=ENVIRONMENT";"PATH=C:/STU/devel/ReMoM/bin\";"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\";"C:\Program Files\Micro
+# set(MY_CUSTOM_PATH "${PROJECT_SOURCE_DIR}/bin")
+# set(REMOM_TEST_PATH_ENV "PATH=${MY_CUSTOM_PATH}$<SEMICOLON>$ENV{PATH}")
+# message(STATUS "REMOM_TEST_PATH_ENV: ${REMOM_TEST_PATH_ENV}")
+set(REMOM_TEST_PATH_ENV "PATH=${PROJECT_SOURCE_DIR}/bin")
 
 
 # # SDL2::Main  SDL2::Core  SDL2::Mixer

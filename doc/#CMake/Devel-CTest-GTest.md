@@ -4,6 +4,43 @@ What is going here?
 https://github.com/scivision/cmake-environment-modification
 ...related to some issue with passing the PATH env var to GTest so it could find the SDL2 DLL files...
 
+## Add path to PATH for GTest
+
+... so GTest can find the DLLs
+set(REMOM_TEST_PATH_ENV "PATH=${PROJECT_SOURCE_DIR}/bin;$ENV{PATH}")
+
+gtest_discover_tests(test_Allocate
+    PROPERTIES
+        ENVIRONMENT "${REMOM_TEST_PATH_ENV}"
+)
+
+...but...
+# -D "TEST_PROPERTIES=ENVIRONMENT";"PATH=C:/STU/devel/ReMoM/bin\";"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\";"C:\Program Files\Micro
+PATH comes out weird
+
+message(STATUS "REMOM_TEST_PATH_ENV: ${REMOM_TEST_PATH_ENV}")
+
+Use a generator expression for cross-platform compatibility, specifically to handle path separators (semicolon on Windows, colon on Unix-like systems).
+"PATH=${MY_CUSTOM_PATH}$<SEMICOLON>$ENV{PATH}"
+
+https://discourse.cmake.org/t/providing-multiple-dll-paths-to-ctest-on-windows/9630/2
+
+https://cmake.org/cmake/help/latest/prop_test/ENVIRONMENT_MODIFICATION.html
+
+PATH=path_list_prepend:${REMOM_TEST_PATH_ENV}
+
+set(REMOM_TEST_PATH_ENV "PATH=${PROJECT_SOURCE_DIR}/bin")
+gtest_discover_tests(test_Util
+    PROPERTIES
+        ENVIRONMENT_MODIFICATION PATH=path_list_prepend:${REMOM_TEST_PATH_ENV}
+)
+workie!!
+-D "TEST_PROPERTIES=ENVIRONMENT_MODIFICATION";"PATH=path_list_prepend:PATH=C:/STU/devel/ReMoM/bin"
+
+
+
+
+
 
 
 SEEALSO:  Devel-GTest-ByHand.md

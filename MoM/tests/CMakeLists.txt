@@ -44,5 +44,5 @@ ReMoM_Add_Target_Support_Files(MOM_tests
 
 gtest_discover_tests(MOM_tests
     PROPERTIES
-        ENVIRONMENT "${REMOM_TEST_PATH_ENV}"
+        ENVIRONMENT_MODIFICATION PATH=path_list_prepend:${REMOM_TEST_PATH_ENV}
 )

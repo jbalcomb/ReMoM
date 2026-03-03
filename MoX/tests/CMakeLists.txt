@@ -60,13 +60,13 @@ ReMoM_Add_Target_Support_Files(test_Allocate
 
 gtest_discover_tests(MOX_tests
     PROPERTIES
-        ENVIRONMENT "${REMOM_TEST_PATH_ENV}"
+        ENVIRONMENT_MODIFICATION PATH=path_list_prepend:${REMOM_TEST_PATH_ENV}
 )
 gtest_discover_tests(test_Util
     PROPERTIES
-        ENVIRONMENT "${REMOM_TEST_PATH_ENV}"
+        ENVIRONMENT_MODIFICATION PATH=path_list_prepend:${REMOM_TEST_PATH_ENV}
 )
 gtest_discover_tests(test_Allocate
     PROPERTIES
-        ENVIRONMENT "${REMOM_TEST_PATH_ENV}"
+        ENVIRONMENT_MODIFICATION PATH=path_list_prepend:${REMOM_TEST_PATH_ENV}
 )

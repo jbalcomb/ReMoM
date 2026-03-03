@@ -11,5 +11,5 @@ target_link_libraries(test_STU
 
 gtest_discover_tests(test_STU
 	PROPERTIES
-		ENVIRONMENT "${REMOM_TEST_PATH_ENV}"
+        ENVIRONMENT_MODIFICATION PATH=path_list_prepend:${REMOM_TEST_PATH_ENV}
 )
