@@ -10,6 +10,7 @@ add_executable(MOM_tests
     test_NEWG_TileIsleExtend__WIP.cpp
     test_TILE_SetLandMass__WIP.cpp
     test_River_Path.cpp
+    test_Desert_Autotile.cpp
     test_City_Maximum_Size_NewGame.cpp
     test_Init_New_Game.cpp
     test_Set_Upper_Lair_Guardian_Count.cpp

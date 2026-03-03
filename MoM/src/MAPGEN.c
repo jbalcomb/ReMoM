@@ -3297,25 +3297,52 @@ void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t
 
 // MGC o51p19
 /**
- * @brief Finalizes desert tile variants during map generation.
+ * @brief Autotiles desert-class squares across both world planes.
  *
  * @details
- * This routine performs desert autotiling using lookup data from the first
- * record of TERRTYPE.LBX. It first assigns landmass ownership for single-tile
- * deserts (`_1Desert`) by copying a neighboring non-ocean landmass when one is
- * found. It then scans all desert-class tiles, computes an 8-neighbor bitmask
- * (NW, N, NE, E, SE, S, SW, W), and translates that mask through the TERRTYPE
- * table to choose the final desert subtype written to `p_world_map`.
+ * This pass consumes TERRTYPE lookup data and applies desert-shape logic in two
+ * phases:
+ * - Phase 1 (`_1Desert` landmass fixup): for each `_1Desert` square, attempts to
+ *   copy a non-zero neighboring landmass id into `_landmasses`.
+ * - Phase 2 (desert neighborhood analysis): for each desert-class square, builds
+ *   an 8-bit neighborhood mask and evaluates the corresponding TERRTYPE entry.
  *
- * If no qualifying neighboring non-desert tiles are found (`mask == 0`), the
- * square is normalized to `tt_Desert1`.
+ * Neighborhood mask bit order:
+ * - `1`   = NW
+ * - `2`   = N
+ * - `4`   = NE
+ * - `8`   = E
+ * - `16`  = SE
+ * - `32`  = S
+ * - `64`  = SW
+ * - `128` = W
  *
- * @note
- * This function has no parameters and no return value. It mutates global map
- * generation state (`p_world_map` and `_landmasses`).
+ * Mask bits are only added when the neighbor is inside map bounds and
+ * `Square_Is_Desert_NewGame(...) == ST_FALSE` for that neighbor. A mask of
+ * zero is normalized to `tt_Desert1`.
  *
- * @see Square_Is_Desert_NewGame
- * @see LBX_Load_Data_Static
+ * Current implementation behavior:
+ * - For `mask > 0`, the routine computes/debug-checks a candidate desert type
+ *   (`290 + terrtype[mask]`) but does not currently write it back.
+ * - For `mask == 0`, the routine writes `tt_Desert1`.
+ *
+ * Key local variables:
+ * - `terrtype`: near-memory buffer loaded from `TERRTYPE.LBX` record 0.
+ * - `mask`: accumulated 8-neighbor non-desert bitmask.
+ * - `wp`, `wy`, `wx`: plane and square coordinates used for full-map scans.
+ * - `DBG_before_desert`, `DBG_terrtype_type`, `DBG_after_desert`: debug values
+ *   used to validate candidate desert type ranges.
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return void
+ * No explicit return value. Updates global world-generation state in place.
+ *
+ * @note Relies on global arrays (`p_world_map`, `_landmasses`) and helper
+ *       functions/macros used by map generation.
+ * @warning The `_1Desert` landmass-neighbor index expression currently uses
+ *          modifier terms without adding `wy/wx`; this block reflects existing
+ *          code behavior exactly.
  */
 void Desert_Autotile(void)
 {
@@ -3345,7 +3372,7 @@ void Desert_Autotile(void)
         {
             for(wx = 0; wx < WORLD_WIDTH; wx++)
             {
-                if(p_world_map[wp][wy][wx] == _1Desert)  /* these were created by the River maker */
+                if(p_world_map[wp][wy][wx] == _1Desert)  /* these were created by River_Terrain() */
                 {
                     for(Y_Mod = -1; Y_Mod < 1; Y_Mod++)
                     {
@@ -3464,6 +3491,7 @@ void Desert_Autotile(void)
                         {
                             STU_DEBUG_BREAK();
                         }
+                        p_world_map[wp][wy][wx] = (290 + terrtype[mask]);
                     }
                     else
                     {
@@ -4299,15 +4327,29 @@ void Shuffle_Terrains(void)
  *                  excessive retries, invalid outflow, or insufficient path length.
  *
  * @details
- * Selects a random inland base tile, rejects unsuitable starts (ocean-adjacent,
- * mountain, hills, desert, node, existing river, or terrain-special squares),
- * then grows a path by selecting directions with a bias toward a main direction.
+ * Step-by-step behavior:
+ * 1) Picks a random interior base square (`4..WORLD_WIDTH-4`,
+ *    `4..WORLD_HEIGHT-4`).
+ * 2) Rejects immediately if the base square is terrain-special, ocean-adjacent
+ *    (including center check), mountain, hills, node, or already river.
+ * 3) Initializes path buffers with the base square and chooses one random
+ *    downstream cardinal direction.
+ * 4) Repeats routing attempts until an outflow is found or retry limits fail:
+ *    - prefers continuing downstream, with occasional alternate direction picks;
+ *    - forbids selecting the direct upstream opposite when deviating;
+ *    - rejects candidate next squares that are special, mountain, hills, node,
+ *      or desert;
+ *    - accepts squares that are valid and appends them to the path.
+ * 5) Marks outflow when the accepted next square touches ocean in cardinal
+ *    directions or merges into an existing river.
+ * 6) Enforces hard limits: more than 30 attempts, path length > 28, or outflow
+ *    reached with length < 4 all fail.
+ * 7) Validates the endpoint and its cardinal neighborhood with
+ *    `TILE_InvalidOutflow`; any invalid side fails the whole path.
+ * 8) On success, writes `1000` river placeholders for each stored path square.
  *
- * The path terminates when it reaches an existing river or ocean-adjacent outflow
- * condition. Additional validation rejects too-short paths and invalid shoreline
- * outflow configurations. On success, each accepted path tile is marked with the
- * temporary river placeholder value (`1000`) in `p_world_map`; final river tile
- * shaping is performed later by `River_Terrain()`.
+ * Final river graphic selection and shore outlet shaping are deferred to
+ * `River_Terrain()`.
  *
  * @note
  * This function mutates global map state (`p_world_map`) and relies on multiple
@@ -4317,7 +4359,7 @@ void Shuffle_Terrains(void)
  */
 int16_t River_Path(int16_t wp)
 {
-    int16_t niu_directions_array[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t niu_directions_array[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };  /* BUGBUG  as coded, completely useless */
     int16_t wy_array[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t wx_array[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t end_wy = 0;
@@ -4334,21 +4376,10 @@ int16_t River_Path(int16_t wp)
     int16_t base_wy = 0;
     int16_t base_wx = 0;
     int16_t length = 0;
-    int16_t DBG_terrain_type = 0;
-    int16_t DBG_terrain_special = 0;
-    int16_t DBG_post_terrain_type = 0;
     
-    // 1. pick a random starting location
     base_wx = (4 + Random((WORLD_WIDTH  - 8)));
     base_wy = (4 + Random((WORLD_HEIGHT - 8)));
-    printf("River_Path(): base_wx = %d, base_wy = %d\n", base_wx, base_wy);
 
-    DBG_terrain_type = p_world_map[wp][base_wy][base_wx];
-    printf("River_Path(): DBG_terrain_type: %d %X\n", DBG_terrain_type, DBG_terrain_type);
-    DBG_terrain_special = _map_square_terrain_specials[((wp * WORLD_SIZE) + (base_wy * WORLD_WIDTH) + base_wx)];
-    printf("River_Path(): DBG_terrain_special: %d %X\n", DBG_terrain_special, DBG_terrain_special);
-
-    // 2. validate location
     if(_map_square_terrain_specials[((wp * WORLD_SIZE) + (base_wy * WORLD_WIDTH) + base_wx)] != 0) { return ST_FALSE; }
     if(Square_Is_Ocean_NewGame((base_wx - 1), (base_wy - 1), wp) == ST_TRUE) { return ST_FALSE; } /* NW */
     if(Square_Is_Ocean_NewGame((base_wx - 1), (base_wy    ), wp) == ST_TRUE) { return ST_FALSE; } /* W  */
@@ -4364,7 +4395,6 @@ int16_t River_Path(int16_t wp)
     if(Square_Is_Node_NewGame(base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
     if(Square_Is_River_NewGame(base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
 
-    // 3. initialize path finding, including random cardinal direction
     wx_array[0] = base_wx;
     wy_array[0] = base_wy;
     length = 1;
@@ -4373,9 +4403,7 @@ int16_t River_Path(int16_t wp)
     downstream = (Random(4) - 1);
     same_dir = ST_UNDEFINED;
     niu_directions_array[0] = downstream;
-    printf("River_Path(): downstream: %d\n", downstream);
 
-    // 4. make 30 attempts at finding a valid path
     while(Have_Outflow == ST_FALSE)
     {
 
@@ -4385,7 +4413,7 @@ int16_t River_Path(int16_t wp)
             (same_dir == ST_UNDEFINED)
         )
         {
-            direction = downstream;  // 2 is north or west, probably north given upstream[2] == 0
+            direction = downstream;
         }
         else
         {
@@ -4394,7 +4422,6 @@ int16_t River_Path(int16_t wp)
                 direction = (Random(4) - 1);
             } while(upstream[downstream] == direction);
         }
-        printf("River_Path(): direction: %d\n", direction);
 
         niu_directions_array[length] = direction;
 
@@ -4402,7 +4429,6 @@ int16_t River_Path(int16_t wp)
 
         next_wx = wx_array[(length - 1)] + dir_chg_tbl_wx[direction];
         next_wy = wy_array[(length - 1)] + dir_chg_tbl_wy[direction];
-        printf("River_Path(): next_wx = %d, next_wy = %d\n", next_wx, next_wy);
 
         niu_prev_dir = direction;
 
@@ -4443,14 +4469,12 @@ int16_t River_Path(int16_t wp)
     if(TILE_InvalidOutflow((end_wx    ), (end_wy - 1), wp) == ST_TRUE) { return ST_FALSE; }  /* N */
     if(TILE_InvalidOutflow((end_wx - 1), (end_wy    ), wp) == ST_TRUE) { return ST_FALSE; }  /* W */
     if(TILE_InvalidOutflow((end_wx    ), (end_wy    ), wp) == ST_TRUE) { return ST_FALSE; }  /* C */
-    if(TILE_InvalidOutflow((end_wx + 1), (end_wy    ), wp) == ST_TRUE) { return ST_FALSE; }  /* E*/
+    if(TILE_InvalidOutflow((end_wx + 1), (end_wy    ), wp) == ST_TRUE) { return ST_FALSE; }  /* E */
     if(TILE_InvalidOutflow((end_wx    ), (end_wy + 1), wp) == ST_TRUE) { return ST_FALSE; }  /* S */
 
     for(itr = 0; itr < length; itr++)
     {
-        DBG_post_terrain_type = 0;
         p_world_map[wp][wy_array[itr]][wx_array[itr]] = 1000;
-        DBG_post_terrain_type = p_world_map[wp][wy_array[itr]][wx_array[itr]];  // 3e8
     }
 
     return ST_TRUE;
@@ -4459,32 +4483,34 @@ int16_t River_Path(int16_t wp)
 
 
 // MGC o51p23
-/*
-; finalizes river tiles and generates the river outflow
-; ones at every river and shore intersection - since
-; not every combination has graphics, some rivers may
-; be shortened by this, turning their last tile into
-; grasslands, and no-inflow single tile lakes are also
-; turned into single tile deserts here
-*/
 /**
  * @brief Finalizes river tiles and applies river/shore/lake post-processing for one plane.
  *
  * @param wp World plane index to process.
  *
  * @details
- * Resolves temporary river placeholders into concrete river terrain variants by
- * building a cardinal (N/E/S/W) connectivity mask against adjacent river or
- * ocean squares, then selecting an entry from `TILE_River_Types`.
+ * Step-by-step behavior:
+ * 1) Iterates all squares in the selected plane.
+ * 2) Reads `terrain_type` from the current square; if `Square_Is_River_NewGame`
+ *    says true, treats it as `TT_RIVER_PLACEHOLDER` for this pass.
+ * 3) For placeholder squares, builds a cardinal river mask (N/E/S/W) where each
+ *    bit is set when the neighbor is ocean or river.
+ * 4) Uses `TILE_River_Types[mask][Random(4)-1]` to pick a concrete river tile
+ *    and writes it back to `p_world_map`.
+ * 5) Rebuilds a river-only cardinal mask (river neighbors only) for downstream
+ *    lake and shore/outlet handling.
+ * 6) If the original `terrain_type` was `_1Lake`, applies lake normalization:
+ *    - no inflow -> `_1Desert`;
+ *    - single inflow -> directional `_1LakeRiv_*`;
+ *    - multi-inflow -> keeps one inflow, converts selected neighbors to
+ *      `tte_Grasslands`, and rewinds `wx/wy` to revisit local topology.
+ * 7) Applies multiple shore-group conversion rules that map eligible shore tiles
+ *    to river-outlet shore variants based on `river_mask`; unsupported
+ *    combinations may be reduced by converting adjacent river tiles to
+ *    `tte_Grasslands` and rewinding iteration.
  *
- * Single-tile lakes (`_1Lake`) are also normalized based on river inflow:
- * no inflow becomes `_1Desert`, one inflow becomes a directional lake-river
- * tile, and multi-inflow cases are reduced by converting selected neighboring
- * river tiles to grasslands while rewinding loop indices to re-evaluate local
- * topology.
- *
- * Shore tiles are additionally checked for valid river outlet combinations and,
- * where supported by available graphics, converted to shore-with-river variants.
+ * This routine is the river/lake/shore topology cleanup pass after river paths
+ * were placed.
  *
  * @note
  * This function has no return value and mutates `p_world_map` in place.
