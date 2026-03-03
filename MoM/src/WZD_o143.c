@@ -27,9 +27,9 @@
 // WZD dseg:6EAC BEGIN:  ovr143 - Initialized Data
 
 // WZD dseg:6EAC
-int16_t rnd_grasslands[3] = { tte_Grasslands, _Grasslands2, _Grasslands3 };
+int16_t rnd_grasslands[3] = { tte_Grasslands, tte_Grasslands2, tte_Grasslands3 };
 // WZD dseg:6EB2
-int16_t rnd_forests[3] = { _Forest1, _Forest2, _Forest3 };
+int16_t rnd_forests[3] = { tte_Forest1, _Forest2, _Forest3 };
 // WZD dseg:6EB8
 int16_t rnd_deserts[3] = { _AllDesert2, _AllDesert3, _AllDesert3 };
 
