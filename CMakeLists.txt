@@ -177,7 +177,8 @@ else()
     message(CHECK_FAIL "The file does not exist: ${GMOCK_DLL_FILE_PATH}")
 endif()
 
-set(REMOM_TEST_PATH_ENV "PATH=${PROJECT_SOURCE_DIR}/bin\\;$ENV{PATH}")
+# so GTest can find the DLLs
+set(REMOM_TEST_PATH_ENV "PATH=${PROJECT_SOURCE_DIR}/bin;$ENV{PATH}")
 
 
 

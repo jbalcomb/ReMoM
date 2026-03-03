@@ -1,4 +1,11 @@
 
+
+What is going here?
+https://github.com/scivision/cmake-environment-modification
+...related to some issue with passing the PATH env var to GTest so it could find the SDL2 DLL files...
+
+
+
 SEEALSO:  Devel-GTest-ByHand.md
 
 Not working...
