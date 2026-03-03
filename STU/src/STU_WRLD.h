@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STU_WRLD_H
+#define STU_WRLD_H
 
 #include <stdint.h>
 #include "../../MoM/src/TerrType.h" /* TerType_Count */
@@ -119,3 +120,17 @@ struct s_Simulation_Data
 };
 #pragma pack(pop)
 extern struct s_Simulation_Data * simulation_data;
+
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void Simulate_World_Map_Generation(void);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* STU_WRLD_H */

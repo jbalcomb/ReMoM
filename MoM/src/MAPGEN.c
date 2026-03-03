@@ -4194,8 +4194,8 @@ void Shuffle_Terrains(void)
     int16_t wp = 0;
     int16_t wx = 0;
     int16_t wy = 0;
-    terrtype = Near_Allocate_First(5 * 512);
-    LBX_Load_Data_Static(terrtype_lbx_file__MGC_ovr051, 0, terrtype, 0, 5, 512);
+    terrtype = (int16_t *)Near_Allocate_First(5 * 512);
+    LBX_Load_Data_Static(terrtype_lbx_file__MGC_ovr051, 0, (SAMB_ptr)terrtype, 0, 5, 512);
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
         for(wy = 0; wy < WORLD_HEIGHT; wy++)

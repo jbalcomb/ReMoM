@@ -96,30 +96,11 @@ Init_New_Game_()
 [x] BUG  starting city in middle of ocean, for human player; failed ocean check? failed max pop check?
 [x] ...move special.c/h from MoM to MoX
 
-[ ] location validation for neutral cities generation
-
-[ ] add Set_Game_Random_Seed_() from MoO2, in Init_New_Game(), with _cmd_line_seed
-
-[ ] MapGen - Towers too close together
-[ ] MapGen - missing SE corner Shore?
-
-
-DIPLOMAC.LBX [entry 52]  was not properly allocated or has been corrupted.
-
-[ ] Clean the hot mess that is Play_Sound ... // DOMSDOS  Play_Sound__STUB(SND_Spell_Music);  Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
-sdl2_Play_Background_Music__WIP
-        // DOMSDOS  Play_Background_Music__STUB();
-[ ] Stop_All_Sounds__STUB();
-// DOMSDOS  Stop_Music__STUB();
-
-
-
-
 [x] New Game Screen 0 - Game Options
 [x] New Game Screen 1 - Wizard Selection;   Title: "Select Wizard";         // HLPENTRY.LBX, 032  ""  "Wizard Selection Help"
 [x] New Game Screen 2 - Wizard Portrait;    Title: "Select Portrait";       // HLPENTRY.LBX, 031  ""  "Wizard Picture Select"
 [x] New Game Screen 3 - Wizards Name;       Title: "Wizard's Name";         N/A
-[ ] New Game Screen 4 - ...custom wizard creation                           // HLPENTRY.LBX, 033  ""  "Wizard Creation Help"
+[-] New Game Screen 4 - ...custom wizard creation                           // HLPENTRY.LBX, 033  ""  "Wizard Creation Help"
 [ ] New Game Screen 5 - ...custom ¿ ?                                       // HLPENTRY.LBX, 036  ""  "Select Spells Help"
 [x] New Game Screen 6 - Wizards Race        Title: "Select Race";           // HLPENTRY.LBX, 035  ""  "Wizard Race Help"
 [x] New Game Screen 7 - Wizards Banner      Title: "Select Banner";     // NEWGAME.LBX, 046  FLAGSNEW   // HLPENTRY.LBX, 030  ""  "Banner Selection Help"
@@ -183,6 +164,23 @@ cmp     eax, _HOME_WORLD_GEN_MAX_CTR
 
 if(_NUM_STARS > 54)
     _HOME_WORLD_GEN_MAX_CTR = 372
+
+
+
+[ ] add Set_Game_Random_Seed_() from MoO2, in Init_New_Game(), with _cmd_line_seed
+
+[ ] MapGen location validation for neutral cities generation
+[ ] MapGen - Towers too close together
+[ ] MapGen - missing SE corner Shore?
+
+
+DIPLOMAC.LBX [entry 52]  was not properly allocated or has been corrupted.
+
+[ ] Clean the hot mess that is Play_Sound ... // DOMSDOS  Play_Sound__STUB(SND_Spell_Music);  Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
+sdl2_Play_Background_Music__WIP
+        // DOMSDOS  Play_Background_Music__STUB();
+[ ] Stop_All_Sounds__STUB();
+// DOMSDOS  Stop_Music__STUB();
 
 
 

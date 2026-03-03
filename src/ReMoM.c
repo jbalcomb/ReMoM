@@ -200,12 +200,12 @@ int main(int argc, char * argv[])
 
     Startup_Platform();
 
-/* HACK */  #ifdef STU_DEBUG
-/* HACK */      Simulate_World_Map_Generation();
-/* HACK */      Exit_With_Message("Simulated world map generation complete. Exiting.");
-/* HACK */  #else
+// /* HACK */  #ifdef STU_DEBUG
+// /* HACK */      Simulate_World_Map_Generation();
+// /* HACK */      Exit_With_Message("Simulated world map generation complete. Exiting.");
+// /* HACK */  #else
     MOM_main(argc, argv);
-/* HACK */  #endif
+// /* HACK */  #endif
 
     Shudown_Platform();
 

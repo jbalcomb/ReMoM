@@ -170,7 +170,7 @@ static const char * terrain_group_names[] =
     "Swamp",       /* 6 */
     "Tundra",      /* 7 */
     "River",       /* 8 */
-    "Shore/Lake",  /* 9 */
+    "Shore",       /* 9 */
 };
 static const int terrain_group_names_count = (int)(sizeof(terrain_group_names) / sizeof(terrain_group_names[0]));
 
@@ -186,7 +186,7 @@ static char Terrain_Type_To_Char(int16_t tt)
     if(tt == tt_Ocean)         return '.';
     if(tt == tt_BugGrass)       return 'B';
     if(tt == tt_Lake)           return 'l';                        /* 0x12 lake within Shore1 range */
-    if(tt <= tt_Shore1_Lst)     return '#';                        /* tt_Shore1_Fst .. tt_Shore1_Lst */
+    if(tt <= tt_Shore1_Lst)     return '`';                        /* tt_Shore1_Fst .. tt_Shore1_Lst */
     if(tt == tt_Grasslands1)    return 'g';
     if(tt == tt_Forest1)        return 'f';
     if(tt == tt_Mountain1)      return 'm';
@@ -206,15 +206,15 @@ static char Terrain_Type_To_Char(int16_t tt)
     if(tt <= tt_Forest3)        return 'f';                        /* tt_Forest2 .. tt_Forest3 */
     if(tt <= tt_RiverM_end)     return '=';                        /* tt_RiverM_1st .. tt_RiverM_end */
     if(tt <= tt_Lake4)          return 'l';                        /* tt_Lake1 .. tt_Lake4 */
-    if(tt <= tt_Shore2F_end)    return '#';                        /* tt_Shore2F_1st .. tt_Shore2F_end */
+    if(tt <= tt_Shore2F_end)    return '`';                        /* tt_Shore2F_1st .. tt_Shore2F_end */
     if(tt <= tt_Rivers_end)     return '=';                        /* tt_Rivers_1st .. tt_Rivers_end */
     if(tt <= tt_Mountains_Lst)  return 'm';                        /* tt_Mountains_Fst .. tt_Mountains_Lst */
     if(tt <= tt_Hills_Lst)      return 'h';                        /* tt_Hills_Fst .. tt_Hills_Lst */
     if(tt <= tt_Desert_Lst)     return 'd';                        /* tt_Desert_Fst .. tt_Desert_Lst */
-    if(tt <= tt_Shore2_end)     return '#';                        /* tt_Shore2_1st .. tt_Shore2_end */
+    if(tt <= tt_Shore2_end)     return '`';                        /* tt_Shore2_1st .. tt_Shore2_end */
     if(tt <= tt_4WRiver5)       return '=';                        /* tt_4WRiver1 .. tt_4WRiver5 */
-    if(tt <= tt_Shore3_end)     return '#';                        /* tt_Shore3_1st .. tt_Shore3_end */
-    if(tt == tt_OceanAnim)         return '~';
+    if(tt <= tt_Shore3_end)     return '`';                        /* tt_Shore3_1st .. tt_Shore3_end */
+    if(tt == tt_OceanAnim)      return '~';
     if(tt <= tt_Tundra_Last)    return 't';                        /* tt_Tundra_1st .. tt_Tundra_Last */
     return '?';
 }
@@ -308,7 +308,7 @@ this is done by maintaining a list of landmass index values and their counts, an
 when we encounter a landmass index value, we check if it is already in the list, if it is, we increment its count, if it is not, we add it to the list with a count of 1
 
 */
-void Landmass_Statistics(int sim_idx, int16_t wp)
+static void Landmass_Statistics(int sim_idx, int16_t wp)
 {
     int16_t wx = 0;
     int16_t wy = 0;
@@ -336,7 +336,7 @@ void Landmass_Statistics(int sim_idx, int16_t wp)
 
 }
 
-void Display_Landmass_Statistics(int sim_idx, int16_t wp)
+static void Display_Landmass_Statistics(int sim_idx, int16_t wp)
 {
     int itr = 0;
 
@@ -367,7 +367,7 @@ stdout.  Each cell is mapped to a single printable character:
   36 – 61   'a' – 'z'
   62+        '+'
 */
-void Print_Landmass_Map(int16_t map_idx)
+static void Print_Landmass_Map(int16_t map_idx)
 {
     int16_t wx    = 0;
     int16_t wy    = 0;
@@ -401,7 +401,7 @@ stage 4: final land terrain conversion
  - count of map squares for each terrain type
 
 */
-void Heightmap_Statistics(int sim_idx, int16_t wp)
+static void Heightmap_Statistics(int sim_idx, int16_t wp)
 {
     int16_t wx = 0;
     int16_t wy = 0;
@@ -421,7 +421,7 @@ void Heightmap_Statistics(int sim_idx, int16_t wp)
 
 }
 
-void Display_Heightmap_Statistics(int sim_idx, int16_t wp)
+static void Display_Heightmap_Statistics(int sim_idx, int16_t wp)
 {
     int    itr          = 0;
     int    count        = 0;
@@ -459,7 +459,7 @@ void Display_Heightmap_Statistics(int sim_idx, int16_t wp)
 
 }
 
-void Display_Heightmap_Histogram(int sim_idx, int16_t wp)
+static void Display_Heightmap_Histogram(int sim_idx, int16_t wp)
 {
     const int bar_width = 40;
     int  itr       = 0;
@@ -468,7 +468,7 @@ void Display_Heightmap_Histogram(int sim_idx, int16_t wp)
     int  max_count = 0;
     int  bar_len   = 0;
     char ch        = '\0';
-    char bar[41];
+    char bar[41] = { 0 };
 
     for(itr = 0; itr < TerType_Count; itr++)
     {
@@ -502,7 +502,7 @@ void Display_Heightmap_Histogram(int sim_idx, int16_t wp)
     }
 }
 
-void Print_Heightmap_Map(int sim_idx, int16_t wp)
+static void Print_Heightmap_Map(int sim_idx, int16_t wp)
 {
     int16_t wx          = 0;
     int16_t wy          = 0;
@@ -523,11 +523,11 @@ void Print_Heightmap_Map(int sim_idx, int16_t wp)
     }
 }
 
-void Worldmap_Statistics(int sim_idx, int16_t wp)
+static void Worldmap_Statistics(int sim_idx, int16_t wp)
 {
     int16_t wx = 0;
     int16_t wy = 0;
-    uint8_t terrain_idx = 0;
+    int16_t terrain_idx = 0;
 
     memset(&simulation_data[sim_idx].worldmap_stats[wp], 0, sizeof(struct s_Worldmap_Squares_Stats));
     simulation_data[sim_idx].tower_stats[wp].tower_count = 0;
@@ -542,6 +542,7 @@ void Worldmap_Statistics(int sim_idx, int16_t wp)
             }
 
             terrain_idx = Get_Terrain(wx, wy, wp);
+
             simulation_data[sim_idx].worldmap_stats[wp].terrain_type_count[terrain_idx]++;
             simulation_data[sim_idx].worldmap_stats[wp].total_count++;
         }
@@ -549,7 +550,7 @@ void Worldmap_Statistics(int sim_idx, int16_t wp)
 
 }
 
-void Display_Worldmap_Statistics(int sim_idx, int16_t wp)
+static void Display_Worldmap_Statistics(int sim_idx, int16_t wp)
 {
     int          itr          = 0;
     int          count        = 0;
@@ -558,39 +559,43 @@ void Display_Worldmap_Statistics(int sim_idx, int16_t wp)
     double       pct_total    = 0.0;
     double       pct_land     = 0.0;
     const char * name         = NULL;
+    const char * group        = NULL;
+    char         ch           = '\0';
 
     total_count  = simulation_data[sim_idx].worldmap_stats[wp].total_count;
     land_squares = simulation_data[sim_idx].landmass_stats[wp].land_squares;
 
-    printf("%3s  %-12s  %9s  %7s  %7s\n", "Idx", "Name", "Squares", "% Total", "% Land");
-    printf("---  ------------  ---------  -------  -------\n");
+    printf("%c  %3s  %-12s  %-12s  %9s  %7s  %7s\n", 'T', "Idx", "Name", "Group", "Squares", "% Total", "% Land");
+    printf("-  ---  ------------  ------------  ---------  -------  -------\n");
     for(itr = 0; itr < TerType_Count; itr++)
     {
         count = simulation_data[sim_idx].worldmap_stats[wp].terrain_type_count[itr];
         if(count == 0)
             continue;
 
-        name = Terrain_Type_Name(itr);
+        name  = Terrain_Type_Name(itr);
+        group = Terrain_Group_Name(Get_Terrain_Group(itr));
+        ch    = Terrain_Type_To_Char((int16_t)itr);
 
         pct_total = (total_count  > 0) ? ((double)count / (double)total_count  * 100.0) : 0.0;
 
         if(itr == tt_Ocean)
         {
-            printf("%3d  %-12s  %9d  %6.2f%%  %7s\n", itr, name, count, pct_total, "---");
+            printf("%c  %3d  %-12s  %-12s  %9d  %6.2f%%  %7s\n", ch, itr, name, group, count, pct_total, "---");
         }
         else
         {
             pct_land = (land_squares > 0) ? ((double)count / (double)land_squares * 100.0) : 0.0;
-            printf("%3d  %-12s  %9d  %6.2f%%  %6.2f%%\n", itr, name, count, pct_total, pct_land);
+            printf("%c  %3d  %-12s  %-12s  %9d  %6.2f%%  %6.2f%%\n", ch, itr, name, group, count, pct_total, pct_land);
         }
     }
-    printf("---  ------------  ---------  -------  -------\n");
+    printf("---  ------------  ------------  ---------  -------  -------\n");
     printf("%-18s  %9d\n", "Total Count:", total_count);
     printf("%-18s  %9d\n", "Land Squares:", land_squares);
 
 }
 
-void Display_Worldmap_Histogram(int sim_idx, int16_t wp)
+static void Display_Worldmap_Histogram(int sim_idx, int16_t wp)
 {
     const int bar_width = 40;
     int  itr       = 0;
@@ -599,7 +604,7 @@ void Display_Worldmap_Histogram(int sim_idx, int16_t wp)
     int  max_count = 0;
     int  bar_len   = 0;
     char ch        = '\0';
-    char bar[41];
+    char bar[41] = { 0 };
 
     for(itr = 0; itr < TerType_Count; itr++)
     {
@@ -633,7 +638,7 @@ void Display_Worldmap_Histogram(int sim_idx, int16_t wp)
     }
 }
 
-void Print_Worldmap_Map(int sim_idx, int16_t wp)
+static void Print_Worldmap_Map(int sim_idx, int16_t wp)
 {
     int16_t wx          = 0;
     int16_t wy          = 0;
@@ -663,7 +668,7 @@ Scans every square of world plane `wp` and accumulates a frequency count of each
 raw terrain-special byte value encountered.  Results are stored in
 simulation_data[sim_idx].specials_stats[wp].
 */
-void Terrain_Specials_Statistics(int sim_idx, int wp)
+static void Terrain_Specials_Statistics(int sim_idx, int wp)
 {
     int16_t wx          = 0;
     int16_t wy          = 0;
@@ -695,7 +700,7 @@ Prints two tables to stdout for world plane `map_idx`:
   1. Minerals  – aggregated counts per mineral type (low nibble of special byte).
   2. Flags     – aggregated counts per flag bit (high nibble of special byte).
 */
-void Display_Terrain_Specials_Statistics(int sim_idx, int16_t wp)
+static void Display_Terrain_Specials_Statistics(int sim_idx, int16_t wp)
 {
     static const struct { uint8_t value; const char * name; } terrain_special_names[] =
     {
@@ -768,7 +773,7 @@ Prints a horizontal bar chart to stdout showing the distribution of mineral type
 across all squares in world plane `map_idx`.  Ocean-equivalent (TS_NONE) squares
 are omitted so the bars for actual specials are visible at a meaningful scale.
 */
-void Display_Terrain_Specials_Histogram(int sim_idx, int16_t wp)
+static void Display_Terrain_Specials_Histogram(int sim_idx, int16_t wp)
 {
     static const char * mineral_labels[] =
     {
@@ -776,15 +781,15 @@ void Display_Terrain_Specials_Histogram(int sim_idx, int16_t wp)
     };
     static const char mineral_chars[] = ".icsgemaaqx";   /* parallel to labels, index 0-9 */
 
-    const int bar_width    = 40;
-    int  mineral_counts[10];
+    const int bar_width = 40;
+    int  mineral_counts[10] = { 0 };
     int  m         = 0;
     int  j         = 0;
     int  itr       = 0;
     int  count     = 0;
     int  max_count = 0;
     int  bar_len   = 0;
-    char bar[41];
+    char bar[41] = { 0 };
 
     /* Aggregate counts per mineral type (low nibble) */
     for(m = 0; m < 10; m++)
@@ -841,7 +846,7 @@ comparing the actual special frequency against the expected rate:
 
 
 */
-void Evaluate_Terrain_Special_Distribution(int sim_idx, int16_t wp)
+static void Evaluate_Terrain_Special_Distribution(int sim_idx, int16_t wp)
 {
     enum { CAT_DESERT, CAT_HILLS, CAT_MOUNTAIN, CAT_FOREST, CAT_SWAMP, CAT_COUNT };
     static const char * cat_names[CAT_COUNT] =
@@ -977,7 +982,7 @@ Expected distribution of specials among desert squares that received one:
   Arcanus: 66.7% Gems, 33.3% Quork
   Myrror:  20.0% Gems, 40.0% Quork, 20.0% Crysx
 */
-void Evaluate_Desert_Special_Distribution(int sim_idx, int16_t wp)
+static void Evaluate_Desert_Special_Distribution(int sim_idx, int16_t wp)
 {
     static const struct { uint8_t mineral; const char * name; } mineral_names[] =
     {
@@ -1097,7 +1102,7 @@ Expected distribution of specials among hills squares that received one:
   Arcanus: 33.3% Iron, 16.7% Coal, 22.2% Silver, 22.2% Gold, 5.6% Mithril, 0% Adamantium
   Myrror:  10.0% Iron, 10.0% Coal, 10.0% Silver, 40.0% Gold, 20.0% Mithril, 10.0% Adamantium
 */
-void Evaluate_Hills_Special_Distribution(int sim_idx, int16_t wp)
+static void Evaluate_Hills_Special_Distribution(int sim_idx, int16_t wp)
 {
     static const struct { uint8_t mineral; const char * name; } mineral_names[] =
     {
@@ -1223,7 +1228,7 @@ Expected distribution of specials among mountain squares that received one:
   Arcanus: 22.2% Iron, 27.7% Coal, 16.7% Silver, 16.7% Gold, 16.7% Mithril, 0% Adamantium
   Myrror:  10.0% Iron, 10.0% Coal, 10.0% Silver, 20.0% Gold, 30.0% Mithril, 20.0% Adamantium
 */
-void Evaluate_Mountain_Special_Distribution(int sim_idx, int16_t wp)
+static void Evaluate_Mountain_Special_Distribution(int sim_idx, int16_t wp)
 {
     static const struct { uint8_t mineral; const char * name; } mineral_names[] =
     {
@@ -1351,7 +1356,7 @@ Terrain_Special_To_Char():
   mineral + flag  uppercase letter
   flag only       N W ? H  (Nightshade, WildGame, Unknown, HuntersLodge)
 */
-void Print_Terrain_Specials_Map(int sim_idx, int16_t wp)
+static void Print_Terrain_Specials_Map(int sim_idx, int16_t wp)
 {
     int16_t wx          = 0;
     int16_t wy          = 0;
@@ -1723,7 +1728,7 @@ static void Clear_Game_Data(void)
     memset(_LAIRS,                        0,  (NUM_LAIRS_102  * sizeof(struct s_LAIR     ))        );
 }
 
-void New_Game_Screen_Mock(void)
+static void New_Game_Screen_Mock(void)
 {
     FILE * file_pointer = 0;
     char builddat_lbx_file[] = "BUILDDAT.LBX";
@@ -1798,13 +1803,8 @@ void Simulate_World_Map_Generation(void)
     int simulations_to_run = 0;
     int num_maps_to_generate = 0;
     int itr = 0;
-    int16_t DBG_placeholder_river_count = 0;
-    int16_t DBG_river_group_count = 0;
-    int16_t wy = 0;
-    int16_t wx = 0;
-    int16_t terrain_type = 0;
 
-    simulations_to_run = 2;  // max is 32,767?
+    simulations_to_run = 3;  // max is 32,767?
     num_maps_to_generate = (simulations_to_run * 2);
 
     Allocate_Simulation(simulations_to_run);
@@ -1855,60 +1855,16 @@ void Simulate_World_Map_Generation(void)
 
         for(rivers = 0; rivers < NUM_RIVERS; rivers++)
         {
-            // for(tries = 0; ((tries < 2000) && (River_Path(ARCANUS_PLANE) != 0)); tries++) { }
-            // for(tries = 0; ((tries < 2000) && (River_Path(MYRROR_PLANE)  != 0)); tries++) { }
-            for(tries = 0; tries < 2000; tries++)
-            {
-                if(River_Path(ARCANUS_PLANE) != ST_FALSE)
-                {
-                    STU_DEBUG_BREAK();
-                }
-            }
+            for(tries = 0; ((tries < 2000) && (River_Path(ARCANUS_PLANE) != 0)); tries++) { }
+            for(tries = 0; ((tries < 2000) && (River_Path(MYRROR_PLANE)  != 0)); tries++) { }
         }
-        
-        DBG_placeholder_river_count = 0;
-        for(wy = 0; wy < WORLD_HEIGHT; wy++)
-        {
-            for(wx = 0; wx < WORLD_WIDTH; wx++)
-            {
-                terrain_type = p_world_map[ARCANUS_PLANE][wy][wx];
-                if(terrain_type == TT_RIVER_PLACEHOLDER)
-                {
-                    DBG_placeholder_river_count++;
-                }
-            }
-        }
-        printf("DBG_placeholder_river_count: %d\n", DBG_placeholder_river_count);
 
         River_Terrain(ARCANUS_PLANE);
-        // River_Terrain(MYRROR_PLANE);
-
-        DBG_river_group_count = 0;
-        for(wy = 0; wy < WORLD_HEIGHT; wy++)
-        {
-            for(wx = 0; wx < WORLD_WIDTH; wx++)
-            {
-                terrain_type = p_world_map[ARCANUS_PLANE][wy][wx];
-                if(
-                    (terrain_type >= _River0010)
-                    &&
-                    (terrain_type <= _River1011_4)
-                )
-                {
-                    DBG_river_group_count++;
-                }
-            }
-        }
-        printf("DBG_river_group_count: %d\n", DBG_river_group_count);
+        River_Terrain(MYRROR_PLANE);
 
         Desert_Autotile();
 
         Shuffle_Terrains();
-
-        Worldmap_Statistics(itr, ARCANUS_PLANE);
-        Display_Worldmap_Statistics(itr, ARCANUS_PLANE);
-        Display_Worldmap_Histogram(itr, ARCANUS_PLANE);
-        Print_Worldmap_Map(itr, ARCANUS_PLANE);
 
         // Movement_Mode_Cost_Maps(ARCANUS_PLANE);
 
@@ -1922,16 +1878,17 @@ void Simulate_World_Map_Generation(void)
 
 
 
+        
         Worldmap_Statistics(itr, ARCANUS_PLANE);
         Display_Worldmap_Statistics(itr, ARCANUS_PLANE);
-        Display_Worldmap_Histogram(itr, ARCANUS_PLANE);
+        // Display_Worldmap_Histogram(itr, ARCANUS_PLANE);
         Print_Worldmap_Map(itr, ARCANUS_PLANE);
-        // Worldmap_Statistics(itr, MYRROR_PLANE);
-        // Display_Worldmap_Statistics(itr, MYRROR_PLANE);
+        Worldmap_Statistics(itr, MYRROR_PLANE);
+        Display_Worldmap_Statistics(itr, MYRROR_PLANE);
         // Display_Worldmap_Histogram(itr, MYRROR_PLANE);
-        // Print_Worldmap_Map(itr, MYRROR_PLANE);
+        Print_Worldmap_Map(itr, MYRROR_PLANE);
 
-        STU_DEBUG_BREAK();
+
 
         // Capture_Simulation_Data(itr);
 
