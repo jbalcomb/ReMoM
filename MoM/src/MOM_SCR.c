@@ -143,8 +143,8 @@ void Screen_Control(void)
             case scr_New_Game_Screen:
             {
                 // MoO2  if(Newgame_Screen_() != ST_FALSE) { Init_New_Game() }
-                // Newgame_Control__WIP();  // MAGIC.EXE  ovr050  o050p001
-                /* HACK */  if(Newgame_Control__WIP())
+                // Newgame_Control();  // MAGIC.EXE  ovr050  o050p001
+                /* HACK */  if(Newgame_Control())
                 /* HACK */  {
                 /* HACK */      current_screen = scr_Continue;
                 /* HACK */  }

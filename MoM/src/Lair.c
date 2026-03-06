@@ -747,7 +747,7 @@ void Lair_Loot_Gold_And_Mana(int16_t lair_idx, int16_t player_idx)
 
 
 // WZD o83p08
-// drake178: STR_ListSeparator()
+// drake178: String_List_Builer()
 void Add_Comma_Or_And(int16_t * size, int16_t count, char * list)
 {
     *size += 1;

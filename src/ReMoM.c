@@ -108,8 +108,8 @@ char CONFIG_FILE[] = "CONFIG.MOM";
  * 
  * @return int Exit status code. Typically returns 0 on success and non-zero on failure.
  */
-int main(int argc, char * argv[])
 // int SDL_main(int argc, char* argv[])
+int main(int argc, char * argv[])
 {
 #ifdef STU_DEBUG
 #ifdef _WIN32

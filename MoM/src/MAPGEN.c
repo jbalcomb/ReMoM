@@ -3356,6 +3356,7 @@ void Desert_Autotile(void)
     int16_t DBG_before_desert = 0;
     int16_t DBG_terrtype_type = 0;
     int16_t DBG_after_desert = 0;
+    int16_t landmass_idx = 0;
 
     terrtype = (int16_t *)Near_Allocate_First((5 * 512));
 
@@ -3378,9 +3379,12 @@ void Desert_Autotile(void)
                     {
                         for(X_Mod = -1; X_Mod < 1; X_Mod++)
                         {
-                            if(_landmasses[((wp * WORLD_SIZE) + (Y_Mod * WORLD_WIDTH) + X_Mod)] != 0)  /* NO_LANDMASS */
+                            if(_landmasses[((wp * WORLD_SIZE) + ((wy + Y_Mod) * WORLD_WIDTH) + (wx + X_Mod))] != 0)  /* NO_LANDMASS */
                             {   
-                                _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = _landmasses[((wp * WORLD_SIZE) + (Y_Mod * WORLD_WIDTH) + X_Mod)];
+                                // _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = _landmasses[((wp * WORLD_SIZE) + (Y_Mod * WORLD_WIDTH) + X_Mod)];
+                                landmass_idx = _landmasses[((wp * WORLD_SIZE) + ((wy + Y_Mod) * WORLD_WIDTH) + (wx + X_Mod))];
+                                assert(landmass_idx < NUM_LANDMASSES);
+                                _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = landmass_idx;
                             }
                         }
                     }
@@ -6347,7 +6351,7 @@ void Movement_Mode_Cost_Maps(int16_t wp)
     for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
     {
 
-        for(itr_wy = 0; itr_wy < WORLD_WIDTH; itr_wy++)
+        for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
         {
 
             terrain_type_idx = TERRAIN_TYPE_INDEX(itr_wx, itr_wy, wp);

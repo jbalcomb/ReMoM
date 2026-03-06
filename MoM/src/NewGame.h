@@ -9,7 +9,19 @@
 #include "../../MoX/src/MOX_TYPE.h"
 
 
+enum e_Newgame_Screens
+{
+    ngscr_Options = 0,
+    ngscr_Wizard = 1,  // "Select Wizard"
+    ngscr_Portrait = 2,  // "Select Picture"  (Custom Wizard)
+    ngscr_Name = 3,    // "Wizard's Name"  (Prefab/Custom)
+    ngscr_Creation = 4,     /* Manual: "spell pick screen" */
+    ngscr_Spells = 5,       /* Manual: "select spells screen" */
+    ngscr_Race = 6,
+    ngscr_Banner = 7,
 
+    ngscr_DONE = 99
+};
 
 #define AI_PRS_MANIACAL         0
 #define AI_PRS_RUTHLESS         1
@@ -157,8 +169,8 @@ extern int16_t NEWG_Clicked_Race;
 */
 
 // MGC  o50p01
-// void Newgame_Control__WIP(void);
-/* HACK */  int16_t Newgame_Control__WIP(void);
+// void Newgame_Control(void);
+/* HACK */  int16_t Newgame_Control(void);
 
 // o50p02
 void GAME_WizardsLaunch__WIP(int16_t save_gam_idx);
@@ -206,16 +218,16 @@ int16_t Newgame_Screen_6__WIP(void);
 void Newgame_Screen_6_Draw__WIP(void);
 
 // MGC  o50p17
-void GAME_DrawRetortsStr(void);
+void Draw_Special_Abilities_String(void);
 
 // MGC  o50p18
 void NEWG_DrawDefShelf__WIP(int16_t wizard_id);
 
 // MGC  o50p19
-void Newgame_Screen4__WIP(void);
+int16_t Newgame_Screen_4__WIP(void);
 
 // MGC  o50p20
-// GAME_Draw_NewScr4()
+void Newgame_Screen_4_Draw__WIP(void);
 
 // MGC  o50p21
 void Newgame_Screen5__WIP(void);
@@ -254,13 +266,13 @@ void Set_Newgame_Screen_2_Help_List(void);
 void Set_Newgame_Screen_1_Help_List(int16_t has_custom);
 
 // MGC  o50p33
-// HLP_Load_WizCreate()
+void Set_Newgame_Screen_4_Help_List(void);
 
 // MGC  o50p34
 void Set_Newgame_Screen_6_Help_List(void);
 
 // MGC  o50p35
-void STR_ListSeparator(int16_t * List_Size, int16_t Total, char * Dest);
+void String_List_Builer(int16_t * List_Size, int16_t Total, char * Dest);
 
 // MGC  o50p36
 // CRP_Empty_Dialog_Fn2()

@@ -27,6 +27,7 @@
 #include "Settings.h"
 #include "Spellbook.h"
 
+#include <assert.h>
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), frite(), fseek(); */
 #include <string.h>
 
@@ -54,7 +55,7 @@ void Print_Paragraph(int16_t x, int16_t y, int16_t max_width, char * string, int
 
 
 // MGC  dseg:1F96 34 27 3C 27 44 27 52 27 61 27 71 27 80 27 8D 27+
-// STR_Retorts@ dw offset cnst_Alchemy, offset cnst_Warlord, offset cnst_ChaosMastery, offset cnst_NatureMastery, offset cnst_SorceryMastery, offset cnst_InfernalPower, offset cnst_DivinePower, offset cnst_SageMaster, offset cnst_Channeler, offset cnst_Myrran, offset cnst_Archmage, offset cnst_ManaFocusing, offset cnst_NodeMastery, offset cnst_Famous, offset cnst_Runemaster, offset cnst_Conjurer, offset cnst_Charismatic, offset cnst_Artificer
+// wsa_names@ dw offset cnst_Alchemy, offset cnst_Warlord, offset cnst_ChaosMastery, offset cnst_NatureMastery, offset cnst_SorceryMastery, offset cnst_InfernalPower, offset cnst_DivinePower, offset cnst_SageMaster, offset cnst_Channeler, offset cnst_Myrran, offset cnst_Archmage, offset cnst_ManaFocusing, offset cnst_NodeMastery, offset cnst_Famous, offset cnst_Runemaster, offset cnst_Conjurer, offset cnst_Charismatic, offset cnst_Artificer
 // MGC  dseg:2734 41 6C 63 68 65 6D 79 00                         cnst_Alchemy db 'Alchemy',0             
 // MGC  dseg:273C 57 61 72 6C 6F 72 64 00                         cnst_Warlord db 'Warlord',0             
 // MGC  dseg:2744 43 68 61 6F 73 20 4D 61 73 74 65 72 79 00       cnst_ChaosMastery db 'Chaos Mastery',0  
@@ -95,7 +96,7 @@ char cnst_Conjurer__NEWGAME[] = "Conjurer";
 char cnst_Charismatic__NEWGAME[] = "Charismatic";
 char cnst_Artificer__NEWGAME[] = "Artificer";
 
-char * STR_Retorts[NUM_RETORTS] =
+char * wsa_names[NUM_RETORTS] =
 {
 cnst_Alchemy__NEWGAME,
 cnst_Warlord__NEWGAME,
@@ -606,22 +607,107 @@ struct s_DEFAULT_SPELLS _default_spells[5] = {
     END: take 3 - 
 */
 
-// MGC  dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Retort_Reqs Retort_Req 2 dup(<0, 0, 0, 0, 0, 0, 0>)
-// MGC  dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00+                                        ; DATA XREF: GAME_New_Screen_4+167o ...
-// MGC  dseg:2CEC 00 00 00 00 04 00 00 00 00 00 00 00 01 00 00 00+Retort_Req <0, 1, 0, 0, 4, 0, 0>
-// MGC  dseg:2CEC 00 00 00 00 04 00 00 00 00 00 01 00 00 00 00 00+Retort_Req <0, 1, 0, 0, 0, 4, 0>
-// MGC  dseg:2CEC 00 00 00 00 04 00 00 00 01 00 00 00 04 00 00 00+Retort_Req <0, 1, 0, 0, 0, 0, 4>
-// MGC  dseg:2CEC 00 00 00 00 00 00 01 00 04 00 00 00 00 00 00 00+Retort_Req <0, 1, 0, 4, 0, 0, 0>
-// MGC  dseg:2CEC 00 00 01 00 02 00 00 00 00 00 00 00 00 00 00 00+Retort_Req <0, 1, 4, 0, 0, 0, 0>
-// MGC  dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+Retort_Req <1, 2, 0, 0, 0, 0, 0>
-// MGC  dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 04 00 01 00+Retort_Req 2 dup(<0, 0, 0, 0, 0, 0, 0>)
-// MGC  dseg:2CEC 00 00 00 00 00 00 00 00 00 00 04 00 01 00 00 00+Retort_Req 2 dup(<4, 1, 0, 0, 0, 0, 0>)
-// MGC  dseg:2CEC 00 00 00 00 00 00 00 00 00 00 03 00 00 00 00 00+Retort_Req <0, 3, 0, 0, 1, 1, 1>
-// MGC  dseg:2CEC 01 00 01 00 01 00 00 00 00 00 00 00 00 00 00 00+Retort_Req <0, 0, 0, 0, 0, 0, 0>
-// MGC  dseg:2CEC 00 00 00 00 02 00 03 00 00 00 00 00 00 00 00 00+Retort_Req <2, 3, 0, 0, 0, 0, 0>
-// MGC  dseg:2CEC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+Retort_Req  3 dup(<0>)
-// MGC  dseg:2DE8 00 00 01 00 08 00 0A 00 11 00 0F 00 07 00 09 00+TBL_Retort_Offsets dw RETORTS, RETORTS.Warlord, RETORTS.Channeler, RETORTS.Archmage, RETORTS.Artificer, RETORTS.Conjurer, RETORTS.Sage_Master, RETORTS.Myrran, RETORTS.Divine_Power, RETORTS.Famous, RETORTS.Runemaster, RETORTS.Charismatic, RETORTS.Chaos_Mastery, RETORTS.Nature_Mastery, RETORTS.Sorcery_Mastery, RETORTS.Infernal_Power, RETORTS.Mana_Focusing, RETORTS.Node_Mastery
-// MGC  dseg:2DE8 06 00 0D 00 0E 00 10 00 02 00 03 00 04 00 05 00+                                        ; DATA XREF: GAME_New_Screen_4+71Fr ...
+// MGC  dseg:2CEC
+// sizeof: 14d
+// struct s_WIZARD_SPECIAL_ABILITIES_REQUIREMENTS
+// {
+//     /* 0 */  int16_t Any_Realm;
+//     /* 2 */  int16_t Realm_Count;
+//     /* 4 */  int16_t Life;
+//     /* 6 */  int16_t Death;
+//     /* 8 */  int16_t Chaos;
+//     /* A */  int16_t Nature;
+//     /* C */  int16_t Sorcery;
+// };
+// struct s_WIZARD_SPECIAL_ABILITIES_REQUIREMENTS wsa_prerequisites[18];
+/*
+column 1            column 2            column 3
+wsa_Alchemy         wsa_Sage_Master     wsa_Chaos_Mastery
+wsa_Warlord         wsa_Myrran          wsa_Nature_Mastery
+wsa_Channeller      wsa_Divine_Power    wsa_Sorcery_Mastery
+wsa_Archmage        wsa_Famous          wsa_Infernal_Power
+wsa_Artificer       wsa_Runemaster      wsa_Mana_Focusing
+wsa_Conjurer        wsa_Charismatic     wsa_Node_Mastery
+*/
+/*
+enum e_WIZARD_SPECIAL_ABILITY
+    wsa_Alchemy          =  0
+    wsa_Warlord          =  1
+    wsa_Chaos_Mastery    =  2
+    wsa_Nature_Mastery   =  3
+    wsa_Sorcery_Mastery  =  4
+    wsa_Infernal_Power   =  5
+    wsa_Divine_Power     =  6
+    wsa_Sage_Master      =  7
+    wsa_Channeller       =  8
+    wsa_Myrran           =  9
+    wsa_Archmage         = 10
+    wsa_Mana_Focusing    = 11
+    wsa_Node_Mastery     = 12
+    wsa_Famous           = 13
+    wsa_Runemaster       = 14
+    wsa_Conjurer         = 15
+    wsa_Charismatic      = 16
+    wsa_Artificer        = 17
+
+0:
+1:
+2:
+...
+17:
+
+Sorcery Mastery: 
+
+Node Mastery: To select Node Mastery you need: 1 pick in Chaos Magic, 1 pick in Nature Magic, 1 pick in Sorcery Magic
+
+Runemaster: To select Runemaster you need: 2 picks in any 3 Realms of Magic
+
+*/
+int16_t wsa_prerequisites[NUM_WIZARD_SPECIAL_ABILITIES][7] =
+{
+    { 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 1, 0, 0, 4, 0, 0 },  /* Nature */
+    { 0, 1, 0, 0, 0, 4, 0 },  /* Sorcery Mastery */
+    { 0, 1, 0, 0, 0, 0, 4 },  /* Chaos */
+    { 0, 1, 0, 4, 0, 0, 0 },  /* Death */
+    { 0, 1, 4, 0, 0, 0, 0 },  /* Life */
+    { 1, 2, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0 },
+    { 4, 1, 0, 0, 0, 0, 0 },  /* Mana Focusing or Archmage */
+    { 4, 1, 0, 0, 0, 0, 0 },  /* Mana Focusing or Archmage */
+    { 0, 3, 0, 0, 1, 1, 1 },  /* Node Mastery */
+    { 0, 0, 0, 0, 0, 0, 0 },
+    { 2, 3, 0, 0, 0, 0, 0 },  /* Runemaster */
+    { 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0 },
+};
+
+// MGC  dseg:2DE8
+int16_t wsa_picklist_order[NUM_WIZARD_SPECIAL_ABILITIES] =
+{
+    wsa_Alchemy,         /*  0 */
+    wsa_Warlord,         /*  1 */
+    wsa_Channeller,      /*  2 */
+    wsa_Archmage,        /*  3 */
+    wsa_Artificer,       /*  4 */
+    wsa_Conjurer,        /*  5 */
+    wsa_Sage_Master,     /*  6 */
+    wsa_Myrran,          /*  7 */
+    wsa_Divine_Power,    /*  8 */
+    wsa_Famous,          /*  9 */
+    wsa_Runemaster,      /* 10 */
+    wsa_Charismatic,     /* 11 */
+    wsa_Chaos_Mastery,   /* 12 */
+    wsa_Nature_Mastery,  /* 13 */
+    wsa_Sorcery_Mastery, /* 14 */
+    wsa_Infernal_Power,  /* 15 */
+    wsa_Mana_Focusing,   /* 16 */
+    wsa_Node_Mastery     /* 17 */
+};
+
 // MGC  dseg:2E0C 66 66 66 66                                     COL_SaveLoad1 db 4 dup( 66h)            ; DATA XREF: Load_Screen_Draw+Br ...
 // MGC  dseg:2E10 60 61 60 61                                     COL_SaveLoad2 db  60h, 61h, 60h, 61h    ; DATA XREF: Load_Screen_Draw+18r ...
 
@@ -706,7 +792,7 @@ uint8_t COL_NEWG_FontShadow[8] = { 31, 31, 31, 31, 31, 31, 31, 0 };
 // MGC  dseg:2EAB
 uint8_t COL_NEWG_Font[8] = { 187, 187, 187, 187, 187, 187, 187, 187 };
 // MGC  dseg:2EB3
-uint8_t COL_NEWG_Retorts[2] = {183, 178};
+uint8_t alias_colors[2] = {183, 178};
 // MGC  dseg:2EB5
 uint8_t RP_COL_NEWG_FontShadow2[8] = { 31, 31, 31, 31, 31, 31, 31, 0 };
 // MGC  dseg:2EBD
@@ -716,8 +802,12 @@ uint8_t RP_COL_NEWG_Font2[8] = { 187, 187, 187, 187, 187, 187, 187, 187 };
 uint8_t RP_COL_NEWG_Font3[8] = { 187, 187, 187, 187, 187, 187, 187, 187 };
 
 // MGC  dseg:2ECD
+/*
+used for player name in Newgame_Screen_7_Draw__WIP()
+    Set_Font_Colors_15(4, &shadow_colors[0]);
+    Set_Font_Colors_15(4, &text_colors[0]);
+*/
 uint8_t RP_COL_NEWG_5Shadow[5] = { 31, 31, 31, 31, 31 };
-// MGC  dseg:2ED2
 uint8_t RP_COL_NEWG_5Font[5] = { 187, 187, 187, 187, 187 };
 
 // MGC  dseg:2ED7 00                                              align 2                                 ; 2ed6 is still free
@@ -764,39 +854,58 @@ uint8_t COL_NEWG_NA[2] = { 25, 22 };
 uint8_t COL_NEWG_RacesShdw2[2] = { 2, 2};
 
 // MGC  dseg:2F35
-uint8_t COL_NEWG_4Font2[4] = { 187, 187, 187, 187 };
+uint8_t string_colors1[4] = { 187, 187, 187, 187 };
 // MGC  dseg:2F39
-uint8_t COL_NEWG_Retorts2[2] = { 183, 178 };
+uint8_t string_colors2[2] = { 183, 178 };
 
 // MGC  dseg:2F3B 00                                              align 2
 
 // MGC  dseg:2F3C
-uint8_t CRP_Unused_Array[12] = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
+uint8_t m_niu_array[12] = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
 
-// MGC  dseg:2F48 4C 69 66 65 00 00 00 00 00 00                   cnst_Realm0_Text_10b db 'Life',0,0,0,0,0,0
-// MGC  dseg:2F48                                                                                         ; DATA XREF: GAME_New_Screen_4+Fo
-// MGC  dseg:2F52 44 65 61 74 68 00 00 00 00 00                   cnst_Realm1_Text_10b db 'Death',0,0,0,0,0
-// MGC  dseg:2F5C 43 68 61 6F 73 00 00 00 00 00                   cnst_Realm2_Text_10b db 'Chaos',0,0,0,0,0
-// MGC  dseg:2F66 4E 61 74 75 72 65 00 00 00 00                   cnst_Realm3_Text_10b db 'Nature',0,0,0,0
-// MGC  dseg:2F70 53 6F 72 63 65 72 79 00 00 00                   cnst_Realm4_Text_10b db 'Sorcery',0,0,0
-// MGC  dseg:2F7A 01 00 02 00 08 00 09 00 0F 00                   TBL_2pickRetort_Lbls dw RETORT_Labels.Warlord, RETORT_Labels.Channeler, RETORT_Labels.Divine_Power, RETORT_Labels.Famous, RETORT_Labels.Infernal_Power
-// MGC  dseg:2F7A                                                                                         ; DATA XREF: GAME_New_Screen_4+21o
-// MGC  dseg:2F84 01 00 02 00 08 00 09 00 0F 00                   RP_TBL_2pickRet_Lbls dw RETORT_Labels.Warlord, RETORT_Labels.Channeler, RETORT_Labels.Divine_Power, RETORT_Labels.Famous, RETORT_Labels.Infernal_Power
-// MGC  dseg:2F84                                                                                         ; DATA XREF: GAME_Draw_NewScr4+Do
-// MGC  dseg:2F84                                                                                         ; redirected to dseg:2f7a and re-purposed in the realm
-// MGC  dseg:2F84                                                                                         ; ordering patch
-// MGC  dseg:2F8E 1F 1F 1F 1F 1F                                  COL_NEWG_5Shadow3 db 5 dup(1Fh)         ; DATA XREF: GAME_Draw_NewScr4+1Fo
-// MGC  dseg:2F8E                                                                                         ; should use dseg:2ea3
-// MGC  dseg:2F93 BB BB BB BB BB                                  COL_NEWG_5Font3 db 5 dup(0BBh)          ; DATA XREF: GAME_Draw_NewScr4+31o
-// MGC  dseg:2F93                                                                                         ; should use dseg:2eab
-// MGC  dseg:2F98 19 32                                           COL_Available_3 dw 3219h                ; DATA XREF: GAME_Draw_NewScr4+3Er
-// MGC  dseg:2F98                                                                                         ; should use dseg:2efe
-// MGC  dseg:2F9A 19 16                                           COL_NEWG_NA2 dw 1619h                   ; DATA XREF: GAME_Draw_NewScr4+44r
-// MGC  dseg:2F9A                                                                                         ; should use dseg:2f31
-// MGC  dseg:2F9C 16 B2                                           COL_NewG_Ret_Known dw 0B216h            ; DATA XREF: GAME_Draw_NewScr4+4Ar
-// MGC  dseg:2F9E 10 10                                           COL_NewG_Ret_Shdw dw 1010h              ; DATA XREF: GAME_Draw_NewScr4+50r
-// MGC  dseg:2FA0 01 01 01 00 01 01 00 01 00 01 00 01 00 00 00 00+TBL_Retort_Lbl_Init RETORT_Labels <1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0>
-// MGC  dseg:2FA0 00 00                                                                                   ; DATA XREF: GAME_Draw_NewScr4+5Bo
+// MGC  dseg:2F48
+char realm_name_character_array[5][10] =
+{
+    {'L','i','f','e',0,0,0,0,0,0},
+    {'D','e','a','t','h',0,0,0,0,0},
+    {'C','h','a','o','s',0,0,0,0,0},
+    {'N','a','t','u','r','e',0,0,0,0},
+    {'S','o','r','c','e','r','y',0,0,0}
+};
+
+// MGC  dseg:2F7A
+int16_t TBL_2pickRetort_Lbls[5] = { 1, 2, 8, 9, 15 };
+// TBL_2pickRetort_Lbls dw RETORT_Labels.Warlord, RETORT_Labels.Channeler, RETORT_Labels.Divine_Power, RETORT_Labels.Famous, RETORT_Labels.Infernal_Power
+
+// MGC  dseg:2F84
+int16_t RP_TBL_2pickRet_Lbls[5] = { 1, 2, 8, 9, 15 };
+// RP_TBL_2pickRet_Lbls dw RETORT_Labels.Warlord, RETORT_Labels.Channeler, RETORT_Labels.Divine_Power, RETORT_Labels.Famous, RETORT_Labels.Infernal_Power
+
+// MGC  dseg:2F8E
+uint8_t COL_NEWG_5Shadow3[5] = { 31, 31, 31, 31, 31 };
+
+// MGC  dseg:2F93
+uint8_t COL_NEWG_5Font3[5] = { 187, 187, 187, 187, 187 };
+
+// MGC  dseg:2F98
+uint8_t COL_Available_3[2] = { 25, 50};
+// MGC  dseg:2F9A
+uint8_t COL_NEWG_NA2[2] = { 25, 22};
+// MGC  dseg:2F9C
+uint8_t COL_NewG_Ret_Known[2] = { 22, 178};
+// MGC  dseg:2F9E
+uint8_t COL_NewG_Ret_Shdw[2] = { 16, 16 };
+
+// MGC  dseg:2FA0
+/*
+starting setting for wsa picklist on screen4 wizard creation
+1 means the wsa is available for selection, 0 means it is not
+*/
+int8_t wsa_picklist_start[NUM_WIZARD_SPECIAL_ABILITIES] =
+{
+    1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0
+};
+
 // MGC  dseg:2FB2 03 00 04 00 02 00 00 00 01 00                   TBL_Realm_Order dw _Life, _Death, _Chaos, _Nature, _Sorcery
 // MGC  dseg:2FB2                                                                                         ; DATA XREF: GAME_New_Screen_5+Eo
 // MGC  dseg:2FBC 1A 00 4D 00 80 00                               UU_Label_Box_TitleTops dw 26, 77, 128   ; DATA XREF: GAME_SpellSel_GUI+Do
@@ -876,40 +985,38 @@ char cnst_Race_Select[] = "Select Race";
 char cnst_Arcanian_Races[] = "Arcanian Races:";
 // MGC  dseg:3148
 char cnst_Myrran_Races[] = "Myrran Races:";
-// MGC  dseg:3156 59 6F 75 20 6E 65 65 64 20 74 6F 20 6D 61 6B 65+cnst_Pick_Error_0 db 'You need to make all your picks before you can continue',0
-// MGC  dseg:318E 59 6F 75 20 6D 61 79 20 6E 6F 74 20 73 65 6C 65+cnst_Pick_Error_1 db 'You may not select more than 6 special abilities',0
-// MGC  dseg:31BF 54 6F 20 73 65 6C 65 63 74 20 00                cnst_Pick_Error_20 db 'To select ',0    ; DATA XREF: GAME_New_Screen_4:loc_40AA3o
-// MGC  dseg:31CA 20 79 6F 75 20 6E 65 65 64 3A 20 20 20 00       cnst_Pick_Error_21 db ' you need:   ',0 ; DATA XREF: GAME_New_Screen_4+44Co
-// MGC  dseg:31D8 20 70 69 63 6B 73 20 69 6E 20 00                cnst_Pick_Error_22 db ' picks in ',0    ; DATA XREF: GAME_New_Screen_4+4D8o
-// MGC  dseg:31E3 20 4D 61 67 69 63 00                            cnst_Pick_Error_23 db ' Magic',0        ; DATA XREF: GAME_New_Screen_4+502o ...
-// MGC  dseg:31EA 20 70 69 63 6B 00                               cnst_Pick_Error_24 db ' pick',0         ; DATA XREF: GAME_New_Screen_4+561o
-// MGC  dseg:31F0 73                                              cnst_Pick_Error_25 db 's'               ; DATA XREF: GAME_New_Screen_4+583o
-// MGC  dseg:31F1 20 69 6E 20 61 6E 79 20 00                      cnst_Pick_Error_26 db ' in any ',0      ; DATA XREF: GAME_New_Screen_4:loc_40C05o
-// MGC  dseg:31FA 20 52 65 61 6C 6D 73 20 6F 66 20 4D 61 67 69 63+cnst_Pick_Error_27 db ' Realms of Magic',0
-// MGC  dseg:31FA 00                                                                                      ; DATA XREF: GAME_New_Screen_4+5DFo
-// MGC  dseg:320B 52 65 61 6C 6D 20 6F 66 20 4D 61 67 69 63 00    cnst_Pick_Error_28 db 'Realm of Magic',0
-// MGC  dseg:320B                                                                                         ; DATA XREF: GAME_New_Screen_4:loc_40C61o
 
-// MGC  dseg:321A
+// MGC  dseg:3156
+char cnst_Pick_Error_0[] = "You need to make all your picks before you can continue";
+char cnst_Pick_Error_1[] = "You may not select more than 6 special abilities";
+char cnst_Pick_Error_20[] = "To select ";
+char cnst_Pick_Error_21[] = " you need:   ";
+char cnst_Pick_Error_22[] = " picks in ";
+char cnst_Pick_Error_23[] = " Magic";
+char cnst_Pick_Error_24[] = " pick";
+char cnst_Pick_Error_25[] = "s";
+char cnst_Pick_Error_26[] = " in any ";
+char cnst_Pick_Error_27[] = " Realms of Magic";
+char cnst_Pick_Error_28[] = "Realm of Magic";
 char cnst_Pick_Error_29[] = ", ";
-
-// MGC  dseg:321D 20 70 69 63 6B 20 69 6E 20 00                   cnst_Pick_Error_2A db ' pick in ',0     ; DATA XREF: GAME_New_Screen_4+669o
-// MGC  dseg:3227 59 6F 75 20 63 61 6E 20 6E 6F 74 20 73 65 6C 65+cnst_Pick_Error_3 db 'You can not select both Life and Death magic',0
-// MGC  dseg:3227 63 74 20 62 6F 74 68 20 4C 69 66 65 20 61 6E 64+                                        ; DATA XREF: GAME_New_Screen_4:loc_40D2Eo
-// MGC  dseg:3254 59 6F 75 20 68 61 76 65 20 61 6C 72 65 61 64 79+cnst_Pick_Error_4 db 'You have already made all your'
-// MGC  dseg:3254 20 6D 61 64 65 20 61 6C 6C 20 79 6F 75 72                                               ; DATA XREF: GAME_New_Screen_4:loc_40D34o
-// MGC  dseg:3272 20 70 69 63 6B 73 00                            cnst_Picks db ' picks',0                ; DATA XREF: GAME_Draw_NewScr4+AA9o ...
-// MGC  dseg:3279 59 6F 75 20 64 6F 6E 27 74 20 68 61 76 65 20 65+cnst_Pick_Error_5 db 'You don',27h,'t have enough picks left to make this selection. You need 2 picks',0
-// MGC  dseg:3279 6E 6F 75 67 68 20 70 69 63 6B 73 20 6C 65 66 74+                                        ; DATA XREF: GAME_New_Screen_4:loc_40D3Ao
+char cnst_Pick_Error_2A[] = " pick in ";
+char cnst_Pick_Error_3[] = "You can not select both Life and Death magic";
+char cnst_Pick_Error_4[] = "You have already made all your";
+char cnst_Picks[] = " picks";
+char cnst_Pick_Error_5[] = "You don't have enough picks left to make this selection. You need 2 picks";
 
 // MGC  dseg:32C3
 char hlpentry_lbx_file__MGC_ovr050[] = "hlpentry.lbx";
 
-// MGC  dseg:32D0 59 6F 75 20 68 61 76 65 20 6E 6F 20 70 69 63 6B+cnst_Pick_Error_6 db 'You have no picks left in this area, to deselect click on a selected item',0
-// MGC  dseg:32D0 73 20 6C 65 66 74 20 69 6E 20 74 68 69 73 20 61+                                        ; DATA XREF: GAME_New_Screen_5:loc_42154o
-// MGC  dseg:331A 53 65 6C 65 63 74 20 00                         cnst_Spell_Select_0 db 'Select ',0      ; DATA XREF: SCRN_Draw_NewScr5_2+DDo
-// MGC  dseg:3322 20 53 70 65 6C 6C 73 00                         cnst_Spell_Select_1 db ' Spells',0      ; DATA XREF: SCRN_Draw_NewScr5_2+108o
-// MGC  dseg:332A 3A 20 00                                        cnst_Spell_Select_2 db ': ',0           ; DATA XREF: SCRN_Draw_NewScr5_2+22Bo ...
+// MGC  dseg:32D0
+char cnst_Pick_Error_6[] = "You have no picks left in this area, to deselect click on a selected item";
+
+// MGC  dseg:331A
+char cnst_Spell_Select_0[] = "Select ";
+// MGC  dseg:3322
+char cnst_Spell_Select_1[] = " Spells";
+// MGC  dseg:332A
+char cnst_Spell_Select_2[] = ": ";
 
 // MGC  dseg:332D
 char cnst_And__ovr050[] = " and ";
@@ -961,8 +1068,10 @@ char cnst_And__ovr050[] = " and ";
 // ...oops... // ...needed by INITGAME.c, so defn in NewGame.h
 struct s_Init_Base_Realms _player_start_spells[PLAYER_COUNT_MAX];
 
-// MGC  dseg:8D4E 00 00                                           NEWG_PickAttempt dw 0                   ; DATA XREF: GAME_New_Screen_4+436r ...
-// MGC  dseg:8D50 00 00                                           NEWG_PickError dw 0                     ; DATA XREF: GAME_New_Screen_4+15Bw ...
+// MGC  dseg:8D4E
+int16_t NEWG_PickAttempt;
+// MGC  dseg:8D50
+int16_t NEWG_PickError;
 
 // MGC  dseg:8D52
 // ; initialized to random values of 0, 1, or 2
@@ -988,11 +1097,16 @@ MoO2  Module: MAPGEN  _fill_msg_bitmap  <-|  Module: MISC  Draw_Advancing_Fill_M
 */
 SAMB_ptr newgame_BUILDWOR_map_build_bar_seg = 0;
 
-// MGC  dseg:8DD8 00 00                                           NEWG_SliderPos_Sorc dw 0                ; DATA XREF: GAME_New_Screen_4+155w ...
-// MGC  dseg:8DDA 00 00                                           NEWG_SliderPos_Nat dw 0                 ; DATA XREF: GAME_New_Screen_4+14Fw ...
-// MGC  dseg:8DDC 00 00                                           NEWG_SliderPos_Chaos dw 0               ; DATA XREF: GAME_New_Screen_4+149w ...
-// MGC  dseg:8DDE 00 00                                           NEWG_SliderPos_Death dw 0               ; DATA XREF: GAME_New_Screen_4+143w ...
-// MGC  dseg:8DE0 00 00                                           NEWG_SliderPos_Life dw 0                ; DATA XREF: GAME_New_Screen_4+13Dw ...
+// MGC  dseg:8DD8
+int16_t m_bookshelf_sorcery;
+// MGC  dseg:8DDA
+int16_t m_bookshelf_nature;
+// MGC  dseg:8DDC
+int16_t m_bookshelf_chaos;
+// MGC  dseg:8DDE
+int16_t m_bookshelf_death;
+// MGC  dseg:8DE0
+int16_t m_bookshelf_life;
 
 // MGC  dseg:8DE2
 /*
@@ -1010,7 +1124,7 @@ int16_t NEWG_PortraitSelType = 0;
 // MGC  dseg:8DE5 00                                              db    0
 // MGC  dseg:8DE6
 // ; 5 groups of 3 images each (L - S - N - D - C)
-SAMB_ptr IMG_NewG_Books[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+SAMB_ptr m_spellbook_pict_segs[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 // MGC  dseg:8E04
 int16_t newgame_landsize_button_field = 0;
@@ -1028,7 +1142,7 @@ MoO2  _race_button_seg
 used for Wizard and Race
 
 */
-int16_t NEWG_Select_Labels[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+int16_t m_newgame_fields[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 // drake178: NEWG_Moused_Wizard
 /*
 ~== MoO2 _displayed_race
@@ -1052,14 +1166,20 @@ IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 40, _screen_seg)
 */
 SAMB_ptr IMG_NewG_RgtOverlay = 0;
 
-// MGC  dseg:8E6A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+NEWG_Retort_Labels dw 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-// MGC  dseg:8E6A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; DATA XREF: GAME_New_Screen_4+2BEw ...
+// MGC  dseg:8E6A
+int16_t wsa_picklist_fields[NUM_WIZARD_SPECIAL_ABILITIES];
+
 // MGC  dseg:8E8E 00 00                                           _quit_active_seg dw 0                   ; DATA XREF: Load_Screen+32w ...
 // MGC  dseg:8E90 00 00                                           _load_active_seg dw 0                   ; DATA XREF: Load_Screen+49w ...
 // MGC  dseg:8E92 00 00                                           _ok_button dw 0                         ; DATA XREF: Load_Screen+1BDw ...
-// MGC  dseg:8E94 00 00                                           NEWG_Picks_Remaining dw 0               ; DATA XREF: GAME_New_Screen_4+10Ew ...
-// MGC  dseg:8E96 00 00                                           _selection_marker_seg dw 0              ; DATA XREF: Load_Screen+D3w ...
-// MGC  dseg:8E98 00 00                                           selected_load_game_slot_idx dw 0        ; DATA XREF: Load_Screen+2D8w ...
+// MGC  dseg:8E94
+int16_t spellpicks_count;
+
+// MGC  dseg:8E96
+SAMB_ptr _selection_marker_seg;
+
+// MGC  dseg:8E98 00 00                                           
+int16_t selected_load_game_slot_idx;
 // MGC  dseg:8E9A 00 00                                           MAY__selected_save_game_slot_idx dw 0
 // MGC  dseg:8E9C 00 00                                           NEWG_SpellSel_Realm dw 0                ; DATA XREF: GAME_New_Screen_5+1D3w ...
 // MGC  dseg:8E9E 00 00                                           _settings_button dw 0                   ; DATA XREF: Load_Screen+2D5w ...
@@ -1074,7 +1194,7 @@ SAMB_ptr IMG_NewG_RgtOverlay = 0;
  *
  * Written by Newgame_Screen_6__WIP() when the player clicks one of the 14 race-name labels in the race list panel.  If the clicked
  * label index falls in [0..8], the value is looked up from the local Arcanus_Races[9] table (Barbarian, Gnoll, Halfling, High Elf,
- * High Man, Klackon, Lizardman, Nomad, Orc).  If the index falls in [9..13] AND the player has the Myrran retort, the value is
+ * High Man, Klackon, Lizardman, Nomad, Orc).  If the index falls in [9..13] AND the player has the Myrran special ability, the value is
  * looked up from the local Myrran_Races[5] table (Beastman, Dark Elf, Draconian, Dwarf, Troll); otherwise the click is rejected
  * and a warning dialog is shown ("You can not select a Myrran race unless you have the Myrran special.").
  *
@@ -1085,7 +1205,7 @@ SAMB_ptr IMG_NewG_RgtOverlay = 0;
  * Consumed downstream by MAPGEN's city-placement logic: when itr==0 (i.e. the human player), the race of the player's starting
  * city is assigned directly from this variable (_CITIES[_cities].race = (int8_t)NEWG_Clicked_Race).  AI players do not use this
  * variable; their starting-city races are chosen randomly from the Myrran or Arcanian race pools according to difficulty and the
- * Myrran retort.
+ * Myrran special ability.
  *
  * Type is int16_t (matching the original 16-bit word at dseg:8EA4) even though enum_RACE_BYTE values fit in a byte, because the
  * original compiled code stores and loads this as a full word in the data segment.
@@ -1096,8 +1216,16 @@ int16_t NEWG_Clicked_Race;
 
 // MGC  dseg:8EA6 00 00                                           dw 0
 // MGC  dseg:8EA8 00 00                                           dw 0
-// MGC  dseg:8EAA 00 00                                           NEWG_ProfileComplete dw 0               ; DATA XREF: GAME_New_Screen_4+114w ...
-// MGC  dseg:8EAC 00 00                                           _ok_inactive_seg dw 0                   ; DATA XREF: Load_Screen+8Ew ...
+
+// MGC  dseg:8EAA
+int16_t NEWG_ProfileComplete;
+
+// MGC  dseg:8EAC
+/*
+NEWGAME.LBX, 043  MAGICOK    non selectable ok
+*/
+SAMB_ptr _ok_inactive_seg;
+
 // MGC  dseg:8EAE 00 00                                           _save_inactive_seg dw 0                 ; DATA XREF: Load_Screen+77w ...
 
 // MGC  dseg:8EAE                                                 END:  ovr050 - Uninitialized Data
@@ -1246,12 +1374,12 @@ int16_t NEWG_Clicked_Race;
 /*
 HACK returns {F,T} did create new game
 
-Newgame_Control__WIP();  // MAGIC.EXE  ovr050  o050p001
+Newgame_Control();  // MAGIC.EXE  ovr050  o050p001
 
 NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
 */
-// void Newgame_Control__WIP(void)
-/* HACK */  int16_t Newgame_Control__WIP(void)
+// void Newgame_Control(void)
+/* HACK */  int16_t Newgame_Control(void)
 {
     int16_t Create_State = 0;
     int16_t Can_Create = 0;
@@ -1281,11 +1409,11 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
                 // return;  // ¿ cancel ?
                 /* HACK */  return ST_FALSE;
             } break;
-            case 0:
+            case ngscr_Options:
             {
                 newgame_state = Newgame_Screen_0();  // returns 1 on input field is ok button, -1 on quit
             } break;
-            case 1:  // "Select Wizard"
+            case ngscr_Wizard:
             {
                 newgame_state = Newgame_Screen_1__WIP();  // returns {0,2,3} - {0:cancel,2:custom,3:prefab}
                 if(newgame_state == 2)
@@ -1297,43 +1425,45 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
                     custom_game_flag = ST_FALSE;
                 }
             } break;
-            case 2:  // "Select Picture"
+            case ngscr_Portrait:
             {
                 newgame_state = Newgame_Screen_2__WIP();
             } break;
-            case 3:  // Wizards Name
+            case ngscr_Name:
             {
                 newgame_state = Newgame_Screen_3__WIP();
                 if(custom_game_flag != ST_FALSE)
                 {
                     if(newgame_state == ST_UNDEFINED)  // cancelled, go back a screen
                     {
-                        newgame_state = 2;                      }
+                        newgame_state = ngscr_Portrait;
+                    }
                     else
                     {
-                        newgame_state = 4;  // custom wizard creation
+                        newgame_state = ngscr_Creation;  // custom wizard creation
                     }
                 }
                 else  // standard / non-custom
                 {
                     if(newgame_state == ST_UNDEFINED)  // cancelled, go back a screen
                     {
-                        newgame_state = 1;                      }
+                        newgame_state = ngscr_Wizard;
+                    }
                     else
                     {
-                        newgame_state = 6;  // Wizards Race
+                        newgame_state = ngscr_Race;  // Wizards Race
                     }
                 }
             } break;
-            case 4:
+            case ngscr_Creation:  //  (Custom Wizard) ..."spell pick screen"
             {
-                Newgame_Screen4__WIP();
+                Newgame_Screen_4__WIP();
             } break;
-            case 5:
+            case ngscr_Spells:  //  (Custom Wizard) ..."select spells screen"
             {
                 Newgame_Screen5__WIP();
             } break;
-            case 6:  // Wizard's Race
+            case ngscr_Race:  // Wizard's Race
             {
                 newgame_state = Newgame_Screen_6__WIP();
                 if(newgame_state == ST_UNDEFINED)  // Cancel Wizards Race
@@ -1348,7 +1478,7 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
                     }
                 }
             } break;
-            case 7:
+            case ngscr_Banner:
             {
                 newgame_state = Newgame_Screen_7__WIP();
             } break;
@@ -1397,7 +1527,7 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
 #elif (PLATFORM == WIN64)
     current_screen = scr_Main_Screen;
 #else
-    printf("FAILURE: BAD_PLATFORM_VALUE: Newgame_Control__WIP()\n");
+    printf("FAILURE: BAD_PLATFORM_VALUE: Newgame_Control()\n");
 #endif
 
     /* HACK */  return ST_UNDEFINED;
@@ -1441,19 +1571,44 @@ void GAME_WizardsLaunch__WIP(int16_t save_gam_idx)
 // Load_Screen_Draw()
 
 // MGC  o50p05
-/*
-PATCHED - rewritten completely in the last profile
-loader/worldgen customizer/patch enabler
-displays and processes the new game creation screen
-for selecting the basic campaign options (difficulty,
-# of opponents, land size, and magic)
-returns 1 and saves the selection to both disk and
-memory if the OK button is clicked, or returns -1
-without saving if the Esc key is pressed
-*/
-/*
-returns 1 on input field is ok button
-*/
+/**
+ * @brief Runs the New Game options controller screen (screen 0).
+ *
+ * @details
+ * Initializes the New Game options UI, loads/persists `magic_set`, and handles
+ * user interaction for difficulty, opponent count, land size, and magic power
+ * before advancing or cancelling.
+ *
+ * Main flow:
+ * 1) Prepares display pages/palette and loads required LBX assets (background,
+ *    frame, action buttons, and option-row button images).
+ * 2) Loads `MAGIC.SET` if present/non-empty; otherwise applies default game
+ *    settings.
+ * 3) Clamps loaded `magic_set` fields to valid ranges.
+ * 4) Creates input fields for OK/Cancel and four option rows, then installs
+ *    draw callback (`Newgame_Screen_0_Draw`) and help list.
+ * 5) Runs input loop:
+ *    - Cancel returns `ST_UNDEFINED`.
+ *    - OK writes `magic_set` to disk, deactivates handlers, randomizes book
+ *      height tables, copies selected options into runtime globals, and
+ *      returns `1`.
+ *    - Option-row clicks cycle each corresponding setting with wrap-around.
+ *    - While active, performs per-frame draw/page/timing updates.
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return int16_t
+ * @retval ST_UNDEFINED User cancelled via quit button.
+ * @retval 1            User confirmed options via OK button.
+ * @retval 0            Fallback path (defensive HACK return).
+ *
+ * @note Mutates global game settings/UI state including `magic_set`,
+ *       `_landsize`, `_magic`, `_num_players`, `_difficulty`, and input field
+ *       globals for this screen.
+ *
+ * @see Newgame_Screen_0_Draw
+ * @see Randomize_Book_Heights
+ */
 int16_t Newgame_Screen_0(void)
 {
     char file_found[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -1464,7 +1619,7 @@ int16_t Newgame_Screen_0(void)
     
     screen_changed = ST_TRUE;
     
-    // ; conflicting condition - will never jump
+    // KNOWNBUG  conflicting condition - will never jump
     if(screen_changed != ST_FALSE)
     {
         Fade_Out();
@@ -1711,27 +1866,48 @@ int16_t Newgame_Screen_0(void)
 }
 
 // MGC  o50p06
-/*
-PATCHED - rewritten completely in the last profile
-loader/worldgen customizer/patch enabler
-
-draws the first screen of the new game creation
-options into the current draw segment
-*/
-/*
-"Game Options"
-
-*/
+/**
+ * @brief Draws the New Game options screen frame (screen 0).
+ *
+ * @details
+ * Performs one render pass for the initial game-options UI by drawing the
+ * options panel, clearing dynamic text/button regions, and rendering current
+ * selections for difficulty, opponents, land size, and magic strength with
+ * hover-aware button offsets.
+ *
+ * Current behavior:
+ * 1) Copies global option-name tables to local arrays used for text rendering.
+ * 2) Selects shadow/font color ramps (`RP_COL_NEWG_4Shadow`,
+ *    `RP_COL_NEWG_4Font`).
+ * 3) Draws background and right-side overlay.
+ * 4) Clears transparent rectangles for each interactive option row and the
+ *    lower action-button regions.
+ * 5) Reads focused control via `Auto_Input()` into `auto_input_field_idx`.
+ * 6) Draws each option button in normal or highlighted offset position,
+ *    printing the corresponding current option label:
+ *    - `magic_set.Difficulty`
+ *    - `magic_set.Opponents`
+ *    - `magic_set.LandSize`
+ *    - `magic_set.MagicPower`
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return void
+ *
+ * @note Draw-only routine; option value mutation and navigation are handled by
+ *       the enclosing controller loop (`Newgame_Screen_0__WIP`).
+ * @note Writes to global `auto_input_field_idx` as part of input focus state.
+ *
+ * @see Newgame_Screen_0__WIP
+ */
 void Newgame_Screen_0_Draw(void)
 {
     struct s_OPPONENT_COUNT_NAMES l_opponent_count_names[4] = { 0, 0, 0, 0 };
     struct s_MAGIC_STRENGTH_NAMES l_magic_strength_names[3] = { 0, 0, 0 };
     struct s_LAND_SIZE_NAMES l_land_size_names[3] = { 0, 0, 0 };
     struct s_DIFFICULTY_NAMES l_difficulty_names[5] = { 0, 0, 0, 0, 0 };
-    // uint8_t colors2[4] = { 0, 0, 0, 0 };
-    // uint8_t colors1[4] = { 0, 0, 0, 0 };
-    uint8_t * colors2;
-    uint8_t * colors1;
+    uint8_t * colors2 = NULL;
+    uint8_t * colors1 = NULL;
 
     colors1 = RP_COL_NEWG_4Shadow;
     
@@ -1837,31 +2013,42 @@ void Newgame_Screen_0_Draw(void)
 }
 
 // MGC  o50p07
-// drake178: GAME_RandBookBinders()
-/*
-; randomizes the spellbook binder image arrays used
-; for displaying bookshelves
-*/
-/*
-Pretty sure, ...
-    randomizes the bookshelf book heights
-    for the bookshelf under the wizard portrait
-    and while selecting books for a custom wizard
-    only has 4 because you can't have Life *and* Death
-
-¿ UU_Settings_Product was to be a random seed ?
-
-*/
+/**
+ * @brief Randomizes spellbook sprite variation offsets for New Game shelves.
+ *
+ * @details
+ * Fills per-book-index variation tables used when drawing realm book rows and
+ * bookshelf stacks during wizard selection/creation screens.
+ *
+ * Current implementation:
+ * 1) Computes a settings-derived integer (`niu`) from difficulty, opponents,
+ *    land size, and magic power.
+ * 2) Iterates indices 0..10 and assigns each table entry to `Random(3) - 1`,
+ *    producing a value in the range `[-1, 1]`.
+ * 3) Writes randomized offsets to:
+ *    - `TBL_Realm4_Books`
+ *    - `TBL_Realm3_Books`
+ *    - `TBL_Realm2_Books`
+ *    - `TBL_Realm0_Books`
+ *    - `TBL_Realm1_Books`
+ *    - `TBL_Bookshelf_Books`
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return void
+ *
+ * @note The computed `niu` value is currently not consumed in this function.
+ * @note Mutates global table data used by bookshelf/book rendering paths.
+ */
 void Randomize_Book_Heights(void)
 {
     int32_t itr = 0;
-    int32_t UU_Settings_Product = 0;
+    int32_t niu = 0;
 
-    UU_Settings_Product = ((((magic_set.MagicPower * magic_set.Opponents) * (magic_set.Difficulty * magic_set.LandSize)) * 123) + 1234);
+    niu = ((((magic_set.MagicPower * magic_set.Opponents) * (magic_set.Difficulty * magic_set.LandSize)) * 123) + 1234);
 
     for(itr = 0; itr < 11; itr++)
     {
-        TBL_Bookshelf_Books[itr] = (Random(3) - 1);
         TBL_Realm4_Books[itr]    = (Random(3) - 1);
         TBL_Realm3_Books[itr]    = (Random(3) - 1);
         TBL_Realm2_Books[itr]    = (Random(3) - 1);
@@ -1875,26 +2062,57 @@ void Randomize_Book_Heights(void)
 // MGC  o50p08
 // drake178: GAME_New_Screen_1()
 /*
-; displays and processes the second screen of new game
-; creation: choosing a wizard, enabling custom creation
-; only on the Easy and higher difficulties
-; returns 2 if the Custom button is clicked, 0 if the
-; Esc key is pressed, or 3 after copying default wizard
-; data if a pre-defined character is selected
-*/
-/*
 "Select Wizard"
 
 returns {0,2,3} - {0:cancel,2:custom,3:prefab}
 */
+/**
+ * @brief Runs custom wizard creation screen 1 (select wizard preset/custom).
+ *
+ * @details
+ * Initializes screen assets and wizard-entry controls for the first custom
+ * wizard step, then processes selection input for preset wizard, custom path,
+ * or cancel.
+ *
+ * Main flow:
+ * 1) Chooses right-column count/mode by difficulty (`IDK`):
+ *    - 7 entries when `magic_set.Difficulty < 1`
+ *    - 8 entries otherwise.
+ * 2) Loads background, button images, appropriate right overlay, and all
+ *    spellbook sprites used by the shared draw routine.
+ * 3) Sets mouse/input state, clears fields, initializes display globals
+ *    (`m_displayed_wizard`, `NEWG_PortraitSelType`), and creates clickable
+ *    list fields for left column + variable right column.
+ * 4) Installs ESC hotkey, assigns `Newgame_Screen_1_2_Draw`, configures help
+ *    list based on difficulty, and sets input delay.
+ * 5) Runs input loop:
+ *    - ESC returns `0`.
+ *    - Preset click (indices 0..13) copies wizard defaults via
+ *      `WIZ_CopyDefault__WIP` and returns `3`.
+ *    - "Custom" click (`m_newgame_fields[14]` when present) returns `2`.
+ *    - Otherwise performs per-frame draw/palette/page/timing updates.
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return int16_t
+ * @retval 0 Cancel/back path.
+ * @retval 2 Custom wizard path selected.
+ * @retval 3 Preset wizard path selected.
+ *
+ * @note Mutates global new-game UI/profile state and depends on preloaded game
+ *       data tables for wizard presets, colors, and string resources.
+ *
+ * @see Newgame_Screen_1_2_Draw
+ * @see WIZ_CopyDefault__WIP
+ */
 int16_t Newgame_Screen_1__WIP(void)
 {
-    int16_t Escape_Hotkey_Control = 0;
+    int16_t hotkey_ESC = 0;
     int16_t input_field_idx = 0;
     int16_t leave_screen = 0;
     int16_t First_Draw_Done = 0;
-    int16_t IDK = 0;  // _DI_
-    int16_t itr = 0;  // _SI_
+    int16_t IDK = 0;
+    int16_t itr = 0;
 
     IDK = 0;
 
@@ -1942,8 +2160,6 @@ int16_t Newgame_Screen_1__WIP(void)
         IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 39, _screen_seg);
     }
 
-    // ; load the spellbook binder images
-    // ; PATCHED here for realm reordering
     /*
     NEWGAME.LBX, 024  BOOKS      White book 1
     NEWGAME.LBX, 025  BOOKS      White book 2
@@ -1963,10 +2179,10 @@ int16_t Newgame_Screen_1__WIP(void)
     */
     for(itr = 0; itr < 15; itr++)
     {
-        IMG_NewG_Books[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (24 + itr), _screen_seg);
+        m_spellbook_pict_segs[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (24 + itr), _screen_seg);
     }
 
-    Set_Mouse_List(1, mouse_list_newgame);  // ; should use Normal_Fullscreen
+    Set_Mouse_List(1, mouse_list_newgame);
 
     Clear_Fields();
 
@@ -1978,24 +2194,23 @@ int16_t Newgame_Screen_1__WIP(void)
 
     NEWG_PortraitSelType = 8;  // Default: "Select Wizard"
 
-    NEWG_Select_Labels[14] = INVALID_FIELD;
+    m_newgame_fields[14] = INVALID_FIELD;
 
-    // ; create the necessary amount of click label controls
     for(itr = 0; itr < 7; itr++)
     {
 
-        NEWG_Select_Labels[itr] = Add_Hidden_Field(168, (26 + (22 * itr)), 237, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+        m_newgame_fields[itr] = Add_Hidden_Field(168, (26 + (22 * itr)), 237, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
 
     }
 
     for(itr = 0; itr < IDK; itr++)
     {
 
-        NEWG_Select_Labels[(7+itr)] = Add_Hidden_Field(244, (26 + (22 * itr)), 313, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+        m_newgame_fields[(7+itr)] = Add_Hidden_Field(244, (26 + (22 * itr)), 313, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
 
     }
 
-    Escape_Hotkey_Control = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
+    hotkey_ESC = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
 
     Assign_Auto_Function(Newgame_Screen_1_2_Draw, 1);
 
@@ -2017,14 +2232,14 @@ int16_t Newgame_Screen_1__WIP(void)
 
         Mark_Time();
 
-        if(input_field_idx == Escape_Hotkey_Control)
+        if(input_field_idx == hotkey_ESC)
         {
             return 0;
         }
 
         for(itr = 0; itr < 14; itr++)
         {
-            if(NEWG_Select_Labels[itr] == input_field_idx)
+            if(m_newgame_fields[itr] == input_field_idx)
             {
                 Deactivate_Auto_Function();
                 Deactivate_Help_List();
@@ -2033,7 +2248,7 @@ int16_t Newgame_Screen_1__WIP(void)
             }
         }
 
-        if(input_field_idx == NEWG_Select_Labels[14])  // "Custom"
+        if(input_field_idx == m_newgame_fields[14])  // "Custom"
         {
             Deactivate_Auto_Function();
             Deactivate_Help_List();
@@ -2060,15 +2275,43 @@ int16_t Newgame_Screen_1__WIP(void)
 }
 
 // MGC  o50p09
-/*
-; draws the new game wizard portrait selection screen
-; into the current draw frame, with or without retort
-; and bookshelf display, and with or without showing
-; the "Custom" button, all based on global variables
-*/
-/*
-unresolved external symbol Set_Newgame_Screen_1_Help_List referenced in function Newgame_Screen_1__WIP
-*/
+/**
+ * @brief Draws the shared wizard-selection / portrait-selection screen frame.
+ *
+ * @details
+ * Performs one render/update pass used by both New Game screen 1 (select
+ * wizard preset) and screen 2 (select picture/custom path). The routine draws
+ * list buttons, title, portrait preview, optional retort text, and shelf books
+ * according to current mode and hovered control.
+ *
+ * Current behavior:
+ * 1) Pulls font/shadow color ramps and alias retort text color.
+ * 2) Reads hover/focus from `Auto_Input()` and updates `m_displayed_wizard`
+ *    from `Scan_Input()` when a control is active.
+ * 3) Draws background and right overlay, then title text:
+ *    - `cnst_Wiz_Select` when `NEWG_PortraitSelType == 8`
+ *    - `cnst_Pic_Select` otherwise.
+ * 4) Clears list button regions and draws left/right wizard name columns with
+ *    highlighted offsets for the currently hovered field.
+ * 5) Computes right-column count from `NEWG_PortraitSelType`, forcing 7 on low
+ *    difficulty (`magic_set.Difficulty < god_Easy`).
+ * 6) Draws selected portrait preview when `m_displayed_wizard < 14`.
+ * 7) In wizard-select mode (`NEWG_PortraitSelType == 8`), optionally prints the
+ *    preset special ability line and draws default shelf books.
+ * 8) Draws displayed wizard name (non-custom entries).
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return void
+ *
+ * @note Updates global `m_displayed_wizard` based on current input scan.
+ * @note Assumes wizard list fields/assets are already initialized by the caller
+ *       and that `m_newgame_fields` indices map to the expected list layout.
+ *
+ * @see Newgame_Screen_1__WIP
+ * @see Newgame_Screen_2__WIP
+ * @see NEWG_DrawDefShelf__WIP
+ */
 void Newgame_Screen_1_2_Draw(void)
 {
     char Retort_String[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -2076,30 +2319,14 @@ void Newgame_Screen_1_2_Draw(void)
     uint8_t Font_Colors[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     uint8_t Shadow_Colors[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Right_Column_Count = 0;
-    int16_t l_auto_input_field_idx = 0;  // _DI_
-    int16_t itr = 0;  // _SI_
+    int16_t l_auto_input_field_idx = 0;
+    int16_t itr = 0;
 
-// lea     ax, [bp+Shadow_Colors]
-// push    ss
-// push    ax                                ; Dest_Struct
-// mov     ax, offset COL_NEWG_FontShadow
-// push    ds
-// push    ax                                ; src
-// mov     cx, 8
-// call    SCOPY@                            ; compiler generate - copy struct to struct
     memcpy(Shadow_Colors, COL_NEWG_FontShadow, 8);
 
-// lea     ax, [bp+Font_Colors]
-// push    ss
-// push    ax                                ; Dest_Struct
-// mov     ax, offset COL_NEWG_Font
-// push    ds                                ; Color_3
-// push    ax                                ; Color_2
-// mov     cx, 8
-// call    SCOPY@                            ; compiler generate - copy struct to struct
     memcpy(Font_Colors, COL_NEWG_Font, 8);
 
-    Retort_Text_Color = COL_NEWG_Retorts;
+    Retort_Text_Color = alias_colors;
 
     l_auto_input_field_idx = Auto_Input();
 
@@ -2148,7 +2375,6 @@ void Newgame_Screen_1_2_Draw(void)
         Fill(244, 180, 313, 196, ST_TRANSPARENT);
     }
 
-    // draws the blank portrait
     if(m_displayed_wizard < 14)  // "Custom"
     {
         FLIC_Draw(24, 10, wizard_portrait_segs[m_displayed_wizard]);
@@ -2156,11 +2382,10 @@ void Newgame_Screen_1_2_Draw(void)
 
     Set_Font_Style(3, 15, ST_NULL, ST_NULL);
 
-    // ; draw the wizard selection buttons of the left column
     for(itr = 0; itr < 7; itr++)
     {
 
-        if(NEWG_Select_Labels[itr] != l_auto_input_field_idx)
+        if(m_newgame_fields[itr] != l_auto_input_field_idx)
         {
             FLIC_Draw(169, (27 + (22 * itr)), IMG_NewG_ButtonBGs[itr]);
             Set_Font_Colors_15(3, &Shadow_Colors[0]);
@@ -2189,7 +2414,7 @@ void Newgame_Screen_1_2_Draw(void)
     for(itr = 0; itr < Right_Column_Count; itr++)
     {
 
-        if(NEWG_Select_Labels[(7+itr)] == l_auto_input_field_idx)
+        if(m_newgame_fields[(7+itr)] == l_auto_input_field_idx)
         {
             FLIC_Draw(246, (28 + (22 * itr)), IMG_NewG_ButtonBGs[(7 + itr)]);
             Set_Font_Colors_15(3, &Shadow_Colors[0]);
@@ -2208,18 +2433,18 @@ void Newgame_Screen_1_2_Draw(void)
 
     }
 
-    /* Print Retort Name */
+    /* Print Special ability Name */
     if(
         (_wizard_presets_table[m_displayed_wizard].special != ST_UNDEFINED)
         &&
-        (NEWG_PortraitSelType == 8)  // defaulted to 8 and god is not Intro so didn't get reduced to 7  second has 7 wizards + custom
+        (NEWG_PortraitSelType == 8)  // defaulted to 8 and god is not Intro so didn't get reduced to 7;  second has 7 wizards + custom
         &&
         (m_displayed_wizard < 14)  // "Custom" is not the mouse-over
     )
     {
         Set_Font_Style(0, 15, ST_NULL, ST_NULL);
         Set_Font_Colors_15(0, &Font_Colors[0]);
-        strcpy(Retort_String, STR_Retorts[_wizard_presets_table[m_displayed_wizard].special]);  // 1 + {-1,0,1,2,...}
+        strcpy(Retort_String, wsa_names[_wizard_presets_table[m_displayed_wizard].special]);  // 1 + {-1,0,1,2,...}
         strcat(Retort_String, cnst_DOT__ovr050);
         Print(13, 181, Retort_String);
         Set_Font_Colors_15(0, &Retort_Text_Color[0]);
@@ -2245,18 +2470,50 @@ void Newgame_Screen_1_2_Draw(void)
 }
 
 // MGC  o50p10
-/*
-
-"Select Picture"
-
-*/
+/**
+ * @brief Runs custom wizard creation screen 2 (wizard portrait selection).
+ *
+ * @details
+ * Initializes portrait-selection assets and controls, then processes input
+ * until the user either cancels or chooses one of the preset wizard portraits.
+ *
+ * Main flow:
+ * 1) Loads background, 15 button background images, and portrait-screen
+ *    right-side overlay art.
+ * 2) Sets mouse list, clears fields, resets local loop state, and initializes
+ *    display globals (`m_displayed_wizard`, `NEWG_PortraitSelType`).
+ * 3) Creates clickable hidden fields for two columns of wizard entries
+ *    (7 + 7 selectable slots in current implementation).
+ * 4) Installs ESC hotkey, assigns `Newgame_Screen_1_2_Draw` as auto draw
+ *    callback, sets help list, and enables input delay.
+ * 5) Runs input loop:
+ *    - ESC returns `ngscr_Wizard`.
+ *    - Clicking a wizard entry sets `_players[0].wizard_id`, copies default
+ *      wizard name into `_players[0].name`, deactivates draw/help handlers,
+ *      and exits the loop.
+ *    - If still active, performs frame draw/palette/page/timing updates.
+ * 6) Returns `ngscr_Name` after a successful portrait selection.
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return int16_t
+ * @retval ngscr_Wizard User cancelled with ESC; caller should return to the
+ *                      previous wizard setup screen.
+ * @retval ngscr_Name   Portrait selected; caller should advance to name entry.
+ *
+ * @note Mutates global new-game state including selected wizard id, wizard
+ *       name, draw/help callbacks, and screen interaction fields.
+ *
+ * @see Newgame_Screen_1_2_Draw
+ * @see Set_Newgame_Screen_2_Help_List
+ */
 int16_t Newgame_Screen_2__WIP(void)
 {
-    int16_t Escape_Hotkey_Control = 0;
+    int16_t hotkey_ESC = 0;
     int16_t itr = 0;
     int16_t input_field_idx = 0;
-    int16_t leave_screen = 0;  // _SI_
-    int16_t First_Draw_Done = 0;  // _DI_
+    int16_t leave_screen = 0;
+    int16_t First_Draw_Done = 0;
 
     newgame_background_seg = LBX_Reload(newgame_lbx_file__ovr050, 0, _screen_seg);
 
@@ -2297,23 +2554,17 @@ int16_t Newgame_Screen_2__WIP(void)
 
     NEWG_PortraitSelType = 7;
 
-    // ; create the click label controls for the left column
     for(itr = 0; itr < 7; itr++)
     {
-
-        NEWG_Select_Labels[itr] = Add_Hidden_Field(168, (26 + (22 * itr)), 237, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
-
+        m_newgame_fields[itr] = Add_Hidden_Field(168, (26 + (22 * itr)), 237, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
     }
 
-    // ; create the click label controls for the right column
     for(itr = 0; itr < 7; itr++)
     {
-
-        NEWG_Select_Labels[(7 + itr)] = Add_Hidden_Field(244, (26 + (22 * itr)), 313, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
-
+        m_newgame_fields[(7 + itr)] = Add_Hidden_Field(244, (26 + (22 * itr)), 313, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
     }
 
-    Escape_Hotkey_Control = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
+    hotkey_ESC = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
 
     Assign_Auto_Function(Newgame_Screen_1_2_Draw, 1);
 
@@ -2328,35 +2579,21 @@ int16_t Newgame_Screen_2__WIP(void)
 
         Mark_Time();
 
-        if(input_field_idx == Escape_Hotkey_Control)
+        if(input_field_idx == hotkey_ESC)
         {
-            return 1;  // go back to game options
+            return ngscr_Wizard;
         }
 
-        // ; check if any of the control labels were clicked, and
-        // ; if so, copy the corresponding default wizard name to
-        // ; the player's profile, and set si to 1
         for(itr = 0; itr < 14; itr++)
         {
-            if(NEWG_Select_Labels[itr] == input_field_idx)
+            if(m_newgame_fields[itr] == input_field_idx)
             {
                 Deactivate_Auto_Function();
                 Deactivate_Help_List();
-
                 _players[0].wizard_id = (uint8_t)itr;
-
                 strcpy(_players[0].name, _wizard_presets_table[itr].name);
-
                 leave_screen = ST_TRUE;
-
             }
-        }
-
-        if(input_field_idx == NEWG_Select_Labels[14])  // "Custom"
-        {
-            Deactivate_Auto_Function();
-            Deactivate_Help_List();
-            return 2;
         }
 
         if(leave_screen == ST_FALSE)
@@ -2374,26 +2611,45 @@ int16_t Newgame_Screen_2__WIP(void)
 
     }
 
-    return 3; // move forward to custom wizard creation
+    return ngscr_Name;
 
 }
 
 
 // MGC  o50p11
-/*
-; displays and processes the wizard name input screen
-; of new game creation, starting with the default name
-; for the selected portrait, and reverting to it if the
-; final input string is empty
-; returns 0 if a valid name was entered, or -1 if the
-; edit control was escaped out of with the Esc key
-*/
-/*
-"Wizard's Name"
-*/
+/**
+ * @brief Runs custom wizard creation screen 3 (wizard name input).
+ *
+ * @details
+ * Prepares the name-entry screen, invokes the text input popup initialized with
+ * the current wizard name, then writes the resulting name back to the player
+ * profile (falling back to the previous name if the entered string is empty).
+ *
+ * Processing steps:
+ * 1) Loads background and name-box overlay assets.
+ * 2) Sets mouse list, clears fields, and registers/draws
+ *    `Newgame_Screen_3_Draw__WIP`.
+ * 3) Applies palette/pages, configures input font style, and calls
+ *    `Setup_Input_Box_Popup(...)` with a 10-character limit.
+ * 4) Trims the resulting string and restores prior name when the trimmed input
+ *    is empty.
+ * 5) Updates `_players[0].name`, deactivates auto draw callback, and returns
+ *    status based on popup result.
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return int16_t
+ * @retval 0 Name accepted (continue forward).
+ * @retval 1 Input cancelled (go back one screen).
+ *
+ * @note Mutates `_players[0].name` and uses global UI/draw state for the New
+ *       Game flow.
+ *
+ * @see Newgame_Screen_3_Draw__WIP
+ */
 int16_t Newgame_Screen_3__WIP(void)
 {
-    char Edit_Text[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char name[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t input_box_return_value = 0;
 
     // NEWGAME.LBX, 000  BACKGRND    Main screen back
@@ -2416,24 +2672,24 @@ int16_t Newgame_Screen_3__WIP(void)
 
     Set_Font_Style(3, 8, 8, ST_NULL);
 
-    strcpy(Edit_Text, _players[0].name);
+    strcpy(name, _players[0].name);
 
-    input_box_return_value = Setup_Input_Box_Popup(195, 36, 80, Edit_Text, 10, 0, 0, 1, wziards_name_colors, ST_UNDEFINED);
+    input_box_return_value = Setup_Input_Box_Popup(195, 36, 80, name, 10, 0, 0, 1, wziards_name_colors, ST_UNDEFINED);
 
-    Trim(Edit_Text);
+    Trim(name);
 
-    if(strlen(Edit_Text) < 1)
+    if(strlen(name) < 1)
     {
-        strcpy(Edit_Text, _players[0].name);
+        strcpy(name, _players[0].name);
     }
 
-    strcpy(_players[0].name, Edit_Text);
+    strcpy(_players[0].name, name);
 
     Deactivate_Auto_Function();
 
     if(input_box_return_value == -1)  // cancelled
     {
-        return -1;  // cancelled, go back a screen
+        return 1;  // cancelled, go back a screen
     }
     else
     {
@@ -2444,75 +2700,100 @@ int16_t Newgame_Screen_3__WIP(void)
 
 
 // MGC  o50p12
-/*
-; draws the wizard name entry screen into the current
-; draw frame, showing bookshelf and retorts only if
-; a default wizard was selected
-*/
-/*
-
-*/
+/**
+ * @brief Draws the New Game wizard-name screen frame (screen 3).
+ *
+ * @details
+ * Renders the name-entry screen background, title area, wizard portrait, and
+ * the current wizard name with shadow/highlight layering. When portrait shelf
+ * content is pending (`NEWG_PortraitSelType == 7`), it also triggers drawing of
+ * the default spellbook shelf and special abilities summary.
+ *
+ * Render/update flow:
+ * 1) Loads local text color and shadow ramps for the name label.
+ * 2) Draws background and right-side name box overlay.
+ * 3) Draws "Select Name" title and selected wizard portrait.
+ * 4) Draws wizard name text with shadow then foreground colors.
+ * 5) If `NEWG_PortraitSelType == 7`, clears that flag and draws additional
+ *    profile summary elements (`NEWG_DrawDefShelf__WIP`,
+ *    `Draw_Special_Abilities_String`).
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return void
+ *
+ * @note This function is draw-focused and intended to be called from the
+ *       enclosing screen logic while name input is active.
+ * @note Mutates global `NEWG_PortraitSelType` when the deferred shelf/ability
+ *       draw path is executed.
+ *
+ * @see Newgame_Screen_3__WIP
+ * @see NEWG_DrawDefShelf__WIP
+ * @see Draw_Special_Abilities_String
+ */
 void Newgame_Screen_3_Draw__WIP(void)
 {
-    uint8_t Text_Colors[8] = { 0, 0, 0, 0, 0, 0, 0, 0, };
+    uint8_t colors1[8] = { 0, 0, 0, 0, 0, 0, 0, 0, };
     uint8_t Shadow_Colors[8] = { 0, 0, 0, 0, 0, 0, 0, 0, };
-
     memcpy(Shadow_Colors, RP_COL_NEWG_FontShadow2, 8);
-
-    memcpy(Text_Colors, RP_COL_NEWG_Font2, 8);
-
+    memcpy(colors1, RP_COL_NEWG_Font2, 8);
     FLIC_Draw(0, 0, newgame_background_seg);
-
     FLIC_Draw(181, 17, IMG_NewG_RgtOverlay);
-
     Set_Font_Style_Shadow_Down(5, 5, ST_NULL, ST_NULL);
-
     Print_Centered(242, 1, cnst_Name_Select);
-
     FLIC_Draw(24, 10, wizard_portrait_segs[_players[0].wizard_id]);
-
     Set_Font_Style(4, 15, ST_NULL, ST_NULL);
-
     Set_Font_Colors_15(4, &Shadow_Colors[0]);
-
     Print_Centered(78, 120, _players[0].name);
-
     Print_Centered(77, 120, _players[0].name);
-
-    Set_Font_Colors_15(4, &Text_Colors[0]);
-
+    Set_Font_Colors_15(4, &colors1[0]);
     Print_Centered(77, 119, _players[0].name);
-
     if(NEWG_PortraitSelType == 7)
     {
-
         NEWG_PortraitSelType = 0;
-
         NEWG_DrawDefShelf__WIP(_players[0].wizard_id);
-
-        GAME_DrawRetortsStr();
-                                    
+        Draw_Special_Abilities_String();
     }
-
 }
 
 
 // MGC  o50p13
-/*
-; displays and processes the banner selection screen
-; of new game creation
-; returns 99 if a banner is chosen, or 6 if the Esc key
-; is pressed instead
-;
-; PATCHED in the last profile loader to save the
-; profile after a banner was selected
-*/
-/*
-
-*/
+/**
+ * @brief Runs custom wizard creation screen 7 (banner selection).
+ *
+ * @details
+ * Initializes banner-selection resources and input fields, then drives the
+ * interactive loop where the player chooses one of five banner colors.
+ *
+ * Main flow:
+ * 1) Loads screen assets (background, banner panel overlay, spellbook sprites,
+ *    and map-build bar segment).
+ * 2) Sets mouse list, clears fields, creates five hidden click fields matching
+ *    banner rows, installs ESC hotkey, draw callback, and help list.
+ * 3) Runs input loop until exit:
+ *    - ESC returns `6` (back to race screen).
+ *    - Clicking a banner row maps index 0..4 to `_players[0].banner_id`
+ *      (`BNR_Green`, `BNR_Blue`, `BNR_Red`, `BNR_Purple`, `BNR_Yellow`) and
+ *      ends the loop.
+ *    - While waiting, performs per-frame draw/palette/page/timing updates.
+ * 4) Deactivates auto draw and help handlers before returning.
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return int16_t
+ * @retval 6   User pressed ESC; caller should navigate back.
+ * @retval 99  Banner selected; caller continues new-game flow.
+ *
+ * @note Mutates global UI state (`m_newgame_fields`, auto/help handlers) and
+ *       player profile state (`_players[0].banner_id`).
+ * @note Requires LBX resources and shared New Game globals to be initialized.
+ *
+ * @see Newgame_Screen_7_Draw__WIP
+ * @see Set_Newgame_Screen_7_Help_List
+ */
 int16_t Newgame_Screen_7__WIP(void)
 {
-    int16_t Escape_Hotkey_Control = 0;
+    int16_t hotkey_ESC = 0;
     uint8_t Dest_Struct[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t input_field_idx = 0;
     int16_t First_Draw_Done = 0;
@@ -2527,7 +2808,6 @@ int16_t Newgame_Screen_7__WIP(void)
     // NEWGAME.LBX, 046  FLAGSNEW
     IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 46, _screen_seg);
 
-    // ; load the spellbook binder images
     for(itr = 0; itr < 15; itr++)
     {
 
@@ -2549,7 +2829,7 @@ int16_t Newgame_Screen_7__WIP(void)
         NEWGAME.LBX, 038  BOOKS      Red book 3
         */
         // ; 5 groups of 3 images each (L - S - N - D - C)
-        IMG_NewG_Books[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (24 + itr), _screen_seg);
+        m_spellbook_pict_segs[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (24 + itr), _screen_seg);
 
     }
 
@@ -2565,17 +2845,17 @@ int16_t Newgame_Screen_7__WIP(void)
 
     First_Draw_Done = ST_FALSE;
 
-    NEWG_Select_Labels[0] = Add_Hidden_Field(175, 21, 313, 55, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+    m_newgame_fields[0] = Add_Hidden_Field(175, 21, 313, 55, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
 
-    NEWG_Select_Labels[1] = Add_Hidden_Field(175, 56, 313, 93, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+    m_newgame_fields[1] = Add_Hidden_Field(175, 56, 313, 93, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
 
-    NEWG_Select_Labels[2] = Add_Hidden_Field(175, 94, 313, 128, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+    m_newgame_fields[2] = Add_Hidden_Field(175, 94, 313, 128, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
 
-    NEWG_Select_Labels[3] = Add_Hidden_Field(175, 129, 313, 162, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+    m_newgame_fields[3] = Add_Hidden_Field(175, 129, 313, 162, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
 
-    NEWG_Select_Labels[4] = Add_Hidden_Field(175, 163, 313, 199, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+    m_newgame_fields[4] = Add_Hidden_Field(175, 163, 313, 199, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
 
-    Escape_Hotkey_Control = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
+    hotkey_ESC = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
 
     Assign_Auto_Function(Newgame_Screen_7_Draw__WIP, 1);
 
@@ -2588,20 +2868,17 @@ int16_t Newgame_Screen_7__WIP(void)
 
         input_field_idx = Get_Input();
 
-        if(input_field_idx == Escape_Hotkey_Control)
+        if(input_field_idx == hotkey_ESC)
         {
 
-            return 6;
+            return ngscr_Race;
 
         }
 
-        // ; check if the click occurred on a banner label, and if
-        // ; so, set the corresponding color into the player's
-        // ; profile and mark the process as finished
         for(itr = 0; itr < NUM_BANNER_SELECTIONS; itr++)
         {
 
-            if(NEWG_Select_Labels[itr] == input_field_idx)
+            if(m_newgame_fields[itr] == input_field_idx)
             {
 
                 switch(itr)
@@ -2668,23 +2945,51 @@ int16_t Newgame_Screen_7__WIP(void)
 
     Deactivate_Help_List();
 
-    return 99;  // ¿ force Cancel New Game ?
+    return 99;
 
 }
 
 
 // MGC  o50p14
-// GAME_Draw_NewScr7()
+/**
+ * @brief Draws the New Game banner-selection screen (screen 7) frame.
+ *
+ * @details
+ * Performs one draw pass for the banner selection UI, including the standard
+ * wizard identity panel and the shared books/abilities summary used on screens
+ * 6 and 7.
+ *
+ * Render sequence:
+ * 1) Initializes local text/shadow color ramps.
+ * 2) Draws background and right-side overlay panel.
+ * 3) Draws title text ("Select Banner"), wizard portrait, and wizard name with
+ *    layered shadow/highlight text.
+ * 4) Draws shelf spellbook icons from `_players[0].spellranks[]` in realm order
+ *    using `m_spellbook_pict_segs` and `TBL_Bookshelf_Books` offsets.
+ * 5) Draws selected special abilities summary text via
+ *    `Draw_Special_Abilities_String()`.
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return void
+ *
+ * @note This routine is draw-only; input handling and state transitions are
+ *       managed by the enclosing screen loop.
+ * @note Assumes required LBX image segments and wizard profile globals are
+ *       already initialized by the caller.
+ *
+ * @see Draw_Special_Abilities_String
+ */
 void Newgame_Screen_7_Draw__WIP(void)
 {
-    uint8_t FontColor_Array[5] = { 0, 0, 0, 0, 0 };
-    uint8_t FontShadow_Array[5] = { 0, 0, 0, 0, 0 };
-    int16_t BookBinder_Left = 0;  // _DI_
-    int16_t itr = 0;  // _SI_
+    uint8_t text_colors[5] = { 0, 0, 0, 0, 0 };
+    uint8_t shadow_colors[5] = { 0, 0, 0, 0, 0 };
+    int16_t start_X = 0;
+    int16_t itr = 0;
 
-    memcpy(FontShadow_Array, RP_COL_NEWG_5Shadow, 5);
+    memcpy(shadow_colors, RP_COL_NEWG_5Shadow, 5);
 
-    memcpy(FontColor_Array, RP_COL_NEWG_5Font, 5);
+    memcpy(text_colors, RP_COL_NEWG_5Font, 5);
 
     FLIC_Draw(0, 0, newgame_background_seg);
 
@@ -2698,11 +3003,11 @@ void Newgame_Screen_7_Draw__WIP(void)
 
     Set_Font_Style(4, 15, ST_NULL, ST_NULL);
 
-    Set_Font_Colors_15(4, &FontShadow_Array[0]);
+    Set_Font_Colors_15(4, &shadow_colors[0]);
     Print_Centered(78, 120, _players[0].name);
     Print_Centered(77, 120, _players[0].name);
 
-    Set_Font_Colors_15(4, &FontColor_Array[0]);
+    Set_Font_Colors_15(4, &text_colors[0]);
     Print_Centered(77, 119, _players[0].name);
     Print_Centered(77, 120, _players[0].name);
 
@@ -2710,39 +3015,39 @@ void Newgame_Screen_7_Draw__WIP(void)
         BEGIN: same on Screen 6 & 7
     */
 
-    BookBinder_Left = 36;
+    start_X = 36;
 
     for(itr = 0; itr < _players[0].spellranks[3]; itr++)
     {
-        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(0 + TBL_Bookshelf_Books[itr])]);
-        BookBinder_Left += 8;
+        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(0 + TBL_Bookshelf_Books[itr])]);
+        start_X += 8;
     }
 
     for(itr = 0; itr < _players[0].spellranks[1]; itr++)
     {
-        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(3 + TBL_Bookshelf_Books[itr])]);
-        BookBinder_Left += 8;
+        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(3 + TBL_Bookshelf_Books[itr])]);
+        start_X += 8;
     }
 
     for(itr = 0; itr < _players[0].spellranks[0]; itr++)
     {
-        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(6 + TBL_Bookshelf_Books[itr])]);
-        BookBinder_Left += 8;
+        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(6 + TBL_Bookshelf_Books[itr])]);
+        start_X += 8;
     }
 
     for(itr = 0; itr < _players[0].spellranks[4]; itr++)
     {
-        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(9 + TBL_Bookshelf_Books[itr])]);
-        BookBinder_Left += 8;
+        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(9 + TBL_Bookshelf_Books[itr])]);
+        start_X += 8;
     }
 
     for(itr = 0; itr < _players[0].spellranks[2]; itr++)
     {
-        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(12 + TBL_Bookshelf_Books[itr])]);
-        BookBinder_Left += 8;
+        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(12 + TBL_Bookshelf_Books[itr])]);
+        start_X += 8;
     }
 
-    GAME_DrawRetortsStr();
+    Draw_Special_Abilities_String();
 
     /*
         END: same on Screen 6 & 7
@@ -2775,14 +3080,47 @@ Module: RACESEL
     Address: 02:0019385C
 
 */
-/*
-New Game Screen 6 
-*/
+/**
+ * @brief Runs custom wizard creation screen 6 (race selection).
+ *
+ * @details
+ * Initializes race-selection assets and controls, then drives the interactive
+ * race selection loop for Arcanus/Myrran race labels.
+ *
+ * Main flow:
+ * 1) Loads screen art/resources (background, right overlay, race panel, warning
+ *    box, and spellbook sprites).
+ * 2) Creates 14 hidden input fields mapped to race labels (9 Arcanus + 5
+ *    Myrran), installs ESC hotkey, draw callback, and help list.
+ * 3) Processes input until a valid race is selected or ESC is pressed:
+ *    - ESC returns `ST_UNDEFINED`.
+ *    - Arcanus label click selects race immediately.
+ *    - Myrran label click selects race only when Myrran retort is active
+ *      (`_players[0].alchemy[rtt_Myrran] == 1`); otherwise shows warning
+ *      dialog (`Warn0(cnst_Race_Error)`) and resumes draw/help handlers.
+ * 4) While waiting for selection, performs manual frame updates
+ *    (`Newgame_Screen_6_Draw__WIP`, palette apply, page toggle, timing).
+ * 5) After selection, redraws selected race label in a short 4-step blink
+ *    sequence, then deactivates auto/help handlers.
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return int16_t
+ * @retval ST_UNDEFINED User pressed ESC (cancel/back path).
+ * @retval ngscr_Banner Race selected; proceed to banner selection screen.
+ *
+ * @note Mutates global state including `NEWG_Clicked_Race`, `m_newgame_fields`,
+ *       and active draw/help callbacks.
+ * @note Requires initialized wizard/profile globals and valid LBX resources.
+ *
+ * @see Newgame_Screen_6_Draw__WIP
+ * @see Set_Newgame_Screen_6_Help_List
+ */
 int16_t Newgame_Screen_6__WIP(void)
 {
     char Arcanus_Races[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Escape_Hotkey_Control = 0;
-    int8_t * wsa_ptr = 0;  // Pointer to 'Wizard Special Abilities'
+    int16_t hotkey_ESC = 0;
+    int8_t * wsa_ptr = 0;
     uint8_t * Shadow_Color = 0;
     uint8_t * Available_Color = 0;
     uint8_t * Not_Available_Color = 0;
@@ -2791,8 +3129,8 @@ int16_t Newgame_Screen_6__WIP(void)
     int16_t input_field_idx = 0;
     int16_t leave_screen = 0;
     int16_t First_Draw_Done = 0;
-    int16_t itr = 0;  // _SI_
-    int16_t itr2 = 0;  // _DI_
+    int16_t itr = 0;
+    int16_t itr2 = 0;
 
     memcpy(Arcanus_Races, TBL_Arcanian_Races, 9);
 
@@ -2817,11 +3155,9 @@ int16_t Newgame_Screen_6__WIP(void)
     // NEWGAME.LBX, 045  WARNBACK   Warning box buttom
     m_warning_box_bottom_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 45, _screen_seg);
 
-    // ; load the spellbook binder images
-    // ; 5 groups of 3 images each (L - S - N - D - C)
     for(itr = 0; itr < 15; itr++)
     {
-        IMG_NewG_Books[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (24 + itr), _screen_seg);
+        m_spellbook_pict_segs[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (24 + itr), _screen_seg);
     }
 
     Set_Mouse_List(1, mouse_list_newgame);
@@ -2834,19 +3170,17 @@ int16_t Newgame_Screen_6__WIP(void)
 
     wsa_ptr = &_players[0].alchemy;
 
-    // ; create the click labels for the arcanus races
     for(itr = 0; itr < 9; itr++)
     {
-        NEWG_Select_Labels[itr] = Add_Hidden_Field(211, (38 + (itr * 10)), 270, (45 + (itr * 10)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+        m_newgame_fields[itr] = Add_Hidden_Field(211, (38 + (itr * 10)), 270, (45 + (itr * 10)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
     }
 
-    // ; create the click labels for the myrran races
     for(itr = 0; itr < 5; itr++)
     {
-        NEWG_Select_Labels[(9 + itr)] = Add_Hidden_Field(211, (147 + (itr * 10)), 270, (154 + (itr * 10)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+        m_newgame_fields[(9 + itr)] = Add_Hidden_Field(211, (147 + (itr * 10)), 270, (154 + (itr * 10)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
     }
 
-    Escape_Hotkey_Control = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
+    hotkey_ESC = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
 
     Assign_Auto_Function(Newgame_Screen_6_Draw__WIP, 1);
 
@@ -2859,35 +3193,29 @@ int16_t Newgame_Screen_6__WIP(void)
 
         input_field_idx = Get_Input();
 
-        if(input_field_idx == Escape_Hotkey_Control)
+        if(input_field_idx == hotkey_ESC)
         {
 
             return ST_UNDEFINED;
 
         }
 
-        // ; if an arcanus race label was clicked, mark and save
-        // ; the selection
         for(itr = 0; itr < 9; itr++)
         {
-            if(NEWG_Select_Labels[itr] == input_field_idx)
+            if(m_newgame_fields[itr] == input_field_idx)
             {
                 NEWG_Clicked_Race = Arcanus_Races[itr];
                 leave_screen = ST_TRUE;
             }
         }
 
-        // ; if a myrran race label was clicked, check if the
-        // ; player is myrran, and either mark and save the
-        // ; selection if they are, or display an error if not
         for(itr = 9; itr < 14; itr++)
         {
 
-            // if(wsa_ptr[RETORTS.Myrran] == 1)
             if(wsa_ptr[rtt_Myrran] == 1)
             {
 
-                if(NEWG_Select_Labels[itr] == input_field_idx)
+                if(m_newgame_fields[itr] == input_field_idx)
                 {
                     NEWG_Clicked_Race = Myrran_Races[(itr - 9)];
                     leave_screen = ST_TRUE;
@@ -2897,7 +3225,7 @@ int16_t Newgame_Screen_6__WIP(void)
             else
             {
 
-                if(NEWG_Select_Labels[itr] == input_field_idx)
+                if(m_newgame_fields[itr] == input_field_idx)
                 {
                     
                     Deactivate_Auto_Function();
@@ -2940,13 +3268,9 @@ int16_t Newgame_Screen_6__WIP(void)
 
     }
 
-    // ; blink the label if the selected race by redrawing it
-    // ; with different colors 4 times
     for(itr = 0; itr < 4; itr++)
     {
 
-        // ; if the selected race is acranian, redraw its label in
-        // ; a different color based on the value of si
         for(itr2 = 0; itr2 < 9; itr2++)
         {
 
@@ -2981,8 +3305,6 @@ int16_t Newgame_Screen_6__WIP(void)
 
         }
 
-        // ; if the selected race is myrran, redraw its label in
-        // ; a different color based on the value of si
         for(itr2 = 9; itr2 < 14; itr2++)
         {
 
@@ -3024,12 +3346,42 @@ int16_t Newgame_Screen_6__WIP(void)
 
     Deactivate_Help_List();
 
-    return 7;  // Title: "Select Banner"
+    return ngscr_Banner;
 
 }
 
 
 // MGC  o50p16
+/**
+ * @brief Draws and updates the New Game race-selection screen (screen 6).
+ *
+ * @details
+ * Performs one full draw/update pass for the race selection UI used during
+ * custom wizard creation. The routine renders static art and wizard identity,
+ * draws current books and selected abilities summary, scans hovered control,
+ * and colors race labels according to availability/highlight state.
+ *
+ * Current behavior:
+ * 1) Loads local race index tables (Arcanus/Myrran) and color ramps.
+ * 2) Draws background, overlays, title, wizard portrait, and wizard name.
+ * 3) Polls current hovered/active control via `Scan_Input()`.
+ * 4) Draws bookshelf books from `_players[0].spellranks[]` and the composed
+ *    abilities paragraph (`Draw_Special_Abilities_String()`).
+ * 5) Draws Arcanus race labels as always available, with hover highlight.
+ * 6) Draws Myrran race labels as available only when Myrran retort is selected
+ *    (`_players[0].alchemy[rtt_Myrran]`), otherwise uses unavailable colors.
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return void
+ *
+ * @note Uses and updates global screen state only via rendering/input side
+ *       effects; it does not perform screen-transition decisions.
+ * @note Assumes required image segments, race tables, palette colors, and
+ *       wizard profile globals are already initialized by the caller.
+ *
+ * @see Draw_Special_Abilities_String
+ */
 void Newgame_Screen_6_Draw__WIP(void)
 {
     int16_t Arcanus_Races[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -3043,9 +3395,9 @@ void Newgame_Screen_6_Draw__WIP(void)
     uint8_t FontShadow_Colors[5] = { 0, 0, 0, 0, 0 };
     int16_t Myrran_Races[5] = { 0, 0, 0, 0, 0 };
     int16_t Moused_Control = 0;
-    int16_t BookBinder_Left = 0;
-    int16_t itr = 0;  // _SI_
-    int16_t itr2 = 0;  // _DI_
+    int16_t start_X = 0;
+    int16_t itr = 0;
+    int16_t itr2 = 0;
     int16_t DBG_race_type = 0;
     char * DBG_race_name_string = 0;
 
@@ -3099,39 +3451,39 @@ void Newgame_Screen_6_Draw__WIP(void)
         BEGIN: same on Screen 6 & 7
     */
 
-    BookBinder_Left = 36;
+    start_X = 36;
 
     for(itr = 0; itr < _players[0].spellranks[3]; itr++)
     {
-        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(0 + TBL_Bookshelf_Books[itr])]);
-        BookBinder_Left += 8;
+        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(0 + TBL_Bookshelf_Books[itr])]);
+        start_X += 8;
     }
 
     for(itr = 0; itr < _players[0].spellranks[1]; itr++)
     {
-        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(3 + TBL_Bookshelf_Books[itr])]);
-        BookBinder_Left += 8;
+        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(3 + TBL_Bookshelf_Books[itr])]);
+        start_X += 8;
     }
 
     for(itr = 0; itr < _players[0].spellranks[0]; itr++)
     {
-        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(6 + TBL_Bookshelf_Books[itr])]);
-        BookBinder_Left += 8;
+        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(6 + TBL_Bookshelf_Books[itr])]);
+        start_X += 8;
     }
 
     for(itr = 0; itr < _players[0].spellranks[4]; itr++)
     {
-        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(9 + TBL_Bookshelf_Books[itr])]);
-        BookBinder_Left += 8;
+        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(9 + TBL_Bookshelf_Books[itr])]);
+        start_X += 8;
     }
 
     for(itr = 0; itr < _players[0].spellranks[2]; itr++)
     {
-        FLIC_Draw(BookBinder_Left, 135, IMG_NewG_Books[(12 + TBL_Bookshelf_Books[itr])]);
-        BookBinder_Left += 8;
+        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(12 + TBL_Bookshelf_Books[itr])]);
+        start_X += 8;
     }
 
-    GAME_DrawRetortsStr();
+    Draw_Special_Abilities_String();
 
     /*
         END: same on Screen 6 & 7
@@ -3143,8 +3495,6 @@ void Newgame_Screen_6_Draw__WIP(void)
 
     Print(198, 25, cnst_Arcanian_Races);  // "Arcanian Races:"
 
-    // ; draw the arcanian race labels, using a different
-    // ; color if the mouse is over one
     for(itr2 = 0; itr2 < 9; itr2++)
     {
 
@@ -3155,7 +3505,7 @@ void Newgame_Screen_6_Draw__WIP(void)
         DBG_race_name_string = *_race_type_table[DBG_race_type].name;
         Print(221, (39 + (10 * itr2)), DBG_race_name_string);
 
-        if(NEWG_Select_Labels[itr2] == Moused_Control)
+        if(m_newgame_fields[itr2] == Moused_Control)
         {
 
             Set_Font_Colors_15(2, Race_Highlight_Color);
@@ -3181,9 +3531,6 @@ void Newgame_Screen_6_Draw__WIP(void)
 
     Print(202, 134, cnst_Myrran_Races);  // "Myrran Races:"
 
-    // ; draw the myrran race labels, using the NA color if
-    // ; the corresponding retort was not taken, and otherwise
-    // ; a different color if the mouse is over one
     for(itr2 = 0; itr2 < 5; itr2++)
     {
 
@@ -3197,7 +3544,7 @@ void Newgame_Screen_6_Draw__WIP(void)
         if(wsa_ptr[rtt_Myrran] == 1)
         {
 
-            if(NEWG_Select_Labels[(9 + itr2)] == Moused_Control)
+            if(m_newgame_fields[(9 + itr2)] == Moused_Control)
             {
 
                 Set_Font_Colors_15(2, Race_Highlight_Color);
@@ -3229,119 +3576,157 @@ void Newgame_Screen_6_Draw__WIP(void)
 
 
 // MGC  o50p17
-/*
-; draws a list of the human player's retorts as a
-; string into the current draw frame, on the left side,
-; under where the portrait and the bookshelf normally
-; are
-*/
-/*
-
-*/
-void GAME_DrawRetortsStr(void)
+/**
+ * @brief Builds and draws the selected-special abilities text block on the New Game UI.
+ *
+ * @details
+ * Reads the current human player's special ability flags, composes a comma-separated
+ * list of enabled special ability names, appends a trailing period, and renders that
+ * paragraph with shadow/highlight layered text colors.
+ *
+ * Processing flow:
+ * 1) Initializes local buffers, color pointers, and special ability state counters.
+ * 2) Points `wsa_ptr` at `_players[0].alchemy`, then treats the next 18 bytes
+ *    as the contiguous special ability-flag array.
+ * 3) Counts enabled special abilities (`== 1`) into `retort_count`.
+ * 4) Rebuilds `string` by iterating enabled special abilities and calling
+ *    `String_List_Builer(...)` before each appended special ability name from
+ *    `wsa_names[itr]`.
+ * 5) Appends `cnst_DOT__ovr050` when at least one special ability is present.
+ * 6) Selects paragraph Y origin (`start_y`) based on line-density heuristic:
+ *    > 5 special abilities starts one pixel higher.
+ * 7) Draws the paragraph twice (shadow first, then highlight) with
+ *    `Print_Paragraph(...)` to produce the final styled text.
+ *
+ * Key local variables:
+ * - `string[126]`: composed output paragraph buffer.
+ * - `retort_count`: number of active special abilities.
+ * - `list_size`: running count used by `String_List_Builer` formatting.
+ * - `colors1` / `colors2`: palette ramps used for layered text draw.
+ * - `start_y`: chosen Y origin for paragraph rendering.
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return void
+ * No return value. Draws directly into the active new-game draw surface.
+ *
+ * @note Relies on contiguous special ability storage beginning at `_players[0].alchemy`
+ *       and on global string/color assets used by the New Game screen.
+ *
+ * @see String_List_Builer
+ */
+void Draw_Special_Abilities_String(void)
 {
-    uint8_t Unused_Local_Array[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    char Retorts_String[126] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Text_Top = 0;
-    int16_t Retorts_Added = 0;
+    uint8_t l_niu_array[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char string[126] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t start_y = 0;
+    int16_t list_size = 0;
     int16_t Local_Zero = 0;
     int8_t * wsa_ptr = 0;
-    // int16_t Retort_Colors = 0;
-    uint8_t * Retort_Colors = 0;
-    // uint8_t Text_Colors[4] = { 0, 0, 0, 0 };
-    uint8_t * Text_Colors = 0;
-    int16_t retort_count = 0;  // _DI_
+    // int16_t colors2 = 0;
+    uint8_t * colors2 = 0;
+    // uint8_t colors1[4] = { 0, 0, 0, 0 };
+    uint8_t * colors1 = 0;
+    int16_t ability_count = 0;  // _DI_
     int16_t itr = 0;  // _SI_
 
     // far pointer address? via assignment ?!?
-    Text_Colors = COL_NEWG_4Font2;
+    colors1 = string_colors1;
 
-    Retort_Colors = COL_NEWG_Retorts2;
+    colors2 = string_colors2;
 
-    // uninitialized local variable 'Unused_Local_Array' used
-    // backwards?  memcpy(CRP_Unused_Array, Unused_Local_Array, 12);
-    // Indeed. But, also, why I had I not initialized Unused_Local_Array[]?
-    memcpy(Unused_Local_Array, CRP_Unused_Array, 12);
+    memcpy(l_niu_array, m_niu_array, 12);
 
     Local_Zero = 0;
 
-    Retorts_Added = 0;
+    list_size = 0;
 
-    Retorts_String[0] = 0;
+    string[0] = 0;
 
     wsa_ptr = &_players[0].alchemy;
 
-    retort_count = 0;
+    ability_count = 0;
 
-    // ; count the number of retorts into di
     for(itr = 0; itr < 18; itr++)
     {
         if(wsa_ptr[itr] == 1)
         {
-            retort_count++;
+            ability_count++;
         }
     }
 
-    strcpy(Retorts_String, empty_string__ovr050);
+    strcpy(string, empty_string__ovr050);
 
-    Retorts_Added = 0;
+    list_size = 0;
 
-    // ; create a string listing the retort names
-    for(itr = 0; itr < 18; itr++)
+    for(itr = 0; itr < NUM_WIZARD_SPECIAL_ABILITIES; itr++)
     {
         if(wsa_ptr[itr] == 1)
         {
-            STR_ListSeparator(&Retorts_Added, retort_count, &Retorts_String[0]);
-            strcat(Retorts_String, STR_Retorts[itr]);
+            String_List_Builer(&list_size, ability_count, &string[0]);
+            strcat(string, wsa_names[itr]);
         }
     }
 
-    if(retort_count > 0)
+    if(ability_count > 0)
     {
-        strcat(Retorts_String, cnst_DOT__ovr050);
+        strcat(string, cnst_DOT__ovr050);
     }
 
-    if(retort_count > 5)
+    if(ability_count > 5)
     {
-        Text_Top = 178;
+        start_y = 178;
     }
     else
     {
-        Text_Top = 180;
+        start_y = 180;
     }
 
     Set_Font_Style(0, 15, ST_NULL, ST_NULL);
 
-    Set_Font_Colors_15(0, &Text_Colors[0]);
+    Set_Font_Colors_15(0, &colors1[0]);
 
     Set_Font_LF(1);
 
-    Print_Paragraph(13, (Text_Top + 1), 138, &Retorts_String[0], 0);
+    Print_Paragraph(13, (start_y + 1), 138, &string[0], 0);
 
-    Set_Font_Colors_15(0, &Retort_Colors[0]);
+    Set_Font_Colors_15(0, &colors2[0]);
 
     Set_Font_LF(1);
 
-    Print_Paragraph(12, Text_Top, 138, &Retorts_String[0], 0);
+    Print_Paragraph(12, start_y, 138, &string[0], 0);
 
 }
 
 
 // MGC  o50p18
-/*
-
-; PATCHED / rewritten in the realm reordering patch
-;
-; draws the bookshelf of the selected default profile
-; into the current draw segment under the large wizard
-; portait location on the left side of the new game
-; creation screen
-;
-; WARNING: limited to only two realms of books
-*/
-/*
-
-*/
+/**
+ * @brief Draws preset wizard spellbooks on the default wizard shelf.
+ *
+ * @details
+ * Reads the selected preset wizard's realm book counts from
+ * `_wizard_presets_table[wizard_id]` and renders bookshelf book sprites at
+ * y=135, starting from x=36.
+ *
+ * The routine scans the 5 magic realms in table order and captures up to two
+ * realms with non-zero book counts:
+ * - first non-zero realm -> first draw group
+ * - second non-zero realm -> second draw group
+ *
+ * For each captured realm, it draws `count` books using that realm's sprite
+ * base index (`realm * 3`) plus `TBL_Bookshelf_Books[itr]` variation offsets,
+ * advancing x by 8 pixels per book.
+ *
+ * @param wizard_id Index of the wizard preset entry in
+ *                  `_wizard_presets_table`.
+ *
+ * @return void
+ *
+ * @note Current WIP behavior only tracks/draws the first two non-zero realms.
+ *       Additional non-zero realms in the preset are ignored by this function.
+ * @note Assumes `m_spellbook_pict_segs` is already loaded and `wizard_id`
+ *       references a valid preset record.
+ */
 void NEWG_DrawDefShelf__WIP(int16_t wizard_id)
 {
     int16_t Second_Book_Realm = 0;
@@ -3387,8 +3772,7 @@ void NEWG_DrawDefShelf__WIP(int16_t wizard_id)
     {
         for(itr = 0; itr < First_Book_Count; itr++)
         {
-            // ; initialized to random values of 0, 1, or 2
-            FLIC_Draw(IDK, 135, IMG_NewG_Books[(First_Realm_Books_Index + TBL_Bookshelf_Books[itr])]);
+            FLIC_Draw(IDK, 135, m_spellbook_pict_segs[(First_Realm_Books_Index + TBL_Bookshelf_Books[itr])]);
             IDK += 8;
         }
     }
@@ -3397,8 +3781,7 @@ void NEWG_DrawDefShelf__WIP(int16_t wizard_id)
     {
         for(itr = 0; itr < Second_Book_Count; itr++)
         {
-            // ; initialized to random values of 0, 1, or 2
-            FLIC_Draw(IDK, 135, IMG_NewG_Books[(Second_Realm_Books_Index + TBL_Bookshelf_Books[itr])]);
+            FLIC_Draw(IDK, 135, m_spellbook_pict_segs[(Second_Realm_Books_Index + TBL_Bookshelf_Books[itr])]);
             IDK += 8;
         }
     }
@@ -3407,18 +3790,971 @@ void NEWG_DrawDefShelf__WIP(int16_t wizard_id)
 
 // MGC  o50p19
 /*
-
+"Wizard Creation"  (Custom Wizard)
 */
-void Newgame_Screen4__WIP(void)
+/**
+ * @brief Runs custom wizard creation screen 4 (books + abilities).
+ *
+ * @details
+ * Loads screen assets and UI controls, resets wizard pick state, then runs the
+ * event loop for selecting spell books and special abilities.
+ *
+ * Current flow:
+ * 1) Loads NEWGAME LBX assets for the screen background, OK button states,
+ *    spellbook sprites, warning box, and checkmark marker.
+ * 2) Sets mouse/help/input context and creates controls (5 sliders, special ability
+ *    label hitboxes, ESC hotkey, and OK field).
+ * 3) Resets mutable state for this screen, including spell ranks, special ability flags,
+ *    remaining picks, and error state.
+ * 4) Registers `Newgame_Screen_4_Draw__WIP` as auto draw/update callback.
+ * 5) Runs input loop until exit:
+ *    - ESC returns `ngscr_Name`.
+ *    - OK leaves only when `NEWG_ProfileComplete` is true.
+ *    - Slider/special ability input updates profile picks and may set `NEWG_PickError`.
+ *    - On error, builds warning text, shows `Warn0()`, and restores draw/help.
+ * 6) Deactivates auto/help handlers and returns `ngscr_Spells`.
+ *
+ * Notes:
+ * - Special ability toggle handling appears twice in the loop in the current WIP code;
+ *   this comment reflects implemented behavior rather than intended cleanup.
+ * - Special ability flags are accessed through `_players[0].alchemy` via `wsa_ptr`.
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return int16_t
+ * @retval ngscr_Name   User cancelled with ESC; caller should navigate back.
+ * @retval ngscr_Spells User completed this step; caller should advance.
+ *
+ * @note This function mutates global new-game creation state and UI globals and
+ *       depends on loaded resource segments and input/draw subsystems.
+ *
+ * @see Newgame_Screen_4_Draw__WIP
+ */
+int16_t Newgame_Screen_4__WIP(void)
 {
+    char l_realm_name_character_array[5][10] = { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
+    char message[LEN_MESSAGE_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t hotkey_ESC = 0;
+    int16_t DoublePick_Retort_Labels[5] = { 0, 0, 0, 0, 0 };
+    char Conversion_String[6] = { 0, 0, 0, 0, 0, 0 };
+    int8_t * wsa_ptr = 0;
+    int16_t Realms_Added = 0;
+    int16_t (*p_wsa_prerequisites)[7] = 0;
+    int16_t ability_count = 0;
+    int16_t input_field_idx = 0;
+    int16_t leave_screen = 0;
+    int16_t First_Draw_Done = 0;
+    int16_t itr = 0;
+    int16_t itr2 = 0;
+    int16_t some_flag = 0;
+
+    memcpy(&l_realm_name_character_array, realm_name_character_array, 50);
+    memcpy(&DoublePick_Retort_Labels, TBL_2pickRetort_Lbls, 10);
+
+    // NEWGAME.LBX, 041  NEWSPELL   Magic pick screen
+    // NEWGAME.LBX, 042  MAGICPIK   ok button
+    // NEWGAME.LBX, 043  MAGICOK    non selectable ok
+    newgame_background_seg = LBX_Reload(newgame_lbx_file__ovr050, 41, _screen_seg);
+    newgame_ok_button_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 42, _screen_seg);
+    _ok_inactive_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 43, _screen_seg);
+
+    for(itr = 0; itr < 15; itr++)
+    {
+        // NEWGAME.LBX, 024  BOOKS      White book 1
+        // NEWGAME.LBX, 025  BOOKS      White book 2
+        // NEWGAME.LBX, 026  BOOKS      White book 3
+        // NEWGAME.LBX, 027  BOOKS      Blue book 1
+        // NEWGAME.LBX, 028  BOOKS      Blue book 2
+        // NEWGAME.LBX, 029  BOOKS      Blue book 3
+        // NEWGAME.LBX, 030  BOOKS      Green book 1
+        // NEWGAME.LBX, 031  BOOKS      Green book 2
+        // NEWGAME.LBX, 032  BOOKS      Green book 3
+        // NEWGAME.LBX, 033  BOOKS      Black book 1
+        // NEWGAME.LBX, 034  BOOKS      Black book 2
+        // NEWGAME.LBX, 035  BOOKS      Black book 3
+        // NEWGAME.LBX, 036  BOOKS      Red book 1
+        // NEWGAME.LBX, 037  BOOKS      Red book 2
+        // NEWGAME.LBX, 038  BOOKS      Red book 3
+        m_spellbook_pict_segs[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (24 + itr), _screen_seg);
+    }
+
+    // NEWGAME.LBX, 044  WARNBACK   Warning box top
+    // NEWGAME.LBX, 045  WARNBACK   Warning box buttom
+    m_warning_box_top_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 44, _screen_seg);
+    m_warning_box_bottom_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 45, _screen_seg);
+
+    // NEWGAME.LBX, 052  CHECKMRK
+    _selection_marker_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 52, _screen_seg);
 
 
+    Set_Mouse_List(1, mouse_list_newgame);
+
+    Clear_Fields();
+
+    Disable_Cancel();
+
+    wsa_ptr = &_players[0].alchemy;
+
+    leave_screen = ST_FALSE;
+
+    First_Draw_Done = ST_FALSE;
+
+    m_displayed_wizard = 0;
+
+    spellpicks_count = 11;
+
+    NEWG_ProfileComplete = 0;
+
+    _ok_button = Add_Hidden_Field(251, 181, 282, 196, empty_string__ovr050[0], ST_UNDEFINED);
+
+    m_bookshelf_life = 0;
+    m_bookshelf_death = 0;
+    m_bookshelf_chaos = 0;
+    m_bookshelf_nature = 0;
+    m_bookshelf_sorcery = 0;
+    NEWG_PickError = 0;
+    selected_load_game_slot_idx = 0;
+    p_wsa_prerequisites = &wsa_prerequisites[0];
+
+    for(itr = 0; itr < NUM_WIZARD_SPECIAL_ABILITIES; itr++)
+    {
+        wsa_ptr[itr] = 0;
+    }
+
+    m_newgame_fields[0] = Add_Scroll_Field(190,  47, 0, 96, 0, 95, 96, 22, &m_bookshelf_life, empty_string__ovr050[0], ST_UNDEFINED);
+    m_newgame_fields[1] = Add_Scroll_Field(190,  73, 0, 96, 0, 95, 96, 22, &m_bookshelf_death, empty_string__ovr050[0], ST_UNDEFINED);
+    m_newgame_fields[2] = Add_Scroll_Field(190,  99, 0, 96, 0, 95, 96, 22, &m_bookshelf_chaos, empty_string__ovr050[0], ST_UNDEFINED);
+    m_newgame_fields[3] = Add_Scroll_Field(190, 125, 0, 96, 0, 95, 96, 22, &m_bookshelf_nature, empty_string__ovr050[0], ST_UNDEFINED);
+    m_newgame_fields[4] = Add_Scroll_Field(190, 151, 0, 96, 0, 95, 96, 22, &m_bookshelf_sorcery, empty_string__ovr050[0], ST_UNDEFINED);
+
+    for(itr = 0; itr < (NUM_WIZARD_SPECIAL_ABILITIES / 3); itr++)
+    {
+        wsa_picklist_fields[( 0 + itr)] = Add_Hidden_Field(164, (5 + (itr * 7)), 202, (10 + (itr * 7)), empty_string__ovr050[0], ST_UNDEFINED);
+        wsa_picklist_fields[( 6 + itr)] = Add_Hidden_Field(203, (5 + (itr * 7)), 252, (10 + (itr * 7)), empty_string__ovr050[0], ST_UNDEFINED);
+        wsa_picklist_fields[(12 + itr)] = Add_Hidden_Field(253, (5 + (itr * 7)), 319, (10 + (itr * 7)), empty_string__ovr050[0], ST_UNDEFINED);
+    }
+
+    hotkey_ESC = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
+
+    _players[0].spellranks[0] = 0;
+    _players[0].spellranks[1] = 0;
+    _players[0].spellranks[2] = 0;
+    _players[0].spellranks[3] = 0;
+    _players[0].spellranks[4] = 0;
+
+    Assign_Auto_Function(Newgame_Screen_4_Draw__WIP, 1);
+
+    Set_Newgame_Screen_4_Help_List();
+
+    // BUGBUG  DNE  Set_Input_Delay(2);?
+
+    while(leave_screen == ST_FALSE)
+    {
+
+        input_field_idx = Get_Input();
+
+        Mark_Time();
+
+        if(input_field_idx == hotkey_ESC)
+        {
+            return ngscr_Name;
+        }
+
+        if(
+            (input_field_idx == _ok_button)
+            &&
+            (NEWG_ProfileComplete != ST_FALSE)
+        )
+        {
+            leave_screen = ST_TRUE;
+        }
+        
+        ability_count = 0;
+        for(itr = 0; itr < NUM_WIZARD_SPECIAL_ABILITIES; itr++)
+        {
+            if(wsa_ptr[itr] == 1)
+            {
+                ability_count++;
+            }
+        }
+
+        if(
+            (
+                (input_field_idx == m_newgame_fields[0])
+                &&
+                (_players[0].spellranks[sbr_Death] != 0)
+            )
+            ||
+                (input_field_idx == m_newgame_fields[1])
+                &&
+                (_players[0].spellranks[sbr_Life] != 0)
+        )
+        {
+            NEWG_PickError = 4;
+        }
+
+        if(NEWG_PickError <= 0)
+        {
+            for(itr = 0; itr < NUM_WIZARD_SPECIAL_ABILITIES; itr++)
+            {
+                if(wsa_picklist_fields[itr] == input_field_idx)
+                {
+                    if(wsa_ptr[wsa_picklist_order[itr]] == ST_TRUE)  // selected
+                    {
+                        wsa_ptr[wsa_picklist_order[itr]] = ST_FALSE;  // deselect
+                    }
+                    else  // unselected
+                    {
+                        if(spellpicks_count <= 0)
+                        {
+                            NEWG_PickError = 5;
+                        }
+                        else
+                        {
+                            if(ability_count > 5)
+                            {
+                                NEWG_PickError = 2;
+                            }
+                            else
+                            {
+                                some_flag = ST_FALSE;
+                                for(itr2 = 0; itr2 < 5; itr2++)
+                                {
+                                    if(DoublePick_Retort_Labels[itr2] == itr)
+                                    {
+                                        if(spellpicks_count < 2)
+                                        {
+                                            NEWG_PickError = 6;
+                                        }
+                                        else
+                                        {
+                                            wsa_ptr[wsa_picklist_order[itr]] = ST_TRUE;  // select
+                                        }
+                                        some_flag = ST_TRUE;
+                                    }
+                                }
+                                if(some_flag == ST_FALSE)
+                                {
+                                    if(itr == 7)  // Myrran 3-picks
+                                    {
+                                        if(spellpicks_count < 3)
+                                        {
+                                            NEWG_PickError = 6;
+                                        }
+                                        else
+                                        {
+                                            wsa_ptr[wsa_Myrran] = ST_TRUE;  // select
+                                        }
+                                        some_flag = ST_TRUE;
+                                    }
+                                }
+                                if(some_flag == ST_FALSE)
+                                {
+                                    wsa_ptr[itr] = ST_TRUE;  // select
+                                }
+                                some_flag = ST_FALSE;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            switch(NEWG_PickError)
+            {
+                case 1: { strcpy(message, cnst_Pick_Error_0); } break;
+                case 2: { strcpy(message, cnst_Pick_Error_1); } break;
+                case 3: {
+                    strcpy(message, cnst_Pick_Error_20);  /* "To select " */
+                    strcat(message, wsa_names[NEWG_PickAttempt]);
+                    strcat(message, cnst_Pick_Error_21);  /* " you need:   " */
+                    if(
+                        (wsa_prerequisites[NEWG_PickAttempt][1] == 1)  // Realm_Count
+                        &&
+                        (wsa_prerequisites[NEWG_PickAttempt][0] == 0)  // Any_Realm
+                    )
+                    {
+                        for(itr = 0; itr < 5; itr++)
+                        {
+                            if(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr)] > 0)
+                            {
+                                itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr)], Conversion_String, 10);
+                                strcat(message, Conversion_String);
+                                strcat(message, cnst_Pick_Error_22);  /* " picks in " */
+                                strcat(message, l_realm_name_character_array[itr]);
+                                strcat(message, cnst_Pick_Error_23);  /* " Magic" */
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if(wsa_prerequisites[NEWG_PickAttempt][0] <= 0)  // Any_Realm
+                        {
+                            Realms_Added = 0;
+                            for(itr2 = 0; itr2 < 5; itr2++)
+                            {
+                                if(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr2)] > 0)
+                                {
+                                    if(Realms_Added > 0)
+                                    {
+                                        strcat(message, cnst_Pick_Error_29);
+                                    }
+                                    itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr2)], Conversion_String, 10);
+                                    strcat(message, Conversion_String);
+                                    strcat(message, cnst_Pick_Error_2A);
+                                    strcat(message, l_realm_name_character_array[itr2]);
+                                    strcat(message, cnst_Pick_Error_23);
+                                    Realms_Added++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            itoa(p_wsa_prerequisites[NEWG_PickAttempt][0], Conversion_String, 10);
+                            strcat(message, Conversion_String);
+                            strcat(message, cnst_Pick_Error_24);  /* " pick"*/
+                            if(p_wsa_prerequisites[NEWG_PickAttempt][0] > 1)
+                            {
+                                strcat(message, cnst_Pick_Error_25);  /* "s" */
+                            }
+                            else
+                            {
+                                strcat(message, cnst_Pick_Error_26);  /* " in any " */
+                            }
+                            if(p_wsa_prerequisites[NEWG_PickAttempt][0] > 1)
+                            {
+                                itoa(p_wsa_prerequisites[NEWG_PickAttempt][1], Conversion_String, 10);
+                                strcat(message, Conversion_String);
+                                strcat(message, cnst_Pick_Error_27);
+                            }
+                            else
+                            {
+                                strcat(message, cnst_Pick_Error_28);
+                            }
+                        }
+                    }
+                } break;
+                case 4: { strcpy(message, cnst_Pick_Error_3); } break;
+                case 5: { strcpy(message, cnst_Pick_Error_4); } break;
+                case 6: { strcpy(message, cnst_Pick_Error_5); } break;
+            }
+            Deactivate_Auto_Function();
+            Deactivate_Help_List();
+            Warn0(message);
+            Assign_Auto_Function(Newgame_Screen_4_Draw__WIP, 1);
+            Set_Help_List(_help_entries, 25);
+            NEWG_PickError = 0;
+        }
+
+        for(itr = 0; itr < NUM_WIZARD_SPECIAL_ABILITIES; itr++)
+        {
+            if(wsa_picklist_fields[itr] == input_field_idx)
+            {
+                if(wsa_ptr[wsa_picklist_order[itr]] == ST_TRUE)  // selected
+                {
+                    wsa_ptr[wsa_picklist_order[itr]] = ST_FALSE;  // deselect
+                }
+                else  // unselected
+                {
+                    if(spellpicks_count <= 0)
+                    {
+                        NEWG_PickError = 5;
+                    }
+                    else
+                    {
+                        if(ability_count > 5)
+                        {
+                            NEWG_PickError = 2;
+                        }
+                        else
+                        {
+                            some_flag = ST_FALSE;
+                            for(itr2 = 0; itr2 < 5; itr2++)
+                            {
+                                if(DoublePick_Retort_Labels[itr2] == itr)
+                                {
+                                    if(spellpicks_count < 2)
+                                    {
+                                        NEWG_PickError = 6;
+                                    }
+                                    else
+                                    {
+                                        wsa_ptr[wsa_picklist_order[itr]] = ST_TRUE;  // select
+                                    }
+                                    some_flag = ST_TRUE;
+                                }
+                            }
+                            if(some_flag == ST_FALSE)
+                            {
+                                if(itr == 7)  // Myrran 3-picks
+                                {
+                                    if(spellpicks_count < 3)
+                                    {
+                                        NEWG_PickError = 6;
+                                    }
+                                    else
+                                    {
+                                        wsa_ptr[wsa_Myrran] = ST_TRUE; // select Myrran
+                                    }
+                                    some_flag = ST_TRUE;
+                                }
+                            }
+                            if(some_flag == ST_FALSE)
+                            {
+                                wsa_ptr[wsa_picklist_order[itr]] = ST_TRUE;  // select
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if(leave_screen == ST_FALSE)
+        {
+            Newgame_Screen_4_Draw__WIP();
+            Apply_Palette();
+            Toggle_Pages();
+            if(First_Draw_Done == ST_FALSE)
+            {
+                First_Draw_Done = ST_TRUE;
+                Copy_On_To_Off_Page();
+            }
+            Release_Time(2);
+        }
+
+    }
+
+    Deactivate_Auto_Function();
+    Deactivate_Help_List();
+
+    return ngscr_Spells;
 
 }
 
 
 // MGC  o50p20
-// GAME_Draw_NewScr4()
+/**
+ * @brief Draw/update callback for custom wizard screen 4.
+ *
+ * @details
+ * Performs one frame of rendering and immediate state reconciliation for spell
+ * rank sliders, special ability availability, and remaining-pick accounting.
+ *
+ * Current responsibilities:
+ * 1) Polls focus via `Auto_Input()` and draws static screen elements.
+ * 2) Recomputes special ability count/cost (including double-pick special abilities and Myrran)
+ *    and updates global `spellpicks_count` from the 11-pick budget.
+ * 3) Applies slider-driven spell rank changes with Life/Death exclusivity and
+ *    per-realm pick spending rules.
+ * 4) Draws selected books on shelves and rank rows.
+ * 5) Enables active/inactive OK rendering and raises pick error 1 when OK is
+ *    clicked while the profile is incomplete.
+ * 6) Rebuilds local special ability availability map from spell-rank prerequisites and
+ *    remaining picks, then draws special ability labels in available/known/unavailable
+ *    colors, auto-clearing now-invalid selected special abilities.
+ * 7) Updates `NEWG_ProfileComplete` and draws picks-left + wizard name labels.
+ * 8) Finishes by drawing special ability description text (`Draw_Special_Abilities_String`).
+ *
+ * Key data:
+ * - Special ability flags are `_players[0].alchemy` (`wsa_ptr`).
+ * - `selected_load_game_slot_idx` is updated with the current focused control.
+ * - `NEWG_PickError` may be set here for invalid immediate interactions.
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return void
+ * No return value. Mutates global new-game UI/profile state and renders into
+ * active draw buffers.
+ *
+ * @note Designed to be called repeatedly (auto-function draw callback) while
+ *       the Spells & Special Abilities screen is active.
+ *
+ * @see Newgame_Screen_4__WIP
+ * @see Draw_Special_Abilities_String
+ */
+void Newgame_Screen_4_Draw__WIP(void)
+{
+    int8_t l_wsa_picklist_start[NUM_WIZARD_SPECIAL_ABILITIES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char spellpicks_count_string[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int8_t * wsa_ptr = NULL;
+    uint8_t * Retort_Shadow_Color = 0;
+    uint8_t * Known_Retort_Color = 0;
+    uint8_t * Unavailable_Retort_Color = 0;
+    uint8_t * Available_Retort_Color = 0;
+    uint8_t WizName_Font_Colors[5] = { 0, 0, 0, 0, 0 };
+    uint8_t WizName_Shadow_Colors[5] = { 0, 0, 0, 0, 0 };
+    int16_t TwoPick_Label_Indices[5] = { 0, 0, 0, 0, 0 };
+    int16_t Retorts_Cost_Total = 0;
+    int16_t Possessed_Realm_Count = 0;
+    int16_t Two_Book_Realm_Count = 0;
+    int16_t ability_count = 0;
+    int16_t bookshelf_start_x = 0;
+    int16_t Picks_Before_Slider_Check = 0;
+    int16_t Mouse_Focus_Control = 0;
+    int16_t itr = 0;
+    int16_t itr2 = 0;
+
+    memcpy(&TwoPick_Label_Indices, RP_TBL_2pickRet_Lbls, 10);
+
+    memcpy(&WizName_Shadow_Colors, COL_NEWG_5Shadow3, 5);
+
+    memcpy(&WizName_Font_Colors, COL_NEWG_5Font3, 5);
+
+    Available_Retort_Color = COL_Available_3;
+    Unavailable_Retort_Color = COL_NEWG_NA2;
+    Known_Retort_Color = COL_NewG_Ret_Known;
+    Retort_Shadow_Color = COL_NewG_Ret_Shdw;
+
+    memcpy(l_wsa_picklist_start, wsa_picklist_start, NUM_WIZARD_SPECIAL_ABILITIES);
+
+    wsa_ptr = &_players[0].alchemy;
+
+    Mouse_Focus_Control = Auto_Input();
+
+    bookshelf_start_x = 36;
+
+    FLIC_Draw(0, 0, newgame_background_seg);
+
+    FLIC_Draw(24, 10, wizard_portrait_segs[_players[0].wizard_id]);
+
+    Fill(251, 181, 282, 196, 0);
+
+    ability_count = 0;
+    for(itr = 0; itr < NUM_WIZARD_SPECIAL_ABILITIES; itr++)
+    {
+        if(wsa_ptr[itr] == 1) { ability_count += 1; }
+    }
+    Retorts_Cost_Total = ability_count;
+    for(itr = 0; itr < 5; itr++)
+    {
+        if(wsa_ptr[TwoPick_Label_Indices[itr]] == ST_TRUE)
+        {
+            Retorts_Cost_Total += 1;
+        }
+    }
+    if(wsa_ptr[wsa_Myrran] == ST_TRUE)
+    {
+        Retorts_Cost_Total += 2;
+    }
+
+    spellpicks_count = (
+        11
+        - Retorts_Cost_Total
+        - _players[0].spellranks[3]
+        - _players[0].spellranks[4]
+        - _players[0].spellranks[2]
+        - _players[0].spellranks[0]
+        - _players[0].spellranks[1]
+    );
+
+    Picks_Before_Slider_Check = spellpicks_count;
+
+    for(itr = 0; itr < 5; itr++)
+    {
+        if(m_newgame_fields[itr] == Mouse_Focus_Control)
+        {
+            switch(itr)
+            {
+                case 0:
+                {
+                    spellpicks_count += _players[0].spellranks[sbr_Life];
+                    for(itr2 = 0; ((m_bookshelf_life / 8) > itr2); itr2++)  /* spellbook count = scroll position / spellbook picture width */
+                    {
+                        if(_players[0].spellranks[sbr_Death] != 0)
+                        {
+                            break;
+                        }
+                        if(spellpicks_count == 0)
+                        {
+                            break;
+                        }
+                        spellpicks_count -= 1;
+                    }
+                    _players[0].spellranks[sbr_Life] = itr2;  /* update spell rank based on slider position */
+                    if((m_bookshelf_life / 8) == itr2)
+                    {
+                        if(spellpicks_count == Picks_Before_Slider_Check)
+                        {
+                            if(spellpicks_count != 0)
+                            {
+                                spellpicks_count -= 1;
+                            }
+                        }
+                    }
+                } break;
+                case 1:
+                {
+                    spellpicks_count += _players[0].spellranks[sbr_Death];
+                    for(itr2 = 0; ((m_bookshelf_death / 8) > itr2); itr2++)
+                    {
+                        if(_players[0].spellranks[sbr_Life] != 0)
+                        {
+                            break;
+                        }
+                        if(spellpicks_count == 0)
+                        {
+                            break;
+                        }
+                        spellpicks_count -= 1;
+                    }
+                    _players[0].spellranks[sbr_Death] = itr2;
+                    if((m_bookshelf_death / 8) == itr2)
+                    {
+                        if(spellpicks_count == Picks_Before_Slider_Check)
+                        {
+                            if(spellpicks_count != 0)
+                            {
+                                spellpicks_count -= 1;
+                            }
+                        }
+                    }
+                } break;
+                case 2:
+                {
+                    spellpicks_count += _players[0].spellranks[sbr_Chaos];
+                    for(itr2 = 0; ((m_bookshelf_chaos / 8) > itr2); itr2++)
+                    {
+                        if(spellpicks_count == 0)
+                        {
+                            break;
+                        }
+                        spellpicks_count -= 1;
+                    }
+                    _players[0].spellranks[sbr_Chaos] = itr2;
+                    if((m_bookshelf_chaos / 8) == itr2)
+                    {
+                        if(spellpicks_count == Picks_Before_Slider_Check)
+                        {
+                            if(spellpicks_count != 0)
+                            {
+                                spellpicks_count -= 1;
+                            }
+                        }
+                    }
+                } break;
+                case 3:
+                {
+                    spellpicks_count += _players[0].spellranks[sbr_Nature];
+                    for(itr2 = 0; ((m_bookshelf_nature / 8) > itr2); itr2++)
+                    {
+                        if(spellpicks_count == 0)
+                        {
+                            break;
+                        }
+                        spellpicks_count -= 1;
+                    }
+                    _players[0].spellranks[sbr_Nature] = itr2;
+                    if((m_bookshelf_nature / 8) == itr2)
+                    {
+                        if(spellpicks_count == Picks_Before_Slider_Check)
+                        {
+                            if(spellpicks_count != 0)
+                            {
+                                spellpicks_count -= 1;
+                            }
+                        }
+                    }
+                } break;
+                case 4:
+                {
+                    spellpicks_count += _players[0].spellranks[sbr_Sorcery];
+                    for(itr2 = 0; ((m_bookshelf_sorcery / 8) > itr2); itr2++)
+                    {
+                        if(spellpicks_count == 0)
+                        {
+                            break;
+                        }
+                        spellpicks_count -= 1;
+                    }
+                    _players[0].spellranks[sbr_Sorcery] = itr2;
+                    if((m_bookshelf_sorcery / 8) == itr2)
+                    {
+                        if(spellpicks_count == Picks_Before_Slider_Check)
+                        {
+                            if(spellpicks_count != 0)
+                            {
+                                spellpicks_count -= 1;
+                            }
+                        }
+                    }
+                } break;
+            }
+        }
+    }
+
+    selected_load_game_slot_idx = Mouse_Focus_Control;
+
+    for(itr = 0; itr < _players[0].spellranks[sbr_Life]; itr++)
+    {
+        FLIC_Draw((197 + (8 * itr)), (49 + (0 * 26)), m_spellbook_pict_segs[( 0 + TBL_Realm1_Books[itr])]);
+        FLIC_Draw(bookshelf_start_x, 135, m_spellbook_pict_segs[(0 + TBL_Bookshelf_Books[itr])]);
+        bookshelf_start_x += 8;
+    }
+    for(itr = 0; itr < _players[0].spellranks[sbr_Death]; itr++)
+    {
+        FLIC_Draw((197 + (8 * itr)), (49 + (1 * 26)), m_spellbook_pict_segs[(9 + TBL_Realm1_Books[itr])]);
+        FLIC_Draw(bookshelf_start_x, 135, m_spellbook_pict_segs[(9 + TBL_Bookshelf_Books[itr])]);
+        bookshelf_start_x += 8;
+    }
+    for(itr = 0; itr < _players[0].spellranks[sbr_Chaos]; itr++)
+    {
+        FLIC_Draw((197 + (8 * itr)), (49 + (2 * 26)), m_spellbook_pict_segs[(12 + TBL_Realm1_Books[itr])]);
+        FLIC_Draw(bookshelf_start_x, 135, m_spellbook_pict_segs[(12 + TBL_Bookshelf_Books[itr])]);
+        bookshelf_start_x += 8;
+    }
+    for(itr = 0; itr < _players[0].spellranks[sbr_Nature]; itr++)
+    {
+        FLIC_Draw((197 + (8 * itr)), (49 + (3 * 26)), m_spellbook_pict_segs[(6 + TBL_Realm1_Books[itr])]);
+        FLIC_Draw(bookshelf_start_x, 135, m_spellbook_pict_segs[(6 + TBL_Bookshelf_Books[itr])]);
+        bookshelf_start_x += 8;
+    }
+    for(itr = 0; itr < _players[0].spellranks[sbr_Sorcery]; itr++)
+    {
+        FLIC_Draw((197 + (8 * itr)), (49 + (4 * 26)), m_spellbook_pict_segs[(3 + TBL_Realm1_Books[itr])]);
+        FLIC_Draw(bookshelf_start_x, 135, m_spellbook_pict_segs[(3 + TBL_Bookshelf_Books[itr])]);
+        bookshelf_start_x += 8;
+    }
+
+    if(NEWG_ProfileComplete != ST_FALSE)
+    {
+        if(Mouse_Focus_Control == _ok_button)
+        {
+            FLIC_Draw(253, 183, newgame_ok_button_seg);
+        }
+        else
+        {
+            FLIC_Draw(252, 182, newgame_ok_button_seg);
+        }
+    }
+    else
+    {
+        FLIC_Draw(252, 182, _ok_inactive_seg);
+        if(Mouse_Focus_Control == _ok_button)
+        {
+            NEWG_PickError = 1;
+        }
+    }
+
+    if(_players[0].spellranks[sbr_Nature] > 3)
+    {
+        l_wsa_picklist_start[13] = 1;
+        l_wsa_picklist_start[3] = 1;
+        l_wsa_picklist_start[16] = 1;
+    }
+    if(_players[0].spellranks[sbr_Sorcery] > 3)
+    {
+        l_wsa_picklist_start[14] = 1;
+        l_wsa_picklist_start[3] = 1;
+        l_wsa_picklist_start[16] = 1;
+    }
+    if(_players[0].spellranks[sbr_Chaos] > 3)
+    {
+        l_wsa_picklist_start[12] = 1;
+        l_wsa_picklist_start[3] = 1;
+        l_wsa_picklist_start[16] = 1;
+    }
+    if(_players[0].spellranks[sbr_Death] > 3)
+    {
+        l_wsa_picklist_start[15] = 1;
+        l_wsa_picklist_start[3] = 1;
+        l_wsa_picklist_start[16] = 1;
+    }
+    if(_players[0].spellranks[sbr_Life] > 3)
+    {
+        l_wsa_picklist_start[8] = 1;
+        l_wsa_picklist_start[3] = 1;
+        l_wsa_picklist_start[16] = 1;
+    }
+    Possessed_Realm_Count = 0;
+    Two_Book_Realm_Count = 0;
+    for(itr = 0; itr < 5; itr++)
+    {
+        if(_players[0].spellranks[itr] > 0)
+        {
+            Possessed_Realm_Count++;
+        }
+        if(_players[0].spellranks[itr] > 1)
+        {
+            Two_Book_Realm_Count++;
+        }   
+    }
+
+    if(Possessed_Realm_Count > 1)
+    {
+        l_wsa_picklist_start[6] = ST_TRUE;
+    }
+
+    if(Two_Book_Realm_Count > 2)  /* 2+ picks in 3+ realms */
+    {
+        l_wsa_picklist_start[10] = ST_TRUE;
+    }
+
+    for(itr = 0; itr < 5; itr++)
+    {
+        if(wsa_ptr[wsa_picklist_order[TwoPick_Label_Indices[itr]]] != ST_TRUE)
+        {
+            if(spellpicks_count < 2)
+            {
+                l_wsa_picklist_start[TwoPick_Label_Indices[itr]] = ST_FALSE;
+            }
+        }
+    }
+
+    if(wsa_ptr[wsa_Myrran] != ST_TRUE)
+    {
+        if(spellpicks_count < 3)
+        {
+            l_wsa_picklist_start[7] = ST_FALSE;
+        }
+    }
+
+    if(
+        (_players[0].spellranks[sbr_Chaos] > 0)
+        &&
+        (_players[0].spellranks[sbr_Sorcery] > 0)
+        &&
+        (_players[0].spellranks[sbr_Nature] > 0)
+    )
+    {
+        l_wsa_picklist_start[17] = ST_TRUE;
+    }
+
+    Set_Font_Style(0, 15, ST_NULL, ST_NULL);
+
+    for(itr2 = 0; itr2 < 2; itr2++)
+    {
+        for(itr = 0; itr < 6; itr++)
+        {
+            if(
+                (wsa_ptr[wsa_picklist_order[(itr + (itr2 * 6))]] != ST_TRUE)
+                ||
+                (l_wsa_picklist_start[(itr + (itr2 * 6))] != ST_TRUE)
+                ||
+                (spellpicks_count < 0)
+            )
+            {
+                if(wsa_ptr[wsa_picklist_order[(itr + (itr2 * 6))]] == ST_TRUE)
+                {
+                    if(l_wsa_picklist_start[(itr + (itr2 * 6))] == ST_FALSE)
+                    {
+                        NEWG_PickError = 3;
+                        NEWG_PickAttempt = wsa_picklist_order[(itr + (itr2 * 6))];
+                    }
+                    wsa_ptr[wsa_picklist_order[(itr + (itr2 * 6))]] = ST_FALSE;
+                }
+                if(
+                    (l_wsa_picklist_start[(itr + (itr2 * 6))] == ST_TRUE)
+                    &&
+                    (ability_count < 6)
+                    &&
+                    (spellpicks_count > 0)
+                )
+                {
+                    Set_Font_Colors_15(0, &Retort_Shadow_Color[0]);
+                    Print((172 + (itr2 * 39)), (6 + (itr * 7)), wsa_names[wsa_picklist_order[(itr + (itr2 * 6))]]);
+                    Set_Font_Colors_15(0, &Available_Retort_Color[0]);
+                }
+                else
+                {
+                    Set_Font_Colors_15(0, &Retort_Shadow_Color[0]);
+                    Print((172 + (itr2 * 39)), (6 + (itr * 7)), wsa_names[wsa_picklist_order[(itr + (itr2 * 6))]]);
+                    Set_Font_Colors_15(0, &Unavailable_Retort_Color[0]);
+                }
+                Print((171 + (itr2 * 39)), (5 + (itr * 7)), wsa_names[wsa_picklist_order[(itr + (itr2 * 6))]]);
+            }
+            else
+            {
+                Set_Font_Colors_15(0, &Retort_Shadow_Color[0]);
+                Print((172 + (itr2 * 39)), (6 + (itr * 7)), wsa_names[wsa_picklist_order[(itr + (itr2 * 6))]]);
+                Set_Font_Colors_15(0, &Known_Retort_Color[0]);
+                Print((171 + (itr2 * 39)), (5 + (itr * 7)), wsa_names[wsa_picklist_order[(itr + (itr2 * 6))]]);
+                FLIC_Draw((165 + (itr2 * 39)), (6 + (itr * 7)), _selection_marker_seg);  // check mark
+            }
+        }
+    }
+
+    for(itr = 0; itr < 6; itr++)
+    {
+        if(
+            (wsa_ptr[wsa_picklist_order[(12 + itr)]] != ST_TRUE)
+            ||
+            (l_wsa_picklist_start[(12 + itr)] != ST_TRUE)
+            ||
+            (spellpicks_count < 0)
+        )
+        {
+            if(wsa_ptr[wsa_picklist_order[(12 + itr)]] == ST_TRUE)
+            {
+                if(l_wsa_picklist_start[(12 + itr)] == ST_FALSE)
+                {
+                    NEWG_PickError = 3;
+                    NEWG_PickAttempt = wsa_picklist_order[(12 + itr)];
+                }
+                wsa_ptr[wsa_picklist_order[(12 + itr)]] = ST_FALSE;
+            }
+            if(
+                (l_wsa_picklist_start[(12 + itr)] == ST_TRUE)
+                &&
+                (ability_count < 6)
+                &&
+                (spellpicks_count > 0)
+            )
+            {
+                Set_Font_Colors_15(0, &Retort_Shadow_Color[0]);
+                Print(261, (6 + (itr * 7)), wsa_names[wsa_picklist_order[(12 + itr)]]);
+                Set_Font_Colors_15(0, &Available_Retort_Color[0]);
+            }
+            else
+            {
+                Set_Font_Colors_15(0, &Retort_Shadow_Color[0]);
+                Print(261, (6 + (itr * 7)), wsa_names[wsa_picklist_order[(12 + itr)]]);
+                Set_Font_Colors_15(0, &Unavailable_Retort_Color[0]);
+            }
+                Print(260, (5 + (itr * 7)), wsa_names[wsa_picklist_order[(12 + itr)]]);
+        }
+        else
+        {
+            Set_Font_Colors_15(0, &Retort_Shadow_Color[0]);
+            Print(261, (6 + (itr * 7)), wsa_names[wsa_picklist_order[(12 + itr)]]);
+            Set_Font_Colors_15(0, &Known_Retort_Color[0]);
+            Print(260, (5 + (itr * 7)), wsa_names[wsa_picklist_order[(12 + itr)]]);
+            FLIC_Draw(254, (6 + (itr * 7)), _selection_marker_seg);  // check mark
+        }
+    }
+
+    itoa(spellpicks_count, spellpicks_count_string, 10);
+
+    strcat(spellpicks_count_string, cnst_Picks);
+
+    if(spellpicks_count == 0)
+    {
+        NEWG_ProfileComplete = ST_TRUE;
+    }
+    else
+    {
+        NEWG_ProfileComplete = ST_FALSE;
+    }
+
+    Set_Font_Style(3, 15, ST_NULL, ST_NULL);
+    Set_Font_Colors_15(3, WizName_Font_Colors);
+    Print_Centered(222, 186, spellpicks_count_string);
+
+    Set_Font_Colors_15(3, WizName_Shadow_Colors);
+    Print_Centered(221, 185, spellpicks_count_string);
+
+    Set_Font_Style(4, 15, ST_NULL, ST_NULL);
+    Set_Font_Colors_15(4, &WizName_Shadow_Colors[0]);
+    Print_Centered(78, 120, _players[0].name);
+    Print_Centered(77, 120, _players[0].name);
+
+    Set_Font_Colors_15(4, &WizName_Font_Colors[0]);
+    Print_Centered(77, 119, _players[0].name);
+
+    Draw_Special_Abilities_String();
+    
+}
+
 
 // MGC  o50p21
 /*
@@ -3442,16 +4778,6 @@ void Newgame_Screen5__WIP(void)
 // SCRN_Draw_NewScr5_2()
 
 // MGC  o50p25
-/*
-; copies the name and profile traits of the selected
-; default wizard to the human player's wizard record,
-; and their default spells to the new game spell
-; selection array, clearing any previous data in these
-; fields
-*/
-/*
-
-*/
 void WIZ_CopyDefault__WIP(int16_t wizard_id)
 {
     int8_t * wsa_ptr = 0;
@@ -3468,8 +4794,6 @@ void WIZ_CopyDefault__WIP(int16_t wizard_id)
 
     wsa_ptr = &_players[0].alchemy;
 
-    // ; clear all retorts in the human player's wizard record
-    // ; while copying any that are in the preset profile
     for(itr = 0; itr < NUM_RETORTS; itr++)
     {
 
@@ -3484,7 +4808,6 @@ void WIZ_CopyDefault__WIP(int16_t wizard_id)
 
     }
 
-    // ; clear the spell selection list
     for(itr = 0; itr < 13; itr++)
     {
         _player_start_spells[0].realms[sbr_Nature].spells[itr] = 0;
@@ -3495,7 +4818,6 @@ void WIZ_CopyDefault__WIP(int16_t wizard_id)
     }
 
     spellranks = _players[0].spellranks[sbr_Nature];
-    // ; PATCHED here to fix 11-book default wizard spells
     if(spellranks > 1)
     {
         for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
@@ -3513,7 +4835,6 @@ void WIZ_CopyDefault__WIP(int16_t wizard_id)
     }
 
     spellranks = _players[0].spellranks[sbr_Sorcery];
-    // ; PATCHED here to fix 11-book default wizard spells
     if(spellranks > 1)
     {
         for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
@@ -3531,7 +4852,6 @@ void WIZ_CopyDefault__WIP(int16_t wizard_id)
     }
 
     spellranks = _players[0].spellranks[sbr_Chaos];
-    // ; PATCHED here to fix 11-book default wizard spells
     if(spellranks > 1)
     {
         for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
@@ -3549,7 +4869,6 @@ void WIZ_CopyDefault__WIP(int16_t wizard_id)
     }
 
     spellranks = _players[0].spellranks[sbr_Life];
-    // ; PATCHED here to fix 11-book default wizard spells
     if(spellranks > 1)
     {
         for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
@@ -3567,7 +4886,6 @@ void WIZ_CopyDefault__WIP(int16_t wizard_id)
     }
 
     spellranks = _players[0].spellranks[sbr_Death];
-    // ; PATCHED here to fix 11-book default wizard spells
     if(spellranks > 1)
     {
         for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
@@ -3668,7 +4986,7 @@ void Set_Newgame_Screen_1_Help_List(int16_t has_custom)
 
     if(has_custom != ST_FALSE)
     {
-        _help_entries[140].help_idx = HLP_CUSTOM;
+        _help_entries[14].help_idx = HLP_CUSTOM;
     }
 
     Set_Help_List(_help_entries, 15);
@@ -3677,10 +4995,17 @@ void Set_Newgame_Screen_1_Help_List(int16_t has_custom)
 
 
 // MGC  o50p33
-// HLP_Load_WizCreate()
+void Set_Newgame_Screen_4_Help_List(void)
+{
+
+    // HLPENTRY.LBX, 033  ""  "Wizard Creation Help"
+    LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 33, (SAMB_ptr)_help_entries, 0, 25, 10);
+
+    Set_Help_List(_help_entries, 25);
+
+}
 
 // MGC  o50p34
-// HLP_Load_RaceSel()
 void Set_Newgame_Screen_6_Help_List(void)
 {
 
@@ -3692,7 +5017,34 @@ void Set_Newgame_Screen_6_Help_List(void)
 }
 
 // MGC  o50p35
-void STR_ListSeparator(int16_t * List_Size, int16_t Total, char * Dest)
+/**
+ * @brief Appends a human-readable separator before the next list item.
+ *
+ * @details
+ * Increments the running item counter and appends either a comma separator or
+ * the final "and" separator into `Dest`, depending on whether the current item
+ * is the last element in the list.
+ *
+ * Behavior:
+ * - Increments `*List_Size` by 1.
+ * - If `*List_Size == Total` and there is more than one item, appends
+ *   `cnst_And__ovr050`.
+ * - If `*List_Size < Total` and there is more than one item, appends
+ *   `cnst_Pick_Error_29` (comma-style list separator).
+ * - Appends nothing for the first item.
+ *
+ * @param List_Size Pointer to running count of items already processed; updated
+ *                  in place.
+ * @param Total Total number of items expected in the final formatted list.
+ * @param Dest Destination C string buffer receiving the separator text via
+ *             `strcat`.
+ *
+ * @return void
+ *
+ * @note `Dest` must reference a writable, NUL-terminated buffer with enough
+ *       remaining capacity for appended separator text.
+ */
+void String_List_Builer(int16_t * List_Size, int16_t Total, char * Dest)
 {
 
     *List_Size += 1;

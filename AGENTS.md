@@ -26,3 +26,4 @@ Ignore the Register annotations. (e.g., `_DI_`, `_SI_`, `_CX_`, etc.) They are j
 - DNE stands for Does Not Exist  (usually mean it seems like it should based on some similar code elsewhere or a bug or SimTex's coding style)
 - IDK stands for I don't know
 - IDGI stands for I don't get it
+- NIU stands for Not In Use

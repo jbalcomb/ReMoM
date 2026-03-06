@@ -952,9 +952,9 @@ int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t bo
 // WZD s34p53
 // 1oom  uiobj.c  uiobj_add_slider_int() / uiobj_add_slider_func()
 // 1oom: int16_t uiobj_add_slider_func(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t w, uint16_t h, int16_t *vptr, void (*cb)(void *ctx, uint8_t slideri, int16_t value), void *ctx, uint8_t slideri)
+// STARMAP.EXE: uiobj_add_slider_noseg(); uiobj_add_slider();
 /*
 MoO2  Module: fields  Add_Scroll_Field()
-
     Add_Scroll_Field()
         Address: 01:00115478
             Return type: signed integer (2 bytes) 
@@ -971,29 +971,14 @@ MoO2  Module: fields  Add_Scroll_Field()
         signed integer (2 bytes) button_sound
 */
 /*
-drake178: GUI_CreateNearSlider(); GUI_CreateSlideBar();
-STARMAP.EXE: uiobj_add_slider_noseg(); uiobj_add_slider();
-Add_Scroll_Field(); Add_Scroll_Field_Far()
-
 ; a wrapper for GUI_CreateSlideBar to create a slide bar control with a near state pointer returns the index of the created control
-...
 ; creates a slider bar with the passed attributes, returns the index of the created control:
 ; the orientation (horizontal/vertical) is defined by the larger of Width/Height, slider bars need to be drawn using a graphic redraw function, the GUI only controls their input state
-
 ;   Min_S  - minimum slider position
 ;   Max_S  - maximum slider position
 ;   Min_V  - minimum represented value
 ;   Max_V  - maximum represented value
 ;   Pos@   - near pointer to the position state
-*/
-// int16_t Add_Scroll_Field_Far(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, char * hotkey, int16_t help)
-// int16_t Add_Scroll_Field_Far(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * ofst_variable, int16_t * sgmt_variable, char * hotkey, int16_t help)
-/*
-    uses all 6 parameters
-
-Alchemy_Popup_Add_Fields()
-    |-> Add_Scroll_Field((m_alchemy_popup_start_x + 50), (m_alchemy_popup_start_y + 25), 0, 55, 3, 53, 55, 7, m_alchemy_arrowbar_pos, cnst_HOTKEY_A_2, ST_UNDEFINED);
-
 */
 int16_t Add_Scroll_Field(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, int16_t hotkey, int16_t help)
 {

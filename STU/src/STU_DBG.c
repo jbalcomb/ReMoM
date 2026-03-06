@@ -161,6 +161,7 @@ FILE * Trace_Log_File = NULL;
 
 void Debug_Log_Startup(void)
 {
+// ==33072==ERROR: AddressSanitizer: attempting free on address which was not malloc()-ed: 0x02c500158f90 in thread T0
     Debug_Log_File = fopen(Debug_Log_FileName, "w");
     if(Debug_Log_File == NULL)
     {
