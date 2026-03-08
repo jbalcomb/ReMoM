@@ -492,16 +492,13 @@ void Build_Spell_List(int16_t type, int16_t spell_list[])
 
                 if(spell_status != 1)  /* ¿ known ? */
                 {
-                    // DELETEME  spell_list[GUI_Multipurpose_Int] = -(spell_idx);  /* ¿ researchable ? */
                     spell_list[m_spell_list_count] = -(spell_idx);  /* ¿ researchable ? */
                 }
                 else
                 {
-                    // DELETEME  spell_list[GUI_Multipurpose_Int] = spell_idx;  /* ¿ castable ? */
                     spell_list[m_spell_list_count] = spell_idx;  /* ¿ castable ? */
                 }
 
-                // DELETEME  GUI_Multipurpose_Int++;
                 m_spell_list_count++;
 
             }
@@ -1861,7 +1858,7 @@ void Spellbook_Add_Page(int16_t group_spell_count, int16_t group_idx, char * tit
             // ~ NOT Apprentice, Choose Research, or Learn Spell  AKA Big Book; therefore, Spells button or Combat  AKA Small Book
             if(page_spell_count != NUM_SPELLS_PER_PAGE_BIG)
             {
-                if(m_spellbook_spell_list[itr_spellbook_spell_list] == _players[HUMAN_PLAYER_IDX].casting_spell_idx)
+                if(abs(m_spellbook_spell_list[itr_spellbook_spell_list]) == _players[HUMAN_PLAYER_IDX].casting_spell_idx)
                 {
                     SBK_OpenPage = page_spell_counter;
                 }

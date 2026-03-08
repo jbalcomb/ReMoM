@@ -105,6 +105,10 @@ Init_New_Game_()
 [x] New Game Screen 6 - Wizards Race        Title: "Select Race";           // HLPENTRY.LBX, 035  ""  "Wizard Race Help"
 [x] New Game Screen 7 - Wizards Banner      Title: "Select Banner";     // NEWGAME.LBX, 046  FLAGSNEW   // HLPENTRY.LBX, 030  ""  "Banner Selection Help"
 
+...finish NewGame, fixup Linux/Clang, remove all WIPs/dunders...remove all "retort"...get a life...
+
+[ ] Naming Things Is Hard^Hard - 'New Game'
+
 // HLPENTRY.LBX, 029  ""  "Options Screen Help"
 // HLPENTRY.LBX, 030  ""  "Banner Selection Help"
 // HLPENTRY.LBX, 031  ""  "Wizard Picture Select"

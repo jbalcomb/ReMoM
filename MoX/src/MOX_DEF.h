@@ -677,10 +677,17 @@ enum enum_BANNER_COLOR_ID
 //     {  13,  13,  12,  12,  11 }
 // };
 
-#define BANNER_COLOR_BLUE                172
-#define BANNER_COLOR_GREEN               216
+// Newgame_Screen_5_Draw_Spells()
+#define SORCERY_BLUE                172
+#define NATURE_GREEN                216
+#define CHAOS_RED                   201
+#define LIFE_WHITE                   13
+#define DEATH_PURPLE                114
+
+#define BANNER_COLOR_BLUE                172  // AKA  SORCERY_BLUE
+#define BANNER_COLOR_GREEN               216  // AKA  NATURE_GREEN
 #define BANNER_COLOR_PURPLE              124
-#define BANNER_COLOR_RED                 201
+#define BANNER_COLOR_RED                 201  // AKA  CHAOS_RED
 #define BANNER_COLOR_YELLOW              211
 #define BANNER_COLOR_BROWN                50
 #define BANNER_COLOR_BLUE_171            171

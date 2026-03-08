@@ -484,11 +484,11 @@ struct s_WIZARD_PRESET _wizard_presets_table[15] = {
 
 // MGC  dseg:2C1A 02 00 03 00 04 00 05 00 06 00 07 00 08 00 09 00+RP_Book_Table dw 2, 3, 4, 5, 6, 7, 8, 9, 0Ah, 0Bh ; repurposed in the worldgen customizer
 // MGC  dseg:2C2E
-int16_t TBL_SpellsPerBook_C[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+int16_t m_select_count_common[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 // MGC  dseg:2C42
-int16_t TBL_SpellsPerBook_U[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 };
+int16_t m_select_count_uncommon[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 };
 // MGC  dseg:2C56
-int16_t TBL_SpellsPerBook_R[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+int16_t m_select_count_rare[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 
 // // MGC  dseg:2C6A
 // // Statically define a variable named 'player_spells'
@@ -530,7 +530,7 @@ int16_t TBL_SpellsPerBook_R[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 
 // /*
 //     BEGIN: take 2 - defaults spells and wizard profiles
-// WIZ_CopyDefault__WIP()
+// Human_Player_Wizard_Profile()
 // iters over 13 ... TBL_Spells_Nature.Common[itr] = 0
 // so, just an array of 13
 // uses `word ptr`
@@ -906,34 +906,59 @@ int8_t wsa_picklist_start[NUM_WIZARD_SPECIAL_ABILITIES] =
     1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0
 };
 
-// MGC  dseg:2FB2 03 00 04 00 02 00 00 00 01 00                   TBL_Realm_Order dw _Life, _Death, _Chaos, _Nature, _Sorcery
-// MGC  dseg:2FB2                                                                                         ; DATA XREF: GAME_New_Screen_5+Eo
-// MGC  dseg:2FBC 1A 00 4D 00 80 00                               UU_Label_Box_TitleTops dw 26, 77, 128   ; DATA XREF: GAME_SpellSel_GUI+Do
-// MGC  dseg:2FC2 25 00 58 00 8B 00                               UU_Label_Box_TextTops dw 37, 88, 139    ; DATA XREF: GAME_SpellSel_GUI+1Fo
-// MGC  dseg:2FC8 1F 1F 1F 1F 1F                                  COL_NEWG_5Shadow4 db 5 dup(1Fh)         ; DATA XREF: SCRN_Draw_NewScr5+Do
-// MGC  dseg:2FC8                                                                                         ; should use dseg:2ea3
-// MGC  dseg:2FCD BB BB BB BB BB                                  COL_NEWG_5Font4 db 5 dup(0BBh)          ; DATA XREF: SCRN_Draw_NewScr5+1Fo
-// MGC  dseg:2FCD                                                                                         ; should use dseg:2eab
-// MGC  dseg:2FD2 1A 00 4D 00 80 00                               Label_Box_TitleTops2 dw 26, 77, 128     ; DATA XREF: SCRN_Draw_NewScr5_2+Eo
-// MGC  dseg:2FD2                                                                                         ; should use dseg:2fbc
-// MGC  dseg:2FD8 25 00 58 00 8B 00                               Label_Box_TextTops2 dw 37, 88, 139      ; DATA XREF: SCRN_Draw_NewScr5_2+20o
-// MGC  dseg:2FD8                                                                                         ; should use dseg:2fc2
-// MGC  dseg:2FDE 19 32                                           COL_Available_4 dw 3219h                ; DATA XREF: SCRN_Draw_NewScr5_2+2Dr
-// MGC  dseg:2FDE                                                                                         ; should use dseg:2efe
-// MGC  dseg:2FE0 16 B2                                           COL_NewG_Spl_Known dw 0B216h            ; DATA XREF: SCRN_Draw_NewScr5_2+33r
-// MGC  dseg:2FE0                                                                                         ; should use dseg:2f9c
-// MGC  dseg:2FE2 10 10                                           COL_NewG_Spl_Shdw dw 1010h              ; DATA XREF: SCRN_Draw_NewScr5_2+39r
-// MGC  dseg:2FE2                                                                                         ; should use dseg:2f9e
-// MGC  dseg:2FE4 43 6F 6D 6D 6F 6E 00 00 00 00                   cnst_Rarity0_10b db 'Common',0,0,0,0    ; DATA XREF: SCRN_Draw_NewScr5_2+44o
-// MGC  dseg:2FEE 55 6E 63 6F 6D 6D 6F 6E 00 00                   cnst_Rarity1_10b db 'Uncommon',0,0
-// MGC  dseg:2FF8 52 61 72 65 00 00 00 00 00 00                   cnst_Rarity2_10b db 'Rare',0,0,0,0,0,0
-// MGC  dseg:3002 56 65 72 79 20 52 61 72 65 00                   cnst_Rarity3_10b db 'Very Rare',0
-// MGC  dseg:300C 4E 61 74 75 72 65 00 00 00 00                   cnst_Realm0_10b db 'Nature',0,0,0,0     ; DATA XREF: SCRN_Draw_NewScr5_2+57o
-// MGC  dseg:300C                                                                                         ; should use / convert dseg:2f48
-// MGC  dseg:3016 53 6F 72 63 65 72 79 00 00 00                   cnst_Realm1_10b db 'Sorcery',0,0,0
-// MGC  dseg:3020 43 68 61 6F 73 00 00 00 00 00                   cnst_Realm2_10b db 'Chaos',0,0,0,0,0
-// MGC  dseg:302A 4C 69 66 65 00 00 00 00 00 00                   cnst_Realm3_10b db 'Life',0,0,0,0,0,0
-// MGC  dseg:3034 44 65 61 74 68 00 00 00 00 00                   cnst_Realm4_10b db 'Death',0,0,0,0,0
+// MGC  dseg:2FB2
+int16_t TBL_Realm_Order[5] = { sbr_Life, sbr_Death, sbr_Chaos, sbr_Nature, sbr_Sorcery };
+
+// MGC  dseg:2FBC
+/*
+y srceen coordinate of the top of the section title
+*/
+int16_t m_niu_title_start_y[3] = { 26, 77, 128 };
+// MGC  dseg:2FC2
+/*
+y srceen coordinate of the top of the section box
+*/
+int16_t m_niu_box_start_y[3] = { 37, 88, 139 };
+
+// MGC  dseg:2FC8
+uint8_t m_dark_colors[5] = { 31, 31, 31, 31, 31 };
+
+// MGC  dseg:2FCD
+uint8_t m_light_colors[5] = { 187, 187, 187, 187, 187 };
+
+// MGC  dseg:2FD2
+int16_t Label_Box_TitleTops2[3] = { 26, 77, 128 };
+// MGC  dseg:2FD8
+int16_t Label_Box_TextTops2[3] = { 37, 88, 139 };
+
+// MGC  dseg:2FDE
+uint8_t m_select_spells_deselected_colors[2] = { 25, 50 };
+
+// MGC  dseg:2FE0
+uint8_t m_select_spells_selected_colors[2] = { 22, 178 };
+
+// MGC  dseg:2FE2
+uint8_t m_select_spells_shadow_colors[2] = { 16, 16 };
+
+// MGC  dseg:2FE4
+char m_rarity_strings[4][10] =
+{
+    { 'C','o','m','m','o','n',  0,  0,  0, 0 },
+    { 'U','n','c','o','m','m','o','n',  0, 0 },
+    { 'R','a','r','e',  0,  0,  0,  0,  0, 0 },
+    { 'V','e','r','y',' ','R','a','r','e', 0 }
+};
+
+// MGC  dseg:300C
+char m_realm_strings[5][10] =
+{
+    { 'N','a','t','u','r','e',  0,  0,  0,  0 },
+    { 'S','o','r','c','e','r','y',  0,  0,  0 },
+    { 'C','h','a','o','s',  0,  0,  0,  0,  0 },
+    { 'L','i','f','e',  0,  0,  0,  0,  0,  0 },
+    { 'D','e','a','t','h',  0,  0,  0,  0,  0 }
+};
+
 // MGC  dseg:303E 57 49 5A 41 52 44 53 2E 45 58 45                cnst_EXESwap_File db 'WIZARDS.EXE'      ; DATA XREF: GAME_WizardsLaunch+38o
 
 // MGC  dseg:3049
@@ -1060,12 +1085,7 @@ char cnst_And__ovr050[] = " and ";
 // // MGC  dseg:8CCC
 // struct Default_Spells UU_TBL_Spells_P5;
 
-// ...oops... // MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_start_spells s_Init_Spells_Table <0>   ; DATA XREF: GAME_New_Screen_5+171w ...
-// ...oops... // ...needed by INITGAME.c, so defn in NewGame.h
-// ...oops... struct s_Init_Spells_Table _start_spells;
-// ...oops... // ...oops... MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_start_spells s_Init_Spells_Table <0>   ; DATA XREF: GAME_New_Screen_5+171w ...
-// ...oops... // MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_player_start_spells s_Init_Base_Realms 6 dup(<0>)
-// ...oops... // ...needed by INITGAME.c, so defn in NewGame.h
+// MGC  dseg:8A42
 struct s_Init_Base_Realms _player_start_spells[PLAYER_COUNT_MAX];
 
 // MGC  dseg:8D4E
@@ -1138,20 +1158,17 @@ int16_t newgame_difficulty_button_field = 0;
 // MGC  dseg:8E0C
 /*
 MoO2  _race_button_seg
-
 used for Wizard and Race
-
 */
-int16_t m_newgame_fields[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+int16_t m_newgame_fields[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 // drake178: NEWG_Moused_Wizard
 /*
 ~== MoO2 _displayed_race
-
 */
 int16_t m_displayed_wizard = 0;
 
 // MGC  dseg:8E4A
-SAMB_ptr IMG_NewG_ButtonBGs[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+SAMB_ptr m_shared_pict_segs[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 // MGC  dseg:8E68
 /*
@@ -1180,8 +1197,12 @@ SAMB_ptr _selection_marker_seg;
 
 // MGC  dseg:8E98 00 00                                           
 int16_t selected_load_game_slot_idx;
+
 // MGC  dseg:8E9A 00 00                                           MAY__selected_save_game_slot_idx dw 0
-// MGC  dseg:8E9C 00 00                                           NEWG_SpellSel_Realm dw 0                ; DATA XREF: GAME_New_Screen_5+1D3w ...
+
+// MGC  dseg:8E9C
+int16_t m_select_spells_realm;
+
 // MGC  dseg:8E9E 00 00                                           _settings_button dw 0                   ; DATA XREF: Load_Screen+2D5w ...
 // MGC  dseg:8EA0 00 00                                           _settings_button_seg dw 0               ; DATA XREF: Load_Screen+BCw ...
 // MGC  dseg:8EA2 00 00                                           _text_fill_seg dw 0                     ; DATA XREF: Load_Screen+A5w ...
@@ -1457,11 +1478,11 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
             } break;
             case ngscr_Creation:  //  (Custom Wizard) ..."spell pick screen"
             {
-                Newgame_Screen_4__WIP();
+                newgame_state = Newgame_Screen_4__WIP();
             } break;
             case ngscr_Spells:  //  (Custom Wizard) ..."select spells screen"
             {
-                Newgame_Screen5__WIP();
+                newgame_state = Newgame_Screen_5();
             } break;
             case ngscr_Race:  // Wizard's Race
             {
@@ -1649,10 +1670,10 @@ int16_t Newgame_Screen_0(void)
     IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 1, _screen_seg);
     newgame_ok_button_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 2, _screen_seg);
     _quit_active_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 3, _screen_seg);
-    IMG_NewG_ButtonBGs[0] = LBX_Reload_Next(newgame_lbx_file__ovr050, 4, _screen_seg);
-    IMG_NewG_ButtonBGs[1] = LBX_Reload_Next(newgame_lbx_file__ovr050, 5, _screen_seg);
-    IMG_NewG_ButtonBGs[2] = LBX_Reload_Next(newgame_lbx_file__ovr050, 6, _screen_seg);
-    IMG_NewG_ButtonBGs[3] = LBX_Reload_Next(newgame_lbx_file__ovr050, 7, _screen_seg);
+    m_shared_pict_segs[0] = LBX_Reload_Next(newgame_lbx_file__ovr050, 4, _screen_seg);
+    m_shared_pict_segs[1] = LBX_Reload_Next(newgame_lbx_file__ovr050, 5, _screen_seg);
+    m_shared_pict_segs[2] = LBX_Reload_Next(newgame_lbx_file__ovr050, 6, _screen_seg);
+    m_shared_pict_segs[3] = LBX_Reload_Next(newgame_lbx_file__ovr050, 7, _screen_seg);
 
     if(
         (DIR(str_MAGIC_SET__ovr050, file_found) == 0)
@@ -1944,7 +1965,7 @@ void Newgame_Screen_0_Draw(void)
 
     if(auto_input_field_idx != newgame_difficulty_button_field)
     {
-        FLIC_Draw(251, 39, IMG_NewG_ButtonBGs[0]);
+        FLIC_Draw(251, 39, m_shared_pict_segs[0]);
         Set_Font_Colors_15(3, &colors1[0]);
         Print_Centered(283, 43, l_difficulty_names[magic_set.Difficulty].name);
         Set_Font_Colors_15(3, &colors2[0]);
@@ -1952,7 +1973,7 @@ void Newgame_Screen_0_Draw(void)
     }
     else
     {
-        FLIC_Draw(252, 40, IMG_NewG_ButtonBGs[0]);
+        FLIC_Draw(252, 40, m_shared_pict_segs[0]);
         Set_Font_Colors_15(3, &colors1[0]);
         Print_Centered(284, 44, l_difficulty_names[magic_set.Difficulty].name);
         Set_Font_Colors_15(3, &colors2[0]);
@@ -1961,7 +1982,7 @@ void Newgame_Screen_0_Draw(void)
 
     if(auto_input_field_idx != newgame_opponents_button_field)
     {
-        FLIC_Draw(251, 66, IMG_NewG_ButtonBGs[1]);
+        FLIC_Draw(251, 66, m_shared_pict_segs[1]);
         Set_Font_Colors_15(3, &colors1[0]);
         Print_Centered(283, 71, l_opponent_count_names[(magic_set.Opponents - 1)].name);
         Set_Font_Colors_15(3, &colors2[0]);
@@ -1969,7 +1990,7 @@ void Newgame_Screen_0_Draw(void)
     }
     else
     {
-        FLIC_Draw(252, 67, IMG_NewG_ButtonBGs[1]);
+        FLIC_Draw(252, 67, m_shared_pict_segs[1]);
         Set_Font_Colors_15(3, &colors1[0]);
         Print_Centered(284, 72, l_opponent_count_names[(magic_set.Opponents - 1)].name);
         Set_Font_Colors_15(3, &colors2[0]);
@@ -1978,7 +1999,7 @@ void Newgame_Screen_0_Draw(void)
 
     if(auto_input_field_idx != newgame_landsize_button_field)
     {
-        FLIC_Draw(251, 93, IMG_NewG_ButtonBGs[2]);
+        FLIC_Draw(251, 93, m_shared_pict_segs[2]);
         Set_Font_Colors_15(3, &colors1[0]);
         Print_Centered(283, 97, l_land_size_names[magic_set.LandSize].name);
         Set_Font_Colors_15(3, &colors2[0]);
@@ -1986,7 +2007,7 @@ void Newgame_Screen_0_Draw(void)
     }
     else
     {
-        FLIC_Draw(252, 94, IMG_NewG_ButtonBGs[2]);
+        FLIC_Draw(252, 94, m_shared_pict_segs[2]);
         Set_Font_Colors_15(3, &colors1[0]);
         Print_Centered(284, 98, l_land_size_names[magic_set.LandSize].name);
         Set_Font_Colors_15(3, &colors2[0]);
@@ -1995,7 +2016,7 @@ void Newgame_Screen_0_Draw(void)
 
     if(auto_input_field_idx != newgame_magic_button_field)
     {
-        FLIC_Draw(251, 120, IMG_NewG_ButtonBGs[3]);
+        FLIC_Draw(251, 120, m_shared_pict_segs[3]);
         Set_Font_Colors_15(3, &colors1[0]);
         Print_Centered(283, 124, l_magic_strength_names[magic_set.MagicPower].name);
         Set_Font_Colors_15(3, &colors2[0]);
@@ -2003,7 +2024,7 @@ void Newgame_Screen_0_Draw(void)
     }
     else
     {
-        FLIC_Draw(252, 121, IMG_NewG_ButtonBGs[3]);
+        FLIC_Draw(252, 121, m_shared_pict_segs[3]);
         Set_Font_Colors_15(3, &colors1[0]);
         Print_Centered(284, 125, l_magic_strength_names[magic_set.MagicPower].name);
         Set_Font_Colors_15(3, &colors2[0]);
@@ -2088,7 +2109,7 @@ returns {0,2,3} - {0:cancel,2:custom,3:prefab}
  * 5) Runs input loop:
  *    - ESC returns `0`.
  *    - Preset click (indices 0..13) copies wizard defaults via
- *      `WIZ_CopyDefault__WIP` and returns `3`.
+ *      `Human_Player_Wizard_Profile` and returns `3`.
  *    - "Custom" click (`m_newgame_fields[14]` when present) returns `2`.
  *    - Otherwise performs per-frame draw/palette/page/timing updates.
  *
@@ -2103,7 +2124,7 @@ returns {0,2,3} - {0:cancel,2:custom,3:prefab}
  *       data tables for wizard presets, colors, and string resources.
  *
  * @see Newgame_Screen_1_2_Draw
- * @see WIZ_CopyDefault__WIP
+ * @see Human_Player_Wizard_Profile
  */
 int16_t Newgame_Screen_1__WIP(void)
 {
@@ -2146,7 +2167,7 @@ int16_t Newgame_Screen_1__WIP(void)
     */
     for(itr = 0; itr < 15; itr++)
     {
-        IMG_NewG_ButtonBGs[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (9 + itr), _screen_seg);
+        m_shared_pict_segs[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (9 + itr), _screen_seg);
     }
 
     if(IDK == 0)
@@ -2243,7 +2264,7 @@ int16_t Newgame_Screen_1__WIP(void)
             {
                 Deactivate_Auto_Function();
                 Deactivate_Help_List();
-                WIZ_CopyDefault__WIP(itr);
+                Human_Player_Wizard_Profile(itr);
                 return 3;
             }
         }
@@ -2387,7 +2408,7 @@ void Newgame_Screen_1_2_Draw(void)
 
         if(m_newgame_fields[itr] != l_auto_input_field_idx)
         {
-            FLIC_Draw(169, (27 + (22 * itr)), IMG_NewG_ButtonBGs[itr]);
+            FLIC_Draw(169, (27 + (22 * itr)), m_shared_pict_segs[itr]);
             Set_Font_Colors_15(3, &Shadow_Colors[0]);
             Print_Centered(203, (31 + (22 * itr)), _wizard_presets_table[itr].name);
             Set_Font_Colors_15(3, &Font_Colors[0]);
@@ -2395,7 +2416,7 @@ void Newgame_Screen_1_2_Draw(void)
         }
         else
         {
-            FLIC_Draw(170, (28 + (22 * itr)), IMG_NewG_ButtonBGs[itr]);
+            FLIC_Draw(170, (28 + (22 * itr)), m_shared_pict_segs[itr]);
             Set_Font_Colors_15(3, &Shadow_Colors[0]);
             Print_Centered(204, (32 + (22 * itr)), _wizard_presets_table[itr].name);
             Set_Font_Colors_15(3, &Font_Colors[0]);
@@ -2416,7 +2437,7 @@ void Newgame_Screen_1_2_Draw(void)
 
         if(m_newgame_fields[(7+itr)] == l_auto_input_field_idx)
         {
-            FLIC_Draw(246, (28 + (22 * itr)), IMG_NewG_ButtonBGs[(7 + itr)]);
+            FLIC_Draw(246, (28 + (22 * itr)), m_shared_pict_segs[(7 + itr)]);
             Set_Font_Colors_15(3, &Shadow_Colors[0]);
             Print_Centered(280, (32 + (22 * itr)), _wizard_presets_table[(7 + itr)].name);
             Set_Font_Colors_15(3, &Font_Colors[0]);
@@ -2424,7 +2445,7 @@ void Newgame_Screen_1_2_Draw(void)
         }
         else
         {
-            FLIC_Draw(245, (27 + (22 * itr)), IMG_NewG_ButtonBGs[(7 + itr)]);
+            FLIC_Draw(245, (27 + (22 * itr)), m_shared_pict_segs[(7 + itr)]);
             Set_Font_Colors_15(3, &Shadow_Colors[0]);
             Print_Centered(279, (31 + (22 * itr)), _wizard_presets_table[(7 + itr)].name);
             Set_Font_Colors_15(3, &Font_Colors[0]);
@@ -2536,7 +2557,7 @@ int16_t Newgame_Screen_2__WIP(void)
     */
     for(itr = 0; itr < 15; itr++)
     {
-        IMG_NewG_ButtonBGs[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (9 + itr), _screen_seg);
+        m_shared_pict_segs[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (9 + itr), _screen_seg);
     }
 
     // NEWGAME.LBX, 039  NEWPICS     
@@ -3017,31 +3038,31 @@ void Newgame_Screen_7_Draw__WIP(void)
 
     start_X = 36;
 
-    for(itr = 0; itr < _players[0].spellranks[3]; itr++)
+    for(itr = 0; itr < _players[0].spellranks[sbr_Life]; itr++)
     {
         FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(0 + TBL_Bookshelf_Books[itr])]);
         start_X += 8;
     }
 
-    for(itr = 0; itr < _players[0].spellranks[1]; itr++)
+    for(itr = 0; itr < _players[0].spellranks[sbr_Sorcery]; itr++)
     {
         FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(3 + TBL_Bookshelf_Books[itr])]);
         start_X += 8;
     }
 
-    for(itr = 0; itr < _players[0].spellranks[0]; itr++)
+    for(itr = 0; itr < _players[0].spellranks[sbr_Nature]; itr++)
     {
         FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(6 + TBL_Bookshelf_Books[itr])]);
         start_X += 8;
     }
 
-    for(itr = 0; itr < _players[0].spellranks[4]; itr++)
+    for(itr = 0; itr < _players[0].spellranks[sbr_Death]; itr++)
     {
         FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(9 + TBL_Bookshelf_Books[itr])]);
         start_X += 8;
     }
 
-    for(itr = 0; itr < _players[0].spellranks[2]; itr++)
+    for(itr = 0; itr < _players[0].spellranks[sbr_Chaos]; itr++)
     {
         FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(12 + TBL_Bookshelf_Books[itr])]);
         start_X += 8;
@@ -3149,7 +3170,7 @@ int16_t Newgame_Screen_6__WIP(void)
     // NEWGAME.LBX, 054  NEWGMWZ2   Wizards border
     IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 54, _screen_seg);
     // NEWGAME.LBX, 055  RACES      Races dark region
-    IMG_NewG_ButtonBGs[0] = LBX_Reload_Next(newgame_lbx_file__ovr050, 55, _screen_seg);
+    m_shared_pict_segs[0] = LBX_Reload_Next(newgame_lbx_file__ovr050, 55, _screen_seg);
     // NEWGAME.LBX, 044  WARNBACK   Warning box top
     m_warning_box_top_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 44, _screen_seg);
     // NEWGAME.LBX, 045  WARNBACK   Warning box buttom
@@ -3423,7 +3444,7 @@ void Newgame_Screen_6_Draw__WIP(void)
 
     FLIC_Draw(164, 18, IMG_NewG_RgtOverlay);
 
-    FLIC_Draw(208, 34, IMG_NewG_ButtonBGs[0]);  // IDGI
+    FLIC_Draw(208, 34, m_shared_pict_segs[0]);  // IDGI
 
     Set_Font_Style_Shadow_Down(5, 5, ST_NULL, ST_NULL);
 
@@ -3453,31 +3474,31 @@ void Newgame_Screen_6_Draw__WIP(void)
 
     start_X = 36;
 
-    for(itr = 0; itr < _players[0].spellranks[3]; itr++)
+    for(itr = 0; itr < _players[0].spellranks[sbr_Life]; itr++)
     {
         FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(0 + TBL_Bookshelf_Books[itr])]);
         start_X += 8;
     }
 
-    for(itr = 0; itr < _players[0].spellranks[1]; itr++)
+    for(itr = 0; itr < _players[0].spellranks[sbr_Sorcery]; itr++)
     {
         FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(3 + TBL_Bookshelf_Books[itr])]);
         start_X += 8;
     }
 
-    for(itr = 0; itr < _players[0].spellranks[0]; itr++)
+    for(itr = 0; itr < _players[0].spellranks[sbr_Nature]; itr++)
     {
         FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(6 + TBL_Bookshelf_Books[itr])]);
         start_X += 8;
     }
 
-    for(itr = 0; itr < _players[0].spellranks[4]; itr++)
+    for(itr = 0; itr < _players[0].spellranks[sbr_Death]; itr++)
     {
         FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(9 + TBL_Bookshelf_Books[itr])]);
         start_X += 8;
     }
 
-    for(itr = 0; itr < _players[0].spellranks[2]; itr++)
+    for(itr = 0; itr < _players[0].spellranks[sbr_Chaos]; itr++)
     {
         FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(12 + TBL_Bookshelf_Books[itr])]);
         start_X += 8;
@@ -3621,30 +3642,20 @@ void Draw_Special_Abilities_String(void)
     char string[126] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t start_y = 0;
     int16_t list_size = 0;
-    int16_t Local_Zero = 0;
+    int16_t niu_flag = 0;
     int8_t * wsa_ptr = 0;
-    // int16_t colors2 = 0;
     uint8_t * colors2 = 0;
-    // uint8_t colors1[4] = { 0, 0, 0, 0 };
     uint8_t * colors1 = 0;
-    int16_t ability_count = 0;  // _DI_
-    int16_t itr = 0;  // _SI_
+    int16_t ability_count = 0;
+    int16_t itr = 0;
 
-    // far pointer address? via assignment ?!?
-    colors1 = string_colors1;
-
+    colors1 = string_colors1;  /* DEDU  why is string_colors1 a far pointer and string_colors2 is not? */
     colors2 = string_colors2;
-
     memcpy(l_niu_array, m_niu_array, 12);
-
-    Local_Zero = 0;
-
+    niu_flag = 0;
     list_size = 0;
-
     string[0] = 0;
-
     wsa_ptr = &_players[0].alchemy;
-
     ability_count = 0;
 
     for(itr = 0; itr < 18; itr++)
@@ -3654,11 +3665,8 @@ void Draw_Special_Abilities_String(void)
             ability_count++;
         }
     }
-
     strcpy(string, empty_string__ovr050);
-
     list_size = 0;
-
     for(itr = 0; itr < NUM_WIZARD_SPECIAL_ABILITIES; itr++)
     {
         if(wsa_ptr[itr] == 1)
@@ -3667,12 +3675,10 @@ void Draw_Special_Abilities_String(void)
             strcat(string, wsa_names[itr]);
         }
     }
-
     if(ability_count > 0)
     {
         strcat(string, cnst_DOT__ovr050);
     }
-
     if(ability_count > 5)
     {
         start_y = 178;
@@ -3681,21 +3687,13 @@ void Draw_Special_Abilities_String(void)
     {
         start_y = 180;
     }
-
     Set_Font_Style(0, 15, ST_NULL, ST_NULL);
-
     Set_Font_Colors_15(0, &colors1[0]);
-
     Set_Font_LF(1);
-
     Print_Paragraph(13, (start_y + 1), 138, &string[0], 0);
-
     Set_Font_Colors_15(0, &colors2[0]);
-
     Set_Font_LF(1);
-
     Print_Paragraph(12, start_y, 138, &string[0], 0);
-
 }
 
 
@@ -3836,7 +3834,7 @@ int16_t Newgame_Screen_4__WIP(void)
     char message[LEN_MESSAGE_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t hotkey_ESC = 0;
     int16_t DoublePick_Retort_Labels[5] = { 0, 0, 0, 0, 0 };
-    char Conversion_String[6] = { 0, 0, 0, 0, 0, 0 };
+    char buffer[6] = { 0, 0, 0, 0, 0, 0 };
     int8_t * wsa_ptr = 0;
     int16_t Realms_Added = 0;
     int16_t (*p_wsa_prerequisites)[7] = 0;
@@ -3960,13 +3958,12 @@ int16_t Newgame_Screen_4__WIP(void)
             return ngscr_Name;
         }
 
-        if(
-            (input_field_idx == _ok_button)
-            &&
-            (NEWG_ProfileComplete != ST_FALSE)
-        )
+        if(input_field_idx == _ok_button)
         {
-            leave_screen = ST_TRUE;
+            if(NEWG_ProfileComplete != ST_FALSE)
+            {
+                leave_screen = ST_TRUE;
+            }
         }
         
         ability_count = 0;
@@ -4079,8 +4076,8 @@ int16_t Newgame_Screen_4__WIP(void)
                         {
                             if(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr)] > 0)
                             {
-                                itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr)], Conversion_String, 10);
-                                strcat(message, Conversion_String);
+                                itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr)], buffer, 10);
+                                strcat(message, buffer);
                                 strcat(message, cnst_Pick_Error_22);  /* " picks in " */
                                 strcat(message, l_realm_name_character_array[itr]);
                                 strcat(message, cnst_Pick_Error_23);  /* " Magic" */
@@ -4100,8 +4097,8 @@ int16_t Newgame_Screen_4__WIP(void)
                                     {
                                         strcat(message, cnst_Pick_Error_29);
                                     }
-                                    itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr2)], Conversion_String, 10);
-                                    strcat(message, Conversion_String);
+                                    itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr2)], buffer, 10);
+                                    strcat(message, buffer);
                                     strcat(message, cnst_Pick_Error_2A);
                                     strcat(message, l_realm_name_character_array[itr2]);
                                     strcat(message, cnst_Pick_Error_23);
@@ -4111,8 +4108,8 @@ int16_t Newgame_Screen_4__WIP(void)
                         }
                         else
                         {
-                            itoa(p_wsa_prerequisites[NEWG_PickAttempt][0], Conversion_String, 10);
-                            strcat(message, Conversion_String);
+                            itoa(p_wsa_prerequisites[NEWG_PickAttempt][0], buffer, 10);
+                            strcat(message, buffer);
                             strcat(message, cnst_Pick_Error_24);  /* " pick"*/
                             if(p_wsa_prerequisites[NEWG_PickAttempt][0] > 1)
                             {
@@ -4124,8 +4121,8 @@ int16_t Newgame_Screen_4__WIP(void)
                             }
                             if(p_wsa_prerequisites[NEWG_PickAttempt][0] > 1)
                             {
-                                itoa(p_wsa_prerequisites[NEWG_PickAttempt][1], Conversion_String, 10);
-                                strcat(message, Conversion_String);
+                                itoa(p_wsa_prerequisites[NEWG_PickAttempt][1], buffer, 10);
+                                strcat(message, buffer);
                                 strcat(message, cnst_Pick_Error_27);
                             }
                             else
@@ -4757,28 +4754,1082 @@ void Newgame_Screen_4_Draw__WIP(void)
 
 
 // MGC  o50p21
-/*
-
-*/
-void Newgame_Screen5__WIP(void)
+/**
+ * @brief Runs custom wizard creation screen 5 (starting spell selection).
+ *
+ * @details
+ * Initializes spell-selection assets/state, prepares per-realm start-spell
+ * buffers, and executes the interactive selection loop for the currently
+ * selected magic realm.
+ *
+ * Current flow:
+ * 1) Loads background/UI assets (overlay, list/button art, OK states, books,
+ *    warning box, check marker) and resets pick/error state.
+ * 2) Clears player start-spell storage for all five realms.
+ * 3) Loads help entries for "Select Spells" and initializes fields/hotkeys.
+ * 4) Selects current realm from `TBL_Realm_Order` and, when that realm has
+ *    more than one book, builds GUI and initializes common/uncommon/rare spell
+ *    slots from `_default_spells` according to `TBL_SpellsPerBook_*`.
+ * 5) Runs input loop:
+ *    - ESC returns `ngscr_Creation`.
+ *    - OK exits loop only when `NEWG_ProfileComplete` is true.
+ *    - Handles common-spell label clicks (toggle/add/remove) and raises
+ *      `NEWG_PickError` when selection constraints fail.
+ *    - Repeatedly calls `Newgame_Screen_5_Draw`, palette/page updates, and
+ *      frame timing while active.
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return void
+ *
+ * @note This function is WIP; uncommon/rare click handlers and some error
+ *       message paths are currently stub/incomplete in source.
+ * @note Mutates global New Game state, including spell selection buffers,
+ *       active input fields, and profile-complete/error flags.
+ *
+ * @see Newgame_Screen_5_Draw
+ * @see Newgame_Screen_5_Spell_Fields
+ */
+int16_t Newgame_Screen_5(void)
 {
+    int16_t Error_Message = 0;
+    int16_t Realm_Order_Array[5] = { 0, 0, 0, 0, 0 };
+    int16_t * p_default_spells = 0;
+    int16_t Click_Processed = 0;
+    int16_t * p_start_spells = 0;
+    int16_t spell_idx = 0;
+    int16_t Selection_Realm = 0;
+    int16_t spellrank_idx = 0;
+    int16_t spellrank_cnt = 0;
+    int16_t section_idx = 0;
+    int16_t itr2 = 0;
+    int16_t itr3 = 0;  /* only use for per column spell count?*/
+    int16_t input_field_idx = 0;
+    int16_t leave_screen = 0;
+    int16_t First_Draw_Done = 0;
+    int16_t itr = 0;  /* used for column count */
+    int16_t itr4 = 0;
 
+    memcpy(&Realm_Order_Array, TBL_Realm_Order, 10);
 
+    // NEWGAME.LBX, 000  BACKGRND    Main screen back
+    newgame_background_seg = LBX_Reload(newgame_lbx_file__ovr050, 0, _screen_seg);
+
+    // NEWGAME.LBX, 047  SPELLS2    Title underline
+    // NEWGAME.LBX, 048  SPELLS2    First dark region
+    // NEWGAME.LBX, 049  SPELLS2    Second dark region
+    // NEWGAME.LBX, 050  SPELLS2    Third dark region
+    // NEWGAME.LBX, 051  PIKMAGIC   Ok & picks back
+    IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 47, _screen_seg);
+    m_shared_pict_segs[0] = LBX_Reload_Next(newgame_lbx_file__ovr050, 48, _screen_seg);
+    m_shared_pict_segs[1] = LBX_Reload_Next(newgame_lbx_file__ovr050, 49, _screen_seg);
+    m_shared_pict_segs[2] = LBX_Reload_Next(newgame_lbx_file__ovr050, 50, _screen_seg);
+    m_shared_pict_segs[3] = LBX_Reload_Next(newgame_lbx_file__ovr050, 51, _screen_seg);
+
+    // NEWGAME.LBX, 042  MAGICPIK   ok button
+    // NEWGAME.LBX, 043  MAGICOK    non selectable ok
+    newgame_ok_button_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 42, _screen_seg);
+    _ok_inactive_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 43, _screen_seg);
+
+    /*
+    NEWGAME.LBX, 024  BOOKS      White book 1
+    NEWGAME.LBX, 025  BOOKS      White book 2
+    NEWGAME.LBX, 026  BOOKS      White book 3
+    NEWGAME.LBX, 027  BOOKS      Blue book 1
+    NEWGAME.LBX, 028  BOOKS      Blue book 2
+    NEWGAME.LBX, 029  BOOKS      Blue book 3
+    NEWGAME.LBX, 030  BOOKS      Green book 1
+    NEWGAME.LBX, 031  BOOKS      Green book 2
+    NEWGAME.LBX, 032  BOOKS      Green book 3
+    NEWGAME.LBX, 033  BOOKS      Black book 1
+    NEWGAME.LBX, 034  BOOKS      Black book 2
+    NEWGAME.LBX, 035  BOOKS      Black book 3
+    NEWGAME.LBX, 036  BOOKS      Red book 1
+    NEWGAME.LBX, 037  BOOKS      Red book 2
+    NEWGAME.LBX, 038  BOOKS      Red book 3
+    */
+    for(itr = 0; itr < 15; itr++)
+    {
+        m_spellbook_pict_segs[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (24 + itr), _screen_seg);
+    }
+
+    // NEWGAME.LBX, 044  WARNBACK   Warning box top
+    // NEWGAME.LBX, 045  WARNBACK   Warning box buttom
+    m_warning_box_top_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 44, _screen_seg);
+    m_warning_box_bottom_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 45, _screen_seg);
+
+    // NEWGAME.LBX, 052  CHECKMRK
+    _selection_marker_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 52, _screen_seg);
+
+    spellpicks_count = 0;
+
+    NEWG_PickError = 0;
+
+    Assign_Auto_Function(Newgame_Screen_5_Draw, 1);
+
+    for(itr = 0; itr < 13; itr++)
+    {
+        _player_start_spells[0].realms[sbr_Nature].spells[itr] = 0;
+        _player_start_spells[0].realms[sbr_Sorcery].spells[itr] = 0;
+        _player_start_spells[0].realms[sbr_Chaos].spells[itr] = 0;
+        _player_start_spells[0].realms[sbr_Life].spells[itr] = 0;
+        _player_start_spells[0].realms[sbr_Death].spells[itr] = 0;
+    }
+
+    // HLPENTRY.LBX, 036  ""  "Select Spells Help"
+    LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 36, (SAMB_ptr)_help_entries, 0, 30, 10);
+
+    for(itr2 = 0; itr2 < 5; itr2++)
+    {
+            
+        leave_screen = ST_TRUE;
+
+        m_select_spells_realm = Realm_Order_Array[itr2];  // WTF
+
+        NEWG_ProfileComplete = ST_FALSE;
+
+        Clear_Fields();
+
+        _quit_button = Add_Hot_Key(str_ESC__ovr050[0]);
+
+        _ok_button = Add_Hidden_Field(251, 181, 282, 196, empty_string__ovr050[0], ST_UNDEFINED);
+
+        for(itr = 0; itr < 30; itr++)
+        {
+            m_newgame_fields[itr] = INVALID_FIELD;
+        }
+
+        /*
+            NOTE: The normal screen-loop is inside this magic realms spellrank loop
+            "Select [Magic Realm] Spells"
+        */
+        if(_players[0].spellranks[m_select_spells_realm] > 1)
+        {
+
+            Newgame_Screen_5_Spell_Fields();
+
+            leave_screen = ST_FALSE;
+
+            First_Draw_Done = ST_FALSE;
+
+            if(m_select_spells_realm == sbr_Chaos)
+            {
+                p_start_spells = &_player_start_spells[0].realms[sbr_Chaos].spells[0];
+                p_default_spells = &_default_spells[sbr_Chaos].spells[0];
+                Selection_Realm = sbr_Chaos;
+            }
+            if(m_select_spells_realm == sbr_Sorcery)
+            {
+                p_start_spells = &_player_start_spells[0].realms[sbr_Sorcery].spells[0];
+                p_default_spells = &_default_spells[sbr_Sorcery].spells[0];
+                Selection_Realm = sbr_Sorcery;
+            }
+            if(m_select_spells_realm == sbr_Nature)
+            {
+                p_start_spells = &_player_start_spells[0].realms[sbr_Nature].spells[0];
+                p_default_spells = &_default_spells[sbr_Nature].spells[0];
+                Selection_Realm = sbr_Nature;
+            }
+            if(m_select_spells_realm == sbr_Life)
+            {
+                p_start_spells = &_player_start_spells[0].realms[sbr_Life].spells[0];
+                p_default_spells = &_default_spells[sbr_Life].spells[0];
+                Selection_Realm = sbr_Life;
+            }
+            if(m_select_spells_realm == sbr_Death)
+            {
+                p_start_spells = &_player_start_spells[0].realms[sbr_Death].spells[0];
+                p_default_spells = &_default_spells[sbr_Death].spells[0];
+                Selection_Realm = sbr_Death;
+            }
+            spellrank_cnt = (_players[0].spellranks[m_select_spells_realm] - 1);
+            spellrank_idx = (spellrank_cnt - 1);
+            for(itr = 0; m_select_count_common[spellrank_idx] > itr; itr++)
+            {
+                p_start_spells[itr] = p_default_spells[itr];
+            }
+            for(itr = 0; m_select_count_uncommon[spellrank_idx] > itr; itr++)
+            {
+                p_start_spells[(10 + itr)] = p_default_spells[(10 + itr)];
+            }
+            for(itr = 0; m_select_count_rare[spellrank_idx] > itr; itr++)
+            {
+                p_start_spells[(12 + itr)] = p_default_spells[(12 + itr)];
+            }
+
+        }
+
+        while(leave_screen == ST_FALSE)
+        {
+            Mark_Time();
+            input_field_idx = Get_Input();
+            if(input_field_idx == _quit_button)
+            {
+                return ngscr_Creation;
+            }
+            if(input_field_idx == _ok_button)
+            {
+                if(NEWG_ProfileComplete != ST_FALSE)
+                {
+                    leave_screen = ST_TRUE;
+                }
+            }
+            if(spellrank_cnt > 0)
+            {
+                if(First_Draw_Done != ST_FALSE)
+                {
+                    if(input_field_idx != 0)
+                    {
+                        section_idx = 0;
+                        spellrank_idx = (spellrank_cnt - 1);
+                        if(
+                            (m_select_count_common[spellrank_idx] > 0)
+                            &&
+                            (m_select_count_common[spellrank_idx] < 10)
+                        )
+                        {
+                            for(itr = 0; itr < 2; itr++)
+                            {
+                                for(itr3 = 0; itr3 < 5; itr3++)
+                                {
+                                    spell_idx = ( 0 + (Selection_Realm * NUM_SPELLS_PER_MAGIC_REALM) + (itr * 5) + itr3 + 1);
+                                    if(m_newgame_fields[((itr * 5) + itr3)] == input_field_idx)
+                                    {
+                                        Click_Processed = ST_FALSE;
+                                        for(itr4 = 0; m_select_count_common[spellrank_idx] > itr4; itr4++)
+                                        {
+                                            if(p_start_spells[itr4] == spell_idx)
+                                            {
+                                                if(Click_Processed == ST_FALSE)
+                                                {
+                                                    p_start_spells[itr4] = spl_NONE;
+                                                    Click_Processed = ST_TRUE;
+                                                }
+                                            }
+                                        }
+                                        if(Click_Processed == ST_FALSE)
+                                        {
+                                            for(itr4 = 0; m_select_count_common[spellrank_idx] > itr4; itr4++)
+                                            {
+                                                if(
+                                                    (
+                                                        (p_start_spells[itr4] == spl_NONE)
+                                                        &&
+                                                        (Click_Processed == ST_FALSE)
+                                                    )
+                                                    ||
+                                                    (m_select_count_common[spellrank_idx] == ST_TRUE)
+                                                )
+                                                {
+                                                    p_start_spells[itr4] = spell_idx;
+                                                    Click_Processed = ST_TRUE;
+                                                }
+                                            }
+                                        }
+                                        if(Click_Processed == ST_FALSE)
+                                        {
+                                            NEWG_PickError = 2;
+                                        }
+                                    }
+                                }
+                            }
+                            section_idx++;
+                        }
+                        /*
+                            BEGIN:  Uncommon
+                        */
+                        if(m_select_count_uncommon[spellrank_idx] > 0)
+                        {
+                            for(itr = 0; itr < 2; itr++)
+                            {
+                                for(itr3 = 0; itr3 < 5; itr3++)
+                                {
+                                    spell_idx = (10 + (Selection_Realm * NUM_SPELLS_PER_MAGIC_REALM) + (itr * 5) + itr3 + 1);
+                                    if(m_newgame_fields[((section_idx * 10) + (itr * 5) + itr3)] == input_field_idx)
+                                    {
+                                        Click_Processed = ST_FALSE;
+                                        for(itr4 = 0; m_select_count_uncommon[spellrank_idx] > itr4; itr4++)
+                                        {
+                                            if(p_start_spells[(10 + itr4)] == spell_idx)
+                                            {
+                                                if(Click_Processed == ST_FALSE)
+                                                {
+                                                    p_start_spells[(10 + itr4)] = spl_NONE;
+                                                    Click_Processed = ST_TRUE;
+                                                }
+                                            }
+                                        }
+                                        if(Click_Processed == ST_FALSE)
+                                        {
+                                            for(itr4 = 0; m_select_count_uncommon[spellrank_idx] > itr4; itr4++)
+                                            {
+                                                if(
+                                                    (
+                                                        (p_start_spells[(10 + itr4)] == spl_NONE)
+                                                        &&
+                                                        (Click_Processed == ST_FALSE)
+                                                    )
+                                                    ||
+                                                    (m_select_count_uncommon[spellrank_idx] == ST_TRUE)
+                                                )
+                                                {
+                                                    p_start_spells[(10 + itr4)] = spell_idx;
+                                                    Click_Processed = ST_TRUE;
+                                                }
+                                            }
+                                        }
+                                        if(Click_Processed == ST_FALSE)
+                                        {
+                                            NEWG_PickError = 2;
+                                        }
+                                    }
+                                }
+                            }
+                            section_idx++;
+                        }
+                        /*
+                            END:  Uncommon
+                        */
+                        /*
+                            BEGIN:  Rare
+                        */
+                        if(m_select_count_rare[spellrank_idx] > 0)
+                        {
+                            for(itr = 0; itr < 2; itr++)
+                            {
+                                for(itr3 = 0; itr3 < 5; itr3++)
+                                {
+                                    spell_idx = (20 + (Selection_Realm * NUM_SPELLS_PER_MAGIC_REALM) + (itr * 5) + itr3 + 1);
+                                    if(m_newgame_fields[((section_idx * 10) + (itr * 5) + itr3)] == input_field_idx)
+                                    {
+                                        Click_Processed = ST_FALSE;
+                                        for(itr4 = 0; m_select_count_rare[spellrank_idx] > itr4; itr4++)
+                                        {
+                                            if(p_start_spells[(12 + itr4)] == spell_idx)
+                                            {
+                                                if(Click_Processed == ST_FALSE)
+                                                {
+                                                    p_start_spells[(12 + itr4)] = spl_NONE;
+                                                    Click_Processed = ST_TRUE;
+                                                }
+                                            }
+                                        }
+                                        if(Click_Processed == ST_FALSE)
+                                        {
+                                            for(itr4 = 0; m_select_count_rare[spellrank_idx] > itr4; itr4++)
+                                            {
+                                                if(
+                                                    (
+                                                        (p_start_spells[(12 + itr4)] == spl_NONE)
+                                                        &&
+                                                        (Click_Processed == ST_FALSE)
+                                                    )
+                                                    ||
+                                                    (m_select_count_rare[spellrank_idx] == ST_TRUE)
+                                                )
+                                                {
+                                                    p_start_spells[(12 + itr4)] = spell_idx;
+                                                    Click_Processed = ST_TRUE;
+                                                }
+                                            }
+                                        }
+                                        if(Click_Processed == ST_FALSE)
+                                        {
+                                            NEWG_PickError = 2;
+                                        }
+                                    }
+                                }
+                            }
+                            section_idx++;
+                        }
+                        /*
+                            END:  Rare
+                        */
+                    }
+                }
+            }
+
+// ; display and clear the stored error
+
+            if(NEWG_PickError > 0)
+            {
+                switch(NEWG_PickError)
+                {
+                    case 1: { strcpy(Error_Message, cnst_Pick_Error_0); } break;
+                    case 2: { strcpy(Error_Message, cnst_Pick_Error_6); } break;
+                }
+            }
+
+            if(leave_screen == ST_FALSE)
+            {
+                Newgame_Screen_5_Draw();
+                Apply_Palette();
+                Toggle_Pages();
+                if(First_Draw_Done == ST_FALSE)
+                {
+                    First_Draw_Done = ST_TRUE;
+                    Copy_On_To_Off_Page();
+                }
+                Release_Time(2);
+            }
+
+        }  /* while(leave_screen == ST_FALSE) */
+
+    }  /* for(itr2 = 0; itr2 < 5; itr2++) */
+
+    Deactivate_Auto_Function();
+
+    // NOTE(drake178); BUG: prevents moving backwards if there are no spells to select
+    return ngscr_Race;
 
 }
 
 
 // MGC  o50p22
-// GAME_SpellSel_GUI()
+/**
+ * @brief Builds spell-label input fields and help mapping for screen 5.
+ *
+ * @details
+ * Configures clickable label boxes (`m_newgame_fields`) and help-entry indices
+ * (`_help_entries`) for the currently selected spell realm on the custom
+ * wizard spell-selection screen.
+ *
+ * Current flow:
+ * 1) Copies local layout helper arrays (`m_niu_title_start_y`,
+ *    `m_niu_box_start_y`) into local temporaries.
+ * 2) Resolves `Selection_Realm` from `m_select_spells_realm`.
+ * 3) Computes book-derived rank count/index from
+ *    `_players[0].spellranks[m_select_spells_realm]`.
+ * 4) Clears all 30 help-entry slots to `ST_UNDEFINED`.
+ * 5) For each enabled rarity section (Common/Uncommon/Rare), creates a 2x5
+ *    grid of hidden label fields, assigns corresponding help indices for that
+ *    section/realm, and advances section offsets.
+ * 6) Activates the assembled help list via `Set_Help_List(_help_entries, 30)`.
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return void
+ *
+ * @note Mutates global arrays `m_newgame_fields` and `_help_entries`.
+ * @note The copied `l_niu_*` layout arrays are currently not consumed further
+ *       in this implementation.
+ *
+ * @see Newgame_Screen_5
+ * @see Set_Help_List
+ */
+void Newgame_Screen_5_Spell_Fields(void)
+{
+    int16_t l_niu_box_start_y[3] = { 0, 0, 0, };
+    int16_t l_niu_title_start_y[3] = { 0, 0, 0, };
+    int16_t field_idx = 0;
+    int16_t start_y = 0;
+    int16_t Selection_Realm = 0;
+    int16_t spellrank_idx = 0;
+    int16_t help_section = 0;
+    int16_t spellrank_cnt = 0;
+    int16_t itr = 0;
+    int16_t itr2 = 0;
 
-// MGC  o50p23
-// SCRN_Draw_NewScr5()
+    memcpy(l_niu_title_start_y, m_niu_title_start_y, 6);
+    memcpy(l_niu_box_start_y, m_niu_box_start_y, 6);
+
+    if(m_select_spells_realm == sbr_Chaos)
+    {
+        Selection_Realm = sbr_Chaos;
+    }
+    if(m_select_spells_realm == sbr_Sorcery)
+    {
+        Selection_Realm = sbr_Sorcery;
+    }
+    if(m_select_spells_realm == sbr_Nature)
+    {
+        Selection_Realm = sbr_Nature;
+    }
+    if(m_select_spells_realm == sbr_Life)
+    {
+        Selection_Realm = sbr_Life;
+    }
+    if(m_select_spells_realm == sbr_Death)
+    {
+        Selection_Realm = sbr_Death;
+    }
+
+    spellrank_cnt = (_players[0].spellranks[m_select_spells_realm] - 1);
+
+    help_section = 0;
+
+    field_idx = 0;
+
+    start_y = (39 + (help_section * 51));
+
+    for(itr = 0; itr < 30; itr++)
+    {
+
+        _help_entries[itr].help_idx = ST_UNDEFINED;
+
+    }
+
+    if(spellrank_cnt > 0)
+    {
+        spellrank_idx = (spellrank_cnt - 1);
+        if(
+            (m_select_count_common[spellrank_idx] > 0)
+            &&
+            (m_select_count_common[spellrank_idx] < 10)
+        )
+        {
+            for(itr = 0; itr < 2; itr++)
+            {
+                for(itr2 = 0; itr2 < 5; itr2++)
+                {
+                    m_newgame_fields[field_idx] = Add_Hidden_Field((170 + (74 * itr)), (start_y + (7 * itr2)), (240 + (78 * itr)), (start_y + 5 + (7 * itr2)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+                    field_idx++;
+                }
+            }
+            for(itr = 0; itr < 10; itr++)
+            {
+                _help_entries[((help_section * 10) + itr)].help_idx = (((Selection_Realm * 40) + itr) + (1 + (0 * 10)));
+            }
+            help_section++;
+        }
+
+        if(m_select_count_uncommon[spellrank_idx] > 0)
+        {
+            start_y = (39 + (help_section * 51));
+            for(itr = 0; itr < 2; itr++)
+            {
+                for(itr2 = 0; itr2 < 5; itr2++)
+                {
+                    m_newgame_fields[field_idx] = Add_Hidden_Field((170 + (74 * itr)), (start_y + (7 * itr2)), (240 + (78 * itr)), (start_y + 5 + (7 * itr2)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+                    field_idx++;
+                }
+            }
+            for(itr = 0; itr < 10; itr++)
+            {
+                _help_entries[((help_section * 10) + itr)].help_idx = (((Selection_Realm * 40) + itr) + (1 + (1 * 10)));
+            }
+            help_section++;
+        }
+
+        if(m_select_count_rare[spellrank_idx] > 0)
+        {
+            start_y = (39 + (help_section * 51));
+            for(itr = 0; itr < 2; itr++)
+            {
+                for(itr2 = 0; itr2 < 5; itr2++)
+                {
+                    m_newgame_fields[field_idx] = Add_Hidden_Field((170 + (74 * itr)), (start_y + (7 * itr2)), (240 + (78 * itr)), (start_y + 5 + (7 * itr2)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+                    field_idx++;
+                }
+            }
+            for(itr = 0; itr < 10; itr++)
+            {
+                _help_entries[((help_section * 10) + itr)].help_idx = (((Selection_Realm * 40) + itr) + (1 + (2 * 10)));
+            }
+            help_section++;
+        }
+
+    }
+
+    Set_Help_List(_help_entries, 30);
+
+}
+
+
+/**
+ * @brief Draws one frame of custom-wizard screen 5 (spell selection).
+ *
+ * @details
+ * Performs the current render/update pass for the spell-selection screen:
+ * background/layout draw, wizard name and bookshelf draw, OK button state, and
+ * remaining-picks label draw.
+ *
+ * Current implemented behavior:
+ * 1) Reads hovered control via `Auto_Input()` into `auto_input_field_idx`.
+ * 2) Draws background, right overlay, and lower panel/button art.
+ * 3) Draws wizard name text with shadow/foreground color layers.
+ * 4) Draws bookshelf books from `_players[0].spellranks[]` across realms.
+ * 5) Draws active/inactive OK button based on `NEWG_ProfileComplete`; if
+ *    incomplete and hovered over OK, sets `NEWG_PickError = 1`.
+ * 6) Builds and prints picks-remaining text from `spellpicks_count` and
+ *    updates `NEWG_ProfileComplete` when picks reach zero.
+ * 7) Draws selected-abilities summary and delegates extra screen-5 detail draw
+ *    to `Newgame_Screen_5_Draw_Spells()`.
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return void
+ *
+ * @note This routine is still WIP and currently contains rough edges in local
+ *       temporary usage (`buffer`, `Font_Colors`, `Shadow_Colors`) in source.
+ * @note Intended to be called repeatedly from `Newgame_Screen_5` during
+ *       the interactive selection loop.
+ *
+ * @see Newgame_Screen_5
+ * @see Newgame_Screen_5_Draw_Spells
+ */
+void Newgame_Screen_5_Draw(void)
+{
+    char buffer[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint8_t light_colors[5] = { 0, 0, 0, 0, 0 };
+    uint8_t dark_colors[5] = { 0, 0, 0, 0, 0 };
+    int16_t x_start = 0;
+    int16_t itr = 0;
+    memcpy(dark_colors, m_dark_colors, 5);
+    memcpy(light_colors, m_light_colors, 5);
+    auto_input_field_idx = Auto_Input();
+    FLIC_Draw(0, 0, newgame_background_seg);
+    FLIC_Draw(181, 18, IMG_NewG_RgtOverlay);  /* ((360 / 2) + 1); 18 is the start of the rope */
+    FLIC_Draw(196, 180, m_shared_pict_segs[3]);  /* "n picks" box */
+    Fill(251, 181, 282, 196, ST_TRANSPARENT);  /* OK button box */
+    /*
+        BEGIN:  Player Name
+    */
+    Set_Font_Style(0, 15, ST_NULL, ST_NULL);
+    Set_Font_Colors_15(4, &dark_colors[0]);
+    Print_Centered(78, 120, _players[0].name);
+    Print_Centered(77, 120, _players[0].name);
+    Set_Font_Colors_15(4, &light_colors[0]);
+    Print_Centered(77, 119, _players[0].name);
+    /*
+        END:  Player Name
+    */
+    /*
+        BEGIN:  Bookshelf
+    */
+    x_start = 36;
+    for(itr = 0; itr < _players[0].spellranks[3]; itr++)
+    {
+        FLIC_Draw(x_start, 135, m_spellbook_pict_segs[( 0 + TBL_Bookshelf_Books[itr])]);
+        x_start += 8;
+    }
+    for(itr = 0; itr < _players[0].spellranks[4]; itr++)
+    {
+        FLIC_Draw(x_start, 135, m_spellbook_pict_segs[(9 + TBL_Bookshelf_Books[itr])]);
+        x_start += 8;
+    }
+    for(itr = 0; itr < _players[0].spellranks[2]; itr++)
+    {
+        FLIC_Draw(x_start, 135, m_spellbook_pict_segs[(12 + TBL_Bookshelf_Books[itr])]);
+        x_start += 8;
+    }
+    for(itr = 0; itr < _players[0].spellranks[0]; itr++)
+    {
+        FLIC_Draw(x_start, 135, m_spellbook_pict_segs[(6 + TBL_Bookshelf_Books[itr])]);
+        x_start += 8;
+    }
+    for(itr = 0; itr < _players[0].spellranks[1]; itr++)
+    {
+        FLIC_Draw(x_start, 135, m_spellbook_pict_segs[(3 + TBL_Bookshelf_Books[itr])]);
+        x_start += 8;
+    }
+    /*
+        END:  Bookshelf
+    */
+    if(NEWG_ProfileComplete != ST_FALSE)
+    {
+        if(auto_input_field_idx == _ok_button)
+        {
+            FLIC_Draw(253, 183, newgame_ok_button_seg);  // BUGBUG  shoudl be up/down, but probably should just let Fields, Push Down handle it?
+        }
+        else
+        {
+            FLIC_Draw(252, 182, newgame_ok_button_seg);
+        }
+    }
+    else
+    {
+        FLIC_Draw(252, 182, _ok_inactive_seg);
+        if(auto_input_field_idx == _ok_button)
+        {
+            NEWG_PickError = 1;
+        }
+    }
+    itoa(spellpicks_count, buffer, 10);
+    strcat(buffer, cnst_Picks);
+/* WTF */    if(spellpicks_count == 0)
+/* WTF */    {
+/* WTF */        NEWG_ProfileComplete = ST_TRUE;
+/* WTF */    }
+/* WTF */    else
+/* WTF */    {
+/* WTF */        NEWG_ProfileComplete = ST_FALSE;
+/* WTF */    }
+    Set_Font_Style(3, 15, ST_NULL, ST_NULL);
+    Set_Font_Colors_15(3, &light_colors[0]);
+    Print_Centered(222, 186, buffer);
+    Set_Font_Colors_15(3, &dark_colors[0]);
+    Print_Centered(221, 185, buffer);
+
+    Draw_Special_Abilities_String();
+
+    Newgame_Screen_5_Draw_Spells();
+
+}
+
 
 // MGC  o50p24
-// SCRN_Draw_NewScr5_2()
+void Newgame_Screen_5_Draw_Spells(void)
+{
+    char section_title_string[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char realm_strings[5][10] = { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
+    char rarity_strings[4][10] = { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
+    int16_t selected_spells[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint8_t realm_color = 0;
+    uint8_t realm_colors[5] = { 0, 0, 0, 0, 0 };
+    char buffer[4] = { 0, 0, 0, 0 };
+    uint8_t * l_shadow_colors = NULL;
+    uint8_t * l_selected_colors = NULL;
+    uint8_t * l_deselected_colors = NULL;
+    int16_t section_box_start_y[3] = { 0, 0, 0 };
+    int16_t section_title_start_y[3] = { 0, 0, 0 };
+    int16_t Display_Type = 0;
+    int16_t niu_selection_count = 0;  // ; always written, never read
+    int16_t * p_start_spells = NULL;
+    int16_t spell_idx = 0;
+    int16_t Label_Box_Height = 0;
+    int16_t Selection_Realm = 0;
+    int16_t spellrank_idx = 0;
+    int16_t section_idx = 0;
+    int16_t spellrank_cnt = 0;
+    int16_t Selection_Index = 0;
+    int16_t itr2 = 0;
+    int16_t itr = 0;
+    
+    memcpy(section_title_start_y, Label_Box_TitleTops2, 6);
+    memcpy(section_box_start_y, Label_Box_TextTops2, 6);
+    l_deselected_colors = m_select_spells_deselected_colors;
+    l_selected_colors = m_select_spells_selected_colors;
+    l_shadow_colors = m_select_spells_shadow_colors;
+    memcpy(rarity_strings, m_rarity_strings, 40);
+    memcpy(realm_strings, m_realm_strings, 50);
+
+    if(m_select_spells_realm == sbr_Chaos)
+    {
+        p_start_spells = &_player_start_spells[0].realms[sbr_Chaos].spells[0];
+        realm_color = CHAOS_RED;
+        Selection_Realm = sbr_Chaos;
+    }
+    if(m_select_spells_realm == sbr_Sorcery)
+    {
+        p_start_spells = &_player_start_spells[0].realms[sbr_Sorcery].spells[0];
+        realm_color = SORCERY_BLUE;
+        Selection_Realm = sbr_Sorcery;
+    }
+    if(m_select_spells_realm == sbr_Nature)
+    {
+        p_start_spells = &_player_start_spells[0].realms[sbr_Nature].spells[0];
+        realm_color = NATURE_GREEN;
+        Selection_Realm = sbr_Nature;
+    }
+    if(m_select_spells_realm == sbr_Life)
+    {
+        p_start_spells = &_player_start_spells[0].realms[sbr_Life].spells[0];
+        realm_color = LIFE_WHITE;
+        Selection_Realm = sbr_Life;
+    }
+    if(m_select_spells_realm == sbr_Death)
+    {
+        p_start_spells = &_player_start_spells[0].realms[sbr_Death].spells[0];
+        realm_color = DEATH_PURPLE;
+        Selection_Realm = sbr_Death;
+    }
+
+    for(itr = 0; itr < 5; itr++)
+    {
+        realm_colors[itr] = realm_color;
+    }
+
+    strcpy(section_title_string, cnst_Spell_Select_0);
+    strcat(section_title_string, realm_strings[Selection_Realm]);
+    strcat(section_title_string, cnst_Spell_Select_1);
+    Set_Font_Colors_15(4, &realm_colors[0]);
+    Set_Font_Style_Shadow_Down(4, 15, ST_NULL, ST_NULL);
+    Print_Centered(241, 6, section_title_string);  /* "Select " [] " Spells" */
+
+    FLIC_Draw(24, 10, wizard_portrait_segs[_players[0].wizard_id]);
+
+    spellrank_cnt = (_players[0].spellranks[m_select_spells_realm] - 1);
+
+    section_idx = 0;
+
+    Label_Box_Height = 39;
+
+    spellpicks_count = 0;
+
+    if(spellrank_cnt > 0)
+    {
+
+        spellrank_idx = (spellrank_cnt - 1);
+
+        /*
+            BEGIN:  Common
+        */
+        if(m_select_count_common[spellrank_idx] < 10)
+        {
+            // p_start_spells[m_select_count_common[spellrank_idx]] = 0;
+            // Warning	C6011	Dereferencing NULL pointer 'p_start_spells'. 	003_MoM	C:\STU\devel\ReMoM\MoM\src\NewGame.c	5505		
+            if(p_start_spells)
+            {
+                p_start_spells[m_select_count_common[spellrank_idx]] = spl_NONE;
+            }
+        }
+// ; copy the common spell selection to the display array,
+// ; marking empty slots as -1s instead of 0s
+        for(itr = 0; itr < 10; itr++)
+        {
+            // selected_spells[itr] = p_start_spells[itr];
+            // Warning	C6011	Dereferencing NULL pointer 'p_start_spells'. 	003_MoM	C:\STU\devel\ReMoM\MoM\src\NewGame.c	5577		
+            if(p_start_spells)
+            {
+                selected_spells[itr] = p_start_spells[itr];
+            }
+            if(selected_spells[itr] == spl_NONE)
+            {
+                selected_spells[itr] = ST_UNDEFINED;
+            }
+        }
+        if(
+            (m_select_count_common[spellrank_idx] > 0)
+            &&
+            (m_select_count_common[spellrank_idx] < 10)
+        )
+        {
+            spellpicks_count += m_select_count_common[spellrank_idx];
+            strcpy(section_title_string, rarity_strings[0]);
+            strcat(section_title_string, cnst_Spell_Select_2);
+            itoa(m_select_count_common[spellrank_idx], buffer, 10);
+            strcat(section_title_string, buffer);
+            Set_Font_Colors_15(3, &realm_colors[0]);
+            Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
+            Print(167, section_title_start_y[section_idx], section_title_string);
+            FLIC_Draw(167, section_box_start_y[section_idx], m_shared_pict_segs[section_idx]);
+            niu_selection_count = 0;
+            for(itr = 0; itr < 2; itr++)
+            {
+                for(itr2 = 0; itr2 < 5; itr2++)
+                {
+                    spell_idx = ( 0 + (Selection_Realm * NUM_SPELLS_PER_MAGIC_REALM) + (itr * 5) + itr2 + 1);
+                    Set_Font_Colors_15(0, &l_shadow_colors[0]);
+                    Print_Far((176 + (74 * itr)), (Label_Box_Height + (7 * itr2) + 1), spell_data_table[spell_idx].name);
+                    Display_Type = ST_UNDEFINED;
+                    // ; if the spell is in the display array, remove it from
+                    // ; there, change the display type, and increase the
+                    // ; selection count
+                    for(Selection_Index = 0; (m_select_count_common[spellrank_idx] > Selection_Index); Selection_Index++)
+                    {
+                        if(selected_spells[Selection_Index] == spell_idx)
+                        {
+                            niu_selection_count++;
+                            Display_Type = 1;
+                            selected_spells[Selection_Index] = ST_UNDEFINED;
+                            Selection_Index = m_select_count_common[spellrank_idx];
+                        }
+                    }
+                    if(Display_Type != ST_UNDEFINED)
+                    {
+                        Set_Font_Colors_15(0, &l_selected_colors[0]);
+                        FLIC_Draw((169 + (74 * itr)), (Label_Box_Height + (itr2 * 7) + 1), _selection_marker_seg);
+                        spellpicks_count--;
+                    }
+                    else
+                    {
+                        Set_Font_Colors_15(0, &l_deselected_colors[0]);
+                    }
+                    Print_Far((175 + (74 * itr)), (Label_Box_Height + (7 * itr2) + 1), spell_data_table[spell_idx].name);
+                }
+            }
+            section_idx++;
+        }
+        /*
+            END:  Common
+        */
+        /*
+            BEGIN:  Uncommon
+        */
+        if(m_select_count_uncommon[spellrank_idx] < 2)
+        {
+            // p_start_spells[(10 + m_select_count_uncommon[spellrank_idx])] = 0;
+            // Warning	C6011	Dereferencing NULL pointer 'p_start_spells'. 	003_MoM	C:\STU\devel\ReMoM\MoM\src\NewGame.c	5603		
+            if(p_start_spells)
+            {
+                p_start_spells[(10 + m_select_count_uncommon[spellrank_idx])] = 0;
+            }
+        }
+// ; copy the uncommon spell selection to the display
+// ; array, marking empty slots as -1s instead of 0s
+        for(itr = 0; itr < 2; itr++)
+        {
+            selected_spells[itr] = p_start_spells[(10 + itr)];
+            if(selected_spells[itr] == 0)
+            {
+                selected_spells[itr] = ST_UNDEFINED;
+            }
+        }
+        if(m_select_count_uncommon[spellrank_idx] > 0)
+        {
+// ; draw the uncommon spell selection box complete with
+// ; the current selection highlights and tick marks
+            spellpicks_count += m_select_count_uncommon[spellrank_idx];
+            Label_Box_Height = (39 + (section_idx * 51));
+            strcpy(section_title_string, rarity_strings[1]);
+            strcat(section_title_string, cnst_Spell_Select_2);
+            itoa(m_select_count_uncommon[spellrank_idx], buffer, 10);
+            strcat(section_title_string, buffer);
+            Set_Font_Colors_15(3, &realm_colors[0]);
+            Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
+            Print(167, section_title_start_y[section_idx], section_title_string);
+            FLIC_Draw(167, section_title_start_y[section_idx], m_shared_pict_segs[section_idx]);
+            niu_selection_count = 0;
+            for(itr = 0; itr < 2; itr++)
+            {
+                for(itr2 = 0; itr2 < 5; itr2++)
+                {
+                    spell_idx = (10 + (Selection_Realm * NUM_SPELLS_PER_MAGIC_REALM) + (itr * 5) + itr2 + 1);
+                    Set_Font_Colors_15(0, &l_shadow_colors[0]);
+                    Print_Far((176 + (74 * itr)), (Label_Box_Height + (7 * itr2) + 1), spell_data_table[spell_idx].name);
+                    Display_Type = ST_UNDEFINED;
+                    // ; if the spell is in the display array, remove it from
+                    // ; there, change the display type, and increase the
+                    // ; selection count
+                    for(Selection_Index = 0; (m_select_count_uncommon[spellrank_idx] > Selection_Index); Selection_Index++)
+                    {
+                        if(selected_spells[Selection_Index] == spell_idx)
+                        {
+                            niu_selection_count++;
+                            Display_Type = 1;
+                            selected_spells[Selection_Index] = ST_UNDEFINED;
+                            Selection_Index = m_select_count_uncommon[spellrank_idx];
+                        }
+                    }
+                    if(Display_Type != ST_UNDEFINED)
+                    {
+                        Set_Font_Colors_15(0, &l_selected_colors[0]);
+                        FLIC_Draw((169 + (74 * itr)), (Label_Box_Height + (itr2 * 7) + 1), _selection_marker_seg);
+                        spellpicks_count--;
+                    }
+                    else
+                    {
+                        Set_Font_Colors_15(0, &l_deselected_colors[0]);
+                    }
+                    Print_Far((175 + (74 * itr)), (Label_Box_Height + (7 * itr2) + 1), spell_data_table[spell_idx].name);
+                }
+            }
+            section_idx++;
+        }
+        /*
+            END:  Uncommon
+        */
+        /*
+            BEGIN:  Rare
+        */
+        if(m_select_count_rare[spellrank_idx] < 1)
+        {
+            // p_start_spells[(12 + m_select_count_rare[spellrank_idx])] = 0;
+            // Warning	C6011	Dereferencing NULL pointer 'p_start_spells'. 	003_MoM	C:\STU\devel\ReMoM\MoM\src\NewGame.c	5624		
+            if(p_start_spells)
+            {
+                p_start_spells[(12 + m_select_count_rare[spellrank_idx])] = 0;
+            }
+        }
+// ; copy the rare spell selection to the display array,
+// ; marking empty slots as -1s instead of 0s
+        for(itr = 0; itr < 1; itr++)
+        {
+            selected_spells[itr] = p_start_spells[(12 + itr)];
+            if(selected_spells[itr] == 0)
+            {
+                selected_spells[itr] = ST_UNDEFINED;
+            }
+        }
+        if(m_select_count_rare[spellrank_idx] > 0)
+        {
+// ; draw the rare spell selection box complete with
+// ; the current selection highlights and tick marks
+            spellpicks_count += m_select_count_rare[spellrank_idx];
+            Label_Box_Height = (39 + (section_idx * 51));
+            strcpy(section_title_string, rarity_strings[2]);
+            strcat(section_title_string, cnst_Spell_Select_2);
+            itoa(m_select_count_rare[spellrank_idx], buffer, 10);
+            strcat(section_title_string, buffer);
+            Set_Font_Colors_15(3, &realm_colors[0]);
+            Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
+            Print(167, section_title_start_y[section_idx], section_title_string);
+            FLIC_Draw(167, section_title_start_y[section_idx], m_shared_pict_segs[section_idx]);
+            niu_selection_count = 0;
+            for(itr = 0; itr < 2; itr++)
+            {
+                for(itr2 = 0; itr2 < 5; itr2++)
+                {
+                    spell_idx = (20 + (Selection_Realm * NUM_SPELLS_PER_MAGIC_REALM) + (itr * 5) + itr2 + 1);
+                    Set_Font_Colors_15(0, &l_shadow_colors[0]);
+                    Print_Far((176 + (74 * itr)), (Label_Box_Height + (7 * itr2) + 1), spell_data_table[spell_idx].name);
+                    Display_Type = ST_UNDEFINED;
+                    // ; if the spell is in the display array, remove it from
+                    // ; there, change the display type, and increase the
+                    // ; selection count
+                    for(Selection_Index = 0; (m_select_count_rare[spellrank_idx] > Selection_Index); Selection_Index++)
+                    {
+                        if(selected_spells[Selection_Index] == spell_idx)
+                        {
+                            niu_selection_count++;
+                            Display_Type = 1;
+                            selected_spells[Selection_Index] = ST_UNDEFINED;
+                            Selection_Index = m_select_count_rare[spellrank_idx];
+                        }
+                    }
+                    if(Display_Type != ST_UNDEFINED)
+                    {
+                        Set_Font_Colors_15(0, &l_selected_colors[0]);
+                        FLIC_Draw((169 + (74 * itr)), (Label_Box_Height + (itr2 * 7) + 1), _selection_marker_seg);
+                        spellpicks_count--;
+                    }
+                    else
+                    {
+                        Set_Font_Colors_15(0, &l_deselected_colors[0]);
+                    }
+                    Print_Far((175 + (74 * itr)), (Label_Box_Height + (7 * itr2) + 1), spell_data_table[spell_idx].name);
+                }
+            }
+            section_idx++;
+        }
+        /*
+            END:  Rare
+        */
+    }
+
+}
+
 
 // MGC  o50p25
-void WIZ_CopyDefault__WIP(int16_t wizard_id)
+/**
+ * @brief Copies a preset wizard profile into the human player record.
+ *
+ * @details
+ * Applies the selected preset wizard's identity, spell ranks, special ability,
+ * default name, and starting spell list to player slot 0.
+ *
+ * Processing flow:
+ * 1) Sets `_players[0].wizard_id` from `wizard_id`.
+ * 2) Copies preset realm book counts (`nature`, `sorcery`, `chaos`, `life`,
+ *    `death`) into `_players[0].spellranks[]`.
+ * 3) Rebuilds retort flags in `_players[0].alchemy` so only the preset's
+ *    `special` retort index is enabled.
+ * 4) Clears all 5 realm start-spell arrays for player 0.
+ * 5) For each realm with `spellranks > 1`, copies default common/uncommon spell
+ *    entries from `_default_spells` using `m_select_count_common/U` thresholds.
+ * 6) Copies preset wizard name into `_players[0].name`.
+ *
+ * @param wizard_id Preset wizard index into `_wizard_presets_table`.
+ *
+ * @return void
+ *
+ * @note This routine overwrites existing player-0 wizard customization state,
+ *       including name, retorts, ranks, and starting spell selections.
+ * @note Assumes `wizard_id` is a valid preset index and global spell tables are
+ *       initialized.
+ */
+void Human_Player_Wizard_Profile(int16_t wizard_id)
 {
     int8_t * wsa_ptr = 0;
     int16_t itr = 0;  // _SI_
@@ -4820,15 +5871,15 @@ void WIZ_CopyDefault__WIP(int16_t wizard_id)
     spellranks = _players[0].spellranks[sbr_Nature];
     if(spellranks > 1)
     {
-        for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
+        for(itr = 0; (m_select_count_common[spellranks] - 2) > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Nature].spells[( 0 + itr)] = _default_spells[sbr_Nature].spells[(0 + itr)];
         }
-        for(itr = 0; (TBL_SpellsPerBook_U[spellranks] - 2) > itr; itr++)
+        for(itr = 0; (m_select_count_uncommon[spellranks] - 2) > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Nature].spells[(10 + itr)] = _default_spells[sbr_Nature].spells[(10 + itr)];
         }
-        if((TBL_SpellsPerBook_U[spellranks] - 2) > 0)
+        if((m_select_count_uncommon[spellranks] - 2) > 0)
         {
             _player_start_spells[0].realms[sbr_Nature].spells[(12 + itr)] = _default_spells[sbr_Nature].spells[(12 + itr)];
         }
@@ -4837,15 +5888,15 @@ void WIZ_CopyDefault__WIP(int16_t wizard_id)
     spellranks = _players[0].spellranks[sbr_Sorcery];
     if(spellranks > 1)
     {
-        for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
+        for(itr = 0; (m_select_count_common[spellranks] - 2) > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Sorcery].spells[( 0 + itr)] = _default_spells[sbr_Sorcery].spells[(0 + itr)];
         }
-        for(itr = 0; (TBL_SpellsPerBook_U[spellranks] - 2) > itr; itr++)
+        for(itr = 0; (m_select_count_uncommon[spellranks] - 2) > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Sorcery].spells[(10 + itr)] = _default_spells[sbr_Sorcery].spells[(10 + itr)];
         }
-        if((TBL_SpellsPerBook_U[spellranks] - 2) > 0)
+        if((m_select_count_uncommon[spellranks] - 2) > 0)
         {
             _player_start_spells[0].realms[sbr_Sorcery].spells[(12 + itr)] = _default_spells[sbr_Sorcery].spells[(12 + itr)];
         }
@@ -4854,15 +5905,15 @@ void WIZ_CopyDefault__WIP(int16_t wizard_id)
     spellranks = _players[0].spellranks[sbr_Chaos];
     if(spellranks > 1)
     {
-        for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
+        for(itr = 0; (m_select_count_common[spellranks] - 2) > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Chaos].spells[( 0 + itr)] = _default_spells[sbr_Chaos].spells[(0 + itr)];
         }
-        for(itr = 0; (TBL_SpellsPerBook_U[spellranks] - 2) > itr; itr++)
+        for(itr = 0; (m_select_count_uncommon[spellranks] - 2) > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Chaos].spells[(10 + itr)] = _default_spells[sbr_Chaos].spells[(10 + itr)];
         }
-        if((TBL_SpellsPerBook_U[spellranks] - 2) > 0)
+        if((m_select_count_uncommon[spellranks] - 2) > 0)
         {
             _player_start_spells[0].realms[sbr_Chaos].spells[(12 + itr)] = _default_spells[sbr_Chaos].spells[(12 + itr)];
         }
@@ -4871,15 +5922,15 @@ void WIZ_CopyDefault__WIP(int16_t wizard_id)
     spellranks = _players[0].spellranks[sbr_Life];
     if(spellranks > 1)
     {
-        for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
+        for(itr = 0; (m_select_count_common[spellranks] - 2) > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Life].spells[( 0 + itr)] = _default_spells[sbr_Life].spells[(0 + itr)];
         }
-        for(itr = 0; (TBL_SpellsPerBook_U[spellranks] - 2) > itr; itr++)
+        for(itr = 0; (m_select_count_uncommon[spellranks] - 2) > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Life].spells[(10 + itr)] = _default_spells[sbr_Life].spells[(10 + itr)];
         }
-        if((TBL_SpellsPerBook_U[spellranks] - 2) > 0)
+        if((m_select_count_uncommon[spellranks] - 2) > 0)
         {
             _player_start_spells[0].realms[sbr_Life].spells[(12 + itr)] = _default_spells[sbr_Life].spells[(12 + itr)];
         }
@@ -4888,15 +5939,15 @@ void WIZ_CopyDefault__WIP(int16_t wizard_id)
     spellranks = _players[0].spellranks[sbr_Death];
     if(spellranks > 1)
     {
-        for(itr = 0; (TBL_SpellsPerBook_C[spellranks] - 2) > itr; itr++)
+        for(itr = 0; (m_select_count_common[spellranks] - 2) > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Death].spells[( 0 + itr)] = _default_spells[sbr_Death].spells[(0 + itr)];
         }
-        for(itr = 0; (TBL_SpellsPerBook_U[spellranks] - 2) > itr; itr++)
+        for(itr = 0; (m_select_count_uncommon[spellranks] - 2) > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Death].spells[(10 + itr)] = _default_spells[sbr_Death].spells[(10 + itr)];
         }
-        if((TBL_SpellsPerBook_U[spellranks] - 2) > 0)
+        if((m_select_count_uncommon[spellranks] - 2) > 0)
         {
             _player_start_spells[0].realms[sbr_Death].spells[(12 + itr)] = _default_spells[sbr_Death].spells[(12 + itr)];
         }

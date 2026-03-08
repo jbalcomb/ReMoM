@@ -230,19 +230,19 @@ int16_t Newgame_Screen_4__WIP(void);
 void Newgame_Screen_4_Draw__WIP(void);
 
 // MGC  o50p21
-void Newgame_Screen5__WIP(void);
+int16_t Newgame_Screen_5(void);
 
 // MGC  o50p22
-// GAME_SpellSel_GUI()
+void Newgame_Screen_5_Spell_Fields(void);
 
 // MGC  o50p23
-// SCRN_Draw_NewScr5()
+void Newgame_Screen_5_Draw(void);
 
 // MGC  o50p24
-// SCRN_Draw_NewScr5_2()
+void Newgame_Screen_5_Draw_Spells(void);
 
 // MGC  o50p25
-void WIZ_CopyDefault__WIP(int16_t wizard_id);
+void Human_Player_Wizard_Profile(int16_t wizard_id);
 
 // MGC  o50p26
 // Fade_Out()
