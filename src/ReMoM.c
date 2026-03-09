@@ -133,6 +133,8 @@ int main(int argc, char * argv[])
     HWND Handle = GetConsoleWindow();
     #pragma warning(suppress : 6031)
     freopen("CON", "w", stdout);
+    #pragma warning(suppress : 6031)
+    freopen("CON", "w", stderr);
 
 //     // https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/freopen-wfreopen?view=msvc-170
 //     FILE *stream;
