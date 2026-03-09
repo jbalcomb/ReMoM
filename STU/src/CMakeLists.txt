@@ -13,6 +13,7 @@ set(STU_SOURCES
     STU_UTIL.c
     STU_WAV.c
     STU_WRLD.c
+    ${PROJECT_SOURCE_DIR}/ext/stu_compat.c
 )
 
 add_library(STU STATIC ${STU_SOURCES})
