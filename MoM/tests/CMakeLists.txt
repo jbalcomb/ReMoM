@@ -17,6 +17,8 @@ add_executable(MOM_tests
     test_Set_Upper_Lair_Guardian_Count.cpp
     test_Square_Food2_NewGame.cpp
     test_STR_ListSeparator.cpp
+    test_Create_Lair.cpp
+    test_Generate_Lairs.cpp
  )
 
 target_include_directories(MOM_tests PRIVATE

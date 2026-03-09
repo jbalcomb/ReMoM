@@ -523,6 +523,23 @@ void AI_Continent_Eval__WIP(int16_t player_idx)
 
         stack_wp = _LAIRS[itr].wp;
 
+        // DONT  if(
+        // DONT      (stack_wp < 0)
+        // DONT      ||
+        // DONT      (stack_wp >= NUM_PLANES)
+        // DONT      ||
+        // DONT      (_LAIRS[itr].wx < 0)
+        // DONT      ||
+        // DONT      (_LAIRS[itr].wx >= WORLD_WIDTH)
+        // DONT      ||
+        // DONT      (_LAIRS[itr].wy < 0)
+        // DONT      ||
+        // DONT      (_LAIRS[itr].wy >= WORLD_HEIGHT)
+        // DONT  )
+        // DONT  {
+        // DONT      continue;
+        // DONT  }
+
         landmass_idx = _landmasses[((stack_wp * WORLD_SIZE) + (_LAIRS[itr].wy * WORLD_WIDTH) + _LAIRS[itr].wx)];
 
         if(landmass_idx < NUM_LANDMASSES)

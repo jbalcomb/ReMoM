@@ -8,10 +8,13 @@
 #include "STU_TYPE.h"
 
 #include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_DEF.h"      /* GET_TERRAIN_TYPE() */
 #include "../../MoM/src/TerrType.h"
 
 #include "STU_VLD.h"
+
+#include <stdio.h>
 
 
 
@@ -129,4 +132,161 @@ void Validate_Terrain_Types(void)
             }
         }
     }
+}
+
+static int16_t Validate_Lair_Fail_Range(int16_t lair_idx, const char * field_name, int32_t value, int32_t min_value, int32_t max_value)
+{
+    fprintf(stderr, "ERROR: Validate_Lair_Record(): lair_idx=%d has invalid %s=%ld (expected [%ld, %ld])\n",
+        lair_idx,
+        field_name,
+        (long)value,
+        (long)min_value,
+        (long)max_value);
+
+    return ST_FALSE;
+}
+
+static int16_t Validate_Lair_Fail_Message(int16_t lair_idx, const char * message)
+{
+    fprintf(stderr, "ERROR: Validate_Lair_Record(): lair_idx=%d %s\n", lair_idx, message);
+
+    return ST_FALSE;
+}
+
+int16_t Validate_Lair_Record(int16_t lair_idx)
+{
+    const struct s_LAIR * lair = NULL;
+    int16_t item_idx = 0;
+
+    if(_LAIRS == NULL)
+    {
+        fprintf(stderr, "ERROR: Validate_Lair_Record(): _LAIRS is NULL\n");
+        return ST_FALSE;
+    }
+
+    if((lair_idx < 0) || (lair_idx >= NUM_LAIRS))
+    {
+        fprintf(stderr, "ERROR: Validate_Lair_Record(): lair_idx=%d out of range [0, %d)\n", lair_idx, NUM_LAIRS);
+        return ST_FALSE;
+    }
+
+    lair = &_LAIRS[lair_idx];
+
+    if((lair->intact != ST_FALSE) && (lair->intact != ST_TRUE))
+    {
+        return Validate_Lair_Fail_Range(lair_idx, "intact", lair->intact, ST_FALSE, ST_TRUE);
+    }
+
+    if(lair->intact == ST_FALSE)
+    {
+        return ST_TRUE;
+    }
+
+    if((lair->wx < 0) || (lair->wx >= WORLD_WIDTH))
+    {
+        return Validate_Lair_Fail_Range(lair_idx, "wx", lair->wx, 0, (WORLD_WIDTH - 1));
+    }
+
+    if((lair->wy < 0) || (lair->wy >= WORLD_HEIGHT))
+    {
+        return Validate_Lair_Fail_Range(lair_idx, "wy", lair->wy, 0, (WORLD_HEIGHT - 1));
+    }
+
+    if((lair->wp < 0) || (lair->wp >= NUM_PLANES))
+    {
+        return Validate_Lair_Fail_Range(lair_idx, "wp", lair->wp, 0, (NUM_PLANES - 1));
+    }
+
+    if((lair->type < lt_NONE) || (lair->type > lt_Fallen_Temple))
+    {
+        return Validate_Lair_Fail_Range(lair_idx, "type", lair->type, lt_NONE, lt_Fallen_Temple);
+    }
+
+    if(lair->guard1_count > 9)
+    {
+        return Validate_Lair_Fail_Range(lair_idx, "guard1_count", lair->guard1_count, 0, 9);
+    }
+
+    if(lair->guard2_count > 9)
+    {
+        return Validate_Lair_Fail_Range(lair_idx, "guard2_count", lair->guard2_count, 0, 9);
+    }
+
+    if((lair->guard1_count + lair->guard2_count) > 9)
+    {
+        fprintf(stderr,
+            "ERROR: Validate_Lair_Record(): lair_idx=%d guard count overflow (%u + %u > 9)\n",
+            lair_idx,
+            (unsigned int)lair->guard1_count,
+            (unsigned int)lair->guard2_count);
+        return ST_FALSE;
+    }
+
+    if((lair->guard1_unit_type == 0) && (lair->guard1_count != 0))
+    {
+        return Validate_Lair_Fail_Message(lair_idx, "guard1_count must be 0 when guard1_unit_type is 0");
+    }
+
+    if((lair->guard2_unit_type == 0) && (lair->guard2_count != 0))
+    {
+        return Validate_Lair_Fail_Message(lair_idx, "guard2_count must be 0 when guard2_unit_type is 0");
+    }
+
+    if(lair->Loot_Gold < 0)
+    {
+        return Validate_Lair_Fail_Range(lair_idx, "Loot_Gold", lair->Loot_Gold, 0, 32767);
+    }
+
+    if(lair->Loot_Mana < 0)
+    {
+        return Validate_Lair_Fail_Range(lair_idx, "Loot_Mana", lair->Loot_Mana, 0, 32767);
+    }
+
+    if((lair->Spell_n_Special < 0) || (lair->Spell_n_Special > 6))
+    {
+        return Validate_Lair_Fail_Range(lair_idx, "Spell_n_Special", lair->Spell_n_Special, 0, 6);
+    }
+
+    if((lair->Item_Count < 0) || (lair->Item_Count > 3))
+    {
+        return Validate_Lair_Fail_Range(lair_idx, "Item_Count", lair->Item_Count, 0, 3);
+    }
+
+    for(item_idx = 0; item_idx < lair->Item_Count; item_idx++)
+    {
+        if(lair->Item_Values[item_idx] <= 0)
+        {
+            fprintf(stderr,
+                "ERROR: Validate_Lair_Record(): lair_idx=%d has non-positive Item_Values[%d]=%d while Item_Count=%d\n",
+                lair_idx,
+                item_idx,
+                lair->Item_Values[item_idx],
+                lair->Item_Count);
+            return ST_FALSE;
+        }
+    }
+
+    return ST_TRUE;
+}
+
+int16_t Validate_All_Lairs(void)
+{
+    int16_t lair_idx = 0;
+
+    if(_LAIRS == NULL)
+    {
+        fprintf(stderr, "ERROR: Validate_All_Lairs(): _LAIRS is NULL\n");
+        return ST_FALSE;
+    }
+
+    for(lair_idx = 0; lair_idx < NUM_LAIRS; lair_idx++)
+    {
+        if(Validate_Lair_Record(lair_idx) != ST_TRUE)
+        {
+            fprintf(stderr, "ERROR: Validate_All_Lairs(): failed at lair_idx=%d\n", lair_idx);
+            return ST_FALSE;
+        }
+    }
+
+    return ST_TRUE;
 }

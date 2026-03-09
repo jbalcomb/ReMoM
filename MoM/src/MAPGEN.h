@@ -69,7 +69,7 @@ void Build_Landmass(int16_t wp, int16_t wx, int16_t wy);
 void Generate_Lairs(void);
 
 // MGC o51p17
-void NEWG_CreateEncounter__WIP(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t UU, int16_t lair_type, int16_t budget);
+void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t UU, int16_t lair_type, int16_t budget);
 
 // MGC o51p18
 // UU_UNIT_RandomRacial()

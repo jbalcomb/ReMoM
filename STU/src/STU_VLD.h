@@ -10,6 +10,10 @@ extern "C" {
 
 
 void Validate_Units_Status(int8_t status);
+void Validate_Terrain_Types(void);
+
+int16_t Validate_Lair_Record(int16_t lair_idx);
+int16_t Validate_All_Lairs(void);
 
 
 

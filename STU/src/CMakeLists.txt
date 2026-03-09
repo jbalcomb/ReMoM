@@ -11,6 +11,7 @@ set(STU_SOURCES
     STU_SND.c
     STU_TST.c
     STU_UTIL.c
+    STU_VLD.c
     STU_WAV.c
     STU_WRLD.c
     ${PROJECT_SOURCE_DIR}/ext/stu_compat.c
