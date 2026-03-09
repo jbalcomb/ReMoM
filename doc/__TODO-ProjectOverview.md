@@ -100,12 +100,14 @@ Init_New_Game_()
 [x] New Game Screen 1 - Wizard Selection;   Title: "Select Wizard";         // HLPENTRY.LBX, 032  ""  "Wizard Selection Help"
 [x] New Game Screen 2 - Wizard Portrait;    Title: "Select Portrait";       // HLPENTRY.LBX, 031  ""  "Wizard Picture Select"
 [x] New Game Screen 3 - Wizards Name;       Title: "Wizard's Name";         N/A
-[-] New Game Screen 4 - ...custom wizard creation                           // HLPENTRY.LBX, 033  ""  "Wizard Creation Help"
-[ ] New Game Screen 5 - ...custom ¿ ?                                       // HLPENTRY.LBX, 036  ""  "Select Spells Help"
+[x] New Game Screen 4 - ...custom wizard creation                           // HLPENTRY.LBX, 033  ""  "Wizard Creation Help"
+[x] New Game Screen 5 - ...custom ¿ ?                                       // HLPENTRY.LBX, 036  ""  "Select Spells Help"
 [x] New Game Screen 6 - Wizards Race        Title: "Select Race";           // HLPENTRY.LBX, 035  ""  "Wizard Race Help"
 [x] New Game Screen 7 - Wizards Banner      Title: "Select Banner";     // NEWGAME.LBX, 046  FLAGSNEW   // HLPENTRY.LBX, 030  ""  "Banner Selection Help"
 
-...finish NewGame, fixup Linux/Clang, remove all WIPs/dunders...remove all "retort"...get a life...
+fixup Linux/Clang
+remove all WIPs/dunders
+remove all "retort"
 
 [ ] Naming Things Is Hard^Hard - 'New Game'
 

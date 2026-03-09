@@ -45,6 +45,29 @@ ReMoM_Add_Target_Support_Files(MOM_tests
 )
 
 gtest_discover_tests(MOM_tests
+    TEST_LIST MOM_TEST_DISCOVERED
     PROPERTIES
         ENVIRONMENT_MODIFICATION PATH=path_list_prepend:${REMOM_TEST_PATH_ENV}
 )
+
+add_test(
+    NAME MOM_tests_stage_runtime
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BIN_DIR=$<TARGET_FILE_DIR:MOM_tests>
+        -DSDL2_DLL_FILE_PATH=${SDL2_DLL_FILE_PATH}
+        -DSDL2D_DLL_FILE_PATH=${SDL2D_DLL_FILE_PATH}
+        -DGMOCK_DLL_FILE_PATH=${GMOCK_DLL_FILE_PATH}
+        -DSDL2_MIXER_DLL_FILE_PATH=${SDL2_MIXER_DLL_FILE_PATH}
+        -DDISABLE_AUDIO=${DISABLE_AUDIO}
+        -P ${CMAKE_SOURCE_DIR}/cmake/stage_test_runtime.cmake
+)
+
+set_tests_properties(MOM_tests_stage_runtime PROPERTIES
+    FIXTURES_SETUP MOM_tests_runtime
+)
+
+if(MOM_TEST_DISCOVERED)
+    set_tests_properties(${MOM_TEST_DISCOVERED} PROPERTIES
+        FIXTURES_REQUIRED MOM_tests_runtime
+    )
+endif()

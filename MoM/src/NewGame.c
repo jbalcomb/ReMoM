@@ -4792,7 +4792,7 @@ void Newgame_Screen_4_Draw__WIP(void)
  */
 int16_t Newgame_Screen_5(void)
 {
-    int16_t Error_Message = 0;
+    char message[150] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Realm_Order_Array[5] = { 0, 0, 0, 0, 0 };
     int16_t * p_default_spells = 0;
     int16_t Click_Processed = 0;
@@ -5155,8 +5155,8 @@ int16_t Newgame_Screen_5(void)
             {
                 switch(NEWG_PickError)
                 {
-                    case 1: { strcpy(Error_Message, cnst_Pick_Error_0); } break;
-                    case 2: { strcpy(Error_Message, cnst_Pick_Error_6); } break;
+                    case 1: { strcpy(message, cnst_Pick_Error_0); } break;
+                    case 2: { strcpy(message, cnst_Pick_Error_6); } break;
                 }
             }
 

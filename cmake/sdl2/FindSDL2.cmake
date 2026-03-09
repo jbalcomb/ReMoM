@@ -351,28 +351,36 @@ if(SDL2_FOUND)
   # SDL2::Core target
   if(SDL2_LIBRARY AND NOT TARGET SDL2::Core)
 
-    add_library(SDL2::Core UNKNOWN IMPORTED)
-
     get_filename_component(SDL2_LIBRARY_DIRECTORY ${SDL2_LIBRARY} DIRECTORY)
-    set(SDL2_DLL_FILE_PATH ${imported_location_dir})
-    string(APPEND SDL2_DLL_FILE_PATH "/SDL2.dll")
+    set(SDL2_DLL_FILE_PATH "${SDL2_LIBRARY_DIRECTORY}/SDL2.dll")
+    set(SDL2D_DLL_CANDIDATE "${SDL2_LIBRARY_DIRECTORY}/SDL2d.dll")
 
-    set_target_properties(SDL2::Core PROPERTIES
-                          IMPORTED_LOCATION "${SDL2_LIBRARY}" # Run-time component (DLL, .so, .dylib, etc)
-                          IMPORTED_IMPLIB "${SDL2_LIBRARY}" # Link-time component (.lib, .a, etc)
-                          IMPORTED_LOCATION_DEBUG "${SDL2_LIBRARY_DIRECTORY}/SDL2.lib"
-                          IMPORTED_IMPLIB_DEBUG "${SDL2_LIBRARY}/SDL2.lib"
-                          INTERFACE_INCLUDE_DIRECTORIES "${SDL2_INCLUDE_DIR}"
-    )
-    set(SDL2_LIBRARIES $<IF:$<CONFIG:Debug>,"${SDL2_LIBRARY_DIRECTORY}/SDL2.lib","${SDL2_LIBRARY_DIRECTORY}/SDL2.dll">   $<IF:$<CONFIG:Debug>,"${SDL2_LIBRARY_DIRECTORY}/SDL2.lib","${SDL2_LIBRARY_DIRECTORY}/SDL2.dll">)
-#     set_target_properties(SDL2::Core PROPERTIES
-#                           IMPORTED_LOCATION "${SDL2_LIBRARY}"
-#                           INTERFACE_INCLUDE_DIRECTORIES "${SDL2_INCLUDE_DIR}"
-#                           IMPORTED_IMPLIB="SDL2.lib"
-#                           IMPORTED_IMPLIB_DEBUG="SDL2.lib"
-#     )
-#                          IMPORTED_IMPLIB_DEBUG "${SDL2_LIBRARY}/SDL2.lib"
-#                          IMPORTED_LOCATION_DEBUG "${SDL2_PATH}/SDL2.dll"
+    if(WIN32)
+      # SHARED IMPORTED so CMake distinguishes the .lib (IMPORTED_IMPLIB) from the .dll (IMPORTED_LOCATION)
+      add_library(SDL2::Core SHARED IMPORTED)
+
+      set_target_properties(SDL2::Core PROPERTIES
+                            IMPORTED_LOCATION "${SDL2_LIBRARY_DIRECTORY}/SDL2.dll"
+                            IMPORTED_IMPLIB "${SDL2_LIBRARY}"
+                            INTERFACE_INCLUDE_DIRECTORIES "${SDL2_INCLUDE_DIR}"
+      )
+
+      # If a debug DLL exists next to the release one, set Debug-specific properties
+      if(EXISTS "${SDL2D_DLL_CANDIDATE}")
+        set_target_properties(SDL2::Core PROPERTIES
+                              IMPORTED_LOCATION_DEBUG "${SDL2D_DLL_CANDIDATE}"
+                              IMPORTED_IMPLIB_DEBUG "${SDL2_LIBRARY}"
+        )
+      endif()
+    else()
+      add_library(SDL2::Core UNKNOWN IMPORTED)
+      set_target_properties(SDL2::Core PROPERTIES
+                            IMPORTED_LOCATION "${SDL2_LIBRARY}"
+                            INTERFACE_INCLUDE_DIRECTORIES "${SDL2_INCLUDE_DIR}"
+      )
+    endif()
+
+    set(SDL2_LIBRARIES "${SDL2_LIBRARY}")
 
     if(APPLE)
       # For OS X, SDL2 uses Cocoa as a backend so it must link to Cocoa.
