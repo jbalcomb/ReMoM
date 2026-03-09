@@ -66,6 +66,8 @@
 
 #include <stdlib.h>
 
+#include "../ext/stu_compat.h"
+
 #include <SDL_stdinc.h>
 
 // #define SDL_MAIN_HANDLED
@@ -74,9 +76,7 @@
 #include <SDL_mixer.h>
 #endif
 
-#ifdef _WIN32
-#include <direct.h>
-#endif
+/* <direct.h> replaced by stu_compat.h */
 
 
 int MOM_main(int argc, char** argv);
@@ -177,23 +177,23 @@ int main(int argc, char * argv[])
     {
         printf("FATAL: GetCurrentDirectoryA()\n");
         dbg_prn("FATAL: GetCurrentDirectoryA()\n");
-        __debugbreak();
+        stu_debugbreak();
     }
 #endif
 #endif
 #ifdef STU_DEBUG
 #ifdef _WIN32
     char path[MAX_PATH] = { 0 };
-    if(_getcwd(path, sizeof(path)) != NULL)
+    if(stu_getcwd(path, sizeof(path)) != NULL)
     {
-        printf("_getcwd(): %s\n", path);
-        dbg_prn("_getcwd(): %s\n", path);
+        printf("stu_getcwd(): %s\n", path);
+        dbg_prn("stu_getcwd(): %s\n", path);
     }
     else
     {
-        printf("FATAL: _getcwd()\n");
-        dbg_prn("FATAL: _getcwd()\n");
-        __debugbreak();
+        printf("FATAL: stu_getcwd()\n");
+        dbg_prn("FATAL: stu_getcwd()\n");
+        stu_debugbreak();
     }
 #endif
 #endif
@@ -475,7 +475,7 @@ int MOM_main(int argc, char** argv)
     {
         if(magic_set.Have_Save[itr_savegams] != ST_FALSE)
         {
-            SDL_itoa(itr_savegams, found_file, 10);
+            stu_itoa(itr_savegams, found_file, 10);
             strcpy(file_name, str_SAVE_NAME);
             strcat(file_name, found_file);
             strcat(file_name, str_SAVE_EXT);
