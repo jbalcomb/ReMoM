@@ -1778,6 +1778,7 @@ void Spellbook_Add_Page(int16_t group_spell_count, int16_t group_idx, char * tit
     int16_t same_group;
     int16_t page_spell_counter;
     int16_t itr_spellbook_spell_list;
+    int16_t prev_page_first_spell;
 
     page_spell_counter = 0;
 
@@ -1829,17 +1830,19 @@ void Spellbook_Add_Page(int16_t group_spell_count, int16_t group_idx, char * tit
 
                 if((m_spellbook_page_count % 2) == 1)  /* ¿ odd pages ? ¿ {0,1} or {1,2} ? */
                 {
-
+                    /* Copilot */  prev_page_first_spell = abs(m_spellbook_pages[(m_spellbook_page_count - 1)].spell[0]);
                     if(magic_set.spell_book_ordering != ST_TRUE)
                     {
-                        if(spell_data_table[m_spellbook_pages[(m_spellbook_page_count - 1)].spell[0]].magic_realm != group_idx)
+                        // if(spell_data_table[m_spellbook_pages[(m_spellbook_page_count - 1)].spell[0]].magic_realm != group_idx)
+                        /* Copilot */  if(spell_data_table[prev_page_first_spell].magic_realm != group_idx)
                         {
                             strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
                         }
                     }
                     else
                     {
-                        if(spell_data_table[m_spellbook_pages[(m_spellbook_page_count - 1)].spell[0]].spell_book_category != group_idx)
+                        // if(spell_data_table[m_spellbook_pages[(m_spellbook_page_count - 1)].spell[0]].spell_book_category != group_idx)
+                        /* Copilot */  if(spell_data_table[prev_page_first_spell].spell_book_category != group_idx)
                         {
                             strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
                         }
