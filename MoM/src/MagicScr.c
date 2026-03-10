@@ -70,19 +70,19 @@ extern char aFinalWar[];
 int16_t m_alchemy_conversion_direction = e_GoldToPower;
 
 // WZD dseg:3480
-char aRvl[] = "RVL";
+char str_RVL[] = "RVL";
 
 // WZD dseg:3483
-// borrowed null-terminator from aRvl
+// borrowed null-terminator from str_RVL
 char str_empty_string__ovr073[]  = "";
 
 // WZD dseg:3484
-char aPwr[] = "PWR";
+char str_PWR[] = "PWR";
 
-// ¿ Add_Scroll_Field() for research_stave_pct_pos borrows 'R' as offset [aPwr+2] ?
+// ¿ Add_Scroll_Field() for research_stave_pct_pos borrows 'R' as offset [str_PWR+2] ?
 
 // WZD dseg:3488
-char aDestin[] = "DESTIN";
+char str_DESTIN[] = "DESTIN";
 
 // WZD dseg:348F
 char cnst_HOTKEY_X_5 = 'X';
@@ -91,7 +91,7 @@ char cnst_HOTKEY_X_5 = 'X';
 char cnst_HOTKEY_Esc7 = '\x1B';
 
 // WZD dseg:3493
-char aWriteItUpGiveMeASav[] = "Write it up, give me a save game.";
+char str_WriteItUpGiveMeASaveGame[] = "Write it up, give me a save game.";
 
 // WZD dseg:3493
 char aDoYouWishToCancelYour[] = "Do you wish to cancel your \x02";
@@ -537,9 +537,9 @@ void Magic_Screen(void)
 
     leave_screen_flag = ST_FALSE;
 
-    multihotkey_RVL = Add_Multi_Hot_Key_Field(aRvl);
-    multihotkey_PWR = Add_Multi_Hot_Key_Field(aPwr);
-    multihotkey_DESTIN = Add_Multi_Hot_Key_Field(aDestin);
+    multihotkey_RVL = Add_Multi_Hot_Key_Field(str_RVL);
+    multihotkey_PWR = Add_Multi_Hot_Key_Field(str_PWR);
+    multihotkey_DESTIN = Add_Multi_Hot_Key_Field(str_DESTIN);
 
 
     while(leave_screen_flag == ST_FALSE)
@@ -555,24 +555,29 @@ void Magic_Screen(void)
 
         hotkey_ESC = Add_Hot_Key('\x1B');  // cnst_HOTKEY_Esc7
 
+        dbg_prn("MagicScr: pre-GetInput RVL_field=%d hotkey=%d(0x%02X '%c') string_pos=%d/%d multi_active=%d\n", multihotkey_RVL, (int)p_fields[multihotkey_RVL].hotkey, (int)p_fields[multihotkey_RVL].hotkey, (p_fields[multihotkey_RVL].hotkey >= 32 && p_fields[multihotkey_RVL].hotkey < 127) ? (char)p_fields[multihotkey_RVL].hotkey : '.', p_fields[multihotkey_RVL].string_pos, p_fields[multihotkey_RVL].string_len, multi_hotkey_active_field);
+
         input_field_idx = Get_Input();
 
+        if(input_field_idx != 0) { dbg_prn("MagicScr: Get_Input returned field_idx=%d  (RVL=%d, PWR=%d, DESTIN=%d)\n", input_field_idx, multihotkey_RVL, multihotkey_PWR, multihotkey_DESTIN); }
 
         if(input_field_idx == multihotkey_RVL)
         {
+            dbg_prn("MagicScr: Cheat_Reveal() triggered\n");
             Cheat_Reveal();
             screen_changed = ST_TRUE;
         }
 
         if(input_field_idx == multihotkey_PWR)
         {
+            dbg_prn("MagicScr: Cheat_Power() triggered\n");
             Cheat_Power();
             screen_changed = ST_TRUE;
         }
 
         if(input_field_idx == multihotkey_DESTIN)
         {
-            Warn1(aWriteItUpGiveMeASav);  // "Write it up, give me a save game."
+            Warn1(str_WriteItUpGiveMeASaveGame);  // "Write it up, give me a save game."
             Assign_Auto_Function(Magic_Screen_Draw, 1);
             Deactivate_Help_List();
             Set_Magic_Screen_Help_List();
@@ -643,9 +648,9 @@ void Magic_Screen(void)
                 Set_Magic_Screen_Help_List();
                 screen_changed = ST_TRUE;
                 Clear_Fields();
-                multihotkey_RVL = Add_Multi_Hot_Key_Field(aRvl);
-                multihotkey_PWR = Add_Multi_Hot_Key_Field(aPwr);
-                multihotkey_DESTIN = Add_Multi_Hot_Key_Field(aDestin);
+                multihotkey_RVL = Add_Multi_Hot_Key_Field(str_RVL);
+                multihotkey_PWR = Add_Multi_Hot_Key_Field(str_PWR);
+                multihotkey_DESTIN = Add_Multi_Hot_Key_Field(str_DESTIN);
             }
         }
         
@@ -677,9 +682,9 @@ void Magic_Screen(void)
             Set_Magic_Screen_Help_List();
             _page_flip_effect = 3;
             Clear_Fields();
-            multihotkey_RVL = Add_Multi_Hot_Key_Field(aRvl);
-            multihotkey_PWR = Add_Multi_Hot_Key_Field(aPwr);
-            multihotkey_DESTIN = Add_Multi_Hot_Key_Field(aDestin);
+            multihotkey_RVL = Add_Multi_Hot_Key_Field(str_RVL);
+            multihotkey_PWR = Add_Multi_Hot_Key_Field(str_PWR);
+            multihotkey_DESTIN = Add_Multi_Hot_Key_Field(str_DESTIN);
             screen_changed = ST_TRUE;
         }
         /*
@@ -706,9 +711,9 @@ void Magic_Screen(void)
                 Deactivate_Help_List();
                 Set_Magic_Screen_Help_List();
                 Clear_Fields();
-                multihotkey_RVL = Add_Multi_Hot_Key_Field(aRvl);
-                multihotkey_PWR = Add_Multi_Hot_Key_Field(aPwr);
-                multihotkey_DESTIN = Add_Multi_Hot_Key_Field(aDestin);
+                multihotkey_RVL = Add_Multi_Hot_Key_Field(str_RVL);
+                multihotkey_PWR = Add_Multi_Hot_Key_Field(str_PWR);
+                multihotkey_DESTIN = Add_Multi_Hot_Key_Field(str_DESTIN);
                 screen_changed = ST_TRUE;
             }
         }
@@ -1405,7 +1410,7 @@ void Magic_Screen_Add_Fields(void)
 
     //                         min_value, max_value, min_valid, max_valid, width, height
     Add_Scroll_Field( 32, 102, 0, 50, 0, 50, 5, 50, &mana_stave_pct_pos,     'M', ST_UNDEFINED);  // cnst_HOTKEY_M_3
-    Add_Scroll_Field( 79, 102, 0, 50, 0, 50, 5, 50, &research_stave_pct_pos, 'R', ST_UNDEFINED);  // (offset aPwr+2)
+    Add_Scroll_Field( 79, 102, 0, 50, 0, 50, 5, 50, &research_stave_pct_pos, 'R', ST_UNDEFINED);  // (offset str_PWR+2)
     Add_Scroll_Field(126, 102, 0, 50, 0, 50, 5, 50, &skill_stave_pct_pos,    'S', ST_UNDEFINED);  // cnst_HOTKEY_S_2
 
     button_magic_ok       = Add_Button_Field(291, 181, str_empty_string__ovr073, magic_ok_button_seg,      'O', ST_UNDEFINED);  // cnst_HOTKEY_O_7

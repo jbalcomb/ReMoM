@@ -1138,12 +1138,9 @@ MoO2
             switch(mouse_button)
             {
                 case 0: { field_num =          0; goto Done; } break;
-    // warning: explicitly assigning value of variable of type 'int16_t' (aka 'short') to itself [-Wself-assign]
-    //             case 1: { field_num =  field_num; goto Done; } break;
+                case 1: { /* field_num =  field_num; */ goto Done; } break;  /* NOTE(JimBalcomb,20260310): Dasm shows this, but VS complains about self assignment */
                 case 2: { field_num = -field_num; goto Done; } break;
             }        
-
-
         
         }  /* END:  if(Mouse_Button() != ST_FALSE) */
         else if(Mouse_Buffer() != ST_FALSE)
@@ -1156,7 +1153,6 @@ MoO2
             */
             if(mouse_button == ST_RIGHT_BUTTON)
             {
-
 
                 if(
                     (help_list_active != ST_FALSE)
@@ -1190,34 +1186,22 @@ MoO2
             */
 
             l_mx = Mouse_Buffer_X();
-
             l_my = Mouse_Buffer_Y();
-            
             field_num = 0;
-
             Unused_Local = ST_UNDEFINED;
-
             character = 0;
-
             Check_Mouse_Shape(l_mx, l_my);
-
             pointer_offset = Get_Pointer_Offset();
-            
             for(alt_field_num = 1; alt_field_num < fields_count; alt_field_num++)
             {
-
                 xmin = p_fields[alt_field_num].x1;
-                
-                ymin = p_fields[alt_field_num].x1;
-
+                ymin = p_fields[alt_field_num].y1;
                 xmax = p_fields[alt_field_num].x2;
-                
-                ymax = p_fields[alt_field_num].x2;
-                
+                ymax = p_fields[alt_field_num].y2;
                 if(
                     ((l_mx + pointer_offset) >= xmin)
                     &&
-                    ((l_mx + pointer_offset) <= xmin)
+                    ((l_mx + pointer_offset) <= xmax)
                     &&
                     ((l_my + pointer_offset) >= ymin)
                     &&
@@ -1226,7 +1210,6 @@ MoO2
                 {
                     field_num = alt_field_num;
                 }
-
             }
 
             if(
@@ -1235,13 +1218,9 @@ MoO2
                 (p_fields[field_num].type != ft_ContinuousStringInput)
             )
             {
-
                 auto_input_variable = field_num;
-
                 Push_Field_Down(field_num, l_mx, l_my);
-
                 Quick_Call_Auto_Function();
-   
             }
 
             if(field_num != 0)
@@ -1312,17 +1291,11 @@ MoO2
             
             if(field_num != 0)
             {
-
                 // HERE: the MB path calls Mouse_Buffer()
-
                 Mouse_Buffer2();
-                
                 last_button_x = l_mx;
-                
                 last_button_y = l_my;
-
                 last_button_number = mouse_button;
-
             }
 
             if(field_num != 0)

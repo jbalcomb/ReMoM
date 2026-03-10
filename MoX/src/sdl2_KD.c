@@ -112,6 +112,14 @@ uint8_t Read_Key(void)
         key_num = kilgore_key_code;
     }
 
+    /* CLAUDE */  /* DOS Alt+key scancodes are UPPERCASE(character) + 95; match that for multi-hotkey support (e.g., Alt+R,V,L cheat codes) */
+    /* CLAUDE */  if ((kilgore_key_value & MOX_MOD_ALT) && kilgore_character >= 'A' && kilgore_character <= 'z')
+    /* CLAUDE */  {
+    /* CLAUDE */      char alt_char = kilgore_character;
+    /* CLAUDE */      if (alt_char >= 'a' && alt_char <= 'z') { alt_char -= 32; }
+    /* CLAUDE */      key_num = (uint16_t)alt_char + 95;
+    /* CLAUDE */  }
+
     return (uint8_t)key_num;  // TODO  why/how key_num is diff from return or kilgore or KBD_GET
 }
 

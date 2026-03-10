@@ -7,6 +7,8 @@
 
 #include "Keyboard.h"
 
+#include "../../STU/src/STU_DBG.h"
+
 
 // WZD dseg:8240                                                 ? BEGIN: Mouse Buffer - Initialized Data ?
 // WZD dseg:824C  MGC dseg:4D1E
@@ -86,6 +88,13 @@ uint8_t Interpret_Keyboard_Input(int16_t * field_num)
 
     UPPERCASE(character);
 
+    dbg_prn(
+        "IKI: raw=%d(0x%02X '%c') upper=%d(0x%02X '%c') multi_active=%d\n",
+        (int)original_character,
+        (int)original_character,
+        (original_character >= 32 && original_character < 127) ? original_character : '.', (int)character, (int)character, (character >= 32 && character < 127) ? character : '.',
+        multi_hotkey_active_field
+    );
 
     /*
         Active, check MultiHotKey Field
@@ -98,13 +107,16 @@ uint8_t Interpret_Keyboard_Input(int16_t * field_num)
         else
         {
             _SI_field_idx = multi_hotkey_active_field;
+            dbg_prn("IKI: Active multi-hotkey field=%d, hotkey=%d(0x%02X '%c'), character=%d(0x%02X), char-95=%d(0x%02X)\n", _SI_field_idx, (int)p_fields[_SI_field_idx].hotkey, (int)p_fields[_SI_field_idx].hotkey, (p_fields[_SI_field_idx].hotkey >= 32 && p_fields[_SI_field_idx].hotkey < 127) ? (char)p_fields[_SI_field_idx].hotkey : '.', (int)character, (int)character, (int)(uint8_t)(character - 95), (int)(uint8_t)(character - 95));
             character -= 95;  // e.g., convert Alt-A to A
             if(character == p_fields[_SI_field_idx].hotkey)
             {
+                dbg_prn("IKI: Active multi-hotkey MATCHED (char-95=%d == hotkey=%d)\n", (int)character, (int)p_fields[_SI_field_idx].hotkey);
                 character += 95;
             }
             else
             {
+                dbg_prn("IKI: Active multi-hotkey NO MATCH (char-95=%d != hotkey=%d)\n", (int)character, (int)p_fields[_SI_field_idx].hotkey);
                 character += 95;
                 _SI_field_idx = fields_count;
             }
@@ -119,13 +131,34 @@ uint8_t Interpret_Keyboard_Input(int16_t * field_num)
         {
             multi_hotkey_active_field = 0;
             _SI_field_idx = KD_prev_field_idx + 1;
-            while(((p_fields[_SI_field_idx].hotkey != character) || (p_fields[_SI_field_idx].type == ft_MultiHotKey)) && (_SI_field_idx != fields_count))
+            while(
+                (
+                    (p_fields[_SI_field_idx].hotkey != character)
+                    ||
+                    (p_fields[_SI_field_idx].type == ft_MultiHotKey)
+                )
+                &&
+                (_SI_field_idx != fields_count)
+            )
             {
+
                 if(p_fields[_SI_field_idx].type == ft_MultiHotKey)
                 {
+                    dbg_prn(
+                        "IKI: Scan field=%d type=MultiHotKey hotkey=%d(0x%02X '%c') char=%d(0x%02X) char-95=%d(0x%02X)\n",
+                        _SI_field_idx,
+                        (int)p_fields[_SI_field_idx].hotkey,
+                        (int)p_fields[_SI_field_idx].hotkey,
+                        (p_fields[_SI_field_idx].hotkey >= 32 && p_fields[_SI_field_idx].hotkey < 127) ? (char)p_fields[_SI_field_idx].hotkey : '.',
+                        (int)character,
+                        (int)character,
+                        (int)(uint8_t)(character - 95),
+                        (int)(uint8_t)(character - 95)
+                    );
                     character -= 95;  // e.g., convert Alt-A to A
                     if(character == p_fields[_SI_field_idx].hotkey)
                     {
+                        dbg_prn("IKI: Scan MATCHED field=%d\n", _SI_field_idx);
                         character += 95;
                         break;
                     }
@@ -201,15 +234,19 @@ uint8_t Interpret_Keyboard_Input(int16_t * field_num)
         {
             strcpy(temp_string, p_fields[_SI_field_idx].string);
             p_fields[_SI_field_idx].string_pos++;
+            dbg_prn("IKI: MultiHotKey field=%d string=\"%s\" string_pos=%d/%d\n", _SI_field_idx, temp_string, p_fields[_SI_field_idx].string_pos, p_fields[_SI_field_idx].string_len);
             if(p_fields[_SI_field_idx].string_pos < p_fields[_SI_field_idx].string_len)
             {
                 p_fields[_SI_field_idx].hotkey = temp_string[p_fields[_SI_field_idx].string_pos];
                 multi_hotkey_active_field = _SI_field_idx;
+                dbg_prn("IKI: Partial match, next hotkey='%c'(0x%02X), active_field=%d\n", (char)p_fields[_SI_field_idx].hotkey, (int)p_fields[_SI_field_idx].hotkey, multi_hotkey_active_field);
                 *field_num = 0;
                 character = 0;
+                /* CLAUDE */  clear_hotkeys = ST_FALSE;  /* Dasm: missing from reconstruction; don't reset multi-hotkey fields mid-sequence */
             }
             else
             {
+                dbg_prn("IKI: FULL MATCH! Returning field=%d for \"%s\"\n", _SI_field_idx, temp_string);
                 p_fields[_SI_field_idx].string_pos = 0;
                 p_fields[_SI_field_idx].hotkey = temp_string[0];
                 multi_hotkey_active_field = 0;
