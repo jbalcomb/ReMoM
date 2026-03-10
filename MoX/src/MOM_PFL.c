@@ -227,4 +227,6 @@ void Platform_Video_Update(void)
 
     SDL_RenderPresent(sdl2_renderer);
 
+    /* CLAUDE */  DBG_Frame_Reset();
+
 }

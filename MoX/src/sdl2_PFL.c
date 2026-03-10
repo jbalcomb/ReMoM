@@ -16,6 +16,7 @@
 #include <SDL.h>
 
 #include <stdbool.h>
+#include <stdio.h>   /* CLAUDE: debug */
 #include <stdlib.h>
 #include <inttypes.h>
 
@@ -306,9 +307,44 @@ void Platform_Window_Event(SDL_WindowEvent *sdl2_window_event)
 
 }
 
+/* CLAUDE: debug — frame timing and event/call counters */
+static uint64_t dbg_frame_start_ticks = 0;
+static uint32_t dbg_handler_calls = 0;
+static uint32_t dbg_events_key = 0;
+static uint32_t dbg_events_mousedown = 0;
+static uint32_t dbg_events_mouseup = 0;
+static uint32_t dbg_events_mousemotion = 0;
+static uint32_t dbg_events_window = 0;
+static uint32_t dbg_events_other = 0;
+static uint32_t dbg_mouse_updates = 0;
+static uint32_t dbg_frame_number = 0;
+
+void DBG_Frame_Reset(void)
+{
+    uint64_t now = SDL_GetTicks64();
+    uint64_t frametime = now - dbg_frame_start_ticks;
+    if(dbg_frame_start_ticks != 0 && (dbg_frame_number % 60) == 0)
+    {
+        fprintf(stderr, "DBG frame=%u  frametime=%llu ms  handler_calls=%u  events: key=%u mdown=%u mup=%u mmove=%u win=%u other=%u  mouse_updates=%u\n", dbg_frame_number, (unsigned long long)frametime, dbg_handler_calls, dbg_events_key, dbg_events_mousedown, dbg_events_mouseup, dbg_events_mousemotion, dbg_events_window, dbg_events_other, dbg_mouse_updates);
+    }
+    dbg_frame_start_ticks = now;
+    dbg_handler_calls = 0;
+    dbg_events_key = 0;
+    dbg_events_mousedown = 0;
+    dbg_events_mouseup = 0;
+    dbg_events_mousemotion = 0;
+    dbg_events_window = 0;
+    dbg_events_other = 0;
+    dbg_mouse_updates = 0;
+    dbg_frame_number++;
+}
+/* CLAUDE: end debug */
+
 void Platform_Event_Handler(void)
 {
     SDL_Event sdl2_event;
+
+    /* CLAUDE */  dbg_handler_calls++;
 
     SDL_PumpEvents();
 
@@ -322,11 +358,13 @@ void Platform_Event_Handler(void)
             case SDL_KEYUP:
             case SDL_TEXTINPUT:
             {
+                /* CLAUDE */  dbg_events_key++;
                 Platform_Keyboard_Event(&sdl2_event);
             } break;
 
             case SDL_MOUSEBUTTONDOWN:
             {
+                /* CLAUDE */  dbg_events_mousedown++;
                 if(sdl2_event.button.state == SDL_PRESSED)
                 {
                     if(platform_mouse_input_enabled)
@@ -352,7 +390,13 @@ void Platform_Event_Handler(void)
 
             case SDL_MOUSEBUTTONUP:
             {
+                /* CLAUDE */  dbg_events_mouseup++;
                 // platform_mouse_button_status = 0;
+            } break;
+
+            case SDL_MOUSEMOTION:
+            {
+                /* CLAUDE */  dbg_events_mousemotion++;
             } break;
 
             case SDL_QUIT:
@@ -363,6 +407,7 @@ void Platform_Event_Handler(void)
 
             case SDL_WINDOWEVENT:
             {
+                /* CLAUDE */  dbg_events_window++;
                 if(sdl2_event.window.windowID == kilgore_video_get_window_id())
                 {
                     Platform_Window_Event(&sdl2_event.window);
@@ -371,7 +416,7 @@ void Platform_Event_Handler(void)
 
             default:
             {
-
+                /* CLAUDE */  dbg_events_other++;
             } break;
 
         }
@@ -396,6 +441,7 @@ void Platform_Event_Handler(void)
             // // kilgore_mouse_move(x, y);
             // User_Mouse_Handler(platform_mouse_button_status, x, y);
             Platform_Update_Mouse_Position(x, y);
+            /* CLAUDE */  dbg_mouse_updates++;
         }
     }
 
@@ -403,6 +449,6 @@ void Platform_Event_Handler(void)
     //     exit(EXIT_FAILURE);
     // }
 
-    SDL_Delay(10);
+    /* CLAUDE */  /* Dasm: SDL_Delay(10) removed; vsync (SDL_RENDERER_PRESENTVSYNC) already provides frame pacing via SDL_RenderPresent(); the delay here stacked on every call to Platform_Event_Handler() (multiple times per frame from Get_Input and Mouse_Button), adding 30-50ms of cumulative lag per frame */
 
 }

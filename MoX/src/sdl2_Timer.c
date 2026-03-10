@@ -72,74 +72,22 @@ void Mark_Time(void)
 // 110 calls-sites, return-value never used?  bool Release_Time(int ticks)
 void Release_Time(int ticks)
 {
-    // // return Release_Time_Seconds(MOO_TICKS_TO_US(ticks));
-    // // #define MOO_TICKS_TO_US(_t_) (((_t_) * 5_000_000) / 91)
-    // Release_Time_Seconds(MOO_TICKS_TO_US(ticks));
+    /* CLAUDE */  /* Original had two loops: a bare busy-wait (no event processing, ~55ms dead time) followed by a frame-cap loop that only ran once. */
+    /* CLAUDE */  /* Replaced with a single loop that processes events and updates the cursor during the wait, so the mouse stays responsive. */
 
-    // double elapsed_seconds = (double)(end - start) / SDL_GetPerformanceFrequency();
-    // double elapsed_microseconds = elapsed_seconds * 1000000;
+    uint64_t sdl2_tick_end;
 
-//     uint64_t now;
-//     int32_t diff;
-//     now = Read_System_Clock_Timer();
-//     diff = now - delay_start;
-//     uint32_t current_tick_count = 0;
-//     do
-//     {
-//         current_tick_count = Read_System_Clock_Timer();
-//     } while(current_tick_count < tick_count + ticks);
+    sdl2_ticks_release_time = Platform_Get_Millies();
+    sdl2_tick_end = sdl2_ticks_mark_time + (ticks * MILLISECONDS_PER_FRAME);  /* ~ IBM-PC - 55 ms per BIOS timer tick */
 
-    uint64_t sdl2_tick_count = 0;
-    uint64_t sdl2_tick_end = 0;
-
-    sdl2_ticks_release_time = Platform_Get_Millies();  // the number of milliseconds since SDL library initialization
-    // DELETEME  dbg_prn("sdl2_ticks_release_time: %llu\n", sdl2_ticks_release_time);
-    // DELETEME  dbg_prn("(sdl2_ticks_release_time - sdl2_ticks_startup): %llu\n", (sdl2_ticks_release_time - sdl2_ticks_startup));
-
-    sdl2_tick_end = (sdl2_ticks_mark_time + (ticks * MILLISECONDS_PER_FRAME));  // ~ IBM-PC - 55 ms per BIOS timer tick
-
-    do
+    while(Platform_Get_Millies() < sdl2_tick_end)
     {
-        sdl2_tick_count = Platform_Get_Millies();
+        /* CLAUDE */  SDL_PumpEvents();  /* keep SDL event queue alive without processing (Platform_Event_Handler draws cursor into buffer, conflicting with Platform_Maybe_Move_Mouse's save/draw/present/restore cycle) */
+        Platform_Maybe_Move_Mouse();
+        Platform_Sleep_Millies(1);
     }
-    while(sdl2_tick_count < (sdl2_ticks_mark_time + (ticks * MILLISECONDS_PER_FRAME)));
 
-    sdl2_frame_count += 1;
-    // DELETEME  dbg_prn("sdl2_frame_count: %llu\n", sdl2_frame_count);
-
-    // cap the frame rate by *sleeping* for the remaining frame time
-
-// This is where we do the actual frame rate capping.
-// When we started the frame, we started a timer to keep track of how much time it took to output this frame. In order for this program not to run too fast, each frame must take a certain amount of time. Since 20 frames are being shown per second, each frame must take no less than 1/20th of a second. If the frame rate is at 60 FPS, each frame must take no less than 1/60th of a second. Since this demo is running at 20 FPS, that means we should spend 50 milliseconds (1000 milliseconds / 20 frames) per frame.
-// To regulate the frame rate, first we check if the frame timer is less than the time allowed per frame. If it's more, it means we're either on time or behind schedule so we don't have time to wait. If it is less, then we use SDL_Delay() to sleep the rest of the frame time.
-// So if the frame timer in this program is at 20 milliseconds we sleep for 30 milliseconds. If the frame timer is at 40 milliseconds, we sleep for 10 milliseconds, etc, etc.
-
-    int itr_ticks;
-    uint64_t current_millies;
-    for(itr_ticks = ticks; itr_ticks > 0; itr_ticks--)
-    {
-
-        do
-        {
-            
-            current_millies = Platform_Get_Millies();
-
-            // (MAYBE) MOVE MOUSE
-            Platform_Maybe_Move_Mouse();
-
-            // CAP FRAME-RATE
-            if((Platform_Get_Millies() - sdl2_ticks_mark_time) < 1000 / FRAMES_PER_SECOND)
-            {
-                Platform_Sleep_Millies((1000 / FRAMES_PER_SECOND) - (Platform_Get_Millies() - sdl2_ticks_mark_time));
-            }
-
-        }
-        while(sdl2_tick_count < (sdl2_ticks_mark_time + (itr_ticks * MILLISECONDS_PER_FRAME)));
-
-        sdl2_frame_count += 1;
-        // DELETEME  dbg_prn("sdl2_frame_count: %llu\n", sdl2_frame_count);
-    
-    }
+    sdl2_frame_count += ticks;
 }
 
 // ui_delay_us_or_click()
