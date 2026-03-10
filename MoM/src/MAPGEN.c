@@ -2548,16 +2548,20 @@ void Generate_Lairs(void)
                     break;
                 }
             }
-            if(wp == ARCANUS_PLANE)
+            /* CLAUDE bugfix: original code called Create_Lair even when distance check broke out of the loop */
+            if((42 + itr) <= itr2)
             {
+                if(wp == ARCANUS_PLANE)
+                {
 
-                IDK = (50 + (Random(29) * 50));
+                    IDK = (50 + (Random(29) * 50));
+                }
+                else
+                {
+                    IDK = (100 + (Random(24) * 100));
+                }
+                Create_Lair(((2 * NUM_TOWERS) + NUM_NODES + itr), wp, wx, wy, IDK, 4, IDK);
             }
-            else
-            {
-                IDK = (100 + (Random(24) * 100));
-            }
-            Create_Lair((((2 * NUM_TOWERS) + NUM_NODES) + itr), wp, wx, wy, IDK, 4, IDK);
         }
     }
     // ; create 32 weak random encounters on non-ocean map squares
@@ -2568,22 +2572,25 @@ void Generate_Lairs(void)
         wy = (2 + Random(34));
         if(Square_Is_Ocean_NewGame(wx, wy, wp) != ST_TRUE)
         {
-            for(itr2 = 0; ((itr + (((2 * NUM_TOWERS) + NUM_NODES) + Strong_Lair_Amt)) > itr2); itr2++)
+            for(itr2 = 0; (((2 * NUM_TOWERS) + NUM_NODES + Strong_Lair_Amt + itr) > itr2); itr2++)
             {
                 if(Delta_XY_With_Wrap(wx, wy, _LAIRS[itr2].wx, _LAIRS[itr2].wy, WORLD_WIDTH) < 2)
                 {
                     break;
                 }
             }
-            if(wp == ARCANUS_PLANE)
+            if(((2 * NUM_TOWERS) + NUM_NODES + Strong_Lair_Amt + itr) <= itr2)
             {
-                IDK = (Random(10) * 10);
+                if(wp == ARCANUS_PLANE)
+                {
+                    IDK = (Random(10) * 10);
+                }
+                else
+                {
+                    IDK = (Random(20) * 10);
+                }
+                Create_Lair(((2 * NUM_TOWERS) + NUM_NODES + Strong_Lair_Amt + itr), wp, wx, wy, IDK, 4, IDK);
             }
-            else
-            {
-                IDK = (Random(20) * 10);
-            }
-            Create_Lair((((2 * NUM_TOWERS) + NUM_NODES + Strong_Lair_Amt) + itr), wp, wx, wy, IDK, 4, IDK);
         }
     }
     // ; mark the last 3 records in the table as empty
@@ -3431,7 +3438,7 @@ void Simex_Autotiling(void)
                         (
                             (p_world_map[wp][(wy - 1)][(wx - 1)] >= _Mount0010)
                             &&
-                            (p_world_map[wp][(wy - 1)][(wx - 1)] >= _Mount1001)
+                            (p_world_map[wp][(wy - 1)][(wx - 1)] <= _Mount1001)
                         )
                     )
                     &&
@@ -3449,7 +3456,7 @@ void Simex_Autotiling(void)
                         (
                             (p_world_map[wp][(wy - 1)][wx] >= _Mount0010)
                             &&
-                            (p_world_map[wp][(wy - 1)][wx] >= _Mount1001)
+                            (p_world_map[wp][(wy - 1)][wx] <= _Mount1001)
                         )
                     )
                     &&
@@ -3465,7 +3472,7 @@ void Simex_Autotiling(void)
                         (
                             (p_world_map[wp][(wy - 1)][(wx + 1)] >= _Mount0010)
                             &&
-                            (p_world_map[wp][(wy - 1)][(wx + 1)] >= _Mount1001)
+                            (p_world_map[wp][(wy - 1)][(wx + 1)] <= _Mount1001)
                         )
                     )
                     &&
@@ -3483,7 +3490,7 @@ void Simex_Autotiling(void)
                         (
                             (p_world_map[wp][wy][(wx + 1)] >= _Mount0010)
                             &&
-                            (p_world_map[wp][wy][(wx + 1)] >= _Mount1001)
+                            (p_world_map[wp][wy][(wx + 1)] <= _Mount1001)
                         )
                     )
                     &&
@@ -3499,13 +3506,13 @@ void Simex_Autotiling(void)
                         (
                             (p_world_map[wp][(wy + 1)][(wx + 1)] >= _Mount0010)
                             &&
-                            (p_world_map[wp][(wy + 1)][(wx + 1)] >= _Mount1001)
+                            (p_world_map[wp][(wy + 1)][(wx + 1)] <= _Mount1001)
                         )
                     )
                     &&
                     ((wx + 1) < WORLD_WIDTH)
                     &&
-                    (wy < WORLD_HEIGHT)  // BUGBUG should be (wy + 1)
+                    (wy < WORLD_HEIGHT)  // KNOWNBUG should be (wy + 1)
                 )
                 {
 
@@ -3520,11 +3527,11 @@ void Simex_Autotiling(void)
                         (
                             (p_world_map[wp][(wy + 1)][wx] >= _Mount0010)
                             &&
-                            (p_world_map[wp][(wy + 1)][wx] >= _Mount1001)
+                            (p_world_map[wp][(wy + 1)][wx] <= _Mount1001)
                         )
                     )
                     &&
-                    (wy < WORLD_HEIGHT)  // BUGBUG should be (wy + 1)
+                    (wy < WORLD_HEIGHT)  // KNOWNBUG should be (wy + 1)
                 )
                 {
 
@@ -3539,13 +3546,13 @@ void Simex_Autotiling(void)
                         (
                             (p_world_map[wp][(wy + 1)][(wx - 1)] >= _Mount0010)
                             &&
-                            (p_world_map[wp][(wy + 1)][(wx - 1)] >= _Mount1001)
+                            (p_world_map[wp][(wy + 1)][(wx - 1)] <= _Mount1001)
                         )
                     )
                     &&
                     ((wx - 1) >= 0)
                     &&
-                    (wy < WORLD_HEIGHT)  // BUGBUG should be (wy + 1)
+                    (wy < WORLD_HEIGHT)  // KNOWNBUG should be (wy + 1)
                 )
                 {
                     mask += 64;
@@ -3557,7 +3564,7 @@ void Simex_Autotiling(void)
                         (
                             (p_world_map[wp][wy][(wx - 1)] >= _Mount0010)
                             &&
-                            (p_world_map[wp][wy][(wx - 1)] >= _Mount1001)
+                            (p_world_map[wp][wy][(wx - 1)] <= _Mount1001)
                         )
                     )
                     &&
@@ -3568,7 +3575,8 @@ void Simex_Autotiling(void)
                 }
                 if(mask > 0)
                 {
-                    terrain_subtype_index = terrtype[(512 + mask)];
+                    /* CLAUDE bugfix: was terrtype[(512 + mask)] — 512 is the byte offset (0x200), not the int16_t index; correct array index is 256 */
+                    terrain_subtype_index = terrtype[(256 + mask)];
                     p_world_map[wp][wy][wx] = terrain_subtype_index;
                 }
             }
@@ -3617,7 +3625,7 @@ void Simex_Autotiling(void)
                     &&
                     (
                         (p_world_map[wp][(wy - 1)][wx] < _Tundra00001000)
-                        &&
+                        ||
                         (p_world_map[wp][(wy - 1)][wx] > _TerType_Count)
                     )
                     &&
@@ -3637,7 +3645,7 @@ void Simex_Autotiling(void)
                     &&
                     (
                         (p_world_map[wp][(wy - 1)][adj_wx] < _Tundra00001000)
-                        &&
+                        ||
                         (p_world_map[wp][(wy - 1)][adj_wx] > _TerType_Count)
                     )
                     &&
@@ -3658,7 +3666,7 @@ void Simex_Autotiling(void)
                     &&
                     (
                         (p_world_map[wp][wy][adj_wx] < _Tundra00001000)
-                        &&
+                        ||
                         (p_world_map[wp][wy][adj_wx] > _TerType_Count)
                     )
                 )
@@ -3679,7 +3687,7 @@ void Simex_Autotiling(void)
                     &&
                     (
                         (p_world_map[wp][(wy + 1)][adj_wx] < _Tundra00001000)
-                        &&
+                        ||
                         (p_world_map[wp][(wy + 1)][adj_wx] > _TerType_Count)
                     )
                     &&
@@ -3697,7 +3705,7 @@ void Simex_Autotiling(void)
                     &&
                     (
                         (p_world_map[wp][(wy + 1)][wx] < _Tundra00001000)
-                        &&
+                        ||
                         (p_world_map[wp][(wy + 1)][wx] > _TerType_Count)
                     )
                     &&
@@ -3720,7 +3728,7 @@ void Simex_Autotiling(void)
                     &&
                     (
                         (p_world_map[wp][(wy + 1)][adj_wx] < _Tundra00001000)
-                        &&
+                        ||
                         (p_world_map[wp][(wy + 1)][adj_wx] > _TerType_Count)
                     )
                     &&
@@ -3740,7 +3748,7 @@ void Simex_Autotiling(void)
                     &&
                     (
                         (p_world_map[wp][wy][adj_wx] < _Tundra00001000)
-                        &&
+                        ||
                         (p_world_map[wp][wy][adj_wx] > _TerType_Count)
                     )
                 )
@@ -3778,7 +3786,7 @@ void Simex_Autotiling(void)
                      &&
                      (
                          (p_world_map[wp][(wy - 1)][(wx - 1)] >= _Hills_0010)
-                         ||
+                         &&
                          (p_world_map[wp][(wy - 1)][(wx - 1)] <= _1Hills2)
                      )
                      &&
@@ -3903,7 +3911,8 @@ void Simex_Autotiling(void)
                  // NOTE(Drake178): PATCHED here to fix the no-cardinal conversion that causes the tile to become Grassland instead
                  if(mask > 0)
                  {
-                    p_world_map[wp][wy][wx] = (16 + terrtype[(512 + mask)]);
+                    /* CLAUDE bugfix: was terrtype[(512 + mask)] — 512 is the byte offset (0x200), not the int16_t index; correct array index is 256 */
+                    p_world_map[wp][wy][wx] = (16 + terrtype[(256 + mask)]);
                  }
              }
          }
