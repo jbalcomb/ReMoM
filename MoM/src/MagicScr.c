@@ -555,22 +555,16 @@ void Magic_Screen(void)
 
         hotkey_ESC = Add_Hot_Key('\x1B');  // cnst_HOTKEY_Esc7
 
-        dbg_prn("MagicScr: pre-GetInput RVL_field=%d hotkey=%d(0x%02X '%c') string_pos=%d/%d multi_active=%d\n", multihotkey_RVL, (int)p_fields[multihotkey_RVL].hotkey, (int)p_fields[multihotkey_RVL].hotkey, (p_fields[multihotkey_RVL].hotkey >= 32 && p_fields[multihotkey_RVL].hotkey < 127) ? (char)p_fields[multihotkey_RVL].hotkey : '.', p_fields[multihotkey_RVL].string_pos, p_fields[multihotkey_RVL].string_len, multi_hotkey_active_field);
-
         input_field_idx = Get_Input();
-
-        if(input_field_idx != 0) { dbg_prn("MagicScr: Get_Input returned field_idx=%d  (RVL=%d, PWR=%d, DESTIN=%d)\n", input_field_idx, multihotkey_RVL, multihotkey_PWR, multihotkey_DESTIN); }
 
         if(input_field_idx == multihotkey_RVL)
         {
-            dbg_prn("MagicScr: Cheat_Reveal() triggered\n");
             Cheat_Reveal();
             screen_changed = ST_TRUE;
         }
 
         if(input_field_idx == multihotkey_PWR)
         {
-            dbg_prn("MagicScr: Cheat_Power() triggered\n");
             Cheat_Power();
             screen_changed = ST_TRUE;
         }
@@ -1157,7 +1151,7 @@ void Magic_Screen_Draw(void)
     strcat(GUI_String_1, cnst_Space_MP);
     Print_Right(54, 160, GUI_String_1);
 
-    if(_players[HUMAN_PLAYER_IDX].researching_spell_idx == 0)
+    if(_players[HUMAN_PLAYER_IDX].researching_spell_idx == spl_NONE)
     {
         Print(67, 100, cnst_NoSpell);
     }

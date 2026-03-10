@@ -3378,7 +3378,7 @@ void Spell_Research_Select(void)
 
     }
 
-    _page_flip_effect = 3;
+    _page_flip_effect = pfe_Dissolve;
 
     Set_Page_Off();
 
@@ -3476,6 +3476,7 @@ void Spell_Research_Select(void)
                 {
 
                     _players[HUMAN_PLAYER_IDX].researching_spell_idx = _players[HUMAN_PLAYER_IDX].research_spells[itr];
+                    assert(_players[HUMAN_PLAYER_IDX].researching_spell_idx > 0);
 
                     leave_screen = ST_TRUE;
 
@@ -3516,9 +3517,9 @@ void Spell_Research_Select(void)
 */
 void Check_Research_Spell_Is_Known(int16_t fade)
 {
-    int16_t spell_idx;  // _DI_
+    int16_t spell_idx = 0;
 
-    spell_idx = abs(_players[HUMAN_PLAYER_IDX].researching_spell_idx);
+    spell_idx = abs(_players[HUMAN_PLAYER_IDX].researching_spell_idx);  /* NOTE(JimBalcomb,20260310): this is the only place this ever gets abs()'d */
 
     if(_players[HUMAN_PLAYER_IDX].spells_list[((((spell_idx - 1) / NUM_SPELLS_PER_MAGIC_REALM) * NUM_SPELLS_PER_MAGIC_REALM) + ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM))] == sls_Known)
     {

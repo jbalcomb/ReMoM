@@ -102,15 +102,11 @@ void AI_Research_Picker__STUB(int16_t player_idx)
 
     if(Candidate_Count == 0)
     {
-
         _players[player_idx].researching_spell_idx = spl_NONE;
-
         _players[player_idx].research_ratio = 0;
         _players[player_idx].mana_ratio = 50;
         _players[player_idx].skill_ratio = 50;
-
         return;
-
     }
 
 
@@ -128,6 +124,7 @@ void AI_Research_Picker__STUB(int16_t player_idx)
     selection = Random(Candidate_Count);
 
     _players[player_idx].researching_spell_idx = ptr__players_research_spells[selection];
+    assert(_players[player_idx].researching_spell_idx >= spl_NONE);
 
 }
 
