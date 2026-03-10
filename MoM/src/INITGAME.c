@@ -1403,61 +1403,76 @@ void Init_Computer_Players_Wizard_Profile(void)
 
         }
 
-
-// WTF?!?
-        if(
-            !(
-                (
-                    (Myrran_AI_Count < 1)
-                    ||
-                    (Myrran_AI_Count > 2)
-                )
-                &&
-                (_difficulty > god_Normal)
-                &&
-                (_num_players > 3)
-            )
-        )
+        /*
+            KNOWNBUG  dead-code for changing Sss'ra
+            I don't see how this doesn't cause other issues
+        */
+        myrran_count = 0;
+        for(itr1 = 1; itr1 < _num_players; itr1++)
         {
-            
+            if(_players[itr1].myrran != ST_FALSE)
+            {
+                myrran_count++;
+            }
         }
-        else
-        {
-            // @@BeginTopLevelPlayerLoop
-        }
+        // if(
+        //     (
+        //         myrran_count < 1
+        //         ||
+        //         myrran_count > 2
+        //     )
+        //     &&
+        //     _difficulty > god_Normal
+        //     &&
+        //     _num_players > 3
+        // )
+        // {
+        //     continue;
+        // }
+        // // 9Ah 154d / sizeof(s_WIZARD_PRESET) = 7
+        // // {"Sss'ra",  4,  0,  0, 0,  4, wsa_Myrran},
+        // _wizard_presets_table[7].special = ST_UNDEFINED;
+        // _wizard_presets_table[7].chaos = 7;
+        // break;
 
     }
+// MGC  ovr056:15B0 C7 46 DE 00 00                                  mov     [bp+myrran_count], 0
+// MGC  ovr056:15B5 BF 01 00                                        mov     itr1, 1
+// MGC  ovr056:15B8 EB 14                                           jmp     short loc_538AE
+// MGC  ovr056:15BA                                                 ; ---------------------------------------------------------------------------
+// MGC  ovr056:15BA                                                 loc_5389A:                              ; CODE XREF: Init_Computer_Players_Wizard_Profile+894j
+// MGC  ovr056:15BA 8B C7                                           mov     ax, itr1
+// MGC  ovr056:15BC BA C8 04                                        mov     dx, size s_WIZARD
+// MGC  ovr056:15BF F7 EA                                           imul    dx
+// MGC  ovr056:15C1 8B D8                                           mov     bx, ax
+// MGC  ovr056:15C3 80 BF 6D 69 00                                  cmp     [_players.myrran+bx], e_ST_FALSE
+// MGC  ovr056:15C8 74 03                                           jz      short loc_538AD
+// MGC  ovr056:15CA FF 46 DE                                        inc     [bp+myrran_count]
+// MGC  ovr056:15CD                                                 loc_538AD:                              ; CODE XREF: Init_Computer_Players_Wizard_Profile+88Aj
+// MGC  ovr056:15CD 47                                              inc     itr1
+// MGC  ovr056:15CE                                                 loc_538AE:                              ; CODE XREF: Init_Computer_Players_Wizard_Profile+87Aj
+// MGC  ovr056:15CE 3B 3E D2 87                                     cmp     itr1, [_num_players]            ; NewGame: magic.opponents + 1
+// MGC  ovr056:15D2 7C E6                                           jl      short loc_5389A
+// MGC  ovr056:15D4 83 7E DE 01                                     cmp     [bp+myrran_count], 1
+// MGC  ovr056:15D8 7C 06                                           jl      short loc_538C0
+// MGC  ovr056:15DA 83 7E DE 02                                     cmp     [bp+myrran_count], 2
+// MGC  ovr056:15DE 7E 1D                                           jle     short loc_538DD
+// MGC  ovr056:15E0                                                 loc_538C0:                              ; CODE XREF: Init_Computer_Players_Wizard_Profile+89Aj
+// MGC  ovr056:15E0 83 3E CC 87 02                                  cmp     [_difficulty], god_Normal
+// MGC  ovr056:15E5 7E 16                                           jle     short loc_538DD
+// MGC  ovr056:15E7 83 3E D2 87 03                                  cmp     [_num_players], 3               ; NewGame: magic.opponents + 1
+// MGC  ovr056:15EC 7E 0F                                           jle     short loc_538DD
+// MGC  ovr056:15EE E9 7D F7                                        jmp     @@BeginTopLevelPlayerLoop
+// MGC  ovr056:15F1                                                 ; ---------------------------------------------------------------------------
+// MGC  ovr056:15F1 C7 06 7E 2B FF FF                               mov     [_wizard_presets_table.special+9Ah], e_ST_UNDEFINED
+// MGC  ovr056:15F7 C7 06 7C 2B 07 00                               mov     [_wizard_presets_table.chaos+9Ah], 7
+// MGC  ovr056:15FD                                                 loc_538DD:                              ; CODE XREF: Init_Computer_Players_Wizard_Profile+8A0j ...
+
+
+
 /*
 END:  ¿ jmp     @@BeginTopLevelPlayerLoop ?
 */
-
-    // ; count the AI wizards with the Myrran retort
-    Myrran_AI_Count = 0;
-    for(itr1 = 1; itr1 < _num_players; itr1++)
-    {
-
-        if(_players[itr1].myrran != ST_FALSE)
-        {
-        
-            Myrran_AI_Count++;
-
-        }
-
-    }
-
-// ovr056:15E7 83 3E D2 87 03                                  cmp     [_num_players], 3               ; NewGame: magic.opponents + 1
-// ovr056:15EC 7E 0F                                           jle     short loc_538DD
-// ovr056:15EC
-// ovr056:15EE E9 7D F7                                        jmp     loc_5304E
-// ovr056:15EE
-// ovr056:15F1                                                 ; ---------------------------------------------------------------------------
-// ovr056:15F1 C7 06 7E 2B FF FF                               mov     [_wizard_presets_table.special+9Ah], -1
-// ovr056:15F7 C7 06 7C 2B 07 00                               mov     [_wizard_presets_table.chaos+9Ah], 7
-// ovr056:15F7
-// ovr056:15FD
-// ovr056:15FD                                                 loc_538DD:                              ; CODE XREF: Init_Computer_Players_Wizard_Profile+8A0j ...
-// ovr056:15FD BE 01 00                                        mov     si, 1
-// ovr056:1600 E9 EC 00                                        jmp     loc_539CF
 
     // ; assign a banner to each wizard, trying first the
     // ; color corresponding to the first realm they have at
