@@ -798,12 +798,12 @@ void Init_Computer_Players_Wizard_Profile(void)
     int16_t Realm_Retort_Available = 0;
     int16_t Realm_Index = 0;
     int16_t Bookshelf[5] = { 0, 0, 0, 0, 0 };
-    int16_t Myrran_AI_Count = 0;
+    int16_t myrran_count = 0;
     int16_t Picks_Left = 0;
-    int16_t Banners_Taken[5] = { 0, 0, 0, 0, 0 };
+    int16_t banners[5] = { 0, 0, 0, 0, 0 };
     int8_t * wsa_ptr = 0;  // Pointer to 'Wizard Special Abilities'
     int16_t Book_Count = 0;
-    int16_t Random_Banner = 0;
+    int16_t random_banner = 0;
     int16_t Trait_Value = 0;  // NOTE: used to index wsa_ptr[]
     int16_t Picks_Used = 0;
     int16_t Trait_Type = 0;
@@ -811,16 +811,16 @@ void Init_Computer_Players_Wizard_Profile(void)
     int16_t Random_Result = 0;
     int16_t Portrait_Taken = 0;
     int16_t itr3 = 0;
-    int16_t itr1 = 0;  // _DI_
-    int16_t itr2 = 0;  // _SI_
+    int16_t itr1 = 0;
+    int16_t itr2 = 0;
 
     // ; clear the taken banner indicators
     for(itr1 = 0; itr1 < NUM_BANNER_SELECTIONS; itr1++)
     {
-        Banners_Taken[itr1] = ST_FALSE;
+        banners[itr1] = ST_FALSE;
     }
 
-    Banners_Taken[_players[0].banner_id] = ST_TRUE;
+    banners[_players[HUMAN_PLAYER_IDX].banner_id] = ST_TRUE;
 
     // ; choose a different random portrait for each AI wizard
     for(itr2 = 1; itr2 < _num_players; itr2++)
@@ -1480,66 +1480,46 @@ END:  ¿ jmp     @@BeginTopLevelPlayerLoop ?
     // ; is already taken
     for(itr2 = 1; itr2 < _num_players; itr2++)
     {
-
         if(_players[itr2].spellranks[sbr_Nature] > 3)
         {
-
-            if(Banners_Taken[1] == ST_FALSE)
+            if(banners[BNR_Green] == ST_FALSE)
             {
-
                 _players[itr2].banner_id = BNR_Green;
-
-                Banners_Taken[1] = ST_TRUE;
-
+                banners[BNR_Green] = ST_TRUE;
             }
-
         }
         else if(_players[itr2].spellranks[sbr_Chaos] > 3)
         {
-
-            if(Banners_Taken[3] == ST_FALSE)
+            if(banners[BNR_Red] == ST_FALSE)
             {
-
                 _players[itr2].banner_id = BNR_Red;
-
-                Banners_Taken[3] = ST_TRUE;
-
+                banners[BNR_Red] = ST_TRUE;
             }
-
         }
         else if(_players[itr2].spellranks[sbr_Sorcery] > 3)
         {
-
-            if(Banners_Taken[0] == ST_FALSE)
+            if(banners[BNR_Blue] == ST_FALSE)
             {
-
                 _players[itr2].banner_id = BNR_Blue;
-
-                Banners_Taken[0] = ST_TRUE;
-
+                banners[BNR_Blue] = ST_TRUE;
             }
-
         }
         else if(_players[itr2].spellranks[sbr_Death] > 3)
         {
-
-            if(Banners_Taken[2] == ST_FALSE)
+            if(banners[BNR_Purple] == ST_FALSE)
             {
-
                 _players[itr2].banner_id = BNR_Purple;
-
-                Banners_Taken[2] = ST_TRUE;
-
+                banners[BNR_Purple] = ST_TRUE;
             }
-
         }
         else
         {
-
-            Random_Banner = (Random(5) - 1);
-
-            Banners_Taken[Random_Banner] = ST_TRUE;
-
+            random_banner = (Random(5) - 1);
+            if(banners[random_banner] != ST_TRUE)
+            {
+                banners[random_banner] = ST_TRUE;
+                _players[itr2].banner_id = random_banner;
+            }
         }
 
     }
