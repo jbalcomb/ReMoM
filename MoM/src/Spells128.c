@@ -104,6 +104,7 @@ int16_t Player_Research_Spells(int16_t player_idx)
                 spell_realm = ((research_list[research_list_idx] - 1) / NUM_SPELLS_PER_MAGIC_REALM);
                 _players[player_idx].spells_list[((spell_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx)] = sls_Researchable;
                 Build_Research_List(player_idx, &research_list[0]);
+                break;  /* CLAUDE bugfix: without break, all empty slots get filled in one pass using the same research_list_idx, causing duplicates */
             }
         }
     }

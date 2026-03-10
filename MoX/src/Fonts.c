@@ -27,6 +27,7 @@
 #include <string.h>
 
 #include <SDL_stdinc.h>
+#include "sdl2_PFL.h"
 
 
 
@@ -157,6 +158,14 @@ byte_ptr mouse_palette;                         // MGC dseg:A81A    set in Load_
 // WZD dseg:E84C                                                                 ; where floating text won't be drawn
 // WZD dseg:E854 00 00 00 00 00 00 00 00 VGA_FltBlock_Lefts dw 4 dup(0)          ; up to 4 left column positions used to reserve space
 // WZD dseg:E854                                                                 ; where floating text won't be drawn
+
+
+
+// WZD dseg:E85C                                                 seg020  MoO2 Module: palette
+int16_t cycle_step_value;
+// WZD dseg:E85E                                                 seg020  MoO2 Module: palette
+int16_t cycle_color_value;
+
 
 
 // WZD dseg:A81E
@@ -3104,12 +3113,115 @@ Module: palette
 /*
 
 */
+// #include <dos.h> /* For union REGS and int86 */
+// 
+// /* Global state variables assumed by the assembly */
+// extern short cycle_step_value;
+// extern short cycle_direction_flag;
+// extern short cycle_color_value;
+// 
+// /* External helper function to tick the animation logic */
+// extern void Update_Cycle(short *min_val, short *max_val);
+// 
 void Cycle_Palette_Color__STUB(int16_t color_num, int16_t red_min, int16_t green_min, int16_t blue_min, int16_t red_max, int16_t green_max, int16_t blue_max, int16_t step_value)
 {
+    
+}
+void Cycle_Palette_Color(int16_t color_num, int16_t red_min, int16_t green_min, int16_t blue_min, int16_t red_max, int16_t green_max, int16_t blue_max, int16_t step_value)
+{
+    int16_t delta_red = 0;
+    int16_t delta_green = 0;
+    int16_t delta_blue = 0;
+    int16_t primary_color = 0;
+    int16_t store_red = 0;
+    int16_t store_blue = 0;
+    int16_t store_green = 0;
 
+    // short delta_red, delta_green, delta_blue;
+    // short store_red, store_green, store_blue;
+    // short primary_color; /* 0 = Red, 1 = Green, 2 = Blue */
+    // union REGS regs;
 
+    /* 1. Calculate Absolute Deltas */
+    delta_red = red_max - red_min;
+    delta_green = green_max - green_min;
+    delta_blue = blue_max - blue_min;
 
+    if (delta_red < 0) delta_red = -delta_red;
+    if (delta_green < 0) delta_green = -delta_green;
+    if (delta_blue < 0) delta_blue = -delta_blue;
 
+    cycle_step_value = step_value;
+
+    /* 2. Determine Primary Color Channel (the one with the largest change) */
+    primary_color = 2; /* Default to Blue */
+    if (delta_red >= delta_green && delta_red >= delta_blue) {
+        primary_color = 0;
+    } else if (delta_green >= delta_red && delta_green >= delta_blue) {
+        primary_color = 1;
+    }
+
+    /* 3. Handle Initialization / Direction Reset */
+    if (cycle_direction_flag == -1) {
+        cycle_direction_flag = 0;
+        if (primary_color == 0)      cycle_color_value = red_min;
+        else if (primary_color == 1) cycle_color_value = green_min;
+        else if (primary_color == 2) cycle_color_value = blue_min;
+    }
+
+    /* 4. Interpolate the other two colors based on the primary color */
+    switch (primary_color) {
+        case 0: /* Red is Primary */
+            store_red = cycle_color_value;
+            store_green = ((green_max - green_min) * (cycle_color_value - red_min)) / (red_max - red_min) + green_min;
+            store_blue  = ((blue_max - blue_min)  * (cycle_color_value - red_min)) / (red_max - red_min) + blue_min;
+            break;
+
+        case 1: /* Green is Primary */
+            store_green = cycle_color_value;
+            store_red  = ((red_max - red_min)   * (cycle_color_value - green_min)) / (green_max - green_min) + red_min;
+            store_blue = ((blue_max - blue_min) * (cycle_color_value - green_min)) / (green_max - green_min) + blue_min;
+            break;
+
+        case 2: /* Blue is Primary */
+            store_blue = cycle_color_value;
+            store_green = ((green_max - green_min) * (cycle_color_value - blue_min)) / (blue_max - blue_min) + green_min;
+            store_red   = ((red_max - red_min)   * (cycle_color_value - blue_min)) / (blue_max - blue_min) + red_min;
+            break;
+    }
+
+    /* 5. Advance the Cycle State */
+    if (primary_color == 0) {
+        Update_Cycle(&red_min, &red_max);
+    } else if (primary_color == 1) {
+        Update_Cycle(&green_min, &green_max);
+    } else if (primary_color == 2) {
+        Update_Cycle(&blue_min, &blue_max);
+    }
+
+//     /* 6. Hardware Update: VGA BIOS Interrupt 10h, Function 1010h */
+//     regs.x.ax = 0x1010;
+//     regs.x.bx = color_num;
+//     regs.h.dh = (unsigned char)store_red;
+//     regs.h.ch = (unsigned char)store_green;
+//     regs.h.cl = (unsigned char)store_blue;
+//     int86(0x10, &regs, &regs);
+    /* 6. Hardware Update: SDL2 Palette Swap */
+    SDL_Color new_color;
+    /* Scale the 6-bit VGA values (0-63) up to 8-bit SDL values (0-255) */
+    /* Multiplying by 255 and dividing by 63 is the most accurate linear scale */
+    new_color.r = (Uint8)((store_red   * 255) / 63);
+    new_color.g = (Uint8)((store_green * 255) / 63);
+    new_color.b = (Uint8)((store_blue  * 255) / 63);
+    new_color.a = 255; /* Fully opaque */
+    /* Update the specific color index in the SDL_Palette */
+    /* Arguments: (palette, array of colors, starting index, number of colors to update) */
+//     if (game_palette != NULL) {
+//         SDL_SetPaletteColors(game_palette, &new_color, color_num, 1);
+//     }
+    if (sdl2_surface_RGB666->format->palette != NULL) {
+        SDL_SetPaletteColors(sdl2_surface_RGB666->format->palette, &new_color, color_num, 1);
+    }
 
 }
 
