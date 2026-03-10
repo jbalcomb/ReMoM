@@ -172,12 +172,7 @@ int16_t Validate_Lair_Record(int16_t lair_idx)
 
     lair = &_LAIRS[lair_idx];
 
-    if((lair->intact != ST_FALSE) && (lair->intact != ST_TRUE))
-    {
-        return Validate_Lair_Fail_Range(lair_idx, "intact", lair->intact, ST_FALSE, ST_TRUE);
-    }
-
-    if(lair->intact == ST_FALSE)
+    if(lair->intact != ST_TRUE)
     {
         return ST_TRUE;
     }
