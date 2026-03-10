@@ -144,7 +144,7 @@ void Production_Screen(void)
     int16_t unit_array[9];
     int16_t unit_array_count;
     int16_t hotkey_idx_ESC;
-    int16_t var_E;
+    int16_t UU_IDK_first_draw;
     int16_t DispCnt;
     int16_t current_index;
     int16_t active_product_idx;
@@ -153,10 +153,6 @@ void Production_Screen(void)
     int16_t scanned_field;
     int16_t itr;  // _SI_
     int16_t leave_screen;  // _DI_
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Production_Screen()\n", __FILE__, __LINE__);
-#endif
 
     Cache_Graphics_Things();
 
@@ -239,7 +235,7 @@ void Production_Screen(void)
 
     screen_changed = ST_FALSE;
 
-    var_E = 1;
+    UU_IDK_first_draw = 1;
 
     Clear_Fields();
 
@@ -289,7 +285,7 @@ void Production_Screen(void)
             (input_field_idx == hotkey_idx_ESC)
         )
         {
-            // Play_Left_Click();
+            Play_Left_Click();
             leave_screen = ST_TRUE;
             current_screen = scr_City_Screen;
         }
@@ -302,11 +298,8 @@ void Production_Screen(void)
         {
             if(product_fields[itr] == input_field_idx)
             {
-
-                // Play_Left_Click();
-
+                Play_Left_Click();
                 Deactivate_Help_List();
-
                 if(itr >= G_CTY_ProducableCount2)
                 {
                     // WZD dseg:2DB5 54 68 65 72 65 20 69 73 20 6E 6F 74 20 65 6E 6F+aThereIsNotEnoughPop db 'There is not enough population to support new construction.',0
@@ -325,18 +318,8 @@ void Production_Screen(void)
                 }
                 else if(current_item == itr)
                 {
-
                     /* Left-Click on what is already being produced - Close Pop-Up ~ ESC, Cancel, OK  ¿ ~== Double-Click ? */
                     _CITIES[_city_idx].construction = product_indexes[current_item];
-    if(_CITIES[_city_idx].construction < 0)
-    {
-        STU_DEBUG_BREAK();
-    }
-    if(_CITIES[_city_idx].construction > 298)
-    {
-        STU_DEBUG_BREAK();
-    }
-
                     leave_screen = ST_TRUE;
                     current_screen = scr_City_Screen;
                     Do_City_Calculations(_city_idx);
@@ -365,7 +348,7 @@ void Production_Screen(void)
         */
         if(input_field_idx == production_screen_ok_button)
         {
-            // Play_Left_Click();
+            Play_Left_Click();
             _CITIES[_city_idx].construction = product_indexes[current_item];
 //     if(_CITIES[_city_idx].construction < 0)
     {
@@ -393,7 +376,7 @@ void Production_Screen(void)
             Copy_Back_To_Off();
             Production_Screen_Draw();
             PageFlip_FX();
-            var_E = 0;
+            UU_IDK_first_draw = 0;
             Release_Time(2);
         }
         screen_changed = ST_FALSE;
@@ -417,7 +400,7 @@ void Production_Screen(void)
         current_screen = scr_City_Screen;
     }
 
-    _page_flip_effect = 3;
+    _page_flip_effect = pfe_Dissolve;
 
     Clear_Palette_Changes(0, 255);
 
