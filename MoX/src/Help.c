@@ -62,7 +62,7 @@ void Set_Items_Screen_Help_List(void)
 // HLPENTRY.LBX  ""
 void Set_CityList_Screen_Help(void)
 {
-    LBX_Load_Data_Static(hlpentry_lbx_file, 10, (SAMB_ptr)_help_entries, 0, 10, 10);
+    LBX_Load_Data_Static(hlpentry_lbx_file, 4, (SAMB_ptr)_help_entries, 0, 10, 10);
     Set_Help_List((char*)&_help_entries[0], 10);
 }
 
