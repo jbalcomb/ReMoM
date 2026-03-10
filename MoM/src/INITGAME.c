@@ -22,7 +22,7 @@ Module: INITGAME
 
 
 // MGC  dseg:2AD0
-struct s_WIZARD_PRESET _wizard_presets_table[15];
+extern struct s_WIZARD_PRESET _wizard_presets_table[15];
 
 // MGC  dseg:2C6A
 extern struct s_DEFAULT_SPELLS _default_spells[5];

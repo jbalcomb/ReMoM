@@ -30,6 +30,7 @@
 #include "SBookScr.h"  /* Spellbook_Screen_Draw(); */
 #include "UNITTYPE.h"
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 

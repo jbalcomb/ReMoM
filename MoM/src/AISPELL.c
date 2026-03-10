@@ -8,30 +8,31 @@ MoO2
 Module: AITECH
 */
 
-#include "AISPELL.h"
-#include "CITYCALC.h"
-#include "../../MoX/src/Allocate.h"
-#include "../../MoX/src/EXIT.h"
-#include "../../MoX/src/MOM_Data.h"
-#include "../../MoX/src/MOX_DAT.h"
-#include "../../MoX/src/MOX_DEF.h"
-
-#include "../../MoX/src/MOX_T4.h"
-#include "../../MoX/src/Util.h"
-#include "../../MoX/src/capture.h"
-#include "../../MoX/src/random.h"
-#include "SBookScr.h"
-#include "../../STU/src/STU_DBG.h"
-#include "Spellbook.h"
-#include "SPELLDEF.h"
-#include "TerrType.h"
 
 #ifdef STU_DEBUG
 #include "../../STU/src/STU_DBG.h"
 #endif
 
+#include "../../MoX/src/Allocate.h"
+#include "../../MoX/src/EXIT.h"
+#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOX_DAT.h"
+#include "../../MoX/src/MOX_DEF.h"
+#include "../../MoX/src/MOX_T4.h"
+#include "../../MoX/src/Util.h"
+#include "../../MoX/src/capture.h"
+#include "../../MoX/src/random.h"
+
+#include "CITYCALC.h"
+#include "SBookScr.h"
+#include "Spellbook.h"
+#include "SPELLDEF.h"
+#include "TerrType.h"
+
+#include <assert.h>
 #include <string.h>
 
+#include "AISPELL.h"
 
 
 // WZD dseg:70F8                                                 BEGIN:  ovr156 - Initialized Data
