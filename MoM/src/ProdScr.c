@@ -350,15 +350,6 @@ void Production_Screen(void)
         {
             Play_Left_Click();
             _CITIES[_city_idx].construction = product_indexes[current_item];
-//     if(_CITIES[_city_idx].construction < 0)
-    {
-        STU_DEBUG_BREAK();
-    }
-    if(_CITIES[_city_idx].construction > 298)
-    {
-        STU_DEBUG_BREAK();
-    }
-
             leave_screen = ST_TRUE;
             current_screen = scr_City_Screen;
             Do_City_Calculations(_city_idx);
