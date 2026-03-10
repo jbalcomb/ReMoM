@@ -2123,6 +2123,8 @@ void AI_Update_Gold_Income_And_Food_Income(int16_t player_idx)
 
         }
 
+        Tries++;
+
     }
 
 }
