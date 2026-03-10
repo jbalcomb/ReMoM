@@ -302,6 +302,8 @@ int MOM_main(int argc, char** argv)
 
     Load_MAGIC_SET();
 
+    DBG_Print_MAGIC_SET("MOM_main after Load_MAGIC_SET");
+
     MIDI_IO = config_mom.MIDI_IO;
     MIDI_IRQ = config_mom.MIDI_IRQ;
     MIDI_DMA = ST_UNDEFINED;

@@ -512,11 +512,11 @@ void Load_Screen_Draw(void)
             uint8_t color_array[4];
             int16_t x_start;
     */
-    uint8_t color_array[4];
-    int16_t x_start;
+    uint8_t color_array[4] = { 0, 0, 0, 0 };
+    int16_t x_start = 0;
 
-    int16_t moused_field;
-    int16_t itr_save_gam;
+    int16_t moused_field = 0;
+    int16_t itr_save_gam = 0;
 
     /*
         MGC

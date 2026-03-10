@@ -19,6 +19,7 @@ MoO2
 #define SETTINGS_H
 
 #include "../../MoX/src/MOX_TYPE.h"
+#include "../../MoX/src/MOX_SET.h"
 
 
 
@@ -51,6 +52,9 @@ void Set_Default_Game_Settings(void);
 
 // WZD o125p05
 void Set_Settings_Screen_Help_List(void);
+
+void DBG_Print_MAGIC_SET(const char * label);
+void DBG_Compare_MAGIC_SET(const struct s_MAGIC_SET * before, const struct s_MAGIC_SET * after, const char * label);
 
 
 

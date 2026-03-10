@@ -27,6 +27,8 @@
 #include "Settings.h"
 #include "Spellbook.h"
 
+#include "../../STU/src/STU_DBG.h"
+
 #include <assert.h>
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), frite(), fseek(); */
 #include <string.h>
@@ -1637,6 +1639,7 @@ int16_t Newgame_Screen_0(void)
     int16_t First_Draw_Done = 0;
     int16_t input_field_idx = 0;  // _SI_
     FILE * file_pointer = 0;  // _DI_
+    struct s_MAGIC_SET magic_set_snapshot;
     
     screen_changed = ST_TRUE;
     
@@ -1732,6 +1735,9 @@ int16_t Newgame_Screen_0(void)
         magic_set.MagicPower = 0;
     }
 
+    DBG_Print_MAGIC_SET("Newgame_Screen_0 after load");
+    memcpy(&magic_set_snapshot, &magic_set, sizeof(struct s_MAGIC_SET));
+
     Set_Mouse_List(1, mouse_list_newgame);
 
     Clear_Fields();
@@ -1781,10 +1787,12 @@ int16_t Newgame_Screen_0(void)
         if(input_field_idx == _ok_button)
         {
 
+            DBG_Compare_MAGIC_SET(&magic_set_snapshot, &magic_set, "Newgame_Screen_0 before save");
+
             file_pointer = fopen(str_MAGIC_SET__ovr050, str_wb__ovr050);
-            
+
             fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
-            
+
             fclose(file_pointer);
 
             Deactivate_Auto_Function();
