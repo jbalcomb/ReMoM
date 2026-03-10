@@ -3998,73 +3998,7 @@ int16_t Newgame_Screen_4__WIP(void)
             NEWG_PickError = 4;
         }
 
-        if(NEWG_PickError <= 0)
-        {
-            for(itr = 0; itr < NUM_WIZARD_SPECIAL_ABILITIES; itr++)
-            {
-                if(wsa_picklist_fields[itr] == input_field_idx)
-                {
-                    if(wsa_ptr[wsa_picklist_order[itr]] == ST_TRUE)  // selected
-                    {
-                        wsa_ptr[wsa_picklist_order[itr]] = ST_FALSE;  // deselect
-                    }
-                    else  // unselected
-                    {
-                        if(spellpicks_count <= 0)
-                        {
-                            NEWG_PickError = 5;
-                        }
-                        else
-                        {
-                            if(ability_count > 5)
-                            {
-                                NEWG_PickError = 2;
-                            }
-                            else
-                            {
-                                some_flag = ST_FALSE;
-                                for(itr2 = 0; itr2 < 5; itr2++)
-                                {
-                                    if(DoublePick_Retort_Labels[itr2] == itr)
-                                    {
-                                        if(spellpicks_count < 2)
-                                        {
-                                            NEWG_PickError = 6;
-                                        }
-                                        else
-                                        {
-                                            wsa_ptr[wsa_picklist_order[itr]] = ST_TRUE;  // select
-                                        }
-                                        some_flag = ST_TRUE;
-                                    }
-                                }
-                                if(some_flag == ST_FALSE)
-                                {
-                                    if(itr == 7)  // Myrran 3-picks
-                                    {
-                                        if(spellpicks_count < 3)
-                                        {
-                                            NEWG_PickError = 6;
-                                        }
-                                        else
-                                        {
-                                            wsa_ptr[wsa_Myrran] = ST_TRUE;  // select
-                                        }
-                                        some_flag = ST_TRUE;
-                                    }
-                                }
-                                if(some_flag == ST_FALSE)
-                                {
-                                    wsa_ptr[itr] = ST_TRUE;  // select
-                                }
-                                some_flag = ST_FALSE;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        else
+        if(NEWG_PickError > 0)
         {
             switch(NEWG_PickError)
             {
