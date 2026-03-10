@@ -345,7 +345,8 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
     int16_t shift_right_flag;
     int16_t half_swap_flag;
 
-    assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
+    // CANT  assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
+    assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_WIDTH);  /*  0 & 60 */
     assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
     l_map_x = *map_x;
@@ -516,12 +517,14 @@ void IDK_CheckSet_MapDisplay_XY(void)
         _prev_world_y = 0;
     }
 
+    assert(_prev_world_x >= WORLD_XMIN && _prev_world_x <= WORLD_XMAX);  /*  0 & 59 */
+    assert(_prev_world_y >= WORLD_YMIN && _prev_world_y <= WORLD_YMAX);  /*  0 & 59 */
+
     // ¿ reorient X if scroll will wrap ?
     if(_map_x == 0 && _prev_world_x > 49)
     {
         _map_x = WORLD_WIDTH;
     }
-
 
 }
 

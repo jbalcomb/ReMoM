@@ -1705,6 +1705,8 @@ void Main_Screen(void)
             {
                 _prev_world_x += (int16_t)(_main_map_grid_x - (MAP_WIDTH  / 2));
                 _prev_world_y += (int16_t)(_main_map_grid_y - (MAP_HEIGHT / 2));
+                // CANT  assert(_prev_world_x >= WORLD_XMIN && _prev_world_x <= WORLD_XMAX);  /*  0 & 59 */
+                // CANT  assert(_prev_world_y >= WORLD_YMIN && _prev_world_y <= WORLD_YMAX);  /*  0 & 59 */
                 IDK_CheckSet_MapDisplay_XY();
             }
             else
@@ -2161,7 +2163,8 @@ void Main_Screen_Draw(void)
     Reset_Window();
     Set_Page_Off();
 
-    assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
+    // CANT  assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
+    assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_WIDTH);  /*  0 & 60 */
     assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
 
     Main_Screen_Draw_Do_Draw(&_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx);
@@ -3456,14 +3459,16 @@ void Main_Screen_Draw_Status_Window(void)
 // WZD o063p02
 void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t x_pos, int16_t y_pos, int16_t player_idx)
 {
-    assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
+    // CANT  assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
+    assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_WIDTH);  /*  0 & 60 */
     assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
     Reset_Map_Draw();
 
     Reduced_Map_Set_Dims(REDUCED_MAP_W, REDUCED_MAP_H);
 
-    assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
+    // CANT  assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
+    assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_WIDTH);  /*  0 & 60 */
     assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
     Draw_Maps(MAP_SCREEN_X, MAP_SCREEN_Y, MAP_WIDTH, MAP_HEIGHT, map_x, map_y, map_plane, x_pos, y_pos, player_idx);
