@@ -700,7 +700,7 @@ void Powergraph_Screen(void)
 
         Clear_Fields();
 
-        full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_XMAX, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr076[0], ST_UNDEFINED);
+        full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr076[0], ST_UNDEFINED);
 
         input_field_idx = Get_Input();
 
@@ -1037,7 +1037,7 @@ void Status_Screen(void)
 
         Clear_Fields();
 
-        full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_XMAX, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr076[0], ST_UNDEFINED);
+        full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr076[0], ST_UNDEFINED);
 
         input_field_idx = Get_Input();
 
