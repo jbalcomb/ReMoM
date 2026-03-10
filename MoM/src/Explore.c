@@ -5,10 +5,41 @@
 
 #include "Explore.h"
 
+/* Copilot TEMP DEBUG: targeted scout/reveal tracing */
+#include "../../STU/src/STU_DBG.h"
+
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_TYPE.h"
 #include "../../MoX/src/Util.h"
+
+#ifdef STU_DEBUG
+/* Copilot TEMP DEBUG: set DBG_TRACE_SCOUT_WX/WY/WP to filter a single tile; leave ST_UNDEFINED for all. */
+static int16_t DBG_TRACE_SCOUT_WX = ST_UNDEFINED;
+static int16_t DBG_TRACE_SCOUT_WY = ST_UNDEFINED;
+static int16_t DBG_TRACE_SCOUT_WP = ST_UNDEFINED;
+static int16_t DBG_TRACE_SCOUT_BUDGET = 160;
+
+static int16_t DBG_Trace_Scout_Match(int16_t wx, int16_t wy, int16_t wp)
+{
+    if((DBG_TRACE_SCOUT_WP != ST_UNDEFINED) && (DBG_TRACE_SCOUT_WP != wp))
+    {
+        return ST_FALSE;
+    }
+
+    if((DBG_TRACE_SCOUT_WX != ST_UNDEFINED) && (DBG_TRACE_SCOUT_WX != wx))
+    {
+        return ST_FALSE;
+    }
+
+    if((DBG_TRACE_SCOUT_WY != ST_UNDEFINED) && (DBG_TRACE_SCOUT_WY != wy))
+    {
+        return ST_FALSE;
+    }
+
+    return ST_TRUE;
+}
+#endif
 
 
 
@@ -308,6 +339,12 @@ int16_t Set_Square_Scouted_Flags(int16_t world_x, int16_t world_y, int16_t world
     int16_t itr_world_y;
     int16_t curr_world_x;
     int16_t square_is_explored;
+#ifdef STU_DEBUG
+    int16_t dbg_do_trace = ST_FALSE;
+    int16_t dbg_tiles_marked = 0;
+    int16_t dbg_y_end = 0;
+    int16_t dbg_x_end = 0;
+#endif
 
     if(scout_range == 0)
     {
@@ -315,6 +352,17 @@ int16_t Set_Square_Scouted_Flags(int16_t world_x, int16_t world_y, int16_t world
     }
     else
     {
+
+#ifdef STU_DEBUG
+        dbg_do_trace = DBG_Trace_Scout_Match(world_x, world_y, world_p);
+        dbg_y_end = (world_y + scout_range);
+        dbg_x_end = (world_x + scout_range);
+        if((dbg_do_trace == ST_TRUE) && (DBG_TRACE_SCOUT_BUDGET > 0))
+        {
+            DBG_TRACE_SCOUT_BUDGET--;
+            dbg_prn("DEBUG: [%s, %d]: BEGIN Set_Square_Scouted_Flags(world_x=%d, world_y=%d, world_p=%d, scout_range=%d, nominal_end_x=%d, nominal_end_y=%d)", __FILE__, __LINE__, world_x, world_y, world_p, scout_range, dbg_x_end, dbg_y_end);
+        }
+#endif
 
         start_world_y = world_y - scout_range;
 
@@ -349,10 +397,27 @@ int16_t Set_Square_Scouted_Flags(int16_t world_x, int16_t world_y, int16_t world
                 {
                     Set_Square_Scouted(curr_world_x, itr_world_y, world_p);
 
+#ifdef STU_DEBUG
+                    dbg_tiles_marked++;
+                    if((dbg_do_trace == ST_TRUE) && (DBG_TRACE_SCOUT_BUDGET > 0))
+                    {
+                        DBG_TRACE_SCOUT_BUDGET--;
+                        dbg_prn("DEBUG: [%s, %d]: SCOUT set (%d,%d,p=%d) explored=%d", __FILE__, __LINE__, curr_world_x, itr_world_y, world_p, square_is_explored);
+                    }
+#endif
+
                 }
             }
         }
         return_value = itr_world_y;
+
+#ifdef STU_DEBUG
+        if((dbg_do_trace == ST_TRUE) && (DBG_TRACE_SCOUT_BUDGET > 0))
+        {
+            DBG_TRACE_SCOUT_BUDGET--;
+            dbg_prn("DEBUG: [%s, %d]: END Set_Square_Scouted_Flags(world_x=%d, world_y=%d, world_p=%d, marked=%d, return_value=%d)", __FILE__, __LINE__, world_x, world_y, world_p, dbg_tiles_marked, return_value);
+        }
+#endif
     }
 
     return return_value;

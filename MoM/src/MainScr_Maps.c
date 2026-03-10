@@ -26,6 +26,9 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 #include "../../MoX/src/MOX_SET.h"  /* magic_set */
 #include "../../MoX/src/MOX_T4.h"
 
+/* Copilot TEMP DEBUG: targeted map reveal tracing */
+#include "../../STU/src/STU_DBG.h"
+
 #include "Explore.h"
 #include "MainScr.h"
 #include "MOM_SCR.h"
@@ -39,6 +42,34 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 #include <string.h>
 
 #include "MainScr_Maps.h"
+
+#ifdef STU_DEBUG
+/* Copilot TEMP DEBUG: set DBG_TRACE_FIX_WX/WY/WP to filter a single tile; leave ST_UNDEFINED for all. */
+static int16_t DBG_TRACE_FIX_WX = ST_UNDEFINED;
+static int16_t DBG_TRACE_FIX_WY = ST_UNDEFINED;
+static int16_t DBG_TRACE_FIX_WP = ST_UNDEFINED;
+static int16_t DBG_TRACE_FIX_BUDGET = 120;
+
+static int16_t DBG_Trace_Fix_Match(int16_t wx, int16_t wy, int16_t wp)
+{
+    if((DBG_TRACE_FIX_WP != ST_UNDEFINED) && (DBG_TRACE_FIX_WP != wp))
+    {
+        return ST_FALSE;
+    }
+
+    if((DBG_TRACE_FIX_WX != ST_UNDEFINED) && (DBG_TRACE_FIX_WX != wx))
+    {
+        return ST_FALSE;
+    }
+
+    if((DBG_TRACE_FIX_WY != ST_UNDEFINED) && (DBG_TRACE_FIX_WY != wy))
+    {
+        return ST_FALSE;
+    }
+
+    return ST_TRUE;
+}
+#endif
 
 
 
@@ -55,12 +86,12 @@ SCT_BottomRight  0x08  00001000
 */
 uint8_t NoSide_Explores[] =
 {
-    SCT_BottomLeft                || SCT_TopRight,
-    SCT_BottomLeft || SCT_TopLeft || SCT_TopRight,
-                      SCT_TopLeft                 || SCT_BottomRight,
-    SCT_BottomLeft || SCT_TopLeft                 || SCT_BottomRight,
-    SCT_BottomLeft                || SCT_TopRight || SCT_BottomRight,
-                      SCT_TopLeft || SCT_TopRight || SCT_BottomRight
+    SCT_BottomLeft               | SCT_TopRight,
+    SCT_BottomLeft | SCT_TopLeft | SCT_TopRight,
+                     SCT_TopLeft                 | SCT_BottomRight,
+    SCT_BottomLeft | SCT_TopLeft                 | SCT_BottomRight,
+    SCT_BottomLeft               | SCT_TopRight | SCT_BottomRight,
+                     SCT_TopLeft | SCT_TopRight | SCT_BottomRight
 };
 // WZD dseg:3278                                                 END:  ovr068 - Initialized Data
 
@@ -1557,6 +1588,14 @@ void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
     int16_t wy_u2 = 0;  // _DI_
     int16_t IDK_wx_l2 = 0;  // _SI_
     int16_t Adjacent_Col = 0;  // _CX_
+#ifdef STU_DEBUG
+    int16_t dbg_change_count = 0;
+    int16_t dbg_before_tile = 0;
+    int16_t dbg_before_adj = 0;
+    int16_t dbg_after_tile = 0;
+    int16_t dbg_after_adj = 0;
+    int16_t dbg_do_trace = ST_FALSE;
+#endif
 
     Match_Count = 38;
     
@@ -1753,6 +1792,15 @@ void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
     
     
     ptr_square_explored = &_square_explored[wp];
+
+#ifdef STU_DEBUG
+    dbg_do_trace = DBG_Trace_Fix_Match(wx, wy, wp);
+    if((dbg_do_trace == ST_TRUE) && (DBG_TRACE_FIX_BUDGET > 0))
+    {
+        DBG_TRACE_FIX_BUDGET--;
+        dbg_prn("DEBUG: [%s, %d]: BEGIN Set_Square_Explored_Flags_Fix(wx=%d, wy=%d, wp=%d, center_before=0x%02X)", __FILE__, __LINE__, wx, wy, wp, ptr_square_explored[((wy * WORLD_WIDTH) + wx)]);
+    }
+#endif
     
     wx_l2 = (wx - 2);
 
@@ -1833,9 +1881,31 @@ void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
                         // ; its locally stored value, otherwise matches further
                         // ; on will not work properly any more (a single tile
                         // ; can have a match in both directions)
-                        ptr_square_explored[((wy_u2 * WORLD_WIDTH) + IDK_wx_l2)] = (Match_Array[Match_Index].Mark_Tile || LoopTile_Scouting);
-                        
-                        ptr_square_explored[((Adjacent_Row * WORLD_WIDTH) + Adjacent_Col)] = (Match_Array[Match_Index].Mark_Adj || Adj_Tile_Scouting);
+                        // MYBUG?  ptr_square_explored[((wy_u2 * WORLD_WIDTH) + IDK_wx_l2)] = (Match_Array[Match_Index].Mark_Tile || LoopTile_Scouting);
+#ifdef STU_DEBUG
+                        dbg_before_tile = ptr_square_explored[((wy_u2 * WORLD_WIDTH) + IDK_wx_l2)];
+                        dbg_before_adj = ptr_square_explored[((Adjacent_Row * WORLD_WIDTH) + Adjacent_Col)];
+#endif
+                        ptr_square_explored[((wy_u2 * WORLD_WIDTH) + IDK_wx_l2)] = (Match_Array[Match_Index].Mark_Tile | LoopTile_Scouting);
+
+                        // MYBUG?  ptr_square_explored[((Adjacent_Row * WORLD_WIDTH) + Adjacent_Col)] = (Match_Array[Match_Index].Mark_Adj || Adj_Tile_Scouting);
+                        ptr_square_explored[((Adjacent_Row * WORLD_WIDTH) + Adjacent_Col)] = (Match_Array[Match_Index].Mark_Adj | Adj_Tile_Scouting);
+
+#ifdef STU_DEBUG
+                        dbg_after_tile = ptr_square_explored[((wy_u2 * WORLD_WIDTH) + IDK_wx_l2)];
+                        dbg_after_adj = ptr_square_explored[((Adjacent_Row * WORLD_WIDTH) + Adjacent_Col)];
+
+                        if((dbg_before_tile != dbg_after_tile) || (dbg_before_adj != dbg_after_adj))
+                        {
+                            dbg_change_count++;
+
+                            if((dbg_do_trace == ST_TRUE) && (DBG_TRACE_FIX_BUDGET > 0))
+                            {
+                                DBG_TRACE_FIX_BUDGET--;
+                                dbg_prn("DEBUG: [%s, %d]: FIX match=%d dir=%d tile(%d,%d)=0x%02X->0x%02X adj(%d,%d)=0x%02X->0x%02X", __FILE__, __LINE__, Match_Index, Match_Array[Match_Index].Adj_Direction, IDK_wx_l2, wy_u2, dbg_before_tile, dbg_after_tile, Adjacent_Col, Adjacent_Row, dbg_before_adj, dbg_after_adj);
+                            }
+                        }
+#endif
                         
                     }
 
@@ -1855,6 +1925,14 @@ void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
         }
 
     }
+
+#ifdef STU_DEBUG
+    if((dbg_do_trace == ST_TRUE) && (DBG_TRACE_FIX_BUDGET > 0))
+    {
+        DBG_TRACE_FIX_BUDGET--;
+        dbg_prn("DEBUG: [%s, %d]: END Set_Square_Explored_Flags_Fix(wx=%d, wy=%d, wp=%d, changes=%d, center_after=0x%02X)", __FILE__, __LINE__, wx, wy, wp, dbg_change_count, ptr_square_explored[((wy * WORLD_WIDTH) + wx)]);
+    }
+#endif
 
 }
 
