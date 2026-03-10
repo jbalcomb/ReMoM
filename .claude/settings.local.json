@@ -14,7 +14,11 @@
       "Read(//c/Program Files \\(x86\\)/AutoIt3/**)",
       "Read(//c/Program Files/AutoIt3/**)",
       "Bash(powershell -Command \"$ws = New-Object -ComObject WScript.Shell; $sc = $ws.CreateShortcut\\(''C:\\\\Users\\\\jbalcomb\\\\Desktop\\\\Dismiss DLL Popups.lnk''\\); $sc.TargetPath = ''C:\\\\STU\\\\devel\\\\ReMoM\\\\Testing\\\\dismiss_dll_popups.bat''; $sc.WorkingDirectory = ''C:\\\\STU\\\\devel\\\\ReMoM\\\\Testing''; $sc.Description = ''Dismiss SDL2d.dll missing popups''; $sc.Save\\(\\)\")",
-      "Bash(powershell -Command \"$ws = New-Object -ComObject WScript.Shell; $sc = $ws.CreateShortcut\\([System.IO.Path]::Combine\\($env:USERPROFILE, ''Desktop'', ''Dismiss DLL Popups.lnk''\\)\\); $sc.TargetPath = ''C:\\\\STU\\\\devel\\\\ReMoM\\\\Testing\\\\dismiss_dll_popups.bat''; $sc.WorkingDirectory = ''C:\\\\STU\\\\devel\\\\ReMoM\\\\Testing''; $sc.Description = ''Dismiss SDL2d.dll missing popups''; $sc.Save\\(\\)\")"
+      "Bash(powershell -Command \"$ws = New-Object -ComObject WScript.Shell; $sc = $ws.CreateShortcut\\([System.IO.Path]::Combine\\($env:USERPROFILE, ''Desktop'', ''Dismiss DLL Popups.lnk''\\)\\); $sc.TargetPath = ''C:\\\\STU\\\\devel\\\\ReMoM\\\\Testing\\\\dismiss_dll_popups.bat''; $sc.WorkingDirectory = ''C:\\\\STU\\\\devel\\\\ReMoM\\\\Testing''; $sc.Description = ''Dismiss SDL2d.dll missing popups''; $sc.Save\\(\\)\")",
+      "Bash(grep -r \"Move_Units\" /c/STU/devel/ReMoM/MoM/src/*.h)",
+      "Bash(grep -n \"Units_In_Tower\" /c/STU/devel/ReMoM/MoM/src/*.h)",
+      "Bash(ls \"c:/STU/devel/ReMoM/out/build/MSVC-debug/src/Debug/\"*.GAM)",
+      "Bash(ls \"c:/STU/devel/ReMoM/out/build/MSVC-nosound-debug/src/Debug/\"*.GAM)"
     ]
   }
 }

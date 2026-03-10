@@ -109,6 +109,8 @@ fixup Linux/Clang
 remove all WIPs/dunders
 remove all "retort"
 
+[ ] WTF - C:\Users\jbalcomb\AppData\Roaming\Code\User\globalStorage\github.copilot-chat\memory-tool\memories\editing-preferences.md
+
 [ ] Naming Things Is Hard^Hard - 'New Game'
 
 // HLPENTRY.LBX, 029  ""  "Options Screen Help"
