@@ -490,7 +490,7 @@ void Load_Screen(void)
         Load_Palette(0, ST_UNDEFINED, ST_NULL);  // EMPERATO - main game palette
         Set_Palette_Changes(0, 255);
         Calculate_Remap_Colors();
-        Cycle_Palette_Color__STUB(198, 40, 0, 0, 63, 0, 0, 1);
+        Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);
     }
 
     if(loaded_game_flag == ST_TRUE)

@@ -1633,7 +1633,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     Reset_Cycle_Palette_Color();
     Load_Palette_From_Animation(combat_background_bottom);
     Apply_Palette();
-    Cycle_Palette_Color__STUB(198, 0, 0, 0, 55, 0, 0, 8);
+    Cycle_Palette_Color(198, 0, 0, 0, 55, 0, 0, 8);
     Set_Palette_Changes(0, 243);
     Calculate_Remap_Colors();
 
@@ -6894,7 +6894,7 @@ void Combat_Screen_Draw(void)
     */
 
 
-    Cycle_Palette_Color__STUB(198, 0, 0, 0, 55, 0, 0, 11);
+    Cycle_Palette_Color(198, 0, 0, 0, 55, 0, 0, 11);
 
     if(
         (_human_handle_immobile == ST_TRUE)

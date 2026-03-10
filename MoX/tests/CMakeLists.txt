@@ -30,6 +30,14 @@ else()
     target_link_libraries(test_Allocate PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL2::Core momlib MOX )
 endif()
 
+add_executable(test_Fonts test_Fonts.cpp)
+target_include_directories(test_Fonts PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${GTEST_INCLUDE_DIRS})
+if(NOT DISABLE_AUDIO)
+#     target_link_libraries(test_Fonts PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL2::Core SDL2::Mixer momlib MOX )
+else()
+    target_link_libraries(test_Fonts PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL2::Core momlib MOX )
+endif()
+
 ReMoM_Add_Target_Support_Files(MOX_tests
     COPY_SDL2
     COPY_SDL2_MIXER
@@ -44,6 +52,11 @@ ReMoM_Add_Target_Support_Files(test_Util
 )
 
 ReMoM_Add_Target_Support_Files(test_Allocate
+    COPY_SDL2
+    COPY_SDL2D
+)
+
+ReMoM_Add_Target_Support_Files(test_Fonts
     COPY_SDL2
     COPY_SDL2D
 )
@@ -67,6 +80,10 @@ gtest_discover_tests(test_Util
         ENVIRONMENT_MODIFICATION PATH=path_list_prepend:${REMOM_TEST_PATH_ENV}
 )
 gtest_discover_tests(test_Allocate
+    PROPERTIES
+        ENVIRONMENT_MODIFICATION PATH=path_list_prepend:${REMOM_TEST_PATH_ENV}
+)
+gtest_discover_tests(test_Fonts
     PROPERTIES
         ENVIRONMENT_MODIFICATION PATH=path_list_prepend:${REMOM_TEST_PATH_ENV}
 )

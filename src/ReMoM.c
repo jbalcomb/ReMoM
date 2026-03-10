@@ -565,7 +565,7 @@ int MOM_main(int argc, char** argv)
     // WZD Load_Palette(0, ST_UNDEFINED);
     // WZD Calculate_Remap_Colors();
     // WZD Set_Button_Down_Offsets(1, 1,);
-    // WZD Cycle_Palette_Color__STUB(198, 40, 0, 0, 63, 0, 0, 1);  // (color_num, red_min, green_min, blue_min, red_max, green_max, blue_max, step_value)
+    // WZD Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);  // (color_num, red_min, green_min, blue_min, red_max, green_max, blue_max, step_value)
     // WZD Apply_Palette();
     // WZD Fade_In();
     // WZD current_screen = scr_Main_Screen

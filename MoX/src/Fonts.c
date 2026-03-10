@@ -3077,56 +3077,40 @@ void Reset_Cycle_Palette_Color(void)
 }
 
 // WZD s20p12
-// drake178: ¿ ?
-/*
-MoO2
-Module: palette
-    function (0 bytes) Cycle_Palette_Color
-    Address: 01:00131B5D
-        Num params: 4
-        Return type: void (1 bytes) 
-        signed integer (2 bytes) 
-        signed integer (2 bytes) 
-        signed integer (2 bytes) 
-        signed integer (2 bytes) 
-        signed integer (2 bytes) 
-        signed integer (2 bytes) 
-        signed integer (2 bytes) 
-        signed integer (2 bytes) 
-        Locals:
-            signed integer (2 bytes) color_num
-            signed integer (2 bytes) red_min
-            signed integer (2 bytes) green_min
-            signed integer (2 bytes) blue_min
-            signed integer (2 bytes) red_max
-            signed integer (2 bytes) green_max
-            signed integer (2 bytes) blue_max
-            signed integer (2 bytes) step_value
-            signed integer (4 bytes) delta_red
-            signed integer (4 bytes) delta_green
-            signed integer (4 bytes) delta_blue
-            signed integer (4 bytes) primary_color
-            signed integer (4 bytes) store_red
-            signed integer (4 bytes) store_blue
-            signed integer (4 bytes) store_green
-*/
-/*
-
-*/
-// #include <dos.h> /* For union REGS and int86 */
-// 
-// /* Global state variables assumed by the assembly */
-// extern short cycle_step_value;
-// extern short cycle_direction_flag;
-// extern short cycle_color_value;
-// 
-// /* External helper function to tick the animation logic */
-// extern void Update_Cycle(short *min_val, short *max_val);
-// 
-void Cycle_Palette_Color__STUB(int16_t color_num, int16_t red_min, int16_t green_min, int16_t blue_min, int16_t red_max, int16_t green_max, int16_t blue_max, int16_t step_value)
-{
-    
-}
+/**
+ * @brief Animates a single palette entry by cycling its RGB value back and forth
+ *        between a minimum and maximum color over successive calls.
+ *
+ * The function uses a "primary color" strategy: it identifies which of the three
+ * RGB channels spans the largest absolute range, then linearly interpolates the
+ * other two channels from that primary value.  A global ping-pong counter
+ * (@c cycle_color_value / @c cycle_direction_flag) is advanced by @p step_value
+ * each call so that successive calls smoothly animate the color.
+ *
+ * On the very first call after @c Reset_Cycle_Palette_Color() the direction
+ * flag is @c -1 (disabled); this function initialises it to @c 0 (forward) and
+ * seeds @c cycle_color_value from the minimum of the primary channel.
+ *
+ * The computed 6-bit VGA component values (0–63) are scaled to 8-bit SDL values
+ * (0–255) and written directly into the SDL palette entry at index @p color_num
+ * via @c SDL_SetPaletteColors().
+ *
+ * @param color_num   Index of the palette entry to update (0-based).
+ * @param red_min     Minimum red component value (6-bit VGA range 0–63).
+ * @param green_min   Minimum green component value (6-bit VGA range 0–63).
+ * @param blue_min    Minimum blue component value (6-bit VGA range 0–63).
+ * @param red_max     Maximum red component value (6-bit VGA range 0–63).
+ * @param green_max   Maximum green component value (6-bit VGA range 0–63).
+ * @param blue_max    Maximum blue component value (6-bit VGA range 0–63).
+ * @param step_value  Number of primary-channel units to advance per call.
+ *                    Larger values produce faster cycling; @c 1 is the slowest.
+ *
+ * @note Relies on the module-level globals @c cycle_direction_flag,
+ *       @c cycle_color_value, and @c cycle_step_value maintained by
+ *       @c Reset_Cycle_Palette_Color() and @c Update_Cycle().
+ * @note Has no effect on the palette if @c sdl2_surface_RGB666 has no palette
+ *       attached (the SDL call is guarded by a @c NULL check).
+ */
 void Cycle_Palette_Color(int16_t color_num, int16_t red_min, int16_t green_min, int16_t blue_min, int16_t red_max, int16_t green_max, int16_t blue_max, int16_t step_value)
 {
     int16_t delta_red = 0;
@@ -3136,11 +3120,6 @@ void Cycle_Palette_Color(int16_t color_num, int16_t red_min, int16_t green_min, 
     int16_t store_red = 0;
     int16_t store_blue = 0;
     int16_t store_green = 0;
-
-    // short delta_red, delta_green, delta_blue;
-    // short store_red, store_green, store_blue;
-    // short primary_color; /* 0 = Red, 1 = Green, 2 = Blue */
-    // union REGS regs;
 
     /* 1. Calculate Absolute Deltas */
     delta_red = red_max - red_min;
@@ -3199,13 +3178,6 @@ void Cycle_Palette_Color(int16_t color_num, int16_t red_min, int16_t green_min, 
         Update_Cycle(&blue_min, &blue_max);
     }
 
-//     /* 6. Hardware Update: VGA BIOS Interrupt 10h, Function 1010h */
-//     regs.x.ax = 0x1010;
-//     regs.x.bx = color_num;
-//     regs.h.dh = (unsigned char)store_red;
-//     regs.h.ch = (unsigned char)store_green;
-//     regs.h.cl = (unsigned char)store_blue;
-//     int86(0x10, &regs, &regs);
     /* 6. Hardware Update: SDL2 Palette Swap */
     SDL_Color new_color;
     /* Scale the 6-bit VGA values (0-63) up to 8-bit SDL values (0-255) */
@@ -3216,9 +3188,6 @@ void Cycle_Palette_Color(int16_t color_num, int16_t red_min, int16_t green_min, 
     new_color.a = 255; /* Fully opaque */
     /* Update the specific color index in the SDL_Palette */
     /* Arguments: (palette, array of colors, starting index, number of colors to update) */
-//     if (game_palette != NULL) {
-//         SDL_SetPaletteColors(game_palette, &new_color, color_num, 1);
-//     }
     if (sdl2_surface_RGB666->format->palette != NULL) {
         SDL_SetPaletteColors(sdl2_surface_RGB666->format->palette, &new_color, color_num, 1);
     }
@@ -3227,21 +3196,82 @@ void Cycle_Palette_Color(int16_t color_num, int16_t red_min, int16_t green_min, 
 
 
 // WZD s20p13
-// drake178: ¿ ?
-/*
-MoO2
-Module: palette
-    function (0 bytes) Update_Cycle
-    Address: 01:00131E6B
-        Num params: 2
-        Return type: void (1 bytes) 
-        pointer (4 bytes) 
-        pointer (4 bytes) 
-        Locals:
-            pointer (4 bytes) color_min
-            pointer (4 bytes) color_max
-*/
-// Update_Cycle(int *color_min, int *color_max)
+/**
+ * @brief Advances the global ping-pong cycle state by one step along a color range.
+ *
+ * This is a helper called by @c Cycle_Palette_Color() after the current color
+ * value has been read and applied.  It increments or decrements
+ * @c cycle_color_value by @c cycle_step_value according to the current
+ * @c cycle_direction_flag, then bounces the direction when a boundary is
+ * reached.
+ *
+ * Two gradient orientations are handled:
+ * - **Positive gradient** (@p color_max > @p color_min): the value sweeps
+ *   upward in the forward direction and downward in the reverse direction.
+ * - **Negative gradient** (@p color_max <= @p color_min): the value sweeps
+ *   downward in the forward direction and upward in the reverse direction,
+ *   so the visual rhythm is preserved regardless of which endpoint is larger.
+ *
+ * When a boundary is overshot the value is clamped one unit inside the
+ * boundary (not exactly at it) to avoid sticking at the extreme for two
+ * consecutive frames.
+ *
+ * @param color_min  Pointer to the lower boundary of the primary color channel
+ *                   (typically @c red_min, @c green_min, or @c blue_min as
+ *                   passed by @c Cycle_Palette_Color()).  Read-only in practice;
+ *                   the pointer indirection matches the calling convention.
+ * @param color_max  Pointer to the upper boundary of the primary color channel.
+ *                   Read-only in practice.
+ *
+ * @note Modifies the module-level globals @c cycle_color_value and
+ *       @c cycle_direction_flag.  @c cycle_step_value is read but not modified.
+ * @note @c cycle_direction_flag meanings: @c 0 = forward, @c 1 = reverse,
+ *       @c -1 = disabled/uninitialised (handled by @c Cycle_Palette_Color()).
+ */
+void Update_Cycle(int16_t *color_min, int16_t * color_max)
+{
+    if (cycle_direction_flag == 0) {
+        /* Moving "Forward" */
+        if (*color_max > *color_min) {
+            cycle_color_value += cycle_step_value;
+            
+            /* Did we overshoot the maximum? */
+            if (cycle_color_value > *color_max) {
+                cycle_color_value = *color_max - 1; /* Bounce back */
+                cycle_direction_flag = 1;           /* Reverse direction */
+            }
+        } else {
+            /* Max is actually lower than Min (Negative gradient) */
+            cycle_color_value -= cycle_step_value;
+            
+            if (cycle_color_value < *color_min) {
+                cycle_color_value = *color_min + 1;
+                cycle_direction_flag = 1;
+            }
+        }
+        
+    } else {
+        /* Moving "Backward" (cycle_direction_flag != 0) */
+        if (*color_max > *color_min) {
+            cycle_color_value -= cycle_step_value;
+            
+            /* Did we overshoot the minimum? */
+            if (cycle_color_value < *color_min) {
+                cycle_color_value = *color_min + 1; /* Bounce back */
+                cycle_direction_flag = 0;           /* Reverse direction */
+            }
+        } else {
+            /* Max is actually lower than Min (Negative gradient) */
+            cycle_color_value += cycle_step_value;
+            
+            if (cycle_color_value > *color_max) {
+                cycle_color_value = *color_max - 1;
+                cycle_direction_flag = 0;
+            }
+        }
+    }
+}
+
 
 // WZD s20p14
 // drake178: UU_VGA_CreateHues()

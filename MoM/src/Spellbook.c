@@ -1548,7 +1548,7 @@ void SmlBook_Draw__WIP(int16_t x, int16_t y)
         Draw_Picture_To_Bitmap(_spellbook_small_symbols[itr], spellbook_symbols_bitm[itr]);
     }
 
-    Cycle_Palette_Color__STUB(198, 41, 33, 29, 48, 43, 43, 3);
+    Cycle_Palette_Color(198, 41, 33, 29, 48, 43, 43, 3);
 
     FLIC_Draw(x, y, _spellbook_small_seg);
 
@@ -1730,7 +1730,7 @@ void SmlBook_PageTurn__WIP(int turn_type, int combat_flag, int player_idx)
         Draw_Picture_To_Bitmap(_spellbook_small_symbols[itr], spellbook_symbols_bitm[itr]);
     }
 
-    Cycle_Palette_Color__STUB(198, 39, 31, 25, 50, 46, 47, 3);
+    Cycle_Palette_Color(198, 39, 31, 25, 50, 46, 47, 3);
 
     for(PageTurn_Stage = 0; PageTurn_Stage < 4; PageTurn_Stage++)
     {
@@ -2044,8 +2044,8 @@ void BigBook_Draw(void)
     // ; (0-7), also combat casting cursor anim stage (0-4)
     SBK_NewSpellAnim_Stg = ((SBK_NewSpellAnim_Stg + 1) % 8);
 
-    // void Cycle_Palette_Color__STUB(int16_t color_num, int16_t red_min, int16_t green_min, int16_t blue_min, int16_t red_max, int16_t green_max, int16_t blue_max, int16_t step_value)
-    Cycle_Palette_Color__STUB(198, 29, 41, 63, 44, 56, 63, 2);  // {0x1D, 0x29, 0x3F}, {0x2C, 0x38, 0x3F}
+    // void Cycle_Palette_Color(int16_t color_num, int16_t red_min, int16_t green_min, int16_t blue_min, int16_t red_max, int16_t green_max, int16_t blue_max, int16_t step_value)
+    Cycle_Palette_Color(198, 29, 41, 63, 44, 56, 63, 2);  // {0x1D, 0x29, 0x3F}, {0x2C, 0x38, 0x3F}
 
     Mark_Block(_screen_seg);
 
@@ -2513,7 +2513,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
             if(SBK_NewSpellAnim_Stg < 15)
             {
 
-                Cycle_Palette_Color__STUB(198, 18, 14, 9, 38, 38, 53, 2);
+                Cycle_Palette_Color(198, 18, 14, 9, 38, 38, 53, 2);
 
             }
 
