@@ -735,6 +735,9 @@ uint32_t SND_CMB_Music_size;  // DNE in Dasm
 // WZD dseg:C41E
 int16_t _defender_sees_illusions;
 // WZD dseg:C420
+/*
+_attacker_sees_illusions is a side-level flag, not a unit-level flag
+*/
 int16_t _attacker_sees_illusions;
 
 // WZD dseg:C422
@@ -17421,49 +17424,53 @@ int16_t AI_BU_AssignAction__WIP(int16_t battle_unit_idx, int16_t no_spells_flag)
 
         }
 
+        /*
+        if there is a lower index own unit with a target of
+        the same type and same base Defense, target that
+        instead
 
-    }
+        BUG: ignores all other attributes of this new target
+        besides base Defense (e.g. flight, immunities)
+        */
 
-
-    /*
-    if there is a lower index own unit with a target of
-    the same type and same base Defense, target that
-    instead
-
-    BUG: ignores all other attributes of this new target
-    besides base Defense (e.g. flight, immunities)
-    */
-    {
-
-        for(itr_battle_units = 0; itr_battle_units < battle_unit_idx; itr_battle_units++)
+        if(has_ranged_attack == ST_FALSE)
         {
-
-            if(battle_units[itr_battle_units].status != bus_Active)
+            for(itr_battle_units = 0; itr_battle_units < battle_unit_idx; itr_battle_units++)
             {
-                continue;
-            }
 
-            if(battle_units[itr_battle_units].controller_idx != battle_units[battle_unit_idx].controller_idx)
-            {
-                continue;
-            }
+                if(battle_units[itr_battle_units].status != bus_Active)
+                {
+                    continue;
+                }
 
-            if(_UNITS[battle_units[battle_units[itr_battle_units].target_battle_unit_idx].unit_idx].type != _UNITS[battle_units[target_battle_unit_idx].unit_idx].type)
-            {
-                continue;
-            }
+                if(battle_units[itr_battle_units].controller_idx != battle_units[battle_unit_idx].controller_idx)
+                {
+                    continue;
+                }
 
-            if(battle_units[battle_units[itr_battle_units].target_battle_unit_idx].status != bus_Active)
-            {
-                continue;
-            }
+                /* HACK */ if(battle_units[itr_battle_units].target_battle_unit_idx == ST_UNDEFINED)
+                /* HACK */ {
+                /* HACK */     continue;
+                /* HACK */ }
+                // BUGBUG  battle_units[itr_battle_units].target_battle_unit_idx may be -1, which will cause this to read outside of the array bounds
+                if(_UNITS[battle_units[battle_units[itr_battle_units].target_battle_unit_idx].unit_idx].type != _UNITS[battle_units[target_battle_unit_idx].unit_idx].type)
+                {
+                    continue;
+                }
 
-            if(battle_units[battle_units[itr_battle_units].target_battle_unit_idx].defense != battle_units[target_battle_unit_idx].defense)
-            {
-                continue;
-            }
+                if(battle_units[battle_units[itr_battle_units].target_battle_unit_idx].status != bus_Active)
+                {
+                    continue;
+                }
 
-            target_battle_unit_idx = battle_units[itr_battle_units].target_battle_unit_idx;
+                if(battle_units[battle_units[itr_battle_units].target_battle_unit_idx].defense != battle_units[target_battle_unit_idx].defense)
+                {
+                    continue;
+                }
+
+                target_battle_unit_idx = battle_units[itr_battle_units].target_battle_unit_idx;
+
+            }
 
         }
 
