@@ -5768,7 +5768,7 @@ void Assign_Mouse_Images(void)
                             else
                             {
 
-                                _combat_mouse_grid->image_num = BU_GetRangedCursor__WIP(_active_battle_unit, scanned_battle_unit_idx);
+                                _combat_mouse_grid->image_num = Ranged_Mouse_Image(_active_battle_unit, scanned_battle_unit_idx);
 
                             }
 
@@ -5776,7 +5776,7 @@ void Assign_Mouse_Images(void)
                         else
                         {
 
-                            _combat_mouse_grid->image_num = BU_GetRangedCursor__WIP(_active_battle_unit, scanned_battle_unit_idx);
+                            _combat_mouse_grid->image_num = Ranged_Mouse_Image(_active_battle_unit, scanned_battle_unit_idx);
 
                         }
 
@@ -5812,24 +5812,88 @@ void Assign_Mouse_Images(void)
 
 
 // WZD o98p11
-// drake178: BU_GetRangedCursor()
-/*
-; returns either the red cross (3) or ranged attack (4)
-; cursor index depending on whether the selected unit
-; can attack the target based on its visibility
-;
-; BUG: returns the ranged cursor if any of the
-; attacker's units can see through invisibility,
-; ignoring the unit's own ability, and always using the
-; attacking player's variable
-*/
-/*
-
-*/
-int16_t BU_GetRangedCursor__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx)
+/**
+ * @brief Selects the tactical combat mouse cursor image for a potential ranged attack.
+ *
+ * The decision is based on the attacker's ranged attack group and visibility
+ * interactions between attacker and defender.
+ *
+ * Logic summary:
+ * - If the attacker does not use a valid ranged group (Boulder, Missile, Magic),
+ *   returns @c crsr_RedCross (not a valid ranged shot).
+ * - Otherwise starts as @c crsr_Ranged.
+ * - If the attacker has @c UE_TRUESIGHT, the ranged cursor remains enabled.
+ * - If the defender is invisible (enchantment or innate ability), ranged fire is
+ *   only allowed when @c _attacker_sees_illusions is true; otherwise it returns
+ *   @c crsr_RedCross.
+ *
+ * @param attacker_idx Index into @c battle_units for the currently active attacker.
+ * @param defender_idx Index into @c battle_units for the scanned/target defender.
+ *
+ * @return Cursor image id to assign to the combat mouse grid:
+ *         @c crsr_Ranged when ranged targeting is valid, otherwise
+ *         @c crsr_RedCross.
+ *
+ * @note Reads combat state from global/unit data, including @c battle_units and
+ *       @c _attacker_sees_illusions. This function does not mutate game state.
+ */
+int16_t Ranged_Mouse_Image(int16_t attacker_idx, int16_t defender_idx)
 {
+    uint32_t defender_enchantments = 0;
+    uint32_t attacker_enchantments = 0;
+    int16_t ranged_attack_group = 0;
+    int16_t image_num = 0;
 
-    /* HACK */  return crsr_Ranged;
+    image_num = crsr_RedCross;
+
+    ranged_attack_group = (battle_units[attacker_idx].ranged_type / 10);
+
+    if(
+        (ranged_attack_group != rag_Boulder)
+        &&
+        (ranged_attack_group != rag_Missile)
+        &&
+        (ranged_attack_group != rag_Magic)
+    )
+    {
+        return crsr_RedCross;
+    }        
+
+    image_num = crsr_Ranged;
+
+    defender_enchantments = (battle_units[defender_idx].enchantments | battle_units[defender_idx].item_enchantments);
+
+    attacker_enchantments = (battle_units[attacker_idx].enchantments | battle_units[attacker_idx].item_enchantments);
+
+    if((attacker_enchantments & UE_TRUESIGHT) != 0)
+    {
+
+        image_num = crsr_Ranged;
+
+    }
+    else if(
+        ((defender_enchantments & UE_INVISIBILITY) != 0)
+        ||
+        ((battle_units[defender_idx].Abilities & UA_INVISIBILITY) != 0)
+    )
+    {
+
+        if(_attacker_sees_illusions == ST_TRUE)
+        {
+
+            image_num = crsr_Ranged;
+
+        }
+        else
+        {
+
+            image_num = crsr_RedCross;
+
+        }
+
+    }
+
+    return image_num;
 
 }
 

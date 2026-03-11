@@ -1479,7 +1479,7 @@ int16_t Unit_Try_To_Move(int16_t wx, int16_t wy, int16_t wp, int16_t unit_idx, i
 void Assign_Mouse_Images(void);
 
 // WZD o98p11
-int16_t BU_GetRangedCursor__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx);
+int16_t Ranged_Mouse_Image(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx);
 
 // WZD o98p12
 void Add_Combat_Enchantment_Fields(void);
