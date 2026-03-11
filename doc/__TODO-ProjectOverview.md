@@ -1,5 +1,72 @@
 
 
+
+[ ] break-down Combat.c
+32K lines across many segments. Here are the natural split boundaries based on the disassembly segments:
+Segment	Lines	Content	Suggested File
+globals + s90	1-2795	Global vars, CMB_TacticalCombat (main loop)	Combat.c (keep)
+s91	2796-4032	Turn flow, movement, unit selection, targeting	CombatTurn.c
+s96	4033-4532	Combat entry, encounter resolution, hostility	CombatEntry.c
+o98	4533-6588	Combat enchantments, AI turn, end-of-combat, unit loading, flee	CombatSetup.c
+o99	6589-7564	Full screen draw, GUI buttons, entities, HP bars	CombatDraw.c
+s103	7565-9204	Info window, unit selection, resource loading	CombatInfo.c
+o105	9205-10352	Win/lose/flee, banner paint, image FX, animations	CombatFX.c
+o110	10353-11672	Damage calc, healing, AI damage estimation	CombatDamage.c
+o111-o112	11673-14118	AI spellcasting, spellbook UI, spell costs	CombatSpells.c
+o113	14119-16230	Spell targeting, ranged/melee anim, summons	CombatAttack.c
+o114	16231-18750	AI movement, action selection, pathfinding	CombatAI.c
+o116	18751-20269	Unit stats, item enchants, specials, levels, node aura	CombatUnit.c
+o122	20270-22700	Attack/defense rolls, resist, melee/ranged resolution	CombatRolls.c
+o123-o124	22701-25642	End-of-combat, results scroll, raze, misc	CombatResults.c
+ovr139	25643-25721	AI combat spell evaluation	fold into CombatAI.c
+    ovr153	25722-27959	Draw map, entities, spawn walls/trees/figures	CombatEntities.c
+    ovr154	27960-30045	Terrain init, map gen, tile gen, pathfinding coords	CombatTerrain.c
+    ovr155	30046-31676	Pathfinding (GetPath, FillReachMap)	CombatPath.c
+    ovr163	31677-32407	GFX loading, background compose, allocations	CombatGFX.c
+I'd start with the cleanest cuts — the ones with no shared static variables and clear segment boundaries:
+ovr154 + ovr155 (terrain gen + pathfinding, lines 27960-31676) — self-contained, rarely touches globals beyond the combat grid
+ovr153 + ovr163 (entity spawning + GFX loading, lines 25722-27959 + 31677-32407) — drawing/resource code
+o114 + ovr139 (AI, lines 16231-18750 + 25643-25721) — AI logic is naturally isolated
+Want me to start splitting one of these out?
+[ ] ovr154  CombatTerrain.c
+[ ] ovr155  CombatPath.c
+[ ] ovr153  CombatEntities.c
+[ ] ovr163  CombatGraphics.c
+
+
+MoO2 has:
+    Module: CMBTAI
+    Module: CMBTDRW1
+    Module: CMBTFIR2
+    Module: CMBTFIRE
+    Module: CMBTMIS
+    Module: CMBTMOV1
+    Module: CMBTSPEC
+
+
+
+
+
+Root Cause Analysis
+The Error: Access violation reading location 0x0000019B9F96A565 when trying to access _UNITS[battle_units[target_battle_unit_idx].unit_idx].type where target_battle_unit_idx is -1 (ST_UNDEFINED).
+Why This Is Happening:
+The code is in a section that tries to coordinate targeting among friendly units:
+
+// Comment in code: "if there is a lower index own unit with a target of the same type 
+// and same base Defense, target that instead"
+
+The loop iterates through battle units with indices less than battle_unit_idx (which is 7), checking if any friendly units at lower indices have targets of the same type. However, the code has a critical flaw:
+1.	target_battle_unit_idx for battle_unit 7 is currently -1 (ST_UNDEFINED), meaning AI_BU_SelectAction__WIP didn't find a valid target
+2.	The code tries to compare the type of the current iteration's target (battle_units[itr_battle_units].target_battle_unit_idx) with the type at target_battle_unit_idx (-1)
+3.	When accessing battle_units[-1].unit_idx, it reads garbage memory (0x2122 = 8482)
+4.	This garbage value is then used to index _UNITS[8482].type, which is far beyond the array bounds
+5.	The resulting address 0x0000019B9F96A565 is in unallocated memory, causing the access violation
+The Fix: The code must check if target_battle_unit_idx is valid (not ST_UNDEFINED) before attempting to use it as an array index. The entire block should be skipped if no target has been assigned yet.
+
+
+
+
+
 gtest
 gmock
 ctest
