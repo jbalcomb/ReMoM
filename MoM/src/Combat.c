@@ -3356,32 +3356,32 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
                 Play_Sound(move_sound_seg, move_sound_seg_size);
             }
 
+// CLAUDE  The simplest fix: revert to the original 8-step loop and add Mark_Time() / Release_Time() pacing — the same pattern Fade_Out() and Fade_In() already use in MOX_T4.c:271-278.
+// CLAUDE  Each step gets ~55ms via Release_Time(1), so 8 steps = ~440ms per square. The original DOS game at ~70Hz VGA retrace would have been 8 frames × ~14ms ≈ 114ms, so 1 tick is a bit slow. You could use Release_Time(1) and tune later, or we could define a smaller constant. For now, 1 tick per step is a good starting point — it'll look smooth and deliberate.
+// CLAUDE  Here's what the changes look like for both loops:
+// CLAUDE  Human movement (line ~3362):
+//                 // for(itr = 0; itr < MOVE_ANIM_CNT; itr++)
+//                 for(itr = 0; itr < (MOVE_ANIM_CNT * 10); itr++)
+//                 {
+//                     // battle_units[battle_unit_idx].move_anim_ctr += 1;
+//                     /* CLAUDE bugfix: was * itr, which sent move_anim_ctr to 632 and drew units off-screen */
+//                     battle_units[battle_unit_idx].move_anim_ctr = ((itr + (10 - 1)) / 10);
             if(magic_set.movement_animations == ST_TRUE)
             {
-
-                // for(itr = 0; itr < MOVE_ANIM_CNT; itr++)
-                for(itr = 0; itr < (MOVE_ANIM_CNT * 10); itr++)
+                for(itr = 0; itr < MOVE_ANIM_CNT; itr++)
                 {
-
-                    // battle_units[battle_unit_idx].move_anim_ctr += 1;
-                    battle_units[battle_unit_idx].move_anim_ctr = (((itr + (10 - 1)) / 10) * itr);
-
+                    Mark_Time();
+                    battle_units[battle_unit_idx].move_anim_ctr = itr;
                     Combat_Screen_Draw();
-
                     PageFlip_FX();
-
+                    Release_Time(1);
                 }
-
             }
             else
             {
-
                 battle_units[battle_unit_idx].move_anim_ctr = MOVE_ANIM_MAX;
-
                 Combat_Screen_Draw();
-
                 PageFlip_FX();
-
             }
 
             if(magic_set.sound_effects == ST_TRUE)
@@ -3389,9 +3389,7 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
                 Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
             }
 
-
             Check_Wall_Of_Fire_Attack(battle_unit_idx);
-
 
             if(battle_units[battle_unit_idx].status != bus_Active)
             {
@@ -18598,18 +18596,20 @@ BUG: this has just been done in the parent function
 
                             if(magic_set.movement_animations == ST_TRUE)
                             {
-
-                                // for(itr_battle_units = 0; itr_battle_units < MOVE_ANIM_CNT; itr_battle_units += move_anim_speed)
-                                for(itr_battle_units = 0; itr_battle_units < (MOVE_ANIM_CNT * 10); itr_battle_units++)
+//                                 // for(itr_battle_units = 0; itr_battle_units < MOVE_ANIM_CNT; itr_battle_units += move_anim_speed)
+//                                 for(itr_battle_units = 0; itr_battle_units < (MOVE_ANIM_CNT * 10); itr_battle_units++)
+                                // // for(itr = 0; itr < MOVE_ANIM_CNT; itr++)
+                                //  for(itr = 0; itr < (MOVE_ANIM_CNT * 10); itr++)
+                                /* CLAUDE */  for(itr_battle_units = 0; itr_battle_units < MOVE_ANIM_CNT; itr_battle_units += move_anim_speed)
                                 {
-
-                                    // battle_units[battle_unit_idx].move_anim_ctr += move_anim_speed);
-                                    battle_units[battle_unit_idx].move_anim_ctr = (((itr_battle_units + (10 - 1)) / 10) * move_anim_speed);
-
+//                                     // battle_units[battle_unit_idx].move_anim_ctr += move_anim_speed);
+//                                     /* CLAUDE bugfix: was * move_anim_speed, which overshot 2x during auto-combat */
+//                                     battle_units[battle_unit_idx].move_anim_ctr = ((itr_battle_units + (10 - 1)) / 10);
+                                    /* CLAUDE */  Mark_Time();
+                                    battle_units[battle_unit_idx].move_anim_ctr = itr_battle_units;
                                     Combat_Screen_Draw();
-
                                     PageFlip_FX();
-
+                                    /* CLAUDE */  Release_Time(1);
                                 }
 
                             }
