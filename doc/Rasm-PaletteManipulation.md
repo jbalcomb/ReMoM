@@ -5,7 +5,7 @@ Where did I put my notes?
 
 
 
-tinting is a type of color panipulation
+tinting is a type of color manipulation
 brighten - add white
 darken - add black
 
