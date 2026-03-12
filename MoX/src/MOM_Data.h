@@ -1861,7 +1861,7 @@ struct s_BATTLE_UNIT
     };
     /* 0x0D */  /* int8_t Cur_Figures; */                         // reqd_bldg_2 & hero_type
     union {
-                int8_t   Cur_Figures;
+                int8_t   Cur_Figures;   /* DEDU  range of values ? */
                 int8_t   reqd_bldg_2;
                 int8_t   hero_type;
     };
@@ -1919,10 +1919,10 @@ struct s_BATTLE_UNIT
     /* 0x54 */  int16_t  action;                /* enum e_BATTLE_UNIT_ACTION */
     /* 0x56 */  int8_t   Confusion_State;       /* {0: , 1: , 2: }  ~== stand around and do nothing while looking foolish and confused, move randomly, attack allies, attack enemies for combat winner, 2 means it currently belong to the other player/opponent */
     /* 0x57 */  int8_t   pad2B_57h;             // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
-    /* 0x58 */  int16_t  Blood_Amount;
+    /* 0x58 */  int16_t  gibs;
     /* 0x5A */  int16_t  Unknown_5A;
     /* 0x5C */  int16_t  Always_Animate;
-    /* 0x5E */  int16_t  Melee_Anim;            /* set TRUE in CMB_MeleeAnim() */
+    /* 0x5E */  int16_t  Melee_Anim;            /* {0,1,2}; not just {F,T}; set in CMB_MeleeAnim() */
     /* 0x60 */  int16_t  Image_Effect;          /* {1:'Black Sleep', 2:  , 3: 'Warp Creature', ...}  passed to Combat_Figure_Effect__WIP() for BU figure bitmap composition */
     /* 0x62 */  int16_t  Move_Bob;
     /* 0x64 */  int8_t   Gold_Melee;

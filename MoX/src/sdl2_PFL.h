@@ -10,7 +10,9 @@
 
 #include <SDL.h>
 
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // ¿ C++ Name Mangled  extern SDL_Window * sdl2_window; ?
 extern SDL_Window * sdl2_window;

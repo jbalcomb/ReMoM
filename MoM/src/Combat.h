@@ -1997,10 +1997,10 @@ void Combat_Load_Spell_Sound_Effect(int16_t spell_idx);
 void Check_Wall_Of_Fire_Attack(int16_t battle_unit_idx);
 
 // WZD o124p11
-// BU_SetBloodAnim()
+void Set_Gibs(int16_t battle_unit_idx, int16_t Damage);
 
 // WZD o124p12
-// BU_ClearBlood()
+void Clear_Gibs(int16_t battle_unit_idx);
 
 // WZD o124p13
 int16_t Battle_Unit_Is_Within_City(int16_t battle_unit_idx);
