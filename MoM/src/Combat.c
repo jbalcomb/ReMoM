@@ -15004,16 +15004,7 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
 
 
 // WZD o113p05
-// drake178: CMB_MeleeAnim()
-/*
-performs the melee attack animation between the
-specified two units, or shows the chosen unit
-attacking the tile at the selected coordinates (used
-when targeting walls with Wall Crushers)*/
-/*
-
-*/
-void CMB_MeleeAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t attacker_damage, int16_t defender_damage, int16_t cgx, int16_t cgy)
+void Melee_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t attacker_damage, int16_t defender_damage, int16_t cgx, int16_t cgy)
 {
     SAMB_ptr sound_data = 0;
     int16_t Anim_Duration = 0;
@@ -15058,7 +15049,29 @@ void CMB_MeleeAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_batt
         Play_Sound(sound_data, sound_buffer_size);
     }
 
-    Anim_Frame_Index = 0;
+    for(Anim_Frame_Index = 0; Anim_Frame_Index < Anim_Duration; Anim_Frame_Index++)
+    {
+        Mark_Time();
+        Set_Page_Off();
+        Combat_Screen_Draw();
+        PageFlip_FX();
+        Release_Time(2);
+    }
+
+    // TODO  BU_ClearBlood(attacker_battle_unit_idx);
+
+    if(defender_battle_unit_idx != 99)
+    {
+        // TODO  BU_ClearBlood(defender_battle_unit_idx);
+        battle_units[defender_battle_unit_idx].Melee_Anim = ST_FALSE;
+    }
+
+    battle_units[attacker_battle_unit_idx].Melee_Anim = ST_FALSE;
+
+    if(magic_set.sound_effects == ST_TRUE)
+    {
+        Release_Block(World_Data);
+    }
 
 }
 
@@ -22435,7 +22448,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
         if(ranged_attack_flag != ST_TRUE)
         {
 
-            CMB_MeleeAnim__STUB(attacker_battle_unit_idx, defender_battle_unit_idx, attacker_damage_total, defender_damage_total, battle_units[defender_battle_unit_idx].cgx, battle_units[defender_battle_unit_idx].cgy);
+            Melee_Animation(attacker_battle_unit_idx, defender_battle_unit_idx, attacker_damage_total, defender_damage_total, battle_units[defender_battle_unit_idx].cgx, battle_units[defender_battle_unit_idx].cgy);
 
             battle_units[attacker_battle_unit_idx].movement_points -= ((Battle_Unit_Moves2(attacker_battle_unit_idx) + 1) / 2);
 
@@ -22637,7 +22650,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
                     Wall_Destroyed = ST_TRUE;
                 }
 
-                CMB_MeleeAnim__STUB(attacker_battle_unit_idx, defender_battle_unit_idx, attacker_damage_total, defender_damage_total, cgx, cgy);
+                Melee_Animation(attacker_battle_unit_idx, defender_battle_unit_idx, attacker_damage_total, defender_damage_total, cgx, cgy);
 
                 battle_units[attacker_battle_unit_idx].movement_points -= ((Battle_Unit_Moves2(attacker_battle_unit_idx) + 1) / 2);
 
