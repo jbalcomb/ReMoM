@@ -266,6 +266,9 @@ CMB_Units_Init__WIP()
 
 
 
+[ ] fix naming for attack_idx/defender_idx for player or battle_unit
+
+
 
 ¿¿¿
 ALPHA
