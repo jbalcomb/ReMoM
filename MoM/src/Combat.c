@@ -14845,29 +14845,21 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
 
     if(defender_battle_unit_idx != 99)
     {
-
         range = Range_To_Battle_Unit(attacker_battle_unit_idx, defender_battle_unit_idx);
-
         battle_units[attacker_battle_unit_idx].target_cgx = battle_units[defender_battle_unit_idx].cgx;
         battle_units[attacker_battle_unit_idx].target_cgy = battle_units[defender_battle_unit_idx].cgy;
-
     }
     else
     {
-
         battle_units[attacker_battle_unit_idx].target_cgx = cgx;
         battle_units[attacker_battle_unit_idx].target_cgy = cgy;
-
         dist_x = abs(battle_units[attacker_battle_unit_idx].cgx - cgx);
-        dist_y = abs(battle_units[attacker_battle_unit_idx].cgx - cgx);
-
-        range = dist_y;  // DNE in Dasm
-
+        dist_y = abs(battle_units[attacker_battle_unit_idx].cgy - cgy);
+        range = dist_y;  // DNE in Dasm  BUGBUG?
         if(dist_x > dist_y)
         {
             range = dist_x;
         }
-
     }
 
     if(
@@ -14876,24 +14868,17 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
         (magic_set.movement_animations != ST_FALSE)
     )
     {
-
         Travel_Distance = 33;  // ¿ DEDU  99 / 3 ?
-
     }
     else
     {
-
         Travel_Distance = 49;  // ¿ DEDU  99 / 2 ?
-
     }
 
     if(magic_set.sound_effects == ST_TRUE)
     {
-
         Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
-
         Mark_Block(World_Data);
-
     }
 
     // NIU: ...,12,13,14,15,16,17,18,...,20,23,24,25,26,27,28,29,30,...,39
@@ -14917,7 +14902,6 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
                 sound_buffer_length = lbxload_entry_length;
             }
         } break;
-
         case 31:
         {
             missile_type = msl_Fireball;
@@ -14927,7 +14911,6 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
                 sound_buffer_length = lbxload_entry_length;
             }
         } break;
-
         case 32:
         {
             missile_type = msl_Illusion;
@@ -14937,52 +14920,31 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
                 sound_buffer_length = lbxload_entry_length;
             }
         } break;
-
     }
-
-    if(magic_set.sound_effects != ST_FALSE)
+    if(magic_set.sound_effects == ST_FALSE)
     {
-
         sound_buffer = (SAMB_ptr)ST_UNDEFINED;
-        
     }
-
-
     if(defender_battle_unit_idx != 99)
     {
-// ; overwrites the _missiles@ array using the
-// ; passed parameters, creating the specified amount of
-// ; projectiles of the selected type heading towards the
-// ; target
-// ; returns and sets the count into _missile_count
         CMB_SetProjectiles__WIP(battle_units[attacker_battle_unit_idx].Cur_Figures, battle_units[defender_battle_unit_idx].Cur_Figures, battle_units[attacker_battle_unit_idx].cgx, battle_units[attacker_battle_unit_idx].cgy, battle_units[defender_battle_unit_idx].cgx, battle_units[defender_battle_unit_idx].cgy, missile_type);
     }
     else
     {
         CMB_SetProjectiles__WIP(battle_units[attacker_battle_unit_idx].Cur_Figures, 1, battle_units[attacker_battle_unit_idx].cgx, battle_units[attacker_battle_unit_idx].cgy, cgx, cgy, missile_type);
     }
-
-
-    CMB_ProjectileFrame = 0;  // ; used with entity drawing type 3, steps 0 to 2
+    CMB_ProjectileFrame = 0;
     RP_CMB_ProjectileFrame2 = 0;
-
     if(sound_buffer != (SAMB_ptr)ST_UNDEFINED)
     {
-
         Play_Sound(sound_buffer, sound_buffer_length);
-
     }
-
     for(Progress_Counter = 0; Progress_Counter < 100; Progress_Counter += Travel_Distance)
     {
-     
         if((Progress_Counter + Travel_Distance) > 99)
         {
-
-            CMB_ProjectileFrame = 4;  // ; used with entity drawing type 3, steps 0 to 2
-
+            CMB_ProjectileFrame = 4;
             RP_CMB_ProjectileFrame2 = 4;
-
             if(defender_battle_unit_idx != 99)
             {
 
@@ -14993,15 +14955,11 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
                 // ; randomizes the CMB_BloodFrames array to 0-3s
 
             }
-
         }
         else
         {
-
             CMB_ProjectileFrame = ((CMB_ProjectileFrame + 1) % 3);  // ; used with entity drawing type 3, steps 0 to 2
-
             RP_CMB_ProjectileFrame2 = ((RP_CMB_ProjectileFrame2 + 1) % 3);
-
         }
 
         Combat_Screen_Draw();
@@ -15057,8 +15015,50 @@ when targeting walls with Wall Crushers)*/
 */
 void CMB_MeleeAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t attacker_damage, int16_t defender_damage, int16_t cgx, int16_t cgy)
 {
+    SAMB_ptr sound_data = 0;
+    int16_t Anim_Duration = 0;
+    int16_t Anim_Frame_Index = 0;
+    /* HACK */  uint32_t sound_buffer_size = 0;  // DNE in Dasm
 
-    return;
+    if(magic_set.movement_animations == ST_TRUE)
+    {
+        Anim_Duration = 5;
+    }
+    else
+    {
+        Anim_Duration = 1;
+    }
+
+    // TODO  BU_SetBloodAnim(attacker_battle_unit_idx, attacker_damage);
+
+    if(defender_battle_unit_idx == 99)
+    {
+        battle_units[attacker_battle_unit_idx].target_cgx = cgx;
+        battle_units[attacker_battle_unit_idx].target_cgy = cgy;
+    }
+    else
+    {
+
+        // TODO  BU_SetBloodAnim(defender_battle_unit_idx, defender_damage);
+
+        battle_units[defender_battle_unit_idx].Melee_Anim = 2;
+        battle_units[defender_battle_unit_idx].target_cgx = battle_units[attacker_battle_unit_idx].cgx;
+        battle_units[defender_battle_unit_idx].target_cgy = battle_units[attacker_battle_unit_idx].cgy;
+        battle_units[attacker_battle_unit_idx].target_cgx = battle_units[defender_battle_unit_idx].cgx;
+        battle_units[attacker_battle_unit_idx].target_cgy = battle_units[defender_battle_unit_idx].cgy;
+    }
+
+    battle_units[attacker_battle_unit_idx].Melee_Anim = ST_TRUE;
+
+    if(magic_set.sound_effects == ST_TRUE)
+    {
+        Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
+        Mark_Block(World_Data);
+        sound_data = Reload_Melee_Sound(attacker_battle_unit_idx, &sound_buffer_size);
+        Play_Sound(sound_data, sound_buffer_size);
+    }
+
+    Anim_Frame_Index = 0;
 
 }
 
@@ -24936,37 +24936,40 @@ SAMB_ptr Reload_Battle_Unit_Move_Sound(int16_t battle_unit_idx, /* HACK */ uint3
 
 
 // WZD o124p08
-// drake178: BU_LoadMeleeSound()
-/*
-; appends the melee sound effect of the specified unit
-; into the World_Data@ allocation
-; returns the segment pointer to the effect data
-*/
-/*
-
-*/
-// SAMB_ptr BU_LoadMeleeSound__WIP(int16_t battle_unit_idx)
-void BU_LoadMeleeSound__WIP(int16_t battle_unit_idx, SAMB_ptr * sound_seg, uint32_t * sound_seg_size)
+/* COPILOT */
+/**
+ * @brief Reloads the melee attack sound data for a battle unit.
+ *
+ * Uses the low nibble of the unit type Sound field as the melee sound index.
+ * Sound index 8 is treated as a silence fallback from SOUNDFX.LBX; all other
+ * melee sound indices are loaded from CMBTSND.LBX.
+ *
+ * @param battle_unit_idx Index of the battle unit whose melee sound is requested.
+ * @param sound_seg_size Output pointer that receives the loaded sound segment size in bytes.
+ * @return SAMB_ptr Pointer to the loaded sound data segment.
+ *
+ * @note The @p sound_seg_size pointer is required and is written on every path.
+ * @note Parameter @p sound_seg_size is marked as HACK in the original signature.
+ */
+SAMB_ptr Reload_Melee_Sound(int16_t battle_unit_idx, /* HACK */ uint32_t * sound_seg_size)
 {
-    // SAMB_ptr sound = 0;  // _SI_
-    int16_t sound = 0;  // _SI_
+    SAMB_ptr sound_seg = 0;
+    int16_t sound_num = 0;  // DNE in Dasm
 
-    sound = (_unit_type_table[_UNITS[battle_units[battle_unit_idx].unit_idx].type].Sound & 0x0F);  // low nibble
+    sound_num = (_unit_type_table[_UNITS[battle_units[battle_unit_idx].unit_idx].type].Sound & 0x0F);  // low nibble
 
-    if(sound == 8)
+    if(sound_num == 8)
     {
-        // sound = LBX_Reload_Next(soundfx_lbx_file__ovr124__1of2, SFX_Silence, World_Data);
-        *sound_seg = LBX_Reload_Next(soundfx_lbx_file__ovr124__1of2, SFX_Silence, World_Data);
+        sound_seg = LBX_Reload_Next(soundfx_lbx_file__ovr124__1of2, SFX_Silence, World_Data);
         *sound_seg_size = lbxload_entry_length;
     }
     else
     {
-        // sound = LBX_Reload_Next(cmbtsnd_lbx_file__ovr124, sound, World_Data);
-        *sound_seg = LBX_Reload_Next(cmbtsnd_lbx_file__ovr124, sound, World_Data);
+        sound_seg = LBX_Reload_Next(cmbtsnd_lbx_file__ovr124, sound_num, World_Data);
         *sound_seg_size = lbxload_entry_length;
     }
 
-    // return sound;
+    return sound_seg;
 
 }
 

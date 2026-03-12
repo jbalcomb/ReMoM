@@ -1988,8 +1988,7 @@ int16_t Get_Player_Mode(int16_t player_idx);
 SAMB_ptr Reload_Battle_Unit_Move_Sound(int16_t battle_unit_idx, /* HACK */ uint32_t * sound_seg_size);
 
 // WZD o124p08
-// SAMB_ptr BU_LoadMeleeSound__WIP(int16_t battle_unit_idx);
-void BU_LoadMeleeSound__WIP(int16_t battle_unit_idx, SAMB_ptr * sound_seg, uint32_t * sound_seg_size);
+SAMB_ptr Reload_Melee_Sound(int16_t battle_unit_idx, /* HACK */ uint32_t * sound_seg_size);
 
 // WZD o124p09
 void Combat_Load_Spell_Sound_Effect(int16_t spell_idx);
