@@ -1,0 +1,238 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "base",
+            "displayName": "Base: Ninja, Clang",
+            "description": "Base: Ninja (MinGW x64), Clang (LLVM)",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "installDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
+                "CMAKE_MAKE_PROGRAM": "C:/mingw64/bin/ninja.exe",
+                "CMAKE_C_COMPILER": "C:/Program Files/LLVM/bin/clang.exe",
+                "CMAKE_CXX_COMPILER": "C:/Program Files/LLVM/bin/clang++.exe"
+            }
+        },
+        {
+            "name": "MSVC-debug",
+            "displayName": "VS2022 amd64 Debug",
+            "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)",
+            "generator": "Visual Studio 17 2022",
+            "toolset": "host=x64",
+            "architecture": "x64",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe"
+            }
+        },
+        {
+            "name": "MSVC-nosound-debug",
+            "displayName": "VS2022 amd64 Debug (No Sound)",
+            "description": "Using compilers for Visual Studio 17 2022 (x64 architecture) with no sound library",
+            "generator": "Visual Studio 17 2022",
+            "toolset": "host=x64",
+            "architecture": "x64",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "DISABLE_AUDIO": {
+                    "type": "BOOL",
+                    "value": "TRUE"
+                }
+            }
+        },
+        {
+            "name": "Clang-Ninja-debug",
+            "displayName": "Clang+Ninja Debug",
+            "description": "Ninja Multi-Config, Clang (GNU-style)",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_MAKE_PROGRAM": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja\\ninja.exe",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++"
+            }
+        },
+        {
+            "name": "Clang-Ninja-coverage",
+            "displayName": "Clang+Ninja Coverage",
+            "description": "Ninja Multi-Config using Clang with coverage instrumentation",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_MAKE_PROGRAM": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja\\ninja.exe",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "ENABLE_COVERAGE": "ON"
+            }
+        },
+        {
+            "name": "clang-nosound-debug",
+            "displayName": "Linux Clang (No Sound)",
+            "description": "Using Clang compilers on Linux with no sound library",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "DISABLE_AUDIO": {
+                    "type": "BOOL",
+                    "value": "TRUE"
+                }
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "base",
+            "displayName": "Base: Ninja, Clang",
+            "configurePreset": "base",
+            "configuration": "Debug",
+            "targets": [
+                "all"
+            ]
+        },
+        {
+            "name": "MSVC-debug",
+            "displayName": "VS2022 amd64 Debug",
+            "configurePreset": "MSVC-debug",
+            "configuration": "Debug",
+            "targets": [
+                "ALL_BUILD"
+            ]
+        },
+        {
+            "name": "MSVC-nosound-debug",
+            "displayName": "VS2022 amd64 Debug (No Sound)",
+            "configurePreset": "MSVC-nosound-debug",
+            "configuration": "Debug",
+            "targets": [
+                "ALL_BUILD"
+            ]
+        },
+        {
+            "name": "clang-nosound-debug",
+            "displayName": "Linux Clang (No Sound)",
+            "configurePreset": "clang-nosound-debug",
+            "configuration": "Debug",
+            "targets": [
+                "all"
+            ]
+        }
+    ],
+    "packagePresets": [
+        {
+            "name": "MSVC-debug",
+            "displayName": "VS2022 amd64 Debug",
+            "configurePreset": "MSVC-debug",
+            "configurations": [
+                "Debug"
+            ]
+        },
+        {
+            "name": "MSVC-nosound-debug",
+            "displayName": "VS2022 amd64 Debug (No Sound)",
+            "configurePreset": "MSVC-nosound-debug",
+            "configurations": [
+                "Debug"
+            ]
+        },
+        {
+            "name": "clang-nosound-debug",
+            "displayName": "Linux Clang (No Sound)",
+            "configurePreset": "clang-nosound-debug",
+            "configurations": [
+                "Debug"
+            ]
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "MSVC-debug",
+            "displayName": "VS2022 amd64 Debug",
+            "configurePreset": "MSVC-debug"
+        },
+        {
+            "name": "MSVC-nosound-debug",
+            "displayName": "VS2022 amd64 Debug (No Sound)",
+            "configurePreset": "MSVC-nosound-debug"
+        },
+        {
+            "name": "clang-nosound-debug",
+            "displayName": "Linux Clang (No Sound)",
+            "configurePreset": "clang-nosound-debug"
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "MSVC-debug",
+            "displayName": "VS2022 amd64 Debug",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "MSVC-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "MSVC-debug"
+                },
+                {
+                    "type": "test",
+                    "name": "MSVC-debug"
+                },
+                {
+                    "type": "package",
+                    "name": "MSVC-debug"
+                }
+            ]
+        },
+        {
+            "name": "MSVC-nosound-debug",
+            "displayName": "VS2022 amd64 Debug (No Sound)",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "MSVC-nosound-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "MSVC-nosound-debug"
+                },
+                {
+                    "type": "test",
+                    "name": "MSVC-nosound-debug"
+                }
+            ]
+        },
+        {
+            "name": "clang-nosound-debug",
+            "displayName": "Linux Clang (No Sound)",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "clang-nosound-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "clang-nosound-debug"
+                },
+                {
+                    "type": "test",
+                    "name": "clang-nosound-debug"
+                }
+            ]
+        }
+    ]
+}
