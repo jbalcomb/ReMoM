@@ -17,7 +17,7 @@ MoO2
 #include <stdio.h>
 #include <string.h>
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 #include "capture.h"
 
@@ -151,12 +151,12 @@ void Screen_Flic_Capture__STUB(void)
         if (Scrdmp_File_Number < 10)
         {
             strcpy(scanline_buffer, cnst_Scrdmp_0);  // "0"
-            SDL_itoa(Scrdmp_File_Number, Conversion_String, 10);
+            stu_itoa(Scrdmp_File_Number, Conversion_String, 10);
             strcat(scanline_buffer, Conversion_String);
         }
         else
         {
-            SDL_itoa(Scrdmp_File_Number, scanline_buffer, 10);
+            stu_itoa(Scrdmp_File_Number, scanline_buffer, 10);
 
         }
         strcpy(file_name, cnst_Scrdmp_Base);  // "SCRDMP"

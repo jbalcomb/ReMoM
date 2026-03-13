@@ -26,8 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL_stdinc.h>
-#include "sdl2_PFL.h"
+#include "../../ext/stu_compat.h"
 
 
 
@@ -532,7 +531,7 @@ int16_t Print_Integer(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[10];
 
-    SDL_itoa(val, buffer, 10);
+    stu_itoa(val, buffer, 10);
 
     next_x = Print(x, y, buffer);
 
@@ -547,7 +546,7 @@ int16_t Print_Long(int16_t x, int16_t y, int32_t val)
     int16_t next_x;
     char buffer[10];
 
-    SDL_ltoa(val, buffer, 10);
+    stu_ltoa(val, buffer, 10);
 
     next_x = Print(x, y, buffer);
 
@@ -592,7 +591,7 @@ int16_t Print_Integer_Right(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    SDL_itoa(val, buffer, 10);
+    stu_itoa(val, buffer, 10);
 
     next_x = Print_Right(x, y, buffer);
 
@@ -606,7 +605,7 @@ int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    SDL_itoa(val, buffer, 10);
+    stu_itoa(val, buffer, 10);
 
     next_x = Print_Centered(x, y, buffer);
 
@@ -621,7 +620,7 @@ int16_t Print_Long_Right(int16_t x, int16_t y, int32_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    SDL_itoa(val, buffer, 10);
+    stu_itoa(val, buffer, 10);
 
     next_x = Print_Right(x, y, buffer);
 
@@ -635,7 +634,7 @@ int16_t Clipped_Print_Integer(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    SDL_itoa(val, buffer, 10);
+    stu_itoa(val, buffer, 10);
 
     next_x = Clipped_Print(x, y, buffer);
 
@@ -649,7 +648,7 @@ int16_t Clipped_Print_Long(int16_t x, int16_t y, int32_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    SDL_ltoa(val, buffer, 10);
+    stu_ltoa(val, buffer, 10);
 
     next_x = Clipped_Print(x, y, buffer);
 
@@ -706,7 +705,7 @@ int16_t Clipped_Print_Integer_Right(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[10];
 
-    SDL_itoa(val, buffer, 10);
+    stu_itoa(val, buffer, 10);
 
     next_x = Clipped_Print_Right(x, y, buffer);
 
@@ -721,7 +720,7 @@ int16_t Clipped_Print_Long_Right(int16_t x, int16_t y, int32_t val)
     int16_t next_x;
     char buffer[LEN_TEMP_BUFFER];
 
-    SDL_ltoa(val, buffer, 10);
+    stu_ltoa(val, buffer, 10);
 
     next_x = Clipped_Print_Right(x, y, buffer);
 
@@ -1127,7 +1126,7 @@ void ST_PSTRM(int16_t x, int16_t y, int16_t val, char * string)
 
         j = ((Get_String_Width(string) + 2) * 10);
 
-        SDL_itoa(val ,buffer, 10);
+        stu_itoa(val ,buffer, 10);
 
         Disp_PSTR((x + j + 1), y, buffer);
 
@@ -1206,7 +1205,7 @@ void ST_PSTR(int x, int y, int val)
     if(Check_Release_Version() != ST_TRUE)
     {
 
-        SDL_itoa(val, buffer, 10);
+        stu_itoa(val, buffer, 10);
 
         Disp_PSTR(x, y, buffer);
 
@@ -1231,7 +1230,7 @@ void PSTRL(int16_t x, int16_t y, int32_t val)
     if(Check_Release_Version() != ST_TRUE)
     {
 
-        SDL_ltoa(val, buffer, 10);
+        stu_ltoa(val, buffer, 10);
 
         Disp_PSTR(x, y, buffer);
 
@@ -1263,7 +1262,7 @@ void PSTRU(int16_t x, int16_t y, uint32_t value)
 // IDGI  mov     [word ptr bp+val], ax
         val = value;
 
-        SDL_ultoa(val, buffer, 10);
+        stu_ultoa(val, buffer, 10);
 
         Disp_PSTR(x, y, buffer);
 
@@ -3094,9 +3093,9 @@ void Reset_Cycle_Palette_Color(void)
  * flag is @c -1 (disabled); this function initialises it to @c 0 (forward) and
  * seeds @c cycle_color_value from the minimum of the primary channel.
  *
- * The computed 6-bit VGA component values (0–63) are scaled to 8-bit SDL values
- * (0–255) and written directly into the SDL palette entry at index @p color_num
- * via @c SDL_SetPaletteColors().
+ * The computed 6-bit VGA component values (0–63) are scaled to 8-bit values
+ * (0–255) and written to the platform palette entry at index @p color_num
+ * via @c Platform_Set_Palette_Color().
  *
  * @param color_num   Index of the palette entry to update (0-based).
  * @param red_min     Minimum red component value (6-bit VGA range 0–63).
@@ -3111,8 +3110,7 @@ void Reset_Cycle_Palette_Color(void)
  * @note Relies on the module-level globals @c cycle_direction_flag,
  *       @c cycle_color_value, and @c cycle_step_value maintained by
  *       @c Reset_Cycle_Palette_Color() and @c Update_Cycle().
- * @note Has no effect on the palette if @c sdl2_surface_RGB666 has no palette
- *       attached (the SDL call is guarded by a @c NULL check).
+ * @note Updates the platform palette via @c Platform_Set_Palette_Color().
  */
 void Cycle_Palette_Color(int16_t color_num, int16_t red_min, int16_t green_min, int16_t blue_min, int16_t red_max, int16_t green_max, int16_t blue_max, int16_t step_value)
 {
@@ -3181,19 +3179,10 @@ void Cycle_Palette_Color(int16_t color_num, int16_t red_min, int16_t green_min, 
         Update_Cycle(&blue_min, &blue_max);
     }
 
-    /* 6. Hardware Update: SDL2 Palette Swap */
-    SDL_Color new_color;
-    /* Scale the 6-bit VGA values (0-63) up to 8-bit SDL values (0-255) */
+    /* 6. Hardware Update: Platform Palette Swap */
+    /* Scale the 6-bit VGA values (0-63) up to 8-bit values (0-255) */
     /* Multiplying by 255 and dividing by 63 is the most accurate linear scale */
-    new_color.r = (Uint8)((store_red   * 255) / 63);
-    new_color.g = (Uint8)((store_green * 255) / 63);
-    new_color.b = (Uint8)((store_blue  * 255) / 63);
-    new_color.a = 255; /* Fully opaque */
-    /* Update the specific color index in the SDL_Palette */
-    /* Arguments: (palette, array of colors, starting index, number of colors to update) */
-    if (sdl2_surface_RGB666->format->palette != NULL) {
-        SDL_SetPaletteColors(sdl2_surface_RGB666->format->palette, &new_color, color_num, 1);
-    }
+    /* CLAUDE */ Platform_Set_Palette_Color(color_num, (uint8_t)((store_red * 255) / 63), (uint8_t)((store_green * 255) / 63), (uint8_t)((store_blue * 255) / 63));
 
 }
 
@@ -3498,24 +3487,13 @@ void Cycle_Palette(int16_t percent)
                 {
                     ofst = itr * 3;
 
-#ifdef _STU_SDL2
-                    platform_palette_buffer[itr].a = 0xFF;
+                    /* CLAUDE */ platform_palette_buffer[itr].a = 0xFF;
                     color_red = *(tmpcurrpal + ofst++);
                     platform_palette_buffer[itr].b = (((color_red * color_multiplier) >> 8) << 2);
                     color_grn = *(tmpcurrpal + ofst++);
                     platform_palette_buffer[itr].g = (((color_grn * color_multiplier) >> 8) << 2);
                     color_blu = *(tmpcurrpal + ofst++);
                     platform_palette_buffer[itr].r = (((color_blu * color_multiplier) >> 8) << 2);
-#endif
-#ifdef _STU_WIN
-                    *(platform_palette_buffer + (itr * 4) + 3) = 0x00;
-                    color_red = *(tmpcurrpal + ofst++);
-                    *(platform_palette_buffer + (itr * 4) + 2) = (((color_red * color_multiplier) >> 8) << 2);
-                    color_grn = *(tmpcurrpal + ofst++);
-                    *(platform_palette_buffer + (itr * 4) + 1) = (((color_grn * color_multiplier) >> 8) << 2);
-                    color_blu = *(tmpcurrpal + ofst++);
-                    *(platform_palette_buffer + (itr * 4) + 0) = (((color_blu * color_multiplier) >> 8) << 2);
-#endif
 
                 }
             }
@@ -3535,19 +3513,10 @@ void Cycle_Palette(int16_t percent)
             {
                 // set hardware palette color to {0,0,0} black
                 // ¿ ~== set platform_palette_buffer color to {0,0,0} black ?
-#ifdef _STU_SDL2
-                platform_palette_buffer[itr].a = 0xFF;
+                /* CLAUDE */ platform_palette_buffer[itr].a = 0xFF;
                 platform_palette_buffer[itr].b = 0x00;
                 platform_palette_buffer[itr].g = 0x00;
                 platform_palette_buffer[itr].r = 0x00;
-#endif
-#ifdef _STU_WIN
-
-                *(platform_palette_buffer + (itr * 4) + 3) = 0x00;
-                *(platform_palette_buffer + (itr * 4) + 2) = 0x00;
-                *(platform_palette_buffer + (itr * 4) + 1) = 0x00;
-                *(platform_palette_buffer + (itr * 4) + 0) = 0x00;
-#endif
             }
         }
 

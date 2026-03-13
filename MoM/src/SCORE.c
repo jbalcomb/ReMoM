@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 #include "SCORE.h"
 
@@ -328,7 +328,7 @@ void Hall_Of_Fame_Screen_Draw(void)
             }
             else
             {
-                SDL_itoa((itr_scores+1), GUI_String_2, 10);
+                stu_itoa((itr_scores+1), GUI_String_2, 10);
                 strcpy(GUI_String_1, GUI_String_2);
                 strcat(GUI_String_1, str_PAREN_CLOSE);  // ")"
                 Print_Right(print_x, print_y, GUI_String_1);
@@ -343,7 +343,7 @@ void Hall_Of_Fame_Screen_Draw(void)
             // score_percent = (8000 / (magic_set.hof_scores[itr_scores] * 100));  // ... 8000 ... 100 ... LXMUL ... LDIV ...
             score_percent = ((magic_set.hof_scores[itr_scores] * 100) / 8000);
 
-            SDL_itoa(score_percent, GUI_String_2, 10);
+            stu_itoa(score_percent, GUI_String_2, 10);
             strcpy(GUI_String_1, str_PAREN_OPEN);  // "("
             strcat(GUI_String_1, GUI_String_2);
             strcat(GUI_String_1, cnst_HoF_String_E);  // "%)"

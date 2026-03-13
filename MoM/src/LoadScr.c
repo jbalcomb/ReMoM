@@ -53,7 +53,7 @@ MoO2  Module: LOADSAVE
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 #include "LoadScr.h"
 
@@ -330,7 +330,7 @@ void Load_Screen(void)
     for(itr = 1; itr < NUM_SAVE_GAME_FILES; itr++)
     {
         strcpy(match_string, cnst_SAVE3);
-        SDL_itoa(itr, buffer2, 10);
+        stu_itoa(itr, buffer2, 10);
         strcat(match_string, buffer2);
         strcat(match_string, cnst_SAVE_ext3);
         if(DIR(match_string, found_file) == ST_FAILURE)  /* File Not Found */

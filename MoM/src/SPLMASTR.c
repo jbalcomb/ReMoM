@@ -39,7 +39,7 @@ MoO2
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 #include "SPLMASTR.h"
 
@@ -435,7 +435,7 @@ void Spellbook_Mana_Adder_Draw(void)
 
     strcpy(string, str_PLUS_SIGN__ovr136);
 
-    SDL_itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
+    stu_itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
 
     strcat(string, buffer);  // extra mana amount
 
@@ -647,7 +647,7 @@ void Combat_Spellbook_Mana_Adder_Draw(void)
 
     strcpy(string, str_PLUS_SIGN__ovr136);
 
-    SDL_itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
+    stu_itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
 
     strcat(string, buffer);  // extra mana amount
 

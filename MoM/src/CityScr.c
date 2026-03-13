@@ -40,7 +40,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 #include "CityScr.h"
 
@@ -648,7 +648,7 @@ void City_Screen__WIP(void)
                     Deactivate_Help_List();
                     Set_Mouse_List(1, mouse_list_default);
                     strcpy(GUI_String_1, aDoYouWishToSpend);  // "Do you wish to spend \x02"
-                    SDL_itoa(City_Cost_To_Buy_Product(_city_idx), GUI_String_2, 10);
+                    stu_itoa(City_Cost_To_Buy_Product(_city_idx), GUI_String_2, 10);
                     strcat(GUI_String_1, GUI_String_2);
                     strcat(GUI_String_1, aGold_3);  // " Gold"
                     strcat(GUI_String_1, aByPurchasing);  // "\x01 by purchasing"
@@ -819,7 +819,7 @@ void City_Screen__WIP(void)
                             strcpy(GUI_String_2, bldg_data_table[cityscape_bldg_idx].name);
                             strcat(GUI_String_1, GUI_String_2);
                             strcat(GUI_String_1, str_sell_back_2);  // "\x01 for "
-                            SDL_itoa(building_value, GUI_String_2, 10);
+                            stu_itoa(building_value, GUI_String_2, 10);
                             strcat(GUI_String_1, GUI_String_2);
                             strcat(GUI_String_1, str_sell_back_3);  // " gold?"
 
@@ -1295,11 +1295,11 @@ void City_Screen_Draw2__WIP(void)
 
     if(pops > 999)
     {
-        SDL_itoa((pops / 1000), GUI_String_2, 10);
+        stu_itoa((pops / 1000), GUI_String_2, 10);
         strcat(GUI_String_1, GUI_String_2);
         strcat(GUI_String_1, ",");
         pops = (pops - ((pops / 1000) * 1000));
-        SDL_itoa(pops, GUI_String_2, 10);
+        stu_itoa(pops, GUI_String_2, 10);
         if(pops < 10)
         {
             strcat(GUI_String_1, "00");
@@ -1314,7 +1314,7 @@ void City_Screen_Draw2__WIP(void)
     }
     else
     {
-        SDL_itoa(pops, GUI_String_2, 10);
+        stu_itoa(pops, GUI_String_2, 10);
     }
 
     strcat(GUI_String_1, GUI_String_2);
@@ -1325,7 +1325,7 @@ void City_Screen_Draw2__WIP(void)
 
     pops = (City_Growth_Rate(_city_idx) * 10);
 
-    SDL_itoa(pops, GUI_String_2, 10);
+    stu_itoa(pops, GUI_String_2, 10);
 
     if(pops > -1)
     {

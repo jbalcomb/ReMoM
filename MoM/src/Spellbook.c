@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 #include "Spellbook.h"
 
@@ -1279,7 +1279,7 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
                 (spell_data_table[abs(spell_idx)].type != 11)  /* scc_Crafting_Spell */
             )
             {
-                SDL_itoa(casting_cost, temp_string, 10);
+                stu_itoa(casting_cost, temp_string, 10);
             }
             else
             {
@@ -1512,7 +1512,7 @@ void CmbBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
                 }
                 else
                 {
-                    SDL_itoa(casting_cost, temp_string, 10);
+                    stu_itoa(casting_cost, temp_string, 10);
                     strcat(temp_string, cnst_Space_MP_2);
                 }
             }
@@ -2485,7 +2485,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
         Print_To_Bitmap(0, 11, cnst_SP_Cost, IMG_SBK_Anims);
 
-        SDL_itoa(casting_cost, Conversion_String, 10);
+        stu_itoa(casting_cost, Conversion_String, 10);
 
         Print_Right_To_Bitmap(42, 11, Conversion_String, IMG_SBK_Anims);
 
@@ -3147,13 +3147,13 @@ void BigBook_Compose__WIP(int16_t page, SAMB_ptr pict_seg, int16_t flag)
 
             strcpy(spell_description, cnst_Catsing_Cost);
 
-            SDL_itoa(casting_cost, spell_name, 10);
+            stu_itoa(casting_cost, spell_name, 10);
 
             strcat(spell_description, spell_name);
 
             strcat(spell_description, cnst_SpaceOpenBrace4);
 
-            SDL_itoa(turns_left, spell_name, 10);
+            stu_itoa(turns_left, spell_name, 10);
             strcat(spell_description, cnst_SpaceOpenBrace4);
 
             strcat(spell_description, spell_name);
@@ -3196,13 +3196,13 @@ void BigBook_Compose__WIP(int16_t page, SAMB_ptr pict_seg, int16_t flag)
 
             strcpy(spell_description, cnst_Research_Cost);
 
-            SDL_ltoa(research_cost, spell_name, 10);
+            stu_ltoa(research_cost, spell_name, 10);
 
             strcat(spell_description, spell_name);
 
             strcat(spell_description, cnst_SpaceOpenBrace4);
 
-            SDL_itoa(turns_left, spell_name, 10);
+            stu_itoa(turns_left, spell_name, 10);
 
             strcat(spell_description, spell_name);
 

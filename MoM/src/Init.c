@@ -23,7 +23,7 @@ MoO2  Module: fonts     Load_Font_File()
 #include "../../MoX/src/MOM_PFL.h"
 #include "../../MoX/src/Video2.h"
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 
 

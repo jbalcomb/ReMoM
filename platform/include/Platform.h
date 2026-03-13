@@ -119,6 +119,16 @@ extern PFL_Color platform_palette_buffer[256];
 void Platform_Palette_Update(void);
 
 /**
+ * Update a single entry in the platform's hardware palette.
+ * Used by palette cycling effects that need immediate per-color updates.
+ * @param index  Palette index (0..255).
+ * @param r      Red component (0..255).
+ * @param g      Green component (0..255).
+ * @param b      Blue component (0..255).
+ */
+void Platform_Set_Palette_Color(uint8_t index, uint8_t r, uint8_t g, uint8_t b);
+
+/**
  * Blit the engine's 8-bit draw page to the platform's display surface,
  * convert to the display pixel format, and present to the window.
  */

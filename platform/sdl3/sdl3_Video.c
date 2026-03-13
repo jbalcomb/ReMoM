@@ -37,6 +37,30 @@ void Platform_Palette_Update(void)
 
 
 /*
+    Update a single palette entry in the platform surface.
+    Used by Cycle_Palette_Color() for real-time palette animation.
+*/
+void Platform_Set_Palette_Color(uint8_t index, uint8_t r, uint8_t g, uint8_t b)
+{
+    SDL_Color color;
+    color.r = r;
+    color.g = g;
+    color.b = b;
+    color.a = 255;
+
+    platform_palette_buffer[index].r = r;
+    platform_palette_buffer[index].g = g;
+    platform_palette_buffer[index].b = b;
+    platform_palette_buffer[index].a = 255;
+
+    if (sdl2_surface_RGB666->format->palette != NULL)
+    {
+        SDL_SetPaletteColors(sdl2_surface_RGB666->format->palette, &color, index, 1);
+    }
+}
+
+
+/*
 ...just update what the user sees on the screen
 
 */

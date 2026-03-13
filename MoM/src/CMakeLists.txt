@@ -107,14 +107,11 @@ target_link_libraries(momlib PUBLIC
     MOX
     STU
     Platform
-    SDL2::Main
 )
 
 target_include_directories(momlib PUBLIC
     ${PROJECT_SOURCE_DIR}
     ${PROJECT_SOURCE_DIR}/src
-    ${SDL2_INCLUDE_DIR}
-    ${SDL2_MIXER_INCLUDE_DIR}
 )
 
 ReMoM_Apply_Common_Compile_Definitions(momlib)

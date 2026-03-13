@@ -1,4 +1,6 @@
 
+#include "../../ext/stu_compat.h"
+
 #include "MOM_DBG.h"
 
 #include "../../MoX/src/MOM_DAT.h"
@@ -10,7 +12,7 @@
 #include <assert.h>
 #include <math.h>       /* sqrt() */
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
-#include <stdlib.h>     /* abs(); SDL_itoa(); */
+#include <stdlib.h>     /* abs(); stu_itoa(); */
 #include <string.h>     /* memset(), strcat(), strcpy(); */
 
 

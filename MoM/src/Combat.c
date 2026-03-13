@@ -80,7 +80,7 @@
 #include <stdlib.h>
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 #include "Combat.h"
 #include "CMBTDEF.h"
@@ -7305,7 +7305,7 @@ void Draw_Spell_Information_Window(void)
 
     value = Combat_Casting_Cost_Multiplier(_human_player_idx);
 
-    SDL_itoa(value, Range_Number_String, 10);
+    stu_itoa(value, Range_Number_String, 10);
 
     Print(200, 190, cnst_CMB_Range);
 
@@ -23669,7 +23669,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
     {
         if(Zombies_Raised > 0)
         {
-            SDL_itoa(Zombies_Raised, temp_buffer, 10);
+            stu_itoa(Zombies_Raised, temp_buffer, 10);
 
             strcpy(GUI_NearMsgString, temp_buffer);
 
@@ -23689,7 +23689,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
         if(Undead_Created > 0)
         {
-            SDL_itoa(Undead_Created, temp_buffer, 10);
+            stu_itoa(Undead_Created, temp_buffer, 10);
 
             strcpy(GUI_NearMsgString, temp_buffer);
 
@@ -24081,7 +24081,7 @@ int16_t Combat_Results_Scroll_Text(void)
         {
             strcat(message, cnst_ScrlFame_Msg_3);  /* "gained " */
         }
-        SDL_itoa(abs(GUI_Multipurpose_Int), temp_string, 10);
+        stu_itoa(abs(GUI_Multipurpose_Int), temp_string, 10);
         strcat(message, temp_string);
         strcat(message, cnst_ScrlFame_Msg_4);  /* " fame." */
         Print_Centered(160, (_scroll_text_top + text_height), message);
@@ -24093,7 +24093,7 @@ int16_t Combat_Results_Scroll_Text(void)
     {
         Set_Font_Colors_15(1, &colors2[0]);
         Set_Font_Spacing_Width(2);
-        SDL_itoa(CMB_Gold_Reward, temp_string, 10);
+        stu_itoa(CMB_Gold_Reward, temp_string, 10);
         strcpy(message, temp_string);
         strcat(message, cnst_ScrlGold_Msg);  /* " gold pieces were looted." */
         Print_Centered(160, (_scroll_text_top + text_height), message);
@@ -24115,7 +24115,7 @@ int16_t Combat_Results_Scroll_Text(void)
         {
             Set_Font_Colors_15(1, &colors2[0]);
             Set_Font_Spacing_Width(2);
-            SDL_itoa(CMB_Population_Lost, temp_string, 10);
+            stu_itoa(CMB_Population_Lost, temp_string, 10);
             strcpy(message, temp_string);
             strcat(message, cnst_ScrlPop_Msg);  /* " thousand inhabitants killed." */
             Print_Centered(160, (_scroll_text_top + text_height), message);
@@ -32397,7 +32397,7 @@ int16_t Combat_Figure_Load(int16_t unit_type, int16_t bufpi)
     FIGUREX_OFFSET
     FIGUREX_POINTER
 
-    SDL_itoa(((unit_type / 15) + 1), buffer, 10);
+    stu_itoa(((unit_type / 15) + 1), buffer, 10);
 
     strcpy(file_name, figure_lbx_file__ovr163);
 

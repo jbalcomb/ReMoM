@@ -49,7 +49,7 @@
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 #include <stdlib.h>
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 #include "City_ovr55.h"
 

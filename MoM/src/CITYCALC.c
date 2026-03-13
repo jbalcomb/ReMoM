@@ -33,7 +33,7 @@
 
 #include <assert.h>
 #include <math.h>       /* sqrt() */
-#include <stdlib.h>     /* abs(); SDL_itoa(); malloc(); */
+#include <stdlib.h>     /* abs(); stu_itoa(); malloc(); */
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 
 

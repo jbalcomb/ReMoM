@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 #include "CityList.h"
 
@@ -519,11 +519,11 @@ void CityList_Screen_Draw(void)
     Print(197, 17, aProducing);   /* "Producing" */
     Print(272, 17, aTime);        /* "Time"      */
 
-    SDL_itoa(_players[_human_player_idx].gold_reserve, GUI_String_1, 10);
+    stu_itoa(_players[_human_player_idx].gold_reserve, GUI_String_1, 10);
     strcat(GUI_String_1, cnst_GP_2);
     Print_Centered(242, 172, GUI_String_1);
 
-    SDL_itoa(_players[_human_player_idx].mana_reserve, GUI_String_1, 10);
+    stu_itoa(_players[_human_player_idx].mana_reserve, GUI_String_1, 10);
     strcat(GUI_String_1, cnst_MP_2);
     Print_Centered(276, 172, GUI_String_1);
 

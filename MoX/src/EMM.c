@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 
 
@@ -294,7 +294,7 @@ void EMM_Set_Minimum(int amount)
 void EMM_GetLowString(char * string)
 {
     char temp[20];
-    SDL_itoa(EMM_MinKB, temp, 10);
+    stu_itoa(EMM_MinKB, temp, 10);
     strcpy(string, cnst_EMMErr_TooLow1);
     strcat(string, temp);
     strcat(string, cnst_EMMErr_TooLow2);

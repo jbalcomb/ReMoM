@@ -1,3 +1,5 @@
+
+#include "../../ext/stu_compat.h"
 /*
     Advisor Screen
 
@@ -31,7 +33,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include "SDL_stdinc.h"
+#include "../../ext/stu_compat.h"
 
 
 
@@ -808,7 +810,7 @@ void Powergraph_Screen_Draw(void)
     // strcpy(GUI_String_1, &months[0]);
     strcpy(GUI_String_1, (char *)&months[8]);
 
-    SDL_itoa((1400 + WTF__turns_years), GUI_String_2, 10);
+    stu_itoa((1400 + WTF__turns_years), GUI_String_2, 10);
 
     strcat(GUI_String_1, dest);
 
