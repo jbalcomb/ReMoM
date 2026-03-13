@@ -3,6 +3,11 @@
     MAGIC.EXE
         ovr050
 */
+#ifdef STU_DEBUG
+#include "../../STU/src/STU_DBG.h"
+#endif
+
+#include "../../ext/stu_compat.h"
 
 #include "../../MoX/src/DOS.h"
 #include "../../MoX/src/Fields.h"
@@ -27,11 +32,11 @@
 #include "Settings.h"
 #include "Spellbook.h"
 
-#include "../../STU/src/STU_DBG.h"
-
 #include <assert.h>
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), frite(), fseek(); */
 #include <string.h>
+
+#include <SDL_stdinc.h>
 
 #include "NewGame.h"
 
@@ -4018,7 +4023,7 @@ int16_t Newgame_Screen_4__WIP(void)
                         {
                             if(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr)] > 0)
                             {
-                                itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr)], buffer, 10);
+                                SDL_itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr)], buffer, 10);
                                 strcat(message, buffer);
                                 strcat(message, cnst_Pick_Error_22);  /* " picks in " */
                                 strcat(message, l_realm_name_character_array[itr]);
@@ -4039,7 +4044,7 @@ int16_t Newgame_Screen_4__WIP(void)
                                     {
                                         strcat(message, cnst_Pick_Error_29);
                                     }
-                                    itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr2)], buffer, 10);
+                                    SDL_itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr2)], buffer, 10);
                                     strcat(message, buffer);
                                     strcat(message, cnst_Pick_Error_2A);
                                     strcat(message, l_realm_name_character_array[itr2]);
@@ -4050,7 +4055,7 @@ int16_t Newgame_Screen_4__WIP(void)
                         }
                         else
                         {
-                            itoa(p_wsa_prerequisites[NEWG_PickAttempt][0], buffer, 10);
+                            SDL_itoa(p_wsa_prerequisites[NEWG_PickAttempt][0], buffer, 10);
                             strcat(message, buffer);
                             strcat(message, cnst_Pick_Error_24);  /* " pick"*/
                             if(p_wsa_prerequisites[NEWG_PickAttempt][0] > 1)
@@ -4063,7 +4068,7 @@ int16_t Newgame_Screen_4__WIP(void)
                             }
                             if(p_wsa_prerequisites[NEWG_PickAttempt][0] > 1)
                             {
-                                itoa(p_wsa_prerequisites[NEWG_PickAttempt][1], buffer, 10);
+                                SDL_itoa(p_wsa_prerequisites[NEWG_PickAttempt][1], buffer, 10);
                                 strcat(message, buffer);
                                 strcat(message, cnst_Pick_Error_27);
                             }
@@ -4662,7 +4667,7 @@ void Newgame_Screen_4_Draw__WIP(void)
         }
     }
 
-    itoa(spellpicks_count, spellpicks_count_string, 10);
+    SDL_itoa(spellpicks_count, spellpicks_count_string, 10);
 
     strcat(spellpicks_count_string, cnst_Picks);
 
@@ -5387,7 +5392,7 @@ void Newgame_Screen_5_Draw(void)
             NEWG_PickError = 1;
         }
     }
-    itoa(spellpicks_count, buffer, 10);
+    SDL_itoa(spellpicks_count, buffer, 10);
     strcat(buffer, cnst_Picks);
 /* WTF */    if(spellpicks_count == 0)
 /* WTF */    {
@@ -5540,7 +5545,7 @@ void Newgame_Screen_5_Draw_Spells(void)
             spellpicks_count += m_select_count_common[spellrank_idx];
             strcpy(section_title_string, rarity_strings[0]);
             strcat(section_title_string, cnst_Spell_Select_2);
-            itoa(m_select_count_common[spellrank_idx], buffer, 10);
+            SDL_itoa(m_select_count_common[spellrank_idx], buffer, 10);
             strcat(section_title_string, buffer);
             Set_Font_Colors_15(3, &realm_colors[0]);
             Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
@@ -5616,7 +5621,7 @@ void Newgame_Screen_5_Draw_Spells(void)
             Label_Box_Height = (39 + (section_idx * 51));
             strcpy(section_title_string, rarity_strings[1]);
             strcat(section_title_string, cnst_Spell_Select_2);
-            itoa(m_select_count_uncommon[spellrank_idx], buffer, 10);
+            SDL_itoa(m_select_count_uncommon[spellrank_idx], buffer, 10);
             strcat(section_title_string, buffer);
             Set_Font_Colors_15(3, &realm_colors[0]);
             Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
@@ -5692,7 +5697,7 @@ void Newgame_Screen_5_Draw_Spells(void)
             Label_Box_Height = (39 + (section_idx * 51));
             strcpy(section_title_string, rarity_strings[2]);
             strcat(section_title_string, cnst_Spell_Select_2);
-            itoa(m_select_count_rare[spellrank_idx], buffer, 10);
+            SDL_itoa(m_select_count_rare[spellrank_idx], buffer, 10);
             strcat(section_title_string, buffer);
             Set_Font_Colors_15(3, &realm_colors[0]);
             Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
