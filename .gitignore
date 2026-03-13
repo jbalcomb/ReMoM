@@ -29,6 +29,9 @@ Debug/
 Release/
 MoM-Rasm/
 
+# Claude Desktop / Claude Code / Claude CLI
+.claude/worktrees
+
 # CMake auto-generated files
 CMakeFiles/
 x64/
