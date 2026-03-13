@@ -128,7 +128,8 @@
             "configurePreset": "clang-nosound-debug",
             "configuration": "Debug",
             "targets": [
-                "all"
+                "all",
+                "ReMoMber"
             ]
         }
     ],
