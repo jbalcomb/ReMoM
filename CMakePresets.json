@@ -231,6 +231,10 @@
                 {
                     "type": "test",
                     "name": "clang-nosound-debug"
+                },
+                {
+                    "type": "package",
+                    "name": "clang-nosound-debug"
                 }
             ]
         }
