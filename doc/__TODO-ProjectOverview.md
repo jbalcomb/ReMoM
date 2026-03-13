@@ -250,6 +250,10 @@ if(_NUM_STARS > 54)
 
 
 
+[ ] make Near_Allocate_First, etc. return (void *)
+
+
+
 DIPLOMAC.LBX [entry 52]  was not properly allocated or has been corrupted.
 
 [ ] Clean the hot mess that is Play_Sound ... // DOMSDOS  Play_Sound__STUB(SND_Spell_Music);  Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
@@ -271,6 +275,8 @@ CMB_Units_Init__WIP()
 [ ] feed Gemini the whole path from GAME_DrawLimboFall() through the rotated drawing functions
 
 [ ] fix naming for attack_idx/defender_idx for player or battle_unit
+
+[ ] check out: /home/jbalcomb/devel/ReMoM/build/_deps/googletest-src/googletest/include/gtest/internal/gtest-port.h
 
 
 

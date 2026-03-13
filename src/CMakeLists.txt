@@ -16,6 +16,7 @@ target_link_libraries(ReMoMber PUBLIC
     momlib
     MOX
     STU
+    Platform
     SDL2::Main
 )
 

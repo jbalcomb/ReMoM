@@ -270,6 +270,7 @@ set(REMOM_TEST_PATH_ENV "PATH=${PROJECT_SOURCE_DIR}/bin")
 set(PLATFORM "SDL2")
 
 add_subdirectory(STU)
+add_subdirectory(platform)
 add_subdirectory(MoX)
 add_subdirectory(MoM)
 add_subdirectory(src)
