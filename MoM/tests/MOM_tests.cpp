@@ -59,7 +59,7 @@ extern "C" {
 */
 // Spells132.c
 // WZD dseg:68A8
-char names_lbx_file__ovr132[];
+extern char names_lbx_file__ovr132[];
 
 #ifdef __cplusplus
 }
