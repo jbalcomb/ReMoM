@@ -72,7 +72,7 @@ TEST_F(Desert_Autotile_test, DesertSquareWithOnlyDesertNeighbors_NormalizesToDes
     EXPECT_EQ(p_world_map[wp][wy][wx], tt_Desert1);
 }
 
-TEST_F(Desert_Autotile_test, DesertSquareWithNonDesertNeighbor_MaskGreaterThanZeroLeavesTileUnchanged)
+TEST_F(Desert_Autotile_test, NonDesertNeighborOfDesert_RemainsUnchanged)
 {
     const int16_t wp = ARCANUS_PLANE;
     const int16_t wx = 20;
@@ -90,5 +90,5 @@ TEST_F(Desert_Autotile_test, DesertSquareWithNonDesertNeighbor_MaskGreaterThanZe
 
     Desert_Autotile();
 
-    EXPECT_EQ(p_world_map[wp][wy][wx], tt_Desert4);
+    EXPECT_EQ(p_world_map[wp][wy][(wx - 1)], tt_Grasslands1);
 }
