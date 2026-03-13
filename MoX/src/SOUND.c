@@ -23,6 +23,12 @@ MoO2
 
 #include "SOUND.h"
 
+#ifndef NO_SOUND_LIBRARY
+#include "sdl2_Audio.h"
+#endif
+/* HACK */  int16_t Play_Sound_SDL2_Mixer(void* sound_buffer, uint32_t sound_buffer_size);
+
+
 
 // // C:\STU\devel\Audio Interface Library (AIL)\AIL2\A214_D3\AIL.H
 // // typedef struct

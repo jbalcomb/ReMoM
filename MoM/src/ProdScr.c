@@ -6,9 +6,7 @@
 
 */
 
-#ifdef STU_DEBUG
 #include "../../STU/src/STU_DBG.h"
-#endif
 
 #include "../../ext/stu_compat.h"
 

@@ -13,6 +13,8 @@
 #include "Mouse.h"
 #include "Video2.h"
 
+#include "MOM_PFL.h"  /* Platform_Palette_Update(), Platform_Video_Update() */
+
 
 
 /*

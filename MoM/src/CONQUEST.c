@@ -537,9 +537,8 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
 
     Copy_Off_To_Page4();
 
-    GUI_String_1 = Near_Allocate_First(100);
-
-    GUI_String_2 = Near_Allocate_First(100);
+    GUI_String_1 = (char *)Near_Allocate_First(100);
+    GUI_String_2 = (char *)Near_Allocate_First(100);
 
     if(GAME_Conquering_Wiz != NEUTRAL_PLAYER_IDX)
     {
@@ -787,9 +786,11 @@ void Conquest_Draw__WIP(void)
             if(
                 (GAME_Conquering_Wiz != NEUTRAL_PLAYER_IDX)
                 &&
-                (m_conquest_anim_stage == 11)
-                ||
-                (magic_set.sound_effects == ST_TRUE)
+                (
+                    (m_conquest_anim_stage == 11)
+                    ||
+                    (magic_set.sound_effects == ST_TRUE)
+                )
             )
             {
 

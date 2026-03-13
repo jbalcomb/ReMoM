@@ -40,9 +40,7 @@
  * @see MOX_TYPE.h for SAMB_ptr and other type definitions
  */
 
-#ifdef STU_DEBUG
 #include "../../STU/src/STU_DBG.h"
-#endif
 
 #include "../../ext/stu_compat.h"
 

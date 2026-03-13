@@ -15,9 +15,7 @@ MoO2
 
 */
 
-#ifdef STU_DEBUG
 #include "../../STU/src/STU_DBG.h"
-#endif
 
 #include "../../ext/stu_compat.h"
 
@@ -690,6 +688,7 @@ void Set_Settings_Screen_Help_List(void)
 }
 
 
+#ifdef STU_DEBUG
 void DBG_Print_MAGIC_SET(const char * label)
 {
     int16_t itr;
@@ -766,3 +765,4 @@ void DBG_Compare_MAGIC_SET(const struct s_MAGIC_SET * before, const struct s_MAG
     else { dbg_prn("  Total changes: %d\n", diff_count); }
     dbg_prn("===== END MAGIC_SET DIFF [%s] =====\n", label);
 }
+#endif

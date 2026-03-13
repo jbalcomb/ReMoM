@@ -85,6 +85,7 @@ Module: MAPGEN
 #include "../../MoM/src/TerrType.h"     /* tt_Ocean1 */
 
 #include "../../MoX/src/Allocate.h"     /* Allocate_Space() */
+#include "../../MoX/src/EXIT.h"         /* Exit_With_Message() */
 #include "../../MoX/src/LBX_Load.h"     /* LBX_Load_Data() */
 #include "../../MoX/src/MOX_BITS.h"     /* GET_2B_OFS() */
 #include "../../MoX/src/MOM_DAT.h"     /* _landmasses, _world_maps */
@@ -480,7 +481,7 @@ static void Display_Heightmap_Histogram(int sim_idx, int16_t wp)
     if(max_count == 0)
         return;
 
-    printf("%c  %3s  %6s  %-40s\n", 'Hits', "Idx", "Count", "Bar");
+    printf("%s  %3s  %6s  %-40s\n", "Hits", "Idx", "Count", "Bar");
     printf("-  ---  ------  ----------------------------------------\n");
 
     for(itr = 0; itr < TerType_Count; itr++)

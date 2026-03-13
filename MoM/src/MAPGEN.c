@@ -21,11 +21,8 @@ MoO2
     Module: MAPGEN
 */
 
-#ifdef STU_DEBUG
 #include "../../STU/src/STU_DBG.h"
-#include "../../STU/src/STU_UTST.h"
 #include "../../STU/src/STU_VLD.h"
-#endif
 
 #include "../../ext/stu_compat.h"
 

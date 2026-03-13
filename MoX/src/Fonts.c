@@ -1570,7 +1570,7 @@ int16_t Clipped_Print_Character(int16_t x, int16_t y, char character)
 {
     int16_t max_y;
     int16_t skip_y;
-    char char_num;
+    int8_t char_num;  // signedness of char is implementation defined, so UB as array subscript, but the original code treats it as signed, so we'll do the same
     int16_t spacing;
     int16_t width;
     int16_t height;
@@ -2642,9 +2642,12 @@ Done:
 ; by setting up and calling VGA_DrawPartialGlyph
 ; unlike most similar functions, this one DOES NOT
 ; return the next X coordinate to draw to
-
 */
-void Print_Clipped_Character(int16_t x, int16_t y, char char_num, int16_t skip_x, int16_t width, int16_t skip_y, int16_t max_y)
+// drake178: VGA_DrawPartialChar()
+// ¿ MoO2  Module: fonts  Print_Clipped_Character() ?
+// void Print_Clipped_Character(int16_t x, int16_t y, char char_num, int16_t skip_x, int16_t width, int16_t skip_y, int16_t max_y)
+// signedness of char is implementation defined, so UB as array subscript, but the original code treats it as signed, so we'll do the same
+void Print_Clipped_Character(int16_t x, int16_t y, int8_t char_num, int16_t skip_x, int16_t width, int16_t skip_y, int16_t max_y)
 {
     // uint16_t si = GET_LE_16(&lbxfontdata[0xaa + char_num * 2]);
     // uint8_t * p = &lbxfontdata[si];

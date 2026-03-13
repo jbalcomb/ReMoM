@@ -1744,8 +1744,10 @@ int16_t Newgame_Screen_0(void)
         magic_set.MagicPower = 0;
     }
 
+#ifdef STU_DEBUG
     DBG_Print_MAGIC_SET("Newgame_Screen_0 after load");
     memcpy(&magic_set_snapshot, &magic_set, sizeof(struct s_MAGIC_SET));
+#endif
 
     Set_Mouse_List(1, mouse_list_newgame);
 
@@ -1796,7 +1798,9 @@ int16_t Newgame_Screen_0(void)
         if(input_field_idx == _ok_button)
         {
 
+#ifdef STU_DEBUG
             DBG_Compare_MAGIC_SET(&magic_set_snapshot, &magic_set, "Newgame_Screen_0 before save");
+#endif
 
             file_pointer = fopen(str_MAGIC_SET__ovr050, str_wb__ovr050);
 
@@ -3156,14 +3160,14 @@ Module: RACESEL
  */
 int16_t Newgame_Screen_6__WIP(void)
 {
-    char Arcanus_Races[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int8_t Arcanus_Races[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0 };  // TODO  DEDU  check Dasm for 1-byte, signed
     int16_t hotkey_ESC = 0;
     int8_t * wsa_ptr = 0;
     uint8_t * Shadow_Color = 0;
     uint8_t * Available_Color = 0;
     uint8_t * Not_Available_Color = 0;
     uint8_t Font_Colors[8] = {0, 0, 0, 0, 0, 0, 0, 0 };
-    char Myrran_Races[5] = { 0, 0, 0, 0, 0 };
+    int8_t Myrran_Races[5] = { 0, 0, 0, 0, 0 };
     int16_t input_field_idx = 0;
     int16_t leave_screen = 0;
     int16_t First_Draw_Done = 0;
@@ -3999,9 +4003,11 @@ int16_t Newgame_Screen_4__WIP(void)
                 (_players[0].spellranks[sbr_Death] != 0)
             )
             ||
+            (
                 (input_field_idx == m_newgame_fields[1])
                 &&
                 (_players[0].spellranks[sbr_Life] != 0)
+            )
         )
         {
             NEWG_PickError = 4;

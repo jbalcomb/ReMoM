@@ -8,10 +8,7 @@ MoO2
 Module: AITECH
 */
 
-
-#ifdef STU_DEBUG
 #include "../../STU/src/STU_DBG.h"
-#endif
 
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/EXIT.h"

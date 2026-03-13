@@ -1,6 +1,24 @@
 #ifndef STU_DBG_H
 #define STU_DBG_H
 
+/*
+...something like...
+I don't want any Debug stuff in the Release build
+But, I do want a quit and easy option for printing or breaking in the Debug build
+So, somewhere, you have to include the debug code or define the empty versions of the debug macros.
+Presently, it seems easier to me to just include STU_DBG.h everywhere and have it handle the split.
+
+*/
+
+#ifndef STU_DEBUG
+#define STU_DEBUG_BREAK()  ( (void)0 )
+/* emptiness, when debugging is not enabled */
+#define DLOG
+/* emptiness, when debugging is not enabled */
+#else
+
+#include "../../ext/stu_compat.h"
+
 #include <stdio.h>
 
 #include "STU_TYPE.h"
@@ -124,7 +142,7 @@ extern "C" {
 #ifdef _WIN32
 #define STU_DEBUG_BREAK()  ( __debugbreak() )
 #else
-#define STU_DEBUG_BREAK()  ( (void)0 )
+#define STU_DEBUG_BREAK()  ( stu_debugbreak() )
 #endif
 #else
 #define STU_DEBUG_BREAK()  ( (void)0 )
@@ -179,5 +197,7 @@ void trc_prn(const char * fmt, ...);
 #ifdef __cplusplus
 }
 #endif
+
+#endif  /* STU_DEBUG */
 
 #endif /* STU_DBG_H */

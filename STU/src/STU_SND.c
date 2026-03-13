@@ -1,12 +1,13 @@
 
-#include "STU_SND.h"
-
 #include "../../MoX/src/MOX_BITS.h"
 #include "../../MoX/src/MOX_BASE.h"
 #include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/MOX_TYPE.h"
 
 #include "STU_DBG.h"
+void dbg_prn(const char * fmt, ...);  // HACK needs to not be behind #ifdef STU_DEBUG
+
+#include "STU_SND.h"
 
 #include <stdlib.h>     /* abs(); SDL_itoa(); malloc(); */
 #include <string.h>
