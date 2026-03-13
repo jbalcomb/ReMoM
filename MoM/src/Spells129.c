@@ -3,7 +3,9 @@
         ovr129
 */
 
+#ifdef STU_DEBUG
 #include "../../STU/src/STU_DBG.h"
+#endif
 
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/GENDRAW.h"
