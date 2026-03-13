@@ -240,6 +240,9 @@ int stu_getch(void)
     newt = oldt;
     newt.c_lflag &= ~((tcflag_t)ICANON | (tcflag_t)ECHO);
     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+// implicit declaration of function 'getchar' is invalid in C99 [-Wimplicit-function-declaration]
+// ...but, not meant to be a declaration, just a call to the function...
+#include <stdio.h>
     ch = getchar();
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     return ch;
@@ -283,6 +286,9 @@ void stu_tzset(void)
 #if STU_COMPILER_MSVC
     _tzset();
 #else
+// implicit declaration of function 'tzset' is invalid in C99 [-Wimplicit-function-declaration]
+// ...but, not meant to be a declaration, just a call to the function...
+#include <time.h>
     tzset();
 #endif
 }
