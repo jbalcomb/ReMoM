@@ -1458,7 +1458,6 @@ void Rebalance_Node_Types(int16_t wp)
 ; converting existing land based on various conditions
 */
 /*
-/*
 sets tt_Tundra1, tt_Desert1, tt_Swamp1
 */
 /**
