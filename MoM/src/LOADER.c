@@ -7,7 +7,7 @@
 #include "Combat.h"
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/LBX_Load.h"
-#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_TYPE.h"
 #include "../../MoX/src/MOX_SND.h"
 

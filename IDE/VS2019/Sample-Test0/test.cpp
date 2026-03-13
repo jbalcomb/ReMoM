@@ -9,7 +9,7 @@ TEST(TestCaseName, TestName) {
 extern "C" {
 #endif
 #include "Allocate.h"  /* _cities[], _UNITS[] */
-#include "MOM_Data.h"  /* _cities[], _UNITS[] */
+#include "MOM_DAT.h"  /* _cities[], _UNITS[] */
 #include "CITYCALC.h"
 #include "NEXTTURN.h"
 #include "UNITTYPE.h"

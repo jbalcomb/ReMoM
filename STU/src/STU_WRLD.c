@@ -87,7 +87,7 @@ Module: MAPGEN
 #include "../../MoX/src/Allocate.h"     /* Allocate_Space() */
 #include "../../MoX/src/LBX_Load.h"     /* LBX_Load_Data() */
 #include "../../MoX/src/MOX_BITS.h"     /* GET_2B_OFS() */
-#include "../../MoX/src/MOM_Data.h"     /* _landmasses, _world_maps */
+#include "../../MoX/src/MOM_DAT.h"     /* _landmasses, _world_maps */
 #include "../../MoX/src/MOM_DEF.h"      /* WORLD_WIDTH, WORLD_HEIGHT */
 #include "../../MoX/src/MOX_DEF.h"      /* GET_TERRAIN_TYPE() */
 #include "../../MoX/src/MOX_SET.h"      /* magic_set */

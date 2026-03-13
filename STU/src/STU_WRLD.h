@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "../../MoM/src/TerrType.h" /* TerType_Count */
 #include "../../MoX/src/MOM_DEF.h"  /* NUM_LANDMASSES, WORLD_WIDTH, WORLD_HEIGHT, NUM_TOWERS, NUM_NODES */
-#include "../../MoX/src/MOM_Data.h" /* struct s_TOWER, struct s_NODE */
+#include "../../MoX/src/MOM_DAT.h" /* struct s_TOWER, struct s_NODE */
 
 #define LANDMASS_INDEX_MAX          256
 #define NUM_TERRAIN_GROUPS           16  /* Oceans, Grasslands, Forests, Hills, Mountains, Deserts, Swamps, Tundras */

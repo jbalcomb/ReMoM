@@ -14,7 +14,7 @@
 #include "../../MoX/src/MOX_SET.h"  /* magic_set */
 #include "../../MoX/src/MOX_T4.h"
 #include "../../MoX/src/SOUND.h"
-#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/Timer.h"
 #include "../../MoX/src/Util.h"
 #include "../../MoX/src/Video.h"

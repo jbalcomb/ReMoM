@@ -13,7 +13,7 @@
 #include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/LOADSAVE.h"
 #include "../../MoX/src/MOX_T4.h"
-#include "../../MoX/src/MOM_Data.h"  /* _difficulty, _magic, _landsize, _num_players */
+#include "../../MoX/src/MOM_DAT.h"  /* _difficulty, _magic, _landsize, _num_players */
 #include "../../MoX/src/Mouse.h"
 #include "../../MoX/src/MOX_DAT.h"
 #include "../../MoX/src/MOX_DEF.h"

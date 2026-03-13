@@ -4,7 +4,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DAT.h"
 
 void Set_Gibs(int16_t battle_unit_idx, int16_t Damage);
 extern int16_t m_gibs_frames[20];

@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 #include "../../MoX/src/Allocate.h"  /* _cities[], _UNITS[] */
-#include "../../MoX/src/MOM_Data.h"  /* _cities[], _UNITS[] */
+#include "../../MoX/src/MOM_DAT.h"  /* _cities[], _UNITS[] */
 #include "../src/CITYCALC.h"
 #include "../src/NEXTTURN.h"
 #include "../src/UNITTYPE.h"

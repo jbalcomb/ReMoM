@@ -7,7 +7,7 @@
 #ifndef LVLMAKE_H
 #define LVLMAKE_H
 
-#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_TYPE.h"
 
 

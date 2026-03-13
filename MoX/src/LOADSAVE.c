@@ -11,7 +11,7 @@
 // #endif
 
 #include "DOS.h"
-#include "MOM_Data.h"
+#include "MOM_DAT.h"
 #include "MOX_DAT.h"  /* _players[]; _screen_seg; */
 #include "MOX_SET.h"  /* magic_set */
 #include "Util.h"

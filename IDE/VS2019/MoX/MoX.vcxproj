@@ -36,7 +36,7 @@
     <ClInclude Include="..\..\..\MoX\src\Keyboard.h" />
     <ClInclude Include="..\..\..\MoX\src\LBX_Load.h" />
     <ClInclude Include="..\..\..\MoX\src\LOADSAVE.h" />
-    <ClInclude Include="..\..\..\MoX\src\MOM_Data.h" />
+    <ClInclude Include="..\..\..\MoX\src\MOM_DAT.h" />
     <ClInclude Include="..\..\..\MoX\src\MOM_DEF.h" />
     <ClInclude Include="..\..\..\MoX\src\MOM_PFL.h" />
     <ClInclude Include="..\..\..\MoX\src\Mouse.h" />

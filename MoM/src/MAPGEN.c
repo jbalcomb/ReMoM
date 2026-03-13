@@ -34,7 +34,7 @@ MoO2
 #include "../../MoX/src/Graphics.h"
 #include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/Mouse.h"
-#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_BITS.h"  /* GET_2B_OFS() */
 #include "../../MoX/src/MOX_DAT.h"  /* _players[]; enum e_SCOUT_BITS{} */
