@@ -2,6 +2,11 @@
     WIZARDS.EXE
         ovr143
 */
+#ifdef STU_DEBUG
+#include "../../STU/src/STU_DBG.h"
+#endif
+
+#include "../../ext/stu_compat.h"
 
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"

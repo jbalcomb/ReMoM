@@ -44,6 +44,8 @@
 #include "../../STU/src/STU_DBG.h"
 #endif
 
+#include "../../ext/stu_compat.h"
+
 #include "Allocate.h"
 #include "EXIT.h"
 #include "MOM_DAT.h"

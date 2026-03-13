@@ -6,9 +6,11 @@
 
 */
 
-// #ifdef STU_DEBUG
-#include "../../STU/src/STU_DBG.h"    /* DLOG() */
-// #endif
+#ifdef STU_DEBUG
+#include "../../STU/src/STU_DBG.h"
+#endif
+
+#include "../../ext/stu_compat.h"
 
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"

@@ -15,7 +15,11 @@ MoO2
 
 */
 
+#ifdef STU_DEBUG
 #include "../../STU/src/STU_DBG.h"
+#endif
+
+#include "../../ext/stu_compat.h"
 
 #include "../../MoX/src/DOS.h"
 #include "../../MoX/src/FLIC_Draw.h"
