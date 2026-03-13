@@ -1759,7 +1759,7 @@ void Combat_Spell_Target_Screen_Draw(void);
 int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx, int16_t * target_cgy);
 
 // WZD o113p04
-void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t Target_Damage_Sum, int16_t cgx, int16_t cgy);
+void Ranged_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t Target_Damage_Sum, int16_t cgx, int16_t cgy);
 
 // WZD o113p05
 void Melee_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t attacker_damage, int16_t defender_damage, int16_t cgx, int16_t cgy);
@@ -2238,7 +2238,7 @@ void Wall_Rise_Load(int16_t wall_type);
 void CMB_BaseAllocs__WIP(void);
 
 // WZD ovr163p05
-void CMB_SetProjectiles__WIP(int16_t missile_count, int16_t Targets, int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t TgtY, int16_t Type);
+void Make_Missiles(int16_t missile_count, int16_t Targets, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t type);
 
 // WZD ovr163p06
 int16_t Combat_Figure_Load(int16_t unit_type, int16_t figure_index);

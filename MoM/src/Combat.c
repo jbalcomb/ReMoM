@@ -1374,7 +1374,7 @@ int16_t _vortex_count;
 */
 struct s_MISSILE * _missiles;
 // WZD dseg:D158
-int16_t _missile_count;
+int16_t m_missile_count;
 
 // WZD dseg:D15A
 /*
@@ -14822,16 +14822,7 @@ Nowhere. It doesn't use a target, never even gets to that code.
 
 
 // WZD o113p04
-// drake178: CMB_RangedAnim()
-/*
-; performs a ranged attack animation by the chosen
-; unit against the target specified, using projectiles
-; based on the unit's ranged attack type
-*/
-/*
-
-*/
-void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t defender_damage_total, int16_t cgx, int16_t cgy)
+void Ranged_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t defender_damage_total, int16_t cgx, int16_t cgy)
 {
     int16_t Travel_Distance = 0;
     int16_t range = 0;
@@ -14840,10 +14831,10 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
     int16_t Progress_Counter = 0;
     int16_t dist_x = 0;  // DNE in Dasm
     int16_t dist_y = 0;  // DNE in Dasm
-    SAMB_ptr sound_buffer = 0;  // _DI_
+    SAMB_ptr sound_buffer = 0;
     uint32_t sound_buffer_length;  // HACK
 
-    if(defender_battle_unit_idx != 99)
+    if(defender_battle_unit_idx != 99)  /* City Walls */
     {
         range = Range_To_Battle_Unit(attacker_battle_unit_idx, defender_battle_unit_idx);
         battle_units[attacker_battle_unit_idx].target_cgx = battle_units[defender_battle_unit_idx].cgx;
@@ -14927,11 +14918,11 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
     }
     if(defender_battle_unit_idx != 99)
     {
-        CMB_SetProjectiles__WIP(battle_units[attacker_battle_unit_idx].Cur_Figures, battle_units[defender_battle_unit_idx].Cur_Figures, battle_units[attacker_battle_unit_idx].cgx, battle_units[attacker_battle_unit_idx].cgy, battle_units[defender_battle_unit_idx].cgx, battle_units[defender_battle_unit_idx].cgy, missile_type);
+        Make_Missiles(battle_units[attacker_battle_unit_idx].Cur_Figures, battle_units[defender_battle_unit_idx].Cur_Figures, battle_units[attacker_battle_unit_idx].cgx, battle_units[attacker_battle_unit_idx].cgy, battle_units[defender_battle_unit_idx].cgx, battle_units[defender_battle_unit_idx].cgy, missile_type);
     }
     else
     {
-        CMB_SetProjectiles__WIP(battle_units[attacker_battle_unit_idx].Cur_Figures, 1, battle_units[attacker_battle_unit_idx].cgx, battle_units[attacker_battle_unit_idx].cgy, cgx, cgy, missile_type);
+        Make_Missiles(battle_units[attacker_battle_unit_idx].Cur_Figures, 1, battle_units[attacker_battle_unit_idx].cgx, battle_units[attacker_battle_unit_idx].cgy, cgx, cgy, missile_type);
     }
     CMB_ProjectileFrame = 0;
     RP_CMB_ProjectileFrame2 = 0;
@@ -14955,43 +14946,28 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
             CMB_ProjectileFrame = ((CMB_ProjectileFrame + 1) % 3);  // ; used with entity drawing type 3, steps 0 to 2
             RP_CMB_ProjectileFrame2 = ((RP_CMB_ProjectileFrame2 + 1) % 3);
         }
-
         Combat_Screen_Draw();
-
         PageFlip_FX();
-
-        for(itr_msl = 0; itr_msl < _missile_count; itr_msl++)
+        for(itr_msl = 0; itr_msl < m_missile_count; itr_msl++)
         {
-
             _missiles[itr_msl].Travel_Percent += Travel_Distance;
-
             if(_missiles[itr_msl].Travel_Percent > 100)
             {
-
                 _missiles[itr_msl].Travel_Percent = 100;
-
             }
-
         }
-
     }
 
-    _missile_count = 0;
+    m_missile_count = 0;
 
     if(defender_battle_unit_idx != 99)
     {
-
-        // TODO  Clear_Gibs(defender_battle_unit_idx);
-        // ; clears the battle unit structure fields associated
-        // ; with the display of blood on the unit
-
+        Clear_Gibs(defender_battle_unit_idx);
     }
 
     if(magic_set.sound_effects == ST_TRUE)
     {
-
         Release_Block(World_Data);
-
     }
 
 }
@@ -22477,10 +22453,9 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
         else  /* (ranged_attack_flag == ST_TRUE) */
         {
 
-            CMB_RangedAnim__WIP(attacker_battle_unit_idx, defender_battle_unit_idx, defender_damage_total, cgx, cgy);
+            Ranged_Animation(attacker_battle_unit_idx, defender_battle_unit_idx, defender_damage_total, cgx, cgy);
 
-            // ; BUG: performing a ranged attack is supposed to
-            // ; always end the unit's turn
+            // NOTE(drake178): BUG: performing a ranged attack is supposed to always end the unit's turn
             battle_units[attacker_battle_unit_idx].movement_points -= 20;
 
             SETMIN(battle_units[attacker_battle_unit_idx].movement_points, 0);
@@ -22607,7 +22582,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
                 // BUG: only expends 10 movement points instead of all
                 // of them, as stated in the v1.2 patch notes
 
-                CMB_RangedAnim__WIP(attacker_battle_unit_idx, defender_battle_unit_idx, defender_damage_total, cgx, cgy);
+                Ranged_Animation(attacker_battle_unit_idx, defender_battle_unit_idx, defender_damage_total, cgx, cgy);
 
                 // ; BUG: performing a ranged attack is supposed to
                 // ; always end the unit's turn
@@ -27579,7 +27554,7 @@ void Spawn_Missile_Entities(void)
     int16_t Origin_X = 0;
     int16_t itr_msl = 0;  // _DI_
 
-    for(itr_msl = 0; itr_msl < _missile_count; itr_msl++)
+    for(itr_msl = 0; itr_msl < m_missile_count; itr_msl++)
     {
 
         Origin_X = (_missiles[itr_msl].Src_Scr_X + (((_missiles[itr_msl].Tgt_Scr_X - _missiles[itr_msl].Src_Scr_X) * _missiles[itr_msl].Travel_Percent) / 100));
@@ -32250,20 +32225,37 @@ void CMB_BaseAllocs__WIP(void)
 
 
 // WZD ovr163p05
-// drake178: CMB_SetProjectiles()
-/*
-; overwrites the CMB_Projectiles@ array using the
-; passed parameters, creating the specified amount of
-; projectiles of the selected type heading towards the
-; target
-; returns and sets the count into CMB_ProjectileCount
-*/
-/*
-
-
-
-*/
-void CMB_SetProjectiles__WIP(int16_t missile_count, int16_t Targets, int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t TgtY, int16_t Type)
+/**
+ * @brief Initializes projectile records for a combat ranged attack volley.
+ *
+ * Builds up to @p missile_count entries in the global `_missiles` array by
+ * computing source/target figure offsets, converting combat-grid cells to
+ * screen coordinates, deriving a firing angle, and mapping that angle to one
+ * of the eight projectile direction enums.
+ *
+ * Each initialized missile gets:
+ * - source and target screen coordinates,
+ * - projectile type,
+ * - initial travel progress (`Travel_Percent = 10`),
+ * - directional sprite orientation (`Proj_Direction`).
+ *
+ * Finally, the global volley counter `m_missile_count` is set to
+ * @p missile_count.
+ *
+ * @param missile_count Number of missiles to generate in the current volley.
+ * @param Targets Target figure count used to spread missiles across defender
+ *        figures (`itr_msl / Targets`).
+ * @param src_wx Source combat-grid X coordinate.
+ * @param src_wy Source combat-grid Y coordinate.
+ * @param dst_wx Destination combat-grid X coordinate.
+ * @param dst_wy Destination combat-grid Y coordinate.
+ * @param type Projectile type value stored in each missile record.
+ *
+ * @note This function writes to global combat state (`_missiles` and
+ *       `m_missile_count`).
+ * @note `Targets` is used as a divisor and is expected to be nonzero.
+ */
+void Make_Missiles(int16_t missile_count, int16_t Targets, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t type)
 {
     int16_t Origin_Y = 0;
     int16_t Origin_X = 0;
@@ -32286,9 +32278,9 @@ void CMB_SetProjectiles__WIP(int16_t missile_count, int16_t Targets, int16_t Src
 
         Battle_Unit_Figure_Position(missile_count, (itr_msl / Targets), &Tgt_Fig_X, &Tgt_Fig_Y);
 
-        Combat_Grid_Screen_Coordinates(SrcX, SrcY, 0, 0, &Src_Screen_X, &Src_Screen_Y);
+        Combat_Grid_Screen_Coordinates(src_wx, src_wy, 0, 0, &Src_Screen_X, &Src_Screen_Y);
 
-        Combat_Grid_Screen_Coordinates(TgtX, TgtY, 0, 0, &Tgt_Screen_X, &Tgt_Screen_Y);
+        Combat_Grid_Screen_Coordinates(dst_wx, dst_wy, 0, 0, &Tgt_Screen_X, &Tgt_Screen_Y);
 
         Src_Fig_Y -= 8;
         Tgt_Fig_Y -= 8;
@@ -32348,7 +32340,7 @@ void CMB_SetProjectiles__WIP(int16_t missile_count, int16_t Targets, int16_t Src
         _missiles[itr_msl].Tgt_Scr_X = Tgt_Screen_X;
         _missiles[itr_msl].Tgt_Scr_Y = Tgt_Screen_Y;
 
-        _missiles[itr_msl].Type = Type;
+        _missiles[itr_msl].Type = type;
 
         _missiles[itr_msl].Travel_Percent = 10;
 
@@ -32356,7 +32348,7 @@ void CMB_SetProjectiles__WIP(int16_t missile_count, int16_t Targets, int16_t Src
         
     }
 
-    _missile_count = missile_count;
+    m_missile_count = missile_count;
 
 }
 

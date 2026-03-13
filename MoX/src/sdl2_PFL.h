@@ -10,28 +10,8 @@
 
 #include <SDL.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
-// ¿ C++ Name Mangled  extern SDL_Window * sdl2_window; ?
-extern SDL_Window * sdl2_window;
-extern SDL_Renderer * sdl2_renderer;
-extern SDL_Surface * sdl2_surface_RGB666;
-extern SDL_Surface * sdl2_surface_ARGB8888;
-extern SDL_Texture * sdl2_texture;
-extern SDL_Texture * sdl2_texture_upscaled;
 
-extern char sdl2_window_title[];
-
-extern SDL_Rect sdl2_blit_rect;
-
-extern uint64_t sdl2_ticks_startup;
-extern uint64_t sdl2_frame_count;
-extern uint64_t sdl2_ticks_mark_time;
-extern uint64_t sdl2_ticks_release_time;
-
-extern uint64_t sdl2_performance_counter;
 
 /*
     Frames Per Second (FPS)
@@ -45,21 +25,6 @@ DELAY_MOUSE_UPDATE_LIMIT
 #define MILLISECONDS_PER_FRAME 55  // ~ IBM-PC - 55 ms per BIOS timer tick
 // #define FRAMES_PER_SECOND 20
 #define FRAMES_PER_SECOND (MILLISECONDS_PER_SECOND / MILLISECONDS_PER_FRAME)  // ~== (100 0 / 55) = 18.18___
-
-
-// MOM_PFL.H  extern SDL_Color platform_palette_buffer[256];
-// extern bool sdl2_1oom_palette_to_set;
-
-extern int sdl2_window_width;
-extern int sdl2_window_height;
-
-
-
-// MOM_PFL.H  extern int platform_mouse_button_status;
-
-
-
-extern int kilgore_option_mouse_speed;  // ./src/hw/sdl/hwsdl_opt.h
 
 
 
@@ -128,9 +93,46 @@ extern int kilgore_option_mouse_speed;  // ./src/hw/sdl/hwsdl_opt.h
     END:  ./src/comp.h
 */
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+// ¿ C++ Name Mangled  extern SDL_Window * sdl2_window; ?
+extern SDL_Window * sdl2_window;
+extern SDL_Renderer * sdl2_renderer;
+extern SDL_Surface * sdl2_surface_RGB666;
+extern SDL_Surface * sdl2_surface_ARGB8888;
+extern SDL_Texture * sdl2_texture;
+extern SDL_Texture * sdl2_texture_upscaled;
+
+extern char sdl2_window_title[];
+
+extern SDL_Rect sdl2_blit_rect;
+
+extern uint64_t sdl2_ticks_startup;
+extern uint64_t sdl2_frame_count;
+extern uint64_t sdl2_ticks_mark_time;
+extern uint64_t sdl2_ticks_release_time;
+
+extern uint64_t sdl2_performance_counter;
+
+
+// MOM_PFL.H  extern SDL_Color platform_palette_buffer[256];
+// extern bool sdl2_1oom_palette_to_set;
+
+extern int sdl2_window_width;
+extern int sdl2_window_height;
+
+
+
+// MOM_PFL.H  extern int platform_mouse_button_status;
+
+
+
+extern int kilgore_option_mouse_speed;  // ./src/hw/sdl/hwsdl_opt.h
+
+
 
 
 

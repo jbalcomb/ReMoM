@@ -249,6 +249,7 @@ if(_NUM_STARS > 54)
 [ ] MapGen - missing SE corner Shore?
 
 
+
 DIPLOMAC.LBX [entry 52]  was not properly allocated or has been corrupted.
 
 [ ] Clean the hot mess that is Play_Sound ... // DOMSDOS  Play_Sound__STUB(SND_Spell_Music);  Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
@@ -265,6 +266,9 @@ TODO  review CMB_TileGen__WIP() and friends
 CMB_Units_Init__WIP()
 
 
+[x] have Claude code a tool to generate the tan, sin, and cos tables for angle.c
+
+[ ] feed Gemini the whole path from GAME_DrawLimboFall() through the rotated drawing functions
 
 [ ] fix naming for attack_idx/defender_idx for player or battle_unit
 
