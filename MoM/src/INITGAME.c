@@ -37,7 +37,7 @@ extern struct S_HERO_TEMPLATE _hero_premade_table[NUM_HERO_TYPES];
 // ...oops... MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_start_spells s_Init_Spells_Table <0>   ; DATA XREF: GAME_New_Screen_5+171w ...
 // MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_player_start_spells s_Init_Base_Realms 6 dup(<0>)
 // ...needed by INITGAME.c, so defn in NewGame.h
-struct s_Init_Base_Realms _player_start_spells[PLAYER_COUNT_MAX];
+extern struct s_Init_Base_Realms _player_start_spells[PLAYER_COUNT_MAX];
 
 // o51p36
 void Draw_Building_The_Worlds(int16_t percent);

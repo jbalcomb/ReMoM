@@ -335,7 +335,8 @@ struct S_HERO_TEMPLATE _hero_premade_table[NUM_HERO_TYPES] = {
 
 
 // MGC  dseg:52C0
-int16_t _quit_button = 0;
+// MainMenu.c  int16_t _quit_button = 0;
+extern int16_t _quit_button;
 
 // MGC  dseg:5CB0
 SAMB_ptr newgame_ok_button_seg = 0;
@@ -1202,8 +1203,10 @@ int16_t spellpicks_count;
 // MGC  dseg:8E96
 SAMB_ptr _selection_marker_seg;
 
-// MGC  dseg:8E98 00 00                                           
-int16_t selected_load_game_slot_idx;
+// MGC  dseg:8E98
+// WZD dseg:C9B2
+// LoadScr.c  int16_t selected_load_game_slot_idx;
+extern int16_t selected_load_game_slot_idx;
 
 // MGC  dseg:8E9A 00 00                                           MAY__selected_save_game_slot_idx dw 0
 
