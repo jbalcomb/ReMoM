@@ -27,6 +27,8 @@ MoO2
 #include "../../STU/src/STU_VLD.h"
 #endif
 
+#include "../../ext/stu_compat.h"
+
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Fields.h"
@@ -5358,7 +5360,7 @@ attempt:
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
         strcpy(buffer, _CITIES[itr_cities].name);
-        if(_stricmp(buffer, &city_names_buffer[(city_name_idx * LEN_CITY_NAME)]) == 0)
+        if(stu_stricmp(buffer, &city_names_buffer[(city_name_idx * LEN_CITY_NAME)]) == 0)
         {
             if(attempts < 200)
             {
