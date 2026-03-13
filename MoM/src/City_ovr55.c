@@ -2518,7 +2518,7 @@ void Resource_Breakdown__STUB(int16_t resource_id)
             for(itr = 0; itr < 15; itr++)
             {
 
-                LBX_Load_Data_Static(str_listdat_lbx_file__ovr055, 0, (SAMB_ptr)GUI_String_1[0], (di + itr), 1, 200);
+                LBX_Load_Data_Static(str_listdat_lbx_file__ovr055, 0, (SAMB_ptr)&GUI_String_1[0], (di + itr), 1, 200);
 
                 strcpy((char *)IDK_CityScr_15x50_tmpbuf[itr], GUI_String_1);
 
