@@ -75,7 +75,11 @@ function(ReMoM_Add_Target_Support_Files target_name)
     endif()
 
     if(RM_COPY_LBX)
-        file(GLOB LBX_FILE_LIST "${CMAKE_SOURCE_DIR}/*.lbx")
+        file(GLOB LBX_FILE_LIST "${CMAKE_SOURCE_DIR}/*.lbx" "${CMAKE_SOURCE_DIR}/*.LBX")
+        if (NOT LBX_FILE_LIST)
+            # If the list is empty, issue a fatal error to stop the configuration
+            message(FATAL_ERROR "No files found: ${CMAKE_SOURCE_DIR}/*.lbx or ${CMAKE_SOURCE_DIR}/*.LBX")
+        endif()
         add_custom_command(
             TARGET ${target_name}
             POST_BUILD

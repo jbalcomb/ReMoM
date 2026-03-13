@@ -3,7 +3,7 @@
 # into the build tree under `${CMAKE_BINARY_DIR}/test_data` so test executables
 # can run with required game data available in a predictable location.
 
-file(GLOB LBX_FILE_LIST "${CMAKE_SOURCE_DIR}/*.lbx")
+file(GLOB LBX_FILE_LIST "${CMAKE_SOURCE_DIR}/*.lbx" "${CMAKE_SOURCE_DIR}/*.LBX")
 
 if(LBX_FILE_LIST)
     set(TEST_DATA_DIR "${CMAKE_BINARY_DIR}/test_data")
@@ -17,5 +17,5 @@ if(LBX_FILE_LIST)
         COMMENT "Copying .lbx data files into build/test_data"
     )
 else()
-    message(STATUS "No .lbx files found in source root; stage_test_data will be a no-op.")
+    message(STATUS "No .lbx or .LBX files found in source root; stage_test_data will be a no-op.")
 endif()
