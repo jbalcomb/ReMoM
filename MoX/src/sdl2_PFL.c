@@ -81,11 +81,13 @@ void Platform_Maybe_Move_Mouse(void)
 
     // if(((mx != pointer_x) || (my != pointer_y)) && ((now - mouse_time) > DELAY_MOUSE_UPDATE_LIMIT))
         
-    Platform_Get_Mouse_Position_XY(&mx, &my);
+    /* CLAUDE */  // Platform_Get_Mouse_Position_XY(&mx, &my);  // SDL_GetMouseState() races with SDL_WarpMouseInWindow(), causing cursor bounce
     // pointer_x = mx;
     // pointer_y = my;
-    Save_Mouse_On_Page((mx / 2), (my / 2));
-    Draw_Mouse_On_Page((mx / 2), (my / 2));
+    /* CLAUDE */  mx = pointer_x;
+    /* CLAUDE */  my = pointer_y;
+    /* CLAUDE */  Save_Mouse_On_Page(mx, my);
+    /* CLAUDE */  Draw_Mouse_On_Page(mx, my);
     // hw_video_redraw_front();  // doesn't touch any game/MoX/MoO1 code, just updates what is displayed on the platform window
     // Dont?  Platform_Palette_Update();
     Platform_Video_Update();

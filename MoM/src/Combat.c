@@ -1393,7 +1393,7 @@ max: 256
 */
 int16_t combat_grid_entity_count;
 // WZD dseg:D160
-int16_t CMB_BloodFrames[20];
+int16_t m_gibs_frames[20];
 
 // WZD dseg:D188
 SAMB_ptr frame_active_seg;
@@ -6311,7 +6311,7 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
         battle_units[itr].Atk_FigLoss = 0;
         battle_units[itr].Moving = 0;
         battle_units[itr].action = bua_Ready;
-        battle_units[itr].Blood_Amount = 0;
+        battle_units[itr].gibs = 0;
         battle_units[itr].Unknown_5A = 0;
         battle_units[itr].Always_Animate = 0;
         battle_units[itr].Melee_Anim = 0;
@@ -7521,7 +7521,7 @@ void Combat_Grid_Entities__WIP(void)
         for(itr_figures = 0; itr_figures < unit_figure_count; itr_figures++)
         {
 
-            CMB_SpawnFigure__WIP(battle_units[itr].bufpi, battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+            CMB_SpawnFigure__WIP(battle_units[itr].bufpi, battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].gibs, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
 
         }
 
@@ -14845,29 +14845,21 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
 
     if(defender_battle_unit_idx != 99)
     {
-
         range = Range_To_Battle_Unit(attacker_battle_unit_idx, defender_battle_unit_idx);
-
         battle_units[attacker_battle_unit_idx].target_cgx = battle_units[defender_battle_unit_idx].cgx;
         battle_units[attacker_battle_unit_idx].target_cgy = battle_units[defender_battle_unit_idx].cgy;
-
     }
     else
     {
-
         battle_units[attacker_battle_unit_idx].target_cgx = cgx;
         battle_units[attacker_battle_unit_idx].target_cgy = cgy;
-
         dist_x = abs(battle_units[attacker_battle_unit_idx].cgx - cgx);
-        dist_y = abs(battle_units[attacker_battle_unit_idx].cgx - cgx);
-
-        range = dist_y;  // DNE in Dasm
-
+        dist_y = abs(battle_units[attacker_battle_unit_idx].cgy - cgy);
+        range = dist_y;  // DNE in Dasm  BUGBUG?
         if(dist_x > dist_y)
         {
             range = dist_x;
         }
-
     }
 
     if(
@@ -14876,24 +14868,17 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
         (magic_set.movement_animations != ST_FALSE)
     )
     {
-
         Travel_Distance = 33;  // ¿ DEDU  99 / 3 ?
-
     }
     else
     {
-
         Travel_Distance = 49;  // ¿ DEDU  99 / 2 ?
-
     }
 
     if(magic_set.sound_effects == ST_TRUE)
     {
-
         Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
-
         Mark_Block(World_Data);
-
     }
 
     // NIU: ...,12,13,14,15,16,17,18,...,20,23,24,25,26,27,28,29,30,...,39
@@ -14917,7 +14902,6 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
                 sound_buffer_length = lbxload_entry_length;
             }
         } break;
-
         case 31:
         {
             missile_type = msl_Fireball;
@@ -14927,7 +14911,6 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
                 sound_buffer_length = lbxload_entry_length;
             }
         } break;
-
         case 32:
         {
             missile_type = msl_Illusion;
@@ -14937,71 +14920,40 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
                 sound_buffer_length = lbxload_entry_length;
             }
         } break;
-
     }
-
-    if(magic_set.sound_effects != ST_FALSE)
+    if(magic_set.sound_effects == ST_FALSE)
     {
-
         sound_buffer = (SAMB_ptr)ST_UNDEFINED;
-        
     }
-
-
     if(defender_battle_unit_idx != 99)
     {
-// ; overwrites the _missiles@ array using the
-// ; passed parameters, creating the specified amount of
-// ; projectiles of the selected type heading towards the
-// ; target
-// ; returns and sets the count into _missile_count
         CMB_SetProjectiles__WIP(battle_units[attacker_battle_unit_idx].Cur_Figures, battle_units[defender_battle_unit_idx].Cur_Figures, battle_units[attacker_battle_unit_idx].cgx, battle_units[attacker_battle_unit_idx].cgy, battle_units[defender_battle_unit_idx].cgx, battle_units[defender_battle_unit_idx].cgy, missile_type);
     }
     else
     {
         CMB_SetProjectiles__WIP(battle_units[attacker_battle_unit_idx].Cur_Figures, 1, battle_units[attacker_battle_unit_idx].cgx, battle_units[attacker_battle_unit_idx].cgy, cgx, cgy, missile_type);
     }
-
-
-    CMB_ProjectileFrame = 0;  // ; used with entity drawing type 3, steps 0 to 2
+    CMB_ProjectileFrame = 0;
     RP_CMB_ProjectileFrame2 = 0;
-
     if(sound_buffer != (SAMB_ptr)ST_UNDEFINED)
     {
-
         Play_Sound(sound_buffer, sound_buffer_length);
-
     }
-
     for(Progress_Counter = 0; Progress_Counter < 100; Progress_Counter += Travel_Distance)
     {
-     
         if((Progress_Counter + Travel_Distance) > 99)
         {
-
-            CMB_ProjectileFrame = 4;  // ; used with entity drawing type 3, steps 0 to 2
-
+            CMB_ProjectileFrame = 4;
             RP_CMB_ProjectileFrame2 = 4;
-
             if(defender_battle_unit_idx != 99)
             {
-
-                // TODO  BU_SetBloodAnim(defender_battle_unit_idx, defender_damage_total);
-                // ; calculates and sets the animation figure loss and
-                // ; blood amount fields of for the target unit based on
-                // ; a ratio of damage per remaining figure, and
-                // ; randomizes the CMB_BloodFrames array to 0-3s
-
+                Set_Gibs(defender_battle_unit_idx, defender_damage_total);
             }
-
         }
         else
         {
-
             CMB_ProjectileFrame = ((CMB_ProjectileFrame + 1) % 3);  // ; used with entity drawing type 3, steps 0 to 2
-
             RP_CMB_ProjectileFrame2 = ((RP_CMB_ProjectileFrame2 + 1) % 3);
-
         }
 
         Combat_Screen_Draw();
@@ -15029,7 +14981,7 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
     if(defender_battle_unit_idx != 99)
     {
 
-        // TODO  BU_ClearBlood(defender_battle_unit_idx);
+        // TODO  Clear_Gibs(defender_battle_unit_idx);
         // ; clears the battle unit structure fields associated
         // ; with the display of blood on the unit
 
@@ -15046,19 +14998,99 @@ void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_batt
 
 
 // WZD o113p05
-// drake178: CMB_MeleeAnim()
-/*
-performs the melee attack animation between the
-specified two units, or shows the chosen unit
-attacking the tile at the selected coordinates (used
-when targeting walls with Wall Crushers)*/
-/*
-
-*/
-void CMB_MeleeAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t attacker_damage, int16_t defender_damage, int16_t cgx, int16_t cgy)
+/**
+ * @brief Plays the melee hit animation sequence between an attacker and a target.
+ *
+ * Sets temporary gore/figure-loss display data via `Set_Gibs()`, configures
+ * melee target coordinates for visual movement, optionally plays melee SFX,
+ * advances a short animation loop, and then clears temporary state with
+ * `Clear_Gibs()`.
+ *
+ * @param attacker_battle_unit_idx Index of the attacking unit in `battle_units`.
+ * @param defender_battle_unit_idx Index of the defending unit in `battle_units`,
+ *        or `99` when striking a map cell instead of a unit.
+ * @param attacker_damage Damage received by the attacker during this exchange
+ *        (used to compute attacker blood/figure-loss visuals).
+ * @param defender_damage Damage received by the defender during this exchange
+ *        (used only when `defender_battle_unit_idx != 99`).
+ * @param cgx Combat-grid X coordinate used as the strike target when
+ *        `defender_battle_unit_idx == 99`.
+ * @param cgy Combat-grid Y coordinate used as the strike target when
+ *        `defender_battle_unit_idx == 99`.
+ *
+ * @note This function mutates per-unit animation fields including
+ *       `target_cgx`, `target_cgy`, and `Melee_Anim`.
+ * @note Sound playback and resource block marking/release occur only when
+ *       `magic_set.sound_effects == ST_TRUE`.
+ */
+void Melee_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t attacker_damage, int16_t defender_damage, int16_t cgx, int16_t cgy)
 {
+    SAMB_ptr sound_data = 0;
+    int16_t Anim_Duration = 0;
+    int16_t Anim_Frame_Index = 0;
+    /* HACK */  uint32_t sound_buffer_size = 0;  // DNE in Dasm
 
-    return;
+    if(magic_set.movement_animations == ST_TRUE)
+    {
+        Anim_Duration = 5;
+    }
+    else
+    {
+        Anim_Duration = 1;
+    }
+
+    Set_Gibs(attacker_battle_unit_idx, attacker_damage);
+
+    if(defender_battle_unit_idx == 99)
+    {
+        battle_units[attacker_battle_unit_idx].target_cgx = cgx;
+        battle_units[attacker_battle_unit_idx].target_cgy = cgy;
+    }
+    else
+    {
+
+        Set_Gibs(defender_battle_unit_idx, defender_damage);
+
+        battle_units[defender_battle_unit_idx].Melee_Anim = 2;
+        battle_units[defender_battle_unit_idx].target_cgx = battle_units[attacker_battle_unit_idx].cgx;
+        battle_units[defender_battle_unit_idx].target_cgy = battle_units[attacker_battle_unit_idx].cgy;
+        battle_units[attacker_battle_unit_idx].target_cgx = battle_units[defender_battle_unit_idx].cgx;
+        battle_units[attacker_battle_unit_idx].target_cgy = battle_units[defender_battle_unit_idx].cgy;
+    }
+
+    battle_units[attacker_battle_unit_idx].Melee_Anim = 1;
+
+    if(magic_set.sound_effects == ST_TRUE)
+    {
+        Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
+        Mark_Block(World_Data);
+        sound_data = Reload_Melee_Sound(attacker_battle_unit_idx, &sound_buffer_size);
+        Play_Sound(sound_data, sound_buffer_size);
+    }
+
+    for(Anim_Frame_Index = 0; Anim_Frame_Index < Anim_Duration; Anim_Frame_Index++)
+    {
+        Mark_Time();
+        Set_Page_Off();
+        Combat_Screen_Draw();
+        PageFlip_FX();
+        Release_Time(2);
+    }
+
+    Clear_Gibs(attacker_battle_unit_idx);
+
+    if(defender_battle_unit_idx != 99)
+    {
+        Clear_Gibs(defender_battle_unit_idx);
+        battle_units[defender_battle_unit_idx].Melee_Anim = 0;
+    }
+
+    battle_units[attacker_battle_unit_idx].Melee_Anim = 1;
+
+    if(magic_set.sound_effects == ST_TRUE)
+    {
+        Release_Block(World_Data);
+    }
 
 }
 
@@ -19476,7 +19508,7 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
 
     battle_unit->Atk_FigLoss = 0;
     battle_unit->Confusion_State = 0;
-    battle_unit->Blood_Amount = 0;
+    battle_unit->gibs = 0;
 
     battle_unit->Unknown_5A = 0;  // NOTE: Per the Dasm, duplicate `battle_unit->Unknown_5A = 0;`
     battle_unit->Unknown_5A = 0;
@@ -22435,7 +22467,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
         if(ranged_attack_flag != ST_TRUE)
         {
 
-            CMB_MeleeAnim__STUB(attacker_battle_unit_idx, defender_battle_unit_idx, attacker_damage_total, defender_damage_total, battle_units[defender_battle_unit_idx].cgx, battle_units[defender_battle_unit_idx].cgy);
+            Melee_Animation(attacker_battle_unit_idx, defender_battle_unit_idx, attacker_damage_total, defender_damage_total, battle_units[defender_battle_unit_idx].cgx, battle_units[defender_battle_unit_idx].cgy);
 
             battle_units[attacker_battle_unit_idx].movement_points -= ((Battle_Unit_Moves2(attacker_battle_unit_idx) + 1) / 2);
 
@@ -22637,7 +22669,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
                     Wall_Destroyed = ST_TRUE;
                 }
 
-                CMB_MeleeAnim__STUB(attacker_battle_unit_idx, defender_battle_unit_idx, attacker_damage_total, defender_damage_total, cgx, cgy);
+                Melee_Animation(attacker_battle_unit_idx, defender_battle_unit_idx, attacker_damage_total, defender_damage_total, cgx, cgy);
 
                 battle_units[attacker_battle_unit_idx].movement_points -= ((Battle_Unit_Moves2(attacker_battle_unit_idx) + 1) / 2);
 
@@ -24936,37 +24968,40 @@ SAMB_ptr Reload_Battle_Unit_Move_Sound(int16_t battle_unit_idx, /* HACK */ uint3
 
 
 // WZD o124p08
-// drake178: BU_LoadMeleeSound()
-/*
-; appends the melee sound effect of the specified unit
-; into the World_Data@ allocation
-; returns the segment pointer to the effect data
-*/
-/*
-
-*/
-// SAMB_ptr BU_LoadMeleeSound__WIP(int16_t battle_unit_idx)
-void BU_LoadMeleeSound__WIP(int16_t battle_unit_idx, SAMB_ptr * sound_seg, uint32_t * sound_seg_size)
+/* COPILOT */
+/**
+ * @brief Reloads the melee attack sound data for a battle unit.
+ *
+ * Uses the low nibble of the unit type Sound field as the melee sound index.
+ * Sound index 8 is treated as a silence fallback from SOUNDFX.LBX; all other
+ * melee sound indices are loaded from CMBTSND.LBX.
+ *
+ * @param battle_unit_idx Index of the battle unit whose melee sound is requested.
+ * @param sound_seg_size Output pointer that receives the loaded sound segment size in bytes.
+ * @return SAMB_ptr Pointer to the loaded sound data segment.
+ *
+ * @note The @p sound_seg_size pointer is required and is written on every path.
+ * @note Parameter @p sound_seg_size is marked as HACK in the original signature.
+ */
+SAMB_ptr Reload_Melee_Sound(int16_t battle_unit_idx, /* HACK */ uint32_t * sound_seg_size)
 {
-    // SAMB_ptr sound = 0;  // _SI_
-    int16_t sound = 0;  // _SI_
+    SAMB_ptr sound_seg = 0;
+    int16_t sound_num = 0;  // DNE in Dasm
 
-    sound = (_unit_type_table[_UNITS[battle_units[battle_unit_idx].unit_idx].type].Sound & 0x0F);  // low nibble
+    sound_num = (_unit_type_table[_UNITS[battle_units[battle_unit_idx].unit_idx].type].Sound & 0x0F);  // low nibble
 
-    if(sound == 8)
+    if(sound_num == 8)
     {
-        // sound = LBX_Reload_Next(soundfx_lbx_file__ovr124__1of2, SFX_Silence, World_Data);
-        *sound_seg = LBX_Reload_Next(soundfx_lbx_file__ovr124__1of2, SFX_Silence, World_Data);
+        sound_seg = LBX_Reload_Next(soundfx_lbx_file__ovr124__1of2, SFX_Silence, World_Data);
         *sound_seg_size = lbxload_entry_length;
     }
     else
     {
-        // sound = LBX_Reload_Next(cmbtsnd_lbx_file__ovr124, sound, World_Data);
-        *sound_seg = LBX_Reload_Next(cmbtsnd_lbx_file__ovr124, sound, World_Data);
+        sound_seg = LBX_Reload_Next(cmbtsnd_lbx_file__ovr124, sound_num, World_Data);
         *sound_seg_size = lbxload_entry_length;
     }
 
-    // return sound;
+    return sound_seg;
 
 }
 
@@ -25068,11 +25103,88 @@ void Check_Wall_Of_Fire_Attack(int16_t battle_unit_idx)
 }
 
 
+/**
+ * @brief Calculates and stores combat gore state for a damaged battle unit.
+ *
+ * Computes two post-hit presentation values on the target unit:
+ * - `Atk_FigLoss`: estimated number of figures lost from the incoming damage.
+ * - `gibs`: amount of blood/gib effect intensity to display.
+ *
+ * The function also refreshes `m_gibs_frames` with randomized frame offsets
+ * used by combat blood visual effects.
+ *
+ * @param battle_unit_idx Index of the target unit in the global `battle_units` array.
+ * @param Damage Total damage applied to the target unit for this hit event.
+ *
+ * @note `gibs` is clamped to a maximum of 5 and forced to at least 1 for
+ *       positive nonzero damage when initial computation yields 0.
+ * @note `figure_loss` is capped to the unit's current figure count.
+ */
 // WZD o124p11
-// drake178: BU_SetBloodAnim()
+void Set_Gibs(int16_t battle_unit_idx, int16_t Damage)
+{
+    int16_t itr = 0;
+    int16_t figure_loss = 0;
+    int16_t gibs = 0;
+
+    figure_loss = 0;
+
+    if(battle_units[battle_unit_idx].Cur_Figures == 0)
+    {
+        gibs = 3;
+    }
+    else
+    {
+        gibs = ((Damage + (battle_units[battle_unit_idx].Cur_Figures / 2)) / (battle_units[battle_unit_idx].Cur_Figures * 2));
+    }
+
+    SETMAX(gibs, 5);
+    
+    if(
+        (Damage > 0)
+        &&
+        (gibs == 0)
+    )
+    {
+        gibs = 1;
+    }
+
+    if(Damage > 0)
+    {
+        // This formula basically gives "damage per 2 HP per figure" — so a 1-figure unit taking 10 damage bleeds more than an 8-figure unit taking 10 damage.
+        figure_loss = (((Damage + battle_units[battle_unit_idx].hits) - 1) / battle_units[battle_unit_idx].hits);
+        if(battle_units[battle_unit_idx].Cur_Figures < figure_loss)
+        {
+            figure_loss = battle_units[battle_unit_idx].Cur_Figures;
+        }
+    }
+
+    for(itr = 0; itr < 20; itr++)
+    {
+        m_gibs_frames[itr] = (Random(4) - 1);
+    }
+
+    battle_units[battle_unit_idx].Atk_FigLoss = figure_loss;
+    battle_units[battle_unit_idx].gibs = gibs; 
+
+}
+
 
 // WZD o124p12
-// drake178: BU_ClearBlood()
+/**
+ * @brief Clears gore-related combat state for a battle unit.
+ *
+ * Resets transient post-hit presentation fields used by combat animation and
+ * rendering so the unit no longer displays pending figure-loss or gib effects.
+ *
+ * @param battle_unit_idx Index of the target unit in the global `battle_units` array.
+ */
+void Clear_Gibs(int16_t battle_unit_idx)
+{
+    battle_units[battle_unit_idx].Atk_FigLoss =  0;
+    battle_units[battle_unit_idx].gibs =  0;
+}
+
 
 // WZD o124p13
 // drake178: BU_IsInCityProper()
@@ -27213,7 +27325,7 @@ void Combat_Grid_Entity_Create_Vortexes(void)
 ~ Battle_Unit_Figure_Position()
 ~ UnitView.C  Unit_Figure_Position()
 
-CMB_SpawnFigure__WIP(battle_units[itr].bufpi, battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+CMB_SpawnFigure__WIP(battle_units[itr].bufpi, battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].gibs, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
 
 bufpi
     passed through
@@ -27351,20 +27463,20 @@ void CMB_SpawnFigure__WIP(int64_t bufpi, int16_t cgx, int16_t cgy, int16_t targe
         {
             if(SrcBld == 0)
             {
-                Prev_Blood_Frame = CMB_BloodFrames[current_figure];
-                CMB_BloodFrames[current_figure] += 1;
-                if(CMB_BloodFrames[current_figure] > 5)
+                Prev_Blood_Frame = m_gibs_frames[current_figure];
+                m_gibs_frames[current_figure] += 1;
+                if(m_gibs_frames[current_figure] > 5)
                 {
-                    CMB_BloodFrames[current_figure] = 5;
+                    m_gibs_frames[current_figure] = 5;
                 }
             }
             else
             {
-                Prev_Blood_Frame = CMB_BloodFrames[(10 + current_figure)];
-                CMB_BloodFrames[(10 + current_figure)] += 1;
-                if(CMB_BloodFrames[(10 + current_figure)] > 5)
+                Prev_Blood_Frame = m_gibs_frames[(10 + current_figure)];
+                m_gibs_frames[(10 + current_figure)] += 1;
+                if(m_gibs_frames[(10 + current_figure)] > 5)
                 {
-                    CMB_BloodFrames[(10 + current_figure)] = 5;
+                    m_gibs_frames[(10 + current_figure)] = 5;
                 }
             }
             Prev_Blood_Frame -= 2;

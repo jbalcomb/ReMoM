@@ -1762,7 +1762,7 @@ int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx,
 void CMB_RangedAnim__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t Target_Damage_Sum, int16_t cgx, int16_t cgy);
 
 // WZD o113p05
-void CMB_MeleeAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t attacker_damage, int16_t defender_damage, int16_t cgx, int16_t cgy);
+void Melee_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t attacker_damage, int16_t defender_damage, int16_t cgx, int16_t cgy);
 
 // WZD o113p06
 void Apply_Battle_Unit_Damage_From_Spell(uint16_t spell_idx, uint16_t battle_unit_idx, int16_t damage_types[], int16_t attack_override_flag);
@@ -1988,8 +1988,7 @@ int16_t Get_Player_Mode(int16_t player_idx);
 SAMB_ptr Reload_Battle_Unit_Move_Sound(int16_t battle_unit_idx, /* HACK */ uint32_t * sound_seg_size);
 
 // WZD o124p08
-// SAMB_ptr BU_LoadMeleeSound__WIP(int16_t battle_unit_idx);
-void BU_LoadMeleeSound__WIP(int16_t battle_unit_idx, SAMB_ptr * sound_seg, uint32_t * sound_seg_size);
+SAMB_ptr Reload_Melee_Sound(int16_t battle_unit_idx, /* HACK */ uint32_t * sound_seg_size);
 
 // WZD o124p09
 void Combat_Load_Spell_Sound_Effect(int16_t spell_idx);
@@ -1998,10 +1997,10 @@ void Combat_Load_Spell_Sound_Effect(int16_t spell_idx);
 void Check_Wall_Of_Fire_Attack(int16_t battle_unit_idx);
 
 // WZD o124p11
-// BU_SetBloodAnim()
+void Set_Gibs(int16_t battle_unit_idx, int16_t Damage);
 
 // WZD o124p12
-// BU_ClearBlood()
+void Clear_Gibs(int16_t battle_unit_idx);
 
 // WZD o124p13
 int16_t Battle_Unit_Is_Within_City(int16_t battle_unit_idx);

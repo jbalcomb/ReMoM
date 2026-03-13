@@ -7,9 +7,12 @@
 
 // The three globals are module-private in Fonts.c but are linked into MOX.
 // Declare them here so we can set up and inspect state directly.
-extern int16_t cycle_direction_flag;   // 0 = forward, 1 = reverse, -1 = disabled
-extern int16_t cycle_color_value;
-extern int16_t cycle_step_value;
+extern "C"
+{
+    extern int16_t cycle_direction_flag;   // 0 = forward, 1 = reverse, -1 = disabled
+    extern int16_t cycle_color_value;
+    extern int16_t cycle_step_value;
+}
 
 // ============================================================================
 // Helper: set all three globals at once before each call  (used by Update_Cycle tests)
