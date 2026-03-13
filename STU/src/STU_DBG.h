@@ -123,6 +123,8 @@ extern "C" {
 #ifdef STU_DEBUG
 #ifdef _WIN32
 #define STU_DEBUG_BREAK()  ( __debugbreak() )
+#else
+#define STU_DEBUG_BREAK()  ( (void)0 )
 #endif
 #else
 #define STU_DEBUG_BREAK()  ( (void)0 )
