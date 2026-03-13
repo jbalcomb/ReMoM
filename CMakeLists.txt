@@ -296,28 +296,44 @@ if(ENABLE_COVERAGE)
 endif()
 
 
+# Installation rules for the executable (runtime components)
+# install(TARGETS MyExe RUNTIME DESTINATION bin)
+# install(TARGETS ReMoMber)
+install(
+    TARGETS ReMoMber
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
 
-install(TARGETS ReMoMber)
-# install(
-#     TARGETS ReMoMber
-#     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-#     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-# )
-# install(FILES $<TARGET_FILE:SDL2::SDL2> DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(FILES $<TARGET_FILE:SDL2::Core> DESTINATION ${CMAKE_INSTALL_BINDIR})
-if(NOT DISABLE_AUDIO)
-    install(FILES $<TARGET_FILE:SDL2::Mixer> DESTINATION ${CMAKE_INSTALL_BINDIR})
-endif()
-message(STATUS "CMAKE_INSTALL_BINDIR='${CMAKE_INSTALL_BINDIR}'")
+# Installation rules for libraries
+if(WIN32)
 
-# $<TARGET_RUNTIME_DLLS:MOX_tests>
+    # install(FILES $<TARGET_FILE:SDL2::SDL2> DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(FILES $<TARGET_FILE:SDL2::Core> DESTINATION ${CMAKE_INSTALL_BINDIR})
+    if(NOT DISABLE_AUDIO)
+        install(FILES $<TARGET_FILE:SDL2::Mixer> DESTINATION ${CMAKE_INSTALL_BINDIR})
+    endif()
+    message(STATUS "CMAKE_INSTALL_BINDIR='${CMAKE_INSTALL_BINDIR}'")
 
-# $<TARGET_FILE_DIR:ReMoMber>
+    # $<TARGET_RUNTIME_DLLS:MOX_tests>
 
-install(FILES ${SDL2_DLL_FILE_PATH} DESTINATION ${CMAKE_INSTALL_BINDIR})
-if(NOT DISABLE_AUDIO)
-    install(FILES ${SDL2_MIXER_DLL_FILE_PATH} DESTINATION ${CMAKE_INSTALL_BINDIR})
+    # $<TARGET_FILE_DIR:ReMoMber>
+
+    install(FILES ${SDL2_DLL_FILE_PATH} DESTINATION ${CMAKE_INSTALL_BINDIR})
+    if(NOT DISABLE_AUDIO)
+        install(FILES ${SDL2_MIXER_DLL_FILE_PATH} DESTINATION ${CMAKE_INSTALL_BINDIR})
+    endif()
+
+else()
+
+    # On Linux/Unix, shared libraries (e.g., .so files) are installed in the 'lib' directory.
+    # The LIBRARY DESTINATION handles this automatically for non-Windows platforms.
+    install(TARGETS ReMoMber 
+            LIBRARY DESTINATION lib 
+            ARCHIVE DESTINATION lib 
+            CONFIGURATIONS Release)
+
 endif()
 
 include(InstallRequiredSystemLibraries)
