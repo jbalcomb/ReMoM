@@ -261,8 +261,7 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
             // if(stricmp(Local_Name_String, city_names_buffer[(city_name_idx * 14)]) != 0)
             city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
 
-            // TODO  stricmp() vs. strcmp()  if(stricmp(Local_Name_String, city_names_buffer_ptr) != 0)
-            if(strcmp(Local_Name_String, city_names_buffer_ptr) != 0)
+            if(stu_stricmp(Local_Name_String, city_names_buffer_ptr) != 0)
             {
 
                 continue;

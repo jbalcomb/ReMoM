@@ -756,7 +756,7 @@ void DBG_Compare_MAGIC_SET(const struct s_MAGIC_SET * before, const struct s_MAG
     for(itr = 0; itr < NUM_SAVES; itr++)
     {
         if(before->Have_Save[itr] != after->Have_Save[itr]) { dbg_prn("  CHANGED Have_Save[%d]:          %d -> %d\n", itr, before->Have_Save[itr], after->Have_Save[itr]); diff_count++; }
-        if(strcmp(before->Save_Names[itr], after->Save_Names[itr]) != 0) { dbg_prn("  CHANGED Save_Names[%d]:         \"%s\" -> \"%s\"\n", itr, before->Save_Names[itr], after->Save_Names[itr]); diff_count++; }
+        if(stu_stricmp(before->Save_Names[itr], after->Save_Names[itr]) != 0) { dbg_prn("  CHANGED Save_Names[%d]:         \"%s\" -> \"%s\"\n", itr, before->Save_Names[itr], after->Save_Names[itr]); diff_count++; }
     }
     if(diff_count == 0) { dbg_prn("  (no changes)\n"); }
     else { dbg_prn("  Total changes: %d\n", diff_count); }

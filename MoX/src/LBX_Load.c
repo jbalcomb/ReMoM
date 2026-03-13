@@ -205,12 +205,11 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
     /*
         BEGIN: Current vs. Previous
     */
-// #pragma warning(suppress : 4996)
-    // if((lbxload_fptr == NULL) || (stricmp(lbx_name, lbxload_file_name) != 0))
+    
     if(
         (lbxload_fptr == NULL)
         ||
-        (strcmp(lbx_name, lbxload_file_name) != 0)
+        (stu_stricmp(lbx_name, lbxload_file_name) != 0)
     )
     {
         /*
@@ -419,11 +418,10 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
         BEGIN: Current vs. Previous
     */
 
-    // if((lbxload_fptr == NULL) || (stricmp(lbx_name, lbxload_file_name) != 0))
     if(
         (lbxload_fptr == NULL)
         ||
-        (strcmp(lbx_name, lbxload_file_name) != 0)
+        (stu_stricmp(lbx_name, lbxload_file_name) != 0)
     )
     {
         /*
@@ -682,7 +680,7 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
         !(
             (NULL != lbxload_fptr)
             &&
-            (_stricmp(lbx_name, lbxload_file_name) == 0)
+            (stu_stricmp(lbx_name, lbxload_file_name) == 0)
             &&
             (farload_extended_flag == current_extended_flag)
         )

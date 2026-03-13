@@ -1949,8 +1949,7 @@ void Build_City_Enchantment_List(int16_t city_idx, int16_t city_enchantment_list
         {
             city_enchantment_list[city_enchantment_count] = itr_city_enchantments;
 
-            // TODO  stricmp() for Linux/clang? if(stricmp(_city_enchantment_names[itr_city_enchantments], str_Nightshade) == 0)
-            if(strcmp(_city_enchantment_names[itr_city_enchantments], str_Nightshade) == 0)
+            if(stu_stricmp(_city_enchantment_names[itr_city_enchantments], str_Nightshade) == 0)
             {
                 city_enchantment_owner_list[city_enchantment_count] = 10;
             }

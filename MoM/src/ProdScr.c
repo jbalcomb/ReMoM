@@ -853,9 +853,9 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
                     {
 
                         if(
-                            (strcmp("Spearmen", *_unit_type_table[itr].name) != 0)
+                            (stu_stricmp("Spearmen", *_unit_type_table[itr].name) != 0)
                             &&
-                            (strcmp("Swordsmen", *_unit_type_table[itr].name) != 0)
+                            (stu_stricmp("Swordsmen", *_unit_type_table[itr].name) != 0)
                         )
                         {
 
