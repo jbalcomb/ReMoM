@@ -148,7 +148,7 @@ This assembly code is an implementation of atan2() (arctangent with two argument
 While the underlying math is definitively an Inverse Tangent (atan2), naming it Get_Angle() tells you exactly what the function is used for in the context of the game engine.
 */
 /* Main Function: Returns a full 0-359 degree angle based on X and Y distances */
-int Get_Angle(int x_dist, int y_dist) {
+int16_t Get_Angle(int x_dist, int y_dist) {
     int angle;
     if (x_dist >= 0) {
         if (y_dist >= 0) {
@@ -267,7 +267,7 @@ int Get_Angle(int x_dist, int y_dist) {
 // }
 // GEMINI
 /* Helper Function: Calculates the angle in Quadrant 1 (0 to 90 degrees) */
-int Get_Base_Angle(unsigned int y, unsigned int x) {
+int16_t Get_Base_Angle(unsigned int y, unsigned int x) {
     unsigned int ratio;
     int i;
 
@@ -325,7 +325,7 @@ GEMINI
 */
 /* Assuming angle_to_cos is a global array of 91 unsigned shorts */
 // extern unsigned short angle_to_cos[91];
-int Cos(int angle, int radius) {
+int16_t Cos(int16_t angle, int16_t radius) {
     int sign = 1;
     unsigned short multiplier;
     long result;
@@ -364,7 +364,7 @@ GEMINI
 */
 /* Assuming angle_to_cos is a global array of unsigned shorts */
 // extern unsigned short angle_to_cos[90]; 
-int Sin(int angle, int radius) {
+int16_t Sin(int16_t angle, int16_t radius) {
     int sign = 1; /* 1 for positive, -1 for negative */
     unsigned short multiplier;
     long result;
@@ -415,12 +415,12 @@ int Sin(int angle, int radius) {
 /*
 */
 /*
-
+draw rotated?
 */
 // WZD s34p06
 // drake178: VGA_DrawTexture_R()
 /*
 */
 /*
-
+remap draw rotated?
 */
