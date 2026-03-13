@@ -32,6 +32,9 @@ MoM-Rasm/
 # Claude Desktop / Claude Code / Claude CLI
 .claude/worktrees
 
+# CMake
+cmake-4.2.3-linux-x86_64.sh
+
 # CMake auto-generated files
 CMakeFiles/
 x64/
