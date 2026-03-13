@@ -54,7 +54,7 @@ set(MOX_SOURCES
     LBX_Load.c
     LOADSAVE.c
     Mouse.c
-    MOM_Data.c
+    MOM_DAT.c
     MOX_DAT.c
     MOX_SET.c
     MOX_SND.c
