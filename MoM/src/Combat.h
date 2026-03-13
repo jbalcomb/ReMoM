@@ -2238,7 +2238,7 @@ void Wall_Rise_Load(int16_t wall_type);
 void CMB_BaseAllocs__WIP(void);
 
 // WZD ovr163p05
-void CMB_SetProjectiles__WIP(int16_t missile_count, int16_t Targets, int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t TgtY, int16_t Type);
+void Make_Missiles(int16_t missile_count, int16_t Targets, int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t TgtY, int16_t Type);
 
 // WZD ovr163p06
 int16_t Combat_Figure_Load(int16_t unit_type, int16_t figure_index);
