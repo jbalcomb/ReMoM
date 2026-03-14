@@ -19,9 +19,7 @@
 
 #include <string.h>
 
-#ifdef _STU_SDL2
-#include "sdl2_PFL.h"
-#endif
+#include "../../platform/include/Platform.h"
 
 #include "Input.h"
 

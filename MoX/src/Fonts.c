@@ -20,7 +20,7 @@
 #include "Video.h"
 #include "capture.h"
 
-#include "MOM_PFL.h"
+#include "../../platform/include/Platform.h"
 
 #include <assert.h>
 #include <stdlib.h>

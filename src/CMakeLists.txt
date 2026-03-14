@@ -17,7 +17,7 @@ target_link_libraries(ReMoMber PUBLIC
     MOX
     STU
     Platform
-    SDL2::Main
+    SDL3::SDL3
 )
 
 target_include_directories(ReMoMber PUBLIC
@@ -25,14 +25,12 @@ target_include_directories(ReMoMber PUBLIC
     ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_SOURCE_DIR}/src/MOX
     ${PROJECT_SOURCE_DIR}/src/STU
-    ${SDL2_INCLUDE_DIR}
-    ${SDL2_MIXER_INCLUDE_DIR}
 )
 
 ReMoM_Apply_Common_Compile_Options(ReMoMber)
 
 ReMoM_Add_Target_Support_Files(ReMoMber
-    COPY_SDL2
-    COPY_SDL2_MIXER
+    COPY_SDL3
+    COPY_SDL3_MIXER
     COPY_LBX
 )

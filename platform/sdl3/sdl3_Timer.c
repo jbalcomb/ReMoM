@@ -8,7 +8,7 @@
 
 #include "sdl2_PFL.h"
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 
 
@@ -32,14 +32,14 @@ void Release_Time_Seconds(uint32_t delay);
 
 // MS-DOS  INT 1A,0 - Read System Clock Counter
 // MWA  GetTickCount64()
-// SDL2  SDL_GetTicks64()
+// SDL2  SDL_GetTicks()
 // 1oom  hw_get_time_us()
 /*
     the number of seconds since the SDL library initialized
 */
 uint64_t Read_System_Clock_Timer(void)
 {
-    return SDL_GetTicks64() * 1000;  // the number of milliseconds since the SDL library initialized
+    return SDL_GetTicks() * 1000;  // the number of milliseconds since the SDL library initialized
 }
 
 /* -------------------------------------------------------------------------- */
@@ -57,7 +57,7 @@ static uint64_t delay_start;
 // ui_delay_prepare()
 void Mark_Time(void)
 {
-    sdl2_ticks_mark_time = SDL_GetTicks64();  // the number of milliseconds since SDL library initialization
+    sdl2_ticks_mark_time = SDL_GetTicks();  // the number of milliseconds since SDL library initialization
     // DELETEME  dbg_prn("sdl2_ticks_mark_time: %llu\n", sdl2_ticks_mark_time);
     // DELETEME  dbg_prn("(sdl2_ticks_mark_time - sdl2_ticks_startup): %llu\n", (sdl2_ticks_mark_time - sdl2_ticks_startup));
 

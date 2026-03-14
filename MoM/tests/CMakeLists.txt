@@ -34,17 +34,16 @@ target_link_libraries(MOM_tests PUBLIC
     GTest::gtest
     GTest::gtest_main
     GTest::gmock
-    SDL2::Core
+    SDL3::SDL3
     momlib
     MOX
     STU
 )
 
 ReMoM_Add_Target_Support_Files(MOM_tests
-    COPY_SDL2
-    COPY_SDL2_MIXER
+    COPY_SDL3
+    COPY_SDL3_MIXER
     COPY_LBX
-    COPY_SDL2D
     COPY_GMOCK
 )
 
@@ -59,10 +58,9 @@ add_test(
     NAME MOM_tests_stage_runtime
     COMMAND ${CMAKE_COMMAND}
         -DTEST_BIN_DIR=$<TARGET_FILE_DIR:MOM_tests>
-        -DSDL2_DLL_FILE_PATH=${SDL2_DLL_FILE_PATH}
-        -DSDL2D_DLL_FILE_PATH=${SDL2D_DLL_FILE_PATH}
+        -DSDL3_DLL_FILE_PATH=${SDL3_DLL_FILE_PATH}
         -DGMOCK_DLL_FILE_PATH=${GMOCK_DLL_FILE_PATH}
-        -DSDL2_MIXER_DLL_FILE_PATH=${SDL2_MIXER_DLL_FILE_PATH}
+        -DSDL3_MIXER_DLL_FILE_PATH=${SDL3_MIXER_DLL_FILE_PATH}
         -DDISABLE_AUDIO=${DISABLE_AUDIO}
         -P ${CMAKE_SOURCE_DIR}/cmake/stage_test_runtime.cmake
 )

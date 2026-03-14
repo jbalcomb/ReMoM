@@ -20,7 +20,7 @@ MoO2  Module: fonts     Load_Font_File()
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/SOUND.h"
 #include "../../MoX/src/random.h"
-#include "../../MoX/src/MOM_PFL.h"
+#include "../../platform/include/Platform.h"
 #include "../../MoX/src/Video2.h"
 
 #include "../../ext/stu_compat.h"

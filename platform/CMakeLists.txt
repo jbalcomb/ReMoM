@@ -1,9 +1,9 @@
 
 # Platform library — all platform-specific code lives here.
-# Only this library links SDL2 (will become SDL3 in Phase 3).
+# Only this library links SDL3.
 # MoX and MoM link Platform, never SDL directly.
 
-set(PLATFORM_SDL2_SOURCES
+set(PLATFORM_SOURCES
     sdl3/sdl3_EMM.c
     sdl3/sdl3_Init.c
     sdl3/sdl3_Input.c
@@ -17,12 +17,12 @@ set(PLATFORM_SDL2_SOURCES
 )
 
 if(NOT DISABLE_AUDIO)
-    list(APPEND PLATFORM_SDL2_SOURCES
+    list(APPEND PLATFORM_SOURCES
         sdl3/sdl3_Audio.c
     )
 endif()
 
-add_library(Platform STATIC ${PLATFORM_SDL2_SOURCES})
+add_library(Platform STATIC ${PLATFORM_SOURCES})
 
 set_target_properties(Platform PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
@@ -34,21 +34,19 @@ target_include_directories(Platform PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-# Private: SDL2 headers and MoX engine headers (needed by platform implementations)
+# Private: SDL3 headers and MoX engine headers (needed by platform implementations)
 target_include_directories(Platform PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/sdl3
     ${PROJECT_SOURCE_DIR}/MoX/src
-    ${SDL2_INCLUDE_DIR}
-    ${SDL2_MIXER_INCLUDE_DIR}
 )
 
 if(NOT DISABLE_AUDIO)
     target_link_libraries(Platform PRIVATE
-        SDL2::Core
-        SDL2::Mixer
+        SDL3::SDL3
+        SDL3_mixer::SDL3_mixer
     )
 else()
     target_link_libraries(Platform PRIVATE
-        SDL2::Core
+        SDL3::SDL3
     )
 endif()

@@ -16,7 +16,7 @@
 #include "MOX_SET.h"  /* magic_set */
 #include "Util.h"
 
-#include "MOM_PFL.h"
+#include "../../platform/include/Platform.h"
 
 #include <assert.h>     /* assert() */
 #include <math.h>       /* sqrt() */

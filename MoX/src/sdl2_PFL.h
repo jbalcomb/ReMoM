@@ -8,7 +8,7 @@
 
 #include <string.h>
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 
 
@@ -148,7 +148,7 @@ void Platform_Maybe_Move_Mouse(void);
 void Platform_Event_Handler(void);
 void DBG_Frame_Reset(void);  /* CLAUDE: debug */
 
-void Platform_Window_Event(SDL_WindowEvent *sdl2_window_event);
+void Platform_Window_Event(SDL_Event *sdl2_window_event);
 
 
 

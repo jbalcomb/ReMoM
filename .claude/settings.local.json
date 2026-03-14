@@ -20,7 +20,9 @@
       "Bash(ls \"c:/STU/devel/ReMoM/out/build/MSVC-debug/src/Debug/\"*.GAM)",
       "Bash(ls \"c:/STU/devel/ReMoM/out/build/MSVC-nosound-debug/src/Debug/\"*.GAM)",
       "Bash(ctest --test-dir out/build/MSVC-nosound-debug --config Debug --output-on-failure)",
-      "Bash(ctest -C Debug --output-on-failure)"
+      "Bash(ctest -C Debug --output-on-failure)",
+      "Bash(rm out/build/MSVC-nosound-debug/CMakeCache.txt)",
+      "Bash(cmake --preset MSVC-nosound-debug)"
     ]
   }
 }

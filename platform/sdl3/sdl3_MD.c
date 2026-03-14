@@ -7,7 +7,7 @@
 
 #include "sdl2_PFL.h"
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 #include "../../MoX/src/sdl2_Audio.h"
 
@@ -22,7 +22,7 @@ x and y are set to the mouse cursor position relative to the focus window
 */
 int16_t Mouse_Button(void)
 {
-    uint32_t sdl2_mouse_state = 0;
+    SDL_MouseButtonFlags sdl2_mouse_state = 0;
     int16_t l_mouse_button = 0;
 
     Platform_Event_Handler();
@@ -36,7 +36,6 @@ int16_t Mouse_Button(void)
     else
     {
         sdl2_mouse_state = SDL_GetMouseState(NULL, NULL);
-        // sdl2_mouse_state = SDL_GetGlobalMouseState(NULL, NULL);
     }
 
     // Check if the left button is pressed

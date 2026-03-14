@@ -50,21 +50,8 @@ ReMoM_Apply_Common_Compile_Options(MOX)
 
 target_include_directories(MOX PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${SDL2_INCLUDE_DIR}
-    ${SDL2_MIXER_INCLUDE_DIR}
 )
 
 target_link_libraries(MOX
     Platform
 )
-
-if(NOT DISABLE_AUDIO)
-    target_link_libraries(MOX
-        SDL2::Core
-        SDL2::Mixer
-    )
-else()
-    target_link_libraries(MOX
-        SDL2::Core
-    )
-endif()

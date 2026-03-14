@@ -68,7 +68,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../MoX/src/MOM_PFL.h"
+#include "../../platform/include/Platform.h"
 
 #include "MainScr.h"
 

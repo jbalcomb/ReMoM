@@ -8,57 +8,53 @@ set(CMAKE_EXECUTE_PROCESS_COMMAND_ECHO STDOUT) # Set default to echo to STDOUT
 add_executable(MOX_tests MOX_tests.cpp)
 # target_include_directories(MOX_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${GTEST_INCLUDE_DIRS})
 if(NOT DISABLE_AUDIO)
-#     target_link_libraries(MOX_tests PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL2::Core SDL2::Mixer momlib MOX )
+#     target_link_libraries(MOX_tests PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL3::SDL3 SDL2::Mixer momlib MOX )
 else()
-    target_link_libraries(MOX_tests PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL2::Core momlib MOX )
+    target_link_libraries(MOX_tests PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL3::SDL3 momlib MOX )
 endif()
 
 add_executable(test_Util test_Util.cpp)
 # target_include_directories(test_Util PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${GTEST_INCLUDE_DIRS})
-# target_link_libraries(test_Util PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL2::Core SDL2::Mixer momlib MOX )
+# target_link_libraries(test_Util PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL3::SDL3 SDL2::Mixer momlib MOX )
 if(NOT DISABLE_AUDIO)
-#     target_link_libraries(test_Util PUBLIC GTest::gtest GTest::gtest_main SDL2::Core SDL2::Mixer momlib MOX )
+#     target_link_libraries(test_Util PUBLIC GTest::gtest GTest::gtest_main SDL3::SDL3 SDL2::Mixer momlib MOX )
 else()
-    target_link_libraries(test_Util PUBLIC GTest::gtest GTest::gtest_main SDL2::Core momlib MOX )
+    target_link_libraries(test_Util PUBLIC GTest::gtest GTest::gtest_main SDL3::SDL3 momlib MOX )
 endif()
 
 add_executable(test_Allocate test_Allocate.cpp)
 # target_include_directories(test_Allocate PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${GTEST_INCLUDE_DIRS})
 if(NOT DISABLE_AUDIO)
-#     target_link_libraries(test_Allocate PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL2::Core SDL2::Mixer momlib MOX )
+#     target_link_libraries(test_Allocate PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL3::SDL3 SDL2::Mixer momlib MOX )
 else()
-    target_link_libraries(test_Allocate PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL2::Core momlib MOX )
+    target_link_libraries(test_Allocate PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL3::SDL3 momlib MOX )
 endif()
 
 add_executable(test_Fonts test_Fonts.cpp)
 # target_include_directories(test_Fonts PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${GTEST_INCLUDE_DIRS})
 if(NOT DISABLE_AUDIO)
-#     target_link_libraries(test_Fonts PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL2::Core SDL2::Mixer momlib MOX )
+#     target_link_libraries(test_Fonts PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL3::SDL3 SDL2::Mixer momlib MOX )
 else()
-    target_link_libraries(test_Fonts PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL2::Core momlib MOX )
+    target_link_libraries(test_Fonts PUBLIC GTest::gtest GTest::gtest_main GTest::gmock SDL3::SDL3 momlib MOX )
 endif()
 
 ReMoM_Add_Target_Support_Files(MOX_tests
-    COPY_SDL2
-    COPY_SDL2_MIXER
+    COPY_SDL3
+    COPY_SDL3_MIXER
     COPY_LBX
-    COPY_SDL2D
     COPY_GMOCK
 )
 
 ReMoM_Add_Target_Support_Files(test_Util
-    COPY_SDL2
-    COPY_SDL2D
+    COPY_SDL3
 )
 
 ReMoM_Add_Target_Support_Files(test_Allocate
-    COPY_SDL2
-    COPY_SDL2D
+    COPY_SDL3
 )
 
 ReMoM_Add_Target_Support_Files(test_Fonts
-    COPY_SDL2
-    COPY_SDL2D
+    COPY_SDL3
 )
 
 # add_custom_command(

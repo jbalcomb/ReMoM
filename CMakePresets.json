@@ -101,7 +101,8 @@
             "configurePreset": "base",
             "configuration": "Debug",
             "targets": [
-                "all"
+                "all",
+                "ReMoMber"
             ]
         },
         {
@@ -110,7 +111,8 @@
             "configurePreset": "MSVC-debug",
             "configuration": "Debug",
             "targets": [
-                "ALL_BUILD"
+                "ALL_BUILD",
+                "ReMoMber"
             ]
         },
         {
@@ -119,7 +121,8 @@
             "configurePreset": "MSVC-nosound-debug",
             "configuration": "Debug",
             "targets": [
-                "ALL_BUILD"
+                "ALL_BUILD",
+                "ReMoMber"
             ]
         },
         {

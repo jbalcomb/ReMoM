@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 #include "../src/MOX_BASE.h"
 #include "../src/Fonts.h"
@@ -145,15 +145,15 @@ protected:
 
     void SetUp() override
     {
-        // Prefer VIDEO; fall back to events-only for headless environments.
-        if (SDL_Init(SDL_INIT_VIDEO) != 0)
+        // Prefer VIDEO; fall back to bare init for headless environments.
+        if (!SDL_Init(SDL_INIT_VIDEO))
         {
-            SDL_Init(SDL_INIT_EVENTS);
+            SDL_Init(0);
         }
         // 8-bit depth → SDL allocates a 256-entry palette automatically.
-        test_surface = SDL_CreateRGBSurface(0, 1, 1, 8, 0, 0, 0, 0);
-        ASSERT_NE(test_surface, nullptr) << "SDL_CreateRGBSurface failed: " << SDL_GetError();
-        ASSERT_NE(test_surface->format->palette, nullptr) << "8-bit surface must have a palette";
+        test_surface = SDL_CreateSurface(1, 1, SDL_PIXELFORMAT_INDEX8);
+        ASSERT_NE(test_surface, nullptr) << "SDL_CreateSurface failed: " << SDL_GetError();
+        ASSERT_NE(SDL_GetSurfacePalette(test_surface), nullptr) << "8-bit surface must have a palette";
 
         sdl2_surface_RGB666 = test_surface;
         Reset_Cycle_Palette_Color();    // sets cycle_direction_flag = -1
@@ -161,14 +161,14 @@ protected:
 
     void TearDown() override
     {
-        SDL_FreeSurface(test_surface);
+        SDL_DestroySurface(test_surface);
         sdl2_surface_RGB666 = nullptr;
         SDL_Quit();
     }
 
     SDL_Color Read_Palette(int index) const
     {
-        return test_surface->format->palette->colors[index];
+        return SDL_GetSurfacePalette(test_surface)->colors[index];
     }
 
     // Scale a 6-bit VGA component (0-63) to 8-bit SDL (0-255), matching the

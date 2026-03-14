@@ -32,11 +32,6 @@ ReMoM_Apply_Common_Compile_Options(STU)
 # )
 target_include_directories(STU PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${SDL2_INCLUDE_DIR}
-)
-
-target_link_libraries(STU
-    SDL2::Core
 )
 
 # list(APPEND ALL_DOC_TARGETS doxySTUlib)

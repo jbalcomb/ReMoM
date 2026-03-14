@@ -174,40 +174,33 @@ if(ENABLE_COVERAGE)
     endif()
 endif()
 
-# https://wiki.libsdl.org/SDL2/README-cmake
-# Append the custom path to CMAKE_PREFIX_PATH
-list(APPEND CMAKE_PREFIX_PATH "C:/devellib/SDL2-2.32.2")
-find_package(SDL2 REQUIRED)
+# https://wiki.libsdl.org/SDL3/README/cmake
+list(APPEND CMAKE_PREFIX_PATH "C:/devellib/SDL3-3.4.2")
+find_package(SDL3 REQUIRED)
 if(NOT DISABLE_AUDIO)
-    list(APPEND CMAKE_PREFIX_PATH "C:/devellib/SDL2_mixer-2.8.1")
-    find_package(SDL2_mixer REQUIRED)
+    list(APPEND CMAKE_PREFIX_PATH "C:/devellib/SDL3_mixer-3.2.0")
+    find_package(SDL3_mixer REQUIRED)
 else()
     add_compile_definitions(NO_SOUND_LIBRARY)
 endif()
 
-# SDL2_DLL_FILE_PATH is set by FindSDL2.cmake
-message(CHECK_START "Finding SDL2.dll")
-if(EXISTS "${SDL2_DLL_FILE_PATH}")
-    message(CHECK_PASS "The file exists: ${SDL2_DLL_FILE_PATH}")
+# Extract SDL3.dll path from the imported target for post-build copies
+get_target_property(SDL3_DLL_FILE_PATH SDL3::SDL3-shared IMPORTED_LOCATION)
+message(CHECK_START "Finding SDL3.dll")
+if(SDL3_DLL_FILE_PATH AND EXISTS "${SDL3_DLL_FILE_PATH}")
+    message(CHECK_PASS "The file exists: ${SDL3_DLL_FILE_PATH}")
 else()
-    message(CHECK_FAIL "The file does not exist: ${SDL2_DLL_FILE_PATH}")
+    message(CHECK_FAIL "SDL3.dll not found via imported target")
 endif()
 
-# Look for SDL2d.dll (debug DLL) next to SDL2.dll first, then fall back to project bin/
-get_filename_component(_sdl2_dll_dir "${SDL2_DLL_FILE_PATH}" DIRECTORY)
-if(EXISTS "${_sdl2_dll_dir}/SDL2d.dll")
-    set(SDL2D_DLL_FILE_PATH "${_sdl2_dll_dir}/SDL2d.dll")
-elseif(EXISTS "${PROJECT_SOURCE_DIR}/bin/SDL2d.dll")
-    set(SDL2D_DLL_FILE_PATH "${PROJECT_SOURCE_DIR}/bin/SDL2d.dll")
-else()
-    set(SDL2D_DLL_FILE_PATH "")
-endif()
-unset(_sdl2_dll_dir)
-message(CHECK_START "Finding SDL2d.dll")
-if(SDL2D_DLL_FILE_PATH AND EXISTS "${SDL2D_DLL_FILE_PATH}")
-    message(CHECK_PASS "The file exists: ${SDL2D_DLL_FILE_PATH}")
-else()
-    message(CHECK_FAIL "SDL2d.dll not found (checked next to SDL2.dll and ${PROJECT_SOURCE_DIR}/bin/)")
+if(NOT DISABLE_AUDIO)
+    get_target_property(SDL3_MIXER_DLL_FILE_PATH SDL3_mixer::SDL3_mixer-shared IMPORTED_LOCATION)
+    message(CHECK_START "Finding SDL3_mixer.dll")
+    if(SDL3_MIXER_DLL_FILE_PATH AND EXISTS "${SDL3_MIXER_DLL_FILE_PATH}")
+        message(CHECK_PASS "The file exists: ${SDL3_MIXER_DLL_FILE_PATH}")
+    else()
+        message(CHECK_FAIL "SDL3_mixer.dll not found via imported target")
+    endif()
 endif()
 set(GMOCK_DLL_FILE_PATH ${PROJECT_SOURCE_DIR})
 string(APPEND GMOCK_DLL_FILE_PATH "/bin")
@@ -267,7 +260,7 @@ set(REMOM_TEST_PATH_ENV "PATH=${PROJECT_SOURCE_DIR}/bin")
 # # >>> [cmake] -- imported_location: C:/devellib/SDL2-2.32.2/lib/x64/SDL2.lib
 # # >>> [cmake] -- imported_location: C:/devellib/SDL2_mixer-2.8.1/lib/x64/SDL2_mixer.lib
 
-set(PLATFORM "SDL2")
+set(PLATFORM "SDL3")
 
 add_subdirectory(STU)
 add_subdirectory(platform)
@@ -310,21 +303,11 @@ install(
 # Installation rules for libraries
 if(WIN32)
 
-    # install(FILES $<TARGET_FILE:SDL2::SDL2> DESTINATION ${CMAKE_INSTALL_BINDIR})
-    install(FILES $<TARGET_FILE:SDL2::Core> DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(FILES ${SDL3_DLL_FILE_PATH} DESTINATION ${CMAKE_INSTALL_BINDIR})
     if(NOT DISABLE_AUDIO)
-        install(FILES $<TARGET_FILE:SDL2::Mixer> DESTINATION ${CMAKE_INSTALL_BINDIR})
+        install(FILES ${SDL3_MIXER_DLL_FILE_PATH} DESTINATION ${CMAKE_INSTALL_BINDIR})
     endif()
     message(STATUS "CMAKE_INSTALL_BINDIR='${CMAKE_INSTALL_BINDIR}'")
-
-    # $<TARGET_RUNTIME_DLLS:MOX_tests>
-
-    # $<TARGET_FILE_DIR:ReMoMber>
-
-    install(FILES ${SDL2_DLL_FILE_PATH} DESTINATION ${CMAKE_INSTALL_BINDIR})
-    if(NOT DISABLE_AUDIO)
-        install(FILES ${SDL2_MIXER_DLL_FILE_PATH} DESTINATION ${CMAKE_INSTALL_BINDIR})
-    endif()
 
 else()
 

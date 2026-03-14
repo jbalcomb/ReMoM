@@ -13,7 +13,7 @@
 
 #include "MOM_PFL.h"
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 #include <stdbool.h>
 #include <stdio.h>   /* CLAUDE: debug */
@@ -53,17 +53,20 @@ uint64_t sdl2_performance_counter;
 
 uint64_t Platform_Get_Millies(void)
 {
-    return SDL_GetTicks64();
+    return SDL_GetTicks();
 }
 
 void Platform_Sleep_Millies(uint64_t millies)
 {
-    SDL_Delay((Uint32)millies);
+    SDL_Delay((uint32_t)millies);
 }
 
 void Platform_Get_Mouse_Position_XY(int * mx, int * my)
 {
-    SDL_GetMouseState(mx, my);
+    float fx, fy;
+    SDL_GetMouseState(&fx, &fy);
+    *mx = (int)fx;
+    *my = (int)fy;
 }
 
 // ~== 1oom uidelay |-> ui_cursor_refresh(mx, my);
@@ -154,12 +157,12 @@ bool kilgore_option_relative_mouse = true;
 void kilgore_video_input_grab(bool grabbed)
 {
 
-    SDL_SetWindowGrab(sdl2_window, (SDL_bool)grabbed);
+    SDL_SetWindowGrab(sdl2_window, grabbed);
 
     if(kilgore_option_relative_mouse)
     {
 
-        SDL_SetRelativeMouseMode((SDL_bool)grabbed);
+        SDL_SetWindowRelativeMouseMode(sdl2_window, grabbed);
 
     }
 
@@ -175,7 +178,7 @@ void kilgore_mouse_grab(void)
     if(!kilgore_mouse_grabbed)
     {
         kilgore_mouse_grabbed = true;
-        SDL_ShowCursor(SDL_DISABLE);
+        SDL_HideCursor();
         kilgore_video_input_grab(true);
     }
 }
@@ -186,7 +189,7 @@ void kilgore_mouse_ungrab(void)
     if(kilgore_mouse_grabbed)
     {
         kilgore_mouse_grabbed = false;
-        SDL_ShowCursor(SDL_ENABLE);
+        SDL_ShowCursor();
         kilgore_video_input_grab(false);
     }
 }
@@ -276,28 +279,28 @@ void Platform_Update_Mouse_Position(int l_mx, int l_my)
     }
 }
 
-void Platform_Window_Event(SDL_WindowEvent *sdl2_window_event)
+void Platform_Window_Event(SDL_Event *sdl2_window_event)
 {
 
-    switch(sdl2_window_event->event)
+    switch(sdl2_window_event->type)
     {
 
-        case SDL_WINDOWEVENT_RESIZED:
+        case SDL_EVENT_WINDOW_RESIZED:
         {
             // hw_video_resize(0, 0);
         } break;
 
-        case SDL_WINDOWEVENT_EXPOSED:
+        case SDL_EVENT_WINDOW_EXPOSED:
         {
             Platform_Video_Update();
         } break;
 
-        case SDL_WINDOWEVENT_FOCUS_GAINED:
+        case SDL_EVENT_WINDOW_FOCUS_GAINED:
         {
             Platform_Mouse_Input_Enable();
         } break;
 
-        case SDL_WINDOWEVENT_FOCUS_LOST:
+        case SDL_EVENT_WINDOW_FOCUS_LOST:
         {
             Platform_Mouse_Input_Disable();
         } break;
@@ -323,7 +326,7 @@ static uint32_t dbg_frame_number = 0;
 
 void DBG_Frame_Reset(void)
 {
-    uint64_t now = SDL_GetTicks64();
+    uint64_t now = SDL_GetTicks();
     uint64_t frametime = now - dbg_frame_start_ticks;
     if(dbg_frame_start_ticks != 0 && (dbg_frame_number % 60) == 0)
     {
@@ -356,18 +359,18 @@ void Platform_Event_Handler(void)
         switch(sdl2_event.type)
         {
 
-            case SDL_KEYDOWN:
-            case SDL_KEYUP:
-            case SDL_TEXTINPUT:
+            case SDL_EVENT_KEY_DOWN:
+            case SDL_EVENT_KEY_UP:
+            case SDL_EVENT_TEXT_INPUT:
             {
                 /* CLAUDE */  dbg_events_key++;
                 Platform_Keyboard_Event(&sdl2_event);
             } break;
 
-            case SDL_MOUSEBUTTONDOWN:
+            case SDL_EVENT_MOUSE_BUTTON_DOWN:
             {
                 /* CLAUDE */  dbg_events_mousedown++;
-                if(sdl2_event.button.state == SDL_PRESSED)
+                if(sdl2_event.button.down)
                 {
                     if(platform_mouse_input_enabled)
                     {
@@ -377,12 +380,12 @@ void Platform_Event_Handler(void)
                 // if(SDL_BUTTON(e.button.button) == SDL_BUTTON_LEFT)
                 if(sdl2_event.button.button == SDL_BUTTON_LEFT)
                 {
-                    User_Mouse_Handler(1 /*0b00000001*/, sdl2_event.button.x, sdl2_event.button.y);
+                    User_Mouse_Handler(1 /*0b00000001*/, (int16_t)sdl2_event.button.x, (int16_t)sdl2_event.button.y);
                 }
                 // if(SDL_BUTTON(e.button.button) == SDL_BUTTON_RIGHT)
                 if(sdl2_event.button.button == SDL_BUTTON_RIGHT)
                 {
-                    User_Mouse_Handler(2 /*0b00000010*/, sdl2_event.button.x, sdl2_event.button.y);
+                    User_Mouse_Handler(2 /*0b00000010*/, (int16_t)sdl2_event.button.x, (int16_t)sdl2_event.button.y);
                 }
                 if(sdl2_event.button.button == SDL_BUTTON_MIDDLE)
                 {
@@ -390,29 +393,32 @@ void Platform_Event_Handler(void)
                 }
             } break;
 
-            case SDL_MOUSEBUTTONUP:
+            case SDL_EVENT_MOUSE_BUTTON_UP:
             {
                 /* CLAUDE */  dbg_events_mouseup++;
                 // platform_mouse_button_status = 0;
             } break;
 
-            case SDL_MOUSEMOTION:
+            case SDL_EVENT_MOUSE_MOTION:
             {
                 /* CLAUDE */  dbg_events_mousemotion++;
             } break;
 
-            case SDL_QUIT:
+            case SDL_EVENT_QUIT:
             {
                 // hw_audio_shutdown_pre();
                 exit(EXIT_SUCCESS);
             } break;
 
-            case SDL_WINDOWEVENT:
+            case SDL_EVENT_WINDOW_RESIZED:
+            case SDL_EVENT_WINDOW_EXPOSED:
+            case SDL_EVENT_WINDOW_FOCUS_GAINED:
+            case SDL_EVENT_WINDOW_FOCUS_LOST:
             {
                 /* CLAUDE */  dbg_events_window++;
                 if(sdl2_event.window.windowID == kilgore_video_get_window_id())
                 {
-                    Platform_Window_Event(&sdl2_event.window);
+                    Platform_Window_Event(&sdl2_event);
                 }
             } break;
 
@@ -427,12 +433,13 @@ void Platform_Event_Handler(void)
     // ¿ ~== MWA WM_MOUSEMOVE ?
     if(platform_mouse_input_enabled)
     {
+        float fx;
+        float fy;
         int x;
         int y;
-        // SDL_GetRelativeMouseState(&x, &y);  // ...x and y are set to the mouse deltas since the last call to SDL_GetRelativeMouseState() or since event initialization
-        // SDL_GetMouseState(&x, &y);
-        // SDL_GetRelativeMouseState(&x, &y);
-        SDL_GetMouseState(&x, &y);
+        SDL_GetMouseState(&fx, &fy);
+        x = (int)fx;
+        y = (int)fy;
         if((x != 0) || (y != 0))
         {
             // // // // // hw_mouse_move(x, y);

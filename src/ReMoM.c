@@ -69,9 +69,10 @@
 #include "../ext/stu_compat.h"
 
 // #define SDL_MAIN_HANDLED
-#include <SDL.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
 #ifndef NO_SOUND_LIBRARY
-#include <SDL_mixer.h>
+#include <SDL3_mixer/SDL_mixer.h>
 #endif
 
 /* <direct.h> replaced by stu_compat.h */

@@ -13,7 +13,7 @@
 #include "../../MoX/src/Video2.h"
 
 #include "../../MoX/src/sdl2_PFL.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 
 /*
@@ -43,6 +43,7 @@ void Platform_Palette_Update(void)
 void Platform_Set_Palette_Color(uint8_t index, uint8_t r, uint8_t g, uint8_t b)
 {
     SDL_Color color;
+    SDL_Palette *palette;
     color.r = r;
     color.g = g;
     color.b = b;
@@ -53,9 +54,10 @@ void Platform_Set_Palette_Color(uint8_t index, uint8_t r, uint8_t g, uint8_t b)
     platform_palette_buffer[index].b = b;
     platform_palette_buffer[index].a = 255;
 
-    if (sdl2_surface_RGB666->format->palette != NULL)
+    palette = SDL_GetSurfacePalette(sdl2_surface_RGB666);
+    if (palette != NULL)
     {
-        SDL_SetPaletteColors(sdl2_surface_RGB666->format->palette, &color, index, 1);
+        SDL_SetPaletteColors(palette, &color, index, 1);
     }
 }
 
@@ -73,7 +75,7 @@ void Platform_Video_Update(void)
 
 
     /* PFL_Color is layout-compatible with SDL_Color */
-    SDL_SetPaletteColors(sdl2_surface_RGB666->format->palette, (SDL_Color *)platform_palette_buffer, 0, 256);
+    SDL_SetPaletteColors(SDL_GetSurfacePalette(sdl2_surface_RGB666), (SDL_Color *)platform_palette_buffer, 0, 256);
 
 
 
@@ -95,11 +97,11 @@ void Platform_Video_Update(void)
 
     SDL_LockTexture(sdl2_texture, &sdl2_blit_rect, &sdl2_surface_ARGB8888->pixels, &sdl2_surface_ARGB8888->pitch);
 
-    SDL_LowerBlit(sdl2_surface_RGB666, &sdl2_blit_rect, sdl2_surface_ARGB8888, &sdl2_blit_rect);
+    SDL_BlitSurfaceUnchecked(sdl2_surface_RGB666, &sdl2_blit_rect, sdl2_surface_ARGB8888, &sdl2_blit_rect);
 
     SDL_UnlockTexture(sdl2_texture);
 
-    SDL_RenderCopy(sdl2_renderer, sdl2_texture, NULL, NULL);
+    SDL_RenderTexture(sdl2_renderer, sdl2_texture, NULL, NULL);
 
     SDL_RenderPresent(sdl2_renderer);
 
