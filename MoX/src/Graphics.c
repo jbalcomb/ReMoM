@@ -456,22 +456,130 @@ static void ui_draw_line_limit_do(int x1, int y1, int x2, int y2, uint8_t color,
 // WZD s14p11
 // drake178: UU_VGA_DrawBiColorRect()
 // MoO2  Module: graphics  Interlaced_Fill()
-// UU_Interlaced_Fill()
+/* COPILOT */
+void UU_Interlaced_Fill(int x1, int y1, int x2, int y2, int Color1, int Color2)
+{
+    register int _SI_x1;
+    register int _DI_y1;
+
+    _SI_x1 = x1;
+    _DI_y1 = y1;
+
+    /* Top edge */
+    Line(_SI_x1, _DI_y1, x2, _DI_y1, Color1);
+
+    /* Left edge */
+    Line(_SI_x1, _DI_y1, _SI_x1, y2, Color1);
+
+    /* Bottom edge: starts x1+1 to avoid overwriting the bottom-left corner */
+    Line(_SI_x1 + 1, y2, x2, y2, Color2);
+
+    /* Right edge: starts y1+1 to avoid overwriting the top-right corner */
+    Line(x2, _DI_y1 + 1, x2, y2, Color2);
+}
 
 // WZD s14p12
 // drake178: 
 // MoO2  
 // UU_VGA_DrawRect()
+/* COPILOT */
+void /* far */ UU_VGA_DrawRect(int Left, int Top, int Width, int Height, int Color)
+{
+    int Bottom;
+    int Right;
+    int si_Left;
+    int di_Top;
+
+    si_Left = Left;
+    di_Top = Top;
+
+    Right = si_Left + Width - 1;
+    Bottom = di_Top + Height - 1;
+
+    /* Top edge: (Left, Top) to (Right, Top) */
+    Line(si_Left, di_Top, Right, di_Top, Color);
+
+    /* Left edge: (Left, Top) to (Left, Bottom) */
+    Line(si_Left, di_Top, si_Left, Bottom, Color);
+
+    /* Bottom edge: (Left + 1, Bottom) to (Right, Bottom) */
+    Line(si_Left + 1, Bottom, Right, Bottom, Color);
+
+    /* Right edge: (Right, Top + 1) to (Right, Bottom) */
+    Line(Right, di_Top + 1, Right, Bottom, Color);
+}
+
 
 // WZD s14p13
 // drake178: 
 // MoO2  
 // UU_VGA_WndDrawRect()
+/* COPILOT */
+void /* far */ UU_VGA_WndDrawRect(int Left, int Top, int Width, int Height, char Color)
+{
+    int Bottom;
+    int Right;
+    int si_Left;
+    int di_Top;
+
+    si_Left = Left;
+    di_Top = Top;
+
+    Right = si_Left + Width - 1;
+    Bottom = di_Top + Height - 1;
+
+    /* Top edge: (Left, Top) to (Right, Top) */
+    Clipped_Line(si_Left, di_Top, Right, di_Top, (int)Color);
+
+    /* Left edge: (Left, Top) to (Left, Bottom) */
+    Clipped_Line(si_Left, di_Top, si_Left, Bottom, (int)Color);
+
+    /* Bottom edge: (Left + 1, Bottom) to (Right, Bottom) */
+    Clipped_Line(si_Left + 1, Bottom, Right, Bottom, (int)Color);
+
+    /* Right edge: (Right, Top + 1) to (Right, Bottom) */
+    Clipped_Line(Right, di_Top + 1, Right, Bottom, (int)Color);
+}
 
 // WZD s14p14
 // drake178: 
 // MoO2  
 // UU_VGA_DrawDblRect()
+/* COPILOT */
+void UU_VGA_DrawDblRect(int x1, int y1, int x2, int y2, int Color1, int Color2, int Color3, int Color4)
+{
+    int si_x1;
+    int di_y1;
+
+    si_x1 = x1;
+    di_y1 = y1;
+
+    /* Draw outer rectangle */
+    /* Top edge: (x1, y1) to (x2, y1) */
+    Line(si_x1, di_y1, x2, di_y1, Color1);
+    /* Left edge: (x1, y1) to (x1, y2) */
+    Line(si_x1, di_y1, si_x1, y2, Color1);
+    /* Bottom edge: (x1+1, y2) to (x2, y2) */
+    Line(si_x1 + 1, y2, x2, y2, Color3);
+    /* Right edge: (x2, y1+1) to (x2, y2) */
+    Line(x2, di_y1 + 1, x2, y2, Color3);
+
+    /* Shrink coordinates for inner rectangle */
+    si_x1++;
+    di_y1++;
+    x2--;
+    y2--;
+
+    /* Draw inner rectangle */
+    /* Top edge: (si, di) to (x2, di) */
+    Line(si_x1, di_y1, x2, di_y1, Color2);
+    /* Left edge: (si, di) to (si, y2) */
+    Line(si_x1, di_y1, si_x1, y2, Color2);
+    /* Bottom edge: (si+1, y2) to (x2, y2) */
+    Line(si_x1 + 1, y2, x2, y2, Color4);
+    /* Right edge: (x2, di+1) to (x2, y2) */
+    Line(x2, di_y1 + 1, x2, y2, Color4);
+}
 
 
 // WZD s14p15

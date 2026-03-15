@@ -2,8 +2,10 @@
 
 #include "../src/MOX_BASE.h"
 #include "../src/Util.h"
+#include "../src/Video.h"
 
 #include <cstring>
+#include <vector>
 
 // ============================================================================
 // String_To_Upper
@@ -685,3 +687,119 @@ TEST(Delete_Structure_test, RemoveLastRecord_NoShift)
 // WTF      EXPECT_EQ(bit_field_test_bits[6], 0x0040);
 // WTF      EXPECT_EQ(bit_field_test_bits[7], 0x0080);
 // WTF  }
+
+
+// ============================================================================
+// Copy_Screen_To_Bitmap
+// ============================================================================
+
+TEST(Copy_Screen_To_Bitmap_test, CopiesExpectedStridePattern)
+{
+    uint8_t * original_video_page = current_video_page;
+
+    const size_t destination_size = static_cast<size_t>(SCREEN_WIDTH) * static_cast<size_t>(SCREEN_HEIGHT);
+    const size_t source_size = (destination_size - 1U) * static_cast<size_t>(SCREEN_WIDTH + 1) + 1U;
+
+    std::vector<uint8_t> source(source_size);
+    std::vector<uint8_t> destination(destination_size, 0x00);
+
+    for (size_t i = 0; i < source.size(); i++)
+    {
+        source[i] = static_cast<uint8_t>((i * 37U + 11U) & 0xFFU);
+    }
+
+    current_video_page = source.data();
+    Copy_Screen_To_Bitmap(destination.data());
+
+    for (size_t i = 0; i < destination_size; i++)
+    {
+        const size_t source_index = i * static_cast<size_t>(SCREEN_WIDTH + 1);
+        EXPECT_EQ(destination[i], source[source_index]);
+    }
+
+    current_video_page = original_video_page;
+}
+
+TEST(Copy_Screen_To_Bitmap_test, WritesExactlyOneScreenToDestination)
+{
+    uint8_t * original_video_page = current_video_page;
+
+    const size_t destination_size = static_cast<size_t>(SCREEN_WIDTH) * static_cast<size_t>(SCREEN_HEIGHT);
+    const size_t source_size = (destination_size - 1U) * static_cast<size_t>(SCREEN_WIDTH + 1) + 1U;
+
+    std::vector<uint8_t> source(source_size, 0x5A);
+    std::vector<uint8_t> destination(destination_size + 16U, 0xCC);
+
+    current_video_page = source.data();
+    Copy_Screen_To_Bitmap(destination.data());
+
+    for (size_t i = destination_size; i < destination.size(); i++)
+    {
+        EXPECT_EQ(destination[i], 0xCC);
+    }
+
+    current_video_page = original_video_page;
+}
+
+
+// ============================================================================
+// Draw_Expanding_Bitmap
+// ============================================================================
+
+TEST(Draw_Expanding_Bitmap_test, CounterZeroCopiesScreenAndCopiesOnToOffPage)
+{
+    uint8_t * original_video_page_0 = video_page_buffer[0];
+    uint8_t * original_video_page_1 = video_page_buffer[1];
+    uint8_t * original_current_video_page = current_video_page;
+    int16_t original_draw_page_num = draw_page_num;
+
+    const size_t screen_size = static_cast<size_t>(SCREEN_WIDTH) * static_cast<size_t>(SCREEN_HEIGHT);
+    const size_t stride_source_size = (screen_size - 1U) * static_cast<size_t>(SCREEN_WIDTH + 1) + 1U;
+    const size_t picture_total_size = 16U + 16U + screen_size;
+
+    std::vector<uint8_t> on_page(screen_size, 0x00);
+    std::vector<uint8_t> off_page(stride_source_size, 0x00);
+    std::vector<uint8_t> picture(picture_total_size, 0xEE);
+
+    for (size_t i = 0; i < on_page.size(); i++)
+    {
+        on_page[i] = static_cast<uint8_t>((i * 13U + 7U) & 0xFFU);
+    }
+
+    for (size_t i = 0; i < off_page.size(); i++)
+    {
+        off_page[i] = static_cast<uint8_t>((i * 29U + 3U) & 0xFFU);
+    }
+
+    draw_page_num = 0;
+    video_page_buffer[0] = on_page.data();
+    video_page_buffer[1] = off_page.data();
+    current_video_page = nullptr;
+
+    Draw_Expanding_Bitmap(50, 40, 0, picture.data());
+
+    const uint8_t * flic_header = picture.data() + 16U;
+    const uint16_t width = static_cast<uint16_t>(flic_header[0] | (flic_header[1] << 8));
+    const uint16_t height = static_cast<uint16_t>(flic_header[2] | (flic_header[3] << 8));
+    EXPECT_EQ(width, static_cast<uint16_t>(SCREEN_WIDTH));
+    EXPECT_EQ(height, static_cast<uint16_t>(SCREEN_HEIGHT));
+
+    const uint8_t * copied_screen = picture.data() + 32U;
+    for (size_t i = 0; i < screen_size; i++)
+    {
+        const size_t source_index = i * static_cast<size_t>(SCREEN_WIDTH + 1);
+        EXPECT_EQ(copied_screen[i], off_page[source_index]);
+    }
+
+    for (size_t i = 0; i < screen_size; i++)
+    {
+        EXPECT_EQ(off_page[i], on_page[i]);
+    }
+
+    EXPECT_EQ(draw_page_num, 0);
+
+    video_page_buffer[0] = original_video_page_0;
+    video_page_buffer[1] = original_video_page_1;
+    current_video_page = original_current_video_page;
+    draw_page_num = original_draw_page_num;
+}

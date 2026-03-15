@@ -21,6 +21,9 @@ MoO2
 
 #include "capture.h"
 
+/* COPILOT */ extern uint8_t * current_palette;
+/* COPILOT */ extern void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg);
+
 
 
 // WZD dseg:7876                                                 BEGIN : seg024 - Initialized Data
@@ -185,11 +188,72 @@ void Screen_Flic_Capture__STUB(void)
     
 }
 
+/* COPILOT */
+short int Screen_Flic_Capture(void)
+{
+    if(release_flag == ST_TRUE)
+    {
+        return 0;
+    }
+
+    Screen_Flic_Capture__STUB();
+    return 0;
+}
+
 // WZD s24p03
 // drake178: VGA_GetDACBlock()
+/* COPILOT */
+void VGA_GetDACBlock(int dac_block, uint8_t *buffer)
+{
+    int start_color;
+    int offset;
+
+    if(buffer == NULL)
+    {
+        return;
+    }
+
+    if(dac_block < 0)
+    {
+        dac_block = 0;
+    }
+
+    if(dac_block > 3)
+    {
+        dac_block = 3;
+    }
+
+    start_color = (dac_block << 6);
+    offset = (start_color * 3);
+
+    memcpy(buffer, current_palette + offset, (64 * 3));
+}
 
 // WZD s24p04
 // drake178: VGA_ReadScreenLine()
+/* COPILOT */
+void VGA_ReadScreenLine(int line, char *scanline_buffer)
+{
+    int x;
+    uint8_t *src;
+
+    if(scanline_buffer == NULL)
+    {
+        return;
+    }
+
+    if((line < 0) || (line >= SCREEN_HEIGHT))
+    {
+        return;
+    }
+
+    src = current_video_page + (line * SCREEN_WIDTH);
+
+    for(x = 0; x < SCREEN_WIDTH; x++)
+    {
+        scanline_buffer[x] = (char)src[x];
+    }
+}
 
 // WZD s24p05
 // MoO2  Module: capture  Release_Version()  Address: 01:00110B34
@@ -209,8 +273,56 @@ int Check_Release_Version(void)
 // drake178: UU_VGA_SaveDrawSection()
 // Screen_Picture_Capture()
 // MoO2  Module: capture  Screen_Flic_Capture()  Address: 01:001101F0
+/* COPILOT */
+void Screen_Picture_Capture(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr pict_seg)
+{
+    int16_t width;
+    int16_t height;
+
+    Set_Page_Off();
+
+    width = x2 - x1 + 1;
+    height = y2 - y1 + 1;
+
+    if(width < 0)
+    {
+        width = -width;
+    }
+
+    if(height < 0)
+    {
+        height = -height;
+    }
+
+    Create_Picture(width, height, pict_seg);
+    Capture_Screen_Block(pict_seg + 16, x1, y1, x2, y2);
+}
 
 // WZD s24p08
 // drake178: UU_VGA_CopyToLBX()
 // Capture_Screen_Block()
 // MoO2  Module: shear  Capture_Screen_Block_()  Address: 01:0014791B
+/* COPILOT */
+void Capture_Screen_Block(byte_ptr frame_data, int16_t x1, int16_t y1, int16_t x2, int16_t y2)
+{
+    byte_ptr buffer;
+    byte_ptr screen_page;
+    int16_t width;
+    int16_t height;
+    int16_t itr_width;
+    int16_t itr_height;
+
+    width = x2 - x1 + 1;
+    height = y2 - y1 + 1;
+
+    buffer = frame_data;
+    screen_page = current_video_page + (y1 * SCREEN_WIDTH) + x1;
+
+    for(itr_height = 0; itr_height < height; ++itr_height)
+    {
+        for(itr_width = 0; itr_width < width; ++itr_width)
+        {
+            *buffer++ = *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width);
+        }
+    }
+}

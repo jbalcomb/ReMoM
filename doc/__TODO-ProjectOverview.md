@@ -1,3 +1,18 @@
+Draw_Expanding_Bitmap is an animated screen transition effect — a "grow-out" or zoom-in reveal. It takes a source image and progressively scales it up from a starting point until it fills the full 320x200 screen.
+
+Here's how it works step by step:
+
+Setup — Copies the current screen contents into a buffer (the "background" behind the growing image).
+Animation loop (runs counter frames) — Each iteration:
+Calculates a growing rectangle anchored near (x_start, y_start) that expands proportionally each frame
+Scales the source picture bitmap to the current Resize_Percent
+Draws the scaled bitmap at the calculated position
+Flips pages (double-buffered) and waits 1 tick
+The effect is that the image starts as a small rectangle near the given coordinates and smoothly grows to fill the entire screen — like a "zoom in" or iris-out transition.
+
+It's marked __WIP because the original EMM (Expanded Memory Manager) calls for saving/restoring the background screen buffer are still commented out (lines 792-795, 799-801) — those DOS-era memory operations haven't been fully replaced yet in the reconstruction.
+
+
 
 
 

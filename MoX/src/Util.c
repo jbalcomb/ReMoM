@@ -7,8 +7,12 @@
  *
  * **Screen Operations:**
  * - Clear_Screens() - Clear both display and draw frames
- * - PageFlip_GrowOut__WIP() - Animated grow-out effect with page flipping
- * - PageFlip_GrowOut_CopyScreen() - Copy current video page data
+ * - Draw_Expanding_Bitmap() - Animated grow-out effect with page flipping
+ * - Copy_Screen_To_Bitmap() - Copy current video page data
+ *
+ * Renamed during refactor:
+ * - Draw_Expanding_Bitmap() was formerly PageFlip_GrowOut__WIP()
+ * - Copy_Screen_To_Bitmap() was formerly PageFlip_GrowOut_CopyScreen()
  *
  * **String Operations:**
  * - String_To_Upper() - Convert string to uppercase
@@ -24,6 +28,7 @@
  * **Structure Operations:**
  * - Clear_Structure() - Zero a record in a structure array
  * - Delete_Structure() - Delete a record from a structure array via memmove
+ * - Delete_Structure() currently performs a byte-wise down-shift loop
  *
  * **Bit Field Operations:**
  * - Test_Bit_Field() - Test bit in a bit field
@@ -68,6 +73,10 @@
 
 
 
+// WZD 0003E2E6                                                 BEGIN: seg022 - Initialized Data
+
+// 0003E2E6 68 35 68 35                                     random_seed dd 35683568h                ; DATA XREF: Set_Random_Seed+6w ...
+
 // WZD dseg:784A 01 00 02 00 04 00 08 00 10 00 20 00 40 00 80 00 bit_field_test_bits dw 1, 10b, 100b, 1000b, 10000b, 100000b, 1000000b, 10000000b
 // WZD dseg:784A
 uint16_t bit_field_test_bits[8] = {
@@ -80,6 +89,24 @@ uint16_t bit_field_test_bits[8] = {
     0x0040,
     0x0080
 };
+
+int16_t UU_DBG_OptionBoxColor = 100;
+int16_t UU_DBG_UnknownOValue= 50;
+int16_t UU_DBG_OptionsFontColor = 0;
+int16_t UU_DBG_OptionsFont = 0;
+
+// 0003E302
+// cnst_RND_Error db 'RND no 0',27h,'s'
+
+// 0003E30C
+// cnst_ZeroString_2 db 0
+
+// 0003E30D
+// UU_cnst_NoHelp db 'NO_HELP',0
+
+// 0003E315 00                                                      align 2
+
+// WZD 0003E315                                                 END:  seg022 - Initialized Data
 
 
 
@@ -744,28 +771,143 @@ void UU_MEM_ClearBit_Near(int bit_idx, char * bit_field)
 }
 
 
-// WZD s22p29 UU_DBG_SetSelectSetting()
-// WZD s22p30 UU_DBG_SelectDialog()
+// WZD s22p29
+void UU_DBG_SetSelectSetting(int B_Color, int UU, int Font, int F_Color)
+{
+    /* sets the font index / color and dialog box border color */
+
+    UU_DBG_OptionsFont = Font;
+    UU_DBG_OptionBoxColor = B_Color;
+    UU_DBG_UnknownOValue = UU;
+    UU_DBG_OptionsFontColor = F_Color;
+}
+
+
+// WZD s22p30
+int UU_DBG_SelectDialog(char /* near */ *Q_ptr, char /* near */ *A1_ptr, char /* near */ *A2_ptr, char /* near */ *A3_ptr, int default_val, int v1, int v2, int v3)
+{
+    int abort_id = 0;
+    int response_3 = 0;
+    int response_2 = 0;
+    int response_1 = 0;
+    int finished = 0;
+    int input_field_idx = 0;
+    char * a1;
+
+    a1 = A1_ptr;
+
+    finished = 0;
+    abort_id = INVALID_FIELD;
+    response_1 = INVALID_FIELD;
+    response_2 = INVALID_FIELD;
+
+    /* Entry point after initialization */
+    response_3 = INVALID_FIELD;
+    Deactivate_Auto_Function();
+
+    while (finished == 0)
+    {
+        input_field_idx = Get_Input();
+
+        if (input_field_idx == abort_id || input_field_idx == ST_UNDEFINED)
+        {
+            return default_val;
+        }
+
+        if (input_field_idx == response_1)
+        {
+            return v1;
+        }
+
+        if (input_field_idx == response_2)
+        {
+            return v2;
+        }
+
+        if (input_field_idx == response_3)
+        {
+            return v3;
+        }
+
+        /* loc_1DB3A: Redraw dialog and define input fields */
+        Set_Page_Off();
+
+        /* Clear screen to black */
+        Fill(0, 0, 319, 199, 0);
+
+        /* Draw main dialog borders */
+        UU_VGA_DrawDblRect(5, 5, 315, 199, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor);
+        
+        /* Draw question text box */
+        UU_VGA_DrawDblRect(100, 90, 220, 110, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor);
+
+        Set_Font_Style(UU_DBG_OptionsFont, UU_DBG_OptionsFontColor);
+        Print_Centered(160, 98, Q_ptr);
+
+        Clear_Fields();
+
+        /* Option 1 */
+        if (a1[0] != '\0')
+        {
+            UU_VGA_DrawDblRect(120, 130, 200, 145, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor);
+            Print_Centered(160, 136, a1);
+            /* cnst_ZeroString_2 likely represents an empty string "" for hotkey */
+            response_1 = Add_Hidden_Field(120, 130, 200, 145, 0, ST_UNDEFINED);
+        }
+
+        /* Option 2 */
+        if (A2_ptr[0] != '\0')
+        {
+            UU_VGA_DrawDblRect(120, 150, 200, 165, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor);
+            Print_Centered(160, 156, A2_ptr);
+            response_2 = Add_Hidden_Field(120, 150, 200, 165, 0, ST_UNDEFINED);
+        }
+
+        /* Option 3 */
+        if (A3_ptr[0] != '\0')
+        {
+            UU_VGA_DrawDblRect(120, 170, 200, 185, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor);
+            Print_Centered(160, 176, A3_ptr);
+            response_3 = Add_Hidden_Field(120, 170, 200, 185, 0, ST_UNDEFINED);
+        }
+
+        /* Screen-wide field to handle clicks outside buttons (Abort) */
+        abort_id = Add_Hidden_Field(0, 0, 319, 199, 0, ST_UNDEFINED);
+        
+        Toggle_Pages();
+    }
+
+    return default_val;
+}
+
 
 // WZD s22p31
-// drake178:  RP_VGA_GrowOutFlip()
-/*
-performs a transition effect with the contents of the
-current draw frame "growing out" from the specified
-location in the display frame; the passed image
-segment must be big enough to hold a full 320x200
-image (64000 bytes), and the call must be made after
-drawing the new frame but before clearing the old one
-
-can be safely repurposed if its call is removed, it
-was originally intended to be used when changing to
-the City Screen, but has been redacted (the call is
-never made after setting up the variables), likely
-because the parent function is hardcoded to use the
-sandbox, which can be problematic because all screen
-redraw elements are normally also loaded there
-*/
-void PageFlip_GrowOut__WIP(int16_t x_start, int16_t y_start, int16_t counter, SAMB_ptr picture)
+/* COPILOT */
+/**
+ * @brief Play a grow-out page-flip transition from a start point.
+ *
+ * Builds a full-screen picture buffer from @p picture, snapshots the current
+ * video page into that buffer, then animates a scaled draw over multiple
+ * frames. Per frame, it computes destination bounds from the current progress,
+ * scales the source picture, remaps color 0 to 1, draws to the off page, and
+ * flips pages.
+ *
+ * @param x_start Initial horizontal origin used to compute the animated left
+ *                edge.
+ * @param y_start Initial vertical origin used to compute the animated top
+ *                edge.
+ * @param counter Number of animation frames. Values greater than zero are
+ *                required for valid progress/division.
+ * @param picture Source SAMB image data handle/pointer. The routine expects a
+ *                header offset and uses picture + 16 as picture payload.
+ *
+ * @note This routine is marked as work in progress and still contains EMM
+ *       transfer steps as comments/TODOs.
+ * @note Uses global page state and timing/page-flip helpers.
+ *
+ * @see Copy_Screen_To_Bitmap()
+ */
+void Draw_Expanding_Bitmap(int16_t x_start, int16_t y_start, int16_t counter, SAMB_ptr picture)
 {
     int16_t Resize_Percent;
     int16_t y2;
@@ -774,77 +916,74 @@ void PageFlip_GrowOut__WIP(int16_t x_start, int16_t y_start, int16_t counter, SA
     int16_t x1;
     byte_ptr picture_data;  // _SI_
     int16_t itr;  // _DI_
-
     Clear_Fields();
-
     picture_data = picture + 16;  // +1 segment / FLIC_HDR / 16 bytes
-
     Create_Picture(SCREEN_WIDTH, SCREEN_HEIGHT, picture_data);
-
     Set_Page_Off();
-
-    PageFlip_GrowOut_CopyScreen((picture_data + 16));
-
+    /* Copy screen contents to buffer_seg + 1 */
+    Copy_Screen_To_Bitmap((picture_data + 16));
     Copy_On_To_Off_Page();
-
-    // TODO  // ; maps in the pages required to reach the data offset in the specified handle, and copies the data from the passed destination (ds if 0 is passed as seg) to EMS returns the source segment
-    // TODO  EMM_MapnWrite(0, picture_data, 0, 0, MAX_SINT2, EmmHndlNbr_VGAFILEH);
-    // TODO  EMM_MapnWrite(0, (picture_data + MAX_SINT2), MAX_SINT2, 0, MAX_SINT2, EmmHndlNbr_VGAFILEH);
-
+    // /* Save the 64,000 byte screen buffer (320x200) to EMM in two 32,000 byte chunks */
+    // /* EMM_MapnWrite(dest_seg, size, src_off, src_seg, buffer_seg, buffer_off) */
+    // EMM_MapnWrite(0, buffer_seg, 0, 0, 0x7D00, _VGAFILEH_seg);
+    // EMM_MapnWrite(0, buffer_seg + 0x7D0, 0x7D00, 0, 0x7D00, _VGAFILEH_seg);
     for(itr = 0; itr < counter; itr++)
     {
         Mark_Time();
-
-        // TODO  // ; maps in the pages required to reach the data offset in the specified handle, and copies the data to the required destination (ds if 0 is passed as seg) returns the page frame segment
-        // TODO  EMM_MapnRead(0, picture_data, 0, 0, MAX_SINT2, EmmHndlNbr_VGAFILEH);
-        // TODO  EMM_MapnRead(0, (picture_data + MAX_SINT2), MAX_SINT2, 0, MAX_SINT2, EmmHndlNbr_VGAFILEH);
-
+        // /* Restore screen from EMM to the buffer at si */
+        // EMM_MapnRead(0, buffer_seg, 0, 0, 0x7D00, _VGAFILEH_seg);
+        // EMM_MapnRead(0, buffer_seg + 0x7D0, 0x7D00, 0, 0x7D00, _VGAFILEH_seg);
+        /* Calculate current Left/Top based on frame progress */
         x1 = (x_start - (((itr + 1) * x_start) / counter));
         y1 = (y_start - (((itr + 1) * y_start) / counter));
+        /* Resize_Percent = ((i + 1) * 100) / Frames */
         Resize_Percent = (((itr + 1) * 100) / counter);
+        /* Right = Left + (Resize_Percent * 32 / 10) */
+        /* Note: 320 pixels / 100 percent = 3.2 */
         x2 = (x1 + ((Resize_Percent * 32) / 10));
+        /* Bottom = Top + (Resize_Percent * 2) */
+        /* Note: 200 pixels / 100 percent = 2 */
         y2 = (y1 + (Resize_Percent * 2));
-
         if(x2 > SCREEN_WIDTH)
         {
             x1 = (SCREEN_WIDTH - ((Resize_Percent * 32) / 10));
         }
-
         if(y2 > SCREEN_HEIGHT)
         {
             y1 = (SCREEN_HEIGHT - (Resize_Percent * 2));
         }
-
         Scale_Bitmap(picture_data, Resize_Percent, Resize_Percent);
-
         Replace_Color(picture_data, 0, 1);
-
         Set_Page_Off();
-
         Draw_Picture(x1, y1, picture_data);
-
         Toggle_Pages();
-
         Release_Time(1);
-
     }
-
 }
 
 // WZD s22p32 
-// drake178:  RP_LBX_IMG_CpyDrawFrame()
-/*
-; reads the full draw frame to an LBX image
-*/
-void PageFlip_GrowOut_CopyScreen(byte_ptr picture_data)
+/* COPILOT */
+/**
+ * @brief Copy the current video page into a picture pixel buffer.
+ *
+ * Reads pixels from @c current_video_page and writes them to @p picture_data
+ * using the same traversal pattern as the original routine used by the
+ * grow-out page-flip effect.
+ *
+ * @param picture_data Destination pixel buffer that receives the copied screen
+ *                     data. The caller must provide enough writable space for
+ *                     a full screen image.
+ *
+ * @note The function assumes valid global video page state and does not
+ *       perform bounds checking on the destination buffer.
+ */
+void Copy_Screen_To_Bitmap(byte_ptr picture_data)
 {
-    int16_t height;  // _BX_
-    int16_t width;  // _CX_
-    byte_ptr screen_data;
-    uint8_t pixel;
-
+    int16_t height = 0;
+    int16_t width = 0;
+    byte_ptr screen_data = 0;
+    uint8_t pixel = 0;
     screen_data = current_video_page;
-
     width = SCREEN_WIDTH;
     while(width > 0)
     {
@@ -858,5 +997,4 @@ void PageFlip_GrowOut_CopyScreen(byte_ptr picture_data)
         }
         width--;
     }
-
 }

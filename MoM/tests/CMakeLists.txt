@@ -1,6 +1,4 @@
 
-# SEEALSO MoX/test/CMakeLists.txt ...notes, experimentation, etc.
-
 include(GoogleTest)
 
 add_executable(MOM_tests
@@ -34,43 +32,10 @@ target_link_libraries(MOM_tests PUBLIC
     GTest::gtest
     GTest::gtest_main
     GTest::gmock
-    SDL3::SDL3
     momlib
     MOX
     STU
+    Platform
 )
 
-ReMoM_Add_Target_Support_Files(MOM_tests
-    COPY_SDL3
-    COPY_SDL3_MIXER
-    COPY_LBX
-    COPY_GMOCK
-)
-
-gtest_discover_tests(MOM_tests
-    TEST_LIST MOM_TEST_DISCOVERED
-    WORKING_DIRECTORY $<TARGET_FILE_DIR:MOM_tests>
-    PROPERTIES
-        ENVIRONMENT_MODIFICATION PATH=path_list_prepend:${REMOM_TEST_PATH_ENV}
-)
-
-add_test(
-    NAME MOM_tests_stage_runtime
-    COMMAND ${CMAKE_COMMAND}
-        -DTEST_BIN_DIR=$<TARGET_FILE_DIR:MOM_tests>
-        -DSDL3_DLL_FILE_PATH=${SDL3_DLL_FILE_PATH}
-        -DGMOCK_DLL_FILE_PATH=${GMOCK_DLL_FILE_PATH}
-        -DSDL3_MIXER_DLL_FILE_PATH=${SDL3_MIXER_DLL_FILE_PATH}
-        -DDISABLE_AUDIO=${DISABLE_AUDIO}
-        -P ${CMAKE_SOURCE_DIR}/cmake/stage_test_runtime.cmake
-)
-
-set_tests_properties(MOM_tests_stage_runtime PROPERTIES
-    FIXTURES_SETUP MOM_tests_runtime
-)
-
-if(MOM_TEST_DISCOVERED)
-    set_tests_properties(${MOM_TEST_DISCOVERED} PROPERTIES
-        FIXTURES_REQUIRED MOM_tests_runtime
-    )
-endif()
+gtest_discover_tests(MOM_tests)

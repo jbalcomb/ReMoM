@@ -3,7 +3,7 @@
 
 #include "../src/MOX_BASE.h"
 #include "../src/Fonts.h"
-#include "../src/sdl2_PFL.h"   // extern SDL_Surface * sdl2_surface_RGB666
+extern "C" { extern SDL_Surface * sdl2_surface_RGB666; }  // defined in platform/sdl3/sdl3_State.c
 
 // The three globals are module-private in Fonts.c but are linked into MOX.
 // Declare them here so we can set up and inspect state directly.
