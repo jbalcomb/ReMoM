@@ -295,7 +295,7 @@
 
 ## Spellbook
 - [ ] Apprentice_Screen__WIP
-- [ ] BigBook__PageTurn__WIP
+- [x] BigBook_PageTurn__WIP
 - [ ] BigBook_Compose__WIP
 - [ ] CmbBook_Compose__WIP
 - [ ] CmbBook_Draw__WIP

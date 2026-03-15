@@ -469,7 +469,7 @@ void Spellbook_Add_Group_Pages(int16_t Page_Size);
 */
 
 // WZD o118p01
-void BigBook__PageTurn__WIP(int16_t direction);
+void BigBook_PageTurn(short int direction);
 
 // WZD o118p02
 void BigBook_Draw(void);
