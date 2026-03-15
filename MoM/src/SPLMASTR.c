@@ -427,7 +427,7 @@ void Spellbook_Mana_Adder_Draw(void)
 
     Copy_Back_To_Off();
 
-    SmlBook_Draw__WIP(16, 10);
+    SmlBook_Draw(16, 10);
 
     FLIC_Draw((x_start - 4), (y_start + 1), IMG_SBK_SliderBG);
 

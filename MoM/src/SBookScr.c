@@ -122,7 +122,7 @@ static void Spell_Screen_Load(void)
 void Spellbook_Screen_Draw(void)
 {
     Copy_Back_To_Off();
-    SmlBook_Draw__WIP(16, 10);
+    SmlBook_Draw(16, 10);
 }
 
 

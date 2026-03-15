@@ -9,13 +9,10 @@
  * - Clear_Screens() - Clear both display and draw frames
  * - Draw_Expanding_Bitmap() - Animated grow-out effect with page flipping
  * - Copy_Screen_To_Bitmap() - Copy current video page data
-<<<<<<< HEAD
  *
  * Renamed during refactor:
  * - Draw_Expanding_Bitmap() was formerly PageFlip_GrowOut__WIP()
  * - Copy_Screen_To_Bitmap() was formerly PageFlip_GrowOut_CopyScreen()
-=======
->>>>>>> origin/claude/upbeat-williams
  *
  * **String Operations:**
  * - String_To_Upper() - Convert string to uppercase
@@ -885,7 +882,6 @@ int UU_DBG_SelectDialog(char /* near */ *Q_ptr, char /* near */ *A1_ptr, char /*
 
 
 // WZD s22p31
-<<<<<<< HEAD
 /* COPILOT */
 /**
  * @brief Play a grow-out page-flip transition from a start point.
@@ -911,25 +907,6 @@ int UU_DBG_SelectDialog(char /* near */ *Q_ptr, char /* near */ *A1_ptr, char /*
  *
  * @see Copy_Screen_To_Bitmap()
  */
-=======
-// drake178:  RP_VGA_GrowOutFlip()
-/*
-performs a transition effect with the contents of the
-current draw frame "growing out" from the specified
-location in the display frame; the passed image
-segment must be big enough to hold a full 320x200
-image (64000 bytes), and the call must be made after
-drawing the new frame but before clearing the old one
-
-can be safely repurposed if its call is removed, it
-was originally intended to be used when changing to
-the City Screen, but has been redacted (the call is
-never made after setting up the variables), likely
-because the parent function is hardcoded to use the
-sandbox, which can be problematic because all screen
-redraw elements are normally also loaded there
-*/
->>>>>>> origin/claude/upbeat-williams
 void Draw_Expanding_Bitmap(int16_t x_start, int16_t y_start, int16_t counter, SAMB_ptr picture)
 {
     int16_t Resize_Percent;
@@ -943,14 +920,8 @@ void Draw_Expanding_Bitmap(int16_t x_start, int16_t y_start, int16_t counter, SA
     picture_data = picture + 16;  // +1 segment / FLIC_HDR / 16 bytes
     Create_Picture(SCREEN_WIDTH, SCREEN_HEIGHT, picture_data);
     Set_Page_Off();
-<<<<<<< HEAD
     /* Copy screen contents to buffer_seg + 1 */
     Copy_Screen_To_Bitmap((picture_data + 16));
-=======
-
-    Copy_Screen_To_Bitmap((picture_data + 16));
-
->>>>>>> origin/claude/upbeat-williams
     Copy_On_To_Off_Page();
     // /* Save the 64,000 byte screen buffer (320x200) to EMM in two 32,000 byte chunks */
     // /* EMM_MapnWrite(dest_seg, size, src_off, src_seg, buffer_seg, buffer_off) */
@@ -991,7 +962,6 @@ void Draw_Expanding_Bitmap(int16_t x_start, int16_t y_start, int16_t counter, SA
 }
 
 // WZD s22p32 
-<<<<<<< HEAD
 /* COPILOT */
 /**
  * @brief Copy the current video page into a picture pixel buffer.
@@ -1007,12 +977,6 @@ void Draw_Expanding_Bitmap(int16_t x_start, int16_t y_start, int16_t counter, SA
  * @note The function assumes valid global video page state and does not
  *       perform bounds checking on the destination buffer.
  */
-=======
-// drake178:  RP_LBX_IMG_CpyDrawFrame()
-/*
-; reads the full draw frame to an LBX image
-*/
->>>>>>> origin/claude/upbeat-williams
 void Copy_Screen_To_Bitmap(byte_ptr picture_data)
 {
     int16_t height = 0;

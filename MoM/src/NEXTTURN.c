@@ -9,6 +9,8 @@
         ovr141
 */
 
+#include "../../STU/src/STU_DBG.h"
+
 #include "../../MoX/src/LOADSAVE.h"
 #include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_DEF.h"
@@ -55,8 +57,7 @@
 #include "WZD_o059.h"
 #include "WZD_o143.h"
 
-#include "../../STU/src/STU_DBG.h"
-
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -170,9 +171,10 @@ void Delete_Dead_Units(void)
         }
     }
 
-// breaks gtest  #ifdef STU_DEBUG
-// breaks gtest      dbg_prn("DEBUG: [%s, %d]: END: Delete_Dead_Units()\n", __FILE__, __LINE__);
-// breaks gtest  #endif
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+        assert(_UNITS[itr_units].owner_idx != ST_UNDEFINED);
+    }
 
 }
 

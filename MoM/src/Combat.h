@@ -2238,11 +2238,7 @@ void Wall_Rise_Load(int16_t wall_type);
 void CMB_BaseAllocs__WIP(void);
 
 // WZD ovr163p05
-<<<<<<< HEAD
 void Make_Missiles(int16_t missile_count, int16_t Targets, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t type);
-=======
-void Make_Missiles(int16_t missile_count, int16_t Targets, int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t TgtY, int16_t Type);
->>>>>>> origin/claude/upbeat-williams
 
 // WZD ovr163p06
 int16_t Combat_Figure_Load(int16_t unit_type, int16_t figure_index);

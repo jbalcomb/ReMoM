@@ -39,4 +39,6 @@ target_link_libraries(MOM_tests PUBLIC
     Platform
 )
 
-gtest_discover_tests(MOM_tests)
+gtest_discover_tests(MOM_tests
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)

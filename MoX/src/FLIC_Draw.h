@@ -207,7 +207,7 @@ void Copy_Bitmap_To_Bitmap(SAMB_ptr target_bitmap, SAMB_ptr source_bitmap);
 void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg);
 
 // WZD s30p03
-// LBX_IMG_VShiftRect
+void LBX_IMG_VShiftRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr bitmap);
 
 // WZD s30p04
 // LBX_IMG_VertWarp

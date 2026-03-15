@@ -1531,7 +1531,7 @@ void CmbBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
 
 // WZD o117p09
 // drake178: OVL_DrawSpellbook()
-void SmlBook_Draw__WIP(int16_t x, int16_t y)
+void SmlBook_Draw(int16_t x, int16_t y)
 {
     SAMB_ptr spellbook_bitmap = 0;
     uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
@@ -1647,7 +1647,7 @@ void CmbBook_Draw__WIP(int16_t x, int16_t y, int16_t caster_idx)
     }
 
     // SmlBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], spellbook_bitmap);
-    // spellbook_bitmap  allocated in SmlBook_Draw__WIP(), passed to SmlBook_Compose__WIP()
+    // spellbook_bitmap  allocated in SmlBook_Draw(), passed to SmlBook_Compose__WIP()
     CmbBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], IMG_SBK_Anims, caster_idx);
 
     Draw_Picture((x + 16), (y + 21), IMG_SBK_Anims);
@@ -1973,19 +1973,6 @@ void Spellbook_Add_Group_Pages(int16_t page_spell_count)
 */
 
 // WZD o118p01
-// // drake178: SBK_PageFlip_Big()
-// /*
-// ; flips the page in the apprentice spellbook based on
-// ; the passed direction:
-// ;     0 - backwards
-// ;     1 - forward
-// ;   666 - forward directly to the research candidates
-// ; draws and displays the animation, then sets the
-// ; redraw function to the apprentice before returning
-// */
-// /*
-// 
-// */
 // void BigBook_PageTurn__WIP(int16_t direction)
 // {
 //     int16_t Stage_Text_Widths[4] = { 0, 0, 0, 0 };
@@ -2049,11 +2036,11 @@ void Spellbook_Add_Group_Pages(int16_t page_spell_count)
  */
 void BigBook_PageTurn(short int direction)
 {
-    short int stage_text_widths[4];
+    short int stage_text_widths[4] = {0};
     short int page_turn_stage;
     short int left_page;
     short int page_index;
-    unsigned short int pict_seg;
+    SAMB_ptr pict_seg;
 
     stage_text_widths[0] = 90;
     stage_text_widths[1] = 60;
@@ -2173,50 +2160,50 @@ void BigBook_PageTurn(short int direction)
         /* Apply distortion effects based on animation stage to simulate page curve */
         if ((direction >= 1 && page_turn_stage == 0) || (direction == 0 && page_turn_stage == 3))
         {
-            LBX_IMG_VShiftRect(pict_seg, 0, 0, 4, -6);
-            LBX_IMG_VShiftRect(pict_seg, 5, -7, 12, -12);
-            LBX_IMG_VShiftRect(pict_seg, 13, -13, 29, -19);
-            LBX_IMG_VShiftRect(pict_seg, 30, -19, 41, -19);
-            LBX_IMG_VShiftRect(pict_seg, 42, -19, 67, -14);
-            LBX_IMG_VShiftRect(pict_seg, 68, -13, 84, -7);
-            LBX_IMG_VShiftRect(pict_seg, 85, -6, 115, 8);
+            LBX_IMG_VShiftRect(0, 0, 4, -6, pict_seg);
+            LBX_IMG_VShiftRect(5, -7, 12, -12, pict_seg);
+            LBX_IMG_VShiftRect(13, -13, 29, -19, pict_seg);
+            LBX_IMG_VShiftRect(30, -19, 41, -19, pict_seg);
+            LBX_IMG_VShiftRect(42, -19, 67, -14, pict_seg);
+            LBX_IMG_VShiftRect(68, -13, 84, -7, pict_seg);
+            LBX_IMG_VShiftRect(85, -6, 115, 8, pict_seg);
             Draw_Picture_Windowed(165, -24, pict_seg);
         }
 
         if ((direction >= 1 && page_turn_stage == 1) || (direction == 0 && page_turn_stage == 2))
         {
-            LBX_IMG_VShiftRect(pict_seg, 0, -4, 5, -9);
-            LBX_IMG_VShiftRect(pict_seg, 6, -10, 14, -18);
-            LBX_IMG_VShiftRect(pict_seg, 15, -19, 32, -26);
-            LBX_IMG_VShiftRect(pict_seg, 33, -26, 42, -28);
-            LBX_IMG_VShiftRect(pict_seg, 43, -28, 56, -25);
-            LBX_IMG_VShiftRect(pict_seg, 57, -25, 69, -18);
-            LBX_IMG_VShiftRect(pict_seg, 70, -18, 76, -12);
+            LBX_IMG_VShiftRect(0, -4, 5, -9, pict_seg);
+            LBX_IMG_VShiftRect(6, -10, 14, -18, pict_seg);
+            LBX_IMG_VShiftRect(15, -19, 32, -26, pict_seg);
+            LBX_IMG_VShiftRect(33, -26, 42, -28, pict_seg);
+            LBX_IMG_VShiftRect(43, -28, 56, -25, pict_seg);
+            LBX_IMG_VShiftRect(57, -25, 69, -18, pict_seg);
+            LBX_IMG_VShiftRect(70, -18, 76, -12, pict_seg);
             Draw_Picture_Windowed(165, -26, pict_seg);
         }
 
         if ((direction >= 1 && page_turn_stage == 2) || (direction == 0 && page_turn_stage == 1))
         {
-            LBX_IMG_VShiftRect(pict_seg, 0, -20, 6, -25);
-            LBX_IMG_VShiftRect(pict_seg, 7, -25, 16, -30);
-            LBX_IMG_VShiftRect(pict_seg, 17, -30, 24, -32);
-            LBX_IMG_VShiftRect(pict_seg, 25, -32, 32, -33);
-            LBX_IMG_VShiftRect(pict_seg, 33, -33, 47, -29);
-            LBX_IMG_VShiftRect(pict_seg, 48, -29, 61, -21);
-            LBX_IMG_VShiftRect(pict_seg, 62, -20, 70, -12);
-            LBX_IMG_VShiftRect(pict_seg, 71, -11, 75, 0);
+            LBX_IMG_VShiftRect(0, -20, 6, -25, pict_seg);
+            LBX_IMG_VShiftRect(7, -25, 16, -30, pict_seg);
+            LBX_IMG_VShiftRect(17, -30, 24, -32, pict_seg);
+            LBX_IMG_VShiftRect(25, -32, 32, -33, pict_seg);
+            LBX_IMG_VShiftRect(33, -33, 47, -29, pict_seg);
+            LBX_IMG_VShiftRect(48, -29, 61, -21, pict_seg);
+            LBX_IMG_VShiftRect(62, -20, 70, -12, pict_seg);
+            LBX_IMG_VShiftRect(71, -11, 75, 0, pict_seg);
             Draw_Picture_Windowed(80, -20, pict_seg);
         }
 
         if ((direction >= 1 && page_turn_stage == 3) || (direction == 0 && page_turn_stage == 0))
         {
-            LBX_IMG_VShiftRect(pict_seg, 0, 0, 36, -18);
-            LBX_IMG_VShiftRect(pict_seg, 37, -18, 64, -26);
-            LBX_IMG_VShiftRect(pict_seg, 65, -26, 73, -27);
-            LBX_IMG_VShiftRect(pict_seg, 74, -27, 84, -26);
-            LBX_IMG_VShiftRect(pict_seg, 85, -25, 92, -23);
-            LBX_IMG_VShiftRect(pict_seg, 93, -22, 102, -18);
-            LBX_IMG_VShiftRect(pict_seg, 103, -17, 115, -6);
+            LBX_IMG_VShiftRect(0, 0, 36, -18, pict_seg);
+            LBX_IMG_VShiftRect(37, -18, 64, -26, pict_seg);
+            LBX_IMG_VShiftRect(65, -26, 73, -27, pict_seg);
+            LBX_IMG_VShiftRect(74, -27, 84, -26, pict_seg);
+            LBX_IMG_VShiftRect(85, -25, 92, -23, pict_seg);
+            LBX_IMG_VShiftRect(93, -22, 102, -18, pict_seg);
+            LBX_IMG_VShiftRect(103, -17, 115, -6, pict_seg);
             Draw_Picture_Windowed(39, -22, pict_seg);
         }
 
@@ -2230,6 +2217,7 @@ void BigBook_PageTurn(short int direction)
 
 
 // WZD o118p02
+/* GEMINI */
 // /*
 // ; draws the apprentice-style spellbook, including all
 // ; text and dog-ears if allowed and applicable
@@ -2280,6 +2268,62 @@ void BigBook_PageTurn(short int direction)
 //     }
 //     Release_Block(_screen_seg);
 // }
+void BigBook_Draw(void)
+{
+    SAMB_ptr pict_seg; /* si */
+
+    /* Update the spellbook animation stage (0-7) */
+    SBK_NewSpellAnim_Stg = (SBK_NewSpellAnim_Stg + 1) % 8;
+
+    /* Cycle palette colors for the glowing spellbook effect */
+    Cycle_Palette_Color(198, 29, 41, 63, 44, 56, 63, 2);
+
+    /* Allocate temporary buffer for page rendering from the screen segment */
+    Mark_Block(_screen_seg);
+    pict_seg = Allocate_Next_Block(_screen_seg, 1800);
+
+    /* Load left and right corner dog-ear graphics from scroll.lbx */
+    _spellbook_big_left_corner_seg = LBX_Reload_Next(scroll_lbx_file__ovr118__1, 7, _screen_seg);
+    _spellbook_big_right_corner_seg = LBX_Reload_Next(scroll_lbx_file__ovr118__1, 8, _screen_seg);
+
+    /* The BIGBOOK background is stored in VGA frame 3; copy it to the current buffer */
+    Copy_Back_To_Off();
+
+    /* Draw navigation dog-ears if in apprentice book mode (SBK_Dogears > 1) */
+    if (SBK_Dogears > 1)
+    {
+        /* Left dog-ear (previous page) */
+        if (SBK_OpenPage != 0)
+        {
+            FLIC_Draw(15, 9, _spellbook_big_left_corner_seg);
+        }
+
+        /* Right dog-ear (next page) */
+        if (SBK_OpenPage != m_spellbook_page_count && SBK_OpenPage < (m_spellbook_page_count - 2))
+        {
+            FLIC_Draw(289, 9, _spellbook_big_right_corner_seg);
+        }
+    }
+
+    /* Compose and draw the left page content */
+    BigBook_Compose__WIP(SBK_OpenPage, pict_seg, 1);
+    Draw_Picture_Windowed(25, -20, pict_seg);
+
+    /* Compose and draw the right page content */
+    BigBook_Compose__WIP(SBK_OpenPage + 1, pict_seg, 0);
+    Draw_Picture_Windowed(173, -20, pict_seg);
+
+    /* If choosing research (SBK_Dogears == 0), display the prompt text */
+    if (SBK_Dogears == 0)
+    {
+        Set_Font_Style_Outline_Heavy(5, 9, 0, 0);
+        Set_Outline_Color(1);
+        Print(43, 183, cnst_ChooseResearch);
+    }
+
+    /* Release the temporary allocation block */
+    Release_Block(_screen_seg);
+}
 
 
 // WZD o118p03
@@ -3141,7 +3185,7 @@ void Apprentice_Screen__WIP(void)
 
                 SBK_LoadSpellDescs__WIP((SBK_OpenPage + 2));
 
-                BigBook_PageTurn__WIP(1);
+                BigBook_PageTurn(1);
 
                 SBK_OpenPage += 2;
 
@@ -3168,7 +3212,7 @@ void Apprentice_Screen__WIP(void)
 
                 SBK_LoadSpellDescs__WIP((SBK_OpenPage - 2));
 
-                BigBook_PageTurn__WIP(0);
+                BigBook_PageTurn(0);
 
                 SBK_OpenPage -= 2;
 

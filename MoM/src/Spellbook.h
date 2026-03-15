@@ -447,7 +447,7 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
 void CmbBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spellbook_bitmap, int16_t caster_idx);
 
 // WZD o117p09
-void SmlBook_Draw__WIP(int16_t x, int16_t y);
+void SmlBook_Draw(int16_t x, int16_t y);
 
 // WZD o117p10
 void CmbBook_Draw__WIP(int16_t x, int16_t y, int16_t caster_idx);
@@ -496,7 +496,7 @@ void SBK_LoadSpellDescs__WIP(int16_t page);
 void Apprentice_Screen__WIP(void);
 
 // WZD o118p10
-void BigBook_Compose__WIP(int16_t pict_seg, SAMB_ptr seg, int16_t flag);
+void BigBook_Compose__WIP(int16_t page, SAMB_ptr pict_seg, int16_t flag);
 
 // WZD o118p11
 void Spell_Research_Select(void);

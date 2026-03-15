@@ -67,7 +67,7 @@ Apprentice_Screen__WIP()
             ...
     ...
     |-> SBK_LoadSpellDescs__WIP()
-    |-> BigBook_PageTurn__WIP()
+    |-> BigBook_PageTurn()
     |-> Spellbook_Big_Draw()
     ...
     Spellbook_Big_Draw()
@@ -135,7 +135,7 @@ Apprentice_Screen()
 
                 SBK_LoadSpellDescs__WIP((SBK_OpenPage - 2));
 
-                BigBook_PageTurn__WIP(0);
+                BigBook_PageTurn(0);
 
                 SBK_OpenPage -= 2;
 

@@ -109,17 +109,9 @@ void UU_MEM_ClearBit_Near(int bit_idx, char * bit_field);
 int UU_DBG_SelectDialog(char /* near */ *Q_ptr, char /* near */ *A1_ptr, char /* near */ *A2_ptr, char /* near */ *A3_ptr, int default_val, int v1, int v2, int v3);
 
 // WZD s22p31
-<<<<<<< HEAD
 void Draw_Expanding_Bitmap(int16_t x_start, int16_t y_start, int16_t counter, SAMB_ptr picture);
 
 // WZD s22p32 
-=======
-// drake178:  RP_VGA_GrowOutFlip()
-void Draw_Expanding_Bitmap(int16_t x_start, int16_t y_start, int16_t counter, SAMB_ptr picture);
-
-// WZD s22p32 
-// drake178:  RP_LBX_IMG_CpyDrawFrame()
->>>>>>> origin/claude/upbeat-williams
 void Copy_Screen_To_Bitmap(byte_ptr picture_data);
 
 

@@ -97,7 +97,7 @@
 - [ ] Battle_Unit_Action__WIP
 - [ ] Battle_Unit_Attack__WIP
 - [ ] BU_Apply_Battlefield_Effects__WIP
-- [ ] BU_ApplyDamage__WIP
+- [x] BU_ApplyDamage__WIP  AKA BU_ApplyDamage__WIP__SEGRAX
 - [ ] BU_AttackTarget__WIP
 - [ ] BU_CheckFlight__WIP
 - [ ] BU_GetCombatEffect__WIP
@@ -188,9 +188,31 @@
 - [ ] GUI_MoveDlgHighlight__STUB
 
 ## FLIC_Draw
-- [ ] LBX_IMG_RevGrayscale__STUB
-- [ ] RNG_GFX_Random__WIP
-- [ ] Vanish_Bitmap__WIP
+- [ ] LBX_IMG_VShiftRect            // WZD s30p03
+- [ ] LBX_IMG_VertWarp              // WZD s30p04
+- [ ] LBX_IMG_HorzWarp              // WZD s30p05
+- [ ] UU_LBX_IMG_ColorShift         // WZD s30p07
+- [ ] UU_LBX_IMG_CReplaceRect       // WZD s30p08
+- [ ] VGA_WndDrawRotateImg()        // WZD s30p20
+- [ ] VGA_WndDrawImageRect()        // WZD s30p21
+- [ ] UU_VGA_WndDrawTransform()     // WZD s30p22
+- [ ] VGA_RotateRect()              // WZD s30p23
+- [ ] UU_LBX_IMG_CropRect()         // WZD s30p29
+- [ ] UU_LBX_IMG_FullGScale()       // WZD s30p31
+- [ ] UU_LBX_IMG_ExtGScaleEC()      // WZD s30p32
+- [ ] UU_LBX_IMG_ExtGrayScale()     // WZD s30p33
+- [ ] UU_LBX_IMG_DrawRect()         // WZD s30p45
+- [ ] VGA_DrawPartEmsImg()          // WZD s32p01
+- [ ] EMM_MapNextIMGPages()         // WZD s32p02
+- [ ] VGA_DrawPartEmsImg_R()        // WZD s32p03
+- [ ] Add_Picture_To_Bitmap_EMM()   // WZD s33p03
+- [ ] EMM_MapNextIMGPages2()        // WZD s33p04
+- [ ] UU_LBX_IMG_GetIntensity()     // WZD s33p10
+- [ ] Vanish_Bitmap__WIP()          // WZD s33p15
+- [ ] Gray_Scale_Bitmap()           // WZD s33p16 // MoO2  Module: bitmap  Gray_Scale_Bitmap()
+- [ ] LBX_IMG_RevGrayscale__STUB()  // WZD s33p17
+- [ ] UU_DUP_RevGrayscale()         // WZD s33p18
+- [ ] RNG_GFX_Random__WIP()         // WZD s33p19
 
 ## Fonts
 - [ ] VGA_SlideColors__STUB
@@ -304,8 +326,8 @@
 - [ ] SBK_DrawSpellDecode__STUB
 - [ ] SBK_LoadSpellDescs__WIP
 - [ ] SmlBook_Compose__WIP
-- [ ] SmlBook_Draw__WIP
-- [ ] SmlBook_PageTurn__WIP
+- [x] SmlBook_Draw__WIP
+- [x] SmlBook_PageTurn__WIP
 - [ ] UU_IDK_turn_to_cast__STUB
 
 ## Spells128

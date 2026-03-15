@@ -12507,7 +12507,7 @@ void CMB_ComposeBookBG__WIP(void)
 /*
 
 ~== Spellbook_Screen_Draw()
-    |-> SmlBook_Draw__WIP(16, 10);
+    |-> SmlBook_Draw(16, 10);
 */
 void Combat_Spellbook_Screen_Draw(void)
 {
@@ -13362,7 +13362,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
 /*
 
 ¿ ~== Spellbook_Screen() ?
-¿ ~== SmlBook_Draw__WIP() ?
+¿ ~== SmlBook_Draw() ?
 */
 int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
 {
@@ -14832,7 +14832,7 @@ void Ranged_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_
     int16_t dist_x = 0;  // DNE in Dasm
     int16_t dist_y = 0;  // DNE in Dasm
     SAMB_ptr sound_buffer = 0;
-    uint32_t sound_buffer_length;  // HACK
+    uint32_t sound_buffer_length = 0;  // HACK
 
     if(defender_battle_unit_idx != 99)  /* City Walls */
     {
@@ -14928,7 +14928,10 @@ void Ranged_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_
     RP_CMB_ProjectileFrame2 = 0;
     if(sound_buffer != (SAMB_ptr)ST_UNDEFINED)
     {
-        Play_Sound(sound_buffer, sound_buffer_length);
+        /* HACK */  if(NULL != sound_buffer && sound_buffer_length != 0)
+        {
+            Play_Sound(sound_buffer, sound_buffer_length);
+        }
     }
     for(Progress_Counter = 0; Progress_Counter < 100; Progress_Counter += Travel_Distance)
     {
@@ -15375,16 +15378,6 @@ void Apply_Battle_Unit_Damage_From_Spell(uint16_t spell_idx, uint16_t battle_uni
 
 // Segrax
 // WZD o113p07
-// drake178: BU_ApplyDamage()
-/*
-; applies the damage points passed through the array
-; to the target battle unit, reducing its figure count
-; or marking it dead as necessary (in which case the
-; combat victor and true sights are also updated)
-*/
-/*
-
-*/
 void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t damage_types[])
 {
     int16_t Figures_Lost = 0;
@@ -17525,6 +17518,21 @@ int16_t AI_BU_AssignAction__WIP(int16_t battle_unit_idx, int16_t no_spells_flag)
                 /* HACK */     continue;
                 /* HACK */ }
                 // BUGBUG  battle_units[itr_battle_units].target_battle_unit_idx may be -1, which will cause this to read outside of the array bounds
+//                 if(_UNITS[battle_units[battle_units[itr_battle_units].target_battle_unit_idx].unit_idx].type != _UNITS[battle_units[target_battle_unit_idx].unit_idx].type)
+//                 {
+//                     continue;
+//                 }
+// Error: AI_BU_AssignAction__WIP() dereferences battle_units[-1] through the local target_battle_unit_idx, causing an access violation on
+// _UNITS[battle_units[target_battle_unit_idx].unit_idx].type.
+// Why this happens: The crash is not just a bad null/sentinel check. The real problem is combat state becomes inconsistent. At the time of the crash, all attacker units (battle_units[0..3]) are already bus_Dead, so combat should be over, but CMB_Winner is still ST_UNDEFINED. That points to BU_ApplyDamage__WIP(): it calls Check_For_Winner() before changing the killed unit’s status from bus_Active to dead/gone/drained, so the “last dead” unit is still counted as active and no winner is recorded. AI then continues processing defender unit 8; AI_BU_SelectAction__WIP() finds no target and returns -1, but AI_BU_AssignAction__WIP() still defaults to melee and later uses that invalid local target in the target-sharing block.
+// Fix:
+// 1.	In BU_ApplyDamage__WIP(), update status first, then compute winner.
+// 2.	In AI_BU_AssignAction__WIP(), do not enter melee/ranged target logic unless target_battle_unit_idx is valid.
+// 3.	If no target exists, set action to bua_Finished or return ST_UNDEFINED.
+                if(target_battle_unit_idx == ST_UNDEFINED)
+                {
+                    continue;
+                }
                 if(_UNITS[battle_units[battle_units[itr_battle_units].target_battle_unit_idx].unit_idx].type != _UNITS[battle_units[target_battle_unit_idx].unit_idx].type)
                 {
                     continue;

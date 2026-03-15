@@ -74,7 +74,6 @@ void Clipped_Line_Base(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t P
 static void ui_draw_line_limit_do(int x1, int y1, int x2, int y2, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos);
 
 // WZD s14p11
-<<<<<<< HEAD
 // UU_Interlaced_Fill()
 /* COPILOT */ void UU_Interlaced_Fill(int x1, int y1, int x2, int y2, int Color1, int Color2);
 
@@ -89,18 +88,6 @@ static void ui_draw_line_limit_do(int x1, int y1, int x2, int y2, uint8_t color,
 // WZD s14p14
 // UU_VGA_DrawDblRect()
 /* COPILOT */ void UU_VGA_DrawDblRect(int x1, int y1, int x2, int y2, int Color1, int Color2, int Color3, int Color4);
-=======
-void far UU_Interlaced_Fill(int x1, int y1, int x2, int y2, int Color1, int Color2);
-
-// WZD s14p12
-void UU_VGA_DrawRect(int Left, int Top, int Width, int Height, int Color);
-
-// WZD s14p13
-void UU_VGA_WndDrawRect(int Left, int Top, int Width, int Height, char Color);
-
-// WZD s14p14
-void UU_VGA_DrawDblRect(int x1, int y1, int x2, int y2, int Color1, int Color2, int Color3, int Color4);
->>>>>>> origin/claude/upbeat-williams
 
 // WZD s14p15
 void Gradient_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t fill_type, int16_t remap_block, int16_t Slope, int16_t Scale, int16_t Seed);

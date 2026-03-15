@@ -11,6 +11,11 @@ project(
 enable_language(CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# noworkie?  set(ENV{CTEST_OUTPUT_ON_FAILURE} ON)
+list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
+# set(ENV{CTEST_PARALLEL_LEVEL} 2)
+# list(APPEND CMAKE_CTEST_ARGUMENTS "--parallel 2")
 include(CTest)
 
 include(FetchContent)
@@ -64,6 +69,8 @@ if(WIN32)
 endif()
 
 add_compile_definitions($<$<CONFIG:Debug>:STU_DEBUG>)
+
+add_compile_options("/wd4068")
 
 add_subdirectory(STU)
 add_subdirectory(platform)

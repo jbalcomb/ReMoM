@@ -49,7 +49,7 @@ Spellbook_Add_Group_Pages()
 Spellbook_Add_Page()
 OVL_ComposeBookText()
 SBK_LoadSpellDescs__WIP()
-BigBook_PageTurn__WIP()
+BigBook_PageTurn()
 Spellbook_Big_Draw()
 Spellbook_Big_Draw()
 BigBook_Compose__WIP()
@@ -67,7 +67,7 @@ Apprentice_Screen__WIP()
             ...
     ...
     |-> SBK_LoadSpellDescs__WIP()
-    |-> BigBook_PageTurn__WIP()
+    |-> BigBook_PageTurn()
     |-> Spellbook_Big_Draw()
     ...
     Spellbook_Big_Draw()

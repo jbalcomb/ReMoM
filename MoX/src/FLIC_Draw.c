@@ -118,71 +118,12 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
     WZD seg024
 */
 
+/* CLAUDE: Screen_Picture_Capture and Capture_Screen_Block moved to capture.c */
 // WZD s24p08
-/*
-    calls Set_Page_Off(), so ~ Copy Off To Picture
-    MoO2: Screen_Bitmap_Capture() |-> Create_Bitmap_Header(); Capture_Screen_Block_();
-*/
-void Screen_Picture_Capture(int16_t x1, int16_t y1, int16_t x2, int16_t y2, SAMB_ptr pict_seg)
-{
-    int16_t width;
-    int16_t height;
-
-    Set_Page_Off();
-
-    width = x2 - x1 + 1;
-    height = y2 - y1 + 1;
-
-    if(width < 0)
-    {
-        width = width * -1;
-    }
-    if(height < 0)
-    {
-        height = height * -1;
-    }
-
-    Create_Picture(width, height, pict_seg);
-
-    Capture_Screen_Block((pict_seg + SZ_FLIC_HDR), x1, y1, x2, y2);
-
-}
-
+// Screen_Picture_Capture()  — see capture.c
 
 // WZD s24p09
-/*
-    x1,y1,x2,y2 of screen
-*/
-void Capture_Screen_Block(byte_ptr frame_data, int16_t x1, int16_t y1, int16_t x2, int16_t y2)
-{
-    byte_ptr buffer;
-    byte_ptr screen_page;
-    int16_t width;
-    int16_t height;
-    uint16_t screen_page_offset;
-    uint16_t itr_width;
-    uint16_t itr_height;
-    
-    width = x2 - x1 + 1;
-    height = y2 - y1 + 1;
-
-    screen_page_offset = ((y1 * SCREEN_WIDTH) + x1);
-
-    buffer = frame_data;
-
-    screen_page = current_video_page + screen_page_offset;
-
-    itr_height = 0;
-    while(itr_height++ < height)
-    {
-        itr_width = 0;
-        while(itr_width++ < width)
-        {
-            *buffer++ = *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width);
-        }
-    }
-
-}
+// Capture_Screen_Block()  — see capture.c
 
 
 /*
@@ -558,6 +499,130 @@ void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg)
     }
 
 }
+
+
+// WZD s30p03
+/* GEMINI */
+void LBX_IMG_VShiftRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr bitmap)
+{
+    uint8_t * bitmap_data;
+    int16_t New_Height;
+    int16_t current_shear;
+    int32_t shear;
+    int32_t shear_add;
+    int16_t itr_width;
+    int16_t height;
+    int16_t width;
+    int16_t itr;
+    int16_t ofst;
+
+    // width = farpeekw(bitmap, 0);
+    // height = farpeekw(bitmap, 2); /* s_FLIC_HDR.height */
+    width = GET_2B_OFS(bitmap, 0);
+    height = GET_2B_OFS(bitmap, 2);
+
+    if (x1 < 0)
+    {
+        x1 = 0;
+    }
+
+    if (x2 > width)
+    {
+        x2 = width;
+    }
+
+    if (x1 > x2)
+    {
+        Swap_Short(&x1, &x2);
+        Swap_Short(&y1, &y2);
+    }
+
+    shear = (int32_t)y1 * 1000;
+
+    if (x2 != x1)
+    {
+        shear_add = ((int32_t)(y2 - y1) * 1000) / (x2 - x1);
+    }
+    else
+    {
+        shear_add = 0;
+    }
+
+    // bitmap_data = (unsigned char *)SA_MK_FP0(bitmap + 1);
+    bitmap_data = (uint8_t *)(bitmap + SZ_PARAGRAPH_B);
+    
+    ofst = height * x1;
+
+    for (itr_width = x1; itr_width <= x2; itr_width++)
+    {
+        current_shear = (int16_t)(shear / 1000);
+
+        if (current_shear != 0)
+        {
+            if (current_shear < 0)
+            {
+                /* MoO2 Shear_Y_Negative_() */
+                New_Height = height + current_shear;
+                if (New_Height > 0)
+                {
+                    /* New_Height = (height + current_shear) > 0 */
+                    for (itr = ofst; itr < (ofst + New_Height); itr++)
+                    {
+                        bitmap_data[itr] = bitmap_data[itr - current_shear];
+                    }
+                    for (itr = New_Height; itr < height; itr++)
+                    {
+                        bitmap_data[ofst + itr] = ST_TRANSPARENT;
+                    }
+                }
+                else
+                {
+                    /* New_Height = (height + current_shear) < 0 */
+                    for (itr = ofst; itr < (ofst + height); itr++)
+                    {
+                        bitmap_data[itr] = ST_TRANSPARENT;
+                    }
+                }
+            }
+            else
+            {
+                /* MoO2 Shear_Y_Positive_() */
+                New_Height = height - current_shear;
+                if (New_Height > 0)
+                {
+                    /* (height - current_shear) > 0 */
+                    for (itr = (ofst + height - 1); itr >= (ofst + current_shear); itr--)
+                    {
+                        bitmap_data[itr] = bitmap_data[itr - current_shear];
+                    }
+                    for (itr = 0; itr < current_shear; itr++)
+                    {
+                        bitmap_data[ofst + itr] = ST_TRANSPARENT;
+                    }
+                }
+                else
+                {
+                    /* (height - current_shear) < 0 */
+                    for (itr = ofst; itr < (ofst + height); itr++)
+                    {
+                        bitmap_data[itr] = ST_TRANSPARENT;
+                    }
+                }
+            }
+        }
+
+        shear += shear_add;
+        ofst += height;
+    }
+}
+
+
+// WZD s30p04
+// LBX_IMG_VertWarp
+
+// WZD s30p05
+// LBX_IMG_HorzWarp
+
 
 // WZD s30p06
 void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint8_t color)

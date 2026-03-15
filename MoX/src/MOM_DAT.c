@@ -3403,9 +3403,9 @@ SAMB_ptr xtramana_ok_button_seg;
 // WZD dseg:CA34
 /*
 
-CmbBook_Draw__WIP() vs. SmlBook_Draw__WIP()
+CmbBook_Draw__WIP() vs. SmlBook_Draw()
     // SmlBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], spellbook_bitmap);
-    // spellbook_bitmap  allocated in SmlBook_Draw__WIP(), passed to SmlBook_Compose__WIP()
+    // spellbook_bitmap  allocated in SmlBook_Draw(), passed to SmlBook_Compose__WIP()
     CmbBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], IMG_SBK_Anims, caster_idx);
 
 */
