@@ -7,8 +7,8 @@
  *
  * **Screen Operations:**
  * - Clear_Screens() - Clear both display and draw frames
- * - PageFlip_GrowOut__WIP() - Animated grow-out effect with page flipping
- * - PageFlip_GrowOut_CopyScreen() - Copy current video page data
+ * - Draw_Expanding_Bitmap() - Animated grow-out effect with page flipping
+ * - Copy_Screen_To_Bitmap() - Copy current video page data
  *
  * **String Operations:**
  * - String_To_Upper() - Convert string to uppercase
@@ -765,7 +765,7 @@ because the parent function is hardcoded to use the
 sandbox, which can be problematic because all screen
 redraw elements are normally also loaded there
 */
-void PageFlip_GrowOut__WIP(int16_t x_start, int16_t y_start, int16_t counter, SAMB_ptr picture)
+void Draw_Expanding_Bitmap(int16_t x_start, int16_t y_start, int16_t counter, SAMB_ptr picture)
 {
     int16_t Resize_Percent;
     int16_t y2;
@@ -783,7 +783,7 @@ void PageFlip_GrowOut__WIP(int16_t x_start, int16_t y_start, int16_t counter, SA
 
     Set_Page_Off();
 
-    PageFlip_GrowOut_CopyScreen((picture_data + 16));
+    Copy_Screen_To_Bitmap((picture_data + 16));
 
     Copy_On_To_Off_Page();
 
@@ -836,7 +836,7 @@ void PageFlip_GrowOut__WIP(int16_t x_start, int16_t y_start, int16_t counter, SA
 /*
 ; reads the full draw frame to an LBX image
 */
-void PageFlip_GrowOut_CopyScreen(byte_ptr picture_data)
+void Copy_Screen_To_Bitmap(byte_ptr picture_data)
 {
     int16_t height;  // _BX_
     int16_t width;  // _CX_

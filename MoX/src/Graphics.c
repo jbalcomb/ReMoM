@@ -171,7 +171,7 @@ void Clipped_Multi_Colored_Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, 
         swap (x1,x2)
 
 */
-void Clipped_Line_Base(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t Patterned, uint8_t color, uint8_t colortbl[], int16_t colornum, int16_t colorpos)
+    void Clipped_Line_Base(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t Patterned, uint8_t color, uint8_t colortbl[], int16_t colornum, int16_t colorpos)
 {
     uint32_t y_delta;
     uint32_t x_delta;
@@ -343,7 +343,7 @@ void Clipped_Line_Base(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t P
 }
 
 // static void ui_draw_line_limit_do(int x0, int y0, int x1, int y1, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos, int scale)
-static void ui_draw_line_limit_do(int x1, int y1, int x2, int y2, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos)
+    static void ui_draw_line_limit_do(int x1, int y1, int x2, int y2, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos)
 {
     if (x1 == x2)
     {
@@ -454,24 +454,230 @@ static void ui_draw_line_limit_do(int x1, int y1, int x2, int y2, uint8_t color,
 }
 
 // WZD s14p11
-// drake178: UU_VGA_DrawBiColorRect()
+/* GEMINI */
 // MoO2  Module: graphics  Interlaced_Fill()
-// UU_Interlaced_Fill()
+/**
+ * @brief Draws a single-pixel rectangle outline with two independent edge colors.
+ *
+ * Renders a rectangle using four `Line()` calls, splitting the edges into two
+ * color groups to create a simple 2D bevel (raised or sunken panel) effect:
+ *   - Top and left edges  : Color1 (typically the highlight color)
+ *   - Bottom and right edges : Color2 (typically the shadow color)
+ *
+ * The bottom and right edges each start one pixel inward from their respective
+ * corner to avoid overwriting the corner pixel already drawn by the top/left pass.
+ *
+ * This function draws directly to `current_video_page` via `Line()` without
+ * clip-region checking. For a clipped variant see `UU_VGA_WndDrawRect()`.
+ * For a double-bordered version see `UU_VGA_DrawDblRect()`.
+ *
+ * @param x1     Left pixel coordinate of the rectangle.
+ * @param y1     Top pixel coordinate of the rectangle.
+ * @param x2     Right pixel coordinate of the rectangle.
+ * @param y2     Bottom pixel coordinate of the rectangle.
+ * @param Color1 Palette index used for the top and left edges.
+ * @param Color2 Palette index used for the bottom and right edges.
+ */
+void UU_Interlaced_Fill(int x1, int y1, int x2, int y2, int Color1, int Color2)
+{
+    register int _SI_x1;
+    register int _DI_y1;
+
+    _SI_x1 = x1;
+    _DI_y1 = y1;
+
+    /* Top edge */
+    Line(_SI_x1, _DI_y1, x2, _DI_y1, Color1);
+
+    /* Left edge */
+    Line(_SI_x1, _DI_y1, _SI_x1, y2, Color1);
+
+    /* Bottom edge */
+    Line(_SI_x1 + 1, y2, x2, y2, Color2);
+
+    /* Right edge */
+    Line(x2, _DI_y1 + 1, x2, y2, Color2);
+}
+
 
 // WZD s14p12
-// drake178: 
-// MoO2  
-// UU_VGA_DrawRect()
+/* GEMINI */
+/**
+ * @brief Draws a single-color rectangle outline specified by top-left corner, width, and height.
+ *
+ * Renders the four edges of a rectangle using `Line()`, which draws directly to
+ * `current_video_page` without clip-region checking. The rectangle coordinates are
+ * expressed as a top-left origin plus extent (Width × Height) rather than two corner
+ * pairs; the function computes Right and Bottom internally:
+ *   - Right  = Left + Width  - 1
+ *   - Bottom = Top  + Height - 1
+ *
+ * The bottom and right edges each start one pixel inward from their respective corners
+ * to avoid overwriting the corner pixel already drawn by the top/left pass.
+ *
+ * Edge drawing order:
+ *  1. Top    : (Left, Top)       → (Left + Width - 1, Top)
+ *  2. Left   : (Left, Top)       → (Left, Top + Height - 1)
+ *  3. Bottom : (Left + 1, Top + Height - 1) → (Left + Width - 1, Top + Height - 1)
+ *  4. Right  : (Left + Width - 1, Top + 1)  → (Left + Width - 1, Top + Height - 1)
+ *
+ * For a clipped variant (respects `Set_Window()`) see `UU_VGA_WndDrawRect()`.
+ * For a two-color bevel variant see `UU_Interlaced_Fill()`.
+ * For a double-bordered variant see `UU_VGA_DrawDblRect()`.
+ *
+ * @param Left   X pixel coordinate of the left edge of the rectangle.
+ * @param Top    Y pixel coordinate of the top edge of the rectangle.
+ * @param Width  Width of the rectangle in pixels (includes both edge columns).
+ * @param Height Height of the rectangle in pixels (includes both edge rows).
+ * @param Color  Palette index used for all four edges.
+ */
+void /* far */ UU_VGA_DrawRect(int Left, int Top, int Width, int Height, int Color)
+{
+    /* Local variables (mapped from stack frame) */
+    /* [bp-04h] -> Bottom : int */
+    /* [bp-02h] -> Right  : int */
+    int Bottom;
+    int Right;
+    int si_Left;
+    int di_Top;
+
+    /* Registers si and di are used as register variables for Left and Top */
+    si_Left = Left;
+    di_Top = Top;
+
+    Right = si_Left + Width - 1;
+    Bottom = di_Top + Height - 1;
+
+    /* Top edge: (Left, Top) to (Right, Top) */
+    Line(si_Left, di_Top, Right, di_Top, Color);
+
+    /* Left edge: (Left, Top) to (Left, Bottom) */
+    Line(si_Left, di_Top, si_Left, Bottom, Color);
+
+    /* Bottom edge: (Left + 1, Bottom) to (Right, Bottom) */
+    /* Note: Starts at Left + 1 to avoid double-drawing the bottom-left corner */
+    Line(si_Left + 1, Bottom, Right, Bottom, Color);
+
+    /* Right edge: (Right, Top + 1) to (Right, Bottom) */
+    /* Note: Starts at Top + 1 to avoid double-drawing the top-right corner */
+    Line(Right, di_Top + 1, Right, Bottom, Color);
+}
+
 
 // WZD s14p13
-// drake178: 
-// MoO2  
-// UU_VGA_WndDrawRect()
+/* GEMINI */
+/**
+ * @brief Draws a clipped single-color rectangle outline within the current screen window.
+ *
+ * Renders the four edges of a rectangle using `Clipped_Line()`, which respects the
+ * clip region established by `Set_Window()`. Coordinates outside the window are silently
+ * clipped rather than drawn.
+ *
+ * The rectangle is specified by its top-left corner and its Width/Height dimensions.
+ * Bottom and right edges are drawn starting one pixel inward from their respective
+ * corners to avoid overwriting the corner pixel already placed by the top/left pass.
+ *
+ * Edge drawing order:
+ *  1. Top    : (Left, Top)       → (Left + Width - 1, Top)
+ *  2. Left   : (Left, Top)       → (Left, Top + Height - 1)
+ *  3. Bottom : (Left + 1, Top + Height - 1) → (Left + Width - 1, Top + Height - 1)
+ *  4. Right  : (Left + Width - 1, Top + 1)  → (Left + Width - 1, Top + Height - 1)
+ *
+ * @param Left   X pixel coordinate of the left edge of the rectangle.
+ * @param Top    Y pixel coordinate of the top edge of the rectangle.
+ * @param Width  Width of the rectangle in pixels (includes both edge columns).
+ * @param Height Height of the rectangle in pixels (includes both edge rows).
+ * @param Color  Palette index used for all four edges.
+ */
+void /* far */ UU_VGA_WndDrawRect(int Left, int Top, int Width, int Height, char Color)
+{
+    int Bottom;
+    int Right;
+    int si_Left;
+    int di_Top;
+
+    si_Left = Left;
+    di_Top = Top;
+
+    Right = si_Left + Width - 1;
+    Bottom = di_Top + Height - 1;
+
+    /* Top edge: (Left, Top) to (Right, Top) */
+    Clipped_Line(si_Left, di_Top, Right, di_Top, (int)Color);
+
+    /* Left edge: (Left, Top) to (Left, Bottom) */
+    Clipped_Line(si_Left, di_Top, si_Left, Bottom, (int)Color);
+
+    /* Bottom edge: (Left + 1, Bottom) to (Right, Bottom) */
+    Clipped_Line(si_Left + 1, Bottom, Right, Bottom, (int)Color);
+
+    /* Right edge: (Right, Top + 1) to (Right, Bottom) */
+    Clipped_Line(Right, di_Top + 1, Right, Bottom, (int)Color);
+}
 
 // WZD s14p14
-// drake178: 
-// MoO2  
-// UU_VGA_DrawDblRect()
+/* GEMINI */
+/**
+ * @brief Draws a double-bordered rectangle using four independent edge colors.
+ *
+ * Renders two concentric rectangles to produce a 3D border effect (raised or sunken
+ * panel appearance). Each rectangle has independently colored top/left and bottom/right
+ * edges, allowing beveled highlight and shadow combinations.
+ *
+ * The outer rectangle spans (x1, y1) to (x2, y2). The inner rectangle is inset by one
+ * pixel on all sides. The bottom and right edges of each rectangle are offset by one
+ * pixel inward from the corner to avoid overdrawing the corner pixel already set by the
+ * top/left pass.
+ *
+ * Edge assignment:
+ * - Outer top    + left  : Color1
+ * - Inner top    + left  : Color2
+ * - Outer bottom + right : Color3
+ * - Inner bottom + right : Color4
+ *
+ * @param x1     Left pixel coordinate of the outer rectangle.
+ * @param y1     Top pixel coordinate of the outer rectangle.
+ * @param x2     Right pixel coordinate of the outer rectangle.
+ * @param y2     Bottom pixel coordinate of the outer rectangle.
+ * @param Color1 Color for the top and left edges of the outer border.
+ * @param Color2 Color for the top and left edges of the inner border.
+ * @param Color3 Color for the bottom and right edges of the outer border.
+ * @param Color4 Color for the bottom and right edges of the inner border.
+ */
+void UU_VGA_DrawDblRect(int x1, int y1, int x2, int y2, int Color1, int Color2, int Color3, int Color4)
+{
+    int si_x1;
+    int di_y1;
+
+    si_x1 = x1;
+    di_y1 = y1;
+
+    /* Draw outer rectangle */
+    /* Top edge: (x1, y1) to (x2, y1) */
+    Line(si_x1, di_y1, x2, di_y1, Color1);
+    /* Left edge: (x1, y1) to (x1, y2) */
+    Line(si_x1, di_y1, si_x1, y2, Color1);
+    /* Bottom edge: (x1+1, y2) to (x2, y2) */
+    Line(si_x1 + 1, y2, x2, y2, Color3);
+    /* Right edge: (x2, y1+1) to (x2, y2) */
+    Line(x2, di_y1 + 1, x2, y2, Color3);
+
+    /* Shrink coordinates for inner rectangle */
+    si_x1++;
+    di_y1++;
+    x2--;
+    y2--;
+
+    /* Draw inner rectangle */
+    /* Top edge: (si, di) to (x2, di) */
+    Line(si_x1, di_y1, x2, di_y1, Color2);
+    /* Left edge: (si, di) to (si, y2) */
+    Line(si_x1, di_y1, si_x1, y2, Color2);
+    /* Bottom edge: (si+1, y2) to (x2, y2) */
+    Line(si_x1 + 1, y2, x2, y2, Color4);
+    /* Right edge: (x2, di+1) to (x2, y2) */
+    Line(x2, di_y1 + 1, x2, y2, Color4);
+}
 
 
 // WZD s14p15
@@ -964,18 +1170,12 @@ void ui_draw_line_ctbl(int x1, int y1, int x2, int y2, const uint8_t *colortbl, 
 
 
 // WZD s16p05
-// drake178: UU_VGA_CreateColorWave()
-// MoO2  
 // UU_VGA_CreateColorWave
 
 // WZD s16p06
-// drake178: UU_VGA_DiagColumns()
-// MoO2  
 // UU_VGA_DiagColumns
 
 // WZD s16p07
-// drake178: RNG_Direct_LFSR()
-// MoO2  
 // 1oom  rnd.c  rnd_bitfiddle()
 uint16_t rnd_bitfiddle__1oom(uint16_t ax)
 {
@@ -1016,7 +1216,6 @@ uint16_t rnd_bitfiddle__1oom(uint16_t ax)
 
 
 // WZD s16p08
-// drake178: VGA_Shade_Rect()
 // MoO2  Module: graphics  Tint_Fill()
 void Tint_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t remap_block)
 {

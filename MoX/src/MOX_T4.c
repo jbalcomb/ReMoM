@@ -244,7 +244,7 @@ void PageFlip_FX(void)
         } break;
         case pfe_GrowOut:
         {
-            PageFlip_GrowOut__WIP(GrowOutLeft, GrowOutTop, GrowOutFrames, (_screen_seg + (20 * SCREEN_WIDTH)));
+            Draw_Expanding_Bitmap(GrowOutLeft, GrowOutTop, GrowOutFrames, (_screen_seg + (20 * SCREEN_WIDTH)));
         } break;
         case pfe_Palette:
         {

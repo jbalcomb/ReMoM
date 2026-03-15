@@ -108,11 +108,11 @@ void UU_MEM_ClearBit_Near(int bit_idx, char * bit_field);
 
 // WZD s22p31
 // drake178:  RP_VGA_GrowOutFlip()
-void PageFlip_GrowOut__WIP(int16_t x_start, int16_t y_start, int16_t counter, SAMB_ptr picture);
+void Draw_Expanding_Bitmap(int16_t x_start, int16_t y_start, int16_t counter, SAMB_ptr picture);
 
 // WZD s22p32 
 // drake178:  RP_LBX_IMG_CpyDrawFrame()
-void PageFlip_GrowOut_CopyScreen(byte_ptr picture_data);
+void Copy_Screen_To_Bitmap(byte_ptr picture_data);
 
 
 
