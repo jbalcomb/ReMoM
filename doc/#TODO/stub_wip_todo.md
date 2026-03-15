@@ -51,8 +51,12 @@
 - [ ] Pick_Target_For_City_Enchantment__WIP
 
 ## capture
-- [ ] F11_Key__WIP
-- [ ] Screen_Flic_Capture__STUB
+- [x] F11_Key__WIP
+- [x] Screen_Flic_Capture__STUB
+- [x] VGA_GetDACBlock
+- [x] VGA_ReadScreenLine
+- [x] Screen_Picture_Capture()  // WZD s24p07  // MoO2  Module: capture  Screen_Flic_Capture()
+- [x] Capture_Screen_Block()    // WZD s24p08
 
 ## City_ovr55
 - [ ] Resource_Breakdown__STUB
@@ -193,6 +197,10 @@
 
 ## Graphics
 - [ ] DOS_PrintString__STUB
+- [x] WZD s14p11 UU_Interlaced_Fill
+- [x] WZD s14p12 UU_VGA_DrawRect
+- [x] WZD s14p13 UU_VGA_WndDrawRect
+- [x] WZD s14p14 UU_VGA_DrawDblRect
 
 ## INITGAME
 - [ ] AI_WIZ_StrategyReset__WIP
@@ -339,8 +347,10 @@
 ## UnitView
 - [ ] UNIT_GetDependants__WIP
 
-## Util
-- [ ] PageFlip_GrowOut__WIP
+## Util  (seg022)
+- [ ] UU_DBG_SetSelectSetting()
+- [ ] UU_DBG_SelectDialog()
+- [x] Draw_Expanding_Bitmap()
 
 ## Video
 - [ ] VGA_MosaicFlip__STUB
