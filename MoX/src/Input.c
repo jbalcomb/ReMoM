@@ -425,7 +425,10 @@ MoO2
             Restore_Mouse_State();
         }
 
-        if((character == ST_KEY_ESCAPE) && (mouse_cancel_disabled != ST_FALSE))
+        /* CLAUDE */  /* Was: mouse_cancel_disabled != ST_FALSE — inverted logic.  When cancel is ENABLED */
+        /* CLAUDE */  /* (mouse_cancel_disabled == ST_FALSE), ESC should short-circuit and return ST_UNDEFINED. */
+        /* CLAUDE */  /* When cancel is DISABLED, ESC falls through to hotkey matching. */
+        if((character == ST_KEY_ESCAPE) && (mouse_cancel_disabled == ST_FALSE))
         {
             goto Return_Type_ESC;
         }

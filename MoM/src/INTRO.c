@@ -24,6 +24,21 @@
 // MGC dseg:385E                                                 BEGIN:  ovr058 - Initialized Data  (Intro/Logos)
 
 // MGC dseg:385E
+/*
+15 frames of ¿ SimTex logo ?
+12 frames of ¿ MicroProse logo ?
+30 frames of ¿ ?
+18 frames of ¿ ?
+25 frames of ¿ ?
+32 frames of ¿ ?
+24 frames of ¿ ?
+32 frames of ¿ ?
+30 frames of ¿ ?
+37 frames of ¿ ?
+30 frames of ¿ ?
+11 frames of ¿ ?
+32 frames of ¿ ?
+*/
 int16_t IntroAnim_FrameCounts__MGC_ovr058[13] = { 15,   12,   30,   18,   25,   32,   24,   32,   30,   37,   30,   11,   32 };
 
 // MGC dseg:3878
@@ -49,14 +64,45 @@ char str_SIMTEX_COPYRIGHT_1995_V131__MGC_ovr058[] = "Copyright  Simtex Software,
 
 
 // MGC o58p1
-/*
-plays the intro cinematic, can be interrupted by
-pressing the Escape key or clicking anywhere on the
-screen
-*/
-/*
-
-*/
+/* COPILOT */
+/**
+ * @brief Plays the intro/logo animation sequence, including synchronized music and sound effects.
+ *
+ * @details
+ * Runs the full INTRO.LBX scene pipeline (13 scenes), handling per-scene fade timing,
+ * frame stepping, user skip input, and scene-specific audio triggers.
+ *
+ * High-level flow:
+ * - Loads intro MIDI and initial digital sound assets into `_screen_seg` scratch space.
+ * - Optionally starts background intro music when `magic_set.background_music == ST_TRUE`.
+ * - Creates full-screen hidden input field and ESC hotkey for skip handling.
+ * - Iterates all intro scenes, opens animation records, applies scene-dependent fade-out,
+ *   draws frames, and conditionally overlays Simtex copyright text.
+ * - Triggers specific digital sound effects at hard-coded scene/frame boundaries.
+ * - Uses double-buffer page toggling (`Set_Page_Off()`, `Toggle_Pages()`, `Copy_On_To_Off_Page()`).
+ * - Enforces frame pacing via `Mark_Time()` / `Release_Time(3)`.
+ * - Exits early if user clicks fullscreen field or presses ESC.
+ *
+ * Audio buffers:
+ * - `midi_sound_buffer` stores intro music entry (`MUSIC_Intro`).
+ * - `digi_sound_buffer1/2/3` are reloaded at specific cut-scene points for spoken lines/effects.
+ * - Sound playback honors `magic_set.sound_effects` and `magic_set.background_music` toggles.
+ *
+ * Input handling:
+ * - Hidden full-screen field captures click-to-skip.
+ * - ESC hotkey captures keyboard skip.
+ * - Either input sets `leave_screen` and aborts remaining frames/scenes.
+ *
+ * @param void This function takes no parameters.
+ *
+ * @return void
+ * No return value. Performs intro presentation and updates video/audio state.
+ *
+ * @note Scene/frame event checks are intentionally data-driven by hard-coded indices to
+ *       match original game behavior.
+ * @warning Existing logic includes a known issue at scene 11/frame 2 where a block release
+ *          may invalidate `digi_sound_buffer3` before later use.
+ */
 void Draw_Logos(void)
 {
     uint8_t colors[2] = { 0, 0 };
@@ -98,43 +144,26 @@ void Draw_Logos(void)
     
     Clear_Fields();
 
+    /* NOTE(JimBalcomb,20260315): it is odd that they didn't do the fullscreen-escape field here */
     fullscreen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_empty_string__MGC_ovr058[0], ST_UNDEFINED);
-
     hotkey_idx_ESC = Add_Hot_Key(str_ESC__MGC_ovr058[0]);
 
+    /*
+        SimTex logo fades in and fades out
+        MicroProse logo fades in and fades out
+        ...
+        ...means the names ofIntro_Fade_Out_2, etc. can't be right
+    */
     // 13 SCENE's, in INTRO.LBX
     for(itr_scenes = 0; itr_scenes < 13; itr_scenes++)
     {
         Open_File_Animation__HACK(intro_lbx_file__MGC_ovr058, itr_scenes);
-
         leave_screen = ST_FALSE;
-
-        /*
-            Dasm looks jumpy
-            Could be a switch?
-            ...with a default?
-            ¿ only matches { 0, 1, 2, 3 } ?
-        */
-        if(itr_scenes == 0)
-        {
-            Intro_Fade_Out_2();
-        }
-        else if(itr_scenes == 1)
-        {
-            Intro_Fade_Out_20();
-        }
-        else if(itr_scenes == 2)
-        {
-            Intro_Fade_Out_10();
-        }
-        else if(itr_scenes == 3)
-        {
-            Intro_Fade_Out_20();
-        }
-        else
-        {
-            Intro_Fade_Out_2();
-        }
+        if(itr_scenes == 0)      { Intro_Fade_Out_2();  }
+        else if(itr_scenes == 1) { Intro_Fade_Out_20(); }
+        else if(itr_scenes == 2) { Intro_Fade_Out_10(); }
+        else if(itr_scenes == 3) { Intro_Fade_Out_20(); }
+        else                     { Intro_Fade_Out_2();  }
 
         for(itr_frames = 0; IntroAnim_FrameCounts__MGC_ovr058[itr_scenes] > itr_frames; itr_frames++)
         {
