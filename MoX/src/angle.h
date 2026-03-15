@@ -32,10 +32,24 @@ extern "C" {
 */
 
 // WZD s34p01
-int16_t Get_Angle(int16_t dx, int16_t dy);
+// int16_t Get_Angle(int16_t dx, int16_t dy);
+int16_t Get_Angle(int x_dist, int y_dist);
 
 // WZD s34p02
-int16_t calc_angle_do(int16_t dx, int16_t dy);
+// int16_t calc_angle_do(int16_t dx, int16_t dy);
+int16_t Get_Base_Angle(unsigned int y, unsigned int x);
+
+// WZD s34p03
+int16_t Cos(int16_t angle, int16_t radius);
+
+// WZD s34p04
+int16_t Sin(int16_t angle, int16_t radius);
+
+// WZD s34p05
+// drake178: VGA_DrawTexture()
+
+// WZD s34p06
+// drake178: VGA_DrawTexture_R()
 
 
 

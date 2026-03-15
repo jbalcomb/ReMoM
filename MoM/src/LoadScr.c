@@ -53,7 +53,7 @@ MoO2  Module: LOADSAVE
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 #include "LoadScr.h"
 
@@ -140,7 +140,33 @@ int16_t loadsave_quit_button;
 // WZD dseg:C9B0
 // Settings.C  int16_t loadsave_ok_button;
 
+// MGC dseg:8E98
 // WZD dseg:C9B2
+/*
+New Game Screen vs Load Screen
+MGC vs WZD
+MGC  ovr50   dseg:8E98 00 00                                           selected_load_game_slot_idx dw 0        ; DATA XREF: Load_Screen+2D8w ...
+WZD  ovr160  dseg:C9B2 00 00                                           selected_load_game_slot_idx dw 0        ; DATA XREF: Load_Screen+1E4w ...
+
+     w Load_Screen+2D8                mov     [selected_load_game_slot_idx], e_ST_UNDEFINED          
+Down w Load_Screen+32F                mov     [selected_load_game_slot_idx], _SI_itr_save_slot_fields
+Down r Load_Screen+367                cmp     [selected_load_game_slot_idx], 0                       
+Down r Load_Screen+373                push    [selected_load_game_slot_idx]     ; save_gam_idx       
+Down r Load_Screen_Draw+1BB           cmp     [selected_load_game_slot_idx], 0                       
+Down r Load_Screen_Draw+CB            cmp     ax, [selected_load_game_slot_idx]                      
+Down r Newgame_Screen_4_Draw__WIP+31D mov     ax, [selected_load_game_slot_idx]                      
+Down w Newgame_Screen_4_Draw__WIP+344 mov     [selected_load_game_slot_idx], ax                      
+Down w Newgame_Screen_4__WIP+161      mov     [selected_load_game_slot_idx], 0                       
+
+Up   w Load_Screen+1E4      mov     [selected_load_game_slot_idx], e_ST_UNDEFINED   
+     w Load_Screen+32D      mov     [selected_load_game_slot_idx], e_ST_UNDEFINED   
+Down w Load_Screen+379      mov     [selected_load_game_slot_idx], e_ST_UNDEFINED   
+Down w Load_Screen+391      mov     [selected_load_game_slot_idx], itr              
+Down r Load_Screen+407      cmp     [selected_load_game_slot_idx], 0                
+Down r Load_Screen+419      push    [selected_load_game_slot_idx]   ; SaveGame_Index
+Down r Load_Screen_Draw+100 cmp     [selected_load_game_slot_idx], 0                
+
+*/
 int16_t selected_load_game_slot_idx;
 
 // WZD dseg:C9B4
@@ -304,7 +330,7 @@ void Load_Screen(void)
     for(itr = 1; itr < NUM_SAVE_GAME_FILES; itr++)
     {
         strcpy(match_string, cnst_SAVE3);
-        SDL_itoa(itr, buffer2, 10);
+        stu_itoa(itr, buffer2, 10);
         strcat(match_string, buffer2);
         strcat(match_string, cnst_SAVE_ext3);
         if(DIR(match_string, found_file) == ST_FAILURE)  /* File Not Found */

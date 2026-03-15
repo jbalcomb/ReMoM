@@ -15,7 +15,7 @@
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/Graphics.h"
 #include "../../MoX/src/LBX_Load.h"
-#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _screen_seg */
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_SET.h"  /* magic_set */
@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 
 
@@ -424,7 +424,7 @@ void Hero_LevelUp_Popup_Draw(void)
     if(value != ST_UNDEFINED)
     {
         FLIC_Draw((lvlmake_base_x + 139), (lvlmake_base_y + 35), item_view_bullet_seg);
-        SDL_itoa(value, temp_string, 10);
+        stu_itoa(value, temp_string, 10);
         strcpy(GUI_String_1, str_Plus__ovr102);  // "+"
         strcat(GUI_String_1, temp_string);
         strcat(GUI_String_1, str_SPACE_Defense__ovr102);  // " Defense"
@@ -508,7 +508,7 @@ void Hero_Build_Specials_List(int16_t unit_idx, struct s_UV_List * specials_list
     {
         strcpy(specials_list->names[specials_index], str_Plus__ovr102);
         ability_value = 1;
-        SDL_itoa(ability_value, temp_string, 10);
+        stu_itoa(ability_value, temp_string, 10);
         strcat(specials_list->names[specials_index], temp_string);
         strcat(specials_list->names[specials_index], str_SPACE_ToHit__ovr102);  // " To Hit"
         specials_list->flags[specials_index] = ST_UNDEFINED;
@@ -620,7 +620,7 @@ void Hero_Build_Specials_List(int16_t unit_idx, struct s_UV_List * specials_list
                         strcpy(specials_list->names[specials_index], str_Sage__ovr102);
                         strcat(specials_list->names[specials_index], str_SPACE__ovr102);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 3);
-                        SDL_itoa(ability_value, temp_string, 10);
+                        stu_itoa(ability_value, temp_string, 10);
                         strcat(specials_list->names[specials_index], temp_string);
                         strcat(specials_list->names[specials_index], str_SPACE_rp__ovr102);
                         ability_has_plus = ST_FALSE;
@@ -631,7 +631,7 @@ void Hero_Build_Specials_List(int16_t unit_idx, struct s_UV_List * specials_list
                         strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
                         strcat(specials_list->names[specials_index], str_SPACE__ovr102);
                         ability_value = (((_UNITS[unit_idx].Level + 1) * 9) / 2);
-                        SDL_itoa(ability_value, temp_string, 10);
+                        stu_itoa(ability_value, temp_string, 10);
                         strcat(specials_list->names[specials_index], temp_string);
                         strcat(specials_list->names[specials_index], str_SPACE_rp__ovr102);
                         ability_has_plus = ST_FALSE;
@@ -675,7 +675,7 @@ void Hero_Build_Specials_List(int16_t unit_idx, struct s_UV_List * specials_list
             {
                 if(ability_has_plus == ST_TRUE)
                 {
-                    SDL_itoa(ability_value, temp_string, 10);
+                    stu_itoa(ability_value, temp_string, 10);
                     strcat(specials_list->names[specials_index], str_SPACE_Plus__ovr102);
                     strcat(specials_list->names[specials_index], temp_string);
                 }
@@ -704,18 +704,18 @@ void Hero_Build_Specials_List(int16_t unit_idx, struct s_UV_List * specials_list
             if(global_battle_unit->mana_max > global_battle_unit->mana)
             {
                     ability_value = global_battle_unit->mana;
-                    SDL_itoa(ability_value, temp_string, 10);
+                    stu_itoa(ability_value, temp_string, 10);
                     strcat(specials_list->names[specials_index], temp_string);
                     strcat(specials_list->names[specials_index], str_SPACE_OpenParen__ovr102);
                     ability_value = global_battle_unit->mana_max;
-                    SDL_itoa(ability_value, temp_string, 10);
+                    stu_itoa(ability_value, temp_string, 10);
                     strcat(specials_list->names[specials_index], temp_string);
                     strcat(specials_list->names[specials_index], str_CloseParen__ovr102);
             }
             else
             {
                 ability_value = global_battle_unit->mana_max;
-                SDL_itoa(ability_value, temp_string, 10);
+                stu_itoa(ability_value, temp_string, 10);
                 strcat(specials_list->names[specials_index], temp_string);
             }
             strcat(specials_list->names[specials_index], str_SPACE_mp__ovr102);

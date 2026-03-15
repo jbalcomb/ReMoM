@@ -21,11 +21,10 @@ MoO2
     Module: MAPGEN
 */
 
-#ifdef STU_DEBUG
 #include "../../STU/src/STU_DBG.h"
-#include "../../STU/src/STU_UTST.h"
 #include "../../STU/src/STU_VLD.h"
-#endif
+
+#include "../../ext/stu_compat.h"
 
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
@@ -34,7 +33,7 @@ MoO2
 #include "../../MoX/src/Graphics.h"
 #include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/Mouse.h"
-#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_BITS.h"  /* GET_2B_OFS() */
 #include "../../MoX/src/MOX_DAT.h"  /* _players[]; enum e_SCOUT_BITS{} */
@@ -1455,7 +1454,6 @@ void Rebalance_Node_Types(int16_t wp)
 ; creates random patches of Tundra, Desert, and Swamp,
 ; converting existing land based on various conditions
 */
-/*
 /*
 sets tt_Tundra1, tt_Desert1, tt_Swamp1
 */
@@ -5358,7 +5356,7 @@ attempt:
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
         strcpy(buffer, _CITIES[itr_cities].name);
-        if(_stricmp(buffer, &city_names_buffer[(city_name_idx * LEN_CITY_NAME)]) == 0)
+        if(stu_stricmp(buffer, &city_names_buffer[(city_name_idx * LEN_CITY_NAME)]) == 0)
         {
             if(attempts < 200)
             {

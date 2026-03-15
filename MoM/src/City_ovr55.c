@@ -6,6 +6,12 @@
 
 */
 
+#ifdef STU_DEBUG
+#include "../../STU/src/STU_DBG.h"
+#endif
+
+#include "../../ext/stu_compat.h"
+
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Fonts.h"
@@ -17,7 +23,7 @@
 #include "../../MoX/src/Util.h"
 #include "../../MoX/src/random.h"
 #include "../../MoX/src/Fields.h"
-#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _screen_seg */
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_T4.h"
@@ -43,7 +49,7 @@
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 #include <stdlib.h>
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 #include "City_ovr55.h"
 
@@ -1949,8 +1955,7 @@ void Build_City_Enchantment_List(int16_t city_idx, int16_t city_enchantment_list
         {
             city_enchantment_list[city_enchantment_count] = itr_city_enchantments;
 
-            // TODO  stricmp() for Linux/clang? if(stricmp(_city_enchantment_names[itr_city_enchantments], str_Nightshade) == 0)
-            if(strcmp(_city_enchantment_names[itr_city_enchantments], str_Nightshade) == 0)
+            if(stu_stricmp(_city_enchantment_names[itr_city_enchantments], str_Nightshade) == 0)
             {
                 city_enchantment_owner_list[city_enchantment_count] = 10;
             }
@@ -2513,7 +2518,7 @@ void Resource_Breakdown__STUB(int16_t resource_id)
             for(itr = 0; itr < 15; itr++)
             {
 
-                LBX_Load_Data_Static(str_listdat_lbx_file__ovr055, 0, (SAMB_ptr)GUI_String_1[0], (di + itr), 1, 200);
+                LBX_Load_Data_Static(str_listdat_lbx_file__ovr055, 0, (SAMB_ptr)&GUI_String_1[0], (di + itr), 1, 200);
 
                 strcpy((char *)IDK_CityScr_15x50_tmpbuf[itr], GUI_String_1);
 

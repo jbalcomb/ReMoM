@@ -36,7 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 
 
@@ -212,7 +212,7 @@ void Merchant_Popup_Draw(void)
 
     strcat(GUI_NearMsgString, cnst_Merchant_Msg_2);
 
-    SDL_itoa(GAME_AssetCost, item_name, 10);
+    stu_itoa(GAME_AssetCost, item_name, 10);
 
     strcat(GUI_NearMsgString, item_name);
 
@@ -385,7 +385,7 @@ void Hire_Hero_Popup_Draw(void)
     if(GAME_HeroHireType == 0)  // ; 0: random, 1: summon, 2: prisoner, 3: champion
     {
         strcpy(GUI_NearMsgString, cnst_Hire_Msg_1);
-        SDL_itoa(GAME_AssetCost, temp_string, 10);
+        stu_itoa(GAME_AssetCost, temp_string, 10);
         strcat(GUI_NearMsgString, temp_string);
         strcat(GUI_NearMsgString, cnst_Hire_Msg_2);
     }
@@ -748,12 +748,12 @@ void Hire_Merc_Popup_Draw(void)
     }
     else
     {
-        SDL_itoa(EVNT_MercUnitCount, temp_string, 10);
+        stu_itoa(EVNT_MercUnitCount, temp_string, 10);
         strcpy(GUI_NearMsgString, temp_string);
         strcat(GUI_NearMsgString, cnst_Hire_Msg_A);
     }
 
-    SDL_itoa(GAME_AssetCost, temp_string, 10);
+    stu_itoa(GAME_AssetCost, temp_string, 10);
 
     strcat(GUI_NearMsgString, temp_string);
 

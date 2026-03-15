@@ -1,5 +1,5 @@
 
-set(MOMLIB_SOURCES
+set(LIBMOM_SOURCES
     AdvsrScr.c
     AIBUILD.c
     AIDATA.c
@@ -75,47 +75,15 @@ set(MOMLIB_SOURCES
     WZD_o143.c
     WZD_o146.c
 )
-
-# find_package(SDL2 REQUIRED)
-# # get_target_property(imported_location SDL2::Core IMPORTED_LOCATION)
-# # message(STATUS "IMPORTED_LOCATION: ${imported_location}")
-# # get_target_property(imported_location SDL2::Main IMPORTED_LOCATION)
-# # message(STATUS "IMPORTED_LOCATION: ${imported_location}")
-# # get_target_property(interface_include_directories SDL2::Main INTERFACE_INCLUDE_DIRECTORIES)
-# # message(STATUS "INTERFACE_INCLUDE_DIRECTORIES: ${interface_include_directories}")
-# # get_target_property(interface_include_directories SDL2::Main INTERFACE_INCLUDE_DIRECTORIES)
-# # message(STATUS "INTERFACE_INCLUDE_DIRECTORIES: ${interface_include_directories}")
-# find_package(SDL2_mixer REQUIRED)
-# # get_target_property(imported_location SDL2::Mixer IMPORTED_LOCATION)
-# # message(STATUS "IMPORTED_LOCATION: ${imported_location}")
-# # get_target_property(interface_include_directories SDL2::Mixer INTERFACE_INCLUDE_DIRECTORIES)
-# # message(STATUS "INTERFACE_INCLUDE_DIRECTORIES: ${interface_include_directories}")
-# # >>> [cmake] -- IMPORTED_LOCATION: C:/devellib/SDL2-2.32.2/lib/x64/SDL2.lib
-# # >>> [cmake] -- IMPORTED_LOCATION: imported_location-NOTFOUND
-# # >>> [cmake] -- INTERFACE_INCLUDE_DIRECTORIES: interface_include_directories-NOTFOUND
-# # >>> [cmake] -- INTERFACE_INCLUDE_DIRECTORIES: interface_include_directories-NOTFOUND
-# # >>> [cmake] -- IMPORTED_LOCATION: C:/devellib/SDL2_mixer-2.8.1/lib/x64/SDL2_mixer.lib
-# # >>> [cmake] -- INTERFACE_INCLUDE_DIRECTORIES: C:/devellib/SDL2_mixer-2.8.1/include
-
-# add_library(momlib STATIC ${MOMLIB_SOURCES} ${SDL2_SOURCES})
-add_library(momlib STATIC ${MOMLIB_SOURCES})
-
-# set_target_properties(momlib PROPERTIES LINKER_LANGUAGE C)
-set_target_properties(momlib PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    
+add_library(momlib STATIC ${LIBMOM_SOURCES})
 
 target_link_libraries(momlib PUBLIC
     MOX
     STU
-    SDL2::Main
+    Platform
 )
 
 target_include_directories(momlib PUBLIC
-    ${PROJECT_SOURCE_DIR}
     ${PROJECT_SOURCE_DIR}/src
-    ${SDL2_INCLUDE_DIR}
-    ${SDL2_MIXER_INCLUDE_DIR}
 )
-
-ReMoM_Apply_Common_Compile_Definitions(momlib)
-
-ReMoM_Apply_Common_Compile_Options(momlib)

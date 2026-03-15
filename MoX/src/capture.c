@@ -80,8 +80,12 @@ extern void Set_Page_Off(void);
 extern void Create_Picture(int width, int height, unsigned int pict_seg);
 extern void /* far */ Capture_Screen_Block(unsigned int /* far */ frame_data_seg, int x1, int y1, int x2, int y2);
 // int Screen_Picture_Capture(int x1, int y1, int x2, int y2, unsigned int pict_seg)
+#include "../../ext/stu_compat.h"
 
 #include "capture.h"
+
+/* COPILOT */ extern uint8_t * current_palette;
+/* COPILOT */ extern void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg);
 
 
 
@@ -174,14 +178,13 @@ short int Screen_Flic_Capture(void)
         file_number++;
         if (file_number < 10)
         {
-            strcpy(scanline_buffer, "0"); /* cnst_Scrdmp_0 */
-            itoa(file_number, conversion_str, 10);
-            strcat(scanline_buffer, conversion_str);
+            strcpy(scanline_buffer, cnst_Scrdmp_0);  // "0"
+            SDL_itoa(Scrdmp_File_Number, Conversion_String, 10);
+            strcat(scanline_buffer, Conversion_String);
         }
         else
         {
-            itoa(file_number, scanline_buffer, 10);
-        }
+            SDL_itoa(Scrdmp_File_Number, scanline_buffer, 10);
 
         strcpy(file_name, "SCRDMP"); /* cnst_Scrdmp_Base */
         strcat(file_name, scanline_buffer);
@@ -290,98 +293,11 @@ short int Screen_Flic_Capture(void)
     return 0;
 }
 
-
 // WZD s24p03
-/* GEMINI + Copilot-GPT54 */
-/**
- * @brief Copies one 64-entry block of VGA DAC palette data into a caller-supplied buffer.
- *
- * The VGA DAC holds 256 colour registers, each described by three 6-bit component
- * values (red, green, blue). This function divides the 256-entry palette into four
- * contiguous blocks of 64 entries and copies the block identified by @p dac_block
- * into @p buffer in packed R-G-B order:
- *
- *   block 0 → palette entries   0 –  63
- *   block 1 → palette entries  64 – 127
- *   block 2 → palette entries 128 – 191
- *   block 3 → palette entries 192 – 255
- *
- * The source of the data is the global `current_palette` array, which stores the
- * entire 768-byte (256 × 3) palette in the same packed R-G-B format.
- *
- * Out-of-range block indices are silently clamped to the valid range [0, 3].
- * If @p buffer is NULL the function returns immediately without accessing memory.
- *
- * @param dac_block  Zero-based block index in the range [0, 3]. Values below 0 are
- *                   treated as 0; values above 3 are treated as 3.
- * @param buffer     Destination byte array. Must point to a buffer of at least
- *                   192 bytes (64 colours × 3 bytes per colour). The written
- *                   layout is: R0, G0, B0, R1, G1, B1, …, R63, G63, B63.
- *                   Passing NULL is safe; the function is a no-op in that case.
- */
-void VGA_GetDACBlock(short int dac_block, uint8_t *buffer)
-{
-    short int start_color;
-    short int offset;
-
-    if (buffer == NULL) {
-        return;
-    }
-
-    if (dac_block < 0) {
-        dac_block = 0;
-    }
-    if (dac_block > 3) {
-        dac_block = 3;
-    }
-
-    start_color = dac_block << 6;
-    offset = start_color * 3;
-
-    memcpy(buffer, current_palette + offset, 64 * 3);
-}
-
+// drake178: VGA_GetDACBlock()
 
 // WZD s24p04
-/* GEMINI + Copilot-GPT54 */
-/**
- * @brief Copies one full scanline of the active video page into a caller buffer.
- *
- * Reads the row identified by @p line from `current_video_page` and writes
- * `SCREEN_WIDTH` bytes into @p scanline_buffer. Each byte is a palette index
- * for a single pixel in 8-bit indexed mode.
- *
- * Safety checks performed by this function:
- * - Returns immediately if @p scanline_buffer is NULL.
- * - Returns immediately if @p line is outside [0, SCREEN_HEIGHT - 1].
- *
- * @param line            Zero-based scanline index to copy.
- * @param scanline_buffer Destination buffer that must be large enough to hold
- *                        `SCREEN_WIDTH` bytes.
- *
- * @return This function returns no value.
- */
-
-void VGA_ReadScreenLine(short int line, char *scanline_buffer)
-{
-    short int x;
-    uint8_t * src;
-
-    if (scanline_buffer == NULL) {
-        return;
-    }
-
-    if (line < 0 || line >= SCREEN_HEIGHT) {
-        return;
-    }
-
-    src = current_video_page + (line * SCREEN_WIDTH);
-
-    for (x = 0; x < SCREEN_WIDTH; ++x) {
-        scanline_buffer[x] = (char)src[x];
-    }
-}
-
+// drake178: VGA_ReadScreenLine()
 
 // WZD s24p05
 // MoO2  Module: capture  Release_Version()  Address: 01:00110B34
@@ -399,94 +315,6 @@ int Check_Release_Version(void)
 
 // WZD s24p07
 // MoO2  Module: capture  Screen_Flic_Capture()  Address: 01:001101F0
-/* GEMINI + Copilot-GPT54 */
-/**
- * @brief Captures a rectangular screen region into a picture buffer.
- *
- * Switches to the off-page context, computes rectangle dimensions from inclusive
- * corner coordinates, allocates/initializes the destination picture via
- * `Create_Picture()`, then copies pixel data from the current video page into the
- * picture payload via `Capture_Screen_Block()`.
- *
- * Width and height are normalized to non-negative values before calling
- * `Create_Picture()`. Pixel data is stored starting at `pict_seg + SZ_FLIC_HDR`,
- * leaving room for the picture header.
- *
- * @param x1       Left source coordinate (inclusive).
- * @param y1       Top source coordinate (inclusive).
- * @param x2       Right source coordinate (inclusive).
- * @param y2       Bottom source coordinate (inclusive).
- * @param pict_seg Destination picture buffer segment/pointer where the picture
- *                 header and payload are written.
- *
- * @return This function returns no value.
- */
-void Screen_Picture_Capture(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr pict_seg)
-{
-    int16_t width;
-    int16_t height;
-
-    Set_Page_Off();
-
-    width = x2 - x1 + 1;
-    height = y2 - y1 + 1;
-
-    if (width < 0)
-    {
-        width = -width;
-    }
-
-    if (height < 0)
-    {
-        height = -height;
-    }
-
-    Create_Picture(width, height, pict_seg);
-    Capture_Screen_Block(pict_seg + SZ_FLIC_HDR, x1, y1, x2, y2);
-}
-
 
 // WZD s24p08
 // MoO2  Module: shear  Capture_Screen_Block_()  Address: 01:0014791B
-/* GEMINI + Copilot-GPT54 */
-/**
- * @brief Copies a rectangular region from the active screen page into a linear frame buffer.
- *
- * Computes rectangle dimensions from inclusive corner coordinates and copies pixels
- * row-by-row from `current_video_page` into @p frame_data in packed linear order.
- * The first byte written corresponds to (x1, y1), followed by increasing x, then
- * subsequent rows in increasing y.
- *
- * This routine performs no clipping or bounds validation; callers are expected to
- * pass coordinates that stay within the valid screen area and a destination buffer
- * large enough to hold `((x2 - x1 + 1) * (y2 - y1 + 1))` bytes.
- *
- * @param frame_data Destination buffer for captured pixels.
- * @param x1         Left coordinate of the source rectangle (inclusive).
- * @param y1         Top coordinate of the source rectangle (inclusive).
- * @param x2         Right coordinate of the source rectangle (inclusive).
- * @param y2         Bottom coordinate of the source rectangle (inclusive).
- *
- * @return This function returns no value.
- */
-void Capture_Screen_Block(byte_ptr frame_data, int16_t x1, int16_t y1, int16_t x2, int16_t y2)
-{
-    byte_ptr buffer;
-    byte_ptr screen_page;
-    int16_t width;
-    int16_t height;
-    int16_t itr_width;
-    int16_t itr_height;
-
-    width = x2 - x1 + 1;
-    height = y2 - y1 + 1;
-
-    buffer = frame_data;
-    screen_page = current_video_page + (y1 * SCREEN_WIDTH) + x1;
-
-    for (itr_height = 0; itr_height < height; ++itr_height) {
-        for (itr_width = 0; itr_width < width; ++itr_width) {
-            *buffer++ = *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width);
-        }
-    }
-}

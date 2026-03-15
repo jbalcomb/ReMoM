@@ -11,12 +11,12 @@
 // #endif
 
 #include "DOS.h"
-#include "MOM_Data.h"
+#include "MOM_DAT.h"
 #include "MOX_DAT.h"  /* _players[]; _screen_seg; */
 #include "MOX_SET.h"  /* magic_set */
 #include "Util.h"
 
-#include "MOM_PFL.h"
+#include "../../platform/include/Platform.h"
 
 #include <assert.h>     /* assert() */
 #include <math.h>       /* sqrt() */
@@ -46,7 +46,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     }
     else
     {
-        SDL_itoa((save_gam_idx + 1), temp_string, 10);
+        stu_itoa((save_gam_idx + 1), temp_string, 10);
         strcpy(file_name, "SAVE");
         strcat(file_name, temp_string);
         strcat(file_name,".GAM");
@@ -216,7 +216,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     }
     else
     {
-        SDL_itoa((save_gam_idx + 1), temp_string, 10);
+        stu_itoa((save_gam_idx + 1), temp_string, 10);
         strcpy(file_name, "SAVE");
         strcat(file_name, temp_string);
         strcat(file_name,".GAM");

@@ -38,7 +38,7 @@
 #include <stdlib.h>
 #include <string.h>     /* memset(), strcat(), strcpy(); */
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 // #include "../MOM.h"
 
@@ -330,8 +330,8 @@ void Near_Allocation_Error(int16_t size)
 {
     strcpy(near_buffer, "Near Allocation too large by ");  // cnst_Alloc_Error01[] = "Near Allocation too large by "
 
-    // SDL_itoa(size, Tmp_Conv_Str_1, 10);
-    SDL_itoa(size, &near_buffer[100], 10);
+    // stu_itoa(size, Tmp_Conv_Str_1, 10);
+    stu_itoa(size, &near_buffer[100], 10);
 
     // strcat(near_buffer, Tmp_Conv_Str_1);
     strcat(near_buffer, &near_buffer[100]);
@@ -563,7 +563,7 @@ void Allocation_Error(uint16_t error_num, uint16_t blocks)
     if(Check_Release_Version() == ST_TRUE)
     {
         strcpy(buffer, "Insufficient memory. You need at least ");
-        SDL_itoa(640, buffer2, 10);
+        stu_itoa(640, buffer2, 10);
         strcat(buffer, buffer2);
         strcat(buffer, "K free. Try removing all TSR's.");
     }
@@ -592,7 +592,7 @@ void Allocation_Error(uint16_t error_num, uint16_t blocks)
                 strcat(buffer, str_allocation_errors[9]);
                 break;
         }
-        SDL_itoa(blocks, buffer2, 10);
+        stu_itoa(blocks, buffer2, 10);
         strcat(buffer, buffer2);
         strcat(buffer, str_allocation_errors[6]);
     }

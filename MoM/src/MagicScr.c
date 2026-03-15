@@ -33,7 +33,7 @@
 
 #include <stdlib.h>
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 #include "MagicScr.h"
 
@@ -1147,7 +1147,7 @@ void Magic_Screen_Draw(void)
     Set_Outline_Color(19);
     Set_Alias_Color(185);
 
-    SDL_itoa(mana, GUI_String_1, 10);
+    stu_itoa(mana, GUI_String_1, 10);
     strcat(GUI_String_1, cnst_Space_MP);
     Print_Right(54, 160, GUI_String_1);
 
@@ -1157,12 +1157,12 @@ void Magic_Screen_Draw(void)
     }
     else
     {
-        SDL_itoa(research, GUI_String_1, 10);
+        stu_itoa(research, GUI_String_1, 10);
         strcat(GUI_String_1, aRp_0);
         Print_Right(101, 160, GUI_String_1);
     }
 
-    SDL_itoa(skill, GUI_String_1, 10);
+    stu_itoa(skill, GUI_String_1, 10);
     strcat(GUI_String_1, aSp);
     Print_Right(148, 160, GUI_String_1);
 
@@ -1176,8 +1176,8 @@ void Magic_Screen_Draw(void)
         "Casting Skill:"
     */
     Print(5, 177, aCastingSkill);
-    SDL_itoa((Player_Base_Casting_Skill(_human_player_idx) + Player_Hero_Casting_Skill(_human_player_idx)), GUI_String_1, 10);
-    SDL_itoa(Player_Base_Casting_Skill(_human_player_idx), GUI_String_2, 10);
+    stu_itoa((Player_Base_Casting_Skill(_human_player_idx) + Player_Hero_Casting_Skill(_human_player_idx)), GUI_String_1, 10);
+    stu_itoa(Player_Base_Casting_Skill(_human_player_idx), GUI_String_2, 10);
     strcat(GUI_String_1, cnst_OpeningBrace_2);
     strcat(GUI_String_1, GUI_String_2);
     strcat(GUI_String_1, cnst_ClosingBrace_2);

@@ -207,7 +207,7 @@ static int verify_table_u16(
 
 int main(int argc, char *argv[])
 {
-    int emit_mode = (argc > 1 && strcmp(argv[1], "--emit") == 0);
+    int emit_mode = (argc > 1 && stu_stricmp(argv[1], "--emit") == 0);
     unsigned char  gen_tan_0_44[45];
     unsigned short gen_tan_45_89[45];
     unsigned short gen_sin[90];

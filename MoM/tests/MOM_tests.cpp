@@ -38,7 +38,7 @@ extern "C" {
 #endif
 #include "../../MoX/src/Allocate.h" /* _cities[], _UNITS[] */
 #include "../../MoX/src/LBX_Load.h" /* LBX_Load_Data_Static() */
-#include "../../MoX/src/MOM_Data.h" /* _cities[], _UNITS[] */
+#include "../../MoX/src/MOM_DAT.h" /* _cities[], _UNITS[] */
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
 #include "../../MoX/src/MOX_DEF.h"  /* HUMAN_PLAYER_IDX */
 #include "../../MoX/src/MOX_UPD.h"  /* UNITS_FINISHED */
@@ -59,7 +59,7 @@ extern "C" {
 */
 // Spells132.c
 // WZD dseg:68A8
-char names_lbx_file__ovr132[];
+extern char names_lbx_file__ovr132[];
 
 #ifdef __cplusplus
 }

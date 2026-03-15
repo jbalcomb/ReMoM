@@ -694,7 +694,7 @@ void Draw_Mouse_On_Page_(int16_t x, int16_t y)
     {
         for(itr_width = 0; itr_width < width; itr_width++)
         {
-            pixel = *(mouse_image + (itr_height * CURSOR_HEIGHT) + itr_width);
+            pixel = *(mouse_image + (itr_width * CURSOR_HEIGHT) + itr_height);
             if(pixel != ST_TRANSPARENT)
             {
                 *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width) = pixel;
@@ -729,7 +729,7 @@ void Draw_Mouse_Off_Page_(int16_t x, int16_t y)
     {
         for(itr_width = 0; itr_width < width; itr_width++)
         {
-            pixel = *(mouse_image + (itr_height * CURSOR_HEIGHT) + itr_width);
+            pixel = *(mouse_image + (itr_width * CURSOR_HEIGHT) + itr_height);
             if(pixel != ST_TRANSPARENT)
             {
                 *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width) = pixel;

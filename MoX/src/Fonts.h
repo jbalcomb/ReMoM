@@ -470,9 +470,7 @@ void Print_Character_No_Alias_ASM(int16_t x_start, int16_t y_start, int16_t widt
 int16_t Get_String_Width(char * string);
 
 // WZD s18p08
-// drake178: VGA_DrawPartialChar()
-// ¿ MoO2  Module: fonts  Print_Clipped_Character() ?
-void Print_Clipped_Character(int16_t x, int16_t y, char char_num, int16_t skip_x, int16_t width, int16_t skip_y, int16_t max_y);
+void Print_Clipped_Character(int16_t x, int16_t y, int8_t char_num, int16_t skip_x, int16_t width, int16_t skip_y, int16_t max_y);
 
 // WZD s18p09
 // drake178: VGA_DrawPartialGlyph()

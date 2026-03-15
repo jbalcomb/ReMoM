@@ -15,7 +15,7 @@
 #include "../../MoX/src/MOX_SET.h"
 #include "../../MoX/src/MOX_T4.h"
 #include "../../MoX/src/LBX_Load.h"
-#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_TYPE.h"
 #include "../../MoX/src/SOUND.h"
 

@@ -80,6 +80,12 @@ extern "C" {
 /* Convert integer to string with given radix (2-36). Returns dst. */
 char *stu_itoa(int value, char *dst, int radix);
 
+/* Convert long to string with given radix (2-36). Returns dst. */
+char *stu_ltoa(long value, char *dst, int radix);
+
+/* Convert unsigned long to string with given radix (2-36). Returns dst. */
+char *stu_ultoa(unsigned long value, char *dst, int radix);
+
 /* Case-insensitive string comparison. Returns <0, 0, or >0. */
 int stu_stricmp(const char *s1, const char *s2);
 
@@ -181,6 +187,85 @@ char *stu_itoa(int value, char *dst, int radix)
 }
 
 /* --------------------------------------------------------------------------
+ * stu_ltoa - portable long to string conversion
+ * -------------------------------------------------------------------------- */
+char *stu_ltoa(long value, char *dst, int radix)
+{
+    char tmp[34];
+    char *tp = tmp;
+    char *out = dst;
+    int sign;
+    unsigned long v;
+
+    if (radix < 2 || radix > 36)
+    {
+        dst[0] = '\0';
+        return dst;
+    }
+
+    sign = (radix == 10 && value < 0);
+    if (sign)
+    {
+        v = (unsigned long)(-(value + 1)) + 1uL;
+    }
+    else
+    {
+        v = (unsigned long)value;
+    }
+
+    while (v || tp == tmp)
+    {
+        unsigned long digit = v % (unsigned long)radix;
+        *tp++ = (char)(digit < 10 ? '0' + digit : 'a' + digit - 10);
+        v /= (unsigned long)radix;
+    }
+
+    if (sign)
+    {
+        *out++ = '-';
+    }
+
+    while (tp > tmp)
+    {
+        *out++ = *--tp;
+    }
+    *out = '\0';
+
+    return dst;
+}
+
+/* --------------------------------------------------------------------------
+ * stu_ultoa - portable unsigned long to string conversion
+ * -------------------------------------------------------------------------- */
+char *stu_ultoa(unsigned long value, char *dst, int radix)
+{
+    char tmp[34];
+    char *tp = tmp;
+    char *out = dst;
+
+    if (radix < 2 || radix > 36)
+    {
+        dst[0] = '\0';
+        return dst;
+    }
+
+    while (value || tp == tmp)
+    {
+        unsigned long digit = value % (unsigned long)radix;
+        *tp++ = (char)(digit < 10 ? '0' + digit : 'a' + digit - 10);
+        value /= (unsigned long)radix;
+    }
+
+    while (tp > tmp)
+    {
+        *out++ = *--tp;
+    }
+    *out = '\0';
+
+    return dst;
+}
+
+/* --------------------------------------------------------------------------
  * stu_stricmp - portable case-insensitive string comparison
  * -------------------------------------------------------------------------- */
 int stu_stricmp(const char *s1, const char *s2)
@@ -240,6 +325,9 @@ int stu_getch(void)
     newt = oldt;
     newt.c_lflag &= ~((tcflag_t)ICANON | (tcflag_t)ECHO);
     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+// implicit declaration of function 'getchar' is invalid in C99 [-Wimplicit-function-declaration]
+// ...but, not meant to be a declaration, just a call to the function...
+#include <stdio.h>
     ch = getchar();
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     return ch;
@@ -283,6 +371,9 @@ void stu_tzset(void)
 #if STU_COMPILER_MSVC
     _tzset();
 #else
+// implicit declaration of function 'tzset' is invalid in C99 [-Wimplicit-function-declaration]
+// ...but, not meant to be a declaration, just a call to the function...
+#include <time.h>
     tzset();
 #endif
 }

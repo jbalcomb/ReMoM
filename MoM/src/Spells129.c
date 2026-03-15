@@ -3,12 +3,14 @@
         ovr129
 */
 
+#ifdef STU_DEBUG
 #include "../../STU/src/STU_DBG.h"
+#endif
 
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/GENDRAW.h"
 #include "../../MoX/src/LBX_Load.h"
-#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_DAT.h"
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/random.h"

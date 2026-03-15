@@ -8,14 +8,11 @@ MoO2
 Module: AITECH
 */
 
-
-#ifdef STU_DEBUG
 #include "../../STU/src/STU_DBG.h"
-#endif
 
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/EXIT.h"
-#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_DAT.h"
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_T4.h"

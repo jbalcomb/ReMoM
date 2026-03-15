@@ -1,3 +1,18 @@
+Draw_Expanding_Bitmap is an animated screen transition effect — a "grow-out" or zoom-in reveal. It takes a source image and progressively scales it up from a starting point until it fills the full 320x200 screen.
+
+Here's how it works step by step:
+
+Setup — Copies the current screen contents into a buffer (the "background" behind the growing image).
+Animation loop (runs counter frames) — Each iteration:
+Calculates a growing rectangle anchored near (x_start, y_start) that expands proportionally each frame
+Scales the source picture bitmap to the current Resize_Percent
+Draws the scaled bitmap at the calculated position
+Flips pages (double-buffered) and waits 1 tick
+The effect is that the image starts as a small rectangle near the given coordinates and smoothly grows to fill the entire screen — like a "zoom in" or iris-out transition.
+
+It's marked __WIP because the original EMM (Expanded Memory Manager) calls for saving/restoring the background screen buffer are still commented out (lines 792-795, 799-801) — those DOS-era memory operations haven't been fully replaced yet in the reconstruction.
+
+
 
 
 
@@ -249,6 +264,11 @@ if(_NUM_STARS > 54)
 [ ] MapGen - missing SE corner Shore?
 
 
+
+[ ] make Near_Allocate_First, etc. return (void *)
+
+
+
 DIPLOMAC.LBX [entry 52]  was not properly allocated or has been corrupted.
 
 [ ] Clean the hot mess that is Play_Sound ... // DOMSDOS  Play_Sound__STUB(SND_Spell_Music);  Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
@@ -265,8 +285,13 @@ TODO  review CMB_TileGen__WIP() and friends
 CMB_Units_Init__WIP()
 
 
+[x] have Claude code a tool to generate the tan, sin, and cos tables for angle.c
+
+[ ] feed Gemini the whole path from GAME_DrawLimboFall() through the rotated drawing functions
 
 [ ] fix naming for attack_idx/defender_idx for player or battle_unit
+
+[ ] check out: /home/jbalcomb/devel/ReMoM/build/_deps/googletest-src/googletest/include/gtest/internal/gtest-port.h
 
 
 

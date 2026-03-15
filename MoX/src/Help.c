@@ -16,7 +16,7 @@ MoO2
 
 #include "../../MoX/src/Help.h"
 
-#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_TYPE.h"
 #include "../../MoX/src/Input.h"
 #include "../../MoX/src/LBX_Load.h"

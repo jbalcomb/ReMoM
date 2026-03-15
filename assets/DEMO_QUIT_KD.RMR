@@ -1,0 +1,9 @@
+# ReMoM Replay v2
+# random_seed=0
+# screen_scale=4
+# frame_count=4
+# idx,timestamp_ms,delta_ms,mouse_x,mouse_y,mouse_buttons,key_pressed,key_count,keys...
+0,2000,2000,0,0,0,1,1,283
+1,2100,100,0,0,0,0,0
+2,6000,3900,0,0,0,1,1,4209
+3,6100,100,0,0,0,0,0

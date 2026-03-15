@@ -4,10 +4,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_SET.h"
 
 void Clear_Gibs(int16_t battle_unit_idx);
+void Make_Missiles(int16_t missile_count, int16_t Targets, int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t TgtY, int16_t Type);
 void Melee_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t attacker_damage, int16_t defender_damage, int16_t cgx, int16_t cgy);
 #ifdef __cplusplus
 }
@@ -136,6 +137,23 @@ TEST_F(Melee_Animation_test, Regression_UnitVsCell_CurrentImplementationDiesWith
                 /*defender_damage=*/0,
                 /*cgx=*/13,
                 /*cgy=*/3);
+        },
+        ".*");
+}
+
+
+TEST(Make_Missiles_test, Regression_CurrentImplementationDiesWithoutMissileBufferInit)
+{
+    ASSERT_DEATH(
+        {
+            Make_Missiles(
+                /*missile_count=*/1,
+                /*Targets=*/1,
+                /*SrcX=*/6,
+                /*SrcY=*/8,
+                /*TgtX=*/10,
+                /*TgtY=*/12,
+                /*Type=*/1);
         },
         ".*");
 }

@@ -60,7 +60,7 @@ XREF:
     Print_Character()
     Print_Character_No_Alias()
     Print_Clipped_Character()
-    PageFlip_GrowOut_CopyScreen()
+    Copy_Screen_To_Bitmap()
     VGA_ReadScreenLine()
     Capture_Screen_Block()
     Draw_File_Animation_Frame__WIP()

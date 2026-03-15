@@ -29,7 +29,7 @@ MoO2
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/Input.h"
 #include "../../MoX/src/LBX_Load.h"
-#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_BASE.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
 #include "../../MoX/src/MOX_DEF.h"
@@ -55,7 +55,7 @@ MoO2
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 #include "DIPLOMAC.h"
 
@@ -4056,7 +4056,7 @@ static void Diplomacy_Offer_Tribute(void)
     for(itr = 0; itr < list_count; itr++)
     {
 
-        SDL_itoa(gold_amounts[itr], string, 10);
+        stu_itoa(gold_amounts[itr], string, 10);
 
         strcpy(G_Some_DIPL_Allocs_7[itr], lstr_gold);
 
@@ -5173,7 +5173,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             m_diplomacy_message[pos] = 0;
 
-                            SDL_itoa(_players[HUMAN_PLAYER_IDX].Dipl.field_114[player_idx], string, 10);
+                            stu_itoa(_players[HUMAN_PLAYER_IDX].Dipl.field_114[player_idx], string, 10);
                             assert(string[30] == 0);
 
                             strcat(m_diplomacy_message, string);
@@ -5201,7 +5201,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             m_diplomacy_message[pos] = 0;
 
-                            SDL_itoa(_players[HUMAN_PLAYER_IDX].Dipl.field_114[player_idx], string, 10);
+                            stu_itoa(_players[HUMAN_PLAYER_IDX].Dipl.field_114[player_idx], string, 10);
                             assert(string[30] == 0);
 
                             strcat(m_diplomacy_message, string);
@@ -5309,7 +5309,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             m_diplomacy_message[pos] = 0;
 
-                            SDL_itoa((1400 + (_turn / 12)), string, 10);
+                            stu_itoa((1400 + (_turn / 12)), string, 10);
                             assert(string[30] == 0);
 
                             strcat(m_diplomacy_message, string);
@@ -5359,7 +5359,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             m_diplomacy_message[pos] = 0;
 
-                            SDL_itoa(word_42E66, string, 10);
+                            stu_itoa(word_42E66, string, 10);
                             assert(string[30] == 0);
 
                             strcat(m_diplomacy_message, string);

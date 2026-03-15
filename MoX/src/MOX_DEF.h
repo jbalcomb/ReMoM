@@ -1,7 +1,7 @@
 #ifndef MOX_DEF_H
 #define MOX_DEF_H
 
-#include "MOM_DATA.h"
+#include "MOM_DAT.h"
 #include "MOX_BASE.h"
 #include "MOX_UPD.h"
 #include "Video.h"
@@ -43,7 +43,7 @@ https://wiki.sei.cmu.edu/confluence/display/c/PRE12-C.+Do+not+define+unsafe+macr
 // x = x + y - ( y = x );
 // #define SWAP(x, y, T) do { T SWAP = x; x = y; y = SWAP; } while (0)  ...  invoke: SWAP(a, b, int);
 // 'Graphics Gems'
-#define SWAP(x, y) (x ^= y ^= x ^= y)
+#define SWAP(x, y) (x ^= y ^= x ^= y)  // ... UB!!  Sequence Point Violation
 // temp = x2; x2 = x1; x1 = temp;
 // temp = y2; y2 = y1; y1 = temp;
 #define SWAP_X() (temp = x2; x2 = x1; x1 = temp;)

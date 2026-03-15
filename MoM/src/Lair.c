@@ -42,7 +42,7 @@ NOTE: IDGI, but the FanDom MoM Wiki uses the term "Encounter Zone"
 
 #include <stdlib.h>
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 #include "Lair.h"
 
@@ -614,7 +614,7 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
     if(_LAIRS[lair_idx].Loot_Gold > 1)
     {
         Add_Comma_Or_And(&List_Count, Total_Rewards, lair_message_box_text);
-        SDL_itoa(_LAIRS[lair_idx].Loot_Gold, temp_string, 10);
+        stu_itoa(_LAIRS[lair_idx].Loot_Gold, temp_string, 10);
         strcat(lair_message_box_text, temp_string);
         strcat(lair_message_box_text, cnst_Reward_Msg_3);  // " gold"
     }
@@ -623,7 +623,7 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
     if(_LAIRS[lair_idx].Loot_Mana > 1)
     {
         Add_Comma_Or_And(&List_Count, Total_Rewards, lair_message_box_text);
-        SDL_itoa(_LAIRS[lair_idx].Loot_Mana, temp_string, 10);
+        stu_itoa(_LAIRS[lair_idx].Loot_Mana, temp_string, 10);
         strcat(lair_message_box_text, temp_string);
         strcat(lair_message_box_text, cnst_Reward_Msg_4);  // " mana crystals"
     }
@@ -664,7 +664,7 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
             Add_Comma_Or_And(&List_Count, Total_Rewards, lair_message_box_text);
             if(Reward_Specials[itr] < 100)
             {
-                SDL_itoa(amount[itr], temp_string, 10);
+                stu_itoa(amount[itr], temp_string, 10);
                 strcat(lair_message_box_text, temp_string);
                 strcat(lair_message_box_text, cnst_EZ_Msg_2);
                 /*
@@ -713,7 +713,7 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
                 Add_Comma_Or_And(&List_Count, Total_Rewards, lair_message_box_text);
                 if(amount[itr] > 1)
                 {
-                    SDL_itoa(amount[itr], temp_string, 10);
+                    stu_itoa(amount[itr], temp_string, 10);
                     strcat(lair_message_box_text, temp_string);
                     strcat(lair_message_box_text, cnst_EZ_Msg_2);  // " "
                     strcat(lair_message_box_text, Item_Type_Names[itr]);

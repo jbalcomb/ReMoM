@@ -4,6 +4,12 @@
         ovr050
 */
 
+#ifdef STU_DEBUG
+#include "../../STU/src/STU_DBG.h"
+#endif
+
+#include "../../ext/stu_compat.h"
+
 #include "../../MoX/src/DOS.h"
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/FLIC_Draw.h"
@@ -13,7 +19,7 @@
 #include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/LOADSAVE.h"
 #include "../../MoX/src/MOX_T4.h"
-#include "../../MoX/src/MOM_Data.h"  /* _difficulty, _magic, _landsize, _num_players */
+#include "../../MoX/src/MOM_DAT.h"  /* _difficulty, _magic, _landsize, _num_players */
 #include "../../MoX/src/Mouse.h"
 #include "../../MoX/src/MOX_DAT.h"
 #include "../../MoX/src/MOX_DEF.h"
@@ -27,11 +33,11 @@
 #include "Settings.h"
 #include "Spellbook.h"
 
-#include "../../STU/src/STU_DBG.h"
-
 #include <assert.h>
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), frite(), fseek(); */
 #include <string.h>
+
+#include "../../ext/stu_compat.h"
 
 #include "NewGame.h"
 
@@ -330,7 +336,8 @@ struct S_HERO_TEMPLATE _hero_premade_table[NUM_HERO_TYPES] = {
 
 
 // MGC  dseg:52C0
-int16_t _quit_button = 0;
+// MainMenu.c  int16_t _quit_button = 0;
+extern int16_t _quit_button;
 
 // MGC  dseg:5CB0
 SAMB_ptr newgame_ok_button_seg = 0;
@@ -1197,8 +1204,10 @@ int16_t spellpicks_count;
 // MGC  dseg:8E96
 SAMB_ptr _selection_marker_seg;
 
-// MGC  dseg:8E98 00 00                                           
-int16_t selected_load_game_slot_idx;
+// MGC  dseg:8E98
+// WZD dseg:C9B2
+// LoadScr.c  int16_t selected_load_game_slot_idx;
+extern int16_t selected_load_game_slot_idx;
 
 // MGC  dseg:8E9A 00 00                                           MAY__selected_save_game_slot_idx dw 0
 
@@ -1735,8 +1744,10 @@ int16_t Newgame_Screen_0(void)
         magic_set.MagicPower = 0;
     }
 
+#ifdef STU_DEBUG
     DBG_Print_MAGIC_SET("Newgame_Screen_0 after load");
     memcpy(&magic_set_snapshot, &magic_set, sizeof(struct s_MAGIC_SET));
+#endif
 
     Set_Mouse_List(1, mouse_list_newgame);
 
@@ -1787,7 +1798,9 @@ int16_t Newgame_Screen_0(void)
         if(input_field_idx == _ok_button)
         {
 
+#ifdef STU_DEBUG
             DBG_Compare_MAGIC_SET(&magic_set_snapshot, &magic_set, "Newgame_Screen_0 before save");
+#endif
 
             file_pointer = fopen(str_MAGIC_SET__ovr050, str_wb__ovr050);
 
@@ -3147,14 +3160,14 @@ Module: RACESEL
  */
 int16_t Newgame_Screen_6__WIP(void)
 {
-    char Arcanus_Races[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int8_t Arcanus_Races[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0 };  // TODO  DEDU  check Dasm for 1-byte, signed
     int16_t hotkey_ESC = 0;
     int8_t * wsa_ptr = 0;
     uint8_t * Shadow_Color = 0;
     uint8_t * Available_Color = 0;
     uint8_t * Not_Available_Color = 0;
     uint8_t Font_Colors[8] = {0, 0, 0, 0, 0, 0, 0, 0 };
-    char Myrran_Races[5] = { 0, 0, 0, 0, 0 };
+    int8_t Myrran_Races[5] = { 0, 0, 0, 0, 0 };
     int16_t input_field_idx = 0;
     int16_t leave_screen = 0;
     int16_t First_Draw_Done = 0;
@@ -3990,9 +4003,11 @@ int16_t Newgame_Screen_4__WIP(void)
                 (_players[0].spellranks[sbr_Death] != 0)
             )
             ||
+            (
                 (input_field_idx == m_newgame_fields[1])
                 &&
                 (_players[0].spellranks[sbr_Life] != 0)
+            )
         )
         {
             NEWG_PickError = 4;
@@ -4018,7 +4033,7 @@ int16_t Newgame_Screen_4__WIP(void)
                         {
                             if(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr)] > 0)
                             {
-                                itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr)], buffer, 10);
+                                stu_itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr)], buffer, 10);
                                 strcat(message, buffer);
                                 strcat(message, cnst_Pick_Error_22);  /* " picks in " */
                                 strcat(message, l_realm_name_character_array[itr]);
@@ -4039,7 +4054,7 @@ int16_t Newgame_Screen_4__WIP(void)
                                     {
                                         strcat(message, cnst_Pick_Error_29);
                                     }
-                                    itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr2)], buffer, 10);
+                                    stu_itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr2)], buffer, 10);
                                     strcat(message, buffer);
                                     strcat(message, cnst_Pick_Error_2A);
                                     strcat(message, l_realm_name_character_array[itr2]);
@@ -4050,7 +4065,7 @@ int16_t Newgame_Screen_4__WIP(void)
                         }
                         else
                         {
-                            itoa(p_wsa_prerequisites[NEWG_PickAttempt][0], buffer, 10);
+                            stu_itoa(p_wsa_prerequisites[NEWG_PickAttempt][0], buffer, 10);
                             strcat(message, buffer);
                             strcat(message, cnst_Pick_Error_24);  /* " pick"*/
                             if(p_wsa_prerequisites[NEWG_PickAttempt][0] > 1)
@@ -4063,7 +4078,7 @@ int16_t Newgame_Screen_4__WIP(void)
                             }
                             if(p_wsa_prerequisites[NEWG_PickAttempt][0] > 1)
                             {
-                                itoa(p_wsa_prerequisites[NEWG_PickAttempt][1], buffer, 10);
+                                stu_itoa(p_wsa_prerequisites[NEWG_PickAttempt][1], buffer, 10);
                                 strcat(message, buffer);
                                 strcat(message, cnst_Pick_Error_27);
                             }
@@ -4662,7 +4677,7 @@ void Newgame_Screen_4_Draw__WIP(void)
         }
     }
 
-    itoa(spellpicks_count, spellpicks_count_string, 10);
+    stu_itoa(spellpicks_count, spellpicks_count_string, 10);
 
     strcat(spellpicks_count_string, cnst_Picks);
 
@@ -5387,7 +5402,7 @@ void Newgame_Screen_5_Draw(void)
             NEWG_PickError = 1;
         }
     }
-    itoa(spellpicks_count, buffer, 10);
+    stu_itoa(spellpicks_count, buffer, 10);
     strcat(buffer, cnst_Picks);
 /* WTF */    if(spellpicks_count == 0)
 /* WTF */    {
@@ -5540,7 +5555,7 @@ void Newgame_Screen_5_Draw_Spells(void)
             spellpicks_count += m_select_count_common[spellrank_idx];
             strcpy(section_title_string, rarity_strings[0]);
             strcat(section_title_string, cnst_Spell_Select_2);
-            itoa(m_select_count_common[spellrank_idx], buffer, 10);
+            stu_itoa(m_select_count_common[spellrank_idx], buffer, 10);
             strcat(section_title_string, buffer);
             Set_Font_Colors_15(3, &realm_colors[0]);
             Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
@@ -5616,7 +5631,7 @@ void Newgame_Screen_5_Draw_Spells(void)
             Label_Box_Height = (39 + (section_idx * 51));
             strcpy(section_title_string, rarity_strings[1]);
             strcat(section_title_string, cnst_Spell_Select_2);
-            itoa(m_select_count_uncommon[spellrank_idx], buffer, 10);
+            stu_itoa(m_select_count_uncommon[spellrank_idx], buffer, 10);
             strcat(section_title_string, buffer);
             Set_Font_Colors_15(3, &realm_colors[0]);
             Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
@@ -5692,7 +5707,7 @@ void Newgame_Screen_5_Draw_Spells(void)
             Label_Box_Height = (39 + (section_idx * 51));
             strcpy(section_title_string, rarity_strings[2]);
             strcat(section_title_string, cnst_Spell_Select_2);
-            itoa(m_select_count_rare[spellrank_idx], buffer, 10);
+            stu_itoa(m_select_count_rare[spellrank_idx], buffer, 10);
             strcat(section_title_string, buffer);
             Set_Font_Colors_15(3, &realm_colors[0]);
             Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);

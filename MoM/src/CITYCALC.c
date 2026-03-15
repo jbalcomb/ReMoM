@@ -8,7 +8,7 @@
 
 #include "CITYCALC.h"
 
-#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_BASE.h"
 #include "../../MoX/src/MOX_BITS.h"
@@ -33,7 +33,7 @@
 
 #include <assert.h>
 #include <math.h>       /* sqrt() */
-#include <stdlib.h>     /* abs(); SDL_itoa(); malloc(); */
+#include <stdlib.h>     /* abs(); stu_itoa(); malloc(); */
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 
 

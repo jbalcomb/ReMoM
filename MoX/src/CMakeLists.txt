@@ -1,37 +1,5 @@
 
-set(WIN32_SOURCES
-    win_CLK.c
-    win_EMS.c
-    win_Fonts.c
-    win_Input.c
-    win_KD.c
-    win_MD.c
-    win_MoM.cpp
-    win_PFL.cpp
-    win_Video.c
-)
-
-set(SDL2_SOURCES
-    sdl2_EMM.c
-    sdl2_Input.c
-    sdl2_KD.c
-    sdl2_MD.c
-    sdl2_MOM.c
-    sdl2_PFL.c
-    sdl2_Timer.c
-)
-
-if(NOT DISABLE_AUDIO)
-set(SDL2_MIXER_SOURCES
-    sdl2_Audio.c
-)
-endif()
-
-set(PFL_SOURCES
-    MOM_PFL.c
-)
-
-set(MOX_SOURCES
+set(LIBMOX_SOURCES
     AIL.c
     Allocate.c
     angle.c
@@ -54,7 +22,7 @@ set(MOX_SOURCES
     LBX_Load.c
     LOADSAVE.c
     Mouse.c
-    MOM_Data.c
+    MOM_DAT.c
     MOX_DAT.c
     MOX_SET.c
     MOX_SND.c
@@ -69,31 +37,12 @@ set(MOX_SOURCES
     Video2.c
 )
 
-if(NOT DISABLE_AUDIO)
-    add_library(MOX STATIC ${MOX_SOURCES} ${PFL_SOURCES} ${SDL2_SOURCES} ${SDL2_MIXER_SOURCES})
-else()
-    add_library(MOX STATIC ${MOX_SOURCES} ${PFL_SOURCES} ${SDL2_SOURCES})
-endif()
-
-# set_target_properties(MOX PROPERTIES LINKER_LANGUAGE C)
-set_target_properties(MOX PROPERTIES POSITION_INDEPENDENT_CODE ON)
-
-ReMoM_Apply_Common_Compile_Definitions(MOX)
-ReMoM_Apply_Common_Compile_Options(MOX)
+add_library(MOX STATIC ${LIBMOX_SOURCES})
 
 target_include_directories(MOX PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${SDL2_INCLUDE_DIR}
-    ${SDL2_MIXER_INCLUDE_DIR}
 )
 
-if(NOT DISABLE_AUDIO)
-    target_link_libraries(MOX
-        SDL2::Core
-        SDL2::Mixer
-    )
-else()
-    target_link_libraries(MOX
-        SDL2::Core
-    )
-endif()
+target_link_libraries(MOX
+    Platform
+)

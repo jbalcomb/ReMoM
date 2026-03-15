@@ -49,7 +49,7 @@ USW_Attributes_1
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 #include "UnitView.h"
 
@@ -1324,7 +1324,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
             strcpy(specials_list->names[specials_index], USW_HeroLevels[_UNITS[unit_idx].Level]);
         }
         strcat(specials_list->names[specials_index], cnst_SpaceOpenBrace2);
-        SDL_itoa(_UNITS[unit_idx].XP, temp_string, 10);
+        stu_itoa(_UNITS[unit_idx].XP, temp_string, 10);
         strcat(specials_list->names[specials_index], temp_string);
         strcat(specials_list->names[specials_index], cnst_ExperiencePts);
         specials_list->flags[specials_index] = -1;
@@ -1493,7 +1493,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
                         strcpy(specials_list->names[specials_index], cnst_Sage_2);
                         strcat(specials_list->names[specials_index], cnst_Space_3);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 3);
-                        SDL_itoa(ability_value, temp_string, 10);
+                        stu_itoa(ability_value, temp_string, 10);
                         strcat(specials_list->names[specials_index], temp_string);
                         strcat(specials_list->names[specials_index], cnst_ResearchPoints);
                     } break;
@@ -1503,7 +1503,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
                         strcat(specials_list->names[specials_index], cnst_SuperAbStar);
                         strcat(specials_list->names[specials_index], cnst_Space_3);
                         ability_value = (((_UNITS[unit_idx].Level + 1) * 9) / 2);
-                        SDL_itoa(ability_value, temp_string, 10);
+                        stu_itoa(ability_value, temp_string, 10);
                         strcat(specials_list->names[specials_index], temp_string);
                         strcat(specials_list->names[specials_index], cnst_ResearchPoints);
                     } break;
@@ -1547,7 +1547,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
                     (ability_value > 0)
                 )
                 {
-                    SDL_itoa(ability_value, temp_string, 10);
+                    stu_itoa(ability_value, temp_string, 10);
                     strcat(specials_list->names[specials_index], cnst_SpacePlus);
                     strcat(specials_list->names[specials_index], temp_string);
                 }
@@ -1578,18 +1578,18 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
                     if(global_battle_unit->mana_max > global_battle_unit->mana)
                     {
                         ability_value = global_battle_unit->mana;
-                        SDL_itoa(ability_value, temp_string, 10);
+                        stu_itoa(ability_value, temp_string, 10);
                         strcat(specials_list->names[specials_index], temp_string);
                         strcat(specials_list->names[specials_index], cnst_SpaceOpenBrace2);
                         ability_value = global_battle_unit->mana_max;
-                        SDL_itoa(ability_value, temp_string, 10);
+                        stu_itoa(ability_value, temp_string, 10);
                         strcat(specials_list->names[specials_index], temp_string);
                         strcat(specials_list->names[specials_index], cnst_ClosingBrace_3);
                     }
                     else
                     {
                         ability_value = global_battle_unit->mana_max;
-                        SDL_itoa(ability_value, temp_string, 10);
+                        stu_itoa(ability_value, temp_string, 10);
                         strcat(specials_list->names[specials_index], temp_string);
                     }
                     strcat(specials_list->names[specials_index], cnst_Space_mp);
@@ -1658,7 +1658,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
                         strcpy(specials_list->names[specials_index], cnst_Spell_2);
                     }
                     ability_value = global_battle_unit->ammo;
-                    SDL_itoa(ability_value, temp_string, 10);
+                    stu_itoa(ability_value, temp_string, 10);
                     if(ability_value > 1)
                     {
                         strcat(specials_list->names[specials_index], cnst_Ammo_Plural);
@@ -1685,7 +1685,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         if(global_battle_unit->tohit != 0)
         {
             ability_value = global_battle_unit->tohit;
-            SDL_itoa(ability_value, temp_string, 10);
+            stu_itoa(ability_value, temp_string, 10);
             if(ability_value > 0)
             {
                 strcpy(specials_list->names[specials_index], cnst_Plus_1);
@@ -1870,7 +1870,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
             {
                 ability_value++;
             }
-            SDL_itoa(ability_value, temp_string, 10);
+            stu_itoa(ability_value, temp_string, 10);
             strcat(specials_list->names[specials_index], cnst_Space_3);
             strcat(specials_list->names[specials_index], temp_string);
             specials_list->flags[specials_index] = -1;
@@ -1897,18 +1897,18 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
             if(global_battle_unit->mana_max > global_battle_unit->mana)
             {
                 ability_value = global_battle_unit->mana;
-                SDL_itoa(ability_value, temp_string, 10);
+                stu_itoa(ability_value, temp_string, 10);
                 strcat(specials_list->names[specials_index], temp_string);
                 strcat(specials_list->names[specials_index], cnst_SpaceOpenBrace2);
                 ability_value = global_battle_unit->mana_max;
-                SDL_itoa(ability_value, temp_string, 10);
+                stu_itoa(ability_value, temp_string, 10);
                 strcat(specials_list->names[specials_index], temp_string);
                 strcat(specials_list->names[specials_index], cnst_ClosingBrace_3);
             }
             else
             {
                 ability_value = global_battle_unit->mana_max;
-                SDL_itoa(ability_value, temp_string, 10);
+                stu_itoa(ability_value, temp_string, 10);
                 strcat(specials_list->names[specials_index], temp_string);
             }
             strcat(specials_list->names[specials_index], cnst_Space_mp);
@@ -1987,14 +1987,14 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
                 if(USW_ATK_Flags[itr].bit_idx == Att_Poison)
                 {
                     ability_value = global_battle_unit->Poison_Strength;
-                    SDL_itoa(ability_value, temp_string, 10);
+                    stu_itoa(ability_value, temp_string, 10);
                     strcat(specials_list->names[specials_index], cnst_Space_3);
                     strcat(specials_list->names[specials_index], temp_string);
                 }
                 if(USW_ATK_Flags[itr].bit_idx == Att_StnTouch)
                 {
                     ability_value = global_battle_unit->Spec_Att_Attrib;
-                    SDL_itoa(ability_value, temp_string, 10);
+                    stu_itoa(ability_value, temp_string, 10);
                     strcat(specials_list->names[specials_index], cnst_Space_3);
                     strcat(specials_list->names[specials_index], temp_string);
                 }
@@ -2031,7 +2031,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
                 {
                     ability_value = global_battle_unit->Spec_Att_Attrib;
                 }
-                SDL_itoa(ability_value, temp_string, 10);
+                stu_itoa(ability_value, temp_string, 10);
                 strcat(specials_list->names[specials_index], cnst_Space_3);
                 strcat(specials_list->names[specials_index], temp_string);
                 specials_list->flags[specials_index] = -1;
@@ -2044,7 +2044,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
                 {
                     strcpy(specials_list->names[specials_index], *USW_SR_Attacks[(itr + 1)].name);
                     ability_value = global_battle_unit->Spec_Att_Attrib;
-                    SDL_itoa(ability_value, temp_string, 10);
+                    stu_itoa(ability_value, temp_string, 10);
                     strcat(specials_list->names[specials_index], cnst_Space_3);
                     strcat(specials_list->names[specials_index], temp_string);
                     specials_list->flags[specials_index] = -1;
@@ -2054,7 +2054,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
 
                     strcpy(specials_list->names[specials_index], *USW_SR_Attacks[(itr - 1)].name);
                     ability_value = global_battle_unit->Spec_Att_Attrib;
-                    SDL_itoa(ability_value, temp_string, 10);
+                    stu_itoa(ability_value, temp_string, 10);
                     strcat(specials_list->names[specials_index], cnst_Space_3);
                     strcat(specials_list->names[specials_index], temp_string);
                     specials_list->flags[specials_index] = -1;
@@ -2307,7 +2307,7 @@ void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_lis
             if((USW_ATK_Flags[itr].bit_idx & Att_Poison) != 0)  /* Att_Poison */
             {
                 value = global_battle_unit->Poison_Strength;
-                SDL_itoa(value, temp_buffer, 10);
+                stu_itoa(value, temp_buffer, 10);
                 strcat(specials_list->names[specials_index], " ");
                 strcat(specials_list->names[specials_index], temp_buffer);
             }
@@ -2315,7 +2315,7 @@ void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_lis
             if((USW_ATK_Flags[itr].bit_idx & Att_StnTouch) != 0)  /* Att_StnTouch */
             {
                 value = global_battle_unit->Spec_Att_Attrib;
-                SDL_itoa(value, temp_buffer, 10);
+                stu_itoa(value, temp_buffer, 10);
                 strcat(specials_list->names[specials_index], " ");
                 strcat(specials_list->names[specials_index], temp_buffer);
             }
@@ -2344,7 +2344,7 @@ void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_lis
                 value = global_battle_unit->Spec_Att_Attrib;
             }
 
-            SDL_itoa(value, temp_buffer, 10);
+            stu_itoa(value, temp_buffer, 10);
             strcat(specials_list->names[specials_index], " ");
             strcat(specials_list->names[specials_index], temp_buffer);
 
@@ -2357,7 +2357,7 @@ void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_lis
             {
                 strcpy(specials_list->names[specials_index], *USW_SR_Attacks[(itr + 1)].name);
                 value = global_battle_unit->Spec_Att_Attrib;
-                SDL_itoa(value, temp_buffer, 10);
+                stu_itoa(value, temp_buffer, 10);
                 strcat(specials_list->names[specials_index], " ");
                 strcat(specials_list->names[specials_index], temp_buffer);
                 specials_list->flags[specials_index] = ST_UNDEFINED;
@@ -2367,7 +2367,7 @@ void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_lis
 
                 strcpy(specials_list->names[specials_index], *USW_SR_Attacks[(itr - 1)].name);
                 value = global_battle_unit->Spec_Att_Attrib;
-                SDL_itoa(value, temp_buffer, 10);
+                stu_itoa(value, temp_buffer, 10);
                 strcat(specials_list->names[specials_index], " ");
                 strcat(specials_list->names[specials_index], temp_buffer);
                 specials_list->flags[specials_index] = ST_UNDEFINED;
@@ -2406,7 +2406,7 @@ void ITEM_GetPowerNames(int16_t item_idx, char power_names[5][20], char power_de
     if(_ITEMS[item_idx].attack > 0)
     {
         strcpy(power_names[display_count], cnst_Plus_1);
-        SDL_itoa(_ITEMS[item_idx].attack, Temp_String, 10);
+        stu_itoa(_ITEMS[item_idx].attack, Temp_String, 10);
         strcat(power_names[display_count], Temp_String);
         strcat(power_names[display_count], cnst_Space_ATK);
         display_count++;
@@ -2414,7 +2414,7 @@ void ITEM_GetPowerNames(int16_t item_idx, char power_names[5][20], char power_de
     if((_ITEMS[item_idx].tohit > 0) && (display_count < 5))
     {
         strcpy(power_names[display_count], cnst_Plus_1);
-        SDL_itoa(_ITEMS[item_idx].tohit, Temp_String, 10);
+        stu_itoa(_ITEMS[item_idx].tohit, Temp_String, 10);
         strcat(power_names[display_count], Temp_String);
         strcat(power_names[display_count], cnst_ToHit);
         display_count++;
@@ -2422,7 +2422,7 @@ void ITEM_GetPowerNames(int16_t item_idx, char power_names[5][20], char power_de
     if((_ITEMS[item_idx].defense > 0) && (display_count < 5))
     {
         strcpy(power_names[display_count], cnst_Plus_1);
-        SDL_itoa(_ITEMS[item_idx].defense, Temp_String, 10);
+        stu_itoa(_ITEMS[item_idx].defense, Temp_String, 10);
         strcat(power_names[display_count], Temp_String);
         strcat(power_names[display_count], cnst_Space_DEF);
         display_count++;
@@ -2430,7 +2430,7 @@ void ITEM_GetPowerNames(int16_t item_idx, char power_names[5][20], char power_de
     if((_ITEMS[item_idx].moves2 > 0) && (display_count < 5))
     {
         strcpy(power_names[display_count], cnst_Plus_1);
-        SDL_itoa(_ITEMS[item_idx].moves2, Temp_String, 10);
+        stu_itoa(_ITEMS[item_idx].moves2, Temp_String, 10);
         strcat(power_names[display_count], Temp_String);
         strcat(power_names[display_count], cnst_Space_Moves);
         display_count++;
@@ -2438,7 +2438,7 @@ void ITEM_GetPowerNames(int16_t item_idx, char power_names[5][20], char power_de
     if((_ITEMS[item_idx].resistance > 0) && (display_count < 5))
     {
         strcpy(power_names[display_count], cnst_Plus_1);
-        SDL_itoa(_ITEMS[item_idx].resistance, Temp_String, 10);
+        stu_itoa(_ITEMS[item_idx].resistance, Temp_String, 10);
         strcat(power_names[display_count], Temp_String);
         strcat(power_names[display_count], cnst_Space_RES);
         display_count++;
@@ -2446,7 +2446,7 @@ void ITEM_GetPowerNames(int16_t item_idx, char power_names[5][20], char power_de
     if((_ITEMS[item_idx].spell_skill > 0) && (display_count < 5))
     {
         strcpy(power_names[display_count], cnst_Plus_1);
-        SDL_itoa(_ITEMS[item_idx].spell_skill, Temp_String, 10);
+        stu_itoa(_ITEMS[item_idx].spell_skill, Temp_String, 10);
         strcat(power_names[display_count], Temp_String);
         strcat(power_names[display_count], cnst_Space_Skill);
         display_count++;
@@ -2454,7 +2454,7 @@ void ITEM_GetPowerNames(int16_t item_idx, char power_names[5][20], char power_de
     if((_ITEMS[item_idx].spell_save > 0) && (display_count < 5))
     {
         strcpy(power_names[display_count], cnst_MinusSign);
-        SDL_itoa(_ITEMS[item_idx].spell_save, Temp_String, 10);
+        stu_itoa(_ITEMS[item_idx].spell_save, Temp_String, 10);
         strcat(power_names[display_count], Temp_String);
         strcat(power_names[display_count], cnst_Space_SAVE);
         display_count++;
@@ -2466,7 +2466,7 @@ void ITEM_GetPowerNames(int16_t item_idx, char power_names[5][20], char power_de
         strcpy(Temp_String, spell_data_table[_ITEMS[item_idx].embed_spell_idx].name);
         strcpy(power_names[display_count], Temp_String);
         strcat(power_names[display_count], cnst_TimesSign);
-        SDL_itoa(_ITEMS[item_idx].embed_spell_cnt, Temp_String, 10);
+        stu_itoa(_ITEMS[item_idx].embed_spell_cnt, Temp_String, 10);
         strcat(power_names[display_count], cnst_Space_3);
         strcat(power_names[display_count], Temp_String);
         display_count++;
@@ -2576,7 +2576,7 @@ void Load_Unit_Figure(int16_t type_or_unit, int16_t use_type)
         figure_num = type_or_unit;  // got passed unit_type
     }
 
-    SDL_itoa(((figure_num / 15) + 1), buffer, 10);
+    stu_itoa(((figure_num / 15) + 1), buffer, 10);
     strcpy(file_name, "FIGURE");
     if(((figure_num / 15) + 1) < 10)
     {

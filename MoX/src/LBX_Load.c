@@ -40,13 +40,13 @@
  * @see MOX_TYPE.h for SAMB_ptr and other type definitions
  */
 
-#ifdef STU_DEBUG
 #include "../../STU/src/STU_DBG.h"
-#endif
+
+#include "../../ext/stu_compat.h"
 
 #include "Allocate.h"
 #include "EXIT.h"
-#include "MOM_Data.h"
+#include "MOM_DAT.h"
 #include "MOX_BASE.h"
 #include "MOX_TYPE.h"
 
@@ -54,7 +54,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL_stdinc.h>
+#include "../../ext/stu_compat.h"
 
 #include "LBX_Load.h"
 
@@ -205,12 +205,11 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
     /*
         BEGIN: Current vs. Previous
     */
-// #pragma warning(suppress : 4996)
-    // if((lbxload_fptr == NULL) || (stricmp(lbx_name, lbxload_file_name) != 0))
+    
     if(
         (lbxload_fptr == NULL)
         ||
-        (strcmp(lbx_name, lbxload_file_name) != 0)
+        (stu_stricmp(lbx_name, lbxload_file_name) != 0)
     )
     {
         /*
@@ -419,11 +418,10 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
         BEGIN: Current vs. Previous
     */
 
-    // if((lbxload_fptr == NULL) || (stricmp(lbx_name, lbxload_file_name) != 0))
     if(
         (lbxload_fptr == NULL)
         ||
-        (strcmp(lbx_name, lbxload_file_name) != 0)
+        (stu_stricmp(lbx_name, lbxload_file_name) != 0)
     )
     {
         /*
@@ -682,7 +680,7 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
         !(
             (NULL != lbxload_fptr)
             &&
-            (_stricmp(lbx_name, lbxload_file_name) == 0)
+            (stu_stricmp(lbx_name, lbxload_file_name) == 0)
             &&
             (farload_extended_flag == current_extended_flag)
         )
@@ -892,7 +890,7 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
 
     strcpy(buffer, file_name);
 #pragma warning(suppress : 4996)
-    SDL_itoa(entry_num, buffer2, 10);
+    stu_itoa(entry_num, buffer2, 10);
     strcat(buffer, str_error_handler[0]);
     strcat(buffer, buffer2);
     strcat(buffer, str_error_handler[1]);
@@ -909,7 +907,7 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
             strcpy(buffer, str_error_handler[4]);
             
 #pragma warning(suppress : 4996)
-            SDL_itoa(640, buffer2, 10);
+            stu_itoa(640, buffer2, 10);
             strcat(buffer, buffer2);
             strcat(buffer, str_error_handler[5]);
             break;
@@ -919,7 +917,7 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
         case le_reload_fail:
             strcat(buffer, str_error_handler[7]);
 #pragma warning(suppress : 4996)
-            SDL_itoa(pages, buffer2, 10);
+            stu_itoa(pages, buffer2, 10);
             strcat(buffer, buffer2);
             strcat(buffer, str_error_handler[8]);
             break;

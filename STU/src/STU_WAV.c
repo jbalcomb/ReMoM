@@ -19,6 +19,7 @@ input?
 */
 
 #include "STU_DBG.h"
+void dbg_prn(const char * fmt, ...);  // HACK needs to not be behind #ifdef STU_DEBUG
 #include "STU_WAV.h"
 
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), frite(), fseek(); */

@@ -1,4 +1,6 @@
 
+#include "../../ext/stu_compat.h"
+
 
 #include "../../MoX/src/Mouse.h"
 #include "../../MoX/src/Timer.h"
@@ -9,7 +11,7 @@
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/Graphics.h"
 #include "../../MoX/src/LBX_Load.h"
-#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_BASE.h"
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_T4.h"
@@ -24,7 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../MoX/src/MOM_PFL.h"
+#include "../../platform/include/Platform.h"
 
 #include "MainMenu.h"
 
@@ -331,7 +333,7 @@ int16_t Main_Menu_Screen(void)
     {
         strcpy(File_Name, "SAVE");
 #pragma warning(suppress : 4996)
-        SDL_itoa(itr_saves__retval, Conversion_String, 10);
+        stu_itoa(itr_saves__retval, Conversion_String, 10);
         strcat(File_Name, Conversion_String);
         strcat(File_Name, ".GAM");
         if(DIR(File_Name, Found_File_Name) != ST_FAILURE)

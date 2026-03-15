@@ -1,6 +1,6 @@
 #include "MOX_DAT.h"
 
-#include "MOM_Data.h"  /* struct s_WIZARD*/
+#include "MOM_DAT.h"  /* struct s_WIZARD*/
 #include "MOX_TYPE.h"
 
 #include "../../MoX/src/MOM_DEF.h"  /* NUM_PLAYERS */

@@ -1,4 +1,6 @@
 
+// I AM A CHANGE!!!
+
 // #ifndef _STU_SDL2
 // #define _STU_SDL2
 // #endif
@@ -38,7 +40,7 @@
 #include "../MoX/src/Graphics.h"
 #include "../MoX/src/LBX_Load.h"
 #include "../MoX/src/MOX_BASE.h"
-#include "../MoX/src/MOM_Data.h"
+#include "../MoX/src/MOM_DAT.h"
 #include "../MoX/src/MOX_DEF.h"
 #include "../MoX/src/MOX_SET.h"
 #include "../MoX/src/MOX_T4.h"
@@ -65,15 +67,16 @@
 
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "../ext/stu_compat.h"
-
-#include <SDL_stdinc.h>
+#include "../platform/include/Platform_Replay.h"
 
 // #define SDL_MAIN_HANDLED
-#include <SDL.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
 #ifndef NO_SOUND_LIBRARY
-#include <SDL_mixer.h>
+#include <SDL3_mixer/SDL_mixer.h>
 #endif
 
 /* <direct.h> replaced by stu_compat.h */
@@ -202,12 +205,40 @@ int main(int argc, char * argv[])
 
     Startup_Platform();
 
+    /* CLAUDE: Record & Replay CLI flags. */
+    {
+        int argi;
+        for(argi = 1; argi < argc; argi++)
+        {
+            if(strcmp(argv[argi], "--record") == 0 && (argi + 1) < argc)
+            {
+                argi++;
+                Platform_Record_Start(argv[argi]);
+            }
+            else if(strcmp(argv[argi], "--replay") == 0 && (argi + 1) < argc)
+            {
+                argi++;
+                Platform_Replay_Start(argv[argi]);
+            }
+        }
+    }
+
 // /* HACK */  #ifdef STU_DEBUG
 // /* HACK */      Simulate_World_Map_Generation();
 // /* HACK */      Exit_With_Message("Simulated world map generation complete. Exiting.");
 // /* HACK */  #else
     MOM_main(argc, argv);
 // /* HACK */  #endif
+
+    /* CLAUDE: Stop any active recording/replay before shutdown. */
+    if(Platform_Record_Active())
+    {
+        Platform_Record_Stop();
+    }
+    if(Platform_Replay_Active())
+    {
+        Platform_Replay_Stop();
+    }
 
     Shudown_Platform();
 
@@ -302,7 +333,9 @@ int MOM_main(int argc, char** argv)
 
     Load_MAGIC_SET();
 
+#ifdef STU_DEBUG
     DBG_Print_MAGIC_SET("MOM_main after Load_MAGIC_SET");
+#endif
 
     MIDI_IO = config_mom.MIDI_IO;
     MIDI_IRQ = config_mom.MIDI_IRQ;

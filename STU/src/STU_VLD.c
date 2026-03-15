@@ -7,7 +7,7 @@
 #include "STU_DBG.h"
 #include "STU_TYPE.h"
 
-#include "../../MoX/src/MOM_Data.h"
+#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_DEF.h"      /* GET_TERRAIN_TYPE() */
 #include "../../MoM/src/TerrType.h"
