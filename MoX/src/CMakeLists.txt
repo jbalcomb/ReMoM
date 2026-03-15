@@ -1,8 +1,5 @@
 
-# WIN32 and SDL2 platform sources have been moved to platform/ library.
-# MoX is now platform-agnostic engine code only.
-
-set(MOX_SOURCES
+set(LIBMOX_SOURCES
     AIL.c
     Allocate.c
     angle.c
@@ -40,13 +37,7 @@ set(MOX_SOURCES
     Video2.c
 )
 
-add_library(MOX STATIC ${MOX_SOURCES})
-
-# set_target_properties(MOX PROPERTIES LINKER_LANGUAGE C)
-set_target_properties(MOX PROPERTIES POSITION_INDEPENDENT_CODE ON)
-
-ReMoM_Apply_Common_Compile_Definitions(MOX)
-ReMoM_Apply_Common_Compile_Options(MOX)
+add_library(MOX STATIC ${LIBMOX_SOURCES})
 
 target_include_directories(MOX PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}

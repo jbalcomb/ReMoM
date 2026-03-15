@@ -51,9 +51,9 @@ typedef struct PFL_Color
 #define PLATFORM_SCREEN_WIDTH   320
 #define PLATFORM_SCREEN_HEIGHT  200
 
-/** Default window dimensions (2x scale). */
-#define PLATFORM_WINDOW_WIDTH   640
-#define PLATFORM_WINDOW_HEIGHT  400
+/** Default window dimensions (4x scale). */
+#define PLATFORM_WINDOW_WIDTH   1280
+#define PLATFORM_WINDOW_HEIGHT  800
 
 
 
@@ -78,6 +78,11 @@ void Startup_Platform(void);
  * No Platform_* functions may be called after this.
  */
 void Shudown_Platform(void);
+
+/**
+ * Return the current window-to-game scale factor (window_width / SCREEN_WIDTH).
+ */
+int Platform_Get_Scale(void);
 
 
 

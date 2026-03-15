@@ -1,4 +1,6 @@
 
+// I AM A CHANGE!!!
+
 // #ifndef _STU_SDL2
 // #define _STU_SDL2
 // #endif
@@ -65,8 +67,10 @@
 
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "../ext/stu_compat.h"
+#include "../platform/include/Platform_Replay.h"
 
 // #define SDL_MAIN_HANDLED
 #include <SDL3/SDL.h>
@@ -201,12 +205,40 @@ int main(int argc, char * argv[])
 
     Startup_Platform();
 
+    /* CLAUDE: Record & Replay CLI flags. */
+    {
+        int argi;
+        for(argi = 1; argi < argc; argi++)
+        {
+            if(strcmp(argv[argi], "--record") == 0 && (argi + 1) < argc)
+            {
+                argi++;
+                Platform_Record_Start(argv[argi]);
+            }
+            else if(strcmp(argv[argi], "--replay") == 0 && (argi + 1) < argc)
+            {
+                argi++;
+                Platform_Replay_Start(argv[argi]);
+            }
+        }
+    }
+
 // /* HACK */  #ifdef STU_DEBUG
 // /* HACK */      Simulate_World_Map_Generation();
 // /* HACK */      Exit_With_Message("Simulated world map generation complete. Exiting.");
 // /* HACK */  #else
     MOM_main(argc, argv);
 // /* HACK */  #endif
+
+    /* CLAUDE: Stop any active recording/replay before shutdown. */
+    if(Platform_Record_Active())
+    {
+        Platform_Record_Stop();
+    }
+    if(Platform_Replay_Active())
+    {
+        Platform_Replay_Stop();
+    }
 
     Shudown_Platform();
 

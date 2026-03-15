@@ -1,6 +1,8 @@
 
 #include "sdl2_PFL.h"
 
+#include "../../platform/include/Platform_Replay.h"
+
 #include "../../MoX/src/MOX_BASE.h"
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_KEYS.h"
@@ -30,8 +32,9 @@ SDL_Surface * sdl2_surface_ARGB8888 = NULL;  // static SDL_Surface *argbbuffer =
 SDL_Texture * sdl2_texture = NULL;           // static SDL_Texture *texture = NULL;
 SDL_Texture * sdl2_texture_upscaled = NULL;  // 
 
-int sdl2_window_width  = 640;
-int sdl2_window_height = 400;
+int platform_screen_scale = 4;
+int sdl2_window_width  = SCREEN_WIDTH * 4;
+int sdl2_window_height = SCREEN_HEIGHT * 4;
 
 char sdl2_window_title[] = "(MoM-Rasm) Master of Magic v1.31 - Reassembly";  // static const char *window_title = "";
 
@@ -50,6 +53,11 @@ uint64_t sdl2_performance_counter;
 // MOM_PFL.C  // left, right, middle, x1, x2; wheel;
 // MOM_PFL.C  // MOM_PFL.C  int16_t lock_mouse_button_status_flag = ST_FALSE;
 
+
+int Platform_Get_Scale(void)
+{
+    return platform_screen_scale;
+}
 
 uint64_t Platform_Get_Millies(void)
 {
@@ -250,29 +258,35 @@ void kilgore_mouse_move(int dx, int dy)
     kilgore_mouse_set_xy_from_hw(x, y);
 }
 
+/* CLAUDE: replaced hardcoded /2 with dynamic scale from window/screen dimensions */
 void Platform_Update_Mouse_Position(int l_mx, int l_my)
 {
-    if(l_mx < SCREEN_XMIN || l_my < SCREEN_YMIN || (l_mx / 2) > SCREEN_XMAX || (l_my / 2) > SCREEN_YMAX)
+    /* OG: int screen_scale = 2; */
+    int screen_scale = sdl2_window_width / SCREEN_WIDTH;
+    int gx = l_mx / screen_scale;
+    int gy = l_my / screen_scale;
+
+    if(l_mx < SCREEN_XMIN || l_my < SCREEN_YMIN || gx > SCREEN_XMAX || gy > SCREEN_YMAX)
     {
         return;
     }
-    pointer_x = l_mx / 2;
-    pointer_y = l_my / 2;
+    pointer_x = gx;
+    pointer_y = gy;
     // ITRY  platform_mouse_button_status = buttons;
     if(mouse_interrupt_active == ST_FALSE)
     {
         mouse_interrupt_active = ST_TRUE;
-        // Check_Mouse_Buffer((l_mx / 2), (l_my / 2), buttons);
+        // Check_Mouse_Buffer(gx, gy, buttons);
         if(mouse_enabled == ST_TRUE)
         {
             mouse_enabled = ST_FALSE;
             if(current_mouse_list_count >= 2)
             {
-                Check_Mouse_Shape((l_mx / 2), (l_my/ 2));
+                Check_Mouse_Shape(gx, gy);
             }
             Restore_Mouse_On_Page();                     // mouse_background_buffer           ->  video_page_buffer[draw_page_num]
-            Save_Mouse_On_Page((l_mx / 2), (l_my / 2));  // video_page_buffer[draw_page_num]  ->  mouse_background_buffer
-            Draw_Mouse_On_Page((l_mx / 2), (l_my / 2));  // mouse_palette                     ->  video_page_buffer[draw_page_num]
+            Save_Mouse_On_Page(gx, gy);                  // video_page_buffer[draw_page_num]  ->  mouse_background_buffer
+            Draw_Mouse_On_Page(gx, gy);                  // mouse_palette                     ->  video_page_buffer[draw_page_num]
             mouse_enabled = ST_TRUE;
         }
         mouse_interrupt_active = ST_FALSE;
@@ -350,6 +364,19 @@ void Platform_Event_Handler(void)
     SDL_Event sdl2_event;
 
     /* CLAUDE */  dbg_handler_calls++;
+
+    /* CLAUDE: Replay — if replaying, inject recorded frame instead of polling OS events. */
+    if(Platform_Replay_Active())
+    {
+        if(!Replay_Inject_Frame())
+        {
+            /* Replay ended — fall through to live input. */
+        }
+        else
+        {
+            return;
+        }
+    }
 
     SDL_PumpEvents();
 
@@ -459,5 +486,11 @@ void Platform_Event_Handler(void)
     // }
 
     /* CLAUDE */  /* Dasm: SDL_Delay(10) removed; vsync (SDL_RENDERER_PRESENTVSYNC) already provides frame pacing via SDL_RenderPresent(); the delay here stacked on every call to Platform_Event_Handler() (multiple times per frame from Get_Input and Mouse_Button), adding 30-50ms of cumulative lag per frame */
+
+    /* CLAUDE: Record — capture input state after processing OS events. */
+    if(Platform_Record_Active())
+    {
+        Replay_Capture_Frame();
+    }
 
 }

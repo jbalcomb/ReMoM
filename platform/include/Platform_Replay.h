@@ -41,7 +41,7 @@ typedef struct Replay_Header
     uint32_t magic;
     uint32_t version;
     uint32_t frame_count;
-    uint32_t rng_seed;
+    uint32_t random_seed;
 } Replay_Header;
 
 /**

@@ -69,29 +69,35 @@ void Mouse_Button_Handler(void)
 
 
 // WZD s35p12
+/* CLAUDE: replaced hardcoded /2 and *2 with dynamic scale from window/screen dimensions */
 void User_Mouse_Handler(int16_t buttons, int16_t l_mx, int16_t l_my)
 {
-    if(l_mx < SCREEN_XMIN || l_my < SCREEN_YMIN || (l_mx / 2) > SCREEN_XMAX || (l_my / 2) > SCREEN_YMAX)
+    /* OG: int16_t scale = 2; */
+    int16_t screen_scale = (int16_t)(sdl2_window_width / SCREEN_WIDTH);
+    int16_t gx = l_mx / screen_scale;
+    int16_t gy = l_my / screen_scale;
+
+    if(l_mx < SCREEN_XMIN || l_my < SCREEN_YMIN || gx > SCREEN_XMAX || gy > SCREEN_YMAX)
     {
         return;
     }
-    pointer_x = l_mx / 2;
-    pointer_y = l_my / 2;
+    pointer_x = gx;
+    pointer_y = gy;
     // ITRY  platform_mouse_button_status = buttons;
     if(mouse_interrupt_active == ST_FALSE)
     {
         mouse_interrupt_active = ST_TRUE;
-        Check_Mouse_Buffer((l_mx / 2), (l_my / 2), buttons);
+        Check_Mouse_Buffer(gx, gy, buttons);
         if(mouse_enabled == ST_TRUE)
         {
             mouse_enabled = ST_FALSE;
             if(current_mouse_list_count >= 2)
             {
-                Check_Mouse_Shape((l_mx / 2), (l_my/ 2));
+                Check_Mouse_Shape(gx, gy);
             }
             Restore_Mouse_On_Page();                     // mouse_background_buffer           ->  video_page_buffer[draw_page_num]
-            Save_Mouse_On_Page((l_mx / 2), (l_my / 2));  // video_page_buffer[draw_page_num]  ->  mouse_background_buffer
-            Draw_Mouse_On_Page((l_mx / 2), (l_my / 2));  // mouse_palette                     ->  video_page_buffer[draw_page_num]
+            Save_Mouse_On_Page(gx, gy);                  // video_page_buffer[draw_page_num]  ->  mouse_background_buffer
+            Draw_Mouse_On_Page(gx, gy);                  // mouse_palette                     ->  video_page_buffer[draw_page_num]
             mouse_enabled = ST_TRUE;
         }
         mouse_interrupt_active = ST_FALSE;
@@ -99,7 +105,10 @@ void User_Mouse_Handler(int16_t buttons, int16_t l_mx, int16_t l_my)
 }
 
 // WZD s35p21
+/* CLAUDE: replaced hardcoded *2 with dynamic scale */
 void Set_Mouse_Position(int16_t mx, int16_t my)
 {
-    SDL_WarpMouseInWindow(sdl2_window, (mx * 2), (my * 2));
+    /* OG: int16_t scale = 2; */
+    int16_t screen_scale = (int16_t)(sdl2_window_width / SCREEN_WIDTH);
+    SDL_WarpMouseInWindow(sdl2_window, (mx * screen_scale), (my * screen_scale));
 }

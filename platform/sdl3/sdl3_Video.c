@@ -15,6 +15,10 @@
 #include "../../MoX/src/sdl2_PFL.h"
 #include <SDL3/SDL.h>
 
+#include <assert.h>
+#include <stdio.h>
+#include <string.h>
+
 
 /*
     copy MoX software palette to platform *hardware* palette
@@ -74,16 +78,27 @@ void Platform_Video_Update(void)
 
 
 
+    assert(sdl2_surface_RGB666 != NULL);
+    assert(sdl2_surface_ARGB8888 != NULL);
+    assert(sdl2_texture != NULL);
+    assert(sdl2_renderer != NULL);
+    assert(video_page_buffer[draw_page_num] != NULL);
+
     /* PFL_Color is layout-compatible with SDL_Color */
-    SDL_SetPaletteColors(SDL_GetSurfacePalette(sdl2_surface_RGB666), (SDL_Color *)platform_palette_buffer, 0, 256);
+    {
+        SDL_Palette *pal = SDL_GetSurfacePalette(sdl2_surface_RGB666);
+        assert(pal != NULL && "8-bit surface must have a palette");
+        assert(SDL_SetPaletteColors(pal, (SDL_Color *)platform_palette_buffer, 0, 256));
+    }
 
-
-
-    SDL_LockSurface(sdl2_surface_RGB666);
+    assert(SDL_LockSurface(sdl2_surface_RGB666));
 
     pitch = sdl2_surface_RGB666->pitch;
     dst = (uint8_t *)sdl2_surface_RGB666->pixels;
     src = video_page_buffer[draw_page_num];
+    assert(dst != NULL);
+    assert(src != NULL);
+    assert(screen_pixel_width <= pitch);
     for(int y = 0; y < screen_pixel_height; ++y)
     {
         memcpy(dst, src, screen_pixel_width);
@@ -93,17 +108,19 @@ void Platform_Video_Update(void)
 
     SDL_UnlockSurface(sdl2_surface_RGB666);
 
+    assert(SDL_LockTexture(sdl2_texture, &sdl2_blit_rect, &sdl2_surface_ARGB8888->pixels, &sdl2_surface_ARGB8888->pitch));
+    assert(sdl2_surface_ARGB8888->pixels != NULL);
 
+    sdl2_surface_ARGB8888->w = sdl2_blit_rect.w;
+    sdl2_surface_ARGB8888->h = sdl2_blit_rect.h;
 
-    SDL_LockTexture(sdl2_texture, &sdl2_blit_rect, &sdl2_surface_ARGB8888->pixels, &sdl2_surface_ARGB8888->pitch);
-
-    SDL_BlitSurfaceUnchecked(sdl2_surface_RGB666, &sdl2_blit_rect, sdl2_surface_ARGB8888, &sdl2_blit_rect);
+    assert(SDL_BlitSurface(sdl2_surface_RGB666, &sdl2_blit_rect, sdl2_surface_ARGB8888, NULL));
 
     SDL_UnlockTexture(sdl2_texture);
 
-    SDL_RenderTexture(sdl2_renderer, sdl2_texture, NULL, NULL);
+    assert(SDL_RenderTexture(sdl2_renderer, sdl2_texture, NULL, NULL));
 
-    SDL_RenderPresent(sdl2_renderer);
+    assert(SDL_RenderPresent(sdl2_renderer));
 
     /* CLAUDE */  DBG_Frame_Reset();
 
