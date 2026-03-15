@@ -53,8 +53,6 @@ int16_t Get_Input(void)
         field_index = Interpret_Mouse_Input();  // WZD s36p01
     }
 
-    /* CLAUDE */  if(field_index != 0) { fprintf(stderr, "GET_INPUT: field_index=%d  fields_count=%d  key_pressed=%d\n", (int)field_index, (int)fields_count, (int)key_pressed); }
-
     Set_Page_Off();
 
     return field_index;

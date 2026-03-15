@@ -453,9 +453,9 @@ int Replay_Inject_Frame(void)
         {
             uint32_t sccc = peek_frame.keys[0];
             char char_code = (char)(sccc & 0xFF);
-            fprintf(stderr, "PLAY KBD_BUF char_code=0x%02X  key_pressed_before=%d\n", (unsigned char)char_code, (int)key_pressed);
+            fprintf(REPLAY_LOG, "PLAY KBD_BUF char_code=0x%02X  key_pressed_before=%d\n", (unsigned char)char_code, (int)key_pressed);
             Platform_Keyboard_Buffer_Add_Key_Press(MOX_KEY_UNKNOWN, MOX_MOD_NONE, char_code);
-            fprintf(stderr, "PLAY KBD_BUF DONE  key_pressed_after=%d\n", (int)key_pressed);
+            fprintf(REPLAY_LOG, "PLAY KBD_BUF DONE  key_pressed_after=%d\n", (int)key_pressed);
         }
 
         /* Debug: log injected frames that have actual input. */
