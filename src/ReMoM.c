@@ -220,6 +220,19 @@ int main(int argc, char * argv[])
                 argi++;
                 Platform_Replay_Start(argv[argi]);
             }
+            else if(strcmp(argv[argi], "--demo") == 0)
+            {
+                /* Optional filename: --demo [FILE.RMR], defaults to DEMO.RMR */
+                if((argi + 1) < argc && argv[argi + 1][0] != '-')
+                {
+                    argi++;
+                    Platform_Replay_Start(argv[argi]);
+                }
+                else
+                {
+                    Platform_Replay_Start("DEMO.RMR");
+                }
+            }
         }
     }
 

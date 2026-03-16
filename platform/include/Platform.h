@@ -108,6 +108,12 @@ extern int lock_mouse_button_status_flag;
 /** When non-zero, mouse input events are processed by the platform. */
 extern int platform_mouse_input_enabled;
 
+/** Per-frame mouse click flag: set when BUTTON_DOWN occurs this frame, cleared
+ *  at the start of each Platform_Event_Handler() call.  Unlike mouse_buffer_button
+ *  (which is sticky and never clears), this is non-zero only on the frame where
+ *  the click actually happened.  Bit 0 = left, bit 1 = right. */
+extern int16_t platform_frame_mouse_buttons;
+
 /** Shadow palette: 256 colors in platform-neutral RGBA format. */
 extern PFL_Color platform_palette_buffer[256];
 
@@ -170,6 +176,17 @@ void Platform_Keyboard_Buffer_Clear(void);
  * @param mox_character The ASCII character, or 0 for non-printable keys.
  */
 void Platform_Keyboard_Buffer_Add_Key_Press(int mox_key, uint32_t mox_mod, char mox_character);
+
+/**
+ * Return the number of unread keys in the keyboard buffer.
+ */
+int Platform_Keyboard_Buffer_Pending_Count(void);
+
+/**
+ * Peek at the most recently written kilgore_key value without consuming it.
+ * Returns 0 if the buffer is empty.
+ */
+uint32_t Platform_Keyboard_Buffer_Peek_Latest(void);
 
 /** Begin accepting text input events (e.g., enable IME). */
 void hw_textinput_start(void);

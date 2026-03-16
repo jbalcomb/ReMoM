@@ -583,6 +583,20 @@ void Platform_Keyboard_Buffer_Add_Key_Press(int mox_key, uint32_t mox_mod, char 
 
 }
 
+int Platform_Keyboard_Buffer_Pending_Count(void)
+{
+    return (platform_keyboard_buffer.key_write - platform_keyboard_buffer.key_read + PLATFORM_KEYBOARD_BUFFER_LENGTH) % PLATFORM_KEYBOARD_BUFFER_LENGTH;
+}
+
+uint32_t Platform_Keyboard_Buffer_Peek_Latest(void)
+{
+    if(platform_keyboard_buffer.key_write == platform_keyboard_buffer.key_read)
+    {
+        return 0;
+    }
+    return platform_keyboard_buffer.kilgore_key[(platform_keyboard_buffer.key_write - 1 + PLATFORM_KEYBOARD_BUFFER_LENGTH) % PLATFORM_KEYBOARD_BUFFER_LENGTH];
+}
+
 char * sdl2_get_key_code_name(int32_t sdl2_key_code)
 {
 

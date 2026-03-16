@@ -23,10 +23,12 @@
 #include "../../MoX/src/Help.h"
 #include "MOM_DBG.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "../../platform/include/Platform.h"
+#include "../../platform/include/Platform_Replay.h"
 
 #include "MainMenu.h"
 
@@ -456,13 +458,33 @@ int16_t Main_Menu_Screen(void)
     
     Set_Input_Delay(4);
 
+    /* CLAUDE */  Platform_Demo_Reset_Idle_Timer();
+
     // DNE input_field_idx = ST_FALSE;
     while(leave_screen_flag == ST_FALSE)
     {
 
         Mark_Time();
 
+        /* CLAUDE: Demo mode — if idle too long, start demo replay. */
+        /* CLAUDE: 30 seconds = 30000 ms.  When demo ends or is cancelled, */
+        /* CLAUDE: the replay system returns to live input and we reset the timer. */
+        if(!Platform_Replay_Active() && Platform_Demo_Idle_Expired(30000))
+        {
+            if(Platform_Demo_Start() == 0)
+            {
+                fprintf(stderr, "DEMO: auto-started after idle timeout\n");
+            }
+            Platform_Demo_Reset_Idle_Timer();
+        }
+
         input_field_idx = Get_Input();
+
+        /* CLAUDE: Any real input resets the demo idle timer. */
+        if(input_field_idx != ST_FALSE)
+        {
+            Platform_Demo_Reset_Idle_Timer();
+        }
 
         // HACK?  NOTE(JimBalcomb,20250713): I don't recall this arrangement ... Need to quit if they close the platform window?
         if(quit_game_flag == ST_TRUE)

@@ -117,6 +117,45 @@ int Platform_Replay_Active(void);
 
 
 /* ========================================================================= */
+/*  Demo Mode API                                                            */
+/* ========================================================================= */
+
+/**
+ * Start demo mode — replay DEMO.RMR.
+ * @return  0 on success, non-zero if DEMO.RMR not found or replay already active.
+ */
+int Platform_Demo_Start(void);
+
+/**
+ * Reset the demo idle timer.  Call this whenever real user input is detected.
+ */
+void Platform_Demo_Reset_Idle_Timer(void);
+
+/**
+ * Check if the demo idle timer has expired.
+ * @param timeout_ms  Idle timeout in milliseconds.
+ * @return  Non-zero if idle time has exceeded timeout_ms.
+ */
+int Platform_Demo_Idle_Expired(uint64_t timeout_ms);
+
+
+
+/* ========================================================================= */
+/*  Diagnostics                                                              */
+/* ========================================================================= */
+
+/**
+ * Compare recording and replay logs side-by-side.
+ * Reads <basename>-RECORD.log and <basename>-REPLAY.log, displays them
+ * in fixed-width columns on stderr, stops at the first divergence and
+ * shows what the replay should have done.
+ * @param rmr_filepath  Path to the .RMR file (e.g., "NEW_GAME.RMR").
+ */
+void Platform_Replay_Compare_Logs(const char *rmr_filepath);
+
+
+
+/* ========================================================================= */
 /*  Internal (called by Platform_Event_Handler)                              */
 /* ========================================================================= */
 

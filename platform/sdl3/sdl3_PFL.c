@@ -53,6 +53,12 @@ uint64_t sdl2_performance_counter;
 // MOM_PFL.C  // left, right, middle, x1, x2; wheel;
 // MOM_PFL.C  // MOM_PFL.C  int16_t lock_mouse_button_status_flag = ST_FALSE;
 
+/* Per-frame mouse click flag: set when BUTTON_DOWN occurs this frame, cleared at
+   the start of each Platform_Event_Handler() call.  Unlike mouse_buffer_button
+   (which is sticky and never clears), this is 1 only on the frame where the
+   click actually happened.  Used by Replay_Capture_Frame() for recording. */
+int16_t platform_frame_mouse_buttons = 0;
+
 
 int Platform_Get_Scale(void)
 {
@@ -365,16 +371,49 @@ void Platform_Event_Handler(void)
 
     /* CLAUDE */  dbg_handler_calls++;
 
+    /* Clear per-frame click flag so Replay_Capture_Frame() only sees
+       BUTTON_DOWN events that occurred THIS frame. */
+    platform_frame_mouse_buttons = 0;
+
     /* CLAUDE: Replay — if replaying, inject recorded frame instead of polling OS events. */
+    /* CLAUDE: If the user presses a key or clicks the mouse during replay, cancel it. */
     if(Platform_Replay_Active())
     {
-        if(!Replay_Inject_Frame())
+        SDL_Event peek_event;
+        SDL_PumpEvents();
+        while(SDL_PeepEvents(&peek_event, 1, SDL_PEEKEVENT, SDL_EVENT_FIRST, SDL_EVENT_LAST) > 0)
         {
-            /* Replay ended — fall through to live input. */
+            if(peek_event.type == SDL_EVENT_KEY_DOWN || peek_event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+            {
+                fprintf(stderr, "REPLAY: cancelled by user input\n");
+                Platform_Replay_Stop();
+                /* Flush the event that cancelled so it doesn't trigger a game action. */
+                SDL_PollEvent(&peek_event);
+                return;
+            }
+            else if(peek_event.type == SDL_EVENT_QUIT)
+            {
+                /* Let the quit event through normally. */
+                Platform_Replay_Stop();
+                break;
+            }
+            else
+            {
+                /* Discard non-input events (window focus, mouse motion, etc.) during replay. */
+                SDL_PollEvent(&peek_event);
+            }
         }
-        else
+
+        if(Platform_Replay_Active())
         {
-            return;
+            if(!Replay_Inject_Frame())
+            {
+                /* Replay ended — fall through to live input. */
+            }
+            else
+            {
+                return;
+            }
         }
     }
 
@@ -407,11 +446,13 @@ void Platform_Event_Handler(void)
                 // if(SDL_BUTTON(e.button.button) == SDL_BUTTON_LEFT)
                 if(sdl2_event.button.button == SDL_BUTTON_LEFT)
                 {
+                    platform_frame_mouse_buttons |= 1;
                     User_Mouse_Handler(1 /*0b00000001*/, (int16_t)sdl2_event.button.x, (int16_t)sdl2_event.button.y);
                 }
                 // if(SDL_BUTTON(e.button.button) == SDL_BUTTON_RIGHT)
                 if(sdl2_event.button.button == SDL_BUTTON_RIGHT)
                 {
+                    platform_frame_mouse_buttons |= 2;
                     User_Mouse_Handler(2 /*0b00000010*/, (int16_t)sdl2_event.button.x, (int16_t)sdl2_event.button.y);
                 }
                 if(sdl2_event.button.button == SDL_BUTTON_MIDDLE)
@@ -424,6 +465,10 @@ void Platform_Event_Handler(void)
             {
                 /* CLAUDE */  dbg_events_mouseup++;
                 // platform_mouse_button_status = 0;
+                /* NOTE: don't clear platform_frame_mouse_buttons here.
+                   It's a per-frame "was clicked" flag, cleared at the
+                   start of each Platform_Event_Handler() call.  BUTTON_UP
+                   in the same frame as BUTTON_DOWN should still record btn=1. */
             } break;
 
             case SDL_EVENT_MOUSE_MOTION:
