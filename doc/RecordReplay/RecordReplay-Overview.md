@@ -9,6 +9,24 @@ SEEALSO: C:\STU\devel\ReMoM\doc\RecordReplay\Handmade Hero Day 023 - Looped Live
 
 
 
+./platform/replay/Replay.c
+
+
+
+
+## --record
+ReMoM.c
+    if(strcmp(argv[argi], "--record") == 0 && (argi + 1) < argc)
+        Platform_Record_Start(argv[argi]);
+
+
+
+## --replay
+ReMoM.c
+    if(strcmp(argv[argi], "--replay") == 0 && (argi + 1) < argc)
+        Platform_Replay_Start(argv[argi]);
+
+
 
 
 Handmade Hero's record and replay system, covered in Day 023, enables live code editing by recording keyboard/mouse inputs and saving a base memory state to disk. By restoring the memory state and replaying the recorded inputs, the game can instantly reproduce bugs or test changes, speeding up development iterations.
