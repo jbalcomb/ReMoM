@@ -1,28 +1,38 @@
+
 Sometimes, on the main movement map, stacks are not drawn. might be specific to enemy stacks. might be just after the human player moves. probably something with #entities_on_movement_map. review the code in that area and see if your can find a cause
+
+
+
 Grep "entities_on_movement_map"
 19 lines of output
 Grep "entities_on_movement_map" (in c:\STU\devel\ReMoM\MoM\src\MainScr_Maps.c)
 19 lines of output
 Read c:\STU\devel\ReMoM\MoM\src\MainScr_Maps.c (lines 701-900)
 Read c:\STU\devel\ReMoM\MoM\src\MainScr_Maps.c (lines 601-700)
+
 Now let me look at the draw code that reads from entities_on_movement_map to render stacks.
 
 Read c:\STU\devel\ReMoM\MoM\src\MainScr_Maps.c (lines 3041-3140)
+
 Now let me look at the Draw_Priority logic more carefully. The key question is what happens when the active stack moves — does Set_Entities_On_Map_Window get called to refresh after movement?
 
 Grep "Draw_Priority" (in c:\STU\devel\ReMoM\MoM\src\MainScr_Maps.c)
 11 lines of output
 Grep "Set_Entities_On_Map_Window"
 83 lines of output
+
 Now let me look at the Draw_Priority logic more closely — specifically Set_Unit_Draw_Priority and Reset_Stack_Draw_Priority.
 
 Read c:\STU\devel\ReMoM\MoM\src\MainScr_Maps.c (lines 959-1038)
+
 Now I see the issue. Let me look at the draw-map function that calls these and look at the draw_active_stack_flag interaction.
 
 Read c:\STU\devel\ReMoM\MoM\src\MainScr_Maps.c (lines 431-470)
+
 Now I see the critical sequence: Set_Unit_Draw_Priority() → Reset_Stack_Draw_Priority() → Set_Entities_On_Map_Window(). Let me look more closely at the filtering logic inside Set_Entities_On_Map_Window, specifically lines 777-803.
 
 Read c:\STU\devel\ReMoM\MoM\src\MainScr_Maps.c (lines 778-807)
+
 Now let me check ST_UNDEFINED value and what happens with Draw_Priority comparisons.
 
 Grep "ST_UNDEFINED" (glob: **/MOX_DEF.h)
@@ -32,10 +42,12 @@ Grep "#define ST_UNDEFINED"
 Grep "UNITS_DRAW_PRIORITY"
 6 lines of output
 Read c:\STU\devel\ReMoM\MoX\src\MOX_UPD.h (lines 166-175)
+
 Now let me check the Draw_Priority field type.
 
 Grep "Draw_Priority" (glob: **/*.h)
 6 lines of output
+
 Draw_Priority is int8_t. Now I see the bug. Let me verify by looking at Set_Unit_Draw_Priority again carefully:
 
 Here's the problem. In Set_Unit_Draw_Priority (line 958), when a unit's owner is ST_UNDEFINED (-1) or it has invisibility and isn't the human player, draw_priority gets set to ST_UNDEFINED (-1). Then at line 992 it's cast to int8_t and stored. So dead/invisible units get Draw_Priority = -1.

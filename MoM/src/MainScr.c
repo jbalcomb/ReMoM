@@ -5518,44 +5518,85 @@ Done:
 
 // WZD o95p02
 /*
-
 OON XREF
 Move_Units()
     Move_Units_Draw(player_idx, map_p, path_length, map_x, map_y, troops, troop_count);
-
 */
+/**
+ * @brief Renders overland movement animation for a moving stack and updates visual exploration state.
+ *
+ * @details
+ * This routine is the draw/animation companion for movement processing in `Move_Units()`.
+ * It computes movement visibility, determines a representative unit sprite for the stack,
+ * animates each path segment on the map window, and refreshes map/minimap state as units move.
+ *
+ * High-level behavior:
+ * - Decides whether movement should be shown (`display_moves`) based on ownership,
+ *   enemy move settings, scouted path visibility, and invisibility composition.
+ * - Centers view if needed and rebuilds map entities/draw state before animation.
+ * - Computes effective scouting range from unit sight and specific movement abilities.
+ * - Selects highest draw-priority unit as the animated stack representative.
+ * - Temporarily moves stack world coordinates to final destination for downstream state usage.
+ * - Optionally applies road construction updates on traversed tiles.
+ * - For each move-path step:
+ *   - computes per-axis sprite shift and stage count,
+ *   - handles wrap-around edge movement,
+ *   - redraws map section/window and animated unit frame,
+ *   - updates explored tiles and reduced map image for human player movement.
+ * - Resets map/window draw state before returning.
+ *
+ * Important globals/couplings:
+ * - Reads movement arrays `movepath_x_array[]` / `movepath_y_array[]`.
+ * - Uses and updates global map window coordinates `_map_x`, `_map_y` for human moves.
+ * - Relies on `_UNITS[]`, player ownership settings, and map draw subsystem calls.
+ *
+ * @param player_idx Index of the moving player.
+ * @param map_p World plane index for movement.
+ * @param movepath_length Number of movement path segments to animate.
+ * @param map_x In/out pointer to current map window X origin.
+ * @param map_y In/out pointer to current map window Y origin.
+ * @param unit_array Array of unit indices composing the moving stack.
+ * @param unit_array_count Number of entries in @p unit_array.
+ *
+ * @return void
+ * No return value. Performs rendering side effects and updates map exploration visuals.
+ *
+ * @note The function currently forces `display_moves = ST_TRUE` via a `HACK` line,
+ *       overriding earlier conditional visibility logic.
+ * @warning The function has extensive side effects on global draw/map state; callers must
+ *          ensure map draw context and movement path globals are valid before invocation.
+ */
 void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length, int16_t * map_x, int16_t * map_y, int16_t unit_array[], int16_t unit_array_count)
 {
 
-    int16_t display_moves;
-    int16_t Highest_Priority;
-    int16_t curr_src_wy;
-    int16_t curr_src_wx;
-    int16_t Move_Stages;
-    int16_t curr_dst_sy;
-    int16_t curr_dst_sx;
-    int16_t curr_src_sy;
-    int16_t curr_src_sx;
-    int16_t scout_range;
-    int16_t build_road;
-    int16_t curr_dst_wy;
-    int16_t curr_dst_wx;
-    int16_t unit_pict_sy;
-    int16_t unit_pict_sx;
-    int16_t unit_y;
-    int16_t unit_x;
-    int16_t Highest_Priority_Unit__Loop_Var;
-    int16_t destination_y;
-    int16_t destination_x;  // In the Dasm, doubles as `invisibility_unit_count`
-    int16_t unit_pict_shift_sy;
-    int16_t unit_pict_shift_sx;
-    int16_t unit_idx;
-
-    int16_t itr_path_length;
-    int16_t itr_unit_array_count;
-    int16_t invisibility_unit_count;
-    int16_t itr_move_stages;
-    int16_t itr_units;
+    int16_t display_moves = 0;
+    int16_t Highest_Priority = 0;
+    int16_t curr_src_wy = 0;
+    int16_t curr_src_wx = 0;
+    int16_t Move_Stages = 0;
+    int16_t curr_dst_sy = 0;
+    int16_t curr_dst_sx = 0;
+    int16_t curr_src_sy = 0;
+    int16_t curr_src_sx = 0;
+    int16_t scout_range = 0;
+    int16_t build_road = 0;
+    int16_t curr_dst_wy = 0;
+    int16_t curr_dst_wx = 0;
+    int16_t unit_pict_sy = 0;
+    int16_t unit_pict_sx = 0;
+    int16_t unit_y = 0;
+    int16_t unit_x = 0;
+    int16_t Highest_Priority_Unit__Loop_Var = 0;
+    int16_t destination_y = 0;
+    int16_t destination_x = 0;  // In the Dasm, doubles as `invisibility_unit_count`
+    int16_t unit_pict_shift_sy = 0;
+    int16_t unit_pict_shift_sx = 0;
+    int16_t unit_idx = 0;
+    int16_t itr_path_length = 0;
+    int16_t itr_unit_array_count = 0;
+    int16_t invisibility_unit_count = 0;
+    int16_t itr_move_stages = 0;
+    int16_t itr_units = 0;
 
     assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
     assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
@@ -5623,7 +5664,6 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
         END: display_moves
     */
 
-    /* HACK */  display_moves = ST_TRUE;
     if(display_moves == ST_TRUE)
     {
 

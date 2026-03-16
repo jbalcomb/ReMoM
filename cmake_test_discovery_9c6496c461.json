@@ -1,5 +1,5 @@
 {
-  "tests": 97,
+  "tests": 104,
   "name": "AllTests",
   "testsuites": [
     {
@@ -367,6 +367,47 @@
           "name": "LeavesZeroCountsAsZero",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Set_Upper_Lair_Guardian_Count.cpp",
           "line": 61
+        }
+      ]
+    },
+    {
+      "name": "Clear_Square_Scouted_test",
+      "tests": 7,
+      "testsuite": [
+        {
+          "name": "CheckSquareScoutedReturnsTrueWhenScoutedAndExplored",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
+          "line": 50
+        },
+        {
+          "name": "CheckSquareScoutedReturnsFalseWhenNotExplored",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
+          "line": 61
+        },
+        {
+          "name": "CheckSquareScoutedReturnsFalseWhenExploredButNotScouted",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
+          "line": 71
+        },
+        {
+          "name": "SetSquareScoutedSetsRequestedPlaneOnly",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
+          "line": 81
+        },
+        {
+          "name": "SetSquareScoutedSetsOnlyTargetSquare",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
+          "line": 93
+        },
+        {
+          "name": "ClearsRequestedPlaneOnly",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
+          "line": 109
+        },
+        {
+          "name": "ClearsOnlyTargetSquare",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
+          "line": 127
         }
       ]
     },

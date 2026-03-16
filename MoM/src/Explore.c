@@ -69,18 +69,49 @@ void Clear_Square_Scouted_Flags(int16_t world_p)
 }
 
 // WZD o92p02
-// drake178: TILE_IsVisible
+/* COPILOT */
+/**
+ * @brief Returns whether a world square is currently scouted on the specified plane.
+ *
+ * @details
+ * A square is considered "scouted" only when both of the following are true:
+ * - its transient visibility bit is set in the plane-specific `square_scouted_p0` or
+ *   `square_scouted_p1` bitfield, and
+ * - the square is also marked explored via `Check_Square_Explored()`.
+ *
+ * This means the function does not test raw current-visibility state alone; it enforces
+ * the game rule that an unexplored square cannot be treated as actively scouted.
+ *
+ * Implementation notes:
+ * - Computes a linear tile index with `world_y * WORLD_WIDTH + world_x`.
+ * - Selects the scouting bitfield based on `world_p`.
+ * - Combines the bitfield result with explored-state validation before returning.
+ *
+ * Related functions:
+ * - `Set_Square_Scouted()` sets the current-plane scouting bit.
+ * - `Clear_Square_Scouted()` clears the current-plane scouting bit.
+ * - `Check_Square_Explored()` validates persistent exploration state.
+ *
+ * @param world_x World-space X coordinate of the square to test.
+ * @param world_y World-space Y coordinate of the square to test.
+ * @param world_p World plane index: `0` selects `square_scouted_p0`, any other value
+ *                selects `square_scouted_p1`.
+ *
+ * @return int16_t
+ * Returns `ST_TRUE` if the square is both currently scouted and explored; otherwise
+ * returns `ST_FALSE`.
+ *
+ * @note This function assumes the caller passes valid world coordinates and plane values;
+ *       it performs no bounds checking.
+ */
 int16_t Check_Square_Scouted(int16_t world_x, int16_t world_y, int16_t world_p)
 {
-    int16_t world_square_idx;
-    int16_t square_scouted_flag;
-    int16_t square_explored_flag;
-    int16_t square_is_scouted;
-
+    int16_t world_square_idx = 0;
+    int16_t square_scouted_flag = 0;
+    int16_t square_explored_flag = 0;
+    int16_t square_is_scouted = 0;
     square_is_scouted = ST_FALSE;
-
     world_square_idx = world_y * WORLD_WIDTH + world_x;
-
     if(world_p == 0)
     {
         square_scouted_flag = Test_Bit_Field(world_square_idx, square_scouted_p0);
@@ -89,94 +120,62 @@ int16_t Check_Square_Scouted(int16_t world_x, int16_t world_y, int16_t world_p)
     {
         square_scouted_flag = Test_Bit_Field(world_square_idx, square_scouted_p1);
     }
-
     square_explored_flag = Check_Square_Explored(world_x, world_y, world_p);
-
     if(square_scouted_flag == ST_TRUE && square_explored_flag == ST_TRUE)
     {
         square_is_scouted = ST_TRUE;
     }
-
-//     if(
-//         ((world_x == 18) && (world_y == 12) && (world_p == 0)) ||
-//         ((world_x == 19) && (world_y == 15) && (world_p == 0)) ||
-//         ((world_x == 20) && (world_y == 15) && (world_p == 0)) ||
-//         ((world_x == 19) && (world_y == 16) && (world_p == 0)) ||
-//         ((world_x == 20) && (world_y == 16) && (world_p == 0)) ||
-//         ((world_x == 19) && (world_y == 17) && (world_p == 0)) ||
-//         ((world_x == 18) && (world_y == 18) && (world_p == 0)) ||
-//         ((world_x == 19) && (world_y == 18) && (world_p == 0)) ||
-//         ((world_x == 18) && (world_y == 21) && (world_p == 0)) ||
-//         ((world_x == 25) && (world_y == 11) && (world_p == 0)) ||
-//         ((world_x == 30) && (world_y == 11) && (world_p == 0)) ||
-//         ((world_x == 24) && (world_y == 13) && (world_p == 0)) ||
-//         ((world_x == 26) && (world_y == 13) && (world_p == 0)) ||
-//         ((world_x == 24) && (world_y == 16) && (world_p == 0)) ||
-//         ((world_x == 25) && (world_y == 16) && (world_p == 0)) ||
-//         ((world_x == 29) && (world_y == 16) && (world_p == 0)) ||
-//         ((world_x == 25) && (world_y == 17) && (world_p == 0)) ||
-//         ((world_x == 25) && (world_y == 18) && (world_p == 0)) ||
-//         ((world_x == 23) && (world_y == 19) && (world_p == 0)) ||
-//         ((world_x == 23) && (world_y == 14) && (world_p == 0)) ||
-//         ((world_x == 23) && (world_y == 17) && (world_p == 0)) ||
-//         ((world_x == 22) && (world_y == 20) && (world_p == 0))
-//     )
-//     {
-// #ifdef STU_DEBUG
-//         dbg_prn("DEBUG: [%s, %d]: world_x, world_y, world_p: %d %d %d\n", __FILE__, __LINE__, world_x, world_y, world_p);
-//         dbg_prn("DEBUG: [%s, %d]: square_scouted_flag: %d\n", __FILE__, __LINE__, square_scouted_flag);
-//         dbg_prn("DEBUG: [%s, %d]: square_explored_flag: %d\n", __FILE__, __LINE__, square_explored_flag);
-//         dbg_prn("DEBUG: [%s, %d]: square_is_scouted: %d\n", __FILE__, __LINE__, square_is_scouted);
-// #endif
-//     }
-/*
-    Map X,Y:    18,11
-
-    Cities:     19,12
-                18,17
-                23,14
-                20,19
-    
-    Units:      18,12
-                19,15
-                20,15
-                19,16
-                20,16
-                19,17
-                18,18
-                19,18
-                18,21
-                !25,11
-                !30,11
-                !24,13
-                !26,13
-                !24,16
-                !25,16
-                !29,16
-                !25,17
-                !25,18
-                !23,19
-*/
-
     return square_is_scouted;
 }
 
 // WZD o92p03
-// drake178: TILE_MarkVisible
+/* COPILOT */
+/**
+ * @brief Marks a world square as currently scouted in the plane-specific visibility bitfield.
+ *
+ * @details
+ * This function sets the transient "currently visible/scouted" bit for a single square
+ * on the requested world plane. It does not mark the tile as explored; persistent map
+ * discovery is handled separately by the explored-state system.
+ *
+ * Implementation behavior:
+ * - Computes the linear square index as `(world_y * WORLD_WIDTH) + world_x`.
+ * - Derives byte/bit addressing information for the corresponding bitfield entry.
+ * - Selects the destination bitfield by plane:
+ *   - `world_p == 0` uses `square_scouted_p0`
+ *   - any other value uses `square_scouted_p1`
+ * - Calls `Set_Bit_Field()` to perform the actual write.
+ *
+ * The local variables that derive `byte_idx`, `byte_bit_idx`, and the merged byte value
+ * mirror the original logic and are useful for debugging/verification, even though the
+ * final write is delegated to `Set_Bit_Field()`.
+ *
+ * Related functions:
+ * - `Check_Square_Scouted()` tests whether a square is both scouted and explored.
+ * - `UU_Clear_Square_Scouted()` removes the transient scouted bit.
+ * - `Set_Square_Scouted_Flags()` applies this function across a sight-radius area.
+ *
+ * @param world_x World-space X coordinate of the square to mark.
+ * @param world_y World-space Y coordinate of the square to mark.
+ * @param world_p World plane index selecting the destination scouting bitfield.
+ *
+ * @return void
+ * No return value. Updates global scouting state in place.
+ *
+ * @note This function assumes valid coordinates and plane values; it performs no bounds
+ *       validation before computing the linear bit index.
+ */
 void Set_Square_Scouted(int16_t world_x, int16_t world_y, int16_t world_p)
 {
-    int16_t world_square_idx;
-
-    int16_t bit_idx;
-    uint8_t * bit_field;
-    int16_t byte_idx;
-    uint16_t bit_field_byte;
-    int16_t byte_bit_idx;
-    uint16_t bit_field_test_bit;
-    uint16_t new_bit_field_byte;
-
+    int16_t world_square_idx = 0;
+    int16_t bit_idx = 0;
+    uint8_t * bit_field = 0;
+    int16_t byte_idx = 0;
+    uint16_t bit_field_byte = 0;
+    int16_t byte_bit_idx = 0;
+    uint16_t bit_field_test_bit = 0;
+    uint16_t new_bit_field_byte = 0;
     world_square_idx = (world_y * WORLD_WIDTH) + world_x;
-
     bit_idx = world_square_idx;
     bit_field = square_scouted_p0;
     byte_idx = (bit_idx >> 3);
@@ -185,8 +184,6 @@ void Set_Square_Scouted(int16_t world_x, int16_t world_y, int16_t world_p)
     // bit_field[byte_idx] = (bit_field_byte | bit_field_test_bits[byte_bit_idx]);
     bit_field_test_bit = bit_field_test_bits[byte_bit_idx];
     new_bit_field_byte = (bit_field_byte | bit_field_test_bits[byte_bit_idx]);
-
-
     if(world_p == 0)
     {
         Set_Bit_Field(world_square_idx, square_scouted_p0);
@@ -195,17 +192,47 @@ void Set_Square_Scouted(int16_t world_x, int16_t world_y, int16_t world_p)
     {
         Set_Bit_Field(world_square_idx, square_scouted_p1);
     }
-
 }
 
 // WZD o92p04
-// drake178: UU_TILE_ClearVisible
-void UU_Clear_Square_Scouted(int16_t world_x, int16_t world_y, int16_t world_p)
+/* COPILOT */
+/**
+ * @brief Clears the transient scouted/visible flag for a single world square.
+ *
+ * @details
+ * This function removes the current-turn visibility bit for one square from the
+ * plane-specific scouting bitfield. It affects only transient scouting state and does
+ * not modify persistent exploration data.
+ *
+ * Implementation behavior:
+ * - Computes the linear world-square index as `(world_y * WORLD_WIDTH) + world_x`.
+ * - Selects the target bitfield by plane:
+ *   - `world_p == 0` clears from `square_scouted_p0`
+ *   - any other value clears from `square_scouted_p1`
+ * - Delegates the actual bit removal to `Clear_Bit_Field()`.
+ *
+ * This routine is the inverse of `Set_Square_Scouted()` and is typically used as part
+ * of visibility refresh logic that rebuilds current scouting each update cycle.
+ *
+ * Related functions:
+ * - `Set_Square_Scouted()` sets the transient scouting bit.
+ * - `Clear_Square_Scouted_Flags()` clears an entire plane's scouting bitfield.
+ * - `Check_Square_Scouted()` tests the final scouted state together with explored state.
+ *
+ * @param world_x World-space X coordinate of the square to clear.
+ * @param world_y World-space Y coordinate of the square to clear.
+ * @param world_p World plane index selecting which scouting bitfield to update.
+ *
+ * @return void
+ * No return value. Updates global scouting visibility state in place.
+ *
+ * @note This function assumes valid coordinates and plane values; it performs no
+ *       bounds checking before computing the bit index.
+ */
+void Clear_Square_Scouted(int16_t world_x, int16_t world_y, int16_t world_p)
 {
     int16_t world_square_idx;
-
     world_square_idx = (world_y * WORLD_WIDTH) + world_x;
-
     if(world_p == 0)
     {
         Clear_Bit_Field(world_square_idx, square_scouted_p0);
@@ -330,9 +357,8 @@ void Update_Scouted_And_Contacted__WIP(void)
 /*
     within the scout range, sets all explored squares as scouted squares
 */
-int16_t Set_Square_Scouted_Flags(int16_t world_x, int16_t world_y, int16_t world_p, int16_t scout_range)
+void Set_Square_Scouted_Flags(int16_t world_x, int16_t world_y, int16_t world_p, int16_t scout_range)
 {
-    int16_t return_value;
     int16_t start_world_x;
     int16_t start_world_y;
     int16_t itr_world_x;
@@ -348,10 +374,8 @@ int16_t Set_Square_Scouted_Flags(int16_t world_x, int16_t world_y, int16_t world
 
     if(scout_range == 0)
     {
-        return_value = 0;
+        return;
     }
-    else
-    {
 
 #ifdef STU_DEBUG
         dbg_do_trace = DBG_Trace_Scout_Match(world_x, world_y, world_p);
@@ -378,10 +402,14 @@ int16_t Set_Square_Scouted_Flags(int16_t world_x, int16_t world_y, int16_t world
             start_world_x = start_world_x + WORLD_WIDTH;
         }
 
-        // TODO review the ranging here - maybe should be while loop, to exit 1 iteration earlier
-        for(itr_world_y = start_world_y; (itr_world_y < (start_world_y + (scout_range * 3) - 1)) && (itr_world_y < WORLD_HEIGHT); itr_world_y++)
+        scout_range = (scout_range * 2) + 1;
+        for (itr_world_y = start_world_y; itr_world_y < start_world_y + scout_range; itr_world_y++)
         {
-            for(itr_world_x = start_world_x; itr_world_x < (start_world_x + (scout_range * 3) - 1); itr_world_x++)
+            if (itr_world_y >= WORLD_HEIGHT)
+            {
+                continue;
+            }
+            for (itr_world_x = start_world_x; itr_world_x < start_world_x + scout_range; itr_world_x++)
             {
                 if(itr_world_x < WORLD_WIDTH)
                 {
@@ -409,18 +437,15 @@ int16_t Set_Square_Scouted_Flags(int16_t world_x, int16_t world_y, int16_t world
                 }
             }
         }
-        return_value = itr_world_y;
-
+        
 #ifdef STU_DEBUG
         if((dbg_do_trace == ST_TRUE) && (DBG_TRACE_SCOUT_BUDGET > 0))
         {
             DBG_TRACE_SCOUT_BUDGET--;
-            dbg_prn("DEBUG: [%s, %d]: END Set_Square_Scouted_Flags(world_x=%d, world_y=%d, world_p=%d, marked=%d, return_value=%d)", __FILE__, __LINE__, world_x, world_y, world_p, dbg_tiles_marked, return_value);
+            dbg_prn("DEBUG: [%s, %d]: END Set_Square_Scouted_Flags(world_x=%d, world_y=%d, world_p=%d, marked=%d)", __FILE__, __LINE__, world_x, world_y, world_p, dbg_tiles_marked);
         }
 #endif
-    }
-
-    return return_value;
+    
 }
 
 // WZD o92p07

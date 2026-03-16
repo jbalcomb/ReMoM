@@ -18,6 +18,7 @@ add_executable(MOM_tests
     test_City_Maximum_Size_NewGame.cpp
     test_Init_New_Game.cpp
     test_Set_Upper_Lair_Guardian_Count.cpp
+    test_Clear_Square_Scouted.cpp
     test_Square_Food2_NewGame.cpp
     test_STR_ListSeparator.cpp
     test_Create_Lair.cpp

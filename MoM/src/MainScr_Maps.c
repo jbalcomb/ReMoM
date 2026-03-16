@@ -719,12 +719,12 @@ void Set_Entities_On_Map_Window(int16_t wx, int16_t wy, int16_t wp)
     int16_t itr_cities;
     int16_t entity_mx;  // DNE in Dasm
     int16_t entity_my;  // DNE in Dasm
-    // DELETEME  int16_t entity_table_idx;  // DNE in Dasm
     int16_t prior_entity_idx;  // used to check if a Unit has already been placed
 
     city_in_view = ST_FALSE;
     entity_wy = 0;
     entity_wx = 0;
+
 
     for(itr_map_y = 0; itr_map_y < MAP_HEIGHT; itr_map_y++)
     {
@@ -748,10 +748,8 @@ void Set_Entities_On_Map_Window(int16_t wx, int16_t wy, int16_t wp)
             {
                 if( (_UNITS[itr_units].wp == wp) || (_UNITS[itr_units].in_tower == ST_TRUE) )
                 {
-                    // entity_world_y = _UNITS[itr_units].wy;
                     if( (entity_wy >= wy) && (entity_wy < wy + MAP_HEIGHT) )
                     {
-                        // entity_world_x = _UNITS[itr_units].wx;
                         if(
                              ((entity_wx >= wx) && (entity_wx < wx + MAP_WIDTH)) ||
                              ((entity_wx + WORLD_WIDTH >= wx) && (entity_wx + WORLD_WIDTH < wx + MAP_WIDTH))
@@ -761,16 +759,9 @@ void Set_Entities_On_Map_Window(int16_t wx, int16_t wy, int16_t wp)
                             {
                                 entity_wx = (entity_wx + WORLD_WIDTH);
                             }
-
                             entity_mx = (entity_wx - wx);
                             entity_my = (entity_wy - wy);
-                            // DELETEME  entity_table_idx = ((entity_map_y * MAP_WIDTH) + entity_map_x);
-                            // DELETEME  
-                            // DELETEME  // prior_entity_idx = (entities_on_movement_map[((entity_map_y * MAP_WIDTH) + entity_map_x)]);
-                            // DELETEME  // // entities_on_movement_map[((my * MAP_WIDTH) + mx)];
-                            // DELETEME  // prior_entity_idx = entities_on_movement_map[entity_table_idx];
                             prior_entity_idx = GET_MAP_ENTITY(entity_mx,entity_my);
-
                             /*
                                 Add UNIT to entities_on_movement_map[]
                             */
@@ -779,7 +770,6 @@ void Set_Entities_On_Map_Window(int16_t wx, int16_t wy, int16_t wp)
                                 if(_UNITS[itr_units].Draw_Priority > _UNITS[prior_entity_idx].Draw_Priority)
                                 {
                                     // Add UNIT to entities_on_movement_map[]
-                                    // DELETEME  entities_on_movement_map[entity_table_idx] = itr_units;
                                     SET_MAP_ENTITY(entity_mx, entity_my, itr_units);
                                 }
                             }
@@ -788,7 +778,6 @@ void Set_Entities_On_Map_Window(int16_t wx, int16_t wy, int16_t wp)
                                 if(_UNITS[itr_units].Draw_Priority > 0)
                                 {
                                     // Add UNIT to entities_on_movement_map[]
-                                    // DELETEME  entities_on_movement_map[entity_table_idx] = itr_units;
                                     SET_MAP_ENTITY(entity_mx, entity_my, itr_units);
                                 }
                                 else
@@ -796,7 +785,6 @@ void Set_Entities_On_Map_Window(int16_t wx, int16_t wy, int16_t wp)
                                     if( (_UNITS[itr_units].Draw_Priority == 0) && (draw_active_stack_flag == -1) )  /* ALWAYS draw active stack */
                                     {
                                         // Add UNIT to entities_on_movement_map[]
-                                        // DELETEME  entities_on_movement_map[entity_table_idx] = itr_units;
                                         SET_MAP_ENTITY(entity_mx, entity_my, itr_units);
                                     }
                                 }
@@ -810,14 +798,10 @@ void Set_Entities_On_Map_Window(int16_t wx, int16_t wy, int16_t wp)
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-
         entity_wx = _CITIES[itr_cities].wx;
         entity_wy = _CITIES[itr_cities].wy;
         entity_wp = _CITIES[itr_cities].wp;
-
-        // DELETEME  square_is_explored = _square_explored[((entity_world_p * WORLD_SIZE) + (entity_world_y * WORLD_WIDTH) + entity_world_x)];
         square_is_explored = GET_SQUARE_EXPLORED(entity_wx, entity_wy, entity_wp);
-
         if(
             (
                 (entity_wp == wp)
@@ -828,52 +812,35 @@ void Set_Entities_On_Map_Window(int16_t wx, int16_t wy, int16_t wp)
             (square_is_explored != ST_FALSE)
         )
         {
-
             entity_wy = _CITIES[itr_cities].wy;
-
             if(
                 (entity_wy >= wy)
                 &&
                 (entity_wy < wy + MAP_HEIGHT)
             )
             {
-
                 city_in_view = ST_FALSE;
-
                 entity_my = (entity_wy - wy);
-
                 entity_wx = _CITIES[itr_cities].wx;
-
                 if(
                     ( (entity_wx >= wx) && (entity_wx < wx + MAP_WIDTH) ) ||
                     ( (entity_wx + WORLD_WIDTH >= wx) && (entity_wx + WORLD_WIDTH < wx + MAP_WIDTH) )
                 )
                 {
-
                     if( (entity_wx + WORLD_WIDTH >= wx) && (entity_wx + WORLD_WIDTH < wx + MAP_WIDTH) )
                     {
                         entity_wx = (entity_wx + WORLD_WIDTH);
                     }
-
                     entity_mx = (entity_wx - wx);
-
                     city_in_view = ST_TRUE;
-
                 }
-
                 if(city_in_view == ST_TRUE)
                 {
-                    // DELETEME  entity_table_idx = ((entity_map_y * MAP_WIDTH) + entity_map_x);
-                    // DELETEME  entities_on_movement_map[entity_table_idx] = (itr_cities + MAX_UNIT_COUNT);
                     SET_MAP_ENTITY(entity_mx, entity_my, (itr_cities + MAX_UNIT_COUNT));
                 }
-
             }
-
         }
-
     }
-
 }
 
 
@@ -1308,130 +1275,116 @@ void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_
 */
 void Set_Map_Square_Explored_Flags_XYP(int16_t wx, int16_t wy, int16_t wp)
 {
-    // DEDU  does this actually exist in the Dasm?  uint8_t * ptr_square_explored;
-    int16_t itr_wx;
-    int16_t wy_u2;
-    int16_t wy_d2;
-    int16_t wx_l2;
-    int16_t wx_r2;
-    int16_t wy_u1;
-    int16_t wy_d1;
-    int16_t wx_l1;
-    int16_t wx_r1;
+    uint8_t * ptr_square_explored = NULL;
+    int16_t itr_wx = 0;
+    int16_t wy_u2 = 0;
+    int16_t wy_d2 = 0;
+    int16_t wx_l2 = 0;
+    int16_t wx_r2 = 0;
+    int16_t wy_u1 = 0;
+    int16_t wy_d1 = 0;
+    int16_t wx_l1 = 0;
+    int16_t wx_r1 = 0;
+
+    ptr_square_explored = _square_explored[(wp * WORLD_SIZE)];
 
     if(wy == 0)
     {
-        SET_SQUARE_EXPLORED(wx, wy, wp, (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
+        ptr_square_explored[((wy * WORLD_WIDTH ) + wx)] = (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight);
+        return;
+    }
+
+    /*
+        BEGIN: sanitize wy & wx
+    */
+    if(wy == 0)
+    {
+        wy_u1 = 0;
+        wy_u2 = 0;
     }
     else
     {
+        wy_u1 = wy - 1;
+        wy_u2 = wy - 2;
+        SETMIN(wy_u2, 0);
+    }
 
-        /*
-            BEGIN: sanitize wy & wx
-        */
-        if(wy == 0)
+    if(wy == WORLD_YMAX)
+    {
+        wy_d1 = WORLD_WIDTH - 1;  // 40 - 1 = 39
+        wy_d2 = WORLD_WIDTH - 2;  // 40 - 2 = 38
+    }
+    else
+    {
+        wy_d1 = wy + 1;
+        wy_d2 = wy + 2;
+        SETMAX(wy_d2, WORLD_WIDTH);
+    }
+
+    if(wx == 0)
+    {
+        wx_l1 = WORLD_WIDTH - 1;  // 60 - 1 = 59
+        wx_l2 = WORLD_WIDTH - 2;  // 60 - 2 = 58
+    }
+    else
+    {
+        wx_l1 = wx - 1;
+        wx_l2 = wx - 2;
+        if(wx_l2 < 0)
         {
-            wy_u1 = 0;
-            wy_u2 = 0;
+            wx_l2 = WORLD_XMAX;
         }
-        else
-        {
-            wy_u1 = wy - 1;
-            wy_u2 = wy - 2;
-            SETMIN(wy_u2, 0);
-        }
+    }
 
-        if(wy == WORLD_YMAX)
-        {
-            wy_d1 = WORLD_WIDTH - 1;  // 40 - 1 = 39
-            wy_d2 = WORLD_WIDTH - 2;  // 40 - 2 = 38
-        }
-        else
-        {
-            wy_d1 = wy + 1;
-            wy_d2 = wy + 2;
-            SETMAX(wy_d2, WORLD_WIDTH);
-        }
+    if(wx == WORLD_XMAX)
+    {
+        wx_r1 = 0;
+        wx_r2 = 1;
+    }
+    else
+    {
+        wx_r1 = wx + 1;
+        wx_r2 = wx + 2;
+    }
+    /*
+        END: sanitize wy & wx
+    */
 
-        if(wx == 0)
-        {
-            wx_l1 = WORLD_WIDTH - 1;  // 60 - 1 = 59
-            wx_l2 = WORLD_WIDTH - 2;  // 60 - 2 = 58
-        }
-        else
-        {
-            wx_l1 = wx - 1;
-            wx_l2 = wx - 2;
-            if(wx_l2 < 0)
-            {
-                wx_l2 = WORLD_XMAX;
-            }
-        }
+    SET_SQUARE_EXPLORED(wx_l1, wy_u1, wp, (GET_SQUARE_EXPLORED(wx_l1, wy_u1, wp) |                                               SCT_BottomRight));
+    SET_SQUARE_EXPLORED(wx,    wy_u1, wp, (GET_SQUARE_EXPLORED(wx,    wy_u1, wp) | SCT_BottomLeft                              | SCT_BottomRight));
+    SET_SQUARE_EXPLORED(wx_r1, wy_u1, wp, (GET_SQUARE_EXPLORED(wx_r1, wy_u1, wp) | SCT_BottomLeft                                               ));
+    SET_SQUARE_EXPLORED(wx_l1, wy,    wp, (GET_SQUARE_EXPLORED(wx_l1, wy,    wp) |                                SCT_TopRight | SCT_BottomRight));
+    SET_SQUARE_EXPLORED(wx,    wy,    wp, (GET_SQUARE_EXPLORED(wx,    wy,    wp) | SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
+    SET_SQUARE_EXPLORED(wx_r1, wy,    wp, (GET_SQUARE_EXPLORED(wx_r1, wy,    wp) | SCT_BottomLeft | SCT_TopLeft                                 ));
+    SET_SQUARE_EXPLORED(wx_l1, wy_d1, wp, (GET_SQUARE_EXPLORED(wx_l1, wy_d1, wp) |                                SCT_TopRight                  ));
+    SET_SQUARE_EXPLORED(wx,    wy_d1, wp, (GET_SQUARE_EXPLORED(wx,    wy_d1, wp) |                  SCT_TopLeft | SCT_TopRight                  ));
+    SET_SQUARE_EXPLORED(wx_r1, wy_d1, wp, (GET_SQUARE_EXPLORED(wx_r1, wy_d1, wp) |                  SCT_TopLeft                                 ));
 
-        if(wx == WORLD_XMAX)
-        {
-            wx_r1 = 0;
-            wx_r2 = 1;
-        }
-        else
-        {
-            wx_r1 = wx + 1;
-            wx_r2 = wx + 2;
-        }
-        /*
-            END: sanitize wy & wx
-        */
+    Set_Square_Explored_Flags_Fix(wx, wy, wp);
 
-        // 
-        SET_SQUARE_EXPLORED(wx_l1, wy_u1, wp, (GET_SQUARE_EXPLORED(wx_l1, wy_u1, wp) |                                               SCT_BottomRight));
-        // 
-        SET_SQUARE_EXPLORED(wx,    wy_u1, wp, (GET_SQUARE_EXPLORED(wx,    wy_u1, wp) | SCT_BottomLeft                              | SCT_BottomRight));
-        // 
-        SET_SQUARE_EXPLORED(wx_r1, wy_u1, wp, (GET_SQUARE_EXPLORED(wx_r1, wy_u1, wp) | SCT_BottomLeft                                               ));
-        // 
-        SET_SQUARE_EXPLORED(wx_l1, wy,    wp, (GET_SQUARE_EXPLORED(wx_l1, wy,    wp) |                                SCT_TopRight | SCT_BottomRight));
-        // 
-        SET_SQUARE_EXPLORED(wx,    wy,    wp, (GET_SQUARE_EXPLORED(wx,    wy,    wp) | SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
-        // 
-        SET_SQUARE_EXPLORED(wx_r1, wy,    wp, (GET_SQUARE_EXPLORED(wx_r1, wy,    wp) | SCT_BottomLeft | SCT_TopLeft                                 ));
-        // 
-        SET_SQUARE_EXPLORED(wx_l1, wy_d1, wp, (GET_SQUARE_EXPLORED(wx_l1, wy_d1, wp) |                                SCT_TopRight                  ));
-        // 
-        SET_SQUARE_EXPLORED(wx,    wy_d1, wp, (GET_SQUARE_EXPLORED(wx,    wy_d1, wp) |                  SCT_TopLeft | SCT_TopRight                  ));
-        // 
-        SET_SQUARE_EXPLORED(wx_r1, wy_d1, wp, (GET_SQUARE_EXPLORED(wx_r1, wy_d1, wp) |                  SCT_TopLeft                                 ));
+    for(itr_wx = wx_l2; itr_wx < wx_r2; itr_wx++)
+    {
 
-
-
-        Set_Square_Explored_Flags_Fix(wx, wy, wp);
-
-
-
-        for(itr_wx = wx_l2; itr_wx < wx_r2; itr_wx++)
-        {
-
-            Set_Square_Explored_Flags_Bottom_Right_Corner(itr_wx, wy_u2, wp);
-
-        }
-
-        Set_Square_Explored_Flags_Bottom_Right_Corner(wx_r1, wy_u1, wp);
-
-        Set_Square_Explored_Flags_Bottom_Right_Corner(wx_r1, wy, wp);
-        
-        for(itr_wx = wx_l2; itr_wx < wx_r2; itr_wx++)
-        {
-
-            Set_Square_Explored_Flags_Bottom_Right_Corner(itr_wx, wy_d1, wp);
-
-        }
-
-        Set_Square_Explored_Flags_Bottom_Right_Corner(wx_l2, wy_u1, wp);
-
-        Set_Square_Explored_Flags_Bottom_Right_Corner(wx_l2, wy, wp);
-
-        Set_Square_Explored_Flags_Fix(wx, wy, wp);
+        Set_Square_Explored_Flags_Bottom_Right_Corner(itr_wx, wy_u2, wp);
 
     }
+
+    Set_Square_Explored_Flags_Bottom_Right_Corner(wx_r1, wy_u1, wp);
+
+    Set_Square_Explored_Flags_Bottom_Right_Corner(wx_r1, wy, wp);
+    
+    for(itr_wx = wx_l2; itr_wx < wx_r2; itr_wx++)
+    {
+
+        Set_Square_Explored_Flags_Bottom_Right_Corner(itr_wx, wy_d1, wp);
+
+    }
+
+    Set_Square_Explored_Flags_Bottom_Right_Corner(wx_l2, wy_u1, wp);
+
+    Set_Square_Explored_Flags_Bottom_Right_Corner(wx_l2, wy, wp);
+
+    Set_Square_Explored_Flags_Fix(wx, wy, wp);
 
 }
 
@@ -1591,14 +1544,6 @@ void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
     int16_t wy_u2 = 0;  // _DI_
     int16_t IDK_wx_l2 = 0;  // _SI_
     int16_t Adjacent_Col = 0;  // _CX_
-#ifdef STU_DEBUG
-    int16_t dbg_change_count = 0;
-    int16_t dbg_before_tile = 0;
-    int16_t dbg_before_adj = 0;
-    int16_t dbg_after_tile = 0;
-    int16_t dbg_after_adj = 0;
-    int16_t dbg_do_trace = ST_FALSE;
-#endif
 
     Match_Count = 38;
     
@@ -1793,17 +1738,7 @@ void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
     Match_Array[37].Mark_Adj = 15;
     Match_Array[37].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
     
-    
     ptr_square_explored = &_square_explored[wp];
-
-#ifdef STU_DEBUG
-    dbg_do_trace = DBG_Trace_Fix_Match(wx, wy, wp);
-    if((dbg_do_trace == ST_TRUE) && (DBG_TRACE_FIX_BUDGET > 0))
-    {
-        DBG_TRACE_FIX_BUDGET--;
-        dbg_prn("DEBUG: [%s, %d]: BEGIN Set_Square_Explored_Flags_Fix(wx=%d, wy=%d, wp=%d, center_before=0x%02X)", __FILE__, __LINE__, wx, wy, wp, ptr_square_explored[((wy * WORLD_WIDTH) + wx)]);
-    }
-#endif
     
     wx_l2 = (wx - 2);
 
@@ -1885,31 +1820,12 @@ void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
                         // ; on will not work properly any more (a single tile
                         // ; can have a match in both directions)
                         // MYBUG?  ptr_square_explored[((wy_u2 * WORLD_WIDTH) + IDK_wx_l2)] = (Match_Array[Match_Index].Mark_Tile || LoopTile_Scouting);
-#ifdef STU_DEBUG
-                        dbg_before_tile = ptr_square_explored[((wy_u2 * WORLD_WIDTH) + IDK_wx_l2)];
-                        dbg_before_adj = ptr_square_explored[((Adjacent_Row * WORLD_WIDTH) + Adjacent_Col)];
-#endif
-                        ptr_square_explored[((wy_u2 * WORLD_WIDTH) + IDK_wx_l2)] = (Match_Array[Match_Index].Mark_Tile | LoopTile_Scouting);
 
+                        ptr_square_explored[((wy_u2 * WORLD_WIDTH) + IDK_wx_l2)] = (Match_Array[Match_Index].Mark_Tile | LoopTile_Scouting);
+                        
                         // MYBUG?  ptr_square_explored[((Adjacent_Row * WORLD_WIDTH) + Adjacent_Col)] = (Match_Array[Match_Index].Mark_Adj || Adj_Tile_Scouting);
                         ptr_square_explored[((Adjacent_Row * WORLD_WIDTH) + Adjacent_Col)] = (Match_Array[Match_Index].Mark_Adj | Adj_Tile_Scouting);
 
-#ifdef STU_DEBUG
-                        dbg_after_tile = ptr_square_explored[((wy_u2 * WORLD_WIDTH) + IDK_wx_l2)];
-                        dbg_after_adj = ptr_square_explored[((Adjacent_Row * WORLD_WIDTH) + Adjacent_Col)];
-
-                        if((dbg_before_tile != dbg_after_tile) || (dbg_before_adj != dbg_after_adj))
-                        {
-                            dbg_change_count++;
-
-                            if((dbg_do_trace == ST_TRUE) && (DBG_TRACE_FIX_BUDGET > 0))
-                            {
-                                DBG_TRACE_FIX_BUDGET--;
-                                dbg_prn("DEBUG: [%s, %d]: FIX match=%d dir=%d tile(%d,%d)=0x%02X->0x%02X adj(%d,%d)=0x%02X->0x%02X", __FILE__, __LINE__, Match_Index, Match_Array[Match_Index].Adj_Direction, IDK_wx_l2, wy_u2, dbg_before_tile, dbg_after_tile, Adjacent_Col, Adjacent_Row, dbg_before_adj, dbg_after_adj);
-                            }
-                        }
-#endif
-                        
                     }
 
                 }
@@ -1928,14 +1844,6 @@ void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
         }
 
     }
-
-#ifdef STU_DEBUG
-    if((dbg_do_trace == ST_TRUE) && (DBG_TRACE_FIX_BUDGET > 0))
-    {
-        DBG_TRACE_FIX_BUDGET--;
-        dbg_prn("DEBUG: [%s, %d]: END Set_Square_Explored_Flags_Fix(wx=%d, wy=%d, wp=%d, changes=%d, center_after=0x%02X)", __FILE__, __LINE__, wx, wy, wp, dbg_change_count, ptr_square_explored[((wy * WORLD_WIDTH) + wx)]);
-    }
-#endif
 
 }
 

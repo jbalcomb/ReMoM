@@ -559,19 +559,13 @@ void Cheat_Reveal(void)
 
 
 // WZD o59p18
-// drake178: ¿ ?
-/*
-
-Set_Map_Square_Explored_Flags_XYP_Range()
-AKA TILE_ExploreRadius__WIP()
-*/
 void Set_Map_Square_Explored_Flags_XYP_Range(int16_t wx, int16_t wy, int16_t wp, int16_t scout_range)
 {
     int16_t y_start = 0;
     int16_t x_start = 0;
-    int16_t world_x = 0;
-    int16_t itr_world_y = 0;
-    int16_t itr_world_x = 0;  // _DI_
+    int16_t curr_wx = 0;
+    int16_t itr_wy = 0;
+    int16_t itr_wx = 0;  // _DI_
 
     if(scout_range == 0)
     {
@@ -581,37 +575,49 @@ void Set_Map_Square_Explored_Flags_XYP_Range(int16_t wx, int16_t wy, int16_t wp,
     if(scout_range == 1)
     {
         Set_Map_Square_Explored_Flags_XYP(wx, wy, wp);
+        return;
     }
 
     scout_range--;
 
-    y_start = wy - scout_range;
+    y_start = (wy - scout_range);
 
     if(y_start < 0)
     {
         y_start = 0;
     }
 
-    x_start = wx - scout_range;
+    x_start = (wx - scout_range);
 
     if(x_start < 0)
     {
         x_start += WORLD_WIDTH;
     }
 
-    scout_range = (scout_range * 2) + 1;
+    scout_range = ((scout_range * 2) + 1);
 
-    for(itr_world_y = y_start; ((y_start + scout_range) > itr_world_y) && (itr_world_y < WORLD_HEIGHT); itr_world_y++)
+    for(itr_wy = y_start; (y_start + scout_range) > itr_wy; itr_wy++)
     {
-        for(itr_world_x = x_start; (x_start + scout_range) > itr_world_x; itr_world_x++)
+        if(itr_wy >= WORLD_HEIGHT)
         {
-            if(itr_world_x < WORLD_WIDTH)
-                world_x = itr_world_x;
-            else
-                world_x = itr_world_x - WORLD_WIDTH;
-
-            Set_Map_Square_Explored_Flags_XYP(world_x, itr_world_y, wp);
+            continue;
         }
+        for(itr_wx = x_start; (x_start + scout_range) > itr_wx; itr_wx++)
+        {
+
+            if(itr_wx < WORLD_WIDTH)
+            {
+                curr_wx = itr_wx;
+            }
+            else
+            {
+                curr_wx = itr_wx - WORLD_WIDTH;
+            }
+
+            Set_Map_Square_Explored_Flags_XYP(curr_wx, itr_wy, wp);
+
+        }
+
     }
 
 }
