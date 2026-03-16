@@ -2,9 +2,7 @@
 
 
 
-#include "MOX_BITS.h"
-#include "MOX_DEF.h"
-#include "SOUND.h"
+#include "PFL_Audio_Internal.h"
 
 #include "../../STU/src/STU_DBG.h"
 
@@ -309,7 +307,7 @@ int16_t Play_Sound_SDL2_Mixer(void* sound_buffer, uint32_t sound_buffer_size)
         default:
         {
             STU_DEBUG_BREAK();
-            Audio_Error__STUB(SND_Invalid_File);
+            Audio_Error__STUB(SND_INVALID_FILE);
         } break;
     }
 
