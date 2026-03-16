@@ -19,6 +19,8 @@
 #include "../../MoX/src/Mouse.h"
 #include "../../MoX/src/random.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -96,12 +98,13 @@ static FILE* Replay_Open_Log(const char *filepath, const char *mode)
     {
         snprintf(log_path, sizeof(log_path), "%s-%s.log", filepath, mode);
     }
-    logfile = fopen(log_path, "w");
+    logfile = stu_fopen(log_path, "w");
     if(logfile != NULL)
     {
         time_t now = time(NULL);
         char timebuf[64];
-        strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", localtime(&now));
+        struct tm time_result;
+        strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", stu_localtime(&now, &time_result));
         fprintf(logfile, "# ReMoM Replay Log\n");
         fprintf(logfile, "# mode=%s  file=%s\n", mode, filepath);
         fprintf(logfile, "# timestamp=%s\n", timebuf);
@@ -140,7 +143,7 @@ int Platform_Record_Start(const char *filepath)
 
     /* "w+b": read+write, binary mode.  Binary avoids Windows \r\n translation
        issues when seeking back to patch frame_count in Platform_Record_Stop(). */
-    replay_file = fopen(filepath, "w+b");
+    replay_file = stu_fopen(filepath, "w+b");
     if(replay_file == NULL)
     {
         return -1;
@@ -242,7 +245,7 @@ int Platform_Replay_Start(const char *filepath)
     /* Open in binary mode ("rb") so ftell/fseek work correctly on Windows.
        In text mode, \r\n translation causes ftell positions to be unreliable
        for fseek, which breaks the header-parsing rewind logic. */
-    replay_file = fopen(filepath, "rb");
+    replay_file = stu_fopen(filepath, "rb");
     if(replay_file == NULL)
     {
         fprintf(stderr, "REPLAY: failed to open %s\n", filepath);
@@ -275,9 +278,9 @@ int Platform_Replay_Start(const char *filepath)
                 fseek(replay_file, line_start, SEEK_SET);
                 break;
             }
-            sscanf(line, "# random_seed=%u", &random_seed);
-            sscanf(line, "# screen_scale=%u", &recorded_screen_scale);
-            sscanf(line, "# frame_count=%u", &frame_count);
+            stu_sscanf(line, "# random_seed=%u", &random_seed);
+            stu_sscanf(line, "# screen_scale=%u", &recorded_screen_scale);
+            stu_sscanf(line, "# frame_count=%u", &frame_count);
         }
     }
 
@@ -344,7 +347,7 @@ static uint64_t demo_idle_start = 0;
 
 int Platform_Demo_Start(void)
 {
-    FILE *test = fopen("DEMO.RMR", "r");
+    FILE *test = stu_fopen("DEMO.RMR", "r");
     if(test == NULL)
     {
         return -1;
@@ -530,10 +533,10 @@ static int Replay_Peek_Frame(void)
 
     key0 = 0;
     key_count = 0;
-    if(sscanf(line, "%u,%llu,%llu,%d,%d,%d,%d,%u,%u",
+    if(stu_sscanf(line, "%u,%llu,%llu,%d,%d,%d,%d,%u,%u",
               &idx, &timestamp, &delta, &mx, &my, &btn, &kp, &key_count, &key0) < 7)
     {
-        fprintf(PLAY_LOG, "PEEK FAIL: sscanf < 7 on line: %s", line);
+        fprintf(PLAY_LOG, "PEEK FAIL: stu_sscanf < 7 on line: %s", line);
         return 0;
     }
 
@@ -753,8 +756,8 @@ void Platform_Replay_Compare_Logs(const char *rmr_filepath)
     snprintf(rec_path,  sizeof(rec_path),  "%.*s-RECORD.log", prefix_len, rmr_filepath);
     snprintf(play_path, sizeof(play_path), "%.*s-REPLAY.log", prefix_len, rmr_filepath);
 
-    rec_file  = fopen(rec_path, "r");
-    play_file = fopen(play_path, "r");
+    rec_file  = stu_fopen(rec_path, "r");
+    play_file = stu_fopen(play_path, "r");
     if(rec_file == NULL)
     {
         fprintf(stderr, "COMPARE: cannot open %s\n", rec_path);

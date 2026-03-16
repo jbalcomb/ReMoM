@@ -20,6 +20,10 @@
  *   - stu_getcwd()        portable getcwd()
  *   - stu_putenv()        portable putenv()
  *   - stu_tzset()         portable tzset()
+ *   - stu_fopen()         portable fopen() (MSVC fopen_s)
+ *   - stu_localtime()     portable thread-safe localtime (MSVC localtime_s / POSIX localtime_r)
+ *   - stu_sscanf()        portable sscanf() (suppresses MSVC C4996)
+ *   - stu_strcpy()        portable strcpy() (suppresses MSVC C4996)
  *   - stu_debugbreak()    portable debug breakpoint
  *
  * COMPATIBILITY MACROS:
@@ -31,9 +35,22 @@
 #ifndef STU_COMPAT_H
 #define STU_COMPAT_H
 
+#include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
+
+/* ============================================================================
+ * MSVC: suppress C4996 "unsafe function" deprecation warnings.
+ * Any translation unit that includes stu_compat.h gets these suppressed.
+ * New code should prefer the stu_ wrappers below; existing game code (original
+ * disassembly reconstruction) keeps using the standard names unchanged.
+ * ========================================================================= */
+#if defined(_MSC_VER)
+#pragma warning(disable: 4996)
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -106,6 +123,18 @@ void stu_tzset(void);
 
 /* Trigger a debug breakpoint. */
 void stu_debugbreak(void);
+
+/* Open a file. Returns FILE* (NULL on failure). Drop-in replacement for fopen. */
+FILE *stu_fopen(const char *filename, const char *mode);
+
+/* Thread-safe localtime. Fills result and returns it (NULL on failure). */
+struct tm *stu_localtime(const time_t *timer, struct tm *result);
+
+/* Portable sscanf wrapper. Same variadic interface as sscanf. */
+int stu_sscanf(const char *str, const char *format, ...);
+
+/* Portable strcpy wrapper. Same interface as strcpy. */
+char *stu_strcpy(char *dst, const char *src);
 
 /* ============================================================================
  * Compatibility aliases (optional, define STU_COMPAT_ALIASES to enable)
@@ -390,6 +419,64 @@ void stu_debugbreak(void)
 #else
     raise(SIGTRAP);
 #endif
+}
+
+/* --------------------------------------------------------------------------
+ * stu_fopen - portable file open (uses fopen_s on MSVC)
+ * -------------------------------------------------------------------------- */
+FILE *stu_fopen(const char *filename, const char *mode)
+{
+#if STU_COMPILER_MSVC
+    FILE *fp = NULL;
+    errno_t err = fopen_s(&fp, filename, mode);
+    return (err == 0) ? fp : NULL;
+#else
+    return fopen(filename, mode);
+#endif
+}
+
+/* --------------------------------------------------------------------------
+ * stu_localtime - portable thread-safe localtime
+ *   MSVC:  localtime_s(struct tm *result, const time_t *timer)
+ *   POSIX: localtime_r(const time_t *timer, struct tm *result)
+ * -------------------------------------------------------------------------- */
+struct tm *stu_localtime(const time_t *timer, struct tm *result)
+{
+#if STU_COMPILER_MSVC
+    errno_t err = localtime_s(result, timer);
+    return (err == 0) ? result : NULL;
+#elif STU_PLATFORM_LINUX || STU_PLATFORM_MACOS
+    return localtime_r(timer, result);
+#else
+    struct tm *tmp = localtime(timer);
+    if (tmp)
+    {
+        *result = *tmp;
+        return result;
+    }
+    return NULL;
+#endif
+}
+
+/* --------------------------------------------------------------------------
+ * stu_sscanf - portable sscanf (forwards to vsscanf)
+ * -------------------------------------------------------------------------- */
+int stu_sscanf(const char *str, const char *format, ...)
+{
+    int result;
+    va_list args;
+    va_start(args, format);
+    result = vsscanf(str, format, args);
+    va_end(args);
+    return result;
+}
+
+/* --------------------------------------------------------------------------
+ * stu_strcpy - portable strcpy wrapper
+ * -------------------------------------------------------------------------- */
+char *stu_strcpy(char *dst, const char *src)
+{
+    return strcpy(dst, src);
 }
 
 #endif /* STU_COMPAT_IMPLEMENTATION */

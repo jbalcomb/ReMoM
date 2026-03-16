@@ -1,5 +1,7 @@
 #include "sdl2_KD.h"
 
+#include "../../ext/stu_compat.h"
+
 #include "../../MoX/src/Keyboard.h"
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_KEYS.h"
