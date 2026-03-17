@@ -50,7 +50,7 @@ echo "  sudo apt install build-essential cmake curl pkg-config \\"
 echo "    libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev \\"
 echo "    libxfixes-dev libxss-dev libwayland-dev libxkbcommon-dev \\"
 echo "    libegl1-mesa-dev libgles2-mesa-dev libgl1-mesa-dev \\"
-echo "    libpulseaudio-dev libasound2-dev libpipewire-0.3-dev \\"
+echo "    libpulse-dev libasound2-dev libpipewire-0.3-dev \\"
 echo "    libdbus-1-dev libudev-dev libdecor-0-dev"
 echo ""
 # When piped (curl | bash), stdin is the script itself, so read from /dev/tty

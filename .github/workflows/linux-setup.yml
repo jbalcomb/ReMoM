@@ -48,7 +48,7 @@ jobs:
             libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev \
             libxfixes-dev libxss-dev libwayland-dev libxkbcommon-dev \
             libegl1-mesa-dev libgles2-mesa-dev libgl1-mesa-dev \
-            libpulseaudio-dev libasound2-dev libpipewire-0.3-dev \
+            libpulse-dev libasound2-dev libpipewire-0.3-dev \
             libdbus-1-dev libudev-dev libdecor-0-dev
 
       - name: Install SDL3 via script (non-interactive)
