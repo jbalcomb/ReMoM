@@ -348,88 +348,88 @@ uint8_t Read_Key(void)
 //     return return_key;
 // }
 
-uint16_t Platform_Translate_Virtual_Key_Code_To_MOX_Key_Num(int32_t virtual_key_code, uint16_t key_modifiers)
-{
-    uint16_t key_num;
-    uint16_t key_modifier_type;
-
-    key_num = 0;
-
-    key_modifier_type = 0;  // no key modifier
-    if((key_modifiers = SDL_KMOD_LSHIFT) | (key_modifiers = SDL_KMOD_RSHIFT)) { key_modifier_type = 1; }
-    if((key_modifiers = SDL_KMOD_LCTRL ) | (key_modifiers = SDL_KMOD_RCTRL )) { key_modifier_type = 2; }
-    if((key_modifiers = SDL_KMOD_LALT  ) | (key_modifiers = SDL_KMOD_RALT  )) { key_modifier_type = 3; }
-
-    switch(key_modifier_type)
-    {
-        case 0:  /* NONE */
-        {
-            key_num = virtual_key_code;
-        } break;
-        case 1:  /* SHIFT */
-        {
-            switch(virtual_key_code)
-            {
-                default:
-                {
-                    key_num = virtual_key_code;
-                } break;
-            }
-        } break;
-        case 2:  /* CTRL */
-        {
-            switch(virtual_key_code)
-            {
-                default:
-                {
-                    key_num = virtual_key_code;
-                } break;
-            }
-        } break;
-        case 3:  /* ALT */
-        {
-            switch(virtual_key_code)
-            {
-                case SDLK_A: { key_num = ST_KEY_ALT_A; }
-                case SDLK_B: { key_num = ST_KEY_ALT_B; }
-                case SDLK_C: { key_num = ST_KEY_ALT_C; }
-                case SDLK_D: { key_num = ST_KEY_ALT_D; }
-                case SDLK_E: { key_num = ST_KEY_ALT_E; }
-                case SDLK_F: { key_num = ST_KEY_ALT_F; }
-                case SDLK_G: { key_num = ST_KEY_ALT_G; }
-                case SDLK_H: { key_num = ST_KEY_ALT_H; }
-                case SDLK_I: { key_num = ST_KEY_ALT_I; }
-                case SDLK_J: { key_num = ST_KEY_ALT_J; }
-                case SDLK_K: { key_num = ST_KEY_ALT_K; }
-                case SDLK_L: { key_num = ST_KEY_ALT_L; }
-                case SDLK_M: { key_num = ST_KEY_ALT_M; }
-                case SDLK_N: { key_num = ST_KEY_ALT_N; }
-                case SDLK_O: { key_num = ST_KEY_ALT_O; }
-                case SDLK_P: { key_num = ST_KEY_ALT_P; }
-                case SDLK_Q: { key_num = ST_KEY_ALT_Q; }
-                case SDLK_R: { key_num = ST_KEY_ALT_R; }
-                case SDLK_S: { key_num = ST_KEY_ALT_S; }
-                case SDLK_T: { key_num = ST_KEY_ALT_T; }
-                case SDLK_U: { key_num = ST_KEY_ALT_U; }
-                case SDLK_V: { key_num = ST_KEY_ALT_V; }
-                case SDLK_W: { key_num = ST_KEY_ALT_W; }
-                case SDLK_X: { key_num = ST_KEY_ALT_X; }
-                case SDLK_Y: { key_num = ST_KEY_ALT_Y; }
-                case SDLK_Z: { key_num = ST_KEY_ALT_Z; }
-                default:
-                {
-                    key_num = virtual_key_code;
-                } break;
-            }
-        } break;
-        default:
-        {
-            key_num = virtual_key_code;
-        } break;
-    }
-
-    return key_num;
-}
+// Eh?  uint16_t Platform_Translate_Virtual_Key_Code_To_MOX_Key_Num(int32_t virtual_key_code, uint16_t key_modifiers)
+// Eh?  {
+// Eh?      uint16_t key_num;
+// Eh?      uint16_t key_modifier_type;
+// Eh?  
+// Eh?      key_num = 0;
+// Eh?  
+// Eh?      key_modifier_type = 0;  // no key modifier
+// Eh?      if((key_modifiers == SDL_KMOD_LSHIFT) || (key_modifiers == SDL_KMOD_RSHIFT)) { key_modifier_type = 1; }
+// Eh?      if((key_modifiers == SDL_KMOD_LCTRL ) || (key_modifiers == SDL_KMOD_RCTRL )) { key_modifier_type = 2; }
+// Eh?      if((key_modifiers == SDL_KMOD_LALT  ) || (key_modifiers == SDL_KMOD_RALT  )) { key_modifier_type = 3; }
+// Eh?  
+// Eh?      switch(key_modifier_type)
+// Eh?      {
+// Eh?          case 0:  /* NONE */
+// Eh?          {
+// Eh?              key_num = virtual_key_code;
+// Eh?          } break;
+// Eh?          case 1:  /* SHIFT */
+// Eh?          {
+// Eh?              switch(virtual_key_code)
+// Eh?              {
+// Eh?                  default:
+// Eh?                  {
+// Eh?                      key_num = virtual_key_code;
+// Eh?                  } break;
+// Eh?              }
+// Eh?          } break;
+// Eh?          case 2:  /* CTRL */
+// Eh?          {
+// Eh?              switch(virtual_key_code)
+// Eh?              {
+// Eh?                  default:
+// Eh?                  {
+// Eh?                      key_num = virtual_key_code;
+// Eh?                  } break;
+// Eh?              }
+// Eh?          } break;
+// Eh?          case 3:  /* ALT */
+// Eh?          {
+// Eh?              switch(virtual_key_code)
+// Eh?              {
+// Eh?                  case SDLK_A: { key_num = ST_KEY_ALT_A; } break;
+// Eh?                  case SDLK_B: { key_num = ST_KEY_ALT_B; } break;
+// Eh?                  case SDLK_C: { key_num = ST_KEY_ALT_C; } break;
+// Eh?                  case SDLK_D: { key_num = ST_KEY_ALT_D; } break;
+// Eh?                  case SDLK_E: { key_num = ST_KEY_ALT_E; } break;
+// Eh?                  case SDLK_F: { key_num = ST_KEY_ALT_F; } break;
+// Eh?                  case SDLK_G: { key_num = ST_KEY_ALT_G; } break;
+// Eh?                  case SDLK_H: { key_num = ST_KEY_ALT_H; } break;
+// Eh?                  case SDLK_I: { key_num = ST_KEY_ALT_I; } break;
+// Eh?                  case SDLK_J: { key_num = ST_KEY_ALT_J; } break;
+// Eh?                  case SDLK_K: { key_num = ST_KEY_ALT_K; } break;
+// Eh?                  case SDLK_L: { key_num = ST_KEY_ALT_L; } break;
+// Eh?                  case SDLK_M: { key_num = ST_KEY_ALT_M; } break;
+// Eh?                  case SDLK_N: { key_num = ST_KEY_ALT_N; } break;
+// Eh?                  case SDLK_O: { key_num = ST_KEY_ALT_O; } break;
+// Eh?                  case SDLK_P: { key_num = ST_KEY_ALT_P; } break;
+// Eh?                  case SDLK_Q: { key_num = ST_KEY_ALT_Q; } break;
+// Eh?                  case SDLK_R: { key_num = ST_KEY_ALT_R; } break;
+// Eh?                  case SDLK_S: { key_num = ST_KEY_ALT_S; } break;
+// Eh?                  case SDLK_T: { key_num = ST_KEY_ALT_T; } break;
+// Eh?                  case SDLK_U: { key_num = ST_KEY_ALT_U; } break;
+// Eh?                  case SDLK_V: { key_num = ST_KEY_ALT_V; } break;
+// Eh?                  case SDLK_W: { key_num = ST_KEY_ALT_W; } break;
+// Eh?                  case SDLK_X: { key_num = ST_KEY_ALT_X; } break;
+// Eh?                  case SDLK_Y: { key_num = ST_KEY_ALT_Y; } break;
+// Eh?                  case SDLK_Z: { key_num = ST_KEY_ALT_Z; } break;
+// Eh?                  default:
+// Eh?                  {
+// Eh?                      key_num = virtual_key_code;
+// Eh?                  } break;
+// Eh?              }
+// Eh?          } break;
+// Eh?          default:
+// Eh?          {
+// Eh?              key_num = virtual_key_code;
+// Eh?          } break;
+// Eh?      }
+// Eh?  
+// Eh?      return key_num;
+// Eh?  }
 
 static int Platform_Translated_Key(SDL_Scancode sdl3_scancode)
 {
