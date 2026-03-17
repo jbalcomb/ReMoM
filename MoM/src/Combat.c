@@ -32296,10 +32296,10 @@ void Make_Missiles(int16_t missile_count, int16_t Targets, int16_t src_wx, int16
         Origin_X = Src_Screen_X;
         Origin_Y = (Src_Screen_Y + 8);
 
-        Src_Screen_X = Src_Fig_X;
-        Src_Screen_Y = Src_Fig_Y;
+        /* CLAUDE */  Src_Screen_X += Src_Fig_X;
+        /* CLAUDE */  Src_Screen_Y += Src_Fig_Y;
 
-        Tgt_Screen_X = Tgt_Fig_X;
+        /* CLAUDE */  Tgt_Screen_X += Tgt_Fig_X;
         Tgt_Screen_Y += Tgt_Fig_Y;
 
         // Firing_Angle = MATH_Inverse_Tangent((Tgt_Screen_X - Origin_X), (Tgt_Screen_Y - Origin_Y));
