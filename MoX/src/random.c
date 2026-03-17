@@ -18,102 +18,7 @@ MoO2
 #include "MOX_BITS.h"
 #include "MOX_TYPE.h"
 
-
-
-// WZD dseg:7846
-// WZD dseg:7846                                                 BEGIN: seg022 - Initialized Data
-// WZD dseg:7846
-// WZD dseg:7846 68 35 68 35                                     random_seed dd 35683568h                ; DATA XREF: Set_Random_Seed+6w ...
-// WZD dseg:784A 01 00 02 00 04 00 08 00 10 00 20 00 40 00 80 00 bit_field_test_bits dw 1, 10b, 100b, 1000b, 10000b, 100000b, 1000000b, 10000000b
-// WZD dseg:785A                                                 seg022
-// WZD dseg:785A 64 00                                           UU_DBG_OptionBoxColor dw 64h            ; DATA XREF: UU_DBG_SetSelectSetting+Cw ...
-// WZD dseg:785C                                                 seg022
-// WZD dseg:785C 32 00                                           UU_DBG_UnknownOValue dw 32h             ; DATA XREF: UU_DBG_SetSelectSetting+12w
-// WZD dseg:785E                                                 seg022
-// WZD dseg:785E 00 00                                           UU_DBG_OptionsFontColor dw 0            ; DATA XREF: UU_DBG_SetSelectSetting+18w ...
-// WZD dseg:7860                                                 seg022
-// WZD dseg:7860 00 00                                           UU_DBG_OptionsFont dw 0                 ; DATA XREF: UU_DBG_SetSelectSetting+6w ...
-// WZD dseg:7862                                                 seg022
-// WZD dseg:7862 52 4E 44 20 6E 6F 20 30 27 73                   cnst_RND_Error db 'RND no 0',27h,'s'    ; DATA XREF: Random:loc_1D5B6o
-// WZD dseg:786C                                                 seg022
-// WZD dseg:786C 00                                              cnst_ZeroString_2 db 0                  ; DATA XREF: UU_DBG_SelectDialog+138o ...
-// WZD dseg:786D                                                 seg022
-// WZD dseg:786D 4E 4F 5F 48 45 4C 50 00                         UU_cnst_NoHelp db 'NO_HELP',0           ; DATA XREF: UU_DBG_SelectDialog+134o ...
-// WZD dseg:7875 00                                              align 2
-// WZD dseg:7875
-// WZD dseg:7875                                                 END:  seg022 - Initialized Data
-// WZD dseg:7875
-
-
-
-/*
-    ¿ "seed" vs. "feedback polynomial" vs. "taps" ?
-
-*/
-/*
-    LFSR Bits
-        initial:  0011010101101000
-        Warp Node: 9B 9F 0F 00  0F9F9Bh  1023899d  11111001111110011011b
-        ¿ Clock Ticks ?
-*/
-/*
-3568
-13672
-0011010101101000
-
-35683568
-896021864
-00110101011010000011010101101000
-
-Per drake178
-01101010000000000000000000000001
-6A000001
-1778384897
-
-01101010
-6A
-106
-
-*/
-/*
-    System Clock Counter
-
-    incremented approximately 18.206 times per second
-*/
-
-
-// WZD dseg:7846  68 35  LFSR_LO_bits dw 3568h
-// WZD dseg:7848  68 35  LFSR_HI_bits dw 3568h
-// uint16_t LFSR_LO_bits = 0x3568;
-// uint16_t LFSR_HI_bits = 0x3568;
-// WZD dseg:7846  68 35 68 35
 uint32_t random_seed = 0x35683568;
-uint16_t random_seed_LO = 0x3568;
-uint16_t random_seed_HI = 0x3568;
-// MGC  dseg:431E 68 35 68 35                                     random_seed dd 35683568h                ; DATA XREF: Set_Random_Seed+6w ...
-/*
-Hex 35683568
-Dec 896021864
-Oct 6532032550
-Bin 00110101011010000011010101101000
-this is overwritten by Randomize() in Init_Drivers() in ReMoM.c, which sets the seed to the system clock timer value.
-*/
-
-// WZD dseg:784A 01 00 02 00 04 00 08 00 10 00 20 00 40 00 80 00 Test_Bit_Words dw 1                     ; DATA XREF: MEM_TestBit_Far+1Cr ...
-// WZD dseg:784A                                                 dw 10b
-// WZD dseg:784A                                                 dw 100b
-// WZD dseg:784A                                                 dw 1000b
-// WZD dseg:784A                                                 dw 10000b
-// WZD dseg:784A                                                 dw 100000b
-// WZD dseg:784A                                                 dw 1000000b
-// WZD dseg:784A                                                 dw 10000000b
-
-// ...
-
-// WZD dseg:7862 52 4E 44 20 6E 6F 20 30 27 73                   
-char cnst_RND_Error[] = "RND no 0's";
-
-
 
 
 
@@ -122,33 +27,19 @@ char cnst_RND_Error[] = "RND no 0's";
 */
 
 // WZD s01p07
-// drake178: RNG_WeightedPick16()
 // MoO2  Module: KEN  Get_Weighted_Choice_()
-/*
-chooses a random item from a list of 16-bit weighted chances
-condensing the weights such that the total fits into a single call of the 9-bit PRNG (max 512),
-using repeated divisions by 2 if necessary
-*/
-/*
-202601212046: I hit a key and broke the shit out of Get_Weighted_Choice() in MGC.
-
-*/
 int16_t Get_Weighted_Choice(int16_t * weight_array, int16_t weight_count)
 {
     int16_t Condense_Loop_Var = 0;
     int16_t Picked_List_Item = 0;
     int16_t Weights_Remainder = 0;
     int16_t itr = 0;
-    int16_t tmp_pick = 0;  // _DI_
-    int16_t return_value = 0;  // _AX_  DNE in Dasm
-    
+    int16_t tmp_pick = 0;
+    int16_t return_value = 0;
     do
     {
-
         tmp_pick = 0;
-
         tmp_pick += weight_array[itr];
-
         if(tmp_pick < 512)
         {
 
@@ -157,47 +48,31 @@ int16_t Get_Weighted_Choice(int16_t * weight_array, int16_t weight_count)
         }
         else
         {
-
             for(Condense_Loop_Var = 0; Condense_Loop_Var < weight_count; Condense_Loop_Var++)
             {
-
                 weight_array[Condense_Loop_Var] = (weight_array[Condense_Loop_Var] / 2);
-
             }
-
         }
-
     } while (itr < weight_count);
-
     if(tmp_pick == 0)
     {
-
         return_value = 0;
 
     }
     else
     {
-
         Weights_Remainder = (Random(tmp_pick) - weight_array[0]);
-
         Picked_List_Item = 0;
-
         while(
             (Weights_Remainder > 0)
             &&
             (weight_count - 1) > Picked_List_Item)
         {
-
             Picked_List_Item++;
-
             Weights_Remainder -= weight_array[Picked_List_Item];
-            
         }
-
         return_value = Picked_List_Item;
-
     }
-
     return return_value;
 }
 
@@ -238,31 +113,14 @@ uint32_t Get_Random_Seed(void)
 // WZD s22p07
 void Randomize(void)
 {
-    uint32_t Clock_Ticks;
-    Clock_Ticks = (uint32_t)Read_System_Clock_Timer();
-    // MoO2  timer_value = time();
-    random_seed = Clock_Ticks;
+    uint32_t timer_value;
+    timer_value = (uint32_t)Read_System_Clock_Timer();
+    random_seed = timer_value;
 }
 
 
 // WZD s22p08
-/*
-1oom
-uint16_t rnd_0_nm1(uint16_t n, uint32_t *seed)
-{
-    uint32_t r = *seed;
-    r ^= (r << 13);
-    r ^= (r >> 17);
-    r ^= (r << 5);
-    *seed = r;
-    return (r >> 16) % n;
-}
-uint16_t rnd_1_n(uint16_t n, uint32_t *seed)
-{
-    return 1 + rnd_0_nm1(n, seed);
-}
-*/
-// int16_t The_Old_Random(int16_t n)
+// 1oom
 int16_t Random(int16_t n)
 {
     uint16_t result;
@@ -280,151 +138,60 @@ int16_t Random(int16_t n)
 
     return result;
 }
-
-
-
-uint16_t _AX_ = 0;
-uint16_t _BX_ = 0;
-uint16_t _CX_ = 0;
-uint16_t _DX_ = 0;
-// void * _SI_ = NULL;
-// void * _DI_ = NULL;
-uint16_t _SI_ = 0;
-uint16_t _DI_ = 0;
-uint16_t _CF_ = 0;
-uint16_t _CFI_ = 0;
-uint16_t _CFO_ = 0;
-
-#define RCL(_val_) {                            \
-    if(_val_ & 0x8000) { _CFO_ = 0x0001; }      \
-    _val_ <<= 1;                                \
-    if(_CFI_ == 0x0001) { _val_ |= 0x0001; }    \
-    _CFI_ = _CFO_;                              \
-    _CFO_ = 0x0000;                             \
-}
-
-#define RCR(_val_) {                            \
-    if(_val_ & 0x0001) { _CFO_ = 0x0001; }      \
-    _val_ >>= 1;                                \
-    if(_CFI_ == 0x0001) { _val_ |= 0x8000; }    \
-    _CFI_ = _CFO_;                              \
-    _CFO_ = 0x0000;                             \
-}
-
-#define SHL(_val_) {                            \
-    if(_val_ & 0x8000) { _CFO_ = 0x0001; }      \
-    _val_ <<= 1;                                \
-    _CFI_ = _CFO_;                              \
-    _CFO_ = 0x0000;                             \
-}
-
-#define SHR(_val_) {                            \
-    if(_val_ & 0x0001) { _CFO_ = 0x0001; }      \
-    _val_ >>= 1;                                \
-    _CFI_ = _CFO_;                              \
-    _CFO_ = 0x0000;                             \
-}
-
-int16_t The_New_Random(int16_t n)
-{
-    uint16_t result = 0;
-    uint16_t return_value = 0;
-
-    if(n == 0)
-    {
-        Exit_With_Message(cnst_RND_Error);  // "RND no 0's"
-    }
-
-    
-    result = 0;
-
-
-// push    si
-// push    di
-
-
-    // // mov     si, [word ptr random_seed]
-    // // mov     di, [word ptr random_seed+2]
-    // _SI_ = random_seed_LO;
-    // _DI_ = random_seed_HI;
-    _SI_ = GET_2B_OFS(&random_seed, 0);
-    _DI_ = GET_2B_OFS(&random_seed, 2);
-
-    // mov     cx, 9
-    _CX_ = 9;
-
-// loc_1D5D2:
-do {
-
-    _AX_ = _SI_;    // mov     ax, si
-    _BX_ = _SI_;    // mov     bx, si
-    _DX_ = _DI_;    // mov     dx, di
-
-    SHR(_DX_);      // shr     dx, 1
-    RCR(_BX_);      // rcr     bx, 1
-    _AX_ ^= _BX_;   // xor     ax, bx
-    SHR(_DX_);      // shr     dx, 1
-    RCR(_BX_);      // rcr     bx, 1
-    _AX_ ^= _BX_;   // xor     ax, bx
-    SHR(_DX_);      // shr     dx, 1
-    RCR(_BX_)       // rcr     bx, 1
-    SHR(_DX_);      // shr     dx, 1
-    RCR(_BX_)       // rcr     bx, 1
-    _AX_ ^= _BX_;   // xor     ax, bx
-    SHR(_DX_);      // shr     dx, 1
-    RCR(_BX_);      // rcr     bx, 1
-    SHR(_DX_);      // shr     dx, 1
-    RCR(_BX_);      // rcr     bx, 1
-    _AX_ ^= _BX_;   // xor     ax, bx
-    SHR(_DX_);      // shr     dx, 1
-    _AX_ = (_AX_ & 0x00FF) ^ (_DX_ & 0xFF00);   // xor     al, dh
-    _DX_ = _AX_;    // mov     dx, ax
-    SHR(_DX_);      // shr     dx, 1
-    RCL(result);    // rcl     [bp+result], 1
-    SHR(_AX_);      // shr     ax, 1
-    RCR(_DI_);      // rcr     di, 1
-    RCR(_SI_);      // rcr     si, 1
-
-} while (--_CX_ != 0);
-// loop    loc_24F9E
-
-
-// cmp     si, 0
-// jnz     short loc_24FE4
-// cmp     di, 0
-// jnz     short loc_24FE4
-// mov     si, 12478
-if(
-    (_SI_ == 0)
-    &&
-    (_DI_ == 0)
-)
-{
-    _SI_ = 0x30BE;
-}
-
-// loc_1D618:
-    // // mov     [word ptr random_seed], si
-    // // mov     [word ptr random_seed+2], di
-    // random_seed_LO = _SI_;
-    // random_seed_HI = _DI_;
-    SET_2B_OFS(&random_seed, 0, _SI_);
-    SET_2B_OFS(&random_seed, 2, _DI_);
-
-
-// pop     di
-// pop     si
-
-
-// mov     ax, [bp+result]
-// cwd
-// idiv    [bp+n]
-// inc     dx
-// mov     [bp+return_value], dx
-
-    return_value = (( result % n ) + 1);
-
-
-    return return_value;
-
-}
+// GEMINI
+// int16_t Random(int n) {
+//     int16_t i = 0;
+//     uint16_t result = 0;
+//     uint16_t low_seed = 0;
+//     uint16_t high_seed = 0;
+//     uint16_t new_bit = 0;
+//     uint16_t carry_bit = 0;
+// 
+//     low_seed = (uint16_t)(random_seed & 0xFFFF);
+//     high_seed = (uint16_t)(random_seed >> 16);
+// 
+//     if (n == 0) Exit_With_Message("RND no 0's");
+// 
+//     /* 9-bit LFSR bit-shifting loop */
+//     for (i = 0; i < 9; i++) {
+//         /* 1. Calculate the Feedback Bit
+//          * We XOR the specific tapped bits together. 
+//          * By shifting them all down, the feedback result ends up in bit 0.
+//          * We use '& 1' at the end to mask off everything except that final bit.
+//          */
+//         new_bit = (low_seed ^ 
+//                   (low_seed >> 1) ^ 
+//                   (low_seed >> 2) ^ 
+//                   (low_seed >> 4) ^ 
+//                   (low_seed >> 6) ^ 
+//                   (high_seed >> 15)) & 1;
+// 
+//         /* 2. Push the generated bit into the 9-bit result queue */
+//         /* Assembly: rcl [bp+result], 1 */
+//         result = (result << 1) | new_bit;
+//         
+//         /* 3. The 32-bit Shift Right
+//          * Because C89 in DOS uses 16-bit integers, we have to manually 
+//          * carry the bit that falls off the bottom of high_seed into 
+//          * the top of low_seed, just like the assembly's RCR instructions.
+//          */
+//         
+//         /* Grab the lowest bit of high_seed before we shift it */
+//         carry_bit = high_seed & 1; 
+//         
+//         /* Shift low_seed right, and drop the carry_bit into its 16th slot (bit 15) */
+//         low_seed = (low_seed >> 1) | (carry_bit << 15);
+//         
+//         /* Shift high_seed right, and drop our calculated new_bit into ITS top slot */
+//         high_seed = (high_seed >> 1) | (new_bit << 15);
+//     }
+// 
+//     if (low_seed == 0 && high_seed == 0) {
+//         low_seed = 12478; /* Prevent the LFSR from getting stuck at 0 */
+//     }
+// 
+//     random_seed = ((uint32_t)high_seed << 16) | low_seed;
+// 
+//     /* Modulo division to fit the requested range, returns 1 to N */
+//     return (result % n) + 1;
+// }
