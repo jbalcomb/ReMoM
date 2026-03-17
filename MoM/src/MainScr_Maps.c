@@ -1286,7 +1286,7 @@ void Set_Map_Square_Explored_Flags_XYP(int16_t wx, int16_t wy, int16_t wp)
     int16_t wx_l1 = 0;
     int16_t wx_r1 = 0;
 
-    ptr_square_explored = _square_explored[(wp * WORLD_SIZE)];
+    ptr_square_explored = &_square_explored[(wp * WORLD_SIZE)];
 
     if(wy == 0)
     {
