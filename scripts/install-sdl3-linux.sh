@@ -46,12 +46,15 @@ fi
 
 # Recommend common SDL3 system dependencies
 echo "Make sure you have the SDL3 build dependencies installed:"
-echo "  sudo apt install build-essential cmake curl pkg-config \\"
-echo "    libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev \\"
-echo "    libxfixes-dev libxss-dev libwayland-dev libxkbcommon-dev \\"
-echo "    libegl1-mesa-dev libgles2-mesa-dev libgl1-mesa-dev \\"
-echo "    libpulse-dev libasound2-dev libpipewire-0.3-dev \\"
-echo "    libdbus-1-dev libudev-dev libdecor-0-dev"
+echo "  https://wiki.libsdl.org/SDL3/README-linux#build-dependencies"
+echo ""
+echo "  sudo apt-get install build-essential git make \\"
+echo "    pkg-config cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \\"
+echo "    libaudio-dev libfribidi-dev libjack-dev libsndio-dev libx11-dev libxext-dev \\"
+echo "    libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \\"
+echo "    libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \\"
+echo "    libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \\"
+echo "    libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev"
 echo ""
 # When piped (curl | bash), stdin is the script itself, so read from /dev/tty
 if [ -t 0 ]; then
