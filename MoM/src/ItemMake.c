@@ -559,11 +559,11 @@ static void Item_Make_Screen_Draw(void)
                     if(m_itemmake_weapon_type_powers_list[(powers_count + itr)] == 65)  // "Spell Charges"
                     {
 
-                        itr_current_columns_counts = Print_Far(x_start, y_start, spell_data_table[_ITEMS[137].embed_spell_idx].name);
+                        itr_current_columns_counts = Print_Far(x_start, y_start, spell_data_table[_ITEMS[MAX_ITEM_COUNT].embed_spell_idx].name);
 
                         itr_current_columns_counts = Print(itr_current_columns_counts, y_start, cnst_TimesSign_2);
 
-                        Print_Integer(itr_current_columns_counts, y_start, _ITEMS[137].embed_spell_cnt);
+                        Print_Integer(itr_current_columns_counts, y_start, _ITEMS[MAX_ITEM_COUNT].embed_spell_cnt);
 
                     }
                     else
@@ -600,11 +600,11 @@ static void Item_Make_Screen_Draw(void)
                     if(m_itemmake_weapon_type_powers_list[(powers_count + itr)] == 65)  // "Spell Charges"
                     {
 
-                        itr_current_columns_counts = Print_Far(x_start, y_start, spell_data_table[_ITEMS[137].embed_spell_idx].name);
+                        itr_current_columns_counts = Print_Far(x_start, y_start, spell_data_table[_ITEMS[MAX_ITEM_COUNT].embed_spell_idx].name);
 
                         itr_current_columns_counts = Print(itr_current_columns_counts, y_start, cnst_TimesSign_2);
 
-                        Print_Integer(itr_current_columns_counts, y_start, _ITEMS[137].embed_spell_cnt);
+                        Print_Integer(itr_current_columns_counts, y_start, _ITEMS[MAX_ITEM_COUNT].embed_spell_cnt);
 
                     }
                     else
@@ -657,7 +657,7 @@ static void Item_Make_Screen_Draw(void)
     // x_start = Print_Integer((x_start - 1), 185, item_cost);
     /* HACK */  x_start = Print_Integer((x_start + 4), 185, item_cost);
 
-    Draw_Item_Icon_With_Enchantment_Outline(137, m_itemmake_item_icon_bitmap_seg);
+    Draw_Item_Icon_With_Enchantment_Outline(MAX_ITEM_COUNT, m_itemmake_item_icon_bitmap_seg);
 
     Draw_Picture(4, 5, m_itemmake_item_icon_bitmap_seg);
 
@@ -1189,12 +1189,12 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
 
     }
 
-    m_itemmake_item_cost = Get_Item_Cost(137);
+    m_itemmake_item_cost = Get_Item_Cost(MAX_ITEM_COUNT);
 
-    // BUGBUG  extra, unused parameter?  strcpy(GUI_NearMsgString, Get_Item_Name(137, 0));
-    strcpy(GUI_NearMsgString, Get_Item_Name(137));
+    // BUGBUG  extra, unused parameter?  strcpy(GUI_NearMsgString, Get_Item_Name(MAX_ITEM_COUNT, 0));
+    strcpy(GUI_NearMsgString, Get_Item_Name(MAX_ITEM_COUNT));
 
-    Create_Item_Record(137);
+    Create_Item_Record(MAX_ITEM_COUNT);
 
     Item_Make_Screen_Add_Fields();
 
@@ -1250,7 +1250,7 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
                                     if(m_itemmake_item_powers_array[itr] == m_itemmake_weapon_type_powers_list[itr2])
                                     {
 
-                                        _ITEMS[137].Powers ^= _ITEM_POWERS[m_itemmake_weapon_type_powers_list[itr2]].powers;
+                                        _ITEMS[MAX_ITEM_COUNT].Powers ^= _ITEM_POWERS[m_itemmake_weapon_type_powers_list[itr2]].powers;
 
                                         Clear_Structure(itr, (uint8_t *)&m_itemmake_item_powers_array[0], 2, 4);
 
@@ -1280,7 +1280,7 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
                     if(m_itemmake_item_powers_array[itr] == m_itemmake_weapon_type_powers_list[itr_field_arrays])
                     {
 
-                        _ITEMS[137].Powers ^= m_itemmake_weapon_type_powers_list[itr_field_arrays];
+                        _ITEMS[MAX_ITEM_COUNT].Powers ^= m_itemmake_weapon_type_powers_list[itr_field_arrays];
 
                         Clear_Structure(itr, (uint8_t *)&m_itemmake_item_powers_array[0], 2, 4);
 
@@ -1332,7 +1332,7 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
                             if(itr2 > 0)
                             {
 
-                                _ITEMS[137].embed_spell_idx = (int8_t)itr2;
+                                _ITEMS[MAX_ITEM_COUNT].embed_spell_idx = (int8_t)itr2;
 
                                 niu_did_select_spell = ST_TRUE;
 
@@ -1346,9 +1346,9 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
                             else
                             {
 
-                                _ITEMS[137].embed_spell_cnt = 0;
+                                _ITEMS[MAX_ITEM_COUNT].embed_spell_cnt = 0;
 
-                                _ITEMS[137].embed_spell_idx = 0;
+                                _ITEMS[MAX_ITEM_COUNT].embed_spell_idx = 0;
 
                                 niu_did_select_spell = ST_FALSE;
 
@@ -1364,7 +1364,7 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
 
                 G_Removed_Power = ST_FALSE;
 
-                m_itemmake_item_cost = Get_Item_Cost(137);
+                m_itemmake_item_cost = Get_Item_Cost(MAX_ITEM_COUNT);
 
             }
 
@@ -1400,7 +1400,7 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
 
                 m_itemmake_item_icon_idx = Item_Type_Icon_Ranges[weapon_type_num].start;
 
-                _ITEMS[137].icon_idx = (int8_t)m_itemmake_item_icon_idx;
+                _ITEMS[MAX_ITEM_COUNT].icon_idx = (int8_t)m_itemmake_item_icon_idx;
 
                 Itam_Make_Screen_Build_Weapon_Powers_List(player_idx, max_power_cost);
 
@@ -1443,13 +1443,13 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
                             if(m_itemmake_item_powers_array[itr] == 65)
                             {
 
-                                _ITEMS[137].embed_spell_cnt = 0;
+                                _ITEMS[MAX_ITEM_COUNT].embed_spell_cnt = 0;
 
-                                _ITEMS[137].embed_spell_idx = 0;
+                                _ITEMS[MAX_ITEM_COUNT].embed_spell_idx = 0;
 
                             }
 
-                            _ITEMS[137].Powers ^= m_itemmake_item_powers_array[itr];
+                            _ITEMS[MAX_ITEM_COUNT].Powers ^= m_itemmake_item_powers_array[itr];
 
                             Clear_Structure(itr, (uint8_t *)&m_itemmake_item_powers_array[0], 2, 4);
 
@@ -1465,7 +1465,7 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
 
                 }
 
-                m_itemmake_item_cost = Get_Item_Cost(137);
+                m_itemmake_item_cost = Get_Item_Cost(MAX_ITEM_COUNT);
 
             }
 
@@ -1512,13 +1512,13 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
 
         Item_Make_Screen_Add_Fields();
 
-        Create_Item_Record(137);
+        Create_Item_Record(MAX_ITEM_COUNT);
 
         if(in_text_edit == ST_FALSE)
         {
 
-            // BUGBUG  extra, unused parameter?  strcpy(GUI_NearMsgString, Get_Item_Name(137, 0));
-            strcpy(GUI_NearMsgString, Get_Item_Name(137));
+            // BUGBUG  extra, unused parameter?  strcpy(GUI_NearMsgString, Get_Item_Name(MAX_ITEM_COUNT, 0));
+            strcpy(GUI_NearMsgString, Get_Item_Name(MAX_ITEM_COUNT));
 
         }
 
@@ -2078,8 +2078,8 @@ static int16_t Item_Make_Screen_Spellbook_Popup(void)
                     
                     m_itemmake_spellbook_idx = itr;
 
-                    // 1AEE  6894  137 * 50 = 6850  6894 - 6850 = 44  2C  /* 2C */  int16_t  embed_spell_cnt;
-                    _ITEMS[137].embed_spell_cnt = 0;
+                    // 1AEE  6894  MAX_ITEM_COUNT * 50 = 6850  6894 - 6850 = 44  2C  /* 2C */  int16_t  embed_spell_cnt;
+                    _ITEMS[MAX_ITEM_COUNT].embed_spell_cnt = 0;
 
                     Clear_Fields();
 
@@ -2121,7 +2121,7 @@ static int16_t Item_Make_Screen_Spellbook_Popup(void)
 
                 itr = m_spell_list_count;
 
-                while(_ITEMS[137].embed_spell_cnt == 0)
+                while(_ITEMS[MAX_ITEM_COUNT].embed_spell_cnt == 0)
                 {
 
                     input_field_idx = Get_Input();
@@ -2132,13 +2132,13 @@ static int16_t Item_Make_Screen_Spellbook_Popup(void)
                         if(spell_fields[itr2] == input_field_idx)
                         {
 
-                            _ITEMS[137].embed_spell_cnt = (itr2 + 1);
+                            _ITEMS[MAX_ITEM_COUNT].embed_spell_cnt = (itr2 + 1);
                             
                         }
 
                     }
 
-                    if(_ITEMS[137].embed_spell_cnt == 0)
+                    if(_ITEMS[MAX_ITEM_COUNT].embed_spell_cnt == 0)
                     {
 
                         Set_Page_Off();

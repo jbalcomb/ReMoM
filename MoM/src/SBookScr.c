@@ -207,7 +207,7 @@ void Spellbook_Screen(void)
 
     for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < 6; itr_spellbook_page_fields++)
     {
-        spellbook_pages[(itr_spellbook_page_fields + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 137), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
+        spellbook_pages[(itr_spellbook_page_fields + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + MAX_ITEM_COUNT), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
     }
 
     for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < 6; itr_spellbook_page_fields++)
@@ -400,7 +400,7 @@ void Spellbook_Screen(void)
             y_start = 12;
             for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < 6; itr_spellbook_page_fields++)
             {
-                spellbook_pages[(0 + itr_spellbook_page_fields)] = Add_Hidden_Field((x_start + 16), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 137), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
+                spellbook_pages[(0 + itr_spellbook_page_fields)] = Add_Hidden_Field((x_start + 16), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + MAX_ITEM_COUNT), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
             }
             for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < 6; itr_spellbook_page_fields++)
             {
@@ -498,7 +498,7 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
                     _players[player_idx].casting_cost_remaining = Item_Make_Screen(0, 0);
-                    _players[player_idx].casting_cost_original = _ITEMS[137].cost;
+                    _players[player_idx].casting_cost_original = _ITEMS[MAX_ITEM_COUNT].cost;
                     Allocate_Reduced_Map();
                     item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 1000);
                     _players[player_idx].casting_cost_original = _ITEMS[item_idx].cost;
@@ -520,7 +520,7 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
                     _players[player_idx].casting_cost_remaining = Item_Make_Screen(0, 1);
-                    _players[player_idx].casting_cost_original = _ITEMS[137].cost;
+                    _players[player_idx].casting_cost_original = _ITEMS[MAX_ITEM_COUNT].cost;
                     Allocate_Reduced_Map();
                     item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 30000);
                     _players[player_idx].casting_cost_original = _ITEMS[item_idx].cost;

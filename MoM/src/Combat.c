@@ -18987,7 +18987,9 @@ uint32_t BU_Apply_Item_Powers(int16_t unit_idx, struct s_BATTLE_UNIT * battle_un
 */
 void BU_Apply_Item_Enchantments(int16_t item_idx, struct s_BATTLE_UNIT * battle_unit)
 {
-    uint32_t item_enchantments;
+    uint32_t item_enchantments = 0;
+
+    assert(item_idx <= MAX_ITEM_COUNT);
 
     item_enchantments = 0;
 

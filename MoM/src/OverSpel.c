@@ -1929,7 +1929,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                         IDK_SummonAnim(-1, 3, player_idx);
 
-                        item_list[0] = Activate_Item(137);
+                        item_list[0] = Activate_Item(MAX_ITEM_COUNT);
 
                         Process_Item_Pool(1, &item_list[0]);
 

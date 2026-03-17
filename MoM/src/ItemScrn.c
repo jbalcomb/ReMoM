@@ -804,7 +804,6 @@ void Destroy_Item(void)
     Copy_On_To_Off_Page();
     item_cost_mana = (_ITEMS[m_cursor_item_idx].cost / 2);
     strcpy(GUI_String_1, cnst_ItemDestroyMsg1);  // "Do you want to destroy your \x02"
-    // TODO  _fstrcpy(GUI_String_2, _ITEMS[m_cursor_item_idx].name);
     strcpy(GUI_String_2, _ITEMS[m_cursor_item_idx].name);
     strcat(GUI_String_1, GUI_String_2);
     strcat(GUI_String_1, cnst_ItemDestroyMsg2);  // "\x01 and gain "
@@ -1454,7 +1453,6 @@ int16_t Check_Wont_Drown(int16_t hero_slot_idx, int16_t item_idx)
         }
 
     }  /* if(On_Water == ST_TRUE) */
-
 
     if(Cant_Remove == ST_TRUE)
     {
