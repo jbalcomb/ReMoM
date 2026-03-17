@@ -53,7 +53,12 @@ echo "    libegl1-mesa-dev libgles2-mesa-dev libgl1-mesa-dev \\"
 echo "    libpulseaudio-dev libasound2-dev libpipewire-0.3-dev \\"
 echo "    libdbus-1-dev libudev-dev libdecor-0-dev"
 echo ""
-read -rp "Continue with build? [Y/n] " REPLY
+# When piped (curl | bash), stdin is the script itself, so read from /dev/tty
+if [ -t 0 ]; then
+    read -rp "Continue with build? [Y/n] " REPLY
+else
+    read -rp "Continue with build? [Y/n] " REPLY </dev/tty || REPLY="y"
+fi
 if [[ "$REPLY" =~ ^[Nn] ]]; then
     echo "Aborted."
     exit 0

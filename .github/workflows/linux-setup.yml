@@ -1,0 +1,69 @@
+name: Linux Setup Scripts
+
+on:
+  push:
+    branches: [ main, current ]
+    paths:
+      - 'scripts/install-cmake-linux.sh'
+      - 'scripts/install-sdl3-linux.sh'
+      - 'CMakeLists.txt'
+      - 'CMakePresets.json'
+      - '.github/workflows/linux-setup.yml'
+  pull_request:
+    paths:
+      - 'scripts/install-cmake-linux.sh'
+      - 'scripts/install-sdl3-linux.sh'
+      - 'CMakeLists.txt'
+      - 'CMakePresets.json'
+      - '.github/workflows/linux-setup.yml'
+  workflow_dispatch:
+
+jobs:
+  test-install-scripts:
+    name: Test Linux install scripts + build
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install base build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential ninja-build curl pkg-config clang
+
+      - name: Install CMake via script
+        run: bash scripts/install-cmake-linux.sh
+        env:
+          INSTALL_DIR: /opt/cmake
+
+      - name: Add CMake to PATH
+        run: echo "/opt/cmake/bin" >> "$GITHUB_PATH"
+
+      - name: Verify CMake version
+        run: cmake --version
+
+      - name: Install SDL3 build dependencies
+        run: |
+          sudo apt-get install -y \
+            libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev \
+            libxfixes-dev libxss-dev libwayland-dev libxkbcommon-dev \
+            libegl1-mesa-dev libgles2-mesa-dev libgl1-mesa-dev \
+            libpulseaudio-dev libasound2-dev libpipewire-0.3-dev \
+            libdbus-1-dev libudev-dev libdecor-0-dev
+
+      - name: Install SDL3 via script (non-interactive)
+        run: yes | bash scripts/install-sdl3-linux.sh
+
+      - name: Verify SDL3 install
+        run: |
+          ls /usr/local/lib/libSDL3* || ls /usr/local/lib/x86_64-linux-gnu/libSDL3* || echo "WARNING: SDL3 libs not found in expected locations"
+          pkg-config --modversion sdl3 || echo "WARNING: pkg-config cannot find sdl3"
+
+      - name: Configure (clang-nosound-debug preset)
+        run: cmake --preset clang-nosound-debug
+
+      - name: Build (clang-nosound-debug preset)
+        run: cmake --build --preset clang-nosound-debug
+
+      - name: Test (clang-nosound-debug preset)
+        run: ctest --preset clang-nosound-debug --output-on-failure
