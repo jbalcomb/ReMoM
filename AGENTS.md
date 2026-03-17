@@ -27,3 +27,4 @@ Ignore the Register annotations. (e.g., `_DI_`, `_SI_`, `_CX_`, etc.) They are j
 - IDK stands for I don't know
 - IDGI stands for I don't get it
 - NIU stands for Not In Use
+- PFL stands for Platform

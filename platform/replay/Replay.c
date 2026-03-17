@@ -174,7 +174,6 @@ int Platform_Record_Start(const char *filepath)
 
 void Platform_Record_Stop(void)
 {
-    long count_pos;
 
     if(!recording || replay_file == NULL)
     {

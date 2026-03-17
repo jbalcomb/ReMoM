@@ -73,9 +73,9 @@ void Mouse_Button_Handler(void)
 void User_Mouse_Handler(int16_t buttons, int16_t l_mx, int16_t l_my)
 {
     /* OG: int16_t scale = 2; */
-    int16_t screen_scale = (int16_t)(sdl2_window_width / SCREEN_WIDTH);
-    int16_t gx = l_mx / screen_scale;
-    int16_t gy = l_my / screen_scale;
+    float screen_scale = (float)sdl2_window_width / (float)SCREEN_WIDTH;
+    int16_t gx = (int16_t)(l_mx / screen_scale);
+    int16_t gy = (int16_t)(l_my / screen_scale);
 
     if(l_mx < SCREEN_XMIN || l_my < SCREEN_YMIN || gx > SCREEN_XMAX || gy > SCREEN_YMAX)
     {
@@ -109,6 +109,6 @@ void User_Mouse_Handler(int16_t buttons, int16_t l_mx, int16_t l_my)
 void Set_Mouse_Position(int16_t mx, int16_t my)
 {
     /* OG: int16_t scale = 2; */
-    int16_t screen_scale = (int16_t)(sdl2_window_width / SCREEN_WIDTH);
-    SDL_WarpMouseInWindow(sdl2_window, (mx * screen_scale), (my * screen_scale));
+    float screen_scale = (float)sdl2_window_width / (float)SCREEN_WIDTH;
+    SDL_WarpMouseInWindow(sdl2_window, mx * screen_scale, my * screen_scale);
 }

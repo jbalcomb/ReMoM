@@ -127,7 +127,7 @@ void Platform_Maybe_Move_Mouse(void)
 int kilgore_option_mouse_speed = 100;
 
 // ./src/hw/sdl/2/hwsdl2_video.c
-int kilgore_video_get_window_id(void)
+static int kilgore_video_get_window_id(void)
 {
 
     return SDL_GetWindowID(sdl2_window);
@@ -141,7 +141,7 @@ int kilgore_video_get_window_id(void)
     ¿ ~== Set_Pointer_Position(), w/o Set_Mouse_Position() ?
     ...as used, is effectively equivalent?
 */
-void kilgore_mouse_set_xy_from_hw(int mx, int my)
+static void kilgore_mouse_set_xy_from_hw(int mx, int my)
 {
     pointer_x = mx;
     pointer_y = my;
@@ -168,10 +168,10 @@ bool kilgore_option_relative_mouse = true;
 // hwsdl2_video2.c
 
 // not a MoO1/MoM function
-void kilgore_video_input_grab(bool grabbed)
+static void kilgore_video_input_grab(bool grabbed)
 {
 
-    SDL_SetWindowGrab(sdl2_window, grabbed);
+    SDL_SetWindowMouseGrab(sdl2_window, grabbed);
 
     if(kilgore_option_relative_mouse)
     {
@@ -187,7 +187,7 @@ void kilgore_video_input_grab(bool grabbed)
 // hwsdl_mouse.c
 
 // not a MoO1/MoM function
-void kilgore_mouse_grab(void)
+static void kilgore_mouse_grab(void)
 {
     if(!kilgore_mouse_grabbed)
     {
@@ -198,7 +198,7 @@ void kilgore_mouse_grab(void)
 }
 
 // not a MoO1/MoM function
-void kilgore_mouse_ungrab(void)
+static void kilgore_mouse_ungrab(void)
 {
     if(kilgore_mouse_grabbed)
     {
@@ -209,7 +209,7 @@ void kilgore_mouse_ungrab(void)
 }
 
 // not a MoO1/MoM function
-void kilgore_mouse_toggle_grab(void)
+static void kilgore_mouse_toggle_grab(void)
 {
     if(kilgore_mouse_grabbed)
     {
@@ -221,13 +221,13 @@ void kilgore_mouse_toggle_grab(void)
     }
 }
 
-void kilgore_mouse_set_limits(int w, int h)
+static void kilgore_mouse_set_limits(int w, int h)
 {
     kilgore_mouse_game_w = w;
     kilgore_mouse_game_h = h;
 }
 
-void kilgore_mouse_set_scale(int w, int h)
+static void kilgore_mouse_set_scale(int w, int h)
 {
     int v;
     v = w / kilgore_mouse_game_w;
@@ -240,7 +240,7 @@ void kilgore_mouse_set_scale(int w, int h)
     kilgore_mouse_sy = v;
 }
 
-void kilgore_mouse_move(int dx, int dy)
+static void kilgore_mouse_move(int dx, int dy)
 {
     int x, y;
     {
@@ -265,7 +265,7 @@ void kilgore_mouse_move(int dx, int dy)
 }
 
 /* CLAUDE: replaced hardcoded /2 with dynamic scale from window/screen dimensions */
-void Platform_Update_Mouse_Position(int l_mx, int l_my)
+static void Platform_Update_Mouse_Position(int l_mx, int l_my)
 {
     /* OG: int screen_scale = 2; */
     int screen_scale = sdl2_window_width / SCREEN_WIDTH;
