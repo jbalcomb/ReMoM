@@ -32,10 +32,15 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # https://wiki.libsdl.org/SDL3/README/cmake
-list(APPEND CMAKE_PREFIX_PATH "C:/devellib/SDL3-3.4.2")
+# On Windows, point to local SDK installs; on Linux, SDL3 is found via system paths / pkg-config.
+if(WIN32)
+    list(APPEND CMAKE_PREFIX_PATH "C:/devellib/SDL3-3.4.2")
+endif()
 find_package(SDL3 REQUIRED)
 if(NOT DISABLE_AUDIO)
-    list(APPEND CMAKE_PREFIX_PATH "C:/devellib/SDL3_mixer-3.2.0")
+    if(WIN32)
+        list(APPEND CMAKE_PREFIX_PATH "C:/devellib/SDL3_mixer-3.2.0")
+    endif()
     find_package(SDL3_mixer REQUIRED)
 else()
     add_compile_definitions(NO_SOUND_LIBRARY)
@@ -70,7 +75,10 @@ endif()
 
 add_compile_definitions($<$<CONFIG:Debug>:STU_DEBUG>)
 
-add_compile_options("/wd4068")
+# Suppress "unknown pragma" warnings (C4068) on MSVC — pragmas from the original Borland C++ disassembly
+if(MSVC)
+    add_compile_options(/wd4068)
+endif()
 
 add_subdirectory(STU)
 add_subdirectory(platform)
