@@ -1778,7 +1778,7 @@ struct s_UNIT
     /* 02 */  int8_t  wp;  // somewhere, doubles as a status? ... wp == 9 is excluded from 'Raise Dead', ~== battle_units[].status == bus_Gone
     /* 03 */  int8_t  owner_idx;    /* set to ST_UNDEFINED when a unit dies */
     /* 04 */  int8_t  moves2_max;
-    /* 05 */  uint8_t type;         /* Unit Type Index |-> Unit Type Table */
+    /* 05 */  uint8_t type;         /* 1-byte, unsigned;  Unit Type Index |-> Unit Type Table */
     /* 06 */  int8_t  Hero_Slot;    /* index into _players[owner_idx].Heroes[] */
     /* 07 */  int8_t  Finished;     /* ¿ orderable ? {F,T}; Unit is out of Movement Points or is Busy performing a Unit Action (Go-To, Build Road, Purify, etc.) */
     /* 08 */  int8_t  moves2;       /* Movement Points, as half-points */

@@ -1,35 +1,51 @@
 {
-  "tests": 104,
+  "tests": 106,
   "name": "AllTests",
   "testsuites": [
     {
       "name": "MyClassTestFixture",
-      "tests": 5,
+      "tests": 6,
       "testsuite": [
         {
           "name": "MOM_Create_Unit",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 111
+          "line": 275
         },
         {
           "name": "MOM_Kill_Unit_kt0",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 239
+          "line": 403
         },
         {
           "name": "MOM_Kill_Unit_kt1",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 274
+          "line": 438
         },
         {
           "name": "MOM_Kill_Unit_kt2",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 296
+          "line": 460
         },
         {
           "name": "MOM_Delete_Dead_Units",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 318
+          "line": 482
+        },
+        {
+          "name": "MOM_Delete_Dead_Units_ConsecutiveDeadUnits",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
+          "line": 493
+        }
+      ]
+    },
+    {
+      "name": "MOMIntegrationTest",
+      "tests": 1,
+      "testsuite": [
+        {
+          "name": "NextTurnProc_RealSave_RemovesKilledUnits",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
+          "line": 516
         }
       ]
     },

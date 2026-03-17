@@ -148,10 +148,11 @@ void Delete_Dead_Units(void)
 {
     int16_t unit_type = 0;
     int16_t itr_heroes = 0;
-    int16_t itr_units = 0; // _SI_
-    int16_t itr_players = 0; // _DI_
+    int16_t itr_units = 0;
+    int16_t itr_players = 0;
 
-    for(itr_units = 0; itr_units < _units; itr_units++)
+    itr_units = 0;
+    while(itr_units < _units)
     {
         unit_type = _UNITS[itr_units].type;
         if(
@@ -161,20 +162,23 @@ void Delete_Dead_Units(void)
         )
         {
             Delete_Structure(itr_units, (uint8_t *)&_UNITS[0], sizeof(struct s_UNIT), _units);
-
             for(itr_players = 0; itr_players < _num_players; itr_players++)
                 for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
                     if((_players[itr_players].Heroes[itr_heroes].unit_idx != ST_UNDEFINED) && (_players[itr_players].Heroes[itr_heroes].unit_idx > itr_units))
                         _players[itr_players].Heroes[itr_heroes].unit_idx -= 1;
-
             _units -= 1;
+
+            /* COPILOT */ continue;  /* Re-check the unit that shifted into this slot. */
         }
+        itr_units++;
     }
 
+#ifdef STU_DEBUG
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
         assert(_UNITS[itr_units].owner_idx != ST_UNDEFINED);
     }
+#endif
 
 }
 
