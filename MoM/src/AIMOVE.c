@@ -4191,6 +4191,7 @@ void AI_sEFC92__WIP(int16_t CX_ID, int16_t Count, int16_t Excess)
     int16_t unit_idx = 0;
     int16_t itr2 = 0;  // _SI_
     int16_t itr = 0;  // _DI_
+    int16_t ogbug_value = 0;  // DNE in Dasm
 
     Combat_Unit_Count = 0;
 
@@ -4226,9 +4227,11 @@ void AI_sEFC92__WIP(int16_t CX_ID, int16_t Count, int16_t Excess)
 
                 Combat_Unit_Indices[Combat_Unit_Count] = unit_idx;
 
-                // ; BUG: parameter mismatch
-                // BUGBUG  should use unit_idx or Effective_Unit_Type_Strength()
-                Combat_Unit_Values[Combat_Unit_Count] = (Effective_Unit_Strength(unit_type) / 10);
+                // // ; BUG: parameter mismatch
+                // // BUGBUG  should use unit_idx or Effective_Unit_Type_Strength()
+                // Combat_Unit_Values[Combat_Unit_Count] = (Effective_Unit_Strength(unit_type) / 10);
+                ogbug_value = ((Random(256) << 8) & Random(256));
+                Combat_Unit_Values[Combat_Unit_Count] = ogbug_value;
 
                 Combat_Unit_Count++;
 
