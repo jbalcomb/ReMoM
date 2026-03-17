@@ -17,7 +17,6 @@
 #include "../../platform/include/Platform_Replay.h"
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/Mouse.h"
-#include "../../MoX/src/random.h"
 
 #include "../../ext/stu_compat.h"
 
@@ -70,6 +69,16 @@ typedef struct Collapsed_Log_State
 
 static Collapsed_Log_State rec_log  = { -1, -1, -1, -1, 0, 0, 0 };
 static Collapsed_Log_State play_log = { -1, -1, -1, -1, 0, 0, 0 };
+
+/* Engine callbacks — registered by the application before record/replay starts. */
+static Platform_Replay_Get_Random_Seed_Fn replay_get_random_seed = NULL;
+static Platform_Replay_Set_Random_Seed_Fn replay_set_random_seed = NULL;
+
+void Platform_Replay_Register_Random_Seed_Callbacks(Platform_Replay_Get_Random_Seed_Fn get_fn, Platform_Replay_Set_Random_Seed_Fn set_fn)
+{
+    replay_get_random_seed = get_fn;
+    replay_set_random_seed = set_fn;
+}
 
 /* Write detailed debug output to the appropriate log file, or stderr if not open. */
 #define REC_LOG  (record_log != NULL ? record_log : stderr)
@@ -151,7 +160,7 @@ int Platform_Record_Start(const char *filepath)
 
     /* Write header lines. frame_count=0 is a placeholder; patched on stop. */
     fprintf(replay_file, "# ReMoM Replay v2\n");
-    fprintf(replay_file, "# random_seed=%u\n", (unsigned)Get_Random_Seed());
+    fprintf(replay_file, "# random_seed=%u\n", (unsigned)(replay_get_random_seed ? replay_get_random_seed() : 0));
     fprintf(replay_file, "# screen_scale=%d\n", Platform_Get_Scale());
     fprintf(replay_file, "# frame_count=%-10u\n", 0u);
     fprintf(replay_file, "# idx,timestamp_ms,delta_ms,mouse_x,mouse_y,mouse_buttons,key_pressed,key_count,keys...\n");
@@ -167,7 +176,7 @@ int Platform_Record_Start(const char *filepath)
 
     record_log = Replay_Open_Log(filepath, "RECORD");
 
-    fprintf(stderr, "REPLAY: recording started -> %s  (random_seed=%u)\n", filepath, (unsigned)Get_Random_Seed());
+    fprintf(stderr, "REPLAY: recording started -> %s  (random_seed=%u)\n", filepath, (unsigned)(replay_get_random_seed ? replay_get_random_seed() : 0));
 
     return 0;
 }
@@ -292,7 +301,10 @@ int Platform_Replay_Start(const char *filepath)
     replay_first_inject = 0;
 
     /* Restore the RNG to the recorded state for deterministic replay. */
-    Set_Random_Seed(random_seed);
+    if(replay_set_random_seed)
+    {
+        replay_set_random_seed(random_seed);
+    }
 
     replaying = 1;
 

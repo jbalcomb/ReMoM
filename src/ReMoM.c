@@ -45,6 +45,7 @@
 #include "../MoX/src/MOX_SET.h"
 #include "../MoX/src/MOX_T4.h"
 #include "../MoX/src/MOX_TYPE.h"
+#include "../MoX/src/random.h"
 #include "../MoX/src/SOUND.h"
 #include "../MoX/src/Timer.h"
 
@@ -204,6 +205,9 @@ int main(int argc, char * argv[])
 #endif
 
     Startup_Platform();
+
+    /* CLAUDE: Register engine callbacks for replay before parsing CLI flags. */
+    Platform_Replay_Register_Random_Seed_Callbacks(Get_Random_Seed, Set_Random_Seed);
 
     /* CLAUDE: Record & Replay CLI flags. */
     {

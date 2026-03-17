@@ -69,6 +69,26 @@ extern "C" {
 
 
 /* ========================================================================= */
+/*  Callbacks                                                                */
+/* ========================================================================= */
+
+/**
+ * Callback types for engine functions that the replay system needs but
+ * cannot call directly (platform library has no dependency on MoX).
+ * The application registers these before starting record/replay.
+ */
+typedef uint32_t (*Platform_Replay_Get_Random_Seed_Fn)(void);
+typedef void     (*Platform_Replay_Set_Random_Seed_Fn)(uint32_t seed);
+
+/**
+ * Register engine callbacks for RNG seed save/restore.
+ * Must be called before Platform_Record_Start() or Platform_Replay_Start().
+ */
+void Platform_Replay_Register_Random_Seed_Callbacks(Platform_Replay_Get_Random_Seed_Fn get_fn, Platform_Replay_Set_Random_Seed_Fn set_fn);
+
+
+
+/* ========================================================================= */
 /*  Recording API                                                            */
 /* ========================================================================= */
 
