@@ -6839,6 +6839,8 @@ void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t moves2, int16_
 
 
 /*
+Debug Only:  draws various coordinate information to the screen for debugging purposes
+
 _map_x,y
 _main_map_grid_x,y
 mouse_x,y
@@ -6859,8 +6861,9 @@ void Main_Screen_Draw_Debug_Information(void)
     int16_t grid_y = 0;
     int16_t world_x = 0;
     int16_t world_y = 0;
-    int pos = 0;
-    int16_t scanned_field = 0;
+    int16_t pos = 0;
+    // COPILOT+GPT54  int16_t scanned_field = 0;
+    int16_t entity_idx = 0;
 
     Set_Outline_Color(0);
     // Set_Font_Style_Shadow_Down(0, 0, 0, 0);
@@ -6935,22 +6938,51 @@ void Main_Screen_Draw_Debug_Information(void)
         pos++;
     }
 
-    // scanned_field = Scan_Field();
-    // if(scanned_field)
+    // COPILOT+GPT54  // scanned_field = Scan_Field();
+    // COPILOT+GPT54  // if(scanned_field)
+    // COPILOT+GPT54  if (screen_x >= MAP_SCREEN_X && screen_x < MAP_SCREEN_X + MAP_WIDTH * SQUARE_WIDTH &&
+    // COPILOT+GPT54  screen_y >= MAP_SCREEN_Y && screen_y < MAP_SCREEN_Y + MAP_HEIGHT * SQUARE_HEIGHT)
+    // COPILOT+GPT54  {
+    // COPILOT+GPT54      int entity_idx = GET_MAP_ENTITY(grid_x, grid_y);
+    // COPILOT+GPT54      if (entity_idx >= 0 && entity_idx < MAX_UNIT_COUNT && entity_idx < _units)
+    // COPILOT+GPT54      {
+    // COPILOT+GPT54          Print_Integer(46, 22 + (8 * pos), _UNITS[entity_idx].wx);
+    // COPILOT+GPT54      }
+    // COPILOT+GPT54  }
+    // ...
+    // if(
+    //     (grid_x >= 0) && (grid_x < MAP_WIDTH)
+    //     &&
+    //     (grid_y >= 0) && (grid_y < MAP_HEIGHT)
+    // )
+    // If the goal is to avoid game logic, use a pixel-rectangle check in addition to your grid check:
+    // Are we really, safely on the main movement map?
+    if(
+        (screen_x >= MAP_SCREEN_X) && (screen_x < (MAP_SCREEN_X + (MAP_WIDTH  * SQUARE_WIDTH ))) &&
+        (screen_y >= MAP_SCREEN_Y) && (screen_y < (MAP_SCREEN_Y + (MAP_HEIGHT * SQUARE_HEIGHT))) &&
+        (grid_x >= 0) && (grid_x < MAP_WIDTH ) &&
+        (grid_y >= 0) && (grid_y < MAP_HEIGHT)
+    )
     {
-        //   U   N   I   T       I   D   X
-        // ~ ? + ? + ? + ? + 4 + ? + 6 + 6 = 
-        Print(2, (22+(8*pos)), "UNIT IDX");
-        Print_Integer(46, (22+(8*pos)), GET_MAP_ENTITY(grid_x, grid_y));
-        pos++;
-        // UNIT WX
-        Print(2, (22+(8*pos)), "UNIT WX");
-        Print_Integer(46, (22+(8*pos)), _UNITS[GET_MAP_ENTITY(grid_x, grid_y)].wx);
-        pos++;
-        // UNIT WY
-        Print(2, (22+(8*pos)), "UNIT WY");
-        Print_Integer(46, (22+(8*pos)), _UNITS[GET_MAP_ENTITY(grid_x, grid_y)].wy);
-        pos++;
+        // ~== entity_idx = GET_MAP_ENTITY(grid_x, grid_y);
+        entity_idx = entities_on_movement_map[((grid_y * MAP_WIDTH) + grid_x)];
+        // Is the entity a unit?
+        if(entity_idx >= 0 && entity_idx < MAX_UNIT_COUNT && entity_idx < _units)
+        {
+            //   U   N   I   T       I   D   X
+            // ~ ? + ? + ? + ? + 4 + ? + 6 + 6 = 
+            Print(2, (22+(8*pos)), "UNIT IDX");
+            Print_Integer(46, (22+(8*pos)), entity_idx);
+            pos++;
+            // UNIT WX
+            Print(2, (22+(8*pos)), "UNIT WX");
+            Print_Integer(46, (22+(8*pos)), _UNITS[entity_idx].wx);
+            pos++;
+            // UNIT WY
+            Print(2, (22+(8*pos)), "UNIT WY");
+            Print_Integer(46, (22+(8*pos)), _UNITS[entity_idx].wy);
+            pos++;
+        }
     }
 
     Set_Font_Style_Shadow_Down(0, 0, 0, 0);
