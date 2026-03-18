@@ -162,13 +162,6 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
     } while(0);                                             \
 }
 
-#define UNITS_DRAW_PRIORITY(_unit_idx_,_priority_)  {       \
-    do {                                                    \
-        /* trc_prn("TRACE: [%s, %d]: UNITS_DRAW_PRIORITY(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].Draw_Priority, (_priority_)); */ \
-        _UNITS[(_unit_idx_)].Draw_Priority = (_priority_);  \
-    } while(0);                                             \
-}
-
 #define UNITS_IN_TOWER(_unit_idx_,_in_tower_)  {            \
     do {                                                    \
         /* trc_prn("TRACE: [%s, %d]: UNITS_IN_TOWER(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].in_tower, (_in_tower_)); */ \

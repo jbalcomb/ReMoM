@@ -956,7 +956,7 @@ void Set_Unit_Draw_Priority(void)
             draw_priority = ST_UNDEFINED;
         }
 
-        UNITS_DRAW_PRIORITY(unit_idx, (int8_t)draw_priority);
+        _UNITS[unit_idx].Draw_Priority = draw_priority;
 
     }
 
@@ -964,7 +964,6 @@ void Set_Unit_Draw_Priority(void)
 
 
 // WZD o67p14
-// drake178: STK_NoUnitDraw()
 void Reset_Stack_Draw_Priority(void)
 {
     int16_t itr_unit_stack_count = 0;
@@ -972,7 +971,7 @@ void Reset_Stack_Draw_Priority(void)
     for(itr_unit_stack_count = 0; itr_unit_stack_count < _unit_stack_count; itr_unit_stack_count++)
     {
         unit_idx = _unit_stack[itr_unit_stack_count].unit_idx;
-        UNITS_DRAW_PRIORITY(unit_idx, 0);
+        _UNITS[unit_idx].Draw_Priority = 0;
     }
 }
 

@@ -4394,21 +4394,15 @@ OON XREF STK_Move() WZD o95p01
 */
 int16_t Stack_Moves(void)
 {
-    int16_t windwalker_unit_idx;
-    int16_t stack_has_windwalker;
-    int16_t movement_points;
-
-    int16_t itr_stack;
-    int16_t unit_idx;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Stack_Moves()\n", __FILE__, __LINE__);
-#endif
+    int16_t windwalker_unit_idx = 0;
+    int16_t stack_has_windwalker = 0;
+    int16_t movement_points = 0;
+    int16_t itr_stack = 0;
+    int16_t unit_idx = 0;
 
     movement_points = 1000;
 
     stack_has_windwalker = ST_FALSE;
-
 
     for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
     {
@@ -5727,8 +5721,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 
     Highest_Priority = _UNITS[unit_array[0]].Draw_Priority;
     Highest_Priority_Unit__Loop_Var = 0;
-    // DELETEME  _UNITS[unit_array[0]].Draw_Priority = 0;
-    UNITS_DRAW_PRIORITY(unit_array[0], 0);
+    _UNITS[unit_array[0]].Draw_Priority = 0;
 
     for(itr_unit_array_count = 1; itr_unit_array_count < unit_array_count; itr_unit_array_count++)
     {
@@ -5737,8 +5730,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
             Highest_Priority = _UNITS[unit_array[itr_unit_array_count]].Draw_Priority;
             Highest_Priority_Unit__Loop_Var = itr_unit_array_count;
         }
-        // DELETEME  _UNITS[unit_array[itr_unit_array_count]].Draw_Priority = 0;
-        UNITS_DRAW_PRIORITY(unit_array[itr_unit_array_count], 0);
+        _UNITS[unit_array[itr_unit_array_count]].Draw_Priority = 0;
     }
     unit_idx = unit_array[Highest_Priority_Unit__Loop_Var];
     unit_x = _UNITS[unit_idx].wx;
@@ -5749,10 +5741,8 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 
     for(itr_units = 0; itr_units < unit_array_count; itr_units++)
     {
-        // DELETEME  _UNITS[unit_array[itr_units]].wx = destination_x;
-        UNITS_WX(unit_array[itr_units], (int8_t)destination_x);
-        // DELETEME  _UNITS[unit_array[itr_units]].wy = destination_y;
-        UNITS_WY(unit_array[itr_units], (int8_t)destination_y);
+        _UNITS[unit_array[itr_units]].wx = destination_x;
+        _UNITS[unit_array[itr_units]].wy = destination_y;
     }
 
 
@@ -6981,6 +6971,22 @@ void Main_Screen_Draw_Debug_Information(void)
             // UNIT WY
             Print(2, (22+(8*pos)), "UNIT WY");
             Print_Integer(46, (22+(8*pos)), _UNITS[entity_idx].wy);
+            pos++;
+            // UNIT SR
+            Print(2, (22+(8*pos)), "UNIT SR");
+            Print_Integer(46, (22+(8*pos)), _UNITS[entity_idx].Sight_Range);
+            pos++;
+        }
+        else if(
+            entity_idx >= MAX_UNIT_COUNT
+            &&
+            entity_idx < (MAX_UNIT_COUNT + MAX_CITY_COUNT)
+            &&
+            entity_idx < _cities
+        )
+        {
+            Print(2, (22+(8*pos)), "CITY IDX");
+            Print_Integer(46, (22+(8*pos)), entity_idx);
             pos++;
         }
     }

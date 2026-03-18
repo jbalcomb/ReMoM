@@ -18,28 +18,28 @@ extern "C" {
 
 
 // WZD o92p01
-void Clear_Square_Scouted_Flags(int16_t world_p);
+void Clear_Square_Scouted_Flags(int16_t wp);
 
 // WZD o92p02
-int16_t Check_Square_Scouted(int16_t world_x, int16_t world_y, int16_t world_p);
+int16_t Check_Square_Scouted(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o92p03
-void Set_Square_Scouted(int16_t world_x, int16_t world_y, int16_t world_p);
+void Set_Square_Scouted(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o92p04
-void Clear_Square_Scouted(int16_t world_x, int16_t world_y, int16_t world_p);
+void Clear_Square_Scouted(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o92p05
 void Update_Scouted_And_Contacted__WIP(void);
 
 // WZD o92p06
-void Set_Square_Scouted_Flags(int16_t world_x, int16_t world_y, int16_t world_p, int16_t scout_range);
+void Set_Square_Scouted_Flags(int16_t wx, int16_t wy, int16_t wp, int16_t scout_range);
 
 // WZD o92p07
-// drake178: UNIT_ContactHuman
+void Contact_Other_Player(int16_t unit_idx, int16_t wp);
 
 // WZD o92p08
-int16_t Check_Square_Explored(int16_t world_x, int16_t world_y, int16_t world_plane);
+int16_t Check_Square_Explored(int16_t wx, int16_t wy, int16_t world_plane);
 
 
 #ifdef __cplusplus
