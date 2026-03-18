@@ -19,7 +19,7 @@ if defender is computer-player...
         AI_CMB_PlayTurn__WIP(_combat_defender_player);
         // ; BUG: the defending AI gets an extra turn?
         CMB_PrepareTurn__WIP();
-        CMB_AIGoesFirst = ST_TRUE;
+        m_cp_took_turn = ST_TRUE;
     }
 
 AI_MoveBattleUnits__WIP()

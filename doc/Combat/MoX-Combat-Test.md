@@ -136,7 +136,7 @@ Player_Fled = ST_FALSE;
     frame_scanned_flag = 0;
     CRP_CMB_NeverChecked1 = ST_TRUE;
     CMB_CityDamage = ST_FALSE;
-    CMB_HumanTurn = ST_TRUE;
+    m_turn_is_local = ST_TRUE;
     _auto_combat_flag = ST_FALSE;
     CMB_PrepareTurn__WIP();
     _human_handle_immobile = ST_FALSE;

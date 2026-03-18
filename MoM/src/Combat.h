@@ -1459,7 +1459,7 @@ int16_t BU_HasSpellAbility__WIP(int16_t battle_unit_idx);
 void AI_CMB_PlayTurn__WIP(int16_t player_idx);
 
 // WZD o98p05
-void CMB_ProgressTurnFlow__WIP(void);
+void Combat_Next_Turn(void);
 
 // WZD o98p06
 // drake178: WIZ_FleeCombat()
@@ -1805,7 +1805,7 @@ int16_t Check_For_Winner(void);
 void AI_SetBasicAttacks__WIP(int16_t player_idx);
 
 // WZD o114p02
-void AI_BU_ProcessAction__WIP(int16_t battle_unit_idx, int16_t rally_cgx, int16_t rally_cgy);
+void AI_BU_ProcessAction(int16_t battle_unit_idx, int16_t rally_cgx, int16_t rally_cgy);
 
 // WZD o114p03
 void BU_SortSlowestFirst__WIP(int16_t Melee_Unit_List[], int16_t Melee_Unit_Count);
@@ -1814,13 +1814,16 @@ void BU_SortSlowestFirst__WIP(int16_t Melee_Unit_List[], int16_t Melee_Unit_Coun
 void AI_GetCombatRallyPt__WIP(int16_t battle_unit_idx, int16_t * Rally_X, int16_t * Rally_Y);
 
 // WZD o114p05
-void AI_MoveBattleUnits__WIP(int16_t player_idx);
+void AI_MoveBattleUnits__WIP__OLD(int16_t player_idx);
+void AI_MoveBattleUnits(int16_t player_idx);
 
 // WZD o114p06
-int16_t AI_BU_AssignAction__WIP(int16_t battle_unit_idx, int16_t no_spells_flag);
+int16_t AI_BU_AssignAction__WIP__OLD(int16_t battle_unit_idx, int16_t no_spells_flag);
+int16_t AI_BU_AssignAction(int16_t battle_unit_idx, int16_t no_spells_flag);
 
 // WZD o114p07
-int16_t AI_BU_SelectAction__WIP(int16_t battle_unit_idx, int16_t * selected_action, int16_t has_ranged_attack);
+int16_t AI_BU_SelectAction__WIP__OLD(int16_t battle_unit_idx, int16_t * selected_action, int16_t has_ranged_attack);
+int16_t AI_BU_SelectAction(int16_t battle_unit_idx, int16_t * selected_action, int16_t has_ranged_attack);
 
 // WZD o114p08
 void Do_Auto_Unit_Turn(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy, int16_t target_battle_unit_idx, int16_t rally_cgx, int16_t rally_cgy);

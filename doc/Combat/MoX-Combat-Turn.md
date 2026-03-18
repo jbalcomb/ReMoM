@@ -9,17 +9,17 @@ Defender is {HP,CP|NP}
 
 Human attacks Computer
     Combat_Screen__WIP()
-    CMB_AIGoesFirst = ST_FALSE;
+    m_cp_took_turn = ST_FALSE;
     if(_combat_defender_player == combat_computer_player)
         AI_CMB_PlayTurn__WIP(_combat_defender_player);
         CMB_PrepareTurn__WIP();
-        CMB_AIGoesFirst = ST_TRUE;
+        m_cp_took_turn = ST_TRUE;
     if(_combat_attacker_player == _human_player_idx)
         Next_Battle_Unit(0);  /* first attacker battle_unit_idx */
 
 Computer attacks Human
     Combat_Screen__WIP()
-    CMB_AIGoesFirst = ST_FALSE;
+    m_cp_took_turn = ST_FALSE;
     NOT if(_combat_defender_player == combat_computer_player)
     _human_out_of_moves = ST_FALSE;
     NOT if(_combat_attacker_player == _human_player_idx)
@@ -71,13 +71,13 @@ XREF:
 
 encompasses MoO2's End_Of_Turn_Bookeeping_()
 
-NOTE  doesn't touch CMB_HumanTurn
+NOTE  doesn't touch m_turn_is_local
 
 reinitializes
     _human_handle_immobile = ST_TRUE
     CMB_WizCastAvailable = ST_TRUE
     _scanned_battle_unit = ST_UNDEFINED
-    CMB_AIGoesFirst = ST_FALSE
+    m_cp_took_turn = ST_FALSE
 increments
     AI_ImmobileCounter
     _combat_turn
@@ -197,18 +197,18 @@ so, it's getting called when it shouldn't?
         ...
         Switch_Active_Battle_Unit();
         ...
-        CMB_HumanTurn = ST_TRUE;
+        m_turn_is_local = ST_TRUE;
         _auto_combat_flag = ST_FALSE;
         ...
         *** CMB_PrepareTurn__WIP(); ***  |-> 
         _human_handle_immobile = ST_FALSE;
         Switch_Active_Battle_Unit();
         ...
-        CMB_AIGoesFirst = ST_FALSE;
+        m_cp_took_turn = ST_FALSE;
         if(_combat_defender_player == combat_computer_player)
             AI_CMB_PlayTurn__WIP(_combat_defender_player);
             CMB_PrepareTurn__WIP();
-            CMB_AIGoesFirst = ST_TRUE;
+            m_cp_took_turn = ST_TRUE;
         Combat_Winner = Check_For_Winner__WIP();
         _human_out_of_moves = ST_FALSE;
         Next_Battle_Unit()
@@ -254,10 +254,10 @@ XREF:
 ## _human_handle_immobile
 
 
-## CMB_HumanTurn
+## m_turn_is_local
 
 
-## CMB_AIGoesFirst
+## m_cp_took_turn
 
 
 
@@ -410,7 +410,7 @@ Tactical_Combat__WIP()
     CMB_TargetFrame = 0;
     CRP_CMB_NeverChecked1 = 1;
     CMB_CityDamage = 0;
-    CMB_HumanTurn = ST_TRUE;
+    m_turn_is_local = ST_TRUE;
     _auto_combat_flag = ST_FALSE;
     CMB_PrepareTurn__WIP();
     _human_handle_immobile = 0;
@@ -421,11 +421,11 @@ Tactical_Combat__WIP()
     CMB_ActiveUnitFrame = 0;
     CMB_TargetFrame = 0;
     CRP_CMB_NeverChecked1 = 1;
-    CMB_AIGoesFirst = ST_FALSE;
+    m_cp_took_turn = ST_FALSE;
     if(_combat_defender_player == combat_computer_player)
         AI_CMB_PlayTurn__WIP(_combat_defender_player);
         CMB_PrepareTurn__WIP();
-        CMB_AIGoesFirst = ST_TRUE;
+        m_cp_took_turn = ST_TRUE;
     Combat_Winner = Check_For_Winner__WIP();
     if(Combat_Winner != ST_UNDEFINED)
         leave_screen = ST_UNDEFINED;

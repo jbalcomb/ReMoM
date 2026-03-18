@@ -14,29 +14,29 @@ CMB_ImmobileCanAct  ==>  _human_handle_immobile
 
 Variables?
 Raison d'etre?
-CMB_HumanTurn
-CMB_AIGoesFirst
+m_turn_is_local
+m_cp_took_turn
 _human_handle_immobile
 CRP_CMB_NeverChecked1
 
-## CMB_AIGoesFirst
+## m_cp_took_turn
 In Combat_Screen__WIP(), ...
-    CMB_AIGoesFirst = ST_FALSE;
+    m_cp_took_turn = ST_FALSE;
     if(_combat_defender_player == combat_computer_player)
         AI_CMB_PlayTurn__WIP(_combat_defender_player);
         CMB_PrepareTurn__WIP();
-        CMB_AIGoesFirst = ST_TRUE;
+        m_cp_took_turn = ST_TRUE;
 ...
     ...nothing in AI_CMB_PlayTurn__WIP()
     ...nothing in AI_CMB_PlayTurn__WIP() |-> CMB_CE_Refresh__WIP()
     ...nothing in AI_CMB_PlayTurn__WIP() |-> AI_MoveBattleUnits__WIP()
     CMB_PrepareTurn__WIP()
-        CMB_AIGoesFirst = ST_FALSE;
+        m_cp_took_turn = ST_FALSE;
 
 initialized to false in Combat_Screen__WIP()
 ...promptly set to false in CMB_PrepareTurn__WIP() and set to true right after
 controls if CMB_ProgressTurnFlow__WIP() calls AI_CMB_PlayTurn__WIP(combat_computer_player);
-...then same logic of 'if computer is defender' to call AI_CMB_PlayTurn__WIP(_combat_defender_player) and set CMB_AIGoesFirst to true
+...then same logic of 'if computer is defender' to call AI_CMB_PlayTurn__WIP(_combat_defender_player) and set m_cp_took_turn to true
 
 
 
@@ -54,7 +54,7 @@ vs. CMB_PrepareTurn__WIP()
 
 
 
-## CMB_HumanTurn
+## m_turn_is_local
 
 initialized to true in Combat_Screen__WIP()
 

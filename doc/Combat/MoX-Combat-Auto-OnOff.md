@@ -54,7 +54,7 @@ CMB_ProgressTurnFlow__WIP()
             if(input_field_idx == auto_combat_cancel_ESC_field)  /* turn off 'Auto Combat' */
                 Play_Left_Click();
                 _auto_combat_flag = ST_FALSE;
-                CMB_AIGoesFirst = ST_FALSE;
+                m_cp_took_turn = ST_FALSE;
                 CRP_CMB_NeverChecked1 = ST_TRUE;
                 CMB_ProgressTurnFlow__WIP();
                 Turn_Off_Auto_Combat();

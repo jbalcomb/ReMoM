@@ -3248,7 +3248,7 @@ int8_t movepath_x_array[120];
 
 // WZD dseg:C799                                                 ¿ END: Move_Stack() || UNITMOVE ?
 
-// WZD dseg:C79A 00 00                                           CMB_HumanTurn dw 0                      ; DATA XREF: CMB_TacticalCombat+26Dw ...
+// WZD dseg:C79A 00 00                                           m_turn_is_local dw 0                      ; DATA XREF: CMB_TacticalCombat+26Dw ...
 
 
 // WZD dseg:C79E

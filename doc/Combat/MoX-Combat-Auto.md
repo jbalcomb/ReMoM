@@ -43,9 +43,9 @@ PoI's?
 ...has to have something to do with where _combat_turn gets incremented?
 
 CMB_ProgressTurnFlow__WIP()
-    sets CMB_HumanTurn = ST_FALSE
+    sets m_turn_is_local = ST_FALSE
     ...does stuff
-    sets CMB_HumanTurn = ST_TRUE
+    sets m_turn_is_local = ST_TRUE
 
 
 
