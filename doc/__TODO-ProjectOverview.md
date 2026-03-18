@@ -377,12 +377,6 @@ int16_t WIZ_MatchManaUpkeep__WIP(int16_t player_idx, int16_t mana_upkeep)
 
 
 
-Combat.c
-Strategic_Combat__WIP()
-    /* DEMOHACK */ if(_combat_environ == 5) { IDK_health_attacker__2 = IDK_health_attacker = 0x7FFFFFFF /*0b01111111111111111111111111111111*/; }
-
-
-
 MainScr.c
 Move_Units()
         // TODO  OVL_SpellWardError();
