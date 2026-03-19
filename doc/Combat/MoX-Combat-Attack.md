@@ -83,7 +83,7 @@ battle_units[].tohit, battle_units[].melee_tohit
 BU_Init_Battle_Unit()
     battle_unit->tohit = _unit_type_table[_UNITS[battle_unit->unit_idx].type].To_Hit;
     battle_unit->melee_tohit = 0;
-    battle_unit->Ranged_To_Hit = 0;
+    battle_unit->ranged_tohit = 0;
     BU_Apply_Level(unit_idx, battle_unit);
     if(_UNITS[unit_idx].Hero_Slot > -1)
         if(battle_unit->Weapon_Plus1 == 0)

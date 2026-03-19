@@ -60,45 +60,13 @@ enum e_DAMAGE_TYPES
 /*
     ~ combat grid coordinates
 
-(battlefield->Central_Structure == CS_SorceryNode)
-(battlefield->Central_Structure == CS_ChaosNode)
-(battlefield->Central_Structure == CS_Outpost)
-&&
-(cgx == 6)
-&&
-(cgy == 11)
-
-(battlefield->Central_Structure == CS_City)
-(battlefield->Central_Structure == CS_Fortress)
-&&
-(cgx == 8)
-&&
-(cgy == 13)
-
-
-Magic Vortex
-    if(
-        (next_cgx >= 5)
-        &&
-        (next_cgx <= 8)
-        &&
-        (next_cgy >= 10)
-        &&
-        (next_cgy <= 13)
-    )
-    {
-        CMB_CityDamage += 5;
-    }
 */
 #define MIN_CGX_CITY  5
 #define MAX_CGX_CITY  8
 #define MIN_CGY_CITY 10
 #define MAX_CGY_CITY 13
-/*
-BU_SetCityMovement__WIP()
-    if(battlefield->Central_Structure != CS_City)
-        _cmbt_movepath_cost_map[((11 * COMBAT_GRID_WIDTH) + 6)] = INF;
-*/
+#define CGX_GATE      8
+#define CGY_GATE     12
 #define CGX_LAIR  6
 #define CGY_LAIR 11
 

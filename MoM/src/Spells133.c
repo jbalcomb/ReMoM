@@ -841,9 +841,238 @@ void Combat_Spell_Animation_Generic__WIP(int16_t cgx, int16_t cgy, int16_t anim_
 
 }
 
-// WZD o133p11  BU_Teleport()
+// WZD o133p11
+/* GEMINI */
+void BU_Teleport(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
+{
+    int16_t Frame_Speed = 0;
+    SAMB_ptr Sound_Data_Seg = 0;
+    int16_t Origin_Y = 0;
+    int16_t Origin_X = 0;
+    int16_t Target_Draw_Y = 0;
+    int16_t Target_Draw_X = 0;
+    int16_t Origin_Draw_Y = 0;
+    int16_t Origin_Draw_X = 0;
 
-// WZD o133p12  BU_TunnelTo()
+    int16_t i = 0;
+    struct s_BATTLE_UNIT * unit_ptr = {0};
+    uint32_t Sound_Data_Seg_size = 0;
+
+    /* Get screen coordinates for the unit's current (origin) position */
+    unit_ptr = &battle_units[battle_unit_idx];
+    Combat_Grid_Screen_Coordinates(unit_ptr->cgx, unit_ptr->cgy, 4, 4, &Origin_Draw_X, &Origin_Draw_Y);
+
+    /* Get screen coordinates for the teleport destination (target) */
+    Combat_Grid_Screen_Coordinates(cgx, cgy, 4, 4, &Target_Draw_X, &Target_Draw_Y);
+
+    /* Adjust drawing offsets to center the unit sprite */
+    Origin_Draw_X -= 13;
+    Target_Draw_X -= 13;
+    Origin_Draw_Y -= 27;
+    Target_Draw_Y -= 27;
+
+    /* Set animation speed based on user settings */
+    if (magic_set.movement_animations != 0)
+    {
+        Frame_Speed = 20;
+    }
+    else
+    {
+        Frame_Speed = 50;
+    }
+
+    /* Store original coordinates for math later */
+    Origin_X = unit_ptr->cgx;
+    Origin_Y = unit_ptr->cgy;
+
+    Mark_Block(World_Data);
+
+    /* Handle teleport sound effect */
+    if (magic_set.sound_effects == 1)
+    {
+        Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
+        Sound_Data_Seg = LBX_Reload_Next(soundfx_lbx_file__ovr133__1of2, SFX_Teleport, World_Data);
+        Sound_Data_Seg_size = lbxload_entry_length;
+        Play_Sound(Sound_Data_Seg, Sound_Data_Seg_size);
+    }
+
+    /* Prepare for animation: capture unit image and hide the actual unit */
+    BU_CreateImage__SEGRAX(battle_unit_idx);
+    unit_ptr->status = bus_Dead;
+
+    Release_Block(World_Data);
+
+    /* Teleport Animation Loop */
+    /* i starts at 150 and decrements; used for cross-fade timing */
+    for (i = 150; i > 0; i -= Frame_Speed)
+    {
+        Mark_Time();
+        Set_Page_Off();
+        Combat_Screen_Draw();
+
+        /* Phase 1: Fade out from Origin (i from 150 down to 50) */
+        if (i > 50)
+        {
+            Create_Picture(45, 42, GfxBuf_2400B);
+            Copy_Bitmap_To_Bitmap(IMG_CMB_FX_Figure, GfxBuf_2400B);
+            /* Vanish_Bitmap__WIP(bitmap, visibility_percent) */
+            Vanish_Bitmap__WIP(GfxBuf_2400B, i - 50);
+            FLIC_Set_LoopFrame_1(GfxBuf_2400B);
+            Draw_Picture_Windowed(Origin_Draw_X, Origin_Draw_Y, GfxBuf_2400B);
+        }
+
+        /* Phase 2: Fade in at Target (i from 100 down to 0) */
+        if (i <= 100)
+        {
+            Create_Picture(45, 42, GfxBuf_2400B);
+            Copy_Bitmap_To_Bitmap(IMG_CMB_FX_Figure, GfxBuf_2400B);
+            Vanish_Bitmap__WIP(GfxBuf_2400B, 100 - i);
+            FLIC_Set_LoopFrame_1(GfxBuf_2400B);
+            Draw_Picture_Windowed(Target_Draw_X, Target_Draw_Y, GfxBuf_2400B);
+        }
+
+        PageFlip_FX();
+        Release_Time(2);
+    }
+
+    /* Finalize unit state and position */
+    unit_ptr->status = bus_Active;
+    unit_ptr->cgx = cgx;
+    unit_ptr->cgy = cgy;
+
+    /* Adjust smooth-scrolling/target offsets so the unit doesn't "jump" visually after move */
+    unit_ptr->target_cgx -= (Origin_X - cgx);
+    unit_ptr->target_cgy -= (Origin_Y - cgy);
+
+    Set_Page_Off();
+    Combat_Screen_Draw();
+    PageFlip_FX();
+
+}
+
+
+// WZD o133p12
+/* GEMINI */
+void BU_TunnelTo(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
+{
+    SAMB_ptr Sound_Data_Seg = 0;
+    int16_t Origin_Y = 0;
+    int16_t Origin_X = 0;
+    int16_t Target_Draw_Y = 0;
+    int16_t Target_Draw_X = 0;
+    int16_t Origin_Draw_Y = 0;
+    int16_t Origin_Draw_X = 0;
+
+    int16_t i = 0;
+    struct s_BATTLE_UNIT * ptr_unit = {0};
+    int16_t temp_y = 0;
+    uint32_t Sound_Data_Seg_size = 0;
+
+    /* Calculate screen coordinates for the origin and target */
+    ptr_unit = &battle_units[battle_unit_idx]; /* battle_units is a far pointer to array of s_BATTLE_UNIT (size 0x6E) */
+    
+    Combat_Grid_Screen_Coordinates(ptr_unit->cgx, ptr_unit->cgy, 4, 4, &Origin_Draw_X, &Origin_Draw_Y);
+    Combat_Grid_Screen_Coordinates(cgx, cgy, 4, 4, &Target_Draw_X, &Target_Draw_Y);
+
+    /* Adjust drawing offsets (centering the figure) */
+    Origin_Draw_X -= 13;
+    Target_Draw_X -= 13;
+    Origin_Draw_Y -= 27;
+    Target_Draw_Y -= 27;
+
+    Origin_X = ptr_unit->cgx;
+    Origin_Y = ptr_unit->cgy;
+
+    Mark_Block(World_Data); /* World_Data: global block handle */
+
+    if (magic_set.sound_effects == 1)
+    {
+        /* Play sound effects for tunneling */
+        Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size); /* SND_CMB_Silence@ is a global sound buffer */
+        Sound_Data_Seg = LBX_Reload_Next(soundfx_lbx_file__ovr133__1of2, SFX_Tunneling, World_Data);
+        Sound_Data_Seg_size = lbxload_entry_length;
+        Play_Sound(Sound_Data_Seg, Sound_Data_Seg_size);
+    }
+
+    /* Create the bitmap image of the unit for the animation */
+    BU_CreateImage__SEGRAX(battle_unit_idx);
+    Release_Block(World_Data);
+
+    /* Set unit to dead/hidden status during the animation so the screen redraw doesn't show it at the grid pos */
+    ptr_unit->status = bus_Dead;
+
+    /* Animation Part 1: Submerging at the origin */
+    for (i = 4; i > 0; )
+    {
+        Mark_Time();
+        Set_Page_Off();
+        Combat_Screen_Draw();
+
+        /* Prepare the figure bitmap with a "vanish" effect */
+        Create_Picture(45, 42, GfxBuf_2400B);
+        Copy_Bitmap_To_Bitmap(IMG_CMB_FX_Figure, GfxBuf_2400B);
+        Vanish_Bitmap__WIP(GfxBuf_2400B, i * 20); /* percent = 80, 60, 40, 20 */
+
+        /* Set a window to clip the unit as it "sinks" into the ground */
+        Set_Window(0, 0, 319, Origin_Draw_Y + 30);
+        FLIC_Set_LoopFrame_1(GfxBuf_2400B);
+        
+        /* Draw the unit sinking (Y position increases) */
+        temp_y = Origin_Draw_Y + ((5 - i) * 5);
+        Draw_Picture_Windowed(Origin_Draw_X, temp_y, GfxBuf_2400B);
+        
+        Reset_Window();
+        PageFlip_FX();
+        Release_Time(2);
+        
+        i--;
+    }
+
+    /* Final static frame at origin before jump */
+    Set_Page_Off();
+    Combat_Screen_Draw();
+    PageFlip_FX();
+
+    /* Animation Part 2: Emerging at the target destination */
+    for (i = 0; i < 5; )
+    {
+        Mark_Time();
+        Set_Page_Off();
+        Combat_Screen_Draw();
+
+        Create_Picture(45, 42, GfxBuf_2400B);
+        Copy_Bitmap_To_Bitmap(IMG_CMB_FX_Figure, GfxBuf_2400B);
+        Vanish_Bitmap__WIP(GfxBuf_2400B, i * 20); /* percent = 0, 20, 40, 60, 80 */
+
+        /* Set a window to clip the unit as it "rises" from the ground */
+        Set_Window(0, 0, 319, Target_Draw_Y + 30);
+        FLIC_Set_LoopFrame_1(GfxBuf_2400B);
+
+        /* Draw the unit rising (Y position decreases) */
+        temp_y = (Target_Draw_Y + 20) - (i * 5);
+        Draw_Picture_Windowed(Target_Draw_X, temp_y, GfxBuf_2400B);
+
+        Reset_Window();
+        PageFlip_FX();
+        Release_Time(2);
+
+        i++;
+    }
+
+    /* Finalize unit position and state */
+    ptr_unit->status = bus_Active;
+    ptr_unit->cgx = cgx;
+    ptr_unit->cgy = cgy;
+
+    /* Update move target/destination relative to the jump distance */
+    ptr_unit->target_cgx -= (Origin_X - cgx);
+    ptr_unit->target_cgy -= (Origin_Y - cgy);
+
+    Set_Page_Off();
+    Combat_Screen_Draw();
+    PageFlip_FX();
+
+}
 
 
 // segrax

@@ -1,6 +1,20 @@
 
 
 
+NOTE(JimBalcomb, 20260319):
+
+AI_MoveBattleUnits()
+    /* Initialize attack parameters */
+    |-> AI_SetBasicAttacks()
+    /* Determine Rally Point */
+    |-> Sort_Battle_Units()
+    /* Get rally point based on the median speed melee unit's destination */
+    |-> AI_GetCombatRallyPt()
+
+
+
+
+
 
 
 
@@ -49,7 +63,7 @@ AI_MoveBattleUnits__WIP()
 
 WIZ_GetLastRangedStr__WIP()
 
-AI_SetBasicAttacks__WIP()
+AI_SetBasicAttacks()
 
 AI_BU_ProcessAction()
 
@@ -106,7 +120,9 @@ AI_BU_ProcessAction()
 AI_MoveBattleUnits()
     |-> AI_BU_AssignAction()
         |-> AI_BU_SelectAction__WIP()
-AI_SetBasicAttacks__WIP()
+AI_SetBasicAttacks()
+
+
 
 
 

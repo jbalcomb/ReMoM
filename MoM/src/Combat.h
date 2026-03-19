@@ -12,7 +12,6 @@
         ovr110
         ovr111
         ovr112
-        ovr114  ¿ MoO2  Module: CMBTAI ?
         ovr116
         ovr122
         ovr123
@@ -81,7 +80,7 @@ else
 #define BLUR_ATTKR 28
 #define BLUR_DFNDR 29
 
-// _battlefield_city_walls
+// _ai_battlefield_city_walls
 #define BATTLEFIELD_CITY_WALL_STONE     0x1 /* 0b00000001 */
 #define BATTLEFIELD_CITY_WALL_FIRE      0x2 /* 0b00000010 */
 #define BATTLEFIELD_CITY_WALL_DARKNESS  0x4 /* 0b00000100 */
@@ -846,10 +845,10 @@ enum e_BATTLE_UNIT_ACTION
     bua_Finished        =   4,
     bua_Wait            =   5,
     /* ¿ BEGIN:  computer-player actions ? */
-    BUA_MeleeAttack     = 100,
-    BUA_RangedAttack    = 101,
-    BUA_MoveNFire       = 102,
-    BUA_MoveNAttack     = 103,
+    bua_Stab     = 100,
+    bua_Shoot    = 101,
+    bua_MoveAndShoot       = 102,
+    bua_MoveAndStab     = 103,
     BUA_DoomBolt        = 104,
     BUA_Fireball        = 105,
     bua_Healing         = 106,
@@ -992,7 +991,7 @@ struct s_BATTLEFIELD
     /* 0x14F6 */  int16_t House_TileXs[16];    // [4][4]
     /* 0x1516 */  int16_t House_TileYs[16];    // [4][4]
     /* 0x1536 */  SAMB_ptr House_IMG_Segs[16];  // [4][4]  ¿ assigned pict seg from [3][15] house types ?
-    /* 0x1556 */  int16_t walled;  // {F,T} city has stone wall;  ... used to set _battlefield_city_walls |= 0x1;, so must be specifcally 'City Walls'/'Wall of Stone'
+    /* 0x1556 */  int16_t walled;  // {F,T} city has stone wall;  ... used to set _ai_battlefield_city_walls |= 0x1;, so must be specifcally 'City Walls'/'Wall of Stone'
     /* 0x1558 */  int16_t walls[16];   /* [4][4] as {4,4,4,4}; state/status 0: none, 1:good, 2:bad  spl_Wall_Of_Stone sets 1, spl_Disrupt sets 2 */
     /* 0x1578 */  int16_t wall_of_fire;  // {F,T}
     /* 0x157A */  int16_t wall_of_darkness;  // {F,T}
@@ -1203,7 +1202,7 @@ extern int16_t * CMB_NearDispel_UCs;
 extern int16_t * CMB_NearDispel_UEs;
 
 // WZD dseg:C972
-extern int16_t CMB_Winner;
+extern int16_t _combat_winner;
 
 // WZD dseg:C974
 extern int16_t GAME_RazeCity;
@@ -1402,7 +1401,7 @@ void Battle_Unit_Action__WIP(int16_t battle_unit_idx, int16_t x, int16_t y);
 void Assign_Combat_Grids(void);
 
 // WZD s91p08
-int16_t BU_IsVisible__STUB(int16_t battle_unit_idx);
+int16_t Target_Is_Visible(int16_t battle_unit_idx);
 
 // WZD s91p09
 void Add_City_Damage_From_Battle_Units_Within(void);
@@ -1797,40 +1796,6 @@ int16_t Battle_Unit_Pict_Open(void);
 // WZD o113p16
 int16_t Check_For_Winner(void);
 
-/*
-    WIZARDS.EXE  ovr114
-*/
-
-// WZD o114p01
-void AI_SetBasicAttacks__WIP(int16_t player_idx);
-
-// WZD o114p02
-void AI_BU_ProcessAction(int16_t battle_unit_idx, int16_t rally_cgx, int16_t rally_cgy);
-
-// WZD o114p03
-void BU_SortSlowestFirst__WIP(int16_t Melee_Unit_List[], int16_t Melee_Unit_Count);
-
-// WZD o114p04
-void AI_GetCombatRallyPt__WIP(int16_t battle_unit_idx, int16_t * Rally_X, int16_t * Rally_Y);
-
-// WZD o114p05
-void AI_MoveBattleUnits__WIP__OLD(int16_t player_idx);
-void AI_MoveBattleUnits(int16_t player_idx);
-
-// WZD o114p06
-int16_t AI_BU_AssignAction__WIP__OLD(int16_t battle_unit_idx, int16_t no_spells_flag);
-int16_t AI_BU_AssignAction(int16_t battle_unit_idx, int16_t no_spells_flag);
-
-// WZD o114p07
-int16_t AI_BU_SelectAction__WIP__OLD(int16_t battle_unit_idx, int16_t * selected_action, int16_t has_ranged_attack);
-int16_t AI_BU_SelectAction(int16_t battle_unit_idx, int16_t * selected_action, int16_t has_ranged_attack);
-
-// WZD o114p08
-void Do_Auto_Unit_Turn(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy, int16_t target_battle_unit_idx, int16_t rally_cgx, int16_t rally_cgy);
-
-// WZD o114p09
-int16_t Auto_Move_Unit(int16_t battle_unit_idx, int16_t Dest_X, int16_t Dest_Y, int16_t target_battle_unit_idx, int16_t Max_X, int16_t Max_Y);
-
 
 
 /*
@@ -1925,7 +1890,7 @@ int16_t Range_To_Battle_Unit(int16_t BU_1, int16_t BU_2);
 int16_t Range_To_Battle_Unit(int16_t BU_1, int16_t BU_2);
 
 // WZD o122p13
-int16_t AI_BU_GetAttackValue__STUB(int16_t battle_unit_idx, int16_t target_battle_unit_idx, int16_t has_ranged_attack);
+int16_t Target_Unit_Value(int16_t attacker_idx, int16_t target_idx, int16_t has_ranged_attack);
 
 // WZD o122p14
 int16_t Battle_Unit_Has_Ranged_Attack(int16_t battle_unit_idx);
@@ -1970,7 +1935,7 @@ int16_t CTY_RampageVictory(void);
 */
 
 // WZD o124p01
-int16_t WIZ_GetLastRangedStr__WIP(int16_t player_idx);
+int16_t Total_Ranged_Attack_Strength(int16_t player_idx);
 
 // WZD o124p02
 void BU_SetCityMovement__WIP(int16_t battle_unit_idx);

@@ -103,7 +103,7 @@
 - [ ] BU_GetCombatEffect__WIP
 - [ ] BU_GetInstaMoveType__WIP
 - [ ] BU_HasSpellAbility__WIP
-- [ ] BU_IsVisible__STUB
+- [x] BU_IsVisible__STUB
 - [ ] BU_MeleeWallCheck__WIP
 - [ ] BU_MoveConfused__WIP
 - [ ] BU_ProcessAttack__WIP
