@@ -10,6 +10,8 @@
 #include "../../MoX/src/MOX_TYPE.h"
 #include "../../MoX/src/Util.h"
 
+#include "UnitMove.h"
+
 #include "Explore.h"
 
 

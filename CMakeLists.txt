@@ -76,9 +76,21 @@ endif()
 add_compile_definitions($<$<CONFIG:Debug>:STU_DEBUG>)
 
 # Suppress "unknown pragma" warnings (C4068) on MSVC — pragmas from the original Borland C++ disassembly
+# if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
 if(MSVC)
     add_compile_options(/wd4068)
 endif()
+if(CMAKE_COMPILER_IS_CLANG)
+    add_compile_options(
+        "-Wno-unsequenced"
+    )
+endif()
+if(CMAKE_COMPILER_IS_GNUCC)
+    add_compile_options(
+        "-Wno-unsequenced"
+    )
+endif()
+
 
 add_subdirectory(STU)
 add_subdirectory(platform)

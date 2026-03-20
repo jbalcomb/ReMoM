@@ -60,6 +60,7 @@
 
 #include "FLIC_Draw.h"
 #include "Fields.h"
+#include "Fonts.h"
 #include "Graphics.h"
 #include "Input.h"
 #include "MOX_DEF.h"
@@ -841,7 +842,7 @@ int UU_DBG_SelectDialog(char /* near */ *Q_ptr, char /* near */ *A1_ptr, char /*
         /* Draw question text box */
         UU_VGA_DrawDblRect(100, 90, 220, 110, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor);
 
-        Set_Font_Style(UU_DBG_OptionsFont, UU_DBG_OptionsFontColor);
+        Set_Font_Style(UU_DBG_OptionsFont, UU_DBG_OptionsFontColor, ST_NULL, ST_NULL);
         Print_Centered(160, 98, Q_ptr);
 
         Clear_Fields();

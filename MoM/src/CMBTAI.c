@@ -8,14 +8,20 @@
 
 #include "../../STU/src/STU_DBG.h"
 
+#include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _players, _screen_seg */
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_SET.h"  /* magic_set */
+#include "../../MoX/src/MOX_T4.h"
 #include "../../MoX/src/MOX_TYPE.h"
+#include "../../MoX/src/random.h"
+#include "../../MoX/src/SOUND.h"
+#include "../../MoX/src/Timer.h"
 
 #include "CMBTDEF.h"
 #include "Combat.h"
 #include "Spellbook.h"  /* spl_Doom_Bolt */
+#include "Spells133.h"  /* BU_Teleport, BU_Tunnel */
 #include "UNITTYPE.h"   /* rag_Missile */
 
 #include "CMBTAI.h"
