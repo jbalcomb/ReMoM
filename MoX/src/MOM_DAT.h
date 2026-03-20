@@ -3096,7 +3096,7 @@ extern struct s_HEROES * _HEROES2[NUM_PLAYERS];                  // alloc in All
 
 // WZD dseg:924A
 // ¿ MoO2  Module: MOX  _ai_retreat_flag ?
-extern int16_t CMB_AI_Fled;
+extern int16_t _computer_player_did_flee;
 
 // WZD dseg:924C
 extern SAMB_ptr IMG_CMB_ScanIcons[MAX_BATTLE_UNIT_COUNT];

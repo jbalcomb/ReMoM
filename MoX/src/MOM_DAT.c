@@ -1176,13 +1176,8 @@ struct s_HEROES * _HEROES2[NUM_PLAYERS];
 
 
 // WZD dseg:924A
-// drake178: CMB_AI_Fled
-/*
-; now 0 (non-strategic battle init)
-; set to 1 if the AI decides to flee
-*/
 // MoO2  Module: MOX  data (0 bytes) _ai_retreat_flag  Address: 02:001918C8
-int16_t CMB_AI_Fled;
+int16_t _computer_player_did_flee;
 
 // WZD dseg:924C
 // struct CSCAN_ICONS IMG_CMB_ScanIcons;
@@ -1228,8 +1223,8 @@ int16_t frame_scanned_flag;
 combat type?
     ...mode, context, setting, circumstance, environment, ...
 ¿ enum ?
-0: Enemy Stack
-1: Enemy City
+0: Open-Field  (Enemy Stack)
+1: City-Seige  (Enemy City)
 5: Lair
 
 STRUCTURES INFLUENCING COMBAT

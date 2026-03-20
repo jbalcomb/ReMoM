@@ -39,14 +39,14 @@
 if(combat_enchantments[CALL_LIGHTNING_DFNDR] != 0)
 
 
-like with CMB_CE_Refresh__WIP()
+like with Update_Combat_Enchantments_Icon_And_Help()
 // even/odd - attacker/defender
 if((itr % 2) == 0)
-    CMB_ATKR_CE_Wnd[attacker_enchantment_count].icon_seg = combat_enchantment_icon_segs[combat_enchantment_icon_data[idx].icon_idx];
-    CMB_ATKR_CE_Wnd[attacker_enchantment_count].help_idx = combat_enchantment_icon_data[idx].help_idx;
+    _combat_enchantments_attacker[attacker_enchantment_count].icon_seg = combat_enchantment_icon_segs[combat_enchantment_icon_data[idx].icon_idx];
+    _combat_enchantments_attacker[attacker_enchantment_count].help_idx = combat_enchantment_icon_data[idx].help_idx;
 else
-    CMB_DEFR_CE_Wnd[defender_enchantment_count].icon_seg = combat_enchantment_icon_segs[combat_enchantment_icon_data[idx].icon_idx];
-    CMB_DEFR_CE_Wnd[defender_enchantment_count].help_idx = combat_enchantment_icon_data[idx].help_idx;
+    _combat_enchantments_defender[defender_enchantment_count].icon_seg = combat_enchantment_icon_segs[combat_enchantment_icon_data[idx].icon_idx];
+    _combat_enchantments_defender[defender_enchantment_count].help_idx = combat_enchantment_icon_data[idx].help_idx;
 
 */
 #define TRUE_LIGHT_ATTKR 0
@@ -832,7 +832,7 @@ enum e_BATTLE_UNIT_STATUS
 {
     bus_Active      = 0,  /* ~== Alive; checked for 'attackable' target */
     bus_Recalled    = 1,  /* ¿ ? */
-    bus_Fleeing     = 2,  /* ¿ ? */
+    bus_Flee     = 2,  /* ¿ ? */
     bus_Uninvolved  = 3,  /* ~ "can not engage" used for 'Floating Island', Transports, etc.; included in 'Flee'; EoC, set to bus_Active; */
     bus_Dead        = 4,  /* ¿ ? */
     bus_Drained     = 5,  /* ¿ ? */
@@ -856,7 +856,7 @@ enum e_BATTLE_UNIT_ACTION
     BUA_CastSpell       = 108,
     BUA_SummonDemon     = 109,
     bua_WebSpell        = 110,
-    BUA_Flee            = 150,
+    bua_Flee            = 150,
     /* ¿ END:  computer-player actions ? */
     BUA_No_Spells       = 333
 };
@@ -1446,7 +1446,7 @@ void Update_Defender_Hostility(int attacker_player_idx, int defender_player_idx)
 
 // WZD o98p01
 // drake178: CMB_CE_Refresh()
-void CMB_CE_Refresh__WIP(void);
+void Update_Combat_Enchantments_Icon_And_Help(void);
 
 // WZD o98p02
 int16_t BU_HasSpellAbility__WIP(int16_t battle_unit_idx);
@@ -1455,7 +1455,7 @@ int16_t BU_HasSpellAbility__WIP(int16_t battle_unit_idx);
 // NIU  int16_t NIU_Who_Has_More_Leadership(void);
 
 // WZD o98p04
-void AI_CMB_PlayTurn__WIP(int16_t player_idx);
+void Auto_Cast_Spell_And_Do_Combat_Turn(int16_t player_idx);
 
 // WZD o98p05
 void Combat_Next_Turn(void);
@@ -1585,7 +1585,7 @@ int16_t Next_Battle_Unit_Nearest_Available(int16_t player_idx);
 void Combat_Cast_Spell_Error(int16_t type);
 
 // WZD s103p11
-void BU_MoveConfused__WIP(int16_t battle_unit_idx);
+void Move_Confused(int16_t battle_unit_idx);
 
 // WZD s103p12
 void CMB_LoadResources__WIP(void);
@@ -1603,7 +1603,7 @@ void Combat_Cast_Spell_With_Caster(int16_t caster_id);
 */
 
 // WZD o105p01
-int16_t Check_For_Winner__WIP(void);
+int16_t Check_For_Winner(void);
 
 // WZD o105p02
 void Combat_Figure_Banner_Color(int16_t player_idx);
@@ -1794,7 +1794,7 @@ void Combat_Cast_Spell_Message(int16_t caster_idx, int16_t spell_idx);
 int16_t Battle_Unit_Pict_Open(void);
 
 // WZD o113p16
-int16_t Check_For_Winner(void);
+int16_t Eliminated_Opponent(void);
 
 
 
@@ -1923,10 +1923,10 @@ void Combat_Results_Scroll_Draw(void);
 int16_t Combat_Results_Scroll_Text(void);
 
 // WZD o123p06
-int16_t CTY_GetConquerGold(int16_t city_idx);
+int16_t City_Gold(int16_t city_idx);
 
 // WZD o123p07
-int16_t CTY_RampageVictory(void);
+int16_t Rampage_Combat_City(void);
 
 
 
@@ -1983,13 +1983,13 @@ int16_t Battle_Unit_Is_Summoned_Creature(int16_t battle_unit_idx);
 int16_t Battle_Unit_Moves2(int16_t battle_unit_idx);
 
 // WZD o124p17
-void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[]);
+void Combat_City_Capture(int16_t troop_count, int16_t * troops);
 
 // WZD o124p18
-int16_t AI_FightorFlight__STUB(int16_t player_idx);
+int16_t Retreat_Check(int16_t player_idx);
 
 // WZD o124p19
-// AI_Raze_Decision()
+int16_t Raze_Check(int16_t player_idx, int16_t city_idx);
 
 // WZD o124p20
 int16_t Raze_City_Prompt(char * message);

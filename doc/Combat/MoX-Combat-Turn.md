@@ -47,7 +47,7 @@ once right before screen redraw in screen-loop
         input_field_idx = ST_UNDEFINED;
         screen_changed = ST_TRUE;
         CRP_CMB_NeverChecked1 = ST_TRUE;
-        winner = Check_For_Winner__WIP();
+        winner = Check_For_Winner();
         if(Combat_Winner != ST_UNDEFINED)
             leave_screen = ST_UNDEFINED;
             input_field_idx = 0;
@@ -115,7 +115,7 @@ Combat Variations: Flying, Water, Walls, and More
 Move_Battle_Unit__WIP() ==> Battle_Unit_Move__WIP()
 BU_CombatAction__WIP() ==> Battle_Unit_Action__WIP()
 ... ==> Battle_Unit_Attack__WIP()
-CMB_WinLoseFlee__WIP() ==> Check_For_Winner__WIP()
+CMB_WinLoseFlee__WIP() ==> Check_For_Winner()
 BU_GetHalfMoves__WIP() == Battle_Unit_Moves2()
 
 
@@ -209,7 +209,7 @@ so, it's getting called when it shouldn't?
             AI_CMB_PlayTurn__WIP(_combat_defender_player);
             CMB_PrepareTurn__WIP();
             m_cp_took_turn = ST_TRUE;
-        Combat_Winner = Check_For_Winner__WIP();
+        Combat_Winner = Check_For_Winner();
         _human_out_of_moves = ST_FALSE;
         Next_Battle_Unit()
         ...
@@ -226,7 +226,7 @@ so, it's getting called when it shouldn't?
 ## 'Auto Combat'
 ```c
     CMB_ProgressTurnFlow__WIP();
-    Combat_Winner = Check_For_Winner__WIP();
+    Combat_Winner = Check_For_Winner();
 ```
 
 
@@ -263,20 +263,20 @@ XREF:
 
 
 
-## Check_For_Winner__WIP()
+## Check_For_Winner()
 
 defender battle unit count
 attacker battle unit count
-AI_FightorFlight__STUB()
+AI_FightorFlight()
 NOTE: The human-player fleeing is handled by the 'Left-Click Flee Button' code.
 
 
-### CMB_AI_Fled
+### _computer_player_did_flee
 ovr105
 ...odd mix of AoR's; most battle unit figures and effects
 
 set to ST_FALSE during setup section of Tactical_Combat__WIP()
-set to ST_TRUE in Check_For_Winner__WIP() if AI decides to Flee
+set to ST_TRUE in Check_For_Winner() if AI decides to Flee
 checked after existing screen-loop in Tactical_Combat__WIP()
 used to set Battle_Result for End_Of_Combat__WIP()
 ...in End_Of_Combat__WIP(..., MsgType)
@@ -288,9 +288,9 @@ used to set Battle_Result for End_Of_Combat__WIP()
             "Your opponent has fled"
 
 XREF:
-    Tactical_Combat__WIP:loc_75ED7 mov     [CMB_AI_Fled], e_ST_FALSE
-    Tactical_Combat__WIP+123D      cmp     [CMB_AI_Fled], e_ST_TRUE
-    Check_For_Winner__WIP+138       mov     [CMB_AI_Fled], e_ST_TRUE
+    Tactical_Combat__WIP:loc_75ED7 mov     [_computer_player_did_flee], e_ST_FALSE
+    Tactical_Combat__WIP+123D      cmp     [_computer_player_did_flee], e_ST_TRUE
+    Check_For_Winner+138       mov     [_computer_player_did_flee], e_ST_TRUE
 
 
 ### CMB_WizardCitySiege
@@ -316,10 +316,10 @@ AI_CMB_PlayTurn__WIP()
 
 CMB_ProgressTurnFlow__WIP()
 
-Check_For_Winner__WIP()
+Check_For_Winner()
 
 
-CMB_PrepareTurn__WIP(), AI_CMB_PlayTurn__WIP(), CMB_ProgressTurnFlow__WIP(), Check_For_Winner__WIP()
+CMB_PrepareTurn__WIP(), AI_CMB_PlayTurn__WIP(), CMB_ProgressTurnFlow__WIP(), Check_For_Winner()
 
 
 ...
@@ -375,7 +375,7 @@ Tactical_Combat__WIP()
     CMB_WizardCitySiege = ST_FALSE;
     if((OVL_Action_Type == 1)  /* Stack vs. City */ && (combat_defender_player_idx != NEUTRAL_PLAYER_IDX))
         CMB_WizardCitySiege = ST_TRUE;
-    CMB_AI_Fled = ST_FALSE;  // ; set to 1 if the AI decides to flee
+    _computer_player_did_flee = ST_FALSE;  // ; set to 1 if the AI decides to flee
     Player_Fled = ST_FALSE;
     if(OVL_Action_Type == 1)  /* Stack vs. City */
         String_Copy_Far(CMB_CityName, _CITIES[OVL_Action_Structure].name);
@@ -426,7 +426,7 @@ Tactical_Combat__WIP()
         AI_CMB_PlayTurn__WIP(_combat_defender_player);
         CMB_PrepareTurn__WIP();
         m_cp_took_turn = ST_TRUE;
-    Combat_Winner = Check_For_Winner__WIP();
+    Combat_Winner = Check_For_Winner();
     if(Combat_Winner != ST_UNDEFINED)
         leave_screen = ST_UNDEFINED;
     _human_out_of_moves = ST_FALSE;

@@ -25,7 +25,7 @@ Tactical_Combat__WIP()
         for(itr = 0; itr < _combat_total_unit_count; itr++)
             BU_SetVisibility__WIP(itr);
         Assign_Combat_Grids();
-        Combat_Winner = Check_For_Winner__WIP();
+        Combat_Winner = Check_For_Winner();
 
 
 

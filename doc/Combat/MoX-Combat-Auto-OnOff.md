@@ -24,7 +24,7 @@ set to on for 'Left-Click Auto Button'
     TOGGLE(_auto_combat_flag);
     _human_out_of_moves = ST_FALSE;
     AI_CMB_PlayTurn__WIP(combat_human_player);
-    Combat_Winner = Check_For_Winner__WIP();
+    Combat_Winner = Check_For_Winner();
 ...loop around screen-loop
     CMB_ProgressTurnFlow__WIP();
 
@@ -62,7 +62,7 @@ CMB_ProgressTurnFlow__WIP()
                 _human_handle_immobile = ST_FALSE;
             else  /* do 'Auto Combat' */
                 CMB_ProgressTurnFlow__WIP();
-            Combat_Winner = Check_For_Winner__WIP();
+            Combat_Winner = Check_For_Winner();
             if(Combat_Winner != ST_UNDEFINED)
                 leave_screen = ST_UNDEFINED;
                 input_field_idx = ST_UNDEFINED;
@@ -81,7 +81,7 @@ CMB_ProgressTurnFlow__WIP()
             Clear_Fields();
             input_field_idx = 0;
             AI_CMB_PlayTurn__WIP(combat_human_player);
-            Combat_Winner = Check_For_Winner__WIP();
+            Combat_Winner = Check_For_Winner();
             if(Combat_Winner == ST_UNDEFINED)
                 leave_screen = ST_UNDEFINED;
                 input_field_idx = 0;
@@ -95,7 +95,7 @@ CMB_ProgressTurnFlow__WIP()
 ## AI_CMB_PlayTurn__WIP()
     if(player_idx == combat_human_player)
         // SPELLY  G_CMB_CastSpell((player_idx + 20), _combat_wx, _combat_wy, _combat_wp);
-    Combat_Winner = Check_For_Winner__WIP();  // ¿ because spell cast may resulted in a win/loss ?
+    Combat_Winner = Check_For_Winner();  // ¿ because spell cast may resulted in a win/loss ?
     if(Combat_Winner == ST_UNDEFINED)
         CMB_CE_Refresh__WIP();  // ¿ because spell cast may been an enchantment ?
         AI_MoveBattleUnits__WIP(player_idx);

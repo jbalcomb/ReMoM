@@ -111,7 +111,7 @@ OVL_Action_Type
 
 AI_ImmobileCounter = 0;
 CMB_WizardCitySiege = ST_FALSE;
-CMB_AI_Fled = ST_FALSE;  // ; set to 1 if the AI decides to flee
+_computer_player_did_flee = ST_FALSE;  // ; set to 1 if the AI decides to flee
 Player_Fled = ST_FALSE;
     _combat_wx = wx;
     _combat_wy = wy;

@@ -346,6 +346,8 @@ Learn_Spell_Animation()
 AI_Kill_Lame_Units()
     ¿ count of *less-than_average* units removed ?
 
+Combat_City_Capture()
+    GUI_Multipurpose_Int is used here as a change accumulator for the summary scroll
 */
 int16_t GUI_Multipurpose_Int;  /* NOTE(JimBalcomb,20240922): presently, now, only used in Combat.C */
 /*

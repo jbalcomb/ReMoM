@@ -84,15 +84,15 @@
 
 ## Combat
 - [ ] AI_BU_AssignAction__WIP
-- [ ] AI_BU_GetAttackValue__STUB
+- [x] AI_BU_GetAttackValue__STUB
 - [ ] AI_BU_ProcessAction__WIP
 - [ ] AI_BU_SelectAction__WIP
 - [ ] AI_CMB_PlayTurn__WIP
-- [ ] AI_FightorFlight__STUB
-- [ ] AI_GetCombatRallyPt__WIP
+- [x] AI_FightorFlight__STUB
+- [x] AI_GetCombatRallyPt__WIP
 - [ ] AI_MoveBattleUnits__WIP
 - [ ] AI_RestrictToCity__WIP
-- [ ] AI_SetBasicAttacks__WIP
+- [x] AI_SetBasicAttacks__WIP
 - [ ] AITP_CombatSpell__STUB
 - [ ] Battle_Unit_Action__WIP
 - [ ] Battle_Unit_Attack__WIP
@@ -110,8 +110,8 @@
 - [ ] BU_SetBaseAnims__WIP
 - [ ] BU_SetCityMovement__WIP
 - [ ] BU_SetVisibility__WIP
-- [ ] BU_SortSlowestFirst__WIP
-- [ ] Check_For_Winner__WIP
+- [x] BU_SortSlowestFirst__WIP
+- [x] Check_For_Winner__WIP
 - [ ] CMB_BaseAllocs__WIP
 - [ ] CMB_CE_Refresh__WIP
 - [ ] CMB_ComposeBackgrnd__WIP

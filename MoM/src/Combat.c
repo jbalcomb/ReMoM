@@ -81,8 +81,9 @@
 
 #include "../../ext/stu_compat.h"
 
-#include "Combat.h"
+#include "CMBTAI.h"
 #include "CMBTDEF.h"
+#include "Combat.h"
 
 // WZD dseg:C8AE                                                 BEGIN:  ovr114 - CMBTAI
 // WZD dseg:C8B0
@@ -90,7 +91,7 @@ extern int16_t _ai_immobile_counter;
 // WZD dseg:C8B2
 extern int16_t _ai_stay_in_city;
 // WZD dseg:C8B4
-int16_t _ai_battlefield_city_walls;
+extern int16_t _ai_battlefield_city_walls;
 // WZD dseg:C8B4                                                 END:  ovr114 - CMBTAI
 
 
@@ -705,10 +706,10 @@ DEDU is this just an 'end of turn wait'?
 int16_t _human_handle_immobile;
 
 // WZD dseg:C408
-int16_t CMB_WizardCitySiege;
+int16_t _computer_player_city_seige;
 
 // WZD dseg:C40A
-char CMB_CityName[LEN_CITY_NAME];
+char _combat_city_name[LEN_CITY_NAME];
 
 // WZD dseg:C418
 /*
@@ -770,7 +771,7 @@ Here's how it works:
 
 Default: ST_FALSE — initialized to false in Combat_Screen__WIP() and reset in CMB_PrepareTurn__WIP().
 
-At the start of Combat_Next_Turn() (Combat.c:4803): if m_cp_took_turn == ST_FALSE, the computer player gets its AI turn via AI_CMB_PlayTurn__WIP(combat_computer_player). If it's ST_TRUE, this call is skipped — because the AI already went.
+At the start of Combat_Next_Turn() (Combat.c:4803): if m_cp_took_turn == ST_FALSE, the computer player gets its AI turn via Auto_Cast_Spell_And_Do_Combat_Turn(combat_computer_player). If it's ST_TRUE, this call is skipped — because the AI already went.
 
 Later in the same function (Combat.c:4813-4816): if the defender is the computer, the defending AI plays its turn, and then m_cp_took_turn is set to ST_TRUE.
 
@@ -848,9 +849,9 @@ int16_t attacker_enchantment_count;
 // WZD dseg:C484
 int16_t defender_enchantment_count;
 // WZD dseg:C486
-struct  s_COMBAT_ENCHANTMENT_ICON CMB_DEFR_CE_Wnd[NUM_COMBAT_ENCHANTMENTS];
+struct  s_COMBAT_ENCHANTMENT_ICON _combat_enchantments_defender[NUM_COMBAT_ENCHANTMENTS];
 // WZD dseg:C4C2
-struct  s_COMBAT_ENCHANTMENT_ICON CMB_ATKR_CE_Wnd[NUM_COMBAT_ENCHANTMENTS];
+struct  s_COMBAT_ENCHANTMENT_ICON _combat_enchantments_attacker[NUM_COMBAT_ENCHANTMENTS];
 // WZD dseg:C4FE
 SAMB_ptr combat_enchantment_icon_segs[NUM_COMBAT_ENCHANTMENTS];
 
@@ -1016,7 +1017,7 @@ In short: it's a UI guard that tracks whether the human player currently has con
 int16_t m_turn_is_local;
 
 // WZD dseg:C79C
-int16_t CRP_CMB_NeverChecked1;
+int16_t m_unknown_variable__ovr090;
 
 // WZD dseg:C79C                                                 ¿ ovr098 ?
 
@@ -1449,7 +1450,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
     int16_t Battle_Result = 0;
     int16_t defender_unit_count = 0;
-    int16_t Player_Fled = 0;
+    int16_t human_player_did_flee = 0;
     int16_t winner = 0;
     int16_t auto_combat_cancel_ESC_field = 0;
     int16_t cast_status = 0;
@@ -1478,339 +1479,183 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     int16_t battle_unit_idx;  // _DI_
     int16_t hotkey_idx_Z = 0;  // debug_hotkey
     int16_t hotkey_idx_T = 0;  // test_hotkey
-
     _ai_immobile_counter = 0;
-
-    CMB_WizardCitySiege = ST_FALSE;
-
+    _computer_player_city_seige = ST_FALSE;
     if(
-        (_combat_environ == 1)  /* Enemy City */
+        (_combat_environ == 1)  /* City-Siege */
         &&
         (combat_defender_player_idx != NEUTRAL_PLAYER_IDX)
     )
     {
-        CMB_WizardCitySiege = ST_TRUE;
+        _computer_player_city_seige = ST_TRUE;
     }
-
-    CMB_AI_Fled = ST_FALSE;  // ; set to 1 if the AI decides to flee
-
-    Player_Fled = ST_FALSE;
-
+    _computer_player_did_flee = ST_FALSE;
+    human_player_did_flee = ST_FALSE;
     Deactivate_Auto_Function();
-
     Clear_Fields();
-
     Fade_Out();
-
     Set_Page_Off();
-
     Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
-
     Toggle_Pages();
-
     _page_flip_effect = pfe_None;
-
-    if(_combat_environ == 1)  /* Enemy City */
+    if(_combat_environ == 1)  /* City-Siege */
     {
-        _fstrcpy(CMB_CityName, _CITIES[_combat_environ_idx].name);
+        _fstrcpy(_combat_city_name, _CITIES[_combat_environ_idx].name);
     }
-
-
     CMB_BaseAllocs__WIP();
-
-
     CMB_LoadResources__WIP();  /* calls CMB_SetNearAllocs__WIP() */
-
-
     _combat_wx = wx;
     _combat_wy = wy;
     _combat_wp = wp;
-
     _combat_attacker_player = combat_attacker_player_idx;
-
     _combat_defender_player = combat_defender_player_idx;
-
-
     Cache_Graphics_Combat();
-
-
     CMB_Terrain_Init__WIP(wx, wy, wp);  // CMB_ComposeBackgrnd__WIP() |-> Copy_Off_To_Back()
-
-
     defender_unit_count = CMB_Units_Init__WIP(troop_count, troops);
-
-
     Clear_Fields();
-
     Deactivate_Auto_Function();
-
     Assign_Auto_Function(Combat_Screen_Draw, 1);
-
-
     CMB_ATKR_First_CE = 0;
-
     CMB_DEFR_First_CE = 0;
-
-
     _combat_structure = Combat_Structure(wx, wy, wp, 0);
-
-
-    CMB_CE_Refresh__WIP();
-
-
+    Update_Combat_Enchantments_Icon_And_Help();
     Combat_Node_Type();
-
     _human_out_of_moves = ST_FALSE;
-
     _combat_turn = 0;
-
-
     CMB_WizCastAvailable = ST_TRUE;
-
-
     _combat_total_battle_effect_count = Combat_Info_Effects_Count();
-
-
     Calc_Battlefield_Bonuses(_combat_structure);
-
-
     Combat_Cache_Write();
-
     SND_CMB_Silence = LBX_Reload(cnst_SOUNDFX_File2, SFX_Silence, World_Data);
     SND_CMB_Silence_size = lbxload_entry_length;
-
     // ; when populating the BU table, set to the index of the
     // ; AI player (the other participant being always human)
     if(CMB_AI_Player != NEUTRAL_PLAYER_IDX)
     {
-
         SND_CMB_Music = LBX_Reload_Next(cnst_MUSIC_File7, ((MUSIC_Merlin_Cmbt1 - 1) + ((_players[CMB_AI_Player].wizard_id * 2) + Random(2))), World_Data);
         SND_CMB_Music_size = lbxload_entry_length;
-
     }
     else
     {
-
         itr = (MUSIC_Combat_1 - 1) + Random(2);
-
         SND_CMB_Music = LBX_Reload_Next(cnst_MUSIC_File7, itr, World_Data);
         SND_CMB_Music_size = lbxload_entry_length;
-
     }
-
     if(magic_set.background_music == ST_TRUE)
     {
-
         Play_Sound(SND_CMB_Music, SND_CMB_Music_size);
-
     }
-
-
     _human_handle_immobile = ST_FALSE;
-
     _ai_stay_in_city = ST_TRUE;
-
     _scanned_battle_unit = ST_UNDEFINED;
-
-
     Reset_Cycle_Palette_Color();
     Load_Palette_From_Animation(combat_background_bottom);
     Apply_Palette();
     Cycle_Palette_Color(198, 0, 0, 0, 55, 0, 0, 8);
     Set_Palette_Changes(0, 243);
     Calculate_Remap_Colors();
-
-    
     if(_combat_attacker_player == _human_player_idx)
     {
-
         Switch_Active_Battle_Unit(0);  /* first attacker battle_unit_idx */
-
     }
     else
     {
-
-        // ; BUG: should set the selected unit manually!
-        // ; corrupts memory is the last value is invalid
-
+        // ; BUG: should set the selected unit manually! corrupts memory is the last value is invalid
         Switch_Active_Battle_Unit((_combat_total_unit_count - defender_unit_count));  /* first defender battle_unit_idx */
-
     }
-
     frame_active_flag = 0;
-
     frame_scanned_flag = 0;
-
-    CRP_CMB_NeverChecked1 = ST_TRUE;
-
-
+    m_unknown_variable__ovr090 = ST_TRUE;
     Combat_Screen_Draw();
-
     PageFlip_FX();
-
-
     _combat_city_damage = ST_FALSE;
-
     leave_screen = ST_FALSE;
-
     m_turn_is_local = ST_TRUE;
-
     _auto_combat_flag = ST_FALSE;
-
-
     CMB_PrepareTurn__WIP();
-
-
     _human_handle_immobile = ST_FALSE;
-
     // ; NONE of the above functions change the focus unit
     if(_combat_attacker_player == _human_player_idx)
     {
-
         Switch_Active_Battle_Unit(0);
-
     }
     else
     {
-
         Switch_Active_Battle_Unit((_combat_total_unit_count - defender_unit_count));
-
     }
-
     frame_active_flag = 0;
-
     frame_scanned_flag = 0;
-
-    CRP_CMB_NeverChecked1 = ST_TRUE;
-
-
+    m_unknown_variable__ovr090 = ST_TRUE;
     Combat_Screen_Draw();
-
     PageFlip_FX();
-
-
     m_cp_took_turn = ST_FALSE;
-
     if(_combat_defender_player == combat_computer_player)
     {
-
-        AI_CMB_PlayTurn__WIP(_combat_defender_player);
-
+        Auto_Cast_Spell_And_Do_Combat_Turn(_combat_defender_player);
         // ; BUG: the defending AI gets an extra turn?
         CMB_PrepareTurn__WIP();
-
         m_cp_took_turn = ST_TRUE;
-
     }
-
-    winner = Check_For_Winner__WIP();
-
+    winner = Check_For_Winner();
     // ; BUG: second time clearing this without using it
     if(winner != ST_UNDEFINED)
     {
         leave_screen = ST_UNDEFINED;
     }
-
     _human_out_of_moves = ST_FALSE;
-
     if(_combat_attacker_player == _human_player_idx)
     {
-
         Next_Battle_Unit(0);  /* first attacker battle_unit_idx */
-
     }
     else
     {
-
         Switch_Active_Battle_Unit((_combat_total_unit_count - defender_unit_count));  /* first defender battle_unit_idx */
-
     }
-
-
     Combat_Screen_Draw();
-
     PageFlip_FX();
-
-
     Assign_Combat_Grids();
-
-
     Set_Input_Delay(3);
-
-
-    CMB_CE_Refresh__WIP();
-
-
+    Update_Combat_Enchantments_Icon_And_Help();
     Deactivate_Help_List();
-
     Set_Combat_Help_List();
-
-    CRP_CMB_NeverChecked1 = ST_TRUE;
-
-
+    m_unknown_variable__ovr090 = ST_TRUE;
     while(leave_screen == ST_FALSE)
     {
 
         Assign_Auto_Function(Combat_Screen_Draw, 1);
-
         Mark_Time();
-
         Clear_Fields();
-
-
-
         /*
             BEGIN: Auto Combat
         */
         {
             if(_auto_combat_flag == ST_TRUE)
             {
-                
                 auto_combat_cancel_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr090[0], ST_UNDEFINED);
-
                 input_field_idx = Get_Input();
-
                 if(input_field_idx == auto_combat_cancel_ESC_field)  /* turn off 'Auto Combat' */
                 {
-
                     Play_Left_Click();
-
                     _auto_combat_flag = ST_FALSE;
-
                     m_cp_took_turn = ST_FALSE;
-
-                    CRP_CMB_NeverChecked1 = ST_TRUE;
-
+                    m_unknown_variable__ovr090 = ST_TRUE;
                     Combat_Next_Turn();
-
                     Turn_Off_Auto_Combat();
-
-                    CRP_CMB_NeverChecked1 = ST_TRUE;
-
+                    m_unknown_variable__ovr090 = ST_TRUE;
                     _human_handle_immobile = ST_FALSE;
-
                 }
                 else  /* do 'Auto Combat' */
                 {
                     Combat_Next_Turn();
                 }
-
-
-                winner = Check_For_Winner__WIP();
-
+                winner = Check_For_Winner();
                 if(winner != ST_UNDEFINED)
                 {
-
                     leave_screen = ST_UNDEFINED;
-
                     input_field_idx = ST_UNDEFINED;
-
                 }
-
                 continue;
-
             }
-
         }
         /*
             END: Auto Combat
@@ -1915,9 +1760,9 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
             input_field_idx = 0;
 
-            AI_CMB_PlayTurn__WIP(combat_human_player);
+            Auto_Cast_Spell_And_Do_Combat_Turn(combat_human_player);
 
-            winner = Check_For_Winner__WIP();
+            winner = Check_For_Winner();
 
             if(winner != ST_UNDEFINED)
             {
@@ -1937,7 +1782,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
                 seems like this would be where the battle unit that just moved would have its turn ended
                 does bua_Finished get set anywhere else?
-                what's status > bus_Active?  ...bus_Recalled, bus_Fleeing, bus_Uninvolved, bus_Dead, bus_Drained, bus_Gone
+                what's status > bus_Active?  ...bus_Recalled, bus_Flee, bus_Uninvolved, bus_Dead, bus_Drained, bus_Gone
         */
         if(
             (
@@ -1986,9 +1831,9 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
             screen_changed = ST_TRUE;
 
-            CRP_CMB_NeverChecked1 = ST_TRUE;
+            m_unknown_variable__ovr090 = ST_TRUE;
 
-            winner = Check_For_Winner__WIP();
+            winner = Check_For_Winner();
 
             if(winner != ST_UNDEFINED)
             {
@@ -2010,7 +1855,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
         )
         {
 
-            BU_MoveConfused__WIP(_active_battle_unit);
+            Move_Confused(_active_battle_unit);
 
             Next_Battle_Unit(_human_player_idx);
 
@@ -2020,9 +1865,9 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
             screen_changed = ST_TRUE;
 
-            CRP_CMB_NeverChecked1 = ST_TRUE;
+            m_unknown_variable__ovr090 = ST_TRUE;
 
-            winner = Check_For_Winner__WIP();
+            winner = Check_For_Winner();
 
             if(winner != ST_UNDEFINED)
             {
@@ -2062,7 +1907,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
                     CMB_ATKR_First_CE = 0;
                 }
 
-                CRP_CMB_NeverChecked1 = ST_TRUE;
+                m_unknown_variable__ovr090 = ST_TRUE;
 
                 break;
 
@@ -2097,7 +1942,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
                     CMB_DEFR_First_CE = 0;
                 }
 
-                CRP_CMB_NeverChecked1 = ST_TRUE;
+                m_unknown_variable__ovr090 = ST_TRUE;
 
                 break;
 
@@ -2126,7 +1971,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
                     if(battle_units[itr].controller_idx == combat_human_player)
                     {
 
-                        battle_units[itr].action = BUA_Flee;
+                        battle_units[itr].action = bua_Flee;
 
                         if(
                             (battle_units[itr].status == bus_Active)
@@ -2135,7 +1980,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
                         )
                         {
                             
-                            battle_units[itr].status = bus_Fleeing;
+                            battle_units[itr].status = bus_Flee;
 
                         }
 
@@ -2144,7 +1989,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
                 }
 
                 winner = combat_computer_player;
-                Player_Fled = ST_TRUE;
+                human_player_did_flee = ST_TRUE;
                 leave_screen = ST_UNDEFINED;
 
             }
@@ -2184,9 +2029,9 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
                 Assign_Combat_Grids();
 
-                CRP_CMB_NeverChecked1 = ST_TRUE;
+                m_unknown_variable__ovr090 = ST_TRUE;
 
-                winner = Check_For_Winner__WIP();
+                winner = Check_For_Winner();
 
                 if(winner != ST_UNDEFINED)  /* invalid / no winner / none / neither */
                 {
@@ -2260,7 +2105,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
                         Assign_Auto_Function(Combat_Screen_Draw, 1);
 
-                        CMB_CE_Refresh__WIP();
+                        Update_Combat_Enchantments_Icon_And_Help();
 
                         CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
 
@@ -2268,7 +2113,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
                         Set_Combat_Help_List();
 
-                        CRP_CMB_NeverChecked1 = ST_TRUE;
+                        m_unknown_variable__ovr090 = ST_TRUE;
 
                     }
                     else
@@ -2314,7 +2159,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
                             Assign_Auto_Function(Combat_Screen_Draw, 1);
 
-                            CMB_CE_Refresh__WIP();
+                            Update_Combat_Enchantments_Icon_And_Help();
 
                             CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
 
@@ -2324,7 +2169,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
                         }
 
-                        CRP_CMB_NeverChecked1 = ST_TRUE;
+                        m_unknown_variable__ovr090 = ST_TRUE;
 
                     }
 
@@ -2414,7 +2259,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
                 Assign_Combat_Grids();
 
-                CMB_CE_Refresh__WIP();  // ¿ because you may just cast a 'Combat Enchantment'
+                Update_Combat_Enchantments_Icon_And_Help();  // ¿ because you may just cast a 'Combat Enchantment'
 
                 CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
 
@@ -2422,9 +2267,9 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
                 Set_Combat_Help_List();
 
-                CRP_CMB_NeverChecked1 = ST_TRUE;
+                m_unknown_variable__ovr090 = ST_TRUE;
 
-                winner = Check_For_Winner__WIP();  // ¿ because your spell may have just killed the last enemy unit ?
+                winner = Check_For_Winner();  // ¿ because your spell may have just killed the last enemy unit ?
 
                 if(winner != ST_UNDEFINED)
                 {
@@ -2458,7 +2303,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
                 Assign_Combat_Grids();
 
-                CRP_CMB_NeverChecked1 = ST_TRUE;
+                m_unknown_variable__ovr090 = ST_TRUE;
 
             }
 
@@ -2490,7 +2335,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
                 Assign_Combat_Grids();
 
-                CMB_CE_Refresh__WIP();
+                Update_Combat_Enchantments_Icon_And_Help();
 
                 CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
 
@@ -2498,7 +2343,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
                 Set_Combat_Help_List();
 
-                CRP_CMB_NeverChecked1 = ST_TRUE;
+                m_unknown_variable__ovr090 = ST_TRUE;
 
             }
 
@@ -2538,9 +2383,9 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
                     screen_changed = ST_TRUE;
                 }
 
-                CRP_CMB_NeverChecked1 = ST_TRUE;
+                m_unknown_variable__ovr090 = ST_TRUE;
 
-                winner = Check_For_Winner__WIP();
+                winner = Check_For_Winner();
 
                 if(winner != ST_UNDEFINED)
                 {
@@ -2594,13 +2439,13 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
             CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
 
-            CMB_CE_Refresh__WIP();
+            Update_Combat_Enchantments_Icon_And_Help();
 
             Deactivate_Help_List();
 
             Set_Combat_Help_List();
 
-            CRP_CMB_NeverChecked1 = ST_TRUE;
+            m_unknown_variable__ovr090 = ST_TRUE;
 
 
         }
@@ -2665,9 +2510,9 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
             screen_changed = ST_TRUE;
 
-            CRP_CMB_NeverChecked1 = ST_TRUE;
+            m_unknown_variable__ovr090 = ST_TRUE;
 
-            winner = Check_For_Winner__WIP();
+            winner = Check_For_Winner();
 
             if(winner != ST_UNDEFINED)
             {
@@ -2718,7 +2563,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 
     Copy_Off_To_Page4();
 
-    if(CMB_AI_Fled == ST_TRUE)
+    if(_computer_player_did_flee == ST_TRUE)
     {
         Battle_Result = 5;
     }
@@ -2726,7 +2571,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     {
         Battle_Result = 1;
     }
-    else if(Player_Fled == ST_TRUE)
+    else if(human_player_did_flee == ST_TRUE)
     {
         Battle_Result = 3;
     }
@@ -3186,15 +3031,11 @@ void Set_Movement_Cost_Map(int16_t battle_unit_idx)
 // WZD s91p04
 // drake178: BU_Move()
 /*
-; plays the animation for, and moves the specified
-; unit to the passed coordinates on the combat map
-;
-; BUG: prevents moving into the central structure tile
-; in regular city battles
+; plays the animation for, and moves the specified unit to the passed coordinates on the combat map
+; BUG: prevents moving into the central structure tile in regular city battles
 ; BUG: teleporting units can't use roads
 */
 /*
-
 
 ~ Combat.c   Auto_Move_Unit()
 ~ MainScr.c  Move_Units_Draw()
@@ -3471,8 +3312,8 @@ XREF:  (9)
         WIZ_BU_SelectClosest+186
         WIZ_BU_SelectClosest+1CD
         AI_BU_ProcessAction+5E
-        AI_MoveBattleUnits+290
-        AI_MoveBattleUnits+384
+        Auto_Do_Combat_Turn+290
+        Auto_Do_Combat_Turn+384
 
 */
 void Switch_Active_Battle_Unit(int16_t battle_unit_idx)
@@ -4205,7 +4046,7 @@ Move_Units() |-> Combat()
 Lair_Combat() |-> ... |-> Combat()
 ...
 Combat()
-    |-> { STK_CaptureCity(), Tactical_Combat(), Strategic_Combat() }
+    |-> { Combat_City_Capture(), Tactical_Combat(), Strategic_Combat() }
 
 */
 int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, int16_t troop_count, int16_t troops[])
@@ -4321,9 +4162,9 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
         (defender_idx < NEUTRAL_PLAYER_IDX)
         &&
         (
-            (_combat_environ == 1)
+            (_combat_environ == 1)  /* City-Seige */
             ||
-            (_combat_environ == 0)
+            (_combat_environ == 0)  /* Open-Field */
         )
     )
     {
@@ -4369,14 +4210,14 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
     }
 
     if(
-        (_combat_environ == 1)  /* Enemy City */
+        (_combat_environ == 1)  /* City-Seige */
         &&
         (Garrison_Size < 1)
     )
     {
         Battle_Outcome = ST_TRUE;
         Item_Count = 0;
-        STK_CaptureCity__WIP(troop_count, &troops[0]);
+        Combat_City_Capture(troop_count, &troops[0]);
     }
     else
     {
@@ -4441,7 +4282,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
         item_pool_in_process = ST_FALSE;
 
         if(
-            (_combat_environ == 1)  /* Enemy City */
+            (_combat_environ == 1)  /* City-Seige */
             &&
             (_CITIES[_combat_environ_idx].owner_idx != combat_attacker_player_idx)
         )
@@ -4502,7 +4343,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
         Player_Process_Item_Pool(defender_idx, Item_Count, &Item_List[0]);
         item_pool_in_process = ST_FALSE;  // drake178: BUG: never set it to 1 in this branch
 
-        if(_combat_environ == 1)  /* Enemy City */
+        if(_combat_environ == 1)  /* City-Seige */
         {
             if(_CITIES[_combat_environ_idx].owner_idx == defender_idx)
             {
@@ -4700,92 +4541,75 @@ void Update_Defender_Hostility(int attacker_player_idx, int defender_player_idx)
 
 
 // WZD o98p01
-// drake178: CMB_CE_Refresh()
-/*
-; refreshes the combat enchantment display arrays from
-; the Combat_Enchants@ allocation for both players
-*/
-/*
-sets icon and help
-
-special treatment for 'Counter Magic'
-
-*/
-void CMB_CE_Refresh__WIP(void)
+/**
+ * COPILOT
+ * @brief Rebuilds the combat enchantment icon and help-entry lists for both sides.
+ *
+ * This routine scans the global combat_enchantments state for every attacker and defender combat
+ * enchantment slot, determines whether each enchantment should be treated as active, and then
+ * repopulates the UI-facing attacker and defender enchantment arrays with the matching icon segment
+ * and help index metadata. The per-side counts are reset before the scan and incremented as active
+ * enchantments are appended.
+ *
+ * Most combat enchantments are considered active only when their slot value is exactly 1. Counter
+ * Magic is handled specially because it stores a strength value rather than a simple boolean flag,
+ * so any value greater than 0 is treated as active.
+ *
+ * @note The function updates the global attacker_enchantment_count and
+ *       defender_enchantment_count values as a side effect.
+ * @note Even-numbered entries in combat_enchantments are interpreted as attacker-side slots, while
+ *       odd-numbered entries are interpreted as defender-side slots.
+ */
+void Update_Combat_Enchantments_Icon_And_Help(void)
 {
-    int16_t Active = 0;
-    int16_t itr = 0;  // _SI_
-    int16_t idx = 0;  // _DI_
-
+    int16_t is_active = 0;
+    int16_t itr = 0;
+    int16_t idx = 0;
     attacker_enchantment_count = 0;
     defender_enchantment_count = 0;
-
     for(itr = 0; itr < (NUM_COMBAT_ENCHANTMENTS * 2); itr++)
     {
-
-        Active = ST_FALSE;
-
+        is_active = ST_FALSE;
         if(combat_enchantments[itr] == 1)
         {
-
-            Active = ST_TRUE;
-
+            is_active = ST_TRUE;
         }
-
         if(
-            (itr == 20)  /* Counter Magic - Defender */
+            (itr == COUNTER_MAGIC_ATTKR)  /* Counter Magic - Defender */
             ||
-            (itr == 21)  /* Counter Magic - Attacker */
+            (itr == COUNTER_MAGIC_DFNDR)  /* Counter Magic - Attacker */
         )
         {
-
             if(combat_enchantments[itr] > 0)
             {
-
-                Active = ST_TRUE;
-
+                is_active = ST_TRUE;
             }
             else
             {
-
-                Active = ST_FALSE;
-
+                is_active = ST_FALSE;
             }
-
         }
-
-        if(Active == ST_TRUE)
+        if(is_active == ST_TRUE)
         {
-
             // enchantment index
             idx = (itr / 2);  /* { 0, 1, 2, ..., 27, 28, 29}  { 0, 0, 1, ..., 13, 14, 14 } */
-
             // even/odd - attacker/defender
             if((itr % 2) == 0)
             {
-
-                CMB_ATKR_CE_Wnd[attacker_enchantment_count].icon_seg = combat_enchantment_icon_segs[combat_enchantment_icon_data[idx].icon_idx];
-
-                CMB_ATKR_CE_Wnd[attacker_enchantment_count].help_idx = combat_enchantment_icon_data[idx].help_idx;
-
+                /* Attacker Enchantment Update */
+                _combat_enchantments_attacker[attacker_enchantment_count].icon_seg = combat_enchantment_icon_segs[combat_enchantment_icon_data[idx].icon_idx];
+                _combat_enchantments_attacker[attacker_enchantment_count].help_idx = combat_enchantment_icon_data[idx].help_idx;
                 attacker_enchantment_count++;
-
             }
             else
             {
-
-                CMB_DEFR_CE_Wnd[defender_enchantment_count].icon_seg = combat_enchantment_icon_segs[combat_enchantment_icon_data[idx].icon_idx];
-
-                CMB_DEFR_CE_Wnd[defender_enchantment_count].help_idx = combat_enchantment_icon_data[idx].help_idx;
-
+                /* Defender Enchantment Update */
+                _combat_enchantments_defender[defender_enchantment_count].icon_seg = combat_enchantment_icon_segs[combat_enchantment_icon_data[idx].icon_idx];
+                _combat_enchantments_defender[defender_enchantment_count].help_idx = combat_enchantment_icon_data[idx].help_idx;
                 defender_enchantment_count++;
-
             }
-
         }
-
     }
-
 }
 
 
@@ -4814,21 +4638,25 @@ int16_t BU_HasSpellAbility__WIP(int16_t battle_unit_idx)
 // NIU  }
 
 // WZD o98p04
-void AI_CMB_PlayTurn__WIP(int16_t player_idx)
+/*
+~100% certain this is at the same level as MoO2's Do_Combat_Turn_()
+But, this feels like an added wrapper for that
+*/
+void Auto_Cast_Spell_And_Do_Combat_Turn(int16_t player_idx)
 {
     int16_t winner;
     /* AI players attempt to cast a spell at the start of their turn */
     if (player_idx != combat_human_player)
     {
-        /* Caster_ID for wizards in combat is player_idx + 20 */
-        // TODO  CP-branch  Combat_Cast_Spell__WIP((player_idx + 20), _combat_wx, _combat_wy, _combat_wp);
+        /* Caster_ID for wizards in combat is 20 + player_idx */
+        // TODO  CP-branch  Combat_Cast_Spell__WIP((20 + player_idx), _combat_wx, _combat_wy, _combat_wp);
     }
-    winner = Check_For_Winner__WIP();  /* ¿ because spell cast may resulted in a win/loss ? */
+    winner = Check_For_Winner();  /* ¿ because spell cast may resulted in a win/loss ? */
     /* If no winner has been determined yet, proceed with unit movement */
     if (winner == ST_UNDEFINED)
     {
-        CMB_CE_Refresh__WIP(); /* ¿ because spell cast may been an enchantment ? */
-        AI_MoveBattleUnits(player_idx);
+        Update_Combat_Enchantments_Icon_And_Help(); /* ¿ because spell cast may been an enchantment ? */
+        Auto_Do_Combat_Turn(player_idx);
     }
 }
 
@@ -4845,20 +4673,20 @@ void Combat_Next_Turn(void)
     {
         frame_active_flag = ST_FALSE;
         frame_scanned_flag = ST_FALSE;
-        AI_CMB_PlayTurn__WIP(combat_computer_player);
+        Auto_Cast_Spell_And_Do_Combat_Turn(combat_computer_player);
     }
-    if(Check_For_Winner__WIP() == ST_UNDEFINED)
+    if(Check_For_Winner() == ST_UNDEFINED)
     {
         CMB_PrepareTurn__WIP();
         if(_combat_defender_player == combat_computer_player)
         {
-            AI_CMB_PlayTurn__WIP(_combat_defender_player);
+            Auto_Cast_Spell_And_Do_Combat_Turn(_combat_defender_player);
             m_cp_took_turn = ST_TRUE;
         }
         m_turn_is_local = ST_TRUE;
         if(_auto_combat_flag == ST_TRUE)
         {
-            AI_CMB_PlayTurn__WIP(combat_human_player);
+            Auto_Cast_Spell_And_Do_Combat_Turn(combat_human_player);
         }
     }
 }
@@ -4912,7 +4740,7 @@ void Retreat_From_Combat(int16_t player_idx)
             battle_units[itr_battle_units].status = bus_Dead;
         }
 
-        if(battle_units[itr_battle_units].status == bus_Fleeing)
+        if(battle_units[itr_battle_units].status == bus_Flee)
         {
             if(battle_units[itr_battle_units].controller_idx == _combat_attacker_player)
             {
@@ -4945,7 +4773,7 @@ void Retreat_From_Combat(int16_t player_idx)
 // as dead in the parent function, so there will never be any
         if(battle_units[itr_battle_units].status == bus_Uninvolved)
         {
-            battle_units[itr_battle_units].status = bus_Fleeing;
+            battle_units[itr_battle_units].status = bus_Flee;
         }
     }
 
@@ -4959,7 +4787,7 @@ void Retreat_From_Combat(int16_t player_idx)
     */
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
-        if(battle_units[itr_battle_units].status == bus_Fleeing)
+        if(battle_units[itr_battle_units].status == bus_Flee)
         {
             unit_idx = battle_units[itr_battle_units].unit_idx;
             _UNITS[unit_idx].wx = (int8_t)OVL_Action_OriginX;
@@ -4985,7 +4813,7 @@ void Retreat_From_Combat(int16_t player_idx)
 // clear all road building progress for fleeing units
     if(fleeing_player_idx == _combat_attacker_player)
     {
-        if(battle_units[itr_battle_units].status == bus_Fleeing)
+        if(battle_units[itr_battle_units].status == bus_Flee)
         {
             if(_UNITS[battle_units[itr_battle_units].unit_idx].Rd_Constr_Left > -1)
             {
@@ -5031,7 +4859,7 @@ void Retreat_From_Combat(int16_t player_idx)
                 )
             )
             {
-                battle_units[itr_battle_units].status = bus_Fleeing;
+                battle_units[itr_battle_units].status = bus_Flee;
             }
 
         }
@@ -5114,7 +4942,7 @@ void Retreat_From_Combat(int16_t player_idx)
                             }
                             else
                             {
-                                battle_units[itr_battle_units].status = bus_Fleeing;
+                                battle_units[itr_battle_units].status = bus_Flee;
                             }
                         }
                     }
@@ -5183,7 +5011,7 @@ void Retreat_From_Combat(int16_t player_idx)
 
                                 if(boat_riders > Transport_Capacity)
                                 {
-                                    battle_units[itr_battle_units].status = bus_Fleeing;
+                                    battle_units[itr_battle_units].status = bus_Flee;
                                 }
                             }
                         }
@@ -5231,7 +5059,7 @@ void Retreat_From_Combat(int16_t player_idx)
         for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
         {
 
-            if(battle_units[itr_battle_units].status == bus_Fleeing)
+            if(battle_units[itr_battle_units].status == bus_Flee)
             {
 
                 if(fleeing_player_idx != _human_player_idx)
@@ -5361,7 +5189,7 @@ void Retreat_From_Combat(int16_t player_idx)
         for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
         {
             if(
-                (battle_units[itr_battle_units].status == bus_Fleeing)
+                (battle_units[itr_battle_units].status == bus_Flee)
                 &&
                 (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
             )
@@ -5477,7 +5305,7 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
             for(itr_battle_units = 0; ((itr_battle_units < _combat_total_unit_count) && (Wind_Walker == ST_FALSE)); itr_battle_units++)
             {
                 if(
-                    (battle_units[itr_battle_units].status == bus_Fleeing)
+                    (battle_units[itr_battle_units].status == bus_Flee)
                     &&
                     (battle_units[itr_battle_units].controller_idx == player_idx)
                 )
@@ -5518,7 +5346,7 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
                 Transport_Capacity = 0;
 
                 if(
-                    (battle_units[itr_battle_units].status == bus_Fleeing)
+                    (battle_units[itr_battle_units].status == bus_Flee)
                     &&
                     (battle_units[itr_battle_units].controller_idx == player_idx)
                 )
@@ -5538,7 +5366,7 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
                 for(itr_battle_units = 0; ((itr_battle_units < _combat_total_unit_count) && (Wind_Walker == ST_FALSE)); itr_battle_units++)
                 {
                     if(
-                        (battle_units[itr_battle_units].status == bus_Fleeing)
+                        (battle_units[itr_battle_units].status == bus_Flee)
                         &&
                         (battle_units[itr_battle_units].controller_idx == player_idx)
                     )
@@ -5590,7 +5418,7 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
             for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
             {
                 if(
-                    (battle_units[itr_battle_units].status == bus_Fleeing)
+                    (battle_units[itr_battle_units].status == bus_Flee)
                     &&
                     (battle_units[itr_battle_units].controller_idx == player_idx)
                 )
@@ -5617,7 +5445,7 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
             for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
             {
                 if(
-                    (battle_units[itr_battle_units].status == bus_Fleeing)
+                    (battle_units[itr_battle_units].status == bus_Flee)
                     &&
                     (battle_units[itr_battle_units].controller_idx == player_idx)
                 )
@@ -6049,7 +5877,7 @@ void Add_Combat_Enchantment_Fields(void)
     for(itr = 0; (((CMB_ATKR_First_CE + itr)  < attacker_enchantment_count) && (itr < 4)); itr++)
     {
 
-        attacker_enchantment_fields[itr] = Add_Picture_Field((start_x + (itr * 17)), 179, CMB_ATKR_CE_Wnd[(CMB_ATKR_First_CE + itr)].icon_seg, str_empty_string__ovr098[0], CMB_ATKR_CE_Wnd[(CMB_ATKR_First_CE + itr)].help_idx);
+        attacker_enchantment_fields[itr] = Add_Picture_Field((start_x + (itr * 17)), 179, _combat_enchantments_attacker[(CMB_ATKR_First_CE + itr)].icon_seg, str_empty_string__ovr098[0], _combat_enchantments_attacker[(CMB_ATKR_First_CE + itr)].help_idx);
 
     }
 
@@ -6070,7 +5898,7 @@ void Add_Combat_Enchantment_Fields(void)
     for(itr = 0; (((CMB_DEFR_First_CE + itr)  < defender_enchantment_count) && (itr < 4)); itr++)
     {
 
-        defender_enchantment_fields[itr] = Add_Picture_Field((start_x + (itr * 17)), 179, CMB_DEFR_CE_Wnd[(CMB_DEFR_First_CE + itr)].icon_seg, str_empty_string__ovr098[0], CMB_DEFR_CE_Wnd[(CMB_DEFR_First_CE + itr)].help_idx);
+        defender_enchantment_fields[itr] = Add_Picture_Field((start_x + (itr * 17)), 179, _combat_enchantments_defender[(CMB_DEFR_First_CE + itr)].icon_seg, str_empty_string__ovr098[0], _combat_enchantments_defender[(CMB_DEFR_First_CE + itr)].help_idx);
 
     }
 
@@ -6437,7 +6265,7 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
         battle_units[itr].Image_Effect = 0;
         battle_units[itr].Move_Bob = 0;
 
-        if(_combat_environ == 1)  /* Enemy City */
+        if(_combat_environ == 1)  /* City-Seige */
         {
 
             // ; BUG: excludes ships with Wraith Form (the comparison value should also include swimming)
@@ -6841,9 +6669,9 @@ void Combat_Screen_Draw(void)
     for(itr = 0; (((CMB_ATKR_First_CE + itr) < attacker_enchantment_count) && (itr < 4)); itr++)
     {
 
-        FLIC_Draw((CE_Window_Left + (itr * 17)), 179, CMB_ATKR_CE_Wnd[(CMB_ATKR_First_CE + itr)].icon_seg);
+        FLIC_Draw((CE_Window_Left + (itr * 17)), 179, _combat_enchantments_attacker[(CMB_ATKR_First_CE + itr)].icon_seg);
 
-        _help_entries[(First_CE_Help_Entry + itr)].help_idx = CMB_ATKR_CE_Wnd[(CMB_ATKR_First_CE + itr)].help_idx;
+        _help_entries[(First_CE_Help_Entry + itr)].help_idx = _combat_enchantments_attacker[(CMB_ATKR_First_CE + itr)].help_idx;
 
     }
 
@@ -6861,9 +6689,9 @@ void Combat_Screen_Draw(void)
     for(itr = 0; (((CMB_DEFR_First_CE + itr) < defender_enchantment_count) && (itr < 4)); itr++)
     {
         
-        FLIC_Draw((CE_Window_Left + (itr * 17)), 179, CMB_DEFR_CE_Wnd[(CMB_DEFR_First_CE + itr)].icon_seg);
+        FLIC_Draw((CE_Window_Left + (itr * 17)), 179, _combat_enchantments_defender[(CMB_DEFR_First_CE + itr)].icon_seg);
 
-        _help_entries[(First_CE_Help_Entry + itr)].help_idx = CMB_DEFR_CE_Wnd[(CMB_DEFR_First_CE + itr)].help_idx;
+        _help_entries[(First_CE_Help_Entry + itr)].help_idx = _combat_enchantments_defender[(CMB_DEFR_First_CE + itr)].help_idx;
 
     }
 
@@ -6939,7 +6767,7 @@ void Combat_Screen_Draw(void)
         }
 
     }
-    else if(_combat_environ == 1)  /* Enemy City */
+    else if(_combat_environ == 1)  /* City-Seige */
     {
 
         for(itr = 1; itr < 5; itr++)
@@ -6971,7 +6799,7 @@ void Combat_Screen_Draw(void)
             )
             {
 
-                Print_Centered(40, 168, CMB_CityName);
+                Print_Centered(40, 168, _combat_city_name);
 
             }
             else
@@ -8378,7 +8206,7 @@ void Combat_Info_Effects_Base(void)
     }
 
 
-    if(_combat_environ == 1)
+    if(_combat_environ == 1)  /* City-Seige */
     {
 
         if(CMB_CloudofShadow > 0)
@@ -8565,7 +8393,7 @@ int16_t Combat_Info_Effects_Count(void)
 
 
 
-    if(_combat_environ == 1)
+    if(_combat_environ == 1)  /* City-Seige */
     {
 
         if(battlefield->city_enchantments[CLOUD_OF_SHADOW] > 0)
@@ -8626,9 +8454,9 @@ sets _combat_node_type
 */
 void Combat_Node_Type(void)
 {
-    int16_t itr_auras;  // _SI_
-    int16_t node_type;  // _DI_
-    int16_t itr_nodes;  // _CX_
+    int16_t itr_auras = 0;
+    int16_t node_type = 0;
+    int16_t itr_nodes = 0;
 
     node_type = ST_UNDEFINED;
 
@@ -9067,21 +8895,58 @@ void Combat_Cast_Spell_Error(int16_t type)
 
 
 // WZD s103p11
-// drake178: BU_MoveConfused()
-/*
-; moves the unit to a random destination within its
-; reach, if one can be found in 600 random attempts,
-; but zeroes movement allowance and marks the unit as
-; finished in any case regardless
-*/
-/*
-
-*/
-void BU_MoveConfused__WIP(int16_t battle_unit_idx)
+/**
+ * COPILOT
+ * @brief Executes the movement phase for a confused battle unit.
+ *
+ * This routine attempts to send the specified unit to a random unoccupied combat square, modeling
+ * the erratic behavior caused by confusion. It performs up to 600 random tile probes within the
+ * combat grid and selects the first location whose entry in CMB_TargetRows indicates that no unit
+ * currently occupies the square. If such a square is found, the unit is moved there through
+ * Move_Battle_Unit__WIP().
+ *
+ * Regardless of whether a valid destination is found, the unit's turn is then ended by forcing its
+ * action to bua_Finished and clearing its remaining movement points.
+ *
+ * @param battle_unit_idx The battle-unit index of the confused unit to move.
+ *
+ * @note The function does not guarantee movement; if no unoccupied square is found during the
+ *       random search, the unit simply loses the rest of its turn in place.
+ * @note Occupancy is determined from CMB_TargetRows, where a value of -1 marks an empty tile.
+ */
+void Move_Confused(int16_t battle_unit_idx)
 {
+    int16_t target_found = 0;
+    int16_t random_x = 0;
+    int16_t random_y = 0;
+    int16_t target_y = 0;
+    int16_t target_x = 0;
+    int16_t i = 0;
 
+    target_found = ST_FALSE;
 
+    for (i = 0; i < 600; i++)
+    {
 
+        random_x = (Random(COMBAT_GRID_WIDTH) - 1);
+        random_y = (Random(COMBAT_GRID_HEIGHT) - 1);
+
+        if (CMB_TargetRows[random_y][random_x] == -1)  /* unoccupied */
+        {
+            target_x = random_x;
+            target_y = random_y;
+            target_found = ST_TRUE;
+            break;
+        }
+    }
+
+    if (target_found == ST_TRUE)
+    {
+        Move_Battle_Unit__WIP(battle_unit_idx, target_x, target_y);
+    }
+
+    battle_units[battle_unit_idx].action = bua_Finished;
+    battle_units[battle_unit_idx].movement_points = 0;
 }
 
 
@@ -9387,163 +9252,111 @@ void Combat_Cast_Spell_With_Caster(int16_t caster_id)
 */
 
 // WZD o105p01
-// drake178: CMB_WinLoseFlee()
 // MoO2  Module: COMBAT1  Check_For_Winner_()
-/*
-; checks whether either side has no units left on the
-; battlefield, and if the AI player is not the neutral
-; one, checks for fight or flight, and will flee if it
-; finds the situation hopeless and has units to save
-; returns the index of the victorious player, if any,
-; or -1 if the battle can continue
-*/
-/*
-
-*/
-int16_t Check_For_Winner__WIP(void)
+/**
+ * @brief Determines whether combat has ended and, if so, which side wins.
+ *
+ * This routine evaluates the current battle state in several stages. It first counts active
+ * attacker and defender units, treating units with Confusion_State equal to 2 as belonging to the
+ * opposite side for winner determination. It then checks for outright elimination, applies the
+ * combat turn-limit rule that awards the battle to the defender after turn 50, and finally allows
+ * the AI-controlled side to concede through Retreat_Check() when that behavior is permitted.
+ *
+ * If an AI side chooses to flee, all of that side's units are switched to bua_Flee and any active
+ * units are marked bus_Flee before the opposing human-controlled side is returned as the winner.
+ * If none of the ending conditions are met, the battle is still in progress.
+ *
+ * @return The attacker or defender player index when one side has won the battle.
+ * @return combat_human_player if the computer-controlled side decides to flee.
+ * @return ST_UNDEFINED if the battle should continue.
+ *
+ * @note Confused units with Confusion_State equal to 2 are counted for the opposing army.
+ * @note A battle that exceeds 50 combat turns is resolved immediately in the defender's favor.
+ * @note This function mutates unit action and status state when the AI flee path is taken.
+ */
+int16_t Check_For_Winner(void)
 {
     int16_t defender_count = 0;
-    int16_t itr = 0;  // _SI_
-    int16_t attacker_count = 0;  // _DI_
-
+    int16_t itr = 0;
+    int16_t attacker_count = 0;
+    
     attacker_count = 0;
-
     defender_count = 0;
 
-    for(itr = 0; itr < _combat_total_unit_count; itr++)
+    /* Count active units on each side, accounting for confusion */
+    for (itr = 0; itr < _combat_total_unit_count; itr++)
     {
-
-        if(battle_units[itr].status == bus_Active)
+        if (battle_units[itr].status == bus_Active)
         {
-
-            if(battle_units[itr].controller_idx == _combat_attacker_player)
+            if (battle_units[itr].controller_idx == _combat_attacker_player)
             {
-
-                if(battle_units[itr].Confusion_State == 2)  // ; BUG: never checks for the actual effect
+                /* OGBUG: The assembly compares Confusion_State to 2 */
+                if (battle_units[itr].Confusion_State == 2)
                 {
-
                     defender_count++;
-
                 }
                 else
                 {
-
                     attacker_count++;
-
                 }
-
             }
-            else
+            else if (battle_units[itr].controller_idx == _combat_defender_player)
             {
-
-                if(battle_units[itr].controller_idx == _combat_defender_player)
+                /* OGBUG: The assembly compares Confusion_State to 2 */
+                if (battle_units[itr].Confusion_State == 2)
                 {
+                    attacker_count++;
+                }
+                else
+                {
+                    defender_count++;
+                }
+            }
+        }
+    }
 
-                    if(battle_units[itr].Confusion_State == 2)  // ; BUG: never checks for the actual effect
+    /* Check for elimination */
+    if (attacker_count == 0)    { return _combat_defender_player; }
+    if (defender_count == 0)    { return _combat_attacker_player; }
+    /* Check for turn limit timeout (50 turns) */
+    if (_combat_turn > 50)      { return _combat_defender_player; }
+
+    /* AI "Fight or Flight" Logic */
+    if (combat_computer_player != NEUTRAL_PLAYER_IDX)
+    {
+        /* AI will not flee during wizard city sieges or on the first turn */
+        if (_computer_player_city_seige == ST_FALSE && _combat_turn > 1)
+        {
+            if (Retreat_Check(combat_computer_player) == ST_TRUE)
+            {
+                /* AI has decided to flee the battle */
+                for (itr = 0; itr < _combat_total_unit_count; itr++)
+                {
+                    if (battle_units[itr].controller_idx == combat_computer_player)
                     {
-
-                        attacker_count++;
-
+                        battle_units[itr].action = bua_Flee;
+                        
+                        if (battle_units[itr].status == bus_Active)
+                        {
+                            battle_units[itr].status = bus_Flee;
+                        }
                     }
-                    else
-                    {
-
-                        defender_count++;
-
-                    }
-
                 }
 
+                _computer_player_did_flee = ST_TRUE;
+                return combat_human_player;
             }
-
         }
-
     }
 
-
-    if(attacker_count == 0)
-    {
-
-        return _combat_defender_player;
-
-    }
-
-    if(defender_count == 0)
-    {
-
-        return _combat_attacker_player;
-
-    }
-
-    if(_combat_turn > 50)
-    {
-
-        return _combat_defender_player;
-
-    }
-
-    if(combat_computer_player == NEUTRAL_PLAYER_IDX)
-    {
-
-        return ST_UNDEFINED;
-
-    }
-
-
-    // TODO  flip this logic around the the fleeing code is wrapped in the tests and the default/fall-through is return ST_UNDEFINED
-    if(
-        !(CMB_WizardCitySiege == ST_FALSE)
-        ||
-        !(_combat_turn > 1)
-        ||
-        !(AI_FightorFlight__STUB(combat_computer_player) == ST_TRUE)
-    )
-    {
-
-        return ST_UNDEFINED;
-
-    }
-
-
-    for(itr = 0; itr < _combat_total_unit_count; itr++)
-    {
-
-        if(battle_units[itr].controller_idx == combat_computer_player)
-        {
-
-
-            battle_units[itr].action = BUA_Flee;
-
-            if(battle_units[itr].status == bus_Active)
-            {
-
-                battle_units[itr].status = bus_Fleeing;
-
-            }
-
-        }
-
-    }
-
-    CMB_AI_Fled = ST_TRUE;
-
-    return combat_human_player;
-
+    /* Battle continues */
+    return ST_UNDEFINED;
 }
 
 
 // WZD o105p02
-// drake178: LBX_IMG_BannerPaint()
 /*
-; performs banner painting on whatever image is loaded
-; into the GUI_SmallWork_IMG@ work area, typically a
-; combat figure, using the banner color of the
-; specified player
-*/
-/*
-
 same as seen in UnitView.C Draw_Unit_Figure()
-
 */
 void Combat_Figure_Banner_Color(int16_t player_idx)
 {
@@ -13134,7 +12947,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
 
                     combat_enchantments[Target_X] = 0;
 
-                    CMB_CE_Refresh__WIP();
+                    Update_Combat_Enchantments_Icon_And_Help();
 
                 }
 
@@ -15553,7 +15366,7 @@ void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t damage_types[])
     {
         battle_units[battle_unit_idx].Cur_Figures = 0;
 
-        _combat_winner = Check_For_Winner();
+        _combat_winner = Eliminated_Opponent();
 
         if(Battle_Unit_Is_Summoned_Creature(battle_unit_idx) == ST_TRUE)
         {
@@ -16343,27 +16156,38 @@ int16_t Battle_Unit_Pict_Open(void)
 
 
 // WZD o113p16
-// MoO2  Module: COMBAT1  Check_For_Winner_()
-/*
-    returns player_idx or ST_UNDEFINED
-*/
-int16_t Check_For_Winner(void)
+/**
+ * @brief Determines whether either combat side has been completely eliminated.
+ *
+ * This routine scans all active battle units and counts how many effective combatants remain for
+ * the attacker and defender. Units under Confusion_State value 2 are counted for the opposing side
+ * instead of their controller, matching the combat logic that treats fully confused units as acting
+ * against their original army for winner-determination purposes.
+ *
+ * After all active units are evaluated, the function reports a winner only if one side has no
+ * remaining effective units. If both sides still have at least one counted combatant, combat is
+ * considered unresolved.
+ *
+ * @return The winning player index when one side has no remaining counted units.
+ * @return ST_UNDEFINED when both the attacker and defender still have effective units in combat.
+ *
+ * @note Only units with status bus_Active are considered.
+ * @note Confused units with Confusion_State equal to 2 are counted for the opposite side.
+ */
+int16_t Eliminated_Opponent(void)
 {
-    int16_t attacker_count;  // _SI_
-    int16_t defender_count;  // _DI_
-    int16_t itr_battle_units;  // _CX_
-    int16_t winner_player_idx;  // DNE in Dasm
-
+    int16_t attacker_count = 0;
+    int16_t defender_count = 0;
+    int16_t itr = 0;
     attacker_count = 0;
     defender_count = 0;
-
-    for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
+    for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
-        if(battle_units[itr_battle_units].status == 0)  /* Unit_Active */
+        if(battle_units[itr].status == bus_Active)
         {
-            if(battle_units[itr_battle_units].controller_idx == _combat_attacker_player)
+            if(battle_units[itr].controller_idx == _combat_attacker_player)
             {
-                if(battle_units[itr_battle_units].Confusion_State != 2)  /* ¿ ? */
+                if(battle_units[itr].Confusion_State != 2)
                 {
                     attacker_count++;
                 }
@@ -16374,9 +16198,9 @@ int16_t Check_For_Winner(void)
             }
             else
             {
-                if(battle_units[itr_battle_units].controller_idx == _combat_defender_player)
+                if(battle_units[itr].controller_idx == _combat_defender_player)
                 {
-                    if(battle_units[itr_battle_units].Confusion_State != 2)  /* ¿ ? */
+                    if(battle_units[itr].Confusion_State != 2)
                     {
                         defender_count++;
                     }
@@ -16388,21 +16212,9 @@ int16_t Check_For_Winner(void)
             }
         }
     }
-
-    if(attacker_count == 0)
-    {
-        winner_player_idx = _combat_defender_player;
-    }
-    else if(defender_count == 0)
-    {
-        winner_player_idx = _combat_attacker_player;
-    }
-    else
-    {
-        winner_player_idx = ST_UNDEFINED;
-    }
-
-    return winner_player_idx;
+    if(attacker_count == 0) { return _combat_defender_player; }
+    if(defender_count == 0) { return _combat_attacker_player; }
+    return ST_UNDEFINED;
 }
 
 
@@ -20680,7 +20492,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         if(
             (battle_units[itr_battle_units].status <= bus_Dead)
             ||
-            (battle_units[itr_battle_units].status == bus_Fleeing)
+            (battle_units[itr_battle_units].status == bus_Flee)
             ||
             (battle_units[itr_battle_units].status == bus_Recalled)
         )
@@ -20819,7 +20631,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         BEGIN:  Enemey City
     */
 
-    if(_combat_environ == 1)
+    if(_combat_environ == 1)  /* City-Seige */
     {
         CMB_Population_Lost = 0;
         CMB_Buildings_Lost = 0;
@@ -20855,7 +20667,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                         // ; INCONSISTENT: Lawful wizards disproportionately
                         // ;  adjust based on whether hidden relation is 0 or not
                         // ; BUG? surviving units are checked without owners
-                        // TODO  GAME_RazeCity = AI_Raze_Decision(player_idx, OVL_Action_Structure);
+                        // TODO  GAME_RazeCity = Raze_Check(player_idx, OVL_Action_Structure);
                         GAME_RazeCity = ST_FALSE;
                     }
                 }
@@ -20888,7 +20700,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
                 CMB_Gold_Reward = 0;
 
-                CMB_Gold_Reward = CTY_GetConquerGold(_combat_environ_idx);  // the conquering wizard gets a portion of the previous owner's gold reserve as loot.
+                CMB_Gold_Reward = City_Gold(_combat_environ_idx);  // the conquering wizard gets a portion of the previous owner's gold reserve as loot.
 
                 if(player_idx < _num_players)
                 {
@@ -20913,7 +20725,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
                 SETMIN(_players[player_idx].fame, 0);
 
-                CMB_Gold_Reward = CTY_GetConquerGold(_combat_environ_idx);
+                CMB_Gold_Reward = City_Gold(_combat_environ_idx);
 
                 if(_CITIES[_combat_environ_idx].owner_idx < _num_players)
                 {
@@ -20970,7 +20782,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                     {
                         Population_Loss_Percent += 50;
 
-                        _active_battle_unit = CTY_RampageVictory();  /* 666 - rampage, no ruins  668 - rampage, created ruins */
+                        _active_battle_unit = Rampage_Combat_City();  /* 666 - rampage, no ruins  668 - rampage, created ruins */
                     }
 
                 }
@@ -21537,7 +21349,7 @@ void Combat_Results_Scroll(void)
     }
     else
     {
-        if(_combat_environ == 1)  /* Enemy City */
+        if(_combat_environ == 1)  /* City-Seige */
         {
             if(
                 (CMB_ScrollMsg_Type == 1)
@@ -21911,7 +21723,7 @@ int16_t Combat_Results_Scroll_Text(void)
 
 
 // WZD o123p06
-int16_t CTY_GetConquerGold(int16_t city_idx)
+int16_t CTY_GetConquerGold__OLD(int16_t city_idx)
 {
     int16_t Empire_Population;
     int16_t Gold_Reward;
@@ -21943,10 +21755,60 @@ int16_t CTY_GetConquerGold(int16_t city_idx)
 
     return Gold_Reward;
 }
+/* GEMINI */
+int16_t City_Gold(int16_t city_idx)
+{
+    int16_t empire_population = 0;
+    int16_t amount = 0;
+    int16_t itr = 0;
+    int16_t city_owner = 0;
+
+    amount = 0;
+
+    /* Check if the city belongs to the neutral player */
+    if (_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
+    {
+        itr = 0;
+        /* amount is a sum of random(10) for each population point */
+        while (itr < _CITIES[city_idx].population)
+        {
+            amount += Random(10);
+            itr++;
+        }
+    }
+    else
+    {
+        /* If owned by a wizard, amount is proportional to their gold reserve */
+        empire_population = 0;
+        city_owner = _CITIES[city_idx].owner_idx;
+
+        /* Calculate total population of the owner's empire */
+        for (itr = 0; itr < _cities; itr++)
+        {
+            if (_CITIES[itr].owner_idx == city_owner)
+            {
+                empire_population += _CITIES[itr].population;
+            }
+        }
+
+        /* Calculate fraction of gold reserve: (city_pop / total_empire_pop) * gold_reserve */
+        /* Assembly uses long multiplication and division (LXMUL@, LDIV@) */
+        if (empire_population > 0)
+        {
+            amount = ((long)_players[city_owner].gold_reserve * (long)_CITIES[city_idx].population / (long)empire_population);
+        }
+        else
+        {
+            amount = 0;
+        }
+    }
+
+    return amount;
+}
 
 
 // WZD o123p07
-int16_t CTY_RampageVictory(void)
+int16_t CTY_RampageVictory__OLD(void)
 {
     int16_t Unit_Type;
     int16_t Unit_Types;
@@ -22086,7 +21948,151 @@ int16_t CTY_RampageVictory(void)
 
     return return_value;
 }
+/* GEMINI */
+int16_t Rampage_Combat_City(void)
+{
+    int16_t primary_count = 0;
+    int16_t secondary_count = 0;
+    int16_t primary_unit = 0;
+    int16_t secondary_unit = 0;
+    int16_t unit_types_found = 0;
+    int16_t current_u_type = 0;
+    int16_t empty_lair_idx = 0;
+    int16_t itr = 0;
+    int16_t fortress_city_idx = 0;
 
+    empty_lair_idx = ST_UNDEFINED;
+
+    for (itr = 0; itr < NUM_LAIRS_102; itr++)
+    {
+        if (_LAIRS[itr].intact == ST_FALSE)
+        {
+            empty_lair_idx = itr;
+            break;
+        }
+    }
+
+    primary_unit = 0;
+    secondary_unit = 0;
+    primary_count = 0;
+    secondary_count = 0;
+
+    /* 50% chance for rampage to create ruins/lair */
+    if (Random(2) == 1)
+    {
+        return 666;
+    }
+
+    /* No room for a new lair record */
+    if (empty_lair_idx == -1)
+    {
+        return 666;
+    }
+
+    /* Check if the city is a player's capital; capitals cannot be turned into ruins by rampage */
+    fortress_city_idx = Player_Fortress_City(_CITIES[_combat_environ_idx].owner_idx);
+    if (fortress_city_idx == _combat_environ_idx)
+    {
+        return 666;
+    }
+
+    /* Transfer ownership to Neutral and destroy the city */
+    Change_City_Ownership(_combat_environ_idx, NEUTRAL_PLAYER_IDX);
+    Destroy_City(_combat_environ_idx);
+
+    unit_types_found = 0;
+
+    /* Identify the two most expensive unit types in the rampaging monster stack to guard the ruins */
+    for (itr = 0; itr < _combat_total_unit_count; itr++)
+    {
+        if (battle_units[itr].status != 1 /* bus_Active */)
+        {
+            continue;
+        }
+
+        if (battle_units[itr].controller_idx != NEUTRAL_PLAYER_IDX)
+        {
+            continue;
+        }
+
+        /* Mark rampaging units as dead (clearing the combat state) */
+        battle_units[itr].status = bus_Dead;
+
+        current_u_type = _UNITS[battle_units[itr].unit_idx].type;
+
+        if (current_u_type == primary_unit)
+        {
+            primary_count++;
+        }
+        else if (current_u_type == secondary_unit)
+        {
+            secondary_count++;
+        }
+        else
+        {
+            if (unit_types_found == 0)
+            {
+                primary_unit = current_u_type;
+                primary_count = 1;
+                unit_types_found = 1;
+            }
+            else if (unit_types_found == 1)
+            {
+                unit_types_found = 2;
+                /* If new unit is more expensive than primary, shift primary to secondary */
+                if (_unit_type_table[current_u_type].cost >= _unit_type_table[primary_unit].cost)
+                {
+                    secondary_unit = primary_unit;
+                    secondary_count = primary_count;
+                    primary_unit = current_u_type;
+                    primary_count = 1;
+                }
+                else
+                {
+                    secondary_unit = current_u_type;
+                    secondary_count = 1;
+                }
+            }
+            else
+            {
+                /* Compare with existing primary and secondary to keep the top two most expensive */
+                if (_unit_type_table[current_u_type].cost > _unit_type_table[primary_unit].cost)
+                {
+                    secondary_unit = primary_unit;
+                    secondary_count = primary_count;
+                    primary_unit = current_u_type;
+                    primary_count = 1;
+                }
+                else if (_unit_type_table[current_u_type].cost > _unit_type_table[secondary_unit].cost)
+                {
+                    secondary_unit = current_u_type;
+                    secondary_count = 1;
+                }
+            }
+        }
+    }
+
+    /* Initialize the new Ruins encounter zone */
+    _LAIRS[empty_lair_idx].guard1_unit_type = (uint8_t)primary_unit;
+    _LAIRS[empty_lair_idx].guard2_unit_type = (uint8_t)secondary_unit;
+    _LAIRS[empty_lair_idx].guard1_count = (uint8_t)(primary_count * 17);  /* shift to upper nibble */
+    _LAIRS[empty_lair_idx].guard2_count = (uint8_t)(secondary_count * 17);  /* shift to upper nibble */
+    _LAIRS[empty_lair_idx].wx = (int8_t)_combat_wx;
+    _LAIRS[empty_lair_idx].wy = (int8_t)_combat_wy;
+    _LAIRS[empty_lair_idx].wp = (int8_t)_combat_wp;
+    _LAIRS[empty_lair_idx].intact = ST_TRUE;
+    _LAIRS[empty_lair_idx].type = lt_Ruins;
+    _LAIRS[empty_lair_idx].Loot_Gold = CMB_Gold_Reward;
+    _LAIRS[empty_lair_idx].Loot_Mana = 0;
+    _LAIRS[empty_lair_idx].Spell_n_Special = 0;
+    _LAIRS[empty_lair_idx].Misc_Flags = 0;
+    _LAIRS[empty_lair_idx].Item_Count = 0;
+    _LAIRS[empty_lair_idx].Item_Values[0] = 0;
+    _LAIRS[empty_lair_idx].Item_Values[1] = 0;
+    _LAIRS[empty_lair_idx].Item_Values[2] = 0;
+
+    return 668;
+}
 
 
 
@@ -22108,7 +22114,7 @@ int16_t Total_Ranged_Attack_Strength(int16_t player_idx)
             {
                 if(Battle_Unit_Has_Ranged_Attack(battle_unit_idx) != ST_FALSE)
                 {
-                    amount = battle_units[battle_unit_idx].ranged;  // OGBUG  should have been cummulative `+=`, not `=`  (deduced from usage in AI_MoveBattleUnits())
+                    amount = battle_units[battle_unit_idx].ranged;  // OGBUG  should have been cummulative `+=`, not `=`  (deduced from usage in Auto_Do_Combat_Turn())
                 }
             }
         }
@@ -22376,7 +22382,7 @@ int16_t Combat_Structure(int16_t wx, int16_t wy, int16_t wp, int16_t set_city_fl
 
     }
 
-    if(_combat_environ == 1)  /* Combat - Enemy City */
+    if(_combat_environ == 1)  /* City-Seige */
     {
 
         if(_CITIES[_combat_environ_idx].enchantments[HEAVENLY_LIGHT] > 0)
@@ -23168,9 +23174,9 @@ int16_t Battle_Unit_Moves2(int16_t battle_unit_idx)
 
 // WZD o124p17
 /*
-    "WIP", cause AI_Raze_Decision(Stack_Owner, OVL_Action_Structure);
+    "WIP", cause Raze_Check(Stack_Owner, OVL_Action_Structure);
 */
-void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
+void STK_CaptureCity__WIP__OLD(int16_t troop_count, int16_t troops[])
 {
     int16_t City_Owner = 0;
     int16_t Stack_Owner = 0;  // _DI_
@@ -23225,7 +23231,7 @@ void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
         {
             if(Stack_Owner < _num_players)
             {
-                // TODO GAME_RazeCity = AI_Raze_Decision(Stack_Owner, OVL_Action_Structure);
+                // TODO GAME_RazeCity = Raze_Check(Stack_Owner, OVL_Action_Structure);
             }
         }
 
@@ -23249,7 +23255,7 @@ void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
 
         CMB_Gold_Reward = 0;
 
-        CMB_Gold_Reward = CTY_GetConquerGold(_combat_environ_idx);
+        CMB_Gold_Reward = City_Gold(_combat_environ_idx);
 
         if(Stack_Owner < _num_players)
         {
@@ -23286,7 +23292,7 @@ void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
             }
         }
 
-        CMB_Gold_Reward = CTY_GetConquerGold(_combat_environ_idx);
+        CMB_Gold_Reward = City_Gold(_combat_environ_idx);
 
         if(City_Owner < _num_players)
         {
@@ -23331,7 +23337,7 @@ void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
 
         _combat_total_unit_count = troop_count;
 
-        _active_battle_unit = CTY_RampageVictory();
+        _active_battle_unit = Rampage_Combat_City();  // HERE:  _LAIRS[].Loot_Gold = CMB_Gold_Reward
 
         for(itr = 0; itr < troop_count; itr++)
         {
@@ -23366,31 +23372,471 @@ void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
     }
 
 }
+/* GEMINI */
+/**
+ * COPILOT
+ * @brief Resolves the strategic aftermath of capturing or destroying a city after combat.
+ *
+ * This routine handles the post-battle city outcome for the victorious stack identified by the
+ * passed troop list. It determines the attacking stack owner and defending city owner, updates fame
+ * and treasury values for the winner and loser, decides whether the city is kept or razed, and
+ * prepares the combat-result summary shown to the human player when relevant.
+ *
+ * When the city is kept, the attacker gains fame based on city size, receives the city's gold
+ * treasury as loot, and the defender loses that same treasury amount. When the city is razed, the
+ * attacker instead suffers a fame penalty, loots the city's treasury plus a fraction of built
+ * structure costs, and the defender's treasury is reduced accordingly. Human-controlled attackers
+ * may be prompted for the raze decision, while AI attackers delegate that choice to Raze_Check().
+ *
+ * The function also contains a special path for neutral fantastic stacks that rampage through the
+ * city: temporary battle-unit state is constructed, Rampage_Combat_City() is invoked, and the
+ * rampaging units are destroyed afterward.
+ *
+ * @param troop_count The number of units in the victorious stack.
+ * @param troops Pointer to the victorious stack's unit indices. The first entry is used to infer
+ *        the stack owner.
+ *
+ * @note GUI_Multipurpose_Int is used as a summary accumulator for human-visible fame changes.
+ * @note The function updates multiple global combat-result fields, including CMB_Gold_Reward,
+ *       CMB_ScrollMsg_Type, CMB_Population_Lost, and CMB_Buildings_Lost.
+ * @note A human-facing results scroll is only shown when either the attacker or the city owner is
+ *       the human player.
+ */
+void Combat_City_Capture(int16_t troop_count, int16_t * troops)
+{
+    int16_t city_owner_idx = 0;
+    int16_t troop_owner_idx = 0;
+    int16_t itr = 0;
+    int16_t city_size = 0;
+    int16_t unit_type = 0;
+    int16_t fame_penalty = 0;  // DNE in Dasm
+    struct s_CITY * city_ptr = NULL;
+    struct s_UNIT * unit_ptr = NULL;
+    struct s_WIZARD * wizard_ptr = NULL;
+
+    Unit_View_Allocate();  // DEDU  ¿ if/where used ?
+    
+    Set_Page_Off();
+    Main_Screen_Draw();
+    Copy_Off_To_Back();
+
+    /* Identify attacker's owner from the first unit in the stack */
+    unit_ptr = &_UNITS[troops[0]];
+    troop_owner_idx = unit_ptr->owner_idx;
+
+    /* Identify city owner */
+    city_ptr = &_CITIES[_combat_environ_idx];
+    city_owner_idx = city_ptr->owner_idx;
+
+    /* GUI_Multipurpose_Int is used here as a change accumulator for the summary scroll */
+    GUI_Multipurpose_Int = 0;
+
+    /* Reduce fame of the loser */
+    if (city_owner_idx < _num_players)
+    {
+        city_size = _CITIES[_combat_environ_idx].size;
+        _players[city_owner_idx].fame -= city_size;
+
+        if (city_owner_idx == HUMAN_PLAYER_IDX)
+        {
+            /* Track fame loss for human player summary */
+            GUI_Multipurpose_Int -= city_size;
+        }
+
+        if (_players[city_owner_idx].fame < 0)
+        {
+            _players[city_owner_idx].fame = 0;
+        }
+    }
+
+    /* Raze Decision Logic */
+    if (_CITIES[_combat_environ_idx].population == 0)
+    {
+        GAME_RazeCity = ST_TRUE;
+    }
+    else
+    {
+        GAME_RazeCity = ST_FALSE;
+
+        if (troop_owner_idx == HUMAN_PLAYER_IDX)
+        {
+            if (magic_set.raze_city == ST_TRUE)
+            {
+                /* displays the passed message as a raze city confirmation dialog */
+                /* returns 0 if the city is razed, or 1 if not */
+                itr = Raze_City_Prompt(cnst_RazeCity_Msg2);
+                if (itr == 0)
+                {
+                    GAME_RazeCity = ST_TRUE;
+                }
+            }
+        }
+        else if (troop_owner_idx < _num_players)
+        {
+            /* AI decides whether to raze or not. Returns 1 for yes, 0 for no. */
+            GAME_RazeCity = Raze_Check(_combat_environ_idx, troop_owner_idx);
+        }
+    }
+
+    if (GAME_RazeCity == ST_FALSE)
+    {
+        /* --- KEEP CITY --- */
+        CMB_Gold_Reward = _CITIES[_combat_environ_idx].size - 2;
+        if (CMB_Gold_Reward < 0)
+        {
+            CMB_Gold_Reward = 0;
+        }
+
+        /* Attacker gains fame for capturing */
+        _players[troop_owner_idx].fame += CMB_Gold_Reward;
+
+        if (troop_owner_idx == HUMAN_PLAYER_IDX)
+        {
+            GUI_Multipurpose_Int += CMB_Gold_Reward;
+        }
+
+        /* Calculate gold loot from conquest */
+        CMB_Gold_Reward = City_Gold(_combat_environ_idx);
+
+        if (troop_owner_idx < _num_players)
+        {
+            Player_Add_Gold(troop_owner_idx, CMB_Gold_Reward);
+        }
+
+        /* Loser loses the same amount of gold */
+        if (city_owner_idx < _num_players)
+        {
+            _players[city_owner_idx].gold_reserve -= CMB_Gold_Reward;
+            if (_players[city_owner_idx].gold_reserve < 0)
+            {
+                _players[city_owner_idx].gold_reserve = 0;
+            }
+        }
+    }
+    else
+    {
+        /* --- RAZE CITY --- */
+        fame_penalty = _CITIES[_combat_environ_idx].size;
+
+        if (troop_owner_idx == HUMAN_PLAYER_IDX)
+        {
+            /* Fame penalty for human razing */
+            GUI_Multipurpose_Int -= fame_penalty;
+        }
+
+        /* Attacker loses fame for razing */
+        if (troop_owner_idx < _num_players)
+        {
+            _players[troop_owner_idx].fame -= fame_penalty;
+            if (_players[troop_owner_idx].fame < 0)
+            {
+                _players[troop_owner_idx].fame = 0;
+            }
+        }
+
+        /* Loot treasury */
+        CMB_Gold_Reward = City_Gold(_combat_environ_idx);
+
+        if (city_owner_idx < _num_players)
+        {
+            _players[city_owner_idx].gold_reserve -= CMB_Gold_Reward;
+            if (_players[city_owner_idx].gold_reserve < 0)
+            {
+                _players[city_owner_idx].gold_reserve = 0;
+            }
+        }
+
+        /* Loot buildings (10% of cost) */
+        for (itr = 3; itr < 36; itr++)
+        {
+            /* bs_NotBuilt is -1, Replaced 0, Built 1, Removed 2 */
+            if (_CITIES[_combat_environ_idx].bldg_status[itr] > bs_NotBuilt)
+            {
+                CMB_Gold_Reward += bldg_data_table[itr].construction_cost / 10;
+            }
+        }
+
+        if (troop_owner_idx < _num_players)
+        {
+            Player_Add_Gold(troop_owner_idx, CMB_Gold_Reward);
+        }
+    }
+
+    battle_units = (struct s_BATTLE_UNIT *)Allocate_First_Block(_screen_seg, 63);  // 63 PR, 1008 B
+
+    /* Check for rampaging neutral fantastic units (e.g., Great Drake, Hydra) */
+    if (_UNITS[troops[0]].owner_idx == NEUTRAL_PLAYER_IDX)
+    {
+        unit_type = _UNITS[troops[0]].type;
+        if ((_unit_type_table[unit_type].Abilities & UA_FANTASTIC) != 0)
+        {
+            /* Populate battle unit data for the rampage */
+            for (itr = 0; itr < troop_count; itr++)
+            {
+                battle_units[itr].controller_idx = NEUTRAL_PLAYER_IDX;
+                battle_units[itr].status = bus_Active;
+                battle_units[itr].unit_idx = troops[itr];
+            }
+            _combat_total_unit_count = troop_count;
+
+            /* Rampage_Combat_City creates Ruins if applicable */
+            _active_battle_unit = Rampage_Combat_City();
+
+            /* Rampaging stack dies after the assault */
+            for (itr = 0; itr < troop_count; itr++)
+            {
+                Kill_Unit(troops[itr], 0);
+            }
+        }
+    }
+
+    /* Prep UI Summary Scroll */
+    CMB_Population_Lost = 0;
+
+    if (troop_owner_idx == HUMAN_PLAYER_IDX)
+    {
+        CMB_ScrollMsg_Type = 1; /* combat victory */
+    }
+
+    if (city_owner_idx == HUMAN_PLAYER_IDX)
+    {
+        CMB_ScrollMsg_Type = 12; /* city lost */
+    }
+
+    CMB_Population_Lost = 0;
+    CMB_Buildings_Lost = 0;
+
+    if (troop_owner_idx == HUMAN_PLAYER_IDX || city_owner_idx == HUMAN_PLAYER_IDX)
+    {
+        /* Displays summary and finalizes raze/capture status */
+        Combat_Results_Scroll();
+    }
+}
+
 
 // WZD o124p18
-// drake178: AI_FightorFlight()
-/*
-; decides whether the AI will try to flee from the
-; battle, which it will only if its situation seems
-; hopeless, and it either has at least one hero on the
-; field or otherwise all of the units are builders
-; returns 1 if the AI picks flight, or 0 if fight
-*/
-/*
-
-
-
-*/
-int16_t AI_FightorFlight__STUB(int16_t player_idx)
+/* GEMINI */
+/**
+ * COPILOT
+ * @brief Determines whether the AI should abandon combat and retreat.
+ *
+ * This routine evaluates the current combat state for one player and returns true only when the
+ * AI considers the situation hopeless enough to flee. It first queries Get_Player_Mode() and only
+ * continues when that safety assessment returns the lowest-risk tolerance state. It then counts the
+ * player's units that are still relevant to the battle, including both active and uninvolved units,
+ * and classifies them into heroes and builder-type units.
+ *
+ * The retreat decision is conservative in two specific cases: the AI will retreat to preserve any
+ * surviving hero units, and it will also retreat when every remaining counted unit is a builder or
+ * outpost-capable non-combatant. If neither of those conditions applies, the battle continues.
+ *
+ * @param player_idx The player whose surviving combat force should be evaluated for retreat.
+ *
+ * @return ST_TRUE if the AI should flee the battle.
+ * @return ST_FALSE if the AI should continue fighting.
+ *
+ * @note Only units with status bus_Active or bus_Uninvolved are considered when evaluating whether
+ *       anything valuable remains to save.
+ * @note A unit is treated as a builder if it can create an outpost or has a positive Construction
+ *       value.
+ */
+int16_t Retreat_Check(int16_t player_idx)
 {
+    int16_t safety_level = 0;
+    int16_t builder_count = 0;
+    int16_t risked_unit_count = 0;
+    int16_t hero_count = 0;
+    int16_t i = 0;
+    struct s_BATTLE_UNIT * b_unit_ptr = NULL;
+    struct s_UNIT * unit_ptr = NULL;
 
-    /* HACK */ return ST_FALSE;
+    hero_count = 0;
+    builder_count = 0;
+    risked_unit_count = 0;
 
+    /* Get_Player_Mode returns 0 if the AI's situation is considered hopeless */
+    safety_level = Get_Player_Mode(player_idx);
+
+    if (safety_level != 0)
+    {
+        return ST_FALSE;
+    }
+
+    for (i = 0; i < _combat_total_unit_count; i++)
+    {
+        b_unit_ptr = &battle_units[i];
+
+        /* Only consider units that are actively in the fight or uninvolved (not dead/fled) */
+        if (b_unit_ptr->status == bus_Active || b_unit_ptr->status == bus_Uninvolved)
+        {
+            if (b_unit_ptr->controller_idx == player_idx)
+            {
+                risked_unit_count++;
+
+                unit_ptr = &_UNITS[b_unit_ptr->unit_idx];
+
+                /* Check if the unit is a Hero */
+                if (unit_ptr->Hero_Slot > -1)
+                {
+                    hero_count++;
+                }
+
+                /* Check if the unit is a "builder" (Settlers or units with Construction) */
+                if ((b_unit_ptr->Abilities & UA_CREATEOUTPOST) || (b_unit_ptr->Construction > 0))
+                {
+                    builder_count++;
+                }
+            }
+        }
+    }
+
+    /* AI will flee if it has at least one hero to save */
+    if (hero_count > 0)
+    {
+        return ST_TRUE;
+    }
+
+    /* AI will flee if all remaining units are just builders (non-combatants) */
+    if (risked_unit_count == builder_count)
+    {
+        return ST_TRUE;
+    }
+
+    return ST_FALSE;
 }
 
 
 // WZD o124p19
-// drake178: AI_Raze_Decision()
+/* GEMINI */
+int16_t Raze_Check(int16_t player_idx, int16_t city_idx)
+{
+    int16_t city_owner_units_on_landmass = 0;
+    int16_t own_units_on_landmass = 0;
+    int16_t city_landmass = 0;
+    int16_t total_surviving = 0;
+    int16_t i = 0;
+    int16_t score = 0;
+    int16_t city_owner = 0;
+    int16_t personality = 0;
+    uint8_t * landmass_ptr = NULL;
+
+    score = 0;
+
+    if (_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
+    {
+        return 0;
+    }
+
+    city_owner = _CITIES[city_idx].owner_idx;  // DNE in Dasm
+
+    /* Adjust score based on AI personality */
+    /* Player struct size is 0x4C8 */
+    personality = _players[player_idx].Personality;
+    switch (personality)
+    {
+        case PRS_Maniacal:
+        {
+            score += 25;
+        } break;
+        case PRS_Ruthless:
+        {
+            score += 10;
+        } break;
+        case PRS_Aggressive:
+        case PRS_Chaotic:
+        {
+            // DNE
+        } break;
+        case PRS_Lawful:
+        {
+            /* OGBUG: this should either check the diplomatic status or hostility instead, or use a different jump */
+            /* BUG: Lawful check uses Hidden_Rel == 0 to penalize raze score */
+            if (_players[player_idx].Dipl.Hidden_Rel[city_owner] == 0)
+            {
+                score -= 200;
+            }
+            else
+            {
+                score += 25;
+            }
+        } break;
+        case PRS_Peaceful:
+        {
+            score -= 200;
+        } break;
+        default:
+            break;
+    }
+
+    /* Count all active units surviving the battle */
+    /* BUG? This counts units regardless of owner */
+    {
+        int total_surviving = 0;
+        for (i = 0; i < _combat_total_unit_count; i++)
+        {
+            if (battle_units[i].status == bus_Active)
+            {
+                total_surviving++;
+            }
+        }
+        if (total_surviving < 3)
+        {
+            score += 10;
+        }
+    }
+
+    /* Identify the landmass (continent) of the city */
+    city_landmass = _landmasses[(_CITIES[city_idx].wp * WORLD_WIDTH) + (_CITIES[city_idx].wy * WORLD_WIDTH) + _CITIES[city_idx].wx];
+
+    /* Count total units on the same landmass for current player and former owner */
+    own_units_on_landmass = 0;
+    city_owner_units_on_landmass = 0;
+
+    for (i = 0; i < _units; i++)
+    {
+        if (_landmasses[(_UNITS[i].wp * WORLD_WIDTH) + (_UNITS[i].wy * WORLD_WIDTH) + _UNITS[i].wx] == city_landmass)
+        {
+            if (_UNITS[i].owner_idx == player_idx)
+            {
+                own_units_on_landmass++;
+            }
+            else if (_UNITS[i].owner_idx == city_owner)
+            {
+                city_owner_units_on_landmass++;
+            }
+        }
+    }
+
+    /* Strategic value adjustment */
+    if (city_owner_units_on_landmass == 0)
+    {
+        score -= 200;
+    }
+    else
+    {
+        /* Ratio of own units vs former owner units on this continent */
+        /* score += ((Own * 50) / Enemy) - 50 */
+        score += (((long)own_units_on_landmass * 50) / city_owner_units_on_landmass) - 50;
+    }
+
+    /* Chaotic wizards have a baseline chance to raze */
+    if (_players[player_idx].Personality == 3 /* PRS_Chaotic */)
+    {
+        if (score < 10)
+        {
+            score = 10;
+        }
+    }
+
+    /* Final probability check */
+    if (Random(100) <= score)
+    {
+        return ST_TRUE; /* Raze city */
+    }
+
+    return ST_FALSE; /* Spare city */
+}
+
 
 // WZD o124p20
 int16_t Raze_City_Prompt(char * message)
@@ -28154,7 +28600,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
         path_cgx = (RP_CMB_MoveMap[((movement_path_grid_cell_count - 1) - itr)] % COMBAT_GRID_WIDTH);
         assert(path_cgx >= COMBAT_GRID_XMIN);
         assert(path_cgx <= COMBAT_GRID_XMAX);
-        _cmbt_mvpth_x[itr] = (unsigned char)path_cgx;
+        _cmbt_mvpth_x[itr] = (uint8_t)path_cgx;
 
         // CMB_Path_Ys[itr] = (RP_CMB_MoveMap[((movement_path_grid_cell_count - 1) - itr)] / COMBAT_GRID_WIDTH);
         // assert(CMB_Path_Ys[itr] >= COMBAT_GRID_YMIN);
@@ -28163,7 +28609,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
         path_cgy = (RP_CMB_MoveMap[((movement_path_grid_cell_count - 1) - itr)] / COMBAT_GRID_WIDTH);
         assert(path_cgy >= COMBAT_GRID_YMIN);
         assert(path_cgy <= COMBAT_GRID_YMAX);
-        _cmbt_mvpth_y[itr] = (unsigned char)path_cgy;
+        _cmbt_mvpth_y[itr] = (uint8_t)path_cgy;
 
     }
 

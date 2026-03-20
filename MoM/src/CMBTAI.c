@@ -249,6 +249,29 @@ void AI_SetBasicAttacks__WIP__OLD(int16_t player_idx)
     }
 
 }
+/**
+ * @brief Chooses each active unit's baseline tactical action for the current combat turn.
+ *
+ * This routine performs the combat AI's initial pass over one player's active battle units. It
+ * assigns each unit a default attack mode based on whether the unit currently has a ranged attack,
+ * then compares the overall threat, mana-backed ranged potential, and selected player posture
+ * against the opposing side. Using those aggregated values, it upgrades some units from static
+ * attack modes into movement-enabled tactics such as bua_MoveAndStab or bua_MoveAndShoot.
+ *
+ * The decision process runs in four stages: it initializes default unit actions and threat totals,
+ * adds wizard ranged strength for both sides, computes supporting metrics such as ranged_diff and
+ * own_melee_threat, and finally refines per-unit actions according to the safety level returned by
+ * Get_Player_Mode().
+ *
+ * @param player_idx The combat controller index whose active units should receive tactical actions.
+ *
+ * @note The function updates battle_units[].action in place for all active units controlled by the
+ *       specified player.
+ * @note If either side has zero total effective threat, the routine exits early and leaves the
+ *       default attack assignments in place.
+ * @note Case 2 logic relies on own_melee_threat when comparing force ratios; the translated code
+ *       preserves the surrounding assembly behavior and comments about that assumption.
+ */
 /* GEMINI */
 void AI_SetBasicAttacks(int16_t player_idx)
 {
@@ -466,7 +489,7 @@ BUA_UseItem         = 107,
 BUA_CastSpell       = 108,
 BUA_SummonDemon     = 109,
 bua_WebSpell        = 110,
-BUA_Flee            = 150,
+bua_Flee            = 150,
 
 jt_bua_00
 jt_bua_01
@@ -732,7 +755,7 @@ jt_bua_10
 
         } break;
 
-        case BUA_Flee:
+        case bua_Flee:
         {
             STU_DEBUG_BREAK();
 
@@ -1080,7 +1103,7 @@ Case_Finished:
 
 /*
 Sort_Battle_Units is an insertion sort that orders a list of battle unit indices by their movement_points, from least to most (slowest first).
-Purpose in context: It's called by AI_MoveBattleUnits before the AI moves its melee units. By sorting slowest-first, the AI moves the least-mobile units first. This matters because the rally point (where units converge) is derived from the last element in the sorted list — the fastest unit. Slow units move toward where the fast unit will end up, and the fast unit goes last so it can adapt to where everyone else already is.
+Purpose in context: It's called by Auto_Do_Combat_Turn before the AI moves its melee units. By sorting slowest-first, the AI moves the least-mobile units first. This matters because the rally point (where units converge) is derived from the last element in the sorted list — the fastest unit. Slow units move toward where the fast unit will end up, and the fast unit goes last so it can adapt to where everyone else already is.
 Algorithm: Standard insertion sort. It walks the list starting at index 1, and for each element, shifts larger-valued entries rightward until it finds the correct insertion point.
 */
 void Sort_Battle_Units(int16_t * troop_list, int16_t troop_count)
@@ -1247,7 +1270,7 @@ void AI_GetCombatRallyPt(int16_t battle_unit_idx, int16_t * cgx, int16_t * cgy)
     target_idx = (int)battle_units[battle_unit_idx].target_battle_unit_idx;
 /*
 OGBUG: If the target_battle_unit_idx is ST_UNDEFINED (-1), the function will attempt to compute a path to an invalid target, which can lead to out-of-bounds access in the cost map and movement path arrays, causing a crash.
-       //COPILOT+GPT54  The root cause is higher up than the crash site: AI_MoveBattleUnits computes a rally point before AI_BU_AssignAction assigns fresh targets, so the chosen melee unit can still have target_battle_unit_idx == ST_UNDEFINED.
+       //COPILOT+GPT54  The root cause is higher up than the crash site: Auto_Do_Combat_Turn computes a rally point before AI_BU_AssignAction assigns fresh targets, so the chosen melee unit can still have target_battle_unit_idx == ST_UNDEFINED.
 */
     if(target_idx == ST_UNDEFINED)
     {
@@ -1290,7 +1313,7 @@ OGBUG: If the target_battle_unit_idx is ST_UNDEFINED (-1), the function will att
 
 
 // WZD o114p05
-// drake178: AI_MoveBattleUnits()
+// drake178: Auto_Do_Combat_Turn()
 /*
 ; assigns and processes the turn's actions for all
 ; battle units controlled by the selected player
@@ -1609,7 +1632,33 @@ void AI_MoveBattleUnits__WIP__OLD(int16_t player_idx)
 
 }
 /* GEMINI */
-void AI_MoveBattleUnits(int16_t player_idx)
+/**
+ * COPILOT
+ * @brief Assigns and executes combat-turn actions for all battle units controlled by one player.
+ *
+ * This routine drives the high-level tactical AI for a single side during combat. It first
+ * handles a special-case cleanup for stuck neutral attackers, then compares allied and enemy
+ * ranged strength to decide whether melee units should coordinate around a rally point or simply
+ * advance opportunistically. It also updates the effective city-wall state used by downstream AI
+ * logic, including conditions where defenders abandon the safety of city walls because of hostile
+ * ranged superiority or active battlefield hazards such as vortexes, Wrack, Call Lightning, or
+ * Mana Leak.
+ *
+ * After the global combat posture is established, the function initializes basic unit actions via
+ * AI_SetBasicAttacks(), optionally builds and sorts a list of melee-capable units to compute a
+ * rally point with AI_GetCombatRallyPt(), and then processes units in two passes. The first pass
+ * handles active non-sleeping units generally, while the second pass revisits hero units under the
+ * special hero melee safety rules controlled by _ai_disable_hero_melee_safety_check.
+ *
+ * @param player_idx The combat controller index whose battle units should take their turn.
+ *
+ * @note The rally point is only computed when this side's ranged strength is at least as strong as
+ *       the opposing side's ranged strength.
+ * @note The function may clear _ai_battlefield_city_walls and force _ai_stay_in_city to false
+ *       when the defender should stop sheltering behind city defenses.
+ * @note Processing can terminate early if _combat_winner becomes defined while units are acting.
+ */
+void Auto_Do_Combat_Turn(int16_t player_idx)
 {
     int16_t melee_unit_count = 0;
     int16_t rally_x = 0;
@@ -1618,7 +1667,8 @@ void AI_MoveBattleUnits(int16_t player_idx)
     int16_t their_ranged_attack_strength = 0;
     int16_t attacker_vortex_count = 0;
     int16_t melee_unit_list[MAX_BATTLE_UNIT_SLOT_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t unit_idx = 0;
+    int16_t itr_battle_units = 0;
+    int16_t itr_vortexes = 0;
     struct s_BATTLE_UNIT * bu_ptr = NULL;
     struct s_MAGIC_VORTEX * vortex_ptr = NULL;
 
@@ -1630,9 +1680,9 @@ void AI_MoveBattleUnits(int16_t player_idx)
         player_idx == _combat_attacker_player && 
         _ai_immobile_counter > 3)
     {
-        for (unit_idx = 0; unit_idx < _combat_total_unit_count; unit_idx++)
+        for (itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
         {
-            bu_ptr = &battle_units[unit_idx];
+            bu_ptr = &battle_units[itr_battle_units];
             if (bu_ptr->status == bus_Active && bu_ptr->controller_idx == NEUTRAL_PLAYER_IDX)
             {
                 bu_ptr->status = bus_Dead;
@@ -1654,30 +1704,30 @@ void AI_MoveBattleUnits(int16_t player_idx)
 
     /* Determine active battlefield obstacles (walls) */
     _ai_battlefield_city_walls = 0;
-    if (battlefield->walled == ST_TRUE)
+    if(battlefield->walled == ST_TRUE)
     {
         _ai_battlefield_city_walls |= 1;
     }
-    if (battlefield->wall_of_darkness == ST_TRUE)
+    if(battlefield->wall_of_darkness == ST_TRUE)
     {
         _ai_battlefield_city_walls |= 4;
     }
-    if (battlefield->wall_of_fire == ST_TRUE)
+    if(battlefield->wall_of_fire == ST_TRUE)
     {
         _ai_battlefield_city_walls |= 2;
     }
 
     /* AI Strategy: Should defender stay behind walls? */
-    if (player_idx == _combat_defender_player)
+    if(player_idx == _combat_defender_player)
     {
-        if (_ai_stay_in_city == ST_TRUE)
+        if(_ai_stay_in_city == ST_TRUE)
         {
             attacker_vortex_count = 0;
             if (_vortex_count > 0)
             {
-                for (unit_idx = 0; unit_idx < _vortex_count; unit_idx++)
+                for(itr_vortexes = 0; itr_vortexes < _vortex_count; itr_vortexes++)
                 {
-                    vortex_ptr = &_vortexes[unit_idx];
+                    vortex_ptr = &_vortexes[itr_vortexes];
                     if (vortex_ptr->owner_idx == _combat_attacker_player)
                     {
                         attacker_vortex_count++;
@@ -1718,14 +1768,14 @@ void AI_MoveBattleUnits(int16_t player_idx)
     if (our_ranged_attack_strength >= their_ranged_attack_strength)
     {
         melee_unit_count = 0;
-        for (unit_idx = 0; unit_idx < _combat_total_unit_count; unit_idx++)
+        for (itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
         {
-            bu_ptr = &battle_units[unit_idx];
+            bu_ptr = &battle_units[itr_battle_units];
             if (bu_ptr->controller_idx == player_idx && bu_ptr->status == bus_Active)
             {
                 if (bu_ptr->action == bua_Stab || bu_ptr->action == bua_MoveAndStab)
                 {
-                    melee_unit_list[melee_unit_count] = unit_idx;
+                    melee_unit_list[melee_unit_count] = itr_battle_units;
                     melee_unit_count++;
                 }
             }
@@ -1745,28 +1795,28 @@ void AI_MoveBattleUnits(int16_t player_idx)
     _ai_disable_hero_melee_safety_check = ST_FALSE;
 
     /* Pass 1: Process non-hero units (or all units initially) */
-    for (unit_idx = 0; unit_idx < _combat_total_unit_count; unit_idx++)
+    for (itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
-        bu_ptr = &battle_units[unit_idx];
+        bu_ptr = &battle_units[itr_battle_units];
         if (bu_ptr->controller_idx == player_idx && 
             bu_ptr->status == bus_Active && 
             bu_ptr->movement_points > 0 && 
             !(bu_ptr->Combat_Effects & bue_Black_Sleep))
         {
-            Switch_Active_Battle_Unit(unit_idx);
+            Switch_Active_Battle_Unit(itr_battle_units);
             Assign_Combat_Grids();
-            AI_BU_AssignAction(unit_idx, bua_Ready);
+            AI_BU_AssignAction(itr_battle_units, bua_Ready);
 
             /* If defending within walls, units outside must rally differently */
-            if (bu_ptr->controller_idx == _combat_defender_player && 
-                _ai_battlefield_city_walls > 0 && 
-                !Battle_Unit_Is_Within_City(unit_idx))
+            if (bu_ptr->controller_idx == _combat_defender_player &&  /* whoever's turn it is, check that it's the defenders turn */
+                _ai_battlefield_city_walls > 0 &&  /* there is a wall of some sort */
+                !Battle_Unit_Is_Within_City(itr_battle_units))  /* unit is outside the city */
             {
-                AI_BU_ProcessAction(unit_idx, 0, 0);
+                AI_BU_ProcessAction(itr_battle_units, 0, 0);  /* "use the target enemy's position as the rally point instead." */
             }
             else
             {
-                AI_BU_ProcessAction(unit_idx, rally_x, rally_y);
+                AI_BU_ProcessAction(itr_battle_units, rally_x, rally_y);  /* in a city with a wall, so behave defensively */
             }
 
             if (_combat_winner != ST_UNDEFINED) { return; }
@@ -1774,26 +1824,19 @@ void AI_MoveBattleUnits(int16_t player_idx)
     }
 
     /* Pass 2: Specific logic for Hero units */
-    if (_ai_immobile_counter != ST_UNDEFINED)
+    if(_ai_immobile_counter != ST_UNDEFINED) { _ai_disable_hero_melee_safety_check = ST_TRUE; }
+    for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
-        _ai_disable_hero_melee_safety_check = ST_TRUE;
-    }
-
-    for (unit_idx = 0; unit_idx < _combat_total_unit_count; unit_idx++)
-    {
-        bu_ptr = &battle_units[unit_idx];
-        if (bu_ptr->controller_idx == player_idx && 
-            bu_ptr->status == bus_Active && 
-            bu_ptr->movement_points > 0)
+        bu_ptr = &battle_units[itr_battle_units];
+        if(bu_ptr->controller_idx == player_idx && bu_ptr->status == bus_Active &&  bu_ptr->movement_points > 0)
         {
             /* Check if the unit is a hero */
-            if (_UNITS[bu_ptr->unit_idx].Hero_Slot > -1 && 
-                !(bu_ptr->Combat_Effects & bue_Black_Sleep))
+            if(_UNITS[bu_ptr->unit_idx].Hero_Slot > -1 && !(bu_ptr->Combat_Effects & bue_Black_Sleep))
             {
-                Switch_Active_Battle_Unit(unit_idx);
+                Switch_Active_Battle_Unit(itr_battle_units);
                 Assign_Combat_Grids();
-                AI_BU_AssignAction(unit_idx, bua_Ready);
-                AI_BU_ProcessAction(unit_idx, rally_x, rally_y);
+                AI_BU_AssignAction(itr_battle_units, bua_Ready);
+                AI_BU_ProcessAction(itr_battle_units, rally_x, rally_y);
                 
                 if(_combat_winner != ST_UNDEFINED) { return; }
             }

@@ -3,15 +3,40 @@
 
 NOTE(JimBalcomb, 20260319):
 
-AI_MoveBattleUnits()
+Auto_Do_Combat_Turn()
     /* Initialize attack parameters */
     |-> AI_SetBasicAttacks()
     /* Determine Rally Point */
     |-> Sort_Battle_Units()
     /* Get rally point based on the median speed melee unit's destination */
     |-> AI_GetCombatRallyPt()
+    /* Pass 1: Process non-hero units (or all units initially) */
+    for (unit_idx = 0; unit_idx < _combat_total_unit_count; unit_idx++)
+        Switch_Active_Battle_Unit(unit_idx);
+        Assign_Combat_Grids();
+        AI_BU_AssignAction(unit_idx, bua_Ready);
+        ..if offensive
+            AI_BU_ProcessAction(itr_battle_units, 0, 0);
+        ...if defensive
+            AI_BU_ProcessAction(itr_battle_units, rally_x, rally_y);  /* in a city with a wall, so behave defensively */
+    /* Pass 2: Specific logic for Hero units */
+    for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
+        if(bu_ptr->controller_idx == player_idx && bu_ptr->status == bus_Active &&  bu_ptr->movement_points > 0)
+            if(_UNITS[bu_ptr->unit_idx].Hero_Slot > -1 && !(bu_ptr->Combat_Effects & bue_Black_Sleep))
+                Switch_Active_Battle_Unit(itr_battle_units);
+                Assign_Combat_Grids();
+                AI_BU_AssignAction(itr_battle_units, bua_Ready);
+                AI_BU_ProcessAction(itr_battle_units, rally_x, rally_y);
 
-
+Auto_Cast_Spell_And_Do_Combat_Turn()
+    |-> Auto_Do_Combat_Turn()
+        |-> AI_SetBasicAttacks()
+        |-> Sort_Battle_Units()
+        |-> AI_GetCombatRallyPt()
+        |-> Switch_Active_Battle_Unit(itr_battle_units);
+        |-> Assign_Combat_Grids();
+        |-> AI_BU_AssignAction(itr_battle_units, bua_Ready);
+        |-> AI_BU_ProcessAction(itr_battle_units, rally_x, rally_y);
 
 
 
@@ -19,8 +44,8 @@ AI_MoveBattleUnits()
 
 
 Tactical_Combat__WIP()
-    |-> AI_CMB_PlayTurn__WIP()
-        |-> AI_MoveBattleUnits__WIP()
+    |-> Auto_Cast_Spell_And_Do_Combat_Turn()
+        |-> Auto_Do_Combat_Turn__WIP()
 
 
 
@@ -30,13 +55,13 @@ if defender is computer-player...
 ...during init section of tactical combat screen
     if(_combat_defender_player == combat_computer_player)
     {
-        AI_CMB_PlayTurn__WIP(_combat_defender_player);
+        Auto_Cast_Spell_And_Do_Combat_Turn(_combat_defender_player);
         // ; BUG: the defending AI gets an extra turn?
         CMB_PrepareTurn__WIP();
         m_cp_took_turn = ST_TRUE;
     }
 
-AI_MoveBattleUnits__WIP()
+Auto_Do_Combat_Turn__WIP()
 
 
 ...towards the end of the screen-loop, right before the screen re-draw...
@@ -59,7 +84,7 @@ AI_CmbtWall_BitField ==> _battlefield_city_walls
 
 
 
-AI_MoveBattleUnits__WIP()
+Auto_Do_Combat_Turn__WIP()
 
 WIZ_GetLastRangedStr__WIP()
 
@@ -86,10 +111,10 @@ Do_Auto_Ship_Turn_()
 
 
 
-AI_MoveBattleUnits__WIP()
+Auto_Do_Combat_Turn__WIP()
     |-> WIZ_GetLastRangedStr__WIP()
 
-AI_MoveBattleUnits__WIP()
+Auto_Do_Combat_Turn__WIP()
     |-> AI_BU_ProcessAction__WIP()
         |-> AI_BU_AssignAction__WIP()
 
@@ -102,13 +127,13 @@ Do_Auto_Ship_Turn()
 
 
 if(_combat_defender_player == combat_computer_player)
-    AI_CMB_PlayTurn__WIP(_combat_defender_player)
-        |-> AI_MoveBattleUnits__WIP(_combat_defender_player)
+    Auto_Cast_Spell_And_Do_Combat_Turn(_combat_defender_player)
+        |-> Auto_Do_Combat_Turn__WIP(_combat_defender_player)
 
 
 
-AI_CMB_PlayTurn__WIP()
-    |-> AI_MoveBattleUnits__WIP
+Auto_Cast_Spell_And_Do_Combat_Turn()
+    |-> Auto_Do_Combat_Turn__WIP
 
 
 AI_BU_ProcessAction()
@@ -117,7 +142,7 @@ AI_BU_ProcessAction()
     ...
     |-> Do_Auto_Ship_Turn()
 
-AI_MoveBattleUnits()
+Auto_Do_Combat_Turn()
     |-> AI_BU_AssignAction()
         |-> AI_BU_SelectAction__WIP()
 AI_SetBasicAttacks()

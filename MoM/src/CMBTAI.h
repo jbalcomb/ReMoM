@@ -42,7 +42,7 @@ void AI_GetCombatRallyPt__WIP(int16_t battle_unit_idx, int16_t * Rally_X, int16_
 
 // WZD o114p05
 void AI_MoveBattleUnits__WIP__OLD(int16_t player_idx);
-void AI_MoveBattleUnits(int16_t player_idx);
+void Auto_Do_Combat_Turn(int16_t player_idx);
 
 // WZD o114p06
 int16_t AI_BU_AssignAction__WIP__OLD(int16_t battle_unit_idx, int16_t no_spells_flag);

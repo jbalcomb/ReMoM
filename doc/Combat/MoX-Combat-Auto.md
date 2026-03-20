@@ -23,7 +23,7 @@ PoI's?
 'Human Player' clicks 'Auto'
     _human_out_of_moves = ST_FALSE;
     AI_CMB_PlayTurn__WIP(combat_human_player);
-    winner = Check_For_Winner__WIP();
+    winner = Check_For_Winner();
     if(winner != ST_UNDEFINED)
         leave_screen = ST_UNDEFINED;
 
@@ -31,7 +31,7 @@ PoI's?
 ## AI_CMB_PlayTurn__WIP()
     if(player_idx != combat_human_player)
         // SPELLY  G_CMB_CastSpell((player_idx + 20), _combat_wx, _combat_wy, _combat_wp);
-    winner = Check_For_Winner__WIP();  // ¿ because spell cast may resulted in a win/loss ?
+    winner = Check_For_Winner();  // ¿ because spell cast may resulted in a win/loss ?
     if(winner == ST_UNDEFINED)
         CMB_CE_Refresh__WIP();  // ¿ because spell cast may been an enchantment ?
         AI_MoveBattleUnits__WIP(player_idx);
