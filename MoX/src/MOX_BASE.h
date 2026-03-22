@@ -63,6 +63,14 @@
 
 #define ST_NULL          0
 
+// vcruntime.h
+// #ifndef NULL
+//     #ifdef __cplusplus
+//         #define NULL 0
+//     #else
+//         #define NULL ((void *)0)
+//     #endif
+// #endif
 #define ST_NONE          0
 #define ST_UNDEFINED    -1  /* � "Empty" ? (// Army List Screen - "Empty Hero Slot") */
 /* Elsewhere, "NOT IN USE" � for Fields ? � Debug for outline of fields on screen */

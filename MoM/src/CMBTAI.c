@@ -27,6 +27,10 @@
 #include "CMBTAI.h"
 
 #include <assert.h>
+#include <stddef.h>  /* NULL */
+#include <stdlib.h>  /* abs() */
+
+
 
 // WZD dseg:C41E
 extern int16_t _defender_sees_illusions;
