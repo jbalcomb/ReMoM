@@ -112,7 +112,10 @@ void Platform_Video_Update(void)
     sdl2_surface_ARGB8888->w = sdl2_blit_rect.w;
     sdl2_surface_ARGB8888->h = sdl2_blit_rect.h;
 
-    SDL_LowerBlit(sdl2_surface_RGB666, &sdl2_blit_rect, sdl2_surface_ARGB8888, NULL);
+    {
+        SDL_Rect dst_rect = { 0, 0, sdl2_blit_rect.w, sdl2_blit_rect.h };
+        SDL_LowerBlit(sdl2_surface_RGB666, &sdl2_blit_rect, sdl2_surface_ARGB8888, &dst_rect);
+    }
 
     SDL_UnlockTexture(sdl2_texture);
 
