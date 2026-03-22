@@ -54,8 +54,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../ext/stu_compat.h"
-
 #include "LBX_Load.h"
 
 

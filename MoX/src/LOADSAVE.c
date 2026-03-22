@@ -10,6 +10,8 @@
 #include "../../STU/src/STU_TST.h"
 // #endif
 
+#include "../../ext/stu_compat.h"
+
 #include "DOS.h"
 #include "MOM_DAT.h"
 #include "MOX_DAT.h"  /* _players[]; _screen_seg; */
@@ -20,10 +22,10 @@
 
 #include <assert.h>     /* assert() */
 #include <math.h>       /* sqrt() */
+#include <stddef.h>     /* NULL */
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
 #include <stdlib.h>
 #include <string.h>     /* memset(), strcat(), strcpy(); */
-
 #include "LOADSAVE.h"
 
 
