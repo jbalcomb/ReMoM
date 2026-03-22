@@ -7,6 +7,7 @@ AM_INIT_AUTOMAKE([foreign subdir-objects -Wall])
 AC_PROG_CC
 AC_PROG_RANLIB
 AM_PROG_AR
+PKG_PROG_PKG_CONFIG
 
 # --------------------------------------------------------------------------
 #  Options
