@@ -877,6 +877,7 @@ NIU
 
 */
 // Message	VCR003	Function 'Set_Alternate_Path' can be made static		C:\STU\devel\ReMoM\MoX\src\LBX_Load.c	674		
+// static void Set_Alternate_Path(char * alternate)
 static void Set_Alternate_Path(char * alternate)
 {
     strcpy(secondary_drive_path, alternate);

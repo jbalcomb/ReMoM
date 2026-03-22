@@ -71,6 +71,7 @@ void Clipped_Multi_Colored_Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, 
 
 // WZD s14p10
 void Clipped_Line_Base(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t Patterned, uint8_t color, uint8_t colortbl[], int16_t colornum, int16_t colorpos);
+// static void ui_draw_line_limit_do(int x0, int y0, int x1, int y1, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos, int scale)
 static void ui_draw_line_limit_do(int x1, int y1, int x2, int y2, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos);
 
 // WZD s14p11

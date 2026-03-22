@@ -432,17 +432,17 @@ NOTE(JimBalcomb,20260302): These have been deprecated, do not use them anymore -
     sets the uint16_t 'Terrain Type' in _world_maps
 */
 /* DELETEME */  #define SET_TERRAIN_TYPE(_wx_, _wy_, _wp_, _terrain_type_)  ( SET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2)), (_terrain_type_)) )
-// #define SET_TERRAIN_TYPESET_2B_OFS(_ofs_,_val_) (                           \
-// *( (uint8_t *)(_world_maps)                                                 \
-//     +                                                                       \
-//     (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2)) \
-//     + 0                                                                     \
-// ) = ( (uint8_t)((_val_)     ) ),                                            \
-// *( (uint8_t *)(_world_maps)                                                 \
-//     +                                                                       \
-//     (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2)) \
-//     + 1                                                                     \
-// ) = ( (uint8_t)((_val_) >> 8) )                                             \
+// #define SET_TERRAIN_TYPESET_2B_OFS(_ofs_,_val_) (                           CONTINUATIONSLASH
+// *( (uint8_t *)(_world_maps)                                                 CONTINUATIONSLASH
+//     +                                                                       CONTINUATIONSLASH
+//     (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2)) CONTINUATIONSLASH
+//     + 0                                                                     CONTINUATIONSLASH
+// ) = ( (uint8_t)((_val_)     ) ),                                            CONTINUATIONSLASH
+// *( (uint8_t *)(_world_maps)                                                 CONTINUATIONSLASH
+//     +                                                                       CONTINUATIONSLASH
+//     (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2)) CONTINUATIONSLASH
+//     + 1                                                                     CONTINUATIONSLASH
+// ) = ( (uint8_t)((_val_) >> 8) )                                             CONTINUATIONSLASH
 // )
 
 

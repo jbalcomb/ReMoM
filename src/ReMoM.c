@@ -13,9 +13,10 @@
 // #define STU_TRACE
 // #endif
 
-#ifndef _WINDLL
-#define HAVE_LIBC
-#endif
+/* CLAUDE */  /* removed — SDL's own headers define HAVE_LIBC correctly */
+/* #ifndef _WINDLL */
+/* #define HAVE_LIBC */
+/* #endif */
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN

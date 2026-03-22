@@ -10,6 +10,8 @@ MoO2
 #ifndef CAPTURE_H
 #define CAPTURE_H
 
+#include "MOX_TYPE.h"
+
 
 
 #ifdef __cplusplus

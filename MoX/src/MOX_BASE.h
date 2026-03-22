@@ -3,16 +3,6 @@
 
 
 
-#ifdef _WIN32
-#pragma warning (disable : 4101)  // Warning C4101 unreferenced local variable
-// #pragma warning (disable : 4701)
-#pragma warning (disable : 4703)  // Error C4703 potentially uninitialized local pointer variable used
-#pragma warning (disable : 6001)  // Warning C6001 Using uninitialized memory '...'.
-#pragma warning(disable : 28183)  // Warning C28183 '...' could be '0', and is a copy of the value found in '...':  this does not adhere to the specification for the function 'fread'.
-#endif
-
-
-
 /*
     FLIC_Draw / animate
 */

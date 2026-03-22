@@ -341,7 +341,6 @@ void Clipped_Line_Base(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t P
     }
 
 }
-
 // static void ui_draw_line_limit_do(int x0, int y0, int x1, int y1, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos, int scale)
 static void ui_draw_line_limit_do(int x1, int y1, int x2, int y2, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos)
 {
