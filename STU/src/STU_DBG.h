@@ -11,10 +11,12 @@ Presently, it seems easier to me to just include STU_DBG.h everywhere and have i
 */
 
 #ifndef STU_DEBUG
+/* emptiness, when debugging is not enabled */
 #define STU_DEBUG_BREAK()  ( (void)0 )
 /* emptiness, when debugging is not enabled */
-#define DLOG
-/* emptiness, when debugging is not enabled */
+// #define DLOG
+#define DLOG(_str_) ((void)sizeof((_str_), 0))
+// This trick leverages the sizeof operator, which does not evaluate its operand. The comma operator (x), 0 evaluates x and discards its value, but since it's inside sizeof, the expression remains unevaluated at runtime.
 #else
 
 #include "../../ext/stu_compat.h"

@@ -6,7 +6,7 @@ bin_PROGRAMS = ReMoMber
 #  Compiler flags
 # =========================================================================
 
-AM_CFLAGS = -Wall -Wno-array-bounds -Wno-maybe-uninitialized -Wno-missing-braces -Wno-sequence-point -Wno-unknown-pragmas -Wno-unused-function -Wno-unused-label  -Wno-unused-result -Wno-unused-but-set-variable -Wno-unused-variable
+AM_CFLAGS = -Wall -Wno-array-bounds -Wno-maybe-uninitialized -Wno-missing-braces -Wno-sequence-point -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label  -Wno-unused-result -Wno-unused-variable
 
 # =========================================================================
 #  Convenience libraries (noinst = not installed, just linked into the exe)
