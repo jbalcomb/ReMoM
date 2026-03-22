@@ -60,7 +60,7 @@ void Init_Drivers(int input_type, int sound_channels, char * font_file, int midi
         Load_Font_File(DEFAULT_FONT_FILE);
 
         // Audio_Init__STUB(0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1);  // IDGI two parameters too many
-        Audio_Init__WIP(0, 0, -1, -1, -1, -1, -1, -1, -1);
+        // TODO  Audio_Init__WIP(0, 0, -1, -1, -1, -1, -1, -1, -1);
 
         Init_Mouse_Keyboard(1);  // ¿ 1 is what now ?
 
@@ -70,14 +70,13 @@ void Init_Drivers(int input_type, int sound_channels, char * font_file, int midi
 
         Load_Font_File(font_file);
 
-        Audio_Init__WIP(midi_driver, sound_channels, MIDI_IO, MIDI_IRQ, MIDI_DMA, digi_driver, Digi_IO, Digi_IRQ, Digi_DMA);
+        // TODO  Audio_Init__WIP(midi_driver, sound_channels, MIDI_IO, MIDI_IRQ, MIDI_DMA, digi_driver, Digi_IO, Digi_IRQ, Digi_DMA);
 
         Init_Mouse_Keyboard(input_type);
 
     }
 
-    // MAP_TRACE
-    // Randomize();
+    Randomize();
 
     Set_Page_Off();  // initializes `current_video_page`
 
