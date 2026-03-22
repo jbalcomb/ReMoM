@@ -4,7 +4,7 @@
 #include "../../MoX/src/MOX_TYPE.h"
 
 #ifndef NO_SOUND_LIBRARY
-#include <SDL3_mixer/SDL_mixer.h>
+#include <SDL_mixer.h>
 #endif
 
 

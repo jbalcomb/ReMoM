@@ -3,7 +3,7 @@
 
 #include "../../MoX/src/MOX_TYPE.h"
 
-#include <SDL3/SDL.h>
+#include <SDL.h>
 
 
 
