@@ -11,7 +11,7 @@
 
 #include <assert.h>
 #include <math.h>       /* sqrt() */
-#include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
+#include <stdio.h>      /* FILE; fclose(), fread(), fseek(); */
 #include <stdlib.h>     /* abs(); stu_itoa(); */
 #include <string.h>     /* memset(), strcat(), strcpy(); */
 

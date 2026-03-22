@@ -22,7 +22,7 @@ input?
 void dbg_prn(const char * fmt, ...);  // HACK needs to not be behind #ifdef STU_DEBUG
 #include "STU_WAV.h"
 
-#include <stdio.h>      /* FILE; fclose(), fopen(), fread(), frite(), fseek(); */
+#include <stdio.h>      /* FILE; fclose(), fread(), frite(), fseek(); */
 
 /*
     LBX File Name

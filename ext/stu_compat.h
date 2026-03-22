@@ -371,10 +371,15 @@ int stu_getch(void)
  * stu_getcwd - portable get current working directory
  * -------------------------------------------------------------------------- */
 #if STU_PLATFORM_WINDOWS
-#include <direct.h>
+#include <windows.h>
 char *stu_getcwd(char *buf, size_t size)
 {
-    return _getcwd(buf, (int)size);
+    DWORD result = GetCurrentDirectoryA((DWORD)size, buf);
+    if (result == 0 || result >= (DWORD)size)
+    {
+        return NULL;
+    }
+    return buf;
 }
 #else
 #include <unistd.h>

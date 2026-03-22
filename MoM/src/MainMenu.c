@@ -144,7 +144,7 @@ void Main_Menu_Screen_Control(void)
     //     Exit_With_Message(cnst_ConfigErr);
     // }               
 
-    // file = fopen(CONFIG_MOM, "RB");
+    // file = stu_fopen_ci(CONFIG_MOM, "RB");
     // fread(&config_mom, 18, 1, file);
     // fclose(file);
 

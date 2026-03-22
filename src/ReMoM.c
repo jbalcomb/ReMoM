@@ -97,6 +97,42 @@ void Startup_Platform(void);
 void Shudown_Platform(void);
 
 
+/* CLAUDE */
+/**
+ * Print and log the current working directory.
+ */
+static void Debug_Print_Working_Directory(void)
+{
+    char working_directory[4096];
+    const char *platform_name;
+
+#if defined(_WIN32)
+    platform_name = "Win32";
+#elif defined(__APPLE__)
+    platform_name = "macOS";
+#elif defined(__linux__)
+    platform_name = "Linux";
+#else
+    platform_name = "Unknown";
+#endif
+
+    if (stu_getcwd(working_directory, sizeof(working_directory)) != NULL)
+    {
+        fprintf(stderr, "CWD (%s): %s\n", platform_name, working_directory);
+#ifdef STU_DEBUG
+        dbg_prn("CWD (%s): %s\n", platform_name, working_directory);
+#endif
+    }
+    else
+    {
+        fprintf(stderr, "ERROR: stu_getcwd() failed\n");
+#ifdef STU_DEBUG
+        dbg_prn("ERROR: stu_getcwd() failed\n");
+#endif
+    }
+}
+
+
 
 // #define MOM_FONT_FILE "FONTS.LBX"
 // #define GAME_FONT_FILE MOM_FONT_FILE
@@ -212,6 +248,8 @@ int main(int argc, char * argv[])
     }
 #endif
 #endif
+
+    Debug_Print_Working_Directory();
 
     Startup_Platform();
 
@@ -352,7 +390,7 @@ int MOM_main(int argc, char** argv)
     }
     else
     {
-        file_handle = fopen(str_CONFIG_MOM, str_RB);
+        file_handle = stu_fopen_ci(str_CONFIG_MOM, str_RB);
         fread(&config_mom, sizeof(struct s_CONFIG_MOM_18), 1, file_handle);
         fclose(file_handle);
     }
@@ -547,9 +585,8 @@ int MOM_main(int argc, char** argv)
             {
                 magic_set.Have_Save[(itr_savegams - 1)] = ST_FALSE;
                 strcpy(magic_set.Save_Names[(itr_savegams - 1)], empty_string__MAIN);
-                file_handle = fopen(str_MAGIC_SET, str_WB);
-                // TODO  fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_handle);
-                fwrite(&magic_set, 466, 1, file_handle);
+                file_handle = stu_fopen_ci(str_MAGIC_SET, str_WB);
+                fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_handle);
                 fclose(file_handle);
             }
         }

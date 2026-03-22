@@ -228,7 +228,7 @@ C:\STU\devel\Audio Interface Library (AIL)\AIL2\A214_D3\MIXDEMO.C
 */
 // C:\STU\devel\Audio Interface Library (AIL)\AIL2\A214_D3\MIXDEMO.C
 // C:\STU\devel\Audio Interface Library (AIL)\AIL2\A214_D3\XPLAY.C
-#include <stdio.h>      /* FILE; fclose(), fopen(), fread(), frite(), fseek(); */
+#include <stdio.h>      /* FILE; fclose(), fread(), frite(), fseek(); */
 /***************************************************************/
 
 //
