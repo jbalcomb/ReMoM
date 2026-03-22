@@ -114,7 +114,8 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
 // LBX_GetEntryData()
 
 // WZD s10p14
-static void Set_Alternate_Path(char * alternate);
+/* CLAUDE */  /* static function — declaration belongs in LBX_Load.c, not the header */
+/* static void Set_Alternate_Path(char * alternate); */
 
 // WZD s10p15
 void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16_t pages);

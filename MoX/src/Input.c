@@ -1941,13 +1941,13 @@ int16_t Wait_For_Input(void)
 */
 int16_t Process_Direction_Key__STUB(int16_t dir_key)
 {
-    int16_t Y_Direction;
-    int16_t X_Direction;
-    int16_t Mouse_Cursor_At;
-    int16_t Mouse_Y;
-    int16_t Mouse_X;
-    int16_t field_num;  // _SI_
-    int16_t itr;  // _DI_
+    int16_t Y_Direction = 0;
+    int16_t X_Direction = 0;
+    int16_t Mouse_Cursor_At = 0;
+    int16_t Mouse_Y = 0;
+    int16_t Mouse_X = 0;
+    int16_t field_num = 0;
+    int16_t itr = 0;
 
     switch(dir_key)
     {

@@ -74,7 +74,6 @@ uint8_t Interpret_Keyboard_Input(int16_t * field_num)
     int16_t itr_fields_count;
     int16_t dirkey_field_idx;
     int16_t _SI_field_idx;
-    int16_t itr;
 
     character = Read_Key();
 

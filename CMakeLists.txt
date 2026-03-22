@@ -109,6 +109,13 @@ if(CMAKE_COMPILER_IS_CLANG)
 endif()
 if(CMAKE_COMPILER_IS_GNUCC)
     add_compile_options(
+        "-Wno-array-bounds="
+        "-Wno-maybe-uninitialized"
+        "-Wno-missing-braces"
+        "-Wno-sequence-point"
+        "-Wno-unknown-pragmas"
+        "-Wno-unused-label"
+        "-Wno-unused-but-set-variable"
         "-Wno-unsequenced"
     )
 endif()

@@ -6,7 +6,7 @@ bin_PROGRAMS = ReMoMber
 #  Compiler flags
 # =========================================================================
 
-AM_CFLAGS = -Wall
+AM_CFLAGS = -Wall -Wno-array-bounds= -Wno-maybe-uninitialized -Wno-missing-braces -Wno-sequence-point -Wno-unknown-pragmas -Wno-unused-label -Wno-unused-but-set-variable -Wno-unsequenced
 
 # =========================================================================
 #  Convenience libraries (noinst = not installed, just linked into the exe)
@@ -16,7 +16,7 @@ noinst_LIBRARIES = \
     libstu.a \
     libplatform.a \
     libmox.a \
-    libmomlib.a
+    libmom.a
 
 # -------------------------------------------------------------------------
 #  STU
@@ -151,7 +151,7 @@ libmox_a_CFLAGS = $(AM_CFLAGS) \
 #  MoM
 # -------------------------------------------------------------------------
 
-libmomlib_a_SOURCES = \
+libmom_a_SOURCES = \
     MoM/src/AdvsrScr.c \
     MoM/src/AIBUILD.c \
     MoM/src/AIDATA.c \
@@ -228,7 +228,7 @@ libmomlib_a_SOURCES = \
     MoM/src/WZD_o143.c \
     MoM/src/WZD_o146.c
 
-libmomlib_a_CFLAGS = $(AM_CFLAGS) \
+libmom_a_CFLAGS = $(AM_CFLAGS) \
     $(SDL_CFLAGS) \
     -I$(srcdir)/MoM/src \
     -I$(srcdir)/MoX/src \
@@ -251,7 +251,7 @@ ReMoMber_CFLAGS = $(AM_CFLAGS) \
     -I$(srcdir)/src
 
 ReMoMber_LDADD = \
-    libmomlib.a \
+    libmom.a \
     libmox.a \
     libplatform.a \
     libstu.a \
