@@ -74,10 +74,18 @@
 #include "../platform/include/Platform_Replay.h"
 
 // #define SDL_MAIN_HANDLED
+#ifdef USE_SDL3
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #ifndef NO_SOUND_LIBRARY
 #include <SDL3_mixer/SDL_mixer.h>
+#endif
+#else
+#include <SDL.h>
+#include <SDL_main.h>
+#ifndef NO_SOUND_LIBRARY
+#include <SDL_mixer.h>
+#endif
 #endif
 
 /* <direct.h> replaced by stu_compat.h */

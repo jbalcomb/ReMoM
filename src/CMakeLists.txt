@@ -4,12 +4,18 @@ add_executable(ReMoMber ReMoM.c)
 # set_target_properties(sdl2_ReMoM PROPERTIES LINKER_LANGUAGE C)
 set_target_properties(ReMoMber PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
+if(USE_SDL3)
+    set(_sdl_main_lib SDL3::SDL3)
+else()
+    set(_sdl_main_lib SDL2::SDL2)
+endif()
+
 target_link_libraries(ReMoMber PUBLIC
     momlib
     MOX
     STU
     Platform
-    SDL3::SDL3
+    ${_sdl_main_lib}
 )
 
 target_include_directories(ReMoMber PUBLIC
