@@ -387,6 +387,7 @@ int16_t Unit_Has_AirTravel(int16_t unit_idx)
 }
 
 // WZD o71p04
+// TODO  DEDU  warning: bitwise comparrison always evaluates to false
 int16_t Unit_Has_WindWalking(int16_t unit_idx)
 {
     int16_t has_windwalking;
@@ -394,9 +395,9 @@ int16_t Unit_Has_WindWalking(int16_t unit_idx)
     has_windwalking = ST_FALSE;
 
     if(
-        ((_UNITS[unit_idx].enchantments & UE_WINDWALKING) == ST_TRUE)
+        ((_UNITS[unit_idx].enchantments & UE_WINDWALKING) != 0)
         ||
-        ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_WINDWALKING) == ST_TRUE)
+        ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_WINDWALKING) != 0)
     )
     {
         has_windwalking = ST_TRUE;
