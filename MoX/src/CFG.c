@@ -11,6 +11,8 @@ MoO2
 SEEALSO: MoX-CONFIG_MOM.md
 */
 
+#include "../../ext/stu_compat.h"
+
 #include <stdio.h>
 
 #include "CFG.h"
@@ -39,8 +41,8 @@ void Load_CONFIG_MOM(void)
 {
     FILE * file_pointer;
 
-    file_pointer = fopen("CONFIG.MOM", "rb");
-
+    file_pointer = stu_fopen_ci("CONFIG.MOM", "rb");
+    
     fread(&config_mom, 18, 1, file_pointer);
 
     fclose(file_pointer);
@@ -51,7 +53,7 @@ void Load_CONFIG_MOM(void)
 void Read_CONFIG_MOM(void)
 {
     FILE * file_pointer;
-    file_pointer = fopen("CONFIG.MOM", "rb");
+    file_pointer = stu_fopen_ci("CONFIG.MOM", "rb");
     fread(&_config_mom, 20, 1, file_pointer);
     fclose(file_pointer);
 }
@@ -60,7 +62,7 @@ void Read_CONFIG_MOM(void)
 void Write_CONFIG_MOM(void)
 {
     FILE * file_pointer;
-    file_pointer = fopen("CONFIG.MOM", "wb");
+    file_pointer = stu_fopen_ci("CONFIG.MOM", "wb");
     fwrite(&_config_mom, 20, 1, file_pointer);
     fclose(file_pointer);
 }

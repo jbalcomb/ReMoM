@@ -25,6 +25,8 @@
 
 #include "../../STU/src/STU_DBG.h"
 
+#include "../../ext/stu_compat.h"
+
 #include "../../MoX/src/angle.h"
 #include "../../MoX/src/EXIT.h"
 #include "../../MoX/src/paragrph.h"
@@ -28297,7 +28299,7 @@ void Combat_Cache_Read(void)
     }
 
     // filehandle = gfopen(str_COMBAT_TMP__ovr154, str_RB__ovr154);
-    file_pointer = fopen(str_COMBAT_TMP__ovr154, str_RB__ovr154);
+    file_pointer = stu_fopen_ci(str_COMBAT_TMP__ovr154, str_RB__ovr154);
 
     // gfread(0, World_Data, (world_data_size_PR * 16), 1, file_handle);
     // fread(World_Data, (world_data_size_PR * 16), 1, file_pointer);
@@ -28351,7 +28353,7 @@ void Combat_Cache_Write(void)
     }
 
     // filehandle = gfopen(str_COMBAT_TMP__ovr154, str_WB__ovr154);
-    file_pointer = fopen(str_COMBAT_TMP__ovr154, str_WB__ovr154);
+    file_pointer = stu_fopen_ci(str_COMBAT_TMP__ovr154, str_WB__ovr154);
 
     // gfwrite(0, World_Data, (world_data_size_PR * 16), 1, file_handle);
     // fwrite(World_Data, (world_data_size_PR * 16), 1, file_pointer);

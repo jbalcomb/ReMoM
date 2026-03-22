@@ -17,6 +17,8 @@ MoO2  Module: dos
 
 */
 
+#include "../../ext/stu_compat.h"
+
 #include "Mouse.h"
 #include "MOX_BASE.h"
 #include "MOX_TYPE.h"
@@ -189,7 +191,7 @@ int32_t LOF(char * file_name)
     signed int long position = 0;
     uint32_t size = 0;
     Save_Mouse_State();
-    file_pointer = fopen(file_name, "rb");
+    file_pointer = stu_fopen_ci(file_name, "rb");
     if(
         (file_pointer != NULL)
         &&
@@ -227,7 +229,7 @@ int16_t DIR(char * match_string, char * found_file)
     int16_t st_status = 0;
     FILE * file_pointer = 0;
     Save_Mouse_State();
-    file_pointer = fopen(match_string, "rb");
+    file_pointer = stu_fopen_ci(match_string, "rb");
     if(file_pointer == NULL)
     {
         found_file[0] = '\0';

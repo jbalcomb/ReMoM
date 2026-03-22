@@ -7,6 +7,9 @@ MoO2
     Module: fields
 
 */
+
+#include "../../ext/stu_compat.h"
+
 #include "DOS.h"
 #include "MOX_DEF.h"
 #include "MOX_TYPE.h"
@@ -16,8 +19,6 @@ MoO2
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "../../ext/stu_compat.h"
 
 #include "capture.h"
 
@@ -167,7 +168,7 @@ void Screen_Flic_Capture__STUB(void)
         strcat(file_name, cnst_Scrdmp_Ext);  // ".FLI"
     }
 
-    file_pointer = fopen(file_name, cnst_WB7);
+    file_pointer = stu_fopen_ci(file_name, cnst_WB7);
 
     
 

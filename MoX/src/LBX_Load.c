@@ -229,7 +229,7 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
         strcpy(lbx_file_name, lbx_name);
         strcat(lbx_file_name, ".LBX");
 
-        lbxload_fptr = fopen(lbx_file_name, "rb");
+        /* CLAUDE */ lbxload_fptr = stu_fopen_ci(lbx_file_name, "rb");
 
         if(NULL == lbxload_fptr)
         {
@@ -242,7 +242,7 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
             // {
             //     strcpy(full_file_path, secondary_drive_path);
             //     strcat(full_file_path, lbx_file_name);
-            //     lbxload_fptr = fopen(full_file_path, "rb");
+            //     lbxload_fptr = stu_fopen_ci(full_file_path, "rb");
             //     if(NULL == lbxload_fptr)
             //     {
             //         Error_Handler(lbx_name, le_not_found, entry_num, ST_NULL);
@@ -441,7 +441,7 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
         strcpy(lbx_file_name, lbx_name);
         strcat(lbx_file_name, ".LBX");
 
-        lbxload_fptr = fopen(lbx_file_name, "rb");
+        /* CLAUDE */ lbxload_fptr = stu_fopen_ci(lbx_file_name, "rb");
 
         if(NULL == lbxload_fptr)
         {
@@ -454,7 +454,7 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
             // {
             //     strcpy(full_file_path, secondary_drive_path);
             //     strcat(full_file_path, lbx_file_name);
-            //     lbxload_fptr = fopen(full_file_path, "rb");
+            //     lbxload_fptr = stu_fopen_ci(full_file_path, "rb");
             //     if(NULL == lbxload_fptr)
             //     {
             //         Error_Handler(lbx_name, le_not_found, entry_num, ST_NULL);
@@ -705,7 +705,7 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
         strcpy(lbx_file_name, lbx_name);
         strcat(lbx_file_name, ".LBX");
 
-        lbxload_fptr = fopen(lbx_file_name, "rb");
+        /* CLAUDE */ lbxload_fptr = stu_fopen_ci(lbx_file_name, "rb");
 
         if(NULL == lbxload_fptr)
         {
@@ -717,7 +717,7 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
             {
                 strcpy(full_file_path, secondary_drive_path);
                 strcat(full_file_path, lbx_file_name);
-                lbxload_fptr = fopen(full_file_path, "rb");
+                /* CLAUDE */ lbxload_fptr = stu_fopen_ci(full_file_path, "rb");
                 if(NULL == lbxload_fptr)
                 {
                     Error_Handler(lbx_name, le_not_found, entry_num, ST_NULL);

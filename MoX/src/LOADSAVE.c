@@ -23,7 +23,7 @@
 #include <assert.h>     /* assert() */
 #include <math.h>       /* sqrt() */
 #include <stddef.h>     /* NULL */
-#include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
+#include <stdio.h>      /* FILE; fclose(), fread(), fseek(); */
 #include <stdlib.h>
 #include <string.h>     /* memset(), strcat(), strcpy(); */
 #include "LOADSAVE.h"
@@ -54,7 +54,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
         strcat(file_name,".GAM");
     }
 
-    file_pointer = fopen(file_name, "wb");
+    file_pointer = stu_fopen_ci(file_name, "wb");
     assert(file_pointer != NULL);
 
     file_pointer_position = ftell(file_pointer);
@@ -193,7 +193,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
         if(save_gam_idx < 8)
         {
             magic_set.Have_Save[save_gam_idx] = ST_TRUE;
-            file_pointer = fopen("MAGIC.SET", "wb");
+            file_pointer = stu_fopen_ci("MAGIC.SET", "wb");
             fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
             fclose(file_pointer);
         }
@@ -235,7 +235,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 
 
     // TODO  gfile_pointer = gfopen(file_name, "rb");
-    file_pointer = fopen(file_name, "rb");
+    file_pointer = stu_fopen_ci(file_name, "rb");
     assert(file_pointer != NULL);
 
     file_pointer_position = ftell(file_pointer);
@@ -385,7 +385,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 void Read_SAVE_GAM(void)
 {
     FILE * file_pointer;
-    file_pointer = fopen("SAVETEST.GAM", "rb");
+    file_pointer = stu_fopen_ci("SAVETEST.GAM", "rb");
     fread(&_save_gam, 123300, 1, file_pointer);
     fclose(file_pointer);
 }
@@ -393,7 +393,7 @@ void Read_SAVE_GAM(void)
 void Write_SAVE_GAM(void)
 {
     FILE * file_pointer;
-    file_pointer = fopen("SAVETEST.GAM", "wb");
+    file_pointer = stu_fopen_ci("SAVETEST.GAM", "wb");
     fwrite(&_save_gam, 123300, 1, file_pointer);
     fclose(file_pointer);
 }

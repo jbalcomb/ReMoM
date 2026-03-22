@@ -34,7 +34,7 @@
 #include "Spellbook.h"
 
 #include <assert.h>
-#include <stdio.h>      /* FILE; fclose(), fopen(), fread(), frite(), fseek(); */
+#include <stdio.h>      /* FILE; fclose(), fread(), frite(), fseek(); */
 #include <string.h>
 
 #include "../../ext/stu_compat.h"
@@ -1700,7 +1700,7 @@ int16_t Newgame_Screen_0(void)
     else
     {
 
-        file_pointer = fopen(str_MAGIC_SET__ovr050, str_rb__ovr050);
+        file_pointer = stu_fopen_ci(str_MAGIC_SET__ovr050, str_rb__ovr050);
 
         fread(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
 
@@ -1802,7 +1802,7 @@ int16_t Newgame_Screen_0(void)
             DBG_Compare_MAGIC_SET(&magic_set_snapshot, &magic_set, "Newgame_Screen_0 before save");
 #endif
 
-            file_pointer = fopen(str_MAGIC_SET__ovr050, str_wb__ovr050);
+            file_pointer = stu_fopen_ci(str_MAGIC_SET__ovr050, str_wb__ovr050);
 
             fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
 

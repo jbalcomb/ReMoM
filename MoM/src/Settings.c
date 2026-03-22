@@ -33,7 +33,7 @@ MoO2
 #include "MOM_SCR.h"
 #include "Spellbook.h"
 
-#include <stdio.h>      /* FILE; fclose(), fopen(), fread(), frite(), fseek(); */
+#include <stdio.h>      /* FILE; fclose(), fread(), frite(), fseek(); */
 #include <string.h>     /* memcpy(), memset(), strcat(), strcpy(); */
 
 #include "Settings.h"
@@ -211,16 +211,16 @@ int16_t load_screen_fade_in_flag;  // ; set to ST_FALSE on entering the settings
 void Read_MAGIC_SET(void)
 {
     FILE * file_pointer;
-    file_pointer = fopen("MAGIC.SET", "rb");
-    fread(&_magic_set, 466, 1, file_pointer);
+    file_pointer = stu_fopen_ci("MAGIC.SET", "rb");
+    fread(&_magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
     fclose(file_pointer);
 }
 
 void Write_MAGIC_SET(void)
 {
     FILE * file_pointer;
-    file_pointer = fopen("MAGIC.SET", "wb");
-    fwrite(&_magic_set, 466, 1, file_pointer);
+    file_pointer = stu_fopen_ci("MAGIC.SET", "wb");
+    fwrite(&_magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
     fclose(file_pointer);
 }
 
@@ -233,7 +233,7 @@ void Write_MAGIC_SET(void)
 // WZD o125p01
 void Settings_Screen(void)
 {
-    char found_file[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char found_file[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Local_Settings_Tops[13] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Option_Control_Indices[19] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     FILE * file_pointer = 0;
@@ -241,19 +241,10 @@ void Settings_Screen(void)
     int16_t hotkey_ESC = 0;
     int16_t input_field_idx = 0;
     int16_t leave_screen = 0;
-    int16_t itr = 0;  // _SI_
-    int16_t row = 0;  // _DI_
+    int16_t itr = 0;
+    int16_t row = 0;
 
-// TODO  lea     ax, [bp+Local_Settings_Tops]
-// TODO  push    ss
-// TODO  push    ax                              ; Dest_Struct
-// TODO  mov     ax, offset TBL_Settings_Tops
-// TODO  push    ds
-// TODO  push    ax                              ; Src_Struct
-// TODO  mov     cx, 26
-// TODO  call    SCOPY@
     memcpy(Local_Settings_Tops, TBL_Settings_Tops, 26);
-
 
     // LOAD.LBX, 011  SETTING2    Settings Backgrnd
     loadsave_background = LBX_Reload(load_lbx_file__ovr125, 11, _screen_seg);
@@ -284,19 +275,16 @@ void Settings_Screen(void)
         IMG_GUI_ChkBoxDn[itr] = LBX_Reload_Next(load_lbx_file__ovr125, (19 + itr), _screen_seg);
     }
 
-
     if(DIR(settings_file__ovr125, found_file) == ST_FAILURE)  // "MAGIC.SET"
     {
         Set_Default_Game_Settings();
     }
     else
     {
-        file_pointer = fopen(settings_file__ovr125, str_RB__ovr125);  // "MAGIC.SET", "rb"
-        // TODO  fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_handle);
-        fwrite(&magic_set, 466, 1, file_pointer);
+        file_pointer = stu_fopen_ci(settings_file__ovr125, str_RB__ovr125);  // "MAGIC.SET", "rb"
+        fread(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
         fclose(file_pointer);
     }
-
 
     magic_set_ptr = (int16_t *)&magic_set;
 
@@ -367,8 +355,8 @@ void Settings_Screen(void)
 
         if(input_field_idx == loadsave_ok_button)
         {
-            file_pointer = fopen(settings_file__ovr125, str_WB__ovr125);  // "MAGIC.SET", "wb"
-            fwrite(&magic_set, 466, 1, file_pointer);
+            file_pointer = stu_fopen_ci(settings_file__ovr125, str_WB__ovr125);  // "MAGIC.SET", "wb"
+            fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
             fclose(file_pointer);
             leave_screen = ST_TRUE;
         }
@@ -593,18 +581,18 @@ void Load_MAGIC_SET(void)
     if(
         (DIR("MAGIC.SET", found_file) == ST_FAILURE)
         ||
-        (LOF("MAGIC.SET") != 466)
+        (LOF("MAGIC.SET") != sizeof(struct s_MAGIC_SET))
     )
     {
         // STU_DEBUG_BREAK();
         Set_Default_Game_Settings();
-        file_pointer = fopen("MAGIC.SET","wb");
-        fwrite(&magic_set, 466, 1, file_pointer);
+        file_pointer = stu_fopen_ci("MAGIC.SET","wb");
+        fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
     }
     else
     {
-        file_pointer = fopen("MAGIC.SET","rb");
-        fread(&magic_set, 466, 1, file_pointer);
+        file_pointer = stu_fopen_ci("MAGIC.SET","rb");
+        fread(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
     }
     fclose(file_pointer);
 
@@ -623,8 +611,8 @@ void Load_MAGIC_SET(void)
         }
     }
 
-    file_pointer = fopen("MAGIC.SET","wb");
-    fwrite(&magic_set, 466, 1, file_pointer);
+    file_pointer = stu_fopen_ci("MAGIC.SET","wb");
+    fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
     fclose(file_pointer);
 
 }

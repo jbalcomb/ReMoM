@@ -21,6 +21,7 @@
  *   - stu_putenv()        portable putenv()
  *   - stu_tzset()         portable tzset()
  *   - stu_fopen()         portable fopen() (MSVC fopen_s)
+ *   - stu_fopen_ci()      case-insensitive fopen() for asset files on case-sensitive filesystems
  *   - stu_localtime()     portable thread-safe localtime (MSVC localtime_s / POSIX localtime_r)
  *   - stu_sscanf()        portable sscanf() (suppresses MSVC C4996)
  *   - stu_strcpy()        portable strcpy() (suppresses MSVC C4996)
@@ -126,6 +127,9 @@ void stu_debugbreak(void);
 
 /* Open a file. Returns FILE* (NULL on failure). Drop-in replacement for fopen. */
 FILE *stu_fopen(const char *filename, const char *mode);
+
+/* Case-insensitive file open for asset files. On Windows (case-insensitive FS) this is just fopen. On Linux/macOS it scans the directory for a case-insensitive match if the exact name fails. */
+FILE *stu_fopen_ci(const char *filename, const char *mode);
 
 /* Thread-safe localtime. Fills result and returns it (NULL on failure). */
 struct tm *stu_localtime(const time_t *timer, struct tm *result);
@@ -434,6 +438,77 @@ FILE *stu_fopen(const char *filename, const char *mode)
     return fopen(filename, mode);
 #endif
 }
+
+/* --------------------------------------------------------------------------
+ * stu_fopen_ci - case-insensitive file open for asset files
+ *
+ * On Windows the filesystem is already case-insensitive, so this is just
+ * fopen.  On POSIX it tries the exact path first; if that fails it scans
+ * the containing directory for a case-insensitive filename match.
+ * -------------------------------------------------------------------------- */
+#if STU_PLATFORM_WINDOWS
+FILE *stu_fopen_ci(const char *filename, const char *mode)
+{
+    return stu_fopen(filename, mode);
+}
+#else
+#include <dirent.h>
+FILE *stu_fopen_ci(const char *filename, const char *mode)
+{
+    FILE *fp = fopen(filename, mode);
+    if (fp != NULL)
+    {
+        return fp;
+    }
+
+    /* Split filename into directory and basename. */
+    const char *last_slash = strrchr(filename, '/');
+    char dir_path[512];
+    const char *basename;
+    if (last_slash != NULL)
+    {
+        size_t dir_len = (size_t)(last_slash - filename);
+        if (dir_len >= sizeof(dir_path))
+        {
+            return NULL;
+        }
+        memcpy(dir_path, filename, dir_len);
+        dir_path[dir_len] = '\0';
+        basename = last_slash + 1;
+    }
+    else
+    {
+        dir_path[0] = '.';
+        dir_path[1] = '\0';
+        basename = filename;
+    }
+
+    DIR *dir = opendir(dir_path);
+    if (dir == NULL)
+    {
+        return NULL;
+    }
+
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL)
+    {
+        if (strcasecmp(entry->d_name, basename) == 0)
+        {
+            char matched_path[512];
+            int written = snprintf(matched_path, sizeof(matched_path), "%s/%s", dir_path, entry->d_name);
+            closedir(dir);
+            if (written < 0 || (size_t)written >= sizeof(matched_path))
+            {
+                return NULL;
+            }
+            return fopen(matched_path, mode);
+        }
+    }
+
+    closedir(dir);
+    return NULL;
+}
+#endif
 
 /* --------------------------------------------------------------------------
  * stu_localtime - portable thread-safe localtime

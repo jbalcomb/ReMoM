@@ -6,6 +6,8 @@
 
 */
 
+#include "../../ext/stu_compat.h"
+
 #include "GFILE.h"
 
 #include "MOX_TYPE.h"
@@ -42,7 +44,7 @@ FILE * _gf_fhandle;
 FILE * gfopen(const char * filename, const char * mode)
 {
     // TODO  if if if if read, write, read & write
-    _gf_fhandle = fopen(filename, mode);
+    _gf_fhandle = stu_fopen_ci(filename, mode);
     return _gf_fhandle;
 }
 
