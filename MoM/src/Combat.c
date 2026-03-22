@@ -20362,7 +20362,9 @@ Diplomatic_Value:
 */
 void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_list[], int16_t MsgType)
 {
-    int16_t Buildings_Lost[36] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    // GCC  warning: storing the address of local variable 'Buildings_Lost' in 'CMB_LostBuildings' [-Wdangling-pointer=]
+    // CMB_LostBuildings is read within the same function (the combat resolution / post-battle summary screen). So the pointer is still valid when it's actually used — it's not truly dangling at runtime, but GCC can't prove that.
+    static int16_t Buildings_Lost[36] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };  /* HACK  static moves this to the data segment */
     int16_t Rare_Foe_Defeated = 0;
     int16_t Diplomatic_Value = 0;
     int16_t Summoned_Unit = 0;
