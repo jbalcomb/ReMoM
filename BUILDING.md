@@ -70,17 +70,57 @@ On MSYS2 / MinGW64 you can optionally pass `--enable-static-sdl` to
 statically link SDL and eliminate DLL dependencies at runtime.
 
 
-## Windows (Visual Studio 2022)
+## Building (CMake)
 
-The CMake build defaults to SDL2. From the project root:
+CMake defaults to the SDL2 backend. The custom Find modules in `cmake/`
+handle locating SDL2 and SDL2_mixer automatically via pkg-config on
+Linux/macOS, or via cache variables on Windows.
+
+### Linux / macOS (CMake)
+
+After installing the SDL2 dev packages (see above), CMake finds them
+automatically through pkg-config:
 
 ```sh
 cmake -B build
+cmake --build build
+ctest --test-dir build --output-on-failure
+```
+
+To build without audio:
+
+```sh
+cmake -B build -DDISABLE_AUDIO=ON
+cmake --build build
+```
+
+### Windows (Visual Studio 2022)
+
+1. Download the SDL2 development package for Visual C++ from
+   https://github.com/libsdl-org/SDL/releases/tag/release-2.30.12
+   (the file named `SDL2-devel-2.30.12-VC.zip`).
+2. Extract it so the directory structure looks like
+   `C:\devellib\SDL2-2.30.12\include\`, `C:\devellib\SDL2-2.30.12\lib\x64\`, etc.
+3. Do the same for SDL2_mixer from
+   https://github.com/libsdl-org/SDL_mixer/releases/tag/release-2.8.1
+   (`SDL2_mixer-devel-2.8.1-VC.zip` → `C:\devellib\SDL2_mixer-2.8.1\`).
+
+Then from the project root:
+
+```sh
+cmake -B build -DSDL2_DIR=C:\devellib\SDL2-2.30.12 -DSDL2_MIXER_DIR=C:\devellib\SDL2_mixer-2.8.1
 cmake --build build --config Debug
 ```
 
-SDL2 DLLs from `C:\devellib\SDL2-*` are needed at runtime. To use SDL3
-instead, pass `-DUSE_SDL3=ON`.
+The default presets already point at `C:\devellib\SDL2-2.30.12` and
+`C:\devellib\SDL2_mixer-2.8.1`, so if you extract to those exact paths
+you can skip the `-D` flags and just use:
+
+```sh
+cmake --workflow --preset=MSVC-debug
+```
+
+To use SDL3 instead, pass `-DUSE_SDL3=ON` (see [SDL3 backend](#sdl3-backend)).
 
 
 ## Configure Options

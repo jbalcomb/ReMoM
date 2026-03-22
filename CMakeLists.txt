@@ -31,6 +31,9 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+# Custom Find modules for SDL2 (from chocolate-doom)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 # SDL backend selection: SDL2 (default) or SDL3 (opt-in with -DUSE_SDL3=ON)
 # https://wiki.libsdl.org/SDL3/README/cmake
 option(USE_SDL3 "Use SDL3 instead of SDL2 (default: SDL2)" OFF)
@@ -128,35 +131,30 @@ add_subdirectory(MoM)
 add_subdirectory(src)
 add_subdirectory(tests)
 
-# Installation rules for the executable (runtime components)
-# install(TARGETS MyExe RUNTIME DESTINATION bin)
-# install(TARGETS ReMoMber)
-install(
-    TARGETS ReMoMber
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-)
+# --- Installation / Packaging ---
 
-# Installation rules for libraries
+install(TARGETS ReMoMber RUNTIME DESTINATION .)
+
+# Bundle SDL DLLs on Windows so the player doesn't need them installed.
 if(WIN32)
-    install(FILES ${SDL3_DLL_FILE_PATH} DESTINATION ${CMAKE_INSTALL_BINDIR})
-    if(NOT DISABLE_AUDIO)
-        install(FILES ${SDL3_MIXER_DLL_FILE_PATH} DESTINATION ${CMAKE_INSTALL_BINDIR})
+    if(_sdl_imported_loc)
+        install(FILES "${_sdl_imported_loc}" DESTINATION .)
     endif()
-else()
-    # On Linux/Unix, shared libraries (e.g., .so files) are installed in the 'lib' directory.
-    # The LIBRARY DESTINATION handles this automatically for non-Windows platforms.
-    install(TARGETS ReMoMber 
-            LIBRARY DESTINATION lib 
-            ARCHIVE DESTINATION lib 
-            CONFIGURATIONS Release)
+    if(NOT DISABLE_AUDIO AND _mixer_imported_loc)
+        install(FILES "${_mixer_imported_loc}" DESTINATION .)
+    endif()
+endif()
+
+# Bundle game assets and the PLAYING readme.
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/assets/" DESTINATION .)
+if(EXISTS "${PROJECT_SOURCE_DIR}/PLAYING.md")
+    install(FILES "${PROJECT_SOURCE_DIR}/PLAYING.md" DESTINATION .)
 endif()
 
 include(InstallRequiredSystemLibraries)
-set(CPACK_PACKAGE_NAME "MoM v1.31 Reassembly")
-set(CPACK_PACKAGE_VERSION "0.0.1")
-set(CPACK_PACKAGE_FILE_NAME "ReMoMv131")
+set(CPACK_PACKAGE_NAME "ReMoM")
+set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
+set(CPACK_PACKAGE_FILE_NAME "ReMoM-${PROJECT_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
 set(CPACK_GENERATOR "ZIP")
-set(CPACK_SOURCE_GENERATOR "ZIP")
+set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON)
 include(CPack)

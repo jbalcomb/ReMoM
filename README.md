@@ -11,6 +11,17 @@ This particular project is hosted by the [#mom-reverse-engineering Channel](http
 Alpha Demo Video:
 https://youtu.be/d-PlvxV_Ek0
 
+## Download and Play
+
+Pre-built binaries are available on the [Releases](https://github.com/jbalcomb/ReMoM/releases) page.
+
+1. Download the ZIP (Windows) or AppImage (Linux) for your platform.
+2. Extract the ZIP (or make the AppImage executable with `chmod +x`).
+3. Copy your original **Master of Magic v1.31** game files (all `.LBX` files and `CONFIG.MOM`) into the same folder as the executable.
+4. Run `ReMoMber`.
+
+See [PLAYING.md](PLAYING.md) for more details and troubleshooting.
+
 ## How to Build
 
 ### Prerequisites

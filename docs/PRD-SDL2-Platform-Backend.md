@@ -245,7 +245,7 @@ This is the only game source file that references SDL directly (for `SDL_main`).
 | `platform/CMakeLists.txt` | Conditional sources, libs, includes, compile definitions |
 | `src/CMakeLists.txt` | Conditional SDL link target |
 | `src/ReMoM.c` | `#ifdef USE_SDL3` for SDL include path |
-| `BUILD.md` | SDL2 as default instructions, SDL3 as opt-in section |
+| `BUILDING.md` | SDL2 as default instructions, SDL3 as opt-in section |
 
 
 ## 8. Verification Criteria
@@ -269,4 +269,4 @@ This is the only game source file that references SDL directly (for `SDL_main`).
 | SDL2/SDL3 API drift as SDL3 matures | Backends are isolated; SDL3 changes only touch `platform/sdl3/` |
 | Behavioral differences between backends | Platform.h contract is the spec; replay system can cross-validate |
 | SDL2 deprecation (long-term) | SDL2 is in maintenance mode with a multi-year support window; SDL3 backend is ready when distros catch up |
-| Contributor confusion about which backend to use | BUILD.md defaults to SDL2; SDL3 is clearly marked opt-in |
+| Contributor confusion about which backend to use | BUILDING.md defaults to SDL2; SDL3 is clearly marked opt-in |
