@@ -29,44 +29,75 @@ AM_CONDITIONAL([USE_SDL3], [test "x$with_sdl3" = "xyes"])
 
 # --------------------------------------------------------------------------
 #  SDL detection (SDL2 default, SDL3 opt-in with --with-sdl3)
+#
+#  PKG_CHECK_MODULES must be at the top level (not nested inside AS_IF)
+#  because autoconf's M4 tracer cannot expand macros through shell quoting.
+#  We probe both SDL2 and SDL3, then pick the right result with shell code.
 # --------------------------------------------------------------------------
 
-AS_IF([test "x$with_sdl3" = "xyes"],
-    [# SDL3
-     PKG_CHECK_MODULES([SDL], [sdl3])
-     AS_IF([test "x$enable_static_sdl" = "xyes"],
-         [SDL_LIBS=$($PKG_CONFIG --static --libs sdl3)])
-     AC_DEFINE([USE_SDL3], [1], [Use SDL3 instead of SDL2])
-     sdl_backend="SDL3"
-    ],
-    [# SDL2 (default)
-     PKG_CHECK_MODULES([SDL], [sdl2])
-     AS_IF([test "x$enable_static_sdl" = "xyes"],
-         [SDL_LIBS=$($PKG_CONFIG --static --libs sdl2)])
-     sdl_backend="SDL2"
-    ])
+PKG_CHECK_MODULES([SDL2], [sdl2], [have_sdl2=yes], [have_sdl2=no])
+PKG_CHECK_MODULES([SDL3], [sdl3], [have_sdl3=yes], [have_sdl3=no])
+
+if test "x$with_sdl3" = "xyes"; then
+    if test "x$have_sdl3" != "xyes"; then
+        AC_MSG_ERROR([--with-sdl3 was given but sdl3 was not found by pkg-config])
+    fi
+    SDL_CFLAGS="$SDL3_CFLAGS"
+    SDL_LIBS="$SDL3_LIBS"
+    if test "x$enable_static_sdl" = "xyes"; then
+        SDL_LIBS=$($PKG_CONFIG --static --libs sdl3)
+    fi
+    AC_DEFINE([USE_SDL3], [1], [Use SDL3 instead of SDL2])
+    sdl_backend="SDL3"
+else
+    if test "x$have_sdl2" != "xyes"; then
+        AC_MSG_ERROR([sdl2 was not found by pkg-config (use --with-sdl3 for SDL3)])
+    fi
+    SDL_CFLAGS="$SDL2_CFLAGS"
+    SDL_LIBS="$SDL2_LIBS"
+    if test "x$enable_static_sdl" = "xyes"; then
+        SDL_LIBS=$($PKG_CONFIG --static --libs sdl2)
+    fi
+    sdl_backend="SDL2"
+fi
+AC_SUBST([SDL_CFLAGS])
+AC_SUBST([SDL_LIBS])
 
 # --------------------------------------------------------------------------
 #  SDL_mixer (optional, default=yes)
 # --------------------------------------------------------------------------
 
-AS_IF([test "x$enable_audio" = "xyes"],
-    [AS_IF([test "x$with_sdl3" = "xyes"],
-        [PKG_CHECK_MODULES([SDL_MIXER], [SDL3_mixer],
-            [have_mixer=yes],
-            [AC_MSG_WARN([SDL3_mixer not found -- building without audio])
-             have_mixer=no])],
-        [PKG_CHECK_MODULES([SDL_MIXER], [SDL2_mixer],
-            [have_mixer=yes],
-            [AC_MSG_WARN([SDL2_mixer not found -- building without audio])
-             have_mixer=no])])],
-    [have_mixer=no])
+PKG_CHECK_MODULES([SDL2_MIXER], [SDL2_mixer], [have_sdl2_mixer=yes], [have_sdl2_mixer=no])
+PKG_CHECK_MODULES([SDL3_MIXER], [SDL3_mixer], [have_sdl3_mixer=yes], [have_sdl3_mixer=no])
 
-AS_IF([test "x$have_mixer" = "xyes"],
-    [AS_IF([test "x$enable_static_sdl" = "xyes"],
-        [AS_IF([test "x$with_sdl3" = "xyes"],
-            [SDL_MIXER_LIBS=$($PKG_CONFIG --static --libs SDL3_mixer)],
-            [SDL_MIXER_LIBS=$($PKG_CONFIG --static --libs SDL2_mixer)])])])
+have_mixer=no
+if test "x$enable_audio" = "xyes"; then
+    if test "x$with_sdl3" = "xyes"; then
+        if test "x$have_sdl3_mixer" = "xyes"; then
+            have_mixer=yes
+            SDL_MIXER_CFLAGS="$SDL3_MIXER_CFLAGS"
+            SDL_MIXER_LIBS="$SDL3_MIXER_LIBS"
+            if test "x$enable_static_sdl" = "xyes"; then
+                SDL_MIXER_LIBS=$($PKG_CONFIG --static --libs SDL3_mixer)
+            fi
+        else
+            AC_MSG_WARN([SDL3_mixer not found -- building without audio])
+        fi
+    else
+        if test "x$have_sdl2_mixer" = "xyes"; then
+            have_mixer=yes
+            SDL_MIXER_CFLAGS="$SDL2_MIXER_CFLAGS"
+            SDL_MIXER_LIBS="$SDL2_MIXER_LIBS"
+            if test "x$enable_static_sdl" = "xyes"; then
+                SDL_MIXER_LIBS=$($PKG_CONFIG --static --libs SDL2_mixer)
+            fi
+        else
+            AC_MSG_WARN([SDL2_mixer not found -- building without audio])
+        fi
+    fi
+fi
+AC_SUBST([SDL_MIXER_CFLAGS])
+AC_SUBST([SDL_MIXER_LIBS])
 
 AM_CONDITIONAL([HAVE_AUDIO], [test "x$have_mixer" = "xyes"])
 AS_IF([test "x$have_mixer" != "xyes"],
@@ -99,6 +130,7 @@ echo ""
 echo "  CFLAGS:           $CFLAGS"
 echo "  SDL_CFLAGS:       $SDL_CFLAGS"
 echo "  SDL_LIBS:         $SDL_LIBS"
-AS_IF([test "x$have_mixer" = "xyes"],
-    [echo "  SDL_MIXER_LIBS:   $SDL_MIXER_LIBS"])
+if test "x$have_mixer" = "xyes"; then
+    echo "  SDL_MIXER_LIBS:   $SDL_MIXER_LIBS"
+fi
 echo ""
