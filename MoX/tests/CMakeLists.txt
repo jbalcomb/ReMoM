@@ -22,7 +22,6 @@ target_link_libraries(MOX_tests PUBLIC
     MOX
     STU
     Platform
-    SDL3::SDL3
 )
 
 gtest_discover_tests(MOX_tests)

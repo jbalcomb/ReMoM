@@ -1,3 +1,5 @@
+# gh workflow run release.yml -f tag=v0.0.1
+
 name: Release
 
 on:
@@ -21,7 +23,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Download SDL2 development libraries
         shell: pwsh
@@ -59,7 +61,7 @@ jobs:
         run: cmake --build build --config Release --target package
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ReMoM-windows-x64
           path: build/ReMoM-*.zip
@@ -70,7 +72,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install build tools
         run: |
@@ -147,7 +149,7 @@ jobs:
           ARCH=x86_64 ./appimagetool AppDir "ReMoM-${VERSION}-linux-x86_64.AppImage"
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ReMoM-linux-x86_64
           path: ReMoM-*.AppImage
@@ -171,6 +173,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          draft: true
           generate_release_notes: true
           files: |
             dist/ReMoM-windows-x64/*
