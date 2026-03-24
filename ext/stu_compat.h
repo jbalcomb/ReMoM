@@ -25,6 +25,7 @@
  *   - stu_localtime()     portable thread-safe localtime (MSVC localtime_s / POSIX localtime_r)
  *   - stu_sscanf()        portable sscanf() (suppresses MSVC C4996)
  *   - stu_strcpy()        portable strcpy() (suppresses MSVC C4996)
+ *   - stu_strcat()        portable strcat() (suppresses MSVC C4996)
  *   - stu_debugbreak()    portable debug breakpoint
  *
  * COMPATIBILITY MACROS:
@@ -139,6 +140,9 @@ int stu_sscanf(const char *str, const char *format, ...);
 
 /* Portable strcpy wrapper. Same interface as strcpy. */
 char *stu_strcpy(char *dst, const char *src);
+
+/* Portable strcat wrapper. Same interface as strcat. */
+char *stu_strcat(char *dst, const char *src);
 
 /* ============================================================================
  * Compatibility aliases (optional, define STU_COMPAT_ALIASES to enable)
@@ -557,6 +561,14 @@ int stu_sscanf(const char *str, const char *format, ...)
 char *stu_strcpy(char *dst, const char *src)
 {
     return strcpy(dst, src);
+}
+
+/* --------------------------------------------------------------------------
+ * stu_strcat - portable strcat wrapper
+ * -------------------------------------------------------------------------- */
+char *stu_strcat(char *dst, const char *src)
+{
+    return strcat(dst, src);
 }
 
 #endif /* STU_COMPAT_IMPLEMENTATION */

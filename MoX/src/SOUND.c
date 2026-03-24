@@ -9,6 +9,8 @@ MoO2
 
 #include "../../STU/src/STU_DBG.h"
 
+#include "../../ext/stu_compat.h"
+
 #include "AIL.h"
 #include "Allocate.h"
 #include "EXIT.h"
@@ -673,7 +675,7 @@ int16_t Audio_Init__WIP(int16_t midi_driver, int16_t sound_channels, int16_t MID
     // Get name of Global Timbre Library file by appending suffix 
     // supplied by XMIDI driver to GTL filename prefix
 
-    strcpy(GTL_filename, str_prefix_GTL_filename);
+    stu_strcpy(GTL_filename, str_prefix_GTL_filename);
 
     _fstrcpy(SND_tbank_suffix, SND_MIDI_drvr_desc->data_suffix);
 

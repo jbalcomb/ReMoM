@@ -3,6 +3,8 @@
 #include "../../STU/src/STU_DBG.h"    /* DLOG() */
 #endif
 
+#include "../../ext/stu_compat.h"
+
 #include "MOX_BASE.h"
 #include "MOX_DEF.h"
 #include "MOX_TYPE.h"
@@ -796,7 +798,7 @@ int16_t Add_Multi_Hot_Key_Field(char * string)
 {
     char hotkey_string[LEN_STRING];
     int16_t itr_string_length = 0;
-    strcpy(hotkey_string, string);
+    stu_strcpy(hotkey_string, string);
     while(hotkey_string[itr_string_length] != '\0' && itr_string_length < LEN_STRING) itr_string_length++;
     p_fields[fields_count].x1 = OFF_SCREEN;
     p_fields[fields_count].y1 = OFF_SCREEN;
@@ -1801,7 +1803,7 @@ void Draw_Fields()
                                 }
                                 if((p_fields[itr_fields_count].max_characters - 1) > itr_continuous_string)
                                 {
-                                    strcat(continuous_string, GUI_EditCursor);  // "_"
+                                    stu_strcat(continuous_string, GUI_EditCursor);  // "_"
                                 }
                             }
                             else

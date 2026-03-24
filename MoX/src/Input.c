@@ -5,6 +5,8 @@
         seg034
 */
 
+#include "../../ext/stu_compat.h"
+
 #include "Allocate.h"
 #include "Fields.h"
 #include "Fonts.h"
@@ -563,7 +565,7 @@ MoO2
                     {
                         if(input_field_active == ST_FALSE)
                         {
-                            strcpy(continuous_string, p_fields[alt_field_num].string);
+                            stu_strcpy(continuous_string, p_fields[alt_field_num].string);
                             GUI_EditAnimStage = 0;
                             GUI_EditCursorOn = ST_FALSE;
                             input_field_active = ST_TRUE;

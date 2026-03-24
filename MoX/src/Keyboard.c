@@ -1,6 +1,8 @@
 
 #include "../../STU/src/STU_DBG.h"
 
+#include "../../ext/stu_compat.h"
+
 #include "Fields.h"
 #include "MOX_DEF.h"
 #include "MOX_TYPE.h"
@@ -329,7 +331,7 @@ uint8_t Interpret_Keyboard_Input(int16_t * field_num)
 
         if(p_fields[_SI_field_idx].type == ft_MultiHotKey)
         {
-            strcpy(temp_string, p_fields[_SI_field_idx].string);
+            stu_strcpy(temp_string, p_fields[_SI_field_idx].string);
             p_fields[_SI_field_idx].string_pos++;
 #ifdef STU_DEBUG
             /* CLAUDE */  dbg_prn("IKI: MultiHotKey field=%d string=\"%s\" string_pos=%d/%d\n", _SI_field_idx, temp_string, p_fields[_SI_field_idx].string_pos, p_fields[_SI_field_idx].string_len);
