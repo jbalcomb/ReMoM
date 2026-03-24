@@ -355,11 +355,11 @@ void Get_Bitmap_Actual_Size(SAMB_ptr bitmap_addr, int16_t * x1, int16_t * y1, in
 */
 
 // WZD s31p01
-void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, byte_ptr frame_data);
+// static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, byte_ptr frame_data);
 
 // WZD s31p02
 // MoO2  Module:   Remap_Clipped_Draw_Animated_Sprite()
-void Clipped_Remap_Draw_Frame__NOP(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, byte_ptr frame_data);
+// static void Clipped_Remap_Draw_Frame__NOP(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, byte_ptr frame_data);
 
 
 /*

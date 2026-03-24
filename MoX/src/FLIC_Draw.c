@@ -15,6 +15,8 @@ MoO2 Module: shear
 
 */
 
+#include "../../ext/stu_compat.h"
+
 #include "file_ani.h"
 #include "Fonts.h"
 #include "Graphics.h"
@@ -28,6 +30,10 @@ MoO2 Module: shear
 #include <string.h>
 
 #include "FLIC_Draw.h"
+
+
+/* Forward Declare Static Functions, because out-of-order */
+static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, SAMB_ptr frame_data);
 
 
 
@@ -1562,21 +1568,20 @@ void Transparent_Color_Range(SAMB_ptr bitmap, int16_t color_start, int16_t color
 
 // WZD s30p30
 // MoO2  ¿ Fill_Bitmap_();  Fill_Bitmap_Unbounded_();  Fill();  Fill_Region_(); ?
-void Clear_Bitmap_Region(int16_t x1, int16_t y1, int16_t x2, int16_t y2, SAMB_ptr bitm)
+void Clear_Bitmap_Region(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr bitm)
 {
-    int16_t Draw_Height;
-    int16_t Draw_Width;
-    int16_t Draw_Start;
-    int16_t Skip_Height;
-    int16_t height;
-    int16_t width;
-    int16_t itr_draw_height;  // _CX_
-    int16_t itr_draw_width;  // _BX_
-    byte_ptr rvr_bitm;  // _ES_DI_
+    int16_t Draw_Height = 0;
+    int16_t Draw_Width = 0;
+    int16_t Draw_Start = 0;
+    int16_t Skip_Height = 0;
+    int16_t height = 0;
+    int16_t width = 0;
+    int16_t itr_draw_height = 0;
+    int16_t itr_draw_width = 0;
+    byte_ptr rvr_bitm = NULL;
 
     // width  = farpeekw(bitm, 0);
     // height = farpeekw(bitm, 2);
-
     width  = FLIC_GET_WIDTH(bitm);
     height = FLIC_GET_HEIGHT(bitm);
 
@@ -2336,7 +2341,7 @@ int16_t CS031_width;
 // WZD s31p01
 // MoO2  Module: animate  Clipped_Draw_Animated_Sprite()
 // 1oom  lbxgfx.c  lbxgfx_draw_pixels_offs_fmt0()
-void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, SAMB_ptr frame_data)
+static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, SAMB_ptr frame_data)
 {
     unsigned char * bbuff_pos = 0;
     unsigned char * bbuff = 0;
@@ -2808,7 +2813,7 @@ static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int width, int h, int s
 
 // WZD s31p02
 // MoO2  Module:   Remap_Clipped_Draw_Animated_Sprite()
-void Clipped_Remap_Draw_Frame__NOP(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, SAMB_ptr frame_data)
+static void Clipped_Remap_Draw_Frame__NOP(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, SAMB_ptr frame_data)
 {
 
     assert(0);
