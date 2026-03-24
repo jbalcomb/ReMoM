@@ -293,19 +293,19 @@ _unitlist_bottom_seg = LBX_Reload_Next(unitview_lbx_file, 29, GFX_Swap_Seg);
 */
 void Unit_List_Window_Draw(void)
 {
-    int16_t temp_unit_type;
-    int16_t stats[5];
-    int16_t stat_y;
-    int16_t stat_x;
-    SAMB_ptr stat_icon_pict;
-    uint8_t colors[6];
-    int16_t unit_type;
-    int16_t y_start;
-    int16_t x_start;
-    int16_t hero_unit_idx;
-    int16_t attack_type_icon;  // in Dasm, hero_unit_idx
-    int16_t itr;  // _SI_
-    int16_t itr_stats;  // _DI_
+    int16_t temp_unit_type = 0;
+    int16_t stats[5] = { 0, 0, 0, 0, 0 };
+    int16_t stat_y = 0;
+    int16_t stat_x = 0;
+    SAMB_ptr stat_icon_pict = NULL;
+    uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t unit_type = 0;
+    int16_t y_start = 0;
+    int16_t x_start = 0;
+    int16_t hero_unit_idx = 0;
+    int16_t attack_type_icon = 0;  // in Dasm, hero_unit_idx
+    int16_t itr = 0;
+    int16_t itr_stats = 0;
 
     if(m_ulw_unit_owner_idx == NEUTRAL_PLAYER_IDX)
     {
@@ -531,6 +531,12 @@ void Unit_List_Window_Draw(void)
                         Moves_Type_Icon(global_battle_unit->ranged_type, &attack_type_icon);
                         stat_icon_pict = unitview_stat_icons_seg[attack_type_icon];
                     } break;
+                    // Error	C4703	potentially uninitialized local pointer variable 'stat_icon_pict' used	003_MoM	C:\STU\devel\ReMoM\MoM\src\UnitList.c	536		
+                    default:
+                    {
+                        stat_icon_pict = NULL;
+                    }
+                    break;
                 }
 
                 FLIC_Draw((stat_x + 1), (stat_y - 2), stat_icon_pict);
