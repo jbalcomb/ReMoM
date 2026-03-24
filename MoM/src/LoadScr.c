@@ -244,14 +244,14 @@ void GAME_NextHumanStack(void)
     _combat_wx = ST_UNDEFINED;
     _combat_wy = ST_UNDEFINED;
 
-    Update_Scouted_And_Contacted__WIP();
+    Update_Scouted_And_Contacted();
 
     // ; does nothing and returns zero; at some point must have been some wizard data refresh function
     // DONT  o62p01_Empty_pFxn(_human_player_idx);
 
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
 
-    Update_Scouted_And_Contacted__WIP();
+    Update_Scouted_And_Contacted();
 
 }
 

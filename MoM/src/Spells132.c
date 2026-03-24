@@ -924,7 +924,7 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
 
                     _page_flip_effect = pfe_None;
 
-                    Update_Scouted_And_Contacted__WIP();
+                    Update_Scouted_And_Contacted();
 
                     Cast_Plane_Shift_Draw(scsv1, scsv2, _map_plane);
 
@@ -1056,7 +1056,7 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
 
                 Set_Map_Square_Explored_Flags_XYP(scsv1, scsv2, _map_plane);
 
-                Update_Scouted_And_Contacted__WIP();
+                Update_Scouted_And_Contacted();
 
                 Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
 

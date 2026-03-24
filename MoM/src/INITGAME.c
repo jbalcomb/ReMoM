@@ -45,21 +45,6 @@ void Draw_Building_The_Worlds(int16_t percent);
 
 
 // MGC o56p1
-// drake178: WIZ_SetProfiles()
-/*
-; creates the AI wizards and sets the known and
-; researchable spells for all players
-*/
-/*
-MoO2
-Init_New_Game_()
-|-> Init_Players_()
-So, ...
-~== Init_Computer_Players()
-
-OON XREF j_Init_Computer_Players() <-| Init_New_Game()
-
-*/
 /**
  * @brief Initializes AI player profiles and their starting spell libraries.
  *
@@ -85,8 +70,8 @@ OON XREF j_Init_Computer_Players() <-| Init_New_Game()
  */
 void Init_Computer_Players(void)
 {
-    int16_t itr_num_players = 0;  // _DI_
-    int16_t itr2 = 0;  // _SI_
+    int16_t itr_num_players = 0;
+    int16_t itr2 = 0;
 
     Init_Computer_Players_Wizard_Profile();
 
@@ -116,17 +101,9 @@ void Init_Computer_Players(void)
 
 
 // MGC o56p2
-// drake178: NEWG_FinalizeTables()
-/*
-finalizes the item, hero, and wizard record tables
-RE-CHECK: some fields are not yet known
-*/
-/*
-
-*/
 void NEWG_FinalizeTables__WIP(void)
 {
-    int16_t itr_players = 0;  // _SI_
+    int16_t itr_players = 0;
 
     Draw_Building_The_Worlds(100);
 
@@ -269,15 +246,12 @@ void Init_Diplomatic_Relations(void)
             }
 
             _players[itr_players1].Dipl.Visible_Rel[itr_players2] = (int8_t)IDK;
-
             _players[itr_players2].Dipl.Visible_Rel[itr_players1] = (int8_t)IDK;
 
             _players[itr_players1].Dipl.Default_Rel[itr_players2] = (int8_t)IDK;
-
             _players[itr_players2].Dipl.Default_Rel[itr_players1] = (int8_t)IDK;
 
             _players[itr_players1].peace_duration[itr_players2] = 0;
-
             _players[itr_players2].peace_duration[itr_players1] = 0;
 
         }
@@ -287,18 +261,9 @@ void Init_Diplomatic_Relations(void)
 
 
 // MGC o56p4
-// drake178: NEWG_ClearItems()
-/*
-clears the item table by setting the value of all
-records to 0, and clears the predefined item
-appearance table
-*/
-/*
-
-*/
 void Initialize_Items(void)
 {
-    int16_t itr = 0;  // _CX_
+    int16_t itr = 0;
     for(itr = 0; itr < 138; itr++)
     {
         _ITEMS[itr].cost = 0;
@@ -322,7 +287,7 @@ research cost into the record of every wizard
 */
 void Init_Summoning_Circle_And_Spell_Of_Mastery(void)
 {
-    int16_t itr_players = 0;  // _SI_
+    int16_t itr_players = 0;
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
@@ -681,8 +646,8 @@ the global enchantment arrays
 void Init_Players(void)
 {
     int16_t itr_heroes = 0;
-    int16_t itr_players = 0;  // _SI_
-    int16_t spell_skill = 0;  // _DI_
+    int16_t itr_players = 0;
+    int16_t spell_skill = 0;
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
@@ -1560,7 +1525,7 @@ void Init_Computer_Players_Spell_Library(void)
     int16_t sri = 0;
     int16_t sbr = 0;
     int16_t itr = 0;
-    int16_t IDK_itr_10 = 0;  // _DI_
+    int16_t IDK_itr_10 = 0;
 
     for(itr = 0; itr < _num_players; itr++)
     {

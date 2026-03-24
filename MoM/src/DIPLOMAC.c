@@ -5402,27 +5402,33 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 */
 
 // WZD o87p01
-// drake178: DIPL_ContactProgress()
 // MoO2  Module: DIPLOMAC  Determine_First_Contacts_()
-/*
-progress the human player's contact with other
-wizards - if progress is 0, but contacted is 1,
-set progress to 1 and relations to no treaty
-*/
-/*
-
-*/
+/**
+ * @brief Finalizes newly discovered wizard contacts for the human player.
+ *
+ * Scans every non-human player and looks for opponents that have already been
+ * marked as contacted but whose contact sequence has not yet been advanced.
+ * For each such player, this function moves the human-side contact progress to
+ * the first active stage and initializes the diplomatic status between the two
+ * players to @c DIPL_NoTreaty on both sides.
+ *
+ * This establishes the baseline diplomacy state used by later AI-to-human
+ * diplomacy processing after first contact has been detected elsewhere.
+ *
+ * @note This function has no parameters and no return value; it operates
+ *       directly on the global player diplomacy state.
+ */
 void Determine_First_Contacts(void)
 {
-    int16_t itr = 0;  // _CX_
+    int16_t itr = 0;
 
     for(itr = 1; itr < _num_players; itr++)
     {
 
         if(
             (_players[_human_player_idx].Dipl.Contact_Progress[itr] == 0)
-            ||
-            (_players[_human_player_idx].Dipl.Contact_Progress[itr] == 1)
+            &&
+            (_players[_human_player_idx].Dipl.Contacted[itr] == ST_TRUE)
         )
         {
 
@@ -5448,10 +5454,10 @@ void NPC_To_Human_Diplomacy__WIP(void)
 {
     int16_t Total_Score = 0;
     int16_t Lowest_Interest = 0;
-    int16_t player_idx = 0;  // _SI_
-    int16_t di = 0;  // _DI_
+    int16_t player_idx = 0;
+    int16_t di = 0;
 
-    if(_players[_human_player_idx].casting_spell_idx == spl_Spell_Of_Return)\
+    if(_players[_human_player_idx].casting_spell_idx == spl_Spell_Of_Return)
     {
 
         return;

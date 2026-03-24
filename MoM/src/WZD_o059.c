@@ -547,7 +547,7 @@ void Cheat_Reveal(void)
 
     _players[_human_player_idx].Globals[NATURES_AWARENESS] = ST_TRUE;
 
-    Update_Scouted_And_Contacted__WIP();
+    Update_Scouted_And_Contacted();
 
     Reset_Map_Draw();
 

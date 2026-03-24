@@ -30,7 +30,7 @@ void Set_Square_Scouted(int16_t wx, int16_t wy, int16_t wp);
 void Clear_Square_Scouted(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o92p05
-void Update_Scouted_And_Contacted__WIP(void);
+void Update_Scouted_And_Contacted(void);
 
 // WZD o92p06
 void Set_Square_Scouted_Flags(int16_t wx, int16_t wy, int16_t wp, int16_t scout_range);

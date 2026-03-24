@@ -623,7 +623,7 @@ void Magic_Screen(void)
                     players_globals[spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr)]].Param0] = 0;
                     if(spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr)]].Param0 == NATURES_AWARENESS)
                     {
-                        Update_Scouted_And_Contacted__WIP();
+                        Update_Scouted_And_Contacted();
                     }
                     if(spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr)]].Param0 == TIME_STOP)
                     {

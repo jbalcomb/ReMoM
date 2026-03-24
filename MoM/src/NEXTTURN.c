@@ -247,17 +247,12 @@ retf
 
 
 // WZD o60p04
-/*
-
-
-
-*/
 void Next_Turn_Proc(void)
 {
     char temp_string[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t orig_map_plane = 0;
-    int16_t itr_msg = 0;  // _SI_
-    int16_t curr_prod_idx = 0;  // _DI_
+    int16_t itr_msg = 0;
+    int16_t curr_prod_idx = 0;
     int16_t DBG_itr_cities = 0;
 
 #ifdef STU_DEBUG
@@ -414,7 +409,7 @@ of all AI units; and updates the visibility
 
 sets Finished, moves2_max, moves2
 handles Statis
-calls All_AI_Players_Contacted(), which calls Update_Scouted_And_Contacted__WIP()
+calls All_AI_Players_Contacted(), which calls Update_Scouted_And_Contacted()
 
 XREF
     j_All_AI_Refresh_Units_Movement()
@@ -561,7 +556,7 @@ void All_AI_Players_Contacted(void)
                     &&
                     (_UNITS[itr_units].owner_idx != NEUTRAL_PLAYER_IDX)
                     &&
-                    ((_UNITS[itr_units].enchantments & UE_INVISIBILITY) == 0)  // BUG: only checks enchantment, not ability or item
+                    ((_UNITS[itr_units].enchantments & UE_INVISIBILITY) == 0)  // OGBUG: only checks enchantment, not ability or item
                 )
                 {
 
@@ -577,7 +572,7 @@ void All_AI_Players_Contacted(void)
 
     }
 
-    Update_Scouted_And_Contacted__WIP();
+    Update_Scouted_And_Contacted();
     // TST  Validate_Square_Scouted(18,11,0);
 
 }

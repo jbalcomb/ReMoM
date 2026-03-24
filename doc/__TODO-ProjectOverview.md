@@ -94,6 +94,16 @@ ninja compile_commands VSC
 
 
 
+
+
+Back Around To The Beginning
+[ ] Next_Turn_Proc()
+[ ] Next_Turn_Calc()
+[ ] NPC_To_Human_Diplomacy__WIP()
+
+
+
+
 New Game
 
 [ ] Init_New_Game()

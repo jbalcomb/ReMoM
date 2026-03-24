@@ -289,7 +289,7 @@ void Clear_Square_Scouted(int16_t wx, int16_t wy, int16_t wp)
  *       comment in the city logic indicates an existing bug where `ORACLE`
  *       overrides the larger `NATURES_EYE` scouting radius.
  */
-void Update_Scouted_And_Contacted__WIP(void)
+void Update_Scouted_And_Contacted(void)
 {
     int16_t scout_level = 0;
     int16_t itr_wp = 0;
@@ -559,7 +559,7 @@ void Set_Square_Scouted_Flags(int16_t wx, int16_t wy, int16_t wp, int16_t scout_
  * or alter any scouting data.
  *
  * Related functions:
- * - `Update_Scouted_And_Contacted__WIP()` calls this function while rebuilding
+ * - `Update_Scouted_And_Contacted()` calls this function while rebuilding
  *   diplomatic contact state.
  * - `Check_Square_Scouted()` determines whether the unit's square is visible to
  *   the human player.

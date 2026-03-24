@@ -3388,7 +3388,7 @@ int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp)
             _active_world_y = _CITIES[dst_city_idx].wy;
             WIZ_NextIdleStack(player_idx, &_map_x, &_map_y, &wp);
             did_earthgate = ST_TRUE;
-            Update_Scouted_And_Contacted__WIP();
+            Update_Scouted_And_Contacted();
         }
     }
 
@@ -5502,7 +5502,7 @@ End_Of_Moving:
 
     if(player_idx == _human_player_idx)
     {
-        Update_Scouted_And_Contacted__WIP();
+        Update_Scouted_And_Contacted();
     }
 
     goto Done_Return_TRUE;
