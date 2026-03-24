@@ -177,10 +177,10 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index);
     WZD seg024
 */
 // WZD s24p08
-void Screen_Picture_Capture(int16_t x1, int16_t y1, int16_t x2, int16_t y2, SAMB_ptr pict_seg);
+// see capture.c/.h  void Screen_Picture_Capture(int16_t x1, int16_t y1, int16_t x2, int16_t y2, SAMB_ptr pict_seg);
 
 // WZD s24p09
-void Capture_Screen_Block(SAMB_ptr pict_seg, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+// see capture.c/.h  void Capture_Screen_Block(SAMB_ptr pict_seg, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 
 
 
