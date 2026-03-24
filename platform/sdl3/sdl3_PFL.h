@@ -142,6 +142,7 @@ void Platform_Sleep_Millies(uint64_t millies);
 void Platform_Get_Mouse_Position_XY(int * mx, int * my);
 
 void Platform_Maybe_Move_Mouse(void);
+void Platform_Set_Warp_Guard(void);  /* CLAUDE: prevents SDL_GetMouseState/SDL_WarpMouseInWindow race */
 
 
 

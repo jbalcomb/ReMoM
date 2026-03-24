@@ -844,15 +844,24 @@ void Main_Screen(void)
 
 
 
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("SCR t=%llu MAIN loading pictures\n", (unsigned long long)Platform_Get_Millies());
+#endif
     // WZD main() |-> WZD_Load_Init_MainGame() |-> Main_Screen_Load_Pictures()
     if(main_screen_loaded == ST_FALSE)
     {
         Main_Screen_Load_Pictures();
         main_screen_loaded = ST_TRUE;
     }
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("SCR t=%llu MAIN pictures loaded\n", (unsigned long long)Platform_Get_Millies());
+#endif
 
 
 
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("SCR t=%llu MAIN map setup\n", (unsigned long long)Platform_Get_Millies());
+#endif
     Reset_Window();
     Clear_Fields();
 
@@ -911,6 +920,9 @@ void Main_Screen(void)
         BEGIN: Screen-Loop
     */
 
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("SCR t=%llu MAIN entering loop\n", (unsigned long long)Platform_Get_Millies());
+#endif
     leave_screen_flag = ST_FALSE;
     while(leave_screen_flag == ST_FALSE)
     {
@@ -973,6 +985,13 @@ void Main_Screen(void)
 
 
         input_field_idx = Get_Input();
+
+#ifdef MOUSE_DEBUG
+        if(input_field_idx != ST_FALSE)
+        {
+            MOUSE_LOG("SCR t=%llu MAIN field=%d\n", (unsigned long long)Platform_Get_Millies(), input_field_idx);
+        }
+#endif
 
         if(quit_game_flag == ST_TRUE)
         {

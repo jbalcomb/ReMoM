@@ -5,6 +5,7 @@
 
 option(USE_SDL3 "Use SDL3 instead of SDL2 (default: SDL2)" OFF)
 option(USE_WIN32 "Use native Win32 backend instead of SDL (no SDL dependency)" OFF)
+option(MOUSE_DEBUG "Enable verbose mouse input debug logging to stderr" OFF)
 
 if(USE_WIN32)
     set(PLATFORM_BACKEND_DIR win32)
@@ -65,6 +66,10 @@ if(USE_WIN32)
     target_compile_definitions(Platform PUBLIC _STU_WIN)
 elseif(USE_SDL3)
     target_compile_definitions(Platform PUBLIC USE_SDL3)
+endif()
+
+if(MOUSE_DEBUG)
+    target_compile_definitions(Platform PUBLIC MOUSE_DEBUG)
 endif()
 
 # Public: Platform.h, Platform_Keys.h, Platform_Replay.h — visible to consumers (MoX, MoM, etc.)

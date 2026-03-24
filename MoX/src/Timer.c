@@ -78,8 +78,7 @@ void Release_Time(int ticks)
 
     while(Platform_Get_Millies() < tick_end)
     {
-        /* CLAUDE */  Platform_Pump_Events();  /* keep event queue alive without processing (Platform_Event_Handler draws cursor into buffer, conflicting with Platform_Maybe_Move_Mouse's save/draw/present/restore cycle) */
-        Platform_Maybe_Move_Mouse();
+        /* CLAUDE */  Platform_Pump_Events();  /* pumps events AND refreshes cursor (polls OS position, redraws only if moved) */
         Platform_Sleep_Millies(1);
     }
 

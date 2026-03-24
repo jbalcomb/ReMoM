@@ -75,41 +75,85 @@ void Platform_Get_Mouse_Position_XY(int * mx, int * my)
     *my = (int)fy;
 }
 
-// ~== 1oom uidelay |-> ui_cursor_refresh(mx, my);
+/* CLAUDE: Warp guard — after Platform_Warp_Mouse() calls SDL_WarpMouseInWindow(), SDL_GetMouseState()
+   may briefly return the OLD position before the warp takes effect.  We skip OS polling for a short
+   window after a warp to prevent the cursor from bouncing back to its pre-warp position. */
+static uint64_t pfl_warp_guard_until = 0;
+
+void Platform_Set_Warp_Guard(void)
+{
+    pfl_warp_guard_until = SDL_GetTicks() + 100;
+}
+
+/* CLAUDE: Cursor refresh — decoupled from the game loop.
+ *
+ * Previously this function read the stale pointer_x/pointer_y (set only when Platform_Event_Handler
+ * ran) and unconditionally did save/draw/present/restore every call — even when the cursor hadn't
+ * moved.  This meant the cursor was frozen for 55–125ms+ between game frames.
+ *
+ * Now it polls SDL_GetMouseState() for the real OS cursor position, converts to game coordinates,
+ * and only redraws + presents when the cursor has actually moved.  This matches Win32's pattern
+ * (which already polled GetCursorPos directly) and lets the cursor track smoothly even during
+ * long game logic frames, as long as Platform_Pump_Events() is called periodically. */
 void Platform_Maybe_Move_Mouse(void)
 {
-    int mx;
-    int my;
+    int wx, wy;
+    int gx, gy;
+    int screen_scale;
 
-    if(Get_Pointer_Image_Number() == 0)  /* crsr_None */
+    if(Get_Pointer_Image_Number() == 0)  /* crsr_None — no cursor to draw */
     {
         return;
     }
 
-    // platform mouse movement update timer
+    /* Poll the OS for the current mouse position unless we just warped. */
+    if(SDL_GetTicks() < pfl_warp_guard_until)
+    {
+        /* Warp guard active — use the engine's position (set by the warp caller). */
+        gx = pointer_x;
+        gy = pointer_y;
+    }
+    else
+    {
+        float fx, fy;
+        SDL_GetMouseState(&fx, &fy);
+        wx = (int)fx;
+        wy = (int)fy;
+        screen_scale = sdl3_window_width / PLATFORM_SCREEN_WIDTH;
+        if(screen_scale < 1) { screen_scale = 1; }
+        gx = wx / screen_scale;
+        gy = wy / screen_scale;
+        SETRANGE(gx, PLATFORM_SCREEN_XMIN, PLATFORM_SCREEN_XMAX);
+        SETRANGE(gy, PLATFORM_SCREEN_YMIN, PLATFORM_SCREEN_YMAX);
+    }
 
-    // if(((mx != pointer_x) || (my != pointer_y)) && ((now - mouse_time) > DELAY_MOUSE_UPDATE_LIMIT))
-        
-    /* CLAUDE */  // Platform_Get_Mouse_Position_XY(&mx, &my);  // SDL_GetMouseState() races with SDL_WarpMouseInWindow(), causing cursor bounce
-    // pointer_x = mx;
-    // pointer_y = my;
-    /* CLAUDE */  mx = pointer_x;
-    /* CLAUDE */  my = pointer_y;
-    /* CLAUDE */  Save_Mouse_On_Page(mx, my);
-    /* CLAUDE */  Draw_Mouse_On_Page(mx, my);
-    // hw_video_redraw_front();  // doesn't touch any game/MoX/MoO1 code, just updates what is displayed on the platform window
-    // Dont?  Platform_Palette_Update();
-    Platform_Video_Update();
-    Restore_Mouse_On_Page();
+    /* Only redraw if the cursor has actually moved. */
+    if(gx == pointer_x && gy == pointer_y)
+    {
+        return;
+    }
 
-//     if(current_mouse_list_count >= 2)
-//     {
-//         Check_Mouse_Shape((l_mx / 2), (l_my/ 2));
-//     }
-//     Restore_Mouse_On_Page();                     // mouse_background_buffer           ->  video_page_buffer[draw_page_num]
-//     Save_Mouse_On_Page((l_mx / 2), (l_my / 2));  // video_page_buffer[draw_page_num]  ->  mouse_background_buffer
-//     Draw_Mouse_On_Page((l_mx / 2), (l_my / 2));  // mouse_palette                     ->  video_page_buffer[draw_page_num]
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("MOUSEt=%llu MAYBE_MOVE ptr=%d,%d -> %d,%d img=%d\n", (unsigned long long)SDL_GetTicks(), pointer_x, pointer_y, gx, gy, Get_Pointer_Image_Number());
+#endif
 
+    if(mouse_enabled == ST_TRUE)
+    {
+        Restore_Mouse_On_Page();
+    }
+    pointer_x = gx;
+    pointer_y = gy;
+    if(mouse_enabled == ST_TRUE)
+    {
+        if(current_mouse_list_count >= 2)
+        {
+            Check_Mouse_Shape(gx, gy);
+        }
+        Save_Mouse_On_Page(gx, gy);
+        Draw_Mouse_On_Page(gx, gy);
+        Platform_Video_Update();
+        Restore_Mouse_On_Page();
+    }
 }
 
 
@@ -335,6 +379,9 @@ static uint32_t dbg_events_window = 0;
 static uint32_t dbg_events_other = 0;
 static uint32_t dbg_mouse_updates = 0;
 static uint32_t dbg_frame_number = 0;
+static uint64_t dbg_prev_handler_ticks = 0;
+static uint64_t dbg_max_handler_delta = 0;
+static uint64_t dbg_total_handler_delta = 0;
 
 void DBG_Frame_Reset(void)
 {
@@ -342,10 +389,13 @@ void DBG_Frame_Reset(void)
     uint64_t frametime = now - dbg_frame_start_ticks;
     if(dbg_frame_start_ticks != 0 && (dbg_frame_number % 60) == 0)
     {
-        fprintf(stderr, "DBG frame=%u  frametime=%llu ms  handler_calls=%u  events: key=%u mdown=%u mup=%u mmove=%u win=%u other=%u  mouse_updates=%u\n", dbg_frame_number, (unsigned long long)frametime, dbg_handler_calls, dbg_events_key, dbg_events_mousedown, dbg_events_mouseup, dbg_events_mousemotion, dbg_events_window, dbg_events_other, dbg_mouse_updates);
+        uint64_t avg_delta = (dbg_handler_calls > 0) ? (dbg_total_handler_delta / dbg_handler_calls) : 0;
+        fprintf(stderr, "DBG frame=%u  frametime=%llu ms  handler_calls=%u  max_delta=%llu ms  avg_delta=%llu ms  events: key=%u mdown=%u mup=%u mmove=%u win=%u other=%u  mouse_updates=%u\n", dbg_frame_number, (unsigned long long)frametime, dbg_handler_calls, (unsigned long long)dbg_max_handler_delta, (unsigned long long)avg_delta, dbg_events_key, dbg_events_mousedown, dbg_events_mouseup, dbg_events_mousemotion, dbg_events_window, dbg_events_other, dbg_mouse_updates);
     }
     dbg_frame_start_ticks = now;
     dbg_handler_calls = 0;
+    dbg_max_handler_delta = 0;
+    dbg_total_handler_delta = 0;
     dbg_events_key = 0;
     dbg_events_mousedown = 0;
     dbg_events_mouseup = 0;
@@ -357,16 +407,34 @@ void DBG_Frame_Reset(void)
 }
 /* CLAUDE: end debug */
 
+/* CLAUDE: Pump events AND refresh cursor.  Any busy-wait that calls this (Release_Time, animation
+   loops, etc.) now gets automatic cursor tracking without needing a separate Platform_Maybe_Move_Mouse()
+   call.  The cursor refresh polls the OS position and only redraws when moved, so the cost is negligible
+   when the mouse is stationary. */
 void Platform_Pump_Events(void)
 {
     SDL_PumpEvents();
+    Platform_Maybe_Move_Mouse();
 }
 
 void Platform_Event_Handler(void)
 {
     SDL_Event sdl3_event;
 
-    /* CLAUDE */  dbg_handler_calls++;
+    /* CLAUDE */  {
+        uint64_t dbg_now = SDL_GetTicks();
+        if(dbg_prev_handler_ticks != 0)
+        {
+            uint64_t delta = dbg_now - dbg_prev_handler_ticks;
+            dbg_total_handler_delta += delta;
+            if(delta > dbg_max_handler_delta) { dbg_max_handler_delta = delta; }
+        }
+        dbg_prev_handler_ticks = dbg_now;
+        dbg_handler_calls++;
+#ifdef MOUSE_DEBUG
+        MOUSE_LOG("MOUSEt=%llu HANDLER_START ptr=%d,%d\n", (unsigned long long)dbg_now, pointer_x, pointer_y);
+#endif
+    }
 
     /* Clear per-frame click flag so Replay_Capture_Frame() only sees
        BUTTON_DOWN events that occurred THIS frame. */
@@ -433,6 +501,9 @@ void Platform_Event_Handler(void)
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
             {
                 /* CLAUDE */  dbg_events_mousedown++;
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("MOUSEt=%llu BTN_DOWN btn=%d wx=%d wy=%d\n", (unsigned long long)SDL_GetTicks(), (int)sdl3_event.button.button, (int)sdl3_event.button.x, (int)sdl3_event.button.y);
+#endif
                 if(sdl3_event.button.down)
                 {
                     if(platform_mouse_input_enabled)
@@ -520,6 +591,9 @@ void Platform_Event_Handler(void)
             // User_Mouse_Handler(platform_mouse_button_status, x, y);
             Platform_Update_Mouse_Position(x, y);
             /* CLAUDE */  dbg_mouse_updates++;
+#ifdef MOUSE_DEBUG
+            MOUSE_LOG("MOUSEt=%llu POLL wx=%d wy=%d gx=%d gy=%d\n", (unsigned long long)SDL_GetTicks(), x, y, pointer_x, pointer_y);
+#endif
         }
     }
 

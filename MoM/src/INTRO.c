@@ -19,6 +19,8 @@
 
 #include "MGC_DATA.h"
 
+#include "../../platform/include/Platform.h"  /* CLAUDE: MOUSE_LOG for intro scene timestamps */
+
 
 
 // MGC dseg:385E                                                 BEGIN:  ovr058 - Initialized Data  (Intro/Logos)
@@ -105,6 +107,9 @@ char str_SIMTEX_COPYRIGHT_1995_V131__MGC_ovr058[] = "Copyright  Simtex Software,
  */
 void Draw_Logos(void)
 {
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("SCR t=%llu INTRO start\n", (unsigned long long)Platform_Get_Millies());
+#endif
     uint8_t colors[2] = { 0, 0 };
     int16_t hotkey_idx_ESC = 0;
     SAMB_ptr digi_sound_buffer2 = 0;
@@ -157,6 +162,9 @@ void Draw_Logos(void)
     // 13 SCENE's, in INTRO.LBX
     for(itr_scenes = 0; itr_scenes < 13; itr_scenes++)
     {
+#ifdef MOUSE_DEBUG
+        MOUSE_LOG("SCR t=%llu INTRO scene=%d loading\n", (unsigned long long)Platform_Get_Millies(), itr_scenes);
+#endif
         Open_File_Animation__HACK(intro_lbx_file__MGC_ovr058, itr_scenes);
         leave_screen = ST_FALSE;
         if(itr_scenes == 0)      { Intro_Fade_Out_2();  }
@@ -165,6 +173,9 @@ void Draw_Logos(void)
         else if(itr_scenes == 3) { Intro_Fade_Out_20(); }
         else                     { Intro_Fade_Out_2();  }
 
+#ifdef MOUSE_DEBUG
+        MOUSE_LOG("SCR t=%llu INTRO scene=%d playing\n", (unsigned long long)Platform_Get_Millies(), itr_scenes);
+#endif
         for(itr_frames = 0; IntroAnim_FrameCounts__MGC_ovr058[itr_scenes] > itr_frames; itr_frames++)
         {
 
@@ -370,7 +381,10 @@ void Draw_Logos(void)
         }
 
     }
-    
+
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("SCR t=%llu INTRO end\n", (unsigned long long)Platform_Get_Millies());
+#endif
 }
 
 

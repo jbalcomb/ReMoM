@@ -282,11 +282,17 @@ int16_t Main_Menu_Screen(void)
     int16_t hotkey_idx_Z = 0;  // debug_hotkey
     int16_t hotkey_idx_T = 0;  // test_hotkey
 
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("SCR t=%llu MENU loading pictures\n", (unsigned long long)Platform_Get_Millies());
+#endif
     if(!main_menu_screen_loaded)
     {
         Main_Menu_Load_Pictures();
         main_menu_screen_loaded = ST_TRUE;
     }
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("SCR t=%llu MENU pictures loaded\n", (unsigned long long)Platform_Get_Millies());
+#endif
 
     // if(g_GUI_MainScreenJump != e_ST_UNDEFINED)
     // {
@@ -319,9 +325,15 @@ int16_t Main_Menu_Screen(void)
     Set_Page_Off();
     // CLS();
 
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("SCR t=%llu MENU loading palette+settings\n", (unsigned long long)Platform_Get_Millies());
+#endif
     Load_Palette(2, -1, 0); // ARCANUS - Magic Castle View
 
     Load_MAGIC_SET();
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("SCR t=%llu MENU palette+settings loaded\n", (unsigned long long)Platform_Get_Millies());
+#endif
 
     _help_entries[0].help_idx = ST_UNDEFINED;
     _help_entries[1].help_idx = ST_UNDEFINED;
@@ -460,6 +472,9 @@ int16_t Main_Menu_Screen(void)
 
     /* CLAUDE */  Platform_Demo_Reset_Idle_Timer();
 
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("SCR t=%llu MENU entering loop\n", (unsigned long long)Platform_Get_Millies());
+#endif
     // DNE input_field_idx = ST_FALSE;
     while(leave_screen_flag == ST_FALSE)
     {
@@ -485,6 +500,19 @@ int16_t Main_Menu_Screen(void)
         {
             Platform_Demo_Reset_Idle_Timer();
         }
+
+#ifdef MOUSE_DEBUG
+        if(input_field_idx != ST_FALSE)
+        {
+            const char *field_name = "unknown";
+            if((input_field_idx == _continue_hotkey) || (input_field_idx == _continue_button)) field_name = "Continue";
+            else if((input_field_idx == _load_hotkey) || (input_field_idx == _load_button)) field_name = "Load";
+            else if((input_field_idx == _new_hotkey) || (input_field_idx == _new_button)) field_name = "New";
+            else if((input_field_idx == _quit_hotkey) || (input_field_idx == _quit_button) || (input_field_idx == _esc_hotkey)) field_name = "Quit";
+            else if((input_field_idx == _hof_hotkey) || (input_field_idx == _hof_button)) field_name = "HoF";
+            MOUSE_LOG("SCR t=%llu MENU field=%d name=%s\n", (unsigned long long)Platform_Get_Millies(), input_field_idx, field_name);
+        }
+#endif
 
         // HACK?  NOTE(JimBalcomb,20250713): I don't recall this arrangement ... Need to quit if they close the platform window?
         if(quit_game_flag == ST_TRUE)

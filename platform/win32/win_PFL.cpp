@@ -114,6 +114,13 @@ void Platform_Palette_Update(void)
     }
 }
 
+void Platform_Get_Palette_Color(uint8_t index, uint8_t *r, uint8_t *g, uint8_t *b)
+{
+    *r = platform_palette_buffer[index].r;
+    *g = platform_palette_buffer[index].g;
+    *b = platform_palette_buffer[index].b;
+}
+
 void Platform_Set_Palette_Color(uint8_t index, uint8_t r, uint8_t g, uint8_t b)
 {
     platform_palette_buffer[index].r = r;
@@ -172,14 +179,19 @@ static void Win_Update_Display(struct win32_offscreen_buffer *buffer, HDC device
 
 void Platform_Event_Handler(void)
 {
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("MOUSEt=%llu HANDLER_START ptr=%d,%d\n", (unsigned long long)Platform_Get_Millies(), pointer_x, pointer_y);
+#endif
     platform_frame_mouse_buttons = 0;
 
     Win_Pump_Messages();
 }
 
+/* CLAUDE: Pump events AND refresh cursor, matching SDL backends. */
 void Platform_Pump_Events(void)
 {
     Win_Pump_Messages();
+    Platform_Maybe_Move_Mouse();
 }
 
 void Win_Pump_Messages(void)
@@ -293,6 +305,9 @@ void Platform_Maybe_Move_Mouse(void)
 
     if (smx != pointer_x || smy != pointer_y)
     {
+#ifdef MOUSE_DEBUG
+        MOUSE_LOG("MOUSEt=%llu MAYBE_MOVE ptr=%d,%d -> %d,%d\n", (unsigned long long)Platform_Get_Millies(), pointer_x, pointer_y, smx, smy);
+#endif
         if (mouse_enabled == ST_TRUE)
         {
             Restore_Mouse_On_Page();
@@ -441,6 +456,9 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
                 game_y = (int16_t)(GET_Y_LPARAM(lParam) / scale);
                 SETRANGE(game_x, PLATFORM_SCREEN_XMIN, PLATFORM_SCREEN_XMAX);
                 SETRANGE(game_y, PLATFORM_SCREEN_YMIN, PLATFORM_SCREEN_YMAX);
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("MOUSEt=%llu WM_MOUSEMOVE wx=%d wy=%d gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), (int)GET_X_LPARAM(lParam), (int)GET_Y_LPARAM(lParam), game_x, game_y);
+#endif
                 User_Mouse_Handler(0, game_x, game_y);
             }
         } break;
@@ -534,6 +552,9 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
                 game_y = (int16_t)(GET_Y_LPARAM(lParam) / scale);
                 SETRANGE(game_x, PLATFORM_SCREEN_XMIN, PLATFORM_SCREEN_XMAX);
                 SETRANGE(game_y, PLATFORM_SCREEN_YMIN, PLATFORM_SCREEN_YMAX);
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("MOUSEt=%llu BTN_DOWN btn=1 gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), game_x, game_y);
+#endif
                 platform_frame_mouse_buttons |= 1;
                 User_Mouse_Handler(ST_LEFT_BUTTON, game_x, game_y);
             }
@@ -551,6 +572,9 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
                 game_y = (int16_t)(GET_Y_LPARAM(lParam) / scale);
                 SETRANGE(game_x, PLATFORM_SCREEN_XMIN, PLATFORM_SCREEN_XMAX);
                 SETRANGE(game_y, PLATFORM_SCREEN_YMIN, PLATFORM_SCREEN_YMAX);
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("MOUSEt=%llu BTN_DOWN btn=2 gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), game_x, game_y);
+#endif
                 platform_frame_mouse_buttons |= 2;
                 User_Mouse_Handler(ST_RIGHT_BUTTON, game_x, game_y);
             }

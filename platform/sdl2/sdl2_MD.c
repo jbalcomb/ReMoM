@@ -35,6 +35,7 @@ int16_t Platform_Get_Mouse_Button_State(void)
 void Platform_Warp_Mouse(int16_t game_x, int16_t game_y)
 {
     float screen_scale = (float)sdl2_window_width / (float)PLATFORM_SCREEN_WIDTH;
+    /* CLAUDE */  Platform_Set_Warp_Guard();  /* prevent Platform_Maybe_Move_Mouse() from reading stale OS position */
     SDL_WarpMouseInWindow(sdl2_window, (int)(game_x * screen_scale), (int)(game_y * screen_scale));
 }
 

@@ -55,6 +55,8 @@ MoO2  Module: LOADSAVE
 
 #include "../../ext/stu_compat.h"
 
+#include "../../platform/include/Platform.h"  /* CLAUDE: MOUSE_LOG for load screen timestamps */
+
 #include "LoadScr.h"
 
 
@@ -283,6 +285,9 @@ void Load_Screen(void)
     load_screen_fade_in_flag = ST_TRUE;  // set to 0 on entering the settings screen
 
     // TODO: maybe, someday, come to terms with the way this logic looks in the Dasm. Pretty sure it's testing for a specific/known valid value and resetting on anything else
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("SCR t=%llu LOAD fade_out\n", (unsigned long long)Platform_Get_Millies());
+#endif
     if(loadsave_settings_flag != 3)  /* 3 indicates returning from the settings screen */
     {
         Fade_Out();
@@ -311,6 +316,9 @@ void Load_Screen(void)
     // LOAD.LBX, 011  SETTING2    Settings Backgrnd
     // LOAD.LBX, 012  LOADSAVE    Settings button
 
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("SCR t=%llu LOAD loading resources\n", (unsigned long long)Platform_Get_Millies());
+#endif
     loadsave_background     = LBX_Reload(     load_lbx_file__ovr160,  0, _screen_seg);
     quit_active             = LBX_Reload_Next(load_lbx_file__ovr160,  2, _screen_seg);
     load_active             = LBX_Reload_Next(load_lbx_file__ovr160,  1, _screen_seg);
@@ -324,6 +332,10 @@ void Load_Screen(void)
     selection_marker        = LBX_Reload_Next(load_lbx_file__ovr160, 10, _screen_seg);
     settings_button         = LBX_Reload_Next(load_lbx_file__ovr160, 12, _screen_seg);
 
+
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("SCR t=%llu LOAD resources loaded\n", (unsigned long long)Platform_Get_Millies());
+#endif
 
     save_game_count__ovr160 = 0;
     
@@ -380,6 +392,9 @@ void Load_Screen(void)
 
     Set_Load_Screen_Help_List();
 
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("SCR t=%llu LOAD entering loop\n", (unsigned long long)Platform_Get_Millies());
+#endif
     while(leave_screen_flag == ST_FALSE)
     {
 
@@ -411,6 +426,20 @@ void Load_Screen(void)
         }
 
 
+#ifdef MOUSE_DEBUG
+        if(input_field_idx != ST_FALSE)
+        {
+            const char *field_name = "unknown";
+            if(input_field_idx == loadsave_quit_button) field_name = "Quit";
+            else if(input_field_idx == loadsave_load_button) field_name = "Load";
+            else if(input_field_idx == loadsave_save_button) field_name = "Save";
+            else if(input_field_idx == loadsave_ok_button || input_field_idx == hotkey_ESC) field_name = "OK";
+            else if(input_field_idx == loadsave_settings_button) field_name = "Settings";
+            else field_name = "Slot";
+            MOUSE_LOG("SCR t=%llu LOAD field=%d name=%s\n", (unsigned long long)Platform_Get_Millies(), input_field_idx, field_name);
+        }
+#endif
+
         if(input_field_idx == loadsave_quit_button)
         {
             // ~== current_screen = scr_Main_Menu_Screen
@@ -437,7 +466,13 @@ void Load_Screen(void)
         {
             loadsave_settings_flag = ST_UNDEFINED;
             Deactivate_Help_List();
+#ifdef MOUSE_DEBUG
+            MOUSE_LOG("SCR t=%llu LOAD loading_savegame slot=%d\n", (unsigned long long)Platform_Get_Millies(), selected_load_game_slot_idx);
+#endif
             Load_SAVE_GAM(selected_load_game_slot_idx);
+#ifdef MOUSE_DEBUG
+            MOUSE_LOG("SCR t=%llu LOAD savegame loaded\n", (unsigned long long)Platform_Get_Millies());
+#endif
             loaded_game_flag = ST_TRUE;
             leave_screen_flag = ST_TRUE;
             /* HACK */ current_screen = scr_Main_Screen;

@@ -34,6 +34,13 @@ void Platform_Palette_Update(void)
 }
 
 
+void Platform_Get_Palette_Color(uint8_t index, uint8_t *r, uint8_t *g, uint8_t *b)
+{
+    *r = platform_palette_buffer[index].r;
+    *g = platform_palette_buffer[index].g;
+    *b = platform_palette_buffer[index].b;
+}
+
 /*
     Update a single palette entry in the platform surface.
     Used by Cycle_Palette_Color() for real-time palette animation.

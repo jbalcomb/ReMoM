@@ -1,9 +1,8 @@
 #include <gtest/gtest.h>
-#include <SDL3/SDL.h>
 
 #include "../src/MOX_BASE.h"
 #include "../src/Fonts.h"
-extern "C" { extern SDL_Surface * sdl2_surface_RGB666; }  // defined in platform/sdl3/sdl3_State.c
+#include "../../platform/include/Platform.h"
 
 // The three globals are module-private in Fonts.c but are linked into MOX.
 // Declare them here so we can set up and inspect state directly.
@@ -125,9 +124,8 @@ TEST(Update_Cycle_test, Reverse_NegativeGradient_BounceAtMax)
 // ============================================================================
 // Cycle_Palette_Color tests
 //
-// The function writes to sdl2_surface_RGB666->format->palette, so the fixture
-// must provide a real 8-bit SDL surface.  An 8-bit SDL_CreateRGBSurface
-// automatically allocates a 256-entry palette.
+// The function writes to the platform palette via Platform_Set_Palette_Color(),
+// so we read back via Platform_Get_Palette_Color() — no direct SDL access needed.
 //
 // On first call after Reset_Cycle_Palette_Color() (cycle_direction_flag == -1)
 // the function seeds cycle_color_value from the min of the primary channel, so
@@ -141,34 +139,17 @@ TEST(Update_Cycle_test, Reverse_NegativeGradient_BounceAtMax)
 class Cycle_Palette_Color_test : public ::testing::Test
 {
 protected:
-    SDL_Surface * test_surface = nullptr;
-
     void SetUp() override
     {
-        // Prefer VIDEO; fall back to bare init for headless environments.
-        if (!SDL_Init(SDL_INIT_VIDEO))
-        {
-            SDL_Init(0);
-        }
-        // 8-bit depth → SDL allocates a 256-entry palette automatically.
-        test_surface = SDL_CreateSurface(1, 1, SDL_PIXELFORMAT_INDEX8);
-        ASSERT_NE(test_surface, nullptr) << "SDL_CreateSurface failed: " << SDL_GetError();
-        ASSERT_NE(SDL_GetSurfacePalette(test_surface), nullptr) << "8-bit surface must have a palette";
-
-        sdl2_surface_RGB666 = test_surface;
+        // Zero out the palette buffer so tests start clean.
+        memset(platform_palette_buffer, 0, sizeof(platform_palette_buffer));
         Reset_Cycle_Palette_Color();    // sets cycle_direction_flag = -1
     }
 
-    void TearDown() override
+    // Read back a palette entry through the Platform API.
+    void Read_Palette(int index, uint8_t &r, uint8_t &g, uint8_t &b) const
     {
-        SDL_DestroySurface(test_surface);
-        sdl2_surface_RGB666 = nullptr;
-        SDL_Quit();
-    }
-
-    SDL_Color Read_Palette(int index) const
-    {
-        return SDL_GetSurfacePalette(test_surface)->colors[index];
+        Platform_Get_Palette_Color((uint8_t)index, &r, &g, &b);
     }
 
     // Scale a 6-bit VGA component (0-63) to 8-bit SDL (0-255), matching the
@@ -188,11 +169,11 @@ TEST_F(Cycle_Palette_Color_test, FirstCall_RedPrimary_SeedsFromRedMin)
 
     Cycle_Palette_Color(color_num, rlo, glo, blo, rhi, ghi, bhi, /*step=*/3);
 
-    SDL_Color c = Read_Palette(color_num);
-    EXPECT_EQ(c.r, Scale(rlo));   // store_red   = cycle_color_value = red_min
-    EXPECT_EQ(c.g, Scale(glo));   // interpolation fraction == 0  => green_min
-    EXPECT_EQ(c.b, Scale(blo));   // interpolation fraction == 0  => blue_min
-    EXPECT_EQ(c.a, 255);
+    uint8_t r, g, b;
+    Read_Palette(color_num, r, g, b);
+    EXPECT_EQ(r, Scale(rlo));   // store_red   = cycle_color_value = red_min
+    EXPECT_EQ(g, Scale(glo));   // interpolation fraction == 0  => green_min
+    EXPECT_EQ(b, Scale(blo));   // interpolation fraction == 0  => blue_min
 }
 
 TEST_F(Cycle_Palette_Color_test, FirstCall_RedPrimary_SetsDirectionForward)
@@ -216,11 +197,11 @@ TEST_F(Cycle_Palette_Color_test, FirstCall_GreenPrimary_SeedsFromGreenMin)
 
     Cycle_Palette_Color(color_num, rlo, glo, blo, rhi, ghi, bhi, /*step=*/2);
 
-    SDL_Color c = Read_Palette(color_num);
-    EXPECT_EQ(c.r, Scale(rlo));   // fraction == 0 → red_min
-    EXPECT_EQ(c.g, Scale(glo));   // store_green = green_min
-    EXPECT_EQ(c.b, Scale(blo));   // fraction == 0 → blue_min
-    EXPECT_EQ(c.a, 255);
+    uint8_t r, g, b;
+    Read_Palette(color_num, r, g, b);
+    EXPECT_EQ(r, Scale(rlo));   // fraction == 0 → red_min
+    EXPECT_EQ(g, Scale(glo));   // store_green = green_min
+    EXPECT_EQ(b, Scale(blo));   // fraction == 0 → blue_min
 }
 
 TEST_F(Cycle_Palette_Color_test, FirstCall_GreenPrimary_SetsDirectionForward)
@@ -244,11 +225,11 @@ TEST_F(Cycle_Palette_Color_test, FirstCall_BluePrimary_SeedsFromBlueMin)
 
     Cycle_Palette_Color(color_num, rlo, glo, blo, rhi, ghi, bhi, /*step=*/4);
 
-    SDL_Color c = Read_Palette(color_num);
-    EXPECT_EQ(c.r, Scale(rlo));   // fraction == 0 → red_min
-    EXPECT_EQ(c.g, Scale(glo));   // fraction == 0 → green_min
-    EXPECT_EQ(c.b, Scale(blo));   // store_blue = blue_min
-    EXPECT_EQ(c.a, 255);
+    uint8_t r, g, b;
+    Read_Palette(color_num, r, g, b);
+    EXPECT_EQ(r, Scale(rlo));   // fraction == 0 → red_min
+    EXPECT_EQ(g, Scale(glo));   // fraction == 0 → green_min
+    EXPECT_EQ(b, Scale(blo));   // store_blue = blue_min
 }
 
 TEST_F(Cycle_Palette_Color_test, FirstCall_BluePrimary_SetsDirectionForward)
@@ -272,9 +253,10 @@ TEST_F(Cycle_Palette_Color_test, Tie_RedGreen_RedWins)
 
     Cycle_Palette_Color(color_num, rlo, glo, blo, rhi, ghi, bhi, /*step=*/1);
 
-    SDL_Color c = Read_Palette(color_num);
+    uint8_t r, g, b;
+    Read_Palette(color_num, r, g, b);
     // If Red is primary: store_red = red_min = 0 → r == 0
-    EXPECT_EQ(c.r, Scale(rlo));
+    EXPECT_EQ(r, Scale(rlo));
     EXPECT_EQ(cycle_color_value, rlo + 1);   // advanced by step from red_min
 }
 
@@ -293,8 +275,9 @@ TEST_F(Cycle_Palette_Color_test, SecondCall_RedPrimary_UsesSteppedValue)
     Cycle_Palette_Color(color_num, rlo, glo, blo, rhi, ghi, bhi, /*step=*/5);
     Cycle_Palette_Color(color_num, rlo, glo, blo, rhi, ghi, bhi, /*step=*/5);
 
-    SDL_Color c = Read_Palette(color_num);
-    EXPECT_EQ(c.r, Scale(5));    // second call uses value == 5 (= red_min + step)
+    uint8_t r, g, b;
+    Read_Palette(color_num, r, g, b);
+    EXPECT_EQ(r, Scale(5));    // second call uses value == 5 (= red_min + step)
     EXPECT_EQ(cycle_color_value, rlo + 5 + 5);  // advanced again after second call
 }
 
@@ -321,9 +304,9 @@ TEST_F(Cycle_Palette_Color_test, SecondCall_RedPrimary_InterpolatesSecondaries)
     Cycle_Palette_Color(color_num, rlo, glo, blo, rhi, ghi, bhi, /*step=*/10);
     Cycle_Palette_Color(color_num, rlo, glo, blo, rhi, ghi, bhi, /*step=*/10);
 
-    SDL_Color c = Read_Palette(color_num);
-    EXPECT_EQ(c.r, Scale(20));
-    EXPECT_EQ(c.g, Scale(15));
-    EXPECT_EQ(c.b, Scale(5));
+    uint8_t r, g, b;
+    Read_Palette(color_num, r, g, b);
+    EXPECT_EQ(r, Scale(20));
+    EXPECT_EQ(g, Scale(15));
+    EXPECT_EQ(b, Scale(5));
 }
-

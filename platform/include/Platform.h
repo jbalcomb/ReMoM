@@ -253,6 +253,15 @@ void Platform_Palette_Update(void);
 void Platform_Set_Palette_Color(uint8_t index, uint8_t r, uint8_t g, uint8_t b);
 
 /**
+ * Read back a single entry from the platform's hardware palette.
+ * @param index  Palette index (0..255).
+ * @param r      [out] Red component (0..255).
+ * @param g      [out] Green component (0..255).
+ * @param b      [out] Blue component (0..255).
+ */
+void Platform_Get_Palette_Color(uint8_t index, uint8_t *r, uint8_t *g, uint8_t *b);
+
+/**
  * Blit the engine's 8-bit draw page to the platform's display surface,
  * convert to the display pixel format, and present to the window.
  */
@@ -411,6 +420,34 @@ void MWA_Exit_With_Message(char *string);
 
 #ifdef __cplusplus
 }
+#endif
+
+
+
+/* ========================================================================= */
+/*  Mouse Debug Log                                                          */
+/*                                                                           */
+/*  When MOUSE_DEBUG is defined, all MOUSE_LOG() calls write to              */
+/*  mouse_debug.log in the working directory (not stderr, which gets         */
+/*  redirected to CON on Win32 debug builds).                                */
+/* ========================================================================= */
+
+#ifdef MOUSE_DEBUG
+#include <stdio.h>
+
+static FILE *mouse_dbg_log_file = NULL;
+
+static FILE *Mouse_Dbg_Log(void)
+{
+    if (mouse_dbg_log_file == NULL)
+    {
+        mouse_dbg_log_file = fopen("mouse_debug.log", "w");
+        if (mouse_dbg_log_file != NULL) { setvbuf(mouse_dbg_log_file, NULL, _IONBF, 0); }
+    }
+    return (mouse_dbg_log_file != NULL) ? mouse_dbg_log_file : stderr;
+}
+
+#define MOUSE_LOG(...) fprintf(Mouse_Dbg_Log(), __VA_ARGS__)
 #endif
 
 #endif /* PLATFORM_H */

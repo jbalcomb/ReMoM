@@ -342,8 +342,14 @@ void User_Mouse_Handler(int16_t buttons, int16_t l_mx, int16_t l_my)
 
     if(l_mx < SCREEN_XMIN || l_my < SCREEN_YMIN || gx > SCREEN_XMAX || gy > SCREEN_YMAX)
     {
+#ifdef MOUSE_DEBUG
+        MOUSE_LOG("MOUSEt=%llu UMH_OOB btn=%d wx=%d wy=%d gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), buttons, l_mx, l_my, gx, gy);
+#endif
         return;
     }
+#ifdef MOUSE_DEBUG
+    MOUSE_LOG("MOUSEt=%llu UMH btn=%d wx=%d wy=%d gx=%d gy=%d scale=%.2f enabled=%d interrupt=%d\n", (unsigned long long)Platform_Get_Millies(), buttons, l_mx, l_my, gx, gy, screen_scale, mouse_enabled, mouse_interrupt_active);
+#endif
     pointer_x = gx;
     pointer_y = gy;
     // ITRY  platform_mouse_button_status = buttons;
@@ -493,6 +499,9 @@ void Check_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons)
     buttons &= (MOUSE_BUTTON_MASK_LEFT | MOUSE_BUTTON_MASK_RIGHT);
     if(buttons != 0)
     {
+#ifdef MOUSE_DEBUG
+        MOUSE_LOG("MOUSEt=%llu BUFFERED x=%d y=%d btn=%d\n", (unsigned long long)Platform_Get_Millies(), x, y, buttons);
+#endif
         mouse_buffer_button = buttons;
         mouse_buffer_flag = ST_TRUE;
         mouse_buffer_flag2 = ST_TRUE;

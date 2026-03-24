@@ -38,6 +38,8 @@
 
 #include <stdio.h>
 
+#include "../../platform/include/Platform.h"  /* CLAUDE: MOUSE_LOG for screen transition timestamps */
+
 #include "MOM_SCR.h"
 
 
@@ -84,16 +86,25 @@ void Screen_Control(void)
 
             case scr_Main_Menu_Screen:
             {
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("SCR t=%llu ENTER screen=Main_Menu\n", (unsigned long long)Platform_Get_Millies());
+#endif
                 Load_Palette(2, -1, 0);
                 Apply_Palette();
                 // TODO  Main_Menu_Screen_Control();
                 Main_Menu_Screen();
                 // MoO2  previous_screen = scr_Main_Menu_Screen
                 previous_screen = scr_Main_Menu_Screen;
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("SCR t=%llu LEAVE screen=Main_Menu next=%d\n", (unsigned long long)Platform_Get_Millies(), current_screen);
+#endif
             } break;
 
             case scr_Continue:
             {
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("SCR t=%llu ENTER screen=Continue\n", (unsigned long long)Platform_Get_Millies());
+#endif
                 // MGC  fid0_Continue:                            ; case 0x0
                 // MGC  Stop_Music__STUB()
                 // MGC  j_GAME_WizardsLaunch__WIP(e_SAVE9GAM)
@@ -101,10 +112,16 @@ void Screen_Control(void)
                 Load_SAVE_GAM(8);
                 Loaded_Game_Update();
                 current_screen = scr_Main_Screen;
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("SCR t=%llu LEAVE screen=Continue next=%d\n", (unsigned long long)Platform_Get_Millies(), current_screen);
+#endif
             } break;
 
             case scr_Load_Screen:
             {
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("SCR t=%llu ENTER screen=Load\n", (unsigned long long)Platform_Get_Millies());
+#endif
                 // TODO  WZD vs. MGC
                 /* WZD  GameState_01:  ; case 0x1 */
                 prev__Settings_BG_Music = magic_set.background_music;
@@ -138,10 +155,16 @@ void Screen_Control(void)
                         // DOMSDOS  Stop_Music__STUB();
                     }
                 }
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("SCR t=%llu LEAVE screen=Load next=%d\n", (unsigned long long)Platform_Get_Millies(), current_screen);
+#endif
             } break;
 
             case scr_New_Game_Screen:
             {
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("SCR t=%llu ENTER screen=New_Game\n", (unsigned long long)Platform_Get_Millies());
+#endif
                 // MoO2  if(Newgame_Screen_() != ST_FALSE) { Init_New_Game() }
                 // Newgame_Control();  // MAGIC.EXE  ovr050  o050p001
                 /* HACK */  if(Newgame_Control())
@@ -153,17 +176,29 @@ void Screen_Control(void)
                 /* HACK */      current_screen = scr_Main_Menu_Screen;
                 /* HACK */  }
                 // MoO2  _previous_screen = scr_New_Game
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("SCR t=%llu LEAVE screen=New_Game next=%d\n", (unsigned long long)Platform_Get_Millies(), current_screen);
+#endif
             } break;
 
             case scr_Quit_To_DOS:
             {
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("SCR t=%llu ENTER screen=Quit\n", (unsigned long long)Platform_Get_Millies());
+#endif
                 // TODO  Auto_Save_Game()  ~== F-10 Quick_Save()
                 quit_flag = ST_TRUE;
                 // TODO  Exit_With_Message("Thank you for playing Master of Magic!\n\n");
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("SCR t=%llu LEAVE screen=Quit\n", (unsigned long long)Platform_Get_Millies());
+#endif
             } break;
 
             case scr_Hall_Of_Fame_Screen:
             {
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("SCR t=%llu ENTER screen=Hall_Of_Fame\n", (unsigned long long)Platform_Get_Millies());
+#endif
                 /*
                     MGC
                         switch(main_menu_selection)
@@ -174,6 +209,9 @@ void Screen_Control(void)
                 Hall_Of_Fame_Screen();
                 // TODO  loop back to Menu_Screen_Control()
                 current_screen = scr_Main_Menu_Screen;
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("SCR t=%llu LEAVE screen=Hall_Of_Fame next=%d\n", (unsigned long long)Platform_Get_Millies(), current_screen);
+#endif
             } break;
 
             case scr_Settings_Screen:
@@ -205,6 +243,9 @@ void Screen_Control(void)
             // scr_Quit = 104,
             case scr_Main_Screen:
             {
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("SCR t=%llu ENTER screen=Main\n", (unsigned long long)Platform_Get_Millies());
+#endif
                 // BEGIN: WZD main()
                 // Load_SAVE_GAM(8)
                 // Load_WZD_Resources()
@@ -232,6 +273,9 @@ void Screen_Control(void)
 
                 // MoO2  previous_screen = scr_Main_Screen
                 previous_screen = scr_Main_Screen;
+#ifdef MOUSE_DEBUG
+                MOUSE_LOG("SCR t=%llu LEAVE screen=Main next=%d\n", (unsigned long long)Platform_Get_Millies(), current_screen);
+#endif
             } break;
             // scr_Magic = 106,
             case scr_Magic_Screen:

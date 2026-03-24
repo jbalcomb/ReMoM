@@ -2993,6 +2993,21 @@ int16_t Get_Input(void)
 
     Set_Page_Off();
 
+#ifdef MOUSE_DEBUG
+    if(field_index != 0)
+    {
+        int16_t fi = (field_index > 0) ? field_index : -field_index;
+        if(fi > 0 && fi < fields_count)
+        {
+            MOUSE_LOG("SCR t=%llu GET_INPUT field=%d type=%d rect=(%d,%d)-(%d,%d)\n", (unsigned long long)Platform_Get_Millies(), field_index, p_fields[fi].type, p_fields[fi].x1, p_fields[fi].y1, p_fields[fi].x2, p_fields[fi].y2);
+        }
+        else
+        {
+            MOUSE_LOG("SCR t=%llu GET_INPUT field=%d\n", (unsigned long long)Platform_Get_Millies(), field_index);
+        }
+    }
+#endif
+
     return field_index;
 
 }
