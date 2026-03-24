@@ -414,7 +414,7 @@ static void Heightmap_Statistics(int sim_idx, int16_t wp)
     {
         for(wx = 0; wx < WORLD_WIDTH; wx++)
         {
-            terrain_idx = Get_Terrain(wx, wy, wp);
+            terrain_idx = (uint8_t)Get_Terrain(wx, wy, wp);
             simulation_data[sim_idx].worldmap_stats[wp].terrain_type_count[terrain_idx]++;
             simulation_data[sim_idx].worldmap_stats[wp].total_count++;
         }
