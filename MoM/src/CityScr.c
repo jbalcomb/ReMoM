@@ -554,50 +554,29 @@ void City_Screen__WIP(void)
         {
             if(input_field_idx == city_screen_change_button)
             {
-
                 Play_Left_Click();
-
                 production_screen_return_screen = 2;  // {1: CityList Screen, 2: City Screen}
-
                 Production_Screen();
-
                 City_Screen_Load();
-
                 Deactivate_Help_List();
-
                 Set_City_Screen_Help_List();
-
                 Assign_Auto_Function(City_Screen_Draw__WIP, 1);
-
                 Do_City_Calculations(_city_idx);
-
                 m_city_production_cost = City_Production_Cost(_CITIES[_city_idx].construction, _city_idx);
-
                 m_city_n_turns_to_produce = City_N_Turns_To_Produce(m_city_production_cost, _city_idx);
-                
                 City_Can_Buy_Product();
-
                 if(_CITIES[_city_idx].construction < 100)
                 {
-
                     _fstrcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
-
                 }
                 else
                 {
-
                     Row = (_CITIES[_city_idx].construction - 100);
-
                     strcpy(m_city_screen_product_name, *_unit_type_table[Row].name);
-
                 }
-
                 City_Screen_Allocate_First_Block();
-
                 production_screen_return_screen = 2;
-
                 screen_changed = ST_TRUE;
-
             }
         }
         /*

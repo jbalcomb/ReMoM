@@ -141,18 +141,18 @@ int16_t popup_base_x;
 // WZD o56p01
 void Production_Screen(void)
 {
-    int16_t unit_array[9];
-    int16_t unit_array_count;
-    int16_t hotkey_idx_ESC;
-    int16_t UU_IDK_first_draw;
-    int16_t DispCnt;
-    int16_t current_index;
-    int16_t active_product_idx;
-    int16_t screen_changed;
-    int16_t input_field_idx;
-    int16_t scanned_field;
-    int16_t itr;  // _SI_
-    int16_t leave_screen;  // _DI_
+    int16_t unit_array [MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t unit_array_count = 0;
+    int16_t hotkey_idx_ESC = 0;
+    int16_t niu_first_draw = 0;
+    int16_t DispCnt = 0;
+    int16_t current_index = 0;
+    int16_t active_product_idx = 0;
+    int16_t screen_changed = 0;
+    int16_t input_field_idx = 0;
+    int16_t scanned_field = 0;
+    int16_t itr = 0;
+    int16_t leave_screen = 0;
 
     Cache_Graphics_Things();
 
@@ -173,8 +173,8 @@ void Production_Screen(void)
 
     unit_list_x1 = popup_base_x + 240;
     unit_list_y1 = popup_base_y + 4;
-    bldg_list_x1  = popup_base_x;
-    bldg_list_y1  = popup_base_y + 4;
+    bldg_list_x1 = popup_base_x;
+    bldg_list_y1 = popup_base_y + 4;
 
     Set_Production_Screen_Help();
 
@@ -235,7 +235,7 @@ void Production_Screen(void)
 
     screen_changed = ST_FALSE;
 
-    UU_IDK_first_draw = 1;
+    niu_first_draw = ST_TRUE;
 
     Clear_Fields();
 
@@ -367,7 +367,7 @@ void Production_Screen(void)
             Copy_Back_To_Off();
             Production_Screen_Draw();
             PageFlip_FX();
-            UU_IDK_first_draw = 0;
+            niu_first_draw = ST_FALSE;
             Release_Time(2);
         }
         screen_changed = ST_FALSE;
@@ -381,7 +381,7 @@ void Production_Screen(void)
     
     Reset_Window();
 
-    // BUGBUG  these should be one or the other, and not allow for neither
+    // OGBUG  these should be one or the other, and not allow for neither
     if(production_screen_return_screen == 1)
     {
         current_screen = scr_Cities_Screen;
