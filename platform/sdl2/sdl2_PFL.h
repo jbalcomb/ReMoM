@@ -1,7 +1,7 @@
 #ifndef SDL2_PFL_H
 #define SDL2_PFL_H
 
-#include "../../MoX/src/MOX_TYPE.h"
+#include <stdint.h>
 
 #include <inttypes.h>
 #include <stdbool.h>
@@ -130,7 +130,7 @@ extern int sdl2_window_height;
 
 
 
-extern int kilgore_option_mouse_speed;  // ./src/hw/sdl/hwsdl_opt.h
+extern int pfl_option_mouse_speed;  // ./src/hw/sdl/hwsdl_opt.h
 
 
 
@@ -155,8 +155,8 @@ void Platform_Window_Event(SDL_WindowEvent *sdl2_window_event);
 /*
     sdl2_KD.C
 */
-void hw_textinput_start(void);
-void hw_textinput_stop(void);
+void Hw_Textinput_Start(void);
+void Hw_Textinput_Stop(void);
 
 
 

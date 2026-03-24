@@ -1,7 +1,7 @@
 #ifndef SDL2_KD_H
 #define SDL2_KD_H
 
-#include "../../MoX/src/MOX_TYPE.h"
+#include <stdint.h>
 
 #include "sdl2_PFL.h"
 
@@ -213,7 +213,7 @@ struct s_KEYBOARD_BUFFER
     int key_write;
     int key_read;
     // uint32_t key_num[PLATFORM_KEYBOARD_BUFFER_LENGTH];
-    uint32_t kilgore_key[PLATFORM_KEYBOARD_BUFFER_LENGTH];
+    uint32_t packed_key[PLATFORM_KEYBOARD_BUFFER_LENGTH];
     uint32_t mox_mod;
     BOOLVEC_DECLARE(pressed, MOX_KEY_OVERRUN);
 };
@@ -242,7 +242,7 @@ void Platform_Keyboard_Buffer_Add_Key_Press(int mox_key, uint32_t mox_mod, char 
 // int Platform_Translate_SCCC_To_MOX_KEY(uint16_t sccc);
 uint16_t Platform_Translate_Virtual_Key_Code_To_MOX_Key_Num(int32_t virtual_key_code, uint16_t key_modifiers);
 
-void build_key_xlat(void);
+void Build_Key_Xlat(void);
 
 #ifdef __cplusplus
 }

@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "sdl2_Audio.h"
+#include "sdl3_Audio.h"
 
 // SOUND.C
 // WZD dseg:82AC
@@ -156,7 +156,7 @@ int16_t wav_buffer_idx = 0;
 
 
 
-void sdl2_Audio_Init(void)
+void sdl3_Audio_Init(void)
 {
 
     // // // // // Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);  // Expands to: AUDIO_S16SYS
@@ -196,11 +196,11 @@ void sdl2_Audio_Init(void)
     printf("Mix_VolumeMusic():  %d\n", Mix_VolumeMusic(-1));
     // Later, elsewhere, ...
     // // Set the volume of the sound effect to 75%
-    // Mix_VolumeChunk(sdl2_mix_chunk, MIX_MAX_VOLUME * 0.75);
+    // Mix_VolumeChunk(sdl3_mix_chunk, MIX_MAX_VOLUME * 0.75);
 
 }
 
-void sdl2_Audio_Deinit(void)
+void sdl3_Audio_Deinit(void)
 {
     int itr = 0;
 
@@ -223,7 +223,7 @@ void sdl2_Audio_Deinit(void)
 /*
 
 // DOMSDOS  Play_Sound__WIP(digi_sound_buffer3);
-sdl2_Play_Sound(digi_sound_buffer3, sound_buffer_size3);
+sdl3_Play_Sound(digi_sound_buffer3, sound_buffer_size3);
 digi_sound_buffer3 = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_ATK_LightningBolt, _screen_seg);
 sound_buffer_size3 = lbxload_entry_length;
 Convert_VOC_To_WAV(digi_sound_buffer3, sound_buffer_size3, &wav_sound_buffer3, &wav_sound_buffer_size3);
@@ -231,15 +231,15 @@ wav_sound_chunk3 = Mix_LoadWAV_IO(SDL_IOFromMem(wav_sound_buffer3, wav_sound_buf
 Mix_PlayChannel(0, wav_sound_chunk3, 0);
 
 */
-int16_t Play_Sound_SDL2_Mixer(void* sound_buffer, uint32_t sound_buffer_size)
+int16_t Platform_Audio_Play_Sound(void *sound_buffer, uint32_t sound_buffer_size)
 {
     int16_t lbx_sound_type = 0;
     // char error[4096] = { 0 };
     uint8_t* wav_sound_buffer;
     uint32_t wav_sound_buffer_size;
-    SDL_IOStream * sdl2_rw_ops = NULL;
-    Mix_Chunk * sdl2_audio_data_chunk = NULL;
-    int sdl2_play_channel_result = 0;
+    SDL_IOStream * sdl3_rw_ops = NULL;
+    Mix_Chunk * sdl3_audio_data_chunk = NULL;
+    int sdl3_play_channel_result = 0;
 
     if(GET_2B_OFS(sound_buffer, 0) != SNDMAGSIG)
     {
@@ -268,9 +268,9 @@ int16_t Play_Sound_SDL2_Mixer(void* sound_buffer, uint32_t sound_buffer_size)
             // m = &mustbl[0];
             m = &mustbl;
             fmt_mus_convert_xmid(sound_buffer, sound_buffer_size, &xmi_sound_buffer, &xmi_sound_buffer_size, &m->loops);
-            SDL_IOStream* sdl2_rw_ops = SDL_IOFromConstMem(xmi_sound_buffer, xmi_sound_buffer_size);
-            m->music = Mix_LoadMUSType_IO(sdl2_rw_ops, m->sdlmtype, 0);
-            SDL_CloseIO(sdl2_rw_ops);
+            SDL_IOStream* sdl3_rw_ops = SDL_IOFromConstMem(xmi_sound_buffer, xmi_sound_buffer_size);
+            m->music = Mix_LoadMUSType_IO(sdl3_rw_ops, m->sdlmtype, 0);
+            SDL_CloseIO(sdl3_rw_ops);
             free(xmi_sound_buffer);
             // ...
             ui_data_mus = sound_buffer;
@@ -281,23 +281,23 @@ int16_t Play_Sound_SDL2_Mixer(void* sound_buffer, uint32_t sound_buffer_size)
         case 2:  /* VOC file */
         {
             Convert_VOC_To_WAV(sound_buffer, sound_buffer_size, &wav_sound_buffer, &wav_sound_buffer_size);
-            sdl2_rw_ops = SDL_IOFromMem(wav_sound_buffer, wav_sound_buffer_size);
-            if(sdl2_rw_ops == NULL)
+            sdl3_rw_ops = SDL_IOFromMem(wav_sound_buffer, wav_sound_buffer_size);
+            if(sdl3_rw_ops == NULL)
             {
 #ifdef STU_DEBUG
                 dbg_prn("ERROR:  SDL_IOFromMem()  %s\n", SDL_GetError());
 #endif
             }
-            sdl2_audio_data_chunk = Mix_LoadWAV_IO(sdl2_rw_ops, 0);
-            if(sdl2_audio_data_chunk == NULL)
+            sdl3_audio_data_chunk = Mix_LoadWAV_IO(sdl3_rw_ops, 0);
+            if(sdl3_audio_data_chunk == NULL)
             {
 #ifdef STU_DEBUG
                 dbg_prn("ERROR:  Mix_LoadWAV_IO()  %s\n", SDL_GetError());
 #endif
             }
-            Mix_VolumeChunk(sdl2_audio_data_chunk, (int)(MIX_MAX_VOLUME * 0.75));
-            sdl2_play_channel_result = Mix_PlayChannel(0, sdl2_audio_data_chunk, 0);
-            if(sdl2_play_channel_result == -1)
+            Mix_VolumeChunk(sdl3_audio_data_chunk, (int)(MIX_MAX_VOLUME * 0.75));
+            sdl3_play_channel_result = Mix_PlayChannel(0, sdl3_audio_data_chunk, 0);
+            if(sdl3_play_channel_result == -1)
             {
 #ifdef STU_DEBUG
                 dbg_prn("ERROR:  Mix_PlayChannel()  %s\n", SDL_GetError());
@@ -315,7 +315,7 @@ int16_t Play_Sound_SDL2_Mixer(void* sound_buffer, uint32_t sound_buffer_size)
     
 }
 
-// void sdl2_Play_Sound_WAV(Mix_Chunk * wav_sound_chunk)
+// void sdl3_Play_Sound_WAV(Mix_Chunk * wav_sound_chunk)
 // {
 //     int result;
 // 
@@ -496,7 +496,7 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
             while(voc_block_size)
             {
                 sample_8bit_unsigned = *voc_rvr++;
-                // Warning	C6011	Dereferencing NULL pointer 'wav_rvr'. 	002_MoX	C:\STU\devel\ReMoM\MoX\src\sdl2_Audio.c	499		
+                // Warning	C6011	Dereferencing NULL pointer 'wav_rvr'. 	002_MoX	C:\STU\devel\ReMoM\MoX\src\sdl3_Audio.c	499		
                 if(NULL != wav_rvr)
                 {
                     *wav_rvr++ = sample_8bit_unsigned;
@@ -588,7 +588,7 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
 }
 
 // C:\STU\developp\1oom\src\ui\classic\uisound.c
-// ...moved into sdl2_Play_Sound()
+// ...moved into sdl3_Play_Sound()
 // void ui_sound_play_music(int musici)
 // {
 //     if ((musici < 0) || (musici >= NUM_MUSICS)) {
@@ -621,7 +621,7 @@ static void ui_sound_stop_music(void)
 
 
 // C:\STU\developp\1oom\src\hw\sdl\hwsdl_audio.c
-// ...moved into sdl2_Play_Sound()
+// ...moved into sdl3_Play_Sound()
 // int hw_audio_music_init(int mus_index, const uint8_t *data_in, uint32_t len_in)
 // {
 //     const uint8_t *data = NULL;

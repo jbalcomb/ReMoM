@@ -1,8 +1,4 @@
-#include "../../MoX/src/EMM.h"
-#include "../../MoX/src/MOX_DEF.h"
-#include "../../MoX/src/MOX_TYPE.h"
-
-#include "MOM_PFL.h"
+#include "Platform.h"
 
 #include <stdlib.h>     /* abs(); SDL_itoa(); malloc(); */
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
@@ -13,7 +9,7 @@
 void EMS_Startup(void)
 {
 
-    _VGAFILEH_seg = (byte_ptr)malloc((16384 * 5));
+    _VGAFILEH_seg = (uint8_t *)malloc((16384 * 5));
 
     memset(_VGAFILEH_seg, 0, (16384 * 5));
 

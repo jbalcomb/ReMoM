@@ -32,6 +32,7 @@ set(LIBMOX_SOURCES
     SOUND.c
     special.c
     TEXTBOX.c
+    Timer.c
     Util.c
     Video.c
     Video2.c

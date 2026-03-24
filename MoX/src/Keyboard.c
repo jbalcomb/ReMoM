@@ -9,6 +9,9 @@
 
 #include "Keyboard.h"
 
+#include "../../platform/include/Platform.h"
+#include "../../platform/include/Platform_Keys.h"
+
 
 
 // WZD dseg:8240                                                 ? BEGIN: Mouse Buffer - Initialized Data ?
@@ -19,11 +22,93 @@ int16_t KD_prev_field_idx = 0;
 int16_t multi_hotkey_active_field = 0;
 
 
-// Platform:  // WZD s35p14
-// Platform:  int16_t Keyboard_Status(void)
+// WZD s35p14
+int16_t Keyboard_Status(void)
+{
+    if(key_pressed == ST_TRUE)
+    {
+        return ST_TRUE;
+    }
+    else
+    {
+        return ST_FALSE;
+    }
+}
 
-// Platform:  // WZD s35p15
-// Platform:  int16_t Read_Key(void)
+
+// WZD s35p15
+/*
+    1oom/Kilgore
+        ...
+        keyp = Read_Key();
+        key = KBD_GET_KEY(keyp);
+        character = KBD_GET_CHAR(keyp);
+        ...
+
+*/
+uint8_t Read_Key(void)
+{
+    // uint16_t key_num;
+    //
+    // if(Keyboard_Status())
+    // {
+    //     key_num = platform_keyboard_buffer.key_num[platform_keyboard_buffer.key_read];
+    //
+    //     platform_keyboard_buffer.key_read = ((platform_keyboard_buffer.key_read + 1) % PLATFORM_KEYBOARD_BUFFER_LENGTH);
+    //
+    //     if(platform_keyboard_buffer.key_read == platform_keyboard_buffer.key_write)
+    //     {
+    //         key_pressed = ST_FALSE;
+    //     }
+    //     else
+    //     {
+    //         key_pressed = ST_TRUE;
+    //     }
+    // }
+
+    uint32_t packed_key_value;
+    uint16_t packed_key_code;
+    char packed_character;
+    uint16_t key_num;
+
+    if(Keyboard_Status())
+    {
+        packed_key_value = platform_keyboard_buffer.packed_key[platform_keyboard_buffer.key_read];
+
+        platform_keyboard_buffer.key_read = ((platform_keyboard_buffer.key_read + 1) % PLATFORM_KEYBOARD_BUFFER_LENGTH);
+
+        if(platform_keyboard_buffer.key_read == platform_keyboard_buffer.key_write)
+        {
+            key_pressed = ST_FALSE;
+        }
+        else
+        {
+            key_pressed = ST_TRUE;
+        }
+    }
+
+    packed_key_code = KBD_GET_KEY(packed_key_value);
+    packed_character = KBD_GET_CHAR(packed_key_value);
+
+    if (packed_character)
+    {
+        key_num = packed_character;
+    }
+    else
+    {
+        key_num = packed_key_code;
+    }
+
+    /* CLAUDE */  /* DOS Alt+key scancodes are UPPERCASE(character) + 95; match that for multi-hotkey support (e.g., Alt+R,V,L cheat codes) */
+    /* CLAUDE */  if ((packed_key_value & MOX_MOD_ALT) && packed_character >= 'A' && packed_character <= 'z')
+    /* CLAUDE */  {
+    /* CLAUDE */      char alt_char = packed_character;
+    /* CLAUDE */      if (alt_char >= 'a' && alt_char <= 'z') { alt_char -= 32; }
+    /* CLAUDE */      key_num = (uint16_t)alt_char + 95;
+    /* CLAUDE */  }
+
+    return (uint8_t)key_num;  // TODO  why/how key_num is diff from return or packed_key or KBD_GET
+}
 
 enum Key_Press
 {

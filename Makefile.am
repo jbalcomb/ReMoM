@@ -50,11 +50,9 @@ if USE_SDL3
 PLATFORM_CORE_SOURCES = \
     platform/sdl3/sdl3_EMM.c \
     platform/sdl3/sdl3_Init.c \
-    platform/sdl3/sdl3_Input.c \
     platform/sdl3/sdl3_KD.c \
     platform/sdl3/sdl3_MD.c \
     platform/sdl3/sdl3_PFL.c \
-    platform/sdl3/sdl3_SDLK.c \
     platform/sdl3/sdl3_State.c \
     platform/sdl3/sdl3_Timer.c \
     platform/sdl3/sdl3_Video.c \
@@ -64,11 +62,9 @@ else
 PLATFORM_CORE_SOURCES = \
     platform/sdl2/sdl2_EMM.c \
     platform/sdl2/sdl2_Init.c \
-    platform/sdl2/sdl2_Input.c \
     platform/sdl2/sdl2_KD.c \
     platform/sdl2/sdl2_MD.c \
     platform/sdl2/sdl2_PFL.c \
-    platform/sdl2/sdl2_SDLK.c \
     platform/sdl2/sdl2_State.c \
     platform/sdl2/sdl2_Timer.c \
     platform/sdl2/sdl2_Video.c \
@@ -138,6 +134,7 @@ libmox_a_SOURCES = \
     MoX/src/SOUND.c \
     MoX/src/special.c \
     MoX/src/TEXTBOX.c \
+    MoX/src/Timer.c \
     MoX/src/Util.c \
     MoX/src/Video.c \
     MoX/src/Video2.c

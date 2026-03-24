@@ -2033,7 +2033,7 @@ void Input_Box_Popup(int16_t field_num)
     int16_t itr = 0;  // _DI_
 
 #ifdef _STU_SDL2
-    hw_textinput_start();
+    Hw_Textinput_Start();
 #endif
 
     Timeout_Counter = 4;
@@ -2337,7 +2337,7 @@ ST_KEY_ENTER            = 0x0C
     */
 
 #ifdef _STU_SDL2
-    hw_textinput_stop();
+    Hw_Textinput_Stop();
 #endif
 
     strcpy(p_fields[field_num].string, input_string);
@@ -2405,7 +2405,7 @@ int16_t Setup_Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, c
 
 
 #ifdef _STU_SDL2
-    hw_textinput_start();
+    Hw_Textinput_Start();
 #endif
 
 
@@ -2685,7 +2685,7 @@ ST_KEY_ENTER            = 0x0C
 
 
 #ifdef _STU_SDL2
-    hw_textinput_stop();
+    Hw_Textinput_Stop();
 #endif
 
 
@@ -2956,7 +2956,46 @@ Done:
 /*
     returns field_idx/num
 */
-// PLATFORM  int16_t Get_Input(void)
+int16_t Get_Input(void)
+{
+    int16_t field_index;
+
+    Platform_Event_Handler();
+
+#ifdef _STU_WIN
+    Pump_Events();
+#endif
+
+    if(input_delay > 0)
+    {
+        input_delay--;
+        return 0;
+    }
+
+    if(input_delay < 0)
+    {
+        input_delay = 0;
+    }
+
+    if(fields_count <= 1)
+    {
+        return 0;
+    }
+
+    if(mouse_installed == ST_FALSE)
+    {
+        // TODO  field_index = CRP_GUI_KeyInputOnly();
+    }
+    else
+    {
+        field_index = Interpret_Mouse_Input();  // WZD s36p01
+    }
+
+    Set_Page_Off();
+
+    return field_index;
+
+}
 
 
 

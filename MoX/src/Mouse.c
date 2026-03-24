@@ -6,6 +6,8 @@
 #include "MOX_TYPE.h"
 #include "Video.h"
 
+#include "../../platform/include/Platform.h"
+
 #include <assert.h>  /* assert() */
 
 
@@ -221,7 +223,18 @@ int16_t Get_Pointer_Offset(void)
 }
 
 // WZD s35p05
-// Platform-Layer int16_t Mouse_Button(void)
+/*
+the current button state is returned as a button bitmask,
+  which can be tested using the SDL_BUTTON(X) macros
+  (where X is generally 1 for the left, 2 for middle, 3 for the right button)
+x and y are set to the mouse cursor position relative to the focus window
+*/
+int16_t Mouse_Button(void)
+{
+    Platform_Event_Handler();
+
+    return Platform_Get_Mouse_Button_State();
+}
 
 // WZD s35p06
 void Mouse_Wait(void)
@@ -302,15 +315,57 @@ void Reset_System_Mouse(void)
 
 
 // WZD s35p10
-// PLATFORM  void Mouse_Movement_Handler(void)
+void Mouse_Movement_Handler(void)
+{
+    lock_mouse_button_status_flag = ST_TRUE;
+}
+
 
 // WZD s35p11
-// PLATFORM void Mouse_Button_Handler(void)
+void Mouse_Button_Handler(void)
+{
+    // ITRY  platform_mouse_button_status = 0;
+    lock_mouse_button_status_flag = ST_FALSE;
+}
+
 
 // WZD s35p12
 // drake178: MOUSE_INT_Handler()
 // MoO2  Module: mouse  User_Mouse_Handler()
-// PLATFORM  void User_Mouse_Handler(int16_t max, int16_t buttons, int16_t mcx, int16_t mdx)
+/* CLAUDE: replaced hardcoded /2 and *2 with dynamic scale from window/screen dimensions */
+void User_Mouse_Handler(int16_t buttons, int16_t l_mx, int16_t l_my)
+{
+    /* OG: int16_t scale = 2; */
+    float screen_scale = (float)Platform_Get_Window_Width() / (float)SCREEN_WIDTH;
+    int16_t gx = (int16_t)(l_mx / screen_scale);
+    int16_t gy = (int16_t)(l_my / screen_scale);
+
+    if(l_mx < SCREEN_XMIN || l_my < SCREEN_YMIN || gx > SCREEN_XMAX || gy > SCREEN_YMAX)
+    {
+        return;
+    }
+    pointer_x = gx;
+    pointer_y = gy;
+    // ITRY  platform_mouse_button_status = buttons;
+    if(mouse_interrupt_active == ST_FALSE)
+    {
+        mouse_interrupt_active = ST_TRUE;
+        Check_Mouse_Buffer(gx, gy, buttons);
+        if(mouse_enabled == ST_TRUE)
+        {
+            mouse_enabled = ST_FALSE;
+            if(current_mouse_list_count >= 2)
+            {
+                Check_Mouse_Shape(gx, gy);
+            }
+            Restore_Mouse_On_Page();                     // mouse_background_buffer           ->  video_page_buffer[draw_page_num]
+            Save_Mouse_On_Page(gx, gy);                  // video_page_buffer[draw_page_num]  ->  mouse_background_buffer
+            Draw_Mouse_On_Page(gx, gy);                  // mouse_palette                     ->  video_page_buffer[draw_page_num]
+            mouse_enabled = ST_TRUE;
+        }
+        mouse_interrupt_active = ST_FALSE;
+    }
+}
 
 
 // WZD s35p13
@@ -354,16 +409,17 @@ void Set_Pointer_Position(int16_t l_mx, int16_t l_my)
 }
 
 // WZD s35p21
-// PLATFORM  void Set_Mouse_Position(int16_t x, int16_t y)
-// {
-// // asm mov cx, [bp+x]
-// // asm shl cx, 1
-// // asm mov dx, [bp+y]
-// // asm mov ax, 4
-// // asm cli
-// // asm int 33h
-// // asm sti
-// }
+void Set_Mouse_Position(int16_t mx, int16_t my)
+{
+    // asm mov cx, [bp+x]
+    // asm shl cx, 1
+    // asm mov dx, [bp+y]
+    // asm mov ax, 4
+    // asm cli
+    // asm int 33h
+    // asm sti
+    Platform_Warp_Mouse(mx, my);
+}
 
 
 // WZD s35p22

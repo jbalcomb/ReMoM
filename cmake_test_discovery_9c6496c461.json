@@ -1,5 +1,5 @@
 {
-  "tests": 106,
+  "tests": 112,
   "name": "AllTests",
   "testsuites": [
     {
@@ -9,32 +9,32 @@
         {
           "name": "MOM_Create_Unit",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 275
+          "line": 284
         },
         {
           "name": "MOM_Kill_Unit_kt0",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 403
+          "line": 412
         },
         {
           "name": "MOM_Kill_Unit_kt1",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 438
+          "line": 447
         },
         {
           "name": "MOM_Kill_Unit_kt2",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 460
+          "line": 469
         },
         {
           "name": "MOM_Delete_Dead_Units",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 482
+          "line": 491
         },
         {
           "name": "MOM_Delete_Dead_Units_ConsecutiveDeadUnits",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 493
+          "line": 502
         }
       ]
     },
@@ -45,7 +45,7 @@
         {
           "name": "NextTurnProc_RealSave_RemovesKilledUnits",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 516
+          "line": 525
         }
       ]
     },
@@ -388,42 +388,72 @@
     },
     {
       "name": "Clear_Square_Scouted_test",
-      "tests": 7,
+      "tests": 13,
       "testsuite": [
         {
           "name": "CheckSquareScoutedReturnsTrueWhenScoutedAndExplored",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
-          "line": 50
+          "line": 61
         },
         {
           "name": "CheckSquareScoutedReturnsFalseWhenNotExplored",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
-          "line": 61
+          "line": 72
         },
         {
           "name": "CheckSquareScoutedReturnsFalseWhenExploredButNotScouted",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
-          "line": 71
+          "line": 82
         },
         {
           "name": "SetSquareScoutedSetsRequestedPlaneOnly",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
-          "line": 81
+          "line": 92
         },
         {
           "name": "SetSquareScoutedSetsOnlyTargetSquare",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
-          "line": 93
+          "line": 104
         },
         {
           "name": "ClearsRequestedPlaneOnly",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
-          "line": 109
+          "line": 120
         },
         {
           "name": "ClearsOnlyTargetSquare",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
-          "line": 127
+          "line": 138
+        },
+        {
+          "name": "ClearSquareScoutedFlagsClearsPlaneZeroOnly",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
+          "line": 159
+        },
+        {
+          "name": "ClearSquareScoutedFlagsClearsNonZeroPlaneOnly",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
+          "line": 175
+        },
+        {
+          "name": "ContactOtherPlayerSetsMutualContactWhenForeignUnitIsVisible",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
+          "line": 191
+        },
+        {
+          "name": "ContactOtherPlayerIgnoresHumanOwnedUnits",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
+          "line": 215
+        },
+        {
+          "name": "ContactOtherPlayerIgnoresInvisibleUnits",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
+          "line": 236
+        },
+        {
+          "name": "ContactOtherPlayerRequiresSquareToBeScouted",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Clear_Square_Scouted.cpp",
+          "line": 259
         }
       ]
     },

@@ -43,6 +43,10 @@
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
                 "CMAKE_C_COMPILER": "cl.exe",
                 "CMAKE_CXX_COMPILER": "cl.exe",
+                "USE_WIN32": {
+                    "type": "BOOL",
+                    "value": "TRUE"
+                },
                 "DISABLE_AUDIO": {
                     "type": "BOOL",
                     "value": "TRUE"

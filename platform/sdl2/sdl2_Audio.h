@@ -1,7 +1,7 @@
 #ifndef SDL2_AUDIO_H
 #define SDL2_AUDIO_H
 
-#include "../../MoX/src/MOX_TYPE.h"
+#include <stdint.h>
 
 #ifndef NO_SOUND_LIBRARY
 #include <SDL_mixer.h>

@@ -36,6 +36,47 @@ typedef struct PFL_Color
 
 
 /* ========================================================================= */
+/*  Shared Constants (originally from MoX engine headers)                    */
+/*                                                                           */
+/*  These let platform code use engine conventions without including          */
+/*  MoX headers.  Guarded so they don't conflict if engine headers are       */
+/*  also visible in the same translation unit.                               */
+/* ========================================================================= */
+
+#ifndef ST_TRUE
+#define ST_TRUE   1
+#endif
+#ifndef ST_FALSE
+#define ST_FALSE  0
+#endif
+
+#define ST_LEFT_BUTTON   1
+#define ST_RIGHT_BUTTON  2
+
+/** Game-space screen bounds. */
+#define PLATFORM_SCREEN_XMIN  0
+#define PLATFORM_SCREEN_YMIN  0
+#define PLATFORM_SCREEN_XMAX  (PLATFORM_SCREEN_WIDTH - 1)
+#define PLATFORM_SCREEN_YMAX  (PLATFORM_SCREEN_HEIGHT - 1)
+
+/** Clamp-to-max: if b < a, set a = b. */
+#ifndef SETMAX
+#define SETMAX(a, b) do { if ((b) < (a)) { (a) = (b); } } while (0)
+#endif
+
+/** Clamp-to-min: if b > a, set a = b. */
+#ifndef SETMIN
+#define SETMIN(a, b) do { if ((b) > (a)) { (a) = (b); } } while (0)
+#endif
+
+/** Clamp a into [b, c]. */
+#ifndef SETRANGE
+#define SETRANGE(a, b, c) do { if (((c) <= (b)) || ((b) > (a))) { (a) = (b); } else if ((c) < (a)) { (a) = (c); } } while (0)
+#endif
+
+
+
+/* ========================================================================= */
 /*  Constants                                                                */
 /* ========================================================================= */
 
@@ -77,7 +118,7 @@ void Startup_Platform(void);
  * Shut down the platform layer and release all resources.
  * No Platform_* functions may be called after this.
  */
-void Shudown_Platform(void);
+void Shutdown_Platform(void);
 
 /**
  * Return the current window-to-game scale factor (window_width / SCREEN_WIDTH).
@@ -116,6 +157,78 @@ extern int16_t platform_frame_mouse_buttons;
 
 /** Shadow palette: 256 colors in platform-neutral RGBA format. */
 extern PFL_Color platform_palette_buffer[256];
+
+
+
+/* ========================================================================= */
+/*  Engine State (defined in MoX, read/written by platform)                  */
+/*                                                                           */
+/*  These globals are DEFINED in the engine (MoX) and EXTERN'd here so       */
+/*  the platform layer can access them without including engine headers.      */
+/* ========================================================================= */
+
+/** Video page buffers — the engine's 8-bit framebuffers (320x200). */
+extern uint8_t *video_page_buffer[];
+
+/** Index of the current draw page (0 or 1). */
+extern int16_t draw_page_num;
+
+/** Actual pixel dimensions of the game screen (typically 320x200). */
+extern int screen_pixel_width;
+extern int screen_pixel_height;
+
+/** 256-color palette: 768 bytes (256 * 3, 6-bit VGA DAC values). */
+extern uint8_t *current_palette;
+
+/** EMS/VGA file buffer — allocated by EMS_Startup(). */
+extern uint8_t *_VGAFILEH_seg;
+
+/** Mouse cursor position in game coordinates. */
+extern int16_t pointer_x;
+extern int16_t pointer_y;
+
+/** Non-zero when cursor drawing is enabled. */
+extern int16_t mouse_enabled;
+
+/** Non-zero when the mouse interrupt handler is active (re-entrancy guard). */
+extern int16_t mouse_interrupt_active;
+
+/** Number of entries in the current mouse cursor region list. */
+extern int16_t current_mouse_list_count;
+
+/** Mouse buffer coordinates (click location). */
+extern int16_t mouse_buffer_x;
+extern int16_t mouse_buffer_y;
+
+/** Input field count (used by replay to iterate field rectangles). */
+extern int16_t fields_count;
+
+
+
+/* ========================================================================= */
+/*  Engine Callbacks (platform calls into engine)                            */
+/*                                                                           */
+/*  These functions are DEFINED in the engine (MoX) and CALLED by the        */
+/*  platform layer for cursor rendering, mouse handling, etc.                */
+/* ========================================================================= */
+
+/** Return the current cursor image number (0 = none/hidden). */
+int16_t Get_Pointer_Image_Number(void);
+
+/** Save the background under the cursor at (x, y) on the draw page. */
+void Save_Mouse_On_Page(int16_t x, int16_t y);
+
+/** Draw the cursor sprite at (x, y) on the draw page. */
+void Draw_Mouse_On_Page(int16_t x, int16_t y);
+
+/** Restore the background previously saved by Save_Mouse_On_Page(). */
+void Restore_Mouse_On_Page(void);
+
+/** Update cursor shape if (x, y) falls in a different mouse region. */
+void Check_Mouse_Shape(int16_t x, int16_t y);
+
+/** Mouse interrupt handler: process a button event at window coordinates. */
+void User_Mouse_Handler(int16_t buttons, int16_t mx, int16_t my);
 
 
 
@@ -160,6 +273,12 @@ void Platform_Video_Update(void);
  */
 void Platform_Event_Handler(void);
 
+/**
+ * Pump the platform event queue without processing events.
+ * Keeps the OS from thinking the application is unresponsive during busy-waits.
+ */
+void Platform_Pump_Events(void);
+
 /** Enable mouse input processing. */
 void Platform_Mouse_Input_Enable(void);
 
@@ -183,16 +302,16 @@ void Platform_Keyboard_Buffer_Add_Key_Press(int mox_key, uint32_t mox_mod, char 
 int Platform_Keyboard_Buffer_Pending_Count(void);
 
 /**
- * Peek at the most recently written kilgore_key value without consuming it.
+ * Peek at the most recently written packed_key value without consuming it.
  * Returns 0 if the buffer is empty.
  */
 uint32_t Platform_Keyboard_Buffer_Peek_Latest(void);
 
 /** Begin accepting text input events (e.g., enable IME). */
-void hw_textinput_start(void);
+void Hw_Textinput_Start(void);
 
 /** Stop accepting text input events. */
-void hw_textinput_stop(void);
+void Hw_Textinput_Stop(void);
 
 
 
@@ -206,6 +325,26 @@ void hw_textinput_stop(void);
 void EMS_Startup(void);
 
 /**
+ * Query the current mouse button state from the platform.
+ * @return  ST_LEFT_BUTTON if left is pressed, ST_RIGHT_BUTTON if right is pressed, 0 if neither.
+ */
+int16_t Platform_Get_Mouse_Button_State(void);
+
+/**
+ * Warp (move) the mouse cursor to a position given in game coordinates.
+ * The platform handles scaling to window coordinates.
+ * @param game_x  X in game coordinates (0..319).
+ * @param game_y  Y in game coordinates (0..199).
+ */
+void Platform_Warp_Mouse(int16_t game_x, int16_t game_y);
+
+/**
+ * Return the current window width in pixels.
+ * Used by engine code that needs to convert between window and game coordinates.
+ */
+int Platform_Get_Window_Width(void);
+
+/**
  * Query the current mouse position from the platform.
  * @param mx  Output: mouse X coordinate (0..319 in game space).
  * @param my  Output: mouse Y coordinate (0..199 in game space).
@@ -217,21 +356,6 @@ void Platform_Get_Mouse_Position_XY(int *mx, int *my);
  * under the cursor and redraw the cursor at the new position.
  */
 void Platform_Maybe_Move_Mouse(void);
-
-/**
- * Callback from the platform to the engine: update the engine's mouse position.
- * @param platform_mouse_x  X in game coordinates.
- * @param platform_mouse_y  Y in game coordinates.
- */
-void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y);
-
-/**
- * Callback from the platform to the engine: update the engine's mouse button state.
- * @param platform_mouse_x      X in game coordinates.
- * @param platform_mouse_y      Y in game coordinates.
- * @param mouse_button_status   Button bitmask.
- */
-void Update_Mouse_Button_Status(int16_t platform_mouse_x, int16_t platform_mouse_y, int16_t mouse_button_status);
 
 
 
@@ -258,6 +382,21 @@ uint64_t Read_System_Clock_Timer(void);
 
 
 /* ========================================================================= */
+/*  Audio                                                                    */
+/* ========================================================================= */
+
+/**
+ * Play a sound effect or music from a raw buffer (VOC, XMIDI, etc.).
+ * The platform layer handles format detection and conversion.
+ * @param sound_buffer       Pointer to the raw sound data.
+ * @param sound_buffer_size  Size of the buffer in bytes.
+ * @return  Implementation-defined status (typically -1 on no-op).
+ */
+int16_t Platform_Audio_Play_Sound(void *sound_buffer, uint32_t sound_buffer_size);
+
+
+
+/* ========================================================================= */
 /*  Win32 Legacy                                                             */
 /* ========================================================================= */
 
@@ -265,6 +404,7 @@ uint64_t Read_System_Clock_Timer(void);
 void Pump_Events(void);
 void Pump_Paints(void);
 void MWA_Set_Mouse_Position(int16_t x, int16_t y);
+void MWA_Exit_With_Message(char *string);
 #endif
 
 

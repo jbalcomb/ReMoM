@@ -6,13 +6,7 @@
 
 #include "../../platform/include/Platform.h"
 
-#include "../../MoX/src/Fonts.h"
-#include "../../MoX/src/MOX_BASE.h"
-#include "../../MoX/src/MOX_TYPE.h"
-#include "../../MoX/src/Video.h"
-#include "../../MoX/src/Video2.h"
-
-#include "../../MoX/src/sdl2_PFL.h"
+#include "sdl3_PFL.h"
 #include <SDL3/SDL.h>
 
 #include <assert.h>
@@ -58,7 +52,7 @@ void Platform_Set_Palette_Color(uint8_t index, uint8_t r, uint8_t g, uint8_t b)
     platform_palette_buffer[index].b = b;
     platform_palette_buffer[index].a = 255;
 
-    palette = SDL_GetSurfacePalette(sdl2_surface_RGB666);
+    palette = SDL_GetSurfacePalette(sdl3_surface_RGB666);
     if (palette != NULL)
     {
         SDL_SetPaletteColors(palette, &color, index, 1);
@@ -78,23 +72,23 @@ void Platform_Video_Update(void)
 
 
 
-    assert(sdl2_surface_RGB666 != NULL);
-    assert(sdl2_surface_ARGB8888 != NULL);
-    assert(sdl2_texture != NULL);
-    assert(sdl2_renderer != NULL);
+    assert(sdl3_surface_RGB666 != NULL);
+    assert(sdl3_surface_ARGB8888 != NULL);
+    assert(sdl3_texture != NULL);
+    assert(sdl3_renderer != NULL);
     assert(video_page_buffer[draw_page_num] != NULL);
 
     /* PFL_Color is layout-compatible with SDL_Color */
     {
-        SDL_Palette *pal = SDL_GetSurfacePalette(sdl2_surface_RGB666);
+        SDL_Palette *pal = SDL_GetSurfacePalette(sdl3_surface_RGB666);
         assert(pal != NULL && "8-bit surface must have a palette");
         assert(SDL_SetPaletteColors(pal, (SDL_Color *)platform_palette_buffer, 0, 256));
     }
 
-    assert(SDL_LockSurface(sdl2_surface_RGB666));
+    assert(SDL_LockSurface(sdl3_surface_RGB666));
 
-    pitch = sdl2_surface_RGB666->pitch;
-    dst = (uint8_t *)sdl2_surface_RGB666->pixels;
+    pitch = sdl3_surface_RGB666->pitch;
+    dst = (uint8_t *)sdl3_surface_RGB666->pixels;
     src = video_page_buffer[draw_page_num];
     assert(dst != NULL);
     assert(src != NULL);
@@ -106,21 +100,21 @@ void Platform_Video_Update(void)
         src += screen_pixel_width;
     }
 
-    SDL_UnlockSurface(sdl2_surface_RGB666);
+    SDL_UnlockSurface(sdl3_surface_RGB666);
 
-    assert(SDL_LockTexture(sdl2_texture, &sdl2_blit_rect, &sdl2_surface_ARGB8888->pixels, &sdl2_surface_ARGB8888->pitch));
-    assert(sdl2_surface_ARGB8888->pixels != NULL);
+    assert(SDL_LockTexture(sdl3_texture, &sdl3_blit_rect, &sdl3_surface_ARGB8888->pixels, &sdl3_surface_ARGB8888->pitch));
+    assert(sdl3_surface_ARGB8888->pixels != NULL);
 
-    sdl2_surface_ARGB8888->w = sdl2_blit_rect.w;
-    sdl2_surface_ARGB8888->h = sdl2_blit_rect.h;
+    sdl3_surface_ARGB8888->w = sdl3_blit_rect.w;
+    sdl3_surface_ARGB8888->h = sdl3_blit_rect.h;
 
-    assert(SDL_BlitSurface(sdl2_surface_RGB666, &sdl2_blit_rect, sdl2_surface_ARGB8888, NULL));
+    assert(SDL_BlitSurface(sdl3_surface_RGB666, &sdl3_blit_rect, sdl3_surface_ARGB8888, NULL));
 
-    SDL_UnlockTexture(sdl2_texture);
+    SDL_UnlockTexture(sdl3_texture);
 
-    assert(SDL_RenderTexture(sdl2_renderer, sdl2_texture, NULL, NULL));
+    assert(SDL_RenderTexture(sdl3_renderer, sdl3_texture, NULL, NULL));
 
-    assert(SDL_RenderPresent(sdl2_renderer));
+    assert(SDL_RenderPresent(sdl3_renderer));
 
     /* CLAUDE */  DBG_Frame_Reset();
 

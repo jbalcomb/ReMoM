@@ -15,8 +15,6 @@
 #include "../../platform/include/Platform.h"
 #include "../../platform/include/Platform_Keys.h"
 #include "../../platform/include/Platform_Replay.h"
-#include "../../MoX/src/Fields.h"
-#include "../../MoX/src/Mouse.h"
 
 #include "../../ext/stu_compat.h"
 
@@ -73,11 +71,17 @@ static Collapsed_Log_State play_log = { -1, -1, -1, -1, 0, 0, 0 };
 /* Engine callbacks — registered by the application before record/replay starts. */
 static Platform_Replay_Get_Random_Seed_Fn replay_get_random_seed = NULL;
 static Platform_Replay_Set_Random_Seed_Fn replay_set_random_seed = NULL;
+static Platform_Replay_Log_Field_Hit_Fn   replay_log_field_hit   = NULL;
 
 void Platform_Replay_Register_Random_Seed_Callbacks(Platform_Replay_Get_Random_Seed_Fn get_fn, Platform_Replay_Set_Random_Seed_Fn set_fn)
 {
     replay_get_random_seed = get_fn;
     replay_set_random_seed = set_fn;
+}
+
+void Platform_Replay_Register_Field_Log_Callback(Platform_Replay_Log_Field_Hit_Fn fn)
+{
+    replay_log_field_hit = fn;
 }
 
 /* Write detailed debug output to the appropriate log file, or stderr if not open. */
@@ -433,7 +437,7 @@ void Replay_Capture_Frame(void)
     delta = timestamp - record_prev_timestamp;
     record_prev_timestamp = timestamp;
 
-    /* Read from the kilgore_key keyboard buffer, not scan_code_char_code
+    /* Read from the packed_key keyboard buffer, not scan_code_char_code
        (which is only set by the Win32 driver, never by SDL3). */
     key_count = Platform_Keyboard_Buffer_Pending_Count();
     key0 = (key_count > 0) ? Platform_Keyboard_Buffer_Peek_Latest() : 0;
@@ -473,18 +477,9 @@ void Replay_Capture_Frame(void)
             (unsigned long long)delta);
 
         /* Show which field the mouse is over, if any. */
+        if(replay_log_field_hit != NULL)
         {
-            int fx = pointer_x;
-            int fy = pointer_y;
-            int fi;
-            for(fi = 0; fi < fields_count; fi++)
-            {
-                if(fx >= p_fields[fi].x1 && fx <= p_fields[fi].x2 && fy >= p_fields[fi].y1 && fy <= p_fields[fi].y2)
-                {
-                    fprintf(REC_LOG, "  field[%d]=(%d,%d)-(%d,%d)", fi, p_fields[fi].x1, p_fields[fi].y1, p_fields[fi].x2, p_fields[fi].y2);
-                    break;
-                }
-            }
+            replay_log_field_hit(REC_LOG, pointer_x, pointer_y);
         }
 
         fprintf(REC_LOG, "\n");
@@ -656,18 +651,9 @@ int Replay_Inject_Frame(void)
             fprintf(PLAY_LOG, "idx=%-6u t=%-8llu  mouse=(%3d,%3d) btn=%d  key=%d sccc=0x%04X  elapsed=%llu", (unsigned)inject.frame_number, (unsigned long long)inject.timestamp_ms, (int)inject.mouse_x, (int)inject.mouse_y, (int)inject.mouse_buttons, (int)inject.key_pressed, (unsigned)play_key0, (unsigned long long)elapsed);
 
             /* Show which field the mouse is over, if any. */
+            if(replay_log_field_hit != NULL)
             {
-                int fx = inject.mouse_x;
-                int fy = inject.mouse_y;
-                int fi;
-                for(fi = 0; fi < fields_count; fi++)
-                {
-                    if(fx >= p_fields[fi].x1 && fx <= p_fields[fi].x2 && fy >= p_fields[fi].y1 && fy <= p_fields[fi].y2)
-                    {
-                        fprintf(PLAY_LOG, "  field[%d]=(%d,%d)-(%d,%d)", fi, p_fields[fi].x1, p_fields[fi].y1, p_fields[fi].x2, p_fields[fi].y2);
-                        break;
-                    }
-                }
+                replay_log_field_hit(PLAY_LOG, inject.mouse_x, inject.mouse_y);
             }
 
             fprintf(PLAY_LOG, "\n");
@@ -705,15 +691,15 @@ int Replay_Inject_Frame(void)
     /* Write keyboard input into the platform keyboard buffer so that
        Read_Key() can consume it — the game reads keys from the buffer,
        not from scan_code_char_code directly.
-       The replay file stores kilgore_key values directly:
+       The replay file stores packed_key values directly:
          bits 0-7: mox_key, bits 8-15: mox_character, bits 16+: mox_mod. */
     if(inject.key_count > 0)
     {
-        uint32_t kilgore_key = inject.keys[0];
-        int mox_key = (int)(kilgore_key & 0xFF);
-        char mox_character = (char)((kilgore_key >> 8) & 0xFF);
-        uint32_t mox_mod = kilgore_key & 0xFFFF0000u;
-        fprintf(PLAY_LOG, "PLAY KBD_BUF kilgore=0x%08X  mox_key=%d  char=0x%02X  mod=0x%X  key_pressed_before=%d\n", kilgore_key, mox_key, (unsigned char)mox_character, mox_mod, (int)key_pressed);
+        uint32_t packed_key = inject.keys[0];
+        int mox_key = (int)(packed_key & 0xFF);
+        char mox_character = (char)((packed_key >> 8) & 0xFF);
+        uint32_t mox_mod = packed_key & 0xFFFF0000u;
+        fprintf(PLAY_LOG, "PLAY KBD_BUF packed=0x%08X  mox_key=%d  char=0x%02X  mod=0x%X  key_pressed_before=%d\n", packed_key, mox_key, (unsigned char)mox_character, mox_mod, (int)key_pressed);
         Platform_Keyboard_Buffer_Add_Key_Press(mox_key, mox_mod, mox_character);
         fprintf(PLAY_LOG, "PLAY KBD_BUF DONE  key_pressed_after=%d\n", (int)key_pressed);
     }

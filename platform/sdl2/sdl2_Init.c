@@ -1,17 +1,13 @@
 
-#include "../../MoX/src/Mouse.h"
-#include "../../MoX/src/MOX_DEF.h"
-#include "../../MoX/src/MOX_TYPE.h"
-#include "../../MoX/src/sdl2_Audio.h"
+#include "Platform.h"
 
-#include "MOM_PFL.h"
+#include "sdl2_Audio.h"
 
 #include "../../STU/src/STU_DBG.h"
 
 #include "sdl2_KD.h"
 #include "sdl2_MOM.h"
 #include "sdl2_PFL.h"
-#include "sdl2_SDLK.h"
 
 #include <SDL.h>
 #ifndef NO_SOUND_LIBRARY
@@ -67,8 +63,8 @@ void Startup_Platform(void)
 
     w = sdl2_window_width;
     h = sdl2_window_height;
-    assert(w >= SCREEN_WIDTH && "window width must be >= SCREEN_WIDTH");
-    assert(h >= SCREEN_HEIGHT && "window height must be >= SCREEN_HEIGHT");
+    assert(w >= PLATFORM_SCREEN_WIDTH && "window width must be >= PLATFORM_SCREEN_WIDTH");
+    assert(h >= PLATFORM_SCREEN_HEIGHT && "window height must be >= PLATFORM_SCREEN_HEIGHT");
 
     sdl2_window_flags = SDL_WINDOW_RESIZABLE;
 
@@ -87,24 +83,24 @@ void Startup_Platform(void)
 
     // Create the 8-bit paletted and the 32-bit RGBA screenbuffer surfaces.
 
-    sdl2_surface_RGB666 = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, 8, 0, 0, 0, 0);
+    sdl2_surface_RGB666 = SDL_CreateRGBSurface(0, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT, 8, 0, 0, 0, 0);
     assert(sdl2_surface_RGB666 != NULL);
     /* SDL2 auto-creates a palette for 8-bit surfaces — no manual creation needed. */
     assert(sdl2_surface_RGB666->format->palette != NULL && "SDL2 must auto-create palette for 8-bit surface");
 
     SDL_FillRect(sdl2_surface_RGB666, NULL, 0);
 
-    sdl2_surface_ARGB8888 = SDL_CreateRGBSurfaceWithFormat(0, SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_PIXELFORMAT_ARGB8888);
+    sdl2_surface_ARGB8888 = SDL_CreateRGBSurfaceWithFormat(0, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT, 32, SDL_PIXELFORMAT_ARGB8888);
     assert(sdl2_surface_ARGB8888 != NULL);
 
-    sdl2_texture = SDL_CreateTexture(sdl2_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, SCREEN_WIDTH, SCREEN_HEIGHT);
+    sdl2_texture = SDL_CreateTexture(sdl2_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT);
     assert(sdl2_texture != NULL);
 
     SDL_ShowCursor(SDL_DISABLE);
 
     // SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 
-    build_key_xlat();
+    Build_Key_Xlat();
 
 #ifndef NO_SOUND_LIBRARY
     sdl2_Audio_Init();
@@ -112,7 +108,7 @@ void Startup_Platform(void)
 
 }
 
-void Shudown_Platform(void)
+void Shutdown_Platform(void)
 {
     SDL_ShowCursor(SDL_ENABLE);
 

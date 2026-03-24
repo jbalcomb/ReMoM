@@ -1,6 +1,17 @@
 
 Platform-Layer (PFL)
 AKA Platform Abstraction Layer (PAL)
+AKA Hardware Abstraction Layer (HAL)
+
+NOTE(JimBalcomb,20260323):
+sdl2,sdl3,win32
+...gonna get get to text from chocolate-doom
+FWIW, ...
+...trying to get having an AI-Prompt that gets us the right arrangement
+...
+Should be, CMake has presets for all four platform layers.
+The autoconf/make build should target SDL2, as it comes with MSYS2 and Ubuntu/Kubuntu.
+
 
 
 

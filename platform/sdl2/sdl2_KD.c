@@ -2,12 +2,7 @@
 
 #include "../../ext/stu_compat.h"
 
-#include "../../MoX/src/Keyboard.h"
-#include "../../MoX/src/MOX_DEF.h"
-#include "../../MoX/src/MOX_KEYS.h"
-#include "../../MoX/src/MOX_TYPE.h"
-
-#include "MOM_PFL.h"
+#include "Platform.h"
 
 #include "sdl2_PFL.h"
 
@@ -15,10 +10,10 @@
 
 
 
-char * sdl2_get_key_code_name(int32_t virtual_key_code);
-uint32_t mod_xlat(uint16_t smod);
-void kbd_set_pressed(int mox_key, uint32_t mox_mod, int pressed);
-int kbd_is_pressed(int mox_key, uint32_t modon, uint32_t modoff);
+char * Platform_Get_Key_Code_Name(int32_t virtual_key_code);
+uint32_t Mod_Xlat(uint16_t smod);
+void Kbd_Set_Pressed(int mox_key, uint32_t mox_mod, int pressed);
+int Kbd_Is_Pressed(int mox_key, uint32_t modon, uint32_t modoff);
 
 
 
@@ -40,91 +35,7 @@ struct s_KEYBOARD_BUFFER platform_keyboard_buffer;
 
 
 
-int16_t Keyboard_Status(void)
-{
-    if(key_pressed == ST_TRUE)
-    {
-        return ST_TRUE;
-    }
-    else
-    {
-        return ST_FALSE;
-    }
-}
-
-
-/*
-    1oom/Kilgore
-        ...
-        keyp = Read_Key();
-        key = KBD_GET_KEY(keyp);
-        character = KBD_GET_CHAR(keyp);
-        ...
-
-*/
-uint8_t Read_Key(void)
-{
-    // uint16_t key_num;
-    //
-    // if(Keyboard_Status())
-    // {
-    //     key_num = platform_keyboard_buffer.key_num[platform_keyboard_buffer.key_read];
-    //
-    //     platform_keyboard_buffer.key_read = ((platform_keyboard_buffer.key_read + 1) % PLATFORM_KEYBOARD_BUFFER_LENGTH);
-    //
-    //     if(platform_keyboard_buffer.key_read == platform_keyboard_buffer.key_write)
-    //     {
-    //         key_pressed = ST_FALSE;
-    //     }
-    //     else
-    //     {
-    //         key_pressed = ST_TRUE;
-    //     }
-    // }
-
-    uint32_t kilgore_key_value;
-    uint16_t kilgore_key_code;
-    char kilgore_character;
-    uint16_t key_num;
-
-    if(Keyboard_Status())
-    {
-        kilgore_key_value = platform_keyboard_buffer.kilgore_key[platform_keyboard_buffer.key_read];
-
-        platform_keyboard_buffer.key_read = ((platform_keyboard_buffer.key_read + 1) % PLATFORM_KEYBOARD_BUFFER_LENGTH);
-
-        if(platform_keyboard_buffer.key_read == platform_keyboard_buffer.key_write)
-        {
-            key_pressed = ST_FALSE;
-        }
-        else
-        {
-            key_pressed = ST_TRUE;
-        }
-    }
-
-    kilgore_key_code = KBD_GET_KEY(kilgore_key_value);
-    kilgore_character = KBD_GET_CHAR(kilgore_key_value);
-
-    if (kilgore_character)
-    {
-        key_num = kilgore_character;
-    }
-    else
-    {
-        key_num = kilgore_key_code;
-    }
-
-    /* CLAUDE */  /* DOS Alt+key scancodes are UPPERCASE(character) + 95; match that for multi-hotkey support (e.g., Alt+R,V,L cheat codes) */
-    /* CLAUDE */  if ((kilgore_key_value & MOX_MOD_ALT) && kilgore_character >= 'A' && kilgore_character <= 'z')
-    /* CLAUDE */  {
-    /* CLAUDE */      char alt_char = kilgore_character;
-    /* CLAUDE */      if (alt_char >= 'a' && alt_char <= 'z') { alt_char -= 32; }
-    /* CLAUDE */      key_num = (uint16_t)alt_char + 95;
-    /* CLAUDE */  }
-
-    return (uint8_t)key_num;  // TODO  why/how key_num is diff from return or kilgore or KBD_GET
-}
+/* Keyboard_Status() and Read_Key() moved to MoX/src/Keyboard.c */
 
 
 
@@ -188,12 +99,12 @@ void Platform_Keyboard_Event(SDL_Event * sdl2_event)
                     }
                 }
 
-                mox_mod = mod_xlat(sdl2_key_modifiers);
+                mox_mod = Mod_Xlat(sdl2_key_modifiers);
                 if((mox_key != MOX_KEY_UNKNOWN) && (mox_key < MOX_KEY_OVERRUN))
                 {
                     Platform_Keyboard_Buffer_Add_Key_Press(mox_key, mox_mod, mox_character);
                 }
-                kbd_set_pressed(mox_key, mox_mod, ST_TRUE);
+                Kbd_Set_Pressed(mox_key, mox_mod, ST_TRUE);
             }
         } break;
         case SDL_KEYUP:
@@ -208,7 +119,7 @@ void Platform_Keyboard_Event(SDL_Event * sdl2_event)
             {
                 mox_key = key_xlat_key[sdl2_key_code];
             }
-            kbd_set_pressed(mox_key, mod_xlat(sdl2_key_modifiers), false);
+            Kbd_Set_Pressed(mox_key, Mod_Xlat(sdl2_key_modifiers), false);
         } break;
         case SDL_TEXTINPUT:
         if(
@@ -244,9 +155,9 @@ void Platform_Keyboard_Buffer_Add_Key_Press(int mox_key, uint32_t mox_mod, char 
     uint16_t mox_key_num = 0;
     int32_t virtual_key_code = 0;
     uint16_t key_modifiers = 0;
-    uint32_t kilgore_key = 0;
+    uint32_t packed_key = 0;
 
-    kilgore_key = ((uint32_t)mox_key) | mox_mod | (((uint32_t)mox_character) << 8);
+    packed_key = ((uint32_t)mox_key) | mox_mod | (((uint32_t)mox_character) << 8);
 
     if(mox_key == MOX_KEY_OVERRUN)
     {
@@ -255,7 +166,7 @@ void Platform_Keyboard_Buffer_Add_Key_Press(int mox_key, uint32_t mox_mod, char 
 
     key_pressed = ST_TRUE;
 
-    platform_keyboard_buffer.kilgore_key[platform_keyboard_buffer.key_write] = kilgore_key;
+    platform_keyboard_buffer.packed_key[platform_keyboard_buffer.key_write] = packed_key;
 
     platform_keyboard_buffer.key_write = ((platform_keyboard_buffer.key_write + 1) % PLATFORM_KEYBOARD_BUFFER_LENGTH);
 
@@ -272,10 +183,10 @@ uint32_t Platform_Keyboard_Buffer_Peek_Latest(void)
     {
         return 0;
     }
-    return platform_keyboard_buffer.kilgore_key[(platform_keyboard_buffer.key_write - 1 + PLATFORM_KEYBOARD_BUFFER_LENGTH) % PLATFORM_KEYBOARD_BUFFER_LENGTH];
+    return platform_keyboard_buffer.packed_key[(platform_keyboard_buffer.key_write - 1 + PLATFORM_KEYBOARD_BUFFER_LENGTH) % PLATFORM_KEYBOARD_BUFFER_LENGTH];
 }
 
-char * sdl2_get_key_code_name(int32_t sdl2_key_code)
+char * Platform_Get_Key_Code_Name(int32_t sdl2_key_code)
 {
 
     memset(sdl2_key_code_name, 0, 4096);
@@ -286,13 +197,13 @@ char * sdl2_get_key_code_name(int32_t sdl2_key_code)
 }
 
 
-void hw_textinput_start(void)
+void Hw_Textinput_Start(void)
 {
     SDL_StartTextInput();
     hw_textinput_active = true;
 }
 
-void hw_textinput_stop(void)
+void Hw_Textinput_Stop(void)
 {
     SDL_StopTextInput();
     hw_textinput_active = false;
@@ -304,7 +215,7 @@ void hw_textinput_stop(void)
     key_xlat_scan[] is indexed by scancode for non-ASCII keys (F-keys, arrows, etc.)
     which have SDLK_SCANCODE_MASK set.
 */
-void build_key_xlat(void)
+void Build_Key_Xlat(void)
 {
     memset(key_xlat_key, 0, sizeof(key_xlat_key));
     memset(key_xlat_scan, 0, sizeof(key_xlat_scan));
@@ -376,7 +287,7 @@ void build_key_xlat(void)
     key_xlat_scan[SDLK_TABLE_INDEX_FROM_SCANCODE(SDLK_KP_9)] = MOX_KEY_RIGHTUP;
 }
 
-uint32_t mod_xlat(uint16_t sdl2_key_modifiers)
+uint32_t Mod_Xlat(uint16_t sdl2_key_modifiers)
 {
     uint32_t mox_mod = 0;
     if (sdl2_key_modifiers & KMOD_SHIFT ) { mox_mod |= MOX_MOD_SHIFT; }
@@ -385,7 +296,7 @@ uint32_t mod_xlat(uint16_t sdl2_key_modifiers)
     return mox_mod;
 }
 
-void kbd_set_pressed(int mox_key, uint32_t mox_mod, int pressed)
+void Kbd_Set_Pressed(int mox_key, uint32_t mox_mod, int pressed)
 {
 
     platform_keyboard_buffer.mox_mod = mox_mod;
@@ -401,7 +312,7 @@ void kbd_set_pressed(int mox_key, uint32_t mox_mod, int pressed)
 
 }
 
-int kbd_is_pressed(int mox_key, uint32_t modon, uint32_t modoff)
+int Kbd_Is_Pressed(int mox_key, uint32_t modon, uint32_t modoff)
 {
 
     return (((platform_keyboard_buffer.mox_mod & modon) == modon) && ((platform_keyboard_buffer.mox_mod & modoff) == 0) && BOOLVEC_IS1(platform_keyboard_buffer.pressed, mox_key));

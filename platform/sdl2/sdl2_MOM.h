@@ -1,7 +1,7 @@
 #ifndef SDL2_MOM_H
 #define SDL2_MOM_H
 
-#include "../../MoX/src/MOX_TYPE.h"
+#include <stdint.h>
 
 #include <SDL.h>
 

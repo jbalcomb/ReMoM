@@ -183,10 +183,13 @@ struct s_KEYBOARD_BUFFER
 {
     int key_write;
     int key_read;
-    uint32_t kilgore_key[PLATFORM_KEYBOARD_BUFFER_LENGTH];
+    uint32_t packed_key[PLATFORM_KEYBOARD_BUFFER_LENGTH];
     uint32_t mox_mod;
     BOOLVEC_DECLARE(pressed, MOX_KEY_OVERRUN);
 };
+
+/** The global keyboard buffer — defined in platform KD, used by engine Keyboard.c */
+extern struct s_KEYBOARD_BUFFER platform_keyboard_buffer;
 
 
 

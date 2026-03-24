@@ -1,240 +1,169 @@
+/**
+ * win_KD.c — Win32 keyboard handling.
+ *
+ * Provides the VK-to-MOX_KEY translation table and keyboard buffer functions.
+ * Game-level Keyboard_Status() and Read_Key() live in MoX/src/Keyboard.c.
+ */
 
-#include "../../MoX/src/MOX_DEF.h"
-#include "../../MoX/src/Input.h"
-#include "../../MoX/src/Mouse.h"
-#include "../../MoX/src/MOX_TYPE.h"
+#include "../../platform/include/Platform.h"
+#include "../../platform/include/Platform_Keys.h"
+#include "win_PFL.h"
 
-#include "MOM_PFL.h"
-#include "PoC_PFL.h"
-
-
-
-/*
-typedef __int64 LONG_PTR, *PLONG_PTR;
-typedef unsigned __int64 UINT_PTR, *PUINT_PTR;
-typedef UINT_PTR            WPARAM;
-typedef LONG_PTR            LPARAM;
-WPARAM  wParam
-LPARAM  lParam
-~ uint64_t wParam
-~ int64_t  lParam
-
-WPARAM  wParam
-LPARAM  lParam
-
-Keyboard Input Notification
-WM_KEYDOWN
-Parameters
-wParam
-The virtual-key code of the nonsystem key. See Virtual-Key Codes.
-lParam
-The repeat count, scan code, extended-key flag, context code, previous key-state flag, and transition-state flag, as shown following.
-
-uint32_t VKCode = wParam;  // the virtual-key code of the key
-
-repeat count
-scan code
-extended-key flag
-context code
-previous key-state flag
-transition-state flag
-
-The previous key state (bit 30) can be used to determine whether the WM_KEYDOWN message indicates the first down transition or a repeated down transition.
-
-
-When you receive a WM_KEYDOWN, WM_KEYUP, WM_SYSKEYDOWN, WM_SYSKEYUP message
-    the lParam parameter contains the scancode in the 16 - 23 bits
-    and the 24th bit indicates if the scancode is 1 or 2 bytes (extended).
-    If the scancode is extended, you just need to add 0xE000 or 0xE100.
+#include <string.h>
 
 
 
-    WORD vkCode = LOWORD(wParam);                                 // virtual-key code
-    WORD keyFlags = HIWORD(lParam);
-    WORD scanCode = LOBYTE(keyFlags);                             // scan code
+/* ========================================================================= */
+/*  Keyboard Buffer                                                          */
+/* ========================================================================= */
+
+struct s_KEYBOARD_BUFFER platform_keyboard_buffer;
 
 
 
+/* ========================================================================= */
+/*  VK to MOX_KEY Translation Table (256 entries)                            */
+/* ========================================================================= */
 
-            int16_t key_shift = GetKeyState(VK_SHIFT);   // VK_SHIFT    0x10  SHIFT key
-            int16_t key_ctrl = GetKeyState(VK_CONTROL);  // VK_CONTROL  0x11  CTRL key
-            // "(The virtual-key code for the ALT key is named VK_MENU for historical reasons.)"
-            int16_t key_alt = GetKeyState(VK_MENU);      // VK_MENU     0x12  ALT key
-            if (GetKeyState(VK_LMENU) & 0x8000)
-            {
-                    // Left ALT key is down.
-            }
-            if (GetKeyState(VK_RMENU) & 0x8000)
-            {
-                    // Right ALT key is down.
-            }
+int VK_to_MOX_KEY[256];
 
-
-*/
-
-// WZD s35p14
-// keystroke available: {0,1} {ST_FALSE,ST_TRUE}
-int16_t Keyboard_Status(void)
+void Build_Key_Xlat(void)
 {
-    int16_t keyboard_status;
+    memset(VK_to_MOX_KEY, 0, sizeof(VK_to_MOX_KEY));
 
-    Save_Mouse_State();
+    /* Letters */
+    VK_to_MOX_KEY['A'] = MOX_KEY_a;
+    VK_to_MOX_KEY['B'] = MOX_KEY_b;
+    VK_to_MOX_KEY['C'] = MOX_KEY_c;
+    VK_to_MOX_KEY['D'] = MOX_KEY_d;
+    VK_to_MOX_KEY['E'] = MOX_KEY_e;
+    VK_to_MOX_KEY['F'] = MOX_KEY_f;
+    VK_to_MOX_KEY['G'] = MOX_KEY_g;
+    VK_to_MOX_KEY['H'] = MOX_KEY_h;
+    VK_to_MOX_KEY['I'] = MOX_KEY_i;
+    VK_to_MOX_KEY['J'] = MOX_KEY_j;
+    VK_to_MOX_KEY['K'] = MOX_KEY_k;
+    VK_to_MOX_KEY['L'] = MOX_KEY_l;
+    VK_to_MOX_KEY['M'] = MOX_KEY_m;
+    VK_to_MOX_KEY['N'] = MOX_KEY_n;
+    VK_to_MOX_KEY['O'] = MOX_KEY_o;
+    VK_to_MOX_KEY['P'] = MOX_KEY_p;
+    VK_to_MOX_KEY['Q'] = MOX_KEY_q;
+    VK_to_MOX_KEY['R'] = MOX_KEY_r;
+    VK_to_MOX_KEY['S'] = MOX_KEY_s;
+    VK_to_MOX_KEY['T'] = MOX_KEY_t;
+    VK_to_MOX_KEY['U'] = MOX_KEY_u;
+    VK_to_MOX_KEY['V'] = MOX_KEY_v;
+    VK_to_MOX_KEY['W'] = MOX_KEY_w;
+    VK_to_MOX_KEY['X'] = MOX_KEY_x;
+    VK_to_MOX_KEY['Y'] = MOX_KEY_y;
+    VK_to_MOX_KEY['Z'] = MOX_KEY_z;
 
-    Pump_Events();
+    /* Digits */
+    /* VK_0..VK_9 are 0x30..0x39 — MOX_KEY for digits maps through character code, not MOX_KEY enum.
+       We set them to MOX_KEY_SPACE as a sentinel so Platform_Keyboard_Buffer_Add_Key_Press fires.
+       The actual digit character is set in WM_KEYDOWN via mox_character. */
+    VK_to_MOX_KEY['0'] = MOX_KEY_SPACE;  /* mox_character='0' handles the rest */
+    VK_to_MOX_KEY['1'] = MOX_KEY_SPACE;
+    VK_to_MOX_KEY['2'] = MOX_KEY_SPACE;
+    VK_to_MOX_KEY['3'] = MOX_KEY_SPACE;
+    VK_to_MOX_KEY['4'] = MOX_KEY_SPACE;
+    VK_to_MOX_KEY['5'] = MOX_KEY_SPACE;
+    VK_to_MOX_KEY['6'] = MOX_KEY_SPACE;
+    VK_to_MOX_KEY['7'] = MOX_KEY_SPACE;
+    VK_to_MOX_KEY['8'] = MOX_KEY_SPACE;
+    VK_to_MOX_KEY['9'] = MOX_KEY_SPACE;
 
-    if(key_pressed == ST_TRUE)
-    {
-        keyboard_status = ST_TRUE;
-    }
-    else
-    {
-        keyboard_status = ST_FALSE;
-    }
+    /* Navigation */
+    VK_to_MOX_KEY[VK_BACK]   = MOX_KEY_BACKSPACE;
+    VK_to_MOX_KEY[VK_TAB]    = MOX_KEY_TAB;
+    VK_to_MOX_KEY[VK_RETURN] = MOX_KEY_ENTER;
+    VK_to_MOX_KEY[VK_ESCAPE] = MOX_KEY_ESCAPE;
+    VK_to_MOX_KEY[VK_SPACE]  = MOX_KEY_SPACE;
+    VK_to_MOX_KEY[VK_DELETE] = MOX_KEY_DELETE;
+    VK_to_MOX_KEY[VK_INSERT] = MOX_KEY_INSERT;
+    VK_to_MOX_KEY[VK_HOME]   = MOX_KEY_HOME;
+    VK_to_MOX_KEY[VK_END]    = MOX_KEY_END;
+    VK_to_MOX_KEY[VK_PRIOR]  = MOX_KEY_PGUP;   /* VK_PRIOR = Page Up */
+    VK_to_MOX_KEY[VK_NEXT]   = MOX_KEY_PGDN;   /* VK_NEXT = Page Down */
 
-    Restore_Mouse_State();
+    /* Arrow keys */
+    VK_to_MOX_KEY[VK_LEFT]   = MOX_KEY_LEFT;
+    VK_to_MOX_KEY[VK_UP]     = MOX_KEY_UP;
+    VK_to_MOX_KEY[VK_RIGHT]  = MOX_KEY_RIGHT;
+    VK_to_MOX_KEY[VK_DOWN]   = MOX_KEY_DOWN;
 
-    return keyboard_status;
+    /* Numpad — directional mapping for MoM */
+    VK_to_MOX_KEY[VK_NUMPAD1] = MOX_KEY_LEFTDOWN;
+    VK_to_MOX_KEY[VK_NUMPAD2] = MOX_KEY_DOWN;
+    VK_to_MOX_KEY[VK_NUMPAD3] = MOX_KEY_RIGHTDOWN;
+    VK_to_MOX_KEY[VK_NUMPAD4] = MOX_KEY_LEFT;
+    VK_to_MOX_KEY[VK_NUMPAD6] = MOX_KEY_RIGHT;
+    VK_to_MOX_KEY[VK_NUMPAD7] = MOX_KEY_LEFTUP;
+    VK_to_MOX_KEY[VK_NUMPAD8] = MOX_KEY_UP;
+    VK_to_MOX_KEY[VK_NUMPAD9] = MOX_KEY_RIGHTUP;
+
+    /* +/- keys */
+    VK_to_MOX_KEY[VK_ADD]      = MOX_KEY_NUMPLUS;
+    VK_to_MOX_KEY[VK_SUBTRACT] = MOX_KEY_NUMMINUS;
+    VK_to_MOX_KEY[VK_OEM_PLUS]  = MOX_KEY_NUMPLUS;
+    VK_to_MOX_KEY[VK_OEM_MINUS] = MOX_KEY_NUMMINUS;
+
+    /* Function keys */
+    VK_to_MOX_KEY[VK_F1]  = MOX_KEY_F1;
+    VK_to_MOX_KEY[VK_F2]  = MOX_KEY_F2;
+    VK_to_MOX_KEY[VK_F3]  = MOX_KEY_F3;
+    VK_to_MOX_KEY[VK_F4]  = MOX_KEY_F4;
+    VK_to_MOX_KEY[VK_F5]  = MOX_KEY_F5;
+    VK_to_MOX_KEY[VK_F6]  = MOX_KEY_F6;
+    VK_to_MOX_KEY[VK_F7]  = MOX_KEY_F7;
+    VK_to_MOX_KEY[VK_F8]  = MOX_KEY_F8;
+    VK_to_MOX_KEY[VK_F9]  = MOX_KEY_F9;
+    VK_to_MOX_KEY[VK_F10] = MOX_KEY_F10;
+    VK_to_MOX_KEY[VK_F11] = MOX_KEY_F11;
+    VK_to_MOX_KEY[VK_F12] = MOX_KEY_F12;
 }
 
 
-// WZD s35p15
-// gets keystroke, clears status and keystroke
-/*
-    MoM gets scan code + character and translates
-    0x01 + 0x1B => 0x001B
-    0x4B + 0xE0 => 0x0001
-    ...
 
+/* ========================================================================= */
+/*  Keyboard Buffer Functions                                                */
+/* ========================================================================= */
 
-*/
-/*
-    To add/edit a key;
-        the SCCC and ST_KEY enums are in Input.H
-        the VK_to_SCCS array is in Win32_Evnt.cpp
-    
-    * Reminder: Key Labels are (generally) capitalized, so (safely) assume "C" is 'c', "Shift-C" is 'C'
-*/
-uint8_t Read_Key(void)
+void Platform_Keyboard_Buffer_Clear(void)
 {
-    uint8_t return_key;
+    platform_keyboard_buffer.key_write = 0;
+    platform_keyboard_buffer.key_read = 0;
+}
 
-    // Clear the Keyboard Status ~== INT 16,10
-    key_pressed = ST_FALSE;
+void Platform_Keyboard_Buffer_Add_Key_Press(int mox_key, uint32_t mox_mod, char mox_character)
+{
+    uint32_t packed_key = 0;
 
-    // treat 1-byte scan code and 1-byte character code as a 2-byte value
-    // short int / int16_t
-    // ¿ array of 65536 values ?
-    // ¿ loop thorugh array of stuct ?
-    // ¿ procedurally generate a switch statement code block ?
-    switch(scan_code_char_code)
+    packed_key = ((uint32_t)mox_key) | mox_mod | (((uint32_t)mox_character) << 8);
+
+    if (mox_key == MOX_KEY_OVERRUN)
     {
-
-        case SCCC_F10: { return_key = ST_KEY_F10; } break;
-
-        case SCCC_A: { return_key = 'a'; } break;
-        case SCCC_B: { return_key = 'b'; } break;
-        case SCCC_C: { return_key = 'c'; } break;
-        case SCCC_D: { return_key = 'd'; } break;
-        case SCCC_E: { return_key = 'e'; } break;
-        case SCCC_F: { return_key = 'f'; } break;
-        case SCCC_G: { return_key = 'g'; } break;
-        case SCCC_H: { return_key = 'h'; } break;
-        case SCCC_I: { return_key = 'i'; } break;
-        case SCCC_J: { return_key = 'j'; } break;
-        case SCCC_K: { return_key = 'k'; } break;
-        case SCCC_L: { return_key = 'l'; } break;
-        case SCCC_M: { return_key = 'm'; } break;
-        case SCCC_N: { return_key = 'n'; } break;
-        case SCCC_O: { return_key = 'o'; } break;
-        case SCCC_P: { return_key = 'p'; } break;
-        case SCCC_Q: { return_key = 'q'; } break;
-        case SCCC_R: { return_key = 'r'; } break;
-        case SCCC_S: { return_key = 's'; } break;
-        case SCCC_T: { return_key = 't'; } break;
-        case SCCC_U: { return_key = 'u'; } break;
-        case SCCC_V: { return_key = 'v'; } break;
-        case SCCC_W: { return_key = 'w'; } break;
-        case SCCC_X: { return_key = 'x'; } break;
-        case SCCC_Y: { return_key = 'y'; } break;
-        case SCCC_Z: { return_key = 'z'; } break;
-
-        case SCCC_Shift_A: { return_key = 'A'; } break;
-        case SCCC_Shift_B: { return_key = 'B'; } break;
-        case SCCC_Shift_C: { return_key = 'C'; } break;
-        case SCCC_Shift_D: { return_key = 'D'; } break;
-        case SCCC_Shift_E: { return_key = 'E'; } break;
-        case SCCC_Shift_F: { return_key = 'F'; } break;
-        case SCCC_Shift_G: { return_key = 'G'; } break;
-        case SCCC_Shift_H: { return_key = 'H'; } break;
-        case SCCC_Shift_I: { return_key = 'I'; } break;
-        case SCCC_Shift_J: { return_key = 'J'; } break;
-        case SCCC_Shift_K: { return_key = 'K'; } break;
-        case SCCC_Shift_L: { return_key = 'L'; } break;
-        case SCCC_Shift_M: { return_key = 'M'; } break;
-        case SCCC_Shift_N: { return_key = 'N'; } break;
-        case SCCC_Shift_O: { return_key = 'O'; } break;
-        case SCCC_Shift_P: { return_key = 'P'; } break;
-        case SCCC_Shift_Q: { return_key = 'Q'; } break;
-        case SCCC_Shift_R: { return_key = 'R'; } break;
-        case SCCC_Shift_S: { return_key = 'S'; } break;
-        case SCCC_Shift_T: { return_key = 'T'; } break;
-        case SCCC_Shift_U: { return_key = 'U'; } break;
-        case SCCC_Shift_V: { return_key = 'V'; } break;
-        case SCCC_Shift_W: { return_key = 'W'; } break;
-        case SCCC_Shift_X: { return_key = 'X'; } break;
-        case SCCC_Shift_Y: { return_key = 'Y'; } break;
-        case SCCC_Shift_Z: { return_key = 'Z'; } break;
-
-        case SCCC_1: { return_key = '1'; } break;
-        case SCCC_2: { return_key = '2'; } break;
-        case SCCC_3: { return_key = '3'; } break;
-        case SCCC_4: { return_key = '4'; } break;
-        case SCCC_5: { return_key = '5'; } break;
-        case SCCC_6: { return_key = '6'; } break;
-        case SCCC_7: { return_key = '7'; } break;
-        case SCCC_8: { return_key = '8'; } break;
-        case SCCC_9: { return_key = '9'; } break;
-        case SCCC_0: { return_key = '0'; } break;
-
-        case SCCC_MINUS:  { return_key = '-'; } break;
-        case SCCC_EQUALS: { return_key = '='; } break;
-        case SCCC_PLUS:   { return_key = '+'; } break;
-
-        case SCCC_BACKSPACE: { return_key = ST_KEY_BACKSPACE; } break;
-        case SCCC_DELETE:    { return_key = ST_KEY_DELETE;    } break;
-        
-        case SCCC_KP_2:     { return_key = ST_KEY_DOWN;       } break;
-        case SCCC_DOWN:     { return_key = ST_KEY_DOWN;       } break;
-        case SCCC_KP_1:     { return_key = ST_KEY_LEFTDOWN;   } break;
-        case SCCC_DOWNLEFT: { return_key = ST_KEY_LEFTDOWN;   } break;
-
-        case SCCC_ENTER:    { return_key = ST_KEY_ENTER;      } break;
-        case SCCC_ESCAPE:   { return_key = ST_KEY_ESCAPE;     } break;
-
-        case SCCC_KP_7:     { return_key = ST_KEY_LEFTUP; } break;
-        case SCCC_UPLEFT:   { return_key = ST_KEY_LEFTUP; } break;
-        // Ins         5200
-        // Keypad 5        
-        // Keypad *    372A
-        // Keypad -    4A2D
-        // Keypad +    4E2B
-        // Keypad /    352F
-        case SCCC_KP_4:         { return_key = ST_KEY_LEFT; } break;
-        case SCCC_LEFT:         { return_key = ST_KEY_LEFT; } break;
-        case SCCC_KP_3:         { return_key = ST_KEY_RIGHTDOWN; } break;
-        case SCCC_DOWNRIGHT:    { return_key = ST_KEY_RIGHTDOWN; } break;
-        case SCCC_KP_9:         { return_key = ST_KEY_RIGHTUP; } break;
-        case SCCC_UPRIGHT:      { return_key = ST_KEY_RIGHTUP; } break;
-        // PrtSc           
-        case SCCC_KP_6:         { return_key = ST_KEY_RIGHT; } break;
-        case SCCC_RIGHT:        { return_key = ST_KEY_RIGHT; } break;
-        // SpaceBar    3920
-        // Tab         0F09
-        case SCCC_KP_8:         { return_key = ST_KEY_UP; } break;
-        case SCCC_UP:           { return_key = ST_KEY_UP; } break;
-
-        default: { return_key = ST_KEY_OVERRUN; }
+        return;
     }
 
-    return return_key;
+    key_pressed = ST_TRUE;
+
+    platform_keyboard_buffer.packed_key[platform_keyboard_buffer.key_write] = packed_key;
+
+    platform_keyboard_buffer.key_write = ((platform_keyboard_buffer.key_write + 1) % PLATFORM_KEYBOARD_BUFFER_LENGTH);
+}
+
+int Platform_Keyboard_Buffer_Pending_Count(void)
+{
+    return (platform_keyboard_buffer.key_write - platform_keyboard_buffer.key_read + PLATFORM_KEYBOARD_BUFFER_LENGTH) % PLATFORM_KEYBOARD_BUFFER_LENGTH;
+}
+
+uint32_t Platform_Keyboard_Buffer_Peek_Latest(void)
+{
+    if (platform_keyboard_buffer.key_write == platform_keyboard_buffer.key_read)
+    {
+        return 0;
+    }
+    return platform_keyboard_buffer.packed_key[(platform_keyboard_buffer.key_write - 1 + PLATFORM_KEYBOARD_BUFFER_LENGTH) % PLATFORM_KEYBOARD_BUFFER_LENGTH];
 }

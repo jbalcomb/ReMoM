@@ -3,17 +3,9 @@
 
 #include "../../platform/include/Platform_Replay.h"
 
-#include "../../MoX/src/MOX_BASE.h"
-#include "../../MoX/src/MOX_DEF.h"
-#include "../../MoX/src/MOX_KEYS.h"
-#include "../../MoX/src/MOX_TYPE.h"
-#include "../../MoX/src/Mouse.h"
-#include "../../MoX/src/Video.h"
-
 #include "sdl2_MOM.h"
-#include "sdl2_SCCC.h"
 
-#include "MOM_PFL.h"
+#include "Platform.h"
 
 #include <SDL.h>
 
@@ -33,12 +25,12 @@ SDL_Texture * sdl2_texture = NULL;           // static SDL_Texture *texture = NU
 SDL_Texture * sdl2_texture_upscaled = NULL;  //
 
 int platform_screen_scale = 4;
-int sdl2_window_width  = SCREEN_WIDTH * 4;
-int sdl2_window_height = SCREEN_HEIGHT * 4;
+int sdl2_window_width  = PLATFORM_SCREEN_WIDTH * 4;
+int sdl2_window_height = PLATFORM_SCREEN_HEIGHT * 4;
 
 char sdl2_window_title[] = "(MoM-Rasm) Master of Magic v1.31 - Reassembly";  // static const char *window_title = "";
 
-SDL_Rect sdl2_blit_rect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};  // static SDL_Rect blit_rect = { 0, 0, SCREENWIDTH, SCREENHEIGHT};
+SDL_Rect sdl2_blit_rect = {0, 0, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT};  // static SDL_Rect blit_rect = { 0, 0, SCREENWIDTH, SCREENHEIGHT};
 
 uint64_t sdl2_ticks_startup;
 uint64_t sdl2_frame_count;
@@ -89,7 +81,7 @@ void Platform_Maybe_Move_Mouse(void)
     int mx;
     int my;
 
-    if(Get_Pointer_Image_Number() == crsr_None)
+    if(Get_Pointer_Image_Number() == 0)  /* crsr_None */
     {
         return;
     }
@@ -124,10 +116,10 @@ void Platform_Maybe_Move_Mouse(void)
 
 
 // ./src/hw/sdl/hwsdl_opt.c
-int kilgore_option_mouse_speed = 100;
+int pfl_option_mouse_speed = 100;
 
 // ./src/hw/sdl/2/hwsdl2_video.c
-static int kilgore_video_get_window_id(void)
+static int pfl_video_get_window_id(void)
 {
 
     return SDL_GetWindowID(sdl2_window);
@@ -141,39 +133,39 @@ static int kilgore_video_get_window_id(void)
     ¿ ~== Set_Pointer_Position(), w/o Set_Mouse_Position() ?
     ...as used, is effectively equivalent?
 */
-static void kilgore_mouse_set_xy_from_hw(int mx, int my)
+static void pfl_mouse_set_xy_from_hw(int mx, int my)
 {
     pointer_x = mx;
     pointer_y = my;
 }
 
-static int kilgore_mouse_game_w = 320;
-static int kilgore_mouse_game_h = 200;
+static int pfl_mouse_game_w = 320;
+static int pfl_mouse_game_h = 200;
 
-static int kilgore_mouse_dx_acc = 0;  // accelerated mouse x
-static int kilgore_mouse_dy_acc = 0;  // accelerated mouse y
-static int kilgore_mouse_sx = 1;  // scaled mouse x
-static int kilgore_mouse_sy = 1;  // scaled mouse y
-
-/* -------------------------------------------------------------------------- */
-
-bool kilgore_mouse_grabbed = false;
+static int pfl_mouse_dx_acc = 0;  // accelerated mouse x
+static int pfl_mouse_dy_acc = 0;  // accelerated mouse y
+static int pfl_mouse_sx = 1;  // scaled mouse x
+static int pfl_mouse_sy = 1;  // scaled mouse y
 
 /* -------------------------------------------------------------------------- */
 
-bool kilgore_option_relative_mouse = true;
+bool pfl_mouse_grabbed = false;
+
+/* -------------------------------------------------------------------------- */
+
+bool pfl_option_relative_mouse = true;
 
 /* -------------------------------------------------------------------------- */
 
 // hwsdl2_video2.c
 
 // not a MoO1/MoM function
-static void kilgore_video_input_grab(bool grabbed)
+static void pfl_video_input_grab(bool grabbed)
 {
 
     SDL_SetWindowGrab(sdl2_window, grabbed ? SDL_TRUE : SDL_FALSE);
 
-    if(kilgore_option_relative_mouse)
+    if(pfl_option_relative_mouse)
     {
 
         SDL_SetRelativeMouseMode(grabbed ? SDL_TRUE : SDL_FALSE);
@@ -187,92 +179,92 @@ static void kilgore_video_input_grab(bool grabbed)
 // hwsdl_mouse.c
 
 // not a MoO1/MoM function
-static void kilgore_mouse_grab(void)
+static void pfl_mouse_grab(void)
 {
-    if(!kilgore_mouse_grabbed)
+    if(!pfl_mouse_grabbed)
     {
-        kilgore_mouse_grabbed = true;
+        pfl_mouse_grabbed = true;
         SDL_ShowCursor(SDL_DISABLE);
-        kilgore_video_input_grab(true);
+        pfl_video_input_grab(true);
     }
 }
 
 // not a MoO1/MoM function
-static void kilgore_mouse_ungrab(void)
+static void pfl_mouse_ungrab(void)
 {
-    if(kilgore_mouse_grabbed)
+    if(pfl_mouse_grabbed)
     {
-        kilgore_mouse_grabbed = false;
+        pfl_mouse_grabbed = false;
         SDL_ShowCursor(SDL_ENABLE);
-        kilgore_video_input_grab(false);
+        pfl_video_input_grab(false);
     }
 }
 
 // not a MoO1/MoM function
-static void kilgore_mouse_toggle_grab(void)
+static void pfl_mouse_toggle_grab(void)
 {
-    if(kilgore_mouse_grabbed)
+    if(pfl_mouse_grabbed)
     {
-        kilgore_mouse_ungrab();
+        pfl_mouse_ungrab();
     }
     else
     {
-        kilgore_mouse_grab();
+        pfl_mouse_grab();
     }
 }
 
-static void kilgore_mouse_set_limits(int w, int h)
+static void pfl_mouse_set_limits(int w, int h)
 {
-    kilgore_mouse_game_w = w;
-    kilgore_mouse_game_h = h;
+    pfl_mouse_game_w = w;
+    pfl_mouse_game_h = h;
 }
 
-static void kilgore_mouse_set_scale(int w, int h)
+static void pfl_mouse_set_scale(int w, int h)
 {
     int v;
-    v = w / kilgore_mouse_game_w;
+    v = w / pfl_mouse_game_w;
     SETMAX(v, 1);
     v *= 100;
-    kilgore_mouse_sx = v;
-    v = h / kilgore_mouse_game_h;
+    pfl_mouse_sx = v;
+    v = h / pfl_mouse_game_h;
     SETMAX(v, 1);
     v *= 100;
-    kilgore_mouse_sy = v;
+    pfl_mouse_sy = v;
 }
 
-static void kilgore_mouse_move(int dx, int dy)
+static void pfl_mouse_move(int dx, int dy)
 {
     int x, y;
     {
-        kilgore_mouse_dx_acc += dx * kilgore_option_mouse_speed;
-        dx = kilgore_mouse_dx_acc / kilgore_mouse_sx;
-        kilgore_mouse_dx_acc = kilgore_mouse_dx_acc % kilgore_mouse_sx;
+        pfl_mouse_dx_acc += dx * pfl_option_mouse_speed;
+        dx = pfl_mouse_dx_acc / pfl_mouse_sx;
+        pfl_mouse_dx_acc = pfl_mouse_dx_acc % pfl_mouse_sx;
     }
     {
-        kilgore_mouse_dy_acc += dy * kilgore_option_mouse_speed;
-        dy = kilgore_mouse_dy_acc / kilgore_mouse_sy;
-        kilgore_mouse_dy_acc = kilgore_mouse_dy_acc % kilgore_mouse_sy;
+        pfl_mouse_dy_acc += dy * pfl_option_mouse_speed;
+        dy = pfl_mouse_dy_acc / pfl_mouse_sy;
+        pfl_mouse_dy_acc = pfl_mouse_dy_acc % pfl_mouse_sy;
     }
     if ((dx == 0) && (dy == 0))
     {
         return;
     }
     x = pointer_x + dx;
-    SETRANGE(x, 0, kilgore_mouse_game_w - 1);
+    SETRANGE(x, 0, pfl_mouse_game_w - 1);
     y = pointer_y + dy;
-    SETRANGE(y, 0, kilgore_mouse_game_h - 1);
-    kilgore_mouse_set_xy_from_hw(x, y);
+    SETRANGE(y, 0, pfl_mouse_game_h - 1);
+    pfl_mouse_set_xy_from_hw(x, y);
 }
 
 /* CLAUDE: replaced hardcoded /2 with dynamic scale from window/screen dimensions */
 static void Platform_Update_Mouse_Position(int l_mx, int l_my)
 {
     /* OG: int screen_scale = 2; */
-    int screen_scale = sdl2_window_width / SCREEN_WIDTH;
+    int screen_scale = sdl2_window_width / PLATFORM_SCREEN_WIDTH;
     int gx = l_mx / screen_scale;
     int gy = l_my / screen_scale;
 
-    if(l_mx < SCREEN_XMIN || l_my < SCREEN_YMIN || gx > SCREEN_XMAX || gy > SCREEN_YMAX)
+    if(l_mx < PLATFORM_SCREEN_XMIN || l_my < PLATFORM_SCREEN_YMIN || gx > PLATFORM_SCREEN_XMAX || gy > PLATFORM_SCREEN_YMAX)
     {
         return;
     }
@@ -365,6 +357,11 @@ void DBG_Frame_Reset(void)
 }
 /* CLAUDE: end debug */
 
+void Platform_Pump_Events(void)
+{
+    SDL_PumpEvents();
+}
+
 void Platform_Event_Handler(void)
 {
     SDL_Event sdl2_event;
@@ -440,7 +437,7 @@ void Platform_Event_Handler(void)
                 {
                     if(platform_mouse_input_enabled)
                     {
-                        kilgore_mouse_grab();
+                        pfl_mouse_grab();
                     }
                 }
                 // if(SDL_BUTTON(e.button.button) == SDL_BUTTON_LEFT)
@@ -457,7 +454,7 @@ void Platform_Event_Handler(void)
                 }
                 if(sdl2_event.button.button == SDL_BUTTON_MIDDLE)
                 {
-                    kilgore_mouse_ungrab();
+                    pfl_mouse_ungrab();
                 }
             } break;
 
@@ -485,7 +482,7 @@ void Platform_Event_Handler(void)
             case SDL_WINDOWEVENT:
             {
                 /* CLAUDE */  dbg_events_window++;
-                if(sdl2_event.window.windowID == kilgore_video_get_window_id())
+                if(sdl2_event.window.windowID == pfl_video_get_window_id())
                 {
                     Platform_Window_Event(&sdl2_event.window);
                 }
@@ -508,11 +505,11 @@ void Platform_Event_Handler(void)
         if((x != 0) || (y != 0))
         {
             // // // // // hw_mouse_move(x, y);
-            // // // // kilgore_mouse_move(x, y);
+            // // // // pfl_mouse_move(x, y);
             // // // User_Mouse_Handler(0, x, y);
             // // Platform_Update_Mouse_Position(x, y);
             // // User_Mouse_Handler(platform_mouse_button_status, (pointer_x + x), (pointer_y + y));
-            // // kilgore_mouse_move(x, y);
+            // // pfl_mouse_move(x, y);
             // User_Mouse_Handler(platform_mouse_button_status, x, y);
             Platform_Update_Mouse_Position(x, y);
             /* CLAUDE */  dbg_mouse_updates++;

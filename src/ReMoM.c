@@ -74,18 +74,14 @@
 #include "../ext/stu_compat.h"
 #include "../platform/include/Platform_Replay.h"
 
-// #define SDL_MAIN_HANDLED
+/* SDL_main.h redefines main() on some platforms (macOS, iOS, Android).
+   We handle our own main(), so tell SDL not to intercept it. */
+#ifndef _STU_WIN
+#define SDL_MAIN_HANDLED
 #ifdef USE_SDL3
-#include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-#ifndef NO_SOUND_LIBRARY
-#include <SDL3_mixer/SDL_mixer.h>
-#endif
 #else
-#include <SDL.h>
 #include <SDL_main.h>
-#ifndef NO_SOUND_LIBRARY
-#include <SDL_mixer.h>
 #endif
 #endif
 
@@ -94,7 +90,7 @@
 
 int MOM_main(int argc, char** argv);
 void Startup_Platform(void);
-void Shudown_Platform(void);
+void Shutdown_Platform(void);
 
 
 /* CLAUDE */
@@ -145,6 +141,24 @@ char CONFIG_FILE[] = "CONFIG.MOM";
 
 /* HACK */  char soundfx_lbx__remom[] = "SOUNDFX";
 /* HACK */  char introsfx_lbx__remom[] = "INTROSFX";
+
+
+
+/* CLAUDE: Callback for replay field hit-test logging.
+   Registered with the replay system so Replay.c doesn't need to include Fields.h. */
+static void Replay_Log_Field_Hit(void *log, int mouse_x, int mouse_y)
+{
+    FILE *fp = (FILE *)log;
+    int fi;
+    for(fi = 0; fi < fields_count; fi++)
+    {
+        if(mouse_x >= p_fields[fi].x1 && mouse_x <= p_fields[fi].x2 && mouse_y >= p_fields[fi].y1 && mouse_y <= p_fields[fi].y2)
+        {
+            fprintf(fp, "  field[%d]=(%d,%d)-(%d,%d)", fi, p_fields[fi].x1, p_fields[fi].y1, p_fields[fi].x2, p_fields[fi].y2);
+            break;
+        }
+    }
+}
 
 
 
@@ -255,6 +269,7 @@ int main(int argc, char * argv[])
 
     /* CLAUDE: Register engine callbacks for replay before parsing CLI flags. */
     Platform_Replay_Register_Random_Seed_Callbacks(Get_Random_Seed, Set_Random_Seed);
+    Platform_Replay_Register_Field_Log_Callback(Replay_Log_Field_Hit);
 
     /* CLAUDE: Record & Replay CLI flags. */
     {
@@ -304,7 +319,7 @@ int main(int argc, char * argv[])
         Platform_Replay_Stop();
     }
 
-    Shudown_Platform();
+    Shutdown_Platform();
 
 #ifdef STU_DEBUG
 #ifdef _WIN32

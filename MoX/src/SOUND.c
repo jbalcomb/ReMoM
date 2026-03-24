@@ -23,10 +23,7 @@ MoO2
 
 #include "SOUND.h"
 
-#ifndef NO_SOUND_LIBRARY
-#include "sdl2_Audio.h"
-#endif
-/* HACK */  int16_t Play_Sound_SDL2_Mixer(void* sound_buffer, uint32_t sound_buffer_size);
+#include "../../platform/include/Platform.h"
 
 
 
@@ -739,7 +736,7 @@ int16_t Audio_Init__WIP(int16_t midi_driver, int16_t sound_channels, int16_t MID
 int16_t Play_Sound(void* sound_buffer, uint32_t sound_buffer_size)
 {
 #ifndef NO_SOUND_LIBRARY
-    Play_Sound_SDL2_Mixer(sound_buffer, sound_buffer_size);
+    Platform_Audio_Play_Sound(sound_buffer, sound_buffer_size);
     /* HACK */  return -1;
 #else
     /* HACK */  return -1;

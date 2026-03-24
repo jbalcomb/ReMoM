@@ -6,12 +6,6 @@
 
 #include "../../platform/include/Platform.h"
 
-#include "../../MoX/src/Fonts.h"
-#include "../../MoX/src/MOX_BASE.h"
-#include "../../MoX/src/MOX_TYPE.h"
-#include "../../MoX/src/Video.h"
-#include "../../MoX/src/Video2.h"
-
 #include "sdl2_PFL.h"
 #include <SDL.h>
 
