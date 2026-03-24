@@ -47,7 +47,7 @@ void Platform_Get_Palette_Color(uint8_t index, uint8_t *r, uint8_t *g, uint8_t *
 */
 void Platform_Set_Palette_Color(uint8_t index, uint8_t r, uint8_t g, uint8_t b)
 {
-    SDL_Color color;
+    SDL_Color color = {0};
     color.r = r;
     color.g = g;
     color.b = b;
