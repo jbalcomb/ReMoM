@@ -76,12 +76,12 @@
 
 /* SDL_main.h redefines main() on some platforms (macOS, iOS, Android).
    We handle our own main(), so tell SDL not to intercept it. */
-#ifndef _STU_WIN
+#ifdef _WIN32
 #define SDL_MAIN_HANDLED
 #ifdef USE_SDL3
 #include <SDL3/SDL_main.h>
 #else
-#include <SDL_main.h>
+#include <SDL.h>
 #endif
 #endif
 
