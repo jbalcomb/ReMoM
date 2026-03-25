@@ -836,20 +836,30 @@ void Change_Relations_For_Enchantments(int16_t player_idx, int16_t spell_idx, in
 
 
 // WZD o128p08
-// drake178: WIZ_ResearchSort()
-/*
-; sorts the wizard's research candidates in ascending
-; order by estimated research time or, if the research
-; income is 0, by research cost
-; contains a BUG that results in some retorts not
-; being applied properly, especially Conjurer
-*/
-/*
-OON XREF:  Player_Research_Spells()
-*/
+/* COPILOT */
+/**
+ * @brief Sorts a player's available research candidates by estimated completion speed.
+ *
+ * Computes an effective research income for each magic realm using the player's
+ * current research point allocation and per-realm research bonus, then reorders
+ * the populated prefix of @c _players[player_idx].research_spells so spells with
+ * the lowest estimated research time appear first.
+ *
+ * The comparison uses each spell's research cost divided by the derived realm
+ * research income. If a realm has no computed income, the raw research cost is
+ * used instead. The implementation performs an insertion sort over the first
+ * @p count entries in the player's research list.
+ *
+ * @param player_idx Index of the player whose @c research_spells array is sorted.
+ * @param count Number of populated entries at the start of the research list to
+ *              include in the sort.
+ *
+ * @note This function updates global player state in place and does not return a
+ *       value.
+ */
 void Sort_Research_List(int16_t player_idx, int16_t count)
 {
-    int16_t realm_research_incomes[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int16_t realm_research_incomes[NUM_MAGIC_REALMS] = { 0, 0, 0, 0, 0, 0 };
     int16_t cost2 = 0;
     int16_t cost1 = 0;
     int16_t research_idx2 = 0;
@@ -859,90 +869,61 @@ void Sort_Research_List(int16_t player_idx, int16_t count)
     int16_t itr = 0;
     int16_t research_idx1 = 0;  // _SI_
     int16_t spell_idx1 = 0;  // DNE in Dasm
-
     Players_Update_Magic_Power();
-
     Player_Magic_Power_Distribution(&research_bonus_percentage, &research_bonus_percentage, &research_points, player_idx);
-
     // ~== SBK_BuildSpellbook__WIP()
     for(itr = 0; itr < NUM_MAGIC_REALMS; itr++)
     {
-
         // ; BUG: research bonus calculated using an arbitrary
         // ; spell of the realm, which won't always include all
         // ; relevant bonuses, and may also add wrong ones
         research_bonus_percentage = Player_Spell_Research_Bonus(HUMAN_PLAYER_IDX, ((itr * NUM_SPELLS_PER_MAGIC_REALM) + 1));
         realm_research_incomes[itr] = ((research_points * research_bonus_percentage) / 100);
     }
-
     for(research_idx2 = 1; research_idx2 < count; research_idx2++)
     {
-
         spell_idx2 = _players[player_idx].research_spells[research_idx2];
-
         research_idx1 = (research_idx2 - 1);
-
         spell_idx1 = _players[player_idx].research_spells[research_idx1];  // DNE in Dasm
-
         if(realm_research_incomes[spell_data_table[spell_idx1].magic_realm] == 0)
         {
-    
             cost1 = spell_data_table[spell_idx1].research_cost;
-
         }
         else
         {
-
             cost1 = (spell_data_table[spell_idx1].research_cost / realm_research_incomes[spell_data_table[spell_idx1].magic_realm]);
-
         }
-
         if(realm_research_incomes[spell_data_table[spell_idx2].magic_realm] == 0)
         {
-
             cost2 = spell_data_table[spell_idx2].research_cost;
-
         }
         else
         {
-
-            cost2 = (spell_data_table[spell_idx2].research_cost / realm_research_incomes[spell_idx2]);
-
+            cost2 = (spell_data_table[spell_idx2].research_cost / realm_research_incomes[spell_data_table[spell_idx2].magic_realm]);
         }
-
         while((research_idx1 > -1) && (cost1 > cost2))
         {
-
+            // _players[player_idx].research_spells[(research_idx1 + 1)] = _players[player_idx].research_spells[research_idx1];
+            // spell_idx1 = _players[player_idx].research_spells[research_idx1];  // DNE in Dasm
+            // research_idx1--;
+            // Problem: spell_idx1 is set before research_idx1--, so it still holds the spell at the old (higher) index. ...
             _players[player_idx].research_spells[(research_idx1 + 1)] = _players[player_idx].research_spells[research_idx1];
-
-            spell_idx1 = _players[player_idx].research_spells[research_idx1];  // DNE in Dasm
-
             research_idx1--;
-
             if(research_idx1 > -1)
             {
-
+                spell_idx1 = _players[player_idx].research_spells[research_idx1];  // DNE in Dasm
                 if(realm_research_incomes[spell_data_table[spell_idx1].magic_realm] == 0)
                 {
-            
                     cost1 = spell_data_table[spell_idx1].research_cost;
-
                 }
                 else
                 {
-
                     cost1 = (spell_data_table[spell_idx1].research_cost / realm_research_incomes[spell_data_table[spell_idx1].magic_realm]);
-
                 }
-
             }
-
         }
-
         _players[player_idx].research_spells[(research_idx1 + 1)] = spell_idx2;
-
     }
-
 }
 
 // WZD o128p09

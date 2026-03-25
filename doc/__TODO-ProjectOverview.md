@@ -278,6 +278,8 @@ if(_NUM_STARS > 54)
 [x] new game turn 1 all human contacted
 [x] constant clicking sound on production screen - happens as soon as you click 'Change' button
 
+[ ] new game city max pop invalid
+
 [ ] research spells seem like the wrong ones
 
 [ ] prod scr usa help is bldg help, melee is part maintenance but also melee - seems bldg is over unit

@@ -274,21 +274,18 @@ int16_t Check_Allocation(SAMB_ptr SAMB_head)
 */
 
 // WZD s08p01
-// drake178: LBX_NearAlloc_Mark()
 void Near_Allocate_Mark(void)
 {
     near_buffer_mark = near_buffer_used;
 }
 
 // WZD s08p02
-// drake178: LBX_NearAlloc_Undo()
 void Near_Allocate_Undo(void)
 {
     near_buffer_used = near_buffer_mark;
 }
 
 // WZD s08p03
-// drake178: LBX_NearAlloc_Reset()
 void Near_Allocate_Reset(void)
 {
     near_buffer_used = NEAR_BUFFER_RESERVED;
@@ -296,10 +293,8 @@ void Near_Allocate_Reset(void)
 }
 
 // WZD s08p04
-// drake178: LBX_NearAlloc_First()
 byte_ptr Near_Allocate_First(int16_t size)
 {
-
     if(size > NEAR_BUFFER_UNRESERVED) /* ¿ 4400 - 256 ? */
     {
         Near_Allocation_Error(size - NEAR_BUFFER_SIZE + NEAR_BUFFER_RESERVED);
@@ -310,11 +305,9 @@ byte_ptr Near_Allocate_First(int16_t size)
 }
 
 // WZD s08p05
-// drake178: LBX_NearAlloc_Next()
 byte_ptr Near_Allocate_Next(int16_t size)
 {
-    int16_t tmp_near_buffer_used;
-
+    int16_t tmp_near_buffer_used = 0;
     if((NEAR_BUFFER_SIZE - near_buffer_used) < size)
     {
         Near_Allocation_Error(size - NEAR_BUFFER_SIZE + near_buffer_used);
@@ -325,19 +318,12 @@ byte_ptr Near_Allocate_Next(int16_t size)
 }
 
 // WZD s08p06
-// drake178: LBX_NearAlloc_Error()
 void Near_Allocation_Error(int16_t size)
 {
     strcpy(near_buffer, "Near Allocation too large by ");  // cnst_Alloc_Error01[] = "Near Allocation too large by "
-
-    // stu_itoa(size, Tmp_Conv_Str_1, 10);
     stu_itoa(size, &near_buffer[100], 10);
-
-    // strcat(near_buffer, Tmp_Conv_Str_1);
     strcat(near_buffer, &near_buffer[100]);
-
     strcat(near_buffer, " bytes");  // cnst_Alloc_Error02[] = " bytes"
-
     Exit_With_Message((char *)&near_buffer[0]);
 }
 
