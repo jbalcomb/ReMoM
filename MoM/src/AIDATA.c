@@ -66,48 +66,24 @@
 */
 void Allocate_AI_Data(void)
 {
-
     AI_Own_City_Values = (int16_t *)Near_Allocate_First(200);
-
     AI_Enemy_City_Values = (int16_t *)Near_Allocate_Next(200);
-
     AI_Own_Garr_Strs = (int16_t *)Near_Allocate_Next(200);
-
     AI_NME_Garrison_Strs = (int16_t *)Near_Allocate_Next(200);
-
     AI_Own_Stacks = (struct s_AI_STACK_DATA *)Near_Allocate_Next(800);
-
     AI_Enemy_Stacks = (struct s_AI_TARGET *)Near_Allocate_Next(1440);
-
     AI_OVL_Spell_Cats = Near_Allocate_Next(92);
-
     CRP_AI_OVL_SpellList = Near_Allocate_Next(50);
-
-    // AI_Arc_Cont_Own_Str = (int16_t *)Near_Allocate_Next(120);
-    // AI_Myr_Cont_Own_Str = (int16_t *)Near_Allocate_Next(120);
     AI_Cont_Own_Str[0] = (int16_t *)Near_Allocate_Next(120);
     AI_Cont_Own_Str[1] = (int16_t *)Near_Allocate_Next(120);
-
-    // CRP_AI_Arc_Cont_Nme_Str = Near_Allocate_Next(120);
-    // CRP_AI_Myr_Cont_Nme_Str = Near_Allocate_Next(120);
     CRP_AI_Cont_Nme_Str[0] = (int16_t *)Near_Allocate_Next(120);
     CRP_AI_Cont_Nme_Str[1] = (int16_t *)Near_Allocate_Next(120);
-
-    // AI_Arc_Cont_Own_Val = Near_Allocate_Next(120);
-    // AI_Myr_Cont_Own_Val = Near_Allocate_Next(120);
     AI_Cont_Own_Val[0] = (int16_t *)Near_Allocate_Next(120);
     AI_Cont_Own_Val[1] = (int16_t *)Near_Allocate_Next(120);
-
-    // AI_Arc_Cont_Nme_Val = Near_Allocate_Next(120);
-    // AI_Myr_Cont_Nme_Val = Near_Allocate_Next(120);
     AI_Cont_Nme_Val[0] = (int16_t *)Near_Allocate_Next(120);
     AI_Cont_Nme_Val[1] = (int16_t *)Near_Allocate_Next(120);
-
-    // AI_Arc_ContBalances = CRP_AI_Arc_Cont_Nme_Str;
-    // AI_Myr_ContBalances = CRP_AI_Myr_Cont_Nme_Str;
     AI_ContBalances[0] = CRP_AI_Cont_Nme_Str[0];
     AI_ContBalances[1] = CRP_AI_Cont_Nme_Str[1];
-
 }
 
 

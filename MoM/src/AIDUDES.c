@@ -2289,6 +2289,9 @@ void EMM_Map_CONTXXX__WIP(void)
     CONTX_1stLoadTs[0]        = (int16_t *)(&EMS_PFBA[0] + (2900 * SZ_PARAGRAPH_B));  // 3000 - 2900 = 100 * 1 PR = 1600 B
     CONTX_1stLoadTs[1]        = (int16_t *)(&EMS_PFBA[0] + (3000 * SZ_PARAGRAPH_B));  // 3200 - 3000 = 200 * 1 PR = 3200 B
 
+    /* HACK */  memset(CONTX_NmeStrMap[0], 0, 9600);
+    /* HACK */  memset(CONTX_NmeStrMap[1], 0, 9600);
+
 // mov     ax, _SI_itr
 // shl     ax, 1
 // mov     dx, [EMS_PFBA]             ; contains the segment address of the EMS page frame

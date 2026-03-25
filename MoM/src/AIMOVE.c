@@ -6,6 +6,8 @@
         ovr162
 */
 
+#include <assert.h>
+
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
 #include "../../MoX/src/MOX_DEF.h"
@@ -7564,6 +7566,20 @@ void AI_SetEnemyStrMaps(int16_t player_idx)
 
     for(itr = 0; itr < _cities; itr++)
     {
+
+        assert((_CITIES[itr].wp >= WORLD_PMIN) && (_CITIES[itr].wp < WORLD_PMAX));
+        assert((_CITIES[itr].wx >= WORLD_XMIN) && (_CITIES[itr].wx < WORLD_XMAX));
+        assert((_CITIES[itr].wy >= WORLD_YMIN) && (_CITIES[itr].wy < WORLD_YMAX));
+        /* HACK */  if(
+        /* HACK */      (_CITIES[itr].wp < WORLD_PMIN) || (_CITIES[itr].wp >= WORLD_PMAX)
+        /* HACK */      ||
+        /* HACK */      (_CITIES[itr].wx < WORLD_XMIN) || (_CITIES[itr].wx >= WORLD_XMAX)
+        /* HACK */      ||
+        /* HACK */      (_CITIES[itr].wy < WORLD_YMIN) || (_CITIES[itr].wy >= WORLD_YMAX)
+        /* HACK */  )
+        /* HACK */  {
+        /* HACK */      continue;
+        /* HACK */  }
 
         wp = _CITIES[itr].wp;
 

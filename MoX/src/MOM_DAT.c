@@ -2406,7 +2406,7 @@ AIDATA.H
 #define AI_TARGET_SITE          0x8000
 
 */
-uint16_t * CONTX_NmeStrMap[2];
+uint16_t * CONTX_NmeStrMap[NUM_PLANES];
 
 // WZD dseg:9C9C
 // drake178: TBL_Catchments_EMS
