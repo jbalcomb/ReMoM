@@ -53,7 +53,18 @@ misc/
 *.MOM
 *.SET
 *.TMP
-!SAVETEST.GAM
+!assets/CONFIG.MOM
+!assets/MAGIC.SET
+!assets/SAVETEST.GAM
+!assets/SAVE1.GAM
+!assets/SAVE2.GAM
+!assets/SAVE3.GAM
+!assets/SAVE4.GAM
+!assets/SAVE5.GAM
+!assets/SAVE6.GAM
+!assets/SAVE7.GAM
+!assets/SAVE8.GAM
+!assets/SAVE9.GAM
 
 
 # STU
