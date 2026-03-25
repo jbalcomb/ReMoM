@@ -1,4 +1,21 @@
 
+# autoconf / make
+*.m4
+*.o
+configure
+config.log
+config.status
+output.*
+traces.*
+.dirstamp
+autotools/
+*.Po
+Makefile
+Makefile.in
+autom4te.cache/
+*.a
+ReMoMber
+
 # Visual Studio Code (VS Code) (VSC)
 .vscode/
 *.code-workspace
