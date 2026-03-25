@@ -6,6 +6,7 @@
 #include "../../STU/src/STU_DBG.h"
 
 #include "../../MoX/src/Allocate.h"
+#include "../../MoX/src/capture.h"
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/GENDRAW.h"
