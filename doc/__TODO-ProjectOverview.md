@@ -287,6 +287,19 @@ if(_NUM_STARS > 54)
 [ ] MSVC-debug didn't copy SDL2_mixer.dll
 
 
+not saving new game options
+
+sometimes the build or purify buttons draw overtop the next turn button
+
+city combat not respecting city walls
+
+some blue wave lightning looking attack?
+
+townsfolk drawing below the bar, maybe just last one or rebels
+
+[ ] SUCCESS:  Mix_OpenAudio():  Couldn't open timidity.cfg
+
+
 
 [ ] make Near_Allocate_First, etc. return (void *)
 
