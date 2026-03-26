@@ -992,7 +992,7 @@ struct s_BATTLEFIELD
     /* 0x1516 */  int16_t House_TileYs[16];    // [4][4]
     /* 0x1536 */  SAMB_ptr House_IMG_Segs[16];  // [4][4]  ¿ assigned pict seg from [3][15] house types ?
     /* 0x1556 */  int16_t walled;  // {F,T} city has stone wall;  ... used to set _ai_battlefield_city_walls |= 0x1;, so must be specifcally 'City Walls'/'Wall of Stone'
-    /* 0x1558 */  int16_t walls[16];   /* [4][4] as {4,4,4,4}; state/status 0: none, 1:good, 2:bad  spl_Wall_Of_Stone sets 1, spl_Disrupt sets 2 */
+    /* 0x1558 */  int16_t walls[4][4];   /* [4][4] as {4,4,4,4}; state/status {0:none,1:good,2:bad}  spl_Wall_Of_Stone sets 1, spl_Disrupt sets 2 */
     /* 0x1578 */  int16_t wall_of_fire;  // {F,T}
     /* 0x157A */  int16_t wall_of_darkness;  // {F,T}
     /* 0x157C */  int16_t wp;
@@ -1938,7 +1938,7 @@ int16_t Rampage_Combat_City(void);
 int16_t Total_Ranged_Attack_Strength(int16_t player_idx);
 
 // WZD o124p02
-void BU_SetCityMovement__WIP(int16_t battle_unit_idx);
+void BU_SetCityMovement(int16_t battle_unit_idx);
 
 // WZD o124p03
 void AI_RestrictToCity__WIP(void);

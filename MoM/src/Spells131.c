@@ -1014,7 +1014,8 @@ void Apply_Cracks_Call(int16_t cgx, int16_t cgy)
 
         wall_cgy = (cgy - 10);
 
-        battlefield->walls[((wall_cgy * 4) + wall_cgx)] = 2;
+        // FU! Why *4?  battlefield->walls[((wall_cgy * 4) + wall_cgx)] = 2;
+        battlefield->walls[wall_cgy][wall_cgx] = 2;
 
     }
 

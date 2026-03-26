@@ -473,7 +473,8 @@ void Wall_Rise(int16_t spell_idx, int16_t caster_idx)
             for(itr_cgx = 0; itr_cgx < 4; itr_cgx++)
             {
                 
-                battlefield->walls[((itr_cgy * 4) + itr_cgx)] = 1;
+                // battlefield->walls[((itr_cgy * 4) + itr_cgx)] = 1;
+                battlefield->walls[itr_cgy][itr_cgx] = 1;
 
             }
 

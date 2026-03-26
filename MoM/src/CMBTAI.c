@@ -3079,7 +3079,7 @@ void Do_Auto_Unit_Turn(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy
 
 
     // sets city squares as impassible
-    BU_SetCityMovement__WIP(battle_unit_idx);
+    BU_SetCityMovement(battle_unit_idx);
 
 
     if(
@@ -3286,7 +3286,7 @@ int16_t Auto_Move_Unit(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy
     }
 
 
-    BU_SetCityMovement__WIP(battle_unit_idx);
+    BU_SetCityMovement(battle_unit_idx);
 
 
     if(

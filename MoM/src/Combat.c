@@ -3101,7 +3101,7 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
     )
     {
 
-        BU_SetCityMovement__WIP(battle_unit_idx);
+        BU_SetCityMovement(battle_unit_idx);
         
     }
 
@@ -3687,7 +3687,7 @@ void Assign_Combat_Grids(void)
     )
     {
 
-        BU_SetCityMovement__WIP(_active_battle_unit);
+        BU_SetCityMovement(_active_battle_unit);
 
     }
 
@@ -8523,7 +8523,7 @@ void BU_CreateImage__SEGRAX(int battle_unit_idx)
     int16_t fig_x = 0;
     int16_t fig_max = 0;
     int16_t fig_cnt = 0;
-// _SI_battle_unit_idx = si
+// _SI_battle_unit_idx = itr2
     int16_t figure_set_idx = 0;  // _DI_
 
     // struct s_BATTLE_UNIT * battle_unit = &battle_units[battle_unit_idx];
@@ -11991,7 +11991,7 @@ case scc_Disjunction_Spell:  // 20
             }
             if(spell_idx == spl_Disrupt)
             {
-                battlefield->walls[(((target_cgy - 10) * 3) + (target_cgx - 5))] = 2;
+                battlefield->walls[(target_cgy - 10)][(target_cgx - 5)] = 2;
             }
             if(spell_idx == spl_Raise_Dead)
             {
@@ -22142,7 +22142,7 @@ int16_t Total_Ranged_Attack_Strength(int16_t player_idx)
 /*
 
 */
-void BU_SetCityMovement__WIP(int16_t battle_unit_idx)
+void BU_SetCityMovement__WIP__OLD(int16_t battle_unit_idx)
 {
     int16_t itr2 = 0;  // _SI_
     int16_t itr1 = 0;  // _DI_
@@ -22261,6 +22261,195 @@ void BU_SetCityMovement__WIP(int16_t battle_unit_idx)
 
     }
 
+}
+/* GEMINI */
+void BU_SetCityMovement(int16_t battle_unit_idx)
+{
+    struct s_BATTLE_UNIT * unit_ptr = {0};
+    int16_t itr2 = 0;
+    int16_t itr1 = 0;
+
+    /* Check specific wall corner logic */
+    if (battlefield->walled == ST_TRUE)
+    {
+        /* [5,10] */
+        if(battlefield->walls[0][0] == ST_TRUE)
+        {
+            _cmbt_movepath_cost_map[((MIN_CGY_CITY * COMBAT_GRID_WIDTH) + MIN_CGX_CITY)] = INF;
+        }
+        /* [8,10] */
+        if(battlefield->walls[0][3] == ST_TRUE)
+        {
+            _cmbt_movepath_cost_map[((MIN_CGY_CITY * COMBAT_GRID_WIDTH) + MAX_CGX_CITY)] = INF;
+        }
+        /* [5,13] */
+        if(battlefield->walls[3][0] == ST_TRUE)
+        {
+            _cmbt_movepath_cost_map[((MAX_CGY_CITY * COMBAT_GRID_WIDTH) + MIN_CGX_CITY)] = INF;
+        }
+        /* [8,13] */
+        if (battlefield->walls[3][3] == ST_TRUE)
+        {
+            _cmbt_movepath_cost_map[((MAX_CGY_CITY * COMBAT_GRID_WIDTH) + MAX_CGX_CITY)] = INF;
+        }
+    }
+
+    /* Central Structure block [6,11] */
+    // OGBUG: open fields don't have anything there either
+    if(battlefield->Central_Structure != CS_City)
+    {
+        _cmbt_movepath_cost_map[((CGY_LAIR * COMBAT_GRID_WIDTH) + CGX_LAIR)] = INF;
+    }
+
+    unit_ptr = &battle_units[battle_unit_idx];
+
+    /* Check for units that ignore wall movement restrictions */
+    if (unit_ptr->Move_Flags & (MV_FLYING | MV_TELEPORT | MV_MERGING))
+    {
+        goto Check_FlyingFortress_Bug;
+    }
+
+    if (unit_ptr->Abilities & UA_NONCORPOREAL)
+    {
+        goto Check_FlyingFortress_Bug;
+    }
+
+    /* Basic wall/fortress check */
+    if (battlefield->walled != ST_TRUE && battlefield->city_enchantments[FLYING_FORTRESS] == 0)
+    {
+        goto Check_FlyingFortress_Bug;
+    }
+
+    /* Check if unit is currently inside city boundaries */
+    /* Battle_Unit_Is_Within_City(battle_unit_idx) */
+    if (Battle_Unit_Is_Within_City(battle_unit_idx)) /* overlay call */
+    {
+/*
+ ; mark the tiles immediately outside of the city proper
+ ; as impassable if there's an active Flying Fortress
+ ; enchantment on the city, or if there's an intact
+ ; city wall section between it and the immediately
+ ; adjacent city proper tile - except at the gate
+ ; WARNING: only allows passage through destroyed walls
+ ; in the cardinal directions (i.e. no diagonals unless
+ ; the next wall section is also destroyed)
+*/
+        /* Unit is INSIDE the city: Mark tiles OUTSIDE the walls as impassable */
+        for (itr1 = 0; itr1 < COMBAT_GRID_CITY_AREA_WIDTH; itr1++)
+        {
+            for (itr2 = 0; itr2 < COMBAT_GRID_CITY_AREA_HEIGHT; itr2++)
+            {
+                /* Skip central tile for non-Flying Fortress cities */
+                if (itr1 == 3 && itr2 == 2 && battlefield->city_enchantments[FLYING_FORTRESS] == 0)
+                {
+                    continue;
+                }
+
+                if (battlefield->walls[itr2][itr1] == ST_TRUE || battlefield->city_enchantments[FLYING_FORTRESS] > 0)
+                {
+                    /* Logic to block egress through wall segments */
+                    if (itr1 == 0)
+                    {
+                        _cmbt_movepath_cost_map[(itr2 + 10) * COMBAT_GRID_WIDTH + 4] = 0xFF;  /* INF */
+                        if (itr2 == 0) _cmbt_movepath_cost_map[(MIN_CGY_CITY * COMBAT_GRID_WIDTH) + 4] = 0xFF;  /* INF */
+                        if (itr2 == 3) _cmbt_movepath_cost_map[(MAX_CGY_CITY * COMBAT_GRID_WIDTH) + 4] = 0xFF;  /* INF */
+                    }
+
+                    if (itr2 == 0)
+                    {
+                        _cmbt_movepath_cost_map[(10 * COMBAT_GRID_WIDTH) + (itr1 + 5)] = 0xFF;  /* INF */
+                    }
+
+                    if (itr1 == 3)
+                    {
+                        _cmbt_movepath_cost_map[(itr2 + 10) * COMBAT_GRID_WIDTH + 9] = 0xFF;  /* INF */
+                        if (itr2 == 0) _cmbt_movepath_cost_map[(MIN_CGY_CITY * COMBAT_GRID_WIDTH) + 9] = 0xFF;  /* INF */
+                        if (itr2 == 3) _cmbt_movepath_cost_map[(MAX_CGY_CITY * COMBAT_GRID_WIDTH) + 9] = 0xFF;  /* INF */
+                    }
+
+                    if (itr2 == 3)
+                    {
+                        _cmbt_movepath_cost_map[(MAX_CGY_CITY * COMBAT_GRID_WIDTH) + (itr1 + 5)] = 0xFF;  /* INF */
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+/*
+ ; mark all tiles immediately behind an intact city wall
+ ; section as impassable with the exception of the tile
+ ; behind the gates, and mark every tile inside a Flying
+ ; Fortress also impassable
+*/
+        /* Unit is OUTSIDE the city: Mark tiles occupied by walls as impassable */
+        for (itr1 = 0; itr1 < COMBAT_GRID_CITY_AREA_WIDTH; itr1++)
+        {
+            for (itr2 = 0; itr2 < COMBAT_GRID_CITY_AREA_HEIGHT; itr2++)
+            {
+                /* Skip central tile for non-Flying Fortress cities */
+                if (itr1 == 3 && itr2 == 2 && battlefield->city_enchantments[FLYING_FORTRESS] == 0)
+                {
+                    continue;
+                }
+
+                if (battlefield->walls[itr2][itr1] == ST_TRUE || battlefield->city_enchantments[FLYING_FORTRESS] > 0)
+                {
+                    /* Mark the specific 4x4 city grid tile in the 21x21 combat map */
+                    _cmbt_movepath_cost_map[(MIN_CGY_CITY + itr2) * COMBAT_GRID_WIDTH + (MIN_CGX_CITY + itr1)] = INF;
+                }
+            }
+        }
+    }
+
+Check_FlyingFortress_Bug:
+    /*
+        BUG:    This section contains a logic error. 'test Abilities, 0' always results in zero,
+                causing the 'jz' to always trigger, bypassing the following Flying Fortress logic.
+    */
+    // if (0) /* test [es:bx+s_BATTLE_UNIT.Abilities], 0 -> always true jump */
+    // {
+    //     if (battlefield->city_enchantments[FLYING_FORTRESS] != 0)
+    //     {
+    //         if (!(unit_ptr->Move_Flags & MV_FLYING) && !(unit_ptr->Move_Flags & MV_TELEPORT))
+    //         {
+    //             if (!Battle_Unit_Is_Within_City(battle_unit_idx)) /* overlay call */
+    //             {
+    //                 for (itr1 = 0; itr1 < COMBAT_GRID_CITY_AREA_WIDTH; itr1++)
+    //                 {
+    //                     for (itr2 = 0; itr2 < COMBAT_GRID_CITY_AREA_HEIGHT; itr2++)
+    //                     {
+    //                         _cmbt_movepath_cost_map[(itr2 + 10) * COMBAT_GRID_WIDTH + (itr1 + 5)] = 0xFF;  /* INF */
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+    if(
+        ((battle_units[battle_unit_idx].Abilities & 0) == 0)
+        &&
+        (battlefield->city_enchantments[FLYING_FORTRESS] != 0)
+        &&
+        ((battle_units[battle_unit_idx].Move_Flags & MV_FLYING) == 0)
+        &&
+        ((battle_units[battle_unit_idx].Move_Flags & MV_TELEPORT) == 0)
+        &&
+        (Battle_Unit_Is_Within_City(battle_unit_idx) != ST_FALSE)
+    )
+    {
+        for(itr1 = 0; itr1 < COMBAT_GRID_CITY_AREA_WIDTH; itr1++)
+        {
+            for(itr2 = 0; itr2 < COMBAT_GRID_CITY_AREA_HEIGHT; itr2++)
+            {
+                // _cmbt_movepath_cost_map[(((10 + itr2) * COMBAT_GRID_WIDTH) + itr1)] = INF;
+                _cmbt_movepath_cost_map[(itr2 + 10) * COMBAT_GRID_WIDTH + (itr1 + 5)] = 0xFF;  /* INF */
+            }
+        }
+    }
+
+    return;
 }
 
 
@@ -26732,29 +26921,22 @@ void Generate_Combat_Map__WIP(
     int16_t House_Index = 0;
     int16_t Dirt_PatchCount = 0;
     int16_t Rough_PatchCount = 0;
-    int16_t itr1 = 0;  // _SI_
-    int16_t itr2 = 0;  // _DI_
-    int16_t itr_cgx = 0;  // _SI_
-    int16_t itr_cgy = 0;  // _DI_
-
+    int16_t itr1 = 0;
+    int16_t itr2 = 0;
+    int16_t itr_cgx = 0;
+    int16_t itr_cgy = 0;
 
     battlefield->House_Count = 0;
 
     for(itr2 = 0; itr2 <= 3; itr2++)
     {
-
         for(itr1 = 0; itr1 <= 3; itr1++)
         {
-
-            battlefield->walls[((itr2 * 3) + itr1)] = 0;
-
+            battlefield->walls[itr2][itr1] = 0;
         }
-
     }
 
-
     random_seed = Get_Random_Seed();
-
 
     switch(location_type)
     {
@@ -26922,16 +27104,17 @@ void Generate_Combat_Map__WIP(
                     for(itr1 = 0; itr1 <= 3; itr1++)
                     {
 
-                        battlefield->walls[((itr2 * 4) + itr1)] = 1;
+                        // TODO  DEDU Why *4?  battlefield->walls[((itr2 * 4) + itr1)] = 1;
+                        battlefield->walls[itr2][itr1] = 1;
 
                     }
 
                 }
 
-                battlefield->walls[ 5] = 0;
-                battlefield->walls[ 9] = 0;
-                battlefield->walls[ 6] = 0;
-                battlefield->walls[10] = 0;
+                battlefield->walls[1][2] = 0;
+                battlefield->walls[3][0] = 0;
+                battlefield->walls[2][0] = 0;
+                battlefield->walls[3][1] = 0;
 
             }
 
