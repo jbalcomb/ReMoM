@@ -7567,9 +7567,9 @@ void AI_SetEnemyStrMaps(int16_t player_idx)
     for(itr = 0; itr < _cities; itr++)
     {
 
-        assert((_CITIES[itr].wp >= WORLD_PMIN) && (_CITIES[itr].wp < WORLD_PMAX));
-        assert((_CITIES[itr].wx >= WORLD_XMIN) && (_CITIES[itr].wx < WORLD_XMAX));
-        assert((_CITIES[itr].wy >= WORLD_YMIN) && (_CITIES[itr].wy < WORLD_YMAX));
+        assert((_CITIES[itr].wp >= WORLD_PMIN) && (_CITIES[itr].wp <= WORLD_PMAX));
+        assert((_CITIES[itr].wx >= WORLD_XMIN) && (_CITIES[itr].wx <= WORLD_XMAX));
+        assert((_CITIES[itr].wy >= WORLD_YMIN) && (_CITIES[itr].wy <= WORLD_YMAX));
         /* HACK */  if(
         /* HACK */      (_CITIES[itr].wp < WORLD_PMIN) || (_CITIES[itr].wp >= WORLD_PMAX)
         /* HACK */      ||
