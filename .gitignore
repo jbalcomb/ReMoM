@@ -66,10 +66,15 @@ misc/
 # MoM
 
 *.GAM
+*.gam
 *.LBX
+*.lbx
 *.MOM
+*.mom
 *.SET
+*.set
 *.TMP
+*.tmp
 !assets/CONFIG.MOM
 !assets/MAGIC.SET
 !assets/SAVETEST.GAM
