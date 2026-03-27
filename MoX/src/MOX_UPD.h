@@ -143,35 +143,30 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
 
 #define UNITS_WX(_unit_idx_,_wx_)  {       \
     do {                                                    \
-        /* trc_prn("TRACE: [%s, %d]: UNITS_WX(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].wx, (_wx_)); */ \
         _UNITS[(_unit_idx_)].wx = (_wx_);  \
     } while(0);                                             \
 }
 
 #define UNITS_WY(_unit_idx_,_wy_)  {       \
     do {                                                    \
-        /* trc_prn("TRACE: [%s, %d]: UNITS_WY(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].wy, (_wy_)); */ \
         _UNITS[(_unit_idx_)].wy = (_wy_);  \
     } while(0);                                             \
 }
 
 #define UNITS_WP(_unit_idx_,_wp_)  {       \
     do {                                                    \
-        /* trc_prn("TRACE: [%s, %d]: UNITS_WP(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].wp, (_wp_)); */ \
         _UNITS[(_unit_idx_)].wp = (_wp_);  \
     } while(0);                                             \
 }
 
 #define UNITS_IN_TOWER(_unit_idx_,_in_tower_)  {            \
     do {                                                    \
-        /* trc_prn("TRACE: [%s, %d]: UNITS_IN_TOWER(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].in_tower, (_in_tower_)); */ \
         _UNITS[(_unit_idx_)].in_tower = (_in_tower_);       \
     } while(0);                                             \
 }
 
 #define UNITS_STATUS(_unit_idx_,_status_)  {                \
     do {                                                    \
-        /* trc_prn("TRACE: [%s, %d]: UNITS_STATUS(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].Status, (_status_)); */ \
         /* Validate_Units_Status() */                       \
         _UNITS[(_unit_idx_)].Status = (_status_);           \
     } while(0);                                             \
@@ -179,16 +174,12 @@ YAY  _CITIES[city_idx].farmer_count=min_farmer_count;
 
 #define UNITS_FINISHED(_unit_idx_,_finished_)  {            \
     do {                                                    \
-        /* trc_prn("TRACE: [%s, %d]: UNITS_FINISHED(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].Finished, (_finished_)); */ \
-        /* Validate_Units_Finished() */                     \
         _UNITS[(_unit_idx_)].Finished = (_finished_);       \
     } while(0);                                             \
 }
 
 #define UNITS_OWNER(_unit_idx_,_owner_idx_)  {            \
     do {                                                    \
-        /* trc_prn("TRACE: [%s, %d]: UNITS_OWNER(): %d,%d\n", __FILE__, __LINE__, _UNITS[(_unit_idx_)].owner_idx, (_owner_idx_)); */ \
-        /* Validate_Units_Owner() */                     \
         _UNITS[(_unit_idx_)].owner_idx = (_owner_idx_);       \
     } while(0);                                             \
 }

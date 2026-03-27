@@ -1920,7 +1920,7 @@ void UV_Add_UpDn_Buttons(int16_t xstart, int16_t ystart)
 // WZD o72p14
 void UV_Clear_Specials_Fields(void)
 {
-    int16_t itr;  // _AX_
+    int16_t itr = 0;
 
     for(itr = 0; itr < 8; itr++)
     {
@@ -1929,12 +1929,15 @@ void UV_Clear_Specials_Fields(void)
         uv_specials_fields_ability_flags[itr]  = INVALID_FIELD;
     }
 
+    unitview_up_button = INVALID_FIELD;
+    unitview_dn_button = INVALID_FIELD;
+
     for(itr = 0; itr < 3; itr++)
     {
         uv_item_icon_fields[itr] = INVALID_FIELD;
         uv_item_desc_fields[itr] = INVALID_FIELD;
     }
-    
+
 }
 
 

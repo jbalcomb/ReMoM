@@ -1,6 +1,8 @@
 
 #include "../../STU/src/STU_DBG.h"
 
+#include "../../ext/stu_compat.h"
+
 #include "../../MoX/src/MOX_BASE.h"
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
@@ -8,6 +10,7 @@
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/GENDRAW.h"
 #include "../../MoX/src/Graphics.h"
+#include "../../MoX/src/Help.h"
 #include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _screen_seg */
 #include "../../MoX/src/MOX_DEF.h"
@@ -23,7 +26,6 @@
 #include "City_ovr55.h"
 #include "CITYCALC.h"
 #include "CITYSCAP.h"
-#include "../../MoX/src/Help.h"
 #include "Lair.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
@@ -39,8 +41,6 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "../../ext/stu_compat.h"
 
 #include "CityScr.h"
 

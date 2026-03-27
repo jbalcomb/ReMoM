@@ -272,9 +272,8 @@ void Production_Screen(void)
         hotkey_idx_ESC = Add_Hot_Key('\x1B');
 
         input_field_idx = Get_Input();
-
+        
         scanned_field = Scan_Input();
-
 
         /*
             Cancel Button  || ESC Hot-Key
@@ -355,12 +354,10 @@ void Production_Screen(void)
             Do_City_Calculations(_city_idx);
         }
 
-
         /*
             'Thing View' Up/Dn Buttons
         */
         UV_Handle_Arrow_Buttons(input_field_idx, &DispCnt); 
-
 
         if((leave_screen == ST_FALSE) && (screen_changed == ST_FALSE))
         {

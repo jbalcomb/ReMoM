@@ -280,7 +280,7 @@ if(_NUM_STARS > 54)
 
 [ ] new game city max pop invalid
 
-[ ] research spells seem like the wrong ones
+[x] research spells seem like the wrong ones
 
 [ ] prod scr usa help is bldg help, melee is part maintenance but also melee - seems bldg is over unit
 
@@ -293,17 +293,13 @@ not saving new game options
 
 sometimes the build or purify buttons draw overtop the next turn button
 
-city combat not respecting city walls
+[x] city combat not respecting city walls
 
 some blue wave lightning looking attack?
 
 townsfolk drawing below the bar, maybe just last one or rebels
 
 [ ] SUCCESS:  Mix_OpenAudio():  Couldn't open timidity.cfg
-
-
-
-[ ] make Near_Allocate_First, etc. return (void *)
 
 
 

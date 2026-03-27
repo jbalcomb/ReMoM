@@ -24,7 +24,7 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
 
 
 // C:\STU\developp\1oom\src\ui\classic\uidefs.h
-#define NUM_MUSICS  0x28
+#define NUM_MUSICS  40
 
 // struct ui_data_s { ... }; extern struct ui_data_s ui_data;
 uint8_t * ui_data_mus;

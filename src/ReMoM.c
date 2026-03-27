@@ -188,6 +188,9 @@ int main(int argc, char * argv[])
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: SDL_main()\n", __FILE__, __LINE__);
 #endif
+#ifdef STU_DEBUG
+    trc_prn("DEBUG: [%s, %d]: BEGIN: SDL_main()\n", __FILE__, __LINE__);
+#endif
 
 #ifdef STU_DEBUG
 #ifdef _WIN32
