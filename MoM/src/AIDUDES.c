@@ -27,6 +27,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 
 #include "AIDUDES.h"
 
