@@ -18,6 +18,24 @@ list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
 # list(APPEND CMAKE_CTEST_ARGUMENTS "--parallel 2")
 include(CTest)
 
+# Valgrind memcheck support — Linux / GCC / Clang only
+option(ENABLE_VALGRIND "Run CTest memcheck pass under Valgrind (Linux GCC/Clang only)" OFF)
+if(ENABLE_VALGRIND)
+    if(WIN32)
+        message(WARNING "ENABLE_VALGRIND is not supported on Windows; ignoring.")
+    else()
+        find_program(VALGRIND_EXECUTABLE valgrind)
+        if(VALGRIND_EXECUTABLE)
+            set(MEMORYCHECK_COMMAND "${VALGRIND_EXECUTABLE}")
+            set(MEMORYCHECK_COMMAND_OPTIONS
+                "--error-exitcode=1 --leak-check=full --track-origins=yes --show-leak-kinds=all")
+            message(STATUS "Valgrind: ${VALGRIND_EXECUTABLE}")
+        else()
+            message(WARNING "ENABLE_VALGRIND is ON but valgrind was not found in PATH.")
+        endif()
+    endif()
+endif()
+
 include(FetchContent)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE BOOL "Disable FetchContent update checks" FORCE)
 set(FETCHCONTENT_UPDATES_DISCONNECTED_GOOGLETEST ON CACHE BOOL "Disable googletest update checks" FORCE)
@@ -111,7 +129,7 @@ add_compile_definitions($<$<CONFIG:Debug>:STU_DEBUG>)
 if(MSVC)
     add_compile_options(/wd4068)
 endif()
-if(CMAKE_COMPILER_IS_CLANG)
+if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
     add_compile_options(
         "-Wno-unsequenced"
     )

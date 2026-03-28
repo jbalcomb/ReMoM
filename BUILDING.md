@@ -168,3 +168,13 @@ distro. Source tarballs and build instructions are at:
 **Fedora:** `SDL3-devel SDL3_mixer-devel`
 **macOS:** `brew install sdl3 sdl3_mixer`
 **MSYS2:** `mingw-w64-x86_64-SDL3 mingw-w64-x86_64-SDL3_mixer`
+
+
+## Building with Valgrind
+### Configure with it enabled:
+`cmake -B build -DCMAKE_BUILD_TYPE=Debug -DENABLE_VALGRIND=ON -DSTU_DEBUG:BOOL=TRUE -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++`
+### Build and run memcheck:
+`cmake --build build`
+`ctest --test-dir build -T memcheck`
+Results land in build/Testing/*/MemoryChecker.*.log. The -T memcheck flag is what actually invokes Valgrind — normal ctest runs still skip it even when ENABLE_VALGRIND=ON.
+cd ~/STU/devel/ReMoM/build/Testing/Temporary/

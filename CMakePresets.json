@@ -96,6 +96,19 @@
                     "value": "TRUE"
                 }
             }
+        },
+        {
+            "name": "clang-debug",
+            "displayName": "Linux Clang",
+            "description": "Using Clang compilers on Linux",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++"
+            }
         }
     ],
     "buildPresets": [
@@ -138,6 +151,16 @@
                 "all",
                 "ReMoMber"
             ]
+        },
+        {
+            "name": "clang-debug",
+            "displayName": "Linux Clang",
+            "configurePreset": "clang-debug",
+            "configuration": "Debug",
+            "targets": [
+                "all",
+                "ReMoMber"
+            ]
         }
     ],
     "packagePresets": [
@@ -164,6 +187,14 @@
             "configurations": [
                 "Debug"
             ]
+        },
+        {
+            "name": "clang-debug",
+            "displayName": "Linux Clang",
+            "configurePreset": "clang-debug",
+            "configurations": [
+                "Debug"
+            ]
         }
     ],
     "testPresets": [
@@ -181,6 +212,11 @@
             "name": "clang-nosound-debug",
             "displayName": "Linux Clang (No Sound)",
             "configurePreset": "clang-nosound-debug"
+        },
+        {
+            "name": "clang-debug",
+            "displayName": "Linux Clang",
+            "configurePreset": "clang-debug"
         }
     ],
     "workflowPresets": [
@@ -243,6 +279,28 @@
                 {
                     "type": "package",
                     "name": "clang-nosound-debug"
+                }
+            ]
+        },
+        {
+            "name": "clang-debug",
+            "displayName": "Linux Clang",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "clang-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "clang-debug"
+                },
+                {
+                    "type": "test",
+                    "name": "clang-debug"
+                },
+                {
+                    "type": "package",
+                    "name": "clang-debug"
                 }
             ]
         }
