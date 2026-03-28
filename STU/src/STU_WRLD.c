@@ -10,7 +10,7 @@ Dependencies:
         _LAIRS[]
         _TOWERS[]
         _CITIES[]
-    Generate_Home_City__WIP()
+    Generate_Home_City()
         _FORTRESSES[]
         _NODES[]
         _TOWERS[]
@@ -20,7 +20,7 @@ Dependencies:
         _cities
         LBX_Load_Data_Static(cityname_lbx_file__MGC_ovr051, 0, (SAMB_ptr)city_names_buffer, race_idx, 1, 280);
         
-    Generate_Neutral_Cities__WIP()
+    Generate_Neutral_Cities()
         _UNITS[]
 
 Terrain Types:
@@ -1842,9 +1842,9 @@ void Simulate_World_Map_Generation(void)
         Generate_Lairs();
         
         _units = 0;
-        Generate_Home_City__WIP();
-        Generate_Neutral_Cities__WIP(ARCANUS_PLANE);
-        Generate_Neutral_Cities__WIP(MYRROR_PLANE);
+        Generate_Home_City();
+        Generate_Neutral_Cities(ARCANUS_PLANE);
+        Generate_Neutral_Cities(MYRROR_PLANE);
 
         Generate_Terrain_Specials(ARCANUS_PLANE);
         Generate_Terrain_Specials(MYRROR_PLANE);

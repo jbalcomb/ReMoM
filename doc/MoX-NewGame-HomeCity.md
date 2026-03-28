@@ -3,6 +3,87 @@ NEWG_CreateCapitals()  ==> NEWG_CreateCapitals__WIP()
 NEWG_CreateCapitals__WIP()  ==>  Generate_Home_City()
 
 
+MAPGEN.c
+// MGC o51p05
+// drake178: NEWG_CreateCapitals()
+/*
+; PATCHED / rewritten in the worldgen customizer
+;
+; creates the fortress and corresponding capital city
+; records for each player, along with their basic
+; starting units
+;
+; BUG: the condition to allow AI high elves only on
+;  Forest map squares can restart the whole fortress
+;  generation process, yielding capitals closer to
+;  each other or other objects than intended
+*/
+/*
+SEEALSO: MoX-NewGame-Capitols.md
+
+MoO2
+MoDule: HOMEGEN
+Generate_Home_Worlds_()
+Generate_Home_Worlds_1_()
+
+Randomize_Home_Worlds_()
+Modify_Home_Worlds_()
+
+Assign_Home_Star_Names_()
+
+Init_Homeworld_Colony_()
+    |-> Init_Homeworld_Colony2_()
+        |-> Create_Ship_()
+
+Module: ERICNET
+    code (0 bytes) Init_Homeworld_Colony2_
+        Address: 01:00013A3D
+    code (0 bytes) Init_Homeworld_Colony_
+        Address: 01:00013FA7
+
+
+Init_New_Game_()
+
+movsx   eax, si
+push    eax
+push    offset aMapD                    ; "Map:  %d"
+push    17h
+push    0
+call    __wcpp_1_unwind_leave_
+add     esp, 10h
+
+
+push    dword ptr _settings.IDK_random_seed
+push    offset aSeedLd                  ; "Seed: %ld"
+push    24
+push    0
+mov     [ebp+IDK_Debug_Exit_Done], 1
+call    __wcpp_1_unwind_leave_
+add     esp, 10h
+
+
+xor     edi, edi
+inc     esi
+call    Screen_Flic_Capture
+
+Change_Home_City_Name_Popup(HUMAN_PLAYER_IDX);
+
+The largest section of the main movement screen is occupied by the
+main movement view. Here you can see a small town with a flag on top
+that represents your starting city (aka “enchanted fortress”).
+
+*/
+/**
+ * @brief Generates starting home cities (fortresses) for all players.
+ *
+ * Selects candidate fortress locations on the appropriate plane for each
+ * wizard, applies minimum-distance constraints from other key world sites,
+ * retries placement under progressively relaxed distance limits, and then
+ * initializes the resulting starting city/fortress state.
+ */
+void Generate_Home_City__WIP(void)
+
+
 
 
 

@@ -32,7 +32,7 @@ void Extend_Islands(int16_t wp);
 void Generate_Towers(void);
 
 // MGC o51p05
-void Generate_Home_City__WIP(void);
+void Generate_Home_City(void);
 
 // MGC o51p06
 void Init_Landmasses(int16_t wp);
@@ -90,7 +90,7 @@ int16_t River_Path(int16_t wp);
 void River_Terrain(int16_t wp);
 
 // MGC o51p24
-void Generate_Neutral_Cities__WIP(int16_t wp);
+void Generate_Neutral_Cities(int16_t wp);
 
 // MGC o51p25
 void Random_City_Name_By_Race_NewGame(int16_t race_type, char * name);

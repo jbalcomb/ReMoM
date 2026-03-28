@@ -23,6 +23,7 @@ add_executable(MOM_tests
     test_STR_ListSeparator.cpp
     test_Create_Lair.cpp
     test_Generate_Lairs.cpp
+    test_Generate_Home_City.cpp
  )
 
 target_include_directories(MOM_tests PRIVATE

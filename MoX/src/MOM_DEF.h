@@ -73,6 +73,7 @@ ITEM_MAX_POWERS
 // MoO2: _NUM_SHIPS, _NUM_COLONIES, _NUM_PLAYERS, _NUM_STARS, _NUM_NEBULAS
 // NUM_PLANES  #define PLANE_COUNT_MAX             2
 #define PLAYER_COUNT_MAX            6
+#define MIN_HOME_POP                7
 #define NUM_DIFFICULTY_LEVEL        5   /* Intro, Easy, Normal, Hard, Impossible */
 #define NUM_UNIT_ENCHANTMENTS      32
 #define NUM_UNIT_ATTRIBUTES        15

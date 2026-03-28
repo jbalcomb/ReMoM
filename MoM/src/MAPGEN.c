@@ -182,7 +182,7 @@ char cityname_lbx_file__MGC_ovr051[] = "CITYNAME";
 // MGC  dseg:8EB0
 /*
 no idea why SimTex made this 200, when there are only 60 landmasses
-only used in Generate_Neutral_Cities__WIP()
+only used in Generate_Neutral_Cities()
 populated with enum e_RACE_TYPE values, randomly selected from the groups of races per plane
 used as the 'default race' per plane, with a three in four chance
 */
@@ -251,8 +251,8 @@ and their order of execution
  *
  * @return void
  *
- * @see Generate_Home_City__WIP
- * @see Generate_Neutral_Cities__WIP
+ * @see Generate_Home_City
+ * @see Generate_Neutral_Cities
  * @see Generate_Terrain_Specials
  * @see Generate_Roads
  * @see Init_Square_Explored
@@ -342,12 +342,12 @@ void Init_New_Game(void)
 
     _units = 0;
 
-    Generate_Home_City__WIP();
+    Generate_Home_City();
 
     Draw_Building_The_Worlds(70);
 
-    Generate_Neutral_Cities__WIP(ARCANUS_PLANE);
-    Generate_Neutral_Cities__WIP(MYRROR_PLANE);
+    Generate_Neutral_Cities(ARCANUS_PLANE);
+    Generate_Neutral_Cities(MYRROR_PLANE);
 
     Draw_Building_The_Worlds(75);
 
@@ -729,84 +729,7 @@ void Generate_Towers(void)
 }
 
 
-// MGC o51p05
-// drake178: NEWG_CreateCapitals()
-/*
-; PATCHED / rewritten in the worldgen customizer
-;
-; creates the fortress and corresponding capital city
-; records for each player, along with their basic
-; starting units
-;
-; BUG: the condition to allow AI high elves only on
-;  Forest map squares can restart the whole fortress
-;  generation process, yielding capitals closer to
-;  each other or other objects than intended
-*/
-/*
-SEEALSO: MoX-NewGame-Capitols.md
-
-MoO2
-MoDule: HOMEGEN
-Generate_Home_Worlds_()
-Generate_Home_Worlds_1_()
-
-Randomize_Home_Worlds_()
-Modify_Home_Worlds_()
-
-Assign_Home_Star_Names_()
-
-Init_Homeworld_Colony_()
-    |-> Init_Homeworld_Colony2_()
-        |-> Create_Ship_()
-
-Module: ERICNET
-    code (0 bytes) Init_Homeworld_Colony2_
-        Address: 01:00013A3D
-    code (0 bytes) Init_Homeworld_Colony_
-        Address: 01:00013FA7
-
-
-Init_New_Game_()
-
-movsx   eax, si
-push    eax
-push    offset aMapD                    ; "Map:  %d"
-push    17h
-push    0
-call    __wcpp_1_unwind_leave_
-add     esp, 10h
-
-
-push    dword ptr _settings.IDK_random_seed
-push    offset aSeedLd                  ; "Seed: %ld"
-push    24
-push    0
-mov     [ebp+IDK_Debug_Exit_Done], 1
-call    __wcpp_1_unwind_leave_
-add     esp, 10h
-
-
-xor     edi, edi
-inc     esi
-call    Screen_Flic_Capture
-
-Change_Home_City_Name_Popup(HUMAN_PLAYER_IDX);
-
-The largest section of the main movement screen is occupied by the
-main movement view. Here you can see a small town with a flag on top
-that represents your starting city (aka “enchanted fortress”).
-
-*/
-/**
- * @brief Generates starting home cities (fortresses) for all players.
- *
- * Selects candidate fortress locations on the appropriate plane for each
- * wizard, applies minimum-distance constraints from other key world sites,
- * retries placement under progressively relaxed distance limits, and then
- * initializes the resulting starting city/fortress state.
- */
-void Generate_Home_City__WIP(void)
+void Generate_Home_City(void)
 {
     int16_t max_pop_failures = 0;
     int16_t minimum_site_distance = 0;  // used for _NODES[], _TOWERS[], _LAIRS[]
@@ -817,10 +740,10 @@ void Generate_Home_City__WIP(void)
     int16_t wy = 0;
     int16_t wx = 0;
     int16_t wp = 0;
-    int16_t UU_Fortresses[NUM_PLANES] = { 0, 0 };  // tracks fortress record populations? 1:1 with player_idx in the players loop?
+    int16_t niu_fortresses[NUM_PLANES] = { 0, 0 };  // tracks fortress record populations? 1:1 with player_idx in the players loop?
     int16_t player_idx = 0;
-    int16_t unit_type = 0;  // _DI_
-    int16_t bldg_idx = 0;  // _SI_
+    int16_t unit_type = 0;
+    int16_t bldg_idx = 0;
     int16_t DBG_pop_min = 0;
     int16_t DBG_pop_max = 0;
 // #ifdef STU_DEBUG
@@ -838,12 +761,6 @@ void Generate_Home_City__WIP(void)
 
     minimum_site_distance = 8;
 
-// ; generate capitals for each player, including choosing
-// ; a starting race for the AI wizards
-// ; 
-// ; contains multiple BUGs in addition to the methodology
-// ;  being utterly horrible
-
     while(1)
     {
 Loop_Distances:
@@ -858,9 +775,9 @@ Loop_Distances:
 
         Tries_Per_Distance = 0;
 
-        UU_Fortresses[ARCANUS_PLANE] = 0;
+        niu_fortresses[ARCANUS_PLANE] = 0;
 
-        UU_Fortresses[MYRROR_PLANE] = 0;
+        niu_fortresses[MYRROR_PLANE] = 0;
 
         max_pop_failures = 0;
 
@@ -993,9 +910,12 @@ Loop_Location_1:
                     }
 
                     // if((8 - (player_idx / 3)) < City_Maximum_Size_NewGame(wx, wy, wp))
+                    // NOTE(JimBalcomb,20260328): this calculation could just be making it easier to find a valid location as more players are placed
                     DBG_pop_min = (8 - (player_idx / 3));
                     DBG_pop_max = City_Maximum_Size_NewGame(wx, wy, wp);
-                    if(DBG_pop_min < DBG_pop_max)
+                    /* CLAUDE */ // BUG FIX: comparison was inverted — was rejecting valid locations and accepting invalid ones
+                    // check if the estimated maximum city population for this map square is too low to support the home city population (absolute minimum is 7)
+                    if(DBG_pop_min > DBG_pop_max)
                     {
                         DBG_Invalid_Reason = 6;
                         DBG_Invalid_Reason_6_Count++;
@@ -1014,12 +934,14 @@ Loop_Location_1:
                     else
                     {
 
+                        assert(City_Maximum_Size_NewGame(wx, wy, wp) >= MIN_HOME_POP);
+
                         _FORTRESSES[player_idx].wx = (int8_t)wx;
                         _FORTRESSES[player_idx].wy = (int8_t)wy;
                         _FORTRESSES[player_idx].wp = (int8_t)wp;
                         _FORTRESSES[player_idx].wx = (int8_t)wx;
                         _FORTRESSES[player_idx].active = ST_TRUE;
-                        UU_Fortresses[wp]++;
+                        niu_fortresses[wp]++;
 
                     }
 
@@ -4800,19 +4722,7 @@ void River_Terrain(int16_t wp)
 
 
 // MGC o51p24
-// drake178: NEWG_CreateNeutrals()
-/*
-; creates up to 15 neutral cities on the selected
-; plane
-;
-; BUG: contains a number of minor errors and
-;  inconsistencies, most of which have no impact at all
-*/
-/*
-similar mess as Generate_Home_City()
-
-*/
-void Generate_Neutral_Cities__WIP(int16_t wp)
+void Generate_Neutral_Cities(int16_t wp)
 {
     int16_t location_is_forest_square = 0;
     int16_t Tries = 0;
