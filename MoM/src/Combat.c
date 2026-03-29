@@ -23141,7 +23141,7 @@ int16_t Combat_Grid_Cell_Has_City_Wall(int16_t cgx, int16_t cgy)
         (
             (cgy >= MIN_CGY_CITY)
             &&
-            (cgy <= MIN_CGY_CITY)
+            (cgy <= MAX_CGY_CITY)
         )
         &&
         (
