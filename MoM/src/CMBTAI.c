@@ -19,6 +19,7 @@
 #include "../../MoX/src/Timer.h"
 
 #include "CMBTDEF.h"
+#include "CMBTMVPT.h"
 #include "Combat.h"
 #include "Spellbook.h"  /* spl_Doom_Bolt */
 #include "Spells133.h"  /* BU_Teleport, BU_Tunnel */
