@@ -1697,10 +1697,14 @@ dbg_prn("BEGIN:  Auto Combat Loop\n");
                 }
                 /* CLAUDE */ { int16_t dbg_i; DBG_atk_active=0; DBG_atk_dead=0; DBG_atk_gone=0; DBG_def_active=0; DBG_def_dead=0; DBG_def_gone=0; for(dbg_i=0; dbg_i<_combat_total_unit_count; dbg_i++) { if(battle_units[dbg_i].controller_idx==_combat_attacker_player) { if(battle_units[dbg_i].status==bus_Active) DBG_atk_active++; else if(battle_units[dbg_i].status==bus_Dead) DBG_atk_dead++; else if(battle_units[dbg_i].status==bus_Gone) DBG_atk_gone++; } else if(battle_units[dbg_i].controller_idx==_combat_defender_player) { if(battle_units[dbg_i].status==bus_Active) DBG_def_active++; else if(battle_units[dbg_i].status==bus_Dead) DBG_def_dead++; else if(battle_units[dbg_i].status==bus_Gone) DBG_def_gone++; } } }
                 winner = Check_For_Winner();
+#ifdef STU_DEBUG
                 /* CLAUDE */ dbg_prn("[CombatLoop] atk: active=%d dead=%d gone=%d | def: active=%d dead=%d gone=%d | winner=%d _combat_winner=%d\n", DBG_atk_active, DBG_atk_dead, DBG_atk_gone, DBG_def_active, DBG_def_dead, DBG_def_gone, winner, _combat_winner);
+#endif
                 if(winner != ST_UNDEFINED)
                 {
+#ifdef STU_DEBUG
                     dbg_prn("AUTOCOMBATWINNER\n");
+#endif
                     leave_screen = ST_UNDEFINED;
                     input_field_idx = ST_UNDEFINED;
                 }
@@ -2648,11 +2652,15 @@ dbg_prn("BEGIN:  Auto Combat Loop\n");
 
     Stop_All_Sounds__STUB();
 
+#ifdef STU_DEF
     /* CLAUDE */ dbg_prn("[Combat_Screen] snapshot: _units=%d  _combat_total_unit_count=%d\n", _units, _combat_total_unit_count);
     memcpy(DBG_battle_units, battle_units, (sizeof(struct s_BATTLE_UNIT) * _combat_total_unit_count));
+#endif
     Combat_Cache_Read();  // reloads World_Data
     Cache_Graphics_Overland();  // reloads g_graphics_cache_seg
+#ifdef STU_DEF
     /* CLAUDE */ DBG_Compare_Battle_Units("after Combat_Cache_Read + Cache_Graphics_Overland");
+#endif
 
     Mark_Time();
 
@@ -15318,6 +15326,7 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t damage_types[])
     {
         battle_units[battle_unit_idx].Cur_Figures = 0;
 
+#ifdef STU_DEBUG
         /* COPILOT */ dbg_prn("[CombatDeath] victim_bu=%d killer_bu=%d victim_controller=%d killer_controller=%d dmg={%d,%d,%d} unit_idx=%d\n",
             battle_unit_idx,
             dbg_killer_battle_unit_idx,
@@ -15327,6 +15336,7 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t damage_types[])
             damage_types[1],
             damage_types[2],
             battle_units[battle_unit_idx].unit_idx);
+#endif
 
         _combat_winner = Eliminated_Opponent();
 
@@ -15373,11 +15383,13 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t damage_types[])
             }
         }
 
+#ifdef STU_DEBUG
         /* COPILOT */ dbg_prn("[CombatDeath] victim_bu=%d killer_bu=%d final_status=%d winner=%d\n",
             battle_unit_idx,
             dbg_killer_battle_unit_idx,
             battle_units[battle_unit_idx].status,
             _combat_winner);
+#endif
 
         Update_Sees_Illusions();
 
@@ -28738,6 +28750,7 @@ void Combat_Screen_Draw_Debug_Information(void)
 #endif
 
 
+#ifdef STU_DEBUG
 /* CLAUDE */
 void DBG_Compare_Battle_Units(const char * label)
 {
@@ -28804,3 +28817,4 @@ void DBG_Compare_Battle_Units(const char * label)
         dbg_prn("[DBG_Compare_Battle_Units] %s: %d of %d battle units DIFFER from snapshot\n", label, mismatch_count, itr);
     }
 }
+#endif
