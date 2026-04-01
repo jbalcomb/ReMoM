@@ -310,7 +310,6 @@ void AI_BU_ProcessAction(int16_t battle_unit_idx, int16_t rally_cgx, int16_t ral
                     if (bu_ptr->controller_idx == _combat_attacker_player)
                     {
                         /* Attacker - Kill the Gatekeeper */
-                        /* COPILOT */ dbg_prn("[GateOverride] attacker bu=%d action=%d current_target=%d searching gate defender at (%d,%d)\n", battle_unit_idx, bu_ptr->action, bu_ptr->target_battle_unit_idx, CGX_GATE, CGY_GATE);
 /*
     would try to find the defending unit at the gate, if
     any - but will never be executed because of the
@@ -328,7 +327,6 @@ that will never jump as written, likely intended to find a specific target
                                 target_ptr->controller_idx != bu_ptr->controller_idx &&
                                 target_ptr->status == bus_Active)
                             {
-                                /* COPILOT */ dbg_prn("[GateOverride] attacker bu=%d action=%d overriding target from %d to gate defender bu=%d\n", battle_unit_idx, bu_ptr->action, bu_ptr->target_battle_unit_idx, some_variable);
                                 bu_ptr->target_battle_unit_idx = some_variable;
                                 proceed_with_melee = ST_TRUE;
                             }
@@ -337,27 +335,23 @@ that will never jump as written, likely intended to find a specific target
 
                         if (proceed_with_melee == ST_FALSE)
                         {
-                            /* COPILOT */ dbg_prn("[GateOverride] attacker bu=%d action=%d found no gate defender; moving toward gate (%d,%d)\n", battle_unit_idx, bu_ptr->action, CGX_GATE, CGY_GATE);
                             /* Attempt to move toward central gate area (8,12) */
                             Do_Auto_Unit_Turn(battle_unit_idx, CGX_GATE, CGY_GATE, -666, CGX_GATE, CGY_GATE);
                         }
                     }
                     else
                     {
-                        /* COPILOT */ dbg_prn("[GateOverride] defender bu=%d action=%d using gatekeeper movement toward (%d,%d)\n", battle_unit_idx, bu_ptr->action, CGX_GATE, CGY_GATE);
                         /* Defender - I am the Gatekeeper */
                         Do_Auto_Unit_Turn(battle_unit_idx, CGX_GATE, CGY_GATE, -666, CGX_GATE, CGY_GATE);
                     }
                 }
                 else
                 {
-                    /* COPILOT */ dbg_prn("[GateOverride] bu=%d action=%d already has target=%d; skipping gate fallback and proceeding with melee\n", battle_unit_idx, bu_ptr->action, bu_ptr->target_battle_unit_idx);
                     proceed_with_melee = ST_TRUE;  // no target, no override needed
                 }
             }
             else
             {
-                /* COPILOT */ dbg_prn("[GateOverride] bu=%d action=%d no stone wall active; proceeding with target=%d\n", battle_unit_idx, bu_ptr->action, bu_ptr->target_battle_unit_idx);
                 proceed_with_melee = ST_TRUE;  // no wall, no override needed
             }
 
@@ -383,7 +377,6 @@ that will never jump as written, likely intended to find a specific target
                     if (bu_ptr->target_battle_unit_idx < 0) break;
 
                     target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
-                    /* COPILOT */ dbg_prn("[GateOverride] bu=%d action=%d pursuing target=%d at (%d,%d) mp=%d rally=(%d,%d)\n", battle_unit_idx, bu_ptr->action, bu_ptr->target_battle_unit_idx, target_ptr->cgx, target_ptr->cgy, bu_ptr->movement_points, rally_cgx, rally_cgy);
                     Do_Auto_Unit_Turn(battle_unit_idx, target_ptr->cgx, target_ptr->cgy, bu_ptr->target_battle_unit_idx, rally_cgx, rally_cgy);
 
                     bu_ptr = &battle_units[battle_unit_idx];
