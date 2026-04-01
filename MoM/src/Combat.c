@@ -97,6 +97,7 @@ extern int16_t _ai_battlefield_city_walls;
 
 
 
+#ifdef STU_DEBUG
 int16_t DBG_player_idx = HUMAN_PLAYER_IDX;
 int16_t DBG_cgx = 0;  // 14
 int16_t DBG_cgy = 0;  // 12
@@ -107,19 +108,10 @@ int16_t DBG_PFA_1411_set = ST_FALSE;
 int16_t DBG_PFA_1511_set = ST_FALSE;
 int16_t * DBG_ptr_CMB_NearBuffer_3 = 0;
 /* COPILOT */ int16_t DBG_damage_source_battle_unit = ST_UNDEFINED;
-
-// DELETE  #define DEBUG_UNIT_IDX          825
-// DELETE  #define DEBUG_FIGURE_SET_IDX    7  // DBG_figure_set_idx: 7
-// DELETE  #define DEBUG_UNIT_TYPE         ut_HMenPikemen  // ut_HMenPikemen  = 112,  /* FIGURES8.LBX, 056    HMPIKE*/
-// DELETE  #define DEBUG_FIGURE_COUNT      8
-
 extern uint8_t DBG_debug_flag;
-// uint8_t DBG_debug_flag = ST_FALSE;
-
-// ~ void Main_Screen_Draw_Debug_Information(void);
 void Combat_Screen_Draw_Debug_Information(void);
-
 void DBG_Compare_Battle_Units(const char * label);
+#endif
 
 
 
@@ -1519,8 +1511,10 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     int16_t input_field_idx = 0;
     int16_t itr = 0;  // _SI_
     int16_t battle_unit_idx;  // _DI_
+#ifdef STU_DEBUG
     int16_t hotkey_idx_Z = 0;  // debug_hotkey
     int16_t hotkey_idx_T = 0;  // test_hotkey
+#endif
     _ai_immobile_counter = 0;
     _computer_player_city_seige = ST_FALSE;
     if(
@@ -1785,8 +1779,10 @@ dbg_prn("BEGIN:  Auto Combat Loop\n");
         space_hotkey_field = Add_Hot_Key(cnst_HOTKEY_SPACE_4[0]);
 
 
+#ifdef STU_DEBUG
         hotkey_idx_Z = Add_Hot_Key('Z');  // debug_hotkey  ...  Derp. 'D' is already used for the "Done" button.
         hotkey_idx_T = Add_Hot_Key('T');  // test_hotkey
+#endif
 
 
         input_field_idx = Get_Input();
@@ -6845,11 +6841,12 @@ void Combat_Screen_Draw(void)
         CMB_MudAnimStage = 0;
     }
 
-
+#ifdef STU_DEBUG
     if(DBG_debug_flag)
     {
         Combat_Screen_Draw_Debug_Information();
     }
+#endif
 
 }
 
