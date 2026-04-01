@@ -1,7 +1,7 @@
 
 
 
-## CMB_ActiveMoveMap
+## _cmbt_movepath_cost_map
 
 
 
@@ -44,10 +44,10 @@ CMB_SetMoveMaps()
 
 
 Q: Who gets the memcpy() of the movement cost map?
-A: CMB_ActiveMoveMap[], in BU_GetMoveMap__WIP()
+A: _cmbt_movepath_cost_map[], in BU_GetMoveMap__WIP()
 
-...same indexing for CMB_TargetRows[] and CMB_NearBuffer_3[]...
-...CMB_NearBuffer_3[((cgy * 21) + cgx)]
+...same indexing for CMB_TargetRows[] and _cmbt_path_data[]...
+..._cmbt_path_data[((cgy * 21) + cgx)]
 ...CMB_TargetRows[cgy][cgx]
 
 
@@ -130,16 +130,16 @@ Tactical_Combat__WIP()
         |-> CMB_SetNearAllocs__WIP()
 
 CMB_BaseAllocs__WIP()
-    CMB_ActiveMoveMap = Near_Allocate_First(504);
+    _cmbt_movepath_cost_map = Near_Allocate_First(504);
     CMB_Path_Costs = Near_Allocate_Next(504);
-    CMB_NearBuffer_3 = Near_Allocate_Next(1008);
+    _cmbt_path_data = Near_Allocate_Next(1008);
     CMB_Path_Xs = Near_Allocate_Next(504);
     CMB_Path_Ys = Near_Allocate_Next(504);
 
 CMB_SetNearAllocs__WIP()
-    CMB_ActiveMoveMap = Near_Allocate_First(504);
+    _cmbt_movepath_cost_map = Near_Allocate_First(504);
     CMB_Path_Costs = Near_Allocate_Next(504);
-    CMB_NearBuffer_3 = Near_Allocate_Next(1008);
+    _cmbt_path_data = Near_Allocate_Next(1008);
     CMB_Path_Xs = Near_Allocate_Next(60);
     CMB_Path_Ys = Near_Allocate_Next(60);
     for(itr = 0; itr < 22; itr++)
@@ -219,11 +219,11 @@ void CMB_GetPath__WIP(int16_t source_cgx, int16_t source_cgy, int16_t target_cgx
 
     CMB_Path_Length = 0;
 
-    if(CMB_ActiveMoveMap[((target_cgy * 21) + target_cgx)] == -1)  /* impassible */
+    if(_cmbt_movepath_cost_map[((target_cgy * 21) + target_cgx)] == -1)  /* impassible */
         return;
 
     for(itr = 0; itr < 462; itr++)
-        CMB_NearBuffer_3[itr] = itr;
+        _cmbt_path_data[itr] = itr;
 
     for(itr = 0; itr < 462; itr++)
         CMB_Path_Costs[itr] = -1;
@@ -246,24 +246,24 @@ CMB_Path_Costs
 
 populates CMB_Path_Costs[]
 
-What is in CMB_ActiveMoveMap[] at this point?
-...BU_GetMoveMap__WIP() set CMB_ActiveMoveMap[] to the movement costs per the movement mode(s)
+What is in _cmbt_movepath_cost_map[] at this point?
+...BU_GetMoveMap__WIP() set _cmbt_movepath_cost_map[] to the movement costs per the movement mode(s)
 ...then, it got manually updated for other battle units, magic vortices, and combat structure
 
 
-sets CMB_NearBuffer_3[itr] = itr
+sets _cmbt_path_data[itr] = itr
 uses it to stash old_next_cell_index
-checks old_next_cell_index to see if CMB_NearBuffer_3[ctr] was changed to adjacent_idx
+checks old_next_cell_index to see if _cmbt_path_data[ctr] was changed to adjacent_idx
 
-sets CMB_NearBuffer_3[] to 1 for every cell that can be reached
+sets _cmbt_path_data[] to 1 for every cell that can be reached
 ...first sets them all to 0
 so, ...
-    CMB_NearBuffer_3[] is {F,T} - unreachable, reachable
+    _cmbt_path_data[] is {F,T} - unreachable, reachable
 AKA 
 
 
 ¿ sames as movepath_cost_map->Reach_From[itr] = itr; in MovePath.C  Move_Path_Find() ?
-CMB_NearBuffer_3[itr] = itr;
+_cmbt_path_data[itr] = itr;
 ¿ sames as movepath_cost_map->Reach_Costs[itr] = 255; in MovePath.C  Move_Path_Find() ?
 CMB_Path_Costs[itr] = 255;
 
@@ -279,7 +279,7 @@ void Move_Path_Find(int16_t arg_wx, int16_t arg_wy, struct s_MOVE_PATH * arg_mov
 
 
 
-## CMB_ActiveMoveMap
+## _cmbt_movepath_cost_map
 
 ~== Overland movepath_cost_map->moves2[]
 
@@ -297,15 +297,15 @@ Assign_Combat_Grids()
     BU_GetMoveMap__WIP(_active_battle_unit);
     for(itr = 0; itr < _combat_total_unit_count; itr++)
         if(battle_units[itr].Status == bus_Active)
-            CMB_ActiveMoveMap[((battle_units[itr].cgy * 21) + battle_units[itr].cgx)] = -1;
+            _cmbt_movepath_cost_map[((battle_units[itr].cgy * 21) + battle_units[itr].cgx)] = -1;
     for(itr= 0; itr < CMB_Vortex_Count; itr++)
-        CMB_ActiveMoveMap[((CMB_Vortex_Array[itr].cgy * 21) + CMB_Vortex_Array[itr].cgx)] = -1;
+        _cmbt_movepath_cost_map[((CMB_Vortex_Array[itr].cgy * 21) + CMB_Vortex_Array[itr].cgx)] = -1;
     if(battlefield->Central_Structure!= CS_None)
-        CMB_ActiveMoveMap[((11 * 21) + 6)] = -1;
+        _cmbt_movepath_cost_map[((11 * 21) + 6)] = -1;
 
 ...after BU_GetMoveMap__WIP(), is populated with movement costs
 ...also updates CMB_TargetRows[]
-...uses CMB_NearBuffer_3[]
+...uses _cmbt_path_data[]
 
 
 Combat_Move_Path_Valid()
@@ -333,23 +333,23 @@ BU_GetMoveMap__WIP()
 
         case 0:
         case 1:
-            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Ground[1], 462);
+            memcpy(_cmbt_movepath_cost_map, &battlefield->MoveCost_Ground[1], 462);
         case 2:
-            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Teleport[1], 462);
+            memcpy(_cmbt_movepath_cost_map, &battlefield->MoveCost_Teleport[1], 462);
         case 3:
-            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Ground2[1], 462);
+            memcpy(_cmbt_movepath_cost_map, &battlefield->MoveCost_Ground2[1], 462);
         case 4:
-            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Sailing[1], 462);
+            memcpy(_cmbt_movepath_cost_map, &battlefield->MoveCost_Sailing[1], 462);
         case 5:
             for(itr_y = 0; itr_y < 22; itr_y++)
                 for(itr_x = 0; itr_x < 21; itr_x++)
                     if(battlefield->MoveCost_Sailing[((itr_y * 21) + itr_x)] > battlefield->MoveCost_Ground[((itr_y * 21) + itr_x)])
-                        CMB_ActiveMoveMap[((itr_y * 21) + itr_x)] = battlefield->MoveCost_Ground[((itr_y * 21) + itr_x)];
+                        _cmbt_movepath_cost_map[((itr_y * 21) + itr_x)] = battlefield->MoveCost_Ground[((itr_y * 21) + itr_x)];
                     else
-                        CMB_ActiveMoveMap[((itr_y * 21) + itr_x)] = battlefield->MoveCost_Sailing[((itr_y * 21) + itr_x)];
+                        _cmbt_movepath_cost_map[((itr_y * 21) + itr_x)] = battlefield->MoveCost_Sailing[((itr_y * 21) + itr_x)];
         case 6:
         case 7:
-            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Teleport[1], 462);
+            memcpy(_cmbt_movepath_cost_map, &battlefield->MoveCost_Teleport[1], 462);
 
 
 BU_Move__WIP()
@@ -362,54 +362,54 @@ CMB_GetPath__WIP()
 
 
 XREF:  (50)
-CMB_BaseAllocs__WIP+81       mov     [CMB_ActiveMoveMap], ax
-CMB_SetNearAllocs__WIP+E     mov     [CMB_ActiveMoveMap], ax
+CMB_BaseAllocs__WIP+81       mov     [_cmbt_movepath_cost_map], ax
+CMB_SetNearAllocs__WIP+E     mov     [_cmbt_movepath_cost_map], ax
 
-BU_GetMoveMap__WIP+48        push    [CMB_ActiveMoveMap]
-BU_GetMoveMap__WIP+DA        add     ax, [CMB_ActiveMoveMap]
-BU_Move__WIP+66              add     ax, [CMB_ActiveMoveMap]
-BU_Move__WIP+A2              add     ax, [CMB_ActiveMoveMap]
-BU_Move__WIP+BE              mov     bx, [CMB_ActiveMoveMap]
-Assign_Combat_Grids+58   add     ax, [CMB_ActiveMoveMap]
-Assign_Combat_Grids+9E   add     ax, [CMB_ActiveMoveMap]
-Assign_Combat_Grids+BF   mov     bx, [CMB_ActiveMoveMap]
-AI_GetCombatRallyPt+AC       add     ax, [CMB_ActiveMoveMap]
-AI_GetCombatRallyPt+F4       add     ax, [CMB_ActiveMoveMap]
-AI_GetCombatRallyPt+133      add     ax, [CMB_ActiveMoveMap]
-Do_Auto_Unit_Turn+58     add     ax, [CMB_ActiveMoveMap]
-Do_Auto_Unit_Turn+E3     add     ax, [CMB_ActiveMoveMap]
-Do_Auto_Unit_Turn+134    add     ax, [CMB_ActiveMoveMap]
-G_AI_BU_Move+74              add     ax, [CMB_ActiveMoveMap]
-G_AI_BU_Move+109             add     ax, [CMB_ActiveMoveMap]
-BU_SetCityMovement+1D        mov     bx, [CMB_ActiveMoveMap]
-BU_SetCityMovement+32        mov     bx, [CMB_ActiveMoveMap]
-BU_SetCityMovement+47        mov     bx, [CMB_ActiveMoveMap]
-BU_SetCityMovement+5C        mov     bx, [CMB_ActiveMoveMap]
-BU_SetCityMovement+71        mov     bx, [CMB_ActiveMoveMap]
-BU_SetCityMovement+160       add     ax, [CMB_ActiveMoveMap]
-BU_SetCityMovement+16E       mov     bx, [CMB_ActiveMoveMap]
-BU_SetCityMovement+17C       mov     bx, [CMB_ActiveMoveMap]
-BU_SetCityMovement:loc_A789D mov     bx, [CMB_ActiveMoveMap]
-BU_SetCityMovement+1A1       add     ax, [CMB_ActiveMoveMap]
-BU_SetCityMovement+1AF       mov     bx, [CMB_ActiveMoveMap]
-BU_SetCityMovement+1BD       mov     bx, [CMB_ActiveMoveMap]
-BU_SetCityMovement+1CB       mov     bx, [CMB_ActiveMoveMap]
-BU_SetCityMovement+23A       add     ax, [CMB_ActiveMoveMap]
-BU_SetCityMovement+2BD       add     ax, [CMB_ActiveMoveMap]
-AI_RestrictToCity+1C         add     ax, [CMB_ActiveMoveMap]
-AI_RestrictToCity+2A         mov     bx, [CMB_ActiveMoveMap]
-AI_RestrictToCity+38         mov     bx, [CMB_ActiveMoveMap]
-AI_RestrictToCity+45         mov     bx, [CMB_ActiveMoveMap]
-AI_RestrictToCity+5D         add     ax, [CMB_ActiveMoveMap]
-AI_RestrictToCity+6B         mov     bx, [CMB_ActiveMoveMap]
-AI_RestrictToCity+79         mov     bx, [CMB_ActiveMoveMap]
-AI_RestrictToCity+87         mov     bx, [CMB_ActiveMoveMap]
-CMB_GetPath__WIP+19          add     ax, [CMB_ActiveMoveMap]
-CMB_GetPath__WIP:loc_E2A6A   mov     bx, [CMB_ActiveMoveMap]
-CMB_GetPath__WIP:loc_E2B87   mov     bx, [CMB_ActiveMoveMap]
-CMB_GetPath__WIP:loc_E2CAA   mov     bx, [CMB_ActiveMoveMap]
-CMB_GetPath__WIP:loc_E2DD6   mov     ax, [CMB_ActiveMoveMap]
-CMB_FillReachMap:loc_E2EFE   mov     bx, [CMB_ActiveMoveMap]
-CMB_FillReachMap:loc_E2FA1   mov     bx, [CMB_ActiveMoveMap]
-CMB_FillReachMap:loc_E304A   mov     bx, [CMB_ActiveMoveMap]
-CMB_FillReachMap+2B1         mov     bx, [CMB_ActiveMoveMap]
+BU_GetMoveMap__WIP+48        push    [_cmbt_movepath_cost_map]
+BU_GetMoveMap__WIP+DA        add     ax, [_cmbt_movepath_cost_map]
+BU_Move__WIP+66              add     ax, [_cmbt_movepath_cost_map]
+BU_Move__WIP+A2              add     ax, [_cmbt_movepath_cost_map]
+BU_Move__WIP+BE              mov     bx, [_cmbt_movepath_cost_map]
+Assign_Combat_Grids+58   add     ax, [_cmbt_movepath_cost_map]
+Assign_Combat_Grids+9E   add     ax, [_cmbt_movepath_cost_map]
+Assign_Combat_Grids+BF   mov     bx, [_cmbt_movepath_cost_map]
+AI_GetCombatRallyPt+AC       add     ax, [_cmbt_movepath_cost_map]
+AI_GetCombatRallyPt+F4       add     ax, [_cmbt_movepath_cost_map]
+AI_GetCombatRallyPt+133      add     ax, [_cmbt_movepath_cost_map]
+Do_Auto_Unit_Turn+58     add     ax, [_cmbt_movepath_cost_map]
+Do_Auto_Unit_Turn+E3     add     ax, [_cmbt_movepath_cost_map]
+Do_Auto_Unit_Turn+134    add     ax, [_cmbt_movepath_cost_map]
+G_AI_BU_Move+74              add     ax, [_cmbt_movepath_cost_map]
+G_AI_BU_Move+109             add     ax, [_cmbt_movepath_cost_map]
+BU_SetCityMovement+1D        mov     bx, [_cmbt_movepath_cost_map]
+BU_SetCityMovement+32        mov     bx, [_cmbt_movepath_cost_map]
+BU_SetCityMovement+47        mov     bx, [_cmbt_movepath_cost_map]
+BU_SetCityMovement+5C        mov     bx, [_cmbt_movepath_cost_map]
+BU_SetCityMovement+71        mov     bx, [_cmbt_movepath_cost_map]
+BU_SetCityMovement+160       add     ax, [_cmbt_movepath_cost_map]
+BU_SetCityMovement+16E       mov     bx, [_cmbt_movepath_cost_map]
+BU_SetCityMovement+17C       mov     bx, [_cmbt_movepath_cost_map]
+BU_SetCityMovement:loc_A789D mov     bx, [_cmbt_movepath_cost_map]
+BU_SetCityMovement+1A1       add     ax, [_cmbt_movepath_cost_map]
+BU_SetCityMovement+1AF       mov     bx, [_cmbt_movepath_cost_map]
+BU_SetCityMovement+1BD       mov     bx, [_cmbt_movepath_cost_map]
+BU_SetCityMovement+1CB       mov     bx, [_cmbt_movepath_cost_map]
+BU_SetCityMovement+23A       add     ax, [_cmbt_movepath_cost_map]
+BU_SetCityMovement+2BD       add     ax, [_cmbt_movepath_cost_map]
+AI_RestrictToCity+1C         add     ax, [_cmbt_movepath_cost_map]
+AI_RestrictToCity+2A         mov     bx, [_cmbt_movepath_cost_map]
+AI_RestrictToCity+38         mov     bx, [_cmbt_movepath_cost_map]
+AI_RestrictToCity+45         mov     bx, [_cmbt_movepath_cost_map]
+AI_RestrictToCity+5D         add     ax, [_cmbt_movepath_cost_map]
+AI_RestrictToCity+6B         mov     bx, [_cmbt_movepath_cost_map]
+AI_RestrictToCity+79         mov     bx, [_cmbt_movepath_cost_map]
+AI_RestrictToCity+87         mov     bx, [_cmbt_movepath_cost_map]
+CMB_GetPath__WIP+19          add     ax, [_cmbt_movepath_cost_map]
+CMB_GetPath__WIP:loc_E2A6A   mov     bx, [_cmbt_movepath_cost_map]
+CMB_GetPath__WIP:loc_E2B87   mov     bx, [_cmbt_movepath_cost_map]
+CMB_GetPath__WIP:loc_E2CAA   mov     bx, [_cmbt_movepath_cost_map]
+CMB_GetPath__WIP:loc_E2DD6   mov     ax, [_cmbt_movepath_cost_map]
+CMB_FillReachMap:loc_E2EFE   mov     bx, [_cmbt_movepath_cost_map]
+CMB_FillReachMap:loc_E2FA1   mov     bx, [_cmbt_movepath_cost_map]
+CMB_FillReachMap:loc_E304A   mov     bx, [_cmbt_movepath_cost_map]
+CMB_FillReachMap+2B1         mov     bx, [_cmbt_movepath_cost_map]

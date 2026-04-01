@@ -143,7 +143,7 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
                 // BUG  Outpost_Screen(1, ST_UNDEFINED, ST_UNDEFINED);
                 Change_City_Name_Popup(_city_idx, outpost_owner);
 
-                sdl2_Play_Background_Music__WIP();
+                Play_Background_Music();
 
                 Set_Map_Square_Explored_Flags_XYP_Range(outpost_wx, outpost_wy, outpost_wp, 2);
 

@@ -1121,8 +1121,6 @@ int16_t Cast_Transmute(int16_t player_idx)
 
         // BUGBUG ?
         // IDGI  gcc says warning: suggest parentheses around ‘&&’ within ‘||’ [-Wparentheses]
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wparentheses"
         if(
             (player_idx == HUMAN_PLAYER_IDX)
             ||
@@ -1136,7 +1134,6 @@ int16_t Cast_Transmute(int16_t player_idx)
             &&
             (magic_set.spell_animations == ST_TRUE)
         )
-#pragma GCC diagnostic pop
         {
 
             Spell_Animation_Load_Sound_Effect__WIP(spl_Change_Terrain);

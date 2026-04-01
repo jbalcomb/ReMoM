@@ -1948,33 +1948,12 @@ void ITEM_ResetViewGrow(void)
 }
 
 // WZD o149p21
-// drake178: EMM_Sandbox2VGAFILEH
-/*
-; saves the first 64k of the LBX_Sandbox_Segment into
-; pages 1-5 of the VGAFILEH EMS handle
-*/
-/*
-
-*/
 void Save_ScreenSeg(void)
 {
     SAVE_SCREEN_SEG
 }
 
 // WZD o149p22
-// drake178: EMM_VGAFILEH2Sandbox
-/*
-; loads pages 1-5 of the VGAFILEH EMS handle into the
-; first 64k of the LBX_Sandbox_Segment
-; BUG: restoring the original sandbox removes the
-; images of the up and down arrows from memory - these
-; are needed for the standard GUI redraw functions,
-; and will cause a crash if the page is flipped before
-; the GUI is cleared
-*/
-/*
-
-*/
 void Restore_ScreenSeg(void)
 {
     RESTORE_SCREEN_SEG

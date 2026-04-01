@@ -2,6 +2,10 @@
 
 
 
+
+
+
+
 ...debugging SAVETEST.GAM...
 Combat_Move_Path_Find(battle_units[battle_unit_idx].cgx, battle_units[battle_unit_idx].cgy, Dest_X, Dest_Y);
 9,14

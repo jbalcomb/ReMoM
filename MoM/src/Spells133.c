@@ -267,7 +267,7 @@ void Apply_Wrack(int16_t player_idx)
 
                     damage_types[0] = Damage_Per_Unit_Array[Damaged_Unit_Array[itr2]];
 
-                    BU_ApplyDamage__WIP(Damaged_Unit_Array[itr2], &damage_types[0]);
+                    BU_ApplyDamage(Damaged_Unit_Array[itr2], &damage_types[0]);
 
                 }
 
@@ -377,7 +377,7 @@ void Apply_Call_Lightning(int16_t player_idx)
 
             Animate_Lightning_Bolt(battle_units[itr].cgx, battle_units[itr].cgy, ST_UNDEFINED);
 
-            BU_ApplyDamage__WIP(itr, &damage_types[0]);
+            BU_ApplyDamage(itr, &damage_types[0]);
 
             Release_Time((Random(10) + 3));
 
@@ -1723,7 +1723,7 @@ void Vortex_Move_And_Attack(int vortex_idx, int next_cgx, int next_cgy)
             damage_types[1] = 0;
             damage_types[2] = 0;
 
-            BU_ApplyDamage__WIP(battle_unit_idx, &damage_types[0]);
+            BU_ApplyDamage(battle_unit_idx, &damage_types[0]);
 
         }
 
@@ -1743,7 +1743,7 @@ void Vortex_Move_And_Attack(int vortex_idx, int next_cgx, int next_cgy)
 
             Apply_Battle_Unit_Damage_From_Spell(spl_Lightning_Bolt, battle_unit_idx, &damage_types[0], 0);
 
-            BU_ApplyDamage__WIP(battle_unit_idx, &damage_types[0]);
+            BU_ApplyDamage(battle_unit_idx, &damage_types[0]);
 
         }
 

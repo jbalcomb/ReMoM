@@ -13,10 +13,10 @@ Past-Me does not show enough love for Future-Me.
 Combat Grid Coordinates
 ...indexing data structures...
 CMB_TargetRows[]
-CMB_ActiveMoveMap[]
+_cmbt_movepath_cost_map[]
 CMB_Vortex_Array[]
 
-BU_Move__WIP indexes CMB_ActiveMoveMap[] using ((cgy * 21) + cgx)
+BU_Move__WIP indexes _cmbt_movepath_cost_map[] using ((cgy * 21) + cgx)
 
 battle_units[itr].position_cgc1,cgc2
 is used the same as 
@@ -24,7 +24,7 @@ CMB_Vortex_Array[itr].Y_Pos,X_Pos
 
 
 CMB_GetPath__WIP()
-    if(CMB_ActiveMoveMap[((target_cgy * 21) + target_cgx)] == -1)  /* impassible */
+    if(_cmbt_movepath_cost_map[((target_cgy * 21) + target_cgx)] == -1)  /* impassible */
         return;
 
 
@@ -68,8 +68,8 @@ Tactical_Combat__WIP()
 Battle_Unit_Action__WIP
     combat_grid_target = CMB_TargetRows[cgy][cgx];
 Assign_Combat_Grids()
-    populates CMB_TargetRows[] and CMB_ActiveMoveMap[]
-    uses CMB_NearBuffer_3[]
+    populates CMB_TargetRows[] and _cmbt_movepath_cost_map[]
+    uses _cmbt_path_data[]
     /*
         default all combat grid targets to invalid action targets
     */
@@ -100,7 +100,7 @@ Assign_Combat_Grids()
     for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
         cgy_offset = (itr_y * COMBAT_GRID_WIDTH);
         for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++)
-            if(CMB_NearBuffer_3[cgy_offset + itr_x] == ST_TRUE)  /* combat grid cell is *reachable* */
+            if(_cmbt_path_data[cgy_offset + itr_x] == ST_TRUE)  /* combat grid cell is *reachable* */
                 CMB_TargetRows[itr_y][itr_x] = -1;
                 uu_count_of_reachable_cells++;
     CMB_TargetRows[battle_units[_active_battle_unit].cgy][battle_units[_active_battle_unit].cgx] = _active_battle_unit;

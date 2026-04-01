@@ -567,7 +567,7 @@ void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t pl
     Release_Block(_screen_seg);
 
     // DOMSDOS  Play_Background_Music__STUB();
-    sdl2_Play_Background_Music__WIP();
+    Play_Background_Music();
 
     if(player_idx == HUMAN_PLAYER_IDX)
     {
@@ -962,7 +962,7 @@ void Cast_Spell_City_Enchantment_Animation_2__WIP(int16_t city_idx, int16_t spel
     // DOMSDOS  Stop_All_Sounds__STUB();
 
     // DOMSDOS  Play_Background_Music__STUB();
-    sdl2_Play_Background_Music__WIP();
+    Play_Background_Music();
 
     Deactivate_Auto_Function();
 
@@ -1403,7 +1403,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
     Stop_All_Sounds__STUB();
 
     // DOMSDOS  Play_Background_Music__STUB();
-    sdl2_Play_Background_Music__WIP();
+    Play_Background_Music();
 
     OVL_MosaicFlip__STUB();
 

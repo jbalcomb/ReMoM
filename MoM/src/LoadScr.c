@@ -754,7 +754,7 @@ void Loaded_Game_Update(void)
 
 
     // DOMSDOS  Play_Background_Music__STUB();
-    sdl2_Play_Background_Music__WIP();
+    Play_Background_Music();
 
 
     Cache_Graphics_Overland();

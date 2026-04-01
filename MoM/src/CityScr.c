@@ -1681,7 +1681,7 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
     }
 
     // DOMSDOS  Play_Background_Music__STUB();
-    sdl2_Play_Background_Music__WIP();
+    Play_Background_Music();
 
     Cityscape_Build_Anim_Reset();
 
@@ -1698,11 +1698,8 @@ void Change_Home_City_Name_Popup(int16_t city_idx)
     char Text[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t start_y = 0;
     int16_t start_x = 0;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-but-set-variable"
     int16_t UU_RetVal_TextEditDialog = 0;
-#pragma clang diagnostic push
-
+    
     _page_flip_effect = pfe_None;
 
     color_array[0]  =  97;

@@ -148,7 +148,7 @@ void Screen_Control(void)
                     if(magic_set.background_music == ST_TRUE)
                     {
                         // DOMSDOS  Play_Background_Music__STUB();
-                        sdl2_Play_Background_Music__WIP();
+                        Play_Background_Music();
                     }
                     else
                     {

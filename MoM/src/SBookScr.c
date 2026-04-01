@@ -804,7 +804,7 @@ void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t
     // DOMSDOS  Stop_All_Sounds__STUB();
 
     // DOMSDOS  Play_Background_Music__STUB();
-    sdl2_Play_Background_Music__WIP();
+    Play_Background_Music();
 
     Release_Block(_screen_seg);
 

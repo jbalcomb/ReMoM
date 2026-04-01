@@ -31,7 +31,7 @@ Module: ERIC
 #include "City_ovr55.h"
 #include "CITYCALC.h"
 #include "DIPLOMAC.h"
-#include "MainScr.h"  /* sdl2_Play_Background_Music__WIP() */
+#include "MainScr.h"  /* Play_Background_Music() */
 #include "Spells128.h"
 #include "WZD_o059.h"
 
@@ -720,7 +720,7 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
     Set_Mouse_List(1, mouse_list_default);
 
     // DOMSDOS  Play_Background_Music__STUB();
-    sdl2_Play_Background_Music__WIP();
+    Play_Background_Music();
 
 }
 

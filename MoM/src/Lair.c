@@ -310,7 +310,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
         Set_Bit_Field(1, &_LAIRS[lair_idx].Misc_Flags);
 
         // DOMSDOS  Play_Background_Music__STUB();
-        sdl2_Play_Background_Music__WIP();
+        Play_Background_Music();
     }
 
     if(Encounter_Outcome == ST_FALSE)
@@ -550,8 +550,7 @@ int16_t Do_Lair_Confirm(int16_t lair_idx)
         lair_is_node = ST_TRUE;
     }
 
-
-    // TODO  EMM_Sandbox2VGAFILEH();
+    Save_ScreenSeg();
 
     lair_confirm_pict = LBX_Reload(reload_lbx_file__ovr083, (9 + lair_type), _screen_seg);    // "RELOAD" ... {LAIR, CHAOS, NATURE, WATER, LAIR, LAIR, LAIR, LAIR, LAIR, LAIR, LAIR}
 
@@ -561,8 +560,7 @@ int16_t Do_Lair_Confirm(int16_t lair_idx)
 
     choice = Lair_Confirm(160, 60, lair_message_box_text, lair_confirm_pict, 0, 0, lair_has_guardians, lair_is_node);
 
-    // TODO  EMM_VGAFILEH2Sandbox();
-
+    Restore_ScreenSeg();
 
     if(lair_has_guardians == ST_FALSE)
     {

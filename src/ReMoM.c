@@ -74,14 +74,27 @@
 #include "../ext/stu_compat.h"
 #include "../platform/include/Platform_Replay.h"
 
-/* SDL_main.h redefines main() on some platforms (macOS, iOS, Android).
-   We handle our own main(), so tell SDL not to intercept it. */
-#ifdef _WIN32
+/* COPILOT */ /* SDL_main.h redefines main() on some platforms (macOS, iOS, Android).
+                      We handle our own main(), so tell SDL not to intercept it.
+                      Skip SDL headers entirely for the native Win32 backend. */
+/* #ifdef _WIN32 */
+/* #define SDL_MAIN_HANDLED */
+/* #ifdef USE_SDL3 */
+/* #include <SDL3/SDL_main.h> */
+/* #else */
+/* #include <SDL.h> */
+/* #endif */
+/* #endif */
+#if defined(_WIN32) && !defined(_STU_WIN)
 #define SDL_MAIN_HANDLED
 #ifdef USE_SDL3
+#if __has_include(<SDL3/SDL_main.h>)
 #include <SDL3/SDL_main.h>
+#endif
 #else
+#if __has_include(<SDL.h>)
 #include <SDL.h>
+#endif
 #endif
 #endif
 

@@ -2,6 +2,47 @@
 SEEALSO:  dijkstra.c
 
 
+//Sidav  this is Bellman Ford
+https://www.google.com/search?q=Grid-based+Bellman-Ford+Iterative+Relaxation+algorithm&oq=Grid-based+Bellman-Ford+Iterative+Relaxation+algorithm
+//Gemini3Pro
+```
+BELLMANFORD(s)
+    INITSSSP(s) [cite: 973]
+    while there is at least one tense edge 
+        for every edge u -> v 
+            if u -> v is tense 
+                RELAX(u -> v)
+```
+Your assembly block maps to this textbook pseudocode line-for-line:
+1. INITSSSP(s): The assembly block starting at loc_E2A21 loops through the entire grid and sets every tile's distance to e_INF (Infinity). It then manually sets the starting coordinate (source_cgx, source_cgy) to 0.
+2. while there is at least one tense edge: Look at the variable Map_Changed (which is named unstable in the second function). At the start of every massive grid sweep (loc_E2A51), the engine sets Map_Changed = e_ST_FALSE. If the algorithm finishes scanning the entire 21x22 grid and Map_Changed is still false, it breaks out of the loop and finishes.
+3. for every edge u -> v: The assembly uses CMB_AdjacentOffsets to check the neighbors (the edges) of whatever tile it is currently standing on.
+4. if u -> v is tense: The assembly calculates the potential_path_cost. It then uses a cmp (compare) instruction to see if this new cost is strictly less than the currently saved cost. If the saved cost is lower (jbe - jump if below or equal), it skips to the next tile.
+5. RELAX(u -> v): If the edge is tense, the assembly updates the tile's cost, writes the breadcrumb into _cmbt_path_data, and critically, executes mov [bp+Map_Changed], e_ST_TRUE to ensure the massive while loop runs at least one more time.
+
+https://stackoverflow.com/questions/28857918/bellman-ford-algorithm-explanation
+https://stackoverflow.com/questions/65166477/bellman-ford-implementation-and-simultaneously-relaxation
+|-> https://cp-algorithms.com/graph/bellman_ford.html
+https://www.geeksforgeeks.org/cpp/bellman-ford-algorithm-in-cpp/
+https://towardsdatascience.com/bellman-ford-single-source-shortest-path-algorithm-on-gpu-using-cuda-a358da20144b/
+https://www.youtube.com/watch?v=Mn9bFIIyXIM
+
+
+For _cmbt_mvpth_c, ... AKA distance array
+"movement cost" is "distance" on a graph where the cost is a "weight" of the "edge"
+
+For _cmbt_path_data, ... AKA predecessor array
+
+
+
+
+
+
+
+
+
+
+
 Elsewhere, ...
 found some material on...
 flood fill algorithm
@@ -10,13 +51,13 @@ value iteration algorithm  (+stochastic movement)
 
 
 
-Set_Movement_Cost_Map() sets CMB_ActiveMoveMap[] from battlefield->MoveCost_Ground[], MoveCost_Teleport[], MoveCost_Ground2[], MoveCost_Sailing[]
+Set_Movement_Cost_Map() sets _cmbt_movepath_cost_map[] from battlefield->MoveCost_Ground[], MoveCost_Teleport[], MoveCost_Ground2[], MoveCost_Sailing[]
 
 Combat_Move_Path_Find()
 
 movement_path_grid_cell_count
 CMB_Path_Costs[]
-CMB_NearBuffer_3[]
+_cmbt_path_data[]
 CMB_Path_Xs[]
 CMB_Path_Ys[]
 
@@ -41,7 +82,7 @@ Tile_GetTo_Cost
 movepath_cost = &movepath_cost_map->moves2[CS_Row_Start];
 move_cost = *movepath_cost++;
 vs.
-move_cost = CMB_ActiveMoveMap[ctr];
+move_cost = _cmbt_movepath_cost_map[ctr];
 
 
 
@@ -87,10 +128,10 @@ No such thing?
 The whole algo starts at 0 {0,0} and just runs until there's no change.
 So, it's just the minimum length from every cell to every other cell?
 
-CMB_NearBuffer_3[] starts with every cell is best reached from itself
+_cmbt_path_data[] starts with every cell is best reached from itself
 CMB_Path_Costs[] starts with every cell has infinite reach cost, except the source cell, which is zero
 
-gets the moves2 cost from CMB_ActiveMoveMap[], given the terrain (group?) and the battle unit's movement mode.
+gets the moves2 cost from _cmbt_movepath_cost_map[], given the terrain (group?) and the battle unit's movement mode.
 starting from ctr = 0, which would be {0,0}
 checks if INF/*impassible*
 
@@ -120,9 +161,9 @@ same for each section
                             existing_path_cost = CMB_Path_Costs[ctr];
                             if(existing_path_cost > potential_path_cost)
                             {
-                                CMB_NearBuffer_3[ctr] = adjacent_idx;
+                                _cmbt_path_data[ctr] = adjacent_idx;
                                 CMB_Path_Costs[ctr] = potential_path_cost;
-                                new_next_cell_index = CMB_NearBuffer_3[ctr];
+                                new_next_cell_index = _cmbt_path_data[ctr];
                                 if(new_next_cell_index != old_next_cell_index)
                                 {
                                     unstable = ST_TRUE;
@@ -167,10 +208,10 @@ Find does 0 to 4 and 4 to 8
                             if(CMB_Path_Costs[ctr] > potential_path_cost)
                             {
                                 // *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                                CMB_NearBuffer_3[ctr] = adjacent_idx;
+                                _cmbt_path_data[ctr] = adjacent_idx;
                                 // *movepath_reach_cost = new_reach_cost;
                                 CMB_Path_Costs[ctr] = potential_path_cost;
-                                if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+                                if(_cmbt_path_data[ctr] != old_next_cell_index)
                                 {
                                     // reach_costs_changed = ST_TRUE;
                                     unstable = ST_TRUE;
@@ -187,9 +228,9 @@ Find does 0 to 4 and 4 to 8
                             potential_path_cost = adjacent_path_cost + move_cost;
                             if(CMB_Path_Costs[ctr] > potential_path_cost)
                             {
-                                CMB_NearBuffer_3[ctr] = adjacent_idx;
+                                _cmbt_path_data[ctr] = adjacent_idx;
                                 CMB_Path_Costs[ctr] = potential_path_cost;
-                                if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+                                if(_cmbt_path_data[ctr] != old_next_cell_index)
                                 {
                                     unstable = ST_TRUE;
                                 }
@@ -212,9 +253,9 @@ if((adjacent_idx >= 0) && (adjacent_idx < 462))
         potential_path_cost = adjacent_path_cost + move_cost;
         if(CMB_Path_Costs[ctr] > potential_path_cost)
         {
-            CMB_NearBuffer_3[ctr] = adjacent_idx;
+            _cmbt_path_data[ctr] = adjacent_idx;
             CMB_Path_Costs[ctr] = potential_path_cost;
-            if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+            if(_cmbt_path_data[ctr] != old_next_cell_index)
             {
                 unstable = ST_TRUE;
             }
@@ -228,10 +269,10 @@ if((adjacent_idx >= 0) && (adjacent_idx < 462))
 
 for the source cell, on the first pass, at {-1,-1}
 
-move_cost = CMB_ActiveMoveMap[ctr];
+move_cost = _cmbt_movepath_cost_map[ctr];
 this is 2
 
-old_next_cell_index = CMB_NearBuffer_3[ctr];
+old_next_cell_index = _cmbt_path_data[ctr];
 by default, this is the array index of itself / the current cell
 
 adjacent_idx = CMB_AdjacentOffsets[itr_adjacent];
@@ -247,13 +288,13 @@ if(CMB_Path_Costs[ctr] > potential_path_cost)
 this is (INF > 2)
 ...the current cells path cost was set to INF beforehand
 
-CMB_NearBuffer_3[ctr] = adjacent_idx;
+_cmbt_path_data[ctr] = adjacent_idx;
 this sets the current cells 'reach from' index to that of the source cell
 
 CMB_Path_Costs[ctr] = potential_path_cost;
 this changes the current cells path cost from INF to (0 + 2)
 
-if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+if(_cmbt_path_data[ctr] != old_next_cell_index)
     unstable = ST_TRUE;
 
 @`if(CMB_Path_Costs[ctr] > potential_path_cost)`
@@ -394,22 +435,22 @@ existing_path_cost
 
 Keeps looping while 'changed'...
 ...but, what really/actually changed?
-    if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+    if(_cmbt_path_data[ctr] != old_next_cell_index)
     ...
-    CMB_NearBuffer_3[ctr] = adjacent_idx;
+    _cmbt_path_data[ctr] = adjacent_idx;
     potential_path_cost = adjacent_path_cost + move_cost;
     ...
         where, ...
-            CMB_NearBuffer_3[ctr] = adjacent_idx;
+            _cmbt_path_data[ctr] = adjacent_idx;
             ...means 
 
 
-old_next_cell_index = CMB_NearBuffer_3[ctr];
+old_next_cell_index = _cmbt_path_data[ctr];
 potential_path_cost = adjacent_path_cost + move_cost;
 if(CMB_Path_Costs[ctr] > potential_path_cost)
-    CMB_NearBuffer_3[ctr] = adjacent_idx;
+    _cmbt_path_data[ctr] = adjacent_idx;
     CMB_Path_Costs[ctr] = potential_path_cost;
-    if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+    if(_cmbt_path_data[ctr] != old_next_cell_index)
 
 
 

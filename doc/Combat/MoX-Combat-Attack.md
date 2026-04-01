@@ -27,8 +27,8 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
             Attack_Damage = CMB_AttackRoll__SEGRAX(attack_strength, attack_tohit);
             ...
             Attack_Damage -= CMB_DefenseRoll__SEGRAX(defense_special, defender_toblock);
-    BU_ApplyDamage__WIP(defender_battle_unit_idx, defender_damage_array);
-    BU_ApplyDamage__WIP(attacker_battle_unit_idx, attacker_damage_array);
+    BU_ApplyDamage(defender_battle_unit_idx, defender_damage_array);
+    BU_ApplyDamage(attacker_battle_unit_idx, attacker_damage_array);
 
 BU_ProcessAttack__WIP()
 Line 21098
@@ -123,7 +123,7 @@ Destroy_Ship_()
 
 ## Where and how does a unit get killed?
 
-BU_ApplyDamage__WIP()
+BU_ApplyDamage()
 
 
     if(battle_units[battle_unit_idx].Cur_Figures <= 0)

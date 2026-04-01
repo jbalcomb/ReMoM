@@ -5,6 +5,12 @@ add_executable(ReMoMber ReMoM.c)
 set_target_properties(ReMoMber PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 if(USE_WIN32)
+    target_compile_definitions(ReMoMber PUBLIC _STU_WIN)
+elseif(USE_SDL3)
+    target_compile_definitions(ReMoMber PUBLIC USE_SDL3)
+endif()
+
+if(USE_WIN32)
     set(_sdl_main_lib "")
 elseif(USE_SDL3)
     set(_sdl_main_lib SDL3::SDL3)

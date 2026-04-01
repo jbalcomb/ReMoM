@@ -753,7 +753,7 @@ void Diplomacy_Screen__WIP(void)
     Cache_Graphics_Overland();
 
     // DOMSDOS  Play_Background_Music__STUB();
-    sdl2_Play_Background_Music__WIP();
+    Play_Background_Music();
 
 }
 
@@ -4856,7 +4856,7 @@ static void Npc_Diplomacy_Screen(void)
     Cache_Graphics_Overland();
 
     // DOMSDOS  Play_Background_Music__STUB();
-    sdl2_Play_Background_Music__WIP();
+    Play_Background_Music();
 
 
 }

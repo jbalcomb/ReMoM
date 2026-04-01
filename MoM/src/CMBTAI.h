@@ -27,29 +27,24 @@ extern "C" {
 */
 
 // WZD o114p01
-void AI_SetBasicAttacks__WIP__OLD(int16_t player_idx);
 void AI_SetBasicAttacks(int16_t player_idx);
 
 // WZD o114p02
-void AI_BU_ProcessAction__WIP__OLD(int16_t battle_unit_idx, int16_t Rally_X, int16_t Rally_Y);
 void AI_BU_ProcessAction(int16_t battle_unit_idx, int16_t rally_cgx, int16_t rally_cgy);
 
 // WZD o114p03
 void Sort_Battle_Units(int16_t * troop_list, int16_t troop_count);
 
 // WZD o114p04
-void AI_GetCombatRallyPt__WIP(int16_t battle_unit_idx, int16_t * Rally_X, int16_t * Rally_Y);
+void AI_GetCombatRallyPt(int16_t battle_unit_idx, int16_t * cgx, int16_t * cgy);
 
 // WZD o114p05
-void AI_MoveBattleUnits__WIP__OLD(int16_t player_idx);
 void Auto_Do_Combat_Turn(int16_t player_idx);
 
 // WZD o114p06
-int16_t AI_BU_AssignAction__WIP__OLD(int16_t battle_unit_idx, int16_t no_spells_flag);
 int16_t AI_BU_AssignAction(int16_t battle_unit_idx, int16_t no_spells_flag);
 
 // WZD o114p07
-int16_t AI_BU_SelectAction__WIP__OLD(int16_t battle_unit_idx, int16_t * selected_action, int16_t has_ranged_attack);
 int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_action, int16_t has_ranged_attack);
 
 // WZD o114p08

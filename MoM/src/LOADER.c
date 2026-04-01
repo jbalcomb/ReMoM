@@ -921,7 +921,7 @@ void Reload_Combat_Graphics_Cache(void)
     for(itr1 = 0; itr1 < 15; itr1++)
     {
 
-        IMG_CMB_Houses[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (2 + itr1), g_graphics_cache_seg);
+        _combat_house_picts_segs[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (2 + itr1), g_graphics_cache_seg);
 
     }
 

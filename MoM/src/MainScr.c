@@ -2430,7 +2430,7 @@ void Increment_Background_Music(void)
         if(background_music_num != m_background_music_num)
         {
             // DOMSDOS  Play_Background_Music__STUB();
-            sdl2_Play_Background_Music__WIP();
+            Play_Background_Music();
         }
 
     }
@@ -2521,10 +2521,10 @@ int16_t Get_Background_Music(void)
 ; appropriate background track based on player power
 */
 // void Play_Background_Music__STUB(void)
-void sdl2_Play_Background_Music__WIP(void)
+void Play_Background_Music(void)
 {
-    SAMB_ptr sound_seg;
-    int16_t background_music_num;  // _SI_
+    SAMB_ptr sound_seg = NULL;
+    int16_t background_music_num = 0;
     uint16_t sound_seg_size = 0;  // DNE in Dasm
 
     if(magic_set.background_music == ST_TRUE)

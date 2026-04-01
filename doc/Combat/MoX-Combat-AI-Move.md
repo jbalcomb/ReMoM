@@ -28,7 +28,7 @@ AI_MoveBattleUnits__WIP()
 Auto_Move_Unit()
     Set_Movement_Cost_Map(battle_unit_idx);
     ...
-    ...updates CMB_ActiveMoveMap[] with INF's
+    ...updates _cmbt_movepath_cost_map[] with INF's
     ...
     Combat_Move_Path_Find(battle_units[battle_unit_idx].cgx, battle_units[battle_unit_idx].cgy, Dest_X, Dest_Y);
 
@@ -101,7 +101,7 @@ What does Do_Auto_Ship_Turn() do with them?
 
 
 
-updates CMB_ActiveMoveMap[]
+updates _cmbt_movepath_cost_map[]
 sets move cost to 2 for target battle unit
 sets move cost to INF for all non-target battle units
 

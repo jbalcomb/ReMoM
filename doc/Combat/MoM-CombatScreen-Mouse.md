@@ -14,7 +14,7 @@ CMB_TargetRows
 
 
 Combat_Move_Path_Valid()
-...closes with indexing CMB_NearBuffer_3[], CMB_Path_Costs[], and CMB_ActiveMoveMap[] using an indexing variable of ((itr_y * 21) + itr_x)
+...closes with indexing _cmbt_path_data[], CMB_Path_Costs[], and _cmbt_movepath_cost_map[] using an indexing variable of ((itr_y * 21) + itr_x)
 
 
 
@@ -41,7 +41,7 @@ Assign_Combat_Grids()
     for(itr_y = 0; itr_y < 22; itr_y++)
         Row_Origin_Offset = (itr_y * 21);
         for(itr_x = 0; itr_x < 21; itr_x++)
-            if(CMB_NearBuffer_3[Row_Origin_Offset + itr_x] == 1)
+            if(_cmbt_path_data[Row_Origin_Offset + itr_x] == 1)
                 CMB_TargetRows[itr_y][itr_x] = -1;
                 UU_TotalMoveArea++;
     CMB_TargetRows[battle_units[_active_battle_unit].cgy][battle_units[_active_battle_unit].cgx] = _active_battle_unit;

@@ -850,8 +850,8 @@ void Apply_Damage_To_City(int16_t city_idx, int16_t population_lost, int16_t bld
 {
     int16_t bldg_roll = 0;
     int16_t bldg_ctr = 0;
-    int16_t itr_buildings = 0;  // _DI_
-
+    int16_t itr_buildings = 0;
+    
     if(bldg_chance > 0)
     {
 
@@ -966,10 +966,7 @@ void Print_City_Enchantment_List(int16_t start_x, int16_t start_y, int16_t * cit
     int16_t x = 0;
     uint8_t banner_colors[6] = { 0, 0, 0, 0, 0, 0 };
     uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-but-set-variable"
     int16_t var_2 = 0;
-#pragma clang diagnostic push
     int16_t itr = 0;  // _DI_
     int16_t itr_colors = 0;  // _SI_
 
@@ -1473,10 +1470,7 @@ void City_Screen_Add_Fields_Resource_Window(int16_t city_idx, int16_t xstart, in
     int16_t group_two_x1 = 0;  // DNE in Dasm, uses city_resource_row_field_idx
 
     abs_diff_food = abs(_CITIES[city_idx].food_units - _CITIES[city_idx].population);
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-but-set-variable"
     abs_diff_gold = abs(_CITIES[city_idx].gold_units - _CITIES[city_idx].building_maintenance);
-#pragma clang diagnostic pop
 
     resources[0] = (_CITIES[city_idx].food_units + 1);
     resources[1] = _CITIES[city_idx].production_units;
@@ -1620,10 +1614,7 @@ void City_Screen_Draw_Resource_Icons(int16_t city_idx, int16_t xstart, int16_t y
     int16_t itr_resource_types = 0;  // _SI_
 
     abs_diff_food = abs(_CITIES[city_idx].food_units - _CITIES[city_idx].population);
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-but-set-variable"
     abs_diff_gold = abs(_CITIES[city_idx].gold_units - _CITIES[city_idx].building_maintenance);
-#pragma clang diagnostic pop
 
     resources[0] = (_CITIES[city_idx].food_units + 1);
     resources[1] = _CITIES[city_idx].production_units;

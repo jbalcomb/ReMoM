@@ -97,7 +97,7 @@
 - [ ] Battle_Unit_Action__WIP
 - [ ] Battle_Unit_Attack__WIP
 - [ ] BU_Apply_Battlefield_Effects__WIP
-- [x] BU_ApplyDamage__WIP  AKA BU_ApplyDamage__WIP__SEGRAX
+- [x] BU_ApplyDamage  AKA BU_ApplyDamage__WIP__SEGRAX
 - [ ] BU_AttackTarget__WIP
 - [ ] BU_CheckFlight__WIP
 - [ ] BU_GetCombatEffect__WIP

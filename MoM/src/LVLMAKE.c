@@ -332,7 +332,7 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
     OVL_MosaicFlip__STUB();
 
     // DOMSDOS  Play_Background_Music__STUB();
-    sdl2_Play_Background_Music__WIP();
+    Play_Background_Music();
 
 }
 

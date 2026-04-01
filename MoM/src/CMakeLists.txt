@@ -14,6 +14,7 @@ set(LIBMOM_SOURCES
     CityScr.c
     City_ovr55.c
     CMBTAI.c
+    CMBTMVPT.c
     Combat.c
     CONQUEST.c
     CREDITS.c

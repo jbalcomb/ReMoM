@@ -1141,6 +1141,7 @@ struct s_BATTLE_UNIT * global_battle_unit;                       // alloc in All
 ~ a 'battle unit' is a combat data *record*
 */
 struct s_BATTLE_UNIT * battle_units;                            // alloc in IDK_Combat_Allocate() and CMB_LoadResources()
+/* CLAUDE */ struct s_BATTLE_UNIT DBG_battle_units[MAX_BATTLE_UNIT_SLOT_COUNT];  // DNE in Dasm, but used for debugging purposes in Combat()  (was MAX_BATTLE_UNIT_COUNT=18, too small when summoned units push count past 18)
 
 // WZD dseg:922E
 // ; 3 LBX_Alloc_Next paragraphs, sandbox segment; the first 30 (1Eh) bytes are zeroed when allocated
@@ -1224,7 +1225,7 @@ combat type?
     ...mode, context, setting, circumstance, environment, ...
 ¿ enum ?
 0: Open-Field  (Enemy Stack)
-1: City-Seige  (Enemy City)
+1: City-Siege  (Enemy City)
 5: Lair
 
 STRUCTURES INFLUENCING COMBAT

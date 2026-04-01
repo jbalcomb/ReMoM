@@ -1,5 +1,5 @@
 {
-  "tests": 114,
+  "tests": 117,
   "name": "AllTests",
   "testsuites": [
     {
@@ -188,6 +188,27 @@
           "name": "AttackerTruesight_OverridesDefenderInvisibility",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Ranged_Mouse_Image.cpp",
           "line": 89
+        }
+      ]
+    },
+    {
+      "name": "Update_Move_Map_City_Area_Restrictions_test",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "OutsideUnit_BlocksWallCellsButLeavesGateOpen",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Update_Move_Map_City_Area_Restrictions.cpp",
+          "line": 63
+        },
+        {
+          "name": "InsideUnit_BlocksPerimeterButKeepsGateExitOpen",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Update_Move_Map_City_Area_Restrictions.cpp",
+          "line": 81
+        },
+        {
+          "name": "FlyingUnitSkipsCityWallRestrictions",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Update_Move_Map_City_Area_Restrictions.cpp",
+          "line": 98
         }
       ]
     },
@@ -712,12 +733,12 @@
       "testsuite": [
         {
           "name": "HumanFortressHasSufficientMaxPop",
-          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Generate_Home_City__WIP.cpp",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Generate_Home_City.cpp",
           "line": 147
         },
         {
           "name": "AllFortressesHaveSufficientMaxPop",
-          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Generate_Home_City__WIP.cpp",
+          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Generate_Home_City.cpp",
           "line": 192
         }
       ]

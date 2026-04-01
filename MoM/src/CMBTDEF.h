@@ -60,6 +60,10 @@ enum e_DAMAGE_TYPES
 /*
     ~ combat grid coordinates
 
+Generate_Combat_Map()
+"case clt_Fortress:
+2. Fortress excludes tile (1,1) — line 26534 skips (i==1, j==1) for house placement, which is (6,11) — the central structure tile for the fortress. City doesn't do this exclusion.
+
 */
 #define MIN_CGX_CITY  5
 #define MAX_CGX_CITY  8
@@ -67,6 +71,8 @@ enum e_DAMAGE_TYPES
 #define MAX_CGY_CITY 13
 #define CGX_GATE      8
 #define CGY_GATE     12
+/*  Combat_Grid_Cell_Has_City_Wall() checks 7,6, in addition to 6,11  */
+/*  Target_Unit_Value() checks 7,6, in addition to 6,11  */
 #define CGX_LAIR  6
 #define CGY_LAIR 11
 

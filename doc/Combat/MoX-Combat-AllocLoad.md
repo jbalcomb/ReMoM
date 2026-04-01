@@ -44,9 +44,9 @@ void CMB_BaseAllocs__WIP(void)
     CMB_Projectiles = Allocate_Next_Block(_screen_seg, 10);  // 10 PR, 160 B
     CMB_Vortex_Array = (struct s_MAGIC_VORTEX *)Allocate_Next_Block(_screen_seg, 9);  // 9 PR, 144 B
     // ¿ drake178:  ; WARNING: these are entirely redundant and will be  reallocated immediately after this! ?
-    CMB_ActiveMoveMap = (int8_t *)Near_Allocate_First(504);
+    _cmbt_movepath_cost_map = (int8_t *)Near_Allocate_First(504);
     CMB_Path_Costs = Near_Allocate_Next(504);
-    CMB_NearBuffer_3 = (int16_t *)Near_Allocate_Next(1008);
+    _cmbt_path_data = (int16_t *)Near_Allocate_Next(1008);
     CMB_Path_Xs = Near_Allocate_Next(504);
     CMB_Path_Ys = Near_Allocate_Next(504);
 void CMB_LoadResources__WIP(void)

@@ -3072,6 +3072,7 @@ extern struct s_BATTLE_UNIT * global_battle_unit;                // alloc in All
 // MoO  Module: Mox  _combat_data_
 // WZD dseg:922A 00 00 00 00                                     _combat_data_ dd 0                      ; DATA XREF: USW_Build_Effect_List+AB7r ...
 extern struct s_BATTLE_UNIT * battle_units;
+/* CLAUDE */ extern struct s_BATTLE_UNIT DBG_battle_units[MAX_BATTLE_UNIT_SLOT_COUNT];
 
 // WZD dseg:922E
 // ; 3 LBX_Alloc_Next paragraphs, sandbox segment; the first 30 (1Eh) bytes are zeroed when allocated

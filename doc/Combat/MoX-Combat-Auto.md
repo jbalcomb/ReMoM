@@ -1,6 +1,40 @@
 
 
 
+NOTE(JimBalcomb,20260331):
+    Enter Combat
+    Turn - Defender & Computer Player
+    Hit Auto
+    Turn - Attacker & Human Player
+    ...
+    ...
+    ...
+    Target: Gatekeeper (8,12)
+    Action: Melee
+    
+    AI_BU_ProcessAction
+
+
+
+
+NOTE(JimBalcomb,20260330):
+    Enter Combat, Hit Auto, Immediately Ends With All Exhausted.
+    Because, City Walls.
+        [ChooseTarget] bu=0 vs target=8 @ (8,12) value=3 highest=-100
+        [ChooseTarget] bu=0 vs target=9 @ (8,11) value=3 highest=3
+        [ChooseTarget] bu=0 vs target=10 @ (7,12) value=3 highest=3
+        [ChooseTarget] bu=0 vs target=11 @ (7,11) value=3 highest=3
+        [ChooseTarget] bu=0 vs target=12 @ (7,13) value=14 highest=3
+        [ChooseTarget] bu=0 vs target=13 @ (7,10) value=4 highest=14
+        [ChooseTarget] bu=0 vs target=14 @ (6,12) value=4 highest=14
+        [ChooseTarget] bu=0 vs target=15 @ (6,11) value=4 highest=14
+        [ChooseTarget] bu=0 vs target=16 @ (6,13) value=-3 highest=14
+        [AssignAction] bu=0 @ (14,12) action=100 target=12 has_ranged=0
+    Target should have been 8, because it knows it needs to clear the city wall gate.
+        [ChooseTarget] bu=0 vs target=8 @ (8,12) value=3 highest=-100
+
+
+
 
 AI_CMB_PlayTurn__WIP()
     |-> AI_MoveBattleUnits__WIP()

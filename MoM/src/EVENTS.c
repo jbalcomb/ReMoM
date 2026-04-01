@@ -1693,7 +1693,7 @@ void Show_Event_Message(void)
     Update_Remap_Gray_Palette();
 
     // DOMSDOS  Play_Background_Music__STUB();
-    sdl2_Play_Background_Music__WIP();
+    Play_Background_Music();
 
     Allocate_Reduced_Map();
 

@@ -3609,7 +3609,7 @@ void Players_Check_Spell_Research(void)
                 {
                     // DOMSDOS  Stop_All_Sounds__STUB();
                     // DOMSDOS  Play_Background_Music__STUB();
-                    sdl2_Play_Background_Music__WIP();
+                    Play_Background_Music();
                 }
 
             }
@@ -3727,7 +3727,7 @@ void Player_Gets_Spell(int16_t player_idx, int16_t spell_idx, int16_t New_Resear
         {
             // DOMSDOS  Stop_All_Sounds__STUB();
             // DOMSDOS  Play_Background_Music__STUB();
-            sdl2_Play_Background_Music__WIP();
+            Play_Background_Music();
         }
 
     }

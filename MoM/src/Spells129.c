@@ -413,7 +413,7 @@ void Apply_Black_Wind(int16_t wx, int16_t wy, int16_t wp, int16_t spell_idx)
 
             }
 
-            BU_ApplyDamage__WIP(0, &damage_types[0]);
+            BU_ApplyDamage(0, &damage_types[0]);
 
             _UNITS[unit_idx].Damage += damage_types[0];
 

@@ -294,9 +294,12 @@ not saving new game options
 
 sometimes the build or purify buttons draw overtop the next turn button
 
-[x] city combat not respecting city walls
-
-some blue wave lightning looking attack?
+[x] bug - city combat not respecting city walls
+[x] bug - attackers can't target gatekeeper
+[x] bug - attackers can't target inside / defenders can't target outside
+[x] bug - combat ends premature
+[x] bug - crashing on End_Of_Combat()
+some blue wave lightning looking attack? auto only? starts when attackers are 2 squares from gate/gatekeeper?
 
 townsfolk drawing below the bar, maybe just last one or rebels
 

@@ -1088,7 +1088,7 @@ total_pages += ((SBK_Group_4_Count + 5) / NUM_SPELLS_PER_PAGE_SML);
 total_pages += ((SBK_Group_6_Count + 5) / NUM_SPELLS_PER_PAGE_SML);
 
 
-    m_spellbook_pages = (struct s_SPELL_BOOK_PAGE *)CMB_NearBuffer_3;
+    m_spellbook_pages = (struct s_SPELL_BOOK_PAGE *)_cmbt_path_data;
 
     // ¿ ~ Spellbook_Add_Page() ?
     for(itr1 = 0; (total_pages + 3) > itr1; itr1++)
