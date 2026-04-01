@@ -163,6 +163,7 @@ libmom_a_SOURCES = \
     MoM/src/CityScr.c \
     MoM/src/City_ovr55.c \
     MoM/src/CMBTAI.c \
+    MoM/src/CMBTMVPT.c \
     MoM/src/Combat.c \
     MoM/src/CONQUEST.c \
     MoM/src/CREDITS.c \
