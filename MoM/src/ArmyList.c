@@ -30,6 +30,8 @@
 #include "UNITTYPE.h"   // WTFMATE
 #include "UnitView.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <string.h>
 
 #include "ArmyList.h"
@@ -154,31 +156,26 @@ TODO(JimBalcomb,20230922): finish ArmyList_Screen()
 void ArmyList_Screen(void)
 {
     
-    int16_t hotkey_ESC;
-    int16_t IDK_have_active_stack;
-    int16_t y2;
-    int16_t x2;
-    int16_t y1;
-    int16_t x1;
-    int16_t screen_changed;
-    int16_t button_armylist_items;
-    int16_t button_armylist_ok;
-    int16_t hotkey_D;
-    int16_t hotkey_U;
-    int16_t button_armylist_down_left;
-    int16_t button_armylist_up_left;
-    int16_t button_armylist_down_right;
-    int16_t button_armylist_up_right;
-    int16_t scanned_field;
-    int16_t leave_screen_flag;
-    
-    int16_t input_field_idx;
-    int16_t hotkey_idx_ESC;
-
-    int16_t itr_hero_portraits;
-
-    int16_t itr;  // _SI_
-
+    int16_t hotkey_esc_fld = 0;
+    int16_t IDK_have_active_stack = 0;
+    int16_t y2 = 0;
+    int16_t x2 = 0;
+    int16_t y1 = 0;
+    int16_t x1 = 0;
+    int16_t screen_changed = 0;
+    int16_t button_armylist_items = 0;
+    int16_t button_armylist_ok = 0;
+    int16_t hotkey_D = 0;
+    int16_t hotkey_U = 0;
+    int16_t button_armylist_down_left = 0;
+    int16_t button_armylist_up_left = 0;
+    int16_t button_armylist_down_right = 0;
+    int16_t button_armylist_up_right = 0;
+    int16_t scanned_field = 0;
+    int16_t leave_screen_flag = 0;
+    int16_t input_field_idx = 0;
+    int16_t itr = 0;
+    int16_t itr_hero_portraits = 0;
 
     ArmyList_Screen_Load();
 
@@ -249,7 +246,7 @@ void ArmyList_Screen(void)
 
         button_armylist_ok = Add_Button_Field(273, 182, "", armylist_ok_button_seg, cnst_HOTKEY_O_4, ST_UNDEFINED);
         
-        hotkey_ESC = Add_Hot_Key(cnst_HOTKEY_Esc5);
+        hotkey_esc_fld = Add_Hot_Key(cnst_HOTKEY_Esc5);
 
         // YayNay Army List Scroll Up
         if(list_first_item != 0)
@@ -287,7 +284,7 @@ void ArmyList_Screen(void)
         /*
             Leave Screen
         */
-        if(input_field_idx == button_armylist_ok || input_field_idx == hotkey_ESC)
+        if(input_field_idx == button_armylist_ok || input_field_idx == hotkey_esc_fld)
         {
             Play_Left_Click();
             leave_screen_flag = ST_TRUE;
@@ -484,31 +481,27 @@ void ArmyList_Screen(void)
 // WZD o66p02
 void ArmyList_Screen_Draw(void)
 {
-    uint8_t colors1[6];
-    uint8_t colors2[6];
-    int16_t unit_race;
-    int16_t hero_unit_idx;
-    int16_t scanned_unit_idx;
-    int16_t unit_enchantment_count;
-    int16_t unit_type;
-    int16_t list_armies_idx;
-    int16_t y2;
-    int16_t x2;
-    int16_t y1;
-    int16_t x1;
-    int16_t itr_units;
-
-    int16_t itr_colors;
-    int16_t itr_hero_portraits;
+    uint8_t colors1[6] = { 0, 0, 0, 0, 0, 0 };
+    uint8_t colors2[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t unit_race = 0;
+    int16_t hero_unit_idx = 0;
+    int16_t scanned_unit_idx = 0;
+    int16_t unit_enchantment_count = 0;
+    int16_t unit_type = 0;
+    int16_t list_armies_idx = 0;
+    int16_t y2 = 0;
+    int16_t x2 = 0;
+    int16_t y1 = 0;
+    int16_t x1 = 0;
+    int16_t itr_units = 0;
+    int16_t itr_colors = 0;
+    int16_t itr_hero_portraits = 0;
     // int16_t itr_list_item_count;
-    int16_t itr_stacks;
-    int16_t itr_unit_enchantment_count;
-
-    int16_t IDK_Hero_Slot;  // _DI_
-    int16_t print_y_offset;  // _DX_
-
-    int16_t unit_idx;
-
+    int16_t itr_stacks = 0;
+    int16_t itr_unit_enchantment_count = 0;
+    int16_t IDK_Hero_Slot = 0;
+    int16_t print_y_offset = 0;
+    int16_t unit_idx = 0;
 
     ArmyList_Set_List_Item_Count();
 
@@ -516,12 +509,11 @@ void ArmyList_Screen_Draw(void)
 
     Copy_Back_To_Off();
 
-
     /*
         BEGIN: Print Title
     */
-    strcpy(GUI_String_1, aTheArmiesOf);
-    strcat(GUI_String_1, _players[_human_player_idx].name);
+    stu_strcpy(GUI_String_1, aTheArmiesOf);
+    stu_strcat(GUI_String_1, _players[_human_player_idx].name);
     for(itr_colors = 0; itr_colors < 5; itr_colors++)
     {
         colors1[itr_colors] = 237;
@@ -696,14 +688,14 @@ void ArmyList_Screen_Draw(void)
 
             if(IDK_Hero_Slot != ST_UNDEFINED)
             {
-                strcpy(GUI_String_1, _players[_human_player_idx].Heroes[_UNITS[scanned_unit_idx].Hero_Slot].name);
+                stu_strcpy(GUI_String_1, _players[_human_player_idx].Heroes[_UNITS[scanned_unit_idx].Hero_Slot].name);
             }
             else
             {
                 if((_unit_type_table[unit_type].Attribs_1 & 0x8000) == 0)  /* enum ATTRIB_1 Std_Unit */
                 {
                     /* "Standard Units" */
-                    strcpy(GUI_String_1, *(_unit_type_table[unit_type].name));
+                    stu_strcpy(GUI_String_1, *(_unit_type_table[unit_type].name));
                 }
                 else
                 {
@@ -712,7 +704,7 @@ void ArmyList_Screen_Draw(void)
                     // TODO  if(unit_race < 15)
                     if(unit_race < 14)
                     {
-                        strcpy(GUI_String_1, *_race_type_table[unit_race].name);
+                        stu_strcpy(GUI_String_1, *_race_type_table[unit_race].name);
                     }
                     else
                     {
@@ -724,11 +716,11 @@ void ArmyList_Screen_Draw(void)
                         // ¿ indexing into an array of 21 DW's (42 bytes) of offsets to (char *) strings of Summoned Unit Race Names ?
                         // starting at 15 * 2 ... 6 offsets ... Arcane, Nature, Sorcery, Chaos, Life, Death
                         // [(_race_type_table.Growth_Mod+120h)+bx]
-                        // TODO  strcpy(GUI_String_1, "SUMMONED");
-                        strcpy(GUI_String_1, "");
+                        // TODO  stu_strcpy(GUI_String_1, "SUMMONED");
+                        stu_strcpy(GUI_String_1, "");
                     }
-                        strcat(GUI_String_1, " ");  // offset aTheArmiesOf+0Dh AKA aTheArmiesOf_SPACE
-                        strcat(GUI_String_1, *(_unit_type_table[unit_type].name));
+                        stu_strcat(GUI_String_1, " ");  // offset aTheArmiesOf+0Dh AKA aTheArmiesOf_SPACE
+                        stu_strcat(GUI_String_1, *(_unit_type_table[unit_type].name));
                 }
             }
 
@@ -783,16 +775,16 @@ void ArmyList_Screen_Draw(void)
 */
 void ArmyList_Add_List_Fields(void)
 {
-    int16_t x1;
-    int16_t y1;
-    int16_t x2;
-    int16_t y2;
-    int16_t hero_unit_idx;
-    int16_t itr_list_item_count;
-    int16_t itr_armylist_list_item_count;
-    int16_t itr_num_hero_portrait;
-    int16_t itr_stacks;
-    int16_t itr_units;
+    int16_t x1 = 0;
+    int16_t y1 = 0;
+    int16_t x2 = 0;
+    int16_t y2 = 0;
+    int16_t hero_unit_idx = 0;
+    int16_t itr_list_item_count = 0;
+    int16_t itr_armylist_list_item_count = 0;
+    int16_t itr_num_hero_portrait = 0;
+    int16_t itr_stacks = 0;
+    int16_t itr_units = 0;
 
     m_armies_list_field_count = 0;
 
@@ -1081,10 +1073,9 @@ void ArmyList_Set_List_Item_Count(void)
 // WZD o66p10
 void ArmyList_Screen_Load(void)
 {
-    int16_t itr;
-    int16_t hero_unit_idx;
-
-    int16_t hero_portrait_lbx_entry_num;
+    int16_t itr = 0;
+    int16_t hero_unit_idx = 0;
+    int16_t hero_portrait_lbx_entry_num = 0;
 
     m_armies_wx = Near_Allocate_First(1000);  // 1000 is one byte per unit of 1000 unit count max
     m_armies_wy = Near_Allocate_Next(1000);   // 1000 is one byte per unit of 1000 unit count max

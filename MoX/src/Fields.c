@@ -21,7 +21,7 @@
 
 #include <assert.h>
 #include <malloc.h>     /* malloc() */
-#include <string.h>     /* strcat(), strcpy() */
+#include <string.h>     /* stu_strcat(), stu_strcpy() */
 
 #include "Fields.h"
 

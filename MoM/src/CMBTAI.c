@@ -273,6 +273,7 @@ void AI_BU_ProcessAction(int16_t battle_unit_idx, int16_t rally_cgx, int16_t ral
     int16_t target_idx = 0;
     struct s_BATTLE_UNIT * bu_ptr = NULL;
     struct s_BATTLE_UNIT * target_ptr = NULL;
+    int16_t itr_battle_units = 0;  // DNE in Dasm
 
     /* If no rally point provided, use the target's current position */
     if (rally_cgx == 0 && rally_cgy == 0)
@@ -321,14 +322,14 @@ void AI_BU_ProcessAction(int16_t battle_unit_idx, int16_t rally_cgx, int16_t ral
 BUG: The original assembly has a conflicting condition loc_925A7 
 that will never jump as written, likely intended to find a specific target
 */
-                        for(some_variable = 0; some_variable < _combat_total_unit_count; some_variable++)
+                        for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
                         {
-                            target_ptr = &battle_units[some_variable];
+                            target_ptr = &battle_units[itr_battle_units];
                             if (target_ptr->cgx == CGX_GATE && target_ptr->cgy == CGY_GATE && 
                                 target_ptr->controller_idx != bu_ptr->controller_idx &&
                                 target_ptr->status == bus_Active)
                             {
-                                bu_ptr->target_battle_unit_idx = some_variable;
+                                bu_ptr->target_battle_unit_idx = (int8_t)itr_battle_units;
                                 proceed_with_melee = ST_TRUE;
                             }
 
@@ -1141,7 +1142,7 @@ int16_t AI_BU_AssignAction(int16_t battle_unit_idx, int16_t no_spells_flag)
     }
 
     /* Store the refined target (truncated to byte for struct storage) */
-    bu_ptr->target_battle_unit_idx = target_battle_unit_idx;
+    bu_ptr->target_battle_unit_idx = (int8_t)target_battle_unit_idx;
 
     return target_battle_unit_idx;
 }

@@ -176,7 +176,7 @@ char * power_descriptions[]
 ...
 for(itr = 0; itr < 5; itr++)
 {
-    strcpy(power_descriptions[itr], "");
+    stu_strcpy(power_descriptions[itr], "");
 }
 
 

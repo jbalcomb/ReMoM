@@ -302,7 +302,7 @@ void Production_Screen(void)
                 if(itr >= G_CTY_ProducableCount2)
                 {
                     // WZD dseg:2DB5 54 68 65 72 65 20 69 73 20 6E 6F 74 20 65 6E 6F+aThereIsNotEnoughPop db 'There is not enough population to support new construction.',0
-                    strcpy(GUI_String_1, "There is not enough population to support new construction.");
+                    stu_strcpy(GUI_String_1, "There is not enough population to support new construction.");
                     Warn1(GUI_String_1);
                     Assign_Auto_Function(Production_Screen_Draw, 1);
                     screen_changed = ST_TRUE;
@@ -310,7 +310,7 @@ void Production_Screen(void)
                 else if((garrison_full == ST_TRUE) && (itr < G_CTY_ProdUnitCount))
                 {
                     // WZD dseg:2D7D 54 68 65 72 65 20 61 72 65 20 61 6C 72 65 61 64+aThereAreAlreadyTooM db 'There are already too many units currently in the city.',0
-                    strcpy(GUI_String_1, "There are already too many units currently in the city.");
+                    stu_strcpy(GUI_String_1, "There are already too many units currently in the city.");
                     Warn1(GUI_String_1);
                     Assign_Auto_Function(Production_Screen_Draw, 1);
                     screen_changed = ST_TRUE;

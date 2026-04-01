@@ -21,7 +21,7 @@ MoO2
 #include "MOX_TYPE.h"
 
 #include <stdlib.h>
-#include <string.h>     /* memset(), strcat(), strcpy(); */
+#include <string.h>     /* memset(), stu_strcat(), stu_strcpy(); */
 
 #include "SOUND.h"
 
@@ -679,7 +679,7 @@ int16_t Audio_Init__WIP(int16_t midi_driver, int16_t sound_channels, int16_t MID
 
     _fstrcpy(SND_tbank_suffix, SND_MIDI_drvr_desc->data_suffix);
 
-    strcat(GTL_filename, SND_tbank_suffix);
+    stu_strcat(GTL_filename, SND_tbank_suffix);
 
     // Set up local timbre cache; open Global Timbre Library file
 
@@ -1205,13 +1205,13 @@ C:\STU\devel\Audio Interface Library (AIL)\AIL2\A214_D3\BLASTER.C
 //     if (type > 4) type=4;
 // 
 //     if (FM_driver_name != NULL)
-//         strcpy(FM_driver_name,FM_driver_names[type-1]);
+//         stu_strcpy(FM_driver_name,FM_driver_names[type-1]);
 // 
 //     if (DSP_driver_name != NULL)
-//         strcpy(DSP_driver_name,DSP_driver_names[type-1]);
+//         stu_strcpy(DSP_driver_name,DSP_driver_names[type-1]);
 // 
 //     if (board_name != NULL)
-//         strcpy(board_name,board_names[type-1]);
+//         stu_strcpy(board_name,board_names[type-1]);
 // 
 //     return type;
 // }
@@ -1233,8 +1233,8 @@ void Audio_Error__STUB(int16_t error)
     {
         case SND_bad_driver:
         {
-            strcpy(string, audio_error_messages[0]);  //  cnst_SND_Error01
-            strcpy(string, audio_error_messages[1]);  //  cnst_SND_Error02
+            stu_strcpy(string, audio_error_messages[0]);  //  cnst_SND_Error01
+            stu_strcpy(string, audio_error_messages[1]);  //  cnst_SND_Error02
         } break;
         case SND_driver_error:
         {
@@ -1286,22 +1286,22 @@ void Audio_Error__STUB(int16_t error)
         } break;
         case SND_Couldnt_Load_File:
         {
-            // strcpy(string, cnst_SND_ErrorD);   // "Could not load"
-            // strcat(string, cnst_SND_Error92);  // " sound file"
+            // stu_strcpy(string, cnst_SND_ErrorD);   // "Could not load"
+            // stu_strcat(string, cnst_SND_Error92);  // " sound file"
         } break;
         case SND_Invalid_File:
         {
-            // strcpy(string, cnst_SND_ErrorF);   // "Not a valid"
-            // strcat(string, cnst_SND_Error92);  // " sound file"
+            // stu_strcpy(string, cnst_SND_ErrorF);   // "Not a valid"
+            // stu_strcat(string, cnst_SND_Error92);  // " sound file"
         } break;
         case SND_Not_Sound_File:
         {
-            // strcpy(string, cnst_SND_ErrorF);   // "Not a valid"
-            // strcat(string, cnst_SND_Error92);  // " sound file"
+            // stu_strcpy(string, cnst_SND_ErrorF);   // "Not a valid"
+            // stu_strcat(string, cnst_SND_Error92);  // " sound file"
         } break;
         case SND_Couldnt_Load_SND_File:
         {
-            strcpy(string, audio_error_messages[16]);  //  "Could not load sound file"
+            stu_strcpy(string, audio_error_messages[16]);  //  "Could not load sound file"
         } break;
     }
 

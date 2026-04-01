@@ -57,6 +57,8 @@
 #include "WZD_o059.h"
 #include "WZD_o143.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
@@ -319,26 +321,26 @@ void Next_Turn_Proc(void)
                     }
                     else
                     {
-                        strcpy(GUI_NearMsgString, "The ");
-                        strcat(GUI_NearMsgString, _city_size_names[_CITIES[_city_idx].size]);
-                        strcat(GUI_NearMsgString, " of ");
-                        strcpy(near_buffer, _CITIES[_city_idx].name);
-                        strcat(GUI_NearMsgString, near_buffer);
-                        strcat(GUI_NearMsgString, " can no longer produce ");
+                        stu_strcpy(GUI_NearMsgString, "The ");
+                        stu_strcat(GUI_NearMsgString, _city_size_names[_CITIES[_city_idx].size]);
+                        stu_strcat(GUI_NearMsgString, " of ");
+                        stu_strcpy(near_buffer, _CITIES[_city_idx].name);
+                        stu_strcat(GUI_NearMsgString, near_buffer);
+                        stu_strcat(GUI_NearMsgString, " can no longer produce ");
                         curr_prod_idx = _CITIES[_city_idx].construction;
                         if(curr_prod_idx >= 100)
                         {
                             curr_prod_idx -= 100;
-                            strcat(GUI_NearMsgString, *_unit_type_table[curr_prod_idx].name);
+                            stu_strcat(GUI_NearMsgString, *_unit_type_table[curr_prod_idx].name);
                         }
                         else
                         {
-                            strcpy(temp_string, bldg_data_table[curr_prod_idx].name);
-                            strcat(GUI_NearMsgString, An(&temp_string[0]));
-                            strcat(GUI_NearMsgString, " ");
-                            strcat(GUI_NearMsgString, temp_string);
+                            stu_strcpy(temp_string, bldg_data_table[curr_prod_idx].name);
+                            stu_strcat(GUI_NearMsgString, An(&temp_string[0]));
+                            stu_strcat(GUI_NearMsgString, " ");
+                            stu_strcat(GUI_NearMsgString, temp_string);
                         }
-                        strcat(GUI_NearMsgString, ".");
+                        stu_strcat(GUI_NearMsgString, ".");
                         Warn0(GUI_NearMsgString);
                     }
                 }
@@ -2135,11 +2137,11 @@ void City_Apply_Production(int16_t city_idx)
 
                     LBX_Load_Data_Static(message_lbx_file, 0, (SAMB_ptr)GUI_NearMsgString, 66, 1, 150);  // "Maximum number of units exceeded"
 
-                    strcpy(city_name, _CITIES[city_idx].name);
+                    stu_strcpy(city_name, _CITIES[city_idx].name);
 
-                    strcat(GUI_NearMsgString, city_name);
+                    stu_strcat(GUI_NearMsgString, city_name);
 
-                    strcat(GUI_NearMsgString, cnst_TooManyUnits);  // ". You must disband some units if you wish to build or summon any more."
+                    stu_strcat(GUI_NearMsgString, cnst_TooManyUnits);  // ". You must disband some units if you wish to build or summon any more."
 
                     Warn0(GUI_NearMsgString);
 
@@ -2889,7 +2891,7 @@ void Apply_City_Changes(void)
                 if((_CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX) && (MSG_CityLost_Count < 20))
                 {
 
-                    strcpy(&MSG_CityLost_Names[(MSG_CityLost_Count * 20)], _CITIES[itr_cities].name);
+                    stu_strcpy(&MSG_CityLost_Names[(MSG_CityLost_Count * 20)], _CITIES[itr_cities].name);
 
                     MSG_CityLost_Count++;
 

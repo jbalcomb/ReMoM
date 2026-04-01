@@ -341,10 +341,10 @@ void Load_Screen(void)
     
     for(itr = 1; itr < NUM_SAVE_GAME_FILES; itr++)
     {
-        strcpy(match_string, cnst_SAVE3);
+        stu_strcpy(match_string, cnst_SAVE3);
         stu_itoa(itr, buffer2, 10);
-        strcat(match_string, buffer2);
-        strcat(match_string, cnst_SAVE_ext3);
+        stu_strcat(match_string, buffer2);
+        stu_strcat(match_string, cnst_SAVE_ext3);
         if(DIR(match_string, found_file) == ST_FAILURE)  /* File Not Found */
         {
             save_game_slots__ovr160[save_game_count__ovr160] = ST_UNDEFINED;
@@ -753,7 +753,6 @@ void Loaded_Game_Update(void)
     _unit_stack_count = 0;
 
 
-    // DOMSDOS  Play_Background_Music__STUB();
     Play_Background_Music();
 
 
@@ -789,7 +788,7 @@ void Loaded_Game_Update(void)
     */
     for(itr = 0; itr < 100; itr++)
     {
-        TBL_OvlMovePaths_EMS[itr] = ST_UNDEFINED;
+        TBL_OvlMovePaths_EMS[itr] = 0xFF;  // DEDU - IF / ST_UNDEFINED?
     }
     CRP_UNIT_OverlandPath = ST_UNDEFINED;
     CONTX_CreateChains__WIP();

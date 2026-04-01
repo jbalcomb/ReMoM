@@ -383,7 +383,7 @@ uint8_t Interpret_Keyboard_Input(int16_t * field_num)
         {
             if(p_fields[itr_fields_count].type == ft_MultiHotKey)
             {
-                strcpy(temp_string, p_fields[itr_fields_count].string);
+                stu_strcpy(temp_string, p_fields[itr_fields_count].string);
                 p_fields[itr_fields_count].string_pos = 0;
                 p_fields[itr_fields_count].hotkey = temp_string[0];
             }

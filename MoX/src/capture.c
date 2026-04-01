@@ -146,7 +146,7 @@ void Screen_Flic_Capture__STUB(void)
 
     Scrdmp_File_Number = 0;
 
-    strcpy(file_name, cnst_Scrdmp00_Full);  // "SCRDMP00"
+    stu_strcpy(file_name, cnst_Scrdmp00_Full);  // "SCRDMP00"
 
 
     while(DIR(file_name, scanline_buffer) != 0)
@@ -154,18 +154,18 @@ void Screen_Flic_Capture__STUB(void)
         Scrdmp_File_Number++;
         if (Scrdmp_File_Number < 10)
         {
-            strcpy(scanline_buffer, cnst_Scrdmp_0);  // "0"
+            stu_strcpy(scanline_buffer, cnst_Scrdmp_0);  // "0"
             stu_itoa(Scrdmp_File_Number, Conversion_String, 10);
-            strcat(scanline_buffer, Conversion_String);
+            stu_strcat(scanline_buffer, Conversion_String);
         }
         else
         {
             stu_itoa(Scrdmp_File_Number, scanline_buffer, 10);
 
         }
-        strcpy(file_name, cnst_Scrdmp_Base);  // "SCRDMP"
-        strcat(file_name, scanline_buffer);
-        strcat(file_name, cnst_Scrdmp_Ext);  // ".FLI"
+        stu_strcpy(file_name, cnst_Scrdmp_Base);  // "SCRDMP"
+        stu_strcat(file_name, scanline_buffer);
+        stu_strcat(file_name, cnst_Scrdmp_Ext);  // ".FLI"
     }
 
     file_pointer = stu_fopen_ci(file_name, cnst_WB7);

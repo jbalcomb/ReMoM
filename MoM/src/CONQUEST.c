@@ -35,6 +35,8 @@ Module: ERIC
 #include "Spells128.h"
 #include "WZD_o059.h"
 
+#include "../../ext/stu_compat.h"
+
 #include "CONQUEST.h"
 
 
@@ -478,7 +480,7 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
     int16_t itr_cities = 0;  // _SI_
     SAMB_ptr wizlab_seg = 0;  // _SI_
 
-    strcpy(Space_String, cnst_Conquest_Msg0__ovr093);  // char cnst_Conquest_Msg0__ovr093[] = " ";
+    stu_strcpy(Space_String, cnst_Conquest_Msg0__ovr093);  // char cnst_Conquest_Msg0__ovr093[] = " ";
 
     if(
         (player_idx != NEUTRAL_PLAYER_IDX)
@@ -542,38 +544,38 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
 
     if(GAME_Conquering_Wiz != NEUTRAL_PLAYER_IDX)
     {
-        strcpy(GUI_String_1, _players[player_idx].name);
-        strcat(GUI_String_1, &Space_String[0]);
+        stu_strcpy(GUI_String_1, _players[player_idx].name);
+        stu_strcat(GUI_String_1, &Space_String[0]);
         if(City_Count > 1)
         {
-            strcat(GUI_String_1, cnst_Conquest_Msg3);  // "banishes"
+            stu_strcat(GUI_String_1, cnst_Conquest_Msg3);  // "banishes"
         }
         else
         {
-            strcat(GUI_String_1, cnst_Conquest_Msg4);  // "defeats"
+            stu_strcat(GUI_String_1, cnst_Conquest_Msg4);  // "defeats"
         }
-        strcat(GUI_String_1, Space_String);
-        strcat(GUI_String_1, _players[city_owner_idx].name);
+        stu_strcat(GUI_String_1, Space_String);
+        stu_strcat(GUI_String_1, _players[city_owner_idx].name);
     }
     else
     {
-        strcpy(GUI_String_1, cnst_Raiders_2);
-        strcat(GUI_String_1, Space_String);
-        strcat(GUI_String_1, cnst_Conquest_Msg1);  // "destroy"
-        strcat(GUI_String_1, Space_String);
-        strcpy(GUI_String_2, _players[city_owner_idx].name);
+        stu_strcpy(GUI_String_1, cnst_Raiders_2);
+        stu_strcat(GUI_String_1, Space_String);
+        stu_strcat(GUI_String_1, cnst_Conquest_Msg1);  // "destroy"
+        stu_strcat(GUI_String_1, Space_String);
+        stu_strcpy(GUI_String_2, _players[city_owner_idx].name);
         if(City_Count > 1)
         {
             Possessive(GUI_String_2);
-            strcat(GUI_String_1, GUI_String_2);
-            strcat(GUI_String_1, Space_String);
-            strcat(GUI_String_1, cnst_Conquest_Msg2);  // "fortress"
+            stu_strcat(GUI_String_1, GUI_String_2);
+            stu_strcat(GUI_String_1, Space_String);
+            stu_strcat(GUI_String_1, cnst_Conquest_Msg2);  // "fortress"
         }
         else
         {
-            strcat(GUI_String_1, GUI_String_2);
+            stu_strcat(GUI_String_1, GUI_String_2);
         }
-        strcat(GUI_String_1, cnst_Dot7);
+        stu_strcat(GUI_String_1, cnst_Dot7);
     }
 
     // WIZLAB.LBX, 000    "MERLIN"      ""

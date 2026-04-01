@@ -79,7 +79,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
-#include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
+#include <string.h>     /* memcpy() memset(), stu_strcat(), stu_strcpy(), stricmp() */
 
 #include "CMBTAI.h"
 #include "CMBTDEF.h"
@@ -106,8 +106,6 @@ int16_t DBG_target_cgy = 0;  // 11 N
 int16_t DBG_PFA_1311_set = ST_FALSE;
 int16_t DBG_PFA_1411_set = ST_FALSE;
 int16_t DBG_PFA_1511_set = ST_FALSE;
-int16_t * DBG_ptr_CMB_NearBuffer_3 = 0;
-/* COPILOT */ int16_t DBG_damage_source_battle_unit = ST_UNDEFINED;
 extern uint8_t DBG_debug_flag;
 void Combat_Screen_Draw_Debug_Information(void);
 void DBG_Compare_Battle_Units(const char * label);
@@ -1274,9 +1272,9 @@ SAMB_ptr magic_vortex_seg;
 // WZD dseg:D13C                                                                                         ; 6 frame animation
 
 // WZD dseg:D13E
-SAMB_ptr _cmbt_mvpth_y;
+uint8_t * _cmbt_mvpth_y;
 // WZD dseg:D140
-SAMB_ptr _cmbt_mvpth_x;
+uint8_t * _cmbt_mvpth_x;
 // WZD dseg:D142
 int16_t movement_path_grid_cell_count;
 
@@ -3683,28 +3681,6 @@ void Assign_Combat_Grids(void)
     // ¿ MoO2 Set_Legal_Moves_() ?
     Combat_Move_Path_Valid(battle_units[_active_battle_unit].cgx, battle_units[_active_battle_unit].cgy, useable_moves2);
 
-    if(
-        (battle_units[_active_battle_unit].cgx == 14)
-        &&
-        (battle_units[_active_battle_unit].cgy == 12)
-    )
-    {
-        
-        // STU_DEBUG_BREAK();
-
-        // assert(_cmbt_path_data[((battle_units[_active_battle_unit].cgy * COMBAT_GRID_WIDTH) + battle_units[_active_battle_unit].cgx)] == _active_battle_unit);
-
-        DBG_ptr_CMB_NearBuffer_3 = &_cmbt_path_data[( ((battle_units[_active_battle_unit].cgy - 1) * COMBAT_GRID_WIDTH) + (battle_units[_active_battle_unit].cgx - 1) )];
-
-//        assert(_cmbt_path_data[
-//            (
-//                ((battle_units[_active_battle_unit].cgy - 1) * COMBAT_GRID_WIDTH)
-//                +
-//                (battle_units[_active_battle_unit].cgx - 1)
-//            ) ] == ST_TRUE
-//        );
-
-    }
 
 
     for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
@@ -4045,9 +4021,9 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
             }
             else
             {
-                strcpy(GUI_NearMsgString, cnst_TreatyAtk_Msg1);  // "You have a treaty with "
-                strcat(GUI_NearMsgString, _players[defender_idx].name);
-                strcat(GUI_NearMsgString, cnst_TreatyAtk_Msg2);  // ".  Do you still wish to attack?"
+                stu_strcpy(GUI_NearMsgString, cnst_TreatyAtk_Msg1);  // "You have a treaty with "
+                stu_strcat(GUI_NearMsgString, _players[defender_idx].name);
+                stu_strcat(GUI_NearMsgString, cnst_TreatyAtk_Msg2);  // ".  Do you still wish to attack?"
                 if(Confirmation_Box(GUI_NearMsgString) != ST_FALSE)
                 {
                     if(
@@ -5874,8 +5850,7 @@ static void UNIT_SummonToBattle__SEGRAX(int16_t player_idx, int16_t unit_idx, in
             struct s_BATTLE_UNIT * battle_unit = &battle_units[itr];
             if(battle_unit->status > bus_Active)
             {
-                uint16_t unit_idx = battle_unit->unit_idx;
-                struct s_UNIT * unit = &_UNITS[unit_idx];
+                struct s_UNIT * unit = &_UNITS[battle_unit->unit_idx];
                 if(unit->wp == 9)
                 {
                     BU_UnitLoadToBattle__SEGRAX(itr, player_idx, unit_idx, cgx, cgy);
@@ -6442,13 +6417,13 @@ void STK_ComposeFleeLost__STUB(int16_t troop_count, int16_t troop_list[])
 
     if(troop_count <= 0)
     {
-        strcpy(GUI_NearMsgString, "");
+        stu_strcpy(GUI_NearMsgString, "");
         return;
     }
 
 
 
-    strcpy(GUI_NearMsgString, "");
+    stu_strcpy(GUI_NearMsgString, "");
     return;
 
 }
@@ -6687,7 +6662,7 @@ void Combat_Screen_Draw(void)
     else if(_combat_environ == 5)  /* Lair */
     {
 
-        strcpy(GUI_String_1, TBL_EZ_Names[_LAIRS[_combat_environ_idx].type]);
+        stu_strcpy(GUI_String_1, TBL_EZ_Names[_LAIRS[_combat_environ_idx].type]);
 
         string_index = 0;
 
@@ -6842,6 +6817,10 @@ void Combat_Screen_Draw(void)
     }
 
 #ifdef STU_DEBUG
+    I_CAN_NOT_BE_POSSIBLE();
+#endif
+
+#ifdef STU_DEBUG
     if(DBG_debug_flag)
     {
         Combat_Screen_Draw_Debug_Information();
@@ -6954,13 +6933,13 @@ void Draw_Active_Unit_Window(void)
         if(Hero_Slot != ST_UNDEFINED)
         {
 
-            strcpy(GUI_String_1, _players[unit_owner_idx].Heroes[Hero_Slot].name);
+            stu_strcpy(GUI_String_1, _players[unit_owner_idx].Heroes[Hero_Slot].name);
 
         }
         else
         {
 
-            strcpy(GUI_String_1, *_unit_type_table[unit_type].name);
+            stu_strcpy(GUI_String_1, *_unit_type_table[unit_type].name);
 
         }
 
@@ -7746,17 +7725,17 @@ void Combat_Information_Window_Draw(void)
         if(CMB_AI_Player < NEUTRAL_PLAYER_IDX)
         {
 
-            strcpy(GUI_String_1, _players[CMB_AI_Player].name);
+            stu_strcpy(GUI_String_1, _players[CMB_AI_Player].name);
 
-            strcat(GUI_String_1, cnst_SpaceSpells);
+            stu_strcat(GUI_String_1, cnst_SpaceSpells);
 
             Print_Centered((_combat_info_wnd_start_x + 54), (_combat_info_wnd_start_y + PerSide_Draw_Top), GUI_String_1);
 
         }
 
-        strcpy(GUI_String_1, _players[combat_human_player].name);
+        stu_strcpy(GUI_String_1, _players[combat_human_player].name);
 
-        strcat(GUI_String_1, cnst_SpaceSpells);
+        stu_strcat(GUI_String_1, cnst_SpaceSpells);
 
         Print_Centered((_combat_info_wnd_start_x + 170), (_combat_info_wnd_start_y + PerSide_Draw_Top), GUI_String_1);
 
@@ -7875,7 +7854,7 @@ void Combat_Info_Effects(void)
 
                 _combat_info_effects[info_common_count]->help_idx = HLP_CRUSADE;
 
-                strcpy(_combat_info_effects[info_common_count]->Name, cnst_Crusade);
+                stu_strcpy(_combat_info_effects[info_common_count]->Name, cnst_Crusade);
 
                 _combat_total_battle_effect_count++;
 
@@ -7890,7 +7869,7 @@ void Combat_Info_Effects(void)
 
                 _combat_info_effects[info_common_count]->help_idx = HLP_HOLY_ARMS;
 
-                strcpy(_combat_info_effects[info_common_count]->Name, cnst_HolyArms);
+                stu_strcpy(_combat_info_effects[info_common_count]->Name, cnst_HolyArms);
 
                 _combat_total_battle_effect_count++;
 
@@ -7905,7 +7884,7 @@ void Combat_Info_Effects(void)
 
                 _combat_info_effects[info_common_count]->help_idx = HLP_CRUSADE;
 
-                strcpy(_combat_info_effects[info_common_count]->Name, cnst_Crusade);
+                stu_strcpy(_combat_info_effects[info_common_count]->Name, cnst_Crusade);
 
                 _combat_total_battle_effect_count++;
 
@@ -7920,7 +7899,7 @@ void Combat_Info_Effects(void)
 
                 _combat_info_effects[info_common_count]->help_idx = HLP_ZOMBIE_MASTERY;
 
-                strcpy(_combat_info_effects[info_common_count]->Name, cnst_ZombieMastery);
+                stu_strcpy(_combat_info_effects[info_common_count]->Name, cnst_ZombieMastery);
 
                 _combat_total_battle_effect_count++;
 
@@ -7999,7 +7978,7 @@ void Combat_Info_Effects_Base(void)
 
         _combat_info_effects[idx]->help_idx = HLP_DISPELS_NON_SORCERY;
 
-        strcpy(_combat_info_effects[idx]->Name, cnst_SorcNodeDispel);
+        stu_strcpy(_combat_info_effects[idx]->Name, cnst_SorcNodeDispel);
 
         idx++;
 
@@ -8011,7 +7990,7 @@ void Combat_Info_Effects_Base(void)
 
         _combat_info_effects[idx]->help_idx = HLP_DISPELS_NON_CHAOS;
 
-        strcpy(_combat_info_effects[idx]->Name, cnst_ChaosNodeDispel);
+        stu_strcpy(_combat_info_effects[idx]->Name, cnst_ChaosNodeDispel);
 
         idx++;
 
@@ -8023,7 +8002,7 @@ void Combat_Info_Effects_Base(void)
 
         _combat_info_effects[idx]->help_idx = HLP_DISPELS_NON_NATURE;
 
-        strcpy(_combat_info_effects[idx]->Name, cnst_NatNodeDispel);
+        stu_strcpy(_combat_info_effects[idx]->Name, cnst_NatNodeDispel);
 
         idx++;
 
@@ -8037,7 +8016,7 @@ void Combat_Info_Effects_Base(void)
 
         _combat_info_effects[idx]->help_idx = HLP_SORCERY_NODE_AURA;
 
-        strcpy(_combat_info_effects[idx]->Name, cnst_SorceryAura);
+        stu_strcpy(_combat_info_effects[idx]->Name, cnst_SorceryAura);
 
         idx++;
 
@@ -8049,7 +8028,7 @@ void Combat_Info_Effects_Base(void)
 
         _combat_info_effects[idx]->help_idx = HLP_NATURE_NODE_AURA;
 
-        strcpy(_combat_info_effects[idx]->Name, cnst_NatureAura);
+        stu_strcpy(_combat_info_effects[idx]->Name, cnst_NatureAura);
 
         idx++;
 
@@ -8061,7 +8040,7 @@ void Combat_Info_Effects_Base(void)
 
         _combat_info_effects[idx]->help_idx = HLP_CHAOS_NODE_AURA;
 
-        strcpy(_combat_info_effects[idx]->Name, cnst_ChaosAura);
+        stu_strcpy(_combat_info_effects[idx]->Name, cnst_ChaosAura);
 
         idx++;
 
@@ -8078,7 +8057,7 @@ void Combat_Info_Effects_Base(void)
 
             _combat_info_effects[idx]->help_idx = HLP_CLOUD_OF_DARKNESS;
 
-            strcpy(_combat_info_effects[idx]->Name, cnst_CloudOfDarkness);
+            stu_strcpy(_combat_info_effects[idx]->Name, cnst_CloudOfDarkness);
 
             idx++;
 
@@ -8091,7 +8070,7 @@ void Combat_Info_Effects_Base(void)
 
             _combat_info_effects[idx]->help_idx = HLP_HOLY_LIGHT;
 
-            strcpy(_combat_info_effects[idx]->Name, cnst_HolyLight);
+            stu_strcpy(_combat_info_effects[idx]->Name, cnst_HolyLight);
 
             idx++;
 
@@ -8109,7 +8088,7 @@ void Combat_Info_Effects_Base(void)
 
             _combat_info_effects[idx]->help_idx = HLP_CHAOS_SURGE;
 
-            strcpy(_combat_info_effects[idx]->Name, cnst_ChaosSurge);
+            stu_strcpy(_combat_info_effects[idx]->Name, cnst_ChaosSurge);
 
             idx++;
 
@@ -8127,7 +8106,7 @@ void Combat_Info_Effects_Base(void)
 
             _combat_info_effects[idx]->help_idx = HLP_ETERNAL_NIGHT;
 
-            strcpy(_combat_info_effects[idx]->Name, cnst_EternalNight);
+            stu_strcpy(_combat_info_effects[idx]->Name, cnst_EternalNight);
 
             idx++;
 
@@ -9027,29 +9006,18 @@ void CMB_LoadResources__WIP(void)
 */
 void CMB_SetNearAllocs__WIP(void)
 {
-    int16_t itr = 0;  // _SI_
-
-    _cmbt_movepath_cost_map = (int8_t *)Near_Allocate_First(504);
-
+    int16_t itr = 0;
+    _cmbt_movepath_cost_map = (uint8_t *)Near_Allocate_First(504);
     _cmbt_mvpth_c = (uint8_t *)Near_Allocate_Next(504);
-
     _cmbt_path_data = (int16_t *)Near_Allocate_Next(1008);  // 504 2-byte values
-
     _cmbt_mvpth_x = Near_Allocate_Next(60);
-
     _cmbt_mvpth_y = Near_Allocate_Next(60);
-
     _combat_mouse_grid = (struct s_mouse_list *)Near_Allocate_Next(12);
-
     for(itr = 0; itr < COMBAT_GRID_HEIGHT; itr++)
     {
-
         CMB_TargetRows[itr] = (int8_t *)Near_Allocate_Next(COMBAT_GRID_WIDTH);
-
     } 
-
     GUI_String_1 = (char *)Near_Allocate_Next(20);
-
 }
 
 
@@ -10120,13 +10088,13 @@ void Draw_Combat_Unit_Display(void)
         if(unit_hero_slot_idx != ST_UNDEFINED)
         {
 
-            strcpy(GUI_String_1, _players[unit_owner_idx].Heroes[unit_hero_slot_idx].name);
+            stu_strcpy(GUI_String_1, _players[unit_owner_idx].Heroes[unit_hero_slot_idx].name);
 
         }
         else
         {
 
-            strcpy(GUI_String_1, *_unit_type_table[unit_type].name);
+            stu_strcpy(GUI_String_1, *_unit_type_table[unit_type].name);
 
         }
 
@@ -11089,7 +11057,6 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
 
             Weights[battle_unit_idx] += 50;
 
-            /* COPILOT */ DBG_damage_source_battle_unit = ST_UNDEFINED;
             BU_ApplyDamage(battle_unit_idx, &damage_types[0]);
 
             if(battle_units[battle_unit_idx].status <= 0)
@@ -11857,7 +11824,6 @@ case scc_Disjunction_Spell:  // 20
 
             Apply_Battle_Unit_Damage_From_Spell(spell_idx, target_idx, &damage_types[0], 0);
 
-            /* COPILOT */ DBG_damage_source_battle_unit = caster_idx;
             BU_ApplyDamage(target_idx, &damage_types[0]);
 
             UPDATE_SCREEN_LOCAL();
@@ -12033,7 +11999,6 @@ case scc_Disjunction_Spell:  // 20
                     
                         damage_types[2] = 200;
                     
-                        /* COPILOT */ DBG_damage_source_battle_unit = caster_idx;
                         BU_ApplyDamage(target_idx, &damage_types[0]);
                     
                     }
@@ -12081,7 +12046,6 @@ case scc_Disjunction_Spell:  // 20
 
                                 damage_types[2] = battle_units[target_idx].hits;
 
-                                /* COPILOT */ DBG_damage_source_battle_unit = caster_idx;
                                 BU_ApplyDamage(target_idx, &damage_types[0]);
 
                             }
@@ -12334,7 +12298,6 @@ case scc_Disjunction_Spell:  // 20
                 }
             }
 
-            /* COPILOT */ DBG_damage_source_battle_unit = caster_idx;
             BU_ApplyDamage(target_idx, &damage_types[0]);
 
             UPDATE_SCREEN_LOCAL();
@@ -14504,10 +14467,10 @@ Nowhere. It doesn't use a target, never even gets to that code.
     while(leave_screen == ST_FALSE)
     {
 
-        strcpy(GUI_NearMsgString, cnst_CmbSpellMsg1);  // "Select a target for a "
+        stu_strcpy(GUI_NearMsgString, cnst_CmbSpellMsg1);  // "Select a target for a "
         _fstrcpy(spell_name, spell_data_table[spell_idx].name);
-        strcat(GUI_NearMsgString, spell_name);
-        strcat(GUI_NearMsgString, cnst_SpaceSpellDot_3);  // " spell."
+        stu_strcat(GUI_NearMsgString, spell_name);
+        stu_strcat(GUI_NearMsgString, cnst_SpaceSpellDot_3);  // " spell."
 
         Mark_Time();
 
@@ -14678,10 +14641,10 @@ Nowhere. It doesn't use a target, never even gets to that code.
 
         if(leave_screen == ST_FALSE)
         {
-            strcpy(GUI_NearMsgString, cnst_CmbSpellMsg1);  // "Select a target for a "
+            stu_strcpy(GUI_NearMsgString, cnst_CmbSpellMsg1);  // "Select a target for a "
             _fstrcpy(spell_name, spell_data_table[spell_idx].name);
-            strcat(GUI_NearMsgString, spell_name);
-            strcat(GUI_NearMsgString, cnst_SpaceSpellDot_3);  // " spell."
+            stu_strcat(GUI_NearMsgString, spell_name);
+            stu_strcat(GUI_NearMsgString, cnst_SpaceSpellDot_3);  // " spell."
 
             Combat_Spell_Target_Screen_Draw();
 
@@ -15265,11 +15228,7 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t damage_types[])
 {
     int16_t Figures_Lost = 0;
     int16_t damage_total = 0;
-    int16_t dbg_killer_battle_unit_idx = 0;
     int16_t itr = 0;
-
-    dbg_killer_battle_unit_idx = DBG_damage_source_battle_unit;
-    DBG_damage_source_battle_unit = ST_UNDEFINED;
 
     damage_total = 0;
 
@@ -15323,18 +15282,6 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t damage_types[])
     {
         battle_units[battle_unit_idx].Cur_Figures = 0;
 
-#ifdef STU_DEBUG
-        /* COPILOT */ dbg_prn("[CombatDeath] victim_bu=%d killer_bu=%d victim_controller=%d killer_controller=%d dmg={%d,%d,%d} unit_idx=%d\n",
-            battle_unit_idx,
-            dbg_killer_battle_unit_idx,
-            battle_units[battle_unit_idx].controller_idx,
-            ((dbg_killer_battle_unit_idx >= 0) && (dbg_killer_battle_unit_idx < _combat_total_unit_count)) ? battle_units[dbg_killer_battle_unit_idx].controller_idx : ST_UNDEFINED,
-            damage_types[0],
-            damage_types[1],
-            damage_types[2],
-            battle_units[battle_unit_idx].unit_idx);
-#endif
-
         _combat_winner = Eliminated_Opponent();
 
         if(Battle_Unit_Is_Summoned_Creature(battle_unit_idx) == ST_TRUE)
@@ -15379,14 +15326,6 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t damage_types[])
                 }
             }
         }
-
-#ifdef STU_DEBUG
-        /* COPILOT */ dbg_prn("[CombatDeath] victim_bu=%d killer_bu=%d final_status=%d winner=%d\n",
-            battle_unit_idx,
-            dbg_killer_battle_unit_idx,
-            battle_units[battle_unit_idx].status,
-            _combat_winner);
-#endif
 
         Update_Sees_Illusions();
 
@@ -16042,28 +15981,28 @@ void Combat_Cast_Spell_Message(int16_t caster_idx, int16_t spell_idx)
 
     if(caster_idx >= CASTER_IDX_BASE)
     {
-        strcpy(GUI_NearMsgString, _players[(caster_idx - 20)].name);
-        strcat(GUI_NearMsgString, cnst_CombatCast_1);  // " has cast "
+        stu_strcpy(GUI_NearMsgString, _players[(caster_idx - 20)].name);
+        stu_strcat(GUI_NearMsgString, cnst_CombatCast_1);  // " has cast "
     }
     else
     {
         if(_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot > ST_UNDEFINED)
         {
             // ; BUG: this may not be the hero's original owner
-            strcpy(GUI_NearMsgString, _players[battle_units[caster_idx].controller_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].name);
-            strcat(GUI_NearMsgString, cnst_CombatCast_1);  // " has cast "
+            stu_strcpy(GUI_NearMsgString, _players[battle_units[caster_idx].controller_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].name);
+            stu_strcat(GUI_NearMsgString, cnst_CombatCast_1);  // " has cast "
         }
         else
         {
-            strcpy(GUI_NearMsgString, cnst_CombatCast_2);  // "The "
-            strcat(GUI_NearMsgString, *_unit_type_table[_UNITS[battle_units[caster_idx].unit_idx].type].name);
+            stu_strcpy(GUI_NearMsgString, cnst_CombatCast_2);  // "The "
+            stu_strcat(GUI_NearMsgString, *_unit_type_table[_UNITS[battle_units[caster_idx].unit_idx].type].name);
             if(battle_units[caster_idx].Max_Figures > 1)
             {
-                strcat(GUI_NearMsgString, cnst_CombatCast_3);  // " have cast "
+                stu_strcat(GUI_NearMsgString, cnst_CombatCast_3);  // " have cast "
             }
             else
             {
-                strcat(GUI_NearMsgString, cnst_CombatCast_1);  // " has cast "
+                stu_strcat(GUI_NearMsgString, cnst_CombatCast_1);  // " has cast "
             }
         }
     }
@@ -16071,11 +16010,11 @@ void Combat_Cast_Spell_Message(int16_t caster_idx, int16_t spell_idx)
     if(spell_idx != spl_NONE)
     {
         _fstrcpy(spell_name, spell_data_table[spell_idx].name);
-        strcat(GUI_NearMsgString, spell_name);
+        stu_strcat(GUI_NearMsgString, spell_name);
     }
     else
     {
-        strcat(GUI_NearMsgString, cnst_CombatCast_4);  // "summon demon"
+        stu_strcat(GUI_NearMsgString, cnst_CombatCast_4);  // "summon demon"
     }
 
     colors[0] = 182;
@@ -19926,10 +19865,8 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
 
 
 
-        /* COPILOT */ DBG_damage_source_battle_unit = attacker_battle_unit_idx;
         BU_ApplyDamage(defender_battle_unit_idx, defender_damage_array);
 
-        /* COPILOT */ DBG_damage_source_battle_unit = defender_battle_unit_idx;
         BU_ApplyDamage(attacker_battle_unit_idx, attacker_damage_array);
 
     }
@@ -21255,18 +21192,18 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         {
             stu_itoa(Zombies_Raised, temp_buffer, 10);
 
-            strcpy(GUI_NearMsgString, temp_buffer);
+            stu_strcpy(GUI_NearMsgString, temp_buffer);
 
             if(Zombies_Raised > 1)
             {
-                strcat(GUI_NearMsgString, cnst_Zombie_Msg_1);
+                stu_strcat(GUI_NearMsgString, cnst_Zombie_Msg_1);
             }
             else
             {
-                strcat(GUI_NearMsgString, cnst_Zombie_Msg_2);
+                stu_strcat(GUI_NearMsgString, cnst_Zombie_Msg_2);
             }
 
-            strcat(GUI_NearMsgString, cnst_Zombie_Msg_3);
+            stu_strcat(GUI_NearMsgString, cnst_Zombie_Msg_3);
 
             // TODO  CMB_CreateUndeadAnim(ut_Zombies);
         }
@@ -21275,20 +21212,20 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         {
             stu_itoa(Undead_Created, temp_buffer, 10);
 
-            strcpy(GUI_NearMsgString, temp_buffer);
+            stu_strcpy(GUI_NearMsgString, temp_buffer);
 
             if(Undead_Created > 1)
             {
-                strcat(GUI_NearMsgString, cnst_Undead_Msg_1);
+                stu_strcat(GUI_NearMsgString, cnst_Undead_Msg_1);
             }
             else
             {
-                strcat(GUI_NearMsgString, cnst_Undead_Msg_2);
+                stu_strcat(GUI_NearMsgString, cnst_Undead_Msg_2);
             }
 
             if(player_idx == HUMAN_PLAYER_IDX)
             {
-                strcat(GUI_NearMsgString, cnst_Undead_Msg_3);
+                stu_strcat(GUI_NearMsgString, cnst_Undead_Msg_3);
             }
             else
             {
@@ -21296,17 +21233,17 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                 {
                     if(Undead_Created > 1)
                     {
-                        strcat(GUI_NearMsgString, cnst_Undead_Msg_4);
+                        stu_strcat(GUI_NearMsgString, cnst_Undead_Msg_4);
                     }
                     else
                     {
-                        strcat(GUI_NearMsgString, cnst_Undead_Msg_5);
+                        stu_strcat(GUI_NearMsgString, cnst_Undead_Msg_5);
                     }
                 }
                 else
                 {
-                    strcat(GUI_NearMsgString, _players[player_idx].name);
-                    strcat(GUI_NearMsgString, cnst_Dot9);
+                    stu_strcat(GUI_NearMsgString, _players[player_idx].name);
+                    stu_strcat(GUI_NearMsgString, cnst_Dot9);
                 }
             }
 
@@ -21615,8 +21552,8 @@ int16_t Combat_Results_Scroll_Text(void)
         case 12:
         {
             // _fstrcpy(GUI_NearMsgString, _CITIES[OVL_Action_Structure].name);
-            strcpy(GUI_NearMsgString, _CITIES[_combat_environ_idx].name);
-            strcat(GUI_NearMsgString, cnst_CityLost_Msg);  /* " has been conquered" */
+            stu_strcpy(GUI_NearMsgString, _CITIES[_combat_environ_idx].name);
+            stu_strcat(GUI_NearMsgString, cnst_CityLost_Msg);  /* " has been conquered" */
             Print_Centered(160, (_scroll_text_top + 25), GUI_NearMsgString);
         } break;
     }
@@ -21635,8 +21572,8 @@ int16_t Combat_Results_Scroll_Text(void)
     {
         Set_Font_Colors_15(1, &colors2[0]);
         // _fstrcpy(GUI_NearMsgString, _CITIES[OVL_Action_Structure].name);
-        strcpy(message, _CITIES[_combat_environ_idx].name);
-        strcat(message, cnst_NewRuins_Msg);  /* " has been reduced to ruins" */
+        stu_strcpy(message, _CITIES[_combat_environ_idx].name);
+        stu_strcat(message, cnst_NewRuins_Msg);  /* " has been reduced to ruins" */
         Print_Paragraph(75, (_scroll_text_top + text_height), 175, message, 2);
         // TODO  text_height += (Get_Paragraph_Max_Height(175, message, 2) + 2));
         text_height += (Get_Paragraph_Max_Height(175, message) + 2);
@@ -21645,8 +21582,8 @@ int16_t Combat_Results_Scroll_Text(void)
     if(_active_battle_unit == 667)  /* ; 667 - raiders won (city neutral) */
     {
         // _fstrcpy(GUI_NearMsgString, _CITIES[OVL_Action_Structure].name);
-        strcpy(message, _CITIES[_combat_environ_idx].name);
-        strcat(message, cnst_CityRaided_Msg);  /* " has fallen to raiders" */
+        stu_strcpy(message, _CITIES[_combat_environ_idx].name);
+        stu_strcat(message, cnst_CityRaided_Msg);  /* " has fallen to raiders" */
         Print_Paragraph(75, (_scroll_text_top + text_height), 175, message, 2);
         // TODO  text_height += (Get_Paragraph_Max_Height(175, message, 2) + 2));
         text_height += (Get_Paragraph_Max_Height(175, message) + 2);
@@ -21656,18 +21593,18 @@ int16_t Combat_Results_Scroll_Text(void)
     if(GUI_Multipurpose_Int != 0)
     {
         Set_Font_Colors_15(1, &colors2[0]);
-        strcpy(message, cnst_ScrlFame_Msg_1);  /* "You have " */
+        stu_strcpy(message, cnst_ScrlFame_Msg_1);  /* "You have " */
         if(GUI_Multipurpose_Int < 0)
         {
-            strcat(message, cnst_ScrlFame_Msg_2);  /* "lost " */
+            stu_strcat(message, cnst_ScrlFame_Msg_2);  /* "lost " */
         }
         else
         {
-            strcat(message, cnst_ScrlFame_Msg_3);  /* "gained " */
+            stu_strcat(message, cnst_ScrlFame_Msg_3);  /* "gained " */
         }
         stu_itoa(abs(GUI_Multipurpose_Int), temp_string, 10);
-        strcat(message, temp_string);
-        strcat(message, cnst_ScrlFame_Msg_4);  /* " fame." */
+        stu_strcat(message, temp_string);
+        stu_strcat(message, cnst_ScrlFame_Msg_4);  /* " fame." */
         Print_Centered(160, (_scroll_text_top + text_height), message);
         text_height += 9;
     }
@@ -21678,8 +21615,8 @@ int16_t Combat_Results_Scroll_Text(void)
         Set_Font_Colors_15(1, &colors2[0]);
         Set_Font_Spacing_Width(2);
         stu_itoa(CMB_Gold_Reward, temp_string, 10);
-        strcpy(message, temp_string);
-        strcat(message, cnst_ScrlGold_Msg);  /* " gold pieces were looted." */
+        stu_strcpy(message, temp_string);
+        stu_strcat(message, cnst_ScrlGold_Msg);  /* " gold pieces were looted." */
         Print_Centered(160, (_scroll_text_top + text_height), message);
         text_height += 9;
     }
@@ -21700,8 +21637,8 @@ int16_t Combat_Results_Scroll_Text(void)
             Set_Font_Colors_15(1, &colors2[0]);
             Set_Font_Spacing_Width(2);
             stu_itoa(CMB_Population_Lost, temp_string, 10);
-            strcpy(message, temp_string);
-            strcat(message, cnst_ScrlPop_Msg);  /* " thousand inhabitants killed." */
+            stu_strcpy(message, temp_string);
+            stu_strcat(message, cnst_ScrlPop_Msg);  /* " thousand inhabitants killed." */
             Print_Centered(160, (_scroll_text_top + text_height), message);
             text_height += 7;
             text_height += 2;
@@ -22728,7 +22665,6 @@ void Check_Wall_Of_Fire_Attack(int16_t battle_unit_idx)
 
         Apply_Battle_Unit_Damage_From_Spell(spl_Fireball, battle_unit_idx, &damage_array[0], 0);
 
-        /* COPILOT */ DBG_damage_source_battle_unit = ST_UNDEFINED;
         BU_ApplyDamage(battle_unit_idx, &damage_array[0]);
 
     }
@@ -23484,7 +23420,7 @@ int16_t Raze_Check(int16_t player_idx, int16_t city_idx)
     /* Count all active units surviving the battle */
     /* BUG? This counts units regardless of owner */
     {
-        int total_surviving = 0;
+        total_surviving = 0;
         for (i = 0; i < _combat_total_unit_count; i++)
         {
             if (battle_units[i].status == bus_Active)
@@ -28035,13 +27971,13 @@ void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp)
             if(wp == ARCANUS_PLANE)
             {
 
-                strcpy(combat_terrain_set_lbx_filename, cmbgrass_lbx_file__ovr163);
+                stu_strcpy(combat_terrain_set_lbx_filename, cmbgrass_lbx_file__ovr163);
 
             }
             else  /* MYRROR_PLANE */
             {
 
-                strcpy(combat_terrain_set_lbx_filename, cmbgrasc_lbx_file__ovr163);
+                stu_strcpy(combat_terrain_set_lbx_filename, cmbgrasc_lbx_file__ovr163);
 
             }
 
@@ -28052,13 +27988,13 @@ void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp)
             if(wp == ARCANUS_PLANE)
             {
 
-                strcpy(combat_terrain_set_lbx_filename, cmbdesrt_lbx_file__ovr163);
+                stu_strcpy(combat_terrain_set_lbx_filename, cmbdesrt_lbx_file__ovr163);
 
             }
             else  /* MYRROR_PLANE */
             {
 
-                strcpy(combat_terrain_set_lbx_filename, cmbdesrc_lbx_file__ovr163);
+                stu_strcpy(combat_terrain_set_lbx_filename, cmbdesrc_lbx_file__ovr163);
 
             }
 
@@ -28069,13 +28005,13 @@ void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp)
             if(wp == ARCANUS_PLANE)
             {
 
-                strcpy(combat_terrain_set_lbx_filename, cmbmount_lbx_file__ovr163);
+                stu_strcpy(combat_terrain_set_lbx_filename, cmbmount_lbx_file__ovr163);
 
             }
             else  /* MYRROR_PLANE */
             {
 
-                strcpy(combat_terrain_set_lbx_filename, cmbmounc_lbx_file__ovr163);
+                stu_strcpy(combat_terrain_set_lbx_filename, cmbmounc_lbx_file__ovr163);
 
             }
 
@@ -28086,13 +28022,13 @@ void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp)
             if(wp == ARCANUS_PLANE)
             {
 
-                strcpy(combat_terrain_set_lbx_filename, cmbtundr_lbx_file__ovr163);
+                stu_strcpy(combat_terrain_set_lbx_filename, cmbtundr_lbx_file__ovr163);
 
             }
             else  /* MYRROR_PLANE */
             {
 
-                strcpy(combat_terrain_set_lbx_filename, cmbtundc_lbx_file__ovr163);
+                stu_strcpy(combat_terrain_set_lbx_filename, cmbtundc_lbx_file__ovr163);
 
             }
 
@@ -28356,7 +28292,7 @@ void CMB_BaseAllocs__WIP(void)
     _vortexes = (struct s_MAGIC_VORTEX *)Allocate_Next_Block(_screen_seg, 9);  // 9 PR, 144 B
 
     // ¿ drake178:  ; WARNING: these are entirely redundant and will be  reallocated immediately after this! ?
-    _cmbt_movepath_cost_map = (int8_t *)Near_Allocate_First(504);
+    _cmbt_movepath_cost_map = (uint8_t *)Near_Allocate_First(504);
     _cmbt_mvpth_c = Near_Allocate_Next(504);
     _cmbt_path_data = (int16_t *)Near_Allocate_Next(1008);
     _cmbt_mvpth_x = Near_Allocate_Next(504);
@@ -28540,18 +28476,18 @@ int16_t Combat_Figure_Load(int16_t unit_type, int16_t bufpi)
 
     stu_itoa(((unit_type / 15) + 1), buffer, 10);
 
-    strcpy(file_name, figure_lbx_file__ovr163);
+    stu_strcpy(file_name, figure_lbx_file__ovr163);
 
     if(((unit_type / 15) + 1) < 10)
     {
 
-        strcat(file_name, str_figure_plural_s__ovr163);
+        stu_strcat(file_name, str_figure_plural_s__ovr163);
 
     }
 
-    strcat(file_name, buffer);
+    stu_strcat(file_name, buffer);
 
-    strcat(file_name, str_empty_string__ovr163);
+    stu_strcat(file_name, str_empty_string__ovr163);
 
     entry_num = ((unit_type % 15) * 8);
 
@@ -28652,7 +28588,7 @@ void Combat_Screen_Draw_Debug_Information(void)
     l_screen_y = (((cgx + cgy) *  8) -  80);  /* ¿ + mid y ? */
 
 
-    strcpy(temp_string, "MD X,Y");
+    stu_strcpy(temp_string, "MD X,Y");
     string_width = Get_String_Width(temp_string);
     Print(         2, (y_off+(y_pos*line_height)), temp_string);
     Print_Integer(40, (y_off+(y_pos*line_height)), mouse_x);
@@ -28661,7 +28597,7 @@ void Combat_Screen_Draw_Debug_Information(void)
 
     y_pos++;
 
-    strcpy(temp_string, "CG C,R");
+    stu_strcpy(temp_string, "CG C,R");
     string_width = Get_String_Width(temp_string);
     Print(         2, (y_off+(y_pos*line_height)), temp_string);
     Print_Integer(40, (y_off+(y_pos*line_height)), combat_grid_col);
@@ -28670,21 +28606,21 @@ void Combat_Screen_Draw_Debug_Information(void)
 
     y_pos++;
 
-    strcpy(temp_string, "CG X,Y");
+    stu_strcpy(temp_string, "CG X,Y");
     string_width = Get_String_Width(temp_string);
     Print(         2, (y_off+(y_pos*line_height)), temp_string);
     Print_Integer(40, (y_off+(y_pos*line_height)), combat_grid_x);
     Print_Integer(56, (y_off+(y_pos*line_height)), combat_grid_y);
     y_pos++;
 
-    strcpy(temp_string, "CG1 X,Y");
+    stu_strcpy(temp_string, "CG1 X,Y");
     string_width = Get_String_Width(temp_string);
     Print(         2, (y_off+(y_pos*line_height)), temp_string);
     Print_Integer(40, (y_off+(y_pos*line_height)), combat_grid_x1);
     Print_Integer(56, (y_off+(y_pos*line_height)), combat_grid_y1);
     y_pos++;
 
-    strcpy(temp_string, "CG2 X,Y");
+    stu_strcpy(temp_string, "CG2 X,Y");
     string_width = Get_String_Width(temp_string);
     Print(         2, (y_off+(y_pos*line_height)), temp_string);
     Print_Integer(40, (y_off+(y_pos*line_height)), combat_grid_x2);
@@ -28693,14 +28629,14 @@ void Combat_Screen_Draw_Debug_Information(void)
 
     y_pos++;
 
-    strcpy(temp_string, "CGC 2,1");
+    stu_strcpy(temp_string, "CGC 2,1");
     string_width = Get_String_Width(temp_string);
     Print(         2, (y_off+(y_pos*line_height)), temp_string);
     Print_Integer((2 + string_width +  5), (y_off+(y_pos*line_height)), cgx);
     Print_Integer((2 + string_width + 16), (y_off+(y_pos*line_height)), cgy);
     y_pos++;
 
-    strcpy(temp_string, "CGC SX,SY");
+    stu_strcpy(temp_string, "CGC SX,SY");
     string_width = Get_String_Width(temp_string);
     Print(         2, (y_off+(y_pos*line_height)), temp_string);
     Print_Integer((2 + string_width +  5), (y_off+(y_pos*line_height)), l_screen_x);
@@ -28709,7 +28645,7 @@ void Combat_Screen_Draw_Debug_Information(void)
 
 
     battlefield_terrain = battlefield->terrain_type[((cgy * COMBAT_GRID_WIDTH) + cgx)];
-    strcpy(temp_string, "CMBT TERR");
+    stu_strcpy(temp_string, "CMBT TERR");
     string_width = Get_String_Width(temp_string);
     Print(         2, (y_off + (y_pos * line_height)), temp_string);
     Print_Integer((2 + string_width +  5), (y_off + (y_pos * line_height)), battlefield_terrain);
@@ -28718,21 +28654,21 @@ void Combat_Screen_Draw_Debug_Information(void)
 
 
     y_pos++;
-    strcpy(temp_string, "ATK A/D/G");
+    stu_strcpy(temp_string, "ATK A/D/G");
     Print(         2, (y_off+(y_pos*line_height)), temp_string);
     Print_Integer(56, (y_off+(y_pos*line_height)), DBG_atk_active);
     Print_Integer(68, (y_off+(y_pos*line_height)), DBG_atk_dead);
     Print_Integer(80, (y_off+(y_pos*line_height)), DBG_atk_gone);
     y_pos++;
 
-    strcpy(temp_string, "DEF A/D/G");
+    stu_strcpy(temp_string, "DEF A/D/G");
     Print(         2, (y_off+(y_pos*line_height)), temp_string);
     Print_Integer(56, (y_off+(y_pos*line_height)), DBG_def_active);
     Print_Integer(68, (y_off+(y_pos*line_height)), DBG_def_dead);
     Print_Integer(80, (y_off+(y_pos*line_height)), DBG_def_gone);
     y_pos++;
 
-    strcpy(temp_string, "WINNER");
+    stu_strcpy(temp_string, "WINNER");
     Print(         2, (y_off+(y_pos*line_height)), temp_string);
     Print_Integer(40, (y_off+(y_pos*line_height)), _combat_winner);
     y_pos++;

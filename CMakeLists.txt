@@ -126,7 +126,29 @@ add_compile_definitions($<$<CONFIG:Debug>:STU_DEBUG>)
 
 if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
     # add_compile_options(/wd4068)
-    # add_compile_options(/W4 /WX)
+    add_compile_options(
+        "/W4"
+        "/WX"
+        # DONT  "/wd4013"  # 'stu_strcat' undefined; assuming extern returning int
+        # DONT  "/wd4057"  # '=': 'uint8_t *' differs in indirection to slightly different base types from 'int8_t *'
+        "/wd4100"  # unreferenced parameter
+        "/wd4101"  # unreferenced local variable
+        "/wd4189"  # local variable is initialized but not referenced
+        "/wd4201"  # nonstandard extension used: nameless struct/union
+        "/wd4206"  # nonstandard extension used: translation unit is empty
+        "/wd4244"  # integer type is converted to a smaller integer type, possible loss of data
+        "/wd4245"  # '=': conversion from 'type1' to 'type2', signed/unsigned mismatch
+        "/wd4310"  # cast truncates constant value
+        "/wd4389"  # '!=': signed/unsigned mismatch
+        # DONT  "/wd4456"  # declaration of 'identifier' hides previous local declaration
+        # DONT  "/wd4457"  # declaration of 'identifier' hides function parameter
+        "/wd4459"  # declaration of 'identifier' hides global declaration
+        "/wd4701"  # potentially uninitialized local variable
+        "/wd4702"  # unreachable code
+        # "/wd4068"
+        # "/wd4365"
+        # "/wd4820"
+    )
 endif()
 if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
     add_compile_options(

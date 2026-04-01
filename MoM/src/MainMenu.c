@@ -345,11 +345,11 @@ int16_t Main_Menu_Screen(void)
     save_game_count = 0;
     for(itr_saves__retval = 1; itr_saves__retval < 10; itr_saves__retval++)
     {
-        strcpy(File_Name, "SAVE");
+        stu_strcpy(File_Name, "SAVE");
 #pragma warning(suppress : 4996)
         stu_itoa(itr_saves__retval, Conversion_String, 10);
-        strcat(File_Name, Conversion_String);
-        strcat(File_Name, ".GAM");
+        stu_strcat(File_Name, Conversion_String);
+        stu_strcat(File_Name, ".GAM");
         if(DIR(File_Name, Found_File_Name) != ST_FAILURE)
         {
             if(itr_saves__retval < 9)

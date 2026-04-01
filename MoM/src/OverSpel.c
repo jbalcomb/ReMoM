@@ -44,6 +44,8 @@
 #include "UNITTYPE.h"
 #include "WZD_o059.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <string.h>
 
 #include "OverSpel.h"
@@ -352,7 +354,7 @@ void Cast_Disenchant(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int
 
                                     _fstrcpy(GUI_NearMsgString, spell_data_table[spell_idx].name);
 
-                                    strcat(GUI_NearMsgString, cnst_Dispel_Msg_2);  // " has been dispelled."
+                                    stu_strcat(GUI_NearMsgString, cnst_Dispel_Msg_2);  // " has been dispelled."
 
                                 }
                                 else
@@ -483,7 +485,7 @@ void Cast_Disenchant(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int
 
                                             _fstrcpy(GUI_NearMsgString, spell_data_table[spells[city_enchantment_idx]].name);
 
-                                            strcat(GUI_NearMsgString, cnst_Dispel_Msg_2);  // " has been dispelled."
+                                            stu_strcat(GUI_NearMsgString, cnst_Dispel_Msg_2);  // " has been dispelled."
 
                                         }
                                         else
@@ -672,7 +674,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
     }
 
 
-    strcpy(spell_name, spell_data_table[spell_idx].name);
+    stu_strcpy(spell_name, spell_data_table[spell_idx].name);
 
 
     /*
@@ -966,9 +968,9 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                                     MultiPurpose_Local_Var = ST_FALSE;
                                     Allocate_Reduced_Map();
                                     Full_Draw_Main_Screen();
-                                    strcpy(GUI_NearMsgString, cnst_SpellError_1_2);
-                                    strcat(GUI_NearMsgString, spell_name);
-                                    strcat(GUI_NearMsgString, cnst_SpellError_2_2);
+                                    stu_strcpy(GUI_NearMsgString, cnst_SpellError_1_2);
+                                    stu_strcat(GUI_NearMsgString, spell_name);
+                                    stu_strcat(GUI_NearMsgString, cnst_SpellError_2_2);
                                     Warn0(GUI_NearMsgString);
                                 }
 
@@ -1023,9 +1025,9 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                                         MultiPurpose_Local_Var = ST_FALSE;
                                         Allocate_Reduced_Map();
                                         Full_Draw_Main_Screen();
-                                        strcpy(GUI_NearMsgString, aOnlyNormalUnit);
-                                        strcat(GUI_NearMsgString, spell_name);
-                                        strcat(GUI_NearMsgString, aCastOnThem);
+                                        stu_strcpy(GUI_NearMsgString, aOnlyNormalUnit);
+                                        stu_strcat(GUI_NearMsgString, spell_name);
+                                        stu_strcat(GUI_NearMsgString, aCastOnThem);
                                         Warn0(GUI_NearMsgString);
                                     }
                                 }
@@ -1159,9 +1161,9 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                                     MultiPurpose_Local_Var = ST_FALSE;
                                     Allocate_Reduced_Map();
                                     Full_Draw_Main_Screen();
-                                    strcpy(GUI_NearMsgString, aOnlyNormalUn_0);
-                                    strcat(GUI_NearMsgString, spell_name);
-                                    strcat(GUI_NearMsgString, aCastOnThem);
+                                    stu_strcpy(GUI_NearMsgString, aOnlyNormalUn_0);
+                                    stu_strcat(GUI_NearMsgString, spell_name);
+                                    stu_strcat(GUI_NearMsgString, aCastOnThem);
                                     Warn0(GUI_NearMsgString);
                                 }
 
@@ -1263,11 +1265,11 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                                     Full_Draw_Main_Screen();
 
-                                    strcpy(GUI_NearMsgString, aThatCityAlread);  // "That city already has "
+                                    stu_strcpy(GUI_NearMsgString, aThatCityAlread);  // "That city already has "
 
-                                    strcat(GUI_NearMsgString, spell_name);
+                                    stu_strcat(GUI_NearMsgString, spell_name);
 
-                                    strcat(GUI_NearMsgString, cnst_SpellError_2_2);  // " cast on it"
+                                    stu_strcat(GUI_NearMsgString, cnst_SpellError_2_2);  // " cast on it"
 
                                     Warn0(GUI_NearMsgString);
 
@@ -1391,9 +1393,9 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                                 if(ptr_enchantments[spell_data_table[spell_idx].ce_idx] > 0)
                                 {
                                     Full_Draw_Main_Screen();
-                                    strcpy(GUI_NearMsgString, aThatCityAlread);  // "That city already has "
-                                    strcat(GUI_NearMsgString, spell_name);
-                                    strcat(GUI_NearMsgString, cnst_SpellError_2_2);  // " cast on it"
+                                    stu_strcpy(GUI_NearMsgString, aThatCityAlread);  // "That city already has "
+                                    stu_strcat(GUI_NearMsgString, spell_name);
+                                    stu_strcat(GUI_NearMsgString, cnst_SpellError_2_2);  // " cast on it"
                                     Warn0(GUI_NearMsgString);
                                 }
                                 else
@@ -1849,8 +1851,8 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                             LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 27, 1, 150);  // "You have no contact with any other wizards. Your "
                             // ; already copied here...
                             _fstrcpy(&spell_name[0], spell_data_table[spell_idx].name);
-                            strcat(GUI_NearMsgString, (char *)&spell_name[0]);
-                            strcat(GUI_NearMsgString, cnst_SpellError_4);  // " spell has failed."
+                            stu_strcat(GUI_NearMsgString, (char *)&spell_name[0]);
+                            stu_strcat(GUI_NearMsgString, cnst_SpellError_4);  // " spell has failed."
                             Warn0(GUI_NearMsgString);
                         }
                     }

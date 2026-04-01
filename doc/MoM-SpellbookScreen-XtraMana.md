@@ -87,7 +87,7 @@ Combat_Spellbook_Mana_Adder_Draw()
 Spellbook_Mana_Adder_Draw()
     GAME_MP_SpellVar_1 = (((_xtra_mana_pos - 3) * spell_data_table[SBK_Spell_Index].casting_cost) / 100);  // extra mana amount
     SDL_itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
-    strcat(string, buffer);  // extra mana amount
+    stu_strcat(string, buffer);  // extra mana amount
     Print_Right((x_start + 144), (y_start + 8), string);  // extra mana amount
     ...
     GAME_MP_SpellVar_1 = (((_xtra_mana_pos - 3) * spell_data_table[SBK_Spell_Index].casting_cost) / 100);

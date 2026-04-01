@@ -305,7 +305,7 @@ void City_Screen__WIP(void)
 
         Row = (_CITIES[_city_idx].construction - 100);
 
-        strcpy(m_city_screen_product_name, *_unit_type_table[Row].name);
+        stu_strcpy(m_city_screen_product_name, *_unit_type_table[Row].name);
         
     }
 
@@ -384,7 +384,7 @@ void City_Screen__WIP(void)
 // TODO  
 // TODO                      unit_type = (_CITIES[_city_idx].construction - 100);
 // TODO  
-// TODO                      strcpy(m_city_screen_product_name, *_unit_type_table[unit_type].name);
+// TODO                      stu_strcpy(m_city_screen_product_name, *_unit_type_table[unit_type].name);
 // TODO  
 // TODO                  }
 // TODO                  else
@@ -572,7 +572,7 @@ void City_Screen__WIP(void)
                 else
                 {
                     Row = (_CITIES[_city_idx].construction - 100);
-                    strcpy(m_city_screen_product_name, *_unit_type_table[Row].name);
+                    stu_strcpy(m_city_screen_product_name, *_unit_type_table[Row].name);
                 }
                 City_Screen_Allocate_First_Block();
                 production_screen_return_screen = 2;
@@ -626,15 +626,15 @@ void City_Screen__WIP(void)
                 {
                     Deactivate_Help_List();
                     Set_Mouse_List(1, mouse_list_default);
-                    strcpy(GUI_String_1, aDoYouWishToSpend);  // "Do you wish to spend \x02"
+                    stu_strcpy(GUI_String_1, aDoYouWishToSpend);  // "Do you wish to spend \x02"
                     stu_itoa(City_Cost_To_Buy_Product(_city_idx), GUI_String_2, 10);
-                    strcat(GUI_String_1, GUI_String_2);
-                    strcat(GUI_String_1, aGold_3);  // " Gold"
-                    strcat(GUI_String_1, aByPurchasing);  // "\x01 by purchasing"
-                    strcat(GUI_String_1, An(m_city_screen_product_name));
-                    strcat(GUI_String_1, cnst_Space);  // " "
-                    strcat(GUI_String_1, m_city_screen_product_name);
-                    strcat(GUI_String_1, cnst_QuestionMark);  // "?"
+                    stu_strcat(GUI_String_1, GUI_String_2);
+                    stu_strcat(GUI_String_1, aGold_3);  // " Gold"
+                    stu_strcat(GUI_String_1, aByPurchasing);  // "\x01 by purchasing"
+                    stu_strcat(GUI_String_1, An(m_city_screen_product_name));
+                    stu_strcat(GUI_String_1, cnst_Space);  // " "
+                    stu_strcat(GUI_String_1, m_city_screen_product_name);
+                    stu_strcat(GUI_String_1, cnst_QuestionMark);  // "?"
                     if(Confirmation_Box(GUI_String_1) == ST_TRUE)
                     {
                         Player_City_Buy_Production(_human_player_idx, _city_idx);
@@ -682,11 +682,11 @@ void City_Screen__WIP(void)
 
                 Deactivate_Help_List();
 
-                strcpy(GUI_String_1, cnst_SpellCancel_Msg);  // "Do you wish to turn off the \x02"
+                stu_strcpy(GUI_String_1, cnst_SpellCancel_Msg);  // "Do you wish to turn off the \x02"
 
-                strcat(GUI_String_1, _city_enchantment_names[city_enchantment_list[(city_enchantment_display_first + itr_ench_fields)]]);
+                stu_strcat(GUI_String_1, _city_enchantment_names[city_enchantment_list[(city_enchantment_display_first + itr_ench_fields)]]);
 
-                strcat(GUI_String_1, cnst_SpellCnclMsg_12);
+                stu_strcat(GUI_String_1, cnst_SpellCnclMsg_12);
 
                 if(Confirmation_Box(GUI_String_1) == ST_TRUE)
                 {
@@ -774,33 +774,33 @@ void City_Screen__WIP(void)
 
                             if(City_Building_Is_Currently_Required(_city_idx, cityscape_bldg_idx) == ST_TRUE)
                             {
-                                strcpy(GUI_String_1, aSellingBackYour);  // "Selling back your \x02"
-                                strcpy(GUI_String_2, bldg_data_table[cityscape_bldg_idx].name);
-                                strcat(GUI_String_1, GUI_String_2);
-                                strcat(GUI_String_1, aWillCeaseProductionOfYour1);  // "\x01 will cease production of your \x02"
+                                stu_strcpy(GUI_String_1, aSellingBackYour);  // "Selling back your \x02"
+                                stu_strcpy(GUI_String_2, bldg_data_table[cityscape_bldg_idx].name);
+                                stu_strcat(GUI_String_1, GUI_String_2);
+                                stu_strcat(GUI_String_1, aWillCeaseProductionOfYour1);  // "\x01 will cease production of your \x02"
                                 if(_CITIES[_city_idx].construction < 100)
                                 {
-                                    strcpy(GUI_String_2, bldg_data_table[_CITIES[_city_idx].construction].name);
-                                    strcat(GUI_String_1, GUI_String_2);
+                                    stu_strcpy(GUI_String_2, bldg_data_table[_CITIES[_city_idx].construction].name);
+                                    stu_strcat(GUI_String_1, GUI_String_2);
                                 }
                                 else
                                 {
-                                    strcat(GUI_String_1, *_unit_type_table[(_CITIES[_city_idx].construction - 100)].name);
+                                    stu_strcat(GUI_String_1, *_unit_type_table[(_CITIES[_city_idx].construction - 100)].name);
                                 }
-                                strcat(GUI_String_1, aWillCeaseProductionOfYour2);
+                                stu_strcat(GUI_String_1, aWillCeaseProductionOfYour2);
                                 Warn0(GUI_String_1);
                                 reqd_bldg_idx = ST_TRUE;
                             }
 
                             building_value = City_Sell_Building_Value(cityscape_bldg_idx);
 
-                            strcpy(GUI_String_1, str_sell_back_1);  // "Do you wish to sell back the \x02"
-                            strcpy(GUI_String_2, bldg_data_table[cityscape_bldg_idx].name);
-                            strcat(GUI_String_1, GUI_String_2);
-                            strcat(GUI_String_1, str_sell_back_2);  // "\x01 for "
+                            stu_strcpy(GUI_String_1, str_sell_back_1);  // "Do you wish to sell back the \x02"
+                            stu_strcpy(GUI_String_2, bldg_data_table[cityscape_bldg_idx].name);
+                            stu_strcat(GUI_String_1, GUI_String_2);
+                            stu_strcat(GUI_String_1, str_sell_back_2);  // "\x01 for "
                             stu_itoa(building_value, GUI_String_2, 10);
-                            strcat(GUI_String_1, GUI_String_2);
-                            strcat(GUI_String_1, str_sell_back_3);  // " gold?"
+                            stu_strcat(GUI_String_1, GUI_String_2);
+                            stu_strcat(GUI_String_1, str_sell_back_3);  // " gold?"
 
                             if(Confirmation_Box(GUI_String_1) == ST_TRUE)
                             {
@@ -818,12 +818,12 @@ void City_Screen__WIP(void)
                                 City_Can_Buy_Product();
                                 if(_CITIES[_city_idx].construction < 100)
                                 {
-                                    strcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
+                                    stu_strcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
                                 }
                                 else
                                 {
                                     reqd_bldg_idx = (_CITIES[_city_idx].construction - 100);
-                                    strcpy(m_city_screen_product_name, *_unit_type_table[reqd_bldg_idx].name);
+                                    stu_strcpy(m_city_screen_product_name, *_unit_type_table[reqd_bldg_idx].name);
                                 }
 
                                 CITIES_SOLD_BUILDING(_city_idx, ST_TRUE);
@@ -837,13 +837,13 @@ void City_Screen__WIP(void)
 
                             if(reqd_bldg_idx > -1)
                             {
-                                strcpy(GUI_String_1, str_cannot_sell_back_1);  // "You cannot sell back the "
-                                strcpy(GUI_String_2, bldg_data_table[cityscape_bldg_idx].name);
-                                strcat(GUI_String_1, GUI_String_2);
-                                strcat(GUI_String_1, str_cannot_sell_back_2);  // " because it is required by the "
-                                strcpy(GUI_String_2, bldg_data_table[reqd_bldg_idx].name);
-                                strcat(GUI_String_1, GUI_String_2);
-                                strcat(GUI_String_1, cnst_Dot);  // "."
+                                stu_strcpy(GUI_String_1, str_cannot_sell_back_1);  // "You cannot sell back the "
+                                stu_strcpy(GUI_String_2, bldg_data_table[cityscape_bldg_idx].name);
+                                stu_strcat(GUI_String_1, GUI_String_2);
+                                stu_strcat(GUI_String_1, str_cannot_sell_back_2);  // " because it is required by the "
+                                stu_strcpy(GUI_String_2, bldg_data_table[reqd_bldg_idx].name);
+                                stu_strcat(GUI_String_1, GUI_String_2);
+                                stu_strcat(GUI_String_1, cnst_Dot);  // "."
                                 Copy_On_To_Off_Page();
                                 Clear_Fields();
                                 Warn0(GUI_String_1);
@@ -908,12 +908,12 @@ void City_Screen__WIP(void)
                     City_Screen_Required_Buildings_List(_city_idx);
                     if(_CITIES[_city_idx].construction < 100)
                     {
-                        strcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
+                        stu_strcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
                     }
                     else
                     {
                         unit_type = (_CITIES[_city_idx].construction - 100);
-                        strcpy(m_city_screen_product_name, *_unit_type_table[unit_type].name);
+                        stu_strcpy(m_city_screen_product_name, *_unit_type_table[unit_type].name);
                     }
                     screen_changed = ST_TRUE;
                     City_Screen_Allocate_First_Block();
@@ -1227,10 +1227,10 @@ void City_Screen_Draw2__WIP(void)
     int16_t para_height = 0;  // _DI_
     int16_t print_y = 0;  // _DI_
 
-    strcpy(GUI_String_1, _city_size_names[_CITIES[_city_idx].size]);
-    strcat(GUI_String_1, " of ");
-    strcpy(GUI_String_2, _CITIES[_city_idx].name);
-    strcat(GUI_String_1, GUI_String_2);
+    stu_strcpy(GUI_String_1, _city_size_names[_CITIES[_city_idx].size]);
+    stu_strcat(GUI_String_1, " of ");
+    stu_strcpy(GUI_String_2, _CITIES[_city_idx].name);
+    stu_strcat(GUI_String_1, GUI_String_2);
 
     Set_Font_Style_Shadow_Down(5, 5, 0, 0);
     Set_Alias_Color(26);
@@ -1244,7 +1244,7 @@ void City_Screen_Draw2__WIP(void)
     Set_Outline_Color(19);
     Set_Font_Style_Shadow_Down(1, 15, 0, 0);
 
-    strcpy(GUI_String_1, *_race_type_table[_CITIES[_city_idx].race].name);
+    stu_strcpy(GUI_String_1, *_race_type_table[_CITIES[_city_idx].race].name);
 
     /*
         Plague
@@ -1253,7 +1253,7 @@ void City_Screen_Draw2__WIP(void)
     {
         // TODO  [_help_entries.help_idx+8Ch], HLP_PLAGUE
 
-        strcat(GUI_String_1, " (Plague)");
+        stu_strcat(GUI_String_1, " (Plague)");
     }
 
     /*
@@ -1263,31 +1263,31 @@ void City_Screen_Draw2__WIP(void)
     {
         // TODO  [_help_entries.help_idx+8Ch], HLP_POPULATION_BOOM
 
-        strcat(GUI_String_1, " (Pop. Boom)");
+        stu_strcat(GUI_String_1, " (Pop. Boom)");
     }
 
     Print(6, 19, GUI_String_1);
 
     pops = (_CITIES[_city_idx].population * 1000) + (_CITIES[_city_idx].Pop_10s * 10);
 
-    strcpy(GUI_String_1, "Population: ");
+    stu_strcpy(GUI_String_1, "Population: ");
 
     if(pops > 999)
     {
         stu_itoa((pops / 1000), GUI_String_2, 10);
-        strcat(GUI_String_1, GUI_String_2);
-        strcat(GUI_String_1, ",");
+        stu_strcat(GUI_String_1, GUI_String_2);
+        stu_strcat(GUI_String_1, ",");
         pops = (pops - ((pops / 1000) * 1000));
         stu_itoa(pops, GUI_String_2, 10);
         if(pops < 10)
         {
-            strcat(GUI_String_1, "00");
+            stu_strcat(GUI_String_1, "00");
         }
         else
         {
             if(pops < 100)
             {
-                strcat(GUI_String_1, "0");
+                stu_strcat(GUI_String_1, "0");
             }
         }
     }
@@ -1296,9 +1296,9 @@ void City_Screen_Draw2__WIP(void)
         stu_itoa(pops, GUI_String_2, 10);
     }
 
-    strcat(GUI_String_1, GUI_String_2);
+    stu_strcat(GUI_String_1, GUI_String_2);
 
-    strcat(GUI_String_1, " (");
+    stu_strcat(GUI_String_1, " (");
 
     // TODO  EMM_Map_DataH()
 
@@ -1308,12 +1308,12 @@ void City_Screen_Draw2__WIP(void)
 
     if(pops > -1)
     {
-        strcat(GUI_String_1, "+");
+        stu_strcat(GUI_String_1, "+");
     }
 
-    strcat(GUI_String_1, GUI_String_2);
+    stu_strcat(GUI_String_1, GUI_String_2);
 
-    strcat(GUI_String_1, ")");
+    stu_strcat(GUI_String_1, ")");
 
     Set_Font_Spacing_Width(1);
 
@@ -1344,11 +1344,11 @@ void City_Screen_Draw2__WIP(void)
 
         if(m_city_n_turns_to_produce > 1)
         {
-            strcpy(GUI_String_1, "Turns");
+            stu_strcpy(GUI_String_1, "Turns");
         }
         else
         {
-            strcpy(GUI_String_1, "Turn");
+            stu_strcpy(GUI_String_1, "Turn");
         }
 
         Print(291, 140, GUI_String_1);
@@ -1617,22 +1617,22 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
 
     bldg_bitm_seg = Allocate_First_Block(_screen_seg, 500);
 
-    strcpy(GUI_String_1, "The ");
-    strcat(GUI_String_1, _city_size_names[_CITIES[_city_idx].size]);
-    strcat(GUI_String_1, " of ");
-    strcpy(GUI_String_2, _CITIES[_city_idx].name);
-    strcat(GUI_String_1, GUI_String_2);
-    strcat(GUI_String_1, " has completed the construction of ");
-    strcpy(GUI_String_2, bldg_data_table[city_built_bldg_idx].name);
-    strcat(GUI_String_1, An(&GUI_String_2[0]));
-    strcat(GUI_String_1, " ");
+    stu_strcpy(GUI_String_1, "The ");
+    stu_strcat(GUI_String_1, _city_size_names[_CITIES[_city_idx].size]);
+    stu_strcat(GUI_String_1, " of ");
+    stu_strcpy(GUI_String_2, _CITIES[_city_idx].name);
+    stu_strcat(GUI_String_1, GUI_String_2);
+    stu_strcat(GUI_String_1, " has completed the construction of ");
+    stu_strcpy(GUI_String_2, bldg_data_table[city_built_bldg_idx].name);
+    stu_strcat(GUI_String_1, An(&GUI_String_2[0]));
+    stu_strcat(GUI_String_1, " ");
     if(city_built_bldg_idx == bt_CityWalls)
     {
         tmp_strlen = (int16_t)strlen(GUI_String_2);
         GUI_String_2[(tmp_strlen - 1)] = 0;
     }
-    strcat(GUI_String_1, GUI_String_2);
-    strcat(GUI_String_1, ".");
+    stu_strcat(GUI_String_1, GUI_String_2);
+    stu_strcat(GUI_String_1, ".");
 
     if(magic_set.event_music == ST_TRUE)
     {
@@ -1730,9 +1730,9 @@ void Change_Home_City_Name_Popup(int16_t city_idx)
 
     Random_City_Name_By_Race(_CITIES[city_idx].race, _CITIES[city_idx].name);
 
-    strcpy(Text, _CITIES[city_idx].name);
+    stu_strcpy(Text, _CITIES[city_idx].name);
 
-    strcpy(default_cityname, Text);
+    stu_strcpy(default_cityname, Text);
 
     Clear_Fields();
 
@@ -1748,10 +1748,10 @@ void Change_Home_City_Name_Popup(int16_t city_idx)
 
     if(strlen(Text) < 1)
     {
-        strcpy(Text, default_cityname);
+        stu_strcpy(Text, default_cityname);
     }
 
-    strcpy(_CITIES[city_idx].name, Text);
+    stu_strcpy(_CITIES[city_idx].name, Text);
 
     _page_flip_effect = pfe_Dissolve;
 

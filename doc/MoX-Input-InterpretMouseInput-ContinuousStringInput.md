@@ -59,7 +59,7 @@ if(field_num == 0) means you clicked where there is no field, so you just need t
                                 itr_continuous_string--;
                             }
                             continuous_string[itr_continuous_string] = '\0';
-                            strcpy((char *)p_fields[active_input_field_number].string, continuous_string);
+                            stu_strcpy((char *)p_fields[active_input_field_number].string, continuous_string);
                             input_field_active = ST_FALSE;
                             active_input_field_number = ST_UNDEFINED;
                         }
@@ -69,7 +69,7 @@ if(field_num == 0) means you clicked where there is no field, so you just need t
                                 (input_field_active == ST_FALSE)
                             )
                         {
-                            strcpy(continuous_string, p_fields[field_num].string);
+                            stu_strcpy(continuous_string, p_fields[field_num].string);
                             GUI_EditAnimStage = 0;
                             GUI_EditCursorOn = ST_FALSE;
                             input_field_active = ST_TRUE;
@@ -85,7 +85,7 @@ if(field_num == 0) means you clicked where there is no field, so you just need t
                         {
                             // `Exit Edit-State`  ~== `Cancel Edit-State`
                             // `Enter Edit-State`
-                            strcpy(continuous_string, p_fields[field_num].string);
+                            stu_strcpy(continuous_string, p_fields[field_num].string);
                             GUI_EditAnimStage = 0;
                             GUI_EditCursorOn = ST_FALSE;
                             input_field_active = ST_TRUE;

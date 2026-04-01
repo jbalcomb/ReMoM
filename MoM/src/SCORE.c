@@ -268,7 +268,7 @@ void Hall_Of_Fame_Screen_Draw(void)
     int16_t itr_color_array;
     int16_t itr_scores;
 
-    strcpy(str_SPACE, str_SPACE__ovr106);
+    stu_strcpy(str_SPACE, str_SPACE__ovr106);
 
     color_array[ 0] = 246;
     color_array[ 1] =  49;
@@ -296,11 +296,11 @@ void Hall_Of_Fame_Screen_Draw(void)
 
     Set_Outline_Color(250);
 
-    strcpy(GUI_String_1, cnst_HoF_String_B);  // "Hall"
-    strcat(GUI_String_1, str_SPACE);          // " "
-    strcat(GUI_String_1, cnst_Of);            // "Of"
-    strcat(GUI_String_1, str_SPACE);          // " "
-    strcat(GUI_String_1, cnst_Fame);          // "Fame"
+    stu_strcpy(GUI_String_1, cnst_HoF_String_B);  // "Hall"
+    stu_strcat(GUI_String_1, str_SPACE);          // " "
+    stu_strcat(GUI_String_1, cnst_Of);            // "Of"
+    stu_strcat(GUI_String_1, str_SPACE);          // " "
+    stu_strcat(GUI_String_1, cnst_Fame);          // "Fame"
 
     Print_Centered(160, 7, GUI_String_1);
 
@@ -329,14 +329,14 @@ void Hall_Of_Fame_Screen_Draw(void)
             else
             {
                 stu_itoa((itr_scores+1), GUI_String_2, 10);
-                strcpy(GUI_String_1, GUI_String_2);
-                strcat(GUI_String_1, str_PAREN_CLOSE);  // ")"
+                stu_strcpy(GUI_String_1, GUI_String_2);
+                stu_strcat(GUI_String_1, str_PAREN_CLOSE);  // ")"
                 Print_Right(print_x, print_y, GUI_String_1);
             }
 
-            strcpy(GUI_String_1, magic_set.hof_names[itr_scores]);
-            strcat(GUI_String_1, cnst_HoF_String_D);  // " of the "
-            strcat(GUI_String_1, TBL_HoF_RaceStrings[magic_set.hof_races[itr_scores]]);
+            stu_strcpy(GUI_String_1, magic_set.hof_names[itr_scores]);
+            stu_strcat(GUI_String_1, cnst_HoF_String_D);  // " of the "
+            stu_strcat(GUI_String_1, TBL_HoF_RaceStrings[magic_set.hof_races[itr_scores]]);
             Print((print_x + 9), print_y, GUI_String_1);  // ¿ 9 is ~ x offset for title column ?
             Print_Integer_Right((print_x + 170), print_y, magic_set.hof_scores[itr_scores]);  // ¿ 9 is ~ x offset for score column ?
 
@@ -344,9 +344,9 @@ void Hall_Of_Fame_Screen_Draw(void)
             score_percent = ((magic_set.hof_scores[itr_scores] * 100) / 8000);
 
             stu_itoa(score_percent, GUI_String_2, 10);
-            strcpy(GUI_String_1, str_PAREN_OPEN);  // "("
-            strcat(GUI_String_1, GUI_String_2);
-            strcat(GUI_String_1, cnst_HoF_String_E);  // "%)"
+            stu_strcpy(GUI_String_1, str_PAREN_OPEN);  // "("
+            stu_strcat(GUI_String_1, GUI_String_2);
+            stu_strcat(GUI_String_1, cnst_HoF_String_E);  // "%)"
             Print_Right((print_x + 198), print_y, GUI_String_1);  // ¿ 198 is ~ x offset for  column ?
 
             print_y += 13;

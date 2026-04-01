@@ -204,19 +204,19 @@ void Merchant_Popup_Draw(void)
 
     FLIC_Draw(screen_x, screen_y, hire_banner_seg);
 
-    strcpy(GUI_NearMsgString, cnst_Merchant_Msg_1);
+    stu_strcpy(GUI_NearMsgString, cnst_Merchant_Msg_1);
 
-    strcpy(item_name, _ITEMS[GUI_InHeroNaming].name);
+    stu_strcpy(item_name, _ITEMS[GUI_InHeroNaming].name);
 
-    strcat(GUI_NearMsgString, item_name);
+    stu_strcat(GUI_NearMsgString, item_name);
 
-    strcat(GUI_NearMsgString, cnst_Merchant_Msg_2);
+    stu_strcat(GUI_NearMsgString, cnst_Merchant_Msg_2);
 
     stu_itoa(GAME_AssetCost, item_name, 10);
 
-    strcat(GUI_NearMsgString, item_name);
+    stu_strcat(GUI_NearMsgString, item_name);
 
-    strcat(GUI_NearMsgString, cnst_Merchant_Msg_3);
+    stu_strcat(GUI_NearMsgString, cnst_Merchant_Msg_3);
 
     Set_Alias_Color(163);
 
@@ -384,23 +384,23 @@ void Hire_Hero_Popup_Draw(void)
 
     if(GAME_HeroHireType == 0)  // ; 0: random, 1: summon, 2: prisoner, 3: champion
     {
-        strcpy(GUI_NearMsgString, cnst_Hire_Msg_1);
+        stu_strcpy(GUI_NearMsgString, cnst_Hire_Msg_1);
         stu_itoa(GAME_AssetCost, temp_string, 10);
-        strcat(GUI_NearMsgString, temp_string);
-        strcat(GUI_NearMsgString, cnst_Hire_Msg_2);
+        stu_strcat(GUI_NearMsgString, temp_string);
+        stu_strcat(GUI_NearMsgString, cnst_Hire_Msg_2);
     }
     else if(GAME_HeroHireType == 1)
     {
-        strcpy(GUI_NearMsgString, cnst_Hire_Msg_3);
+        stu_strcpy(GUI_NearMsgString, cnst_Hire_Msg_3);
     }
     else if(GAME_HeroHireType == 3)
     {
-        strcpy(GUI_NearMsgString, cnst_Hire_Msg_4);
+        stu_strcpy(GUI_NearMsgString, cnst_Hire_Msg_4);
         
     }
     else
     {
-        strcpy(GUI_NearMsgString, cnst_Hire_Msg_5);
+        stu_strcpy(GUI_NearMsgString, cnst_Hire_Msg_5);
     }
 
     Print_Centered((window_x + 103), (window_y - 11), GUI_NearMsgString);
@@ -494,7 +494,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
     window_x = 25;
     window_y = 17;
 
-    strcpy(_players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, hirehero_unit_type_name);
+    stu_strcpy(_players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, hirehero_unit_type_name);
 
     Hire_Success = WIZ_HireHero(HUMAN_PLAYER_IDX, unit_type_idx, hero_slot_idx, ST_FALSE);
 
@@ -699,7 +699,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
         // Setup_Input_Box_Popup((window_x + 45), (window_y + 75), 120, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, (LEN_HERO_NAME - 1), 0, 0, 0, &Name_Edit_Colors[0], empty_string__ovr127[0], ST_UNDEFINED);
         Setup_Input_Box_Popup((window_x + 45), (window_y + 75), 120, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, (LEN_HERO_NAME - 1), 0, 0, 0, &Name_Edit_Colors[0], empty_string__ovr127[0]);
 
-        strcpy(hero_names_table[unit_type_idx].name, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name);
+        stu_strcpy(hero_names_table[unit_type_idx].name, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name);
 
     }
 
@@ -744,20 +744,20 @@ void Hire_Merc_Popup_Draw(void)
 
     if(EVNT_MercUnitCount == 1)
     {
-        strcpy(GUI_NearMsgString, cnst_Hire_Msg_9);
+        stu_strcpy(GUI_NearMsgString, cnst_Hire_Msg_9);
     }
     else
     {
         stu_itoa(EVNT_MercUnitCount, temp_string, 10);
-        strcpy(GUI_NearMsgString, temp_string);
-        strcat(GUI_NearMsgString, cnst_Hire_Msg_A);
+        stu_strcpy(GUI_NearMsgString, temp_string);
+        stu_strcat(GUI_NearMsgString, cnst_Hire_Msg_A);
     }
 
     stu_itoa(GAME_AssetCost, temp_string, 10);
 
-    strcat(GUI_NearMsgString, temp_string);
+    stu_strcat(GUI_NearMsgString, temp_string);
 
-    strcat(GUI_NearMsgString, cnst_Hire_Msg_2);
+    stu_strcat(GUI_NearMsgString, cnst_Hire_Msg_2);
 
     Print_Centered((window_x + 103), (window_y - 11), GUI_NearMsgString);
 

@@ -745,7 +745,7 @@ void SBK_BuildSpellbook__WIP(int16_t spell_list_type, int16_t page_spell_count)
     for(itr1 = 0; (Total_Pages + 3) > itr1; itr1++)
     {
         m_spellbook_pages[itr1].count = 0;
-        strcpy(m_spellbook_pages[itr1].title, "");
+        stu_strcpy(m_spellbook_pages[itr1].title, "");
 
         for(itr2 = 0; itr2 < page_spell_count; itr2++)
         {
@@ -1096,7 +1096,7 @@ total_pages += ((SBK_Group_6_Count + 5) / NUM_SPELLS_PER_PAGE_SML);
 
         m_spellbook_pages[itr1].count = 0;
 
-        strcpy(m_spellbook_pages[itr1].title, str_empty_string__ovr117);
+        stu_strcpy(m_spellbook_pages[itr1].title, str_empty_string__ovr117);
 
         for(Index_on_Page = 0; Index_on_Page < NUM_SPELLS_PER_PAGE_SML; Index_on_Page++)
         {
@@ -1254,7 +1254,7 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
 
             Set_Font_Colors_15(1, &colors[0]);
 
-            strcpy(spell_name, spell_data_table[abs(spell_idx)].name);
+            stu_strcpy(spell_name, spell_data_table[abs(spell_idx)].name);
 
             Text_Width = Get_String_Width(spell_name);
 
@@ -1285,10 +1285,10 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
             }
             else
             {
-                strcpy(temp_string, cnst_QuestionMark5);
+                stu_strcpy(temp_string, cnst_QuestionMark5);
             }
 
-            strcat(temp_string, cnst_Space_MP_2);
+            stu_strcat(temp_string, cnst_Space_MP_2);
 
             Text_Width = Get_String_Width(temp_string);
 
@@ -1504,18 +1504,18 @@ void CmbBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
 
             if(casting_cost == 0)
             {
-                strcpy(temp_string, cnst_QuestionMark5);
+                stu_strcpy(temp_string, cnst_QuestionMark5);
             }
             else
             {
                 if(casting_cost == 22222)
                 {
-                    strcpy(temp_string, cnst_Item);
+                    stu_strcpy(temp_string, cnst_Item);
                 }
                 else
                 {
                     stu_itoa(casting_cost, temp_string, 10);
-                    strcat(temp_string, cnst_Space_MP_2);
+                    stu_strcat(temp_string, cnst_Space_MP_2);
                 }
             }
             Max_Spendable = Get_String_Width(temp_string);
@@ -1785,7 +1785,7 @@ void Spellbook_Add_Page(int16_t group_spell_count, int16_t group_idx, char * tit
 
     page_spell_counter = 0;
 
-    strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
+    stu_strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
 
     itr_spellbook_spell_list = 0;
 
@@ -1839,7 +1839,7 @@ void Spellbook_Add_Page(int16_t group_spell_count, int16_t group_idx, char * tit
                         // if(spell_data_table[m_spellbook_pages[(m_spellbook_page_count - 1)].spell[0]].magic_realm != group_idx)
                         /* Copilot */  if(spell_data_table[prev_page_first_spell].magic_realm != group_idx)
                         {
-                            strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
+                            stu_strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
                         }
                     }
                     else
@@ -1847,14 +1847,14 @@ void Spellbook_Add_Page(int16_t group_spell_count, int16_t group_idx, char * tit
                         // if(spell_data_table[m_spellbook_pages[(m_spellbook_page_count - 1)].spell[0]].spell_book_category != group_idx)
                         /* Copilot */  if(spell_data_table[prev_page_first_spell].spell_book_category != group_idx)
                         {
-                            strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
+                            stu_strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
                         }
                     }
 
                 }
                 else
                 {
-                    strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
+                    stu_strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
                 }
                 
             }
@@ -2488,11 +2488,11 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
         Main_Screen_Draw();
 
-        strcpy(GUI_NearMsgString, cnst_NewSpell_Msg);  // "You have mastered the spell of "
+        stu_strcpy(GUI_NearMsgString, cnst_NewSpell_Msg);  // "You have mastered the spell of "
 
         _fstrcpy(Spell_Name, spell_data_table[spell_idx].name);
 
-        strcat(GUI_NearMsgString, Spell_Name);
+        stu_strcat(GUI_NearMsgString, Spell_Name);
 
         Notify2(0, 40, 2, GUI_NearMsgString, 0, learn_spell_notify_seg, 0, 9, 0, 0, 0, 1, 0);
 
@@ -2960,7 +2960,7 @@ void SBK_LoadSpellDescs__WIP(int16_t page)
     for(itr = 0; itr < NUM_SPELLBOOK_DESCRIPTIONS; itr++)
     {
         // TODO  String_Copy_Far(SBK_Descriptions[itr], str_empty_string__ovr118);
-        strcpy(SBK_Descriptions[itr], str_empty_string__ovr118);
+        stu_strcpy(SBK_Descriptions[itr], str_empty_string__ovr118);
     }
 
     for(itr = SBK_OpenPage; (SBK_OpenPage + 1) >= itr; itr++)
@@ -2977,7 +2977,7 @@ void SBK_LoadSpellDescs__WIP(int16_t page)
             {
 
                 // TODO  String_Copy_Far(SBK_Descriptions[((itr - SBK_OpenPage) + count)], str_empty_string__ovr118);
-                strcpy(SBK_Descriptions[(((itr - SBK_OpenPage) * 4) + count)], str_empty_string__ovr118);
+                stu_strcpy(SBK_Descriptions[(((itr - SBK_OpenPage) * 4) + count)], str_empty_string__ovr118);
 
             }
 
@@ -2994,14 +2994,14 @@ void SBK_LoadSpellDescs__WIP(int16_t page)
                     LBX_Load_Data_Static(desc_lbx_file__ovr118, 0, (SAMB_ptr)buffer, abs(m_spellbook_pages[itr].spell[count]), 1, 110);
 
                     // TODO  String_Copy_Far(SBK_Descriptions[((itr - SBK_OpenPage) + count)], buffer);
-                    strcpy(SBK_Descriptions[(((itr - SBK_OpenPage) * 4) + count)], buffer);
+                    stu_strcpy(SBK_Descriptions[(((itr - SBK_OpenPage) * 4) + count)], buffer);
 
                 }
                 else
                 {
 
                     // TODO  String_Copy_Far(SBK_Descriptions[((itr - SBK_OpenPage) + count)], str_empty_string__ovr118);
-                    strcpy(SBK_Descriptions[(((itr - SBK_OpenPage) * 4) + count)], str_empty_string__ovr118);
+                    stu_strcpy(SBK_Descriptions[(((itr - SBK_OpenPage) * 4) + count)], str_empty_string__ovr118);
 
                 }
 
@@ -3025,7 +3025,7 @@ void SBK_LoadSpellDescs__WIP(int16_t page)
             {
 
                 // TODO  String_Copy_Far(SBK_Descriptions[((itr - page) + count)], str_empty_string__ovr118);
-                strcpy(SBK_Descriptions[((((itr - page) + 2) * 4) + count)], str_empty_string__ovr118);
+                stu_strcpy(SBK_Descriptions[((((itr - page) + 2) * 4) + count)], str_empty_string__ovr118);
 
             }
 
@@ -3042,14 +3042,14 @@ void SBK_LoadSpellDescs__WIP(int16_t page)
                     LBX_Load_Data_Static(desc_lbx_file__ovr118, 0, (SAMB_ptr)buffer, abs(m_spellbook_pages[itr].spell[count]), 1, 110);
 
                     // TODO  String_Copy_Far(SBK_Descriptions[((itr - page) + count)], buffer);
-                    strcpy(SBK_Descriptions[((((itr - page) + 2) * 4) + count)], buffer);
+                    stu_strcpy(SBK_Descriptions[((((itr - page) + 2) * 4) + count)], buffer);
 
                 }
                 else
                 {
 
                     // TODO  String_Copy_Far(SBK_Descriptions[((itr - page) + count)], str_empty_string__ovr118);
-                    strcpy(SBK_Descriptions[((((itr - page) + 2) * 4) + count)], str_empty_string__ovr118);
+                    stu_strcpy(SBK_Descriptions[((((itr - page) + 2) * 4) + count)], str_empty_string__ovr118);
 
                 }
 
@@ -3194,7 +3194,7 @@ void Apprentice_Screen__WIP(void)
                 for(itr = 0; itr < 8; itr++)
                 {
                     // TODO  String_Copy_Far(SBK_Descriptions[(0 + itr)], SBK_Descriptions[(8 + itr)]);
-                    strcpy(SBK_Descriptions[(0 + itr)], SBK_Descriptions[(8 + itr)]);
+                    stu_strcpy(SBK_Descriptions[(0 + itr)], SBK_Descriptions[(8 + itr)]);
                 }
 
                 Set_Page_Off();
@@ -3221,7 +3221,7 @@ void Apprentice_Screen__WIP(void)
                 for(itr = 0; itr < 8; itr++)
                 {
                     // TODO  String_Copy_Far(SBK_Descriptions[(0 + itr)], SBK_Descriptions[(8 + itr)]);
-                    strcpy(SBK_Descriptions[(0 + itr)], SBK_Descriptions[(8 + itr)]);
+                    stu_strcpy(SBK_Descriptions[(0 + itr)], SBK_Descriptions[(8 + itr)]);
                 }
 
                 Set_Page_Off();
@@ -3328,7 +3328,7 @@ void BigBook_Compose__WIP(int16_t page, SAMB_ptr pict_seg, int16_t flag)
         }
 
         // TODO  String_Copy_Far(spell_name, spell_data_table[abs(m_spellbook_pages[page].spell[itr])].name);
-        strcpy(spell_name, spell_data_table[abs(m_spellbook_pages[page].spell[itr])].name);
+        stu_strcpy(spell_name, spell_data_table[abs(m_spellbook_pages[page].spell[itr])].name);
 
         Print_To_Bitmap(0, (48 + (37 * itr)), spell_name, pict_seg);
 
@@ -3373,26 +3373,26 @@ void BigBook_Compose__WIP(int16_t page, SAMB_ptr pict_seg, int16_t flag)
                 turns_left = (((casting_cost + SBK_BookManaLimit) - 1) / SBK_BookManaLimit);
             }
 
-            strcpy(spell_description, cnst_Catsing_Cost);
+            stu_strcpy(spell_description, cnst_Catsing_Cost);
 
             stu_itoa(casting_cost, spell_name, 10);
 
-            strcat(spell_description, spell_name);
+            stu_strcat(spell_description, spell_name);
 
-            strcat(spell_description, cnst_SpaceOpenBrace4);
+            stu_strcat(spell_description, cnst_SpaceOpenBrace4);
 
             stu_itoa(turns_left, spell_name, 10);
-            strcat(spell_description, cnst_SpaceOpenBrace4);
+            stu_strcat(spell_description, cnst_SpaceOpenBrace4);
 
-            strcat(spell_description, spell_name);
+            stu_strcat(spell_description, spell_name);
 
             if(turns_left == 1)
             {
-                strcat(spell_description, cnst_RT1turn);
+                stu_strcat(spell_description, cnst_RT1turn);
             }
             else
             {
-                strcat(spell_description, cnst_RTmoreturns);
+                stu_strcat(spell_description, cnst_RTmoreturns);
             }
 
         }
@@ -3422,25 +3422,25 @@ void BigBook_Compose__WIP(int16_t page, SAMB_ptr pict_seg, int16_t flag)
                 turns_left = (((research_cost + SBK_Research_Incomes[spell_data_table[abs(m_spellbook_pages[page].spell[itr])].magic_realm]) - 1) / SBK_Research_Incomes[spell_data_table[abs(m_spellbook_pages[page].spell[itr])].magic_realm]);
             }
 
-            strcpy(spell_description, cnst_Research_Cost);
+            stu_strcpy(spell_description, cnst_Research_Cost);
 
             stu_ltoa(research_cost, spell_name, 10);
 
-            strcat(spell_description, spell_name);
+            stu_strcat(spell_description, spell_name);
 
-            strcat(spell_description, cnst_SpaceOpenBrace4);
+            stu_strcat(spell_description, cnst_SpaceOpenBrace4);
 
             stu_itoa(turns_left, spell_name, 10);
 
-            strcat(spell_description, spell_name);
+            stu_strcat(spell_description, spell_name);
 
             if(turns_left == 1)
             {
-                strcat(spell_description, cnst_RT1turn);
+                stu_strcat(spell_description, cnst_RT1turn);
             }
             else
             {
-                strcat(spell_description, cnst_RTmoreturns);
+                stu_strcat(spell_description, cnst_RTmoreturns);
             }
 
         }
@@ -3455,7 +3455,7 @@ void BigBook_Compose__WIP(int16_t page, SAMB_ptr pict_seg, int16_t flag)
             Set_Font_Spacing(1);
 
             // TODO  String_Copy_Far(spell_description, SBK_Descriptions[(description_batch + itr)]);
-            strcpy(spell_description, SBK_Descriptions[((description_batch * 4) + itr)]);
+            stu_strcpy(spell_description, SBK_Descriptions[((description_batch * 4) + itr)]);
 
             Print_Paragraph_To_Bitmap(0, (65 + (37 * itr)), 128, spell_description, 0, pict_seg);  // Align-Left
 

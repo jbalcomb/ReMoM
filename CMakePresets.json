@@ -27,7 +27,11 @@
             "cacheVariables": {
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
                 "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe"
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "USE_WIN32": {
+                    "type": "BOOL",
+                    "value": "TRUE"
+                }
             }
         },
         {
@@ -48,6 +52,25 @@
                     "value": "TRUE"
                 },
                 "DISABLE_AUDIO": {
+                    "type": "BOOL",
+                    "value": "TRUE"
+                }
+            }
+        },
+        {
+            "name": "MSVC-release",
+            "displayName": "VS2022 amd64 Release",
+            "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)",
+            "generator": "Visual Studio 17 2022",
+            "toolset": "host=x64",
+            "architecture": "x64",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "USE_WIN32": {
                     "type": "BOOL",
                     "value": "TRUE"
                 }
@@ -143,6 +166,16 @@
             ]
         },
         {
+            "name": "MSVC-release",
+            "displayName": "VS2022 amd64 Release",
+            "configurePreset": "MSVC-release",
+            "configuration": "Release",
+            "targets": [
+                "ALL_BUILD",
+                "ReMoMber"
+            ]
+        },
+        {
             "name": "clang-nosound-debug",
             "displayName": "Linux Clang (No Sound)",
             "configurePreset": "clang-nosound-debug",
@@ -181,6 +214,14 @@
             ]
         },
         {
+            "name": "MSVC-release",
+            "displayName": "VS2022 amd64 Release",
+            "configurePreset": "MSVC-release",
+            "configurations": [
+                "Release"
+            ]
+        },
+        {
             "name": "clang-nosound-debug",
             "displayName": "Linux Clang (No Sound)",
             "configurePreset": "clang-nosound-debug",
@@ -207,6 +248,11 @@
             "name": "MSVC-nosound-debug",
             "displayName": "VS2022 amd64 Debug (No Sound)",
             "configurePreset": "MSVC-nosound-debug"
+        },
+        {
+            "name": "MSVC-release",
+            "displayName": "VS2022 amd64 Release",
+            "configurePreset": "MSVC-release"
         },
         {
             "name": "clang-nosound-debug",
@@ -257,6 +303,28 @@
                 {
                     "type": "test",
                     "name": "MSVC-nosound-debug"
+                }
+            ]
+        },
+        {
+            "name": "MSVC-release",
+            "displayName": "VS2022 amd64 Release",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "MSVC-release"
+                },
+                {
+                    "type": "build",
+                    "name": "MSVC-release"
+                },
+                {
+                    "type": "test",
+                    "name": "MSVC-release"
+                },
+                {
+                    "type": "package",
+                    "name": "MSVC-release"
                 }
             ]
         },

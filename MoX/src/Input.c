@@ -543,7 +543,7 @@ MoO2
                 {
                     alt_field_num = active_input_field_number;
                     // MoO2:  Copy_Continuous_String()
-                    strcpy((char *)p_fields[alt_field_num].string, continuous_string);
+                    stu_strcpy((char *)p_fields[alt_field_num].string, continuous_string);
                     if(mouse_auto_exit == ST_FALSE)
                     {
                         Quick_Call_Auto_Function();
@@ -586,12 +586,12 @@ MoO2
                                 continuous_string[itr_continuous_string] = 0;
                                 GUI_EditAnimStage = 0;
                                 active_input_field_number = ST_UNDEFINED;
-                                strcpy(p_fields[alt_field_num].string, continuous_string);
+                                stu_strcpy(p_fields[alt_field_num].string, continuous_string);
                                 // @@IDK_KD_Enter_PostOp
                             }
                             else
                             {
-                                strcpy(continuous_string, p_fields[alt_field_num].string);
+                                stu_strcpy(continuous_string, p_fields[alt_field_num].string);
                                 GUI_EditAnimStage = 0;  // cursor_count
                                 GUI_EditCursorOn = 0;   // cursor_on
                                 active_input_field_number = alt_field_num;
@@ -612,7 +612,7 @@ MoO2
                             // UNREACHABLE          itr_continuous_string--;
                             // UNREACHABLE      }
                             // UNREACHABLE      continuous_string[itr_continuous_string] = 0;
-                            // UNREACHABLE      strcpy(p_fields[alt_field_num].string, continuous_string);
+                            // UNREACHABLE      stu_strcpy(p_fields[alt_field_num].string, continuous_string);
                             // UNREACHABLE      GUI_EditAnimStage = 0;
                             // UNREACHABLE      input_field_active = ST_FALSE;
                             // UNREACHABLE      active_input_field_number = ST_UNDEFINED;
@@ -942,7 +942,7 @@ MoO2
                                 itr_continuous_string--;
                             }
                             continuous_string[itr_continuous_string] = '\0';
-                            strcpy((char *)p_fields[active_input_field_number].string, continuous_string);
+                            stu_strcpy((char *)p_fields[active_input_field_number].string, continuous_string);
                             input_field_active = ST_FALSE;
                             active_input_field_number = ST_UNDEFINED;
                         }
@@ -952,7 +952,7 @@ MoO2
                                 (input_field_active == ST_FALSE)
                             )
                         {
-                            strcpy(continuous_string, p_fields[field_num].string);
+                            stu_strcpy(continuous_string, p_fields[field_num].string);
                             GUI_EditAnimStage = 0;
                             GUI_EditCursorOn = ST_FALSE;
                             input_field_active = ST_TRUE;
@@ -968,7 +968,7 @@ MoO2
                         {
                             // `Exit Edit-State`  ~== `Cancel Edit-State`
                             // `Enter Edit-State`
-                            strcpy(continuous_string, p_fields[field_num].string);
+                            stu_strcpy(continuous_string, p_fields[field_num].string);
                             GUI_EditAnimStage = 0;
                             GUI_EditCursorOn = ST_FALSE;
                             input_field_active = ST_TRUE;
@@ -1251,7 +1251,7 @@ MoO2
                         itr_continuous_string--;
                     }
                     continuous_string[itr_continuous_string] = '\0';
-                    strcpy((char *)p_fields[active_input_field_number].string, continuous_string);
+                    stu_strcpy((char *)p_fields[active_input_field_number].string, continuous_string);
                     input_field_active = ST_FALSE;
                     active_input_field_number = ST_UNDEFINED;
                 }
@@ -1261,7 +1261,7 @@ MoO2
                         (input_field_active == ST_FALSE)
                     )
                 {
-                    strcpy(continuous_string, p_fields[field_num].string);
+                    stu_strcpy(continuous_string, p_fields[field_num].string);
                     GUI_EditAnimStage = 0;
                     GUI_EditCursorOn = ST_FALSE;
                     input_field_active = ST_TRUE;
@@ -1277,7 +1277,7 @@ MoO2
                 {
                     // `Exit Edit-State`  ~== `Cancel Edit-State`
                     // `Enter Edit-State`
-                    strcpy(continuous_string, p_fields[field_num].string);
+                    stu_strcpy(continuous_string, p_fields[field_num].string);
                     GUI_EditAnimStage = 0;
                     GUI_EditCursorOn = ST_FALSE;
                     input_field_active = ST_TRUE;
@@ -2067,7 +2067,7 @@ void Input_Box_Popup(int16_t field_num)
 
     Set_Font_Style(p_fields[field_num].font_style_num, p_fields[field_num].font_normal_color, p_fields[field_num].font_highlight_color, ST_NULL);
 
-    strcpy(input_string, p_fields[field_num].string);
+    stu_strcpy(input_string, p_fields[field_num].string);
 
     while(input_string[string_pos] != '\0') { string_pos++; }
 
@@ -2086,7 +2086,7 @@ void Input_Box_Popup(int16_t field_num)
 
     SETMAX(GUI_Edit_Position, max_characters);
 
-    strcpy(input_string, p_fields[field_num].string);
+    stu_strcpy(input_string, p_fields[field_num].string);
 
     Font_Height = Get_Font_Height();
 
@@ -2342,7 +2342,7 @@ ST_KEY_ENTER            = 0x0C
     Hw_Textinput_Stop();
 #endif
 
-    strcpy(p_fields[field_num].string, input_string);
+    stu_strcpy(p_fields[field_num].string, input_string);
 
     if(Control_Change != ST_FALSE)
     {
@@ -2442,7 +2442,7 @@ int16_t Setup_Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, c
 
     Font_Height = Get_Font_Height();  // 10
 
-    strcpy(input_string, string);
+    stu_strcpy(input_string, string);
 
     while(input_string[string_pos] != '\0') { string_pos++; }
 
@@ -2691,7 +2691,7 @@ ST_KEY_ENTER            = 0x0C
 #endif
 
 
-    strcpy(string, input_string);
+    stu_strcpy(string, input_string);
 
     if(Control_Change != ST_FALSE)
     {
@@ -2759,7 +2759,7 @@ void Draw_Input_Box_Popup(int16_t field_num, char * string)
     // TODO  Copy_Memory_Near(ibeam_color_array, p_fields[field_num].color_array, Get_Font_Height());  // ; ~ ibeam / edit cursor height
     memcpy(ibeam_color_array, p_fields[field_num].color_array, Get_Font_Height());  // ; ~ ibeam / edit cursor height
 
-    strcpy(input_string, string);
+    stu_strcpy(input_string, string);
 
     Invoke_Auto_Function();
 

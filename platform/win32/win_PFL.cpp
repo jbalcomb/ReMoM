@@ -131,7 +131,7 @@ void Platform_Set_Palette_Color(uint8_t index, uint8_t r, uint8_t g, uint8_t b)
 
 void Platform_Video_Update(void)
 {
-    RECT client_rect;
+    // DEDU  artifact from Claude's platform refactor - RECT client_rect;
 
     assert(video_page_buffer[draw_page_num] != NULL);
     assert(win_video_back_buffer.Memory != NULL);

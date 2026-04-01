@@ -29,6 +29,8 @@
 #include "RACETYPE.h"
 #include "Spellbook.h"
 
+#include "../../ext/stu_compat.h"
+
 #include "Spells131.h"
 
 
@@ -168,7 +170,7 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
 
                             _fstrcpy(GUI_NearMsgString, spell_data_table[spell_idx].name);
 
-                            strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
+                            stu_strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
 
                         }
                         else
@@ -324,7 +326,7 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
 
                         _fstrcpy(GUI_NearMsgString, spell_data_table[spell_idx].name);
 
-                        strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
+                        stu_strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
 
                     }
                     else
@@ -571,7 +573,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
 
                                         _fstrcpy(GUI_NearMsgString, spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].name);
 
-                                        strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
+                                        stu_strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
 
                                     }
                                     else
@@ -681,7 +683,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
 
                                         _fstrcpy(GUI_NearMsgString, spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].name);
 
-                                        strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
+                                        stu_strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
 
                                     }
                                     else
@@ -787,7 +789,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
 
                                             _fstrcpy(GUI_NearMsgString, spell_data_table[CMB_NearDispel_UCs[Flag_Loop_Var]].name);
 
-                                            strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
+                                            stu_strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
 
                                         }
                                         else
@@ -846,7 +848,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
 
                                 _fstrcpy(GUI_NearMsgString, spell_data_table[spl_Haste].name);
 
-                                strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
+                                stu_strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
 
                             }
                             else
@@ -922,7 +924,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
 
                                 _fstrcpy(GUI_NearMsgString, spell_data_table[spl_Confusion].name);
 
-                                strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
+                                stu_strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
 
                             }
                             else
@@ -1729,7 +1731,7 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
             // ; least 9 even if combat summons can't be raised
             // ; BUG: this will copy the string to a random address
             // ; instead of saving its pointer here
-            // // BUGBUG  strcpy(Target_Name_Ptr_List[Target_Count], _unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name);
+            // // BUGBUG  stu_strcpy(Target_Name_Ptr_List[Target_Count], _unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name);
             // Target_Name_Ptr_List[Target_Count] = _unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name;
             Target_Name_Ptr_List[Target_Count] = (char *)*_unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name;
             Target_Count++;
@@ -1900,7 +1902,7 @@ void Cast_Animate_Dead(int16_t player_idx, int16_t caster_idx)
             // ; BUG: this will copy the string to a random address
             // ; instead of saving its pointer here
             // ; dest
-            // BUGBUG  strcpy(Target_Name_Ptr_List[Target_Count], _unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name);
+            // BUGBUG  stu_strcpy(Target_Name_Ptr_List[Target_Count], _unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name);
             // Target_Name_Ptr_List[Target_Count] = _unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name;
             Target_Name_Ptr_List[Target_Count] = (char *)*_unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name;
             Target_Count++;

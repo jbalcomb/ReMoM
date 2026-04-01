@@ -34,7 +34,7 @@ MoO2
 #include "Spellbook.h"
 
 #include <stdio.h>      /* FILE; fclose(), fread(), frite(), fseek(); */
-#include <string.h>     /* memcpy(), memset(), strcat(), strcpy(); */
+#include <string.h>     /* memcpy(), memset(), stu_strcat(), stu_strcpy(); */
 
 #include "Settings.h"
 
@@ -607,7 +607,7 @@ void Load_MAGIC_SET(void)
         {
             magic_set.hof_scores[itr] = 0;
             magic_set.hof_races[itr] = 0;
-            strcpy(magic_set.hof_names[itr], "");
+            stu_strcpy(magic_set.hof_names[itr], "");
         }
     }
 
@@ -661,7 +661,7 @@ void Set_Default_Game_Settings(void)
     {
         magic_set.hof_scores[itr] = 0;
         magic_set.hof_races[itr] = 0;
-        strcpy(magic_set.hof_names[itr], "");
+        stu_strcpy(magic_set.hof_names[itr], "");
     }
 
 }

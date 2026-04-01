@@ -309,15 +309,15 @@ int16_t Select_Hero_To_Ressurect(int16_t hero_count, int16_t hero_list[])
 
         _fstrcpy(&strings_seg[(itr * 40)], hero_names_table[hero_list[itr]].name);
 
-        strcat(&strings_seg[(itr * 40)], aThe_0);
+        stu_strcat(&strings_seg[(itr * 40)], aThe_0);
 
-        strcat(&strings_seg[itr * 40], *_unit_type_table[hero_list[itr]].name);
+        stu_strcat(&strings_seg[itr * 40], *_unit_type_table[hero_list[itr]].name);
 
         selection_list[itr] = &strings_seg[(itr * 40)];
 
     }
 
-    strcpy(&strings_seg[(itr * 40)], str_empty_string__ovr136);
+    stu_strcpy(&strings_seg[(itr * 40)], str_empty_string__ovr136);
 
     selection_list[itr] = &strings_seg[(itr * 40)];
 
@@ -433,11 +433,11 @@ void Spellbook_Mana_Adder_Draw(void)
 
     GAME_MP_SpellVar_1 = (((_xtra_mana_pos - 3) * spell_data_table[SBK_Spell_Index].casting_cost) / 100);  // extra mana amount
 
-    strcpy(string, str_PLUS_SIGN__ovr136);
+    stu_strcpy(string, str_PLUS_SIGN__ovr136);
 
     stu_itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
 
-    strcat(string, buffer);  // extra mana amount
+    stu_strcat(string, buffer);  // extra mana amount
 
     Set_Outline_Color(246);
     Set_Font_Style_Shadow_Up(4, 4, 4, 4);
@@ -645,11 +645,11 @@ void Combat_Spellbook_Mana_Adder_Draw(void)
 
     GAME_MP_SpellVar_1 = (((_xtra_mana_pos - 3) * CMB_SliderLimit) / 100);  // extra mana amount
 
-    strcpy(string, str_PLUS_SIGN__ovr136);
+    stu_strcpy(string, str_PLUS_SIGN__ovr136);
 
     stu_itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
 
-    strcat(string, buffer);  // extra mana amount
+    stu_strcat(string, buffer);  // extra mana amount
 
     Set_Outline_Color(246);
 
@@ -1104,18 +1104,18 @@ void Spell_Target_Global_Enchantment_Screen_Draw(void)
     if(_osc_need_target_flag == ST_TRUE)
     {
 
-        strcpy(GUI_NearMsgString, aSelectASpellTo);  // "Select a spell to "
+        stu_strcpy(GUI_NearMsgString, aSelectASpellTo);  // "Select a spell to "
 
         if(SBK_Spell_Index != spl_Spell_Binding)
         {
 
-            strcat(GUI_NearMsgString, aDisjunct_);  // "disjunct."
+            stu_strcat(GUI_NearMsgString, aDisjunct_);  // "disjunct."
 
         }
         else
         {
 
-            strcat(GUI_NearMsgString, aBind_);  // "bind."
+            stu_strcat(GUI_NearMsgString, aBind_);  // "bind."
         }
 
     }
@@ -1129,13 +1129,13 @@ void Spell_Target_Global_Enchantment_Screen_Draw(void)
             if(SBK_Spell_Index != spl_Spell_Binding)
             {
 
-                strcpy(GUI_NearMsgString, aSpellSuccesful);  // "Spell succesfully dispelled."
+                stu_strcpy(GUI_NearMsgString, aSpellSuccesful);  // "Spell succesfully dispelled."
 
             }
             else
             {
 
-                strcpy(GUI_NearMsgString, aSpellSuccesf_0);  // "Spell succesfully bound."
+                stu_strcpy(GUI_NearMsgString, aSpellSuccesf_0);  // "Spell succesfully bound."
 
             }
 
@@ -1154,13 +1154,13 @@ void Spell_Target_Global_Enchantment_Screen_Draw(void)
             if(SBK_Spell_Index != spl_Spell_Binding)
             {
 
-                strcpy(GUI_NearMsgString, aDisjunctionUns);  // "Disjunction unsuccesful"
+                stu_strcpy(GUI_NearMsgString, aDisjunctionUns);  // "Disjunction unsuccesful"
 
             }
             else
             {
 
-                strcpy(GUI_NearMsgString, aSpellBindingUn);  // "Spell Binding unsuccesful"
+                stu_strcpy(GUI_NearMsgString, aSpellBindingUn);  // "Spell Binding unsuccesful"
 
             }
 
@@ -1255,17 +1255,17 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
     // total count - human player count ... you might, but they don't
     if((ovl_ench_cnt - ovl_ench_list_cnt2[0]) <= 0)
     {
-        strcpy(GUI_NearMsgString, aThereAreNoGlob);  // "There are no global spells to "
+        stu_strcpy(GUI_NearMsgString, aThereAreNoGlob);  // "There are no global spells to "
         if(spell_idx != spl_Spell_Binding)
         {
-            strcat(GUI_NearMsgString, aDisjunct_);  // "disjunct."
+            stu_strcat(GUI_NearMsgString, aDisjunct_);  // "disjunct."
             Warn0(GUI_NearMsgString);
             var_A = ST_UNDEFINED;
             var_C = ST_UNDEFINED;
         }
         else
         {
-            strcat(GUI_NearMsgString, aBind_);  // "bind."
+            stu_strcat(GUI_NearMsgString, aBind_);  // "bind."
             Warn0(GUI_NearMsgString);
             var_A = ST_UNDEFINED;
             var_C = ST_UNDEFINED;
@@ -1693,9 +1693,9 @@ void Spell_Of_Mastery_Lose_Load(int16_t wizard_id)
 
     Copy_Off_To_Back();
 
-    strcpy(GUI_NearMsgString, _players[GAME_SoM_Cast_By].name);
+    stu_strcpy(GUI_NearMsgString, _players[GAME_SoM_Cast_By].name);
 
-    strcat(GUI_NearMsgString, strHasCastThe);  // " has cast the"
+    stu_strcat(GUI_NearMsgString, strHasCastThe);  // " has cast the"
 
     // SPELLOSE.LBX, 029  "SPHERE"    ""
     spellose_sphere_seg = LBX_Reload(spellose_lbx_file__ovr138, 29, _screen_seg);
@@ -1991,9 +1991,9 @@ void SoM_Started__STUB(int16_t player_idx)
 
     Stop_All_Sounds__STUB();
 
-    strcpy(GUI_NearMsgString, _players[player_idx].name);
+    stu_strcpy(GUI_NearMsgString, _players[player_idx].name);
 
-    strcat(GUI_NearMsgString, strHasStartedCastingThe);  // " has started casting the"
+    stu_strcat(GUI_NearMsgString, strHasStartedCastingThe);  // " has started casting the"
 
     SND_Spell_Music = LBX_Reload(music_lbx_file__ovr138, MUSIC_SoM_Started, SND_Music_Segment);
     SND_Spell_Music_size = lbxload_entry_length;

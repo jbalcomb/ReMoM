@@ -94,7 +94,7 @@ Anyway, ...
     if(p_fields[field_num].type == ft_ContinuousStringInput)
         input_field_active != ST_FALSE
             active_input_field_number == field_num
-                strcpy(GUI_EditString, Param0)
+                stu_strcpy(GUI_EditString, Param0)
                 GUI_EditAnimStage = 0
                 GUI_EditCursorOn = 0
                 input_field_active = e_ST_TRUE

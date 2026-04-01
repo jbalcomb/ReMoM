@@ -8,7 +8,7 @@ extern "C" {
 }
 #endif
 
-#include <cstring> // Why is this included? For strcat and strcmp functions used in the tests, because C++ here rather than C.
+#include <cstring> // Why is this included? For stu_strcat and strcmp functions used in the tests, because C++ here rather than C.
 
 /*
     String_List_Builer(int16_t * List_Size, int16_t Total, char * Dest)
@@ -23,7 +23,7 @@ extern "C" {
         Retorts_Added = 0;
         for each retort:
             String_List_Builer(&Retorts_Added, retort_count, &Retorts_String[0]);
-            strcat(Retorts_String, retort_name);
+            stu_strcat(Retorts_String, retort_name);
 */
 
 
@@ -36,7 +36,7 @@ TEST(STR_ListSeparator_test, SingleItem_NoSeparator)
 
     // First (and only) item
     String_List_Builer(&List_Size, Total, Dest);
-    strcat(Dest, "Alchemy");
+    stu_strcat(Dest, "Alchemy");
 
     EXPECT_EQ(List_Size, 1);
     EXPECT_STREQ(Dest, "Alchemy");
@@ -52,14 +52,14 @@ TEST(STR_ListSeparator_test, TwoItems_AndSeparator)
 
     // First item
     String_List_Builer(&List_Size, Total, Dest);
-    strcat(Dest, "Alchemy");
+    stu_strcat(Dest, "Alchemy");
 
     EXPECT_EQ(List_Size, 1);
     EXPECT_STREQ(Dest, "Alchemy");
 
     // Second (last) item
     String_List_Builer(&List_Size, Total, Dest);
-    strcat(Dest, "Warlord");
+    stu_strcat(Dest, "Warlord");
 
     EXPECT_EQ(List_Size, 2);
     EXPECT_STREQ(Dest, "Alchemy and Warlord");
@@ -75,17 +75,17 @@ TEST(STR_ListSeparator_test, ThreeItems_CommaAndAnd)
 
     // First item
     String_List_Builer(&List_Size, Total, Dest);
-    strcat(Dest, "Alchemy");
+    stu_strcat(Dest, "Alchemy");
     EXPECT_EQ(List_Size, 1);
 
     // Second item (not last)
     String_List_Builer(&List_Size, Total, Dest);
-    strcat(Dest, "Warlord");
+    stu_strcat(Dest, "Warlord");
     EXPECT_EQ(List_Size, 2);
 
     // Third (last) item
     String_List_Builer(&List_Size, Total, Dest);
-    strcat(Dest, "Myrran");
+    stu_strcat(Dest, "Myrran");
     EXPECT_EQ(List_Size, 3);
 
     EXPECT_STREQ(Dest, "Alchemy, Warlord and Myrran");
@@ -100,16 +100,16 @@ TEST(STR_ListSeparator_test, FourItems_MultipleCommasThenAnd)
     int16_t Total = 4;
 
     String_List_Builer(&List_Size, Total, Dest);
-    strcat(Dest, "Alchemy");
+    stu_strcat(Dest, "Alchemy");
 
     String_List_Builer(&List_Size, Total, Dest);
-    strcat(Dest, "Warlord");
+    stu_strcat(Dest, "Warlord");
 
     String_List_Builer(&List_Size, Total, Dest);
-    strcat(Dest, "Myrran");
+    stu_strcat(Dest, "Myrran");
 
     String_List_Builer(&List_Size, Total, Dest);
-    strcat(Dest, "Channeler");
+    stu_strcat(Dest, "Channeler");
 
     EXPECT_EQ(List_Size, 4);
     EXPECT_STREQ(Dest, "Alchemy, Warlord, Myrran and Channeler");
@@ -126,7 +126,7 @@ TEST(STR_ListSeparator_test, ListSizeIncrementsCorrectly)
     for (int i = 0; i < 5; i++)
     {
         String_List_Builer(&List_Size, Total, Dest);
-        strcat(Dest, "X");
+        stu_strcat(Dest, "X");
         EXPECT_EQ(List_Size, i + 1);
     }
 }
@@ -157,7 +157,7 @@ TEST(STR_ListSeparator_test, MiddleItem_CommaAppended)
 
     // First item
     String_List_Builer(&List_Size, Total, Dest);
-    strcat(Dest, "A");
+    stu_strcat(Dest, "A");
 
     // Second item (middle)
     String_List_Builer(&List_Size, Total, Dest);
@@ -175,7 +175,7 @@ TEST(STR_ListSeparator_test, LastItem_AndAppended)
 
     // First item
     String_List_Builer(&List_Size, Total, Dest);
-    strcat(Dest, "A");
+    stu_strcat(Dest, "A");
 
     // Second (last) item
     String_List_Builer(&List_Size, Total, Dest);

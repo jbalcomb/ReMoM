@@ -1752,24 +1752,24 @@ void Get_Event_Message(void)
         {
             case 0:
             {
-                strcpy(&m_event_message[IDK], _CITIES[m_event_city_idx].name);
+                stu_strcpy(&m_event_message[IDK], _CITIES[m_event_city_idx].name);
                 IDK = (int16_t)strlen(m_event_message);
             } break;
             case 1:
             {
-                strcpy(&m_event_message[IDK], _CITIES[EVNT_MsgDataValue].name);
+                stu_strcpy(&m_event_message[IDK], _CITIES[EVNT_MsgDataValue].name);
                 IDK = (int16_t)strlen(m_event_message);
             } break;
             case 2:
             {
-                strcpy(&m_event_message[IDK], _city_size_names[_CITIES[EVNT_MsgDataValue].size]);
+                stu_strcpy(&m_event_message[IDK], _city_size_names[_CITIES[EVNT_MsgDataValue].size]);
                 IDK = (int16_t)strlen(m_event_message);
             } break;
             case 3:
             {
                 m_event_message[IDK] = 0;
                 stu_itoa(EVNT_MsgDataValue, temp_string, 10);
-                strcat(m_event_message, temp_string);
+                stu_strcat(m_event_message, temp_string);
                 IDK = (int16_t)strlen(m_event_message);
             } break;
             // case 4:
@@ -1780,22 +1780,22 @@ void Get_Event_Message(void)
             case 9:
             {
                 m_event_message[IDK] = 0;
-                strcat(m_event_message, TBL_EVNT_OreNames[EVNT_MsgDataValue]);
+                stu_strcat(m_event_message, TBL_EVNT_OreNames[EVNT_MsgDataValue]);
                 IDK = (int16_t)strlen(m_event_message);
             } break;
             case 10:
             {
-                strcpy(&m_event_message[IDK], _ITEMS[EVNT_MsgDataValue].name);
+                stu_strcpy(&m_event_message[IDK], _ITEMS[EVNT_MsgDataValue].name);
                 IDK = (int16_t)strlen(m_event_message);
             } break;
             case 11:
             {
-                strcpy(&m_event_message[IDK], _city_size_names[_CITIES[m_event_city_idx].size]);
+                stu_strcpy(&m_event_message[IDK], _city_size_names[_CITIES[m_event_city_idx].size]);
                 IDK = (int16_t)strlen(m_event_message);
             } break;
             case 12:
             {
-                strcpy(&m_event_message[IDK], _players[m_event_player_idx].name);
+                stu_strcpy(&m_event_message[IDK], _players[m_event_player_idx].name);
                 IDK = (int16_t)strlen(m_event_message);
             } break;
             // case 13:
@@ -1806,12 +1806,12 @@ void Get_Event_Message(void)
                 {
                     m_event_message[IDK] = 0;
                     stu_itoa(EVNT_LostUnitCount, temp_string, 10);
-                    strcat(&m_event_message[0], temp_string);
+                    stu_strcat(&m_event_message[0], temp_string);
                 }
                 else
                 {
                     m_event_message[IDK] = 0;
-                    strcat(&m_event_message[0], cnst_EventMsg_1);  // "no"
+                    stu_strcat(&m_event_message[0], cnst_EventMsg_1);  // "no"
                 }
                 IDK = (int16_t)strlen(m_event_message);
             } break;
@@ -1821,13 +1821,13 @@ void Get_Event_Message(void)
                 {
                     m_event_message[IDK] = 0;
                     stu_itoa(EVNT_LostPopulation, temp_string, 10);
-                    strcat(&m_event_message[0], temp_string);
-                    strcpy(&m_event_message[0], cnst_EventMsg_2);  // " thousand"
+                    stu_strcat(&m_event_message[0], temp_string);
+                    stu_strcpy(&m_event_message[0], cnst_EventMsg_2);  // " thousand"
                 }
                 else
                 {
                     m_event_message[IDK] = 0;
-                    strcat(&m_event_message[0], cnst_EventMsg_1);  // "no"
+                    stu_strcat(&m_event_message[0], cnst_EventMsg_1);  // "no"
                 }
                 IDK = (int16_t)strlen(m_event_message);
             } break;
@@ -1837,12 +1837,12 @@ void Get_Event_Message(void)
                 {
                     m_event_message[IDK] = 0;
                     stu_itoa(EVNT_DestroyedBldngs, temp_string, 10);
-                    strcat(&m_event_message[0], temp_string);
+                    stu_strcat(&m_event_message[0], temp_string);
                 }
                 else
                 {
                     m_event_message[IDK] = 0;
-                    strcat(&m_event_message[0], cnst_EventMsg_1);  // "no"
+                    stu_strcat(&m_event_message[0], cnst_EventMsg_1);  // "no"
                 }
                 IDK = (int16_t)strlen(m_event_message);
             } break;
@@ -1856,7 +1856,7 @@ void Get_Event_Message(void)
                 else
                 {
                     m_event_message[IDK] = 0;
-                    strcat(&m_event_message[0], cnst_EventMsg_3);
+                    stu_strcat(&m_event_message[0], cnst_EventMsg_3);
                     IDK = (int16_t)strlen(m_event_message);
                 }
             } break;
@@ -1869,7 +1869,7 @@ void Get_Event_Message(void)
                 else
                 {
                     m_event_message[IDK] = 0;
-                    strcat(&m_event_message[0], cnst_EventMsg_3);
+                    stu_strcat(&m_event_message[0], cnst_EventMsg_3);
                     IDK = (int16_t)strlen(m_event_message);
                 }
             } break;

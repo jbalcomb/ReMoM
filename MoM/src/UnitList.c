@@ -25,6 +25,8 @@
 #include "UnitStat.h"
 #include "MainScr.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <string.h>
 
 #include "UnitList.h"
@@ -346,17 +348,17 @@ void Unit_List_Window_Draw(void)
     {
         if((_unit_type_table[_UNITS[m_ulw_troops[0]].type].Abilities & UA_FANTASTIC) == 0)
         {
-            strcpy(GUI_String_1, str_Raiders);  // "Raiders"
+            stu_strcpy(GUI_String_1, str_Raiders);  // "Raiders"
         }
         else
         {
-            strcpy(GUI_String_1, str_RampagingMonsters);  // "Rampaging Monsters"
+            stu_strcpy(GUI_String_1, str_RampagingMonsters);  // "Rampaging Monsters"
         }
     }
     else
     {
-        strcpy(GUI_String_1, _players[m_ulw_unit_owner_idx].name);
-        strcat(GUI_String_1, str_Units);  // " Units"
+        stu_strcpy(GUI_String_1, _players[m_ulw_unit_owner_idx].name);
+        stu_strcat(GUI_String_1, str_Units);  // " Units"
     }
 
     Set_Font_Style_Outline(4, 15, 0, 0);
@@ -388,11 +390,11 @@ void Unit_List_Window_Draw(void)
 
         if(hero_unit_idx == ST_UNDEFINED)
         {
-            strcpy(GUI_String_1, *_unit_type_table[unit_type].name);
+            stu_strcpy(GUI_String_1, *_unit_type_table[unit_type].name);
         }
         else
         {
-            strcpy(GUI_String_1, _players[_UNITS[m_ulw_troops[itr]].owner_idx].Heroes[hero_unit_idx].name);
+            stu_strcpy(GUI_String_1, _players[_UNITS[m_ulw_troops[itr]].owner_idx].Heroes[hero_unit_idx].name);
         }
 
         colors[0] = 197;

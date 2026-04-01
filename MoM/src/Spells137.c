@@ -438,9 +438,9 @@ void IDK_SummonAnim_Draw(void)
     if(_osc_summon_unit_type > 0)
     {
 
-        strcpy(GUI_NearMsgString, *_unit_type_table[spell_data_table[_players[_osc_player_idx].casting_spell_idx].unit_type].name);
+        stu_strcpy(GUI_NearMsgString, *_unit_type_table[spell_data_table[_players[_osc_player_idx].casting_spell_idx].unit_type].name);
 
-        strcat(GUI_NearMsgString, aSummoned);
+        stu_strcat(GUI_NearMsgString, aSummoned);
 
     }
     else
@@ -448,7 +448,7 @@ void IDK_SummonAnim_Draw(void)
         if(_osc_summon_unit_type == -1)
         {
 
-            strcpy(GUI_NearMsgString, aItemEnchanted);
+            stu_strcpy(GUI_NearMsgString, aItemEnchanted);
 
         }
         else
@@ -457,13 +457,13 @@ void IDK_SummonAnim_Draw(void)
             if(_osc_summon_unit_type > -10)
             {
 
-                strcpy(GUI_NearMsgString, aHeroSummoned_0);
+                stu_strcpy(GUI_NearMsgString, aHeroSummoned_0);
 
             }
             else
             {
 
-                strcpy(GUI_NearMsgString, aChampionSumm_0);
+                stu_strcpy(GUI_NearMsgString, aChampionSumm_0);
 
             }
 
@@ -600,13 +600,13 @@ void Cast_Spell_City_Enchantment_Animation_Load(int16_t spell_idx,int16_t  playe
 
     Set_Font_Style_Shadow_Down(5, 5, 0, 0);
 
-    strcpy(GUI_NearMsgString, _city_size_names[_CITIES[_osc_city_idx].size]);  // { "Outpost", "Hamlet", "Village", "Town", "City", "Capital" }
+    stu_strcpy(GUI_NearMsgString, _city_size_names[_CITIES[_osc_city_idx].size]);  // { "Outpost", "Hamlet", "Village", "Town", "City", "Capital" }
 
-    strcat(GUI_NearMsgString, cnst_Sp_Of_Sp_5);  // " of "
+    stu_strcat(GUI_NearMsgString, cnst_Sp_Of_Sp_5);  // " of "
 
     _fstrcpy(string, _CITIES[_osc_city_idx].name);  // [YOUR CITY NAME HERE]
 
-    strcat(GUI_NearMsgString, string);
+    stu_strcat(GUI_NearMsgString, string);
 
     Print_Centered(160, 44, GUI_NearMsgString);
 
@@ -619,21 +619,21 @@ void Cast_Spell_City_Enchantment_Animation_Load(int16_t spell_idx,int16_t  playe
     if(player_idx == HUMAN_PLAYER_IDX)
     {
 
-        strcpy(GUI_NearMsgString, aYouCast);  // "You cast "
+        stu_strcpy(GUI_NearMsgString, aYouCast);  // "You cast "
 
     }
     else
     {
 
-        strcpy(GUI_NearMsgString, _players[player_idx].name);
+        stu_strcpy(GUI_NearMsgString, _players[player_idx].name);
 
-        strcat(GUI_NearMsgString, aCasts);  // " casts "
+        stu_strcat(GUI_NearMsgString, aCasts);  // " casts "
 
     }
 
     _fstrcpy(string, spell_data_table[spell_idx].name);
 
-    strcat(GUI_NearMsgString, string);
+    stu_strcat(GUI_NearMsgString, string);
 
     Print_Centered(160, 164, GUI_NearMsgString);
 
@@ -1124,15 +1124,15 @@ void OVL_DrawGlobalAnim(void)
         if(_osc_player_idx == HUMAN_PLAYER_IDX)
         {
 
-            strcpy(GUI_NearMsgString, cnst_Spellcast_Msg_1);  // "You have completed casting..."
+            stu_strcpy(GUI_NearMsgString, cnst_Spellcast_Msg_1);  // "You have completed casting..."
 
         }
         else
         {
 
-            strcpy(GUI_NearMsgString, _players[_osc_player_idx].name);
+            stu_strcpy(GUI_NearMsgString, _players[_osc_player_idx].name);
 
-            strcat(GUI_NearMsgString, cnst_Spellcast_Msg_2);  // " has cast..."
+            stu_strcat(GUI_NearMsgString, cnst_Spellcast_Msg_2);  // " has cast..."
 
         }
 
@@ -1154,15 +1154,15 @@ void OVL_DrawGlobalAnim(void)
             if(_osc_player_idx == 0)
             {
 
-                strcpy(GUI_NearMsgString, cnst_Spellcast_Msg_1);
+                stu_strcpy(GUI_NearMsgString, cnst_Spellcast_Msg_1);
 
             }
             else
             {
 
-                strcpy(GUI_NearMsgString, _players[_osc_player_idx].name);
+                stu_strcpy(GUI_NearMsgString, _players[_osc_player_idx].name);
 
-                strcat(GUI_NearMsgString, cnst_Spellcast_Msg_2);
+                stu_strcat(GUI_NearMsgString, cnst_Spellcast_Msg_2);
 
             }
 
@@ -1558,7 +1558,7 @@ static void Target_Wizard_Screen_Draw(void)
                     Set_Outline_Color(254);
                     Set_Font_Colors_15(4, &colors[0]);
                     stu_itoa((_players[(1 + itr)].casting_cost_original - _players[(1 + itr)].casting_cost_remaining), string, 10);
-                    strcat(string, cnst_Space_MP_3);
+                    stu_strcat(string, cnst_Space_MP_3);
                     Print_Centered((x_start + 39), (y_start + 149), string);
                 }
                 else
@@ -1585,51 +1585,51 @@ static void Target_Wizard_Screen_Draw(void)
     if(_osc_need_target_flag == ST_TRUE)
     {
 
-        strcpy(GUI_NearMsgString, aChooseTargetFo);  // "Choose target for a "
+        stu_strcpy(GUI_NearMsgString, aChooseTargetFo);  // "Choose target for a "
 
         _fstrcpy(string, spell_data_table[SBK_Spell_Index].name);
 
-        strcat(GUI_NearMsgString, string);
+        stu_strcat(GUI_NearMsgString, string);
 
-        strcat(GUI_NearMsgString, aSpell_0);  // " spell"
+        stu_strcat(GUI_NearMsgString, aSpell_0);  // " spell"
 
     }
     else
     {
 
-        strcpy(GUI_NearMsgString, _players[_temp_sint_1].name);
+        stu_strcpy(GUI_NearMsgString, _players[_temp_sint_1].name);
 
         switch(spell_data_table[SBK_Spell_Index].Param0)
         {
             case 0:
             {
-                strcat(GUI_NearMsgString, aHasBeenSpellBl);  // " has been spell blasted"
+                stu_strcat(GUI_NearMsgString, aHasBeenSpellBl);  // " has been spell blasted"
             } break;
             case 1:
             {
-                strcat(GUI_NearMsgString, aLoses);  // " loses "
+                stu_strcat(GUI_NearMsgString, aLoses);  // " loses "
                 stu_itoa(GAME_MP_SpellVar_1, buffer, 10);
-                strcat(GUI_NearMsgString, buffer);
-                strcat(GUI_NearMsgString, aPointsOfCastin);  // " points of casting ability"
+                stu_strcat(GUI_NearMsgString, buffer);
+                stu_strcat(GUI_NearMsgString, aPointsOfCastin);  // " points of casting ability"
             } break;
             case 2:
             {
-                strcat(GUI_NearMsgString, aLoses);  // " loses "
+                stu_strcat(GUI_NearMsgString, aLoses);  // " loses "
                 stu_itoa(GAME_MP_SpellVar_1, buffer, 10);
-                strcat(GUI_NearMsgString, buffer);
-                strcat(GUI_NearMsgString, aPointsOfMana);  // " points of mana"
+                stu_strcat(GUI_NearMsgString, buffer);
+                stu_strcat(GUI_NearMsgString, aPointsOfMana);  // " points of mana"
             } break;
             case 3:
             {
                 if(GUI_NearMsgString[(strlen(GUI_NearMsgString) - 1)] == 's')
                 {
-                    strcat(GUI_NearMsgString, cnst_Apostrophe_3);  // "' "
+                    stu_strcat(GUI_NearMsgString, cnst_Apostrophe_3);  // "' "
                 }
                 else
                 {
-                    strcat(GUI_NearMsgString, cnst_Possessive_3);  // "'s "
+                    stu_strcat(GUI_NearMsgString, cnst_Possessive_3);  // "'s "
                 }
-                strcat(GUI_NearMsgString, aRelationsHaveB);  // " relations have been subverted"
+                stu_strcat(GUI_NearMsgString, aRelationsHaveB);  // " relations have been subverted"
             } break;
             default:
             {

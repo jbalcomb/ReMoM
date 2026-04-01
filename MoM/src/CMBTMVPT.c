@@ -19,7 +19,7 @@
 
 // WZD dseg:D13C                                                 ovr153
 // WZD dseg:D142
-int16_t movement_path_grid_cell_count;
+extern int16_t movement_path_grid_cell_count;
 
 
 

@@ -634,15 +634,15 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
                 Play_Left_Click();
                 if(_UNITS[uv_unit_idx].Hero_Slot != -1)
                 {
-                    strcpy(GUI_String_1, cnst_Dismiss_Msg);  // "Do you wish to dismiss "
-                    strcat(GUI_String_1, _players[_human_player_idx].Heroes[_UNITS[uv_unit_idx].Hero_Slot].name);
+                    stu_strcpy(GUI_String_1, cnst_Dismiss_Msg);  // "Do you wish to dismiss "
+                    stu_strcat(GUI_String_1, _players[_human_player_idx].Heroes[_UNITS[uv_unit_idx].Hero_Slot].name);
                 }
                 else
                 {
-                    strcpy(GUI_String_1, cnst_Disband_Msg1);  // "Do you wish to disband the unit of \x02"
-                    strcat(GUI_String_1, *_unit_type_table[_UNITS[uv_unit_idx].type].name);
+                    stu_strcpy(GUI_String_1, cnst_Disband_Msg1);  // "Do you wish to disband the unit of \x02"
+                    stu_strcat(GUI_String_1, *_unit_type_table[_UNITS[uv_unit_idx].type].name);
                 }
-                strcat(GUI_String_1, cnst_Disband_Msg2);
+                stu_strcat(GUI_String_1, cnst_Disband_Msg2);
                 Deactivate_Help_List();
                 if(Confirmation_Box(GUI_String_1) == ST_TRUE)
                 {
@@ -905,13 +905,13 @@ if(_CITIES[_city_idx].construction > 298)
         if(View_Type == 1)  /* Product is Unit */
         {
             
-            strcat(GUI_NearMsgString, "(");
+            stu_strcat(GUI_NearMsgString, "(");
 
             stu_itoa(_unit_type_table[unit_type_idx].cost, temp_string, 10);  // Full Cost
 
-            strcat(GUI_NearMsgString, temp_string);
+            stu_strcat(GUI_NearMsgString, temp_string);
 
-            strcat(GUI_NearMsgString, ")");
+            stu_strcat(GUI_NearMsgString, ")");
 
         }
 
@@ -956,7 +956,7 @@ if(_CITIES[_city_idx].construction > 298)
         Set_Outline_Color(251);
         Set_Font_Spacing_Width(1);
 
-        strcpy(GUI_NearMsgString, bldg_data_table[bldg_idx].name);
+        stu_strcpy(GUI_NearMsgString, bldg_data_table[bldg_idx].name);
 
         if(Get_String_Width(GUI_NearMsgString) > 100)
         {
@@ -1015,7 +1015,7 @@ if(_CITIES[_city_idx].construction > 298)
         Set_Font_Spacing_Width(1);
         Set_Font_LF(1);
 
-        strcpy(GUI_NearMsgString, "");
+        stu_strcpy(GUI_NearMsgString, "");
 
         Allows_List_Size = 0;
 
@@ -1025,18 +1025,18 @@ if(_CITIES[_city_idx].construction > 298)
 
             if(Allows_List[itr] < 100)
             {
-                strcpy(temp_string, bldg_data_table[Allows_List[itr]].name);
-                strcat(GUI_NearMsgString, temp_string);
+                stu_strcpy(temp_string, bldg_data_table[Allows_List[itr]].name);
+                stu_strcat(GUI_NearMsgString, temp_string);
             }
             else
             {
-                strcat(GUI_NearMsgString, *_unit_type_table[(Allows_List[itr] - 100)].name);
+                stu_strcat(GUI_NearMsgString, *_unit_type_table[(Allows_List[itr] - 100)].name);
             }
         }
 
         if(Allows_Count > 0)
         {
-            strcat(GUI_NearMsgString, ".");
+            stu_strcat(GUI_NearMsgString, ".");
         }
 
         Print_Paragraph(Text_Left, Text_Top, 100, GUI_NearMsgString, 0);

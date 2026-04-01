@@ -25,7 +25,7 @@
 #include <stddef.h>     /* NULL */
 #include <stdio.h>      /* FILE; fclose(), fread(), fseek(); */
 #include <stdlib.h>
-#include <string.h>     /* memset(), strcat(), strcpy(); */
+#include <string.h>     /* memset(), stu_strcat(), stu_strcpy(); */
 #include "LOADSAVE.h"
 
 
@@ -44,14 +44,14 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
 
     if(save_gam_idx == ST_UNDEFINED)
     {
-        strcpy(file_name, "SAVETEST.GAM");
+        stu_strcpy(file_name, "SAVETEST.GAM");
     }
     else
     {
         stu_itoa((save_gam_idx + 1), temp_string, 10);
-        strcpy(file_name, "SAVE");
-        strcat(file_name, temp_string);
-        strcat(file_name,".GAM");
+        stu_strcpy(file_name, "SAVE");
+        stu_strcat(file_name, temp_string);
+        stu_strcat(file_name,".GAM");
     }
 
     file_pointer = stu_fopen_ci(file_name, "wb");
@@ -214,14 +214,14 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 
     if(save_gam_idx == ST_UNDEFINED)
     {
-        strcpy(file_name, "SAVETEST.GAM");
+        stu_strcpy(file_name, "SAVETEST.GAM");
     }
     else
     {
         stu_itoa((save_gam_idx + 1), temp_string, 10);
-        strcpy(file_name, "SAVE");
-        strcat(file_name, temp_string);
-        strcat(file_name,".GAM");
+        stu_strcpy(file_name, "SAVE");
+        stu_strcat(file_name, temp_string);
+        stu_strcat(file_name,".GAM");
     }
 
     file_size = LOF(file_name);

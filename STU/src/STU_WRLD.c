@@ -95,6 +95,8 @@ Module: MAPGEN
 
 #include "STU_WRLD.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <assert.h>  /* assert() */
 #include <stdio.h>   /* FILE, fopen, ftell, fprintf, fclose */
 #include <stdlib.h>  /* malloc, free */
@@ -149,7 +151,7 @@ static const struct { int type; const char * name; } terrain_type_names[] =
 };
 static const int terrain_type_names_count = (int)(sizeof(terrain_type_names) / sizeof(terrain_type_names[0]));
 
-static const char * Terrain_Type_Name(int type)
+static const char * Terrain_Type_Name(int16_t type)
 {
     int n = 0;
     for(n = 0; n < terrain_type_names_count; n++)
@@ -175,7 +177,7 @@ static const char * terrain_group_names[] =
 };
 static const int terrain_group_names_count = (int)(sizeof(terrain_group_names) / sizeof(terrain_group_names[0]));
 
-static const char * Terrain_Group_Name(int group)
+static const char * Terrain_Group_Name(int16_t group)
 {
     if(group >= 0 && group < terrain_group_names_count)
         return terrain_group_names[group];
@@ -574,8 +576,8 @@ static void Display_Worldmap_Statistics(int sim_idx, int16_t wp)
         if(count == 0)
             continue;
 
-        name  = Terrain_Type_Name(itr);
-        group = Terrain_Group_Name(Get_Terrain_Group(itr));
+        name  = Terrain_Type_Name((int16_t)itr);
+        group = Terrain_Group_Name(Get_Terrain_Group((int16_t)itr));
         ch    = Terrain_Type_To_Char((int16_t)itr);
 
         pct_total = (total_count  > 0) ? ((double)count / (double)total_count  * 100.0) : 0.0;
@@ -669,7 +671,7 @@ Scans every square of world plane `wp` and accumulates a frequency count of each
 raw terrain-special byte value encountered.  Results are stored in
 simulation_data[sim_idx].specials_stats[wp].
 */
-static void Terrain_Specials_Statistics(int sim_idx, int wp)
+static void Terrain_Specials_Statistics(int sim_idx, int16_t wp)
 {
     int16_t wx          = 0;
     int16_t wy          = 0;
@@ -1744,9 +1746,9 @@ static void New_Game_Screen_Mock(void)
     magic_set.Opponents = goo_Two;
     magic_set.Difficulty = god_Normal;
     
-    file_pointer = fopen("MAGIC.SET", "wb");
-    fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
-    fclose(file_pointer);
+    file_pointer = stu_fopen("MAGIC.SET", "wb");
+    stu_fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
+    stu_fclose(file_pointer);
 
     _landsize = magic_set.LandSize;
     _magic = magic_set.MagicPower;

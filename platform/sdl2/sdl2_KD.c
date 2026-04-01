@@ -191,7 +191,7 @@ char * Platform_Get_Key_Code_Name(int32_t sdl2_key_code)
 
     memset(sdl2_key_code_name, 0, 4096);
 
-    strcpy(sdl2_key_code_name, SDL_GetKeyName(sdl2_key_code));
+    stu_strcpy(sdl2_key_code_name, SDL_GetKeyName(sdl2_key_code));
 
     return sdl2_key_code_name;
 }

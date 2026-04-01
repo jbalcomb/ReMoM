@@ -520,47 +520,47 @@ void Surveyor_Window_Display(void)
 
                 Print(245, 158, str_ProdBonus);
                 stu_itoa(production_bonus, GUI_String_1, 10);
-                strcpy(GUI_String_2, str_PlusSign);
-                strcat(GUI_String_2, GUI_String_1);
-                strcat(GUI_String_2, str_PercentSign);
+                stu_strcpy(GUI_String_2, str_PlusSign);
+                stu_strcat(GUI_String_2, GUI_String_1);
+                stu_strcat(GUI_String_2, str_PercentSign);
                 Print_Right(312, 158, GUI_String_2);
 
                 Print(245, 165, str_GoldBonus);
                 stu_itoa(gold_bonus, GUI_String_1, 10);
-                strcpy(GUI_String_2, str_PlusSign);
-                strcat(GUI_String_2, GUI_String_1);
-                strcat(GUI_String_2, str_PercentSign);
+                stu_strcpy(GUI_String_2, str_PlusSign);
+                stu_strcat(GUI_String_2, GUI_String_1);
+                stu_strcat(GUI_String_2, str_PercentSign);
                 Print_Right(312, 165, GUI_String_2);
 
             } break;
             case 1:
             {
-                strcpy(GUI_String_1, str_OnWater_);
+                stu_strcpy(GUI_String_1, str_OnWater_);
             } break;
             case 2:
             {
-                strcpy(GUI_String_1, str_OnLairs_);
+                stu_strcpy(GUI_String_1, str_OnLairs_);
             } break;
             case 3:
             {
-                strcpy(GUI_String_1, str_OnTowers_);
+                stu_strcpy(GUI_String_1, str_OnTowers_);
             } break;
             case 4:
             {
-                strcpy(GUI_String_1, str_OnMagicNodes_);
+                stu_strcpy(GUI_String_1, str_OnMagicNodes_);
             } break;
             case 5:
             {
-                strcpy(GUI_String_1, str_LessThan3SquaresFromAnyOtherCity);
+                stu_strcpy(GUI_String_1, str_LessThan3SquaresFromAnyOtherCity);
             } break;
             
         }
 
         if(var_4 > 0)
         {
-            strcpy(GUI_String_2, str_CitiesCannotBe);
+            stu_strcpy(GUI_String_2, str_CitiesCannotBe);
 
-            strcat(GUI_String_2, GUI_String_1);
+            stu_strcat(GUI_String_2, GUI_String_1);
 
             Print_Paragraph(246, 143, 67, GUI_String_2, 0);
         }
@@ -726,9 +726,9 @@ void Surveyor_IDK_Print_Terrain_And_Effect(int16_t IDK_type, int16_t IDK_IDK)
 
     Surveyor_IDK_Set_Font_Stuff__1();
 
-    strcpy(GUI_String_1, str_empty_string__094);
+    stu_strcpy(GUI_String_1, str_empty_string__094);
 
-    strcpy(GUI_String_2, str_empty_string__094);
+    stu_strcpy(GUI_String_2, str_empty_string__094);
 
     switch(IDK_type)
     {
@@ -736,51 +736,51 @@ void Surveyor_IDK_Print_Terrain_And_Effect(int16_t IDK_type, int16_t IDK_IDK)
         case 0:
         {
             Print_Centered(280, 91, aOcean);
-            strcpy(GUI_String_1, str_empty_string__094);
-            strcpy(GUI_String_2, str_empty_string__094);
+            stu_strcpy(GUI_String_1, str_empty_string__094);
+            stu_strcpy(GUI_String_2, str_empty_string__094);
         } break;
         case 1:
         {
             Print_Centered(280, 91, aGrasslands);
-            strcpy(GUI_String_1, a112Food);
+            stu_strcpy(GUI_String_1, a112Food);
         } break;
         case 2:
         {
             Print_Centered(280, 91, aForest);
-            strcpy(GUI_String_1, a12Food);
-            strcpy(GUI_String_2, a3Production);
+            stu_strcpy(GUI_String_1, a12Food);
+            stu_strcpy(GUI_String_2, a3Production);
         } break;
         case 3:
         {
             Print_Centered(280, 91, aMountain);
-            strcpy(GUI_String_1, a5Production);
+            stu_strcpy(GUI_String_1, a5Production);
         } break;
         case 4:
         {
             Print_Centered(280, 91, aDesert);
-            strcpy(GUI_String_1, a3Production);
+            stu_strcpy(GUI_String_1, a3Production);
         } break;
         case 5:
         {
             Print_Centered(280, 91, aSwamp);
-            strcpy(GUI_String_1, a12Food);
+            stu_strcpy(GUI_String_1, a12Food);
         } break;
         case 6:
         {
             Print_Centered(280, 91, aTundra);
-            strcpy(GUI_String_1, str_empty_string__094);
+            stu_strcpy(GUI_String_1, str_empty_string__094);
         } break;
         case 7:
         {
             Print_Centered(280, 91, aShore);
-            strcpy(GUI_String_1, a12Food);
-            strcpy(GUI_String_2, a10Gold);
+            stu_strcpy(GUI_String_1, a12Food);
+            stu_strcpy(GUI_String_2, a10Gold);
         } break;
         case 8:
         {
             Print_Centered(280, 91, aRiverMouth);
-            strcpy(GUI_String_1, a12Food);
-            strcpy(GUI_String_2, a30Gold);
+            stu_strcpy(GUI_String_1, a12Food);
+            stu_strcpy(GUI_String_2, a30Gold);
         } break;
         case 9:
         {
@@ -789,24 +789,24 @@ void Surveyor_IDK_Print_Terrain_And_Effect(int16_t IDK_type, int16_t IDK_IDK)
         case 10:
         {
             Print_Centered(280, 91, aHills);
-            strcpy(GUI_String_1, a12Food);
-            strcpy(GUI_String_2, a3Production);
+            stu_strcpy(GUI_String_1, a12Food);
+            stu_strcpy(GUI_String_2, a3Production);
         } break;
         case 11:
         {
             Print_Centered(280, 91, aPlains);
-            strcpy(GUI_String_1, a1Food);
+            stu_strcpy(GUI_String_1, a1Food);
         } break;
         case 12:
         {
             Print_Centered(280, 91, aRiver);
-            strcpy(GUI_String_1, a2Food);
-            strcpy(GUI_String_2, a20Gold);
+            stu_strcpy(GUI_String_1, a2Food);
+            stu_strcpy(GUI_String_2, a20Gold);
         } break;
         case 13:
         {
             Print_Centered(280, 91, aVolcano);
-            strcpy(GUI_String_1, str_empty_string__094);
+            stu_strcpy(GUI_String_1, str_empty_string__094);
         } break;
 
     }
@@ -820,9 +820,9 @@ void Surveyor_IDK_Print_Terrain_And_Effect(int16_t IDK_type, int16_t IDK_IDK)
     )
     {
 
-        strcpy(GUI_String_1, aCorruption);
+        stu_strcpy(GUI_String_1, aCorruption);
 
-        strcpy(GUI_String_2, str_empty_string__094);
+        stu_strcpy(GUI_String_2, str_empty_string__094);
 
         if(IDK_IDK > 1000)
         {
@@ -840,7 +840,7 @@ void Surveyor_IDK_Print_Terrain_And_Effect(int16_t IDK_type, int16_t IDK_IDK)
     if(IDK_IDK < 300)
     {
 
-        strcpy(GUI_String_1, str_empty_string__094);
+        stu_strcpy(GUI_String_1, str_empty_string__094);
 
 
         var_2 = IDK_IDK;
@@ -858,57 +858,57 @@ void Surveyor_IDK_Print_Terrain_And_Effect(int16_t IDK_type, int16_t IDK_IDK)
             case 1:
             {
                 Print_Centered(280, 114, aIronOre);
-                strcpy(GUI_String_1, aReducesNormalU);
+                stu_strcpy(GUI_String_1, aReducesNormalU);
             } break;
             case 2:
             {
                 Print_Centered(280, 114, aCoal);
-                strcpy(GUI_String_1, aReducesNorma_0);
+                stu_strcpy(GUI_String_1, aReducesNorma_0);
             } break;
             case 3:
             {
                 Print_Centered(280, 114, aSilverOre);
-                strcpy(GUI_String_1, a2Gold);
+                stu_strcpy(GUI_String_1, a2Gold);
             } break;
             case 4:
             {
                 Print_Centered(280, 114, aGoldOre);
-                strcpy(GUI_String_1, a3Gold);
+                stu_strcpy(GUI_String_1, a3Gold);
             } break;
             case 5:
             {
                 Print_Centered(280, 114, aGems);
-                strcpy(GUI_String_1, a5Gold);
+                stu_strcpy(GUI_String_1, a5Gold);
             } break;
             case 6:
             {
                 Print_Centered(280, 114, aMithrilOre);
-                strcpy(GUI_String_1, a1Power);
+                stu_strcpy(GUI_String_1, a1Power);
             } break;
             case 7:
             {
                 Print_Centered(280, 114, aAdamantiumOre);
-                strcpy(GUI_String_1, a2Power);
+                stu_strcpy(GUI_String_1, a2Power);
             } break;
             case 8:
             {
                 Print_Centered(280, 114, aQuorkCrystals);
-                strcpy(GUI_String_1, a3Power);
+                stu_strcpy(GUI_String_1, a3Power);
             } break;
             case 9:
             {
                 Print_Centered(280, 114, aCrysxCrystals);
-                strcpy(GUI_String_1, a5Power);
+                stu_strcpy(GUI_String_1, a5Power);
             } break;
             case 0x40:
             {
                 Print_Centered(280, 114, aWildGame);
-                strcpy(GUI_String_1, a2Food_0);
+                stu_strcpy(GUI_String_1, a2Food_0);
             } break;
             case 0x80:
             {
                 Print_Centered(280, 114, str_Nightshade__ovr094);
-                strcpy(GUI_String_1, aProtectsCityFr);
+                stu_strcpy(GUI_String_1, aProtectsCityFr);
             } break;
             /* Lairs */
             case 100:
@@ -953,9 +953,9 @@ void Surveyor_IDK_Print_Terrain_And_Effect(int16_t IDK_type, int16_t IDK_IDK)
 
         IDK_IDK -= 300;
 
-        strcpy(GUI_String_1, _city_size_names[_CITIES[IDK_IDK].size]);
+        stu_strcpy(GUI_String_1, _city_size_names[_CITIES[IDK_IDK].size]);
 
-        strcat(GUI_String_1, aOf_0);
+        stu_strcat(GUI_String_1, aOf_0);
 
         Print_Centered(280, 114, GUI_String_1);
 
@@ -1005,49 +1005,49 @@ int16_t Surveyor_Lairs(int16_t wx, int16_t wy, int16_t wp)
             {
                 case 0:
                 {
-                    strcpy(survey_near_alloc_1_100, aTower);
+                    stu_strcpy(survey_near_alloc_1_100, aTower);
                 } break;
                 case 4:
                 {
-                    strcpy(survey_near_alloc_1_100, aCave);
+                    stu_strcpy(survey_near_alloc_1_100, aCave);
 
                 } break;
                 case 5:
                 {
-                    strcpy(survey_near_alloc_1_100, aDungeon);
+                    stu_strcpy(survey_near_alloc_1_100, aDungeon);
                 } break;
                 case 6:
                 {
-                    strcpy(survey_near_alloc_1_100, aTemple);
+                    stu_strcpy(survey_near_alloc_1_100, aTemple);
                 } break;
                 case 7:
                 {
-                    strcpy(survey_near_alloc_1_100, aKeep);
+                    stu_strcpy(survey_near_alloc_1_100, aKeep);
                 } break;
                 case 8:
                 {
-                    strcpy(survey_near_alloc_1_100, aLair);
+                    stu_strcpy(survey_near_alloc_1_100, aLair);
                 } break;
                 case 9:
                 {
-                    strcpy(survey_near_alloc_1_100, aRuins);
+                    stu_strcpy(survey_near_alloc_1_100, aRuins);
                 } break;
                 case 10:
                 {
-                    strcpy(survey_near_alloc_1_100, aTemple);
+                    stu_strcpy(survey_near_alloc_1_100, aTemple);
                 } break;
             }
 
-            strcpy(survey_near_alloc_3_50, str_empty_string__094);
+            stu_strcpy(survey_near_alloc_3_50, str_empty_string__094);
 
             if(Test_Bit_Field(1, &_LAIRS[itr_lairs].Misc_Flags) == ST_FALSE)
             {
-                strcpy(survey_near_alloc_2_50, aUnexplored);
+                stu_strcpy(survey_near_alloc_2_50, aUnexplored);
             }
             else
             {
 
-                strcpy(survey_near_alloc_2_50, *_unit_type_table[_LAIRS[itr_lairs].guard1_unit_type].name);
+                stu_strcpy(survey_near_alloc_2_50, *_unit_type_table[_LAIRS[itr_lairs].guard1_unit_type].name);
 
                 if(
                     (Test_Bit_Field(2, &_LAIRS[itr_lairs].Misc_Flags) != ST_FALSE)
@@ -1055,7 +1055,7 @@ int16_t Surveyor_Lairs(int16_t wx, int16_t wy, int16_t wp)
                     ((_LAIRS[itr_lairs].guard2_count & 0x0F) > 0)
                 )
                 {
-                    strcpy(survey_near_alloc_3_50, *_unit_type_table[_LAIRS[itr_lairs].guard2_unit_type].name);
+                    stu_strcpy(survey_near_alloc_3_50, *_unit_type_table[_LAIRS[itr_lairs].guard2_unit_type].name);
                 }
 
             }
@@ -1098,37 +1098,37 @@ int16_t Surveyor_Nodes(int16_t wx, int16_t wy, int16_t wp)
             {
                 case 0:
                 {
-                    strcpy(survey_near_alloc_1_100, aSorceryNode);
+                    stu_strcpy(survey_near_alloc_1_100, aSorceryNode);
                 } break;
                 case 1:
                 {
-                    strcpy(survey_near_alloc_1_100, aNatureNode);
+                    stu_strcpy(survey_near_alloc_1_100, aNatureNode);
                 } break;
                 case 2:
                 {
-                    strcpy(survey_near_alloc_1_100, aChaosNode);
+                    stu_strcpy(survey_near_alloc_1_100, aChaosNode);
                 } break;
                 
             }
 
-            strcpy(survey_near_alloc_2_50, str_empty_string__094);
+            stu_strcpy(survey_near_alloc_2_50, str_empty_string__094);
 
-            strcpy(survey_near_alloc_3_50, str_empty_string__094);
+            stu_strcpy(survey_near_alloc_3_50, str_empty_string__094);
 
             if(_NODES[itr_nodes].owner_idx != ST_UNDEFINED)
             {
 
                 if((_NODES[itr_nodes].flags & NF_WARPED) != 0)
                 {
-                    strcpy(survey_near_alloc_2_50, aWarped);
+                    stu_strcpy(survey_near_alloc_2_50, aWarped);
                 }
                 else if((_NODES[itr_nodes].flags & NF_GUARDIAN) != 0)
                 {
-                    strcpy(survey_near_alloc_2_50, aGuardianSpir_0);
+                    stu_strcpy(survey_near_alloc_2_50, aGuardianSpir_0);
                 }
                 else
                 {
-                    strcpy(survey_near_alloc_2_50, aMagicSpirit_0);
+                    stu_strcpy(survey_near_alloc_2_50, aMagicSpirit_0);
                 }
 
             }
@@ -1153,16 +1153,16 @@ int16_t Surveyor_Nodes(int16_t wx, int16_t wy, int16_t wp)
 
                         var_4 = ST_TRUE;
 
-                        strcpy(survey_near_alloc_3_50, str_empty_string__094);
+                        stu_strcpy(survey_near_alloc_3_50, str_empty_string__094);
 
                         if(Test_Bit_Field(1, &_LAIRS[itr_lairs].Misc_Flags) == ST_FALSE)
                         {
-                            strcpy(survey_near_alloc_2_50, aUnexplored);
+                            stu_strcpy(survey_near_alloc_2_50, aUnexplored);
                         }
                         else
                         {
 
-                            strcpy(survey_near_alloc_2_50, *_unit_type_table[_LAIRS[itr_lairs].guard1_unit_type].name);
+                            stu_strcpy(survey_near_alloc_2_50, *_unit_type_table[_LAIRS[itr_lairs].guard1_unit_type].name);
 
                             if(
                                 (Test_Bit_Field(2, &_LAIRS[itr_lairs].Misc_Flags) != ST_FALSE)
@@ -1170,7 +1170,7 @@ int16_t Surveyor_Nodes(int16_t wx, int16_t wy, int16_t wp)
                                 ((_LAIRS[itr_lairs].guard2_count & 0x0F) > 0)
                             )
                             {
-                                strcpy(survey_near_alloc_3_50, *_unit_type_table[_LAIRS[itr_lairs].guard2_unit_type].name);
+                                stu_strcpy(survey_near_alloc_3_50, *_unit_type_table[_LAIRS[itr_lairs].guard2_unit_type].name);
                             }
 
                         }
@@ -1282,12 +1282,12 @@ Surveyor_Window_Display()
 ...
 st_08:                                  ; case 0x8
     Print_Centered(280, 91, aRiverMouth);
-    strcpy(GUI_String_1, a12Food);
-    strcpy(GUI_String_2, a30Gold);
+    stu_strcpy(GUI_String_1, a12Food);
+    stu_strcpy(GUI_String_2, a30Gold);
 st_12:                                  ; case 0x8
     Print_Centered(280, 91, aRiver);
-    strcpy(GUI_String_1, a2Food);
-    strcpy(GUI_String_2, a20Gold);
+    stu_strcpy(GUI_String_1, a2Food);
+    stu_strcpy(GUI_String_2, a20Gold);
 
 */
 int16_t Surveyor_IDK_RiverMouth(int16_t wx, int16_t wy, int16_t wp)

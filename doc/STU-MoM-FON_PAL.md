@@ -19,7 +19,7 @@ MoM Font Style Number 1 - width = 3, height = 5
 
 
 void Load_Font_File(char * font_file)
-    strcpy(font_name, font_file);
+    stu_strcpy(font_name, font_file);
     font_style_data = LBX_Load(font_file, 0);
     border_style_data = LBX_Load(font_file, 1);
     font_header = (struct s_FONT_HEADER *)font_style_data;

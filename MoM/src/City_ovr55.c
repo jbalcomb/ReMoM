@@ -46,7 +46,7 @@
 #include "CITYSCAP.h"
 
 #include <assert.h>
-#include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
+#include <string.h>     /* memcpy() memset(), stu_strcat(), stu_strcpy(), stricmp() */
 #include <stdlib.h>
 
 #include "../../ext/stu_compat.h"
@@ -322,9 +322,9 @@ void Enemy_City_Screen(void)
                 {
                     Play_Left_Click();
                     Deactivate_Help_List();
-                    strcpy(GUI_String_1, str_TurnOffSpell_1__ovr055);
-                    strcat(GUI_String_1, _city_enchantment_names[city_enchantment_list[(city_enchantment_display_first + itr)]]);
-                    strcat(GUI_String_1, str_TurnOffSpell_2__ovr055);
+                    stu_strcpy(GUI_String_1, str_TurnOffSpell_1__ovr055);
+                    stu_strcat(GUI_String_1, _city_enchantment_names[city_enchantment_list[(city_enchantment_display_first + itr)]]);
+                    stu_strcat(GUI_String_1, str_TurnOffSpell_2__ovr055);
                     if(Confirmation_Box(GUI_String_1) == ST_TRUE)
                     {
                         
@@ -450,10 +450,10 @@ void Enemy_City_Screen_Draw(void)
     Set_Font_Style_Shadow_Down(5, 5, 0, 0);
     Set_Font_Spacing_Width(1);
     Set_Outline_Color(0);
-    strcpy(GUI_String_1, _city_size_names[_CITIES[_city_idx].size]);
-    strcat(GUI_String_1, str_Sp_Of_Sp);
-    strcpy(GUI_String_2, _CITIES[_city_idx].name);
-    strcat(GUI_String_1, GUI_String_2);
+    stu_strcpy(GUI_String_1, _city_size_names[_CITIES[_city_idx].size]);
+    stu_strcat(GUI_String_1, str_Sp_Of_Sp);
+    stu_strcpy(GUI_String_2, _CITIES[_city_idx].name);
+    stu_strcat(GUI_String_1, GUI_String_2);
     Print_Centered((x_start + 106), (y_start + 3), GUI_String_1);
 
     colors[0] = 190;
@@ -627,7 +627,7 @@ void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start
             
             if(cityscape_bldg_fields[itr].field_bldg_idx == bt_Fortress)
             {
-                strcpy(string, _players[owner_idx].name);
+                stu_strcpy(string, _players[owner_idx].name);
                 Possessive(&string[0]);
                 Print_Centered((cityscape_bldg_fields[itr].field_print_sx + 1), (cityscape_bldg_fields[itr].field_print_sy - 4), string);
                 Print_Centered((cityscape_bldg_fields[itr].field_print_sx + 1), (cityscape_bldg_fields[itr].field_print_sy + 3), _magic_building_names[(cityscape_bldg_fields[itr].field_bldg_idx - bt_NUM_BUILDINGS)]);
@@ -2433,11 +2433,11 @@ void Possessive(char * string)
         (string[(string_length - 1)] == 'S')
     )
     {
-        strcat(string, str_Genitive_NoS);
+        stu_strcat(string, str_Genitive_NoS);
     }
     else
     {
-        strcat(string, str_Genitive_S);
+        stu_strcat(string, str_Genitive_S);
     }
 
 }
@@ -2511,7 +2511,7 @@ void Resource_Breakdown__STUB(int16_t resource_id)
 
                 LBX_Load_Data_Static(str_listdat_lbx_file__ovr055, 0, (SAMB_ptr)&GUI_String_1[0], (di + itr), 1, 200);
 
-                strcpy((char *)IDK_CityScr_15x50_tmpbuf[itr], GUI_String_1);
+                stu_strcpy((char *)IDK_CityScr_15x50_tmpbuf[itr], GUI_String_1);
 
             }
 

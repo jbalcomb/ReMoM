@@ -24,7 +24,9 @@
 #include "../../MoX/src/Video.h"
 #include "UNITTYPE.h"   // WTFMATE
 
-#include <string.h>     /* memcpy() memset(), strcat(), strcpy(); */
+#include "../../ext/stu_compat.h"
+
+#include <string.h>     /* memcpy() memset(), stu_strcat(), stu_strcpy(); */
 
 
 
@@ -259,7 +261,7 @@ void Mirror_Screen_Draw(void)
     int16_t wizard_hero_count;  // _SI_
     int16_t IDK_x;  // _DI_
 
-    strcpy(dest, str_SPACE__ovr074);
+    stu_strcpy(dest, str_SPACE__ovr074);
 
 // TODO  mov     [bp+retort_helps], HLP_ALCHEMY_Ret
 // TODO  mov     [bp+retort_helps+2], HLP_WARLORD
@@ -321,11 +323,11 @@ void Mirror_Screen_Draw(void)
 
     Set_Font_Style_Shadow_Down(1, 15, 0, 0);
 
-    strcpy(GUI_String_1, str_Relations);  // "Relations:"
+    stu_strcpy(GUI_String_1, str_Relations);  // "Relations:"
 
-    strcat(GUI_String_1, dest);
+    stu_strcat(GUI_String_1, dest);
 
-    strcat(GUI_String_1, diplo_state[var_14]);
+    stu_strcat(GUI_String_1, diplo_state[var_14]);
 
     Print((mirror_start_x + 59), (mirror_start_y + 25), GUI_String_1);
 
@@ -343,11 +345,11 @@ void Mirror_Screen_Draw(void)
 // TODO  add     ax, 32
 // TODO  mov     [_help_entries.help_14.y2], ax
 
-    strcpy(GUI_String_1, str_Treaties);  // "Treaties:"
+    stu_strcpy(GUI_String_1, str_Treaties);  // "Treaties:"
 
-    strcat(GUI_String_1, dest);
+    stu_strcat(GUI_String_1, dest);
 
-    strcat(GUI_String_1, _treaty_type_names[_players[_human_player_idx].Dipl.Dipl_Status[mirror_screen_player_idx]]);
+    stu_strcat(GUI_String_1, _treaty_type_names[_players[_human_player_idx].Dipl.Dipl_Status[mirror_screen_player_idx]]);
 
     Print((mirror_start_x + 59), (mirror_start_y + 33), GUI_String_1);
 
@@ -377,11 +379,11 @@ void Mirror_Screen_Draw(void)
 // TODO  add     ax, 40
 // TODO  mov     [_help_entries.help_15.y2], ax
 
-    strcpy(GUI_String_1, str_Personality);  // "Personality:"
+    stu_strcpy(GUI_String_1, str_Personality);  // "Personality:"
 
-    strcat(GUI_String_1, dest);
+    stu_strcat(GUI_String_1, dest);
 
-    strcat(GUI_String_1, _personality_type_names[_players[mirror_screen_player_idx].Personality]);
+    stu_strcat(GUI_String_1, _personality_type_names[_players[mirror_screen_player_idx].Personality]);
 
     Print((mirror_start_x + 59), (mirror_start_y + 41), GUI_String_1);
 
@@ -407,11 +409,11 @@ void Mirror_Screen_Draw(void)
 // add     ax, 48
 // mov     [_help_entries.help_16.y2], ax
 
-    strcpy(GUI_String_1, str_Objective);  // "Objective:"
+    stu_strcpy(GUI_String_1, str_Objective);  // "Objective:"
 
-    strcat(GUI_String_1, dest);
+    stu_strcat(GUI_String_1, dest);
 
-    strcat(GUI_String_1, _objective_type_names[_players[mirror_screen_player_idx].Objective]);
+    stu_strcat(GUI_String_1, _objective_type_names[_players[mirror_screen_player_idx].Objective]);
 
     Print((mirror_start_x + 59), (mirror_start_y + 49), GUI_String_1);
 
@@ -478,7 +480,7 @@ void Mirror_Screen_Draw(void)
 // TODO  mov     [_help_entries.help_12.entry_idx], 0FFFFh
 // TODO  mov     [_help_entries.help_13.entry_idx], 0FFFFh
 
-    strcpy(GUI_String_1, str_empty_string__ovr074);
+    stu_strcpy(GUI_String_1, str_empty_string__ovr074);
 
     wizard_special_abilities_count = 0;
 
@@ -503,7 +505,7 @@ void Mirror_Screen_Draw(void)
 
         Set_Font_Spacing_Width(1);
 
-        strcpy(GUI_String_1, str_empty_string__ovr074);
+        stu_strcpy(GUI_String_1, str_empty_string__ovr074);
 
         x = (mirror_start_x + 13);
         IDK_x = x;
@@ -518,21 +520,21 @@ void Mirror_Screen_Draw(void)
 
         for(itr = 0; itr < wizard_special_abilities_count; itr++)
         {
-            strcpy(GUI_String_1, _wizard_abilities_names[wizard_special_abilities_index[itr]]);
+            stu_strcpy(GUI_String_1, _wizard_abilities_names[wizard_special_abilities_index[itr]]);
 
             if((itr + 1) != wizard_special_abilities_count)
             {
                 if((itr + 2) == wizard_special_abilities_count)
                 {
-                    strcat(GUI_String_1, dest);
-                    strcat(GUI_String_1, mirror_screen_abilities_list_and);
+                    stu_strcat(GUI_String_1, dest);
+                    stu_strcat(GUI_String_1, mirror_screen_abilities_list_and);
                 }
                 else
                 {
-                    strcat(GUI_String_1, mirror_screen_abilities_list_comma);
+                    stu_strcat(GUI_String_1, mirror_screen_abilities_list_comma);
                 }
 
-                strcat(GUI_String_1, dest);
+                stu_strcat(GUI_String_1, dest);
             }
 
             string_width = Get_String_Width(GUI_String_1);
@@ -590,7 +592,7 @@ void Mirror_Screen_Draw(void)
 
             IDK_x += (string_width + 1);
 
-            strcpy(GUI_String_1, str_empty_string__ovr074);
+            stu_strcpy(GUI_String_1, str_empty_string__ovr074);
 
         }
 
@@ -618,15 +620,15 @@ void Mirror_Screen_Draw(void)
         )
         {
 
-            strcpy(GUI_String_1, _players[mirror_screen_player_idx].Heroes[itr].name);
+            stu_strcpy(GUI_String_1, _players[mirror_screen_player_idx].Heroes[itr].name);
 
-            strcat(GUI_String_1, dest);
+            stu_strcat(GUI_String_1, dest);
 
-            strcat(GUI_String_1, str_The);
+            stu_strcat(GUI_String_1, str_The);
 
-            strcat(GUI_String_1, dest);
+            stu_strcat(GUI_String_1, dest);
 
-            strcat(GUI_String_1, *_unit_type_table[_UNITS[hero_unit_idx].type].name);
+            stu_strcat(GUI_String_1, *_unit_type_table[_UNITS[hero_unit_idx].type].name);
 
             Print((mirror_start_x + 13), (mirror_start_y + 142 + (wizard_hero_count * 8)), GUI_String_1);
 

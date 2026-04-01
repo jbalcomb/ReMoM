@@ -14,7 +14,7 @@
 #include "MOX_TYPE.h"
 #include "TEXTBOX.h"
 
-#include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
+#include <string.h>     /* memcpy() memset(), stu_strcat(), stu_strcpy(), stricmp() */
 
 
 

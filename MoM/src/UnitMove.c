@@ -38,7 +38,7 @@ Elsewhere, ...
 #include "Terrain.h"
 #include "MovePath.h"
 
-#include <string.h>     /* memcpy() memset(), strcat(), strcpy(); */
+#include <string.h>     /* memcpy() memset(), stu_strcat(), stu_strcpy(); */
 
 
 

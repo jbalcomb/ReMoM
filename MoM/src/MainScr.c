@@ -1237,9 +1237,9 @@ void Main_Screen(void)
             {
                 turns_til_return = _players[HUMAN_PLAYER_IDX].casting_cost_remaining / _players[HUMAN_PLAYER_IDX].Nominal_Skill;
                 stu_itoa(turns_til_return, temp_string, 10);
-                strcpy(GUI_NearMsgString, aYouMayNotThrowAnySp);  // "You may not throw any spells while you are banished.  There are at least "
-                strcat(GUI_NearMsgString, temp_string);
-                strcat(GUI_NearMsgString, aTurnsRemainingUntil);  // " turns remaining until you may return."
+                stu_strcpy(GUI_NearMsgString, aYouMayNotThrowAnySp);  // "You may not throw any spells while you are banished.  There are at least "
+                stu_strcat(GUI_NearMsgString, temp_string);
+                stu_strcat(GUI_NearMsgString, aTurnsRemainingUntil);  // " turns remaining until you may return."
                 Warn0(GUI_NearMsgString);
                 Assign_Auto_Function(Main_Screen_Draw, 1);
             }
@@ -6822,17 +6822,17 @@ void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t moves2, int16_
         moves = moves2 / 2;
     }
     
-    strcpy(string, "");  // WZD dseg:569A cnst_Nullstring[] = {'\0'}
+    stu_strcpy(string, "");  // WZD dseg:569A cnst_Nullstring[] = {'\0'}
 
     if(moves > 0)
     {
         stu_itoa(moves, buffer, 10);
-        strcat(string, buffer);
+        stu_strcat(string, buffer);
     }
 
     if((moves2 % 2) != 0)
     {
-        strcat(string, ".5");  // WZD dseg:56C9 cnst_Half_2[] = ".5"
+        stu_strcat(string, ".5");  // WZD dseg:56C9 cnst_Half_2[] = ".5"
     }
 
     if(right_align_flag == ST_FALSE)

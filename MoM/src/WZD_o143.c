@@ -259,9 +259,9 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
         for(itr_cities = 0; itr_cities < _cities; itr_cities++)
         {
 
-            strcpy(Local_Name_String, _CITIES[itr_cities].name);
+            stu_strcpy(Local_Name_String, _CITIES[itr_cities].name);
 
-            strcpy(hack_new_name, _CITIES[itr_cities].name);
+            stu_strcpy(hack_new_name, _CITIES[itr_cities].name);
 
             // if(stricmp(Local_Name_String, city_names_buffer[(city_name_idx * 14)]) != 0)
             city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
@@ -286,9 +286,9 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
 
     }
     
-    // strcpy(name, city_names_buffer[(city_name_idx * 14)]);
+    // stu_strcpy(name, city_names_buffer[(city_name_idx * 14)]);
     city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
-    strcpy(name, city_names_buffer_ptr);
+    stu_strcpy(name, city_names_buffer_ptr);
     
 }
 

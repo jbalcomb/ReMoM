@@ -470,8 +470,8 @@ void CityList_Screen_Draw(void)
 
     // BEGIN: Print Title
 
-    strcpy(GUI_String_1, aTheCitiesOf);
-    strcat(GUI_String_1, _players[_human_player_idx].name);
+    stu_strcpy(GUI_String_1, aTheCitiesOf);
+    stu_strcat(GUI_String_1, _players[_human_player_idx].name);
     for(itr_colors = 0; itr_colors < 5; itr_colors++)
     {
         colors1[itr_colors] = 237;
@@ -520,11 +520,11 @@ void CityList_Screen_Draw(void)
     Print(272, 17, aTime);        /* "Time"      */
 
     stu_itoa(_players[_human_player_idx].gold_reserve, GUI_String_1, 10);
-    strcat(GUI_String_1, cnst_GP_2);
+    stu_strcat(GUI_String_1, cnst_GP_2);
     Print_Centered(242, 172, GUI_String_1);
 
     stu_itoa(_players[_human_player_idx].mana_reserve, GUI_String_1, 10);
-    strcat(GUI_String_1, cnst_MP_2);
+    stu_strcat(GUI_String_1, cnst_MP_2);
     Print_Centered(276, 172, GUI_String_1);
 
 
@@ -570,12 +570,12 @@ void CityList_Screen_Draw(void)
         if(city_construction < 100)  /* building */
         {
             // TODO  _fstrcpy()
-            strcpy(GUI_String_1, bldg_data_table[city_construction].name);
+            stu_strcpy(GUI_String_1, bldg_data_table[city_construction].name);
         }
         else  /* unit */
         {
             unit_type = (city_construction - 100);
-            strcpy(GUI_String_1, *_unit_type_table[unit_type].name);
+            stu_strcpy(GUI_String_1, *_unit_type_table[unit_type].name);
         }
         Print(196, (27 + 14 * itr_list_item_count), GUI_String_1);
 
@@ -598,7 +598,7 @@ void CityList_Screen_Draw(void)
         Set_Font_Colors_15(1, &colors1[0]);
         Set_Font_Style_Shadow_Down(1, 15, 0, 0);
         // TODO  _fstrcpy()
-        strcpy(GUI_String_1, _CITIES[city_idx].name);
+        stu_strcpy(GUI_String_1, _CITIES[city_idx].name);
         String_To_Upper(GUI_String_1);
         Print(99, 158, GUI_String_1);
 

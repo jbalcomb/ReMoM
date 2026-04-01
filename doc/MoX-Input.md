@@ -279,7 +279,7 @@ p_fields[field_num].type == ft_ContinuousStringInput  &&  input_field_active != 
     p_fields[field_num].type == ft_ContinuousStringInput  &&  input_field_active == ST_FALSE
     p_fields[field_num].type == ft_ContinuousStringInput  &&  input_field_active != ST_FALSE  &&  field_num != active_input_field_number
     {
-        strcpy(continuous_string, p_fields[field_num].Param0)
+        stu_strcpy(continuous_string, p_fields[field_num].Param0)
         GUI_EditAnimStage = 0
         GUI_EditCursorOn = 0
         input_field_active = ST_TRUE

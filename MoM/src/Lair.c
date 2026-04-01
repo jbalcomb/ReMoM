@@ -503,15 +503,15 @@ int16_t Do_Lair_Confirm(int16_t lair_idx)
 
     UU_temp_string = (char *)Near_Allocate_Next(100);
 
-    strcpy(lair_message_box_text, cnst_EZ_Msg_1);  // "You have found"
+    stu_strcpy(lair_message_box_text, cnst_EZ_Msg_1);  // "You have found"
 
-    strcat(lair_message_box_text, TBL_EZ_Indefinites[lair_type]);
+    stu_strcat(lair_message_box_text, TBL_EZ_Indefinites[lair_type]);
 
-    strcat(lair_message_box_text, cnst_EZ_Msg_2);  // " "
+    stu_strcat(lair_message_box_text, cnst_EZ_Msg_2);  // " "
 
-    strcat(lair_message_box_text, TBL_EZ_Names[lair_type]);
+    stu_strcat(lair_message_box_text, TBL_EZ_Names[lair_type]);
 
-    strcat(lair_message_box_text, cnst_Dot6);  // "."
+    stu_strcat(lair_message_box_text, cnst_Dot6);  // "."
 
 
     lair_has_guardians = ST_FALSE;
@@ -520,21 +520,21 @@ int16_t Do_Lair_Confirm(int16_t lair_idx)
     {
         lair_has_guardians = ST_TRUE;
 
-        strcat(lair_message_box_text, cnst_EZ_Msg_3);  // "  Scouts have spotted "
+        stu_strcat(lair_message_box_text, cnst_EZ_Msg_3);  // "  Scouts have spotted "
 
         if(_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].Figures == 1)
         {
-            strcat(lair_message_box_text, An(*_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].name));
-            strcat(lair_message_box_text, cnst_EZ_Msg_2);
+            stu_strcat(lair_message_box_text, An(*_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].name));
+            stu_strcat(lair_message_box_text, cnst_EZ_Msg_2);
         }
 
-        strcat(lair_message_box_text, *_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].name);
+        stu_strcat(lair_message_box_text, *_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].name);
 
-        strcat(lair_message_box_text, cnst_EZ_Msg_4);  // " within the "
+        stu_strcat(lair_message_box_text, cnst_EZ_Msg_4);  // " within the "
 
-        strcat(lair_message_box_text, TBL_EZ_Names[lair_type]);
+        stu_strcat(lair_message_box_text, TBL_EZ_Names[lair_type]);
 
-        strcat(lair_message_box_text, cnst_EZ_Msg_5);  // ".  Do you wish to enter?"
+        stu_strcat(lair_message_box_text, cnst_EZ_Msg_5);  // ".  Do you wish to enter?"
 
     }
 
@@ -598,12 +598,12 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
     // RELOAD.LBX, 20  020  TREASUR2������������������������
     lair_treasure_notify_pict_seg = LBX_Reload(reload_lbx_file__ovr083, 20, _screen_seg);
 
-    strcpy(lair_message_box_text, cnst_Reward_Msg_1);  // "Inside you find "
+    stu_strcpy(lair_message_box_text, cnst_Reward_Msg_1);  // "Inside you find "
 
     // BUG:  ¿ should be if nothing else something ?
     if(Total_Rewards < 1)
     {
-        strcat(lair_message_box_text, cnst_Reward_Msg_2);  // "absolutely nothing"
+        stu_strcat(lair_message_box_text, cnst_Reward_Msg_2);  // "absolutely nothing"
     }
 
     List_Count = 0;
@@ -613,8 +613,8 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
     {
         Add_Comma_Or_And(&List_Count, Total_Rewards, lair_message_box_text);
         stu_itoa(_LAIRS[lair_idx].Loot_Gold, temp_string, 10);
-        strcat(lair_message_box_text, temp_string);
-        strcat(lair_message_box_text, cnst_Reward_Msg_3);  // " gold"
+        stu_strcat(lair_message_box_text, temp_string);
+        stu_strcat(lair_message_box_text, cnst_Reward_Msg_3);  // " gold"
     }
 
     // ¿ ; BUG: ignores 1 ?
@@ -622,24 +622,24 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
     {
         Add_Comma_Or_And(&List_Count, Total_Rewards, lair_message_box_text);
         stu_itoa(_LAIRS[lair_idx].Loot_Mana, temp_string, 10);
-        strcat(lair_message_box_text, temp_string);
-        strcat(lair_message_box_text, cnst_Reward_Msg_4);  // " mana crystals"
+        stu_strcat(lair_message_box_text, temp_string);
+        stu_strcat(lair_message_box_text, cnst_Reward_Msg_4);  // " mana crystals"
     }
 
     if(hero_slot != -1)
     {
         Add_Comma_Or_And(&List_Count, Total_Rewards, lair_message_box_text);
-        strcat(lair_message_box_text, cnst_Reward_Msg_5);  // "a prisoner"
+        stu_strcat(lair_message_box_text, cnst_Reward_Msg_5);  // "a prisoner"
     }
 
     if(spell > -1)
     {
         Add_Comma_Or_And(&List_Count, Total_Rewards, lair_message_box_text);
-        strcpy(Spell_Name, spell_data_table[spell].name);
-        strcat(lair_message_box_text, An(Spell_Name));
-        strcat(lair_message_box_text, cnst_EZ_Msg_2);  // " "
-        strcat(lair_message_box_text, Spell_Name);
-        strcat(lair_message_box_text, cnst_Reward_Msg_6);  // " spell"
+        stu_strcpy(Spell_Name, spell_data_table[spell].name);
+        stu_strcat(lair_message_box_text, An(Spell_Name));
+        stu_strcat(lair_message_box_text, cnst_EZ_Msg_2);  // " "
+        stu_strcat(lair_message_box_text, Spell_Name);
+        stu_strcat(lair_message_box_text, cnst_Reward_Msg_6);  // " spell"
     }
 
     if(Reward_Special_Count > 0)
@@ -663,28 +663,28 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
             if(Reward_Specials[itr] < 100)
             {
                 stu_itoa(amount[itr], temp_string, 10);
-                strcat(lair_message_box_text, temp_string);
-                strcat(lair_message_box_text, cnst_EZ_Msg_2);
+                stu_strcat(lair_message_box_text, temp_string);
+                stu_strcat(lair_message_box_text, cnst_EZ_Msg_2);
                 /*
                             Severity	Code	Description	Project	File	Line	Suppression State
                     TODO    Warning	C6385	Reading invalid data from 'rtn16':  the readable size is '40' bytes, but 'Reward_Specials[itr]' bytes may be read.	ReMoM	C:\STU\devel\ReMoM\src\Lair.C	634	
                 */
-                strcat(lair_message_box_text, rtn16[Reward_Specials[itr]]);
-                strcat(lair_message_box_text, cnst_Reward_Msg_7);  // " spell book"
+                stu_strcat(lair_message_box_text, rtn16[Reward_Specials[itr]]);
+                stu_strcat(lair_message_box_text, cnst_Reward_Msg_7);  // " spell book"
                 if(amount[itr] > 1)
                 {
-                    strcat(lair_message_box_text, cnst_Reward_Msg_9);
+                    stu_strcat(lair_message_box_text, cnst_Reward_Msg_9);
                 }
             }
             else
             {
-                strcat(lair_message_box_text, cnst_Reward_Msg_8);  // "a retort of "
+                stu_strcat(lair_message_box_text, cnst_Reward_Msg_8);  // "a retort of "
                 // push    _wizard_abilities_names[bx-(2*64h)]
                 /*
                             Severity	Code	Description	Project	File	Line	Suppression State
                     TODO    Warning	C6385	Reading invalid data from '_wizard_abilities_names':  the readable size is '144' bytes, but 'Reward_Specials[itr]' bytes may be read.	ReMoM	C:\STU\devel\ReMoM\src\Lair.C	645
                 */
-                strcat(lair_message_box_text, _wizard_abilities_names[Reward_Specials[itr]]);
+                stu_strcat(lair_message_box_text, _wizard_abilities_names[Reward_Specials[itr]]);
             }
         }
     }
@@ -701,7 +701,7 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
         for(itr = 0; itr < lair_item_count; itr++)
         {
             amount[itr] = 1;
-            strcpy(Item_Type_Names[itr], Get_Item_Type_Name(item_list[itr]));
+            stu_strcpy(Item_Type_Names[itr], Get_Item_Type_Name(item_list[itr]));
         }
 
         for(itr = 0; itr < lair_item_count; itr++)
@@ -712,24 +712,24 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
                 if(amount[itr] > 1)
                 {
                     stu_itoa(amount[itr], temp_string, 10);
-                    strcat(lair_message_box_text, temp_string);
-                    strcat(lair_message_box_text, cnst_EZ_Msg_2);  // " "
-                    strcat(lair_message_box_text, Item_Type_Names[itr]);
-                    strcat(lair_message_box_text, cnst_Reward_Msg_9);
+                    stu_strcat(lair_message_box_text, temp_string);
+                    stu_strcat(lair_message_box_text, cnst_EZ_Msg_2);  // " "
+                    stu_strcat(lair_message_box_text, Item_Type_Names[itr]);
+                    stu_strcat(lair_message_box_text, cnst_Reward_Msg_9);
                 }
                 else
                 {
-                    strcpy(temp_string, Item_Type_Names[itr]);
-                    strcat(lair_message_box_text, An(temp_string));
-                    strcat(lair_message_box_text, cnst_EZ_Msg_2);  // " "
-                    strcat(lair_message_box_text, temp_string);
+                    stu_strcpy(temp_string, Item_Type_Names[itr]);
+                    stu_strcat(lair_message_box_text, An(temp_string));
+                    stu_strcat(lair_message_box_text, cnst_EZ_Msg_2);  // " "
+                    stu_strcat(lair_message_box_text, temp_string);
                 }
             }
         }
     }
 
 
-    strcat(lair_message_box_text, cnst_Dot6);
+    stu_strcat(lair_message_box_text, cnst_Dot6);
 
     Notify1(190, window_y, 3, lair_message_box_text, 0, lair_treasure_notify_pict_seg, 2, 8, 0, 0, 0, 2, 0); 
 
@@ -754,14 +754,14 @@ void Add_Comma_Or_And(int16_t * size, int16_t count, char * list)
     {
         if(*size > 1)
         {
-            strcat(list, " and ");
+            stu_strcat(list, " and ");
         }
     }
     else
     {
         if(*size > 1)
         {
-            strcat(list, ", ");
+            stu_strcat(list, ", ");
         }
     }
 

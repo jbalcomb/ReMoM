@@ -10,6 +10,9 @@ https://olegkutkov.me/2019/03/25/simple-logger-with-stdout-files-and-syslog-supp
 // // C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\ucrt\corecrt_wstdio.h
 // // C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h
 // #endif
+
+#include "../../ext/stu_compat.h"
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -162,7 +165,7 @@ FILE * Trace_Log_File = NULL;
 void Debug_Log_Startup(void)
 {
 // ==33072==ERROR: AddressSanitizer: attempting free on address which was not malloc()-ed: 0x02c500158f90 in thread T0
-    Debug_Log_File = fopen(Debug_Log_FileName, "w");
+    Debug_Log_File = stu_fopen(Debug_Log_FileName, "w");
     if(Debug_Log_File == NULL)
     {
         printf("DEBUG [FATAL]: Unable to open log file: %s", Debug_Log_FileName);
@@ -180,12 +183,12 @@ void Debug_Log_Shutdown(void)
     get_datetime(&Log_ISO8601_DateTime[0]);
     fprintf(Debug_Log_File, "[%s] DEBUG: %s\n", Log_ISO8601_DateTime, "END: Debug Log");
     fflush(Debug_Log_File);
-    fclose(Debug_Log_File);
+    stu_fclose(Debug_Log_File);
 }
 
 void Trace_Log_Startup(void)
 {
-    Trace_Log_File = fopen(Trace_Log_FileName, "w");
+    Trace_Log_File = stu_fopen(Trace_Log_FileName, "w");
     if(Trace_Log_File == NULL)
     {
         printf("TRACE [FATAL]: Unable to open log file: %s", Trace_Log_FileName);
@@ -203,7 +206,7 @@ void Trace_Log_Shutdown(void)
     get_datetime(&Log_ISO8601_DateTime[0]);
     fprintf(Trace_Log_File, "[%s] TRACE: %s\n", Log_ISO8601_DateTime, "END: Trace Log");
     fflush(Trace_Log_File);
-    fclose(Trace_Log_File);
+    stu_fclose(Trace_Log_File);
 }
 
 // "dbg" as in "debug"; "prn" as in "print"/"printf";

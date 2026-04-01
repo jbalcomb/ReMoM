@@ -6,7 +6,7 @@
         ovr142
 */
 
-#include "CITYCALC.h"
+#include "../../STU/src/STU_DBG.h"
 
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
@@ -27,14 +27,14 @@
 #include "Terrain.h"
 #include "UNITTYPE.h"   // WTFMATE
 
-// #ifdef STU_DEBUG
-#include "../../STU/src/STU_DBG.h"
-// #endif
+#include "../../ext/stu_compat.h"
 
 #include <assert.h>
 #include <math.h>       /* sqrt() */
 #include <stdlib.h>     /* abs(); stu_itoa(); malloc(); */
-#include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
+#include <string.h>     /* memcpy() memset(), stu_strcat(), stu_strcpy(), stricmp() */
+
+#include "CITYCALC.h"
 
 
 
@@ -751,7 +751,7 @@ void Kill_Unit(int16_t unit_idx, int16_t kill_type)
 
                 hero_names_table[_UNITS[unit_idx].type].experience_points = _UNITS[unit_idx].XP;
 
-                strcpy(hero_names_table[_UNITS[unit_idx].type].name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].name);
+                stu_strcpy(hero_names_table[_UNITS[unit_idx].type].name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].name);
 
             }
 
@@ -780,7 +780,7 @@ void Kill_Unit(int16_t unit_idx, int16_t kill_type)
 
                     hero_names_table[_UNITS[unit_idx].type].experience_points = _UNITS[unit_idx].XP;
 
-                    strcpy(hero_names_table[_UNITS[unit_idx].type].name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].name);
+                    stu_strcpy(hero_names_table[_UNITS[unit_idx].type].name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].name);
 
                 }
 

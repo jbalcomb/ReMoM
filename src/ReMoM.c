@@ -608,14 +608,14 @@ int MOM_main(int argc, char** argv)
         if(magic_set.Have_Save[itr_savegams] != ST_FALSE)
         {
             stu_itoa(itr_savegams, found_file, 10);
-            strcpy(file_name, str_SAVE_NAME);
-            strcat(file_name, found_file);
-            strcat(file_name, str_SAVE_EXT);
+            stu_strcpy(file_name, str_SAVE_NAME);
+            stu_strcat(file_name, found_file);
+            stu_strcat(file_name, str_SAVE_EXT);
             DIR(file_name, found_file);
             if(found_file[0] == '\0')
             {
                 magic_set.Have_Save[(itr_savegams - 1)] = ST_FALSE;
-                strcpy(magic_set.Save_Names[(itr_savegams - 1)], empty_string__MAIN);
+                stu_strcpy(magic_set.Save_Names[(itr_savegams - 1)], empty_string__MAIN);
                 file_handle = stu_fopen_ci(str_MAGIC_SET, str_WB);
                 fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_handle);
                 fclose(file_handle);

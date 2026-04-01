@@ -13,7 +13,7 @@
 #include <math.h>       /* sqrt() */
 #include <stdio.h>      /* FILE; fclose(), fread(), fseek(); */
 #include <stdlib.h>     /* abs(); stu_itoa(); */
-#include <string.h>     /* memset(), strcat(), strcpy(); */
+#include <string.h>     /* memset(), stu_strcat(), stu_strcpy(); */
 
 
 

@@ -225,9 +225,9 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
             DBG_lbxload_fptr = 0;
         }
 
-        strcpy(lbxload_file_name, lbx_name);
-        strcpy(lbx_file_name, lbx_name);
-        strcat(lbx_file_name, ".LBX");
+        stu_strcpy(lbxload_file_name, lbx_name);
+        stu_strcpy(lbx_file_name, lbx_name);
+        stu_strcat(lbx_file_name, ".LBX");
 
         /* CLAUDE */ lbxload_fptr = stu_fopen_ci(lbx_file_name, "rb");
 
@@ -240,8 +240,8 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
             // }
             // else
             // {
-            //     strcpy(full_file_path, secondary_drive_path);
-            //     strcat(full_file_path, lbx_file_name);
+            //     stu_strcpy(full_file_path, secondary_drive_path);
+            //     stu_strcat(full_file_path, lbx_file_name);
             //     lbxload_fptr = stu_fopen_ci(full_file_path, "rb");
             //     if(NULL == lbxload_fptr)
             //     {
@@ -437,9 +437,9 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
             DBG_lbxload_fptr = 0;
         }
 
-        strcpy(lbxload_file_name, lbx_name);
-        strcpy(lbx_file_name, lbx_name);
-        strcat(lbx_file_name, ".LBX");
+        stu_strcpy(lbxload_file_name, lbx_name);
+        stu_strcpy(lbx_file_name, lbx_name);
+        stu_strcat(lbx_file_name, ".LBX");
 
         /* CLAUDE */ lbxload_fptr = stu_fopen_ci(lbx_file_name, "rb");
 
@@ -452,8 +452,8 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
             // }
             // else
             // {
-            //     strcpy(full_file_path, secondary_drive_path);
-            //     strcat(full_file_path, lbx_file_name);
+            //     stu_strcpy(full_file_path, secondary_drive_path);
+            //     stu_strcat(full_file_path, lbx_file_name);
             //     lbxload_fptr = stu_fopen_ci(full_file_path, "rb");
             //     if(NULL == lbxload_fptr)
             //     {
@@ -701,9 +701,9 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
             DBG_lbxload_fptr = 0;
         }
 
-        strcpy(lbxload_file_name, lbx_name);
-        strcpy(lbx_file_name, lbx_name);
-        strcat(lbx_file_name, ".LBX");
+        stu_strcpy(lbxload_file_name, lbx_name);
+        stu_strcpy(lbx_file_name, lbx_name);
+        stu_strcat(lbx_file_name, ".LBX");
 
         /* CLAUDE */ lbxload_fptr = stu_fopen_ci(lbx_file_name, "rb");
 
@@ -715,8 +715,8 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
             }
             else
             {
-                strcpy(full_file_path, secondary_drive_path);
-                strcat(full_file_path, lbx_file_name);
+                stu_strcpy(full_file_path, secondary_drive_path);
+                stu_strcat(full_file_path, lbx_file_name);
                 /* CLAUDE */ lbxload_fptr = stu_fopen_ci(full_file_path, "rb");
                 if(NULL == lbxload_fptr)
                 {
@@ -878,7 +878,7 @@ NIU
 // static void Set_Alternate_Path(char * alternate)
 static void Set_Alternate_Path(char * alternate)
 {
-    strcpy(secondary_drive_path, alternate);
+    stu_strcpy(secondary_drive_path, alternate);
 }
 
 // WZD s10p15
@@ -887,74 +887,74 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
     char buffer[120];
     char buffer2[20];
 
-    strcpy(buffer, file_name);
+    stu_strcpy(buffer, file_name);
 #pragma warning(suppress : 4996)
     stu_itoa(entry_num, buffer2, 10);
-    strcat(buffer, str_error_handler[0]);
-    strcat(buffer, buffer2);
-    strcat(buffer, str_error_handler[1]);
+    stu_strcat(buffer, str_error_handler[0]);
+    stu_strcat(buffer, buffer2);
+    stu_strcat(buffer, str_error_handler[1]);
 
     switch (error_num)
     {
         case le_not_found:
-            strcat(buffer, str_error_handler[2]);
+            stu_strcat(buffer, str_error_handler[2]);
             break;
         case le_corrupted:
-            strcat(buffer, str_error_handler[3]);
+            stu_strcat(buffer, str_error_handler[3]);
             break;
         case le_low_RAM:
-            strcpy(buffer, str_error_handler[4]);
+            stu_strcpy(buffer, str_error_handler[4]);
             
 #pragma warning(suppress : 4996)
             stu_itoa(640, buffer2, 10);
-            strcat(buffer, buffer2);
-            strcat(buffer, str_error_handler[5]);
+            stu_strcat(buffer, buffer2);
+            stu_strcat(buffer, str_error_handler[5]);
             break;
         case le_alloc_fail:
-            strcat(buffer, str_error_handler[6]);
+            stu_strcat(buffer, str_error_handler[6]);
             break;
         case le_reload_fail:
-            strcat(buffer, str_error_handler[7]);
+            stu_strcat(buffer, str_error_handler[7]);
 #pragma warning(suppress : 4996)
             stu_itoa(pages, buffer2, 10);
-            strcat(buffer, buffer2);
-            strcat(buffer, str_error_handler[8]);
+            stu_strcat(buffer, buffer2);
+            stu_strcat(buffer, str_error_handler[8]);
             break;
         case 6:
             break;
         case 7:
-            strcat(buffer, str_error_handler[9]);
+            stu_strcat(buffer, str_error_handler[9]);
             break;
         case 8:
-            strcat(buffer, str_error_handler[10]);
+            stu_strcat(buffer, str_error_handler[10]);
             break;
         case 9:
-            strcat(buffer, str_error_handler[11]);
+            stu_strcat(buffer, str_error_handler[11]);
             break;
         case 10:
-            strcat(buffer, str_error_handler[13]);
+            stu_strcat(buffer, str_error_handler[13]);
             break;
         case 11:
-            strcpy(buffer, file_name);
-            strcat(buffer, ".LBX");
-            strcat(buffer, str_error_handler[14]);
+            stu_strcpy(buffer, file_name);
+            stu_strcat(buffer, ".LBX");
+            stu_strcat(buffer, str_error_handler[14]);
             break;
         case 12:
-            strcat(buffer, str_error_handler[15]);
+            stu_strcat(buffer, str_error_handler[15]);
             break;
         case 13:
-            strcat(buffer, str_error_handler[16]);
+            stu_strcat(buffer, str_error_handler[16]);
             break;
         case 14:
-            strcat(buffer, str_error_handler[14]);
-            strcat(buffer, str_error_handler[16]);
+            stu_strcat(buffer, str_error_handler[14]);
+            stu_strcat(buffer, str_error_handler[16]);
         case 15:
-            strcat(buffer, str_error_handler[17]);
-            strcat(buffer, str_error_handler[14]);
-            strcat(buffer, str_error_handler[16]);
+            stu_strcat(buffer, str_error_handler[17]);
+            stu_strcat(buffer, str_error_handler[14]);
+            stu_strcat(buffer, str_error_handler[16]);
             break;
         case 16:
-            strcat(buffer, str_error_handler[18]);
+            stu_strcat(buffer, str_error_handler[18]);
             break;
     }
 

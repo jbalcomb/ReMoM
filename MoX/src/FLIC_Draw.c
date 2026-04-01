@@ -1792,7 +1792,7 @@ void Open_File_Animation__HACK(char * file_name, int16_t entry_num)
 // void Open_File_Animation__STUB(char * file_name, int16_t entry_num)
 // {
 // 
-//     strcpy(file_animation_file_name, file_name);
+//     stu_strcpy(file_animation_file_name, file_name);
 // 
 //     file_animation_entry_num = entry_num;
 // 

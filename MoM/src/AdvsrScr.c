@@ -294,132 +294,132 @@ void Advisor_Screen(int16_t advisor_idx)
 
     int16_t itr = 0;
 
-    strcpy(fkey_string, cnst_Info_Msg_0); // " (F"
+    stu_strcpy(fkey_string, cnst_Info_Msg_0); // " (F"
 
     if(advisor_idx == ST_UNDEFINED)
     {
-        strcpy(str0_Surveyor, cnst_Info_Msg_1);  // "Surveyor"
-        // strcat(str0_Surveyor, text_0x1D);
-        strcat(str0_Surveyor, "\t");
-        strcat(str0_Surveyor, fkey_string);
-        strcat(str0_Surveyor, cnst_Info_Msg_1_2);
+        stu_strcpy(str0_Surveyor, cnst_Info_Msg_1);  // "Surveyor"
+        // stu_strcat(str0_Surveyor, text_0x1D);
+        stu_strcat(str0_Surveyor, "\t");
+        stu_strcat(str0_Surveyor, fkey_string);
+        stu_strcat(str0_Surveyor, cnst_Info_Msg_1_2);
 
-        strcpy(str1_Cartographer, cnst_Info_Msg_2);  // "Cartographer"
-        // strcat(str1_Cartographer, text_0x1D);
-        strcat(str1_Cartographer, "\t");
-        strcat(str1_Cartographer, fkey_string);
-        strcat(str1_Cartographer, cnst_Info_Msg_2_2);
+        stu_strcpy(str1_Cartographer, cnst_Info_Msg_2);  // "Cartographer"
+        // stu_strcat(str1_Cartographer, text_0x1D);
+        stu_strcat(str1_Cartographer, "\t");
+        stu_strcat(str1_Cartographer, fkey_string);
+        stu_strcat(str1_Cartographer, cnst_Info_Msg_2_2);
 
-        strcpy(str2_Apprentice, cnst_Info_Msg_3);  // "Apprentice"
-        // strcat(str2_Apprentice, text_0x1D);
-        strcat(str2_Apprentice, "\t");
-        strcat(str2_Apprentice, fkey_string);
-        strcat(str2_Apprentice, cnst_Info_Msg_3_2);
+        stu_strcpy(str2_Apprentice, cnst_Info_Msg_3);  // "Apprentice"
+        // stu_strcat(str2_Apprentice, text_0x1D);
+        stu_strcat(str2_Apprentice, "\t");
+        stu_strcat(str2_Apprentice, fkey_string);
+        stu_strcat(str2_Apprentice, cnst_Info_Msg_3_2);
 
-        strcpy(str3_Historian, cnst_Info_Msg_4);  // "Historian"
-        // strcat(str3_Historian, text_0x1D);
-        strcat(str3_Historian, "\t");
-        strcat(str3_Historian, fkey_string);
-        strcat(str3_Historian, cnst_Info_Msg_4_2);
+        stu_strcpy(str3_Historian, cnst_Info_Msg_4);  // "Historian"
+        // stu_strcat(str3_Historian, text_0x1D);
+        stu_strcat(str3_Historian, "\t");
+        stu_strcat(str3_Historian, fkey_string);
+        stu_strcat(str3_Historian, cnst_Info_Msg_4_2);
 
-        strcpy(str4_Astrologer, cnst_Info_Msg_5);  // "Astrologer"
-        // strcat(str4_Astrologer, text_0x1D);
-        strcat(str4_Astrologer, "\t");
-        strcat(str4_Astrologer, fkey_string);
-        strcat(str4_Astrologer, cnst_Info_Msg_5_2);
+        stu_strcpy(str4_Astrologer, cnst_Info_Msg_5);  // "Astrologer"
+        // stu_strcat(str4_Astrologer, text_0x1D);
+        stu_strcat(str4_Astrologer, "\t");
+        stu_strcat(str4_Astrologer, fkey_string);
+        stu_strcat(str4_Astrologer, cnst_Info_Msg_5_2);
 
-        strcpy(str5_Chancellor, cnst_Info_Msg_6);  // "Chancellor"
-        // strcat(str5_Chancellor, text_0x1D);
-        strcat(str5_Chancellor, "\t");
-        strcat(str5_Chancellor, fkey_string);
-        strcat(str5_Chancellor, cnst_Info_Msg_6_2);
+        stu_strcpy(str5_Chancellor, cnst_Info_Msg_6);  // "Chancellor"
+        // stu_strcat(str5_Chancellor, text_0x1D);
+        stu_strcat(str5_Chancellor, "\t");
+        stu_strcat(str5_Chancellor, fkey_string);
+        stu_strcat(str5_Chancellor, cnst_Info_Msg_6_2);
 
-        strcpy(str6_TaxCollector, cnst_Info_Msg_7);  // "Tax Collector"
-        // strcat(str6_TaxCollector, text_0x1D);
-        strcat(str6_TaxCollector, "\t");
-        strcat(str6_TaxCollector, fkey_string);
-        strcat(str6_TaxCollector, cnst_Info_Msg_7_2);
+        stu_strcpy(str6_TaxCollector, cnst_Info_Msg_7);  // "Tax Collector"
+        // stu_strcat(str6_TaxCollector, text_0x1D);
+        stu_strcat(str6_TaxCollector, "\t");
+        stu_strcat(str6_TaxCollector, fkey_string);
+        stu_strcat(str6_TaxCollector, cnst_Info_Msg_7_2);
 
-        strcpy(str7_GrandVizier, cnst_Info_Msg_8);  // "Grand Vizier"
+        stu_strcpy(str7_GrandVizier, cnst_Info_Msg_8);  // "Grand Vizier"
         if(grand_vizier == ST_TRUE)
         {
-            strcat(str7_GrandVizier, cnst_Info_Msg_0_2);
+            stu_strcat(str7_GrandVizier, cnst_Info_Msg_0_2);
         }
-        // strcat(str7_GrandVizier, text_0x1D);
-        strcat(str7_GrandVizier, "\t");
-        strcat(str7_GrandVizier, fkey_string);
-        strcat(str7_GrandVizier, cnst_Info_Msg_8_2);
+        // stu_strcat(str7_GrandVizier, text_0x1D);
+        stu_strcat(str7_GrandVizier, "\t");
+        stu_strcat(str7_GrandVizier, fkey_string);
+        stu_strcat(str7_GrandVizier, cnst_Info_Msg_8_2);
 
-        strcpy(str8_Mirror, cnst_Info_Msg_9);  // "Mirror"
-        // strcat(str8_Mirror, text_0x1D);
-        strcat(str8_Mirror, "\t");
-        strcat(str8_Mirror, fkey_string);
-        strcat(str8_Mirror, cnst_Info_Msg_9_2);
+        stu_strcpy(str8_Mirror, cnst_Info_Msg_9);  // "Mirror"
+        // stu_strcat(str8_Mirror, text_0x1D);
+        stu_strcat(str8_Mirror, "\t");
+        stu_strcat(str8_Mirror, fkey_string);
+        stu_strcat(str8_Mirror, cnst_Info_Msg_9_2);
 
-        // strcpy(str9_EoT, 0);  // (offset cnst_Info_Msg_0+3)
-        strcpy(str9_EoT, "");
+        // stu_strcpy(str9_EoT, 0);  // (offset cnst_Info_Msg_0+3)
+        stu_strcpy(str9_EoT, "");
 
-        strcpy(box_list_stings[0], cnst_Info_Msg_1);  // "Surveyor"
-        // strcat(str0_Surveyor, text_0x1D);  // ASCII  1Dh  29d  GS  (group separator)
-        strcat(box_list_stings[0], "\x1D\x51");
-        strcat(box_list_stings[0], fkey_string);
-        strcat(box_list_stings[0], cnst_Info_Msg_1_2);
+        stu_strcpy(box_list_stings[0], cnst_Info_Msg_1);  // "Surveyor"
+        // stu_strcat(str0_Surveyor, text_0x1D);  // ASCII  1Dh  29d  GS  (group separator)
+        stu_strcat(box_list_stings[0], "\x1D\x51");
+        stu_strcat(box_list_stings[0], fkey_string);
+        stu_strcat(box_list_stings[0], cnst_Info_Msg_1_2);
 
-        strcpy(box_list_stings[1], cnst_Info_Msg_2);  // "Cartographer"
-        // strcat(str1_Cartographer, text_0x1D);
-        strcat(box_list_stings[1], "\x1D\x51");
-        strcat(box_list_stings[1], fkey_string);
-        strcat(box_list_stings[1], cnst_Info_Msg_2_2);
+        stu_strcpy(box_list_stings[1], cnst_Info_Msg_2);  // "Cartographer"
+        // stu_strcat(str1_Cartographer, text_0x1D);
+        stu_strcat(box_list_stings[1], "\x1D\x51");
+        stu_strcat(box_list_stings[1], fkey_string);
+        stu_strcat(box_list_stings[1], cnst_Info_Msg_2_2);
 
-        strcpy(box_list_stings[2], cnst_Info_Msg_3);  // "Apprentice"
-        // strcat(str2_Apprentice, text_0x1D);
-        strcat(box_list_stings[2], "\x1D\x51");
-        strcat(box_list_stings[2], fkey_string);
-        strcat(box_list_stings[2], cnst_Info_Msg_3_2);
+        stu_strcpy(box_list_stings[2], cnst_Info_Msg_3);  // "Apprentice"
+        // stu_strcat(str2_Apprentice, text_0x1D);
+        stu_strcat(box_list_stings[2], "\x1D\x51");
+        stu_strcat(box_list_stings[2], fkey_string);
+        stu_strcat(box_list_stings[2], cnst_Info_Msg_3_2);
 
-        strcpy(box_list_stings[3], cnst_Info_Msg_4);  // "Historian"
-        // strcat(str3_Historian, text_0x1D);
-        strcat(box_list_stings[3], "\x1D\x51");
-        strcat(box_list_stings[3], fkey_string);
-        strcat(box_list_stings[3], cnst_Info_Msg_4_2);
+        stu_strcpy(box_list_stings[3], cnst_Info_Msg_4);  // "Historian"
+        // stu_strcat(str3_Historian, text_0x1D);
+        stu_strcat(box_list_stings[3], "\x1D\x51");
+        stu_strcat(box_list_stings[3], fkey_string);
+        stu_strcat(box_list_stings[3], cnst_Info_Msg_4_2);
 
-        strcpy(box_list_stings[4], cnst_Info_Msg_5);  // "Astrologer"
-        // strcat(str4_Astrologer, text_0x1D);
-        strcat(box_list_stings[4], "\x1D\x51");
-        strcat(box_list_stings[4], fkey_string);
-        strcat(box_list_stings[4], cnst_Info_Msg_5_2);
+        stu_strcpy(box_list_stings[4], cnst_Info_Msg_5);  // "Astrologer"
+        // stu_strcat(str4_Astrologer, text_0x1D);
+        stu_strcat(box_list_stings[4], "\x1D\x51");
+        stu_strcat(box_list_stings[4], fkey_string);
+        stu_strcat(box_list_stings[4], cnst_Info_Msg_5_2);
 
-        strcpy(box_list_stings[5], cnst_Info_Msg_6);  // "Chancellor"
-        // strcat(str5_Chancellor, text_0x1D);
-        strcat(box_list_stings[5], "\x1D\x51");
-        strcat(box_list_stings[5], fkey_string);
-        strcat(box_list_stings[5], cnst_Info_Msg_6_2);
+        stu_strcpy(box_list_stings[5], cnst_Info_Msg_6);  // "Chancellor"
+        // stu_strcat(str5_Chancellor, text_0x1D);
+        stu_strcat(box_list_stings[5], "\x1D\x51");
+        stu_strcat(box_list_stings[5], fkey_string);
+        stu_strcat(box_list_stings[5], cnst_Info_Msg_6_2);
 
-        strcpy(box_list_stings[6], cnst_Info_Msg_7);  // "Tax Collector"
-        // strcat(str6_TaxCollector, text_0x1D);
-        strcat(box_list_stings[6], "\x1D\x51");
-        strcat(box_list_stings[6], fkey_string);
-        strcat(box_list_stings[6], cnst_Info_Msg_7_2);
+        stu_strcpy(box_list_stings[6], cnst_Info_Msg_7);  // "Tax Collector"
+        // stu_strcat(str6_TaxCollector, text_0x1D);
+        stu_strcat(box_list_stings[6], "\x1D\x51");
+        stu_strcat(box_list_stings[6], fkey_string);
+        stu_strcat(box_list_stings[6], cnst_Info_Msg_7_2);
 
-        strcpy(box_list_stings[7], cnst_Info_Msg_8);  // "Grand Vizier"
+        stu_strcpy(box_list_stings[7], cnst_Info_Msg_8);  // "Grand Vizier"
         if(grand_vizier == ST_TRUE)
         {
-            strcat(box_list_stings[7], cnst_Info_Msg_0_2);
+            stu_strcat(box_list_stings[7], cnst_Info_Msg_0_2);
         }
-        // strcat(str7_GrandVizier, text_0x1D);
-        strcat(box_list_stings[7], "\x1D\x51");
-        strcat(box_list_stings[7], fkey_string);
-        strcat(box_list_stings[7], cnst_Info_Msg_8_2);
+        // stu_strcat(str7_GrandVizier, text_0x1D);
+        stu_strcat(box_list_stings[7], "\x1D\x51");
+        stu_strcat(box_list_stings[7], fkey_string);
+        stu_strcat(box_list_stings[7], cnst_Info_Msg_8_2);
 
-        strcpy(box_list_stings[8], cnst_Info_Msg_9);  // "Mirror"
-        // strcat(str8_Mirror, text_0x1D);
-        // strcat(box_list_stings[8], "\t");
-        strcat(box_list_stings[8], "\x1D\x51");
-        strcat(box_list_stings[8], fkey_string);
-        strcat(box_list_stings[8], cnst_Info_Msg_9_2);
+        stu_strcpy(box_list_stings[8], cnst_Info_Msg_9);  // "Mirror"
+        // stu_strcat(str8_Mirror, text_0x1D);
+        // stu_strcat(box_list_stings[8], "\t");
+        stu_strcat(box_list_stings[8], "\x1D\x51");
+        stu_strcat(box_list_stings[8], fkey_string);
+        stu_strcat(box_list_stings[8], cnst_Info_Msg_9_2);
 
-        // strcpy(str9_EoT, 0);  // (offset cnst_Info_Msg_0+3)
-        strcpy(box_list_stings[9], "");
+        // stu_strcpy(str9_EoT, 0);  // (offset cnst_Info_Msg_0+3)
+        stu_strcpy(box_list_stings[9], "");
 
         for(itr = 0; itr < 10; itr++)
         {
@@ -552,9 +552,9 @@ void TaxCollector_Window(void)
     int16_t tax_rate = 0;
     int16_t itr_list = 0;
 
-    strcpy(str_gold, cnst_Info_Msg_7_3); // " gold,"
+    stu_strcpy(str_gold, cnst_Info_Msg_7_3); // " gold,"
 
-    strcpy(str_unrest, cnst_Info_Msg_7_4); // "% unrest"
+    stu_strcpy(str_unrest, cnst_Info_Msg_7_4); // "% unrest"
 
 
     tax_rate = _players[_human_player_idx].tax_rate;
@@ -569,47 +569,47 @@ void TaxCollector_Window(void)
     // tax_rate: 5  "2.5 gold, 60% unrest "
     // tax_rate: 6  "3 gold,   75% unrest "
 
-    strcpy(box_list_stings[0], str_0);
-    strcat(box_list_stings[0], str_gold);
-    strcat(box_list_stings[0], tab_59);
-    strcat(box_list_stings[0], str_0);
-    strcat(box_list_stings[0], str_unrest);
+    stu_strcpy(box_list_stings[0], str_0);
+    stu_strcat(box_list_stings[0], str_gold);
+    stu_strcat(box_list_stings[0], tab_59);
+    stu_strcat(box_list_stings[0], str_0);
+    stu_strcat(box_list_stings[0], str_unrest);
 
-    strcpy(box_list_stings[1], cnst_Half);
-    strcat(box_list_stings[1], str_gold);
-    strcat(box_list_stings[1], tab_54);
-    strcat(box_list_stings[1], a10);
-    strcat(box_list_stings[1], str_unrest);
+    stu_strcpy(box_list_stings[1], cnst_Half);
+    stu_strcat(box_list_stings[1], str_gold);
+    stu_strcat(box_list_stings[1], tab_54);
+    stu_strcat(box_list_stings[1], a10);
+    stu_strcat(box_list_stings[1], str_unrest);
 
-    strcpy(box_list_stings[2], a1_0);
-    strcat(box_list_stings[2], str_gold);
-    strcat(box_list_stings[2], tab_52);
-    strcat(box_list_stings[2], a20);
-    strcat(box_list_stings[2], str_unrest);
+    stu_strcpy(box_list_stings[2], a1_0);
+    stu_strcat(box_list_stings[2], str_gold);
+    stu_strcat(box_list_stings[2], tab_52);
+    stu_strcat(box_list_stings[2], a20);
+    stu_strcat(box_list_stings[2], str_unrest);
 
-    strcpy(box_list_stings[3], a1_5);
-    strcat(box_list_stings[3], str_gold);
-    strcat(box_list_stings[3], tab_52);
-    strcat(box_list_stings[3], a30);
-    strcat(box_list_stings[3], str_unrest);
+    stu_strcpy(box_list_stings[3], a1_5);
+    stu_strcat(box_list_stings[3], str_gold);
+    stu_strcat(box_list_stings[3], tab_52);
+    stu_strcat(box_list_stings[3], a30);
+    stu_strcat(box_list_stings[3], str_unrest);
 
-    strcpy(box_list_stings[4], a2_0);
-    strcat(box_list_stings[4], str_gold);
-    strcat(box_list_stings[4], tab_52);
-    strcat(box_list_stings[4], a45);
-    strcat(box_list_stings[4], str_unrest);
+    stu_strcpy(box_list_stings[4], a2_0);
+    stu_strcat(box_list_stings[4], str_gold);
+    stu_strcat(box_list_stings[4], tab_52);
+    stu_strcat(box_list_stings[4], a45);
+    stu_strcat(box_list_stings[4], str_unrest);
 
-    strcpy(box_list_stings[5], a2_5);
-    strcat(box_list_stings[5], str_gold);
-    strcat(box_list_stings[5], tab_52);
-    strcat(box_list_stings[5], a60);
-    strcat(box_list_stings[5], str_unrest);
+    stu_strcpy(box_list_stings[5], a2_5);
+    stu_strcat(box_list_stings[5], str_gold);
+    stu_strcat(box_list_stings[5], tab_52);
+    stu_strcat(box_list_stings[5], a60);
+    stu_strcat(box_list_stings[5], str_unrest);
 
-    strcpy(box_list_stings[6], a3_0);
-    strcat(box_list_stings[6], str_gold);
-    strcat(box_list_stings[6], tab_52);
-    strcat(box_list_stings[6], a75);
-    strcat(box_list_stings[6], str_unrest);
+    stu_strcpy(box_list_stings[6], a3_0);
+    stu_strcat(box_list_stings[6], str_gold);
+    stu_strcat(box_list_stings[6], tab_52);
+    stu_strcat(box_list_stings[6], a75);
+    stu_strcat(box_list_stings[6], str_unrest);
 
 
 
@@ -623,14 +623,14 @@ void TaxCollector_Window(void)
     {
         if(itr_list == tax_rate)
         {
-            strcat(box_list_stings[itr_list], cnst_Info_Msg_0_2);
+            stu_strcat(box_list_stings[itr_list], cnst_Info_Msg_0_2);
         }
         str_list[itr_list] = box_list_stings[itr_list];
     }
 
     // ¿ why not set before and included in the loop like in 'Advisor Screen'
-    // strcpy(box_list_stings[7] = *(asc_3A261 + 2));  // '\x00' BCPP3 string optimizer
-    strcpy(box_list_stings[7], "");
+    // stu_strcpy(box_list_stings[7] = *(asc_3A261 + 2));  // '\x00' BCPP3 string optimizer
+    stu_strcpy(box_list_stings[7], "");
     // str_list[7] = &box_list_stings[7];
     // str_list[7] = (char *)(box_list_stings + (30 * 7));  // sizeof(box_list_stings[0])
     str_list[7] = box_list_stings[7];
@@ -760,20 +760,20 @@ void Powergraph_Screen_Draw(void)
     int16_t year = 0;  // _SI_  ¿ used as 'first year' ?
     int16_t months_count = 0;  // _DI_
 
-    strcpy(dest, &str_TaxRatePerPopulation__ovr076[19]);  // ¿ "tion" ? ¿ but, also, unsed/overwritten ?
+    stu_strcpy(dest, &str_TaxRatePerPopulation__ovr076[19]);  // ¿ "tion" ? ¿ but, also, unsed/overwritten ?
 
-    strcpy(months[0],  str_January__ovr076);
-    strcpy(months[1],  str_February__ovr076);
-    strcpy(months[2],  str_March__ovr076);
-    strcpy(months[3],  str_April__ovr076);
-    strcpy(months[4],  str_May__ovr076);
-    strcpy(months[5],  str_June__ovr076);
-    strcpy(months[6],  str_July__ovr076);
-    strcpy(months[7],  str_August__ovr076);
-    strcpy(months[8],  str_September__ovr076);
-    strcpy(months[9],  str_October__ovr076);
-    strcpy(months[10], str_November__ovr076);
-    strcpy(months[11], str_December__ovr076);
+    stu_strcpy(months[0],  str_January__ovr076);
+    stu_strcpy(months[1],  str_February__ovr076);
+    stu_strcpy(months[2],  str_March__ovr076);
+    stu_strcpy(months[3],  str_April__ovr076);
+    stu_strcpy(months[4],  str_May__ovr076);
+    stu_strcpy(months[5],  str_June__ovr076);
+    stu_strcpy(months[6],  str_July__ovr076);
+    stu_strcpy(months[7],  str_August__ovr076);
+    stu_strcpy(months[8],  str_September__ovr076);
+    stu_strcpy(months[9],  str_October__ovr076);
+    stu_strcpy(months[10], str_November__ovr076);
+    stu_strcpy(months[11], str_December__ovr076);
 
     banner_colors[0] = BANNER_COLOR_BLUE;
     banner_colors[1] = BANNER_COLOR_GREEN;
@@ -785,7 +785,7 @@ void Powergraph_Screen_Draw(void)
 
     FLIC_Draw(0, 0, powergraph_screen_seg);
 
-    strcpy(dest, str_SPACE__ovr076);
+    stu_strcpy(dest, str_SPACE__ovr076);
 
     for(itr_players = 1; itr_players < NUM_PLAYERS; itr_players++)
     {
@@ -806,15 +806,15 @@ void Powergraph_Screen_Draw(void)
 
     WTF__turns_months = (_turn % 12);
 
-    // strcpy(GUI_String_1, (char *)&months[(WTF__turns_months * 12)][0]);
-    // strcpy(GUI_String_1, &months[0]);
-    strcpy(GUI_String_1, (char *)&months[8]);
+    // stu_strcpy(GUI_String_1, (char *)&months[(WTF__turns_months * 12)][0]);
+    // stu_strcpy(GUI_String_1, &months[0]);
+    stu_strcpy(GUI_String_1, (char *)&months[8]);
 
     stu_itoa((1400 + WTF__turns_years), GUI_String_2, 10);
 
-    strcat(GUI_String_1, dest);
+    stu_strcat(GUI_String_1, dest);
 
-    strcat(GUI_String_1, GUI_String_2);
+    stu_strcat(GUI_String_1, GUI_String_2);
 
     Set_Font_Style_Shadow_Down(2, 15, 0, 0);
 
@@ -1082,7 +1082,7 @@ void Status_Screen_Draw(void)
     int16_t itr_scores = 0;  // _SI_
     int16_t IDK_y = 0;  // _DI_
 
-    strcpy(dest, str_SPACE__ovr076);
+    stu_strcpy(dest, str_SPACE__ovr076);
 
     banner_colors[0] = 172;
     banner_colors[1] = 216;
@@ -1115,27 +1115,27 @@ void Status_Screen_Draw(void)
 
     Set_Outline_Color(254);
 
-    strcpy(GUI_String_1, str_Army__ovr076);
+    stu_strcpy(GUI_String_1, str_Army__ovr076);
 
-    strcat(GUI_String_1, dest);
+    stu_strcat(GUI_String_1, dest);
 
-    strcat(GUI_String_1, str_Strength__ovr076);
+    stu_strcat(GUI_String_1, str_Strength__ovr076);
 
     Print_Centered((status_screen_x + 138), (status_screen_y + 23), GUI_String_1);
 
-    strcpy(GUI_String_1, str_Magic__ovr076);
+    stu_strcpy(GUI_String_1, str_Magic__ovr076);
 
-    strcat(GUI_String_1, dest);
+    stu_strcat(GUI_String_1, dest);
 
-    strcat(GUI_String_1, str_Power);
+    stu_strcat(GUI_String_1, str_Power);
 
     Print_Centered((status_screen_x + 138), (status_screen_y + 72), GUI_String_1);
 
-    strcpy(GUI_String_1, str_Spell__ovr076);
+    stu_strcpy(GUI_String_1, str_Spell__ovr076);
 
-    strcat(GUI_String_1, dest);
+    stu_strcat(GUI_String_1, dest);
 
-    strcat(GUI_String_1, str_Research);
+    stu_strcat(GUI_String_1, str_Research);
 
     Print_Centered((status_screen_x + 138), (status_screen_y + 121), GUI_String_1);
 
@@ -1483,14 +1483,14 @@ void Cartograph_Screen_Draw_Map__WIP(int16_t flag)
 
     if(flag == 0)
     {
-        strcpy(GUI_String_1, str_Arcanus__ovr076);  // "Arcanus"
+        stu_strcpy(GUI_String_1, str_Arcanus__ovr076);  // "Arcanus"
     }
     else
     {
-        strcpy(GUI_String_1, str_Myrror__ovr076);  // "Myrror"
+        stu_strcpy(GUI_String_1, str_Myrror__ovr076);  // "Myrror"
     }
 
-    strcat(GUI_String_1, str_Plane__ovr076);  // " Plane"
+    stu_strcat(GUI_String_1, str_Plane__ovr076);  // " Plane"
 
     Print_Centered(160, 12, GUI_String_1);
 

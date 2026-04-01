@@ -18,7 +18,7 @@ TEST(MOX_test, MOX_String_To_Upper)
     std::string string = "sup";
     // TODO  Valgrind  ==415298== 4 bytes in 1 blocks are definitely lost in loss record 1 of 1
     char * buffer = new char[string.length() + 1];  // Create a modifiable buffer and copy the string
-    strcpy(buffer, string.c_str());
+    stu_strcpy(buffer, string.c_str());
     String_To_Upper(buffer);
     ASSERT_STREQ("SUP", buffer);
 }
@@ -30,7 +30,7 @@ TEST(MOX_test, MOX_String_To_Lower)
     std::string string = "SUP";
     // TODO  Valgrind  ==415298== 4 bytes in 1 blocks are definitely lost in loss record 1 of 1
     char * buffer = new char[string.length() + 1];  // Create a modifiable buffer and copy the string
-    strcpy(buffer, string.c_str());
+    stu_strcpy(buffer, string.c_str());
     String_To_Lower(buffer);
     ASSERT_STREQ("sup", buffer);
 }

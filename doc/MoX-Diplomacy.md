@@ -157,7 +157,7 @@ XREF:
 // WZD o74p02
 void Mirror_Screen_Draw(void)
 
-    strcat(GUI_String_1, _treaty_type_names[_players[_human_player_idx].Dipl.Dipl_Status[mirror_screen_player_idx]]);
+    stu_strcat(GUI_String_1, _treaty_type_names[_players[_human_player_idx].Dipl.Dipl_Status[mirror_screen_player_idx]]);
 
 
 

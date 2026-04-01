@@ -22,6 +22,8 @@ input?
 void dbg_prn(const char * fmt, ...);  // HACK needs to not be behind #ifdef STU_DEBUG
 #include "STU_WAV.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <stdio.h>      /* FILE; fclose(), fread(), frite(), fseek(); */
 
 /*
@@ -42,8 +44,8 @@ void Export_WAV_File(void * wav_sound_buffer, int wav_sound_buffer_size)
 #endif
 
     dbg_prn("BEGIN:  fopen()\n");
-    // // file_handle = fopen(filename, "WB");
-    file_handle = fopen(filename, mode);
+    // // file_handle = stu_fopen(filename, "WB");
+    file_handle = stu_fopen(filename, mode);
     if(file_handle == NULL)
     {
         STU_DEBUG_BREAK();
@@ -51,13 +53,13 @@ void Export_WAV_File(void * wav_sound_buffer, int wav_sound_buffer_size)
     dbg_prn("END:  fopen()\n");
 
     dbg_prn("BEGIN:  fwrite()\n");
-    // fwrite(wav_sound_buffer, wav_sound_buffer_size, 1, file_handle);
+    // stu_fwrite(wav_sound_buffer, wav_sound_buffer_size, 1, file_handle);
     dbg_prn("END:  fwrite()\n");
 
     dbg_prn("BEGIN:  fclose()\n");
     if(file_handle != NULL)
     {
-        fclose(file_handle);
+        stu_fclose(file_handle);
     }
     dbg_prn("END:  fclose()\n");
 

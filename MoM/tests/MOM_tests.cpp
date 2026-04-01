@@ -355,7 +355,7 @@ kill_type e_KILL_TYPE kt_Normal, kt_Dismissed, kt_Disappeared
 
 Kill_Unit() DEPENDS ON ...
 
-string      strcpy()
+string      stu_strcpy()
 CITYCALC    Unit_Base_Level()
 Items       Remove_Item()
 

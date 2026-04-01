@@ -52,7 +52,7 @@ MoO2
 #include "MGC_DATA.h"  /* terrain_stats_table[] */
 
 #include <assert.h>     /* assert() */
-#include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
+#include <string.h>     /* memcpy() memset(), stu_strcat(), stu_strcpy(), stricmp() */
 
 #include "MAPGEN.h"
 
@@ -5265,7 +5265,7 @@ attempt:
     city_name_idx = (Random(20) - 1);
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-        strcpy(buffer, _CITIES[itr_cities].name);
+        stu_strcpy(buffer, _CITIES[itr_cities].name);
         if(stu_stricmp(buffer, &city_names_buffer[(city_name_idx * LEN_CITY_NAME)]) == 0)
         {
             if(attempts < 200)
@@ -5278,7 +5278,7 @@ attempt:
             }
         }
     }
-    strcpy(name, &city_names_buffer[(city_name_idx * LEN_CITY_NAME)]);
+    stu_strcpy(name, &city_names_buffer[(city_name_idx * LEN_CITY_NAME)]);
 }
 
 // MGC o51p26

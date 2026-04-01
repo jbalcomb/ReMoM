@@ -31,6 +31,8 @@
 #include "UnitList.h"
 #include "WZD_o059.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
@@ -940,53 +942,53 @@ e.g.,
 void Build_Select_Target_String(int16_t spell_target_type, char * spell_name)
 {
 
-    strcpy((char *)_osc_panel_title, str_SelectA);  // "Select a"
+    stu_strcpy((char *)_osc_panel_title, str_SelectA);  // "Select a"
 
     switch(spell_target_type)
     {
         case 0:
         {
-            strcat(_osc_panel_title, str_FriendlyUnit);
+            stu_strcat(_osc_panel_title, str_FriendlyUnit);
         } break;
         case 1:
         {
-            strcat(_osc_panel_title, str_FriendlyGroup);
+            stu_strcat(_osc_panel_title, str_FriendlyGroup);
         } break;
         case 2:
         {
-            strcat(_osc_panel_title, str_NEnemyUnit);
+            stu_strcat(_osc_panel_title, str_NEnemyUnit);
         } break;
         case 3:
         {
-            strcat(_osc_panel_title, str_NEnemyGroup);
+            stu_strcat(_osc_panel_title, str_NEnemyGroup);
         } break;
         case 4:
         {
-            strcat(_osc_panel_title, aSpace);
+            stu_strcat(_osc_panel_title, aSpace);
         } break;
         case 5:
         {
-            strcat(_osc_panel_title, str_FriendlyCity);
+            stu_strcat(_osc_panel_title, str_FriendlyCity);
         } break;
         case 6:
         {
-            strcat(_osc_panel_title, str_NEnemyCity);
+            stu_strcat(_osc_panel_title, str_NEnemyCity);
         } break;
         case 7:
         {
-            strcat(_osc_panel_title, str_MagicNode);
+            stu_strcat(_osc_panel_title, str_MagicNode);
         } break;
     }
 
-    strcat(_osc_panel_title, str_AsTheTargetFor);
+    stu_strcat(_osc_panel_title, str_AsTheTargetFor);
 
-    strcat(_osc_panel_title, An(spell_name));
+    stu_strcat(_osc_panel_title, An(spell_name));
 
-    strcat(_osc_panel_title, byte_39E44);
+    stu_strcat(_osc_panel_title, byte_39E44);
     
-    strcat(_osc_panel_title, spell_name);
+    stu_strcat(_osc_panel_title, spell_name);
 
-    strcat(_osc_panel_title, byte_39E47);
+    stu_strcat(_osc_panel_title, byte_39E47);
 
 }
 

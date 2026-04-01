@@ -22,6 +22,10 @@
  *   - stu_tzset()         portable tzset()
  *   - stu_fopen()         portable fopen() (MSVC fopen_s)
  *   - stu_fopen_ci()      case-insensitive fopen() for asset files on case-sensitive filesystems
+ *   - stu_fclose()        portable fclose() (symmetric with stu_fopen)
+ *   - stu_fread()         portable fread()
+ *   - stu_fwrite()        portable fwrite()
+ *   - stu_fseek()         portable fseek()
  *   - stu_localtime()     portable thread-safe localtime (MSVC localtime_s / POSIX localtime_r)
  *   - stu_sscanf()        portable sscanf() (suppresses MSVC C4996)
  *   - stu_strcpy()        portable strcpy() (suppresses MSVC C4996)
@@ -129,6 +133,18 @@ void stu_debugbreak(void);
 /* Open a file. Returns FILE* (NULL on failure). Drop-in replacement for fopen. */
 FILE *stu_fopen(const char *filename, const char *mode);
 
+/* Close a file. Drop-in replacement for fclose, symmetric with stu_fopen. */
+int stu_fclose(FILE *stream);
+
+/* Read from a file. Drop-in replacement for fread. */
+size_t stu_fread(void *buffer, size_t element_size, size_t element_count, FILE *stream);
+
+/* Write to a file. Drop-in replacement for fwrite. */
+size_t stu_fwrite(const void *buffer, size_t element_size, size_t element_count, FILE *stream);
+
+/* Seek in a file. Drop-in replacement for fseek. */
+int stu_fseek(FILE *stream, long offset, int origin);
+
 /* Case-insensitive file open for asset files. On Windows (case-insensitive FS) this is just fopen. On Linux/macOS it scans the directory for a case-insensitive match if the exact name fails. */
 FILE *stu_fopen_ci(const char *filename, const char *mode);
 
@@ -138,10 +154,10 @@ struct tm *stu_localtime(const time_t *timer, struct tm *result);
 /* Portable sscanf wrapper. Same variadic interface as sscanf. */
 int stu_sscanf(const char *str, const char *format, ...);
 
-/* Portable strcpy wrapper. Same interface as strcpy. */
+/* Portable stu_strcpy wrapper. Same interface as stu_strcpy. */
 char *stu_strcpy(char *dst, const char *src);
 
-/* Portable strcat wrapper. Same interface as strcat. */
+/* Portable stu_strcat wrapper. Same interface as stu_strcat. */
 char *stu_strcat(char *dst, const char *src);
 
 /* ============================================================================
@@ -449,6 +465,38 @@ FILE *stu_fopen(const char *filename, const char *mode)
 }
 
 /* --------------------------------------------------------------------------
+ * stu_fclose - portable file close (symmetric with stu_fopen)
+ * -------------------------------------------------------------------------- */
+int stu_fclose(FILE *stream)
+{
+    return fclose(stream);
+}
+
+/* --------------------------------------------------------------------------
+ * stu_fread - portable file read
+ * -------------------------------------------------------------------------- */
+size_t stu_fread(void *buffer, size_t element_size, size_t element_count, FILE *stream)
+{
+    return fread(buffer, element_size, element_count, stream);
+}
+
+/* --------------------------------------------------------------------------
+ * stu_fwrite - portable file write
+ * -------------------------------------------------------------------------- */
+size_t stu_fwrite(const void *buffer, size_t element_size, size_t element_count, FILE *stream)
+{
+    return fwrite(buffer, element_size, element_count, stream);
+}
+
+/* --------------------------------------------------------------------------
+ * stu_fseek - portable file seek
+ * -------------------------------------------------------------------------- */
+int stu_fseek(FILE *stream, long offset, int origin)
+{
+    return fseek(stream, offset, origin);
+}
+
+/* --------------------------------------------------------------------------
  * stu_fopen_ci - case-insensitive file open for asset files
  *
  * On Windows the filesystem is already case-insensitive, so this is just
@@ -556,10 +604,14 @@ int stu_sscanf(const char *str, const char *format, ...)
 }
 
 /* --------------------------------------------------------------------------
- * stu_strcpy - portable strcpy wrapper
+ * stu_strcpy - portable stu_strcpy wrapper
  * -------------------------------------------------------------------------- */
 char *stu_strcpy(char *dst, const char *src)
 {
+    if (dst == NULL || src == NULL)
+    {
+        return dst;
+    }
     return strcpy(dst, src);
 }
 
@@ -568,6 +620,10 @@ char *stu_strcpy(char *dst, const char *src)
  * -------------------------------------------------------------------------- */
 char *stu_strcat(char *dst, const char *src)
 {
+    if (dst == NULL || src == NULL)
+    {
+        return dst;
+    }
     return strcat(dst, src);
 }
 

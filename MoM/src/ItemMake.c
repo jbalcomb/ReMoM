@@ -784,11 +784,11 @@ static const char * Get_Item_Name(int16_t item_idx)
             (item_type < it_Misc)
         )
         {
-            strcpy(item_name, cnst_Plus_4);
+            stu_strcpy(item_name, cnst_Plus_4);
             stu_itoa((Unprocessed_Powers[itr] + 1), temp_buffer, 10);
-            strcat(item_name, temp_buffer);
-            strcat(item_name, cnst_Space_4);
-            strcat(item_name, Get_Item_Type_Name(item_idx));  // Sword, Mace, Axe, Bow, Staff, Wand, Misc, Shield, Chain, Plate, Amulet, Ring, Cloak, Gauntlet, Helm, Orb
+            stu_strcat(item_name, temp_buffer);
+            stu_strcat(item_name, cnst_Space_4);
+            stu_strcat(item_name, Get_Item_Type_Name(item_idx));  // Sword, Mace, Axe, Bow, Staff, Wand, Misc, Shield, Chain, Plate, Amulet, Ring, Cloak, Gauntlet, Helm, Orb
 
             Unprocessed_Powers[itr] = -2;
 
@@ -803,7 +803,7 @@ static const char * Get_Item_Name(int16_t item_idx)
         {
             // jmp     short $+2
         }
-        strcpy(item_name, Get_Item_Type_Name(item_idx));
+        stu_strcpy(item_name, Get_Item_Type_Name(item_idx));
     }
 
 
@@ -819,25 +819,25 @@ static const char * Get_Item_Name(int16_t item_idx)
 
     if(Highest_Index_Power > -1)
     {
-        strcat(item_name, cnst_Sp_Of_Sp_4);
+        stu_strcat(item_name, cnst_Sp_Of_Sp_4);
 
         if(Highest_Index_Power < 33)
         {
-            strcat(item_name, Attrib_Suffixes[_ITEM_POWERS[Highest_Index_Power].type]);
+            stu_strcat(item_name, Attrib_Suffixes[_ITEM_POWERS[Highest_Index_Power].type]);
         }
         else if(Highest_Index_Power < 65)
         {
-            strcat(item_name, _ITEM_POWERS[Highest_Index_Power].name);
+            stu_strcat(item_name, _ITEM_POWERS[Highest_Index_Power].name);
         }
         else
         {
-            strcpy(spell_name, spell_data_table[_ITEMS[item_idx].embed_spell_idx].name);
-            strcat(item_name, spell_name);
+            stu_strcpy(spell_name, spell_data_table[_ITEMS[item_idx].embed_spell_idx].name);
+            stu_strcat(item_name, spell_name);
             if(strlen(item_name) < 26)
             {
-                strcat(item_name, cnst_TimesSign_2);
+                stu_strcat(item_name, cnst_TimesSign_2);
                 stu_itoa(_ITEMS[item_idx].embed_spell_cnt, temp_buffer, 10);
-                strcat(item_name, temp_buffer);
+                stu_strcat(item_name, temp_buffer);
             }
         }
 
@@ -1191,8 +1191,8 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
 
     m_itemmake_item_cost = Get_Item_Cost(MAX_ITEM_COUNT);
 
-    // BUGBUG  extra, unused parameter?  strcpy(GUI_NearMsgString, Get_Item_Name(MAX_ITEM_COUNT, 0));
-    strcpy(GUI_NearMsgString, Get_Item_Name(MAX_ITEM_COUNT));
+    // BUGBUG  extra, unused parameter?  stu_strcpy(GUI_NearMsgString, Get_Item_Name(MAX_ITEM_COUNT, 0));
+    stu_strcpy(GUI_NearMsgString, Get_Item_Name(MAX_ITEM_COUNT));
 
     Create_Item_Record(MAX_ITEM_COUNT);
 
@@ -1517,8 +1517,8 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
         if(in_text_edit == ST_FALSE)
         {
 
-            // BUGBUG  extra, unused parameter?  strcpy(GUI_NearMsgString, Get_Item_Name(MAX_ITEM_COUNT, 0));
-            strcpy(GUI_NearMsgString, Get_Item_Name(MAX_ITEM_COUNT));
+            // BUGBUG  extra, unused parameter?  stu_strcpy(GUI_NearMsgString, Get_Item_Name(MAX_ITEM_COUNT, 0));
+            stu_strcpy(GUI_NearMsgString, Get_Item_Name(MAX_ITEM_COUNT));
 
         }
 
@@ -1585,7 +1585,7 @@ static void Create_Item_Record(int16_t item_idx)
 
     memset(&_ITEMS[item_idx], 0, sizeof(_ITEMS[0]));
 
-    strcpy(_ITEMS[item_idx].name, GUI_NearMsgString);
+    stu_strcpy(_ITEMS[item_idx].name, GUI_NearMsgString);
 
     _ITEMS[item_idx].embed_spell_idx = (int8_t)embed_spell_idx;
 
@@ -1991,7 +1991,7 @@ static int16_t Item_Make_Screen_Spellbook_Popup(void)
     int16_t itr = 0;  // _SI_
     int16_t leave_screen = 0;  // _DI_
 
-    strcpy(string, GUI_NearMsgString);
+    stu_strcpy(string, GUI_NearMsgString);
 
 
     x_start = 28;
@@ -2170,7 +2170,7 @@ static int16_t Item_Make_Screen_Spellbook_Popup(void)
 
     }
 
-    strcpy(GUI_NearMsgString, string);
+    stu_strcpy(GUI_NearMsgString, string);
 
     return return_value;
 
@@ -2350,7 +2350,7 @@ static void Create_Random_Item(int16_t Power, int16_t Value)
                 {
                     m_itemmake_item_powers_array[power_ctr] = item_power_idx;
                     m_itemmake_item_cost = Get_Item_Cost(136);
-                    strcpy(GUI_NearMsgString, Get_Item_Name(136));
+                    stu_strcpy(GUI_NearMsgString, Get_Item_Name(136));
                     Create_Item_Record(136);
                     power_ctr++;
                 }

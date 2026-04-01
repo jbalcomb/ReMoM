@@ -32,6 +32,8 @@
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <stdlib.h>
 
 #include "SBookScr.h"
@@ -288,10 +290,10 @@ void Spellbook_Screen(void)
                         {
                             spell_idx = ST_UNDEFINED;
 
-                            strcpy(GUI_NearMsgString, _msg_abort_1);
-                            strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].name);
-                            strcat(GUI_NearMsgString, temp_string);
-                            strcat(GUI_NearMsgString, _msg_abort_3);
+                            stu_strcpy(GUI_NearMsgString, _msg_abort_1);
+                            stu_strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].name);
+                            stu_strcat(GUI_NearMsgString, temp_string);
+                            stu_strcat(GUI_NearMsgString, _msg_abort_3);
                             Abort_Spell__YN = Confirmation_Box(GUI_NearMsgString);
 
                             if(Abort_Spell__YN == ST_TRUE)
@@ -323,10 +325,10 @@ void Spellbook_Screen(void)
                         {
                             spell_idx = ST_UNDEFINED;
 
-                            strcpy(GUI_NearMsgString, _msg_abort_1);
-                            strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].name);
-                            strcat(GUI_NearMsgString, temp_string);
-                            strcat(GUI_NearMsgString, _msg_abort_3);
+                            stu_strcpy(GUI_NearMsgString, _msg_abort_1);
+                            stu_strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].name);
+                            stu_strcat(GUI_NearMsgString, temp_string);
+                            stu_strcat(GUI_NearMsgString, _msg_abort_3);
                             Abort_Spell__YN = Confirmation_Box(GUI_NearMsgString);
 
                             if(Abort_Spell__YN == ST_TRUE)
@@ -349,10 +351,10 @@ void Spellbook_Screen(void)
                     if(_players[HUMAN_PLAYER_IDX].casting_spell_idx > spl_NONE)
                     {
                 
-                        strcpy(GUI_NearMsgString, _msg_abort_1);
-                        strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].name);
-                        strcat(GUI_NearMsgString, temp_string);
-                        strcat(GUI_NearMsgString, _msg_abort_3);
+                        stu_strcpy(GUI_NearMsgString, _msg_abort_1);
+                        stu_strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].name);
+                        stu_strcat(GUI_NearMsgString, temp_string);
+                        stu_strcat(GUI_NearMsgString, _msg_abort_3);
                         Abort_Spell__YN = Confirmation_Box(GUI_NearMsgString);
 
                         if(Abort_Spell__YN == ST_TRUE)
@@ -731,61 +733,61 @@ void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t
     if(counter_player_idx == HUMAN_PLAYER_IDX)
     {
 
-        strcpy(GUI_NearMsgString, cnst_CounterMsg1_2);
+        stu_strcpy(GUI_NearMsgString, cnst_CounterMsg1_2);
 
     }
     else
     {
 
-        strcpy(GUI_NearMsgString, _players[counter_player_idx].name);
+        stu_strcpy(GUI_NearMsgString, _players[counter_player_idx].name);
 
         Name_Length = (int16_t)strlen(_players[counter_player_idx].name);
 
         if(_players[counter_player_idx].name[(Name_Length - 1)] == 's')
         {
-            strcat(GUI_NearMsgString, cnst_Apostrophe_2);
+            stu_strcat(GUI_NearMsgString, cnst_Apostrophe_2);
         }
         else
         {
-            strcat(GUI_NearMsgString, cnst_Possessive_2);
+            stu_strcat(GUI_NearMsgString, cnst_Possessive_2);
         }
 
     }
 
-    strcat(GUI_NearMsgString, counter_spell_name);
+    stu_strcat(GUI_NearMsgString, counter_spell_name);
 
-    strcat(GUI_NearMsgString, cnst_CounterMsg2_2);
+    stu_strcat(GUI_NearMsgString, cnst_CounterMsg2_2);
 
     if(player_idx == HUMAN_PLAYER_IDX)
     {
 
-        strcat(GUI_NearMsgString, _msg_abort_2);
+        stu_strcat(GUI_NearMsgString, _msg_abort_2);
 
     }
     else
     {
 
 
-        strcpy(GUI_NearMsgString, _players[player_idx].name);
+        stu_strcpy(GUI_NearMsgString, _players[player_idx].name);
 
         Name_Length = (int16_t)strlen(_players[player_idx].name);
 
         if(_players[player_idx].name[(Name_Length - 1)] == 's')
         {
-            strcat(GUI_NearMsgString, cnst_Apostrophe_2);
+            stu_strcat(GUI_NearMsgString, cnst_Apostrophe_2);
         }
         else
         {
-            strcat(GUI_NearMsgString, cnst_Possessive_2);
+            stu_strcat(GUI_NearMsgString, cnst_Possessive_2);
         }
 
     }
 
     _fstrcpy(temp_string, spell_data_table[spell_idx].name);
 
-    strcat(GUI_NearMsgString, temp_string);
+    stu_strcat(GUI_NearMsgString, temp_string);
 
-    strcat(GUI_NearMsgString, cnst_CounterMsg6_2);
+    stu_strcat(GUI_NearMsgString, cnst_CounterMsg6_2);
 
     Copy_On_To_Off_Page();
 

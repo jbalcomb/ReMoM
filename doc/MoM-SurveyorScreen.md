@@ -52,8 +52,8 @@ Surveyor_Screen()
 HERE: var_4 being 0 means it shows all the summary information
 THEN: 
     if(var_4 > 0)
-        strcpy(GUI_String_2, str_CitiesCannotBe);
-        strcat(GUI_String_2, GUI_String_1);
+        stu_strcpy(GUI_String_2, str_CitiesCannotBe);
+        stu_strcat(GUI_String_2, GUI_String_1);
         Print_Paragraph(246, 143, 67, GUI_String_2, 0);
 
 
@@ -66,7 +66,7 @@ XREF?
     Surveyor_Window_Display()
         switch(var_4)
             case 3:
-                strcpy(GUI_String_1, str_OnTowers_);
+                stu_strcpy(GUI_String_1, str_OnTowers_);
 
 3 parts?
 1)  terrain type name and effect / "Corruption"

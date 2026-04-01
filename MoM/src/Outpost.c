@@ -36,6 +36,8 @@
 
 #include "Outpost.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <string.h>
 
 
@@ -306,9 +308,9 @@ void Outpost_Screen(int16_t flag)
                 {
                     Play_Left_Click();
                     Deactivate_Help_List();
-                    strcpy(GUI_String_1, str_TurnOffSpell_1__ovr077);
-                    strcat(GUI_String_1, _city_enchantment_names[city_enchantment_list[(city_enchantment_display_first + itr)]]);
-                    strcat(GUI_String_1, str_TurnOffSpell_2__ovr077);
+                    stu_strcpy(GUI_String_1, str_TurnOffSpell_1__ovr077);
+                    stu_strcat(GUI_String_1, _city_enchantment_names[city_enchantment_list[(city_enchantment_display_first + itr)]]);
+                    stu_strcat(GUI_String_1, str_TurnOffSpell_2__ovr077);
                     if(Confirmation_Box(GUI_String_1) == ST_TRUE)
                     {
                         // TODO  CTY_ClearEnchant(_city_idx, city_enchantment_list[(city_enchantment_display_first + itr)]);
@@ -530,9 +532,9 @@ void Outpost_Screen_Draw(void)
     }
     else
     {
-        strcpy(GUI_String_1, str_OutpostHeader_2);  // "Outpost Of "
-        strcpy(GUI_String_2, _CITIES[_city_idx].name);
-        strcat(GUI_String_1, GUI_String_2);
+        stu_strcpy(GUI_String_1, str_OutpostHeader_2);  // "Outpost Of "
+        stu_strcpy(GUI_String_2, _CITIES[_city_idx].name);
+        stu_strcat(GUI_String_1, GUI_String_2);
         Print_Centered((window_start_x + 124), (window_start_y + 6), GUI_String_1);
     }
 
@@ -634,9 +636,9 @@ void Change_City_Name_Popup(int16_t city_idx, int16_t player_idx)
 
     Random_City_Name_By_Race(_CITIES[city_idx].race, _CITIES[city_idx].name);
 
-    strcpy(city_name, _CITIES[city_idx].name);
+    stu_strcpy(city_name, _CITIES[city_idx].name);
 
-    strcpy(default_city_name, city_name);
+    stu_strcpy(default_city_name, city_name);
 
     Deactivate_Auto_Function();
 
@@ -656,10 +658,10 @@ void Change_City_Name_Popup(int16_t city_idx, int16_t player_idx)
 
     if(strlen(city_name) < 1)
     {
-        strcpy(city_name, default_city_name);
+        stu_strcpy(city_name, default_city_name);
     }
 
-    strcpy(_CITIES[city_idx].name, city_name);
+    stu_strcpy(_CITIES[city_idx].name, city_name);
 
     Deactivate_Auto_Function();
 

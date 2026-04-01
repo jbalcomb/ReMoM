@@ -33761,7 +33761,7 @@ Module: stk386
 
 Module types:
 -------------------------------------------------------------
-Module: strcat
+Module: stu_strcat
     code (0 bytes) strcat_
     Address: 01:0013F220
         Locals:
@@ -33842,7 +33842,7 @@ Module: memcpy
 
 Module types:
 -------------------------------------------------------------
-Module: strcpy
+Module: stu_strcpy
     code (0 bytes) strcpy_
     Address: 01:0013F37F
         Locals:

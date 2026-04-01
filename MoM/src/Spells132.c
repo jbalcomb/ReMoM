@@ -39,6 +39,8 @@
 #include "UNITTYPE.h"
 #include "UnitMove.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <stdlib.h>
 
 #include "Spells132.h"
@@ -433,7 +435,7 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
         if(player_idx == HUMAN_PLAYER_IDX)
         {
 
-            strcpy(_players[player_idx].Heroes[hero_slot_idx].name, hero_names_table[unit_type_idx].name);
+            stu_strcpy(_players[player_idx].Heroes[hero_slot_idx].name, hero_names_table[unit_type_idx].name);
 
             _UNITS[(_units - 1)].XP = hero_names_table[unit_type_idx].experience_points;
 

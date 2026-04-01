@@ -56,22 +56,22 @@ char * cnst_Quit_Report6 = " blocks";           // dseg:3CF5
 // TODO      Current_LargestFreeBlock_KB = dos_memfree_kb();
 // TODO      Worst_LargestFreeBlock_KB = MemFreeWorst_KB;
 // TODO      Current_FreeNearHeap_B = coreleft();
-// TODO      strcpy(string, cnst_Quit_Report1);
-// TODO      strcat(string, cnst_Quit_Report2);
+// TODO      stu_strcpy(string, cnst_Quit_Report1);
+// TODO      stu_strcat(string, cnst_Quit_Report2);
 // TODO      SDL_ltoa(Current_FreeNearHeap_B, temp_string, 10);  // Data Free: bytes
-// TODO      strcat(string, temp_string);
-// TODO      strcat(string, cnst_Quit_Report3);
-// TODO      strcat(string, cnst_Quit_Report2);
+// TODO      stu_strcat(string, temp_string);
+// TODO      stu_strcat(string, cnst_Quit_Report3);
+// TODO      stu_strcat(string, cnst_Quit_Report2);
 // TODO      SDL_itoa(Current_LargestFreeBlock_KB, temp_string, 10);  // "Memory Free: k"
-// TODO      strcat(string, temp_string);
-// TODO      strcat(string, cnst_Quit_Report4);
-// TODO      strcat(string, cnst_Quit_Report2);
+// TODO      stu_strcat(string, temp_string);
+// TODO      stu_strcat(string, cnst_Quit_Report4);
+// TODO      stu_strcat(string, cnst_Quit_Report2);
 // TODO      SDL_itoa(Worst_LargestFreeBlock_KB, temp_string, 10);  // "Worst Free k"
-// TODO      strcat(string, temp_string);
-// TODO      strcat(string, cnst_Quit_Report5);
+// TODO      stu_strcat(string, temp_string);
+// TODO      stu_strcat(string, cnst_Quit_Report5);
 // TODO      SDL_itoa(EMM_Pages_Reserved, temp_string, 10);  // "EMM: blocks"
-// TODO      strcat(string, temp_string);
-// TODO      strcat(string, cnst_Quit_Report6);
+// TODO      stu_strcat(string, temp_string);
+// TODO      stu_strcat(string, cnst_Quit_Report6);
 // TODO  
 // TODO      Exit_With_Message(string);
 // TODO  }

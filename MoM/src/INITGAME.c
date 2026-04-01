@@ -17,6 +17,8 @@ Module: INITGAME
 
 #include "INITGAME.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <string.h>
 
 
@@ -623,7 +625,7 @@ void AI_WIZ_StrategyReset__WIP(void)
 
         for(itr_players2 = 0; itr_players2 < _num_players; itr_players2++)
         {
-            _players[itr_players1].peace_duration[itr_players2] = ST_UNDEFINED;
+            _players[itr_players1].peace_duration[itr_players2] = 0xFF;  // 255 INF ST_UNDEFINED?
         }
 
     }
@@ -821,7 +823,7 @@ void Init_Computer_Players_Wizard_Profile(void)
     for(itr2 = 1; itr2 < _num_players; itr2++)
     {
 
-        strcpy(_players[itr2].name, _wizard_presets_table[_players[itr2].wizard_id].name);
+        stu_strcpy(_players[itr2].name, _wizard_presets_table[_players[itr2].wizard_id].name);
 
     }
 

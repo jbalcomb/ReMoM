@@ -26,6 +26,8 @@
 #include "SBookScr.h"
 #include "UNITTYPE.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <string.h>
 
 #include "REPORT.h"
@@ -234,14 +236,14 @@ void Chancellor_Screen__WIP(int16_t flag)
     for(itr_msgs = 0; MSG_CityLost_Count > itr_msgs; itr_msgs++)
     {
 
-        strcpy(GUI_NearMsgString, aTheOutpostOf);  // "The outpost of "
+        stu_strcpy(GUI_NearMsgString, aTheOutpostOf);  // "The outpost of "
 
         // ; BUG: incorrect array element size, should be 14
-        // strcat(GUI_NearMsgString, (MSG_CityLost_Names + (itr_msgs * 20)));
-        strcat(GUI_NearMsgString, &MSG_CityLost_Names[(itr_msgs * 20)]);
-        // strcat(GUI_NearMsgString, MSG_CityLost_Names[itr_msgs]);
+        // stu_strcat(GUI_NearMsgString, (MSG_CityLost_Names + (itr_msgs * 20)));
+        stu_strcat(GUI_NearMsgString, &MSG_CityLost_Names[(itr_msgs * 20)]);
+        // stu_strcat(GUI_NearMsgString, MSG_CityLost_Names[itr_msgs]);
 
-        strcat(GUI_NearMsgString, aHasBeenDeserte);  // " has been deserted."
+        stu_strcat(GUI_NearMsgString, aHasBeenDeserte);  // " has been deserted."
 
         Warn0(GUI_NearMsgString);
 
@@ -251,14 +253,14 @@ void Chancellor_Screen__WIP(int16_t flag)
     for(itr_msgs = 0; MSG_CityGained_Count > itr_msgs; itr_msgs++)
     {
 
-        strcpy(GUI_NearMsgString, aTheOutpostOf);  // "The outpost of "
+        stu_strcpy(GUI_NearMsgString, aTheOutpostOf);  // "The outpost of "
 
         // String_Copy_Far(temp_string, _CITIES[MSG_CityGained_Array[itr_msgs]].name);
-        strcpy(temp_string, _CITIES[MSG_CityGained_Array[itr_msgs]].name);
+        stu_strcpy(temp_string, _CITIES[MSG_CityGained_Array[itr_msgs]].name);
 
-        strcat(GUI_NearMsgString, temp_string);
+        stu_strcat(GUI_NearMsgString, temp_string);
 
-        strcat(GUI_NearMsgString, aHasGrownIntoAH);  // " has grown into a hamlet."
+        stu_strcat(GUI_NearMsgString, aHasGrownIntoAH);  // " has grown into a hamlet."
 
         Warn0(GUI_NearMsgString);
 
@@ -853,23 +855,23 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
             }
             else
             {
-                strcpy(GUI_NearMsgString, *_unit_type_table[MSG_UnitKilled_Array[itr].Unit_Type].name);
+                stu_strcpy(GUI_NearMsgString, *_unit_type_table[MSG_UnitKilled_Array[itr].Unit_Type].name);
             }
 
-            strcat(GUI_NearMsgString, aKilledBy);
+            stu_strcat(GUI_NearMsgString, aKilledBy);
 
             _fstrcpy(temp_string, spell_data_table[MSG_UnitKilled_Array[itr].Spell].name);
 
-            strcat(GUI_NearMsgString, temp_string);
+            stu_strcat(GUI_NearMsgString, temp_string);
 
             if(MSG_UnitKilled_Array[itr].City > 0)
             {
 
-                strcat(GUI_NearMsgString, aIn);
+                stu_strcat(GUI_NearMsgString, aIn);
 
                 _fstrcpy(temp_string, _CITIES[MSG_UnitKilled_Array[itr].City].name);
 
-                strcat(GUI_NearMsgString, temp_string);
+                stu_strcat(GUI_NearMsgString, temp_string);
 
             }
 

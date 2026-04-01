@@ -416,26 +416,26 @@ void Draw_Road_Building_Window(void)
 
     Set_Outline_Color(148);
 
-    strcpy(GUI_String_1, str_empty_string__ovr069);
+    stu_strcpy(GUI_String_1, str_empty_string__ovr069);
 
     if(m_turns_to_build_road == ST_UNDEFINED)
     {
-        strcpy(GUI_String_1, str_Blocked_RoadsCanNot);  // "Blocked.  Roads can not be built across large bodies of water."
+        stu_strcpy(GUI_String_1, str_Blocked_RoadsCanNot);  // "Blocked.  Roads can not be built across large bodies of water."
         
     }
     else
     {
         if(m_turns_to_build_road > 0)
         {
-            strcpy(GUI_String_1, str_ItWillTake);  // "It will take "
+            stu_strcpy(GUI_String_1, str_ItWillTake);  // "It will take "
             stu_itoa(m_turns_to_build_road, GUI_String_2, 10);
-            strcat(GUI_String_1, GUI_String_2);
-            strcat(GUI_String_1, str_Turn_2);  // " turn"
+            stu_strcat(GUI_String_1, GUI_String_2);
+            stu_strcat(GUI_String_1, str_Turn_2);  // " turn"
             if(m_turns_to_build_road > 1)
             {
-                strcat(GUI_String_1, str_S_4);  // "s"
+                stu_strcat(GUI_String_1, str_S_4);  // "s"
             }
-            strcat(GUI_String_1, str_ToCompleteTheConstr);  // " to complete the construction of this road.""
+            stu_strcat(GUI_String_1, str_ToCompleteTheConstr);  // " to complete the construction of this road.""
         }
     }
 

@@ -170,7 +170,7 @@ if pointer on ft_ContinuousStringInput field and one is active
 4)     not the same one, load string and activate
 
 1)  alt_field_num = active_input_field_number;
-    strcpy((char *)p_fields[alt_field_num].string, continuous_string);
+    stu_strcpy((char *)p_fields[alt_field_num].string, continuous_string);
 
 2)  
 

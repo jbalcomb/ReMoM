@@ -613,10 +613,10 @@ void Magic_Screen(void)
             if((magic_ovl_ench_flds[itr] == input_field_idx) && (ovl_ench_list_players[(magic_ovl_ench_list_first_item + itr)] == _human_player_idx))
             {
                 Play_Left_Click();
-                strcpy(GUI_String_1, aDoYouWishToCancelYour);  // "Do you wish to cancel your \x02"
-                strcpy(GUI_String_2, spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr)]].name);
-                strcat(GUI_String_1, GUI_String_2);
-                strcat(GUI_String_1, aSpell_1);  // "\x01 spell."  // BUGBUG  should be "...spell?"
+                stu_strcpy(GUI_String_1, aDoYouWishToCancelYour);  // "Do you wish to cancel your \x02"
+                stu_strcpy(GUI_String_2, spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr)]].name);
+                stu_strcat(GUI_String_1, GUI_String_2);
+                stu_strcat(GUI_String_1, aSpell_1);  // "\x01 spell."  // BUGBUG  should be "...spell?"
                 if(Confirmation_Box(GUI_String_1) == ST_TRUE)
                 {
                     players_globals = &_players[HUMAN_PLAYER_IDX].Globals[0];
@@ -1148,7 +1148,7 @@ void Magic_Screen_Draw(void)
     Set_Alias_Color(185);
 
     stu_itoa(mana, GUI_String_1, 10);
-    strcat(GUI_String_1, cnst_Space_MP);
+    stu_strcat(GUI_String_1, cnst_Space_MP);
     Print_Right(54, 160, GUI_String_1);
 
     if(_players[HUMAN_PLAYER_IDX].researching_spell_idx == spl_NONE)
@@ -1158,12 +1158,12 @@ void Magic_Screen_Draw(void)
     else
     {
         stu_itoa(research, GUI_String_1, 10);
-        strcat(GUI_String_1, aRp_0);
+        stu_strcat(GUI_String_1, aRp_0);
         Print_Right(101, 160, GUI_String_1);
     }
 
     stu_itoa(skill, GUI_String_1, 10);
-    strcat(GUI_String_1, aSp);
+    stu_strcat(GUI_String_1, aSp);
     Print_Right(148, 160, GUI_String_1);
 
 
@@ -1178,9 +1178,9 @@ void Magic_Screen_Draw(void)
     Print(5, 177, aCastingSkill);
     stu_itoa((Player_Base_Casting_Skill(_human_player_idx) + Player_Hero_Casting_Skill(_human_player_idx)), GUI_String_1, 10);
     stu_itoa(Player_Base_Casting_Skill(_human_player_idx), GUI_String_2, 10);
-    strcat(GUI_String_1, cnst_OpeningBrace_2);
-    strcat(GUI_String_1, GUI_String_2);
-    strcat(GUI_String_1, cnst_ClosingBrace_2);
+    stu_strcat(GUI_String_1, cnst_OpeningBrace_2);
+    stu_strcat(GUI_String_1, GUI_String_2);
+    stu_strcat(GUI_String_1, cnst_ClosingBrace_2);
     Print_Right(90, 177, GUI_String_1);
 
     /*

@@ -770,7 +770,7 @@ void Draw_Item_With_Name(int16_t x, int16_t y, int16_t item_idx)
     Draw_Item_Icon_With_Enchantment_Outline(item_idx, m_item_icon_workarea);
     Draw_Picture_Windowed(x, y, m_item_icon_workarea);
     // TODO  _fstrcpy(GUI_String_1, 0, _ITEMS[item_idx].name);
-    strcpy(GUI_String_1, _ITEMS[item_idx].name);
+    stu_strcpy(GUI_String_1, _ITEMS[item_idx].name);
     // Clipped_Print_Centered((x + 12), (y + 19), GUI_String_1);
     Print_Centered((x + 12), (y + 19), GUI_String_1);
 }
@@ -803,13 +803,13 @@ void Destroy_Item(void)
     PageFlip_FX();
     Copy_On_To_Off_Page();
     item_cost_mana = (_ITEMS[m_cursor_item_idx].cost / 2);
-    strcpy(GUI_String_1, cnst_ItemDestroyMsg1);  // "Do you want to destroy your \x02"
-    strcpy(GUI_String_2, _ITEMS[m_cursor_item_idx].name);
-    strcat(GUI_String_1, GUI_String_2);
-    strcat(GUI_String_1, cnst_ItemDestroyMsg2);  // "\x01 and gain "
+    stu_strcpy(GUI_String_1, cnst_ItemDestroyMsg1);  // "Do you want to destroy your \x02"
+    stu_strcpy(GUI_String_2, _ITEMS[m_cursor_item_idx].name);
+    stu_strcat(GUI_String_1, GUI_String_2);
+    stu_strcat(GUI_String_1, cnst_ItemDestroyMsg2);  // "\x01 and gain "
     stu_itoa(item_cost_mana, GUI_String_2, 10);
-    strcat(GUI_String_1, GUI_String_2);
-    strcat(GUI_String_1, cnst_ItemDestroyMsg3);  // " mana crystals?"
+    stu_strcat(GUI_String_1, GUI_String_2);
+    stu_strcat(GUI_String_1, cnst_ItemDestroyMsg3);  // " mana crystals?"
     Set_Mouse_List(1, mouse_list_default);
     if(Confirmation_Box(GUI_String_1) == ST_TRUE)
     {
@@ -1008,10 +1008,10 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
                     {
                         Set_Mouse_List(1, mouse_list_default);
                         PageFlip_FX();
-                        strcpy(GUI_String_1, cnst_ItemPort_Msg_1);  /* "Do you wish to make this transfer at a cost of " */
+                        stu_strcpy(GUI_String_1, cnst_ItemPort_Msg_1);  /* "Do you wish to make this transfer at a cost of " */
                         stu_itoa(20, GUI_String_2, 10);
-                        strcat(GUI_String_1, GUI_String_2);
-                        strcat(GUI_String_1, cnst_ItemPort_Msg_2);  /* " mana crystals?" */
+                        stu_strcat(GUI_String_1, GUI_String_2);
+                        stu_strcat(GUI_String_1, cnst_ItemPort_Msg_2);  /* " mana crystals?" */
 
                         Can_Equip = Confirmation_Box(GUI_String_1);
 

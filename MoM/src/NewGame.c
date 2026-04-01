@@ -2486,8 +2486,8 @@ void Newgame_Screen_1_2_Draw(void)
     {
         Set_Font_Style(0, 15, ST_NULL, ST_NULL);
         Set_Font_Colors_15(0, &Font_Colors[0]);
-        strcpy(Retort_String, wsa_names[_wizard_presets_table[m_displayed_wizard].special]);  // 1 + {-1,0,1,2,...}
-        strcat(Retort_String, cnst_DOT__ovr050);
+        stu_strcpy(Retort_String, wsa_names[_wizard_presets_table[m_displayed_wizard].special]);  // 1 + {-1,0,1,2,...}
+        stu_strcat(Retort_String, cnst_DOT__ovr050);
         Print(13, 181, Retort_String);
         Set_Font_Colors_15(0, &Retort_Text_Color[0]);
         Print(12, 180, Retort_String);
@@ -2633,7 +2633,7 @@ int16_t Newgame_Screen_2__WIP(void)
                 Deactivate_Auto_Function();
                 Deactivate_Help_List();
                 _players[0].wizard_id = (uint8_t)itr;
-                strcpy(_players[0].name, _wizard_presets_table[itr].name);
+                stu_strcpy(_players[0].name, _wizard_presets_table[itr].name);
                 leave_screen = ST_TRUE;
             }
         }
@@ -2714,7 +2714,7 @@ int16_t Newgame_Screen_3__WIP(void)
 
     Set_Font_Style(3, 8, 8, ST_NULL);
 
-    strcpy(name, _players[0].name);
+    stu_strcpy(name, _players[0].name);
 
     input_box_return_value = Setup_Input_Box_Popup(195, 36, 80, name, 10, 0, 0, 1, wziards_name_colors, ST_UNDEFINED);
 
@@ -2722,10 +2722,10 @@ int16_t Newgame_Screen_3__WIP(void)
 
     if(strlen(name) < 1)
     {
-        strcpy(name, _players[0].name);
+        stu_strcpy(name, _players[0].name);
     }
 
-    strcpy(_players[0].name, name);
+    stu_strcpy(_players[0].name, name);
 
     Deactivate_Auto_Function();
 
@@ -3686,19 +3686,19 @@ void Draw_Special_Abilities_String(void)
             ability_count++;
         }
     }
-    strcpy(string, empty_string__ovr050);
+    stu_strcpy(string, empty_string__ovr050);
     list_size = 0;
     for(itr = 0; itr < NUM_WIZARD_SPECIAL_ABILITIES; itr++)
     {
         if(wsa_ptr[itr] == 1)
         {
             String_List_Builer(&list_size, ability_count, &string[0]);
-            strcat(string, wsa_names[itr]);
+            stu_strcat(string, wsa_names[itr]);
         }
     }
     if(ability_count > 0)
     {
-        strcat(string, cnst_DOT__ovr050);
+        stu_strcat(string, cnst_DOT__ovr050);
     }
     if(ability_count > 5)
     {
@@ -4017,12 +4017,12 @@ int16_t Newgame_Screen_4__WIP(void)
         {
             switch(NEWG_PickError)
             {
-                case 1: { strcpy(message, cnst_Pick_Error_0); } break;
-                case 2: { strcpy(message, cnst_Pick_Error_1); } break;
+                case 1: { stu_strcpy(message, cnst_Pick_Error_0); } break;
+                case 2: { stu_strcpy(message, cnst_Pick_Error_1); } break;
                 case 3: {
-                    strcpy(message, cnst_Pick_Error_20);  /* "To select " */
-                    strcat(message, wsa_names[NEWG_PickAttempt]);
-                    strcat(message, cnst_Pick_Error_21);  /* " you need:   " */
+                    stu_strcpy(message, cnst_Pick_Error_20);  /* "To select " */
+                    stu_strcat(message, wsa_names[NEWG_PickAttempt]);
+                    stu_strcat(message, cnst_Pick_Error_21);  /* " you need:   " */
                     if(
                         (wsa_prerequisites[NEWG_PickAttempt][1] == 1)  // Realm_Count
                         &&
@@ -4034,10 +4034,10 @@ int16_t Newgame_Screen_4__WIP(void)
                             if(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr)] > 0)
                             {
                                 stu_itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr)], buffer, 10);
-                                strcat(message, buffer);
-                                strcat(message, cnst_Pick_Error_22);  /* " picks in " */
-                                strcat(message, l_realm_name_character_array[itr]);
-                                strcat(message, cnst_Pick_Error_23);  /* " Magic" */
+                                stu_strcat(message, buffer);
+                                stu_strcat(message, cnst_Pick_Error_22);  /* " picks in " */
+                                stu_strcat(message, l_realm_name_character_array[itr]);
+                                stu_strcat(message, cnst_Pick_Error_23);  /* " Magic" */
                             }
                         }
                     }
@@ -4052,13 +4052,13 @@ int16_t Newgame_Screen_4__WIP(void)
                                 {
                                     if(Realms_Added > 0)
                                     {
-                                        strcat(message, cnst_Pick_Error_29);
+                                        stu_strcat(message, cnst_Pick_Error_29);
                                     }
                                     stu_itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr2)], buffer, 10);
-                                    strcat(message, buffer);
-                                    strcat(message, cnst_Pick_Error_2A);
-                                    strcat(message, l_realm_name_character_array[itr2]);
-                                    strcat(message, cnst_Pick_Error_23);
+                                    stu_strcat(message, buffer);
+                                    stu_strcat(message, cnst_Pick_Error_2A);
+                                    stu_strcat(message, l_realm_name_character_array[itr2]);
+                                    stu_strcat(message, cnst_Pick_Error_23);
                                     Realms_Added++;
                                 }
                             }
@@ -4066,32 +4066,32 @@ int16_t Newgame_Screen_4__WIP(void)
                         else
                         {
                             stu_itoa(p_wsa_prerequisites[NEWG_PickAttempt][0], buffer, 10);
-                            strcat(message, buffer);
-                            strcat(message, cnst_Pick_Error_24);  /* " pick"*/
+                            stu_strcat(message, buffer);
+                            stu_strcat(message, cnst_Pick_Error_24);  /* " pick"*/
                             if(p_wsa_prerequisites[NEWG_PickAttempt][0] > 1)
                             {
-                                strcat(message, cnst_Pick_Error_25);  /* "s" */
+                                stu_strcat(message, cnst_Pick_Error_25);  /* "s" */
                             }
                             else
                             {
-                                strcat(message, cnst_Pick_Error_26);  /* " in any " */
+                                stu_strcat(message, cnst_Pick_Error_26);  /* " in any " */
                             }
                             if(p_wsa_prerequisites[NEWG_PickAttempt][0] > 1)
                             {
                                 stu_itoa(p_wsa_prerequisites[NEWG_PickAttempt][1], buffer, 10);
-                                strcat(message, buffer);
-                                strcat(message, cnst_Pick_Error_27);
+                                stu_strcat(message, buffer);
+                                stu_strcat(message, cnst_Pick_Error_27);
                             }
                             else
                             {
-                                strcat(message, cnst_Pick_Error_28);
+                                stu_strcat(message, cnst_Pick_Error_28);
                             }
                         }
                     }
                 } break;
-                case 4: { strcpy(message, cnst_Pick_Error_3); } break;
-                case 5: { strcpy(message, cnst_Pick_Error_4); } break;
-                case 6: { strcpy(message, cnst_Pick_Error_5); } break;
+                case 4: { stu_strcpy(message, cnst_Pick_Error_3); } break;
+                case 5: { stu_strcpy(message, cnst_Pick_Error_4); } break;
+                case 6: { stu_strcpy(message, cnst_Pick_Error_5); } break;
             }
             Deactivate_Auto_Function();
             Deactivate_Help_List();
@@ -4679,7 +4679,7 @@ void Newgame_Screen_4_Draw__WIP(void)
 
     stu_itoa(spellpicks_count, spellpicks_count_string, 10);
 
-    strcat(spellpicks_count_string, cnst_Picks);
+    stu_strcat(spellpicks_count_string, cnst_Picks);
 
     if(spellpicks_count == 0)
     {
@@ -5112,8 +5112,8 @@ int16_t Newgame_Screen_5(void)
             {
                 switch(NEWG_PickError)
                 {
-                    case 1: { strcpy(message, cnst_Pick_Error_0); } break;
-                    case 2: { strcpy(message, cnst_Pick_Error_6); } break;
+                    case 1: { stu_strcpy(message, cnst_Pick_Error_0); } break;
+                    case 2: { stu_strcpy(message, cnst_Pick_Error_6); } break;
                 }
             }
 
@@ -5403,7 +5403,7 @@ void Newgame_Screen_5_Draw(void)
         }
     }
     stu_itoa(spellpicks_count, buffer, 10);
-    strcat(buffer, cnst_Picks);
+    stu_strcat(buffer, cnst_Picks);
 /* WTF */    if(spellpicks_count == 0)
 /* WTF */    {
 /* WTF */        NEWG_ProfileComplete = ST_TRUE;
@@ -5497,9 +5497,9 @@ void Newgame_Screen_5_Draw_Spells(void)
         realm_colors[itr] = realm_color;
     }
 
-    strcpy(section_title_string, cnst_Spell_Select_0);
-    strcat(section_title_string, realm_strings[Selection_Realm]);
-    strcat(section_title_string, cnst_Spell_Select_1);
+    stu_strcpy(section_title_string, cnst_Spell_Select_0);
+    stu_strcat(section_title_string, realm_strings[Selection_Realm]);
+    stu_strcat(section_title_string, cnst_Spell_Select_1);
     Set_Font_Colors_15(4, &realm_colors[0]);
     Set_Font_Style_Shadow_Down(4, 15, ST_NULL, ST_NULL);
     Print_Centered(241, 6, section_title_string);  /* "Select " [] " Spells" */
@@ -5553,10 +5553,10 @@ void Newgame_Screen_5_Draw_Spells(void)
         )
         {
             spellpicks_count += m_select_count_common[spellrank_idx];
-            strcpy(section_title_string, rarity_strings[0]);
-            strcat(section_title_string, cnst_Spell_Select_2);
+            stu_strcpy(section_title_string, rarity_strings[0]);
+            stu_strcat(section_title_string, cnst_Spell_Select_2);
             stu_itoa(m_select_count_common[spellrank_idx], buffer, 10);
-            strcat(section_title_string, buffer);
+            stu_strcat(section_title_string, buffer);
             Set_Font_Colors_15(3, &realm_colors[0]);
             Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
             Print(167, section_title_start_y[section_idx], section_title_string);
@@ -5629,10 +5629,10 @@ void Newgame_Screen_5_Draw_Spells(void)
 // ; the current selection highlights and tick marks
             spellpicks_count += m_select_count_uncommon[spellrank_idx];
             Label_Box_Height = (39 + (section_idx * 51));
-            strcpy(section_title_string, rarity_strings[1]);
-            strcat(section_title_string, cnst_Spell_Select_2);
+            stu_strcpy(section_title_string, rarity_strings[1]);
+            stu_strcat(section_title_string, cnst_Spell_Select_2);
             stu_itoa(m_select_count_uncommon[spellrank_idx], buffer, 10);
-            strcat(section_title_string, buffer);
+            stu_strcat(section_title_string, buffer);
             Set_Font_Colors_15(3, &realm_colors[0]);
             Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
             Print(167, section_title_start_y[section_idx], section_title_string);
@@ -5705,10 +5705,10 @@ void Newgame_Screen_5_Draw_Spells(void)
 // ; the current selection highlights and tick marks
             spellpicks_count += m_select_count_rare[spellrank_idx];
             Label_Box_Height = (39 + (section_idx * 51));
-            strcpy(section_title_string, rarity_strings[2]);
-            strcat(section_title_string, cnst_Spell_Select_2);
+            stu_strcpy(section_title_string, rarity_strings[2]);
+            stu_strcat(section_title_string, cnst_Spell_Select_2);
             stu_itoa(m_select_count_rare[spellrank_idx], buffer, 10);
-            strcat(section_title_string, buffer);
+            stu_strcat(section_title_string, buffer);
             Set_Font_Colors_15(3, &realm_colors[0]);
             Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
             Print(167, section_title_start_y[section_idx], section_title_string);
@@ -5910,7 +5910,7 @@ void Human_Player_Wizard_Profile(int16_t wizard_id)
         }
     }
 
-    strcpy(_players[0].name, _wizard_presets_table[wizard_id].name);
+    stu_strcpy(_players[0].name, _wizard_presets_table[wizard_id].name);
 
 }
 
@@ -6045,7 +6045,7 @@ void Set_Newgame_Screen_6_Help_List(void)
  *                  in place.
  * @param Total Total number of items expected in the final formatted list.
  * @param Dest Destination C string buffer receiving the separator text via
- *             `strcat`.
+ *             `stu_strcat`.
  *
  * @return void
  *
@@ -6061,7 +6061,7 @@ void String_List_Builer(int16_t * List_Size, int16_t Total, char * Dest)
     {
         if(*List_Size > 1)
         {
-            strcat(Dest, &cnst_And__ovr050[0]);
+            stu_strcat(Dest, &cnst_And__ovr050[0]);
         }
 
     }
@@ -6069,7 +6069,7 @@ void String_List_Builer(int16_t * List_Size, int16_t Total, char * Dest)
     {
         if(*List_Size > 1)
         {
-            strcat(Dest, &cnst_Pick_Error_29[0]);
+            stu_strcat(Dest, &cnst_Pick_Error_29[0]);
         }
 
     }

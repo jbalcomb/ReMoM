@@ -378,9 +378,9 @@ void Hero_LevelUp_Popup_Draw(void)
 
     Set_Outline_Color(240);
 
-    strcpy(GUI_String_1, _players[unit_owner_idx].Heroes[_UNITS[lvlmake_unit_idx].Hero_Slot].name);
+    stu_strcpy(GUI_String_1, _players[unit_owner_idx].Heroes[_UNITS[lvlmake_unit_idx].Hero_Slot].name);
 
-    strcat(GUI_String_1, str_HasMadeALevel__ovr102);  // " has made a level."
+    stu_strcat(GUI_String_1, str_HasMadeALevel__ovr102);  // " has made a level."
 
     Print((lvlmake_base_x + 48), (lvlmake_base_y + 9), GUI_String_1);
 
@@ -425,9 +425,9 @@ void Hero_LevelUp_Popup_Draw(void)
     {
         FLIC_Draw((lvlmake_base_x + 139), (lvlmake_base_y + 35), item_view_bullet_seg);
         stu_itoa(value, temp_string, 10);
-        strcpy(GUI_String_1, str_Plus__ovr102);  // "+"
-        strcat(GUI_String_1, temp_string);
-        strcat(GUI_String_1, str_SPACE_Defense__ovr102);  // " Defense"
+        stu_strcpy(GUI_String_1, str_Plus__ovr102);  // "+"
+        stu_strcat(GUI_String_1, temp_string);
+        stu_strcat(GUI_String_1, str_SPACE_Defense__ovr102);  // " Defense"
         Print((lvlmake_base_x + 147), (lvlmake_base_y + 34), GUI_String_1);
     }
 
@@ -488,7 +488,7 @@ void Hero_Build_Specials_List(int16_t unit_idx, struct s_UV_List * specials_list
 
     unit_owner = _UNITS[unit_idx].owner_idx;
 
-    strcpy(specials_list->names[specials_index], USW_HeroLevels[_UNITS[unit_idx].Level]);
+    stu_strcpy(specials_list->names[specials_index], USW_HeroLevels[_UNITS[unit_idx].Level]);
 
     specials_list->flags[specials_index] = ST_UNDEFINED;
 
@@ -506,11 +506,11 @@ void Hero_Build_Specials_List(int16_t unit_idx, struct s_UV_List * specials_list
         (_UNITS[unit_idx].Level == 8)
     )
     {
-        strcpy(specials_list->names[specials_index], str_Plus__ovr102);
+        stu_strcpy(specials_list->names[specials_index], str_Plus__ovr102);
         ability_value = 1;
         stu_itoa(ability_value, temp_string, 10);
-        strcat(specials_list->names[specials_index], temp_string);
-        strcat(specials_list->names[specials_index], str_SPACE_ToHit__ovr102);  // " To Hit"
+        stu_strcat(specials_list->names[specials_index], temp_string);
+        stu_strcat(specials_list->names[specials_index], str_SPACE_ToHit__ovr102);  // " To Hit"
         specials_list->flags[specials_index] = ST_UNDEFINED;
         specials_list->picts[specials_index] = (SAMB_INT)special_seg[125];
         specials_list->helps[specials_index] = HLP_TOHIT_PLUS;
@@ -535,137 +535,137 @@ void Hero_Build_Specials_List(int16_t unit_idx, struct s_UV_List * specials_list
             {
                     case HSA_AGILITY:
                     {
-                        strcpy(specials_list->names[specials_index], str_Agility__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Agility__ovr102);
                         ability_value = (_UNITS[unit_idx].Level + 1);
                     } break;
                     case HSA_LEADERSHIP:
                     {
-                        strcpy(specials_list->names[specials_index], str_Leadership__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Leadership__ovr102);
                         ability_value = ((_UNITS[unit_idx].Level + 1) / 3);
                     } break;
                     case HSA_LEADERSHIP2:
                     {
-                        strcpy(specials_list->names[specials_index], str_Leadership__ovr102);
-                        strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Leadership__ovr102);
+                        stu_strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
                         ability_value = ((_UNITS[unit_idx].Level + 1) / 2);
                     } break;
                     case HSA_LEGENDARY:
                     {
-                        strcpy(specials_list->names[specials_index], str_Legendary__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Legendary__ovr102);
                         ability_value = ((_UNITS[unit_idx].Level + 1) / 3);
                     } break;
                     case HSA_LEGENDARY2:
                     {
-                        strcpy(specials_list->names[specials_index], str_Legendary__ovr102);
-                        strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Legendary__ovr102);
+                        stu_strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
                         ability_value = (((_UNITS[unit_idx].Level + 1) * 9) / 2);
                     } break;
                     case HSA_BLADEMASTER:
                     {
-                        strcpy(specials_list->names[specials_index], str_Blademaster__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Blademaster__ovr102);
                         ability_value = ((_UNITS[unit_idx].Level + 1) / 2);
                     } break;
                     case HSA_BLADEMASTER2:
                     {
-                        strcpy(specials_list->names[specials_index], str_Blademaster__ovr102);
-                        strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Blademaster__ovr102);
+                        stu_strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
                         ability_value = (((_UNITS[unit_idx].Level + 1) * 3) / 4);
                     } break;
                     case HSA_ARMSMASTER:
                     {
-                        strcpy(specials_list->names[specials_index], str_Armsmaster__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Armsmaster__ovr102);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 2);
                     } break;
                     case HSA_ARMSMASTER2:
                     {
-                        strcpy(specials_list->names[specials_index], str_Armsmaster__ovr102);
-                        strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Armsmaster__ovr102);
+                        stu_strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 3);
                     } break;
                     case HSA_CONSTITUTION:
                     {
-                        strcpy(specials_list->names[specials_index], str_Constitution__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Constitution__ovr102);
                         ability_value = (_UNITS[unit_idx].Level + 1);
                     } break;
                     case HSA_CONSTITUTION2:
                     {
-                        strcpy(specials_list->names[specials_index], str_Constitution__ovr102);
-                        strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Constitution__ovr102);
+                        stu_strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 3);
                     } break;
                     case HSA_MIGHT:
                     {
-                        strcpy(specials_list->names[specials_index], str_Might__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Might__ovr102);
                         ability_value = (_UNITS[unit_idx].Level + 1);
                     } break;
                     case HSA_MIGHT2:
                     {
-                        strcpy(specials_list->names[specials_index], str_Might__ovr102);
-                        strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Might__ovr102);
+                        stu_strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 3);
                     } break;
                     case HSA_ARCANE_POWER:
                     {
-                        strcpy(specials_list->names[specials_index], str_ArcanePower__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_ArcanePower__ovr102);
                         ability_value = (_UNITS[unit_idx].Level + 1);
                     } break;
                     case HSA_ARCANE_POWER2:
                     {
-                        strcpy(specials_list->names[specials_index], str_ArcanePower__ovr102);
-                        strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_ArcanePower__ovr102);
+                        stu_strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 3);
                     } break;
                     case HSA_SAGE:
                     {
-                        strcpy(specials_list->names[specials_index], str_Sage__ovr102);
-                        strcat(specials_list->names[specials_index], str_SPACE__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Sage__ovr102);
+                        stu_strcat(specials_list->names[specials_index], str_SPACE__ovr102);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 3);
                         stu_itoa(ability_value, temp_string, 10);
-                        strcat(specials_list->names[specials_index], temp_string);
-                        strcat(specials_list->names[specials_index], str_SPACE_rp__ovr102);
+                        stu_strcat(specials_list->names[specials_index], temp_string);
+                        stu_strcat(specials_list->names[specials_index], str_SPACE_rp__ovr102);
                         ability_has_plus = ST_FALSE;
                     } break;
                     case HSA_SAGE2:
                     {
-                        strcpy(specials_list->names[specials_index], str_Sage__ovr102);
-                        strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
-                        strcat(specials_list->names[specials_index], str_SPACE__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Sage__ovr102);
+                        stu_strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
+                        stu_strcat(specials_list->names[specials_index], str_SPACE__ovr102);
                         ability_value = (((_UNITS[unit_idx].Level + 1) * 9) / 2);
                         stu_itoa(ability_value, temp_string, 10);
-                        strcat(specials_list->names[specials_index], temp_string);
-                        strcat(specials_list->names[specials_index], str_SPACE_rp__ovr102);
+                        stu_strcat(specials_list->names[specials_index], temp_string);
+                        stu_strcat(specials_list->names[specials_index], str_SPACE_rp__ovr102);
                         ability_has_plus = ST_FALSE;
                     } break;
                     case HSA_PRAYERMASTER:
                     {
-                        strcpy(specials_list->names[specials_index], str_Prayermaster__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Prayermaster__ovr102);
                         ability_value = (_UNITS[unit_idx].Level + 1);
                     } break;
                     case HSA_PRAYERMASTER2:
                     {
-                        strcpy(specials_list->names[specials_index], str_Prayermaster__ovr102);
-                        strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Prayermaster__ovr102);
+                        stu_strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 3);
                     } break;
                     case HSA_AGILITY2:
                     {
-                        strcpy(specials_list->names[specials_index], str_Agility__ovr102);
-                        strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
+                        stu_strcpy(specials_list->names[specials_index], str_Agility__ovr102);
+                        stu_strcat(specials_list->names[specials_index], str_CloseBrace__ovr102);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 3);
                     } break;
                     // DNE in Dasm  case HSA_LUCKY:
                     // DNE in Dasm  {
-                    // DNE in Dasm      strcpy(specials_list->names[specials_index], str_Lucky__ovr102);
+                    // DNE in Dasm      stu_strcpy(specials_list->names[specials_index], str_Lucky__ovr102);
                     // DNE in Dasm      ability_value = -1;
                     // DNE in Dasm  } break;
                     // DNE in Dasm  case HSA_CHARMED:
                     // DNE in Dasm  {
-                    // DNE in Dasm      strcpy(specials_list->names[specials_index], str_Charmed__ovr102);
+                    // DNE in Dasm      stu_strcpy(specials_list->names[specials_index], str_Charmed__ovr102);
                     // DNE in Dasm      ability_value = -1;
                     // DNE in Dasm  } break;
                     // DNE in Dasm  case HSA_NOBLE:
                     // DNE in Dasm  {
-                    // DNE in Dasm      strcpy(specials_list->names[specials_index], str_Noble__ovr102);
+                    // DNE in Dasm      stu_strcpy(specials_list->names[specials_index], str_Noble__ovr102);
                     // DNE in Dasm      ability_value = -1;
                     // DNE in Dasm  } break;
             }
@@ -676,8 +676,8 @@ void Hero_Build_Specials_List(int16_t unit_idx, struct s_UV_List * specials_list
                 if(ability_has_plus == ST_TRUE)
                 {
                     stu_itoa(ability_value, temp_string, 10);
-                    strcat(specials_list->names[specials_index], str_SPACE_Plus__ovr102);
-                    strcat(specials_list->names[specials_index], temp_string);
+                    stu_strcat(specials_list->names[specials_index], str_SPACE_Plus__ovr102);
+                    stu_strcat(specials_list->names[specials_index], temp_string);
                 }
                 specials_list->flags[specials_index] = ST_UNDEFINED;
                 specials_list->picts[specials_index] = (SAMB_INT)special_seg[USW_HeroAbilities[itr].icon_idx];
@@ -698,27 +698,27 @@ void Hero_Build_Specials_List(int16_t unit_idx, struct s_UV_List * specials_list
     {
         if(_HEROES2[unit_owner]->heroes[unit_type].Casting_Skill > 0)
         {
-            strcpy(specials_list->names[specials_index], str_Caster__ovr102);
-            strcat(specials_list->names[specials_index], str_SPACE__ovr102);
+            stu_strcpy(specials_list->names[specials_index], str_Caster__ovr102);
+            stu_strcat(specials_list->names[specials_index], str_SPACE__ovr102);
                 
             if(global_battle_unit->mana_max > global_battle_unit->mana)
             {
                     ability_value = global_battle_unit->mana;
                     stu_itoa(ability_value, temp_string, 10);
-                    strcat(specials_list->names[specials_index], temp_string);
-                    strcat(specials_list->names[specials_index], str_SPACE_OpenParen__ovr102);
+                    stu_strcat(specials_list->names[specials_index], temp_string);
+                    stu_strcat(specials_list->names[specials_index], str_SPACE_OpenParen__ovr102);
                     ability_value = global_battle_unit->mana_max;
                     stu_itoa(ability_value, temp_string, 10);
-                    strcat(specials_list->names[specials_index], temp_string);
-                    strcat(specials_list->names[specials_index], str_CloseParen__ovr102);
+                    stu_strcat(specials_list->names[specials_index], temp_string);
+                    stu_strcat(specials_list->names[specials_index], str_CloseParen__ovr102);
             }
             else
             {
                 ability_value = global_battle_unit->mana_max;
                 stu_itoa(ability_value, temp_string, 10);
-                strcat(specials_list->names[specials_index], temp_string);
+                stu_strcat(specials_list->names[specials_index], temp_string);
             }
-            strcat(specials_list->names[specials_index], str_SPACE_mp__ovr102);
+            stu_strcat(specials_list->names[specials_index], str_SPACE_mp__ovr102);
             specials_list->flags[specials_index] = ST_UNDEFINED;
             specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_CASTER];
             specials_list->helps[specials_index] = HLP_CASTER;

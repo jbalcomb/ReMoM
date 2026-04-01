@@ -34,7 +34,7 @@ XREFS:  (117)
 ### Spell Book Page - Title
 ...in the code
 ¿ Spellbook_Add_Page() ?
-    strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
+    stu_strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
 
 ~ 58,10
 
@@ -42,14 +42,14 @@ XREFS:  (117)
 ```
 jbalcomb@HMS-PinkThad3 MINGW64 /c/STU/devel/ReMoM/src (develop)
 $ grep -i title *
-Spellbook.C:        strcpy(m_spellbook_pages[itr1].title, "");
+Spellbook.C:        stu_strcpy(m_spellbook_pages[itr1].title, "");
 Spellbook.C:    Print_Centered((x + 70), (y + 6), m_spellbook_pages[SBK_OpenPage].title);
 Spellbook.C:    Print_Centered((x + 208), (y + 6), m_spellbook_pages[(SBK_OpenPage + 1)].title);
 Spellbook.C:void Spellbook_Add_Page(int16_t Spell_Count, int16_t Grp_Index, char * title, int16_t Page_Size)
-Spellbook.C:    strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
-Spellbook.C:                            strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
-Spellbook.C:                            strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
-Spellbook.C:                    strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
+Spellbook.C:    stu_strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
+Spellbook.C:                            stu_strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
+Spellbook.C:                            stu_strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
+Spellbook.C:                    stu_strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
 Spellbook.C:            Print_Centered_To_Bitmap(66, 30, m_spellbook_pages[page].title, pict_seg);
 Spellbook.C:            Print_Centered_To_Bitmap(58, 30, m_spellbook_pages[page].title, pict_seg);
 Spellbook.H:    /* 00 */   char title[16];
@@ -63,7 +63,7 @@ Apprentice_Screen__WIP()
         |-> Spellbook_Add_Group_Pages()
         |-> Spellbook_Add_Page()
             ...
-            strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
+            stu_strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
             ...
     ...
     |-> SBK_LoadSpellDescs__WIP()
@@ -115,10 +115,10 @@ Why?
 for(itr = SBK_OpenPage; (SBK_OpenPage + 1) >= itr; itr++)
 for(itr = page; (page + 1) >= itr; itr++)
 if((itr < 0) || (itr >= m_spellbook_page_count))
-    strcpy(SBK_Descriptions[((itr - SBK_OpenPage) + count)], str_empty_string__ovr118)
+    stu_strcpy(SBK_Descriptions[((itr - SBK_OpenPage) + count)], str_empty_string__ovr118)
 else
     LBX_Load_Data_Static(desc_lbx_file__ovr118, 0, (SAMB_ptr)buffer, abs(m_spellbook_pages[itr].spell[count]), 1, 110);
-    strcpy(SBK_Descriptions[((itr - page) + count)], buffer);
+    stu_strcpy(SBK_Descriptions[((itr - page) + count)], buffer);
 
 ¿ math on SBK_Descriptions{} looks like it treats the 16 descriptions as 4 pages of 4 ?
 
@@ -142,7 +142,7 @@ Apprentice_Screen()
                 for(itr = 0; itr < 8; itr++)
                 {
                     // TODO  String_Copy_Far(SBK_Descriptions[(0 + itr)], SBK_Descriptions[(8 + itr)]);
-                    strcpy(SBK_Descriptions[(0 + itr)], SBK_Descriptions[(8 + itr)]);
+                    stu_strcpy(SBK_Descriptions[(0 + itr)], SBK_Descriptions[(8 + itr)]);
                 }
 
                 Set_Page_Off();

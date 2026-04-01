@@ -193,7 +193,7 @@ void Load_Font_File(char * font_file)
 {
     int itr;
 
-    strcpy(font_name, font_file);
+    stu_strcpy(font_name, font_file);
 
     font_style_data = LBX_Load(font_file, 0);
     border_style_data = LBX_Load(font_file, 1);
@@ -2069,7 +2069,7 @@ int16_t Print_To_Bitmap_Far(int16_t x, int16_t y, char * string, SAMB_ptr bitmap
 {
     int16_t next_x;  // DNE in Dasm
     // TODO  _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
-    strcpy(near_buffer, string);
+    stu_strcpy(near_buffer, string);
     next_x = Print_To_Bitmap(x, y, near_buffer, bitmap);
     return next_x;
 }

@@ -26,6 +26,8 @@ Module: AITECH
 #include "SPELLDEF.h"
 #include "TerrType.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <assert.h>
 #include <string.h>
 
@@ -499,7 +501,7 @@ void Cast_Spell_Target_Error(int16_t spell_idx)
 
     _fstrcpy(near_buffer, spell_data_table[spell_idx].name);
 
-    strcat(near_buffer, CRP_AI_SpellTargetError);  // " could not be found for CP."
+    stu_strcat(near_buffer, CRP_AI_SpellTargetError);  // " could not be found for CP."
 
     Exit_With_Message(near_buffer);
 

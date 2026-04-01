@@ -36,7 +36,7 @@
 #include "capture.h"
 
 #include <stdlib.h>
-#include <string.h>     /* memset(), strcat(), strcpy(); */
+#include <string.h>     /* memset(), stu_strcat(), stu_strcpy(); */
 
 #include "../../ext/stu_compat.h"
 
@@ -320,10 +320,10 @@ byte_ptr Near_Allocate_Next(int16_t size)
 // WZD s08p06
 void Near_Allocation_Error(int16_t size)
 {
-    strcpy(near_buffer, "Near Allocation too large by ");  // cnst_Alloc_Error01[] = "Near Allocation too large by "
+    stu_strcpy(near_buffer, "Near Allocation too large by ");  // cnst_Alloc_Error01[] = "Near Allocation too large by "
     stu_itoa(size, &near_buffer[100], 10);
-    strcat(near_buffer, &near_buffer[100]);
-    strcat(near_buffer, " bytes");  // cnst_Alloc_Error02[] = " bytes"
+    stu_strcat(near_buffer, &near_buffer[100]);
+    stu_strcat(near_buffer, " bytes");  // cnst_Alloc_Error02[] = " bytes"
     Exit_With_Message((char *)&near_buffer[0]);
 }
 
@@ -548,39 +548,39 @@ void Allocation_Error(uint16_t error_num, uint16_t blocks)
 
     if(Check_Release_Version() == ST_TRUE)
     {
-        strcpy(buffer, "Insufficient memory. You need at least ");
+        stu_strcpy(buffer, "Insufficient memory. You need at least ");
         stu_itoa(640, buffer2, 10);
-        strcat(buffer, buffer2);
-        strcat(buffer, "K free. Try removing all TSR's.");
+        stu_strcat(buffer, buffer2);
+        stu_strcat(buffer, "K free. Try removing all TSR's.");
     }
     else
     {
         switch(error_num)
         {
             case 1:
-                strcpy(buffer, str_allocation_errors[4]);
-                strcat(buffer, str_allocation_errors[5]);
+                stu_strcpy(buffer, str_allocation_errors[4]);
+                stu_strcat(buffer, str_allocation_errors[5]);
                 break;
             case 2:
-                strcpy(buffer, str_allocation_errors[7]);
-                strcat(buffer, str_allocation_errors[8]);
-                strcat(buffer, str_allocation_errors[9]);
+                stu_strcpy(buffer, str_allocation_errors[7]);
+                stu_strcat(buffer, str_allocation_errors[8]);
+                stu_strcat(buffer, str_allocation_errors[9]);
                 break;
             case 3:
-                strcpy(buffer, str_allocation_errors[10]);
-                strcat(buffer, str_allocation_errors[8]);
-                strcat(buffer, str_allocation_errors[5]);
+                stu_strcpy(buffer, str_allocation_errors[10]);
+                stu_strcat(buffer, str_allocation_errors[8]);
+                stu_strcat(buffer, str_allocation_errors[5]);
                 break;
             case 4:
-                strcpy(buffer, str_allocation_errors[7]);
-                strcat(buffer, str_allocation_errors[11]);
-                strcat(buffer, str_allocation_errors[8]);
-                strcat(buffer, str_allocation_errors[9]);
+                stu_strcpy(buffer, str_allocation_errors[7]);
+                stu_strcat(buffer, str_allocation_errors[11]);
+                stu_strcat(buffer, str_allocation_errors[8]);
+                stu_strcat(buffer, str_allocation_errors[9]);
                 break;
         }
         stu_itoa(blocks, buffer2, 10);
-        strcat(buffer, buffer2);
-        strcat(buffer, str_allocation_errors[6]);
+        stu_strcat(buffer, buffer2);
+        stu_strcat(buffer, str_allocation_errors[6]);
     }
 
     Exit_With_Message(buffer);

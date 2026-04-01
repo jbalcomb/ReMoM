@@ -10,7 +10,7 @@
 #include "MOX_TYPE.h"
 
 #include <stdlib.h>
-#include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
+#include <string.h>     /* memcpy() memset(), stu_strcat(), stu_strcpy(), stricmp() */
 
 #include "../../ext/stu_compat.h"
 
@@ -295,7 +295,7 @@ void EMM_GetLowString(char * string)
 {
     char temp[20];
     stu_itoa(EMM_MinKB, temp, 10);
-    strcpy(string, cnst_EMMErr_TooLow1);
-    strcat(string, temp);
-    strcat(string, cnst_EMMErr_TooLow2);
+    stu_strcpy(string, cnst_EMMErr_TooLow1);
+    stu_strcat(string, temp);
+    stu_strcat(string, cnst_EMMErr_TooLow2);
 }
