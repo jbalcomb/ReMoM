@@ -5,9 +5,23 @@
 
 option(USE_SDL3 "Use SDL3 instead of SDL2 (default: SDL2)" OFF)
 option(USE_WIN32 "Use native Win32 backend instead of SDL (no SDL dependency)" OFF)
+option(USE_HEADLESS "Headless build with no display/audio (for testing, CI, replay)" OFF)
 option(MOUSE_DEBUG "Enable verbose mouse input debug logging to stderr" OFF)
 
-if(USE_WIN32)
+if(USE_HEADLESS)
+    set(PLATFORM_BACKEND_DIR headless)
+    set(PLATFORM_SOURCES
+        headless/headless_PFL.c
+        headless/headless_KD.c
+        headless/headless_Timer.c
+        headless/headless_EMM.c
+        headless/headless_Audio.c
+        headless/headless_State.c
+        replay/Replay.c
+    )
+    set(PLATFORM_LINK_LIBS "")
+    add_compile_definitions(NO_SOUND_LIBRARY)
+elseif(USE_WIN32)
     set(PLATFORM_BACKEND_DIR win32)
     set(PLATFORM_SOURCES
         win32/win_PFL.cpp
@@ -62,7 +76,9 @@ endif()
 
 add_library(Platform STATIC ${PLATFORM_SOURCES})
 
-if(USE_WIN32)
+if(USE_HEADLESS)
+    target_compile_definitions(Platform PUBLIC USE_HEADLESS)
+elseif(USE_WIN32)
     target_compile_definitions(Platform PUBLIC _STU_WIN)
 elseif(USE_SDL3)
     target_compile_definitions(Platform PUBLIC USE_SDL3)

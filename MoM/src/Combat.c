@@ -6817,10 +6817,6 @@ void Combat_Screen_Draw(void)
     }
 
 #ifdef STU_DEBUG
-    I_CAN_NOT_BE_POSSIBLE();
-#endif
-
-#ifdef STU_DEBUG
     if(DBG_debug_flag)
     {
         Combat_Screen_Draw_Debug_Information();

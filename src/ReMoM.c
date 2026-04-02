@@ -73,6 +73,7 @@
 
 #include "../ext/stu_compat.h"
 #include "../platform/include/Platform_Replay.h"
+#include "ReMoM_Init.h"
 
 /* COPILOT */ /* SDL_main.h redefines main() on some platforms (macOS, iOS, Android).
                       We handle our own main(), so tell SDL not to intercept it.
@@ -281,13 +282,35 @@ int main(int argc, char * argv[])
 
     Debug_Print_Working_Directory();
 
+    /* --headless: set SDL video driver to offscreen before SDL init.
+       Must be parsed before Startup_Platform() so the environment variable
+       takes effect. Has no effect on the pure headless (USE_HEADLESS) backend. */
+#ifndef USE_HEADLESS
+    {
+        int argi;
+        for (argi = 1; argi < argc; argi++)
+        {
+            if (strcmp(argv[argi], "--headless") == 0)
+            {
+#ifdef USE_SDL3
+                stu_putenv("SDL_VIDEODRIVER=offscreen");
+#else
+                stu_putenv("SDL_VIDEODRIVER=dummy");
+#endif
+                fprintf(stderr, "[headless] SDL video driver set to offscreen\n");
+                break;
+            }
+        }
+    }
+#endif
+
     Startup_Platform();
 
     /* CLAUDE: Register engine callbacks for replay before parsing CLI flags. */
     Platform_Replay_Register_Random_Seed_Callbacks(Get_Random_Seed, Set_Random_Seed);
     Platform_Replay_Register_Field_Log_Callback(Replay_Log_Field_Hit);
 
-    /* CLAUDE: Record & Replay CLI flags. */
+    /* CLAUDE: Record, Replay, and Startup Mode CLI flags. */
     {
         int argi;
         for(argi = 1; argi < argc; argi++)
@@ -384,279 +407,17 @@ This is an amalgamation of the original main functions from both the MAGIC.EXE a
 */
 int MOM_main(int argc, char** argv)
 {
-    char found_file[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    char file_name[LEN_MAIN_SAVE_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t DIGI_ID = 0;
-    int16_t MIDI_ID = 0;
-    int16_t DIGI_DMA = 0;
-    int16_t DIGI_IRQ = 0;
-    int16_t DIGI_IO = 0;
-    int16_t DIGI_DRV = 0;
-    int16_t MIDI_IRQ = 0;
-    int16_t MIDI_IO = 0;
-    int16_t itr_savegams = 0;
-    FILE *  file_handle = 0;
-    int16_t EMS_Pages_Left = 0;
-    int16_t MIDI_DMA = 0;  // _DI_
-    int16_t MIDI_DRV = 0;  // _SI_
     SAMB_ptr main_menu_music_seg;  // MGC
     uint32_t main_menu_music_seg_size = 0;  // DNE in Dasm
 
-    EMM_Pages_Reserved = 158;
-
-    if(DIR(str_CONFIG_MOM, found_file) == 0)
-    {
-        
-        // TODO  if PLATFORM-MSDOS Exit_With_Message(str_CONFIG_MOM_ERROR);
-        config_mom.MIDI_IO = 0;
-        config_mom.MIDI_ID = 0; 
-        config_mom.MIDI_IRQ = 0;
-        config_mom.DIGI_IO = 0;
-        config_mom.DIGI_IRQ = 0;
-        config_mom.DIGI_DMA = 0;
-        config_mom.DIGI_ID = 0;
-        config_mom.NIU_0E = 0;
-        config_mom.NIU_10 = 0;
-        config_mom.NIU_12 = 0;
-    }
-    else
-    {
-        file_handle = stu_fopen_ci(str_CONFIG_MOM, str_RB);
-        fread(&config_mom, sizeof(struct s_CONFIG_MOM_18), 1, file_handle);
-        fclose(file_handle);
-    }
-
-    Load_MAGIC_SET();
-
-#ifdef STU_DEBUG
-    DBG_Print_MAGIC_SET("MOM_main after Load_MAGIC_SET");
-#endif
-
-    MIDI_IO = config_mom.MIDI_IO;
-    MIDI_IRQ = config_mom.MIDI_IRQ;
-    MIDI_DMA = ST_UNDEFINED;
-    MIDI_ID = config_mom.MIDI_ID;
-    switch(MIDI_ID)
-    {
-        case 0:
-        {
-            MIDI_DRV = SND_NONE;
-            MIDI_IO = ST_UNDEFINED;
-            MIDI_IRQ = ST_UNDEFINED;
-            MIDI_DMA = ST_UNDEFINED;
-        } break;
-        case 1:
-        {
-            MIDI_DRV = SND_Speaker;
-            MIDI_IO = ST_UNDEFINED;
-            MIDI_IRQ = ST_UNDEFINED;
-            MIDI_DMA = ST_UNDEFINED;
-        } break;
-        case 16:
-        {
-            MIDI_DRV = SND_AdLib;
-            MIDI_IO = ST_UNDEFINED;
-            MIDI_IRQ = ST_UNDEFINED;
-            MIDI_DMA = ST_UNDEFINED;
-        } break;
-        case 18:
-        {
-            MIDI_DRV = SND_SB;
-            MIDI_IRQ = ST_UNDEFINED;
-            MIDI_DMA = ST_UNDEFINED;
-        } break;
-        case 24:
-        {
-            MIDI_DRV = SND_SBPro;
-            MIDI_IRQ = ST_UNDEFINED;
-            MIDI_DMA = ST_UNDEFINED;
-        } break;
-        case 25:
-        {
-            MIDI_DRV = SND_PAS;
-            MIDI_IO = ST_UNDEFINED;
-            MIDI_IRQ = ST_UNDEFINED;
-            MIDI_DMA = ST_UNDEFINED;
-        } break;
-        case 32:
-        {
-            MIDI_DRV = SND_SBPro2;
-            MIDI_IRQ = ST_UNDEFINED;
-            MIDI_DMA = ST_UNDEFINED;
-        } break;
-        case 33:
-        {
-            MIDI_DRV = SND_PAS16;
-            MIDI_IO = ST_UNDEFINED;
-            MIDI_IRQ = ST_UNDEFINED;
-            MIDI_DMA = ST_UNDEFINED;
-        } break;
-        case 34:
-        {
-            MIDI_DRV = SND_ALG;
-            MIDI_IO = ST_UNDEFINED;
-            MIDI_IRQ = ST_UNDEFINED;
-            MIDI_DMA = ST_UNDEFINED;
-        } break;
-        case 48:
-        {
-            MIDI_DRV = SND_GMIDI;
-            MIDI_DMA = ST_UNDEFINED;
-        } break;
-        case 49:
-        {
-            MIDI_DRV = SND_Roland;
-            MIDI_DMA = ST_UNDEFINED;
-        } break;
-        case 56:
-        {
-            MIDI_DRV = SND_GMIDI;
-            MIDI_DMA = ST_UNDEFINED;
-        } break;
-    }
-    if(MIDI_DRV == SND_Roland)
-    {
-        DOS_PrintString__STUB(str_Initializing_Roland_Drivers);
-        Mark_Time();
-        Release_Time(2);
-    }
-    DIGI_IO = config_mom.DIGI_IO;
-    DIGI_IRQ = config_mom.DIGI_IRQ;
-    DIGI_DMA = config_mom.DIGI_DMA;
-    DIGI_ID = config_mom.DIGI_ID;
-    switch(DIGI_ID)
-    {
-        case 0:
-        {
-            DIGI_DRV = SND_NONE;
-            DIGI_IO = ST_UNDEFINED;
-            DIGI_IRQ = ST_UNDEFINED;
-            DIGI_DMA = ST_UNDEFINED;
-        } break;
-        case 1:
-        {
-            DIGI_DRV = SND_Speaker;
-            DIGI_IO = ST_UNDEFINED;
-            DIGI_IRQ = ST_UNDEFINED;
-            DIGI_DMA = ST_UNDEFINED;
-        } break;
-        case 16:
-        {
-            DIGI_DRV = SND_NONE;
-            DIGI_IO = ST_UNDEFINED;
-            DIGI_IRQ = ST_UNDEFINED;
-            DIGI_DMA = ST_UNDEFINED;
-        } break;
-        case 18:
-        {
-            DIGI_DRV = SND_SB;
-        } break;
-        case 24:
-        {
-            DIGI_DRV = SND_SBPro;
-        } break;
-        case 25:
-        {
-            DIGI_DRV = SND_PAS;
-            DIGI_IO = ST_UNDEFINED;
-        } break;
-        case 32:
-        {
-            DIGI_DRV = SND_SBPro2;
-            MIDI_IRQ = DIGI_IRQ;
-            MIDI_DMA = DIGI_DMA;
-        } break;
-        case 33:
-        {
-            DIGI_DRV = SND_PAS16;
-            DIGI_IO = ST_UNDEFINED;
-        } break;
-        case 34:
-        {
-            DIGI_DRV = SND_ALG;
-        } break;
-        case 48:
-        case 49:
-        {
-            DIGI_DRV = SND_Roland;
-            DIGI_IO = ST_UNDEFINED;
-            DIGI_IRQ = ST_UNDEFINED;
-            DIGI_DMA = ST_UNDEFINED;
-        } break;
-        case 56:
-        {
-            DIGI_DRV = SND_GMIDI;
-            DIGI_IO = ST_UNDEFINED;
-            DIGI_IRQ = ST_UNDEFINED;
-            DIGI_DMA = ST_UNDEFINED;
-        } break;
-    }
-    if(MIDI_DRV == SND_AdLib)
-    {
-        DIGI_DRV = SND_AdLib;
-    }
-    if((magic_set.sound_channels > 2) || (magic_set.sound_channels < 0))
-    {
-        magic_set.sound_channels = 0;
-    }
-
-    magic_set.input_type = 1;  // NOTE:  OG-MoM v1.31 is hard-coded to 'keyboard and mouse'
-
-    // ¿ MoO2  Check_For_Saved_Games() ?
-    for(itr_savegams = 1; itr_savegams < 9; itr_savegams++)
-    {
-        if(magic_set.Have_Save[itr_savegams] != ST_FALSE)
-        {
-            stu_itoa(itr_savegams, found_file, 10);
-            stu_strcpy(file_name, str_SAVE_NAME);
-            stu_strcat(file_name, found_file);
-            stu_strcat(file_name, str_SAVE_EXT);
-            DIR(file_name, found_file);
-            if(found_file[0] == '\0')
-            {
-                magic_set.Have_Save[(itr_savegams - 1)] = ST_FALSE;
-                stu_strcpy(magic_set.Save_Names[(itr_savegams - 1)], empty_string__MAIN);
-                file_handle = stu_fopen_ci(str_MAGIC_SET, str_WB);
-                fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_handle);
-                fclose(file_handle);
-            }
-        }
-    }
-
-    EMM_Set_Minimum(2700);
-    RAM_Set_Minimum(583);
-    magic_set.input_type = 1;
-    magic_set.sound_channels = 2;
-    Init_Drivers(magic_set.input_type, magic_set.sound_channels, MOM_FONT_FILE, MIDI_DRV, MIDI_IO, MIDI_IRQ, MIDI_DMA, DIGI_DRV, DIGI_IO, DIGI_IRQ, DIGI_DMA);
-    Release_Version();
-
-    // HERE: MGC === WZD
-
-    // MGC Allocate_Data_Space(6100);
-    // MGC Disable_Cancel();
-    // WZD Disable_Cancel();
-    // WZD Allocate_Data_Space(4600);
-    Disable_Cancel();
-
-    Allocate_Data_Space(6100);
-
-    // HERE: MGC ~== WZD
-
-    Load_Palette(0, ST_UNDEFINED, 0);
-    Apply_Palette();
+    /* Core engine initialization (shared with HeMoM) */
+    ReMoM_Init_Engine();
 
     // DOMSDOS  MS-DOS has some area for the program execution that lets you get away with the AVRL here?  ... why argv[1] instead of argv[2]?
     if(!((argc > 1) && (argv[1][0] == 'J' && argv[1][1] == 'E' && argv[1][2] == 'N' && argv[1][3] == 'N' && argv[1][4] == 'Y')))
     {
         Draw_Logos();
     }
-
-    Load_MGC_Resources();
-
-    // BEGIN: ~== New Game Screen
-    Load_TERRSTAT();  // ; ~== NewGame  MAPGEN
-    Load_SPELLDAT();  // ; ~== NewGame
-    // END: ~== New Game Screen
 
     Init_Credits();
 
@@ -673,9 +434,6 @@ int MOM_main(int argc, char** argv)
     Load_Palette(0, ST_UNDEFINED, 0);
     Apply_Palette();
     // END: ~== Main Menu Screen
-
-    // WZD Load_SAVE_GAM(8);  Because, running WIZARDS.EXE is equivalent to 'Continue'
-    /* WZD */ Load_WZD_Resources();
 
     // WZD EMS_Pages_Left = STU_INT(0x67, 5901);
     // WZD if(EMS_Pages_Left != 0)
@@ -711,7 +469,7 @@ int MOM_main(int argc, char** argv)
 
 
     current_screen = scr_Main_Menu_Screen;
-    
+
     Screen_Control();
 
     return 0;
