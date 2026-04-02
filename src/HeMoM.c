@@ -35,6 +35,7 @@
 #include "../MoX/src/MOX_TYPE.h"
 #include "../MoX/src/MOX_T4.h"
 #include "../MoX/src/Fields.h"
+#include "../MoX/src/LBX_Load.h"
 #include "../MoX/src/LOADSAVE.h"
 #include "../MoX/src/random.h"
 
@@ -75,6 +76,15 @@ void Shutdown_Platform(void);
 char MOM_FONT_FILE[] = "FONTS.LBX";
 extern int16_t fields_count;
 extern struct s_Field *p_fields;
+// NewGame.c
+// MGC  dseg:3090
+extern char newgame_lbx_file__ovr050[];
+// MGC  dseg:8DD6
+extern SAMB_ptr newgame_BUILDWOR_map_build_bar_seg;
+// MainScr.c
+// WZD dseg:2E14
+// MoO2  _given_chance_to_rename_home_star
+extern int16_t _given_chance_to_rename_home_city;
 
 
 
@@ -394,11 +404,23 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
 
     fprintf(stderr, "[HeMoM] Creating new game: difficulty=%d magic=%d landsize=%d opponents=%d wizard=%s race=%d banner=%d\n", cfg->difficulty, cfg->magic, cfg->landsize, cfg->opponents, cfg->wizard_name, cfg->race, cfg->banner);
 
+    // New_Game_Screen_7__WIP()
+    // NEWGAME.LBX, 053  BUILDWOR   map build bar
+    // newgame_BUILDWOR_map_build_bar_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 53, _screen_seg);
+    newgame_BUILDWOR_map_build_bar_seg = LBX_Load(newgame_lbx_file__ovr050, 53);
+
     Init_New_Game();
     Initialize_Events();
     NEWG_FinalizeTables__WIP();
     Save_SAVE_GAM(8);
 
+    // MainScr.c  Main_Screen()  1910:
+    //     if((_turn == 0) && (_given_chance_to_rename_home_city == ST_FALSE))
+    //         Change_Home_City_Name_Popup(HUMAN_PLAYER_IDX);
+    //         Assign_Auto_Function(Main_Screen_Draw, 1);
+    //         _given_chance_to_rename_home_city = ST_TRUE;
+    _given_chance_to_rename_home_city = ST_TRUE;
+    
     fprintf(stderr, "[HeMoM] New game created successfully\n");
 }
 
@@ -453,6 +475,15 @@ int main(int argc, char *argv[])
     int hemom_mode = 0;  /* 0=none, 1=newgame, 2=load */
     char hemom_file[260] = { 0 };
     int argi;
+
+#ifdef STU_DEBUG
+    Debug_Log_Startup();
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: HeMoM  main()\n", __FILE__, __LINE__);
+#endif
+#ifdef STU_DEBUG
+    Trace_Log_Startup();
+    trc_prn("TRACE: [%s, %d]: BEGIN: HeMoM  main()\n", __FILE__, __LINE__);
+#endif
 
     /* Parse CLI arguments */
     for (argi = 1; argi < argc; argi++)
@@ -572,6 +603,15 @@ int main(int argc, char *argv[])
     if (Platform_Replay_Active()) { Platform_Replay_Stop(); }
 
     Shutdown_Platform();
+
+#ifdef STU_DEBUG
+    trc_prn("TRACE: [%s, %d]: END: HeMoM  main()\n", __FILE__, __LINE__);
+    Trace_Log_Shutdown();
+#endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: HeMoM  main()\n", __FILE__, __LINE__);
+    Debug_Log_Shutdown();
+#endif
 
     fprintf(stderr, "[HeMoM] Done\n");
     return 0;
