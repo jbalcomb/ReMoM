@@ -175,7 +175,7 @@ struct s_HeMoM_Config
     int16_t wizard_id;
     int16_t race;
     int16_t banner;
-    char    wizard_name[20];
+    char    wizard_name[LEN_WIZARD_NAME];
 
     int has_books;
     int16_t books_nature;
@@ -379,8 +379,8 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
 
     if (cfg->has_name)
     {
-        memset(_players[0].name, 0, 20);
-        strncpy(_players[0].name, cfg->wizard_name, 19);
+        memset(_players[0].name, 0, LEN_WIZARD_NAME);
+        stu_strncpy(_players[0].name, cfg->wizard_name, LEN_WIZARD_NAME);
     }
 
     if (cfg->has_books)
