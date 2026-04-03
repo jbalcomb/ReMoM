@@ -37,8 +37,6 @@
 #include <stdio.h>      /* FILE; fclose(), fread(), frite(), fseek(); */
 #include <string.h>
 
-#include "../../ext/stu_compat.h"
-
 #include "NewGame.h"
 
 
@@ -5441,7 +5439,7 @@ void Newgame_Screen_5_Draw_Spells(void)
     int16_t section_box_start_y[3] = { 0, 0, 0 };
     int16_t section_title_start_y[3] = { 0, 0, 0 };
     int16_t Display_Type = 0;
-    int16_t niu_selection_count = 0;  // ; always written, never read
+    int16_t niu_selection_count = 0;  // OGBUG: always written, never read
     int16_t * p_start_spells = NULL;
     int16_t spell_idx = 0;
     int16_t Label_Box_Height = 0;
@@ -5460,6 +5458,11 @@ void Newgame_Screen_5_Draw_Spells(void)
     l_shadow_colors = m_select_spells_shadow_colors;
     memcpy(rarity_strings, m_rarity_strings, 40);
     memcpy(realm_strings, m_realm_strings, 50);
+
+// Severity	Code	Description	Project	File	Line	Suppression State	Details
+// Warning	C6011	Dereferencing NULL pointer 'p_start_spells'. 	003_MoM	C:\STU\devel\ReMoM\MoM\src\NewGame.c	5618		
+// selected_spells[itr] = p_start_spells[(10 + itr)];
+    p_start_spells = &_player_start_spells[0].realms[0].spells[0]; // set it to something non-NULL to avoid dereferencing NULL pointer warnings, but it will be properly set below before use
 
     if(m_select_spells_realm == sbr_Chaos)
     {
