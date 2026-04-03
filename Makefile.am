@@ -46,6 +46,18 @@ libstu_a_CFLAGS = $(AM_CFLAGS) \
 #  Platform
 # -------------------------------------------------------------------------
 
+if USE_HEADLESS
+PLATFORM_CORE_SOURCES = \
+    platform/headless/headless_PFL.c \
+    platform/headless/headless_KD.c \
+    platform/headless/headless_Timer.c \
+    platform/headless/headless_EMM.c \
+    platform/headless/headless_Audio.c \
+    platform/headless/headless_State.c \
+    platform/replay/Replay.c
+PLATFORM_BACKEND_DIR = platform/headless
+PLATFORM_AUDIO_SOURCES =
+else
 if USE_SDL3
 PLATFORM_CORE_SOURCES = \
     platform/sdl3/sdl3_EMM.c \
@@ -82,6 +94,7 @@ PLATFORM_AUDIO_SOURCES = \
 endif
 else
 PLATFORM_AUDIO_SOURCES =
+endif
 endif
 
 libplatform_a_SOURCES = \
@@ -260,3 +273,47 @@ ReMoMber_LDADD += $(SDL_MIXER_LIBS)
 endif
 
 ReMoMber_LDADD += -lm
+
+# =========================================================================
+#  HeMoM — Headless Master of Magic (testing/CI/replay)
+# =========================================================================
+
+bin_PROGRAMS += HeMoM
+
+HeMoM_SOURCES = \
+    src/HeMoM.c \
+    src/ReMoM_Init.c \
+    src/HeMoM_Player.c
+
+HeMoM_CFLAGS = $(AM_CFLAGS) \
+    -I$(srcdir)/MoX/src \
+    -I$(srcdir)/MoM/src \
+    -I$(srcdir)/platform/include \
+    -I$(srcdir)/STU/src \
+    -I$(srcdir)/src
+
+if USE_HEADLESS
+HeMoM_CFLAGS += -DUSE_HEADLESS
+else
+if USE_SDL3
+HeMoM_CFLAGS += -DUSE_SDL3 $(SDL_CFLAGS)
+else
+HeMoM_CFLAGS += $(SDL_CFLAGS)
+endif
+endif
+
+HeMoM_LDADD = \
+    libmom.a \
+    libmox.a \
+    libplatform.a \
+    libstu.a
+
+if USE_HEADLESS
+HeMoM_LDADD += -lm
+else
+HeMoM_LDADD += $(SDL_LIBS)
+if HAVE_AUDIO
+HeMoM_LDADD += $(SDL_MIXER_LIBS)
+endif
+HeMoM_LDADD += -lm
+endif

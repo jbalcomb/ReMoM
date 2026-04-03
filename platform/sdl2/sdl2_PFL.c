@@ -51,6 +51,14 @@ uint64_t sdl2_performance_counter;
    click actually happened.  Used by Replay_Capture_Frame() for recording. */
 int16_t platform_frame_mouse_buttons = 0;
 
+/* Optional per-frame callback for synthetic input injection (HeMoM). */
+static void (*platform_frame_callback)(void) = NULL;
+
+void Platform_Register_Frame_Callback(void (*callback)(void))
+{
+    platform_frame_callback = callback;
+}
+
 
 int Platform_Get_Scale(void)
 {
@@ -595,6 +603,12 @@ void Platform_Event_Handler(void)
     // }
 
     /* CLAUDE */  /* Dasm: SDL_Delay(10) removed; vsync (SDL_RENDERER_PRESENTVSYNC) already provides frame pacing via SDL_RenderPresent(); the delay here stacked on every call to Platform_Event_Handler() (multiple times per frame from Get_Input and Mouse_Button), adding 30-50ms of cumulative lag per frame */
+
+    /* Synthetic player: inject scripted input. */
+    if (platform_frame_callback != NULL)
+    {
+        platform_frame_callback();
+    }
 
     /* CLAUDE: Record — capture input state after processing OS events. */
     if(Platform_Record_Active())

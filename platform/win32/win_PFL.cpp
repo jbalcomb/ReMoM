@@ -35,6 +35,14 @@ uint64_t win_ticks_startup;
 
 struct win32_offscreen_buffer win_video_back_buffer;
 
+/* Optional per-frame callback for synthetic input injection (HeMoM). */
+static void (*platform_frame_callback)(void) = NULL;
+
+void Platform_Register_Frame_Callback(void (*callback)(void))
+{
+    platform_frame_callback = callback;
+}
+
 static const CHAR win_window_class_name[] = "MoM_Wnd_Cls";
 static const CHAR win_window_title[] = "(ReMoM) Master of Magic v1.31 - Win32";
 
@@ -185,6 +193,12 @@ void Platform_Event_Handler(void)
     platform_frame_mouse_buttons = 0;
 
     Win_Pump_Messages();
+
+    /* Synthetic player: inject scripted input. */
+    if (platform_frame_callback != NULL)
+    {
+        platform_frame_callback();
+    }
 }
 
 /* CLAUDE: Pump events AND refresh cursor, matching SDL backends. */

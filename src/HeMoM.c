@@ -25,6 +25,9 @@
 #include <ctype.h>
 
 #include "../ext/stu_compat.h"
+#ifdef STU_DEBUG
+#include "../STU/src/STU_DBG.h"
+#endif
 #include "../platform/include/Platform.h"
 #include "../platform/include/Platform_Replay.h"
 #include "../platform/include/Platform_Keys.h"
@@ -46,9 +49,11 @@
 #include "../MoM/src/MOM_SCR.h"
 
 #include "ReMoM_Init.h"
+#include "HeMoM_Player.h"
 
 /* _wizard_presets_table is defined in NewGame.c but has no extern in a header */
 extern struct s_WIZARD_PRESET _wizard_presets_table[];
+
 
 #if defined(_WIN32) && !defined(_STU_WIN) && !defined(USE_HEADLESS)
 #define SDL_MAIN_HANDLED
@@ -454,11 +459,13 @@ static void Print_Usage(const char *program_name)
 {
     fprintf(stderr, "HeMoM — Headless Master of Magic\n\n");
     fprintf(stderr, "Usage:\n");
-    fprintf(stderr, "  %s --newgame [ReMoM.ini] [--replay game.RMR] [--record out.RMR]\n", program_name);
-    fprintf(stderr, "  %s --load SAVE3.GAM [--replay game.RMR] [--record out.RMR]\n", program_name);
+    fprintf(stderr, "  %s --newgame [ReMoM.ini] [--scenario test.hms] [--record out.RMR]\n", program_name);
+    fprintf(stderr, "  %s --load SAVE3.GAM [--scenario test.hms] [--record out.RMR]\n", program_name);
+    fprintf(stderr, "  %s --newgame [ReMoM.ini] [--replay game.RMR]\n", program_name);
     fprintf(stderr, "\nOptions:\n");
     fprintf(stderr, "  --newgame [FILE]   Create new game from config (default: ReMoM.ini)\n");
     fprintf(stderr, "  --load FILE        Load a save file (SAVE1.GAM .. SAVE9.GAM, SAVETEST.GAM)\n");
+    fprintf(stderr, "  --scenario FILE    Run synthetic player from scenario script (.hms)\n");
     fprintf(stderr, "  --replay FILE      Replay recorded input from .RMR file\n");
     fprintf(stderr, "  --record FILE      Record input to .RMR file\n");
     fprintf(stderr, "  --help             Show this help\n");
@@ -474,6 +481,7 @@ int main(int argc, char *argv[])
 {
     int hemom_mode = 0;  /* 0=none, 1=newgame, 2=load */
     char hemom_file[260] = { 0 };
+    char hemom_scenario[260] = { 0 };
     int argi;
 
 #ifdef STU_DEBUG
@@ -485,7 +493,21 @@ int main(int argc, char *argv[])
     trc_prn("TRACE: [%s, %d]: BEGIN: HeMoM  main()\n", __FILE__, __LINE__);
 #endif
 
-    /* Parse CLI arguments */
+    /* Log and parse CLI arguments */
+    fprintf(stderr, "[HeMoM] argc=%d\n", argc);
+#ifdef STU_DEBUG
+    dbg_prn("[HeMoM] argc=%d\n", argc);
+    trc_prn("[HeMoM] argc=%d\n", argc);
+#endif
+    for (argi = 0; argi < argc; argi++)
+    {
+        fprintf(stderr, "[HeMoM] argv[%d]=\"%s\"\n", argi, argv[argi]);
+#ifdef STU_DEBUG
+        dbg_prn("[HeMoM] argv[%d]=\"%s\"\n", argi, argv[argi]);
+        trc_prn("[HeMoM] argv[%d]=\"%s\"\n", argi, argv[argi]);
+#endif
+    }
+
     for (argi = 1; argi < argc; argi++)
     {
         if (strcmp(argv[argi], "--help") == 0 || strcmp(argv[argi], "-h") == 0)
@@ -505,18 +527,57 @@ int main(int argc, char *argv[])
             {
                 stu_strcpy(hemom_file, "ReMoM.ini");
             }
+            fprintf(stderr, "[HeMoM] CLI: --newgame \"%s\"\n", hemom_file);
+#ifdef STU_DEBUG
+            dbg_prn("[HeMoM] CLI: --newgame \"%s\"\n", hemom_file);
+            trc_prn("[HeMoM] CLI: --newgame \"%s\"\n", hemom_file);
+#endif
         }
         else if (strcmp(argv[argi], "--load") == 0 && (argi + 1) < argc)
         {
             hemom_mode = 2;
             argi++;
             stu_strcpy(hemom_file, argv[argi]);
+            fprintf(stderr, "[HeMoM] CLI: --load \"%s\"\n", hemom_file);
+#ifdef STU_DEBUG
+            dbg_prn("[HeMoM] CLI: --load \"%s\"\n", hemom_file);
+            trc_prn("[HeMoM] CLI: --load \"%s\"\n", hemom_file);
+#endif
         }
         else if (strcmp(argv[argi], "--replay") == 0 || strcmp(argv[argi], "--record") == 0)
         {
+            fprintf(stderr, "[HeMoM] CLI: %s (deferred until after platform init)\n", argv[argi]);
+#ifdef STU_DEBUG
+            dbg_prn("[HeMoM] CLI: %s (deferred until after platform init)\n", argv[argi]);
+            trc_prn("[HeMoM] CLI: %s (deferred until after platform init)\n", argv[argi]);
+#endif
             /* Handled after Startup_Platform() */
         }
+        else if (strcmp(argv[argi], "--scenario") == 0 && (argi + 1) < argc)
+        {
+            argi++;
+            stu_strcpy(hemom_scenario, argv[argi]);
+            fprintf(stderr, "[HeMoM] CLI: --scenario \"%s\"\n", hemom_scenario);
+#ifdef STU_DEBUG
+            dbg_prn("[HeMoM] CLI: --scenario \"%s\"\n", hemom_scenario);
+            trc_prn("[HeMoM] CLI: --scenario \"%s\"\n", hemom_scenario);
+#endif
+        }
+        else
+        {
+            fprintf(stderr, "[HeMoM] CLI: unknown arg \"%s\"\n", argv[argi]);
+#ifdef STU_DEBUG
+            dbg_prn("[HeMoM] CLI: unknown arg \"%s\"\n", argv[argi]);
+            trc_prn("[HeMoM] CLI: unknown arg \"%s\"\n", argv[argi]);
+#endif
+        }
     }
+
+    fprintf(stderr, "[HeMoM] Parsed: mode=%d file=\"%s\" scenario=\"%s\"\n", hemom_mode, hemom_file, hemom_scenario);
+#ifdef STU_DEBUG
+    dbg_prn("[HeMoM] Parsed: mode=%d file=\"%s\" scenario=\"%s\"\n", hemom_mode, hemom_file, hemom_scenario);
+    trc_prn("[HeMoM] Parsed: mode=%d file=\"%s\" scenario=\"%s\"\n", hemom_mode, hemom_file, hemom_scenario);
+#endif
 
     if (hemom_mode == 0)
     {
@@ -594,11 +655,46 @@ int main(int argc, char *argv[])
         current_screen = scr_Main_Screen;
     }
 
+    /* Load and register synthetic player scenario */
+    if (hemom_scenario[0] != '\0')
+    {
+        fprintf(stderr, "[HeMoM] Loading scenario: %s\n", hemom_scenario);
+#ifdef STU_DEBUG
+        dbg_prn("[HeMoM] Loading scenario: %s\n", hemom_scenario);
+        trc_prn("[HeMoM] Loading scenario: %s\n", hemom_scenario);
+#endif
+        if (HeMoM_Player_Load_Scenario(hemom_scenario) != 0)
+        {
+            fprintf(stderr, "[HeMoM] Failed to load scenario: %s\n", hemom_scenario);
+#ifdef STU_DEBUG
+            dbg_prn("[HeMoM] Failed to load scenario: %s\n", hemom_scenario);
+            trc_prn("[HeMoM] Failed to load scenario: %s\n", hemom_scenario);
+#endif
+            Shutdown_Platform();
+            return 1;
+        }
+        Platform_Register_Frame_Callback(HeMoM_Player_Frame);
+        fprintf(stderr, "[HeMoM] Registered synthetic player callback\n");
+#ifdef STU_DEBUG
+        dbg_prn("[HeMoM] Registered synthetic player callback\n");
+        trc_prn("[HeMoM] Registered synthetic player callback\n");
+#endif
+    }
+    else
+    {
+        fprintf(stderr, "[HeMoM] No --scenario specified\n");
+#ifdef STU_DEBUG
+        dbg_prn("[HeMoM] No --scenario specified\n");
+        trc_prn("[HeMoM] No --scenario specified\n");
+#endif
+    }
+
     /* Enter game loop */
     fprintf(stderr, "[HeMoM] Entering Screen_Control()\n");
     Screen_Control();
 
     /* Cleanup */
+    HeMoM_Player_Shutdown();
     if (Platform_Record_Active()) { Platform_Record_Stop(); }
     if (Platform_Replay_Active()) { Platform_Replay_Stop(); }
 

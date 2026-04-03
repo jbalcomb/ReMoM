@@ -1,0 +1,33 @@
+# test_worldgen.hms — Smoke test: create game, run 3 turns, quit
+#
+# Usage:
+#   HeMoM --newgame test_worldgen.ini --scenario test_worldgen.hms
+#
+# Actions:
+#   wait <frames>     idle for N frames (game runs at ~18 Hz)
+#   next_turn         press 'N' (Next Turn hotkey)
+#   key <char>        press a key
+#   click <x> <y>     left-click at game coordinates (320x200)
+#   rclick <x> <y>    right-click at game coordinates
+#   escape            press Escape
+#   enter             press Enter
+#   quit              set quit flag
+#   end               stop player (idle forever)
+
+# Let the main screen settle after world generation
+wait 30
+
+# Turn 1
+next_turn
+wait 200
+
+# Turn 2
+next_turn
+wait 200
+
+# Turn 3
+next_turn
+wait 200
+
+# Done — quit the game
+quit

@@ -15,6 +15,24 @@
 
 
 /* ========================================================================= */
+/*  Synthetic Player Callback                                                */
+/* ========================================================================= */
+
+/**
+ * Optional per-frame callback for synthetic input injection.
+ * Registered by HeMoM via Platform_Register_Frame_Callback().
+ * Called once per Platform_Event_Handler() when no replay is active.
+ */
+static void (*platform_frame_callback)(void) = NULL;
+
+void Platform_Register_Frame_Callback(void (*callback)(void))
+{
+    platform_frame_callback = callback;
+}
+
+
+
+/* ========================================================================= */
 /*  Lifecycle                                                                */
 /* ========================================================================= */
 
@@ -78,12 +96,51 @@ void Platform_Video_Update(void)
 /*  Events / Input                                                           */
 /* ========================================================================= */
 
+static int headless_event_handler_first_call = 1;
+
 void Platform_Event_Handler(void)
 {
+    /* Log input mode on first call so we can see which path is active. */
+    if (headless_event_handler_first_call)
+    {
+        headless_event_handler_first_call = 0;
+        if (Platform_Replay_Active())
+        {
+            fprintf(stderr, "[headless] Platform_Event_Handler: input mode = REPLAY (.RMR)\n");
+        }
+        else if (platform_frame_callback != NULL)
+        {
+            fprintf(stderr, "[headless] Platform_Event_Handler: input mode = SCENARIO (.hms synthetic player)\n");
+        }
+        else
+        {
+            fprintf(stderr, "[headless] Platform_Event_Handler: input mode = NONE (no input source)\n");
+        }
+    }
+
     platform_frame_mouse_buttons = 0;
 
-    /* During replay, the replay system in Replay.c handles injecting input. */
-    /* In non-replay headless mode, there is simply no input. */
+    /* Replay: inject recorded frame instead of polling OS events. */
+    if (Platform_Replay_Active())
+    {
+        if (Replay_Inject_Frame())
+        {
+            return;
+        }
+        /* Replay ended — fall through (no live input in headless). */
+    }
+
+    /* Synthetic player: inject scripted input when no replay is active. */
+    if (platform_frame_callback != NULL)
+    {
+        platform_frame_callback();
+    }
+
+    /* Record: capture input state (including synthetic player actions). */
+    if (Platform_Record_Active())
+    {
+        Replay_Capture_Frame();
+    }
 }
 
 void Platform_Pump_Events(void)
