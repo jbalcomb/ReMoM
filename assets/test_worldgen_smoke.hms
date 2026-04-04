@@ -1,0 +1,16 @@
+# test_worldgen_smoke.hms — Smoke test: does world generation complete without crashing?
+#
+# World generation + SAVE9.GAM creation happen in Config_Apply_And_Create_New_Game()
+# BEFORE Screen_Control() is entered. By the time this scenario runs, the game is
+# already at the Main Screen with a valid save file written.
+#
+# This scenario just tells the game to exit cleanly.
+#
+# Usage:
+#   HeMoM --newgame test_worldgen.ini --scenario test_worldgen_smoke.hms
+#
+# Validation:
+#   - HeMoM exits with code 0
+#   - SAVE9.GAM exists and is exactly 123300 bytes
+
+quit

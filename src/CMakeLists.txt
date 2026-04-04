@@ -57,7 +57,7 @@ set_target_properties(ReMoMber PROPERTIES
 #  HeMoM — Headless Master of Magic
 # =========================================================================
 
-add_executable(HeMoM HeMoM.c ReMoM_Init.c HeMoM_Player.c)
+add_executable(HeMoM HeMoM.c ReMoM_Init.c HeMoM_Player.c HeMoM_SaveDump.c)
 
 set_target_properties(HeMoM PROPERTIES POSITION_INDEPENDENT_CODE ON)
 

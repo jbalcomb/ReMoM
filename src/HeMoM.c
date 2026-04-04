@@ -50,6 +50,7 @@
 
 #include "ReMoM_Init.h"
 #include "HeMoM_Player.h"
+#include "HeMoM_SaveDump.h"
 
 /* _wizard_presets_table is defined in NewGame.c but has no extern in a header */
 extern struct s_WIZARD_PRESET _wizard_presets_table[];
@@ -167,6 +168,7 @@ struct s_HeMoM_Config
     int has_race;
     int has_banner;
     int has_name;
+    int has_seed;
 
     int16_t difficulty;
     int16_t magic;
@@ -176,6 +178,7 @@ struct s_HeMoM_Config
     int16_t race;
     int16_t banner;
     char    wizard_name[LEN_WIZARD_NAME];
+    uint32_t seed;
 
     int has_books;
     int16_t books_nature;
@@ -279,6 +282,11 @@ static int Config_Parse(const char *filepath, struct s_HeMoM_Config *cfg)
         {
             cfg->opponents = (int16_t)stu_atoi(value);
             cfg->has_opponents = 1;
+        }
+        else if (Str_Equal_CI(key, "seed"))
+        {
+            cfg->seed = (uint32_t)strtoul(value, NULL, 0);
+            cfg->has_seed = 1;
         }
         else if (Str_Equal_CI(key, "wizard"))
         {
@@ -407,7 +415,22 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
     NEWG_Clicked_Race = cfg->race;
     _players[0].banner_id = (uint8_t)cfg->banner;
 
-    fprintf(stderr, "[HeMoM] Creating new game: difficulty=%d magic=%d landsize=%d opponents=%d wizard=%s race=%d banner=%d\n", cfg->difficulty, cfg->magic, cfg->landsize, cfg->opponents, cfg->wizard_name, cfg->race, cfg->banner);
+    /* Set deterministic RNG seed if specified in config. */
+    if (cfg->has_seed)
+    {
+        Set_Random_Seed(cfg->seed);
+        fprintf(stderr, "[HeMoM] RNG seed set to %u (0x%08X)\n", cfg->seed, cfg->seed);
+#ifdef STU_DEBUG
+        dbg_prn("[HeMoM] RNG seed set to %u (0x%08X)\n", cfg->seed, cfg->seed);
+        trc_prn("[HeMoM] RNG seed set to %u (0x%08X)\n", cfg->seed, cfg->seed);
+#endif
+    }
+
+    fprintf(stderr, "[HeMoM] Creating new game: difficulty=%d magic=%d landsize=%d opponents=%d wizard=%s race=%d banner=%d seed=%u\n", cfg->difficulty, cfg->magic, cfg->landsize, cfg->opponents, cfg->wizard_name, cfg->race, cfg->banner, Get_Random_Seed());
+#ifdef STU_DEBUG
+    dbg_prn("[HeMoM] Creating new game: difficulty=%d magic=%d landsize=%d opponents=%d wizard=%s race=%d banner=%d seed=%u\n", cfg->difficulty, cfg->magic, cfg->landsize, cfg->opponents, cfg->wizard_name, cfg->race, cfg->banner, Get_Random_Seed());
+    trc_prn("[HeMoM] Creating new game: difficulty=%d magic=%d landsize=%d opponents=%d wizard=%s race=%d banner=%d seed=%u\n", cfg->difficulty, cfg->magic, cfg->landsize, cfg->opponents, cfg->wizard_name, cfg->race, cfg->banner, Get_Random_Seed());
+#endif
 
     // New_Game_Screen_7__WIP()
     // NEWGAME.LBX, 053  BUILDWOR   map build bar
@@ -418,6 +441,9 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
     Initialize_Events();
     NEWG_FinalizeTables__WIP();
     Save_SAVE_GAM(8);
+
+    /* Dump structured text representation of the save file for testing */
+    HeMoM_Save_Dump("SAVE9.GAM", "SAVE9.txt");
 
     // MainScr.c  Main_Screen()  1910:
     //     if((_turn == 0) && (_given_chance_to_rename_home_city == ST_FALSE))
