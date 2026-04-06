@@ -102,6 +102,11 @@ void Screen_Control(void)
 
             case scr_Continue:
             {
+#ifdef STU_DEBUG
+                printf("DEBUG: [%s, %d]: Screen_Control(): swicth(): scr_Continue\n", __FILE__, __LINE__);
+                dbg_prn("DEBUG: [%s, %d]: Screen_Control(): swicth(): scr_Continue\n", __FILE__, __LINE__);
+                trc_prn("DEBUG: [%s, %d]: Screen_Control(): swicth(): scr_Continue\n", __FILE__, __LINE__);
+#endif
 #ifdef MOUSE_DEBUG
                 MOUSE_LOG("SCR t=%llu ENTER screen=Continue\n", (unsigned long long)Platform_Get_Millies());
 #endif

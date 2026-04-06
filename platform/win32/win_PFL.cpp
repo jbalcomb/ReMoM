@@ -5,6 +5,8 @@
  * No engine headers are included — only Platform.h and win_PFL.h.
  */
 
+#include "../../STU/src/STU_DBG.h"
+
 #include <Windows.h>
 #include "windowsx.h"   /* GET_X_LPARAM(), GET_Y_LPARAM() */
 #include <timeapi.h>    /* timeBeginPeriod() */
@@ -55,7 +57,8 @@ static const CHAR win_window_title[] = "(ReMoM) Master of Magic v1.31 - Win32";
 static void Win_Init_Back_Buffer(struct win32_offscreen_buffer *buffer, int width, int height);
 static void Win_Init_Window(void);
 static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-static void Win_Update_Display(struct win32_offscreen_buffer *buffer, HDC device_context, int window_width, int window_height);
+static void Win_Convert_Engine_Pixels_To_Back_Buffer(struct win32_offscreen_buffer *buffer);
+static void Win_Blit_Back_Buffer(struct win32_offscreen_buffer *buffer, HDC device_context, int window_width, int window_height);
 
 
 
@@ -67,6 +70,11 @@ void Startup_Platform(void)
 {
     int w = win_window_width;
     int h = win_window_height;
+
+#ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: BEGIN: Startup_Platform()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Startup_Platform()\n", __FILE__, __LINE__);
+#endif
 
     assert(w >= PLATFORM_SCREEN_WIDTH && "window width must be >= PLATFORM_SCREEN_WIDTH");
     assert(h >= PLATFORM_SCREEN_HEIGHT && "window height must be >= PLATFORM_SCREEN_HEIGHT");
@@ -81,10 +89,19 @@ void Startup_Platform(void)
     timeBeginPeriod(1);
 
     Build_Key_Xlat();
+
+#ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: END: Startup_Platform()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Startup_Platform()\n", __FILE__, __LINE__);
+#endif
 }
 
 void Shutdown_Platform(void)
 {
+#ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: BEGIN: Shutdown_Platform()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Shutdown_Platform()\n", __FILE__, __LINE__);
+#endif
     ShowCursor(TRUE);
     timeEndPeriod(1);
     if (win_window)
@@ -92,6 +109,10 @@ void Shutdown_Platform(void)
         DestroyWindow(win_window);
         win_window = NULL;
     }
+#ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: END: Shutdown_Platform()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Shutdown_Platform()\n", __FILE__, __LINE__);
+#endif
 }
 
 int Platform_Get_Scale(void)
@@ -115,9 +136,9 @@ void Platform_Palette_Update(void)
 
     for (itr = 0; itr < 256; itr++)
     {
-        platform_palette_buffer[itr].r = (*(current_palette + (itr * 3) + 0) << 2);
+        platform_palette_buffer[itr].r = (*(current_palette + (itr * 3) + 2) << 2);
         platform_palette_buffer[itr].g = (*(current_palette + (itr * 3) + 1) << 2);
-        platform_palette_buffer[itr].b = (*(current_palette + (itr * 3) + 2) << 2);
+        platform_palette_buffer[itr].b = (*(current_palette + (itr * 3) + 0) << 2);
         platform_palette_buffer[itr].a = 0xFF;
     }
 }
@@ -137,17 +158,12 @@ void Platform_Set_Palette_Color(uint8_t index, uint8_t r, uint8_t g, uint8_t b)
     platform_palette_buffer[index].a = 255;
 }
 
-void Platform_Video_Update(void)
-{
-    // DEDU  artifact from Claude's platform refactor - RECT client_rect;
-
-    assert(video_page_buffer[draw_page_num] != NULL);
-    assert(win_video_back_buffer.Memory != NULL);
-
-    Win_Update_Display(&win_video_back_buffer, win_device_context, win_window_width, win_window_height);
-}
-
-static void Win_Update_Display(struct win32_offscreen_buffer *buffer, HDC device_context, int window_width, int window_height)
+/**
+ * Convert the engine's 8-bit framebuffer to 32-bit XBGR pixels in the platform
+ * back buffer, applying the current palette.  Touches engine state.
+ * Called by Platform_Video_Update() — only safe after Allocate_Data_Space().
+ */
+static void Win_Convert_Engine_Pixels_To_Back_Buffer(struct win32_offscreen_buffer *buffer)
 {
     uint8_t *source_pixels;
     uint32_t *dest_pixels;
@@ -175,8 +191,25 @@ static void Win_Update_Display(struct win32_offscreen_buffer *buffer, HDC device
             *(dest_pixels + (itr_y * width) + itr_x) = color;
         }
     }
+}
 
+/**
+ * Blit the platform's back buffer to the window.  Touches no engine state.
+ * Safe to call any time after Win_Init_Back_Buffer() — including from WM_PAINT
+ * before the engine has initialized.
+ */
+static void Win_Blit_Back_Buffer(struct win32_offscreen_buffer *buffer, HDC device_context, int window_width, int window_height)
+{
     StretchDIBits(device_context, 0, 0, window_width, window_height, 0, 0, buffer->Width, buffer->Height, buffer->Memory, &buffer->Info, DIB_RGB_COLORS, SRCCOPY);
+}
+
+void Platform_Video_Update(void)
+{
+    assert(video_page_buffer[draw_page_num] != NULL);
+    assert(win_video_back_buffer.Memory != NULL);
+
+    Win_Convert_Engine_Pixels_To_Back_Buffer(&win_video_back_buffer);
+    Win_Blit_Back_Buffer(&win_video_back_buffer, win_device_context, win_window_width, win_window_height);
 }
 
 
@@ -453,7 +486,8 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
             GetClientRect(hWnd, &client_rect);
             client_width = client_rect.right - client_rect.left;
             client_height = client_rect.bottom - client_rect.top;
-            Win_Update_Display(&win_video_back_buffer, hdc, client_width, client_height);
+            /* Blit only the platform back buffer.  No engine state touched. */
+            Win_Blit_Back_Buffer(&win_video_back_buffer, hdc, client_width, client_height);
             EndPaint(hWnd, &ps);
         } break;
 

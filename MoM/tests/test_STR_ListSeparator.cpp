@@ -8,7 +8,7 @@ extern "C" {
 }
 #endif
 
-#include <cstring> // Why is this included? For stu_strcat and strcmp functions used in the tests, because C++ here rather than C.
+#include <cstring> // Why is this included? For stu_strcat and stu_strcmp functions used in the tests, because C++ here rather than C.
 
 /*
     String_List_Builer(int16_t * List_Size, int16_t Total, char * Dest)

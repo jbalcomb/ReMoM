@@ -26,12 +26,14 @@
  *   - stu_fread()         portable fread()
  *   - stu_fwrite()        portable fwrite()
  *   - stu_fseek()         portable fseek()
+ *   - stu_ftell()         portable ftell()
  *   - stu_localtime()     portable thread-safe localtime (MSVC localtime_s / POSIX localtime_r)
  *   - stu_sscanf()        portable sscanf() (suppresses MSVC C4996)
  *   - stu_strcpy()        portable strcpy() (suppresses MSVC C4996)
  *   - stu_strcat()        portable strcat() (suppresses MSVC C4996)
  *   - stu_strncpy()       portable strncpy() with NULL check (suppresses MSVC C4996)
  *   - stu_strchr()        portable strchr() with NULL check
+ *   - stu_strcmp()        portable strcmp() with NULL check
  *   - stu_atoi()          portable atoi() with NULL check
  *   - stu_debugbreak()    portable debug breakpoint
  *
@@ -148,6 +150,9 @@ size_t stu_fwrite(const void *buffer, size_t element_size, size_t element_count,
 /* Seek in a file. Drop-in replacement for fseek. */
 int stu_fseek(FILE *stream, long offset, int origin);
 
+/* Get current file position. Drop-in replacement for ftell. */
+long stu_ftell(FILE *stream);
+
 /* Case-insensitive file open for asset files. On Windows (case-insensitive FS) this is just fopen. On Linux/macOS it scans the directory for a case-insensitive match if the exact name fails. */
 FILE *stu_fopen_ci(const char *filename, const char *mode);
 
@@ -171,6 +176,9 @@ char *stu_strncpy(char *dst, const char *src, size_t count);
 
 /* Portable strchr wrapper with NULL check. Returns NULL if str is NULL. */
 char *stu_strchr(const char *str, int ch);
+
+/* Portable strcmp wrapper with NULL check. NULL is treated as less-than non-NULL; two NULLs compare equal. */
+int stu_strcmp(const char *lhs, const char *rhs);
 
 /* ============================================================================
  * Compatibility aliases (optional, define STU_COMPAT_ALIASES to enable)
@@ -509,6 +517,14 @@ int stu_fseek(FILE *stream, long offset, int origin)
 }
 
 /* --------------------------------------------------------------------------
+ * stu_ftell - portable file tell
+ * -------------------------------------------------------------------------- */
+long stu_ftell(FILE *stream)
+{
+    return ftell(stream);
+}
+
+/* --------------------------------------------------------------------------
  * stu_fopen_ci - case-insensitive file open for asset files
  *
  * On Windows the filesystem is already case-insensitive, so this is just
@@ -661,6 +677,26 @@ char *stu_strchr(const char *str, int ch)
         return NULL;
     }
     return strchr(str, ch);
+}
+
+/* --------------------------------------------------------------------------
+ * stu_strcmp - portable strcmp wrapper with NULL check
+ * -------------------------------------------------------------------------- */
+int stu_strcmp(const char *lhs, const char *rhs)
+{
+    if (lhs == NULL && rhs == NULL)
+    {
+        return 0;
+    }
+    if (lhs == NULL)
+    {
+        return -1;
+    }
+    if (rhs == NULL)
+    {
+        return 1;
+    }
+    return strcmp(lhs, rhs);
 }
 
 /* --------------------------------------------------------------------------

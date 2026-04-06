@@ -106,7 +106,11 @@ int MOM_main(int argc, char** argv);
 void Startup_Platform(void);
 void Shutdown_Platform(void);
 
+/* --continue: skip Main Menu, go straight to scr_Continue (WIZARDS.EXE path). */
+static int remom_continue_flag = 0;
 
+
+#ifdef STU_DEBUG
 /* CLAUDE */
 /**
  * Print and log the current working directory.
@@ -114,7 +118,7 @@ void Shutdown_Platform(void);
 static void Debug_Print_Working_Directory(void)
 {
     char working_directory[4096];
-    const char *platform_name;
+    const char * platform_name;
 
 #if defined(_WIN32)
     platform_name = "Win32";
@@ -126,21 +130,28 @@ static void Debug_Print_Working_Directory(void)
     platform_name = "Unknown";
 #endif
 
+#ifdef _WIN32
+    char buffer[MAX_PATH] = { 0 };
+    if(GetCurrentDirectoryA(MAX_PATH, buffer) != 0)
+    {
+        printf("GetCurrentDirectoryA(): %s\n", buffer);
+    }
+#endif
+
     if (stu_getcwd(working_directory, sizeof(working_directory)) != NULL)
     {
         fprintf(stderr, "CWD (%s): %s\n", platform_name, working_directory);
-#ifdef STU_DEBUG
         dbg_prn("CWD (%s): %s\n", platform_name, working_directory);
-#endif
     }
     else
     {
-        fprintf(stderr, "ERROR: stu_getcwd() failed\n");
-#ifdef STU_DEBUG
-        dbg_prn("ERROR: stu_getcwd() failed\n");
-#endif
+        printf("FATAL: stu_getcwd()\n");
+        fprintf(stderr, "FATAL: stu_getcwd() failed\n");
+        dbg_prn("FATAL: stu_getcwd() failed\n");
+        stu_debugbreak();
     }
 }
+#endif
 
 
 
@@ -195,15 +206,11 @@ int main(int argc, char * argv[])
 #endif
 #ifdef STU_DEBUG
     Debug_Log_Startup();
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: ReMoM main()\n", __FILE__, __LINE__);
 #endif
 #ifdef STU_DEBUG
     Trace_Log_Startup();
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: SDL_main()\n", __FILE__, __LINE__);
-#endif
-#ifdef STU_DEBUG
-    trc_prn("DEBUG: [%s, %d]: BEGIN: SDL_main()\n", __FILE__, __LINE__);
+    trc_prn("TRACE: [%s, %d]: BEGIN: ReMoM main()\n", __FILE__, __LINE__);
 #endif
 
 #ifdef STU_DEBUG
@@ -211,9 +218,9 @@ int main(int argc, char * argv[])
     AllocConsole();
     AttachConsole(GetCurrentProcessId());
     HWND Handle = GetConsoleWindow();
-    #pragma warning(suppress : 6031)
+    #pragma warning(suppress : 6031)  // Return value ignored: 'called-function' could return unexpected value
     freopen("CON", "w", stdout);
-    #pragma warning(suppress : 6031)
+    #pragma warning(suppress : 6031)  // Return value ignored: 'called-function' could return unexpected value
     freopen("CON", "w", stderr);
 
 //     // https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/freopen-wfreopen?view=msvc-170
@@ -247,50 +254,24 @@ int main(int argc, char * argv[])
     }
 #endif
 #endif
-#ifdef STU_DEBUG
-#ifdef _WIN32
-    char buffer[MAX_PATH] = { 0 };
-    if(GetCurrentDirectoryA(MAX_PATH, buffer) != 0)
-    {
-        printf("GetCurrentDirectoryA(): %s\n", buffer);
-        dbg_prn("CWD: %s\n", buffer);
-    }
-    else
-    {
-        printf("FATAL: GetCurrentDirectoryA()\n");
-        dbg_prn("FATAL: GetCurrentDirectoryA()\n");
-        stu_debugbreak();
-    }
-#endif
-#endif
-#ifdef STU_DEBUG
-#ifdef _WIN32
-    char path[MAX_PATH] = { 0 };
-    if(stu_getcwd(path, sizeof(path)) != NULL)
-    {
-        printf("stu_getcwd(): %s\n", path);
-        dbg_prn("stu_getcwd(): %s\n", path);
-    }
-    else
-    {
-        printf("FATAL: stu_getcwd()\n");
-        dbg_prn("FATAL: stu_getcwd()\n");
-        stu_debugbreak();
-    }
-#endif
-#endif
 
+#ifdef STU_DEBUG
     Debug_Print_Working_Directory();
+#endif
 
     /* --headless: set SDL video driver to offscreen before SDL init.
        Must be parsed before Startup_Platform() so the environment variable
        takes effect. Has no effect on the pure headless (USE_HEADLESS) backend. */
 #ifndef USE_HEADLESS
     {
+#ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: #ifndef USE_HEADLESS\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: #ifndef USE_HEADLESS\n", __FILE__, __LINE__);
+#endif
         int argi;
         for (argi = 1; argi < argc; argi++)
         {
-            if (strcmp(argv[argi], "--headless") == 0)
+            if (stu_strcmp(argv[argi], "--headless") == 0)
             {
 #ifdef USE_SDL3
                 stu_putenv("SDL_VIDEODRIVER=offscreen");
@@ -304,7 +285,15 @@ int main(int argc, char * argv[])
     }
 #endif
 
+#ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: BEFORE: Startup_Platform()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEFORE: Startup_Platform()\n", __FILE__, __LINE__);
+#endif
     Startup_Platform();
+#ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: AFTER: Startup_Platform()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: AFTER: Startup_Platform()\n", __FILE__, __LINE__);
+#endif
 
     /* CLAUDE: Register engine callbacks for replay before parsing CLI flags. */
     Platform_Replay_Register_Random_Seed_Callbacks(Get_Random_Seed, Set_Random_Seed);
@@ -315,17 +304,25 @@ int main(int argc, char * argv[])
         int argi;
         for(argi = 1; argi < argc; argi++)
         {
-            if(strcmp(argv[argi], "--record") == 0 && (argi + 1) < argc)
+            if(stu_strcmp(argv[argi], "--record") == 0 && (argi + 1) < argc)
             {
                 argi++;
                 Platform_Record_Start(argv[argi]);
             }
-            else if(strcmp(argv[argi], "--replay") == 0 && (argi + 1) < argc)
+            else if(stu_strcmp(argv[argi], "--replay") == 0 && (argi + 1) < argc)
             {
                 argi++;
                 Platform_Replay_Start(argv[argi]);
             }
-            else if(strcmp(argv[argi], "--demo") == 0)
+            else if(stu_strcmp(argv[argi], "--continue") == 0)
+            {
+#ifdef STU_DEBUG
+                printf("DEBUG: [%s, %d]: --continue flag detected\n", __FILE__, __LINE__);
+                dbg_prn("DEBUG: [%s, %d]: --continue flag detected\n", __FILE__, __LINE__);
+#endif
+                remom_continue_flag = 1;
+            }
+            else if(stu_strcmp(argv[argi], "--demo") == 0)
             {
                 /* Optional filename: --demo [FILE.RMR], defaults to DEMO.RMR */
                 if((argi + 1) < argc && argv[argi + 1][0] != '-')
@@ -367,13 +364,14 @@ int main(int argc, char * argv[])
 #endif
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: SDL_main()\n", __FILE__, __LINE__);
 #endif
 
 #ifdef STU_DEBUG
+    trc_prn("TRACE: [%s, %d]: END: ReMoM main()\n", __FILE__, __LINE__);
     Trace_Log_Shutdown();
 #endif
 #ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: ReMoM main()\n", __FILE__, __LINE__);
     Debug_Log_Shutdown();
 #endif
 
@@ -414,7 +412,12 @@ int MOM_main(int argc, char** argv)
     ReMoM_Init_Engine();
 
     // DOMSDOS  MS-DOS has some area for the program execution that lets you get away with the AVRL here?  ... why argv[1] instead of argv[2]?
-    if(!((argc > 1) && (argv[1][0] == 'J' && argv[1][1] == 'E' && argv[1][2] == 'N' && argv[1][3] == 'N' && argv[1][4] == 'Y')))
+    /* OG-MoM: `MAGIC.EXE JENNY` skipped the intro logos */
+    if(
+        !(argv[1][0] == 'J' && argv[1][1] == 'E' && argv[1][2] == 'N' && argv[1][3] == 'N' && argv[1][4] == 'Y')
+        &&
+        !(remom_continue_flag == ST_TRUE)
+    )
     {
         Draw_Logos();
     }
@@ -468,7 +471,15 @@ int MOM_main(int argc, char** argv)
     // WZD Exit_With_Size();
 
 
-    current_screen = scr_Main_Menu_Screen;
+    if (remom_continue_flag)
+    {
+        /* --continue: skip Main Menu, load SAVE9.GAM, enter game (WIZARDS.EXE path). */
+        current_screen = scr_Continue;
+    }
+    else
+    {
+        current_screen = scr_Main_Menu_Screen;
+    }
 
     Screen_Control();
 

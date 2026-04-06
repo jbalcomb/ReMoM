@@ -361,7 +361,7 @@ STUB
 
 
 
-if(strcmp(dst->name, src->name) != 0)
+if(stu_strcmp(dst->name, src->name) != 0)
 shows that "Banbury" got changes to "Creative Voice File"
 ¿ need to release city data before going into combat ?
 ...whatever gets dumped into COMBAT.TMP

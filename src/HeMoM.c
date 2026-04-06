@@ -486,10 +486,12 @@ static void Print_Usage(const char *program_name)
     fprintf(stderr, "HeMoM — Headless Master of Magic\n\n");
     fprintf(stderr, "Usage:\n");
     fprintf(stderr, "  %s --newgame [ReMoM.ini] [--scenario test.hms] [--record out.RMR]\n", program_name);
+    fprintf(stderr, "  %s --continue [--scenario test.hms] [--record out.RMR]\n", program_name);
     fprintf(stderr, "  %s --load SAVE3.GAM [--scenario test.hms] [--record out.RMR]\n", program_name);
     fprintf(stderr, "  %s --newgame [ReMoM.ini] [--replay game.RMR]\n", program_name);
     fprintf(stderr, "\nOptions:\n");
     fprintf(stderr, "  --newgame [FILE]   Create new game from config (default: ReMoM.ini)\n");
+    fprintf(stderr, "  --continue         Load SAVE9.GAM (continue from previous --newgame)\n");
     fprintf(stderr, "  --load FILE        Load a save file (SAVE1.GAM .. SAVE9.GAM, SAVETEST.GAM)\n");
     fprintf(stderr, "  --scenario FILE    Run synthetic player from scenario script (.hms)\n");
     fprintf(stderr, "  --replay FILE      Replay recorded input from .RMR file\n");
@@ -536,12 +538,12 @@ int main(int argc, char *argv[])
 
     for (argi = 1; argi < argc; argi++)
     {
-        if (strcmp(argv[argi], "--help") == 0 || strcmp(argv[argi], "-h") == 0)
+        if (stu_strcmp(argv[argi], "--help") == 0 || stu_strcmp(argv[argi], "-h") == 0)
         {
             Print_Usage(argv[0]);
             return 0;
         }
-        else if (strcmp(argv[argi], "--newgame") == 0)
+        else if (stu_strcmp(argv[argi], "--newgame") == 0)
         {
             hemom_mode = 1;
             if ((argi + 1) < argc && argv[argi + 1][0] != '-')
@@ -559,7 +561,7 @@ int main(int argc, char *argv[])
             trc_prn("[HeMoM] CLI: --newgame \"%s\"\n", hemom_file);
 #endif
         }
-        else if (strcmp(argv[argi], "--load") == 0 && (argi + 1) < argc)
+        else if (stu_strcmp(argv[argi], "--load") == 0 && (argi + 1) < argc)
         {
             hemom_mode = 2;
             argi++;
@@ -570,7 +572,17 @@ int main(int argc, char *argv[])
             trc_prn("[HeMoM] CLI: --load \"%s\"\n", hemom_file);
 #endif
         }
-        else if (strcmp(argv[argi], "--replay") == 0 || strcmp(argv[argi], "--record") == 0)
+        else if (stu_strcmp(argv[argi], "--continue") == 0)
+        {
+            hemom_mode = 2;
+            stu_strcpy(hemom_file, "SAVE9.GAM");
+            fprintf(stderr, "[HeMoM] CLI: --continue (SAVE9.GAM)\n");
+#ifdef STU_DEBUG
+            dbg_prn("[HeMoM] CLI: --continue (SAVE9.GAM)\n");
+            trc_prn("[HeMoM] CLI: --continue (SAVE9.GAM)\n");
+#endif
+        }
+        else if (stu_strcmp(argv[argi], "--replay") == 0 || stu_strcmp(argv[argi], "--record") == 0)
         {
             fprintf(stderr, "[HeMoM] CLI: %s (deferred until after platform init)\n", argv[argi]);
 #ifdef STU_DEBUG
@@ -579,7 +591,7 @@ int main(int argc, char *argv[])
 #endif
             /* Handled after Startup_Platform() */
         }
-        else if (strcmp(argv[argi], "--scenario") == 0 && (argi + 1) < argc)
+        else if (stu_strcmp(argv[argi], "--scenario") == 0 && (argi + 1) < argc)
         {
             argi++;
             stu_strcpy(hemom_scenario, argv[argi]);
@@ -631,12 +643,12 @@ int main(int argc, char *argv[])
     /* Process --replay and --record flags (after platform init) */
     for (argi = 1; argi < argc; argi++)
     {
-        if (strcmp(argv[argi], "--record") == 0 && (argi + 1) < argc)
+        if (stu_strcmp(argv[argi], "--record") == 0 && (argi + 1) < argc)
         {
             argi++;
             Platform_Record_Start(argv[argi]);
         }
-        else if (strcmp(argv[argi], "--replay") == 0 && (argi + 1) < argc)
+        else if (stu_strcmp(argv[argi], "--replay") == 0 && (argi + 1) < argc)
         {
             argi++;
             Platform_Replay_Start(argv[argi]);

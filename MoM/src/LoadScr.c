@@ -715,73 +715,56 @@ Load_Screen()
 */
 void Loaded_Game_Update(void)
 {
-    int16_t itr;
-    int16_t itr_players;
+    int16_t itr = 0;
+    int16_t itr_players = 0;
 
 #ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()\n", __FILE__, __LINE__);
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()\n", __FILE__, __LINE__);
+    trc_prn("DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()\n", __FILE__, __LINE__);
 #endif
-
 
     /* seg001 */ GAME_RazeCity = ST_FALSE;
 
-
     _human_player_idx = HUMAN_PLAYER_IDX;
 
-
     _page_flip_effect = pfe_None;
-    
 
     Reset_City_Area_Bitfields();
 
-
     Init_Overland();
-
 
     Patch_Units_Upkeep_And_Sound();
 
-
     // DONT  o142p04  NOOP_Current_Player_All_City_Areas() |-> empty_fxn_o142p03()
-
 
     // DONT  o142p19  LD_MAP_TFUnk40_Eval()
 
-
     All_Colony_Calculations();
-
 
     _unit_stack_count = 0;
 
-
     Play_Background_Music();
-
 
     Cache_Graphics_Overland();
 
-
     Reset_City_Road_Connection_Bitfields();
-
 
     Delete_Dead_Units();
 
-
     All_AI_Refresh_Units_Movement();
-
 
     /* seg001 */  for(itr = 1; itr < NUM_PLAYERS; itr++)
     /* seg001 */  {
     /* seg001 */      _players[itr].average_unit_cost = 0;
     /* seg001 */  }
 
-
     GAME_NextHumanStack();
-
 
     if(_difficulty == god_Intro)
     {
         magic_set.random_events = ST_FALSE;
     }
-
 
     /*
         BEGIN:  AI CONT / MOVE
@@ -801,7 +784,6 @@ void Loaded_Game_Update(void)
         END:  AI CONT / MOVE
     */
 
-
     g_timestop_player_num = ST_NONE;
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
@@ -810,8 +792,6 @@ void Loaded_Game_Update(void)
             g_timestop_player_num = (itr_players + 1);
         }
     }
-
-
 
     /*
         BEGIN:  STU Debug
@@ -826,7 +806,9 @@ void Loaded_Game_Update(void)
     */
 
 #ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: END: Loaded_Game_Update()\n", __FILE__, __LINE__);
     dbg_prn("DEBUG: [%s, %d]: END: Loaded_Game_Update()\n", __FILE__, __LINE__);
+    trc_prn("DEBUG: [%s, %d]: END: Loaded_Game_Update()\n", __FILE__, __LINE__);
 #endif
 
 }

@@ -30,17 +30,17 @@
 
 
 
-uint8_t _save_gam[123300];
+uint8_t _save_gam[LEN_SAVE_GAM_FILE];
 
 
 
 // WZD o50p01
 void Save_SAVE_GAM(int16_t save_gam_idx)
 {
-    char file_name[LEN_FILE_NAME];
-    char temp_string[LEN_TEMP_STRING];
-    FILE * file_pointer;
-    long file_pointer_position;
+    char file_name[LEN_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char temp_string[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    FILE * file_pointer = NULL;
+    long file_pointer_position = 0;
 
     if(save_gam_idx == ST_UNDEFINED)
     {
@@ -57,132 +57,132 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     file_pointer = stu_fopen_ci(file_name, "wb");
     assert(file_pointer != NULL);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 0);
 
-    fwrite(_HEROES2[0], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
-    fwrite(_HEROES2[1], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
-    fwrite(_HEROES2[2], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
-    fwrite(_HEROES2[3], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
-    fwrite(_HEROES2[4], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
-    fwrite(_HEROES2[5], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
+    stu_fwrite(_HEROES2[0], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
+    stu_fwrite(_HEROES2[1], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
+    stu_fwrite(_HEROES2[2], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
+    stu_fwrite(_HEROES2[3], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
+    stu_fwrite(_HEROES2[4], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
+    stu_fwrite(_HEROES2[5], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 2520);
 
-    fwrite(&_num_players, 1, 2, file_pointer);
-    fwrite(&_landsize , 1, 2, file_pointer);
-    fwrite(&_magic, 1, 2, file_pointer);
-    fwrite(&_difficulty, 1, 2, file_pointer);
-    fwrite(&_cities, 1, 2, file_pointer);
-    fwrite(&_units, 1, 2, file_pointer);
-    fwrite(&_turn, 1, 2, file_pointer);
-    fwrite(&_unit, 1, 2, file_pointer);
+    stu_fwrite(&_num_players, 1, 2, file_pointer);
+    stu_fwrite(&_landsize , 1, 2, file_pointer);
+    stu_fwrite(&_magic, 1, 2, file_pointer);
+    stu_fwrite(&_difficulty, 1, 2, file_pointer);
+    stu_fwrite(&_cities, 1, 2, file_pointer);
+    stu_fwrite(&_units, 1, 2, file_pointer);
+    stu_fwrite(&_turn, 1, 2, file_pointer);
+    stu_fwrite(&_unit, 1, 2, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 2536);
 
-    fwrite(_players, NUM_PLAYERS, 1224, file_pointer);
-    // fwrite(_players, PLAYER_COUNT_MAX, sizeof(struct s_WIZARD), file_pointer);
+    stu_fwrite(_players, NUM_PLAYERS, 1224, file_pointer);
+    // stu_fwrite(_players, PLAYER_COUNT_MAX, sizeof(struct s_WIZARD), file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 9880);
 
-    fwrite(_world_maps, NUM_PLANES, 4800, file_pointer);
+    stu_fwrite(_world_maps, NUM_PLANES, 4800, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 19480);
 
-    fwrite(UU_TBL_1, NUM_PLANES, 96, file_pointer);
-    fwrite(UU_TBL_2, NUM_PLANES, 96, file_pointer);
+    stu_fwrite(UU_TBL_1, NUM_PLANES, 96, file_pointer);
+    stu_fwrite(UU_TBL_2, NUM_PLANES, 96, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 19864);
 
-    fwrite(_landmasses, NUM_PLANES, 2400, file_pointer);
+    stu_fwrite(_landmasses, NUM_PLANES, 2400, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 24664);
 
-    fwrite(_NODES, NUM_NODES, 48, file_pointer);
+    stu_fwrite(_NODES, NUM_NODES, 48, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 26104);
 
-    fwrite(_FORTRESSES, NUM_FORTRESSES, 4, file_pointer);
-    // fwrite(_FORTRESSES, FORTRESS_COUNT_MAX, sizeof(struct s_FORTRESS), file_pointer);
+    stu_fwrite(_FORTRESSES, NUM_FORTRESSES, 4, file_pointer);
+    // stu_fwrite(_FORTRESSES, FORTRESS_COUNT_MAX, sizeof(struct s_FORTRESS), file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 26128);
 
-    fwrite(_TOWERS, NUM_TOWERS, 4, file_pointer);
-    // fwrite(_TOWERS, TOWER_COUNT_MAX, sizeof(struct s_TOWER), file_pointer);
+    stu_fwrite(_TOWERS, NUM_TOWERS, 4, file_pointer);
+    // stu_fwrite(_TOWERS, TOWER_COUNT_MAX, sizeof(struct s_TOWER), file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 26152);
 
-    // fwrite(_LAIRS, NUM_LAIRS, 24, file_pointer);
-    /* HACK */  fwrite(_LAIRS, 102, 24, file_pointer);
+    // stu_fwrite(_LAIRS, NUM_LAIRS, 24, file_pointer);
+    /* HACK */  stu_fwrite(_LAIRS, 102, 24, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 28600);
 
-    fwrite(_ITEMS, 138, 50, file_pointer);
+    stu_fwrite(_ITEMS, 138, 50, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 35500);
 
-    fwrite(_CITIES, NUM_CITIES, 114, file_pointer);
-    // fwrite(_CITIES, CITY_COUNT_MAX, sizeof(struct s_CITY), file_pointer);
+    stu_fwrite(_CITIES, NUM_CITIES, 114, file_pointer);
+    // stu_fwrite(_CITIES, CITY_COUNT_MAX, sizeof(struct s_CITY), file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 46900);
 
-    fwrite(_UNITS, NUM_UNITS, 32, file_pointer);
-    // fwrite(_UNITS, UNIT_COUNT_MAX, sizeof(struct s_UNIT), file_pointer);
+    stu_fwrite(_UNITS, NUM_UNITS, 32, file_pointer);
+    // stu_fwrite(_UNITS, UNIT_COUNT_MAX, sizeof(struct s_UNIT), file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 79188);
 
-    fwrite(_map_square_terrain_specials, NUM_PLANES, 2400, file_pointer);
+    stu_fwrite(_map_square_terrain_specials, NUM_PLANES, 2400, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 83988);
 
-    fwrite(_square_explored, NUM_PLANES, 2400, file_pointer);
+    stu_fwrite(_square_explored, NUM_PLANES, 2400, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 88788);
 
     // TODO  sizeof(struct s_MOVE_MODE_COST_MAPS)
-    fwrite(movement_mode_cost_maps, NUM_PLANES, 14400, file_pointer);
+    stu_fwrite(movement_mode_cost_maps, NUM_PLANES, 14400, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 117588);
 
-    fwrite(events_table, 1, 100, file_pointer);
+    stu_fwrite(events_table, 1, 100, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 117688);
 
-    fwrite(_map_square_flags, NUM_PLANES, 2400, file_pointer);
+    stu_fwrite(_map_square_flags, NUM_PLANES, 2400, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 122488);
 
-    fwrite(&grand_vizier, 1, 2, file_pointer);
+    stu_fwrite(&grand_vizier, 1, 2, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 122490);
 
-    fwrite(TBL_Premade_Items, 250, 1, file_pointer);
+    stu_fwrite(TBL_Premade_Items, 250, 1, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 122740);
 
-    fwrite(hero_names_table, sizeof(struct s_INACTV_HERO), NUM_HERO_TYPES, file_pointer);
+    stu_fwrite(hero_names_table, sizeof(struct s_INACTV_HERO), NUM_HERO_TYPES, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == LEN_SAVE_GAM_FILE);
 
     fclose(file_pointer);
@@ -194,7 +194,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
         {
             magic_set.Have_Save[save_gam_idx] = ST_TRUE;
             file_pointer = stu_fopen_ci("MAGIC.SET", "wb");
-            fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
+            stu_fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
             fclose(file_pointer);
         }
     }
@@ -207,10 +207,16 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 {
     char file_name[LEN_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     char temp_string[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    FILE * file_pointer = 0;
+    FILE * file_pointer = NULL;
     int32_t file_size = 0;
     int16_t file_size_flag = 0;
     long file_pointer_position = 0;
+
+#ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: BEGIN: Load_SAVE_GAM(%d)\n", __FILE__, __LINE__, save_gam_idx);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_SAVE_GAM(%d)\n", __FILE__, __LINE__, save_gam_idx);
+    trc_prn("DEBUG: [%s, %d]: BEGIN: Load_SAVE_GAM(%d)\n", __FILE__, __LINE__, save_gam_idx);
+#endif
 
     if(save_gam_idx == ST_UNDEFINED)
     {
@@ -238,145 +244,151 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     file_pointer = stu_fopen_ci(file_name, "rb");
     assert(file_pointer != NULL);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 0);  // BoF
 
-    fread(_HEROES2[0], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
-    fread(_HEROES2[1], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
-    fread(_HEROES2[2], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
-    fread(_HEROES2[3], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
-    fread(_HEROES2[4], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
-    fread(_HEROES2[5], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
+    stu_fread(_HEROES2[0], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
+    stu_fread(_HEROES2[1], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
+    stu_fread(_HEROES2[2], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
+    stu_fread(_HEROES2[3], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
+    stu_fread(_HEROES2[4], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
+    stu_fread(_HEROES2[5], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 2520);
 
-    fread(&_num_players, 1, 2, file_pointer);
-    fread(&_landsize, 1, 2, file_pointer);
-    fread(&_magic, 1, 2, file_pointer);
-    fread(&_difficulty, 1, 2, file_pointer);
-    fread(&_cities, 1, 2, file_pointer);
-    fread(&_units, 1, 2, file_pointer);
-    fread(&_turn, 1, 2, file_pointer);
-    fread(&_unit, 1, 2, file_pointer);
+    stu_fread(&_num_players, 1, 2, file_pointer);
+    stu_fread(&_landsize, 1, 2, file_pointer);
+    stu_fread(&_magic, 1, 2, file_pointer);
+    stu_fread(&_difficulty, 1, 2, file_pointer);
+    stu_fread(&_cities, 1, 2, file_pointer);
+    stu_fread(&_units, 1, 2, file_pointer);
+    stu_fread(&_turn, 1, 2, file_pointer);
+    stu_fread(&_unit, 1, 2, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 2536);
 
-    fread(_players, NUM_PLAYERS, 1224, file_pointer);
-    // fread(_players, PLAYER_COUNT_MAX, sizeof(struct s_WIZARD), file_pointer);
+    stu_fread(_players, NUM_PLAYERS, 1224, file_pointer);
+    // stu_fread(_players, PLAYER_COUNT_MAX, sizeof(struct s_WIZARD), file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 9880);
 
-    fread(_world_maps, NUM_PLANES, 4800, file_pointer);
+    stu_fread(_world_maps, NUM_PLANES, 4800, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 19480);
 
-    fread(UU_TBL_1, NUM_PLANES, 96, file_pointer);
-    fread(UU_TBL_2, NUM_PLANES, 96, file_pointer);
+    stu_fread(UU_TBL_1, NUM_PLANES, 96, file_pointer);
+    stu_fread(UU_TBL_2, NUM_PLANES, 96, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 19864);
 
     // 0x004d98	0x0960	2	Land mass IDs
     assert(file_pointer_position == 0x4D98);
-    // fread(_landmasses, NUM_PLANES, 2400, file_pointer);
-    fread(_landmasses, 2400, NUM_PLANES, file_pointer);
+    // stu_fread(_landmasses, NUM_PLANES, 2400, file_pointer);
+    stu_fread(_landmasses, 2400, NUM_PLANES, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 24664);
 
-    fread(_NODES, NUM_NODES, 48, file_pointer);
+    stu_fread(_NODES, NUM_NODES, 48, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 26104);
 
-    fread(_FORTRESSES, NUM_FORTRESSES, 4, file_pointer);
-    // fread(_FORTRESSES, FORTRESS_COUNT_MAX, sizeof(struct s_FORTRESS), file_pointer);
+    stu_fread(_FORTRESSES, NUM_FORTRESSES, 4, file_pointer);
+    // stu_fread(_FORTRESSES, FORTRESS_COUNT_MAX, sizeof(struct s_FORTRESS), file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 26128);
 
-    fread(_TOWERS, NUM_TOWERS, 4, file_pointer);
-    // fread(_TOWERS, TOWER_COUNT_MAX, sizeof(struct s_TOWER), file_pointer);
+    stu_fread(_TOWERS, NUM_TOWERS, 4, file_pointer);
+    // stu_fread(_TOWERS, TOWER_COUNT_MAX, sizeof(struct s_TOWER), file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 26152);
 
-    // fread(_LAIRS, NUM_LAIRS, 24, file_pointer);
-    /* HACK */  fread(_LAIRS, 102, 24, file_pointer);
+    // stu_fread(_LAIRS, NUM_LAIRS, 24, file_pointer);
+    /* HACK */  stu_fread(_LAIRS, 102, 24, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 28600);
 
-    fread(_ITEMS, 138, 50, file_pointer);
+    stu_fread(_ITEMS, 138, 50, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 35500);
 
-    fread(_CITIES, NUM_CITIES, 114, file_pointer);
-    // fread(_CITIES, CITY_COUNT_MAX, sizeof(struct s_CITY), file_pointer);
+    stu_fread(_CITIES, NUM_CITIES, 114, file_pointer);
+    // stu_fread(_CITIES, CITY_COUNT_MAX, sizeof(struct s_CITY), file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 46900);
 
-    fread(_UNITS, NUM_UNITS, 32, file_pointer);
-    // fread(_UNITS, UNIT_COUNT_MAX, sizeof(struct s_UNIT), file_pointer);
+    stu_fread(_UNITS, NUM_UNITS, 32, file_pointer);
+    // stu_fread(_UNITS, UNIT_COUNT_MAX, sizeof(struct s_UNIT), file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 79188);
 
-    fread(_map_square_terrain_specials, NUM_PLANES, 2400, file_pointer);
+    stu_fread(_map_square_terrain_specials, NUM_PLANES, 2400, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 83988);
 
-    fread(_square_explored, NUM_PLANES, 2400, file_pointer);
+    stu_fread(_square_explored, NUM_PLANES, 2400, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 88788);
     
     // TODO  sizeof(struct s_MOVE_MODE_COST_MAPS)
-    fread(movement_mode_cost_maps, NUM_PLANES, 14400, file_pointer);
+    stu_fread(movement_mode_cost_maps, NUM_PLANES, 14400, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 117588);
 
-    fread(events_table, 1, 100, file_pointer);
+    stu_fread(events_table, 1, 100, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 117688);
 
-    fread(_map_square_flags, NUM_PLANES, 2400, file_pointer);
+    stu_fread(_map_square_flags, NUM_PLANES, 2400, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 122488);
 
-    fread(&grand_vizier, 1, 2, file_pointer);
+    stu_fread(&grand_vizier, 1, 2, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 122490);
 
-    fread(TBL_Premade_Items, 250, 1, file_pointer);
+    stu_fread(TBL_Premade_Items, 250, 1, file_pointer);
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 122740);
 
     if(file_size_flag == ST_FALSE)
     {
-        fread(hero_names_table, sizeof(struct s_INACTV_HERO), NUM_HERO_TYPES, file_pointer);
+        stu_fread(hero_names_table, sizeof(struct s_INACTV_HERO), NUM_HERO_TYPES, file_pointer);
     }
     else
     {
         Clear_Memory((int8_t *)hero_names_table, 545);
     }
 
-    file_pointer_position = ftell(file_pointer);
+    file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == LEN_SAVE_GAM_FILE);
 
-    fclose(file_pointer);
+    stu_fclose(file_pointer);
+
+#ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: END: Load_SAVE_GAM(%d)\n", __FILE__, __LINE__, save_gam_idx);
+    dbg_prn("DEBUG: [%s, %d]: END: Load_SAVE_GAM(%d)\n", __FILE__, __LINE__, save_gam_idx);
+    trc_prn("DEBUG: [%s, %d]: END: Load_SAVE_GAM(%d)\n", __FILE__, __LINE__, save_gam_idx);
+#endif
 
 }
 
@@ -384,16 +396,16 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 
 void Read_SAVE_GAM(void)
 {
-    FILE * file_pointer;
+    FILE * file_pointer = NULL;
     file_pointer = stu_fopen_ci("SAVETEST.GAM", "rb");
-    fread(&_save_gam, 123300, 1, file_pointer);
-    fclose(file_pointer);
+    stu_fread(&_save_gam, LEN_SAVE_GAM_FILE, 1, file_pointer);
+    stu_fclose(file_pointer);
 }
 
 void Write_SAVE_GAM(void)
 {
-    FILE * file_pointer;
+    FILE * file_pointer = NULL;
     file_pointer = stu_fopen_ci("SAVETEST.GAM", "wb");
-    fwrite(&_save_gam, 123300, 1, file_pointer);
-    fclose(file_pointer);
+    stu_fwrite(&_save_gam, LEN_SAVE_GAM_FILE, 1, file_pointer);
+    stu_fclose(file_pointer);
 }

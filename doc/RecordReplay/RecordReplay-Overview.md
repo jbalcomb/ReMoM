@@ -16,14 +16,14 @@ SEEALSO: C:\STU\devel\ReMoM\doc\RecordReplay\Handmade Hero Day 023 - Looped Live
 
 ## --record
 ReMoM.c
-    if(strcmp(argv[argi], "--record") == 0 && (argi + 1) < argc)
+    if(stu_strcmp(argv[argi], "--record") == 0 && (argi + 1) < argc)
         Platform_Record_Start(argv[argi]);
 
 
 
 ## --replay
 ReMoM.c
-    if(strcmp(argv[argi], "--replay") == 0 && (argi + 1) < argc)
+    if(stu_strcmp(argv[argi], "--replay") == 0 && (argi + 1) < argc)
         Platform_Replay_Start(argv[argi]);
 
 
