@@ -1,0 +1,5 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Combat_Results_Scroll,MoM/src/Combat.c,21385,Combat_Results_Scroll,Add_Hot_Key,Hotkey_R1_Index,cnst_HOTKEY_R,,0,0,,,,,,,,,,,
+Combat_Results_Scroll,MoM/src/Combat.c,21386,Combat_Results_Scroll,Add_Hot_Key,Hotkey_R2_Index,cnst_HOTKEY_R_2,,0,0,,,,,,,,,,,
+Combat_Results_Scroll,MoM/src/Combat.c,21387,Combat_Results_Scroll,Add_Hidden_Field,hotkey_esc_fld,"0, 0, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc1A, ST_UNDEFINED",,0,0,,,,,,,,,,,
+Combat_Results_Scroll,MoM/src/Combat.c,21435,Combat_Results_Scroll,Add_Hidden_Field,hotkey_esc_fld,"0, 0, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc1A, ST_UNDEFINED",,0,0,,,,,,,,,,,

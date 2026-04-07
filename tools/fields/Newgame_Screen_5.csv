@@ -1,0 +1,3 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Newgame_Screen_5,MoM/src/NewGame.c,4848,Newgame_Screen_5,Add_Hot_Key,_quit_button,str_ESC__ovr050[0],,0,0,,,,,,,,,,,
+Newgame_Screen_5,MoM/src/NewGame.c,4850,Newgame_Screen_5,Add_Hidden_Field,_ok_button,"251, 181, 282, 196, empty_string__ovr050[0], ST_UNDEFINED",,0,0,,,,,,,,,,,

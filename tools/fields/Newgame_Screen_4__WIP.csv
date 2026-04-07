@@ -1,0 +1,10 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Newgame_Screen_4__WIP,MoM/src/NewGame.c,3925,Newgame_Screen_4__WIP,Add_Hidden_Field,_ok_button,"251, 181, 282, 196, empty_string__ovr050[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Newgame_Screen_4__WIP,MoM/src/NewGame.c,3941,Newgame_Screen_4__WIP,Add_Scroll_Field,m_newgame_fields[0],"190, 47, 0, 96, 0, 95, 96, 22, &m_bookshelf_life, empty_string__ovr050[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Newgame_Screen_4__WIP,MoM/src/NewGame.c,3942,Newgame_Screen_4__WIP,Add_Scroll_Field,m_newgame_fields[1],"190, 73, 0, 96, 0, 95, 96, 22, &m_bookshelf_death, empty_string__ovr050[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Newgame_Screen_4__WIP,MoM/src/NewGame.c,3943,Newgame_Screen_4__WIP,Add_Scroll_Field,m_newgame_fields[2],"190, 99, 0, 96, 0, 95, 96, 22, &m_bookshelf_chaos, empty_string__ovr050[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Newgame_Screen_4__WIP,MoM/src/NewGame.c,3944,Newgame_Screen_4__WIP,Add_Scroll_Field,m_newgame_fields[3],"190, 125, 0, 96, 0, 95, 96, 22, &m_bookshelf_nature, empty_string__ovr050[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Newgame_Screen_4__WIP,MoM/src/NewGame.c,3945,Newgame_Screen_4__WIP,Add_Scroll_Field,m_newgame_fields[4],"190, 151, 0, 96, 0, 95, 96, 22, &m_bookshelf_sorcery, empty_string__ovr050[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Newgame_Screen_4__WIP,MoM/src/NewGame.c,3949,Newgame_Screen_4__WIP,Add_Hidden_Field,wsa_picklist_fields[(0+itr)],"164, (5 + (itr * 7)), 202, (10 + (itr * 7)), empty_string__ovr050[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Newgame_Screen_4__WIP,MoM/src/NewGame.c,3950,Newgame_Screen_4__WIP,Add_Hidden_Field,wsa_picklist_fields[(6+itr)],"203, (5 + (itr * 7)), 252, (10 + (itr * 7)), empty_string__ovr050[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Newgame_Screen_4__WIP,MoM/src/NewGame.c,3951,Newgame_Screen_4__WIP,Add_Hidden_Field,wsa_picklist_fields[(12+itr)],"253, (5 + (itr * 7)), 319, (10 + (itr * 7)), empty_string__ovr050[0], ST_UNDEFINED",,0,0,,,,,,,,,,,

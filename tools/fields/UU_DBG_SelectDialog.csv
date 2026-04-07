@@ -1,0 +1,5 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+UU_DBG_SelectDialog,MoX/src/Util.c,856,UU_DBG_SelectDialog,Add_Hidden_Field,response_1,"120, 130, 200, 145, 0, ST_UNDEFINED",,0,0,,,,,,,,,,,
+UU_DBG_SelectDialog,MoX/src/Util.c,864,UU_DBG_SelectDialog,Add_Hidden_Field,response_2,"120, 150, 200, 165, 0, ST_UNDEFINED",,0,0,,,,,,,,,,,
+UU_DBG_SelectDialog,MoX/src/Util.c,872,UU_DBG_SelectDialog,Add_Hidden_Field,response_3,"120, 170, 200, 185, 0, ST_UNDEFINED",,0,0,,,,,,,,,,,
+UU_DBG_SelectDialog,MoX/src/Util.c,876,UU_DBG_SelectDialog,Add_Hidden_Field,abort_id,"0, 0, 319, 199, 0, ST_UNDEFINED",,0,0,,,,,,,,,,,

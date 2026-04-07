@@ -1,0 +1,13 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Magic_Screen_Add_Fields,MoM/src/MagicScr.c,1406,Magic_Screen_Add_Fields,Add_Scroll_Field,,"32, 102, 0, 50, 0, 50, 5, 50, &mana_stave_pct_pos, 'M', ST_UNDEFINED",,0,0,,,,,,,,,,,
+Magic_Screen_Add_Fields,MoM/src/MagicScr.c,1407,Magic_Screen_Add_Fields,Add_Scroll_Field,,"79, 102, 0, 50, 0, 50, 5, 50, &research_stave_pct_pos, 'R', ST_UNDEFINED",,0,0,,,,,,,,,,,
+Magic_Screen_Add_Fields,MoM/src/MagicScr.c,1408,Magic_Screen_Add_Fields,Add_Scroll_Field,,"126, 102, 0, 50, 0, 50, 5, 50, &skill_stave_pct_pos, 'S', ST_UNDEFINED",,0,0,,,,,,,,,,,
+Magic_Screen_Add_Fields,MoM/src/MagicScr.c,1410,Magic_Screen_Add_Fields,Add_Button_Field,button_magic_ok,"291, 181, str_empty_string__ovr073, magic_ok_button_seg, 'O', ST_UNDEFINED",,0,0,,,,,,,,,,,
+Magic_Screen_Add_Fields,MoM/src/MagicScr.c,1411,Magic_Screen_Add_Fields,Add_Button_Field,button_magic_alchemy,"232, 181, str_empty_string__ovr073, magic_alchemy_button_seg, 'A', ST_UNDEFINED",,0,0,,,,,,,,,,,
+Magic_Screen_Add_Fields,MoM/src/MagicScr.c,1413,Magic_Screen_Add_Fields,Add_Hidden_Field,magic_mana_staff_locked,"28, 82, 41, 101, 0, ST_UNDEFINED",,0,0,,,,,,,,,,,
+Magic_Screen_Add_Fields,MoM/src/MagicScr.c,1414,Magic_Screen_Add_Fields,Add_Hidden_Field,magic_research_staff_locked,"75, 82, 88, 101, 0, ST_UNDEFINED",,0,0,,,,,,,,,,,
+Magic_Screen_Add_Fields,MoM/src/MagicScr.c,1415,Magic_Screen_Add_Fields,Add_Hidden_Field,magic_skill_staff_locked,"122, 82, 135, 101, 0, ST_UNDEFINED",,0,0,,,,,,,,,,,
+Magic_Screen_Add_Fields,MoM/src/MagicScr.c,1421,Magic_Screen_Add_Fields,Add_Hidden_Field,magic_gem_fields[itr_gem_count],"x1, y1, (x1 + 30), (y1 + 32), str_empty_string__ovr073[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Magic_Screen_Add_Fields,MoM/src/MagicScr.c,1432,Magic_Screen_Add_Fields,Add_Hidden_Field,magic_ovl_ench_flds[itr_ovl_ench_cnt],"x1, (y1 + (10 * itr_ovl_ench_cnt)), (x1 + 120), (y1 + 9 + (10 * itr_ovl_ench_cnt)), str_empty_string__ovr073[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Magic_Screen_Add_Fields,MoM/src/MagicScr.c,1441,Magic_Screen_Add_Fields,Add_Hidden_Field,magic_ovl_ench_flds[itr_ovl_ench_list_cnt],"(x1 + (70 * (itr_ovl_ench_list_cnt % 2))), (y1 + (9 * (itr_ovl_ench_list_cnt / 2))), (63 + (x1 + (70 * (itr_ovl_ench_list_cnt % 2)))), (6 + (y1 + (9 * (itr_ovl_ench_list_cnt / 2)))), str_empty_string__ovr073[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Magic_Screen_Add_Fields,MoM/src/MagicScr.c,1448,Magic_Screen_Add_Fields,Add_Hidden_Field,magic_ovl_ench_list_down,"286, 163, 307, 169, str_empty_string__ovr073[0], ST_UNDEFINED",,0,0,,,,,,,,,,,

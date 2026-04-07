@@ -1,0 +1,10 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+ArmyList_Screen,MoM/src/ArmyList.c,245,ArmyList_Screen,Add_Button_Field,button_armylist_items,"273, 163, """", armylist_items_button_seg, cnst_HOTKEY_I_2, ST_UNDEFINED",,0,0,,,,,,,,,,,
+ArmyList_Screen,MoM/src/ArmyList.c,247,ArmyList_Screen,Add_Button_Field,button_armylist_ok,"273, 182, """", armylist_ok_button_seg, cnst_HOTKEY_O_4, ST_UNDEFINED",,0,0,,,,,,,,,,,
+ArmyList_Screen,MoM/src/ArmyList.c,249,ArmyList_Screen,Add_Hot_Key,hotkey_esc_fld,cnst_HOTKEY_Esc5,,0,0,,,,,,,,,,,
+ArmyList_Screen,MoM/src/ArmyList.c,254,ArmyList_Screen,Add_Hot_Key,hotkey_U,cnst_HOTKEY_U_3,,0,0,,,,,,,,,,,
+ArmyList_Screen,MoM/src/ArmyList.c,255,ArmyList_Screen,Add_Button_Field,button_armylist_up_right,"250, 26, """", armylist_up_button_seg, armylist_hotkey_NUL, ST_UNDEFINED",,0,0,,,,,,,,,,,
+ArmyList_Screen,MoM/src/ArmyList.c,256,ArmyList_Screen,Add_Button_Field,button_armylist_up_left,"60, 26, """", armylist_up_button_seg, armylist_hotkey_NUL, ST_UNDEFINED",,0,0,,,,,,,,,,,
+ArmyList_Screen,MoM/src/ArmyList.c,268,ArmyList_Screen,Add_Hot_Key,hotkey_D,cnst_HOTKEY_D_3,,0,0,,,,,,,,,,,
+ArmyList_Screen,MoM/src/ArmyList.c,269,ArmyList_Screen,Add_Button_Field,button_armylist_down_right,"250, 139, """", armylist_down_button_seg, armylist_hotkey_NUL, ST_UNDEFINED",,0,0,,,,,,,,,,,
+ArmyList_Screen,MoM/src/ArmyList.c,270,ArmyList_Screen,Add_Button_Field,button_armylist_down_left,"60, 139, """", armylist_down_button_seg, armylist_hotkey_NUL, ST_UNDEFINED",,0,0,,,,,,,,,,,

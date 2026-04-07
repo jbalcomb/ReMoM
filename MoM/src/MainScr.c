@@ -983,6 +983,25 @@ void Main_Screen(void)
             END: Add Fields
         */
 
+#ifdef STU_DEBUG
+g_dbg_fields_trace = 1;
+        /*
+            BEGIN: Main_Screen - Field Catalog Dump (one-shot)
+            Emits a FIELDSNAPSHOT block to TRACE.LOG listing every field registered for the Main Screen.
+            Feeds the static+runtime field catalog used by Record & Replay and the AI input simulator.
+        */
+        {
+            static int16_t s_main_screen_fields_dumped = 0;
+            if(s_main_screen_fields_dumped == 0)
+            {
+                Dump_Fields_CSV("Main_Screen");
+                s_main_screen_fields_dumped = 1;
+            }
+        }
+        /*
+            END: Main_Screen - Field Catalog Dump (one-shot)
+        */
+#endif
 
         input_field_idx = Get_Input();
 

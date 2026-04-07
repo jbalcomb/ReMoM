@@ -1,0 +1,5 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Selection_Box,MoX/src/GENDRAW.c,781,Selection_Box,Add_Hidden_Field,selectbox_fields[itr],"x1, y1, x2, y2, str_empty_string__ovr149[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Selection_Box,MoX/src/GENDRAW.c,790,Selection_Box,Add_Hidden_Field,selectbox_fields[itr],"x1, y1, x2, y2, str_empty_string__ovr149[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Selection_Box,MoX/src/GENDRAW.c,858,Selection_Box,Add_Hidden_Field,selectbox_window,"selectbox_x1, selectbox_y1, selectbox_x2, selectbox_y2, str_empty_string__ovr149[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Selection_Box,MoX/src/GENDRAW.c,860,Selection_Box,Add_Hidden_Field,hotkey_ESC,"SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr149[0], ST_UNDEFINED",,0,0,,,,,,,,,,,

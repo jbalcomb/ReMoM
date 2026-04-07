@@ -1,0 +1,4 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+City_Add_Fields_City_Enchantments,MoM/src/City_ovr55.c,2066,City_Add_Fields_City_Enchantments,Add_Button_Field,city_up_button,"(xstart + 62), (ystart - 1), str_empty_string__ovr055, city_spell_up_arrow_button_seg, str_empty_string__ovr055[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+City_Add_Fields_City_Enchantments,MoM/src/City_ovr55.c,2067,City_Add_Fields_City_Enchantments,Add_Button_Field,city_dn_button,"(xstart + 62), (ystart + 34), str_empty_string__ovr055, city_spell_dn_arrow_button_seg, str_empty_string__ovr055[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+City_Add_Fields_City_Enchantments,MoM/src/City_ovr55.c,2089,City_Add_Fields_City_Enchantments,Add_Hidden_Field,city_enchantment_fields[itr],"xstart, (ystart + (itr * 7)), (xstart + 60), (ystart + (itr * 7) + 6), 0, ST_UNDEFINED",,0,0,,,,,,,,,,,

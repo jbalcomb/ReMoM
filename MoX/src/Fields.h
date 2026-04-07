@@ -831,6 +831,40 @@ void UU_GUI_ExtClear(void);
 
 
 
+/*
+    BEGIN: Fields - Runtime Catalog (for Record & Replay / AI input simulator)
+    When g_dbg_fields_trace is non-zero, every Add_*Field call emits a FIELDADD line via trc_prn().
+    Dump_Fields_CSV() emits a FIELDSNAPSHOT block for the currently-registered fields.
+    See also: tools/fields_extract.py (static extractor) and tools/fields_merge.py (static+runtime merge).
+*/
+#ifdef STU_DEBUG
+extern int16_t g_dbg_fields_trace;
+extern const char * g_dbg_fields_screen_tag;
+extern const char * g_dbg_fields_call_file;
+extern int32_t g_dbg_fields_call_line;
+void Dump_Fields_CSV(const char * screen_tag);
+
+/*
+    Macro wrappers capture __FILE__/__LINE__ at each call site without requiring
+    edits at every call site. Skipped inside Fields.c itself (FIELDS_C_IMPL guard)
+    so the real definitions compile.
+*/
+#ifndef FIELDS_C_IMPL
+#define DBG_FIELDS_LOC_SET() (g_dbg_fields_call_file = __FILE__, g_dbg_fields_call_line = __LINE__)
+#define Add_Button_Field(...)                 (DBG_FIELDS_LOC_SET(), Add_Button_Field(__VA_ARGS__))
+#define Add_Hidden_Field(...)                 (DBG_FIELDS_LOC_SET(), Add_Hidden_Field(__VA_ARGS__))
+#define Add_Hot_Key(...)                      (DBG_FIELDS_LOC_SET(), Add_Hot_Key(__VA_ARGS__))
+#define Add_Multi_Hot_Key_Field(...)          (DBG_FIELDS_LOC_SET(), Add_Multi_Hot_Key_Field(__VA_ARGS__))
+#define Add_Grid_Field(...)                   (DBG_FIELDS_LOC_SET(), Add_Grid_Field(__VA_ARGS__))
+#define Add_Scroll_Field(...)                 (DBG_FIELDS_LOC_SET(), Add_Scroll_Field(__VA_ARGS__))
+#define Add_Input_Field(...)                  (DBG_FIELDS_LOC_SET(), Add_Input_Field(__VA_ARGS__))
+#define Add_Continuous_String_Input_Field(...) (DBG_FIELDS_LOC_SET(), Add_Continuous_String_Input_Field(__VA_ARGS__))
+#define Add_Picture_Field(...)                (DBG_FIELDS_LOC_SET(), Add_Picture_Field(__VA_ARGS__))
+#endif
+#endif
+
+
+
 #ifdef __cplusplus
 }
 #endif

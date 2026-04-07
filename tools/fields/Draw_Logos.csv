@@ -1,0 +1,3 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Draw_Logos,MoM/src/INTRO.c,153,Draw_Logos,Add_Hidden_Field,fullscreen_field,"SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_empty_string__MGC_ovr058[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Draw_Logos,MoM/src/INTRO.c,154,Draw_Logos,Add_Hot_Key,hotkey_idx_ESC,str_ESC__MGC_ovr058[0],,0,0,,,,,,,,,,,
