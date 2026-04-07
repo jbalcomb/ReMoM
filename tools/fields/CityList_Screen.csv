@@ -1,0 +1,9 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+CityList_Screen,MoM/src/CityList.c,183,CityList_Screen,Add_Button_Field,button_citylist_ok,"239, 182, """", citylist_ok_button_seg, str_citylist_O, ST_UNDEFINED",,0,0,,,,,,,,,,,
+CityList_Screen,MoM/src/CityList.c,184,CityList_Screen,Add_Hot_Key,hotkey_ESC,str_citylist_ESC,,0,0,,,,,,,,,,,
+CityList_Screen,MoM/src/CityList.c,192,CityList_Screen,Add_Hot_Key,hotkey_U,str_citylist_U,,0,0,,,,,,,,,,,
+CityList_Screen,MoM/src/CityList.c,193,CityList_Screen,Add_Button_Field,citylist_up_button_left,"11, 26, """", citylist_up_button_seg, emptystring__ovr065, ST_UNDEFINED",,0,0,,,,,,,,,,,
+CityList_Screen,MoM/src/CityList.c,194,CityList_Screen,Add_Button_Field,citylist_up_button_right,"299, 26, """", citylist_up_button_seg, emptystring__ovr065, ST_UNDEFINED",,0,0,,,,,,,,,,,
+CityList_Screen,MoM/src/CityList.c,209,CityList_Screen,Add_Hot_Key,hotkey_D,str_citylist_D,,0,0,,,,,,,,,,,
+CityList_Screen,MoM/src/CityList.c,210,CityList_Screen,Add_Button_Field,citylist_down_button_left,"11, 139, """", citylist_down_button_seg, emptystring__ovr065, ST_UNDEFINED",,0,0,,,,,,,,,,,
+CityList_Screen,MoM/src/CityList.c,211,CityList_Screen,Add_Button_Field,citylist_down_button_right,"299, 139, """", citylist_down_button_seg, emptystring__ovr065, ST_UNDEFINED",,0,0,,,,,,,,,,,

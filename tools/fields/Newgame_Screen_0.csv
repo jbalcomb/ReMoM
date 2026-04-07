@@ -1,0 +1,7 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Newgame_Screen_0,MoM/src/NewGame.c,1762,Newgame_Screen_0,Add_Button_Field,_ok_button,"252, 179, &empty_string__ovr050[0], newgame_ok_button_seg, empty_string__ovr050[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Newgame_Screen_0,MoM/src/NewGame.c,1764,Newgame_Screen_0,Add_Button_Field,_quit_button,"171, 179, &empty_string__ovr050[0], _quit_active_seg, str_ESC__ovr050[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Newgame_Screen_0,MoM/src/NewGame.c,1766,Newgame_Screen_0,Add_Hidden_Field,newgame_difficulty_button_field,"250, 38, 315, 54, empty_string__ovr050[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Newgame_Screen_0,MoM/src/NewGame.c,1768,Newgame_Screen_0,Add_Hidden_Field,newgame_opponents_button_field,"250, 65, 315, 81, empty_string__ovr050[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Newgame_Screen_0,MoM/src/NewGame.c,1770,Newgame_Screen_0,Add_Hidden_Field,newgame_landsize_button_field,"250, 92, 315, 108, empty_string__ovr050[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Newgame_Screen_0,MoM/src/NewGame.c,1772,Newgame_Screen_0,Add_Hidden_Field,newgame_magic_button_field,"250, 119, 315, 135, empty_string__ovr050[0], ST_UNDEFINED",,0,0,,,,,,,,,,,

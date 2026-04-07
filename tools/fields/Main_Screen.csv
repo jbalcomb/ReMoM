@@ -1,0 +1,45 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Main_Screen,MoM/src/MainScr.c,939,Main_Screen,Add_Hot_Key,hotkey_idx_X,'X',,1,129,7,500,500,500,500,500,500,88,X,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,944,Main_Screen,Add_Hot_Key,hotkey_idx_C,'C',,1,129,7,500,500,500,500,500,500,67,C,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,948,Main_Screen,Add_Hot_Key,hotkey_idx_Q,'Q',,1,129,7,500,500,500,500,500,500,81,Q,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,949,Main_Screen,Add_Hot_Key,hotkey_idx_U,'U',,1,129,7,500,500,500,500,500,500,85,U,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,957,Main_Screen,Add_Hot_Key,hotkey_idx_LeftUp,ST_KEY_LEFTUP,,1,129,7,500,500,500,500,500,500,7,LEFTUP,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,958,Main_Screen,Add_Hot_Key,hotkey_idx_Up,ST_KEY_UP,,1,129,7,500,500,500,500,500,500,3,UP,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,959,Main_Screen,Add_Hot_Key,hotkey_idx_RightUp,ST_KEY_RIGHTUP,,1,129,7,500,500,500,500,500,500,5,RIGHTUP,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,960,Main_Screen,Add_Hot_Key,hotkey_idx_Left,ST_KEY_LEFT,,1,129,7,500,500,500,500,500,500,1,LEFT,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,961,Main_Screen,Add_Hot_Key,hotkey_idx_Right,ST_KEY_RIGHT,,1,129,7,500,500,500,500,500,500,2,RIGHT,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,962,Main_Screen,Add_Hot_Key,hotkey_idx_LeftDown,ST_KEY_LEFTDOWN,,1,129,7,500,500,500,500,500,500,8,LEFTDOWN,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,963,Main_Screen,Add_Hot_Key,hotkey_idx_Down,ST_KEY_DOWN,,1,129,7,500,500,500,500,500,500,4,DOWN,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,964,Main_Screen,Add_Hot_Key,hotkey_idx_RightDown,ST_KEY_RIGHTDOWN,,1,129,7,500,500,500,500,500,500,6,RIGHTDOWN,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,966,Main_Screen,Add_Hot_Key,hotkey_idx_F10,ST_KEY_F10,,1,129,7,500,500,500,500,500,500,23,F10,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,967,Main_Screen,Add_Hot_Key,hotkey_idx_F1,ST_KEY_F1,,1,129,7,500,500,500,500,500,500,14,F1,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,968,Main_Screen,Add_Hot_Key,hotkey_idx_F2,ST_KEY_F2,,1,129,7,500,500,500,500,500,500,15,F2,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,969,Main_Screen,Add_Hot_Key,hotkey_idx_F3,ST_KEY_F3,,1,129,7,500,500,500,500,500,500,16,F3,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,970,Main_Screen,Add_Hot_Key,hotkey_idx_F4,ST_KEY_F4,,1,129,7,500,500,500,500,500,500,17,F4,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,971,Main_Screen,Add_Hot_Key,hotkey_idx_F5,ST_KEY_F5,,1,129,7,500,500,500,500,500,500,18,F5,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,972,Main_Screen,Add_Hot_Key,hotkey_idx_F6,ST_KEY_F6,,1,129,7,500,500,500,500,500,500,19,F6,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,973,Main_Screen,Add_Hot_Key,hotkey_idx_F7,ST_KEY_F7,,1,129,7,500,500,500,500,500,500,20,F7,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,974,Main_Screen,Add_Hot_Key,hotkey_idx_F8,ST_KEY_F8,,1,129,7,500,500,500,500,500,500,21,F8,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,975,Main_Screen,Add_Hot_Key,hotkey_idx_F9,ST_KEY_F9,,1,129,7,500,500,500,500,500,500,22,F9,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,976,Main_Screen,Add_Multi_Hot_Key_Field,hotkey_idx_Alt_K,"""K""",,1,129,8,500,500,500,500,500,500,75,K,-1,Add_Multi_Hot_Key_Field
+Main_Screen,MoM/src/MainScr.c,977,Main_Screen,Add_Multi_Hot_Key_Field,hotkey_idx_Alt_A,"""A""",,1,129,8,500,500,500,500,500,500,65,A,-1,Add_Multi_Hot_Key_Field
+Main_Screen,MoM/src/MainScr.c,979,Main_Screen,Add_Hot_Key,hotkey_idx_Z,'Z',,1,129,7,500,500,500,500,500,500,90,Z,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,980,Main_Screen,Add_Hot_Key,hotkey_idx_T,'T',,1,129,7,500,500,500,500,500,500,84,T,-1,Add_Hot_Key
+Main_Screen,MoM/src/MainScr.c,2009,Main_Screen_Add_Fields,Add_Hidden_Field,_next_turn_button,"248, 175, 313, 199, 'N', ST_UNDEFINED",,1,78,7,248,175,313,199,280,187,78,N,-1,Add_Hidden_Field
+Main_Screen,MoM/src/MainScr.c,2015,Main_Screen_Add_Fields,Add_Grid_Field,_main_map_grid_field,"MAP_SCREEN_X, MAP_SCREEN_Y, SQUARE_WIDTH, SQUARE_HEIGHT, MAP_WIDTH, MAP_HEIGHT, &_main_map_grid_x, &_main_map_grid_y, ST_UNDEFINED",,1,129,12,0,20,239,199,119,109,0,,-1,Add_Grid_Field
+Main_Screen,MoM/src/MainScr.c,2020,Main_Screen_Add_Fields,Add_Grid_Field,_minimap_grid_field,"REDUCED_MAP_SCREEN_X, REDUCED_MAP_SCREEN_Y, REDUCED_MAP_SQUARE_WIDTH, REDUCED_MAP_SQUARE_HEIGHT, REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT, &_minimap_grid_x, &_minimap_grid_y, ST_UNDEFINED",,1,129,12,251,21,308,50,279,35,0,,-1,Add_Grid_Field
+Main_Screen,MoM/src/MainScr.c,2034,Add_Unit_Action_Fields,Add_Button_Field,_done_button,"246, 176, """", main_done_button, 'D', ST_UNDEFINED",,1,51,0,246,176,278,184,262,180,68,D,-1,Add_Button_Field
+Main_Screen,MoM/src/MainScr.c,2035,Add_Unit_Action_Fields,Add_Button_Field,_patrol_button,"280, 176, """", main_patrol_button, 0, ST_UNDEFINED",,1,51,0,280,176,312,184,296,180,0,,-1,Add_Button_Field
+Main_Screen,MoM/src/MainScr.c,2036,Add_Unit_Action_Fields,Add_Button_Field,_wait_button,"246, 186, """", main_wait_button, 'W', ST_UNDEFINED",,1,51,0,246,186,278,194,262,190,87,W,-1,Add_Button_Field
+Main_Screen,MoM/src/MainScr.c,2043,Add_Unit_Action_Fields,Add_Button_Field,_special_button,"280, 186, """", main_purify_button, 0, ST_UNDEFINED",,0,0,,,,,,,,,,,
+Main_Screen,MoM/src/MainScr.c,2047,Add_Unit_Action_Fields,Add_Button_Field,_special_button,"280, 186, """", main_meld_button, 0, ST_UNDEFINED",,0,0,,,,,,,,,,,
+Main_Screen,MoM/src/MainScr.c,2051,Add_Unit_Action_Fields,Add_Button_Field,_special_button,"280, 186, """", main_build_button, 'B', ST_UNDEFINED",,0,0,,,,,,,,,,,
+Main_Screen,MoM/src/MainScr.c,2064,Add_Unit_Action_Fields,Add_Button_Field,_wait_button,"246, 186, """", main_wait_button, 'W', ST_UNDEFINED",,0,0,,,,,,,,,,,
+Main_Screen,MoM/src/MainScr.c,2147,Add_Game_Button_Fields,Add_Button_Field,_game_button,"7, 4, empty_string__ovr057, main_game_button, hotkey_GameButton[0], ST_UNDEFINED",,1,129,0,7,4,45,15,26,9,71,G,-1,Add_Button_Field
+Main_Screen,MoM/src/MainScr.c,2148,Add_Game_Button_Fields,Add_Button_Field,_spells_button,"47, 4, empty_string__ovr057, main_spells_button, hotkey_SpellsButton[0], ST_UNDEFINED",,1,129,0,47,4,87,15,67,9,83,S,-1,Add_Button_Field
+Main_Screen,MoM/src/MainScr.c,2149,Add_Game_Button_Fields,Add_Button_Field,_armies_button,"89, 4, empty_string__ovr057, main_armies_button, hotkey_ArmiesButton[0], ST_UNDEFINED",,1,129,0,89,4,138,15,113,9,65,A,-1,Add_Button_Field
+Main_Screen,MoM/src/MainScr.c,2150,Add_Game_Button_Fields,Add_Button_Field,_cities_button,"140, 4, empty_string__ovr057, main_cities_button, empty_string__ovr057[0], ST_UNDEFINED",,1,129,0,140,4,182,15,161,9,0,,-1,Add_Button_Field
+Main_Screen,MoM/src/MainScr.c,2151,Add_Game_Button_Fields,Add_Button_Field,_magic_button,"184, 4, empty_string__ovr057, main_magic_button, hotkey_MagicButton[0], ST_UNDEFINED",,1,129,0,184,4,224,15,204,9,77,M,-1,Add_Button_Field
+Main_Screen,MoM/src/MainScr.c,2152,Add_Game_Button_Fields,Add_Button_Field,_info_button,"226, 4, empty_string__ovr057, main_info_button, hotkey_InfoButton[0], ST_UNDEFINED",,1,129,0,226,4,268,15,247,9,73,I,-1,Add_Button_Field
+Main_Screen,MoM/src/MainScr.c,2153,Add_Game_Button_Fields,Add_Button_Field,_plane_button,"270, 4, empty_string__ovr057, main_plane_button, hotkey_PlaneButton[0], ST_UNDEFINED",,1,129,0,270,4,312,15,291,9,80,P,-1,Add_Button_Field
+Main_Screen,MoM/src/MainScr.c,2195,Add_Unit_Window_Fields,Add_Hidden_Field,g_unit_window_fields[itr_stack],"(x1 - 1), (y1 - 1), (x2 - 2), (y2 - 2), 0, ST_UNDEFINED",,1,102,7,246,78,267,105,256,91,0,,-1,Add_Hidden_Field
