@@ -486,10 +486,12 @@ static void Print_Usage(const char *program_name)
     fprintf(stderr, "HeMoM — Headless Master of Magic\n\n");
     fprintf(stderr, "Usage:\n");
     fprintf(stderr, "  %s --newgame [ReMoM.ini] [--scenario test.hms] [--record out.RMR]\n", program_name);
+    fprintf(stderr, "  %s --continue [--scenario test.hms] [--record out.RMR]\n", program_name);
     fprintf(stderr, "  %s --load SAVE3.GAM [--scenario test.hms] [--record out.RMR]\n", program_name);
     fprintf(stderr, "  %s --newgame [ReMoM.ini] [--replay game.RMR]\n", program_name);
     fprintf(stderr, "\nOptions:\n");
     fprintf(stderr, "  --newgame [FILE]   Create new game from config (default: ReMoM.ini)\n");
+    fprintf(stderr, "  --continue         Load SAVE9.GAM (the WIZARDS.EXE / Continue path)\n");
     fprintf(stderr, "  --load FILE        Load a save file (SAVE1.GAM .. SAVE9.GAM, SAVETEST.GAM)\n");
     fprintf(stderr, "  --scenario FILE    Run synthetic player from scenario script (.hms)\n");
     fprintf(stderr, "  --replay FILE      Replay recorded input from .RMR file\n");
@@ -568,6 +570,17 @@ int main(int argc, char *argv[])
 #ifdef STU_DEBUG
             dbg_prn("[HeMoM] CLI: --load \"%s\"\n", hemom_file);
             trc_prn("[HeMoM] CLI: --load \"%s\"\n", hemom_file);
+#endif
+        }
+        else if (strcmp(argv[argi], "--continue") == 0)
+        {
+            /* --continue is sugar for --load SAVE9.GAM (the WIZARDS.EXE path). */
+            hemom_mode = 2;
+            stu_strcpy(hemom_file, "SAVE9.GAM");
+            fprintf(stderr, "[HeMoM] CLI: --continue (SAVE9.GAM)\n");
+#ifdef STU_DEBUG
+            dbg_prn("[HeMoM] CLI: --continue (SAVE9.GAM)\n");
+            trc_prn("[HeMoM] CLI: --continue (SAVE9.GAM)\n");
 #endif
         }
         else if (strcmp(argv[argi], "--replay") == 0 || strcmp(argv[argi], "--record") == 0)

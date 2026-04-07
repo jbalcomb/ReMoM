@@ -1,5 +1,5 @@
 
-add_executable(ReMoMber ReMoM.c ReMoM_Init.c)
+add_executable(ReMoMber ReMoM.c ReMoM_Init.c HeMoM_Player.c)
 
 # set_target_properties(sdl2_ReMoM PROPERTIES LINKER_LANGUAGE C)
 set_target_properties(ReMoMber PROPERTIES POSITION_INDEPENDENT_CODE ON)

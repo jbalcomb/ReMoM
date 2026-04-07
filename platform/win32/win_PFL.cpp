@@ -115,9 +115,9 @@ void Platform_Palette_Update(void)
 
     for (itr = 0; itr < 256; itr++)
     {
-        platform_palette_buffer[itr].r = (*(current_palette + (itr * 3) + 0) << 2);
+        platform_palette_buffer[itr].r = (*(current_palette + (itr * 3) + 2) << 2);
         platform_palette_buffer[itr].g = (*(current_palette + (itr * 3) + 1) << 2);
-        platform_palette_buffer[itr].b = (*(current_palette + (itr * 3) + 2) << 2);
+        platform_palette_buffer[itr].b = (*(current_palette + (itr * 3) + 0) << 2);
         platform_palette_buffer[itr].a = 0xFF;
     }
 }
@@ -450,10 +450,16 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
             int client_height;
 
             HDC hdc = BeginPaint(hWnd, &ps);
-            GetClientRect(hWnd, &client_rect);
-            client_width = client_rect.right - client_rect.left;
-            client_height = client_rect.bottom - client_rect.top;
-            Win_Update_Display(&win_video_back_buffer, hdc, client_width, client_height);
+            /* CLAUDE: ShowWindow(SW_SHOW) inside Win_Init_Window() dispatches WM_PAINT
+               synchronously, before MOM_main() has called Allocate_Data_Space() to set up
+               video_page_buffer[].  Skip the draw until the engine framebuffer exists. */
+            if (video_page_buffer != NULL && video_page_buffer[draw_page_num] != NULL)
+            {
+                GetClientRect(hWnd, &client_rect);
+                client_width = client_rect.right - client_rect.left;
+                client_height = client_rect.bottom - client_rect.top;
+                Win_Update_Display(&win_video_back_buffer, hdc, client_width, client_height);
+            }
             EndPaint(hWnd, &ps);
         } break;
 
@@ -523,21 +529,14 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
             {
                 mox_character = ' ';
             }
-            else if (vk_code == VK_RETURN)
-            {
-                mox_character = '\r';
-            }
-            else if (vk_code == VK_BACK)
-            {
-                mox_character = '\b';
-            }
+            /* CLAUDE: Backspace, Enter, and Tab leave mox_character at 0 so Read_Key()
+               returns the MoX key code (e.g., ST_KEY_BACKSPACE = 0x0B), not the ASCII
+               character (e.g., '\b' = 0x08). Setup_Input_Box_Popup() and other input
+               loops switch on the MoX key code, not the ASCII byte.
+               Escape happens to work either way: ST_KEY_ESCAPE == 0x1B == ASCII ESC. */
             else if (vk_code == VK_ESCAPE)
             {
                 mox_character = 0x1B;
-            }
-            else if (vk_code == VK_TAB)
-            {
-                mox_character = '\t';
             }
 
             /* Also set legacy scan_code_char_code for backwards compatibility */
@@ -605,11 +604,23 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
 
         case WM_ACTIVATEAPP:
         {
-            /* no-op */
+            /* CLAUDE: Match SDL behavior — enable/disable mouse input on focus change.
+               wParam is TRUE when the window is being activated, FALSE on deactivation. */
+            if (wParam)
+            {
+                Platform_Mouse_Input_Enable();
+            }
+            else
+            {
+                Platform_Mouse_Input_Disable();
+            }
         } break;
 
         case WM_CREATE:
         {
+            /* CLAUDE: Enable mouse input on window creation so it works from the first frame
+               (WM_ACTIVATEAPP also enables it on focus, but that may not fire before first input). */
+            Platform_Mouse_Input_Enable();
             ShowCursor(FALSE);
         } break;
 

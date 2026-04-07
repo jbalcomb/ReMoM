@@ -72,8 +72,10 @@
 #include <string.h>
 
 #include "../ext/stu_compat.h"
+#include "../platform/include/Platform.h"
 #include "../platform/include/Platform_Replay.h"
 #include "ReMoM_Init.h"
+#include "HeMoM_Player.h"
 
 /* COPILOT */ /* SDL_main.h redefines main() on some platforms (macOS, iOS, Android).
                       We handle our own main(), so tell SDL not to intercept it.
@@ -105,6 +107,10 @@
 int MOM_main(int argc, char** argv);
 void Startup_Platform(void);
 void Shutdown_Platform(void);
+
+/* --continue: skip Main Menu and intro logos, go straight to scr_Continue
+   (the WIZARDS.EXE path — load SAVE9.GAM and enter the game loop). */
+static int remom_continue_flag = ST_FALSE;
 
 
 /* CLAUDE */
@@ -338,6 +344,18 @@ int main(int argc, char * argv[])
                     Platform_Replay_Start("DEMO.RMR");
                 }
             }
+            else if(strcmp(argv[argi], "--continue") == 0)
+            {
+                remom_continue_flag = ST_TRUE;
+            }
+            else if(strcmp(argv[argi], "--scenario") == 0 && (argi + 1) < argc)
+            {
+                argi++;
+                if(HeMoM_Player_Load_Scenario(argv[argi]) == 0)
+                {
+                    Platform_Register_Frame_Callback(HeMoM_Player_Frame);
+                }
+            }
         }
     }
 
@@ -357,6 +375,7 @@ int main(int argc, char * argv[])
     {
         Platform_Replay_Stop();
     }
+    HeMoM_Player_Shutdown();
 
     Shutdown_Platform();
 
@@ -414,7 +433,13 @@ int MOM_main(int argc, char** argv)
     ReMoM_Init_Engine();
 
     // DOMSDOS  MS-DOS has some area for the program execution that lets you get away with the AVRL here?  ... why argv[1] instead of argv[2]?
-    if(!((argc > 1) && (argv[1][0] == 'J' && argv[1][1] == 'E' && argv[1][2] == 'N' && argv[1][3] == 'N' && argv[1][4] == 'Y')))
+    /* OG-MoM: `MAGIC.EXE JENNY` skipped the intro logos.
+       --continue also skips the intro (along with the Main Menu). */
+    if(
+        !((argc > 1) && (argv[1][0] == 'J' && argv[1][1] == 'E' && argv[1][2] == 'N' && argv[1][3] == 'N' && argv[1][4] == 'Y'))
+        &&
+        !(remom_continue_flag == ST_TRUE)
+    )
     {
         Draw_Logos();
     }
@@ -468,7 +493,15 @@ int MOM_main(int argc, char** argv)
     // WZD Exit_With_Size();
 
 
-    current_screen = scr_Main_Menu_Screen;
+    if(remom_continue_flag == ST_TRUE)
+    {
+        /* --continue: skip Main Menu, load SAVE9.GAM, enter game (WIZARDS.EXE path). */
+        current_screen = scr_Continue;
+    }
+    else
+    {
+        current_screen = scr_Main_Menu_Screen;
+    }
 
     Screen_Control();
 
