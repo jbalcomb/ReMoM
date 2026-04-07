@@ -72,8 +72,10 @@
 #include <string.h>
 
 #include "../ext/stu_compat.h"
+#include "../platform/include/Platform.h"
 #include "../platform/include/Platform_Replay.h"
 #include "ReMoM_Init.h"
+#include "HeMoM_Player.h"
 
 /* COPILOT */ /* SDL_main.h redefines main() on some platforms (macOS, iOS, Android).
                       We handle our own main(), so tell SDL not to intercept it.
@@ -335,6 +337,18 @@ int main(int argc, char * argv[])
                     Platform_Replay_Start("DEMO.RMR");
                 }
             }
+            else if(strcmp(argv[argi], "--continue") == 0)
+            {
+                remom_continue_flag = ST_TRUE;
+            }
+            else if(strcmp(argv[argi], "--scenario") == 0 && (argi + 1) < argc)
+            {
+                argi++;
+                if(HeMoM_Player_Load_Scenario(argv[argi]) == 0)
+                {
+                    Platform_Register_Frame_Callback(HeMoM_Player_Frame);
+                }
+            }
         }
     }
 
@@ -354,6 +368,7 @@ int main(int argc, char * argv[])
     {
         Platform_Replay_Stop();
     }
+    HeMoM_Player_Shutdown();
 
     Shutdown_Platform();
 
