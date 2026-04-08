@@ -1,0 +1,3 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Get_List_Field,MoX/src/Fields.c,1426,Get_List_Field,Add_String_List_Field,,"title_x1, ymin, fill_width, (char *)string_address, active, variable, itr, select_fill_type, sfill1, sfill2, sfill3, sfill4, str_empty_string__seg036, help_entry",,0,0,,,,,,,,,,,
+Get_List_Field,MoX/src/Fields.c,1457,Get_List_Field,Add_String_List_Field,title_field,"title_x1, title_y1, fill_width, title_string, 0, &title_var, 1, 0, 0, 0, 0, 0, str_empty_string__seg036, default_help_entry",,0,0,,,,,,,,,,,

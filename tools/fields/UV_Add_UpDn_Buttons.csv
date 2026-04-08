@@ -1,0 +1,3 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+UV_Add_UpDn_Buttons,MoM/src/UnitStat.c,1914,UV_Add_UpDn_Buttons,Add_Button_Field,unitview_up_button,"xstart, ystart, """", unitview_up_arrow_seg, 'U', ST_UNDEFINED",,0,0,,,,,,,,,,,
+UV_Add_UpDn_Buttons,MoM/src/UnitStat.c,1915,UV_Add_UpDn_Buttons,Add_Button_Field,unitview_dn_button,"xstart, (ystart + 63), """", unitview_down_arrow_seg, 'D', ST_UNDEFINED",,0,0,,,,,,,,,,,

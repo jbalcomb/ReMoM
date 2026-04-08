@@ -23,6 +23,7 @@
 #include <malloc.h>     /* malloc() */
 #include <string.h>     /* stu_strcat(), stu_strcpy() */
 
+#define FIELDS_C_IMPL  /* suppress Add_*Field macro wrappers inside Fields.c itself */
 #include "Fields.h"
 
 
@@ -467,6 +468,9 @@ int16_t Auto_Input(void);
 // WZD s36p33
 // WZD s36p34
 int16_t Add_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string, int16_t max_characters, int16_t fill_color, int16_t justification, int16_t cursor_type, uint8_t color_array[], char * select_char, int16_t help);
+#ifdef STU_DEBUG
+static void Dbg_Trace_Field_Added(int16_t idx, const char * origin);
+#endif
 // WZD s36p35
 int16_t Add_Continuous_String_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string, int16_t max_characters, int16_t fill_color, SAMB_ptr marker_picture, int16_t help, int16_t shadow);
 // WZD s36p36
@@ -680,6 +684,9 @@ int16_t Add_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string
     p_fields[fields_count].color_array = color_array;
     p_fields[fields_count].type = ft_Input;
     fields_count += 1;
+#ifdef STU_DEBUG
+    Dbg_Trace_Field_Added(fields_count - 1, "Add_Input_Field");
+#endif
     return (fields_count - 1);
 }
 
@@ -722,6 +729,9 @@ int16_t Add_Continuous_String_Input_Field(int16_t xmin, int16_t ymin, int16_t wi
     p_fields[fields_count].shadow = shadow;
     p_fields[fields_count].type = ft_ContinuousStringInput;
     fields_count += 1;
+#ifdef STU_DEBUG
+    Dbg_Trace_Field_Added(fields_count - 1, "Add_Continuous_String_Input_Field");
+#endif
     return (fields_count - 1);
 }
 
@@ -789,6 +799,9 @@ static int16_t Add_String_List_Field(int16_t x1, int16_t y1, int16_t width, char
 
     fields_count += 1;
 
+#ifdef STU_DEBUG
+    Dbg_Trace_Field_Added(fields_count - 1, "Add_String_List_Field");
+#endif
     return (fields_count - 1);
 
 }
@@ -812,6 +825,9 @@ int16_t Add_Multi_Hot_Key_Field(char * string)
     p_fields[fields_count].hotkey = hotkey_string[0];  // TODO(JimBalcomb,20230612): fix hotkey - ? need char * ?
     UPPERCASE(p_fields[fields_count].hotkey);
     fields_count += 1;
+#ifdef STU_DEBUG
+    Dbg_Trace_Field_Added(fields_count - 1, "Add_Multi_Hot_Key_Field");
+#endif
     return (fields_count - 1);
 }
 
@@ -829,6 +845,9 @@ int16_t Add_Picture_Field(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, int16_t
     p_fields[fields_count].type = ft_Picture;
     UPPERCASE(p_fields[fields_count].type);
     fields_count += 1;
+#ifdef STU_DEBUG
+    Dbg_Trace_Field_Added(fields_count - 1, "Add_Picture_Field");
+#endif
     return (fields_count - 1);
 }
 
@@ -843,6 +862,53 @@ void Set_Button_Down_Offsets(int16_t x, int16_t y)
     down_x = x;
     down_y = y;
 }
+
+/*
+    BEGIN: Fields - Runtime Catalog Instrumentation
+    g_dbg_fields_trace: set non-zero to log every Add_*Field via trc_prn (FIELDADD lines)
+    g_dbg_fields_screen_tag: short label for the current screen (e.g. "Main_Screen")
+    Dbg_Trace_Field_Added(): internal helper; call at end of each Add_* after fields_count++
+    Dump_Fields_CSV(): emit FIELDSNAPSHOT block for the currently-registered fields
+*/
+#ifdef STU_DEBUG
+int16_t g_dbg_fields_trace = 0;
+const char * g_dbg_fields_screen_tag = "";
+const char * g_dbg_fields_call_file = "";
+int32_t g_dbg_fields_call_line = 0;
+
+static void Dbg_Trace_Field_Added(int16_t idx, const char * origin)
+{
+    const char * file;
+    const char * slash;
+    if(g_dbg_fields_trace == 0) { return; }
+    if(idx < 0) { return; }
+    file = g_dbg_fields_call_file;
+    /* Strip to basename for compactness in TRACE.LOG. */
+    slash = file;
+    while(*file != '\0')
+    {
+        if(*file == '/' || *file == '\\') { slash = file + 1; }
+        file += 1;
+    }
+    trc_prn("FIELDADD,%s,%d,%s,%s:%d,type=%d,x1=%d,y1=%d,x2=%d,y2=%d,hotkey=%d,help=%d\n", g_dbg_fields_screen_tag, (int)idx, origin, slash, (int)g_dbg_fields_call_line, (int)p_fields[idx].type, (int)p_fields[idx].x1, (int)p_fields[idx].y1, (int)p_fields[idx].x2, (int)p_fields[idx].y2, (int)p_fields[idx].hotkey, (int)p_fields[idx].help);
+}
+
+void Dump_Fields_CSV(const char * screen_tag)
+{
+    int16_t itr;
+    trc_prn("FIELDSNAPSHOT_BEGIN,%s,count=%d\n", screen_tag, (int)fields_count);
+    trc_prn("FIELDSNAPSHOT_HDR,screen,idx,type,x1,y1,x2,y2,hotkey,help,param1,param2\n");
+    for(itr = 0; itr < fields_count; itr++)
+    {
+        trc_prn("FIELDSNAPSHOT,%s,%d,%d,%d,%d,%d,%d,%d,%d,%lld,%lld\n", screen_tag, (int)itr, (int)p_fields[itr].type, (int)p_fields[itr].x1, (int)p_fields[itr].y1, (int)p_fields[itr].x2, (int)p_fields[itr].y2, (int)p_fields[itr].hotkey, (int)p_fields[itr].help, (long long)p_fields[itr].Param1, (long long)p_fields[itr].Param2);
+    }
+    trc_prn("FIELDSNAPSHOT_END,%s\n", screen_tag);
+}
+#endif
+/*
+    END: Fields - Runtime Catalog Instrumentation
+*/
+
 
 // WZD s36p42
 void Add_Button_Info(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help)
@@ -889,6 +955,9 @@ int16_t Add_Button_Field(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pic
     Add_Button_Info(xmin, ymin, string, pict_seg, hotkey, help);
     p_fields[fields_count].type = ft_Button;
     fields_count += 1;
+#ifdef STU_DEBUG
+    Dbg_Trace_Field_Added(fields_count - 1, "Add_Button_Field");
+#endif
     return (fields_count - 1);
 }
 
@@ -905,6 +974,9 @@ int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax,
     p_fields[fields_count].hotkey = hotkey;
     UPPERCASE(p_fields[fields_count].hotkey);
     fields_count += 1;
+#ifdef STU_DEBUG
+    Dbg_Trace_Field_Added(fields_count - 1, "Add_Hidden_Field");
+#endif
     return (fields_count - 1);
 }
 
@@ -920,6 +992,9 @@ int16_t Add_Hot_Key(int16_t select_char)
     p_fields[fields_count].hotkey = select_char;
     UPPERCASE(p_fields[fields_count].hotkey);
     fields_count += 1;
+#ifdef STU_DEBUG
+    Dbg_Trace_Field_Added(fields_count - 1, "Add_Hot_Key");
+#endif
     return (fields_count - 1);
 }
 
@@ -946,6 +1021,9 @@ int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t bo
     p_fields[fields_count].Param4 = (int64_t)ypos;  // NOTE: assigning address, not value
     UPPERCASE(p_fields[fields_count].hotkey);
     fields_count += 1;
+#ifdef STU_DEBUG
+    Dbg_Trace_Field_Added(fields_count - 1, "Add_Grid_Field");
+#endif
     return (fields_count - 1);
 }
 
@@ -1000,6 +1078,9 @@ int16_t Add_Scroll_Field(int16_t xmin, int16_t ymin, int16_t min_value, int16_t 
     UPPERCASE(p_fields[fields_count].hotkey);
     // TODO  SET_HOTKEY(hotkey);
     fields_count += 1;
+#ifdef STU_DEBUG
+    Dbg_Trace_Field_Added(fields_count - 1, "Add_Scroll_Field");
+#endif
     return (fields_count - 1);
 }
 

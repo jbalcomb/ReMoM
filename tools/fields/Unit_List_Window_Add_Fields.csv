@@ -1,0 +1,4 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Unit_List_Window_Add_Fields,MoM/src/UnitList.c,624,Unit_List_Window_Add_Fields,Add_Hidden_Field,ULW_stack_fields[itr_troops],"x1, y1, (x1 + 222), (y1 + 18), str_emptystring__ovr079[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Unit_List_Window_Add_Fields,MoM/src/UnitList.c,628,Unit_List_Window_Add_Fields,Add_Hidden_Field,_ulw_window_field,"m_ulw_start_x, m_ulw_start_y, (m_ulw_start_x + 237), (m_ulw_height + 4), str_emptystring__ovr079[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Unit_List_Window_Add_Fields,MoM/src/UnitList.c,631,Unit_List_Window_Add_Fields,Add_Hidden_Field,_ulw_full_screen_ESC_field,"SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr079[0], ST_UNDEFINED",,0,0,,,,,,,,,,,

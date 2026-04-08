@@ -1,0 +1,4 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+ArmyList_Add_List_Fields,MoM/src/ArmyList.c,805,ArmyList_Add_List_Fields,Add_Hidden_Field,m_armies_list_fields[m_armies_list_field_count],"x1, y1, x2, y2, armylist_hotkey_NUL, ST_UNDEFINED",,0,0,,,,,,,,,,,
+ArmyList_Add_List_Fields,MoM/src/ArmyList.c,821,ArmyList_Add_List_Fields,Add_Hidden_Field,,"x1, y1, x2, y2, armylist_hotkey_NUL, ST_UNDEFINED",,0,0,,,,,,,,,,,
+ArmyList_Add_List_Fields,MoM/src/ArmyList.c,840,ArmyList_Add_List_Fields,Add_Hidden_Field,armylist_hero_portrait_fields[itr_num_hero_portrait],"x1, y1, x2, y2, armylist_hotkey_NUL, ST_UNDEFINED",,0,0,,,,,,,,,,,

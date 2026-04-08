@@ -1,0 +1,5 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Raze_City_Prompt,MoM/src/Combat.c,23537,Raze_City_Prompt,Add_Button_Field,no_button_fld,"(message_box_x + 101), (message_box_y + message_height + 15), """", confirmation_button_yes_seg, 'N', ST_UNDEFINED",,0,0,,,,,,,,,,,
+Raze_City_Prompt,MoM/src/Combat.c,23538,Raze_City_Prompt,Add_Button_Field,raze_button_fld,"(message_box_x + 18), (message_box_y + message_height + 15), """", confirmation_button_no_seg, 'R', ST_UNDEFINED",,0,0,,,,,,,,,,,
+Raze_City_Prompt,MoM/src/Combat.c,23539,Raze_City_Prompt,Add_Hidden_Field,window_fld,"message_box_x, message_box_y, (message_box_x + 185), (message_box_y + 63), ST_NULL, ST_UNDEFINED",,0,0,,,,,,,,,,,
+Raze_City_Prompt,MoM/src/Combat.c,23540,Raze_City_Prompt,Add_Hidden_Field,hotkey_esc_fld,"0, 0, SCREEN_XMAX, SCREEN_YMAX, '\x1B', ST_UNDEFINED",,0,0,,,,,,,,,,,

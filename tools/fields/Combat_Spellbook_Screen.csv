@@ -1,0 +1,3 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Combat_Spellbook_Screen,MoM/src/Combat.c,13268,Combat_Spellbook_Screen,Add_Hidden_Field,hotkey_esc_fld,"x_start + 159, y_start + 154, x_start + 177, y_start + 183, ST_UNDEFINED, ST_UNDEFINED",,0,0,,,,,,,,,,,
+Combat_Spellbook_Screen,MoM/src/Combat.c,13474,Combat_Spellbook_Screen,Add_Hidden_Field,hotkey_esc_fld,"x_start + 159, y_start + 154, x_start + 177, y_start + 183, ST_UNDEFINED, ST_UNDEFINED",,0,0,,,,,,,,,,,

@@ -41,6 +41,7 @@ enum e_HeMoM_Action_Type
     act_KEY,            /* press a key (character) */
     act_ESCAPE,         /* press Escape */
     act_ENTER,          /* press Enter */
+    act_BACKSPACE,      /* press Backspace */
     act_CLICK,          /* left-click at (x, y) */
     act_RCLICK,         /* right-click at (x, y) */
     act_QUIT,           /* press Escape to quit */
@@ -124,12 +125,22 @@ static uint32_t Pack_Key_Char(char ch)
 
 static uint32_t Pack_Key_Escape(void)
 {
-    return ((uint32_t)MOX_KEY_ESCAPE) | (((uint32_t)0x1B) << 8);
+    /* Escape: character byte left as 0 so Read_Key() returns the key code (ST_KEY_ESCAPE = 0x1B). */
+    return (uint32_t)MOX_KEY_ESCAPE;
 }
 
 static uint32_t Pack_Key_Enter(void)
 {
-    return ((uint32_t)MOX_KEY_ENTER) | (((uint32_t)'\r') << 8);
+    /* Enter: character byte left as 0 so Read_Key() returns the key code (ST_KEY_ENTER = 0x0C),
+       NOT the ASCII '\r' (0x0D). The popup input loop checks against the MoX key code. */
+    return (uint32_t)MOX_KEY_ENTER;
+}
+
+static uint32_t Pack_Key_Backspace(void)
+{
+    /* Backspace: character byte left as 0 so Read_Key() returns the key code (ST_KEY_BACKSPACE = 0x0B),
+       NOT the ASCII '\b' (0x08). */
+    return (uint32_t)MOX_KEY_BACKSPACE;
 }
 
 
@@ -177,10 +188,24 @@ int HeMoM_Player_Load_Scenario(const char *filepath)
 
     while (fgets(line, sizeof(line), fp) != NULL && hemom_action_count < HEMOM_MAX_ACTIONS)
     {
+        char *comment;
         line_num++;
         p = Trim(line);
 
         if (*p == '\0' || *p == '#') { continue; }
+
+        /* Strip inline `#` comments and re-trim trailing whitespace. */
+        comment = strchr(p, '#');
+        if (comment != NULL)
+        {
+            *comment = '\0';
+            while (comment > p && isspace((unsigned char)*(comment - 1)))
+            {
+                comment--;
+                *comment = '\0';
+            }
+            if (*p == '\0') { continue; }
+        }
 
         act = &hemom_actions[hemom_action_count];
         memset(act, 0, sizeof(*act));
@@ -207,6 +232,11 @@ int HeMoM_Player_Load_Scenario(const char *filepath)
         {
             act->type = act_ENTER;
             act->packed_key = Pack_Key_Enter();
+        }
+        else if (stu_stricmp(p, "backspace") == 0)
+        {
+            act->type = act_BACKSPACE;
+            act->packed_key = Pack_Key_Backspace();
         }
         else if (stu_strnicmp(p, "click ", 6) == 0)
         {
@@ -356,6 +386,20 @@ void HeMoM_Player_Frame(void)
 #ifdef STU_DEBUG
             dbg_prn("[HeMoM Player] enter\n");
             trc_prn("[HeMoM Player] enter\n");
+#endif
+        } break;
+
+        case act_BACKSPACE:
+        {
+            mox_key = (int)(act->packed_key & 0xFF);
+            mox_character = (char)((act->packed_key >> 8) & 0xFF);
+            mox_mod = act->packed_key & 0xFFFF0000u;
+            Platform_Keyboard_Buffer_Add_Key_Press(mox_key, mox_mod, mox_character);
+            hemom_action_index++;
+            fprintf(stderr, "[HeMoM Player] backspace\n");
+#ifdef STU_DEBUG
+            dbg_prn("[HeMoM Player] backspace\n");
+            trc_prn("[HeMoM Player] backspace\n");
 #endif
         } break;
 

@@ -1,0 +1,4 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Hire_Hero_Popup,MoM/src/HIRE.c,558,Hire_Hero_Popup,Add_Button_Field,hire_button_field,"(window_x + 221), (window_y + 143), cnst_Hire_Msg_7, red_button_seg, str_hotkey_H__ovr127[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Hire_Hero_Popup,MoM/src/HIRE.c,565,Hire_Hero_Popup,Add_Button_Field,hire_button_field,"(window_x + 221), (window_y + 143), cnst_Hire_Msg_8, red_button_seg, str_hotkey_A__ovr127[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Hire_Hero_Popup,MoM/src/HIRE.c,569,Hire_Hero_Popup,Add_Button_Field,reject_button_field,"(window_x + 221), (window_y + 162), cnst_Merchant_Msg_5, red_button_seg, ST_UNDEFINED, ST_UNDEFINED",,0,0,,,,,,,,,,,

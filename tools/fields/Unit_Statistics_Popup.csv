@@ -1,0 +1,8 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Unit_Statistics_Popup,MoM/src/UnitStat.c,442,Unit_Statistics_Popup,Add_Button_Field,unitview_ok_button,"(UV_x_start + 222), (UV_y_start + 162), cnst_Ok_BtnMsg_2, red_button_seg, 'O', -1",,0,0,,,,,,,,,,,
+Unit_Statistics_Popup,MoM/src/UnitStat.c,449,Unit_Statistics_Popup,Add_Button_Field,unitview_dismiss_button,"(UV_x_start + 222), (UV_y_start + 143), cnst_Dismiss_BtnMsg, red_button_seg, 'D', -1",,0,0,,,,,,,,,,,
+Unit_Statistics_Popup,MoM/src/UnitStat.c,453,Unit_Statistics_Popup,Add_Hidden_Field,unitview_window,"UV_x_start, UV_y_start, (UV_x_start + 217), (UV_y_start + 184), 0, -1",,0,0,,,,,,,,,,,
+Unit_Statistics_Popup,MoM/src/UnitStat.c,459,Unit_Statistics_Popup,Add_Hidden_Field,unitview_button_box,"(UV_x_start + 213), (UV_y_start + 133), (UV_x_start + 280), (UV_y_start + 183), 0, -1",,0,0,,,,,,,,,,,
+Unit_Statistics_Popup,MoM/src/UnitStat.c,463,Unit_Statistics_Popup,Add_Hidden_Field,unitview_full_screen,"SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0, ST_UNDEFINED",,0,0,,,,,,,,,,,
+Unit_Statistics_Popup,MoM/src/UnitStat.c,466,Unit_Statistics_Popup,Add_Hot_Key,hotkey_idx_ESC,'\x1B',,0,0,,,,,,,,,,,
+Unit_Statistics_Popup,MoM/src/UnitStat.c,468,Unit_Statistics_Popup,Add_Hot_Key,hotkey_idx_X,'X',,0,0,,,,,,,,,,,

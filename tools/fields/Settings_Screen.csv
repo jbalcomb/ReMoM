@@ -1,0 +1,8 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Settings_Screen,MoM/src/Settings.c,295,Settings_Screen,Add_Hot_Key,hotkey_ESC,str_hotkey_ESC__ovr125[0],,0,0,,,,,,,,,,,
+Settings_Screen,MoM/src/Settings.c,297,Settings_Screen,Add_Hidden_Field,loadsave_ok_button,"265, 175, 306, 189, str_hotkey_O__ovr125[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Settings_Screen,MoM/src/Settings.c,307,Settings_Screen,Add_Hidden_Field,Option_Control_Indices[itr],"31, Local_Settings_Tops[row], 175, (Local_Settings_Tops[row] + 9), str_empty_string__ovr125[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Settings_Screen,MoM/src/Settings.c,311,Settings_Screen,Add_Hidden_Field,Option_Control_Indices[8],"31, Local_Settings_Tops[11], 175, (Local_Settings_Tops[11] + 9), str_empty_string__ovr125[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Settings_Screen,MoM/src/Settings.c,314,Settings_Screen,Add_Hidden_Field,Option_Control_Indices[9],"31, Local_Settings_Tops[12], 175, (Local_Settings_Tops[12] + 9), str_empty_string__ovr125[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Settings_Screen,MoM/src/Settings.c,327,Settings_Screen,Add_Hidden_Field,Option_Control_Indices[(10+itr)],"192, Local_Settings_Tops[row], 310, (Local_Settings_Tops[row] + 9), str_empty_string__ovr125[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Settings_Screen,MoM/src/Settings.c,331,Settings_Screen,Add_Hidden_Field,Option_Control_Indices[18],"192, 74, 310, (9 + 74), str_empty_string__ovr125[0], ST_UNDEFINED",,0,0,,,,,,,,,,,

@@ -1,0 +1,5 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Cartographer_Screen__WIP,MoM/src/AdvsrScr.c,1223,Cartographer_Screen__WIP,Add_Hidden_Field,hotkey_next,"285, 180, 314, 199, str_hotkey_N__ovr076[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Cartographer_Screen__WIP,MoM/src/AdvsrScr.c,1225,Cartographer_Screen__WIP,Add_Hidden_Field,hotkey_close,"265, 143, 299, 169, str_hotkey_C__ovr076[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Cartographer_Screen__WIP,MoM/src/AdvsrScr.c,1227,Cartographer_Screen__WIP,Add_Hot_Key,hotkey_escape,str_hotkey_ESC__ovr076[0],,0,0,,,,,,,,,,,
+Cartographer_Screen__WIP,MoM/src/AdvsrScr.c,1230,Cartographer_Screen__WIP,Add_Grid_Field,cartograph_dot_grid,"m_cartograph_x, m_cartograph_y, 4, 4, WORLD_WIDTH, WORLD_HEIGHT, &grid_column, &grid_row, ST_UNDEFINED",,0,0,,,,,,,,,,,
