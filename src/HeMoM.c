@@ -496,6 +496,7 @@ static void Print_Usage(const char *program_name)
     fprintf(stderr, "  --scenario FILE    Run synthetic player from scenario script (.hms)\n");
     fprintf(stderr, "  --replay FILE      Replay recorded input from .RMR file\n");
     fprintf(stderr, "  --record FILE      Record input to .RMR file\n");
+    fprintf(stderr, "  --dump-save FILE   After Screen_Control returns, dump FILE.GAM to FILE.txt\n");
     fprintf(stderr, "  --help             Show this help\n");
 }
 
@@ -510,6 +511,7 @@ int main(int argc, char *argv[])
     int hemom_mode = 0;  /* 0=none, 1=newgame, 2=load */
     char hemom_file[260] = { 0 };
     char hemom_scenario[260] = { 0 };
+    char hemom_dump_save[260] = { 0 };
     int argi;
 
 #ifdef STU_DEBUG
@@ -600,6 +602,16 @@ int main(int argc, char *argv[])
 #ifdef STU_DEBUG
             dbg_prn("[HeMoM] CLI: --scenario \"%s\"\n", hemom_scenario);
             trc_prn("[HeMoM] CLI: --scenario \"%s\"\n", hemom_scenario);
+#endif
+        }
+        else if (strcmp(argv[argi], "--dump-save") == 0 && (argi + 1) < argc)
+        {
+            argi++;
+            stu_strcpy(hemom_dump_save, argv[argi]);
+            fprintf(stderr, "[HeMoM] CLI: --dump-save \"%s\"\n", hemom_dump_save);
+#ifdef STU_DEBUG
+            dbg_prn("[HeMoM] CLI: --dump-save \"%s\"\n", hemom_dump_save);
+            trc_prn("[HeMoM] CLI: --dump-save \"%s\"\n", hemom_dump_save);
 #endif
         }
         else
@@ -730,13 +742,65 @@ int main(int argc, char *argv[])
 
     /* Enter game loop */
     fprintf(stderr, "[HeMoM] Entering Screen_Control()\n");
+#ifdef STU_DEBUG
+    dbg_prn("[HeMoM] Entering Screen_Control()\n");
+    trc_prn("[HeMoM] Entering Screen_Control()\n");
+#endif
     Screen_Control();
 
+    fprintf(stderr, "[HeMoM] Screen_Control() returned\n");
+#ifdef STU_DEBUG
+    dbg_prn("[HeMoM] Screen_Control() returned\n");
+    trc_prn("[HeMoM] Screen_Control() returned\n");
+#endif
+
+    /* Dump a save file to text after the game loop exits.  Used by tests
+       that need to inspect a save produced by the scenario. */
+    if (hemom_dump_save[0] != '\0')
+    {
+        char dump_text[260];
+        size_t len = strlen(hemom_dump_save);
+        size_t i;
+        stu_strcpy(dump_text, hemom_dump_save);
+        /* Replace ".GAM" suffix with ".txt" if present, else append ".txt". */
+        if (len >= 4 && stu_stricmp(dump_text + len - 4, ".GAM") == 0)
+        {
+            dump_text[len - 4] = '\0';
+        }
+        i = strlen(dump_text);
+        if ((i + 4) < sizeof(dump_text))
+        {
+            dump_text[i + 0] = '.';
+            dump_text[i + 1] = 't';
+            dump_text[i + 2] = 'x';
+            dump_text[i + 3] = 't';
+            dump_text[i + 4] = '\0';
+        }
+        fprintf(stderr, "[HeMoM] Dumping %s -> %s\n", hemom_dump_save, dump_text);
+#ifdef STU_DEBUG
+        dbg_prn("[HeMoM] Dumping %s -> %s\n", hemom_dump_save, dump_text);
+        trc_prn("[HeMoM] Dumping %s -> %s\n", hemom_dump_save, dump_text);
+#endif
+        HeMoM_Save_Dump(hemom_dump_save, dump_text);
+#ifdef STU_DEBUG
+        dbg_prn("[HeMoM] HeMoM_Save_Dump returned\n");
+        trc_prn("[HeMoM] HeMoM_Save_Dump returned\n");
+#endif
+    }
+
     /* Cleanup */
+#ifdef STU_DEBUG
+    dbg_prn("[HeMoM] Cleanup: HeMoM_Player_Shutdown()\n");
+    trc_prn("[HeMoM] Cleanup: HeMoM_Player_Shutdown()\n");
+#endif
     HeMoM_Player_Shutdown();
     if (Platform_Record_Active()) { Platform_Record_Stop(); }
     if (Platform_Replay_Active()) { Platform_Replay_Stop(); }
 
+#ifdef STU_DEBUG
+    dbg_prn("[HeMoM] Cleanup: Shutdown_Platform()\n");
+    trc_prn("[HeMoM] Cleanup: Shutdown_Platform()\n");
+#endif
     Shutdown_Platform();
 
 #ifdef STU_DEBUG

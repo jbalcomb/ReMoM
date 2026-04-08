@@ -1,0 +1,34 @@
+# assert_continue_save.txt — Field-level assertions for the Continue + Save test.
+#
+# Each non-comment, non-blank line is a "field = expected_value" assertion.
+# The check_save_fields tool looks up each field in the dump and reports
+# any mismatches with exact field names, actual values, and expected values.
+#
+# This file focuses on the state changes the synthetic player directly caused
+# via test_continue_save.hms:
+#   - Named the home city "Claudesville" via the city-name popup
+#   - Patrolled the starting unit stack (affects both units in the stack)
+#
+# Other state changes (power_base recomputation, bldg_status flip, etc.) are
+# side effects of Loaded_Game_Update() and are NOT asserted here — they would
+# make the test brittle against unrelated engine changes.
+
+# --- Wizard identity (unchanged from new game config, sanity check) ---
+player[0].name = Rjak
+player[0].wizard_id = 6
+player[0].capital_race = 8
+player[0].banner_id = 4
+
+# --- Home city: renamed via popup ---
+city[0].name = Claudesville
+city[0].owner_idx = 0
+city[0].race = 8
+
+# --- Home stack units: both patrolled (status=1=us_Patrol, finished=1) ---
+unit[0].owner_idx = 0
+unit[0].status = 1
+unit[0].finished = 1
+
+unit[5].owner_idx = 0
+unit[5].status = 1
+unit[5].finished = 1

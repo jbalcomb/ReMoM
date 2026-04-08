@@ -187,7 +187,10 @@ void Platform_Warp_Mouse(int16_t game_x, int16_t game_y)
 
 int Platform_Get_Window_Width(void)
 {
-    return PLATFORM_WINDOW_WIDTH;
+    /* Headless has no window.  Return the game's native screen width so that
+       User_Mouse_Handler's scale calculation (window_width / SCREEN_WIDTH) comes
+       out to 1.  This matches Platform_Get_Scale() == 1 for the headless backend. */
+    return PLATFORM_SCREEN_WIDTH;
 }
 
 void Platform_Get_Mouse_Position_XY(int *mx, int *my)
