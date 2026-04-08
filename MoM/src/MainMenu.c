@@ -1,6 +1,10 @@
 
 #include "../../ext/stu_compat.h"
 
+#ifdef STU_DEBUG
+#include "../../STU/src/STU_DBG.h"
+#endif
+
 
 #include "../../MoX/src/Mouse.h"
 #include "../../MoX/src/Timer.h"
@@ -495,6 +499,14 @@ int16_t Main_Menu_Screen(void)
 
         input_field_idx = Get_Input();
 
+/* CLAUDE */  #ifdef STU_DEBUG
+/* CLAUDE */          if(input_field_idx != ST_FALSE)
+/* CLAUDE */          {
+/* CLAUDE */              trc_prn("[MENU] Get_Input() returned field=%d\n", input_field_idx);
+/* CLAUDE */              dbg_prn("[MENU] Get_Input() returned field=%d\n", input_field_idx);
+/* CLAUDE */          }
+/* CLAUDE */  #endif
+
         /* CLAUDE: Any real input resets the demo idle timer. */
         if(input_field_idx != ST_FALSE)
         {
@@ -548,6 +560,10 @@ int16_t Main_Menu_Screen(void)
             }
             if((input_field_idx == _quit_hotkey) || (input_field_idx == _quit_button) || (input_field_idx == _esc_hotkey))
             {
+#ifdef STU_DEBUG
+                trc_prn("[MENU] Quit hit: field=%d _quit_hotkey=%d _quit_button=%d _esc_hotkey=%d\n", input_field_idx, _quit_hotkey, _quit_button, _esc_hotkey);
+                dbg_prn("[MENU] Quit hit: field=%d _quit_hotkey=%d _quit_button=%d _esc_hotkey=%d\n", input_field_idx, _quit_hotkey, _quit_button, _esc_hotkey);
+#endif
                 leave_screen_flag = ST_TRUE;
                 current_menu_screen = 3;
                 /* HACK */  current_screen = scr_Quit_To_DOS;

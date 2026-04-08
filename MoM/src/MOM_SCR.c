@@ -89,6 +89,10 @@ void Screen_Control(void)
 #ifdef MOUSE_DEBUG
                 MOUSE_LOG("SCR t=%llu ENTER screen=Main_Menu\n", (unsigned long long)Platform_Get_Millies());
 #endif
+#ifdef STU_DEBUG
+                trc_prn("[SCR] ENTER scr_Main_Menu_Screen\n");
+                dbg_prn("[SCR] ENTER scr_Main_Menu_Screen\n");
+#endif
                 Load_Palette(2, -1, 0);
                 Apply_Palette();
                 // TODO  Main_Menu_Screen_Control();
@@ -97,6 +101,10 @@ void Screen_Control(void)
                 previous_screen = scr_Main_Menu_Screen;
 #ifdef MOUSE_DEBUG
                 MOUSE_LOG("SCR t=%llu LEAVE screen=Main_Menu next=%d\n", (unsigned long long)Platform_Get_Millies(), current_screen);
+#endif
+#ifdef STU_DEBUG
+                trc_prn("[SCR] LEAVE scr_Main_Menu_Screen -> next=%d\n", current_screen);
+                dbg_prn("[SCR] LEAVE scr_Main_Menu_Screen -> next=%d\n", current_screen);
 #endif
             } break;
 
@@ -190,6 +198,10 @@ void Screen_Control(void)
             {
 #ifdef MOUSE_DEBUG
                 MOUSE_LOG("SCR t=%llu ENTER screen=Quit\n", (unsigned long long)Platform_Get_Millies());
+#endif
+#ifdef STU_DEBUG
+                trc_prn("[SCR] ENTER scr_Quit_To_DOS -> setting quit_flag\n");
+                dbg_prn("[SCR] ENTER scr_Quit_To_DOS -> setting quit_flag\n");
 #endif
                 // TODO  Auto_Save_Game()  ~== F-10 Quick_Save()
                 quit_flag = ST_TRUE;
@@ -352,4 +364,8 @@ void Screen_Control(void)
 
     }  /* while(quit_flag == ST_FALSE) */
 
+#ifdef STU_DEBUG
+    trc_prn("[SCR] Screen_Control: while loop exited, returning\n");
+    dbg_prn("[SCR] Screen_Control: while loop exited, returning\n");
+#endif
 }
