@@ -1,0 +1,2 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Cityscape_Add_Fields,MoM/src/CityScr.c,1522,Cityscape_Add_Fields,Add_Hidden_Field,,"x1, y1, x2, y2, emptystring__ovr054[0], ST_UNDEFINED",,0,0,,,,,,,,,,,

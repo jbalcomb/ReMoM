@@ -1,0 +1,4 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Production_Screen_Add_Fields,MoM/src/ProdScr.c,469,Production_Screen_Add_Fields,Add_Hidden_Field,product_fields[itr],"x1, y1, x2, y2, 0, ST_UNDEFINED",,0,0,,,,,,,,,,,
+Production_Screen_Add_Fields,MoM/src/ProdScr.c,491,Production_Screen_Add_Fields,Add_Button_Field,production_screen_cancel_button,"(popup_base_x + 99), (popup_base_y + 181), ""Cancel"", red_button_seg, 'C', ST_UNDEFINED",,0,0,,,,,,,,,,,
+Production_Screen_Add_Fields,MoM/src/ProdScr.c,495,Production_Screen_Add_Fields,Add_Button_Field,production_screen_ok_button,"(popup_base_x + 172), (popup_base_y + 181), ""OK"", red_button_seg, 'O', ST_UNDEFINED",,0,0,,,,,,,,,,,

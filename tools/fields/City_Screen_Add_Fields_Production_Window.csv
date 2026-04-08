@@ -1,0 +1,5 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+City_Screen_Add_Fields_Production_Window,MoM/src/CityScr.c,1538,City_Screen_Add_Fields_Production_Window,Add_Button_Field,city_screen_buy_button,"214, 188, """", city_buy_button_seg, 'B', ST_UNDEFINED",,0,0,,,,,,,,,,,
+City_Screen_Add_Fields_Production_Window,MoM/src/CityScr.c,1542,City_Screen_Add_Fields_Production_Window,Add_Button_Field,city_screen_change_button,"247, 188, """", city_change_button_seg, 'C', ST_UNDEFINED",,0,0,,,,,,,,,,,
+City_Screen_Add_Fields_Production_Window,MoM/src/CityScr.c,1545,City_Screen_Add_Fields_Production_Window,Add_Button_Field,city_screen_ok_button,"286, 188, """", city_ok_button_seg, 'O', ST_UNDEFINED",,0,0,,,,,,,,,,,
+City_Screen_Add_Fields_Production_Window,MoM/src/CityScr.c,1548,City_Screen_Add_Fields_Production_Window,Add_Hot_Key,city_screen_esc_hotkey,'\x1B',,0,0,,,,,,,,,,,

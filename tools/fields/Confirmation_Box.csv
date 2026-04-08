@@ -1,0 +1,5 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Confirmation_Box,MoX/src/GENDRAW.c,403,Confirmation_Box,Add_Button_Field,confirmation_button_yes,"(message_box_x + 101), (message_box_y + paragraph_height + 15), str_empty_string__ovr149, confirmation_button_yes_seg, str_hotkey_Y__ovr149[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Confirmation_Box,MoX/src/GENDRAW.c,405,Confirmation_Box,Add_Button_Field,confirmation_button_no,"(message_box_x + 18), (message_box_y + paragraph_height + 15), str_empty_string__ovr149, confirmation_button_no_seg, str_hotkey_N__ovr149[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Confirmation_Box,MoX/src/GENDRAW.c,407,Confirmation_Box,Add_Hidden_Field,Text_Label_Index,"message_box_x, message_box_y, (message_box_x + 185), (message_box_y + 63), str_empty_string__ovr149[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Confirmation_Box,MoX/src/GENDRAW.c,409,Confirmation_Box,Add_Hidden_Field,hotkey_ESC,"0, 0, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr149[0], ST_UNDEFINED",,0,0,,,,,,,,,,,

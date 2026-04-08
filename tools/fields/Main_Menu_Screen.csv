@@ -1,0 +1,14 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Main_Menu_Screen,MoM/src/MainMenu.c,388,Main_Menu_Screen,Add_Hidden_Field,_load_button,"108, 150, 211, 161, 0, ST_UNDEFINED",,1,1,7,108,150,211,161,159,155,0,,-1,Add_Hidden_Field
+Main_Menu_Screen,MoM/src/MainMenu.c,402,Main_Menu_Screen,Add_Hidden_Field,_continue_button,"108, (138 + (12 * menu_shift)), 211, (149 + (12 * menu_shift)), 0, ST_UNDEFINED",,1,1,7,108,138,211,149,159,143,0,,-1,Add_Hidden_Field
+Main_Menu_Screen,MoM/src/MainMenu.c,410,Main_Menu_Screen,Add_Hidden_Field,_new_button,"108, 162, 211, 173, 0, ST_UNDEFINED",,1,1,7,108,162,211,173,159,167,0,,-1,Add_Hidden_Field
+Main_Menu_Screen,MoM/src/MainMenu.c,417,Main_Menu_Screen,Add_Hidden_Field,_hof_button,"108, 174, 211, 185, 0, ST_UNDEFINED",,1,1,7,108,174,211,185,159,179,0,,-1,Add_Hidden_Field
+Main_Menu_Screen,MoM/src/MainMenu.c,424,Main_Menu_Screen,Add_Hidden_Field,_quit_button,"108, 186, 211, 199, 0, ST_UNDEFINED",,1,1,7,108,186,211,199,159,192,0,,-1,Add_Hidden_Field
+Main_Menu_Screen,MoM/src/MainMenu.c,434,Main_Menu_Screen,Add_Hot_Key,_continue_hotkey,'C',,1,1,7,500,500,500,500,500,500,67,C,-1,Add_Hot_Key
+Main_Menu_Screen,MoM/src/MainMenu.c,438,Main_Menu_Screen,Add_Hot_Key,_load_hotkey,'L',,1,1,7,500,500,500,500,500,500,76,L,-1,Add_Hot_Key
+Main_Menu_Screen,MoM/src/MainMenu.c,439,Main_Menu_Screen,Add_Hot_Key,_new_hotkey,'N',,1,1,7,500,500,500,500,500,500,78,N,-1,Add_Hot_Key
+Main_Menu_Screen,MoM/src/MainMenu.c,440,Main_Menu_Screen,Add_Hot_Key,_hof_hotkey,'H',,1,1,7,500,500,500,500,500,500,72,H,-1,Add_Hot_Key
+Main_Menu_Screen,MoM/src/MainMenu.c,441,Main_Menu_Screen,Add_Hot_Key,_quit_hotkey,'Q',,1,1,7,500,500,500,500,500,500,81,Q,-1,Add_Hot_Key
+Main_Menu_Screen,MoM/src/MainMenu.c,442,Main_Menu_Screen,Add_Hot_Key,_esc_hotkey,27,,1,1,7,500,500,500,500,500,500,27,ESCAPE,-1,Add_Hot_Key
+Main_Menu_Screen,MoM/src/MainMenu.c,444,Main_Menu_Screen,Add_Hot_Key,hotkey_idx_Z,'Z',,1,1,7,500,500,500,500,500,500,90,Z,-1,Add_Hot_Key
+Main_Menu_Screen,MoM/src/MainMenu.c,445,Main_Menu_Screen,Add_Hot_Key,hotkey_idx_T,'T',,1,1,7,500,500,500,500,500,500,84,T,-1,Add_Hot_Key

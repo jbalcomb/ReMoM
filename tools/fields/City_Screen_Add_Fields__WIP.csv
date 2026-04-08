@@ -1,0 +1,2 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+City_Screen_Add_Fields__WIP,MoM/src/CityScr.c,1482,City_Screen_Add_Fields__WIP,Add_Hidden_Field,g_unit_window_fields[itr_stack],"(x1 - 1), (y1 - 1), (x2 - 2), (y2 - 2), emptystring__ovr054[0], ST_UNDEFINED",,0,0,,,,,,,,,,,

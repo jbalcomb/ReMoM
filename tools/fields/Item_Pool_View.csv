@@ -1,0 +1,2 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Item_Pool_View,MoM/src/ItemView.c,221,Item_Pool_View,Add_Hidden_Field,hotkey_ESC,"0, 0, SCREEN_XMAX, SCREEN_YMAX, '\x1B', ST_UNDEFINED",,0,0,,,,,,,,,,,

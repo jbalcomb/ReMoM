@@ -1,0 +1,3 @@
+screen,src_file,src_line,function,add_func,symbol,args,guards,rt_seen,rt_hit_count,rt_type,rt_x1,rt_y1,rt_x2,rt_y2,rt_click_cx,rt_click_cy,rt_hotkey,rt_hotkey_name,rt_help,rt_origin
+Learn_Spell_Animation,MoM/src/Spellbook.c,2532,Learn_Spell_Animation,Add_Hidden_Field,spellbook_page,"SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_empty_string__ovr118[0], ST_UNDEFINED",,0,0,,,,,,,,,,,
+Learn_Spell_Animation,MoM/src/Spellbook.c,2730,Learn_Spell_Animation,Add_Hidden_Field,Minus1_Hotkey_Ctrl_Index,"SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_UNDEFINED, ST_UNDEFINED",,0,0,,,,,,,,,,,
