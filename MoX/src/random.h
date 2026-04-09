@@ -28,16 +28,16 @@ extern "C" {
 */
 
 // WZD s01p07
-int16_t Get_Weighted_Choice(int16_t * Weights, int16_t List_Count);
+int16_t Get_Weighted_Choice(int16_t * weight_array, int16_t weight_count);
 
 // WZD s01p08
-// RNG_WeightedPick32()
+int16_t Get_Weighted_Choice_Long(int32_t * weight_array, int16_t weight_count);
 
 // WZD s01p09
-// UU_RNG_HighestPick16()
+// Get_Weighted_Best_Choice()
 
 // WZD s01p10
-// UU_RNG_HighestPick32()
+// Get_Weighted_Best_Choice_Long()
 
 
 

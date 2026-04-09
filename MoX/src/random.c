@@ -28,67 +28,117 @@ uint32_t random_seed = 0x35683568;
 
 // WZD s01p07
 // MoO2  Module: KEN  Get_Weighted_Choice_()
+/* GEMINI */
+// MGC  int16_t Get_Weighted_Choice_MGC(int16_t * weight_array, int16_t weight_count)
 int16_t Get_Weighted_Choice(int16_t * weight_array, int16_t weight_count)
 {
-    int16_t Condense_Loop_Var = 0;
-    int16_t Picked_List_Item = 0;
-    int16_t Weights_Remainder = 0;
-    int16_t itr = 0;
-    int16_t tmp_pick = 0;
-    int16_t return_value = 0;
-    do
-    {
-        tmp_pick = 0;
-        tmp_pick += weight_array[itr];
-        if(tmp_pick < 512)
-        {
+    int16_t i = 0;
+    int16_t choice = 0;
+    int16_t weight_remainder = 0;
+    int16_t j = 0;
+    int16_t max_weight = 0;
 
-            itr++;
-
-        }
-        else
-        {
-            for(Condense_Loop_Var = 0; Condense_Loop_Var < weight_count; Condense_Loop_Var++)
-            {
-                weight_array[Condense_Loop_Var] = (weight_array[Condense_Loop_Var] / 2);
+restart_sum:
+    max_weight = 0;
+    
+    /* 1. Sum up all the weights in the array */
+    for (j = 0; j < weight_count; j++) {
+        max_weight += weight_array[j];
+        
+        /* 2. THE NORMALIZATION HACK */
+        if (max_weight >= 512) {
+            /* If the total weight gets dangerously high, divide EVERY weight in the array by 2 (bit-shift right) */
+            for (i = 0; i < weight_count; i++) {
+                weight_array[i] >>= 1; 
             }
+            /* Start the summation completely over! */
+            goto restart_sum;
         }
-    } while (itr < weight_count);
-    if(tmp_pick == 0)
-    {
-        return_value = 0;
+    }
 
+    /* 3. Safety Check: If the max weight is 0, default to the first element */
+    if (max_weight == 0) {
+        return 0;
     }
-    else
-    {
-        Weights_Remainder = (Random(tmp_pick) - weight_array[0]);
-        Picked_List_Item = 0;
-        while(
-            (Weights_Remainder > 0)
-            &&
-            (weight_count - 1) > Picked_List_Item)
-        {
-            Picked_List_Item++;
-            Weights_Remainder -= weight_array[Picked_List_Item];
-        }
-        return_value = Picked_List_Item;
+
+    /* 4. Roll the dice */
+    weight_remainder = Random(max_weight);
+    
+    /* 5. Find the winning index */
+    weight_remainder -= weight_array[0];
+    choice = 0;
+
+    /* Subtract weights until the random value dips below zero */
+    while (weight_remainder > 0 && choice < weight_count - 1) {
+        choice++;
+        weight_remainder -= weight_array[choice];
     }
-    return return_value;
+
+    return choice;
 }
 
 
 // WZD s01p08
-// drake178: RNG_WeightedPick32()
 // MoO2  Module: KEN  Get_Weighted_Choice_Long_()
+/* only difference is the type for the weights and the sum */
+/* GEMINI */
+int16_t Get_Weighted_Choice_Long(int32_t * weight_array, int16_t weight_count)
+{
+    int16_t i = 0;
+    int16_t choice = 0;
+    int16_t weight_remainder = 0;
+    int16_t j = 0;
+    int32_t max_weight = 0;
+
+restart_sum:
+    max_weight = 0;
+    
+    /* 1. Sum up all the weights in the array */
+    for (j = 0; j < weight_count; j++) {
+        max_weight += weight_array[j];
+        
+        /* 2. THE NORMALIZATION HACK */
+        if (max_weight >= 512) {
+            /* If the total weight gets dangerously high, divide EVERY weight in the array by 2 (bit-shift right) */
+            for (i = 0; i < weight_count; i++) {
+                weight_array[i] >>= 1; 
+            }
+            /* Start the summation completely over! */
+            goto restart_sum;
+        }
+    }
+
+    /* 3. Safety Check: If the max weight is 0, default to the first element */
+    if (max_weight == 0) {
+        return 0;
+    }
+
+    /* 4. Roll the dice */
+    weight_remainder = Random(max_weight);
+    
+    /* 5. Find the winning index */
+    weight_remainder -= weight_array[0];
+    choice = 0;
+
+    /* Subtract weights until the random value dips below zero */
+    while (weight_remainder > 0 && choice < weight_count - 1) {
+        choice++;
+        weight_remainder -= weight_array[choice];
+    }
+
+    return choice;
+
+}
 
 
 // WZD s01p09
-// drake178: UU_RNG_HighestPick16()
 // MoO2  Module: KEN  Get_Weighted_Best_Choice_()
+// Get_Weighted_Best_Choice()
+
 
 // WZD s01p10
-// drake178: UU_RNG_HighestPick32()
 // MoO2  Module: KEN  Get_Weighted_Choice_Best_Long_()
+// Get_Weighted_Best_Choice_Long()
 
 
 

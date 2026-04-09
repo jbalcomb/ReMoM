@@ -1,106 +1,30 @@
+
 # test_continue_save.hms
 #
 # Drives the Main Screen after `--continue` lands us on the newly created test
-# game-save.  Names the home city, patrols the starting unit, and saves the
-# game to slot 1 with a timestamped name.
+# game-save.  Names the home city, patrols the starting unit, then delegates
+# to scenario_tail_save_and_quit.hms for the standard save-and-exit sequence.
 #
 # Usage:
 #   ReMoMber --continue --scenario test_continue_save.hms
-#   HeMoM    --continue --scenario test_continue_save.hms
+#   HeMoM    --continue --scenario test_continue_save.hms --dump-save SAVE1.GAM
 #
 # Notes:
-#   - The save slot name field rejects underscore.  Using `-` instead.
-#   - The backspace loop clears whatever name is in the slot (max 19 chars).
+#   - The save slot name comes from the $SAVE_NAME built-in (expanded to
+#     "AHP-YYYYMMDDHHMM" by HeMoM_Player at scenario-load time).
 #   - Coordinates are game-space (320x200).
 
 # === Home city naming popup (fires immediately on Continue, turn 0) ===
-wait 30
+wait 500ms                # let the popup finish loading
 backspace                 # clear the random pre-filled city name in one stroke
-key C
-key l
-key a
-key u
-key d
-key e
-key s
-key v
-key i
-key l
-key l
-key e
+type Claudesville
 enter                     # confirm the name; popup closes
 
-wait 30
+wait 500ms                # let the popup close and the Main Screen settle
 
 # === Main Screen: patrol the active unit stack ===
 click 290 180             # Patrol button (rect ~280,176 - 313,186)
-wait 30
+wait 300ms                # let the patrol action take effect
 
-# === Open the Game / Save / Load screen ===
-key G                     # 'G' is the Game button hotkey on the Main Screen
-wait 60
-
-# === Save / Load Screen: select slot 1, type name, click Save ===
-click 80 54               # save slot 0 (UI "slot 1") at x=43,y=47 + ~15 high
-wait 15
-
-# Backspace loop: clear up to 19 characters from the slot name field.
-# Each backspace deletes one char; harmless if the field is already empty.
-backspace
-backspace
-backspace
-backspace
-backspace
-backspace
-backspace
-backspace
-backspace
-backspace
-backspace
-backspace
-backspace
-backspace
-backspace
-backspace
-backspace
-backspace
-backspace
-backspace
-
-# Type "AHP-202604071014"
-key A
-key H
-key P
-key -
-key 2
-key 0
-key 2
-key 6
-key 0
-key 4
-key 0
-key 7
-key 1
-key 0
-key 1
-key 4
-
-wait 15
-click 140 177             # Save button at (122,171)-(159,184)
-
-wait 60
-
-# === Back on Main Screen: open Game menu again ===
-key G
-wait 60
-
-# === Save / Load Screen: click Quit (returns to Main Menu Screen) ===
-click 62 177              # Quit button at (43,171)-(82,184)
-
-wait 60
-
-# === Main Menu Screen: hit Q to Quit To DOS ===
-key Q
-
-# Scenario ends here; the game exits via the Quit To DOS path.
-end
+# === Save the game and quit (shared tail) ===
+include scenario_tail_save_and_quit.hms

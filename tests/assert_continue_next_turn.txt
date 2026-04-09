@@ -1,0 +1,111 @@
+
+# assert_continue_next_turn.txt — Field-level assertions for the Continue + Next Turn test.
+#
+# Each non-comment, non-blank line is a "field = expected_value" assertion.
+# The check_save_fields tool looks up each field in the dump and reports
+# any mismatches with exact field names, actual values, and expected values.
+#
+# This file extends the assertions from assert_continue_save.txt with the
+# state changes caused by pressing Next Turn once.
+#
+# Direct causes:
+#   - City name popup: `Claudesville` typed into city[0].name
+#   - Patrol click: unit[0] and unit[5] (same stack) get status=1, finished=1
+#   - Next Turn click: game.turn advances, AI gives movement orders to its units
+#   - Research picker: human clicks top-left spell (Resist Magic, idx 41)
+#   - AI research: each AI selects a spell via AI_Spell_Research_Select
+
+# --- Game state ---
+game.turn = 1
+
+# ==========================================================================
+#  Player 0 — Rjak (Human)
+# ==========================================================================
+
+# Identity (sanity check, unchanged from new game config)
+player[0].name = Rjak
+player[0].wizard_id = 6
+player[0].capital_race = 8
+player[0].banner_id = 4
+
+# Research pick: Resist Magic selected via click (54,38) on picker
+player[0].researching_spell_idx = 41
+
+# Resource calculations after turn 1
+# power_base = sum of spellbooks (2+4+3+1+0 = 10) from fortress
+player[0].power_base = 10
+# 33/33/33 split of power_base 10: each gets 3
+player[0].mana_reserve = 3
+player[0].spell_casting_skill = 384
+# gold: 75 + city_income(4) - bldg_maint(2) - unit_upkeep(1) = 76
+player[0].gold_reserve = 76
+# research_cost_remaining = Resist Magic base cost (just selected, no progress yet)
+player[0].research_cost_remaining = 20
+
+# Home city: renamed via popup
+city[0].name = Claudesville
+city[0].owner_idx = 0
+city[0].race = 8
+
+# Units: Spearmen (unit[0]) and Swordsmen (unit[5]), both patrolled
+unit[0].owner_idx = 0
+unit[0].wx = 44
+unit[0].wy = 8
+unit[0].wp = 0
+unit[0].status = 1
+unit[0].finished = 1
+
+unit[5].owner_idx = 0
+unit[5].wx = 44
+unit[5].wy = 8
+unit[5].wp = 0
+unit[5].status = 1
+unit[5].finished = 1
+
+# ==========================================================================
+#  Player 1
+# ==========================================================================
+
+player[1].researching_spell_idx = 166
+
+unit[1].owner_idx = 1
+unit[1].wx = 18
+unit[1].wy = 17
+unit[1].wp = 0
+unit[1].status = 3
+
+# ==========================================================================
+#  Player 2
+# ==========================================================================
+
+player[2].researching_spell_idx = 48
+
+unit[2].owner_idx = 2
+unit[2].wx = 42
+unit[2].wy = 16
+unit[2].wp = 0
+unit[2].status = 3
+
+# ==========================================================================
+#  Player 3
+# ==========================================================================
+
+player[3].researching_spell_idx = 126
+
+unit[3].owner_idx = 3
+unit[3].wx = 18
+unit[3].wy = 17
+unit[3].wp = 0
+unit[3].status = 3
+
+# ==========================================================================
+#  Player 4
+# ==========================================================================
+
+player[4].researching_spell_idx = 202
+
+unit[4].owner_idx = 4
+unit[4].wx = 25
+unit[4].wy = 27
+unit[4].wp = 0
+unit[4].status = 3

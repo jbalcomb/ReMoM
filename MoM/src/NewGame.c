@@ -129,7 +129,7 @@ cnst_Artificer__NEWGAME
 // MGC o51p01
 void Init_New_Game(void);
 // MGC o56p2
-void NEWG_FinalizeTables__WIP(void);
+void Init_Runtime(void);
 // MGC o56p11
 void Initialize_Events(void);
 
@@ -1527,7 +1527,7 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
 
     Initialize_Events();
 
-    NEWG_FinalizeTables__WIP();  // ... wrap it up ... 100%!
+    Init_Runtime();  // ... wrap it up ... 100%!
 
     // save new game as continue save
     Save_SAVE_GAM(8);

@@ -3,8 +3,11 @@
 # Usage:
 #   HeMoM --newgame test_worldgen.ini --scenario test_worldgen.hms
 #
-# Actions:
-#   wait <frames>     idle for N frames (game runs at ~18 Hz)
+# Actions (durations require an explicit unit suffix):
+#   wait <N>f         wait N frames (1 frame = 55ms)
+#   wait <N>ms        wait N milliseconds (wall clock)
+#   wait <N>s         wait N seconds (wall clock)
+#   wait <N>m         wait N minutes (wall clock)
 #   next_turn         press 'N' (Next Turn hotkey)
 #   key <char>        press a key
 #   click <x> <y>     left-click at game coordinates (320x200)
@@ -15,19 +18,19 @@
 #   end               stop player (idle forever)
 
 # Let the main screen settle after world generation
-wait 30
+wait 500ms
 
 # Turn 1
 next_turn
-wait 200
+wait 10s
 
 # Turn 2
 next_turn
-wait 200
+wait 10s
 
 # Turn 3
 next_turn
-wait 200
+wait 10s
 
 # Done — quit the game
 quit

@@ -369,3 +369,117 @@ on the command line, and CTest will start running all of our tests. Below is the
 
 
 cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE="conan_toolchain.cmake" -G Ninja-multiconfig ..
+
+
+
+
+
+## ISSUE: ReMoM needs cleaner logging
+
+might be time for a new approach to the logging, since you keep getting confused, and we're mixing up a lot of different purposes
+
+Agreed. Before I touch anything, let me make sure I understand the purposes we're mixing — I'd rather get the taxonomy right than invent another layer on top of the mess.
+
+From what I've seen in the tree, there are at least these distinct things currently sharing stderr/dbg_prn/trc_prn/MOUSE_LOG/printf:
+
+Original-game DBG trace — dbg_prn / trc_prn calls sprinkled in reconstructed code to mirror what the disassembly is doing. Long-lived, mostly faithful-to-dasm debugging.
+Platform / input low-level trace — IKI, FIELDADD, SCR, MENU, MOUSE_LOG. Pre-existing instrumentation for input/field/screen transitions.
+HeMoM synthetic player trace — [HeMoM Player] action dispatch + wait timer logs. Test-infrastructure, only meaningful in headless scenario runs.
+HeMoM test-probe trace — the new [NEXTTURN] BEGIN/END/phase stuff I just added. Ad-hoc "which function is eating time" probes that come and go per investigation.
+User-facing errors / asserts — things that should always print regardless of build config.
+And they all currently go to some mix of stderr, DEBUG.LOG, TRACE.LOG, with overlapping #ifdef STU_DEBUG gates.
+
+Before I propose a new scheme, a few questions so I don't guess wrong:
+
+Q1. Do you want these split into separate log files (e.g. HEMOM.LOG, NEXTTURN.LOG, INPUT.LOG) or separate tagged channels in one file that can be grep'd?
+
+Q2. For the HeMoM/test-probe category (#3 + #4) specifically — should that stuff never go to stderr (so CTest output stays clean) and never go to DEBUG.LOG/TRACE.LOG (so it doesn't pollute the original-game dasm trace)? I.e., a dedicated HeMoM log that is only headless-test instrumentation?
+
+Q3. The ad-hoc probe category (#4 — the PHASE macro, BEGIN/END wrappers) — do you want a permanent primitive for "time this call and log it" so future probes are one-line drop-ins, or should each probe just use whatever the new logging primitive is?
+
+Q4. Should the new scheme be runtime-gated (env var, .ini flag) so you can turn individual channels on/off per run, or stay compile-time #ifdef-gated like now?
+
+Once I know the answers I can sketch the concrete API (function names, file destinations, gating) before writing any code.
+
+
+
+## ISSUE: HeMoM_Player needs non-stick 'Next Turn'
+
+FUUUUU!!!!!  Players_Check_Spell_Research()
+
+Good — the picture is clear. Inside Next_Turn_Proc the end-of-turn block fires several interactive surfaces against the human player:
+
+NEXTTURN.c:291 Chancellor_Screen__WIP(0) — gated by magic_set.end_of_turn_summary
+NEXTTURN.c:326 City_Built_Building_Message(...) — per completed building
+NEXTTURN.c:359,1004,2172 Warn0(...) — modal warnings
+NEXTTURN.c:364 City_Screen__WIP() — full city screen re-entry
+Later: Merchant_Popup, Hire_Merc_Popup, Hire_Hero_Popup, Hero_LevelUp_Popup
+All of them spin their own local input loop, so the synthetic player's only lever is to keep feeding keystrokes blind and hope the right hotkey lands — which is exactly the mess we've been fighting.
+
+Here are a few ways to manage this in headless tests. Two concrete, two for context:
+
+Idea 1 — Suppress at the source with a headless_mode gate.
+Wrap each interactive end-of-turn call in if (headless_mode == ST_FALSE) (or a dedicated hemom_suppress_popups flag set by HeMoM at init). The bookkeeping around them (advancing MSG_Building_Complete, setting current_screen, _map_plane restore) still runs; only the modal UI call is skipped. Pros: deterministic, no input-timing dependency, test runs in ~1 second. Cons: we're no longer exercising the popup code paths — the test proves the turn calculation but not that popups would have rendered.
+
+Idea 2 — Turn the flags off in the .ini / save.
+magic_set.end_of_turn_summary = ST_FALSE kills Chancellor immediately. Most "spam" popups are gated by magic_set.* or game-state conditions (new building, hired hero, city alert). A test-only magic_set preset + a known-quiet save (no buildings completing turn 1, no heroes offered, no merchants) makes the whole block a no-op by construction. Pros: zero code change, purely data-driven. Cons: fragile — any later save drift can silently resurrect a popup, and you can't test any popup path this way.
+
+Idea 3 — A HeMoM "auto-dismiss" hook inside the popup primitives.
+Warn0, City_Built_Building_Message, Chancellor_Screen__WIP, the *_Popup family all eventually call into Fields + input. Add a single hook at the top of each: if (hemom_auto_dismiss) { inject_escape(); return; } — or more surgically, a hook in the input dispatcher that, when hemom_auto_dismiss is set and no scripted action is pending, synthesizes ESC/ENTER. Pros: exercises real popup entry/exit, no scenario needs to know they exist. Cons: more touch points; need to pick a per-popup "benign dismissal" (ESC on Warn0, ENTER on Chancellor, etc.).
+
+Idea 4 — State-aware waits in the scenario (the TODO already filed).
+Instead of wait 2s, wait_until screen=Main_Screen or wait_until field=next_turn_button visible. The player stays idle across however many popups fire; once the game is back on the Main Screen the scenario proceeds. Pros: no game-code changes, tests the real interactive path end-to-end. Cons: biggest infra lift, and the scenarios must still script each popup dismissal (or combine with Idea 3 for a "dismiss-all" helper).
+
+My recommendation: Idea 1 for the turn-over smoke test (fast, deterministic, exactly what the current scenario wants — get to turn 1 and dump the save), and Idea 3 + Idea 4 later when you want tests that actually cover popups. Idea 2 alone is too fragile to rely on.
+
+
+
+## ISSUE: HeMoM_Player needs input field 
+
+
+
+## ISSUE: HeMoM_Player needs state-aware waits
+
+**Problem:**
+The synthetic player's `wait <duration>` actions are wall-clock based.  They idle until `Platform_Get_Millies()` reaches a target.  This is fragile when the wait is meant to bracket a long-running game operation whose duration is not known up front.
+
+The first concrete failure: in `test_continue_next_turn.hms`, the action sequence is `key N` (Next Turn) → `wait 10s` → `key G` → ...  Empirically, `Next_Turn_Calc()` takes ~11 seconds for a 4-opponent game on the first turn.  The 10s wall-clock wait elapses while the AI is still processing, and the post-wait actions (`key G`, `click 80 54`, etc.) fire *during* `Next_Turn_Proc()`.  Those keys/clicks land on whatever transient screen state happens to be active mid-turn-processing, and the scenario loses sync with the game.
+
+The current workaround is to bump the wait to `15s` or `20s` — guessing high enough that the AI is always done.  This is fragile (a slower machine, or a longer-running turn deeper in the game, breaks the test) and slow (every test pays the worst-case wait time on every run).
+
+**Proposed fix: state-aware waits.**
+Add new scenario actions that block the synthetic player until a game-state condition becomes true:
+
+```
+wait_screen <name>      block until current_screen == scr_<name>
+wait_turn <N>           block until game_turn == N
+wait_field <name>       block until field <name> exists in p_fields[]
+                        (means: until the named button/hotkey is on-screen)
+```
+
+Implementation sketch:
+- Add new action types `act_WAIT_SCREEN`, `act_WAIT_TURN`, `act_WAIT_FIELD`
+- Each holds a target value (screen enum, turn number, or field name)
+- The frame callback checks the condition each tick; advances when true
+- Add a safety timeout (e.g. 30s wall clock) so a typo can't hang the test forever
+- The action's debug log shows the current value vs the target on each poll
+
+Benefits:
+- Tests don't pay worst-case wait time — they advance as soon as the AI/turn is done
+- Tests don't break when game logic gets faster or slower
+- Scenarios become more readable: `wait_turn 1` is more meaningful than `wait 20s`
+
+**Example after the change:**
+```
+key N                   # Next Turn
+wait_turn 1             # block until the turn counter advances
+key G                   # safe to open the Game menu now
+```
+
+**Related:**
+- `current_screen` is `int16_t` in `MoX/src/MOX_T4.h` — already accessible to the player
+- `_turn` is `int16_t` in MoM globals — need extern in HeMoM_Player.c
+- `p_fields[]` and `fields_count` are accessible (HeMoM already iterates them in `HeMoM_Replay_Log_Field_Hit`)
+- The screen-name lookup table can mirror the existing `e_SCREENS` enum from `MoM_SCR.h`
+
+**Priority:** Medium.  The wall-clock workaround is good enough to keep building tests, but every test that includes a Next Turn or other long-running operation will need to be revisited when this lands.

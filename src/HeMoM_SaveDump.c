@@ -145,34 +145,224 @@ static void Dump_Game(FILE *fp, const uint8_t *sav)
     fprintf(fp, "game.unit = %d\n", rd_i16(sav, SD_OFF_GAME + 14));
 }
 
+/*
+ * Dump every field in struct s_WIZARD (1224 bytes).  Layout mirrored from
+ * MoX/src/MOM_DAT.h:1382.  Nested sub-structs s_OWNED_HERO (28 B, x6),
+ * s_WIZ_DIPL (306 B), s_Astr_Data (6 B) are expanded inline field-by-field.
+ * Variable-length arrays (spells_list[240], Historian[288], Globals[24], etc.)
+ * are emitted one element per line so diffs pinpoint which index changed.
+ */
 static void Dump_Players(FILE *fp, const uint8_t *sav)
 {
-    int itr, base, r;
+    int itr, base, k, p;
     char name[21];
+    char hero_name[15];
+
     for (itr = 0; itr < SD_NUM_PLAYERS; itr++)
     {
         base = SD_OFF_PLAYERS + (itr * SD_WIZARD_SIZE);
-        fprintf(fp, "player[%d].wizard_id = %d\n", itr, rd_u8(sav, base + 0));
-        rd_str(sav, base + 1, 20, name);
-        fprintf(fp, "player[%d].name = %s\n", itr, name);
+
+        /* --- 0x0000 header --- */
+        fprintf(fp, "player[%d].wizard_id = %d\n",    itr, rd_u8(sav, base + 0x00));
+        rd_str(sav, base + 0x01, 20, name);
+        fprintf(fp, "player[%d].name = %s\n",         itr, name);
         fprintf(fp, "player[%d].capital_race = %d\n", itr, rd_u8(sav, base + 0x15));
-        fprintf(fp, "player[%d].banner_id = %d\n", itr, rd_u8(sav, base + 0x16));
-        fprintf(fp, "player[%d].personality = %d\n", itr, rd_u16(sav, base + 0x18));
-        fprintf(fp, "player[%d].objective = %d\n", itr, rd_u16(sav, base + 0x1A));
-        fprintf(fp, "player[%d].fame = %d\n", itr, rd_u16(sav, base + 0x24));
-        fprintf(fp, "player[%d].power_base = %d\n", itr, rd_u16(sav, base + 0x26));
-        fprintf(fp, "player[%d].tax_rate = %d\n", itr, rd_u16(sav, base + 0x58));
-        /* Spellranks: Nature, Sorcery, Chaos, Life, Death */
-        fprintf(fp, "player[%d].spellranks[sbr_Nature] = %d\n", itr, rd_i16(sav, base + 0x5A));
-        fprintf(fp, "player[%d].spellranks[sbr_Sorcery] = %d\n", itr, rd_i16(sav, base + 0x5C));
-        fprintf(fp, "player[%d].spellranks[sbr_Chaos] = %d\n", itr, rd_i16(sav, base + 0x5E));
-        fprintf(fp, "player[%d].spellranks[sbr_Life] = %d\n", itr, rd_i16(sav, base + 0x60));
-        fprintf(fp, "player[%d].spellranks[sbr_Death] = %d\n", itr, rd_i16(sav, base + 0x62));
-        /* Retorts */
-        for (r = 0; r < SD_NUM_RETORTS; r++)
+        fprintf(fp, "player[%d].banner_id = %d\n",    itr, rd_u8(sav, base + 0x16));
+        fprintf(fp, "player[%d].pad2B_17h = %d\n",    itr, rd_u8(sav, base + 0x17));
+        fprintf(fp, "player[%d].personality = %d\n",  itr, rd_u16(sav, base + 0x18));
+        fprintf(fp, "player[%d].objective = %d\n",    itr, rd_u16(sav, base + 0x1A));
+        for (k = 0; k < 6; k++)
         {
-            fprintf(fp, "player[%d].retort[%d] = %d\n", itr, r, rd_i8(sav, base + 0x64 + r));
+            fprintf(fp, "player[%d].unknown_01Ch[%d] = %d\n", itr, k, rd_u8(sav, base + 0x1C + k));
         }
+        fprintf(fp, "player[%d].som_research_cost = %d\n", itr, rd_u16(sav, base + 0x22));
+        fprintf(fp, "player[%d].fame = %d\n",              itr, rd_u16(sav, base + 0x24));
+        fprintf(fp, "player[%d].power_base = %d\n",        itr, rd_u16(sav, base + 0x26));
+        fprintf(fp, "player[%d].volcanoes = %d\n",         itr, rd_u16(sav, base + 0x28));
+        fprintf(fp, "player[%d].research_ratio = %d\n",    itr, rd_u8(sav,  base + 0x2A));
+        fprintf(fp, "player[%d].mana_ratio = %d\n",        itr, rd_u8(sav,  base + 0x2B));
+        fprintf(fp, "player[%d].skill_ratio = %d\n",       itr, rd_u8(sav,  base + 0x2C));
+        fprintf(fp, "player[%d].volcano_power = %d\n",     itr, rd_u8(sav,  base + 0x2D));
+        fprintf(fp, "player[%d].summon_wx = %d\n",         itr, rd_i16(sav, base + 0x2E));
+        fprintf(fp, "player[%d].summon_wy = %d\n",         itr, rd_i16(sav, base + 0x30));
+        fprintf(fp, "player[%d].summon_wp = %d\n",         itr, rd_i16(sav, base + 0x32));
+
+        /* --- 0x0034 research_spells[8] --- */
+        for (k = 0; k < 8; k++)
+        {
+            fprintf(fp, "player[%d].research_spells[%d] = %d\n", itr, k, rd_u16(sav, base + 0x34 + (k * 2)));
+        }
+
+        /* --- 0x0044 unknown + casting state --- */
+        for (k = 0; k < 4; k++)
+        {
+            fprintf(fp, "player[%d].unknown_044h[%d] = %d\n", itr, k, rd_u8(sav, base + 0x44 + k));
+        }
+        fprintf(fp, "player[%d].average_unit_cost = %d\n",      itr, rd_u16(sav, base + 0x48));
+        fprintf(fp, "player[%d].unknown_04Ah = %d\n",           itr, rd_u16(sav, base + 0x4A));
+        fprintf(fp, "player[%d].cmbt_skill_left = %d\n",        itr, rd_u16(sav, base + 0x4C));
+        fprintf(fp, "player[%d].casting_cost_remaining = %d\n", itr, rd_u16(sav, base + 0x4E));
+        fprintf(fp, "player[%d].casting_cost_original = %d\n",  itr, rd_u16(sav, base + 0x50));
+        fprintf(fp, "player[%d].casting_spell_idx = %d\n",      itr, rd_u16(sav, base + 0x52));
+        fprintf(fp, "player[%d].skill_left = %d\n",             itr, rd_u16(sav, base + 0x54));
+        fprintf(fp, "player[%d].nominal_skill = %d\n",          itr, rd_u16(sav, base + 0x56));
+        fprintf(fp, "player[%d].tax_rate = %d\n",               itr, rd_u16(sav, base + 0x58));
+
+        /* --- 0x005A Spellranks (Nature, Sorcery, Chaos, Life, Death) --- */
+        fprintf(fp, "player[%d].spellranks[sbr_Nature] = %d\n",  itr, rd_i16(sav, base + 0x5A));
+        fprintf(fp, "player[%d].spellranks[sbr_Sorcery] = %d\n", itr, rd_i16(sav, base + 0x5C));
+        fprintf(fp, "player[%d].spellranks[sbr_Chaos] = %d\n",   itr, rd_i16(sav, base + 0x5E));
+        fprintf(fp, "player[%d].spellranks[sbr_Life] = %d\n",    itr, rd_i16(sav, base + 0x60));
+        fprintf(fp, "player[%d].spellranks[sbr_Death] = %d\n",   itr, rd_i16(sav, base + 0x62));
+
+        /* --- 0x0064 Retorts (18 x int8) --- */
+        fprintf(fp, "player[%d].retort.alchemy = %d\n",         itr, rd_i8(sav, base + 0x64));
+        fprintf(fp, "player[%d].retort.warlord = %d\n",         itr, rd_i8(sav, base + 0x65));
+        fprintf(fp, "player[%d].retort.chaos_mastery = %d\n",   itr, rd_i8(sav, base + 0x66));
+        fprintf(fp, "player[%d].retort.nature_mastery = %d\n",  itr, rd_i8(sav, base + 0x67));
+        fprintf(fp, "player[%d].retort.sorcery_mastery = %d\n", itr, rd_i8(sav, base + 0x68));
+        fprintf(fp, "player[%d].retort.infernal_power = %d\n",  itr, rd_i8(sav, base + 0x69));
+        fprintf(fp, "player[%d].retort.divine_power = %d\n",    itr, rd_i8(sav, base + 0x6A));
+        fprintf(fp, "player[%d].retort.sage_master = %d\n",     itr, rd_i8(sav, base + 0x6B));
+        fprintf(fp, "player[%d].retort.channeler = %d\n",       itr, rd_i8(sav, base + 0x6C));
+        fprintf(fp, "player[%d].retort.myrran = %d\n",          itr, rd_i8(sav, base + 0x6D));
+        fprintf(fp, "player[%d].retort.archmage = %d\n",        itr, rd_i8(sav, base + 0x6E));
+        fprintf(fp, "player[%d].retort.mana_focusing = %d\n",   itr, rd_i8(sav, base + 0x6F));
+        fprintf(fp, "player[%d].retort.node_mastery = %d\n",    itr, rd_i8(sav, base + 0x70));
+        fprintf(fp, "player[%d].retort.famous = %d\n",          itr, rd_i8(sav, base + 0x71));
+        fprintf(fp, "player[%d].retort.runemaster = %d\n",      itr, rd_i8(sav, base + 0x72));
+        fprintf(fp, "player[%d].retort.conjurer = %d\n",        itr, rd_i8(sav, base + 0x73));
+        fprintf(fp, "player[%d].retort.charismatic = %d\n",     itr, rd_i8(sav, base + 0x74));
+        fprintf(fp, "player[%d].retort.artificer = %d\n",       itr, rd_i8(sav, base + 0x75));
+
+        /* --- 0x0076 Heroes[6] (s_OWNED_HERO, 28 bytes each) --- */
+        for (k = 0; k < 6; k++)
+        {
+            int h = base + 0x76 + (k * 28);
+            fprintf(fp, "player[%d].hero[%d].unit_idx = %d\n", itr, k, rd_i16(sav, h + 0x00));
+            rd_str(sav, h + 0x02, 14, hero_name);
+            fprintf(fp, "player[%d].hero[%d].name = %s\n",       itr, k, hero_name);
+            fprintf(fp, "player[%d].hero[%d].item[0] = %d\n",    itr, k, rd_i16(sav, h + 0x10));
+            fprintf(fp, "player[%d].hero[%d].item[1] = %d\n",    itr, k, rd_i16(sav, h + 0x12));
+            fprintf(fp, "player[%d].hero[%d].item[2] = %d\n",    itr, k, rd_i16(sav, h + 0x14));
+            fprintf(fp, "player[%d].hero[%d].item_slot[0] = %d\n", itr, k, rd_i16(sav, h + 0x16));
+            fprintf(fp, "player[%d].hero[%d].item_slot[1] = %d\n", itr, k, rd_i16(sav, h + 0x18));
+            fprintf(fp, "player[%d].hero[%d].item_slot[2] = %d\n", itr, k, rd_i16(sav, h + 0x1A));
+        }
+
+        /* --- 0x011E unknown + 0x0120 Vault_Items[4] --- */
+        fprintf(fp, "player[%d].unknown_11Eh = %d\n", itr, rd_u16(sav, base + 0x11E));
+        for (k = 0; k < 4; k++)
+        {
+            fprintf(fp, "player[%d].vault_items[%d] = %d\n", itr, k, rd_i16(sav, base + 0x120 + (k * 2)));
+        }
+
+        /* --- 0x0128 Dipl (s_WIZ_DIPL, 306 bytes) --- */
+        {
+            int d = base + 0x128;
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.contacted[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x00 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.treaty_modifier[%d] = %d\n",     itr, p, rd_i16(sav, d + 0x06 + (p * 2))); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.peace_modifier[%d] = %d\n",      itr, p, rd_i16(sav, d + 0x12 + (p * 2))); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.exchange_modifier[%d] = %d\n",   itr, p, rd_i16(sav, d + 0x1E + (p * 2))); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.visible_rel[%d] = %d\n",         itr, p, rd_i8(sav,  d + 0x2A + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.dipl_status[%d] = %d\n",         itr, p, rd_i8(sav,  d + 0x30 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.da_strength[%d] = %d\n",         itr, p, rd_i16(sav, d + 0x36 + (p * 2))); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.dipl_action[%d] = %d\n",         itr, p, rd_i8(sav,  d + 0x42 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.da_spell[%d] = %d\n",            itr, p, rd_i16(sav, d + 0x48 + (p * 2))); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.da_city[%d] = %d\n",             itr, p, rd_i8(sav,  d + 0x54 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.default_rel[%d] = %d\n",         itr, p, rd_i8(sav,  d + 0x5A + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.contact_progress[%d] = %d\n",    itr, p, rd_i8(sav,  d + 0x60 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.broken_treaty[%d] = %d\n",       itr, p, rd_i8(sav,  d + 0x66 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_6C[%d] = %d\n",            itr, p, rd_i16(sav, d + 0x6C + (p * 2))); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.hidden_rel[%d] = %d\n",          itr, p, rd_i8(sav,  d + 0x78 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_7E[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0x7E + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_84[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0x84 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_8A[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0x8A + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_90[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0x90 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.tribute_spell[%d] = %d\n",       itr, p, rd_i8(sav,  d + 0x96 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_9C[%d] = %d\n",            itr, p, rd_u8(sav,  d + 0x9C + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_A2[%d] = %d\n",            itr, p, rd_u8(sav,  d + 0xA2 + p)); }
+            for (k = 0; k < (SD_NUM_PLAYERS * 6); k++) { fprintf(fp, "player[%d].dipl.field_A8[%d] = %d\n",      itr, k, rd_i16(sav, d + 0xA8 + (k * 2))); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_F0[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0xF0 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.tribute_gold[%d] = %d\n",        itr, p, rd_i16(sav, d + 0xF6 + (p * 2))); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_102[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x102 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_108[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x108 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_10E[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x10E + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_114[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x114 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_11A[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x11A + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_120[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x120 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_126[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x126 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.g_warning_progress[%d] = %d\n",  itr, p, rd_i8(sav,  d + 0x12C + p)); }
+        }
+
+        /* --- 0x025A research / mana / casting skill / researching spell --- */
+        fprintf(fp, "player[%d].research_cost_remaining = %d\n", itr, rd_u16(sav, base + 0x25A));
+        fprintf(fp, "player[%d].mana_reserve = %d\n",            itr, rd_u16(sav, base + 0x25C));
+        fprintf(fp, "player[%d].spell_casting_skill = %d\n",     itr, rd_i32(sav, base + 0x25E));
+        fprintf(fp, "player[%d].researching_spell_idx = %d\n",   itr, rd_i16(sav, base + 0x262));
+
+        /* --- 0x0264 spells_list[240] --- */
+        for (k = 0; k < 240; k++)
+        {
+            fprintf(fp, "player[%d].spells_list[%d] = %d\n", itr, k, rd_u8(sav, base + 0x264 + k));
+        }
+
+        /* --- 0x0354 tail fields --- */
+        fprintf(fp, "player[%d].defeated_wizards = %d\n", itr, rd_u16(sav, base + 0x354));
+        fprintf(fp, "player[%d].gold_reserve = %d\n",     itr, rd_u16(sav, base + 0x356));
+        fprintf(fp, "player[%d].field_358 = %d\n",        itr, rd_u16(sav, base + 0x358));
+
+        /* --- 0x035A Astr (s_Astr_Data, 6 bytes) --- */
+        fprintf(fp, "player[%d].astr.magic_power = %d\n",    itr, rd_i16(sav, base + 0x35A));
+        fprintf(fp, "player[%d].astr.spell_research = %d\n", itr, rd_i16(sav, base + 0x35C));
+        fprintf(fp, "player[%d].astr.army_strength = %d\n",  itr, rd_i16(sav, base + 0x35E));
+
+        fprintf(fp, "player[%d].pop_div_10k = %d\n", itr, rd_u16(sav, base + 0x360));
+
+        /* --- 0x0362 Historian[288] --- */
+        for (k = 0; k < 288; k++)
+        {
+            fprintf(fp, "player[%d].historian[%d] = %d\n", itr, k, rd_u8(sav, base + 0x362 + k));
+        }
+
+        /* --- 0x0482 Globals[NUM_OVERLAND_ENCHANTMENTS=24] --- */
+        for (k = 0; k < 24; k++)
+        {
+            fprintf(fp, "player[%d].globals[%d] = %d\n", itr, k, rd_u8(sav, base + 0x482 + k));
+        }
+
+        fprintf(fp, "player[%d].magic_strategy = %d\n", itr, rd_u16(sav, base + 0x49A));
+        fprintf(fp, "player[%d].unknown_49Ch = %d\n",   itr, rd_u16(sav, base + 0x49C));
+
+        /* --- 0x049E Hostility[NUM_PLAYERS=6] --- */
+        for (p = 0; p < SD_NUM_PLAYERS; p++)
+        {
+            fprintf(fp, "player[%d].hostility[%d] = %d\n", itr, p, rd_u16(sav, base + 0x49E + (p * 2)));
+        }
+
+        fprintf(fp, "player[%d].reevaluate_hostility_countdown = %d\n",       itr, rd_u16(sav, base + 0x4AA));
+        fprintf(fp, "player[%d].reevaluate_magic_strategy_countdown = %d\n",  itr, rd_u16(sav, base + 0x4AC));
+        fprintf(fp, "player[%d].reevaluate_magic_power_countdown = %d\n",     itr, rd_u16(sav, base + 0x4AE));
+
+        /* --- 0x04B0 peace_duration[6] --- */
+        for (p = 0; p < SD_NUM_PLAYERS; p++)
+        {
+            fprintf(fp, "player[%d].peace_duration[%d] = %d\n", itr, p, rd_u8(sav, base + 0x4B0 + p));
+        }
+
+        fprintf(fp, "player[%d].idk_ai_strategy_1 = %d\n", itr, rd_i16(sav, base + 0x4B6));
+        fprintf(fp, "player[%d].idk_ai_strategy_2 = %d\n", itr, rd_i16(sav, base + 0x4B8));
+        fprintf(fp, "player[%d].idk_ai_strategy_3 = %d\n", itr, rd_i16(sav, base + 0x4BA));
+        fprintf(fp, "player[%d].idk_ai_strategy_4 = %d\n", itr, rd_i16(sav, base + 0x4BC));
+
+        /* --- 0x04BE field_4BE[NUM_PLAYERS=6] --- */
+        for (p = 0; p < SD_NUM_PLAYERS; p++)
+        {
+            fprintf(fp, "player[%d].field_4BE[%d] = %d\n", itr, p, rd_u8(sav, base + 0x4BE + p));
+        }
+
+        fprintf(fp, "player[%d].prim_realm = %d\n", itr, rd_u16(sav, base + 0x4C4));
+        fprintf(fp, "player[%d].sec_realm = %d\n",  itr, rd_u16(sav, base + 0x4C6));
     }
 }
 
@@ -267,6 +457,9 @@ static void Dump_Items(FILE *fp, const uint8_t *sav)
     }
 }
 
+/*
+ * Dump every field in struct s_CITY (114 bytes).  Layout from MOM_DAT.h:1673.
+ */
 static void Dump_Cities(FILE *fp, const uint8_t *sav)
 {
     int itr, base, b;
@@ -274,42 +467,82 @@ static void Dump_Cities(FILE *fp, const uint8_t *sav)
     for (itr = 0; itr < SD_NUM_CITIES; itr++)
     {
         base = SD_OFF_CITIES + (itr * SD_CITY_SIZE);
-        rd_str(sav, base, 14, name);
+
+        /* 0x00 */ rd_str(sav, base, 14, name);
         fprintf(fp, "city[%d].name = %s\n", itr, name);
-        fprintf(fp, "city[%d].race = %d\n", itr, rd_i8(sav, base + 0x0E));
-        fprintf(fp, "city[%d].wx = %d\n", itr, rd_i8(sav, base + 0x0F));
-        fprintf(fp, "city[%d].wy = %d\n", itr, rd_i8(sav, base + 0x10));
-        fprintf(fp, "city[%d].wp = %d\n", itr, rd_i8(sav, base + 0x11));
-        fprintf(fp, "city[%d].owner_idx = %d\n", itr, rd_i8(sav, base + 0x12));
-        fprintf(fp, "city[%d].size = %d\n", itr, rd_i8(sav, base + 0x13));
-        fprintf(fp, "city[%d].population = %d\n", itr, rd_i8(sav, base + 0x14));
-        fprintf(fp, "city[%d].farmer_count = %d\n", itr, rd_i8(sav, base + 0x15));
-        fprintf(fp, "city[%d].construction = %d\n", itr, rd_i16(sav, base + 0x1C));
-        fprintf(fp, "city[%d].bldg_cnt = %d\n", itr, rd_i8(sav, base + 0x1E));
-        for (b = 0; b < SD_NUM_BUILDINGS; b++)
+        /* 0x0E */ fprintf(fp, "city[%d].race = %d\n",              itr, rd_i8(sav, base + 0x0E));
+        /* 0x0F */ fprintf(fp, "city[%d].wx = %d\n",                itr, rd_i8(sav, base + 0x0F));
+        /* 0x10 */ fprintf(fp, "city[%d].wy = %d\n",                itr, rd_i8(sav, base + 0x10));
+        /* 0x11 */ fprintf(fp, "city[%d].wp = %d\n",                itr, rd_i8(sav, base + 0x11));
+        /* 0x12 */ fprintf(fp, "city[%d].owner_idx = %d\n",         itr, rd_i8(sav, base + 0x12));
+        /* 0x13 */ fprintf(fp, "city[%d].size = %d\n",              itr, rd_i8(sav, base + 0x13));
+        /* 0x14 */ fprintf(fp, "city[%d].population = %d\n",        itr, rd_i8(sav, base + 0x14));
+        /* 0x15 */ fprintf(fp, "city[%d].farmer_count = %d\n",      itr, rd_i8(sav, base + 0x15));
+        /* 0x16 */ fprintf(fp, "city[%d].sold_building = %d\n",     itr, rd_i8(sav, base + 0x16));
+        /* 0x17 */ fprintf(fp, "city[%d].pad2B_17h = %d\n",         itr, rd_i8(sav, base + 0x17));
+        /* 0x18 */ fprintf(fp, "city[%d].pop_10s = %d\n",           itr, rd_i16(sav, base + 0x18));
+        /* 0x1A */ fprintf(fp, "city[%d].contacts = %d\n",          itr, rd_u8(sav, base + 0x1A));
+        /* 0x1B */ fprintf(fp, "city[%d].pad2B_1Bh = %d\n",         itr, rd_i8(sav, base + 0x1B));
+        /* 0x1C */ fprintf(fp, "city[%d].construction = %d\n",      itr, rd_i16(sav, base + 0x1C));
+        /* 0x1E */ fprintf(fp, "city[%d].bldg_cnt = %d\n",          itr, rd_i8(sav, base + 0x1E));
+        /* 0x1F */ for (b = 0; b < SD_NUM_BUILDINGS; b++)
         {
             fprintf(fp, "city[%d].bldg_status[%d] = %d\n", itr, b, rd_i8(sav, base + 0x1F + b));
+        }
+        /* 0x43 */ for (b = 0; b < SD_NUM_CITY_ENCHANTMENTS; b++)
+        {
+            fprintf(fp, "city[%d].enchantment[%d] = %d\n", itr, b, rd_u8(sav, base + 0x43 + b));
+        }
+        /* 0x5D */ fprintf(fp, "city[%d].production_units = %d\n",  itr, rd_i8(sav, base + 0x5D));
+        /* 0x5E */ fprintf(fp, "city[%d].prod_accu = %d\n",         itr, rd_i16(sav, base + 0x5E));
+        /* 0x60 */ fprintf(fp, "city[%d].gold_units = %d\n",        itr, rd_u8(sav, base + 0x60));
+        /* 0x61 */ fprintf(fp, "city[%d].building_maintenance = %d\n", itr, rd_i8(sav, base + 0x61));
+        /* 0x62 */ fprintf(fp, "city[%d].mana_units = %d\n",        itr, rd_i8(sav, base + 0x62));
+        /* 0x63 */ fprintf(fp, "city[%d].research_units = %d\n",    itr, rd_i8(sav, base + 0x63));
+        /* 0x64 */ fprintf(fp, "city[%d].food_units = %d\n",        itr, rd_i8(sav, base + 0x64));
+        /* 0x65 */ for (b = 0; b < 13; b++)
+        {
+            fprintf(fp, "city[%d].road_connections[%d] = %d\n", itr, b, rd_u8(sav, base + 0x65 + b));
         }
     }
 }
 
+/*
+ * Dump every field in struct s_UNIT (32 bytes).  Layout from MOM_DAT.h:1695.
+ */
 static void Dump_Units(FILE *fp, const uint8_t *sav)
 {
     int itr, base;
     for (itr = 0; itr < SD_NUM_UNITS; itr++)
     {
         base = SD_OFF_UNITS + (itr * SD_UNIT_SIZE);
-        fprintf(fp, "unit[%d].wx = %d\n", itr, rd_i8(sav, base + 0));
-        fprintf(fp, "unit[%d].wy = %d\n", itr, rd_i8(sav, base + 1));
-        fprintf(fp, "unit[%d].wp = %d\n", itr, rd_i8(sav, base + 2));
-        fprintf(fp, "unit[%d].owner_idx = %d\n", itr, rd_i8(sav, base + 3));
-        fprintf(fp, "unit[%d].type = %d\n", itr, rd_u8(sav, base + 5));
-        fprintf(fp, "unit[%d].hero_slot = %d\n", itr, rd_i8(sav, base + 6));
-        fprintf(fp, "unit[%d].finished = %d\n", itr, rd_i8(sav, base + 7));
-        fprintf(fp, "unit[%d].moves2 = %d\n", itr, rd_i8(sav, base + 8));
-        fprintf(fp, "unit[%d].status = %d\n", itr, rd_i8(sav, base + 0x0B));
-        fprintf(fp, "unit[%d].level = %d\n", itr, rd_i8(sav, base + 0x0C));
-        fprintf(fp, "unit[%d].enchantments = 0x%08X\n", itr, rd_u32(sav, base + 0x18));
+        /* 0x00 */ fprintf(fp, "unit[%d].wx = %d\n",              itr, rd_i8(sav,  base + 0x00));
+        /* 0x01 */ fprintf(fp, "unit[%d].wy = %d\n",              itr, rd_i8(sav,  base + 0x01));
+        /* 0x02 */ fprintf(fp, "unit[%d].wp = %d\n",              itr, rd_i8(sav,  base + 0x02));
+        /* 0x03 */ fprintf(fp, "unit[%d].owner_idx = %d\n",       itr, rd_i8(sav,  base + 0x03));
+        /* 0x04 */ fprintf(fp, "unit[%d].moves2_max = %d\n",      itr, rd_i8(sav,  base + 0x04));
+        /* 0x05 */ fprintf(fp, "unit[%d].type = %d\n",            itr, rd_u8(sav,  base + 0x05));
+        /* 0x06 */ fprintf(fp, "unit[%d].hero_slot = %d\n",       itr, rd_i8(sav,  base + 0x06));
+        /* 0x07 */ fprintf(fp, "unit[%d].finished = %d\n",        itr, rd_i8(sav,  base + 0x07));
+        /* 0x08 */ fprintf(fp, "unit[%d].moves2 = %d\n",          itr, rd_i8(sav,  base + 0x08));
+        /* 0x09 */ fprintf(fp, "unit[%d].dst_wx = %d\n",          itr, rd_i8(sav,  base + 0x09));
+        /* 0x0A */ fprintf(fp, "unit[%d].dst_wy = %d\n",          itr, rd_i8(sav,  base + 0x0A));
+        /* 0x0B */ fprintf(fp, "unit[%d].status = %d\n",          itr, rd_i8(sav,  base + 0x0B));
+        /* 0x0C */ fprintf(fp, "unit[%d].level = %d\n",           itr, rd_i8(sav,  base + 0x0C));
+        /* 0x0D */ fprintf(fp, "unit[%d].pad2B_0Dh = %d\n",       itr, rd_u8(sav,  base + 0x0D));
+        /* 0x0E */ fprintf(fp, "unit[%d].xp = %d\n",             itr, rd_i16(sav, base + 0x0E));
+        /* 0x10 */ fprintf(fp, "unit[%d].move_failed = %d\n",     itr, rd_i8(sav,  base + 0x10));
+        /* 0x11 */ fprintf(fp, "unit[%d].damage = %d\n",          itr, rd_i8(sav,  base + 0x11));
+        /* 0x12 */ fprintf(fp, "unit[%d].draw_priority = %d\n",   itr, rd_i8(sav,  base + 0x12));
+        /* 0x13 */ fprintf(fp, "unit[%d].pad2B_13h = %d\n",       itr, rd_u8(sav,  base + 0x13));
+        /* 0x14 */ fprintf(fp, "unit[%d].in_tower = %d\n",        itr, rd_i16(sav, base + 0x14));
+        /* 0x16 */ fprintf(fp, "unit[%d].sight_range = %d\n",     itr, rd_i8(sav,  base + 0x16));
+        /* 0x17 */ fprintf(fp, "unit[%d].mutations = %d\n",       itr, rd_i8(sav,  base + 0x17));
+        /* 0x18 */ fprintf(fp, "unit[%d].enchantments = 0x%08X\n", itr, rd_u32(sav, base + 0x18));
+        /* 0x1C */ fprintf(fp, "unit[%d].rd_constr_left = %d\n",  itr, rd_i8(sav,  base + 0x1C));
+        /* 0x1D */ fprintf(fp, "unit[%d].rd_from_x = %d\n",      itr, rd_i8(sav,  base + 0x1D));
+        /* 0x1E */ fprintf(fp, "unit[%d].rd_from_y = %d\n",      itr, rd_i8(sav,  base + 0x1E));
+        /* 0x1F */ fprintf(fp, "unit[%d].pad2B_1Fh = %d\n",       itr, rd_u8(sav,  base + 0x1F));
     }
 }
 

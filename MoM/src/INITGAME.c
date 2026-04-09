@@ -103,57 +103,63 @@ void Init_Computer_Players(void)
 
 
 // MGC o56p2
-void NEWG_FinalizeTables__WIP(void)
+/* COPILOT */
+/**
+ * @brief Finalizes per-player and global runtime state for a new game.
+ *
+ * @details
+ * Runs the late initialization pass after the world, cities, and fortress
+ * records already exist. The routine advances the world-building progress
+ * display, clears item state, initializes hero data, resets player runtime
+ * fields, seeds AI strategy timers, derives AI personalities/objectives,
+ * copies fortress coordinates into each player's summoning-circle state,
+ * clears message counters, and computes initial wizard-to-wizard diplomatic
+ * relations.
+ *
+ * It then derives each active player's `capital_race` from the matching entry
+ * in `_CITIES[]`, assigns the human player's starting gold from `_difficulty`,
+ * and gives each AI player a fixed opening treasury plus an initial
+ * `AI_SCircle_Reevals[]` delay randomized in the range `[80, 119]`.
+ *
+ * @return void
+ *
+ * @note Expects `_num_players`, `_players[]`, `_CITIES[]`, and fortress data
+ *       to have already been populated by earlier new-game setup.
+ * @note Mutates several global runtime tables as part of the final startup
+ *       pass.
+ *
+ * @see Draw_Building_The_Worlds
+ * @see Initialize_Items
+ * @see Init_Heroes
+ * @see Init_Players
+ * @see Init_CP_Strategy
+ * @see Init_Magic_Personalities_Objectives
+ * @see Init_Summoning_Circle_And_Spell_Of_Mastery
+ * @see Initialize_Messages
+ * @see Init_Diplomatic_Relations
+ */
+void Init_Runtime(void)
 {
     int16_t itr_players = 0;
-
     Draw_Building_The_Worlds(100);
-
     Initialize_Items();
-
     Init_Heroes();
-
     Init_Players();
-
-    AI_WIZ_StrategyReset__WIP();
-
+    Init_CP_Strategy();
     Init_Magic_Personalities_Objectives();
-
     Init_Summoning_Circle_And_Spell_Of_Mastery();
-
     Initialize_Messages();
-
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
         _players[itr_players].capital_race = _CITIES[itr_players].race;
     }
-
     Init_Diplomatic_Relations();
-
     _players[HUMAN_PLAYER_IDX].gold_reserve = ((5 - _difficulty) * 25);
-
     for(itr_players = 1; itr_players < _num_players; itr_players++)
     {
-
         _players[itr_players].gold_reserve = 150;
-
-// ; 80 + rnd(40) is stored here for each AI wizard (word
-// ; array pointer, human excluded) when setting initial
-// ; gold
-// mov     ax, 40
-// push    ax
-// call    Random
-// add     ax, 80
-// mov     dx, _SI_itr_players
-// shl     dx, 1
-// mov     bx, [Wiz5_Spell_E0h@]             
-// add     bx, dx
-// mov     [bx], ax
-        // Wiz5_Spell_E0h[itr_players] = (80 + Random(40));
-        // mov     [AI_SCircle_Reevals@],  (offset _players.spells_list+18C8h) ; 16 bytes
-        AI_SCircle_Reevals = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18C8) );  // 16 bytes        
+        AI_SCircle_Reevals[itr_players] = (80 + Random(40));
     }
-
 }
 
 
@@ -600,60 +606,82 @@ void Init_Magic_Personalities_Objectives(void)
 
 
 // MGC o56p7
-// drake178: AI_WIZ_StrategyReset()
 /*
-resets the war counter and magic strategy
-reevaluation delay timers, and fills the unknown
-wizard record fields $4B0-$4BD with -1s
+MoO2  Module: DIPLOMAC  Init_Diplomatic_Relations_()
 */
-/*
-
-*/
-void AI_WIZ_StrategyReset__WIP(void)
+/**
+ * @brief Resets per-player AI strategy timers and relationship sentinel state.
+ *
+ * @details
+ * Iterates across all active players in `_num_players` and clears the
+ * reevaluation countdowns used by AI hostility, magic-strategy, and
+ * magic-power logic. It also initializes every entry in each player's
+ * `peace_duration[]` array to `ST_UNDEFINED`, then resets the four
+ * undocumented `IDK_AI_Strategy_*` fields to the same sentinel value.
+ *
+ * Despite the function name, the reset is applied to every active player slot
+ * rather than only computer-controlled wizards.
+ *
+ * @return void
+ *
+ * @note This routine mutates the global `_players[]` table in place.
+ * @note `ST_UNDEFINED` is used here as an initialization sentinel, not as a
+ *       countdown value.
+ */
+void Init_CP_Strategy(void)
 {
-    int16_t itr_players1 = 0;  // _CX_
-    int16_t itr_players2 = 0;  // _SI_
-
-    for(itr_players1 = 0; itr_players1 < _num_players; itr_players1++)
+    int16_t player_idx = 0;
+    int16_t other_player_idx = 0;
+    for(player_idx = 0; player_idx < _num_players; player_idx++)
     {
-
-        _players[itr_players1].reevaluate_hostility_countdown = 0;
-
-        _players[itr_players1].reevaluate_magic_strategy_countdown = 0;
-
-        _players[itr_players1].reevaluate_magic_power_countdown = 0;
-
-        for(itr_players2 = 0; itr_players2 < _num_players; itr_players2++)
+        _players[player_idx].reevaluate_hostility_countdown = 0;
+        _players[player_idx].reevaluate_magic_strategy_countdown = 0;
+        _players[player_idx].reevaluate_magic_power_countdown = 0;
+        for(other_player_idx = 0; other_player_idx < _num_players; other_player_idx++)
         {
-            _players[itr_players1].peace_duration[itr_players2] = 0xFF;  // 255 INF ST_UNDEFINED?
+            _players[player_idx].peace_duration[other_player_idx] = ST_UNDEFINED;
         }
-
+        _players[player_idx].niu_cp_target_1 = ST_UNDEFINED;
+        _players[player_idx].niu_cp_target_2 = ST_UNDEFINED;
+        _players[player_idx].cp_target_3 = ST_UNDEFINED;
+        _players[player_idx].niu_cp_target_4 = ST_UNDEFINED;
     }
 
 }
 
 
 // MGC o56p8
-// drake178: WIZ_SetStartingStats()
-/*
-calculates the starting fame and casting skill for
-each wizard, clears their vault and hero list, sets
-the SoM as researchable, sets the initial power
-ratios, clears the research and casting fields, and
-the global enchantment arrays
-*/
-/*
-
-*/
+/**
+ * @brief Initializes baseline runtime state for every active player.
+ *
+ * @details
+ * Walks the active player range `[0, _num_players)` and derives each
+ * wizard's opening fame, nominal casting skill, and invested casting skill
+ * from stored spellbook counts and retorts. It then clears or seeds the core
+ * strategic resource fields used at game start, including mana, research,
+ * casting progress, power-distribution ratios, tax rate, global enchantment
+ * flags, vault contents, and hero slot assignments.
+ *
+ * The routine computes a target `spell_skill` from the player's five realm
+ * book counts, adds the Archmage bonus when present, doubles the result, and
+ * increments `spell_casting_skill` until `Player_Nominal_Skill()` reaches that
+ * derived target.
+ *
+ * @return void
+ *
+ * @note Mutates the global `_players[]` table in place.
+ * @note Every player starts with `spl_Spell_Of_Mastery` marked with state `3`
+ *       and all hero slots initialized to `ST_UNDEFINED`.
+ *
+ * @see Player_Nominal_Skill
+ */
 void Init_Players(void)
 {
     int16_t itr_heroes = 0;
     int16_t itr_players = 0;
     int16_t spell_skill = 0;
-
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-
         if(_players[itr_players].famous == ST_TRUE)
         {
             _players[itr_players].fame = 10;
@@ -662,49 +690,31 @@ void Init_Players(void)
         {
             _players[itr_players].fame = 0;
         }
-
         spell_skill = (_players[itr_players].spellranks[0] + _players[itr_players].spellranks[1] + _players[itr_players].spellranks[2] + _players[itr_players].spellranks[3] + _players[itr_players].spellranks[4]);
-
         if(_players[itr_players].archmage != ST_FALSE)
         {
             spell_skill += 5;
         }
-
-        spell_skill *= 2;
-
+        /* Base skill is doubled for starting calculation */
+        spell_skill += spell_skill;
         _players[itr_players].Nominal_Skill = 0;
-
         _players[itr_players].spell_casting_skill = 0;
-
+        // The grow-until-reached loop lands spell_casting_skill at the smallest value where Player_Base_Casting_Skill__MGC returns spell_skill.
+        // The inverse formula is N*(N-1)+1.
         while(_players[itr_players].Nominal_Skill < spell_skill)
         {
-
             _players[itr_players].spell_casting_skill += 1;
-
-            _players[itr_players].Nominal_Skill = Player_Nominal_Skill(itr_players);
-            
+            _players[itr_players].Nominal_Skill = Player_Base_Casting_Skill__MGC(itr_players);
         }
-
-        // BUGBUG ; PATCHED here to allow casting in the first turn
-
         _players[itr_players].researching_spell_idx = spl_NONE;
-
         _players[itr_players].mana_reserve = 0;
-
         _players[itr_players].research_cost_remaining = 0;
-
         _players[itr_players].skill_ratio = 33;
-
         _players[itr_players].mana_ratio = 33;
-
         _players[itr_players].research_ratio = 33;
-
-        _players[itr_players].spells_list[spl_Spell_Of_Mastery] = 3;  // TODO add enum for spell list statuses
-
+        _players[itr_players].spells_list[spl_Spell_Of_Mastery] = 3;
         _players[itr_players].casting_spell_idx = spl_NONE;
-
         _players[itr_players].casting_cost_remaining = 0;
-
         _players[itr_players].Globals[ETERNAL_NIGHT] = 0;
         _players[itr_players].Globals[EVIL_OMENS] = 0;
         _players[itr_players].Globals[ZOMBIE_MASTERY] = 0;
@@ -725,25 +735,18 @@ void Init_Players(void)
         _players[itr_players].Globals[CRUSADE] = 0;
         _players[itr_players].Globals[JUST_CAUSE] = 0;
         _players[itr_players].Globals[HOLY_ARMS] = 0;
-
         _players[itr_players].volcanoes = 0;
-
         _players[itr_players].Globals[DETECT_MAGIC] = 0;
-
         _players[itr_players].tax_rate = 2;
-
         _players[itr_players].Vault_Items[0] = ST_UNDEFINED;
         _players[itr_players].Vault_Items[1] = ST_UNDEFINED;
         _players[itr_players].Vault_Items[2] = ST_UNDEFINED;
         _players[itr_players].Vault_Items[3] = ST_UNDEFINED;
-        
         for(itr_heroes = 0; itr_heroes < NUM_HERO_SLOTS; itr_heroes++)
         {
             _players[itr_players].Heroes[itr_heroes].unit_idx = ST_UNDEFINED;
         }
-
     }
-    
 }
 
 
@@ -1236,7 +1239,7 @@ void Init_Computer_Players_Wizard_Profile(void)
                         if(Realm_Retort_Available != 0)
                         {
 
-                            Trait_Value = Get_Weighted_Choice(Bookshelf, 5);
+                            Trait_Value = Get_Weighted_Choice(&Bookshelf[0], 5);
 
                             if(Trait_Value == 2)
                             {
@@ -2422,41 +2425,50 @@ void Consolidate_Spell_Book_Realms(int16_t player_idx)
 
 
 // MGC o56p16
-// drake178: WIZ_GetNominalSkill()
 /*
-calculates and returns the wizard's nominal spell
-casting skill from their stored invested skill
-points, adding 10 for Archmage if applicable
-*/
-/*
-
 ¿ ~ Player_Base_Casting_Skill() ?
 */
-int16_t Player_Nominal_Skill(int16_t player_idx)
+/**
+ * @brief Converts stored casting-skill investment into nominal casting skill.
+ *
+ * @details
+ * Interprets `_players[player_idx].spell_casting_skill` as an accumulated pool
+ * of invested skill points and walks the game's triangular progression one
+ * step at a time until the running threshold meets or exceeds that stored
+ * investment. The resulting step count becomes the player's nominal casting
+ * skill, with an additional +10 applied when the wizard has the Archmage
+ * retort.
+ *
+ * This routine is used during player initialization to translate invested
+ * casting points back into the displayed base skill value.
+ *
+ * @param player_idx Index of the player record in `_players[]`.
+ *
+ * @return The player's nominal casting skill, including the Archmage bonus
+ *         when applicable.
+ *
+ * @note Uses the same progression as `Player_Base_Casting_Skill()` in
+ *       [MoM/src/NEXTTURN.c](MoM/src/NEXTTURN.c).
+ */
+int16_t Player_Base_Casting_Skill__MGC(int16_t player_idx)
 {
-    int32_t Skill_Points_Left = 0;
-    int16_t IDK = 0;  // _SI_
-    int16_t nominal_skill = 0;  // _CX_
-
-    IDK = 0;
-    
-    nominal_skill = 0;
-    
-    Skill_Points_Left = 0;
-
-    while(_players[player_idx].spell_casting_skill > Skill_Points_Left)
+    int32_t num = 0;
+    int16_t twos = 0;
+    int16_t casting_skill = 0;
+    twos = 0;
+    casting_skill = 0;
+    num = 0;
+    while(_players[player_idx].spell_casting_skill > num)
     {
-        nominal_skill += 1;
-        IDK += 2;
-        Skill_Points_Left += IDK;
+        casting_skill += 1;
+        twos += 2;
+        num += twos;
     }
-
     if(_players[player_idx].archmage > 0)
     {
-        nominal_skill += 10;
+        casting_skill += 10;
     }
-
-    return nominal_skill;
+    return casting_skill;
 }
 
 

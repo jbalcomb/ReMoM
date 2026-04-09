@@ -136,6 +136,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
         # DONT  "/wd4057"  # '=': 'uint8_t *' differs in indirection to slightly different base types from 'int8_t *'
         "/wd4100"  # unreferenced parameter
         "/wd4101"  # unreferenced local variable
+        "/wd4127"  # conditional expression is constant
         "/wd4189"  # local variable is initialized but not referenced
         "/wd4201"  # nonstandard extension used: nameless struct/union
         "/wd4206"  # nonstandard extension used: translation unit is empty
@@ -148,6 +149,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
         "/wd4459"  # declaration of 'identifier' hides global declaration
         "/wd4701"  # potentially uninitialized local variable
         "/wd4702"  # unreachable code
+        "/wd4996"  # 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
         # "/wd4068"
         # "/wd4365"
         # "/wd4820"
@@ -178,6 +180,7 @@ add_subdirectory(platform)
 add_subdirectory(MoX)
 add_subdirectory(MoM)
 add_subdirectory(src)
+add_subdirectory(tools)
 add_subdirectory(tests)
 
 # --- Installation / Packaging ---

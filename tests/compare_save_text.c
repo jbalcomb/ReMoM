@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
             continue;
         }
 
-        if (stu_strcmp(line_actual, line_expected) != 0)
+        if (strcmp(line_actual, line_expected) != 0)
         {
             diff_count++;
             if (diff_count <= max_diffs)

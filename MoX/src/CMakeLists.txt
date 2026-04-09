@@ -6,7 +6,7 @@ set(LIBMOX_SOURCES
     capture.c
     CFG.c
     DOS.c
-    EMM.c
+    EMS/EMS.c
     EXIT.c
     Fields.c
     file_ani.c

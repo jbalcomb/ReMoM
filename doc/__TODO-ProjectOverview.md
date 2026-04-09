@@ -116,7 +116,7 @@ New Game
     [ ] Initialize_Items
     [ ] Init_Heroes
     [ ] Init_Players
-    [ ] AI_WIZ_StrategyReset__WIP
+    [x] Init_CP_Strategy
     [ ] Init_Magic_Personalities_Objectives
     [ ] Init_Summoning_Circle_And_Spell_Of_Mastery
     [ ] Initialize_Messages

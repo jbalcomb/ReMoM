@@ -20,6 +20,7 @@ Module: AITECH
 #include "../../MoX/src/capture.h"
 #include "../../MoX/src/random.h"
 
+#include "AIDUDES.h"
 #include "CITYCALC.h"
 #include "SBookScr.h"
 #include "Spellbook.h"
@@ -51,81 +52,219 @@ char CRP_AI_SpellTargetError[] = " could not be found for CP.";
 */
 
 // WZD o156p01
-// drake178: AI_Research_Picker()
 // ~ MoO2  Module: AITECH  AI_Tech_Select_()
-/*
-; selects the spell to research from the wizard's list
-; of candidates using a weighted random roll,
-; prioritizing combat spells in research groups from
-; which the player does not yet have a known spell
-;
-; contains multipe BUGs that prevent research-related
-; profile traits from properly affecting the outcome
-*/
-void AI_Research_Picker__STUB(int16_t player_idx)
+/* GEMINI */
+int16_t AI_Spell_Research_Select(int16_t player_idx)
 {
-    /* Dasm does itr 90, so this must be 90 bytes + 1 for 2-byte alignment */
-    int16_t Possessed_Categories[91] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Unused_Var = 0;
-    uint32_t Costs_32bit[NUM_RESEARCH_SPELLS] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Candidate_Costs[NUM_RESEARCH_SPELLS] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Highest_Cost = 0;
-    int16_t Weight_Total = 0;
-    int16_t Cnd_Category = 0;
-    int16_t Skill = 0;
-    int16_t Mana = 0;
-    int16_t Research = 0;
-    int16_t Loop_Var = 0;
-    int16_t Research_Bonus = 0;
-    int16_t Candidate_Count = 0;
-    int16_t Original_Cost = 0;
+    int16_t possessed_categories[92] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int32_t weights_long[NUM_RESEARCH_SPELLS] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t candidate_costs[NUM_RESEARCH_SPELLS] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int32_t highest_cost = 0;
+    int32_t weights_long_total = 0;
+    int16_t cnd_category = 0;
+    int16_t skill_income = 0;
+    int16_t mana_income = 0;
+    int16_t research_income = 0;
+    int16_t itr2 = 0;
+    int16_t research_bonus = 0;
+    int16_t candidate_count = 0;
+    int16_t original_cost = 0;
     int16_t selection = 0;
-    int16_t * ptr__players_spellranks = 0;
-    uint16_t * ptr__players_research_spells = 0;
-    int16_t itr_candidates = 0;  // _DI_
+    int16_t * spellranks = 0;
+    uint16_t * research_spells = 0;
+    int16_t itr = 0;
+    unsigned int spell_idx = 0;
+    unsigned int base_cost = 0;
+    int16_t known_spell_idx = 0;
+    int32_t w = 0;
 
-    ptr__players_research_spells = &_players[player_idx].research_spells[0];
+    research_spells = _players[player_idx].research_spells;
 
-    ptr__players_spellranks = &_players[player_idx].spellranks[0];
+    spellranks = &_players[player_idx].spellranks[0];
 
-    Candidate_Count = 0;
+    candidate_count = 0;
 
-    for(itr_candidates = 0; itr_candidates < NUM_RESEARCH_SPELLS; itr_candidates++)
-    {
-
-        if(ptr__players_research_spells[itr_candidates] != 0)
-        {
-            Candidate_Count++;
+    for (itr = 0; itr < 8; itr++) {
+        if (research_spells[itr] != 0) {
+            candidate_count++;
         }
-
     }
 
-    if(Candidate_Count == 0)
-    {
-        _players[player_idx].researching_spell_idx = spl_NONE;
+    if (candidate_count == 0) {
+        dbg_prn("[AI_RESEARCH] player[%d] candidate_count=0, no spells to research\n", player_idx);
+        _players[player_idx].researching_spell_idx = 0;
         _players[player_idx].research_ratio = 0;
         _players[player_idx].mana_ratio = 50;
         _players[player_idx].skill_ratio = 50;
-        return;
+        return 0;
     }
 
+    /* BUG #1: Setting this to index 1 (Earth to Mud) just to satisfy research trait logic */
+    _players[player_idx].researching_spell_idx = 1; 
+    _players[player_idx].reevaluate_magic_power_countdown = 0;
 
-    // ...
-    // ...
-    // ...
+    AI_Update_Magic_Power(player_idx);
+    Player_Magic_Power_Income_Total(&mana_income, &research_income, &skill_income, player_idx);
 
+    /* Calculate adjusted research costs based on traits/bonuses */
+    /* OGBUG: #3 research-related traits are now applied twice (if it wasn't for BUGs #1 & #2) */
+    /* Gemini rearranged the logic here quite a bit */
+    for (itr = 0; itr < candidate_count; itr++) {
+        spell_idx = research_spells[itr];
 
-    // ; chooses a random item from a list of 32bit weighted
-    // ; chances; condensing the weights such that the total
-    // ; fits into a single call of the 9-bit RNG (max 512),
-    // ; using repeated divisions by 2 if necessary
-    // TODO  Picked_Candidate = Get_Weighted_Choice_Long(&Costs_32bit[0], Candidate_Count);
+        if (spell_idx == spl_Spell_Of_Mastery) {
+            base_cost = _players[player_idx].som_research_cost;
+        } else {
+            base_cost = spell_data_table[spell_idx].research_cost;
+        }
+        
+        /* OGBUG: passes magic_realm instead of spell index */
+        research_bonus = Player_Spell_Research_Bonus(player_idx, spell_data_table[spell_idx].magic_realm);
+        
+        /* Adjusted Cost = Cost * 100 / (Bonus + 100) */
+        candidate_costs[itr] = (unsigned int)((long)base_cost * 100 / (long)(100 + research_bonus));
+    }
 
-    selection = Random(Candidate_Count);
+    /* Determine which spell categories (AI_Groups) the wizard already knows */
+    /* NOTE: Dasm definitely shows <= 90 */
+    for (itr = 0; itr <= 90; itr++) {
+        possessed_categories[itr] = 0;
+    }
 
-    _players[player_idx].researching_spell_idx = ptr__players_research_spells[selection];
-    assert(_players[player_idx].researching_spell_idx >= spl_NONE);
+    for (itr = 0; itr < 6; itr++) { /* 6 Realms */
+        for (itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_REALM; itr2++) {
+            if (_players[player_idx].spells_list[((itr * NUM_SPELLS_PER_MAGIC_REALM) + itr2)] == sls_Known) {
+                known_spell_idx = ((itr * NUM_SPELLS_PER_MAGIC_REALM) + itr2 + 1);
+                possessed_categories[spell_data_table[known_spell_idx].AI_Group] = ST_TRUE;
+            }
+        }
+    }
 
+/*
+adjust research priority of the candidates by
+manipulating their research costs: reduce to improve
+their odds of being picked for research, or increase
+to lower the odds; store the highest of the results
+*/
+    highest_cost = 0L;
+
+    /* Assign weights based on category possession and personality */
+    for (itr = 0; itr < candidate_count; itr++) {
+        spell_idx = research_spells[itr];
+        cnd_category = spell_data_table[spell_idx].AI_Group;
+        
+        weights_long[itr] = candidate_costs[itr];
+        original_cost = candidate_costs[itr];
+
+        /* If we already have a spell in this category, heavily penalize weight (by multiplying cost) */
+        if (possessed_categories[cnd_category] == ST_TRUE) {
+            weights_long[itr] *= 4;
+        } 
+        else {
+            /* Prioritize first spell in specific combat/utility categories */
+            if (cnd_category == SGRP_CombatSummon_1 || cnd_category == SGRP_CombatSummon_2 || cnd_category == SGRP_CombatSummon_3 || cnd_category == SGRP_IDK) {
+                weights_long[itr] /= 10;
+            }
+            
+            /* Various priority categories (Combat, Summons, City Buffs) */
+            if (cnd_category == SGRP_CombatHarm_1  || cnd_category == SGRP_CombatCurse || cnd_category == SGRP_CombatHarm_2 || cnd_category == SGRP_CombatHarm_3 ||
+                cnd_category == SGRP_CE_1 || cnd_category == SGRP_CE_2 || cnd_category == SGRP_CE_3 || cnd_category == SGRP_CE_4 ||
+                cnd_category == SGRP_Disrupt || cnd_category == SGRP_CombatMisc || cnd_category == SGRP_Haste || cnd_category == SGRP_AnimateDead ||
+                cnd_category == SGRP_CombatSummon_1 || cnd_category == SGRP_CombatSummon_2 || cnd_category == SGRP_CombatSummon_3 || cnd_category == SGRP_IDK) {
+                weights_long[itr] /= 5;
+            }
+        }
+
+        /* Militarist objective prioritizes specific combat categories */
+        if (_players[player_idx].Objective == OBJ_Militarist) {
+            if (cnd_category == SGRP_CombatSummon_1 || cnd_category == SGRP_CombatSummon_2 || cnd_category == SGRP_CombatSummon_3 || cnd_category == SGRP_IDK) {
+                weights_long[itr] /= 2;
+            }
+        }
+
+        /* Specific category prioritization for first-time acquisition */
+        if (possessed_categories[cnd_category] == 0) {
+            if (cnd_category == SGRP_CombatSummon_1) weights_long[itr] /= 10;
+            if (cnd_category == SGRP_CombatSummon_2) weights_long[itr] /= 7;
+            if (cnd_category == SGRP_CombatSummon_3) weights_long[itr] /= 5;
+            if (cnd_category == SGRP_IDK) weights_long[itr] /= 3;
+        }
+
+        /* Realm-specific counter-spell prioritization (Consecration, Spell Ward) */
+        if (_players[player_idx].Prim_Realm == 1 || _players[player_idx].Prim_Realm == 2) { /* Death or Chaos */
+            if (spell_idx == spl_Consecration || spell_idx == spl_Spell_Ward) {
+                weights_long[itr] /= 2;
+            }
+        } else {
+            if (spell_idx == spl_Spell_Ward) { /* Spell Ward */
+                weights_long[itr] /= 2;
+            }
+        }
+
+        /* Utility/Meta-magic prioritization */
+        if (spell_idx == spl_Disenchant_Area)  weights_long[itr] /= 2;
+        if (spell_idx == spl_Disjunction)      weights_long[itr] /= 2;
+        if (spell_idx == spl_Disenchant_True)  weights_long[itr] /= 5;
+        if (spell_idx == spl_Disjunction_True) weights_long[itr] /= 5;
+        if (spell_idx == spl_Summon_Hero)      weights_long[itr] /= 5;
+
+        /* De-prioritize Summoning Circle */
+        if (spell_idx == spl_Summoning_Circle) { 
+            weights_long[itr] <<= 1;
+        }
+
+        /* If we already have this category, de-prioritize more */
+        if (possessed_categories[cnd_category] == 1) {
+            weights_long[itr] *= 3;
+        }
+
+        /* High cost vs current research income checks */
+        if ((candidate_costs[itr] / 20) > research_income) {
+            weights_long[itr] *= 2;
+        }
+        if ((candidate_costs[itr] / 50) > research_income) {
+            weights_long[itr] *= 5;
+        }
+
+        /* Minimum weight clamping */
+        if (weights_long[itr] < 1L && original_cost > 0) {
+            weights_long[itr] = 1L;
+        }
+
+        /* Categories with group 0 are not researchable or invalid candidates */
+        if (spell_data_table[spell_idx].AI_Group == 0) {
+            weights_long[itr] = 0L;
+        }
+
+        if (weights_long[itr] > highest_cost) {
+            highest_cost = weights_long[itr];
+        }
+    }
+
+    /* Convert costs to selection weights: Weight = 52 - (AdjCost * 50 / Highest) */
+    weights_long_total = 0L;
+    for (itr = 0; itr < candidate_count; itr++) {
+        if (weights_long[itr] != 0L) {
+            w = 52L - (weights_long[itr] * 50L / highest_cost);
+            weights_long[itr] = (w < 1L) ? 1L : w;
+        }
+        weights_long_total += weights_long[itr];
+    }
+
+    dbg_prn("[AI_RESEARCH] player[%d] candidates=%d highest_cost=%d research_income=%d\n", player_idx, candidate_count, highest_cost, research_income);
+    for (itr = 0; itr < candidate_count; itr++) {
+        dbg_prn("[AI_RESEARCH] player[%d]   [%d] spell=%3d cost=%4d adj_cost=%4d weight=%4ld category=%d %s\n", player_idx, itr, research_spells[itr], (research_spells[itr] == spl_Spell_Of_Mastery) ? _players[player_idx].som_research_cost : spell_data_table[research_spells[itr]].research_cost, candidate_costs[itr], weights_long[itr], spell_data_table[research_spells[itr]].AI_Group, possessed_categories[spell_data_table[research_spells[itr]].AI_Group] ? "(have)" : "");
+    }
+    dbg_prn("[AI_RESEARCH] player[%d] weights_total=%d\n", player_idx, weights_long_total);
+
+    /* Perform weighted random roll */
+    selection = Get_Weighted_Choice_Long(&weights_long[0], candidate_count);
+
+    _players[player_idx].researching_spell_idx = research_spells[selection];
+
+    dbg_prn("[AI_RESEARCH] player[%d] SELECTED [%d] spell=%d\n", player_idx, selection, _players[player_idx].researching_spell_idx);
+
+    return _players[player_idx].researching_spell_idx;
 }
 
 

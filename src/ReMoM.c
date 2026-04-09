@@ -1,4 +1,3 @@
-
 // I AM A CHANGE!!!
 
 // #ifndef _STU_SDL2
@@ -34,7 +33,7 @@
 #include "../MoX/src/capture.h"
 #include "../MoX/src/CFG.h"
 #include "../MoX/src/DOS.h"
-#include "../MoX/src/EMM.h"
+#include "../MoX/src/EMS/EMS.h"
 #include "../MoX/src/EXIT.h"
 #include "../MoX/src/Fields.h"
 #include "../MoX/src/Fonts.h"
@@ -428,11 +427,9 @@ int MOM_main(int argc, char** argv)
 
     // DOMSDOS  MS-DOS has some area for the program execution that lets you get away with the AVRL here?  ... why argv[1] instead of argv[2]?
     /* OG-MoM: `MAGIC.EXE JENNY` skipped the intro logos */
-    if(
-        !(argv[1][0] == 'J' && argv[1][1] == 'E' && argv[1][2] == 'N' && argv[1][3] == 'N' && argv[1][4] == 'Y')
-        &&
-        !(remom_continue_flag == ST_TRUE)
-    )
+    /* MS-DOS allowed checking argv[1] even if there wasn't an argument? ... if(!(argv[1][0] == 'J' && argv[1][1] == 'E' && argv[1][2] == 'N' && argv[1][3] == 'N' && argv[1][4] == 'Y') */
+    int skip_intro = (argc > 1 && strcmp(argv[1], "JENNY") == 0);
+    if (!skip_intro && !remom_continue_flag)
     {
         Draw_Logos();
     }

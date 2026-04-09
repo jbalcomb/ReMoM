@@ -30,7 +30,7 @@ BU_UnitLoadToBattle__SEGRAX()
 #include "CMBTTSTU.h"
 
 #include "../../MoX/src/Allocate.h"
-#include "../../MoX/src/EMM.h"
+#include "../../MoX/src/EMS/EMS.h"
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Graphics.h"
 #include "../../MoX/src/MOX_TYPE.h"

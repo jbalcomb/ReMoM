@@ -37,7 +37,7 @@ add_test(
     WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
 )
 set_tests_properties(HeMoM_WorldGen_Run PROPERTIES
-    TIMEOUT 120
+    TIMEOUT 10
     FIXTURES_SETUP HeMoM_WorldGen
     LABELS "hemom;integration;worldgen"
 )
@@ -119,7 +119,7 @@ add_test(
     WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
 )
 set_tests_properties(HeMoM_Continue_Setup PROPERTIES
-    TIMEOUT 120
+    TIMEOUT 10
     FIXTURES_SETUP HeMoM_Continue
     LABELS "hemom;integration;continue"
 )
@@ -133,7 +133,7 @@ add_test(
     WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
 )
 set_tests_properties(HeMoM_Continue_Run PROPERTIES
-    TIMEOUT 120
+    TIMEOUT 20
     FIXTURES_REQUIRED HeMoM_Continue
     FIXTURES_SETUP HeMoM_Continue_Saved
     LABELS "hemom;integration;continue"
@@ -148,4 +148,58 @@ add_test(
 set_tests_properties(HeMoM_Continue_Assertions PROPERTIES
     FIXTURES_REQUIRED HeMoM_Continue_Saved
     LABELS "hemom;integration;continue"
+)
+
+
+
+# =========================================================================
+#  Continue + Next Turn Test
+#
+#  Extends the Continue + Save test with one Next Turn advancement.  Creates
+#  its own game-save via --newgame (independent of HeMoM_Continue), runs a
+#  scenario that names the home city, patrols the starting stack, clicks
+#  Next Turn, waits for the AI to finish, then saves to slot 1 and quits.
+#
+#  Assertions cover the scenario-caused state changes plus the Next Turn
+#  effects (game.turn advancing, AI unit movement orders).  Load-time
+#  recomputation is deliberately not asserted.
+# =========================================================================
+
+add_test(
+    NAME HeMoM_NextTurn_Setup
+    COMMAND $<TARGET_FILE:HeMoM>
+        --newgame "${HEMOM_TEST_ASSETS}/test_worldgen.ini"
+        --scenario "${HEMOM_TEST_ASSETS}/test_worldgen_smoke.hms"
+    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+)
+set_tests_properties(HeMoM_NextTurn_Setup PROPERTIES
+    TIMEOUT 10
+    FIXTURES_SETUP HeMoM_NextTurn
+    LABELS "hemom;integration;nextturn"
+)
+
+add_test(
+    NAME HeMoM_NextTurn_Run
+    COMMAND $<TARGET_FILE:HeMoM>
+        --continue
+        --scenario "${HEMOM_TEST_ASSETS}/test_continue_next_turn.hms"
+        --dump-save SAVE1.GAM
+    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+)
+set_tests_properties(HeMoM_NextTurn_Run PROPERTIES
+    TIMEOUT 30
+    FIXTURES_REQUIRED HeMoM_NextTurn
+    FIXTURES_SETUP HeMoM_NextTurn_Saved
+    LABELS "hemom;integration;nextturn"
+)
+
+add_test(
+    NAME HeMoM_NextTurn_Assertions
+    COMMAND $<TARGET_FILE:check_save_fields>
+        ${HEMOM_TEST_WORKDIR}/SAVE1.txt
+        ${CMAKE_CURRENT_SOURCE_DIR}/assert_continue_next_turn.txt
+)
+set_tests_properties(HeMoM_NextTurn_Assertions PROPERTIES
+    FIXTURES_REQUIRED HeMoM_NextTurn_Saved
+    LABELS "hemom;integration;nextturn"
 )

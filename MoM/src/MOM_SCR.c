@@ -323,8 +323,24 @@ void Screen_Control(void)
             // scr_NextTurn = 110,
             case scr_NextTurn:
             {
-
+#ifdef STU_DEBUG
+                {
+                    uint64_t nt_start_ms = Platform_Get_Millies();
+                    fprintf(stderr, "[NEXTTURN] BEGIN Next_Turn_Proc() at %llu ms\n", (unsigned long long)nt_start_ms);
+                    dbg_prn("[NEXTTURN] BEGIN Next_Turn_Proc() at %llu ms\n", (unsigned long long)nt_start_ms);
+                    trc_prn("[NEXTTURN] BEGIN Next_Turn_Proc() at %llu ms\n", (unsigned long long)nt_start_ms);
+                    Next_Turn_Proc();
+                    {
+                        uint64_t nt_end_ms = Platform_Get_Millies();
+                        uint64_t nt_dur_ms = nt_end_ms - nt_start_ms;
+                        fprintf(stderr, "[NEXTTURN] END   Next_Turn_Proc() at %llu ms (duration=%llu ms)\n", (unsigned long long)nt_end_ms, (unsigned long long)nt_dur_ms);
+                        dbg_prn("[NEXTTURN] END   Next_Turn_Proc() at %llu ms (duration=%llu ms)\n", (unsigned long long)nt_end_ms, (unsigned long long)nt_dur_ms);
+                        trc_prn("[NEXTTURN] END   Next_Turn_Proc() at %llu ms (duration=%llu ms)\n", (unsigned long long)nt_end_ms, (unsigned long long)nt_dur_ms);
+                    }
+                }
+#else
                 Next_Turn_Proc();
+#endif
 
             } break;
             // /* ?default? */

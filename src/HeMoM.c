@@ -439,7 +439,7 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
 
     Init_New_Game();
     Initialize_Events();
-    NEWG_FinalizeTables__WIP();
+    Init_Runtime();
     Save_SAVE_GAM(8);
 
     /* Dump structured text representation of the save file for testing */

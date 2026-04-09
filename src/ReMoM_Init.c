@@ -8,7 +8,7 @@
 
 #include "../MoX/src/CFG.h"
 #include "../MoX/src/DOS.h"
-#include "../MoX/src/EMM.h"
+#include "../MoX/src/EMS/EMS.h"
 #include "../MoX/src/EXIT.h"
 #include "../MoX/src/Graphics.h"
 #include "../MoX/src/LBX_Load.h"

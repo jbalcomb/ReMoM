@@ -156,7 +156,7 @@ int16_t Player_Research_Spells(int16_t player_idx)
         else
         {
 
-            AI_Research_Picker__STUB(player_idx);
+            AI_Spell_Research_Select(player_idx);
 
         }
 

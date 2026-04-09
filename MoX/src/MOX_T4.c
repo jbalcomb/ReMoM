@@ -296,10 +296,16 @@ void Fade_In(void)
 
 
 // WZD s01p06
+// Loaded_Game_Update__seg001()
+
 // WZD s01p07
+// random.c  Get_Weighted_Choice()
 // WZD s01p08
+// random.c  Get_Weighted_Choice_Long()
 // WZD s01p09
+// random.c  Get_Weighted_Best_Choice()
 // WZD s01p10
+// random.c  Get_Weighted_Best_Choice_Long()
 
 
 // WZD s01p11

@@ -246,56 +246,6 @@ so, 300 PRs, + 1 for the SAMB header
     // MoO2  Module: MOX  data (0 bytes) _global_music_handle  Address: 02:0018B17C
     SND_Music_Segment = Allocate_Space(350);  // 350 PR, 5600 B
 
-
-// MGC mov     [Wiz5_Spell_00h@], (offset _players.Spells_Known+17E8h)
-// MGC mov     [Wiz5_Spell_0Ch@], (offset _players.Spells_Known+17F4h)
-// MGC mov     [Wiz5_Spell_18h@], (offset _players.Spells_Known+1800h)
-// MGC mov     [Wiz5_Spell_28h@], (offset _players.Spells_Known+1810h)
-// MGC mov     [Wiz5_Spell_3Ch@], (offset _players.Spells_Known+1824h)
-// MGC mov     [Wiz5_Spell_50h@], (offset _players.Spells_Known+1838h)
-// MGC mov     [Wiz5_Spell_64h@], (offset _players.Spells_Known+184Ch)
-// MGC mov     [Wiz5_Spell_78h@], (offset _players.Spells_Known+1860h)
-// MGC mov     [Wiz5_Spell_8Ch@], (offset _players.Spells_Known+1874h)
-// MGC mov     [Wiz5_Spell_A0h@], (offset _players.Spells_Known+1888h)
-// MGC mov     [Wiz5_Spell_B4h@], (offset _players.Spells_Known+189Ch)
-// MGC mov     [Wiz5_Spell_C8h@], (offset _players.Spells_Known+18B0h)
-// MGC mov     [Wiz5_Spell_D4h@], (offset _players.Spells_Known+18BCh)
-// MGC mov     [Wiz5_Spell_E0h@], (offset _players.Spells_Known+18C8h)
-
-// mov     [AI_Arc_MainWarConts@], (offset _players.spells_list+17E8h) ; 12 bytes, Arcanus array
-// mov     [AI_Myr_MainWarConts@], (offset _players.spells_list+17F4h) ; 12 bytes, Myrror array
-// mov     [_ai_reevaluate_continents_countdown@],    (offset _players.spells_list+1800h) ; 16 bytes
-// mov     [Wiz5_Spell_28h@],      (offset _players.spells_list+1810h) ; 20 bytes
-// mov     [Wiz5_Spell_3Ch@],      (offset _players.spells_list+1824h) ; 20 bytes
-// mov     [Wiz5_Spell_50h@],      (offset _players.spells_list+1838h) ; 20 bytes
-// mov     [Wiz5_Spell_64h@],      (offset _players.spells_list+184Ch) ; 20 bytes
-// mov     [AI_Arc_NewColConts@],  (offset _players.spells_list+1860h) ; 20 bytes
-// mov     [AI_Myr_NewColConts@],  (offset _players.spells_list+1874h) ; 20 bytes
-// mov     [AI_Arc_NewColTgtXs@],  (offset _players.spells_list+1888h) ; 20 bytes
-// mov     [AI_Myr_NewColTgtXs@],  (offset _players.spells_list+189Ch) ; 20 bytes
-// mov     [AI_Arc_NewColTgtYs@],  (offset _players.spells_list+18B0h) ; 12 bytes
-// mov     [AI_Myr_NewColTgtYs@],  (offset _players.spells_list+18BCh) ; 12 bytes
-// mov     [AI_SCircle_Reevals@],  (offset _players.spells_list+18C8h) ; 16 bytes
-
-    // WZD dseg:9ECA struct s_WIZARD _players[6]
-    // struc s_WIZARD ; (sizeof=0x4C8)  1224
-
-    // B916 - 9ECA = 1A4C  6732
-    // 6732 / 1224 = 5.5
-    // 5.0 * 1224 = 6120   ¿ ~== _players[5] ?
-    // 0.5 * 1224 = 612  0x264
-
-    // B9F6 - 9ECA = 1B2C  6956
-    // 6956 - 6120 = 836  0x344
-
-    // /* 0264 */ uint8_t  spells_list[NUM_SPELLS];
-    // 240 bytes
-
-    // 17E8  6120  6120 - 6120 =  0
-    // 17F4  6132  6132 - 6120 = 12
-
-    // AI_Arc_MainWarConts = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17E8) );  // 12 bytes
-    // AI_Myr_MainWarConts = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17F4) );  // 12 bytes
     AI_MainWarConts[0] = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17E8) );  // 12 bytes
     AI_MainWarConts[1] = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17F4) );  // 12 bytes
     _ai_reevaluate_continents_countdown   = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1800) );  // 16 bytes

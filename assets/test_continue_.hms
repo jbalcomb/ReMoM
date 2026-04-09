@@ -14,7 +14,7 @@
 #   - Coordinates are game-space (320x200).
 
 # === Home city naming popup (fires immediately on Continue, turn 0) ===
-wait 30
+wait 500ms
 backspace                 # clear the random pre-filled city name in one stroke
 key C
 key l
@@ -30,4 +30,4 @@ key l
 key e
 enter                     # confirm the name; popup closes
 
-wait 30
+wait 500ms

@@ -225,7 +225,7 @@
 - [x] WZD s14p14 UU_VGA_DrawDblRect
 
 ## INITGAME
-- [ ] AI_WIZ_StrategyReset__WIP
+- [x] Init_CP_Strategy
 - [ ] NEWG_FinalizeTables__WIP
 
 ## Input

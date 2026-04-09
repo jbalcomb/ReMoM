@@ -7,6 +7,8 @@
 
 */
 
+#include "../../STU/src/STU_DBG.h"
+
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/Fields.h"
@@ -213,6 +215,10 @@ void Chancellor_Screen__WIP(int16_t flag)
     int16_t arg_0 = 0;
     int16_t itr_msgs = 0;  // _SI_
     int16_t scroll_text_line_count = 0;  // _DI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Chancellor_Screen__WIP()\n", __FILE__, __LINE__);
+#endif
 
     scroll_text_line_count = 0;
 
@@ -572,6 +578,10 @@ void Chancellor_Screen__WIP(int16_t flag)
     Full_Draw_Main_Screen();
 
     Copy_On_To_Off_Page();
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Chancellor_Screen__WIP()\n", __FILE__, __LINE__);
+#endif
 
 }
 

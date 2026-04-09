@@ -23,7 +23,7 @@ extern "C" {
 void Init_Computer_Players(void);
 
 // MGC o56p2
-void NEWG_FinalizeTables__WIP(void);
+void Init_Runtime(void);
 
 // MGC o56p3
 void Init_Diplomatic_Relations(void);
@@ -38,7 +38,7 @@ void Init_Summoning_Circle_And_Spell_Of_Mastery(void);
 void Init_Magic_Personalities_Objectives(void);
 
 // MGC o56p7
-void AI_WIZ_StrategyReset__WIP(void);
+void Init_CP_Strategy(void);
 
 // MGC o56p8
 void Init_Players(void);
@@ -66,7 +66,7 @@ void Initialize_Messages(void);
 void Consolidate_Spell_Book_Realms(int16_t player_idx);
 
 // MGC o56p16
-int16_t Player_Nominal_Skill(int16_t player_idx);
+int16_t Player_Base_Casting_Skill__MGC(int16_t player_idx);
 
 // MGC o56p17
 // RNG_WeightedPick16()

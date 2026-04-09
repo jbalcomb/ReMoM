@@ -1,3 +1,11 @@
+/* COPILOT */
+/**
+ * @file NEXTTURN.c
+ * @brief Implements the main strategic next-turn update pipeline.
+ *
+ * Coordinates the end-of-turn processing for units, cities, players, spell
+ * casting, research, diplomacy, AI maintenance, healing, and autosave.
+ */
 /*
     Next Turn Procedure
 
@@ -11,6 +19,8 @@
 
 #include "../../STU/src/STU_DBG.h"
 
+#include "../../platform/include/Platform.h"  /* Platform_Get_Millies() */
+
 #include "../../MoX/src/LOADSAVE.h"
 #include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_DEF.h"
@@ -20,6 +30,7 @@
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/GENDRAW.h"
 #include "../../MoX/src/LBX_Load.h"
+#include "../../MoX/src/SOUND.h"
 #include "../../MoX/src/Util.h"       /* Clear_Structure(); Delete_Structure() */
 #include "../../MoX/src/random.h"
 
@@ -298,17 +309,27 @@ void Next_Turn_Proc(void)
     if(g_bldg_msg_ctr > 0)
     {
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Next_Turn_Proc(): if(g_bldg_msg_ctr > 0)\n", __FILE__, __LINE__);
+#endif
+
         o62p01_empty_function(_human_player_idx);
 
         for(itr_msg = 0; itr_msg < g_bldg_msg_ctr; itr_msg++)
         {
             if(MSG_Building_Complete[itr_msg].city_idx != ST_UNDEFINED)
             {
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Next_Turn_Proc(): if(MSG_Building_Complete[itr_msg].city_idx != ST_UNDEFINED)\n", __FILE__, __LINE__);
+#endif
                 _city_idx = MSG_Building_Complete[itr_msg].city_idx;
                 orig_map_plane = _map_plane;
                 _map_plane = _CITIES[_city_idx].wp;
                 if(MSG_Building_Complete[itr_msg].bldg_type_idx >= bt_NONE)
                 {
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Next_Turn_Proc(): if(MSG_Building_Complete[itr_msg].bldg_type_idx >= bt_NONE)\n", __FILE__, __LINE__);
+#endif
                     city_built_bldg_idx = MSG_Building_Complete[itr_msg].bldg_type_idx;
                     Center_Map(&_map_x, &_map_y, _CITIES[_city_idx].wx, _CITIES[_city_idx].wy, _map_plane);
                     City_Built_Building_Message(5, 101, _city_idx, city_built_bldg_idx);
@@ -321,6 +342,9 @@ void Next_Turn_Proc(void)
                     }
                     else
                     {
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Next_Turn_Proc(): (MSG_Building_Complete[itr_msg].bldg_type_idx < bt_NONE)\n", __FILE__, __LINE__);
+#endif
                         stu_strcpy(GUI_NearMsgString, "The ");
                         stu_strcat(GUI_NearMsgString, _city_size_names[_CITIES[_city_idx].size]);
                         stu_strcat(GUI_NearMsgString, " of ");
@@ -590,29 +614,47 @@ void Next_Turn_Calc(void)
 {
     int16_t itr_players = 0;  // _SI_
     int16_t DBG_itr_cities = 0;
+#ifdef STU_DEBUG
+    uint64_t ntc_start_ms = Platform_Get_Millies();
+#endif
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Next_Turn_Calc()\n", __FILE__, __LINE__);
+    fprintf(stderr, "[NEXTTURN] BEGIN Next_Turn_Calc() at %llu ms\n", (unsigned long long)ntc_start_ms);
+    dbg_prn("[NEXTTURN] BEGIN Next_Turn_Calc() at %llu ms\n", (unsigned long long)ntc_start_ms);
+    trc_prn("[NEXTTURN] BEGIN Next_Turn_Calc() at %llu ms\n", (unsigned long long)ntc_start_ms);
 #endif
+
+/* CLAUDE */ #ifdef STU_DEBUG
+/* CLAUDE */ #define PHASE(CALL) do { uint64_t _ps = Platform_Get_Millies(); CALL; { uint64_t _pe = Platform_Get_Millies(); fprintf(stderr, "[NEXTTURN] phase %-48s = %llu ms\n", #CALL, (unsigned long long)(_pe - _ps)); trc_prn("[NEXTTURN] phase %-48s = %llu ms\n", #CALL, (unsigned long long)(_pe - _ps)); } } while(0)
+/* CLAUDE */ #else
+/* CLAUDE */ #define PHASE(CALL) CALL
+/* CLAUDE */ #endif
 
 
     Set_Random_Seed(RNG_AI_Turn_Seed);
 
     Set_Mouse_List(1, mouse_list_hourglass);
 
-    All_City_Calculations();
+    // All_City_Calculations();
+/* CLAUDE */ PHASE(All_City_Calculations());
 
-    AI_Kill_Lame_Units();  // ¿ BUGBUG  leaves dead/deleteable units lying around ?
+    // AI_Kill_Lame_Units();  // ¿ BUGBUG  leaves dead/deleteable units lying around ?
+/* CLAUDE */ PHASE(AI_Kill_Lame_Units());
 
-    Delete_Dead_Units();  // DNE in Dasm
+    // Delete_Dead_Units();  // DNE in Dasm
+/* CLAUDE */ PHASE(Delete_Dead_Units());
 
-    AI_Next_Turn__WIP();
+    // AI_Next_Turn__WIP();
+/* CLAUDE */ PHASE(AI_Next_Turn__WIP());
 
-    Delete_Dead_Units();  // DNE in Dasm
+    // Delete_Dead_Units();  // DNE in Dasm
+/* CLAUDE */ PHASE(Delete_Dead_Units());
 
-    Next_Turn_Process_Purify();
+    // Next_Turn_Process_Purify();
+/* CLAUDE */ PHASE(Next_Turn_Process_Purify());
 
-    Initialize_Reports();
+    // Initialize_Reports();
+/* CLAUDE */ PHASE(Initialize_Reports());
 
     if(g_timestop_player_num != 0)
     {
@@ -641,17 +683,25 @@ void Next_Turn_Calc(void)
     else
     {
 
-        Decrease_Peace_Duration();
+        // Decrease_Peace_Duration();
+/* CLAUDE */ PHASE(Decrease_Peace_Duration());
 
-        Update_Players_Gold_Reserve();
+        // Update_Players_Gold_Reserve();
+/* CLAUDE */ fprintf(stderr, "[GOLD] BEFORE Update_Players_Gold_Reserve: gold_reserve=%d\n", _players[0].gold_reserve);
+/* CLAUDE */ PHASE(Update_Players_Gold_Reserve());
+/* CLAUDE */ fprintf(stderr, "[GOLD] AFTER  Update_Players_Gold_Reserve: gold_reserve=%d\n", _players[0].gold_reserve);
 
-        Players_Update_Magic_Power();
+        // Players_Update_Magic_Power();
+/* CLAUDE */ PHASE(Players_Update_Magic_Power());
 
-        Players_Apply_Magic_Power();
+        // Players_Apply_Magic_Power();
+/* CLAUDE */ PHASE(Players_Apply_Magic_Power());
 
-        Players_Check_Spell_Research();
+        // Players_Check_Spell_Research();
+/* CLAUDE */ PHASE(Players_Check_Spell_Research());
 
-        OVL_DisableIncmBlink();
+        // OVL_DisableIncmBlink();
+/* CLAUDE */ PHASE(OVL_DisableIncmBlink());
 
         if(
             (DBG_Alt_A_State == ST_FALSE)
@@ -660,21 +710,29 @@ void Next_Turn_Calc(void)
         )
         {
 
-            Determine_Event();
+            // Determine_Event();
+/* CLAUDE */ PHASE(Determine_Event());
 
         }
 
-        Event_Twiddle();
+        // Event_Twiddle();
+/* CLAUDE */ PHASE(Event_Twiddle());
 
-        Players_Apply_Upkeeps__WIP();
+/* CLAUDE */ fprintf(stderr, "[GOLD] BEFORE Players_Apply_Upkeeps: gold_reserve=%d\n", _players[0].gold_reserve);
+        // Players_Apply_Upkeeps__WIP();
+/* CLAUDE */ PHASE(Players_Apply_Upkeeps__WIP());
+/* CLAUDE */ fprintf(stderr, "[GOLD] AFTER  Players_Apply_Upkeeps: gold_reserve=%d\n", _players[0].gold_reserve);
 
         // DONT  EMM_Map_DataH()
 
-        All_Outpost_Population_Growth();
+        // All_Outpost_Population_Growth();
+/* CLAUDE */ PHASE(All_Outpost_Population_Growth());
 
-        Apply_City_Changes();
+        // Apply_City_Changes();
+/* CLAUDE */ PHASE(Apply_City_Changes());
 
-        Diplomacy_Growth_For_Enchantments__WIP();
+        // Diplomacy_Growth_For_Enchantments__WIP();
+/* CLAUDE */ PHASE(Diplomacy_Growth_For_Enchantments__WIP());
 
 
         /*
@@ -689,22 +747,26 @@ void Next_Turn_Calc(void)
         */
 
 
-        Determine_Offer();
+        // Determine_Offer();
+/* CLAUDE */ PHASE(Determine_Offer());
 
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
 
-        All_City_Nightshade_Count();
+        // All_City_Nightshade_Count();
+/* CLAUDE */ PHASE(All_City_Nightshade_Count());
 
 
         /*
             BEGIN:  NPC Diplomacy
         */
 
-        Diplomacy_Growth();
+        // Diplomacy_Growth();
+/* CLAUDE */ PHASE(Diplomacy_Growth());
 
-        Determine_First_Contacts();
+        // Determine_First_Contacts();
+/* CLAUDE */ PHASE(Determine_First_Contacts());
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
@@ -712,50 +774,64 @@ void Next_Turn_Calc(void)
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
-        NPC_To_Human_Diplomacy__WIP();
+        // NPC_To_Human_Diplomacy__WIP();
+/* CLAUDE */ PHASE(NPC_To_Human_Diplomacy__WIP());
 
-        Resolve_Delayed_Diplomacy_Orders();
+        // Resolve_Delayed_Diplomacy_Orders();
+/* CLAUDE */ PHASE(Resolve_Delayed_Diplomacy_Orders());
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
-        End_Of_Turn_Diplomacy_Adjustments();
+        // End_Of_Turn_Diplomacy_Adjustments();
+/* CLAUDE */ PHASE(End_Of_Turn_Diplomacy_Adjustments());
 
-        Modifier_Diplomacy_Adjustments();
+        // Modifier_Diplomacy_Adjustments();
+/* CLAUDE */ PHASE(Modifier_Diplomacy_Adjustments());
 
         /*
             END:  NPC Diplomacy
         */
 
 
-        Cool_Off_Volcanoes();
+        // Cool_Off_Volcanoes();
+/* CLAUDE */ PHASE(Cool_Off_Volcanoes());
 
     }
 
 
-    All_Players_Apply_Spell_Casting();
+    // All_Players_Apply_Spell_Casting();
+/* CLAUDE */ PHASE(All_Players_Apply_Spell_Casting());
 
 
-    Delete_Dead_Units();  // ¿ here, because we may have killed units with a spell, just above ?
+    // Delete_Dead_Units();  // ¿ here, because we may have killed units with a spell, just above ?
+/* CLAUDE */ PHASE(Delete_Dead_Units());
 
 
-    Set_Unit_Draw_Priority();
+    // Set_Unit_Draw_Priority();
+/* CLAUDE */ PHASE(Set_Unit_Draw_Priority());
 
-    Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-
-
-    All_City_Removed_Buildings();
-
-
-    Do_All_Units_XP_Check_();
+    // Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+/* CLAUDE */ PHASE(Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane));
 
 
-    Heal_All_Units();
+    // All_City_Removed_Buildings();
+/* CLAUDE */ PHASE(All_City_Removed_Buildings());
 
 
-    Record_History();
+    // Do_All_Units_XP_Check_();
+/* CLAUDE */ PHASE(Do_All_Units_XP_Check_());
 
 
-    Increment_Background_Music();
+    // Heal_All_Units();
+/* CLAUDE */ PHASE(Heal_All_Units());
+
+
+    // Record_History();
+/* CLAUDE */ PHASE(Record_History());
+
+
+    // Increment_Background_Music();
+/* CLAUDE */ PHASE(Increment_Background_Music());
 
 
     _turn++;
@@ -771,13 +847,16 @@ void Next_Turn_Calc(void)
     }
 
 
-    OVL_EnableIncmBlink();
-    
-
-    Do_Autosave();
+    // OVL_EnableIncmBlink();
+/* CLAUDE */ PHASE(OVL_EnableIncmBlink());
 
 
-    All_City_Calculations();
+    // Do_Autosave();
+/* CLAUDE */ PHASE(Do_Autosave());
+
+
+    // All_City_Calculations();
+/* CLAUDE */ PHASE(All_City_Calculations());
 
 
     RNG_AI_Turn_Seed = Get_Random_Seed();
@@ -787,7 +866,15 @@ void Next_Turn_Calc(void)
 
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Next_Turn_Calc()\n", __FILE__, __LINE__);
+    {
+        uint64_t ntc_end_ms = Platform_Get_Millies();
+        uint64_t ntc_dur_ms = ntc_end_ms - ntc_start_ms;
+        fprintf(stderr, "[GOLD] END Next_Turn_Calc: gold_reserve=%d\n", _players[0].gold_reserve);
+        fprintf(stderr, "[NEXTTURN] END   Next_Turn_Calc() at %llu ms (duration=%llu ms)\n", (unsigned long long)ntc_end_ms, (unsigned long long)ntc_dur_ms);
+        dbg_prn("[NEXTTURN] END   Next_Turn_Calc() at %llu ms (duration=%llu ms)\n", (unsigned long long)ntc_end_ms, (unsigned long long)ntc_dur_ms);
+        trc_prn("[NEXTTURN] END   Next_Turn_Calc() at %llu ms (duration=%llu ms)\n", (unsigned long long)ntc_end_ms, (unsigned long long)ntc_dur_ms);
+/* CLAUDE */ #undef PHASE
+    }
 #endif
 
 }
@@ -1029,22 +1116,9 @@ Done:
 
 
 // WZD o121p02
-// drake178: Calc_Nominal_Skill()
 // AKA Player_Nominal_Skill()
 // MGC ovr056 o56p16
-// int16_t Player_Base_Casting_Skill(int16_t player_idx)
-// {
-//     int16_t casting_skill;  // _CX_
-//     casting_skill = sqrt(_players[player_idx].spell_casting_skill);
-//     casting_skill += 1;  // STUBUG(JimBalcomb,20240113): getting 71 instead of 72; truncated? round up? imperfect square? isqrt()? CORDIC Algorithm - Successive Approximation?
-//     if(_players[player_idx].archmage > 0)
-//     {
-//         casting_skill += 10;
-//     }
-//     return casting_skill;
-// }
 /*
-
     Nope. ¿ estimate the square root of a number ?
     Nope. ¿ the Babylonian method AKA the Newton-Raphson method ?
     Nope. ¿ CORDIC Algorithm - Successive Approximation?
@@ -1052,37 +1126,48 @@ Done:
     https://en.wikipedia.org/wiki/Triangular_number
     https://en.wikipedia.org/wiki/File:Triangular_Numbers_Plot.svg
 */
-// int16_t Player_Base_Casting_Skill__ORIG(int16_t player_idx)
+/**
+ * @brief Converts stored casting-skill investment into nominal base skill.
+ *
+ * @details
+ * Reads `_players[player_idx].spell_casting_skill` as the invested skill-point
+ * total and walks upward through the triangular growth thresholds used by the
+ * game to derive the corresponding base casting skill. Each loop iteration
+ * adds the next even increment to an accumulator until the stored investment
+ * is no longer greater than the running threshold, then applies the Archmage
+ * bonus if present.
+ *
+ * This makes the function the inverse of the startup skill-growth loop used
+ * when initializing player casting skill from a target nominal value.
+ *
+ * @param player_idx Index into the global `_players[]` table.
+ *
+ * @return The player's nominal base casting skill, including the +10 Archmage
+ *         bonus when `_players[player_idx].archmage > 0`.
+ *
+ * @note The computation uses `_players[player_idx].spell_casting_skill` as a
+ *       cumulative investment total rather than a direct displayed skill value.
+ */
 int16_t Player_Base_Casting_Skill(int16_t player_idx)
 {
     int32_t num = 0;
-    int16_t casting_skill;  // _CX_
-    int16_t twos = 0;  // _SI_
-
+    int16_t casting_skill;
+    int16_t twos = 0;
     twos = 0;
-
     casting_skill = 0;
-
     num = 0;
-
     while(_players[player_idx].spell_casting_skill > num)
     {
         casting_skill++;
-
         twos += 2;      // { 2, 4,  6,  8, 10, 12, 14, 16, 18,  20 ... }
-
         num += twos;    // { 2, 6, 12, 20, 30, 42, 56, 72, 90, 110, ... }
         // count of twos   { 1, 3,  6, 10, 15, 21, 28, 36, 45,  55, ... }
-
     }
-
     if(_players[player_idx].archmage > 0)
     {
         casting_skill += 10;
     }
-
     return casting_skill;
-
 }
 
 
@@ -3560,8 +3645,8 @@ A: Players_Apply_Magic_Power()
 */
 void Players_Check_Spell_Research(void)
 {
-    int16_t itr_players = 0;  // _SI_
-    int16_t IDK = 0;  // _DI_
+    int16_t itr_players = 0;
+    int16_t IDK = 0;
 
     IDK = ST_FALSE;
 
@@ -3609,8 +3694,7 @@ void Players_Check_Spell_Research(void)
 
                 if(IDK == ST_TRUE)
                 {
-                    // DOMSDOS  Stop_All_Sounds__STUB();
-                    // DOMSDOS  Play_Background_Music__STUB();
+                    Stop_All_Sounds__STUB();
                     Play_Background_Music();
                 }
 
@@ -3618,7 +3702,7 @@ void Players_Check_Spell_Research(void)
             else
             {
 
-                AI_Research_Picker__STUB(itr_players);
+                AI_Spell_Research_Select(itr_players);
 
             }
 
@@ -3645,7 +3729,6 @@ void Players_Check_Spell_Research(void)
 // WZD o140p21
 // MoO2  Module: COLCALC  Player_Gets_Tech_App_()
 /*
-    WIP: needs GAME_LearnSpellAnim() and AI_Research_Picker()
 
 handles researched spell, traded/gifted spell, treasure spell, and conquest spell
 
@@ -3727,8 +3810,7 @@ void Player_Gets_Spell(int16_t player_idx, int16_t spell_idx, int16_t New_Resear
 
         if(Was_Research_Target == ST_FALSE)
         {
-            // DOMSDOS  Stop_All_Sounds__STUB();
-            // DOMSDOS  Play_Background_Music__STUB();
+            Stop_All_Sounds__STUB();
             Play_Background_Music();
         }
 
@@ -3740,7 +3822,7 @@ void Player_Gets_Spell(int16_t player_idx, int16_t spell_idx, int16_t New_Resear
     )
     {
 
-        AI_Research_Picker__STUB(player_idx);
+        AI_Spell_Research_Select(player_idx);
 
         if(_players[player_idx].researching_spell_idx == spl_Spell_Of_Mastery)
         {

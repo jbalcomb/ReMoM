@@ -890,19 +890,19 @@ static void Dbg_Trace_Field_Added(int16_t idx, const char * origin)
         if(*file == '/' || *file == '\\') { slash = file + 1; }
         file += 1;
     }
-    trc_prn("FIELDADD,%s,%d,%s,%s:%d,type=%d,x1=%d,y1=%d,x2=%d,y2=%d,hotkey=%d,help=%d\n", g_dbg_fields_screen_tag, (int)idx, origin, slash, (int)g_dbg_fields_call_line, (int)p_fields[idx].type, (int)p_fields[idx].x1, (int)p_fields[idx].y1, (int)p_fields[idx].x2, (int)p_fields[idx].y2, (int)p_fields[idx].hotkey, (int)p_fields[idx].help);
+    // trc_prn("FIELDADD,%s,%d,%s,%s:%d,type=%d,x1=%d,y1=%d,x2=%d,y2=%d,hotkey=%d,help=%d\n", g_dbg_fields_screen_tag, (int)idx, origin, slash, (int)g_dbg_fields_call_line, (int)p_fields[idx].type, (int)p_fields[idx].x1, (int)p_fields[idx].y1, (int)p_fields[idx].x2, (int)p_fields[idx].y2, (int)p_fields[idx].hotkey, (int)p_fields[idx].help);
 }
 
 void Dump_Fields_CSV(const char * screen_tag)
 {
     int16_t itr;
-    trc_prn("FIELDSNAPSHOT_BEGIN,%s,count=%d\n", screen_tag, (int)fields_count);
-    trc_prn("FIELDSNAPSHOT_HDR,screen,idx,type,x1,y1,x2,y2,hotkey,help,param1,param2\n");
+    // trc_prn("FIELDSNAPSHOT_BEGIN,%s,count=%d\n", screen_tag, (int)fields_count);
+    // trc_prn("FIELDSNAPSHOT_HDR,screen,idx,type,x1,y1,x2,y2,hotkey,help,param1,param2\n");
     for(itr = 0; itr < fields_count; itr++)
     {
-        trc_prn("FIELDSNAPSHOT,%s,%d,%d,%d,%d,%d,%d,%d,%d,%lld,%lld\n", screen_tag, (int)itr, (int)p_fields[itr].type, (int)p_fields[itr].x1, (int)p_fields[itr].y1, (int)p_fields[itr].x2, (int)p_fields[itr].y2, (int)p_fields[itr].hotkey, (int)p_fields[itr].help, (long long)p_fields[itr].Param1, (long long)p_fields[itr].Param2);
+        // trc_prn("FIELDSNAPSHOT,%s,%d,%d,%d,%d,%d,%d,%d,%d,%lld,%lld\n", screen_tag, (int)itr, (int)p_fields[itr].type, (int)p_fields[itr].x1, (int)p_fields[itr].y1, (int)p_fields[itr].x2, (int)p_fields[itr].y2, (int)p_fields[itr].hotkey, (int)p_fields[itr].help, (long long)p_fields[itr].Param1, (long long)p_fields[itr].Param2);
     }
-    trc_prn("FIELDSNAPSHOT_END,%s\n", screen_tag);
+    // trc_prn("FIELDSNAPSHOT_END,%s\n", screen_tag);
 }
 #endif
 /*

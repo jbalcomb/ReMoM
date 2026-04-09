@@ -1438,12 +1438,22 @@ return field_num;
 */
 #pragma warning(suppress : 4102)  // TODO  unreferenced label
 Return_Type_F00:
+#ifdef STU_DEBUG
+    fprintf(stderr, "[IKI] Return_Type_F00: field_num=%d character=%d(0x%02X '%c')\n", field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+    dbg_prn("[IKI] Return_Type_F00: field_num=%d character=%d(0x%02X '%c')\n", field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+    trc_prn("[IKI] Return_Type_F00: field_num=%d character=%d(0x%02X '%c')\n", field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+#endif
     return field_num;
 
 /*
 down_mouse_button = ST_UNDEFINED; return field_num;
 */
 Return_Type_F10:
+#ifdef STU_DEBUG
+    fprintf(stderr, "[IKI] Return_Type_F10: field_num=%d character=%d(0x%02X '%c')\n", field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+    dbg_prn("[IKI] Return_Type_F10: field_num=%d character=%d(0x%02X '%c')\n", field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+    trc_prn("[IKI] Return_Type_F10: field_num=%d character=%d(0x%02X '%c')\n", field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+#endif
     down_mouse_button = ST_UNDEFINED;
     return field_num;
 
@@ -1451,6 +1461,11 @@ Return_Type_F10:
 Mouse_Button_Handler(); return field_num;
 */
 Return_Type_F01:
+#ifdef STU_DEBUG
+    fprintf(stderr, "[IKI] Return_Type_F01: field_num=%d character=%d(0x%02X '%c')\n", field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+    dbg_prn("[IKI] Return_Type_F01: field_num=%d character=%d(0x%02X '%c')\n", field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+    trc_prn("[IKI] Return_Type_F01: field_num=%d character=%d(0x%02X '%c')\n", field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+#endif
     Mouse_Button_Handler();
     return field_num;
 
@@ -1459,6 +1474,11 @@ down_mouse_button = ST_UNDEFINED; Mouse_Button_Handler(); return field_num;
 */
 #pragma warning(suppress : 4102)  // TODO  unreferenced label
 Return_Type_F11:
+#ifdef STU_DEBUG
+    fprintf(stderr, "[IKI] Return_Type_F11: field_num=%d character=%d(0x%02X '%c')\n", field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+    dbg_prn("[IKI] Return_Type_F11: field_num=%d character=%d(0x%02X '%c')\n", field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+    trc_prn("[IKI] Return_Type_F11: field_num=%d character=%d(0x%02X '%c')\n", field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+#endif
     down_mouse_button = ST_UNDEFINED;
     Mouse_Button_Handler();
     return field_num;
@@ -1467,6 +1487,11 @@ Return_Type_F11:
 Mouse_Button_Handler(); down_mouse_button == ST_UNDEFINED; return alt_field_num;
 */
 Return_Type_4:
+#ifdef STU_DEBUG
+    fprintf(stderr, "[IKI] Return_Type_4: alt_field_num=%d character=%d(0x%02X '%c')\n", alt_field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+    dbg_prn("[IKI] Return_Type_4: alt_field_num=%d character=%d(0x%02X '%c')\n", alt_field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+    trc_prn("[IKI] Return_Type_4: alt_field_num=%d character=%d(0x%02X '%c')\n", alt_field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+#endif
     Mouse_Button_Handler();
     down_mouse_button = ST_UNDEFINED;
     return alt_field_num;
@@ -1475,6 +1500,11 @@ Return_Type_4:
 down_mouse_button == ST_UNDEFINED; return alt_field_num;
 */
 Return_Type_5:
+#ifdef STU_DEBUG
+    fprintf(stderr, "[IKI] Return_Type_5: alt_field_num=%d character=%d(0x%02X '%c')\n", alt_field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+    dbg_prn("[IKI] Return_Type_5: alt_field_num=%d character=%d(0x%02X '%c')\n", alt_field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+    trc_prn("[IKI] Return_Type_5: alt_field_num=%d character=%d(0x%02X '%c')\n", alt_field_num, character, (unsigned)(uint8_t)character, (character >= 32 && character < 127) ? (char)character : '.');
+#endif
     down_mouse_button = ST_UNDEFINED;
     return alt_field_num;
 

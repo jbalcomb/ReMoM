@@ -1,0 +1,52 @@
+
+# test_continue_next_turn.hms
+#
+# Extends test_continue_save.hms with one full Next Turn advancement.
+# Drives the same setup (continue load, name home city, patrol stack),
+# clicks Next Turn, waits for the AI turns to complete, then delegates to
+# the shared save-and-quit tail.
+#
+# Usage:
+#   ReMoMber --continue --scenario test_continue_next_turn.hms
+#   HeMoM    --continue --scenario test_continue_next_turn.hms --dump-save SAVE1.GAM
+#
+# Expected state changes beyond test_continue_save.hms:
+#   - game.turn advances from 0 to 1
+#   - AI opponents are given movement orders (unit[1..4].status = us_GOTO = 3)
+
+# === Home city naming popup ===
+wait 500ms                # let the popup finish loading
+backspace                 # clear the random pre-filled city name
+type Claudesville
+enter                     # confirm the name; popup closes
+
+wait 500ms                # let the popup close and the Main Screen settle
+
+# === Main Screen: patrol the active unit stack ===
+# Patrolling sets both stack units to us_Patrol + finished=1, which satisfies
+# the all_units_moved precondition for the Next Turn hotkey/button.
+click 290 180             # Patrol button (rect ~280,176 - 313,186)
+wait 300ms                # let the patrol action take effect
+
+# === Next Turn ===
+# After patrol, all human units are "finished" so the Next Turn button field
+# is active and the 'N' hotkey is bound.
+key N
+# Next_Turn_Calc enters the Spell Research Select picker mid-turn (the starting
+# research target completes on turn 1 from the deterministic newgame save).
+# The picker is modal and blocks Next_Turn_Calc until a spell is chosen — no
+# amount of waiting will dismiss it, so the scenario must click a slot.
+#
+# Spell_GUI_Controls[0] (top-left slot) field rect, from Spellbook.c:3602-3606:
+#   Left_X = 25 + (0 / 4) * 147 = 25
+#   Top_Y  = 25 + (0 % 4) * 37  = 25
+#   rect   = (25, 25) - (135, 58)
+# Click center-ish of that rect.
+wait 500ms                # let the picker finish drawing
+click 54 38               # top-left research spell slot
+wait 500ms                # let the picker close and Next_Turn_Calc resume
+# AI turns + remaining end-of-turn processing.
+wait 1s
+
+# === Save the game and quit (shared tail) ===
+include scenario_tail_save_and_quit.hms

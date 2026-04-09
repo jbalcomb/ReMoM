@@ -1,0 +1,32 @@
+
+# test_continue_pre_next_turn.hms
+#
+# Scripts the deterministic portion of the Continue-and-Save flow (name the
+# home city, patrol the starting stack), then hands control back to the human
+# player via `end` so the rest of the session can be played manually and
+# captured with `--record`.
+#
+# Usage:
+#   ReMoMber --continue --scenario test_continue_pre_next_turn.hms --record next_turn.RMR
+#
+# The scenario stops after the Patrol click.  The game is still running and
+# sitting on the Main Screen with all starting units patrolled — ready for a
+# Next Turn click and whatever else you want to capture manually.
+#
+# To exit, play out whatever you want then quit normally from within the game;
+# the .RMR file will be finalized when Screen_Control returns.
+
+# === Home city naming popup ===
+wait 500ms                # let the popup finish loading
+backspace                 # clear the random pre-filled city name
+type Claudesville
+enter                     # confirm the name; popup closes
+
+wait 500ms                # let the popup close and the Main Screen settle
+
+# === Main Screen: patrol the active unit stack ===
+click 290 180             # Patrol button (rect ~280,176 - 313,186)
+wait 300ms                # let the patrol action take effect
+
+# Scenario ends here without quitting — control hands back to the human.
+end

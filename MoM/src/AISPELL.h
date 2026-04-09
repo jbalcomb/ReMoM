@@ -16,6 +16,90 @@ Module: AITECH
 
 
 
+enum e_AI_SPELL_GROUP
+{
+    SGRP_Scouting  = 0,
+    SGRP_Dispel  = 1,
+    SGRP_ResistBuff_1  = 4,
+    SGRP_CombatHarm_1  = 5,
+    SGRP_MoveBuff_1  = 6,
+    SGRP_AttackBuff_1  = 7,
+    SGRP_WallsRituals  = 8,
+    SGRP_DefenseBuff_1  = 10,
+    SGRP_Disrupt  = 12,
+    SGRP_OVL_CommonSummon  = 13,
+    SGRP_Corruption  = 14,
+    SGRP_JustCause  = 15,
+    SGRP_CombatSummon_1  = 16,
+    SGRP_CE_1  = 17,
+    SGRP_Heals  = 18,
+    SGRP_SpellLock  = 19,
+    SGRP_DispelTrue  = 20,
+    SGRP_Disenchant  = 21,
+    SGRP_Disjunction  = 22,
+    SGRP_CombatCurse  = 24,
+    SGRP_MoveBuff_2  = 25,
+    SGRP_AttackBuff_2  = 26,
+    SGRP_OVL_Damage  = 28,
+    SGRP_ImmolInvuln  = 29,
+    SGRP_EnchantItem  = 30,
+    SGRP_CombatMisc  = 31,
+    SGRP_UC_Summon  = 32,
+    SGRP_Famine  = 33,
+    SGRP_SorceryGE  = 34,
+    SGRP_CombatSummon_2  = 35,
+    SGRP_CE_2  = 36,
+    SGRP_TerrainMod  = 37,
+    SGRP_HarmWizard  = 38,
+    SGRP_Stasis  = 39,
+    SGRP_CC_WW  = 40,
+    SGRP_WarpNode  = 41,
+    SGRP_WordofRecall  = 42,
+    SGRP_DisjTrue  = 45,
+    SGRP_ElemArmor  = 46,
+    SGRP_CombatHarm_2  = 47,
+    SGRP_MoveBuff_3  = 48,
+    SGRP_CityBuff_1  = 51,
+    SGRP_Earthquake  = 52,
+    SGRP_DefenseBuff_2  = 53,
+    SGRP_Artifact  = 54,
+    SGRP_Haste  = 55,
+    SGRP_RareSummon  = 56,
+    SGRP_RaiseVolcano  = 57,
+    SGRP_GreatWasting  = 58,
+    SGRP_CombatSummon_3  = 59,
+    SGRP_CE_3  = 60,
+    SGRP_Rez  = 61,
+    SGRP_PlanarSeal  = 62,
+    SGRP_LifeForce  = 63,
+    SGRP_Tranquility  = 64,
+    SGRP_EvilOmens  = 65,
+    SGRP_CityBuff_2  = 66,
+    SGRP_MagicImm  = 69,
+    SGRP_CombatHarm_3  = 70,
+    SGRP_Gates  = 71,
+    SGRP_CityBuff_3  = 73,
+    SGRP_RegenMassInvis  = 75,
+    SGRP_AnimateDead  = 77,
+    SGRP_VRSummon  = 78,
+    SGRP_DestroyCity  = 79,
+    SGRP_GE  = 80,
+
+    SGRP_IDK  = 81,  /* ¿ SGRP_CombatSummon_4 ? something combat for militarist objective */
+    
+    SGRP_CE_4  = 82,
+    SGRP_Unsummon  = 83,
+    SGRP_TimeStop  = 84,
+    SGRP_Suppress  = 85,
+    SGRP_DeathWish  = 86,
+    SGRP_SummonHero  = 87,
+    SGRP_SummonChamp  = 88,
+    SGRP_SummonCircle  = 89,
+    SGRP_SoM  = 90
+};
+
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -27,7 +111,7 @@ extern "C" {
 */
 
 // WZD o156p01
-void AI_Research_Picker__STUB(int16_t player_idx);
+int16_t AI_Spell_Research_Select(int16_t player_idx);
 
 // WZD o156p02
 void AI_Spell_Select__STUB(int16_t player_idx);

@@ -1602,6 +1602,10 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
     int16_t bitm_y;  // _DI_
     uint32_t sound_seg_size = 0;  // DNE in Dasm
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Built_Building_Message()\n", __FILE__, __LINE__);
+#endif
+
     // DOMSDOS  Stop_All_Sounds__STUB();
 
     Allocate_Reduced_Map();
@@ -1686,6 +1690,11 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
     Cityscape_Build_Anim_Reset();
 
     cityscreen_city_built_bldg_idx = bldg_idx;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: City_Built_Building_Message()\n", __FILE__, __LINE__);
+#endif
+
 }
 
 

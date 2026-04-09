@@ -1,0 +1,72 @@
+
+# scenario_tail_save_and_quit.hms
+#
+# Reusable tail for .hms scenarios.  Included from the Main Screen, this:
+#   - Opens the Game menu (G hotkey)
+#   - Clicks save slot 1 to activate its name input
+#   - Clears any existing slot name (20 backspaces — harmless if already empty)
+#   - Types the value of $SAVE_NAME (built-in: `AHP-YYYYMMDDHHMM`)
+#   - Clicks the Save button to commit SAVE1.GAM
+#   - Returns to Main Menu via the Quit button on the Save/Load screen
+#   - Hits Q on the Main Menu to reach scr_Quit_To_DOS
+#   - Ends the synthetic player
+#
+# Requires: caller must be on the Main Screen with all units finished
+#           (otherwise the Next Turn field intercepts G / input handling
+#            may differ).
+#
+# Include via:  include scenario_tail_save_and_quit.hms
+
+# === Open the Game / Save / Load screen ===
+key G                     # Game button hotkey on the Main Screen
+wait 1s                   # let the Save/Load screen finish loading
+
+# === Save / Load Screen: select slot 1, type name, click Save ===
+click 80 54               # save slot 0 (UI "slot 1") at x=43,y=47 + ~15 high
+wait 300ms
+
+# Clear up to 19 characters from the slot's current name.
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+
+# Type the run-specific save name.  $SAVE_NAME expands at parse time to
+# something like "AHP-202604081435".
+type $SAVE_NAME
+
+wait 300ms
+click 140 177             # Save button at (122,171)-(159,184)
+
+wait 1s                   # let the save complete and return to the Main Screen
+
+# === Back on Main Screen: open Game menu again ===
+key G
+wait 1s                   # let the Save/Load screen finish loading
+
+# === Save / Load Screen: click Quit (returns to Main Menu Screen) ===
+click 62 177              # Quit button at (43,171)-(82,184)
+
+wait 1s                   # let the Main Menu Screen finish loading
+
+# === Main Menu Screen: hit Q to Quit To DOS ===
+key Q
+
+# Stop the synthetic player — the game exits via scr_Quit_To_DOS.
+end

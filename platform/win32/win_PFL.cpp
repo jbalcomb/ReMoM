@@ -18,6 +18,8 @@
 
 #include "../../platform/include/Platform.h"
 #include "../../platform/include/Platform_Keys.h"
+/* CLAUDE: needed for Platform_Record_Active() / Replay_Capture_Frame() used in Platform_Event_Handler. */
+#include "../../platform/include/Platform_Replay.h"
 #include "win_PFL.h"
 
 
@@ -231,6 +233,12 @@ void Platform_Event_Handler(void)
     if (platform_frame_callback != NULL)
     {
         platform_frame_callback();
+    }
+
+    /* CLAUDE: Record — capture input state after processing OS events.  Matches sdl2/sdl3/headless backends.  Without this, --record produces an empty RMR on win32. */
+    if (Platform_Record_Active())
+    {
+        Replay_Capture_Frame();
     }
 }
 

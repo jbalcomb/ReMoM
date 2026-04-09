@@ -646,42 +646,42 @@
         {
           "name": "SingleItem_NoSeparator",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_STR_ListSeparator.cpp",
-          "line": 31
+          "line": 36
         },
         {
           "name": "TwoItems_AndSeparator",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_STR_ListSeparator.cpp",
-          "line": 47
+          "line": 52
         },
         {
           "name": "ThreeItems_CommaAndAnd",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_STR_ListSeparator.cpp",
-          "line": 70
+          "line": 75
         },
         {
           "name": "FourItems_MultipleCommasThenAnd",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_STR_ListSeparator.cpp",
-          "line": 96
+          "line": 101
         },
         {
           "name": "ListSizeIncrementsCorrectly",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_STR_ListSeparator.cpp",
-          "line": 120
+          "line": 125
         },
         {
           "name": "FirstItem_DestUnchanged",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_STR_ListSeparator.cpp",
-          "line": 136
+          "line": 141
         },
         {
           "name": "MiddleItem_CommaAppended",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_STR_ListSeparator.cpp",
-          "line": 152
+          "line": 157
         },
         {
           "name": "LastItem_AndAppended",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_STR_ListSeparator.cpp",
-          "line": 170
+          "line": 175
         }
       ]
     },

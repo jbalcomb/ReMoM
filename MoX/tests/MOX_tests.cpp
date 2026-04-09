@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include "../../ext/stu_compat.h"
+
 // Where'd this go?  #include "Util.h"
 
 #include "../src/Util.h"
