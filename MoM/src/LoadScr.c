@@ -45,6 +45,7 @@ MoO2  Module: LOADSAVE
 #include "Settings.h"
 #include "Spellbook.h"
 #include "Spells128.h"
+#include "UnitMove.h"
 #include "UNITSTK.h"
 #include "WZD_o143.h"
 
@@ -769,16 +770,17 @@ void Loaded_Game_Update(void)
     /*
         BEGIN:  AI CONT / MOVE
     */
+    // OGBUG: only clears 100 out of the 140 elements
     for(itr = 0; itr < 100; itr++)
     {
-        TBL_OvlMovePaths_EMS[itr] = 0xFF;  // DEDU - IF / ST_UNDEFINED?
+        _ai_move_path_table[itr]->src_wx = -1;  // DEDU - INF / ST_UNDEFINED?
     }
-    CRP_UNIT_OverlandPath = ST_UNDEFINED;
+    _ai_move_path_idx = ST_UNDEFINED;
     CONTX_CreateChains__WIP();
     CONTX_CreateLChains__WIP();
     for(itr = 0; itr < _num_players; itr++)
     {
-        _ai_reevaluate_continents_countdown[itr] = ST_FALSE;
+        _ai_reevaluate_continents_countdown[itr] = 0;
     }
     /*
         END:  AI CONT / MOVE

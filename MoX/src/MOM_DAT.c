@@ -7,6 +7,7 @@
 
 #include "../../MoM/src/MovePath.h"  /* struct s_MOVE_MODE_COST_MAPS */
 
+#include "../../MoM/src/UnitMove.h"  /* struct s_AI_MOVE_PATH */
 
 
 /*
@@ -755,18 +756,6 @@ int16_t tax_unrest_pct_table[7] = {0, 10, 20, 30, 45, 60, 75};
 
 
 
-// WZD dseg:6F76                                                 BEGIN:  ovr148 - Initialized Data
-
-// WZD dseg:6F76
-// ; an index into OvlMovePaths_EMS@
-int16_t CRP_UNIT_OverlandPath = ST_UNDEFINED;
-
-// WZD dseg:6F76                                                 END:  ovr148 - Initialized Data
-
-
-
-
-
 // WZD dseg:6FFE
 // AKA Map_LastDraw_X
 int16_t prev_map_x = ST_UNDEFINED;
@@ -875,14 +864,14 @@ struct s_AI_CONTINENTS _ai_continents;
 
 
 /*
-; 80 + rnd(40) is stored here for each AI wizard (word
-; array pointer, human excluded) when setting initial
-; gold during game creation in MAGIC.EXE
-; decreased during the AI's turn, likely some relation
-; or interest value
+; 80 + rnd(40) is stored here for each AI wizard (word array pointer, human excluded) when setting initial gold during game creation in MAGIC.EXE
+; decreased during the AI's turn, likely some relation or interest value
 */
 // WZD dseg:8F98 
-// uint8_t * AI_SCircle_Reevals;
+/*
+2-byte, signed
+decremented in AI_Next_Turn()
+*/
 int16_t * AI_SCircle_Reevals;
 
 // WZD dseg:8F9A
@@ -2379,8 +2368,7 @@ int8_t MSG_GEs_Lost;
 
 
 // WZD dseg:9C90
-// drake178: TBL_OvlMovePathsEMS@
-SAMB_ptr TBL_OvlMovePaths_EMS;
+struct s_AI_MOVE_PATH ** _ai_move_path_table;
 
 // WZD dseg:9C94
 /*

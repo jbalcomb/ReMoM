@@ -85,114 +85,78 @@ Game-Data:
 
 
 // WZD o100p01
-// drake178: AI_MoveUnits()
-/*
-attempts to execute the current orders for all owned
-units
-
-unclear, BUGgy, RE-EXPLORE!
-*/
-/*
-
-*/
-void AI_MoveUnits__WIP(int16_t player_idx)
+/* MoO2  Module: AIMOVE  Move_AI_() */
+void AI_MoveUnits(int16_t player_idx)
 {
-    int16_t OVL_Prev_Plane = 0;
-    int16_t OVL_Prev_Top_Y = 0;
-    int16_t OVL_Prev_Left_X = 0;
-    int16_t itr_units = 0;  // _SI_
+    int16_t l_map_plane = 0;
+    int16_t l_map_y = 0;
+    int16_t l_map_x = 0;
+    int16_t unit_idx = 0;
 
+    /* Store current map state to restore later */
+    l_map_x = _map_x;
+    l_map_y = _map_y;
+    l_map_plane = _map_plane;
 
-    OVL_Prev_Left_X = _map_x;
-
-    OVL_Prev_Top_Y = _map_y;
-
-    OVL_Prev_Plane = _map_plane;
-
-
-    if(
-        (g_timestop_player_num > 0)
-        &&
-        ((player_idx + 1) != g_timestop_player_num)
-    )
+    /* Time Stop Logic Check */
+    if (g_timestop_player_num > 0)
     {
-
-        return;
-
+        /* If Time Stop is active, only the casting player can move units */
+        if ((player_idx + 1) != g_timestop_player_num)
+        {
+            return;
+        }
     }
 
-
-    for(itr_units = 0; itr_units <_units; itr_units++)
+    /* Iterate through all units in the game world */
+    for (unit_idx = 0; unit_idx < _units; unit_idx++)
     {
-
-        if(_UNITS[itr_units].owner_idx == player_idx)
+        /* Check if unit belongs to the player currently processing AI moves */
+        if (_UNITS[unit_idx].owner_idx == (int8_t)player_idx)
         {
-
-            switch(_UNITS[itr_units].Status)
+            /* Process unit orders based on its current Status */
+            /* Status values 2-16 are evaluated via jump table (jt_ai_unit_status) */
+                        switch(_UNITS[unit_idx].Status)
             {
-
                 case us_BuildRoad:
                 {
-
-                    AI_UNIT_BuildRoad__WIP(itr_units);
-
-                    AI_UNIT_Move__WIP(itr_units);
-
+                    AI_UNIT_BuildRoad__WIP(unit_idx);
+                    AI_UNIT_Move(unit_idx);
                 } break;
-
                 case us_GOTO:
                 {
-
-                    AI_UNIT_Move__WIP(itr_units);
-
+                    AI_UNIT_Move(unit_idx);
                 } break;
-
                 case us_Meld:
                 {
-
-                    AI_UNIT_Meld__WIP(itr_units);
-
+                    AI_UNIT_Meld__WIP(unit_idx);
                 } break;
-
                 case us_Settle:
                 {
-
-                    AI_UNIT_Settle__WIP(itr_units);
-
+                    AI_UNIT_Settle__WIP(unit_idx);
                 } break;
-
                 case us_SeekTransport:
                 {
-
-                    AI_UNIT_SeekTransprt__WIP(itr_units);
-
+                    AI_UNIT_SeekTransprt__WIP(unit_idx);
                 } break;
-
                 case us_Move:
                 {
-
-                    AI_UNIT_Move__WIP(itr_units);
-
+                    AI_UNIT_Move(unit_idx);
                 } break;
-
+                default:
+                    /* Cases 4-8, 12-15 are skipped */
+                    break;
             }
-
         }
-
     }
 
-
-    _map_x = OVL_Prev_Left_X;
-
-    _map_y = OVL_Prev_Top_Y;
-
+    /* Restore map view coordinates and plane to state before AI movement */
+    _map_x = l_map_x;
+    _map_y = l_map_y;
     _prev_world_x = _map_x;
-
     _prev_world_y = _map_y;
-
-    _map_plane = OVL_Prev_Plane;
-
-
+    _map_plane = l_map_plane;
+    
 }
 
 
@@ -306,66 +270,60 @@ int16_t STK_SettleTile(int16_t troop_count, int16_t troops[])
 
 
 // WZD o100p06
-// drake178: AI_UNIT_Move()
 /*
-; selects and moves the stack that the specified unit
-; is part of based on destination and road building
-; progress
-; returns 1 if the unit has moved, or 0 if not
-; (including if it is already marked as finished)
-;
-; contains multiple inherited BUGs
+only other call to Stack_Move_To() is in WIZ_NextIdleStack()
+which wraps Move_Units()
+whose return value is {F,T} - did_move_stack
 */
-/*
-
-*/
-void AI_UNIT_Move__WIP(int16_t unit_idx)
+int16_t AI_UNIT_Move(int16_t unit_idx)
 {
-    int16_t UU_Result = 0;
-    int16_t Unit_Y = 0;
-    int16_t Unit_X = 0;
-    int16_t Unit_Owner = 0;
-    int16_t Plane = 0;
-    int16_t Dummy_OVL_Map_TopY = 0;
-    int16_t Dummy_OVL_Map_LeftX = 0;
-    int16_t Target_Y = 0;
-    int16_t Target_X = 0;
+    int16_t did_move_stack = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t unit_owner_idx = 0;
+    int16_t unit_wp = 0;
+    int16_t l_map_y = 0;
+    int16_t l_map_x = 0;
+    int16_t unit_dst_wy = 0;
+    int16_t unit_dst_wx = 0;
 
-
-    if(_UNITS[unit_idx].Finished != ST_TRUE)
+    /* Check if unit is already finished */
+    if(_UNITS[unit_idx].Finished == ST_TRUE)
     {
-
-        return;
-
+        return ST_FALSE;
     }
 
-
     Allocate_Reduced_Map();
-
     MainScr_Create_Reduced_Map_Picture();
 
-    Target_X = _UNITS[unit_idx].dst_wx;
-    
-    Target_Y = _UNITS[unit_idx].dst_wy;
-    
-    Plane = _UNITS[unit_idx].wp;
+    /* Extract unit data to local variables */
+    /* Note: cbw in assembly indicates sign-extension from byte fields */
+    unit_dst_wx = (int16_t)_UNITS[unit_idx].dst_wx;
+    unit_dst_wy = (int16_t)_UNITS[unit_idx].dst_wy;
+    unit_wp = (int16_t)_UNITS[unit_idx].wp;
+    unit_owner_idx = (int16_t)_UNITS[unit_idx].owner_idx;
+    unit_wx = (int16_t)_UNITS[unit_idx].wx;
+    unit_wy = (int16_t)_UNITS[unit_idx].wy;
 
-    Unit_Owner = _UNITS[unit_idx].owner_idx;
+    /* Logic involves temporary map coordinate storage */
+    /* Assembly shows redundant assignment back to globals before passing pointers */
+    l_map_x = _map_x;
+    l_map_y = _map_y;
+    _map_x = l_map_x;
+    _map_y = l_map_y;
 
-    Unit_X = _UNITS[unit_idx].wx;
+    /* Attempt to move the stack */
+    did_move_stack = Stack_Move_To(
+        unit_owner_idx, 
+        unit_idx, 
+        unit_dst_wx, 
+        unit_dst_wy, 
+        &l_map_x, 
+        &l_map_y, 
+        unit_wp
+    );
 
-    Unit_Y = _UNITS[unit_idx].wy;
-
-    Dummy_OVL_Map_LeftX = _map_x;
-
-    Dummy_OVL_Map_TopY = _map_y;
-
-    _map_x = Dummy_OVL_Map_LeftX;
-
-    _map_y = Dummy_OVL_Map_TopY;
-
-    UU_Result = RdBd_UNIT_MoveStack__WIP(Unit_Owner, unit_idx, Target_X, Target_Y, &Dummy_OVL_Map_LeftX, &Dummy_OVL_Map_TopY, Plane);
-
+    return did_move_stack;
 }
 
 

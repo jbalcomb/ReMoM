@@ -241,7 +241,7 @@ void Screen_Flic_Capture(void)
     /* Get all 256 colors in 4 blocks of 64 */
     for (itr = 0; itr < 4; itr++)
     {
-        VGA_GetDACBlock(itr, scanline_buffer);
+        VGA_GetDACBlock(itr, (uint8_t *)scanline_buffer);
         stu_fwrite(scanline_buffer, 192, 1, file_pointer); /* 64 colors * 3 bytes (R,G,B) */
     }
 
@@ -254,7 +254,7 @@ void Screen_Flic_Capture(void)
 
     for (itr = 0; itr < 200; itr++)
     {
-        VGA_ReadScreenLine(itr, scanline_buffer);
+        VGA_ReadScreenLine(itr, (char *)scanline_buffer);
         stu_fwrite(scanline_buffer, 320, 1, file_pointer);
     }
 

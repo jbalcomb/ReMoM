@@ -25,7 +25,7 @@ extern "C" {
 */
 
 // WZD o100p01
-void AI_MoveUnits__WIP(int16_t player_idx);
+void AI_MoveUnits(int16_t player_idx);
 
 // WZD o100p02
 void AI_UNIT_Meld__WIP(int16_t unit_idx);
@@ -34,30 +34,24 @@ void AI_UNIT_Meld__WIP(int16_t unit_idx);
 void AI_UNIT_Settle__WIP(int16_t unit_idx);
 
 // WZD o100p04
-// drake178: Do_Build_Outpost()
 int16_t Do_Build_Outpost(void);
 
 // WZD o100p05
-// drake178: STK_SettleTile()
 int16_t STK_SettleTile(int16_t troop_count, int16_t troops[]);
 
 // WZD o100p06
-void AI_UNIT_Move__WIP(int16_t unit_idx);
+int16_t AI_UNIT_Move(int16_t unit_idx);
 
 // WZD o100p07
-// drake178: sub_8227A()
 // sub_8227A()
 
 // WZD o100p08
-// drake178: sub_82377()
 // sub_82377()
 
 // WZD o100p09
-// drake178: UNIT_PushOffTile()
 void UNIT_PushOffTile(int16_t unit_idx);
 
 // WZD o100p10
-// drake178: TILE_UNIT_CanMoveTo()
 int16_t Unit_Space_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t unit_idx);
 
 // WZD o100p11

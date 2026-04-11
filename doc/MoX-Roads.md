@@ -58,7 +58,7 @@ Road_Build_Screen()
         RdBd_UNIT_MoveStack_STUB()
         WIZ_NextIdleStack()
 
-RdBd_UNIT_MoveStack__WIP
+RdBd_UNIT_MoveStack
 XREF:
     WIZ_NextIdleStack()
     j_RdBd_UNIT_MoveStack_STUB()

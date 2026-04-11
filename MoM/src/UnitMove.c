@@ -22,23 +22,35 @@ Elsewhere, ...
 
 */
 
-#pragma warning(disable: 4068)
-
 #include "../../MoX/src/Util.h"
+#include "../../MoX/src/MOM_DAT.h"
+#include "../../MoX/src/MOX_TYPE.h"
+#include "../../MoX/src/MOX_DEF.h"
+#include "../../MoX/src/MOM_DEF.h"
+
 #include "MainScr.h"
 #include "UNITTYPE.h"
 #include "UnitMove.h"
 
-#include "../../MoX/src/MOM_DAT.h"
-#include "../../MoX/src/MOX_TYPE.h"
-#include "../../MoX/src/MOX_DEF.h"
-
 #include "Combat.h"
-#include "../../MoX/src/MOM_DEF.h"
 #include "Terrain.h"
 #include "MovePath.h"
 
-#include <string.h>     /* memcpy() memset(), stu_strcat(), stu_strcpy(); */
+#include <string.h>     /* memcpy(), memset() */
+
+
+
+
+
+
+// WZD  dseg:6F76                                                 BEGIN:  ovr148 - Initialized Data
+
+// WZD  dseg:6F76
+// ; an index into OvlMovePaths_EMS@
+int16_t _ai_move_path_idx = ST_UNDEFINED;
+
+// WZD  dseg:6F76                                                 END:  ovr148 - Initialized Data
+
 
 
 
@@ -754,7 +766,7 @@ int16_t Make_Move_Path(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t M
     UU_flag = ST_TRUE;
     UU_moves2 = 8;
 
-    CRP_UNIT_OverlandPath = ST_UNDEFINED;  // ; an index into OvlMovePaths_EMS@
+    _ai_move_path_idx = ST_UNDEFINED;
 
     if(player_idx == HUMAN_PLAYER_IDX)
     {
@@ -1065,7 +1077,136 @@ Done:
 
 
 // WZD o148p07
-// OVL_ClearUnitPath()
+/* GEMINI */
+/**
+ * Clears the long-range path for a unit on the overland map.
+ * This is done by setting the first word (likely the status or length) 
+ * of the corresponding MovePath structure to -1.
+ * 
+ * The function ensures the path index is within the valid range (1 to 139).
+ * Note: Index 0 is ignored/treated as invalid.
+ */
+/*
+
+Loaded_Game_Update()
+    / *
+        BEGIN:  AI CONT / MOVE
+    * /
+    for(itr = 0; itr < 100; itr++)
+    {
+        _ai_move_path_table[itr] = -1;  // DEDU - INF / ST_UNDEFINED?
+    }
+    _ai_move_path_idx = ST_UNDEFINED;
+    ...
+
+*/
+void Invalidate_AI_Move_Path(void)
+{
+    if (_ai_move_path_idx > 0 && _ai_move_path_idx < 140)
+    {
+        _ai_move_path_table[_ai_move_path_idx]->src_wx = -1;  // INF / ST_UNDEFINED?
+    }
+}
 
 // WZD o148p08
-// OVL_StoreLongPath()
+/*
+OON XREF:
+    Stack_Move_To()
+...handles all AI / CP / NPC movement on the overland map, including pathfinding and move execution, and calls this function to store the calculated long-range path for a unit.
+*/
+void Cache_AI_Move_Path(int16_t player_idx, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t plane, int8_t * wx_array, int8_t * wy_array, int8_t * cost_array)
+{
+    int16_t duplicate = 0;
+    int16_t dst_idx = 0;
+    int16_t i = 0;
+    int16_t src_idx = 0;
+    struct s_AI_MOVE_PATH * path_ptr = NULL;
+
+    /* Only process for AI players */
+    if (player_idx == HUMAN_PLAYER_IDX)
+    {
+        return;
+    }
+
+    src_idx = -1;
+    dst_idx = -1;
+    
+    /* Find the source and destination indices within the provided path arrays */
+    for (i = 0; i < 35; i++)
+    {
+        if (wx_array[i] == src_wx && wy_array[i] == src_wy)
+        {
+            src_idx = i;
+        }
+
+        if (wx_array[i] == dst_wx && wy_array[i] == dst_wy)
+        {
+            dst_idx = i;
+        }
+
+        /* Optimization: break if both found */
+        if (src_idx != -1 && dst_idx != -1)
+        {
+            break;
+        }
+    }
+
+    /* Valid path must contain both points and move forward in the array */
+    if (src_idx == -1 || dst_idx == -1 || dst_idx <= src_idx)
+    {
+        return;
+    }
+
+    /* Find an empty slot in the move path table */
+    i = 0;
+    while((i < 140) && (_ai_move_path_idx == -1))
+    {
+        if (_ai_move_path_table[i]->src_wx == -1)
+        {
+            _ai_move_path_idx = i;
+        }
+        i++;
+    }
+
+    /* If no empty slot is found, return */
+    if (_ai_move_path_idx == -1)
+    {
+        return;
+    }
+
+    /* Check if this specific path is already stored in the table */
+    /* OGBUG: ignores the plane ... `_ai_move_path_table[i]->wp == plane` */
+    duplicate = ST_FALSE;
+    for (i = 0; i < 140; i++)
+    {
+        if (_ai_move_path_table[i]->src_wx == src_wx &&
+            _ai_move_path_table[i]->srx_wy == src_wy &&
+            _ai_move_path_table[i]->dst_wx == dst_wx &&
+            _ai_move_path_table[i]->dst_wy == dst_wy)
+        {
+            duplicate = ST_TRUE;
+            break;
+        }
+    }
+
+    if (duplicate == ST_TRUE)
+    {
+        return;
+    }
+
+    /* Record the new path into the allocated slot */
+    path_ptr = _ai_move_path_table[_ai_move_path_idx];
+
+    path_ptr->src_wx = src_wx;
+    path_ptr->srx_wy = src_wy;
+    path_ptr->dst_wx = dst_wx;
+    path_ptr->dst_wy = dst_wy;
+    path_ptr->wp = plane;
+    path_ptr->length = dst_idx - src_idx;
+
+    /* Copy the step coordinates and costs (skipping the source tile itself) */
+    memcpy(path_ptr->wx_array,   &wx_array[src_idx + 1],   path_ptr->length);
+    memcpy(path_ptr->wy_array,   &wy_array[src_idx + 1],   path_ptr->length);
+    memcpy(path_ptr->cost_array, &cost_array[src_idx + 1], path_ptr->length);
+
+}

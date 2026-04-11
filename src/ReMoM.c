@@ -111,6 +111,7 @@ void Shutdown_Platform(void);
 static int remom_continue_flag = 0;
 
 int16_t remom_start_id;
+
 // make Valgrind says something else, maybe
 void ReMoM_Report_Startup_Platform(void)
 {

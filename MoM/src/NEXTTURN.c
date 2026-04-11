@@ -644,8 +644,8 @@ void Next_Turn_Calc(void)
     // Delete_Dead_Units();  // DNE in Dasm
 /* CLAUDE */ PHASE(Delete_Dead_Units());
 
-    // AI_Next_Turn__WIP();
-/* CLAUDE */ PHASE(AI_Next_Turn__WIP());
+    // AI_Next_Turn();
+/* CLAUDE */ PHASE(AI_Next_Turn());
 
     // Delete_Dead_Units();  // DNE in Dasm
 /* CLAUDE */ PHASE(Delete_Dead_Units());

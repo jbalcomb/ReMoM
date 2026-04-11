@@ -184,7 +184,7 @@ Set_Active_Stack_Movement_Path
     passes the offset of OVL_Path_Costs to STK_GetPath()
 
 UNIT_MoveStack
-    passes the offset of OVL_Path_Costs to OVL_StoreLongPath()
+    passes the offset of OVL_Path_Costs to Cache_AI_Move_Path()
 
 Move_Stack()
     has two blocks assigning values to OVL_Path_Costs
@@ -196,7 +196,7 @@ Move_Stack()
 
 STK_GetPath()
     passed offset of OVL_Path_Costs RCs
-        memcpy() from TBL_OvlMovePathsEMS@  Move_Path.Costs
+        memcpy() from _ai_move_path_table@  Move_Path.Costs
         ¿ OR ?
         RCs[itr_path_length] = movepath_cost_map[((y * WORLD_WIDTH) + x)]
 

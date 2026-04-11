@@ -87,20 +87,8 @@ int16_t AI_Accept_Mercenaries(int16_t player_idx, int16_t cost)
 
 
 // WZD o145p02
-// drake178: AI_Overland_Turn()
 // ¿ MoO2  Module: AIDATA  Compute_AI_Data_() ?
-/*
-; process all aspects of the AI turns except diplomacy,
-; including the neutral player
-;
-; contains a hoard of BUGs
-; plans first for all players before processing for all
-; players
-*/
-/*
-
-*/
-void AI_Next_Turn__WIP(void)
+void AI_Next_Turn_OLD(void)
 {
     int16_t itr_players = 0;  // _SI_
     int16_t itr_units = 0;  // _DI_
@@ -347,7 +335,7 @@ void AI_Next_Turn__WIP(void)
                 // ; units
                 // ;
                 // ; unclear, BUGgy, RE-EXPLORE!
-                AI_MoveUnits__WIP(itr_players);
+                AI_MoveUnits(itr_players);
 
             }
 
@@ -418,6 +406,175 @@ void AI_Next_Turn__WIP(void)
     // ; less than 7 resistance
     // TODO  AI_StasisDisband();
 
+}
+/* GEMINI */
+void AI_Next_Turn(void)
+{
+    int i;                  /* _DI_itr_units__peace */
+    int player_idx;         /* _SI_itr_players */
+    int other_player_idx;   /* _DI_itr_units__peace (re-used) */
+    // int16_t itr_players = 0;  // _SI_
+    // int16_t itr_units = 0;  // _DI_
+    // int16_t itr_players2 = 0;  // _DI_
+
+
+    /* Unit sanity/bounds check loop */
+    for (i = 0; i < _units; i++)
+    {
+        /* Sanity check Plane (wp) */
+        if (_UNITS[i].wp < 0 || _UNITS[i].wp > 1)
+        {
+            _UNITS[i].wp = 0;
+            _UNITS[i].owner_idx = ST_UNDEFINED;
+        }
+
+        /* Sanity check World X (wx) */
+        if (_UNITS[i].wx < 0 || _UNITS[i].wx >= WORLD_WIDTH)
+        {
+            _UNITS[i].wx = 0;
+            _UNITS[i].owner_idx = ST_UNDEFINED;
+        }
+
+        /* Sanity check World Y (wy) */
+        if (_UNITS[i].wy < 0 || _UNITS[i].wy >= WORLD_HEIGHT)
+        {
+            _UNITS[i].wy = 0;
+            _UNITS[i].owner_idx = ST_UNDEFINED;
+        }
+    }
+
+    EMM_Map_DataH();
+    Allocate_AI_Data();
+
+    /* Main AI Player processing loop (Skip Human Player 0) */
+    for (player_idx = 1; player_idx < _num_players; player_idx++)
+    {
+        /* Check for Time Stop effect */
+        if (g_timestop_player_num != 0)
+        {
+            if ((g_timestop_player_num - 1) != player_idx)
+            {
+                continue;
+            }
+        }
+
+        /* Check if Wizard is active or returning */
+        /* MoO2 ~ `s_PLAYER.eliminated == ST_FALSE` */
+        if (_FORTRESSES[player_idx].active != ST_TRUE && _players[player_idx].casting_spell_idx != spl_Spell_Of_Return)
+        {
+            continue;
+        }
+
+        /* Update Summoning Circle re-evaluation counter */
+        AI_SCircle_Reevals[player_idx]--;
+
+        AI_Evaluate_Hostility(player_idx);
+
+        AI_Magic_Strategy__WIP(player_idx);
+
+        CRP_AI_Turn_Var = 0;
+
+        Player_Hostile_Opponents(player_idx);
+
+        AI_Player_Calculate_Target_Values(player_idx);
+
+        AI_Continent_Eval__WIP(player_idx);
+
+        AI_Pick_Action_Conts__WIP(player_idx);
+
+        /* Handle Overland Casting Completion */
+        if (_players[player_idx].casting_cost_remaining <= 0 && _players[player_idx].casting_spell_idx != spl_NONE)
+        {
+            // Cast_Spell_Overland__WIP(player_idx);
+            EMM_Map_DataH();
+            _players[player_idx].casting_spell_idx = spl_NONE;
+            if (AI_Eval_After_Spell == ST_TRUE)
+            {
+                Allocate_AI_Data();
+                Player_Hostile_Opponents(player_idx);
+                AI_Player_Calculate_Target_Values(player_idx);
+            }
+        }
+
+        /* Handle New Spell Selection if not casting */
+        if (_players[player_idx].casting_spell_idx == spl_NONE)
+        {
+            AI_Spell_Select__STUB(player_idx);
+        }
+
+        EMM_Map_DataH();
+        AI_Update_Magic_Power(player_idx);
+        AI_Sanity_Check_Overland_Enchantments(player_idx);
+        AI_Update_Gold_And_Mana_Reserves(player_idx);
+        AI_Update_Gold_Income_And_Food_Income(player_idx);
+
+        Some_AI_Turn_Var_2 = 0;
+        Some_AI_Turn_Var_3 = 0;
+
+        /* Decrement peace treaties durations */
+        for (other_player_idx = 0; other_player_idx < _num_players; other_player_idx++)
+        {
+            if (_players[player_idx].peace_duration[other_player_idx] != 0)
+            {
+                _players[player_idx].peace_duration[other_player_idx]--;
+            }
+        }
+
+        Player_All_Colony_Autobuild(player_idx);
+        
+        AI_Evaluation_Map(player_idx);
+        AI_Continent_Reeval__WIP(player_idx);
+        AI_SetUnitOrders__WIP(player_idx);
+        
+        EMM_Map_DataH();
+        AI_Kill_Excess_Settlers_And_Engineers(player_idx);
+    }
+
+    EMM_Map_DataH();
+
+    /* Reset Move_Failed flag for all non-human units */
+    for (i = 0; i < _units; i++)
+    {
+        if (_UNITS[i].owner_idx != HUMAN_PLAYER_IDX)
+        {
+            _UNITS[i].Move_Failed = ST_FALSE;
+        }
+    }
+
+    /* AI Unit Movement Phase */
+    for (player_idx = 1; player_idx < _num_players; player_idx++)
+    {
+        /* Check for Time Stop effect */
+        if (g_timestop_player_num != 0)
+        {
+            if ((g_timestop_player_num - 1) != player_idx)
+            {
+                continue;
+            }
+        }
+
+        /* Check if Wizard is active or returning */
+        if (_FORTRESSES[player_idx].active == ST_TRUE || _players[player_idx].casting_spell_idx == spl_Spell_Of_Return)
+        {
+            AI_MoveUnits(player_idx);
+        }
+    }
+
+    EMM_Map_DataH();
+
+    /* Neutral Player (index 6) Turn Processing */
+    Player_All_Colony_Autobuild(NEUTRAL_PLAYER_IDX);
+    // AI_SetNeutralFarmers();
+    // AI_SetNeutralTargets();
+    AI_MoveUnits(NEUTRAL_PLAYER_IDX);
+    
+    /* Event Generation */
+    // EVNT_GenerateRaiders();
+    // EVNT_RampageMonsters();
+    
+    /* Cleanup and Stasis */
+    // AI_ExcessNeutrals();
+    // AI_StasisDisband();
 }
 
 
@@ -2430,6 +2587,7 @@ void CONTX_CreateChains__WIP(void)
     // DONT  EMM_Map_DataH();
 
 }
+
 
 // WZD o145p18
 // drake178: CONTX_CreateLChains()

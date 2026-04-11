@@ -10,6 +10,35 @@
 
 
 
+// size 0x76 (118 bytes) */
+#pragma pack(push)
+#pragma pack(2)  /* All structures packed to 2 bytes, matching original memory layout */
+struct s_AI_MOVE_PATH
+{
+    /* 0x00 */  int16_t src_wx;    
+    /* 0x02 */  int16_t srx_wy;    
+    /* 0x04 */  int16_t dst_wx;   
+    /* 0x06 */  int16_t dst_wy;   
+    /* 0x08 */  int16_t wp;      
+    /* 0x0A */  int16_t length;     
+    /* 0x0C */  int8_t wx_array[35];    
+    /* 0x2F */  int8_t wy_array[35];    
+    /* 0x52 */  int8_t cost_array[35]; 
+};
+#pragma pack(pop)
+
+
+
+// WZD  dseg:6F76                                                 BEGIN:  ovr148 - Initialized Data
+
+// WZD  dseg:6F76
+// ; an index into OvlMovePaths_EMS@
+extern int16_t _ai_move_path_idx;
+
+// WZD  dseg:6F76                                                 END:  ovr148 - Initialized Data
+
+
+
 // ... in MOM_DEF.H  :shrug:
 // 00000000 struc s_Movement_Modes ; (sizeof=0x12)
 // 00000000 mm_UU_Cavalry dw ?
@@ -130,10 +159,10 @@ int16_t Make_Move_Path(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t M
 void Init_MovePathMap(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t wp);
 
 // WZD o148p07
-// OVL_ClearUnitPath()
+void Invalidate_AI_Move_Path(void);
 
 // WZD o148p08
-// OVL_StoreLongPath()
+void Cache_AI_Move_Path(int16_t player_idx, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t plane, int8_t * wx_array, int8_t * wy_array, int8_t * cost_array);
 
 
 

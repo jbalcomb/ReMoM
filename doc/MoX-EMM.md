@@ -82,9 +82,9 @@ movepath_cost_map
 nmovement_mode_cost_maps
 city_area_shared_bits
 city_area_bits
-TBL_OvlMovePathsEMS@
+_ai_move_path_table@
 
-dseg:9C90 00 00 00 00                                     TBL_OvlMovePathsEMS@ dd 0
+dseg:9C90 00 00 00 00                                     _ai_move_path_table@ dd 0
 dseg:9C94 ...
 dseg:9C98 ...
 dseg:9C9C 00 00 00 00                                     city_area_bits dd 0

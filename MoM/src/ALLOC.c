@@ -180,7 +180,7 @@ movepath_cost_map        = SA_MK_FP0( EMM_EMMDATAH_AllocFirst( 632 ) );  //  632
 movement_mode_cost_maps  = SA_MK_FP0( EMM_EMMDATAH_AllocNext( 1802 ) );  // 1802 PR  28832 B
 city_area_shared_bits    = SA_MK_FP0( EMM_EMMDATAH_AllocNext(  301 ) );  //  301 PR   4816 B
 city_area_bits           = SA_MK_FP0( EMM_EMMDATAH_AllocNext(  301 ) );  //  301 PR   4816 B
-TBL_OvlMovePathsEMS      = SA_MK_FP0( EMM_EMMDATAH_AllocNext( 1033 ) );  // 1033 PR  16528 B
+_ai_move_path_table      = SA_MK_FP0( EMM_EMMDATAH_AllocNext( 1033 ) );  // 1033 PR  16528 B
 
 city_area_bits & city_area_shared_bits
 ¿ ~== _square_explored or square_scouted_p0/p1 ?
@@ -199,7 +199,7 @@ so, 300 PRs, + 1 for the SAMB header
     city_area_shared_bits = (uint8_t *)Allocate_Space(WORLD_MAP_BITFIELD_SIZE + 1);
     city_area_bits = (uint8_t *)Allocate_Space(WORLD_MAP_BITFIELD_SIZE + 1);
 
-    TBL_OvlMovePaths_EMS = Allocate_Space(1033);  // 1033 * 16 = 16528 B
+    _ai_move_path_table = (struct s_AI_MOVE_PATH **)Allocate_Space(1033);  // 1033 * 16 = 16528 B
 
 
     /*

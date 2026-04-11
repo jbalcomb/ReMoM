@@ -292,24 +292,36 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 }
 
 // WZD o61p03
-// drake178: RdBd_UNIT_MoveStack()
-/*
-; attempts to select and move the stack of units that
-; the selected one is part of based on destination and
-; road building progress
-; returns 1 if the stack has moved, or 0 if not at all
-; or selection was impossible
-;
-; contains multiple inherited BUGs
-;
-; progress is in here
-*/
-/*
-
-Where does the road building actually happen?
-
-*/
-int16_t RdBd_UNIT_MoveStack__WIP(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int16_t dst_wy, int16_t * map_x, int16_t * map_y, int16_t map_p)
+/* COPILOT */
+/**
+ * @brief Moves the selected unit's matching stack toward the requested destination.
+ *
+ * Builds a movement group from the selected unit's current square by matching
+ * destination coordinates and road-construction state, then forwards that
+ * group to Move_Units(). If every eligible unit in the group is actively road
+ * building, the move is issued with the special road-building move mode.
+ *
+ * After the move attempt, units that failed to leave the origin square have
+ * their pending movement order cleared when they are not road builders. The
+ * routine then refreshes cached AI path data for the first remaining
+ * non-road-building unit and, for the human player, updates the visible stack
+ * and map rendering state.
+ *
+ * @param player_idx Owning player for the stack being moved.
+ * @param unit_idx Lead unit used to identify the source square and original position.
+ * @param dst_wx Destination world x coordinate.
+ * @param dst_wy Destination world y coordinate.
+ * @param map_x In-out pointer to the current map window x coordinate.
+ * @param map_y In-out pointer to the current map window y coordinate.
+ * @param map_p Current world plane for the move and path-cache update.
+ *
+ * @return ST_TRUE if Move_Units() reports a successful move, or ST_FALSE if no
+ *         eligible units were found or the move could not be performed.
+ *
+ * @note This routine is used by automated stack progression, including
+ *       next-idle-stack handling of pending goto orders.
+ */
+int16_t Stack_Move_To(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int16_t dst_wy, int16_t * map_x, int16_t * map_y, int16_t map_p)
 {
     int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t roadbuilder_count = 0;
@@ -319,147 +331,105 @@ int16_t RdBd_UNIT_MoveStack__WIP(int16_t player_idx, int16_t unit_idx, int16_t d
     int16_t troop_count = 0;
     int16_t Special_Move = 0;
     int16_t troop_unit_idx = 0;
-    int16_t itr_units = 0;  // _SI_
-    int16_t itr_troops = 0;  // _SI_
+    int16_t itr_troops = 0;
+    struct s_UNIT * unit_ptr;
 
-
+    /* Build the stack of units for moving, filtering for road builders if necessary */
     Build_RoadBuilder_Stack(&troop_count, &troops[0], dst_wx, dst_wy, player_idx, unit_idx);
 
-
-    if(troop_count < 1)
+    if (troop_count < 1)
     {
         return ST_FALSE;
     }
 
-
     roadbuilder_count = 0;
-
     Special_Move = 0;
 
-    // yellow
-    for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+    /* Count how many units in the stack are currently building roads */
+    for (itr_troops = 0; itr_troops < troop_count; itr_troops++)
     {
-
         troop_unit_idx = troops[itr_troops];
+        unit_ptr = &_UNITS[troop_unit_idx];
 
-        if(_UNITS[troop_unit_idx].Rd_Constr_Left != ST_UNDEFINED)
+        if (unit_ptr->Rd_Constr_Left != ST_UNDEFINED)
         {
-
             roadbuilder_count++;
-
         }
-
     }
 
-
-    if(roadbuilder_count == troop_count)
+    /* If every unit in the stack is a road builder, set special move flag */
+    if (roadbuilder_count == troop_count)
     {
-
         Special_Move = 2;  /* ¿ IIF 'Build Road' ? */
-
     }
 
+    /* Store original location of the lead unit */
+    unit_ptr = &_UNITS[unit_idx];
+    unit_wx = (int16_t)unit_ptr->wx;
+    unit_wy = (int16_t)unit_ptr->wy;
 
-    unit_wx = _UNITS[unit_idx].wx;
-
-    unit_wy = _UNITS[unit_idx].wy;
-
-
-    // HERE: as-is, except Special_Move is '2' if all 'road builder', rather than *normal* '0'
+    /* Attempt to move the stack */
     did_move_stack = Move_Units(player_idx, dst_wx, dst_wy, Special_Move, map_x, map_y, map_p, troop_count, &troops[0]);
 
-
-    // purple
-    for(itr_units = 0; itr_units < troop_count; itr_units++)
+    /* Post-move logic: Check units that failed to move and reset their orders */
+    for (itr_troops = 0; itr_troops < troop_count; itr_troops++)
     {
-
-        if(
-            (_UNITS[troops[itr_units]].wx == unit_wx)
-            &&
-            (_UNITS[troops[itr_units]].wy == unit_wy)
-            &&
-            (_UNITS[troops[itr_units]].Rd_Constr_Left == ST_UNDEFINED)
-            &&
-            (
-                (_UNITS[troops[itr_units]].Status == us_GOTO)
-                ||
-                (_UNITS[troops[itr_units]].Status == us_Move)
-            )
-            &&
-            (_UNITS[troops[itr_units]].Finished == ST_FALSE)
-        )
+        unit_ptr = &_UNITS[troops[itr_troops]];
+        /* If unit is still at original coordinates and isn't building a road */
+        if ((int16_t)unit_ptr->wx == unit_wx && (int16_t)unit_ptr->wy == unit_wy)
         {
-
-            _UNITS[troops[itr_units]].Move_Failed = ST_TRUE;  // DEDU  What is Move_Failed even?
-
-            _UNITS[troops[itr_units]].Status = us_Ready;
-
-            _UNITS[troops[itr_units]].dst_wx = 0;
-
-            _UNITS[troops[itr_units]].dst_wy = 0;
-
-        }
-
-    }
-
-
-    // dark gold
-    for(itr_units = 0; itr_units < troop_count; itr_units++)
-    {
-
-        if(
-            (_UNITS[troops[itr_units]].owner_idx != ST_UNDEFINED)
-            &&
-            (_UNITS[troops[itr_units]].Rd_Constr_Left == -1)
-        )
-        {
-
-            if(_UNITS[troops[itr_units]].Status == us_Ready)
+            if (unit_ptr->Rd_Constr_Left == ST_UNDEFINED)
             {
-
-                // HERE: unit status is NOT "NO ORDERS"  us_Ready
-                // DONT  EMM_Map_DataH();
-                // TODO  OVL_ClearUnitPath();               ; clears the long path referenced by UNIT_OverlandPath, provided that it is in the range of the corresponding table
-
+                /* If unit was in GOTO or MOVE state and hasn't finished its turn */
+                if ((unit_ptr->Status == us_GOTO || unit_ptr->Status == us_Move) && unit_ptr->Finished == ST_FALSE)
+                {
+                    unit_ptr->Move_Failed = ST_TRUE;
+                    unit_ptr->Status = us_Ready;
+                    unit_ptr->dst_wx = 0;
+                    unit_ptr->dst_wy = 0;
+                }
+            }
+        }
+    }
+    /* Post-move pathing updates */
+    for (itr_troops = 0; itr_troops < troop_count; itr_troops++)
+    {
+        unit_ptr = &_UNITS[troops[itr_troops]];
+        /* Only process valid units that aren't road builders */
+        if (unit_ptr->owner_idx != ST_UNDEFINED && unit_ptr->Rd_Constr_Left == ST_UNDEFINED)
+        {
+            if (unit_ptr->Status == us_Ready)
+            {
+                EMM_Map_DataH();
+                Invalidate_AI_Move_Path(); /* Clears existing pathing data in EMS */
             }
             else
             {
-
-                // DONT  EMM_Map_DataH();
-
-                // TODO  OVL_StoreLongPath(player_idx, _UNITS[unit_array[itr_units]].wx, _UNITS[unit_array[itr_units]].wy, _UNITS[unit_array[itr_units]].dst_wx, _UNITS[unit_array[itr_units]].dst_wy, map_p, &MovePath_X, &MovePath_Y, &OVL_Path_Costs);
-                    // ; attempts to store a multi-turn path into EMS,
-                    // ; provided that both the source and destination
-                    // ; locations are on it, and there is space left in the
-                    // ; corresponding table
-                    // ; BUG: ignores the plane when looking for a match
-                    // ; WARNING: the state of the map can change by the time
-                    // ;  the path is retrieved later (concept flaw)
-
+                /* Recalculate and store long-range path */
+                EMM_Map_DataH();
+                Cache_AI_Move_Path(player_idx,
+                    (int16_t)unit_ptr->wx,
+                    (int16_t)unit_ptr->wy, 
+                    (int16_t)unit_ptr->dst_wx,
+                    (int16_t)unit_ptr->dst_wy, 
+                    map_p,
+                    &movepath_x_array[1],
+                    &movepath_y_array[1],
+                    movepath_cost_array);
             }
-
+            /* Note: break-like behavior in assembly jump table suggests it exits loop after first path update for specific conditions */
+            break;
         }
-
     }
-
-
-    if(player_idx == _human_player_idx)
+    /* Refresh graphics if the moving player is the local player */
+    if (player_idx == _human_player_idx)
     {
-
-        // DONT  o62p01_Empty_pFxn(player_idx);
-
-
+        o62p01_empty_function(player_idx);
         Set_Unit_Draw_Priority();
-
         Reset_Stack_Draw_Priority();
-
         Set_Entities_On_Map_Window(*map_x, *map_y, map_p);
-
         Reset_Draw_Active_Stack();
-
-
     }
-
     return did_move_stack;
 }
 
@@ -543,7 +513,7 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
                 {
 
                     Allocate_Reduced_Map();
-                    RdBd_UNIT_MoveStack__WIP(player_idx, _unit, next_unit_dst_wx, next_unit_dst_wy, map_x, map_y, *map_p);
+                    Stack_Move_To(player_idx, _unit, next_unit_dst_wx, next_unit_dst_wy, map_x, map_y, *map_p);
                     Allocate_Reduced_Map();
 
                 }
