@@ -178,3 +178,95 @@ distro. Source tarballs and build instructions are at:
 `ctest --test-dir build -T memcheck`
 Results land in build/Testing/*/MemoryChecker.*.log. The -T memcheck flag is what actually invokes Valgrind — normal ctest runs still skip it even when ENABLE_VALGRIND=ON.
 cd ~/STU/devel/ReMoM/build/Testing/Temporary/
+
+How to use Valgrind
+Once installed, you can run your compiled program under Valgrind to check for memory errors. Compile your program with the -g flag to include debugging information so Valgrind can provide exact line numbers in its reports. 
+g++ -g myprogram.cpp -o myprogram
+valgrind --leak-check=yes ./myprogram
+clang -g -O0 your_program.c -o your_program
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./your_program
+...add suppressions, use the --gen-suppressions=yes option 
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --gen-suppressions=yes ./ReMoMber
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --gen-suppressions=all ./ReMoMber
+Here's the suppressions used by a run of valgrind -v --tool=memcheck ls -l:
+
+--suppressions=ReMoM.supp
+Each time it runs, valgrind looks for options in files called ~/.valgrindrc and ./.valgrindrc
+put a general suppression in the first and one that's more specific to your project in the second
+~/.valgrindrc containing:
+--memcheck:leak-check=full
+--show-reachable=yes
+--suppressions=/home/david/devel/wxGTK-2.8.12.supp
+--suppressions=/home/david/devel/wxGTK-2.9.supp
+To check that valgrind is actually using the suppression files, run it with the -v option. The list of suppression files read is near the beginning of the output.
+
+https://wiki.wxwidgets.org/Parse_valgrind_suppressions.sh
+grindmerge <input >output
+or, more cleverly:
+valgrind --show-leak-kinds=all --leak-check=full  foo 3>&1 1>&2 2>&3 | grindmerge -f oldrules >newrules
+
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --gen-suppressions=all ./ReMoMber
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --gen-suppressions=all ./ReMoMber 2> ~/STU/devel/ReMoM/valgrind-gen-suppressions-all.npp
+
+valgrind ./ReMoMber
+Meh. Can't line up locations of ReMoMber executable, the game assets, and the repo ver of .valgrindrc.
+cp ~/STU/devel/ReMoM/.valgrindrc ~/
+cd ~/STU/devel/ReMoM/out/build/clang-debug/bin/Debug
+valgrind ./ReMoMber
+...some stil showed
+==509202== For lists of detected and suppressed errors, rerun with: -s
+==509202== ERROR SUMMARY: 1035 errors from 107 contexts (suppressed: 1887 from 1416)
+
+valgrind --gen-suppressions=all ./ReMoMber 2> ~/STU/devel/ReMoM/valgrind-gen-suppressions-more.npp
+
+==509881==  Uninitialised value was created by a stack allocation
+==509881==    at 0x414A1A0: Startup_Platform (platform/sdl2/sdl2_Init.c:43)
+^^^^^^^^^^  ...
+useless         WTF? line 43 in sdl2_Init is the opening brace
+Program Id      of the definition of the function Startup_Platform()
+
+
+objdump --syms <executable_name>
+jbalcomb@iMustAi:~/STU/devel/ReMoM/out/build/clang-debug/bin/Debug$ objdump --syms ReMoMber | head -10
+objdump -h <executable_name> | grep debug
+...sections like .debug_info, .debug_aranges, etc.
+Display raw DWARF debug information:
+objdump -g <executable_name> | less
+readelf --debug-dump=info <executable_name>
+
+
+https://valgrind.org/docs/manual/quick-start.html
+Preparing your program
+Compile your program with -g to include debugging information so that Memcheck's error messages include exact line numbers.
+use -O0, but sofa-king-slow
+with -O1 line numbers in error messages can be inaccurate
+don't use -O2+  (reports uninitialised-value errors which don't exist)
+
+https://plus.tuni.fi/graderT/static/compcs300-compcs300-october-2024/lectures/trees/valgrind/tools.html#:~:text=Valgrind%20tools%20%C2%B6%20detect%20memory%20issues%20Valgrind,program%20execution%20correlate%20errors%20with%20source%20code
+
+https://web.stanford.edu/class/archive/cs/cs107/cs107.1176/guide_valgrind.html#:~:text=Running%20a%20program%20under%20Valgrind%20which%20starts,and%20runs%20the%20program%20inside%20of%20it.
+Memory errors versus memory leaks
+Finding memory errors
+    ==4651== Invalid write of size 1
+    ==4651==    at 0x80486A4: main (mywhich.c:58)
+Finding leaks
+    valgrind --leak-check=full --show-leak-kinds=all myprog arg1 arg2
+    ==5942== 12 bytes in 1 blocks are definitely lost in loss record 1 of 1
+    ==5942==    at 0x43BC3C0: malloc (vg_replace_malloc.c:149)
+    ==5942==    by 0x804863D: main (mywhich.c:51)
+Using gdb and Valgrind together
+    valgrind --db-attach=yes myprog arg1 arg2
+
+    --vgdb=no|yes|full        activate gdbserver? [yes]
+                              full is slower but provides precise watchpoint/step
+    --vgdb-error=<number>     invoke gdbserver after <number> errors [999999999]
+                              to get started quickly, use --vgdb-error=0
+                              and follow the on-screen directions
+
+Extra options read from ~/.valgrindrc, $VALGRIND_OPTS, ./.valgrindrc
+
+
+
+Alternative: Address Sanitizer (ASan) 
+...consider using Clang's built-in Address Sanitizer (ASan). ASan is a compiler flag that instruments the code at compile time...
+cmake -DCMAKE_C_FLAGS="-fsanitize=address" -DCMAKE_CXX_FLAGS="-fsanitize=address" ...

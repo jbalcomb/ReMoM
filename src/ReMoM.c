@@ -107,8 +107,19 @@ int MOM_main(int argc, char** argv);
 void Startup_Platform(void);
 void Shutdown_Platform(void);
 
+<<<<<<< HEAD
 /* --continue: skip Main Menu, go straight to scr_Continue (WIZARDS.EXE path). */
 static int remom_continue_flag = 0;
+=======
+int16_t remom_start_id;
+
+// make Valgrind says something else, maybe
+void ReMoM_Report_Startup_Platform(void)
+{
+    remom_start_id = Random(42);
+    fprintf(stderr, "ReMoM: Starting up platform layer...  (%d)\n", remom_start_id);
+}
+>>>>>>> 430bf0d (try valgrind (again))
 
 
 #ifdef STU_DEBUG
@@ -200,6 +211,9 @@ static void Replay_Log_Field_Hit(void *log, int mouse_x, int mouse_y)
 // int SDL_main(int argc, char* argv[])
 int main(int argc, char * argv[])
 {
+
+    ReMoM_Report_Startup_Platform();
+
 #ifdef STU_DEBUG
 #ifdef _WIN32
     int itr = 0;

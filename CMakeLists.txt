@@ -127,6 +127,7 @@ endif()
 
 add_compile_definitions($<$<CONFIG:Debug>:STU_DEBUG>)
 
+<<<<<<< HEAD
 if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
     # add_compile_options(/wd4068)
     add_compile_options(
@@ -154,6 +155,16 @@ if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
         # "/wd4365"
         # "/wd4820"
     )
+=======
+if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    add_compile_options(-g -O0 -fno-limit-debug-info)
+endif()
+
+# Suppress "unknown pragma" warnings (C4068) on MSVC — pragmas from the original Borland C++ disassembly
+# if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+if(MSVC)
+    add_compile_options(/wd4068)
+>>>>>>> 430bf0d (try valgrind (again))
 endif()
 if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
     add_compile_options(

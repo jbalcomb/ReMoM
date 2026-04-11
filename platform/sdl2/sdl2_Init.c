@@ -16,6 +16,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>  /* random() */
 
 /*
     Platform-Layer Screen Buffer / Window Surface
@@ -37,13 +38,23 @@
 
 */
 
+int16_t platform_start_id;
+
+// make Valgrind says something else, maybe
+void Platform_Report_Startup_Platform(void)
+{
+    platform_start_id = random();
+    fprintf(stderr, "ReMoM: Starting up platform layer...  (%d)\n", platform_start_id);
+}
 
 
 void Startup_Platform(void)
 {
-    int w;
-    int h;
-    Uint32 sdl2_window_flags;
+    int w = 0;
+    int h = 0;
+    Uint32 sdl2_window_flags = 0;
+
+    Platform_Report_Startup_Platform();
 
 #ifndef NO_SOUND_LIBRARY
     SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER);
@@ -68,7 +79,9 @@ void Startup_Platform(void)
 
     sdl2_window_flags = SDL_WINDOW_RESIZABLE;
 
-    sdl2_window = SDL_CreateWindow(sdl2_window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, sdl2_window_flags);
+    sdl2_window = SDL_CreateWindow(
+        sdl2_window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, sdl2_window_flags
+    );
     assert(sdl2_window != NULL);
     {
         int actual_w, actual_h;
