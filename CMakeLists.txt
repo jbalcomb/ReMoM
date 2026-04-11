@@ -154,7 +154,10 @@ if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
         # "/wd4365"
         # "/wd4820"
     )
+if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    add_compile_options(-g -O0 -fno-limit-debug-info)
 endif()
+
 if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
     add_compile_options(
         "-Wno-unsequenced"
