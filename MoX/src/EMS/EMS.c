@@ -11,14 +11,29 @@ NOTE(JimBalcomb,20260409): Last night, I started a new effort with Codex+GPT54 t
 
 #include "../../../ext/stu_compat.h"
 
+#include "../Allocate.h"
+#include "../EXIT.h"
 #include "../MOX_BASE.h"
 #include "../MOX_TYPE.h"
 
+#include <ctype.h>
 #include <stdlib.h>
-#include <string.h>     /* memcpy() memset(), stu_strcat(), stu_strcpy(), stricmp() */
+#include <string.h>
+#include <stddef.h>
 
 #include "EMS.h"
 
+
+
+#define EMS_EMU_MAX_HANDLES     128
+#define EMS_EMU_DEFAULT_PAGES   2048  /* 32MB default */
+#define EMS_EMU_DATAH_PAGES     1024  /* 16MB default */
+
+static const char cnst_EMMErr_ResOut1[] = "EMM reserved exceeded by ";
+static const char cnst_EMMErr_ResOut2[] = " blocks [";
+static const char cnst_EMMErr_ResOut3[] = ".LBX]";
+static const char cnst_EMMErr_Reload1[] = " reloaded into EMM, diff size =";
+static const char cnst_EMMErr_Space[]   = "  ";
 
 
 // WZD dseg:760C                                                 BEGIN:  seg012 - Initialized Data
@@ -26,7 +41,6 @@ NOTE(JimBalcomb,20260409): Last night, I started a new effort with Codex+GPT54 t
 // ; contains the segment address of the EMS page frame
 // WZD dseg:760C
 SAMB_ptr EMS_PFBA = 0;
-// WZD dseg:760E 45 4D 4D 58 58 58 58 30 00                      EMM_DevName db 'EMMXXXX0',0             ; DATA XREF: EMM_DetectDevice:loc_16AA0o
 
 // WZD dseg:7617
 struct s_EMM_L2P_MAP_RECORD EMM_Log2Phys_Map[4] =
@@ -37,70 +51,161 @@ struct s_EMM_L2P_MAP_RECORD EMM_Log2Phys_Map[4] =
                { 0, 3 }
 };
 
-// WZD dseg:7627 00                                              db    0
-
 // WZD dseg:7628
 int16_t EMM_Pages_Reserved = 40;
 
 // WZD dseg:762A
 int16_t EMM_Open_Handles = 0;
 
-// WZD dseg:762C 59 4F 20 4D 4F 4D 41 00                         cnst_EMM_Hnd1 db 'YO MOMA',0            ; DATA XREF: EMM_Startup+3Ao ...
-// WZD dseg:7634 59 4F 20 4D 4F 4D 41 00                         cnst_EMM_Hnd12 db 'YO MOMA',0           ; DATA XREF: EMM_Startup+6Ao
-
-// WZD dseg:763C 00                                              db    0
-// WZD dseg:763D 00                                              db    0
-
-// WZD dseg:763D                                                 END:  seg012 - Initialized Data
-
-
-
-// WZD dseg:763E                                                 BEGIN:  seg013 - Initialized Data
-
-// WZD dseg:763E 56 47 41 46 49 4C 45 48 00                      str_VGAFILEH__seg013 db 'VGAFILEH',0    ; DATA XREF: EMM_Startup+164o
-// WZD dseg:7647 45 4D 4D 44 41 54 41 48 00                      str_EMMDATAH__seg013 db 'EMMDATAH',0    ; DATA XREF: EMM_Startup+17Bo
-// WZD dseg:7650 2E 4C 42 58 00                                  str_LBX_extension__seg013 db '.LBX',0   ; DATA XREF: EMM_Load_LBX_File+A3o ...
-// WZD dseg:7655 45 4D 4D 20 72 65 73 65 72 76 65 64 20 65 78 63+cnst_EMMErr_ResOut1 db 'EMM reserved exceeded by ',0
-// WZD dseg:766F 20 62 6C 6F 63 6B 73 20 5B 00                   cnst_EMMErr_ResOut2 db ' blocks [',0    ; DATA XREF: EMM_GetHandle+12Co
-// WZD dseg:7679 2E 4C 42 58 5D 00                               cnst_EMMErr_ResOut3 db '.LBX]',0        ; DATA XREF: EMM_GetHandle+147o
-// WZD dseg:767F 20 72 65 6C 6F 61 64 65 64 20 69 6E 74 6F 20 45+cnst_EMMErr_Reload1 db ' reloaded into EMM, diff size =',0
-// WZD dseg:769F 20 20 00                                        cnst_EMMErr_Space db '  ',0             ; DATA XREF: EMM_GetHandle+1ECo ...
-// WZD dseg:76A2 45 4D 4D 20 32 6C 6F 6E 67 00                   UU_cnst_EMMErr_2long db 'EMM 2long',0   ; DATA XREF: UU_EMM_LBX_Load2Hnd+A3o
 // WZD dseg:76AC
 char cnst_EMMErr_TooLow1[] = "You must have at least ";
 // WZD dseg:76C4
 char cnst_EMMErr_TooLow2[] = "K of expanded memory.";
 
-// WZD dseg:76C4                                                 END:  seg013 - Initialized Data
+// WZD dseg:763D                                                 END:  seg012 - Initialized Data
 
 
+// WZD dseg:E5EA                                                 BEGIN:  seg013 - Uninitialized Data
 
-// WZD dseg:E5EA                                                 BEGIN:  seg013 - Unitialized Data
+static int16_t UU_EMMData_PrevLvl = 0;
 
-// WZD dseg:E5EA 00 00                                           UU_EMMData_PrevLvl dw 0                 ; DATA XREF: UU_EMM_Data_Mark+6w ...
+int16_t g_EmmHndl_OVERXYZ = 0;
+int16_t EMM_Data_Level = 0;
+SAMB_ptr _EMMDATAH_seg = 0;
+byte_ptr _VGAFILEH_seg = 0;
+SAMB_ptr EmmHndlNbr_YOMOMA = 0;
+int16_t EMM_OK = 0;
 
-// WZD dseg:E5EC
-int16_t g_EmmHndl_OVERXYZ;
-
-// WZD dseg:E5EE 00 00                                           EMM_Data_Level dw 0                     ; DATA XREF: EMM_Startup+18Ew ...
-// WZD dseg:E5F0 00 00                                           _EMMDATAH_seg dw 0                      ; DATA XREF: EMM_Startup+18Bw ...
-// WZD dseg:E5F2 00 00                                           dw 0
-
-// WZD dseg:E5F4
-byte_ptr _VGAFILEH_seg;
-
-// WZD dseg:E5F6 00 00                                           g_EmmRsvd dw 0                          ; DATA XREF: EMM_LBX_EntryLoader:@@EmmHndlNmExistsr ...
-// WZD dseg:E5F8 00 00                                           EmmHndlNbr_YOMOMA dw 0                  ; DATA XREF: EMM_Startup+1Bw ...
-// WZD dseg:E5FA 00 00                                           EMM_OK dw 0                             ; DATA XREF: EMM_Startup:loc_16E33w ...
-
-// WZD dseg:E5FC
 struct s_EMM_RECORD EMM_Table[40];
+int16_t EMM_MinKB = 0;
 
-// WZD dseg:E7DC
-int16_t EMM_MinKB;
+// WZD dseg:E7DC                                                 END:  seg013 - Uninitialized Data
 
-// WZD dseg:E7DC                                                 END:  seg013 - Unitialized Data
 
+typedef struct s_EMS_HOST_HANDLE
+{
+    int in_use;
+    SAMB_ptr base;
+    int16_t pages;
+    char name[9];
+} s_EMS_HOST_HANDLE;
+
+static s_EMS_HOST_HANDLE g_ems_handles[EMS_EMU_MAX_HANDLES];
+static int32_t g_ems_total_pages = 0;
+
+static int EMS_StrICmp(const char *a, const char *b)
+{
+    unsigned char ca;
+    unsigned char cb;
+
+    if (a == NULL && b == NULL) {
+        return 0;
+    }
+    if (a == NULL) {
+        return -1;
+    }
+    if (b == NULL) {
+        return 1;
+    }
+
+    while (*a != '\0' || *b != '\0') {
+        ca = (unsigned char)*a++;
+        cb = (unsigned char)*b++;
+        ca = (unsigned char)tolower(ca);
+        cb = (unsigned char)tolower(cb);
+        if (ca != cb) {
+            return (int)ca - (int)cb;
+        }
+    }
+    return 0;
+}
+
+static s_EMS_HOST_HANDLE *EMS_FindHandle(SAMB_ptr base)
+{
+    int idx;
+
+    if (base == NULL) {
+        return NULL;
+    }
+
+    for (idx = 0; idx < EMS_EMU_MAX_HANDLES; ++idx) {
+        if (g_ems_handles[idx].in_use && g_ems_handles[idx].base == base) {
+            return &g_ems_handles[idx];
+        }
+    }
+
+    return NULL;
+}
+
+static SAMB_ptr EMS_AllocHandle(int16_t pages, const char *name)
+{
+    int idx;
+    size_t alloc_size;
+    SAMB_ptr base;
+
+    if (pages <= 0) {
+        return NULL;
+    }
+
+    alloc_size = (size_t)pages * SZ_EMM_LOGICAL_PAGE;
+    base = (SAMB_ptr)calloc(1u, alloc_size);
+    if (base == NULL) {
+        return NULL;
+    }
+
+    for (idx = 0; idx < EMS_EMU_MAX_HANDLES; ++idx) {
+        if (!g_ems_handles[idx].in_use) {
+            g_ems_handles[idx].in_use = 1;
+            g_ems_handles[idx].base = base;
+            g_ems_handles[idx].pages = pages;
+            g_ems_handles[idx].name[0] = '\0';
+            if (name != NULL) {
+                strncpy(g_ems_handles[idx].name, name, 8);
+                g_ems_handles[idx].name[8] = '\0';
+            }
+            return base;
+        }
+    }
+
+    free(base);
+    return NULL;
+}
+
+static void EMS_FreeHandle(SAMB_ptr base)
+{
+    s_EMS_HOST_HANDLE *handle = EMS_FindHandle(base);
+
+    if (handle == NULL) {
+        return;
+    }
+
+    if (handle->base != NULL) {
+        free(handle->base);
+    }
+
+    memset(handle, 0, sizeof(*handle));
+}
+
+static int32_t EMS_GetTotalPages(void)
+{
+    int32_t min_pages;
+
+    if (g_ems_total_pages != 0) {
+        return g_ems_total_pages;
+    }
+
+    min_pages = 0;
+    if (EMM_MinKB > 0) {
+        min_pages = (int32_t)EMM_MinKB / 16;
+    }
+
+    if (min_pages < EMS_EMU_DEFAULT_PAGES) {
+        min_pages = EMS_EMU_DEFAULT_PAGES;
+    }
+
+    g_ems_total_pages = min_pages;
+    return g_ems_total_pages;
+}
 
 
 /*
@@ -108,72 +213,155 @@ int16_t EMM_MinKB;
 */
 
 // WZD s12p01
-// EMM_DetectDevice()
+int16_t EMM_DetectDevice(void)
+{
+    return ST_TRUE;
+}
 
 // WZD s12p02
-// EMM_GetHandleCount()
+int16_t EMM_GetHandleCount(void)
+{
+    int idx;
+    int count = 0;
+
+    for (idx = 0; idx < EMS_EMU_MAX_HANDLES; ++idx) {
+        if (g_ems_handles[idx].in_use) {
+            ++count;
+        }
+    }
+
+    return (int16_t)count;
+}
 
 // WZD s12p03
-// EMM_GetFreePageCnt()
+int16_t EMM_GetFreePageCnt(void)
+{
+    int idx;
+    int32_t used = 0;
+    int32_t total = EMS_GetTotalPages();
+
+    for (idx = 0; idx < EMS_EMU_MAX_HANDLES; ++idx) {
+        if (g_ems_handles[idx].in_use) {
+            used += g_ems_handles[idx].pages;
+        }
+    }
+
+    if (used >= total) {
+        return 0;
+    }
+
+    return (int16_t)(total - used);
+}
 
 // WZD s12p04
-// EMM_GetPageCount()
+int16_t EMM_GetPageCount(SAMB_ptr emm_handle)
+{
+    s_EMS_HOST_HANDLE *handle = EMS_FindHandle(emm_handle);
+
+    if (handle == NULL) {
+        return 0;
+    }
+
+    return handle->pages;
+}
 
 // WZD s12p05
-// EMM_MakeNamedHandle()
+SAMB_ptr EMM_MakeNamedHandle(int16_t pages, const char *name)
+{
+    return EMS_AllocHandle(pages, name);
+}
 
 // WZD s12p06
-// EMM_GetHandleName()
+int16_t EMM_GetHandleName(SAMB_ptr emm_handle, char *out_name)
+{
+    s_EMS_HOST_HANDLE *handle = EMS_FindHandle(emm_handle);
+
+    if (handle == NULL || out_name == NULL) {
+        return ST_FAILURE;
+    }
+
+    strncpy(out_name, handle->name, 8);
+    out_name[8] = '\0';
+    return ST_SUCCESS;
+}
 
 // WZD s12p07
-void EMM_ReleaseHandle__SUTB(int16_t handle)
+void EMM_ReleaseHandle__SUTB(SAMB_ptr handle)
 {
-    if(handle != 0)
-    {
-// mov     ah, 45h
-// mov     dx, [bp+EMM_Handle]
-// int     67h                             ;  - LIM EMS - RELEASE HANDLE AND MEMORY
-//                                         ; DX = EMM handle
-//                                         ; Return: AH = status
-        
+    if (handle != NULL) {
+        EMS_FreeHandle(handle);
     }
 }
 
 // WZD s12p08
-// EMM_MapnRead()
+void EMM_MapnRead(uint16_t target_offset, SAMB_ptr target_seg, uint32_t emm_data_offset, uint16_t byte_count, SAMB_ptr emm_handle)
+{
+    SAMB_ptr source;
+    SAMB_ptr dest;
+    s_EMS_HOST_HANDLE *handle = EMS_FindHandle(emm_handle);
+    size_t total_bytes;
+
+    if (handle == NULL || handle->base == NULL || target_seg == NULL) {
+        return;
+    }
+
+    total_bytes = (size_t)handle->pages * SZ_EMM_LOGICAL_PAGE;
+    if ((size_t)emm_data_offset + byte_count > total_bytes) {
+        return;
+    }
+
+    source = handle->base + emm_data_offset;
+    dest = target_seg + target_offset;
+    memcpy(dest, source, byte_count);
+}
 
 // WZD s12p09
-// EMM_MapnWrite()
+void EMM_MapnWrite(uint16_t target_offset, SAMB_ptr target_seg, uint32_t emm_data_offset, uint16_t byte_count, SAMB_ptr emm_handle)
+{
+    SAMB_ptr source;
+    SAMB_ptr dest;
+    s_EMS_HOST_HANDLE *handle = EMS_FindHandle(emm_handle);
+    size_t total_bytes;
+
+    if (handle == NULL || handle->base == NULL || target_seg == NULL) {
+        return;
+    }
+
+    total_bytes = (size_t)handle->pages * SZ_EMM_LOGICAL_PAGE;
+    if ((size_t)emm_data_offset + byte_count > total_bytes) {
+        return;
+    }
+
+    source = target_seg + target_offset;
+    dest = handle->base + emm_data_offset;
+    memcpy(dest, source, byte_count);
+}
 
 // WZD s12p10
-// EMM_GetPageFrame()
+SAMB_ptr EMM_GetPageFrame(void)
+{
+    return EMS_PFBA;
+}
 
 // WZD s12p11
-// EMM_MapFourPages()
+void EMM_MapFourPages(uint16_t emsFirst, SAMB_ptr emsHandle)
+{
+    EMS_PFBA = emsHandle + (emsFirst * SZ_EMM_LOGICAL_PAGE);
+
+    EMM_Log2Phys_Map[0].Logical_Page = emsFirst;
+    EMM_Log2Phys_Map[0].Physical_Page = 0;
+    EMM_Log2Phys_Map[1].Logical_Page = emsFirst + 1;
+    EMM_Log2Phys_Map[1].Physical_Page = 1;
+    EMM_Log2Phys_Map[2].Logical_Page = emsFirst + 2;
+    EMM_Log2Phys_Map[2].Physical_Page = 2;
+    EMM_Log2Phys_Map[3].Logical_Page = emsFirst + 3;
+    EMM_Log2Phys_Map[3].Physical_Page = 3;
+}
 
 // WZD s12p12
 void EMM_Map4Pages(int emsFirst, SAMB_ptr emsHandle)
 {
-    EMS_PFBA = (emsHandle + (emsFirst * SZ_EMM_LOGICAL_PAGE));
-// mov     bx, [bp+emsFirst]
-// mov     dx, [bp+emsHandle]
-// mov     ax, seg dseg
-// mov     ds, ax
-// mov     [ems_mapping_array.Logical_Page], bx
-// inc     bx
-// mov     [ems_mapping_array.Logical_Page+4], bx
-// inc     bx
-// mov     [ems_mapping_array.Logical_Page+8], bx
-// inc     bx
-// mov     [ems_mapping_array.Logical_Page+0Ch], bx
-// inc     bx                              ; ¿ trailing increment in a for-loop ?
-// mov     cx, 4                           ; number of entries in array
-// mov     si, offset ems_mapping_array
-// mov     ax, 5000h
-// int     67h                             ;  - LIM EMS 4.0 - MAP/UNMAP MULTIPLE HANDLE PAGES
-//                                         ; AL = 00h / 01h, DX = handle, CX = number of entries in array
-//                                         ; DS:SI -> mapping array
-//                                         ; Return: AH = status
+    EMM_MapFourPages((uint16_t)emsFirst, emsHandle);
 }
 
 
@@ -184,110 +372,197 @@ void EMM_Map4Pages(int emsFirst, SAMB_ptr emsHandle)
 // WZD s13p01
 void EMM_Startup(void)
 {
+    int idx;
 
+    EMM_OK = ST_TRUE;
+    EMM_Open_Handles = 0;
+    EMM_Pages_Reserved = 40;
+    EMM_Data_Level = 0;
+    EmmHndlNbr_YOMOMA = NULL;
 
+    for (idx = 0; idx < EMS_EMU_MAX_HANDLES; ++idx) {
+        g_ems_handles[idx].in_use = 0;
+        g_ems_handles[idx].base = NULL;
+        g_ems_handles[idx].pages = 0;
+        g_ems_handles[idx].name[0] = '\0';
+    }
 
+    if (_EMMDATAH_seg == NULL) {
+        int16_t pages = EMS_EMU_DATAH_PAGES;
+        int32_t min_pages = (EMM_MinKB > 0) ? (int32_t)EMM_MinKB / 16 : 0;
+        if (min_pages > pages) {
+            pages = (int16_t)min_pages;
+        }
+        _EMMDATAH_seg = EMM_MakeNamedHandle(pages, "EMMDATAH");
+    }
 }
 
-
-// WZD s13p02
-// EMM_Load_LBX_File_0()
-
-// WZD s13p03
-// EMM_Load_LBX_File_1()
-
-// WZD s13p04
-// EMM_Load_LBX_File()
-
-// WZD s13p05
-// RP_EMM_LoadLBX2Hnd()
-
-// WZD s13p06
-// RP_EMM_LoadLBX2Hnd2()
-
-// WZD s13p07
-// UU_EMM_LoadLBX_Fail()
-
-// WZD s13p08
-// UU_EMM_CustLoadLBX()
-
-// WZD s13p09
-// UU_EMM_CustLoadLBX2()
-
-// WZD s13p10
-// UU_EMM_CustomLBXLoad()
-
-// WZD s13p11
-// EMM_LBX_EntryLoader()
-
-// WZD s13p12
-// EMM_LBX_Load_Picture_Header()
-
-// WZD s13p13
-// EMM_LBX_RecLoader()
-
-// WZD s13p14
-// EMM_LBXR_DirectLoad()
-
-// WZD s13p15
-// EMM_CheckHandleOpen()
-
-// s13p16
+// WZD s13p16
 void EMM_ReleaseAll__STUB(void)
 {
     int16_t itr = 0;  // _SI_
-    for(itr = 0; itr < EMM_Open_Handles; itr++)
+    for (itr = 0; itr < EMM_Open_Handles; itr++)
     {
         EMM_ReleaseHandle__SUTB(EMM_Table[itr].handle);
     }
-    if(g_EmmHndl_OVERXYZ != 0)
+    if (g_EmmHndl_OVERXYZ != 0)
     {
-        EMM_ReleaseHandle__SUTB(g_EmmHndl_OVERXYZ);
+        EMM_ReleaseHandle__SUTB((SAMB_ptr)g_EmmHndl_OVERXYZ);
     }
 }
 
-
-// WZD s13p17
-// EMM_Release_Resd()
-
-// WZD s13p18
-// UU_EMM_ReleaseHnd()
-
-// WZD s13p19
-// UU_EMM_Available()
-
 // WZD s13p20
-// EMM_GetHandle()
+SAMB_ptr EMM_GetHandle(int16_t page_count, const char *handle_name, int16_t reserved_flag)
+{
+    char buffer[20];
+    int handle_idx;
+    int itr;
+    SAMB_ptr emm_handle;
 
-// WZD s13p21
-// RP_EMM_VGAWrite_fP5()
+    if (handle_name == NULL || handle_name[0] == '\0') {
+        return NULL;
+    }
 
-// WZD s13p22
-// RP_EMM_VGARead_fP5()
+    handle_idx = ST_UNDEFINED;
 
-// WZD s13p23
-// RP_EMM_VGAWrite_P5()
+    for (itr = 0; itr < EMM_Open_Handles; itr++) {
+        if (EMS_StrICmp(handle_name, EMM_Table[itr].name) == 0) {
+            handle_idx = itr;
+        }
+    }
 
-// WZD s13p24
-// RP_EMM_VGARead_P5()
+    if (handle_idx == ST_UNDEFINED) {
+        if (EMM_Open_Handles >= 40) {
+            Exit_With_Message("EMM handle table overflow");
+            return NULL;
+        }
+
+        strncpy(EMM_Table[EMM_Open_Handles].name, handle_name, 8);
+        EMM_Table[EMM_Open_Handles].name[8] = '\0';
+
+        if (reserved_flag == ST_TRUE && EMM_Table[EMM_Open_Handles].name[0] != '\0') {
+            EMM_Table[EMM_Open_Handles].name[0] = (char)(-(signed char)EMM_Table[EMM_Open_Handles].name[0]);
+        }
+
+        emm_handle = EMM_MakeNamedHandle(page_count, EMM_Table[EMM_Open_Handles].name);
+        if (emm_handle == NULL) {
+            return NULL;
+        }
+
+        strncpy(EMM_Table[EMM_Open_Handles].name, handle_name, 8);
+        EMM_Table[EMM_Open_Handles].name[8] = '\0';
+        EMM_Table[EMM_Open_Handles].reserved = (char)reserved_flag;
+        EMM_Table[EMM_Open_Handles].handle = emm_handle;
+        EMM_Open_Handles++;
+
+        if (reserved_flag == ST_TRUE) {
+            EMM_Pages_Reserved -= page_count;
+        }
+
+        if (EMM_Pages_Reserved < 0) {
+            stu_itoa(-EMM_Pages_Reserved, buffer, 10);
+            stu_strcpy(near_buffer, cnst_EMMErr_ResOut1);
+            stu_strcat(near_buffer, buffer);
+            stu_strcat(near_buffer, cnst_EMMErr_ResOut2);
+            stu_strcat(near_buffer, handle_name);
+            stu_strcat(near_buffer, cnst_EMMErr_ResOut3);
+            Exit_With_Message(near_buffer);
+        }
+
+        return emm_handle;
+    }
+
+    emm_handle = EMM_Table[handle_idx].handle;
+
+    if (EMM_GetPageCount(emm_handle) < page_count) {
+        stu_itoa(page_count, buffer, 10);
+        stu_strcpy(near_buffer, handle_name);
+        stu_strcat(near_buffer, cnst_EMMErr_Reload1);
+        stu_strcat(near_buffer, cnst_EMMErr_Space);
+        stu_strcat(near_buffer, buffer);
+        Exit_With_Message(near_buffer);
+    }
+
+    return emm_handle;
+}
 
 // WZD s13p25
-// EMM_Map_DataH()
+SAMB_ptr EMM_Map_DataH(void)
+{
+    if (_EMMDATAH_seg == NULL) {
+        return NULL;
+    }
+
+    EMM_MapFourPages(0, _EMMDATAH_seg);
+    return EMS_PFBA;
+}
 
 // WZD s13p26
-// EMM_EMMDATAH_AllocFirst()
+SAMB_ptr EMM_EMMDATAH_AllocFirst(uint16_t nparas)
+{
+    uint16_t nparas_total = (uint16_t)(nparas + 1);
+    uint16_t free_paras;
+    SAMB_ptr header;
+
+    EMM_Data_Level = 0;
+    if (EMM_Map_DataH() == NULL) {
+        return NULL;
+    }
+
+    free_paras = (uint16_t)(4090 - EMM_Data_Level);
+    if (free_paras < nparas_total) {
+        Allocation_Error(4, (uint16_t)(nparas_total - free_paras));
+    }
+
+    header = EMS_PFBA + ((size_t)EMM_Data_Level * SZ_PARAGRAPH_B);
+    _SA_SET_MEMSIG1(header);
+    _SA_SET_MEMSIG2(header);
+    SA_SET_SIZE(header, (uint16_t)(nparas_total - 1));
+    SA_SET_USED(header, 1);
+    SA_SET_MARK(header, 1);
+
+    EMM_Data_Level = (int16_t)(EMM_Data_Level + nparas_total + 1);
+    return header + SZ_PARAGRAPH_B;
+}
 
 // WZD s13p27
-// EMM_EMMDATAH_AllocNext()
+SAMB_ptr EMM_EMMDATAH_AllocNext(uint16_t nparas)
+{
+    uint16_t nparas_total = (uint16_t)(nparas + 1);
+    uint16_t free_paras;
+    SAMB_ptr header;
+
+    if (EMM_Map_DataH() == NULL) {
+        return NULL;
+    }
+
+    free_paras = (uint16_t)(4090 - EMM_Data_Level);
+    if (free_paras < nparas_total) {
+        Allocation_Error(4, (uint16_t)(nparas_total - free_paras));
+    }
+
+    header = EMS_PFBA + ((size_t)EMM_Data_Level * SZ_PARAGRAPH_B);
+    _SA_SET_MEMSIG1(header);
+    _SA_SET_MEMSIG2(header);
+    SA_SET_SIZE(header, (uint16_t)(nparas_total - 1));
+    SA_SET_USED(header, 1);
+    SA_SET_MARK(header, 1);
+
+    EMM_Data_Level = (int16_t)(EMM_Data_Level + nparas_total + 1);
+    return header + SZ_PARAGRAPH_B;
+}
 
 // WZD s13p28
-// UU_EMM_Data_Mark()
+void UU_EMM_Data_Mark(void)
+{
+    UU_EMMData_PrevLvl = EMM_Data_Level;
+}
 
 // WZD s13p29
-// UU_EMM_Data_Undo()
-
-// WZD s13p30
-// UU_EMM_LBX_Load2Hnd()
+void UU_EMM_Data_Undo(void)
+{
+    EMM_Data_Level = UU_EMMData_PrevLvl;
+}
 
 // WZD s13p31
 void EMM_Set_Minimum(int amount)
@@ -296,7 +571,7 @@ void EMM_Set_Minimum(int amount)
 }
 
 // WZD s13p32
-void EMM_GetLowString(char * string)
+void EMM_GetLowString(char *string)
 {
     char temp[20];
     stu_itoa(EMM_MinKB, temp, 10);
@@ -304,3 +579,4 @@ void EMM_GetLowString(char * string)
     stu_strcat(string, temp);
     stu_strcat(string, cnst_EMMErr_TooLow2);
 }
+

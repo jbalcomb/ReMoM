@@ -420,7 +420,7 @@ MoO2
         {
             Save_Mouse_State();
             Restore_Mouse_On_Page();
-            Screen_Flic_Capture__STUB();
+            Screen_Flic_Capture();
             Save_Mouse_On_Page(Pointer_X(), Pointer_Y());
             Draw_Mouse_On_Page(Pointer_X(), Pointer_Y());
             Set_Pointer_Position(Pointer_X(), Pointer_Y());
@@ -1902,7 +1902,7 @@ int16_t Wait_For_Input(void)
                 {
                     Save_Mouse_State();
                     Restore_Mouse_On_Page();
-                    Screen_Flic_Capture__STUB();
+                    Screen_Flic_Capture();
                     Save_Mouse_On_Page(Pointer_X(), Pointer_Y());
                     Draw_Mouse_On_Page(Pointer_X(), Pointer_Y());
                     Set_Pointer_Position(Pointer_X(), Pointer_Y());
@@ -1928,7 +1928,7 @@ int16_t Wait_For_Input(void)
                 {
                     Save_Mouse_State();
                     Restore_Mouse_On_Page();
-                    Screen_Flic_Capture__STUB();
+                    Screen_Flic_Capture();
                     Save_Mouse_On_Page(Pointer_X(), Pointer_Y());
                     Draw_Mouse_On_Page(Pointer_X(), Pointer_Y());
                     Set_Pointer_Position(Pointer_X(), Pointer_Y());
@@ -3014,14 +3014,15 @@ int16_t Get_Input(void)
         return 0;
     }
 
-    if(mouse_installed == ST_FALSE)
-    {
-        // TODO  field_index = CRP_GUI_KeyInputOnly();
-    }
-    else
-    {
-        field_index = Interpret_Mouse_Input();  // WZD s36p01
-    }
+    // if(mouse_installed == ST_FALSE)
+    // {
+    //     // TODO  field_index = CRP_GUI_KeyInputOnly();
+    // }
+    // else
+    // {
+    //     field_index = Interpret_Mouse_Input();  // WZD s36p01
+    // }
+    field_index = Interpret_Mouse_Input();  // WZD s36p01
 
     Set_Page_Off();
 

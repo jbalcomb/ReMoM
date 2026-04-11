@@ -137,16 +137,16 @@ int16_t save_game_slots[8];  // BUGBUG  why is this clashing with the one over i
 // MGC s01p03
 void Main_Menu_Screen_Control(void)
 {
-    char Read_Buffer[30];
+    char Read_Buffer[LEN_DESCRIPTION];
     // file
     int16_t quit_flag;
     int16_t main_menu_selection;
     
-    // if(DIR("CONFIG.MOM", Read_Buffer) == ST_FAILURE)  // offset CONFIG_MOM  MGC dseg:27FF CONFIG_MOM db 'CONFIG.MOM',0
-    // {
-    //     // dseg:280A cnst_ConfigErr db 'Run INSTALL to configure MASTER OF MAGIC.',0Ah,0Ah,0
-    //     Exit_With_Message(cnst_ConfigErr);
-    // }               
+    if(DIR("CONFIG.MOM", Read_Buffer) == ST_FAILURE)  // offset CONFIG_MOM  MGC dseg:27FF CONFIG_MOM db 'CONFIG.MOM',0
+    {
+        // dseg:280A cnst_ConfigErr db 'Run INSTALL to configure MASTER OF MAGIC.',0Ah,0Ah,0
+        // Exit_With_Message(cnst_ConfigErr);
+    }               
 
     // file = stu_fopen_ci(CONFIG_MOM, "RB");
     // fread(&config_mom, 18, 1, file);
@@ -724,12 +724,12 @@ NOTE(JimBalcomb,20250302): added per a request from Blake, but can't won't work 
 */
 void Main_Menu_Screen_Draw_Debug()
 {
-    int16_t logo_frame_idx;
-    int16_t itr_logo;
-    uint16_t menu_x_start;
-    uint16_t menu_y_start;
-    uint8_t menu_shift;
-    int16_t scanned_field;
+    int16_t logo_frame_idx = 0;
+    int16_t itr_logo = 0;
+    uint16_t menu_x_start = 0;
+    uint16_t menu_y_start = 0;
+    uint8_t menu_shift = 0;
+    int16_t scanned_field = 0;
 
     menu_x_start = 123;
     menu_y_start = 141;

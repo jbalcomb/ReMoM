@@ -2397,7 +2397,7 @@ high 2 bits indicate nonhostile and site (city, intact lair, node)
 bit 14  set means nonhostile, ¿ unset means hostile ?
 bit 15  ¿set means {City,Lair,Node} ?, ¿ unset means Unit ?
 
-AI_SetEnemyStrMaps() clears 2 * 2400 = 4800 words  9600 bytes
+AI_Evaluation_Map() clears 2 * 2400 = 4800 words  9600 bytes
 
 max strength value (6 bits) 0x3FFF  16383
 
@@ -2407,7 +2407,7 @@ AIDATA.H
 #define AI_TARGET_SITE          0x8000
 
 */
-uint16_t * CONTX_NmeStrMap[NUM_PLANES];
+uint16_t * g_ai_evaluation_map[NUM_PLANES];
 
 // WZD dseg:9C9C
 // drake178: TBL_Catchments_EMS

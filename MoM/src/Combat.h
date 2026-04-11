@@ -1596,7 +1596,7 @@ void Combat_Unit_Enchantment_Outline_Draw(int16_t enchantment_magic_realm);
 void Update_Sees_Illusions(void);
 
 // WZD o105p08
- void BU_SetVisibility__WIP(int16_t battle_unit_idx);
+ void BU_SetVisibility(int16_t battle_unit_idx);
 
 // WZD o105p09
 int16_t BU_GetCombatEffect__WIP(int16_t battle_unit_idx);

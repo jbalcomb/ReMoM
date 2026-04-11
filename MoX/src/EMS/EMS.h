@@ -3,6 +3,7 @@
 #define EMM_H
 
 #include "../MOX_TYPE.h"
+#include "../MOX_BASE.h"
 
 
 
@@ -11,7 +12,7 @@ struct s_EMM_RECORD
 {
     /* 0x00 */ char name[9];  // 8 characters + null-terminator
     /* 0x09 */ char reserved;
-    /* 0x0A */ uint16_t handle;
+    /* 0x0A */ SAMB_ptr handle;
     /* 0x0C */ 
 };
 
@@ -84,6 +85,11 @@ extern int16_t g_EmmHndl_OVERXYZ;
 
 // WZD dseg:E5F4
 extern byte_ptr _VGAFILEH_seg;
+extern SAMB_ptr _EMMDATAH_seg;
+extern SAMB_ptr EmmHndlNbr_YOMOMA;
+extern int16_t EMM_OK;
+extern int16_t EMM_Data_Level;
+extern int16_t EMM_MinKB;
 
 // WZD dseg:E5F6 00 00                                           g_EmmRsvd dw 0                          ; DATA XREF: EMM_LBX_EntryLoader:@@EmmHndlNmExistsr ...
 // WZD dseg:E5F8 00 00                                           EmmHndlNbr_YOMOMA dw 0                  ; DATA XREF: EMM_Startup+1Bw ...
@@ -107,9 +113,18 @@ extern "C" {
 
 
 
-/*
-    WIZARDS.EXE seg012
-*/
+/* WIZARDS.EXE seg012 */
+int16_t EMM_DetectDevice(void);
+int16_t EMM_GetHandleCount(void);
+int16_t EMM_GetFreePageCnt(void);
+int16_t EMM_GetPageCount(SAMB_ptr emm_handle);
+SAMB_ptr EMM_MakeNamedHandle(int16_t pages, const char *name);
+int16_t EMM_GetHandleName(SAMB_ptr emm_handle, char *out_name);
+void EMM_ReleaseHandle__SUTB(SAMB_ptr handle);
+void EMM_MapnRead(uint16_t target_offset, SAMB_ptr target_seg, uint32_t emm_data_offset, uint16_t byte_count, SAMB_ptr emm_handle);
+void EMM_MapnWrite(uint16_t target_offset, SAMB_ptr target_seg, uint32_t emm_data_offset, uint16_t byte_count, SAMB_ptr emm_handle);
+SAMB_ptr EMM_GetPageFrame(void);
+void EMM_MapFourPages(uint16_t emsFirst, SAMB_ptr emsHandle);
 
 // WZD s12p01
 // EMM_DetectDevice()
@@ -130,7 +145,7 @@ extern "C" {
 // EMM_GetHandleName()
 
 // WZD s12p07
-void EMM_ReleaseHandle__SUTB(int16_t handle);
+void EMM_ReleaseHandle__SUTB(SAMB_ptr handle);
 
 // WZD s12p08
 // EMM_MapnRead()
@@ -148,9 +163,13 @@ void EMM_ReleaseHandle__SUTB(int16_t handle);
 void EMM_Map4Pages(int emsFirst, SAMB_ptr emsHandle);
 
 
-/*
-    WIZARDS.EXE seg013
-*/
+/* WIZARDS.EXE seg013 */
+SAMB_ptr EMM_GetHandle(int16_t page_count, const char *handle_name, int16_t reserved_flag);
+SAMB_ptr EMM_Map_DataH(void);
+SAMB_ptr EMM_EMMDATAH_AllocFirst(uint16_t nparas);
+SAMB_ptr EMM_EMMDATAH_AllocNext(uint16_t nparas);
+void UU_EMM_Data_Mark(void);
+void UU_EMM_Data_Undo(void);
 
 // WZD s13p01
 void EMM_Startup(void);

@@ -2071,7 +2071,7 @@ dbg_prn("BEGIN:  Auto Combat Loop\n");
                 for(itr = 0; itr < _combat_total_unit_count; itr++)
                 {
 
-                    BU_SetVisibility__WIP(itr);
+                    BU_SetVisibility(itr);
 
                 }
 
@@ -7299,7 +7299,7 @@ void Combat_Grid_Entities__WIP(void)
 
         Curse_Anim = BU_GetCombatEffect__WIP(itr);  // sets Image_Effect  {1, 3}
 
-        BU_SetVisibility__WIP(itr);  // sets Image_Effect to 4 or 5
+        BU_SetVisibility(itr);  // sets Image_Effect to 4 or 5
 
 
         for(itr_figures = 0; itr_figures < unit_figure_count; itr_figures++)
@@ -8384,7 +8384,7 @@ void BU_CreateImage__SEGRAX(int battle_unit_idx)
     }
     Combat_Unit_Enchantment_Outline_Set(battle_unit_idx);  // battle_units[].sets outline_magic_realm
     BU_SetBaseAnims__WIP(battle_unit_idx);  // sets battle_units[].Always_Animate and .Move_Bob
-    BU_SetVisibility__WIP(battle_unit_idx);  // sets battle_units[].Image_Effect
+    BU_SetVisibility(battle_unit_idx);  // sets battle_units[].Image_Effect
 
 
     // ~ Combat_Figure_Compose_USEFULL()
@@ -9581,7 +9581,7 @@ void Update_Sees_Illusions(void)
 sets battle_units[].Image_Effect
 
 */
-void BU_SetVisibility__WIP(int16_t battle_unit_idx)
+static void BU_SetVisibility_OLD(int16_t battle_unit_idx)
 {
     int16_t Visible = 0;
     int16_t Tile_Distance = 0;

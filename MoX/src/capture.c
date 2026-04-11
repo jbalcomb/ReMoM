@@ -25,6 +25,9 @@ MoO2
 /* COPILOT */ extern uint8_t * current_palette;
 /* COPILOT */ extern void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg);
 
+static void VGA_GetDACBlock(int dac_block, uint8_t *buffer);
+static void VGA_ReadScreenLine(int line, char *scanline_buffer);
+
 
 
 // WZD dseg:7876                                                 BEGIN : seg024 - Initialized Data
@@ -122,89 +125,164 @@ Module: capture
             signed integer (4 bytes) file_num
 
 */
-void Screen_Flic_Capture__STUB(void)
+/* GEMINI */
+void Screen_Flic_Capture(void)
 {
-    char Conversion_String[16];
-    char file_name[16];
-    // uint8_t scanline_buffer[SCREEN_WIDTH];
+    // char buffer[16];    /* [bp-186h] */
+    // char file_name[16];         /* [bp-176h] */
+    // char scanline_buffer[320];  /* [bp-166h] */
+    // int file_number;            /* [bp-08h] */
+    // unsigned int word_field;    /* [bp-06h] */
+    // unsigned long dword_field;  /* [bp-04h] */
+    // FILE *fp;                   /* _SI_file_pointer */
+    // int i;                      /* di */
+    char buffer[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char file_name[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     char scanline_buffer[SCREEN_WIDTH];
-    char var_26[30];
-    int16_t Scrdmp_File_Number;
-    uint16_t Word_Field_Value;
-    uint32_t Dword_Field_Value;
+    char var_26[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t file_number = 0;
+    uint16_t word_field = 0;
+    uint32_t dword_field = 0;
     // int16_t file_handle;  // _SI_
-    FILE * file_pointer;
+    FILE * file_pointer = NULL;
+    int16_t itr = 0;
 
-    if(release_flag == ST_TRUE)
+    if (release_flag == ST_TRUE)
     {
         return;
     }
 
     Set_Page_On();
-    
     Save_Mouse_State();
 
-    Scrdmp_File_Number = 0;
+    file_number = 0;
+    stu_strcpy(file_name, cnst_Scrdmp00_Full);
 
-    stu_strcpy(file_name, cnst_Scrdmp00_Full);  // "SCRDMP00"
-
-
-    while(DIR(file_name, scanline_buffer) != 0)
+    /* Loop to find an unused filename SCRDMPxx.FLI */
+    while (DIR(file_name, scanline_buffer) != 0)
     {
-        Scrdmp_File_Number++;
-        if (Scrdmp_File_Number < 10)
+        file_number++;
+        if (file_number < 10)
         {
-            stu_strcpy(scanline_buffer, cnst_Scrdmp_0);  // "0"
-            stu_itoa(Scrdmp_File_Number, Conversion_String, 10);
-            stu_strcat(scanline_buffer, Conversion_String);
+            stu_strcpy(scanline_buffer, cnst_Scrdmp_0);
+            stu_itoa(file_number, buffer, 10);
+            stu_strcat(scanline_buffer, buffer);
         }
         else
         {
-            stu_itoa(Scrdmp_File_Number, scanline_buffer, 10);
-
+            stu_itoa(file_number, scanline_buffer, 10);
         }
-        stu_strcpy(file_name, cnst_Scrdmp_Base);  // "SCRDMP"
+
+        stu_strcpy(file_name, "SCRDMP"); /* cnst_Scrdmp_Base */
         stu_strcat(file_name, scanline_buffer);
-        stu_strcat(file_name, cnst_Scrdmp_Ext);  // ".FLI"
+        stu_strcat(file_name, ".FLI"); /* cnst_Scrdmp_Ext */
     }
 
-    file_pointer = stu_fopen_ci(file_name, cnst_WB7);
+    file_pointer = stu_fopen(file_name, "wb"); /* cnst_WB7 */
 
-    
+    /* --- FLI MAIN HEADER --- */
+    dword_field = 64944L; /* Total file size: 128 (head) + 64816 (frame) */
+    stu_fwrite(&dword_field, 4, 1, file_pointer);
 
-    // TODO
-    // TODO
-    // TODO
-    // TODO
-    // TODO
-    
+    word_field = 0xAF11; /* FLI Magic */
+    stu_fwrite(&word_field, 2, 1, file_pointer);
 
+    word_field = 1; /* Frame count */
+    stu_fwrite(&word_field, 2, 1, file_pointer);
+
+    word_field = 320; /* e_SCREEN_WIDTH */
+    stu_fwrite(&word_field, 2, 1, file_pointer);
+
+    word_field = 200; /* e_SCREEN_HEIGHT */
+    stu_fwrite(&word_field, 2, 1, file_pointer);
+
+    word_field = 8; /* Bits per pixel */
+    stu_fwrite(&word_field, 2, 1, file_pointer);
+
+    word_field = 0; /* Flags */
+    stu_fwrite(&word_field, 2, 1, file_pointer);
+
+    word_field = 5; /* Speed */
+    stu_fwrite(&word_field, 2, 1, file_pointer);
+
+    word_field = 0;
+    for (itr = 0; itr < 55; itr++)
+    {
+        stu_fwrite(&word_field, 2, 1, file_pointer); /* Reserved/Padding */
+    }
+
+    /* --- FRAME CHUNK HEADER --- */
+    dword_field = 0xFD20; /* Chunk size: 64800 */
+    stu_fwrite(&dword_field, 4, 1, file_pointer);
+
+    word_field = 0xF1FA; /* Prefix chunk type */
+    stu_fwrite(&word_field, 2, 1, file_pointer);
+
+    word_field = 2; /* Number of sub-chunks */
+    stu_fwrite(&word_field, 2, 1, file_pointer);
+
+    dword_field = 0;
+    stu_fwrite(&dword_field, 4, 1, file_pointer); /* Reserved */
+    stu_fwrite(&dword_field, 4, 1, file_pointer); /* Reserved */
+
+    /* --- SUB-CHUNK 1: COLOR_64 (Palette) --- */
+    dword_field = 778; /* Sub-chunk size: 6 (head) + 2 (skip/count) + 768 (data) */
+    stu_fwrite(&dword_field, 4, 1, file_pointer);
+
+    word_field = 11; /* Type 11: FLI_COLOR (6-bit DAC) */
+    stu_fwrite(&word_field, 2, 1, file_pointer);
+
+    word_field = 1; /* Number of packets */
+    stu_fwrite(&word_field, 2, 1, file_pointer);
+
+    word_field = 0; /* Number of colors to skip */
+    stu_fwrite(&word_field, 2, 1, file_pointer);
+
+    /* Get all 256 colors in 4 blocks of 64 */
+    for (itr = 0; itr < 4; itr++)
+    {
+        VGA_GetDACBlock(itr, scanline_buffer);
+        stu_fwrite(scanline_buffer, 192, 1, file_pointer); /* 64 colors * 3 bytes (R,G,B) */
+    }
+
+    /* --- SUB-CHUNK 2: FLI_COPY (Pixel Data) --- */
+    dword_field = 64006; /* Sub-chunk size: 6 (head) + 64000 (data) */
+    stu_fwrite(&dword_field, 4, 1, file_pointer);
+
+    word_field = 16; /* Type 16: FLI_COPY (Uncompressed pixels) */
+    stu_fwrite(&word_field, 2, 1, file_pointer);
+
+    for (itr = 0; itr < 200; itr++)
+    {
+        VGA_ReadScreenLine(itr, scanline_buffer);
+        stu_fwrite(scanline_buffer, 320, 1, file_pointer);
+    }
+
+    /* --- FINAL EMPTY PREFIX CHUNK (FLI Footer/Padding) --- */
+    dword_field = 16; /* Chunk size */
+    stu_fwrite(&dword_field, 4, 1, file_pointer);
+
+    word_field = 0xF1FA; /* Prefix chunk type */
+    stu_fwrite(&word_field, 2, 1, file_pointer);
+
+    word_field = 0;
+    stu_fwrite(&word_field, 2, 1, file_pointer); /* No sub-chunks */
+
+    dword_field = 0;
+    stu_fwrite(&dword_field, 4, 1, file_pointer);
+    stu_fwrite(&dword_field, 4, 1, file_pointer);
 
     fclose(file_pointer);
-    
-    
+
     Restore_Mouse_State();
-
     Set_Page_Off();
-    
+
 }
 
-/* COPILOT */
-short int Screen_Flic_Capture(void)
-{
-    if(release_flag == ST_TRUE)
-    {
-        return 0;
-    }
-
-    Screen_Flic_Capture__STUB();
-    return 0;
-}
 
 // WZD s24p03
-// drake178: VGA_GetDACBlock()
 /* COPILOT */
-void VGA_GetDACBlock(int dac_block, uint8_t *buffer)
+static void VGA_GetDACBlock(int dac_block, uint8_t *buffer)
 {
     int start_color;
     int offset;
@@ -230,10 +308,10 @@ void VGA_GetDACBlock(int dac_block, uint8_t *buffer)
     memcpy(buffer, current_palette + offset, (64 * 3));
 }
 
+
 // WZD s24p04
-// drake178: VGA_ReadScreenLine()
 /* COPILOT */
-void VGA_ReadScreenLine(int line, char *scanline_buffer)
+static void VGA_ReadScreenLine(int line, char *scanline_buffer)
 {
     int x;
     uint8_t *src;

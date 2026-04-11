@@ -3182,7 +3182,7 @@ void Cycle_Palette_Color(int16_t color_num, int16_t red_min, int16_t green_min, 
     /* 6. Hardware Update: Platform Palette Swap */
     /* Scale the 6-bit VGA values (0-63) up to 8-bit values (0-255) */
     /* Multiplying by 255 and dividing by 63 is the most accurate linear scale */
-    /* CLAUDE */ Platform_Set_Palette_Color(color_num, (uint8_t)((store_red * 255) / 63), (uint8_t)((store_green * 255) / 63), (uint8_t)((store_blue * 255) / 63));
+    /* CLAUDE */ Platform_Set_Palette_Color((uint8_t)color_num, (uint8_t)((store_red * 255) / 63), (uint8_t)((store_green * 255) / 63), (uint8_t)((store_blue * 255) / 63));
 
 }
 

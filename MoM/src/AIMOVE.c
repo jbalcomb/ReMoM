@@ -538,7 +538,7 @@ void AI_FillGarrisons__WIP(int16_t player_idx, int16_t wp, int16_t landmass_idx)
 
             Asset_Y = _NODES[itr].wx;
 
-            if(CONTX_NmeStrMap[wp][((Asset_Y * WORLD_WIDTH) + Asset_X)] == AI_TARGET_SITE)
+            if(g_ai_evaluation_map[wp][((Asset_Y * WORLD_WIDTH) + Asset_X)] == AI_TARGET_SITE)
             {
 
                 Asset_X = _NODES[itr].wx;
@@ -1267,12 +1267,12 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
                         {
                             
                             // BUGBUG bad indexing, incorrect order of operation
-                            // (CONTX_NmeStrMap[wp][(((stack_wy * WORLD_WIDTH) + Y_Offset) + (X_Offset + stack_wx))] == 0)
-                            // (CONTX_NmeStrMap[wp][(((Y_Offset + stack_wy) * WORLD_WIDTH) + (X_Offset + stack_wx))] == 0)
+                            // (g_ai_evaluation_map[wp][(((stack_wy * WORLD_WIDTH) + Y_Offset) + (X_Offset + stack_wx))] == 0)
+                            // (g_ai_evaluation_map[wp][(((Y_Offset + stack_wy) * WORLD_WIDTH) + (X_Offset + stack_wx))] == 0)
                             if(
                                 (_landmasses[((wp * WORLD_SIZE) + ((Y_Offset + stack_wy) * WORLD_WIDTH) + (X_Offset + stack_wx))] == 0)  // ; BUG: no range checks
                                 &&
-                                (CONTX_NmeStrMap[wp][(((stack_wy * WORLD_WIDTH) + Y_Offset) + (X_Offset + stack_wx))] == 0)  // ; BUG: no range checks
+                                (g_ai_evaluation_map[wp][(((stack_wy * WORLD_WIDTH) + Y_Offset) + (X_Offset + stack_wx))] == 0)  // ; BUG: no range checks
                             )
                             {
 
@@ -1561,7 +1561,7 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
 
                                         Y_Offset = CONTX_LoadTileYs[wp][Tile_Index];
 
-                                        if(CONTX_NmeStrMap[wp][((Y_Offset * WORLD_WIDTH) + X_Offset)] == 0)  // empty map square
+                                        if(g_ai_evaluation_map[wp][((Y_Offset * WORLD_WIDTH) + X_Offset)] == 0)  // empty map square
                                         {
 
                                             closest_target_distance = target_distance;
@@ -1791,7 +1791,7 @@ void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx
 
             LoadTile_X = CONTX_LoadTileYs[wp][Next_Tile_ChainIndex];
 
-            if(CONTX_NmeStrMap[wp][((LoadTile_Y * WORLD_WIDTH) + LoadTile_X)] == 0)
+            if(g_ai_evaluation_map[wp][((LoadTile_Y * WORLD_WIDTH) + LoadTile_X)] == 0)
             {
 
                 Tile_Count = Delta_XY_With_Wrap(Midpoint_X, Midpoint_Y, LoadTile_X, LoadTile_Y, WORLD_WIDTH);
@@ -2340,7 +2340,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
     int16_t node_wx = 0;
     int16_t Next_Tile_Y = 0;
     int16_t Next_Tile_X = 0;
-    int16_t Tile_Strength_Value = 0;
+    int16_t target_square_evaluation_value = 0;
     int16_t Next_Tile_ChainIndex = 0;
     int16_t Asset_Owner = 0;
     int16_t fortress_wy = 0;
@@ -2386,7 +2386,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
 // ; BUG: coordinates not set up yet (will use those of
 // ; the previous wizard, if any)
 
-                target_strength = ((CONTX_NmeStrMap[wp][((fortress_wy * WORLD_WIDTH) + fortress_wx)] & AI_TARGET_FORTRESS) * 5 / 4);
+                target_strength = ((g_ai_evaluation_map[wp][((fortress_wy * WORLD_WIDTH) + fortress_wx)] & AI_TARGET_FORTRESS) * 5 / 4);
 
             }
             else
@@ -2395,7 +2395,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
 // ; BUG: coordinates not set up yet (will use those of
 // ; the previous wizard, if any)
 
-                target_strength = (CONTX_NmeStrMap[wp][((fortress_wy * WORLD_WIDTH) + fortress_wx)] & AI_TARGET_FORTRESS);
+                target_strength = (g_ai_evaluation_map[wp][((fortress_wy * WORLD_WIDTH) + fortress_wx)] & AI_TARGET_FORTRESS);
 
             }
 
@@ -2458,13 +2458,13 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
             if(itr_cities == HUMAN_PLAYER_IDX)
             {
 
-                target_strength = ((CONTX_NmeStrMap[wp][((fortress_wy * WORLD_WIDTH) + fortress_wx)] & AI_TARGET_FORTRESS) * 5 / 4);
+                target_strength = ((g_ai_evaluation_map[wp][((fortress_wy * WORLD_WIDTH) + fortress_wx)] & AI_TARGET_FORTRESS) * 5 / 4);
 
             }
             else
             {
 
-                target_strength = (CONTX_NmeStrMap[wp][((fortress_wy * WORLD_WIDTH) + fortress_wx)] & AI_TARGET_FORTRESS);
+                target_strength = (g_ai_evaluation_map[wp][((fortress_wy * WORLD_WIDTH) + fortress_wx)] & AI_TARGET_FORTRESS);
 
             }
 
@@ -2548,16 +2548,16 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
 
         Next_Tile_Y = CONTX_TileYs[wp][Next_Tile_ChainIndex];
 
-        Tile_Strength_Value = CONTX_NmeStrMap[wp][((Next_Tile_Y * WORLD_WIDTH) + Next_Tile_X)];
+        target_square_evaluation_value = g_ai_evaluation_map[wp][((Next_Tile_Y * WORLD_WIDTH) + Next_Tile_X)];
 
         if(
-            (Tile_Strength_Value > 0)
+            (target_square_evaluation_value > 0)
             &&
-            ((Tile_Strength_Value & AI_TARGET_NONHOSTILE) == 0)
+            ((target_square_evaluation_value & AI_TARGET_NONHOSTILE) == 0)
             &&
-            ((Tile_Strength_Value & AI_TARGET_SITE) == 0)
+            ((target_square_evaluation_value & AI_TARGET_SITE) == 0)
             &&
-            ((Tile_Strength_Value & AI_TARGET_FORTRESS) != 0)  // just getting the value
+            ((target_square_evaluation_value & AI_TARGET_FORTRESS) != 0)  // just getting the value
         )
         {
 
@@ -2568,13 +2568,13 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
             )
             {
 
-                AI_Add_Target(Next_Tile_X, Next_Tile_Y, (Tile_Strength_Value & AI_TARGET_FORTRESS), (Tile_Strength_Value & AI_TARGET_FORTRESS));
+                AI_Add_Target(Next_Tile_X, Next_Tile_Y, (target_square_evaluation_value & AI_TARGET_FORTRESS), (target_square_evaluation_value & AI_TARGET_FORTRESS));
 
             }
             else
             {
 
-                AI_Add_Target(Next_Tile_X, Next_Tile_Y, (Tile_Strength_Value & AI_TARGET_FORTRESS), ((Tile_Strength_Value & AI_TARGET_FORTRESS) / 3));
+                AI_Add_Target(Next_Tile_X, Next_Tile_Y, (target_square_evaluation_value & AI_TARGET_FORTRESS), ((target_square_evaluation_value & AI_TARGET_FORTRESS) / 3));
 
             }
 
@@ -2619,17 +2619,17 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
                     if(Asset_Owner != ST_UNDEFINED)
                     {
 
-                        AI_Add_Target(node_wx, node_wy, (CONTX_NmeStrMap[wp][((node_wy * WORLD_WIDTH) + node_wx)] & AI_TARGET_FORTRESS), ((_NODES[itr_nodes].power * 10) + 50));
+                        AI_Add_Target(node_wx, node_wy, (g_ai_evaluation_map[wp][((node_wy * WORLD_WIDTH) + node_wx)] & AI_TARGET_FORTRESS), ((_NODES[itr_nodes].power * 10) + 50));
 
                     }
                     else
                     {
 
                         // ¿ checking if there are any defenders for attacking ?
-                        if((CONTX_NmeStrMap[wp][((node_wy * WORLD_WIDTH) + node_wx)] & AI_TARGET_FORTRESS) != 0)
+                        if((g_ai_evaluation_map[wp][((node_wy * WORLD_WIDTH) + node_wx)] & AI_TARGET_FORTRESS) != 0)
                         {
 
-                            AI_Add_Target(node_wx, node_wy, (CONTX_NmeStrMap[wp][((node_wy * WORLD_WIDTH) + node_wx)] & AI_TARGET_FORTRESS), ((_NODES[itr_nodes].power * 10) + 25));
+                            AI_Add_Target(node_wx, node_wy, (g_ai_evaluation_map[wp][((node_wy * WORLD_WIDTH) + node_wx)] & AI_TARGET_FORTRESS), ((_NODES[itr_nodes].power * 10) + 25));
 
                         }
 
@@ -2665,7 +2665,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
             if(_landmasses[((wp * WORLD_SIZE) + (lair_wy * WORLD_WIDTH) + lair_wx)] == landmass_idx)
             {
 
-                AI_Add_Target(lair_wx, lair_wy, (CONTX_NmeStrMap[wp][((lair_wy * WORLD_WIDTH) + lair_wx)] & AI_TARGET_FORTRESS), 50);
+                AI_Add_Target(lair_wx, lair_wy, (g_ai_evaluation_map[wp][((lair_wy * WORLD_WIDTH) + lair_wx)] & AI_TARGET_FORTRESS), 50);
 
             }
             
@@ -2725,7 +2725,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
                             )
                             {
 
-                                AI_Add_Target(tower_wx, tower_wy, (CONTX_NmeStrMap[wp][((tower_wy * WORLD_WIDTH) + tower_wx)] & AI_TARGET_FORTRESS), 10);
+                                AI_Add_Target(tower_wx, tower_wy, (g_ai_evaluation_map[wp][((tower_wy * WORLD_WIDTH) + tower_wx)] & AI_TARGET_FORTRESS), 10);
 
                             }
                             else
@@ -2734,7 +2734,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
                                 if(Asset_Owner == ST_UNDEFINED)
                                 {
 
-                                    AI_Add_Target(tower_wx, tower_wy, (CONTX_NmeStrMap[wp][((tower_wy * WORLD_WIDTH) + tower_wx)] & AI_TARGET_FORTRESS), 150);
+                                    AI_Add_Target(tower_wx, tower_wy, (g_ai_evaluation_map[wp][((tower_wy * WORLD_WIDTH) + tower_wx)] & AI_TARGET_FORTRESS), 150);
 
                                 }
 
@@ -3176,8 +3176,8 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
 
             }
 
-            // DEDU  what is it actually check here?  What's in CONTX_NmeStrMap[] for the AI's own units?
-            if(CONTX_NmeStrMap[unit_wp][((unit_wy * WORLD_WIDTH) + unit_wx)] != 0)
+            // DEDU  what is it actually check here?  What's in g_ai_evaluation_map[] for the AI's own units?
+            if(g_ai_evaluation_map[unit_wp][((unit_wy * WORLD_WIDTH) + unit_wx)] != 0)
             {
 
                 if(
@@ -3297,7 +3297,7 @@ int16_t AI_Find_Nearest_Target_Unit(int16_t stack_idx, int16_t landmass_idx, int
     int16_t l_target_wx = 0;
     int16_t closest_distance = 0;
     int16_t distance = 0;
-    int16_t Tile_Strength_Value = 0;
+    int16_t target_square_evaluation_value = 0;
     int16_t Next_Tile_ChainIndex = 0;  // _DI_
 
     closest_distance = 1000;
@@ -3316,14 +3316,14 @@ int16_t AI_Find_Nearest_Target_Unit(int16_t stack_idx, int16_t landmass_idx, int
 
         Next_Tile_Y = CONTX_TileYs[wp][Next_Tile_ChainIndex];
 
-        Tile_Strength_Value = CONTX_NmeStrMap[wp][((Next_Tile_Y * WORLD_WIDTH) + Next_Tile_X)];
+        target_square_evaluation_value = g_ai_evaluation_map[wp][((Next_Tile_Y * WORLD_WIDTH) + Next_Tile_X)];
 
         if(
-            ((Tile_Strength_Value & AI_TARGET_FORTRESS) != 0)
+            ((target_square_evaluation_value & AI_TARGET_FORTRESS) != 0)
             &&
-            ((Tile_Strength_Value & AI_TARGET_NONHOSTILE) != 0)
+            ((target_square_evaluation_value & AI_TARGET_NONHOSTILE) != 0)
             &&
-            ((Tile_Strength_Value & AI_TARGET_SITE) != 0)
+            ((target_square_evaluation_value & AI_TARGET_SITE) != 0)
         )
         {
 
@@ -4562,7 +4562,7 @@ void AI_Do_Meld(int16_t player_idx)
 
                         node_wy = _NODES[itr_nodes].wy;
 
-                        if(CONTX_NmeStrMap[unit_wp][((node_wy * WORLD_WIDTH) + node_wx)] == AI_TARGET_SITE)
+                        if(g_ai_evaluation_map[unit_wp][((node_wy * WORLD_WIDTH) + node_wx)] == AI_TARGET_SITE)
                         {
 
                             node_landmass_idx = _landmasses[((unit_wp * WORLD_SIZE) + (node_wy * WORLD_WIDTH) + node_wx)];
@@ -4814,7 +4814,7 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                                 if(Map_Square_Survey(wx, wy, unit_wp) == 0)
                                 {
 
-                                    if((CONTX_NmeStrMap[unit_wp][((wy * WORLD_WIDTH) + wx)] & AI_TARGET_FORTRESS) == 0)
+                                    if((g_ai_evaluation_map[unit_wp][((wy * WORLD_WIDTH) + wx)] & AI_TARGET_FORTRESS) == 0)
                                     {
                                         
                                         Tile_Distance = Range(unit_wx, unit_wy, wx, wy);
@@ -4966,7 +4966,7 @@ void AI_Do_Purify(int16_t landmass_idx, int16_t wp)
         if(
             ((_map_square_flags[((wp * WORLD_SIZE) + (Tile_Y * WORLD_WIDTH) + Tile_X)] & MSF_CORRUPTION) != 0)
             &&
-            ((CONTX_NmeStrMap[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)] & AI_TARGET_FORTRESS) == 0)
+            ((g_ai_evaluation_map[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)] & AI_TARGET_FORTRESS) == 0)
         )
         {
 
@@ -4983,7 +4983,7 @@ void AI_Do_Purify(int16_t landmass_idx, int16_t wp)
                 for(Tile_X_Offset = -2; Tile_X_Offset < 3; Tile_X_Offset++)
                 {
 
-                    if(CONTX_NmeStrMap[wp][(((Tile_Y_Offset + Tile_Y) * WORLD_WIDTH) + (Tile_X_Offset + Tile_X))] == AI_TARGET_SITE)
+                    if(g_ai_evaluation_map[wp][(((Tile_Y_Offset + Tile_Y) * WORLD_WIDTH) + (Tile_X_Offset + Tile_X))] == AI_TARGET_SITE)
                     {
 
                         InRange_Corruption = ST_TRUE;
@@ -5254,7 +5254,7 @@ void AI_Set_Move_Or_Goto_Target(int16_t unit_idx, int16_t target_wx, int16_t tar
 
     wp = _UNITS[unit_idx].wp;
 
-    target_value = CONTX_NmeStrMap[wp][((target_wy * WORLD_WIDTH) + target_wx)];
+    target_value = g_ai_evaluation_map[wp][((target_wy * WORLD_WIDTH) + target_wx)];
 
     if(
         ((target_value & AI_TARGET_SITE) != 0)
@@ -6144,7 +6144,7 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
 
                 Tile_Y = CONTX_TileYs[wp][Next_Tile_ChainIndex];
 
-                Opposition = CONTX_NmeStrMap[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)];
+                Opposition = g_ai_evaluation_map[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)];
                 
                 if(Opposition == 0)
                 {
@@ -6246,7 +6246,7 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
 
                 Tile_Y = CONTX_LoadTileYs[wp][Next_Tile_ChainIndex];
 
-                if(CONTX_NmeStrMap[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)] == 0)
+                if(g_ai_evaluation_map[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)] == 0)
                 {
 
                     Best_Tile_Weight = Tile_Weight;
@@ -6432,7 +6432,7 @@ void TILE_AI_FindLoadTile__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
                 if(
                     (_landmasses[((wp * WORLD_SIZE) + ((some_wy + LoadTile_Y) * WORLD_WIDTH) + (some_wx + LoadTile_X))] != 0)
                     &&
-                    (CONTX_NmeStrMap[wp][((some_wy + LoadTile_Y) * WORLD_WIDTH) + (some_wx + LoadTile_X)] == 0)
+                    (g_ai_evaluation_map[wp][((some_wy + LoadTile_Y) * WORLD_WIDTH) + (some_wx + LoadTile_X)] == 0)
                 )
                 {
 
@@ -6543,7 +6543,7 @@ int16_t TILE_AI_FindEmptyLnd__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * 
                 if(
                     (Square_Is_Land(some_wx, some_wy, wp) == ST_TRUE)
                     &&
-                    CONTX_NmeStrMap[wp][((some_wy * WORLD_WIDTH) + some_wx)]
+                    g_ai_evaluation_map[wp][((some_wy * WORLD_WIDTH) + some_wx)]
                 )
                 {
 
@@ -6819,7 +6819,7 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
             if(_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_NoPresence)
             {
 
-                if(CONTX_NmeStrMap[wp][((_ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] * WORLD_WIDTH) + _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx])] != 0)
+                if(g_ai_evaluation_map[wp][((_ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] * WORLD_WIDTH) + _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx])] != 0)
                 {
 
                     found_target = ST_TRUE;
@@ -6859,7 +6859,7 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
             &&
             (_unit_type_table[_UNITS[itr].type].Construction == 0)
             &&
-            (CONTX_NmeStrMap[wp][((_UNITS[itr].dst_wy * WORLD_WIDTH) + _UNITS[itr].dst_wx)] == 0)
+            (g_ai_evaluation_map[wp][((_UNITS[itr].dst_wy * WORLD_WIDTH) + _UNITS[itr].dst_wx)] == 0)
         )
         {
 
@@ -7118,7 +7118,7 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
 
                     Tile_Linear = ((Tile_Y * WORLD_WIDTH) + Tile_X);
 
-                    if(CONTX_NmeStrMap[wp][Tile_Linear] == 0)
+                    if(g_ai_evaluation_map[wp][Tile_Linear] == 0)
                     {
 
                         // ; BUG: uninitialized variables
@@ -7180,9 +7180,9 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
 
             if(
                 (_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_Contested)
-                &&
+                ||
                 (_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_Own)
-                &&
+                ||
                 (_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_NoLanding)
             )
             {
@@ -7192,7 +7192,7 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
                 Center_Y = _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx];
 
                 if(
-                    (CONTX_NmeStrMap[wp][Tile_Linear] == 0)
+                    (g_ai_evaluation_map[wp][Tile_Linear] == 0)
                     &&
                     (_landmasses[((wp * WORLD_SIZE) + (Center_Y * WORLD_WIDTH) + Center_X)] == landmass_idx)
                 )
@@ -7217,7 +7217,7 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
 
                             Tile_Y = CONTX_TileYs[wp][Next_Tile_ChainIndex];
 
-                            found_target = CONTX_NmeStrMap[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)];
+                            found_target = g_ai_evaluation_map[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)];
 
                             if(found_target == ST_FALSE)
                             {
@@ -7297,7 +7297,7 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
 
                     Tile_Y = CONTX_LoadTileYs[wp][Next_Tile_ChainIndex];
 
-                    if(CONTX_NmeStrMap[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)] == 0)
+                    if(g_ai_evaluation_map[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)] == 0)
                     {
 
                         Tile_Weight = Delta_XY_With_Wrap(Tile_X, Tile_Y, Center_X, Center_Y, WORLD_WIDTH);
@@ -7406,7 +7406,7 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
 
                             Tile_Y = CONTX_LoadTileYs[wp][Next_Tile_ChainIndex];
 
-                            if(CONTX_NmeStrMap[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)] == 0)
+                            if(g_ai_evaluation_map[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)] == 0)
                             {
 
                                 Best_Tile_Weight = Tile_Weight;
@@ -7447,34 +7447,48 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
 
 
 // WZD o162p36
-// drake178: AI_SetEnemyStrMaps()
-/*
-; maps in and fills out the CONTXXX enemy strength
-; arrays
-;
-; BUG? the maps are only 4800 bytes despite their
-; allocated 9600
-*/
-/*
-
-
-
-*/
-void AI_SetEnemyStrMaps(int16_t player_idx)
+/**
+ * @brief Builds the per-plane AI evaluation map for one wizard's turn.
+ *
+ * @details Clears @c g_ai_evaluation_map for both planes, then repopulates each
+ * square with packed evaluation data used by later AI targeting and movement
+ * logic. For units not owned by @p player_idx, one tenth of each unit's
+ * effective combat strength is added to the tile value. Squares occupied by
+ * wizards considered non-hostile to @p player_idx are additionally flagged
+ * with @c AI_TARGET_NONHOSTILE. Intact lairs contribute guardian strength, and
+ * city, lair, and node squares are marked with @c AI_TARGET_SITE. Non-owned
+ * cities also add a small extra value to make them eligible as AI targets.
+ *
+ * @param player_idx Index of the wizard whose diplomatic state is used to
+ * classify other players as hostile or non-hostile while building the map.
+ *
+ * @note This routine mutates the global @c g_ai_evaluation_map data for both
+ * planes. The low 14 bits store the accumulated evaluation value, while the
+ * upper bits store flags such as @c AI_TARGET_NONHOSTILE and
+ * @c AI_TARGET_SITE. The routine also depends on the continent-mapping state
+ * prepared by @c EMM_Map_CONTXXX__WIP().
+ *
+ * @warning The implementation is still under reverse-engineering and contains
+ * defensive range checks and naming that do not yet fully describe the final
+ * intent of the original routine.
+ */
+void AI_Evaluation_Map(int16_t player_idx)
 {
     int16_t nonhostiles[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
     int16_t xy_ofst = 0;
     int16_t unit_owner_idx = 0;
     int16_t map_square_count = 0;
-    int16_t itr = 0;  // _SI_
-    int16_t itr_units = 0;  // _SI_
-    int16_t wp = 0;  // _DI_
+    int16_t itr = 0;
+    int16_t itr_units = 0;
+    int16_t wp = 0;
+    int16_t strength = 0;
 
     EMM_Map_CONTXXX__WIP();
 
+    /* Identify non-hostile players relative to the current player */
     for(itr = 0; itr < NUM_PLAYERS; itr++)
     {
-
+        /* Check for Wizard Pact, Alliance, Peace Treaty, or low Hostility */
         if(
             (_players[player_idx].Dipl.Dipl_Status[itr] == DIPL_WizardPact)
             ||
@@ -7485,30 +7499,30 @@ void AI_SetEnemyStrMaps(int16_t player_idx)
             (_players[player_idx].Hostility[itr] < 2)
         )
         {
-
             nonhostiles[itr] = ST_TRUE;
-
         }
-
+        else
+        {
+            nonhostiles[itr] = ST_FALSE;
+        }
     }
 
+    /* Clear the strength maps for both planes (Arcanus and Myrror) */
     map_square_count = WORLD_SIZE;
-
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
-
         for(itr = 0; itr < map_square_count; itr++)
         {
-
-            CONTX_NmeStrMap[wp][itr] = 0;
-
+            g_ai_evaluation_map[wp][itr] = 0;
         }
-
     }
 
+    /* Iterate through all units and add their strength to the map */
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
 
+        assert(_UNITS[itr_units].owner_idx != ST_UNDEFINED);
+        assert(_UNITS[itr_units].wp != ST_UNDEFINED);
         /* HACK */  if(
         /* HACK */      (_UNITS[itr_units].owner_idx == ST_UNDEFINED)
         /* HACK */      ||
@@ -7520,28 +7534,32 @@ void AI_SetEnemyStrMaps(int16_t player_idx)
 
         unit_owner_idx = _UNITS[itr_units].owner_idx;
 
+        /* Skip units belonging to the player being evaluated */
         if(
-            (unit_owner_idx != player_idx)
-            &&
-            (_UNITS[itr_units].owner_idx != player_idx)  // ; conflicting condition - will always jump
+            (unit_owner_idx == player_idx)
+            ||
+            (_UNITS[itr_units].owner_idx == player_idx)  // ; conflicting condition - will always jump
         )
         {
+            continue;
+        }
 
-            wp = _UNITS[itr_units].wp;
+        wp = _UNITS[itr_units].wp;
+        xy_ofst = ((_UNITS[itr_units].wy * WORLD_WIDTH) + _UNITS[itr_units].wx);
 
-            xy_ofst = ((_UNITS[itr_units].wy * WORLD_WIDTH) + _UNITS[itr_units].wx);
+        /* Add 1/10th of the unit's effective strength to the map square */
+        strength = Effective_Unit_Strength(itr) / 10;
+        g_ai_evaluation_map[wp][xy_ofst] += strength;
 
-            CONTX_NmeStrMap[wp][xy_ofst] += (Effective_Unit_Strength(itr_units) / 10);
-
-            if(nonhostiles[unit_owner_idx] == ST_TRUE)
-            {
-                CONTX_NmeStrMap[wp][xy_ofst] |= AI_TARGET_NONHOSTILE;
-            }
-
+        /* If the unit owner is non-hostile, mark the square with a flag */
+        if(nonhostiles[unit_owner_idx] == ST_TRUE)
+        {
+            g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_NONHOSTILE;
         }
 
     }
 
+    /* Iterate through all lairs and add guardian strength */
     for(itr = 0; itr < NUM_LAIRS; itr++)
     {
 
@@ -7551,19 +7569,36 @@ void AI_SetEnemyStrMaps(int16_t player_idx)
             (_LAIRS[itr].guard1_count > 0)
         )
         {
+            assert((_LAIRS[itr].wp >= WORLD_PMIN) && (_LAIRS[itr].wp <= WORLD_PMAX));
+            assert((_LAIRS[itr].wx >= WORLD_XMIN) && (_LAIRS[itr].wx <= WORLD_XMAX));
+            assert((_LAIRS[itr].wy >= WORLD_YMIN) && (_LAIRS[itr].wy <= WORLD_YMAX));
+            /* HACK */  if(
+            /* HACK */      (_LAIRS[itr].wp < WORLD_PMIN) || (_LAIRS[itr].wp >= WORLD_PMAX)
+            /* HACK */      ||
+            /* HACK */      (_LAIRS[itr].wx < WORLD_XMIN) || (_LAIRS[itr].wx >= WORLD_XMAX)
+            /* HACK */      ||
+            /* HACK */      (_LAIRS[itr].wy < WORLD_YMIN) || (_LAIRS[itr].wy >= WORLD_YMAX)
+            /* HACK */  )
+            /* HACK */  {
+            /* HACK */      continue;
+            /* HACK */  }
 
             wp = _LAIRS[itr].wp;
-
             xy_ofst = ((_LAIRS[itr].wy * WORLD_WIDTH) + _LAIRS[itr].wx);
 
-            CONTX_NmeStrMap[wp][xy_ofst] += ((Effective_Unit_Type_Strength((_LAIRS[itr].guard1_unit_type & 0x0F)) / 10) * _LAIRS[itr].guard1_count);
+            /* Add Guardian 1 strength */
+            strength = (Effective_Unit_Type_Strength(_LAIRS[itr].guard1_unit_type) / 10) * (_LAIRS[itr].guard1_count & 0x0F);
+            g_ai_evaluation_map[wp][xy_ofst] += strength;
 
-            CONTX_NmeStrMap[wp][xy_ofst] += ((Effective_Unit_Type_Strength((_LAIRS[itr].guard2_unit_type & 0x0F)) / 10) * _LAIRS[itr].guard2_count);
+            /* Add Guardian 2 strength */
+            strength = (Effective_Unit_Type_Strength(_LAIRS[itr].guard2_unit_type) / 10) * (_LAIRS[itr].guard2_count & 0x0F);
+            g_ai_evaluation_map[wp][xy_ofst] += strength;
 
         }
 
     }
 
+    /* Iterate through all cities and flag them on the map */
     for(itr = 0; itr < _cities; itr++)
     {
 
@@ -7582,44 +7617,70 @@ void AI_SetEnemyStrMaps(int16_t player_idx)
         /* HACK */  }
 
         wp = _CITIES[itr].wp;
-
         xy_ofst = ((_CITIES[itr].wy * WORLD_WIDTH) + _CITIES[itr].wx);
 
-        CONTX_NmeStrMap[wp][xy_ofst] |= AI_TARGET_SITE;
+        g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_SITE;
 
+        /* If the city is not owned by the current player, increment value for AI targeting */
         if(_CITIES[itr].owner_idx != player_idx)
         {
-
-            CONTX_NmeStrMap[wp][xy_ofst] += 1;
-
+            g_ai_evaluation_map[wp][xy_ofst] += 1;
         }
-
+        
     }
 
+    /* Re-iterate through all lairs to flag intact lairs */
     for(itr = 0; itr < NUM_LAIRS; itr++)
     {
 
         if(_LAIRS[itr].intact != ST_FALSE)
         {
 
-            wp = _LAIRS[itr].wp;
+            assert((_LAIRS[itr].wp >= WORLD_PMIN) && (_LAIRS[itr].wp <= WORLD_PMAX));
+            assert((_LAIRS[itr].wx >= WORLD_XMIN) && (_LAIRS[itr].wx <= WORLD_XMAX));
+            assert((_LAIRS[itr].wy >= WORLD_YMIN) && (_LAIRS[itr].wy <= WORLD_YMAX));
+            /* HACK */  if(
+            /* HACK */      (_LAIRS[itr].wp < WORLD_PMIN) || (_LAIRS[itr].wp >= WORLD_PMAX)
+            /* HACK */      ||
+            /* HACK */      (_LAIRS[itr].wx < WORLD_XMIN) || (_LAIRS[itr].wx >= WORLD_XMAX)
+            /* HACK */      ||
+            /* HACK */      (_LAIRS[itr].wy < WORLD_YMIN) || (_LAIRS[itr].wy >= WORLD_YMAX)
+            /* HACK */  )
+            /* HACK */  {
+            /* HACK */      continue;
+            /* HACK */  }
 
+            wp = _LAIRS[itr].wp;
             xy_ofst = ((_LAIRS[itr].wy * WORLD_WIDTH) + _LAIRS[itr].wx);
 
-            CONTX_NmeStrMap[wp][xy_ofst] |= AI_TARGET_SITE;
+            g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_SITE;
 
         }
 
     }
 
+    /* Iterate through all magic nodes and flag them */
     for(itr = 0; itr < NUM_NODES; itr++)
     {
 
-        wp = _NODES[itr].wp;
+        assert((_NODES[itr].wp >= WORLD_PMIN) && (_NODES[itr].wp <= WORLD_PMAX));
+        assert((_NODES[itr].wx >= WORLD_XMIN) && (_NODES[itr].wx <= WORLD_XMAX));
+        assert((_NODES[itr].wy >= WORLD_YMIN) && (_NODES[itr].wy <= WORLD_YMAX));
+        /* HACK */  if(
+        /* HACK */      (_NODES[itr].wp < WORLD_PMIN) || (_NODES[itr].wp >= WORLD_PMAX)
+        /* HACK */      ||
+        /* HACK */      (_NODES[itr].wx < WORLD_XMIN) || (_NODES[itr].wx >= WORLD_XMAX)
+        /* HACK */      ||
+        /* HACK */      (_NODES[itr].wy < WORLD_YMIN) || (_NODES[itr].wy >= WORLD_YMAX)
+        /* HACK */  )
+        /* HACK */  {
+        /* HACK */      continue;
+        /* HACK */  }
 
+        wp = _NODES[itr].wp;
         xy_ofst = ((_NODES[itr].wy * WORLD_WIDTH) + _NODES[itr].wx);
 
-        CONTX_NmeStrMap[wp][xy_ofst] |= AI_TARGET_SITE;
+        g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_SITE;
 
     }
 
@@ -7958,7 +8019,7 @@ void AI_Pick_Action_Conts__WIP(int16_t player_idx)
 
                     // ; isn't this the previous data? the table is not
                     // ; recalculated before this point
-                    CONTX_NmeStrMap[wp][((Transport_Tile_Y * WORLD_WIDTH) + Transport_Tile_X)] = 0;
+                    g_ai_evaluation_map[wp][((Transport_Tile_Y * WORLD_WIDTH) + Transport_Tile_X)] = 0;
 
                     // Own_City_Count = Delta_XY_With_Wrap(Transport_Tile_X, Transport_Tile_Y, Territory_Center_X, Territory_Center_Y, WORLD_WIDTH);
                     distance = Delta_XY_With_Wrap(Transport_Tile_X, Transport_Tile_Y, Territory_Center_X, Territory_Center_Y, WORLD_WIDTH);

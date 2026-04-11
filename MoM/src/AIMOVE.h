@@ -250,7 +250,7 @@ int16_t TILE_NextFreeLand__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
 void AI_Continent_Reeval__WIP(int16_t player_idx);
 
 // WZD o162p36
-void AI_SetEnemyStrMaps(int16_t player_idx);
+void AI_Evaluation_Map(int16_t player_idx);
 
 // WZD o162p37
 void AI_Pick_Action_Conts__WIP(int16_t player_idx);

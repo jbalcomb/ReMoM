@@ -282,7 +282,7 @@ void AI_Next_Turn__WIP(void)
 
                 Player_All_Colony_Autobuild(itr_players);
 
-                AI_SetEnemyStrMaps(itr_players);
+                AI_Evaluation_Map(itr_players);
 
 
                 AI_Continent_Reeval__WIP(itr_players);
@@ -2279,8 +2279,8 @@ void EMM_Map_CONTXXX__WIP(void)
     _ai_own_stack_wp          = (&EMS_PFBA[0] + ( 870 * SZ_PARAGRAPH_B));  //  880 -  870 =  10 * 1 PR =  160 B  80 2-byte values
     _ai_own_stack_type        = (&EMS_PFBA[0] + ( 880 * SZ_PARAGRAPH_B));  //  890 -  880 =  10 * 1 PR =  160 B  80 2-byte values
     _ai_own_stack_unit_count  = (&EMS_PFBA[0] + ( 890 * SZ_PARAGRAPH_B));  //  900 -  890 =  10 * 1 PR =  160 B  80 2-byte values
-    CONTX_NmeStrMap[0]        = (uint16_t *)(&EMS_PFBA[0] + ( 900 * SZ_PARAGRAPH_B));  // 1500 -  900 = 600 * 1 PR = 9600 B
-    CONTX_NmeStrMap[1]        = (uint16_t *)(&EMS_PFBA[0] + (1500 * SZ_PARAGRAPH_B));  // 2100 - 1500 = 600 * 1 PR = 9600 B
+    g_ai_evaluation_map[0]        = (uint16_t *)(&EMS_PFBA[0] + ( 900 * SZ_PARAGRAPH_B));  // 1500 -  900 = 600 * 1 PR = 9600 B
+    g_ai_evaluation_map[1]        = (uint16_t *)(&EMS_PFBA[0] + (1500 * SZ_PARAGRAPH_B));  // 2100 - 1500 = 600 * 1 PR = 9600 B
     CONTX_LoadTileXs[0]       =  (int8_t *)(&EMS_PFBA[0] + (2100 * SZ_PARAGRAPH_B));  // 2200 - 2100 = 100 * 1 PR = 1600 B
     CONTX_LoadTileXs[1]       =  (int8_t *)(&EMS_PFBA[0] + (2200 * SZ_PARAGRAPH_B));  // 2300 - 2200 = 100 * 1 PR = 1600 B
     CONTX_LoadTileYs[0]       =  (int8_t *)(&EMS_PFBA[0] + (2300 * SZ_PARAGRAPH_B));  // 2400 - 2300 = 100 * 1 PR = 1600 B
@@ -2290,8 +2290,8 @@ void EMM_Map_CONTXXX__WIP(void)
     CONTX_1stLoadTs[0]        = (int16_t *)(&EMS_PFBA[0] + (2900 * SZ_PARAGRAPH_B));  // 3000 - 2900 = 100 * 1 PR = 1600 B
     CONTX_1stLoadTs[1]        = (int16_t *)(&EMS_PFBA[0] + (3000 * SZ_PARAGRAPH_B));  // 3200 - 3000 = 200 * 1 PR = 3200 B
 
-    /* HACK */  memset(CONTX_NmeStrMap[0], 0, 9600);
-    /* HACK */  memset(CONTX_NmeStrMap[1], 0, 9600);
+    /* HACK */  memset(g_ai_evaluation_map[0], 0, 9600);
+    /* HACK */  memset(g_ai_evaluation_map[1], 0, 9600);
 
 // mov     ax, _SI_itr
 // shl     ax, 1

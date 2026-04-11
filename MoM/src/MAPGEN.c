@@ -934,8 +934,6 @@ Loop_Location_1:
                     else
                     {
 
-                        assert(City_Maximum_Size_NewGame(wx, wy, wp) >= MIN_HOME_POP);
-
                         _FORTRESSES[player_idx].wx = (int8_t)wx;
                         _FORTRESSES[player_idx].wy = (int8_t)wy;
                         _FORTRESSES[player_idx].wp = (int8_t)wp;

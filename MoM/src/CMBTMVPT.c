@@ -92,7 +92,7 @@ int16_t * m_movement_path_grid_cell_index;
                 potential_path_cost = adjacent_path_cost + move_cost + (EXTRA_COST); \
                 if (potential_path_cost < _cmbt_mvpth_c[ctr]) { \
                     _cmbt_path_data[ctr] = adjacent_idx; \
-                    _cmbt_mvpth_c[ctr] = potential_path_cost; \
+                    _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost; \
                     if (_cmbt_path_data[ctr] != current_origin) { \
                         tense = ST_TRUE; \
                     } \

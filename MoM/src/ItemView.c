@@ -146,14 +146,14 @@ XREF:
 */
 void Item_View_Prepare(int16_t item_idx, SAMB_ptr item_bitmap_seg, SAMB_ptr item_icon_pict_seg)
 {
-    char Power_Texts[5][40];
-    char Power_Names[5][20];
-    uint8_t colors[4];
-    int16_t y_start;
-    int16_t line_space;
-    int16_t Power_Count;
-    int16_t Name_Width;
-    int16_t itr_item_powers;  // _SI_
+    char Power_Texts[5][40] = { 0 };
+    char Power_Names[5][20] = { 0 };;
+    uint8_t colors[4] = { 0, 0, 0, 0 };
+    int16_t y_start = 0;
+    int16_t line_space = 0;
+    int16_t Power_Count = 0;
+    int16_t Name_Width = 0;
+    int16_t itr_item_powers = 0;
 
     Draw_Picture_To_Bitmap(item_view_background_seg, item_bitmap_seg);
     Draw_Item_Icon_With_Enchantment_Outline(item_idx, item_icon_pict_seg);
@@ -290,12 +290,9 @@ Draw_Item_With_Name()
 */
 void Draw_Item_Icon_With_Enchantment_Outline(int16_t item_idx, SAMB_ptr item_icon_bitm)
 {
-    uint32_t item_powers;
-    uint16_t item_powers_HI;  // _DX_
-    uint16_t item_powers_LO;  // _AX_
-    int16_t magic_realm;  // _SI_
-    uint8_t * color_list;  // DNE in Dasm
-    struct s_ITEM * item_ptr;
+    uint32_t item_powers = 0;
+    int16_t magic_realm = 0;
+    struct s_ITEM * item_ptr = NULL;
 
     Draw_Picture_To_Bitmap(item_icons_seg[_ITEMS[item_idx].icon_idx], GfxBuf_2400B);
 
