@@ -242,7 +242,7 @@ void Road_Build_Screen(void)
                 if(roadbuilder_count > 0)
                 {
                     Set_Army_Road_Building(roadbuilder_count, &roadbuilders[0], m_road_dst_x, m_road_dst_y);
-                    RdBd_UNIT_MoveStack__WIP(_human_player_idx, roadbuilders[0], m_road_dst_x, m_road_dst_y, &_map_x, &_map_y, _map_plane);
+                    Stack_Move_To(_human_player_idx, roadbuilders[0], m_road_dst_x, m_road_dst_y, &_map_x, &_map_y, _map_plane);
                     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
                 }
             }

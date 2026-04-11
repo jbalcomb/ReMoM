@@ -53,17 +53,7 @@
 // AI_SetNeutralTargets()
 
 // WZD o164p05
-// drake178: AI_Turn_NearAllocs()
 // ¿ MoO2  Module: AIDATA  Compute_AI_Data_() ? ¿ ... Deallocate_AI_Data_() ?
-/*
-; allocates a total of 3,942 bytes of the LBX near
-; buffer to various AI arrays
-;
-; RE-EXPLORE and MOVE
-*/
-/*
-
-*/
 void Allocate_AI_Data(void)
 {
     AI_Own_City_Values = (int16_t *)Near_Allocate_First(200);

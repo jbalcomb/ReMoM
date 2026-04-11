@@ -10,7 +10,7 @@
 
 ## AIDUDES
 - [ ] AI_Continent_Eval__WIP
-- [ ] AI_Next_Turn__WIP
+- [ ] AI_Next_Turn
 - [ ] CONTX_CreateChains__WIP
 - [ ] CONTX_CreateLChains__WIP
 - [ ] EMM_Map_CONTXXX__WIP
@@ -299,10 +299,10 @@
 - [ ] GAME_OVER__STUB
 
 ## SETTLE
-- [ ] AI_MoveUnits__WIP
+- [ ] AI_MoveUnits
 - [ ] AI_UNIT_BuildRoad__WIP
 - [ ] AI_UNIT_Meld__WIP
-- [ ] AI_UNIT_Move__WIP
+- [ ] AI_UNIT_Move
 - [ ] AI_UNIT_SeekTransprt__WIP
 - [ ] AI_UNIT_Settle__WIP
 
@@ -364,7 +364,7 @@
 - [ ] Thing_View_Draw__WIP
 
 ## UNITSTK
-- [ ] RdBd_UNIT_MoveStack__WIP
+- [ ] RdBd_UNIT_MoveStack
 
 ## UnitView
 - [ ] UNIT_GetDependants__WIP

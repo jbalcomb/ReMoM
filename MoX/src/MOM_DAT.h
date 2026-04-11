@@ -1389,7 +1389,7 @@ struct s_WIZARD
     /* 04AA */ uint16_t reevaluate_hostility_countdown;
     /* 04AC */ uint16_t reevaluate_magic_strategy_countdown;
     /* 04AE */ uint16_t reevaluate_magic_power_countdown;
-    /* 04B0 */ uint8_t  peace_duration[NUM_PLAYERS];
+    /* 04B0 */ uint8_t  peace_duration[NUM_PLAYERS];  /* decremented in AI_Next_Turn() */
     /* 04B6 */ int16_t  niu_cp_target_1;  /* set in Init_CP_Strategy(), never xref'd again */
     /* 04B8 */ int16_t  niu_cp_target_2;  /* set in Init_CP_Strategy(), never xref'd again */
     /* 04BA */ int16_t  cp_target_3;  /* set to hostile, target player_idx in AI_OVL_SplCat_Picker()  OVL_TargetWiz AKA IDK_AI_Strategy_3 */
@@ -1709,7 +1709,7 @@ struct s_UNIT
     /* 0C */  int8_t  Level;
     /* 0D */  uint8_t pad2B_0Dh;    /* 2-byte alignment padding */
     /* 0E */  int16_t XP;  // should be `"ep"
-    /* 10 */  int8_t  Move_Failed;
+    /* 10 */  int8_t  Move_Failed;  /* reset to ST_FALSE in AI_Next_Turn(), for all non-human units */
     /* 11 */  int8_t  Damage;       /* 'Nature's Cures' sets this and only this to 0. ¿ What does that mean for my understanding of Unit/Figure damage, including front_figure_damage ?*/
     /* 12 */  int8_t  Draw_Priority;    /* ~ draw order, z-index, depth, overlay ... 2-D bitmap graphics  Moo2 ~ _moveable_box_order Box_Order_() */
     /* 13 */  uint8_t pad2B_13h;    /* 2-byte alignment padding */
@@ -2699,18 +2699,6 @@ extern char hlpentry_lbx_file[];
 // WZD dseg:6E9E
 // drake178: TBL_Tax_Unrest_Pcnts
 extern int16_t tax_unrest_pct_table[7];
-
-
-
-
-
-// WZD dseg:6F76                                                 BEGIN:  ovr148 - Initialized Data
-
-// WZD dseg:6F76
-// ; an index into OvlMovePaths_EMS@
-extern int16_t CRP_UNIT_OverlandPath;
-
-// WZD dseg:6F76                                                 END:  ovr148 - Initialized Data
 
 
 
@@ -3942,7 +3930,7 @@ extern int8_t MSG_GEs_Lost;
 
 
 // WZD dseg:9C90
-extern SAMB_ptr TBL_OvlMovePaths_EMS;
+extern struct s_AI_MOVE_PATH ** _ai_move_path_table;
 
 // WZD dseg:9C94
 extern uint16_t * g_ai_evaluation_map[2];

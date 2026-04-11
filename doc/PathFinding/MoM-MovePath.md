@@ -130,13 +130,13 @@ move path struct shows 35 bytes for the x,y and cost arrays
 
 STK_GetPath()
     iters over 140
-        to get cached MovePath from TBL_OvlMovePathsEMS@
+        to get cached MovePath from _ai_move_path_table@
 OVL_ClearUnitPath()
     tests CRP_UNIT_OverlandPath > 0 && < 140
-    to set TBL_OvlMovePathsEMS@[] to ST_UNDEFINED
+    to set _ai_move_path_table@[] to ST_UNDEFINED
 Loaded_Game_Update()
     iters over 100
-    to set TBL_OvlMovePathsEMS@[] to ST_UNDEFINED
+    to set _ai_move_path_table@[] to ST_UNDEFINED
     sets CRP_UNIT_OverlandPath to ST_UNDEFINED
 
 
@@ -515,7 +515,7 @@ OVL_MoveUnitStack()
 
 
 sizeof MovePath structure is 118 (0x76) bytes
-TBL_OvlMovePathsEMS is 1033 (0x409) paragraphs  1033 * 16 = 16528 bytes
+_ai_move_path_table is 1033 (0x409) paragraphs  1033 * 16 = 16528 bytes
 118 * 140 = 16520
 
 00000000 struc MovePath ; (sizeof=0x76, standard type)
@@ -557,25 +557,25 @@ sets CRP_UNIT_OverlandPath to ST_UNDEFINED
 loops 140
 ...
     if...
-        TBL_OvlMovePathsEMS[itr].Start_X == SrcX
-        TBL_OvlMovePathsEMS[itr].Start_Y == SrcY
-        TBL_OvlMovePathsEMS[itr].Target_X == TgtX
-        TBL_OvlMovePathsEMS[itr].Target_Y == TgtY
-        TBL_OvlMovePathsEMS[itr].Plane == Plane
+        _ai_move_path_table[itr].Start_X == SrcX
+        _ai_move_path_table[itr].Start_Y == SrcY
+        _ai_move_path_table[itr].Target_X == TgtX
+        _ai_move_path_table[itr].Target_Y == TgtY
+        _ai_move_path_table[itr].Plane == Plane
     sets CRP_UNIT_OverlandPath to _SI_itr_Path_Length_Max ; an index into OvlMovePaths_EMS@
 then,
     if CRP_UNIT_OverlandPath != ST_UNDEFINED
         fmemcpy()
             from
-                TBL_OvlMovePathsEMS@  MovePath._Xs
-                TBL_OvlMovePathsEMS@  MovePath._Ys
-                TBL_OvlMovePathsEMS@  MovePath.Costs
+                _ai_move_path_table@  MovePath._Xs
+                _ai_move_path_table@  MovePath._Ys
+                _ai_move_path_table@  MovePath.Costs
             to
                 RXs@
                 RYs@
                 RCs@
             count of
-                TBL_OvlMovePathsEMS@  MovePath.Length
+                _ai_move_path_table@  MovePath.Length
             where
                 RXs@ is &IDK_MovePath_DestinationX[0]
                 RXs@ is &IDK_MovePath_DestinationY[0]
@@ -631,7 +631,7 @@ Set_Active_Stack_Movement_Path
     passes the offset of OVL_Path_Costs to STK_GetPath()
 
 UNIT_MoveStack
-    passes the offset of OVL_Path_Costs to OVL_StoreLongPath()
+    passes the offset of OVL_Path_Costs to Cache_AI_Move_Path()
 
 Move_Stack()
     has two blocks assigning values to OVL_Path_Costs
@@ -643,7 +643,7 @@ Move_Stack()
 
 STK_GetPath()
     passed offset of OVL_Path_Costs RCs
-        memcpy() from TBL_OvlMovePathsEMS@  Move_Path.Costs
+        memcpy() from _ai_move_path_table@  Move_Path.Costs
         ¿ OR ?
         RCs[itr_path_length] = movepath_cost_map[((y * WORLD_WIDTH) + x)]
 

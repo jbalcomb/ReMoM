@@ -78,7 +78,7 @@ Loaded_Game_Update()
         BEGIN:  AI CONT / MOVE
     */
     for(itr = 0; itr < 100; itr++)
-        TBL_OvlMovePaths_EMS[itr] = ST_UNDEFINED;
+        _ai_move_path_table[itr] = ST_UNDEFINED;
 
     CRP_UNIT_OverlandPath = ST_UNDEFINED;
 

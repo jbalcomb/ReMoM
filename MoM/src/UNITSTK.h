@@ -27,7 +27,7 @@ void Update_Stack_Active(int16_t stack_idx);
 int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p);
 
 // WZD o61p03
-int16_t RdBd_UNIT_MoveStack__WIP(int16_t player_idx, int16_t unit_idx, int16_t destination_world_x, int16_t destination_world_y, int16_t * map_x, int16_t * map_y, int16_t map_p);
+int16_t Stack_Move_To(int16_t player_idx, int16_t unit_idx, int16_t destination_world_x, int16_t destination_world_y, int16_t * map_x, int16_t * map_y, int16_t map_p);
 
 // WZD o61p04
 void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p);

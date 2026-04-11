@@ -69,7 +69,7 @@ char cnst_EMMErr_TooLow2[] = "K of expanded memory.";
 
 static int16_t UU_EMMData_PrevLvl = 0;
 
-int16_t g_EmmHndl_OVERXYZ = 0;
+SAMB_ptr g_EmmHndl_OVERXYZ = 0;
 int16_t EMM_Data_Level = 0;
 SAMB_ptr _EMMDATAH_seg = 0;
 byte_ptr _VGAFILEH_seg = 0;
@@ -407,7 +407,7 @@ void EMM_ReleaseAll__STUB(void)
     }
     if (g_EmmHndl_OVERXYZ != 0)
     {
-        EMM_ReleaseHandle__SUTB((SAMB_ptr)g_EmmHndl_OVERXYZ);
+        EMM_ReleaseHandle__SUTB(g_EmmHndl_OVERXYZ);
     }
 }
 

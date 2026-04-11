@@ -2642,7 +2642,22 @@ void Select_Stack_At_Summon(void)
 
 // WZD o62p01
 /*
-drake178: does nothing and returns zero; at some point must have been some wizard data refresh function
+XREF:
+    Init_Overland+107             call    j_o62p01_empty_function
+    Main_Screen+743               call    j_o62p01_empty_function
+    Main_Screen+7ED               call    j_o62p01_empty_function
+    Select_Stack_At_Unit+B        call    j_o62p01_empty_function
+    Select_Stack_At_Summon+7      call    j_o62p01_empty_function
+    Next_Turn_Proc__WIP+60        call    j_o62p01_empty_function
+    Next_Turn_Proc__WIP+2A0       call    j_o62p01_empty_function
+    Move_Stack+BF                 call    j_o62p01_empty_function
+    Move_Stack+D0                 call    j_o62p01_empty_function
+    Stack_Move_To+2FC  call    j_o62p01_empty_function
+    WIZ_NextIdleStack+23          call    j_o62p01_empty_function
+    ArmyList_Screen+265           call    j_o62p01_empty_function
+    Unit_Statistics_Popup+73B     call    j_o62p01_empty_function
+    GAME_NextHumanStack:loc_82D44 call    j_o62p01_empty_function
+    Determine_Offer+30A           call    j_o62p01_empty_function
 */
 int16_t o62p01_empty_function(int16_t player_idx)
 {
@@ -2655,9 +2670,7 @@ int16_t o62p01_empty_function(int16_t player_idx)
 // pop     bp
 // retf
 // endp o62p01_empty_function
-
     return 0;
-
 }
 
 

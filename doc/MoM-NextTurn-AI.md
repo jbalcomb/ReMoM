@@ -9,7 +9,7 @@ Page 120  (PDF Page 125)
 
 
 AI_CullTheWeak()    ==>  AI_Kill_Lame_Units()
-AI_Overland_Turn()  ==>  AI_Next_Turn__WIP()
+AI_Overland_Turn()  ==>  AI_Next_Turn()
 AI_AtWarWith_Players  ==>  _cp_hostile_opponents
 AI_Active_War_Count  ==>  _cp_hostile_opponent_count
 AI_Count_Active_Wars__WIP  ==>  Player_Hostile_Opponents()
@@ -31,7 +31,7 @@ Screen_Control()
         |-> Next_Turn_Calc()
             |-> AI_Kill_Lame_Units()
                 |-> AI_Calculate_Average_Unit_Cost()
-            |-> AI_Next_Turn__WIP()
+            |-> AI_Next_Turn()
                 |-> Allocate_AI_Data()
 
 MoO2
@@ -134,7 +134,7 @@ else
 
 
 
-## AI_Next_Turn__WIP()
+## AI_Next_Turn()
 
 ...sanity check all unit coordinates...make insane units be dead... (owner == -1)
 
@@ -224,8 +224,8 @@ ai_transport_count
 
 XREF:
     NX_j_AI_OVL_Eval_Assets__WIP()
-    AI_Next_Turn__WIP()
-    AI_Next_Turn__WIP()
+    AI_Next_Turn()
+    AI_Next_Turn()
 
 AI_Enemy_City_Values
     ...looks to be used to pick the target for negative city (area) spells
@@ -365,7 +365,7 @@ For Each City...
 
 
 
-## AI_SetEnemyStrMaps__WIP()
+## AI_Evaluation_Map()
 
 sets bit for non-hostile
 sets bit for city/lair/node

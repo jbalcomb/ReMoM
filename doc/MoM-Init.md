@@ -339,7 +339,7 @@ TBL_TempMoveMap_EMS                         Nay-SAVE_GAM
 TBL_MoveMaps_EMS                            Yay-SAVE_GAM
 TBL_SharedTiles_EMS                         Nay-SAVE_GAM
 TBL_Catchments_EMS                          Nay-SAVE_GAM
-TBL_OvlMovePaths_EMS                        Nay-SAVE_GAM
+_ai_move_path_table                        Nay-SAVE_GAM
 
 p0_heroes                                   Yay-SAVE_GAM
 p1_heroes                                   Yay-SAVE_GAM

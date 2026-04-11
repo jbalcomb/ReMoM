@@ -242,7 +242,7 @@ Spellbook_Screen()
 
 XREF:
     j_AI_Spell_Select__STUB()
-        AI_Next_Turn__WIP()
+        AI_Next_Turn()
             j_AI_Next_Turn__WIP()
                 Next_Turn_Calc()
 
