@@ -124,6 +124,10 @@ endif()
 
 add_compile_definitions($<$<CONFIG:Debug>:STU_DEBUG>)
 
+if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    add_compile_options(-g -O0 -fno-limit-debug-info)
+endif()
+
 # Suppress "unknown pragma" warnings (C4068) on MSVC — pragmas from the original Borland C++ disassembly
 # if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
 if(MSVC)
