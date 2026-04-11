@@ -3,6 +3,7 @@
 *.m4
 *.o
 configure
+configure~
 config.log
 config.status
 output.*
