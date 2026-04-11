@@ -59,7 +59,7 @@ void AI_Update_Gold_And_Mana_Reserves(int16_t player_idx);
 void AI_Update_Gold_Income_And_Food_Income(int16_t player_idx);
 
 // WZD o145p13
-// AI_SetNeutralFarmers()
+void AI_SetNeutralFarmers(void);
 
 // WZD o145p14
 void AI_Kill_Excess_Settlers_And_Engineers(int16_t player_idx);

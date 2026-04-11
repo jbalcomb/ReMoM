@@ -564,7 +564,7 @@ void AI_Next_Turn(void)
 
     /* Neutral Player (index 6) Turn Processing */
     Player_All_Colony_Autobuild(NEUTRAL_PLAYER_IDX);
-    // AI_SetNeutralFarmers();
+    AI_SetNeutralFarmers();
     // AI_SetNeutralTargets();
     AI_MoveUnits(NEUTRAL_PLAYER_IDX);
     
@@ -2289,7 +2289,58 @@ void AI_Update_Gold_Income_And_Food_Income(int16_t player_idx)
 
 
 // WZD o145p13
-// drake178: AI_SetNeutralFarmers()
+void AI_SetNeutralFarmers(void)
+{
+    int16_t city_idx = 0;
+    int16_t min_farmers = 0;
+    int16_t unit_count = 0;
+    int16_t temp_val = 0;
+    for (city_idx = 0; city_idx < _cities; city_idx++)
+    {
+        /* Check if city owner is Neutral (owner 5) */
+        if (_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
+        {
+            /* Calculate base farmers needed for population */
+            min_farmers = City_Minimum_Farmers(city_idx);
+            /* Count units currently in the city square to calculate food maintenance */
+            unit_count = Map_Square_Unit_Count(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp);
+            /* 
+             * Check for production bonus (Halflings or Granary).
+             * Note: In MoM, bldg_status[10] (0Ah) is the Granary.
+             * BUG: The following logic incorrectly mixes "farmers" and "food units".
+             * It adds unit count (food) to min_farmers (farmers) then divides again.
+             */
+            if (_CITIES[city_idx].race == 4 /* rt_Halfling */ || _CITIES[city_idx].bldg_status[10] == 1 /* bs_Built */)
+            {
+                /* loc_D4805: Halfling/Granary logic (3 food per farmer) */
+                temp_val = min_farmers + unit_count;
+                _CITIES[city_idx].farmer_count = (temp_val / 3);
+                /* Round up if there is a remainder */
+                if ((temp_val % 3) != 0)
+                {
+                    _CITIES[city_idx].farmer_count++;
+                }
+            }
+            else
+            {
+                /* Standard logic (2 food per farmer) */
+                temp_val = min_farmers + unit_count;
+                _CITIES[city_idx].farmer_count = (temp_val / 2);
+                /* Round up if there is a remainder */
+                if ((temp_val % 2) != 0)
+                {
+                    _CITIES[city_idx].farmer_count++;
+                }
+            }
+            /* Ensure farmer count does not exceed total population */
+            if (_CITIES[city_idx].farmer_count > _CITIES[city_idx].population)
+            {
+                _CITIES[city_idx].farmer_count = _CITIES[city_idx].population;
+            }
+        }
+    }
+}
+
 
 // WZD o145p14
 // drake178: AI_ExcessBuilders()
