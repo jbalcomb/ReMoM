@@ -133,13 +133,13 @@ AI_Find_Opportunity_City_Target()
 AI_Build_Stacks_Find_Targets_Order_Moves()
     |-> AI_Find_Nearest_Target_Unit()
 
-TILE_NextFreeLand__WIP()
+TILE_NextFreeLand()
     |-> Map_Square_Is_Land()
 
 AI_GarrBuilderPush__WIP()
-    |-> TILE_NextFreeLand__WIP()
+    |-> TILE_NextFreeLand()
     |-> AI_Set_Move_Or_Goto_Target()
-    |-> TILE_NextFreeLand__WIP()
+    |-> TILE_NextFreeLand()
     |-> AI_Set_Move_Or_Goto_Target()
 
 sub_EFBD6()
@@ -249,7 +249,7 @@ AI_Set_Move_Or_Goto_Target()
 ## AI_Set_Move_Or_Goto_Target()
 
 
-## TILE_NextFreeLand__WIP()
+## TILE_NextFreeLand()
 
 ## Map_Square_Is_Land()
 this should be in the terrain notes  MOVE IT!!!!!
@@ -257,9 +257,9 @@ this should be in the terrain notes  MOVE IT!!!!!
 
 
 ## AI_GarrBuilderPush__WIP()
-    |-> TILE_NextFreeLand__WIP()
+    |-> TILE_NextFreeLand()
     |-> AI_Set_Move_Or_Goto_Target()
-    |-> TILE_NextFreeLand__WIP()
+    |-> TILE_NextFreeLand()
     |-> AI_Set_Move_Or_Goto_Target()
 
 

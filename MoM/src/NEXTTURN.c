@@ -1004,6 +1004,7 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
 
                 if((R_Param < 0) || R_Param >= 2000)
                 {
+                    // ¿ OGBUG  this means level 0 Raiders never get created ?
                     if(R_Param < -1)
                     {
                         R_Param = (abs(R_Param) - 1);

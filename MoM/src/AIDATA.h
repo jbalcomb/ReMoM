@@ -36,7 +36,7 @@ void NPC_Excess_Garrison(void);
 // EVNT_RampageMonsters()
 
 // WZD o164p03
-// EVNT_GenerateRaiders()
+void Make_Raiders(void);
 
 // WZD o164p04
 int16_t NPC_Destinations(void);

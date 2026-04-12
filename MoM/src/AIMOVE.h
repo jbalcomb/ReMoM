@@ -238,7 +238,7 @@ int16_t TILE_AI_FindEmptyLnd__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * 
 // sub_F6EBF()
 
 // WZD o162p32
-int16_t TILE_NextFreeLand__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * RetX, int16_t * RetY);
+int16_t Adjacent_Free_Square(int16_t wx, int16_t wy, int16_t wp, int16_t * RetX, int16_t * RetY);
 
 // WZD o162p33
 // EVNT_MakeRampageList()

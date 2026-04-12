@@ -22,6 +22,7 @@
 #include "Spellbook.h"
 #include "UnitMove.h"
 #include "UNITTYPE.h"
+#include "WZD_o059.h"
 
 #include "AIDATA.h"
 
@@ -52,7 +53,7 @@ void NPC_Excess_Garrison(void)
     int16_t city_wx = 0;
     int16_t cheapest_unit = 0;
     int16_t lowest_value = 0;
-    int16_t garrison_count = 0;
+    int16_t troop_count = 0;
     int16_t i = 0;
     int16_t j = 0;
 
@@ -66,7 +67,7 @@ void NPC_Excess_Garrison(void)
 
             lowest_value = 1000;
             cheapest_unit = ST_UNDEFINED;
-            garrison_count = 0;
+            troop_count = 0;
 
             for (j = 0; j < _units; j++)
             {
@@ -74,7 +75,7 @@ void NPC_Excess_Garrison(void)
                     _UNITS[j].wx == city_wx && 
                     _UNITS[j].wy == city_wy)
                 {
-                    garrison_count++;
+                    troop_count++;
 
                     /* Check cost of unit to find the cheapest in the garrison */
                     if (_unit_type_table[_UNITS[j].type].cost < lowest_value)
@@ -101,7 +102,7 @@ void NPC_Excess_Garrison(void)
             }
 
             /* If garrison exceeds limits, remove the cheapest unit */
-            if (garrison_count > max_garrison && cheapest_unit != ST_UNDEFINED)
+            if (troop_count > max_garrison && cheapest_unit != ST_UNDEFINED)
             {
                 Kill_Unit(cheapest_unit, kt_Normal);
             }
@@ -115,8 +116,246 @@ void NPC_Excess_Garrison(void)
 // EVNT_RampageMonsters()
 
 // WZD o164p03
-// drake178: EVNT_GenerateRaiders()
-// EVNT_GenerateRaiders()
+/**
+ * @brief Attempts to spawn a neutral raider stack from a qualifying neutral city.
+ *
+ * The routine first checks whether any neutral cities exist, then uses the
+ * neutral player's @c casting_cost_original field as a turn-over-turn spawn
+ * accumulator. Once that accumulator reaches the threshold, the function makes
+ * repeated attempts to choose a neutral city whose continent also contains at
+ * least one non-neutral city and an adjacent free land square suitable for
+ * spawning raiders.
+ *
+ * When a valid source city is found, the city's current garrison is sampled to
+ * determine how many raiders to create and which unit types may be copied.
+ * Raider count is scaled by difficulty, reduced if an AI fortress is present
+ * on the same landmass, and further reduced on early-game Myrror. Newly
+ * created raiders inherit their unit type from random defenders, excluding
+ * transport and outpost-capable units and preserving the original game's local
+ * Barbarian-unit exclusion noted in the implementation.
+ *
+ * After successful creation, a fraction of the original defenders are removed
+ * to represent the raiding party leaving the city. If all generation attempts
+ * fail after the accumulator triggers, the function instead increments the
+ * neutral player's @c average_unit_cost field, which this code uses as the
+ * fallback rampaging-monster accumulator.
+ *
+ * @note This routine has no parameters and no direct return value; it mutates
+ *       global player, city, unit, and fortress state.
+ * @note Reads from globals including @c _players, @c _CITIES, @c _UNITS,
+ *       @c _FORTRESSES, and @c _landmasses, and may call
+ *       @c Create_Unit__WIP(), @c Kill_Unit(), @c Army_At_Square_2(), and
+ *       @c Adjacent_Free_Square() as part of the spawn attempt.
+ */
+/* GEMINI */
+void Make_Raiders(void)
+{
+    int16_t itr = 0;
+    int16_t city_wx = 0;
+    int16_t city_wy = 0;
+    int16_t city_wp = 0;
+    int16_t unused_local = 0;
+    int16_t empty_adjacent_x = 0;
+    int16_t empty_adjacent_y = 0;
+    int16_t raiders_level_neg = 0;
+    int16_t city_landmass_idx = 0;
+    int16_t troop_count = 0;
+    int16_t raiders_count = 0;
+    int16_t have_neutral_city = 0;
+    int16_t did_create = 0;
+    int16_t tries = 0;
+    int16_t rolled_city = 0;
+    int16_t have_non_neutral = 0;
+    int16_t unit_type = 0;
+    int16_t units_created = 0;
+    int16_t have_ai_fortress = 0;
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 }; 
+    int16_t itr2 = 0;
+    struct s_CITY * city_ptr = NULL;
+    struct s_FORTRESS * fortress_ptr = NULL;
+    struct s_UNIT * unit_ptr = NULL;
+
+    have_neutral_city = 0;
+
+    /* Check if any neutral cities exist on the map */
+    for (itr = 0; itr < _cities; itr++)
+    {
+        city_ptr = &_CITIES[itr];
+        if (city_ptr->owner_idx == NEUTRAL_PLAYER_IDX)
+        {
+            have_neutral_city = ST_TRUE;
+        }
+    }
+
+    if (have_neutral_city == ST_FALSE)
+    {
+        return;
+    }
+
+    /* Update raider spawn accumulator */
+    _players[NEUTRAL_PLAYER_IDX].casting_cost_original += Random(_difficulty + 1);
+
+    if (_players[NEUTRAL_PLAYER_IDX].casting_cost_original < 30)
+    {
+        return;
+    }
+
+    /* Reset raider accumulator and start generation attempts */
+    _players[NEUTRAL_PLAYER_IDX].casting_cost_original = 0;
+    unused_local = 0;
+    did_create = 0;
+
+    for (tries = 0; tries < 1000 && did_create == 0; tries++)
+    {
+        /* BUG: Random(cities) - 1 can result in index -1 */
+        rolled_city = Random(_cities) - 1;
+
+        city_ptr = &_CITIES[rolled_city];
+        if (city_ptr->owner_idx != NEUTRAL_PLAYER_IDX)
+        {
+            continue;
+        }
+
+        city_wx = city_ptr->wx;
+        city_wy = city_ptr->wy;
+        city_wp = city_ptr->wp;
+
+        /* Look up landmass index for the city */
+        city_landmass_idx = _landmasses[(city_wp * WORLD_SIZE) + (city_wy * WORLD_WIDTH) + city_wx];
+
+        /* Check for presence of AI fortresses on the same landmass */
+        have_ai_fortress = 0;
+        for (itr = 1; itr < _num_players; itr++)
+        {
+            fortress_ptr = &_FORTRESSES[itr];
+            /* BUG: Uses wp/wy/wx to index landmasses but doesn't strictly verify wp matches city_wp */
+            if (_landmasses[(fortress_ptr->wp * WORLD_SIZE) + (fortress_ptr->wy * WORLD_WIDTH) + fortress_ptr->wx] == city_landmass_idx)
+            {
+                have_ai_fortress = ST_TRUE;
+            }
+        }
+
+        /* Check if there is at least one non-neutral city on the same landmass */
+        have_non_neutral = 0;
+        for (itr = 0; itr < _cities; itr++)
+        {
+            city_ptr = &_CITIES[itr];
+            if (city_ptr->owner_idx != NEUTRAL_PLAYER_IDX)
+            {
+                if (_landmasses[(city_ptr->wp * WORLD_SIZE) + (city_ptr->wy * WORLD_WIDTH) + city_ptr->wx] == city_landmass_idx)
+                {
+                    have_non_neutral = ST_TRUE;
+                    break;
+                }
+            }
+        }
+
+        if (have_non_neutral == ST_FALSE)
+        {
+            continue;
+        }
+
+        /* Find a valid adjacent tile for the raiders to spawn */
+        if (Adjacent_Free_Square(city_wx, city_wy, city_wp, &empty_adjacent_x, &empty_adjacent_y) != ST_TRUE)
+        {
+            continue;
+        }
+
+        /* Get the garrison of the neutral city */
+        Army_At_Square_2(city_wx, city_wy, city_wp, &troop_count, troops);
+
+        if (troop_count <= 0)
+        {
+            continue;
+        }
+
+        /* Calculate how many raiders should spawn */
+        raiders_count = (troop_count * _difficulty) / 6;
+
+        // Reduce raiders by 1/3 if AI fortress is present
+        // What the game-play rationale for this?
+        // Being nice to the human player, assuming they are already having to deal with a Computer Player being nearby?
+        // Being a cheatin' ass bitch on behalf of Computer Player?
+        if (have_ai_fortress == ST_TRUE)
+        {
+            raiders_count = (raiders_count * 2) / 3;
+        }
+
+        /* Myrror raiders are reduced in early game */
+        // Again, intent? Is life harder on Myrror?
+        if (city_wp == MYRROR_PLANE && _turn < 200)
+        {
+            raiders_count /= 2;
+        }
+
+        if (raiders_count < 1)
+        {
+            raiders_count = 1;
+        }
+
+        /* Determine experience level based on game turn */
+        if (_turn > 250)
+        {
+            raiders_level_neg = -4;
+        }
+        else if (_turn > 120)
+        {
+            raiders_level_neg = -3;
+        }
+        else if (_turn > 40)
+        {
+            raiders_level_neg = -2;
+        }
+        else
+        {
+            raiders_level_neg = -1;
+        }
+
+        units_created = 0;
+        for (itr = 0; itr < raiders_count; itr++)
+        {
+
+            unit_type = _UNITS[troops[(Random(troop_count) - 1)]].type;
+
+            /* OGBUG: This comparison excludes barbarian spearmen and swordsmen from raiding */
+            if (unit_type <= ut_BarbSwordsmen)
+            {
+                continue;
+            }
+
+            /* Raiders cannot be transports or settlers */
+            if (_unit_type_table[unit_type].Transport != 0)
+            {
+                continue;
+            }
+
+            if (_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST)
+            {
+                continue;
+            }
+
+            /* Create the raider unit for the neutral player */
+            Create_Unit__WIP(unit_type, NEUTRAL_PLAYER_IDX, empty_adjacent_x, empty_adjacent_y, city_wp, raiders_level_neg);
+            units_created++;
+        }
+
+        /* Remove a portion of the original garrison to 'form' the raider party */
+        for (itr2 = 0; itr2 < (units_created / 3); itr2++)
+        {
+            Kill_Unit(troops[itr2], kt_Normal);
+        }
+
+        did_create = ST_TRUE;
+    }
+
+    /* If raider generation failed, increment the rampaging monster accumulator instead */
+    if (did_create == ST_FALSE)
+    {
+        _players[NEUTRAL_PLAYER_IDX].average_unit_cost += 15;
+    }
+
+}
+
 
 // WZD o164p04
 // MoO2  Module: AIMOVE  Move_NPCs_(); NPC_Dest_();

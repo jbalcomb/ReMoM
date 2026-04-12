@@ -4033,7 +4033,7 @@ void AI_GarrBuilderPush__WIP(int16_t wp)
             )
             {
 
-                if(TILE_NextFreeLand__WIP(_ai_own_stack_wx[itr_stacks], _ai_own_stack_wy[itr_stacks], _ai_own_stack_wp[itr_stacks], &RetX, &RetY) == ST_TRUE)
+                if(Adjacent_Free_Square(_ai_own_stack_wx[itr_stacks], _ai_own_stack_wy[itr_stacks], _ai_own_stack_wp[itr_stacks], &RetX, &RetY) == ST_TRUE)
                 {
 
                     AI_Set_Move_Or_Goto_Target(unit_idx, RetX, RetY, itr_stacks, itr_garrison);
@@ -4071,7 +4071,7 @@ void AI_GarrBuilderPush__WIP(int16_t wp)
                 if(Node_On_Tile == ST_FALSE)
                 {
 
-                    if(TILE_NextFreeLand__WIP(_ai_own_stack_wx[itr_stacks], _ai_own_stack_wy[itr_stacks], _ai_own_stack_wp[itr_stacks], &RetX, &RetY) == ST_TRUE)
+                    if(Adjacent_Free_Square(_ai_own_stack_wx[itr_stacks], _ai_own_stack_wy[itr_stacks], _ai_own_stack_wp[itr_stacks], &RetX, &RetY) == ST_TRUE)
                     {
 
                         AI_Set_Move_Or_Goto_Target(unit_idx, RetX, RetY, itr_stacks, itr_garrison);
@@ -6676,165 +6676,119 @@ int16_t TILE_AI_FindEmptyLnd__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * 
 // drake178: sub_F6EBF()
 
 // WZD o162p32
-// drake178: TILE_NextFreeLand()
 /*
-; looks for an adjacent empty land tile
-; returns 1 along with the coordinates; or 0 if there
-; aren't any
-*/
-/*
-
 returns {F,T} 'found target'
 in-outs wx,wy
-
 ¿ weird indexing of the local array ?
-
 */
-int16_t TILE_NextFreeLand__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * RetX, int16_t * RetY)
+/**
+ * @brief Finds an adjacent unoccupied land square around the given tile.
+ *
+ * Builds a 3x3 availability map centered on the source square, first marking
+ * which neighboring tiles are land, then clearing any entries occupied by a
+ * unit, an intact lair, or a city on the same plane. The center tile is always
+ * treated as unavailable.
+ *
+ * The search returns the first remaining free square in row-major order,
+ * scanning from the northwest neighbor to the southeast neighbor. When such a
+ * square is found, the chosen coordinates are written through the output
+ * pointers.
+ *
+ * @param wx World x coordinate of the center square.
+ * @param wy World y coordinate of the center square.
+ * @param wp World plane containing the search area.
+ * @param adjacent_wx Output pointer that receives the selected adjacent x coordinate.
+ * @param adjacent_wy Output pointer that receives the selected adjacent y coordinate.
+ *
+ * @return ST_TRUE if at least one adjacent land square remains free after
+ *         occupancy checks, or ST_FALSE if no qualifying square exists.
+ *
+ * @note Occupancy checks consider global unit, lair, and city state from
+ *       _UNITS, _LAIRS, and _CITIES on the requested plane.
+ */
+int16_t Adjacent_Free_Square(int16_t wx, int16_t wy, int16_t wp, int16_t * adjacent_wx, int16_t * adjacent_wy)
 {
     int16_t map_square_area[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Checked_Y = 0;
-    int16_t Checked_X = 0;
-    int16_t itr1 = 0;  // _SI_
-    int16_t itr2 = 0;  // _DI_
-
-// ; set up the adjacent tile array - walkable tiles are
-// ; 1s, oceans and shores are 0s
-
+    int16_t entity_wy = 0;
+    int16_t entity_wx = 0;
+    int16_t itr1 = 0;
+    int16_t itr2 = 0;
     for(itr1 = 0; itr1 < 3; itr1++)
     {
-
-        for(itr1 = 0; itr1 < 3; itr1++)
+        for(itr2 = 0; itr2 < 3; itr2++)
         {
-
             if(Square_Is_Land((wx + itr2 - 1), (wy + itr1 - 1), wp) == ST_FALSE)
             {
-
                 map_square_area[((itr1 * 3) + itr2)] = ST_FALSE;
-
             }
             else
             {
-
                 map_square_area[((itr1 * 3) + itr2)] = ST_TRUE;
-
             }
-
         }
-
     }
-
-// ; clear the value of any tile that has a unit on it
-
-    map_square_area[4] = 0;
-
+    map_square_area[4] = ST_FALSE;
     for(itr1 = 0; itr1 < _units; itr1++)
     {
-
         if(_UNITS[itr1].wp == wp)
         {
-
-            Checked_X = _UNITS[itr1].wx;
-
-            Checked_Y = _UNITS[itr1].wy;
-
+            entity_wx = _UNITS[itr1].wx;
+            entity_wy = _UNITS[itr1].wy;
             if(
-                (abs((Checked_X - wx)) < 2)
+                (abs((entity_wx - wx)) < 2)
                 &&
-                (abs((Checked_Y - wy)) < 2)
+                (abs((entity_wy - wy)) < 2)
             )
             {
-
-                map_square_area[(4 + (((Checked_Y - wy) * 3) + (Checked_X - wx)))] = 0;
-
+                map_square_area[(4 + (((entity_wy - wy) * 3) + (entity_wx - wx)))] = ST_FALSE;
             }
-
         }
-
     }
-
-// clear the value of any tile with an intact encounter
-
     for(itr1 = 0; itr1 < NUM_LAIRS; itr1++)
     {
-
-        if(
-            (_LAIRS[itr1].intact == ST_TRUE)
-            &&
-            (_LAIRS[itr1].wp == wp)
-        )
+        if((_LAIRS[itr1].intact == ST_TRUE) && (_LAIRS[itr1].wp == wp))
         {
-
-            Checked_X = _LAIRS[itr1].wx;
-
-            Checked_Y = _LAIRS[itr1].wy;
-
+            entity_wx = _LAIRS[itr1].wx;
+            entity_wy = _LAIRS[itr1].wy;
             if(
-                (abs((Checked_X - wx)) < 2)
+                (abs((entity_wx - wx)) < 2)
                 &&
-                (abs((Checked_Y - wy)) < 2)
+                (abs((entity_wy - wy)) < 2)
             )
             {
-
-                map_square_area[(4 + ((Checked_Y - wy) * 3) + (Checked_X - wx))] = 0;
-
+                map_square_area[(4 + ((entity_wy - wy) * 3) + (entity_wx - wx))] = ST_FALSE;
             }
-
         }
-
     }
-
-// ; clear the value of any tile with a city on it
-
     for(itr1 = 0; itr1 < _cities; itr1++)
     {
-
         if(_CITIES[itr1].wp == wp)
         {
-
-            Checked_X = _CITIES[itr1].wx;
-
-            Checked_Y = _CITIES[itr1].wy;
-
+            entity_wx = _CITIES[itr1].wx;
+            entity_wy = _CITIES[itr1].wy;
             if(
-                (abs((Checked_X - wx)) < 2)
+                (abs((entity_wx - wx)) < 2)
                 &&
-                (abs((Checked_Y - wy)) < 2)
+                (abs((entity_wy - wy)) < 2)
             )
             {
-
-                map_square_area[(4 + ((Checked_Y - wy) * 3) + (Checked_X - wx))] = 0;
-
+                map_square_area[(4 + ((entity_wy - wy) * 3) + (entity_wx - wx))] = ST_FALSE;
             }
-
-
         }
-
     }
-
     for(itr1 = 0; itr1 < 3; itr1++)
     {
-
-        for(itr1 = 0; itr1 < 3; itr1++)
+        for(itr2 = 0; itr2 < 3; itr2++)
         {
-
             if(map_square_area[((itr1 * 3) + itr2)] == ST_TRUE)
             {
-
-                *RetX = (wx + itr2 - 1);
-
-                *RetY = (wy + itr1 - 1);
-
+                *adjacent_wx = (wx + itr2 - 1);
+                *adjacent_wy = (wy + itr1 - 1);
                 return ST_TRUE;
-
             }
-
         }
-
     }
-
     return ST_FALSE;
-
 }
 
 

@@ -37,7 +37,7 @@
 - [ ] G_AI_RallyOrFerry__WIP
 - [ ] TILE_AI_FindEmptyLnd__WIP
 - [ ] TILE_AI_FindLoadTile__WIP
-- [ ] TILE_NextFreeLand__WIP
+- [ ] TILE_NextFreeLand
 
 ## AISPELL
 - [ ] AI_Research_Picker__STUB

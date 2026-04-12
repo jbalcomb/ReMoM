@@ -249,7 +249,7 @@ void AI_Next_Turn(void)
     AI_MoveUnits(NEUTRAL_PLAYER_IDX);
     
     /* Event Generation */
-    // EVNT_GenerateRaiders();
+    Make_Raiders();
     // EVNT_RampageMonsters();
     
     /* Cleanup and Stasis */
