@@ -30,7 +30,7 @@ extern "C" {
 */
 
 // WZD o164p01
-// AI_ExcessNeutrals()
+void NPC_Excess_Garrison(void);
 
 // WZD o164p02
 // EVNT_RampageMonsters()

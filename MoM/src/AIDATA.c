@@ -21,6 +21,7 @@
 #include "NEXTTURN.h"
 #include "Spellbook.h"
 #include "UnitMove.h"
+#include "UNITTYPE.h"
 
 #include "AIDATA.h"
 
@@ -43,8 +44,71 @@
 */
 
 // WZD o164p01
-// drake178: AI_ExcessNeutrals()
-// AI_ExcessNeutrals()
+void NPC_Excess_Garrison(void)
+{
+    int16_t max_garrison = 0;
+    int16_t city_wp = 0;
+    int16_t city_wy = 0;
+    int16_t city_wx = 0;
+    int16_t cheapest_unit = 0;
+    int16_t lowest_value = 0;
+    int16_t garrison_count = 0;
+    int16_t i = 0;
+    int16_t j = 0;
+
+    for (i = 0; i < _cities; i++)
+    {
+        if (_CITIES[i].owner_idx == NEUTRAL_PLAYER_IDX)
+        {
+            city_wx = _CITIES[i].wx;
+            city_wy = _CITIES[i].wy;
+            city_wp = _CITIES[i].wp;
+
+            lowest_value = 1000;
+            cheapest_unit = ST_UNDEFINED;
+            garrison_count = 0;
+
+            for (j = 0; j < _units; j++)
+            {
+                if (_UNITS[j].wp == city_wp && 
+                    _UNITS[j].wx == city_wx && 
+                    _UNITS[j].wy == city_wy)
+                {
+                    garrison_count++;
+
+                    /* Check cost of unit to find the cheapest in the garrison */
+                    if (_unit_type_table[_UNITS[j].type].cost < lowest_value)
+                    {
+                        lowest_value = _unit_type_table[_UNITS[j].type].cost;
+                        cheapest_unit = j;
+                    }
+                }
+            }
+
+            /* Calculate base max garrison from population */
+            max_garrison = _CITIES[i].population;
+
+            if (_CITIES[i].bldg_status[GRANARY] == bs_Built || 
+                _CITIES[i].bldg_status[GRANARY] == bs_Replaced)
+            {
+                max_garrison += 2;
+            }
+
+            if (_CITIES[i].bldg_status[FARMERS_MARKET] == bs_Built || 
+                _CITIES[i].bldg_status[FARMERS_MARKET] == bs_Replaced)
+            {
+                max_garrison += 2;
+            }
+
+            /* If garrison exceeds limits, remove the cheapest unit */
+            if (garrison_count > max_garrison && cheapest_unit != ST_UNDEFINED)
+            {
+                Kill_Unit(cheapest_unit, 0);
+            }
+        }
+    }
+}
+
 
 // WZD o164p02
 // drake178: EVNT_RampageMonsters()

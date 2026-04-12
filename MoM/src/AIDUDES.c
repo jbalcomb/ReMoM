@@ -253,7 +253,7 @@ void AI_Next_Turn(void)
     // EVNT_RampageMonsters();
     
     /* Cleanup and Stasis */
-    // AI_ExcessNeutrals();
+    NPC_Excess_Garrison();
     // AI_StasisDisband();
 }
 
