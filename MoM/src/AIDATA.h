@@ -33,7 +33,7 @@ extern "C" {
 void NPC_Excess_Garrison(void);
 
 // WZD o164p02
-// EVNT_RampageMonsters()
+void Make_Monsters(void);
 
 // WZD o164p03
 void Make_Raiders(void);

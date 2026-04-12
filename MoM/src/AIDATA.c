@@ -19,6 +19,7 @@
 #include "CITYCALC.h"
 #include "DIPLODEF.h"
 #include "NEXTTURN.h"
+#include "RACETYPE.h"
 #include "Spellbook.h"
 #include "UnitMove.h"
 #include "UNITTYPE.h"
@@ -112,8 +113,180 @@ void NPC_Excess_Garrison(void)
 
 
 // WZD o164p02
-// drake178: EVNT_RampageMonsters()
-// EVNT_RampageMonsters()
+void Make_Monsters(void)
+{
+    int16_t rampage_budget = 0;
+    int16_t valid_zone_count = 0;
+    int16_t lair_idx = 0;
+    int16_t lair_wx = 0;
+    int16_t lair_wy = 0;
+    int16_t lair_wp = 0;
+    int16_t lair_landmass_idx = 0;
+    int16_t adjacent_wx = 0;
+    int16_t adjacent_wy = 0;
+    int16_t tries = 0;
+    int16_t rolled_idx = 0;
+    int16_t lair_race = 0;
+    int16_t n_monsters = 0;
+    int16_t ai_home_continent = 0;
+    int16_t uu_bogus = 0;
+    int16_t monster_type_list[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t itr = 0;
+    int16_t city_match_found = 0;
+    uint8_t * landmass_ptr = NULL;
+
+    valid_zone_count = 0;
+
+    /* First pass: Count how many lairs are intact and eligible to spawn rampages */
+    for (itr = 0; itr < NUM_LAIRS; itr++)
+    {
+        if (_LAIRS[itr].intact == ST_TRUE && _LAIRS[itr].guard1_unit_type != 0)
+        {
+            /* If the guards are 'Life' based, they don't rampage */
+            if (_unit_type_table[_LAIRS[itr].guard1_unit_type].race_type != rt_Life)
+            {
+                valid_zone_count++;
+            }
+        }
+    }
+
+    if (valid_zone_count == 0)
+    {
+        return;
+    }
+
+    /* Update the rampage accumulator based on difficulty */
+    _players[NEUTRAL_PLAYER_IDX].average_unit_cost += Random(_difficulty + 1);
+
+    /* Check if the accumulator has reached the threshold: (50 - (difficulty * 5)) */
+    if (_players[NEUTRAL_PLAYER_IDX].average_unit_cost < (50 - (_difficulty * 5)))
+    {
+        return;
+    }
+
+    /* Threshold reached: reset and check turn minimum */
+    _players[NEUTRAL_PLAYER_IDX].average_unit_cost = 0;
+    if (_turn < 50)
+    {
+        return;
+    }
+
+    tries = 0;
+    lair_idx = ST_UNDEFINED;
+
+    /* Search for an eligible lair that is on the same continent as a non-neutral city */
+    while (lair_idx == ST_UNDEFINED && tries < 1000)
+    {
+        rolled_idx = (Random(NUM_LAIRS) - 1);
+
+        if (_LAIRS[rolled_idx].intact == ST_TRUE && _LAIRS[rolled_idx].guard1_unit_type != 0)
+        {
+            if (_unit_type_table[_LAIRS[rolled_idx].guard1_unit_type].race_type != rt_Life)
+            {
+                /* Check if this lair is on a continent with any player city */
+                city_match_found = 0;
+                for (itr = 0; itr < _cities; itr++)
+                {
+                    if (_CITIES[itr].owner_idx != NEUTRAL_PLAYER_IDX)
+                    {
+                        if (_CITIES[itr].wp == _LAIRS[rolled_idx].wp)
+                        {
+                            if (_landmasses[_CITIES[itr].wp * WORLD_SIZE + _CITIES[itr].wy * WORLD_WIDTH + _CITIES[itr].wx] ==
+                                _landmasses[_LAIRS[rolled_idx].wp * WORLD_SIZE + _LAIRS[rolled_idx].wy * WORLD_WIDTH + _LAIRS[rolled_idx].wx])
+                            {
+                                lair_idx = rolled_idx;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                /* 33% chance to force the rampage to be on the same plane as the human fortress */
+                if (lair_idx != ST_UNDEFINED && Random(3) == 2)
+                {
+                    if (_FORTRESSES[HUMAN_PLAYER_IDX].wp != _LAIRS[rolled_idx].wp)
+                    {
+                        lair_idx = ST_UNDEFINED; /* Plane mismatch, retry search */
+                    }
+                }
+            }
+        }
+        tries++;
+    }
+
+    if (tries >= 1000 || lair_idx == ST_UNDEFINED)
+    {
+        return;
+    }
+
+    /* Lair selected, extract map data */
+    lair_wx = _LAIRS[lair_idx].wx;
+    lair_wy = _LAIRS[lair_idx].wy;
+    lair_wp = _LAIRS[lair_idx].wp;
+    lair_landmass_idx = _landmasses[lair_wp * WORLD_SIZE + lair_wy * WORLD_WIDTH + lair_wx];
+
+    /* Determine if an AI player's fortress is on this continent */
+    ai_home_continent = 0;
+
+    /* BUG: The code compares the human landmass (Player 0) without checking the plane first */
+    /* This can cause ai_home_continent to be 0 even if an AI is on the same landmass ID on a different plane */
+    // slightly different than Raiders, which doesn't branch on the human players home continent
+    // here, means we a flag for whether the rampage is on a continent the human is sharing with an AI
+    if (_landmasses[_FORTRESSES[HUMAN_PLAYER_IDX].wp * WORLD_SIZE + _FORTRESSES[HUMAN_PLAYER_IDX].wy * WORLD_WIDTH + _FORTRESSES[HUMAN_PLAYER_IDX].wx] != lair_landmass_idx)
+    {
+        for (itr = 1; itr < _num_players; itr++)
+        {
+            if (_landmasses[_FORTRESSES[itr].wp * WORLD_SIZE + _FORTRESSES[itr].wy * WORLD_WIDTH + _FORTRESSES[itr].wx] == lair_landmass_idx)
+            {
+                ai_home_continent = ST_TRUE;
+                break;
+            }
+        }
+    }
+
+    /* Determine monster race from the lair's primary guard */
+    lair_race = ST_UNDEFINED;
+    if (_LAIRS[lair_idx].guard1_count > 0)
+    {
+        lair_race = _unit_type_table[_LAIRS[lair_idx].guard1_unit_type].race_type;
+        if (lair_race < rt_Arcane)
+        {
+            lair_race = rt_Death;
+        }
+    }
+
+    if (lair_race == ST_UNDEFINED)
+    {
+        return;
+    }
+
+    /* Find a valid adjacent tile to spawn the stack */
+    if (Adjacent_Free_Square(lair_wx, lair_wy, lair_wp, &adjacent_wx, &adjacent_wy) == 0)
+    {
+        return;
+    }
+
+    /* Calculate budget for monsters: ((Rand(diff+1) + Rand(diff+1)) * turn) / 5 */
+    rampage_budget = (Random(_difficulty + 1) + Random(_difficulty + 1));
+    rampage_budget = (rampage_budget * _turn) / 5;
+
+    /* If the continent belongs to an AI, halve the budget */
+    if (ai_home_continent == 1)
+    {
+        rampage_budget /= 2;
+    }
+
+    /* Generate the monster stack based on budget and race */
+    n_monsters = Make_Monster_List(rampage_budget, lair_race, &monster_type_list[0]);
+
+    /* Create the units on the map */
+    for (itr = 0; itr < n_monsters; itr++)
+    {
+        Create_Unit__WIP(monster_type_list[itr], NEUTRAL_PLAYER_IDX, adjacent_wx, adjacent_wy, lair_wp, -1);
+    }
+
+}
+
 
 // WZD o164p03
 /**

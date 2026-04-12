@@ -6793,7 +6793,54 @@ int16_t Adjacent_Free_Square(int16_t wx, int16_t wy, int16_t wp, int16_t * adjac
 
 
 // WZD o162p33
-// drake178: EVNT_MakeRampageList()
+int16_t Make_Monster_List(int16_t budget, int16_t lair_race, int16_t * unit_type_array)
+{
+    int16_t rolled_unit_type = 0;
+    int16_t tries = 0;
+    int16_t count = 0;
+    int16_t current_budget = 0;
+
+    current_budget = budget;
+
+    if (current_budget < 0)
+    {
+        current_budget = 0;
+    }
+
+    count = 0;
+    tries = 0;
+
+    /* Loop continues while budget is at least 25 and we haven't exceeded 2000 attempts */
+    while (current_budget >= 25 && tries < 2000)
+    {
+        /* Generate a random unit index from the pool of rampage monsters */
+        /* OGBUG  should be Random(44) */
+        /* BUG: should be 153 (base index) */
+        /* ¿ is meant to be inclusively between { ut_Magic_Spirit  = 154, ..., ut_Nagas  = 197 } ? */
+        rolled_unit_type = (ut_TrollShaman + Random(47));
+
+        if(
+            (_unit_type_table[rolled_unit_type].race_type == lair_race)
+            &&
+            (_unit_type_table[rolled_unit_type].cost <= current_budget)
+            &&
+            (_unit_type_table[rolled_unit_type].Transport == 0)
+            &&
+            (count < MAX_STACK)
+        )
+        {
+            /* Deduct cost and add to list */
+            current_budget -= _unit_type_table[rolled_unit_type].cost;
+            unit_type_array[count] = rolled_unit_type;
+            count++;
+        }
+
+        tries++;
+    }
+
+    return count;
+}
+
 
 // WZD o162p34
 /*

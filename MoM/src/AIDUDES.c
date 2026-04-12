@@ -250,7 +250,7 @@ void AI_Next_Turn(void)
     
     /* Event Generation */
     Make_Raiders();
-    // EVNT_RampageMonsters();
+    Make_Monsters();
     
     /* Cleanup and Stasis */
     NPC_Excess_Garrison();

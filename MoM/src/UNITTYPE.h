@@ -160,7 +160,7 @@ enum e_UNIT_TYPE
     ut_TrlSpearmen  = 147,
     ut_TrlSwordsmen  = 148,
     ut_TrlHalberdiers  = 149,
-    ut_TrlShaman  = 150,
+    ut_TrollShaman  = 150,
     ut_TrlSettlers  = 151,
     ut_WarTrolls  = 152,
     ut_WarMammoths  = 153,

@@ -241,7 +241,7 @@ int16_t TILE_AI_FindEmptyLnd__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * 
 int16_t Adjacent_Free_Square(int16_t wx, int16_t wy, int16_t wp, int16_t * RetX, int16_t * RetY);
 
 // WZD o162p33
-// EVNT_MakeRampageList()
+int16_t Make_Monster_List(int16_t budget, int16_t lair_race, int16_t * unit_list);
 
 // WZD o162p34
 int16_t AI_Stack_Can_Mobilize(int16_t stack_idx, int16_t wx, int16_t wy, int16_t wp);
