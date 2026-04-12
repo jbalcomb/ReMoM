@@ -103,7 +103,7 @@ void NPC_Excess_Garrison(void)
             /* If garrison exceeds limits, remove the cheapest unit */
             if (garrison_count > max_garrison && cheapest_unit != ST_UNDEFINED)
             {
-                Kill_Unit(cheapest_unit, 0);
+                Kill_Unit(cheapest_unit, kt_Normal);
             }
         }
     }
@@ -245,7 +245,7 @@ int16_t NPC_Destinations(void)
                 /* same as seen in MoO2 ... `if(NPC_Dest_() == ST_UNDEFINED)` */
                 for (itr = 0; itr < _units; itr++) {
                     if (_UNITS[itr].wx == stack_wx && _UNITS[itr].wy == stack_wy && _UNITS[itr].wp == stack_wp) {
-                        Kill_Unit(itr, 0);
+                        Kill_Unit(itr, kt_Normal);
                     }
                 }
             }

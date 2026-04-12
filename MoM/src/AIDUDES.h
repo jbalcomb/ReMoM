@@ -65,7 +65,7 @@ void NPC_Farmers(void);
 void AI_Kill_Excess_Settlers_And_Engineers(int16_t player_idx);
 
 // WZD o145p15
-// AI_StasisDisband()
+void AI_Hopeless_Stasis(void);
 
 // WZD o145p16
 void EMM_Map_CONTXXX__WIP(void);

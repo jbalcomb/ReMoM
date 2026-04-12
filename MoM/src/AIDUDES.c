@@ -254,7 +254,7 @@ void AI_Next_Turn(void)
     
     /* Cleanup and Stasis */
     NPC_Excess_Garrison();
-    // AI_StasisDisband();
+    AI_Hopeless_Stasis();
 }
 
 
@@ -2134,7 +2134,26 @@ void AI_Kill_Excess_Settlers_And_Engineers(int16_t player_idx)
 
 
 // WZD o145p15
-// drake178: AI_StasisDisband()
+void AI_Hopeless_Stasis(void)
+{
+    int16_t unit_idx = 0;
+    for (unit_idx = 0; unit_idx < _units; unit_idx++)
+    {
+        if (_UNITS[unit_idx].owner_idx == HUMAN_PLAYER_IDX)
+        {
+            continue;
+        }
+        if (!(_UNITS[unit_idx].mutations & (C_STASISINIT | C_STASISLINGER)))
+        {
+            continue;
+        }
+        if (_unit_type_table[_UNITS[unit_idx].type].Resist < 7)
+        {
+            Kill_Unit(unit_idx, kt_Normal);
+        }
+    }
+}
+
 
 // WZD o145p16
 // drake178: EMM_Map_CONTXXX()
