@@ -27,6 +27,8 @@
 
 #include "AIDATA.h"
 
+#include "../../STU/src/STU_DBG.h"
+
 #include <stdlib.h>
 
 
@@ -105,6 +107,7 @@ void NPC_Excess_Garrison(void)
             /* If garrison exceeds limits, remove the cheapest unit */
             if (troop_count > max_garrison && cheapest_unit != ST_UNDEFINED)
             {
+                dbg_prn("AI_NPC: Excess garrison at city %d (%d/%d), removing unit %d (type %d)\n", i, troop_count, max_garrison, cheapest_unit, _UNITS[cheapest_unit].type);
                 Kill_Unit(cheapest_unit, kt_Normal);
             }
         }
@@ -161,13 +164,16 @@ void Make_Monsters(void)
     /* Check if the accumulator has reached the threshold: (50 - (difficulty * 5)) */
     if (_players[NEUTRAL_PLAYER_IDX].average_unit_cost < (50 - (_difficulty * 5)))
     {
+        dbg_prn("AI_NPC: Make_Monsters accumulator %d < threshold %d\n", _players[NEUTRAL_PLAYER_IDX].average_unit_cost, (50 - (_difficulty * 5)));
         return;
     }
 
     /* Threshold reached: reset and check turn minimum */
+    dbg_prn("AI_NPC: Make_Monsters accumulator reached threshold, turn=%d\n", _turn);
     _players[NEUTRAL_PLAYER_IDX].average_unit_cost = 0;
     if (_turn < 50)
     {
+        dbg_prn("AI_NPC: Make_Monsters skipped (turn %d < 50)\n", _turn);
         return;
     }
 
@@ -216,10 +222,12 @@ void Make_Monsters(void)
 
     if (tries >= 1000 || lair_idx == ST_UNDEFINED)
     {
+        dbg_prn("AI_NPC: Make_Monsters failed to find eligible lair after %d tries\n", tries);
         return;
     }
 
     /* Lair selected, extract map data */
+    dbg_prn("AI_NPC: Make_Monsters selected lair %d at (%d,%d) plane %d after %d tries\n", lair_idx, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, tries);
     lair_wx = _LAIRS[lair_idx].wx;
     lair_wy = _LAIRS[lair_idx].wy;
     lair_wp = _LAIRS[lair_idx].wp;
@@ -278,6 +286,8 @@ void Make_Monsters(void)
 
     /* Generate the monster stack based on budget and race */
     n_monsters = Make_Monster_List(rampage_budget, lair_race, &monster_type_list[0]);
+
+    dbg_prn("AI_NPC: Make_Monsters spawning %d monsters (budget=%d) at (%d,%d) plane %d\n", n_monsters, rampage_budget, adjacent_wx, adjacent_wy, lair_wp);
 
     /* Create the units on the map */
     for (itr = 0; itr < n_monsters; itr++)
@@ -370,10 +380,12 @@ void Make_Raiders(void)
 
     if (_players[NEUTRAL_PLAYER_IDX].casting_cost_original < 30)
     {
+        dbg_prn("AI_NPC: Make_Raiders accumulator %d < 30\n", _players[NEUTRAL_PLAYER_IDX].casting_cost_original);
         return;
     }
 
     /* Reset raider accumulator and start generation attempts */
+    dbg_prn("AI_NPC: Make_Raiders accumulator reached 30, attempting spawn\n");
     _players[NEUTRAL_PLAYER_IDX].casting_cost_original = 0;
     unused_local = 0;
     did_create = 0;
@@ -508,6 +520,7 @@ void Make_Raiders(void)
             }
 
             /* Create the raider unit for the neutral player */
+            dbg_prn("AI_NPC: Make_Raiders creating unit type %d at (%d,%d) plane %d, level %d\n", unit_type, empty_adjacent_x, empty_adjacent_y, city_wp, raiders_level_neg);
             Create_Unit__WIP(unit_type, NEUTRAL_PLAYER_IDX, empty_adjacent_x, empty_adjacent_y, city_wp, raiders_level_neg);
             units_created++;
         }
@@ -518,12 +531,14 @@ void Make_Raiders(void)
             Kill_Unit(troops[itr2], kt_Normal);
         }
 
+        dbg_prn("AI_NPC: Make_Raiders spawned %d raiders from city %d at (%d,%d) plane %d, removed %d garrison\n", units_created, rolled_city, city_wx, city_wy, city_wp, (units_created / 3));
         did_create = ST_TRUE;
     }
 
     /* If raider generation failed, increment the rampaging monster accumulator instead */
     if (did_create == ST_FALSE)
     {
+        dbg_prn("AI_NPC: Make_Raiders failed after 1000 tries, boosting monster accumulator by 15\n");
         _players[NEUTRAL_PLAYER_IDX].average_unit_cost += 15;
     }
 
@@ -555,6 +570,8 @@ int16_t NPC_Destinations(void)
     EMM_Map_DataH();
 
     Build_NPC_Stacks();  // OGBUG  definitely passes NEUTRAL_PLAYER_IDX here, but Build_NPC_Stacks doesn't take a parameter and is hard-coded for NEUTRAL_PLAYER_IDX
+
+    dbg_prn("AI_NPC: NPC_Destinations evaluating %d neutral stacks\n", AI_Own_Stack_Count);
 
     for (stack_idx = 0; stack_idx < AI_Own_Stack_Count; stack_idx++) {
         stack = &AI_Own_Stacks[stack_idx];
@@ -611,6 +628,7 @@ int16_t NPC_Destinations(void)
                 }
 
                 if (adj_city_val > cur_target_val) {
+                    dbg_prn("AI_NPC: Stack %d at (%d,%d) redirected to adjacent city %d at (%d,%d) (val %d > %d)\n", stack_idx, stack_wx, stack_wy, adj_city_idx, _CITIES[adj_city_idx].wx, _CITIES[adj_city_idx].wy, adj_city_val, cur_target_val);
                     AI_Stack_Set_Destination(stack_idx, _CITIES[adj_city_idx].wx, _CITIES[adj_city_idx].wy, NEUTRAL_PLAYER_IDX);
                     stack->unit_status = us_GOTO;
                 }
@@ -629,7 +647,7 @@ int16_t NPC_Destinations(void)
                 if (_CITIES[itr].wp != stack_wp) continue;
 
                 /* If unit is LandOnly, check if city is on the same landmass */
-                if (!(stack->abilities & AICAP_LandOnly)) {
+                if ((stack->abilities & AICAP_LandOnly) != 0) {
                     if (_landmasses[(_CITIES[itr].wp * WORLD_SIZE) + (_CITIES[itr].wy * WORLD_WIDTH) + _CITIES[itr].wx] != stack_landmass_idx) {
                         continue;
                     }
@@ -650,11 +668,13 @@ int16_t NPC_Destinations(void)
 
             if (cities_examined > 0) {
                 uu_city_idx = target_city_idx;
+                dbg_prn("AI_NPC: Stack %d at (%d,%d) targeting city %d at (%d,%d) (val %d, examined %d cities)\n", stack_idx, stack_wx, stack_wy, target_city_idx, _CITIES[target_city_idx].wx, _CITIES[target_city_idx].wy, adj_city_val, cities_examined);
                 AI_Stack_Set_Destination(stack_idx, _CITIES[target_city_idx].wx, _CITIES[target_city_idx].wy, NEUTRAL_PLAYER_IDX);
                 stack->unit_status = us_GOTO;
             } else {
                 /* No reachable targets: disband the stack to clear conventional memory */
                 /* same as seen in MoO2 ... `if(NPC_Dest_() == ST_UNDEFINED)` */
+                dbg_prn("AI_NPC: Stack %d at (%d,%d) disbanded (no reachable targets)\n", stack_idx, stack_wx, stack_wy);
                 for (itr = 0; itr < _units; itr++) {
                     if (_UNITS[itr].wx == stack_wx && _UNITS[itr].wy == stack_wy && _UNITS[itr].wp == stack_wp) {
                         Kill_Unit(itr, kt_Normal);

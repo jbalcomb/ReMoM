@@ -25,6 +25,8 @@
 #include "UNITTYPE.h"
 #include "UnitMove.h"
 
+#include "../../STU/src/STU_DBG.h"
+
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>     /* memcpy() memset(), stu_strcat(), stu_strcpy(), stricmp() */
@@ -86,6 +88,65 @@ int16_t AI_Accept_Mercenaries(int16_t player_idx, int16_t cost)
 }
 
 
+static void AI_Log_Metrics(void)
+{
+    int16_t player_idx = 0;
+    int16_t itr = 0;
+    int16_t unit_counts[NUM_PLAYERS];
+    int16_t city_counts[NUM_PLAYERS];
+
+    for (player_idx = 0; player_idx < NUM_PLAYERS; player_idx++)
+    {
+        unit_counts[player_idx] = 0;
+        city_counts[player_idx] = 0;
+    }
+
+    for (itr = 0; itr < _units; itr++)
+    {
+        if (_UNITS[itr].owner_idx >= 0 && _UNITS[itr].owner_idx < NUM_PLAYERS)
+        {
+            unit_counts[_UNITS[itr].owner_idx]++;
+        }
+    }
+
+    for (itr = 0; itr < _cities; itr++)
+    {
+        if (_CITIES[itr].owner_idx >= 0 && _CITIES[itr].owner_idx < NUM_PLAYERS)
+        {
+            city_counts[_CITIES[itr].owner_idx]++;
+        }
+    }
+
+    dbg_prn("AI_METRICS: Turn %d  Difficulty %d  Players %d\n", _turn, _difficulty, _num_players);
+
+    dbg_prn("AI_METRICS: P0 %-20s units=%-4d cities=%-3d gold=%-5d mana=%-5d (Human)\n",
+        _players[HUMAN_PLAYER_IDX].name,
+        unit_counts[HUMAN_PLAYER_IDX],
+        city_counts[HUMAN_PLAYER_IDX],
+        _players[HUMAN_PLAYER_IDX].gold_reserve,
+        _players[HUMAN_PLAYER_IDX].mana_reserve);
+
+    for (player_idx = 1; player_idx < _num_players; player_idx++)
+    {
+        dbg_prn("AI_METRICS: P%d %-20s units=%-4d cities=%-3d gold=%-5d mana=%-5d active=%d\n",
+            player_idx,
+            _players[player_idx].name,
+            unit_counts[player_idx],
+            city_counts[player_idx],
+            _players[player_idx].gold_reserve,
+            _players[player_idx].mana_reserve,
+            _FORTRESSES[player_idx].active);
+    }
+
+    dbg_prn("AI_METRICS: NPC %-19s units=%-4d cities=%-3d raider_acc=%-3d monster_acc=%-3d\n",
+        "(Neutral)",
+        unit_counts[NEUTRAL_PLAYER_IDX],
+        city_counts[NEUTRAL_PLAYER_IDX],
+        _players[NEUTRAL_PLAYER_IDX].casting_cost_original,
+        _players[NEUTRAL_PLAYER_IDX].average_unit_cost);
+}
+
+
 // WZD o145p02
 // ¿ MoO2  Module: AIDATA  Compute_AI_Data_() ?
 void AI_Next_Turn(void)
@@ -123,6 +184,8 @@ void AI_Next_Turn(void)
         }
     }
 
+    dbg_prn("AI_TURN: === BEGIN Turn %d ===\n", _turn);
+
     EMM_Map_DataH();
     Allocate_AI_Data();
 
@@ -134,6 +197,7 @@ void AI_Next_Turn(void)
         {
             if ((g_timestop_player_num - 1) != player_idx)
             {
+                dbg_prn("AI_TURN: Player %d (%s) SKIPPED (Time Stop)\n", player_idx, _players[player_idx].name);
                 continue;
             }
         }
@@ -142,11 +206,14 @@ void AI_Next_Turn(void)
         /* MoO2 ~ `s_PLAYER.eliminated == ST_FALSE` */
         if (_FORTRESSES[player_idx].active != ST_TRUE && _players[player_idx].casting_spell_idx != spl_Spell_Of_Return)
         {
+            dbg_prn("AI_TURN: Player %d (%s) SKIPPED (inactive)\n", player_idx, _players[player_idx].name);
             continue;
         }
 
         /* Update Summoning Circle re-evaluation counter */
         AI_SCircle_Reevals[player_idx]--;
+
+        dbg_prn("AI_TURN: --- Player %d (%s) BEGIN ---\n", player_idx, _players[player_idx].name);
 
         AI_Evaluate_Hostility(player_idx);
 
@@ -208,6 +275,8 @@ void AI_Next_Turn(void)
         
         EMM_Map_DataH();
         AI_Kill_Excess_Settlers_And_Engineers(player_idx);
+
+        dbg_prn("AI_TURN: --- Player %d (%s) END ---\n", player_idx, _players[player_idx].name);
     }
 
     EMM_Map_DataH();
@@ -222,6 +291,7 @@ void AI_Next_Turn(void)
     }
 
     /* AI Unit Movement Phase */
+    dbg_prn("AI_TURN: === Movement Phase ===\n");
     for (player_idx = 1; player_idx < _num_players; player_idx++)
     {
         /* Check for Time Stop effect */
@@ -236,6 +306,7 @@ void AI_Next_Turn(void)
         /* Check if Wizard is active or returning */
         if (_FORTRESSES[player_idx].active == ST_TRUE || _players[player_idx].casting_spell_idx == spl_Spell_Of_Return)
         {
+            dbg_prn("AI_TURN: Moving units for Player %d (%s)\n", player_idx, _players[player_idx].name);
             AI_MoveUnits(player_idx);
         }
     }
@@ -243,18 +314,27 @@ void AI_Next_Turn(void)
     EMM_Map_DataH();
 
     /* Neutral Player Turn Processing */
+    dbg_prn("AI_TURN: === Neutral Player Phase ===\n");
     Player_All_Colony_Autobuild(NEUTRAL_PLAYER_IDX);
     NPC_Farmers();
+    dbg_prn("AI_TURN: NPC_Farmers done\n");
     NPC_Destinations();
+    dbg_prn("AI_TURN: NPC_Destinations done\n");
     AI_MoveUnits(NEUTRAL_PLAYER_IDX);
-    
+    dbg_prn("AI_TURN: NPC movement done\n");
+
     /* Event Generation */
     Make_Raiders();
+    dbg_prn("AI_TURN: Make_Raiders done\n");
     Make_Monsters();
-    
+    dbg_prn("AI_TURN: Make_Monsters done\n");
+
     /* Cleanup and Stasis */
     NPC_Excess_Garrison();
     AI_Hopeless_Stasis();
+
+    AI_Log_Metrics();
+    dbg_prn("AI_TURN: === END Turn %d ===\n", _turn);
 }
 
 
