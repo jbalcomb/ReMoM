@@ -773,7 +773,7 @@ void Loaded_Game_Update(void)
     // OGBUG: only clears 100 out of the 140 elements
     for(itr = 0; itr < 100; itr++)
     {
-        _ai_move_path_table[itr]->src_wx = -1;  // DEDU - INF / ST_UNDEFINED?
+        _ai_move_path_table[itr].src_wx = -1;  // DEDU - INF / ST_UNDEFINED?
     }
     _ai_move_path_idx = ST_UNDEFINED;
     CONTX_CreateChains__WIP();

@@ -53,10 +53,11 @@
 
 
 // enum AI_STK_Capabilities
-#define AICAP_Transport     0x1
-#define AICAP_RoadBuild     0x2
-#define AICAP_Purify        0x4
-#define AICAP_LandOnly      0x8
+#define AICAP_None          0x00
+#define AICAP_Transport     0x01
+#define AICAP_RoadBuild     0x02
+#define AICAP_Purify        0x04
+#define AICAP_LandOnly      0x08
 #define AICAP_WindWalk      0x10
 #define AICAP_Hero          0x20
 #define AICAP_Melding       0x40
@@ -98,18 +99,19 @@ struct s_AI_TARGET
 };
 
 
-//  ; (sizeof=0xA)
+// sizeof: 0xA  10
+// MoO2  s_G_SHIP_MOVE_INFO ?
 struct s_AI_STACK_DATA
 {
     /* 00 */  uint8_t wx;
     /* 01 */  uint8_t wy;
     /* 02 */  uint8_t wp;
     /* 03 */  uint8_t abilities;  /* ; enum AI_STK_Capabilities */
-    /* 04 */  int16_t value;
+    /* 04 */  int16_t value;  /* ST_UNDEFINED means it has a target ? */
     /* 06 */  uint8_t transport_capacity;
     /* 07 */  uint8_t unit_count;
     /* 08 */  uint8_t landmass_idx;
-    /* 09 */  uint8_t unit_status;
+    /* 09 */  int8_t unit_status;  /* ~== s_UNIT.Status */
     /* 0A */  
 };
 
@@ -3930,7 +3932,7 @@ extern int8_t MSG_GEs_Lost;
 
 
 // WZD dseg:9C90
-extern struct s_AI_MOVE_PATH ** _ai_move_path_table;
+extern struct s_AI_MOVE_PATH * _ai_move_path_table;
 
 // WZD dseg:9C94
 extern uint16_t * g_ai_evaluation_map[2];

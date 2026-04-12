@@ -2368,7 +2368,7 @@ int8_t MSG_GEs_Lost;
 
 
 // WZD dseg:9C90
-struct s_AI_MOVE_PATH ** _ai_move_path_table;
+struct s_AI_MOVE_PATH * _ai_move_path_table;
 
 // WZD dseg:9C94
 /*

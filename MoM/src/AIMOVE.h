@@ -178,7 +178,7 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
 // sub_F5432()
 
 // WZD o162p12
-// AI_STK_SetTarget()
+void AI_Stack_Set_Destination(int16_t stack_idx, int16_t wx, int16_t wy, int16_t player_idx);
 
 // WZD o162p13
 // sub_F57AF()
@@ -244,7 +244,7 @@ int16_t TILE_NextFreeLand__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
 // EVNT_MakeRampageList()
 
 // WZD o162p34
-// AI_TILE_CanLeave()
+int16_t AI_Stack_Can_Mobilize(int16_t stack_idx, int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o162p35
 void AI_Continent_Reeval__WIP(int16_t player_idx);

@@ -43,7 +43,11 @@ int16_t platform_start_id;
 // make Valgrind says something else, maybe
 void Platform_Report_Startup_Platform(void)
 {
+#ifdef _WIN32
+    platform_start_id = rand();
+#else
     platform_start_id = random();
+#endif
     fprintf(stderr, "ReMoM: Starting up platform layer...  (%d)\n", platform_start_id);
 }
 

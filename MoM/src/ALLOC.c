@@ -199,7 +199,7 @@ so, 300 PRs, + 1 for the SAMB header
     city_area_shared_bits = (uint8_t *)Allocate_Space(WORLD_MAP_BITFIELD_SIZE + 1);
     city_area_bits = (uint8_t *)Allocate_Space(WORLD_MAP_BITFIELD_SIZE + 1);
 
-    _ai_move_path_table = (struct s_AI_MOVE_PATH **)Allocate_Space(1033);  // 1033 * 16 = 16528 B
+    _ai_move_path_table = (struct s_AI_MOVE_PATH *)Allocate_Space(1033);  // 1033 * 16 = 16528 B
 
 
     /*

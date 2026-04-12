@@ -115,8 +115,7 @@ void AI_MoveUnits(int16_t player_idx)
         if (_UNITS[unit_idx].owner_idx == (int8_t)player_idx)
         {
             /* Process unit orders based on its current Status */
-            /* Status values 2-16 are evaluated via jump table (jt_ai_unit_status) */
-                        switch(_UNITS[unit_idx].Status)
+            switch(_UNITS[unit_idx].Status)
             {
                 case us_BuildRoad:
                 {

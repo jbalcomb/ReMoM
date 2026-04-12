@@ -242,10 +242,10 @@ void AI_Next_Turn(void)
 
     EMM_Map_DataH();
 
-    /* Neutral Player (index 6) Turn Processing */
+    /* Neutral Player Turn Processing */
     Player_All_Colony_Autobuild(NEUTRAL_PLAYER_IDX);
-    AI_SetNeutralFarmers();
-    // AI_SetNeutralTargets();
+    NPC_Farmers();
+    NPC_Destinations();
     AI_MoveUnits(NEUTRAL_PLAYER_IDX);
     
     /* Event Generation */
@@ -1969,7 +1969,27 @@ void AI_Update_Gold_Income_And_Food_Income(int16_t player_idx)
 
 
 // WZD o145p13
-void AI_SetNeutralFarmers(void)
+/**
+ * @brief Recomputes farmer allocation for all neutral-owned cities.
+ *
+ * Iterates over every city owned by the neutral player and sets its
+ * farmer_count high enough to satisfy the city's minimum food requirement plus
+ * the upkeep burden from units currently standing on that city's square.
+ *
+ * The routine applies a special divisor of 3 food per farmer for Halfling
+ * cities and cities with a built granary, and otherwise uses the standard
+ * divisor of 2. Each result is rounded up so partial farmer demand becomes a
+ * full assigned farmer, then clamped so the final farmer count never exceeds
+ * the city's total population.
+ *
+ * @note This function preserves the original game behavior noted in the local
+ *       comments, including the Halfling/granary overland food calculation.
+ * @note Reads global city and unit state from _CITIES, _cities, and the unit
+ *       list queried via Map_Square_Unit_Count(), and writes updated
+ *       farmer_count values back into neutral cities.
+ */
+/* GEMINI */
+void NPC_Farmers(void)
 {
     int16_t city_idx = 0;
     int16_t min_farmers = 0;
@@ -1977,22 +1997,17 @@ void AI_SetNeutralFarmers(void)
     int16_t temp_val = 0;
     for (city_idx = 0; city_idx < _cities; city_idx++)
     {
-        /* Check if city owner is Neutral (owner 5) */
         if (_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
         {
             /* Calculate base farmers needed for population */
             min_farmers = City_Minimum_Farmers(city_idx);
             /* Count units currently in the city square to calculate food maintenance */
             unit_count = Map_Square_Unit_Count(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp);
-            /* 
-             * Check for production bonus (Halflings or Granary).
-             * Note: In MoM, bldg_status[10] (0Ah) is the Granary.
-             * BUG: The following logic incorrectly mixes "farmers" and "food units".
-             * It adds unit count (food) to min_farmers (farmers) then divides again.
-             */
-            if (_CITIES[city_idx].race == 4 /* rt_Halfling */ || _CITIES[city_idx].bldg_status[10] == 1 /* bs_Built */)
+            /* Check for production bonus (Halflings or Granary). */
+            /* OGBUG:  wrong calculation */
+            if (_CITIES[city_idx].race == rt_Halfling || _CITIES[city_idx].bldg_status[GRANARY] == bs_Built)
             {
-                /* loc_D4805: Halfling/Granary logic (3 food per farmer) */
+                /* Halfling/Granary logic (3 food per farmer) */
                 temp_val = min_farmers + unit_count;
                 _CITIES[city_idx].farmer_count = (temp_val / 3);
                 /* Round up if there is a remainder */

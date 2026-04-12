@@ -26,7 +26,7 @@ extern "C" {
 
 
 /*
-    WIZARDS.EXE  ovr64
+    WIZARDS.EXE  ovr164
 */
 
 // WZD o164p01
@@ -39,7 +39,7 @@ extern "C" {
 // EVNT_GenerateRaiders()
 
 // WZD o164p04
-// AI_SetNeutralTargets()
+int16_t NPC_Destinations(void);
 
 // WZD o164p05
 void Allocate_AI_Data(void);
@@ -51,8 +51,7 @@ void AI_Magic_Strategy__WIP(int16_t player_idx);
 void AI_Evaluate_Hostility(int16_t player_idx);
 
 // WZD o164p08
-// AI_GetNeutralStacks()
-
+void Build_NPC_Stacks(void);
 
 
 

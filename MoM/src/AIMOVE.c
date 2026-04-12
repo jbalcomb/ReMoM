@@ -5700,7 +5700,7 @@ void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp
 
                         Embarkable_Tile = ST_TRUE;
 
-                        Adjacent_Ocean_X = Unwrapped_X;  // BUGBUG  ; BUG: this should be si  [NOTE: "si" as in unit_wx]
+                        Adjacent_Ocean_X = Unwrapped_X;  // BUGBUG  ; BUG: this should be itr  [NOTE: "itr" as in unit_wx]
 
                         Adjacent_Ocean_Y = unit_wy;
                         
@@ -6307,7 +6307,92 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
 // drake178: sub_F5432()
 
 // WZD o162p12
-// drake178: AI_STK_SetTarget()
+/*
+OON XREF:
+    NPC_Destinations()
+        both calls are for city targets
+        both calls are for NEUTRAL_PLAYER_IDX
+¿ feels like MoO2 Ships_Try_To_Move_To_() ? 
+*/
+/* GEMINI */
+void AI_Stack_Set_Destination(int16_t stack_idx, int16_t wx, int16_t wy, int16_t player_idx)
+{
+    int16_t occupant_owner_idx = 0;
+    int16_t occupied = 0;
+    int16_t stack_wp = 0;
+    int16_t stack_wy = 0;
+    int16_t stack_wx = 0;
+    int16_t itr = 0;
+    struct s_AI_STACK_DATA * stack_ptr = NULL;
+
+    /* Retrieve current stack location and plane */
+    stack_ptr = &AI_Own_Stacks[stack_idx];
+    stack_wx = (int8_t)stack_ptr->wx;
+    stack_wy = (int8_t)stack_ptr->wy;
+    stack_wp = (int8_t)stack_ptr->wp;
+
+    /* Phase 1: Check for defenders at the target location */
+    occupied = ST_FALSE;
+    for (itr = 0; itr < _units; itr++)
+    {
+        if (((int8_t)_UNITS[itr].wx) == wx &&
+            ((int8_t)_UNITS[itr].wy) == wy &&
+            ((int8_t)_UNITS[itr].wp) == stack_wp)
+        {
+            occupied = ST_TRUE;
+            occupant_owner_idx = ((int8_t)_UNITS[itr].owner_idx);
+            break;
+        }
+    }
+
+    /* Phase 2: Diplomatic restrictions */
+    if (occupied == ST_TRUE)
+    {
+        /* If owner is not self and not Neutral Player */
+        if (occupant_owner_idx != player_idx && occupant_owner_idx != NEUTRAL_PLAYER_IDX)
+        {
+
+            if (
+                _players[player_idx].peace_duration[occupant_owner_idx] != 0
+                ||
+                _players[player_idx].Dipl.Dipl_Status[occupant_owner_idx] == DIPL_WizardPact
+                ||
+                _players[player_idx].Dipl.Dipl_Status[occupant_owner_idx] == DIPL_Alliance
+            )
+            {
+                return; /* Cannot target due to treaty */
+            }
+        }
+    }
+
+    /* Phase 3: Check if the stack is strategically allowed to leave current square (garrison check) */
+    if (!AI_Stack_Can_Mobilize(stack_idx, stack_wx, stack_wy, stack_wp))
+    {
+        return;
+    }
+
+    /* Phase 4: Assign GOTO status to all units in the stack at current location */
+    for (itr = 0; itr < _units; itr++)
+    {
+        if (((int8_t)_UNITS[itr].wx) == stack_wx &&
+            ((int8_t)_UNITS[itr].wy) == stack_wy &&
+            ((int8_t)_UNITS[itr].wp) == stack_wp)
+        {
+            /* Do not move units that are intended for outpost creation (Settlers/Engineers) */
+            if (!(_unit_type_table[_UNITS[itr].type].Abilities & UA_CREATEOUTPOST))
+            {
+                _UNITS[itr].Status = us_GOTO;
+                _UNITS[itr].dst_wx = (int8_t)wx;
+                _UNITS[itr].dst_wy = (int8_t)wy;
+            }
+        }
+    }
+
+    /* Mark stack as having a target/processed */
+    AI_Own_Stacks[stack_idx].value = ST_UNDEFINED;
+
+}
+
 
 // WZD o162p13
 // drake178: sub_F57AF()
@@ -6757,7 +6842,101 @@ int16_t TILE_NextFreeLand__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
 // drake178: EVNT_MakeRampageList()
 
 // WZD o162p34
-// drake178: AI_TILE_CanLeave()
+/*
+called by 11 other functions that are all Not-In-Use (NIU)
+OON XREF:
+    AI_Stack_Set_Destination()
+*/
+/* GEMINI */
+int16_t AI_Stack_Can_Mobilize(int16_t stack_idx, int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t unit_owner_idx = 0;
+    int16_t unit_type = 0;
+    int16_t square_has_city = 0;
+    int16_t itr = 0;
+    int16_t garrison = 0;
+
+    square_has_city = ST_FALSE;
+
+    for (itr = 0; itr < _cities; itr++)
+    {
+        if (_CITIES[itr].wx == wx && 
+            _CITIES[itr].wy == wy && 
+            _CITIES[itr].wp == wp)
+        {
+            square_has_city = ST_TRUE;
+            break;
+        }
+    }
+
+    if (square_has_city == ST_FALSE)
+    {
+        return ST_TRUE;
+    }
+
+    /* Set minimum required defenders based on difficulty level */
+    if (_difficulty < god_Normal)
+    {
+        garrison = 1;
+    }
+    else if (_difficulty == god_Normal)
+    {
+        garrison = 2;
+    }
+    else  /* (_difficulty > god_Normal) */
+    {
+        garrison = 3;
+    }
+
+    /* Count combat-capable units at the location */
+    for (itr = 0; itr < _units; itr++)
+    {
+        if (garrison <= 0)
+        {
+            break;
+        }
+
+        if (_UNITS[itr].wx == wx && 
+            _UNITS[itr].wy == wy && 
+            _UNITS[itr].wp == wp)
+        {
+            unit_owner_idx = _UNITS[itr].owner_idx;
+            unit_type = _UNITS[itr].type;
+
+            /* Check if unit is a military unit (not Settler,Engineer,Boat) */
+            if (!(_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) &&
+                _unit_type_table[unit_type].Construction == 0 &&
+                _unit_type_table[unit_type].Transport == 0)
+            {
+                garrison--;
+            }
+        }
+    }
+
+    /* Fortress defense check */
+    // DEDU  What is the intent of the 120 turns? Is it backwards? Supports early game exploration?
+    if (unit_owner_idx != NEUTRAL_PLAYER_IDX)
+    {
+        if (_FORTRESSES[unit_owner_idx].wp == wp &&
+            _FORTRESSES[unit_owner_idx].wx == wx &&
+            _FORTRESSES[unit_owner_idx].wy == wy)
+        {
+            if (_turn > 120)
+            {
+                return ST_FALSE;
+            }
+        }
+    }
+
+    /* If defense requirement met, tile can be left */
+    if (garrison <= 0)
+    {
+        return ST_TRUE;
+    }
+
+    return ST_FALSE;
+}
+
 
 // WZD o162p35
 // drake178: AI_Continent_Reeval()
@@ -7521,13 +7700,13 @@ void AI_Evaluation_Map(int16_t player_idx)
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
 
-        assert(_UNITS[itr_units].owner_idx != ST_UNDEFINED);
+        // by (bad) design  assert(_UNITS[itr_units].owner_idx != ST_UNDEFINED);
+        /* HACK */  if(_UNITS[itr_units].owner_idx == ST_UNDEFINED)
+        /* HACK */  {
+        /* HACK */      continue;
+        /* HACK */  }
         assert(_UNITS[itr_units].wp != ST_UNDEFINED);
-        /* HACK */  if(
-        /* HACK */      (_UNITS[itr_units].owner_idx == ST_UNDEFINED)
-        /* HACK */      ||
-        /* HACK */      (_UNITS[itr_units].wp == ST_UNDEFINED)
-        /* HACK */  )
+        /* HACK */  if(_UNITS[itr_units].wp == ST_UNDEFINED)
         /* HACK */  {
         /* HACK */      continue;
         /* HACK */  }
@@ -7552,6 +7731,7 @@ void AI_Evaluation_Map(int16_t player_idx)
         g_ai_evaluation_map[wp][xy_ofst] += strength;
 
         /* If the unit owner is non-hostile, mark the square with a flag */
+        // OGBUG  will index nonhostiles[] with unit_owner_idx = -1, because it *sanitizes* owner_idx to ST_UNDEFINED at start of turn
         if(nonhostiles[unit_owner_idx] == ST_TRUE)
         {
             g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_NONHOSTILE;

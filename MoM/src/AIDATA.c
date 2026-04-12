@@ -11,14 +11,20 @@
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
 #include "../../MoX/src/MOX_TYPE.h"
 #include "../../MoX/src/random.h"
+#include "../../MoX/src/special.h"
+#include "../../MoX/src/EMS/EMS.h"
 
 #include "AIDUDES.h"
+#include "AIMOVE.h"
 #include "CITYCALC.h"
+#include "DIPLODEF.h"
 #include "NEXTTURN.h"
 #include "Spellbook.h"
-#include "DIPLODEF.h"
+#include "UnitMove.h"
 
 #include "AIDATA.h"
+
+#include <stdlib.h>
 
 
 
@@ -33,7 +39,7 @@
 
 
 /*
-    WIZARDS.EXE  ov1r64
+    WIZARDS.EXE  ovr164
 */
 
 // WZD o164p01
@@ -49,8 +55,142 @@
 // EVNT_GenerateRaiders()
 
 // WZD o164p04
-// drake178: AI_SetNeutralTargets()
-// AI_SetNeutralTargets()
+// MoO2  Module: AIMOVE  Move_NPCs_(); NPC_Dest_();
+int16_t NPC_Destinations(void)
+{
+    int16_t troops[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t dst_wy = 0;
+    int16_t dst_wx = 0;
+    int16_t troop_count = 0;
+    int16_t cur_target_val = 0;
+    int16_t target_city_idx = 0;
+    int16_t stack_idx = 0;
+    int16_t uu_city_idx = 0;
+    int16_t adj_city_val = 0;
+    int16_t adj_city_idx = 0;
+    int16_t cities_examined = 0;
+    int16_t stack_wp = 0;
+    int16_t stack_landmass_idx = 0;
+    int16_t stack_wy = 0;
+    int16_t stack_wx = 0;
+    int16_t itr = 0;
+    struct s_AI_STACK_DATA * stack = NULL;
+
+    EMM_Map_DataH();
+
+    Build_NPC_Stacks();  // OGBUG  definitely passes NEUTRAL_PLAYER_IDX here, but Build_NPC_Stacks doesn't take a parameter and is hard-coded for NEUTRAL_PLAYER_IDX
+
+    for (stack_idx = 0; stack_idx < AI_Own_Stack_Count; stack_idx++) {
+        stack = &AI_Own_Stacks[stack_idx];
+        stack_wx = stack->wx;
+        stack_wy = stack->wy;
+        stack_wp = stack->wp;
+
+        stack_landmass_idx = _landmasses[(stack_wp * WORLD_SIZE) + (stack_wy * WORLD_WIDTH) + stack_wx];
+
+        /* Check for any adjacent non-neutral city */
+        adj_city_idx = -1;
+        for (itr = 0; itr < _cities; itr++) {
+            if (_CITIES[itr].owner_idx != NEUTRAL_PLAYER_IDX && _CITIES[itr].wp == stack_wp) {
+                if (abs(stack_wx - _CITIES[itr].wx) < 2 && abs(stack_wy - _CITIES[itr].wy) < 2) {
+                    adj_city_idx = itr;
+                    break;
+                }
+            }
+        }
+
+        /* If adjacent city found and stack is already moving (GOTO), evaluate redirection */
+        if (adj_city_idx > -1 && stack->unit_status == us_GOTO) {
+            Army_At_Square_1(stack_wx, stack_wy, stack_wp, &troop_count, troops);
+            
+            /* Current destination coordinates from the first unit in the stack */
+            dst_wx = _UNITS[troops[0]].dst_wx;
+            dst_wy = _UNITS[troops[0]].dst_wy;
+
+            /* Identify if current destination is a city */
+            target_city_idx = -1;
+            for (itr = 0; itr < _cities; itr++) {
+                if (_CITIES[itr].wx == dst_wx && _CITIES[itr].wy == dst_wy && _CITIES[itr].wp == stack_wp) {
+                    target_city_idx = itr;
+                    break;
+                }
+            }
+
+            if (target_city_idx != adj_city_idx) {
+                /* Evaluate the worth of attacking the adjacent city */
+                Army_At_Square_1(_CITIES[adj_city_idx].wx, _CITIES[adj_city_idx].wy, _CITIES[adj_city_idx].wp, &troop_count, troops);
+                // OGBUG  ¿ Delta_XY_With_Wrap() is always 1 here ?  ... adj_city_idx
+                adj_city_val = 10 - troop_count - Delta_XY_With_Wrap(_CITIES[adj_city_idx].wx, _CITIES[adj_city_idx].wy, stack_wx, stack_wy, WORLD_WIDTH);
+                
+                if (_difficulty > god_Normal && _CITIES[adj_city_idx].owner_idx == HUMAN_PLAYER_IDX) adj_city_val += 5;
+                if (_difficulty > god_Hard   && _CITIES[adj_city_idx].owner_idx == HUMAN_PLAYER_IDX) adj_city_val += 5;
+
+                /* Evaluate the worth of continuing to current target */
+                Army_At_Square_1(dst_wx, dst_wy, stack_wp, &troop_count, troops);
+                cur_target_val = 10 - troop_count - Delta_XY_With_Wrap(dst_wx, dst_wy, stack_wx, stack_wy, WORLD_WIDTH);
+                
+                if (target_city_idx != -1) {
+                    if (_difficulty > god_Normal && _CITIES[target_city_idx].owner_idx == HUMAN_PLAYER_IDX) cur_target_val += 5;
+                    if (_difficulty > god_Hard   && _CITIES[target_city_idx].owner_idx == HUMAN_PLAYER_IDX) cur_target_val += 5;
+                }
+
+                if (adj_city_val > cur_target_val) {
+                    AI_Stack_Set_Destination(stack_idx, _CITIES[adj_city_idx].wx, _CITIES[adj_city_idx].wy, NEUTRAL_PLAYER_IDX);
+                    stack->unit_status = us_GOTO;
+                }
+            }
+        }
+
+        /* If stack is idle, find the best non-neutral city to target on the same landmass/plane */
+        if (stack->unit_status != us_GOTO) {
+            adj_city_val = -1000;
+            target_city_idx = -1;
+            cities_examined = 0;
+
+            for (itr = 0; itr < _cities; itr++) {
+                if (_CITIES[itr].owner_idx == NEUTRAL_PLAYER_IDX) continue;
+                if (cities_examined >= 30) break;
+                if (_CITIES[itr].wp != stack_wp) continue;
+
+                /* If unit is LandOnly, check if city is on the same landmass */
+                if (!(stack->abilities & AICAP_LandOnly)) {
+                    if (_landmasses[(_CITIES[itr].wp * WORLD_SIZE) + (_CITIES[itr].wy * WORLD_WIDTH) + _CITIES[itr].wx] != stack_landmass_idx) {
+                        continue;
+                    }
+                }
+
+                Army_At_Square_1(_CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, &troop_count, troops);
+                cur_target_val = 10 - troop_count - Delta_XY_With_Wrap(_CITIES[itr].wx, _CITIES[itr].wy, stack_wx, stack_wy, WORLD_WIDTH);
+                
+                if (_difficulty > god_Normal && _CITIES[itr].owner_idx == HUMAN_PLAYER_IDX) cur_target_val += 5;
+                if (_difficulty > god_Hard   && _CITIES[itr].owner_idx == HUMAN_PLAYER_IDX) cur_target_val += 5;
+
+                if (cur_target_val > adj_city_val) {
+                    target_city_idx = itr;
+                    adj_city_val = cur_target_val;
+                }
+                cities_examined++;
+            }
+
+            if (cities_examined > 0) {
+                uu_city_idx = target_city_idx;
+                AI_Stack_Set_Destination(stack_idx, _CITIES[target_city_idx].wx, _CITIES[target_city_idx].wy, NEUTRAL_PLAYER_IDX);
+                stack->unit_status = us_GOTO;
+            } else {
+                /* No reachable targets: disband the stack to clear conventional memory */
+                /* same as seen in MoO2 ... `if(NPC_Dest_() == ST_UNDEFINED)` */
+                for (itr = 0; itr < _units; itr++) {
+                    if (_UNITS[itr].wx == stack_wx && _UNITS[itr].wy == stack_wy && _UNITS[itr].wp == stack_wp) {
+                        Kill_Unit(itr, 0);
+                    }
+                }
+            }
+        }
+    }
+
+    return stack_idx;
+}
+
 
 // WZD o164p05
 // ¿ MoO2  Module: AIDATA  Compute_AI_Data_() ? ¿ ... Deallocate_AI_Data_() ?
@@ -480,5 +620,112 @@ void AI_Evaluate_Hostility(int16_t player_idx)
 
 
 // WZD o164p08
-// drake178: AI_GetNeutralStacks()
-// AI_GetNeutralStacks()
+/**
+ * @brief Enumerates roaming neutral stacks into the shared AI stack buffer.
+ *
+ * Scans the global unit list for units owned by the neutral player and builds
+ * one AI stack entry per occupied map square, excluding neutral units that are
+ * stationed inside cities. When multiple neutral units share the same square,
+ * they are coalesced into a single entry in AI_Own_Stacks.
+ *
+ * Each recorded stack stores its map location, current unit status, and a
+ * coarse movement-capability flag derived from the units encountered at that
+ * square. If any unit in an already-recorded stack lacks air and water travel,
+ * the stack's abilities field is reduced to AICAP_None.
+ *
+ * @note This routine resets AI_Own_Stack_Count before rebuilding the list and
+ *       stops after filling 80 entries, matching the allocated stack buffer.
+ * @note The function reads global unit and city state from _UNITS, _CITIES,
+ *       _units, and _cities, and writes the results to AI_Own_Stacks and
+ *       AI_Own_Stack_Count.
+ */
+void Build_NPC_Stacks(void)
+{
+    int16_t unit_wp = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t city_defender = 0;
+    int16_t stack_exists = 0;
+    int16_t unit_idx = 0;
+    int16_t itr = 0;
+    struct s_AI_STACK_DATA * stack_ptr;
+    struct s_UNIT * curr_unit;
+    struct s_CITY * curr_city;
+
+    AI_Own_Stack_Count = 0;
+    
+    for (unit_idx = 0; unit_idx < _units; unit_idx++)
+    {
+        if (AI_Own_Stack_Count >= 80)
+        {
+            break;
+        }
+
+        curr_unit = &_UNITS[unit_idx];
+
+        /* Check if unit is owned by Neutral (Owner Index 5) */
+        if (curr_unit->owner_idx != NEUTRAL_PLAYER_IDX)
+        {
+            continue;
+        }
+
+        unit_wx = curr_unit->wx;
+        unit_wy = curr_unit->wy;
+        unit_wp = curr_unit->wp;
+        stack_exists = 0;
+
+        /* Check if a stack already exists at this location in the AI's collection */
+        for (itr = 0; itr < AI_Own_Stack_Count; itr++)
+        {
+            stack_ptr = &AI_Own_Stacks[itr];
+
+            if (stack_ptr->wx == (uint8_t)unit_wx &&
+                stack_ptr->wy == (uint8_t)unit_wy &&
+                stack_ptr->wp == (uint8_t)unit_wp)
+            {
+                stack_exists = 1;
+
+                /* If unit is part of an existing stack, verify movement capabilities */
+                if (!Unit_Has_AirTravel(unit_idx) && !Unit_Has_WaterTravel(unit_idx))
+                {
+                    stack_ptr->abilities = AICAP_None;
+                }
+            }
+        }
+
+        if (stack_exists == ST_FALSE)
+        {
+            city_defender = ST_FALSE;
+            /* Check if unit is currently inside a city */
+            for (itr = 0; itr < _cities; itr++)
+            {
+                curr_city = &_CITIES[itr];
+                if (curr_city->wx == (uint8_t)unit_wx &&
+                    curr_city->wy == (uint8_t)unit_wy &&
+                    curr_city->wp == (uint8_t)unit_wp)
+                {
+                    city_defender = ST_TRUE;
+                }
+            }
+            /* If not already in a stack and not in a city, record as a new neutral stack */
+            if (city_defender == ST_FALSE)
+            {
+                stack_ptr = &AI_Own_Stacks[AI_Own_Stack_Count];
+                stack_ptr->wx = (uint8_t)unit_wx;
+                stack_ptr->wy = (uint8_t)unit_wy;
+                stack_ptr->wp = (uint8_t)unit_wp;
+                stack_ptr->unit_status = curr_unit->Status;
+                /* Determine if the stack has non-standard movement capability */
+                if (!Unit_Has_AirTravel(unit_idx) && !Unit_Has_WaterTravel(unit_idx))
+                {
+                    stack_ptr->abilities = AICAP_None;
+                }
+                else
+                {
+                    stack_ptr->abilities = AICAP_LandOnly;
+                }
+                AI_Own_Stack_Count++;
+            }
+        }
+    }
+}

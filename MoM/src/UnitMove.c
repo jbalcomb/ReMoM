@@ -1104,7 +1104,7 @@ void Invalidate_AI_Move_Path(void)
 {
     if (_ai_move_path_idx > 0 && _ai_move_path_idx < 140)
     {
-        _ai_move_path_table[_ai_move_path_idx]->src_wx = -1;  // INF / ST_UNDEFINED?
+        _ai_move_path_table[_ai_move_path_idx].src_wx = -1;  // INF / ST_UNDEFINED?
     }
 }
 
@@ -1161,7 +1161,7 @@ void Cache_AI_Move_Path(int16_t player_idx, int16_t src_wx, int16_t src_wy, int1
     i = 0;
     while((i < 140) && (_ai_move_path_idx == -1))
     {
-        if (_ai_move_path_table[i]->src_wx == -1)
+        if (_ai_move_path_table[i].src_wx == -1)
         {
             _ai_move_path_idx = i;
         }
@@ -1179,10 +1179,10 @@ void Cache_AI_Move_Path(int16_t player_idx, int16_t src_wx, int16_t src_wy, int1
     duplicate = ST_FALSE;
     for (i = 0; i < 140; i++)
     {
-        if (_ai_move_path_table[i]->src_wx == src_wx &&
-            _ai_move_path_table[i]->srx_wy == src_wy &&
-            _ai_move_path_table[i]->dst_wx == dst_wx &&
-            _ai_move_path_table[i]->dst_wy == dst_wy)
+        if (_ai_move_path_table[i].src_wx == src_wx &&
+            _ai_move_path_table[i].srx_wy == src_wy &&
+            _ai_move_path_table[i].dst_wx == dst_wx &&
+            _ai_move_path_table[i].dst_wy == dst_wy)
         {
             duplicate = ST_TRUE;
             break;
@@ -1195,7 +1195,7 @@ void Cache_AI_Move_Path(int16_t player_idx, int16_t src_wx, int16_t src_wy, int1
     }
 
     /* Record the new path into the allocated slot */
-    path_ptr = _ai_move_path_table[_ai_move_path_idx];
+    path_ptr = &_ai_move_path_table[_ai_move_path_idx];
 
     path_ptr->src_wx = src_wx;
     path_ptr->srx_wy = src_wy;
