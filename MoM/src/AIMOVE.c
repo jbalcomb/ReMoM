@@ -256,7 +256,7 @@ void AI_SetUnitOrders__WIP(int16_t player_idx)
     }
 
 
-    // DONT  EMM_Map_DataH()
+    EMMDATAH_Map();
 
 
 }
@@ -7621,7 +7621,7 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
     }
 
 
-    // DONT  EMM_Map_DataH();
+    EMMDATAH_Map();
 
 }
 

@@ -114,7 +114,8 @@ ITEM_MAX_POWERS
 /* HACK */  #define NUM_LAIRS                 99
 // NOTE(JimBalcomb,20260206): Why/When did I hack this?
 
-#define MAX_STACK                   9
+#define MAX_STACK                         9
+#define NUM_AI_ARMIES                    80  // AKA "AI_STACK", "AI_Stacks"
 #define NUM_SPELLS                      240  // 6 reals, 40 spells each
 #define NUM_SPELLS_PER_MAGIC_REALM       40
 #define NUM_SPELLS_PER_MAGIC_RARITY      10

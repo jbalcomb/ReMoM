@@ -132,7 +132,7 @@ XREF:
 
 ### Tmp_Conv_Str_1
 Near_Allocation_Error()
-    SDL_itoa(nbytes, Tmp_Conv_Str_1, 10)
+    stu_itoa(nbytes, Tmp_Conv_Str_1, 10)
     stu_strcat(Temp_String, Tmp_Conv_Str_1)
 EMM_GetHandle+184        mov     ax, offset Tmp_Conv_Str_1
 EMM_GetHandle+1DD        mov     ax, offset Tmp_Conv_Str_1

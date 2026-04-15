@@ -185,6 +185,24 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index);
 
 
 /*
+    WZD  seg025
+*/
+
+// WZD s25p01
+// AKA Draw_File_Animation_Frame_ASM()
+// Draw_File_Animation_Frame()
+
+// WZD s25p02
+// AKA Map_File_Animation_Frame_ASM()
+// Map_File_Animation_Frame()
+
+// WZD s25p03
+// AKA Remap_Draw_File_Animation_Frame_ASM()
+// Remap_Draw_File_Animation_Frame()
+
+
+
+/*
     WZD  seg029
 */
 
@@ -306,13 +324,13 @@ void Clear_Bitmap_Region(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_pt
 void Scale_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y);
 
 // WZD s30p35
-void Open_File_Animation__HACK(char * file_name, int16_t entry_num);
+void Open_File_Animation(char * file_name, int16_t entry_num);
 
 // WZD s30p36
 void Draw_File_Animation__HACK(void);
 
 // WZD s30p37
-// void Load_File_Animation_Frame__STUB(int32_t offset, int32_t size, int16_t logical_page);
+// static void Load_File_Animation_Frame(int32_t offset, int32_t size, int16_t logical_page);
 
 // WZD s30p38
 int16_t Get_File_Animation_Frame(void);

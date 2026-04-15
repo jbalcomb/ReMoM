@@ -175,11 +175,11 @@
 - [ ] NPC_To_NPC_Treaty_Negotiations__STUB
 
 ## EMM
-- [ ] EMM_ReleaseAll__STUB
+- [ ] EMM_Release_All
 
 ## EXIT
-- [ ] DBG_Close_ERROR_LOG__STUB
-- [ ] DBG_Open_ERROR_LOG__STUB
+- [ ] DBG_Close_ERROR_LOG
+- [ ] DBG_Open_ERROR_LOG
 
 ## Explore
 - [ ] Update_Scouted_And_Contacted__WIP

@@ -123,7 +123,7 @@ void AI_Next_Turn(void)
         }
     }
 
-    EMM_Map_DataH();
+    EMMDATAH_Map();
     Allocate_AI_Data();
 
     /* Main AI Player processing loop (Skip Human Player 0) */
@@ -166,7 +166,7 @@ void AI_Next_Turn(void)
         if (_players[player_idx].casting_cost_remaining <= 0 && _players[player_idx].casting_spell_idx != spl_NONE)
         {
             // Cast_Spell_Overland__WIP(player_idx);
-            EMM_Map_DataH();
+            EMMDATAH_Map();
             _players[player_idx].casting_spell_idx = spl_NONE;
             if (AI_Eval_After_Spell == ST_TRUE)
             {
@@ -182,7 +182,7 @@ void AI_Next_Turn(void)
             AI_Spell_Select__STUB(player_idx);
         }
 
-        EMM_Map_DataH();
+        EMMDATAH_Map();
         AI_Update_Magic_Power(player_idx);
         AI_Sanity_Check_Overland_Enchantments(player_idx);
         AI_Update_Gold_And_Mana_Reserves(player_idx);
@@ -206,11 +206,11 @@ void AI_Next_Turn(void)
         AI_Continent_Reeval__WIP(player_idx);
         AI_SetUnitOrders__WIP(player_idx);
         
-        EMM_Map_DataH();
+        EMMDATAH_Map();
         AI_Kill_Excess_Settlers_And_Engineers(player_idx);
     }
 
-    EMM_Map_DataH();
+    EMMDATAH_Map();
 
     /* Reset Move_Failed flag for all non-human units */
     for (i = 0; i < _units; i++)
@@ -240,7 +240,7 @@ void AI_Next_Turn(void)
         }
     }
 
-    EMM_Map_DataH();
+    EMMDATAH_Map();
 
     /* Neutral Player Turn Processing */
     Player_All_Colony_Autobuild(NEUTRAL_PLAYER_IDX);
@@ -2178,7 +2178,7 @@ void EMM_Map_CONTXXX__WIP(void)
 {
     int16_t itr = 0;  // _SI_
 
-    // TODO  EMM_Map4Pages(0, EmmHndl_CONTXXX);
+    // TODO  EMM_MapMulti4(0, EmmHndl_CONTXXX);
     // ...
     // TODO  CONTX_Arc_TileXs = SA_MK_FP0(EMS_PFBA);
     // ...
@@ -2349,7 +2349,7 @@ void CONTX_CreateChains__WIP(void)
 
     }
 
-    // DONT  EMM_Map_DataH();
+    EMMDATAH_Map();
 
 }
 
@@ -2477,6 +2477,6 @@ void CONTX_CreateLChains__WIP(void)
 
     }
 
-    // DONT  EMM_Map_DataH();
+    EMMDATAH_Map();
 
 }

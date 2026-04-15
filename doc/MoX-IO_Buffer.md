@@ -98,7 +98,7 @@ mov     [cs:Log_Page_seg029], bx
 mov     dx, [cs:EMM_Handle_seg029]
 push    dx                              ; EMM_Handle
 push    bx                              ; First_Log_Page
-call    EMM_Map4Pages                   ; maps in four consecutive logical pages from the
+call    EMM_MapMulti4                   ; maps in four consecutive logical pages from the
                                         ; passed handle, starting with the one specified
                                         ; uses a different EMM function than seg012:0255
                                         ; preserves all register values

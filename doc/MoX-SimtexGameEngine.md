@@ -72,7 +72,7 @@ LBX_Load
 Allocate
     farpeekw()
     farpokew()
-    Update_MemFreeWorst_KB()
+    Check_Free()
     Check_Release_Version()
     Exit_With_Message()
 

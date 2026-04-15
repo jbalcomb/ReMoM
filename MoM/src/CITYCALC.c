@@ -56,7 +56,7 @@
 void Do_City_Calculations(int16_t city_idx)
 {
 
-    // DONT  EMM_Map_DataH();
+    EMMDATAH_Map();
 
     CITIES_FOOD_UNITS(city_idx, (int8_t)City_Food_Production(city_idx));
     CITIES_PRODUCTION_UNITS(city_idx, (int8_t)City_Production_Production(city_idx));
@@ -1430,7 +1430,7 @@ void UNIT_RemoveExcess(int16_t unit_idx)
 void Make_Road(int16_t wx, int16_t wy, int16_t wp)
 {
 
-    // TODO  EMM_Map_DataH();  // ; maps the EMM Data block into the page frame
+    EMMDATAH_Map();
 
     movement_mode_cost_maps[wp].UU_MvMd.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
     movement_mode_cost_maps[wp].walking.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
@@ -1467,7 +1467,7 @@ XREF:
 void Make_Road_Enchanted(int16_t wx, int16_t wy, int16_t wp)
 {
 
-    // TODO  EMM_Map_DataH();                   ; maps the EMM Data block into the page frame
+    EMMDATAH_Map();
 
     if((_map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] & MSF_ROAD) != 0)
     {
@@ -2670,7 +2670,7 @@ int16_t City_Current_Product_Cost(int16_t city_idx)
     int16_t product_idx = 0;  // _DI_
 
 
-    // TODO  EMM_Map_DataH()
+    EMMDATAH_Map();
 
 
     product_idx = _CITIES[city_idx].construction;
@@ -3020,7 +3020,7 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
     int16_t minimum_farmer_count = 0;
     int16_t farmer_food = 0;  // _DI_
 
-    // TODO  EMM_Map_DataH()
+    EMMDATAH_Map();
 
     city_population = _CITIES[city_idx].population;
 
@@ -3149,7 +3149,7 @@ void All_Outpost_Population_Growth(void)
     int16_t itr_cities = 0;  // _SI_
     int16_t grow = 0;  // _DI_
 
-    // DONT  EMM_Map_DataH();
+    EMMDATAH_Map();
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
@@ -3761,7 +3761,7 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
     int16_t itr_wy;  // _DI_
     int16_t curr_wx;  // _SI_
 
-    // DONT  EMM_Map_DataH();  // ; maps the EMM Data block into the page frame
+    EMMDATAH_Map();
 
     map_square_has_city = ST_FALSE;
 
@@ -4088,7 +4088,7 @@ void Reset_City_Area_Bitfields(void)
     int16_t itr_cities;  // _SI_
     int16_t city_area_x;  // _DI_
 
-    // TODO  EMM_Map_DataH();
+    EMMDATAH_Map();
 
     // IDA Dasm - Grey-Dark
     for(itr_wp = 0; itr_wp < NUM_PLANES; itr_wp++)
@@ -4211,7 +4211,7 @@ OON XREF: CTY_Remove()
 void City_Remove_Road(int16_t wx, int16_t wy, int16_t wp)
 {
 
-    // TODO  EMM_Map_DataH()
+    EMMDATAH_Map();
 
     // movement_mode_cost_maps + (wp * sizeof(struct s_MOVE_MODE_COST_MAPS)) + (wy * WORLD_WIDTH) + wx
     movement_mode_cost_maps[wp].UU_MvMd.moves2[((wy * WORLD_WIDTH) + wx)] = 2;
@@ -4248,7 +4248,7 @@ void CTY_Food_Breakdown(int16_t city_idx, struct s_FOOD_BREAKDOWN * Retn_Struct)
     int16_t itr = 0;
     int16_t Food_Sub_Sum = 0;
 
-    // DONT  EMM_Map_DataH();
+    EMMDATAH_Map();
 
     for(itr = 0; itr < 15; itr++)
     {

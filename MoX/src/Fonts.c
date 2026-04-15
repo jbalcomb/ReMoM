@@ -8,6 +8,8 @@
 */
 
 #include "Allocate.h"
+#include "DOS.h"
+#include "file_ani.h"
 #include "Fonts.h"
 #include "Graphics.h"
 #include "LBX_Load.h"
@@ -191,31 +193,19 @@ uint8_t * palette_flags;
 */
 void Load_Font_File(char * font_file)
 {
-    int itr;
-
+    int itr = 0;
     stu_strcpy(font_name, font_file);
-
     font_style_data = LBX_Load(font_file, 0);
     border_style_data = LBX_Load(font_file, 1);
-
     font_header = (struct s_FONT_HEADER *)font_style_data;
-
     palette_block = Allocate_Space(348);    // 348 PR, 5568 B
-
     current_palette = Allocate_Space(64);     //  64 PR, 1024 B
-
     palette_flags = current_palette + (48 * SZ_PARAGRAPH_B);  // ~== palette_flags = &current_palette[768];
-
     // TODO  UU_DAC_Save_Seg = Allocate_Space(48);  // in MoO1, also unused, maybe debug code
-
     remap_color_palettes = (uint8_t *)Allocate_Space(384);  // 384 PR, 6144 B  (24 * 256  ~'remap color tables')
-
-    // TODO  file_animation_header = (struct s_FLIC_HDR *)Allocate_Space(2);
-
+    file_animation_header = Allocate_Space(2);  // 2 PR, 32 B
     Intensity_Scale_Tbl = Allocate_Space(96);  // 96 PR, 1536 B
-
     // TODO  VGA_TextDraw_Init();
-
     for(itr = 0; itr < 768; itr++)
     {
         *(current_palette + itr) = ST_TRANSPARENT;
@@ -224,7 +214,6 @@ void Load_Font_File(char * font_file)
     {
         *(palette_flags + itr) = ST_TRUE;
     }
-
 }
 
 

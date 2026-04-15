@@ -723,7 +723,7 @@ void Next_Turn_Calc(void)
 /* CLAUDE */ PHASE(Players_Apply_Upkeeps__WIP());
 /* CLAUDE */ fprintf(stderr, "[GOLD] AFTER  Players_Apply_Upkeeps: gold_reserve=%d\n", _players[0].gold_reserve);
 
-        // DONT  EMM_Map_DataH()
+        EMMDATAH_Map();
 
         // All_Outpost_Population_Growth();
 /* CLAUDE */ PHASE(All_Outpost_Population_Growth());

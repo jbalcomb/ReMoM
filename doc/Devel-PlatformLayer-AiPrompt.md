@@ -1521,7 +1521,7 @@ I've conducted a thorough search of the MoX/ and MoM/ directories for platform b
   - Comment reference: `SDL2: manually or next SDL_WINDOWEVENT_EXPOSED...`
 
 - **/c/STU/devel/ReMoM/MoX/src/EXIT.c** - Lines 61, 65, 69, 72
-  - Comments reference `SDL_ltoa()` and `SDL_itoa()` (in TODO blocks, but still references SDL)
+  - Comments reference `stu_ltoa()` and `stu_itoa()` (in TODO blocks, but still references SDL)
 
 #### 3. **Win32 Headers in Game/Platform Interface Code**
 - **/c/STU/devel/ReMoM/MoX/src/win_CLK.c** - Line 4

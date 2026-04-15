@@ -34,7 +34,7 @@ void Exit_With_Message(char * string);
 // GAME_EXE_Swap()
 
 // WZD s05p05
-// Update_MemFreeWorst_KB()
+void Check_Free(void);
 
 // WZD s05p06
 // UU_VGA_B800Dump()
@@ -58,33 +58,16 @@ void Quit_With_Message(char * string);
 // UU_DOS_PrintString2()
 
 // WZD s06p04
-// RAM_GetFreeBlockSize()
+int16_t Dos_Free(void);
 
 // WZD s06p05
 // s06p05_Empty_pFxn()
-void DBG_Open_ERROR_LOG__STUB(void);
+void DBG_Open_ERROR_LOG(void);
 
 // WZD s06p06
 // s06p06_Empty_pFxn()
-void DBG_Close_ERROR_LOG__STUB(void);
-/*
+void DBG_Close_ERROR_LOG(void);
 
-; In MoO1
-; this is closing ERRROR.LOG
-
-*/
-// ; int __far DBG_Close_ERROR_LOG(void)
-// proc DBG_Close_ERROR_LOG far
-// push    es
-// push    ds
-// push    si
-// push    di
-// pop     di
-// pop     si
-// pop     ds
-// pop     es
-// retf
-// endp DBG_Close_ERROR_LOG
 
 
 #ifdef __cplusplus

@@ -6,7 +6,9 @@
 #include <stdio.h>
 
 
-
+/*
+TODO  rename, e_FARLOAD_ERROR, fle_...
+*/
 enum e_LBX_ERROR
 {
     le_not_found          =  1,
@@ -28,6 +30,7 @@ enum e_LBX_ERROR
 
 
 
+#define SZ_LBX_HDR_PREAMBLE     8
 #define SZ_LBX_HDR_B          512
 #define SZ_LBX_HDR_PR          32  // 32 paragraphs * 16 bytes per paragaph = 512 bytes
 
@@ -66,6 +69,35 @@ extern char lbxload_file_name[];
 extern "C" {
 #endif
     /* C and Asm Function Prototypes */
+
+
+
+/*
+    WIZARDS.EXE seg009
+*/
+
+// WZD s09p01
+FILE * lbx_open(char * lbx_name);
+
+// WZD s09p02
+void lbx_close(FILE * lbx_handle);
+
+// WZD s09p03
+int16_t lbx_seek(int32_t offset, FILE * lbx_handle);
+
+// WZD s09p04
+// drake178: UU_DISK_GetFileSize()
+int32_t lbx_lof(int32_t offset, FILE * lbx_handle);
+
+// WZD s09p05
+int16_t lbx_read_sgmt(uint8_t * sgmt, uint16_t nbytes, FILE * lbx_handle);
+
+// WZD s09p06
+int16_t lbx_read_ofst(uint8_t * ofst, uint16_t nbytes, FILE * lbx_handle);
+
+// WZD s09p07
+void _fstrcpy(char * dst, char * src);
+
 
 
 /*
@@ -110,8 +142,7 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
 void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, uint16_t start_rec, uint16_t num_recs, uint16_t record_size);
 
 // WZD s10p13
-// ¿ MoO2: Get_Farload_Data_Record_Count() ?
-// LBX_GetEntryData()
+FILE * LBX_Get_Entry_Data(char * file_name, int16_t entry_num, int32_t * entry_start, int32_t * entry_length, int16_t format);
 
 // WZD s10p14
 /* CLAUDE */  /* static function — declaration belongs in LBX_Load.c, not the header */

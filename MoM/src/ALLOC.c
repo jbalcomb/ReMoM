@@ -37,8 +37,8 @@ char EmmHndlNm_CONTXXX[] = "CONTXXX";
 void Allocate_Data_Space(int16_t gfx_buff_nparas)
 {
     
-    // TODO  EmmHndl_FIGUREX = EMM_GetHandle(28, EmmHndlNm_FIGUREX, 1);
-    // TODO  EmmHndl_TILEXXX = EMM_GetHandle( 3, EmmHndlNm_TILEXXX, 1);
+    // TODO  EmmHndl_FIGUREX = EMM_Get_Handle(28, EmmHndlNm_FIGUREX, 1);
+    // TODO  EmmHndl_TILEXXX = EMM_Get_Handle( 3, EmmHndlNm_TILEXXX, 1);
     EmmHndl_FIGUREX = Allocate_Space(28672);  // 28 * 16384 EMM Page Size = 458752 B / 16 = 28672 PR
     EmmHndl_TILEXXX = Allocate_Space(3072);   //  3 * 16384 EMM Page Size =  49152 B / 16 =  3072 PR
 
@@ -261,7 +261,7 @@ so, 300 PRs, + 1 for the SAMB header
     AI_NewColTgtYs[1]  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18BC) );  // 12 bytes
     AI_SCircle_Reevals = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18C8) );  // 16 bytes
 
-    // TODO  EMM_ContXXX_H = EMM_GetHandle(4, cnst_EMM_ContH_Name, 1)
+    // TODO  EMM_ContXXX_H = EMM_Get_Handle(4, cnst_EMM_ContH_Name, 1)
     EmmHndl_CONTXXX = Allocate_Space(4096);   //  4 * 16384 EMM Page Size = 65536 B / 16 = 4096 PR
 
 }

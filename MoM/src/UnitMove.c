@@ -22,11 +22,14 @@ Elsewhere, ...
 
 */
 
+#include "../../ext/stu_compat.h"
+
 #include "../../MoX/src/Util.h"
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_TYPE.h"
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOM_DEF.h"
+#include "../../MoX/src/EMS/EMS.h"
 
 #include "MainScr.h"
 #include "UNITTYPE.h"
@@ -757,7 +760,7 @@ int16_t Make_Move_Path(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t M
     int16_t * ptr_reached_from = 0;  // DNE in Dasm
     int16_t reached_from = 0;  // DNE in Dasm
 
-    // DONT  EMM_Map_DataH();  // ; maps the EMM Data block into the page frame
+    EMMDATAH_Map();
 
     UU_flag = ST_TRUE;
     UU_moves2 = 8;
@@ -945,7 +948,7 @@ void Init_MovePathMap(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t Mv
     int16_t itr_wy = 0;
     int16_t itr_wx = 0;  // _DI_
 
-    // TODO  EMM_Map_DataH()
+    EMMDATAH_Map();
 
     if(MvMd_5 == ST_TRUE) { goto Flying; }
     if(MvMd_4 == ST_TRUE) { goto Sailing; }

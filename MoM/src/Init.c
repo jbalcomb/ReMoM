@@ -13,17 +13,19 @@ MoO2  Module: fonts     Load_Font_File()
 
 */
 
-#include "Init.h"
+#include "../../ext/stu_compat.h"
 
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/Input.h"
+#include "../../MoX/src/IO_Buffer.h"
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/SOUND.h"
 #include "../../MoX/src/random.h"
-#include "../../platform/include/Platform.h"
 #include "../../MoX/src/Video2.h"
 
-#include "../../ext/stu_compat.h"
+#include "../../platform/include/Platform.h"
+
+#include "Init.h"
 
 
 
@@ -45,10 +47,10 @@ void Init_Drivers(int input_type, int sound_channels, char * font_file, int midi
 {
 
     /* NEWCODE */  // DBG_Open_ERROR_LOG();
-    
-    EMS_Startup();
 
-    // TODO  Create_IO_Buffer();  /* MoO2 */
+    Create_IO_Buffer();  /* MoO2 */
+
+    EMS_Startup();
 
     // VGA_SetModeY()  // MoO2  Init_Video_Drivers() ... |-> Set_Video_Mode()
     Init_Video_Drivers(VIDEO_MODE);

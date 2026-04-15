@@ -9,7 +9,7 @@ void dbg_prn(const char * fmt, ...);  // HACK needs to not be behind #ifdef STU_
 
 #include "STU_SND.h"
 
-#include <stdlib.h>     /* abs(); SDL_itoa(); malloc(); */
+#include <stdlib.h>     /* abs(); stu_itoa(); malloc(); */
 #include <string.h>
 
 

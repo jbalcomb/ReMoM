@@ -14,7 +14,7 @@ if(USE_HEADLESS)
         headless/headless_PFL.c
         headless/headless_KD.c
         headless/headless_Timer.c
-        headless/headless_EMM.c
+        # headless/headless_EMM.c
         headless/headless_Audio.c
         headless/headless_State.c
         replay/Replay.c
@@ -28,7 +28,7 @@ elseif(USE_WIN32)
         win32/win_KD.c
         win32/win_MD.c
         win32/win_CLK.c
-        win32/win_EMS.c
+        # win32/win_EMS.c
         win32/win_Exit.c
         win32/win_Video.c
         win32/win_State.c
@@ -39,7 +39,7 @@ elseif(USE_WIN32)
 elseif(USE_SDL3)
     set(PLATFORM_BACKEND_DIR sdl3)
     set(PLATFORM_SOURCES
-        sdl3/sdl3_EMM.c
+        # sdl3/sdl3_EMM.c
         sdl3/sdl3_Init.c
         sdl3/sdl3_KD.c
         sdl3/sdl3_MD.c
@@ -57,7 +57,7 @@ elseif(USE_SDL3)
 else()
     set(PLATFORM_BACKEND_DIR sdl2)
     set(PLATFORM_SOURCES
-        sdl2/sdl2_EMM.c
+        # sdl2/sdl2_EMM.c
         sdl2/sdl2_Init.c
         sdl2/sdl2_KD.c
         sdl2/sdl2_MD.c

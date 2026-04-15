@@ -38,6 +38,26 @@ enum e_SA_Allocation_Type
     sa_Invalid
 };
 
+enum e_Alloc_Error_Types
+{
+    sa_Alloc_too_small         = 1,
+    sa_Alloc_Next_too_small    = 2,
+    sa_Alloc_Space_corrupted   = 3,
+    sa_Alloc_EMM_too_small     = 4
+};
+
+struct s_SAMB
+{
+    uint16_t reserved1;  // DNE in Dasm
+    uint16_t reserved2;  // DNE in Dasm
+    uint16_t MemSig1;
+    uint16_t MemSig2;
+    uint16_t Size;
+    uint16_t Used;
+    uint16_t unknown;  // DNE in Dasm
+    uint16_t Mark;
+};
+
 #define SAMB_RESERVED1   0
 #define SAMB_RESERVED2   2
 #define SAMB_MEMSIG1     4
@@ -177,13 +197,6 @@ extern int16_t near_buffer_mark;
 extern char near_buffer[];
 
 
-
-/*
-    MGC  seg007
-*/
-
-// MGC s07p04
-int16_t Check_Allocation(SAMB_ptr SAMB_head);
 
 /*
     MGC  seg008

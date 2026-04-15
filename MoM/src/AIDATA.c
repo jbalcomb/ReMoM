@@ -552,7 +552,7 @@ int16_t NPC_Destinations(void)
     int16_t itr = 0;
     struct s_AI_STACK_DATA * stack = NULL;
 
-    EMM_Map_DataH();
+    EMMDATAH_Map();
 
     Build_NPC_Stacks();  // OGBUG  definitely passes NEUTRAL_PLAYER_IDX here, but Build_NPC_Stacks doesn't take a parameter and is hard-coded for NEUTRAL_PLAYER_IDX
 

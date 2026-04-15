@@ -149,17 +149,6 @@ void s01p16_empty_function(void);
 
 
 
-/*
-    WIZARDS.EXE  seg009
-*/
-
-// WZD s09p07
-// void _fstrcpy(uint16_t dst_ofst, char * dst_sgmt, uint16_t src_ofst, char * src_sgmt);
-void _fstrcpy(char * dst, char * src);
-void _fstrcpy__Casm(unsigned short int dst_ofst, unsigned short int dst_sgmt, unsigned short int src_ofst, unsigned short int src_sgmt);
-
-
-
 #ifdef __cplusplus
 }
 #endif

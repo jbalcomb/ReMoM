@@ -12,7 +12,7 @@ TEXTBOX.H
 but, ...
 EMM_Map_VGAFILEH1_5__WIP()
 meaningfulness?
-***hard-coded for _VGAFILEH_seg; EMM_Map4Pages(emsFirst = 1, emsHandle = _VGAFILEH_seg); returns EMM_PageFrame;***
+***hard-coded for _VGAFILEH_seg; EMM_MapMulti4(emsFirst = 1, emsHandle = _VGAFILEH_seg); returns EMM_PageFrame;***
 WTF is the intent of _VGAFILEH_seg?
 Why {1,2,3,4} and not 0?
 

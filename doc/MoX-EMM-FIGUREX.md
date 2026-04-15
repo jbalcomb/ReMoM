@@ -19,7 +19,7 @@ Allocate_Data_Space()
     // TODO  EmmHndl_FIGUREX = EMM_GetHandle(28, EmmHndlNm_FIGUREX, 1);
     EmmHndl_FIGUREX = Allocate_Space(28672);  // 28 * 16384 EMM Page Size = 458752 B / 16 = 28672 PR
 EMM_FIGUREX_Init__HACK()
-    EMM_Map4Pages(logical_page, EmmHndl_FIGUREX)
+    EMM_MapMulti4(logical_page, EmmHndl_FIGUREX)
 
 
 ## EMM_FIGUREX_Init__HACK()

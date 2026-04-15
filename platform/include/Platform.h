@@ -181,7 +181,7 @@ extern int screen_pixel_height;
 extern uint8_t *current_palette;
 
 /** EMS/VGA file buffer — allocated by EMS_Startup(). */
-extern uint8_t *_VGAFILEH_seg;
+extern uint16_t _VGAFILEH_seg;
 
 /** Mouse cursor position in game coordinates. */
 extern int16_t pointer_x;

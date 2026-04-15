@@ -4,11 +4,15 @@
 
 */
 
+#include "../../ext/stu_compat.h"
+
 #include "../../MoX/src/Allocate.h"
+#include "../../MoX/src/DOS.h"
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/Graphics.h"
+#include "../../MoX/src/Help.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _screen_seg */
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_T4.h"
@@ -18,7 +22,6 @@
 
 #include "MOM_SCR.h"
 #include "CITYCALC.h"
-#include "../../MoX/src/Help.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 #include "Outpost.h"
@@ -27,12 +30,10 @@
 #include "UNITTYPE.h"   // WTFMATE
 #include "WZD_o059.h"
 
+#include "Surveyor.h"
+
 #include <stdlib.h>
 #include <string.h>
-
-#include "../../ext/stu_compat.h"
-
-#include "Surveyor.h"
 
 
 

@@ -495,6 +495,9 @@ int stu_fclose(FILE *stream)
 /* --------------------------------------------------------------------------
  * stu_fread - portable file read
  * -------------------------------------------------------------------------- */
+// ferror(): Returns a non-zero value if a read error occurred on the stream.
+// feof(): Returns a non-zero value if the end-of-file was reached. 
+// Note on Item Size: If you set the size parameter to 1 (e.g., reading char), the return value will equal the number of bytes read.
 size_t stu_fread(void *buffer, size_t element_size, size_t element_count, FILE *stream)
 {
     return fread(buffer, element_size, element_count, stream);

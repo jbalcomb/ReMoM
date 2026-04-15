@@ -39,13 +39,13 @@ extern "C" {
 // UU_Botched_DISK_GetSpace()
 // UU_DISK_GetDefaultDrive()
 // UU_DISK_DeleteFile()
-// LOF()
-// UU_DISK_GetFileDateTime()
-// UU_DISK_CheckDrive()
-// UU_DISK_GetCurrentDir()
 
 // WZD s03p05
 int32_t LOF(char * file_name);
+
+// UU_DISK_GetFileDateTime()
+// UU_DISK_CheckDrive()
+// UU_DISK_GetCurrentDir()
 
 
 
@@ -61,35 +61,40 @@ int16_t DIR(char * match_string, char * found_file);
 
 
 
-/*
-    WIZARDS.EXE  seg005
-*/
-
-
 
 /*
-    WIZARDS.EXE  seg006
+    WIZARDS.EXE  seg007
 */
 
-// WZD s06p01
-// VGA_SetTextMode()
+// WZD s07p01
+// UU_SAMB_DOS_Allocate_Memory
 
-// WZD s06p02
-// DOS_QuitWithMsg()
+// WZD s07p02
+// UU_DOS_MemAlloc
 
-// WZD s06p03
-// UU_DOS_PrintString2()
+// WZD s07p03
+// UU_DOS_MemFree
 
-// WZD s06p04
-// RAM_GetFreeBlockSize()
+// WZD s07p04
+int16_t Check_Allocation(SAMB_ptr SAMB_head);
 
-// WZD s06p05
-// s06p05_Empty_pFxn()
-void DBG_Open_ERROR_LOG(void);
+// WZD s07p05
+uint8_t farpeekb(void * ptr, int16_t ofst);
 
-// WZD s06p06
-// s06p06_Empty_pFxn()
-void DBG_Close_ERROR_LOG(void);
+// WZD s07p06
+uint16_t farpeekw(void * ptr, int16_t ofst);
+
+// WZD s07p07
+uint32_t farpeekdw(void * ptr, int16_t ofst);
+
+// WZD s07p08
+void farpokeb(void * ptr, int16_t ofst, uint8_t value);
+
+// WZD s07p09
+void farpokew(void * ptr, int16_t ofst, uint16_t value);
+
+// WZD s07p10
+void farpokedw(void * ptr, int16_t ofst, uint32_t value);
 
 
 

@@ -3,6 +3,7 @@
         seg004
     WIZARDS.EXE
         seg004
+        seg007
 
 MoO2  Module: dos
 */
@@ -14,18 +15,20 @@ MoO2  Module: dos
         seg004
         seg005
         seg006
+        seg007
 
 */
 
 #include "../../ext/stu_compat.h"
 
+#include "Allocate.h"
 #include "Mouse.h"
 #include "MOX_BASE.h"
 #include "MOX_TYPE.h"
 
-#include <stdio.h>
-
 #include "DOS.h"
+
+#include <stdio.h>
 
 
 
@@ -195,9 +198,9 @@ int32_t LOF(char * file_name)
     if(
         (file_pointer != NULL)
         &&
-        (fseek(file_pointer, 0, SEEK_END) == 0)
+        (stu_fseek(file_pointer, 0, SEEK_END) == 0)
         &&
-        ((position = ftell(file_pointer)) != -1L)
+        ((position = stu_ftell(file_pointer)) != -1L)
     )
     {
         size = (uint32_t)position;
@@ -208,7 +211,7 @@ int32_t LOF(char * file_name)
     }
     if(file_pointer != NULL)
     {
-        fclose(file_pointer);
+        stu_fclose(file_pointer);
     }
     Restore_Mouse_State();
     return size;
@@ -237,7 +240,7 @@ int16_t DIR(char * match_string, char * found_file)
     }
     else
     {
-        fclose(file_pointer);
+        stu_fclose(file_pointer);
         while(*match_string) { *(found_file++) = *(match_string++); }
         *found_file = '\0';
         st_status = ST_SUCCESS;
@@ -304,142 +307,93 @@ Module: dos
 
 /*
     WIZARDS.EXE  seg005
+    EXIT.c
 */
 
 /*
     WIZARDS.EXE  seg006
     MoO1  STARMAP.EXE  seg016
+    EXIT.c
 */
 
-// WZD s06p01
-// VGA_SetTextMode()
 
-// WZD s06p02
-// DOS_QuitWithMsg()
-
-// WZD s06p03
-// UU_DOS_PrintString2()
-
-// WZD s06p04
-// RAM_GetFreeBlockSize()
-
-// WZD s06p05
-// AKA  s06p05_Empty_pFxn()
 /*
-
-XREF:
-    Init_Drivers()
-    UU_Legacy_Startup()
-
+    WIZARDS.EXE  seg007
 */
-void DBG_Open_ERROR_LOG(void)
+
+// WZD s07p01
+// UU_SAMB_DOS_Allocate_Memory
+
+// WZD s07p02
+// UU_DOS_MemAlloc
+
+// WZD s07p03
+// UU_DOS_MemFree
+
+// WZD s07p04
+int16_t Check_Allocation(SAMB_ptr SAMB_head)
 {
-
-/*
-MoM
-
-push    es
-push    ds
-push    si
-push    di
-pop     di
-pop     si
-pop     ds
-pop     es
-retf
-*/
-
-/*
-MoO1
-
-push    es
-push    ds
-push    si
-push    di
-pop     di
-pop     si
-pop     ds
-pop     es
-retf
-; ---------------------------------------------------------------------------
-mov     ah, 3Ch
-mov     cx, 0
-mov     dx, offset aError_log ; "ERROR.LOG"
-int     21h             ; DOS - 2+ - CREATE A FILE WITH HANDLE (CREAT)  ; CX = attributes for file  ; DS:DX -> ASCIZ filename (may include drive and path)
-mov     fh_ERROR_LOG, ax
-mov     ah, 45h
-mov     bx, 2
-int     21h             ; DOS - 2+ - CREATE DUPLICATE HANDLE (DUP)  ; BX = file handle to duplicate
-mov     fh2_ERROR_LOG, ax
-mov     ah, 46h
-mov     bx, fh_ERROR_LOG
-mov     cx, 2
-int     21h             ; DOS - 2+ - FORCE DUPLICATE HANDLE (FORCDUP,DUP2)  ; BX = existing file handle, CX = new file handle
-pop     di
-pop     si
-pop     ds
-pop     es
-retf
-*/
+    if (SA_GET_MEMSIG1(SAMB_head) != _SA_MEMSIG1 || SA_GET_MEMSIG2(SAMB_head) != _SA_MEMSIG2)
+    {
+        return ST_FAILURE;
+    }
+    else
+    {
+        return ST_SUCCESS;
+    }
 }
 
-// WZD s06p06
-// AKA  s06p06_Empty_pFxn()
-/*
-XRE:
-    Exit_With_Message()
-    UU_Exit_With_Value()
-    UU_VGA_B800Dump()
-
-*/
-void DBG_Close_ERROR_LOG(void)
+// WZD s07p05
+uint8_t farpeekb(void * ptr, int16_t ofst)
 {
-/*
-MoM
-
-push    es
-push    ds
-push    si
-push    di
-pop     di
-pop     si
-pop     ds
-pop     es
-retf
-
-*/
-
-/*
-MoO1
-
-push    es
-push    ds
-push    si
-push    di
-pop     di
-pop     si
-pop     ds
-pop     es
-retf
-; ---------------------------------------------------------------------------
-mov     bx, fh_ERROR_LOG
-cmp     bx, 0
-jz      short loc_171ED
-mov     ah, 3Eh
-mov     bx, fh_ERROR_LOG
-int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE  ; BX = file handle
-mov     ah, 46h
-mov     bx, fh2_ERROR_LOG
-mov     cx, 2
-int     21h             ; DOS - 2+ - FORCE DUPLICATE HANDLE (FORCDUP,DUP2)  ; BX = existing file handle, CX = new file handle
-mov     ah, 3Eh
-mov     bx, fh2_ERROR_LOG
-int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE  ; BX = file handle
-loc_171ED:
-pop     di
-pop     si
-pop     ds
-pop     es
-retf
-*/
+    uint8_t * target_ptr = (uint8_t *)ptr + ofst;
+    return *target_ptr;
 }
+
+// WZD s07p06
+uint16_t farpeekw(void * ptr, int16_t ofst)
+{
+    uint16_t * target_ptr = (uint16_t *)ptr + ofst;
+    return *target_ptr;
+}
+
+// WZD s07p07
+uint32_t farpeekdw(void * ptr, int16_t ofst)
+{
+    uint32_t * target_ptr = (uint32_t *)ptr + ofst;
+    return *target_ptr;
+}
+
+// WZD s07p08
+void farpokeb(void * ptr, int16_t ofst, uint8_t value)
+{
+    uint8_t * target_ptr = (uint8_t *)ptr + ofst;
+    *target_ptr = value;
+}
+
+// WZD s07p09
+void farpokew(void * ptr, int16_t ofst, uint16_t value)
+{
+    uint16_t * target_ptr = (uint16_t *)ptr + ofst;
+    *target_ptr = value;
+}
+
+// WZD s07p10
+void farpokedw(void * ptr, int16_t ofst, uint32_t value)
+{
+    uint32_t * target_ptr = (uint32_t *)ptr + ofst;
+    *target_ptr = value;
+}
+
+/* GEMINI */
+// #include <dos.h>
+// /* Using standard Borland macros to build a Far Pointer */
+// void far farpokew_C(unsigned int sgmt, unsigned int ofst, unsigned int value) {
+//     unsigned int far *target_ptr;
+//     
+//     /* MK_FP combines the Segment and Offset into a 32-bit pointer */
+//     target_ptr = (unsigned int far *)MK_FP(sgmt, ofst);
+//     
+//     /* Write the value directly to memory */
+//     *target_ptr = value;
+// }
