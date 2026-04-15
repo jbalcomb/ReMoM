@@ -27,20 +27,21 @@
 
 */
 
-#include "Allocate.h"
+#include "../../ext/stu_compat.h"
 
 #include "capture.h"  /* Check_Release_Version() */
+#include "DOS.h"  /* Check_Allocation() */
 #include "EXIT.h"
 #include "MOX_BASE.h"
 #include "MOX_TYPE.h"
 #include "capture.h"
 
+#include "Allocate.h"
+
 #include <stdlib.h>
 #include <string.h>     /* memset(), stu_strcat(), stu_strcpy(); */
 
-#include "../../ext/stu_compat.h"
 
-// #include "../MOM.h"
 
 uint16_t _SA_MEMSIG1 = 0x12FA;
 uint16_t _SA_MEMSIG2 = 0x4ECF;
@@ -247,29 +248,6 @@ char const * str_allocation_errors[] =
 
 
 /*
-    MAGIC.EXE  seg007
-*/
-
-// s07p04
-int16_t Check_Allocation(SAMB_ptr SAMB_head)
-{
-    int16_t is_valid;
-
-    // if (SA_GET_MEMSIG1(SAMB_head) != SA_MEMSIG1 || SA_GET_MEMSIG2(SAMB_head) != SA_MEMSIG2)
-    if (SA_GET_MEMSIG1(SAMB_head) != _SA_MEMSIG1 || SA_GET_MEMSIG2(SAMB_head) != _SA_MEMSIG2)
-    {
-        is_valid = ST_FAILURE;
-    }
-    else
-    {
-        is_valid = ST_SUCCESS;
-    }
-
-    return is_valid;
-}
-
-
-/*
     MAGIC.EXE  seg008
 */
 
@@ -356,7 +334,7 @@ SAMB_ptr Allocate_Space(uint16_t size)
     SA_SET_SIZE(SAMB_head,size);
     SA_SET_USED(SAMB_head,1);
 
-    // Update_MemFreeWorst_KB();
+    Check_Free();
 
 // Severity	Code	Description	Project	File	Line	Suppression State	Details
 // Warning	C6011	Dereferencing NULL pointer '(uint8_t *)(SAMB_head)+((0))+0'. 	002_MoX	C:\STU\devel\ReMoM\MoX\src\Allocate.c	359		
@@ -365,6 +343,7 @@ SAMB_ptr Allocate_Space(uint16_t size)
 }
 
 // WZD s08p08 / s08p09
+// SAMB_ptr Allocate_Space_No_Header__LbxHeader(uint16_t size)
 SAMB_ptr Allocate_Space_No_Header(uint16_t size)
 {
     int32_t lsize;
@@ -376,7 +355,7 @@ SAMB_ptr Allocate_Space_No_Header(uint16_t size)
     if(tmp_SAMB_head == NULL) { Allocation_Error(1, size); }
     SAMB_data = tmp_SAMB_head + 12;  // 16-byte paragraph - 4-byte malloc header
 
-    // Update_MemFreeWorst_KB();
+    Check_Free();
 
     return SAMB_data;
 }
@@ -543,8 +522,8 @@ uint16_t Get_Free_Blocks(SAMB_ptr SAMB_head)
 // WZD s08p19
 void Allocation_Error(uint16_t error_num, uint16_t blocks)
 {
-    char buffer[120] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    char buffer2[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char buffer[LEN_EXIT_MESSAGE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char buffer2[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     if(Check_Release_Version() == ST_TRUE)
     {

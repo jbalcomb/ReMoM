@@ -25,6 +25,7 @@ MoO2 Module: shear
 #include "MOX_DEF.h"
 #include "MOX_TYPE.h"
 #include "Util.h"  /* Swap_Short() */
+#include "EMS/EMS.h"
 
 #include <assert.h>
 #include <string.h>
@@ -34,6 +35,8 @@ MoO2 Module: shear
 
 /* Forward Declare Static Functions, because out-of-order */
 static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, SAMB_ptr frame_data);
+// WZD s30p37
+static void Load_File_Animation_Frame(int32_t offset, int32_t size, int16_t logical_page);
 
 
 
@@ -122,301 +125,6 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
 
 
 /*
-    WZD seg024
-*/
-
-/* CLAUDE: Screen_Picture_Capture and Capture_Screen_Block moved to capture.c */
-// WZD s24p08
-// Screen_Picture_Capture()  — see capture.c
-
-// WZD s24p09
-// Capture_Screen_Block()  — see capture.c
-
-
-/*
-    WZD  seg029
-*/
-
-// WZD s29p01
-// 1oom  lbxgfx_draw_pixels_fmt0()
-/*
-
-frame_data
-    pointer to buffer of FLIC animation frame
-
-200 lines of 320 pixels  64,000 pixels at 1 byte per pixel  64,000 bytes of data
-((SCREEN_YMIN * SCREEN_WIDTH) + SCREEN_XMIN)  ((  0 * 320) +   0)      0
-((SCREEN_YMAX * SCREEN_WIDTH) + SCREEN_XMAX)  ((199 * 320) + 319)  63999
-
-...on the last byte...
-the address of bbuff is the address of the last pixel/byte in current_video_page
-but, we still add SCREEN_WIDTH, one last time
-so, testing at that point is useless
-
-*/
-void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data, int16_t DBG_height)
-{
-    unsigned char * bbuff_pos = 0;
-    unsigned char * bbuff = 0;
-    unsigned char data_byte = 0;
-
-    unsigned char packet_op = 0;
-    unsigned char packet_byte_count = 0;
-    unsigned char sequence_byte_count = 0;
-    unsigned char delta_byte_count = 0;
-    unsigned char itr_op_repeat = 0;
-
-    byte_ptr DBG_frame_data = 0;
-    // byte_ptr DBG_frame_data_end = 0;
-    //uint16_t DBG_frame_data_pos = 0;
-    unsigned char * DBG_bbuff_pos = 0;
-    unsigned char * DBG_bbuff_pos_end = 0;
-    unsigned char * DBG_bbuff = 0;
-    unsigned char* DBG_bbuff_end = 0;
-
-    assert(x_start >= SCREEN_XMIN);
-    assert(x_start <= SCREEN_XMAX);
-    assert(y_start >= SCREEN_YMIN);
-    assert(y_start <= SCREEN_YMAX);
-    assert((x_start + (width - 1)) <= SCREEN_XMAX);
-    assert((y_start + (DBG_height - 1)) <= SCREEN_YMAX);
-
-    DBG_frame_data = frame_data;
-    // DBG_frame_data_end = (DBG_frame_data + (width * DBG_height));
-
-    bbuff_pos = current_video_page + ((y_start * SCREEN_WIDTH) + x_start);
-    DBG_bbuff_pos = bbuff_pos;
-    DBG_bbuff_pos_end = current_video_page + (((SCREEN_YMAX * SCREEN_WIDTH) + SCREEN_XMAX) - SCREEN_HEIGHT);
-    DBG_bbuff_end = current_video_page + ((SCREEN_YMAX * SCREEN_WIDTH) + SCREEN_XMAX);
-
-    while(width--)
-    {
-        bbuff = bbuff_pos++;  // next column
-        assert(bbuff <= DBG_bbuff_end);
-
-        packet_op = *frame_data++;
-        // DBG_frame_data_pos = (frame_data - DBG_frame_data);
-        // assert(frame_data <= DBG_frame_data_end);
-
-        if(packet_op == 0xFF)  /* Type: skip */
-        {
-            continue;
-        }
-        packet_byte_count = *frame_data++;
-        if(packet_op == 0x80)  /* Type: decode */
-        {
-            do {
-                sequence_byte_count = *frame_data++;
-                delta_byte_count = *frame_data++;
-                bbuff += (delta_byte_count * SCREEN_WIDTH);
-                assert(bbuff <= DBG_bbuff_end);
-                packet_byte_count -= sequence_byte_count + 2;
-                while(sequence_byte_count--)
-                {
-                    data_byte = *frame_data++;  // this unsigned char is the op-repeat or just the unsigned char to copy
-                    if(data_byte >= 224)  /* op: repeat */
-                    {
-                        itr_op_repeat = (data_byte - 224) + 1;
-                        sequence_byte_count--;
-                        data_byte = *frame_data++;
-                        while(itr_op_repeat--)
-                        {
-                            assert(bbuff <= DBG_bbuff_end);
-                            *bbuff = data_byte;
-                            bbuff += SCREEN_WIDTH;
-                        }
-                    }
-                    else  /* op: copy */
-                    {
-                        assert(bbuff <= DBG_bbuff_end);
-                        *bbuff = data_byte;
-                        bbuff += SCREEN_WIDTH;
-                    }
-                }
-            } while(packet_byte_count >= 1);
-        }
-        if(packet_op == 0x00)  /* Type: copy */
-        {
-            do {
-                sequence_byte_count = *frame_data++;
-                delta_byte_count = *frame_data++;
-                bbuff += (delta_byte_count * SCREEN_WIDTH);
-                assert(bbuff <= DBG_bbuff_end);
-                packet_byte_count -= sequence_byte_count + 2;
-                while(sequence_byte_count--)
-                {
-                    assert(bbuff <= DBG_bbuff_end);
-                    *bbuff = *frame_data++;
-                    bbuff += SCREEN_WIDTH;
-                }
-            } while(packet_byte_count >= 1);
-        }
-    }
-
-}
-
-
-// WZD s29p02
-// MoO2  Module: animate  Remap_Draw() |-> Remap_Draw_Animated_Sprite(); ... Module: remap  unsigned int picture_remap_color_list[256]  Address: 02:001B479C
-// 1oom  lbxgfx_draw_pixels_fmt1()
-/*
-    MoO2
-    Module: animate
-    Remap_Draw_Animated_Sprite()  Address: 01:0012BAEB
-        signed integer (2 bytes) x_start
-        signed integer (2 bytes) y_start
-        pointer (4 bytes) frame_data
-            Locals:
-                signed integer (4 bytes) bitmap_size
-                signed integer (4 bytes) pos
-                signed integer (4 bytes) screen_pos
-                signed integer (4 bytes) x
-                signed integer (4 bytes) y
-                signed integer (4 bytes) i
-                signed integer (4 bytes) screen_start
-                signed integer (4 bytes) buffer_pos
-                signed integer (4 bytes) buffer_pos_word
-                signed integer (4 bytes) packet_end
-                signed integer (2 bytes) height
-                signed integer (2 bytes) data_count
-                signed integer (2 bytes) skip_count
-                signed integer (2 bytes) store_type
-                signed integer (2 bytes) line_skip
-                unsigned integer (4 bytes) data
-                pointer (4 bytes) frame_data_word
-    Module: remap
-    unsigned int picture_remap_color_list[256]  Address: 02:001B479C
-
-*/
-/*
-    draw a FLIC frame, using the remap colors
-*/
-void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data, int16_t DBG_height)
-{
-    unsigned char * bbuff_pos;  // TODO rename all these to screen_start
-    unsigned char * bbuff;  // TODO rename all these to screen_pos
-    unsigned char data_byte;
-
-    unsigned char packet_op;
-    unsigned char packet_byte_count;
-    unsigned char sequence_byte_count;
-    unsigned char delta_byte_count;
-    unsigned char itr_op_repeat;
-
-    uint8_t remap_block;
-    uint8_t remap_block_index;
-    uint8_t remap_color;
-
-    byte_ptr DBG_frame_data;
-    byte_ptr DBG_frame_data_end;
-    uint16_t DBG_frame_data_pos;
-
-    DBG_frame_data = frame_data;
-    DBG_frame_data_end = (DBG_frame_data + (width * DBG_height));
-
-    bbuff_pos = current_video_page + ((y_start * SCREEN_WIDTH) + x_start);
-//     screen_start = current_video_page + (y_start * SCREEN_WIDTH) + x_start;
-// 
-//     data = pict_seg + ofst;
-//     screen_pos = screen_start;
-//     itr_width = width;
-
-    while(width--)
-    {
-        bbuff = bbuff_pos++;
-
-        packet_op = *frame_data++;  // Frame Byte #1: Op/Count
-        DBG_frame_data_pos = (uint16_t)(frame_data - DBG_frame_data);  // NOTE pointers, so __int64
-        // assert(frame_data <= DBG_frame_data_end);
-
-        if(packet_op == 0xFF)  /* Type: skip */
-        {
-            continue;
-        }
-        // HERE: not actually 0x80 and 0x00, just sign-bit set or unset
-        // not skip, so copy or decode  (MoO2 ¿ "store_type" ?)
-        packet_byte_count = *frame_data++;
-        if(packet_op == 0x80)  /* Type: decode */
-        {
-            do {
-                sequence_byte_count = *frame_data++;
-                delta_byte_count = *frame_data++;
-                bbuff += (delta_byte_count * SCREEN_WIDTH);
-                packet_byte_count -= sequence_byte_count + 2;
-                while(sequence_byte_count--)
-                {
-                    data_byte = *frame_data++;  // this unsigned char is the op-repeat or just the unsigned char to copy
-                    if(data_byte >= 224)  /* op: repeat */
-                    {
-                        itr_op_repeat = (data_byte - 224) + 1;
-                        sequence_byte_count--;
-                        data_byte = *frame_data++;
-                        if(data_byte >= 232)
-                        {
-                            remap_block = data_byte - 232;  /* index of picture_remap_color_list[] */
-                            while(itr_op_repeat--)
-                            {
-                                // repeatedly, get the existing palette index; remap it; replace it; move down;
-                                remap_block_index = *bbuff;
-                                remap_color = *(remap_color_palettes + (remap_block * (16 * 16)) + remap_block_index);
-                                *bbuff = remap_color;
-                                bbuff += SCREEN_WIDTH;
-                            }
-                        }
-                        else
-                        {
-                            while(itr_op_repeat--)
-                            {
-                                *bbuff = data_byte;
-                                bbuff += SCREEN_WIDTH;
-                            }
-                        }
-                    }
-                    else  /* op: copy */
-                    {
-                        *bbuff = data_byte;
-                        bbuff += SCREEN_WIDTH;
-                    }
-                }
-            } while(packet_byte_count >= 1);
-        }
-        if(packet_op == 0x00)  /* Type: copy */
-        {
-            do {
-                sequence_byte_count = *frame_data++;
-                delta_byte_count = *frame_data++;
-                bbuff += (delta_byte_count * SCREEN_WIDTH);
-                packet_byte_count -= sequence_byte_count + 2;
-
-                /* ¿  ? */
-
-                while(sequence_byte_count--)
-                {
-                    // *bbuff = *frame_data++;
-                    // data_byte = *data++;
-                    data_byte = *frame_data++;
-                    if(data_byte >= 232)
-                    {
-                        remap_block = data_byte - 232;  /* index of picture_remap_color_list[] */
-                        remap_block_index = *bbuff;
-                        remap_color = *(remap_color_palettes + (remap_block * (16 * 16)) + remap_block_index);
-                        *bbuff = remap_color;
-                    }
-                    else
-                    {
-                        *bbuff = data_byte;
-                    }
-                    bbuff += SCREEN_WIDTH;
-                }
-            } while(packet_byte_count >= 1);
-        }
-    }
-
-}
-
-
-
-/*
     WZD seg030
 */
 
@@ -438,17 +146,10 @@ void Copy_Bitmap_To_Bitmap(SAMB_ptr target_bitmap, SAMB_ptr source_bitmap)
     int16_t width = 0;
     int16_t height = 0;
     int16_t length = 0;
-
-    // DOMSDOS  width = farpeekw(source_bitmap, FLIC_HDR_POS_WIDTH);
-    width = GET_2B_OFS(source_bitmap, FLIC_HDR_POS_WIDTH);
-
-    // height = farpeekw(source_bitmap, FLIC_HDR_POS_HEIGHT);
-    height = GET_2B_OFS(source_bitmap, FLIC_HDR_POS_HEIGHT);
-
+    width = farpeekw(source_bitmap, FLIC_HDR_POS_WIDTH);
+    height = farpeekw(source_bitmap, FLIC_HDR_POS_HEIGHT);
     length = (SZ_FLIC_HDR + (width * height));
-
     memcpy(target_bitmap, source_bitmap, length);
-
 }
 
 
@@ -1737,7 +1438,6 @@ void Scale_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y)
 
 
 // WZD s30p35
-// VGA_FILEH_LoadFirst()
 // MoO2  Module: file_ani  Open_File_Animation()
 /*
 MoO2
@@ -1778,141 +1478,181 @@ Module: file_ani
 ; into the VGA_FILE_H_Hdr allocation, filling out the
 ; handle and data offset fields
 */
-void Open_File_Animation__HACK(char * file_name, int16_t entry_num)
-{
-
-    stu_strcpy(file_animation_file_name, file_name);
-
-    file_animation_entry_num = entry_num;
-
-    // file_animation_header = (struct s_FLIC_HDR *)LBX_Reload(file_animation_file_name, file_animation_entry_num, _VGAFILEH_seg);
-    file_animation_header = LBX_Load(file_animation_file_name, file_animation_entry_num);
-
-}
-// void Open_File_Animation__STUB(char * file_name, int16_t entry_num)
+/**
+ * @brief Opens an LBX-backed file animation and caches its source metadata.
+ *
+ * This hack implementation records the requested LBX file name and entry index
+ * in the global file animation state, then loads the animation header/data with
+ * LBX_Load() into file_animation_header.
+ *
+ * @param file_name Name of the LBX file that contains the animation entry.
+ * @param entry_num Zero-based LBX entry index for the animation to load.
+ *
+ * @note This is a temporary replacement for the original EMM-backed
+ * file-animation loader path.
+ */
+// void Open_File_Animation__OLD_HACK(char * file_name, int16_t entry_num)
 // {
-// 
 //     stu_strcpy(file_animation_file_name, file_name);
-// 
 //     file_animation_entry_num = entry_num;
-// 
-// 
-// // xor     ax, ax
-// // push    ax                              ; logical_page
-// // xor     ax, ax
-// // mov     dx, 16300
-// // push    ax
-// // push    dx                              ; size
-// // xor     ax, ax
-// // xor     dx, dx
-// // push    ax
-// // push    dx                              ; offset
-// // nop
-// // push    cs
-// // Load_File_Animation_Frame__STUB();
-// // // Open_File_Animation__STUB() pushes are 32-bit value
-//     Load_File_Animation_Frame__STUB(0, 16300, 0, 0);
-// 
-// 
-// // push    [EmmHndlNbr_VGAFILEH]           ; EMM_Handle
-// // mov     ax, 16
-// // push    ax                              ; Amt_Bytes
-// // xor     ax, ax
-// // xor     dx, dx
-// // push    ax
-// // push    dx                              ; Data_Offset
-// // push    [file_animation_header]         ; Target_Seg
-// // xor     ax, ax
-// // push    ax                              ; Target_Off
-// // EMM_MapnRead();
-// // // Open_File_Animation__STUB() pushes are 32-bit value
-// 
-// 
-//     // farpokew(file_animation_header, FLIC_HDR_POS_EMM_HANDLE_NUMBER, EmmHndlNbr_VGAFILEH);
-//     // farpokew(file_animation_header, FLIC_HDR_POS_EMM_LOGICAL_PAGE_OFFSET, 0);
-// 
-// 
+//     // file_animation_header = (struct s_FLIC_HDR *)LBX_Reload(file_animation_file_name, file_animation_entry_num, _VGAFILEH_seg);
+//     file_animation_header = LBX_Load(file_animation_file_name, file_animation_entry_num);
 // }
+/* CODEX+GPT54 */
+void Open_File_Animation(char * file_name, int16_t entry_num)
+{
+    stu_strcpy(file_animation_file_name, file_name);
+    file_animation_entry_num = entry_num;
+    Load_File_Animation_Frame(0, 16300, 0);
+    EMM_MapnRead(0, file_animation_header, 0, SZ_FLIC_HDR, _VGAFILEH_seg);
+    farpokew(file_animation_header, FLIC_HDR_POS_EMM_HANDLE_NUMBER, _VGAFILEH_seg);
+    farpokew(file_animation_header, FLIC_HDR_POS_EMM_LOGICAL_PAGE_OFFSET, 0);
+}
 
 
 // WZD s30p36
-// drake178: VGA_FILEH_DrawFrame()
-/*
-; loads an image frame from the current VGA_Source_File
-; into the VGAFILEH EMM handle starting at page index
-; 1, and then draws it into the current draw frame
-*/
-// Draw_File_Animation()
-void Draw_File_Animation__HACK(void)
+// void Draw_File_Animation__OLD_HACK(void)
+// {
+//     FLIC_Draw(0, 0, file_animation_header);
+// }
+void Draw_File_Animation(void)
 {
+    int16_t frame_length = 0;
+    int16_t frame_end = 0;
+    int16_t value_to_write = 0;
+    int16_t frame_start = 0;
+    int16_t next_frame_idx = 0;
+    int16_t current_frame_idx = 0;
+    int16_t frame_count = 0;
+    int16_t loop_frame = 0;
+    int16_t palette_offset = 0;
 
-    FLIC_Draw(0, 0, file_animation_header);
+    /* Get current frame from FLIC header segment */
+    current_frame_idx = farpeekw(file_animation_header, FLIC_HDR_POS_CURRENT_FRAME);
+    next_frame_idx = current_frame_idx + 1;
 
+    /* Determine the next frame index (handle looping) */
+    frame_count = farpeekw(file_animation_header, FLIC_HDR_POS_FRAME_COUNT);
+    if (frame_count > next_frame_idx)
+    {
+        farpokew(file_animation_header, FLIC_HDR_POS_CURRENT_FRAME, next_frame_idx);
+    }
+    else
+    {
+        loop_frame = farpeekw(file_animation_header, FLIC_HDR_POS_LOOP_FRAME);
+        farpokew(file_animation_header, FLIC_HDR_POS_CURRENT_FRAME, loop_frame);
+    }
+
+    /* Check if palette needs loading */
+    palette_offset = farpeekw(file_animation_header, FLIC_HDR_POS_PALETTE_HEADER_OFFSET);
+    if (palette_offset != 0)
+    {
+        FLIC_Load_Palette(file_animation_header, current_frame_idx);
+    }
+
+    /* Read frame start and end offsets from the EMM handle's table */
+    /* Table starts at offset 18, each entry is a 4-byte dword */
+    // read, so pass in dst; sets the source emm logical page based on the emm_data_offset
+    EMM_MapnRead(&frame_start, ((long)FLIC_HDR_POS_FRAME_OFFSET_TABLE + 0 + (current_frame_idx * 4)), 4, _VGAFILEH_seg);
+    EMM_MapnRead(&frame_end, ((long)FLIC_HDR_POS_FRAME_OFFSET_TABLE + 4 + (current_frame_idx * 4)), 4, _VGAFILEH_seg);
+
+    frame_length = frame_end - frame_start;
+
+    /* " Vga file animation frames cannot exceed 65536 bytes" */
+    if (frame_length > 65536L)
+    {
+        Error_Handler(file_animation_file_name, le_anim_over_64k, file_animation_entry_num, ST_NULL);
+    }
+
+    value_to_write = 16384L;
+    // write, so pass in src; sets the destination emm logical page based on the emm_data_offset
+    EMM_MapnWrite(&value_to_write, ((long)FLIC_HDR_POS_FRAME_OFFSET_TABLE + 0 + (current_frame_idx * 4)), 4, _VGAFILEH_seg);
+
+    /* Load the actual frame data from EMM into the draw buffer (logical page 1) */
+    Load_File_Animation_Frame(frame_start, frame_length, 1);
+
+    /* Render the frame to the current draw buffer at 0,0 */
+    Draw_File_Animation_Frame(0, 0, file_animation_header, current_frame_idx);
+
+    EMM_MapnWrite(&frame_start, ((long)FLIC_HDR_POS_FRAME_OFFSET_TABLE + 0 + (current_frame_idx * 4)), 4, _VGAFILEH_seg);
 }
 
 
 // WZD s30p37
-// drake178: VGA_FILEH_Loader()
-// Load_File_Animation_Frame()
 /*
-; loads data from a specific entry of an LBX file to
-; the specified logical page in the VGAFILEH EMM handle
-; the file name is set through VGA_Source_File, while
-; the entry index is specified in VGA_Source_Entry
-; passing a large enough byte count will load from the
-; offset to the end of the entry, never beyond
-; has a minor bug about error reporting
-*/
-/*
-
 XREF:
     Open_File_Animation__WIP()
     Draw_File_Animation__WIP()
-
 */
-// void Load_File_Animation_Frame__STUB(int32_t offset, int32_t size, int16_t logical_page)
-// {
-//     char file_name[LEN_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-//     int32_t entry_start = 0;
-//     int32_t entry_length = 0;
-//     int32_t Total_Bytes_Left = 0;
-//     int16_t read_size = 0;
-//     int16_t Page_Frame_Segment = 0;
-//     int16_t Page_Count = 0;
-//     int16_t current_page = 0;  // _SI_
-//     int16_t lbx_fptr = 0;  // _DI_
-//     // ; BUG: should not allocate a local string
-// 
-//     // if(_VGAFILEH_seg == ST_NULL)
-//     {
-//         // Error_Handler(file_animation_file_name, le_low_emm, 0);
-//         Error_Handler(file_animation_file_name, le_low_emm, 0, ST_NULL);
-//     }
-// 
-//     // ; finds and opens the LBX file if it wasn't already,
-//     // ; loads its header data, and fills out the 32bit
-//     // ; returns values pointed to by the arguments
-//     // ; returns the file handle (unclosed), quits on errors
-//     lbx_fptr = LBX_GetEntryData__WIP(file_animation_file_name, file_animation_entry_num, &entry_start, &entry_length, 0);
-// 
-//     entry_start += offset;
-// 
-//     entry_length -= offset;
-// 
-//     if(entry_length <= 0)
-//     {
-//         // ; BUG: should use the global variable
-//         // Error_Handler(file_name, le_corrupted, file_animation_entry_num);
-//         Error_Handler(file_name, le_corrupted, file_animation_entry_num, ST_NULL);
-//     }
-// 
-// 
-// 
-// 
-// 
-// 
-// 
-// }
+/* CODEX+GPT54 */
+static void Load_File_Animation_Frame(int32_t offset, int32_t size, int16_t logical_page)
+{
+    char file_name[LEN_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint32_t entry_start = 0;
+    uint32_t entry_length = 0;
+    uint32_t total_bytes_left = 0;
+    uint16_t read_size = 0;
+    uint8_t * page_frame = 0;
+    uint16_t page_count = 0;
+    FILE * lbx_fptr = 0;
+    uint16_t current_page = 0;
+
+    if (_VGAFILEH_seg == EMM_HANDLE_INVALID)
+    {
+        Error_Handler(file_animation_file_name, le_low_emm, 0, ST_NULL);
+    }
+
+    lbx_fptr = LBX_Get_Entry_Data(file_animation_file_name, file_animation_entry_num, &entry_start, &entry_length, 0);
+
+    entry_start += offset;
+    entry_length -= offset;
+
+    if (entry_length <= 0)
+    {
+        Error_Handler(file_name, le_corrupted, file_animation_entry_num, ST_NULL);  /* OGBUG  should use file_animation_file_name, not file_name */
+    }
+
+    if (size < entry_length)
+    {
+        entry_length = size;
+    }
+
+    if (lbx_seek(entry_start, lbx_fptr) == ST_FAILURE)
+    {
+        Error_Handler(file_name, le_corrupted, file_animation_entry_num, ST_NULL);  /* OGBUG  should use file_animation_file_name, not file_name */
+    }
+
+    page_count = (int16_t)(entry_length / SZ_EMM_LOGICAL_PAGE);
+
+    if ((entry_length % SZ_EMM_LOGICAL_PAGE) != 0)
+    {
+        page_count++;
+    }
+
+    page_frame = EMM_Get_Page_Frame();
+
+    current_page = logical_page;
+
+    total_bytes_left = entry_length;
+
+    read_size = SZ_EMM_LOGICAL_PAGE;
+
+    while (total_bytes_left >= SZ_EMM_LOGICAL_PAGE)
+    {
+        total_bytes_left -= SZ_EMM_LOGICAL_PAGE;
+        EMM_MapFourPages(_VGAFILEH_seg, current_page);
+        lbx_read_sgmt(page_frame, read_size, lbx_fptr);
+        current_page++;
+    }
+
+    if (total_bytes_left > 0)
+    {
+        read_size = total_bytes_left;
+        EMM_MapFourPages(_VGAFILEH_seg, current_page);
+        lbx_read_sgmt(page_frame, read_size, lbx_fptr);
+    }
+
+}
 
 
 // WZD s30p38

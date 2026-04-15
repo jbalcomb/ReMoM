@@ -16,10 +16,10 @@
 #include "MOX_DAT.h"
 #include "MOX_BASE.h"
 #include "MOX_TYPE.h"
-
-#include "../../MoX/src/Help.h"
+#include "Help.h"
 #include "Video.h"
 #include "paragrph.h"
+#include "EMS/EMS.h"
 
 #include <string.h>     /* memcpy() memset(), stu_strcat(), stu_strcpy(), stricmp() */
 
@@ -110,7 +110,10 @@ void Draw_Help_Entry__WIP(int16_t help_entry_idx)
         BEGIN:  Text Box Startup
     */
     
-    SAVE_SCREEN_SEG
+    // SAVE_SCREEN_SEG
+    EMS_PFBA = EMM_Map4Pages_VGAFILEH1234();
+    memcpy(&EMS_PFBA[0], &_screen_seg[0], 32768);
+    memcpy(&EMS_PFBA[(2048 * SZ_SEGMENT)], &_screen_seg[(2048 * SZ_SEGMENT)], 32768);
 
     old_fields_count = fields_count;
 
@@ -389,7 +392,10 @@ void Draw_Help_Entry__WIP(int16_t help_entry_idx)
 
     Near_Allocate_Undo();
 
-    RESTORE_SCREEN_SEG
+    // RESTORE_SCREEN_SEG
+    EMS_PFBA = EMM_Map4Pages_VGAFILEH1234();
+    memcpy(&_screen_seg[0], &EMS_PFBA[0], 32768);
+    memcpy(&_screen_seg[(2048 * SZ_SEGMENT)], &EMS_PFBA[(2048 * SZ_SEGMENT)], 32768);
 
     fields_count = old_fields_count;
 
@@ -421,6 +427,8 @@ void Draw_Help_Entry_Draw(void)
 What happens after this?
 elsewhere, *only* used by 'file animation? page 0 is header, pages 1-4 are data?
 
+Draw_Help_Map_VGAFILEH()
+
 XREF:
     Draw_Help_Entry__WIP()
     Draw_Help_Entry__WIP()
@@ -431,8 +439,6 @@ XREF:
 */
 SAMB_ptr EMM_Map4Pages_VGAFILEH1234(void)
 {
-    // TODO  EMM_Map4Pages(1, _VGAFILEH_seg);
-    EMS_PFBA = (_VGAFILEH_seg + (1 * SZ_EMM_LOGICAL_PAGE));
-
+    EMM_MapMulti4(_VGAFILEH_seg, 1);
     return EMS_PFBA;
 }

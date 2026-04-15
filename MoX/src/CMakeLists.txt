@@ -6,7 +6,10 @@ set(LIBMOX_SOURCES
     capture.c
     CFG.c
     DOS.c
+    Draw_seg025.c
+    Draw_seg029.c
     EMS/EMS.c
+    EMS/EMS_EMU.c
     EXIT.c
     Fields.c
     file_ani.c

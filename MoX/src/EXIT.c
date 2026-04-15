@@ -6,11 +6,13 @@
         Module: exit
 */
 
-#include "EXIT.h"
+#include "../../ext/stu_compat.h"
 
-#include "EMS/EMS.h"
 #include "Mouse.h"
 #include "SOUND.h"
+#include "EMS/EMS.h"
+
+#include "EXIT.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -33,70 +35,61 @@
 // MoO1 ORION dseg:5DDE                         END:  seg016 - Initialized Data
 
 
-
-int MemFreeWorst_KB = 64000;                    // dseg:3CC2  0xFA00  ? Bytes vs. Paragrphs ? 62.5 KB vs 4000 Pr ? sizeof VGA 320x200 ?
-char * cnst_Quit_Report1 = "Data";              // dseg:3CC4
-char * cnst_Quit_Report2 = " Free: ";           // dseg:3CC9
-char * cnst_Quit_Report3 = " bytes   Memory";   // dseg:3CD1
-char * cnst_Quit_Report4 = "k   Worst";         // dseg:3CE1
-char * cnst_Quit_Report5 = "k   EMM: ";         // dseg:3CEB
-char * cnst_Quit_Report6 = " blocks";           // dseg:3CF5
+// AKA MemFreeWorst_KB
+int max_far_size = 64000;                    // dseg:3CC2  0xFA00  ? Bytes vs. Paragrphs ? 62.5 KB vs 4000 Pr ? sizeof VGA 320x200 ?
+char * msg_size_1 = "Data";              // dseg:3CC4
+char * msg_size_2_4_6 = " Free: ";           // dseg:3CC9
+char * msg_size_3 = " bytes   Memory";   // dseg:3CD1
+char * msg_size_5 = "k   Worst";         // dseg:3CE1
+char * msg_size_7 = "k   EMM: ";         // dseg:3CEB
+char * msg_size_8 = " blocks";           // dseg:3CF5
 
 
 
 // s05p01
-// TODO  void Exit_With_Size(void)
-// TODO  {
-// TODO      char temp_string[20];
-// TODO      char string[120];
-// TODO      unsigned int Current_FreeNearHeap_B;
-// TODO      unsigned int Worst_LargestFreeBlock_KB;
-// TODO      unsigned int Current_LargestFreeBlock_KB;
-// TODO      
-// TODO      Current_LargestFreeBlock_KB = dos_memfree_kb();
-// TODO      Worst_LargestFreeBlock_KB = MemFreeWorst_KB;
-// TODO      Current_FreeNearHeap_B = coreleft();
-// TODO      stu_strcpy(string, cnst_Quit_Report1);
-// TODO      stu_strcat(string, cnst_Quit_Report2);
-// TODO      SDL_ltoa(Current_FreeNearHeap_B, temp_string, 10);  // Data Free: bytes
-// TODO      stu_strcat(string, temp_string);
-// TODO      stu_strcat(string, cnst_Quit_Report3);
-// TODO      stu_strcat(string, cnst_Quit_Report2);
-// TODO      SDL_itoa(Current_LargestFreeBlock_KB, temp_string, 10);  // "Memory Free: k"
-// TODO      stu_strcat(string, temp_string);
-// TODO      stu_strcat(string, cnst_Quit_Report4);
-// TODO      stu_strcat(string, cnst_Quit_Report2);
-// TODO      SDL_itoa(Worst_LargestFreeBlock_KB, temp_string, 10);  // "Worst Free k"
-// TODO      stu_strcat(string, temp_string);
-// TODO      stu_strcat(string, cnst_Quit_Report5);
-// TODO      SDL_itoa(EMM_Pages_Reserved, temp_string, 10);  // "EMM: blocks"
-// TODO      stu_strcat(string, temp_string);
-// TODO      stu_strcat(string, cnst_Quit_Report6);
-// TODO  
-// TODO      Exit_With_Message(string);
-// TODO  }
+void Exit_With_Size(void)
+{
+    char temp_string[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char string[LEN_EXIT_MESSAGE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t data_free = 0;
+    int16_t worst_free = 0;
+    int16_t current_free = 0;
+
+    current_free = Dos_Free();
+    worst_free = max_far_size;
+    /* HACK */  data_free = 1; // ¿ emulate conventional memory w/ interruprs to manufacture need for coreleft() ?
+    stu_strcpy(string, msg_size_1);
+    stu_strcat(string, msg_size_2_4_6);
+    stu_ltoa(data_free, temp_string, 10);  // Data Free: bytes
+    stu_strcat(string, temp_string);
+    stu_strcat(string, msg_size_3);
+    stu_strcat(string, msg_size_2_4_6);
+    stu_itoa(current_free, temp_string, 10);  // "Memory Free: k"
+    stu_strcat(string, temp_string);
+    stu_strcat(string, msg_size_5);
+    stu_strcat(string, msg_size_2_4_6);
+    stu_itoa(worst_free, temp_string, 10);  // "Worst Free k"
+    stu_strcat(string, temp_string);
+    stu_strcat(string, msg_size_7);
+    stu_itoa(EMM_Pages_Reserved, temp_string, 10);  // "EMM: blocks"
+    stu_strcat(string, temp_string);
+    stu_strcat(string, msg_size_8);
+
+    Exit_With_Message(string);
+}
 
 
 // WZD s05p02
-// drake178: ¿ ?
-/*
-shuts down the mouse, sound, and EMM systems, returns
-the VGA to text mode, and quits the game with the
-passed message - using a direct DOS interrupt rather
-than the standard library exit functions
-*/
-/*
-
-*/
-// TODO  void (*Exit_With_Message)(char* string);
 void Exit_With_Message(char * string)
 {
+    // MoO2  Reset_System()
     Stop_Music__STUB();
     Reset_System_Mouse();
     Audio_Uninit__STUB();
-    EMM_ReleaseAll__STUB();
-    DBG_Close_ERROR_LOG__STUB();
+    EMM_Release_All();
+    DBG_Close_ERROR_LOG();
     Reset_Video();
+    // MoO2   printf_(printf_fmt_string_newline, string); exit_(1);
     Quit_With_Message(string);
 }
 /*
@@ -124,13 +117,78 @@ void Reset_System(void)
 
 
 // WZD s05p03
-// void Exit_With_Value(int16_t value);
+// drake178: ¿ ?
+// MoO1  ¿ ?
+// Mo2  Module: exit  Exit_With_Value()
+void Exit_With_Value(int16_t value)
+{
+    char string[40] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    // MoO2   itoa_(value, string, 10);
+    // MoO2  Reset_System()
+    stu_itoa(value, string, 10);
+    Stop_Music__STUB();
+    Reset_System_Mouse();
+    Audio_Uninit__STUB();
+    EMM_Release_All();
+    DBG_Close_ERROR_LOG();
+    Reset_Video();
+    // MoO2   printf_(printf_fmt_string_newline, string); exit_(1);
+    Quit_With_Message(string);
+}
+/*
+Exit_With_Value     proc near
+string              = byte ptr -2Ch
+value               = dword ptr -4
+push 50h
+call __CHK
+push ebx
+push ecx
+push edx
+push esi
+push edi
+push ebp
+mov ebp, esp
+sub esp, 2Ch
+mov [ebp+value], eax
+mov ebx, 10
+lea edx, [ebp+string]
+mov eax, [ebp+value]
+call itoa_
+call Reset_System
+lea eax, [ebp+string]
+push eax
+mov eax, offset printf_fmt_string_newline                                       ; "%s\n"
+push eax
+call printf_
+add esp, 8
+mov eax, 1
+call exit_
+mov esp, ebp
+pop ebp
+pop edi
+pop esi
+pop edx
+pop ecx
+pop ebx
+retn
+endp
+*/
+
 
 // WZD s05p04
 // GAME_EXE_Swap()
 
 // WZD s05p05
-// Update_MemFreeWorst_KB()
+// AKA Update_MemFreeWorst_KB()
+void Check_Free(void)
+{
+    int16_t size = 0;
+    size = Dos_Free();
+    if(size > max_far_size)
+    {
+        max_far_size = size;
+    }
+}
 
 // WZD s05p06
 // UU_VGA_B800Dump()
@@ -172,6 +230,7 @@ void Reset_Video(void)
         call    int386_
     }
 */
+
 
 // WZD s06p02
 // drake178: ¿ ?
@@ -228,16 +287,25 @@ void Quit_With_Message(char * string)
 
     // ~== //MoO2
     // ORION2.LE  dseg02:00172670 25 73 0A 00                                     printf_fmt_string_newline db '%s',0Ah,0
-    printf("%s\n", string);
+    // mov     eax, [ebp+string]
+    // push    eax
+    // mov     eax, offset printf_fmt_string_newline ; "%s\n"
+    // push    eax
+    // call    printf_
+    // add     esp, 8
+    // mov     eax, 1
+    // call    exit_
 
-#ifdef _WIN32
-    // getch();  not without _CRT_INTERNAL_NONSTDC_NAMES
-    // _getch();  // 6031 Return value ignored
-    // char ch = _getch();
-    #pragma warning(suppress : 6031)  // 6031 Return value ignored
-    _getch();
+    printf("%s\n\n", string);
 
-#endif
+/* HACK */  #ifdef _WIN32
+/* HACK */      // getch();  not without _CRT_INTERNAL_NONSTDC_NAMES
+/* HACK */      // _getch();  // 6031 Return value ignored
+/* HACK */      // char ch = _getch();
+/* HACK */      #pragma warning(suppress : 6031)  // 6031 Return value ignored
+/* HACK */      _getch();
+/* HACK */  
+/* HACK */  #endif
 
     exit(EXIT_FAILURE);
     // Exception thrown at 0x00007FF9012D698B (ntdll.dll) in 010_ReMoMber.exe: 
@@ -254,102 +322,150 @@ void Quit_With_Message(char * string)
 // WZD s06p03
 // UU_DOS_PrintString2()
 // 1oom  dos_write_str()
+/*
+No *Quit*, but same print string functionality as Quit_With_Message(), byte-for-byte
+*/
+void Print_Message(char * string)
+{
+    printf("%s\n\n", string);
+}
 
 // WZD s06p04
-// RAM_GetFreeBlockSize()
+// AKA RAM_GetFreeBlockSize()
 // 1oom  get_free_mem_k()
+// ¿ Linear_Free(), because B to KB ?
+int16_t Dos_Free(void)
+{
+// mov     ah, 48h
+// mov     bx, 0FFFFh
+// int     21h                             ; DOS - 2+ - ALLOCATE MEMORY
+//                                         ; BX = number of 16-byte paragraphs desired
+// mov     ax, bx                          ; largest available block size
+// shr     ax, 1
+// shr     ax, 1
+// shr     ax, 1
+// shr     ax, 1
+// shr     ax, 1
+// shr     ax, 1
+    /* HACK */  return 640;
+}
 
 // WZD s06p05
 // drake178: ¿ ?
-// AKA s06p05_Empty_pFxn()
+// AKA  s06p05_Empty_pFxn()
 // MoO1 ORION seg006 STARMAP seg016
-void DBG_Open_ERROR_LOG__STUB(void)
+/*
+XREF:
+    Init_Drivers()
+    UU_Legacy_Startup()
+*/
+void DBG_Open_ERROR_LOG(void)
 {
 
 }
+/*
+MoM
+    push    es
+    push    ds
+    push    si
+    push    di
+    pop     di
+    pop     si
+    pop     ds
+    pop     es
+    retf
+*/
+/*
+MoO1
+    push    es
+    push    ds
+    push    si
+    push    di
+    pop     di
+    pop     si
+    pop     ds
+    pop     es
+    retf
+    ; ---------------------------------------------------------------------------
+    mov     ah, 3Ch
+    mov     cx, 0
+    mov     dx, offset aError_log ; "ERROR.LOG"
+    int     21h             ; DOS - 2+ - CREATE A FILE WITH HANDLE (CREAT)  ; CX = attributes for file  ; DS:DX -> ASCIZ filename (may include drive and path)
+    mov     fh_ERROR_LOG, ax
+    // save a copy of the file handle for STDERR
+    mov     ah, 45h
+    mov     bx, 2
+    int     21h             ; DOS - 2+ - CREATE DUPLICATE HANDLE (DUP)  ; BX = file handle to duplicate
+    mov     fh2_ERROR_LOG, ax
+    // overwrite the file handle for STDERR
+    mov     ah, 46h
+    mov     bx, fh_ERROR_LOG
+    mov     cx, 2
+    int     21h             ; DOS - 2+ - FORCE DUPLICATE HANDLE (FORCDUP,DUP2)  ; BX = existing file handle, CX = new file handle
+    pop     di
+    pop     si
+    pop     ds
+    pop     es
+    retf
+*/
+
 
 // WZD s06p06
 // drake178: ¿ ?
 // AKA  s06p06_Empty_pFxn()
 // MoO1 ORION seg006 STARMAP seg016
-void DBG_Close_ERROR_LOG__STUB(void)
+/*
+XREF:
+    Exit_With_Message()
+    UU_Exit_With_Value()
+    UU_VGA_B800Dump()
+*/
+void DBG_Close_ERROR_LOG(void)
 {
 
 }
-// seg006:007A DBG_Open_ERROR_LOG proc far             ; CODE XREF: init_fonts_sound_mouse_etc+7P
-// seg006:007A                                         ; seg014:00AFP
-// seg006:007A                 push    es
-// seg006:007B                 push    ds
-// seg006:007C                 push    si
-// seg006:007D                 push    di
-// seg006:007E                 pop     di
-// seg006:007F                 pop     si
-// seg006:0080                 pop     ds
-// seg006:0081                 pop     es
-// seg006:0082                 retf
-// seg006:0083 ; ---------------------------------------------------------------------------
-// seg006:0083                 mov     ah, 3Ch
-// seg006:0085                 mov     cx, 0
-// seg006:0088                 mov     dx, offset str_ERROR_LOG ; "ERROR.LOG"
-// seg006:008B                 int     21h             ; DOS - 2+ - CREATE A FILE WITH HANDLE (CREAT)
-// seg006:008B                                         ; CX = attributes for file
-// seg006:008B                                         ; DS:DX -> ASCIZ filename (may include drive and path)
-// seg006:008D                 mov     fh_ERROR_LOG, ax
-// seg006:0090                 mov     ah, 45h
-// seg006:0092                 mov     bx, 2
-// seg006:0095                 int     21h             ; DOS - 2+ - CREATE DUPLICATE HANDLE (DUP)
-// seg006:0095                                         ; BX = file handle to duplicate
-// seg006:0097                 mov     fh2_ERROR_LOG, ax
-// seg006:009A                 mov     ah, 46h
-// seg006:009C                 mov     bx, fh_ERROR_LOG
-// seg006:00A0                 mov     cx, 2
-// seg006:00A3                 int     21h             ; DOS - 2+ - FORCE DUPLICATE HANDLE (FORCDUP,DUP2)
-// seg006:00A3                                         ; BX = existing file handle, CX = new file handle
-// seg006:00A5                 pop     di
-// seg006:00A6                 pop     si
-// seg006:00A7                 pop     ds
-// seg006:00A8                 pop     es
-// seg006:00A9                 retf
-// seg006:00A9 DBG_Open_ERROR_LOG endp
-// seg006:00A9
-// seg006:00AA
-// seg006:00AA ; =============== S U B R O U T I N E =======================================
-// seg006:00AA
-// seg006:00AA
-// seg006:00AA DBG_Close_ERROR_LOG proc far            ; CODE XREF: Exit_With_Message+17P
-// seg006:00AA                 push    es
-// seg006:00AB                 push    ds
-// seg006:00AC                 push    si
-// seg006:00AD                 push    di
-// seg006:00AE                 pop     di
-// seg006:00AF                 pop     si
-// seg006:00B0                 pop     ds
-// seg006:00B1                 pop     es
-// seg006:00B2                 retf
-// seg006:00B3 ; ---------------------------------------------------------------------------
-// seg006:00B3                 mov     bx, fh_ERROR_LOG
-// seg006:00B7                 cmp     bx, 0
-// seg006:00BA                 jz      short loc_4687
-// seg006:00BC                 mov     ah, 3Eh
-// seg006:00BE                 mov     bx, fh_ERROR_LOG
-// seg006:00C2                 int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
-// seg006:00C2                                         ; BX = file handle
-// seg006:00C4                 mov     ah, 46h
-// seg006:00C6                 mov     bx, fh2_ERROR_LOG
-// seg006:00CA                 mov     cx, 2
-// seg006:00CD                 int     21h             ; DOS - 2+ - FORCE DUPLICATE HANDLE (FORCDUP,DUP2)
-// seg006:00CD                                         ; BX = existing file handle, CX = new file handle
-// seg006:00CF                 mov     ah, 3Eh
-// seg006:00D1                 mov     bx, fh2_ERROR_LOG
-// seg006:00D5                 int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
-// seg006:00D5                                         ; BX = file handle
-// seg006:00D7
-// seg006:00D7 loc_4687:                               ; CODE XREF: DBG_Close_ERROR_LOG+10j
-// seg006:00D7                 pop     di
-// seg006:00D8                 pop     si
-// seg006:00D9                 pop     ds
-// seg006:00DA                 pop     es
-// seg006:00DB                 retf
-// seg006:00DB DBG_Close_ERROR_LOG endp
-// seg006:00DB
-// seg006:00DB seg006          ends
+/*
+MoM
+    push    es
+    push    ds
+    push    si
+    push    di
+    pop     di
+    pop     si
+    pop     ds
+    pop     es
+    retf
+*/
+/*
+MoO1
+    push    es
+    push    ds
+    push    si
+    push    di
+    pop     di
+    pop     si
+    pop     ds
+    pop     es
+    retf
+    ; ---------------------------------------------------------------------------
+    mov     bx, fh_ERROR_LOG
+    cmp     bx, 0
+    jz      short loc_171ED
+    mov     ah, 3Eh
+    mov     bx, fh_ERROR_LOG
+    int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE  ; BX = file handle
+    // restore the file handle for STDERR
+    mov     ah, 46h
+    mov     bx, fh2_ERROR_LOG
+    mov     cx, 2
+    int     21h             ; DOS - 2+ - FORCE DUPLICATE HANDLE (FORCDUP,DUP2)  ; BX = existing file handle, CX = new file handle
+    mov     ah, 3Eh
+    mov     bx, fh2_ERROR_LOG
+    int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE  ; BX = file handle
+    loc_171ED:
+    pop     di
+    pop     si
+    pop     ds
+    pop     es
+    retf
+*/

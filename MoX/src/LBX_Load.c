@@ -39,12 +39,17 @@
  * @see Allocate.h for memory allocation interfaces
  * @see MOX_TYPE.h for SAMB_ptr and other type definitions
  */
-
+/*
+    WIZARDS.EXE
+        seg009
+        seg010
+*/
 #include "../../STU/src/STU_DBG.h"
 
 #include "../../ext/stu_compat.h"
 
 #include "Allocate.h"
+#include "DOS.h"
 #include "EXIT.h"
 #include "MOM_DAT.h"
 #include "MOX_BASE.h"
@@ -70,6 +75,8 @@ FILE * lbxload_fptr = NULL;  // MoO2  Module: farload  farload_fptr  ... MoO2 ch
 int64_t DBG_lbxload_fptr = 0;  // DEBUG  AVWL on fclose()
 char lbxload_lbx_file_extension[] = ".LBX";
 int16_t lbxload_num_entries;
+// WZD dseg:7392
+int16_t UU_gLbxLoadFormat = 0;
 int16_t farload_extended_flag;
 SAMB_ptr lbxload_lbx_header;
 char lbxload_file_name[16];  // MoO2  Module: farload  farload_file_name
@@ -102,6 +109,217 @@ char * str_error_handler[] =
     " Vga file animation frames cannot exceed 65536 bytes"
 };
 
+
+
+/*
+    WIZARDS.EXE seg009
+*/
+
+// WZD s09p01
+FILE * lbx_open(char * lbx_name)
+{
+// mov     ax, 3D00h
+// mov     dx, [bp+fname]
+// int     21h                               ; DOS - 2+ - OPEN DISK FILE WITH HANDLE
+//                                           ; DS:DX -> ASCIZ filename
+//                                           ; AL = access mode
+//                                           ; 0 - read
+// jb      short @Error
+// @Error:
+// mov     ax, 0
+    FILE * file_pointer = NULL;
+    stu_fopen(lbx_name, "rb");
+    if(file_pointer == NULL) { return NULL; }
+    return file_pointer;
+}
+
+// WZD s09p02
+void lbx_close(FILE * lbx_handle)
+{
+// mov     ah, 3Eh
+// mov     bx, [bp+lbx_handle]
+// int     21h                             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
+//                                         ; BX = file handle
+    stu_fclose(lbx_handle);
+}
+
+// WZD s09p03
+int16_t lbx_seek(int32_t offset, FILE * lbx_handle)
+{
+// mov     ax, 4200h
+// mov     bx, [bp+lbx_handle]
+// mov     cx, [word ptr bp+foffset+2]
+// mov     dx, [word ptr bp+foffset]
+// int     21h                             ; DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+//                                         ; AL = method: offset from beginning of file
+// jb      short @@Error
+// mov     ax, e_ST_SUCCESS
+// @@Error:
+// mov     ax, e_ST_FAILURE
+    if(stu_fseek(lbx_handle, offset, SEEK_SET) != 0)
+    {
+        return ST_FAILURE;
+    }
+    return ST_SUCCESS;
+}
+
+// WZD s09p04
+// drake178: UU_DISK_GetFileSize()
+int32_t lbx_lof(int32_t offset, FILE * lbx_handle)
+{
+// mov     ax, 4202h
+// mov     bx, [bp+lbx_handle]
+// mov     cx, 0
+// mov     dx, 0
+// int     21h                             ; DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+//                                         ; AL = method: offset from end of file
+// jb      short @@Error
+// @@Error:
+// mov     ax, e_ST_FAILURE
+    int32_t position = 0;
+    if(stu_fseek(lbx_handle, offset, SEEK_SET) != 0)
+    {
+        return ST_FAILURE;
+    }
+    position = stu_ftell(lbx_handle);
+    if(position == -1L)
+    {
+        return ST_FAILURE;
+    }
+    return position;
+}
+
+// WZD s09p05
+int16_t lbx_read_sgmt(uint8_t * sgmt, uint16_t nbytes, FILE * lbx_handle)
+{
+// mov     ah, 3Fh
+// mov     bx, [bp+lbx_handle]
+// mov     cx, [bp+nbytes]
+// mov     dx, [bp+sgmt]
+// mov     ds, dx
+// mov     dx, 0
+// int     21h                             ; DOS - 2+ - READ FROM FILE WITH HANDLE
+//                                         ; BX = file handle, CX = number of bytes to read
+//                                         ; DS:DX -> buffer
+// jb      short @@Error
+// mov     ax, e_RE_SUCCESS
+// @@Error:
+// mov     ax, e_RE_FAILURE
+    if(stu_fread(sgmt, 1, nbytes, lbx_handle) != nbytes)
+    {
+        return ST_FAILURE;
+    }
+    return ST_SUCCESS;
+}
+
+// WZD s09p06
+int16_t lbx_read_ofst(uint8_t * ofst, uint16_t nbytes, FILE * lbx_handle)
+{
+// mov     ah, 3Fh
+// mov     bx, [bp+lbx_handle]
+// mov     cx, [bp+nbytes]
+// mov     dx, [bp+ofst]
+// int     21h                               ; DOS - 2+ - READ FROM FILE WITH HANDLE
+//                                           ; BX = file handle, CX = number of bytes to read
+//                                           ; DS:DX -> buffer
+// jb      short @@Error
+// mov     ax, e_RE_SUCCESS
+// @@Error:
+// mov     ax, e_RE_FAILURE
+    if(stu_fread(ofst, 1, nbytes, lbx_handle) != nbytes)
+    {
+        return ST_FAILURE;
+    }
+    return ST_SUCCESS;
+}
+
+// WZD s09p07
+// AKA  String_Copy_Far()
+/*
+    MSC/BCPP Compiler Generated?  ..."#pragma inline"?
+    ~== BCPP _fstrcpy() strcpy() strcpy.cas _farfunc.h farfuncs.bat
+e.g., 
+Cast_Spell_Target_Error()
+mov     ax, [bp+spell_idx]
+mov     dx, size s_SPELL_DATA
+imul    dx
+mov     dx, [word ptr spell_data_table]
+add     dx, ax
+push    [word ptr spell_data_table+2]   ; src_sgmt
+push    dx                              ; src_ofst
+xor     ax, ax
+push    ax                              ; dst_sgmt
+mov     ax, offset near_buffer
+push    ax                              ; dst_ofst
+call    _fstrcpy
+add     sp, 8
+...
+would be null pointer + offset of near_buffer, which is meaningless
+*/ 
+// void _fstrcpy(uint16_t dst_ofst, char * dst_sgmt, uint16_t src_ofst, char * src_sgmt)
+void _fstrcpy(char * dst, char * src)
+{
+// cmp     [bp+dst_sgmt], 0
+// jnz     short loc_14EFF
+// mov     ax, ds
+// mov     [bp+dst_sgmt], ax
+// loc_14EFF:
+// cmp     [bp+src_sgmt], 0
+// jnz     short loc_14F0A
+// mov     ax, ds
+// mov     [bp+src_sgmt], ax
+// loc_14F0A:
+// mov     ax, [bp+dst_sgmt]
+// mov     es, ax
+// mov     si, [bp+src_ofst]
+// mov     di, [bp+dst_ofst]
+// mov     ax, [bp+src_sgmt]
+// mov     ds, ax
+// @@CopyByte:
+// lodsb
+// stosb
+// cmp     al, 0
+// jnz     short @@CopyByte
+    // char * dst = NULL;
+    // char * src = NULL;
+    // dst = dst_sgmt + dst_ofst;
+    // src = src_sgmt + src_ofst;
+    while ((*dst++ = *src++) != '\0') { }
+}
+/* GEMINI */
+// #include <dos.h>
+// void far _fstrcpy(char far *dst, char far *src) {
+//     /* Extract the segments and offsets from the 32-bit far pointers */
+//     unsigned int dst_seg = FP_SEG(dst);
+//     unsigned int dst_off = FP_OFF(dst);
+//     unsigned int src_seg = FP_SEG(src);
+//     unsigned int src_off = FP_OFF(src);
+// 
+//     /* --- THE "NEAR POINTER" FALLBACK HACK --- */
+//     /* If the segment is 0x0000, default to the local Data Segment (_DS) */
+//     if (dst_seg == 0) {
+//         dst_seg = _DS; 
+//     }
+//     if (src_seg == 0) {
+//         src_seg = _DS;
+//     }
+// 
+//     /* Reconstruct the safe far pointers */
+//     char far *safe_dst = (char far *)MK_FP(dst_seg, dst_off);
+//     char far *safe_src = (char far *)MK_FP(src_seg, src_off);
+// 
+//     /* --- THE CORE COPY LOOP --- */
+//     /* Copies characters until the null-terminator '\0' is hit */
+//     while ((*safe_dst++ = *safe_src++) != '\0') {
+//         /* Empty loop body; the condition does all the work */
+//     }
+// }
+
+
+
+/*
+    WIZARDS.EXE seg010
+*/
 
 // MGC s10p01
 SAMB_ptr LBX_Load(char * lbx_name, int16_t entry_num)
@@ -363,7 +581,7 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
     */
 
 
-    // Update_MemFreeWorst_KB();
+    // Check_Free();
     // MoO2: Check_Free();
 
 #if defined(__DOS16__)
@@ -591,7 +809,7 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
     */
 
     
-    // Update_MemFreeWorst_KB();
+    // Check_Free();
     // MoO2: Check_Free();
 
 #if defined(__DOS16__)
@@ -668,7 +886,7 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
 
     current_extended_flag = ST_FALSE;
 
-    // TODO  if(UU_SAMB_data == ST_NULL) { ... } Update_MemFreeWorst_KB();
+    // TODO  if(UU_SAMB_data == ST_NULL) { ... } Check_Free();
 
     /*
         BEGIN: Current vs. Previous
@@ -843,10 +1061,132 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
         END: Read Data
     */
 
-    // DOMSDOS  Update_MemFreeWorst_KB();
+    // DOMSDOS  Check_Free();
     // MoO2: Check_Free();
 
 }
+
+// WZD s10p13
+/* CODEX+GPT54 */
+FILE * LBX_Get_Entry_Data(char * file_name, int16_t entry_num, int32_t * entry_start, int32_t * entry_length, int16_t format)
+{
+    char full_file_path[LEN_FILE_PATH] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char lbx_file_name[LEN_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int32_t foffset = 0;
+    int32_t entry_end = 0;
+    int16_t offset_table = 0;
+    int16_t current_extended_flag = 0;
+
+    if (entry_num < 0)
+    {
+        Error_Handler(file_name, le_not_found, entry_num, ST_NULL);
+    }
+
+    if (lbxload_lbx_header_flag == ST_FALSE)
+    {
+        lbxload_lbx_header_flag = ST_TRUE;
+        // lbxload_lbx_header = Allocate_Space_No_Header__LbxHeader(32);
+        lbxload_lbx_header = Allocate_Space_No_Header(32);
+    }
+
+    File_Name_Base(file_name);
+
+    if ((format == 0) || (UU_gLbxLoadFormat != 2))
+    {
+        current_extended_flag = 0;
+    }
+    else
+    {
+        current_extended_flag = 1;
+    }
+
+    if (
+        /* (lbxload_fptr != (FILE *)0xFFFF) */
+        (lbxload_fptr != NULL)
+        &&
+        (stu_stricmp(file_name, lbxload_file_name) == 0)
+        &&
+        (farload_extended_flag == current_extended_flag)
+    )
+    {
+        goto DO_READ_DATA;
+    }
+
+/*
+@@LBX_FILE_CHANGED
+*/
+
+    farload_extended_flag = current_extended_flag;
+
+    // if (lbxload_fptr != (FILE *)0xFFFF)
+    if (lbxload_fptr != NULL)
+    {
+        lbx_close(lbxload_fptr);
+    }
+
+    stu_strcpy(lbxload_file_name, file_name);
+    stu_strcpy(lbx_file_name, file_name);
+    stu_strcat(lbx_file_name, lbxload_lbx_file_extension);
+
+    lbxload_fptr = lbx_open(lbx_file_name);
+
+    if (lbxload_fptr == NULL)
+    {
+        if (secondary_drive_path[0] == '\0')
+        {
+            Error_Handler(file_name, le_not_found, entry_num, ST_NULL);
+        }
+
+        stu_strcpy(full_file_path, secondary_drive_path);
+        stu_strcat(full_file_path, lbx_file_name);
+
+        lbxload_fptr = lbx_open(full_file_path);
+
+        if (lbxload_fptr == NULL)
+        {
+            Error_Handler(file_name, le_not_found, entry_num, ST_NULL);
+        }
+    }
+
+    if (farload_extended_flag != 0)
+    {
+        foffset = 512L;
+    }
+    else
+    {
+        foffset = 0L;
+    }
+
+    if (lbx_seek(foffset, lbxload_fptr) == ST_FAILURE)
+    {
+        Error_Handler(file_name, le_corrupted, entry_num, ST_NULL);
+    }
+
+    lbx_read_sgmt(lbxload_lbx_header, SZ_LBX_HDR_B, lbxload_fptr);
+
+    if (farpeekw(lbxload_lbx_header, LBX_HDR_POS_MAGIC_NUMBER) != LBX_MAGSIG)
+    {
+        Error_Handler(file_name, le_bad_header, entry_num, ST_NULL);
+    }
+
+    lbxload_num_entries = farpeekw(lbxload_lbx_header, LBX_HDR_POS_NUM_ENTRIES);
+
+DO_READ_DATA:
+
+    if (entry_num >= lbxload_num_entries)
+    {
+        Error_Handler(file_name, le_entries_exceeded, entry_num, ST_NULL);
+    }
+
+    offset_table = (SZ_LBX_HDR_PREAMBLE + (entry_num * 4));
+
+    *entry_start = farpeekdw(lbxload_lbx_header, offset_table);
+    entry_end = farpeekdw(lbxload_lbx_header, offset_table + 4);
+    *entry_length = entry_end - *entry_start;
+
+    return lbxload_fptr;
+}
+
 
 // WZD s10p14
 // drake178: UU_LBX_SetPath()

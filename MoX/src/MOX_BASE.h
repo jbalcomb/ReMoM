@@ -29,6 +29,7 @@
 #define LEN_NAME              20  /* ¿ Wizard Name, Unit Type Name, Building Name, HoF Name, Save-Game Name, ... ? (NOT Item Name, City Name)*/
 #define LEN_DESCRIPTION       30  /* ¿ Item Name ? */
 #define LEN_TEMP_STRING       20
+#define LEN_EXIT_MESSAGE     120
 #define LEN_TEMP_BUFFER       10
 #define LEN_FILE_NAME         20
 #define LEN_FILE_PATH         60
