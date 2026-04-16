@@ -36,7 +36,19 @@ protected:
         memset(_NODES, 0xFF, sizeof(struct s_NODE) * NUM_NODES);
 
         p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
-        memset(_world_maps, tt_Ocean, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
+
+        // Fill both planes with grasslands so the strong/weak lair loops can
+        // find valid non-ocean locations and terminate.
+        for(int16_t wp = 0; wp < NUM_PLANES; wp++)
+        {
+            for(int16_t wy = 0; wy < WORLD_HEIGHT; wy++)
+            {
+                for(int16_t wx = 0; wx < WORLD_WIDTH; wx++)
+                {
+                    SET_TERRAIN_TYPE(wx, wy, wp, tt_Grasslands1);
+                }
+            }
+        }
 
         _difficulty = god_Normal;
         _magic = 1;
@@ -59,6 +71,28 @@ protected:
                 case 0: _NODES[itr].type = nt_Sorcery; break;
                 case 1: _NODES[itr].type = nt_Nature; break;
                 default: _NODES[itr].type = nt_Chaos; break;
+            }
+        }
+    }
+
+    // The 0xFF poison in SetUp lets us detect slots that Generate_Lairs never wrote.
+    // Every slot must have intact set to exactly ST_TRUE or ST_FALSE (not 0xFF poison).
+    // Active slots (intact == ST_TRUE) must have coordinates in valid map range.
+    void Assert_All_Lairs_Initialized()
+    {
+        for(int16_t i = 0; i < NUM_LAIRS; i++)
+        {
+            EXPECT_NE(static_cast<uint8_t>(_LAIRS[i].intact), 0xFFu) << "Lair " << i << " intact field never written by Generate_Lairs (uninitialized 0xFF)";
+            EXPECT_TRUE(_LAIRS[i].intact == ST_TRUE || _LAIRS[i].intact == ST_FALSE) << "Lair " << i << " intact has invalid value " << static_cast<int>(_LAIRS[i].intact);
+
+            if(_LAIRS[i].intact == ST_TRUE)
+            {
+                EXPECT_GE(_LAIRS[i].wp, 0) << "Lair " << i << " (active) has invalid wp";
+                EXPECT_LT(_LAIRS[i].wp, NUM_PLANES) << "Lair " << i << " (active) has invalid wp";
+                EXPECT_GE(_LAIRS[i].wx, 0) << "Lair " << i << " (active) has invalid wx";
+                EXPECT_LT(_LAIRS[i].wx, WORLD_WIDTH) << "Lair " << i << " (active) has invalid wx";
+                EXPECT_GE(_LAIRS[i].wy, 0) << "Lair " << i << " (active) has invalid wy";
+                EXPECT_LT(_LAIRS[i].wy, WORLD_HEIGHT) << "Lair " << i << " (active) has invalid wy";
             }
         }
     }
@@ -110,33 +144,15 @@ TEST_F(GenerateLairsTest, CreatesTowerMirrorAndNodeEntries)
     EXPECT_EQ(_LAIRS[first_node_lair].wp, _NODES[0].wp);
     EXPECT_EQ(_LAIRS[second_node_lair].wp, _NODES[1].wp);
     EXPECT_EQ(_LAIRS[third_node_lair].wp, _NODES[2].wp);
+
+    Assert_All_Lairs_Initialized();
 }
 
-TEST_F(GenerateLairsTest, DISABLED_AllOceanSkipsRandomLairPlacementAndClearsTrailingRecords)
+TEST_F(GenerateLairsTest, AllSlotsInitializedAfterGeneration)
 {
     Generate_Lairs();
 
-    const int16_t strong_start = static_cast<int16_t>((2 * NUM_TOWERS) + NUM_NODES);
-    const int16_t weak_start = static_cast<int16_t>(strong_start + 25);
-    const int16_t tail_start = static_cast<int16_t>(weak_start + 32);
-
-    EXPECT_EQ(_LAIRS[strong_start].intact, ST_FALSE);
-    EXPECT_EQ(_LAIRS[weak_start].intact, ST_FALSE);
-
-    if((tail_start + 0) < NUM_LAIRS)
-    {
-        EXPECT_EQ(_LAIRS[tail_start + 0].intact, ST_FALSE);
-    }
-
-    if((tail_start + 1) < NUM_LAIRS)
-    {
-        EXPECT_EQ(_LAIRS[tail_start + 1].intact, ST_FALSE);
-    }
-
-    if((tail_start + 2) < NUM_LAIRS)
-    {
-        EXPECT_EQ(_LAIRS[tail_start + 2].intact, ST_FALSE);
-    }
+    Assert_All_Lairs_Initialized();
 }
 
 TEST_F(GenerateLairsTest, ValidateAllLairsPassesAfterGeneration)
@@ -144,4 +160,6 @@ TEST_F(GenerateLairsTest, ValidateAllLairsPassesAfterGeneration)
     Generate_Lairs();
 
     EXPECT_EQ(Validate_All_Lairs(), ST_TRUE);
+
+    Assert_All_Lairs_Initialized();
 }

@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmake --build out/build/MSVC-debug --config Debug --target MOM_tests)"
+    ]
+  }
+}
