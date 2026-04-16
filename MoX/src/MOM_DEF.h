@@ -113,6 +113,8 @@ ITEM_MAX_POWERS
 #define NUM_LAIRS_102                102
 /* HACK */  #define NUM_LAIRS                 99
 // NOTE(JimBalcomb,20260206): Why/When did I hack this?
+#define NUM_STRONG_LAIRS              25
+#define NUM_WEAK_LAIRS                32
 
 #define MAX_STACK                   9
 #define NUM_SPELLS                      240  // 6 reals, 40 spells each

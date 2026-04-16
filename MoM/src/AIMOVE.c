@@ -7662,6 +7662,10 @@ void AI_Evaluation_Map(int16_t player_idx)
     int16_t itr_units = 0;
     int16_t wp = 0;
     int16_t strength = 0;
+    struct s_UNIT * p_unit = NULL;
+    struct s_LAIR * p_lair = NULL;
+    struct s_CITY * p_city = NULL;
+    struct s_NODE * p_node = NULL;
 
     EMM_Map_CONTXXX__WIP();
 
@@ -7700,32 +7704,33 @@ void AI_Evaluation_Map(int16_t player_idx)
     /* Iterate through all units and add their strength to the map */
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
+        p_unit = &_UNITS[itr_units];
 
         // by (bad) design  assert(_UNITS[itr_units].owner_idx != ST_UNDEFINED);
-        /* HACK */  if(_UNITS[itr_units].owner_idx == ST_UNDEFINED)
+        /* HACK */  if(p_unit->owner_idx == ST_UNDEFINED)
         /* HACK */  {
         /* HACK */      continue;
         /* HACK */  }
-        assert(_UNITS[itr_units].wp != ST_UNDEFINED);
-        /* HACK */  if(_UNITS[itr_units].wp == ST_UNDEFINED)
+        assert(p_unit->wp != ST_UNDEFINED);
+        /* HACK */  if(p_unit->wp == ST_UNDEFINED)
         /* HACK */  {
         /* HACK */      continue;
         /* HACK */  }
 
-        unit_owner_idx = _UNITS[itr_units].owner_idx;
+        unit_owner_idx = p_unit->owner_idx;
 
         /* Skip units belonging to the player being evaluated */
         if(
             (unit_owner_idx == player_idx)
             ||
-            (_UNITS[itr_units].owner_idx == player_idx)  // ; conflicting condition - will always jump
+            (p_unit->owner_idx == player_idx)  // ; conflicting condition - will always jump
         )
         {
             continue;
         }
 
-        wp = _UNITS[itr_units].wp;
-        xy_ofst = ((_UNITS[itr_units].wy * WORLD_WIDTH) + _UNITS[itr_units].wx);
+        wp = p_unit->wp;
+        xy_ofst = ((p_unit->wy * WORLD_WIDTH) + p_unit->wx);
 
         /* Add 1/10th of the unit's effective strength to the map square */
         strength = Effective_Unit_Strength(itr) / 10;
@@ -7782,28 +7787,28 @@ void AI_Evaluation_Map(int16_t player_idx)
     /* Iterate through all cities and flag them on the map */
     for(itr = 0; itr < _cities; itr++)
     {
-
-        assert((_CITIES[itr].wp >= WORLD_PMIN) && (_CITIES[itr].wp <= WORLD_PMAX));
-        assert((_CITIES[itr].wx >= WORLD_XMIN) && (_CITIES[itr].wx <= WORLD_XMAX));
-        assert((_CITIES[itr].wy >= WORLD_YMIN) && (_CITIES[itr].wy <= WORLD_YMAX));
+        p_city = &_CITIES[itr];
+        assert((p_city->wp >= WORLD_PMIN) && (p_city->wp <= WORLD_PMAX));
+        assert((p_city->wx >= WORLD_XMIN) && (p_city->wx <= WORLD_XMAX));
+        assert((p_city->wy >= WORLD_YMIN) && (p_city->wy <= WORLD_YMAX));
         /* HACK */  if(
-        /* HACK */      (_CITIES[itr].wp < WORLD_PMIN) || (_CITIES[itr].wp >= WORLD_PMAX)
+        /* HACK */      (p_city->wp < WORLD_PMIN) || (p_city->wp >= WORLD_PMAX)
         /* HACK */      ||
-        /* HACK */      (_CITIES[itr].wx < WORLD_XMIN) || (_CITIES[itr].wx >= WORLD_XMAX)
+        /* HACK */      (p_city->wx < WORLD_XMIN) || (p_city->wx >= WORLD_XMAX)
         /* HACK */      ||
-        /* HACK */      (_CITIES[itr].wy < WORLD_YMIN) || (_CITIES[itr].wy >= WORLD_YMAX)
+        /* HACK */      (p_city->wy < WORLD_YMIN) || (p_city->wy >= WORLD_YMAX)
         /* HACK */  )
         /* HACK */  {
         /* HACK */      continue;
         /* HACK */  }
 
-        wp = _CITIES[itr].wp;
-        xy_ofst = ((_CITIES[itr].wy * WORLD_WIDTH) + _CITIES[itr].wx);
+        wp = p_city->wp;
+        xy_ofst = ((p_city->wy * WORLD_WIDTH) + p_city->wx);
 
         g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_SITE;
 
         /* If the city is not owned by the current player, increment value for AI targeting */
-        if(_CITIES[itr].owner_idx != player_idx)
+        if(p_city->owner_idx != player_idx)
         {
             g_ai_evaluation_map[wp][xy_ofst] += 1;
         }
@@ -7813,26 +7818,27 @@ void AI_Evaluation_Map(int16_t player_idx)
     /* Re-iterate through all lairs to flag intact lairs */
     for(itr = 0; itr < NUM_LAIRS; itr++)
     {
+        p_lair = &_LAIRS[itr];
 
-        if(_LAIRS[itr].intact != ST_FALSE)
+        if(p_lair->intact != ST_FALSE)  /* CAUTION: 0xC0 != ST_FALSE */
         {
 
-            assert((_LAIRS[itr].wp >= WORLD_PMIN) && (_LAIRS[itr].wp <= WORLD_PMAX));
-            assert((_LAIRS[itr].wx >= WORLD_XMIN) && (_LAIRS[itr].wx <= WORLD_XMAX));
-            assert((_LAIRS[itr].wy >= WORLD_YMIN) && (_LAIRS[itr].wy <= WORLD_YMAX));
+            assert((p_lair->wp >= WORLD_PMIN) && (p_lair->wp <= WORLD_PMAX));
+            assert((p_lair->wx >= WORLD_XMIN) && (p_lair->wx <= WORLD_XMAX));
+            assert((p_lair->wy >= WORLD_YMIN) && (p_lair->wy <= WORLD_YMAX));
             /* HACK */  if(
-            /* HACK */      (_LAIRS[itr].wp < WORLD_PMIN) || (_LAIRS[itr].wp >= WORLD_PMAX)
+            /* HACK */      (p_lair->wp < WORLD_PMIN) || (p_lair->wp >= WORLD_PMAX)
             /* HACK */      ||
-            /* HACK */      (_LAIRS[itr].wx < WORLD_XMIN) || (_LAIRS[itr].wx >= WORLD_XMAX)
+            /* HACK */      (p_lair->wx < WORLD_XMIN) || (p_lair->wx >= WORLD_XMAX)
             /* HACK */      ||
-            /* HACK */      (_LAIRS[itr].wy < WORLD_YMIN) || (_LAIRS[itr].wy >= WORLD_YMAX)
+            /* HACK */      (p_lair->wy < WORLD_YMIN) || (p_lair->wy >= WORLD_YMAX)
             /* HACK */  )
             /* HACK */  {
             /* HACK */      continue;
             /* HACK */  }
 
-            wp = _LAIRS[itr].wp;
-            xy_ofst = ((_LAIRS[itr].wy * WORLD_WIDTH) + _LAIRS[itr].wx);
+            wp = p_lair->wp;
+            xy_ofst = ((p_lair->wy * WORLD_WIDTH) + p_lair->wx);
 
             g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_SITE;
 
@@ -7843,23 +7849,24 @@ void AI_Evaluation_Map(int16_t player_idx)
     /* Iterate through all magic nodes and flag them */
     for(itr = 0; itr < NUM_NODES; itr++)
     {
-
-        assert((_NODES[itr].wp >= WORLD_PMIN) && (_NODES[itr].wp <= WORLD_PMAX));
-        assert((_NODES[itr].wx >= WORLD_XMIN) && (_NODES[itr].wx <= WORLD_XMAX));
-        assert((_NODES[itr].wy >= WORLD_YMIN) && (_NODES[itr].wy <= WORLD_YMAX));
+        p_node = &_NODES[itr];
+        
+        assert((p_node->wp >= WORLD_PMIN) && (p_node->wp <= WORLD_PMAX));
+        assert((p_node->wx >= WORLD_XMIN) && (p_node->wx <= WORLD_XMAX));
+        assert((p_node->wy >= WORLD_YMIN) && (p_node->wy <= WORLD_YMAX));
         /* HACK */  if(
-        /* HACK */      (_NODES[itr].wp < WORLD_PMIN) || (_NODES[itr].wp >= WORLD_PMAX)
+        /* HACK */      (p_node->wp < WORLD_PMIN) || (p_node->wp >= WORLD_PMAX)
         /* HACK */      ||
-        /* HACK */      (_NODES[itr].wx < WORLD_XMIN) || (_NODES[itr].wx >= WORLD_XMAX)
+        /* HACK */      (p_node->wx < WORLD_XMIN) || (p_node->wx >= WORLD_XMAX)
         /* HACK */      ||
-        /* HACK */      (_NODES[itr].wy < WORLD_YMIN) || (_NODES[itr].wy >= WORLD_YMAX)
+        /* HACK */      (p_node->wy < WORLD_YMIN) || (p_node->wy >= WORLD_YMAX)
         /* HACK */  )
         /* HACK */  {
         /* HACK */      continue;
         /* HACK */  }
 
-        wp = _NODES[itr].wp;
-        xy_ofst = ((_NODES[itr].wy * WORLD_WIDTH) + _NODES[itr].wx);
+        wp = p_node->wp;
+        xy_ofst = ((p_node->wy * WORLD_WIDTH) + p_node->wx);
 
         g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_SITE;
 

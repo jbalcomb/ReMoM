@@ -646,7 +646,7 @@ void Extend_Islands(int16_t wp)
 */
 void Generate_Towers(void)
 {
-    int16_t Tries = 0;
+    int16_t tries = 0;
     int16_t Min_Distance = 0;
     int16_t wy = 0;
     int16_t wx = 0;
@@ -661,12 +661,12 @@ void Generate_Towers(void)
         while(1)
         {
 
-            Tries++;  // BUGBUG uninitialized!
+            tries++;  // BUGBUG uninitialized!
 
-            if(Tries > 500)
+            if(tries > 500)
             {
 
-                Tries = 450;
+                tries = 450;
 
                 Min_Distance--;
 
@@ -2399,7 +2399,7 @@ void Build_Landmass(int16_t wp, int16_t wx, int16_t wy)
  *    copying records and changing only plane (`wp`).
  * 3) Creates one node encounter per node (`NUM_NODES`) using node power/type to
  *    derive guardian tier and budget.
- * 4) Attempts to create `Strong_Lair_Amt` random strong encounters (currently
+ * 4) Attempts to create `strong_lair_count` random strong encounters (currently
  *    25) on non-ocean squares, with plane-dependent strength scaling.
  * 5) Attempts to create 32 random weak encounters on non-ocean squares, again
  *    with plane-dependent budget scaling.
@@ -2427,92 +2427,119 @@ void Generate_Lairs(void)
     int16_t wx = 0;
     int16_t itr2 = 0;
     int16_t wp = 0;
-    int16_t Strong_Lair_Amt = 0;
+    int16_t strong_lair_count = 0;
     int16_t itr = 0;
-    int16_t IDK = 0;
+    int16_t niu_generate_lair_value = 0;
     int16_t tail_start = 0;
+    int16_t generate_lair_budget_value = 0;
 
-    // DONT  memset(_LAIRS, 0, (sizeof(struct s_LAIR) * NUM_LAIRS));
+    strong_lair_count = NUM_STRONG_LAIRS;
 
-    Strong_Lair_Amt = 25;
     for(itr = 0; itr < NUM_TOWERS; itr++)
     {
         Create_Lair(itr, ARCANUS_PLANE, _TOWERS[itr].wx, _TOWERS[itr].wy, 3, 0, (650 + (50 * Random(11))));
     }
+
     for(itr = NUM_TOWERS; itr < (2 * NUM_TOWERS); itr++)
     {
         memcpy(&_LAIRS[itr], &_LAIRS[(itr - NUM_TOWERS)], sizeof(struct s_LAIR));
         _LAIRS[itr].wp = MYRROR_PLANE;
     }
+
     for(itr = 0; itr < NUM_NODES; itr++)
     {
-        IDK = (((((_NODES[itr].power - 1) * _magic) / 2) / 6) + 1);
-        SETMAX(IDK, 4);
-        SETMIN(IDK, 1);
-        Create_Lair(((2 * NUM_TOWERS) + itr), _NODES[itr].wp, _NODES[itr].wx, _NODES[itr].wy, IDK, (_NODES[itr].type + 1), ((((_NODES[itr].power * _NODES[itr].power) * (4 + Random(11))) * (_magic + 1)) / 2));
+        niu_generate_lair_value = (((((_NODES[itr].power - 1) * _magic) / 2) / 6) + 1);
+        SETMAX(niu_generate_lair_value, 4);
+        SETMIN(niu_generate_lair_value, 1);
+        Create_Lair(((2 * NUM_TOWERS) + itr), _NODES[itr].wp, _NODES[itr].wx, _NODES[itr].wy, niu_generate_lair_value, (_NODES[itr].type + 1), ((((_NODES[itr].power * _NODES[itr].power) * (4 + Random(11))) * (_magic + 1)) / 2));
     }
-    // ; create 25 random strong encounters on non-ocean map squares
-    for(itr = 0; itr < Strong_Lair_Amt; itr++)
-    {
-        wp = (Random(2) - 1);
-        wx = (2 + Random(54));
-        wy = (2 + Random(34));
-        if(Square_Is_Ocean_NewGame(wx, wy, wp) != ST_TRUE)
-        {
-            for(itr2 = 0; ((itr + 42) > itr2); itr2++)
-            {
-                if(Delta_XY_With_Wrap(wx, wy, _LAIRS[itr2].wx, _LAIRS[itr2].wy, WORLD_WIDTH) < 2)
-                {
-                    break;
-                }
-            }
-            /* CLAUDE bugfix: original code called Create_Lair even when distance check broke out of the loop */
-            if((42 + itr) <= itr2)
-            {
-                if(wp == ARCANUS_PLANE)
-                {
 
-                    IDK = (50 + (Random(29) * 50));
-                }
-                else
-                {
-                    IDK = (100 + (Random(24) * 100));
-                }
-                Create_Lair(((2 * NUM_TOWERS) + NUM_NODES + itr), wp, wx, wy, IDK, 4, IDK);
-            }
-        }
-    }
-    // ; create 32 weak random encounters on non-ocean map squares
-    for(itr = 0; itr < 32; itr++)
+    // ; create 25 random strong encounters on non-ocean map squares
+
+    itr = 0;
+    while(itr < strong_lair_count)
     {
-        wp = (Random(2) - 1);
-        wx = (2 + Random(54));
-        wy = (2 + Random(34));
-        if(Square_Is_Ocean_NewGame(wx, wy, wp) != ST_TRUE)
+
+        wp = (Random(2) - 1);  // { 0:Arcanus, 1:Myrror }
+        wx = (2 + Random((WORLD_WIDTH  - 2 - 2 - 2)));  // 54
+        wy = (2 + Random((WORLD_HEIGHT - 2 - 2 - 2)));  // 34
+
+        if(Square_Is_Ocean_NewGame(wx, wy, wp) == ST_TRUE)
         {
-            for(itr2 = 0; (((2 * NUM_TOWERS) + NUM_NODES + Strong_Lair_Amt + itr) > itr2); itr2++)
+            continue;
+        }
+    
+        /* check that every other Lairs is at least 2 units away */
+        for(itr2 = 0; ((itr + (2 * NUM_TOWERS) + NUM_NODES) > itr2); itr2++)
+        {
+            if(Delta_XY_With_Wrap(wx, wy, _LAIRS[itr2].wx, _LAIRS[itr2].wy, WORLD_WIDTH) < 2)
             {
-                if(Delta_XY_With_Wrap(wx, wy, _LAIRS[itr2].wx, _LAIRS[itr2].wy, WORLD_WIDTH) < 2)
-                {
-                    break;
-                }
-            }
-            if(((2 * NUM_TOWERS) + NUM_NODES + Strong_Lair_Amt + itr) <= itr2)
-            {
-                if(wp == ARCANUS_PLANE)
-                {
-                    IDK = (Random(10) * 10);
-                }
-                else
-                {
-                    IDK = (Random(20) * 10);
-                }
-                Create_Lair(((2 * NUM_TOWERS) + NUM_NODES + Strong_Lair_Amt + itr), wp, wx, wy, IDK, 4, IDK);
+                break;
             }
         }
+        
+        if(((2 * NUM_TOWERS) + NUM_NODES + itr) <= itr2)
+        {
+            if(wp == ARCANUS_PLANE)
+            {
+                generate_lair_budget_value = (50 + (Random(29) * 50));
+            }
+            else
+            {
+                generate_lair_budget_value = (100 + (Random(24) * 100));
+            }
+            /* bullshit? */ niu_generate_lair_value = generate_lair_budget_value;
+            Create_Lair(((2 * NUM_TOWERS) + NUM_NODES + itr), wp, wx, wy, niu_generate_lair_value, 4, generate_lair_budget_value);
+            itr++;
+        }
+
     }
+
+    // ; create 32 weak random encounters on non-ocean map squares
+
+    itr = 0;
+    while(itr < NUM_WEAK_LAIRS)
+    {
+
+        wp = (Random(2) - 1);  // { 0:Arcanus, 1:Myrror }
+        wx = (2 + Random((WORLD_WIDTH  - 2 - 2 - 2)));  // 54
+        wy = (2 + Random((WORLD_HEIGHT - 2 - 2 - 2)));  // 34
+
+        if(Square_Is_Ocean_NewGame(wx, wy, wp) == ST_TRUE)
+        {
+            continue;
+        }
+
+        /* check that every other Lairs is at least 2 squares away */
+        for(itr2 = 0; (((2 * NUM_TOWERS) + NUM_NODES + strong_lair_count + itr) > itr2); itr2++)
+        {
+            if(Delta_XY_With_Wrap(wx, wy, _LAIRS[itr2].wx, _LAIRS[itr2].wy, WORLD_WIDTH) < 2)
+            {
+                break;
+            }
+        }
+
+        /* if every other Lairs was at least 2 squares away, go ahead and create another one */
+        if(((2 * NUM_TOWERS) + NUM_NODES + strong_lair_count + itr) <= itr2)
+        {
+            if(wp == ARCANUS_PLANE)
+            {
+                generate_lair_budget_value = (Random(10) * 10);
+            }
+            else
+            {
+                generate_lair_budget_value = (Random(20) * 10);
+            }
+            /* bullshit? */ niu_generate_lair_value = generate_lair_budget_value;
+            Create_Lair(((2 * NUM_TOWERS) + NUM_NODES + strong_lair_count + itr), wp, wx, wy, niu_generate_lair_value, 4, generate_lair_budget_value);
+            itr++;
+        }
+
+    }
+    
     // ; mark the last 3 records in the table as empty
-    tail_start = ((2 * NUM_TOWERS) + NUM_NODES + Strong_Lair_Amt + 32);
+
+    tail_start = ((2 * NUM_TOWERS) + NUM_NODES + strong_lair_count + NUM_WEAK_LAIRS);
     for(itr = tail_start; (itr < (tail_start + 3)) && (itr < NUM_LAIRS); itr++)
     {
         _LAIRS[itr].intact = ST_FALSE;
@@ -2553,7 +2580,7 @@ void Generate_Lairs(void)
  * @param wp World plane index for the lair location.
  * @param wx World X coordinate of lair location.
  * @param wy World Y coordinate of lair location.
- * @param UU Legacy/unknown tuning input (currently unused by this function).
+ * @param niu_create_lair_parameter unknown parameter (currently unused).
  * @param lair_type New-game lair type selector used for encounter type/race
  *                  rules (tower/node/random category paths).
  * @param budget Base encounter budget before internal scaling.
@@ -2565,16 +2592,16 @@ void Generate_Lairs(void)
  * @warning Several known quirks/bugs in current logic are preserved (including
  *          assignment-in-condition paths and some fall-through behavior).
  */
-void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t UU, int16_t lair_type, int16_t budget)
+void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t niu_create_lair_parameter, int16_t lair_type, int16_t budget)
 {
-    int16_t Tries = 0;
+    int16_t tries = 0;
     int16_t Divided_Budget = 0;
     int16_t Highest_Cost = 0;
     int16_t Picked_Unit_Type = 0;
     int16_t Price = 0;
     int16_t race_type = 0;
     int16_t unit_type = 0;
-    int16_t IDK;
+    int16_t unknown_create_lair_value;
 
 #ifdef STU_DEBUG
     assert(lair_idx >= 0);
@@ -2660,8 +2687,8 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t U
             case 4: { race_type = rt_Nature; }  // KNOWNBUG: falls through, missing break
         }
     }
-    Tries = 0;
-    while(Tries < 200)
+    tries = 0;
+    while(tries < 200)
     {
         Divided_Budget = (budget / Random(4));
         Highest_Cost = 0;
@@ -2682,14 +2709,14 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t U
                 Picked_Unit_Type = unit_type;
             }
         }
-        Tries++;
+        tries++;
         if(
             (Picked_Unit_Type != ST_UNDEFINED)
             ||
-            (Tries >= 200)
+            (tries >= 200)
         )
         {
-            if(Tries < 200)
+            if(tries < 200)
             {
                 _LAIRS[lair_idx].guard1_unit_type = (uint8_t)Picked_Unit_Type;
                 _LAIRS[lair_idx].guard1_count = (budget / _unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost);
@@ -2705,15 +2732,15 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t U
                 budget -= (_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost * _LAIRS[lair_idx].guard1_count);
             }
         }
-    }  /* while(Tries < 200) */
-    Tries = 0;
+    }  /* while(tries < 200) */
+    tries = 0;
     if(
         (_LAIRS[lair_idx].guard1_count != 9)  // ; conflicting condition - will always jump
         &&
         (_LAIRS[lair_idx].guard1_count != 0)
     )
     {
-        while(Tries < 200)
+        while(tries < 200)
         {
             Divided_Budget = (budget / Random((10 - _LAIRS[lair_idx].guard1_count)));
             Highest_Cost = 0;
@@ -2737,14 +2764,14 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t U
                     }
                 }
             }
-            Tries++;
+            tries++;
             if(
                 (Picked_Unit_Type != ST_UNDEFINED)
                 ||
-                (Tries >= 200)
+                (tries >= 200)
             )
             {
-                if(Tries < 200)
+                if(tries < 200)
                 {
                     _LAIRS[lair_idx].guard2_unit_type = (uint8_t)Picked_Unit_Type;
                     _LAIRS[lair_idx].guard2_count = (budget / _unit_type_table[_LAIRS[lair_idx].guard2_unit_type].cost);
@@ -2755,7 +2782,7 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t U
                 }
             }
         }
-    }  /* while(Tries < 200) */
+    }  /* while(tries < 200) */
     if(_LAIRS[lair_idx].guard1_unit_type == 0)
     {
         _LAIRS[lair_idx].guard1_count = 0;
@@ -2764,29 +2791,29 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t U
     {
         _LAIRS[lair_idx].guard2_count = 0;
     }
-    IDK = (_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost * _LAIRS[lair_idx].guard1_count);
+    unknown_create_lair_value = (_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost * _LAIRS[lair_idx].guard1_count);
     // KNOWNBUG: this is not always the smaller part of the treasure budget
-    IDK += ((_unit_type_table[_LAIRS[lair_idx].guard2_unit_type].cost * _LAIRS[lair_idx].guard2_count) / 2);
+    unknown_create_lair_value += ((_unit_type_table[_LAIRS[lair_idx].guard2_unit_type].cost * _LAIRS[lair_idx].guard2_count) / 2);
     if(_difficulty != god_Impossible)
     {
-        IDK = ((IDK * (_difficulty + 1)) / 4);
+        unknown_create_lair_value = ((unknown_create_lair_value * (_difficulty + 1)) / 4);
     }
     if(wp == ARCANUS_PLANE)
     {
-        IDK = ((IDK * (49 + Random(76))) / 100);
+        unknown_create_lair_value = ((unknown_create_lair_value * (49 + Random(76))) / 100);
     }
     else
     {
-        IDK = ((IDK * (75 + Random(100))) / 100);
+        unknown_create_lair_value = ((unknown_create_lair_value * (75 + Random(100))) / 100);
     }
-    SETMIN(IDK, 50);
+    SETMIN(unknown_create_lair_value, 50);
     if(lair_type == 0)  // New Game Lair Type - Temple
     {
         Price = Random(4);
-        IDK -= (((Price * Price) * 50) - 100);
+        unknown_create_lair_value -= (((Price * Price) * 50) - 100);
         _LAIRS[lair_idx].Spell_n_Special = (int8_t)Price;
     }
-    if(IDK >= 50)
+    if(unknown_create_lair_value >= 50)
     {
         switch(Random(15))
         {
@@ -2797,9 +2824,9 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t U
             case 1:
             {
                 Price = (Random(20) * 10);
-                SETMAX(Price, IDK);
+                SETMAX(Price, unknown_create_lair_value);
                 Price = ((Price / 10) * 10);
-                IDK -= 200;
+                unknown_create_lair_value -= 200;
                 _LAIRS[lair_idx].Loot_Gold = Price;
             }
             case 2:
@@ -2809,9 +2836,9 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t U
             case 3:
             {
                 Price = (Random(20) * 10);
-                SETMAX(Price, IDK);
+                SETMAX(Price, unknown_create_lair_value);
                 Price = ((Price / 10) * 10);
-                IDK -= 200;
+                unknown_create_lair_value -= 200;
                 _LAIRS[lair_idx].Loot_Mana = Price;
             } break;
             case 4:
@@ -2828,13 +2855,13 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t U
                 if(
                     (_LAIRS[lair_idx].Item_Count < 3)
                     &&
-                    (IDK >= 300)
+                    (unknown_create_lair_value >= 300)
                 )
                 {
                     Price = (300 + (Random(27) * 100));
-                    SETMAX(Price, IDK);
+                    SETMAX(Price, unknown_create_lair_value);
                     Price = ((Price / 10) * 10);
-                    IDK -= Price;
+                    unknown_create_lair_value -= Price;
                     _LAIRS[lair_idx].Item_Values[_LAIRS[lair_idx].Item_Count] = Price;
                     _LAIRS[lair_idx].Item_Count += 1;
                 }
@@ -2863,13 +2890,13 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t U
                 // ; value:    1000
                 // ; max:      1
                 if(
-                    (IDK >= 400)
+                    (unknown_create_lair_value >= 400)
                     &&
                     (_LAIRS[lair_idx].Misc_Flags == 0)
                 )
                 {
                     _LAIRS[lair_idx].Misc_Flags = 1;
-                    IDK -= 1000;
+                    unknown_create_lair_value -= 1000;
                 }
             } break;
             case 11:
@@ -2883,12 +2910,12 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t U
                 // ; rarities to be awarded cheaper than they should be
                 Price = Random(4);
                 if(
-                    (((Price * Price) * 50) < IDK)
+                    (((Price * Price) * 50) < unknown_create_lair_value)
                     &&
                     (_LAIRS[lair_idx].Spell_n_Special < 4)
                 )
                 {
-                    IDK -= ((Price * Price) * 50);
+                    unknown_create_lair_value -= ((Price * Price) * 50);
                     _LAIRS[lair_idx].Spell_n_Special += Price;
                     SETMAX(_LAIRS[lair_idx].Spell_n_Special, 4);
                 }
@@ -2913,21 +2940,21 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t U
                 if(
                     (Price == 1)
                     &&
-                    (IDK >= 3000)
+                    (unknown_create_lair_value >= 3000)
                 )
                 {
                     _LAIRS[lair_idx].Spell_n_Special = 6;
-                    IDK -= 3000;
+                    unknown_create_lair_value -= 3000;
                 }
-                else if(IDK >= 2000)
+                else if(unknown_create_lair_value >= 2000)
                 {
                     _LAIRS[lair_idx].Spell_n_Special = 6;
-                    IDK -= 3000;
+                    unknown_create_lair_value -= 3000;
                 }
-                else if(IDK >= 1000)
+                else if(unknown_create_lair_value >= 1000)
                 {
                     _LAIRS[lair_idx].Spell_n_Special = 5;
-                    IDK -= 3000;
+                    unknown_create_lair_value -= 3000;
                 }
             } break;
             case 15:
@@ -4723,7 +4750,7 @@ void River_Terrain(int16_t wp)
 void Generate_Neutral_Cities(int16_t wp)
 {
     int16_t location_is_forest_square = 0;
-    int16_t Tries = 0;
+    int16_t tries = 0;
     int16_t Best_Ranged_Unit = 0;
     int16_t Best_Melee_Unit = 0;
     int16_t itr3 = 0;
@@ -4733,7 +4760,7 @@ void Generate_Neutral_Cities(int16_t wp)
     int16_t itr2 = 0;  // _SI_
     int16_t itr1 = 0;  // _DI_
 
-    Tries = 0;
+    tries = 0;
 
     // ; fill the default continental race table with random
     // ; values corresponding to the selected plane,
@@ -4792,14 +4819,14 @@ void Generate_Neutral_Cities(int16_t wp)
     for(itr1 = 0; itr1 < 15; itr1++)
     {
 
-        if(Tries < 1000)
+        if(tries < 1000)
         {
 
 // jump back here if the location is invalid
 Loop_Location_2:
 // ...same as in Generate_Home_City()
 
-            Tries++;
+            tries++;
 
             wx = (3 + Random(54));
 
@@ -4842,7 +4869,7 @@ Loop_Location_2:
             // ; encounter zone - including nodes and towers
 
             if(
-                (Tries < 1000)
+                (tries < 1000)
                 &&
                 (Invalid == ST_TRUE)
             )

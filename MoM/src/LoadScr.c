@@ -800,6 +800,10 @@ void Loaded_Game_Update(void)
     */
 
         // TST_Validate_GameData();
+        // if(Validate_All_Lairs() != ST_TRUE)
+        // {
+        //     Generate_Lairs();
+        // }
 
         TST_Patch_Game_Data();
 

@@ -5,6 +5,8 @@
         ¿ ovr145 ?
 */
 
+#include "../../STU/src/STU_DBG.h"
+
 #include "../../MoX/src/EMS/EMS.h"
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_BASE.h"
@@ -25,13 +27,11 @@
 #include "UNITTYPE.h"
 #include "UnitMove.h"
 
-#include "../../STU/src/STU_DBG.h"
+#include "AIDUDES.h"
 
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>     /* memcpy() memset(), stu_strcat(), stu_strcpy(), stricmp() */
-
-#include "AIDUDES.h"
 
 
 

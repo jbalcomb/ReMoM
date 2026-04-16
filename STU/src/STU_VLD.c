@@ -172,9 +172,14 @@ int16_t Validate_Lair_Record(int16_t lair_idx)
 
     lair = &_LAIRS[lair_idx];
 
-    if(lair->intact != ST_TRUE)
+    if(lair->intact == ST_FALSE)
     {
         return ST_TRUE;
+    }
+
+    if(lair->intact != ST_TRUE)
+    {
+        return Validate_Lair_Fail_Range(lair_idx, "intact", lair->intact, ST_FALSE, ST_TRUE);
     }
 
     if((lair->wx < 0) || (lair->wx >= WORLD_WIDTH))
