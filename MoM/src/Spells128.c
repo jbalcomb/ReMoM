@@ -871,7 +871,7 @@ void Sort_Research_List(int16_t player_idx, int16_t count)
     int16_t spell_idx1 = 0;  // DNE in Dasm
     Players_Update_Magic_Power();
     Player_Magic_Power_Distribution(&research_bonus_percentage, &research_bonus_percentage, &research_points, player_idx);
-    // ~== SBK_BuildSpellbook__WIP()
+    // ~== Build_Spellbook()
     for(itr = 0; itr < NUM_MAGIC_REALMS; itr++)
     {
         // ; BUG: research bonus calculated using an arbitrary

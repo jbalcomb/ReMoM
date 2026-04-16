@@ -268,7 +268,7 @@ int16_t SBK_BookManaLimit;
 // drake178: NearAlloc_First!
 /*
 
-SBK_BuildSpellbook__WIP()
+Build_Spellbook()
     for(itr1 = 0; itr1 < NUM_MAGIC_REALMS; itr1++)
     {
         research_bonus_percentage = Player_Spell_Research_Bonus(HUMAN_PLAYER_IDX, ((itr1 * 40) + 1));
@@ -280,7 +280,7 @@ SAMB_ptr SBK_Research_Incomes;
 
 // WZD dseg:C90E
 /*
-SBK_BuildSpellbook__WIP()
+Build_Spellbook()
 WIZ_ManaPerTurn = (((_players[HUMAN_PLAYER_IDX].mana_ratio * _players[HUMAN_PLAYER_IDX].Power_Base) / 100) - Player_Armies_And_Enchantments_Mana_Upkeep(HUMAN_PLAYER_IDX));
 just used for the calculation for SBK_BookManaLimit
 no reason this is module scoped?
@@ -638,27 +638,32 @@ void Spellbook_Group_Counts(void)
 
 
 // WZD o117p04
-// drake178: SBK_BuildSpellbook()
-/*
-; creates a list of spells for the specified book type,
-; then organizes them into the global near dynamic
-; allocation m_spellbook_pages@ (created here)
-; Book_Type corresponds to one of the following:
-;   0 - overland spellbook
-;   1 - combat spellbook
-;   2 - Apprentice spellbook
-; however, combat doesn't actually use this routine, as
-; it has to account for unit spells too
-*/
 /*
     spell_list_type   {0,1,2}
     page_spell_count   {4,6,8}
-
 spell_list_type only used in call to Build_Spell_List()
 (which would seem to mean it is not actually "book type")
-
 */
-void SBK_BuildSpellbook__WIP(int16_t spell_list_type, int16_t page_spell_count)
+/**
+ * @brief Build the spellbook page list and related casting and research data for the human player.
+ *
+ * Initializes the temporary spell list, computes per-realm research incomes, derives the current
+ * casting mana limit for the book display, counts spell groups, allocates the page table, and fills
+ * the generated pages. When building the big spellbook, this routine also appends the two research
+ * candidate pages after the grouped spell pages.
+ *
+ * @param spell_list_type Selects which spells are gathered into the spell list.
+ * Use the spell list type values consumed by Build_Spell_List(), such as overland, combat, or
+ * apprentice/library mode.
+ * @param page_spell_count Number of spell entries to place on each generated page.
+ * Typical values are the small-book and big-book page capacities.
+ *
+ * @note This routine updates module-scoped spellbook state including m_spellbook_spell_list,
+ * m_spellbook_pages, m_spell_list_count, m_spellbook_page_count, SBK_Research_Incomes, and
+ * SBK_BookManaLimit.
+ * @note The build always targets the human player state and uses HUMAN_PLAYER_IDX throughout.
+ */
+void Build_Spellbook(int16_t spell_list_type, int16_t page_spell_count)
 {
     int16_t hero_casting_skill = 0;
     int16_t itr2 = 0;
@@ -669,11 +674,9 @@ void SBK_BuildSpellbook__WIP(int16_t spell_list_type, int16_t page_spell_count)
     int16_t itr1 = 0;  // _SI_
     int16_t itr_magic_realms = 0;  // _SI_
     
-    // m_spellbook_spell_list = SA_MK_FP0(Allocate_First_Block(_screen_seg, 13));
     m_spellbook_spell_list = (int16_t *)Allocate_First_Block(_screen_seg, 13);  // 13 PR, 208 B
 
-    // ¿ BUG  should be 12 bytes, not 12 paragraphs ?
-    SBK_Research_Incomes = Near_Allocate_First(12);  // 12 PR, 192 B
+    SBK_Research_Incomes = Near_Allocate_First(12);
 
     // spells...divided into categories
     SBK_Group_3_Count = 0;      // City Spells or Death
@@ -683,22 +686,16 @@ void SBK_BuildSpellbook__WIP(int16_t spell_list_type, int16_t page_spell_count)
     SBK_Group_4_Count = 0;      // Unit Spells or Nature
     SBK_Group_6_Count = 0;      // Combat Spells or Sorcery
 
-    // DELETEME  GUI_Multipurpose_Int = 0;   // Spell List Count, New Spell Index, ...
     m_spell_list_count = 0;
 
     m_spellbook_page_count = 0;
     
     Players_Update_Magic_Power();
 
-// void Player_Magic_Power_Distribution(int16_t * mana_points, int16_t * skill_points, int16_t * research_points, int16_t player_idx)
-//     *mana_points = mana_portion;
-//     *skill_points = skill_portion;
-//     *research_points = research_portion;
     Player_Magic_Power_Distribution(&bogus_placeholder, &bogus_placeholder, &research_points, HUMAN_PLAYER_IDX);
 
     for(itr_magic_realms = 0; itr_magic_realms < NUM_MAGIC_REALMS; itr_magic_realms++)
     {
-        // int16_t Player_Spell_Research_Bonus(int16_t player_idx, int16_t spell_idx)
         research_bonus_percentage = Player_Spell_Research_Bonus(HUMAN_PLAYER_IDX, ((itr_magic_realms * NUM_SPELLS_PER_MAGIC_REALM) + 1));  // {1, 41, 81, 121, 161, 201}
 
         SBK_Research_Incomes[itr_magic_realms] = research_points + ((research_points * research_bonus_percentage) / 100);
@@ -724,10 +721,8 @@ void SBK_BuildSpellbook__WIP(int16_t spell_list_type, int16_t page_spell_count)
         SBK_BookManaLimit = 0;
     }
 
-    // void Build_Spell_List(int16_t spell_list_type, SAMB_ptr SpList_Ptr)
     Build_Spell_List(spell_list_type, m_spellbook_spell_list);
 
-    // void Spellbook_Group_Counts(void)
     Spellbook_Group_Counts();
 
     Total_Pages =  ((SBK_Group_3_Count + page_spell_count - 1) / page_spell_count);
@@ -737,10 +732,7 @@ void SBK_BuildSpellbook__WIP(int16_t spell_list_type, int16_t page_spell_count)
     Total_Pages += ((SBK_Group_4_Count + page_spell_count - 1) / page_spell_count);
     Total_Pages += ((SBK_Group_6_Count + page_spell_count - 1) / page_spell_count);
 
-    // Severity	Code	Description	Project	File	Line	Suppression State
-    // TODO  Message	lnt - arithmetic - overflow	A sub - expression may overflow before being assigned to a wider type.ReMoM	C : \STU\devel\ReMoM\src\Spellbook.C	558
-    // m_spellbook_pages = (struct s_SPELL_BOOK_PAGE *)Near_Allocate_Next(((Total_Pages + 3) * sizeof(struct s_SPELL_BOOK_PAGE)));
-    m_spellbook_pages = (struct s_SPELL_BOOK_PAGE *)Near_Allocate_Next( (Total_Pages + 3) * 30 );
+    m_spellbook_pages = (struct s_SPELL_BOOK_PAGE *)Near_Allocate_Next(((size_t)(Total_Pages + 3) * sizeof(struct s_SPELL_BOOK_PAGE)));
 
     for(itr1 = 0; (Total_Pages + 3) > itr1; itr1++)
     {
@@ -753,7 +745,6 @@ void SBK_BuildSpellbook__WIP(int16_t spell_list_type, int16_t page_spell_count)
         }
     }
 
-    // void Spellbook_Add_Group_Pages(int16_t page_spell_count)
     Spellbook_Add_Group_Pages(page_spell_count);
 
     /*
@@ -777,7 +768,6 @@ void SBK_BuildSpellbook__WIP(int16_t spell_list_type, int16_t page_spell_count)
             }
         }
 
-        // void Spellbook_Add_Page(int16_t group_spell_count, int16_t group_idx, char * title, int16_t page_spell_count)
         Spellbook_Add_Page((4 - itr2), ST_UNDEFINED, cnst_Rsrch_Page1, page_spell_count);
 
         itr2 = 0;
@@ -794,7 +784,6 @@ void SBK_BuildSpellbook__WIP(int16_t spell_list_type, int16_t page_spell_count)
             }
         }
 
-        // void Spellbook_Add_Page(int16_t group_spell_count, int16_t group_idx, char * title, int16_t page_spell_count)
         Spellbook_Add_Page((4 - itr2), ST_UNDEFINED, cnst_Rsrch_Page2, page_spell_count);
 
     }
@@ -1070,7 +1059,7 @@ int16_t Combat_Spellbook_Build__WIP(int16_t caster_idx)
     }
 
 
-// SBK_BuildSpellbook__WIP()
+// Build_Spellbook()
 // Total_Pages =  ((SBK_Group_3_Count + page_spell_count - 1) / page_spell_count);
 // Total_Pages += ((SBK_Group_2_Count + page_spell_count - 1) / page_spell_count);
 // Total_Pages += ((SBK_Group_1_Count + page_spell_count - 1) / page_spell_count);
@@ -2569,7 +2558,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
         Update_Remap_Color_Range(0, 0);
 
-        SBK_BuildSpellbook__WIP(slt_Library, 4);
+        Build_Spellbook(slt_Library, 4);
 
         // SCROLL.LBX, 006  "BIGBOOK"   ""
         _spellbook_big_seg = LBX_Reload(scroll_lbx_file__ovr118__2, 6, _screen_seg);
@@ -2631,7 +2620,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
             // ; this branch ever triggered
             _players[HUMAN_PLAYER_IDX].spells_list[((((spell_idx - 2) / NUM_SPELLS_PER_MAGIC_REALM) * NUM_SPELLS_PER_MAGIC_REALM) + ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM))] = 1;  /* S_Knowable */
 
-            SBK_BuildSpellbook__WIP(slt_Library, 4);
+            Build_Spellbook(slt_Library, 4);
 
             for(spellbook_page = 0; (((m_spellbook_page_count - 1) > spellbook_page) && (Spell_Found == ST_FALSE)); spellbook_page++)
             {
@@ -3073,7 +3062,7 @@ void Apprentice_Screen__WIP(void)
     int16_t itr = 0;  // _SI_
     int16_t leave_screen = 0;  // _DI_
 
-    SBK_BuildSpellbook__WIP(slt_Library, 4);  // spell_list_type, page_spell_count
+    Build_Spellbook(slt_Library, 4);  // spell_list_type, page_spell_count
 
     SBK_OpenPage = SBK_Candidate_Page;
 
@@ -3572,7 +3561,7 @@ void Spell_Research_Select(void)
 
     Copy_Off_To_Back();
 
-    SBK_BuildSpellbook__WIP(slt_Library, 4);
+    Build_Spellbook(slt_Library, 4);
 
     Set_Mouse_List(1, mouse_list_default);
 

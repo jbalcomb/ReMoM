@@ -432,7 +432,7 @@ void Combat_Spellbook_Add_Spells_From_Magic_Realm(int16_t * spell_list, int16_t 
 void Spellbook_Group_Counts(void);
 
 // WZD o117p04
-void SBK_BuildSpellbook__WIP(int16_t spell_list_type, int16_t page_spell_count);
+void Build_Spellbook(int16_t spell_list_type, int16_t page_spell_count);
 
 // WZD o117p05
 int16_t UU_IDK_turn_to_cast__STUB(int16_t player_idx);

@@ -31,14 +31,14 @@ Settings_Screen()
 
 Settings_Screen() sets CMB_SpellBookPage, SBK_SomePageSaveVar, SBK_Candidate_Page to 0
 G_WLD_StaticAssetRfrsh() 
-SBK_BuildSpellbook__WIP() sets SBK_Candidate_Page = m_spellbook_page_count, if page size is 4, where page size means it's the Apprentice spellbook
+Build_Spellbook() sets SBK_Candidate_Page = m_spellbook_page_count, if page size is 4, where page size means it's the Apprentice spellbook
 Apprentice_Screen__WIP() sets SBK_Candidate_Page = SBK_OpenPage when it leaves
 Spell_Research_Select() sets SBK_OpenPage = SBK_Candidate_Page
 ¿ Learn_Spell_Animation() uses SBK_OpenPage and SBK_Candidate_Page to BigBook_PageTurn() to the page that has the spell that is being learned ?
 
 XREF:
     G_WLD_StaticAssetRfrsh+67       mov     [SBK_Candidate_Page], 0               
-    SBK_BuildSpellbook__WIP+226     mov     [SBK_Candidate_Page], ax              
+    Build_Spellbook+226     mov     [SBK_Candidate_Page], ax              
     BigBook_PageTurn:loc_9CA9C mov     ax, [SBK_Candidate_Page]              
     BigBook_PageTurn+1A0       mov     ax, [SBK_Candidate_Page]              
     Learn_Spell_Animation+5A8       cmp     ax, [SBK_Candidate_Page]              

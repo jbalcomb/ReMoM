@@ -2,10 +2,10 @@
 
 // WZD o134p03
 void Spellbook_Screen(void)
-SBK_BuildSpellbook__WIP(slt_Overland, 6);
+Build_Spellbook(slt_Overland, 6);
 
 // WZD o117p04
-void SBK_BuildSpellbook__WIP(int16_t spell_list_type, int16_t page_spell_count)
+void Build_Spellbook(int16_t spell_list_type, int16_t page_spell_count)
 
 Allocate_First_Block()
 Near_Allocate_First()
@@ -40,10 +40,10 @@ XREF:
     Magic_Screen+471                  mov     ax, [WIZ_ManaPerTurn]
     Magic_Screen:loc_60C86            mov     ax, [WIZ_ManaPerTurn]
     Magic_Screen+48F                  mov     ax, [WIZ_ManaPerTurn]
-    SBK_BuildSpellbook__WIP+F8        mov     [WIZ_ManaPerTurn], dx
-    SBK_BuildSpellbook__WIP+108       mov     ax, [WIZ_ManaPerTurn]
-    SBK_BuildSpellbook__WIP:loc_9A840 mov     ax, [WIZ_ManaPerTurn]
-    SBK_BuildSpellbook__WIP+12E       mov     ax, [WIZ_ManaPerTurn]
+    Build_Spellbook+F8        mov     [WIZ_ManaPerTurn], dx
+    Build_Spellbook+108       mov     ax, [WIZ_ManaPerTurn]
+    Build_Spellbook:loc_9A840 mov     ax, [WIZ_ManaPerTurn]
+    Build_Spellbook+12E       mov     ax, [WIZ_ManaPerTurn]
 
 ## SBK_BookManaLimit
 
@@ -60,9 +60,9 @@ XREF:
     Magic_Screen+496                  mov     [SBK_BookManaLimit], ax
     Magic_Screen:loc_60C9B            mov     [SBK_BookManaLimit], 0 
     Combat_Spellbook_Screen+5A3       cmp     ax, [SBK_BookManaLimit]
-    SBK_BuildSpellbook__WIP+120       mov     [SBK_BookManaLimit], ax
-    SBK_BuildSpellbook__WIP+135       mov     [SBK_BookManaLimit], ax
-    SBK_BuildSpellbook__WIP:loc_9A855 mov     [SBK_BookManaLimit], 0 
+    Build_Spellbook+120       mov     [SBK_BookManaLimit], ax
+    Build_Spellbook+135       mov     [SBK_BookManaLimit], ax
+    Build_Spellbook:loc_9A855 mov     [SBK_BookManaLimit], 0 
     Combat_Spellbook_Build__WIP+78    mov     [SBK_BookManaLimit], ax
     Combat_Spellbook_Build__WIP+99    cmp     ax, [SBK_BookManaLimit]
     Combat_Spellbook_Build__WIP+BD    mov     [SBK_BookManaLimit], ax

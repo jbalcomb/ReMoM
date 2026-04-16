@@ -162,7 +162,7 @@ void Spellbook_Screen(void)
 
     Spell_Screen_Load();
 
-    SBK_BuildSpellbook__WIP(slt_Overland, 6);  // Book_Type, Page_Size
+    Build_Spellbook(slt_Overland, 6);  // Book_Type, Page_Size
 
     SBK_Dogears = 1;
 
