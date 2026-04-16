@@ -878,7 +878,7 @@ void Sort_Research_List(int16_t player_idx, int16_t count)
         // ; spell of the realm, which won't always include all
         // ; relevant bonuses, and may also add wrong ones
         research_bonus_percentage = Player_Spell_Research_Bonus(HUMAN_PLAYER_IDX, ((itr * NUM_SPELLS_PER_MAGIC_REALM) + 1));
-        realm_research_incomes[itr] = ((research_points * research_bonus_percentage) / 100);
+        realm_research_incomes[itr] = research_points + ((research_points * research_bonus_percentage) / 100);
     }
     for(research_idx2 = 1; research_idx2 < count; research_idx2++)
     {

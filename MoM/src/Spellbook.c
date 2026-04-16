@@ -701,7 +701,7 @@ void SBK_BuildSpellbook__WIP(int16_t spell_list_type, int16_t page_spell_count)
         // int16_t Player_Spell_Research_Bonus(int16_t player_idx, int16_t spell_idx)
         research_bonus_percentage = Player_Spell_Research_Bonus(HUMAN_PLAYER_IDX, ((itr_magic_realms * NUM_SPELLS_PER_MAGIC_REALM) + 1));  // {1, 41, 81, 121, 161, 201}
 
-        SBK_Research_Incomes[itr_magic_realms] = ((research_points * research_bonus_percentage) / 100);
+        SBK_Research_Incomes[itr_magic_realms] = research_points + ((research_points * research_bonus_percentage) / 100);
     }
 
     _players[HUMAN_PLAYER_IDX].Nominal_Skill = Player_Base_Casting_Skill(HUMAN_PLAYER_IDX);
