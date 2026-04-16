@@ -452,10 +452,10 @@ void Platform_Keyboard_Event(SDL_Event * sdl3_event)
             (sdl3_event->text.text[0] != 0)
         )
         {
-            char mox_character = sdl3_event->text.text[0];
+            char l_mox_character = sdl3_event->text.text[0];
             SDL_StopTextInput(sdl3_window);
             SDL_StartTextInput(sdl3_window);
-            Platform_Keyboard_Buffer_Add_Key_Press(MOX_KEY_UNKNOWN, MOX_MOD_NONE, mox_character);
+            Platform_Keyboard_Buffer_Add_Key_Press(MOX_KEY_UNKNOWN, MOX_MOD_NONE, l_mox_character);
         }
         break;
         default:

@@ -11,6 +11,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>   /* CLAUDE: debug */
+#include "../../STU/src/STU_DBG.h"  /* CLAUDE: trc_prn() for frame logging */
 #include <stdlib.h>
 #include <inttypes.h>
 
@@ -398,7 +399,7 @@ void DBG_Frame_Reset(void)
     if(dbg_frame_start_ticks != 0 && (dbg_frame_number % 60) == 0)
     {
         uint64_t avg_delta = (dbg_handler_calls > 0) ? (dbg_total_handler_delta / dbg_handler_calls) : 0;
-        fprintf(stderr, "DBG frame=%u  frametime=%llu ms  handler_calls=%u  max_delta=%llu ms  avg_delta=%llu ms  events: key=%u mdown=%u mup=%u mmove=%u win=%u other=%u  mouse_updates=%u\n", dbg_frame_number, (unsigned long long)frametime, dbg_handler_calls, (unsigned long long)dbg_max_handler_delta, (unsigned long long)avg_delta, dbg_events_key, dbg_events_mousedown, dbg_events_mouseup, dbg_events_mousemotion, dbg_events_window, dbg_events_other, dbg_mouse_updates);
+        trc_prn("DBG frame=%u  frametime=%llu ms  handler_calls=%u  max_delta=%llu ms  avg_delta=%llu ms  events: key=%u mdown=%u mup=%u mmove=%u win=%u other=%u  mouse_updates=%u\n", dbg_frame_number, (unsigned long long)frametime, dbg_handler_calls, (unsigned long long)dbg_max_handler_delta, (unsigned long long)avg_delta, dbg_events_key, dbg_events_mousedown, dbg_events_mouseup, dbg_events_mousemotion, dbg_events_window, dbg_events_other, dbg_mouse_updates);
     }
     dbg_frame_start_ticks = now;
     dbg_handler_calls = 0;
