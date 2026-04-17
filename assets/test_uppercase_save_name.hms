@@ -1,0 +1,67 @@
+
+# test_uppercase_save_name.hms
+#
+# Regression test for uppercase character input in save game name fields.
+# Types a mixed-case name "AbCdEf" into save slot 0, saves the game,
+# then quits.  The test runner should verify that MAGIC.SET contains
+# the exact string "AbCdEf" at the correct offset (slot 0 = offset 0x40).
+#
+# Usage:
+#   HeMoM --continue --scenario test_uppercase_save_name.hms
+#
+# Requires: a game save loaded via --continue (or --newgame + --continue)
+#           with the Main Screen active and all units finished.
+
+# === Open the Game / Save / Load screen ===
+key G
+wait 1s
+
+# === Select save slot 0 (first slot, y=47) ===
+click 80 54
+wait 300ms
+
+# Clear up to 19 characters from the slot's current name.
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+backspace
+
+# Type a mixed-case name — the critical test payload.
+type AbCdEf
+
+wait 300ms
+
+# Click the Save button at (122,171)-(159,184)
+click 140 177
+
+wait 1s
+
+# === Back on Main Screen: open Game menu again ===
+key G
+wait 1s
+
+# === Save / Load Screen: click Quit (returns to Main Menu Screen) ===
+click 62 177
+
+wait 1s
+
+# === Main Menu Screen: hit Q to Quit To DOS ===
+key Q
+
+end

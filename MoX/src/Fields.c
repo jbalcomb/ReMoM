@@ -18,6 +18,7 @@
 #include "FLIC_Draw.h"
 
 #include "../../MoX/src/MOM_DEF.h"
+#include "../../platform/include/Platform.h"  /* CLAUDE: Hw_Textinput_Stop() */
 
 #include <assert.h>
 #include <malloc.h>     /* malloc() */
@@ -1309,6 +1310,7 @@ void Clear_Fields(void)
     auto_input_variable = 0;
     input_field_active = ST_FALSE;
     active_input_field_number = ST_UNDEFINED;
+    /* CLAUDE */ Hw_Textinput_Stop();
 }
 
 // WZD s36p58

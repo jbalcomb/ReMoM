@@ -570,6 +570,7 @@ MoO2
                             GUI_EditCursorOn = ST_FALSE;
                             input_field_active = ST_TRUE;
                             active_input_field_number = alt_field_num;
+                            /* CLAUDE */ Hw_Textinput_Start();
                             // jmp     @@IDK_KD_Enter_PostOp
                         }
                         else  /* input_field_active == ST_TRUE */
@@ -945,6 +946,7 @@ MoO2
                             stu_strcpy((char *)p_fields[active_input_field_number].string, continuous_string);
                             input_field_active = ST_FALSE;
                             active_input_field_number = ST_UNDEFINED;
+                            /* CLAUDE */ Hw_Textinput_Stop();
                         }
                         else if(
                                 (p_fields[field_num].type == ft_ContinuousStringInput)
@@ -957,6 +959,7 @@ MoO2
                             GUI_EditCursorOn = ST_FALSE;
                             input_field_active = ST_TRUE;
                             active_input_field_number = field_num;
+                            /* CLAUDE */ Hw_Textinput_Start();
                         }
                         else if(
                                 (p_fields[field_num].type == ft_ContinuousStringInput)
@@ -1254,6 +1257,7 @@ MoO2
                     stu_strcpy((char *)p_fields[active_input_field_number].string, continuous_string);
                     input_field_active = ST_FALSE;
                     active_input_field_number = ST_UNDEFINED;
+                    /* CLAUDE */ Hw_Textinput_Stop();
                 }
                 else if(
                         (p_fields[field_num].type == ft_ContinuousStringInput)
@@ -1266,6 +1270,7 @@ MoO2
                     GUI_EditCursorOn = ST_FALSE;
                     input_field_active = ST_TRUE;
                     active_input_field_number = field_num;
+                    /* CLAUDE */ Hw_Textinput_Start();
                 }
                 else if(
                         (p_fields[field_num].type == ft_ContinuousStringInput)
