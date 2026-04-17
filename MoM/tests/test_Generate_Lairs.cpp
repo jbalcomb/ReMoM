@@ -6,6 +6,7 @@ extern "C" {
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_BITS.h"
+#include "../../MoX/src/MOX_DEF.h"  /* SET_TERRAIN_TYPE */
 #include "../../STU/src/STU_VLD.h"
 #include "../src/MAPGEN.h"
 #include "../src/TerrType.h"
