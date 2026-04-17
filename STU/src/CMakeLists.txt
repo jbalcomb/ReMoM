@@ -1,5 +1,6 @@
 
 set(LIBSTU_SOURCES
+    AI_METRICS.c
     STU_DBG.c
     STU_DRAW.c
     STU_EMS.c

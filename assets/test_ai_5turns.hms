@@ -1,0 +1,51 @@
+# test_ai_5turns.hms — Run 5 turns for AI metrics evaluation.
+#
+# Drives the Main Screen through 5 full turns, handling the research
+# picker that fires on turn 1 (deterministic seed from test_worldgen.ini).
+#
+# Usage:
+#   HeMoM --continue --scenario test_ai_5turns.hms --ai-metrics --dump-save SAVE1.GAM
+
+# === Home city naming popup ===
+wait 500ms
+backspace
+type Claudesville
+enter
+wait 500ms
+
+# === Patrol the starting stack ===
+click 290 180
+wait 300ms
+
+# === Turn 1 ===
+key N
+wait 500ms
+click 54 38               # research picker: top-left spell slot
+wait 1s
+
+# === Turn 2 ===
+click 290 180             # patrol the stack again
+wait 300ms
+key N
+wait 1s
+
+# === Turn 3 ===
+click 290 180
+wait 300ms
+key N
+wait 1s
+
+# === Turn 4 ===
+click 290 180
+wait 300ms
+key N
+wait 1s
+
+# === Turn 5 ===
+click 290 180
+wait 300ms
+key N
+wait 1s
+
+# === Save and quit ===
+include scenario_tail_save_and_quit.hms

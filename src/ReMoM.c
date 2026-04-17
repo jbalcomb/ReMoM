@@ -26,6 +26,7 @@
 #endif
 
 #ifdef STU_DEBUG
+#include "../STU/src/AI_METRICS.h"
 #include "../STU/src/STU_DBG.h"
 #include "../STU/src/STU_WRLD.h"
 #endif
@@ -224,6 +225,9 @@ int main(int argc, char * argv[])
     Trace_Log_Startup();
     trc_prn("TRACE: [%s, %d]: BEGIN: ReMoM main()\n", __FILE__, __LINE__);
 #endif
+#ifdef STU_DEBUG
+    AI_Metrics_Startup();
+#endif
 
 #ifdef STU_DEBUG
 #ifdef _WIN32
@@ -391,6 +395,9 @@ int main(int argc, char * argv[])
 #ifdef STU_DEBUG
 #endif
 
+#ifdef STU_DEBUG
+    AI_Metrics_Shutdown();
+#endif
 #ifdef STU_DEBUG
     trc_prn("TRACE: [%s, %d]: END: ReMoM main()\n", __FILE__, __LINE__);
     Trace_Log_Shutdown();

@@ -6,6 +6,7 @@
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/AI_METRICS.h"
 
 #include "../../MoX/src/EMS/EMS.h"
 #include "../../MoX/src/MOM_DAT.h"
@@ -334,6 +335,7 @@ void AI_Next_Turn(void)
     AI_Hopeless_Stasis();
 
     AI_Log_Metrics();
+    AI_Metrics_Emit_Turn_Summary(_turn, _difficulty, _num_players);
     dbg_prn("AI_TURN: === END Turn %d ===\n", _turn);
 }
 

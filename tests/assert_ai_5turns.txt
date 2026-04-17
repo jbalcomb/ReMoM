@@ -1,0 +1,54 @@
+# assert_ai_5turns.txt — Behavioral assertions for a 5-turn AI test.
+#
+# These are evaluated by check_ai_metrics against the CSV files
+# produced by a 5-turn headless run with --ai-metrics.
+
+# ===================================================================
+#  Liveness checks — things that should always be happening
+# ===================================================================
+
+# The turn summary CSV should have data (6 players * 5 turns = 30 rows)
+LIVENESS  AI_TURN_SUMMARY.CSV  *             turn        MIN 1
+
+# Human player (0) should exist with at least 1 city
+LIVENESS  AI_TURN_SUMMARY.CSV  player_idx=0  city_count  MIN 1
+
+# Human player should have units
+LIVENESS  AI_TURN_SUMMARY.CSV  player_idx=0  unit_count  MIN 1
+
+# At least one AI wizard (player 1) should be active
+LIVENESS  AI_TURN_SUMMARY.CSV  player_idx=1  active      MIN 1
+
+# AI wizard 1 should have at least 1 city
+LIVENESS  AI_TURN_SUMMARY.CSV  player_idx=1  city_count  MIN 1
+
+# AI wizard 1 should have units
+LIVENESS  AI_TURN_SUMMARY.CSV  player_idx=1  unit_count  MIN 1
+
+# Neutral player (5) should exist in the data
+LIVENESS  AI_TURN_SUMMARY.CSV  player_idx=5  unit_count  MIN 0
+
+# Neutral player should have units (city garrisons)
+LIVENESS  AI_TURN_SUMMARY.CSV  player_idx=5  unit_count  MIN 1
+
+# ===================================================================
+#  Sanity bounds — values that should stay in range
+# ===================================================================
+
+# No player should have negative gold (uint16 so 0..65535, but sane range)
+BOUNDS    AI_TURN_SUMMARY.CSV  *             gold        RANGE 0 30000
+
+# No player should have negative mana
+BOUNDS    AI_TURN_SUMMARY.CSV  *             mana        RANGE 0 30000
+
+# Unit counts should be reasonable
+BOUNDS    AI_TURN_SUMMARY.CSV  *             unit_count  RANGE 0 1009
+
+# City counts should be reasonable
+BOUNDS    AI_TURN_SUMMARY.CSV  *             city_count  RANGE 0 100
+
+# Raider accumulator should be in range (resets at 30)
+BOUNDS    AI_TURN_SUMMARY.CSV  player_idx=5  raider_acc  RANGE 0 100
+
+# Monster accumulator should be in range
+BOUNDS    AI_TURN_SUMMARY.CSV  player_idx=5  monster_acc RANGE 0 100

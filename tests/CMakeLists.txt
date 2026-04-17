@@ -203,3 +203,58 @@ set_tests_properties(HeMoM_NextTurn_Assertions PROPERTIES
     FIXTURES_REQUIRED HeMoM_NextTurn_Saved
     LABELS "hemom;integration;nextturn"
 )
+
+
+
+# =========================================================================
+#  AI Behavior Test
+#
+#  Runs 5 turns headlessly with --ai-metrics enabled, then evaluates the
+#  resulting CSV files against behavioral assertions using check_ai_metrics.
+#
+#  Assertions cover:
+#    - Liveness: players have units/cities, turn data exists
+#    - Bounds: gold/mana/unit counts stay in sane ranges
+# =========================================================================
+
+add_executable(check_ai_metrics check_ai_metrics.c)
+
+add_test(
+    NAME HeMoM_AIBehavior_Setup
+    COMMAND $<TARGET_FILE:HeMoM>
+        --newgame "${HEMOM_TEST_ASSETS}/test_worldgen.ini"
+        --scenario "${HEMOM_TEST_ASSETS}/test_worldgen_smoke.hms"
+    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+)
+set_tests_properties(HeMoM_AIBehavior_Setup PROPERTIES
+    TIMEOUT 10
+    FIXTURES_SETUP HeMoM_AIBehavior
+    LABELS "hemom;integration;ai"
+)
+
+add_test(
+    NAME HeMoM_AIBehavior_Run
+    COMMAND $<TARGET_FILE:HeMoM>
+        --continue
+        --scenario "${HEMOM_TEST_ASSETS}/test_ai_5turns.hms"
+        --ai-metrics
+        --dump-save SAVE1.GAM
+    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+)
+set_tests_properties(HeMoM_AIBehavior_Run PROPERTIES
+    TIMEOUT 60
+    FIXTURES_REQUIRED HeMoM_AIBehavior
+    FIXTURES_SETUP HeMoM_AIBehavior_Done
+    LABELS "hemom;integration;ai"
+)
+
+add_test(
+    NAME HeMoM_AIBehavior_Evaluate
+    COMMAND $<TARGET_FILE:check_ai_metrics>
+        "${HEMOM_TEST_WORKDIR}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/assert_ai_5turns.txt"
+)
+set_tests_properties(HeMoM_AIBehavior_Evaluate PROPERTIES
+    FIXTURES_REQUIRED HeMoM_AIBehavior_Done
+    LABELS "hemom;integration;ai"
+)

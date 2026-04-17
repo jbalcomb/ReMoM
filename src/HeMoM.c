@@ -26,6 +26,7 @@
 
 #include "../ext/stu_compat.h"
 #ifdef STU_DEBUG
+#include "../STU/src/AI_METRICS.h"
 #include "../STU/src/STU_DBG.h"
 #endif
 #include "../platform/include/Platform.h"
@@ -613,6 +614,17 @@ int main(int argc, char *argv[])
             trc_prn("[HeMoM] CLI: --dump-save \"%s\"\n", hemom_dump_save);
 #endif
         }
+        else if (strcmp(argv[argi], "--ai-metrics") == 0)
+        {
+#ifdef STU_DEBUG
+            AI_Metrics_Enabled = 1;
+            fprintf(stderr, "[HeMoM] CLI: --ai-metrics (enabled)\n");
+            dbg_prn("[HeMoM] CLI: --ai-metrics (enabled)\n");
+            trc_prn("[HeMoM] CLI: --ai-metrics (enabled)\n");
+#else
+            fprintf(stderr, "[HeMoM] CLI: --ai-metrics ignored (not a debug build)\n");
+#endif
+        }
         else
         {
             fprintf(stderr, "[HeMoM] CLI: unknown arg \"%s\"\n", argv[argi]);
@@ -627,6 +639,10 @@ int main(int argc, char *argv[])
 #ifdef STU_DEBUG
     dbg_prn("[HeMoM] Parsed: mode=%d file=\"%s\" scenario=\"%s\"\n", hemom_mode, hemom_file, hemom_scenario);
     trc_prn("[HeMoM] Parsed: mode=%d file=\"%s\" scenario=\"%s\"\n", hemom_mode, hemom_file, hemom_scenario);
+#endif
+
+#ifdef STU_DEBUG
+    AI_Metrics_Startup();
 #endif
 
     if (hemom_mode == 0)
@@ -802,6 +818,9 @@ int main(int argc, char *argv[])
 #endif
     Shutdown_Platform();
 
+#ifdef STU_DEBUG
+    AI_Metrics_Shutdown();
+#endif
 #ifdef STU_DEBUG
     trc_prn("TRACE: [%s, %d]: END: HeMoM  main()\n", __FILE__, __LINE__);
     Trace_Log_Shutdown();
