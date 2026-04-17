@@ -269,6 +269,7 @@ int16_t Validate_Lair_Record(int16_t lair_idx)
     return ST_TRUE;
 }
 
+
 int16_t Validate_All_Lairs(void)
 {
     int16_t lair_idx = 0;
@@ -284,6 +285,141 @@ int16_t Validate_All_Lairs(void)
         if(Validate_Lair_Record(lair_idx) != ST_TRUE)
         {
             fprintf(stderr, "ERROR: Validate_All_Lairs(): failed at lair_idx=%d\n", lair_idx);
+            return ST_FALSE;
+        }
+    }
+
+    return ST_TRUE;
+}
+
+
+static int16_t Validate_City_Fail_Range(int16_t city_idx, const char * field_name, int32_t value, int32_t min_value, int32_t max_value)
+{
+    fprintf(stderr,
+        "ERROR: Validate_City_Record(): city_idx=%d has invalid %s=%ld (expected [%ld, %ld])\n",
+        city_idx,
+        field_name,
+        (long)value,
+        (long)min_value,
+        (long)max_value);
+
+    return ST_FALSE;
+}
+
+int16_t Validate_City_Record(int16_t city_idx)
+{
+    const struct s_CITY * city = NULL;
+
+    if(_CITIES == NULL)
+    {
+        fprintf(stderr, "ERROR: Validate_City_Record(): _CITIES is NULL\n");
+        return ST_FALSE;
+    }
+
+    if((city_idx < 0) || (city_idx >= NUM_CITIES))
+    {
+        fprintf(stderr, "ERROR: Validate_City_Record(): city_idx=%d out of range [0, %d)\n", city_idx, NUM_CITIES);
+        return ST_FALSE;
+    }
+
+    city = &_CITIES[city_idx];
+
+    if((city->wx < 0) || (city->wx >= WORLD_WIDTH))
+    {
+        return Validate_City_Fail_Range(city_idx, "wx", city->wx, 0, (WORLD_WIDTH - 1));
+    }
+
+    if((city->wy < 0) || (city->wy >= WORLD_HEIGHT))
+    {
+        return Validate_City_Fail_Range(city_idx, "wy", city->wy, 0, (WORLD_HEIGHT - 1));
+    }
+
+    if((city->wp < 0) || (city->wp >= NUM_PLANES))
+    {
+        return Validate_City_Fail_Range(city_idx, "wp", city->wp, 0, (NUM_PLANES - 1));
+    }
+
+    if((city->race < 0) || (city->race >= NUM_RACES))
+    {
+        return Validate_City_Fail_Range(city_idx, "race", city->race, 0, (NUM_RACES - 1));
+    }
+
+    if((city->owner_idx < 0) || (city->owner_idx > NEUTRAL_PLAYER_IDX))
+    {
+        return Validate_City_Fail_Range(city_idx, "owner_idx", city->owner_idx, 0, NEUTRAL_PLAYER_IDX);
+    }
+
+    if(city->population < 0)
+    {
+        return Validate_City_Fail_Range(city_idx, "population", city->population, 0, 127);
+    }
+
+    if(city->size < 0)
+    {
+        return Validate_City_Fail_Range(city_idx, "size", city->size, 0, 127);
+    }
+
+    if((city->farmer_count < 0) || (city->farmer_count > city->population))
+    {
+        return Validate_City_Fail_Range(city_idx, "farmer_count", city->farmer_count, 0, city->population);
+    }
+
+    return ST_TRUE;
+}
+
+int16_t Validate_All_Cities(void)
+{
+    int16_t city_idx = 0;
+
+    if(_CITIES == NULL)
+    {
+        fprintf(stderr, "ERROR: Validate_All_Cities(): _CITIES is NULL\n");
+        return ST_FALSE;
+    }
+
+    if((_cities < 0) || (_cities > NUM_CITIES))
+    {
+        fprintf(stderr, "ERROR: Validate_All_Cities(): _cities=%d out of range [0, %d]\n", _cities, NUM_CITIES);
+        return ST_FALSE;
+    }
+
+    for(city_idx = 0; city_idx < _cities; city_idx++)
+    {
+        if(Validate_City_Record(city_idx) != ST_TRUE)
+        {
+            fprintf(stderr, "ERROR: Validate_All_Cities(): failed at city_idx=%d\n", city_idx);
+            return ST_FALSE;
+        }
+    }
+
+    return ST_TRUE;
+}
+
+int16_t Validate_All_Neutral_Cities(void)
+{
+    int16_t city_idx = 0;
+
+    if(_CITIES == NULL)
+    {
+        fprintf(stderr, "ERROR: Validate_All_Neutral_Cities(): _CITIES is NULL\n");
+        return ST_FALSE;
+    }
+
+    if((_cities < 0) || (_cities > NUM_CITIES))
+    {
+        fprintf(stderr, "ERROR: Validate_All_Neutral_Cities(): _cities=%d out of range [0, %d]\n", _cities, NUM_CITIES);
+        return ST_FALSE;
+    }
+
+    for(city_idx = 0; city_idx < _cities; city_idx++)
+    {
+        if(_CITIES[city_idx].owner_idx != NEUTRAL_PLAYER_IDX)
+        {
+            continue;
+        }
+        if(Validate_City_Record(city_idx) != ST_TRUE)
+        {
+            fprintf(stderr, "ERROR: Validate_All_Neutral_Cities(): failed at city_idx=%d\n", city_idx);
             return ST_FALSE;
         }
     }

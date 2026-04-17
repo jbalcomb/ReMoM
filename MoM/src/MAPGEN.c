@@ -251,7 +251,7 @@ and their order of execution
  *
  * @return void
  *
- * @see Generate_Home_City
+ * @see Generate_Home_Cities
  * @see Generate_Neutral_Cities
  * @see Generate_Terrain_Specials
  * @see Generate_Roads
@@ -342,12 +342,20 @@ void Init_New_Game(void)
 
     _units = 0;
 
-    Generate_Home_City();
+    Generate_Home_Cities();
+
+#ifdef STU_DEBUG
+    assert(Validate_All_Cities() == ST_TRUE);
+#endif
 
     Draw_Building_The_Worlds(70);
 
     Generate_Neutral_Cities(ARCANUS_PLANE);
     Generate_Neutral_Cities(MYRROR_PLANE);
+
+#ifdef STU_DEBUG
+    assert(Validate_All_Neutral_Cities() == ST_TRUE);
+#endif
 
     Draw_Building_The_Worlds(75);
 
@@ -729,7 +737,34 @@ void Generate_Towers(void)
 }
 
 
-void Generate_Home_City(void)
+/**
+ * @brief Places each wizard's starting fortress and capital, then creates starting garrison units.
+ *
+ * @details
+ * Runs the home-city placement phase of world generation for all players. The routine repeatedly
+ * searches for valid fortress coordinates on the appropriate plane for each wizard, rejecting map
+ * squares that are ocean, too close to previously placed fortresses, or too close to nodes, towers,
+ * or lairs. It also rejects locations whose estimated maximum city size is too low for the intended
+ * starting city population threshold.
+ *
+ * After all fortress locations are accepted, the function initializes one capital city per active
+ * player in `_CITIES`, assigns the human-selected race to the human player, chooses AI starting races,
+ * initializes core city state and starting buildings, assigns a random race-appropriate city name,
+ * and finally creates the initial spearmen/swordsmen garrison units at each capital.
+ *
+ * @return void
+ *
+ * @note The plane selection is driven by each player's `myrran` flag.
+ * @note This routine mutates global fortress, city, and unit state including `_FORTRESSES`,
+ * `_CITIES`, `_cities`, and the new-game unit table via `Create_Unit_NewGame()`.
+ * @warning The placement logic intentionally uses retry loops and distance relaxation; historical
+ * behavior notes in the body indicate known quirks and bug-prone edge cases in some checks.
+ *
+ * @see City_Maximum_Size_NewGame
+ * @see Random_City_Name_By_Race_NewGame
+ * @see Create_Unit_NewGame
+ */
+void Generate_Home_Cities(void)
 {
     int16_t max_pop_failures = 0;
     int16_t minimum_site_distance = 0;  // used for _NODES[], _TOWERS[], _LAIRS[]
@@ -4824,7 +4859,7 @@ void Generate_Neutral_Cities(int16_t wp)
 
 // jump back here if the location is invalid
 Loop_Location_2:
-// ...same as in Generate_Home_City()
+// ...same as in Generate_Home_Cities()
 
             tries++;
 

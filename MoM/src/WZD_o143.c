@@ -12,7 +12,7 @@
 #include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_BASE.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
-#include "../../MoX/src/MOX_DEF.h"
+#include "../../MoX/src/MOX_DEF.h"  /* SET_TERRAIN_TYPE */
 #include "../../MoX/src/MOX_TYPE.h"
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/LBX_Load.h"

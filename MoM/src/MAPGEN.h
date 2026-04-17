@@ -32,7 +32,7 @@ void Extend_Islands(int16_t wp);
 void Generate_Towers(void);
 
 // MGC o51p05
-void Generate_Home_City(void);
+void Generate_Home_Cities(void);
 
 // MGC o51p06
 void Init_Landmasses(int16_t wp);

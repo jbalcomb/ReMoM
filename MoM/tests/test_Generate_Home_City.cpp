@@ -21,7 +21,7 @@ extern "C" {
 
 
 /*
-    Generate_Home_City() places fortresses (starting city locations) for
+    Generate_Home_Cities() places fortresses (starting city locations) for
     each player and then creates the actual city records and starting units.
 
     The fortress placement loop validates each random location by checking:
@@ -166,7 +166,7 @@ TEST_F(GenerateHomeCityTest, HumanFortressHasSufficientMaxPop)
     }
 
     // Act
-    Generate_Home_City();
+    Generate_Home_Cities();
 
     // Assert: human player fortress (player_idx 0) should be on viable terrain
     int16_t human_wx = _FORTRESSES[HUMAN_PLAYER_IDX].wx;
@@ -175,7 +175,7 @@ TEST_F(GenerateHomeCityTest, HumanFortressHasSufficientMaxPop)
     int16_t max_pop = City_Maximum_Size_NewGame(human_wx, human_wy, human_wp);
     int16_t pop_min = (8 - (HUMAN_PLAYER_IDX / 3));
 
-    EXPECT_GT(max_pop, pop_min) << "Human fortress at (" << human_wx << ", " << human_wy << ", " << human_wp << ") has max_pop " << max_pop << " but needs > " << pop_min << ". The population comparison in Generate_Home_City is inverted.";
+    EXPECT_GT(max_pop, pop_min) << "Human fortress at (" << human_wx << ", " << human_wy << ", " << human_wp << ") has max_pop " << max_pop << " but needs > " << pop_min << ". The population comparison in Generate_Home_Cities is inverted.";
 }
 
 
@@ -211,7 +211,7 @@ TEST_F(GenerateHomeCityTest, AllFortressesHaveSufficientMaxPop)
     }
 
     // Act
-    Generate_Home_City();
+    Generate_Home_Cities();
 
     // Assert: every fortress should be on terrain with sufficient max_pop
     for (int16_t player_idx = 0; player_idx < NUM_PLAYERS; player_idx++)

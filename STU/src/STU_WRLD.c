@@ -10,7 +10,7 @@ Dependencies:
         _LAIRS[]
         _TOWERS[]
         _CITIES[]
-    Generate_Home_City()
+    Generate_Home_Cities()
         _FORTRESSES[]
         _NODES[]
         _TOWERS[]
@@ -1844,7 +1844,7 @@ void Simulate_World_Map_Generation(void)
         Generate_Lairs();
         
         _units = 0;
-        Generate_Home_City();
+        Generate_Home_Cities();
         Generate_Neutral_Cities(ARCANUS_PLANE);
         Generate_Neutral_Cities(MYRROR_PLANE);
 

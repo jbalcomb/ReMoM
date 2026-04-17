@@ -18,6 +18,12 @@ MoO2  Module: LOADSAVE
 
 */
 
+#include "../../ext/stu_compat.h"
+
+#include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_TST.h"
+#include "../../STU/src/STU_VLD.h"
+
 #include "../../MoX/src/DOS.h"
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Fields.h"
@@ -49,12 +55,9 @@ MoO2  Module: LOADSAVE
 #include "UNITSTK.h"
 #include "WZD_o143.h"
 
-#include "../../STU/src/STU_TST.h"
-
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../ext/stu_compat.h"
 
 #include "../../platform/include/Platform.h"  /* CLAUDE: MOUSE_LOG for load screen timestamps */
 
@@ -800,10 +803,24 @@ void Loaded_Game_Update(void)
     */
 
         // TST_Validate_GameData();
+#ifdef STU_DEBUG
         // if(Validate_All_Lairs() != ST_TRUE)
         // {
         //     Generate_Lairs();
         // }
+#endif
+#ifdef STU_DEBUG
+        if(Validate_All_Neutral_Cities() != ST_TRUE)
+        {
+            // Generate_Neutral_Cities();
+        }
+#endif
+#ifdef STU_DEBUG
+        if(Validate_All_Cities() != ST_TRUE)
+        {
+            // Generate_Home_Cities();
+        }
+#endif
 
         TST_Patch_Game_Data();
 
