@@ -36,39 +36,62 @@
 #include "AIMOVE.h"
 
 
-// WZD dseg:D3EC                                                 BEGIN:  ovr158 - Uninitialized Data
+
+
+// WZD dseg:7116                                                 BEGIN:  ovr158 - Initialized Data  (AIMOVE)
+
+int16_t ai_human_hostility = ST_FALSE;  /* OON XREF: AI_Set_Unit_Orders() */
+
+// WZD dseg:7116                                                 END:  ovr158 - Initialized Data  (AIMOVE)
+
+
+
+// WZD dseg:D3EC                                                 BEGIN:  ovr158 - Uninitialized Data  (AIMOVE)
 
 // WZD dseg:D3EC
-uint8_t * AI_ContinentType_Ptr;
+uint8_t * cp_landmass_type_array;
 // WZD dseg:D3EE
-uint8_t * AI_Continent_Y_Ptr;
+uint8_t * cp_landmass_wy_array;
 // WZD dseg:D3F0
-uint8_t * AI_Continent_X_Ptr;
+uint8_t * cp_landmass_wx_array;
 
 // WZD dseg:D3F2
 int16_t G_Seafaring_Lowest_Value;
 // WZD dseg:D3F4
 int16_t G_Pushout_Lowest_Value;
 // WZD dseg:D3F6
+/*
+cleared in AI_Survey_Excess_Units()
+populated in AI_Survey_Excess_Units_In_Stack()
+*/
 int16_t G_Seafaring_Count;
 // WZD dseg:D3F8
 int16_t G_Pushout_Units_Count;
 // WZD dseg:D3FA
-int16_t G_Seafaring_Values[9];
+int16_t G_Seafaring_Values[MAX_STACK];
 // WZD dseg:D40C
-int16_t G_Pushout_Values[9];
+int16_t G_Pushout_Values[MAX_STACK];
 // WZD dseg:D41E
-int16_t G_Seafaring_CX_IDs[9];
+int16_t G_Seafaring_CX_IDs[MAX_STACK];
 // WZD dseg:D430
-int16_t G_Pushout_CX_IDs[9];
+int16_t G_Pushout_CX_IDs[MAX_STACK];
 // WZD dseg:D442
-int16_t G_Seafaring_UL_Indices[9];
+int16_t G_Seafaring_UL_Indices[MAX_STACK];
 // WZD dseg:D454
-int16_t G_Pushout_UL_Indices[9];
+int16_t G_Pushout_UL_Indices[MAX_STACK];
 // WZD dseg:D466
-int16_t G_Seafaring_Unit_Indices[9];
+int16_t G_Seafaring_Unit_Indices[MAX_STACK];
+
 // WZD dseg:D478
-int16_t G_Pushout_Unit_Indices[9];
+/*
+AI_Set_Unit_Orders
+    |-> AI_Survey_Excess_Units()
+        |-> AI_Survey_Excess_Units_In_Stack()
+    |-> G_AI_RallyFill__WIP()
+
+*/
+int16_t G_Pushout_Unit_Indices[MAX_STACK];
+
 // WZD dseg:D48A
 int16_t AI_OnRallyPt_Count;
 // WZD dseg:D48C
@@ -82,13 +105,12 @@ int16_t UU_AI_TargetingVar;
 
 // WZD dseg:D492 00 00                                           dw 0
 
-// WZD dseg:D492                                                 END:  ovr158 - Uninitialized Data
-
+// WZD dseg:D492                                                 END:  ovr158 - Uninitialized Data  (AIMOVE)
 
 
 
 /*
-    WIZARDS.EXE  ovr162
+    WIZARDS.EXE  ovr158
 */
 
 // WZD o158p01
@@ -105,18 +127,16 @@ many many BUGs
 
 
 */
-void AI_SetUnitOrders__WIP(int16_t player_idx)
+void AI_Set_Unit_Orders(int16_t player_idx)
 {
     int16_t wp = 0;
-    int16_t landmass_idx = 0;  // _SI_
+    int16_t landmass_idx = 0;
 
-
+    /* Initialization and Hostility Check */
     ai_human_hostility = ST_FALSE;
-
-
     if(
         (
-            (_players[player_idx].Hostility[HUMAN_PLAYER_IDX] < 3)
+            (_players[player_idx].Hostility[HUMAN_PLAYER_IDX] >= 3)
             ||
             (_players[player_idx].Dipl.Dipl_Status[HUMAN_PLAYER_IDX] >= DIPL_War)
         )
@@ -124,141 +144,84 @@ void AI_SetUnitOrders__WIP(int16_t player_idx)
         (_players[player_idx].peace_duration[HUMAN_PLAYER_IDX] == 0)
     )
     {
-
         ai_human_hostility = ST_TRUE;
-
     }
-
 
     EMM_Map_CONTXXX__WIP();
-
-
     ai_seektransport_cnt = 0;
-
-
     g_ai_minattackstack = (2 + (_turn / 30));
-
-
     if(g_ai_minattackstack > MAX_STACK)
     {
-
         g_ai_minattackstack = MAX_STACK;
-
     }
-
-
+    /* Global AI adjustments */
     AI_Disband_To_Balance_Budget(player_idx);
-
-
     AI_Shift_Off_Home_Plane(player_idx);
-
-
     AI_Move_Out_Boats();
-
-
+    /* OGBUG: wp is used here before being initialized to 0 */
     AI_Find_Opportunity_City_Target(wp, player_idx);
-
-
+    /* Iterate through all planes */
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
-
-        AI_Continent_X_Ptr = &_ai_continents.plane[wp].player[player_idx].X_Coords[0];
-
-        AI_Continent_Y_Ptr = &_ai_continents.plane[wp].player[player_idx].Y_Coords[0];
-
-        AI_ContinentType_Ptr = &_ai_continents.plane[wp].player[player_idx].Cont_Types[0];
-
+        cp_landmass_wx_array = &_ai_continents.plane[wp].player[player_idx].wx_array[0];
+        cp_landmass_wy_array = &_ai_continents.plane[wp].player[player_idx].wy_array[0];
+        cp_landmass_type_array = &_ai_continents.plane[wp].player[player_idx].type_array[0];
+        /* Iterate through all landmasses */
         for(landmass_idx = 1; landmass_idx < NUM_LANDMASSES; landmass_idx++)
         {
-
             AI_Build_Stacks_Find_Targets_Order_Moves(player_idx, landmass_idx, wp);
-
-
             AI_GarrBuilderPush__WIP(wp);
-
-
-            AI_sEFBD6__WIP();
-
-
+            AI_Survey_Excess_Units();
             AI_Do_Meld(player_idx);
-
-
             AI_Do_Settle(player_idx, landmass_idx);
-
-
             AI_Do_Purify(landmass_idx, wp);
-
-
             AI_Do_RoadBuild(landmass_idx);
-
-
             AI_Build_Target_List(player_idx, landmass_idx, wp);
-
-
             AI_ProcessRoamers__WIP(landmass_idx, wp, player_idx);
-
-
-            // ; should just test for 2...
+            // almost just NOT lmt_Contested
             if(
-                (AI_ContinentType_Ptr[landmass_idx] >= CONT_Abandon)     /* {..., CONT_Abandon: 5, CONT_NoTargets: 6 } */
+                (cp_landmass_type_array[landmass_idx] >= lmt_Abandon)     /* {..., lmt_Abandon: 5, lmt_NoTargets: 6 } */
                 ||
-                (AI_ContinentType_Ptr[landmass_idx] == CONT_Own)         /* 1 */
+                (cp_landmass_type_array[landmass_idx] == lmt_Own)         /* 1 */
                 ||
-                (AI_ContinentType_Ptr[landmass_idx] == CONT_NoLanding)   /* 4 */
+                (cp_landmass_type_array[landmass_idx] == lmt_NoLanding)   /* 4 */
                 ||
-                (AI_ContinentType_Ptr[landmass_idx] == CONT_NoPresence)  /* 3 */
+                (cp_landmass_type_array[landmass_idx] == lmt_NoPresence)  /* 3 */
             )
             {
-
+                // Early-out if the AI has no designated main-war continent on this plane (AI_MainWarConts[wp][player_idx] == 0)
+                // Walk all AI-owned stacks of type 0 or 1 (roaming/mobile, not garrison)
+                // For each stack physically standing on the main-war continent:
+                // For each unit in that stack with air or water travel and no UA_MELD:
+                // Issue a move order toward the main-war continent's rally coordinates
                 AI_PullForMainWar__WIP(player_idx, wp);
-
             }
-
-
             if(
-                (AI_ContinentType_Ptr[landmass_idx] >= CONT_Abandon)  /* {..., CONT_Abandon: 5, CONT_NoTargets: 6 } */
+                (cp_landmass_type_array[landmass_idx] >= lmt_Abandon)  /* {..., lmt_Abandon: 5, lmt_NoTargets: 6 } */
                 ||
-                (AI_ContinentType_Ptr[landmass_idx] == CONT_Own)
+                (cp_landmass_type_array[landmass_idx] == lmt_Own)
             )
             {
-
                 G_AI_HomeRallyFill__WIP(landmass_idx, wp, player_idx);
-
             }
-
-
             G_AI_RallyFill__WIP(landmass_idx, wp, player_idx);
-
-
             if(
-                (AI_ContinentType_Ptr[landmass_idx] == CONT_Own)
+                (cp_landmass_type_array[landmass_idx] == lmt_Own)
                 ||
-                (AI_ContinentType_Ptr[landmass_idx] == CONT_Contested)
+                (cp_landmass_type_array[landmass_idx] == lmt_Contested)
                 ||
-                (AI_ContinentType_Ptr[landmass_idx] >= CONT_Abandon)
+                (cp_landmass_type_array[landmass_idx] >= lmt_Abandon)
             )
             {
-
                 AI_FillGarrisons__WIP(player_idx, wp, landmass_idx);
-
             }
-
-
         }
-
-
+        /* Process non-landmass based units */
         AI_ProcessOcean__WIP(player_idx, wp);
-
-
         G_AI_ProcessTransports__WIP(player_idx, wp);
-
-
     }
-
-
-    // DONT  EMM_Map_DataH()
-
-
+    /* Restore EMM mapping to default Data block */
+    EMM_Map_DataH();
 }
 
 
@@ -295,9 +258,9 @@ void G_AI_RallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx)
     {
 
         if(
-            (_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] >= CONT_Abandon)
+            (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] >= lmt_Abandon)
             ||
-            (_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_NoPresence)
+            (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoPresence)
             ||
             ((AI_OnRallyPt_Count + AI_RallyEnRouteCount + G_Pushout_Units_Count) > g_ai_minattackstack)
         )
@@ -314,7 +277,7 @@ void G_AI_RallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx)
 
                 unit_idx = G_Pushout_Unit_Indices[itr];
 
-                AI_Set_Move_Or_Goto_Target(unit_idx, AI_Continent_X_Ptr[landmass_idx], AI_Continent_Y_Ptr[landmass_idx], unit_list_idx, list_unit_idx);
+                AI_Set_Move_Or_Goto_Target(unit_idx, cp_landmass_wx_array[landmass_idx], cp_landmass_wy_array[landmass_idx], unit_list_idx, list_unit_idx);
 
             }
 
@@ -368,19 +331,19 @@ void AI_FillGarrisons__WIP(int16_t player_idx, int16_t wp, int16_t landmass_idx)
     int16_t target_site_idx = 0;  // _DI_
 
     if(
-        (_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] < CONT_Abandon)
+        (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] < lmt_Abandon)
         &&
-        (_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] != CONT_Own)
+        (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] != lmt_Own)
     )
     {
 
-        // CONT_Invalid, CONT_Contested, CONT_NoPresence, CONT_NoLanding
+        // lmt_Invalid, lmt_Contested, lmt_NoPresence, lmt_NoLanding
         G_Low_Threat = ST_FALSE;
 
     }
     else
     {
-        // CONT_Own, CONT_Abandon, CONT_NoTargets
+        // lmt_Own, lmt_Abandon, lmt_NoTargets
         G_Low_Threat = ST_TRUE;
 
     }
@@ -625,9 +588,9 @@ void AI_FillGarrisons__WIP(int16_t player_idx, int16_t wp, int16_t landmass_idx)
         {
 
             if(
-                (_ai_own_stack_wx[itr_stacks] != AI_Continent_X_Ptr[landmass_idx])
+                (_ai_own_stack_wx[itr_stacks] != cp_landmass_wx_array[landmass_idx])
                 ||
-                (_ai_own_stack_wy[itr_stacks] != AI_Continent_Y_Ptr[landmass_idx])
+                (_ai_own_stack_wy[itr_stacks] != cp_landmass_wy_array[landmass_idx])
             )
             {
 
@@ -800,9 +763,9 @@ void AI_ProcessOcean__WIP(int16_t player_idx, int16_t wp)
 
     }
 
-    MainWar_Rally_X = _ai_continents.plane[wp].player[player_idx].X_Coords[AI_MainWarConts[wp][player_idx]];
+    MainWar_Rally_X = _ai_continents.plane[wp].player[player_idx].wx_array[AI_MainWarConts[wp][player_idx]];
 
-    MainWar_Rally_Y = _ai_continents.plane[wp].player[player_idx].Y_Coords[AI_MainWarConts[wp][player_idx]];
+    MainWar_Rally_Y = _ai_continents.plane[wp].player[player_idx].wy_array[AI_MainWarConts[wp][player_idx]];
 
     fortress_wx = _FORTRESSES[player_idx].wx;
 
@@ -821,22 +784,22 @@ void AI_ProcessOcean__WIP(int16_t player_idx, int16_t wp)
         {
 
             if(
-                (_ai_continents.plane[wp].player[player_idx].Cont_Types[itr] == CONT_Contested)
+                (_ai_continents.plane[wp].player[player_idx].type_array[itr] == lmt_Contested)
                 ||
-                (_ai_continents.plane[wp].player[player_idx].Cont_Types[itr] == CONT_NoPresence)
+                (_ai_continents.plane[wp].player[player_idx].type_array[itr] == lmt_NoPresence)
             )
             {
 
-                Fortress_Distance = Delta_XY_With_Wrap(fortress_wx, fortress_wy, _ai_continents.plane[wp].player[player_idx].X_Coords[itr], _ai_continents.plane[wp].player[player_idx].Y_Coords[itr], WORLD_WIDTH);
+                Fortress_Distance = Delta_XY_With_Wrap(fortress_wx, fortress_wy, _ai_continents.plane[wp].player[player_idx].wx_array[itr], _ai_continents.plane[wp].player[player_idx].wy_array[itr], WORLD_WIDTH);
 
                 if(Fortress_Distance < Lowest_Fortress_Distance)
                 {
                     
                     Lowest_Fortress_Distance = Fortress_Distance;
 
-                    MainWar_Rally_X = _ai_continents.plane[wp].player[player_idx].X_Coords[itr];
+                    MainWar_Rally_X = _ai_continents.plane[wp].player[player_idx].wx_array[itr];
 
-                    MainWar_Rally_Y = _ai_continents.plane[wp].player[player_idx].Y_Coords[itr];
+                    MainWar_Rally_Y = _ai_continents.plane[wp].player[player_idx].wy_array[itr];
 
                 }
 
@@ -1423,7 +1386,7 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
                                 (
                                     (AI_Enemy_Unit_In_Range(stack_wx, stack_wy, wp, 5, player_idx, Adjacent_Landmass) != ST_FALSE)
                                     ||
-                                    (_ai_continents.plane[wp].player[player_idx].Cont_Types[Adjacent_Landmass] != CONT_NoPresence)
+                                    (_ai_continents.plane[wp].player[player_idx].type_array[Adjacent_Landmass] != lmt_NoPresence)
                                 )
                                 &&
                                 (AI_NewColConts[wp][player_idx] != Adjacent_Landmass)
@@ -1819,11 +1782,11 @@ void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx
     if(Closest_Landing_Distance != 1000)
     {
 
-        _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] = CONT_Abandon;
+        _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Abandon;
 
-        _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = (uint8_t)Best_LoadTile_X;
+        _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = (uint8_t)Best_LoadTile_X;
 
-        _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = (uint8_t)Best_LoadTile_Y;
+        _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = (uint8_t)Best_LoadTile_Y;
 
     }
 
@@ -1851,9 +1814,9 @@ void G_AI_HomeRallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_id
     int16_t IDK_count = 0;
 
 
-    stage_wx = _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx];
+    stage_wx = _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx];
 
-    stage_wy = _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx];
+    stage_wy = _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx];
 
     IDK_count = 0;
 
@@ -1971,7 +1934,7 @@ void AI_PullForMainWar__WIP(int16_t player_idx, int16_t wp)
                     )
                     {
 
-                        AI_Set_Move_Or_Goto_Target(unit_idx, _ai_continents.plane[wp].player[player_idx].X_Coords[AI_MainWarConts[wp][player_idx]], _ai_continents.plane[wp].player[player_idx].Y_Coords[AI_MainWarConts[wp][player_idx]], itr_stacks, itr_list_units);
+                        AI_Set_Move_Or_Goto_Target(unit_idx, _ai_continents.plane[wp].player[player_idx].wx_array[AI_MainWarConts[wp][player_idx]], _ai_continents.plane[wp].player[player_idx].wy_array[AI_MainWarConts[wp][player_idx]], itr_stacks, itr_list_units);
 
                     }
 
@@ -2756,7 +2719,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
     if(_ai_targets_count == 0)
     {
 
-        _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] = CONT_NoTargets;
+        _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_NoTargets;
 
     }
 
@@ -3059,9 +3022,9 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
 
 
         if(
-            (AI_Continent_X_Ptr[landmass_idx] == unit_wx)
+            (cp_landmass_wx_array[landmass_idx] == unit_wx)
             &&
-            (AI_Continent_Y_Ptr[landmass_idx] == unit_wy)
+            (cp_landmass_wy_array[landmass_idx] == unit_wy)
         )
         {
             
@@ -3119,9 +3082,9 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
                 _ai_own_stack_unit_list[stack_idx][_ai_own_stack_unit_count[stack_idx]] = ST_UNDEFINED;
 
                 if(
-                    (_UNITS[itr_units].dst_wx == AI_Continent_X_Ptr[landmass_idx])
+                    (_UNITS[itr_units].dst_wx == cp_landmass_wx_array[landmass_idx])
                     &&
-                    (_UNITS[itr_units].dst_wy == AI_Continent_Y_Ptr[landmass_idx])
+                    (_UNITS[itr_units].dst_wy == cp_landmass_wy_array[landmass_idx])
                 )
                 {
 
@@ -3164,9 +3127,9 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
 
 
                 if(
-                    (_UNITS[itr_units].dst_wx == AI_Continent_X_Ptr[landmass_idx])
+                    (_UNITS[itr_units].dst_wx == cp_landmass_wx_array[landmass_idx])
                     &&
-                    (_UNITS[itr_units].dst_wy == AI_Continent_Y_Ptr[landmass_idx])
+                    (_UNITS[itr_units].dst_wy == cp_landmass_wy_array[landmass_idx])
                 )
                 {
 
@@ -3528,7 +3491,7 @@ kill units until gold,food,mana income == upkeep
 
 uses AI_ContBalances[][]
 
-AI_SetUnitOrders__WIP(itr_players)
+AI_Set_Unit_Orders(itr_players)
     |-> AI_Balance_Upkeep(itr_players)
 
 */
@@ -4090,399 +4053,332 @@ void AI_GarrBuilderPush__WIP(int16_t wp)
 
 
 // WZD o158p20
-// drake178: sub_EFBD6()
+// drake178: AI_Survey_Excess_Units()
 /*
 evaluates excess units for inclusion into the two
 global offensive? stacks instead if they are strong
 enough
 */
 /*
+CLAUDE
+
+AI_Survey_Excess_Units() is a WIP placeholder name (the AI_Survey_Excess_Units is the Dasm offset 0xEFBD6) for an excess-unit survey:
+ it walks every AI-owned stack and,
+  for stacks that have more units than they need,
+   delegates to AI_Survey_Excess_Units_In_Stack()
+    which scores those surplus units
+     and inserts the top 9 strongest into two global pools.
+
+What it does
+Per the drake178 header comment at AIMOVE.c:4118-4124:
+
+evaluates excess units for inclusion into the two global offensive? stacks instead if they are strong enough
+
+The function itself is purely a dispatcher. For each stack in _ai_own_stack_[0.._ai_own_stack_count],
+ it computes how many units are "excess" based on stack type and calls AI_Survey_Excess_Units_In_Stack() to score them:
+
+_ai_own_stack_type	Condition	Excess count
+4	_turn < 100 AND count > 5	count - 5 (leave 5 behind)
+3 (garrison-like)	count > 5	count - 5
+0 (roaming?)	always	all count units are candidates
+1 (something with lead slot)	unit_list[0] != ST_UNDEFINED	all count units are candidates
+other	skipped	—
+Before the loop, it resets the four globals that AI_Survey_Excess_Units_In_Stack writes into:
+
+G_Pushout_Units_Count = 0, G_Pushout_Lowest_Value = 10000
+G_Seafaring_Count = 0, G_Seafaring_Lowest_Value = 10000
+What the output is used for
+The two 9-slot arrays it ultimately populates
+ — G_Pushout_* and G_Seafaring_* at AIMOVE.c:51-72
+  — are consumed later in the same turn to pull units toward rally/main-war targets:
+
+G_AI_RallyFill__WIP() at AIMOVE.c:334-344 —
+ when a continent is abandoned / no-presence / undermanned for a main-war rally,
+ it issues AI_Set_Move_Or_Goto_Target() for each G_Pushout_Unit_Indices[] entry toward the continent's rally coords.
+AI_PullForMainWar__WIP() — similar, and uses the Seafaring pool for units with air/water travel.
+Where it sits in the turn
+Called once per (plane, landmass) from AI_SetUnitOrders at AIMOVE.c:145,
+ wedged between AI_GarrBuilderPush__WIP (pushes builders out of garrisons) and AI_Do_Meld. 
+So the ordering is:
+ push builders away
+ → survey excess combat units
+ → then run the various per-unit-type order handlers
+ → consume the excess pool for rally-fill and main-war pulls.
+
+Short version
+It's the "find excess combat units across my stacks and rank the top 9 for reassignment" pass.
+ It doesn't move anyone itself — it just fills a global ranked pool.
+  The reassignment happens later in G_AI_RallyFill__WIP / AI_PullForMainWar__WIP.
+
 
 */
-void AI_sEFBD6__WIP(void)
+void AI_Survey_Excess_Units(void)
 {
-    int16_t itr_stacks = 0;  // _SI_
-    int16_t stack_unit_count = 0;  // _DI_
-
+    int16_t itr_stacks = 0;
+    int16_t stack_unit_count = 0;
     G_Pushout_Units_Count = 0;
-
     G_Seafaring_Count = 0;
-
     G_Pushout_Lowest_Value = 10000;
-
     G_Seafaring_Lowest_Value = 10000;
-
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     {
-
         stack_unit_count = _ai_own_stack_unit_count[itr_stacks];
-
-        if(_ai_own_stack_type[itr_stacks] == 4)
+        switch(_ai_own_stack_type[itr_stacks])
         {
-
-            if(
-                (_turn < 100)
-                &&
-                (stack_unit_count > 5)
-            )
+            case 0:
             {
-
-                AI_sEFC92__WIP(itr_stacks, stack_unit_count, (stack_unit_count - 5));
-
-            }
-
-        }
-        else if (_ai_own_stack_type[itr_stacks] == 3)
-        {
-
-            if(stack_unit_count > 5)
+                AI_Survey_Excess_Units_In_Stack(itr_stacks, stack_unit_count, stack_unit_count);
+            } break;
+            case 1:
             {
-
-                AI_sEFC92__WIP(itr_stacks, stack_unit_count, (stack_unit_count - 5));
-
-            }
-
-        }
-        else
-        {
-
-            if(
-                (_ai_own_stack_type[itr_stacks] == 0)
-                ||
-                (
-                    (_ai_own_stack_type[itr_stacks] == 1)
-                    &&
-                    (_ai_own_stack_unit_list[itr_stacks][0] != ST_UNDEFINED)
-                )
-            )
+                if(_ai_own_stack_unit_list[itr_stacks][0] != ST_UNDEFINED)
+                {
+                    AI_Survey_Excess_Units_In_Stack(itr_stacks, stack_unit_count, stack_unit_count);
+                }
+            } break;
+            case 2:
             {
-
-                AI_sEFC92__WIP(itr_stacks, stack_unit_count, stack_unit_count);
-
-            }
-
+                // DNE
+            } break;
+            case 3:
+            {
+                if(stack_unit_count > 5)
+                {
+                    AI_Survey_Excess_Units_In_Stack(itr_stacks, stack_unit_count, (stack_unit_count - 5));
+                }
+            } break;
+            case 4:
+            {
+                if((_turn < 100) && (stack_unit_count > 5))
+                {
+                    AI_Survey_Excess_Units_In_Stack(itr_stacks, stack_unit_count, (stack_unit_count - 5));
+                }
+            } break;
+            default:
+            {
+                /* others are skipped */
+            } break;
         }
-
     }
-
 }
 
 
 // WZD o158p21
-// drake178: sub_EFC92()
-/*
-evaluates the excess units in the stack, and adds
-them to the two global offensive? stacks if they are
-stronger than the current selections
-*/
-/*
 
+/*
+AI_Survey_Excess_Units_In_Stack = "from this one stack, score up to Excess combat units and keep only the top 9 (and top 9 seafaring) across the whole AI's army."
+It's the per-stack scorer behind AI_Survey_Excess_Units's survey pass, and its output feeds the later rally-fill / main-war-pull passes.
 */
-void AI_sEFC92__WIP(int16_t CX_ID, int16_t Count, int16_t Excess)
+void AI_Survey_Excess_Units_In_Stack(int16_t stack_idx, int16_t unit_count, int16_t excess_count)
 {
-    int16_t Combat_Unit_Indices[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Combat_Unit_Values[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Combat_Unit_UL_Indices[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Combat_Unit_Count = 0;
-    int16_t Unit_Value = 0;
-    int16_t Local_Array_Index = 0;
-    int16_t Lowest_Value_Index = 0;
-    int16_t Seafaring_Unit = 0;
+    int16_t combat_unit_indices[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t combat_unit_values[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t combat_unit_ul_indices[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t combat_unit_count = 0;
+    int16_t unit_value = 0;
+    int16_t local_itr = 0;
+    int16_t lowest_value_index = 0;
+    int16_t is_seafaring = 0;
     int16_t unit_type = 0;
-    int16_t CX_UL_Index = 0;
+    int16_t stack_ul_idx = 0;
     int16_t unit_idx = 0;
-    int16_t itr2 = 0;  // _SI_
-    int16_t itr = 0;  // _DI_
+    int16_t itr2 = 0;
+    int16_t itr = 0;
     int16_t ogbug_value = 0;  // DNE in Dasm
 
-    Combat_Unit_Count = 0;
+    combat_unit_count = 0;
 
-// ; create a list of the combat units (not builders or
-// ; transports) in the stack, complete with indices and
-// ; threat values
-// ; 
-// ; BUG: parameter mismatch in the threat function call
-// ; BUG? transports could fight over water
-
-    for(CX_UL_Index = 0; CX_UL_Index < Count; CX_UL_Index++)
+    /* Phase 1: Filter units in the stack for candidates to push out */
+    for (stack_ul_idx = 0; stack_ul_idx < unit_count; stack_ul_idx++)
     {
-
-        unit_idx = _ai_own_stack_unit_list[CX_ID][CX_UL_Index];
-
-        if(unit_idx != ST_UNDEFINED)
+        unit_idx = _ai_own_stack_unit_list[stack_idx][stack_ul_idx];
+        
+        if (unit_idx == ST_UNDEFINED)
         {
-
-            unit_type = _UNITS[unit_idx].type;
-
-            if(
-                (_unit_type_table[unit_type].Construction == 0)
-                &&
-                ((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) == 0)
-                &&
-                ((_unit_type_table[unit_type].Abilities & UA_MELD) == 0)
-                &&
-                (_unit_type_table[unit_type].Transport == 0)
-            )
-            {
-
-                Combat_Unit_UL_Indices[Combat_Unit_Count] = CX_UL_Index;
-
-                Combat_Unit_Indices[Combat_Unit_Count] = unit_idx;
-
-                // // ; BUG: parameter mismatch
-                // // BUGBUG  should use unit_idx or Effective_Unit_Type_Strength()
-                // Combat_Unit_Values[Combat_Unit_Count] = (Effective_Unit_Strength(unit_type) / 10);
-                ogbug_value = ((Random(256) << 8) & Random(256));
-                Combat_Unit_Values[Combat_Unit_Count] = ogbug_value;
-
-                Combat_Unit_Count++;
-
-            }
-
+            continue;
         }
 
+        unit_type = _UNITS[unit_idx].type;
+
+        /* Skip non-military units: Roadbuilders, Settlers, Melders, Transports */
+        if (_unit_type_table[unit_type].Construction != 0) continue;
+        if (_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) continue;
+        if (_unit_type_table[unit_type].Abilities & UA_MELD) continue;
+        if (_unit_type_table[unit_type].Transport != 0) continue;  // OGBUG  transports could fight over water
+
+        combat_unit_ul_indices[combat_unit_count] = stack_ul_idx;
+        combat_unit_indices[combat_unit_count] = unit_idx;
+
+        /* Calculate unit strength value. */
+        // OGBUG  should pass unit_idx or use Effective_Unit_Type_Strength()
+        // combat_unit_values[combat_unit_count] = Effective_Unit_Strength(unit_type) / 10;
+        ogbug_value = ((Random(256) << 8) & Random(256));
+        combat_unit_values[combat_unit_count] = ogbug_value;
+
+        combat_unit_count++;
     }
 
-
-// ; sort the arrays into descending value order
-
-    if(Excess < Combat_Unit_Count)
+    /* Phase 2: Bubble sort candidates by value descending */
+    for (itr = 0; itr < (combat_unit_count - 1); itr++)
     {
-
-        Combat_Unit_Count = Excess;
-
+        for (itr2 = 0; itr2 < (combat_unit_count - 1); itr2++)
+        {
+            if (combat_unit_values[itr2] < combat_unit_values[itr2 + 1])
+            {
+                Swap_Short(&combat_unit_values[itr2], &combat_unit_values[itr2 + 1]);
+                Swap_Short(&combat_unit_ul_indices[itr2], &combat_unit_ul_indices[itr2 + 1]);
+                Swap_Short(&combat_unit_indices[itr2], &combat_unit_indices[itr2 + 1]);
+            }
+        }
     }
 
-    for(Local_Array_Index = 0; Local_Array_Index < Combat_Unit_Count; Local_Array_Index++)
+    /* Limit processing to the requested number of excess units */
+    // OGBUG  This truncates by list order, not by score — so for a type-3/4 garrison, it sends the first N combat units in list order, not the N weakest.
+    if (excess_count < combat_unit_count)
     {
+        combat_unit_count = excess_count;
+    }
 
-        CX_UL_Index = Combat_Unit_UL_Indices[Local_Array_Index];
-
-        unit_idx = Combat_Unit_Indices[Local_Array_Index];
-
-        Unit_Value = Combat_Unit_Values[Local_Array_Index];
-
+    /* Phase 3: Update global Offensive lists with these candidates */
+    for(local_itr = 0; local_itr < combat_unit_count; local_itr++)
+    {
+        stack_ul_idx = combat_unit_ul_indices[local_itr];
+        unit_idx = combat_unit_indices[local_itr];
+        unit_value = combat_unit_values[local_itr];
         if(
             (Unit_Has_AirTravel(unit_idx) == ST_TRUE)
             ||
             (Unit_Has_WaterTravel(unit_idx) == ST_TRUE)
         )
         {
-
-            Seafaring_Unit = ST_TRUE;
-
+            is_seafaring = ST_TRUE;
         }
         else
         {
-
-            Seafaring_Unit = ST_FALSE;
-
+            is_seafaring = ST_FALSE;
         }
 
-        if(G_Pushout_Units_Count < 9)
+        /* Update standard Pushout list (Global Offensive Stack) */
+        if(G_Pushout_Units_Count < MAX_STACK)
         {
-
-            G_Pushout_UL_Indices[G_Pushout_Units_Count] = CX_UL_Index;
-
-            G_Pushout_CX_IDs[G_Pushout_Units_Count] = CX_ID;
-
-            G_Pushout_Values[G_Pushout_Units_Count] = Unit_Value;
-
+            G_Pushout_UL_Indices[G_Pushout_Units_Count] = stack_ul_idx;
+            G_Pushout_CX_IDs[G_Pushout_Units_Count] = stack_idx;
+            G_Pushout_Values[G_Pushout_Units_Count] = unit_value;
             G_Pushout_Unit_Indices[G_Pushout_Units_Count] = unit_idx;
-
             G_Pushout_Units_Count++;
-
-            if(Unit_Value < G_Pushout_Lowest_Value)
+            if(unit_value < G_Pushout_Lowest_Value)
             {
-
-                G_Pushout_Lowest_Value = Unit_Value;
-
+                G_Pushout_Lowest_Value = unit_value;
             }
-
         }
         else
         {
-
-            if(Unit_Value > G_Pushout_Lowest_Value)
+            /* Replace the weakest unit in the global list */
+            if(unit_value > G_Pushout_Lowest_Value)
             {
 
-// ; find the local array index that corresponds to the
-// ; lowest value
-
-                Lowest_Value_Index = 0;
-
-                for(itr = 0; itr < 9; itr++)
+                lowest_value_index = 0;
+                for(itr = 0; itr < MAX_STACK; itr++)
                 {
-
                     if(G_Pushout_Values[itr] == G_Pushout_Lowest_Value)
                     {
-
-                        Lowest_Value_Index = itr;
-
+                        lowest_value_index = itr;
                     }
-
                 }
 
-// ; replace and recalculate the lowest value
+                G_Pushout_UL_Indices[lowest_value_index] = stack_ul_idx;
+                G_Pushout_CX_IDs[lowest_value_index] = stack_idx;
+                G_Pushout_Values[lowest_value_index] = unit_value;
+                G_Pushout_Unit_Indices[lowest_value_index] = unit_idx;
 
-                G_Pushout_UL_Indices[Lowest_Value_Index] = CX_UL_Index;
-
-                G_Pushout_CX_IDs[Lowest_Value_Index] = CX_ID;
-
-                G_Pushout_Values[Lowest_Value_Index] = Unit_Value;
-
-                G_Pushout_Unit_Indices[Lowest_Value_Index] = unit_idx;
-
+                /* Recalculate new lowest value in list */
                 G_Pushout_Lowest_Value = 10000;
-
-                for(itr = 0; itr < 9; itr++)
+                for(itr = 0; itr < MAX_STACK; itr++)
                 {
-
                     if(G_Pushout_Values[itr] < G_Pushout_Lowest_Value)
                     {
-
                         G_Pushout_Lowest_Value = G_Pushout_Values[itr];
-
                     }
-
                 }
-
             }
-
         }
 
-        if(Seafaring_Unit == ST_TRUE)
+        /* Update Seafaring Pushout list */
+        if(is_seafaring == ST_TRUE)
         {
-
-            if(G_Seafaring_Count < 9)
+            if(G_Seafaring_Count < MAX_STACK)
             {
-
-                G_Seafaring_UL_Indices[G_Seafaring_Count] = CX_UL_Index;
-
-                G_Seafaring_CX_IDs[G_Seafaring_Count] = CX_ID;
-
-                G_Seafaring_Values[G_Seafaring_Count] = Unit_Value;
-
+                G_Seafaring_UL_Indices[G_Seafaring_Count] = stack_ul_idx;
+                G_Seafaring_CX_IDs[G_Seafaring_Count] = stack_idx;
+                G_Seafaring_Values[G_Seafaring_Count] = unit_value;
                 G_Seafaring_Unit_Indices[G_Seafaring_Count] = unit_idx;
-
                 G_Seafaring_Count++;
-
-                if(Unit_Value < G_Seafaring_Lowest_Value)
+                if(unit_value < G_Seafaring_Lowest_Value)
                 {
-
                     G_Seafaring_Lowest_Value = (Effective_Unit_Strength(unit_idx) / 10);
-
                 }
-
             }
             else
             {
-
-// ; replace the current lowest value unit with the new
-// ; one
-
-                if(Unit_Value > G_Seafaring_Lowest_Value)
+                if(unit_value > G_Seafaring_Lowest_Value)
                 {
-
-                    Lowest_Value_Index = 0;
-
-                    for(itr = 0; itr < 9; itr++)
+                    lowest_value_index = 0;
+                    for(itr = 0; itr < MAX_STACK; itr++)
                     {
-
                         if(G_Seafaring_Values[itr] == G_Seafaring_Lowest_Value)
                         {
-
-                            Lowest_Value_Index = itr;
-
+                            lowest_value_index = itr;
                         }
-
                     }
-
-                    G_Seafaring_UL_Indices[Lowest_Value_Index] = CX_UL_Index;
-
-                    G_Seafaring_CX_IDs[Lowest_Value_Index] = CX_ID;
-
-                    G_Seafaring_Values[Lowest_Value_Index] = Unit_Value;
-
-                    G_Seafaring_Unit_Indices[Lowest_Value_Index] = unit_idx;
-
+                    G_Seafaring_UL_Indices[lowest_value_index] = stack_ul_idx;
+                    G_Seafaring_CX_IDs[lowest_value_index] = stack_idx;
+                    G_Seafaring_Values[lowest_value_index] = unit_value;
+                    G_Seafaring_Unit_Indices[lowest_value_index] = unit_idx;
                     G_Seafaring_Lowest_Value = 10000;
-
-                    for(itr = 0; itr < 9; itr++)
+                    for(itr = 0; itr < MAX_STACK; itr++)
                     {
-
                         if(G_Seafaring_Values[itr] < G_Seafaring_Lowest_Value)
                         {
-
                             G_Seafaring_Lowest_Value = G_Seafaring_Values[itr];
-
                         }
-
                     }
-
                 }
-
             }
-
         }
-
     }
 
-
-
-// ; rearrange the regular table into descending order
-
+    /* Phase 4: Final sort of Global Pushout list descending */
     for(itr = 0; (G_Pushout_Units_Count - 1) > itr; itr++)
     {
-
-        for(itr = 0; (G_Pushout_Units_Count - 1) > itr; itr++)
+        for(itr2 = 0; (G_Pushout_Units_Count - 1) > itr2; itr2++)
         {
-
             if(G_Pushout_Values[itr2] < G_Pushout_Values[(itr2 + 1)])
             {
-
                 Swap_Short(&G_Pushout_UL_Indices[itr2], &G_Pushout_UL_Indices[(itr2 + 1)]);
-
                 Swap_Short(&G_Pushout_CX_IDs[itr2], &G_Pushout_CX_IDs[(itr2 + 1)]);
-
                 Swap_Short(&G_Pushout_Values[itr2], &G_Pushout_Values[(itr2 + 1)]);
-
                 Swap_Short(&G_Pushout_Unit_Indices[itr2], &G_Pushout_Unit_Indices[(itr2 + 1)]);
-
             }
-
         }
-
     }
 
-
-// ; rearrange the seafaring table into descending order
-
+    /* Phase 5: Final sort of Global Seafaring list descending */
     for(itr = 0; (G_Seafaring_Count - 1) > itr; itr++)
     {
-
-        for(itr = 0; (G_Seafaring_Count - 1) > itr; itr++)
+        for(itr2 = 0; (G_Seafaring_Count - 1) > itr2; itr2++)
         {
-
             if(G_Seafaring_Values[itr2] < G_Seafaring_Values[(itr2 + 1)])
             {
-
                 Swap_Short(&G_Seafaring_UL_Indices[itr2], &G_Seafaring_UL_Indices[(itr2 + 1)]);
-
                 Swap_Short(&G_Seafaring_CX_IDs[itr2], &G_Seafaring_CX_IDs[(itr2 + 1)]);
-
                 Swap_Short(&G_Seafaring_Values[itr2], &G_Seafaring_Values[(itr2 + 1)]);
-
                 Swap_Short(&G_Seafaring_Unit_Indices[itr2], &G_Seafaring_Unit_Indices[(itr2 + 1)]);
-
             }
-
         }
-
     }
 
-
 }
+
 
 
 // WZD o158p22
@@ -4592,9 +4488,9 @@ void AI_Do_Meld(int16_t player_idx)
                             }
 
                             if(
-                                (_ai_continents.plane[unit_wp].player[player_idx].Cont_Types[node_landmass_idx] == CONT_Own)
+                                (_ai_continents.plane[unit_wp].player[player_idx].type_array[node_landmass_idx] == lmt_Own)
                                 ||
-                                (_ai_continents.plane[unit_wp].player[player_idx].Cont_Types[node_landmass_idx] >= CONT_Abandon)  // {..., 5: CONT_Abandon, 6: CONT_NoTargets}
+                                (_ai_continents.plane[unit_wp].player[player_idx].type_array[node_landmass_idx] >= lmt_Abandon)  // {..., 5: lmt_Abandon, 6: lmt_NoTargets}
                                 ||
                                 (node_is_garrisoned == ST_TRUE)
                             )
@@ -5236,7 +5132,7 @@ void AI_Do_RoadBuild(int16_t landmass_idx)
 /*
 
 */
-void AI_Set_Move_Or_Goto_Target(int16_t unit_idx, int16_t target_wx, int16_t target_wy, int16_t CX_ID, int16_t list_unit_idx)
+void AI_Set_Move_Or_Goto_Target(int16_t unit_idx, int16_t target_wx, int16_t target_wy, int16_t stack_idx, int16_t list_unit_idx)
 {
     int16_t wp = 0;
     int16_t target_value = 0;  // _DI_
@@ -5276,7 +5172,7 @@ void AI_Set_Move_Or_Goto_Target(int16_t unit_idx, int16_t target_wx, int16_t tar
     _UNITS[unit_idx].dst_wx = (int8_t)target_wx;
     _UNITS[unit_idx].dst_wy = (int8_t)target_wy;
 
-    _ai_own_stack_unit_list[CX_ID][list_unit_idx] = ST_UNDEFINED;
+    _ai_own_stack_unit_list[stack_idx][list_unit_idx] = ST_UNDEFINED;
 
 }
 
@@ -5601,7 +5497,7 @@ void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp
 {
     int16_t target_wy = 0;
     int16_t target_wx = 0;
-    int16_t Seafaring_Unit = 0;
+    int16_t is_seafaring = 0;
     int16_t Transport_StackSize = 0;
     int16_t transport_capacity = 0;
     int16_t Adjacent_Ocean_Y = 0;
@@ -5624,7 +5520,7 @@ void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp
 
     wp = _UNITS[unit_idx].wp;
 
-    Seafaring_Unit = ST_FALSE;
+    is_seafaring = ST_FALSE;
 
     if(
         (Unit_Has_AirTravel(unit_idx) != ST_FALSE)
@@ -5633,7 +5529,7 @@ void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp
     )
     {
 
-        Seafaring_Unit = ST_TRUE;
+        is_seafaring = ST_TRUE;
 
     }
 
@@ -5649,7 +5545,7 @@ void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp
 
     transport_wy = AI_NewColTgtYs[wp][player_idx];
 
-    if(Seafaring_Unit == ST_TRUE)
+    if(is_seafaring == ST_TRUE)
     {
 
         AI_Set_Move_Or_Goto_Target(unit_idx, transport_wx, transport_wy, unit_list_idx, list_unit_idx);
@@ -5877,9 +5773,9 @@ int16_t AI_Tower_Target_Worthwhile(int16_t player_idx, int16_t wx, int16_t wy, i
     Opposite_Landmass = _landmasses[((Opposite_Plane * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
 
     if(
-        (_ai_continents.plane[Opposite_Plane].player[player_idx].Cont_Types[Opposite_Landmass] != CONT_Own)
+        (_ai_continents.plane[Opposite_Plane].player[player_idx].type_array[Opposite_Landmass] != lmt_Own)
         &&
-        (_ai_continents.plane[Opposite_Plane].player[player_idx].Cont_Types[Opposite_Landmass] != CONT_NoLanding)
+        (_ai_continents.plane[Opposite_Plane].player[player_idx].type_array[Opposite_Landmass] != lmt_NoLanding)
     )
     {
 
@@ -5908,7 +5804,7 @@ int16_t AI_Tower_Target_Worthwhile(int16_t player_idx, int16_t wx, int16_t wy, i
 
     }
 
-    if(_ai_continents.plane[Opposite_Plane].player[player_idx].Cont_Types[Opposite_Landmass] != CONT_NoPresence)
+    if(_ai_continents.plane[Opposite_Plane].player[player_idx].type_array[Opposite_Landmass] != lmt_NoPresence)
     {
 
         itr_cities = 0;
@@ -6028,20 +5924,20 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
 
             Sum_City_Y_NonOwn_UnitCost += _CITIES[itr].wy;
 
-            _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] += 1;
+            _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] += 1;
 
         }
 
     }
 
-    City_Count = _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx];
+    City_Count = _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx];
 
     if(City_Count > 0)
     {
 
-        _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = (Sum_City_X_Own_UnitCost / City_Count);
+        _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = (Sum_City_X_Own_UnitCost / City_Count);
 
-        _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = (Sum_City_Y_NonOwn_UnitCost / City_Count);
+        _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = (Sum_City_Y_NonOwn_UnitCost / City_Count);
 
     }
 
@@ -6052,19 +5948,19 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
 // ; BUG: does not clear the variables beforehand, so
 // ; they still contain the coordinate sums too
 
-    if(_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] > 0)
+    if(_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] > 0)
     {
 
         if((Sum_City_Y_NonOwn_UnitCost * 10) < Sum_City_X_Own_UnitCost)
         {
 
-            _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] = CONT_Own;
+            _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Own;
 
         }
         else
         {
             
-            _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] = CONT_Contested;
+            _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Contested;
 
         }
 
@@ -6072,7 +5968,7 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
     else
     {
 
-        _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] = CONT_NoPresence;
+        _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_NoPresence;
 
     }
 
@@ -6095,11 +5991,11 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
             if(
                 (_players[player_idx].Dipl.Dipl_Status[_CITIES[itr].owner_idx] == DIPL_Alliance)
                 &&
-                (_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_NoPresence)
+                (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoPresence)
             )
             {
 
-                _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] = CONT_NoLanding;
+                _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_NoLanding;
 
             }
 
@@ -6107,22 +6003,22 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
 
     }
 
-    _ai_continents.plane[0].player[player_idx].Cont_Types[0] = CONT_NoLanding;
+    _ai_continents.plane[0].player[player_idx].type_array[0] = lmt_NoLanding;
 
-    _ai_continents.plane[1].player[player_idx].Cont_Types[0] = CONT_NoLanding;
+    _ai_continents.plane[1].player[player_idx].type_array[0] = lmt_NoLanding;
 
     if(
-        (_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_Contested)
+        (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_Contested)
         ||
-        (_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_Own)
+        (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_Own)
         ||
-        (_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_NoLanding)
+        (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoLanding)
     )
     {
 
-        Center_X = _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx];
+        Center_X = _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx];
 
-        Center_Y = _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx];
+        Center_Y = _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx];
 
         Best_Tile_Weight = 1000;
 
@@ -6168,19 +6064,19 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
         if(Best_Tile_Weight < 1000)
         {
 
-            _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = (uint8_t)Rally_X;
+            _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = (uint8_t)Rally_X;
 
-            _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = (uint8_t)Rally_Y;
+            _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = (uint8_t)Rally_Y;
 
         }
         else
         {
 
-            _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = 0;
+            _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = 0;
 
-            _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = 0;
+            _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = 0;
 
-            _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] = CONT_NoLanding;
+            _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_NoLanding;
 
         }
 
@@ -6192,7 +6088,7 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
 // ; is not possible, re-mark the continent as not
 // ; landable with a rally point of [0,0]
 
-    if(_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_Own)
+    if(_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_Own)
     {
 
         LoadTile_X = 0;
@@ -6996,10 +6892,10 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
         for(landmass_idx = 0; ((landmass_idx < NUM_PLANES) && (found_target == ST_FALSE)); landmass_idx++)
         {
 
-            if(_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_NoPresence)
+            if(_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoPresence)
             {
 
-                if(g_ai_evaluation_map[wp][((_ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] * WORLD_WIDTH) + _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx])] != 0)
+                if(g_ai_evaluation_map[wp][((_ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] * WORLD_WIDTH) + _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx])] != 0)
                 {
 
                     found_target = ST_TRUE;
@@ -7059,7 +6955,7 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
         for(landmass_idx = 0; ((landmass_idx < NUM_PLANES) && (found_target == ST_FALSE)); landmass_idx++)
         {
 
-            _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] = CONT_Invalid;  // actually just 0, cause its about to just be a city count
+            _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Invalid;  // actually just 0, cause its about to just be a city count
 
             // ; own unit strength (value total)
             Sum_City_X_Own_UnitCost[wp][landmass_idx] = 0;
@@ -7089,7 +6985,7 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
 
             Sum_City_Y_NonOwn_UnitCost[wp][landmass_idx] += _CITIES[itr].wy;
 
-            _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] += 1;
+            _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] += 1;
 
         }
         
@@ -7106,14 +7002,14 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
         for(landmass_idx = 0; ((landmass_idx < NUM_PLANES) && (found_target == ST_FALSE)); landmass_idx++)
         {
 
-            city_count = _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx];
+            city_count = _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx];
 
             if(city_count > 0)
             {
 
-                _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = (Sum_City_X_Own_UnitCost[wp][landmass_idx] / city_count);
+                _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = (Sum_City_X_Own_UnitCost[wp][landmass_idx] / city_count);
 
-                _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = (Sum_City_Y_NonOwn_UnitCost[wp][landmass_idx] / city_count);
+                _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = (Sum_City_Y_NonOwn_UnitCost[wp][landmass_idx] / city_count);
 
             }
 
@@ -7190,13 +7086,13 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
         {
 
             if(
-                (_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] != CONT_NoTargets)  // HERE: still just city count?
+                (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] != lmt_NoTargets)  // HERE: still just city count?
                 ||
                 (Sum_City_Y_NonOwn_UnitCost[wp][itr] != 0)
             )
             {
 
-                if(_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] > CONT_Invalid)  // HERE: still just city count?
+                if(_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] > lmt_Invalid)  // HERE: still just city count?
                 {
 
                     // ; BUG: this can easily overflow on a large continent,
@@ -7207,13 +7103,13 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
                     if(Sum_City_X_Own_UnitCost[wp][itr] > (Sum_City_Y_NonOwn_UnitCost[wp][itr] / 10))
                     {
 
-                        _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] = CONT_Own;
+                        _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Own;
 
                     }
                     else
                     {
 
-                        _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] = CONT_Contested;
+                        _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Contested;
 
                     }
 
@@ -7221,7 +7117,7 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
                 else
                 {
 
-                    _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] = CONT_NoPresence;
+                    _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_NoPresence;
 
                 }
 
@@ -7249,10 +7145,10 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
 
             landmass_idx = _landmasses[((_CITIES[itr].wp * WORLD_SIZE) + (_CITIES[itr].wy * WORLD_WIDTH) + _CITIES[itr].wx)];
 
-            if(_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_NoPresence)
+            if(_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoPresence)
             {
 
-                _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] = CONT_NoLanding;
+                _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_NoLanding;
 
             }
 
@@ -7261,9 +7157,9 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
     }
 
 
-    _ai_continents.plane[0].player[player_idx].Cont_Types[landmass_idx] = CONT_NoLanding;
+    _ai_continents.plane[0].player[player_idx].type_array[landmass_idx] = lmt_NoLanding;
 
-    _ai_continents.plane[1].player[player_idx].Cont_Types[landmass_idx] = CONT_NoLanding;
+    _ai_continents.plane[1].player[player_idx].type_array[landmass_idx] = lmt_NoLanding;
 
 
 // ; choose the next colony continent from among those
@@ -7281,7 +7177,7 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
         {
 
             if(
-                (_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_NoPresence)
+                (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoPresence)
                 &&
                 (Sum_City_Y_NonOwn_UnitCost[wp][itr] == 0)
             )
@@ -7359,17 +7255,17 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
         {
 
             if(
-                (_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_Contested)
+                (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_Contested)
                 ||
-                (_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_Own)
+                (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_Own)
                 ||
-                (_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_NoLanding)
+                (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoLanding)
             )
             {
 
-                Center_X = _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx];
+                Center_X = _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx];
 
-                Center_Y = _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx];
+                Center_Y = _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx];
 
                 if(
                     (g_ai_evaluation_map[wp][Tile_Linear] == 0)
@@ -7421,19 +7317,19 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
                     if(Best_Tile_Weight < 1000)
                     {
 
-                        _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = (uint8_t)Target_Tile_X;
+                        _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = (uint8_t)Target_Tile_X;
 
-                        _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = (uint8_t)Target_Tile_Y;
+                        _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = (uint8_t)Target_Tile_Y;
 
                     }
                     else
                     {
 
-                        _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = 0;
+                        _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = 0;
 
-                        _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = 0;
+                        _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = 0;
 
-                        _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] = CONT_NoLanding;
+                        _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_NoLanding;
 
                     }
 
@@ -7458,12 +7354,12 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
         for(landmass_idx = 1; landmass_idx < NUM_LANDMASSES; landmass_idx++)
         {
 
-            if(_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_NoPresence)
+            if(_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoPresence)
             {
 
-                Center_X = _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx];
+                Center_X = _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx];
 
-                Center_Y = _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx];
+                Center_Y = _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx];
 
                 Best_Tile_Weight = 1000;
 
@@ -7504,19 +7400,19 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
                 if(Best_Tile_Weight < 1000)
                 {
 
-                    _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = (uint8_t)Target_Tile_X;
+                    _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = (uint8_t)Target_Tile_X;
 
-                    _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = (uint8_t)Target_Tile_Y;
+                    _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = (uint8_t)Target_Tile_Y;
 
                 }
                 else
                 {
 
-                    _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = 0;
+                    _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = 0;
 
-                    _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = 0;
+                    _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = 0;
 
-                    _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] = CONT_NoLanding;
+                    _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_NoLanding;
 
                 }
 
@@ -7540,7 +7436,7 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
             for(landmass_idx = 1; landmass_idx < NUM_LANDMASSES; landmass_idx++)
             {
 
-                if(_ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_Own)
+                if(_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_Own)
                 {
 
                     X_2 = 0;
@@ -7606,9 +7502,9 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
                     if(Best_Tile_Weight < 1000)
                     {
 
-                        _ai_continents.plane[wp].player[player_idx].X_Coords[landmass_idx] = (uint8_t)Target_Tile_X;
+                        _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = (uint8_t)Target_Tile_X;
 
-                        _ai_continents.plane[wp].player[player_idx].Y_Coords[landmass_idx] = (uint8_t)Target_Tile_Y;
+                        _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = (uint8_t)Target_Tile_Y;
 
                     }
 
@@ -7918,30 +7814,23 @@ void AI_Pick_Action_Conts__WIP(int16_t player_idx)
 
     EMM_Map_CONTXXX__WIP();
 
-    // ; check if there are any hostile players (at war with
-    // ; or casting SoM)
-    // ; 
+    // ; check if there are any hostile players (at war with or casting SoM)
     // ; BUG: checks Fire Elemental instead of SoM
     // ; BUG: does not exclude self
-
     for(itr_players = 0; ((itr_players < _num_players) & (First_Hostile_Player == ST_UNDEFINED)); itr_players++)
     {
-
         if(
             (_players[player_idx].Dipl.Dipl_Status[itr_players] < 3)
             ||
             (_players[itr_players].casting_spell_idx == spl_Fire_Elemental)
         )
         {
-
             First_Hostile_Player = itr_players;
-
         }
-
     }
 
 
-    for(wp = 0; wp < 2; wp++)
+    for(wp = 0; wp < NUM_PLANES; wp++)
     {
 
         Reevaluate = ST_FALSE;
@@ -7957,124 +7846,88 @@ void AI_Pick_Action_Conts__WIP(int16_t player_idx)
         else
         {
 
-            continent_status = _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx];
+            continent_status = _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx];
             // -1, so {1,2,3,4,5}
             switch(continent_status)
             {
 
                 case 0:
+                {
+                    // DNE
+                } break;
+                case 1:
+                {
+                    Reevaluate = ST_FALSE;
+                } break;
+                case 2:
+                {
+                    Reevaluate = ST_FALSE;
+                } break;
                 case 3:
                 case 4:
                 {
-
                     for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
                     {
-
                         Continent_Values[itr_players] = 0;
-
                     }
-
                     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
                     {
-
                         // ; BUG: what if the city is on the other plane?
-
                         if(_landmasses[((wp * WORLD_SIZE) + (_CITIES[itr_cities].wy * WORLD_WIDTH) + _CITIES[itr_cities].wx)] == landmass_idx)
                         {
-
                             if(_CITIES[itr_cities].owner_idx != player_idx)
                             {
-
                                 city_owner_idx = _CITIES[itr_cities].owner_idx;
-
                                 Continent_Values[city_owner_idx] += 1;
-
-
                             }
-
                         }
-
                     }
-
                     if(First_Hostile_Player > ST_UNDEFINED)
                     {
-
                         if(Continent_Values[First_Hostile_Player] == 0)
                         {
-
                             Reevaluate = ST_TRUE;
-
                         }
                         else
                         {
-
                             Reevaluate = ST_FALSE;
-
                         }
-
                     }
                     else
                     {
-                        
                         Reevaluate = ST_TRUE;
-
                         if(Continent_Values[NEUTRAL_PLAYER_IDX] > 0)
                         {
-
                             Reevaluate = ST_FALSE;
-
                         }
                         else
                         {
-
                             for(itr_players = 0; itr_players < _num_players; itr_players++)
                             {
-
                                 if(Reevaluate == ST_TRUE)
                                 {
-
                                     if(_players[player_idx].Hostility[itr_players] >= 2)
                                     {
-
                                         if(Continent_Values[itr_players] > 0)
                                         {
-
                                             Reevaluate = ST_FALSE;
-
                                         }
-
                                     }
-
                                 }
-
                             }
-
                         }
-
                     }
-
-
                 } break;
-
-                case 1:
-                case 2:
-                {
-                    
-                    Reevaluate = ST_FALSE;
-
-                } break;
-
                 case 5:
                 {
-                    
                     Reevaluate = ST_TRUE;
-
                 } break;
-                
+                default:
+                {
+                    // DNE
+                } break;
             }
-
         }
-
 
         if(Reevaluate == ST_TRUE)
         {
@@ -8303,9 +8156,9 @@ void AI_Pick_Action_Conts__WIP(int16_t player_idx)
                 {
 
                     if(
-                        (_ai_continents.plane[wp].player[player_idx].Cont_Types[itr_landmasses] != CONT_Own)
+                        (_ai_continents.plane[wp].player[player_idx].type_array[itr_landmasses] != lmt_Own)
                         &&
-                        (_ai_continents.plane[wp].player[player_idx].Cont_Types[itr_landmasses] != CONT_NoTargets)
+                        (_ai_continents.plane[wp].player[player_idx].type_array[itr_landmasses] != lmt_NoTargets)
                     )
                     {
 

@@ -11,8 +11,8 @@ AI_FindClosestEnemy()  ==>  AI_Find_Nearest_Target_Unit()
 AI_UNIT_SetMoveOrder()  ==>  AI_Set_Move_Or_Goto_Target()
 AI_CONTX_Regroup()  ==>  AI_Build_Stacks_Find_Targets_Order_Moves()
 TILE_IsLand()  ==>  Map_Square_Is_Land()
-sub_EFBD6()  ==>  AI_sEFBD6__WIP()
-sub_EFC92()  ==>  AI_sEFC92__WIP()
+AI_Survey_Excess_Units()  ==>  AI_Survey_Excess_Units()
+AI_Survey_Excess_Units_In_Stack()  ==>  AI_Survey_Excess_Units_In_Stack()
 AI_UNIT_SetMeldOrder()  ==>  AI_Order_Meld()
 AI_ProcessMelders()  ==>  AI_Do_Meld()
 TILE_CheckEnemyUnits()  ==>  Map_Square_Area_Has_Opponent()
@@ -142,8 +142,8 @@ AI_GarrBuilderPush__WIP()
     |-> TILE_NextFreeLand()
     |-> AI_Set_Move_Or_Goto_Target()
 
-sub_EFBD6()
-    |-> sub_EFC92()
+AI_Survey_Excess_Units()
+    |-> AI_Survey_Excess_Units_In_Stack()
 
 AI_Do_Meld()
     |-> AI_Order_Meld()
@@ -264,8 +264,8 @@ this should be in the terrain notes  MOVE IT!!!!!
 
 
 
-## sub_EFBD6()
-    |-> sub_EFC92()
+## AI_Survey_Excess_Units()
+    |-> AI_Survey_Excess_Units_In_Stack()
 
 
 

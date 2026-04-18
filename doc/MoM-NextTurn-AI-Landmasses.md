@@ -16,7 +16,7 @@ allocated in Allocate_AI_Data()
 populated in ? with ?
 
 Usage:
-AI_SetUnitOrders__WIP(itr_players)
+AI_Set_Unit_Orders(itr_players)
     |-> AI_Balance_Upkeep(itr_players)
             if(AI_ContBalances[Unit_Plane][Unit_Landmass] == 0)
                 Unit_Value *= 2;

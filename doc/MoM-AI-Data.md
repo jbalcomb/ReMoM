@@ -110,7 +110,7 @@ AI_Transport_Sailoff() |-> AI_Stack_Set_Boats_Goto() sets AI_Own_Stacks[].value 
 AI_CONTX_Regroup__WIP()
 XREF:
     NX_j_AI_CONTX_Regroup__WIP jmp     AI_CONTX_Regroup__WIP         
-    AI_SetUnitOrders__WIP+F2   call    near ptr AI_CONTX_Regroup__WIP
+    AI_Set_Unit_Orders+F2   call    near ptr AI_CONTX_Regroup__WIP
     AI_ProcessOcean+2F3        call    near ptr AI_CONTX_Regroup__WIP
     G_AI_ProcessTransports+12B call    near ptr AI_CONTX_Regroup__WIP
 
@@ -168,8 +168,8 @@ XREF:
 
 ## AI_RallyEnRouteCount
 count of units enroute the continent stage point
-    (_UNITS[itr_units].dst_wx == AI_Continent_X_Ptr[landmass_idx])
-    (_UNITS[itr_units].dst_wy == AI_Continent_Y_Ptr[landmass_idx])
+    (_UNITS[itr_units].dst_wx == cp_landmass_wx_array[landmass_idx])
+    (_UNITS[itr_units].dst_wy == cp_landmass_wy_array[landmass_idx])
 
 
 

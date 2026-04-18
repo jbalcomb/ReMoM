@@ -24,7 +24,7 @@ extern "C" {
 */
 
 // WZD o158p01
-void AI_SetUnitOrders__WIP(int16_t player_idx);
+void AI_Set_Unit_Orders(int16_t player_idx);
 
 // WZD o158p02
 void G_AI_RallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx);
@@ -81,10 +81,10 @@ void AI_Move_Out_Boats(void);
 void AI_GarrBuilderPush__WIP(int16_t wp);
 
 // WZD o158p20
-void AI_sEFBD6__WIP(void);
+void AI_Survey_Excess_Units(void);
 
 // WZD o158p21
-void AI_sEFC92__WIP(int16_t CX_ID, int16_t Count, int16_t Excess);
+void AI_Survey_Excess_Units_In_Stack(int16_t CX_ID, int16_t Count, int16_t Excess);
 
 // WZD o158p22
 void AI_Do_Meld(int16_t player_idx);

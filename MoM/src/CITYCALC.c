@@ -225,7 +225,7 @@ int16_t Unit_Gold_Upkeep(int16_t unit_idx)
             
             // Yay Hero, Nay Noble, Nay Toren The Chosen
             if(
-                (!HERO_NOBLE(unit_owner_idx, _UNITS[unit_idx].type))  /* BUGBUG  from back in AI_sEFC92__WIP(), uses unit_type instead of unit_idx, causes AVRL here */
+                (!HERO_NOBLE(unit_owner_idx, _UNITS[unit_idx].type))  /* BUGBUG  from back in AI_Survey_Excess_Units_In_Stack(), uses unit_type instead of unit_idx, causes AVRL here */
                 &&
                 (_UNITS[unit_idx].type != ut_Chosen)
             )

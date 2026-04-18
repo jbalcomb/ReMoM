@@ -272,7 +272,7 @@ void AI_Next_Turn(void)
         
         AI_Evaluation_Map(player_idx);
         AI_Continent_Reeval__WIP(player_idx);
-        AI_SetUnitOrders__WIP(player_idx);
+        AI_Set_Unit_Orders(player_idx);
         
         EMM_Map_DataH();
         AI_Kill_Excess_Settlers_And_Engineers(player_idx);

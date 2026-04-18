@@ -625,11 +625,6 @@ char str_WB__ovr154[] = "wb";
 
 
 
-// WZD dseg:7116                                                 BEGIN:  ovr158
-// WZD dseg:7116
-int16_t ai_human_hostility = ST_FALSE;
-// WZD dseg:7116                                                 END:  ovr158
-
 // WZD dseg:7118 B9 2F 2F 2F 2F                                  COL_HLP_Titles db 0B9h, 4 dup(2Fh)      ; DATA XREF: Draw_Help_Entry:loc_F27EBo
 // WZD dseg:7118                                                                                         ; this should ideally have been 16 bytes long
 // WZD dseg:711D B8 37 37 37 37                                  COL_HLP_Text db 0B8h, 4 dup(37h)        ; DATA XREF: Draw_Help_Entry:loc_F25E4o ...
@@ -17521,7 +17516,7 @@ void BU_Init_Hero_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     /* HACK */  if(hero_owner_idx == ST_UNDEFINED) { hero_owner_idx = (Random((_num_players + 1)) - 1); }
     // Meh.  Should be Random() for hero_type, actually
 
-    hero_type = UNITTYPE();  /* BUGBUG  from back in AI_sEFC92__WIP(), cause AVRL here */
+    hero_type = UNITTYPE();  /* BUGBUG  from back in AI_Survey_Excess_Units_In_Stack(), cause AVRL here */
     
     if(
         (HERO_NOBLE(hero_owner_idx, hero_type))

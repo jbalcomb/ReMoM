@@ -117,39 +117,39 @@ struct s_AI_STACK_DATA
 
 
 //  ; (sizeof=0xB4)
-struct s_CONTS
+struct s_LANDMASSES
 {
-    /* 00 */ uint8_t X_Coords[NUM_LANDMASSES];
-    /* 3C */ uint8_t Y_Coords[NUM_LANDMASSES];
-    /* 78 */ uint8_t Cont_Types[NUM_LANDMASSES];    /* ; enum CONT_Types */
+    /* 00 */ uint8_t wx_array[NUM_LANDMASSES];
+    /* 3C */ uint8_t wy_array[NUM_LANDMASSES];
+    /* 78 */ uint8_t type_array[NUM_LANDMASSES];    /* enum e_LANDMASS_TYPE */
     /* B4 */ 
 };
 
 //  ; (sizeof=0x384)
-struct s_CONT_TBL
+struct s_CONTINENTS_TABLE
 {
-    /* 0000 */ struct s_CONTS Player_0;
-    /* 00B4 */ struct s_CONTS Player_1;
-    /* 0168 */ struct s_CONTS Player_2;
-    /* 021C */ struct s_CONTS Player_3;
-    /* 02D0 */ struct s_CONTS Player_4;
+    /* 0000 */ struct s_LANDMASSES Player_0;
+    /* 00B4 */ struct s_LANDMASSES Player_1;
+    /* 0168 */ struct s_LANDMASSES Player_2;
+    /* 021C */ struct s_LANDMASSES Player_3;
+    /* 02D0 */ struct s_LANDMASSES Player_4;
     /* 0384 */ 
 };
 
-enum e_CONT_Types
+enum e_LANDMASS_TYPE
 {
-    CONT_Invalid    = 0,
-    CONT_Own        = 1,
-    CONT_Contested  = 2,
-    CONT_NoPresence = 3,
-    CONT_NoLanding  = 4,
-    CONT_Abandon    = 5,
-    CONT_NoTargets  = 6
+    lmt_Invalid    = 0,
+    lmt_Own        = 1,
+    lmt_Contested  = 2,
+    lmt_NoPresence = 3,
+    lmt_NoLanding  = 4,
+    lmt_Abandon    = 5,
+    lmt_NoTargets  = 6
 };
 
 struct s_AI_CONTINENTS_PLAYERS
 {
-    struct s_CONTS player[NUM_PLAYERS];
+    struct s_LANDMASSES player[NUM_PLAYERS];
 };
 
 struct s_AI_CONTINENTS
@@ -2787,7 +2787,7 @@ extern int16_t map_sustain;
 // WZD dseg:8890
 // extern struct s_CONTTBL TBL_Arcanus;
 // WZD dseg:8C14
-// extern struct s_CONT_TBL TBL_Myrror;
+// extern struct s_CONTINENTS_TABLE TBL_Myrror;
 // WZD dseg:8890
 extern struct s_AI_CONTINENTS _ai_continents;
 

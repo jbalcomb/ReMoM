@@ -852,14 +852,14 @@ int16_t map_sustain = 2;
 // WZD dseg:8890
 // struct s_CONTTBL TBL_Arcanus;
 // WZD dseg:8C14
-// struct s_CONT_TBL TBL_Myrror;
+// struct s_CONTINENTS_TABLE TBL_Myrror;
 // WZD dseg:8890
 /*
 1800 bytes
 
 */
 // uint8_t _ai_continents[NUM_PLANES][NUM_PLAYERS][NUM_LANDMASSES];
-// struct s_CONTS _ai_continents[NUM_PLANES][NUM_PLAYERS];
+// struct s_LANDMASSES _ai_continents[NUM_PLANES][NUM_PLAYERS];
 struct s_AI_CONTINENTS _ai_continents;
 
 
