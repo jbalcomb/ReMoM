@@ -1,5 +1,0 @@
-if(EXISTS "C:/STU/devel/ReMoM/build-dbg/MoM/tests/MOM_tests[1]_tests.cmake")
-  include("C:/STU/devel/ReMoM/build-dbg/MoM/tests/MOM_tests[1]_tests.cmake")
-else()
-  add_test(MOM_tests_NOT_BUILT MOM_tests_NOT_BUILT)
-endif()

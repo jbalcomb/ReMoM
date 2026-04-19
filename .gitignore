@@ -43,6 +43,9 @@ CppProperties.json
 _deps/
 out/
 build/
+build-dbg/
+build-sdl2/
+build-win32/
 Debug/
 Release/
 MoM-Rasm/

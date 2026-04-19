@@ -1,5 +1,0 @@
-if(EXISTS "C:/STU/devel/ReMoM/build-win32/MoX/tests/MOX_tests[1]_tests.cmake")
-  include("C:/STU/devel/ReMoM/build-win32/MoX/tests/MOX_tests[1]_tests.cmake")
-else()
-  add_test(MOX_tests_NOT_BUILT MOX_tests_NOT_BUILT)
-endif()
