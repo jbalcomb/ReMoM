@@ -83,8 +83,9 @@ add_library(momlib STATIC ${LIBMOM_SOURCES})
 target_link_libraries(momlib PUBLIC
     MOX
     STU
-    Platform
 )
+# momlib does not link Platform — see MoX/src/CMakeLists.txt for rationale.
+# Public include of platform/include comes transitively through MOX.
 
 target_include_directories(momlib PUBLIC
     ${PROJECT_SOURCE_DIR}/src

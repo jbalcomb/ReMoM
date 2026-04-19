@@ -15,6 +15,7 @@ AM_CFLAGS = -Wall -Wno-array-bounds -Wno-maybe-uninitialized -Wno-missing-braces
 noinst_LIBRARIES = \
     libstu.a \
     libplatform.a \
+    libplatform_headless.a \
     libmox.a \
     libmom.a
 
@@ -43,21 +44,10 @@ libstu_a_CFLAGS = $(AM_CFLAGS) \
     -I$(srcdir)/STU/src
 
 # -------------------------------------------------------------------------
-#  Platform
+#  Platform — windowed backend (SDL2 default, SDL3 with --with-sdl3).
+#  ReMoMber links this.
 # -------------------------------------------------------------------------
 
-if USE_HEADLESS
-PLATFORM_CORE_SOURCES = \
-    platform/headless/headless_PFL.c \
-    platform/headless/headless_KD.c \
-    platform/headless/headless_Timer.c \
-    platform/headless/headless_EMM.c \
-    platform/headless/headless_Audio.c \
-    platform/headless/headless_State.c \
-    platform/replay/Replay.c
-PLATFORM_BACKEND_DIR = platform/headless
-PLATFORM_AUDIO_SOURCES =
-else
 if USE_SDL3
 PLATFORM_CORE_SOURCES = \
     platform/sdl3/sdl3_EMM.c \
@@ -95,7 +85,6 @@ endif
 else
 PLATFORM_AUDIO_SOURCES =
 endif
-endif
 
 libplatform_a_SOURCES = \
     $(PLATFORM_CORE_SOURCES) \
@@ -109,6 +98,25 @@ libplatform_a_CFLAGS = $(AM_CFLAGS) \
 if HAVE_AUDIO
 libplatform_a_CFLAGS += $(SDL_MIXER_CFLAGS)
 endif
+
+# -------------------------------------------------------------------------
+#  Platform_Headless — always built, no external dependencies.
+#  HeMoM links this regardless of the ReMoMber backend choice.
+# -------------------------------------------------------------------------
+
+libplatform_headless_a_SOURCES = \
+    platform/headless/headless_PFL.c \
+    platform/headless/headless_KD.c \
+    platform/headless/headless_Timer.c \
+    platform/headless/headless_EMM.c \
+    platform/headless/headless_Audio.c \
+    platform/headless/headless_State.c \
+    platform/replay/Replay.c
+
+libplatform_headless_a_CFLAGS = $(AM_CFLAGS) \
+    -DNO_SOUND_LIBRARY \
+    -I$(srcdir)/platform/include \
+    -I$(srcdir)/platform/headless
 
 # -------------------------------------------------------------------------
 #  MoX
@@ -287,34 +295,16 @@ HeMoM_SOURCES = \
     src/HeMoM_Player.c
 
 HeMoM_CFLAGS = $(AM_CFLAGS) \
+    -DNO_SOUND_LIBRARY \
     -I$(srcdir)/MoX/src \
     -I$(srcdir)/MoM/src \
     -I$(srcdir)/platform/include \
     -I$(srcdir)/STU/src \
     -I$(srcdir)/src
 
-if USE_HEADLESS
-HeMoM_CFLAGS += -DUSE_HEADLESS
-else
-if USE_SDL3
-HeMoM_CFLAGS += -DUSE_SDL3 $(SDL_CFLAGS)
-else
-HeMoM_CFLAGS += $(SDL_CFLAGS)
-endif
-endif
-
 HeMoM_LDADD = \
     libmom.a \
     libmox.a \
-    libplatform.a \
-    libstu.a
-
-if USE_HEADLESS
-HeMoM_LDADD += -lm
-else
-HeMoM_LDADD += $(SDL_LIBS)
-if HAVE_AUDIO
-HeMoM_LDADD += $(SDL_MIXER_LIBS)
-endif
-HeMoM_LDADD += -lm
-endif
+    libplatform_headless.a \
+    libstu.a \
+    -lm

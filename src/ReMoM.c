@@ -277,13 +277,8 @@ int main(int argc, char * argv[])
 
     /* --headless: set SDL video driver to offscreen before SDL init.
        Must be parsed before Startup_Platform() so the environment variable
-       takes effect. Has no effect on the pure headless (USE_HEADLESS) backend. */
-#ifndef USE_HEADLESS
+       takes effect. */
     {
-#ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: #ifndef USE_HEADLESS\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: #ifndef USE_HEADLESS\n", __FILE__, __LINE__);
-#endif
         int argi;
         for (argi = 1; argi < argc; argi++)
         {
@@ -299,7 +294,6 @@ int main(int argc, char * argv[])
             }
         }
     }
-#endif
 
 #ifdef STU_DEBUG
     printf("DEBUG: [%s, %d]: BEFORE: Startup_Platform()\n", __FILE__, __LINE__);

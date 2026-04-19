@@ -148,6 +148,14 @@ void Platform_Pump_Events(void)
     /* No OS event queue to pump. */
 }
 
+/* CLAUDE: Stubs for the Win32-only pump entry points referenced from MoX
+ * Input.c / Video.c under #ifdef _STU_WIN.  These are needed when MoX is
+ * built with _STU_WIN defined (because the windowed backend in this build is
+ * Win32) but HeMoM links against the headless platform — without these the
+ * link of HeMoM fails on unresolved Pump_Events / Pump_Paints. */
+void Pump_Events(void) { /* no-op */ }
+void Pump_Paints(void) { /* no-op */ }
+
 void Platform_Mouse_Input_Enable(void)
 {
     platform_mouse_input_enabled = ST_TRUE;

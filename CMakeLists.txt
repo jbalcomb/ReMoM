@@ -57,11 +57,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 option(USE_SDL3 "Use SDL3 instead of SDL2 (default: SDL2)" OFF)
 
 option(USE_WIN32 "Use native Win32 backend instead of SDL (no SDL dependency)" OFF)
-option(USE_HEADLESS "Headless build with no display/audio (for testing, CI, replay)" OFF)
 
-if(USE_HEADLESS)
-    add_compile_definitions(NO_SOUND_LIBRARY)
-elseif(USE_WIN32)
+if(USE_WIN32)
     add_compile_definitions(NO_SOUND_LIBRARY)
 elseif(USE_SDL3)
     if(WIN32)
@@ -97,7 +94,7 @@ endif()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$<CONFIG>")
 
 # Copy SDL runtime DLLs to both Debug and Release output dirs at configure time.
-if(WIN32 AND NOT USE_WIN32 AND NOT USE_HEADLESS)
+if(WIN32 AND NOT USE_WIN32)
     if(USE_SDL3)
         set(_sdl_target SDL3::SDL3)
         set(_mixer_target SDL3_mixer::SDL3_mixer)
@@ -193,7 +190,7 @@ add_subdirectory(tests)
 install(TARGETS ReMoMber RUNTIME DESTINATION .)
 
 # Bundle SDL DLLs on Windows so the player doesn't need them installed.
-if(WIN32 AND NOT USE_WIN32 AND NOT USE_HEADLESS)
+if(WIN32 AND NOT USE_WIN32)
     if(_sdl_imported_loc)
         install(FILES "${_sdl_imported_loc}" DESTINATION .)
     endif()

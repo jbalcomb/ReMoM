@@ -39,7 +39,7 @@ target_link_libraries(MOM_tests PUBLIC
     momlib
     MOX
     STU
-    Platform
+    Platform_Headless
 )
 
 gtest_discover_tests(MOM_tests

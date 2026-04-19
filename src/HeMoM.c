@@ -10,8 +10,9 @@
  * No logos, no credits, no main menu music. Initializes the engine,
  * creates or loads a game, and enters Screen_Control().
  *
- * Build with USE_HEADLESS=ON for zero external dependencies,
- * or with SDL for offscreen rendering (SDL_VIDEODRIVER=offscreen).
+ * HeMoM is hardwired to the headless platform library — no display, no
+ * audio, no external dependencies — regardless of which windowed backend
+ * the build's preset chose for ReMoMber.
  */
 
 #ifdef _WIN32
@@ -57,18 +58,7 @@
 extern struct s_WIZARD_PRESET _wizard_presets_table[];
 
 
-#if defined(_WIN32) && !defined(_STU_WIN) && !defined(USE_HEADLESS)
-#define SDL_MAIN_HANDLED
-#ifdef USE_SDL3
-#if __has_include(<SDL3/SDL_main.h>)
-#include <SDL3/SDL_main.h>
-#endif
-#else
-#if __has_include(<SDL.h>)
-#include <SDL.h>
-#endif
-#endif
-#endif
+/* HeMoM is always headless — no SDL_main / SDL header pull-in needed. */
 
 
 
@@ -651,16 +641,6 @@ int main(int argc, char *argv[])
         fprintf(stderr, "\nError: must specify --newgame or --load\n");
         return 1;
     }
-
-    /* Set SDL video driver to offscreen for non-headless SDL builds */
-#if !defined(USE_HEADLESS) && !defined(_STU_WIN)
-#ifdef USE_SDL3
-    stu_putenv("SDL_VIDEODRIVER=offscreen");
-#else
-    stu_putenv("SDL_VIDEODRIVER=dummy");
-#endif
-    fprintf(stderr, "[HeMoM] SDL video driver set to offscreen\n");
-#endif
 
     Startup_Platform();
 

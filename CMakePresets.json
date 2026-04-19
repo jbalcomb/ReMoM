@@ -132,42 +132,6 @@
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++"
             }
-        },
-        {
-            "name": "MSVC-headless-debug",
-            "displayName": "VS2022 amd64 Headless Debug",
-            "description": "Headless build — no display, no audio, no SDL dependency",
-            "generator": "Visual Studio 17 2022",
-            "toolset": "host=x64",
-            "architecture": "x64",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "installDir": "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-                "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe",
-                "USE_HEADLESS": {
-                    "type": "BOOL",
-                    "value": "TRUE"
-                }
-            }
-        },
-        {
-            "name": "clang-headless-debug",
-            "displayName": "Clang Headless Debug",
-            "description": "Headless build — no display, no audio, no SDL dependency",
-            "generator": "Ninja Multi-Config",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "installDir": "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++",
-                "USE_HEADLESS": {
-                    "type": "BOOL",
-                    "value": "TRUE"
-                }
-            }
         }
     ],
     "buildPresets": [
@@ -230,28 +194,6 @@
             "name": "clang-debug",
             "displayName": "Linux Clang",
             "configurePreset": "clang-debug",
-            "configuration": "Debug",
-            "targets": [
-                "all",
-                "ReMoMber",
-                "HeMoM"
-            ]
-        },
-        {
-            "name": "MSVC-headless-debug",
-            "displayName": "VS2022 amd64 Headless Debug",
-            "configurePreset": "MSVC-headless-debug",
-            "configuration": "Debug",
-            "targets": [
-                "ALL_BUILD",
-                "ReMoMber",
-                "HeMoM"
-            ]
-        },
-        {
-            "name": "clang-headless-debug",
-            "displayName": "Clang Headless Debug",
-            "configurePreset": "clang-headless-debug",
             "configuration": "Debug",
             "targets": [
                 "all",
@@ -327,16 +269,6 @@
             "name": "clang-debug",
             "displayName": "Linux Clang",
             "configurePreset": "clang-debug"
-        },
-        {
-            "name": "MSVC-headless-debug",
-            "displayName": "VS2022 amd64 Headless Debug",
-            "configurePreset": "MSVC-headless-debug"
-        },
-        {
-            "name": "clang-headless-debug",
-            "displayName": "Clang Headless Debug",
-            "configurePreset": "clang-headless-debug"
         }
     ],
     "workflowPresets": [
@@ -443,42 +375,6 @@
                 {
                     "type": "package",
                     "name": "clang-debug"
-                }
-            ]
-        },
-        {
-            "name": "MSVC-headless-debug",
-            "displayName": "VS2022 amd64 Headless Debug",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "MSVC-headless-debug"
-                },
-                {
-                    "type": "build",
-                    "name": "MSVC-headless-debug"
-                },
-                {
-                    "type": "test",
-                    "name": "MSVC-headless-debug"
-                }
-            ]
-        },
-        {
-            "name": "clang-headless-debug",
-            "displayName": "Clang Headless Debug",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "clang-headless-debug"
-                },
-                {
-                    "type": "build",
-                    "name": "clang-headless-debug"
-                },
-                {
-                    "type": "test",
-                    "name": "clang-headless-debug"
                 }
             ]
         }
