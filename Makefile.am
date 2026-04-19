@@ -129,7 +129,8 @@ libmox_a_SOURCES = \
     MoX/src/capture.c \
     MoX/src/CFG.c \
     MoX/src/DOS.c \
-    MoX/src/EMM.c \
+    MoX/src/EMS/EMS.c \
+    MoX/src/EMS/EMS_EMU.c \
     MoX/src/EXIT.c \
     MoX/src/Fields.c \
     MoX/src/file_ani.c \
@@ -163,6 +164,7 @@ libmox_a_SOURCES = \
 libmox_a_CFLAGS = $(AM_CFLAGS) \
     $(SDL_CFLAGS) \
     -I$(srcdir)/MoX/src \
+    -I$(srcdir)/MoX/src/EMS \
     -I$(srcdir)/platform/include
 
 # -------------------------------------------------------------------------
