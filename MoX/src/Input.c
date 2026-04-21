@@ -2995,13 +2995,21 @@ Done:
 */
 int16_t Get_Input(void)
 {
-    int16_t field_index;
+    int16_t field_index = 0;
 
     Platform_Event_Handler();
 
-#ifdef _STU_WIN
-    Pump_Events();
-#endif
+/* CLAUDE: disabled redundant `Pump_Events()` here.
+ * Platform_Event_Handler() on the win32 backend already calls
+ * Win_Pump_Messages() internally, so this second pump did nothing useful.
+ * Worse, it created a window where keystrokes arriving between the two pumps
+ * landed in the keyboard buffer AFTER Replay_Capture_Frame() had already
+ * snapshotted, then were consumed by the popup's next Read_Key() — meaning
+ * those keys were never recorded into the .RMR.  Symptom: typing
+ * "HomeBoi" into a city-name popup recorded only the trailing 'i'. */
+// #ifdef _STU_WIN
+//     Pump_Events();
+// #endif
 
     if(input_delay > 0)
     {

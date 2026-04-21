@@ -1,5 +1,5 @@
 {
-  "tests": 118,
+  "tests": 117,
   "name": "AllTests",
   "testsuites": [
     {
@@ -708,27 +708,22 @@
     },
     {
       "name": "GenerateLairsTest",
-      "tests": 4,
+      "tests": 3,
       "testsuite": [
         {
           "name": "CreatesTowerMirrorAndNodeEntries",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Generate_Lairs.cpp",
-          "line": 106
+          "line": 118
         },
         {
           "name": "AllSlotsInitializedAfterGeneration",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Generate_Lairs.cpp",
-          "line": 148
-        },
-        {
-          "name": "DISABLED_AllOceanSkipsRandomLairPlacementAndClearsTrailingRecords",
-          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Generate_Lairs.cpp",
-          "line": 155
+          "line": 152
         },
         {
           "name": "ValidateAllLairsPassesAfterGeneration",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Generate_Lairs.cpp",
-          "line": 182
+          "line": 159
         }
       ]
     },

@@ -29,7 +29,7 @@
 set -euo pipefail
 
 REPO_ROOT="c:/STU/devel/ReMoM"
-HEADLESS_DIR="${REPO_ROOT}/out/build/MSVC-headless-debug/bin/Debug"
+HEMOM_DIR="${REPO_ROOT}/out/build/MSVC-headless-debug/bin/Debug"
 REMOMBER_DIR="${REPO_ROOT}/out/build/MSVC-debug/bin/Debug"
 ASSETS="${REPO_ROOT}/assets"
 
@@ -49,18 +49,18 @@ echo "  rebuilt: HeMoM (MSVC-headless-debug), ReMoMber + savedump (MSVC-debug)"
 
 echo
 echo "=== Step 1/5: Generate fresh SAVE9.GAM (headless, seed=12345) ==="
-if [ ! -x "${HEADLESS_DIR}/HeMoM.exe" ]; then
-    echo "FAIL: HeMoM.exe not found at ${HEADLESS_DIR}"
+if [ ! -x "${HEMOM_DIR}/HeMoM.exe" ]; then
+    echo "FAIL: HeMoM.exe not found at ${HEMOM_DIR}"
     echo "      Build the MSVC-headless-debug preset first."
     exit 1
 fi
-cd "${HEADLESS_DIR}"
+cd "${HEMOM_DIR}"
 ./HeMoM.exe --newgame "${NEWGAME_CONFIG}" --scenario "${NEWGAME_SCENARIO}" > /dev/null 2>&1
 if [ ! -f SAVE9.GAM ]; then
     echo "FAIL: HeMoM did not produce SAVE9.GAM"
     exit 1
 fi
-echo "  generated: ${HEADLESS_DIR}/SAVE9.GAM"
+echo "  generated: ${HEMOM_DIR}/SAVE9.GAM"
 
 echo
 echo "=== Step 2/5: Copy SAVE9.GAM and baseline dump to ReMoMber build ==="
@@ -74,7 +74,7 @@ if [ ! -x "${REMOMBER_DIR}/savedump.exe" ]; then
     echo "      Build the savedump target under MSVC-debug."
     exit 1
 fi
-cp "${HEADLESS_DIR}/SAVE9.GAM" "${REMOMBER_DIR}/SAVE9.GAM"
+cp "${HEMOM_DIR}/SAVE9.GAM" "${REMOMBER_DIR}/SAVE9.GAM"
 cd "${REMOMBER_DIR}"
 ./savedump.exe SAVE9.GAM SAVE9.txt > /dev/null
 echo "  copied:  ${REMOMBER_DIR}/SAVE9.GAM"

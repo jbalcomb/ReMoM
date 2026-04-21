@@ -1,5 +1,190 @@
 
 
+## Record & Replay
+
+RMR script
+HMS script
+rmr2hms.exe
+
+ReMoM
+HeMoM  (headless ReMoM)
+--record
+--replay
+--newgame
+--scenario
+
+## HeMoM  (headless ReMoM)
+--newgame
+--scenario
+
+Testing needs to be deterministic, so the INI file holds a random number seed
+
+cd c:/STU/devel/ReMoM/out/build/MSVC-headless-debug/bin/Debug
+./HeMoM.exe --newgame c:/STU/devel/ReMoM/assets/test_worldgen.ini --scenario c:/STU/devel/ReMoM/assets/test_worldgen_smoke.hms
+
+cd c:/STU/devel/ReMoM/out/build/MSVC-headless-debug/bin/Debug
+./HeMoM.exe --newgame c:/STU/devel/ReMoM/assets/test_worldgen.ini --scenario c:/STU/devel/ReMoM/assets/test_worldgen_smoke.hms
+
+--record
+--replay
+
+cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug && ./rmr2hms.exe next_turn.RMR next_turn.hms && cat next_turn.hms
+
+e.g.,
+cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug
+ReMoMber.exe --record my_recording.rmr
+...record some sequence of mouse moves, button clicks, keyboard presses
+ReMoMber.exe --replay my_recording.rmr
+...watch a playback of the recorded sequence
+
+Use `--newgame my_newgame.ini` to automatically create a 'New Game', saved as the 'Continue' save
+Use `--continue` to automatically launch with the 'Continue' save
+
+## Canonical Scenarios
+test_worldgen_smoke.hms — Smoke test: does world generation complete without crashing?
+World generation + SAVE9.GAM creation happen in Config_Apply_And_Create_New_Game()
+BEFORE Screen_Control() is entered. By the time this scenario runs, the game is already at the Main Screen with a valid save file written.
+This scenario just tells the game to exit cleanly.
+Usage:  HeMoM --newgame test_worldgen.ini --scenario test_worldgen_smoke.hms
+Validation: - HeMoM exits with code 0 - SAVE9.GAM exists and is exactly 123300 bytes
+cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug &&
+.\HeMoM.exe --newgame test_worldgen.ini --scenario test_worldgen_smoke.hms
+
+
+cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug &&
+.\HeMoM.exe --newgame test_gameplay.ini --scenario test_worldgen_smoke.hms
+
+Auto-Generate 'New Game', Launch 'Continue', handle 'Name Home City'
+
+C:\STU\devel\ReMoM\out\build\MSVC-debug\bin\Debug\ReMoMber.exe
+
+cd C:\STU\devel\ReMoM\out\build\MSVC-debug\bin\Debug\
+.\HeMoM.exe --newgame C:\STU\devel\ReMoM\assets\test_gameplay.ini
+.\ReMoMber.exe --continue
+
+
+cd c:/STU/devel/ReMoM/out/build/MSVC-debug
+.\HeMoM.exe --newgame test_gameplay.ini
+.\savedump.exe SAVE9.GAM SAVE9_gameplay.txt
+.\ReMoMber.exe --continue --record test-gameplay.rmr
+.\ReMoMber.exe --continue --replay test-gameplay.rmr
+.\rmr2hms test-gameplay.rmr test-gameplay.hms
+
+.\ReMoMber.exe --continue --scenario test-gameplay.hms
+.\savedump.exe SAVE1.GAM SAVE1_gameplay.txt
+
+--dump-save SAVE1.GAM
+
+
+PS C:\STU\devel\ReMoM\out\build\MSVC-debug> ./savedump.exe SAVE9.GAM SAVE9_gameplay.txt
+[HeMoM SaveDump] Wrote: SAVE9_gameplay.txt
+savedump: wrote SAVE9_gameplay.txt
+PS C:\STU\devel\ReMoM\out\build\MSVC-debug> 
+
+.\ReMoMber.exe --continue --record test-gameplay.rmr
+.\rmr2hms test-gameplay.rmr test-gameplay.hms
+
+ReMoMber.exe --replay test-gameplay.rmr
+rmr2hms test-gameplay.rmr test-gameplay.hms
+
+
+#   ReMoMber --continue --scenario test_continue_save.hms
+# Used with:  ReMoMber --newgame [ReMoM.ini]
+#             ReMoMber --headless --newgame ReMoM.ini --replay game.RMR
+
+### test_continue_.hms
+used to launch a new-game continue game-save and start from turn 0
+currently handles the 'Name Home City' box then sits idle
+### test_continue_pre_next_turn.hms
+used to launch a new-game continue game-save and start from turn 0
+currently handles the 'Name Home City' box, puts the starting units on patrol, then sits idle
+### test_continue_save.hms
+used to test from --continue through save-and-quit; post-op test uses output from --dump-save SAVE1.GAM
+### test_continue_next_turn.hms
+
+### scenario_tail_save_and_quit.hms
+assumes 'Main Screen'; saves the current game in save-slot-1
+Notes:
+  - The save slot name comes from the $SAVE_NAME built-in (expanded to "AHP-YYYYMMDDHHMM" by HeMoM_Player at scenario-load time).
+  - Coordinates are game-space (320x200).
+
+
+
+# ReMoM.ini — New Game Configuration  (example/template)
+
+
+
+## Scenario Authoring Work-Flow
+    Here's where we landed:
+        One-time setup:
+            cmake --workflow --preset MSVC-debug
+            OR
+            cmake --preset MSVC-debug
+            cmake --build out/build/MSVC-debug --config Debug
+            Builds HeMoM, ReMoMber, savedump, rmr2hms, tests — all into out/build/MSVC-debug/bin/Debug/ alongside SDL DLLs and game assets.
+        Per-scenario authoring loop:
+            1. Generate deterministic baseline (in bin/Debug/):
+                ./HeMoM.exe --newgame /path/to/your.ini
+                Writes SAVE9.GAM + SAVE9.txt. Exits cleanly.
+            2. Snapshot baseline dump (so you can diff later):
+                ./savedump.exe SAVE9.GAM SAVE9_baseline.txt
+            3. Play interactively + record:
+                ./ReMoMber.exe --continue --record next_turn.RMR
+                Loads SAVE9.GAM, drops you into the game. Play your turn, hit popups, save to a slot, quit normally so the .RMR finalizes.
+            4. Translate recording to a draft scenario:
+                ./rmr2hms.exe next_turn.RMR next_turn.hms
+                Hand-clean the output — fix any double-key collapses (e.g. "ll"), pick sensible wait granularities, add comments.
+            5. Dump and diff post-session save:
+                ./savedump.exe SAVE1.GAM SAVE1_postturn.txt
+                diff SAVE9_baseline.txt SAVE1_postturn.txt > next_turn_diff.txt
+                Read the diff, pick which fields are the meaningful state changes, write them into assert_<name>.txt.
+            6. Verify the scenario replays the same outcome:
+                ./HeMoM.exe --newgame /path/to/your.ini
+                ./HeMoM.exe --continue --scenario next_turn.hms --dump-save SAVE1.GAM
+                ./check_save_fields.exe SAVE1.txt assert_<name>.txt
+            7. Wire into CTest — add to tests/CMakeLists.txt following the HeMoM_NextTurn_* pattern (Setup fixture → Run → Assertions).
+                tools/record_next_turn.sh already automates 1–5 for the next-turn case. It still has stale references to the old two-build-dir layout — worth updating to match the unified single-dir reality if you want to keep using it as the canonical example.
+
+
+
+cd c:/STU/devel/ReMoM/out/build/MSVC-debug
+./HeMoM.exe --newgame test_worldgen.ini
+./ReMoMber.exe --continue
+./savedump.exe SAVE9.GAM
+./rmr2hms.exe next_turn.RMR
+./check_save_fields.exe SAVE9.txt assert_continue_save.txt
+Everything lives in c:/STU/devel/ReMoM/out/build/MSVC-debug/: all 7 .exe files, both SDL DLLs, all .LBX assets, CONFIG.MOM, .ini and .hms scenario files, PLAYING.md.
+
+Confirmed — actually working:
+
+HeMoM --newgame test_worldgen.ini → writes SAVE9.GAM (123300 bytes), exits clean
+savedump SAVE9.GAM → writes SAVE9.txt (1.7 MB)
+check_save_fields SAVE9.txt <assert> → runs (correctly reports 5 failures vs the post-continue assertions, since SAVE9 is the pre-continue baseline)
+All 7 .exe files present in out/build/MSVC-debug/
+rmr2hms runs, prints usage
+Correction to my earlier example: the assert_*.txt files live in c:/STU/devel/ReMoM/tests/, not in the install dir. So that line should be:
+
+./check_save_fields.exe SAVE9.txt c:/STU/devel/ReMoM/tests/assert_continue_save.txt
+I didn't run ReMoMber (it'd open a GUI window mid-conversation), but the .exe is there.
+
+
+
+
+
+
+## Translate RMR script to HMS script
+
+Tool is working. 3778 frames → 42 actions, output is valid HMS that matches the recorded session: city-name typing, Patrol click, Next Turn ('n'), research picker click at (54,38), then the save+quit interactions.
+
+One caveat in the output worth flagging: "Claudesvile" has one 'l' instead of two. That's a known limitation of my key-event detection — when you press the same key twice in fast succession, the recording may show key0 unchanged across consecutive frames without key_pressed going to 0 between them, and my dedupe logic collapses them into one event. Consecutive identical keys ("ll", "tt", "00", etc.) need a hand-fix.
+
+A real fix would be to look at delta_ms or the position within the keyboard buffer queue to detect "same key, new press" — but the .RMR format only records the latest pending key, not press/release transitions per-frame. Best path is to add a comment in the output for runs of the same key, or have the user spot-check.
+
+The tool is in tools/rmr2hms.c, builds as rmr2hms target, follows the same CLI pattern as savedump (./rmr2hms input.RMR [output.hms]). Use it as a starting point and hand-clean the output before saving as a canonical scenario.
+
+
+
+
 
 
 

@@ -18,7 +18,7 @@ MoO2
 #include "MOX_BITS.h"
 #include "MOX_TYPE.h"
 
-uint32_t random_seed = 0x35683568;
+uint32_t random_seed = 0x35683568;  /* 896021864d  00110101011010000011010101101000b */
 
 
 

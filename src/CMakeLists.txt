@@ -34,17 +34,10 @@ target_include_directories(ReMoMber PUBLIC
     ${PROJECT_SOURCE_DIR}/src
 )
 
-add_custom_command(TARGET ReMoMber POST_BUILD
-    COMMAND "${CMAKE_COMMAND}" -E copy_directory
-        "${PROJECT_SOURCE_DIR}/assets"
-        "$<TARGET_FILE_DIR:ReMoMber>"
-    COMMENT "Copying game assets to output directory"
-    VERBATIM
-)
-
 set_target_properties(ReMoMber PROPERTIES
     VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:ReMoMber>"
 )
+# Asset staging is handled once at the project level (see top-level CMakeLists.txt).
 
 
 
@@ -70,14 +63,7 @@ target_include_directories(HeMoM PUBLIC
     ${PROJECT_SOURCE_DIR}/src
 )
 
-add_custom_command(TARGET HeMoM POST_BUILD
-    COMMAND "${CMAKE_COMMAND}" -E copy_directory
-        "${PROJECT_SOURCE_DIR}/assets"
-        "$<TARGET_FILE_DIR:HeMoM>"
-    COMMENT "Copying game assets to HeMoM output directory"
-    VERBATIM
-)
-
 set_target_properties(HeMoM PROPERTIES
     VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:HeMoM>"
 )
+# Asset staging is handled once at the project level (see top-level CMakeLists.txt).

@@ -145,6 +145,14 @@ static uint32_t Pack_Key_Backspace(void)
     return (uint32_t)MOX_KEY_BACKSPACE;
 }
 
+static uint32_t Pack_Key_Direction(int dir_code)
+{
+    /* Direction / numpad keys (MOX_KEY_LEFT..MOX_KEY_LEFTDOWN, codes 1..8).
+       Used to move unit stacks one square at a time on the world map.
+       Character byte left as 0 so Read_Key() returns the key code. */
+    return (uint32_t)dir_code;
+}
+
 
 
 /* ========================================================================= */
@@ -519,6 +527,15 @@ static int Parse_Scenario_File(const char *filepath, int depth)
             act->packed_key = Pack_Key_Backspace();
             hemom_action_count++;
         }
+        /* Direction / numpad keys — move unit stack one square. */
+        else if (stu_stricmp(p, "left") == 0)      { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_LEFT);      hemom_action_count++; }
+        else if (stu_stricmp(p, "right") == 0)     { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_RIGHT);     hemom_action_count++; }
+        else if (stu_stricmp(p, "up") == 0)        { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_UP);        hemom_action_count++; }
+        else if (stu_stricmp(p, "down") == 0)      { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_DOWN);      hemom_action_count++; }
+        else if (stu_stricmp(p, "upright") == 0)   { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_RIGHTUP);   hemom_action_count++; }
+        else if (stu_stricmp(p, "downright") == 0) { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_RIGHTDOWN); hemom_action_count++; }
+        else if (stu_stricmp(p, "upleft") == 0)    { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_LEFTUP);    hemom_action_count++; }
+        else if (stu_stricmp(p, "downleft") == 0)  { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_LEFTDOWN);  hemom_action_count++; }
         else if (stu_strnicmp(p, "click ", 6) == 0)
         {
             act->type = act_CLICK;

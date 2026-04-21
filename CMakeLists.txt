@@ -93,6 +93,18 @@ endif()
 # All executables and DLLs go to one directory (per-config on multi-config generators).
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$<CONFIG>")
 
+# Single asset-staging step.  All executables (HeMoM, ReMoMber, savedump,
+# rmr2hms, tests, ...) share the same bin/$<CONFIG> directory, so the asset
+# tree is copied there exactly once per build instead of being copied
+# redundantly by each executable's POST_BUILD.
+add_custom_target(copy_assets ALL
+    COMMAND "${CMAKE_COMMAND}" -E copy_directory
+        "${PROJECT_SOURCE_DIR}/assets"
+        "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+    COMMENT "Staging game assets to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+    VERBATIM
+)
+
 # Copy SDL runtime DLLs to both Debug and Release output dirs at configure time.
 if(WIN32 AND NOT USE_WIN32)
     if(USE_SDL3)
@@ -187,7 +199,16 @@ add_subdirectory(tests)
 
 # --- Installation / Packaging ---
 
-install(TARGETS ReMoMber RUNTIME DESTINATION .)
+install(TARGETS
+        ReMoMber
+        HeMoM
+        savedump
+        rmr2hms
+        check_save_fields
+        compare_save_text
+        check_ai_metrics
+    RUNTIME DESTINATION .
+)
 
 # Bundle SDL DLLs on Windows so the player doesn't need them installed.
 if(WIN32 AND NOT USE_WIN32)

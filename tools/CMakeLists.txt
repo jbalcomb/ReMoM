@@ -24,3 +24,14 @@ target_link_libraries(savedump PRIVATE STU)
 set_target_properties(savedump PROPERTIES
     POSITION_INDEPENDENT_CODE ON
 )
+
+
+# --- rmr2hms: translate a .RMR replay recording to a .hms scenario script ---
+
+add_executable(rmr2hms
+    rmr2hms.c
+)
+
+set_target_properties(rmr2hms PROPERTIES
+    POSITION_INDEPENDENT_CODE ON
+)

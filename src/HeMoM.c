@@ -735,19 +735,33 @@ int main(int argc, char *argv[])
 #endif
     }
 
-    /* Enter game loop */
-    fprintf(stderr, "[HeMoM] Entering Screen_Control()\n");
+    /* Enter game loop — but skip it for --newgame without --scenario.
+       Config_Apply_And_Create_New_Game() already wrote SAVE9.GAM, and HeMoM
+       has no interactive UI, so entering Screen_Control() here would just
+       spin forever waiting for input that can never arrive. */
+    if (hemom_mode == 1 && hemom_scenario[0] == '\0')
+    {
+        fprintf(stderr, "[HeMoM] Newgame complete — SAVE9.GAM written, skipping Screen_Control()\n");
 #ifdef STU_DEBUG
-    dbg_prn("[HeMoM] Entering Screen_Control()\n");
-    trc_prn("[HeMoM] Entering Screen_Control()\n");
+        dbg_prn("[HeMoM] Newgame complete — SAVE9.GAM written, skipping Screen_Control()\n");
+        trc_prn("[HeMoM] Newgame complete — SAVE9.GAM written, skipping Screen_Control()\n");
 #endif
-    Screen_Control();
+    }
+    else
+    {
+        fprintf(stderr, "[HeMoM] Entering Screen_Control()\n");
+#ifdef STU_DEBUG
+        dbg_prn("[HeMoM] Entering Screen_Control()\n");
+        trc_prn("[HeMoM] Entering Screen_Control()\n");
+#endif
+        Screen_Control();
 
-    fprintf(stderr, "[HeMoM] Screen_Control() returned\n");
+        fprintf(stderr, "[HeMoM] Screen_Control() returned\n");
 #ifdef STU_DEBUG
-    dbg_prn("[HeMoM] Screen_Control() returned\n");
-    trc_prn("[HeMoM] Screen_Control() returned\n");
+        dbg_prn("[HeMoM] Screen_Control() returned\n");
+        trc_prn("[HeMoM] Screen_Control() returned\n");
 #endif
+    }
 
     /* Dump a save file to text after the game loop exits.  Used by tests
        that need to inspect a save produced by the scenario. */
