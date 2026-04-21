@@ -504,18 +504,15 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
         {
             if (platform_mouse_input_enabled)
             {
-                int scale = Platform_Get_Scale();
-                int16_t game_x;
-                int16_t game_y;
-                if (scale < 1) { scale = 1; }
-                game_x = (int16_t)(GET_X_LPARAM(lParam) / scale);
-                game_y = (int16_t)(GET_Y_LPARAM(lParam) / scale);
-                SETRANGE(game_x, PLATFORM_SCREEN_XMIN, PLATFORM_SCREEN_XMAX);
-                SETRANGE(game_y, PLATFORM_SCREEN_YMIN, PLATFORM_SCREEN_YMAX);
+                /* CLAUDE: User_Mouse_Handler() expects window-space coords and divides by scale internally.  Passing pre-scaled (game-space) coords double-scales and causes the cursor to jump up-left before Platform_Maybe_Move_Mouse() corrects it. */
+                int16_t win_x = (int16_t)GET_X_LPARAM(lParam);
+                int16_t win_y = (int16_t)GET_Y_LPARAM(lParam);
 #ifdef MOUSE_DEBUG
-                MOUSE_LOG("MOUSEt=%llu WM_MOUSEMOVE wx=%d wy=%d gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), (int)GET_X_LPARAM(lParam), (int)GET_Y_LPARAM(lParam), game_x, game_y);
+                int scale = Platform_Get_Scale();
+                if (scale < 1) { scale = 1; }
+                MOUSE_LOG("MOUSEt=%llu WM_MOUSEMOVE wx=%d wy=%d gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (int)(win_x / scale), (int)(win_y / scale));
 #endif
-                User_Mouse_Handler(0, game_x, game_y);
+                User_Mouse_Handler(0, win_x, win_y);
             }
         } break;
 
@@ -593,19 +590,16 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
         {
             if (platform_mouse_input_enabled)
             {
-                int scale = Platform_Get_Scale();
-                int16_t game_x;
-                int16_t game_y;
-                if (scale < 1) { scale = 1; }
-                game_x = (int16_t)(GET_X_LPARAM(lParam) / scale);
-                game_y = (int16_t)(GET_Y_LPARAM(lParam) / scale);
-                SETRANGE(game_x, PLATFORM_SCREEN_XMIN, PLATFORM_SCREEN_XMAX);
-                SETRANGE(game_y, PLATFORM_SCREEN_YMIN, PLATFORM_SCREEN_YMAX);
+                /* CLAUDE: pass window-space coords; User_Mouse_Handler divides by scale internally.  See WM_MOUSEMOVE note. */
+                int16_t win_x = (int16_t)GET_X_LPARAM(lParam);
+                int16_t win_y = (int16_t)GET_Y_LPARAM(lParam);
 #ifdef MOUSE_DEBUG
-                MOUSE_LOG("MOUSEt=%llu BTN_DOWN btn=1 gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), game_x, game_y);
+                int scale = Platform_Get_Scale();
+                if (scale < 1) { scale = 1; }
+                MOUSE_LOG("MOUSEt=%llu BTN_DOWN btn=1 wx=%d wy=%d gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (int)(win_x / scale), (int)(win_y / scale));
 #endif
                 platform_frame_mouse_buttons |= 1;
-                User_Mouse_Handler(ST_LEFT_BUTTON, game_x, game_y);
+                User_Mouse_Handler(ST_LEFT_BUTTON, win_x, win_y);
             }
         } break;
 
@@ -613,19 +607,16 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
         {
             if (platform_mouse_input_enabled)
             {
-                int scale = Platform_Get_Scale();
-                int16_t game_x;
-                int16_t game_y;
-                if (scale < 1) { scale = 1; }
-                game_x = (int16_t)(GET_X_LPARAM(lParam) / scale);
-                game_y = (int16_t)(GET_Y_LPARAM(lParam) / scale);
-                SETRANGE(game_x, PLATFORM_SCREEN_XMIN, PLATFORM_SCREEN_XMAX);
-                SETRANGE(game_y, PLATFORM_SCREEN_YMIN, PLATFORM_SCREEN_YMAX);
+                /* CLAUDE: pass window-space coords; User_Mouse_Handler divides by scale internally.  See WM_MOUSEMOVE note. */
+                int16_t win_x = (int16_t)GET_X_LPARAM(lParam);
+                int16_t win_y = (int16_t)GET_Y_LPARAM(lParam);
 #ifdef MOUSE_DEBUG
-                MOUSE_LOG("MOUSEt=%llu BTN_DOWN btn=2 gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), game_x, game_y);
+                int scale = Platform_Get_Scale();
+                if (scale < 1) { scale = 1; }
+                MOUSE_LOG("MOUSEt=%llu BTN_DOWN btn=2 wx=%d wy=%d gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (int)(win_x / scale), (int)(win_y / scale));
 #endif
                 platform_frame_mouse_buttons |= 2;
-                User_Mouse_Handler(ST_RIGHT_BUTTON, game_x, game_y);
+                User_Mouse_Handler(ST_RIGHT_BUTTON, win_x, win_y);
             }
         } break;
 
