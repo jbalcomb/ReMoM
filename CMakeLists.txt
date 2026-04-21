@@ -189,6 +189,34 @@ endif()
 
 
 
+# Summary of Differences
+# Method            Portability     When it runs
+# add_dependencies  All Generators  Before the target's first source is compiled.
+# OUTPUT Command    All Generators  Only if the generated file is out-of-date.
+# Pro Tip: Use the cmake -E command for common tasks (like copy, make_directory, or echo) to ensure your pre-build scripts remain platform-independent. 
+
+# # Define the custom task
+# add_custom_target(run_pre_build_task
+#     COMMAND ${CMAKE_COMMAND} -E echo "Running pre-build task..."
+#     # Add your specific command here
+#     VERBATIM
+# )
+# 
+# # Make your main target depend on it
+# add_dependencies(my_executable run_pre_build_task)
+
+# add_custom_command(
+#     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/generated.h"
+#     COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_SOURCE_DIR}/generate_header.cmake"
+#     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/template.h.in"
+#     VERBATIM
+# )
+# 
+# # The command will run because the executable depends on 'generated.h'
+# add_executable(my_executable main.cpp "${CMAKE_CURRENT_BINARY_DIR}/generated.h")
+
+
+
 add_subdirectory(STU)
 add_subdirectory(platform)
 add_subdirectory(MoX)

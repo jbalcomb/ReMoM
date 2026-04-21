@@ -5,6 +5,14 @@
 
 add_executable(ReMoMber ReMoM.c ReMoM_Init.c HeMoM_Player.c)
 
+add_custom_target(run_pre_build_task
+    COMMAND ${CMAKE_COMMAND} -E echo "Running pre-build task..."
+    COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}/timestamp.txt"
+    COMMENT "Updating timestamp file in binary directory"
+    VERBATIM
+)
+add_dependencies(ReMoMber run_pre_build_task)
+
 set_target_properties(ReMoMber PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 if(USE_WIN32)
