@@ -166,7 +166,7 @@ XREF:
 
 
 
-## AI_RallyEnRouteCount
+## cp_enroute_unit_countt
 count of units enroute the continent stage point
     (_UNITS[itr_units].dst_wx == cp_landmass_wx_array[landmass_idx])
     (_UNITS[itr_units].dst_wy == cp_landmass_wy_array[landmass_idx])

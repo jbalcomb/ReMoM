@@ -6,7 +6,6 @@
         ovr162
 */
 
-#include <assert.h>
 
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
@@ -15,6 +14,7 @@
 #include "../../MoX/src/random.h"
 #include "../../MoX/src/special.h"
 #include "../../MoX/src/Util.h"
+#include "../../MoX/src/EMS/EMS.h"
 
 #include "Outpost.h"
 #include "SETTLE.h"
@@ -31,6 +31,7 @@
 #include "UnitMove.h"
 #include "DIPLODEF.h"
 
+#include <assert.h>
 #include <stdlib.h>
 
 #include "AIMOVE.h"
@@ -66,7 +67,7 @@ populated in AI_Survey_Excess_Units_In_Stack()
 */
 int16_t G_Seafaring_Count;
 // WZD dseg:D3F8
-int16_t G_Pushout_Units_Count;
+int16_t cp_drafted_unit_count;
 // WZD dseg:D3FA
 int16_t G_Seafaring_Values[MAX_STACK];
 // WZD dseg:D40C
@@ -93,9 +94,9 @@ AI_Set_Unit_Orders
 int16_t G_Pushout_Unit_Indices[MAX_STACK];
 
 // WZD dseg:D48A
-int16_t AI_OnRallyPt_Count;
+int16_t cp_staged_unit_count;
 // WZD dseg:D48C
-int16_t AI_RallyEnRouteCount;
+int16_t cp_enroute_unit_count;
 
 // WZD dseg:D48E
 int16_t g_ai_minattackstack;
@@ -240,49 +241,38 @@ void G_AI_RallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx)
     int16_t unit_idx = 0;
     int16_t list_unit_idx = 0;
     int16_t gap_count = 0;
-    int16_t itr = 0;  // _SI_
+    int16_t itr = 0;
 
-    if(AI_OnRallyPt_Count == MAX_STACK)
+    if(cp_staged_unit_count == MAX_STACK)
     {
-
-        if(Random(20) == 1)
+        if(Random(20) == 1)  // 1:20  5% chance
         {
-
             AI_SingleCont_Reeval__WIP(player_idx, landmass_idx, wp);
-
         }
-
     }
 
-    if((AI_OnRallyPt_Count + AI_RallyEnRouteCount) < g_ai_minattackstack)  // ; turn / 30 + 2, max 9
+    if((cp_staged_unit_count + cp_enroute_unit_count) < g_ai_minattackstack)
     {
-
         if(
             (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] >= lmt_Abandon)
             ||
             (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoPresence)
             ||
-            ((AI_OnRallyPt_Count + AI_RallyEnRouteCount + G_Pushout_Units_Count) > g_ai_minattackstack)
+            ((cp_staged_unit_count + cp_enroute_unit_count + cp_drafted_unit_count) > g_ai_minattackstack)
         )
         {
-
-            gap_count = (MAX_STACK - AI_RallyEnRouteCount);
-
-            for(itr = 0; ((itr < gap_count) && (itr < G_Pushout_Units_Count)); itr++)
+            gap_count = (MAX_STACK - cp_enroute_unit_count);
+            for(itr = 0; ((itr < gap_count) && (itr < cp_drafted_unit_count)); itr++)
             {
-
                 unit_list_idx = G_Pushout_CX_IDs[itr];
-
                 list_unit_idx = G_Pushout_UL_Indices[itr];
-
                 unit_idx = G_Pushout_Unit_Indices[itr];
-
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, cp_landmass_wx_array[landmass_idx], cp_landmass_wy_array[landmass_idx], unit_list_idx, list_unit_idx);
+#endif
                 AI_Set_Move_Or_Goto_Target(unit_idx, cp_landmass_wx_array[landmass_idx], cp_landmass_wy_array[landmass_idx], unit_list_idx, list_unit_idx);
-
             }
-
         }
-
     }
 
 }
@@ -694,6 +684,9 @@ void AI_FillGarrisons__WIP(int16_t player_idx, int16_t wp, int16_t landmass_idx)
                                 )
                                 {
 
+#ifdef STU_DEBUG
+                                    dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
+#endif
                                     AI_Set_Move_Or_Goto_Target(unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
 
                                     if(target_type == 0)
@@ -1188,6 +1181,9 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
 
                             Transport_Stack_Room -= (_unit_type_table[_UNITS[itr_units].type].Transport + 1);
 
+#ifdef STU_DEBUG
+                            dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, itr_units, target_wx, target_wy, itr_stacks, itr_list_units);
+#endif
                             AI_Set_Move_Or_Goto_Target(itr_units, target_wx, target_wy, itr_stacks, itr_list_units);
 
                         }
@@ -1436,6 +1432,9 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
                             else
                             {
 
+#ifdef STU_DEBUG
+                                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
+#endif
                                 AI_Set_Move_Or_Goto_Target(itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
 
                             }
@@ -1488,6 +1487,9 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
 
                                 itr_units = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
 
+#ifdef STU_DEBUG
+                                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
+#endif
                                 AI_Set_Move_Or_Goto_Target(itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
 
                             }
@@ -1575,6 +1577,9 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
 
                                         itr_units = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
 
+#ifdef STU_DEBUG
+                                        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
+#endif
                                         AI_Set_Move_Or_Goto_Target(itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
 
                                     }
@@ -1685,6 +1690,9 @@ void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx
 
                         unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
 
+#ifdef STU_DEBUG
+                        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
+#endif
                         AI_Set_Move_Or_Goto_Target(unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
 
                     }
@@ -1934,6 +1942,9 @@ void AI_PullForMainWar__WIP(int16_t player_idx, int16_t wp)
                     )
                     {
 
+#ifdef STU_DEBUG
+                        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, _ai_continents.plane[wp].player[player_idx].wx_array[AI_MainWarConts[wp][player_idx]], _ai_continents.plane[wp].player[player_idx].wy_array[AI_MainWarConts[wp][player_idx]], itr_stacks, itr_list_units);
+#endif
                         AI_Set_Move_Or_Goto_Target(unit_idx, _ai_continents.plane[wp].player[player_idx].wx_array[AI_MainWarConts[wp][player_idx]], _ai_continents.plane[wp].player[player_idx].wy_array[AI_MainWarConts[wp][player_idx]], itr_stacks, itr_list_units);
 
                     }
@@ -2052,6 +2063,9 @@ void G_AI_RallyOrFerry__WIP(int16_t stack_idx, int16_t landmass_idx, int16_t wp,
 
             unit_idx = _ai_own_stack_unit_list[stack_idx][itr_list_units];
 
+#ifdef STU_DEBUG
+            dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, stage_wx, stage_wy, stack_idx, itr_list_units);
+#endif
             AI_Set_Move_Or_Goto_Target(unit_idx, stage_wx, stage_wy, stack_idx, itr_list_units);
 
             IDK_count--;
@@ -2223,6 +2237,9 @@ void G_AI_RallyOrFerry__WIP(int16_t stack_idx, int16_t landmass_idx, int16_t wp,
 
                     unit_idx = _ai_own_stack_unit_list[stack_idx][itr_list_units];
 
+#ifdef STU_DEBUG
+                    dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, Ocean_Unit_X, Ocean_Unit_Y, stack_idx, itr_list_units);
+#endif
                     AI_Set_Move_Or_Goto_Target(unit_idx, Ocean_Unit_X, Ocean_Unit_Y, stack_idx, itr_list_units);
 
                     if(
@@ -2953,7 +2970,7 @@ builds _ai_own_stack_unit_list[]
 finds nearest target unit
 sets move|goto status
 
-What's with AI_RallyEnRouteCount and AI_OnRallyPt_Count?
+What's with cp_enroute_unit_count and cp_staged_unit_count?
 
 */
 void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landmass_idx, int16_t wp)
@@ -2971,9 +2988,9 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
 
     _ai_own_stack_count = 0;
 
-    AI_RallyEnRouteCount = 0;
+    cp_enroute_unit_count = 0;
 
-    AI_OnRallyPt_Count = 0;
+    cp_staged_unit_count = 0;
 
     for(itr_stacks1 = 0; itr_stacks1 < 80; itr_stacks1++)
     {
@@ -3028,7 +3045,7 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
         )
         {
             
-            AI_OnRallyPt_Count++;
+            cp_staged_unit_count++;
             
         }
 
@@ -3088,7 +3105,7 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
                 )
                 {
 
-                    AI_RallyEnRouteCount++;
+                    cp_enroute_unit_count++;
 
                 }
 
@@ -3133,7 +3150,7 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
                 )
                 {
 
-                    AI_RallyEnRouteCount++;
+                    cp_enroute_unit_count++;
 
                 }
 
@@ -3208,6 +3225,9 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
                     for(itr_stacks2 = 0; _ai_own_stack_unit_count[itr_stacks1] > itr_stacks2; itr_stacks2++)
                     {
 
+#ifdef STU_DEBUG
+                        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, _ai_own_stack_unit_list[itr_stacks1][itr_stacks2], target_wx, target_wy, itr_stacks1, itr_stacks2);
+#endif
                         AI_Set_Move_Or_Goto_Target(_ai_own_stack_unit_list[itr_stacks1][itr_stacks2], target_wx, target_wy, itr_stacks1, itr_stacks2);
 
                     }
@@ -3999,6 +4019,9 @@ void AI_GarrBuilderPush__WIP(int16_t wp)
                 if(Adjacent_Free_Square(_ai_own_stack_wx[itr_stacks], _ai_own_stack_wy[itr_stacks], _ai_own_stack_wp[itr_stacks], &RetX, &RetY) == ST_TRUE)
                 {
 
+#ifdef STU_DEBUG
+                    dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, RetX, RetY, itr_stacks, itr_garrison);
+#endif
                     AI_Set_Move_Or_Goto_Target(unit_idx, RetX, RetY, itr_stacks, itr_garrison);
 
                 }
@@ -4037,6 +4060,9 @@ void AI_GarrBuilderPush__WIP(int16_t wp)
                     if(Adjacent_Free_Square(_ai_own_stack_wx[itr_stacks], _ai_own_stack_wy[itr_stacks], _ai_own_stack_wp[itr_stacks], &RetX, &RetY) == ST_TRUE)
                     {
 
+#ifdef STU_DEBUG
+                        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, RetX, RetY, itr_stacks, itr_garrison);
+#endif
                         AI_Set_Move_Or_Goto_Target(unit_idx, RetX, RetY, itr_stacks, itr_garrison);
 
                     }
@@ -4085,7 +4111,7 @@ _ai_own_stack_type	Condition	Excess count
 other	skipped	—
 Before the loop, it resets the four globals that AI_Survey_Excess_Units_In_Stack writes into:
 
-G_Pushout_Units_Count = 0, G_Pushout_Lowest_Value = 10000
+cp_drafted_unit_count = 0, G_Pushout_Lowest_Value = 10000
 G_Seafaring_Count = 0, G_Seafaring_Lowest_Value = 10000
 What the output is used for
 The two 9-slot arrays it ultimately populates
@@ -4116,7 +4142,7 @@ void AI_Survey_Excess_Units(void)
 {
     int16_t itr_stacks = 0;
     int16_t stack_unit_count = 0;
-    G_Pushout_Units_Count = 0;
+    cp_drafted_unit_count = 0;
     G_Seafaring_Count = 0;
     G_Pushout_Lowest_Value = 10000;
     G_Seafaring_Lowest_Value = 10000;
@@ -4259,13 +4285,13 @@ void AI_Survey_Excess_Units_In_Stack(int16_t stack_idx, int16_t unit_count, int1
         }
 
         /* Update standard Pushout list (Global Offensive Stack) */
-        if(G_Pushout_Units_Count < MAX_STACK)
+        if(cp_drafted_unit_count < MAX_STACK)
         {
-            G_Pushout_UL_Indices[G_Pushout_Units_Count] = stack_ul_idx;
-            G_Pushout_CX_IDs[G_Pushout_Units_Count] = stack_idx;
-            G_Pushout_Values[G_Pushout_Units_Count] = unit_value;
-            G_Pushout_Unit_Indices[G_Pushout_Units_Count] = unit_idx;
-            G_Pushout_Units_Count++;
+            G_Pushout_UL_Indices[cp_drafted_unit_count] = stack_ul_idx;
+            G_Pushout_CX_IDs[cp_drafted_unit_count] = stack_idx;
+            G_Pushout_Values[cp_drafted_unit_count] = unit_value;
+            G_Pushout_Unit_Indices[cp_drafted_unit_count] = unit_idx;
+            cp_drafted_unit_count++;
             if(unit_value < G_Pushout_Lowest_Value)
             {
                 G_Pushout_Lowest_Value = unit_value;
@@ -4348,9 +4374,9 @@ void AI_Survey_Excess_Units_In_Stack(int16_t stack_idx, int16_t unit_count, int1
     }
 
     /* Phase 4: Final sort of Global Pushout list descending */
-    for(itr = 0; (G_Pushout_Units_Count - 1) > itr; itr++)
+    for(itr = 0; (cp_drafted_unit_count - 1) > itr; itr++)
     {
-        for(itr2 = 0; (G_Pushout_Units_Count - 1) > itr2; itr2++)
+        for(itr2 = 0; (cp_drafted_unit_count - 1) > itr2; itr2++)
         {
             if(G_Pushout_Values[itr2] < G_Pushout_Values[(itr2 + 1)])
             {
@@ -4531,6 +4557,9 @@ void AI_Do_Meld(int16_t player_idx)
 
                         node_wy = _NODES[target_node_idx].wy;
 
+#ifdef STU_DEBUG
+                        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, node_wx, node_wy, itr, list_unit_idx);
+#endif
                         AI_Set_Move_Or_Goto_Target(unit_idx, node_wx, node_wy, itr, list_unit_idx);
 
                     }
@@ -4689,6 +4718,9 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                         if(AI_CanSettleOffPlane__STUB(player_idx, unit_idx, &Tower_X, &Tower_Y, unit_wp) == ST_TRUE)
                         {
 
+#ifdef STU_DEBUG
+                            dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, Tower_X, Tower_Y, itr_stacks, itr_list_units);
+#endif
                             AI_Set_Move_Or_Goto_Target(unit_idx, Tower_X, Tower_Y, itr_stacks, itr_list_units);
 
                         }
@@ -4782,6 +4814,9 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                             }
                             else
                             {
+#ifdef STU_DEBUG
+                                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, Best_Tile_X, Best_Tile_Y, itr_stacks, itr_list_units);
+#endif
                                 AI_Set_Move_Or_Goto_Target(unit_idx, Best_Tile_X, Best_Tile_Y, itr_stacks, itr_list_units);
 
                             }
@@ -4936,6 +4971,9 @@ void AI_Do_Purify(int16_t landmass_idx, int16_t wp)
                             else
                             {
 
+#ifdef STU_DEBUG
+                                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, list_unit_idx);
+#endif
                                 AI_Set_Move_Or_Goto_Target(unit_idx, target_wx, target_wy, itr_stacks, list_unit_idx);
 
                             }
@@ -5057,6 +5095,9 @@ void AI_Do_RoadBuild(int16_t landmass_idx)
                     if(closest_distance > 1)
                     {
 
+#ifdef STU_DEBUG
+                        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, _CITIES[nearest_city_idx].wx, _CITIES[nearest_city_idx].wy, itr_stacks, itr_list_units);
+#endif
                         AI_Set_Move_Or_Goto_Target(unit_idx, _CITIES[nearest_city_idx].wx, _CITIES[nearest_city_idx].wy, itr_stacks, itr_list_units);
 
                     }
@@ -5121,59 +5162,51 @@ void AI_Do_RoadBuild(int16_t landmass_idx)
 
 
 // WZD o158p26
-// drake178: AI_UNIT_SetMoveOrder()
-/*
-; sets the move order for the unit, either US_Move if
-; the target tile contains enemy units and nothing
-; else, or US_GoingTo otherwise; and replaces the
-; unit's index in the stack with -1, marking it
-; processed
-*/
-/*
-
-*/
 void AI_Set_Move_Or_Goto_Target(int16_t unit_idx, int16_t target_wx, int16_t target_wy, int16_t stack_idx, int16_t list_unit_idx)
 {
     int16_t wp = 0;
-    int16_t target_value = 0;  // _DI_
-
+    int16_t target_value = 0;
+#ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: BEGIN: AI_Set_Move_Or_Goto_Target()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: AI_Set_Move_Or_Goto_Target()\n", __FILE__, __LINE__);
+    trc_prn("DEBUG: [%s, %d]: BEGIN: AI_Set_Move_Or_Goto_Target()\n", __FILE__, __LINE__);
+#endif
     if(
         (unit_idx < 0)
         ||
         (unit_idx > MAX_UNIT_COUNT)
     )
     {
-
         return;
-
     }
-
     wp = _UNITS[unit_idx].wp;
-
     target_value = g_ai_evaluation_map[wp][((target_wy * WORLD_WIDTH) + target_wx)];
-
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: unit_idx: %d, target_wx: %d, target_wy: %d, target_value: %d\n", __FILE__, __LINE__, unit_idx, target_wx, target_wy, target_value);
+#endif
     if(
         ((target_value & AI_TARGET_SITE) != 0)
         ||
         ((target_value & AI_TARGET_FORTRESS) != 0)
     )
     {
-
         _UNITS[unit_idx].Status = us_Move;  // DEDU  What does this status mean?
-
     }
     else
     {
-
         _UNITS[unit_idx].Status = us_GOTO;
-
     }
-
     _UNITS[unit_idx].dst_wx = (int8_t)target_wx;
     _UNITS[unit_idx].dst_wy = (int8_t)target_wy;
-
+#ifdef STU_DEBUG
+        dbg_prn("DEBUG: [%s, %d]: unit_idx: %d, status: %d, dst_wx: %d, dst_wy: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].Status, _UNITS[unit_idx].dst_wx, _UNITS[unit_idx].dst_wy);
+#endif
     _ai_own_stack_unit_list[stack_idx][list_unit_idx] = ST_UNDEFINED;
-
+#ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: END: AI_Set_Move_Or_Goto_Target()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: AI_Set_Move_Or_Goto_Target()\n", __FILE__, __LINE__);
+    trc_prn("DEBUG: [%s, %d]: END: AI_Set_Move_Or_Goto_Target()\n", __FILE__, __LINE__);
+#endif
 }
 
 
@@ -5548,6 +5581,9 @@ void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp
     if(is_seafaring == ST_TRUE)
     {
 
+#ifdef STU_DEBUG
+        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, transport_wx, transport_wy, unit_list_idx, list_unit_idx);
+#endif
         AI_Set_Move_Or_Goto_Target(unit_idx, transport_wx, transport_wy, unit_list_idx, list_unit_idx);
 
     }
@@ -5617,6 +5653,9 @@ void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp
             if(TILE_AI_FindEmptyLnd__WIP(Adjacent_Ocean_X, Adjacent_Ocean_Y, wp, &Adjacent_Ocean_X, &Adjacent_Ocean_Y) == ST_TRUE)
             {
 
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, Adjacent_Ocean_X, Adjacent_Ocean_Y, unit_list_idx, list_unit_idx);
+#endif
                 AI_Set_Move_Or_Goto_Target(unit_idx, Adjacent_Ocean_X, Adjacent_Ocean_Y, unit_list_idx, list_unit_idx);
 
             }
@@ -5669,6 +5708,9 @@ void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp
             if(found_transport == ST_TRUE)
             {
 
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, transport_wx, transport_wy, unit_list_idx, list_unit_idx);
+#endif
                 AI_Set_Move_Or_Goto_Target(unit_idx, transport_wx, transport_wy, unit_list_idx, list_unit_idx);
 
             }

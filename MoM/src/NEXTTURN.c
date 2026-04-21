@@ -1,4 +1,3 @@
-/* COPILOT */
 /**
  * @file NEXTTURN.c
  * @brief Implements the main strategic next-turn update pipeline.

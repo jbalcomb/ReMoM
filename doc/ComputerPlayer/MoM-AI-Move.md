@@ -71,6 +71,13 @@ _ai_continents__1
     AI_Continent_Reeval__WIP()
     AI_Pick_Action_Conts__WIP()
 
+set in 1 function, at 2 sites
+    if (Value_Sum == 0) {
+        AI_MainWarConts[wp][player_idx] = 0;
+    } else {
+        AI_MainWarConts[wp][player_idx] = Get_Weighted_Choice(&Continent_Values_2[0], NUM_LANDMASSES);
+    }
+
 
 
 ai_human_hostility
@@ -110,38 +117,82 @@ populated in AI_Survey_Excess_Units_In_Stack()
 
 cleared in AI_Survey_Excess_Units()
 populated in AI_Survey_Excess_Units_In_Stack()
-    G_Pushout_Units_Count
+    cp_drafted_unit_count
     G_Pushout_Lowest_Value
 populated in AI_Survey_Excess_Units_In_Stack()
     G_Pushout_Values[MAX_STACK]
     G_Pushout_CX_IDs[MAX_STACK]
     G_Pushout_UL_Indices[MAX_STACK]
 used in G_AI_RallyFill__WIP()
-    G_Pushout_Units_Count
+    cp_drafted_unit_count
     G_Pushout_CX_IDs[MAX_STACK]
     G_Pushout_UL_Indices[MAX_STACK]
     G_Pushout_Unit_Indices[MAX_STACK]
 
+## cp_staged_unit_count
+    set in AI_Build_Stacks_Find_Targets_Order_Moves
+    used in G_AI_RallyFill__WIP
+    ...something like...
+    ...if staging area already staffed
+    ...if staged and routed enough to staff the staging area
+    ...if drafted and staged and routed enough to staff the staging area
+
+¿ MoO2 Move_To_Stage_Points_() ?
+
+mov     ax, [cp_staged_unit_count]
+add     ax, [cp_enroute_unit_countt]
+add     ax, [cp_drafted_unit_count]
+cmp     ax, [g_ai_minattackstack]       ; turn / 30 + 2, max 9
+jge     short loc_EC03C
 
 
-Down r G_AI_RallyFill__WIP+B                       cmp [AI_OnRallyPt_Count], e_MAX_STACK
-Down r G_AI_RallyFill__WIP:loc_EBFDD               mov ax, [AI_OnRallyPt_Count]         
-Down r G_AI_RallyFill__WIP+7C                      mov ax, [AI_OnRallyPt_Count]         
-Down w AI_Build_Stacks_Find_Targets_Order_Moves+14 mov [AI_OnRallyPt_Count], 0          
-Down w AI_Build_Stacks_Find_Targets_Order_Moves+D8 inc [AI_OnRallyPt_Count]             
 
-Down r G_AI_RallyFill__WIP+33                       add ax, [AI_RallyEnRouteCount]
-Down r G_AI_RallyFill__WIP+7F                       add ax, [AI_RallyEnRouteCount]
-Down r G_AI_RallyFill__WIP+92                       sub ax, [AI_RallyEnRouteCount]
-Down w AI_Build_Stacks_Find_Targets_Order_Moves+E   mov [AI_RallyEnRouteCount], 0 
-Down w AI_Build_Stacks_Find_Targets_Order_Moves+203 inc [AI_RallyEnRouteCount]    
-Down w AI_Build_Stacks_Find_Targets_Order_Moves+339 inc [AI_RallyEnRouteCount]    
+Down r G_AI_RallyFill__WIP+B                       cmp [cp_staged_unit_count], e_MAX_STACK
+Down r G_AI_RallyFill__WIP:loc_EBFDD               mov ax, [cp_staged_unit_count]         
+Down r G_AI_RallyFill__WIP+7C                      mov ax, [cp_staged_unit_count]         
+Down w AI_Build_Stacks_Find_Targets_Order_Moves+14 mov [cp_staged_unit_count], 0          
+Down w AI_Build_Stacks_Find_Targets_Order_Moves+D8 inc [cp_staged_unit_count]             
+
+Down r G_AI_RallyFill__WIP+33                       add ax, [cp_enroute_unit_countt]
+Down r G_AI_RallyFill__WIP+7F                       add ax, [cp_enroute_unit_countt]
+Down r G_AI_RallyFill__WIP+92                       sub ax, [cp_enroute_unit_countt]
+Down w AI_Build_Stacks_Find_Targets_Order_Moves+E   mov [cp_enroute_unit_countt], 0 
+Down w AI_Build_Stacks_Find_Targets_Order_Moves+203 inc [cp_enroute_unit_countt]    
+Down w AI_Build_Stacks_Find_Targets_Order_Moves+339 inc [cp_enroute_unit_countt]    
 
 Down w AI_Set_Unit_Orders+5E mov [g_ai_minattackstack], ax       ; turn / 30 + 2, max 9  
 Down r AI_Set_Unit_Orders+61 cmp [g_ai_minattackstack], e_MAX_STACK; turn / 30 + 2, max 9
 Down w AI_Set_Unit_Orders+68 mov [g_ai_minattackstack], e_MAX_STACK; turn / 30 + 2, max 9
 Down r G_AI_RallyFill__WIP+37   cmp ax, [g_ai_minattackstack]       ; turn / 30 + 2, max 9  
 Down r G_AI_RallyFill__WIP+87   cmp ax, [g_ai_minattackstack]       ; turn / 30 + 2, max 9  
+
+
+## AI_Set_Move_Or_Goto_Target()
+
+Up   J NX_j_AI_Set_Move_Or_Goto_Target              jmp     AI_Set_Move_Or_Goto_Target         
+     p G_AI_RallyFill__WIP+DD                       call    near ptr AI_Set_Move_Or_Goto_Target
+Down p AI_FillGarrisons__WIP+76A                    call    near ptr AI_Set_Move_Or_Goto_Target
+Down p G_AI_ProcessTransports__WIP+646              call    near ptr AI_Set_Move_Or_Goto_Target
+Down p G_AI_ProcessTransports__WIP+75B              call    near ptr AI_Set_Move_Or_Goto_Target
+Down p G_AI_ProcessTransports__WIP+915              call    near ptr AI_Set_Move_Or_Goto_Target
+Down p G_AI_ProcessTransports__WIP+9FE              call    near ptr AI_Set_Move_Or_Goto_Target
+Down p AI_ProcessRoamers__WIP:loc_ED7E1             call    near ptr AI_Set_Move_Or_Goto_Target
+Down p AI_PullForMainWar__WIP+15F                   call    near ptr AI_Set_Move_Or_Goto_Target
+Down p G_AI_RallyOrFerry__WIP+E1                    call    near ptr AI_Set_Move_Or_Goto_Target
+Down p G_AI_RallyOrFerry__WIP+341                   call    near ptr AI_Set_Move_Or_Goto_Target
+Down p AI_Build_Stacks_Find_Targets_Order_Moves+3FD call    near ptr AI_Set_Move_Or_Goto_Target
+Down p AI_GarrBuilderPush__WIP+C9                   call    near ptr AI_Set_Move_Or_Goto_Target
+Down p AI_GarrBuilderPush__WIP+1C0                  call    near ptr AI_Set_Move_Or_Goto_Target
+Down p AI_Do_Meld+29E                               call    near ptr AI_Set_Move_Or_Goto_Target
+Down p AI_Do_Settle+1DF                             call    near ptr AI_Set_Move_Or_Goto_Target
+Down p AI_Do_Settle+39B                             call    near ptr AI_Set_Move_Or_Goto_Target
+Down p AI_Do_Purify+1E4                             call    near ptr AI_Set_Move_Or_Goto_Target
+Down p AI_Do_RoadBuild+1D7                          call    near ptr AI_Set_Move_Or_Goto_Target
+Down p AI_SendToColonize__WIP+E4                    call    near ptr AI_Set_Move_Or_Goto_Target
+Down p AI_SendToColonize__WIP+1A3                   call    near ptr AI_Set_Move_Or_Goto_Target
+Down p AI_SendToColonize__WIP+298                   call    near ptr AI_Set_Move_Or_Goto_Target
+
+
 
 
 
@@ -165,7 +216,7 @@ populated in AI_Survey_Excess_Units_In_Stack()
 */
 int16_t G_Seafaring_Count;
 // WZD dseg:D3F8
-int16_t G_Pushout_Units_Count;
+int16_t cp_drafted_unit_count;
 // WZD dseg:D3FA
 int16_t G_Seafaring_Values[MAX_STACK];
 // WZD dseg:D40C
@@ -192,9 +243,9 @@ AI_Set_Unit_Orders
 int16_t G_Pushout_Unit_Indices[MAX_STACK];
 
 // WZD dseg:D48A
-int16_t AI_OnRallyPt_Count;
+int16_t cp_staged_unit_count;
 // WZD dseg:D48C
-int16_t AI_RallyEnRouteCount;
+int16_t cp_enroute_unit_countt;
 
 // WZD dseg:D48E
 int16_t g_ai_minattackstack;

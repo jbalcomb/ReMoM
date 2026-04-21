@@ -121,7 +121,7 @@ struct s_LANDMASSES
 {
     /* 00 */ uint8_t wx_array[NUM_LANDMASSES];
     /* 3C */ uint8_t wy_array[NUM_LANDMASSES];
-    /* 78 */ uint8_t type_array[NUM_LANDMASSES];    /* enum e_LANDMASS_TYPE */
+    /* 78 */ uint8_t type_array[NUM_LANDMASSES];  /* ¿ ~== MoO2 s_SHIP.ai_mission ? */ /* enum e_LANDMASS_TYPE */
     /* B4 */ 
 };
 
