@@ -1898,6 +1898,7 @@ int16_t Wait_For_Input(void)
             }
             if(Keyboard_Status() != 0)
             {
+                /* HACK */  Platform_Event_Handler();  /* TODO  consolidate 'record key press' effort */
                 charcode = Read_Key();
                 if(charcode == ST_KEY_F11)
                 {
@@ -1924,6 +1925,7 @@ int16_t Wait_For_Input(void)
         {
             if(Keyboard_Status() != 0)
             {
+                /* HACK */  Platform_Event_Handler();  /* TODO  consolidate 'record key press' effort */
                 charcode = Read_Key();
                 if(charcode == ST_KEY_F11)
                 {
@@ -2195,6 +2197,7 @@ void Input_Box_Popup(int16_t field_num)
             break;
         }
 
+        /* HACK */  Platform_Event_Handler();  /* TODO  consolidate 'record key press' effort */
         key = Read_Key();
 
 /*
@@ -2550,6 +2553,7 @@ int16_t Setup_Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, c
             break;
         }
 
+        /* HACK */  Platform_Event_Handler();  /* TODO  consolidate 'record key press' effort */
         key = Read_Key();
 
 /*

@@ -399,7 +399,9 @@ void DBG_Frame_Reset(void)
     if(dbg_frame_start_ticks != 0 && (dbg_frame_number % 60) == 0)
     {
         uint64_t avg_delta = (dbg_handler_calls > 0) ? (dbg_total_handler_delta / dbg_handler_calls) : 0;
+#ifdef STU_DEBUG
         trc_prn("DBG frame=%u  frametime=%llu ms  handler_calls=%u  max_delta=%llu ms  avg_delta=%llu ms  events: key=%u mdown=%u mup=%u mmove=%u win=%u other=%u  mouse_updates=%u\n", dbg_frame_number, (unsigned long long)frametime, dbg_handler_calls, (unsigned long long)dbg_max_handler_delta, (unsigned long long)avg_delta, dbg_events_key, dbg_events_mousedown, dbg_events_mouseup, dbg_events_mousemotion, dbg_events_window, dbg_events_other, dbg_mouse_updates);
+#endif
     }
     dbg_frame_start_ticks = now;
     dbg_handler_calls = 0;
@@ -445,9 +447,7 @@ void Platform_Event_Handler(void)
 #endif
     }
 
-    /* Clear per-frame click flag so Replay_Capture_Frame() only sees
-       BUTTON_DOWN events that occurred THIS frame. */
-    platform_frame_mouse_buttons = 0;
+    /* CLAUDE: do NOT reset platform_frame_mouse_buttons here.  Clicks that arrive during Release_Time's Platform_Pump_Events spin-wait are OR'd into this flag between frames.  Resetting at the top would clobber them before Replay_Capture_Frame could read them.  Reset is now done at the END of this function, after capture. */
 
     /* CLAUDE: Replay — if replaying, inject recorded frame instead of polling OS events. */
     /* CLAUDE: If the user presses a key or clicks the mouse during replay, cancel it. */
@@ -617,4 +617,6 @@ void Platform_Event_Handler(void)
         Replay_Capture_Frame();
     }
 
+    /* CLAUDE: reset per-frame click edge AFTER capture so clicks arriving during the next spin-wait accumulate into the following frame's edge. */
+    platform_frame_mouse_buttons = 0;
 }

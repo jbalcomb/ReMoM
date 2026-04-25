@@ -72,6 +72,12 @@ void Screen_Control(void)
     int16_t DBG_food_total = 0;
     int16_t DBG_mana_total = 0;
 
+#ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: BEGIN: Screen_Control()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Screen_Control()\n", __FILE__, __LINE__);
+    trc_prn("DEBUG: [%s, %d]: BEGIN: Screen_Control()\n", __FILE__, __LINE__);
+#endif
+
     quit_flag = ST_FALSE;
 
     while(quit_flag == ST_FALSE)
@@ -381,7 +387,9 @@ void Screen_Control(void)
     }  /* while(quit_flag == ST_FALSE) */
 
 #ifdef STU_DEBUG
-    trc_prn("[SCR] Screen_Control: while loop exited, returning\n");
-    dbg_prn("[SCR] Screen_Control: while loop exited, returning\n");
+    printf("DEBUG: [%s, %d]: END: Screen_Control()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Screen_Control()\n", __FILE__, __LINE__);
+    trc_prn("DEBUG: [%s, %d]: END: Screen_Control()\n", __FILE__, __LINE__);
 #endif
+
 }

@@ -118,13 +118,14 @@ void Platform_Event_Handler(void)
         }
     }
 
-    platform_frame_mouse_buttons = 0;
+    /* CLAUDE: do NOT reset platform_frame_mouse_buttons here.  For consistency with windowed backends, reset is now done at the END after capture, so any edge flag set by the synthetic player callback accumulates correctly into this frame's capture. */
 
     /* Replay: inject recorded frame instead of polling OS events. */
     if (Platform_Replay_Active())
     {
         if (Replay_Inject_Frame())
         {
+            platform_frame_mouse_buttons = 0;
             return;
         }
         /* Replay ended — fall through (no live input in headless). */
@@ -141,6 +142,9 @@ void Platform_Event_Handler(void)
     {
         Replay_Capture_Frame();
     }
+
+    /* CLAUDE: reset AFTER capture so synthetic player edges accumulate into the captured frame. */
+    platform_frame_mouse_buttons = 0;
 }
 
 void Platform_Pump_Events(void)

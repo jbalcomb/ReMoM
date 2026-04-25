@@ -284,6 +284,12 @@ void Load_Screen(void)
     int16_t itr = 0;  // _SI_
     int16_t itr_save_slot_input_field_array = 0;  // _SI_
 
+#ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: BEGIN: Load_Screen()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_Screen()\n", __FILE__, __LINE__);
+    trc_prn("DEBUG: [%s, %d]: BEGIN: Load_Screen()\n", __FILE__, __LINE__);
+#endif
+
     loaded_game_flag = ST_FALSE;
 
     load_screen_fade_in_flag = ST_TRUE;  // set to 0 on entering the settings screen
@@ -562,6 +568,12 @@ void Load_Screen(void)
     {
         Loaded_Game_Update();
     }
+
+#ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: END: Load_Screen()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Load_Screen()\n", __FILE__, __LINE__);
+    trc_prn("DEBUG: [%s, %d]: END: Load_Screen()\n", __FILE__, __LINE__);
+#endif
 
 }
 

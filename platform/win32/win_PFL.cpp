@@ -220,12 +220,67 @@ void Platform_Video_Update(void)
 /*  Events / Input                                                           */
 /* ========================================================================= */
 
+/**
+ * @brief Process one platform input frame for the Win32 backend.
+ *
+ * Pumps pending Win32 messages, clears the per-frame mouse button state,
+ * optionally invokes the registered synthetic-input callback, and then records
+ * the resolved input frame when replay recording is active.
+ *
+ * This function is the main per-frame input entry point for the Win32 platform
+ * layer. It updates global platform input state as a side effect and does not
+ * return a value.
+ *
+ * @note The synthetic frame callback is intended for scripted input injection
+ * and is executed after OS events are processed.
+ *
+ * @note Replay capture occurs after message pumping so the recorded frame
+ * matches the final input state seen by the engine for that frame.
+ */
+
 void Platform_Event_Handler(void)
 {
 #ifdef MOUSE_DEBUG
     MOUSE_LOG("MOUSEt=%llu HANDLER_START ptr=%d,%d\n", (unsigned long long)Platform_Get_Millies(), pointer_x, pointer_y);
 #endif
-    platform_frame_mouse_buttons = 0;
+
+    /* CLAUDE: do NOT reset platform_frame_mouse_buttons here.  Clicks that arrive during Release_Time's Platform_Pump_Events spin-wait are OR'd into this flag between frames.  Resetting at the top would clobber them before Replay_Capture_Frame could read them.  Reset is now done at the END of this function, after capture. */
+
+    /* CLAUDE: Replay — if active, inject recorded frame instead of pumping OS events.  Matches sdl2/sdl3/headless backends.  Without this, --replay on win32 opens the RMR but never injects any frames. */
+    if (Platform_Replay_Active())
+    {
+        MSG cancel_msg;
+        int cancelled = 0;
+        if (PeekMessageA(&cancel_msg, 0, WM_KEYDOWN, WM_KEYDOWN, PM_NOREMOVE))
+        {
+            cancelled = 1;
+        }
+        else if (PeekMessageA(&cancel_msg, 0, WM_LBUTTONDOWN, WM_LBUTTONDOWN, PM_NOREMOVE))
+        {
+            cancelled = 1;
+        }
+        else if (PeekMessageA(&cancel_msg, 0, WM_RBUTTONDOWN, WM_RBUTTONDOWN, PM_NOREMOVE))
+        {
+            cancelled = 1;
+        }
+
+        if (cancelled)
+        {
+            fprintf(stderr, "REPLAY: cancelled by user input\n");
+            Platform_Replay_Stop();
+            /* Fall through to live input. */
+        }
+        else
+        {
+            if (Replay_Inject_Frame())
+            {
+                /* Frame injected successfully — skip pump/capture this tick. */
+                platform_frame_mouse_buttons = 0;
+                return;
+            }
+            /* Replay ended — fall through to live input. */
+        }
+    }
 
     Win_Pump_Messages();
 
@@ -240,6 +295,9 @@ void Platform_Event_Handler(void)
     {
         Replay_Capture_Frame();
     }
+
+    /* CLAUDE: reset per-frame click edge AFTER capture so clicks arriving during the next spin-wait accumulate into the following frame's edge. */
+    platform_frame_mouse_buttons = 0;
 }
 
 /* CLAUDE: Pump events AND refresh cursor, matching SDL backends. */
@@ -517,6 +575,15 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
         } break;
 
 
+        case WM_SYSKEYDOWN:
+        {
+            /* CLAUDE: diagnostic — some keys (F10, Alt+key, etc.) arrive as WM_SYSKEYDOWN rather than WM_KEYDOWN.  Log them so we can see if missed keys are landing here. */
+#ifdef STU_DEBUG
+            trc_prn("WIN_KEY t=%llu WM_SYSKEYDOWN vk=0x%02X (%d) wParam=0x%llX lParam=0x%llX repeat=%d\n", (unsigned long long)Platform_Get_Millies(), (int)wParam, (int)wParam, (unsigned long long)wParam, (unsigned long long)lParam, (int)(lParam & 0xFFFF));
+#endif
+            return DefWindowProc(hWnd, message, wParam, lParam);
+        }
+
         case WM_KEYDOWN:
         {
             int vk_code = (int)wParam;
@@ -529,9 +596,14 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
                 mox_key = VK_to_MOX_KEY[vk_code];
             }
 
-            if (GetKeyState(VK_SHIFT) & 0x8000)   { mox_mod |= MOX_MOD_SHIFT; }
+            if (GetKeyState(VK_SHIFT)   & 0x8000)  { mox_mod |= MOX_MOD_SHIFT; }
             if (GetKeyState(VK_CONTROL) & 0x8000)  { mox_mod |= MOX_MOD_CTRL; }
-            if (GetKeyState(VK_MENU) & 0x8000)     { mox_mod |= MOX_MOD_ALT; }
+            if (GetKeyState(VK_MENU)    & 0x8000)  { mox_mod |= MOX_MOD_ALT; }
+
+            /* CLAUDE: diagnostic — trace raw WM_KEYDOWN before translation, to help find keys that are received but dropped. */
+#ifdef STU_DEBUG
+            trc_prn("WIN_KEY t=%llu WM_KEYDOWN vk=0x%02X (%d) mod=0x%X mox_key=0x%X repeat=%d\n", (unsigned long long)Platform_Get_Millies(), vk_code, vk_code, (unsigned)mox_mod, (unsigned)mox_key, (int)(lParam & 0xFFFF));
+#endif
 
             /* Ctrl+Alt+Q to quit */
             if ((mox_mod & MOX_MOD_CTRL) && (mox_mod & MOX_MOD_ALT) && vk_code == 'Q')
@@ -579,9 +651,19 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
                 /* The packed_key / keyboard buffer system is the primary path now */
             }
 
+            /* CLAUDE: diagnostic — log whether the key survived translation and reached the keyboard buffer, or was dropped (and why). */
             if (mox_key != MOX_KEY_UNKNOWN && mox_key < MOX_KEY_OVERRUN)
             {
+#ifdef STU_DEBUG
+                trc_prn("WIN_KEY t=%llu BUFFERED vk=0x%02X mox_key=0x%X mox_mod=0x%X mox_char=0x%02X ('%c')\n", (unsigned long long)Platform_Get_Millies(), vk_code, (unsigned)mox_key, (unsigned)mox_mod, (unsigned char)mox_character, (mox_character >= 0x20 && mox_character < 0x7F) ? mox_character : '.');
+#endif
                 Platform_Keyboard_Buffer_Add_Key_Press(mox_key, mox_mod, mox_character);
+            }
+            else
+            {
+#ifdef STU_DEBUG
+                trc_prn("WIN_KEY t=%llu DROPPED vk=0x%02X mox_key=0x%X reason=%s\n", (unsigned long long)Platform_Get_Millies(), vk_code, (unsigned)mox_key, (mox_key == MOX_KEY_UNKNOWN) ? "UNKNOWN" : "OVERRUN");
+#endif
             }
         } break;
 
@@ -597,6 +679,9 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
                 int scale = Platform_Get_Scale();
                 if (scale < 1) { scale = 1; }
                 MOUSE_LOG("MOUSEt=%llu BTN_DOWN btn=1 wx=%d wy=%d gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (int)(win_x / scale), (int)(win_y / scale));
+#endif
+#ifdef STU_DEBUG
+                trc_prn("WIN_BTN t=%llu WM_LBUTTONDOWN wx=%d wy=%d prev_edge=0x%X\n", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (unsigned)platform_frame_mouse_buttons);
 #endif
                 platform_frame_mouse_buttons |= 1;
                 User_Mouse_Handler(ST_LEFT_BUTTON, win_x, win_y);
@@ -614,6 +699,9 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
                 int scale = Platform_Get_Scale();
                 if (scale < 1) { scale = 1; }
                 MOUSE_LOG("MOUSEt=%llu BTN_DOWN btn=2 wx=%d wy=%d gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (int)(win_x / scale), (int)(win_y / scale));
+#endif
+#ifdef STU_DEBUG
+                trc_prn("WIN_BTN t=%llu WM_RBUTTONDOWN wx=%d wy=%d prev_edge=0x%X\n", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (unsigned)platform_frame_mouse_buttons);
 #endif
                 platform_frame_mouse_buttons |= 2;
                 User_Mouse_Handler(ST_RIGHT_BUTTON, win_x, win_y);

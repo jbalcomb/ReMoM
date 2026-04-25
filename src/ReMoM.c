@@ -316,11 +316,21 @@ int main(int argc, char * argv[])
         {
             if(stu_strcmp(argv[argi], "--record") == 0 && (argi + 1) < argc)
             {
+#ifdef STU_DEBUG
+                printf("DEBUG: [%s, %d]: --record flag detected\n", __FILE__, __LINE__);
+                dbg_prn("DEBUG: [%s, %d]: --record flag detected\n", __FILE__, __LINE__);
+                trc_prn("DEBUG: [%s, %d]: --record flag detected\n", __FILE__, __LINE__);
+#endif
                 argi++;
                 Platform_Record_Start(argv[argi]);
             }
             else if(stu_strcmp(argv[argi], "--replay") == 0 && (argi + 1) < argc)
             {
+#ifdef STU_DEBUG
+                printf("DEBUG: [%s, %d]: --replay flag detected\n", __FILE__, __LINE__);
+                dbg_prn("DEBUG: [%s, %d]: --replay flag detected\n", __FILE__, __LINE__);
+                trc_prn("DEBUG: [%s, %d]: --replay flag detected\n", __FILE__, __LINE__);
+#endif
                 argi++;
                 Platform_Replay_Start(argv[argi]);
             }
@@ -329,11 +339,17 @@ int main(int argc, char * argv[])
 #ifdef STU_DEBUG
                 printf("DEBUG: [%s, %d]: --continue flag detected\n", __FILE__, __LINE__);
                 dbg_prn("DEBUG: [%s, %d]: --continue flag detected\n", __FILE__, __LINE__);
+                trc_prn("DEBUG: [%s, %d]: --continue flag detected\n", __FILE__, __LINE__);
 #endif
                 remom_continue_flag = 1;
             }
             else if(stu_strcmp(argv[argi], "--demo") == 0)
             {
+#ifdef STU_DEBUG
+                printf("DEBUG: [%s, %d]: --demo flag detected\n", __FILE__, __LINE__);
+                dbg_prn("DEBUG: [%s, %d]: --demo flag detected\n", __FILE__, __LINE__);
+                trc_prn("DEBUG: [%s, %d]: --demo flag detected\n", __FILE__, __LINE__);
+#endif
                 /* Optional filename: --demo [FILE.RMR], defaults to DEMO.RMR */
                 if((argi + 1) < argc && argv[argi + 1][0] != '-')
                 {
@@ -345,12 +361,13 @@ int main(int argc, char * argv[])
                     Platform_Replay_Start("DEMO.RMR");
                 }
             }
-            else if(strcmp(argv[argi], "--continue") == 0)
-            {
-                remom_continue_flag = ST_TRUE;
-            }
             else if(strcmp(argv[argi], "--scenario") == 0 && (argi + 1) < argc)
             {
+#ifdef STU_DEBUG
+                printf("DEBUG: [%s, %d]: --scenario flag detected\n", __FILE__, __LINE__);
+                dbg_prn("DEBUG: [%s, %d]: --scenario flag detected\n", __FILE__, __LINE__);
+                trc_prn("DEBUG: [%s, %d]: --scenario flag detected\n", __FILE__, __LINE__);
+#endif
                 argi++;
                 if(HeMoM_Player_Load_Scenario(argv[argi]) == 0)
                 {

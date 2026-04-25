@@ -63,14 +63,56 @@ cd C:\STU\devel\ReMoM\out\build\MSVC-debug\bin\Debug\
 .\ReMoMber.exe --continue
 
 
-cd c:/STU/devel/ReMoM/out/build/MSVC-debug
+
+c:/STU/devel/ReMoM/assets/
+c:/STU/devel/ReMoM/out/build/MSVC-debug/
+c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/
+C:\STU\devel\ReMoM\IDE\VS2022-SDL2\ReMoMber
+
+...CMake copies c:/STU/devel/ReMoM/assets/ to c:/STU/devel/ReMoM/out/build/MSVC-debug/
+...CMake copies c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/ to c:/STU/devel/ReMoM/out/build/MSVC-debug/
+
+copy c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/MAGIC.SET :/STU/devel/ReMoM/assets/
+
+copy c:/STU/devel/ReMoM/assets/*.* c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/
+
+copy c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/SAVE1.GAM c:/STU/devel/ReMoM/assets/
+copy c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/MAGIC.SET :/STU/devel/ReMoM/assets/
+
+cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/
 .\HeMoM.exe --newgame test_gameplay.ini
+.\ReMoMber.exe --continue --record test-gameplay.rmr
+.\HeMoM.exe --newgame test_gameplay.ini
+.\ReMoMber.exe --continue --replay test-gameplay.rmr
+.\rmr2hms test-gameplay.rmr test-gameplay.hms
+.\HeMoM.exe --newgame test_gameplay.ini
+.\ReMoMber.exe --continue --scenario test-gameplay.hms
+
+TRACE.LOG, test-gameplay.rmr, and test-gameplay-RECORD.log
+
+grep -E "WIN_KEY|REC_CAP|KBD_READ" TRACE.LOG | grep -A5 "vk=0x43"   # for 'C' key
+
+
+
+cd c:/STU/devel/ReMoM/out/build/MSVC-debug
+cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/
+.\HeMoM.exe --newgame test_gameplay.ini
+copy .\SAVE9.GAM .\SAVE1.GAM
 .\savedump.exe SAVE9.GAM SAVE9_gameplay.txt
 .\ReMoMber.exe --continue --record test-gameplay.rmr
 .\ReMoMber.exe --continue --replay test-gameplay.rmr
 .\rmr2hms test-gameplay.rmr test-gameplay.hms
 
-.\ReMoMber.exe --continue --scenario test-gameplay.hms
+...the continue save has now been overwritten, so we need to reload another copy...
+
+.\HeMoM.exe --newgame test_gameplay.ini
+.\ReMoMber.exe --continue --scenario test-gameplay-byhand.hms
+
+copy .\SAVE1.GAM .\SAVE9.GAM
+.\ReMoMber.exe --loadsave SAVE1.GAM --scenario test-gameplay-byhand.hms
+
+
+
 .\savedump.exe SAVE1.GAM SAVE1_gameplay.txt
 
 --dump-save SAVE1.GAM

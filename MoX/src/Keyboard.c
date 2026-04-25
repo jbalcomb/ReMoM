@@ -77,6 +77,11 @@ uint8_t Read_Key(void)
     {
         packed_key_value = platform_keyboard_buffer.packed_key[platform_keyboard_buffer.key_read];
 
+        /* CLAUDE: diagnostic — trace every consumption of the keyboard buffer.  If this fires BEFORE the corresponding REC_CAP trace for the same frame, the capture race from Input.c's comment is back. */
+#ifdef STU_DEBUG
+        trc_prn("KBD_READ t=%llu packed=0x%08X key_read=%d->%d key_write=%d\n", (unsigned long long)Platform_Get_Millies(), (unsigned)packed_key_value, platform_keyboard_buffer.key_read, (platform_keyboard_buffer.key_read + 1) % PLATFORM_KEYBOARD_BUFFER_LENGTH, platform_keyboard_buffer.key_write);
+#endif
+
         platform_keyboard_buffer.key_read = ((platform_keyboard_buffer.key_read + 1) % PLATFORM_KEYBOARD_BUFFER_LENGTH);
 
         if(platform_keyboard_buffer.key_read == platform_keyboard_buffer.key_write)
