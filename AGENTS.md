@@ -15,6 +15,7 @@ Ignore the Register annotations. (e.g., `_DI_`, `_SI_`, `_CX_`, etc.) They are j
 - Use lower_snake_case for variable names  (e.g., )
 - Use Proper_Snake_Case for function names  (e.g., Simulate_World_Map_Generation)
 - Use UPPER_SNAKE_CASE for manifest constants and macro names
+- Name shared modules by what they do, not by which target first uses them. A file/symbol prefix that names one consumer (e.g., `HeMoM_*` on code that is also linked into ReMoMber) reads as a layering violation and misleads readers. Reserve target-specific naming for code that genuinely cannot be linked into another target (e.g., main entry points, target-specific glue).
 
 ## Error Handling
 - Always log errors with contextual information
