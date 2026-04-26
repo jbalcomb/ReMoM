@@ -20,6 +20,15 @@ Ignore the Register annotations. (e.g., `_DI_`, `_SI_`, `_CX_`, etc.) They are j
 ## Error Handling
 - Always log errors with contextual information
 
+## Verification — prefer deterministic tools over guessing
+- When a question can be answered deterministically by running a tool, run the tool. Do not read source and claim "this should work" without verification.
+- Compiler/linker is the authority for: will it compile, will it link, are types right, are includes correct. Build the affected target with the project's CMake preset (`cmake --build --preset MSVC-debug`) — never use ad-hoc build directories or bare `cmake -S . -B build`.
+- `git log --diff-filter=A --format='%h %ai %an %s' -- <path>` and `git blame -L start,end <path>` are the authority for who introduced a piece of code and when. Do not assume.
+- Word-boundary `grep` over the appropriate file types is near-canonical for C symbol cross-references. IDE "Find All References" without a clean compile_commands.json is also just text search — be honest about the limitation.
+- Static analysis: MSVC compiler warnings are first-class — treat them like errors.
+- Existing valgrind suppressions live in `valgrind-suppressions-all.supp`.
+- The action loop is: change → run the smallest validating tool → read the output → fix and repeat → only then summarize. If a build wasn't run, say so explicitly ("unverified — please build to confirm") rather than implying validation that didn't happen.
+
 ## Glossary of Terms
 - Dasm stands for Disassembly  (the disassembley of the Borland C++ 3.0 code from IDA Pro 5.5)
 - DBG stands for Debug
