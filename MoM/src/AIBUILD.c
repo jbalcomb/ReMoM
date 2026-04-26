@@ -18,6 +18,8 @@
 
 #include "AIBUILD.h"
 
+#include "../../STU/src/AI_METRICS.h"
+
 
 
 /*
@@ -553,6 +555,11 @@ void Player_Colony_Autobuild_CP(int16_t player_idx, int16_t city_idx)
     product_choice = Get_Weighted_Choice(&Weights[0], product_count);
 
     _CITIES[city_idx].construction = product_array[product_choice];
+
+    AI_Metrics_Emit_Build(_turn, player_idx, city_idx,
+        _CITIES[city_idx].population, city_unit_count,
+        product_count, Weights[product_choice], product_array[product_choice],
+        &product_array[0], &Weights[0]);
 
     assert(_CITIES[city_idx].construction >= -4);  // min -1 is grand vizier
     assert(_CITIES[city_idx].construction <= 298);  // 100 buildings + 198 units

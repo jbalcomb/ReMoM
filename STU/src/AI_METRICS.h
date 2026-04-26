@@ -8,8 +8,10 @@
     of AI behavior in both interactive (ReMoM) and headless (HeMoM) modes.
 
     Output files (when enabled):
-        AI_TURN_SUMMARY.CSV  — per-player scoreboard each turn
-        AI_NPC_EVENTS.CSV    — raider/monster spawns, NPC targeting, garrison culls
+        AI_TURN_SUMMARY.CSV   — per-player scoreboard each turn
+        AI_NPC_EVENTS.CSV     — raider/monster spawns, NPC targeting, garrison culls
+        AI_BUILD_DETAIL.CSV   — city production decisions with weights
+        AI_UNIT_OUTCOMES.CSV  — unit movement results (arrived, failed, etc.)
 
     Toggle:
         Compile-time:  #ifdef STU_DEBUG
@@ -23,6 +25,8 @@
 #define AI_Metrics_Shutdown()                       ((void)0)
 #define AI_Metrics_Emit_Turn_Summary(t,d,np)        ((void)0)
 #define AI_Metrics_Emit_NPC_Event(t,et,si,sx,sy,sp,cnt,bud,tx,ty,acc,thr) ((void)0)
+#define AI_Metrics_Emit_Build(t,pi,ci,cp,cu,pc,cw,ac,pa,wa) ((void)0)
+#define AI_Metrics_Emit_Unit_Outcome(t,pi,ui,ut,st,sx,sy,dx,dy,ex,ey,mf) ((void)0)
 
 #else
 
@@ -61,6 +65,42 @@ void AI_Metrics_Emit_NPC_Event(
     int16_t target_wy,
     int16_t accumulator,
     int16_t threshold
+);
+
+/*
+    Build Detail — one row per city production decision.
+    Caller passes the Weights[] and product_array[] locals from the build function.
+*/
+void AI_Metrics_Emit_Build(
+    int16_t turn,
+    int16_t player_idx,
+    int16_t city_idx,
+    int16_t city_pop,
+    int16_t city_units,
+    int16_t product_count,
+    int16_t chosen_weight,
+    int16_t chosen_product,
+    int16_t * product_array,
+    int16_t * weights
+);
+
+/*
+    Unit Outcome — one row per non-idle unit after movement.
+    Caller snapshots position before movement and reports the result after.
+*/
+void AI_Metrics_Emit_Unit_Outcome(
+    int16_t turn,
+    int16_t player_idx,
+    int16_t unit_idx,
+    int16_t unit_type,
+    int16_t status,
+    int16_t src_wx,
+    int16_t src_wy,
+    int16_t dst_wx,
+    int16_t dst_wy,
+    int16_t end_wx,
+    int16_t end_wy,
+    int16_t move_failed
 );
 
 #ifdef __cplusplus
