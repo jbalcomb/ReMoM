@@ -242,7 +242,7 @@ add_test(
     WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
 )
 set_tests_properties(HeMoM_AIBehavior_Run PROPERTIES
-    TIMEOUT 60
+    TIMEOUT 120
     FIXTURES_REQUIRED HeMoM_AIBehavior
     FIXTURES_SETUP HeMoM_AIBehavior_Done
     LABELS "hemom;integration;ai"

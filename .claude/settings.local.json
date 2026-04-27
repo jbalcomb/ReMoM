@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cmake --build out/build/MSVC-debug --config Debug --target MOM_tests)"
+      "Bash(cmake --build build --target ReMoMber)",
+      "Bash(cmake --build build --target HeMoM)",
+      "Bash(cmake .. -DCMAKE_BUILD_TYPE=Debug)",
+      "Bash(ctest -L ai -V)",
+      "Bash(cmake ..)"
     ]
   }
 }

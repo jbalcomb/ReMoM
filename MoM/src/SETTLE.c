@@ -9,6 +9,7 @@
 
 #include "SETTLE.h"
 
+#include "../../STU/src/AI_METRICS.h"
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_BASE.h"
 #include "../../MoX/src/MOX_DEF.h"
@@ -114,6 +115,13 @@ void AI_MoveUnits(int16_t player_idx)
         /* Check if unit belongs to the player currently processing AI moves */
         if (_UNITS[unit_idx].owner_idx == (int8_t)player_idx)
         {
+            /* Snapshot state before movement for metrics */
+            int16_t pre_wx = _UNITS[unit_idx].wx;
+            int16_t pre_wy = _UNITS[unit_idx].wy;
+            int16_t pre_status = _UNITS[unit_idx].Status;
+            int16_t pre_dst_wx = _UNITS[unit_idx].dst_wx;
+            int16_t pre_dst_wy = _UNITS[unit_idx].dst_wy;
+
             /* Process unit orders based on its current Status */
             switch(_UNITS[unit_idx].Status)
             {
@@ -145,6 +153,17 @@ void AI_MoveUnits(int16_t player_idx)
                 default:
                     /* Cases 4-8, 12-15 are skipped */
                     break;
+            }
+
+            /* Emit unit outcome for non-idle units */
+            if (pre_status == us_GOTO || pre_status == us_Move || pre_status == us_BuildRoad)
+            {
+                AI_Metrics_Emit_Unit_Outcome(_turn, player_idx, unit_idx,
+                    _UNITS[unit_idx].type, pre_status,
+                    pre_wx, pre_wy,
+                    pre_dst_wx, pre_dst_wy,
+                    _UNITS[unit_idx].wx, _UNITS[unit_idx].wy,
+                    _UNITS[unit_idx].Move_Failed);
             }
         }
     }
