@@ -108,7 +108,9 @@ void NPC_Excess_Garrison(void)
             /* If garrison exceeds limits, remove the cheapest unit */
             if (troop_count > max_garrison && cheapest_unit != ST_UNDEFINED)
             {
+#ifdef STU_DEBUG
                 dbg_prn("AI_NPC: Excess garrison at city %d (%d/%d), removing unit %d (type %d)\n", i, troop_count, max_garrison, cheapest_unit, _UNITS[cheapest_unit].type);
+#endif
                 AI_Metrics_Emit_NPC_Event(_turn, "GARRISON_CULL", i, city_wx, city_wy, city_wp, 1, 0, 0, 0, troop_count, max_garrison);
                 Kill_Unit(cheapest_unit, kt_Normal);
             }
@@ -166,16 +168,22 @@ void Make_Monsters(void)
     /* Check if the accumulator has reached the threshold: (50 - (difficulty * 5)) */
     if (_players[NEUTRAL_PLAYER_IDX].average_unit_cost < (50 - (_difficulty * 5)))
     {
+#ifdef STU_DEBUG
         dbg_prn("AI_NPC: Make_Monsters accumulator %d < threshold %d\n", _players[NEUTRAL_PLAYER_IDX].average_unit_cost, (50 - (_difficulty * 5)));
+#endif
         return;
     }
 
     /* Threshold reached: reset and check turn minimum */
+#ifdef STU_DEBUG
     dbg_prn("AI_NPC: Make_Monsters accumulator reached threshold, turn=%d\n", _turn);
+#endif
     _players[NEUTRAL_PLAYER_IDX].average_unit_cost = 0;
     if (_turn < 50)
     {
+#ifdef STU_DEBUG
         dbg_prn("AI_NPC: Make_Monsters skipped (turn %d < 50)\n", _turn);
+#endif
         return;
     }
 
@@ -224,13 +232,17 @@ void Make_Monsters(void)
 
     if (tries >= 1000 || lair_idx == ST_UNDEFINED)
     {
+#ifdef STU_DEBUG
         dbg_prn("AI_NPC: Make_Monsters failed to find eligible lair after %d tries\n", tries);
+#endif
         AI_Metrics_Emit_NPC_Event(_turn, "MONSTER_FAIL", -1, 0, 0, 0, 0, 0, 0, 0, _players[NEUTRAL_PLAYER_IDX].average_unit_cost, (50 - (_difficulty * 5)));
         return;
     }
 
     /* Lair selected, extract map data */
+#ifdef STU_DEBUG
     dbg_prn("AI_NPC: Make_Monsters selected lair %d at (%d,%d) plane %d after %d tries\n", lair_idx, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, tries);
+#endif
     lair_wx = _LAIRS[lair_idx].wx;
     lair_wy = _LAIRS[lair_idx].wy;
     lair_wp = _LAIRS[lair_idx].wp;
@@ -290,7 +302,9 @@ void Make_Monsters(void)
     /* Generate the monster stack based on budget and race */
     n_monsters = Make_Monster_List(rampage_budget, lair_race, &monster_type_list[0]);
 
+#ifdef STU_DEBUG
     dbg_prn("AI_NPC: Make_Monsters spawning %d monsters (budget=%d) at (%d,%d) plane %d\n", n_monsters, rampage_budget, adjacent_wx, adjacent_wy, lair_wp);
+#endif
     AI_Metrics_Emit_NPC_Event(_turn, "MONSTER_SPAWN", lair_idx, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, lair_wp, n_monsters, rampage_budget, adjacent_wx, adjacent_wy, _players[NEUTRAL_PLAYER_IDX].average_unit_cost, (50 - (_difficulty * 5)));
 
     /* Create the units on the map */
@@ -384,12 +398,16 @@ void Make_Raiders(void)
 
     if (_players[NEUTRAL_PLAYER_IDX].casting_cost_original < 30)
     {
+#ifdef STU_DEBUG
         dbg_prn("AI_NPC: Make_Raiders accumulator %d < 30\n", _players[NEUTRAL_PLAYER_IDX].casting_cost_original);
+#endif
         return;
     }
 
     /* Reset raider accumulator and start generation attempts */
+#ifdef STU_DEBUG
     dbg_prn("AI_NPC: Make_Raiders accumulator reached 30, attempting spawn\n");
+#endif
     _players[NEUTRAL_PLAYER_IDX].casting_cost_original = 0;
     unused_local = 0;
     did_create = 0;
@@ -524,7 +542,9 @@ void Make_Raiders(void)
             }
 
             /* Create the raider unit for the neutral player */
+#ifdef STU_DEBUG
             dbg_prn("AI_NPC: Make_Raiders creating unit type %d at (%d,%d) plane %d, level %d\n", unit_type, empty_adjacent_x, empty_adjacent_y, city_wp, raiders_level_neg);
+#endif
             Create_Unit__WIP(unit_type, NEUTRAL_PLAYER_IDX, empty_adjacent_x, empty_adjacent_y, city_wp, raiders_level_neg);
             units_created++;
         }
@@ -535,7 +555,9 @@ void Make_Raiders(void)
             Kill_Unit(troops[itr2], kt_Normal);
         }
 
+#ifdef STU_DEBUG
         dbg_prn("AI_NPC: Make_Raiders spawned %d raiders from city %d at (%d,%d) plane %d, removed %d garrison\n", units_created, rolled_city, city_wx, city_wy, city_wp, (units_created / 3));
+#endif
         AI_Metrics_Emit_NPC_Event(_turn, "RAIDER_SPAWN", rolled_city, city_wx, city_wy, city_wp, units_created, raiders_count, 0, 0, _players[NEUTRAL_PLAYER_IDX].casting_cost_original, 30);
         did_create = ST_TRUE;
     }
@@ -543,7 +565,9 @@ void Make_Raiders(void)
     /* If raider generation failed, increment the rampaging monster accumulator instead */
     if (did_create == ST_FALSE)
     {
+#ifdef STU_DEBUG
         dbg_prn("AI_NPC: Make_Raiders failed after 1000 tries, boosting monster accumulator by 15\n");
+#endif
         AI_Metrics_Emit_NPC_Event(_turn, "RAIDER_FAIL", -1, 0, 0, 0, 0, 0, 0, 0, _players[NEUTRAL_PLAYER_IDX].casting_cost_original, 30);
         _players[NEUTRAL_PLAYER_IDX].average_unit_cost += 15;
     }
@@ -577,7 +601,9 @@ int16_t NPC_Destinations(void)
 
     Build_NPC_Stacks();  // OGBUG  definitely passes NEUTRAL_PLAYER_IDX here, but Build_NPC_Stacks doesn't take a parameter and is hard-coded for NEUTRAL_PLAYER_IDX
 
+#ifdef STU_DEBUG
     dbg_prn("AI_NPC: NPC_Destinations evaluating %d neutral stacks\n", AI_Own_Stack_Count);
+#endif
 
     for (stack_idx = 0; stack_idx < AI_Own_Stack_Count; stack_idx++) {
         stack = &AI_Own_Stacks[stack_idx];
@@ -634,7 +660,9 @@ int16_t NPC_Destinations(void)
                 }
 
                 if (adj_city_val > cur_target_val) {
+#ifdef STU_DEBUG
                     dbg_prn("AI_NPC: Stack %d at (%d,%d) redirected to adjacent city %d at (%d,%d) (val %d > %d)\n", stack_idx, stack_wx, stack_wy, adj_city_idx, _CITIES[adj_city_idx].wx, _CITIES[adj_city_idx].wy, adj_city_val, cur_target_val);
+#endif
                     AI_Metrics_Emit_NPC_Event(_turn, "NPC_REDIRECT", stack_idx, stack_wx, stack_wy, stack_wp, 0, adj_city_val, _CITIES[adj_city_idx].wx, _CITIES[adj_city_idx].wy, 0, 0);
                     AI_Stack_Set_Destination(stack_idx, _CITIES[adj_city_idx].wx, _CITIES[adj_city_idx].wy, NEUTRAL_PLAYER_IDX);
                     stack->unit_status = us_GOTO;
@@ -675,14 +703,18 @@ int16_t NPC_Destinations(void)
 
             if (cities_examined > 0) {
                 uu_city_idx = target_city_idx;
+#ifdef STU_DEBUG
                 dbg_prn("AI_NPC: Stack %d at (%d,%d) targeting city %d at (%d,%d) (val %d, examined %d cities)\n", stack_idx, stack_wx, stack_wy, target_city_idx, _CITIES[target_city_idx].wx, _CITIES[target_city_idx].wy, adj_city_val, cities_examined);
+#endif
                 AI_Metrics_Emit_NPC_Event(_turn, "NPC_TARGET", stack_idx, stack_wx, stack_wy, stack_wp, 0, adj_city_val, _CITIES[target_city_idx].wx, _CITIES[target_city_idx].wy, cities_examined, 0);
                 AI_Stack_Set_Destination(stack_idx, _CITIES[target_city_idx].wx, _CITIES[target_city_idx].wy, NEUTRAL_PLAYER_IDX);
                 stack->unit_status = us_GOTO;
             } else {
                 /* No reachable targets: disband the stack to clear conventional memory */
                 /* same as seen in MoO2 ... `if(NPC_Dest_() == ST_UNDEFINED)` */
+#ifdef STU_DEBUG
                 dbg_prn("AI_NPC: Stack %d at (%d,%d) disbanded (no reachable targets)\n", stack_idx, stack_wx, stack_wy);
+#endif
                 AI_Metrics_Emit_NPC_Event(_turn, "NPC_DISBAND", stack_idx, stack_wx, stack_wy, stack_wp, 0, 0, 0, 0, 0, 0);
                 for (itr = 0; itr < _units; itr++) {
                     if (_UNITS[itr].wx == stack_wx && _UNITS[itr].wy == stack_wy && _UNITS[itr].wp == stack_wp) {

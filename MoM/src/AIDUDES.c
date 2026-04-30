@@ -118,6 +118,7 @@ static void AI_Log_Metrics(void)
         }
     }
 
+#ifdef STU_DEBUG
     dbg_prn("AI_METRICS: Turn %d  Difficulty %d  Players %d\n", _turn, _difficulty, _num_players);
 
     dbg_prn("AI_METRICS: P0 %-20s units=%-4d cities=%-3d gold=%-5d mana=%-5d (Human)\n",
@@ -145,6 +146,7 @@ static void AI_Log_Metrics(void)
         city_counts[NEUTRAL_PLAYER_IDX],
         _players[NEUTRAL_PLAYER_IDX].casting_cost_original,
         _players[NEUTRAL_PLAYER_IDX].average_unit_cost);
+#endif
 }
 
 
@@ -185,7 +187,9 @@ void AI_Next_Turn(void)
         }
     }
 
+#ifdef STU_DEBUG
     dbg_prn("AI_TURN: === BEGIN Turn %d ===\n", _turn);
+#endif
 
     EMM_Map_DataH();
     Allocate_AI_Data();
@@ -198,7 +202,9 @@ void AI_Next_Turn(void)
         {
             if ((g_timestop_player_num - 1) != player_idx)
             {
+#ifdef STU_DEBUG
                 dbg_prn("AI_TURN: Player %d (%s) SKIPPED (Time Stop)\n", player_idx, _players[player_idx].name);
+#endif
                 continue;
             }
         }
@@ -207,14 +213,18 @@ void AI_Next_Turn(void)
         /* MoO2 ~ `s_PLAYER.eliminated == ST_FALSE` */
         if (_FORTRESSES[player_idx].active != ST_TRUE && _players[player_idx].casting_spell_idx != spl_Spell_Of_Return)
         {
+#ifdef STU_DEBUG
             dbg_prn("AI_TURN: Player %d (%s) SKIPPED (inactive)\n", player_idx, _players[player_idx].name);
+#endif
             continue;
         }
 
         /* Update Summoning Circle re-evaluation counter */
         AI_SCircle_Reevals[player_idx]--;
 
+#ifdef STU_DEBUG
         dbg_prn("AI_TURN: --- Player %d (%s) BEGIN ---\n", player_idx, _players[player_idx].name);
+#endif
 
         AI_Evaluate_Hostility(player_idx);
 
@@ -277,7 +287,9 @@ void AI_Next_Turn(void)
         EMM_Map_DataH();
         AI_Kill_Excess_Settlers_And_Engineers(player_idx);
 
+#ifdef STU_DEBUG
         dbg_prn("AI_TURN: --- Player %d (%s) END ---\n", player_idx, _players[player_idx].name);
+#endif
     }
 
     EMM_Map_DataH();
@@ -292,7 +304,9 @@ void AI_Next_Turn(void)
     }
 
     /* AI Unit Movement Phase */
+#ifdef STU_DEBUG
     dbg_prn("AI_TURN: === Movement Phase ===\n");
+#endif
     for (player_idx = 1; player_idx < _num_players; player_idx++)
     {
         /* Check for Time Stop effect */
@@ -307,7 +321,9 @@ void AI_Next_Turn(void)
         /* Check if Wizard is active or returning */
         if (_FORTRESSES[player_idx].active == ST_TRUE || _players[player_idx].casting_spell_idx == spl_Spell_Of_Return)
         {
+#ifdef STU_DEBUG
             dbg_prn("AI_TURN: Moving units for Player %d (%s)\n", player_idx, _players[player_idx].name);
+#endif
             AI_MoveUnits(player_idx);
         }
     }
@@ -315,20 +331,32 @@ void AI_Next_Turn(void)
     EMM_Map_DataH();
 
     /* Neutral Player Turn Processing */
+#ifdef STU_DEBUG
     dbg_prn("AI_TURN: === Neutral Player Phase ===\n");
+#endif
     Player_All_Colony_Autobuild(NEUTRAL_PLAYER_IDX);
     NPC_Farmers();
+#ifdef STU_DEBUG
     dbg_prn("AI_TURN: NPC_Farmers done\n");
+#endif
     NPC_Destinations();
+#ifdef STU_DEBUG
     dbg_prn("AI_TURN: NPC_Destinations done\n");
+#endif
     AI_MoveUnits(NEUTRAL_PLAYER_IDX);
+#ifdef STU_DEBUG
     dbg_prn("AI_TURN: NPC movement done\n");
+#endif
 
     /* Event Generation */
     Make_Raiders();
+#ifdef STU_DEBUG
     dbg_prn("AI_TURN: Make_Raiders done\n");
+#endif
     Make_Monsters();
+#ifdef STU_DEBUG
     dbg_prn("AI_TURN: Make_Monsters done\n");
+#endif
 
     /* Cleanup and Stasis */
     NPC_Excess_Garrison();
@@ -336,7 +364,9 @@ void AI_Next_Turn(void)
 
     AI_Log_Metrics();
     AI_Metrics_Emit_Turn_Summary(_turn, _difficulty, _num_players);
+#ifdef STU_DEBUG
     dbg_prn("AI_TURN: === END Turn %d ===\n", _turn);
+#endif
 }
 
 
@@ -2559,6 +2589,6 @@ void CONTX_CreateLChains__WIP(void)
 
     }
 
-    // DONT  EMM_Map_DataH();
+    EMM_Map_DataH();
 
 }
