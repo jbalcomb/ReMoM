@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+#
+# pre-push — block local `git push` when the codebase fails to build/test.
+#
+# See doc/PRDs/PRD-Git-Hook-Pre-Push-Release-Check.md.
+#
+# Mirrors the .vscode/tasks.json `check: safe-to-push` compound: builds Debug,
+# builds Release (catches unguarded dbg_prn/trc_prn and other Debug-only-symbol
+# leakage), then runs the test suite.  Short-circuits on first failure.
+#
+# Activate per-clone (one-time setup):
+#     git config core.hooksPath tools/git-hooks
+#
+# Bypass for emergencies:
+#     git push --no-verify
+
+# Git pipes one line per ref being pushed on stdin:
+#     <local-ref> <local-sha> <remote-ref> <remote-sha>
+# Drain it so the upstream `git push` doesn't see a closed pipe.  v1 ignores
+# the contents (no per-ref filtering).
+cat > /dev/null
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT" || exit 1
+
+run_step()
+{
+    local label="$1"
+    shift
+    echo "[pre-push] running: $label"
+    if ! "$@"
+    then
+        echo
+        echo "[pre-push] FAILED: $label"
+        echo "[pre-push] push aborted.  Bypass with: git push --no-verify"
+        exit 1
+    fi
+}
+
+run_step "build: MSVC-debug"   cmake --build --preset MSVC-debug
+run_step "build: MSVC-release" cmake --build --preset MSVC-release
+run_step "test:  MSVC-release" ctest --preset MSVC-release
+
+echo "[pre-push] OK — push allowed"
+exit 0

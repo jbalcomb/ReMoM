@@ -29,6 +29,21 @@ Ignore the Register annotations. (e.g., `_DI_`, `_SI_`, `_CX_`, etc.) They are j
 - Existing valgrind suppressions live in `valgrind-suppressions-all.supp`.
 - The action loop is: change → run the smallest validating tool → read the output → fix and repeat → only then summarize. If a build wasn't run, say so explicitly ("unverified — please build to confirm") rather than implying validation that didn't happen.
 
+## Pre-push gate (optional but recommended)
+A repo-tracked `pre-push` Git hook lives at `tools/git-hooks/pre-push`. It mirrors the VS Code `check: safe-to-push` task: builds Debug, builds Release (catches unguarded `dbg_prn` / `trc_prn` and other Debug-only-symbol leakage), then runs the test suite. Short-circuits on first failure.
+
+One-time setup per clone:
+```
+git config core.hooksPath tools/git-hooks
+```
+
+Bypass for emergencies:
+```
+git push --no-verify
+```
+
+The same gate is also wired up as the VS Code task `check: safe-to-push` (`Tasks: Run Task...`) for on-demand IDE-side runs. See `doc/PRDs/PRD-Git-Hook-Pre-Push-Release-Check.md` and `doc/PRDs/PRD-VSCode-Task-Safe-To-Push.md`.
+
 ## Glossary of Terms
 - Dasm stands for Disassembly  (the disassembley of the Borland C++ 3.0 code from IDA Pro 5.5)
 - DBG stands for Debug
