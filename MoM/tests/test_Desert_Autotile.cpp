@@ -12,6 +12,7 @@ extern "C" {
 }
 #endif
 
+#include <cstdio>
 #include <cstdlib>
 
 class Desert_Autotile_test : public ::testing::Test
@@ -19,6 +20,15 @@ class Desert_Autotile_test : public ::testing::Test
 protected:
     void SetUp() override
     {
+        FILE * terrtype_file = std::fopen("TERRTYPE.LBX", "rb");
+
+        if(terrtype_file == nullptr)
+        {
+            GTEST_SKIP() << "TERRTYPE.LBX is not available in the current working directory; run this test from an asset-aware directory.";
+        }
+
+        std::fclose(terrtype_file);
+
         _world_maps = static_cast<uint8_t *>(malloc(WORLD_SIZE * NUM_PLANES * sizeof(int16_t)));
         ASSERT_NE(_world_maps, nullptr);
 

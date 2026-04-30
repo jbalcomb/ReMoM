@@ -1,5 +1,5 @@
 {
-  "tests": 117,
+  "tests": 116,
   "name": "AllTests",
   "testsuites": [
     {
@@ -9,43 +9,32 @@
         {
           "name": "MOM_Create_Unit",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 284
+          "line": 125
         },
         {
           "name": "MOM_Kill_Unit_kt0",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 412
+          "line": 253
         },
         {
           "name": "MOM_Kill_Unit_kt1",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 447
+          "line": 288
         },
         {
           "name": "MOM_Kill_Unit_kt2",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 469
+          "line": 310
         },
         {
           "name": "MOM_Delete_Dead_Units",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 491
+          "line": 332
         },
         {
           "name": "MOM_Delete_Dead_Units_ConsecutiveDeadUnits",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 502
-        }
-      ]
-    },
-    {
-      "name": "MOMIntegrationTest",
-      "tests": 1,
-      "testsuite": [
-        {
-          "name": "NextTurnProc_RealSave_RemovesKilledUnits",
-          "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\MOM_tests.cpp",
-          "line": 525
+          "line": 343
         }
       ]
     },
@@ -304,12 +293,12 @@
         {
           "name": "DesertSquareWithOnlyDesertNeighbors_NormalizesToDesert1",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Desert_Autotile.cpp",
-          "line": 54
+          "line": 64
         },
         {
           "name": "NonDesertNeighborOfDesert_RemainsUnchanged",
           "file": "C:\\STU\\devel\\ReMoM\\MoM\\tests\\test_Desert_Autotile.cpp",
-          "line": 75
+          "line": 85
         }
       ]
     },
