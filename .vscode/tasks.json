@@ -1,0 +1,80 @@
+// "Safe to push" verification tasks.
+// See doc/PRDs/PRD-VSCode-Task-Safe-To-Push.md for design rationale.
+//
+// Atomic sub-tasks (each runnable individually via "Tasks: Run Task..."):
+//   build:   MSVC-debug
+//   build:   MSVC-release
+//   test:    MSVC-release
+//   package: MSVC-release
+//
+// Compound gate (run before `git push`):
+//   check: safe-to-push  →  Debug build + Release build + tests, in sequence.
+//                            Short-circuits on first failure.
+//
+// Fresh clone? Each preset must be configured once before its build sub-task
+// will work:
+//   cmake --preset MSVC-debug
+//   cmake --preset MSVC-release
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build: MSVC-debug",
+            "type": "shell",
+            "command": "cmake --build --preset MSVC-debug",
+            "problemMatcher": ["$msCompile"],
+            "presentation": {
+                "panel": "dedicated",
+                "revealProblems": "onProblem",
+                "showReuseMessage": false
+            }
+        },
+        {
+            "label": "build: MSVC-release",
+            "type": "shell",
+            "command": "cmake --build --preset MSVC-release",
+            "problemMatcher": ["$msCompile"],
+            "presentation": {
+                "panel": "dedicated",
+                "revealProblems": "onProblem",
+                "showReuseMessage": false
+            }
+        },
+        {
+            "label": "test: MSVC-release",
+            "type": "shell",
+            "command": "ctest --preset MSVC-release",
+            "problemMatcher": [],
+            "presentation": {
+                "panel": "dedicated",
+                "revealProblems": "onProblem",
+                "showReuseMessage": false
+            }
+        },
+        {
+            "label": "package: MSVC-release",
+            "type": "shell",
+            "command": "cmake --build --preset MSVC-release --target package",
+            "problemMatcher": ["$msCompile"],
+            "presentation": {
+                "panel": "dedicated",
+                "revealProblems": "onProblem",
+                "showReuseMessage": false
+            }
+        },
+        {
+            "label": "check: safe-to-push",
+            "dependsOn": [
+                "build: MSVC-debug",
+                "build: MSVC-release",
+                "test: MSVC-release"
+            ],
+            "dependsOrder": "sequence",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "problemMatcher": []
+        }
+    ]
+}

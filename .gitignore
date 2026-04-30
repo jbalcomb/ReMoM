@@ -18,7 +18,8 @@ autom4te.cache/
 ReMoMber
 
 # Visual Studio Code (VS Code) (VSC)
-.vscode/
+.vscode/*
+!.vscode/tasks.json
 *.code-workspace
 
 
