@@ -759,6 +759,7 @@ TEST(Draw_Expanding_Bitmap_test, CounterZeroCopiesScreenAndCopiesOnToOffPage)
 
     std::vector<uint8_t> on_page(screen_size, 0x00);
     std::vector<uint8_t> off_page(stride_source_size, 0x00);
+    std::vector<uint8_t> original_off_page(off_page.size(), 0x00);
     std::vector<uint8_t> picture(picture_total_size, 0xEE);
 
     for (size_t i = 0; i < on_page.size(); i++)
@@ -770,6 +771,8 @@ TEST(Draw_Expanding_Bitmap_test, CounterZeroCopiesScreenAndCopiesOnToOffPage)
     {
         off_page[i] = static_cast<uint8_t>((i * 29U + 3U) & 0xFFU);
     }
+
+    original_off_page = off_page;
 
     draw_page_num = 0;
     video_page_buffer[0] = on_page.data();
@@ -788,7 +791,7 @@ TEST(Draw_Expanding_Bitmap_test, CounterZeroCopiesScreenAndCopiesOnToOffPage)
     for (size_t i = 0; i < screen_size; i++)
     {
         const size_t source_index = i * static_cast<size_t>(SCREEN_WIDTH + 1);
-        EXPECT_EQ(copied_screen[i], off_page[source_index]);
+        EXPECT_EQ(copied_screen[i], original_off_page[source_index]);
     }
 
     for (size_t i = 0; i < screen_size; i++)
