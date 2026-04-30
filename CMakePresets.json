@@ -248,27 +248,32 @@
         {
             "name": "MSVC-debug",
             "displayName": "VS2022 amd64 Debug",
-            "configurePreset": "MSVC-debug"
+            "configurePreset": "MSVC-debug",
+            "configuration": "Debug"
         },
         {
             "name": "MSVC-nosound-debug",
             "displayName": "VS2022 amd64 Debug (No Sound)",
-            "configurePreset": "MSVC-nosound-debug"
+            "configurePreset": "MSVC-nosound-debug",
+            "configuration": "Debug"
         },
         {
             "name": "MSVC-release",
             "displayName": "VS2022 amd64 Release",
-            "configurePreset": "MSVC-release"
+            "configurePreset": "MSVC-release",
+            "configuration": "Release"
         },
         {
             "name": "clang-nosound-debug",
             "displayName": "Linux Clang (No Sound)",
-            "configurePreset": "clang-nosound-debug"
+            "configurePreset": "clang-nosound-debug",
+            "configuration": "Debug"
         },
         {
             "name": "clang-debug",
             "displayName": "Linux Clang",
-            "configurePreset": "clang-debug"
+            "configurePreset": "clang-debug",
+            "configuration": "Debug"
         }
     ],
     "workflowPresets": [
