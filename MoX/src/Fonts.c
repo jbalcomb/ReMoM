@@ -42,7 +42,9 @@ int16_t draw_alias_flag = 0;
 // WZD dseg:7842 00 00                                           exclusion_count dw 0                    ; DATA XREF: Print_Paragraph+181w ...
 
 // WZD dseg:7844                                                 seg020  MoO2 Module: palette
-// WZD dseg:7844
+/*
+{-1:disabled, 0:normal, 1:reverse}
+*/
 int16_t cycle_direction_flag = ST_UNDEFINED;
 
 // WZD dseg:7846 68 35 68 35                                     random_seed dd 35683568h                ; DATA XREF: Set_Random_Seed+6w ...
@@ -3228,17 +3230,18 @@ void Update_Cycle(int16_t *color_min, int16_t * color_max)
             cycle_color_value += cycle_step_value;
             
             /* Did we overshoot the maximum? */
-            if (cycle_color_value > *color_max) {
+            if (cycle_color_value >= *color_max) {
                 cycle_color_value = *color_max - 1; /* Bounce back */
-                cycle_direction_flag = 1;           /* Reverse direction */
+                cycle_direction_flag = 1;           /* Switch direction */
             }
         } else {
             /* Max is actually lower than Min (Negative gradient) */
             cycle_color_value -= cycle_step_value;
             
-            if (cycle_color_value < *color_min) {
-                cycle_color_value = *color_min + 1;
-                cycle_direction_flag = 1;
+            /* ¿ OGBUG  Claude feels strongly that this should be (cycle_color_value <= *color_max) ? */
+            if (cycle_color_value <= *color_min) {
+                cycle_color_value = *color_min + 1; /* Bounce back */
+                cycle_direction_flag = 1;           /* Switch direction */
             }
         }
         
@@ -3248,17 +3251,18 @@ void Update_Cycle(int16_t *color_min, int16_t * color_max)
             cycle_color_value -= cycle_step_value;
             
             /* Did we overshoot the minimum? */
-            if (cycle_color_value < *color_min) {
+            if (cycle_color_value <= *color_min) {
                 cycle_color_value = *color_min + 1; /* Bounce back */
-                cycle_direction_flag = 0;           /* Reverse direction */
+                cycle_direction_flag = 0;           /* Switch direction */
             }
         } else {
             /* Max is actually lower than Min (Negative gradient) */
             cycle_color_value += cycle_step_value;
             
-            if (cycle_color_value > *color_max) {
-                cycle_color_value = *color_max - 1;
-                cycle_direction_flag = 0;
+            /* ¿ OGBUG  Claude feels strongly that this should be (cycle_color_value >= *color_min) ? */
+            if (cycle_color_value >= *color_max) {
+                cycle_color_value = *color_max - 1; /* Bounce back */
+                cycle_direction_flag = 0;           /* Switch direction */
             }
         }
     }

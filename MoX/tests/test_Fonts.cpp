@@ -49,12 +49,36 @@ TEST(Update_Cycle_test, Forward_PositiveGradient_BounceAtMax)
 
 // ============================================================================
 // Update_Cycle — forward direction (flag == 0), negative gradient (max <= min)
+//
+// OGBUG: in the negative-gradient branches Update_Cycle compares the new
+// cycle_color_value against the *origin* bound (color_min for forward,
+// color_max for reverse) instead of the *destination* bound, so any value
+// inside the legal range trips the bounce on the first step.  The disassembly
+// confirms this — see the "¿ OGBUG" notes in MoX/src/Fonts.c — so the buggy
+// behaviour is preserved.  The "NormalStep" cases below encode the *intended*
+// semantics of negative gradient (decrease in forward, increase in reverse,
+// no bounce while inside range) which the actual game code never exhibits;
+// they are disabled until a fix is sanctioned.
+//
+// TODO  GUI/integration test: drive Cycle_Palette_Color() through enough
+// frames to render the cycle visually in all four direction × gradient
+// combinations — forward+positive, reverse+positive, forward+negative,
+// reverse+negative — including the two suspected-broken negative cases.
+// The visual output is the ground truth: if the original game's palette
+// cycles look wrong in negative gradient on real hardware, the OGBUG is real;
+// if they look right despite the comparison anomaly, the disassembly may
+// have been misread or there's a calling-convention twist we missed.
 // ============================================================================
 
-TEST(Update_Cycle_test, Forward_NegativeGradient_NormalStep)
+TEST(Update_Cycle_test, DISABLED_Forward_NegativeGradient_NormalStep)
 {
     // min=30, max=10 (negative gradient): forward means decreasing
     // value=25, step=3 → value becomes 22, direction stays 0
+    //
+    // DISABLED — Update_Cycle's forward-negative-gradient branch compares against
+    // *color_min instead of *color_max, so any starting value inside the legal
+    // range bounces immediately.  See OGBUG note above.  Re-enable once the GUI
+    // test confirms the intended semantics.
     int16_t lo = 30, hi = 10;
     Setup_Cycle(0, 25, 3);
     Update_Cycle(&lo, &hi);
@@ -100,10 +124,14 @@ TEST(Update_Cycle_test, Reverse_PositiveGradient_BounceAtMin)
 // Update_Cycle — reverse direction (flag == 1), negative gradient (max <= min)
 // ============================================================================
 
-TEST(Update_Cycle_test, Reverse_NegativeGradient_NormalStep)
+TEST(Update_Cycle_test, DISABLED_Reverse_NegativeGradient_NormalStep)
 {
     // min=30, max=10: reverse of negative gradient means increasing
     // value=15, step=3 → value becomes 18, direction stays 1
+    //
+    // DISABLED — Update_Cycle's reverse-negative-gradient branch compares against
+    // *color_max instead of *color_min, so any starting value inside the legal
+    // range bounces immediately.  See OGBUG note above the forward case.
     int16_t lo = 30, hi = 10;
     Setup_Cycle(1, 15, 3);
     Update_Cycle(&lo, &hi);
