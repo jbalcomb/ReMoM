@@ -32,12 +32,14 @@ Ignore the Register annotations. (e.g., `_DI_`, `_SI_`, `_CX_`, etc.) They are j
 ## Pre-push gate (optional but recommended)
 A repo-tracked `pre-push` Git hook lives at `tools/git-hooks/pre-push`. It mirrors the VS Code `check: safe-to-push` task: builds Debug, builds Release (catches unguarded `dbg_prn` / `trc_prn` and other Debug-only-symbol leakage), then runs the test suite. Short-circuits on first failure.
 
+The hook only runs when at least one ref being pushed targets `refs/heads/main`. Pushes to feature branches skip the gate so iterative work doesn't pay the full build+test cost. Run the VS Code `check: safe-to-push` task manually on a feature branch when you want to verify locally before opening a merge.
+
 One-time setup per clone:
 ```
 git config core.hooksPath tools/git-hooks
 ```
 
-Bypass for emergencies:
+Bypass for emergencies (only meaningful on a main-bound push, since other pushes already skip the gate):
 ```
 git push --no-verify
 ```

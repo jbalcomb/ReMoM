@@ -16,9 +16,26 @@
 
 # Git pipes one line per ref being pushed on stdin:
 #     <local-ref> <local-sha> <remote-ref> <remote-sha>
-# Drain it so the upstream `git push` doesn't see a closed pipe.  v1 ignores
-# the contents (no per-ref filtering).
-cat > /dev/null
+# We only gate pushes destined for refs/heads/main.  Pushes to feature
+# branches skip the gate so iterative work doesn't pay the full
+# build+test cost; CI / a manual `check: safe-to-push` task covers those
+# branches' eventual landing on main.
+ZERO_SHA="0000000000000000000000000000000000000000"
+gate_main=0
+while read -r local_ref local_sha remote_ref remote_sha
+do
+    # Branch deletion (local SHA all zeros) -- nothing to verify.
+    [ "$local_sha" = "$ZERO_SHA" ] && continue
+    case "$remote_ref" in
+        refs/heads/main) gate_main=1 ;;
+    esac
+done
+
+if [ "$gate_main" -eq 0 ]
+then
+    echo "[pre-push] skip: no ref targets refs/heads/main"
+    exit 0
+fi
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT" || exit 1
