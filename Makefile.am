@@ -151,6 +151,7 @@ libmox_a_SOURCES = \
     MoX/src/MOX_SET.c \
     MoX/src/MOX_SND.c \
     MoX/src/MOX_T4.c \
+    MoX/src/MOX2.c \
     MoX/src/paragrph.c \
     MoX/src/random.c \
     MoX/src/SOUND.c \
