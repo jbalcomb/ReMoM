@@ -72,6 +72,9 @@ misc/
 
 *.GAM
 *.gam
+# Track committed test goldens despite the broad *.gam exclusion above.
+!tests/golden_*.GAM
+!tests/golden_*.gam
 *.LBX
 *.lbx
 *.MOM
