@@ -1,0 +1,181 @@
+# assert_worldgen.txt — Field-level assertions for the WorldGen smoke test.
+#
+# Each non-comment, non-blank line is a "field = expected_value" assertion.
+# check_save_fields looks up the field in the dump and compares values.
+#
+# Why assertions instead of full-file comparison
+#
+# The save format is fixed-size and reserves slots/padding for content that
+# isn't populated yet (unused hero slots, item slots, struct padding bytes).
+# Those bytes come from whatever the OS handed back at allocation time and
+# vary run-to-run.  Whole-file or whole-field comparison is therefore not a
+# valid test design — it would only "work" under MSVC Debug because the
+# Debug allocator deterministically fills with 0xCD; the moment you switch
+# to Release, the latent non-determinism surfaces.
+#
+# This test instead asserts the fields the game actually reads back: world
+# parameters, the five wizard identities, their starting cities and units,
+# and a handful of player-banner counts.  Anything not listed here is
+# deliberately left unconstrained.
+#
+# Inputs that produce these values:
+#   --newgame  assets/test_worldgen.ini   (seed=12345, 5 wizards, etc.)
+#   --scenario assets/test_worldgen_smoke.hms
+#
+# When wizard generation, world layout, or starting-city/unit logic
+# intentionally changes, regenerate via:
+#   tools/regenerate_goldens.sh
+# inspect the resulting tests/golden_worldgen_seed12345.txt, and update the
+# expectations below.
+
+# =============================================================================
+# Game-level state
+# =============================================================================
+
+game.num_players = 5
+game.landsize = 2
+game.magic = 1
+game.difficulty = 2
+game.cities = 5
+game.units = 13
+game.turn = 0
+game.unit = 0
+
+# =============================================================================
+# Wizards (player[0]: human "Rjak"; players 1-4: AI; player[5]: neutral)
+# =============================================================================
+
+player[0].name = Rjak
+player[0].wizard_id = 6
+player[0].capital_race = 8
+player[0].banner_id = 4
+player[0].fame = 0
+
+player[1].name = Custom
+player[1].wizard_id = 14
+player[1].capital_race = 13
+player[1].banner_id = 2
+
+player[2].name = Kali
+player[2].wizard_id = 13
+player[2].capital_race = 1
+player[2].banner_id = 0
+
+player[3].name = Ariel
+player[3].wizard_id = 11
+player[3].capital_race = 13
+player[3].banner_id = 0
+
+player[4].name = Oberic
+player[4].wizard_id = 5
+player[4].capital_race = 13
+player[4].banner_id = 1
+
+# =============================================================================
+# Starting cities — one per wizard, named per the data table
+# =============================================================================
+
+city[0].name = York
+city[0].owner_idx = 0
+city[0].race = 8
+city[0].wx = 20
+city[0].wy = 17
+
+city[1].name = Groningen
+city[1].owner_idx = 1
+city[1].race = 13
+city[1].wx = 8
+city[1].wy = 32
+
+city[2].name = Lorn
+city[2].owner_idx = 2
+city[2].race = 1
+city[2].wx = 45
+city[2].wy = 11
+
+city[3].name = Muck
+city[3].owner_idx = 3
+city[3].race = 13
+city[3].wx = 4
+city[3].wy = 11
+
+city[4].name = Fauul
+city[4].owner_idx = 4
+city[4].race = 13
+city[4].wx = 51
+city[4].wy = 31
+
+# =============================================================================
+# Starting units — two stacks per wizard (units 0..9, paired) plus three
+# neutral units (10..12) for lair garrisons
+# =============================================================================
+
+unit[0].owner_idx = 0
+unit[0].type = 104
+unit[0].wx = 20
+unit[0].wy = 17
+unit[0].status = 0
+
+unit[1].owner_idx = 1
+unit[1].type = 147
+unit[1].wx = 8
+unit[1].wy = 32
+unit[1].status = 0
+
+unit[2].owner_idx = 2
+unit[2].type = 46
+unit[2].wx = 45
+unit[2].wy = 11
+unit[2].status = 0
+
+unit[3].owner_idx = 3
+unit[3].type = 147
+unit[3].wx = 4
+unit[3].wy = 11
+unit[3].status = 0
+
+unit[4].owner_idx = 4
+unit[4].type = 147
+unit[4].wx = 51
+unit[4].wy = 31
+unit[4].status = 0
+
+unit[5].owner_idx = 0
+unit[5].type = 105
+unit[5].wx = 20
+unit[5].wy = 17
+
+unit[6].owner_idx = 1
+unit[6].type = 148
+unit[6].wx = 8
+unit[6].wy = 32
+
+unit[7].owner_idx = 2
+unit[7].type = 47
+unit[7].wx = 45
+unit[7].wy = 11
+
+unit[8].owner_idx = 3
+unit[8].type = 148
+unit[8].wx = 4
+unit[8].wy = 11
+
+unit[9].owner_idx = 4
+unit[9].type = 148
+unit[9].wx = 51
+unit[9].wy = 31
+
+unit[10].owner_idx = 5
+unit[10].type = 40
+unit[10].wx = 21
+unit[10].wy = 23
+
+unit[11].owner_idx = 5
+unit[11].type = 40
+unit[11].wx = 21
+unit[11].wy = 23
+
+unit[12].owner_idx = 5
+unit[12].type = 47
+unit[12].wx = 47
+unit[12].wy = 32

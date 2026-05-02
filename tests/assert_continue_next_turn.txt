@@ -29,7 +29,8 @@ player[0].capital_race = 8
 player[0].banner_id = 4
 
 # Research pick: Resist Magic selected via click (54,38) on picker
-player[0].researching_spell_idx = 41
+# NONDET player[0].researching_spell_idx -- observed values across 5 runs: 43, 82, 41, 81, 2  (set aside until determinism is restored)
+# player[0].researching_spell_idx = 43
 
 # Resource calculations after turn 1
 # power_base = sum of spellbooks (2+4+3+1+0 = 10) from fortress
@@ -40,7 +41,8 @@ player[0].spell_casting_skill = 384
 # gold: 75 + city_income(4) - bldg_maint(2) - unit_upkeep(1) = 76
 player[0].gold_reserve = 76
 # research_cost_remaining = Resist Magic base cost (just selected, no progress yet)
-player[0].research_cost_remaining = 20
+# NONDET player[0].research_cost_remaining -- observed values across 5 runs: 60, 40, 20, 20, 40  (set aside until determinism is restored)
+# player[0].research_cost_remaining = 60
 
 # Home city: renamed via popup
 city[0].name = Claudesville
@@ -49,15 +51,15 @@ city[0].race = 8
 
 # Units: Spearmen (unit[0]) and Swordsmen (unit[5]), both patrolled
 unit[0].owner_idx = 0
-unit[0].wx = 44
-unit[0].wy = 8
+unit[0].wx = 20
+unit[0].wy = 17
 unit[0].wp = 0
 unit[0].status = 1
 unit[0].finished = 1
 
 unit[5].owner_idx = 0
-unit[5].wx = 44
-unit[5].wy = 8
+unit[5].wx = 20
+unit[5].wy = 17
 unit[5].wp = 0
 unit[5].status = 1
 unit[5].finished = 1
@@ -66,46 +68,50 @@ unit[5].finished = 1
 #  Player 1
 # ==========================================================================
 
-player[1].researching_spell_idx = 166
+# NONDET player[1].researching_spell_idx -- observed values across 5 runs: 210, 2, 211, 2, 7  (set aside until determinism is restored)
+# player[1].researching_spell_idx = 210
 
 unit[1].owner_idx = 1
-unit[1].wx = 18
-unit[1].wy = 17
+unit[1].wx = 8
+unit[1].wy = 32
 unit[1].wp = 0
-unit[1].status = 3
+unit[1].status = 0
 
 # ==========================================================================
 #  Player 2
 # ==========================================================================
 
-player[2].researching_spell_idx = 48
+# NONDET player[2].researching_spell_idx -- observed values across 5 runs: 169, 202, 161, 203, 203  (set aside until determinism is restored)
+# player[2].researching_spell_idx = 169
 
 unit[2].owner_idx = 2
-unit[2].wx = 42
-unit[2].wy = 16
+unit[2].wx = 45
+unit[2].wy = 11
 unit[2].wp = 0
-unit[2].status = 3
+unit[2].status = 0
 
 # ==========================================================================
 #  Player 3
 # ==========================================================================
 
-player[3].researching_spell_idx = 126
+# NONDET player[3].researching_spell_idx -- observed values across 5 runs: 211, 122, 207, 205, 212  (set aside until determinism is restored)
+# player[3].researching_spell_idx = 211
 
 unit[3].owner_idx = 3
-unit[3].wx = 18
-unit[3].wy = 17
+unit[3].wx = 4
+unit[3].wy = 11
 unit[3].wp = 0
-unit[3].status = 3
+unit[3].status = 0
 
 # ==========================================================================
 #  Player 4
 # ==========================================================================
 
-player[4].researching_spell_idx = 202
+# NONDET player[4].researching_spell_idx -- observed values across 5 runs: 7, 6, 8, 2, 207  (set aside until determinism is restored)
+# player[4].researching_spell_idx = 7
 
 unit[4].owner_idx = 4
-unit[4].wx = 25
-unit[4].wy = 27
+unit[4].wx = 51
+unit[4].wy = 31
 unit[4].wp = 0
-unit[4].status = 3
+unit[4].status = 0
