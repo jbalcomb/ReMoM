@@ -88,6 +88,33 @@ cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/
 .\HeMoM.exe --newgame test_gameplay.ini
 .\ReMoMber.exe --continue --scenario test-gameplay.hms
 
+cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/
+.\HeMoM.exe --newgame test_gameplay.ini
+.\HeMoM.exe --continue --scenario test-gameplay.hms
+
+cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/
+.\ReMoMber.exe --continue --scenario test-gameplay.hms --record test-gameplay2.rmr
+
+
+
+Three PRDs drafted under doc/PRDs/:
+
+File	Layer	Enforcement	Speed
+PRD-VSCode-Task-Safe-To-Push.md	IDE / on-demand	none (manual)	fastest after first run
+PRD-Git-Hook-Pre-Push-Release-Check.md	Local git	local, bypassable	medium
+PRD-Github-Actions-Release-Check.md	GitHub CI	absolute	slowest, runs in parallel
+Each is self-contained — same problem statement framed for its layer, distinct goals/non-goals, explicit acceptance criteria, dependencies cross-linked. They're independent: any one can ship without the others, and the three together form layered defense.
+
+A few things I deliberately left as "TBD" or "open question" rather than decided in the PRDs:
+
+Task name. check: safe-to-push vs. release-build: verify. The first reads better but overstates what the check covers.
+Hook scope. Whether to gate on every push or only main-bound. Affects speed → bypass discipline.
+Hook OS coverage. v1 is Windows-only by virtue of the MSVC-release preset. Listed as a follow-up rather than baked in.
+Required-status-check on main. Stage gate — don't flip it until the workflow has stabilized.
+Worth your read-through before any of them get implemented. Anything you'd want changed in the framing before we move to implementation?
+
+
+
 TRACE.LOG, test-gameplay.rmr, and test-gameplay-RECORD.log
 
 grep -E "WIN_KEY|REC_CAP|KBD_READ" TRACE.LOG | grep -A5 "vk=0x43"   # for 'C' key

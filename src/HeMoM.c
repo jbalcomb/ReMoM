@@ -43,6 +43,7 @@
 #include "../MoX/src/LBX_Load.h"
 #include "../MoX/src/LOADSAVE.h"
 #include "../MoX/src/random.h"
+#include "../MoX/src/MOX2.h"  /* CLAUDE: Check_Command_Line_Parameters_() */
 
 #include "../MoM/src/NewGame.h"
 #include "../MoM/src/MAPGEN.h"
@@ -529,6 +530,11 @@ int main(int argc, char *argv[])
 #endif
     }
 
+    /* CLAUDE: MoO2 pattern -- a single shared CLI-parser that sets _cmd_line_*
+       globals.  Currently only handles --seed; remaining flags are still
+       parsed by the per-target loop below during the incremental migration. */
+    Check_Command_Line_Parameters_(argc, argv);
+
     for (argi = 1; argi < argc; argi++)
     {
         if (stu_strcmp(argv[argi], "--help") == 0 || stu_strcmp(argv[argi], "-h") == 0)
@@ -603,6 +609,13 @@ int main(int argc, char *argv[])
             dbg_prn("[HeMoM] CLI: --dump-save \"%s\"\n", hemom_dump_save);
             trc_prn("[HeMoM] CLI: --dump-save \"%s\"\n", hemom_dump_save);
 #endif
+        }
+        else if (stu_strcmp(argv[argi], "--seed") == 0 && (argi + 1) < argc)
+        {
+            /* CLAUDE: --seed parsing migrated to MOX2::Check_Command_Line_Parameters_().
+               Skip the value here so the rest of this loop doesn't see it as
+               an "unknown arg". */
+            argi++;
         }
         else if (strcmp(argv[argi], "--ai-metrics") == 0)
         {

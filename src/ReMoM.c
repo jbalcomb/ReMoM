@@ -47,6 +47,7 @@
 #include "../MoX/src/MOX_T4.h"
 #include "../MoX/src/MOX_TYPE.h"
 #include "../MoX/src/random.h"
+#include "../MoX/src/MOX2.h"  /* CLAUDE: Check_Command_Line_Parameters_() */
 #include "../MoX/src/SOUND.h"
 #include "../MoX/src/Timer.h"
 
@@ -274,6 +275,10 @@ int main(int argc, char * argv[])
 #ifdef STU_DEBUG
     Debug_Print_Working_Directory();
 #endif
+
+    /* CLAUDE: MoO2 pattern -- shared CLI parser sets _cmd_line_* globals
+       (currently --seed only; flags will migrate over incrementally). */
+    Check_Command_Line_Parameters_(argc, argv);
 
     /* --headless: set SDL video driver to offscreen before SDL init.
        Must be parsed before Startup_Platform() so the environment variable

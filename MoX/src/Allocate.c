@@ -330,6 +330,7 @@ void Near_Allocation_Error(int16_t size)
 
 // WZD s08p07
 /* TODO  make Allocate_Space() return a void pointer */
+/* TODO  mark memory as 0xCD so it looks the same in Release and Debug  (MSVC does this automatically in debug mode) */
 SAMB_ptr Allocate_Space(uint16_t size)
 {
     int32_t lsize;

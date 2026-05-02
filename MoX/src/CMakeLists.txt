@@ -27,6 +27,7 @@ set(LIBMOX_SOURCES
     MOX_SET.c
     MOX_SND.c
     MOX_T4.c
+    MOX2.c
     paragrph.c
     random.c
     SOUND.c

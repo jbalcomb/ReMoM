@@ -38,6 +38,7 @@ MoO2  Module: LOADSAVE
 #include "../../MoX/src/Timer.h"
 #include "../../MoX/src/capture.h"
 #include "../../MoX/src/random.h"
+#include "../../MoX/src/MOX2.h"  /* CLAUDE: _cmd_line_seed for the MoO2 PreInit_Overland pattern */
 
 #include "AIDUDES.h"
 #include "CITYCALC.h"
@@ -976,13 +977,38 @@ void PreInit_Overland(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: PreInit_Overland()\n", __FILE__, __LINE__);
 #endif
 
-
-    Randomize();
-    debug_random_seed = 1000;
-    if(!Check_Release_Version())
-    {
-        Set_Random_Seed(debug_random_seed);
-    }
+/*
+MoO2
+    _main()
+        call    Check_Release_Version
+        cmp     _cmd_line_seed, 0
+        jz      short loc_101B7
+        mov     eax, _cmd_line_seed
+        call    Set_Random_Seed
+        jmp     short loc_101BC
+        loc_101B7:
+        call    Randomize
+        loc_101BC:
+        ...
+*/
+    // Randomize();
+    // debug_random_seed = 1000;
+    // if(!Check_Release_Version())
+    // {
+    //     Set_Random_Seed(debug_random_seed);
+    // }
+    /* CLAUDE: matches MoO2's pattern (see disassembly comment above) -- honour
+       a CLI-provided seed when non-zero, otherwise fall back to the original
+       Randomize() behaviour.  This is the minimum-divergence way to make
+       --continue runs deterministic when the test harness passes --seed. */
+    /* CLAUDE */  if(_cmd_line_seed != 0)
+    /* CLAUDE */  {
+    /* CLAUDE */      Set_Random_Seed((uint32_t)_cmd_line_seed);
+    /* CLAUDE */  }
+    /* CLAUDE */  else
+    /* CLAUDE */  {
+    /* CLAUDE */      Randomize();
+    /* CLAUDE */  }
 
 
     all_units_moved = ST_FALSE;

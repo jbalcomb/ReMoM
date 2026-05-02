@@ -20,6 +20,10 @@ MoO2
 
 uint32_t random_seed = 0x35683568;  /* 896021864d  00110101011010000011010101101000b */
 
+/* CLAUDE: _cmd_line_seed is declared/defined in MoX/src/MOX2.c.  In MoO2 SimTex
+   placed it in the MOX2 module alongside Check_Command_Line_Parameters_();
+   we mirror that placement.  random.c only owns the RNG itself. */
+
 
 
 /*
