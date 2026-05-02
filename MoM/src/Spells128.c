@@ -3,6 +3,8 @@
         ovr128
 */
 
+#include <stdio.h>  /* CLAUDE: fprintf(stderr, ...) for [RESEARCH_SETUP] diagnostics */
+
 #include "CITYCALC.h"
 #include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/Util.h"
@@ -69,6 +71,26 @@ int16_t Player_Research_Spells(int16_t player_idx)
 
     Build_Research_List(player_idx, &research_list[0]);
 
+    /* CLAUDE: log entry state for the research candidate-list population.  The
+       value of m_spell_list_count and the contents of research_list[] are what
+       Random() picks indices into, so any nondeterminism in research_spells[]
+       traces back to one of these inputs varying or to the RNG state having
+       advanced different amounts before this function is reached. */
+    {
+        int16_t _dbg_eligible = 0;
+        int16_t _dbg_idx;
+        for(_dbg_idx = 0; _dbg_idx < (NUM_SPELLS_PER_MAGIC_REALM * NUM_MAGIC_REALMS); _dbg_idx++)
+        {
+            if(_players[player_idx].spells_list[_dbg_idx] == sls_Researchable) { _dbg_eligible++; }
+        }
+        fprintf(stderr, "[RESEARCH_SETUP] player=%d ENTER  random_seed=0x%08X  random_calls=%llu  m_spell_list_count=%d  spells_list_researchable_count=%d  research_spells=[%d,%d,%d,%d,%d,%d,%d,%d]\n",
+            player_idx, (unsigned)Get_Random_Seed(), (unsigned long long)g_random_call_count, m_spell_list_count, _dbg_eligible,
+            _players[player_idx].research_spells[0], _players[player_idx].research_spells[1],
+            _players[player_idx].research_spells[2], _players[player_idx].research_spells[3],
+            _players[player_idx].research_spells[4], _players[player_idx].research_spells[5],
+            _players[player_idx].research_spells[6], _players[player_idx].research_spells[7]);
+    }
+
 
     if(_players[player_idx].spells_list[(spl_Spell_Of_Mastery - 1)] == sls_Known)
     {
@@ -91,6 +113,10 @@ int16_t Player_Research_Spells(int16_t player_idx)
 
     while((spells_cnt < spells_max) && (m_spell_list_count > 0))
     {
+        /* CLAUDE: capture pre-Random state for the diagnostic log below. */
+        uint64_t _dbg_calls_before = g_random_call_count;
+        int16_t _dbg_pool_size = m_spell_list_count;
+
         research_list_idx = (Random(m_spell_list_count) - 1);
 
         spells_cnt++;
@@ -103,11 +129,26 @@ int16_t Player_Research_Spells(int16_t player_idx)
                 spell_realm_idx = ((research_list[research_list_idx] - 1) % NUM_SPELLS_PER_MAGIC_REALM);
                 spell_realm = ((research_list[research_list_idx] - 1) / NUM_SPELLS_PER_MAGIC_REALM);
                 _players[player_idx].spells_list[((spell_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx)] = sls_Researchable;
+                /* CLAUDE: log the assignment so we can see which Random() call mapped to which slot/spell. */
+                fprintf(stderr, "[RESEARCH_SETUP] player=%d pick: random_calls=%llu->%llu  pool=%d  rng_idx=%d  -> slot=%d spell=%d  spells_list[%d]=Researchable\n",
+                    player_idx, (unsigned long long)_dbg_calls_before, (unsigned long long)g_random_call_count,
+                    _dbg_pool_size, research_list_idx, itr, research_list[research_list_idx],
+                    (spell_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx);
                 Build_Research_List(player_idx, &research_list[0]);
                 break;  /* CLAUDE bugfix: without break, all empty slots get filled in one pass using the same research_list_idx, causing duplicates */
             }
         }
     }
+
+    /* CLAUDE: log exit state — final research_spells[] contents.  Compare across
+       runs to confirm whether nondeterminism here is upstream (RNG-state /
+       eligibility-pool divergence) or local. */
+    fprintf(stderr, "[RESEARCH_SETUP] player=%d EXIT   random_calls=%llu  research_spells=[%d,%d,%d,%d,%d,%d,%d,%d]\n",
+        player_idx, (unsigned long long)g_random_call_count,
+        _players[player_idx].research_spells[0], _players[player_idx].research_spells[1],
+        _players[player_idx].research_spells[2], _players[player_idx].research_spells[3],
+        _players[player_idx].research_spells[4], _players[player_idx].research_spells[5],
+        _players[player_idx].research_spells[6], _players[player_idx].research_spells[7]);
 
 
     spells_cnt = 0;

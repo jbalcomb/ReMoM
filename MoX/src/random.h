@@ -57,8 +57,11 @@ void Randomize(void);
 // WZD s22p08
 int16_t Random(int16_t max);
 
-/* CLAUDE: _cmd_line_seed is declared in MoX/src/MOX2.h (MoO2 placement).
-   Files that reference it -- e.g. LoadScr.c::PreInit_Overland -- include MOX2.h. */
+/* CLAUDE: diagnostic — running count of calls to Random() since process start. */
+extern uint64_t g_random_call_count;
+
+/* CLAUDE: _cmd_line_seed declaration moved to MoX/src/MOX2.h.  Files that
+   reference it (e.g. LoadScr.c::PreInit_Overland) now include MOX2.h. */
 
 // win_CLK.C  /* Get_System_Clock_Counter() */
 // uint32_t Get_System_Clock_Counter(void);

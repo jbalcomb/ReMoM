@@ -13,6 +13,8 @@ MoO2
 
 */
 
+#include <stdio.h>  /* CLAUDE: fprintf(stderr, ...) for [RNG] diagnostic logging */
+
 #include "EXIT.h"
 #include "random.h"
 #include "MOX_BITS.h"
@@ -20,9 +22,14 @@ MoO2
 
 uint32_t random_seed = 0x35683568;  /* 896021864d  00110101011010000011010101101000b */
 
-/* CLAUDE: _cmd_line_seed is declared/defined in MoX/src/MOX2.c.  In MoO2 SimTex
-   placed it in the MOX2 module alongside Check_Command_Line_Parameters_();
-   we mirror that placement.  random.c only owns the RNG itself. */
+/* CLAUDE: diagnostic — counts every call to Random() since process start.  Used to
+   investigate whether the RNG-state divergence between supposedly-deterministic
+   runs is caused by different numbers of calls, not different seed handling. */
+uint64_t g_random_call_count = 0;
+
+/* CLAUDE: _cmd_line_seed moved to MoX/src/MOX2.c.  In MoO2 SimTex declared it
+   in the MOX2 module alongside Check_Command_Line_Parameters_(); we mirror
+   that placement.  random.c now only owns the RNG itself. */
 
 
 
@@ -153,6 +160,11 @@ restart_sum:
 // WZD s22p05
 void Set_Random_Seed(uint32_t n)
 {
+    /* CLAUDE: log every explicit seed assignment so we can see WHO sets it
+       (config parse, save-load, etc.) and confirm it matches what the .ini
+       requested. */
+    fprintf(stderr, "[RNG] Set_Random_Seed(0x%08X = %u)  (was 0x%08X)  random_calls=%llu\n",
+        (unsigned)n, (unsigned)n, (unsigned)random_seed, (unsigned long long)g_random_call_count);
     random_seed = n;
 }
 
@@ -169,6 +181,12 @@ void Randomize(void)
 {
     uint32_t timer_value;
     timer_value = (uint32_t)Read_System_Clock_Timer();
+    /* CLAUDE: Randomize() reads the system clock and seeds from it.  Calling
+       this AFTER the .ini-driven Set_Random_Seed() would clobber the
+       deterministic seed with a wall-clock-derived one — exactly the kind
+       of bug we are looking for.  Log every call. */
+    fprintf(stderr, "[RNG] Randomize() called  timer=0x%08X  (clobbers prior seed 0x%08X)  random_calls=%llu\n",
+        (unsigned)timer_value, (unsigned)random_seed, (unsigned long long)g_random_call_count);
     random_seed = timer_value;
 }
 
@@ -180,10 +198,13 @@ int16_t Random(int16_t n)
     uint16_t result;
     uint32_t r = random_seed;
 
+    /* CLAUDE: count every call so divergence in call-count between runs is observable. */
+    g_random_call_count++;
+
     r ^= (r << 13);
     r ^= (r >> 17);
     r ^= (r << 5);
-    
+
     random_seed = r;
 
     result = (r >> 16) % n;
