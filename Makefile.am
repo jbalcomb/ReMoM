@@ -263,7 +263,8 @@ libmom_a_CFLAGS = $(AM_CFLAGS) \
 
 ReMoMber_SOURCES = \
     src/ReMoM.c \
-    src/ReMoM_Init.c
+    src/ReMoM_Init.c \
+    src/Artificial_Human_Player.c
 
 ReMoMber_CFLAGS = $(AM_CFLAGS) \
     $(SDL_CFLAGS) \
