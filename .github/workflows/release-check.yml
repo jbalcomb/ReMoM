@@ -1,0 +1,135 @@
+# Release-build gate. Runs on every push and PR to enforce that the
+# MSVC-release preset still configures, builds, and tests cleanly.
+# Pure pass/fail — no artifact upload on success, no packaging.
+# Tag-driven packaging lives in release.yml and is unaffected by this workflow.
+
+name: Release Check
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  windows-release:
+    name: Windows MSVC Release
+    runs-on: windows-latest
+
+    env:
+      SDL2_VER: "2.30.12"
+      MIXER_VER: "2.8.1"
+      SDL2_ROOT: "C:\\devellib"
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Cache SDL2 development libraries
+        id: cache-sdl2
+        uses: actions/cache@v4
+        with:
+          path: C:\devellib
+          key: sdl2-${{ runner.os }}-${{ env.SDL2_VER }}-mixer-${{ env.MIXER_VER }}
+
+      - name: Download SDL2 development libraries
+        if: steps.cache-sdl2.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          $DEST = "$env:SDL2_ROOT"
+          New-Item -ItemType Directory -Force -Path $DEST | Out-Null
+
+          $sdl2Url = "https://github.com/libsdl-org/SDL/releases/download/release-$env:SDL2_VER/SDL2-devel-$env:SDL2_VER-VC.zip"
+          Invoke-WebRequest -Uri $sdl2Url -OutFile "$env:TEMP\sdl2.zip"
+          Expand-Archive "$env:TEMP\sdl2.zip" -DestinationPath $DEST -Force
+          Write-Host "SDL2 installed to $DEST\SDL2-$env:SDL2_VER"
+
+          $mixerUrl = "https://github.com/libsdl-org/SDL_mixer/releases/download/release-$env:MIXER_VER/SDL2_mixer-devel-$env:MIXER_VER-VC.zip"
+          Invoke-WebRequest -Uri $mixerUrl -OutFile "$env:TEMP\sdl2_mixer.zip"
+          Expand-Archive "$env:TEMP\sdl2_mixer.zip" -DestinationPath $DEST -Force
+          Write-Host "SDL2_mixer installed to $DEST\SDL2_mixer-$env:MIXER_VER"
+
+      - name: Cache CMake build directory
+        uses: actions/cache@v4
+        with:
+          path: out/build/MSVC-release
+          key: cmake-${{ runner.os }}-MSVC-release-${{ hashFiles('CMakePresets.json', '**/CMakeLists.txt') }}
+          restore-keys: |
+            cmake-${{ runner.os }}-MSVC-release-
+
+      - name: Configure (MSVC-release preset)
+        shell: pwsh
+        run: |
+          cmake --preset MSVC-release `
+            -D "SDL2_DIR=$env:SDL2_ROOT\SDL2-$env:SDL2_VER" `
+            -D "SDL2_MIXER_DIR=$env:SDL2_ROOT\SDL2_mixer-$env:MIXER_VER"
+
+      - name: Build (MSVC-release preset)
+        run: cmake --build --preset MSVC-release
+
+      - name: Test (MSVC-release preset)
+        run: ctest --preset MSVC-release --output-on-failure
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: cmake-logs-windows-${{ github.run_id }}
+          path: |
+            out/build/MSVC-release/CMakeFiles/CMakeOutput.log
+            out/build/MSVC-release/CMakeFiles/CMakeError.log
+            out/build/MSVC-release/**/*.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+  linux-release:
+    name: Linux Clang Release
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install build tools and SDL2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build clang pkg-config libsdl2-dev libsdl2-mixer-dev
+
+      - name: Cache CMake build directory
+        uses: actions/cache@v4
+        with:
+          path: out/build/clang-release
+          key: cmake-${{ runner.os }}-clang-release-${{ hashFiles('CMakePresets.json', '**/CMakeLists.txt') }}
+          restore-keys: |
+            cmake-${{ runner.os }}-clang-release-
+
+      - name: Configure
+        run: >
+          cmake -B out/build/clang-release
+          -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_C_COMPILER=clang
+          -DCMAKE_CXX_COMPILER=clang++
+
+      - name: Build
+        run: cmake --build out/build/clang-release
+
+      - name: Test
+        run: ctest --test-dir out/build/clang-release --output-on-failure
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: cmake-logs-linux-${{ github.run_id }}
+          path: |
+            out/build/clang-release/CMakeFiles/CMakeOutput.log
+            out/build/clang-release/CMakeFiles/CMakeError.log
+            out/build/clang-release/**/*.log
+          if-no-files-found: ignore
+          retention-days: 7
