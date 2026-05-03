@@ -605,7 +605,7 @@ void Platform_Event_Handler(void)
 
     /* CLAUDE */  /* Dasm: SDL_Delay(10) removed; vsync (SDL_RENDERER_PRESENTVSYNC) already provides frame pacing via SDL_RenderPresent(); the delay here stacked on every call to Platform_Event_Handler() (multiple times per frame from Get_Input and Mouse_Button), adding 30-50ms of cumulative lag per frame */
 
-    /* Synthetic player: inject scripted input. */
+    /* Artificial human player: inject scripted input. */
     if (platform_frame_callback != NULL)
     {
         platform_frame_callback();

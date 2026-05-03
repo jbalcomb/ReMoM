@@ -52,8 +52,8 @@
 #include "../MoM/src/MOM_SCR.h"
 
 #include "ReMoM_Init.h"
-#include "HeMoM_Player.h"
-#include "HeMoM_SaveDump.h"
+#include "Artificial_Human_Player.h"
+#include "Game_Save_Dump.h"
 
 /* _wizard_presets_table is defined in NewGame.c but has no extern in a header */
 extern struct s_WIZARD_PRESET _wizard_presets_table[];
@@ -485,7 +485,7 @@ static void Print_Usage(const char *program_name)
     fprintf(stderr, "  --newgame [FILE]   Create new game from config (default: ReMoM.ini)\n");
     fprintf(stderr, "  --continue         Load SAVE9.GAM (continue from previous --newgame)\n");
     fprintf(stderr, "  --load FILE        Load a save file (SAVE1.GAM .. SAVE9.GAM, SAVETEST.GAM)\n");
-    fprintf(stderr, "  --scenario FILE    Run synthetic player from scenario script (.hms)\n");
+    fprintf(stderr, "  --scenario FILE    Run artificial human player from scenario script (.hms)\n");
     fprintf(stderr, "  --replay FILE      Replay recorded input from .RMR file\n");
     fprintf(stderr, "  --record FILE      Record input to .RMR file\n");
     fprintf(stderr, "  --dump-save FILE   After Screen_Control returns, dump FILE.GAM to FILE.txt\n");
@@ -714,7 +714,7 @@ int main(int argc, char *argv[])
         current_screen = scr_Main_Screen;
     }
 
-    /* Load and register synthetic player scenario */
+    /* Load and register artificial human player scenario */
     if (hemom_scenario[0] != '\0')
     {
         fprintf(stderr, "[HeMoM] Loading scenario: %s\n", hemom_scenario);
@@ -733,10 +733,10 @@ int main(int argc, char *argv[])
             return 1;
         }
         Platform_Register_Frame_Callback(HeMoM_Player_Frame);
-        fprintf(stderr, "[HeMoM] Registered synthetic player callback\n");
+        fprintf(stderr, "[HeMoM] Registered artificial human player callback\n");
 #ifdef STU_DEBUG
-        dbg_prn("[HeMoM] Registered synthetic player callback\n");
-        trc_prn("[HeMoM] Registered synthetic player callback\n");
+        dbg_prn("[HeMoM] Registered artificial human player callback\n");
+        trc_prn("[HeMoM] Registered artificial human player callback\n");
 #endif
     }
     else

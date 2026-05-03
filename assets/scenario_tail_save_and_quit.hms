@@ -9,7 +9,7 @@
 #   - Clicks the Save button to commit SAVE1.GAM
 #   - Returns to Main Menu via the Quit button on the Save/Load screen
 #   - Hits Q on the Main Menu to reach scr_Quit_To_DOS
-#   - Ends the synthetic player
+#   - Ends the artificial human player
 #
 # Requires: caller must be on the Main Screen with all units finished
 #           (otherwise the Next Turn field intercepts G / input handling
@@ -68,5 +68,5 @@ wait 1s                   # let the Main Menu Screen finish loading
 # === Main Menu Screen: hit Q to Quit To DOS ===
 key Q
 
-# Stop the synthetic player — the game exits via scr_Quit_To_DOS.
+# Stop the artificial human player — the game exits via scr_Quit_To_DOS.
 end

@@ -1,5 +1,5 @@
 /**
- * HeMoM_SaveDump.h — Dump a .GAM save file to structured human-readable text.
+ * Game_Save_Dump.h — Dump a .GAM save file to structured human-readable text.
  *
  * Reads a binary save file (123300 bytes) and writes every field as a named
  * key=value line. The output can be diffed line-by-line against a golden

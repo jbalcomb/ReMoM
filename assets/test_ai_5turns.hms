@@ -50,6 +50,6 @@ wait 1s
 # === Save and quit ===
 # Use the shared save-and-quit tail which navigates through
 # Game menu -> Save -> Quit button -> Main Menu -> Q to DOS.
-# The `end` in the tail stops the synthetic player, so we rely
+# The `end` in the tail stops the artificial human player, so we rely
 # on the Q key hitting scr_Quit_To_DOS to exit Screen_Control.
 include scenario_tail_save_and_quit.hms

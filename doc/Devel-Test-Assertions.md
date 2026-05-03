@@ -37,7 +37,7 @@ Refresh after intentional changes to:
 - world-gen logic
 - AI decision-making
 - per-turn computation
-- a scenario file (changing what the synthetic player does)
+- a scenario file (changing what the artificial human player does)
 - the save format itself (rare, but it has happened)
 
 Do **not** refresh just to make a failing test pass.  A test failure is

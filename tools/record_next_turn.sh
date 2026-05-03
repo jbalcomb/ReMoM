@@ -15,7 +15,7 @@
 #   4. Launches ReMoMber with --continue, the pre-Next-Turn scenario script,
 #      and --record to capture your session.  The scripted portion runs
 #      automatically (city-name popup, Claudesville, patrol).  When the
-#      synthetic player reaches `end`, control hands back to you.  You play
+#      artificial human player reaches `end`, control hands back to you.  You play
 #      through the next turn, handle any popups, save to slot 1, and quit.
 #   5. After ReMoMber exits, dumps SAVE1.GAM to SAVE1.txt.
 #   6. Diffs SAVE9.txt against SAVE1.txt and saves the result.
@@ -38,7 +38,7 @@ NEWGAME_CONFIG="${ASSETS}/test_worldgen.ini"
 NEWGAME_SCENARIO="${ASSETS}/test_worldgen_smoke.hms"
 
 echo "=== Step 0/5: Rebuild MSVC-headless-debug (HeMoM) and MSVC-debug (ReMoMber) ==="
-# Both presets consume shared sources (HeMoM_Player.c, platform/*, etc.).  A
+# Both presets consume shared sources (Artificial_Human_Player.c, platform/*, etc.).  A
 # stale build on either side silently breaks this workflow, so rebuild both
 # before doing anything else.
 cmake --build "${REPO_ROOT}/out/build/MSVC-headless-debug" --config Debug --target HeMoM     >/dev/null

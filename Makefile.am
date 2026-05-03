@@ -295,7 +295,7 @@ bin_PROGRAMS += HeMoM
 HeMoM_SOURCES = \
     src/HeMoM.c \
     src/ReMoM_Init.c \
-    src/HeMoM_Player.c
+    src/Artificial_Human_Player.c
 
 HeMoM_CFLAGS = $(AM_CFLAGS) \
     -DNO_SOUND_LIBRARY \

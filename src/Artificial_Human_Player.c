@@ -1,18 +1,18 @@
 /**
- * HeMoM_Player.c — Synthetic human player for headless testing.
+ * Artificial_Human_Player.c — Artificial human player for simulations.
  *
- * Reads a test scenario file and injects input actions one per frame
+ * Reads a scenario file and injects simulated input one per frame
  * through the platform input layer (same functions the replay system uses).
  *
  * Actions with a wait count idle for that many frames before the next action.
  * Actions without an explicit wait execute on the next frame.
  *
- * The synthetic player sits at the same level as the replay system:
+ * The artificial human player sits at the same level as the replay system:
  * it writes into the engine's input globals, and the engine's Get_Input() /
  * Interpret_Mouse_Input() processes them normally through the Fields system.
  */
 
-#include "HeMoM_Player.h"
+#include "Artificial_Human_Player.h"
 
 #include "../platform/include/Platform.h"
 #include "../platform/include/Platform_Keys.h"
@@ -46,7 +46,7 @@ enum e_HeMoM_Action_Type
     act_CLICK,          /* left-click at (x, y) */
     act_RCLICK,         /* right-click at (x, y) */
     act_QUIT,           /* press Escape to quit */
-    act_END             /* stop the synthetic player */
+    act_END             /* stop the artificial human player */
 };
 
 struct s_HeMoM_Action
@@ -771,10 +771,10 @@ void HeMoM_Player_Frame(void)
             case act_END:
             {
                 hemom_active = 0;
-                fprintf(stderr, "[HeMoM Player] t=%llu ms end — synthetic player stopped\n", t_now);
+                fprintf(stderr, "[HeMoM Player] t=%llu ms end — artificial human player stopped\n", t_now);
 #ifdef STU_DEBUG
-                dbg_prn("[HeMoM Player] t=%llu ms end — synthetic player stopped\n", t_now);
-                trc_prn("[HeMoM Player] t=%llu ms end — synthetic player stopped\n", t_now);
+                dbg_prn("[HeMoM Player] t=%llu ms end — artificial human player stopped\n", t_now);
+                trc_prn("[HeMoM Player] t=%llu ms end — artificial human player stopped\n", t_now);
 #endif
             } break;
         }

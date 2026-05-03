@@ -1,7 +1,7 @@
 
 # HeMoM Continue + Save Test
 
-An end-to-end gameplay integration test that exercises the **Continue** code path (the WIZARDS.EXE path) and verifies specific game-state changes caused by a scripted synthetic player session.
+An end-to-end gameplay integration test that exercises the **Continue** code path (the WIZARDS.EXE path) and verifies specific game-state changes caused by a scripted artificial human player session.
 
 ## What This Test Does
 
@@ -39,7 +39,7 @@ The test is a chain of three CTest steps with `FIXTURES_SETUP` / `FIXTURES_REQUI
 
 ## Tested State Changes
 
-These are the fields the test explicitly asserts in [assert_continue_save.txt](../tests/assert_continue_save.txt). Each was chosen because it represents a direct effect of the synthetic player's input.
+These are the fields the test explicitly asserts in [assert_continue_save.txt](../tests/assert_continue_save.txt). Each was chosen because it represents a direct effect of the artificial human player's input.
 
 ### Wizard identity (sanity checks)
 
@@ -80,7 +80,7 @@ unit[5].finished = 1
 
 ## Other State Changes (Not Asserted)
 
-The `diff SAVE9.txt SAVE1.txt` output shows more changes than just the ones we assert. These are **side effects** of the continue load path and the in-game save path. They are deliberately not asserted because they are not caused directly by the synthetic player's input, and asserting them would make the test brittle against unrelated engine changes.
+The `diff SAVE9.txt SAVE1.txt` output shows more changes than just the ones we assert. These are **side effects** of the continue load path and the in-game save path. They are deliberately not asserted because they are not caused directly by the artificial human player's input, and asserting them would make the test brittle against unrelated engine changes.
 
 | Field | SAVE9 | SAVE1 | Cause |
 |---|---|---|---|
@@ -123,7 +123,7 @@ The Win32 backend had red and blue channels swapped when building the palette bu
 
 The Win32 `WM_KEYDOWN` handler was setting `mox_character = '\b'` for Backspace and `'\r'` for Enter. `Read_Key()` returns the character byte when non-zero, so input loops checking against `ST_KEY_BACKSPACE (0x0B)` and `ST_KEY_ENTER (0x0C)` never matched — they got `0x08` and `0x0D` instead. Fixed by leaving `mox_character = 0` for those keys so `Read_Key()` returns the MoX key code.
 
-### Synthetic player (HeMoM_Player.c)
+### Artificial human player (Artificial_Human_Player.c)
 
 **Missing `act_BACKSPACE`**
 
@@ -145,11 +145,11 @@ Added to both HeMoM and ReMoMber. On HeMoM it's sugar for `--load SAVE9.GAM`; on
 
 **`--scenario` CLI flag on ReMoMber**
 
-Previously only HeMoM supported scenarios. ReMoMber got the same flag plus a link against `HeMoM_Player.c`, with registration via `Platform_Register_Frame_Callback()`.
+Previously only HeMoM supported scenarios. ReMoMber got the same flag plus a link against `Artificial_Human_Player.c`, with registration via `Platform_Register_Frame_Callback()`.
 
 **`Platform_Register_Frame_Callback()` in Platform.h**
 
-Added a generic per-frame callback API to `Platform.h` so the synthetic player can register once and have it called from any backend's `Platform_Event_Handler()`. Previously the hook was only in the headless backend.
+Added a generic per-frame callback API to `Platform.h` so the artificial human player can register once and have it called from any backend's `Platform_Event_Handler()`. Previously the hook was only in the headless backend.
 
 **`--dump-save FILE.GAM` CLI flag**
 
@@ -188,8 +188,8 @@ This test locks down a specific, narrow slice of gameplay state. Many things rem
 - **Non-happy paths.** Cancelling dialogs, right-click help, error popups, out-of-memory, missing asset files — none are exercised.
 - **Save file format migration.** The test uses a fixed seed and always produces the same save layout. It won't catch bugs where an old save file becomes incompatible with a newer engine.
 - **Audio.** No sound effects, no music loading or playback — headless has no audio backend at all.
-- **Replay determinism.** The scenario is synthetic player input, not `.RMR` replay. A separate test using `--record` + `--replay` would verify that the replay system itself is deterministic for this scenario.
-- **Real-keyboard Backspace/Enter on SDL backends.** I fixed the Win32 backend's `mox_character` bug for these keys, but didn't check or fix the same pattern in `sdl2_KD.c` and `sdl3_KD.c`, which both still set `mox_character = '\b'` / `'\r'`. The text input popup will misbehave on SDL2/SDL3 for real keyboard input the same way it did before the synthetic player fix. This is a latent bug exposed by the investigation but not addressed by this test.
+- **Replay determinism.** The scenario is artificial human player input, not `.RMR` replay. A separate test using `--record` + `--replay` would verify that the replay system itself is deterministic for this scenario.
+- **Real-keyboard Backspace/Enter on SDL backends.** I fixed the Win32 backend's `mox_character` bug for these keys, but didn't check or fix the same pattern in `sdl2_KD.c` and `sdl3_KD.c`, which both still set `mox_character = '\b'` / `'\r'`. The text input popup will misbehave on SDL2/SDL3 for real keyboard input the same way it did before the artificial human player fix. This is a latent bug exposed by the investigation but not addressed by this test.
 
 **What this test is good for:**
 
@@ -199,6 +199,6 @@ Catching regressions in the input pipeline from "synthetic action in a .hms file
 - The Patrol button action correctly updates both units in the starting stack
 - The Save / Load screen's save path writes a new `.GAM` file with the modified state
 - `Screen_Control()` cleanly exits via the Main Menu → Quit to DOS path from a continue'd game
-- The synthetic player's click coordinate math works end-to-end on the headless backend (the very first test of this at all, which is what surfaced the `Platform_Get_Window_Width()` bug)
+- The artificial human player's click coordinate math works end-to-end on the headless backend (the very first test of this at all, which is what surfaced the `Platform_Get_Window_Width()` bug)
 
 If any of that chain breaks, this test fails with a specific field assertion pointing at the exact piece of state that's wrong.

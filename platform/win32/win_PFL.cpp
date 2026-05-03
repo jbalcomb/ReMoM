@@ -284,7 +284,7 @@ void Platform_Event_Handler(void)
 
     Win_Pump_Messages();
 
-    /* Synthetic player: inject scripted input. */
+    /* Artificial human player: inject scripted input. */
     if (platform_frame_callback != NULL)
     {
         platform_frame_callback();

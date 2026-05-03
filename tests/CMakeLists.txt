@@ -252,7 +252,7 @@ add_test(
 # pinning the RNG, the scenario sometimes hangs at the very end: the
 # scenario_tail_save_and_quit.hms tail clicks (62,177) on the Save/Load Quit
 # button, which under Release headless does not always fire the screen
-# transition back to Main Menu Screen.  When it doesn't, the synthetic player
+# transition back to Main Menu Screen.  When it doesn't, the artificial human player
 # ends without ever reaching scr_Quit_To_DOS, quit_game_flag never gets set,
 # and the game idles until ctest's TIMEOUT.  Under Debug it always works.
 # Root cause is in headless input dispatch / field-press handling, not RNG --

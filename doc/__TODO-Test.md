@@ -174,7 +174,7 @@ used to test from --continue through save-and-quit; post-op test uses output fro
 ### scenario_tail_save_and_quit.hms
 assumes 'Main Screen'; saves the current game in save-slot-1
 Notes:
-  - The save slot name comes from the $SAVE_NAME built-in (expanded to "AHP-YYYYMMDDHHMM" by HeMoM_Player at scenario-load time).
+  - The save slot name comes from the $SAVE_NAME built-in (expanded to "AHP-YYYYMMDDHHMM" by Artificial_Human_Player at scenario-load time).
   - Coordinates are game-space (320x200).
 
 
@@ -638,7 +638,7 @@ From what I've seen in the tree, there are at least these distinct things curren
 
 Original-game DBG trace — dbg_prn / trc_prn calls sprinkled in reconstructed code to mirror what the disassembly is doing. Long-lived, mostly faithful-to-dasm debugging.
 Platform / input low-level trace — IKI, FIELDADD, SCR, MENU, MOUSE_LOG. Pre-existing instrumentation for input/field/screen transitions.
-HeMoM synthetic player trace — [HeMoM Player] action dispatch + wait timer logs. Test-infrastructure, only meaningful in headless scenario runs.
+HeMoM artificial human player trace — [HeMoM Player] action dispatch + wait timer logs. Test-infrastructure, only meaningful in headless scenario runs.
 HeMoM test-probe trace — the new [NEXTTURN] BEGIN/END/phase stuff I just added. Ad-hoc "which function is eating time" probes that come and go per investigation.
 User-facing errors / asserts — things that should always print regardless of build config.
 And they all currently go to some mix of stderr, DEBUG.LOG, TRACE.LOG, with overlapping #ifdef STU_DEBUG gates.
@@ -657,7 +657,7 @@ Once I know the answers I can sketch the concrete API (function names, file dest
 
 
 
-## ISSUE: HeMoM_Player needs non-stick 'Next Turn'
+## ISSUE: Artificial_Human_Player needs non-stick 'Next Turn'
 
 FUUUUU!!!!!  Players_Check_Spell_Research()
 
@@ -668,7 +668,7 @@ NEXTTURN.c:326 City_Built_Building_Message(...) — per completed building
 NEXTTURN.c:359,1004,2172 Warn0(...) — modal warnings
 NEXTTURN.c:364 City_Screen__WIP() — full city screen re-entry
 Later: Merchant_Popup, Hire_Merc_Popup, Hire_Hero_Popup, Hero_LevelUp_Popup
-All of them spin their own local input loop, so the synthetic player's only lever is to keep feeding keystrokes blind and hope the right hotkey lands — which is exactly the mess we've been fighting.
+All of them spin their own local input loop, so the artificial human player's only lever is to keep feeding keystrokes blind and hope the right hotkey lands — which is exactly the mess we've been fighting.
 
 Here are a few ways to manage this in headless tests. Two concrete, two for context:
 
@@ -688,21 +688,21 @@ My recommendation: Idea 1 for the turn-over smoke test (fast, deterministic, exa
 
 
 
-## ISSUE: HeMoM_Player needs input field 
+## ISSUE: Artificial_Human_Player needs input field 
 
 
 
-## ISSUE: HeMoM_Player needs state-aware waits
+## ISSUE: Artificial_Human_Player needs state-aware waits
 
 **Problem:**
-The synthetic player's `wait <duration>` actions are wall-clock based.  They idle until `Platform_Get_Millies()` reaches a target.  This is fragile when the wait is meant to bracket a long-running game operation whose duration is not known up front.
+The artificial human player's `wait <duration>` actions are wall-clock based.  They idle until `Platform_Get_Millies()` reaches a target.  This is fragile when the wait is meant to bracket a long-running game operation whose duration is not known up front.
 
 The first concrete failure: in `test_continue_next_turn.hms`, the action sequence is `key N` (Next Turn) → `wait 10s` → `key G` → ...  Empirically, `Next_Turn_Calc()` takes ~11 seconds for a 4-opponent game on the first turn.  The 10s wall-clock wait elapses while the AI is still processing, and the post-wait actions (`key G`, `click 80 54`, etc.) fire *during* `Next_Turn_Proc()`.  Those keys/clicks land on whatever transient screen state happens to be active mid-turn-processing, and the scenario loses sync with the game.
 
 The current workaround is to bump the wait to `15s` or `20s` — guessing high enough that the AI is always done.  This is fragile (a slower machine, or a longer-running turn deeper in the game, breaks the test) and slow (every test pays the worst-case wait time on every run).
 
 **Proposed fix: state-aware waits.**
-Add new scenario actions that block the synthetic player until a game-state condition becomes true:
+Add new scenario actions that block the artificial human player until a game-state condition becomes true:
 
 ```
 wait_screen <name>      block until current_screen == scr_<name>
@@ -732,7 +732,7 @@ key G                   # safe to open the Game menu now
 
 **Related:**
 - `current_screen` is `int16_t` in `MoX/src/MOX_T4.h` — already accessible to the player
-- `_turn` is `int16_t` in MoM globals — need extern in HeMoM_Player.c
+- `_turn` is `int16_t` in MoM globals — need extern in Artificial_Human_Player.c
 - `p_fields[]` and `fields_count` are accessible (HeMoM already iterates them in `HeMoM_Replay_Log_Field_Hit`)
 - The screen-name lookup table can mirror the existing `e_SCREENS` enum from `MoM_SCR.h`
 

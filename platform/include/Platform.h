@@ -410,9 +410,9 @@ int16_t Platform_Audio_Play_Sound(void *sound_buffer, uint32_t sound_buffer_size
 /* ========================================================================= */
 
 /**
- * Register an optional per-frame callback for synthetic input injection.
+ * Register an optional per-frame callback for simulated input injection.
  * Called once per Platform_Event_Handler() when no replay is active.
- * Used by HeMoM's synthetic player to inject scripted actions.
+ * Used by the artificial human player to inject scripted actions.
  * @param callback  Function to call each frame, or NULL to unregister.
  */
 void Platform_Register_Frame_Callback(void (*callback)(void));

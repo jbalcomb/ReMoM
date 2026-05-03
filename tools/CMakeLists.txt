@@ -12,7 +12,7 @@
 
 add_executable(savedump
     savedump.c
-    ${PROJECT_SOURCE_DIR}/src/HeMoM_SaveDump.c
+    ${PROJECT_SOURCE_DIR}/src/Game_Save_Dump.c
 )
 
 target_include_directories(savedump PRIVATE

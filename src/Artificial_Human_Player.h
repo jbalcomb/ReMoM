@@ -1,5 +1,5 @@
 /**
- * HeMoM_Player.h — Synthetic human player for headless testing.
+ * Artificial_Human_Player.h — Synthetic human player for headless testing.
  *
  * Reads a test scenario file (.hms) and injects input actions through
  * the platform input layer. Called once per frame from Platform_Event_Handler()
@@ -15,7 +15,7 @@
  *   rclick <x> <y>                 — right-click at game coordinates
  *   next_turn                      — press 'N' (Next Turn hotkey)
  *   quit                           — press Escape twice (quit to menu, then quit game)
- *   end                            — stop the synthetic player (idle forever or exit)
+ *   end                            — stop the artificial human player (idle forever or exit)
  */
 
 #ifndef HEMOM_PLAYER_H
@@ -42,12 +42,12 @@ int HeMoM_Player_Load_Scenario(const char *filepath);
 void HeMoM_Player_Frame(void);
 
 /**
- * Return non-zero if the synthetic player is active (has a loaded scenario with actions remaining).
+ * Return non-zero if the artificial human player is active (has a loaded scenario with actions remaining).
  */
 int HeMoM_Player_Active(void);
 
 /**
- * Shut down the synthetic player and free resources.
+ * Shut down the artificial human player and free resources.
  */
 void HeMoM_Player_Shutdown(void);
 

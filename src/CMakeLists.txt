@@ -3,7 +3,7 @@
 #  ReMoMber — windowed Master of Magic.
 # =========================================================================
 
-add_executable(ReMoMber ReMoM.c ReMoM_Init.c HeMoM_Player.c)
+add_executable(ReMoMber ReMoM.c ReMoM_Init.c Artificial_Human_Player.c)
 
 add_custom_target(run_pre_build_task
     COMMAND ${CMAKE_COMMAND} -E echo "Running pre-build task..."
@@ -55,7 +55,7 @@ set_target_properties(ReMoMber PROPERTIES
 #  is not affected by which windowed backend the preset chose for ReMoMber.
 # =========================================================================
 
-add_executable(HeMoM HeMoM.c ReMoM_Init.c HeMoM_Player.c HeMoM_SaveDump.c)
+add_executable(HeMoM HeMoM.c ReMoM_Init.c Artificial_Human_Player.c Game_Save_Dump.c)
 
 set_target_properties(HeMoM PROPERTIES POSITION_INDEPENDENT_CODE ON)
 

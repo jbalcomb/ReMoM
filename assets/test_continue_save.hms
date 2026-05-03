@@ -11,7 +11,7 @@
 #
 # Notes:
 #   - The save slot name comes from the $SAVE_NAME built-in (expanded to
-#     "AHP-YYYYMMDDHHMM" by HeMoM_Player at scenario-load time).
+#     "AHP-YYYYMMDDHHMM" by Artificial_Human_Player at scenario-load time).
 #   - Coordinates are game-space (320x200).
 
 # === Home city naming popup (fires immediately on Continue, turn 0) ===

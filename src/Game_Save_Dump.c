@@ -1,5 +1,5 @@
 /**
- * HeMoM_SaveDump.c — Dump a .GAM save file to structured human-readable text.
+ * Game_Save_Dump.c — Dump a .GAM save file to structured human-readable text.
  *
  * Reads the raw 123300-byte binary save and prints every field as a named
  * key=value line. The field layout matches Save_SAVE_GAM() / Load_SAVE_GAM()
@@ -16,14 +16,15 @@
  *   world_map[0][1440] = 3
  */
 
-#include "HeMoM_SaveDump.h"
+#include "../MoX/src/MOX_BASE.h"
+
+#include "Game_Save_Dump.h"
+
+#include "../ext/stu_compat.h"
 
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-
-#include "../ext/stu_compat.h"
-#include "../MoX/src/MOX_BASE.h"
 
 
 

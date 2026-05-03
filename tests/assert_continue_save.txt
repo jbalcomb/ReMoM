@@ -4,7 +4,7 @@
 # The check_save_fields tool looks up each field in the dump and reports
 # any mismatches with exact field names, actual values, and expected values.
 #
-# This file focuses on the state changes the synthetic player directly caused
+# This file focuses on the state changes the artificial human player directly caused
 # via test_continue_save.hms:
 #   - Named the home city "Claudesville" via the city-name popup
 #   - Patrolled the starting unit stack (affects both units in the stack)

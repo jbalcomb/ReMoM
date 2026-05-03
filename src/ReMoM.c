@@ -59,6 +59,13 @@
 #include "../MoM/src/MOM_SCR.h"
 #include "../MoM/src/Settings.h"
 
+#include "../platform/include/Platform.h"
+#include "../platform/include/Platform_Replay.h"
+
+#include "ReMoM_Init.h"
+#include "Artificial_Human_Player.h"  /* HeMoM_Player_Frame() */
+
+#include "../ext/stu_compat.h"
 // Reassigns a file pointer. More secure versions of the functions are available; see freopen_s, _wfreopen_s.
 #include <stdio.h>
 // #define _CRT_SECURE_NO_WARNINGS  // '_CRT_SECURE_NO_WARNINGS' previously declared on the command line
@@ -66,17 +73,8 @@
 // #define _CRT_NONSTDC_NO_DEPRECATE
 // #include <stdio.h>
 // 4>C:\STU\devel\ReMoM\src\ReMoM.c(57,9): warning C4005: '_CRT_SECURE_NO_WARNINGS': macro redefinition
-
-
-
 #include <stdlib.h>
 #include <string.h>
-
-#include "../ext/stu_compat.h"
-#include "../platform/include/Platform.h"
-#include "../platform/include/Platform_Replay.h"
-#include "ReMoM_Init.h"
-#include "HeMoM_Player.h"
 
 /* COPILOT */ /* SDL_main.h redefines main() on some platforms (macOS, iOS, Android).
                       We handle our own main(), so tell SDL not to intercept it.

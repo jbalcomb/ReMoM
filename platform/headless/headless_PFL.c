@@ -110,7 +110,7 @@ void Platform_Event_Handler(void)
         }
         else if (platform_frame_callback != NULL)
         {
-            fprintf(stderr, "[headless] Platform_Event_Handler: input mode = SCENARIO (.hms synthetic player)\n");
+            fprintf(stderr, "[headless] Platform_Event_Handler: input mode = SCENARIO (.hms artificial human player)\n");
         }
         else
         {
@@ -118,7 +118,7 @@ void Platform_Event_Handler(void)
         }
     }
 
-    /* CLAUDE: do NOT reset platform_frame_mouse_buttons here.  For consistency with windowed backends, reset is now done at the END after capture, so any edge flag set by the synthetic player callback accumulates correctly into this frame's capture. */
+    /* CLAUDE: do NOT reset platform_frame_mouse_buttons here.  For consistency with windowed backends, reset is now done at the END after capture, so any edge flag set by the artificial human player callback accumulates correctly into this frame's capture. */
 
     /* Replay: inject recorded frame instead of polling OS events. */
     if (Platform_Replay_Active())
@@ -131,19 +131,19 @@ void Platform_Event_Handler(void)
         /* Replay ended — fall through (no live input in headless). */
     }
 
-    /* Synthetic player: inject scripted input when no replay is active. */
+    /* Artificial human player: inject scripted input when no replay is active. */
     if (platform_frame_callback != NULL)
     {
         platform_frame_callback();
     }
 
-    /* Record: capture input state (including synthetic player actions). */
+    /* Record: capture input state (including artificial human player actions). */
     if (Platform_Record_Active())
     {
         Replay_Capture_Frame();
     }
 
-    /* CLAUDE: reset AFTER capture so synthetic player edges accumulate into the captured frame. */
+    /* CLAUDE: reset AFTER capture so artificial human player edges accumulate into the captured frame. */
     platform_frame_mouse_buttons = 0;
 }
 
