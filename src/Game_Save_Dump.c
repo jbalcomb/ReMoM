@@ -667,6 +667,7 @@ int Game_Save_Dump(const char *save_filepath, const char *text_filepath)
     Dump_Map_Array(fout, "explored", sav, SD_OFF_EXPLORED);
     fprintf(fout, "\n");
 
+    /* NOTE(JimBalcomb,20260503): these are derived values, so they not needed */
     /* Movement cost maps: 2 planes * 14400 bytes = 28800 bytes.
        Too large to dump per-byte — dump as checksum per plane per mode. */
     {

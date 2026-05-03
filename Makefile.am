@@ -296,6 +296,7 @@ bin_PROGRAMS += HeMoM
 HeMoM_SOURCES = \
     src/HeMoM.c \
     src/ReMoM_Init.c \
+    src/Game_Save_Dump.c \ 
     src/Artificial_Human_Player.c
 
 HeMoM_CFLAGS = $(AM_CFLAGS) \
