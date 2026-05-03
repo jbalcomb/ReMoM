@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
         output_path = derived_path;
     }
 
-    if (HeMoM_Save_Dump(input_path, output_path) != 0)
+    if (Game_Save_Dump(input_path, output_path) != 0)
     {
         fprintf(stderr, "savedump: failed\n");
         return 2;

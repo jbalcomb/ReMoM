@@ -595,7 +595,7 @@ static void Dump_Tail(FILE *fp, const uint8_t *sav)
 /*  Public API                                                               */
 /* ========================================================================= */
 
-int HeMoM_Save_Dump(const char *save_filepath, const char *text_filepath)
+int Game_Save_Dump(const char *save_filepath, const char *text_filepath)
 {
     FILE *fin;
     FILE *fout;

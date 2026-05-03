@@ -19,7 +19,7 @@ extern "C" {
  * @param text_filepath   Path to write the structured text output.
  * @return  0 on success, non-zero on failure.
  */
-int HeMoM_Save_Dump(const char *save_filepath, const char *text_filepath);
+int Game_Save_Dump(const char *save_filepath, const char *text_filepath);
 
 #ifdef __cplusplus
 }

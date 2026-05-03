@@ -1,11 +1,13 @@
 /**
- * HeMoM.c — Headless Master of Magic
+ * HeMoM.c — Headless ReMoM
  *
- * A lean entry point for headless/automated operation:
+ * An entry point for headless/automated operation:
  *   --newgame [ReMoM.ini]   Create a new game from config (skip menus)
  *   --load SAVE3.GAM        Load a save file (skip menus)
+ *   --continue              Same as 'Main Menu ' Continue (loads SAVE9.GAM)
  *   --replay game.RMR       Replay recorded input
  *   --record game.RMR       Record input to file
+ *   --scenario gameplay.HMS play a scripted scenario (uses Artificial Human Player)
  *
  * No logos, no credits, no main menu music. Initializes the engine,
  * creates or loads a game, and enters Screen_Control().
@@ -435,7 +437,7 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
     Save_SAVE_GAM(8);
 
     /* Dump structured text representation of the save file for testing */
-    HeMoM_Save_Dump("SAVE9.GAM", "SAVE9.txt");
+    Game_Save_Dump("SAVE9.GAM", "SAVE9.txt");
 
     // MainScr.c  Main_Screen()  1910:
     //     if((_turn == 0) && (_given_chance_to_rename_home_city == ST_FALSE))
@@ -803,10 +805,10 @@ int main(int argc, char *argv[])
         dbg_prn("[HeMoM] Dumping %s -> %s\n", hemom_dump_save, dump_text);
         trc_prn("[HeMoM] Dumping %s -> %s\n", hemom_dump_save, dump_text);
 #endif
-        HeMoM_Save_Dump(hemom_dump_save, dump_text);
+        Game_Save_Dump(hemom_dump_save, dump_text);
 #ifdef STU_DEBUG
-        dbg_prn("[HeMoM] HeMoM_Save_Dump returned\n");
-        trc_prn("[HeMoM] HeMoM_Save_Dump returned\n");
+        dbg_prn("[HeMoM] Game_Save_Dump returned\n");
+        trc_prn("[HeMoM] Game_Save_Dump returned\n");
 #endif
     }
 
