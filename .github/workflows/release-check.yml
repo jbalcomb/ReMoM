@@ -7,6 +7,9 @@ name: Release Check
 
 on:
   push:
+    branches-ignore:
+      - develop
+      - current
   pull_request:
   workflow_dispatch:
 
