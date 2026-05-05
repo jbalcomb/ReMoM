@@ -276,7 +276,7 @@ set(CPACK_SOURCE_PACKAGE_FILE_NAME "ReMoM-${PROJECT_VERSION}-Source")
 set(CPACK_SOURCE_IGNORE_FILES
     "/assets/"
     "/\\.LBX/"
-    "\\.LBX$"
+    "\\.LBX\\$"
     "/\\.git/"
     "/build/"
     "/out/"
