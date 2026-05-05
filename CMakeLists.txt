@@ -47,6 +47,8 @@ FetchContent_Declare(
 )
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+# Don't pull googletest's install rules into our package — they only matter at dev/test time.
+set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # Custom Find modules for SDL2 (from chocolate-doom)
@@ -258,6 +260,25 @@ include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_NAME "ReMoM")
 set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
 set(CPACK_PACKAGE_FILE_NAME "ReMoM-${PROJECT_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
-set(CPACK_GENERATOR "ZIP")
-set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON)
+
+if(WIN32)
+    set(CPACK_GENERATOR "ZIP;NSIS")
+    set(CPACK_NSIS_PACKAGE_NAME "ReMoM")
+    set(CPACK_NSIS_DISPLAY_NAME "ReMoM ${PROJECT_VERSION}")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "ReMoM")
+    set(CPACK_NSIS_MUI_FINISHPAGE_RUN "ReMoMber.exe")
+else()
+    set(CPACK_GENERATOR "ZIP;TGZ")
+endif()
+
+set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME "ReMoM-${PROJECT_VERSION}-Source")
+set(CPACK_SOURCE_IGNORE_FILES
+    "/assets/"
+    "/\\.LBX/"
+    "\\.LBX$"
+    "/\\.git/"
+    "/build/"
+    "/out/"
+)
 include(CPack)
