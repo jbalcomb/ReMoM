@@ -28,6 +28,8 @@
 
 #include "../../ext/stu_compat.h"
 
+#include "Init_Data/FONTS_LBX.h"
+
 
 
 // WZD dseg:783C                                                 seg017  MoO2 Module: fonts
@@ -197,8 +199,25 @@ void Load_Font_File(char * font_file)
 
     stu_strcpy(font_name, font_file);
 
-    font_style_data = LBX_Load(font_file, 0);
-    border_style_data = LBX_Load(font_file, 1);
+    if(FONTS_LBX_ENTRY_0_SIZE > 0)
+    {
+        font_style_data = Allocate_Space_No_Header(1 + (FONTS_LBX_ENTRY_0_SIZE / SZ_PARAGRAPH_B));
+        memcpy(font_style_data, &FONTS_LBX_ENTRY_0, FONTS_LBX_ENTRY_0_SIZE);
+    }
+    else
+    {
+        font_style_data = LBX_Load(font_file, 0);
+    }
+
+    if(FONTS_LBX_ENTRY_1_SIZE > 0)
+    {
+        border_style_data = Allocate_Space_No_Header(1 + (FONTS_LBX_ENTRY_1_SIZE / SZ_PARAGRAPH_B));
+        memcpy(border_style_data, FONTS_LBX_ENTRY_1, FONTS_LBX_ENTRY_1_SIZE);
+    }
+    else
+    {
+        border_style_data = LBX_Load(font_file, 1);
+    }
 
     font_header = (struct s_FONT_HEADER *)font_style_data;
 
@@ -2907,7 +2926,16 @@ void Load_Palette(int entry, int start_color, int end_color)
     int color_count;
     int itr;
 
-    palette_data = LBX_Reload(font_name, entry+2, palette_block);
+    if((entry == 0) && (FONTS_LBX_ENTRY_2_SIZE > 0))
+    {
+        palette_data = palette_block + 16;
+        SA_SET_USED(palette_block, (1 + (FONTS_LBX_ENTRY_2_SIZE / SZ_PARAGRAPH_B) + 1));
+        memcpy(palette_data, &FONTS_LBX_ENTRY_2, FONTS_LBX_ENTRY_2_SIZE);
+    }
+    else
+    {
+        palette_data = LBX_Reload(font_name, entry + 2, palette_block);
+    }
     // 1oom: lbxpal_palette_inlbx = palette_data;
 
     // font_colors = (palette_data + (16 * (48)));  // 768

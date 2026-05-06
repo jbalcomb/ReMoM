@@ -11,6 +11,7 @@ set(LIBMOX_SOURCES
     Fields.c
     file_ani.c
     Fonts.c
+    Init_Data/FONTS_LBX.c
     GENDRAW.c
     GFILE.c
     Graphics.c

@@ -4,7 +4,10 @@ set(LIBSTU_SOURCES
     STU_DBG.c
     STU_DRAW.c
     STU_EMS.c
+    STU_FIO.c
     STU_FMT.c
+    STU_FON.c
+    STU_INIT.c
     STU_INT.c
     STU_JSON.c
     STU_MSG.c
@@ -15,6 +18,7 @@ set(LIBSTU_SOURCES
     STU_VLD.c
     STU_WAV.c
     STU_WRLD.c
+    STU_XTRC.c
     ${PROJECT_SOURCE_DIR}/ext/stu_compat.c
 )
 

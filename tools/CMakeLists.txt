@@ -35,3 +35,26 @@ add_executable(rmr2hms
 set_target_properties(rmr2hms PROPERTIES
     POSITION_INDEPENDENT_CODE ON
 )
+
+# --- Extract_FONTS_LBX: extract FONTS.LBX data into embeddable C source ---
+# cd ~/STU/devel/ReMoM/ && cmake --build build --target Extract_FONTS_LBX
+# cd ~/STU/devel/ReMoM/build/bin/Debug && ./Extract_FONTS_LBX
+# The tool is now at build/bin/Debug/Extract_FONTS_LBX. To generate the real data, run it from the directory where FONTS.LBX lives and copy the output to MoX/src/Init_Data/FONTS_LBX.c.
+# jbalcomb@iMustAi:~/STU/devel/ReMoM/assets$ ../build/bin/Debug/Extract_FONTS_LBX 
+# >>> Extract_FONTS_LBX: wrote FONTS_LBX.c
+# jbalcomb@iMustAi:~/STU/devel/ReMoM/assets$ mv FONTS_LBX.c ../MoX/src/Init_Data/
+add_executable(Extract_FONTS_LBX Extract_FONTS_LBX.c)
+
+target_include_directories(Extract_FONTS_LBX PRIVATE
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/src
+)
+
+target_link_libraries(Extract_FONTS_LBX PRIVATE
+    STU
+    MOX
+    momlib
+    Platform_Headless
+)
+
+set_target_properties(Extract_FONTS_LBX PROPERTIES POSITION_INDEPENDENT_CODE ON)
