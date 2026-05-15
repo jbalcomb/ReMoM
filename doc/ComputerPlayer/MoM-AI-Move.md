@@ -51,6 +51,7 @@ Definitely Done-Done:
 [ ]     |-> AI_Next_Turn()
 ...
 [x]         |-> AI_Evaluate_Hostility()
+[x]         |-> AI_Evaluate_Magic_Power_Strategy()  ... AI_Update_Magic_Power()
 
 ...
     |-> AI_Evaluation_Map()             ovr162

@@ -1385,12 +1385,12 @@ struct s_WIZARD
     /* 0362 */ uint8_t  Historian[288];     /* ¿ Wizard's Power ? */
     /* 0482 */ // struct s_GLOBALE Globals;
                uint8_t  Globals[NUM_OVERLAND_ENCHANTMENTS];
-    /* 049A */ uint16_t Magic_Strategy;
+    /* 049A */ uint16_t magic_power_strategy;
     /* 049C */ uint16_t Unknown_49Ch;   /* ¿ unused strategy ? */
     /* 049E */ uint16_t Hostility[NUM_PLAYERS]; /* attitude;  < 2 === non-hostile;  OSG: "None, Annoyed, Warlike, Jihad" */
     /* 04AA */ uint16_t reevaluate_hostility_countdown;
     /* 04AC */ uint16_t reevaluate_magic_strategy_countdown;
-    /* 04AE */ uint16_t reevaluate_magic_power_countdown;
+    /* 04AE */ uint16_t reevaluate_magic_power_countdown;  /* Why does this have it's own countdown? */
     /* 04B0 */ uint8_t  peace_duration[NUM_PLAYERS];  /* decremented in AI_Next_Turn() */
     /* 04B6 */ int16_t  niu_cp_target_1;  /* set in Init_CP_Strategy(), never xref'd again */
     /* 04B8 */ int16_t  niu_cp_target_2;  /* set in Init_CP_Strategy(), never xref'd again */

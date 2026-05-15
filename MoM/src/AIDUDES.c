@@ -228,7 +228,7 @@ void AI_Next_Turn(void)
 
         AI_Evaluate_Hostility(player_idx);
 
-        AI_Magic_Strategy__WIP(player_idx);
+        AI_Evaluate_Magic_Power_Strategy(player_idx);
 
         CRP_AI_Turn_Var = 0;  /* BUGBUG  OON XREF */
 
@@ -627,6 +627,11 @@ spells to research
 "...spell casting skill..." ... "...total current spell casting skill..."
 "...adjust how much of your total magic power you allocate to your mana reserves, researching efforts and spell casting skill..."
 
+OSG  Page 406  (PDF Page 403)
+I. Computer Players Prepare
+...
+    F. Adjust mana ratios for wand, research, and skill level.
+
 */
 void AI_Update_Magic_Power(int16_t player_idx)
 {
@@ -636,7 +641,7 @@ void AI_Update_Magic_Power(int16_t player_idx)
     int16_t Unresearched_Spells = 0;
     int16_t itr_spells = 0;
     int16_t itr_realms = 0;
-    int16_t IDK = 0;  // _DI_
+    int16_t desired_magic_investment_type = 0;
 
     Nominal_Skill = Player_Base_Casting_Skill(player_idx);
 
@@ -644,7 +649,7 @@ void AI_Update_Magic_Power(int16_t player_idx)
 
     _players[player_idx].reevaluate_magic_power_countdown -= 1;
 
-    if(_players[player_idx].reevaluate_magic_power_countdown)
+    if(_players[player_idx].reevaluate_magic_power_countdown > 0)
     {
         return;
     }
@@ -695,15 +700,13 @@ void AI_Update_Magic_Power(int16_t player_idx)
     {
 
         _players[player_idx].research_ratio = 10;
-
         _players[player_idx].skill_ratio = 10;
-
         _players[player_idx].mana_ratio = 30;
 
         for(itr = 0; itr < 5; itr++)
         {
 
-            IDK = (Random(3) - 1);
+            desired_magic_investment_type = (Random(3) - 1);
 
             if(
                 (_players[player_idx].Objective == OBJ_Theurgist)
@@ -711,7 +714,7 @@ void AI_Update_Magic_Power(int16_t player_idx)
                 (Random(3) == 1)
             )
             {
-                IDK = 2;
+                desired_magic_investment_type = 2;  /* Research */
             }
 
             if(
@@ -720,7 +723,7 @@ void AI_Update_Magic_Power(int16_t player_idx)
                 (Random(3) == 1)
             )
             {
-                IDK = 1;
+                desired_magic_investment_type = 1;  /* Skill */
             }
 
             if(
@@ -729,7 +732,7 @@ void AI_Update_Magic_Power(int16_t player_idx)
                 (Random(3) == 1)
             )
             {
-                IDK = 0;
+                desired_magic_investment_type = 0;
             }
 
             if(
@@ -738,9 +741,7 @@ void AI_Update_Magic_Power(int16_t player_idx)
                 (Random(3) == 1)
             )
             {
-
-                IDK = 2;  // same as OBJ_Theurgist
-
+                desired_magic_investment_type = 2;  /* Research */  // same as OBJ_Theurgist
             }
 
             if(
@@ -749,42 +750,34 @@ void AI_Update_Magic_Power(int16_t player_idx)
                 (Random(3) == 1)
             )
             {
-
-                IDK = 0;  // same as OBJ_Perfectionist
-
+                desired_magic_investment_type = 0;  /* Mana */  // same as OBJ_Perfectionist
             }
 
             if(
-                (_players[player_idx].Magic_Strategy == 6)
+                (_players[player_idx].magic_power_strategy == 6)
                 &&
                 (Random(3) == 1)
             )
             {
-
-                IDK = 0;  // same as OBJ_Perfectionist
-
+                desired_magic_investment_type = 0;  /* Mana */  // same as OBJ_Perfectionist
             }
 
             if(
-                (_players[player_idx].Magic_Strategy == 1)
+                (_players[player_idx].magic_power_strategy == 1)
                 &&
                 (Random(3) == 1)
             )
             {
-
-                IDK = 2;  // same as OBJ_Theurgist
-
+                desired_magic_investment_type = 2;  /* Research */  // same as OBJ_Theurgist
             }
 
             if(
-                (_players[player_idx].Magic_Strategy == 2)
+                (_players[player_idx].magic_power_strategy == 2)
                 &&
                 (Random(3) == 1)
             )
             {
-
-                IDK = 1;  // same as OBJ_Militarist
-
+                desired_magic_investment_type = 1;  /* Skill */  // same as OBJ_Militarist
             }
 
             if(
@@ -793,94 +786,66 @@ void AI_Update_Magic_Power(int16_t player_idx)
                 (Random(2) == 1)
             )
             {
-
-                IDK = 0;  // same as OBJ_Perfectionist
-
+                desired_magic_investment_type = 0;  /* Mana */  // same as OBJ_Perfectionist
             }
 
             if(_players[player_idx].mana_reserve > 1000)
             {
-
                 if(Random(2) == 1)
                 {
-
-                    IDK = 2;  // same as OBJ_Theurgist
-
+                    desired_magic_investment_type = 2;  /* Research */  // same as OBJ_Theurgist
                 }
                 else
                 {
-
-                    IDK = 1;  // same as OBJ_Militarist
-
+                    desired_magic_investment_type = 1;  /* Skill */  // same as OBJ_Militarist
                 }
-
             }
 
             if(
-                (IDK == 1)
+                (desired_magic_investment_type == 1)  /* Skill */
                 &&
                 ((Mana_Total * 4) < Nominal_Skill)
             )
             {
-
-                IDK = 0;  // same as OBJ_Perfectionist
-
+                desired_magic_investment_type = 0;  /* Mana */ // same as OBJ_Perfectionist
             }
 
-            switch(IDK)
+            switch(desired_magic_investment_type)
             {
-
-                case 0:
+                case 0:  /* Mana */
                 {
-
                     _players[player_idx].mana_ratio += 10;
-
                 } break;
-
-                case 1:
+                case 1:  /* Skill */
                 {
-
                     _players[player_idx].skill_ratio += 10;
-
                 } break;
-
-                case 2:
+                case 2:  /* Research */
                 {
-
                     _players[player_idx].research_ratio += 10;
-
                 } break;
-                
             }
 
         }
 
-        // ; BUG: should be Spell_Of_Mastery
+        /* OGBUG  should be spl_Spell_Of_Mastery */
         if(_players[player_idx].researching_spell_idx == spl_Fire_Elemental)
         {
-
             _players[player_idx].research_ratio = 70;
-
             _players[player_idx].skill_ratio = 10;
-
             _players[player_idx].mana_ratio = 20;
-
         }
 
         if(_turn < 30)
         {
-
             _players[player_idx].research_ratio = 35;
-
             _players[player_idx].skill_ratio = 25;
-
             _players[player_idx].mana_ratio = 40;
-
         }
 
-        _players[player_idx].mana_ratio = ((100 - _players[player_idx].skill_ratio) - _players[player_idx].research_ratio);
-
     }
+
+    _players[player_idx].mana_ratio = ((100 - _players[player_idx].skill_ratio) - _players[player_idx].research_ratio);
 
 }
 

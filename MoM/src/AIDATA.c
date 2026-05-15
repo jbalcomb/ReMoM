@@ -755,28 +755,58 @@ void Allocate_AI_Data(void)
 
 
 // WZD o164p06
-// drake178: AI_Magic_Strategy()
 /*
-evaluates conditions and sets the magic strategy
-that may influence the AI's power distribution
-
-has one certain, and multiple possible bugs, as it
-sets unused strategies, possibly overwriting others
+uses _players[].Hostility[], which just got set in Reevaluate_Hostility()
+sets _players[player_idx].magic_power_strategy[]
+...used in AI_Update_Magic_Power()
+1, Research
+2, Skill
+6, Mana
 */
-/*
-
-
-*/
-void AI_Magic_Strategy__WIP(int16_t player_idx)
+/**
+ * @brief Chooses one wizard's magic power allocation strategy for the next AI
+ *        interval.
+ *
+ * This routine periodically reevaluates how an AI wizard should prioritize its
+ * power split after hostility has already been refreshed. Once the wizard's
+ * magic-strategy countdown reaches zero, the function resets that countdown,
+ * scans current hostility levels, compares the wizard's army upkeep burden and
+ * casting strength against the human player, counts owned cities, and then
+ * derives a new value for @c _players[player_idx].magic_power_strategy.
+ *
+ * The decision path prefers different strategy codes when the AI is weaker
+ * than the human, has low casting skill, appears behind on spells, is under
+ * high hostility pressure, or can counter a Spell of Mastery attempt with
+ * specific disruption spells. The intermediate
+ * @c niu_strategy_variable is preserved from the original logic even though it
+ * does not affect the final stored strategy.
+ *
+ * @param player_idx Index of the wizard whose magic power strategy should be
+ *                   reevaluated.
+ *
+ * @return This function does not return a value. It updates
+ *         @c _players[player_idx].reevaluate_magic_strategy_countdown and
+ *         writes the selected strategy code into
+ *         @c _players[player_idx].magic_power_strategy.
+ *
+ * @note The function returns immediately while the reevaluation countdown is
+ *       still positive.
+ * @note The original bug documented in the source remains: the
+ *       @c low_or_behind_on_spells branch is effectively always true because it
+ *       compares the player's known spell count against itself.
+ */
+void AI_Evaluate_Magic_Power_Strategy(int16_t player_idx)
 {
-    int16_t Need_Research = 0;
+    int16_t low_or_behind_on_spells = 0;
     int16_t city_count = 0;
-    int16_t Human_Stronger = 0;
-    int16_t Unused_Strategy = 0;
-    int16_t Power_Strategy = 0;
-    int16_t At_War = 0;
-    int16_t itr_players = 0;  // _DI_
-    int16_t itr_cities = 0;  // _DI_
+    int16_t human_stronger = 0;
+    int16_t niu_strategy_variable = 0;
+    int16_t magic_power_strategy = 0;
+    int16_t high_hostility = 0;
+    int16_t itr_players = 0;
+    int16_t itr_cities = 0;
+    int16_t ai_strength = 0;
+    int16_t human_strength = 0;
 
     _players[player_idx].reevaluate_magic_strategy_countdown -= 1;
 
@@ -787,116 +817,80 @@ void AI_Magic_Strategy__WIP(int16_t player_idx)
 
     _players[player_idx].reevaluate_magic_strategy_countdown = (15 + Random(10));
 
-    At_War = ST_FALSE;
+    high_hostility = ST_FALSE;
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-
         if(_players[player_idx].Hostility[itr_players] >= 3)
         {
-            At_War = ST_TRUE;
+            high_hostility = ST_TRUE;
         }
-
     }
 
-    if(
-        (Player_Armies_Gold_Upkeep(player_idx) + (Player_Armies_And_Enchantments_Mana_Upkeep(player_idx) * 2))
-        <
-        (Player_Armies_Gold_Upkeep(HUMAN_PLAYER_IDX) + (Player_Armies_And_Enchantments_Mana_Upkeep(HUMAN_PLAYER_IDX) / 2))
-    )
+    /* Compare Military/Economic Strength (AI vs Human [player 0]) */
+    /* Strength = Gold Upkeep + (Mana Upkeep * 2) */
+    ai_strength = Player_Armies_Gold_Upkeep(player_idx) + (Player_Armies_And_Enchantments_Mana_Upkeep(player_idx) * 2);
+    human_strength = Player_Armies_Gold_Upkeep(HUMAN_PLAYER_IDX) + (Player_Armies_And_Enchantments_Mana_Upkeep(HUMAN_PLAYER_IDX) * 2);
+    if (ai_strength < human_strength)
     {
-
-        Human_Stronger = ST_TRUE;
-
+        human_stronger = ST_TRUE;
     }
     else
     {
-
-        Human_Stronger = ST_FALSE;
-
+        human_stronger = ST_FALSE;
     }
 
     city_count = 0;
-
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-
         if(_CITIES[itr_cities].owner_idx == player_idx)
         {
-
             city_count++;
-
         }
-
     }
 
-
-    // ; BUG: will always branch as a result of wrong player
-    // ; indexing; one of these were likely meant to call the
-    // ; function with player index 0 (human player)
+    /* Determine if spell research is a priority */
+    /* OGBUG  always true, should use HUMAN_PLAYER_IDX */
     if(
-        (Player_Known_Spell_Count(player_idx) >= 20)
+        (Player_Known_Spell_Count(player_idx) < 20)
         ||
-        (Player_Known_Spell_Count(player_idx) * 3 / 4) > Player_Known_Spell_Count(player_idx)
+        ((Player_Known_Spell_Count(player_idx) * 3 / 4) > Player_Known_Spell_Count(player_idx))
     )
     {
-
-        Need_Research = ST_TRUE;
-
+        low_or_behind_on_spells = ST_TRUE;
     }
     else
     {
-
-        Need_Research = ST_TRUE;
-
+        low_or_behind_on_spells = ST_TRUE;
     }
 
-
-    Unused_Strategy = 0;
-
-    if(Need_Research == ST_TRUE)
+    niu_strategy_variable = 0;
+    if(low_or_behind_on_spells == ST_TRUE)
     {
-
-        Unused_Strategy = 5;
-
+        niu_strategy_variable = 5;  /* Research */
     }
-
     if(city_count < 4)
     {
-
-        Unused_Strategy = 4;
-
+        niu_strategy_variable = 4;
     }
-
     if(city_count < 10)
     {
-
-        Unused_Strategy = 3;
-
+        niu_strategy_variable = 3;
     }
-
-    if(Human_Stronger == ST_TRUE)
+    if(human_stronger == ST_TRUE)
     {
-
-        Unused_Strategy = 1;
-
+        niu_strategy_variable = 1;  /* ¿ Skill ... for combat, to compensate ? */
     }
-
     if((Player_Armies_Gold_Upkeep(player_idx) * 2) > _players[player_idx].gold_reserve)
     {
-
-        Unused_Strategy = 2;
-
+        niu_strategy_variable = 2;  /* ¿ income deficit, so more mana for alchemy ? */
     }
 
+    magic_power_strategy = 0;
 
-    Power_Strategy = 0;
-
-    if(Human_Stronger == ST_TRUE)
+    if(human_stronger == ST_TRUE)
     {
-
-        Power_Strategy = 3;
-
+        magic_power_strategy = 3;
     }
 
     if(
@@ -905,23 +899,17 @@ void AI_Magic_Strategy__WIP(int16_t player_idx)
         (Player_Base_Casting_Skill(player_idx) < 20)
     )
     {
-
-        Power_Strategy = 2;
-
+        magic_power_strategy = 2;
     }
 
-    if(Need_Research == ST_TRUE)
+    if(low_or_behind_on_spells == ST_TRUE)
     {
-
-        Power_Strategy = 1;
-
+        magic_power_strategy = 1;
     }
 
-    if(At_War == ST_TRUE)
+    if(high_hostility == ST_TRUE)
     {
-
-        Power_Strategy = 4;
-
+        magic_power_strategy = 4;
     }
 
     if(
@@ -932,27 +920,20 @@ void AI_Magic_Strategy__WIP(int16_t player_idx)
         (Player_Knows_Spell(player_idx, spl_Cruel_Unminding) == ST_TRUE)
     )
     {
-
         if(_players[HUMAN_PLAYER_IDX].casting_spell_idx == spl_Spell_Of_Mastery)
         {
-            Power_Strategy = 5;
+            magic_power_strategy = 5;
         }
-
         if(_players[player_idx].Hostility[HUMAN_PLAYER_IDX] == 2)
         {
-
             if(spell_data_table[_players[player_idx].casting_spell_idx].casting_cost >= spell_data_table[spl_Cruel_Unminding].casting_cost)
             {
-
-                Power_Strategy = 5;
-
+                magic_power_strategy = 5;
             }
-
         }
-
     }
 
-    _players[player_idx].Magic_Strategy = Power_Strategy;
+    _players[player_idx].magic_power_strategy = magic_power_strategy;
 
 }
 

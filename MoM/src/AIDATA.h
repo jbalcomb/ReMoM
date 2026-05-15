@@ -45,7 +45,7 @@ int16_t NPC_Destinations(void);
 void Allocate_AI_Data(void);
 
 // WZD o164p06
-void AI_Magic_Strategy__WIP(int16_t player_idx);
+void AI_Evaluate_Magic_Power_Strategy(int16_t player_idx);
 
 // WZD o164p07
 void AI_Evaluate_Hostility(int16_t player_idx);
