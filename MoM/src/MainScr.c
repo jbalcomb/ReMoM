@@ -839,7 +839,9 @@ void Main_Screen(void)
 
 
 #ifdef STU_DEBUG
+    fprintf(stderr, "DEBUG: [%s, %d]: BEGIN: Main_Screen()\n", __FILE__, __LINE__);
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen()\n", __FILE__, __LINE__);
+    trc_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen()\n", __FILE__, __LINE__);
 #endif
 
 

@@ -447,7 +447,13 @@ void o52p4_empty_function(void)
 // WZD o52p05
 void Main_Screen_Load_Pictures(void)
 {
-    int16_t itr;
+    int16_t itr = 0;
+
+#ifdef STU_DEBUG
+    fprintf(stderr, "DEBUG: [%s, %d]: BEGIN: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
+    trc_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
+#endif
 
     main_background_seg = LBX_Load(main_lbx_file,  0);
 
@@ -550,6 +556,12 @@ void Main_Screen_Load_Pictures(void)
     {
         main_lilevent_icons[itr] = LBX_Load(main_lbx_file, (59 + itr));
     }
+
+#ifdef STU_DEBUG
+    fprintf(stderr, "DEBUG: [%s, %d]: END: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
+    trc_prn("DEBUG: [%s, %d]: END: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
+#endif
 
 }
 

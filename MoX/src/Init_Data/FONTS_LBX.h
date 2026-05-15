@@ -19,13 +19,23 @@ extern "C" {
     as byte offsets from the start of the entire entry.
     Header and glyph data must remain contiguous.
 */
-#define FONTS_LBX_GLYPH_DATA_SIZE  15834
+#define FONTS_LBX_GLYPH_DATA_SIZE  15066  /* was 15834 before SZ_FONT_HDR fix (1946 -> 2714); total entry size 17780 unchanged (header 2714 + glyph_data 15066 = 17780) */
 
 struct s_FONTS_LBX_ENTRY_0
 {
-    struct s_FONT_HEADER header;                            /* 1946 bytes at offset 0x000 */
-    uint8_t              glyph_data[FONTS_LBX_GLYPH_DATA_SIZE];  /* RLE bitmaps at offset 0x79A */
+    struct s_FONT_HEADER header;                            /* 2714 bytes at offset 0x000 */
+    uint8_t              glyph_data[FONTS_LBX_GLYPH_DATA_SIZE];  /* RLE bitmaps at offset 0xA9A */
 };
+
+/* CLAUDE: Validate the embedded font data has no compiler-inserted padding.
+ * The runtime treats the entire entry as a flat byte array and indexes glyph
+ * bitmaps via header.data_offsets[] as byte offsets from the start of the
+ * entry.  Any padding in s_FONT_HEADER would shift glyph_data and corrupt
+ * every glyph lookup — the most likely cause of "garbage rendering" or a
+ * crash inside the font printing code.  These typedef'd negative-size arrays
+ * fail to compile if the sizes are wrong (works in any C mode). */
+typedef char FONTS_LBX_assert_header_size[(sizeof(struct s_FONT_HEADER) == 2714) ? 1 : -1];
+typedef char FONTS_LBX_assert_entry0_size[(sizeof(struct s_FONTS_LBX_ENTRY_0) == 2714 + FONTS_LBX_GLYPH_DATA_SIZE) ? 1 : -1];
 
 
 

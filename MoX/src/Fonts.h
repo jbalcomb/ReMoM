@@ -14,7 +14,7 @@
 
 
 
-#define SZ_FONT_HDR                             1946
+#define SZ_FONT_HDR                             2714
 
 #define COLOR_SET_COUNT                           16
 #define COLOR_SET_HIGHLIGHT                        1
@@ -80,6 +80,8 @@ enum e_Font_Shadow
 
 // 96 characters; ASCII: {32, ..., 126}
 
+#pragma pack(push)
+#pragma pack(2)
 struct s_FONT_HEADER
 {
     /*  00 */ uint8_t  current_colors[COLOR_SET_COUNT];
@@ -100,8 +102,9 @@ struct s_FONT_HEADER
     /* 18A */ uint16_t vertical_spacing[8];
     /* 19A */ uint8_t  font_widths[768];    /* 8 * 96 * sizeof 1 */
     /* 49A */ uint16_t data_offsets[768];   /* 8 * 96 * sizeof 2 */
-    /* 79A */
+    /* A9A */
 };
+#pragma pack(pop)
 
 
 

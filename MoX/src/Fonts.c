@@ -7,6 +7,8 @@
         seg021
 */
 
+#include "../../STU/src/STU_DBG.h"
+
 #include "Allocate.h"
 #include "Fonts.h"
 #include "Graphics.h"
@@ -195,7 +197,13 @@ uint8_t * palette_flags;
 */
 void Load_Font_File(char * font_file)
 {
-    int itr;
+    int itr = 0;
+
+#ifdef STU_DEBUG
+    fprintf(stderr, "DEBUG: [%s, %d]: BEGIN: Load_Font_File()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_Font_File()\n", __FILE__, __LINE__);
+    trc_prn("DEBUG: [%s, %d]: BEGIN: Load_Font_File()\n", __FILE__, __LINE__);
+#endif
 
     stu_strcpy(font_name, font_file);
 
