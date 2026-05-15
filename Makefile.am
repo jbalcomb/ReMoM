@@ -160,7 +160,8 @@ libmox_a_SOURCES = \
     MoX/src/Timer.c \
     MoX/src/Util.c \
     MoX/src/Video.c \
-    MoX/src/Video2.c
+    MoX/src/Video2.c \
+    MoX/src/Init_Data/FONTS_LBX.c
 
 libmox_a_CFLAGS = $(AM_CFLAGS) \
     $(SDL_CFLAGS) \

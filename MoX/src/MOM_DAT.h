@@ -1387,7 +1387,7 @@ struct s_WIZARD
                uint8_t  Globals[NUM_OVERLAND_ENCHANTMENTS];
     /* 049A */ uint16_t Magic_Strategy;
     /* 049C */ uint16_t Unknown_49Ch;   /* ¿ unused strategy ? */
-    /* 049E */ uint16_t Hostility[NUM_PLAYERS]; /* attitude;  < 2 == non-hostile;  OSG: "None, Annoyed, Warlike, Jihad" */
+    /* 049E */ uint16_t Hostility[NUM_PLAYERS]; /* attitude;  < 2 === non-hostile;  OSG: "None, Annoyed, Warlike, Jihad" */
     /* 04AA */ uint16_t reevaluate_hostility_countdown;
     /* 04AC */ uint16_t reevaluate_magic_strategy_countdown;
     /* 04AE */ uint16_t reevaluate_magic_power_countdown;

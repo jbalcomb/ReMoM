@@ -19,6 +19,7 @@
 #include "../../MoX/src/MOX_BASE.h"
 #include "../../MoX/src/Init_Data/FONTS_LBX.h"
 
+#include "../../ext/stu_compat.h"
 #include <string.h>
 
 /*
@@ -350,7 +351,7 @@ void Extract_FONTS_LBX(const char * out_path)
 {
     FILE * out;
 
-    out = fopen(out_path, "w");
+    out = stu_fopen(out_path, "w");
     if(out == NULL)
     {
         fprintf(stderr, "Extract_FONTS_LBX: cannot open %s for writing\n", out_path);
