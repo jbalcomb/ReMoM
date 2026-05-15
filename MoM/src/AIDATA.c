@@ -958,59 +958,67 @@ void AI_Magic_Strategy__WIP(int16_t player_idx)
 
 
 // WZD o164p07
-// drake178: AI_Evaluate_War()
 // ¿ MoO2  Module: DIPLOMAC  Diplomacy_Growth_() ?
 // ¿ MoO2  Module: AIMOEV  Player_Is_Hostile_To_Player_() ?
 /*
-decrease the war reevaluation counter, and if 0 or
-less reset to Rnd(10)+15 and perform a war
-evaluation, resetting Hostility with all other
-players, then deciding whether to set it to 2, 3, or
-4 instead
-
-BUG: considers the casting of Fire Elemental as an
-immediate call for war instead of the Spell of
-Mastery in the first instance
-*/
-/*
-
 sets _players[].Hostility[]
-
-evaluate diplomatic relations
-every 15 to 25 turns
-always Warlike with Neutral Player
-
-
 */
+/**
+ * @brief Recomputes one wizard's hostility state toward every contacted player.
+ *
+ * Once the game has progressed past turn 100 and the caller's hostility
+ * reevaluation countdown expires, this routine resets the countdown to a new
+ * random interval and rebuilds the player's @c Hostility table from scratch.
+ * The neutral player slot is forced to a warlike state, self-relations and
+ * unknown wizards are skipped, and each contacted wizard is then evaluated from
+ * current diplomatic status, visible and hidden relations, peace duration,
+ * personality war modifiers, and spell-casting context.
+ *
+ * Wizards already at war are marked at least warlike and may escalate to the
+ * most aggressive hostility level for Maniacal, Ruthless, or Chaotic
+ * personalities based on additional random rolls. Other contacted wizards may
+ * become annoyed or warlike when the computed hostility chance succeeds,
+ * including a large bonus when the target is casting Spell of Mastery.
+ *
+ * @param player_idx Index of the wizard whose hostility table should be
+ *                   reevaluated.
+ *
+ * @return This function does not return a value. It mutates
+ *         @c _players[player_idx].reevaluate_hostility_countdown and the
+ *         corresponding @c _players[player_idx].Hostility[] entries in place.
+ *
+ * @note The routine returns immediately before turn 100 or while the hostility
+ *       countdown remains above zero.
+ * @note The original logic still contains the known bug documented above: it
+ *       treats casting Fire Elemental as an immediate trigger for warlike
+ *       hostility.
+ */
 void AI_Evaluate_Hostility(int16_t player_idx)
 {
-    int16_t Hostility_Chance = 0;
-    int16_t itr_players = 0;  // _DI_
+    int16_t hostility_percentage = 0;
+    int16_t itr_players = 0;
 
     if(_turn < 100)
     {
-
         return;
-
     }
 
+    /* Decrement re-evaluation timer */
     _players[player_idx].reevaluate_hostility_countdown -= 1;
 
     if(_players[player_idx].reevaluate_hostility_countdown > 0)
     {
-
         return;
-
     }
 
     _players[player_idx].reevaluate_hostility_countdown = (15 + Random(10));
 
-    _players[player_idx].Hostility[5] = 3;  // Change_Relations(): sets 3 if Dipl_Status[] >= 3  ~ DIPL_War
+    _players[player_idx].Hostility[NEUTRAL_PLAYER_IDX] = 3;
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
 
-        _players[player_idx].Hostility[itr_players] = 0;  // Change_Relations():  sets 0 if Dipl_Status[] == 2  ~ DIPL_Alliance
+        _players[player_idx].Hostility[itr_players] = 0;
 
         if(
             (itr_players == player_idx)
@@ -1018,135 +1026,97 @@ void AI_Evaluate_Hostility(int16_t player_idx)
             (_players[player_idx].Dipl.Contacted[itr_players] != ST_TRUE)
         )
         {
-
             continue;
-
         }
 
         if(
             (_players[player_idx].Dipl.Dipl_Status[itr_players] == DIPL_War)
             ||
-            (_players[player_idx].casting_spell_idx == spl_Fire_Elemental)
+            (_players[player_idx].casting_spell_idx == spl_Fire_Elemental)  /* BUGBUG  should be Spell of Mastery */
         )
         {
-
-            // ; set Hostility to 3, or randomly to 4 if the source
-            // ; wizard is Maniacal (40%), Ruthless (20%), or Chaotic
-            // ; (10%)
 
             _players[player_idx].Hostility[itr_players] = 3;
 
             if(_players[player_idx].Personality == PRS_Maniacal)
             {
-
                 if(Random(10) <= 4)  // 40% chance
                 {
-
                     _players[player_idx].Hostility[itr_players] = 4;
-
                 }
-
             }
             else if(_players[player_idx].Personality == PRS_Ruthless)
             {
-
                 if(Random(10) <= 2)  // 20% chance
                 {
-
                     _players[player_idx].Hostility[itr_players] = 4;
-
                 }
-
             }
             else if(_players[player_idx].Personality == PRS_Chaotic)
             {
-
                 if(Random(10) <= 1)  // 10% chance
                 {
-
                     _players[player_idx].Hostility[itr_players] = 4;
-
                 }
-
             }
 
         }
         else
         {
 
+            /* Skip evaluation if in a positive diplomatic state (Alliance/Peace) 
+            UNLESS the target is casting the Spell of Mastery */
+            if (_players[player_idx].Dipl.Dipl_Status[itr_players] == DIPL_Alliance
+                || 
+                _players[player_idx].Dipl.Dipl_Status[itr_players] == DIPL_WizardPact
+                || 
+                _players[player_idx].peace_duration[itr_players] != 0)
+            {
+                if (_players[itr_players].casting_spell_idx != spl_Spell_Of_Mastery)
+                {
+                    continue;
+                }
+            }
+
+            if(_players[player_idx].Dipl.Visible_Rel[itr_players] < 0)
+            {
+                hostility_percentage = ((50 + -(_players[player_idx].Dipl.Visible_Rel[itr_players])) / 2);
+            }
+            else
+            {
+                hostility_percentage = ((100 - _players[player_idx].Dipl.Visible_Rel[itr_players]) / 4);
+            }
+
             if(
-                (
-                    (
-                        (_players[player_idx].Dipl.Dipl_Status[itr_players] != DIPL_Alliance)
-                        &&
-                        (_players[player_idx].Dipl.Dipl_Status[itr_players] != DIPL_WizardPact)
-                    )
-                    ||
-                    (_players[player_idx].peace_duration[itr_players] == 0)
-                )
-                ||
-                (_players[itr_players].casting_spell_idx == spl_Spell_Of_Mastery)
+                (_players[player_idx].Personality == PRS_Lawful)
+                &&
+                (_players[player_idx].Dipl.Hidden_Rel[itr_players] < 0)
             )
             {
+                hostility_percentage -= TBL_AI_PRS_War_Mod[PRS_Lawful];
+            }
+            else
+            {
+                hostility_percentage += TBL_AI_PRS_War_Mod[_players[player_idx].Personality];
+            }
 
-                if(_players[player_idx].Dipl.Visible_Rel[itr_players] < 0)
+            hostility_percentage += _players[player_idx].Dipl.Hidden_Rel[itr_players];
+
+            if(_players[itr_players].casting_spell_idx == spl_Spell_Of_Mastery)
+            {
+                hostility_percentage += 50;
+            }
+
+            if(Random(100) < hostility_percentage)
+            {
+                _players[player_idx].Hostility[itr_players] = 2;  // OSG: "Annoyed"
+                if(Random(100) < hostility_percentage)
                 {
-
-                    Hostility_Chance = ((50 + -(_players[player_idx].Dipl.Visible_Rel[itr_players])) / 2);
-
-                }
-                else
-                {
-
-                    Hostility_Chance = ((100 - _players[player_idx].Dipl.Visible_Rel[itr_players]) / 4);
-
-                }
-
-                if(
-                    (_players[player_idx].Personality == PRS_Lawful)
-                    &&
-                    (_players[player_idx].Dipl.Hidden_Rel[itr_players] < 0)
-                )
-                {
-
-                    Hostility_Chance -= TBL_AI_PRS_War_Mod[PRS_Lawful];
-
-                }
-                else
-                {
-
-                    Hostility_Chance += TBL_AI_PRS_War_Mod[_players[player_idx].Personality];
-
-                }
-
-                Hostility_Chance += _players[player_idx].Dipl.Hidden_Rel[itr_players];
-
-                if(_players[itr_players].casting_spell_idx == spl_Spell_Of_Mastery)
-                {
-
-                    Hostility_Chance += 50;
-
-                }
-
-                if(Random(100) < Hostility_Chance)
-                {
-
-                    _players[player_idx].Hostility[itr_players] = 2;  // OSG: "Annoyed"
-
-                    if(Random(100) < Hostility_Chance)
+                    if(Random(100) < hostility_percentage)
                     {
-
-                        if(Random(100) < Hostility_Chance)
-                        {
-
-                            _players[player_idx].Hostility[itr_players] = 2;  // OSG: "Warlike"
-
-                        }
-
+                        _players[player_idx].Hostility[itr_players] = 2;  // OSG: "Warlike"
                     }
-
                 }
-
             }
 
         }

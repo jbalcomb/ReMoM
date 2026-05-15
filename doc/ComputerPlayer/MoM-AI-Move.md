@@ -45,6 +45,19 @@ AI_Next_Turn()
             |-> AI_ProcessOcean__WIP()
             |-> G_AI_ProcessTransports__WIP()
 
+Definitely Done-Done:
+[ ] Next_Turn_Proc()
+[ ] |-> Next_Turn_Calc()
+[ ]     |-> AI_Next_Turn()
+...
+[x]         |-> AI_Evaluate_Hostility()
+
+...
+    |-> AI_Evaluation_Map()             ovr162
+    |-> AI_Continent_Reeval__WIP()      ovr162
+
+
+
 cp_landmass_wx_array = &_ai_continents.plane[wp].player[player_idx].wx_array[0];
 cp_landmass_wy_array = &_ai_continents.plane[wp].player[player_idx].wy_array[0];
 cp_landmass_type_array = &_ai_continents.plane[wp].player[player_idx].type_array[0];

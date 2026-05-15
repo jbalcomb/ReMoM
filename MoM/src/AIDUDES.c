@@ -230,7 +230,7 @@ void AI_Next_Turn(void)
 
         AI_Magic_Strategy__WIP(player_idx);
 
-        CRP_AI_Turn_Var = 0;
+        CRP_AI_Turn_Var = 0;  /* BUGBUG  OON XREF */
 
         Player_Hostile_Opponents(player_idx);
 
