@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 
+void STU_File_Open(void * file_struct, const char * file_name, const char * mode);
 
 
 
