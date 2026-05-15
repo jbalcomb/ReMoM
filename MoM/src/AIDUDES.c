@@ -39,7 +39,7 @@
 // WZD dseg:6F60                                                 BEGIN:  ovr145 - Initialized Data
 
 // WZD dseg:6F60
-int16_t CRP_AI_Turn_Var = 0;
+int16_t m_niu_ai_turn_eval_var = 0;
 
 // WZD dseg:6F62 02 03 04 05 06 07 08 00                         UU_IDK_OVL_AI_7x1 db  2, 3, 4, 5, 6, 7, 8, 0
 // WZD dseg:6F6A 00 00                                           dw 0
@@ -230,7 +230,7 @@ void AI_Next_Turn(void)
 
         AI_Evaluate_Magic_Power_Strategy(player_idx);
 
-        CRP_AI_Turn_Var = 0;  /* BUGBUG  OON XREF */
+        m_niu_ai_turn_eval_var = 0;  /* OON XREF */
 
         Player_Hostile_Opponents(player_idx);
 
@@ -1710,20 +1710,35 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
 
 
 // WZD o145p08
-// drake178: AI_Count_Active_Wars()
 /*
-; counts the wars the player is currently in, storing
-; both the amount and the target players into their
-; corresponding global variables
+uses _players[].Hostility[], which was just reevaluated in AI_Evaluate_Hostility()
+uses _players[].peace_duration[], to avoid timiing mishap
+...later, used to iterate through and weigh target selection
 */
-/*
-
-
-
-*/
+/**
+ * @brief Rebuilds the current AI player's list of hostile opponent indexes.
+ *
+ * This helper clears the shared hostile-opponent count and scans every player
+ * slot, selecting only other wizards whose hostility rating toward the caller
+ * is at least annoyed/warlike and whose peace timer has already expired. Each
+ * qualifying player index is appended to the global
+ * @c _cp_hostile_opponents array for later target-selection logic.
+ *
+ * @param player_idx Index of the AI wizard whose hostile-opponent list should
+ *                   be refreshed.
+ *
+ * @return This function does not return a value. It updates the global
+ *         @c _cp_hostile_opponent_count and populates
+ *         @c _cp_hostile_opponents with matching player indexes.
+ *
+ * @note The caller itself is always excluded, even if its hostility table
+ *       would otherwise satisfy the filter.
+ * @note Players still covered by a non-zero peace duration are intentionally
+ *       omitted to avoid transient post-treaty targeting.
+ */
 void Player_Hostile_Opponents(int16_t player_idx)
 {
-    int16_t itr_players = 0;  // _CX_
+    int16_t itr_players = 0;
 
     _cp_hostile_opponent_count = 0;
 
@@ -1731,9 +1746,9 @@ void Player_Hostile_Opponents(int16_t player_idx)
     {
 
         if(
-            (_players[player_idx].Hostility[itr_players] >= 2)
+            (_players[player_idx].Hostility[itr_players] >= 2)  /* high-hostility */
             &&
-            (_players[player_idx].peace_duration[itr_players] == 0)  /* DEDU  Q: Why is it checking peace_duration for non-peace statuses? ¿ A: because this is *just* 'attackable wizards' ? */
+            (_players[player_idx].peace_duration[itr_players] == 0)
             &&
             (player_idx != itr_players)
         )

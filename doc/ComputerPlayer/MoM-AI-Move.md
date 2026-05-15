@@ -52,6 +52,26 @@ Definitely Done-Done:
 ...
 [x]         |-> AI_Evaluate_Hostility()
 [x]         |-> AI_Evaluate_Magic_Power_Strategy()  ... AI_Update_Magic_Power()
+[x]         |-> Player_Hostile_Opponents()
+
+[ ]         |-> AI_Player_Calculate_Target_Values
+[ ]         |-> AI_Continent_Eval__WIP
+[ ]         |-> AI_Pick_Action_Conts__WIP
+
+Allocate_AI_Data
+Player_Hostile_Opponents
+
+AI_Spell_Select__STUB
+AI_Update_Magic_Power
+AI_Sanity_Check_Overland_Enchantments
+AI_Update_Gold_And_Mana_Reserves
+AI_Update_Gold_Income_And_Food_Income
+Player_All_Colony_Autobuild
+[x] c:/python314/python.exe .\rasm_named_gemini.py AI_SetEnemyStrMaps__WIP
+[x] c:/python314/python.exe .\rasm_named_gemini.py AI_SetUnitOrders__WIP
+[] c:/python314/python.exe .\rasm_named_gemini.py AI_Kill_Excess_Settlers_And_Engineers
+
+[] c:/python314/python.exe .\rasm_named_gemini.py WIZ_NextIdleStack
 
 ...
     |-> AI_Evaluation_Map()             ovr162
