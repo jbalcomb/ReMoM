@@ -3398,21 +3398,21 @@ void AI_Find_Opportunity_City_Target(int16_t wp, int16_t player_idx)
     int16_t itr_stacks = 0;  // _DI_
     int16_t itr_cities = 0;  // _SI_
 
-    for(itr_stacks = 0; itr_stacks < AI_Own_Stack_Count; itr_stacks++)
+    for(itr_stacks = 0; itr_stacks < _ai_all_own_stack_count; itr_stacks++)
     {
 
-        if(AI_Own_Stacks[itr_stacks].unit_status != us_GOTO)
+        if(_ai_all_own_stacks[itr_stacks].unit_status != us_GOTO)
         {
 
             continue;
 
         }
 
-        stack_wx = AI_Own_Stacks[itr_stacks].wx;
+        stack_wx = _ai_all_own_stacks[itr_stacks].wx;
 
-        stack_wy = AI_Own_Stacks[itr_stacks].wy;
+        stack_wy = _ai_all_own_stacks[itr_stacks].wy;
 
-        stack_wp = AI_Own_Stacks[itr_stacks].wp;
+        stack_wp = _ai_all_own_stacks[itr_stacks].wp;
 
         min_wx = (stack_wx - 1);
         min_wy = (stack_wy - 1);
@@ -3776,17 +3776,17 @@ void AI_Shift_Off_Home_Plane(int16_t player_idx)
 
     Opposite_Plane = (1 - _FORTRESSES[player_idx].wp);
 
-    for(itr2 = 0; itr2 < AI_Own_Stack_Count; itr2++)
+    for(itr2 = 0; itr2 < _ai_all_own_stack_count; itr2++)
     {
 
-        Stack_Plane = AI_Own_Stacks[itr2].wp;
+        Stack_Plane = _ai_all_own_stacks[itr2].wp;
 
         if(Stack_Plane != Opposite_Plane)
         {
 
-            Stack_X = AI_Own_Stacks[itr2].wx;
+            Stack_X = _ai_all_own_stacks[itr2].wx;
 
-            Stack_Y = AI_Own_Stacks[itr2].wy;
+            Stack_Y = _ai_all_own_stacks[itr2].wy;
 
 
             if(Map_Square_Troops_Can_Plane_Shift(Stack_X, Stack_Y, Stack_Plane) == ST_TRUE)
@@ -3809,7 +3809,7 @@ void AI_Shift_Off_Home_Plane(int16_t player_idx)
                         for(itr = 0; itr < _units; itr++)
                         {
 
-                            AI_Own_Stacks[itr2].wp = (uint8_t)Opposite_Plane;
+                            _ai_all_own_stacks[itr2].wp = (uint8_t)Opposite_Plane;
 
                         }
 
@@ -3879,7 +3879,7 @@ void AI_Shift_Off_Home_Plane(int16_t player_idx)
 */
 /*
 
-being in AI_Own_Stacks[] and being next to Square_Is_OceanLike()
+being in _ai_all_own_stacks[] and being next to Square_Is_OceanLike()
 means the boats is on land/in a city/dry dock?
 
 */
@@ -3896,21 +3896,21 @@ void AI_Move_Out_Boats(void)
     int16_t itr_stack = 0;  // _SI_
     int16_t itr_wx = 0;  // _DI_
 
-    for(itr_stack = 0; itr_stack < AI_Own_Stack_Count; itr_stack++)
+    for(itr_stack = 0; itr_stack < _ai_all_own_stack_count; itr_stack++)
     {
 
         if(
-            (AI_Own_Stacks[itr_stack].value != ST_UNDEFINED)
+            (_ai_all_own_stacks[itr_stack].value != ST_UNDEFINED)
             &&
-            ((AI_Own_Stacks[itr_stack].abilities & AICAP_Transport) != 0)
+            ((_ai_all_own_stacks[itr_stack].abilities & AICAP_Transport) != 0)
         )
         {
 
-            wx = AI_Own_Stacks[itr_stack].wx;
+            wx = _ai_all_own_stacks[itr_stack].wx;
 
-            wy = AI_Own_Stacks[itr_stack].wy;
+            wy = _ai_all_own_stacks[itr_stack].wy;
 
-            wp = AI_Own_Stacks[itr_stack].wp;
+            wp = _ai_all_own_stacks[itr_stack].wp;
 
             landmass_idx = _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
 
@@ -5093,7 +5093,7 @@ void AI_Do_RoadBuild(int16_t landmass_idx)
                         (_CITIES[city_idx].wp == unit_wp)
                         &&
                         (
-                            ((AI_Own_Stacks[itr_stacks].abilities & AICAP_LandOnly) != 0)
+                            ((_ai_all_own_stacks[itr_stacks].abilities & AICAP_LandOnly) != 0)
                             ||
                             ((unit_wp * WORLD_SIZE) + (_CITIES[city_idx].wy * WORLD_WIDTH) + _CITIES[city_idx].wx)  == Landmass_Dup
                         )
@@ -5709,19 +5709,19 @@ void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp
 
             found_transport = ST_FALSE;
 
-            for(Own_Stack_Index = 0; ((Own_Stack_Index < AI_Own_Stack_Count) && (found_transport == ST_FALSE)); Own_Stack_Index++)
+            for(Own_Stack_Index = 0; ((Own_Stack_Index < _ai_all_own_stack_count) && (found_transport == ST_FALSE)); Own_Stack_Index++)
             {
 
                 if(
-                    (AI_Own_Stacks[Own_Stack_Index].wp == wp)
+                    (_ai_all_own_stacks[Own_Stack_Index].wp == wp)
                     &&
-                    ((AI_Own_Stacks[Own_Stack_Index].abilities & AICAP_Transport) != 0)
+                    ((_ai_all_own_stacks[Own_Stack_Index].abilities & AICAP_Transport) != 0)
                 )
                 {
 
-                    unit_wx = AI_Own_Stacks[Own_Stack_Index].wx;
+                    unit_wx = _ai_all_own_stacks[Own_Stack_Index].wx;
 
-                    unit_wy = AI_Own_Stacks[Own_Stack_Index].wy;
+                    unit_wy = _ai_all_own_stacks[Own_Stack_Index].wy;
 
                     if(
                         (abs(wx - unit_wx) < 2)
@@ -5736,9 +5736,9 @@ void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp
 
                         transport_wy = unit_wy;
 
-                        transport_capacity = AI_Own_Stacks[Own_Stack_Index].transport_capacity;
+                        transport_capacity = _ai_all_own_stacks[Own_Stack_Index].transport_capacity;
 
-                        Transport_StackSize = (MAX_STACK - AI_Own_Stacks[Own_Stack_Index].unit_count);
+                        Transport_StackSize = (MAX_STACK - _ai_all_own_stacks[Own_Stack_Index].unit_count);
 
                     }
 
@@ -6306,7 +6306,7 @@ void AI_Stack_Set_Destination(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
     struct s_AI_STACK_DATA * stack_ptr = NULL;
 
     /* Retrieve current stack location and plane */
-    stack_ptr = &AI_Own_Stacks[stack_idx];
+    stack_ptr = &_ai_all_own_stacks[stack_idx];
     stack_wx = (int8_t)stack_ptr->wx;
     stack_wy = (int8_t)stack_ptr->wy;
     stack_wp = (int8_t)stack_ptr->wp;
@@ -6369,7 +6369,7 @@ void AI_Stack_Set_Destination(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
     }
 
     /* Mark stack as having a target/processed */
-    AI_Own_Stacks[stack_idx].value = ST_UNDEFINED;
+    _ai_all_own_stacks[stack_idx].value = ST_UNDEFINED;
 
 }
 
@@ -6411,11 +6411,11 @@ void AI_Stack_Set_Boats_Goto(int16_t ai_stack_idx, int16_t wx, int16_t wy)
     int16_t stack_wx = 0;
     int16_t itr_units = 0;  // _SI_
 
-    stack_wx = AI_Own_Stacks[ai_stack_idx].wx;
+    stack_wx = _ai_all_own_stacks[ai_stack_idx].wx;
 
-    stack_wy = AI_Own_Stacks[ai_stack_idx].wy;
+    stack_wy = _ai_all_own_stacks[ai_stack_idx].wy;
 
-    stack_wp = AI_Own_Stacks[ai_stack_idx].wp;
+    stack_wp = _ai_all_own_stacks[ai_stack_idx].wp;
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
@@ -6440,7 +6440,7 @@ void AI_Stack_Set_Boats_Goto(int16_t ai_stack_idx, int16_t wx, int16_t wy)
 
     }
 
-    AI_Own_Stacks[ai_stack_idx].value = ST_UNDEFINED;
+    _ai_all_own_stacks[ai_stack_idx].value = ST_UNDEFINED;
 
 }
 

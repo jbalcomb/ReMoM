@@ -602,11 +602,11 @@ int16_t NPC_Destinations(void)
     Build_NPC_Stacks();  // OGBUG  definitely passes NEUTRAL_PLAYER_IDX here, but Build_NPC_Stacks doesn't take a parameter and is hard-coded for NEUTRAL_PLAYER_IDX
 
 #ifdef STU_DEBUG
-    dbg_prn("AI_NPC: NPC_Destinations evaluating %d neutral stacks\n", AI_Own_Stack_Count);
+    dbg_prn("AI_NPC: NPC_Destinations evaluating %d neutral stacks\n", _ai_all_own_stack_count);
 #endif
 
-    for (stack_idx = 0; stack_idx < AI_Own_Stack_Count; stack_idx++) {
-        stack = &AI_Own_Stacks[stack_idx];
+    for (stack_idx = 0; stack_idx < _ai_all_own_stack_count; stack_idx++) {
+        stack = &_ai_all_own_stacks[stack_idx];
         stack_wx = stack->wx;
         stack_wy = stack->wy;
         stack_wp = stack->wp;
@@ -733,12 +733,12 @@ int16_t NPC_Destinations(void)
 // ¿ MoO2  Module: AIDATA  Compute_AI_Data_() ? ¿ ... Deallocate_AI_Data_() ?
 void Allocate_AI_Data(void)
 {
-    AI_Own_City_Values = (int16_t *)Near_Allocate_First(200);
-    AI_Enemy_City_Values = (int16_t *)Near_Allocate_Next(200);
-    AI_Own_Garr_Strs = (int16_t *)Near_Allocate_Next(200);
-    AI_NME_Garrison_Strs = (int16_t *)Near_Allocate_Next(200);
-    AI_Own_Stacks = (struct s_AI_STACK_DATA *)Near_Allocate_Next(800);
-    AI_Enemy_Stacks = (struct s_AI_TARGET *)Near_Allocate_Next(1440);
+    _ai_all_own_city_values = (int16_t *)Near_Allocate_First(200);
+    _ai_all_enemy_city_values = (int16_t *)Near_Allocate_Next(200);
+    _ai_all_own_garrison_strengths = (int16_t *)Near_Allocate_Next(200);
+    _ai_all_enemy_garrison_strengths = (int16_t *)Near_Allocate_Next(200);
+    _ai_all_own_stacks = (struct s_AI_STACK_DATA *)Near_Allocate_Next(800);
+    _ai_all_enemy_stacks = (struct s_AI_TARGET *)Near_Allocate_Next(1440);
     AI_OVL_Spell_Cats = Near_Allocate_Next(92);
     CRP_AI_OVL_SpellList = Near_Allocate_Next(50);
     AI_Cont_Own_Str[0] = (int16_t *)Near_Allocate_Next(120);
@@ -1114,18 +1114,18 @@ void AI_Evaluate_Hostility(int16_t player_idx)
  * Scans the global unit list for units owned by the neutral player and builds
  * one AI stack entry per occupied map square, excluding neutral units that are
  * stationed inside cities. When multiple neutral units share the same square,
- * they are coalesced into a single entry in AI_Own_Stacks.
+ * they are coalesced into a single entry in _ai_all_own_stacks.
  *
  * Each recorded stack stores its map location, current unit status, and a
  * coarse movement-capability flag derived from the units encountered at that
  * square. If any unit in an already-recorded stack lacks air and water travel,
  * the stack's abilities field is reduced to AICAP_None.
  *
- * @note This routine resets AI_Own_Stack_Count before rebuilding the list and
+ * @note This routine resets _ai_all_own_stack_count before rebuilding the list and
  *       stops after filling 80 entries, matching the allocated stack buffer.
  * @note The function reads global unit and city state from _UNITS, _CITIES,
- *       _units, and _cities, and writes the results to AI_Own_Stacks and
- *       AI_Own_Stack_Count.
+ *       _units, and _cities, and writes the results to _ai_all_own_stacks and
+ *       _ai_all_own_stack_count.
  */
 void Build_NPC_Stacks(void)
 {
@@ -1140,11 +1140,11 @@ void Build_NPC_Stacks(void)
     struct s_UNIT * curr_unit;
     struct s_CITY * curr_city;
 
-    AI_Own_Stack_Count = 0;
+    _ai_all_own_stack_count = 0;
     
     for (unit_idx = 0; unit_idx < _units; unit_idx++)
     {
-        if (AI_Own_Stack_Count >= 80)
+        if (_ai_all_own_stack_count >= 80)
         {
             break;
         }
@@ -1163,9 +1163,9 @@ void Build_NPC_Stacks(void)
         stack_exists = 0;
 
         /* Check if a stack already exists at this location in the AI's collection */
-        for (itr = 0; itr < AI_Own_Stack_Count; itr++)
+        for (itr = 0; itr < _ai_all_own_stack_count; itr++)
         {
-            stack_ptr = &AI_Own_Stacks[itr];
+            stack_ptr = &_ai_all_own_stacks[itr];
 
             if (stack_ptr->wx == (uint8_t)unit_wx &&
                 stack_ptr->wy == (uint8_t)unit_wy &&
@@ -1198,7 +1198,7 @@ void Build_NPC_Stacks(void)
             /* If not already in a stack and not in a city, record as a new neutral stack */
             if (city_defender == ST_FALSE)
             {
-                stack_ptr = &AI_Own_Stacks[AI_Own_Stack_Count];
+                stack_ptr = &_ai_all_own_stacks[_ai_all_own_stack_count];
                 stack_ptr->wx = (uint8_t)unit_wx;
                 stack_ptr->wy = (uint8_t)unit_wy;
                 stack_ptr->wp = (uint8_t)unit_wp;
@@ -1212,7 +1212,7 @@ void Build_NPC_Stacks(void)
                 {
                     stack_ptr->abilities = AICAP_LandOnly;
                 }
-                AI_Own_Stack_Count++;
+                _ai_all_own_stack_count++;
             }
         }
     }

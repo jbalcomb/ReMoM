@@ -860,7 +860,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
         {
 
             if(
-                (AI_Enemy_City_Values[itr_cities] > best_enemy_city_value)
+                (_ai_all_enemy_city_values[itr_cities] > best_enemy_city_value)
                 &&
                 (_CITIES[itr_cities].owner_idx != NEUTRAL_PLAYER_IDX)
                 &&
@@ -961,7 +961,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
                         if(duped == ST_FALSE)
                         {
 
-                            best_enemy_city_value = AI_Enemy_City_Values[itr_cities];
+                            best_enemy_city_value = _ai_all_enemy_city_values[itr_cities];
 
                             enemy_city_idx = itr_cities;
 

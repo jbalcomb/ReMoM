@@ -53,8 +53,8 @@ Definitely Done-Done:
 [x]         |-> AI_Evaluate_Hostility()
 [x]         |-> AI_Evaluate_Magic_Power_Strategy()  ... AI_Update_Magic_Power()
 [x]         |-> Player_Hostile_Opponents()
+[x]         |-> AI_Player_Calculate_Target_Values
 
-[ ]         |-> AI_Player_Calculate_Target_Values
 [ ]         |-> AI_Continent_Eval__WIP
 [ ]         |-> AI_Pick_Action_Conts__WIP
 

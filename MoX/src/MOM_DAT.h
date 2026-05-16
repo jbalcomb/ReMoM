@@ -2892,16 +2892,16 @@ extern int16_t * CRP_AI_Cont_Nme_Str[2];
 extern int16_t * AI_Cont_Own_Str[2];
 
 // WZD dseg:9106
-extern struct s_AI_TARGET * AI_Enemy_Stacks;
+extern struct s_AI_TARGET * _ai_all_enemy_stacks;
 
 // WZD dseg:9108
-extern struct s_AI_STACK_DATA * AI_Own_Stacks;
+extern struct s_AI_STACK_DATA * _ai_all_own_stacks;
 
 // WZD dseg:910A
-extern int16_t AI_Enemy_Stack_Count;
+extern int16_t _ai_all_enemy_stack_count;
 
 // WZD dseg:910C
-extern int16_t AI_Own_Stack_Count;
+extern int16_t _ai_all_own_stack_count;
 
 // WZD dseg:910E
 extern int16_t _cp_hostile_opponents[NUM_PLAYERS];
@@ -2918,13 +2918,13 @@ extern int16_t CRP_AI_OVL_SpellCount;
 extern SAMB_ptr AI_OVL_Spell_Cats;
 
 // WZD dseg:9122
-extern int16_t * AI_NME_Garrison_Strs;
+extern int16_t * _ai_all_enemy_garrison_strengths;
 // WZD dseg:9124
-extern int16_t * AI_Own_Garr_Strs;
+extern int16_t * _ai_all_own_garrison_strengths;
 // WZD dseg:9126
-extern int16_t * AI_Enemy_City_Values;
+extern int16_t * _ai_all_enemy_city_values;
 // WZD dseg:9128
-extern int16_t * AI_Own_City_Values;
+extern int16_t * _ai_all_own_city_values;
 
 
 

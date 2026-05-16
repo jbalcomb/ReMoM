@@ -938,6 +938,9 @@ int16_t _ai_targets_wx[25];
 int16_t _ai_targets_count;
 
 // WZD dseg:9094
+/*
+used to help decide on casting spl_Floating_Island, in AI_OVL_PickSummon()
+*/
 int16_t ai_transport_count;
 // WZD dseg:9096
 int16_t ai_seektransport_cnt;
@@ -985,23 +988,23 @@ int16_t * CRP_AI_Cont_Nme_Str[2];
 /*
 allocated in Allocate_AI_Data()
 2 pointers to 60 2-byte values
-holds (AI_Own_Stacks[].Value / 10)
+holds (_ai_all_own_stacks[].Value / 10)
 */
 int16_t * AI_Cont_Own_Str[2];
 
 // WZD dseg:9106
 // allocated in Allocate_AI_Data()
-struct s_AI_TARGET * AI_Enemy_Stacks;
+struct s_AI_TARGET * _ai_all_enemy_stacks;
 
 // WZD dseg:9108
 // allocated in Allocate_AI_Data()
-struct s_AI_STACK_DATA * AI_Own_Stacks;
+struct s_AI_STACK_DATA * _ai_all_own_stacks;
 
 // WZD dseg:910A
-int16_t AI_Enemy_Stack_Count;
+int16_t _ai_all_enemy_stack_count;
 
 // WZD dseg:910C
-int16_t AI_Own_Stack_Count;
+int16_t _ai_all_own_stack_count;
 
 // WZD dseg:910E
 int16_t _cp_hostile_opponents[NUM_PLAYERS];
@@ -1029,28 +1032,28 @@ SAMB_ptr AI_OVL_Spell_Cats;
 100 values
 allocated in Allocate_AI_Data()
 */
-int16_t * AI_NME_Garrison_Strs;
+int16_t * _ai_all_enemy_garrison_strengths;
 // WZD dseg:9124
 /*
 2-byte, signed
 100 values
 allocated in Allocate_AI_Data()
 */
-int16_t * AI_Own_Garr_Strs;
+int16_t * _ai_all_own_garrison_strengths;
 // WZD dseg:9126
 /*
 2-byte, signed
 100 values
 allocated in Allocate_AI_Data()
 */
-int16_t * AI_Enemy_City_Values;
+int16_t * _ai_all_enemy_city_values;
 // WZD dseg:9128
 /*
 2-byte, signed
 100 values
 allocated in Allocate_AI_Data()
 */
-int16_t * AI_Own_City_Values;
+int16_t * _ai_all_own_city_values;
 
 
 
@@ -2640,10 +2643,10 @@ SAMB_ptr _ai_own_stack_unit_count;
 // WZD dseg:9E90
 // drake178: CONTX_OwnStack_Types
 SAMB_ptr _ai_own_stack_type;
-// WZD dseg:9E90                                                                                         ;   0 - in transit, purifying, or road building (c < 3)
-// WZD dseg:9E90                                                                                         ;   1 - roamer
-// WZD dseg:9E90                                                                                         ;   3 - garrison (city or node)
-// WZD dseg:9E90                                                                                         ;   4 - fortress garrison
+// ;   0 - in transit, purifying, or road building (c < 3)
+// ;   1 - roamer
+// ;   3 - garrison (city or node)
+// ;   4 - fortress garrison
 // WZD dseg:9E94
 // drake178: CONTX_OwnStack_Ps
 SAMB_ptr _ai_own_stack_wp;

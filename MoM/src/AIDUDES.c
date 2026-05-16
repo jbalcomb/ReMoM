@@ -424,17 +424,17 @@ void AI_Continent_Eval__WIP(int16_t player_idx)
 // ; BUG: the continent IDs are already stored in the
 // ;  AI stack data, there's no need to recalculate
 
-    for(itr = 0; itr < AI_Own_Stack_Count; itr++)
+    for(itr = 0; itr < _ai_all_own_stack_count; itr++)
     {
 
-        stack_wp = AI_Own_Stacks[itr].wp;
+        stack_wp = _ai_all_own_stacks[itr].wp;
 
-        landmass_idx = _landmasses[((stack_wp * WORLD_SIZE) + (AI_Own_Stacks[itr].wy * WORLD_WIDTH) + AI_Own_Stacks[itr].wx)];
+        landmass_idx = _landmasses[((stack_wp * WORLD_SIZE) + (_ai_all_own_stacks[itr].wy * WORLD_WIDTH) + _ai_all_own_stacks[itr].wx)];
 
         if(landmass_idx < NUM_LANDMASSES)
         {
 
-            AI_Cont_Own_Str[stack_wp][landmass_idx] += (AI_Own_Stacks[itr].value / 10);
+            AI_Cont_Own_Str[stack_wp][landmass_idx] += (_ai_all_own_stacks[itr].value / 10);
 
         }
 
@@ -446,17 +446,17 @@ void AI_Continent_Eval__WIP(int16_t player_idx)
 // ; 
 // ; BUG: only evaluates the first 60 continents
 
-    for(itr = 0; itr < AI_Enemy_Stack_Count; itr++)
+    for(itr = 0; itr < _ai_all_enemy_stack_count; itr++)
     {
 
-        stack_wp = AI_Enemy_Stacks[itr].wp;
+        stack_wp = _ai_all_enemy_stacks[itr].wp;
 
-        landmass_idx = _landmasses[((stack_wp * WORLD_SIZE) + (AI_Enemy_Stacks[itr].wy * WORLD_WIDTH) + AI_Enemy_Stacks[itr].wx)];
+        landmass_idx = _landmasses[((stack_wp * WORLD_SIZE) + (_ai_all_enemy_stacks[itr].wy * WORLD_WIDTH) + _ai_all_enemy_stacks[itr].wx)];
 
         if(landmass_idx < NUM_LANDMASSES)
         {
 
-            CRP_AI_Cont_Nme_Str[stack_wp][landmass_idx] += (AI_Enemy_Stacks[itr].value / 10);
+            CRP_AI_Cont_Nme_Str[stack_wp][landmass_idx] += (_ai_all_enemy_stacks[itr].value / 10);
 
         }
 
@@ -525,9 +525,9 @@ void AI_Continent_Eval__WIP(int16_t player_idx)
         if(landmass_idx < NUM_LANDMASSES)
         {
 
-            AI_Cont_Own_Val[stack_wp][landmass_idx] = AI_Own_City_Values[itr];
+            AI_Cont_Own_Val[stack_wp][landmass_idx] = _ai_all_own_city_values[itr];
 
-            AI_Cont_Nme_Val[stack_wp][landmass_idx] = AI_Enemy_City_Values[itr];
+            AI_Cont_Nme_Val[stack_wp][landmass_idx] = _ai_all_enemy_city_values[itr];
 
         }
 
@@ -940,6 +940,42 @@ sets values for own and enemy cities, stacks, garrisons
 
 
 */
+/**
+ * @brief Rebuilds the AI's cached city, garrison, and stack target values for
+ *        one player.
+ *
+ * This evaluator clears the shared overland-value tables and then walks every
+ * city and unit on the map to classify them as owned or hostile relative to
+ * @p player_idx. City entries receive heuristic values from population,
+ * building count, race bonuses, and fortress presence. Unit entries are folded
+ * into aggregate own-stack or enemy-stack records while also contributing to
+ * nearby garrison-strength tables used by later continent and targeting logic.
+ *
+ * While aggregating units, the routine records stack capabilities such as
+ * transport capacity, road building, purification, melding, wind walking,
+ * settler status, and hero presence, and it suppresses strength contribution
+ * for transports, construction units, and outpost-capable units in the same
+ * places as the original game logic. At the end, it also refreshes the global
+ * transport-unit count for the player.
+ *
+ * @param player_idx Index of the wizard whose perspective should be used when
+ *                   classifying owned versus enemy cities and stacks.
+ *
+ * @return This function does not return a value. It mutates shared AI working
+ *         buffers including @c _ai_all_enemy_garrison_strengths,
+ *         @c _ai_all_own_garrison_strengths,
+ *         @c _ai_all_enemy_city_values, @c _ai_all_own_city_values,
+ *         @c _ai_all_enemy_stacks, @c _ai_all_own_stacks,
+ *         @c _ai_all_enemy_stack_count, @c _ai_all_own_stack_count, and
+ *         @c ai_transport_count.
+ *
+ * @note The function preserves several documented original-game bugs noted in
+ *       the local comments, including the human-city iterator mix-up, the
+ *       Troll-race check using @c rt_Standard, and the late-pass stack and
+ *       garrison adjustments that use inconsistent indexes.
+ * @note Neutral cities are always considered valid enemy-city targets, even
+ *       when no hostility relationship exists.
+ */
 void AI_Player_Calculate_Target_Values(int16_t player_idx)
 {
     int16_t City_Loop_Var = 0;
@@ -949,30 +985,19 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
     int16_t unit_has_windwalking = 0;
     int16_t unit_has_airtravel = 0;
     int16_t effective_unit_strength = 0;
-    int16_t Processed_Unit = 0;
-    int16_t Loop_Var = 0;
+    int16_t seen_unit = 0;
+    int16_t itr = 0;
     int16_t city_owner_idx = 0;
     int16_t itr_cities = 0;
-    int16_t itr_units = 0;  // _DI_
-
-    // ; assign target values to all owned and hostile cities
-    // ; based on population, building count, and fortress
-    // ; presence
-    // ; BUG: considers the generic race (0x0E) instead of
-    // ;  trolls (0x0D) for doubling the population value
-    // ; BUG: randomly doubles the value of all enemy cities
-    // ;  instead of those of the human player
+    int16_t itr_units = 0;
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
 
-        AI_NME_Garrison_Strs[itr_cities] = 0;
-
-        AI_Own_Garr_Strs[itr_cities] = 0;
-
-        AI_Enemy_City_Values[itr_cities] = 0;
-
-        AI_Own_City_Values[itr_cities] = 0;
+        _ai_all_enemy_garrison_strengths[itr_cities] = 0;
+        _ai_all_own_garrison_strengths[itr_cities] = 0;
+        _ai_all_enemy_city_values[itr_cities] = 0;
+        _ai_all_own_city_values[itr_cities] = 0;
 
         city_owner_idx = _CITIES[itr_cities].owner_idx;
 
@@ -981,16 +1006,16 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
 
             if(
                 (
-                    (_players[player_idx].Hostility[city_owner_idx] >= 2)  // attitude is hostile
+                    (_players[player_idx].Hostility[city_owner_idx] >= 2)  /* high-hostility */
                     &&
-                    (_players[player_idx].peace_duration[city_owner_idx] == 0)  // reguardless of any treaty
+                    (_players[player_idx].peace_duration[city_owner_idx] == 0)
                 )
                 ||
                 (city_owner_idx == NEUTRAL_PLAYER_IDX)
             )
             {
 
-                AI_Enemy_City_Values[itr_cities] = _CITIES[itr_cities].population;
+                _ai_all_enemy_city_values[itr_cities] = _CITIES[itr_cities].population;
 
                 if(
                     (_CITIES[itr_cities].race == rt_Beastmen)
@@ -1001,16 +1026,17 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
                     ||
                     (_CITIES[itr_cities].race == rt_Dwarf)
                     ||
-                    (_CITIES[itr_cities].race != rt_Standard)  /* BUGBUG  should be rt_Trolls */
+                    (_CITIES[itr_cities].race == rt_Standard)  /* OGBUG  should be rt_Trolls */
                 )
                 {
 
-                    AI_Enemy_City_Values[itr_cities] *= 2;
+                    _ai_all_enemy_city_values[itr_cities] *= 2;
 
                 }
 
-                AI_Enemy_City_Values[itr_cities] += _CITIES[itr_cities].bldg_cnt;
+                _ai_all_enemy_city_values[itr_cities] += (_CITIES[itr_cities].bldg_cnt * 2);
 
+                /* Fortress City Bonus */
                 if(
                     (_FORTRESSES[city_owner_idx].wx == _CITIES[itr_cities].wx)
                     &&
@@ -1022,14 +1048,16 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
                 )
                 {
 
-                    AI_Enemy_City_Values[itr_cities] += 200;
+                    _ai_all_enemy_city_values[itr_cities] += 200;
 
                 }
-        
+                
+                /* The Human Player is our favorite Enemy */
+                /* OGBUG  should use itr_cities, not itr_units */
                 if(_CITIES[itr_units].owner_idx == HUMAN_PLAYER_IDX)
                 {
 
-                    AI_Enemy_City_Values[itr_cities] *= 2;
+                    _ai_all_enemy_city_values[itr_cities] *= 2;
 
                 }
 
@@ -1039,7 +1067,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
         else
         {
 
-            AI_Own_City_Values[itr_cities] = _CITIES[itr_cities].population;
+            _ai_all_own_city_values[itr_cities] = _CITIES[itr_cities].population;
 
             if(
                 (_CITIES[itr_cities].race == rt_Beastmen)
@@ -1050,16 +1078,17 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
                 ||
                 (_CITIES[itr_cities].race == rt_Dwarf)
                 ||
-                (_CITIES[itr_cities].race != rt_Standard)  /* BUGBUG  should be rt_Trolls */
+                (_CITIES[itr_cities].race == rt_Standard)  /* OGBUG  should be rt_Trolls */
             )
             {
 
-                AI_Enemy_City_Values[itr_cities] *= 2;
+                _ai_all_own_city_values[itr_cities] *= 2;
 
             }
 
-            AI_Enemy_City_Values[itr_cities] += _CITIES[itr_cities].bldg_cnt;
+            _ai_all_own_city_values[itr_cities] += (_CITIES[itr_cities].bldg_cnt * 2);
 
+            /* Fortress City Bonus */
             if(
                 (_FORTRESSES[player_idx].wx == _CITIES[itr_cities].wx)
                 &&
@@ -1069,7 +1098,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
             )
             {
 
-                AI_Enemy_City_Values[itr_cities] += _turn;
+                _ai_all_own_city_values[itr_cities] += (_turn * 2);
 
             }
 
@@ -1077,14 +1106,13 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
 
     }
 
-
-    AI_Own_Stack_Count = 0;
-
-    AI_Enemy_Stack_Count = 0;
+    _ai_all_own_stack_count = 0;
+    _ai_all_enemy_stack_count = 0;
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
 
+        /* ¿ OGBUG  gets here with -1 and illegally indexes arrays ? */
         /* HACK */  if(
         /* HACK */      (_UNITS[itr_units].owner_idx == ST_UNDEFINED)
         /* HACK */      ||
@@ -1102,7 +1130,8 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
 
         unit_has_watertravel = Unit_Has_WaterTravel(itr_units);
 
-        if(_UNITS[itr_units].type < ut_BarbSwordsmen)  /* ¿ hero or boat ? */ /* ; BUG? ignores Barbarian Spearmen */
+        /* OGBUG  ignores Barbarian Spearmen */
+        if(_UNITS[itr_units].type < ut_BarbSwordsmen)  /* ¿ hero or boat ? */ 
         {
 
             unit_is_hero = ST_TRUE;
@@ -1128,84 +1157,47 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
 
         }
 
+        // `seen_unit`: the intent is the standard linear-search-then-insert pattern
+
         if(_UNITS[itr_units].owner_idx != player_idx)
         {
 
-            if(AI_Enemy_Stack_Count < 240)
+            /* Enemy Unit Processing */
+
+            if(_ai_all_enemy_stack_count >= 240) { continue; }
+
+            seen_unit = ST_FALSE;
+
+            for(itr = 0; ((itr < _cities) & (seen_unit == ST_FALSE)); itr++)
             {
 
-                Processed_Unit = ST_FALSE;
-
-                for(Loop_Var = 0; ((Loop_Var < _cities) & (Processed_Unit == ST_FALSE)); Loop_Var++)
+                if(
+                    (_UNITS[itr_units].wx == _CITIES[itr].wx)
+                    &&
+                    (_UNITS[itr_units].wy == _CITIES[itr].wy)
+                    &&
+                    (_UNITS[itr_units].wp == _CITIES[itr].wp)
+                )
                 {
 
-                    if(
-                        (_UNITS[itr_units].wx == _CITIES[Loop_Var].wx)
-                        &&
-                        (_UNITS[itr_units].wy == _CITIES[Loop_Var].wy)
-                        &&
-                        (_UNITS[itr_units].wp == _CITIES[Loop_Var].wp)
-                    )
-                    {
-
-                        Processed_Unit = ST_TRUE;
-
-                    }
+                    seen_unit = ST_TRUE;
 
                 }
 
+            }
 
-                for(Loop_Var = 0; ((Loop_Var < AI_Enemy_Stack_Count) & (Processed_Unit != ST_FALSE)); Loop_Var++)
+
+            for(itr = 0; ((itr < _ai_all_enemy_stack_count) & (seen_unit == ST_FALSE)); itr++)
+            {
+
+                if(
+                    (_UNITS[itr_units].wx == _ai_all_enemy_stacks[itr].wx)
+                    &&
+                    (_UNITS[itr_units].wy == _ai_all_enemy_stacks[itr].wy)
+                    &&
+                    (_UNITS[itr_units].wp == _ai_all_enemy_stacks[itr].wp)
+                )
                 {
-
-                    if(
-                        (_UNITS[itr_units].wx == AI_Enemy_Stacks[Loop_Var].wx)
-                        &&
-                        (_UNITS[itr_units].wy == AI_Enemy_Stacks[Loop_Var].wy)
-                        &&
-                        (_UNITS[itr_units].wp == AI_Enemy_Stacks[Loop_Var].wp)
-                    )
-                    {
-
-                        if(_unit_type_table[_UNITS[itr_units].type].Transport > 0)
-                        {
-
-                            effective_unit_strength = 0;
-
-                        }
-
-                        if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_CREATEOUTPOST) != 0)
-                        {
-
-                            effective_unit_strength = 0;
-
-                        }
-
-                        if(_unit_type_table[_UNITS[itr_units].type].Construction > 0)
-                        {
-
-                            effective_unit_strength = 0;
-
-                        }
-
-                        AI_Enemy_Stacks[Loop_Var].value = effective_unit_strength;
-
-                        Processed_Unit = ST_TRUE;
-
-                    }
-
-
-                }
-
-
-                if(Processed_Unit == ST_FALSE)
-                {
-
-                    AI_Enemy_Stacks[AI_Enemy_Stack_Count].wx = _UNITS[itr_units].wx;
-
-                    AI_Enemy_Stacks[AI_Enemy_Stack_Count].wy = _UNITS[itr_units].wy;
-
-                    AI_Enemy_Stacks[AI_Enemy_Stack_Count].wp = _UNITS[itr_units].wp;
 
                     if(_unit_type_table[_UNITS[itr_units].type].Transport > 0)
                     {
@@ -1228,253 +1220,106 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
 
                     }
 
-                    AI_Enemy_Stacks[AI_Enemy_Stack_Count].value = effective_unit_strength;
+                    _ai_all_enemy_stacks[itr].value = effective_unit_strength;
 
-                    AI_Enemy_Stack_Count++;
+                    seen_unit = ST_TRUE;
 
                 }
 
-                for(Loop_Var = 0; Loop_Var < _cities; Loop_Var++)
+            }
+
+            /* not in a City Garrison and not in a known enemy stack, so must be previously unseen enemy stack */
+            /* Units Loop; Enemy Units; New Stack; loc_D3D24; grey-purple (not light-purple) */
+            if(seen_unit == ST_FALSE)
+            {
+
+                _ai_all_enemy_stacks[_ai_all_enemy_stack_count].wx = _UNITS[itr_units].wx;
+
+                _ai_all_enemy_stacks[_ai_all_enemy_stack_count].wy = _UNITS[itr_units].wy;
+
+                _ai_all_enemy_stacks[_ai_all_enemy_stack_count].wp = _UNITS[itr_units].wp;
+
+                if(_unit_type_table[_UNITS[itr_units].type].Transport > 0)
                 {
 
-                    if(_UNITS[itr_units].wp == _CITIES[Loop_Var].wp)
-                    {
-                        if(
-                            (_UNITS[itr_units].wx == _CITIES[Loop_Var].wx)
-                            &&
-                            (_UNITS[itr_units].wy == _CITIES[Loop_Var].wy)
-                        )
-                        {
-
-                            AI_NME_Garrison_Strs[Loop_Var] += effective_unit_strength;
-
-                        }
-                        else
-                        {
-
-                            if(
-                                (abs(_UNITS[itr_units].wx - _CITIES[Loop_Var].wx) < 3)
-                                &&
-                                (abs(_UNITS[itr_units].wy - _CITIES[Loop_Var].wy) < 3)
-                            )
-                            {
-
-                                AI_NME_Garrison_Strs[Loop_Var] += (effective_unit_strength / 2);
-
-                            }
-
-                        }
-
-                    }
+                    effective_unit_strength = 0;
 
                 }
 
+                if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_CREATEOUTPOST) != 0)
+                {
+
+                    effective_unit_strength = 0;
+
+                }
+
+                if(_unit_type_table[_UNITS[itr_units].type].Construction > 0)
+                {
+
+                    effective_unit_strength = 0;
+
+                }
+
+                _ai_all_enemy_stacks[_ai_all_enemy_stack_count].value = effective_unit_strength;
+
+                _ai_all_enemy_stack_count++;
+
+            }
+
+            for(itr = 0; itr < _cities; itr++)
+            {
+                if(_UNITS[itr_units].wp == _CITIES[itr].wp)
+                {
+                    if(
+                        (_UNITS[itr_units].wx == _CITIES[itr].wx)
+                        &&
+                        (_UNITS[itr_units].wy == _CITIES[itr].wy)
+                    )
+                    {
+                        _ai_all_enemy_garrison_strengths[itr] += effective_unit_strength;
+                    }
+                    else
+                    {
+                        if(
+                            (abs(_UNITS[itr_units].wx - _CITIES[itr].wx) < 3)
+                            &&
+                            (abs(_UNITS[itr_units].wy - _CITIES[itr].wy) < 3)
+                        )
+                        {
+                            _ai_all_enemy_garrison_strengths[itr] += (effective_unit_strength / 2);
+                        }
+                    }
+                }
             }
 
         }
         else
         {
 
-            if(AI_Own_Stack_Count < 80)
+            if(_ai_all_own_stack_count >= 80) { continue; }
+            
+            seen_unit = ST_FALSE;
+
+            for(itr = 0; ((itr < _ai_all_own_stack_count) & (seen_unit == ST_FALSE)); itr++)
             {
 
-                Processed_Unit = ST_FALSE;
-
-                for(Loop_Var = 0; ((Loop_Var < AI_Own_Stack_Count) & (Processed_Unit == ST_FALSE)); Loop_Var++)
+                if(
+                    (_UNITS[itr_units].wx == _ai_all_own_stacks[itr].wx)
+                    &&
+                    (_UNITS[itr_units].wy == _ai_all_own_stacks[itr].wy)
+                    &&
+                    (_UNITS[itr_units].wp == _ai_all_own_stacks[itr].wp)
+                )
                 {
 
-
-                    if(
-                        (_UNITS[itr_units].wx == AI_Own_Stacks[Loop_Var].wx)
-                        &&
-                        (_UNITS[itr_units].wy == AI_Own_Stacks[Loop_Var].wy)
-                        &&
-                        (_UNITS[itr_units].wp == AI_Own_Stacks[Loop_Var].wp)
-                    )
-                    {
-
-                        AI_Own_Stacks[Loop_Var].unit_count += 1;
-
-                        if(_unit_type_table[_UNITS[itr_units].type].Transport > 0)
-                        {
-
-                            AI_Own_Stacks[Loop_Var].abilities |= AICAP_Transport;
-
-                            AI_Own_Stacks[Loop_Var].transport_capacity += _unit_type_table[_UNITS[itr_units].type].Transport;
-
-                            effective_unit_strength = 0;
-
-                        }
-                        else
-                        {
-
-                            // subtract boatrider from capacity
-                            if(
-                                (unit_has_watertravel == ST_FALSE)
-                                &&
-                                (unit_has_airtravel == ST_FALSE)
-                            )
-                            {
-
-                                AI_Own_Stacks[Loop_Var].transport_capacity -= 1;
-
-                            }
-
-                        }
-
-                        if(_unit_type_table[_UNITS[itr_units].type].Construction > 0)
-                        {
-
-                            AI_Own_Stacks[Loop_Var].abilities |= AICAP_RoadBuild;
-
-                            effective_unit_strength = 0;
-
-                        }
-
-                        if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_PURIFY) != 0)
-                        {
-
-                            AI_Own_Stacks[Loop_Var].abilities |= AICAP_Purify;
-
-                        }
-
-                        if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_CREATEOUTPOST) != 0)
-                        {
-
-                            AI_Own_Stacks[Loop_Var].abilities |= AICAP_Settler;
-
-                            effective_unit_strength = 0;
-
-                        }
-
-                        if(
-                            (player_idx == NEUTRAL_PLAYER_IDX)
-                            &&
-                            ((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_FANTASTIC) != 0)
-                        )
-                        {
-
-                            AI_Own_Stacks[Loop_Var].abilities |= AICAP_Settler;
-
-                            effective_unit_strength = 0;
-
-                        }
-
-                        // BUGBUG double checking transport capacity
-                        if(_unit_type_table[_UNITS[itr_units].type].Transport > 0)
-                        {
-
-                            AI_Own_Stacks[Loop_Var].abilities |= AICAP_Transport;
-
-                            AI_Own_Stacks[Loop_Var].transport_capacity += _unit_type_table[_UNITS[itr_units].type].Transport;
-
-                            effective_unit_strength = 0;
-
-                        }
-
-                        if(
-                            (unit_has_airtravel == ST_FALSE)
-                            &&
-                            (unit_has_watertravel == ST_FALSE)
-                        )
-                        {
-
-                            AI_Own_Stacks[Loop_Var].abilities ^= AICAP_LandOnly;
-
-                        }
-
-                        if(unit_has_windwalking == ST_TRUE)
-                        {
-
-                            AI_Own_Stacks[Loop_Var].abilities |= AICAP_WindWalk;
-
-                            AI_Own_Stacks[Loop_Var].transport_capacity = 8;
-
-                        }
-
-                        if(unit_is_hero == ST_TRUE)
-                        {
-
-                            AI_Own_Stacks[Loop_Var].abilities |= AICAP_Hero;
-
-                            effective_unit_strength *= 2;
-
-                        }
-
-                        if(unit_has_melding == ST_TRUE)
-                        {
-
-                            AI_Own_Stacks[Loop_Var].abilities |= AICAP_Melding;
-
-                        }
-
-                        // BUGBUG double checking construction
-                        if(_unit_type_table[_UNITS[itr_units].type].Construction > 0)
-                        {
-
-                            AI_Own_Stacks[Loop_Var].abilities |= AICAP_RoadBuild;
-
-                            effective_unit_strength = 0;
-
-                        }
-
-                        AI_Own_Stacks[Loop_Var].value += effective_unit_strength;
-
-                        if(_UNITS[itr_units].Status == us_BuildRoad)
-                        {
-
-                            AI_Own_Stacks[Loop_Var].unit_status = us_BuildRoad;
-
-                        }
-                        else
-                        {
-
-                            if(
-                                (AI_Own_Stacks[Loop_Var].unit_status != us_BuildRoad)
-                                &&
-                                (_UNITS[itr_units].Status == us_GOTO)
-                            )
-                            {
-
-                                AI_Own_Stacks[Loop_Var].unit_status = us_GOTO;
-
-                            }
-
-                        }
-    
-                        Processed_Unit = ST_TRUE;
-
-                    }
-
-                }
-
-                if(Processed_Unit == ST_FALSE)
-                {
-
-                    AI_Own_Stacks[AI_Own_Stack_Count].wx = _UNITS[itr_units].wx;
-
-                    AI_Own_Stacks[AI_Own_Stack_Count].wy = _UNITS[itr_units].wy;
-
-                    AI_Own_Stacks[AI_Own_Stack_Count].wp = _UNITS[itr_units].wp;
-
-                    AI_Own_Stacks[AI_Own_Stack_Count].abilities = AICAP_LandOnly;
-
-                    AI_Own_Stacks[AI_Own_Stack_Count].value = 0;
-
-                    AI_Own_Stacks[AI_Own_Stack_Count].transport_capacity = 0;
-
-                    AI_Own_Stacks[AI_Own_Stack_Count].unit_count = 1;
-
-                    AI_Own_Stacks[AI_Own_Stack_Count].landmass_idx = 0;
-
-                    AI_Own_Stacks[AI_Own_Stack_Count].landmass_idx = _landmasses[((_UNITS[itr_units].wp * WORLD_SIZE) + (_UNITS[itr_units].wy * WORLD_WIDTH) + _UNITS[itr_units].wx)];
+                    _ai_all_own_stacks[itr].unit_count += 1;
 
                     if(_unit_type_table[_UNITS[itr_units].type].Transport > 0)
                     {
 
-                        AI_Own_Stacks[AI_Own_Stack_Count].abilities |= AICAP_Transport;
+                        _ai_all_own_stacks[itr].abilities |= AICAP_Transport;
 
-                        AI_Own_Stacks[AI_Own_Stack_Count].transport_capacity += _unit_type_table[_UNITS[itr_units].type].Transport;
+                        _ai_all_own_stacks[itr].transport_capacity += _unit_type_table[_UNITS[itr_units].type].Transport;
 
                         effective_unit_strength = 0;
 
@@ -1482,6 +1327,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
                     else
                     {
 
+                        // subtract boatrider from capacity
                         if(
                             (unit_has_watertravel == ST_FALSE)
                             &&
@@ -1489,7 +1335,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
                         )
                         {
 
-                            AI_Own_Stacks[AI_Own_Stack_Count].transport_capacity -= 1;
+                            _ai_all_own_stacks[itr].transport_capacity -= 1;
 
                         }
 
@@ -1498,7 +1344,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
                     if(_unit_type_table[_UNITS[itr_units].type].Construction > 0)
                     {
 
-                        AI_Own_Stacks[AI_Own_Stack_Count].abilities |= AICAP_RoadBuild;
+                        _ai_all_own_stacks[itr].abilities |= AICAP_RoadBuild;
 
                         effective_unit_strength = 0;
 
@@ -1507,14 +1353,39 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
                     if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_PURIFY) != 0)
                     {
 
-                        AI_Own_Stacks[AI_Own_Stack_Count].abilities |= AICAP_Purify;
+                        _ai_all_own_stacks[itr].abilities |= AICAP_Purify;
 
                     }
 
                     if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_CREATEOUTPOST) != 0)
                     {
 
-                        AI_Own_Stacks[AI_Own_Stack_Count].abilities |= AICAP_Settler;
+                        _ai_all_own_stacks[itr].abilities |= AICAP_Settler;
+
+                        effective_unit_strength = 0;
+
+                    }
+
+                    if(
+                        (player_idx == NEUTRAL_PLAYER_IDX)
+                        &&
+                        ((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_FANTASTIC) != 0)
+                    )
+                    {
+
+                        _ai_all_own_stacks[itr].abilities |= AICAP_Settler;
+
+                        effective_unit_strength = 0;
+
+                    }
+
+                    /* OGBUG  duplicate transport check */
+                    if(_unit_type_table[_UNITS[itr_units].type].Transport > 0)
+                    {
+
+                        _ai_all_own_stacks[itr].abilities |= AICAP_Transport;
+
+                        _ai_all_own_stacks[itr].transport_capacity += _unit_type_table[_UNITS[itr_units].type].Transport;
 
                         effective_unit_strength = 0;
 
@@ -1527,124 +1398,254 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
                     )
                     {
 
-                        AI_Own_Stacks[AI_Own_Stack_Count].abilities ^= AICAP_LandOnly;
+                        _ai_all_own_stacks[itr].abilities ^= AICAP_LandOnly;
 
                     }
 
                     if(unit_has_windwalking == ST_TRUE)
                     {
 
-                        AI_Own_Stacks[AI_Own_Stack_Count].abilities |= AICAP_WindWalk;
+                        _ai_all_own_stacks[itr].abilities |= AICAP_WindWalk;
 
-                        AI_Own_Stacks[AI_Own_Stack_Count].transport_capacity = 8;
+                        _ai_all_own_stacks[itr].transport_capacity = 8;
 
                     }
 
                     if(unit_is_hero == ST_TRUE)
                     {
 
-                        AI_Own_Stacks[AI_Own_Stack_Count].abilities |= AICAP_Hero;
+                        _ai_all_own_stacks[itr].abilities |= AICAP_Hero;
 
-                        /* ¿ BUGBUG does not do `effective_unit_strength *= 2;` ? */
+                        effective_unit_strength = ((effective_unit_strength * 2) / 3);
 
                     }
 
                     if(unit_has_melding == ST_TRUE)
                     {
 
-                        AI_Own_Stacks[AI_Own_Stack_Count].abilities |= AICAP_Melding;
+                        _ai_all_own_stacks[itr].abilities |= AICAP_Melding;
 
                     }
 
-                    AI_Own_Stacks[AI_Own_Stack_Count].value += effective_unit_strength;
+                    /* OGBUG  duplicate construction check */
+                    if(_unit_type_table[_UNITS[itr_units].type].Construction > 0)
+                    {
 
-                    AI_Own_Stacks[AI_Own_Stack_Count].unit_status = _UNITS[itr_units].Status;
+                        _ai_all_own_stacks[itr].abilities |= AICAP_RoadBuild;
+
+                        effective_unit_strength = 0;
+
+                    }
+
+                    _ai_all_own_stacks[itr].value += effective_unit_strength;
 
                     if(_UNITS[itr_units].Status == us_BuildRoad)
                     {
 
-                        AI_Own_Stacks[AI_Own_Stack_Count].unit_status = us_BuildRoad;
+                        _ai_all_own_stacks[itr].unit_status = us_BuildRoad;
 
                     }
                     else
                     {
 
                         if(
-                            (AI_Own_Stacks[AI_Own_Stack_Count].unit_status != us_BuildRoad)
+                            (_ai_all_own_stacks[itr].unit_status != us_BuildRoad)
                             &&
                             (_UNITS[itr_units].Status == us_GOTO)
                         )
                         {
 
-                            AI_Own_Stacks[AI_Own_Stack_Count].unit_status = us_GOTO;
+                            _ai_all_own_stacks[itr].unit_status = us_GOTO;
 
                         }
 
                     }
 
-                    if(player_idx != NEUTRAL_PLAYER_IDX)
+                    seen_unit = ST_TRUE;
+
+                }
+
+            }
+
+            /* Units Loop; Own Units; New Stack; loc_D35EA; light-purple (not grey-purple) */
+            if(seen_unit == ST_FALSE)
+            {
+
+                _ai_all_own_stacks[_ai_all_own_stack_count].wx = _UNITS[itr_units].wx;
+                _ai_all_own_stacks[_ai_all_own_stack_count].wy = _UNITS[itr_units].wy;
+                _ai_all_own_stacks[_ai_all_own_stack_count].wp = _UNITS[itr_units].wp;
+                _ai_all_own_stacks[_ai_all_own_stack_count].abilities = AICAP_LandOnly;
+                _ai_all_own_stacks[_ai_all_own_stack_count].value = 0;
+                _ai_all_own_stacks[_ai_all_own_stack_count].transport_capacity = 0;
+                _ai_all_own_stacks[_ai_all_own_stack_count].unit_count = 1;
+                _ai_all_own_stacks[_ai_all_own_stack_count].landmass_idx = 0;
+                _ai_all_own_stacks[_ai_all_own_stack_count].landmass_idx = _landmasses[((_UNITS[itr_units].wp * WORLD_SIZE) + (_UNITS[itr_units].wy * WORLD_WIDTH) + _UNITS[itr_units].wx)];
+
+                if(_unit_type_table[_UNITS[itr_units].type].Transport > 0)
+                {
+
+                    _ai_all_own_stacks[_ai_all_own_stack_count].abilities |= AICAP_Transport;
+
+                    _ai_all_own_stacks[_ai_all_own_stack_count].transport_capacity += _unit_type_table[_UNITS[itr_units].type].Transport;
+
+                    effective_unit_strength = 0;
+
+                }
+                else
+                {
+
+                    if(
+                        (unit_has_watertravel == ST_FALSE)
+                        &&
+                        (unit_has_airtravel == ST_FALSE)
+                    )
                     {
 
-                        AI_Own_Stack_Count++;
+                        _ai_all_own_stacks[_ai_all_own_stack_count].transport_capacity -= 1;
 
                     }
-                    else
+
+                }
+
+                if(_unit_type_table[_UNITS[itr_units].type].Construction > 0)
+                {
+
+                    _ai_all_own_stacks[_ai_all_own_stack_count].abilities |= AICAP_RoadBuild;
+
+                    effective_unit_strength = 0;
+
+                }
+
+                if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_PURIFY) != 0)
+                {
+
+                    _ai_all_own_stacks[_ai_all_own_stack_count].abilities |= AICAP_Purify;
+
+                }
+
+                if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_CREATEOUTPOST) != 0)
+                {
+
+                    _ai_all_own_stacks[_ai_all_own_stack_count].abilities |= AICAP_Settler;
+
+                    effective_unit_strength = 0;
+
+                }
+
+                if(
+                    (unit_has_airtravel == ST_FALSE)
+                    &&
+                    (unit_has_watertravel == ST_FALSE)
+                )
+                {
+
+                    _ai_all_own_stacks[_ai_all_own_stack_count].abilities ^= AICAP_LandOnly;
+
+                }
+
+                if(unit_has_windwalking == ST_TRUE)
+                {
+
+                    _ai_all_own_stacks[_ai_all_own_stack_count].abilities |= AICAP_WindWalk;
+
+                    _ai_all_own_stacks[_ai_all_own_stack_count].transport_capacity = 8;
+
+                }
+
+                if(unit_is_hero == ST_TRUE)
+                {
+
+                    _ai_all_own_stacks[_ai_all_own_stack_count].abilities |= AICAP_Hero;
+
+                    /* ¿ OGBUG  does not do effective_unit_strength += 50% ? */
+
+                }
+
+                if(unit_has_melding == ST_TRUE)
+                {
+
+                    _ai_all_own_stacks[_ai_all_own_stack_count].abilities |= AICAP_Melding;
+
+                }
+
+                _ai_all_own_stacks[_ai_all_own_stack_count].value += effective_unit_strength;
+
+                _ai_all_own_stacks[_ai_all_own_stack_count].unit_status = _UNITS[itr_units].Status;
+
+                if(_UNITS[itr_units].Status == us_BuildRoad)
+                {
+
+                    _ai_all_own_stacks[_ai_all_own_stack_count].unit_status = us_BuildRoad;
+
+                }
+                else
+                {
+
+                    if(
+                        (_ai_all_own_stacks[_ai_all_own_stack_count].unit_status != us_BuildRoad)
+                        &&
+                        (_UNITS[itr_units].Status == us_GOTO)
+                    )
                     {
 
-                        Processed_Unit = ST_FALSE;
-
-                        if((AI_Own_Stacks[AI_Own_Stack_Count].abilities & AICAP_Settler) == 0)
-                        {
-
-                            Processed_Unit = ST_TRUE;
-                            
-                        }
-
-                        for(City_Loop_Var = 0; ((City_Loop_Var < _cities) && (Processed_Unit == ST_FALSE)); City_Loop_Var++)
-                        {
-
-                            if(
-                            (_CITIES[City_Loop_Var].wx == AI_Own_Stacks[AI_Own_Stack_Count].wx)
-                            &&
-                            (_CITIES[City_Loop_Var].wy == AI_Own_Stacks[AI_Own_Stack_Count].wy)
-                            &&
-                            (_CITIES[City_Loop_Var].wp == AI_Own_Stacks[AI_Own_Stack_Count].wp)
-                            )
-                            {
-
-                                Processed_Unit = ST_TRUE;
-
-                            }
-
-                        }
-
-                        if(Processed_Unit == ST_FALSE)
-                        {
-
-                            AI_Own_Stack_Count++;
-
-                        }
+                        _ai_all_own_stacks[_ai_all_own_stack_count].unit_status = us_GOTO;
 
                     }
 
-                    for(Loop_Var = 0; Loop_Var < _cities; Loop_Var++)
+                }
+
+                if(player_idx != NEUTRAL_PLAYER_IDX)
+                {
+
+                    _ai_all_own_stack_count++;
+
+                }
+                else
+                {
+
+                    seen_unit = ST_FALSE;
+
+                    if((_ai_all_own_stacks[_ai_all_own_stack_count].abilities & AICAP_Settler) == 0)
+                    {
+                        seen_unit = ST_TRUE;
+                    }
+
+                    for(City_Loop_Var = 0; ((City_Loop_Var < _cities) && (seen_unit == ST_FALSE)); City_Loop_Var++)
                     {
 
                         if(
-                            (_UNITS[itr_units].wx == _CITIES[Loop_Var].wx)
-                            &&
-                            (_UNITS[itr_units].wy == _CITIES[Loop_Var].wy)
-                            &&
-                            (_UNITS[itr_units].wp == _CITIES[Loop_Var].wp)
+                        (_CITIES[City_Loop_Var].wx == _ai_all_own_stacks[_ai_all_own_stack_count].wx)
+                        &&
+                        (_CITIES[City_Loop_Var].wy == _ai_all_own_stacks[_ai_all_own_stack_count].wy)
+                        &&
+                        (_CITIES[City_Loop_Var].wp == _ai_all_own_stacks[_ai_all_own_stack_count].wp)
                         )
                         {
-
-                            AI_Own_Garr_Strs[Loop_Var] += effective_unit_strength;
-
+                            seen_unit = ST_TRUE;
                         }
 
                     }
 
+                    if(seen_unit == ST_FALSE)
+                    {
+                        _ai_all_own_stack_count++;
+                    }
+
+                }
+
+            }  /* if(seen_unit == ST_FALSE) */
+
+            for(itr = 0; itr < _cities; itr++)
+            {
+                if(
+                    (_UNITS[itr_units].wx == _CITIES[itr].wx)
+                    &&
+                    (_UNITS[itr_units].wy == _CITIES[itr].wy)
+                    &&
+                    (_UNITS[itr_units].wp == _CITIES[itr].wp)
+                )
+                {
+                    _ai_all_own_garrison_strengths[itr] += effective_unit_strength;
                 }
 
             }
@@ -1654,56 +1655,45 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
     }
 
 
-    // ; perform a hostility-based doubling of enemy garrison
-    // ; values... or that's what should happen I think
-    // ; BUG: uses 3 different sets of variables that have no
-    // ;  connection to each other whatsoever
-    // ¿ BUGBUG  checks hostile, not hostile or wose ?
-    for(itr_units = 0; itr_units < AI_Enemy_Stack_Count; itr_units++)
+    /* OGBUG  doesn't set city_owner_idx */
+    /* OGBUG  _ai_all_enemy_garrison_strengths[] is per city not per stack */
+    /* OGBUG  should check high-hostility `>= 2` */
+    for(itr_units = 0; itr_units < _ai_all_enemy_stack_count; itr_units++)
     {
 
-        if(_players[player_idx].Hostility[city_owner_idx] == 2)  /* ; BUG: variable not set up */
+        if(_players[player_idx].Hostility[city_owner_idx] == 2)
         {
 
-            AI_NME_Garrison_Strs[itr_units] *= 2;
+            _ai_all_enemy_garrison_strengths[itr_units] *= 2;
 
         }
 
     }
 
 
-    // ; remove AICAP_LandOnly from any owned stacks that also
-    // ; have AICAP_WindWalk
-    for(itr_units = 0; itr_units < AI_Own_Stack_Count; itr_units++)
+    /* OGBUG  mixed up iterators; c&p error? */
+    /* OGBUG  should be NOT instead of OR; c&p error? */
+    for(itr_units = 0; itr_units < _ai_all_own_stack_count; itr_units++)
     {
-
-        if((AI_Own_Stacks[itr_units].abilities & AICAP_WindWalk) != 0)
+        if((_ai_all_own_stacks[itr_units].abilities & AICAP_WindWalk) != 0)
         {
-
-            AI_Own_Stacks[Loop_Var].abilities |= AICAP_LandOnly;
-
+            _ai_all_own_stacks[itr].abilities |= AICAP_LandOnly;
         }
-
     }
 
 
-    // ; count the transport units into a global variable
+    /* Eh? Might as well count up the transport units while we're here. */
     ai_transport_count = 0;
-
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-
         if(
             (_UNITS[itr_units].owner_idx == player_idx)
             &&
             (_unit_type_table[_UNITS[itr_units].type].Transport > 0)
         )
         {
-
             ai_transport_count++;
-
         }
-
     }
 
 }
