@@ -3528,7 +3528,7 @@ BUG? resets the units to plane 0 after disbanding
 
 kill units until gold,food,mana income == upkeep
 
-uses AI_ContBalances[][]
+uses _ai_landmass_strength_ratios[][]
 
 AI_Set_Unit_Orders(itr_players)
     |-> AI_Balance_Upkeep(itr_players)
@@ -3608,7 +3608,7 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
 
                     unit_value = (Effective_Unit_Strength(itr_units) / 10);
 
-                    if(AI_ContBalances[unit_wp][unit_landmass_idx] == 0)
+                    if(_ai_landmass_strength_ratios[unit_wp][unit_landmass_idx] == 0)
                     {
 
                         unit_value *= 2;
@@ -3687,7 +3687,7 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
                     // BUGBUG ¿ should use Effective_Unit_Type_Strength() or pass itr_units ?
                     unit_value = (Effective_Unit_Strength(_UNITS[itr_units].type) / 10);
 
-                    if(AI_ContBalances[unit_wp][unit_landmass_idx] == 0)
+                    if(_ai_landmass_strength_ratios[unit_wp][unit_landmass_idx] == 0)
                     {
 
                         unit_value *= 2;

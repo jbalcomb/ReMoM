@@ -93,8 +93,8 @@ struct s_AI_TARGET
     /* 00 */ uint8_t wx;
     /* 01 */ uint8_t wy;
     /* 02 */ uint8_t wp;
-    /* 03 */ uint8_t field_3;
-    /* 04 */ int16_t value;
+    /* 03 */ uint8_t field_3;  // landmass_idx?  (Q: 2-byte alignment padding? A: Nope. Used as 1-byte, signed in sub_F64C2())
+    /* 04 */ int16_t value;  // in AI_Landmass_Values_And_Strengths(), looks like unsigned 32-bit?
     /* 06 */ 
 };
 
@@ -2871,25 +2871,25 @@ extern int16_t AI_SeekTransport_Ys[15];
 extern int16_t AI_SeekTransport_Xs[15];
 
 // WZD dseg:90F2
-extern int16_t * AI_ContBalances[2];
+extern int16_t * _ai_landmass_strength_ratios[2];
 
 // WZD dseg:90F6
 /*
 allocated in Allocate_AI_Data()
 */
-extern int16_t * AI_Cont_Nme_Val[2];
+extern int16_t * _ai_landmass_enemy_values[2];
 
 // WZD dseg:90FA
 /*
 allocated in Allocate_AI_Data()
 */
-extern int16_t * AI_Cont_Own_Val[2];
+extern int16_t * _ai_landmass_own_values[2];
 
 // WZD dseg:90FE
-extern int16_t * CRP_AI_Cont_Nme_Str[2];
+extern int16_t * _ai_landmass_enemy_strengths[2];
 
 // WZD dseg:9102
-extern int16_t * AI_Cont_Own_Str[2];
+extern int16_t * _ai_landmass_own_strengths[2];
 
 // WZD dseg:9106
 extern struct s_AI_TARGET * _ai_all_enemy_stacks;

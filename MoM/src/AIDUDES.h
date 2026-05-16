@@ -29,7 +29,7 @@ int16_t AI_Accept_Mercenaries(int16_t player_idx, int16_t cost);
 void AI_Next_Turn(void);
 
 // WZD o145p03
-void AI_Continent_Eval__WIP(int16_t player_idx);
+void AI_Landmass_Values_And_Strengths(int16_t player_idx);
 
 // WZD o145p04
 void AI_Update_Magic_Power(int16_t player);

@@ -1,4 +1,9 @@
 
+SEEALSO: MoM-NextTurn-AI-Landmasses.md
+SEEALSO: MoM-NextTurn-AI.md
+
+
+
 Continent
 Continents
 Land Mass
@@ -113,7 +118,7 @@ A: My best guess is that we end up with an array for each continent that holds t
 
 
 
-## AI_Continent_Eval__WIP()
+## AI_Landmass_Values_And_Strengths()
 
 AIDUDES.C
 // WZD o145p03
@@ -136,7 +141,7 @@ AI_Enemy_Stacks[]
 
 AI_Cont_Own_Str[][]
 CRP_AI_Cont_Nme_Str[][]
-...set in AI_Continent_Eval__WIP()
+...set in AI_Landmass_Values_And_Strengths()
 
 
 ...set in AI_Player_Calculate_Target_Values()

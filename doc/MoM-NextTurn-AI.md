@@ -15,7 +15,7 @@ AI_Active_War_Count  ==>  _cp_hostile_opponent_count
 AI_Count_Active_Wars__WIP  ==>  Player_Hostile_Opponents()
 AI_GetThreat_UNIT__WIP() ==>  Effective_Unit_Strength()
 AI_OVL_Eval_Assets__WIP()  ==>  AI_Player_Calculate_Target_Values()
-AI_Continent_Eval__WIP()
+AI_Landmass_Values_And_Strengths()
 AI_OVL_GetSpellList__WIP()  ==>  AI_Compute_Spells_Info()
 AI_OVL_SpellPicker() ==> AI_Spell_Select()
 AI_Alchemy()  ==>  AI_Update_Gold_And_Mana_Reserves()
@@ -234,16 +234,16 @@ AI_Own_City_Values
 
 
 
-## AI_Continent_Eval__WIP()
+## AI_Landmass_Values_And_Strengths()
 
-sets AI_Cont_Own_Str[], AI_Cont_Own_Val[], AI_Cont_Nme_Val[], AI_ContBalances[]
+sets AI_Cont_Own_Str[], AI_Cont_Own_Val[], AI_Cont_Nme_Val[], _ai_landmass_strength_ratios[]
 
 
 AI_Cont_Own_Str[]
 CRP_AI_Cont_Nme_Str[]
 AI_Cont_Own_Val[]
 AI_Cont_Nme_Val[]
-AI_ContBalances[]
+_ai_landmass_strength_ratios[]
 
 
 AI_Cont_Own_Str[0]
@@ -270,10 +270,10 @@ AI_Cont_Nme_Val[]
         if(Continent_Balance < 0)
             Continent_Balance = 0;
     ...
-    AI_ContBalances[0] = CRP_AI_Cont_Nme_Str[0];
-    AI_ContBalances[1] = CRP_AI_Cont_Nme_Str[1];
+    _ai_landmass_strength_ratios[0] = CRP_AI_Cont_Nme_Str[0];
+    _ai_landmass_strength_ratios[1] = CRP_AI_Cont_Nme_Str[1];
     ...
-    AI_ContBalances[stack_wp][landmass_idx] = Continent_Balance;
+    _ai_landmass_strength_ratios[stack_wp][landmass_idx] = Continent_Balance;
 so, CRP_AI_Cont_Nme_Str[] gets overwritten...
 
 

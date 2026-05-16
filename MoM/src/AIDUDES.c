@@ -236,7 +236,7 @@ void AI_Next_Turn(void)
 
         AI_Player_Calculate_Target_Values(player_idx);
 
-        AI_Continent_Eval__WIP(player_idx);
+        AI_Landmass_Values_And_Strengths(player_idx);
 
         AI_Pick_Action_Conts__WIP(player_idx);
 
@@ -371,239 +371,164 @@ void AI_Next_Turn(void)
 
 
 // WZD o145p03
-// drake178: AI_Continent_Eval()
 /*
-evaluates own and enemy strength and target values on
-the first 60 continents
-
-BUG: there can be more than 60 continents
+uses values just calculated in AI_Player_Calculate_Target_Values()
+odd that it calculates landmass_idx instead of using the stack struct value
 */
-/*
-
-
-
-*/
-void AI_Continent_Eval__WIP(int16_t player_idx)
+/**
+ * @brief Aggregates per-landmass military strength and strategic value totals
+ *        for one AI player.
+ *
+ * Using the city, garrison, and stack valuation data produced by
+ * @c AI_Player_Calculate_Target_Values(), this routine clears the shared
+ * landmass summary tables for both planes and then repopulates them from the
+ * player's own stacks, hostile stacks, intact lairs, city values, and magic
+ * nodes. Own and enemy military pressure are tracked separately from own and
+ * enemy strategic value so later AI passes can decide where the player is weak
+ * or overcommitted.
+ *
+ * After accumulation, the function computes one final balance value per plane
+ * and landmass by subtracting enemy strength and a defense-overhead fraction of
+ * the player's own value from the player's own strength. Positive balances are
+ * then reduced by a fixed 25-point hysteresis threshold before being written to
+ * the final strength-ratio table.
+ *
+ * @param player_idx Index of the wizard whose ownership perspective should be
+ *                   used when classifying node value as friendly or enemy.
+ *
+ * @return This function does not return a value. It refreshes the shared
+ *         arrays @c _ai_landmass_own_strengths,
+ *         @c _ai_landmass_enemy_strengths,
+ *         @c _ai_landmass_own_values,
+ *         @c _ai_landmass_enemy_values, and
+ *         @c _ai_landmass_strength_ratios.
+ *
+ * @note The routine depends on the stack and city valuation buffers having
+ *       already been rebuilt for the same player earlier in the AI turn.
+ * @note Intact lairs always contribute to enemy strength, and magic node value
+ *       is scaled by @c (_magic + 1) * 2 before being added to the owning or
+ *       opposing landmass totals.
+ */
+void AI_Landmass_Values_And_Strengths(int16_t player_idx)
 {
-    int16_t Continent_Balance = 0;
-    int16_t stack_wp = 0;
+    int16_t strength_ratio = 0;
+    int16_t wp = 0;
     int16_t landmass_idx = 0;
-    int16_t itr = 0;  // _DI_
-    uint8_t DBG_guard1_count = 0;
-    uint8_t DBG_guard2_count = 0;
-    uint8_t DBG_guard1_unit_type = 0;
-    uint8_t DBG_guard2_unit_type = 0;
-    int16_t DBG_guard1_unit_type_cost = 0;
-    int16_t DBG_guard2_unit_type_cost = 0;
-    int16_t DBG_CRP_AI_Cont_Nme_Str = 0;
+    int16_t itr = 0;
+    int16_t node_value = 0;
 
-    // ; clear the value arrays
-    // ; BUG: only supports 60 continents total
-
+    /* 1. Initialize arrays for all continents across both planes */
     for(itr = 0; itr < NUM_LANDMASSES; itr++)
     {
-
-        AI_Cont_Own_Str[0][itr] = 0;
-        AI_Cont_Own_Str[1][itr] = 0;
-
-        CRP_AI_Cont_Nme_Str[0][itr] = 0;
-        CRP_AI_Cont_Nme_Str[1][itr] = 0;
-
-        AI_Cont_Own_Val[0][itr] = 0;
-        AI_Cont_Own_Val[1][itr] = 0;
-
-        AI_Cont_Nme_Val[0][itr] = 0;
-        AI_Cont_Nme_Val[1][itr] = 0;
-
+        _ai_landmass_own_strengths[ARCANUS_PLANE][itr] = 0;
+        _ai_landmass_own_strengths[MYRROR_PLANE][itr] = 0;
+        _ai_landmass_enemy_strengths[ARCANUS_PLANE][itr] = 0;
+        _ai_landmass_enemy_strengths[MYRROR_PLANE][itr] = 0;
+        _ai_landmass_own_values[ARCANUS_PLANE][itr] = 0;
+        _ai_landmass_own_values[MYRROR_PLANE][itr] = 0;
+        _ai_landmass_enemy_values[ARCANUS_PLANE][itr] = 0;
+        _ai_landmass_enemy_values[MYRROR_PLANE][itr] = 0;
     }
 
-
-// ; add the value of owned stacks to their corresponding
-// ; continents
-// ; BUG: only evaluates the first 60 continents
-// ; BUG: the continent IDs are already stored in the
-// ;  AI stack data, there's no need to recalculate
-
+    /* 2. Calculate military strength of AI's own stacks on each continent */
+    /* IDA: light-purple */
     for(itr = 0; itr < _ai_all_own_stack_count; itr++)
     {
-
-        stack_wp = _ai_all_own_stacks[itr].wp;
-
-        landmass_idx = _landmasses[((stack_wp * WORLD_SIZE) + (_ai_all_own_stacks[itr].wy * WORLD_WIDTH) + _ai_all_own_stacks[itr].wx)];
-
+        wp = _ai_all_own_stacks[itr].wp;
+        landmass_idx = _landmasses[((wp * WORLD_SIZE) + (_ai_all_own_stacks[itr].wy * WORLD_WIDTH) + _ai_all_own_stacks[itr].wx)];
         if(landmass_idx < NUM_LANDMASSES)
         {
-
-            AI_Cont_Own_Str[stack_wp][landmass_idx] += (_ai_all_own_stacks[itr].value / 10);
-
+            /* Add 1/10th of stack value to the continent's own strength */
+            _ai_landmass_own_strengths[wp][landmass_idx] += (_ai_all_own_stacks[itr].value / 10);
         }
-
     }
 
-
-// ; add the value of enemy stacks to their corresponding
-// ; continents
-// ; 
-// ; BUG: only evaluates the first 60 continents
-
+    /* 3. Calculate military strength of enemy stacks on each continent */
+    /* IDA: grey-purple */
     for(itr = 0; itr < _ai_all_enemy_stack_count; itr++)
     {
-
-        stack_wp = _ai_all_enemy_stacks[itr].wp;
-
-        landmass_idx = _landmasses[((stack_wp * WORLD_SIZE) + (_ai_all_enemy_stacks[itr].wy * WORLD_WIDTH) + _ai_all_enemy_stacks[itr].wx)];
-
+        wp = _ai_all_enemy_stacks[itr].wp;
+        landmass_idx = _landmasses[((wp * WORLD_SIZE) + (_ai_all_enemy_stacks[itr].wy * WORLD_WIDTH) + _ai_all_enemy_stacks[itr].wx)];
         if(landmass_idx < NUM_LANDMASSES)
         {
-
-            CRP_AI_Cont_Nme_Str[stack_wp][landmass_idx] += (_ai_all_enemy_stacks[itr].value / 10);
-
+            _ai_landmass_enemy_strengths[wp][landmass_idx] += (_ai_all_enemy_stacks[itr].value / 10);
         }
-
     }
 
-
-// ; add the value of encounters (as enemy stacks) to
-// ; their corresponding continents
-// ; 
-// ; BUG: only evaluates the first 60 continents
-
+    /* 4. Add strength of monsters inside intact Lairs to enemy strength */
     for(itr = 0; itr < NUM_LAIRS; itr++)
     {
-
-        if(_LAIRS[itr].intact != ST_TRUE)
-        {
-            continue;
-        }
-
-        stack_wp = _LAIRS[itr].wp;
-
-        landmass_idx = _landmasses[((stack_wp * WORLD_SIZE) + (_LAIRS[itr].wy * WORLD_WIDTH) + _LAIRS[itr].wx)];
-
+        if(_LAIRS[itr].intact != ST_TRUE) { continue; }
+        wp = _LAIRS[itr].wp;
+        landmass_idx = _landmasses[((wp * WORLD_SIZE) + (_LAIRS[itr].wy * WORLD_WIDTH) + _LAIRS[itr].wx)];
         if(landmass_idx < NUM_LANDMASSES)
         {
-
-            // CRP_AI_Cont_Nme_Str[stack_wp][landmass_idx] += ((_LAIRS[itr].guard1_count & 0x0F) * (_unit_type_table[_LAIRS[itr].guard1_unit_type].cost / 10));
-
-            // CRP_AI_Cont_Nme_Str[stack_wp][landmass_idx] += ((_LAIRS[itr].guard2_count & 0x0F) * (_unit_type_table[_LAIRS[itr].guard2_unit_type].cost / 10));
-
-            DBG_guard1_count = _LAIRS[itr].guard1_count;
-            DBG_guard2_count = _LAIRS[itr].guard2_count;
-            DBG_guard1_unit_type = _LAIRS[itr].guard1_unit_type;
-            DBG_guard2_unit_type = _LAIRS[itr].guard2_unit_type;
-            DBG_guard1_count = (DBG_guard1_count & 0x0F);
-            DBG_guard2_count = (DBG_guard2_count & 0x0F);
-            DBG_guard1_unit_type_cost = _unit_type_table[DBG_guard1_unit_type].cost;
-            DBG_guard2_unit_type_cost = _unit_type_table[DBG_guard2_unit_type].cost;
-
-            DBG_CRP_AI_Cont_Nme_Str += (DBG_guard1_count * (DBG_guard1_unit_type_cost / 10));
-            DBG_CRP_AI_Cont_Nme_Str += (DBG_guard2_count * (DBG_guard2_unit_type_cost / 10));
-
-            // CRP_AI_Cont_Nme_Str[stack_wp][landmass_idx] += DBG_CRP_AI_Cont_Nme_Str;
-            DBG_CRP_AI_Cont_Nme_Str = CRP_AI_Cont_Nme_Str[stack_wp][landmass_idx];
-            DBG_CRP_AI_Cont_Nme_Str += (DBG_guard1_count * (DBG_guard1_unit_type_cost / 10));
-            DBG_CRP_AI_Cont_Nme_Str += (DBG_guard2_count * (DBG_guard2_unit_type_cost / 10));
-            CRP_AI_Cont_Nme_Str[stack_wp][landmass_idx] = DBG_CRP_AI_Cont_Nme_Str;
-
+            /* Strength = Guard Count * (Unit Cost / 10) */
+            /* guard_count is masked with 0Fh (low nibble) */
+            _ai_landmass_enemy_strengths[wp][landmass_idx] += ((_LAIRS[itr].guard1_count & 0x0F) * (_unit_type_table[_LAIRS[itr].guard1_unit_type].cost / 10));
+            _ai_landmass_enemy_strengths[wp][landmass_idx] += ((_LAIRS[itr].guard2_count & 0x0F) * (_unit_type_table[_LAIRS[itr].guard2_unit_type].cost / 10));
         }
-
     }
 
-
-// ; add the value of cities to their corresponding
-// ; continent tables
-// ; 
-// ; BUG: only evaluates the first 60 continents
-
+    /* 5. Accumulate strategic value of cities on each continent */
     for(itr = 0; itr < _cities; itr++)
     {
-
-        stack_wp = _CITIES[itr].wp;
-
-        landmass_idx = _landmasses[((stack_wp * WORLD_SIZE) + (_CITIES[itr].wy * WORLD_WIDTH) + _CITIES[itr].wx)];
-
+        wp = _CITIES[itr].wp;
+        landmass_idx = _landmasses[((wp * WORLD_SIZE) + (_CITIES[itr].wy * WORLD_WIDTH) + _CITIES[itr].wx)];
         if(landmass_idx < NUM_LANDMASSES)
         {
-
-            AI_Cont_Own_Val[stack_wp][landmass_idx] = _ai_all_own_city_values[itr];
-
-            AI_Cont_Nme_Val[stack_wp][landmass_idx] = _ai_all_enemy_city_values[itr];
-
+            _ai_landmass_own_values[wp][landmass_idx] = _ai_all_own_city_values[itr];
+            _ai_landmass_enemy_values[wp][landmass_idx] = _ai_all_enemy_city_values[itr];
         }
-
     }
 
-
-// ; add the value of nodes to their corresponding
-// ; continent tables
-// ; 
-// ; BUG: only evaluates the first 60 continents
-
+    /* 6. Accumulate strategic value of Magic Nodes on each continent */
     for(itr = 0; itr < NUM_NODES; itr++)
     {
-
-        stack_wp = _NODES[itr].wp;
-
-        landmass_idx = _landmasses[((stack_wp * WORLD_SIZE) + (_NODES[itr].wy * WORLD_WIDTH) + _NODES[itr].wx)];
-
+        wp = _NODES[itr].wp;
+        landmass_idx = _landmasses[((wp * WORLD_SIZE) + (_NODES[itr].wy * WORLD_WIDTH) + _NODES[itr].wx)];
         if(landmass_idx < NUM_LANDMASSES)
         {
-
+            /* convert game option magic level from index to number */
+            /* Value = Power * (Global Magic + 1) * 2 */
+            node_value = _NODES[itr].power * (_magic + 1) * 2;
             if(_NODES[itr].owner_idx == player_idx)
             {
-
-                AI_Cont_Own_Val[stack_wp][landmass_idx] = (_NODES[itr].power * _magic);
-
+                _ai_landmass_own_values[wp][landmass_idx] += node_value;
             }
             else
             {
-
-                AI_Cont_Nme_Val[stack_wp][landmass_idx] = (_NODES[itr].power * _magic);
-
+                _ai_landmass_enemy_values[wp][landmass_idx] += node_value;
             }
-
         }
-
     }
 
-
-// ; replaces the enemy strength values for each continent
-// ; with a balance value: 
-// ; own str - enemy str - (own value / 10); -25 if above
-// ; 0, but set to 0 if this would reduce it below
-// ; (negatives are stored as is)
-// ; 
-// ; BUG: only evaluates the first 60 continents
-
-    for(stack_wp = 0; stack_wp < 2; stack_wp++)
+    /* 7. Final Balance Calculation: (Own Strength - 10% of Own Value) - Enemy Strength */
+    for(wp = 0; wp < 2; wp++)
     {
-
-        for(itr = 0; itr < NUM_LANDMASSES; itr++)
+        for(landmass_idx = 0; landmass_idx < NUM_LANDMASSES; landmass_idx++)
         {
+            /* the own value subtraction is a "defense overhead" - the more value on the landmass, the more you want to protect it */
+            strength_ratio = (
+                _ai_landmass_own_strengths[wp][landmass_idx]
+                -
+                (_ai_landmass_own_values[wp][landmass_idx] / 10)
+                -
+                _ai_landmass_enemy_strengths[wp][landmass_idx]
+            );
 
-            Continent_Balance = (AI_Cont_Own_Str[stack_wp][landmass_idx] - (AI_Cont_Own_Val[stack_wp][landmass_idx] / 10) - CRP_AI_Cont_Nme_Str[stack_wp][landmass_idx]);
-
-            if(Continent_Balance > 0)
+            /* Hysteresis/Thresholding: If positive, subtract 25 to favor defensive posture unless significantly ahead. */
+            if(strength_ratio > 0)
             {
-
-                Continent_Balance -= 25;
-
-                if(Continent_Balance < 0)
+                strength_ratio -= 25;  /* DEDU  how much and for how long could 25 really impact the decision? */
+                if(strength_ratio < 0)
                 {
-
-                    Continent_Balance = 0;
-
+                    strength_ratio = 0;
                 }
-
             }
-
-            // ; own str - enemy str - own value
-            AI_ContBalances[stack_wp][landmass_idx] = Continent_Balance;
-
+            _ai_landmass_strength_ratios[wp][landmass_idx] = strength_ratio;
         }
-
     }
-
 
 }
 

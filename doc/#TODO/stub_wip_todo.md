@@ -9,7 +9,7 @@
 - [ ] AI_Magic_Strategy__WIP
 
 ## AIDUDES
-- [ ] AI_Continent_Eval__WIP
+- [ ] AI_Landmass_Values_And_Strengths
 - [ ] AI_Next_Turn
 - [ ] CONTX_CreateChains__WIP
 - [ ] CONTX_CreateLChains__WIP

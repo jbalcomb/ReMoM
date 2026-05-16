@@ -952,7 +952,7 @@ int16_t AI_SeekTransport_Ys[15];
 int16_t AI_SeekTransport_Xs[15];
 
 
-// WZD dseg:90F2 00 00                                           AI_Arc_ContBalances@ dw 0               ; DATA XREF: AI_Continent_Eval+4C5r ...
+// WZD dseg:90F2 00 00                                           AI_Arc_ContBalances@ dw 0               ; DATA XREF: AI_Landmass_Values_And_Strengths+4C5r ...
 // WZD dseg:90F2                                                                                         ; 120 LBX_NearAlloc_Next bytes
 // WZD dseg:90F2                                                                                         ; own str - enemy str - own value
 // WZD dseg:90F4 00 00                                           AI_Myr_ContBalances@ dw 0               ; DATA XREF: Allocate_AI_Data+DCw
@@ -961,36 +961,24 @@ int16_t AI_SeekTransport_Xs[15];
 
 // WZD dseg:90F2
 /*
-allocated in Allocate_AI_Data()
-*/
-int16_t * AI_ContBalances[2];
+...(the per-landmass balance computation)...
+Allocate_AI_Data()
+AI_Landmass_Values_And_Strengths()
 
-// WZD dseg:90F6
-/*
-allocated in Allocate_AI_Data()
-*/
-int16_t * AI_Cont_Nme_Val[2];
+touched first in Allocate_AI_Data()
+referenced in reverse order in both
+all 120 bytes
+Near-Allocation!!  ...allocated in Allocate_AI_Data()
 
-// WZD dseg:90FA
-/*
-allocated in Allocate_AI_Data()
-*/
-int16_t * AI_Cont_Own_Val[2];
+any reason for _ai_landmass_enemy_strengths[]?
+any reason for _ai_landmass_strength_ratios pointing to _ai_landmass_enemy_strengths[]?
 
-// WZD dseg:90FE
-// ; redundant, should not be the primary pointer
-/*
-allocated in Allocate_AI_Data()
 */
-int16_t * CRP_AI_Cont_Nme_Str[2];
-
-// WZD dseg:9102
-/*
-allocated in Allocate_AI_Data()
-2 pointers to 60 2-byte values
-holds (_ai_all_own_stacks[].Value / 10)
-*/
-int16_t * AI_Cont_Own_Str[2];
+int16_t * _ai_landmass_strength_ratios[2];
+int16_t * _ai_landmass_enemy_values[2];
+int16_t * _ai_landmass_own_values[2];
+int16_t * _ai_landmass_enemy_strengths[2];  // ; redundant, should not be the primary pointer
+int16_t * _ai_landmass_own_strengths[2];  /* holds (_ai_all_own_stacks[].Value / 10) */
 
 // WZD dseg:9106
 // allocated in Allocate_AI_Data()

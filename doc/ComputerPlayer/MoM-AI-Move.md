@@ -53,9 +53,9 @@ Definitely Done-Done:
 [x]         |-> AI_Evaluate_Hostility()
 [x]         |-> AI_Evaluate_Magic_Power_Strategy()  ... AI_Update_Magic_Power()
 [x]         |-> Player_Hostile_Opponents()
-[x]         |-> AI_Player_Calculate_Target_Values
+[x]         |-> AI_Player_Calculate_Target_Values()
+[x]         |-> AI_Landmass_Values_And_Strengths()
 
-[ ]         |-> AI_Continent_Eval__WIP
 [ ]         |-> AI_Pick_Action_Conts__WIP
 
 Allocate_AI_Data

@@ -741,16 +741,16 @@ void Allocate_AI_Data(void)
     _ai_all_enemy_stacks = (struct s_AI_TARGET *)Near_Allocate_Next(1440);
     AI_OVL_Spell_Cats = Near_Allocate_Next(92);
     CRP_AI_OVL_SpellList = Near_Allocate_Next(50);
-    AI_Cont_Own_Str[0] = (int16_t *)Near_Allocate_Next(120);
-    AI_Cont_Own_Str[1] = (int16_t *)Near_Allocate_Next(120);
-    CRP_AI_Cont_Nme_Str[0] = (int16_t *)Near_Allocate_Next(120);
-    CRP_AI_Cont_Nme_Str[1] = (int16_t *)Near_Allocate_Next(120);
-    AI_Cont_Own_Val[0] = (int16_t *)Near_Allocate_Next(120);
-    AI_Cont_Own_Val[1] = (int16_t *)Near_Allocate_Next(120);
-    AI_Cont_Nme_Val[0] = (int16_t *)Near_Allocate_Next(120);
-    AI_Cont_Nme_Val[1] = (int16_t *)Near_Allocate_Next(120);
-    AI_ContBalances[0] = CRP_AI_Cont_Nme_Str[0];
-    AI_ContBalances[1] = CRP_AI_Cont_Nme_Str[1];
+    _ai_landmass_own_strengths[0] = (int16_t *)Near_Allocate_Next(120);
+    _ai_landmass_own_strengths[1] = (int16_t *)Near_Allocate_Next(120);
+    _ai_landmass_enemy_strengths[0] = (int16_t *)Near_Allocate_Next(120);
+    _ai_landmass_enemy_strengths[1] = (int16_t *)Near_Allocate_Next(120);
+    _ai_landmass_own_values[0] = (int16_t *)Near_Allocate_Next(120);
+    _ai_landmass_own_values[1] = (int16_t *)Near_Allocate_Next(120);
+    _ai_landmass_enemy_values[0] = (int16_t *)Near_Allocate_Next(120);
+    _ai_landmass_enemy_values[1] = (int16_t *)Near_Allocate_Next(120);
+    _ai_landmass_strength_ratios[0] = _ai_landmass_enemy_strengths[0];
+    _ai_landmass_strength_ratios[1] = _ai_landmass_enemy_strengths[1];
 }
 
 
