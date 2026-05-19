@@ -890,16 +890,20 @@ uint8_t * Wiz5_Spell_3Ch;
 uint8_t * _ai_reevaluate_continents_countdown;
 // WZD dseg:8FAC
 /*
+landmass_idx
+populated in AI_Continent_Reeval__WIP()
 [2]
 20 bytes
 */
-uint8_t * AI_NewColConts[2];
+uint8_t * AI_NewColConts[NUM_PLANES];
 // WZD dseg:8FB0
 /*
+landmass_idx
+
 12 values
 2 planes * 6 players
 */
-int16_t * AI_MainWarConts[2];
+int16_t * _ai_landmass_war_targets[NUM_PLANES];
 
 // WZD dseg:8FB4 00                                              unk_3FA54 db    0                       ; DATA XREF: sub_F6CAB+103o
 // WZD dseg:8FB5 00                                              db    0
@@ -2363,6 +2367,8 @@ struct s_AI_MOVE_PATH * _ai_move_path_table;
 
 // WZD dseg:9C94
 /*
+populated in AI_Evaluation_Map()
+
 does `== 0x8000`, so, probably, must be 2-byte, unsigned?
 does it use negative values anywhere?
 
@@ -2610,13 +2616,55 @@ uint16_t grand_vizier;
 */
 
 // WZD dseg:9D2A
-int16_t * CONTX_1stLoadTs[2];
-// WZD dseg:9D32
-int16_t * CONTX_LoadTChain[2];
-// WZD dseg:9D3A
-int8_t * CONTX_LoadTileYs[2];
-// WZD dseg:9D42
-int8_t * CONTX_LoadTileXs[2];
+/*
+ * EMBARK-SQUARE TABLES — set once at game load, never modified during gameplay.
+ *
+ * For each (plane, landmass), enumerates the land squares where a transport
+ * can embark or disembark units — i.e., land squares within 1 (3x3 Moore
+ * neighborhood) of any shore-terrain square.
+ *
+ * Storage layout: a per-landmass linked list whose head is in
+ * g_world_landmass_first_embark_square__load_init[plane][landmass]. The chain
+ * is walked via g_world_embark_square_next__load_init[plane][cursor] until
+ * ST_UNDEFINED. Each chain entry's coordinates are in the parallel
+ * g_world_embark_square_wx__load_init[plane][cursor] /
+ * g_world_embark_square_wy__load_init[plane][cursor] arrays.
+ *
+ * Lifecycle:
+ *   - Allocated and populated ONCE at game load by CONTX_CreateLChains__WIP()
+ *     (called from LoadScr.c:796 via the AI CONT / MOVE init block).
+ *   - NEVER rebuilt during gameplay. The __load_init suffix flags this.
+ *   - Slot 0 in the first-embark array is ALWAYS ST_UNDEFINED — the producer's
+ *     if (landmass_idx != 0) filter at AIDUDES.c:2416 skips the ocean sentinel,
+ *     so landmass index 0 has no chain.
+ *
+ * Why this is safe across the entire game:
+ *   - _landmasses[] is computed at map generation and never modified
+ *     (no spell converts land↔water).
+ *   - Square_Is_Shoreline() reads terrain type, and the two terrain-modifying
+ *     spells explicitly exclude shore/water:
+ *       Change Terrain   (Spells130.c:532-547)  rejects Shore, Ocean, Nodes.
+ *       Raise Volcano    (Spells130.c:825-864)  rejects Sailable, Mountain,
+ *                                                Hills, River.
+ *   - Therefore shoreline squares are static per game, and the load-time
+ *     chain remains correct forever.
+ *
+ * The OG comments at AIMOVE.c lines 8062-8063 and 8089-8091 ("BUG? uses an
+ * array that holds previous data at this point in time?") were overcautious;
+ * the dev was worried about staleness without verifying the inputs are
+ * immutable. They are.
+ *
+ * Original IDA names: CONTX_1stLoadTs / g_world_embark_square_next__load_init / CONTX_LoadTileXs /
+ * CONTX_LoadTileYs (where "T" = "Tile"). Renamed for descriptive clarity and
+ * to encode the set-once-at-load semantic via the __load_init suffix.
+ */
+int16_t * g_world_landmass_first_embark_square__load_init[NUM_PLANES];
+// WZD dseg:9D32  (was g_world_embark_square_next__load_init)
+int16_t * g_world_embark_square_next__load_init[NUM_PLANES];
+// WZD dseg:9D3A  (was CONTX_LoadTileYs)
+int8_t * g_world_embark_square_wy__load_init[NUM_PLANES];
+// WZD dseg:9D42  (was CONTX_LoadTileXs)
+int8_t * g_world_embark_square_wx__load_init[NUM_PLANES];
 
 
 // WZD dseg:9D4A
@@ -2648,6 +2696,7 @@ SAMB_ptr _ai_own_stack_wx;
 
 // WZD dseg:9EA0
 /*
+per landmass, heads of linked lists for all squares
 2 planes
 60 continents
 */

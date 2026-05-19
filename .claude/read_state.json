@@ -1,0 +1,178 @@
+{
+  "_schema_version": 1,
+  "_purpose": "Side-channel record of source-file regions Claude has freshly read. Used to detect stale mental models before making code claims.",
+  "_workflow": {
+    "update_when": "After a Read tool call on a source file where Claude is building or maintaining a mental model. One entry per (file, contiguous region).",
+    "verify_before": "Making any specific code claim (line numbers, identifier names, presence/absence of bugs, code structure).",
+    "verify_steps": [
+      "1. Get the file's current mtime via PowerShell: (Get-Item path).LastWriteTime",
+      "2. ConvertFrom-Json auto-parses mtime_at_read into a DateTime object — compare DateTimes directly via .Ticks or via .ToString('o') on BOTH sides. Do NOT compare DateTime to raw ISO string — PowerShell's display formatting will mislead you.",
+      "3. If mtime matches, compute SHA-256-first-12-hex-lowercase of the line at stored start_line and compare to first_line_hash. If mismatch, the region was edited (without changing overall file mtime? unlikely) OR the stored data is wrong — re-read.",
+      "4. NOTE: a single-line hash for generic lines (lone braces, blank lines) can false-negative on inserts that happen to place the same line at the stored offset. For such regions, treat the hash check as advisory and re-read on any doubt.",
+      "5. Both checks pass: the region is current. Proceed with the claim."
+    ],
+    "hash_function": "SHA-256 of the UTF-8 bytes of the line text (no trailing newline), then first 12 hex chars, lowercase.",
+    "powershell_hash_snippet": "([System.Convert]::ToHexString([System.Security.Cryptography.SHA256]::HashData([System.Text.Encoding]::UTF8.GetBytes($text)))).Substring(0,12).ToLower()",
+    "do_not_track": "One-off file peeks, files Claude is not actively reasoning about. Tracking everything degrades signal-to-noise."
+  },
+  "files": {
+    "MoM/src/Spells130.c": {
+      "mtime_at_read": "2026-04-01T14:47:13.6154223-04:00",
+      "size_at_read": 52414,
+      "regions": [
+        {
+          "start_line": 491,
+          "end_line": 615,
+          "first_line_hash": "45eab09ed80e",
+          "first_line_excerpt": "int16_t Cast_Change_Terrain(int16_t player_idx)",
+          "read_at": "2026-05-17T15:30:00Z",
+          "purpose": "Cast_Change_Terrain — lines 532-547 enumerate eligible terrain types (Grasslands/Forest/Desert/Volcano/Hills/Mountain/Swamp); Shore and Ocean explicitly excluded. Lines 552-556 exclude all Nodes."
+        },
+        {
+          "start_line": 783,
+          "end_line": 870,
+          "first_line_hash": "ac060ecff786",
+          "first_line_excerpt": "int16_t Cast_Raise_Volcano(int16_t player_idx)",
+          "read_at": "2026-05-17T15:30:00Z",
+          "purpose": "Cast_Raise_Volcano — lines 825-864 reject Sailable (water/shore), Mountain, Hills, River. Cannot target shore/water."
+        }
+      ]
+    },
+    "MoM/src/WZD_o143.c": {
+      "mtime_at_read": "2026-04-17T17:43:24.6430391-04:00",
+      "size_at_read": 23867,
+      "regions": [
+        {
+          "start_line": 65,
+          "end_line": 82,
+          "first_line_hash": "f10ae5dd753a",
+          "first_line_excerpt": "void Set_Terrain_Type_Volcano_With_Owner(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx)",
+          "read_at": "2026-05-17T15:30:00Z",
+          "purpose": "Set_Terrain_Type_Volcano_With_Owner — unconditional SET_TERRAIN_TYPE to tt_Volcano; target restrictions live in the caller (Cast_Raise_Volcano). Does not update _landmasses[]."
+        }
+      ]
+    },
+    "MoM/src/Terrain.c": {
+      "mtime_at_read": "2026-03-13T16:55:06.0848989-04:00",
+      "size_at_read": 60313,
+      "regions": [
+        {
+          "start_line": 1038,
+          "end_line": 1090,
+          "first_line_hash": "8f576ccbe67a",
+          "first_line_excerpt": "int16_t Square_Is_Shoreline(int16_t wx, int16_t wy, int16_t wp)",
+          "read_at": "2026-05-17T15:30:00Z",
+          "purpose": "Square_Is_Shoreline — reads TERRAIN_TYPE only, checks against shore-terrain-type enum ranges. Result depends only on terrain type at the tile (which Change Terrain and Raise Volcano cannot modify to/from shore)."
+        }
+      ]
+    },
+    "MoM/src/AIDUDES.c": {
+      "mtime_at_read": "2026-05-16T14:52:43.0099693-04:00",
+      "size_at_read": 77562,
+      "regions": [
+        {
+          "start_line": 2375,
+          "end_line": 2459,
+          "first_line_hash": "28c485b2911b",
+          "first_line_excerpt": "void CONTX_CreateLChains__WIP(void)",
+          "read_at": "2026-05-17T15:02:00Z",
+          "purpose": "CONTX_CreateLChains__WIP — producer of CONTX_1stLoadTs[] and g_world_embark_square_next__load_init[]. Reads first 90 lines (signature through partial chain-build loop). Builds load-tile chains: for each non-ocean tile within 1 square of shoreline, add to landmass's chain. Slot 0 always ST_UNDEFINED (loop filters out landmass_idx == 0). Called ONCE at game load, never refreshed."
+        }
+      ]
+    },
+    "MoM/src/LoadScr.c": {
+      "mtime_at_read": "2026-05-02T17:19:56.8945329-04:00",
+      "size_at_read": 33212,
+      "regions": [
+        {
+          "start_line": 786,
+          "end_line": 803,
+          "first_line_hash": "3942f61c9580",
+          "first_line_excerpt": "    /*",
+          "read_at": "2026-05-17T15:02:00Z",
+          "purpose": "Load-screen AI/MOVE initialization block — confirms CONTX_CreateLChains__WIP is called once at game load and never refreshed (only call site). Generic '/*' first line — re-locate via grep for 'BEGIN:  AI CONT / MOVE' if hash mismatches.",
+          "_note": "Generic first line — use the 'BEGIN: AI CONT / MOVE' comment to relocate if shifted."
+        }
+      ]
+    },
+    "MoM/src/AIDATA.c": {
+      "mtime_at_read": "2026-05-16T12:07:56.0241298-04:00",
+      "size_at_read": 45282,
+      "regions": [
+        {
+          "start_line": 977,
+          "end_line": 1107,
+          "first_line_hash": "de9247848eaf",
+          "first_line_excerpt": "void AI_Evaluate_Hostility(int16_t player_idx)",
+          "read_at": "2026-05-17T14:00:00Z",
+          "purpose": "AI_Evaluate_Hostility full body — producer of _players[].Hostility[] from Dipl_Status + other inputs. Used for Dipl_Status vs Hostility relationship documentation. Notes: throttled to turn >= 100 and reevaluate_hostility_countdown==0; OGBUG at line 1016 (Fire Elemental should be SoM); OGBUG at lines 1093/1098 (both set Hostility=2 instead of 2/3 escalation)."
+        }
+      ]
+    },
+    "MoX/src/MOM_DAT.h": {
+      "mtime_at_read": "2026-05-17T13:14:59.3565257-04:00",
+      "size_at_read": 182334,
+      "regions": [
+        {
+          "start_line": 1270,
+          "end_line": 1270,
+          "first_line_hash": "a6a086d65789",
+          "first_line_excerpt": "    /* 0030 */ int8_t Dipl_Status[NUM_PLAYERS];  /* 1-byte, signed;  1oom: treaty;  enum DIPL_Status { DIPL_NoTreaty, DIPL_WizardPact, DIPL_Alliance, DIPL_War, DIPL_Crusade } */",
+          "read_at": "2026-05-17T14:00:00Z",
+          "purpose": "Dipl_Status field definition + enum values (NoTreaty=0, WizardPact=1, Alliance=2, War=3, Crusade=4)"
+        },
+        {
+          "start_line": 1390,
+          "end_line": 1390,
+          "first_line_hash": "8df65f8fc704",
+          "first_line_excerpt": "    /* 049E */ uint16_t Hostility[NUM_PLAYERS]; /* attitude;  < 2 === non-hostile;  OSG: \"None, Annoyed, Warlike, Jihad\" */",
+          "read_at": "2026-05-17T14:00:00Z",
+          "purpose": "Hostility field definition + OSG value names (None/Annoyed/Warlike/Jihad). Comment notes '< 2 === non-hostile'."
+        }
+      ]
+    },
+    "MoM/src/AIMOVE.c": {
+      "mtime_at_read": "2026-05-17T15:01:40.4649709-04:00",
+      "size_at_read": 259887,
+      "regions": [
+        {
+          "start_line": 5914,
+          "end_line": 5935,
+          "first_line_hash": "6682800963ad",
+          "first_line_excerpt": "void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t wp)",
+          "read_at": "2026-05-17T12:31:00Z",
+          "purpose": "AI_SingleCont_Reeval__WIP signature + locals — hash unchanged across multiple edits, stable re-locate anchor"
+        },
+        {
+          "start_line": 6060,
+          "end_line": 6120,
+          "first_line_hash": "766e0153d3f7",
+          "first_line_excerpt": "/*",
+          "read_at": "2026-05-17T13:18:00Z",
+          "purpose": "AI_SingleCont_Reeval__WIP Phase 5 (stage-point picker for Contested/Own/AllyLand). User renumbered phases since earlier reads — Phase 6 exists somewhere I have NOT re-read.",
+          "_note": "Generic '/*' first line. Re-locate via grep for 'BEGIN:  Phase 5: Determine Stage Point' if hash mismatches."
+        },
+        {
+          "start_line": 6128,
+          "end_line": 6171,
+          "first_line_hash": "830a33dfe4af",
+          "first_line_excerpt": "    /* Phase 7: Own Continent - Calculate Transport Loading Center */",
+          "read_at": "2026-05-17T13:18:00Z",
+          "purpose": "AI_SingleCont_Reeval__WIP Phase 7 (lmt_Own refinement; reads _ai_landmass_war_targets[wp][player_idx]; BUG-7 still present — stage_wx/wy computed but not written back to wx_array/wy_array)"
+        },
+        {
+          "start_line": 7822,
+          "end_line": 8240,
+          "first_line_hash": "1f83ba21e832",
+          "first_line_excerpt": "void AI_Choose_War_Landmasst16_t player_idx)",
+          "read_at": "2026-05-17T13:50:00Z",
+          "purpose": "AI_Choose_War_Landmassll body — re-read this turn to build the walkthrough doc. Function bounds shrank from 7822-8251 to 7822-8240 in latest edit. Captures: First_Hostile_Player search (7852), per-plane reevaluate gate (7868), Continent_Values raw weighting (7981-8040), empire centroid (8045-8054), Continent_Values_2 weighting + Hostility-4 fortress +1000 bonus (8068-8165), fallback tile-count (8180-8218), final pick (8222-8234). NOTE: the Value_Sum '+=' direction bug previously flagged is now FIXED in this version — code correctly does Value_Sum += Continent_Values_2[itr_landmasses]. Docstring at 7820-7821 is stale (still mentions the fixed issue)."
+        }
+      ],
+      "_known_unread": {
+        "lines_5936_to_6059": "Phases 1-4 of AI_SingleCont_Reeval__WIP (and possibly the new Phase 6) — last verified read was at mtime 12:31:27. Re-read before claiming anything about lines 5936-6059.",
+        "lines_8251_to_end": "AI_Pick_Action_Conts__GEMINI variant and beyond. Skip unless specifically needed (per user pref: production only)."
+      }
+    }
+  }
+}

@@ -253,7 +253,7 @@ void AI_Continent_Reeval__WIP(int16_t player_idx);
 void AI_Evaluation_Map(int16_t player_idx);
 
 // WZD o162p37
-void AI_Pick_Action_Conts__WIP(int16_t player_idx);
+void AI_Choose_War_Landmass(int16_t player_idx);
 
 // WZD o162p38
 void Player_Clear_All_Unit_Orders(int16_t player_idx);

@@ -236,9 +236,9 @@ void AI_Next_Turn(void)
 
         AI_Player_Calculate_Target_Values(player_idx);
 
-        AI_Landmass_Values_And_Strengths(player_idx);
+        AI_Landmass_Values_And_Strengths(player_idx);  // uses the arrays just populated in AI_Player_Calculate_Target_Values()
 
-        AI_Pick_Action_Conts__WIP(player_idx);
+        AI_Choose_War_Landmass(player_idx);  /* populates _ai_landmass_war_targets[]; uses the arrays just populated in AI_Landmass_Values_And_Strengths() */
 
         /* Handle Overland Casting Completion */
         if (_players[player_idx].casting_cost_remaining <= 0 && _players[player_idx].casting_spell_idx != spl_NONE)
@@ -2210,14 +2210,14 @@ void EMM_Map_CONTXXX__WIP(void)
     _ai_own_stack_unit_count  = (&EMS_PFBA[0] + ( 890 * SZ_PARAGRAPH_B));  //  900 -  890 =  10 * 1 PR =  160 B  80 2-byte values
     g_ai_evaluation_map[0]        = (uint16_t *)(&EMS_PFBA[0] + ( 900 * SZ_PARAGRAPH_B));  // 1500 -  900 = 600 * 1 PR = 9600 B
     g_ai_evaluation_map[1]        = (uint16_t *)(&EMS_PFBA[0] + (1500 * SZ_PARAGRAPH_B));  // 2100 - 1500 = 600 * 1 PR = 9600 B
-    CONTX_LoadTileXs[0]       =  (int8_t *)(&EMS_PFBA[0] + (2100 * SZ_PARAGRAPH_B));  // 2200 - 2100 = 100 * 1 PR = 1600 B
-    CONTX_LoadTileXs[1]       =  (int8_t *)(&EMS_PFBA[0] + (2200 * SZ_PARAGRAPH_B));  // 2300 - 2200 = 100 * 1 PR = 1600 B
-    CONTX_LoadTileYs[0]       =  (int8_t *)(&EMS_PFBA[0] + (2300 * SZ_PARAGRAPH_B));  // 2400 - 2300 = 100 * 1 PR = 1600 B
-    CONTX_LoadTileYs[1]       =  (int8_t *)(&EMS_PFBA[0] + (2400 * SZ_PARAGRAPH_B));  // 2500 - 2400 = 100 * 1 PR = 1600 B
-    CONTX_LoadTChain[0]       = (int16_t *)(&EMS_PFBA[0] + (2500 * SZ_PARAGRAPH_B));  // 2700 - 2500 = 200 * 1 PR = 3200 B
-    CONTX_LoadTChain[1]       = (int16_t *)(&EMS_PFBA[0] + (2700 * SZ_PARAGRAPH_B));  // 2900 - 2700 = 200 * 1 PR = 3200 B
-    CONTX_1stLoadTs[0]        = (int16_t *)(&EMS_PFBA[0] + (2900 * SZ_PARAGRAPH_B));  // 3000 - 2900 = 100 * 1 PR = 1600 B
-    CONTX_1stLoadTs[1]        = (int16_t *)(&EMS_PFBA[0] + (3000 * SZ_PARAGRAPH_B));  // 3200 - 3000 = 200 * 1 PR = 3200 B
+    g_world_embark_square_wx__load_init[0]       =  (int8_t *)(&EMS_PFBA[0] + (2100 * SZ_PARAGRAPH_B));  // 2200 - 2100 = 100 * 1 PR = 1600 B
+    g_world_embark_square_wx__load_init[1]       =  (int8_t *)(&EMS_PFBA[0] + (2200 * SZ_PARAGRAPH_B));  // 2300 - 2200 = 100 * 1 PR = 1600 B
+    g_world_embark_square_wy__load_init[0]       =  (int8_t *)(&EMS_PFBA[0] + (2300 * SZ_PARAGRAPH_B));  // 2400 - 2300 = 100 * 1 PR = 1600 B
+    g_world_embark_square_wy__load_init[1]       =  (int8_t *)(&EMS_PFBA[0] + (2400 * SZ_PARAGRAPH_B));  // 2500 - 2400 = 100 * 1 PR = 1600 B
+    g_world_embark_square_next__load_init[0]       = (int16_t *)(&EMS_PFBA[0] + (2500 * SZ_PARAGRAPH_B));  // 2700 - 2500 = 200 * 1 PR = 3200 B
+    g_world_embark_square_next__load_init[1]       = (int16_t *)(&EMS_PFBA[0] + (2700 * SZ_PARAGRAPH_B));  // 2900 - 2700 = 200 * 1 PR = 3200 B
+    g_world_landmass_first_embark_square__load_init[0]        = (int16_t *)(&EMS_PFBA[0] + (2900 * SZ_PARAGRAPH_B));  // 3000 - 2900 = 100 * 1 PR = 1600 B
+    g_world_landmass_first_embark_square__load_init[1]        = (int16_t *)(&EMS_PFBA[0] + (3000 * SZ_PARAGRAPH_B));  // 3200 - 3000 = 200 * 1 PR = 3200 B
 
     /* HACK */  memset(g_ai_evaluation_map[0], 0, 9600);
     /* HACK */  memset(g_ai_evaluation_map[1], 0, 9600);
@@ -2391,9 +2391,9 @@ void CONTX_CreateLChains__WIP(void)
     for(itr = 0; itr < NUM_LANDMASSES; itr++)
     {
 
-        CONTX_1stLoadTs[0][itr] = ST_UNDEFINED;
+        g_world_landmass_first_embark_square__load_init[0][itr] = ST_UNDEFINED;
 
-        CONTX_1stLoadTs[1][itr] = ST_UNDEFINED;
+        g_world_landmass_first_embark_square__load_init[1][itr] = ST_UNDEFINED;
 
     }
 
@@ -2438,16 +2438,16 @@ void CONTX_CreateLChains__WIP(void)
                     if(Transport_Tile == ST_TRUE)
                     {
 
-                        if(CONTX_1stLoadTs[wp][landmass_idx] == ST_UNDEFINED)
+                        if(g_world_landmass_first_embark_square__load_init[wp][landmass_idx] == ST_UNDEFINED)
                         {
 
-                            array_ptr = &CONTX_1stLoadTs[wp][landmass_idx];
+                            array_ptr = &g_world_landmass_first_embark_square__load_init[wp][landmass_idx];
 
                         }
                         else
                         {
 
-                            itr = CONTX_1stLoadTs[wp][landmass_idx];
+                            itr = g_world_landmass_first_embark_square__load_init[wp][landmass_idx];
 
                             Current_Tile = itr;
 
@@ -2456,21 +2456,21 @@ void CONTX_CreateLChains__WIP(void)
 
                                 Current_Tile = itr;
 
-                                itr = CONTX_LoadTChain[wp][itr];
+                                itr = g_world_embark_square_next__load_init[wp][itr];
 
                             }
 
-                            array_ptr = &CONTX_LoadTChain[wp][Current_Tile];
+                            array_ptr = &g_world_embark_square_next__load_init[wp][Current_Tile];
 
                         }
 
                         *array_ptr = count[wp];
 
-                        CONTX_LoadTileXs[wp][count[wp]] = (int8_t)wx;
+                        g_world_embark_square_wx__load_init[wp][count[wp]] = (int8_t)wx;
 
-                        CONTX_LoadTileYs[wp][count[wp]] = (int8_t)wy;
+                        g_world_embark_square_wy__load_init[wp][count[wp]] = (int8_t)wy;
 
-                        CONTX_LoadTChain[wp][count[wp]] = ST_UNDEFINED;
+                        g_world_embark_square_next__load_init[wp][count[wp]] = ST_UNDEFINED;
 
                         count[wp] += 1;
 

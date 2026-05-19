@@ -55,18 +55,18 @@ Definitely Done-Done:
 [x]         |-> Player_Hostile_Opponents()
 [x]         |-> AI_Player_Calculate_Target_Values()
 [x]         |-> AI_Landmass_Values_And_Strengths()
+[x]         |-> AI_Choose_War_Landmass        ¿ uses g_ai_evaluation_map from previous turn ?
+...
+...j_Cast_Spell_Overland__WIP(); EMMDATAH_Map(); Allocate_AI_Data(); Player_Hostile_Opponents(); AI_Player_Calculate_Target_Values(); j_AI_Spell_Select();
+...EMMDATAH_Map(); AI_Update_Magic_Power(); AI_Sanity_Check_Overland_Enchantments(); AI_Update_Gold_And_Mana_Reserves(); AI_Update_Gold_Income_And_Food_Income();
+...
+Player_All_Colony_Autobuild(player_idx)
+AI_Evaluation_Map(player_idx)               populates g_ai_evaluation_map
+AI_Continent_Reeval__WIP(player_idx)        uses g_ai_evaluation_map, just populated in AI_Evaluation_Map()
+AI_Set_Unit_Orders(player_idx)
+EMMDATAH_Map();
+AI_Kill_Excess_Settlers_And_Engineers(player_idx)
 
-[ ]         |-> AI_Pick_Action_Conts__WIP
-
-Allocate_AI_Data
-Player_Hostile_Opponents
-
-AI_Spell_Select__STUB
-AI_Update_Magic_Power
-AI_Sanity_Check_Overland_Enchantments
-AI_Update_Gold_And_Mana_Reserves
-AI_Update_Gold_Income_And_Food_Income
-Player_All_Colony_Autobuild
 [x] c:/python314/python.exe .\rasm_named_gemini.py AI_SetEnemyStrMaps__WIP
 [x] c:/python314/python.exe .\rasm_named_gemini.py AI_SetUnitOrders__WIP
 [] c:/python314/python.exe .\rasm_named_gemini.py AI_Kill_Excess_Settlers_And_Engineers
@@ -95,7 +95,7 @@ _ai_continents__1
     G_AI_HomeRallyFill__WIP+1F         mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
     AI_PullForMainWar__WIP+154         mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
 
-## AI_MainWarConts[]
+## _ai_landmass_war_targets[]
     Allocate_Data_Space()
     AI_ProcessOcean__WIP()
     G_AI_ProcessTransports__WIP()
@@ -103,13 +103,13 @@ _ai_continents__1
     AI_PullForMainWar__WIP()
     AI_SingleCont_Reeval__WIP()
     AI_Continent_Reeval__WIP()
-    AI_Pick_Action_Conts__WIP()
+    AI_Choose_War_Landmass
 
 set in 1 function, at 2 sites
     if (Value_Sum == 0) {
-        AI_MainWarConts[wp][player_idx] = 0;
+        _ai_landmass_war_targets[wp][player_idx] = 0;
     } else {
-        AI_MainWarConts[wp][player_idx] = Get_Weighted_Choice(&Continent_Values_2[0], NUM_LANDMASSES);
+        _ai_landmass_war_targets[wp][player_idx] = Get_Weighted_Choice(&Continent_Values_2[0], NUM_LANDMASSES);
     }
 
 

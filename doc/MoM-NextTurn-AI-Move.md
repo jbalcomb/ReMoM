@@ -339,12 +339,12 @@ AI_Set_Move_Or_Goto_Target()
 ## AI_ProcessOcean__WIP()
 
 short-circuits
-    if(AI_MainWarConts[wp][player_idx] == 0)
+    if(_ai_landmass_war_targets[wp][player_idx] == 0)
         return;
-What does it mean for AI_MainWarConts[wp][player_idx] to be 0?
+What does it mean for _ai_landmass_war_targets[wp][player_idx] to be 0?
 
-MainWar_Rally_X = _ai_continents.plane[wp].player[player_idx].X_Coords[AI_MainWarConts[wp][player_idx]];
-MainWar_Rally_Y = _ai_continents.plane[wp].player[player_idx].Y_Coords[AI_MainWarConts[wp][player_idx]];
+MainWar_Rally_X = _ai_continents.plane[wp].player[player_idx].X_Coords[_ai_landmass_war_targets[wp][player_idx]];
+MainWar_Rally_Y = _ai_continents.plane[wp].player[player_idx].Y_Coords[_ai_landmass_war_targets[wp][player_idx]];
 if((MainWar_Rally_X == 0) && (MainWar_Rally_X == 0))
 What does it mean for the _ai_continentswx,wy to be 0?
 

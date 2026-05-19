@@ -20,6 +20,9 @@ _players[].Hostility[]
         None, Annoyed, Warlike, Jihad
 
 _players[player_idx].Hostility[NEUTRAL_PLAYER_IDX] = 3;  // Change_Relations(): sets 3 if Dipl_Status[] >= 3  ~ DIPL_War
+
+Dipl_Status >= 3 === casting 'Spell of Mastery'
+...functionaly equivalent for Hostility
 */
 enum DIPL_Status
 {

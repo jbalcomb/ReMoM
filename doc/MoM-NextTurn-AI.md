@@ -278,7 +278,7 @@ so, CRP_AI_Cont_Nme_Str[] gets overwritten...
 
 
 
-## AI_Pick_Action_Conts__WIP()
+## AI_Choose_War_Landmass
 
 needs
     CRP_UNIT_OverlandPath], -1     ; an index into OvlMovePaths_EMS@

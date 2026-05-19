@@ -2,14 +2,130 @@
 SEEALSO: MoM-AI-Continents.md
 SEEALSO: MoM-NextTurn-AI.md
 
-
-
 probably just 'AI Turn', not realy 'Next Turn'
 
+AI_Pick_Action_Conts__WIP()  ==>  AI_Choose_War_Landmass()
+AI_MainWarConts  ==>  _ai_landmass_war_targets
+
+I renamed AI_Pick_Action_Conts__WIP to AI_Choose_War_Landmass and AI_MainWarConts to _ai_landmass_war_targets.
+For BUG-B, I double-checked the disassembly. Looks like the comment and Gemini were wrong. It's definitely if this player's fortress is not active or if this landmass is this player's home continent.
+
+
+
+
+_ai_landmass_war_targets[]   populated in AI_Choose_War_Landmass 
+AI_NewColConts[]    populated in AI_Continent_Reeval__WIP(); // ; choose the next colony continent from among those with no presence, or clear it if no such ones exist
+
+
+
+_ai_reevaluate_continents_countdown
+used by AI_Continent_Reeval__WIP[]
+...includes override utilizing g_ai_evaluation_map[]
+
+
+
+AI_Choose_War_Landmass
+    _ai_landmass_war_targets[wp][player_idx] = Get_Weighted_Choice(&final_landmass_weights[0], NUM_LANDMASSES);
+weighted choice
+    
+    vs.
+    count of map squares, minimum 10
 
 
 _ai_landmass_strength_ratios[][]
 
+
+
+        AI_Player_Calculate_Target_Values(player_idx);
+
+        AI_Landmass_Values_And_Strengths(player_idx);  // uses the arrays just populated in AI_Player_Calculate_Target_Values()
+
+        AI_Choose_War_Landmassayer_idx);  // uses the arrays just populated in AI_Landmass_Values_And_Strengths()
+
+
+AIMOVE.c
+AI_Choose_War_Landmass
+AIMOVE-AI_Choose_War_Landmass
+AI_Next_Turn()
+AI_Choose_War_Landmassayer_idx);  /* populates _ai_landmass_war_targets[]; uses the arrays just populated in AI_Landmass_Values_And_Strengths() */
+
+
+AI_SingleCont_Reeval__WIP()
+
+## Landmass Type/Status:
+    0: lmt_Unevaluated
+        only used as the initialization value
+    1: lmt_Own
+        Decisively held — own unit-cost > 10 × enemy unit-cost. Not "I'm the only one here," just "I'm overwhelmingly stronger." */
+    2: lmt_Contested
+        Own vs. Contested;  Own city + non-trivial enemy unit-cost
+    3: lmt_NoPresence
+        just means the player does not have any cities on the landmass
+    4: lmt_NoLanding
+        Allied territory OR No rally tile
+    5: lmt_Abandon
+        Embarkation tile was found — set when a load tile is reachable. Logically "we can depart from here," not "we have decided to abandon."
+    6: lmt_NoTargets
+        No attackable enemies, lairs, or nodes worth targeting.
+
+_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Abandon;
+
+Here's the VS Code regex. Enable the .* (regex) toggle in the search bar.
+Strict — only the fully-qualified path:
+_ai_continents\.plane\[[^\]]+\]\.player\[[^\]]+\]\.type_array\[[^\]]+\]\s*[+\-*/%&|^]?=(?!=)
+What it does:
+_ai_continents\.plane\[[^\]]+\]\.player\[[^\]]+\]\.type_array\[[^\]]+\] — matches the full path with any single index expression inside each [ ]
+\s* — optional whitespace before the operator
+[+\-*/%&|^]? — optional compound-assignment prefix (catches +=, -=, *=, /=, |=, etc.)
+=(?!=) — an = that is NOT followed by another = (excludes == comparisons)
+This catches both plain = lmt_Own and counter-style += 1. It deliberately does NOT catch ++ or --, because I didn't see those used on type_array in AIMOVE.c — let me know if you want them added.
+Broader — any pointer or pointer-aliased path ending in type_array (useful if anywhere uses s_LANDMASSES *lms; lms->type_array[i] = ...):
+\btype_array\[[^\]]+\]\s*[+\-*/%&|^]?=(?!=)
+The \b word boundary prevents false matches on identifiers that happen to end in type_array. This would catch any future code that goes through a struct pointer alias.
+Quick sanity-check against what I'd expect it to find — the writes from my earlier grep:
+AIMOVE.c lines 1806, 2757, 6027, 6031, 6036, 6056, 6061, 6063, 6134, 7013, 7161, 7167, 7175, 7206, 7215, 7217, 7387, 7470 — all should hit
+And += 1 counter sites at lines 6011 and 7072 should also hit (the strict form will catch them via the optional + prefix).
+Reads (the ==, !=, >=, <, etc. comparisons) won't match because of the (?!=) lookahead — and for !=/>=/< the path is followed by those operators, not by = alone.
+Want a read-only version too (find all places type_array is consulted but not assigned)?
+
+
+## _ai_landmass_war_targets[]
+(12 values; 2 planes * 6 players)
+
+AI_Continent_Reeval__WIP()
+
+AI_Choose_War_Landmass
+
+_ai_landmass_war_targets[wp][player_idx] holds the landmass index of the AI's main war continent on plane wp for this turn
+(set fresh each turn by AI_Choose_War_Landmasshich runs earlier in AI_Turn)
+
+XREF:
+    AI_Continent_Reeval__WIP+D94    mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Continent_Reeval__WIP+DE2    mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Choose_War_Landmass    mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Choose_War_LandmassC   mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Choose_War_Landmass2   mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_ProcessOcean__WIP+3B         mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_ProcessOcean__WIP+6B         mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_ProcessOcean__WIP+D          mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_ProcessRoamers__WIP+148      mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_ProcessRoamers__WIP+15F      mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_ProcessRoamers__WIP+187      mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_PullForMainWar__WIP+119      mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_PullForMainWar__WIP+145      mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_PullForMainWar__WIP+8C       mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_PullForMainWar__WIP+F        mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_SingleCont_Reeval__WIP+8DF   mov     bx, [_ai_landmass_war_targets+bx]                                
+    G_AI_ProcessTransports__WIP+488 mov     bx, [_ai_landmass_war_targets+bx]                                
+    G_AI_ProcessTransports__WIP+774 mov     bx, [_ai_landmass_war_targets+bx]                                
+    G_AI_ProcessTransports__WIP+798 mov     bx, [_ai_landmass_war_targets+bx]                                
+
+Allocate_Data_Space()
+    mov     [_ai_landmass_war_targets], (offset _players.spells_list+17E8h)
+    mov     [_ai_landmass_war_targets+2], (offset _players.spells_list+17F4h)
+
+
+AI_SingleCont_Reeval__WIP() :: Phase 7 :: _ai_landmass_war_targets[]
 
 
 

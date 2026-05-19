@@ -116,12 +116,23 @@ struct s_AI_STACK_DATA
 };
 
 
-//  ; (sizeof=0xB4)
+enum e_LANDMASS_TYPE
+{
+    lmt_Unevaluated = 0,
+    lmt_Own         = 1,  /* Own vs. Contested;  Decisively held — own unit-cost > 10 × enemy unit-cost. Not "I'm the only one here," just "I'm overwhelmingly stronger." */
+    lmt_Contested   = 2,  /* Own vs. Contested;  Own city + non-trivial enemy unit-cost. Name matches. */
+    lmt_NoOwnCity   = 3,  /* 'Nay Own City';  Units may be roaming freely on the landmass — that doesn't count as "presence" here. */
+    lmt_NoOwnCityAndAllyHasCity  = 4,  /* Purpose: flag landmasses that should be ignore/excluded; ally-only landmass OR no occupieable square; not just 'Nay Own City, Yay Ally City'; */
+    lmt_Abandon     = 5,  /* Embarkation tile was found — set when a load tile is reachable. Logically "we can depart from here," not "we have decided to abandon." */
+    lmt_NoTargets   = 6   /* No attackable enemies, lairs, or nodes worth targeting. */
+};
+
+//  sizeof:  B4  180d  (3 * 60)
 struct s_LANDMASSES
 {
-    /* 00 */ uint8_t wx_array[NUM_LANDMASSES];
-    /* 3C */ uint8_t wy_array[NUM_LANDMASSES];
-    /* 78 */ uint8_t type_array[NUM_LANDMASSES];  /* ¿ ~== MoO2 s_SHIP.ai_mission ? */ /* enum e_LANDMASS_TYPE */
+    /* 00 */ uint8_t wx_array[NUM_LANDMASSES];  /* embark/disemabrk */
+    /* 3C */ uint8_t wy_array[NUM_LANDMASSES];  /* embark/disemabrk */
+    /* 78 */ uint8_t type_array[NUM_LANDMASSES];  /* 1-byte, signed; enum e_LANDMASS_TYPE */  /* ¿ ~== MoO2 s_SHIP.ai_mission ? */
     /* B4 */ 
 };
 
@@ -134,17 +145,6 @@ struct s_CONTINENTS_TABLE
     /* 021C */ struct s_LANDMASSES Player_3;
     /* 02D0 */ struct s_LANDMASSES Player_4;
     /* 0384 */ 
-};
-
-enum e_LANDMASS_TYPE
-{
-    lmt_Invalid    = 0,
-    lmt_Own        = 1,
-    lmt_Contested  = 2,
-    lmt_NoPresence = 3,
-    lmt_NoLanding  = 4,
-    lmt_Abandon    = 5,
-    lmt_NoTargets  = 6
 };
 
 struct s_AI_CONTINENTS_PLAYERS
@@ -1922,7 +1922,7 @@ struct s_FORTRESS
     /* 00 */ int8_t wx;
     /* 01 */ int8_t wy;
     /* 02 */ int8_t wp;
-    /* 03 */ int8_t active;
+    /* 03 */ int8_t active;  /* When is this ST_FALSE? */
     /* 04 */
 };
 #pragma pack(pop)
@@ -2782,30 +2782,14 @@ extern int16_t map_sustain;
 // WZD dseg:8890                                                 IDK
 // WZD dseg:8890                                                 ...*feels like* ~ AIDATA
 
-// WZD dseg:8890 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Arcanus CONT_TBL <0>
-// WZD dseg:8C14 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Myrror CONT_TBL <0>
-// WZD dseg:8890
-// extern struct s_CONTTBL TBL_Arcanus;
-// WZD dseg:8C14
-// extern struct s_CONTINENTS_TABLE TBL_Myrror;
 // WZD dseg:8890
 extern struct s_AI_CONTINENTS _ai_continents;
-
-/*
-; 80 + rnd(40) is stored here for each AI wizard (word
-; array pointer, human excluded) when setting initial
-; gold during game creation in MAGIC.EXE
-; decreased during the AI's turn, likely some relation
-; or interest value
-*/
 // WZD dseg:8F98 
-// extern uint8_t * AI_SCircle_Reevals;
 extern int16_t * AI_SCircle_Reevals;
-
 // WZD dseg:8F9A
-extern uint8_t * AI_NewColTgtYs[2];
+extern uint8_t * AI_NewColTgtYs[NUM_PLANES];
 // WZD dseg:8F9E
-extern uint8_t * AI_NewColTgtXs[2];
+extern uint8_t * AI_NewColTgtXs[NUM_PLANES];
 // WZD dseg:8FA2
 extern uint8_t * Wiz5_Spell_50h;
 // WZD dseg:8FA4
@@ -2817,9 +2801,9 @@ extern uint8_t * Wiz5_Spell_3Ch;
 // WZD dseg:8FAA
 extern uint8_t * _ai_reevaluate_continents_countdown;
 // WZD dseg:8FAC
-extern uint8_t * AI_NewColConts[2];
+extern uint8_t * AI_NewColConts[NUM_PLANES];
 // WZD dseg:8FB0
-extern int16_t * AI_MainWarConts[2];
+extern int16_t * _ai_landmass_war_targets[NUM_PLANES];
 
 // WZD dseg:8FB4 00                                              unk_3FA54 db    0                       ; DATA XREF: sub_F6CAB+103o
 // WZD dseg:8FB5 00                                              db    0
@@ -4024,14 +4008,14 @@ extern uint16_t grand_vizier;
     ¿ BEGIN: CONTXXX ?
 */
 
-// WZD dseg:9D2A
-extern int16_t * CONTX_1stLoadTs[NUM_PLANES];
-// WZD dseg:9D32
-extern int16_t * CONTX_LoadTChain[NUM_PLANES];
-// WZD dseg:9D3A
-extern int8_t * CONTX_LoadTileYs[NUM_PLANES];
-// WZD dseg:9D42
-extern int8_t * CONTX_LoadTileXs[NUM_PLANES];
+// WZD dseg:9D2A  (was CONTX_1stLoadTs)
+extern int16_t * g_world_landmass_first_embark_square__load_init[NUM_PLANES];
+// WZD dseg:9D32  (was g_world_embark_square_next__load_init)
+extern int16_t * g_world_embark_square_next__load_init[NUM_PLANES];
+// WZD dseg:9D3A  (was CONTX_LoadTileYs)
+extern int8_t * g_world_embark_square_wy__load_init[NUM_PLANES];
+// WZD dseg:9D42  (was CONTX_LoadTileXs)
+extern int8_t * g_world_embark_square_wx__load_init[NUM_PLANES];
 // WZD dseg:9D4A
 extern int16_t _ai_own_stack_count;
 // WZD dseg:9D4C

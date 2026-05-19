@@ -18,8 +18,8 @@ Game Options: "Land Size"
 
 ALLOC.C
 Allocate_Data_Space()
-    AI_MainWarConts[0] = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17E8) );  // 12 bytes
-    AI_MainWarConts[1] = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17F4) );  // 12 bytes
+    _ai_landmass_war_targets[0] = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17E8) );  // 12 bytes
+    _ai_landmass_war_targets[1] = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17F4) );  // 12 bytes
     AI_CONTX_Reevals   = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1800) );  // 16 bytes
     AI_NewColConts[0]  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1860) );  // 20 bytes
     AI_NewColConts[1]  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1874) );  // 20 bytes
@@ -38,14 +38,14 @@ EMM_Map_DataH()
 CONTX_FirstTiles[2][60]
 CONTX_TileChain[2][1600]
 
-CONTX_1stLoadTs[2][60]
-CONTX_LoadTChain[2][]
+g_world_landmass_first_embark_square__load_init[2][60]
+g_world_embark_square_next__load_init[2][]
 
 AI_NewColTgtYs[2]
 AI_NewColTgtXs[2]
 _ai_reevaluate_continents_countdown
 AI_NewColConts[2]
-AI_MainWarConts[2]
+_ai_landmass_war_targets[2]
 
 
 
@@ -66,14 +66,14 @@ EMM_Map_CONTXXX__WIP()
     _ai_own_stack_unit_count  = (&EMM_PageFrame[0] + ( 890 * SZ_PARAGRAPH_B));  //  900 -  890 =  10 * 1 PR =  160 B  80 2-byte values
     CONTX_NmeStrMap[0]        = (&EMM_PageFrame[0] + ( 900 * SZ_PARAGRAPH_B));  // 1500 -  900 = 600 * 1 PR = 9600 B
     CONTX_NmeStrMap[1]        = (&EMM_PageFrame[0] + (1500 * SZ_PARAGRAPH_B));  // 2100 - 1500 = 600 * 1 PR = 9600 B
-    CONTX_LoadTileXs[0]       =  (int8_t *)(&EMM_PageFrame[0] + (2100 * SZ_PARAGRAPH_B));  // 2200 - 2100 = 100 * 1 PR = 1600 B
-    CONTX_LoadTileXs[1]       =  (int8_t *)(&EMM_PageFrame[0] + (2200 * SZ_PARAGRAPH_B));  // 2300 - 2200 = 100 * 1 PR = 1600 B
-    CONTX_LoadTileYs[0]       =  (int8_t *)(&EMM_PageFrame[0] + (2300 * SZ_PARAGRAPH_B));  // 2400 - 2300 = 100 * 1 PR = 1600 B
-    CONTX_LoadTileYs[1]       =  (int8_t *)(&EMM_PageFrame[0] + (2400 * SZ_PARAGRAPH_B));  // 2500 - 2400 = 100 * 1 PR = 1600 B
-    CONTX_LoadTChain[0]       = (int16_t *)(&EMM_PageFrame[0] + (2500 * SZ_PARAGRAPH_B));  // 2700 - 2500 = 200 * 1 PR = 3200 B
-    CONTX_LoadTChain[1]       = (int16_t *)(&EMM_PageFrame[0] + (2700 * SZ_PARAGRAPH_B));  // 2900 - 2700 = 200 * 1 PR = 3200 B
-    CONTX_1stLoadTs[0]        = (int16_t *)(&EMM_PageFrame[0] + (2900 * SZ_PARAGRAPH_B));  // 3000 - 2900 = 100 * 1 PR = 1600 B
-    CONTX_1stLoadTs[1]        = (int16_t *)(&EMM_PageFrame[0] + (3000 * SZ_PARAGRAPH_B));  // 3200 - 3000 = 200 * 1 PR = 3200 B
+    g_world_embark_square_wx__load_init[0]       =  (int8_t *)(&EMM_PageFrame[0] + (2100 * SZ_PARAGRAPH_B));  // 2200 - 2100 = 100 * 1 PR = 1600 B
+    g_world_embark_square_wx__load_init[1]       =  (int8_t *)(&EMM_PageFrame[0] + (2200 * SZ_PARAGRAPH_B));  // 2300 - 2200 = 100 * 1 PR = 1600 B
+    g_world_embark_square_wy__load_init[0]       =  (int8_t *)(&EMM_PageFrame[0] + (2300 * SZ_PARAGRAPH_B));  // 2400 - 2300 = 100 * 1 PR = 1600 B
+    g_world_embark_square_wy__load_init[1]       =  (int8_t *)(&EMM_PageFrame[0] + (2400 * SZ_PARAGRAPH_B));  // 2500 - 2400 = 100 * 1 PR = 1600 B
+    g_world_embark_square_next__load_init[0]       = (int16_t *)(&EMM_PageFrame[0] + (2500 * SZ_PARAGRAPH_B));  // 2700 - 2500 = 200 * 1 PR = 3200 B
+    g_world_embark_square_next__load_init[1]       = (int16_t *)(&EMM_PageFrame[0] + (2700 * SZ_PARAGRAPH_B));  // 2900 - 2700 = 200 * 1 PR = 3200 B
+    g_world_landmass_first_embark_square__load_init[0]        = (int16_t *)(&EMM_PageFrame[0] + (2900 * SZ_PARAGRAPH_B));  // 3000 - 2900 = 100 * 1 PR = 1600 B
+    g_world_landmass_first_embark_square__load_init[1]        = (int16_t *)(&EMM_PageFrame[0] + (3000 * SZ_PARAGRAPH_B));  // 3200 - 3000 = 200 * 1 PR = 3200 B
 
 
 
