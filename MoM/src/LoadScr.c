@@ -792,12 +792,11 @@ void Loaded_Game_Update(void)
         _ai_move_path_table[itr].src_wx = -1;  // DEDU - INF / ST_UNDEFINED?
     }
     _ai_move_path_idx = ST_UNDEFINED;
-    CONTX_CreateChains__WIP();
-    CONTX_CreateLChains__WIP();
-    for(itr = 0; itr < _num_players; itr++)
-    {
-        _ai_reevaluate_continents_countdown[itr] = 0;
-    }
+    /* BEGIN:   CONTX */
+    Build_Land_Linked_List();
+    Build_Dock_Linked_List(); /* OON XREF; shoreline data never changes */
+    for(itr = 0; itr < _num_players; itr++) { _ai_reevaluate_continents_countdown[itr] = 0; }
+    /* END:     CONTX */
     /*
         END:  AI CONT / MOVE
     */

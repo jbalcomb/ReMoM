@@ -71,10 +71,10 @@ void AI_Hopeless_Stasis(void);
 void EMM_Map_CONTXXX__WIP(void);
 
 // WZD o145p17
-void CONTX_CreateChains__WIP(void);
+void Build_Land_Linked_List(void);
 
 // WZD o145p18
-void CONTX_CreateLChains__WIP(void);
+void Build_Dock_Linked_List(void);
 
 
 

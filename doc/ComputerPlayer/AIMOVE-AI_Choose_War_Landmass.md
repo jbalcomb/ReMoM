@@ -19,19 +19,19 @@ AI_Choose_War_Landmass() populates _ai_landmass_war_targets[]
 So a tighter description: "head of the per-landmass linked-list of land squares that qualify as transport embarkation points."
 There's a family of 4 related globals that should rename coherently:
 Current	Role
-g_world_landmass_first_embark_square__load_init[plane][landmass]	head index of chain (this one)
-g_world_embark_square_next__load_init[plane][idx]	next-pointer in chain
-g_world_embark_square_wx__load_init[plane][idx]	X coord of chain entry
-g_world_embark_square_wy__load_init[plane][idx]	Y coord of chain entry
+_ai_landmass_dock_squares_heads[plane][landmass]	head index of chain (this one)
+_ai_landmass_dock_squares_lists[plane][idx]	next-pointer in chain
+_ai_landmass_dock_squares_wx_array[plane][idx]	X coord of chain entry
+_ai_landmass_dock_squares_wy_array[plane][idx]	Y coord of chain entry
 Per project conventions (g_ prefix for new globals, use "square" not "tile"), let me ask which direction you want:
 AskUserQuestion
     User has answered your questions: "Which naming style do you prefer for the CONTX_*LoadT* family?"="Shore-adjacent land". You can now continue with the user's answers in mind.
     Good choice. Let me first scope the change — grep for all uses of each of the 4 names.
 
-CONTX_1stLoadTs     g_world_landmass_first_embark_square__load_init
-CONTX_LoadTChain    g_world_embark_square_next__load_init
-CONTX_LoadTileXs    g_world_embark_square_wx__load_init
-CONTX_LoadTileYs    g_world_embark_square_wy__load_init
+CONTX_1stLoadTs     _ai_landmass_dock_squares_heads
+CONTX_LoadTChain    _ai_landmass_dock_squares_lists
+_ai_landmass_dock_squares_wx_array    _ai_landmass_dock_squares_wx_array
+_ai_landmass_dock_squares_wy_array    _ai_landmass_dock_squares_wy_array
 The trade-off:
     Naming	                                What it says
     g_world_landmass_first_shore_adj_square	"land square within 1 of shore" (how it's defined)

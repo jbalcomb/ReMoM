@@ -13,6 +13,98 @@ Landmasses
 Game Options: "Land Size"
 
 
+EMM Handle Name: "CONTXXX"
+..."CONT" as in "continent"
+Eh?
+CONTX_CreateChains__WIP()   ==>  Build_Land_Linked_List()
+CONTX_CreateLChains__WIP()  ==>  Build_Dock_Linked_List()
+
+
+
+array for war landmass
+array for colonization landmass
+arrays for landmass map squares
+arrays for shoreline map squares
+
+"stage square"
+world map square for picking up a stack, dropping a stack off, or collecting units to build a stack
+...embark/disembark, load/unload, dock (load or unload), port (load or unload), 
+...OSG says "coastal square", would seem to be counterpart to "shoreline" ("shoreline" is not used in the OSG)
+..."port" is used in the manual, but it is specific to cities and the bevaior of departing ships
+..."shore" is specific to a terrain type - allows buildings, affects bonuses
+
+drake178:
+    CONTX_1stLoadTs, CONTX_LoadTChain, CONTX_LoadTileYs, CONTX_LoadTileXs
+    CONTX_FirstTiles, CONTX_TileChain, CONTX_TileYs, CONTX_TileXs
+    "T" for "tile", AKA "sqaure"
+    "Load" as in load a transport, not sure if he meant load and unload
+CLAUDE:
+    "coastal landing tiles"
+GEMINI:
+    AI Naval Pathfinding and Amphibious Assaults.
+    ...this function sweeps the entire globe and builds an optimized Linked List of every single coastal tile, grouped by continent
+
+CONTX_1stLoadTs
+CONTX_LoadTChain
+CONTX_LoadTileYs
+CONTX_LoadTileXs
+_ai_landmass_land_squares_heads
+_ai_landmass_land_squares_lists
+_ai_landmass_land_squares_wx_array
+_ai_landmass_land_squares_wy_array
+
+CONTX_FirstTiles
+CONTX_TileChain
+CONTX_TileYs
+CONTX_TileXs
+g_world_embark_square_wx__load_init
+g_world_embark_square_wy__load_init
+g_world_embark_square_next__load_init
+g_world_landmass_first_embark_square__load_init
+_ai_landmass_dock_squares_heads
+_ai_landmass_dock_squares_lists
+_ai_landmass_dock_squares_wx_array
+_ai_landmass_dock_squares_wy_array
+...only used for the AI?
+...created on-load, never changed, all/only for use inside 'AI Turn'?
+...linked-list...dock squares...
+
+
+EMBARK-SQUARE TABLES — set once at game load, never modified during gameplay.
+For each (plane, landmass), enumerates the land squares where a transport
+can embark or disembark units — i.e., land squares within 1 (3x3 Moore
+neighborhood) of any shore-terrain square.
+    *A Moore neighborhood defines the 8 cells immediately surrounding a central cell on a 2D square grid.*
+    *It includes all orthogonal (up, down, left, right) and diagonal (corner) cells, creating a 3x3 window.*
+    How It Works
+        * Total Size: 9 cells total (1 center cell + 8 surrounding neighbors).
+        * Distance: All 8 surrounding cells are exactly 1 step away from the center (using Chebyshev distance, where diagonal distance equals orthogonal distance).
+        * Boundary Conditions: When applying this to the edge of a grid, programmers often use "padding" (adding empty rows/columns) or "wrapping" (treating the grid like a torus) to handle missing neighbors.
+    GEMINI:
+        Why this is a masterpiece of AI Design
+        Imagine an AI army consisting of 6 Swordsmen sitting in the middle of a massive continent. They want to attack an enemy Wizard on a different continent.
+        If the game didn't have this function, the AI would have to run a pathfinding algorithm outward from the Swordsmen across the entire map just to figure out where they could safely meet up with a transport ship. It would cripple a 486 processor.
+        Because CONTX_CreateLChains pre-builds these Linked Lists, the AI's logic becomes incredibly cheap:
+        The AI says: "My Swordsmen are on Continent #4."
+        It looks at CONTX_1stLoadTs[0][4].
+        Instantly, it has a linked list of every single valid port/shoreline tile on Continent #4.
+        It just loops through that tiny, pre-calculated list, finds the port tile closest to the enemy continent, and issues the move order!
+        This perfectly ties back to the EMM_Map_CONTXXX snippet you shared earlier. Now we know exactly what the CONTX_1stLoadTs (First Load Tiles) and CONTX_LoadTChain (Load Tile Chain) arrays are actually doing!
+
+EMM_Map_CONTXXX()
+CONTX_CreateChains__WIP()
+CONTX_CreateLChains__WIP()
+...last three procs in over145 ...later additions? ...after other weirder later additions, so rearrangement?
+AI_Set_Unit_Orders() |-> AI_Do_Settle() |-> AI_SendToColonize__WIP() |-> j_TILE_AI_FindLoadTile__WIP() |-> TILE_AI_FindLoadTile__WIP()
+
+Loaded_Game_Update__seg001()
+    |-> CONTX_CreateChains__WIP()
+    |-> CONTX_CreateLChains__WIP()
+
+Square_Is_Shoreline() is only used by CONTX_CreateLChains__WIP()
+    ...sailable and land-adjacent?
+
+
 
 ¿ structures and data behind AISTAGE ?
 

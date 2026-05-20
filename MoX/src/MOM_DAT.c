@@ -2624,14 +2624,14 @@ uint16_t grand_vizier;
  * neighborhood) of any shore-terrain square.
  *
  * Storage layout: a per-landmass linked list whose head is in
- * g_world_landmass_first_embark_square__load_init[plane][landmass]. The chain
- * is walked via g_world_embark_square_next__load_init[plane][cursor] until
+ * _ai_landmass_dock_squares_heads[plane][landmass]. The chain
+ * is walked via _ai_landmass_dock_squares_lists[plane][cursor] until
  * ST_UNDEFINED. Each chain entry's coordinates are in the parallel
- * g_world_embark_square_wx__load_init[plane][cursor] /
- * g_world_embark_square_wy__load_init[plane][cursor] arrays.
+ * _ai_landmass_dock_squares_wx_array[plane][cursor] /
+ * _ai_landmass_dock_squares_wy_array[plane][cursor] arrays.
  *
  * Lifecycle:
- *   - Allocated and populated ONCE at game load by CONTX_CreateLChains__WIP()
+ *   - Allocated and populated ONCE at game load by Build_Dock_Linked_List()
  *     (called from LoadScr.c:796 via the AI CONT / MOVE init block).
  *   - NEVER rebuilt during gameplay. The __load_init suffix flags this.
  *   - Slot 0 in the first-embark array is ALWAYS ST_UNDEFINED — the producer's
@@ -2648,23 +2648,17 @@ uint16_t grand_vizier;
  *                                                Hills, River.
  *   - Therefore shoreline squares are static per game, and the load-time
  *     chain remains correct forever.
- *
- * The OG comments at AIMOVE.c lines 8062-8063 and 8089-8091 ("BUG? uses an
- * array that holds previous data at this point in time?") were overcautious;
- * the dev was worried about staleness without verifying the inputs are
- * immutable. They are.
- *
- * Original IDA names: CONTX_1stLoadTs / g_world_embark_square_next__load_init / CONTX_LoadTileXs /
- * CONTX_LoadTileYs (where "T" = "Tile"). Renamed for descriptive clarity and
- * to encode the set-once-at-load semantic via the __load_init suffix.
+ 
+ singly linked list
+
  */
-int16_t * g_world_landmass_first_embark_square__load_init[NUM_PLANES];
-// WZD dseg:9D32  (was g_world_embark_square_next__load_init)
-int16_t * g_world_embark_square_next__load_init[NUM_PLANES];
-// WZD dseg:9D3A  (was CONTX_LoadTileYs)
-int8_t * g_world_embark_square_wy__load_init[NUM_PLANES];
-// WZD dseg:9D42  (was CONTX_LoadTileXs)
-int8_t * g_world_embark_square_wx__load_init[NUM_PLANES];
+int16_t * _ai_landmass_dock_squares_heads[NUM_PLANES];
+// WZD dseg:9D32  (was _ai_landmass_dock_squares_lists)
+int16_t * _ai_landmass_dock_squares_lists[NUM_PLANES];
+// WZD dseg:9D3A  (was _ai_landmass_dock_squares_wy_array)
+int8_t * _ai_landmass_dock_squares_wy_array[NUM_PLANES];
+// WZD dseg:9D42  (was _ai_landmass_dock_squares_wx_array)
+int8_t * _ai_landmass_dock_squares_wx_array[NUM_PLANES];
 
 
 // WZD dseg:9D4A
@@ -2700,17 +2694,17 @@ per landmass, heads of linked lists for all squares
 2 planes
 60 continents
 */
-int16_t * CONTX_FirstTiles[NUM_PLANES];
+int16_t * _ai_landmass_land_squares_heads[NUM_PLANES];
 // WZD dseg:9EA8
 /*
 2 planes
 1600 whats?
 */
-int16_t * CONTX_TileChain[NUM_PLANES];
+int16_t * _ai_landmass_land_squares_lists[NUM_PLANES];
 // WZD dseg:9EB0
-int8_t * CONTX_TileYs[NUM_PLANES];
+int8_t * _ai_landmass_land_squares_wy_array[NUM_PLANES];
 // WZD dseg:9EB8
-int8_t * CONTX_TileXs[NUM_PLANES];
+int8_t * _ai_landmass_land_squares_wx_array[NUM_PLANES];
 
 // WZD dseg:9EC0
 SAMB_ptr EmmHndl_CONTXXX;

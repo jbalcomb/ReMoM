@@ -1520,21 +1520,21 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
 
                                 Adj_NonOcean_Y = stack_wy;
 
-                                Tile_Index = g_world_landmass_first_embark_square__load_init[wp][_ai_landmass_war_targets[wp][player_idx]];
+                                Tile_Index = _ai_landmass_dock_squares_heads[wp][_ai_landmass_war_targets[wp][player_idx]];
 
                                 closest_target_distance = 1000;
 
                                 if(Tile_Index != ST_UNDEFINED)
                                 {
 
-                                    target_distance = Delta_XY_With_Wrap(g_world_embark_square_wx__load_init[wp][Tile_Index], g_world_embark_square_wy__load_init[wp][Tile_Index], Adj_NonOcean_X, Adj_NonOcean_Y, WORLD_WIDTH);
+                                    target_distance = Delta_XY_With_Wrap(_ai_landmass_dock_squares_wx_array[wp][Tile_Index], _ai_landmass_dock_squares_wy_array[wp][Tile_Index], Adj_NonOcean_X, Adj_NonOcean_Y, WORLD_WIDTH);
 
                                     if(target_distance < closest_target_distance)
                                     {
 
-                                        X_Offset = g_world_embark_square_wx__load_init[wp][Tile_Index];
+                                        X_Offset = _ai_landmass_dock_squares_wx_array[wp][Tile_Index];
 
-                                        Y_Offset = g_world_embark_square_wy__load_init[wp][Tile_Index];
+                                        Y_Offset = _ai_landmass_dock_squares_wy_array[wp][Tile_Index];
 
                                         if(g_ai_evaluation_map[wp][((Y_Offset * WORLD_WIDTH) + X_Offset)] == 0)  // empty map square
                                         {
@@ -1549,7 +1549,7 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
 
                                     }
 
-                                        Tile_Index = g_world_embark_square_next__load_init[wp][Tile_Index];
+                                        Tile_Index = _ai_landmass_dock_squares_lists[wp][Tile_Index];
 
                                 }
 
@@ -1742,19 +1742,19 @@ void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx
 
         Tile_Count = 0;
 
-        Next_Tile_ChainIndex = g_world_landmass_first_embark_square__load_init[wp][_ai_landmass_war_targets[wp][player_idx]];
+        Next_Tile_ChainIndex = _ai_landmass_dock_squares_heads[wp][_ai_landmass_war_targets[wp][player_idx]];
 
-        // while(Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+        // while(Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
         while(Next_Tile_ChainIndex != ST_UNDEFINED)
         {
 
-            Midpoint_X += g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex];
+            Midpoint_X += _ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex];
 
-            Midpoint_X += g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex];
+            Midpoint_X += _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex];
 
             Tile_Count++;
 
-            Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex];
+            Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex];
 
         }
 
@@ -1764,15 +1764,15 @@ void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx
 
             Closest_Landing_Distance = 1000;
 
-            Next_Tile_ChainIndex = g_world_landmass_first_embark_square__load_init[wp][landmass_idx];
+            Next_Tile_ChainIndex = _ai_landmass_dock_squares_heads[wp][landmass_idx];
 
-        // while(Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+        // while(Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
         while(Next_Tile_ChainIndex != ST_UNDEFINED)
         {
 
-            LoadTile_X = g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex];
+            LoadTile_X = _ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex];
 
-            LoadTile_X = g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex];
+            LoadTile_X = _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex];
 
             if(g_ai_evaluation_map[wp][((LoadTile_Y * WORLD_WIDTH) + LoadTile_X)] == 0)
             {
@@ -1792,7 +1792,7 @@ void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx
 
             }
 
-            Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex];
+            Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex];
 
         }
         
@@ -2535,15 +2535,15 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
 // ; add any free-roaming enemy stacks on the continent to
 // ; the target list
 
-    Next_Tile_ChainIndex = CONTX_FirstTiles[wp][landmass_idx];
+    Next_Tile_ChainIndex = _ai_landmass_land_squares_heads[wp][landmass_idx];
 
-    // while(Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+    // while(Next_Tile_ChainIndex = _ai_landmass_land_squares_lists[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
     while(Next_Tile_ChainIndex != ST_UNDEFINED)
     {
 
-        Next_Tile_X = CONTX_TileXs[wp][Next_Tile_ChainIndex];
+        Next_Tile_X = _ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex];
 
-        Next_Tile_Y = CONTX_TileYs[wp][Next_Tile_ChainIndex];
+        Next_Tile_Y = _ai_landmass_land_squares_wy_array[wp][Next_Tile_ChainIndex];
 
         target_square_evaluation_value = g_ai_evaluation_map[wp][((Next_Tile_Y * WORLD_WIDTH) + Next_Tile_X)];
 
@@ -2577,7 +2577,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
 
         }
 
-        Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex];
+        Next_Tile_ChainIndex = _ai_landmass_land_squares_lists[wp][Next_Tile_ChainIndex];
 
     }
 
@@ -3307,15 +3307,15 @@ int16_t AI_Find_Nearest_Target_Unit(int16_t stack_idx, int16_t landmass_idx, int
 
     stack_wy = _ai_own_stack_wy[stack_idx];
 
-    Next_Tile_ChainIndex = CONTX_FirstTiles[wp][landmass_idx];
+    Next_Tile_ChainIndex = _ai_landmass_land_squares_heads[wp][landmass_idx];
 
-    // while(Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+    // while(Next_Tile_ChainIndex = _ai_landmass_land_squares_lists[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
     while(Next_Tile_ChainIndex != ST_UNDEFINED)
     {
 
-        Next_Tile_X = CONTX_TileXs[wp][Next_Tile_ChainIndex];
+        Next_Tile_X = _ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex];
 
-        Next_Tile_Y = CONTX_TileYs[wp][Next_Tile_ChainIndex];
+        Next_Tile_Y = _ai_landmass_land_squares_wy_array[wp][Next_Tile_ChainIndex];
 
         target_square_evaluation_value = g_ai_evaluation_map[wp][((Next_Tile_Y * WORLD_WIDTH) + Next_Tile_X)];
 
@@ -3343,7 +3343,7 @@ int16_t AI_Find_Nearest_Target_Unit(int16_t stack_idx, int16_t landmass_idx, int
 
         }
 
-        Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex];
+        Next_Tile_ChainIndex = _ai_landmass_land_squares_lists[wp][Next_Tile_ChainIndex];
 
     }
 
@@ -4752,15 +4752,15 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
 
                             Best_Tile_Value = ST_UNDEFINED;
 
-                            Next_Tile_ChainIndex = CONTX_FirstTiles[unit_wp][landmass_idx];
+                            Next_Tile_ChainIndex = _ai_landmass_land_squares_heads[unit_wp][landmass_idx];
 
-                            // while(Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+                            // while(Next_Tile_ChainIndex = _ai_landmass_land_squares_lists[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
                             while(Next_Tile_ChainIndex != ST_UNDEFINED)
                             {
 
-                                wx = CONTX_TileXs[unit_wp][Next_Tile_ChainIndex];
+                                wx = _ai_landmass_land_squares_wx_array[unit_wp][Next_Tile_ChainIndex];
                                 
-                                wy = CONTX_TileYs[unit_wp][Next_Tile_ChainIndex];
+                                wy = _ai_landmass_land_squares_wy_array[unit_wp][Next_Tile_ChainIndex];
 
                                 if(Map_Square_Survey(wx, wy, unit_wp) == 0)
                                 {
@@ -4825,7 +4825,7 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                                     
                                 }
 
-                                Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex];
+                                Next_Tile_ChainIndex = _ai_landmass_land_squares_lists[wp][Next_Tile_ChainIndex];
 
                             }
 
@@ -4901,9 +4901,9 @@ void AI_Do_Purify(int16_t landmass_idx, int16_t wp)
 
     InRange_Corruption = ST_FALSE;
 
-    Next_Tile_ChainIndex = CONTX_FirstTiles[wp][landmass_idx];
+    Next_Tile_ChainIndex = _ai_landmass_land_squares_heads[wp][landmass_idx];
 
-    // while(Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+    // while(Next_Tile_ChainIndex = _ai_landmass_land_squares_lists[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
     while(Next_Tile_ChainIndex != ST_UNDEFINED)
     {
 
@@ -4914,9 +4914,9 @@ void AI_Do_Purify(int16_t landmass_idx, int16_t wp)
 
         }
 
-        Tile_X = CONTX_TileXs[wp][Next_Tile_ChainIndex];
+        Tile_X = _ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex];
         
-        Tile_Y = CONTX_TileYs[wp][Next_Tile_ChainIndex];
+        Tile_Y = _ai_landmass_land_squares_wy_array[wp][Next_Tile_ChainIndex];
 
         if(
             ((_map_square_flags[((wp * WORLD_SIZE) + (Tile_Y * WORLD_WIDTH) + Tile_X)] & MSF_CORRUPTION) != 0)
@@ -4956,7 +4956,7 @@ void AI_Do_Purify(int16_t landmass_idx, int16_t wp)
 
         }
 
-        Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex];
+        Next_Tile_ChainIndex = _ai_landmass_land_squares_lists[wp][Next_Tile_ChainIndex];
 
     }
 
@@ -5883,8 +5883,8 @@ int16_t AI_Tower_Target_Worthwhile(int16_t player_idx, int16_t wx, int16_t wy, i
     if(_ai_continents.plane[Opposite_Plane].player[player_idx].type_array[Opposite_Landmass] != lmt_NoOwnCity)
     {
         itr_cities = 0;
-        Next_Tile_ChainIndex = CONTX_FirstTiles[Opposite_Plane][Opposite_Landmass];
-        // while(Next_Tile_ChainIndex = CONTX_TileChain[Opposite_Plane][Next_Tile_ChainIndex] != ST_UNDEFINED)
+        Next_Tile_ChainIndex = _ai_landmass_land_squares_heads[Opposite_Plane][Opposite_Landmass];
+        // while(Next_Tile_ChainIndex = _ai_landmass_land_squares_lists[Opposite_Plane][Next_Tile_ChainIndex] != ST_UNDEFINED)
         while(Next_Tile_ChainIndex != ST_UNDEFINED)
         {
             if(Have_City_Target != ST_FALSE)
@@ -5896,7 +5896,7 @@ int16_t AI_Tower_Target_Worthwhile(int16_t player_idx, int16_t wx, int16_t wy, i
             {
                 Have_City_Target = ST_TRUE;
             }
-            Next_Tile_ChainIndex = CONTX_TileChain[Opposite_Plane][Next_Tile_ChainIndex];
+            Next_Tile_ChainIndex = _ai_landmass_land_squares_lists[Opposite_Plane][Next_Tile_ChainIndex];
         }
     }
 
@@ -5907,6 +5907,7 @@ int16_t AI_Tower_Target_Worthwhile(int16_t player_idx, int16_t wx, int16_t wy, i
 
 // WZD o158p38
 /*
+OON XREF: AI_Set_Unit_Orders() |-> G_AI_RallyFill__WIP() |-> AI_SingleCont_Reeval__WIP()
 Per Player, Per Landmass+Plane
 2. **Count owned cities** and sum their coordinates to get a geographic centroid.
 */
@@ -6073,8 +6074,8 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
         Center_Y = _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx];
         Best_Tile_Weight = 1000;
 // ; find a semi-random empty tile on the continent, if any (weighted by distance + a random value)
-        Next_Tile_ChainIndex = g_world_landmass_first_embark_square__load_init[wp][landmass_idx];
-        // while(Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+        Next_Tile_ChainIndex = _ai_landmass_dock_squares_heads[wp][landmass_idx];
+        // while(Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
         while(Next_Tile_ChainIndex != ST_UNDEFINED)
         {
 // ...jitter (0-4) ... mostly affects ties: two tiles at exact taxicab distance ... and which one wins depends on the rolls
@@ -6082,24 +6083,24 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
             square_weight = (
                 Random(5)
                 +
-                Delta_XY_With_Wrap(CONTX_TileXs[wp][Next_Tile_ChainIndex], CONTX_TileYs[wp][Next_Tile_ChainIndex], Center_X, Center_Y, WORLD_WIDTH)
+                Delta_XY_With_Wrap(_ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex], _ai_landmass_land_squares_wy_array[wp][Next_Tile_ChainIndex], Center_X, Center_Y, WORLD_WIDTH)
             );
 // "Best" = lowest because lower distance = closer to the city centroid = better stage point.
             if(square_weight < Best_Tile_Weight)
             {
-                Tile_X = CONTX_TileXs[wp][Next_Tile_ChainIndex];
-                Tile_Y = CONTX_TileYs[wp][Next_Tile_ChainIndex];
+                Tile_X = _ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex];
+                Tile_Y = _ai_landmass_land_squares_wy_array[wp][Next_Tile_ChainIndex];
                 /* Check if square is occupied by a site or an enemy stack */
                 square_occupation_value = g_ai_evaluation_map[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)];
                 if(square_occupation_value == 0)  /* none or own */
                 {
                     Best_Tile_Weight = square_weight;
                     // ¿ ; already in local vars ?
-                    stage_wx = CONTX_TileXs[wp][Next_Tile_ChainIndex];
-                    stage_wy = CONTX_TileYs[wp][Next_Tile_ChainIndex];
+                    stage_wx = _ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex];
+                    stage_wy = _ai_landmass_land_squares_wy_array[wp][Next_Tile_ChainIndex];
                 }
             }
-            Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex];
+            Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex];
         }
         /*
             Update stage-point
@@ -6135,28 +6136,28 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
         Tile_X = 0;
         /* Calculate average position of all possible coastal loading points */
         /* _ai_landmass_war_targets[wp][player_idx] could be 0 as in NONE */
-        Next_Tile_ChainIndex = g_world_landmass_first_embark_square__load_init[wp][_ai_landmass_war_targets[wp][player_idx]];
+        Next_Tile_ChainIndex = _ai_landmass_dock_squares_heads[wp][_ai_landmass_war_targets[wp][player_idx]];
         while(Next_Tile_ChainIndex != ST_UNDEFINED)
         {
-            LoadTile_X += g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex];
-            LoadTile_Y += g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex];
+            LoadTile_X += _ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex];
+            LoadTile_Y += _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex];
             Tile_X++;
-            Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex];
+            Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex];
         }
 
         /* OGBUG  possible division by 0 */
         LoadTile_X /= Tile_X;
         LoadTile_Y /= Tile_X;
         Best_Tile_Weight = 1000;
-        Next_Tile_ChainIndex = g_world_landmass_first_embark_square__load_init[wp][landmass_idx];
-        // while(Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+        Next_Tile_ChainIndex = _ai_landmass_dock_squares_heads[wp][landmass_idx];
+        // while(Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
         while(Next_Tile_ChainIndex != ST_UNDEFINED)
         {
-            square_weight = (Delta_XY_With_Wrap(g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex], g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex], LoadTile_X, LoadTile_Y, WORLD_WIDTH) + Random(5));
+            square_weight = (Delta_XY_With_Wrap(_ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex], _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex], LoadTile_X, LoadTile_Y, WORLD_WIDTH) + Random(5));
             if(square_weight < Best_Tile_Weight)
             {
-                Tile_X = g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex];
-                Tile_Y = g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex];
+                Tile_X = _ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex];
+                Tile_Y = _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex];
                 if(g_ai_evaluation_map[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)] == 0)
                 {
                     Best_Tile_Weight = square_weight;
@@ -6164,13 +6165,300 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
                     stage_wy = Tile_Y;
                 }
             }
-            Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex];
+            Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex];
         }
 
     }
 
 }
+/* GEMINI */
+void AI_SingleCont_Reeval__GEMINI(int player_idx, int landmass_idx, int wp)
+{
+    int itr;
+    int city_count;
+    int center_x;
+    int center_y;
+    int next_tile_chain_idx;
+    int best_square_weight;
+    int load_square_wx;
+    int load_square_wy;
+    int opposition;
+    int square_wx;
+    int square_wy;
+    int stage_wx;
+    int stage_wy;
+    int sum_y;
+    int sum_x;
+    int unit_type_idx;
+    int square_weight;
+    unsigned char * landmass_ptr;
+    // int continent_idx;
 
+    EMM_Map_CONTXXX();
+
+    /* Phase 1: Reset unit status for this landmass */
+    for (itr = 0; itr < _units; itr++)
+    {
+        /* Filter by owner */
+        if (_UNITS[itr].owner_idx == player_idx)
+        {
+            /* Filter by non-construction units */
+            if (_unit_type_table[_UNITS[itr].type].Construction == 0)
+            {
+                /* Check if unit is on the target landmass/plane */
+                landmass_ptr = _landmasses + ( (long)_UNITS[itr].wp * 3600L ) + ( (long)_UNITS[itr].wy * 60L ) + _UNITS[itr].wx;
+                if (*landmass_ptr == landmass_idx)
+                {
+                    _UNITS[itr].Status = us_Ready;
+                }
+            }
+        }
+    }
+
+    /* Indexing for the AI continent data table: [plane][player][landmass] */
+    // continent_idx = (wp * 1200) + (player_idx * 100) + landmass_idx;
+
+    // _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = 0;
+    _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = 0;
+    sum_x = 0;
+    sum_y = 0;
+
+    /* Phase 2: Calculate city center and presence */
+    for (itr = 0; itr < _cities; itr++)
+    {
+        if (_CITIES[itr].owner_idx == player_idx)
+        {
+            landmass_ptr = _landmasses + ( (long)_CITIES[itr].wp * 3600L ) + ( (long)_CITIES[itr].wy * 60L ) + _CITIES[itr].wx;
+            if (*landmass_ptr == landmass_idx)
+            {
+                sum_x += _CITIES[itr].wx;
+                sum_y += _CITIES[itr].wy;
+                // _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx]++;
+                _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx]++;
+            }
+        }
+    }
+
+    // city_count = _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx];
+    city_count = _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx];
+    if (city_count > 0)
+    {
+        // _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = (sum_x / city_count);
+        // _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = (sum_y / city_count);
+        _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = (sum_x / city_count);
+        _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = (sum_y / city_count);
+
+    }
+
+    /* Phase 3: Evaluate military strength ratio */
+    // WTF, Gemini? DNE!!  sum_x = 0; /* Own unit cost sum */
+    // WTF, Gemini? DNE!!  sum_y = 0; /* Enemy unit cost sum */
+    for (itr = 0; itr < _units; itr++)
+    {
+        unit_type_idx = _UNITS[itr].type;
+        
+        /* Skip settlers/outpost builders */
+        if ((_unit_type_table[unit_type_idx].Abilities & UA_CREATEOUTPOST) == 0)
+        {
+            landmass_ptr = _landmasses + ( (long)_UNITS[itr].wp * 3600L ) + ( (long)_UNITS[itr].wy * 60L ) + _UNITS[itr].wx;
+            if (*landmass_ptr == landmass_idx)
+            {
+                if (_UNITS[itr].owner_idx == player_idx)
+                {
+                    sum_x += _unit_type_table[unit_type_idx].cost;
+                }
+                else
+                {
+                    sum_y += _unit_type_table[unit_type_idx].cost;
+                }
+            }
+        }
+    }
+
+    /* Determine continent status based on force presence */
+    if (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] > 0)
+    {
+        /* If enemy forces are less than 10% of ours, we own it */
+        if ((sum_y * 10) < sum_x)
+        {
+            _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Own;
+        }
+        else
+        {
+            _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Contested;
+        }
+    }
+    else
+    {
+        _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_NoOwnCity;
+    }
+
+    /* Phase 4: Check for Allied presence */
+    for (itr = 0; itr < _cities; itr++)
+    {
+        if (_CITIES[itr].owner_idx != player_idx && _CITIES[itr].owner_idx != NEUTRAL_PLAYER_IDX)
+        {
+            landmass_ptr = _landmasses + ( (long)_CITIES[itr].wp * 3600L ) + ( (long)_CITIES[itr].wy * 60L ) + _CITIES[itr].wx;
+            if (*landmass_ptr == landmass_idx)
+            {
+                /* If we have no presence but an ally does, mark as NoLanding (don't invade ally) */
+                if (_players[player_idx].Dipl.Dipl_Status[_CITIES[itr].owner_idx] == DIPL_Alliance)
+                {
+                    if (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoOwnCity)
+                    {
+                        _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_NoOwnCityAndAllyHasCity;
+                    }
+                }
+            }
+        }
+    }
+
+    /* Landmass 0 is Ocean / 'Landmass of No-LandMass' */
+    _ai_continents.plane[wp].player[player_idx].type_array[0] = lmt_NoOwnCityAndAllyHasCity;
+
+    /* Phase 5: Determine Stage Point for the Continent */
+    if (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_Contested || 
+        _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_Own || 
+        _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoOwnCityAndAllyHasCity)
+    {
+
+        center_x = _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx];
+        center_y = _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx];
+        best_square_weight = 1000;
+        
+        /* Iterate through list of tiles belonging to this landmass */
+        next_tile_chain_idx = _ai_landmass_land_squares_heads[wp][landmass_idx];
+        while (next_tile_chain_idx != ST_UNDEFINED)
+        {
+            square_weight = Delta_XY_With_Wrap(_ai_landmass_land_squares_wx_array[wp][next_tile_chain_idx], 
+                                            _ai_landmass_land_squares_wy_array[wp][next_tile_chain_idx], 
+                                            center_x, center_y, 60) + Random(5);
+            
+            if (square_weight < best_square_weight)
+            {
+                square_wx = _ai_landmass_land_squares_wx_array[wp][next_tile_chain_idx];
+                square_wy = _ai_landmass_land_squares_wy_array[wp][next_tile_chain_idx];
+                
+                /* Check if square is occupied by enemy (opposition) */
+                opposition = g_ai_evaluation_map[wp][(square_wy * 60) + square_wx];
+                if (opposition == 0)
+                {
+                    best_square_weight = square_weight;
+                    stage_wx = square_wx;
+                    stage_wy = square_wy;
+                }
+            }
+            next_tile_chain_idx = _ai_landmass_land_squares_lists[wp][next_tile_chain_idx];
+        }
+
+        if (best_square_weight < 1000)
+        {
+            _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = stage_wx;
+            _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = stage_wy;
+        }
+        else
+        {
+            _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = 0;
+            _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = 0;
+            _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_NoOwnCityAndAllyHasCity;
+        }
+    }
+
+    /* Phase 6: Handle Landing/Loading Point for Invaded/NoPresence Continents */
+    if (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoOwnCity)
+    {
+        center_x = _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx];
+        center_y = _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx];
+        best_square_weight = 1000;
+
+        /* Iterate through coastal landing tiles */
+        next_tile_chain_idx = _ai_landmass_dock_squares_heads[wp][landmass_idx];
+        while (next_tile_chain_idx != -1)
+        {
+            square_wx = _ai_landmass_dock_squares_wx_array[wp][next_tile_chain_idx];
+            square_wy = _ai_landmass_dock_squares_wy_array[wp][next_tile_chain_idx];
+
+            if (g_ai_evaluation_map[wp][(square_wy * 60) + square_wx] == 0)
+            {
+                square_weight = Delta_XY_With_Wrap(square_wx, square_wy, center_x, center_y, 60) + Random(20);
+                if (square_weight < best_square_weight)
+                {
+                    best_square_weight = square_weight;
+                    stage_wx = square_wx;
+                    stage_wy = square_wy;
+                }
+            }
+            next_tile_chain_idx = _ai_landmass_dock_squares_lists[wp][next_tile_chain_idx];
+        }
+
+        if (best_square_weight < 1000)
+        {
+            _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = stage_wx;
+            _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = stage_wy;
+        }
+        else
+        {
+            _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = 0;
+            _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = 0;
+            _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_NoOwnCityAndAllyHasCity;
+        }
+    }
+
+    /* Phase 7: Own Continent - Calculate Transport Loading Center */
+    if (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_Own)
+    {
+        load_square_wx = 0;
+        load_square_wy = 0;
+        square_wx = 0; /* Counter for landing tiles */
+
+        /* Calculate average position of all possible coastal loading points */
+        next_tile_chain_idx = _ai_landmass_dock_squares_heads[wp][_ai_landmass_war_targets[wp][player_idx]];
+        while (next_tile_chain_idx != ST_UNDEFINED)
+        {
+            load_square_wx += _ai_landmass_dock_squares_wx_array[wp][next_tile_chain_idx];
+            load_square_wy += _ai_landmass_dock_squares_wy_array[wp][next_tile_chain_idx];
+            square_wx++;
+            next_tile_chain_idx = _ai_landmass_dock_squares_lists[wp][next_tile_chain_idx];
+        }
+
+        if (square_wx > 0)
+        {
+            load_square_wx /= square_wx;
+            load_square_wy /= square_wx;
+        }
+
+        best_square_weight = 1000;
+        next_tile_chain_idx = _ai_landmass_dock_squares_heads[wp][landmass_idx];
+        while (next_tile_chain_idx != ST_UNDEFINED)
+        {
+            square_weight = (
+                Delta_XY_With_Wrap(_ai_landmass_dock_squares_wx_array[wp][next_tile_chain_idx], _ai_landmass_dock_squares_wy_array[wp][next_tile_chain_idx], load_square_wx, load_square_wy, 60)
+                +
+                Random(5)
+            );
+            
+            if (square_weight < best_square_weight)
+            {
+                square_wx = _ai_landmass_dock_squares_wx_array[wp][next_tile_chain_idx];
+                square_wy = _ai_landmass_dock_squares_wy_array[wp][next_tile_chain_idx];
+                
+                if (g_ai_evaluation_map[wp][(square_wy * 60) + square_wx] == 0)
+                {
+                    best_square_weight = square_weight;
+                    stage_wx = square_wx;
+                    stage_wy = square_wy;
+                }
+            }
+            next_tile_chain_idx = _ai_landmass_dock_squares_lists[wp][next_tile_chain_idx];
+        }
+
+        if (best_square_weight < 1000)
+        {
+            _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = stage_wx;
+            _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = stage_wy;
+        }
+    }
+}
 
 
 /*
@@ -6402,13 +6690,13 @@ void TILE_AI_FindLoadTile__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
 
     closest_distance = 2000;
 
-    Next_Tile_ChainIndex = g_world_landmass_first_embark_square__load_init[wp][landmass_idx];
+    Next_Tile_ChainIndex = _ai_landmass_dock_squares_heads[wp][landmass_idx];
 
-    // while(Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+    // while(Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
     while(Next_Tile_ChainIndex != ST_UNDEFINED)
     {
 
-        LoadTile_Y = g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex];
+        LoadTile_Y = _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex];
 
         Adj_Empty_Land = ST_FALSE;
 
@@ -6451,7 +6739,7 @@ void TILE_AI_FindLoadTile__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
 
         }
 
-        Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex];
+        Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex];
 
     }
 
@@ -7120,11 +7408,11 @@ HERE:
                 (sum_own_city_wy__enemy_units_cost[wp][itr] == 0)
             )
             {
-                Next_Tile_ChainIndex = CONTX_FirstTiles[wp][landmass_idx];
-                while(((Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED) && (found_target != ST_FALSE)))
+                Next_Tile_ChainIndex = _ai_landmass_land_squares_heads[wp][landmass_idx];
+                while(((Next_Tile_ChainIndex = _ai_landmass_land_squares_lists[wp][Next_Tile_ChainIndex] != ST_UNDEFINED) && (found_target != ST_FALSE)))
                 {
-                    Tile_X = CONTX_TileXs[wp][Next_Tile_ChainIndex];
-                    Tile_Y = CONTX_TileYs[wp][Next_Tile_ChainIndex];
+                    Tile_X = _ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex];
+                    Tile_Y = _ai_landmass_land_squares_wy_array[wp][Next_Tile_ChainIndex];
                     Tile_Linear = ((Tile_Y * WORLD_WIDTH) + Tile_X);
                     /* occupieable - no site or enemy stack */
                     if(g_ai_evaluation_map[wp][Tile_Linear] == 0)
@@ -7138,8 +7426,8 @@ HERE:
                         if(Tile_Weight < Best_Tile_Weight)
                         {
                             Best_Tile_Weight = Tile_Weight;
-                            Target_Tile_X = CONTX_TileXs[wp][Next_Tile_ChainIndex];
-                            Target_Tile_Y = CONTX_TileXs[wp][Next_Tile_ChainIndex];
+                            Target_Tile_X = _ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex];
+                            Target_Tile_Y = _ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex];
                             Target_Tile_Landmass = landmass_idx;
                         }
                     }
@@ -7184,25 +7472,25 @@ HERE:
                 )
                 {
                     Best_Tile_Weight = 1000;
-                    Next_Tile_ChainIndex = CONTX_FirstTiles[wp][landmass_idx];
+                    Next_Tile_ChainIndex = _ai_landmass_land_squares_heads[wp][landmass_idx];
                     while(Next_Tile_ChainIndex != ST_UNDEFINED)
                     {
-                        Tile_Weight = Delta_XY_With_Wrap(CONTX_TileXs[wp][Next_Tile_ChainIndex], CONTX_TileYs[wp][Next_Tile_ChainIndex], Center_X, Center_Y, WORLD_WIDTH);
+                        Tile_Weight = Delta_XY_With_Wrap(_ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex], _ai_landmass_land_squares_wy_array[wp][Next_Tile_ChainIndex], Center_X, Center_Y, WORLD_WIDTH);
                         if(Tile_Weight < Best_Tile_Weight)
                         {
-                            Tile_X = CONTX_TileXs[wp][Next_Tile_ChainIndex];
-                            Tile_Y = CONTX_TileYs[wp][Next_Tile_ChainIndex];
+                            Tile_X = _ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex];
+                            Tile_Y = _ai_landmass_land_squares_wy_array[wp][Next_Tile_ChainIndex];
                             /* occupieable - no site or enemy stack */
                             found_target = g_ai_evaluation_map[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)];
                             if(found_target == ST_FALSE)
                             {
                                 Best_Tile_Weight = Tile_Weight;
-                                Target_Tile_X = CONTX_TileXs[wp][Next_Tile_ChainIndex];
-                                Target_Tile_Y = CONTX_TileXs[wp][Next_Tile_ChainIndex];
+                                Target_Tile_X = _ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex];
+                                Target_Tile_Y = _ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex];
                                 Target_Tile_Landmass = landmass_idx;
                             }
                         }
-                        Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex];
+                        Next_Tile_ChainIndex = _ai_landmass_land_squares_lists[wp][Next_Tile_ChainIndex];
                     }
                     if(Best_Tile_Weight < 1000)
                     {
@@ -7233,23 +7521,23 @@ HERE:
                 Center_X = _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx];
                 Center_Y = _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx];
                 Best_Tile_Weight = 1000;
-                Next_Tile_ChainIndex = g_world_landmass_first_embark_square__load_init[wp][landmass_idx];
+                Next_Tile_ChainIndex = _ai_landmass_dock_squares_heads[wp][landmass_idx];
                 while(Next_Tile_ChainIndex != ST_UNDEFINED)
                 {
-                    Tile_X = g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex];
-                    Tile_Y = g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex];
+                    Tile_X = _ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex];
+                    Tile_Y = _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex];
                     if(g_ai_evaluation_map[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)] == 0)
                     {
                         Tile_Weight = Delta_XY_With_Wrap(Tile_X, Tile_Y, Center_X, Center_Y, WORLD_WIDTH);
                         if(Tile_Weight < Best_Tile_Weight)
                         {
                             Best_Tile_Weight = Tile_Weight;
-                            Target_Tile_X = g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex];
-                            Target_Tile_Y = g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex];
+                            Target_Tile_X = _ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex];
+                            Target_Tile_Y = _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex];
                             Target_Tile_Landmass = landmass_idx;
                         }
                     }
-                    Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex];
+                    Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex];
                 }
                 if(Best_Tile_Weight < 1000)
                 {
@@ -7282,27 +7570,27 @@ HERE:
                     X_2 = 0;
                     Y_2 = 0;
                     Tile_Linear = 0;
-                    Next_Tile_ChainIndex = g_world_landmass_first_embark_square__load_init[wp][_ai_landmass_war_targets[wp][player_idx]];
-                    // while(Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+                    Next_Tile_ChainIndex = _ai_landmass_dock_squares_heads[wp][_ai_landmass_war_targets[wp][player_idx]];
+                    // while(Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
                     while(Next_Tile_ChainIndex != ST_UNDEFINED)
                     {
-                        X_2 = g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex];
-                        Y_2 = g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex];
+                        X_2 = _ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex];
+                        Y_2 = _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex];
                         Tile_Linear++;
-                        Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex];
+                        Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex];
                     }
                     X_2 /= Tile_Linear;
                     Y_2 /= Tile_Linear;
                     Best_Tile_Weight = 1000;
-                    Next_Tile_ChainIndex = g_world_landmass_first_embark_square__load_init[wp][landmass_idx];
-                    // while(Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+                    Next_Tile_ChainIndex = _ai_landmass_dock_squares_heads[wp][landmass_idx];
+                    // while(Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
                     while(Next_Tile_ChainIndex != ST_UNDEFINED)
                     {
-                        Tile_Weight = Delta_XY_With_Wrap(g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex], g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex], X_2, Y_2, WORLD_WIDTH);
+                        Tile_Weight = Delta_XY_With_Wrap(_ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex], _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex], X_2, Y_2, WORLD_WIDTH);
                         if(Tile_Weight < Best_Tile_Weight)
                         {
-                            Tile_X = g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex];
-                            Tile_Y = g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex];
+                            Tile_X = _ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex];
+                            Tile_Y = _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex];
                             if(g_ai_evaluation_map[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)] == 0)
                             {
                                 Best_Tile_Weight = Tile_Weight;
@@ -7310,7 +7598,7 @@ HERE:
                                 Target_Tile_Y = Tile_Y;
                             }
                         }
-                        Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex];
+                        Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex];
                     }
                     if(Best_Tile_Weight < 1000)
                     {
@@ -7478,22 +7766,22 @@ void AI_Continent_Reeval__GEMINI(int player_idx)
         for (landmass_idx = 1; landmass_idx < NUM_LANDMASSES; landmass_idx++) {
             if (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoOwnCity) {
                 if (Sum_City_Y_NonOwn_UnitCost[wp][landmass_idx] != 0) {
-                    Next_Tile_ChainIndex = CONTX_FirstTiles[wp][landmass_idx];
+                    Next_Tile_ChainIndex = _ai_landmass_land_squares_heads[wp][landmass_idx];
                     while (Next_Tile_ChainIndex != ST_UNDEFINED && found_target == ST_FALSE) {
-                        Tile_X = CONTX_TileXs[wp][Next_Tile_ChainIndex];
-                        Tile_Y = CONTX_TileYs[wp][Next_Tile_ChainIndex];
+                        Tile_X = _ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex];
+                        Tile_Y = _ai_landmass_land_squares_wy_array[wp][Next_Tile_ChainIndex];
                         Tile_Linear = Tile_Y * WORLD_WIDTH + Tile_X;
                         if (g_ai_evaluation_map[wp][Tile_Linear] == 0) {
                             /* BUG: X_2 and Y_2 are uninitialized here */
                             Tile_Weight = Delta_XY_With_Wrap(Tile_X, Tile_Y, X_2, Y_2, WORLD_WIDTH) + Random(20);
                             if (Tile_Weight < Best_Tile_Weight) {
                                 Best_Tile_Weight = Tile_Weight;
-                                Target_Tile_X = CONTX_TileXs[wp][Next_Tile_ChainIndex];
-                                Target_Tile_Y = CONTX_TileYs[wp][Next_Tile_ChainIndex];
+                                Target_Tile_X = _ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex];
+                                Target_Tile_Y = _ai_landmass_land_squares_wy_array[wp][Next_Tile_ChainIndex];
                                 Target_Tile_Landmass = landmass_idx;
                             }
                         }
-                        Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex];
+                        Next_Tile_ChainIndex = _ai_landmass_land_squares_lists[wp][Next_Tile_ChainIndex];
                     }
                 }
             }
@@ -7520,21 +7808,21 @@ void AI_Continent_Reeval__GEMINI(int player_idx)
                     _landmasses[wp * WORLD_SIZE + Center_Y * WORLD_WIDTH + Center_X] != landmass_idx) {
                     
                     Best_Tile_Weight = 1000;
-                    Next_Tile_ChainIndex = CONTX_FirstTiles[wp][landmass_idx];
+                    Next_Tile_ChainIndex = _ai_landmass_land_squares_heads[wp][landmass_idx];
                     while (Next_Tile_ChainIndex != ST_UNDEFINED) {
-                        Tile_Weight = Delta_XY_With_Wrap(CONTX_TileXs[wp][Next_Tile_ChainIndex], CONTX_TileYs[wp][Next_Tile_ChainIndex], Center_X, Center_Y, WORLD_WIDTH);
+                        Tile_Weight = Delta_XY_With_Wrap(_ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex], _ai_landmass_land_squares_wy_array[wp][Next_Tile_ChainIndex], Center_X, Center_Y, WORLD_WIDTH);
                         if (Tile_Weight < Best_Tile_Weight) {
-                            Tile_X = CONTX_TileXs[wp][Next_Tile_ChainIndex];
-                            Tile_Y = CONTX_TileYs[wp][Next_Tile_ChainIndex];
+                            Tile_X = _ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex];
+                            Tile_Y = _ai_landmass_land_squares_wy_array[wp][Next_Tile_ChainIndex];
                             found_target = g_ai_evaluation_map[wp][Tile_Y * WORLD_WIDTH + Tile_X];
                             if (found_target == ST_FALSE) {
                                 Best_Tile_Weight = Tile_Weight;
-                                Target_Tile_X = CONTX_TileXs[wp][Next_Tile_ChainIndex];
-                                Target_Tile_Y = CONTX_TileYs[wp][Next_Tile_ChainIndex];
+                                Target_Tile_X = _ai_landmass_land_squares_wx_array[wp][Next_Tile_ChainIndex];
+                                Target_Tile_Y = _ai_landmass_land_squares_wy_array[wp][Next_Tile_ChainIndex];
                                 Target_Tile_Landmass = landmass_idx;
                             }
                         }
-                        Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex];
+                        Next_Tile_ChainIndex = _ai_landmass_land_squares_lists[wp][Next_Tile_ChainIndex];
                     }
                     if (Best_Tile_Weight < 1000) {
                         _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = Target_Tile_X;
@@ -7555,20 +7843,20 @@ void AI_Continent_Reeval__GEMINI(int player_idx)
                 Center_X = _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx];
                 Center_Y = _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx];
                 Best_Tile_Weight = 1000;
-                Next_Tile_ChainIndex = g_world_landmass_first_embark_square__load_init[wp][landmass_idx];
+                Next_Tile_ChainIndex = _ai_landmass_dock_squares_heads[wp][landmass_idx];
                 while (Next_Tile_ChainIndex != ST_UNDEFINED) {
-                    Tile_X = g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex];
-                    Tile_Y = g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex];
+                    Tile_X = _ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex];
+                    Tile_Y = _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex];
                     if (g_ai_evaluation_map[wp][Tile_Y * WORLD_WIDTH + Tile_X] == 0) {
                         Tile_Weight = Delta_XY_With_Wrap(Tile_X, Tile_Y, Center_X, Center_Y, WORLD_WIDTH) + Random(20);
                         if (Tile_Weight < Best_Tile_Weight) {
                             Best_Tile_Weight = Tile_Weight;
-                            Target_Tile_X = g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex];
-                            Target_Tile_Y = g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex];
+                            Target_Tile_X = _ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex];
+                            Target_Tile_Y = _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex];
                             Target_Tile_Landmass = landmass_idx;
                         }
                     }
-                    Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex];
+                    Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex];
                 }
                 if (Best_Tile_Weight < 1000) {
                     _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = Target_Tile_X;
@@ -7589,29 +7877,29 @@ void AI_Continent_Reeval__GEMINI(int player_idx)
                     X_2 = 0;
                     Y_2 = 0;
                     Tile_Linear = 0;
-                    Next_Tile_ChainIndex = g_world_landmass_first_embark_square__load_init[wp][_ai_landmass_war_targets[wp][player_idx]];
+                    Next_Tile_ChainIndex = _ai_landmass_dock_squares_heads[wp][_ai_landmass_war_targets[wp][player_idx]];
                     while (Next_Tile_ChainIndex != ST_UNDEFINED) {
-                        X_2 += g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex];
-                        Y_2 += g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex];
+                        X_2 += _ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex];
+                        Y_2 += _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex];
                         Tile_Linear++;
-                        Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex];
+                        Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex];
                     }
                     X_2 = X_2 / Tile_Linear;
                     Y_2 = Y_2 / Tile_Linear;
                     Best_Tile_Weight = 1000;
-                    Next_Tile_ChainIndex = g_world_landmass_first_embark_square__load_init[wp][landmass_idx];
+                    Next_Tile_ChainIndex = _ai_landmass_dock_squares_heads[wp][landmass_idx];
                     while (Next_Tile_ChainIndex != ST_UNDEFINED) {
-                        Tile_Weight = Delta_XY_With_Wrap(g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex], g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex], X_2, Y_2, WORLD_WIDTH);
+                        Tile_Weight = Delta_XY_With_Wrap(_ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex], _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex], X_2, Y_2, WORLD_WIDTH);
                         if (Tile_Weight < Best_Tile_Weight) {
-                            Tile_X = g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex];
-                            Tile_Y = g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex];
+                            Tile_X = _ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex];
+                            Tile_Y = _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex];
                             if (g_ai_evaluation_map[wp][Tile_Y * WORLD_WIDTH + Tile_X] == 0) {
                                 Best_Tile_Weight = Tile_Weight;
                                 Target_Tile_X = Tile_X;
                                 Target_Tile_Y = Tile_Y;
                             }
                         }
-                        Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex];
+                        Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex];
                     }
                     if (Best_Tile_Weight < 1000) {
                         _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = Target_Tile_X;
@@ -8109,12 +8397,12 @@ void AI_Choose_War_Landmass(int16_t player_idx)
 
             for(itr_landmasses = 1; itr_landmasses < NUM_LANDMASSES; itr_landmasses++)
             {
-                Next_Tile_ChainIndex = g_world_landmass_first_embark_square__load_init[wp][itr_landmasses];
+                Next_Tile_ChainIndex = _ai_landmass_dock_squares_heads[wp][itr_landmasses];
                 nearest_dock_square_distance = 1000;
                 while(Next_Tile_ChainIndex != ST_UNDEFINED)
                 {
-                    dock_square_wx = g_world_embark_square_wx__load_init[wp][Value_Sum];
-                    dock_square_wy = g_world_embark_square_wy__load_init[wp][Value_Sum];
+                    dock_square_wx = _ai_landmass_dock_squares_wx_array[wp][Value_Sum];
+                    dock_square_wy = _ai_landmass_dock_squares_wy_array[wp][Value_Sum];
                     if(g_ai_evaluation_map[wp][((dock_square_wy * WORLD_WIDTH) + dock_square_wx)] == 0)
                     {
                         distance = Delta_XY_With_Wrap(dock_square_wx, dock_square_wy, empire_wx, empire_wy, WORLD_WIDTH);
@@ -8124,7 +8412,7 @@ void AI_Choose_War_Landmass(int16_t player_idx)
                     {
                         nearest_dock_square_distance = distance;
                     }
-                    Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex];
+                    Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex];
                 }
                 /* to avoid divide by zero */
                 if(nearest_dock_square_distance == 0) { nearest_dock_square_distance = 1; }
@@ -8208,11 +8496,11 @@ void AI_Choose_War_Landmass(int16_t player_idx)
                             (itr_landmasses == _landmasses[((wp * WORLD_SIZE) + (_FORTRESSES[player_idx].wy * WORLD_WIDTH) + _FORTRESSES[player_idx].wx)])
                         )
                         {
-                            Next_Tile_ChainIndex = CONTX_FirstTiles[wp][itr_landmasses];
+                            Next_Tile_ChainIndex = _ai_landmass_land_squares_heads[wp][itr_landmasses];
                             while(Next_Tile_ChainIndex != ST_UNDEFINED)
                             {
                                 final_landmass_weights[itr_landmasses] += 1;
-                                Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex];
+                                Next_Tile_ChainIndex = _ai_landmass_land_squares_lists[wp][Next_Tile_ChainIndex];
                             }
                             if (final_landmass_weights[itr_landmasses] < 10)
                             {

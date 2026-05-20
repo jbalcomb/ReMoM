@@ -22,6 +22,16 @@ _ai_reevaluate_continents_countdown
 used by AI_Continent_Reeval__WIP[]
 ...includes override utilizing g_ai_evaluation_map[]
 
+AI_Continent_Reeval__WIP()
+AI_SingleCont_Reeval__WIP()
+...last proc in ovr158 ...later addition?
+
+OON XREF: AI_Set_Unit_Orders() |-> G_AI_RallyFill__WIP() |-> AI_SingleCont_Reeval__WIP()
+
+AI_Set_Unit_Orders()
+    |-> G_AI_RallyFill__WIP()
+        |-> AI_SingleCont_Reeval__WIP()
+
 
 
 AI_Choose_War_Landmass
@@ -93,8 +103,9 @@ Want a read-only version too (find all places type_array is consulted but not as
 (12 values; 2 planes * 6 players)
 
 AI_Continent_Reeval__WIP()
+AI_SingleCont_Reeval__WIP()
 
-AI_Choose_War_Landmass
+AI_Choose_War_Landmass()
 
 _ai_landmass_war_targets[wp][player_idx] holds the landmass index of the AI's main war continent on plane wp for this turn
 (set fresh each turn by AI_Choose_War_Landmasshich runs earlier in AI_Turn)

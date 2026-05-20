@@ -76,7 +76,7 @@
           "first_line_hash": "28c485b2911b",
           "first_line_excerpt": "void CONTX_CreateLChains__WIP(void)",
           "read_at": "2026-05-17T15:02:00Z",
-          "purpose": "CONTX_CreateLChains__WIP — producer of CONTX_1stLoadTs[] and g_world_embark_square_next__load_init[]. Reads first 90 lines (signature through partial chain-build loop). Builds load-tile chains: for each non-ocean tile within 1 square of shoreline, add to landmass's chain. Slot 0 always ST_UNDEFINED (loop filters out landmass_idx == 0). Called ONCE at game load, never refreshed."
+          "purpose": "CONTX_CreateLChains__WIP — producer of _ai_landmass_dock_squares_heads[] and _ai_landmass_dock_squares_lists[]. Reads first 90 lines (signature through partial chain-build loop). Builds load-tile chains: for each non-ocean tile within 1 square of shoreline, add to landmass's chain. Slot 0 always ST_UNDEFINED (loop filters out landmass_idx == 0). Called ONCE at game load, never refreshed."
         }
       ]
     },

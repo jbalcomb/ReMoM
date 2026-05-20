@@ -4008,14 +4008,14 @@ extern uint16_t grand_vizier;
     ¿ BEGIN: CONTXXX ?
 */
 
-// WZD dseg:9D2A  (was CONTX_1stLoadTs)
-extern int16_t * g_world_landmass_first_embark_square__load_init[NUM_PLANES];
-// WZD dseg:9D32  (was g_world_embark_square_next__load_init)
-extern int16_t * g_world_embark_square_next__load_init[NUM_PLANES];
-// WZD dseg:9D3A  (was CONTX_LoadTileYs)
-extern int8_t * g_world_embark_square_wy__load_init[NUM_PLANES];
-// WZD dseg:9D42  (was CONTX_LoadTileXs)
-extern int8_t * g_world_embark_square_wx__load_init[NUM_PLANES];
+// WZD dseg:9D2A  (was _ai_landmass_dock_squares_heads)
+extern int16_t * _ai_landmass_dock_squares_heads[NUM_PLANES];
+// WZD dseg:9D32  (was _ai_landmass_dock_squares_lists)
+extern int16_t * _ai_landmass_dock_squares_lists[NUM_PLANES];
+// WZD dseg:9D3A  (was _ai_landmass_dock_squares_wy_array)
+extern int8_t * _ai_landmass_dock_squares_wy_array[NUM_PLANES];
+// WZD dseg:9D42  (was _ai_landmass_dock_squares_wx_array)
+extern int8_t * _ai_landmass_dock_squares_wx_array[NUM_PLANES];
 // WZD dseg:9D4A
 extern int16_t _ai_own_stack_count;
 // WZD dseg:9D4C
@@ -4031,13 +4031,13 @@ extern SAMB_ptr _ai_own_stack_wy;
 // WZD dseg:9E9C
 extern SAMB_ptr _ai_own_stack_wx;
 // WZD dseg:9EA0
-extern int16_t * CONTX_FirstTiles[NUM_PLANES];
+extern int16_t * _ai_landmass_land_squares_heads[NUM_PLANES];
 // WZD dseg:9EA8
-extern int16_t * CONTX_TileChain[NUM_PLANES];
+extern int16_t * _ai_landmass_land_squares_lists[NUM_PLANES];
 // WZD dseg:9EB0
-extern int8_t * CONTX_TileYs[NUM_PLANES];
+extern int8_t * _ai_landmass_land_squares_wy_array[NUM_PLANES];
 // WZD dseg:9EB8
-extern int8_t * CONTX_TileXs[NUM_PLANES];
+extern int8_t * _ai_landmass_land_squares_wx_array[NUM_PLANES];
 
 // WZD dseg:9EC0
 extern SAMB_ptr EmmHndl_CONTXXX;

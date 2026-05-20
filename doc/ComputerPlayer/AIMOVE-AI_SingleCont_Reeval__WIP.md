@@ -6,9 +6,21 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_SingleCont_Reeva
 
 # AI_SingleCont_Reeval__WIP — Walkthrough
 
-**Location:** [MoM/src/AIMOVE.c:5914](../../MoM/src/AIMOVE.c#L5914) (~253 lines, ends line 6166)
+**Location:** [MoM/src/AIMOVE.c:5913](../../MoM/src/AIMOVE.c#L5913) (~260 lines, ends line 6172)
 **WZD overlay:** ovr158, p38
 **drake178 name:** (none listed at o158p38)
+
+## Re-review note (lesson from `AI_Choose_War_Landmass` BUG-B)
+
+In a recent rereview of `AI_Choose_War_Landmass` (formerly `AI_Pick_Action_Conts__WIP`), I flagged a "BUG-B" where production diverged from both the OG comment and the GEMINI second opinion. User verified against disassembly: **production matched the OG bytes; the comment and GEMINI were both wrong.** My BUG-B claim was a misdiagnosis.
+
+**Applied to this function:** there is no `__GEMINI` variant for `AI_SingleCont_Reeval__WIP`, so the cross-check pressure is lower. But the outstanding **BUG-7** flag below ("refined stage point computed but never written back") rests on:
+- Phase 6's structural similarity to the sibling `AI_Continent_Reeval__WIP` Phase 14, which DOES have the write-back, AND
+- The "looks like dead code" semantic intuition.
+
+Neither is disassembly proof. **BUG-7 should be treated as "needs disassembly verification," not as a confirmed translation bug.** The OG bytes may legitimately have no write-back here — perhaps because the per-landmass reeval relies on the immediately-following AI passes to consume `stage_wx`/`stage_wy` from somewhere else, or because the OG dev intentionally left this as a partial computation. Without verification, BUG-7 is a *candidate* for disassembly check, not an established defect.
+
+The flagged-in-source OGBUG comments (OGBUG-A, OGBUG-B, OGBUG-C, OGBUG-D) remain valid because they're explicit OG annotations in the code itself — those are documentation of OG behavior, not my inferences.
 
 ## Purpose
 
@@ -269,7 +281,7 @@ if(
     Best_Tile_Weight = 1000;
 
     // ; find a semi-random empty tile on the continent, if any (weighted by distance + a random value)
-    Next_Tile_ChainIndex = g_world_landmass_first_embark_square__load_init[wp][landmass_idx];
+    Next_Tile_ChainIndex = _ai_landmass_dock_squares_heads[wp][landmass_idx];
     while(Next_Tile_ChainIndex != ST_UNDEFINED)
     {
         square_weight = (
@@ -292,7 +304,7 @@ if(
                 stage_wy = CONTX_TileYs[wp][Next_Tile_ChainIndex];
             }
         }
-        Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex];
+        Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex];
     }
 
     /* Update stage-point */
@@ -317,9 +329,9 @@ if(
 
 ### ⚠️ Possible BUG-5 — generic Tile arrays used while walking the LoadT chain
 
-Phase 5 walks `g_world_embark_square_next__load_init[wp][...]` (the load-tile chain) but indexes into `CONTX_TileXs[wp][...]` and `CONTX_TileYs[wp][...]` (the generic-tile arrays). Phase 6 (below) walks the same `g_world_embark_square_next__load_init` and uses `g_world_embark_square_wx__load_init` / `g_world_embark_square_wy__load_init` consistently. If the load-tile and generic-tile arrays use **different index spaces**, Phase 5 is reading the wrong coordinates.
+Phase 5 walks `_ai_landmass_dock_squares_lists[wp][...]` (the load-tile chain) but indexes into `CONTX_TileXs[wp][...]` and `CONTX_TileYs[wp][...]` (the generic-tile arrays). Phase 6 (below) walks the same `_ai_landmass_dock_squares_lists` and uses `_ai_landmass_dock_squares_wx_array` / `_ai_landmass_dock_squares_wy_array` consistently. If the load-tile and generic-tile arrays use **different index spaces**, Phase 5 is reading the wrong coordinates.
 
-**Verify whether `CONTX_TileXs`/`Ys` and `g_world_embark_square_wx__load_init`/`Ys` share an index space.** If they do, Phase 5 is just stylistically inconsistent. If they don't, Phase 5's coordinate reads are garbage.
+**Verify whether `CONTX_TileXs`/`Ys` and `_ai_landmass_dock_squares_wx_array`/`Ys` share an index space.** If they do, Phase 5 is just stylistically inconsistent. If they don't, Phase 5's coordinate reads are garbage.
 
 ## Phase 6 — Refine stage point for Own landmasses (snap to embark tile near main war continent)
 
@@ -335,15 +347,15 @@ if(_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_O
     LoadTile_X = 0;
     LoadTile_Y = 0;
     Tile_X = 0;                                                  // ← reused as a counter
-    Next_Tile_ChainIndex = g_world_landmass_first_embark_square__load_init[wp][_ai_landmass_war_targets[wp][player_idx]];
+    Next_Tile_ChainIndex = _ai_landmass_dock_squares_heads[wp][_ai_landmass_war_targets[wp][player_idx]];
 
     // Step A: compute centroid of load tiles on the main war continent
     while(Next_Tile_ChainIndex != ST_UNDEFINED)
     {
-        LoadTile_X += g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex];
-        LoadTile_Y += g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex];
+        LoadTile_X += _ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex];
+        LoadTile_Y += _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex];
         Tile_X++;                                                // ← counter
-        Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex];
+        Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex];
     }
 
     /* OGBUG  possible division by 0 */
@@ -351,17 +363,17 @@ if(_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_O
     LoadTile_Y /= Tile_X;
 
     Best_Tile_Weight = 1000;
-    Next_Tile_ChainIndex = g_world_landmass_first_embark_square__load_init[wp][landmass_idx];
+    Next_Tile_ChainIndex = _ai_landmass_dock_squares_heads[wp][landmass_idx];
 
     // Step B: walk our landmass's load tiles, find the one closest to that centroid
     while(Next_Tile_ChainIndex != ST_UNDEFINED)
     {
-        square_weight = (Delta_XY_With_Wrap(g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex], g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex], LoadTile_X, LoadTile_Y, WORLD_WIDTH) + Random(5));
+        square_weight = (Delta_XY_With_Wrap(_ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex], _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex], LoadTile_X, LoadTile_Y, WORLD_WIDTH) + Random(5));
 
         if(square_weight < Best_Tile_Weight)
         {
-            Tile_X = g_world_embark_square_wx__load_init[wp][Next_Tile_ChainIndex];
-            Tile_Y = g_world_embark_square_wy__load_init[wp][Next_Tile_ChainIndex];
+            Tile_X = _ai_landmass_dock_squares_wx_array[wp][Next_Tile_ChainIndex];
+            Tile_Y = _ai_landmass_dock_squares_wy_array[wp][Next_Tile_ChainIndex];
 
             if(g_ai_evaluation_map[wp][((Tile_Y * WORLD_WIDTH) + Tile_X)] == 0)
             {
@@ -370,7 +382,7 @@ if(_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_O
                 stage_wy = Tile_Y;
             }
         }
-        Next_Tile_ChainIndex = g_world_embark_square_next__load_init[wp][Next_Tile_ChainIndex];
+        Next_Tile_ChainIndex = _ai_landmass_dock_squares_lists[wp][Next_Tile_ChainIndex];
     }
 }
 ```
@@ -394,7 +406,7 @@ Phase 6 is missing the equivalent. **Verify against disassembly:** is the write-
 
 Lines 6142-6143: `LoadTile_X /= Tile_X` and `LoadTile_Y /= Tile_X`. If the main war continent has no load tiles, `Tile_X` remains 0 and these divisions crash.
 
-The "no main war continent" case is the OG bug noted at line 6127. `_ai_landmass_war_targets[wp][player_idx]` could be 0 (no main war set), in which case `g_world_landmass_first_embark_square__load_init[wp][0]` is the slot-0 / ocean entry — which likely has no load tiles in its chain — so `Tile_X` ends up 0 and we divide by zero.
+The "no main war continent" case is the OG bug noted at line 6127. `_ai_landmass_war_targets[wp][player_idx]` could be 0 (no main war set), in which case `_ai_landmass_dock_squares_heads[wp][0]` is the slot-0 / ocean entry — which likely has no load tiles in its chain — so `Tile_X` ends up 0 and we divide by zero.
 
 ## Bug catalog summary
 
@@ -407,7 +419,7 @@ All previously-claimed translation typos have been resolved. Remaining issues ar
 | OGBUG-C | Medium | Line 5991 (Phase 3) | Same cross-plane lookup issue as OGBUG-A | OG, preserved |
 | Uncertain | Unknown | Lines 6078-6098 (Phase 5) | Walks LoadT chain but reads generic Tile arrays | Needs disassembly verification |
 | OGBUG-D | Known | Lines 6142-6143 (Phase 6) | Division by zero if main war continent has no load tiles | OG, preserved (commented) |
-| BUG-7 | High | Phase 6 entirely | Refined stage point computed but `stage_wx`/`stage_wy` never written back to `wx_array`/`wy_array` | Translation? |
+| BUG-7 | Suspected | Phase 6 entirely | Refined stage point computed but `stage_wx`/`stage_wy` never written back to `wx_array`/`wy_array` | **Needs disassembly verification** — sibling has write-back, but post-BUG-B lesson, do not assume production is wrong without checking |
 
 ## What the function correctly does post-fix
 

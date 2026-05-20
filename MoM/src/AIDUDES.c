@@ -2195,14 +2195,14 @@ void EMM_Map_CONTXXX__WIP(void)
     // EMS_PFBA = Allocate_Space(((4 * 16384) / 16));
     EMS_PFBA = EmmHndl_CONTXXX;
 
-    CONTX_TileXs[0]           =  (int8_t *)(&EMS_PFBA[0] + (   0 * SZ_PARAGRAPH_B));  //  100 -    0 = 100 * 1 PR = 1600 B
-    CONTX_TileXs[1]           =  (int8_t *)(&EMS_PFBA[0] + ( 100 * SZ_PARAGRAPH_B));  //  200 -  100 = 100 * 1 PR = 1600 B
-    CONTX_TileYs[0]           =  (int8_t *)(&EMS_PFBA[0] + ( 200 * SZ_PARAGRAPH_B));  //  300 -  200 = 100 * 1 PR = 1600 B
-    CONTX_TileYs[1]           =  (int8_t *)(&EMS_PFBA[0] + ( 300 * SZ_PARAGRAPH_B));  //  400 -  300 = 100 * 1 PR = 1600 B
-    CONTX_TileChain[0]        = (int16_t *)(&EMS_PFBA[0] + ( 400 * SZ_PARAGRAPH_B));  //  600 -  400 = 200 * 1 PR = 3200 B
-    CONTX_TileChain[1]        = (int16_t *)(&EMS_PFBA[0] + ( 600 * SZ_PARAGRAPH_B));  //  800 -  600 = 200 * 1 PR = 3200 B
-    CONTX_FirstTiles[0]       = (int16_t *)(&EMS_PFBA[0] + ( 800 * SZ_PARAGRAPH_B));  //  825 -  800 =  25 * 1 PR =  400 B
-    CONTX_FirstTiles[1]       = (int16_t *)(&EMS_PFBA[0] + ( 825 * SZ_PARAGRAPH_B));  //  850 -  825 =  25 * 1 PR =  400 B
+    _ai_landmass_land_squares_wx_array[0]           =  (int8_t *)(&EMS_PFBA[0] + (   0 * SZ_PARAGRAPH_B));  //  100 -    0 = 100 * 1 PR = 1600 B
+    _ai_landmass_land_squares_wx_array[1]           =  (int8_t *)(&EMS_PFBA[0] + ( 100 * SZ_PARAGRAPH_B));  //  200 -  100 = 100 * 1 PR = 1600 B
+    _ai_landmass_land_squares_wy_array[0]           =  (int8_t *)(&EMS_PFBA[0] + ( 200 * SZ_PARAGRAPH_B));  //  300 -  200 = 100 * 1 PR = 1600 B
+    _ai_landmass_land_squares_wy_array[1]           =  (int8_t *)(&EMS_PFBA[0] + ( 300 * SZ_PARAGRAPH_B));  //  400 -  300 = 100 * 1 PR = 1600 B
+    _ai_landmass_land_squares_lists[0]        = (int16_t *)(&EMS_PFBA[0] + ( 400 * SZ_PARAGRAPH_B));  //  600 -  400 = 200 * 1 PR = 3200 B
+    _ai_landmass_land_squares_lists[1]        = (int16_t *)(&EMS_PFBA[0] + ( 600 * SZ_PARAGRAPH_B));  //  800 -  600 = 200 * 1 PR = 3200 B
+    _ai_landmass_land_squares_heads[0]       = (int16_t *)(&EMS_PFBA[0] + ( 800 * SZ_PARAGRAPH_B));  //  825 -  800 =  25 * 1 PR =  400 B
+    _ai_landmass_land_squares_heads[1]       = (int16_t *)(&EMS_PFBA[0] + ( 825 * SZ_PARAGRAPH_B));  //  850 -  825 =  25 * 1 PR =  400 B
     _ai_own_stack_wx          = (&EMS_PFBA[0] + ( 850 * SZ_PARAGRAPH_B));  //  860 -  850 =  10 * 1 PR =  160 B  80 2-byte values
     _ai_own_stack_wy          = (&EMS_PFBA[0] + ( 860 * SZ_PARAGRAPH_B));  //  870 -  860 =  10 * 1 PR =  160 B  80 2-byte values
     _ai_own_stack_wp          = (&EMS_PFBA[0] + ( 870 * SZ_PARAGRAPH_B));  //  880 -  870 =  10 * 1 PR =  160 B  80 2-byte values
@@ -2210,14 +2210,14 @@ void EMM_Map_CONTXXX__WIP(void)
     _ai_own_stack_unit_count  = (&EMS_PFBA[0] + ( 890 * SZ_PARAGRAPH_B));  //  900 -  890 =  10 * 1 PR =  160 B  80 2-byte values
     g_ai_evaluation_map[0]        = (uint16_t *)(&EMS_PFBA[0] + ( 900 * SZ_PARAGRAPH_B));  // 1500 -  900 = 600 * 1 PR = 9600 B
     g_ai_evaluation_map[1]        = (uint16_t *)(&EMS_PFBA[0] + (1500 * SZ_PARAGRAPH_B));  // 2100 - 1500 = 600 * 1 PR = 9600 B
-    g_world_embark_square_wx__load_init[0]       =  (int8_t *)(&EMS_PFBA[0] + (2100 * SZ_PARAGRAPH_B));  // 2200 - 2100 = 100 * 1 PR = 1600 B
-    g_world_embark_square_wx__load_init[1]       =  (int8_t *)(&EMS_PFBA[0] + (2200 * SZ_PARAGRAPH_B));  // 2300 - 2200 = 100 * 1 PR = 1600 B
-    g_world_embark_square_wy__load_init[0]       =  (int8_t *)(&EMS_PFBA[0] + (2300 * SZ_PARAGRAPH_B));  // 2400 - 2300 = 100 * 1 PR = 1600 B
-    g_world_embark_square_wy__load_init[1]       =  (int8_t *)(&EMS_PFBA[0] + (2400 * SZ_PARAGRAPH_B));  // 2500 - 2400 = 100 * 1 PR = 1600 B
-    g_world_embark_square_next__load_init[0]       = (int16_t *)(&EMS_PFBA[0] + (2500 * SZ_PARAGRAPH_B));  // 2700 - 2500 = 200 * 1 PR = 3200 B
-    g_world_embark_square_next__load_init[1]       = (int16_t *)(&EMS_PFBA[0] + (2700 * SZ_PARAGRAPH_B));  // 2900 - 2700 = 200 * 1 PR = 3200 B
-    g_world_landmass_first_embark_square__load_init[0]        = (int16_t *)(&EMS_PFBA[0] + (2900 * SZ_PARAGRAPH_B));  // 3000 - 2900 = 100 * 1 PR = 1600 B
-    g_world_landmass_first_embark_square__load_init[1]        = (int16_t *)(&EMS_PFBA[0] + (3000 * SZ_PARAGRAPH_B));  // 3200 - 3000 = 200 * 1 PR = 3200 B
+    _ai_landmass_dock_squares_wx_array[0]       =  (int8_t *)(&EMS_PFBA[0] + (2100 * SZ_PARAGRAPH_B));  // 2200 - 2100 = 100 * 1 PR = 1600 B
+    _ai_landmass_dock_squares_wx_array[1]       =  (int8_t *)(&EMS_PFBA[0] + (2200 * SZ_PARAGRAPH_B));  // 2300 - 2200 = 100 * 1 PR = 1600 B
+    _ai_landmass_dock_squares_wy_array[0]       =  (int8_t *)(&EMS_PFBA[0] + (2300 * SZ_PARAGRAPH_B));  // 2400 - 2300 = 100 * 1 PR = 1600 B
+    _ai_landmass_dock_squares_wy_array[1]       =  (int8_t *)(&EMS_PFBA[0] + (2400 * SZ_PARAGRAPH_B));  // 2500 - 2400 = 100 * 1 PR = 1600 B
+    _ai_landmass_dock_squares_lists[0]       = (int16_t *)(&EMS_PFBA[0] + (2500 * SZ_PARAGRAPH_B));  // 2700 - 2500 = 200 * 1 PR = 3200 B
+    _ai_landmass_dock_squares_lists[1]       = (int16_t *)(&EMS_PFBA[0] + (2700 * SZ_PARAGRAPH_B));  // 2900 - 2700 = 200 * 1 PR = 3200 B
+    _ai_landmass_dock_squares_heads[0]        = (int16_t *)(&EMS_PFBA[0] + (2900 * SZ_PARAGRAPH_B));  // 3000 - 2900 = 100 * 1 PR = 1600 B
+    _ai_landmass_dock_squares_heads[1]        = (int16_t *)(&EMS_PFBA[0] + (3000 * SZ_PARAGRAPH_B));  // 3200 - 3000 = 200 * 1 PR = 3200 B
 
     /* HACK */  memset(g_ai_evaluation_map[0], 0, 9600);
     /* HACK */  memset(g_ai_evaluation_map[1], 0, 9600);
@@ -2252,238 +2252,233 @@ void EMM_Map_CONTXXX__WIP(void)
 }
 
 // WZD o145p17
-// drake178: CONTX_CreateChains()
-/*
-maps in the CONTXXX handle into the EMS page frame
-and (re)creates the continent tile chains
-
-BUG: only evaluates the first 60 continents
-*/
-/*
-
-*/
-void CONTX_CreateChains__WIP(void)
+/**
+ * @brief Rebuilds the per-plane linked lists of land tiles for every landmass.
+ *
+ * This routine maps the temporary CONTXXX working area, clears the head and
+ * next-index arrays for both planes, and then scans every world square. Each
+ * non-ocean tile is appended to the array-backed linked list for its landmass,
+ * with the tile's world coordinates recorded in the parallel x/y arrays and
+ * the corresponding head entry initialized on first insertion.
+ *
+ * The resulting structure gives each nonzero landmass ID a forward chain of
+ * all of its land squares on Arcanus and Myrror, which later AI routines can
+ * traverse without rescanning the full map.
+ *
+ * @return This function does not return a value. It repopulates
+ *         @c _ai_landmass_land_squares_heads,
+ *         @c _ai_landmass_land_squares_lists,
+ *         @c _ai_landmass_land_squares_wx_array, and
+ *         @c _ai_landmass_land_squares_wy_array.
+ *
+ * @note Landmass index 0 is treated as ocean and is intentionally excluded
+ *       from the generated lists.
+ * @note The routine temporarily remaps CONTXXX via
+ *       @c EMM_Map_CONTXXX__WIP() and restores the normal data mapping with
+ *       @c EMM_Map_DataH() before returning.
+ */
+void Build_Land_Linked_List(void)
 {
-    int16_t Current_Tile = 0;
+    int16_t previous_node_idx = 0;
     int16_t landmass_idx = 0;
     int16_t count[2] = { 0, 0 };
     int16_t itr = 0;
     int16_t wy = 0;
     int16_t wx = 0;
-    int16_t wp = 0;  // _DI_
-    int16_t * array_ptr;  // DNE in Dasm  ~ [ES:BX]
+    int16_t wp = 0;
+    int16_t next_node_idx = 0;  // DNE in Dasm, reuses itr
 
     EMM_Map_CONTXXX__WIP();
 
     for(itr = 0; itr < NUM_LANDMASSES; itr++)
     {
-
-        CONTX_FirstTiles[0][itr] = ST_UNDEFINED;
-
-        CONTX_FirstTiles[1][itr] = ST_UNDEFINED;
-
+        _ai_landmass_land_squares_heads[ARCANUS_PLANE][itr] = ST_UNDEFINED;
+        _ai_landmass_land_squares_heads[MYRROR_PLANE][itr] = ST_UNDEFINED;
     }
 
     for(itr = 0; itr < 1600; itr++)
     {
-
-        CONTX_TileChain[0][itr] = ST_UNDEFINED;
-
-        CONTX_TileChain[1][itr] = ST_UNDEFINED;
-
+        _ai_landmass_land_squares_lists[ARCANUS_PLANE][itr] = ST_UNDEFINED;
+        _ai_landmass_land_squares_lists[MYRROR_PLANE][itr] = ST_UNDEFINED;
     }
 
-    count[0] = 0;
-
-    count[1] = 0;
+    count[ARCANUS_PLANE] = 0;
+    count[MYRROR_PLANE] = 0;
 
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
-
         for(wy = 0; wy < WORLD_HEIGHT; wy++)
         {
-            
             for(wx = 0; wx < WORLD_WIDTH; wx++)
             {
-
                 landmass_idx = _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
                 assert(landmass_idx < NUM_LANDMASSES);
-
                 if(landmass_idx != 0)
                 {
-
-                    if(CONTX_FirstTiles[wp][landmass_idx] == ST_UNDEFINED)
+                    if(_ai_landmass_land_squares_heads[wp][landmass_idx] == ST_UNDEFINED)
                     {
-
-                        array_ptr = &CONTX_FirstTiles[wp][landmass_idx];
-
+                        _ai_landmass_land_squares_heads[wp][landmass_idx] = count[wp];
                     }
                     else
                     {
-
-                        itr = CONTX_FirstTiles[wp][landmass_idx];
-
-                        Current_Tile = itr;
-
-                        while(itr != ST_UNDEFINED)
+                        next_node_idx = _ai_landmass_land_squares_heads[wp][landmass_idx];
+                        previous_node_idx = next_node_idx;
+                        while(next_node_idx != ST_UNDEFINED)
                         {
-
-                            Current_Tile = itr;
-
-                            itr = CONTX_TileChain[wp][itr];
-
+                            previous_node_idx = next_node_idx;
+                            next_node_idx = _ai_landmass_land_squares_lists[wp][next_node_idx];
                         }
-
-                        array_ptr = &CONTX_TileChain[wp][Current_Tile];
-
+                        _ai_landmass_land_squares_lists[wp][previous_node_idx] = count[wp];
                     }
-
-                    *array_ptr = count[wp];
-
-                    CONTX_TileXs[wp][count[wp]] = (int8_t)wx;
-
-                    CONTX_TileYs[wp][count[wp]] = (int8_t)wy;
-
-                    CONTX_TileChain[wp][count[wp]] = ST_UNDEFINED;
-
+                    _ai_landmass_land_squares_wx_array[wp][count[wp]] = (int8_t)wx;
+                    _ai_landmass_land_squares_wy_array[wp][count[wp]] = (int8_t)wy;
+                    _ai_landmass_land_squares_lists[wp][count[wp]] = ST_UNDEFINED;
                     count[wp] += 1;
-
                 }
-
             }
-
         }
-
     }
 
-    // DONT  EMM_Map_DataH();
+    EMM_Map_DataH();
 
 }
 
 
 // WZD o145p18
-// drake178: CONTX_CreateLChains()
-/*
-maps in the CONTXXX handle into the EMS page frame
-and (re)creates the transport loading tile chains
-
-BUG: only evaluates the first 60 continents
-*/
-/*
-
-*/
-void CONTX_CreateLChains__WIP(void)
+/**
+ * @brief Rebuilds the per-plane linked lists of dock or embarkation-adjacent
+ *        ocean squares.
+ *
+ * This routine maps the CONTXXX work area, clears the shoreline-list heads for
+ * both planes, and scans every map square looking for ocean tiles. For each
+ * ocean square, it performs a 3x3 shoreline test; squares adjacent to land are
+ * treated as valid dock squares and appended to the array-backed linked list
+ * associated with the neighboring landmass.
+ *
+ * The resulting lists store shoreline-accessible water coordinates in the
+ * parallel dock x/y arrays and link them through
+ * @c _ai_landmass_dock_squares_lists so later transport, embarkation, and
+ * continent-evaluation code can iterate only the relevant coastal approach
+ * tiles instead of rescanning the full map.
+ *
+ * @return This function does not return a value. It repopulates
+ *         @c _ai_landmass_dock_squares_heads,
+ *         @c _ai_landmass_dock_squares_lists,
+ *         @c _ai_landmass_dock_squares_wx_array, and
+ *         @c _ai_landmass_dock_squares_wy_array.
+ *
+ * @note The implementation treats landmass index 0 as ocean and only records
+ *       ocean squares that satisfy the shoreline-adjacency test.
+ * @note The routine temporarily remaps CONTXXX via
+ *       @c EMM_Map_CONTXXX__WIP() and restores the normal data mapping with
+ *       @c EMM_Map_DataH() before returning.
+ */
+void Build_Dock_Linked_List(void)
 {
-    int16_t Transport_Tile = 0;
+    int16_t square_is_shoreline = 0;
     int16_t wy_ofst = 0;
     int16_t wx_ofst = 0;
-    int16_t Current_Tile = 0;
+    int16_t previous_node_idx = 0;
     int16_t landmass_idx = 0;
-    int16_t count[2] = { 0, 0 };
+    int16_t count[2] = { 0, 0 };  /* an array tracking the coastal tile count per plane */
     int16_t itr = 0;
     int16_t wy = 0;
     int16_t wx = 0;
-    int16_t wp = 0;  // _DI_
-    int16_t * array_ptr;  // DNE in Dasm  ~ [ES:BX]
+    int16_t wp = 0;
+    int16_t next_node_idx = 0;  // DNE in Dasm, reuses itr
 
     EMM_Map_CONTXXX__WIP();
 
+    /* 2. Initialize the "Head" pointers of the Linked Lists to -1 (Empty) */
+    /* default all of boths planes to invalid */
     for(itr = 0; itr < NUM_LANDMASSES; itr++)
     {
-
-        g_world_landmass_first_embark_square__load_init[0][itr] = ST_UNDEFINED;
-
-        g_world_landmass_first_embark_square__load_init[1][itr] = ST_UNDEFINED;
-
+        _ai_landmass_dock_squares_heads[ARCANUS_PLANE][itr] = ST_UNDEFINED;
+        _ai_landmass_dock_squares_heads[MYRROR_PLANE][itr] = ST_UNDEFINED;
     }
 
-    count[0] = 0;
+    count[ARCANUS_PLANE] = 0;
+    count[MYRROR_PLANE] = 0;
 
-    count[1] = 0;
-
+    /* 3. The Global Sweep */
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
-
         for(wy = 0; wy < WORLD_HEIGHT; wy++)
         {
-            
             for(wx = 0; wx < WORLD_WIDTH; wx++)
             {
-
+                /* Fetch the Continent ID for the current tile */
                 landmass_idx = _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
                 assert(landmass_idx < NUM_LANDMASSES);
-
+                /* If it's ocean (0), skip it */
                 if(landmass_idx != 0)
                 {
-
-                    Transport_Tile = ST_FALSE;
-
-                    for(wx_ofst = -1; ((wx_ofst < 2) && (Transport_Tile == ST_FALSE)); wx_ofst++)
-                    {
-
-                        for(wy_ofst = -1; ((wy_ofst < 2) && (Transport_Tile == ST_FALSE)); wy_ofst++)
-                        {
-
-                            if(Square_Is_Shoreline((wx + wx_ofst), (wy + wy_ofst), wp) == ST_TRUE)
-                            {
-
-                                Transport_Tile = ST_TRUE;
-
-                            }
-
-                        }
-
-                    }
-
-                    if(Transport_Tile == ST_TRUE)
-                    {
-
-                        if(g_world_landmass_first_embark_square__load_init[wp][landmass_idx] == ST_UNDEFINED)
-                        {
-
-                            array_ptr = &g_world_landmass_first_embark_square__load_init[wp][landmass_idx];
-
-                        }
-                        else
-                        {
-
-                            itr = g_world_landmass_first_embark_square__load_init[wp][landmass_idx];
-
-                            Current_Tile = itr;
-
-                            while(itr != ST_UNDEFINED)
-                            {
-
-                                Current_Tile = itr;
-
-                                itr = g_world_embark_square_next__load_init[wp][itr];
-
-                            }
-
-                            array_ptr = &g_world_embark_square_next__load_init[wp][Current_Tile];
-
-                        }
-
-                        *array_ptr = count[wp];
-
-                        g_world_embark_square_wx__load_init[wp][count[wp]] = (int8_t)wx;
-
-                        g_world_embark_square_wy__load_init[wp][count[wp]] = (int8_t)wy;
-
-                        g_world_embark_square_next__load_init[wp][count[wp]] = ST_UNDEFINED;
-
-                        count[wp] += 1;
-
-                    }
-
+                    continue;
                 }
+/* 4. The 3x3 Shoreline Scan */
+                square_is_shoreline = ST_FALSE;
+                for(wx_ofst = -1; ((wx_ofst < 2) && (square_is_shoreline == ST_FALSE)); wx_ofst++)
+                {
+                    for(wy_ofst = -1; ((wy_ofst < 2) && (square_is_shoreline == ST_FALSE)); wy_ofst++)
+                    {
+/* Does this land tile touch the ocean? */
+                        if(Square_Is_Shoreline((wx + wx_ofst), (wy + wy_ofst), wp) == ST_TRUE)
+                        {
+                            square_is_shoreline = ST_TRUE;
+                        }
+                    }
+                }
+/* 5. The Linked List Insertion */
+                if(square_is_shoreline == ST_TRUE)
+                {
+/* If this continent doesn't have a head node yet, this tile becomes the head */
+/* First tile in the chain for this landmass */
+                    if(_ai_landmass_dock_squares_heads[wp][landmass_idx] == ST_UNDEFINED)
+                    {
+                        _ai_landmass_dock_squares_heads[wp][landmass_idx] = count[wp];
+                    }
+                    else
+                    {
+/* Otherwise, traverse the linked list to find the tail */
+/*
+What you are looking at is the classic "Trailing Pointer"
+(or "Previous Node") pattern for traversing an array-based linked list.
+1. The Problem with Array-Based Linked Lists
+In standard C, a linked list uses pointers (Node *next). But in this engine, the "pointers" are just integer indices pointing to a slot in the CONTX_LoadTChain array.
+To add a new coastal tile to the end of the chain, the engine has to walk from the Head node all the way down to the Tail node. The Tail node is the one whose next pointer is e_ST_UNDEFINED (-1).
+If you just write a loop that says next_node_idx = next[next_node_idx] until next_node_idx == -1, you fall off the edge of the list. By the time the loop finishes, next_node_idx is -1, and you have completely forgotten the index of the actual Tail node, meaning you have nowhere to attach the new tile!
+2. The "Trailing Pointer" Solution
+To prevent falling off the edge, the assembly uses previous_node_idx to follow exactly one step behind next_node_idx.
 
+*/
+/* Start at the head of the chain */
+                        next_node_idx = _ai_landmass_dock_squares_heads[wp][landmass_idx];
+/* Defensive initialization */
+                        previous_node_idx = next_node_idx;
+/* Walk down the chain until 'next_node_idx' falls off the edge */
+                        while(next_node_idx != ST_UNDEFINED)
+                        {
+/* Park the trailing pointer on the current valid node */
+                            previous_node_idx = next_node_idx;
+/* Step 'next_node_idx' forward to the next node */
+                            next_node_idx = _ai_landmass_dock_squares_lists[wp][next_node_idx];
+                        }
+/* Append the new coastal tile to the tail */
+/* Link the previous tile to this new tile */
+                        _ai_landmass_dock_squares_lists[wp][previous_node_idx] = count[wp];
+                    }
+/* 6. Save the actual World Coordinates in the data arrays */
+                    _ai_landmass_dock_squares_wx_array[wp][count[wp]] = (int8_t)wx;
+                    _ai_landmass_dock_squares_wy_array[wp][count[wp]] = (int8_t)wy;
+/* Terminate the new tail of the list */
+                    _ai_landmass_dock_squares_lists[wp][count[wp]] = ST_UNDEFINED;
+/* Increment the coastal tile counter for this plane */
+                    count[wp] += 1;
+                }
             }
-
         }
-
     }
-
-    EMM_Map_DataH();
+/* Safely remap the standard Data Handle before exiting */
+    EMM_Map_DataH();  /* ¿ set EMM back to the default handle - EMMDATAH ? */
 
 }
