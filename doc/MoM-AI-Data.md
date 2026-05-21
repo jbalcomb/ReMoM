@@ -48,7 +48,7 @@ AI_Enemy_Stack_Count
 ## _ai_continents
 
 
-...in AI_SingleCont_Reeval__WIP(),  
+...in AI_Reevaluate_Continent(),  
 ...gets used as a temporary variable to hold count of cities
 
 MoM_Data.C

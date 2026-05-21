@@ -275,7 +275,7 @@ void AI_BU_ProcessAction(int16_t battle_unit_idx, int16_t rally_cgx, int16_t ral
     struct s_BATTLE_UNIT * target_ptr = NULL;
     int16_t itr_battle_units = 0;  // DNE in Dasm
 
-    /* If no rally point provided, use the target's current position */
+    /* If no stage point provided, use the target's current position */
     if (rally_cgx == 0 && rally_cgy == 0)
     {
         bu_ptr = &battle_units[battle_unit_idx];
@@ -610,7 +610,7 @@ Case_Finished:
 
 /*
 Sort_Battle_Units is an insertion sort that orders a list of battle unit indices by their movement_points, from least to most (slowest first).
-Purpose in context: It's called by Auto_Do_Combat_Turn before the AI moves its melee units. By sorting slowest-first, the AI moves the least-mobile units first. This matters because the rally point (where units converge) is derived from the last element in the sorted list — the fastest unit. Slow units move toward where the fast unit will end up, and the fast unit goes last so it can adapt to where everyone else already is.
+Purpose in context: It's called by Auto_Do_Combat_Turn before the AI moves its melee units. By sorting slowest-first, the AI moves the least-mobile units first. This matters because the stage point (where units converge) is derived from the last element in the sorted list — the fastest unit. Slow units move toward where the fast unit will end up, and the fast unit goes last so it can adapt to where everyone else already is.
 Algorithm: Standard insertion sort. It walks the list starting at index 1, and for each element, shifts larger-valued entries rightward until it finds the correct insertion point.
 */
 void Sort_Battle_Units(int16_t * troop_list, int16_t troop_count)
@@ -703,7 +703,7 @@ void AI_GetCombatRallyPt(int16_t battle_unit_idx, int16_t * cgx, int16_t * cgy)
     target_idx = (int)battle_units[battle_unit_idx].target_battle_unit_idx;
 /*
 OGBUG: If the target_battle_unit_idx is ST_UNDEFINED (-1), the function will attempt to compute a path to an invalid target, which can lead to out-of-bounds access in the cost map and movement path arrays, causing a crash.
-       //COPILOT+GPT54  The root cause is higher up than the crash site: Auto_Do_Combat_Turn computes a rally point before AI_BU_AssignAction assigns fresh targets, so the chosen melee unit can still have target_battle_unit_idx == ST_UNDEFINED.
+       //COPILOT+GPT54  The root cause is higher up than the crash site: Auto_Do_Combat_Turn computes a stage point before AI_BU_AssignAction assigns fresh targets, so the chosen melee unit can still have target_battle_unit_idx == ST_UNDEFINED.
 */
     if(target_idx == ST_UNDEFINED)
     {
@@ -739,7 +739,7 @@ OGBUG: If the target_battle_unit_idx is ST_UNDEFINED (-1), the function will att
         }
     }
 
-    /* Set the rally point to the last valid cell found in the path */
+    /* Set the stage point to the last valid cell found in the path */
     *cgx = _cmbt_mvpth_x[itr - 1];
     *cgy = _cmbt_mvpth_y[itr - 1];
 }
@@ -753,7 +753,7 @@ OGBUG: If the target_battle_unit_idx is ST_UNDEFINED (-1), the function will att
  *
  * This routine drives the high-level tactical AI for a single side during combat. It first
  * handles a special-case cleanup for stuck neutral attackers, then compares allied and enemy
- * ranged strength to decide whether melee units should coordinate around a rally point or simply
+ * ranged strength to decide whether melee units should coordinate around a stage point or simply
  * advance opportunistically. It also updates the effective city-wall state used by downstream AI
  * logic, including conditions where defenders abandon the safety of city walls because of hostile
  * ranged superiority or active battlefield hazards such as vortexes, Wrack, Call Lightning, or
@@ -761,13 +761,13 @@ OGBUG: If the target_battle_unit_idx is ST_UNDEFINED (-1), the function will att
  *
  * After the global combat posture is established, the function initializes basic unit actions via
  * AI_SetBasicAttacks(), optionally builds and sorts a list of melee-capable units to compute a
- * rally point with AI_GetCombatRallyPt(), and then processes units in two passes. The first pass
+ * stage point with AI_GetCombatRallyPt(), and then processes units in two passes. The first pass
  * handles active non-sleeping units generally, while the second pass revisits hero units under the
  * special hero melee safety rules controlled by _ai_disable_hero_melee_safety_check.
  *
  * @param player_idx The combat controller index whose battle units should take their turn.
  *
- * @note The rally point is only computed when this side's ranged strength is at least as strong as
+ * @note The stage point is only computed when this side's ranged strength is at least as strong as
  *       the opposing side's ranged strength.
  * @note The function may clear _ai_battlefield_city_walls and force _ai_stay_in_city to false
  *       when the defender should stop sheltering behind city defenses.
@@ -869,7 +869,7 @@ void Auto_Do_Combat_Turn(int16_t player_idx)
         }
         else
         {
-            /* Attackers don't care about city walls for rally points */
+            /* Attackers don't care about city walls for stage points */
             _ai_battlefield_city_walls = 0;
         }
     }
@@ -898,7 +898,7 @@ void Auto_Do_Combat_Turn(int16_t player_idx)
 
         Sort_Battle_Units(melee_unit_list, melee_unit_count);
 
-        /* Get rally point based on the median speed melee unit's destination */
+        /* Get stage point based on the median speed melee unit's destination */
         AI_GetCombatRallyPt(melee_unit_list[(melee_unit_count - 1) / 2], &rally_x, &rally_y);
     }
     else
@@ -922,12 +922,12 @@ void Auto_Do_Combat_Turn(int16_t player_idx)
             Assign_Combat_Grids();
             AI_BU_AssignAction(itr_battle_units, bua_Ready);
 
-            /* If defending within walls, units outside must rally differently */
+            /* If defending within walls, units outside must stage differently */
             if (bu_ptr->controller_idx == _combat_defender_player &&  /* whoever's turn it is, check that it's the defenders turn */
                 _ai_battlefield_city_walls > 0 &&  /* there is a wall of some sort */
                 !Battle_Unit_Is_Within_City(itr_battle_units))  /* unit is outside the city */
             {
-                AI_BU_ProcessAction(itr_battle_units, 0, 0);  /* "use the target enemy's position as the rally point instead." */
+                AI_BU_ProcessAction(itr_battle_units, 0, 0);  /* "use the target enemy's position as the stage point instead." */
             }
             else
             {
@@ -1441,7 +1441,7 @@ MoO2  Module: CMBTAI  Auto_Move_Ship_() <-| OON XREF:  Module: CMBTAI  Do_Auto_S
  * city interior. It finds the shortest reachable square in the city proper and issues an
  * intermediate Auto_Move_Unit() call toward that square before attempting the originally requested
  * move. After that optional fallback, it always performs a final Auto_Move_Unit() call using the
- * destination and rally constraints passed in by the caller.
+ * destination and stage constraints passed in by the caller.
  *
  * @param battle_unit_idx Index of the acting battle unit in battle_units.
  * @param dst_cgx Requested combat-grid destination X coordinate.
@@ -1449,9 +1449,9 @@ MoO2  Module: CMBTAI  Auto_Move_Ship_() <-| OON XREF:  Module: CMBTAI  Do_Auto_S
  * @param target_battle_unit_idx Target unit index for pathing and occupancy exceptions, or
  *        ST_UNDEFINED when moving without a direct target.
  * @param rally_cgx Rally-point X coordinate used later by Auto_Move_Unit() to constrain quadrant
- *        movement when the destination is not itself the rally point.
+ *        movement when the destination is not itself the stage point.
  * @param rally_cgy Rally-point Y coordinate used later by Auto_Move_Unit() to constrain quadrant
- *        movement when the destination is not itself the rally point.
+ *        movement when the destination is not itself the stage point.
  *
  * @note This function mutates the shared combat movement-cost map and movement-path state used by
  *       the lower-level combat pathfinding routines.
@@ -1611,7 +1611,7 @@ void Do_Auto_Unit_Turn(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy
 ; chosen unit to the specified destination or target
 ;
 ; if not the same as the destination, Max_X/Y define
-; the rally point - a center tile around which the unit
+; the stage point - a center tile around which the unit
 ; can only move within the quadrant it starts in
 ;
 ; moves are only expended for the last step, and

@@ -19,7 +19,7 @@ Next_Turn_Proc() |-> Next_Turn_Calc() |-> AI_Next_Turn()
 Per Computer Player  {1, ..., _num_players{2,3,4,5}}
 AI_Next_Turn()
     |-> AI_Evaluation_Map()
-    |-> AI_Reevaluate_All_Continents()
+    |-> AI_Evaluate_Continents()
     |-> AI_Set_Unit_Orders()
         |-> AI_Disband_To_Balance_Budget()
         |-> AI_Shift_Off_Home_Plane()
@@ -40,6 +40,7 @@ AI_Next_Turn()
                 |-> AI_PullForMainWar__WIP()
                 |-> G_AI_HomeRallyFill__WIP()
                 |-> G_AI_RallyFill__WIP()
+                    |-> AI_Reevaluate_Continent()
                 |-> AI_FillGarrisons__WIP()
             ...Ocean (non-landmass)...
             |-> AI_ProcessOcean__WIP()
@@ -55,17 +56,18 @@ Definitely Done-Done:
 [x]         |-> Player_Hostile_Opponents()
 [x]         |-> AI_Player_Calculate_Target_Values()
 [x]         |-> AI_Landmass_Values_And_Strengths()
-[x]         |-> AI_Choose_War_Landmass        ¿ uses g_ai_evaluation_map from previous turn ?
+[x]         |-> AI_Choose_War_Landmass()            ¿ uses g_ai_evaluation_map from previous turn ?
 ...
 ...j_Cast_Spell_Overland__WIP(); EMMDATAH_Map(); Allocate_AI_Data(); Player_Hostile_Opponents(); AI_Player_Calculate_Target_Values(); j_AI_Spell_Select();
 ...EMMDATAH_Map(); AI_Update_Magic_Power(); AI_Sanity_Check_Overland_Enchantments(); AI_Update_Gold_And_Mana_Reserves(); AI_Update_Gold_Income_And_Food_Income();
 ...
-Player_All_Colony_Autobuild(player_idx)
-AI_Evaluation_Map(player_idx)               populates g_ai_evaluation_map
-AI_Reevaluate_All_Continents(player_idx)        uses g_ai_evaluation_map, just populated in AI_Evaluation_Map()
-AI_Set_Unit_Orders(player_idx)
-EMMDATAH_Map();
-AI_Kill_Excess_Settlers_And_Engineers(player_idx)
+[]          |-> Player_All_Colony_Autobuild(player_idx)
+[x]         |-> AI_Evaluation_Map(player_idx)               populates g_ai_evaluation_map
+[x]         |-> AI_Evaluate_Continents(player_idx)      uses g_ai_evaluation_map, just populated in AI_Evaluation_Map()
+                ...sibling function... [x] OON XREF: AI_Set_Unit_Orders() |-> G_AI_RallyFill__WIP() |-> AI_Reevaluate_Continent()
+[]          |-> AI_Set_Unit_Orders(player_idx)
+[]          |-> EMMDATAH_Map();
+[]          |-> AI_Kill_Excess_Settlers_And_Engineers(player_idx)
 
 [x] c:/python314/python.exe .\rasm_named_gemini.py AI_SetEnemyStrMaps__WIP
 [x] c:/python314/python.exe .\rasm_named_gemini.py AI_SetUnitOrders__WIP
@@ -75,7 +77,7 @@ AI_Kill_Excess_Settlers_And_Engineers(player_idx)
 
 ...
     |-> AI_Evaluation_Map()             ovr162
-    |-> AI_Reevaluate_All_Continents()      ovr162
+    |-> AI_Evaluate_Continents()      ovr162
 
 
 
@@ -85,8 +87,8 @@ cp_landmass_type_array = &_ai_continents.plane[wp].player[player_idx].type_array
 
 _ai_continents__0
 _ai_continents__1
-    AI_SingleCont_Reeval__WIP()
-    AI_Reevaluate_All_Continents()
+    AI_Reevaluate_Continent()
+    AI_Evaluate_Continents()
     AI_Set_Unit_Orders+A7              add     dx, offset _ai_continents__0    ; _bdata_start                     
     AI_ProcessOcean__WIP+4A            mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
     AI_ProcessOcean__WIP+13A           mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
@@ -101,8 +103,8 @@ _ai_continents__1
     G_AI_ProcessTransports__WIP()
     AI_ProcessRoamers__WIP()
     AI_PullForMainWar__WIP()
-    AI_SingleCont_Reeval__WIP()
-    AI_Reevaluate_All_Continents()
+    AI_Reevaluate_Continent()
+    AI_Evaluate_Continents()
     AI_Choose_War_Landmass
 
 set in 1 function, at 2 sites

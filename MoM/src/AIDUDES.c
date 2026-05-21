@@ -281,7 +281,7 @@ void AI_Next_Turn(void)
         Player_All_Colony_Autobuild(player_idx);
         
         AI_Evaluation_Map(player_idx);
-        AI_Reevaluate_All_Continents(player_idx);
+        AI_Evaluate_Continents(player_idx);
         AI_Set_Unit_Orders(player_idx);
         
         EMM_Map_DataH();
@@ -2163,7 +2163,7 @@ void AI_Hopeless_Stasis(void)
 
 
 // WZD o145p16
-// drake178: EMM_Map_CONTXXX()
+// drake178: EMM_Map_CONTXXX__WIP()
 /*
 maps in the EMM_ContXXX_H handle (all 4 pages), and
 resets its corresponding global pointers

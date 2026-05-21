@@ -55,9 +55,9 @@ XREF:
     AI_PullForMainWar__WIP+8C       mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_PullForMainWar__WIP+119      mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_PullForMainWar__WIP+145      mov     bx, [_ai_landmass_war_targets+bx]                                
-    AI_SingleCont_Reeval__WIP+8DF   mov     bx, [_ai_landmass_war_targets+bx]                                
-    AI_Reevaluate_All_Continents+D94    mov     bx, [_ai_landmass_war_targets+bx]                                
-    AI_Reevaluate_All_Continents+DE2    mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Reevaluate_Continent+8DF   mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Evaluate_Continents+D94    mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Evaluate_Continents+DE2    mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_Choose_War_Landmass    mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_Choose_War_LandmassC   mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_Choose_War_Landmass2   mov     bx, [_ai_landmass_war_targets+bx]                                
@@ -175,7 +175,7 @@ GEMINI uses the same `(2000 - enemy × 10) / dist` formula at [line 8433](../../
 
 ## Comparison with sibling functions
 
-| Pattern | `AI_Choose_War_Landmass` | `AI_Reevaluate_All_Continents` | `AI_SingleCont_Reeval__WIP` |
+| Pattern | `AI_Choose_War_Landmass` | `AI_Evaluate_Continents` | `AI_Reevaluate_Continent` |
 |---|---|---|---|
 | Value_Sum-pattern bugs | Has BUG-A (first sum doesn't reset) | Earlier had similar bug, now fixed | N/A |
 | Fortress-continent polarity | ~~Was flagged as BUG-B~~ — verified production matches OG; comment was misleading | Has stale-`wp` bug at fortress check | N/A |
@@ -198,7 +198,7 @@ The OG comment at lines 8226-8229 saying "with the exception of the fortress con
 
 ## Related references
 
-- [AIMOVE-AI_SingleCont_Reeval__WIP.md](AIMOVE-AI_SingleCont_Reeval__WIP.md) — per-landmass classifier; reads _ai_landmass_war_targets in its Phase 7
-- [AIMOVE-AI_Reevaluate_All_Continents.md](AIMOVE-AI_Reevaluate_All_Continents.md) — full-rebuild classifier; reads _ai_landmass_war_targets in its Phase 14
+- [AIMOVE-AI_Reevaluate_Continent.md](AIMOVE-AI_Reevaluate_Continent.md) — per-landmass classifier; reads _ai_landmass_war_targets in its Phase 7
+- [AIMOVE-AI_Evaluate_Continents.md](AIMOVE-AI_Evaluate_Continents.md) — full-rebuild classifier; reads _ai_landmass_war_targets in its Phase 14
 - [MoM-AI-Landmass-Types.md](MoM-AI-Landmass-Types.md) — `lmt_*` enum that gates the Phase 2 switch
 - [MoM-AI-AIMOVE-Index.md](MoM-AI-AIMOVE-Index.md) — function index

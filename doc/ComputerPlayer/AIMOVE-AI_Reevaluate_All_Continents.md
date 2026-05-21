@@ -1,10 +1,10 @@
-AIMOVE-AI_Reevaluate_All_Continents.md
+AIMOVE-AI_Evaluate_Continents.md
 
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr162\AI_Continent_Reeval__WIP.c
 
 ---
 
-# AI_Reevaluate_All_Continents — Walkthrough
+# AI_Evaluate_Continents — Walkthrough
 
 **Location:** [MoM/src/AIMOVE.c:7059](../../MoM/src/AIMOVE.c#L7059) (~498 lines, ends line 7556). No GEMINI variant — tossed.
 **WZD overlay:** ovr162, p35
@@ -12,7 +12,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr162\AI_Continent_Reeval
 
 ## Purpose
 
-**Full-rebuild classifier for every (plane, landmass) for one player**, throttled to ~25-43 turns. The counterpart to the per-landmass [`AI_SingleCont_Reeval__WIP`](AIMOVE-AI_SingleCont_Reeval__WIP.md), which only refreshes one landmass at a time.
+**Full-rebuild classifier for every (plane, landmass) for one player**, throttled to ~25-43 turns. The counterpart to the per-landmass [`AI_Reevaluate_Continent`](AIMOVE-AI_Reevaluate_Continent.md), which only refreshes one landmass at a time.
 
 Three outputs:
 1. `_ai_continents.plane[*][player_idx].type_array[*]` — `lmt_*` classification per (plane, landmass)
@@ -491,7 +491,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
 **Intent:** for landmasses we hold (`lmt_Own`), if a war target exists on this plane, reposition the stage point toward the war landmass. Step A computes the centroid of the war landmass's dock squares; Step B finds this landmass's dock square closest to that centroid. If found, overwrite the stage point.
 
 **Source-flagged OGBUGs:**
-- Divide-by-zero risk: Step A divides by `landmass_node_count` without checking for 0. If the war landmass has no dock squares, divide-by-zero. (Same OGBUG as the sibling Phase in `AI_SingleCont_Reeval__WIP`.)
+- Divide-by-zero risk: Step A divides by `landmass_node_count` without checking for 0. If the war landmass has no dock squares, divide-by-zero. (Same OGBUG as the sibling Phase in `AI_Reevaluate_Continent`.)
 - No `Random(20)` jitter on the weight.
 
 ## Phase 10 — Cleanup
@@ -522,7 +522,7 @@ All preserved as faithful-to-disassembly with inline `/* OGBUG */` markers:
 
 ## Related references
 
-- [AIMOVE-AI_SingleCont_Reeval__WIP.md](AIMOVE-AI_SingleCont_Reeval__WIP.md) — per-landmass sibling; shares Phase 4-7 structure
+- [AIMOVE-AI_Reevaluate_Continent.md](AIMOVE-AI_Reevaluate_Continent.md) — per-landmass sibling; shares Phase 4-7 structure
 - [AIMOVE-AI_Choose_War_Landmass.md](AIMOVE-AI_Choose_War_Landmass.md) — consumer of `_ai_landmass_war_targets` (which Phase 9 here reads)
 - [MoM-AI-Landmass-Types.md](MoM-AI-Landmass-Types.md) — `lmt_*` state machine; this function is a major writer
 - [MoM-AI-AIMOVE-Index.md](MoM-AI-AIMOVE-Index.md) — function index

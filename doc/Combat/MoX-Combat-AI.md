@@ -8,7 +8,7 @@ Auto_Do_Combat_Turn()
     |-> AI_SetBasicAttacks()
     /* Determine Rally Point */
     |-> Sort_Battle_Units()
-    /* Get rally point based on the median speed melee unit's destination */
+    /* Get stage point based on the median speed melee unit's destination */
     |-> AI_GetCombatRallyPt()
     /* Pass 1: Process non-hero units (or all units initially) */
     for (unit_idx = 0; unit_idx < _combat_total_unit_count; unit_idx++)

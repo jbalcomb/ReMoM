@@ -114,7 +114,7 @@ XREF:
 for
     BUA_MoveNAttack   103
     BUA_RangedAttack  101
-sets rally/dest to own square
+sets stage/dest to own square
 PoI?
 ...Max_X, Max_Y are passed in, but can get updated
 ...that updating includes the locals Min_X, Min_Y

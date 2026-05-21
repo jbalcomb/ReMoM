@@ -132,22 +132,31 @@
       ]
     },
     "MoM/src/AIMOVE.c": {
-      "mtime_at_read": "2026-05-21T11:21:15.1895557-04:00",
-      "size_at_read": 266205,
+      "mtime_at_read": "2026-05-21T13:02:01.8888599-04:00",
+      "size_at_read": 266874,
       "regions": [
         {
-          "start_line": 7059,
-          "end_line": 7556,
+          "start_line": 5753,
+          "end_line": 6027,
+          "first_line_hash": "6682800963ad",
+          "first_line_excerpt": "void AI_Reevaluate_Continent(int16_t player_idx, int16_t landmass_idx, int16_t wp)",
+          "read_at": "2026-05-21T17:05:00Z",
+          "purpose": "AI_Reevaluate_Continent — backing source for AIMOVE-AI_Reevaluate_Continent.md walkthrough. Source uses /* Phase 1: */ through /* Phase 6: */ labels. Locals: itr split into itr_units/itr_cities; landmass_node_count separated from OG's reused Tile_X. Phase 5 uses _ai_landmass_land_squares_* throughout (head 5927, body 5933/5939-5940/5947-5948, lists 5952). Phase 6 has write-back at 6018-6022. Inline OGBUG markers at 5783, 5784, 5837, 5841, 5847, 5978, 5987, 6025."
+        },
+        {
+          "start_line": 6934,
+          "end_line": 6934,
           "first_line_hash": "e63a0fb1136b",
-          "first_line_excerpt": "void AI_Reevaluate_All_Continents(int16_t player_idx)",
-          "read_at": "2026-05-21T15:25:00Z",
-          "purpose": "AI_Reevaluate_All_Continents full body — used to build AIMOVE-AI_Reevaluate_All_Continents.md walkthrough. Function renamed from AI_Continent_Reeval__WIP; GEMINI variant tossed. All four outer-loop iterators (Phases 6/7/8/9) now use for(wp = 0; ...); Phase 6 enemy gate uses [wp][landmass_idx]; Phase 5 slot-0 force uses literal [0]. Inline OGBUG markers at lines 7141, 7142, 7214, 7242, 7257, 7331, 7413, 7458, 7465, 7513, 7520."
+          "first_line_excerpt": "void AI_Evaluate_Continents(int16_t player_idx)",
+          "read_at": "2026-05-21T16:15:00Z",
+          "purpose": "AI_Evaluate_Continents signature anchor only. Full body was last read at start_line 7059 (mtime 11:21:15); function has since shifted -125 lines via deletions between SingleCont GEMINI and this function. Body content believed unchanged but NOT re-verified this read — re-read 6934-end before making specific line claims. Phase 9 write-back currently around line 7416 (verified by Grep this turn)."
         }
       ],
       "_known_unread": {
-        "AI_SingleCont_Reeval__WIP at 5880": "Was at 5886 last read (2026-05-17 mtime); file edited since. Re-read before claiming anything about it.",
-        "AI_Evaluation_Map at 7585": "Not re-read in this session.",
-        "AI_Choose_War_Landmass at 7809": "Was at 7822-8240 last read; line numbers shifted by GEMINI tossing + AI_Reevaluate_All_Continents shrink. Re-read before claiming anything specific."
+        "AI_SingleCont_Reeval__GEMINI at 6024": "Not in scope (per user pref: production only).",
+        "AI_Evaluate_Continents body 6935-end": "Function moved -125 lines; body content unchanged based on Grep but full re-read needed before any specific line claims. AIMOVE-AI_Evaluate_Continents.md is now stale on line numbers — needs refresh pass.",
+        "AI_Evaluation_Map (was 7585)": "Shifted with the -125 move; not re-located this turn.",
+        "AI_Choose_War_Landmass at 7684": "Was at 7809 earlier; shifted -125. Not re-read this turn."
       }
     }
   }

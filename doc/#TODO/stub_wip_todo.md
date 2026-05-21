@@ -18,7 +18,7 @@
 ## AIMOVE
 - [ ] AI_AssignStackTarget__WIP
 - [ ] AI_CanSettleOffPlane__STUB
-- [ ] AI_Reevaluate_All_Continents
+- [ ] AI_Evaluate_Continents
 - [ ] AI_FillGarrisons__WIP
 - [ ] AI_GarrBuilderPush__WIP
 - [ ] AI_Choose_War_Landmass
@@ -30,7 +30,7 @@
 - [ ] AI_Survey_Excess_Units_In_Stack
 - [ ] AI_SendToColonize__WIP
 - [ ] AI_Set_Unit_Orders
-- [ ] AI_SingleCont_Reeval__WIP
+- [ ] AI_Reevaluate_Continent
 - [ ] G_AI_HomeRallyFill__WIP
 - [ ] G_AI_ProcessTransports__WIP
 - [ ] G_AI_RallyFill__WIP

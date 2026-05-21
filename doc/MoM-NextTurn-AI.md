@@ -392,7 +392,7 @@ gets used in AI_Pick_Conts__WIP()
 
 
 
-## AI_Reevaluate_All_Continents()
+## AI_Evaluate_Continents()
 
 Sum_City_Y_NonOwn_UnitCost
 Sum_City_X_Own_UnitCost

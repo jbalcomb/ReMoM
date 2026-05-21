@@ -14,23 +14,23 @@ For BUG-B, I double-checked the disassembly. Looks like the comment and Gemini w
 
 
 _ai_landmass_war_targets[]   populated in AI_Choose_War_Landmass 
-AI_NewColConts[]    populated in AI_Reevaluate_All_Continents(); // ; choose the next colony continent from among those with no presence, or clear it if no such ones exist
+AI_NewColConts[]    populated in AI_Evaluate_Continents(); // ; choose the next colony continent from among those with no presence, or clear it if no such ones exist
 
 
 
 _ai_reevaluate_continents_countdown
-used by AI_Reevaluate_All_Continents[]
+used by AI_Evaluate_Continents[]
 ...includes override utilizing g_ai_evaluation_map[]
 
-AI_Reevaluate_All_Continents()
-AI_SingleCont_Reeval__WIP()
+AI_Evaluate_Continents()
+AI_Reevaluate_Continent()
 ...last proc in ovr158 ...later addition?
 
-OON XREF: AI_Set_Unit_Orders() |-> G_AI_RallyFill__WIP() |-> AI_SingleCont_Reeval__WIP()
+OON XREF: AI_Set_Unit_Orders() |-> G_AI_RallyFill__WIP() |-> AI_Reevaluate_Continent()
 
 AI_Set_Unit_Orders()
     |-> G_AI_RallyFill__WIP()
-        |-> AI_SingleCont_Reeval__WIP()
+        |-> AI_Reevaluate_Continent()
 
 
 
@@ -60,7 +60,7 @@ AI_Next_Turn()
 AI_Choose_War_Landmassayer_idx);  /* populates _ai_landmass_war_targets[]; uses the arrays just populated in AI_Landmass_Values_And_Strengths() */
 
 
-AI_SingleCont_Reeval__WIP()
+AI_Reevaluate_Continent()
 
 ## Landmass Type/Status:
     0: lmt_Unevaluated
@@ -72,7 +72,7 @@ AI_SingleCont_Reeval__WIP()
     3: lmt_NoPresence
         just means the player does not have any cities on the landmass
     4: lmt_NoLanding
-        Allied territory OR No rally tile
+        Allied territory OR No stage tile
     5: lmt_Abandon
         Embarkation tile was found — set when a dock square is reachable. Logically "we can depart from here," not "we have decided to abandon."
     6: lmt_NoTargets
@@ -102,8 +102,8 @@ Want a read-only version too (find all places type_array is consulted but not as
 ## _ai_landmass_war_targets[]
 (12 values; 2 planes * 6 players)
 
-AI_Reevaluate_All_Continents()
-AI_SingleCont_Reeval__WIP()
+AI_Evaluate_Continents()
+AI_Reevaluate_Continent()
 
 AI_Choose_War_Landmass()
 
@@ -111,8 +111,8 @@ _ai_landmass_war_targets[wp][player_idx] holds the landmass index of the AI's ma
 (set fresh each turn by AI_Choose_War_Landmasshich runs earlier in AI_Turn)
 
 XREF:
-    AI_Reevaluate_All_Continents+D94    mov     bx, [_ai_landmass_war_targets+bx]                                
-    AI_Reevaluate_All_Continents+DE2    mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Evaluate_Continents+D94    mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Evaluate_Continents+DE2    mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_Choose_War_Landmass    mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_Choose_War_LandmassC   mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_Choose_War_Landmass2   mov     bx, [_ai_landmass_war_targets+bx]                                
@@ -126,7 +126,7 @@ XREF:
     AI_PullForMainWar__WIP+145      mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_PullForMainWar__WIP+8C       mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_PullForMainWar__WIP+F        mov     bx, [_ai_landmass_war_targets+bx]                                
-    AI_SingleCont_Reeval__WIP+8DF   mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Reevaluate_Continent+8DF   mov     bx, [_ai_landmass_war_targets+bx]                                
     G_AI_ProcessTransports__WIP+488 mov     bx, [_ai_landmass_war_targets+bx]                                
     G_AI_ProcessTransports__WIP+774 mov     bx, [_ai_landmass_war_targets+bx]                                
     G_AI_ProcessTransports__WIP+798 mov     bx, [_ai_landmass_war_targets+bx]                                
@@ -136,7 +136,7 @@ Allocate_Data_Space()
     mov     [_ai_landmass_war_targets+2], (offset _players.spells_list+17F4h)
 
 
-AI_SingleCont_Reeval__WIP() :: Phase 7 :: _ai_landmass_war_targets[]
+AI_Reevaluate_Continent() :: Phase 7 :: _ai_landmass_war_targets[]
 
 
 

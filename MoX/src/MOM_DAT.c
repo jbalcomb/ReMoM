@@ -892,7 +892,7 @@ uint8_t * _ai_reevaluate_continents_countdown;
 /*
 landmass_idx
 0 if no unoccupied landmass available
-populated in AI_Reevaluate_All_Continents()
+populated in AI_Evaluate_Continents()
 [2]
 20 bytes
 */
