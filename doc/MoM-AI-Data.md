@@ -1,8 +1,8 @@
 
 CONTX_FirstTiles[]
 CONTX_TileChain[]
-    Next_Tile_ChainIndex = CONTX_FirstTiles[wp][landmass_idx];
-    while(Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+    landmass_node_index = CONTX_FirstTiles[wp][landmass_idx];
+    while(landmass_node_index = CONTX_TileChain[wp][landmass_node_index] != ST_UNDEFINED)
     {
     }
 

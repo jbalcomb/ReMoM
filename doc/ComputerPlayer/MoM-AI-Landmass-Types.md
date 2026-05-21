@@ -26,7 +26,7 @@ The enum is really **two different categories** of value stuffed into one byte:
 | Tier | Members | Origin | Lifetime |
 |---|---|---|---|
 | **Classifier outputs** | `Own`, `Contested`, `NoOwnCity`, `NoOwnCityAndAllyHasCity` | Produced by reeval functions ([`AI_Reevaluate_Continent`](../../MoM/src/AIMOVE.c#L5933), [`AI_Evaluate_Continents`](../../MoM/src/AIMOVE.c#L6902)) | Regenerated each classification pass |
-| **Phase overlays** | `Abandon`, `NoTargets` | Produced by other AI phases ([`AI_ProcessRoamers__WIP`](../../MoM/src/AIMOVE.c#L1635) at line 1806, [`AI_Build_Target_List`](../../MoM/src/AIMOVE.c#L2327) at line 2757) | Survive only until next classifier run, which clobbers them |
+| **Phase overlays** | `Abandon`, `NoTargets` | Produced by other AI phases ([`AI_ProcessRoamers__WIP`](../../MoM/src/AIMOVE.c#L1635) at line 1806, [`AI_Build_Target_List`](../../MoM/src/AIMOVE.c#L2327) at line 2757) | `Abandon` is clobbered by the next classifier run. `NoTargets` is **preserved across turns** by `AI_Evaluate_Continents`'s preservation clause at [line 6848](../../MoM/src/AIMOVE.c#L6848), subject to a city-count collision OGBUG (see `lmt_NoTargets` notes below). |
 | **Initial / sentinel** | `Unevaluated` | Set by [`AI_Evaluate_Continents`](../../MoM/src/AIMOVE.c#L7013) as counter base | Never appears as a final state |
 
 This is the source of the design's awkwardness: a classifier-output and a phase-overlay can never coexist on the same slot, because each clobbers the other.
@@ -102,7 +102,11 @@ The "Abandon" name is accurate — the AI has committed to leaving the landmass.
 |---|---|---|
 | [2757](../../MoM/src/AIMOVE.c#L2757) | `AI_Build_Target_List` | `_ai_targets_count == 0` after target-gathering phase |
 
-Semantic: "Walked the landmass, found nothing to attack."
+**Semantic at write site:** "Walked the landmass, found zero hostile assets to attack" — no hostile fortress, no non-own city, no lair/node/tower with `Hostility >= 3` or `DIPL_War` against the asset's owner. Per-landmass, hostility-gated.
+
+**At read sites** (notably the [`AI_Choose_War_Landmass`](../../MoM/src/AIMOVE.c#L7733) `!= lmt_NoTargets` exclusion): the tag is **at least one turn old**. Written only by `AI_Build_Target_List`, which runs during `AI_Set_Unit_Orders` AFTER `AI_Choose_War_Landmass` in the per-turn driver ([`AIDUDES.c:241,284,285`](../../MoM/src/AIDUDES.c#L241)). Preserved across turns by `AI_Evaluate_Continents`'s preservation clause at [AIMOVE.c:6848](../../MoM/src/AIMOVE.c#L6848). See [AIMOVE-AI_Choose_War_Landmass.md](AIMOVE-AI_Choose_War_Landmass.md) for the full timing analysis and two failure modes (stale-positive false exclusion; city-count collision OGBUG that preserves 6-city heartland landmasses as `lmt_NoTargets`).
+
+A more accurate name would be something like `lmt_NoHostileAssetsLastSeen` — the read-site interpretation is "last time we looked, nothing to attack on this landmass," not current state.
 
 ## Read sites — what each value triggers downstream
 

@@ -483,7 +483,7 @@ void Surveyor_Window_Display(void)
         // ; returns 0 if the tile can be settled, or an error
         // ; value if not:
         // ;   1 - tile is in the ocean
-        // ;   2 - tile has an intact encounter zone
+        // ;   2 - tile has an intact lair
         // ;   3 - tile has a tower of wizardry
         // ;   4 - tile has a node
         // ;   5 - there's already a city within 3 tiles

@@ -73,7 +73,7 @@ void AI_Reevaluate_Continent(int16_t player_idx, int16_t landmass_idx, int16_t w
 
 **Variable naming notes:**
 - `sum_own_city_wx__own_units_cost` and `sum_own_city_wy__enemy_units_cost` carry the dual-use explicitly in their names: they hold both the city coordinate sum (from Phase 3) and the unit cost sum (added on top in Phase 4). The `__` separator makes the dual semantic visible.
-- The Dasm-recovered locals previously named `Tile_X`/`Tile_Y`/`Best_Tile_Weight`/`Next_Tile_ChainIndex`/`Center_X`/`Center_Y`/`LoadTile_X`/`LoadTile_Y`/`square_weight` have been renamed to match the sibling's terminology (`landmass_node_wx/wy`, `min_delta_distance`, `landmass_node_index`, `territory_centroid_wx/wy`, `landmass_node_centroid_wx/wy`, `delta_distance`). The OG dev had reused `Tile_X` as a counter in Phase 6 — that counter is now its own variable `landmass_node_count`.
+- The Dasm-recovered locals previously named `Tile_X`/`Tile_Y`/`Best_Tile_Weight`/`landmass_node_index`/`Center_X`/`Center_Y`/`LoadTile_X`/`LoadTile_Y`/`square_weight` have been renamed to match the sibling's terminology (`landmass_node_wx/wy`, `min_delta_distance`, `landmass_node_index`, `territory_centroid_wx/wy`, `landmass_node_centroid_wx/wy`, `delta_distance`). The OG dev had reused `Tile_X` as a counter in Phase 6 — that counter is now its own variable `landmass_node_count`.
 - The OG single `itr` has been split into `itr_units` and `itr_cities` for readability (commented-out `itr` is preserved as a faithful-to-Dasm marker).
 - `target_square_wx` / `target_square_wy` are the chosen target square coordinates, written to `wx_array` / `wy_array` by Phase 5 (always when found) and Phase 6 (for `lmt_Own` landmasses).
 

@@ -57,14 +57,17 @@ CONTX_FirstTiles
 CONTX_TileChain
 CONTX_TileYs
 CONTX_TileXs
+
 g_world_embark_square_wx__load_init
 g_world_embark_square_wy__load_init
 g_world_embark_square_next__load_init
 g_world_landmass_first_embark_square__load_init
-_ai_landmass_dock_squares_heads
-_ai_landmass_dock_squares_lists
+
 _ai_landmass_dock_squares_wx_array
 _ai_landmass_dock_squares_wy_array
+_ai_landmass_dock_squares_lists
+_ai_landmass_dock_squares_heads
+
 ...only used for the AI?
 ...created on-load, never changed, all/only for use inside 'AI Turn'?
 ...linked-list...dock squares...

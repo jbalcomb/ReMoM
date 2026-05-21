@@ -930,13 +930,27 @@ int16_t Some_AI_Turn_Var_2;
 int16_t Some_AI_Turn_Var_3;
 
 // WZD dseg:8FC8
-int16_t _ai_targets_value[25];
+/*
+~ "AI Targets"
+Per Player, Plane, Landmass, ...
+
+_ai_targets_count
+cleared in AI_Build_Target_List(), then incremented in AI_Add_Target()
+used to index _ai_targets_value[], _ai_targets_strength[], _ai_targets_wy[], _ai_targets_wx[]
+
+AI_Build_Target_List()
+    |-> AI_Add_Target()
+AI_ProcessRoamers__WIP()
+    |-> AI_AssignStackTarget__WIP()
+
+*/
+int16_t _ai_targets_value[MAX_AI_TARGETS];
 // WZD dseg:8FFA
-int16_t _ai_targets_strength[25];
+int16_t _ai_targets_strength[MAX_AI_TARGETS];
 // WZD dseg:902C
-int16_t _ai_targets_wy[25];
+int16_t _ai_targets_wy[MAX_AI_TARGETS];
 // WZD dseg:905E
-int16_t _ai_targets_wx[25];
+int16_t _ai_targets_wx[MAX_AI_TARGETS];
 // WZD dseg:9090 00                                              db    0
 // WZD dseg:9091 00                                              db    0
 // WZD dseg:9092 
@@ -2701,7 +2715,7 @@ SAMB_ptr _ai_own_stack_wx;
 per landmass, heads of linked lists for all squares
 2 planes
 60 continents
-Next_Tile_ChainIndex = _ai_landmass_land_squares_heads[wp][landmass_idx];
+landmass_node_index = _ai_landmass_land_squares_heads[wp][landmass_idx];
 
 next_node_idx = _ai_landmass_dock_squares_heads[wp][landmass_idx];
 previous_node_idx = next_node_idx;

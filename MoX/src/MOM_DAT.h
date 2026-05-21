@@ -126,6 +126,13 @@ lmt_NoOwnCityAndAllyHasCity:
 lmt_Abandon:
     in AI_ProcessRoamers__WIP(), means relocate to the war landmass
 lmt_NoTargets:
+    set in AI_Build_Target_List(), if a landmass has no military targets
+
+### Why "NoTargets" is a misleading name for the tag
+Three concerns the tag conflates that the name doesn't disclose:
+- **Per-landmass only.** It's not "no targets anywhere" — it's "no targets ON THIS LANDMASS."
+- **Hostility-gated.** A non-hostile player's cities don't count as targets, so a landmass full of cities owned by a wizard you're not at war with reads as `lmt_NoTargets` even though it's full of strategic assets.
+- **Time-stale.** The tag reflects a past turn's gather, not current state.
 
 */
 enum e_LANDMASS_TYPE

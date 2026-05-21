@@ -864,7 +864,7 @@ Loop_Location_1:
                     // ; invalidate the attempt if any node is closer than the
                     // ; minimum distance
                     // ; 
-                    // ; BUG: the encounter zone check below will also catch
+                    // ; BUG: the lair check below will also catch
                     // ;  these
                     // ; BUG: because the distance is halved, same map square is not
                     // ; excluded
@@ -891,7 +891,7 @@ Loop_Location_1:
                     // ; invalidate the attempt if any tower is closer than
                     // ; the minimum distance
                     // ; 
-                    // ; BUG: the encounter zone check below will also catch
+                    // ; BUG: the lair check below will also catch
                     // ;  these
                     // ; BUG: because the distance is halved, same map square is not
                     // ; excluded
@@ -910,7 +910,7 @@ Loop_Location_1:
 
                     }
 
-                    // ; invalidate the attempt if any encounter zone is
+                    // ; invalidate the attempt if any site is
                     // ; closer than the minimum distance
                     // ; BUG: because the distance is halved, same map square is not
                     // ; excluded
@@ -4901,7 +4901,7 @@ Loop_Location_2:
             // ; the encounter exclusion below would also catch these
 
             // ; invalidate if less than 4 map squares away from an
-            // ; encounter zone - including nodes and towers
+            // ; site - including nodes and towers
 
             if(
                 (tries < 1000)

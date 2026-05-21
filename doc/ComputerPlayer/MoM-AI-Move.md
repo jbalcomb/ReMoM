@@ -15,6 +15,26 @@ Purify Corruption
 Meld Node
 
 
+
+
+
+MoO2
+Move_All_AI_()
+    |-> Move_AI_()
+    |-> Move_NPCs_()
+
+Move_AI_()
+    |-> Get_Colonizable_Planets_(&_colonizable[0], &_n_colonizable)
+    _nonplayer_here[star_idx] = monster ship's owner_idx
+    ...
+    |-> Assign_New_Colony_Ship_Destinations_()
+    ...
+
+Gather_Player_Ships_At_Star_()
+
+
+
+
 Next_Turn_Proc() |-> Next_Turn_Calc() |-> AI_Next_Turn()
 Per Computer Player  {1, ..., _num_players{2,3,4,5}}
 AI_Next_Turn()
@@ -66,6 +86,58 @@ Definitely Done-Done:
 [x]         |-> AI_Evaluate_Continents(player_idx)      uses g_ai_evaluation_map, just populated in AI_Evaluation_Map()
                 ...sibling function... [x] OON XREF: AI_Set_Unit_Orders() |-> G_AI_RallyFill__WIP() |-> AI_Reevaluate_Continent()
 []          |-> AI_Set_Unit_Orders(player_idx)
+[]              |-> AI_Disband_To_Balance_Budget()
+[]              |-> AI_Shift_Off_Home_Plane()
+[]              |-> AI_Move_Out_Boats()
+[]              |-> AI_Find_Opportunity_City_Target()
+[]              |-> AI_Build_Stacks_Find_Targets_Order_Moves()
+[]              |-> AI_GarrBuilderPush__WIP()
+[]              |-> AI_Survey_Excess_Units()
+[]              |-> AI_Do_Meld()
+[]              |-> AI_Do_Settle()
+[]              |-> AI_Do_Purify()
+[]              |-> AI_Do_RoadBuild()
+[x]             |-> AI_Build_Target_List()
+[x]                 |-> AI_Add_Target()
+[]              |-> AI_ProcessRoamers__WIP()
+[ ]                 |-> AI_AssignStackTarget__WIP()
+[]              |-> AI_PullForMainWar__WIP()
+[]              |-> G_AI_HomeRallyFill__WIP()
+[]              |-> G_AI_RallyFill__WIP()
+[x]                 |-> AI_Reevaluate_Continent()
+[]              |-> AI_FillGarrisons__WIP()
+[]              |-> AI_ProcessOcean__WIP()
+[]              |-> G_AI_ProcessTransports__WIP()
+
+## Call graph
+```
+AI_Set_Unit_Orders(player_idx)
+├── EMM_Map_CONTXXX__WIP                     [setup]
+├── AI_Disband_To_Balance_Budget             [global pre-pass]
+├── AI_Shift_Off_Home_Plane                  [global pre-pass]
+├── AI_Move_Out_Boats                        [global pre-pass]
+├── AI_Find_Opportunity_City_Target          [global pre-pass; OGBUG: wp=0 stale]
+└── for wp in [Arcanus, Myrror]:
+    └── for landmass_idx in [1..NUM_LANDMASSES):
+        ├── AI_Build_Stacks_Find_Targets_Order_Moves
+        ├── AI_GarrBuilderPush__WIP
+        ├── AI_Survey_Excess_Units
+        ├── AI_Do_Meld
+        ├── AI_Do_Settle
+        ├── AI_Do_Purify
+        ├── AI_Do_RoadBuild
+        ├── AI_Build_Target_List
+        ├── AI_ProcessRoamers__WIP
+        ├── AI_PullForMainWar__WIP           [gate: NOT lmt_Contested basically]
+        ├── G_AI_HomeRallyFill__WIP          [gate: lmt_Own / lmt_Abandon+]
+        ├── G_AI_RallyFill__WIP              [always]
+        │   └── AI_Reevaluate_Continent     [5% roll when stage is full]
+        └── AI_FillGarrisons__WIP            [gate: lmt_Own / lmt_Contested / lmt_Abandon+]
+    ├── AI_ProcessOcean__WIP                 [per-plane post-pass]
+    └── G_AI_ProcessTransports__WIP          [per-plane post-pass]
+└── EMM_Map_DataH                            [cleanup]
+```
+
 []          |-> EMMDATAH_Map();
 []          |-> AI_Kill_Excess_Settlers_And_Engineers(player_idx)
 

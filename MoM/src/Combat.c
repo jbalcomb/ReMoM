@@ -5811,7 +5811,7 @@ int16_t Battle_Unit_Movement_Icon(int16_t battle_unit_idx)
 ; specified player at the passed location - if the
 ; battle unit table is full, will overwrite the first
 ; inactive unit with 9 set as its present Plane
-; (typically combat summons and encounter zone guards)
+; (typically combat summons and lair guards)
 ; BUG: does not apply battlefield effects to the unit
 ; WARNING: will freeze up the game if all figure slots
 ; are occupied (already 18 units on the battlefield)
@@ -21844,7 +21844,7 @@ int16_t Rampage_Combat_City(void)
         }
     }
 
-    /* Initialize the new Ruins encounter zone */
+    /* Initialize the new Ruins lair */
     _LAIRS[empty_lair_idx].guard1_unit_type = (uint8_t)primary_unit;
     _LAIRS[empty_lair_idx].guard2_unit_type = (uint8_t)secondary_unit;
     _LAIRS[empty_lair_idx].guard1_count = (uint8_t)(primary_count * 17);  /* shift to upper nibble */

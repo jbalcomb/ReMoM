@@ -13,7 +13,7 @@ Make_System_Monsters_()
 
 // MGC o51p16
 // drake178: NEWG_CreateEZs()
-; populates the encounter zone table
+; populates the lair table
 */
 void NEWG_CreateEZs__WIP(void)
 

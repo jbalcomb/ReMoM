@@ -98,6 +98,45 @@ Most of my previous OGBUG flags survive the re-review. The Value_Sum bug I flagg
 | 8 | 8231-8256 | Tile-count fallback when Value_Sum == 0 (replaces empty weights with tile counts for eligible landmasses) | **DIVERGES from GEMINI on fortress polarity (D-2)** |
 | 9 | 8260-8272 | Final pick: re-sum (this one properly resets Value_Sum), set `_ai_landmass_war_targets[wp][p]` to 0 or `Get_Weighted_Choice(final_landmass_weights, NUM_LANDMASSES)` | OK |
 
+## What `lmt_NoTargets` really means at the read sites
+
+`AI_Choose_War_Landmass` reads `lmt_NoTargets` in two places: the Phase 2 switch (where the value falls through to `default: DNE` — see D-1 below) and the Phase 8 / Phase 6 weighting loop (`!= lmt_NoTargets` filter when building `final_landmass_weights`). Both reads observe values written by a **prior turn**.
+
+### Timing — why the tag is always stale at the read sites
+
+The per-AI-turn driver in `AI_Next_Turn` ([`AIDUDES.c`](../../MoM/src/AIDUDES.c)) runs these in order:
+
+1. [`AIDUDES.c:241`](../../MoM/src/AIDUDES.c#L241) — `AI_Choose_War_Landmass(player_idx)` — **READS** `type_array`
+2. [`AIDUDES.c:284`](../../MoM/src/AIDUDES.c#L284) — `AI_Evaluate_Continents(player_idx)` — full reclassifier; may preserve `lmt_NoTargets` via its preservation clause
+3. [`AIDUDES.c:285`](../../MoM/src/AIDUDES.c#L285) — `AI_Set_Unit_Orders(player_idx)` — per-landmass dispatch; calls `AI_Build_Target_List` (the only writer of `lmt_NoTargets`, at [AIMOVE.c:2668](../../MoM/src/AIMOVE.c#L2668))
+
+`AI_Build_Target_List` runs LAST. By the time `AI_Choose_War_Landmass` reads `type_array` next turn, the most recent `lmt_NoTargets` write happened during the PREVIOUS turn's per-landmass dispatch. Survival to the current read depends on `AI_Evaluate_Continents`'s preservation clause firing correctly.
+
+### What the tag actually represents
+
+A landmass tagged `lmt_NoTargets` at the moment `AI_Choose_War_Landmass` reads it is one where, on some prior turn:
+
+- `AI_Build_Target_List(player_idx, landmass_idx, wp)` walked its target-gathering pass — hostile fortresses, non-own cities (neutral or hostile), lairs/nodes/towers, gated on `Hostility >= 3` or `DIPL_War` against the asset's owner — and found zero entries, **AND**
+- Every subsequent `AI_Evaluate_Continents` pass at the start of turns since then has preserved the tag via its `(type_array[idx] == lmt_NoTargets) && (sum_enemy_units_cost == 0)` clause at [AIMOVE.c:6848](../../MoM/src/AIMOVE.c#L6848).
+
+The Phase 8 / 6 exclusion (`!= lmt_NoTargets` at the current [AIMOVE.c:7733](../../MoM/src/AIMOVE.c#L7733)) therefore reads as: **"don't pick this landmass as the main war target if, the last time we looked, it had no hostile asset worth attacking AND no enemy units have arrived since."**
+
+### Failure modes implied by the timing
+
+1. **Stale-positive false exclusion.** The tag is at least one turn old. An enemy can land troops on a previously-cleared landmass and `AI_Choose_War_Landmass` will still see `lmt_NoTargets` for at least one full turn — until the next per-landmass dispatch refreshes, or `AI_Evaluate_Continents`'s `sum_enemy_units_cost == 0` clause fires negatively. Lag is bounded but real.
+
+2. **City-count collision OGBUG (heartland exclusion).** `AI_Evaluate_Continents`'s preservation clause checks the type_array slot while it's still being used as a city counter (per the inline OGBUG comment at [AIMOVE.c:6845-6846](../../MoM/src/AIMOVE.c#L6845-L6846)). A 6-city own landmass with no enemy units present accidentally matches `lmt_NoTargets` (enum value 6 == city count 6) and gets preserved as `lmt_NoTargets`. On the next turn, `AI_Choose_War_Landmass` excludes this fully-secure heartland landmass from war-target weighting.
+
+   In practice this OGBUG happens to coincide with intent: a heartland landmass shouldn't be the war TARGET; it should be the staging origin. But the mechanism is wrong — it's accidental do-the-right-thing, not designed-correctly behavior.
+
+### Why "NoTargets" is a misleading name at this read site
+
+- **Per-landmass only.** Not "no targets anywhere" — "no targets ON THIS LANDMASS."
+- **Hostility-gated.** A non-hostile player's cities don't count as targets, so a landmass full of cities owned by a wizard you're not at war with reads as `lmt_NoTargets` despite being full of strategic assets.
+- **Time-stale.** Reflects a past turn's gather, not current state.
+
+A more accurate name would be something like `lmt_NoHostileAssetsLastSeen`. The exclusion is "this landmass had no targets the last time we looked," not "this landmass has no targets right now."
+
 ## Bugs
 
 ### ✅ ~~BUG-B~~ — Phase 8 fortress-continent gate (verified against disassembly: production matches OG)
