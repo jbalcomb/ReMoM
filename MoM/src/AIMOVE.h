@@ -247,7 +247,7 @@ int16_t Make_Monster_List(int16_t budget, int16_t lair_race, int16_t * unit_list
 int16_t AI_Stack_Can_Mobilize(int16_t stack_idx, int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o162p35
-void AI_Continent_Reeval__WIP(int16_t player_idx);
+void AI_Reevaluate_All_Continents(int16_t player_idx);
 
 // WZD o162p36
 void AI_Evaluation_Map(int16_t player_idx);

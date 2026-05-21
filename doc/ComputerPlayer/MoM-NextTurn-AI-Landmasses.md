@@ -14,15 +14,15 @@ For BUG-B, I double-checked the disassembly. Looks like the comment and Gemini w
 
 
 _ai_landmass_war_targets[]   populated in AI_Choose_War_Landmass 
-AI_NewColConts[]    populated in AI_Continent_Reeval__WIP(); // ; choose the next colony continent from among those with no presence, or clear it if no such ones exist
+AI_NewColConts[]    populated in AI_Reevaluate_All_Continents(); // ; choose the next colony continent from among those with no presence, or clear it if no such ones exist
 
 
 
 _ai_reevaluate_continents_countdown
-used by AI_Continent_Reeval__WIP[]
+used by AI_Reevaluate_All_Continents[]
 ...includes override utilizing g_ai_evaluation_map[]
 
-AI_Continent_Reeval__WIP()
+AI_Reevaluate_All_Continents()
 AI_SingleCont_Reeval__WIP()
 ...last proc in ovr158 ...later addition?
 
@@ -74,7 +74,7 @@ AI_SingleCont_Reeval__WIP()
     4: lmt_NoLanding
         Allied territory OR No rally tile
     5: lmt_Abandon
-        Embarkation tile was found — set when a load tile is reachable. Logically "we can depart from here," not "we have decided to abandon."
+        Embarkation tile was found — set when a dock square is reachable. Logically "we can depart from here," not "we have decided to abandon."
     6: lmt_NoTargets
         No attackable enemies, lairs, or nodes worth targeting.
 
@@ -102,7 +102,7 @@ Want a read-only version too (find all places type_array is consulted but not as
 ## _ai_landmass_war_targets[]
 (12 values; 2 planes * 6 players)
 
-AI_Continent_Reeval__WIP()
+AI_Reevaluate_All_Continents()
 AI_SingleCont_Reeval__WIP()
 
 AI_Choose_War_Landmass()
@@ -111,8 +111,8 @@ _ai_landmass_war_targets[wp][player_idx] holds the landmass index of the AI's ma
 (set fresh each turn by AI_Choose_War_Landmasshich runs earlier in AI_Turn)
 
 XREF:
-    AI_Continent_Reeval__WIP+D94    mov     bx, [_ai_landmass_war_targets+bx]                                
-    AI_Continent_Reeval__WIP+DE2    mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Reevaluate_All_Continents+D94    mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Reevaluate_All_Continents+DE2    mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_Choose_War_Landmass    mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_Choose_War_LandmassC   mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_Choose_War_Landmass2   mov     bx, [_ai_landmass_war_targets+bx]                                

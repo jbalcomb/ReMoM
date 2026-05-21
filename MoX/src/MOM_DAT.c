@@ -875,9 +875,9 @@ decremented in AI_Next_Turn()
 int16_t * AI_SCircle_Reevals;
 
 // WZD dseg:8F9A
-uint8_t * AI_NewColTgtYs[2];
+uint8_t * _ai_landmass_settler_targets_wy_array[2];
 // WZD dseg:8F9E
-uint8_t * AI_NewColTgtXs[2];
+uint8_t * _ai_landmass_settler_targets_wx_array[2];
 // WZD dseg:8FA2
 uint8_t * Wiz5_Spell_50h;
 // WZD dseg:8FA4
@@ -891,11 +891,12 @@ uint8_t * _ai_reevaluate_continents_countdown;
 // WZD dseg:8FAC
 /*
 landmass_idx
-populated in AI_Continent_Reeval__WIP()
+0 if no unoccupied landmass available
+populated in AI_Reevaluate_All_Continents()
 [2]
 20 bytes
 */
-uint8_t * AI_NewColConts[NUM_PLANES];
+uint8_t * _ai_landmass_settler_targets[NUM_PLANES];
 // WZD dseg:8FB0
 /*
 landmass_idx
@@ -2649,9 +2650,16 @@ uint16_t grand_vizier;
  *   - Therefore shoreline squares are static per game, and the load-time
  *     chain remains correct forever.
  
- singly linked list
-
- */
+singly linked list
+...
+next_node_idx = _ai_landmass_dock_squares_heads[wp][landmass_idx];
+previous_node_idx = next_node_idx;
+while(next_node_idx != ST_UNDEFINED)
+{
+    previous_node_idx = next_node_idx;
+    next_node_idx = _ai_landmass_dock_squares_lists[wp][next_node_idx];
+}
+*/
 int16_t * _ai_landmass_dock_squares_heads[NUM_PLANES];
 // WZD dseg:9D32  (was _ai_landmass_dock_squares_lists)
 int16_t * _ai_landmass_dock_squares_lists[NUM_PLANES];
@@ -2693,6 +2701,16 @@ SAMB_ptr _ai_own_stack_wx;
 per landmass, heads of linked lists for all squares
 2 planes
 60 continents
+Next_Tile_ChainIndex = _ai_landmass_land_squares_heads[wp][landmass_idx];
+
+next_node_idx = _ai_landmass_dock_squares_heads[wp][landmass_idx];
+previous_node_idx = next_node_idx;
+while(next_node_idx != ST_UNDEFINED)
+{
+    previous_node_idx = next_node_idx;
+    next_node_idx = _ai_landmass_dock_squares_lists[wp][next_node_idx];
+}
+
 */
 int16_t * _ai_landmass_land_squares_heads[NUM_PLANES];
 // WZD dseg:9EA8

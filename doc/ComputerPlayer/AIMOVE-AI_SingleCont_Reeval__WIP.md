@@ -15,7 +15,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_SingleCont_Reeva
 In a recent rereview of `AI_Choose_War_Landmass` (formerly `AI_Pick_Action_Conts__WIP`), I flagged a "BUG-B" where production diverged from both the OG comment and the GEMINI second opinion. User verified against disassembly: **production matched the OG bytes; the comment and GEMINI were both wrong.** My BUG-B claim was a misdiagnosis.
 
 **Applied to this function:** there is no `__GEMINI` variant for `AI_SingleCont_Reeval__WIP`, so the cross-check pressure is lower. But the outstanding **BUG-7** flag below ("refined stage point computed but never written back") rests on:
-- Phase 6's structural similarity to the sibling `AI_Continent_Reeval__WIP` Phase 14, which DOES have the write-back, AND
+- Phase 6's structural similarity to the sibling `AI_Reevaluate_All_Continents` Phase 14, which DOES have the write-back, AND
 - The "looks like dead code" semantic intuition.
 
 Neither is disassembly proof. **BUG-7 should be treated as "needs disassembly verification," not as a confirmed translation bug.** The OG bytes may legitimately have no write-back here — perhaps because the per-landmass reeval relies on the immediately-following AI passes to consume `stage_wx`/`stage_wy` from somewhere else, or because the OG dev intentionally left this as a partial computation. Without verification, BUG-7 is a *candidate* for disassembly check, not an established defect.
@@ -24,7 +24,7 @@ The flagged-in-source OGBUG comments (OGBUG-A, OGBUG-B, OGBUG-C, OGBUG-D) remain
 
 ## Purpose
 
-**Single-landmass reclassifier + stage-point picker.** Called when a specific landmass on a specific plane needs its `_ai_continents.plane[wp].player[player_idx]` entries refreshed (type + center coords + stage square) — without doing the full all-landmasses rebuild that [`AI_Continent_Reeval__WIP`](../../MoM/src/AIMOVE.c#L6902) does.
+**Single-landmass reclassifier + stage-point picker.** Called when a specific landmass on a specific plane needs its `_ai_continents.plane[wp].player[player_idx]` entries refreshed (type + center coords + stage square) — without doing the full all-landmasses rebuild that [`AI_Reevaluate_All_Continents`](../../MoM/src/AIMOVE.c#L6902) does.
 
 The function does six sequential things:
 
@@ -323,7 +323,7 @@ if(
 }
 ```
 
-**Intent:** for landmasses where positioning matters (Own / Contested / AllyLand), find a stage square — a load tile near the city centroid that has no occupation per `g_ai_evaluation_map`. The chosen tile becomes the stage point where stacks gather. If no acceptable tile is found, clear the stage point and downgrade to `lmt_NoOwnCityAndAllyHasCity`.
+**Intent:** for landmasses where positioning matters (Own / Contested / AllyLand), find a stage square — a dock square near the city centroid that has no occupation per `g_ai_evaluation_map`. The chosen tile becomes the stage point where stacks gather. If no acceptable tile is found, clear the stage point and downgrade to `lmt_NoOwnCityAndAllyHasCity`.
 
 **Why "Best" = lowest:** `square_weight = distance + Random(5)`. Lower weight = closer to city centroid + small jitter. `Best_Tile_Weight` tracks the lowest weight seen for any tile that ALSO has `square_occupation_value == 0`. Initialized to 1000 as a sentinel above any valid weight (max realistic ~54 for a 60×40 world), which doubles as the "did we find anything?" marker after the loop.
 
@@ -387,7 +387,7 @@ if(_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_O
 }
 ```
 
-**Intent:** for landmasses we own decisively, the stage point shouldn't just be near our city center — it should be positioned to ship troops out toward the main war. Step A computes the centroid of load tiles on the main war continent (the "embark destination"). Step B picks our landmass's load tile closest to that centroid.
+**Intent:** for landmasses we own decisively, the stage point shouldn't just be near our city center — it should be positioned to ship troops out toward the main war. Step A computes the centroid of load tiles on the main war continent (the "embark destination"). Step B picks our landmass's dock square closest to that centroid.
 
 ### 🐛 BUG-7 — Refined stage point computed but never stored
 
@@ -427,9 +427,9 @@ The classifier produces meaningful `lmt_Own` / `lmt_Contested` / `lmt_NoOwnCity`
 
 The function is broadly functional — Phase 1 cancels orders, Phase 2 computes a centroid, Phases 3-4 classify, Phase 5 places a stage tile. Phase 6 alone is silently dead (BUG-7).
 
-## Comparison with sibling: `AI_Continent_Reeval__WIP`
+## Comparison with sibling: `AI_Reevaluate_All_Continents`
 
-| Aspect | `AI_SingleCont_Reeval__WIP` | `AI_Continent_Reeval__WIP` |
+| Aspect | `AI_SingleCont_Reeval__WIP` | `AI_Reevaluate_All_Continents` |
 |---|---|---|
 | Scope | One specific (player, landmass, plane) | All landmasses on both planes for one player |
 | Caller | `G_AI_RallyFill__WIP` on 5% random roll when stage is full | (TBD — needs verification) |
@@ -441,11 +441,11 @@ The function is broadly functional — Phase 1 cancels orders, Phase 2 computes 
 | Same-plane check on unit/city lookups? | No (OGBUG-A, OGBUG-C) | (Needs verification) |
 | Coord/cost var sharing? | Yes (OGBUG-B) | No — explicit clearing between phases (line ~7110) |
 
-The two functions are siblings — `AI_Continent_Reeval__WIP` is the "rebuild everything" full pass, `AI_SingleCont_Reeval__WIP` is the "just this one landmass" focused pass. With the recent fixes, the per-landmass version mirrors the full-rebuild structure closely. The remaining differences are the preserved-OG bugs (cross-plane contamination, coord/cost var sharing) plus the Phase 5 BUG-4 distance defect and the Phase 6 BUG-7 missing write-back.
+The two functions are siblings — `AI_Reevaluate_All_Continents` is the "rebuild everything" full pass, `AI_SingleCont_Reeval__WIP` is the "just this one landmass" focused pass. With the recent fixes, the per-landmass version mirrors the full-rebuild structure closely. The remaining differences are the preserved-OG bugs (cross-plane contamination, coord/cost var sharing) plus the Phase 5 BUG-4 distance defect and the Phase 6 BUG-7 missing write-back.
 
 ## Related references
 
 - [MoM-AI-Landmass-Types.md](MoM-AI-Landmass-Types.md) — `lmt_*` enum state machine; this function's writes feed into the Tier-1 classifier outputs
 - [MoM-AI-AIMOVE-Index.md](MoM-AI-AIMOVE-Index.md) — function index entry
 - [AIMOVE-AI_Choose_War_Landmass](AIMOVE-AI_AI_Choose_War_Landmass sibling function notes; `_ai_landmass_war_targets[]` cross-reference
-- `AI_Continent_Reeval__WIP` at [AIMOVE.c:6902](../../MoM/src/AIMOVE.c#L6902) — full-rebuild counterpart
+- `AI_Reevaluate_All_Continents` at [AIMOVE.c:6902](../../MoM/src/AIMOVE.c#L6902) — full-rebuild counterpart

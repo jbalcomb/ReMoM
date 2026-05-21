@@ -19,7 +19,7 @@ Next_Turn_Proc() |-> Next_Turn_Calc() |-> AI_Next_Turn()
 Per Computer Player  {1, ..., _num_players{2,3,4,5}}
 AI_Next_Turn()
     |-> AI_Evaluation_Map()
-    |-> AI_Continent_Reeval__WIP()
+    |-> AI_Reevaluate_All_Continents()
     |-> AI_Set_Unit_Orders()
         |-> AI_Disband_To_Balance_Budget()
         |-> AI_Shift_Off_Home_Plane()
@@ -62,7 +62,7 @@ Definitely Done-Done:
 ...
 Player_All_Colony_Autobuild(player_idx)
 AI_Evaluation_Map(player_idx)               populates g_ai_evaluation_map
-AI_Continent_Reeval__WIP(player_idx)        uses g_ai_evaluation_map, just populated in AI_Evaluation_Map()
+AI_Reevaluate_All_Continents(player_idx)        uses g_ai_evaluation_map, just populated in AI_Evaluation_Map()
 AI_Set_Unit_Orders(player_idx)
 EMMDATAH_Map();
 AI_Kill_Excess_Settlers_And_Engineers(player_idx)
@@ -75,7 +75,7 @@ AI_Kill_Excess_Settlers_And_Engineers(player_idx)
 
 ...
     |-> AI_Evaluation_Map()             ovr162
-    |-> AI_Continent_Reeval__WIP()      ovr162
+    |-> AI_Reevaluate_All_Continents()      ovr162
 
 
 
@@ -86,7 +86,7 @@ cp_landmass_type_array = &_ai_continents.plane[wp].player[player_idx].type_array
 _ai_continents__0
 _ai_continents__1
     AI_SingleCont_Reeval__WIP()
-    AI_Continent_Reeval__WIP()
+    AI_Reevaluate_All_Continents()
     AI_Set_Unit_Orders+A7              add     dx, offset _ai_continents__0    ; _bdata_start                     
     AI_ProcessOcean__WIP+4A            mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
     AI_ProcessOcean__WIP+13A           mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
@@ -102,7 +102,7 @@ _ai_continents__1
     AI_ProcessRoamers__WIP()
     AI_PullForMainWar__WIP()
     AI_SingleCont_Reeval__WIP()
-    AI_Continent_Reeval__WIP()
+    AI_Reevaluate_All_Continents()
     AI_Choose_War_Landmass
 
 set in 1 function, at 2 sites

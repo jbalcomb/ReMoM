@@ -14,7 +14,7 @@ enum e_LANDMASS_TYPE  // [MOM_DAT.h:119](../../MoX/src/MOM_DAT.h#L119)
     lmt_Contested                = 2,  // has own city + non-trivial enemy presence
     lmt_NoOwnCity                = 3,  // no owned city (units may still be present)
     lmt_NoOwnCityAndAllyHasCity  = 4,  // overloaded: ally's land OR no rally tile OR slot-0 sentinel
-    lmt_Abandon                  = 5,  // load tile reachable from here (departure-staging point)
+    lmt_Abandon                  = 5,  // dock square reachable from here (departure-staging point)
     lmt_NoTargets                = 6   // no attackable enemies/lairs/nodes found
 };
 ```
@@ -25,9 +25,9 @@ The enum is really **two different categories** of value stuffed into one byte:
 
 | Tier | Members | Origin | Lifetime |
 |---|---|---|---|
-| **Classifier outputs** | `Own`, `Contested`, `NoOwnCity`, `NoOwnCityAndAllyHasCity` | Produced by reeval functions ([`AI_SingleCont_Reeval__WIP`](../../MoM/src/AIMOVE.c#L5933), [`AI_Continent_Reeval__WIP`](../../MoM/src/AIMOVE.c#L6902)) | Regenerated each classification pass |
+| **Classifier outputs** | `Own`, `Contested`, `NoOwnCity`, `NoOwnCityAndAllyHasCity` | Produced by reeval functions ([`AI_SingleCont_Reeval__WIP`](../../MoM/src/AIMOVE.c#L5933), [`AI_Reevaluate_All_Continents`](../../MoM/src/AIMOVE.c#L6902)) | Regenerated each classification pass |
 | **Phase overlays** | `Abandon`, `NoTargets` | Produced by other AI phases ([`AI_ProcessRoamers__WIP`](../../MoM/src/AIMOVE.c#L1635) at line 1806, [`AI_Build_Target_List`](../../MoM/src/AIMOVE.c#L2327) at line 2757) | Survive only until next classifier run, which clobbers them |
-| **Initial / sentinel** | `Unevaluated` | Set by [`AI_Continent_Reeval__WIP`](../../MoM/src/AIMOVE.c#L7013) as counter base | Never appears as a final state |
+| **Initial / sentinel** | `Unevaluated` | Set by [`AI_Reevaluate_All_Continents`](../../MoM/src/AIMOVE.c#L7013) as counter base | Never appears as a final state |
 
 This is the source of the design's awkwardness: a classifier-output and a phase-overlay can never coexist on the same slot, because each clobbers the other.
 
@@ -37,7 +37,7 @@ This is the source of the design's awkwardness: a classifier-output and a phase-
 
 | Line | Function | Triggering condition |
 |---|---|---|
-| [7013](../../MoM/src/AIMOVE.c#L7013) | `AI_Continent_Reeval__WIP` | Initialization before using slot as city counter (comment: "actually just 0, cause its about to just be a city count") |
+| [7013](../../MoM/src/AIMOVE.c#L7013) | `AI_Reevaluate_All_Continents` | Initialization before using slot as city counter (comment: "actually just 0, cause its about to just be a city count") |
 
 **Note:** [`AI_SingleCont_Reeval__WIP`](../../MoM/src/AIMOVE.c#L5933) does NOT zero the slot before its own city-counter use at [line 6005](../../MoM/src/AIMOVE.c#L6005). It does `type_array[idx] += 1` per owned city, starting from whatever value was there. If the prior value was non-zero (e.g., a stale `lmt_Abandon` = 5), the "city count > 0" test at [line 6024](../../MoM/src/AIMOVE.c#L6024) is spuriously true. **Possible bug — verify against disassembly.**
 
@@ -46,7 +46,7 @@ This is the source of the design's awkwardness: a classifier-output and a phase-
 | Line | Function | Triggering condition |
 |---|---|---|
 | [6027](../../MoM/src/AIMOVE.c#L6027) | `AI_SingleCont_Reeval__WIP` | `(Sum_NonOwn_UnitCost × 10) < Sum_Own_UnitCost` after city-counting found ≥1 owned city on landmass |
-| [7161](../../MoM/src/AIMOVE.c#L7161) | `AI_Continent_Reeval__WIP` | Same comparison in the full-rebuild path |
+| [7161](../../MoM/src/AIMOVE.c#L7161) | `AI_Reevaluate_All_Continents` | Same comparison in the full-rebuild path |
 
 Semantic: "Decisively held — own unit-cost is more than 10× enemy unit-cost on this landmass."
 
@@ -55,7 +55,7 @@ Semantic: "Decisively held — own unit-cost is more than 10× enemy unit-cost o
 | Line | Function | Triggering condition |
 |---|---|---|
 | [6031](../../MoM/src/AIMOVE.c#L6031) | `AI_SingleCont_Reeval__WIP` | Else-branch of the 10× check (has ≥1 own city, but not dominant) |
-| [7167](../../MoM/src/AIMOVE.c#L7167) | `AI_Continent_Reeval__WIP` | Same |
+| [7167](../../MoM/src/AIMOVE.c#L7167) | `AI_Reevaluate_All_Continents` | Same |
 
 Semantic: "Has own city + non-trivial enemy unit-cost present."
 
@@ -64,7 +64,7 @@ Semantic: "Has own city + non-trivial enemy unit-cost present."
 | Line | Function | Triggering condition |
 |---|---|---|
 | [6036](../../MoM/src/AIMOVE.c#L6036) | `AI_SingleCont_Reeval__WIP` | Else-branch of outer "city count > 0" check |
-| [7175](../../MoM/src/AIMOVE.c#L7175) | `AI_Continent_Reeval__WIP` | Same |
+| [7175](../../MoM/src/AIMOVE.c#L7175) | `AI_Reevaluate_All_Continents` | Same |
 
 Semantic: "No owned CITY on this landmass." Units may roam freely — they don't count.
 
@@ -78,11 +78,11 @@ The most overloaded value — five different write sites with three distinct sem
 | [6061](../../MoM/src/AIMOVE.c#L6061) | `AI_SingleCont_Reeval__WIP` | Force-set: `plane[0]...type_array[0]` | Slot-0 sentinel (ocean) |
 | [6063](../../MoM/src/AIMOVE.c#L6063) | `AI_SingleCont_Reeval__WIP` | Force-set: `plane[1]...type_array[0]` | Slot-0 sentinel (ocean) |
 | [6134](../../MoM/src/AIMOVE.c#L6134) | `AI_SingleCont_Reeval__WIP` | Continent was Own/Contested/(ally-land) but stage-square search found no valid embarking tile within `Best_Tile_Weight < 1000` | No rally tile (downgrade) |
-| [7206](../../MoM/src/AIMOVE.c#L7206) | `AI_Continent_Reeval__WIP` | Same allied-city promotion as 6056 | Ally's land |
-| [7215](../../MoM/src/AIMOVE.c#L7215) | `AI_Continent_Reeval__WIP` | Slot-0 force, plane 0 | Slot-0 sentinel |
-| [7217](../../MoM/src/AIMOVE.c#L7217) | `AI_Continent_Reeval__WIP` | Slot-0 force, plane 1 | Slot-0 sentinel |
-| [7387](../../MoM/src/AIMOVE.c#L7387) | `AI_Continent_Reeval__WIP` | Rally-tile search failed downgrade (continent-pick path) | No rally tile (downgrade) |
-| [7470](../../MoM/src/AIMOVE.c#L7470) | `AI_Continent_Reeval__WIP` | Same — different sub-path | No rally tile (downgrade) |
+| [7206](../../MoM/src/AIMOVE.c#L7206) | `AI_Reevaluate_All_Continents` | Same allied-city promotion as 6056 | Ally's land |
+| [7215](../../MoM/src/AIMOVE.c#L7215) | `AI_Reevaluate_All_Continents` | Slot-0 force, plane 0 | Slot-0 sentinel |
+| [7217](../../MoM/src/AIMOVE.c#L7217) | `AI_Reevaluate_All_Continents` | Slot-0 force, plane 1 | Slot-0 sentinel |
+| [7387](../../MoM/src/AIMOVE.c#L7387) | `AI_Reevaluate_All_Continents` | Rally-tile search failed downgrade (continent-pick path) | No rally tile (downgrade) |
+| [7470](../../MoM/src/AIMOVE.c#L7470) | `AI_Reevaluate_All_Continents` | Same — different sub-path | No rally tile (downgrade) |
 
 **Three distinct meanings folded into one byte:** "ally's land" (diplomatic), "no rally tile" (physical inability), "ocean sentinel" (geometric). The name only fits the first.
 
@@ -90,9 +90,9 @@ The most overloaded value — five different write sites with three distinct sem
 
 | Line | Function | Triggering condition |
 |---|---|---|
-| [1806](../../MoM/src/AIMOVE.c#L1806) | `AI_ProcessRoamers__WIP` | Decision already made by enclosing function: this continent has no targets AND has at least one roaming stack of 7+ units. Inner predicate at line 1803 (`Closest_Landing_Distance != 1000`) confirms a reachable load tile exists. |
+| [1806](../../MoM/src/AIMOVE.c#L1806) | `AI_ProcessRoamers__WIP` | Decision already made by enclosing function: this continent has no targets AND has at least one roaming stack of 7+ units. Inner predicate at line 1803 (`Closest_Landing_Distance != 1000`) confirms a reachable dock square exists. |
 
-Semantic: **"We're leaving this continent."** Per the function's drake178 header comment at [lines 1620-1631](../../MoM/src/AIMOVE.c#L1620-L1631): "if there are no targets but at least one roaming stack with at least 7 units, changes the type and rally point of the continent to prepare for troops to move to the action continent instead." Co-written with `wx_array`/`wy_array` set to the chosen load tile so embarkation orders know where to go.
+Semantic: **"We're leaving this continent."** Per the function's drake178 header comment at [lines 1620-1631](../../MoM/src/AIMOVE.c#L1620-L1631): "if there are no targets but at least one roaming stack with at least 7 units, changes the type and rally point of the continent to prepare for troops to move to the action continent instead." Co-written with `wx_array`/`wy_array` set to the chosen dock square so embarkation orders know where to go.
 
 The "Abandon" name is accurate — the AI has committed to leaving the landmass. The reeval on the next turn ([`AI_Choose_War_Landmass66`](../../MoM/src/AIMOVE.c#L7966) sets `Reevaluate = ST_TRUE` for this case) checks if the situation has changed enough to reconsider.
 
@@ -162,7 +162,7 @@ Comment at [337](../../MoM/src/AIMOVE.c#L337) explicitly lists the "threat" grou
 | [6066-6071](../../MoM/src/AIMOVE.c#L6066) | `Contested` OR `Own` OR `NoOwnCityAndAllyHasCity` | Enter stage-square search block |
 | [6146](../../MoM/src/AIMOVE.c#L6146) | `== Own` | Enter embark-tile validation |
 
-### `AI_Continent_Reeval__WIP` self-reads (analogous to above)
+### `AI_Reevaluate_All_Continents` self-reads (analogous to above)
 
 | Line | Condition | Action |
 |---|---|---|
@@ -241,7 +241,7 @@ The main consumer — uses the type to decide whether to keep current "main war 
 ```
 G_AI_RallyOrFerry__WIP        AI_Build_Target_List          AI_SingleCont_Reeval__WIP
   writes lmt_Abandon            writes lmt_NoTargets         OVERWRITES with classifier output
-   (load tile found)             (no targets found)           (Own / Contested / NoOwnCity / etc.)
+   (dock square found)             (no targets found)           (Own / Contested / NoOwnCity / etc.)
         │                              │                              │
         └──────────────────────────────┴──────────────────────────────┘
                                        ▼
@@ -255,8 +255,8 @@ G_AI_RallyOrFerry__WIP        AI_Build_Target_List          AI_SingleCont_Reeval
 1. **`lmt_NoOwnCity` does not mean "no presence."** Units may be roaming. Only cities count.
 2. **`lmt_Own` requires a 10:1 unit-cost dominance.** A single own city with comparable enemy strength → `lmt_Contested`.
 3. **`lmt_NoOwnCityAndAllyHasCity` is overloaded.** Three semantic situations share this value: ally's territory, no rally tile, slot-0 sentinel. The name only fits the first.
-4. **`lmt_Abandon` means "we are leaving this continent."** Set by `AI_ProcessRoamers__WIP` when the landmass has no targets AND has at least one roaming stack of 7+ units. The load tile is the embarkation point. The next-turn re-evaluation ([`AI_Choose_War_Landmass66`](../../MoM/src/AIMOVE.c#L7966)) may revise the decision if conditions changed.
-5. **`AI_SingleCont_Reeval__WIP` does not zero the slot before counting.** [`AI_Continent_Reeval__WIP`](../../MoM/src/AIMOVE.c#L7013) does. Possible bug in `AI_SingleCont_Reeval__WIP` — verify against disassembly.
+4. **`lmt_Abandon` means "we are leaving this continent."** Set by `AI_ProcessRoamers__WIP` when the landmass has no targets AND has at least one roaming stack of 7+ units. The dock square is the embarkation point. The next-turn re-evaluation ([`AI_Choose_War_Landmass66`](../../MoM/src/AIMOVE.c#L7966)) may revise the decision if conditions changed.
+5. **`AI_SingleCont_Reeval__WIP` does not zero the slot before counting.** [`AI_Reevaluate_All_Continents`](../../MoM/src/AIMOVE.c#L7013) does. Possible bug in `AI_SingleCont_Reeval__WIP` — verify against disassembly.
 6. **`lmt_NoTargets` is unhandled in `AI_Choose_War_Landmass switch.** Falls to default. Gemini's translation includes it with the NoOwnCity group — may be a missing case in production.
 7. **The disassembly's switch is `(type - 1)`**, jumping into a 5-entry table for values 1-5. Value 0 (`lmt_Unevaluated`) cannot enter that switch — the `case lmt_Unevaluated` in the C code is dead. Value 6 (`lmt_NoTargets`) would index past the table → also dead in the bytes, unless a separate default branch handles it.
 

@@ -132,46 +132,22 @@
       ]
     },
     "MoM/src/AIMOVE.c": {
-      "mtime_at_read": "2026-05-17T15:01:40.4649709-04:00",
-      "size_at_read": 259887,
+      "mtime_at_read": "2026-05-21T11:21:15.1895557-04:00",
+      "size_at_read": 266205,
       "regions": [
         {
-          "start_line": 5914,
-          "end_line": 5935,
-          "first_line_hash": "6682800963ad",
-          "first_line_excerpt": "void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t wp)",
-          "read_at": "2026-05-17T12:31:00Z",
-          "purpose": "AI_SingleCont_Reeval__WIP signature + locals — hash unchanged across multiple edits, stable re-locate anchor"
-        },
-        {
-          "start_line": 6060,
-          "end_line": 6120,
-          "first_line_hash": "766e0153d3f7",
-          "first_line_excerpt": "/*",
-          "read_at": "2026-05-17T13:18:00Z",
-          "purpose": "AI_SingleCont_Reeval__WIP Phase 5 (stage-point picker for Contested/Own/AllyLand). User renumbered phases since earlier reads — Phase 6 exists somewhere I have NOT re-read.",
-          "_note": "Generic '/*' first line. Re-locate via grep for 'BEGIN:  Phase 5: Determine Stage Point' if hash mismatches."
-        },
-        {
-          "start_line": 6128,
-          "end_line": 6171,
-          "first_line_hash": "830a33dfe4af",
-          "first_line_excerpt": "    /* Phase 7: Own Continent - Calculate Transport Loading Center */",
-          "read_at": "2026-05-17T13:18:00Z",
-          "purpose": "AI_SingleCont_Reeval__WIP Phase 7 (lmt_Own refinement; reads _ai_landmass_war_targets[wp][player_idx]; BUG-7 still present — stage_wx/wy computed but not written back to wx_array/wy_array)"
-        },
-        {
-          "start_line": 7822,
-          "end_line": 8240,
-          "first_line_hash": "1f83ba21e832",
-          "first_line_excerpt": "void AI_Choose_War_Landmasst16_t player_idx)",
-          "read_at": "2026-05-17T13:50:00Z",
-          "purpose": "AI_Choose_War_Landmassll body — re-read this turn to build the walkthrough doc. Function bounds shrank from 7822-8251 to 7822-8240 in latest edit. Captures: First_Hostile_Player search (7852), per-plane reevaluate gate (7868), Continent_Values raw weighting (7981-8040), empire centroid (8045-8054), Continent_Values_2 weighting + Hostility-4 fortress +1000 bonus (8068-8165), fallback tile-count (8180-8218), final pick (8222-8234). NOTE: the Value_Sum '+=' direction bug previously flagged is now FIXED in this version — code correctly does Value_Sum += Continent_Values_2[itr_landmasses]. Docstring at 7820-7821 is stale (still mentions the fixed issue)."
+          "start_line": 7059,
+          "end_line": 7556,
+          "first_line_hash": "e63a0fb1136b",
+          "first_line_excerpt": "void AI_Reevaluate_All_Continents(int16_t player_idx)",
+          "read_at": "2026-05-21T15:25:00Z",
+          "purpose": "AI_Reevaluate_All_Continents full body — used to build AIMOVE-AI_Reevaluate_All_Continents.md walkthrough. Function renamed from AI_Continent_Reeval__WIP; GEMINI variant tossed. All four outer-loop iterators (Phases 6/7/8/9) now use for(wp = 0; ...); Phase 6 enemy gate uses [wp][landmass_idx]; Phase 5 slot-0 force uses literal [0]. Inline OGBUG markers at lines 7141, 7142, 7214, 7242, 7257, 7331, 7413, 7458, 7465, 7513, 7520."
         }
       ],
       "_known_unread": {
-        "lines_5936_to_6059": "Phases 1-4 of AI_SingleCont_Reeval__WIP (and possibly the new Phase 6) — last verified read was at mtime 12:31:27. Re-read before claiming anything about lines 5936-6059.",
-        "lines_8251_to_end": "AI_Pick_Action_Conts__GEMINI variant and beyond. Skip unless specifically needed (per user pref: production only)."
+        "AI_SingleCont_Reeval__WIP at 5880": "Was at 5886 last read (2026-05-17 mtime); file edited since. Re-read before claiming anything about it.",
+        "AI_Evaluation_Map at 7585": "Not re-read in this session.",
+        "AI_Choose_War_Landmass at 7809": "Was at 7822-8240 last read; line numbers shifted by GEMINI tossing + AI_Reevaluate_All_Continents shrink. Re-read before claiming anything specific."
       }
     }
   }

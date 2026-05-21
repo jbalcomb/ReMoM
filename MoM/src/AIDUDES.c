@@ -281,7 +281,7 @@ void AI_Next_Turn(void)
         Player_All_Colony_Autobuild(player_idx);
         
         AI_Evaluation_Map(player_idx);
-        AI_Continent_Reeval__WIP(player_idx);
+        AI_Reevaluate_All_Continents(player_idx);
         AI_Set_Unit_Orders(player_idx);
         
         EMM_Map_DataH();

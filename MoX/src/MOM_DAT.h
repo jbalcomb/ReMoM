@@ -116,6 +116,18 @@ struct s_AI_STACK_DATA
 };
 
 
+/*
+lmt_Unevaluated:
+lmt_Own:
+lmt_Contested:
+lmt_NoOwnCity:
+lmt_NoOwnCityAndAllyHasCity:
+    IIF we have 0 cities and an allied wizard does have a 1+ cities
+lmt_Abandon:
+    in AI_ProcessRoamers__WIP(), means relocate to the war landmass
+lmt_NoTargets:
+
+*/
 enum e_LANDMASS_TYPE
 {
     lmt_Unevaluated = 0,
@@ -123,7 +135,7 @@ enum e_LANDMASS_TYPE
     lmt_Contested   = 2,  /* Own vs. Contested;  Own city + non-trivial enemy unit-cost. Name matches. */
     lmt_NoOwnCity   = 3,  /* 'Nay Own City';  Units may be roaming freely on the landmass — that doesn't count as "presence" here. */
     lmt_NoOwnCityAndAllyHasCity  = 4,  /* Purpose: flag landmasses that should be ignore/excluded; ally-only landmass OR no occupieable square; not just 'Nay Own City, Yay Ally City'; */
-    lmt_Abandon     = 5,  /* Embarkation tile was found — set when a load tile is reachable. Logically "we can depart from here," not "we have decided to abandon." */
+    lmt_Abandon     = 5,  /* Embarkation tile was found — set when a dock square is reachable. Logically "we can depart from here," not "we have decided to abandon." */
     lmt_NoTargets   = 6   /* No attackable enemies, lairs, or nodes worth targeting. */
 };
 
@@ -2787,9 +2799,9 @@ extern struct s_AI_CONTINENTS _ai_continents;
 // WZD dseg:8F98 
 extern int16_t * AI_SCircle_Reevals;
 // WZD dseg:8F9A
-extern uint8_t * AI_NewColTgtYs[NUM_PLANES];
+extern uint8_t * _ai_landmass_settler_targets_wy_array[NUM_PLANES];
 // WZD dseg:8F9E
-extern uint8_t * AI_NewColTgtXs[NUM_PLANES];
+extern uint8_t * _ai_landmass_settler_targets_wx_array[NUM_PLANES];
 // WZD dseg:8FA2
 extern uint8_t * Wiz5_Spell_50h;
 // WZD dseg:8FA4
@@ -2801,7 +2813,7 @@ extern uint8_t * Wiz5_Spell_3Ch;
 // WZD dseg:8FAA
 extern uint8_t * _ai_reevaluate_continents_countdown;
 // WZD dseg:8FAC
-extern uint8_t * AI_NewColConts[NUM_PLANES];
+extern uint8_t * _ai_landmass_settler_targets[NUM_PLANES];
 // WZD dseg:8FB0
 extern int16_t * _ai_landmass_war_targets[NUM_PLANES];
 

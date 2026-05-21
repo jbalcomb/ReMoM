@@ -18,7 +18,7 @@
 ## AIMOVE
 - [ ] AI_AssignStackTarget__WIP
 - [ ] AI_CanSettleOffPlane__STUB
-- [ ] AI_Continent_Reeval__WIP
+- [ ] AI_Reevaluate_All_Continents
 - [ ] AI_FillGarrisons__WIP
 - [ ] AI_GarrBuilderPush__WIP
 - [ ] AI_Choose_War_Landmass

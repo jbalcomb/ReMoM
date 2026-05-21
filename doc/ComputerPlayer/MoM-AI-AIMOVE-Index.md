@@ -47,7 +47,7 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 ### `AI_ProcessRoamers__WIP` — [line 1635](../../MoM/src/AIMOVE.c#L1635)
 - **drake178:** `AI_ProcessRoamers()` (o158p06)
 - **End:** line 1814
-- **Purpose:** Searches for and assigns targets + corresponding move orders to all roamer stacks on a continent. If no targets exist but there is at least one roaming stack of 7+ units, **switches the continent to `lmt_Abandon`** and picks a rally point at a reachable load tile — preparing the troops to embark and move to the action continent instead.
+- **Purpose:** Searches for and assigns targets + corresponding move orders to all roamer stacks on a continent. If no targets exist but there is at least one roaming stack of 7+ units, **switches the continent to `lmt_Abandon`** and picks a rally point at a reachable dock square — preparing the troops to embark and move to the action continent instead.
 - **Writes `lmt_*`:** **`lmt_Abandon`** at [line 1806](../../MoM/src/AIMOVE.c#L1806) (the "abandon this continent" decision)
 - **Known issue per header:** "when setting the leave continent type, the rally point chosen ignores own units, and can't be a tile with a city, tower, or node either"
 
@@ -221,7 +221,7 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **Purpose:** Per-landmass reclassifier — cancels orders on the landmass, recomputes city center / unit-cost sums, assigns `lmt_*` type, picks rally point
 - **Writes `lmt_*`:** `lmt_Own` (6027), `lmt_Contested` (6031), `lmt_NoOwnCity` (6036), `lmt_NoOwnCityAndAllyHasCity` (6056, 6061, 6063, 6134)
 - **Reads `lmt_*`:** `lmt_NoOwnCity` (6053), `lmt_Contested`/`lmt_Own`/`lmt_NoOwnCityAndAllyHasCity` (6066-6071), `lmt_Own` (6146)
-- **Known issue:** does not zero slot before counting (compare with `AI_Continent_Reeval__WIP:7013`). Stale prior value can spuriously pass the city-count test.
+- **Known issue:** does not zero slot before counting (compare with `AI_Reevaluate_All_Continents:7013`). Stale prior value can spuriously pass the city-count test.
 
 ---
 
@@ -283,7 +283,7 @@ Lines 6605-6628 contain stubs for `sub_F64C2()` through `sub_F6EBF()`. No bodies
 - **End:** ~line 6901
 - **Purpose:** TBD
 
-### `AI_Continent_Reeval__WIP` — [line 6902](../../MoM/src/AIMOVE.c#L6902)
+### `AI_Reevaluate_All_Continents` — [line 6902](../../MoM/src/AIMOVE.c#L6902)
 - **drake178:** `AI_Continent_Reeval()` (o162p35)
 - **End:** ~line 7605
 - **Purpose:** Full-rebuild classifier for ALL landmasses on ALL planes for one player. Counterpart to per-landmass `AI_SingleCont_Reeval__WIP`.
