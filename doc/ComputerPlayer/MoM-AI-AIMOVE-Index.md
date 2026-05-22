@@ -44,7 +44,7 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **Purpose:** TBD
 - **Reads `lmt_*`:** `lmt_NoOwnCity` (line 1394)
 
-### `AI_ProcessRoamers__WIP` — [line 1635](../../MoM/src/AIMOVE.c#L1635)
+### `AI_Stacks_Roamers_Target_Or_Deploy` — [line 1635](../../MoM/src/AIMOVE.c#L1635)
 - **drake178:** `AI_ProcessRoamers()` (o158p06)
 - **End:** line 1814
 - **Purpose:** Searches for and assigns targets + corresponding move orders to all roamer stacks on a continent. If no targets exist but there is at least one roaming stack of 7+ units, **switches the continent to `lmt_Abandon`** and picks a stage point at a reachable dock square — preparing the troops to embark and move to the action continent instead.
@@ -67,7 +67,7 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **drake178:** `G_AI_RallyOrFerry()` (o158p09)
 - **End:** ~line 2326
 - **Purpose:** TBD
-- **Reads/writes `lmt_*`:** none direct (earlier draft of this doc misattributed the `lmt_Abandon` write at line 1806 to this function; that write actually belongs to `AI_ProcessRoamers__WIP` — see entry above)
+- **Reads/writes `lmt_*`:** none direct (earlier draft of this doc misattributed the `lmt_Abandon` write at line 1806 to this function; that write actually belongs to `AI_Stacks_Roamers_Target_Or_Deploy` — see entry above)
 
 ### `AI_Build_Target_List` — [line 2327](../../MoM/src/AIMOVE.c#L2327)
 - **drake178:** `AI_CreateTargetList()` (o158p10)
@@ -81,7 +81,7 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **Purpose:** TBD
 - **Reads/writes `lmt_*`:** none
 
-### `AI_AssignStackTarget__WIP` — [line 2804](../../MoM/src/AIMOVE.c#L2804)
+### `AI_Stacks_Assign_Target` — [line 2804](../../MoM/src/AIMOVE.c#L2804)
 - **drake178:** `AI_AssignStackTarget()` (o158p12)
 - **End:** ~line 2993
 - **Purpose:** TBD

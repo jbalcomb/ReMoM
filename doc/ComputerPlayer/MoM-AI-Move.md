@@ -55,7 +55,7 @@ AI_Next_Turn()
                 |-> AI_Do_Purify()
                 |-> AI_Do_RoadBuild()
                 |-> AI_Build_Target_List()
-                |-> AI_ProcessRoamers__WIP()
+                |-> AI_Stacks_Roamers_Target_Or_Deploy()
                 ...depends on landmass type...
                 |-> AI_PullForMainWar__WIP()
                 |-> G_AI_HomeRallyFill__WIP()
@@ -99,15 +99,18 @@ Definitely Done-Done:
 []              |-> AI_Do_RoadBuild()
 [x]             |-> AI_Build_Target_List()
 [x]                 |-> AI_Add_Target()
-[]              |-> AI_ProcessRoamers__WIP()
-[ ]                 |-> AI_AssignStackTarget__WIP()
+[x]             |-> AI_Stacks_Roamers_Target_Or_Deploy()
+[x]                 |-> AI_Stacks_Assign_Target()
 []              |-> AI_PullForMainWar__WIP()
 []              |-> G_AI_HomeRallyFill__WIP()
+[]                  |-> G_AI_RallyOrFerry__WIP()
 []              |-> G_AI_RallyFill__WIP()
 [x]                 |-> AI_Reevaluate_Continent()
 []              |-> AI_FillGarrisons__WIP()
 []              |-> AI_ProcessOcean__WIP()
 []              |-> G_AI_ProcessTransports__WIP()
+
+
 
 ## Call graph
 ```
@@ -127,7 +130,7 @@ AI_Set_Unit_Orders(player_idx)
         ├── AI_Do_Purify
         ├── AI_Do_RoadBuild
         ├── AI_Build_Target_List
-        ├── AI_ProcessRoamers__WIP
+        ├── AI_Stacks_Roamers_Target_Or_Deploy
         ├── AI_PullForMainWar__WIP           [gate: NOT lmt_Contested basically]
         ├── G_AI_HomeRallyFill__WIP          [gate: lmt_Own / lmt_Abandon+]
         ├── G_AI_RallyFill__WIP              [always]
@@ -165,7 +168,7 @@ _ai_continents__1
     AI_ProcessOcean__WIP+4A            mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
     AI_ProcessOcean__WIP+13A           mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
     AI_ProcessOcean__WIP+175           mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
-    AI_ProcessRoamers__WIP+2EA         mov     [byte ptr _ai_continents__0.Player_0.wx_array+bx], al; _bdata_start
+    AI_Stacks_Roamers_Target_Or_Deploy+2EA         mov     [byte ptr _ai_continents__0.Player_0.wx_array+bx], al; _bdata_start
     G_AI_HomeRallyFill__WIP+1F         mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
     AI_PullForMainWar__WIP+154         mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
 
@@ -173,7 +176,7 @@ _ai_continents__1
     Allocate_Data_Space()
     AI_ProcessOcean__WIP()
     G_AI_ProcessTransports__WIP()
-    AI_ProcessRoamers__WIP()
+    AI_Stacks_Roamers_Target_Or_Deploy()
     AI_PullForMainWar__WIP()
     AI_Reevaluate_Continent()
     AI_Evaluate_Continents()
@@ -284,7 +287,7 @@ Down p G_AI_ProcessTransports__WIP+646              call    near ptr AI_Set_Move
 Down p G_AI_ProcessTransports__WIP+75B              call    near ptr AI_Set_Move_Or_Goto_Target
 Down p G_AI_ProcessTransports__WIP+915              call    near ptr AI_Set_Move_Or_Goto_Target
 Down p G_AI_ProcessTransports__WIP+9FE              call    near ptr AI_Set_Move_Or_Goto_Target
-Down p AI_ProcessRoamers__WIP:loc_ED7E1             call    near ptr AI_Set_Move_Or_Goto_Target
+Down p AI_Stacks_Roamers_Target_Or_Deploy:loc_ED7E1             call    near ptr AI_Set_Move_Or_Goto_Target
 Down p AI_PullForMainWar__WIP+15F                   call    near ptr AI_Set_Move_Or_Goto_Target
 Down p G_AI_RallyOrFerry__WIP+E1                    call    near ptr AI_Set_Move_Or_Goto_Target
 Down p G_AI_RallyOrFerry__WIP+341                   call    near ptr AI_Set_Move_Or_Goto_Target

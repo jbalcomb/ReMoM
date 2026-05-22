@@ -16,14 +16,14 @@
 - [ ] EMM_Map_CONTXXX__WIP
 
 ## AIMOVE
-- [ ] AI_AssignStackTarget__WIP
+- [ ] AI_Stacks_Assign_Target
 - [ ] AI_CanSettleOffPlane__STUB
 - [ ] AI_Evaluate_Continents
 - [ ] AI_FillGarrisons__WIP
 - [ ] AI_GarrBuilderPush__WIP
 - [ ] AI_Choose_War_Landmass
 - [ ] AI_ProcessOcean__WIP
-- [ ] AI_ProcessRoamers__WIP
+- [ ] AI_Stacks_Roamers_Target_Or_Deploy
 - [ ] AI_PullForMainWar__WIP
 - [ ] AI_SeekTransportFrom__WIP
 - [ ] AI_Survey_Excess_Units

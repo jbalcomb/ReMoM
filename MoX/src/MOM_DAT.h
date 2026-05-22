@@ -87,6 +87,26 @@ Tile_Enemy_Value = g_ai_evaluation_map[wp][((Next_Tile_Y * WORLD_WIDTH) + Next_T
 
 #define AI_TARGET_SITE          0x8000
 
+/*
+_ai_own_stack_type
+0: in transit, purifying, or road building (c < 3)
+1: Free/Roaming  (not sitting on a Site)
+2: DNE
+3: Garrison - City, Node, Tower (sitting on a Site, assumed to be garrisoned in a City or protecting a Node or Tower)
+4: Garrison - Fortress City   (sitting on a Site, which is the player's Fortress City)
+
+0 is set if AI_Find_Nearest_Target_Unit() returns ST_FALSE
+*/
+enum e_AI_OWN_STACK_TYPE
+{
+    AISTK_InTransit = 0,   /* in transit, purifying, or road building (c < 3) */
+    AISTK_Roamer = 1,   /* Free/Roaming  (not sitting on a Site) */
+    AISTK_DNE = 2,      /* DNE */
+    AISTK_Garrison = 3,  /* Garrison - City, Node, Tower (sitting on a Site, assumed to be garrisoned in a City or protecting a Node or Tower) */
+    AISTK_FortressGarrison = 4,   /* Garrison - Fortress City   (sitting on a Site, which is the player's Fortress City) */
+    AISTK_COUNT = 5
+};
+
 //  ; (sizeof=0x6)
 struct s_AI_TARGET
 {
@@ -124,15 +144,30 @@ lmt_NoOwnCity:
 lmt_NoOwnCityAndAllyHasCity:
     IIF we have 0 cities and an allied wizard does have a 1+ cities
 lmt_Abandon:
-    in AI_ProcessRoamers__WIP(), means relocate to the war landmass
+    in AI_Stacks_Roamers_Target_Or_Deploy(), means relocate to the war landmass
 lmt_NoTargets:
     set in AI_Build_Target_List(), if a landmass has no military targets
 
-### Why "NoTargets" is a misleading name for the tag
-Three concerns the tag conflates that the name doesn't disclose:
-- **Per-landmass only.** It's not "no targets anywhere" — it's "no targets ON THIS LANDMASS."
-- **Hostility-gated.** A non-hostile player's cities don't count as targets, so a landmass full of cities owned by a wizard you're not at war with reads as `lmt_NoTargets` even though it's full of strategic assets.
-- **Time-stale.** The tag reflects a past turn's gather, not current state.
+OON set lmt_NoTargets:
+    ### Why "NoTargets" is a misleading name for the tag
+    Three concerns the tag conflates that the name doesn't disclose:
+    - **Per-landmass only.** It's not "no targets anywhere" — it's "no targets ON THIS LANDMASS."
+    - **Hostility-gated.** A non-hostile player's cities don't count as targets, so a landmass full of cities owned by a wizard you're not at war with reads as `lmt_NoTargets` even though it's full of strategic assets.
+    - **Time-stale.** The tag reflects a past turn's gather, not current state.
+
+OON set lmt_Abandon:
+    AI_Stacks_Roamers_Target_Or_Deploy()
+    The tag is written only when ALL of these hold simultaneously,
+    on this turn, for this (player, plane, landmass):
+    Phase 1 found at least one roamer stack with ≥8 units on this landmass (Have_Large_Stack == ST_TRUE)
+    Phase 1 found NO targets for ANY roamer stack on this landmass (No_Targets == ST_TRUE)
+    A main-war landmass IS set for this plane (_ai_landmass_war_targets[wp][player_idx] != 0)
+    We are NOT on the main-war landmass (_ai_landmass_war_targets[wp][player_idx] != landmass_idx)
+    Phase 2 found an empty (eval == 0) dock square on this landmass to use as the embark point (min_delta_distance got lowered below 1000)
+    * seems made specifically for AI_PullForMainWar__WIP(), which runs next
+    * G_AI_HomeRallyFill__WIP() usage?
+    * AI_FillGarrisons__WIP() usage?
+    AI_Choose_War_Landmass() always reevaluates these, so temp condition
 
 */
 enum e_LANDMASS_TYPE
@@ -1730,7 +1765,7 @@ struct s_UNIT
     /* 0C */  int8_t  Level;
     /* 0D */  uint8_t pad2B_0Dh;    /* 2-byte alignment padding */
     /* 0E */  int16_t XP;  // should be `"ep"
-    /* 10 */  int8_t  Move_Failed;  /* reset to ST_FALSE in AI_Next_Turn(), for all non-human units */
+    /* 10 */  int8_t  Move_Failed;  /* used to decide if needs call to Make_Move_Path(); OON set ST_TRUE in Stack_Move_To(); reset to ST_FALSE in AI_Next_Turn(), for all non-human units */
     /* 11 */  int8_t  Damage;       /* 'Nature's Cures' sets this and only this to 0. ¿ What does that mean for my understanding of Unit/Figure damage, including front_figure_damage ?*/
     /* 12 */  int8_t  Draw_Priority;    /* ~ draw order, z-index, depth, overlay ... 2-D bitmap graphics  Moo2 ~ _moveable_box_order Box_Order_() */
     /* 13 */  uint8_t pad2B_13h;    /* 2-byte alignment padding */

@@ -107,7 +107,7 @@ int16_t cp_enroute_unit_count;
 int16_t g_ai_minattackstack;
 
 // WZD dseg:D490
-int16_t UU_AI_TargetingVar;
+int16_t niu_unknown_var;
 
 // WZD dseg:D492 00 00                                           dw 0
 
@@ -181,7 +181,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
             AI_Do_Purify(landmass_idx, wp);
             AI_Do_RoadBuild(landmass_idx);
 /*
-AI_Build_Target_List() and AI_ProcessRoamers__WIP()
+AI_Build_Target_List() and AI_Stacks_Roamers_Target_Or_Deploy()
 are the core of the AI's movement decision-making
 on the strategic layer for each landmass.
 They analyze the current situation, identify targets, and assign roamers
@@ -192,11 +192,11 @@ _ai_targets_count, _ai_targets_value[], _ai_targets_strength[], _ai_targets_wy[]
 ...
 AI_Build_Target_List()
     |-> AI_Add_Target()
-AI_ProcessRoamers__WIP()
-    |-> AI_AssignStackTarget__WIP()
+AI_Stacks_Roamers_Target_Or_Deploy()
+    |-> AI_Stacks_Assign_Target()
 */
             AI_Build_Target_List(player_idx, landmass_idx, wp);
-            AI_ProcessRoamers__WIP(landmass_idx, wp, player_idx);
+            AI_Stacks_Roamers_Target_Or_Deploy(landmass_idx, wp, player_idx);
 
             // almost just NOT lmt_Contested
             if(
@@ -313,7 +313,7 @@ void AI_Set_Unit_Orders__GEMINI(int player_idx)
 
             AI_Build_Target_List(player_idx, landmass_idx, wp);
 
-            AI_ProcessRoamers__WIP(landmass_idx, wp, player_idx);
+            AI_Stacks_Roamers_Target_Or_Deploy(landmass_idx, wp, player_idx);
 
             type_ptr = cp_landmass_type_array + landmass_idx;
 
@@ -699,9 +699,9 @@ void AI_FillGarrisons__WIP(int16_t player_idx, int16_t wp, int16_t landmass_idx)
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     {
         if(
-            (_ai_own_stack_type[itr_stacks] == 0)
+            (_ai_own_stack_type[itr_stacks] == AISTK_InTransit)
             ||
-            (_ai_own_stack_type[itr_stacks] == 1)
+            (_ai_own_stack_type[itr_stacks] == AISTK_Roamer)
         )
         {
 
@@ -1736,39 +1736,47 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
 
 
 // WZD o158p06
-// drake178: AI_ProcessRoamers()
-/*
-searches for and assigns targets and corresponding
-move orders to all roamer stack on the continent or,
-if there are no targets but at least one roaming
-stack with at least 7 units, changes the type and
-stage point of the continent to prepare for troops to
-move to the action continent instead
-
-WARNING: when setting the leave continent type, the
-stage point chosen ignores own units, and can't be
-a tile with a city, tower, or node either
-*/
-/*
-
-*/
-void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx)
+/**
+ * @brief Assign targets to roaming stacks on a landmass or prepare them to redeploy.
+ *
+ * Iterates over AI stacks marked as `AISTK_Roamer` on the specified landmass,
+ * checking whether each stack is fully populated with valid unit entries and,
+ * when possible, requesting a destination from AI_Stacks_Assign_Target(). If a
+ * target is found, every unit in that stack receives orders toward the chosen
+ * target square.
+ *
+ * If no roaming stack on the landmass can be assigned a target, but at least
+ * one large roaming stack exists and the player has a different main-war
+ * landmass, the function searches for the closest empty dock square to use as a
+ * staging point for leaving this landmass. In that case it updates the
+ * landmass state in `_ai_continents` to `lmt_Abandon` and stores the chosen
+ * embark square coordinates.
+ *
+ * @param landmass_idx Index of the landmass being processed.
+ * @param wp World plane containing the landmass.
+ * @param player_idx Index of the AI player whose roaming stacks are being
+ * processed.
+ *
+ * @note This is the only code path in the current code base that sets a
+ * landmass type to `lmt_Abandon`.
+ */
+void AI_Stacks_Roamers_Target_Or_Deploy(int16_t landmass_idx, int16_t wp, int16_t player_idx)
 {
-    int16_t Have_Large_Stack = 0;
+    int16_t have_large_stack = 0;
     int16_t landmass_node_count = 0;
     int16_t min_delta_distance = 0;
-    int16_t Best_LoadTile_Y = 0;
-    int16_t No_Targets = 0;
+    int16_t target_square_wy = 0;
+    int16_t no_target_found_for_any_stack = 0;
     int16_t landmass_node_wy = 0;
     int16_t landmass_node_wx = 0;
-    int16_t Best_LoadTile_X = 0;
+    int16_t target_square_wx = 0;
     int16_t landmass_node_index = 0;
     int16_t landmass_node_centroid_wy = 0;
     int16_t landmass_node_centroid_wx = 0;
-    int16_t Have_Processed_Unit = 0;
+    int16_t hit_end_of_stack = 0;
     int16_t unit_idx = 0;
     int16_t list_unit_count = 0;
-    int16_t UU_Have_Landlubbers = 0;
+    int16_t niu_have_boat_riders = 0;
     int16_t itr_list_units = 0;
     int16_t target_wy = 0;
     int16_t target_wx = 0;
@@ -1777,55 +1785,76 @@ void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx
     int16_t itr_stacks = 0;
     int16_t delta_distance = 0;  // DNE in Dasm, reuses landmass_node_count
 
-    Have_Large_Stack = ST_FALSE;
+    /* Phase 1 */
+    have_large_stack = ST_FALSE;
 
-    No_Targets = ST_TRUE;
+    no_target_found_for_any_stack = ST_TRUE;
 
-// ; if possible, assign targets to all roaming stacks
-// ; that do not have a unit that is already given a task,
-// ; while also looking for stacks of 8 or more units
 
+    /* Phase 2 */
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     {
-        if(_ai_own_stack_type[itr_stacks] == 1)
+        if(_ai_own_stack_type[itr_stacks] != AISTK_Roamer)
         {
-            list_unit_count = _ai_own_stack_unit_count[itr_stacks];
-            stack_wx = _ai_own_stack_wx[itr_stacks];
-            stack_wy = _ai_own_stack_wy[itr_stacks];
-            if(list_unit_count >= 8)
+            continue;
+        }
+        list_unit_count = _ai_own_stack_unit_count[itr_stacks];
+        stack_wx = _ai_own_stack_wx[itr_stacks];
+        stack_wy = _ai_own_stack_wy[itr_stacks];
+        if(list_unit_count >= 8)  /* ¿ (MAX_STACK - 1) ?*/
+        {
+            have_large_stack = ST_TRUE;
+        }
+
+        niu_have_boat_riders = ST_FALSE;
+        hit_end_of_stack = ST_FALSE;
+
+        for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
+        {
+            unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
+            if(unit_idx == ST_UNDEFINED)
             {
-                Have_Large_Stack = ST_TRUE;
+                hit_end_of_stack = ST_TRUE;
+                break;
             }
-// ; check for processed units and land only units
-// ; WARNING: the latter is not evaluated properly by the
-// ; called functions (but is not used anyway)
-            if(Have_Processed_Unit == ST_FALSE)
+
+            if(
+                (Unit_Has_AirTravel(unit_idx) == ST_FALSE)
+                &&
+                (Unit_Has_WaterTravel(unit_idx) == ST_FALSE)
+            )
             {
-                if(AI_AssignStackTarget__WIP(stack_wx, stack_wy, &target_wx, &target_wy, itr_stacks, itr_list_units) == ST_TRUE)
+                niu_have_boat_riders = ST_TRUE;
+            }
+        }
+
+        if(hit_end_of_stack == ST_FALSE)
+        {
+            if(AI_Stacks_Assign_Target(stack_wx, stack_wy, &target_wx, &target_wy, itr_stacks, itr_list_units) == ST_TRUE)
+            {
+                no_target_found_for_any_stack = ST_FALSE;
+                for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
                 {
-// ; clear the no targets indicator, and assign every unit
-// ; in the stack a move order to the target coordinates
-                    No_Targets = ST_FALSE;
-                    for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
-                    {
-                        unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
+                    unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
 #ifdef STU_DEBUG
-                        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
+                    dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Set_Move_Or_Goto_Target(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
 #endif
-                        g_ai_set_target_caller = 7;
-                        AI_Set_Move_Or_Goto_Target(unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
-                    }
+                    g_ai_set_target_caller = 7;
+                    AI_Set_Move_Or_Goto_Target(unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
                 }
             }
-            UU_AI_TargetingVar = 0;
         }
+        niu_unknown_var = 0;
     }
 
-    if(Have_Large_Stack != ST_TRUE)
+/*
+¿ prepare large stack to embark and ferry off ?
+*/
+    if(have_large_stack != ST_TRUE)
     {
         return;
     }
-    if(No_Targets != ST_TRUE)
+    if(no_target_found_for_any_stack != ST_TRUE)
     {
         return;
     }
@@ -1833,14 +1862,14 @@ void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx
     {
         return;
     }
-    if(_ai_landmass_war_targets[wp][player_idx] != landmass_idx)
+    if(_ai_landmass_war_targets[wp][player_idx] == landmass_idx)
     {
         return;
     }
 
-// ; find the nearest empty transport loading tile to the
-// ; center of the action continent, if any
-// ; WARNING: ignores own units on the tile
+
+/* ¿ same block of code as AI_Reevaluate_Continent() ? */
+
     landmass_node_centroid_wx = 0;
     landmass_node_centroid_wy = 0;
     landmass_node_count = 0;
@@ -1852,6 +1881,7 @@ void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx
         landmass_node_count++;
         landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
     }
+    /* OGBUG  divide by zero, should `if(landmass_node_count > 0)` */
     landmass_node_centroid_wx /= landmass_node_count;
     landmass_node_centroid_wy /= landmass_node_count;
     min_delta_distance = 1000;
@@ -1872,174 +1902,21 @@ void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx
             if(delta_distance < min_delta_distance)
             {
                 min_delta_distance = delta_distance;
-                Best_LoadTile_X = landmass_node_wx;
-                Best_LoadTile_Y = landmass_node_wy;
+                target_square_wx = landmass_node_wx;
+                target_square_wy = landmass_node_wy;
             }
         }
         landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
     }
 
-
+    /* NOTE(JimBalcomb,20260521): this is the only place in the whole code-base that sets lmt_Abandon */
     if(min_delta_distance != 1000)
     {
         _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Abandon;
-        _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = (uint8_t)Best_LoadTile_X;
-        _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = (uint8_t)Best_LoadTile_Y;
+        _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = (uint8_t)target_square_wx;
+        _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = (uint8_t)target_square_wy;
     }
 
-}
-/* GEMINI */
-void AI_ProcessRoamers__GEMINI(int player_idx, int wp, int landmass_idx)
-{
-    /* Local variables mapped from stack frame */
-    int stack_wx;                   /* [bp-02h] */
-    int stack_wy;                   /* [bp-04h] */
-    int Target_X;                   /* [bp-06h] */
-    int Target_Y;                   /* [bp-08h] */
-    int UnitList_Index;             /* [bp-0Ah] */
-    int UU_Have_Landlubbers;        /* [bp-0Ch] */
-    int list_unit_count;            /* [bp-0Eh] */
-    int unit_idx;                   /* [bp-10h] */
-    int Have_Processed_Unit;        /* [bp-12h] */
-    int Midpoint_X;                 /* [bp-14h] */
-    int Midpoint_Y;                 /* [bp-16h] */
-    int landmass_node_index;       /* [bp-18h] */
-    int Best_LoadTile_X;            /* [bp-1Ah] */
-    int LoadTile_X;                 /* [bp-1Ch] */
-    int LoadTile_Y;                 /* [bp-1Eh] */
-    int No_Targets;                 /* [bp-20h] */
-    int Best_LoadTile_Y;            /* [bp-22h] */
-    int Closest_Landing_Distance;   /* [bp-24h] */
-    int Tile_Count;                 /* [bp-26h] */
-    int Have_Large_Stack;           /* [bp-28h] */
-
-    int itr_stacks;                 /* di */
-    /* si used for wp */
-
-    Have_Large_Stack = ST_FALSE;
-    No_Targets = ST_TRUE;
-
-    for (itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
-    {
-        /* Check if stack type is 1 (Roaming/Active) */
-        if (_ai_own_stack_type[itr_stacks] != 1)
-        {
-            continue;
-        }
-
-        list_unit_count = _ai_own_stack_unit_count[itr_stacks];
-        stack_wx = _ai_own_stack_wx[itr_stacks];
-        stack_wy = _ai_own_stack_wy[itr_stacks];
-
-        if (list_unit_count >= 8)
-        {
-            Have_Large_Stack = ST_TRUE;
-        }
-
-        UU_Have_Landlubbers = ST_FALSE;
-        Have_Processed_Unit = ST_FALSE;
-
-        for (UnitList_Index = 0; UnitList_Index < list_unit_count; UnitList_Index++)
-        {
-            unit_idx = _ai_own_stack_unit_list[itr_stacks][UnitList_Index];
-            
-            if (unit_idx == ST_UNDEFINED)
-            {
-                Have_Processed_Unit = ST_TRUE;
-                break;
-            }
-
-            if (!Unit_Has_AirTravel(unit_idx) && !Unit_Has_WaterTravel(unit_idx))
-            {
-                UU_Have_Landlubbers = ST_TRUE;
-            }
-        }
-
-        if (Have_Processed_Unit == ST_FALSE)
-        {
-            /* Attempt to find a target for the stack */
-            /* Note: AI_AssignStackTarget__WIP is an overlay call */
-            if (AI_AssignStackTarget__WIP(stack_wx, stack_wy, &Target_X, &Target_Y, itr_stacks, UnitList_Index) == ST_TRUE)
-            {
-                No_Targets = ST_FALSE;
-                
-                for (UnitList_Index = 0; UnitList_Index < list_unit_count; UnitList_Index++)
-                {
-                    unit_idx = _ai_own_stack_unit_list[itr_stacks][UnitList_Index];
-                    /* Note: AI_Set_Move_Or_Goto_Target is an overlay call */
-                    AI_Set_Move_Or_Goto_Target(unit_idx, Target_X, Target_Y, itr_stacks, UnitList_Index);
-                }
-            }
-        }
-
-        UU_AI_TargetingVar = 0;
-    }
-
-    /* Logic for consolidating stacks to leave a landmass if no targets found */
-    if (Have_Large_Stack == ST_TRUE && No_Targets == ST_TRUE)
-    {
-        /* _ai_landmass_war_targets is a pointer table: Plane -> Player -> Target Landmass */
-        if (_ai_landmass_war_targets[wp][player_idx] != 0)
-        {
-            /* If the player's primary war target landmass is different from this one */
-            if (_ai_landmass_war_targets[wp][player_idx] != landmass_idx)
-            {
-                Midpoint_X = 0;
-                Midpoint_Y = 0;
-                Tile_Count = 0;
-
-                /* Calculate centroid of 'Load Tiles' (coastal transport points) for the target landmass */
-                landmass_node_index = _ai_landmass_dock_squares_heads[wp][_ai_landmass_war_targets[wp][player_idx]];
-                
-                while (landmass_node_index != ST_UNDEFINED)
-                {
-                    Midpoint_X += _ai_landmass_dock_squares_wx_array[wp][landmass_node_index];
-                    Midpoint_Y += _ai_landmass_dock_squares_wy_array[wp][landmass_node_index];
-                    Tile_Count++;
-                    landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
-                }
-
-                if (Tile_Count > 0)
-                {
-                    Midpoint_X /= Tile_Count;
-                    Midpoint_Y /= Tile_Count;
-                }
-
-                /* Find the closest available Load Tile to that midpoint */
-                Closest_Landing_Distance = 1000;
-                landmass_node_index = _ai_landmass_dock_squares_heads[wp][landmass_idx];
-
-                while (landmass_node_index != ST_UNDEFINED)
-                {
-                    LoadTile_X = _ai_landmass_dock_squares_wx_array[wp][landmass_node_index];
-                    LoadTile_Y = _ai_landmass_dock_squares_wy_array[wp][landmass_node_index];
-
-                    /* Check if the tile is unoccupied/valid in the AI evaluation map */
-                    if (g_ai_evaluation_map[wp][(LoadTile_Y * WORLD_WIDTH) + LoadTile_X] == 0)
-                    {
-                        Tile_Count = Delta_XY_With_Wrap(Midpoint_X, Midpoint_Y, LoadTile_X, LoadTile_Y, WORLD_WIDTH);
-                        
-                        if (Tile_Count < Closest_Landing_Distance)
-                        {
-                            Closest_Landing_Distance = Tile_Count;
-                            Best_LoadTile_X = LoadTile_X;
-                            Best_LoadTile_Y = LoadTile_Y;
-                        }
-                    }
-                    landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
-                }
-
-                if (Closest_Landing_Distance != 1000)
-                {
-                    /* Set the landmass target state to 'Abandon' and set the rally point */
-                    /* _ai_continents__0 structure: [Plane][Player].type/wx/wy[Landmass] */
-                    _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Abandon;
-                    _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = (unsigned char)Best_LoadTile_X;
-                    _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = (unsigned char)Best_LoadTile_Y;
-                }
-            }
-        }
-    }
 }
 
 
@@ -2095,7 +1972,7 @@ void G_AI_HomeRallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_id
     {
 
         if(
-            (_ai_own_stack_type[itr_stacks] == 1)
+            (_ai_own_stack_type[itr_stacks] == AISTK_Roamer)
             &&
             (_ai_own_stack_unit_list[itr_stacks][0] != ST_UNDEFINED)
         )
@@ -2117,7 +1994,7 @@ void G_AI_HomeRallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_id
 /*
 ; send all unprocessed flying and seafaring units that
 ; are not in a garrison to the main war continent, with
-; the exception of spirits
+; the exception of Melders
 ;
 ; BUG: the functions used do not cover all cases
 */
@@ -2131,34 +2008,24 @@ void AI_PullForMainWar__WIP(int16_t player_idx, int16_t wp)
     int16_t list_unit_count = 0;
     int16_t unit_idx = 0;
     int16_t itr_list_units = 0;
-    int16_t itr_stacks = 0;  // _SI_
-
+    int16_t itr_stacks = 0;
 
     if(_ai_landmass_war_targets[wp][player_idx] == 0)
     {
-
         return;
-
     }
-
 
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     {
-
         if(
-            (_ai_own_stack_type[itr_stacks] == 1)
+            (_ai_own_stack_type[itr_stacks] == AISTK_Roamer)
             ||
-            (_ai_own_stack_type[itr_stacks] == 0)
+            (_ai_own_stack_type[itr_stacks] == AISTK_InTransit)
         )
         {
-
-
             list_unit_count = _ai_own_stack_unit_count[itr_stacks];
-
             stack_wx = _ai_own_stack_wx[itr_stacks];
-
             stack_wy = _ai_own_stack_wy[itr_stacks];
-
             if(_landmasses[((wp * WORLD_SIZE) + (stack_wy * WORLD_WIDTH) + stack_wx)] == _ai_landmass_war_targets[wp][player_idx])
             {
 
@@ -2550,7 +2417,7 @@ void G_AI_RallyOrFerry__WIP(int16_t stack_idx, int16_t landmass_idx, int16_t wp,
  * AI_Add_Target().
  *
  * The resulting parallel arrays are consumed later by
- * AI_AssignStackTarget__WIP() when roaming stacks pick destinations.
+ * AI_Stacks_Assign_Target() when roaming stacks pick destinations.
  *
  * @param player_idx Index of the AI player building the target list.
  * @param landmass_idx Index of the landmass whose targets should be evaluated.
@@ -2935,100 +2802,96 @@ void AI_Add_Target(int16_t wx, int16_t wy, int16_t strength, int16_t value)
 
 
 // WZD o158p12
-// drake178: AI_AssignStackTarget()
-/*
-; selects a target for the unassigned units in the
-; specified stack, clearing its value and returning 1
-; if a valid one was found, or returning 0 otherwise
-*/
-/*
-
-*/
-int16_t AI_AssignStackTarget__WIP(int16_t stack_wx, int16_t stack_wy, int16_t * target_wx, int16_t * target_wy, int16_t unit_list_idx, int16_t list_unit_idx)
+/**
+ * @brief Choose the best available target for one AI stack.
+ *
+ * Computes the stack's effective strength from the units listed in
+ * `_ai_own_stack_unit_list[unit_list_idx]`, then scans the current
+ * `_ai_targets_*` arrays for the highest-valued reachable target that the
+ * stack is strong enough to attack. Target scoring is based on target value
+ * reduced by distance, and when the stack's last move failed the function also
+ * requires `Make_Move_Path()` to find a valid path.
+ *
+ * On success, the chosen target coordinates are written through the output
+ * pointers and the selected target is consumed by clearing its entry in
+ * `_ai_targets_value[]`.
+ *
+ * @param stack_wx World x-coordinate of the stack being assigned.
+ * @param stack_wy World y-coordinate of the stack being assigned.
+ * @param target_wx Output pointer that receives the chosen target x-coordinate.
+ * @param target_wy Output pointer that receives the chosen target y-coordinate.
+ * @param unit_list_idx Index of the AI stack within `_ai_own_stack_*` arrays.
+ * @param niu_list_unit_idx Unused legacy parameter preserved to match the
+ * existing call signature.
+ *
+ * @return `ST_TRUE` if a target was selected and written to `target_wx` and
+ * `target_wy`; otherwise `ST_FALSE`.
+ */
+int16_t AI_Stacks_Assign_Target(int16_t stack_wx, int16_t stack_wy, int16_t * target_wx, int16_t * target_wy, int16_t unit_list_idx, int16_t niu_list_unit_idx)
 {
-    int16_t Need_Path_To_Target = 0;
+    int16_t last_move_failed = 0;
     int16_t player_idx = 0;
     int16_t wp = 0;
     int16_t effective_unit_strength = 0;
     int16_t delta_distance = 0;
-    int16_t Target_Rating = 0;
+    int16_t target_weighted_value = 0;
     int16_t targets_idx = 0;
-    int16_t Highest_Target_Rating = 0;
+    int16_t highest_target_value = 0;
     int16_t effective_stack_strength = 0;
     int16_t unit_idx = 0;
     int16_t list_unit_count = 0;
-    int16_t itr_list_units = 0;  // _DI_
-    int16_t itr_targets = 0;  // _SI_
+    int16_t itr_list_units = 0;
+    int16_t itr_targets = 0;
     int16_t return_value = 0;  // DNE in Dasm
 
-    itr_list_units = list_unit_idx;
 
+    /* Phase 1 */
+/* DEAD */  itr_list_units = niu_list_unit_idx;
     list_unit_count = _ai_own_stack_unit_count[unit_list_idx];
 
+
+    /* Phase 2 */
+    /* Calculate the total effective strength of the stack */
     effective_stack_strength = 0;
-
-// ; sum up the threat vealue of all units in the stack
-// ; that have not yet been assigned an order, and store
-// ; whether the last unit is marked as needing a valid
-// ; path for targeting
-
     for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
     {
-
         unit_idx = _ai_own_stack_unit_list[unit_list_idx][itr_list_units];
-
         if(unit_idx != ST_UNDEFINED)
         {
-
             wp = _UNITS[unit_idx].wp;
-
             player_idx = _UNITS[unit_idx].owner_idx;
-
-            Need_Path_To_Target = _UNITS[unit_idx].Move_Failed;
-
+            /* ¿ OGBUG  should be once true, always true (ever false), for the whole stack ? */
+            last_move_failed = _UNITS[unit_idx].Move_Failed;
             effective_unit_strength = (Effective_Unit_Strength(unit_idx) / 10);
-
             effective_stack_strength += effective_unit_strength;
-
         }
-
     }
 
-    Highest_Target_Rating = 0;
 
+    /* Phase 3 */
+    highest_target_value = 0;
     targets_idx = ST_UNDEFINED;
-
     for(itr_targets = 0; itr_targets < _ai_targets_count; itr_targets++)
     {
-
-        if(
-            (_ai_targets_value[itr_targets] > 0)
-            &&
-            ((_ai_targets_strength[itr_targets] * 3 / 4) < effective_stack_strength)
-        )
+        if (_ai_targets_value[itr_targets] <= 0)
         {
-
+            continue;
+        }
+        /* Strength Check: Stack must be stronger than 75% of target strength */
+        /* Calculation: (target_strength * 3) / 4 */
+        if((_ai_targets_strength[itr_targets] * 3 / 4) >= effective_stack_strength)
+        {
+            continue;
+        }
+        {
             delta_distance = Delta_XY_With_Wrap(_ai_targets_wx[itr_targets], _ai_targets_wy[itr_targets], stack_wx, stack_wy, WORLD_WIDTH);
-
-            if(delta_distance < 1)
+            SETMIN(delta_distance,1);
+            target_weighted_value = (_ai_targets_value[itr_targets] / (delta_distance * 4));
+            SETMIN(target_weighted_value,1);
+            if(target_weighted_value > highest_target_value)
             {
-                delta_distance = 1;
-            }
-
-            Target_Rating = (_ai_targets_value[itr_targets] / (delta_distance * 4));
-
-            if(Target_Rating < 1)
-            {
-
-                Target_Rating = 1;
-
-            }
-
-            if(Target_Rating > Highest_Target_Rating)
-            {
-
                 if(
-                    (Need_Path_To_Target != ST_FALSE)
+                    (last_move_failed == ST_FALSE)
                     ||
                     (
                         Make_Move_Path(
@@ -3055,63 +2918,26 @@ int16_t AI_AssignStackTarget__WIP(int16_t stack_wx, int16_t stack_wy, int16_t * 
                     )
                 )
                 {
-// UnitMove.C
-// int16_t Make_Move_Path(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, 
-//                        int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, 
-//                        int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], 
-//                        int16_t UU_flag, int16_t UU_moves2, int16_t boatrider_count, int16_t troop_count, int16_t player_idx)
-// MainScr.C
-// _active_stack_path_length = Make_Move_Path(
-//     movement_mode_flags[0],
-//     movement_mode_flags[1],
-//     movement_mode_flags[2],
-//     movement_mode_flags[3],
-//     movement_mode_flags[4],
-//     movement_mode_flags[5],
-//     unit_wx,
-//     unit_wy,
-//     unit_goto_wx,
-//     unit_goto_wy,
-//     _map_plane,
-//     &movepath_x_array[2],
-//     &movepath_y_array[2],
-//     &movepath_cost_array[0],
-//     1,
-//     30,
-//     boatrider_count,
-//     troop_count,
-//     player_idx
-// );
-
-                    Highest_Target_Rating = Target_Rating;
-
+                    highest_target_value = target_weighted_value;
                     targets_idx = itr_targets;
-
                 }
-
             }
-
         }
-
     }
 
-    if(targets_idx != ST_UNDEFINED)
-    {
 
-        *target_wx = _ai_targets_wx[targets_idx];
-        
-        *target_wy = _ai_targets_wy[targets_idx];
-        
-        _ai_targets_value[targets_idx] = 0;
-
-        return_value = ST_TRUE;
-
-    }
-    else
+    /* Phase 4 */
+    if(targets_idx == ST_UNDEFINED)
     {
         return_value = ST_FALSE;
     }
-
+    else
+    {
+        *target_wx = _ai_targets_wx[targets_idx];
+        *target_wy = _ai_targets_wy[targets_idx];
+        _ai_targets_value[targets_idx] = 0;  /* *consume* the chosen target */
+        return_value = ST_TRUE;
+    }
     return return_value;
 
 }
@@ -3161,7 +2987,6 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-// ; BUG: fails to sort any more units if there are already 80 stacks
         if
         (
             (_ai_own_stack_count >= MAX_AI_STACKS)
@@ -3262,8 +3087,10 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
                 }
             }
             // DEDU  what is it actually check here?  What's in g_ai_evaluation_map[] for the AI's own units?
+            /* weird but clever way to check if a stack is effectively a garrison - it's on a City, Node, or Tower (or, but probably not, on a Lair or Enemy Stack) */
             if(g_ai_evaluation_map[unit_wp][((unit_wy * WORLD_WIDTH) + unit_wx)] != 0)
             {
+                /* Is the *site* our Fortress City? */
                 if(
                     (_FORTRESSES[player_idx].wx == unit_wx)
                     &&
@@ -3272,23 +3099,23 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
                     (_FORTRESSES[player_idx].wp == unit_wp)
                 )
                 {
-                    _ai_own_stack_type[_ai_own_stack_count] = 4;
+                    _ai_own_stack_type[_ai_own_stack_count] = AISTK_FortressGarrison;
                 }
                 else
                 {
-                    _ai_own_stack_type[_ai_own_stack_count] = 3;
+                    _ai_own_stack_type[_ai_own_stack_count] = AISTK_Garrison;
                 }
             }
             else
             {
-                _ai_own_stack_type[_ai_own_stack_count] = 1;
+                _ai_own_stack_type[_ai_own_stack_count] = AISTK_Roamer;
             }
             _ai_own_stack_count++;
         }
     }
     for(itr_stacks1 = 0; itr_stacks1 < _ai_own_stack_count; itr_stacks1++)
     {
-        if(_ai_own_stack_type[_ai_own_stack_count] == 1)
+        if(_ai_own_stack_type[_ai_own_stack_count] == AISTK_Roamer)
         {
             First_Unit_Index = _ai_own_stack_unit_list[itr_stacks1][0];
             if(
@@ -3299,7 +3126,7 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
             {
                 if((_ai_own_stack_unit_count[itr_stacks1] + 1) < 3)
                 {
-                    _ai_own_stack_type[itr_stacks1] = 0;
+                    _ai_own_stack_type[itr_stacks1] = AISTK_InTransit;
                 }
             }
             else
@@ -3321,12 +3148,203 @@ void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landma
                     {
                         _UNITS[_ai_own_stack_unit_list[itr_stacks1][itr_stacks2]].Status = us_Ready;
                     }
-                    _ai_own_stack_type[itr_stacks1] = 0;
+                    _ai_own_stack_type[itr_stacks1] = AISTK_InTransit;
                 }
             }
         }
     }
 
+}
+/* GEMINI */
+void AI_Build_Stacks_Find_Targets_Order_Moves__GEMINI(int16_t player_idx, int16_t landmass_idx, int16_t wp)
+{
+    int16_t first_unit_idx;
+    int16_t target_wy;
+    int16_t target_wx;
+    int16_t stack_idx;
+    int16_t unit_wp;
+    int16_t unit_wy;
+    int16_t unit_wx;
+    int16_t i;
+    int16_t j;
+
+    _ai_own_stack_count = 0;
+    cp_enroute_unit_count = 0;
+    cp_staged_unit_count = 0;
+
+    /* Initialize AI stack arrays */
+    for (i = 0; i < 80; i++)
+    {
+        _ai_own_stack_wx[i] = 0xFF;          /* e_ST_UNDEFINED_DB */
+        _ai_own_stack_wy[i] = 0xFF;
+        _ai_own_stack_wp[i] = 0xFF;
+        _ai_own_stack_unit_count[i] = 0;
+    }
+
+    /* Iterate through all units to group them into stacks by location */
+    for (i = 0; i < _units; i++)
+    {
+        if (_ai_own_stack_count >= MAX_AI_STACKS)
+        {
+            break;
+        }
+
+        if (_UNITS[i].owner_idx != player_idx)
+        {
+            continue;
+        }
+
+        unit_wp = _UNITS[i].wp;
+        if (unit_wp != wp)
+        {
+            continue;
+        }
+
+        unit_wx = _UNITS[i].wx;
+        unit_wy = _UNITS[i].wy;
+
+        /* Check if unit is at the staging landmass coordinates */
+        if (cp_landmass_wx_array[landmass_idx] == unit_wx && cp_landmass_wy_array[landmass_idx] == unit_wy)
+        {
+            cp_staged_unit_count++;
+        }
+
+        /* Verify unit is on the correct landmass */
+        /* Indexing: [wp * WORLD_SIZE + wy * WORLD_WIDTH + wx] */
+        if (_landmasses[(unit_wp * 2400) + (unit_wy * 60) + unit_wx] != landmass_idx)
+        {
+            continue;
+        }
+
+        /* Check if an AI stack already exists at this location */
+        stack_idx = -1; /* e_ST_UNDEFINED */
+        for (j = 0; j < _ai_own_stack_count; j++)
+        {
+            if (_ai_own_stack_wx[j] == unit_wx && 
+                _ai_own_stack_wy[j] == unit_wy && 
+                _ai_own_stack_wp[j] == unit_wp)
+            {
+                stack_idx = j;
+                break;
+            }
+        }
+
+        if (stack_idx == -1)
+        {
+            /* Create a new AI stack entry */
+            _ai_own_stack_wx[_ai_own_stack_count] = (unsigned char)unit_wx;
+            _ai_own_stack_wy[_ai_own_stack_count] = (unsigned char)unit_wy;
+            _ai_own_stack_wp[_ai_own_stack_count] = (unsigned char)unit_wp;
+            _ai_own_stack_unit_count[_ai_own_stack_count] = 1;
+
+            /* Filter units by status */
+            if (_UNITS[i].Status == 3 /* us_GOTO */ || 
+                _UNITS[i].Status == 8 /* us_Purify */ || 
+                _UNITS[i].Status == 7 /* us_BuildRoad */)
+            {
+                _ai_own_stack_unit_list[_ai_own_stack_count][0] = ST_UNDEFINED;
+                
+                if (_UNITS[i].dst_wx == (unsigned char)cp_landmass_wx_array[landmass_idx] && 
+                    _UNITS[i].dst_wy == (unsigned char)cp_landmass_wy_array[landmass_idx])
+                {
+                    cp_enroute_unit_count++;
+                }
+            }
+            else
+            {
+                _ai_own_stack_unit_list[_ai_own_stack_count][0] = i;
+            }
+
+            /* Assign stack type based on location evaluation */
+            /* Evaluation map check: g_ai_evaluation_map[wp][wy * WORLD_WIDTH + wx] */
+            if (g_ai_evaluation_map[unit_wp][(unit_wy * WORLD_WIDTH) + unit_wx] != 0)
+            {
+                /* Check if this is the player's fortress location */
+                if (_FORTRESSES[player_idx].wx == unit_wx && 
+                    _FORTRESSES[player_idx].wy == unit_wy && 
+                    _FORTRESSES[player_idx].wp == unit_wp)
+                {
+                    _ai_own_stack_type[_ai_own_stack_count] = AISTK_FortressGarrison;
+                }
+                else
+                {
+                    _ai_own_stack_type[_ai_own_stack_count] = AISTK_Garrison;
+                }
+            }
+            else
+            {
+                _ai_own_stack_type[_ai_own_stack_count] = AISTK_Roamer;
+            }
+
+            _ai_own_stack_count++;
+        }
+        else
+        {
+            /* Add unit to existing AI stack */
+            int current_unit_count = _ai_own_stack_unit_count[stack_idx];
+
+            if (_UNITS[i].Status == us_GOTO || 
+                _UNITS[i].Status == us_Purify || 
+                _UNITS[i].Status == us_BuildRoad)
+            {
+                _ai_own_stack_unit_list[stack_idx][current_unit_count] = -1; /* e_ST_UNDEFINED */
+
+                if (_UNITS[i].dst_wx == (unsigned char)cp_landmass_wx_array[landmass_idx] && 
+                    _UNITS[i].dst_wy == (unsigned char)cp_landmass_wy_array[landmass_idx])
+                {
+                    cp_enroute_unit_count++;
+                }
+            }
+            else
+            {
+                _ai_own_stack_unit_list[stack_idx][current_unit_count] = i;
+            }
+            _ai_own_stack_unit_count[stack_idx]++;
+        }
+    }
+
+    /* Process the built stacks and assign orders */
+    for (i = 0; i < _ai_own_stack_count; i++)
+    {
+        if (_ai_own_stack_type[i] != AISTK_Roamer)
+        {
+            continue;
+        }
+
+        first_unit_idx = _ai_own_stack_unit_list[i][0];
+        
+        /* If the stack contains a valid primary unit ready to move */
+        if (first_unit_idx != -1 && _UNITS[first_unit_idx].Status == 1 /* us_Move */)
+        {
+            /* Attempt to find a target for this stack */
+            /* AI_Find_Nearest_Target_Unit(stack_idx, landmass_idx, &target_wx, &target_wy, wp) */
+            if (AI_Find_Nearest_Target_Unit(i, landmass_idx, &target_wx, &target_wy, wp) == 1 /* e_ST_TRUE */)
+            {
+                /* Assign move orders to all units in the stack */
+                for (j = 0; j < _ai_own_stack_unit_count[i]; j++)
+                {
+                    AI_Set_Move_Or_Goto_Target(_ai_own_stack_unit_list[i][j], target_wx, target_wy, i, j);
+                }
+            }
+            else
+            {
+                /* No target found: Set units to Ready and clear stack type */
+                for (j = 0; j < _ai_own_stack_unit_count[i]; j++)
+                {
+                    _UNITS[_ai_own_stack_unit_list[i][j]].Status = us_Ready;
+                }
+                _ai_own_stack_type[i] = AISTK_InTransit;
+            }
+        }
+        else
+        {
+            /* If the stack is too small, dissolve the AI stack type */
+            if (_ai_own_stack_unit_count[i] < 2) /* cmp ax, 3 / jge follows inc ax */
+            {
+                _ai_own_stack_type[i] = AISTK_InTransit;
+            }
+        }
+    }
 }
 
 
@@ -4029,7 +4047,7 @@ void AI_GarrBuilderPush__WIP(int16_t wp)
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     {
 
-        if(_ai_own_stack_type[itr_stacks] < 3)
+        if(_ai_own_stack_type[itr_stacks] < AISTK_Garrison)
         {
 
             continue;
@@ -4683,9 +4701,9 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
     {
 
         if(
-            (_ai_own_stack_type[itr_stacks] == 3)  // DEDU  What is stack type 3 getting us here?
+            (_ai_own_stack_type[itr_stacks] == AISTK_Garrison)
             &&
-            (_ai_own_stack_unit_count[itr_stacks] < 1)  // ¿ ; conflicting condition - will always jump ?
+            (_ai_own_stack_unit_count[itr_stacks] < 1)
         )
         {
 
@@ -4750,32 +4768,20 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                         }
                         else
                         {
-
                             Best_Tile_Value = ST_UNDEFINED;
-
                             landmass_node_index = _ai_landmass_land_squares_heads[unit_wp][landmass_idx];
-
-                            // while(landmass_node_index = _ai_landmass_land_squares_lists[wp][landmass_node_index] != ST_UNDEFINED)
                             while(landmass_node_index != ST_UNDEFINED)
                             {
-
                                 wx = _ai_landmass_land_squares_wx_array[unit_wp][landmass_node_index];
-                                
                                 wy = _ai_landmass_land_squares_wy_array[unit_wp][landmass_node_index];
-
                                 if(Map_Square_Survey(wx, wy, unit_wp) == 0)
                                 {
-
                                     if((g_ai_evaluation_map[unit_wp][((wy * WORLD_WIDTH) + wx)] & AI_TARGET_FORTRESS) == 0)
                                     {
-                                        
                                         Tile_Distance = Range(unit_wx, unit_wy, wx, wy);
-
                                         if(Tile_Distance != 0)
                                         {
-
                                             Compute_Base_Values_For_Map_Square(wx, wy, wp, &maximum_population, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &Unexplored);
-
                                             Tile_Settling_Value = 
                                                 (
                                                     (
@@ -4808,26 +4814,16 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
 
                                             EMM_Map_CONTXXX__WIP();
 
-
                                             if(Tile_Settling_Value > Best_Tile_Value)
                                             {
-
                                                 Best_Tile_Value = Tile_Settling_Value;
-                                                
                                                 Best_Tile_X = wx;
-
                                                 Best_Tile_Y = wy;
-
                                             }
-
                                         }
-
                                     }
-                                    
                                 }
-
                                 landmass_node_index = _ai_landmass_land_squares_lists[wp][landmass_node_index];
-
                             }
 
                             if(Best_Tile_Value == ST_UNDEFINED)
@@ -4967,7 +4963,7 @@ void AI_Do_Purify(int16_t landmass_idx, int16_t wp)
         for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
         {
 
-            if(_ai_own_stack_type[itr_stacks] == 0)
+            if(_ai_own_stack_type[itr_stacks] == AISTK_InTransit)
             {
 
                 list_unit_count = _ai_own_stack_unit_count[itr_stacks];

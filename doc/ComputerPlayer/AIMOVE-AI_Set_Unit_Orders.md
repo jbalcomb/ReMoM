@@ -126,7 +126,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
         AI_Do_Purify(landmass_idx, wp);
         AI_Do_RoadBuild(landmass_idx);
         AI_Build_Target_List(player_idx, landmass_idx, wp);
-        AI_ProcessRoamers__WIP(landmass_idx, wp, player_idx);
+        AI_Stacks_Roamers_Target_Or_Deploy(landmass_idx, wp, player_idx);
 
         // Pull units toward main-war landmass — runs for "almost NOT lmt_Contested"
         if(
@@ -181,7 +181,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
 | 6 | `AI_Do_Purify` | Issue purify orders for corrupted tiles. |
 | 7 | `AI_Do_RoadBuild` | Issue road-build orders. |
 | 8 | `AI_Build_Target_List` | (Re-)build the target list. |
-| 9 | `AI_ProcessRoamers__WIP` | Move stray "roamer" stacks. |
+| 9 | `AI_Stacks_Roamers_Target_Or_Deploy` | Move stray "roamer" stacks. |
 | 13 | `G_AI_RallyFill__WIP` | Top up the stage point with units (always). |
 
 ### Per-landmass conditional gates
@@ -236,7 +236,7 @@ AI_Set_Unit_Orders(player_idx)
         ├── AI_Do_Purify
         ├── AI_Do_RoadBuild
         ├── AI_Build_Target_List
-        ├── AI_ProcessRoamers__WIP
+        ├── AI_Stacks_Roamers_Target_Or_Deploy
         ├── AI_PullForMainWar__WIP           [gate: NOT lmt_Contested basically]
         ├── G_AI_HomeRallyFill__WIP          [gate: lmt_Own / lmt_Abandon+]
         ├── G_AI_RallyFill__WIP              [always]

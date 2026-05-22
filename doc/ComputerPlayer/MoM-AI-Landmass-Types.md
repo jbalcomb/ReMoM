@@ -26,7 +26,7 @@ The enum is really **two different categories** of value stuffed into one byte:
 | Tier | Members | Origin | Lifetime |
 |---|---|---|---|
 | **Classifier outputs** | `Own`, `Contested`, `NoOwnCity`, `NoOwnCityAndAllyHasCity` | Produced by reeval functions ([`AI_Reevaluate_Continent`](../../MoM/src/AIMOVE.c#L5933), [`AI_Evaluate_Continents`](../../MoM/src/AIMOVE.c#L6902)) | Regenerated each classification pass |
-| **Phase overlays** | `Abandon`, `NoTargets` | Produced by other AI phases ([`AI_ProcessRoamers__WIP`](../../MoM/src/AIMOVE.c#L1635) at line 1806, [`AI_Build_Target_List`](../../MoM/src/AIMOVE.c#L2327) at line 2757) | `Abandon` is clobbered by the next classifier run. `NoTargets` is **preserved across turns** by `AI_Evaluate_Continents`'s preservation clause at [line 6848](../../MoM/src/AIMOVE.c#L6848), subject to a city-count collision OGBUG (see `lmt_NoTargets` notes below). |
+| **Phase overlays** | `Abandon`, `NoTargets` | Produced by other AI phases ([`AI_Stacks_Roamers_Target_Or_Deploy`](../../MoM/src/AIMOVE.c#L1635) at line 1806, [`AI_Build_Target_List`](../../MoM/src/AIMOVE.c#L2327) at line 2757) | `Abandon` is clobbered by the next classifier run. `NoTargets` is **preserved across turns** by `AI_Evaluate_Continents`'s preservation clause at [line 6848](../../MoM/src/AIMOVE.c#L6848), subject to a city-count collision OGBUG (see `lmt_NoTargets` notes below). |
 | **Initial / sentinel** | `Unevaluated` | Set by [`AI_Evaluate_Continents`](../../MoM/src/AIMOVE.c#L7013) as counter base | Never appears as a final state |
 
 This is the source of the design's awkwardness: a classifier-output and a phase-overlay can never coexist on the same slot, because each clobbers the other.
@@ -90,11 +90,13 @@ The most overloaded value — five different write sites with three distinct sem
 
 | Line | Function | Triggering condition |
 |---|---|---|
-| [1806](../../MoM/src/AIMOVE.c#L1806) | `AI_ProcessRoamers__WIP` | Decision already made by enclosing function: this continent has no targets AND has at least one roaming stack of 7+ units. Inner predicate at line 1803 (`Closest_Landing_Distance != 1000`) confirms a reachable dock square exists. |
+| [1890](../../MoM/src/AIMOVE.c#L1890) | `AI_Stacks_Roamers_Target_Or_Deploy` | Phase 3 fires only when all five hold: Phase 1 found a roamer stack of ≥8 units on this landmass AND no roamer stack found a target AND `_ai_landmass_war_targets[wp][player_idx] != 0` AND we're not on the war landmass AND Phase 2 found an empty dock square. Co-writes `wx_array`/`wy_array` with the chosen dock square as the embark point. |
 
-Semantic: **"We're leaving this continent."** Per the function's drake178 header comment at [lines 1620-1631](../../MoM/src/AIMOVE.c#L1620-L1631): "if there are no targets but at least one roaming stack with at least 7 units, changes the type and stage point of the continent to prepare for troops to move to the action continent instead." Co-written with `wx_array`/`wy_array` set to the chosen dock square so embarkation orders know where to go.
+**Semantic at write site:** "We have a sizable expeditionary force on this landmass, this landmass has nothing left to attack, there's a war elsewhere, and we found an embark point — stage the force at that dock square for ferrying."
 
-The "Abandon" name is accurate — the AI has committed to leaving the landmass. The reeval on the next turn ([`AI_Choose_War_Landmass66`](../../MoM/src/AIMOVE.c#L7966) sets `Reevaluate = ST_TRUE` for this case) checks if the situation has changed enough to reconsider.
+**At read sites:** the tag is a **single-turn ferry-staging marker**, NOT a long-term "we are leaving this place" classification. It is written during dispatch slot 9 ([`AI_Set_Unit_Orders`](AIMOVE-AI_Set_Unit_Orders.md) Phase 4); consumed THIS turn by slots 10/11/14 (`AI_PullForMainWar__WIP`, `G_AI_HomeRallyFill__WIP`, `AI_FillGarrisons__WIP`) using the embark point as a staging target; survives ONE turn boundary to be read by next turn's `AI_Choose_War_Landmass` ([line 7786](../../MoM/src/AIMOVE.c#L7786) switch sets `Reevaluate = ST_TRUE` for this case); then **clobbered** by `AI_Evaluate_Continents` ([line 6874](../../MoM/src/AIMOVE.c#L6874)) before the next dispatch — no preservation clause exists for `lmt_Abandon` (unlike `lmt_NoTargets`).
+
+To stay tagged across turns, the Phase 3 write must re-fire — which requires ALL five trigger conditions to still hold. See [AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md](AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md) for the full timing analysis, comparison with `lmt_NoTargets`, and the "why 'Abandon' is a misleading name" notes.
 
 ### `lmt_NoTargets` (6)
 
@@ -259,7 +261,7 @@ G_AI_RallyOrFerry__WIP        AI_Build_Target_List          AI_Reevaluate_Contin
 1. **`lmt_NoOwnCity` does not mean "no presence."** Units may be roaming. Only cities count.
 2. **`lmt_Own` requires a 10:1 unit-cost dominance.** A single own city with comparable enemy strength → `lmt_Contested`.
 3. **`lmt_NoOwnCityAndAllyHasCity` is overloaded.** Three semantic situations share this value: ally's territory, no stage tile, slot-0 sentinel. The name only fits the first.
-4. **`lmt_Abandon` means "we are leaving this continent."** Set by `AI_ProcessRoamers__WIP` when the landmass has no targets AND has at least one roaming stack of 7+ units. The dock square is the embarkation point. The next-turn re-evaluation ([`AI_Choose_War_Landmass66`](../../MoM/src/AIMOVE.c#L7966)) may revise the decision if conditions changed.
+4. **`lmt_Abandon` means "we are leaving this continent."** Set by `AI_Stacks_Roamers_Target_Or_Deploy` when the landmass has no targets AND has at least one roaming stack of 7+ units. The dock square is the embarkation point. The next-turn re-evaluation ([`AI_Choose_War_Landmass66`](../../MoM/src/AIMOVE.c#L7966)) may revise the decision if conditions changed.
 5. **`AI_Reevaluate_Continent` does not zero the slot before counting.** [`AI_Evaluate_Continents`](../../MoM/src/AIMOVE.c#L7013) does. Possible bug in `AI_Reevaluate_Continent` — verify against disassembly.
 6. **`lmt_NoTargets` is unhandled in `AI_Choose_War_Landmass switch.** Falls to default. Gemini's translation includes it with the NoOwnCity group — may be a missing case in production.
 7. **The disassembly's switch is `(type - 1)`**, jumping into a 5-entry table for values 1-5. Value 0 (`lmt_Unevaluated`) cannot enter that switch — the `case lmt_Unevaluated` in the C code is dead. Value 6 (`lmt_NoTargets`) would index past the table → also dead in the bytes, unless a separate default branch handles it.

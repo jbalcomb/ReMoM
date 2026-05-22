@@ -940,8 +940,8 @@ used to index _ai_targets_value[], _ai_targets_strength[], _ai_targets_wy[], _ai
 
 AI_Build_Target_List()
     |-> AI_Add_Target()
-AI_ProcessRoamers__WIP()
-    |-> AI_AssignStackTarget__WIP()
+AI_Stacks_Roamers_Target_Or_Deploy()
+    |-> AI_Stacks_Assign_Target()
 
 */
 int16_t _ai_targets_value[MAX_AI_TARGETS];
@@ -2684,29 +2684,23 @@ int8_t * _ai_landmass_dock_squares_wx_array[NUM_PLANES];
 
 
 // WZD dseg:9D4A
-// drake178: CONTX_OwnStack_Count
+/*
+~ "AI Own Stack"
+
+cleared in AI_Build_Stacks_Find_Targets_Order_Moves()
+    _ai_own_stack_count = 0;
+    _ai_own_stack_wx[] = ST_UNDEFINED;
+    _ai_own_stack_wy[] = ST_UNDEFINED;
+    _ai_own_stack_wp[] = ST_UNDEFINED;
+    _ai_own_stack_unit_count[] = 0;
+
+*/
 int16_t _ai_own_stack_count;
-// WZD dseg:9D4C
-// drake178: CONTX_OwnStack_ULsts
-int16_t * _ai_own_stack_unit_list[80];
-// WZD dseg:9E8C
-// drake178: CONTX_OwnStack_UCnt
+int16_t * _ai_own_stack_unit_list[MAX_AI_STACKS];
 SAMB_ptr _ai_own_stack_unit_count;
-// WZD dseg:9E90
-// drake178: CONTX_OwnStack_Types
-SAMB_ptr _ai_own_stack_type;
-// ;   0 - in transit, purifying, or road building (c < 3)
-// ;   1 - roamer
-// ;   3 - garrison (city or node)
-// ;   4 - fortress garrison
-// WZD dseg:9E94
-// drake178: CONTX_OwnStack_Ps
+SAMB_ptr _ai_own_stack_type;    /* enum e_AI_OWN_STACK_TYPE */
 SAMB_ptr _ai_own_stack_wp;
-// WZD dseg:9E98
-// drake178: CONTX_OwnStack_Ys
 SAMB_ptr _ai_own_stack_wy;
-// WZD dseg:9E9C
-// drake178: CONTX_OwnStack_Xs
 SAMB_ptr _ai_own_stack_wx;
 
 

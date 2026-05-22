@@ -2,7 +2,7 @@ AIMOVE-AI_Build_Target_List.md
 
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Build_Target_List.c
 
-SEEALSO: AIMOVE-AI_ProcessRoamers__WIP.md
+SEEALSO: AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md
 
 ---
 
@@ -34,7 +34,7 @@ Also writes `_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx
 void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
 ```
 
-Called from [`AI_Set_Unit_Orders`](AIMOVE-AI_Set_Unit_Orders.md) Phase 4 dispatch (slot 8), immediately before [`AI_ProcessRoamers__WIP`](AIMOVE-AI_ProcessRoamers__WIP.md) (slot 9, the only consumer).
+Called from [`AI_Set_Unit_Orders`](AIMOVE-AI_Set_Unit_Orders.md) Phase 4 dispatch (slot 8), immediately before [`AI_Stacks_Roamers_Target_Or_Deploy`](AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md) (slot 9, the only consumer).
 
 ## Phase 1 — Clear the target count (line 2564)
 
@@ -283,18 +283,18 @@ AI_Set_Unit_Orders                                  [AIMOVE.c:131, Phase 4 dispa
        │         ↓ writes _ai_targets_count/wx/wy/strength/value[25]
        │         ↓ writes type_array[landmass_idx] = lmt_NoTargets (conditional)
        │
-       └─ AI_ProcessRoamers__WIP(landmass_idx, wp, player_idx)             [slot 9 — SOLE CONSUMER]
+       └─ AI_Stacks_Roamers_Target_Or_Deploy(landmass_idx, wp, player_idx)             [slot 9 — SOLE CONSUMER]
             └─ per roamer stack (_ai_own_stack_type == 1):
-                 └─ AI_AssignStackTarget__WIP(...)                          [AIMOVE.c:3186]
+                 └─ AI_Stacks_Assign_Target(...)                          [AIMOVE.c:3186]
                       ↑ reads _ai_targets_count/wx/wy/strength/value
                       ↓ "consumes" by zeroing _ai_targets_value[picked]
 ```
 
 No other function in `MoM/src/` or `MoX/src/` reads `_ai_targets_*` arrays. The producer/consumer pair is fully scoped to one per-landmass iteration of `AI_Set_Unit_Orders` Phase 4.
 
-## Impact on AI_ProcessRoamers__WIP
+## Impact on AI_Stacks_Roamers_Target_Or_Deploy
 
-`AI_ProcessRoamers__WIP` ([AIMOVE.c:1755](../../MoM/src/AIMOVE.c#L1755)) iterates roaming stacks (`_ai_own_stack_type[itr_stacks] == 1`) and for each one calls `AI_AssignStackTarget__WIP`, which:
+`AI_Stacks_Roamers_Target_Or_Deploy` ([AIMOVE.c:1755](../../MoM/src/AIMOVE.c#L1755)) iterates roaming stacks (`_ai_own_stack_type[itr_stacks] == 1`) and for each one calls `AI_Stacks_Assign_Target`, which:
 
 1. Iterates `_ai_targets_count` entries.
 2. Filters by `value > 0 && strength * 3/4 < effective_stack_strength`.
@@ -327,12 +327,12 @@ War-hostile cities dominate the value board, so roamers in a war target enemy ci
 
 When all phases together produce zero entries, Phase 7 (lmt_NoTargets gate) tags the landmass. That tag is read by `AI_Choose_War_Landmass` on the FOLLOWING turn (the per-turn driver in `AIDUDES.c:241-285` runs `AI_Choose_War_Landmass` BEFORE the next `AI_Set_Unit_Orders` dispatch) to exclude the landmass from war-target selection. So this function's per-landmass output controls both:
 
-1. **This turn's roamer targets** on this landmass (via `AI_ProcessRoamers__WIP` immediately after).
+1. **This turn's roamer targets** on this landmass (via `AI_Stacks_Roamers_Target_Or_Deploy` immediately after).
 2. **Next turn's war-landmass selection** (via the `lmt_NoTargets` tag surviving through `AI_Evaluate_Continents`'s preservation clause).
 
 ## Related references
 
-- [AIMOVE-AI_ProcessRoamers__WIP.md](AIMOVE-AI_ProcessRoamers__WIP.md) — sole consumer
+- [AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md](AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md) — sole consumer
 - [AIMOVE-AI_Set_Unit_Orders.md](AIMOVE-AI_Set_Unit_Orders.md) — dispatcher (slot 8 = this function, slot 9 = consumer)
 - [AIMOVE-AI_Choose_War_Landmass.md](AIMOVE-AI_Choose_War_Landmass.md) — reads `lmt_NoTargets` written by Phase 7 above
 - [MoM-AI-Landmass-Types.md](MoM-AI-Landmass-Types.md) — `lmt_NoTargets` state machine

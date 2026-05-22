@@ -292,7 +292,6 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 }
 
 // WZD o61p03
-/* COPILOT */
 /**
  * @brief Moves the selected unit's matching stack toward the requested destination.
  *

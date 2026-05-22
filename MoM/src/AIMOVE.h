@@ -39,7 +39,7 @@ void AI_ProcessOcean__WIP(int16_t player_idx, int16_t wp);
 void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp);
 
 // WZD o158p06
-void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx);
+void AI_Stacks_Roamers_Target_Or_Deploy(int16_t landmass_idx, int16_t wp, int16_t player_idx);
 
 // WZD o158p07
 void G_AI_HomeRallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx);
@@ -57,7 +57,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp);
 void AI_Add_Target(int16_t wx, int16_t wy, int16_t strength, int16_t value);
 
 // WZD o158p12
-int16_t AI_AssignStackTarget__WIP(int16_t stack_wx, int16_t stack_wy, int16_t * target_wx, int16_t * target_wy, int16_t unit_list_idx, int16_t list_unit_idx);
+int16_t AI_Stacks_Assign_Target(int16_t stack_wx, int16_t stack_wy, int16_t * target_wx, int16_t * target_wy, int16_t unit_list_idx, int16_t niu_list_unit_idx);
 
 // WZD o158p13
 void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landmass_idx, int16_t wp);
