@@ -87,13 +87,13 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **Purpose:** TBD
 - **Reads/writes `lmt_*`:** none direct
 
-### `AI_Build_Stacks_Find_Targets_Order_Moves` — [line 2994](../../MoM/src/AIMOVE.c#L2994)
+### `AI_Stacks_Init_Build_Target_Order` - [line 2994](../../MoM/src/AIMOVE.c#L2994)
 - **drake178:** `AI_CONTX_Regroup()` (o158p13)
 - **End:** ~line 3291
 - **Purpose:** TBD — name in current source is much broader than drake's `AI_CONTX_Regroup()`
 - **Reads/writes `lmt_*`:** none direct
 
-### `AI_Find_Nearest_Target_Unit` — [line 3292](../../MoM/src/AIMOVE.c#L3292)
+### `AI_Stacks_Target_Nearest_Hostile_Stack` — [line 3292](../../MoM/src/AIMOVE.c#L3292)
 - **drake178:** `AI_FindClosestEnemy()` (o158p14)
 - **End:** ~line 3382
 - **Purpose:** TBD
@@ -154,7 +154,7 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **End:** ~line 5191
 - **Purpose:** TBD
 
-### `AI_Set_Move_Or_Goto_Target` — [line 5192](../../MoM/src/AIMOVE.c#L5192)
+### `AI_Stacks_Order_Attack_Target_Or_Goto_Destination` — [line 5192](../../MoM/src/AIMOVE.c#L5192)
 - **drake178:** (no drake name) (o158p26)
 - **End:** ~line 5260
 - **Purpose:** TBD — new helper

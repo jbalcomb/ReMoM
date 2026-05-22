@@ -55,9 +55,9 @@ for(itr_players = 0; itr_players < _num_players; itr_players++)
 
     if(itr_players == HUMAN_PLAYER_IDX)
         // strength lookup uses fortress_wy/wx BEFORE they're set this iteration
-        target_strength = ...(eval & AI_TARGET_FORTRESS) * 5 / 4;
+        target_strength = ...(eval & AI_TARGET_STRENGTH_MASK) * 5 / 4;
     else
-        target_strength = ...(eval & AI_TARGET_FORTRESS);
+        target_strength = ...(eval & AI_TARGET_STRENGTH_MASK);
 
     fortress_wx = _FORTRESSES[itr_players].wx;
     fortress_wy = _FORTRESSES[itr_players].wy;
@@ -93,9 +93,9 @@ for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     target_value_base = (non-neutral && DIPL_War) ? 10 : 1;
 
     if(itr_cities == HUMAN_PLAYER_IDX)                     // OGBUG: c&p typo, see below
-        target_strength = ...(city eval & AI_TARGET_FORTRESS) * 5 / 4;
+        target_strength = ...(city eval & AI_TARGET_STRENGTH_MASK) * 5 / 4;
     else
-        target_strength = ...(city eval & AI_TARGET_FORTRESS);
+        target_strength = ...(city eval & AI_TARGET_STRENGTH_MASK);
 
     if((target_owner_idx == NEUTRAL) && (landmass matches))
     {
@@ -144,7 +144,7 @@ while(landmass_node_index != ST_UNDEFINED)
         if(
             ((eval & AI_TARGET_NONHOSTILE) == 0)
             && ((eval & AI_TARGET_SITE) == 0)
-            && ((eval & AI_TARGET_FORTRESS) != 0)      // just masking out the strength bits
+            && ((eval & AI_TARGET_STRENGTH_MASK) != 0)      // strength bits non-zero = at least one unit present
         )
         {
             if(own fortress on this landmass)
@@ -162,7 +162,7 @@ while(landmass_node_index != ST_UNDEFINED)
 - has non-zero evaluation (any units present), AND
 - is not flagged `AI_TARGET_NONHOSTILE`, AND
 - is not flagged `AI_TARGET_SITE` (sites are handled by their own phases), AND
-- has the `AI_TARGET_FORTRESS`-masked strength bits set (hostile units present).
+- has at least one unit's worth of strength on it (`eval & AI_TARGET_STRENGTH_MASK != 0` — note this is the strength-value field; combined with the two flag tests above, this means hostile units present, not on a site).
 
 Value is full strength if our fortress is on this landmass (defensive priority), otherwise one-third.
 
@@ -184,12 +184,12 @@ for(itr_nodes = 0; itr_nodes < NUM_NODES; itr_nodes++)
 
     if(target_owner_idx != ST_UNDEFINED)
         AI_Add_Target(node_wx, node_wy, strength, (power * 10) + 50);    // owned by hostile
-    else if((eval & AI_TARGET_FORTRESS) != 0)
+    else if((eval & AI_TARGET_STRENGTH_MASK) != 0)
         AI_Add_Target(node_wx, node_wy, strength, (power * 10) + 25);    // unowned but defended
 }
 ```
 
-**Intent:** add hostile-owned (`Hostility >= 2`) or unowned-but-defended magic nodes on this landmass. Value = `power × 10 + 50` (owned) or `power × 10 + 25` (unowned, only if guardians remain per `AI_TARGET_FORTRESS` mask).
+**Intent:** add hostile-owned (`Hostility >= 2`) or unowned-but-defended magic nodes on this landmass. Value = `power × 10 + 50` (owned) or `power × 10 + 25` (unowned, only if guardians remain per `eval & AI_TARGET_STRENGTH_MASK != 0`).
 
 **Source-flagged OGBUG:**
 

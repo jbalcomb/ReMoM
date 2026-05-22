@@ -1941,6 +1941,8 @@ used to decide on ocean for cityscape  (not river, not *water*)
 ; lake, which means it should also return 0 for its
 ; river outlet versions (0xC5 - 0xC8)
 
+used by AI_Move_Out_Boats(), so ~== "Sailable"
+should also be equivalent to Square_Is_Shoreline(), used to build the shoreline linked-list array
 */
 int16_t Square_Is_OceanLike(int16_t wx, int16_t wy, int16_t wp)
 {

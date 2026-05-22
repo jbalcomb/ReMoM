@@ -2402,9 +2402,23 @@ AI_Evaluation_Map() clears 2 * 2400 = 4800 words  9600 bytes
 max strength value (6 bits) 0x3FFF  16383
 
 AIDATA.H
-#define AI_TARGET_FORTRESS      0x3FFF
+#define AI_TARGET_STRENGTH_MASK      0x3FFF
 #define AI_TARGET_NONHOSTILE    0x4000
 #define AI_TARGET_SITE          0x8000
+
+WTF?
+if(((target_value & AI_TARGET_SITE) != 0) || ((target_value & AI_TARGET_STRENGTH_MASK) != 0))
+    _UNITS[unit_idx].Status = us_Move;
+else
+    _UNITS[unit_idx].Status = us_GOTO;
+...
+...both mean go there and attack that
+
+(target_value & AI_TARGET_SITE) != 0)
+...means bit 15 is set, so it's a site (City, Lair, Node, Tower)
+
+((target_value & AI_TARGET_STRENGTH_MASK) != 0))
+...means some of the first six bits are set?
 
 */
 uint16_t * g_ai_evaluation_map[NUM_PLANES];
@@ -2687,13 +2701,22 @@ int8_t * _ai_landmass_dock_squares_wx_array[NUM_PLANES];
 /*
 ~ "AI Own Stack"
 
-cleared in AI_Build_Stacks_Find_Targets_Order_Moves()
+cleared in AI_Stacks_Init_Build_Target_Order
     _ai_own_stack_count = 0;
     _ai_own_stack_wx[] = ST_UNDEFINED;
     _ai_own_stack_wy[] = ST_UNDEFINED;
     _ai_own_stack_wp[] = ST_UNDEFINED;
     _ai_own_stack_unit_count[] = 0;
 
+...works like setting target value to 0 in AI_Stacks_Assign_Target()
+_ai_own_stack_unit_list[][] = ST_UNDEFINED
+    AI_Stacks_Init_Build_Target_Order
+    AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
+    AI_Order_Settle()
+    AI_Order_RoadBuild()
+    AI_Order_SeekTransport()
+    AI_Order_Meld()
+    AI_Order_Purify()
 */
 int16_t _ai_own_stack_count;
 int16_t * _ai_own_stack_unit_list[MAX_AI_STACKS];

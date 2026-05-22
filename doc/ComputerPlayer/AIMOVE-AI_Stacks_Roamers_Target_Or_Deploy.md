@@ -14,7 +14,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Stacks_Roamers_T
 
 **Per-(player, plane, landmass) roamer-stack processor.** Two responsibilities:
 
-1. **Target assignment:** for every roaming stack (`_ai_own_stack_type == AISTK_Roamer`) on this landmass, walk its unit list to confirm it's well-formed, then try to assign it a target from the per-landmass list that `AI_Build_Target_List` just built. If a target is found, every unit in that stack gets a move order to those coords via `AI_Set_Move_Or_Goto_Target`.
+1. **Target assignment:** for every roaming stack (`_ai_own_stack_type == AISTK_Roamer`) on this landmass, walk its unit list to confirm it's well-formed, then try to assign it a target from the per-landmass list that `AI_Build_Target_List` just built. If a target is found, every unit in that stack gets a move order to those coords via `AI_Stacks_Order_Attack_Target_Or_Goto_Destination`.
 
 2. **Deploy (embark-staging):** if no roamer stack found a target AND there's a large stack (≥8 units) on this landmass AND we have a main-war landmass set elsewhere (and we're not on it), retag this landmass `lmt_Abandon` with its stage point set to this landmass's dock square closest to the war landmass's dock-square centroid — preparing the large stack to embark and ferry off.
 
@@ -40,7 +40,7 @@ int16_t target_square_wx = 0;                // chosen embark-stage X
 int16_t landmass_node_index = 0;             // chain cursor
 int16_t landmass_node_centroid_wy = 0;       // war landmass dock centroid Y (Step A)
 int16_t landmass_node_centroid_wx = 0;       // war landmass dock centroid X (Step A)
-int16_t hit_end_of_stack = 0;                // set ST_TRUE when inner unit-list walk encounters ST_UNDEFINED
+int16_t hit_end_of_stack = 0;                // misnamed: set ST_TRUE when inner unit-list walk encounters a CONSUMED slot (ST_UNDEFINED) — see note below on sparse unit lists
 int16_t unit_idx = 0;
 int16_t list_unit_count = 0;                 // count of units in current stack
 int16_t niu_have_boat_riders = 0;            // set but never read here (NIU = Not In Use)
@@ -110,7 +110,7 @@ for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
             {
                 unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
                 g_ai_set_target_caller = 7;
-                AI_Set_Move_Or_Goto_Target(unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
+                AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
             }
         }
     }
@@ -122,17 +122,36 @@ for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
 - Cache size + position.
 - Note if it's a large stack (≥8 units) — used as a precondition for the embark-staging path.
 - Walk the unit-list once:
-  - Break out on `ST_UNDEFINED` (end-of-stack sentinel) and remember that with `hit_end_of_stack`.
+  - Break out the moment a `ST_UNDEFINED` slot is found (means "this unit's slot was already consumed this turn by an earlier dispatch-slot order-issuer — see note on sparse unit lists below") and remember that with `hit_end_of_stack`.
   - Also count whether any unit in the stack lacks both air and water travel (`niu_have_boat_riders`) — currently gathered but unused.
-- Skip the target call entirely if the stack hit end-of-stack early (malformed stack).
-- Otherwise try `AI_Stacks_Assign_Target`. That function reads `_ai_targets_*` built by [`AI_Build_Target_List`](AIMOVE-AI_Build_Target_List.md), picks the highest-rated reachable target, and zeros that target's value so no other stack claims it.
-- If a target was found, issue every unit in the stack a move order via `AI_Set_Move_Or_Goto_Target`. The `g_ai_set_target_caller = 7` is a debug breadcrumb identifying this call site.
+- **Skip the target call entirely if any unit in this stack was already consumed.** The semantic is "don't split a stack — only assign a unified roamer target if every unit is still available." (`hit_end_of_stack` is misnamed; it really means "stack has at least one consumed slot.")
+- Otherwise try `AI_Stacks_Assign_Target`. That function reads `_ai_targets_*` built by [`AI_Build_Target_List`](AIMOVE-AI_Build_Target_List.md), picks the highest-rated reachable target, and consumes the picked target by zeroing its value so no other stack claims it.
+- If a target was found, issue every unit in the stack a move order via `AI_Stacks_Order_Attack_Target_Or_Goto_Destination`. The `g_ai_set_target_caller = 7` is a debug breadcrumb identifying this call site.
 
 `niu_unknown_var = 0` is a per-stack reset of an unrelated module-level variable consumed elsewhere — the "NIU" prefix marks identifiers whose semantics are still unknown.
+
+### Note on sparse `_ai_own_stack_unit_list[][]`
+
+`_ai_own_stack_unit_list[stack][slot]` is **NOT a contiguous list terminated by a single ST_UNDEFINED.** Per the comment block at [MoX/src/MOM_DAT.c:2697](../../MoX/src/MOM_DAT.c#L2697), the pattern is the same as the `_ai_targets_value[picked] = 0` "consume" idiom used by `AI_Stacks_Assign_Target` — every per-unit order-issuer in the AI dispatch consumes the unit's slot by writing `ST_UNDEFINED`, marking it processed so subsequent passes skip it. The drake178 header on `AI_Order_Settle` says it plainly: `"replaces its index in the stack with -1, marking it processed"`.
+
+The seven consumers (per the MOM_DAT.c comment):
+- `AI_Stacks_Init_Build_Target_Order` ...ial empty state)
+- `AI_Stacks_Order_Attack_Target_Or_Goto_Destination` at [AIMOVE.c:5076](../../MoM/src/AIMOVE.c#L5076)
+- `AI_Order_Settle` at [AIMOVE.c:5120](../../MoM/src/AIMOVE.c#L5120)
+- `AI_Order_RoadBuild`
+- `AI_Order_SeekTransport`
+- `AI_Order_Meld`
+- `AI_Order_Purify`
+
+By the time this function runs (dispatch slot 9), the stack lists have been sparsified by slots 4-7 (`AI_Do_Meld`, `AI_Do_Settle`, `AI_Do_Purify`, `AI_Do_RoadBuild`) consuming slots as they issue orders to settlers/road-builders/melders. The consumed slots are scattered with valid slots; later slots in the same stack can still hold real unit indices.
+
+That's why the gate works as a whole-stack check: **if ANY slot is `ST_UNDEFINED`, the stack has been partially consumed and should not be re-tasked as a roamer destination.** The `break` is a short-circuit ("I only need to know IF any unit was consumed, not how many").
 
 ### Note on `niu_have_boat_riders`
 
 The inner unit-list walk gathers `niu_have_boat_riders` (true if any unit lacks both air and water travel — i.e., "would need a transport to cross water") but doesn't use it. Preserved faithful-to-dasm; the value would presumably gate transport-related logic if the gather were wired up downstream.
+
+Because the loop `break`s on the first `ST_UNDEFINED`, `niu_have_boat_riders` only reflects units BEFORE the first pre-tasked slot. If the gather ever gets wired up, this asymmetry would matter.
 
 ## Embark-staging path (lines 1850-1918)
 
@@ -232,7 +251,7 @@ If Step B found an acceptable dock square (`min_delta_distance` lowered below 10
 - `g_ai_evaluation_map[wp][...]` — per-square evaluation map
 
 **Writes:**
-- Unit-level: `AI_Set_Move_Or_Goto_Target` orders for every unit in stacks that found targets
+- Unit-level: `AI_Stacks_Order_Attack_Target_Or_Goto_Destination` orders for every unit in stacks that found targets
 - Module-level: `g_ai_set_target_caller = 7`, `niu_unknown_var = 0`, `_ai_targets_value[picked] = 0` (via callee)
 - Landmass classification: `_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Abandon` (conditional)
 - Landmass stage: `wx_array[landmass_idx]` / `wy_array[landmass_idx]` (same conditional)
@@ -255,7 +274,7 @@ AI_Set_Unit_Orders                                  [AIMOVE.c:131, Phase 4 dispa
             │   │    ↓ zeros _ai_targets_value[picked]
             │   │    ↓ returns picked target via out-params
             │   └─ if found: per unit in stack:
-            │        └─ AI_Set_Move_Or_Goto_Target(unit_idx, target_wx, target_wy, ...)
+            │        └─ AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, target_wx, target_wy, ...)
             │
             └─ Embark-staging path (4 early-return gates):
                  ├─ Step A: walk _ai_landmass_dock_squares_* for war landmass → centroid

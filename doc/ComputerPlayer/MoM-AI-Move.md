@@ -2,7 +2,20 @@
 AIMOVE
 ovr158
 
+
+
 How does the AI decide what the Computer Player should do with its units?
+
+Per-turn driver (per AI player)
+Where AI_Set_Unit_Orders and AI_MoveUnits fit in AI_Next_Turn:
+The order is strict: Orders writes Status + dst, then Move reads Status + dst. No interleaving. (See AIDUDES.c:241/284/285/327 for the call sites.)
+AI_Next_Turn()
+    |-> AI_Set_Unit_Orders()
+    |-> AI_MoveUnits()
+
+
+
+NOTE: "Garrison" gets mixed up later/at some point, when it comes Site, not just City, and even Site vs. Fortress City
 
 City Defense Garrion
 Node Defense Garrison
@@ -47,7 +60,9 @@ AI_Next_Turn()
         |-> AI_Find_Opportunity_City_Target()
             Per Plane:
                 Per Landmass:
-                |-> AI_Build_Stacks_Find_Targets_Order_Moves()
+                |-> AI_Stacks_Init_Build_Target_Order
+                    |-> AI_Stacks_Target_Nearest_Hostile_Stack()
+                    |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
                 |-> AI_GarrBuilderPush__WIP()
                 |-> AI_Survey_Excess_Units()
                 |-> AI_Do_Meld()
@@ -55,10 +70,16 @@ AI_Next_Turn()
                 |-> AI_Do_Purify()
                 |-> AI_Do_RoadBuild()
                 |-> AI_Build_Target_List()
+                    |-> AI_Add_Target()
                 |-> AI_Stacks_Roamers_Target_Or_Deploy()
+                    |-> AI_Stacks_Assign_Target()
                 ...depends on landmass type...
                 |-> AI_PullForMainWar__WIP()
                 |-> G_AI_HomeRallyFill__WIP()
+                    |-> G_AI_RallyOrFerry__WIP()
+                        |-> AI_SeekTransportFrom__WIP()
+                            |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
+                        |-> AI_Order_SeekTransport()
                 |-> G_AI_RallyFill__WIP()
                     |-> AI_Reevaluate_Continent()
                 |-> AI_FillGarrisons__WIP()
@@ -85,31 +106,55 @@ Definitely Done-Done:
 [x]         |-> AI_Evaluation_Map(player_idx)               populates g_ai_evaluation_map
 [x]         |-> AI_Evaluate_Continents(player_idx)      uses g_ai_evaluation_map, just populated in AI_Evaluation_Map()
                 ...sibling function... [x] OON XREF: AI_Set_Unit_Orders() |-> G_AI_RallyFill__WIP() |-> AI_Reevaluate_Continent()
-[]          |-> AI_Set_Unit_Orders(player_idx)
-[]              |-> AI_Disband_To_Balance_Budget()
-[]              |-> AI_Shift_Off_Home_Plane()
-[]              |-> AI_Move_Out_Boats()
-[]              |-> AI_Find_Opportunity_City_Target()
-[]              |-> AI_Build_Stacks_Find_Targets_Order_Moves()
-[]              |-> AI_GarrBuilderPush__WIP()
-[]              |-> AI_Survey_Excess_Units()
-[]              |-> AI_Do_Meld()
-[]              |-> AI_Do_Settle()
-[]              |-> AI_Do_Purify()
-[]              |-> AI_Do_RoadBuild()
+[ ]         |-> AI_Set_Unit_Orders(player_idx)
+[ ]             |-> AI_Disband_To_Balance_Budget()
+[ ]             |-> AI_Shift_Off_Home_Plane()
+[ ]             |-> AI_Move_Out_Boats()
+[ ]             |-> AI_Find_Opportunity_City_Target()
+[x]             |-> AI_Stacks_Init_Build_Target_Order()
+[x]                 |-> AI_Stacks_Target_Nearest_Hostile_Stack()
+[x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
+[ ]             |-> AI_GarrBuilderPush__WIP()
+[ ]             |-> AI_Survey_Excess_Units()
+[ ]             |-> AI_Do_Meld()
+[ ]             |-> AI_Do_Settle()
+[ ]             |-> AI_Do_Purify()
+[ ]             |-> AI_Do_RoadBuild()
 [x]             |-> AI_Build_Target_List()
 [x]                 |-> AI_Add_Target()
 [x]             |-> AI_Stacks_Roamers_Target_Or_Deploy()
 [x]                 |-> AI_Stacks_Assign_Target()
-[]              |-> AI_PullForMainWar__WIP()
-[]              |-> G_AI_HomeRallyFill__WIP()
-[]                  |-> G_AI_RallyOrFerry__WIP()
-[]              |-> G_AI_RallyFill__WIP()
+[ ]             |-> AI_PullForMainWar__WIP()
+[ ]             |-> G_AI_HomeRallyFill__WIP()
+[ ]                 |-> G_AI_RallyOrFerry__WIP()
+[ ]                     |-> AI_SeekTransportFrom__WIP()
+[x]                         |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
+[ ]                     |-> AI_Order_SeekTransport()
+[ ]             |-> G_AI_RallyFill__WIP()
 [x]                 |-> AI_Reevaluate_Continent()
-[]              |-> AI_FillGarrisons__WIP()
-[]              |-> AI_ProcessOcean__WIP()
-[]              |-> G_AI_ProcessTransports__WIP()
+[ ]             |-> AI_FillGarrisons__WIP()
+[ ]             |-> AI_ProcessOcean__WIP()
+[x]                 |-> AI_Stacks_Init_Build_Target_Order()
+[ ]             |-> G_AI_ProcessTransports__WIP()
+[x]                 |-> AI_Stacks_Init_Build_Target_Order()
+[ ]                 |-> AI_Do_Meld()
+[x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
+[ ]                 |-> AI_Enemy_Unit_In_Range()
+[ ]                 |-> AI_Order_SeekTransport()
+[x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
+
+AI_ProcessOcean__WIP()  IIF _ai_landmass_war_targets[] != 0
+    |-> AI_Stacks_Init_Build_Target_Order()
+    (...|-> Kill_Unit() ...WTF?)
+
+G_AI_ProcessTransports__WIP()
+    |-> AI_Stacks_Init_Build_Target_Order()
+    |-> AI_Do_Meld()
+    |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
+    |-> AI_Enemy_Unit_In_Range()
+    |-> AI_Order_SeekTransport()
+    |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 
 ## Call graph
@@ -122,7 +167,7 @@ AI_Set_Unit_Orders(player_idx)
 ├── AI_Find_Opportunity_City_Target          [global pre-pass; OGBUG: wp=0 stale]
 └── for wp in [Arcanus, Myrror]:
     └── for landmass_idx in [1..NUM_LANDMASSES):
-        ├── AI_Build_Stacks_Find_Targets_Order_Moves
+        ├── AI_Stacks_Init_Build_Target_Order
         ├── AI_GarrBuilderPush__WIP
         ├── AI_Survey_Excess_Units
         ├── AI_Do_Meld
@@ -241,7 +286,7 @@ used in G_AI_RallyFill__WIP()
     G_Pushout_Unit_Indices[MAX_STACK]
 
 ## cp_staged_unit_count
-    set in AI_Build_Stacks_Find_Targets_Order_Moves
+    set in AI_Stacks_Init_Build_Target_Order
     used in G_AI_RallyFill__WIP
     ...something like...
     ...if staging area already staffed
@@ -261,15 +306,15 @@ jge     short loc_EC03C
 Down r G_AI_RallyFill__WIP+B                       cmp [cp_staged_unit_count], e_MAX_STACK
 Down r G_AI_RallyFill__WIP:loc_EBFDD               mov ax, [cp_staged_unit_count]         
 Down r G_AI_RallyFill__WIP+7C                      mov ax, [cp_staged_unit_count]         
-Down w AI_Build_Stacks_Find_Targets_Order_Moves+14 mov [cp_staged_unit_count], 0          
-Down w AI_Build_Stacks_Find_Targets_Order_Moves+D8 inc [cp_staged_unit_count]             
+Down w AI_Stacks_Init_Build_Target_Order [cp_staged_unit_count], 0          
+Down w AI_Stacks_Init_Build_Target_Order [cp_staged_unit_count]             
 
 Down r G_AI_RallyFill__WIP+33                       add ax, [cp_enroute_unit_countt]
 Down r G_AI_RallyFill__WIP+7F                       add ax, [cp_enroute_unit_countt]
 Down r G_AI_RallyFill__WIP+92                       sub ax, [cp_enroute_unit_countt]
-Down w AI_Build_Stacks_Find_Targets_Order_Moves+E   mov [cp_enroute_unit_countt], 0 
-Down w AI_Build_Stacks_Find_Targets_Order_Moves+203 inc [cp_enroute_unit_countt]    
-Down w AI_Build_Stacks_Find_Targets_Order_Moves+339 inc [cp_enroute_unit_countt]    
+Down w AI_Stacks_Init_Build_Target_Order ...v [cp_enroute_unit_countt], 0 
+Down w AI_Stacks_Init_Build_Target_Order ...c [cp_enroute_unit_countt]    
+Down w AI_Stacks_Init_Build_Target_Order ...c [cp_enroute_unit_countt]    
 
 Down w AI_Set_Unit_Orders+5E mov [g_ai_minattackstack], ax       ; turn / 30 + 2, max 9  
 Down r AI_Set_Unit_Orders+61 cmp [g_ai_minattackstack], e_MAX_STACK; turn / 30 + 2, max 9
@@ -278,30 +323,30 @@ Down r G_AI_RallyFill__WIP+37   cmp ax, [g_ai_minattackstack]       ; turn / 30 
 Down r G_AI_RallyFill__WIP+87   cmp ax, [g_ai_minattackstack]       ; turn / 30 + 2, max 9  
 
 
-## AI_Set_Move_Or_Goto_Target()
+## AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
-Up   J NX_j_AI_Set_Move_Or_Goto_Target              jmp     AI_Set_Move_Or_Goto_Target         
-     p G_AI_RallyFill__WIP+DD                       call    near ptr AI_Set_Move_Or_Goto_Target
-Down p AI_FillGarrisons__WIP+76A                    call    near ptr AI_Set_Move_Or_Goto_Target
-Down p G_AI_ProcessTransports__WIP+646              call    near ptr AI_Set_Move_Or_Goto_Target
-Down p G_AI_ProcessTransports__WIP+75B              call    near ptr AI_Set_Move_Or_Goto_Target
-Down p G_AI_ProcessTransports__WIP+915              call    near ptr AI_Set_Move_Or_Goto_Target
-Down p G_AI_ProcessTransports__WIP+9FE              call    near ptr AI_Set_Move_Or_Goto_Target
-Down p AI_Stacks_Roamers_Target_Or_Deploy:loc_ED7E1             call    near ptr AI_Set_Move_Or_Goto_Target
-Down p AI_PullForMainWar__WIP+15F                   call    near ptr AI_Set_Move_Or_Goto_Target
-Down p G_AI_RallyOrFerry__WIP+E1                    call    near ptr AI_Set_Move_Or_Goto_Target
-Down p G_AI_RallyOrFerry__WIP+341                   call    near ptr AI_Set_Move_Or_Goto_Target
-Down p AI_Build_Stacks_Find_Targets_Order_Moves+3FD call    near ptr AI_Set_Move_Or_Goto_Target
-Down p AI_GarrBuilderPush__WIP+C9                   call    near ptr AI_Set_Move_Or_Goto_Target
-Down p AI_GarrBuilderPush__WIP+1C0                  call    near ptr AI_Set_Move_Or_Goto_Target
-Down p AI_Do_Meld+29E                               call    near ptr AI_Set_Move_Or_Goto_Target
-Down p AI_Do_Settle+1DF                             call    near ptr AI_Set_Move_Or_Goto_Target
-Down p AI_Do_Settle+39B                             call    near ptr AI_Set_Move_Or_Goto_Target
-Down p AI_Do_Purify+1E4                             call    near ptr AI_Set_Move_Or_Goto_Target
-Down p AI_Do_RoadBuild+1D7                          call    near ptr AI_Set_Move_Or_Goto_Target
-Down p AI_SendToColonize__WIP+E4                    call    near ptr AI_Set_Move_Or_Goto_Target
-Down p AI_SendToColonize__WIP+1A3                   call    near ptr AI_Set_Move_Or_Goto_Target
-Down p AI_SendToColonize__WIP+298                   call    near ptr AI_Set_Move_Or_Goto_Target
+Up   J NX_j_AI_Set_Move_Or_Goto_Target              jmp     AI_Stacks_Order_Attack_Target_Or_Goto_Destination         
+     p G_AI_RallyFill__WIP+DD                       call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_FillGarrisons__WIP+76A                    call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p G_AI_ProcessTransports__WIP+646              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p G_AI_ProcessTransports__WIP+75B              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p G_AI_ProcessTransports__WIP+915              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p G_AI_ProcessTransports__WIP+9FE              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_Stacks_Roamers_Target_Or_Deploy:loc_ED7E1             call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_PullForMainWar__WIP+15F                   call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p G_AI_RallyOrFerry__WIP+E1                    call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p G_AI_RallyOrFerry__WIP+341                   call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_Stacks_Init_Build_Target_Order            call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_GarrBuilderPush__WIP+C9                   call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_GarrBuilderPush__WIP+1C0                  call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_Do_Meld+29E                               call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_Do_Settle+1DF                             call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_Do_Settle+39B                             call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_Do_Purify+1E4                             call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_Do_RoadBuild+1D7                          call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_SendToColonize__WIP+E4                    call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_SendToColonize__WIP+1A3                   call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_SendToColonize__WIP+298                   call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 
 
 

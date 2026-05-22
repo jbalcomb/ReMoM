@@ -82,7 +82,7 @@ Tile_Enemy_Value = g_ai_evaluation_map[wp][((Next_Tile_Y * WORLD_WIDTH) + Next_T
 &&
 ((Tile_Enemy_Value & 0x8000) != 0)
 */
-#define AI_TARGET_FORTRESS      0x3FFF
+#define AI_TARGET_STRENGTH_MASK 0x3FFF
 #define AI_TARGET_NONHOSTILE    0x4000
 
 #define AI_TARGET_SITE          0x8000
@@ -95,7 +95,7 @@ _ai_own_stack_type
 3: Garrison - City, Node, Tower (sitting on a Site, assumed to be garrisoned in a City or protecting a Node or Tower)
 4: Garrison - Fortress City   (sitting on a Site, which is the player's Fortress City)
 
-0 is set if AI_Find_Nearest_Target_Unit() returns ST_FALSE
+0 is set if AI_Stacks_Target_Nearest_Hostile_Stack() returns ST_FALSE
 */
 enum e_AI_OWN_STACK_TYPE
 {
@@ -488,13 +488,32 @@ enum e_LAIR_TYPE
 };
 
 
+/*
+AI_Stacks_Init_Build_Target_Order
+    considers us_GOTO to be *busy* but us_Move to be *free*
 
+AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
+    ...us_Move means "I'm going to fight something at the destination"
+    ...us_GOTO means "I'm just traveling."
+
+// WZD o100p01
+/ * MoO2  Module: AIMOVE  Move_AI_() * /
+AI_MoveUnits()
+    case us_BuildRoad:
+        AI_UNIT_BuildRoad__WIP(unit_idx);
+        AI_UNIT_Move(unit_idx);
+    case us_GOTO:
+        AI_UNIT_Move(unit_idx);
+    case us_Move:
+        AI_UNIT_Move(unit_idx);
+
+*/
 enum e_UNIT_STATUS
 {
     us_Ready          =   0,  /* 'MoM Demo': "NO ORDERS" */
     us_Patrol         =   1,
     us_BuildRoad      =   2,
-    us_GOTO           =   3,
+    us_GOTO           =   3,    /* auto move to dst_wx,dst_wy */
     us_ReachedDest    =   4,  /* 'MoM Demo': "DONE"      */
     us_Wait           =   5,
     us_Casting        =   6,  /* 'MoM Demo': "CASTING"   */
@@ -507,7 +526,7 @@ enum e_UNIT_STATUS
     us_Unknown_13     =  13,
     us_Unknown_14     =  14,
     us_Unknown_15     =  15,
-    us_Move           =  16,    /* AI_Set_Move_Or_Goto_Target() sets this for site/fortress target */
+    us_Move           =  16,    /* auto move to dst_wx,dst_wy */  /* AI_Stacks_Order_Attack_Target_Or_Goto_Destination() sets this for (Hostile) Site/Stack Target */
     us_Unknown_100    = 100,   //  64h  100d  01100100b
     us_PurifyDone     = 111    //  6Fh  111d  01101111b
 };

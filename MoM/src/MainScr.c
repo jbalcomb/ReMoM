@@ -6405,8 +6405,8 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
     int16_t Cant_Enter = 0;
     int16_t Path_Length_Copy = 0;
     int16_t Stop_Short = 0;
-    int16_t Out_of_Moves_Value = 0;
-    int16_t HMoves_Used = 0;
+    int16_t used_all_moves2_points = 0;
+    int16_t total_move_path_cost = 0;
     int16_t lair_idx = 0;
     int16_t UU_Encounter = 0;   // boolean flag for movement blocked by Lair
     int16_t UU_City = 0;        // boolean flag for movement blocked by City - spellwarded or enemy
@@ -6417,33 +6417,33 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
     int16_t unit_idx = 0;
     int16_t Move_Interrupted = 0;
     int16_t Path_Length = 0;
-    int16_t Combat_Path_Value = 0;
+    int16_t l_attack_flag = 0;
     int16_t Obstacle_Value = 0;
     int16_t itr_Path_Length = 0;  // _DI_
     int16_t itr_troops = 0;  // _SI_
 
     Obstacle_Value = -1;
-    Combat_Path_Value = *attack_flag;
+    l_attack_flag = *attack_flag;
     Path_Length = *path_length;
-    Out_of_Moves_Value = *Cmplt;
+    used_all_moves2_points = *Cmplt;
     Path_Length_Copy = *path_length;
 
     Obstacle_Value = -1;
-    Combat_Path_Value = *attack_flag;
-    Out_of_Moves_Value = *Cmplt;
+    l_attack_flag = *attack_flag;
+    used_all_moves2_points = *Cmplt;
     Path_Length = Path_Length_Copy;
 
-    HMoves_Used = 0;
+    total_move_path_cost = 0;
     Move_Interrupted = ST_FALSE;
     for(itr_Path_Length = 0; ((itr_Path_Length < Path_Length) && (Move_Interrupted == ST_FALSE)); itr_Path_Length++)
     {
-        HMoves_Used += mvpth_c[itr_Path_Length];
+        total_move_path_cost += mvpth_c[itr_Path_Length];
         
-        if(HMoves_Used >= moves2)
+        if(total_move_path_cost >= moves2)
         {
             Path_Length = (itr_Path_Length + 1);
-            Out_of_Moves_Value = ST_TRUE;
-            Combat_Path_Value = ST_FALSE;
+            used_all_moves2_points = ST_TRUE;
+            l_attack_flag = ST_FALSE;
             Move_Interrupted = ST_TRUE;
         }
 
@@ -6454,14 +6454,14 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
         {
             Move_Interrupted = ST_TRUE;
             UU_Encounter = 1;
-            Out_of_Moves_Value = 0;
+            used_all_moves2_points = ST_FALSE;
             Path_Length = itr_Path_Length;
             Path_Length = itr_Path_Length + 1;
-            Combat_Path_Value = 1;
+            l_attack_flag = ST_TRUE;
             _combat_environ = cnv_Lair;
             _combat_environ_idx = lair_idx;
             Obstacle_Value = 5;
-            Out_of_Moves_Value = 0;
+            used_all_moves2_points = ST_FALSE;
 
             continue;
         }
@@ -6474,10 +6474,10 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
             Cant_Enter = RP_CTY_CheckSpellWard__STUB(city_idx, &troop_count, &troops[0]);
             if(Cant_Enter == ST_TRUE)
             {
-                Move_Interrupted = 1;
+                Move_Interrupted = ST_TRUE;
                 Path_Length = itr_Path_Length;
                 UU_City = 1;
-                Out_of_Moves_Value = 0;
+                used_all_moves2_points = ST_FALSE;
             }
             else
             {
@@ -6487,24 +6487,24 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
 
                     if((troop_count + Unit_Count) > 9)
                     {
-                        Move_Interrupted = 1;
+                        Move_Interrupted = ST_TRUE;
                         Path_Length = itr_Path_Length;
-                        Out_of_Moves_Value = 0;
+                        used_all_moves2_points = ST_FALSE;
                     }
 
                 }
                 else
                 {
-                    Move_Interrupted = 1;
+                    Move_Interrupted = ST_TRUE;
                     Path_Length = itr_Path_Length;
                     UU_City = 1;
-                    Out_of_Moves_Value = 0;
+                    used_all_moves2_points = ST_FALSE;
                     Path_Length = (itr_Path_Length + 1);
-                    Combat_Path_Value = 1;
+                    l_attack_flag = ST_TRUE;
                     Obstacle_Value = _CITIES[city_idx].owner_idx;
                     _combat_environ_idx = city_idx;
                     _combat_environ = cnv_Enemy_City;
-                    Out_of_Moves_Value = 0;
+                    used_all_moves2_points = ST_FALSE;
                 }
 
             }
@@ -6517,13 +6517,13 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
 
         if(Unit_Count > 0)
         {
-            Move_Interrupted = 1;
+            Move_Interrupted = ST_TRUE;
             UU_EnemyUnit = 1;
-            Out_of_Moves_Value = 0;
+            used_all_moves2_points = ST_FALSE;
             Path_Length = itr_Path_Length;
             Path_Length = (itr_Path_Length + 1);
-            Out_of_Moves_Value = 0;
-            Combat_Path_Value = 1;
+            used_all_moves2_points = ST_FALSE;
+            l_attack_flag = ST_TRUE;
             Obstacle_Value = Units[0];
             _combat_environ = cnv_Enemy_Stack;
 
@@ -6533,11 +6533,11 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
 
         Player_Army_At_Square(mvpth_x[itr_Path_Length], mvpth_y[itr_Path_Length], wp, player_idx, &Unit_Count, &Units[0]);
 
-        if((troop_count + Unit_Count) > 9)
+        if((troop_count + Unit_Count) > MAX_STACK)
         {
-            Move_Interrupted = 1;
+            Move_Interrupted = ST_TRUE;
             Path_Length = itr_Path_Length;
-            Out_of_Moves_Value = 0;
+            used_all_moves2_points = ST_FALSE;
 
             continue;
         }
@@ -6551,9 +6551,9 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
                 if(_unit_type_table[_UNITS[Units[itr_troops]].type].Transport > 0)
                 {
                     Transport_Capacity += _unit_type_table[_UNITS[Units[itr_troops]].type].Transport;
-                    Move_Interrupted = 1;
+                    Move_Interrupted = ST_TRUE;
                     Path_Length = (itr_Path_Length + 1);
-                    Out_of_Moves_Value = 0;
+                    used_all_moves2_points = ST_FALSE;
                 }
             }
 
@@ -6562,9 +6562,9 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
                 if(_unit_type_table[_UNITS[troops[itr_troops]].type].Transport > 0)
                 {
                     Transport_Capacity += _unit_type_table[_UNITS[troops[itr_troops]].type].Transport;
-                    Move_Interrupted = 1;
+                    Move_Interrupted = ST_TRUE;
                     Path_Length = (itr_Path_Length + 1);
-                    Out_of_Moves_Value = 0;
+                    used_all_moves2_points = ST_FALSE;
                 }
             }
 
@@ -6629,7 +6629,7 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
         Cancel 'Go-To'
     */
     if(
-        (Out_of_Moves_Value == ST_FALSE)
+        (used_all_moves2_points == ST_FALSE)
         &&
         (Move_Interrupted == ST_TRUE)
     )
@@ -6644,9 +6644,9 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
                 (player_idx == _human_player_idx)
             )
             {
-                if(Combat_Path_Value == ST_TRUE)
+                if(l_attack_flag == ST_TRUE)
                 {
-                    Combat_Path_Value = ST_FALSE;
+                    l_attack_flag = ST_FALSE;
                     Stop_Short = ST_TRUE;
                 }
                 _UNITS[unit_idx].Status = us_Ready;
@@ -6662,9 +6662,9 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
 
 
     *atackee_idx = Obstacle_Value;
-    *attack_flag = Combat_Path_Value;
+    *attack_flag = l_attack_flag;
     *path_length = Path_Length;
-    *Cmplt = Out_of_Moves_Value;
+    *Cmplt = used_all_moves2_points;
 }
 
 

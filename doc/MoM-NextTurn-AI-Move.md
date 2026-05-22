@@ -7,9 +7,9 @@ AI_ShiftOffHomePlane()  ==>  AI_Shift_Off_Home_Plane()
 AI_STK_MoveTransports()  ==>  AI_Stack_Set_Boats_Goto()
 AI_Transport_Sailoff() ==>  AI_Move_Out_Boats()
 AI_OppMoveOverride()  ==>  AI_Find_Opportunity_City_Target()
-AI_FindClosestEnemy()  ==>  AI_Find_Nearest_Target_Unit()
-AI_UNIT_SetMoveOrder()  ==>  AI_Set_Move_Or_Goto_Target()
-AI_CONTX_Regroup()  ==>  AI_Build_Stacks_Find_Targets_Order_Moves()
+AI_FindClosestEnemy()  ==>  AI_Stacks_Target_Nearest_Hostile_Stack()
+AI_UNIT_SetMoveOrder()  ==>  AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
+AI_CONTX_Regroup()  ==>  AI_Stacks_Init_Build_Target_Order
 TILE_IsLand()  ==>  Map_Square_Is_Land()
 AI_Survey_Excess_Units()  ==>  AI_Survey_Excess_Units()
 AI_Survey_Excess_Units_In_Stack()  ==>  AI_Survey_Excess_Units_In_Stack()
@@ -130,24 +130,24 @@ AI_Disband_To_Balance_Budget()
 AI_Shift_Off_Home_Plane()
 AI_Move_Out_Boats()
 AI_Find_Opportunity_City_Target()
-AI_Build_Stacks_Find_Targets_Order_Moves()
-    |-> AI_Find_Nearest_Target_Unit()
+AI_Stacks_Init_Build_Target_Order
+    |-> AI_Stacks_Target_Nearest_Hostile_Stack()
 
 TILE_NextFreeLand()
     |-> Map_Square_Is_Land()
 
 AI_GarrBuilderPush__WIP()
     |-> TILE_NextFreeLand()
-    |-> AI_Set_Move_Or_Goto_Target()
+    |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
     |-> TILE_NextFreeLand()
-    |-> AI_Set_Move_Or_Goto_Target()
+    |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 AI_Survey_Excess_Units()
     |-> AI_Survey_Excess_Units_In_Stack()
 
 AI_Do_Meld()
     |-> AI_Order_Meld()
-    |-> AI_Set_Move_Or_Goto_Target()
+    |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 AI_Do_Settle()
     |-> AI_CanSettleOffPlane()
@@ -224,7 +224,7 @@ if AI Stack is us_GOTO and is next to an enemy city with three or less defenders
 
 
 
-## AI_Build_Stacks_Find_Targets_Order_Moves()
+## AI_Stacks_Init_Build_Target_Order
 
 builds _ai_own_stack_unit_list[]
 finds nearest target
@@ -234,19 +234,19 @@ sets move|goto status
 ...
 ...
 ...
-AI_Find_Nearest_Target_Unit()
+AI_Stacks_Target_Nearest_Hostile_Stack()
 ...
-AI_Set_Move_Or_Goto_Target()
+AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 
 
 
 
-## AI_Find_Nearest_Target_Unit()
+## AI_Stacks_Target_Nearest_Hostile_Stack()
 
 
 
-## AI_Set_Move_Or_Goto_Target()
+## AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 
 ## TILE_NextFreeLand()
@@ -258,9 +258,9 @@ this should be in the terrain notes  MOVE IT!!!!!
 
 ## AI_GarrBuilderPush__WIP()
     |-> TILE_NextFreeLand()
-    |-> AI_Set_Move_Or_Goto_Target()
+    |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
     |-> TILE_NextFreeLand()
-    |-> AI_Set_Move_Or_Goto_Target()
+    |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 
 
@@ -271,7 +271,7 @@ this should be in the terrain notes  MOVE IT!!!!!
 
 ## AI_Do_Meld()
     |-> AI_Order_Meld()
-    |-> AI_Set_Move_Or_Goto_Target()
+    |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 _ai_own_stack_count
 _ai_own_stack_unit_count
@@ -330,7 +330,7 @@ Need_Path_To_Target = _UNITS[unit_idx].Move_Failed;
 
 for stack types 1 and 0
 if Unit_Has_AirTravel() or Unit_Has_WaterTravel and not UA_MELD
-AI_Set_Move_Or_Goto_Target()
+AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 
 

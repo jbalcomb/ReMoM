@@ -60,10 +60,10 @@ void AI_Add_Target(int16_t wx, int16_t wy, int16_t strength, int16_t value);
 int16_t AI_Stacks_Assign_Target(int16_t stack_wx, int16_t stack_wy, int16_t * target_wx, int16_t * target_wy, int16_t unit_list_idx, int16_t niu_list_unit_idx);
 
 // WZD o158p13
-void AI_Build_Stacks_Find_Targets_Order_Moves(int16_t player_idx, int16_t landmass_idx, int16_t wp);
+void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx, int16_t wp);
 
 // WZD o158p14
-int16_t AI_Find_Nearest_Target_Unit(int16_t stack_idx, int16_t landmass_idx, int16_t * target_wx, int16_t * target_wy, int16_t wp);
+int16_t AI_Stacks_Target_Nearest_Hostile_Stack(int16_t stack_idx, int16_t landmass_idx, int16_t * target_wx, int16_t * target_wy, int16_t wp);
 
 // WZD o158p15
 void AI_Find_Opportunity_City_Target(int16_t wp, int16_t player_idx);
@@ -99,7 +99,7 @@ void AI_Do_Purify(int16_t landmass_idx, int16_t wp);
 void AI_Do_RoadBuild(int16_t landmass_idx);
 
 // WZD o158p26
-void AI_Set_Move_Or_Goto_Target(int16_t unit_idx, int16_t target_wx, int16_t target_wy, int16_t itr_stacks1, int16_t itr_stacks2);
+void AI_Stacks_Order_Attack_Target_Or_Goto_Destination(int16_t unit_idx, int16_t target_wx, int16_t target_wy, int16_t itr_stacks1, int16_t itr_stacks2);
 
 // WZD o158p27
 void AI_Order_Settle(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx);
