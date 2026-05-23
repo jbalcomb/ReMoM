@@ -962,13 +962,13 @@ used to help decide on casting spl_Floating_Island, in AI_OVL_PickSummon()
 */
 int16_t ai_transport_count;
 // WZD dseg:9096
-int16_t ai_seektransport_cnt;
+int16_t _ai_ferry_count;
 // WZD dseg:9098
-int16_t AI_SeekTransport_Ps[15];
+int16_t _ai_ferry_wp_array[15];
 // WZD dseg:90B6
-int16_t AI_SeekTransport_Ys[15];
+int16_t _ai_ferry_wy_array[15];
 // WZD dseg:90D4
-int16_t AI_SeekTransport_Xs[15];
+int16_t _ai_ferry_wx_array[15];
 
 
 // WZD dseg:90F2 00 00                                           AI_Arc_ContBalances@ dw 0               ; DATA XREF: AI_Landmass_Values_And_Strengths+4C5r ...
@@ -2762,7 +2762,7 @@ _ai_own_stack_unit_list[][] = ST_UNDEFINED
     AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
     AI_Order_Settle()
     AI_Order_RoadBuild()
-    AI_Order_SeekTransport()
+    AI_Stacks_Order_Ferry()
     AI_Order_Meld()
     AI_Order_Purify()
 */

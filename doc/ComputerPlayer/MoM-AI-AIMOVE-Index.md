@@ -18,19 +18,19 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **drake178:** `AI_SetUnitOrders()` (o158p01)
 - **End:** ~line 239
 - **Purpose:** TBD
-- **Reads `lmt_*`:** `lmt_Contested`, `lmt_Own`, `lmt_NoOwnCity`, `lmt_NoOwnCityAndAllyHasCity`, `lmt_Abandon` (lines 186-217)
+- **Reads `lmt_*`:** `lmt_Contested`, `lmt_Own`, `lmt_NoOwnCity`, `lmt_NoOwnCityAndAllyHasCity`, `lmt_Leaveable` (lines 186-217)
 
 ### `G_AI_RallyFill__WIP` — [line 240](../../MoM/src/AIMOVE.c#L240)
 - **drake178:** `G_AI_RallyFill()` (o158p02)
 - **End:** ~line 297
 - **Purpose:** TBD
-- **Reads `lmt_*`:** `lmt_Abandon`, `lmt_NoOwnCity` (lines 259-263)
+- **Reads `lmt_*`:** `lmt_Leaveable`, `lmt_NoOwnCity` (lines 259-263)
 
 ### `AI_FillGarrisons__WIP` — [line 298](../../MoM/src/AIMOVE.c#L298)
 - **drake178:** `AI_FillGarrisons()` (o158p03)
 - **End:** ~line 741
 - **Purpose:** TBD
-- **Reads `lmt_*`:** `lmt_Abandon`, `lmt_Own` for `G_Low_Threat` gate (lines 331-344)
+- **Reads `lmt_*`:** `lmt_Leaveable`, `lmt_Own` for `G_Low_Threat` gate (lines 331-344)
 
 ### `AI_ProcessOcean__WIP` — [line 742](../../MoM/src/AIMOVE.c#L742)
 - **drake178:** `AI_ProcessOcean()` (o158p04)
@@ -47,27 +47,27 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 ### `AI_Stacks_Roamers_Target_Or_Deploy` — [line 1635](../../MoM/src/AIMOVE.c#L1635)
 - **drake178:** `AI_ProcessRoamers()` (o158p06)
 - **End:** line 1814
-- **Purpose:** Searches for and assigns targets + corresponding move orders to all roamer stacks on a continent. If no targets exist but there is at least one roaming stack of 7+ units, **switches the continent to `lmt_Abandon`** and picks a stage point at a reachable dock square — preparing the troops to embark and move to the action continent instead.
-- **Writes `lmt_*`:** **`lmt_Abandon`** at [line 1806](../../MoM/src/AIMOVE.c#L1806) (the "abandon this continent" decision)
+- **Purpose:** Searches for and assigns targets + corresponding move orders to all roamer stacks on a continent. If no targets exist but there is at least one roaming stack of 7+ units, **switches the continent to `lmt_Leaveable`** and picks a stage point at a reachable dock square — preparing the troops to embark and move to the action continent instead.
+- **Writes `lmt_*`:** **`lmt_Leaveable`** at [line 1806](../../MoM/src/AIMOVE.c#L1806) (the "abandon this continent" decision)
 - **Known issue per header:** "when setting the leave continent type, the stage point chosen ignores own units, and can't be a tile with a city, tower, or node either"
 
-### `G_AI_HomeRallyFill__WIP` — [line 1828](../../MoM/src/AIMOVE.c#L1828)
+### `AI_Stacks_Relocate_Roamers` — [line 1875](../../MoM/src/AIMOVE.c#L1875)
 - **drake178:** `G_AI_HomeRallyFill()` (o158p07)
-- **End:** ~line 1897
-- **Purpose:** TBD
-- **Reads `lmt_*`:** none direct
+- **End:** ~line 1921
+- **Purpose:** For one landmass, set up ferry-departure for each `AISTK_Roamer` stack via [`AI_Stacks_Setup_Ferry`](AIMOVE-AI_Stacks_Setup_Ferry.md). Gated to landmass types where leaving makes sense (`lmt_Leaveable`, `lmt_NoTargets`, `lmt_Own`). See [AIMOVE-AI_Stacks_Relocate_Roamers.md](AIMOVE-AI_Stacks_Relocate_Roamers.md).
+- **Reads `lmt_*`:** none direct (gated by the caller)
 
-### `AI_Stacks_Order_To_War_Landmass` — [line 1899](../../MoM/src/AIMOVE.c#L1899)
+### `AI_Stacks_Order_To_War_Landmass` — [line 1925](../../MoM/src/AIMOVE.c#L1925)
 - **drake178:** `AI_PullForMainWar()` (o158p08)
-- **End:** ~line 1962
+- **End:** ~line 1988
 - **Purpose:** Order mobile (air- or water-traveling) non-melder units to head to the main war landmass's stage point. Skips stacks already on the war landmass; skips Garrison/FortressGarrison stacks. See [AIMOVE-AI_Stacks_Order_To_War_Landmass.md](AIMOVE-AI_Stacks_Order_To_War_Landmass.md).
 - **Reads `lmt_*`:** none direct (gated by the caller on landmass type — see walkthrough)
 
-### `G_AI_RallyOrFerry__WIP` — [line 1993](../../MoM/src/AIMOVE.c#L1993)
+### `AI_Stacks_Setup_Ferry` — [line 2028](../../MoM/src/AIMOVE.c#L2028)
 - **drake178:** `G_AI_RallyOrFerry()` (o158p09)
-- **End:** ~line 2326
-- **Purpose:** TBD
-- **Reads/writes `lmt_*`:** none direct (earlier draft of this doc misattributed the `lmt_Abandon` write at line 1806 to this function; that write actually belongs to `AI_Stacks_Roamers_Target_Or_Deploy` — see entry above)
+- **End:** ~line 2261
+- **Purpose:** Per-stack workhorse called from [`AI_Stacks_Relocate_Roamers`](AIMOVE-AI_Stacks_Relocate_Roamers.md). For one stack: file a ferry-pickup request, walk units to the stage point (capped by parent's budget), and opportunistically embark on a nearby ocean transport if one exists. See [AIMOVE-AI_Stacks_Setup_Ferry.md](AIMOVE-AI_Stacks_Setup_Ferry.md) — drake178 noted "full of BUGs and inconsistencies."
+- **Reads/writes `lmt_*`:** none direct (earlier draft of this doc misattributed the `lmt_Leaveable` write at line 1806 to this function; that write actually belongs to `AI_Stacks_Roamers_Target_Or_Deploy` — see entry above)
 
 ### `AI_Build_Target_List` — [line 2327](../../MoM/src/AIMOVE.c#L2327)
 - **drake178:** `AI_CreateTargetList()` (o158p10)
@@ -137,7 +137,7 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **drake178:** `AI_ProcessMelders()` (o158p22)
 - **End:** ~line 4611
 - **Purpose:** TBD
-- **Reads `lmt_*`:** `lmt_Own`, `≥ lmt_Abandon` (lines 4538-4540)
+- **Reads `lmt_*`:** `lmt_Own`, `≥ lmt_Leaveable` (lines 4538-4540)
 
 ### `AI_Do_Settle` — [line 4612](../../MoM/src/AIMOVE.c#L4612)
 - **drake178:** `AI_ProcessSettlers()` (o158p23)
@@ -169,10 +169,10 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **End:** ~line 5334
 - **Purpose:** TBD
 
-### `AI_Order_SeekTransport` — [line 5335](../../MoM/src/AIMOVE.c#L5335)
+### `AI_Stacks_Order_Ferry` — [line 4773](../../MoM/src/AIMOVE.c#L4773)
 - **drake178:** `AI_UNIT_SeekTransport()` (o158p29)
-- **End:** ~line 5366
-- **Purpose:** TBD
+- **End:** ~line 4779
+- **Purpose:** Mark a single unit as waiting for ferry transport — sets `_UNITS[unit_idx].Status = us_Ferry`, stores a "timer" value of 10 in `dst_wx`, consumes the unit's slot in `_ai_own_stack_unit_list`. Bounds-checked against `MAX_UNIT_COUNT` (= 1000). See [AIMOVE-AI_Stacks_Order_Ferry.md](AIMOVE-AI_Stacks_Order_Ferry.md).
 
 ### `AI_Order_Meld` — [line 5367](../../MoM/src/AIMOVE.c#L5367)
 - **drake178:** `AI_UNIT_SetMeldOrder()` (o158p30)
@@ -204,10 +204,10 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **End:** ~line 5797
 - **Purpose:** TBD
 
-### `AI_SeekTransportFrom__WIP` — [line 5798](../../MoM/src/AIMOVE.c#L5798)
+### `AI_Stacks_Ferry_Add_Location` — [line 5151](../../MoM/src/AIMOVE.c#L5151)
 - **drake178:** `AI_SeekTransportFrom()` (o158p36)
-- **End:** ~line 5843
-- **Purpose:** TBD
+- **End:** ~line 5179
+- **Purpose:** Register a `(wx, wy, wp)` request in the global seek-transport list (`_ai_ferry_*`), with dedup and `MAX_AI_FERRIES` (= 15) capacity guard. See [AIMOVE-AI_Stacks_Ferry_Add_Location.md](AIMOVE-AI_Stacks_Ferry_Add_Location.md).
 
 ### `AI_Tower_Target_Worthwhile` — [line 5844](../../MoM/src/AIMOVE.c#L5844)
 - **drake178:** `AI_CheckOtherPlane()` (o158p37)
@@ -299,7 +299,7 @@ Lines 6605-6628 contain stubs for `sub_F64C2()` through `sub_F6EBF()`. No bodies
 - **drake178:** (no drake name at o162p37)
 - **End:** ~line 8265
 - **Purpose:** Picks "main war continent" per player per plane. Decides per-landmass whether existing assignment should be reevaluated based on type and hostility.
-- **Reads `lmt_*`:** switch on `lmt_Unevaluated`/`lmt_Own`/`lmt_Contested`/`lmt_NoOwnCity`/`lmt_NoOwnCityAndAllyHasCity`/`lmt_Abandon` (lines 7896-7969), plus `lmt_Own`/`lmt_NoTargets` filter (line 8199-8202)
+- **Reads `lmt_*`:** switch on `lmt_Unevaluated`/`lmt_Own`/`lmt_Contested`/`lmt_NoOwnCity`/`lmt_NoOwnCityAndAllyHasCity`/`lmt_Leaveable` (lines 7896-7969), plus `lmt_Own`/`lmt_NoTargets` filter (line 8199-8202)
 - **Known issue:** `lmt_NoTargets` is unhandled in the switch (Gemini groups it with the NoOwnCity case). `lmt_Unevaluated` case is dead (disassembly uses `(type-1)` jump table).
 
 ### `Player_Clear_All_Unit_Orders` — [line 8491](../../MoM/src/AIMOVE.c#L8491)

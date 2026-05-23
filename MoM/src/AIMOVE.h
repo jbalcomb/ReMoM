@@ -42,13 +42,13 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp);
 void AI_Stacks_Roamers_Target_Or_Deploy(int16_t landmass_idx, int16_t wp, int16_t player_idx);
 
 // WZD o158p07
-void G_AI_HomeRallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx);
+void AI_Stacks_Relocate_Roamers(int16_t landmass_idx, int16_t wp, int16_t player_idx);
 
 // WZD o158p08
 void AI_Stacks_Order_To_War_Landmass(int16_t player_idx, int16_t wp);
 
 // WZD o158p09
-void G_AI_RallyOrFerry__WIP(int16_t itr_stacks, int16_t landmass_idx, int16_t wp, int16_t stage_wx, int16_t stage_wy, int16_t IDK_count, int16_t player_idx);
+void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, int16_t stage_wx, int16_t stage_wy, int16_t stage_count_slot_count, int16_t player_idx);
 
 // WZD o158p10
 void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp);
@@ -108,7 +108,7 @@ void AI_Order_Settle(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_
 void AI_Order_RoadBuild(int16_t unit_idx, int16_t wx, int16_t wy, int16_t unit_list_idx, int16_t list_unit_idx);
 
 // WZD o158p29
-void AI_Order_SeekTransport(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx);
+void AI_Stacks_Order_Ferry(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx);
 
 // WZD o158p30
 void AI_Order_Meld(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx);
@@ -130,7 +130,7 @@ int16_t AI_CanSettleOffPlane__STUB(int16_t player_idx, int16_t unit_idx, int16_t
 void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t unit_list_idx, int16_t list_unit_idx);
 
 // WZD o158p36
-void AI_SeekTransportFrom__WIP(int16_t wx, int16_t wy, int16_t wp);
+void AI_Stacks_Ferry_Add_Location(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o158p37
 int16_t AI_Tower_Target_Worthwhile(int16_t player_idx, int16_t wx, int16_t wy, int16_t wp);

@@ -158,6 +158,7 @@ ITEM_MAX_POWERS
 
 #define MAX_AI_STACKS              80   /* ¿ only used by _ai_all_own_stacks, etc. ? */
 #define MAX_AI_TARGETS             25   /* ¿ only used by _ai_targets_count, etc. ? */
+#define MAX_AI_FERRIES          15   /* ¿ only used by _ai_ferry_count, etc. ? */
 
 #define SCREEN_WIDTH    320
 #define SCREEN_HEIGHT   200

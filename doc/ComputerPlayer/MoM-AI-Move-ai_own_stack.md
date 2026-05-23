@@ -13,7 +13,7 @@ relationship?
     _ai_targets_value[MAX_AI_TARGETS]; _ai_targets_strength[MAX_AI_TARGETS]; _ai_targets_wy[MAX_AI_TARGETS]; _ai_targets_wx[MAX_AI_TARGETS]; _ai_targets_count; 
 
 relationship?
-    int16_t ai_transport_count; int16_t ai_seektransport_cnt; int16_t AI_SeekTransport_Ps[15]; int16_t AI_SeekTransport_Ys[15]; int16_t AI_SeekTransport_Xs[15];
+    int16_t ai_transport_count; int16_t _ai_ferry_count; int16_t _ai_ferry_wp_array[15]; int16_t _ai_ferry_wy_array[15]; int16_t _ai_ferry_wx_array[15];
 
 
 
@@ -56,7 +56,7 @@ _ai_own_stack_unit_list[][] = ST_UNDEFINED
     AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
     AI_Order_Settle()
     AI_Order_RoadBuild()
-    AI_Order_SeekTransport()
+    AI_Stacks_Order_Ferry()
     AI_Order_Meld()
     AI_Order_Purify()
 */
@@ -86,7 +86,7 @@ AI_Move_Out_Boats() |-> AI_Stack_Set_Boats_Goto()
 AI_SendToColonize__WIP()
 ...uses the arrays
 ...also _ai_landmass_settler_targets_wx_array
-...also AI_SeekTransport_Xs/Ys/Ps
+...also _ai_ferry_wx_array/Ys/Ps
 
 intermingled?
     // WZD o158p32
@@ -96,7 +96,7 @@ intermingled?
     // WZD o158p34
     AI_CanSettleOffPlane__STUB
     // WZD o158p36
-    AI_SeekTransportFrom__WIP()
+    AI_Stacks_Ferry_Add_Location()
     // WZD o158p37
     AI_Tower_Target_Worthwhile()
     // WZD o158p38
@@ -210,7 +210,7 @@ AI_Next_Turn (per-AI-player driver)
                 case us_BuildRoad:   → AI_UNIT_BuildRoad__WIP, then AI_UNIT_Move
                 case us_Meld:        → AI_UNIT_Meld__WIP
                 case us_Settle:      → AI_UNIT_Settle__WIP
-                case us_SeekTransport: → AI_UNIT_SeekTransprt__WIP
+                case us_Ferry: → AI_UNIT_SeekTransprt__WIP
                 default:             → skip
                   │
                   └─ AI_UNIT_Move(unit_idx)                            [SETTLE.c:296]
@@ -232,7 +232,7 @@ flowchart TD
 Useful diagram types for what we've been documenting:
 flowchart — dispatch graphs, call chains (better than my ASCII art when there are multiple branches/joins)
 stateDiagram-v2 — the lmt_* state machine (writer-by-writer transitions)
-sequenceDiagram — turn-driver flow (AI_Next_Turn → AI_Choose_War_Landmass → AI_Evaluate_Continents → AI_Set_Unit_Orders → AI_MoveUnits), particularly good for showing the temporal ordering of reads vs writes for lmt_NoTargets and lmt_Abandon
+sequenceDiagram — turn-driver flow (AI_Next_Turn → AI_Choose_War_Landmass → AI_Evaluate_Continents → AI_Set_Unit_Orders → AI_MoveUnits), particularly good for showing the temporal ordering of reads vs writes for lmt_NoTargets and lmt_Leaveable
 classDiagram — _ai_continents and _UNITS structure relationships
 Tradeoffs vs the ASCII art I've been using
 
@@ -244,7 +244,7 @@ Tradeoffs vs the ASCII art I've been using
 ## AI_Order_RoadBuild()
 
 
-## AI_Order_SeekTransport()
+## AI_Stacks_Order_Ferry()
 
 
 ## AI_Order_Meld()

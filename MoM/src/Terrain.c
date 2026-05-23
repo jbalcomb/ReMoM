@@ -1328,129 +1328,81 @@ int16_t Square_Is_Ocean(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD s161p26
-// drake178: G_TILE_IsAIEmbarkable()
 /*
-; returns 1 for certain ocean tiles, 0 for everything
-; else
-;
-; BUG: should return 1 for all oceans and shores except
-; single tile lakes
-*/
-/*
-
+vs. Square_Is_Sailable()?
+vs. Square_Is_OceanLike()?
 */
 int16_t Map_Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type = 0;  // _CX_
+    int16_t terrain_type = 0;
     int16_t is_emarkable = 0;  // DNE in Dasm
-
     is_emarkable = ST_FALSE;
-
     terrain_type = TERRAIN_TYPE(wx, wy, wp);
-
     if(terrain_type == tt_BugGrass)
     {
-
         is_emarkable = ST_FALSE;
-
     }
     else
     {
-
         if(terrain_type == tt_Lake)
         {
-
             is_emarkable = ST_FALSE;
-
         }
         else
         {
-
             if(terrain_type < _Shore11101110)
             {
-
                 is_emarkable = ST_FALSE;
-
             }
             else
             {
-
                 if(terrain_type < _Shore10111000)
                 {
-
                     is_emarkable = ST_FALSE;
-
                 }
                 else
                 {
-
                     if(terrain_type < tte_Grasslands)
                     {
-
                         is_emarkable = ST_TRUE;
-
                     }
                     else
                     {
-
                         if(terrain_type < _Shore00001R10)
                         {
-
                             is_emarkable = ST_FALSE;
-
                         }
                         else
                         {
-
                             if(terrain_type < _River1100_3)
                             {
-
                                 is_emarkable = ST_TRUE;
-
                             }
                             else
                             {
-
                                 if(terrain_type < _Shore1100000R)
                                 {
-
                                     is_emarkable = ST_FALSE;
-
                                 }
                                 else
                                 {
-
                                     if(terrain_type < _Shore1000111R)
                                     {
-
                                         is_emarkable = ST_TRUE;
-
                                     }
                                     else
                                     {
-
                                         is_emarkable = ST_FALSE;
-
                                     }
-
                                 }
-
                             }
-
                         }
-
                     }
-
                 }
-
             }
-
         }
-
     }
-
     return is_emarkable;
-
 }
 
 

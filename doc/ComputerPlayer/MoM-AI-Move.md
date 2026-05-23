@@ -76,12 +76,12 @@ AI_Next_Turn()
                 |-> AI_Stacks_Roamers_Target_Or_Deploy()
                     |-> AI_Stacks_Assign_Target()
                 ...depends on landmass type...
-                |-> AI_Stacks_Order_To_War_Landmass()   ...uses _ai_own_stack_count, etc.
-                |-> G_AI_HomeRallyFill__WIP()
-                    |-> G_AI_RallyOrFerry__WIP()
-                        |-> AI_SeekTransportFrom__WIP()
+                |-> AI_Stacks_Order_To_War_Landmass()       ...uses _ai_own_stack_count, etc.
+                |-> AI_Stacks_Relocate_Roamers()            ...uses _ai_own_stack_count, etc.
+                    |-> AI_Stacks_Setup_Ferry()             OON XREF
+                        |-> AI_Stacks_Ferry_Add_Location()  ...uses _ai_ferry_count, etc.
                             |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
-                        |-> AI_Order_SeekTransport()
+                        |-> AI_Stacks_Order_Ferry()         ...uses _ai_own_stack_count, etc.
                 |-> G_AI_RallyFill__WIP()
                     |-> AI_Reevaluate_Continent()
                 |-> AI_FillGarrisons__WIP()
@@ -127,11 +127,11 @@ Definitely Done-Done:
 [x]             |-> AI_Stacks_Roamers_Target_Or_Deploy()
 [x]                 |-> AI_Stacks_Assign_Target()
 [x]             |-> AI_Stacks_Order_To_War_Landmass()
-[ ]             |-> G_AI_HomeRallyFill__WIP()
-[ ]                 |-> G_AI_RallyOrFerry__WIP()
-[ ]                     |-> AI_SeekTransportFrom__WIP()
+[x]             |-> AI_Stacks_Relocate_Roamers()
+[x]                 |-> AI_Stacks_Setup_Ferry()
+[x]                     |-> AI_Stacks_Ferry_Add_Location()
 [x]                         |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
-[ ]                     |-> AI_Order_SeekTransport()
+[ ]                     |-> AI_Stacks_Order_Ferry()
 [ ]             |-> G_AI_RallyFill__WIP()
 [x]                 |-> AI_Reevaluate_Continent()
 [ ]             |-> AI_FillGarrisons__WIP()
@@ -142,7 +142,7 @@ Definitely Done-Done:
 [ ]                 |-> AI_Do_Meld()
 [x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 [ ]                 |-> AI_Enemy_Unit_In_Range()
-[ ]                 |-> AI_Order_SeekTransport()
+[ ]                 |-> AI_Stacks_Order_Ferry()
 [x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 
@@ -155,7 +155,7 @@ G_AI_ProcessTransports__WIP()
     |-> AI_Do_Meld()
     |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
     |-> AI_Enemy_Unit_In_Range()
-    |-> AI_Order_SeekTransport()
+    |-> AI_Stacks_Order_Ferry()
     |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 
@@ -179,10 +179,10 @@ AI_Set_Unit_Orders(player_idx)
         ├── AI_Build_Target_List
         ├── AI_Stacks_Roamers_Target_Or_Deploy
         ├── AI_Stacks_Order_To_War_Landmass           [gate: NOT lmt_Contested basically]
-        ├── G_AI_HomeRallyFill__WIP          [gate: lmt_Own / lmt_Abandon+]
+        ├── AI_Stacks_Relocate_Roamers          [gate: lmt_Own / lmt_Leaveable+]
         ├── G_AI_RallyFill__WIP              [always]
         │   └── AI_Reevaluate_Continent     [5% roll when stage is full]
-        └── AI_FillGarrisons__WIP            [gate: lmt_Own / lmt_Contested / lmt_Abandon+]
+        └── AI_FillGarrisons__WIP            [gate: lmt_Own / lmt_Contested / lmt_Leaveable+]
     ├── AI_ProcessOcean__WIP                 [per-plane post-pass]
     └── G_AI_ProcessTransports__WIP          [per-plane post-pass]
 └── EMM_Map_DataH                            [cleanup]
@@ -216,7 +216,7 @@ _ai_continents__1
     AI_ProcessOcean__WIP+13A           mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
     AI_ProcessOcean__WIP+175           mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
     AI_Stacks_Roamers_Target_Or_Deploy+2EA         mov     [byte ptr _ai_continents__0.Player_0.wx_array+bx], al; _bdata_start
-    G_AI_HomeRallyFill__WIP+1F         mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
+    AI_Stacks_Relocate_Roamers+1F         mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
     AI_Stacks_Order_To_War_Landmass+154         mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
 
 ## _ai_landmass_war_targets[]
@@ -245,13 +245,13 @@ g_ai_minattackstack
     AI_Set_Unit_Orders()
     G_AI_RallyFill__WIP()
 
-ai_seektransport_cnt
+_ai_ferry_count
     AI_Set_Unit_Orders()
     G_AI_RallyFill__WIP()
     ...
     G_AI_ProcessTransports__WIP()
     AI_SendToColonize__WIP()
-    AI_SeekTransportFrom__WIP()
+    AI_Stacks_Ferry_Add_Location()
 
 
 
@@ -336,8 +336,8 @@ Down p G_AI_ProcessTransports__WIP+915              call    near ptr AI_Stacks_O
 Down p G_AI_ProcessTransports__WIP+9FE              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p AI_Stacks_Roamers_Target_Or_Deploy:loc_ED7E1             call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p AI_Stacks_Order_To_War_Landmass+15F                   call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
-Down p G_AI_RallyOrFerry__WIP+E1                    call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
-Down p G_AI_RallyOrFerry__WIP+341                   call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_Stacks_Setup_Ferry+E1                    call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_Stacks_Setup_Ferry+341                   call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p AI_Stacks_Init_Build_Target_Order            call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p AI_Stacks_Move_Out_NonMilitary_Garrisoned+C9                   call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p AI_Stacks_Move_Out_NonMilitary_Garrisoned+1C0                  call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination

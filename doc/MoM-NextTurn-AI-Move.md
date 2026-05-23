@@ -18,7 +18,7 @@ AI_ProcessMelders()  ==>  AI_Do_Meld()
 TILE_CheckEnemyUnits()  ==>  Map_Square_Area_Has_Opponent()
 TILE_GetDistance()  ==> Range()  MoO2  Module: special
 G_TILE_IsAIEmbarkable()  ==>  Map_Square_Is_Embarkable()
-AI_UNIT_SeekTransport()  ==>  AI_Order_SeekTransport()
+AI_UNIT_SeekTransport()  ==>  AI_Stacks_Order_Ferry()
 AI_UNIT_SettleOrder()  ==>  AI_Order_Settle()
 AI_ProcessSettlers()  ==>  AI_Do_Settle()
 AI_UNIT_PurifyOrder()  ==>  AI_Order_Purify()
@@ -124,7 +124,7 @@ _target[]
 
 ai_human_hostility
 EMM_Map_CONTXXX__WIP()
-ai_seektransport_cnt
+_ai_ferry_count
 g_ai_minattackstack
 AI_Disband_To_Balance_Budget()
 AI_Shift_Off_Home_Plane()
@@ -358,7 +358,7 @@ What does it mean for _ai_own_stack_unit_list[][] to be ST_UNDEFINED?
 
 ## G_AI_ProcessTransports__WIP()
 
-¿ setting AI_SeekTransport_Ps[itr1] = ST_UNDEFINED means the boat stage poing is full ?
+¿ setting _ai_ferry_wp_array[itr1] = ST_UNDEFINED means the boat stage poing is full ?
 
 
 

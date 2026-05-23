@@ -16,7 +16,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Stacks_Roamers_T
 
 1. **Target assignment:** for every roaming stack (`_ai_own_stack_type == AISTK_Roamer`) on this landmass, walk its unit list to confirm it's well-formed, then try to assign it a target from the per-landmass list that `AI_Build_Target_List` just built. If a target is found, every unit in that stack gets a move order to those coords via `AI_Stacks_Order_Attack_Target_Or_Goto_Destination`.
 
-2. **Deploy (embark-staging):** if no roamer stack found a target AND there's a large stack (≥8 units) on this landmass AND we have a main-war landmass set elsewhere (and we're not on it), retag this landmass `lmt_Abandon` with its stage point set to this landmass's dock square closest to the war landmass's dock-square centroid — preparing the large stack to embark and ferry off.
+2. **Deploy (embark-staging):** if no roamer stack found a target AND there's a large stack (≥8 units) on this landmass AND we have a main-war landmass set elsewhere (and we're not on it), retag this landmass `lmt_Leaveable` with its stage point set to this landmass's dock square closest to the war landmass's dock-square centroid — preparing the large stack to embark and ferry off.
 
 ## Signature
 
@@ -139,7 +139,7 @@ The seven consumers (per the MOM_DAT.c comment):
 - `AI_Stacks_Order_Attack_Target_Or_Goto_Destination` at [AIMOVE.c:5076](../../MoM/src/AIMOVE.c#L5076)
 - `AI_Order_Settle` at [AIMOVE.c:5120](../../MoM/src/AIMOVE.c#L5120)
 - `AI_Order_RoadBuild`
-- `AI_Order_SeekTransport`
+- `AI_Stacks_Order_Ferry`
 - `AI_Order_Meld`
 - `AI_Order_Purify`
 
@@ -226,19 +226,19 @@ while(landmass_node_index != ST_UNDEFINED)
 
 Walk THIS landmass's dock-square chain; for each empty (eval == 0) dock, compute wrapped taxicab distance to the war centroid; track the minimum. "Empty" here means no enemy units, no sites — but ignores OWN units on the square (the chosen embark point may already have one of our stacks on it).
 
-### Step C — apply `lmt_Abandon` tag (lines 1911-1918)
+### Step C — apply `lmt_Leaveable` tag (lines 1911-1918)
 
 ```c
-/* NOTE(JimBalcomb,20260521): this is the only place in the whole code-base that sets lmt_Abandon */
+/* NOTE(JimBalcomb,20260521): this is the only place in the whole code-base that sets lmt_Leaveable */
 if(min_delta_distance != 1000)
 {
-    _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Abandon;
+    _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Leaveable;
     _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = (uint8_t)target_square_wx;
     _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = (uint8_t)target_square_wy;
 }
 ```
 
-If Step B found an acceptable dock square (`min_delta_distance` lowered below 1000), tag this landmass `lmt_Abandon` and overwrite its stage point with that dock square. The next dispatch slot will see `lmt_Abandon` and route troops toward the embark tile.
+If Step B found an acceptable dock square (`min_delta_distance` lowered below 1000), tag this landmass `lmt_Leaveable` and overwrite its stage point with that dock square. The next dispatch slot will see `lmt_Leaveable` and route troops toward the embark tile.
 
 ## Inputs / outputs
 
@@ -253,7 +253,7 @@ If Step B found an acceptable dock square (`min_delta_distance` lowered below 10
 **Writes:**
 - Unit-level: `AI_Stacks_Order_Attack_Target_Or_Goto_Destination` orders for every unit in stacks that found targets
 - Module-level: `g_ai_set_target_caller = 7`, `niu_unknown_var = 0`, `_ai_targets_value[picked] = 0` (via callee)
-- Landmass classification: `_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Abandon` (conditional)
+- Landmass classification: `_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Leaveable` (conditional)
 - Landmass stage: `wx_array[landmass_idx]` / `wy_array[landmass_idx]` (same conditional)
 
 ## Call graph
@@ -279,18 +279,18 @@ AI_Set_Unit_Orders                                  [AIMOVE.c:131, Phase 4 dispa
             └─ Embark-staging path (4 early-return gates):
                  ├─ Step A: walk _ai_landmass_dock_squares_* for war landmass → centroid
                  ├─ Step B: walk _ai_landmass_dock_squares_* for this landmass → closest empty
-                 └─ Step C: write _ai_continents.{type, wx, wy}_array[landmass_idx] = {lmt_Abandon, target_square_wx, target_square_wy}
+                 └─ Step C: write _ai_continents.{type, wx, wy}_array[landmass_idx] = {lmt_Leaveable, target_square_wx, target_square_wy}
 ```
 
-## What `lmt_Abandon` really means
+## What `lmt_Leaveable` really means
 
-Step C of this function is the **only writer** of `lmt_Abandon` in the codebase.
+Step C of this function is the **only writer** of `lmt_Leaveable` in the codebase.
 
 ### Lifetime — single-turn, unlike `lmt_NoTargets`
 
-`AI_Evaluate_Continents` unconditionally rewrites `type_array` every turn it runs ([AIMOVE.c:6874](../../MoM/src/AIMOVE.c#L6874)). Its preservation clause at [line 6848](../../MoM/src/AIMOVE.c#L6848) only triggers for `lmt_NoTargets`, NOT `lmt_Abandon`. So:
+`AI_Evaluate_Continents` unconditionally rewrites `type_array` every turn it runs ([AIMOVE.c:6874](../../MoM/src/AIMOVE.c#L6874)). Its preservation clause at [line 6848](../../MoM/src/AIMOVE.c#L6848) only triggers for `lmt_NoTargets`, NOT `lmt_Leaveable`. So:
 
-- Turn N, `AI_Set_Unit_Orders` dispatch slot 9: this function writes `lmt_Abandon`.
+- Turn N, `AI_Set_Unit_Orders` dispatch slot 9: this function writes `lmt_Leaveable`.
 - Turn N, dispatch slots 10/11/14: see the just-written tag and use it.
 - Turn N+1, `AI_Next_Turn` driver: `AI_Choose_War_Landmass` reads the tag, then `AI_Evaluate_Continents` **clobbers it** with one of `lmt_Own`/`lmt_Contested`/`lmt_NoOwnCity`/`lmt_NoOwnCityAndAllyHasCity`.
 - Turn N+1, dispatch: the previous Abandon decision is gone. To stay tagged, Step C must re-fire — which requires ALL four staging-gate conditions to still hold.
@@ -301,23 +301,23 @@ This is a **single-turn assertion** that only persists across one turn boundary 
 
 | Reader | Test | Timing vs. writer | Meaning of tag at this read |
 |---|---|---|---|
-| `AI_Stacks_Order_To_War_Landmass` ([line 203](../../MoM/src/AIMOVE.c#L203) gate) | `>= lmt_Abandon` (in OR-chain that's "almost NOT Contested") | Same turn, just after slot 9 wrote it | Pull units off this landmass toward main war |
-| `G_AI_HomeRallyFill__WIP` ([line 220](../../MoM/src/AIMOVE.c#L220) gate) | `>= lmt_Abandon || == lmt_Own` | Same turn | Stage point is valid — consolidate units there |
-| `AI_FillGarrisons__WIP` ([line 233](../../MoM/src/AIMOVE.c#L233) gate) | `== lmt_Own || == lmt_Contested || >= lmt_Abandon` | Same turn | Garrison maintenance allowed |
-| `AI_FillGarrisons__WIP` internal ([line 380](../../MoM/src/AIMOVE.c#L380)) | `>= lmt_Abandon` | Same turn | "We're in the abandoning/no-targets group" |
-| `AI_FillGarrisons__WIP` internal ([line 452](../../MoM/src/AIMOVE.c#L452)) | `< lmt_Abandon` | Same turn | "We're NOT abandoning" |
-| `AI_Do_Meld` ([line 4558](../../MoM/src/AIMOVE.c#L4558)) | `>= lmt_Abandon` (node-meld eligibility) | Same turn, BEFORE slot 9 wrote it (Do_Meld is dispatch slot 4) | In practice, never sees Abandon |
-| `AI_Choose_War_Landmass` ([line 7786](../../MoM/src/AIMOVE.c#L7786) switch) | `case lmt_Abandon:` → `Reevaluate = ST_TRUE` | **Next turn**, before `AI_Evaluate_Continents` clobbers | "We marked this for abandonment last turn — reconsider whether the war target is still right" |
+| `AI_Stacks_Order_To_War_Landmass` ([line 203](../../MoM/src/AIMOVE.c#L203) gate) | `>= lmt_Leaveable` (in OR-chain that's "almost NOT Contested") | Same turn, just after slot 9 wrote it | Pull units off this landmass toward main war |
+| `AI_Stacks_Relocate_Roamers` ([line 220](../../MoM/src/AIMOVE.c#L220) gate) | `>= lmt_Leaveable || == lmt_Own` | Same turn | Stage point is valid — consolidate units there |
+| `AI_FillGarrisons__WIP` ([line 233](../../MoM/src/AIMOVE.c#L233) gate) | `== lmt_Own || == lmt_Contested || >= lmt_Leaveable` | Same turn | Garrison maintenance allowed |
+| `AI_FillGarrisons__WIP` internal ([line 380](../../MoM/src/AIMOVE.c#L380)) | `>= lmt_Leaveable` | Same turn | "We're in the abandoning/no-targets group" |
+| `AI_FillGarrisons__WIP` internal ([line 452](../../MoM/src/AIMOVE.c#L452)) | `< lmt_Leaveable` | Same turn | "We're NOT abandoning" |
+| `AI_Do_Meld` ([line 4558](../../MoM/src/AIMOVE.c#L4558)) | `>= lmt_Leaveable` (node-meld eligibility) | Same turn, BEFORE slot 9 wrote it (Do_Meld is dispatch slot 4) | In practice, never sees Abandon |
+| `AI_Choose_War_Landmass` ([line 7786](../../MoM/src/AIMOVE.c#L7786) switch) | `case lmt_Leaveable:` → `Reevaluate = ST_TRUE` | **Next turn**, before `AI_Evaluate_Continents` clobbers | "We marked this for abandonment last turn — reconsider whether the war target is still right" |
 
 ### The real meaning, in one sentence
 
-`lmt_Abandon` is a **single-turn ferry-staging marker**: "we have a large stack here, nothing to attack here, and a war elsewhere — for the rest of this turn, treat this landmass as having a valid stage point AT THE EMBARK DOCK so later dispatch slots can pull troops off; next turn, reconsider whether the main-war target is still correct."
+`lmt_Leaveable` is a **single-turn ferry-staging marker**: "we have a large stack here, nothing to attack here, and a war elsewhere — for the rest of this turn, treat this landmass as having a valid stage point AT THE EMBARK DOCK so later dispatch slots can pull troops off; next turn, reconsider whether the main-war target is still correct."
 
 It is NOT a long-term classification ("we are leaving this place"). It's a within-turn coordination signal between dispatch slot 9 (writer) and slots 10/11/14 (consumers), plus a single-turn-stale hint for next turn's war-landmass reselection.
 
 ### Why "Abandon" is a slightly misleading tag name
 
-The function name `AI_Stacks_Roamers_Target_Or_Deploy` is more accurate for what this function actually does — the "Or_Deploy" half captures the embark-staging case. But the tag it writes is still called `lmt_Abandon`, which suggests a strategic decision that persists. In reality:
+The function name `AI_Stacks_Roamers_Target_Or_Deploy` is more accurate for what this function actually does — the "Or_Deploy" half captures the embark-staging case. But the tag it writes is still called `lmt_Leaveable`, which suggests a strategic decision that persists. In reality:
 - The tag does NOT persist past `AI_Evaluate_Continents` (one turn).
 - The tag does NOT prevent re-targeting — slots 10/11/14 still process the landmass actively, just with the embark-stage point.
 - The "abandon" is conditional on a large stack being there. A 6-unit roamer on an empty landmass does NOT trigger it — that stack just gets no orders.
@@ -326,12 +326,12 @@ A more accurate tag name would be `lmt_EmbarkingLargeStack` or `lmt_FerryStaging
 
 ### Compared to `lmt_NoTargets`
 
-| Aspect | `lmt_NoTargets` | `lmt_Abandon` |
+| Aspect | `lmt_NoTargets` | `lmt_Leaveable` |
 |---|---|---|
 | Writers in production | 1 (`AI_Build_Target_List`) | 1 (this function) |
 | Survives `AI_Evaluate_Continents`? | Yes (preservation clause at [line 6848](../../MoM/src/AIMOVE.c#L6848), subject to city-count OGBUG) | No (clobbered every turn) |
 | Lifetime | Multi-turn until enemy arrives | Single turn |
-| Read by `AI_Choose_War_Landmass`? | Yes (`!= lmt_NoTargets` filter) | Yes (switch `case lmt_Abandon`) |
+| Read by `AI_Choose_War_Landmass`? | Yes (`!= lmt_NoTargets` filter) | Yes (switch `case lmt_Leaveable`) |
 | Trigger | "No hostile assets found this turn" | "Large stack stranded, war elsewhere, embark point exists" |
 | Effect of misfire | Wrong landmass excluded from war-target weighting | Wrong landmass gets treated as ferry-staging this turn |
 
@@ -343,5 +343,5 @@ A more accurate tag name would be `lmt_EmbarkingLargeStack` or `lmt_FerryStaging
 - [AIMOVE-AI_Choose_War_Landmass.md](AIMOVE-AI_Choose_War_Landmass.md) — producer of `_ai_landmass_war_targets[]` consumed by the staging path
 - [AIMOVE-AI_Reevaluate_Continent.md](AIMOVE-AI_Reevaluate_Continent.md) — sibling with the same div-by-zero pattern in its Phase 6
 - [AIMOVE-AI_Reevaluate_All_Continents.md](AIMOVE-AI_Reevaluate_All_Continents.md) — sibling with the same div-by-zero pattern in its Phase 9
-- [MoM-AI-Landmass-Types.md](MoM-AI-Landmass-Types.md) — `lmt_Abandon` state machine entry; this function is the sole writer of that tag
+- [MoM-AI-Landmass-Types.md](MoM-AI-Landmass-Types.md) — `lmt_Leaveable` state machine entry; this function is the sole writer of that tag
 - [MoM-AI-AIMOVE-Index.md](MoM-AI-AIMOVE-Index.md) — function index

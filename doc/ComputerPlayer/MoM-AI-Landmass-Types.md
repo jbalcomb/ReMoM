@@ -14,7 +14,7 @@ enum e_LANDMASS_TYPE  // [MOM_DAT.h:119](../../MoX/src/MOM_DAT.h#L119)
     lmt_Contested                = 2,  // has own city + non-trivial enemy presence
     lmt_NoOwnCity                = 3,  // no owned city (units may still be present)
     lmt_NoOwnCityAndAllyHasCity  = 4,  // overloaded: ally's land OR no stage tile OR slot-0 sentinel
-    lmt_Abandon                  = 5,  // dock square reachable from here (departure-staging point)
+    lmt_Leaveable                  = 5,  // dock square reachable from here (departure-staging point)
     lmt_NoTargets                = 6   // no attackable enemies/lairs/nodes found
 };
 ```
@@ -39,7 +39,7 @@ This is the source of the design's awkwardness: a classifier-output and a phase-
 |---|---|---|
 | [7013](../../MoM/src/AIMOVE.c#L7013) | `AI_Evaluate_Continents` | Initialization before using slot as city counter (comment: "actually just 0, cause its about to just be a city count") |
 
-**Note:** [`AI_Reevaluate_Continent`](../../MoM/src/AIMOVE.c#L5933) does NOT zero the slot before its own city-counter use at [line 6005](../../MoM/src/AIMOVE.c#L6005). It does `type_array[idx] += 1` per owned city, starting from whatever value was there. If the prior value was non-zero (e.g., a stale `lmt_Abandon` = 5), the "city count > 0" test at [line 6024](../../MoM/src/AIMOVE.c#L6024) is spuriously true. **Possible bug — verify against disassembly.**
+**Note:** [`AI_Reevaluate_Continent`](../../MoM/src/AIMOVE.c#L5933) does NOT zero the slot before its own city-counter use at [line 6005](../../MoM/src/AIMOVE.c#L6005). It does `type_array[idx] += 1` per owned city, starting from whatever value was there. If the prior value was non-zero (e.g., a stale `lmt_Leaveable` = 5), the "city count > 0" test at [line 6024](../../MoM/src/AIMOVE.c#L6024) is spuriously true. **Possible bug — verify against disassembly.**
 
 ### `lmt_Own` (1)
 
@@ -86,7 +86,7 @@ The most overloaded value — five different write sites with three distinct sem
 
 **Three distinct meanings folded into one byte:** "ally's land" (diplomatic), "no stage tile" (physical inability), "ocean sentinel" (geometric). The name only fits the first.
 
-### `lmt_Abandon` (5)
+### `lmt_Leaveable` (5)
 
 | Line | Function | Triggering condition |
 |---|---|---|
@@ -94,7 +94,7 @@ The most overloaded value — five different write sites with three distinct sem
 
 **Semantic at write site:** "We have a sizable expeditionary force on this landmass, this landmass has nothing left to attack, there's a war elsewhere, and we found an embark point — stage the force at that dock square for ferrying."
 
-**At read sites:** the tag is a **single-turn ferry-staging marker**, NOT a long-term "we are leaving this place" classification. It is written during dispatch slot 9 ([`AI_Set_Unit_Orders`](AIMOVE-AI_Set_Unit_Orders.md) Phase 4); consumed THIS turn by slots 10/11/14 (`AI_Stacks_Order_To_War_Landmass`, `G_AI_HomeRallyFill__WIP`, `AI_FillGarrisons__WIP`) using the embark point as a staging target; survives ONE turn boundary to be read by next turn's `AI_Choose_War_Landmass` ([line 7786](../../MoM/src/AIMOVE.c#L7786) switch sets `Reevaluate = ST_TRUE` for this case); then **clobbered** by `AI_Evaluate_Continents` ([line 6874](../../MoM/src/AIMOVE.c#L6874)) before the next dispatch — no preservation clause exists for `lmt_Abandon` (unlike `lmt_NoTargets`).
+**At read sites:** the tag is a **single-turn ferry-staging marker**, NOT a long-term "we are leaving this place" classification. It is written during dispatch slot 9 ([`AI_Set_Unit_Orders`](AIMOVE-AI_Set_Unit_Orders.md) Phase 4); consumed THIS turn by slots 10/11/14 (`AI_Stacks_Order_To_War_Landmass`, `AI_Stacks_Relocate_Roamers`, `AI_FillGarrisons__WIP`) using the embark point as a staging target; survives ONE turn boundary to be read by next turn's `AI_Choose_War_Landmass` ([line 7786](../../MoM/src/AIMOVE.c#L7786) switch sets `Reevaluate = ST_TRUE` for this case); then **clobbered** by `AI_Evaluate_Continents` ([line 6874](../../MoM/src/AIMOVE.c#L6874)) before the next dispatch — no preservation clause exists for `lmt_Leaveable` (unlike `lmt_NoTargets`).
 
 To stay tagged across turns, the Phase 3 write must re-fire — which requires ALL five trigger conditions to still hold. See [AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md](AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md) for the full timing analysis, comparison with `lmt_NoTargets`, and the "why 'Abandon' is a misleading name" notes.
 
@@ -116,21 +116,21 @@ A more accurate name would be something like `lmt_NoHostileAssetsLastSeen` — t
 
 | Line | Group tested | Action |
 |---|---|---|
-| [186-193](../../MoM/src/AIMOVE.c#L186) | `≥ lmt_Abandon` OR `Own` OR `NoOwnCityAndAllyHasCity` OR `NoOwnCity` ("almost just NOT Contested") | (gates an `if` block — see surrounding code) |
-| [203-206](../../MoM/src/AIMOVE.c#L203) | `≥ lmt_Abandon` OR `Own` | Skip `AI_Stacks_Order_To_War_Landmass` |
-| [212-217](../../MoM/src/AIMOVE.c#L212) | `Own` OR `Contested` OR `≥ lmt_Abandon` | (gates an `if` block) |
+| [186-193](../../MoM/src/AIMOVE.c#L186) | `≥ lmt_Leaveable` OR `Own` OR `NoOwnCityAndAllyHasCity` OR `NoOwnCity` ("almost just NOT Contested") | (gates an `if` block — see surrounding code) |
+| [203-206](../../MoM/src/AIMOVE.c#L203) | `≥ lmt_Leaveable` OR `Own` | Skip `AI_Stacks_Order_To_War_Landmass` |
+| [212-217](../../MoM/src/AIMOVE.c#L212) | `Own` OR `Contested` OR `≥ lmt_Leaveable` | (gates an `if` block) |
 
 ### `G_AI_RallyFill__WIP` ([line 240](../../MoM/src/AIMOVE.c#L240))
 
 | Line | Condition | Action |
 |---|---|---|
-| [259-263](../../MoM/src/AIMOVE.c#L259) | `≥ lmt_Abandon` OR `NoOwnCity` OR (drafted unit threshold) | (gates an `if` block — staging-tile check) |
+| [259-263](../../MoM/src/AIMOVE.c#L259) | `≥ lmt_Leaveable` OR `NoOwnCity` OR (drafted unit threshold) | (gates an `if` block — staging-tile check) |
 
 ### `AI_FillGarrisons__WIP` ([line 298](../../MoM/src/AIMOVE.c#L298))
 
 | Line | Condition | Action |
 |---|---|---|
-| [331-334](../../MoM/src/AIMOVE.c#L331) | `< lmt_Abandon` AND `!= lmt_Own` | `G_Low_Threat = ST_FALSE` (i.e., we're not safe — Unevaluated, Contested, NoOwnCity, NoOwnCityAndAllyHasCity all mean threat) |
+| [331-334](../../MoM/src/AIMOVE.c#L331) | `< lmt_Leaveable` AND `!= lmt_Own` | `G_Low_Threat = ST_FALSE` (i.e., we're not safe — Unevaluated, Contested, NoOwnCity, NoOwnCityAndAllyHasCity all mean threat) |
 | [343](../../MoM/src/AIMOVE.c#L343) | Else (Own, Abandon, NoTargets) | `G_Low_Threat = ST_TRUE` |
 
 Comment at [337](../../MoM/src/AIMOVE.c#L337) explicitly lists the "threat" group: `lmt_Unevaluated, lmt_Contested, lmt_NoOwnCity, lmt_NoOwnCityAndAllyHasCity`.
@@ -151,7 +151,7 @@ Comment at [337](../../MoM/src/AIMOVE.c#L337) explicitly lists the "threat" grou
 
 | Line | Condition | Action |
 |---|---|---|
-| [4538-4540](../../MoM/src/AIMOVE.c#L4538) | Node landmass = `Own` OR `≥ lmt_Abandon` OR garrisoned | (gates meld-target eligibility) |
+| [4538-4540](../../MoM/src/AIMOVE.c#L4538) | Node landmass = `Own` OR `≥ lmt_Leaveable` OR garrisoned | (gates meld-target eligibility) |
 
 ### `AI_CheckOtherPlane` (around [line 5860](../../MoM/src/AIMOVE.c#L5860))
 
@@ -191,7 +191,7 @@ The main consumer — uses the type to decide whether to keep current "main war 
 | [7903](../../MoM/src/AIMOVE.c#L7903) | `lmt_Own` | `ST_FALSE` (don't revisit) |
 | [7907](../../MoM/src/AIMOVE.c#L7907) | `lmt_Contested` | `ST_FALSE` (don't revisit — questionable) |
 | [7911-7912](../../MoM/src/AIMOVE.c#L7911) | `lmt_NoOwnCity` OR `lmt_NoOwnCityAndAllyHasCity` | Complex hostility/target-presence check |
-| [7966](../../MoM/src/AIMOVE.c#L7966) | `lmt_Abandon` | `ST_TRUE` (revisit — we said we could depart) |
+| [7966](../../MoM/src/AIMOVE.c#L7966) | `lmt_Leaveable` | `ST_TRUE` (revisit — we said we could depart) |
 | (missing) | `lmt_NoTargets` | **Falls to default (DNE)** — Gemini's translation groups this with the NoOwnCity case. May be a missing case. |
 
 ### Other late-stage consumers
@@ -245,8 +245,8 @@ The main consumer — uses the type to decide whether to keep current "main war 
 ### Cross-function clobbering
 
 ```
-G_AI_RallyOrFerry__WIP        AI_Build_Target_List          AI_Reevaluate_Continent
-  writes lmt_Abandon            writes lmt_NoTargets         OVERWRITES with classifier output
+AI_Stacks_Setup_Ferry        AI_Build_Target_List          AI_Reevaluate_Continent
+  writes lmt_Leaveable            writes lmt_NoTargets         OVERWRITES with classifier output
    (dock square found)             (no targets found)           (Own / Contested / NoOwnCity / etc.)
         │                              │                              │
         └──────────────────────────────┴──────────────────────────────┘
@@ -261,7 +261,7 @@ G_AI_RallyOrFerry__WIP        AI_Build_Target_List          AI_Reevaluate_Contin
 1. **`lmt_NoOwnCity` does not mean "no presence."** Units may be roaming. Only cities count.
 2. **`lmt_Own` requires a 10:1 unit-cost dominance.** A single own city with comparable enemy strength → `lmt_Contested`.
 3. **`lmt_NoOwnCityAndAllyHasCity` is overloaded.** Three semantic situations share this value: ally's territory, no stage tile, slot-0 sentinel. The name only fits the first.
-4. **`lmt_Abandon` means "we are leaving this continent."** Set by `AI_Stacks_Roamers_Target_Or_Deploy` when the landmass has no targets AND has at least one roaming stack of 7+ units. The dock square is the embarkation point. The next-turn re-evaluation ([`AI_Choose_War_Landmass66`](../../MoM/src/AIMOVE.c#L7966)) may revise the decision if conditions changed.
+4. **`lmt_Leaveable` means "we are leaving this continent."** Set by `AI_Stacks_Roamers_Target_Or_Deploy` when the landmass has no targets AND has at least one roaming stack of 7+ units. The dock square is the embarkation point. The next-turn re-evaluation ([`AI_Choose_War_Landmass66`](../../MoM/src/AIMOVE.c#L7966)) may revise the decision if conditions changed.
 5. **`AI_Reevaluate_Continent` does not zero the slot before counting.** [`AI_Evaluate_Continents`](../../MoM/src/AIMOVE.c#L7013) does. Possible bug in `AI_Reevaluate_Continent` — verify against disassembly.
 6. **`lmt_NoTargets` is unhandled in `AI_Choose_War_Landmass switch.** Falls to default. Gemini's translation includes it with the NoOwnCity group — may be a missing case in production.
 7. **The disassembly's switch is `(type - 1)`**, jumping into a 5-entry table for values 1-5. Value 0 (`lmt_Unevaluated`) cannot enter that switch — the `case lmt_Unevaluated` in the C code is dead. Value 6 (`lmt_NoTargets`) would index past the table → also dead in the bytes, unless a separate default branch handles it.

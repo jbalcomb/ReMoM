@@ -143,7 +143,7 @@ lmt_Contested:
 lmt_NoOwnCity:
 lmt_NoOwnCityAndAllyHasCity:
     IIF we have 0 cities and an allied wizard does have a 1+ cities
-lmt_Abandon:
+lmt_Leaveable:
     in AI_Stacks_Roamers_Target_Or_Deploy(), means relocate to the war landmass
 lmt_NoTargets:
     set in AI_Build_Target_List(), if a landmass has no military targets
@@ -155,7 +155,7 @@ OON set lmt_NoTargets:
     - **Hostility-gated.** A non-hostile player's cities don't count as targets, so a landmass full of cities owned by a wizard you're not at war with reads as `lmt_NoTargets` even though it's full of strategic assets.
     - **Time-stale.** The tag reflects a past turn's gather, not current state.
 
-OON set lmt_Abandon:
+OON set lmt_Leaveable:
     AI_Stacks_Roamers_Target_Or_Deploy()
     The tag is written only when ALL of these hold simultaneously,
     on this turn, for this (player, plane, landmass):
@@ -165,7 +165,7 @@ OON set lmt_Abandon:
     We are NOT on the main-war landmass (_ai_landmass_war_targets[wp][player_idx] != landmass_idx)
     Phase 2 found an empty (eval == 0) dock square on this landmass to use as the embark point (min_delta_distance got lowered below 1000)
     * seems made specifically for AI_Stacks_Order_To_War_Landmass(), which runs next
-    * G_AI_HomeRallyFill__WIP() usage?
+    * AI_Stacks_Relocate_Roamers() usage?
     * AI_FillGarrisons__WIP() usage?
     AI_Choose_War_Landmass() always reevaluates these, so temp condition
 
@@ -177,7 +177,7 @@ enum e_LANDMASS_TYPE
     lmt_Contested   = 2,  /* Own vs. Contested;  Own city + non-trivial enemy unit-cost. Name matches. */
     lmt_NoOwnCity   = 3,  /* 'Nay Own City';  Units may be roaming freely on the landmass — that doesn't count as "presence" here. */
     lmt_NoOwnCityAndAllyHasCity  = 4,  /* Purpose: flag landmasses that should be ignore/excluded; ally-only landmass OR no occupieable square; not just 'Nay Own City, Yay Ally City'; */
-    lmt_Abandon     = 5,  /* Embarkation tile was found — set when a dock square is reachable. Logically "we can depart from here," not "we have decided to abandon." */
+    lmt_Leaveable     = 5,  /* Embarkation tile was found — set when a dock square is reachable. Logically "we can depart from here," not "we have decided to abandon." */
     lmt_NoTargets   = 6   /* No attackable enemies, lairs, or nodes worth targeting. */
 };
 
@@ -521,7 +521,7 @@ enum e_UNIT_STATUS
     us_Purify         =   8,
     us_Meld           =   9,
     us_Settle         =  10,
-    us_SeekTransport  =  11,
+    us_Ferry  =  11,
     us_Unknown_12     =  12,
     us_Unknown_13     =  13,
     us_Unknown_14     =  14,
@@ -1778,7 +1778,7 @@ struct s_UNIT
     /* 06 */  int8_t  Hero_Slot;    /* index into _players[owner_idx].Heroes[] */
     /* 07 */  int8_t  Finished;     /* ¿ orderable ? {F,T}; Unit is out of Movement Points or is Busy performing a Unit Action (Go-To, Build Road, Purify, etc.) */
     /* 08 */  int8_t  moves2;       /* Movement Points, as half-points */
-    /* 09 */  int8_t  dst_wx;       /* 1-byte, signed; ...used as Pruify progress?;  Go-To Destination World X */  /* AI_Order_SeekTransport() uses this as some timer value */
+    /* 09 */  int8_t  dst_wx;       /* 1-byte, signed; ...used as Pruify progress?;  Go-To Destination World X */  /* AI_Stacks_Order_Ferry() uses this as some timer value */
     /* 0A */  int8_t  dst_wy;       /* 1-byte, signed;  Go-To Destination World Y */
     /* 0B */  int8_t  Status;
     /* 0C */  int8_t  Level;
@@ -2919,13 +2919,13 @@ extern int16_t _ai_targets_count;
 extern int16_t ai_transport_count;
 
 // WZD dseg:9096
-extern int16_t ai_seektransport_cnt;
+extern int16_t _ai_ferry_count;
 // WZD dseg:9098 
-extern int16_t AI_SeekTransport_Ps[15];
+extern int16_t _ai_ferry_wp_array[15];
 // WZD dseg:90B6 
-extern int16_t AI_SeekTransport_Ys[15];
+extern int16_t _ai_ferry_wy_array[15];
 // WZD dseg:90D4 
-extern int16_t AI_SeekTransport_Xs[15];
+extern int16_t _ai_ferry_wx_array[15];
 
 // WZD dseg:90F2
 extern int16_t * _ai_landmass_strength_ratios[2];

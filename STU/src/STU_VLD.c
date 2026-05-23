@@ -90,7 +90,7 @@ uint8_t pad2B_1Fh
     us_Purify         =   8
     us_Meld           =   9
     us_Settle         =  10
-    us_SeekTransport  =  11
+    us_Ferry  =  11
     us_Unknown_12     =  12
     us_Unknown_13     =  13
     us_Unknown_14     =  14

@@ -136,7 +136,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
 
     EMM_Map_CONTXXX__WIP();
 
-    ai_seektransport_cnt = 0;
+    _ai_ferry_count = 0;
 
     /* Compute the minimum attack-stack threshold: grows 1 per 30 turns starting from 2, capped at MAX_STACK (9 by turn 240). */
     g_ai_minattackstack = (2 + (_turn / 30));
@@ -186,7 +186,7 @@ AI_Stacks_Roamers_Target_Or_Deploy()
 
             // almost just NOT lmt_Contested
             if(
-                (cp_landmass_type_array[landmass_idx] >= lmt_Abandon)  /* {5:lmt_Abandon,6:lmt_NoTargets} */
+                (cp_landmass_type_array[landmass_idx] >= lmt_Leaveable)  /* {5:lmt_Leaveable,6:lmt_NoTargets} */
                 ||
                 (cp_landmass_type_array[landmass_idx] == lmt_Own)
                 ||
@@ -197,21 +197,27 @@ AI_Stacks_Roamers_Target_Or_Deploy()
             {
                 AI_Stacks_Order_To_War_Landmass(player_idx, wp);
             }
+
+            /* move non-garrisoned stacks off of landmasses whose type/status would suggested we can spare them */
             if(
-                (cp_landmass_type_array[landmass_idx] >= lmt_Abandon)  /* {5:lmt_Abandon,6:lmt_NoTargets} */
+                (cp_landmass_type_array[landmass_idx] >= lmt_Leaveable)  /* {5:lmt_Leaveable,6:lmt_NoTargets} */
                 ||
                 (cp_landmass_type_array[landmass_idx] == lmt_Own)
             )
             {
-                G_AI_HomeRallyFill__WIP(landmass_idx, wp, player_idx);
+                AI_Stacks_Relocate_Roamers(landmass_idx, wp, player_idx);
             }
+
+            /* could be super-duper weird this doesn't have a landmass type/status filer prerequisite */
             G_AI_RallyFill__WIP(landmass_idx, wp, player_idx);
+
+            /* Eh? Incongruent landmass filter? dominant, nervous, sure we can withdaraw, no reason not to withdraw? */
             if(
                 (cp_landmass_type_array[landmass_idx] == lmt_Own)
                 ||
                 (cp_landmass_type_array[landmass_idx] == lmt_Contested)
                 ||
-                (cp_landmass_type_array[landmass_idx] >= lmt_Abandon)
+                (cp_landmass_type_array[landmass_idx] >= lmt_Leaveable)
             )
             {
                 AI_FillGarrisons__WIP(player_idx, wp, landmass_idx);
@@ -251,7 +257,7 @@ void AI_Set_Unit_Orders__GEMINI(int player_idx)
     /* Map EMM data for continent/landmass processing */
     EMM_Map_CONTXXX__WIP();
 
-    ai_seektransport_cnt = 0; /* word_43F12 */
+    _ai_ferry_count = 0; /* word_43F12 */
 
     /* Calculate minimum stack size for AI attacks based on turn number */
     /* Formula: (turn / 30) + 2, capped at 9 (MAX_STACK) */
@@ -299,22 +305,22 @@ void AI_Set_Unit_Orders__GEMINI(int player_idx)
             type_ptr = cp_landmass_type_array + landmass_idx;
 
             /* Check if landmass needs a main war effort pull */
-            if (*type_ptr >= lmt_Abandon || *type_ptr == lmt_Own || *type_ptr == lmt_NoOwnCityAndAllyHasCity || *type_ptr == lmt_NoOwnCity)
+            if (*type_ptr >= lmt_Leaveable || *type_ptr == lmt_Own || *type_ptr == lmt_NoOwnCityAndAllyHasCity || *type_ptr == lmt_NoOwnCity)
             {
                 AI_Stacks_Order_To_War_Landmass(player_idx, wp);
             }
 
             /* Home Stage processing */
-            if (*type_ptr >= lmt_Abandon || *type_ptr == lmt_Own)
+            if (*type_ptr >= lmt_Leaveable || *type_ptr == lmt_Own)
             {
-                G_AI_HomeRallyFill__WIP(landmass_idx, wp, player_idx);
+                AI_Stacks_Relocate_Roamers(landmass_idx, wp, player_idx);
             }
 
             /* General Stage processing */
             G_AI_RallyFill__WIP(landmass_idx, wp, player_idx);
 
             /* Fill garrisons on controlled or contested landmasses */
-            if (*type_ptr == lmt_Own || *type_ptr == lmt_Contested || *type_ptr >= lmt_Abandon)
+            if (*type_ptr == lmt_Own || *type_ptr == lmt_Contested || *type_ptr >= lmt_Leaveable)
             {
                 AI_FillGarrisons__WIP(player_idx, wp, landmass_idx);
             }
@@ -358,7 +364,7 @@ void G_AI_RallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx)
     if((cp_staged_unit_count + cp_enroute_unit_count) < g_ai_minattackstack)
     {
         if(
-            (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] >= lmt_Abandon)
+            (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] >= lmt_Leaveable)
             ||
             (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoOwnCity)
             ||
@@ -430,7 +436,7 @@ void AI_FillGarrisons__WIP(int16_t player_idx, int16_t wp, int16_t landmass_idx)
     int16_t target_site_idx = 0;  // _DI_
 
     if(
-        (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] < lmt_Abandon)
+        (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] < lmt_Leaveable)
         &&
         (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] != lmt_Own)
     )
@@ -442,7 +448,7 @@ void AI_FillGarrisons__WIP(int16_t player_idx, int16_t wp, int16_t landmass_idx)
     }
     else
     {
-        // lmt_Own, lmt_Abandon, lmt_NoTargets
+        // lmt_Own, lmt_Leaveable, lmt_NoTargets
         G_Low_Threat = ST_TRUE;
 
     }
@@ -1067,15 +1073,15 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
         )
         {
 
-            for(itr1 = 0; itr1 < ai_seektransport_cnt; itr1++)
+            for(itr1 = 0; itr1 < _ai_ferry_count; itr1++)
             {
 
                 if(
-                    (_UNITS[itr2].dst_wx == AI_SeekTransport_Xs[itr1])
+                    (_UNITS[itr2].dst_wx == _ai_ferry_wx_array[itr1])
                     &&
-                    (_UNITS[itr2].dst_wy == AI_SeekTransport_Ys[itr1])
+                    (_UNITS[itr2].dst_wy == _ai_ferry_wy_array[itr1])
                     &&
-                    (AI_SeekTransport_Ps[itr1] == wp)
+                    (_ai_ferry_wp_array[itr1] == wp)
                 )
                 {
 
@@ -1091,13 +1097,13 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
     }
 
 
-    for(itr1 = 0; itr1 < ai_seektransport_cnt; itr1++)
+    for(itr1 = 0; itr1 < _ai_ferry_count; itr1++)
     {
 
         if(Transport_Spaces[itr1] <= 0)
         {
 
-            AI_SeekTransport_Ps[itr1] = ST_UNDEFINED;
+            _ai_ferry_wp_array[itr1] = ST_UNDEFINED;
 
         }
         
@@ -1192,21 +1198,21 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
 
                 closest_target_distance = 10000;
 
-                for(itr1 = 0; itr1 < ai_seektransport_cnt; itr1++)
+                for(itr1 = 0; itr1 < _ai_ferry_count; itr1++)
                 {
 
-                    if(AI_SeekTransport_Ps[itr1] == wp)
+                    if(_ai_ferry_wp_array[itr1] == wp)
                     {
 
-                        target_distance = Delta_XY_With_Wrap(stack_wx, stack_wy, AI_SeekTransport_Xs[itr1], AI_SeekTransport_Ys[itr1], WORLD_WIDTH);
+                        target_distance = Delta_XY_With_Wrap(stack_wx, stack_wy, _ai_ferry_wx_array[itr1], _ai_ferry_wy_array[itr1], WORLD_WIDTH);
 
                         if(target_distance < closest_target_distance)
                         {
                             closest_target_distance = target_distance;
 
-                            target_wx = AI_SeekTransport_Xs[itr1];
+                            target_wx = _ai_ferry_wx_array[itr1];
                             
-                            target_wy = AI_SeekTransport_Ys[itr1];
+                            target_wy = _ai_ferry_wy_array[itr1];
                             
                             Target_Queue_Index = itr1;
 
@@ -1250,7 +1256,7 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
                     if(Transport_Stack_Room <= 0)
                     {
 
-                        AI_SeekTransport_Ps[Target_Queue_Index] = ST_UNDEFINED;
+                        _ai_ferry_wp_array[Target_Queue_Index] = ST_UNDEFINED;
 
                     }
 
@@ -1481,7 +1487,7 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
                             if(_unit_type_table[unit_type].Transport > 0)
                             {
 
-                                AI_Order_SeekTransport(itr_units, itr_stacks, itr_list_units);
+                                AI_Stacks_Order_Ferry(itr_units, itr_stacks, itr_list_units);
 
                             }
                             else
@@ -1674,7 +1680,7 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
  * one large roaming stack exists and the player has a different main-war
  * landmass, the function searches for the closest empty dock square to use as a
  * staging point for leaving this landmass. In that case it updates the
- * landmass state in `_ai_continents` to `lmt_Abandon` and stores the chosen
+ * landmass state in `_ai_continents` to `lmt_Leaveable` and stores the chosen
  * embark square coordinates.
  *
  * @param landmass_idx Index of the landmass being processed.
@@ -1683,7 +1689,7 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
  * processed.
  *
  * @note This is the only code path in the current code base that sets a
- * landmass type to `lmt_Abandon`.
+ * landmass type to `lmt_Leaveable`.
  */
 void AI_Stacks_Roamers_Target_Or_Deploy(int16_t landmass_idx, int16_t wp, int16_t player_idx)
 {
@@ -1834,10 +1840,10 @@ void AI_Stacks_Roamers_Target_Or_Deploy(int16_t landmass_idx, int16_t wp, int16_
         landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
     }
 
-    /* NOTE(JimBalcomb,20260521): this is the only place in the whole code-base that sets lmt_Abandon */
+    /* NOTE(JimBalcomb,20260521): this is the only place in the whole code-base that sets lmt_Leaveable */
     if(min_delta_distance != 1000)
     {
-        _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Abandon;
+        _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Leaveable;
         _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = (uint8_t)target_square_wx;
         _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = (uint8_t)target_square_wy;
     }
@@ -1846,27 +1852,47 @@ void AI_Stacks_Roamers_Target_Or_Deploy(int16_t landmass_idx, int16_t wp, int16_
 
 
 // WZD o158p07
-// drake178: G_AI_HomeRallyFill()
-/*
-tries to fill the stack at the stage point and load
-all excess units onto ships afterward
-
-full of BUGs, it's a complete mess
-*/
-/*
-
-*/
-void G_AI_HomeRallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx)
+/**
+ * @brief Reposition roaming stacks toward a landmass stage point and prepare ferry handling.
+ *
+ * Reads the current stage-point coordinates stored for the specified landmass,
+ * estimates how many unit slots remain open at that square, and then iterates
+ * over all AI-owned stacks marked as `AISTK_Roamer`. Each non-empty roamer
+ * stack is handed off to AI_Stacks_Setup_Ferry(), which may move the stack to
+ * the stage point, queue ferry pickup coordinates, or issue ferry-related
+ * orders for the stack's units.
+ *
+ * After each eligible stack is processed, this helper reduces the projected
+ * stage-point capacity by that stack's unit count so later stacks are routed
+ * using the remaining assumed space.
+ *
+ * @param landmass_idx Index of the landmass whose stage point is being filled.
+ * @param wp World plane containing the landmass and its stage square.
+ * @param player_idx Index of the AI player whose roaming stacks are being
+ *                   relocated.
+ *
+ * @return This function does not return a value. It may indirectly update unit
+ *         orders and ferry queues through AI_Stacks_Setup_Ferry().
+ *
+ * @note The available-space calculation reflects only the last stack already
+ *       found on the exact stage square, then projects remaining capacity by
+ *       subtracting each processed roamer stack in sequence.
+ */
+void AI_Stacks_Relocate_Roamers(int16_t landmass_idx, int16_t wp, int16_t player_idx)
 {
     int16_t stage_wy = 0;
     int16_t stage_wx = 0;
     int16_t stack_wy = 0;
     int16_t stack_wx = 0;
     int16_t itr_stacks = 0;
-    int16_t IDK_count = 0;
+    int16_t stage_count_slot_count = 0;
+
+    /* Phase 1: Init */
     stage_wx = _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx];
     stage_wy = _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx];
-    IDK_count = 0;
+
+    /* Phase 2: Count of Open Stack Slots at Landmass Stage-Point */
+    stage_count_slot_count = 0;
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     {
         stack_wx = _ai_own_stack_wx[itr_stacks];
@@ -1877,21 +1903,27 @@ void G_AI_HomeRallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_id
             (stack_wy == stage_wy)
         )
         {
-            IDK_count = (MAX_STACK - _ai_own_stack_unit_count[itr_stacks]);
+            stage_count_slot_count = (MAX_STACK - _ai_own_stack_unit_count[itr_stacks]);
         }
     }
+
+    /* Phase 3: Setup Ferry for Valid, Roamer Stacks */ 
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     {
-        if(
-            (_ai_own_stack_type[itr_stacks] == AISTK_Roamer)
-            &&
-            (_ai_own_stack_unit_list[itr_stacks][0] != ST_UNDEFINED)
-        )
+        if(_ai_own_stack_type[itr_stacks] != AISTK_Roamer)
         {
-            G_AI_RallyOrFerry__WIP(itr_stacks, landmass_idx, wp, stage_wx, stage_wy, IDK_count, player_idx);
-            IDK_count -= _ai_own_stack_unit_count[itr_stacks];
+            continue;
         }
+        if(_ai_own_stack_unit_list[itr_stacks][0] == ST_UNDEFINED)
+        {
+            continue;
+        }
+        /* NOTE: OON XREF of AI_Stacks_Setup_Ferry() ~ per stack portion of parent function */
+        AI_Stacks_Setup_Ferry(itr_stacks, landmass_idx, wp, stage_wx, stage_wy, stage_count_slot_count, player_idx);
+        /* Deduct the units in this stack from the destination's projected available space */
+        stage_count_slot_count -= _ai_own_stack_unit_count[itr_stacks];
     }
+
 }
 
 
@@ -1963,71 +1995,108 @@ void AI_Stacks_Order_To_War_Landmass(int16_t player_idx, int16_t wp)
 
 
 // WZD o158p09
-// drake178: G_AI_RallyOrFerry()
-/*
-gives any unassigned units move orders to the passed
-tile, gives any adjacent ships a halt order (move to
-their current location), and tries to move any
-remaining units in the stack to a ship if there is
-one adjacent
-
-full of BUGs and inconsistencies
-*/
-/*
-
-*/
-void G_AI_RallyOrFerry__WIP(int16_t stack_idx, int16_t landmass_idx, int16_t wp, int16_t stage_wx, int16_t stage_wy, int16_t IDK_count, int16_t player_idx)
+/**
+ * @brief Move one roaming stack toward a landmass stage point and prepare ferry support.
+ *
+ * This helper is called from AI_Stacks_Relocate_Roamers() for roaming stacks on
+ * landmasses the AI wants to reinforce. It first determines an ocean square
+ * adjacent to the destination stage point and registers that square in the AI
+ * ferry-request queue through AI_Stacks_Ferry_Add_Location().
+ *
+ * If the stack is not already standing on the stage point, the function orders
+ * as many units as there is projected room for toward the stage coordinates.
+ * It then checks the stack's neighborhood for allied units already on ocean
+ * squares, estimating available transport capacity and free stack slots there.
+ * When such a nearby ocean group exists, eligible units are redirected to join
+ * that square immediately; otherwise the function leaves a ferry request in
+ * place and marks units to wait for ferry processing.
+ *
+ * @param stack_idx Index of the AI-owned stack being processed.
+ * @param landmass_idx Index of the landmass currently being rallied. Preserved
+ *                     locally for legacy logic, but not otherwise used here.
+ * @param wp World plane containing the stack, stage point, and ferry request.
+ * @param stage_wx World x-coordinate of the stage point for this landmass.
+ * @param stage_wy World y-coordinate of the stage point for this landmass.
+ * @param stage_count_slot_count Projected number of open unit slots available
+ *                               at the stage point before this stack is applied.
+ * @param player_idx Index of the AI player that owns the stack and nearby
+ *                   transport candidates.
+ *
+ * @return This function does not return a value. It may enqueue ferry pickup
+ *         coordinates in the `_ai_ferry_*` arrays and may assign movement or
+ *         ferry-wait orders to units in `_ai_own_stack_unit_list[stack_idx]`.
+ *
+ * @note Several original-game quirks are intentionally preserved, including
+ *       lack of bounds validation around adjacent-square scans and the fallback
+ *       ferry request that can reuse the stack's current land tile when no
+ *       adjacent ocean square is found.
+ */
+void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, int16_t stage_wx, int16_t stage_wy, int16_t stage_count_slot_count, int16_t player_idx)
 {
     int16_t unit_type = 0;
-    int16_t Max_Y = 0;
-    int16_t Min_Y = 0;
-    int16_t Max_X = 0;
-    int16_t Min_X = 0;
-    int16_t Ocean_Y = 0;
-    int16_t Ocean_X = 0;
+    int16_t max_wy = 0;
+    int16_t min_wy = 0;
+    int16_t max_wx = 0;
+    int16_t min_wx = 0;
+    int16_t ocean_wy = 0;
+    int16_t ocean_wx = 0;
     int16_t unit_idx = 0;
     int16_t list_unit_count = 0;
     int16_t stack_wy = 0;
     int16_t stack_wx = 0;
-    int16_t Space_On_Tile = 0;
-    int16_t Total_Transport = 0;
-    int16_t UU_Embarkable_Y = 0;
-    int16_t UU_Embarkable_X = 0;
-    int16_t UU_Landmass = 0;
-    int16_t Ocean_Unit_Y = 0;
-    int16_t Ocean_Unit_X = 0;
+    int16_t free_stack_slots_on_square = 0;
+    int16_t total_boat_capacity = 0;
+    int16_t niu_embarkable_wy = 0;
+    int16_t niu_embarkable_wx = 0;
+    int16_t niu_Landmass_idx = 0;
+    int16_t adjacent_unit_on_ocean_wy = 0;  // last-seen ocean unit's square
+    int16_t adjacent_unit_on_ocean_wx = 0;  // last-seen ocean unit's square
     int16_t Adjacent_X = 0;
     int16_t Y_Offset = 0;
     int16_t itr_units = 0;
-    int16_t Nearby_Ocean_Stack = 0;
-    int16_t UU_OceanFound = 0;
+    int16_t found_adjacent_unit_on_ocean = 0;
+    int16_t niu_embarkable_found = 0;
     int16_t itr_list_units = 0;
     int16_t X_Offset = 0;
-    UU_Landmass = landmass_idx;
+    int16_t wx_offset = 0;
+    int16_t wy_offset = 0;
+    int16_t unit_wx = 0;  // DNE in Dasm, reuses wx_offset
+    int16_t unit_wy = 0;  // DNE in Dasm, reuses wy_offset
+    int16_t itr_stack_wx = 0;  // DNE in Dasm, reuses Adjacent_X
+    int16_t itr_stack_wy = 0;  // DNE in Dasm, reuses Y_Offset
+
+    /* Phase 1: Init*/
+    niu_Landmass_idx = landmass_idx;
     stack_wx = _ai_own_stack_wx[stack_idx];
     stack_wy = _ai_own_stack_wy[stack_idx];
-    Ocean_X = stack_wx;
-    Ocean_Y = stack_wy;
-// ; find the last ocean tile in the 3 by 3 area centered around the stack
-// ; BUG: there is no guarantee that there will be one
-// ; BUG: doesn't validate the coordinates
-    for(Y_Offset = -1; Y_Offset < 2; Y_Offset++)
+    ocean_wx = stack_wx;
+    ocean_wy = stack_wy;
+
+
+    /* Phase 2: Find adjacent Ocean square */
+    /* OGBUG  should handle no ocean found */
+    /* OGBUG  should validate coordinates */
+    /* OGBUG  should early-exit on Ocean found */
+    for(wy_offset = -1; wy_offset < 2; wy_offset++)
     {
-        for(Y_Offset = -1; Y_Offset < 2; Y_Offset++)
+        for(wx_offset = -1; wx_offset < 2; wx_offset++)
         {
-            if(_landmasses[((wp * WORLD_SIZE) + ((Y_Offset + stage_wy) * WORLD_WIDTH) + (X_Offset + stage_wx))] == 0)
+            if(_landmasses[((wp * WORLD_SIZE) + ((stage_wy + wy_offset) * WORLD_WIDTH) + (stage_wx + wx_offset))] == 0)  /* Square is in Ocean landmass */
             {
-                Ocean_X = (X_Offset + stage_wx);
-                Ocean_Y = (Y_Offset + stage_wy);
+                ocean_wx = (stage_wx + wx_offset);
+                ocean_wy = (stage_wy + wy_offset);
             }
         }
     }
-// ; BUG: will add the original land tile if there was no ocean around the stack
-    AI_SeekTransportFrom__WIP(Ocean_X, Ocean_Y, wp);
-// ; keep giving move orders to the target destination to
-// ; any unassigned units in the stack until they are
-// ; either all assigned, or the required count is filled
-// ; BUG: never checks if the units can actually go there
+
+
+    /* Phase 3 */
+    /* OGBUG  will add the original land tile if there was no ocean around the stack */
+    AI_Stacks_Ferry_Add_Location(ocean_wx, ocean_wy, wp);
+
+
+    /* Phase 4 */
+    /* If the stack is not at the staging point, move units to it */
     if(
         (stack_wx != stage_wx)
         ||
@@ -2035,153 +2104,166 @@ void G_AI_RallyOrFerry__WIP(int16_t stack_idx, int16_t landmass_idx, int16_t wp,
     )
     {
         list_unit_count = _ai_own_stack_unit_count[stack_idx];
-        for(itr_list_units = 0; ((itr_list_units < list_unit_count) && (IDK_count > 0)); itr_list_units++)
+        for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
         {
+            if(stage_count_slot_count <= 0)
+            {
+                break;
+            }
             unit_idx = _ai_own_stack_unit_list[stack_idx][itr_list_units];
 #ifdef STU_DEBUG
             dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, stage_wx, stage_wy, stack_idx, itr_list_units);
 #endif
             g_ai_set_target_caller = 9;
             AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, stage_wx, stage_wy, stack_idx, itr_list_units);
-            IDK_count--;
+            stage_count_slot_count--;
         }
     }
-// ; find the last embarkable tile in the 3 by 3 area centered around the stack
-// ; BUG: no guarantee that there is a valid tile
-// ; BUG: the result variables are uninitialized
-// ; BUG: the function used to validate tiles does not
-// ; return true for all embarkable ones
-    for(Y_Offset = (stack_wy - 1); (stack_wy + 2) > Y_Offset; Y_Offset++)
+
+
+    /* Phase 5 */
+    /* DEDU  For what might this have been meant to be used? */
+    /* NOTE(JimBalcomb,20260523): this block is in AI_SendToColonize__WIP(), used properly there */
+    for(itr_stack_wy = (stack_wy - 1); (stack_wy + 2) > itr_stack_wy; itr_stack_wy++)
     {
         if(
-            (Y_Offset > 0)
+            (itr_stack_wy > 0)
             &&
-            (Y_Offset < WORLD_HEIGHT)
+            (itr_stack_wy < WORLD_HEIGHT)
         )
         {
-            for(Adjacent_X = (stack_wx - 1); (stack_wx + 2) > Adjacent_X; Adjacent_X++)
+            for(itr_stack_wx = (stack_wx - 1); (stack_wx + 2) > itr_stack_wx; itr_stack_wx++)
             {
-                X_Offset = Adjacent_X;
-                if(X_Offset < 0)
+                wx_offset = itr_stack_wx;
+                if(wx_offset < 0)
                 {
-                    X_Offset += WORLD_WIDTH;
+                    wx_offset += WORLD_WIDTH;
                 }
-                if(X_Offset >= WORLD_WIDTH)
+                if(wx_offset >= WORLD_WIDTH)
                 {
-                    X_Offset -= WORLD_WIDTH;
+                    wx_offset -= WORLD_WIDTH;
                 }
-                if(Map_Square_Is_Embarkable(X_Offset, Y_Offset, wp) != ST_FALSE)
+                if(Map_Square_Is_Embarkable(wx_offset, itr_stack_wy, wp) != ST_FALSE)
                 {
-                    UU_OceanFound = ST_TRUE;
-                    UU_Embarkable_X = Adjacent_X;
-                    UU_Embarkable_Y = Y_Offset;
+                    niu_embarkable_found = ST_TRUE;
+                    niu_embarkable_wx = itr_stack_wx;
+                    niu_embarkable_wy = itr_stack_wy;
                 }
             }
         }
     }
-// ; check the 3 by 3 area around the stack to determine
-// ; whether there are any ocean stacks there, and count
-// ; the units that need transportation as well as the
-// ; capacity of the transports
-// ; BUG: fails to check the plane the units are on
-// ; BUG: the check for seafaring units is inadequate
-// ; BUG? assigns any transports found a GoingTo order to
-// ;  the same tile that they are already on
-// ; BUG? counts the units on all 9 tiles together
-    Nearby_Ocean_Stack = ST_FALSE;
-    Min_X = (stack_wx - 1);
-    Min_Y = (stack_wx - 1);
-    Max_X = (stack_wx + 1);
-    Max_Y = (stack_wx + 1);
-    Total_Transport = 0;
-    Space_On_Tile = MAX_STACK;
+
+
+    /* Phase 6 */
+    /* Search all units for a nearby transport on the ocean */
+    /* OGBUG  should skip center square */
+    /* OGBUG  should track coordinates and capacity for where flag was set */
+    found_adjacent_unit_on_ocean = ST_FALSE;
+    min_wx = (stack_wx - 1);
+    min_wy = (stack_wy - 1);
+    max_wx = (stack_wx + 1);
+    max_wy = (stack_wy + 1);
+    total_boat_capacity = 0;
+    free_stack_slots_on_square = MAX_STACK;
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-        if(_UNITS[itr_units].owner_idx == player_idx)
+        if(_UNITS[itr_units].owner_idx != player_idx)
         {
-            X_Offset = _UNITS[itr_units].wx;
-            Y_Offset = _UNITS[itr_units].wy;
+            continue;
+        }
+        unit_wx = _UNITS[itr_units].wx;
+        unit_wy = _UNITS[itr_units].wy;
+        if(
+            (unit_wx < min_wx)
+            ||
+            (unit_wy < min_wy)
+            ||
+            (unit_wx > max_wx)
+            ||
+            (unit_wy > max_wy)
+        )
+        {
+            continue;
+        }
+        /* OGBUG  should use unit's wp */
+        if(_landmasses[((wp * WORLD_SIZE) + (unit_wy * WORLD_WIDTH) + unit_wx)] != 0)
+        {
+            continue;
+        }
+        /* found any adjacent unit on an ocean square */
+        found_adjacent_unit_on_ocean = ST_TRUE;
+        adjacent_unit_on_ocean_wx = _UNITS[itr_units].wx;  // last-seen ocean unit's square
+        adjacent_unit_on_ocean_wy = _UNITS[itr_units].wy;  // last-seen ocean unit's square
+        unit_type = _UNITS[itr_units].type;
+        /* Boat or Boatrider? */
+        if(_unit_type_table[unit_type].Transport > 0)
+        {
+            _UNITS[itr_units].dst_wx = _UNITS[itr_units].wx;
+            _UNITS[itr_units].dst_wy = _UNITS[itr_units].wy;
+            _UNITS[itr_units].Status = us_GOTO;
+            total_boat_capacity += _unit_type_table[unit_type].Transport;  // transport capacity for all nine squares?
+        }
+        else
+        {
             if(
-                (X_Offset >= Min_X)
+                (Unit_Has_AirTravel(itr_units) == ST_FALSE)
                 &&
-                (Y_Offset >= Min_Y)
-                &&
-                (X_Offset <= Max_X)
-                &&
-                (Y_Offset <= Max_Y)
+                (Unit_Has_WaterTravel(itr_units) == ST_FALSE)
             )
             {
-                if(_landmasses[((wp * WORLD_SIZE) + (Y_Offset * WORLD_WIDTH) + X_Offset)] == 0)
-                {
-                    Nearby_Ocean_Stack = ST_TRUE;
-                    Ocean_Unit_X = _UNITS[itr_units].wx;
-                    Ocean_Unit_Y = _UNITS[itr_units].wy;
-                    unit_type = _UNITS[itr_units].type;
-                    if(_unit_type_table[unit_type].Transport > 0)
-                    {
-                        _UNITS[itr_units].dst_wx = _UNITS[itr_units].wx;
-                        _UNITS[itr_units].dst_wy = _UNITS[itr_units].wy;
-                        _UNITS[itr_units].Status = us_GOTO;
-                        Total_Transport += _unit_type_table[unit_type].Transport;
-                    }
-                    else
-                    {
-                        if(
-                            (Unit_Has_AirTravel(itr_units) == ST_FALSE)
-                            &&
-                            (Unit_Has_WaterTravel(itr_units) == ST_FALSE)
-                        )
-                        {
-                            Total_Transport--;
-                        }
-                    }
-                }
-            }    
+                total_boat_capacity--;  // ← passenger needing ferry: deduct one
+            }
         }
+        free_stack_slots_on_square--;
     }
-    if(Nearby_Ocean_Stack == ST_TRUE)
+
+
+    /* Phase 7: Optimization - join neighbor or actively seek transport */
+    if(found_adjacent_unit_on_ocean == ST_TRUE)
     {
+        /* Phase 7a: override the ferry request */
         for(itr_list_units = 0; _ai_own_stack_unit_count[stack_idx] > itr_list_units; itr_list_units++)
         {
-            if(itr_list_units < Space_On_Tile)
+            if(itr_list_units < free_stack_slots_on_square)
             {
-                if(Total_Transport > 0)
+                if(total_boat_capacity > 0)
                 {
                     unit_idx = _ai_own_stack_unit_list[stack_idx][itr_list_units];
 #ifdef STU_DEBUG
-                    dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, Ocean_Unit_X, Ocean_Unit_Y, stack_idx, itr_list_units);
+                    dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_unit_on_ocean_wx, adjacent_unit_on_ocean_wy, stack_idx, itr_list_units);
 #endif
                     g_ai_set_target_caller = 10;
-                    AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, Ocean_Unit_X, Ocean_Unit_Y, stack_idx, itr_list_units);
+                    AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_unit_on_ocean_wx, adjacent_unit_on_ocean_wy, stack_idx, itr_list_units);
                     if(
                         (Unit_Has_AirTravel(unit_idx) == ST_FALSE)
                         ||
                         (Unit_Has_WaterTravel(unit_idx) == ST_FALSE)
                     )
                     {
-                        Total_Transport--;
+                        total_boat_capacity--;
                     }
                 }
             }
         }
     }
-    else
+    else  /* (found_adjacent_unit_on_ocean == ST_FALSE) */
     {
+        /* Phase 7b: set ferry request */
+        /* would have been an optimization, because us_Ferry? otherwise, Phase 3 and 4 still set up the stage move and ferry dispatch */
         for(itr_list_units = 0; _ai_own_stack_unit_count[stack_idx] > itr_list_units; itr_list_units++)
         {
-            if(itr_list_units < Space_On_Tile)
+            if(itr_list_units < free_stack_slots_on_square)
             {
-                // ; conflicting condition - will never jump
-                if(Total_Transport > 0)
+                /* unreachable - total_boat_capacity is always zero if there was no adjacent ocean unit found */
+                if(total_boat_capacity > 0)
                 {
-//  ; code path can't be reached - transport count is
-// ; always zero if there was no ocean stack
                     unit_idx = _ai_own_stack_unit_list[stack_idx][itr_list_units];
-                    AI_Order_SeekTransport(unit_idx, stack_idx, itr_list_units);
+                    AI_Stacks_Order_Ferry(unit_idx, stack_idx, itr_list_units);
                 }
             }
         }
     }
+
 }
 
 
@@ -4037,7 +4119,7 @@ void AI_Do_Meld(int16_t player_idx)
                             if(
                                 (_ai_continents.plane[unit_wp].player[player_idx].type_array[node_landmass_idx] == lmt_Own)
                                 ||
-                                (_ai_continents.plane[unit_wp].player[player_idx].type_array[node_landmass_idx] >= lmt_Abandon)  // {..., 5: lmt_Abandon, 6: lmt_NoTargets}
+                                (_ai_continents.plane[unit_wp].player[player_idx].type_array[node_landmass_idx] >= lmt_Leaveable)  // {..., 5: lmt_Leaveable, 6: lmt_NoTargets}
                                 ||
                                 (node_is_garrisoned == ST_TRUE)
                             )
@@ -4716,14 +4798,7 @@ void AI_Stacks_Order_Attack_Target_Or_Goto_Destination(int16_t unit_idx, int16_t
 // WZD o158p27
 void AI_Order_Settle(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx)
 {
-    if(
-        (unit_idx < 0)
-        ||
-        (unit_idx >= MAX_UNIT_COUNT)
-    )
-    {
-        return;
-    }
+    if((unit_idx < 0) || (unit_idx >= MAX_UNIT_COUNT)) { return; }
     _UNITS[unit_idx].Status = us_Settle;
     _ai_own_stack_unit_list[unit_list_idx][list_unit_idx] = ST_UNDEFINED;
 }
@@ -4732,14 +4807,7 @@ void AI_Order_Settle(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_
 // WZD o158p28
 void AI_Order_RoadBuild(int16_t unit_idx, int16_t wx, int16_t wy, int16_t unit_list_idx, int16_t list_unit_idx)
 {
-    if(
-        (unit_idx < 0)
-        ||
-        (unit_idx >= MAX_UNIT_COUNT)
-    )
-    {
-        return;
-    }
+    if((unit_idx < 0) || (unit_idx >= MAX_UNIT_COUNT)) { return; }
     _UNITS[unit_idx].Rd_From_X = _UNITS[unit_idx].wx;
     _UNITS[unit_idx].Rd_From_Y = _UNITS[unit_idx].wy;
     _UNITS[unit_idx].Status = us_BuildRoad;
@@ -4750,17 +4818,31 @@ void AI_Order_RoadBuild(int16_t unit_idx, int16_t wx, int16_t wy, int16_t unit_l
 
 
 // WZD o158p29
-void AI_Order_SeekTransport(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx)
+/**
+ * @brief Marks one AI-controlled unit as waiting for ferry transport.
+ *
+ * Validates the supplied unit index, then switches the unit's status to
+ * @c us_Ferry so later AI transport handling can pick it up. The routine also
+ * stores the original game's ferry wait counter value in @c dst_wx and removes
+ * the unit from the current `_ai_own_stack_unit_list` entry so the stack logic
+ * no longer treats it as unassigned this pass.
+ *
+ * @param unit_idx Global unit index to place into ferry-wait status.
+ * @param unit_list_idx Index of the owning AI stack within
+ *                      `_ai_own_stack_unit_list`.
+ * @param list_unit_idx Slot of the unit inside that AI stack list.
+ *
+ * @return This function does not return a value. It may update
+ *         @c _UNITS[unit_idx].Status, @c _UNITS[unit_idx].dst_wx, and
+ *         @c _ai_own_stack_unit_list[unit_list_idx][list_unit_idx].
+ *
+ * @note If @p unit_idx falls outside the valid unit array range, the function
+ *       exits without modifying unit or stack state.
+ */
+void AI_Stacks_Order_Ferry(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx)
 {
-    if(
-        (unit_idx < 0)
-        ||
-        (unit_idx >= UNIT_COUNT_MAX)
-    )
-    {
-        return;
-    }
-    _UNITS[unit_idx].Status = us_SeekTransport;
+    if((unit_idx < 0) || (unit_idx >= MAX_UNIT_COUNT)) { return; }
+    _UNITS[unit_idx].Status = us_Ferry;
     _UNITS[unit_idx].dst_wx = 10;  /* DEDU  drake178: "sets ... a timer of 10" */
     _ai_own_stack_unit_list[unit_list_idx][list_unit_idx] = ST_UNDEFINED;
 }
@@ -4769,14 +4851,7 @@ void AI_Order_SeekTransport(int16_t unit_idx, int16_t unit_list_idx, int16_t lis
 // WZD o158p30
 void AI_Order_Meld(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx)
 {
-    if(
-        (unit_idx < 0)
-        ||
-        (unit_idx > MAX_UNIT_COUNT)  /* ¿ JIMBUG  should be >= ? */
-    )
-    {
-        return;
-    }
+    if((unit_idx < 0) || (unit_idx >= MAX_UNIT_COUNT)) { return; }
     _UNITS[unit_idx].Status = us_Meld;
     _ai_own_stack_unit_list[unit_list_idx][list_unit_idx] = ST_UNDEFINED;
 }
@@ -4785,31 +4860,17 @@ void AI_Order_Meld(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_id
 // WZD o158p31
 void AI_Order_Purify(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx)
 {
-    if(
-        (unit_idx < 0)
-        &&
-        (unit_idx >= UNIT_COUNT_MAX)
-    )
-    {
-        return;
-    }
-        _UNITS[unit_idx].Status = us_Purify;
-        _UNITS[unit_idx].dst_wx = 20;  /* DEDU  timer, like SeekTransport? */
-        _ai_own_stack_unit_list[unit_list_idx][list_unit_idx] = ST_UNDEFINED;
+    if((unit_idx < 0) || (unit_idx >= MAX_UNIT_COUNT)) { return; }
+    _UNITS[unit_idx].Status = us_Purify;
+    _UNITS[unit_idx].dst_wx = 20;  /* DEDU  timer, like SeekTransport? */
+    _ai_own_stack_unit_list[unit_list_idx][list_unit_idx] = ST_UNDEFINED;
 }
 
 
 // WZD o158p32
-// drake178: TILE_CheckEnemyUnits()
 /*
-; checks if there are any non-own units in the radius
-; around the specified tile
-; returns 1 if there are, 0 if there aren't
-*/
-/*
-
-~== AI_Enemy_Unit_In_Range()
-
+OON XREF: AI_Do_Settle()
+~== AI_Enemy_Unit_In_Range(), but Landmass agnostic
 */
 int16_t Map_Square_Area_Has_Opponent(int16_t wx, int16_t wy, int16_t wp, int16_t range, int16_t player_idx)
 {
@@ -4825,69 +4886,74 @@ int16_t Map_Square_Area_Has_Opponent(int16_t wx, int16_t wy, int16_t wp, int16_t
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
         if(
-            (_UNITS[itr_units].wx >= min_wx)
+            (_UNITS[itr_units].wx < min_wx)
             &&
-            (_UNITS[itr_units].wx <= max_wx)
+            (_UNITS[itr_units].wy < min_wy)
             &&
-            (_UNITS[itr_units].wy >= min_wy)
+            (_UNITS[itr_units].wx > max_wx)
             &&
-            (_UNITS[itr_units].wy <= max_wy)
-            &&
-            (_UNITS[itr_units].wp == wp)
-            &&
-            (_UNITS[itr_units].owner_idx != player_idx)
+            (_UNITS[itr_units].wy > max_wy)
         )
         {
-            return ST_TRUE;
+            continue;
         }
+        if(_UNITS[itr_units].wp != wp)
+        {
+            continue;
+        }
+        if(_UNITS[itr_units].owner_idx != player_idx)
+        {
+            continue;
+        }
+        return ST_TRUE;
     }
     return ST_FALSE;
 }
 
 
 // WZD o158p33
-// drake178: AI_TILE_CheckEnemies()
 /*
-returns 1 if there is at least one non-own unit
-within the specified range of the selected tile; or
-0 otherwise
-*/
-/*
-
-~== Map_Square_Area_Has_Opponent()
-
+OON XREF: G_AI_ProcessTransports__WIP()
+~== Map_Square_Area_Has_Opponent(), but Landmass aware
 */
 int16_t AI_Enemy_Unit_In_Range(int16_t wx, int16_t wy, int16_t wp, int16_t range, int16_t player_idx, int16_t landmass_idx)
 {
-    int16_t Max_Y = 0;
-    int16_t Min_Y = 0;
-    int16_t Max_X = 0;
-    int16_t Min_X = 0;
+    int16_t max_wy = 0;
+    int16_t min_wy = 0;
+    int16_t max_wx = 0;
+    int16_t min_wx = 0;
     int16_t itr_units = 0;
-    Min_X = (wx - range);
-    Min_Y = (wy - range);
-    Max_X = (wx + range);
-    Max_Y = (wy + range);
+    min_wx = (wx - range);
+    min_wy = (wy - range);
+    max_wx = (wx + range);
+    max_wy = (wy + range);
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
         if(
-            (_UNITS[itr_units].wx >= Min_X)
+            (_UNITS[itr_units].wx < min_wx)
             &&
-            (_UNITS[itr_units].wy >= Min_Y)
+            (_UNITS[itr_units].wy < min_wy)
             &&
-            (_UNITS[itr_units].wx <= Max_X)
+            (_UNITS[itr_units].wx > max_wx)
             &&
-            (_UNITS[itr_units].wy <= Max_Y)
-            &&
-            (_UNITS[itr_units].wp == wp)
-            &&
-            (_UNITS[itr_units].owner_idx == player_idx)
-            &&
-            (_landmasses[((wp * WORLD_SIZE) + (_UNITS[itr_units].wy * WORLD_WIDTH) + _UNITS[itr_units].wx)] == landmass_idx)
+            (_UNITS[itr_units].wy > max_wy)
         )
         {
-            return ST_TRUE;
+            continue;
         }
+        if(_UNITS[itr_units].wp != wp)
+        {
+            continue;
+        }
+        if(_UNITS[itr_units].owner_idx != player_idx)
+        {
+            continue;
+        }
+        if(_landmasses[((wp * WORLD_SIZE) + (_UNITS[itr_units].wy * WORLD_WIDTH) + _UNITS[itr_units].wx)] != landmass_idx)
+        {
+            continue;
+        }
+        return ST_TRUE;
     }
     return ST_FALSE;
 }
@@ -5056,13 +5122,13 @@ void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp
             }
             else
             {
-                if(ai_seektransport_cnt < 15)
+                if(_ai_ferry_count < 15)
                 {
-                    AI_Order_SeekTransport(unit_idx, unit_list_idx, list_unit_idx);
-                    AI_SeekTransport_Xs[ai_seektransport_cnt] = Adjacent_Ocean_X;
-                    AI_SeekTransport_Ys[ai_seektransport_cnt] = Adjacent_Ocean_Y;
-                    AI_SeekTransport_Ps[ai_seektransport_cnt] = wp;
-                    ai_seektransport_cnt++;
+                    AI_Stacks_Order_Ferry(unit_idx, unit_list_idx, list_unit_idx);
+                    _ai_ferry_wx_array[_ai_ferry_count] = Adjacent_Ocean_X;
+                    _ai_ferry_wy_array[_ai_ferry_count] = Adjacent_Ocean_Y;
+                    _ai_ferry_wp_array[_ai_ferry_count] = wp;
+                    _ai_ferry_count++;
                 }
             }
         }
@@ -5071,34 +5137,50 @@ void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp
 
 
 // WZD o158p36
-// drake178: AI_SeekTransportFrom()
-/*
-; adds the tile to the transport request array, unless
-; it is already on it, or the array is full
-*/
-/*
-
-*/
-void AI_SeekTransportFrom__WIP(int16_t wx, int16_t wy, int16_t wp)
+/**
+ * @brief Registers a ferry-request location if it is not already queued.
+ *
+ * Scans the current AI ferry request arrays for an existing entry that matches
+ * the supplied world coordinates and plane. If a match is already present, the
+ * function leaves the queue unchanged. Otherwise, it appends a new request at
+ * the end of the arrays, provided the queue has not reached
+ * @c MAX_AI_FERRIES entries.
+ *
+ * @param wx World x coordinate of the requested ferry pickup square.
+ * @param wy World y coordinate of the requested ferry pickup square.
+ * @param wp World plane containing the requested ferry pickup square.
+ *
+ * @return This function does not return a value. It may update
+ *         @c _ai_ferry_wx_array, @c _ai_ferry_wy_array,
+ *         @c _ai_ferry_wp_array, and @c _ai_ferry_count.
+ */
+void AI_Stacks_Ferry_Add_Location(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t itr_seektransports = 0;
-    for(itr_seektransports = 0; itr_seektransports < ai_seektransport_cnt; itr_seektransports++)
+    int16_t itr = 0;
+    /* Search for existing entry */
+    for(itr = 0; itr < _ai_ferry_count; itr++)
     {
         if(
-            (AI_SeekTransport_Xs[itr_seektransports] == wx)
+            (_ai_ferry_wx_array[itr] == wx)
             &&
-            (AI_SeekTransport_Ys[itr_seektransports] == wy)
+            (_ai_ferry_wy_array[itr] == wy)
             &&
-            (AI_SeekTransport_Ps[itr_seektransports] == wp)
+            (_ai_ferry_wp_array[itr] == wp)
         )
         {
+            /* Found: do nothing and return. */
             return;
         }
     }
-    AI_SeekTransport_Xs[ai_seektransport_cnt] = wx;
-    AI_SeekTransport_Ys[ai_seektransport_cnt] = wy;
-    AI_SeekTransport_Ps[ai_seektransport_cnt] = wp;
-    ai_seektransport_cnt++;
+    if(_ai_ferry_count >= MAX_AI_FERRIES)
+    {
+        return;
+    }
+    /* If not found and the list has capacity (max 15), add new entry */
+    _ai_ferry_wx_array[_ai_ferry_count] = wx;
+    _ai_ferry_wy_array[_ai_ferry_count] = wy;
+    _ai_ferry_wp_array[_ai_ferry_count] = wp;
+    _ai_ferry_count++;
 }
 
 
@@ -7018,7 +7100,7 @@ void AI_Choose_War_Landmass(int16_t player_idx)
                     }
                 } break;
 
-                case lmt_Abandon:
+                case lmt_Leaveable:
                 {
                     reevaluate_the_current_plane = ST_TRUE;
                 } break;

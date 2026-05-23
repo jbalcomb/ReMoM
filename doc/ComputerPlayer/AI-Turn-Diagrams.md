@@ -23,7 +23,7 @@ sequenceDiagram
     Driver->>Choose: AI_Choose_War_Landmass(player_idx)
     Note over Choose: reads _ai_continents.type_array (stale from last turn)<br/>writes _ai_landmass_war_targets[wp][player_idx]
     Driver->>Eval: AI_Evaluate_Continents(player_idx)
-    Note over Eval: rewrites _ai_continents.type_array<br/>(preserves lmt_NoTargets, clobbers lmt_Abandon)
+    Note over Eval: rewrites _ai_continents.type_array<br/>(preserves lmt_NoTargets, clobbers lmt_Leaveable)
     Driver->>Orders: AI_Set_Unit_Orders(player_idx)
     Note over Orders: per (plane, landmass) dispatch<br/>writes _UNITS.Status + dst_wx/wy
     Driver->>Move: AI_MoveUnits(player_idx)
@@ -53,7 +53,7 @@ flowchart TD
         Dispatch --> Slots4_7["slots 4-7<br/>AI_Do_Meld<br/>AI_Do_Settle<br/>AI_Do_Purify<br/>AI_Do_RoadBuild"]:::func
         Dispatch --> Slot8["slot 8<br/>AI_Build_Target_List<br/>builds _ai_targets_*"]:::func
         Dispatch --> Slot9["slot 9<br/>AI_Stacks_Roamers_Target_Or_Deploy"]:::func
-        Dispatch --> SlotsRally["slots 10/11/13/14<br/>AI_Stacks_Order_To_War_Landmass<br/>G_AI_HomeRallyFill<br/>G_AI_RallyFill<br/>AI_FillGarrisons"]:::func
+        Dispatch --> SlotsRally["slots 10/11/13/14<br/>AI_Stacks_Order_To_War_Landmass<br/>AI_Stacks_Relocate_Roamers<br/>G_AI_RallyFill<br/>AI_FillGarrisons"]:::func
 
         Slot1 -. "Phase 3 only<br/>(first unit in us_Move)" .-> FindNearest["AI_Stacks_Target_Nearest_Hostile_Stack<br/>nearest hostile free-roaming stack on landmass"]:::func
         FindNearest --> SetTgt
@@ -65,7 +65,7 @@ flowchart TD
 
         SetTgt["AI_Stacks_Order_Attack_Target_Or_Goto_Destination<br/><br/>reads g_ai_evaluation_map at target<br/>SITE or STRENGTH_MASK bits set → Status = us_Move<br/>else → Status = us_GOTO<br/>writes dst_wx/wy<br/>consumes _ai_own_stack_unit_list slot"]:::func
 
-        Slots4_7 --> OrderXxx["AI_Order_Meld<br/>AI_Order_Settle<br/>AI_Order_Purify<br/>AI_Order_RoadBuild<br/>AI_Order_SeekTransport<br/><br/>sets Status to the matching us_* value<br/>consumes _ai_own_stack_unit_list slot"]:::func
+        Slots4_7 --> OrderXxx["AI_Order_Meld<br/>AI_Order_Settle<br/>AI_Order_Purify<br/>AI_Order_RoadBuild<br/>AI_Stacks_Order_Ferry<br/><br/>sets Status to the matching us_* value<br/>consumes _ai_own_stack_unit_list slot"]:::func
     end
 
     SetTgt -. "writes" .-> UnitFields
@@ -83,7 +83,7 @@ flowchart TD
         BuildRoad --> UnitMove
         StatusGate -- "us_Meld" --> UnitMeld["AI_UNIT_Meld__WIP"]:::func
         StatusGate -- "us_Settle" --> UnitSettle["AI_UNIT_Settle__WIP"]:::func
-        StatusGate -- "us_SeekTransport" --> UnitSeek["AI_UNIT_SeekTransprt__WIP"]:::func
+        StatusGate -- "us_Ferry" --> UnitSeek["AI_UNIT_SeekTransprt__WIP"]:::func
 
         UnitMove["AI_UNIT_Move<br/>reads _UNITS[u].dst_wx/wy"]:::func --> MoveUnits["Move_Units<br/>actual movement resolution"]:::terminal
 

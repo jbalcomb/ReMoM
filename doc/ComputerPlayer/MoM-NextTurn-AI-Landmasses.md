@@ -73,12 +73,12 @@ AI_Reevaluate_Continent()
         just means the player does not have any cities on the landmass
     4: lmt_NoLanding
         Allied territory OR No stage tile
-    5: lmt_Abandon
+    5: lmt_Leaveable
         Embarkation tile was found — set when a dock square is reachable. Logically "we can depart from here," not "we have decided to abandon."
     6: lmt_NoTargets
         No attackable enemies, lairs, or nodes worth targeting.
 
-_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Abandon;
+_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Leaveable;
 
 Here's the VS Code regex. Enable the .* (regex) toggle in the search bar.
 Strict — only the fully-qualified path:

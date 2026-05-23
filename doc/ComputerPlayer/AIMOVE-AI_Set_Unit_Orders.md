@@ -29,7 +29,7 @@ cp_landmass_wy_array   = &_ai_continents.plane[wp].player[player_idx].wy_array[0
 cp_landmass_type_array = &_ai_continents.plane[wp].player[player_idx].type_array[0];
 ```
 
-It also writes `ai_human_hostility` (boolean) and `g_ai_minattackstack` (turn-scaled stack size threshold), and resets `ai_seektransport_cnt = 0`.
+It also writes `ai_human_hostility` (boolean) and `g_ai_minattackstack` (turn-scaled stack size threshold), and resets `_ai_ferry_count = 0`.
 
 ## When it's called
 
@@ -72,7 +72,7 @@ if(
 ```c
 // AIMOVE.c:151-157
 EMM_Map_CONTXXX__WIP();
-ai_seektransport_cnt = 0;
+_ai_ferry_count = 0;
 g_ai_minattackstack = (2 + (_turn / 30));
 if(g_ai_minattackstack > MAX_STACK)
 {
@@ -130,7 +130,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
 
         // Pull units toward main-war landmass — runs for "almost NOT lmt_Contested"
         if(
-            (cp_landmass_type_array[landmass_idx] >= lmt_Abandon)
+            (cp_landmass_type_array[landmass_idx] >= lmt_Leaveable)
             || (cp_landmass_type_array[landmass_idx] == lmt_Own)
             || (cp_landmass_type_array[landmass_idx] == lmt_NoOwnCityAndAllyHasCity)
             || (cp_landmass_type_array[landmass_idx] == lmt_NoOwnCity)
@@ -141,11 +141,11 @@ for(wp = 0; wp < NUM_PLANES; wp++)
 
         // Home rally fill — only for own / abandoned / no-targets
         if(
-            (cp_landmass_type_array[landmass_idx] >= lmt_Abandon)
+            (cp_landmass_type_array[landmass_idx] >= lmt_Leaveable)
             || (cp_landmass_type_array[landmass_idx] == lmt_Own)
         )
         {
-            G_AI_HomeRallyFill__WIP(landmass_idx, wp, player_idx);
+            AI_Stacks_Relocate_Roamers(landmass_idx, wp, player_idx);
         }
 
         G_AI_RallyFill__WIP(landmass_idx, wp, player_idx);  // unconditional
@@ -154,7 +154,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
         if(
             (cp_landmass_type_array[landmass_idx] == lmt_Own)
             || (cp_landmass_type_array[landmass_idx] == lmt_Contested)
-            || (cp_landmass_type_array[landmass_idx] >= lmt_Abandon)
+            || (cp_landmass_type_array[landmass_idx] >= lmt_Leaveable)
         )
         {
             AI_FillGarrisons__WIP(player_idx, wp, landmass_idx);
@@ -188,9 +188,9 @@ for(wp = 0; wp < NUM_PLANES; wp++)
 
 | Function | Gate | Notes |
 |---|---|---|
-| `AI_Stacks_Order_To_War_Landmass` (10) | `lmt_Abandon` or `lmt_Own` or `lmt_NoOwnCityAndAllyHasCity` or `lmt_NoOwnCity` | "almost just NOT `lmt_Contested`" — comment in source. Skips contested-only. |
-| `G_AI_HomeRallyFill__WIP` (11) | `lmt_Abandon` or `lmt_Own` | Home-base rally — only for landmasses we hold or are abandoning. |
-| `AI_FillGarrisons__WIP` (14) | `lmt_Own` or `lmt_Contested` or `lmt_Abandon` | Garrison maintenance — needs a city to garrison. Excludes `lmt_NoOwnCity` / `lmt_NoOwnCityAndAllyHasCity`. |
+| `AI_Stacks_Order_To_War_Landmass` (10) | `lmt_Leaveable` or `lmt_Own` or `lmt_NoOwnCityAndAllyHasCity` or `lmt_NoOwnCity` | "almost just NOT `lmt_Contested`" — comment in source. Skips contested-only. |
+| `AI_Stacks_Relocate_Roamers` (11) | `lmt_Leaveable` or `lmt_Own` | Home-base rally — only for landmasses we hold or are abandoning. |
+| `AI_FillGarrisons__WIP` (14) | `lmt_Own` or `lmt_Contested` or `lmt_Leaveable` | Garrison maintenance — needs a city to garrison. Excludes `lmt_NoOwnCity` / `lmt_NoOwnCityAndAllyHasCity`. |
 
 (Numbers continue the dispatch-order column; gaps are where the conditional dispatch slot sits.)
 
@@ -238,10 +238,10 @@ AI_Set_Unit_Orders(player_idx)
         ├── AI_Build_Target_List
         ├── AI_Stacks_Roamers_Target_Or_Deploy
         ├── AI_Stacks_Order_To_War_Landmass           [gate: NOT lmt_Contested basically]
-        ├── G_AI_HomeRallyFill__WIP          [gate: lmt_Own / lmt_Abandon+]
+        ├── AI_Stacks_Relocate_Roamers          [gate: lmt_Own / lmt_Leaveable+]
         ├── G_AI_RallyFill__WIP              [always]
         │   └── AI_Reevaluate_Continent     [5% roll when stage is full]
-        └── AI_FillGarrisons__WIP            [gate: lmt_Own / lmt_Contested / lmt_Abandon+]
+        └── AI_FillGarrisons__WIP            [gate: lmt_Own / lmt_Contested / lmt_Leaveable+]
     ├── AI_ProcessOcean__WIP                 [per-plane post-pass]
     └── G_AI_ProcessTransports__WIP          [per-plane post-pass]
 └── EMM_Map_DataH                            [cleanup]

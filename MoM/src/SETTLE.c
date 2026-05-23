@@ -142,7 +142,7 @@ void AI_MoveUnits(int16_t player_idx)
                 {
                     AI_UNIT_Settle__WIP(unit_idx);
                 } break;
-                case us_SeekTransport:
+                case us_Ferry:
                 {
                     AI_UNIT_SeekTransprt__WIP(unit_idx);
                 } break;
