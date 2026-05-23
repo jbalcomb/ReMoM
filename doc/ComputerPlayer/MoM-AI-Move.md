@@ -76,7 +76,7 @@ AI_Next_Turn()
                 |-> AI_Stacks_Roamers_Target_Or_Deploy()
                     |-> AI_Stacks_Assign_Target()
                 ...depends on landmass type...
-                |-> AI_PullForMainWar__WIP()
+                |-> AI_Stacks_Order_To_War_Landmass()   ...uses _ai_own_stack_count, etc.
                 |-> G_AI_HomeRallyFill__WIP()
                     |-> G_AI_RallyOrFerry__WIP()
                         |-> AI_SeekTransportFrom__WIP()
@@ -126,7 +126,7 @@ Definitely Done-Done:
 [x]                 |-> AI_Add_Target()
 [x]             |-> AI_Stacks_Roamers_Target_Or_Deploy()
 [x]                 |-> AI_Stacks_Assign_Target()
-[ ]             |-> AI_PullForMainWar__WIP()
+[x]             |-> AI_Stacks_Order_To_War_Landmass()
 [ ]             |-> G_AI_HomeRallyFill__WIP()
 [ ]                 |-> G_AI_RallyOrFerry__WIP()
 [ ]                     |-> AI_SeekTransportFrom__WIP()
@@ -178,7 +178,7 @@ AI_Set_Unit_Orders(player_idx)
         ├── AI_Do_RoadBuild
         ├── AI_Build_Target_List
         ├── AI_Stacks_Roamers_Target_Or_Deploy
-        ├── AI_PullForMainWar__WIP           [gate: NOT lmt_Contested basically]
+        ├── AI_Stacks_Order_To_War_Landmass           [gate: NOT lmt_Contested basically]
         ├── G_AI_HomeRallyFill__WIP          [gate: lmt_Own / lmt_Abandon+]
         ├── G_AI_RallyFill__WIP              [always]
         │   └── AI_Reevaluate_Continent     [5% roll when stage is full]
@@ -217,14 +217,14 @@ _ai_continents__1
     AI_ProcessOcean__WIP+175           mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
     AI_Stacks_Roamers_Target_Or_Deploy+2EA         mov     [byte ptr _ai_continents__0.Player_0.wx_array+bx], al; _bdata_start
     G_AI_HomeRallyFill__WIP+1F         mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
-    AI_PullForMainWar__WIP+154         mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
+    AI_Stacks_Order_To_War_Landmass+154         mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
 
 ## _ai_landmass_war_targets[]
     Allocate_Data_Space()
     AI_ProcessOcean__WIP()
     G_AI_ProcessTransports__WIP()
     AI_Stacks_Roamers_Target_Or_Deploy()
-    AI_PullForMainWar__WIP()
+    AI_Stacks_Order_To_War_Landmass()
     AI_Reevaluate_Continent()
     AI_Evaluate_Continents()
     AI_Choose_War_Landmass
@@ -335,7 +335,7 @@ Down p G_AI_ProcessTransports__WIP+75B              call    near ptr AI_Stacks_O
 Down p G_AI_ProcessTransports__WIP+915              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p G_AI_ProcessTransports__WIP+9FE              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p AI_Stacks_Roamers_Target_Or_Deploy:loc_ED7E1             call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
-Down p AI_PullForMainWar__WIP+15F                   call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_Stacks_Order_To_War_Landmass+15F                   call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p G_AI_RallyOrFerry__WIP+E1                    call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p G_AI_RallyOrFerry__WIP+341                   call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p AI_Stacks_Init_Build_Target_Order            call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination

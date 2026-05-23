@@ -5,9 +5,9 @@ SEEALSO: MoM-NextTurn-AI.md
 probably just 'AI Turn', not realy 'Next Turn'
 
 AI_Pick_Action_Conts__WIP()  ==>  AI_Choose_War_Landmass()
-AI_MainWarConts  ==>  _ai_landmass_war_targets
+_ai_landmass_war_targets  ==>  _ai_landmass_war_targets
 
-I renamed AI_Pick_Action_Conts__WIP to AI_Choose_War_Landmass and AI_MainWarConts to _ai_landmass_war_targets.
+I renamed AI_Pick_Action_Conts__WIP to AI_Choose_War_Landmass and _ai_landmass_war_targets to _ai_landmass_war_targets.
 For BUG-B, I double-checked the disassembly. Looks like the comment and Gemini were wrong. It's definitely if this player's fortress is not active or if this landmass is this player's home continent.
 
 
@@ -122,10 +122,10 @@ XREF:
     AI_Stacks_Roamers_Target_Or_Deploy+148      mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_Stacks_Roamers_Target_Or_Deploy+15F      mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_Stacks_Roamers_Target_Or_Deploy+187      mov     bx, [_ai_landmass_war_targets+bx]                                
-    AI_PullForMainWar__WIP+119      mov     bx, [_ai_landmass_war_targets+bx]                                
-    AI_PullForMainWar__WIP+145      mov     bx, [_ai_landmass_war_targets+bx]                                
-    AI_PullForMainWar__WIP+8C       mov     bx, [_ai_landmass_war_targets+bx]                                
-    AI_PullForMainWar__WIP+F        mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Stacks_Order_To_War_Landmass+119      mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Stacks_Order_To_War_Landmass+145      mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Stacks_Order_To_War_Landmass+8C       mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Stacks_Order_To_War_Landmass+F        mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_Reevaluate_Continent+8DF   mov     bx, [_ai_landmass_war_targets+bx]                                
     G_AI_ProcessTransports__WIP+488 mov     bx, [_ai_landmass_war_targets+bx]                                
     G_AI_ProcessTransports__WIP+774 mov     bx, [_ai_landmass_war_targets+bx]                                

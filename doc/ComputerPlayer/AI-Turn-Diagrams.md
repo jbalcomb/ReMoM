@@ -53,7 +53,7 @@ flowchart TD
         Dispatch --> Slots4_7["slots 4-7<br/>AI_Do_Meld<br/>AI_Do_Settle<br/>AI_Do_Purify<br/>AI_Do_RoadBuild"]:::func
         Dispatch --> Slot8["slot 8<br/>AI_Build_Target_List<br/>builds _ai_targets_*"]:::func
         Dispatch --> Slot9["slot 9<br/>AI_Stacks_Roamers_Target_Or_Deploy"]:::func
-        Dispatch --> SlotsRally["slots 10/11/13/14<br/>AI_PullForMainWar<br/>G_AI_HomeRallyFill<br/>G_AI_RallyFill<br/>AI_FillGarrisons"]:::func
+        Dispatch --> SlotsRally["slots 10/11/13/14<br/>AI_Stacks_Order_To_War_Landmass<br/>G_AI_HomeRallyFill<br/>G_AI_RallyFill<br/>AI_FillGarrisons"]:::func
 
         Slot1 -. "Phase 3 only<br/>(first unit in us_Move)" .-> FindNearest["AI_Stacks_Target_Nearest_Hostile_Stack<br/>nearest hostile free-roaming stack on landmass"]:::func
         FindNearest --> SetTgt
@@ -127,7 +127,7 @@ flowchart LR
     Move --> NextSlot1["next turn slot 1 Phase 3:<br/>AI_Stacks_Target_Nearest_Hostile_Stack"]:::func
     NextSlot1 -- "enemy stack found" --> SetMove["AI_Stacks_Order_Attack_Target_Or_Goto_Destination<br/>target has STRENGTH_MASK bits<br/>→ Status = us_Move (renewed)"]:::func
     SetMove --> Move
-    NextSlot1 -- "no enemy on landmass" --> Demote["AISTK_InTransit<br/>Status = us_Ready"]:::state
+    NextSlot1 -- "no enemy on landmass" --> Demote["AISTK_Unknown<br/>Status = us_Ready"]:::state
 ```
 
 The loop terminates only when no hostile free-roaming stack remains on the landmass, OR when between-turn movement resolution actually engages the target.

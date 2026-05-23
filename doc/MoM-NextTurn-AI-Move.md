@@ -162,7 +162,7 @@ AI_CreateTargetList()
 
 AI_ProcessRoamers()
 
-AI_PullForMainWar__WIP()
+AI_Stacks_Order_To_War_Landmass()
 
 
 AI_ProcessOcean__WIP()
@@ -326,7 +326,7 @@ Need_Path_To_Target = _UNITS[unit_idx].Move_Failed;
 
 
 
-## AI_PullForMainWar__WIP()
+## AI_Stacks_Order_To_War_Landmass()
 
 for stack types 1 and 0
 if Unit_Has_AirTravel() or Unit_Has_WaterTravel and not UA_MELD

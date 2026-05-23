@@ -87,7 +87,7 @@ for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     ...
 ```
 
-`AISTK_Garrison = 3` and `AISTK_FortressGarrison = 4` per [MoX/src/MOM_DAT.h:102-107](../../MoX/src/MOM_DAT.h#L102-L107). Skipping `< AISTK_Garrison` excludes `AISTK_InTransit` (0), `AISTK_Roamer` (1), and `AISTK_DNE` (2). Only stacks that are physically sitting on a city/site/fortress square get processed — the rationale being that roamers don't need to be "pushed out" of anywhere; they're already mobile.
+`AISTK_Garrison = 3` and `AISTK_FortressGarrison = 4` per [MoX/src/MOM_DAT.h:102-107](../../MoX/src/MOM_DAT.h#L102-L107). Skipping `< AISTK_Garrison` excludes `AISTK_Unknown` (0), `AISTK_Roamer` (1), and `AISTK_DNE` (2). Only stacks that are physically sitting on a city/site/fortress square get processed — the rationale being that roamers don't need to be "pushed out" of anywhere; they're already mobile.
 
 ### Inner loop — per-unit slot ([lines 3580-3588](../../MoM/src/AIMOVE.c#L3580-L3588))
 

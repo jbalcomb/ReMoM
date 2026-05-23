@@ -89,7 +89,7 @@ Tile_Enemy_Value = g_ai_evaluation_map[wp][((Next_Tile_Y * WORLD_WIDTH) + Next_T
 
 /*
 _ai_own_stack_type
-0: in transit, purifying, or road building (c < 3)
+0: not sure yet
 1: Free/Roaming  (not sitting on a Site)
 2: DNE
 3: Garrison - City, Node, Tower (sitting on a Site, assumed to be garrisoned in a City or protecting a Node or Tower)
@@ -99,11 +99,11 @@ _ai_own_stack_type
 */
 enum e_AI_OWN_STACK_TYPE
 {
-    AISTK_InTransit = 0,   /* in transit, purifying, or road building (c < 3) */
-    AISTK_Roamer = 1,   /* Free/Roaming  (not sitting on a Site) */
-    AISTK_DNE = 2,      /* DNE */
-    AISTK_Garrison = 3,  /* Garrison - City, Node, Tower (sitting on a Site, assumed to be garrisoned in a City or protecting a Node or Tower) */
-    AISTK_FortressGarrison = 4,   /* Garrison - Fortress City   (sitting on a Site, which is the player's Fortress City) */
+    AISTK_Unknown = 0,
+    AISTK_Roamer = 1,           /* Free/Roaming  (not sitting on a Site) */
+    AISTK_DNE = 2,              /* DNE */
+    AISTK_Garrison = 3,         /* Garrison - City, Node, Tower (sitting on a Site, assumed to be garrisoned in a City or protecting a Node or Tower) */
+    AISTK_FortressGarrison = 4, /* Garrison - Fortress City     (sitting on a Site, which is the player's Fortress City) */
     AISTK_COUNT = 5
 };
 
@@ -164,7 +164,7 @@ OON set lmt_Abandon:
     A main-war landmass IS set for this plane (_ai_landmass_war_targets[wp][player_idx] != 0)
     We are NOT on the main-war landmass (_ai_landmass_war_targets[wp][player_idx] != landmass_idx)
     Phase 2 found an empty (eval == 0) dock square on this landmass to use as the embark point (min_delta_distance got lowered below 1000)
-    * seems made specifically for AI_PullForMainWar__WIP(), which runs next
+    * seems made specifically for AI_Stacks_Order_To_War_Landmass(), which runs next
     * G_AI_HomeRallyFill__WIP() usage?
     * AI_FillGarrisons__WIP() usage?
     AI_Choose_War_Landmass() always reevaluates these, so temp condition

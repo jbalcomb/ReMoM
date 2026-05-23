@@ -136,7 +136,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
             || (cp_landmass_type_array[landmass_idx] == lmt_NoOwnCity)
         )
         {
-            AI_PullForMainWar__WIP(player_idx, wp);
+            AI_Stacks_Order_To_War_Landmass(player_idx, wp);
         }
 
         // Home rally fill — only for own / abandoned / no-targets
@@ -188,7 +188,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
 
 | Function | Gate | Notes |
 |---|---|---|
-| `AI_PullForMainWar__WIP` (10) | `lmt_Abandon` or `lmt_Own` or `lmt_NoOwnCityAndAllyHasCity` or `lmt_NoOwnCity` | "almost just NOT `lmt_Contested`" — comment in source. Skips contested-only. |
+| `AI_Stacks_Order_To_War_Landmass` (10) | `lmt_Abandon` or `lmt_Own` or `lmt_NoOwnCityAndAllyHasCity` or `lmt_NoOwnCity` | "almost just NOT `lmt_Contested`" — comment in source. Skips contested-only. |
 | `G_AI_HomeRallyFill__WIP` (11) | `lmt_Abandon` or `lmt_Own` | Home-base rally — only for landmasses we hold or are abandoning. |
 | `AI_FillGarrisons__WIP` (14) | `lmt_Own` or `lmt_Contested` or `lmt_Abandon` | Garrison maintenance — needs a city to garrison. Excludes `lmt_NoOwnCity` / `lmt_NoOwnCityAndAllyHasCity`. |
 
@@ -237,7 +237,7 @@ AI_Set_Unit_Orders(player_idx)
         ├── AI_Do_RoadBuild
         ├── AI_Build_Target_List
         ├── AI_Stacks_Roamers_Target_Or_Deploy
-        ├── AI_PullForMainWar__WIP           [gate: NOT lmt_Contested basically]
+        ├── AI_Stacks_Order_To_War_Landmass           [gate: NOT lmt_Contested basically]
         ├── G_AI_HomeRallyFill__WIP          [gate: lmt_Own / lmt_Abandon+]
         ├── G_AI_RallyFill__WIP              [always]
         │   └── AI_Reevaluate_Continent     [5% roll when stage is full]
@@ -251,6 +251,6 @@ AI_Set_Unit_Orders(player_idx)
 
 - [AIMOVE-AI_Reevaluate_Continent.md](AIMOVE-AI_Reevaluate_Continent.md) — invoked via `G_AI_RallyFill__WIP` on 5% roll
 - [AIMOVE-AI_Reevaluate_All_Continents.md](AIMOVE-AI_Reevaluate_All_Continents.md) — full-rebuild classifier; **not** called from this dispatcher (runs on a separate per-turn schedule)
-- [AIMOVE-AI_Choose_War_Landmass.md](AIMOVE-AI_Choose_War_Landmass.md) — producer of `_ai_landmass_war_targets[]` read by `AI_PullForMainWar__WIP`
+- [AIMOVE-AI_Choose_War_Landmass.md](AIMOVE-AI_Choose_War_Landmass.md) — producer of `_ai_landmass_war_targets[]` read by `AI_Stacks_Order_To_War_Landmass`
 - [MoM-AI-Landmass-Types.md](MoM-AI-Landmass-Types.md) — `lmt_*` enum used by every conditional gate above
 - [MoM-AI-AIMOVE-Index.md](MoM-AI-AIMOVE-Index.md) — function index

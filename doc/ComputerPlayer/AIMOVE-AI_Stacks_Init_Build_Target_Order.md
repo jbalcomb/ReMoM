@@ -36,7 +36,7 @@ Per the comment block at [MoX/src/MOM_DAT.c:2685-2706](../../MoX/src/MOM_DAT.c#L
 | `_ai_own_stack_wx[s]`, `_ai_own_stack_wy[s]`, `_ai_own_stack_wp[s]` | Stack `s`'s world coordinates and plane |
 | `_ai_own_stack_unit_count[s]` | Number of units in stack `s` |
 | `_ai_own_stack_unit_list[s][u]` | Unit index of slot `u` in stack `s`, OR `ST_UNDEFINED` if "consumed" (busy/processed). See [AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md](AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md) "Note on sparse `_ai_own_stack_unit_list[][]`" for the consume-by-sentinel idiom. |
-| `_ai_own_stack_type[s]` | `AISTK_FortressGarrison` / `AISTK_Garrison` / `AISTK_Roamer` / `AISTK_InTransit` |
+| `_ai_own_stack_type[s]` | `AISTK_FortressGarrison` / `AISTK_Garrison` / `AISTK_Roamer` / `AISTK_Unknown` |
 
 Also writes two `cp_*` module-level counters:
 - `cp_staged_unit_count` — units already AT the landmass's stage point
@@ -211,7 +211,7 @@ for(itr_stacks1 = 0; itr_stacks1 < _ai_own_stack_count; itr_stacks1++)
     {
         if((_ai_own_stack_unit_count[itr_stacks1] + 1) < 3)  /* NOTE(JimBalcomb,20260522): double-checked, this really does weirdly test +1<3 */
         {
-            _ai_own_stack_type[itr_stacks1] = AISTK_InTransit;
+            _ai_own_stack_type[itr_stacks1] = AISTK_Unknown;
         }
     }
     else  /* (first_unit_idx != ST_UNDEFINED) && (Status == us_Move) */
@@ -232,17 +232,17 @@ for(itr_stacks1 = 0; itr_stacks1 < _ai_own_stack_count; itr_stacks1++)
             {
                 _UNITS[_ai_own_stack_unit_list[itr_stacks1][itr_units2]].Status = us_Ready;
             }
-            _ai_own_stack_type[itr_stacks1] = AISTK_InTransit;
+            _ai_own_stack_type[itr_stacks1] = AISTK_Unknown;
         }
     }
 }
 ```
 
 **Intent:** for each Roamer stack:
-- If its first unit was consumed (`ST_UNDEFINED` in slot 0) or its first unit is NOT in `us_Move`, AND the stack is small (`count + 1 < 3`, i.e. count is 0 or 1), mark it `AISTK_InTransit`. Small stragglers get parked.
+- If its first unit was consumed (`ST_UNDEFINED` in slot 0) or its first unit is NOT in `us_Move`, AND the stack is small (`count + 1 < 3`, i.e. count is 0 or 1), mark it `AISTK_Unknown`. Small stragglers get parked.
 - Otherwise (first unit is in `us_Move`), this stack is actively moving — call [`AI_Stacks_Target_Nearest_Hostile_Stack`](../../MoM/src/AIMOVE.c#L3240) to find a nearby hostile free-roaming stack on the same landmass:
   - If found, issue every unit in the stack a move/goto order toward those coords (caller breadcrumb `g_ai_set_target_caller = 11`). `AI_Stacks_Order_Attack_Target_Or_Goto_Destination` then consumes each slot — so post-Phase-3, the affected stack's unit list becomes fully `ST_UNDEFINED`.
-  - If no target found, release every unit to `us_Ready` and mark the stack `AISTK_InTransit`.
+  - If no target found, release every unit to `us_Ready` and mark the stack `AISTK_Unknown`.
 
 The `(count + 1) < 3` check is **faithful-to-OG** (verified against disassembly per the inline note at line 3002) — equivalent to `count < 2`. Stacks of 0 or 1 units get parked; larger stacks-without-us_Move-leader stay as Roamer for later dispatch slots to handle.
 
@@ -270,11 +270,11 @@ AI_Set_Unit_Orders                                          [AIMOVE.c:131, Phase
             │    │         └─ zero                    → AISTK_Roamer
             │    └─ append: write unit_idx (or ST_UNDEFINED if busy), increment unit_count
             └─ Phase 3: per Roamer stack:
-                 ├─ small/non-Move stack → AISTK_InTransit
+                 ├─ small/non-Move stack → AISTK_Unknown
                  └─ Move-status stack:
                       └─ AI_Stacks_Target_Nearest_Hostile_Stack
                            ├─ found → AI_Stacks_Order_Attack_Target_Or_Goto_Destination(every_unit, target)  [g_ai_set_target_caller = 11]
-                           └─ none  → release all units to us_Ready, mark AISTK_InTransit
+                           └─ none  → release all units to us_Ready, mark AISTK_Unknown
 ```
 
 ## Consumers (what reads the arrays this function builds)
@@ -291,7 +291,7 @@ Every subsequent slot of `AI_Set_Unit_Orders` Phase 4 dispatch consumes some par
 | 7 | `AI_Do_RoadBuild` | type, unit_list |
 | 8 | `AI_Build_Target_List` | (doesn't touch stack arrays) |
 | 9 | [`AI_Stacks_Roamers_Target_Or_Deploy`](AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md) | type, unit_count, wx/wy, unit_list (for Roamer stacks) |
-| 10 | `AI_PullForMainWar__WIP` | type, unit_count, unit_list |
+| 10 | `AI_Stacks_Order_To_War_Landmass` | type, unit_count, unit_list |
 | 11 | `G_AI_HomeRallyFill__WIP` | type, wx/wy, unit_list |
 | 13 | `G_AI_RallyFill__WIP` | type, unit_count, unit_list; also `cp_staged_unit_count` / `cp_enroute_unit_count` |
 | 14 | `AI_FillGarrisons__WIP` | type, unit_count, unit_list |

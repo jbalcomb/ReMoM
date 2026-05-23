@@ -301,7 +301,7 @@ This is a **single-turn assertion** that only persists across one turn boundary 
 
 | Reader | Test | Timing vs. writer | Meaning of tag at this read |
 |---|---|---|---|
-| `AI_PullForMainWar__WIP` ([line 203](../../MoM/src/AIMOVE.c#L203) gate) | `>= lmt_Abandon` (in OR-chain that's "almost NOT Contested") | Same turn, just after slot 9 wrote it | Pull units off this landmass toward main war |
+| `AI_Stacks_Order_To_War_Landmass` ([line 203](../../MoM/src/AIMOVE.c#L203) gate) | `>= lmt_Abandon` (in OR-chain that's "almost NOT Contested") | Same turn, just after slot 9 wrote it | Pull units off this landmass toward main war |
 | `G_AI_HomeRallyFill__WIP` ([line 220](../../MoM/src/AIMOVE.c#L220) gate) | `>= lmt_Abandon || == lmt_Own` | Same turn | Stage point is valid — consolidate units there |
 | `AI_FillGarrisons__WIP` ([line 233](../../MoM/src/AIMOVE.c#L233) gate) | `== lmt_Own || == lmt_Contested || >= lmt_Abandon` | Same turn | Garrison maintenance allowed |
 | `AI_FillGarrisons__WIP` internal ([line 380](../../MoM/src/AIMOVE.c#L380)) | `>= lmt_Abandon` | Same turn | "We're in the abandoning/no-targets group" |

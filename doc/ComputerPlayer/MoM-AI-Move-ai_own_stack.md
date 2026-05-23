@@ -31,7 +31,7 @@ _ai_own_stack_type
 */
 enum e_AI_OWN_STACK_TYPE
 {
-    AISTK_InTransit = 0,   /* in transit, purifying, or road building (c < 3) */
+    AISTK_Unknown = 0,   /* in transit, purifying, or road building (c < 3) */
     AISTK_Roamer = 1,   /* Free/Roaming  (not sitting on a Site) */
     AISTK_DNE = 2,      /* DNE */
     AISTK_Garrison = 3,  /* Garrison - City, Node, Tower (sitting on a Site, assumed to be garrisoned in a City or protecting a Node or Tower) */
@@ -116,7 +116,7 @@ _ai_own_stack_wx;
 
 ## AI_Stacks_Init_Build_Target_Order
 
-Seems odd that it changes the _ai_own_stack_type from AISTK_Roamer to AISTK_InTransit if it can't find an immediate target with #AI_Stacks_Target_Nearest_Hostile_Stack.
+Seems odd that it changes the _ai_own_stack_type from AISTK_Roamer to AISTK_Unknown if it can't find an immediate target with #AI_Stacks_Target_Nearest_Hostile_Stack.
 What's the different between using AI_Stacks_Target_Nearest_Hostile_Stack() here vs. AI_Stacks_Roamers_Target_Or_Deploy() |-> AI_Stacks_Assign_Target() later?
 
 Stack is Roamer in us_Move (already moving toward a previous target)

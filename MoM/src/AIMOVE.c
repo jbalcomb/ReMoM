@@ -186,24 +186,19 @@ AI_Stacks_Roamers_Target_Or_Deploy()
 
             // almost just NOT lmt_Contested
             if(
-                (cp_landmass_type_array[landmass_idx] >= lmt_Abandon)     /* {..., lmt_Abandon: 5, lmt_NoTargets: 6 } */
+                (cp_landmass_type_array[landmass_idx] >= lmt_Abandon)  /* {5:lmt_Abandon,6:lmt_NoTargets} */
                 ||
-                (cp_landmass_type_array[landmass_idx] == lmt_Own)         /* 1 */
+                (cp_landmass_type_array[landmass_idx] == lmt_Own)
                 ||
-                (cp_landmass_type_array[landmass_idx] == lmt_NoOwnCityAndAllyHasCity)   /* 4 */
+                (cp_landmass_type_array[landmass_idx] == lmt_NoOwnCityAndAllyHasCity)
                 ||
-                (cp_landmass_type_array[landmass_idx] == lmt_NoOwnCity)  /* 3 */
+                (cp_landmass_type_array[landmass_idx] == lmt_NoOwnCity)
             )
             {
-                // Early-out if the AI has no designated main-war continent on this plane (_ai_landmass_war_targets[wp][player_idx] == 0)
-                // Walk all AI-owned stacks of type 0 or 1 (roaming/mobile, not garrison)
-                // For each stack physically standing on the main-war continent:
-                // For each unit in that stack with air or water travel and no UA_MELD:
-                // Issue a move order toward the main-war continent's stage coordinates
-                AI_PullForMainWar__WIP(player_idx, wp);
+                AI_Stacks_Order_To_War_Landmass(player_idx, wp);
             }
             if(
-                (cp_landmass_type_array[landmass_idx] >= lmt_Abandon)  /* {..., lmt_Abandon: 5, lmt_NoTargets: 6 } */
+                (cp_landmass_type_array[landmass_idx] >= lmt_Abandon)  /* {5:lmt_Abandon,6:lmt_NoTargets} */
                 ||
                 (cp_landmass_type_array[landmass_idx] == lmt_Own)
             )
@@ -224,7 +219,7 @@ AI_Stacks_Roamers_Target_Or_Deploy()
         }
 
         /* Process non-landmass based units */
-        AI_ProcessOcean__WIP(player_idx, wp);
+        AI_ProcessOcean__WIP(player_idx, wp);  /* ¿ only for war landmass ? */
         G_AI_ProcessTransports__WIP(player_idx, wp);
         
     }
@@ -306,7 +301,7 @@ void AI_Set_Unit_Orders__GEMINI(int player_idx)
             /* Check if landmass needs a main war effort pull */
             if (*type_ptr >= lmt_Abandon || *type_ptr == lmt_Own || *type_ptr == lmt_NoOwnCityAndAllyHasCity || *type_ptr == lmt_NoOwnCity)
             {
-                AI_PullForMainWar__WIP(player_idx, wp);
+                AI_Stacks_Order_To_War_Landmass(player_idx, wp);
             }
 
             /* Home Stage processing */
@@ -685,7 +680,7 @@ void AI_FillGarrisons__WIP(int16_t player_idx, int16_t wp, int16_t landmass_idx)
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     {
         if(
-            (_ai_own_stack_type[itr_stacks] == AISTK_InTransit)
+            (_ai_own_stack_type[itr_stacks] == AISTK_Unknown)
             ||
             (_ai_own_stack_type[itr_stacks] == AISTK_Roamer)
         )
@@ -1901,18 +1896,7 @@ void G_AI_HomeRallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_id
 
 
 // WZD o158p08
-// drake178: AI_PullForMainWar()
-/*
-; send all unprocessed flying and seafaring units that
-; are not in a garrison to the main war continent, with
-; the exception of Melders
-;
-; BUG: the functions used do not cover all cases
-*/
-/*
-
-*/
-void AI_PullForMainWar__WIP(int16_t player_idx, int16_t wp)
+void AI_Stacks_Order_To_War_Landmass(int16_t player_idx, int16_t wp)
 {
     int16_t stack_wy = 0;
     int16_t stack_wx = 0;
@@ -1920,66 +1904,61 @@ void AI_PullForMainWar__WIP(int16_t player_idx, int16_t wp)
     int16_t unit_idx = 0;
     int16_t itr_list_units = 0;
     int16_t itr_stacks = 0;
+    int16_t war_landmass_idx = 0; // DNE in Dasm
+    int16_t current_landmass_idx = 0; // DNE in Dasm
+    int16_t war_landmass_stage_point_wx = 0;  // DNE in Dasm
+    int16_t war_landmass_stage_point_wy = 0;  // DNE in Dasm
 
-    if(_ai_landmass_war_targets[wp][player_idx] == 0)
+    war_landmass_idx = _ai_landmass_war_targets[wp][player_idx];
+    if(war_landmass_idx == 0)
     {
         return;
     }
-
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     {
+        /* Filter stack types (only Non-Garrison and Unknown) */
         if(
-            (_ai_own_stack_type[itr_stacks] == AISTK_Roamer)
-            ||
-            (_ai_own_stack_type[itr_stacks] == AISTK_InTransit)
+            (_ai_own_stack_type[itr_stacks] != AISTK_Roamer)
+            &&
+            (_ai_own_stack_type[itr_stacks] != AISTK_Unknown)
         )
         {
-            list_unit_count = _ai_own_stack_unit_count[itr_stacks];
-            stack_wx = _ai_own_stack_wx[itr_stacks];
-            stack_wy = _ai_own_stack_wy[itr_stacks];
-            if(_landmasses[((wp * WORLD_SIZE) + (stack_wy * WORLD_WIDTH) + stack_wx)] == _ai_landmass_war_targets[wp][player_idx])
-            {
-
-// ; send all unassigned flying and seafaring units in the
-// ; stack to the main war continent (give move orders),
-// ; except those that can Meld
-// ; 
-// ; BUG: the functions used don't cover all cases
-
-                for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
-                {
-
-                    unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
-
-                    if(
-                        (
-                            (Unit_Has_AirTravel(unit_idx) == ST_TRUE)
-                            ||
-                            (Unit_Has_WaterTravel(unit_idx) == ST_TRUE)
-                        )
-                        &&
-                        ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_MELD) == 0)
-                    )
-                    {
-
-#ifdef STU_DEBUG
-//                        dbg_prn("AI_ORDERS: [PullMainWar] unit %d -> MainWarCont[%d][%d]=%d coords (%d,%d)\n", unit_idx, wp, player_idx, _ai_landmass_war_targets[wp][player_idx], _ai_continents.plane[wp].player[player_idx].X_Coords[_ai_landmass_war_targets[wp][player_idx]], _ai_continents.plane[wp].player[player_idx].Y_Coords[_ai_landmass_war_targets[wp][player_idx]]);
-                        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, _ai_continents.plane[wp].player[player_idx].wx_array[_ai_landmass_war_targets[wp][player_idx]], _ai_continents.plane[wp].player[player_idx].wy_array[_ai_landmass_war_targets[wp][player_idx]], itr_stacks, itr_list_units);
-#endif
-                        g_ai_set_target_caller = 8;
-//                        AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, _ai_continents.plane[wp].player[player_idx].X_Coords[_ai_landmass_war_targets[wp][player_idx]], _ai_continents.plane[wp].player[player_idx].Y_Coords[_ai_landmass_war_targets[wp][player_idx]], itr_stacks, itr_list_units);
-                        AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, _ai_continents.plane[wp].player[player_idx].wx_array[_ai_landmass_war_targets[wp][player_idx]], _ai_continents.plane[wp].player[player_idx].wy_array[_ai_landmass_war_targets[wp][player_idx]], itr_stacks, itr_list_units);
-
-                    }
-
-                }
-
-            }
-
+            continue;
         }
-
+        list_unit_count = _ai_own_stack_unit_count[itr_stacks];
+        stack_wx = _ai_own_stack_wx[itr_stacks];
+        stack_wy = _ai_own_stack_wy[itr_stacks];
+        current_landmass_idx = _landmasses[((wp * WORLD_SIZE) + (stack_wy * WORLD_WIDTH) + stack_wx)];
+        if(current_landmass_idx == war_landmass_idx)
+        {
+            continue;
+        }
+        for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
+        {
+            unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
+            /* ¿ OGBUG  should check wind-walk and items ? */
+            if(
+                (Unit_Has_AirTravel(unit_idx) != ST_TRUE)
+                &&
+                (Unit_Has_WaterTravel(unit_idx) != ST_TRUE)
+            )
+            {
+                continue;
+            }
+            if((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_MELD) != 0)
+            {
+                continue;
+            }
+            war_landmass_stage_point_wx = _ai_continents.plane[wp].player[player_idx].wx_array[war_landmass_idx];
+            war_landmass_stage_point_wy = _ai_continents.plane[wp].player[player_idx].wy_array[war_landmass_idx];
+#ifdef STU_DEBUG
+//                        dbg_prn("AI_ORDERS: [PullMainWar] unit %d -> MainWarCont[%d][%d]=%d coords (%d,%d)\n", unit_idx, wp, player_idx, _ai_landmass_war_targets[wp][player_idx], war_landmass_stage_point_wx, war_landmass_stage_point_wy);
+            dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, war_landmass_stage_point_wx, war_landmass_stage_point_wy, itr_stacks, itr_list_units);
+#endif
+            g_ai_set_target_caller = 8;
+            AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, war_landmass_stage_point_wx, war_landmass_stage_point_wy, itr_stacks, itr_list_units);
+        }
     }
-
 }
 
 
@@ -2940,7 +2919,7 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
         {
             if((_ai_own_stack_unit_count[itr_stacks1] + 1) < 3)  /* NOTE(JimBalcomb,20260522): double-checked, this really does weirdly test +1<3 */
             {
-                _ai_own_stack_type[itr_stacks1] = AISTK_InTransit;
+                _ai_own_stack_type[itr_stacks1] = AISTK_Unknown;
             }
         }
         else  /* (first_unit_idx != ST_UNDEFINED) && (_UNITS[first_unit_idx].Status == us_Move) */
@@ -2966,7 +2945,7 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
                 {
                     _UNITS[_ai_own_stack_unit_list[itr_stacks1][itr_units2]].Status = us_Ready;
                 }
-                _ai_own_stack_type[itr_stacks1] = AISTK_InTransit;
+                _ai_own_stack_type[itr_stacks1] = AISTK_Unknown;
             }
         }
     }
@@ -3671,7 +3650,7 @@ G_AI_RallyFill__WIP() at AIMOVE.c:334-344 —
  when a continent is abandoned / no-presence / undermanned for a main-war stage,
  it issues AI_Stacks_Order_Attack_Target_Or_Goto_Destination() for each G_Pushout_Unit_Indices[] entry
  toward the continent's stage coords.
-AI_PullForMainWar__WIP() — similar, and uses the Seafaring pool for units with air/water travel.
+AI_Stacks_Order_To_War_Landmass() — similar, and uses the Seafaring pool for units with air/water travel.
 Where it sits in the turn
 Called once per (plane, landmass) from AI_SetUnitOrders at AIMOVE.c:145,
  wedged between AI_Stacks_Move_Out_NonMilitary_Garrisoned (pushes builders out of garrisons) and AI_Do_Meld. 
@@ -3684,7 +3663,7 @@ So the ordering is:
 Short version
 It's the "find excess combat units across my stacks and rank the top 9 for reassignment" pass.
  It doesn't move anyone itself — it just fills a global ranked pool.
-  The reassignment happens later in G_AI_RallyFill__WIP / AI_PullForMainWar__WIP.
+  The reassignment happens later in G_AI_RallyFill__WIP / AI_Stacks_Order_To_War_Landmass.
 
 
 */
@@ -4452,7 +4431,7 @@ void AI_Do_Purify(int16_t landmass_idx, int16_t wp)
         for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
         {
 
-            if(_ai_own_stack_type[itr_stacks] == AISTK_InTransit)
+            if(_ai_own_stack_type[itr_stacks] == AISTK_Unknown)
             {
 
                 list_unit_count = _ai_own_stack_unit_count[itr_stacks];

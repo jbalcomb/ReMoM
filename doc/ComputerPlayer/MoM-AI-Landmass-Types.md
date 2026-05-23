@@ -94,7 +94,7 @@ The most overloaded value — five different write sites with three distinct sem
 
 **Semantic at write site:** "We have a sizable expeditionary force on this landmass, this landmass has nothing left to attack, there's a war elsewhere, and we found an embark point — stage the force at that dock square for ferrying."
 
-**At read sites:** the tag is a **single-turn ferry-staging marker**, NOT a long-term "we are leaving this place" classification. It is written during dispatch slot 9 ([`AI_Set_Unit_Orders`](AIMOVE-AI_Set_Unit_Orders.md) Phase 4); consumed THIS turn by slots 10/11/14 (`AI_PullForMainWar__WIP`, `G_AI_HomeRallyFill__WIP`, `AI_FillGarrisons__WIP`) using the embark point as a staging target; survives ONE turn boundary to be read by next turn's `AI_Choose_War_Landmass` ([line 7786](../../MoM/src/AIMOVE.c#L7786) switch sets `Reevaluate = ST_TRUE` for this case); then **clobbered** by `AI_Evaluate_Continents` ([line 6874](../../MoM/src/AIMOVE.c#L6874)) before the next dispatch — no preservation clause exists for `lmt_Abandon` (unlike `lmt_NoTargets`).
+**At read sites:** the tag is a **single-turn ferry-staging marker**, NOT a long-term "we are leaving this place" classification. It is written during dispatch slot 9 ([`AI_Set_Unit_Orders`](AIMOVE-AI_Set_Unit_Orders.md) Phase 4); consumed THIS turn by slots 10/11/14 (`AI_Stacks_Order_To_War_Landmass`, `G_AI_HomeRallyFill__WIP`, `AI_FillGarrisons__WIP`) using the embark point as a staging target; survives ONE turn boundary to be read by next turn's `AI_Choose_War_Landmass` ([line 7786](../../MoM/src/AIMOVE.c#L7786) switch sets `Reevaluate = ST_TRUE` for this case); then **clobbered** by `AI_Evaluate_Continents` ([line 6874](../../MoM/src/AIMOVE.c#L6874)) before the next dispatch — no preservation clause exists for `lmt_Abandon` (unlike `lmt_NoTargets`).
 
 To stay tagged across turns, the Phase 3 write must re-fire — which requires ALL five trigger conditions to still hold. See [AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md](AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md) for the full timing analysis, comparison with `lmt_NoTargets`, and the "why 'Abandon' is a misleading name" notes.
 
@@ -117,7 +117,7 @@ A more accurate name would be something like `lmt_NoHostileAssetsLastSeen` — t
 | Line | Group tested | Action |
 |---|---|---|
 | [186-193](../../MoM/src/AIMOVE.c#L186) | `≥ lmt_Abandon` OR `Own` OR `NoOwnCityAndAllyHasCity` OR `NoOwnCity` ("almost just NOT Contested") | (gates an `if` block — see surrounding code) |
-| [203-206](../../MoM/src/AIMOVE.c#L203) | `≥ lmt_Abandon` OR `Own` | Skip `AI_PullForMainWar__WIP` |
+| [203-206](../../MoM/src/AIMOVE.c#L203) | `≥ lmt_Abandon` OR `Own` | Skip `AI_Stacks_Order_To_War_Landmass` |
 | [212-217](../../MoM/src/AIMOVE.c#L212) | `Own` OR `Contested` OR `≥ lmt_Abandon` | (gates an `if` block) |
 
 ### `G_AI_RallyFill__WIP` ([line 240](../../MoM/src/AIMOVE.c#L240))

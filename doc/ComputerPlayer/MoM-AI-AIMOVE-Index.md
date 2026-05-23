@@ -57,11 +57,11 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **Purpose:** TBD
 - **Reads `lmt_*`:** none direct
 
-### `AI_PullForMainWar__WIP` — [line 1898](../../MoM/src/AIMOVE.c#L1898)
+### `AI_Stacks_Order_To_War_Landmass` — [line 1899](../../MoM/src/AIMOVE.c#L1899)
 - **drake178:** `AI_PullForMainWar()` (o158p08)
-- **End:** ~line 1992
-- **Purpose:** TBD
-- **Reads `lmt_*`:** none direct
+- **End:** ~line 1962
+- **Purpose:** Order mobile (air- or water-traveling) non-melder units to head to the main war landmass's stage point. Skips stacks already on the war landmass; skips Garrison/FortressGarrison stacks. See [AIMOVE-AI_Stacks_Order_To_War_Landmass.md](AIMOVE-AI_Stacks_Order_To_War_Landmass.md).
+- **Reads `lmt_*`:** none direct (gated by the caller on landmass type — see walkthrough)
 
 ### `G_AI_RallyOrFerry__WIP` — [line 1993](../../MoM/src/AIMOVE.c#L1993)
 - **drake178:** `G_AI_RallyOrFerry()` (o158p09)

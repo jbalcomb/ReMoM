@@ -45,7 +45,7 @@ void AI_Stacks_Roamers_Target_Or_Deploy(int16_t landmass_idx, int16_t wp, int16_
 void G_AI_HomeRallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx);
 
 // WZD o158p08
-void AI_PullForMainWar__WIP(int16_t player_idx, int16_t wp);
+void AI_Stacks_Order_To_War_Landmass(int16_t player_idx, int16_t wp);
 
 // WZD o158p09
 void G_AI_RallyOrFerry__WIP(int16_t itr_stacks, int16_t landmass_idx, int16_t wp, int16_t stage_wx, int16_t stage_wy, int16_t IDK_count, int16_t player_idx);
