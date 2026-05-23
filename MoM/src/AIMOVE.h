@@ -78,7 +78,7 @@ void AI_Shift_Off_Home_Plane(int16_t player_idx);
 void AI_Move_Out_Boats(void);
 
 // WZD o158p19
-void AI_GarrBuilderPush__WIP(int16_t wp);
+void AI_Stacks_Move_Out_NonMilitary_Garrisoned(int16_t wp);
 
 // WZD o158p20
 void AI_Survey_Excess_Units(void);

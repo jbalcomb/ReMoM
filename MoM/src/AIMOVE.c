@@ -59,46 +59,32 @@ uint8_t * cp_landmass_wy_array;
 uint8_t * cp_landmass_wx_array;
 
 // WZD dseg:D3F2
-int16_t G_Seafaring_Lowest_Value;
-// WZD dseg:D3F4
-int16_t G_Pushout_Lowest_Value;
-// WZD dseg:D3F6
 /*
 cleared in AI_Survey_Excess_Units()
 populated in AI_Survey_Excess_Units_In_Stack()
-*/
-int16_t G_Seafaring_Count;
-// WZD dseg:D3F8
-int16_t cp_drafted_unit_count;
-// WZD dseg:D3FA
-int16_t G_Seafaring_Values[MAX_STACK];
-// WZD dseg:D40C
-int16_t G_Pushout_Values[MAX_STACK];
-// WZD dseg:D41E
-int16_t G_Seafaring_CX_IDs[MAX_STACK];
-// WZD dseg:D430
-int16_t G_Pushout_CX_IDs[MAX_STACK];
-// WZD dseg:D442
-int16_t G_Seafaring_UL_Indices[MAX_STACK];
-// WZD dseg:D454
-int16_t G_Pushout_UL_Indices[MAX_STACK];
-// WZD dseg:D466
-int16_t G_Seafaring_Unit_Indices[MAX_STACK];
 
-// WZD dseg:D478
-/*
 AI_Set_Unit_Orders
     |-> AI_Survey_Excess_Units()
         |-> AI_Survey_Excess_Units_In_Stack()
     |-> G_AI_RallyFill__WIP()
 
 */
+int16_t G_Seafaring_Lowest_Value;
+int16_t G_Pushout_Lowest_Value;
+int16_t G_Seafaring_Count;
+int16_t cp_drafted_unit_count;
+int16_t G_Seafaring_Values[MAX_STACK];
+int16_t G_Pushout_Values[MAX_STACK];
+int16_t G_Seafaring_CX_IDs[MAX_STACK];
+int16_t G_Pushout_CX_IDs[MAX_STACK];
+int16_t G_Seafaring_UL_Indices[MAX_STACK];
+int16_t G_Pushout_UL_Indices[MAX_STACK];
+int16_t G_Seafaring_Unit_Indices[MAX_STACK];
 int16_t G_Pushout_Unit_Indices[MAX_STACK];
 
 // WZD dseg:D48A
 /*
-cleared and calculated in AI_Stacks_Init_Build_Target_Order
-
+cleared and calculated in AI_Stacks_Init_Build_Target_Order()
 */
 int16_t cp_staged_unit_count;
 int16_t cp_enroute_unit_count;
@@ -174,7 +160,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
         for(landmass_idx = 1; landmass_idx < NUM_LANDMASSES; landmass_idx++)
         {
             AI_Stacks_Init_Build_Target_Order(player_idx, landmass_idx, wp);
-            AI_GarrBuilderPush__WIP(wp);
+            AI_Stacks_Move_Out_NonMilitary_Garrisoned(wp);
             AI_Survey_Excess_Units();
             AI_Do_Meld(player_idx);
             AI_Do_Settle(player_idx, landmass_idx);
@@ -304,7 +290,7 @@ void AI_Set_Unit_Orders__GEMINI(int player_idx)
         {
             /* Core AI unit management and pathfinding */
             AI_Stacks_Init_Build_Target_Order(player_idx, landmass_idx, wp);
-            AI_GarrBuilderPush__WIP(wp);
+            AI_Stacks_Move_Out_NonMilitary_Garrisoned(wp);
             AI_Survey_Excess_Units(); /* overlay call */
             AI_Do_Meld(player_idx);
             AI_Do_Settle(player_idx, landmass_idx);
@@ -3101,12 +3087,15 @@ void AI_Find_Opportunity_City_Target(int16_t wp, int16_t player_idx)
     int16_t itr_units = 0;
     int16_t itr_stacks = 0;
     int16_t itr_cities = 0;
+    
     for(itr_stacks = 0; itr_stacks < _ai_all_own_stack_count; itr_stacks++)
     {
+
         if(_ai_all_own_stacks[itr_stacks].unit_status != us_GOTO)
         {
             continue;
         }
+
         stack_wx = _ai_all_own_stacks[itr_stacks].wx;
         stack_wy = _ai_all_own_stacks[itr_stacks].wy;
         stack_wp = _ai_all_own_stacks[itr_stacks].wp;
@@ -3115,25 +3104,18 @@ void AI_Find_Opportunity_City_Target(int16_t wp, int16_t player_idx)
         max_wx = (stack_wx + 1);
         max_wy = (stack_wy + 1);
         found_target = ST_FALSE;
-// ; check if there's a lightly defended enemy city on the tiles adjacent to the stack
+
         for(itr_cities = 0; ((itr_cities < _cities) && (found_target == ST_FALSE)); itr_cities++)
         {
-            if(
-                (_CITIES[itr_cities].wx < min_wx)
-                ||
-                (_CITIES[itr_cities].wx > max_wx)
-                ||
-                (_CITIES[itr_cities].wy < min_wy)
-                ||
-                (_CITIES[itr_cities].wy > min_wy)
-                ||
-                (_CITIES[itr_cities].wp != wp)
-                ||
-                (_CITIES[itr_cities].owner_idx != player_idx)
-            )
-            {
-                continue;
-            }
+            /* Search for an adjacent enemy city that is weakly defended */
+            if (_CITIES[itr_cities].wx < min_wx) { continue; }
+            if (_CITIES[itr_cities].wx > max_wx) { continue; }
+            if (_CITIES[itr_cities].wy < min_wy) { continue; }
+            if (_CITIES[itr_cities].wy > max_wy) { continue; }
+            if (_CITIES[itr_cities].wp != wp) { continue; }
+            if (_CITIES[itr_cities].owner_idx == player_idx) { continue; }
+
+            /* Enemy city found in range, count its defenders */
             defender_count = 0;
             city_wx = _CITIES[itr_cities].wx;
             city_wy = _CITIES[itr_cities].wy;
@@ -3151,12 +3133,14 @@ void AI_Find_Opportunity_City_Target(int16_t wp, int16_t player_idx)
                     defender_count++;
                 }
             }
+            /* If the city has fewer than 4 defenders, it's an "opportunity" */
             if(defender_count < 4)
             {
                 found_target = ST_TRUE;
             }
         }
-// ; cancel the orders of both the stack and the individual units in it
+
+        /* If an opportunity was found, cancel the GOTO status for this stack and its units */
         if(found_target == ST_TRUE)
         {
             for(itr_units = 0; itr_units < _units; itr_units++)
@@ -3172,8 +3156,11 @@ void AI_Find_Opportunity_City_Target(int16_t wp, int16_t player_idx)
                     _UNITS[itr_units].Status = us_Ready;
                 }
             }
+            _ai_all_own_stacks[itr_stacks].unit_status = us_Ready;
         }
-    }
+
+    }  /* END: for(itr_stacks = 0; itr_stacks < _ai_all_own_stack_count; itr_stacks++) */
+
 }
 
 
@@ -3347,8 +3334,7 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
                 if(unit_landmass_idx > 0)
                 {
 
-                    // ; BUG: parameter mismatch
-                    // BUGBUG ¿ should use Effective_Unit_Type_Strength() or pass itr_units ?
+                    /* OGBUG ¿ should use Effective_Unit_Type_Strength() or pass itr_units ? */
                     unit_value = (Effective_Unit_Strength(_UNITS[itr_units].type) / 10);
 
                     if(_ai_landmass_strength_ratios[unit_wp][unit_landmass_idx] == 0)
@@ -3400,27 +3386,13 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
 
 
 // WZD o158p17
-// drake178: AI_ShiftOffHomePlane()
-/*
-shifts all stacks that are on a Tower of Wizardry or
-Astral Gate tile off the fortress plane if
-possible
-
-contains multiple BUGs in its subfunctions,
-RE-EXPLORE!
-*/
-/*
-
-shift all units on a tower or astral gate to the plane opposite the players fortress
-
-*/
 void AI_Shift_Off_Home_Plane(int16_t player_idx)
 {
     int16_t itr_cities = 0;
-    int16_t Stack_Plane = 0;
-    int16_t Stack_Y = 0;
-    int16_t Stack_X = 0;
-    int16_t Opposite_Plane = 0;
+    int16_t stack_wp = 0;
+    int16_t stack_wy = 0;
+    int16_t stack_wx = 0;
+    int16_t other_wp = 0;
     int16_t itr_towers = 0;
     int16_t itr = 0;
     int16_t itr2 = 0;
@@ -3431,32 +3403,30 @@ void AI_Shift_Off_Home_Plane(int16_t player_idx)
             return;
         }
     }
-    Opposite_Plane = (1 - _FORTRESSES[player_idx].wp);
+    other_wp = (1 - _FORTRESSES[player_idx].wp);
     for(itr2 = 0; itr2 < _ai_all_own_stack_count; itr2++)
     {
-        Stack_Plane = _ai_all_own_stacks[itr2].wp;
-        if(Stack_Plane != Opposite_Plane)
+        stack_wp = _ai_all_own_stacks[itr2].wp;
+        if(stack_wp != other_wp)
         {
-            Stack_X = _ai_all_own_stacks[itr2].wx;
-            Stack_Y = _ai_all_own_stacks[itr2].wy;
-            if(Map_Square_Troops_Can_Plane_Shift(Stack_X, Stack_Y, Stack_Plane) == ST_TRUE)
+            stack_wx = _ai_all_own_stacks[itr2].wx;
+            stack_wy = _ai_all_own_stacks[itr2].wy;
+            if(Map_Square_Troops_Can_Plane_Shift(stack_wx, stack_wy, stack_wp) == ST_TRUE)
             {
-// ; if there is a Tower of Wizardry on the tile, shift all of the units to the other plane
                 for(itr_towers = 0; itr_towers < NUM_TOWERS; itr_towers++)
                 {
                     if(
-                        (_TOWERS[itr_towers].wx == Stack_X)
+                        (_TOWERS[itr_towers].wx == stack_wx)
                         &&
-                        (_TOWERS[itr_towers].wy == Stack_Y)
+                        (_TOWERS[itr_towers].wy == stack_wy)
                     )
                     {
                         for(itr = 0; itr < _units; itr++)
                         {
-                            _ai_all_own_stacks[itr2].wp = (uint8_t)Opposite_Plane;
+                            _ai_all_own_stacks[itr2].wp = (uint8_t)other_wp;
                         }
                     }
                 }
-// ; if there's an own city with Astral Gate on the tile, shift all of the units to the other plane
                 for(itr_cities = 0; itr_cities < _cities; itr_cities++)
                 {
                     if(
@@ -3466,20 +3436,20 @@ void AI_Shift_Off_Home_Plane(int16_t player_idx)
                     )
                     {
                         if(
-                            (_CITIES[itr_cities].wx == Stack_X)
+                            (_CITIES[itr_cities].wx == stack_wx)
                             &&
-                            (_CITIES[itr_cities].wy == Stack_Y)
+                            (_CITIES[itr_cities].wy == stack_wy)
                         )
                         {
                             for(itr = 0; itr < _units; itr++)
                             {
                                 if(
-                                    (_UNITS[itr].wx = (int8_t)Stack_X)
+                                    (_UNITS[itr].wx == (int8_t)stack_wx)
                                     &&
-                                    (_UNITS[itr].wy = (int8_t)Stack_Y)
+                                    (_UNITS[itr].wy == (int8_t)stack_wy)
                                 )
                                 {
-                                    _UNITS[itr].wp = (int8_t)Opposite_Plane;
+                                    _UNITS[itr].wp = (int8_t)other_wp;
                                 }
                             }
                         }
@@ -3492,33 +3462,19 @@ void AI_Shift_Off_Home_Plane(int16_t player_idx)
 
 
 // WZD o158p18
-// drake178: AI_Transport_Sailoff()
-/*
-; sets all transports that are not on a sailable tile
-; to move to one if there's one adjacent, reducing
-; their stack's value to -1
-;
-; BUG: flying or non-corporeal transports should
-; definitely no do this
-*/
-/*
-
-being in _ai_all_own_stacks[] and being next to Square_Is_OceanLike()
-means the boats is on land/in a city/dry dock?
-
-*/
 void AI_Move_Out_Boats(void)
 {
-    int16_t Can_Sail_Off = 0;
-    int16_t Sailable_Tile_Y = 0;
-    int16_t Sailable_Tile_X = 0;
+    int16_t do_move_out = 0;
+    int16_t adjacent_wy = 0;
+    int16_t adjacent_wx = 0;
     int16_t itr_wy = 0;
     int16_t landmass_idx = 0;
-    int16_t wp = 0;
-    int16_t wy = 0;
-    int16_t wx = 0;
+    int16_t unit_wp = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
     int16_t itr_stack = 0;
     int16_t itr_wx = 0;
+
     for(itr_stack = 0; itr_stack < _ai_all_own_stack_count; itr_stack++)
     {
         if(
@@ -3527,16 +3483,15 @@ void AI_Move_Out_Boats(void)
             ((_ai_all_own_stacks[itr_stack].abilities & AICAP_Transport) != 0)
         )
         {
-            wx = _ai_all_own_stacks[itr_stack].wx;
-            wy = _ai_all_own_stacks[itr_stack].wy;
-            wp = _ai_all_own_stacks[itr_stack].wp;
-            landmass_idx = _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
-            Sailable_Tile_X = 0;
-            Sailable_Tile_Y = 0;
-            Can_Sail_Off = ST_FALSE;
+            unit_wx = _ai_all_own_stacks[itr_stack].wx;
+            unit_wy = _ai_all_own_stacks[itr_stack].wy;
+            unit_wp = _ai_all_own_stacks[itr_stack].wp;
+            landmass_idx = _landmasses[((unit_wp * WORLD_SIZE) + (unit_wy * WORLD_WIDTH) + unit_wx)];
+            adjacent_wx = 0;
+            adjacent_wy = 0;
+            do_move_out = ST_FALSE;
             if(landmass_idx > 0)
             {
-                // ; check if there's an adjacent sailable tile
                 for(itr_wy = -1; itr_wy < 2; itr_wy++)
                 {
                     for(itr_wx = -1; itr_wx < 2; itr_wx++)
@@ -3546,23 +3501,23 @@ void AI_Move_Out_Boats(void)
                             &&
                             (itr_wx != 0)
                             &&
-                            ((itr_wy + wy) < WORLD_HEIGHT)
+                            ((itr_wy + unit_wy) < WORLD_HEIGHT)
                             &&
-                            ((itr_wx + wx) < WORLD_WIDTH)
+                            ((itr_wx + unit_wx) < WORLD_WIDTH)
                         )
                         {
-                            if(Square_Is_OceanLike((itr_wx + wx), (itr_wy + wy), wp) == ST_TRUE)
+                            if(Square_Is_OceanLike((itr_wx + unit_wx), (itr_wy + unit_wy), unit_wp) == ST_TRUE)
                             {
-                                Sailable_Tile_X = (wx + itr_wx);
-                                Sailable_Tile_Y = (wy + itr_wy);
-                                Can_Sail_Off = ST_TRUE;
+                                adjacent_wx = (unit_wx + itr_wx);
+                                adjacent_wy = (unit_wy + itr_wy);
+                                do_move_out = ST_TRUE;
                             }
                         }
                     }
                 }
-                if(Can_Sail_Off == ST_TRUE)
+                if(do_move_out == ST_TRUE)
                 {
-                    AI_Stack_Set_Boats_Goto(itr_stack, Sailable_Tile_X, Sailable_Tile_Y);
+                    AI_Stack_Set_Boats_Goto(itr_stack, adjacent_wx, adjacent_wy);
                 }
             }
         }
@@ -3586,7 +3541,7 @@ void AI_Move_Out_Boats(void)
  * @param wp World plane used when checking whether a melder is already on a
  * magic node square.
  */
-void AI_GarrBuilderPush__WIP(int16_t wp)
+void AI_Stacks_Move_Out_NonMilitary_Garrisoned(int16_t wp)
 {
     int16_t unit_is_on_node_square = 0;
     int16_t itr_nodes = 0;
@@ -3598,7 +3553,10 @@ void AI_GarrBuilderPush__WIP(int16_t wp)
     int16_t adjacent_wy = 0;
     int16_t adjacent_wx = 0;
     int16_t itr_stacks = 0;
-    int16_t itr_stack = 0;
+    int16_t itr_stack_units = 0;
+
+
+    /* Phase 1 */
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     {
         if(_ai_own_stack_type[itr_stacks] < AISTK_Garrison)  /* Site Garrison or Fortress City Garrison */
@@ -3606,14 +3564,15 @@ void AI_GarrBuilderPush__WIP(int16_t wp)
             continue;
         }
         stack_unit_count = _ai_own_stack_unit_count[itr_stacks];
-        for(itr_stack = 0; itr_stack < stack_unit_count; itr_stack++)
+        for(itr_stack_units = 0; itr_stack_units < stack_unit_count; itr_stack_units++)
         {
-            unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_stack];
+            unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_stack_units];
             if(unit_idx == ST_UNDEFINED)
             {
                 continue;
             }
             unit_type = _UNITS[unit_idx].type;
+            /* Settlers & Engineers vs. Melders */
             if(
                 ((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) != 0)
                 ||
@@ -3623,10 +3582,10 @@ void AI_GarrBuilderPush__WIP(int16_t wp)
                 if(Adjacent_Free_Square(_ai_own_stack_wx[itr_stacks], _ai_own_stack_wy[itr_stacks], _ai_own_stack_wp[itr_stacks], &adjacent_wx, &adjacent_wy) == ST_TRUE)
                 {
 #ifdef STU_DEBUG
-                    dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack);
+                    dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack_units);
 #endif
                     g_ai_set_target_caller = 12;
-                    AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack);
+                    AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack_units);
                 }
             }
             else if((_unit_type_table[unit_type].Abilities & UA_MELD) != 0)
@@ -3636,6 +3595,7 @@ void AI_GarrBuilderPush__WIP(int16_t wp)
                 unit_is_on_node_square = ST_FALSE;
                 for(itr_nodes = 0; itr_nodes < NUM_NODES; itr_nodes++)
                 {
+                    /* ¿ OGBUG  should check if Nodes is owned ? */
                     if(
                         (_NODES[itr_nodes].wx == unit_wx)
                         &&
@@ -3648,15 +3608,17 @@ void AI_GarrBuilderPush__WIP(int16_t wp)
                         break;
                     }
                 }
+
+                /* If Melder is in a Garrison but NOT on a Node, push it out to find one */
                 if(unit_is_on_node_square == ST_FALSE)
                 {
                     if(Adjacent_Free_Square(_ai_own_stack_wx[itr_stacks], _ai_own_stack_wy[itr_stacks], _ai_own_stack_wp[itr_stacks], &adjacent_wx, &adjacent_wy) == ST_TRUE)
                     {
 #ifdef STU_DEBUG
-                        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack);
+                        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack_units);
 #endif
                         g_ai_set_target_caller = 13;
-                        AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack);
+                        AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack_units);
                     }
                 }
             }
@@ -3712,7 +3674,7 @@ G_AI_RallyFill__WIP() at AIMOVE.c:334-344 —
 AI_PullForMainWar__WIP() — similar, and uses the Seafaring pool for units with air/water travel.
 Where it sits in the turn
 Called once per (plane, landmass) from AI_SetUnitOrders at AIMOVE.c:145,
- wedged between AI_GarrBuilderPush__WIP (pushes builders out of garrisons) and AI_Do_Meld. 
+ wedged between AI_Stacks_Move_Out_NonMilitary_Garrisoned (pushes builders out of garrisons) and AI_Do_Meld. 
 So the ordering is:
  push builders away
  → survey excess combat units
@@ -5693,18 +5655,8 @@ void AI_Stack_Set_Destination(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
 // WZD o162p18
 // drake178: sub_F5EBF()
 
+
 // WZD o162p19
-// drake178: AI_STK_MoveTransports()
-/*
-; give all transport units in the selected stack a move
-; order to the specified destination, changing the
-; stack's value to -1 in the process
-*/
-/*
-
-sets every boat in the stack to GOTO with wx,wy as their dst
-
-*/
 void AI_Stack_Set_Boats_Goto(int16_t ai_stack_idx, int16_t wx, int16_t wy)
 {
     int16_t stack_wp = 0;

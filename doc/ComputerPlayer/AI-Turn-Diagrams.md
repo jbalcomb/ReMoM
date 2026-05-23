@@ -49,7 +49,7 @@ flowchart TD
         Dispatch["per plane × per landmass dispatch loop"]:::func
 
         Dispatch --> Slot1["slot 1<br/>AI_Stacks_Init_Build_Target_Order>rebuilds _ai_own_stack_*</i>"]:::func
-        Dispatch --> Slot2["slot 2<br/>AI_GarrBuilderPush__WIP<br/><i>push settlers/engineers/melders out of garrisons</i>"]:::func
+        Dispatch --> Slot2["slot 2<br/>AI_Stacks_Move_Out_NonMilitary_Garrisoned<br/><i>push settlers/engineers/melders out of garrisons</i>"]:::func
         Dispatch --> Slots4_7["slots 4-7<br/>AI_Do_Meld<br/>AI_Do_Settle<br/>AI_Do_Purify<br/>AI_Do_RoadBuild"]:::func
         Dispatch --> Slot8["slot 8<br/>AI_Build_Target_List<br/>builds _ai_targets_*"]:::func
         Dispatch --> Slot9["slot 9<br/>AI_Stacks_Roamers_Target_Or_Deploy"]:::func

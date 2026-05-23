@@ -118,10 +118,10 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **End:** ~line 3992
 - **Purpose:** TBD
 
-### `AI_GarrBuilderPush__WIP` — [line 3993](../../MoM/src/AIMOVE.c#L3993)
+### `AI_Stacks_Move_Out_NonMilitary_Garrisoned` — [line 3558](../../MoM/src/AIMOVE.c#L3558)
 - **drake178:** `AI_GarrBuilderPush()` (o158p19)
-- **End:** ~line 4161
-- **Purpose:** TBD
+- **End:** ~line 3641
+- **Purpose:** Push non-military units (Settlers, Engineers, Melders not on a node) out of Garrison/FortressGarrison stacks to an adjacent free square. See [AIMOVE-AI_Stacks_Move_Out_NonMilitary_Garrisoned.md](AIMOVE-AI_Stacks_Move_Out_NonMilitary_Garrisoned.md).
 
 ### `AI_Survey_Excess_Units` — [line 4162](../../MoM/src/AIMOVE.c#L4162)
 - **drake178:** `AI_Survey_Excess_Units()` (o158p20)

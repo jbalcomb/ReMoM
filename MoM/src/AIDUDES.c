@@ -1221,7 +1221,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
         else
         {
 
-            if(_ai_all_own_stack_count >= 80) { continue; }
+            if(_ai_all_own_stack_count >= MAX_AI_STACKS) { continue; }
             
             seen_unit = ST_FALSE;
 

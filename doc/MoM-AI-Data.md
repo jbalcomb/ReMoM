@@ -142,8 +142,8 @@ XREF:
     AI_CONTX_Regroup__WIP+32     les     bx, [CONTX_OwnStack_Ps]           
     AI_CONTX_Regroup__WIP+12B    les     bx, [CONTX_OwnStack_Ps]           
     AI_CONTX_Regroup__WIP+169    les     bx, [CONTX_OwnStack_Ps]           
-    AI_GarrBuilderPush+8E        les     bx, [CONTX_OwnStack_Ps]           
-    AI_GarrBuilderPush:loc_EFB7C les     bx, [CONTX_OwnStack_Ps]           
+    AI_Stacks_Move_Out_NonMilitary_Garrisoned+8E        les     bx, [CONTX_OwnStack_Ps]           
+    AI_Stacks_Move_Out_NonMilitary_Garrisoned:loc_EFB7C les     bx, [CONTX_OwnStack_Ps]           
     EMM_Map_CONTXXX__WIP+E4      mov     [word ptr CONTX_OwnStack_Ps+2], dx
 
 

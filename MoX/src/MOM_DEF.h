@@ -156,8 +156,8 @@ ITEM_MAX_POWERS
 #define SZ_ITEM_POWER_RECORD       30
 #define SZ_ITEM_POWER_DATA       2010  // Bytes
 
-#define MAX_AI_STACKS              80
-#define MAX_AI_TARGETS             25
+#define MAX_AI_STACKS              80   /* ¿ only used by _ai_all_own_stacks, etc. ? */
+#define MAX_AI_TARGETS             25   /* ¿ only used by _ai_targets_count, etc. ? */
 
 #define SCREEN_WIDTH    320
 #define SCREEN_HEIGHT   200

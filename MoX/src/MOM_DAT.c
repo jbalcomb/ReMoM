@@ -1001,10 +1001,38 @@ int16_t * _ai_landmass_own_strengths[2];  /* holds (_ai_all_own_stacks[].Value /
 
 // WZD dseg:9106
 // allocated in Allocate_AI_Data()
+/* COPILOT */
+/**
+ * @brief Dynamically allocated table of AI-visible enemy stack summaries.
+ *
+ * Each entry is an `s_AI_TARGET` record describing one enemy stack or hostile
+ * target square known to the strategic AI, including world coordinates, plane,
+ * an auxiliary byte field, and an aggregate value used by AI evaluation code.
+ * The array is populated during AI data gathering and then consumed by later
+ * passes that total enemy strength, rate landmasses, and reason about nearby
+ * hostile stacks.
+ *
+ * @note Storage is allocated in `Allocate_AI_Data()`. The number of valid
+ * entries is tracked separately by `_ai_all_enemy_stack_count`.
+ */
 struct s_AI_TARGET * _ai_all_enemy_stacks;
 
 // WZD dseg:9108
 // allocated in Allocate_AI_Data()
+/* COPILOT */
+/**
+ * @brief Dynamically allocated table of all AI-owned world-map stacks.
+ *
+ * Each entry is an `s_AI_STACK_DATA` summary describing one currently known AI
+ * stack, including its world coordinates, plane, ability flags, aggregate
+ * value, transport capacity, unit count, landmass index, and representative
+ * unit status. The array is populated during AI data gathering and is used by
+ * later strategic passes that evaluate own stack strength, mobility, and local
+ * opportunities.
+ *
+ * @note Storage is allocated in `Allocate_AI_Data()`. The number of valid
+ * entries is tracked separately by `_ai_all_own_stack_count`.
+ */
 struct s_AI_STACK_DATA * _ai_all_own_stacks;
 
 // WZD dseg:910A
@@ -2697,7 +2725,27 @@ int8_t * _ai_landmass_dock_squares_wy_array[NUM_PLANES];
 int8_t * _ai_landmass_dock_squares_wx_array[NUM_PLANES];
 
 
+// vs. struc s_AI_TARGET?
+// vs. struc s_AI_STACK_DATA?
 // WZD dseg:9D4A
+struct s_AI_OWN_STACK
+{
+    int16_t unit_count;
+    int16_t unit_list[MAX_STACK];
+    int16_t type;  /* enum e_AI_OWN_STACK_TYPE */
+    int16_t wp;
+    int16_t wy;
+    int16_t wx;
+};
+struct s_AI_OWN_STACK _ai_own_stack[MAX_AI_STACKS];
+int16_t _ai_own_stack_count;
+int16_t * _ai_own_stack_unit_list[MAX_AI_STACKS];
+SAMB_ptr _ai_own_stack_unit_count;
+SAMB_ptr _ai_own_stack_type;    /* enum e_AI_OWN_STACK_TYPE */
+SAMB_ptr _ai_own_stack_wp;
+SAMB_ptr _ai_own_stack_wy;
+SAMB_ptr _ai_own_stack_wx;
+
 /*
 ~ "AI Own Stack"
 

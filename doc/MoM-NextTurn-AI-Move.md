@@ -136,7 +136,7 @@ AI_Stacks_Init_Build_Target_Order
 TILE_NextFreeLand()
     |-> Map_Square_Is_Land()
 
-AI_GarrBuilderPush__WIP()
+AI_Stacks_Move_Out_NonMilitary_Garrisoned()
     |-> TILE_NextFreeLand()
     |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
     |-> TILE_NextFreeLand()
@@ -256,7 +256,7 @@ this should be in the terrain notes  MOVE IT!!!!!
 
 
 
-## AI_GarrBuilderPush__WIP()
+## AI_Stacks_Move_Out_NonMilitary_Garrisoned()
     |-> TILE_NextFreeLand()
     |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
     |-> TILE_NextFreeLand()

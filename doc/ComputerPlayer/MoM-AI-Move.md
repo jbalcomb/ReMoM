@@ -48,28 +48,30 @@ Gather_Player_Ships_At_Star_()
 
 
 
+
 Next_Turn_Proc() |-> Next_Turn_Calc() |-> AI_Next_Turn()
 Per Computer Player  {1, ..., _num_players{2,3,4,5}}
 AI_Next_Turn()
-    |-> AI_Evaluation_Map()
+    |-> AI_Evaluation_Map()                     ...populates g_ai_evaluation_map
     |-> AI_Evaluate_Continents()
     |-> AI_Set_Unit_Orders()
         |-> AI_Disband_To_Balance_Budget()
-        |-> AI_Shift_Off_Home_Plane()
-        |-> AI_Move_Out_Boats()
-        |-> AI_Find_Opportunity_City_Target()
+        |-> AI_Shift_Off_Home_Plane()           ...uses struct s_AI_STACK_DATA * _ai_all_own_stacks
+        |-> AI_Move_Out_Boats()                 ...uses struct s_AI_STACK_DATA * _ai_all_own_stacks
+            |-> AI_Stack_Set_Boats_Goto()       ...uses struct s_AI_STACK_DATA * _ai_all_own_stacks
+        |-> AI_Find_Opportunity_City_Target()   ...uses struct s_AI_STACK_DATA * _ai_all_own_stacks
             Per Plane:
                 Per Landmass:
-                |-> AI_Stacks_Init_Build_Target_Order
+                |-> AI_Stacks_Init_Build_Target_Order   ...populates _ai_own_stack_count, etc.
                     |-> AI_Stacks_Target_Nearest_Hostile_Stack()
                     |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
-                |-> AI_GarrBuilderPush__WIP()
+                |-> AI_Stacks_Move_Out_NonMilitary_Garrisoned()
                 |-> AI_Survey_Excess_Units()
                 |-> AI_Do_Meld()
                 |-> AI_Do_Settle()
                 |-> AI_Do_Purify()
                 |-> AI_Do_RoadBuild()
-                |-> AI_Build_Target_List()
+                |-> AI_Build_Target_List()      ...populates _ai_targets_count, etc.
                     |-> AI_Add_Target()
                 |-> AI_Stacks_Roamers_Target_Or_Deploy()
                     |-> AI_Stacks_Assign_Target()
@@ -114,7 +116,7 @@ Definitely Done-Done:
 [x]             |-> AI_Stacks_Init_Build_Target_Order()
 [x]                 |-> AI_Stacks_Target_Nearest_Hostile_Stack()
 [x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
-[ ]             |-> AI_GarrBuilderPush__WIP()
+[x]             |-> AI_Stacks_Move_Out_NonMilitary_Garrisoned()
 [ ]             |-> AI_Survey_Excess_Units()
 [ ]             |-> AI_Do_Meld()
 [ ]             |-> AI_Do_Settle()
@@ -168,7 +170,7 @@ AI_Set_Unit_Orders(player_idx)
 └── for wp in [Arcanus, Myrror]:
     └── for landmass_idx in [1..NUM_LANDMASSES):
         ├── AI_Stacks_Init_Build_Target_Order
-        ├── AI_GarrBuilderPush__WIP
+        ├── AI_Stacks_Move_Out_NonMilitary_Garrisoned
         ├── AI_Survey_Excess_Units
         ├── AI_Do_Meld
         ├── AI_Do_Settle
@@ -337,8 +339,8 @@ Down p AI_PullForMainWar__WIP+15F                   call    near ptr AI_Stacks_O
 Down p G_AI_RallyOrFerry__WIP+E1                    call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p G_AI_RallyOrFerry__WIP+341                   call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p AI_Stacks_Init_Build_Target_Order            call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
-Down p AI_GarrBuilderPush__WIP+C9                   call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
-Down p AI_GarrBuilderPush__WIP+1C0                  call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_Stacks_Move_Out_NonMilitary_Garrisoned+C9                   call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_Stacks_Move_Out_NonMilitary_Garrisoned+1C0                  call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p AI_Do_Meld+29E                               call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p AI_Do_Settle+1DF                             call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p AI_Do_Settle+39B                             call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
