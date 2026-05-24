@@ -284,7 +284,7 @@ Every subsequent slot of `AI_Set_Unit_Orders` Phase 4 dispatch consumes some par
 | Slot | Function | Reads |
 |---|---|---|
 | 2 | `AI_Stacks_Move_Out_NonMilitary_Garrisoned` | type, unit_list (for Garrison+ stacks) |
-| 3 | `AI_Survey_Excess_Units` | type, unit_count, unit_list (pools excess units) |
+| 3 | `AI_Stacks_Survey_Expedition_Forces` | type, unit_count, unit_list (pools excess units) |
 | 4 | `AI_Do_Meld` | type, unit_list |
 | 5 | `AI_Do_Settle` | type, unit_list |
 | 6 | `AI_Do_Purify` | type, unit_list |
@@ -293,7 +293,7 @@ Every subsequent slot of `AI_Set_Unit_Orders` Phase 4 dispatch consumes some par
 | 9 | [`AI_Stacks_Roamers_Target_Or_Deploy`](AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md) | type, unit_count, wx/wy, unit_list (for Roamer stacks) |
 | 10 | `AI_Stacks_Order_To_War_Landmass` | type, unit_count, unit_list |
 | 11 | `AI_Stacks_Relocate_Roamers` | type, wx/wy, unit_list |
-| 13 | `G_AI_RallyFill__WIP` | type, unit_count, unit_list; also `cp_staged_unit_count` / `cp_enroute_unit_count` |
+| 13 | `AI_Stacks_Stage_Expedition_Forces` | type, unit_count, unit_list; also `cp_staged_unit_count` / `cp_enroute_unit_count` |
 | 14 | `AI_FillGarrisons__WIP` | type, unit_count, unit_list |
 
 Plus [`AI_Stacks_Assign_Target`](AIMOVE-AI_Stacks_Assign_Target.md) (called transitively from slot 9) reads `_ai_own_stack_unit_list` to sum stack effective strength.

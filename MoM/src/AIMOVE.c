@@ -60,13 +60,31 @@ uint8_t * cp_landmass_wx_array;
 
 // WZD dseg:D3F2
 /*
-cleared in AI_Survey_Excess_Units()
-populated in AI_Survey_Excess_Units_In_Stack()
+cleared in AI_Stacks_Survey_Expedition_Forces()
+populated in AI_Stacks_Survey_Expedition_Forces_Stack()
 
 AI_Set_Unit_Orders
-    |-> AI_Survey_Excess_Units()
-        |-> AI_Survey_Excess_Units_In_Stack()
-    |-> G_AI_RallyFill__WIP()
+    |-> AI_Stacks_Survey_Expedition_Forces()
+        |-> AI_Stacks_Survey_Expedition_Forces_Stack()
+    |-> AI_Stacks_Stage_Expedition_Forces()
+
+G_Pushout_Count  ==>  cp_drafted_unit_count
+
+G_Seafaring_Lowest_Value
+G_Seafaring_Count
+XRFEF:
+    AI_Stacks_Survey_Expedition_Forces()
+    AI_Stacks_Survey_Expedition_Forces_Stack()
+G_Seafaring_Values[]
+G_Pushout_Values[]
+G_Seafaring_CX_IDs[]
+G_Pushout_CX_IDs[]
+G_Seafaring_UL_Indices[]
+G_Seafaring_Unit_Indices[]
+XREF:
+    AI_Stacks_Survey_Expedition_Forces_Stack()
+
+all of "G_Seafaring_..." is, effectively, Not-In-Use (NIU)
 
 */
 int16_t G_Seafaring_Lowest_Value;
@@ -74,22 +92,80 @@ int16_t G_Pushout_Lowest_Value;
 int16_t G_Seafaring_Count;
 int16_t cp_drafted_unit_count;
 int16_t G_Seafaring_Values[MAX_STACK];
-int16_t G_Pushout_Values[MAX_STACK];
+int16_t G_Pushout_Values[MAX_STACK];  /* holds Effective_Unit_Type_Strength() */
 int16_t G_Seafaring_CX_IDs[MAX_STACK];
 int16_t G_Pushout_CX_IDs[MAX_STACK];
 int16_t G_Seafaring_UL_Indices[MAX_STACK];
 int16_t G_Pushout_UL_Indices[MAX_STACK];
 int16_t G_Seafaring_Unit_Indices[MAX_STACK];
 int16_t G_Pushout_Unit_Indices[MAX_STACK];
+/*
+Sizes match exactly — 4 fields × 2 bytes × 9 entries + 2 scalars × 2 bytes = 76 bytes per pool, 152 bytes total. Same as the current 12-global layout.
+*/
+/*
+Producer access pattern (the only place these are written)
+Before (AIMOVE.c:4014-4017):
+    G_Pushout_UL_Indices[cp_drafted_unit_count] = stack_ul_idx;
+    G_Pushout_CX_IDs[cp_drafted_unit_count] = stack_idx;
+    G_Pushout_Values[cp_drafted_unit_count] = unit_value;
+    G_Pushout_Unit_Indices[cp_drafted_unit_count] = unit_idx;
+    cp_drafted_unit_count++;
+After:
+    _ai_pushout_pool.entries[_ai_pushout_pool.count].list_unit_idx = stack_ul_idx;
+    _ai_pushout_pool.entries[_ai_pushout_pool.count].stack_idx     = stack_idx;
+    _ai_pushout_pool.entries[_ai_pushout_pool.count].value         = unit_value;
+    _ai_pushout_pool.entries[_ai_pushout_pool.count].unit_idx      = unit_idx;
+    _ai_pushout_pool.count++;
+Verbose at the call site, but the cp_drafted_unit_count / G_Seafaring_Count naming mismatch goes away — both pools use .count.
+*/
+/*
+Bubble-sort swap becomes one struct copy
+Before (AIMOVE.c:4122-4125):
+    Swap_Short(&G_Seafaring_UL_Indices[itr2], &G_Seafaring_UL_Indices[itr2+1]);
+    Swap_Short(&G_Seafaring_CX_IDs[itr2],     &G_Seafaring_CX_IDs[itr2+1]);
+    Swap_Short(&G_Seafaring_Values[itr2],     &G_Seafaring_Values[itr2+1]);
+    Swap_Short(&G_Seafaring_Unit_Indices[itr2], &G_Seafaring_Unit_Indices[itr2+1]);
+After:
+    struct s_AI_Excess_Entry tmp = _ai_seafaring_pool.entries[itr2];
+    _ai_seafaring_pool.entries[itr2]     = _ai_seafaring_pool.entries[itr2+1];
+    _ai_seafaring_pool.entries[itr2+1]   = tmp;
+One value-copy chain instead of four function calls. Cleaner — and arguably more SimTex-style than the OG, since SimTex did love their record-copies.
+*/
+/* Per-entry: a single ranked unit in an excess pool */
+struct s_AI_Excess_Entry
+{
+    int16_t value;            /* unit's effective strength score */
+    int16_t stack_idx;        /* index into _ai_own_stack_* (was CX_ID) */
+    int16_t list_unit_idx;    /* per-stack slot index   (was UL_Index) */
+    int16_t unit_idx;         /* index into _UNITS[]    (was Unit_Index) */
+};
+
+/* Pool: top-N priority queue keyed on value, with cached lowest for fast displacement */
+struct s_AI_Excess_Pool
+{
+    int16_t count;
+    int16_t lowest_value;
+    struct s_AI_Excess_Entry entries[MAX_STACK];
+};
+
+/* The two instances — replaces the 12 parallel globals */
+struct s_AI_Excess_Pool _ai_pushout_pool;
+struct s_AI_Excess_Pool _ai_seafaring_pool;
+
 
 // WZD dseg:D48A
 /*
 cleared and calculated in AI_Stacks_Init_Build_Target_Order()
+used by AI_Stacks_Stage_Expedition_Forces()
 */
 int16_t cp_staged_unit_count;
 int16_t cp_enroute_unit_count;
 
 // WZD dseg:D48E
+/*
+calcuated in AI_Set_Unit_Orders()
+used by AI_Stacks_Stage_Expedition_Forces()
+*/
 int16_t g_ai_minattackstack;
 
 // WZD dseg:D490
@@ -98,6 +174,15 @@ int16_t niu_unknown_var;
 // WZD dseg:D492 00 00                                           dw 0
 
 // WZD dseg:D492                                                 END:  ovr158 - Uninitialized Data  (AIMOVE)
+
+
+
+// WZD o158p02
+static void AI_Stacks_Stage_Expedition_Forces(int16_t landmass_idx, int16_t wp, int16_t player_idx);
+// WZD o158p20
+static void AI_Stacks_Survey_Expedition_Forces(void);
+// WZD o158p21
+static void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t unit_count, int16_t excess_count);
 
 
 
@@ -112,7 +197,7 @@ processes continent reevaluation and gives orders to all available units, includ
 many many BUGs
 */
 /*
-OON XREF: AI_Set_Unit_Orders() |-> G_AI_RallyFill__WIP() |-> AI_Reevaluate_Continent()
+OON XREF: AI_Set_Unit_Orders() |-> AI_Stacks_Stage_Expedition_Forces() |-> AI_Reevaluate_Continent()
 */
 void AI_Set_Unit_Orders(int16_t player_idx)
 {
@@ -139,8 +224,9 @@ void AI_Set_Unit_Orders(int16_t player_idx)
     _ai_ferry_count = 0;
 
     /* Compute the minimum attack-stack threshold: grows 1 per 30 turns starting from 2, capped at MAX_STACK (9 by turn 240). */
+    /* only used by AI_Stacks_Stage_Expedition_Forces() */
     g_ai_minattackstack = (2 + (_turn / 30));
-    if(g_ai_minattackstack > MAX_STACK) { g_ai_minattackstack = MAX_STACK; }
+    SETMAX(g_ai_minattackstack,MAX_STACK);
 
     /* Global AI adjustments */
     AI_Disband_To_Balance_Budget(player_idx);
@@ -161,7 +247,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
         {
             AI_Stacks_Init_Build_Target_Order(player_idx, landmass_idx, wp);
             AI_Stacks_Move_Out_NonMilitary_Garrisoned(wp);
-            AI_Survey_Excess_Units();
+            AI_Stacks_Survey_Expedition_Forces();
             AI_Do_Meld(player_idx);
             AI_Do_Settle(player_idx, landmass_idx);
             AI_Do_Purify(landmass_idx, wp);
@@ -209,7 +295,7 @@ AI_Stacks_Roamers_Target_Or_Deploy()
             }
 
             /* could be super-duper weird this doesn't have a landmass type/status filer prerequisite */
-            G_AI_RallyFill__WIP(landmass_idx, wp, player_idx);
+            AI_Stacks_Stage_Expedition_Forces(landmass_idx, wp, player_idx);
 
             /* Eh? Incongruent landmass filter? dominant, nervous, sure we can withdaraw, no reason not to withdraw? */
             if(
@@ -235,7 +321,7 @@ AI_Stacks_Roamers_Target_Or_Deploy()
 
 }
 /* GEMINI */
-void AI_Set_Unit_Orders__GEMINI(int player_idx)
+static void AI_Set_Unit_Orders__GEMINI(int player_idx)
 {
     int wp = 0;
     int landmass_idx; /* si */
@@ -292,7 +378,7 @@ void AI_Set_Unit_Orders__GEMINI(int player_idx)
             /* Core AI unit management and pathfinding */
             AI_Stacks_Init_Build_Target_Order(player_idx, landmass_idx, wp);
             AI_Stacks_Move_Out_NonMilitary_Garrisoned(wp);
-            AI_Survey_Excess_Units(); /* overlay call */
+            AI_Stacks_Survey_Expedition_Forces(); /* overlay call */
             AI_Do_Meld(player_idx);
             AI_Do_Settle(player_idx, landmass_idx);
             AI_Do_Purify(landmass_idx, wp);
@@ -317,7 +403,7 @@ void AI_Set_Unit_Orders__GEMINI(int player_idx)
             }
 
             /* General Stage processing */
-            G_AI_RallyFill__WIP(landmass_idx, wp, player_idx);
+            AI_Stacks_Stage_Expedition_Forces(landmass_idx, wp, player_idx);
 
             /* Fill garrisons on controlled or contested landmasses */
             if (*type_ptr == lmt_Own || *type_ptr == lmt_Contested || *type_ptr >= lmt_Leaveable)
@@ -337,15 +423,39 @@ void AI_Set_Unit_Orders__GEMINI(int player_idx)
 
 
 // WZD o158p02
-// drake178: G_AI_RallyFill()
-/*
-attempts to move enough units to the stage point to
-create an offensive stack ... I think anyway
-*/
-/*
-OON XREF: AI_Set_Unit_Orders() |-> G_AI_RallyFill__WIP() |-> AI_Reevaluate_Continent()
-*/
-void G_AI_RallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx)
+/**
+ * @brief Send ranked expedition candidates toward a landmass stage point.
+ *
+ * Consumes the global expedition pool previously built by
+ * AI_Stacks_Survey_Expedition_Forces(), checks whether the selected landmass
+ * still needs additional staged or en-route units, and then issues movement
+ * orders for the highest-ranked drafted units toward that landmass's current
+ * stage coordinates.
+ *
+ * The function first performs a throttled continent re-evaluation when the
+ * staged stack is already full. It then stops early if the minimum desired
+ * attack-stack size has already been met, or if the landmass state and total
+ * available expedition strength indicate that staging should not proceed. When
+ * staging does proceed, units are taken from the front of the global pushout
+ * arrays and ordered to the stage point via
+ * AI_Stacks_Order_Attack_Target_Or_Goto_Destination().
+ *
+ * @param landmass_idx Index of the landmass whose stage point should receive
+ *                     expedition units.
+ * @param wp World plane containing the stage point and selected landmass.
+ * @param player_idx Index of the AI player whose expedition forces are being
+ *                   staged.
+ *
+ * @return This function does not return a value. It may trigger
+ *         AI_Reevaluate_Continent() and may assign move orders to units stored
+ *         in the global pushout expedition pool.
+ *
+ * @note This routine relies on the current values of `cp_staged_unit_count`,
+ *       `cp_enroute_unit_count`, `cp_drafted_unit_count`, and
+ *       `g_ai_minattackstack`, all of which must already have been prepared by
+ *       earlier AI passes in the same turn.
+ */
+static void AI_Stacks_Stage_Expedition_Forces(int16_t landmass_idx, int16_t wp, int16_t player_idx)
 {
     int16_t unit_list_idx = 0;
     int16_t unit_idx = 0;
@@ -353,43 +463,58 @@ void G_AI_RallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx)
     int16_t gap_count = 0;
     int16_t itr = 0;
 
+    /* Phase 1: Staged Stack is Full -  */
     if(cp_staged_unit_count == MAX_STACK)
     {
-        if(Random(20) == 1)  // 1:20  5% chance
+        /* Throttled re-evaluation of the continent strategy */
+        if(Random(20) == 1)  /* 1:20  5% chance */
         {
             AI_Reevaluate_Continent(player_idx, landmass_idx, wp);
         }
     }
 
-    if((cp_staged_unit_count + cp_enroute_unit_count) < g_ai_minattackstack)
+    /* Phase 2: Sanity Checks */
+    /* Check if we've already met our quota */
+    if((cp_staged_unit_count + cp_enroute_unit_count) >= g_ai_minattackstack)
     {
-        if(
-            (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] >= lmt_Leaveable)
-            ||
-            (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoOwnCity)
-            ||
-            ((cp_staged_unit_count + cp_enroute_unit_count + cp_drafted_unit_count) > g_ai_minattackstack)
-        )
-        {
-            gap_count = (MAX_STACK - cp_enroute_unit_count);
-            for(itr = 0; ((itr < gap_count) && (itr < cp_drafted_unit_count)); itr++)
-            {
-                unit_list_idx = G_Pushout_CX_IDs[itr];
-                list_unit_idx = G_Pushout_UL_Indices[itr];
-                unit_idx = G_Pushout_Unit_Indices[itr];
-
-#ifdef STU_DEBUG
-//                dbg_prn("AI_ORDERS: [GarrPush] unit %d -> continent %d coords (%d,%d)\n", unit_idx, landmass_idx, AI_Continent_X_Ptr[landmass_idx], AI_Continent_Y_Ptr[landmass_idx]);
-                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, cp_landmass_wx_array[landmass_idx], cp_landmass_wy_array[landmass_idx], unit_list_idx, list_unit_idx);
-#endif
-                g_ai_set_target_caller = 1;
-//                AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, AI_Continent_X_Ptr[landmass_idx], AI_Continent_Y_Ptr[landmass_idx], unit_list_idx, list_unit_idx);
-                AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, cp_landmass_wx_array[landmass_idx], cp_landmass_wy_array[landmass_idx], unit_list_idx, list_unit_idx);
-
-            }
-        }
+        return;
+    }
+    /* Not enough available, don't bother */
+    /* {lmt_Unevaluated, lmt_Own, lmt_Contested, lmt_NoOwnCityAndAllyHasCity} */
+    /* Alt. if {lmt_NoOwnCity, lmt_Leaveable, lmt_NoTargets}, assemble what you can?*/
+    if(
+        (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] < lmt_Leaveable)
+        &&
+        (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] != lmt_NoOwnCity)
+        &&
+        ((cp_staged_unit_count + cp_enroute_unit_count + cp_drafted_unit_count) < g_ai_minattackstack)
+    )
+    {
+        return;
     }
 
+    /* Phase 3 */
+    /* Determine how many slots are available in the virtual "stack" being built */
+    gap_count = (MAX_STACK - cp_enroute_unit_count);
+    for(itr = 0; itr < gap_count; itr++)
+    {
+        /* If we run out of drafted units to send, stop */
+        if(itr >= cp_drafted_unit_count)
+        {
+            break;
+        }
+        unit_list_idx = G_Pushout_CX_IDs[itr];
+        list_unit_idx = G_Pushout_UL_Indices[itr];
+        unit_idx = G_Pushout_Unit_Indices[itr];
+        /* Call movement logic to set the unit's target to this landmass's stage point */
+#ifdef STU_DEBUG
+//      dbg_prn("AI_ORDERS: [GarrPush] unit %d -> continent %d coords (%d,%d)\n", unit_idx, landmass_idx, AI_Continent_X_Ptr[landmass_idx], AI_Continent_Y_Ptr[landmass_idx]);
+        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, cp_landmass_wx_array[landmass_idx], cp_landmass_wy_array[landmass_idx], unit_list_idx, list_unit_idx);
+#endif
+        g_ai_set_target_caller = 1;
+        AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, cp_landmass_wx_array[landmass_idx], cp_landmass_wy_array[landmass_idx], unit_list_idx, list_unit_idx);
+    }
+    
 }
 
 
@@ -2826,10 +2951,10 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
 #endif
 
 
-    /* Phase 1 */
+    /* Phase 1: Init */
     _ai_own_stack_count = 0;
-    cp_enroute_unit_count = 0;
-    cp_staged_unit_count = 0;
+    cp_enroute_unit_count = 0;  /* only used by AI_Stacks_Stage_Expedition_Forces() */
+    cp_staged_unit_count = 0;   /* only used by AI_Stacks_Stage_Expedition_Forces() */
     for(itr_stacks1 = 0; itr_stacks1 < MAX_AI_STACKS; itr_stacks1++)
     {
         _ai_own_stack_wx[itr_stacks1] = ST_UNDEFINED;
@@ -3689,106 +3814,71 @@ void AI_Stacks_Move_Out_NonMilitary_Garrisoned(int16_t wp)
 
 
 // WZD o158p20
-// drake178: AI_Survey_Excess_Units()
-/*
-evaluates excess units for inclusion into the two
-global offensive? stacks instead if they are strong
-enough
-*/
-/*
-CLAUDE
-
-AI_Survey_Excess_Units() is a WIP placeholder name (the AI_Survey_Excess_Units is the Dasm offset 0xEFBD6) for an excess-unit survey:
- it walks every AI-owned stack and,
-  for stacks that have more units than they need,
-   delegates to AI_Survey_Excess_Units_In_Stack()
-    which scores those surplus units
-     and inserts the top 9 strongest into two global pools.
-
-What it does
-Per the drake178 header comment at AIMOVE.c:4118-4124:
-
-evaluates excess units for inclusion into the two global offensive? stacks instead if they are strong enough
-
-The function itself is purely a dispatcher. For each stack in _ai_own_stack_[0.._ai_own_stack_count],
- it computes how many units are "excess" based on stack type and calls AI_Survey_Excess_Units_In_Stack() to score them:
-
-_ai_own_stack_type	Condition	Excess count
-4	_turn < 100 AND count > 5	count - 5 (leave 5 behind)
-3 (garrison-like)	count > 5	count - 5
-0 (roaming?)	always	all count units are candidates
-1 (something with lead slot)	unit_list[0] != ST_UNDEFINED	all count units are candidates
-other	skipped	—
-Before the loop, it resets the four globals that AI_Survey_Excess_Units_In_Stack writes into:
-
-cp_drafted_unit_count = 0, G_Pushout_Lowest_Value = 10000
-G_Seafaring_Count = 0, G_Seafaring_Lowest_Value = 10000
-What the output is used for
-The two 9-slot arrays it ultimately populates
- — G_Pushout_* and G_Seafaring_* at AIMOVE.c:51-72
-  — are consumed later in the same turn to pull units toward stage/main-war targets:
-
-G_AI_RallyFill__WIP() at AIMOVE.c:334-344 —
- when a continent is abandoned / no-presence / undermanned for a main-war stage,
- it issues AI_Stacks_Order_Attack_Target_Or_Goto_Destination() for each G_Pushout_Unit_Indices[] entry
- toward the continent's stage coords.
-AI_Stacks_Order_To_War_Landmass() — similar, and uses the Seafaring pool for units with air/water travel.
-Where it sits in the turn
-Called once per (plane, landmass) from AI_SetUnitOrders at AIMOVE.c:145,
- wedged between AI_Stacks_Move_Out_NonMilitary_Garrisoned (pushes builders out of garrisons) and AI_Do_Meld. 
-So the ordering is:
- push builders away
- → survey excess combat units
- → then run the various per-unit-type order handlers
- → consume the excess pool for stage-fill and main-war pulls.
-
-Short version
-It's the "find excess combat units across my stacks and rank the top 9 for reassignment" pass.
- It doesn't move anyone itself — it just fills a global ranked pool.
-  The reassignment happens later in G_AI_RallyFill__WIP / AI_Stacks_Order_To_War_Landmass.
-
-
-*/
-void AI_Survey_Excess_Units(void)
+/**
+ * @brief Rebuild the global expedition candidate pools from the current AI stacks.
+ *
+ * Clears the global pushout and seafaring expedition bookkeeping, then scans
+ * every stack in `_ai_own_stack_*` and submits qualifying stacks to
+ * AI_Stacks_Survey_Expedition_Forces_Stack(). Roaming and unknown stacks can
+ * contribute all of their military units, while garrison-style stacks only
+ * contribute units beyond the five-unit reserve threshold used here.
+ *
+ * The resulting global arrays are later consumed by rally and war-staging logic
+ * that pulls expedition-capable units away from lower-priority duties.
+ *
+ * @return This function does not return a value. It resets and repopulates the
+ *         global `G_Pushout_*`, `G_Seafaring_*`, `cp_drafted_unit_count`, and
+ *         related lowest-value trackers.
+ *
+ * @note Fortress garrisons only contribute excess units during the early game
+ *       (`_turn < 100`), preserving the current heuristic that avoids stripping
+ *       the fortress city too aggressively in early turns.
+ */
+static void AI_Stacks_Survey_Expedition_Forces(void)
 {
     int16_t itr_stacks = 0;
     int16_t stack_unit_count = 0;
+
+    /* Phase 1: Init */
     cp_drafted_unit_count = 0;
     G_Seafaring_Count = 0;
     G_Pushout_Lowest_Value = 10000;
     G_Seafaring_Lowest_Value = 10000;
+
+    /* Phase 2: Submit qualifying stacks and counts */
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     {
         stack_unit_count = _ai_own_stack_unit_count[itr_stacks];
         switch(_ai_own_stack_type[itr_stacks])
         {
-            case 0:
+            case AISTK_Unknown:
             {
-                AI_Survey_Excess_Units_In_Stack(itr_stacks, stack_unit_count, stack_unit_count);
+                AI_Stacks_Survey_Expedition_Forces_Stack(itr_stacks, stack_unit_count, stack_unit_count);
             } break;
-            case 1:
+            case AISTK_Roamer:
             {
                 if(_ai_own_stack_unit_list[itr_stacks][0] != ST_UNDEFINED)
                 {
-                    AI_Survey_Excess_Units_In_Stack(itr_stacks, stack_unit_count, stack_unit_count);
+                    AI_Stacks_Survey_Expedition_Forces_Stack(itr_stacks, stack_unit_count, stack_unit_count);
                 }
             } break;
-            case 2:
+            case AISTK_DNE:
             {
                 // DNE
             } break;
-            case 3:
+            case AISTK_Garrison:
             {
                 if(stack_unit_count > 5)
                 {
-                    AI_Survey_Excess_Units_In_Stack(itr_stacks, stack_unit_count, (stack_unit_count - 5));
+                    AI_Stacks_Survey_Expedition_Forces_Stack(itr_stacks, stack_unit_count, (stack_unit_count - 5));
                 }
             } break;
-            case 4:
+            case AISTK_FortressGarrison:
             {
+                /* ¿ hack to avoid over-garrisoning of Fortress City in the early-game ? */
                 if((_turn < 100) && (stack_unit_count > 5))
                 {
-                    AI_Survey_Excess_Units_In_Stack(itr_stacks, stack_unit_count, (stack_unit_count - 5));
+                    AI_Stacks_Survey_Expedition_Forces_Stack(itr_stacks, stack_unit_count, (stack_unit_count - 5));
                 }
             } break;
             default:
@@ -3797,21 +3887,46 @@ void AI_Survey_Excess_Units(void)
             } break;
         }
     }
+
 }
 
 
 // WZD o158p21
-
-/*
-AI_Survey_Excess_Units_In_Stack = "from this one stack, score up to Excess combat units and keep only the top 9 (and top 9 seafaring) across the whole AI's army."
-It's the per-stack scorer behind AI_Survey_Excess_Units's survey pass, and its output feeds the later stage-fill / main-war-pull passes.
-*/
-void AI_Survey_Excess_Units_In_Stack(int16_t stack_idx, int16_t unit_count, int16_t excess_count)
+/**
+ * @brief Score one AI stack's excess military units for expedition reassignment.
+ *
+ * Filters the specified stack down to military units that can be pulled out for
+ * offensive use, skipping engineers, settlers, melders, and transport hulls.
+ * The surviving candidates are assigned per-unit values, sorted in descending
+ * order, truncated to the requested excess count, and then merged into the two
+ * global ranked expedition pools: the general pushout list and the seafaring
+ * pushout list.
+ *
+ * Candidates added here are stored in the global `G_Pushout_*` and
+ * `G_Seafaring_*` arrays along with their source stack slot indices so later AI
+ * passes can reassign those units toward stage or war objectives.
+ *
+ * @param stack_idx Index of the AI-owned stack being surveyed.
+ * @param unit_count Number of entries from `_ai_own_stack_unit_list[stack_idx]`
+ *                   to inspect.
+ * @param excess_count Maximum number of filtered military units from this stack
+ *                     that may be contributed to the global expedition pools.
+ *
+ * @return This function does not return a value. It may update the global
+ *         expedition candidate arrays, their counts, and their tracked lowest
+ *         values.
+ *
+ * @note The preserved original-game behavior intentionally uses a bogus random
+ *       value in place of a true strength score and truncates by the filtered
+ *       list length after sorting, matching the current reverse-engineered
+ *       implementation rather than an idealized ranking pass.
+ */
+static void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t unit_count, int16_t excess_count)
 {
-    int16_t combat_unit_indices[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t combat_unit_values[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t combat_unit_ul_indices[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t combat_unit_count = 0;
+    int16_t military_unit_indices[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t military_unit_values[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };  /* holds Effective_Unit_Type_Strength() */
+    int16_t military_unit_ul_indices[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t military_unit_count = 0;
     int16_t unit_value = 0;
     int16_t local_itr = 0;
     int16_t lowest_value_index = 0;
@@ -3823,65 +3938,70 @@ void AI_Survey_Excess_Units_In_Stack(int16_t stack_idx, int16_t unit_count, int1
     int16_t itr = 0;
     int16_t ogbug_value = 0;  // DNE in Dasm
 
-    combat_unit_count = 0;
-
     /* Phase 1: Filter units in the stack for candidates to push out */
-    for (stack_ul_idx = 0; stack_ul_idx < unit_count; stack_ul_idx++)
+    military_unit_count = 0;
+    for(stack_ul_idx = 0; stack_ul_idx < unit_count; stack_ul_idx++)
     {
+
         unit_idx = _ai_own_stack_unit_list[stack_idx][stack_ul_idx];
         
-        if (unit_idx == ST_UNDEFINED)
+        if(unit_idx == ST_UNDEFINED)
         {
             continue;
         }
 
         unit_type = _UNITS[unit_idx].type;
 
-        /* Skip non-military units: Roadbuilders, Settlers, Melders, Transports */
-        if (_unit_type_table[unit_type].Construction != 0) continue;
-        if (_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) continue;
-        if (_unit_type_table[unit_type].Abilities & UA_MELD) continue;
-        if (_unit_type_table[unit_type].Transport != 0) continue;  // OGBUG  transports could fight over water
+        /* Skip non-military units: Engineers, Settlers, Melders, Boats */
+        if(_unit_type_table[unit_type].Construction != 0)             { continue; }
+        if(_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST)  { continue; }
+        if(_unit_type_table[unit_type].Abilities & UA_MELD)           { continue; }
+        if(_unit_type_table[unit_type].Transport != 0)                { continue; }
 
-        combat_unit_ul_indices[combat_unit_count] = stack_ul_idx;
-        combat_unit_indices[combat_unit_count] = unit_idx;
+        military_unit_ul_indices[military_unit_count] = stack_ul_idx;
+        military_unit_indices[military_unit_count] = unit_idx;
 
         /* Calculate unit strength value. */
         // OGBUG  should pass unit_idx or use Effective_Unit_Type_Strength()
-        // combat_unit_values[combat_unit_count] = Effective_Unit_Strength(unit_type) / 10;
-        ogbug_value = ((Random(256) << 8) & Random(256));
-        combat_unit_values[combat_unit_count] = ogbug_value;
+        /* military_unit_values[military_unit_count] = Effective_Unit_Strength(unit_type) / 10; */
+        /* HACK  OGBUG would have result in bogus data, so we try to replicate that */
+        ogbug_value = ((Random(256) << 8) | Random(256));
+#ifdef STU_DEBUG
+    trc_prn("DEBUG: [%s, %d]: AI_Stacks_Survey_Expedition_Forces_Stack(): ogbug_value: %d\n", __FILE__, __LINE__, ogbug_value);
+#endif
+        military_unit_values[military_unit_count] = ogbug_value;
 
-        combat_unit_count++;
+        military_unit_count++;
     }
 
     /* Phase 2: Bubble sort candidates by value descending */
-    for (itr = 0; itr < (combat_unit_count - 1); itr++)
+    for (itr = 0; itr < (military_unit_count - 1); itr++)
     {
-        for (itr2 = 0; itr2 < (combat_unit_count - 1); itr2++)
+        for (itr2 = 0; itr2 < (military_unit_count - 1); itr2++)
         {
-            if (combat_unit_values[itr2] < combat_unit_values[itr2 + 1])
+            if(military_unit_values[itr2] < military_unit_values[itr2 + 1])
             {
-                Swap_Short(&combat_unit_values[itr2], &combat_unit_values[itr2 + 1]);
-                Swap_Short(&combat_unit_ul_indices[itr2], &combat_unit_ul_indices[itr2 + 1]);
-                Swap_Short(&combat_unit_indices[itr2], &combat_unit_indices[itr2 + 1]);
+                Swap_Short(&military_unit_values[itr2], &military_unit_values[itr2 + 1]);
+                Swap_Short(&military_unit_ul_indices[itr2], &military_unit_ul_indices[itr2 + 1]);
+                Swap_Short(&military_unit_indices[itr2], &military_unit_indices[itr2 + 1]);
             }
         }
     }
 
+    /* Phase 4 */
     /* Limit processing to the requested number of excess units */
     // OGBUG  This truncates by list order, not by score — so for a type-3/4 garrison, it sends the first N combat units in list order, not the N weakest.
-    if (excess_count < combat_unit_count)
+    if(excess_count < military_unit_count)
     {
-        combat_unit_count = excess_count;
+        military_unit_count = excess_count;
     }
 
-    /* Phase 3: Update global Offensive lists with these candidates */
-    for(local_itr = 0; local_itr < combat_unit_count; local_itr++)
+    /* Phase 5: Update global Offensive lists with these candidates */
+    for(local_itr = 0; local_itr < military_unit_count; local_itr++)
     {
-        stack_ul_idx = combat_unit_ul_indices[local_itr];
-        unit_idx = combat_unit_indices[local_itr];
-        unit_value = combat_unit_values[local_itr];
+        stack_ul_idx = military_unit_ul_indices[local_itr];
+        unit_idx = military_unit_indices[local_itr];
+        unit_value = military_unit_values[local_itr];
         if(
             (Unit_Has_AirTravel(unit_idx) == ST_TRUE)
             ||
@@ -3898,6 +4018,7 @@ void AI_Survey_Excess_Units_In_Stack(int16_t stack_idx, int16_t unit_count, int1
         /* Update standard Pushout list (Global Offensive Stack) */
         if(cp_drafted_unit_count < MAX_STACK)
         {
+            /* Add new unit to the global list */
             G_Pushout_UL_Indices[cp_drafted_unit_count] = stack_ul_idx;
             G_Pushout_CX_IDs[cp_drafted_unit_count] = stack_idx;
             G_Pushout_Values[cp_drafted_unit_count] = unit_value;
@@ -3984,7 +4105,7 @@ void AI_Survey_Excess_Units_In_Stack(int16_t stack_idx, int16_t unit_count, int1
         }
     }
 
-    /* Phase 4: Final sort of Global Pushout list descending */
+    /* Phase 6: Final sort of Global Pushout list descending */
     for(itr = 0; (cp_drafted_unit_count - 1) > itr; itr++)
     {
         for(itr2 = 0; (cp_drafted_unit_count - 1) > itr2; itr2++)
@@ -3999,7 +4120,7 @@ void AI_Survey_Excess_Units_In_Stack(int16_t stack_idx, int16_t unit_count, int1
         }
     }
 
-    /* Phase 5: Final sort of Global Seafaring list descending */
+    /* Phase 7: Final sort of Global Seafaring list descending */
     for(itr = 0; (G_Seafaring_Count - 1) > itr; itr++)
     {
         for(itr2 = 0; (G_Seafaring_Count - 1) > itr2; itr2++)
@@ -5283,7 +5404,7 @@ int16_t AI_Tower_Target_Worthwhile(int16_t player_idx, int16_t wx, int16_t wy, i
  *       and the missing @c EMM_Map_DataH() restore noted at the end of the function.
  */
 /*
-OON XREF: AI_Set_Unit_Orders() |-> G_AI_RallyFill__WIP() |-> AI_Reevaluate_Continent()
+OON XREF: AI_Set_Unit_Orders() |-> AI_Stacks_Stage_Expedition_Forces() |-> AI_Reevaluate_Continent()
 Per Player, Per Landmass+Plane
 (no plane and landmass loops, so can not use continue style logic, like AI_Evaluate_Continents())
 */

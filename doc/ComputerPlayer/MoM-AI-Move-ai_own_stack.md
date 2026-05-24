@@ -3,6 +3,69 @@ SEEALSO:  C:\STU\devel\ReMoM\doc\ComputerPlayer\AIMOVE-AI_Stacks_Init_Build_Targ
 
 # "ai_own_stack" - 'Area Of Code'
 
+includes a subset:
+    SEEALSO: AIMOVE-AI_Stacks_Stage_Expedition_Forces.md
+    AI_Stacks_Survey_Expedition_Forces()
+    AI_Stacks_Survey_Expedition_Forces_Stack()
+    AI_Stacks_Stage_Expedition_Forces()
+    AI_FillGarrisons__WIP()
+
+* cp_landmass_wx_array, cp_landmass_wy_array
+    * XREF:
+        * AI_Stacks_Init_Build_Target_Order()
+        * AI_Set_Unit_Orders()
+        * AI_Stacks_Stage_Expedition_Forces()
+        * AI_FillGarrisons__WIP()
+* G_Seafaring_Lowest_Value
+    * XREF:
+        * AI_Stacks_Survey_Expedition_Forces()
+        * AI_Stacks_Survey_Expedition_Forces_Stack()
+* G_Pushout_Lowest_Value
+    * XREF:
+        * AI_Stacks_Survey_Expedition_Forces()
+        * AI_Stacks_Survey_Expedition_Forces_Stack()
+* G_Seafaring_Count
+    * XREF:
+        * AI_Stacks_Survey_Expedition_Forces()
+        * AI_Stacks_Survey_Expedition_Forces_Stack()
+* cp_drafted_unit_count
+    * XREF:
+        * AI_Stacks_Survey_Expedition_Forces()
+        * AI_Stacks_Survey_Expedition_Forces_Stack()
+        * AI_Stacks_Stage_Expedition_Forces()
+* G_Seafaring_Values
+    * XREF:
+* G_Pushout_Values
+    * XREF:
+* G_Seafaring_CX_IDs
+    * XREF:
+* G_Pushout_CX_IDs
+    * XREF:
+* G_Seafaring_UL_Indices
+    * XREF:
+* G_Pushout_UL_Indices
+    * XREF:
+* G_Seafaring_Unit_Indices
+    * XREF:
+* G_Pushout_Unit_Indices
+    * XREF:
+        * AI_Stacks_Survey_Expedition_Forces_Stack()
+        * AI_Stacks_Stage_Expedition_Forces()
+* cp_staged_unit_count
+    * XREF:
+        * AI_Stacks_Init_Build_Target_Order()
+        * AI_Stacks_Stage_Expedition_Forces()
+* cp_enroute_unit_count
+    * XREF:
+        * AI_Stacks_Init_Build_Target_Order()
+        * AI_Stacks_Stage_Expedition_Forces()
+* g_ai_minattackstack
+    * XREF:
+        * AI_Set_Unit_Orders()
+        * AI_Stacks_Stage_Expedition_Forces()
+
+
+
 some overlap with `g_ai_evaluation_map`
 struct s_AI_TARGET
 struct s_AI_STACK_DATA
@@ -111,6 +174,70 @@ _ai_own_stack_type;
 _ai_own_stack_wp;
 _ai_own_stack_wy;
 _ai_own_stack_wx;
+
+
+
+## G_Pushout_* and G_Seafaring_* — secondary indexes INTO `_ai_own_stack_*`
+
+These look like a separate AI subsystem but they are NOT. They're a **top-9 cherry-picked subset** of `_ai_own_stack_*` slots, materialized as ranked lists for fast iteration by downstream consumers. They live in the same area-of-code as everything else in this doc.
+
+Declared at [AIMOVE.c:72-83](../../MoM/src/AIMOVE.c#L72-L83):
+
+```c
+int16_t G_Pushout_Lowest_Value;                  /* scalar — cached min for fast displacement */
+int16_t cp_drafted_unit_count;                   /* scalar — pool size (inconsistent name) */
+int16_t G_Pushout_Values[MAX_STACK];             /* per-entry: score for ranking */
+int16_t G_Pushout_CX_IDs[MAX_STACK];             /* per-entry: index into _ai_own_stack_* */
+int16_t G_Pushout_UL_Indices[MAX_STACK];         /* per-entry: per-stack slot within _ai_own_stack_unit_list */
+int16_t G_Pushout_Unit_Indices[MAX_STACK];       /* per-entry: cached _UNITS[] index (same as _ai_own_stack_unit_list[CX][UL]) */
+
+/* Mirror-shaped Seafaring pool — same layout, different naming for the count: */
+int16_t G_Seafaring_Lowest_Value;
+int16_t G_Seafaring_Count;                       /* scalar — pool size */
+int16_t G_Seafaring_Values[MAX_STACK];
+int16_t G_Seafaring_CX_IDs[MAX_STACK];
+int16_t G_Seafaring_UL_Indices[MAX_STACK];
+int16_t G_Seafaring_Unit_Indices[MAX_STACK];
+```
+
+**Pool entries are 3-index triples that point into the `_ai_own_stack_*` AoS:**
+
+```
+G_Pushout_CX_IDs[i]       → which stack:    _ai_own_stack_*[CX]
+G_Pushout_UL_Indices[i]   → which slot:     _ai_own_stack_unit_list[CX][UL]
+G_Pushout_Unit_Indices[i] → cached _UNITS[] idx (same value the dereference above would give)
+G_Pushout_Values[i]       → unit's effective strength score (for ranking + displacement)
+```
+
+The cached `Unit_Indices[i]` is redundant with the `unit_list[CX][UL]` dereference — kept for speed (avoids the indirect read at consume time).
+
+### Producer
+
+[`AI_Stacks_Survey_Expedition_Forces_Stack`](../../MoM/src/AIMOVE.c#L3942) (called from `AI_Stacks_Survey_Expedition_Forces`, dispatch slot 3). The producer scans every `_ai_own_stack_*` entry, scores "excess" combat units, and maintains a top-9 ranked pool with cached lowest-value for fast displacement decisions. After the producer, a bubble-sort pass orders the entries by value descending.
+
+**OGBUG — pool ranking is meaningless** ([AIMOVE.c:4034-4042](../../MoM/src/AIMOVE.c#L4034-L4042)). The "value" assigned to each candidate is NOT a real strength score. The OG passed the wrong argument (or called the wrong function) and got back garbage; the production reconstruction emulates this with `((Random(256) << 8) | Random(256))` — two random bytes concatenated into a pseudo-random 16-bit value. The intended computation, per the inline comment, was `Effective_Unit_Strength(unit_type) / 10`.
+
+Practical consequences for both pools:
+
+- The "top 9 by value" semantic is broken in the OG. Pool entries are ranked by random numbers, not by actual unit strength.
+- The displacement logic still EXERCISES (the random values vary, so `unit_value > G_Pushout_Lowest_Value` fires intermittently and a candidate's chance of staying in the pool depends on how its random value compares to the random values of incumbents).
+- The bubble sort still sorts — by random values, not strength.
+- Consumers downstream (`AI_Stacks_Stage_Expedition_Forces` for Pushout) see "9 essentially-random excess units" rather than "9 strongest excess units."
+
+So even before considering the Seafaring pool's dead-consumer status, BOTH pools' rankings are degraded by this OG bug. The pool size cap (9) holds; the priority queue still maintains *something* close to a top-N over a 16-bit random distribution; but the "top" being selected has no relationship to unit strength.
+
+### Consumers
+
+| Pool | Reader | Where |
+|---|---|---|
+| `G_Pushout_*` | [`AI_Stacks_Stage_Expedition_Forces`](AIMOVE-AI_Stacks_Stage_Expedition_Forces.md) | Slot 12 of `AI_Set_Unit_Orders` dispatch — pulls pool entries to order their units toward THIS landmass's stage point |
+| `G_Seafaring_*` | **NONE** | Producer fills + sorts the pool every turn; no consumer reads it back. **Dead infrastructure** — mirror-shaped scaffolding for an intended-but-never-built sibling stage function |
+
+### Why this matters
+
+The pools look like a separate AI subsystem because of the `G_` prefix and the different naming style (`CX_IDs`, `UL_Indices`, `Values`, `Lowest_Value`). They aren't. They're a secondary index over the AoC's main arrays — same units, same stacks, just ranked and bounded to the top 9.
+
+When reading dispatch code that mentions `G_Pushout_*`, mentally translate to: *"look up an excess-flagged slot in `_ai_own_stack_*` that the survey pass tagged as worth drafting elsewhere."*
 
 
 

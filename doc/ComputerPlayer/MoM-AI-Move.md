@@ -66,7 +66,8 @@ AI_Next_Turn()
                     |-> AI_Stacks_Target_Nearest_Hostile_Stack()
                     |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
                 |-> AI_Stacks_Move_Out_NonMilitary_Garrisoned()
-                |-> AI_Survey_Excess_Units()
+                |-> AI_Stacks_Survey_Expedition_Forces()
+                    |-> AI_Stacks_Survey_Expedition_Forces_Stack()
                 |-> AI_Do_Meld()
                 |-> AI_Do_Settle()
                 |-> AI_Do_Purify()
@@ -82,7 +83,7 @@ AI_Next_Turn()
                         |-> AI_Stacks_Ferry_Add_Location()  ...uses _ai_ferry_count, etc.
                             |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
                         |-> AI_Stacks_Order_Ferry()         ...uses _ai_own_stack_count, etc.
-                |-> G_AI_RallyFill__WIP()
+                |-> AI_Stacks_Stage_Expedition_Forces()
                     |-> AI_Reevaluate_Continent()
                 |-> AI_FillGarrisons__WIP()
             ...Ocean (non-landmass)...
@@ -95,19 +96,19 @@ Definitely Done-Done:
 [ ]     |-> AI_Next_Turn()
 ...
 [x]         |-> AI_Evaluate_Hostility()
-[x]         |-> AI_Evaluate_Magic_Power_Strategy()  ... AI_Update_Magic_Power()
+[x]         |-> AI_Evaluate_Magic_Power_Strategy()          ... AI_Update_Magic_Power()
 [x]         |-> Player_Hostile_Opponents()
 [x]         |-> AI_Player_Calculate_Target_Values()
 [x]         |-> AI_Landmass_Values_And_Strengths()
-[x]         |-> AI_Choose_War_Landmass()            ¿ uses g_ai_evaluation_map from previous turn ?
+[x]         |-> AI_Choose_War_Landmass()                    ¿ uses g_ai_evaluation_map from previous turn ?
 ...
 ...j_Cast_Spell_Overland__WIP(); EMMDATAH_Map(); Allocate_AI_Data(); Player_Hostile_Opponents(); AI_Player_Calculate_Target_Values(); j_AI_Spell_Select();
 ...EMMDATAH_Map(); AI_Update_Magic_Power(); AI_Sanity_Check_Overland_Enchantments(); AI_Update_Gold_And_Mana_Reserves(); AI_Update_Gold_Income_And_Food_Income();
 ...
 []          |-> Player_All_Colony_Autobuild(player_idx)
 [x]         |-> AI_Evaluation_Map(player_idx)               populates g_ai_evaluation_map
-[x]         |-> AI_Evaluate_Continents(player_idx)      uses g_ai_evaluation_map, just populated in AI_Evaluation_Map()
-                ...sibling function... [x] OON XREF: AI_Set_Unit_Orders() |-> G_AI_RallyFill__WIP() |-> AI_Reevaluate_Continent()
+[x]         |-> AI_Evaluate_Continents(player_idx)          uses g_ai_evaluation_map, just populated in AI_Evaluation_Map()
+                ...sibling function... [x] OON XREF: AI_Set_Unit_Orders() |-> AI_Stacks_Stage_Expedition_Forces() |-> AI_Reevaluate_Continent()
 [ ]         |-> AI_Set_Unit_Orders(player_idx)
 [ ]             |-> AI_Disband_To_Balance_Budget()
 [ ]             |-> AI_Shift_Off_Home_Plane()
@@ -117,7 +118,8 @@ Definitely Done-Done:
 [x]                 |-> AI_Stacks_Target_Nearest_Hostile_Stack()
 [x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 [x]             |-> AI_Stacks_Move_Out_NonMilitary_Garrisoned()
-[ ]             |-> AI_Survey_Excess_Units()
+[x]             |-> AI_Stacks_Survey_Expedition_Forces()
+[x]                 |-> AI_Stacks_Survey_Expedition_Forces_Stack()
 [ ]             |-> AI_Do_Meld()
 [ ]             |-> AI_Do_Settle()
 [ ]             |-> AI_Do_Purify()
@@ -131,8 +133,17 @@ Definitely Done-Done:
 [x]                 |-> AI_Stacks_Setup_Ferry()
 [x]                     |-> AI_Stacks_Ferry_Add_Location()
 [x]                         |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
-[ ]                     |-> AI_Stacks_Order_Ferry()
-[ ]             |-> G_AI_RallyFill__WIP()
+[x]                     |-> AI_Stacks_Order_Ferry()
+[x]             |-> AI_Stacks_Stage_Expedition_Forces()
+                    ...uses
+                        cp_staged_unit_count    ...cleared in AI_Stacks_Init_Build_Target_Order()
+                        cp_enroute_unit_count   ...cleared in AI_Stacks_Init_Build_Target_Order()
+                        cp_drafted_unit_count   ...
+                        g_ai_minattackstack     ...
+                        g_ai_set_target_caller  ...
+                    ...uses
+                        G_Pushout_CX_IDs[], G_Pushout_UL_Indices[], G_Pushout_Unit_Indices[]
+
 [x]                 |-> AI_Reevaluate_Continent()
 [ ]             |-> AI_FillGarrisons__WIP()
 [ ]             |-> AI_ProcessOcean__WIP()
@@ -142,7 +153,7 @@ Definitely Done-Done:
 [ ]                 |-> AI_Do_Meld()
 [x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 [ ]                 |-> AI_Enemy_Unit_In_Range()
-[ ]                 |-> AI_Stacks_Order_Ferry()
+[x]                 |-> AI_Stacks_Order_Ferry()
 [x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 
@@ -171,7 +182,7 @@ AI_Set_Unit_Orders(player_idx)
     └── for landmass_idx in [1..NUM_LANDMASSES):
         ├── AI_Stacks_Init_Build_Target_Order
         ├── AI_Stacks_Move_Out_NonMilitary_Garrisoned
-        ├── AI_Survey_Excess_Units
+        ├── AI_Stacks_Survey_Expedition_Forces
         ├── AI_Do_Meld
         ├── AI_Do_Settle
         ├── AI_Do_Purify
@@ -180,7 +191,7 @@ AI_Set_Unit_Orders(player_idx)
         ├── AI_Stacks_Roamers_Target_Or_Deploy
         ├── AI_Stacks_Order_To_War_Landmass           [gate: NOT lmt_Contested basically]
         ├── AI_Stacks_Relocate_Roamers          [gate: lmt_Own / lmt_Leaveable+]
-        ├── G_AI_RallyFill__WIP              [always]
+        ├── AI_Stacks_Stage_Expedition_Forces              [always]
         │   └── AI_Reevaluate_Continent     [5% roll when stage is full]
         └── AI_FillGarrisons__WIP            [gate: lmt_Own / lmt_Contested / lmt_Leaveable+]
     ├── AI_ProcessOcean__WIP                 [per-plane post-pass]
@@ -243,11 +254,11 @@ ai_human_hostility
 
 g_ai_minattackstack
     AI_Set_Unit_Orders()
-    G_AI_RallyFill__WIP()
+    AI_Stacks_Stage_Expedition_Forces()
 
 _ai_ferry_count
     AI_Set_Unit_Orders()
-    G_AI_RallyFill__WIP()
+    AI_Stacks_Stage_Expedition_Forces()
     ...
     G_AI_ProcessTransports__WIP()
     AI_SendToColonize__WIP()
@@ -257,31 +268,31 @@ _ai_ferry_count
 
 
 AI_Set_Unit_Orders
-    |-> AI_Survey_Excess_Units()
-        |-> AI_Survey_Excess_Units_In_Stack()
-    |-> G_AI_RallyFill__WIP()
+    |-> AI_Stacks_Survey_Expedition_Forces()
+        |-> AI_Stacks_Survey_Expedition_Forces_Stack()
+    |-> AI_Stacks_Stage_Expedition_Forces()
 
 
 
-cleared in AI_Survey_Excess_Units()
-populated in AI_Survey_Excess_Units_In_Stack()
+cleared in AI_Stacks_Survey_Expedition_Forces()
+populated in AI_Stacks_Survey_Expedition_Forces_Stack()
     G_Seafaring_Count
     G_Seafaring_Lowest_Value
-populated in AI_Survey_Excess_Units_In_Stack()
+populated in AI_Stacks_Survey_Expedition_Forces_Stack()
     G_Seafaring_Values[MAX_STACK]
     G_Seafaring_CX_IDs[MAX_STACK]
     G_Seafaring_UL_Indices[MAX_STACK]
     G_Seafaring_Unit_Indices[MAX_STACK]
 
-cleared in AI_Survey_Excess_Units()
-populated in AI_Survey_Excess_Units_In_Stack()
+cleared in AI_Stacks_Survey_Expedition_Forces()
+populated in AI_Stacks_Survey_Expedition_Forces_Stack()
     cp_drafted_unit_count
     G_Pushout_Lowest_Value
-populated in AI_Survey_Excess_Units_In_Stack()
+populated in AI_Stacks_Survey_Expedition_Forces_Stack()
     G_Pushout_Values[MAX_STACK]
     G_Pushout_CX_IDs[MAX_STACK]
     G_Pushout_UL_Indices[MAX_STACK]
-used in G_AI_RallyFill__WIP()
+used in AI_Stacks_Stage_Expedition_Forces()
     cp_drafted_unit_count
     G_Pushout_CX_IDs[MAX_STACK]
     G_Pushout_UL_Indices[MAX_STACK]
@@ -289,7 +300,7 @@ used in G_AI_RallyFill__WIP()
 
 ## cp_staged_unit_count
     set in AI_Stacks_Init_Build_Target_Order
-    used in G_AI_RallyFill__WIP
+    used in AI_Stacks_Stage_Expedition_Forces
     ...something like...
     ...if staging area already staffed
     ...if staged and routed enough to staff the staging area
@@ -305,15 +316,15 @@ jge     short loc_EC03C
 
 
 
-Down r G_AI_RallyFill__WIP+B                       cmp [cp_staged_unit_count], e_MAX_STACK
-Down r G_AI_RallyFill__WIP:loc_EBFDD               mov ax, [cp_staged_unit_count]         
-Down r G_AI_RallyFill__WIP+7C                      mov ax, [cp_staged_unit_count]         
+Down r AI_Stacks_Stage_Expedition_Forces+B                       cmp [cp_staged_unit_count], e_MAX_STACK
+Down r AI_Stacks_Stage_Expedition_Forces:loc_EBFDD               mov ax, [cp_staged_unit_count]         
+Down r AI_Stacks_Stage_Expedition_Forces+7C                      mov ax, [cp_staged_unit_count]         
 Down w AI_Stacks_Init_Build_Target_Order [cp_staged_unit_count], 0          
 Down w AI_Stacks_Init_Build_Target_Order [cp_staged_unit_count]             
 
-Down r G_AI_RallyFill__WIP+33                       add ax, [cp_enroute_unit_countt]
-Down r G_AI_RallyFill__WIP+7F                       add ax, [cp_enroute_unit_countt]
-Down r G_AI_RallyFill__WIP+92                       sub ax, [cp_enroute_unit_countt]
+Down r AI_Stacks_Stage_Expedition_Forces+33                       add ax, [cp_enroute_unit_countt]
+Down r AI_Stacks_Stage_Expedition_Forces+7F                       add ax, [cp_enroute_unit_countt]
+Down r AI_Stacks_Stage_Expedition_Forces+92                       sub ax, [cp_enroute_unit_countt]
 Down w AI_Stacks_Init_Build_Target_Order ...v [cp_enroute_unit_countt], 0 
 Down w AI_Stacks_Init_Build_Target_Order ...c [cp_enroute_unit_countt]    
 Down w AI_Stacks_Init_Build_Target_Order ...c [cp_enroute_unit_countt]    
@@ -321,14 +332,14 @@ Down w AI_Stacks_Init_Build_Target_Order ...c [cp_enroute_unit_countt]
 Down w AI_Set_Unit_Orders+5E mov [g_ai_minattackstack], ax       ; turn / 30 + 2, max 9  
 Down r AI_Set_Unit_Orders+61 cmp [g_ai_minattackstack], e_MAX_STACK; turn / 30 + 2, max 9
 Down w AI_Set_Unit_Orders+68 mov [g_ai_minattackstack], e_MAX_STACK; turn / 30 + 2, max 9
-Down r G_AI_RallyFill__WIP+37   cmp ax, [g_ai_minattackstack]       ; turn / 30 + 2, max 9  
-Down r G_AI_RallyFill__WIP+87   cmp ax, [g_ai_minattackstack]       ; turn / 30 + 2, max 9  
+Down r AI_Stacks_Stage_Expedition_Forces+37   cmp ax, [g_ai_minattackstack]       ; turn / 30 + 2, max 9  
+Down r AI_Stacks_Stage_Expedition_Forces+87   cmp ax, [g_ai_minattackstack]       ; turn / 30 + 2, max 9  
 
 
 ## AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 Up   J NX_j_AI_Set_Move_Or_Goto_Target              jmp     AI_Stacks_Order_Attack_Target_Or_Goto_Destination         
-     p G_AI_RallyFill__WIP+DD                       call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+     p AI_Stacks_Stage_Expedition_Forces+DD                       call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p AI_FillGarrisons__WIP+76A                    call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p G_AI_ProcessTransports__WIP+646              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p G_AI_ProcessTransports__WIP+75B              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
@@ -369,8 +380,8 @@ int16_t G_Seafaring_Lowest_Value;
 int16_t G_Pushout_Lowest_Value;
 // WZD dseg:D3F6
 /*
-cleared in AI_Survey_Excess_Units()
-populated in AI_Survey_Excess_Units_In_Stack()
+cleared in AI_Stacks_Survey_Expedition_Forces()
+populated in AI_Stacks_Survey_Expedition_Forces_Stack()
 */
 int16_t G_Seafaring_Count;
 // WZD dseg:D3F8
@@ -393,9 +404,9 @@ int16_t G_Seafaring_Unit_Indices[MAX_STACK];
 // WZD dseg:D478
 /*
 AI_Set_Unit_Orders
-    |-> AI_Survey_Excess_Units()
-        |-> AI_Survey_Excess_Units_In_Stack()
-    |-> G_AI_RallyFill__WIP()
+    |-> AI_Stacks_Survey_Expedition_Forces()
+        |-> AI_Stacks_Survey_Expedition_Forces_Stack()
+    |-> AI_Stacks_Stage_Expedition_Forces()
 
 */
 int16_t G_Pushout_Unit_Indices[MAX_STACK];

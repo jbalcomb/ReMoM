@@ -53,7 +53,7 @@ flowchart TD
         Dispatch --> Slots4_7["slots 4-7<br/>AI_Do_Meld<br/>AI_Do_Settle<br/>AI_Do_Purify<br/>AI_Do_RoadBuild"]:::func
         Dispatch --> Slot8["slot 8<br/>AI_Build_Target_List<br/>builds _ai_targets_*"]:::func
         Dispatch --> Slot9["slot 9<br/>AI_Stacks_Roamers_Target_Or_Deploy"]:::func
-        Dispatch --> SlotsRally["slots 10/11/13/14<br/>AI_Stacks_Order_To_War_Landmass<br/>AI_Stacks_Relocate_Roamers<br/>G_AI_RallyFill<br/>AI_FillGarrisons"]:::func
+        Dispatch --> SlotsRally["slots 10/11/12/13<br/>AI_Stacks_Order_To_War_Landmass<br/>AI_Stacks_Relocate_Roamers<br/>AI_Stacks_Stage_Expedition_Forces<br/>AI_FillGarrisons"]:::func
 
         Slot1 -. "Phase 3 only<br/>(first unit in us_Move)" .-> FindNearest["AI_Stacks_Target_Nearest_Hostile_Stack<br/>nearest hostile free-roaming stack on landmass"]:::func
         FindNearest --> SetTgt

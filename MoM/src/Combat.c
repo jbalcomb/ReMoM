@@ -17516,7 +17516,7 @@ void BU_Init_Hero_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     /* HACK */  if(hero_owner_idx == ST_UNDEFINED) { hero_owner_idx = (Random((_num_players + 1)) - 1); }
     // Meh.  Should be Random() for hero_type, actually
 
-    hero_type = UNITTYPE();  /* BUGBUG  from back in AI_Survey_Excess_Units_In_Stack(), cause AVRL here */
+    hero_type = UNITTYPE();  /* BUGBUG  from back in AI_Stacks_Survey_Expedition_Forces_Stack(), cause AVRL here */
     
     if(
         (HERO_NOBLE(hero_owner_idx, hero_type))

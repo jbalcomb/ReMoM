@@ -26,10 +26,10 @@ AI_Evaluate_Continents()
 AI_Reevaluate_Continent()
 ...last proc in ovr158 ...later addition?
 
-OON XREF: AI_Set_Unit_Orders() |-> G_AI_RallyFill__WIP() |-> AI_Reevaluate_Continent()
+OON XREF: AI_Set_Unit_Orders() |-> AI_Stacks_Stage_Expedition_Forces() |-> AI_Reevaluate_Continent()
 
 AI_Set_Unit_Orders()
-    |-> G_AI_RallyFill__WIP()
+    |-> AI_Stacks_Stage_Expedition_Forces()
         |-> AI_Reevaluate_Continent()
 
 

@@ -94,6 +94,7 @@ _ai_own_stack_type
 2: DNE
 3: Garrison - City, Node, Tower (sitting on a Site, assumed to be garrisoned in a City or protecting a Node or Tower)
 4: Garrison - Fortress City   (sitting on a Site, which is the player's Fortress City)
+    ¿ is this distinct only made to support the hack in AI_Stacks_Survey_Expedition_Forces() ?
 
 0 is set if AI_Stacks_Target_Nearest_Hostile_Stack() returns ST_FALSE
 */
@@ -172,13 +173,13 @@ OON set lmt_Leaveable:
 */
 enum e_LANDMASS_TYPE
 {
-    lmt_Unevaluated = 0,
-    lmt_Own         = 1,  /* Own vs. Contested;  Decisively held — own unit-cost > 10 × enemy unit-cost. Not "I'm the only one here," just "I'm overwhelmingly stronger." */
-    lmt_Contested   = 2,  /* Own vs. Contested;  Own city + non-trivial enemy unit-cost. Name matches. */
-    lmt_NoOwnCity   = 3,  /* 'Nay Own City';  Units may be roaming freely on the landmass — that doesn't count as "presence" here. */
-    lmt_NoOwnCityAndAllyHasCity  = 4,  /* Purpose: flag landmasses that should be ignore/excluded; ally-only landmass OR no occupieable square; not just 'Nay Own City, Yay Ally City'; */
-    lmt_Leaveable     = 5,  /* Embarkation tile was found — set when a dock square is reachable. Logically "we can depart from here," not "we have decided to abandon." */
-    lmt_NoTargets   = 6   /* No attackable enemies, lairs, or nodes worth targeting. */
+    lmt_Unevaluated             = 0,
+    lmt_Own                     = 1,  /* Own vs. Contested;  Decisively held — own unit-cost > 10 × enemy unit-cost. Not "I'm the only one here," just "I'm overwhelmingly stronger." */
+    lmt_Contested               = 2,  /* Own vs. Contested;  Own city + non-trivial enemy unit-cost. Name matches. */
+    lmt_NoOwnCity               = 3,  /* 'Nay Own City';  Units may be roaming freely on the landmass — that doesn't count as "presence" here. */
+    lmt_NoOwnCityAndAllyHasCity = 4,  /* Purpose: flag landmasses that should be ignore/excluded; ally-only landmass OR no occupieable square; not just 'Nay Own City, Yay Ally City'; */
+    lmt_Leaveable               = 5,  /* Embarkation tile was found — set when a dock square is reachable. Logically "we can depart from here," not "we have decided to abandon." */
+    lmt_NoTargets               = 6   /* No attackable enemies, lairs, or nodes worth targeting. */
 };
 
 //  sizeof:  B4  180d  (3 * 60)

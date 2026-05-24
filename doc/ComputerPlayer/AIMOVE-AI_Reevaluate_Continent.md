@@ -27,7 +27,7 @@ The function does six sequential phases (the source code labels them `/* Phase 1
 
 ```c
 // AIMOVE.c:238-252 — only caller
-void G_AI_RallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx)
+void AI_Stacks_Stage_Expedition_Forces(int16_t landmass_idx, int16_t wp, int16_t player_idx)
 {
     ...
     if(cp_staged_unit_count == MAX_STACK)
@@ -419,7 +419,7 @@ When no main war target is set, `_ai_landmass_war_targets[wp][player_idx]` is 0.
 
 Inline comment: `/* ¿ OGBUG  no EMM_Map_DataH() ? */`
 
-Unlike sibling [`AI_Evaluate_Continents`](AIMOVE-AI_Evaluate_Continents.md) (which calls `EMM_Map_DataH()` to restore the default EMM mapping), this function ends without restoring the EMM mapping. Caller `G_AI_RallyFill__WIP` does not re-map either. Either:
+Unlike sibling [`AI_Evaluate_Continents`](AIMOVE-AI_Evaluate_Continents.md) (which calls `EMM_Map_DataH()` to restore the default EMM mapping), this function ends without restoring the EMM mapping. Caller `AI_Stacks_Stage_Expedition_Forces` does not re-map either. Either:
 - The CONTXXX mapping happens to be the correct state for downstream callers in this code path, or
 - This is a missing cleanup — preserved-OG behavior.
 
@@ -443,7 +443,7 @@ All entries are inline OG annotations preserved faithful-to-disassembly.
 | Aspect | `AI_Reevaluate_Continent` | [`AI_Evaluate_Continents`](AIMOVE-AI_Evaluate_Continents.md) |
 |---|---|---|
 | Scope | One specific (player, plane, landmass) | All landmasses on both planes for one player |
-| Caller | `G_AI_RallyFill__WIP` on 5% random roll when stage is full | (per-turn; needs caller verification) |
+| Caller | `AI_Stacks_Stage_Expedition_Forces` on 5% random roll when stage is full | (per-turn; needs caller verification) |
 | Zeros type_array before counter use? | Yes (line 5805) | Yes |
 | Has unit-cost summing loop? | Yes (lines 5838-5859) | Yes |
 | Uses correct `.wp/.wy/.wx` landmass lookup? | Yes | Yes |

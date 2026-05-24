@@ -120,7 +120,7 @@ A more accurate name would be something like `lmt_NoHostileAssetsLastSeen` — t
 | [203-206](../../MoM/src/AIMOVE.c#L203) | `≥ lmt_Leaveable` OR `Own` | Skip `AI_Stacks_Order_To_War_Landmass` |
 | [212-217](../../MoM/src/AIMOVE.c#L212) | `Own` OR `Contested` OR `≥ lmt_Leaveable` | (gates an `if` block) |
 
-### `G_AI_RallyFill__WIP` ([line 240](../../MoM/src/AIMOVE.c#L240))
+### `AI_Stacks_Stage_Expedition_Forces` ([line 240](../../MoM/src/AIMOVE.c#L240))
 
 | Line | Condition | Action |
 |---|---|---|

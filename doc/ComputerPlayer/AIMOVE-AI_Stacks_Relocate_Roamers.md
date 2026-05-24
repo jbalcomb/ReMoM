@@ -16,7 +16,7 @@ For a single (player, plane, landmass), set up ferry-departure for every `AISTK_
 
 The gate ([AIMOVE.c:200-204](../../MoM/src/AIMOVE.c#L200-L204)) only invokes this function for landmasses where moving roamers OFF makes sense: `lmt_Leaveable` (explicit evacuate), `lmt_NoTargets` (no local work), and `lmt_Own` (securely owned, spare forces available). In every case the implicit intent is: prepare these roamers to be transported elsewhere.
 
-The "Relocate_Roamers" name reflects that intent — not "Home rally," not "Fill" — the function selects roamers for ferry-setup and provides the per-stack delegate with a stage-point fill budget.
+The "Relocate_Roamers" name reflects that intent — not "Home stage," not "Fill" — the function selects roamers for ferry-setup and provides the per-stack delegate with a stage-point fill budget.
 
 Runs as dispatch slot 11 of [`AI_Set_Unit_Orders`](AIMOVE-AI_Set_Unit_Orders.md), immediately after slot 10 [`AI_Stacks_Order_To_War_Landmass`](AIMOVE-AI_Stacks_Order_To_War_Landmass.md).
 
@@ -169,13 +169,13 @@ AI_Stacks_Relocate_Roamers(landmass_idx, wp, player_idx)
 |---|---|---|
 | 1 | [`AI_Stacks_Init_Build_Target_Order`](AIMOVE-AI_Stacks_Init_Build_Target_Order.md) | Rebuilds `_ai_own_stack_*` |
 | 2 | [`AI_Stacks_Move_Out_NonMilitary_Garrisoned`](AIMOVE-AI_Stacks_Move_Out_NonMilitary_Garrisoned.md) | Push builders out of garrisons |
-| 3 | `AI_Survey_Excess_Units` | Score surplus combat units into pushout pools |
+| 3 | `AI_Stacks_Survey_Expedition_Forces` | Score surplus combat units into pushout pools |
 | 4-7 | `AI_Do_Meld` / `AI_Do_Settle` / `AI_Do_Purify` / `AI_Do_RoadBuild` | Per-job order-setters |
 | 8 | [`AI_Build_Target_List`](AIMOVE-AI_Build_Target_List.md) | Build `_ai_targets_*` |
 | 9 | [`AI_Stacks_Roamers_Target_Or_Deploy`](AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md) | Assign targets to roamers; sets `lmt_Leaveable` as needed |
 | 10 | [`AI_Stacks_Order_To_War_Landmass`](AIMOVE-AI_Stacks_Order_To_War_Landmass.md) | Send mobile non-melders to war landmass stage |
 | **11** | **`AI_Stacks_Relocate_Roamers`** | **(this function)** — set up ferry for each roamer stack on a leaveable landmass |
-| 13 | `G_AI_RallyFill__WIP` | Cross-landmass rally fill from pushout pool |
+| 13 | `AI_Stacks_Stage_Expedition_Forces` | Cross-landmass stage fill from pushout pool |
 | 14 | `AI_FillGarrisons__WIP` | Top up garrisons |
 
 ## Call chain

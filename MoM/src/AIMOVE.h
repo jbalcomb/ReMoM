@@ -27,7 +27,7 @@ extern "C" {
 void AI_Set_Unit_Orders(int16_t player_idx);
 
 // WZD o158p02
-void G_AI_RallyFill__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx);
+// static void AI_Stacks_Stage_Expedition_Forces(int16_t landmass_idx, int16_t wp, int16_t player_idx);
 
 // WZD o158p03
 void AI_FillGarrisons__WIP(int16_t player_idx, int16_t wp, int16_t landmass_idx);
@@ -81,10 +81,10 @@ void AI_Move_Out_Boats(void);
 void AI_Stacks_Move_Out_NonMilitary_Garrisoned(int16_t wp);
 
 // WZD o158p20
-void AI_Survey_Excess_Units(void);
+// static void AI_Stacks_Survey_Expedition_Forces(void);
 
 // WZD o158p21
-void AI_Survey_Excess_Units_In_Stack(int16_t CX_ID, int16_t Count, int16_t Excess);
+// static void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t unit_count, int16_t excess_count);
 
 // WZD o158p22
 void AI_Do_Meld(int16_t player_idx);

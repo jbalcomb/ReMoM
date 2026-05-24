@@ -20,11 +20,11 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **Purpose:** TBD
 - **Reads `lmt_*`:** `lmt_Contested`, `lmt_Own`, `lmt_NoOwnCity`, `lmt_NoOwnCityAndAllyHasCity`, `lmt_Leaveable` (lines 186-217)
 
-### `G_AI_RallyFill__WIP` — [line 240](../../MoM/src/AIMOVE.c#L240)
+### `AI_Stacks_Stage_Expedition_Forces` — [line 449](../../MoM/src/AIMOVE.c#L449)
 - **drake178:** `G_AI_RallyFill()` (o158p02)
-- **End:** ~line 297
-- **Purpose:** TBD
-- **Reads `lmt_*`:** `lmt_Leaveable`, `lmt_NoOwnCity` (lines 259-263)
+- **End:** ~line 509
+- **Purpose:** Per-(plane, landmass) — pull top-9 units from the `G_Pushout_*` pool toward this landmass's stage point, gradually assembling an expedition force sized for downstream overseas attacks. UNGATED at the dispatcher; applies own sanity-check gates internally. See [AIMOVE-AI_Stacks_Stage_Expedition_Forces.md](AIMOVE-AI_Stacks_Stage_Expedition_Forces.md).
+- **Reads `lmt_*`:** `lmt_Leaveable`, `lmt_NoOwnCity` (in Phase 2 sanity-check gates)
 
 ### `AI_FillGarrisons__WIP` — [line 298](../../MoM/src/AIMOVE.c#L298)
 - **drake178:** `AI_FillGarrisons()` (o158p03)
@@ -123,15 +123,15 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **End:** ~line 3641
 - **Purpose:** Push non-military units (Settlers, Engineers, Melders not on a node) out of Garrison/FortressGarrison stacks to an adjacent free square. See [AIMOVE-AI_Stacks_Move_Out_NonMilitary_Garrisoned.md](AIMOVE-AI_Stacks_Move_Out_NonMilitary_Garrisoned.md).
 
-### `AI_Survey_Excess_Units` — [line 4162](../../MoM/src/AIMOVE.c#L4162)
+### `AI_Stacks_Survey_Expedition_Forces` — [line 3828](../../MoM/src/AIMOVE.c#L3828)
 - **drake178:** `AI_Survey_Excess_Units()` (o158p20)
-- **End:** ~line 4218
-- **Purpose:** TBD
+- **End:** ~line 3882
+- **Purpose:** Dispatch slot 3 — clears the `G_Pushout_*` and `G_Seafaring_*` pools, then iterates `_ai_own_stack_*` and submits qualifying stacks to `AI_Stacks_Survey_Expedition_Forces_Stack`. Per-stack-type submission rules: Unknown/Roamer = all units; Garrison = excess above 5; FortressGarrison = excess above 5 only when `_turn < 100`.
 
-### `AI_Survey_Excess_Units_In_Stack` — [line 4219](../../MoM/src/AIMOVE.c#L4219)
+### `AI_Stacks_Survey_Expedition_Forces_Stack` — [line 3915](../../MoM/src/AIMOVE.c#L3915)
 - **drake178:** (no drake name) (o158p21)
-- **End:** ~line 4441
-- **Purpose:** TBD — new helper (no drake equivalent)
+- **End:** ~line 4129
+- **Purpose:** Per-stack scorer — filters to military units (no engineers/settlers/melders/transports), assigns values (OGBUG: bogus random instead of real strength), bubble-sorts, truncates to excess_count, and inserts the top candidates into the `G_Pushout_*` pool (and the `G_Seafaring_*` pool for water-capable units). See [MoM-AI-Move-ai_own_stack.md](MoM-AI-Move-ai_own_stack.md) for the pool structure.
 
 ### `AI_Do_Meld` — [line 4442](../../MoM/src/AIMOVE.c#L4442)
 - **drake178:** `AI_ProcessMelders()` (o158p22)

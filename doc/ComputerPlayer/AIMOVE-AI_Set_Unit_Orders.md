@@ -120,7 +120,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
     {
         AI_Stacks_Init_Build_Target_Order(player_idx, landmass_idx, wp);
         AI_Stacks_Move_Out_NonMilitary_Garrisoned(wp);
-        AI_Survey_Excess_Units();
+        AI_Stacks_Survey_Expedition_Forces();
         AI_Do_Meld(player_idx);
         AI_Do_Settle(player_idx, landmass_idx);
         AI_Do_Purify(landmass_idx, wp);
@@ -139,7 +139,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
             AI_Stacks_Order_To_War_Landmass(player_idx, wp);
         }
 
-        // Home rally fill — only for own / abandoned / no-targets
+        // Home stage fill — only for own / abandoned / no-targets
         if(
             (cp_landmass_type_array[landmass_idx] >= lmt_Leaveable)
             || (cp_landmass_type_array[landmass_idx] == lmt_Own)
@@ -148,7 +148,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
             AI_Stacks_Relocate_Roamers(landmass_idx, wp, player_idx);
         }
 
-        G_AI_RallyFill__WIP(landmass_idx, wp, player_idx);  // unconditional
+        AI_Stacks_Stage_Expedition_Forces(landmass_idx, wp, player_idx);  // unconditional
 
         // Garrison fill — for own / contested / abandoned (NOT NoOwnCity/AllyHasCity)
         if(
@@ -175,21 +175,21 @@ for(wp = 0; wp < NUM_PLANES; wp++)
 |---|---|---|
 | 1 | `AI_Stacks_Init_Build_Target_Order` ...ld the per-landmass target list + stack assignments. |
 | 2 | `AI_Stacks_Move_Out_NonMilitary_Garrisoned` | Push garrison builds. |
-| 3 | `AI_Survey_Excess_Units` | Inventory excess units (for later disband). |
+| 3 | `AI_Stacks_Survey_Expedition_Forces` | Inventory excess units (for later disband). |
 | 4 | `AI_Do_Meld` | Spirit-meld at nodes. |
 | 5 | `AI_Do_Settle` | Issue settler-settle orders. |
 | 6 | `AI_Do_Purify` | Issue purify orders for corrupted tiles. |
 | 7 | `AI_Do_RoadBuild` | Issue road-build orders. |
 | 8 | `AI_Build_Target_List` | (Re-)build the target list. |
 | 9 | `AI_Stacks_Roamers_Target_Or_Deploy` | Move stray "roamer" stacks. |
-| 13 | `G_AI_RallyFill__WIP` | Top up the stage point with units (always). |
+| 13 | `AI_Stacks_Stage_Expedition_Forces` | Top up the stage point with units (always). |
 
 ### Per-landmass conditional gates
 
 | Function | Gate | Notes |
 |---|---|---|
 | `AI_Stacks_Order_To_War_Landmass` (10) | `lmt_Leaveable` or `lmt_Own` or `lmt_NoOwnCityAndAllyHasCity` or `lmt_NoOwnCity` | "almost just NOT `lmt_Contested`" — comment in source. Skips contested-only. |
-| `AI_Stacks_Relocate_Roamers` (11) | `lmt_Leaveable` or `lmt_Own` | Home-base rally — only for landmasses we hold or are abandoning. |
+| `AI_Stacks_Relocate_Roamers` (11) | `lmt_Leaveable` or `lmt_Own` | Home-base stage — only for landmasses we hold or are abandoning. |
 | `AI_FillGarrisons__WIP` (14) | `lmt_Own` or `lmt_Contested` or `lmt_Leaveable` | Garrison maintenance — needs a city to garrison. Excludes `lmt_NoOwnCity` / `lmt_NoOwnCityAndAllyHasCity`. |
 
 (Numbers continue the dispatch-order column; gaps are where the conditional dispatch slot sits.)
@@ -230,7 +230,7 @@ AI_Set_Unit_Orders(player_idx)
     └── for landmass_idx in [1..NUM_LANDMASSES):
         ├── AI_Stacks_Init_Build_Target_Order
         ├── AI_Stacks_Move_Out_NonMilitary_Garrisoned
-        ├── AI_Survey_Excess_Units
+        ├── AI_Stacks_Survey_Expedition_Forces
         ├── AI_Do_Meld
         ├── AI_Do_Settle
         ├── AI_Do_Purify
@@ -239,7 +239,7 @@ AI_Set_Unit_Orders(player_idx)
         ├── AI_Stacks_Roamers_Target_Or_Deploy
         ├── AI_Stacks_Order_To_War_Landmass           [gate: NOT lmt_Contested basically]
         ├── AI_Stacks_Relocate_Roamers          [gate: lmt_Own / lmt_Leaveable+]
-        ├── G_AI_RallyFill__WIP              [always]
+        ├── AI_Stacks_Stage_Expedition_Forces              [always]
         │   └── AI_Reevaluate_Continent     [5% roll when stage is full]
         └── AI_FillGarrisons__WIP            [gate: lmt_Own / lmt_Contested / lmt_Leaveable+]
     ├── AI_ProcessOcean__WIP                 [per-plane post-pass]
@@ -249,7 +249,7 @@ AI_Set_Unit_Orders(player_idx)
 
 ## Related references
 
-- [AIMOVE-AI_Reevaluate_Continent.md](AIMOVE-AI_Reevaluate_Continent.md) — invoked via `G_AI_RallyFill__WIP` on 5% roll
+- [AIMOVE-AI_Reevaluate_Continent.md](AIMOVE-AI_Reevaluate_Continent.md) — invoked via `AI_Stacks_Stage_Expedition_Forces` on 5% roll
 - [AIMOVE-AI_Reevaluate_All_Continents.md](AIMOVE-AI_Reevaluate_All_Continents.md) — full-rebuild classifier; **not** called from this dispatcher (runs on a separate per-turn schedule)
 - [AIMOVE-AI_Choose_War_Landmass.md](AIMOVE-AI_Choose_War_Landmass.md) — producer of `_ai_landmass_war_targets[]` read by `AI_Stacks_Order_To_War_Landmass`
 - [MoM-AI-Landmass-Types.md](MoM-AI-Landmass-Types.md) — `lmt_*` enum used by every conditional gate above

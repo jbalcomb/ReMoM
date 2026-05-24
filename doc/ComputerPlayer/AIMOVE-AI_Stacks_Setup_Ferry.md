@@ -12,7 +12,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Stacks_Setup_Fer
 
 ## Purpose
 
-Per-stack workhorse called by [`AI_Stacks_Relocate_Roamers`](AIMOVE-AI_Stacks_Relocate_Roamers.md) for every roamer stack the parent wants to rally. Does three things in one pass:
+Per-stack workhorse called by [`AI_Stacks_Relocate_Roamers`](AIMOVE-AI_Stacks_Relocate_Roamers.md) for every roamer stack the parent wants to stage. Does three things in one pass:
 
 1. **Register a ferry-pickup request** for an ocean square near the stage point (via [`AI_Stacks_Ferry_Add_Location`](AIMOVE-AI_Stacks_Ferry_Add_Location.md)) — for the next-turn transport dispatcher to pick up.
 2. **Issue goto-stage orders** for up to `stage_count_slot_count` units in the stack (capped by the parent's open-slot budget).
@@ -178,7 +178,7 @@ if(
 }
 ```
 
-This is the **rally** half. For stacks not already at the stage point:
+This is the **stage** half. For stacks not already at the stage point:
 - Iterate the stack's unit slots up to the stack's unit count, with an explicit `break` when the parent's `stage_count_slot_count` budget hits zero.
 - Issue a goto-stage order for each (the order-setter consumes the slot via `ST_UNDEFINED` write).
 - Decrement `stage_count_slot_count` per order issued.
@@ -382,7 +382,7 @@ AI_Stacks_Setup_Ferry(stack_idx, landmass_idx, wp, stage_wx, stage_wy, stage_cou
 Despite the bug catalog, the function does the core job on most calls:
 
 - **Phase 3** files a ferry-pickup request (subject to B2 — coord may be wrong but a request lands either way).
-- **Phase 4** issues correct goto-stage orders for stacks not at the stage point — the "rally" effect.
+- **Phase 4** issues correct goto-stage orders for stacks not at the stage point — the "stage" effect.
 - **Phase 7a** correctly redirects to a nearby own ocean unit when one is found — the "opportunistic embark" effect.
 
 The buggy bits (Phase 2's `else if`-vs-`else`, Phase 5's dead writes, Phase 6's plane non-check, Phase 7b's dead branch) mostly fail silently. The game runs; the AI makes mildly suboptimal decisions about pickup points and embark targets. See the discussion of Phase 7b above for why no player complaints have surfaced.
