@@ -52,10 +52,11 @@ int16_t ai_human_hostility = ST_FALSE;  /* OON XREF: AI_Set_Unit_Orders() */
 // WZD dseg:D3EC                                                 BEGIN:  ovr158 - Uninitialized Data  (AIMOVE)
 
 // WZD dseg:D3EC
+/*
+
+*/
 uint8_t * cp_landmass_type_array;
-// WZD dseg:D3EE
 uint8_t * cp_landmass_wy_array;
-// WZD dseg:D3F0
 uint8_t * cp_landmass_wx_array;
 
 // WZD dseg:D3F2
@@ -306,7 +307,7 @@ AI_Stacks_Roamers_Target_Or_Deploy()
                 (cp_landmass_type_array[landmass_idx] >= lmt_Leaveable)
             )
             {
-                AI_FillGarrisons__WIP(player_idx, wp, landmass_idx);
+                AI_Stacks_Garrison_Sites(player_idx, wp, landmass_idx);
             }
         }
 
@@ -408,7 +409,7 @@ static void AI_Set_Unit_Orders__GEMINI(int player_idx)
             /* Fill garrisons on controlled or contested landmasses */
             if (*type_ptr == lmt_Own || *type_ptr == lmt_Contested || *type_ptr >= lmt_Leaveable)
             {
-                AI_FillGarrisons__WIP(player_idx, wp, landmass_idx);
+                AI_Stacks_Garrison_Sites(player_idx, wp, landmass_idx);
             }
         }
 
@@ -519,70 +520,95 @@ static void AI_Stacks_Stage_Expedition_Forces(int16_t landmass_idx, int16_t wp, 
 
 
 // WZD o158p03
-// drake178: AI_FillGarrisons()
-/*
-; tries to fill all garrisons on the continent to their
-; predefined minimum unit count using any roaming or
-; building stack units (but not the actual builders)
-*/
-/*
-
-*/
-void AI_FillGarrisons__WIP(int16_t player_idx, int16_t wp, int16_t landmass_idx)
+/**
+ * @brief Redirect available stacks to cities and nodes that still need garrison units.
+ *
+ * Surveys the specified landmass for player-owned cities and AI-targetable
+ * nodes, computes how many defenders each site still needs after accounting for
+ * units already present in AI stacks, and then walks the non-garrison stacks on
+ * that landmass to assign reinforcements to the best remaining city or node.
+ *
+ * Site demand is influenced by the current landmass threat classification and,
+ * for cities, by whether the city race tends to field stronger defenders. Each
+ * eligible source stack chooses the site with the best distance-minus-shortfall
+ * heuristic, then sends up to the requested number of military units while
+ * skipping engineers, settlers, and melders.
+ *
+ * @param player_idx Index of the AI player whose sites are being reinforced.
+ * @param wp World plane containing the landmass, cities, and nodes under
+ *           consideration.
+ * @param landmass_idx Index of the landmass whose cities and nodes should be
+ *                     surveyed for garrison shortfalls.
+ *
+ * @return This function does not return a value. It may assign movement orders
+ *         to units in `_ai_own_stack_unit_list` and updates the local
+ *         shortfall-tracking arrays while processing.
+ *
+ * @note The current implementation preserves several original-game quirks,
+ *       including asymmetrical node shortfall formulas, a duplicated
+ *       `list_unit_count` assignment, and the loop condition that limits units
+ *       sent by processed slot index rather than by successfully dispatched
+ *       defenders.
+ */
+void AI_Stacks_Garrison_Sites(int16_t player_idx, int16_t wp, int16_t landmass_idx)
 {
-    int8_t Node_Units_Needed[NUM_NODES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int8_t Node_Indices[NUM_NODES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int8_t Garrison_Units_Needed[NUM_CITIES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int8_t City_Indices[NUM_CITIES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t TrollDwarfDraconian = 0;
-    int16_t Fortress_City_Index = 0;
-    int16_t G_Low_Threat = 0;
+    int8_t node_garrison_shortfall[NUM_NODES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int8_t node_list[NUM_NODES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int8_t city_garrison_shortfall[NUM_CITIES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int8_t city_list[NUM_CITIES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t extra_strong_race = 0;
+    int16_t fortress_city_idx = 0;
+    int16_t low_concern_landmass = 0;
     int16_t site_added = 0;
     int16_t unit_idx = 0;
     int16_t target_type = 0;
-    int16_t Units_To_Send = 0;
+    int16_t units_to_send = 0;
     int16_t stack_wy = 0;
     int16_t stack_wx = 0;
     int16_t target_wy = 0;
     int16_t target_wx = 0;
     int16_t target_value = 0;
     int16_t best_target_value = 0;
-    int16_t Node_Arrays_Count = 0;
-    int16_t City_Arrays_Count = 0;
-    int16_t Asset_Y = 0;
-    int16_t Asset_X = 0;
-    int16_t Own_City_Y = 0;
-    int16_t Own_City_X = 0;
+    int16_t node_count = 0;
+    int16_t city_count = 0;
+    int16_t node_wy = 0;
+    int16_t node_wx = 0;
+    int16_t city_wy = 0;
+    int16_t city_wx = 0;
     int16_t itr = 0;
     int16_t unit_type = 0;
     int16_t list_unit_count = 0;
     int16_t itr_list_units = 0;
-    int16_t itr_stacks = 0;  // _SI_
-    int16_t target_site_idx = 0;  // _DI_
+    int16_t itr_stacks = 0;
+    int16_t target_site_idx = 0;
 
+
+    /* Phase 1 */
+    /* Check landmass threat level for player on this continent - threat assessment shifts garrison-size formulas */
+    /* same check as in AI_Stacks_Stage_Expedition_Forces() */
     if(
         (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] < lmt_Leaveable)
         &&
         (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] != lmt_Own)
     )
     {
-
-        // lmt_Unevaluated, lmt_Contested, lmt_NoOwnCity, lmt_NoOwnCityAndAllyHasCity
-        G_Low_Threat = ST_FALSE;
-
+        /* {lmt_Unevaluated, lmt_Contested, lmt_NoOwnCity, lmt_NoOwnCityAndAllyHasCity} */
+        low_concern_landmass = ST_FALSE;
     }
     else
     {
-        // lmt_Own, lmt_Leaveable, lmt_NoTargets
-        G_Low_Threat = ST_TRUE;
-
+        /* {lmt_Own, lmt_Leaveable, lmt_NoTargets} */
+        low_concern_landmass = ST_TRUE;
     }
 
-    Fortress_City_Index = player_idx;  // ¿ BUGBUG  useless? meaningless? invalid?
 
+    /* Phase 2 */
+    /* Locate Fortress City for the player */
+    /* player_idx, here, because fortress cities are created during world-gen in player order */
+    /* OGBUG  should early-exit with `break;`*/
+    fortress_city_idx = player_idx;
     for(itr = 0; itr < _cities; itr++)
     {
-
         if(
             (_CITIES[itr].wx == _FORTRESSES[player_idx].wx)
             &&
@@ -591,370 +617,270 @@ void AI_FillGarrisons__WIP(int16_t player_idx, int16_t wp, int16_t landmass_idx)
             (_CITIES[itr].wp == _FORTRESSES[player_idx].wp)
         )
         {
-
-            Fortress_City_Index = itr;
-
+            fortress_city_idx = itr;
         }
-
     }
 
-    City_Arrays_Count = 0;
 
+    /* Phase 3: Survey Cities for garrison shortfalls */
+    city_count = 0;
     for(itr = 0; itr < _cities; itr++)
     {
+        if(_CITIES[itr].owner_idx != player_idx) { continue; }
+        if(_CITIES[itr].wp != wp) { continue; }
 
-        if(
-            (_CITIES[itr].owner_idx == player_idx)
-            &&
-            (_CITIES[itr].wp == wp)
-        )
+        city_wx = _CITIES[itr].wx;
+        city_wy = _CITIES[itr].wy;
+
+        /* Dwarf/Troll/Draconian units are high value, influencing garrison size logic */
+        extra_strong_race = ST_FALSE;
+        if(_CITIES[itr].race == rt_Dwarf || _CITIES[itr].race == rt_Troll || _CITIES[itr].race == rt_Draconian)
         {
-
-            Own_City_X = _CITIES[itr].wx;
-
-            Own_City_Y = _CITIES[itr].wy;
-
-            TrollDwarfDraconian = ST_FALSE;
-
+            extra_strong_race = ST_TRUE;
+        }
+    
+        /* Ensure City is on the active landmass being processed */
+        if(_landmasses[((wp * WORLD_SIZE) + (city_wy * WORLD_WIDTH) + city_wx)] != landmass_idx)
+        {
+            continue;
+        }
+    
+        site_added = ST_FALSE;
+        if(itr == fortress_city_idx)
+        {
+            city_garrison_shortfall[city_count] = MAX_STACK;
+        }
+        else
+        {
             if(
-                (_CITIES[itr].race == rt_Dwarf)
-                ||
-                (_CITIES[itr].race == rt_Troll)
-                ||
-                (_CITIES[itr].race == rt_Draconian)
+                (low_concern_landmass == ST_FALSE)
+                &&
+                (extra_strong_race == ST_FALSE)
             )
             {
-
-                TrollDwarfDraconian = ST_TRUE;
-
+                /* Low threat or high-quality defenders: 2 + pop/3 */
+                city_garrison_shortfall[city_count] = (2 + (_CITIES[itr].population / 3));
             }
-
-            if(_landmasses[((wp * WORLD_SIZE) + (Own_City_Y * WORLD_WIDTH) + Own_City_X)] == landmass_idx)
+            else
             {
+                /* Standard threat: 2+ pop/4 */
+                city_garrison_shortfall[city_count] = (2 + (_CITIES[itr].population / 4));
+            }
+        }
+        SETMAX(city_garrison_shortfall[city_count],MAX_STACK);
 
-                site_added = ST_FALSE;
-
-                if(itr == Fortress_City_Index)
+        /* Back out units already present in AI stacks at this city */
+        for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
+        {
+            if(site_added != ST_FALSE)
+            {
+                break;
+            }
+            if(
+                (_ai_own_stack_wx[itr_stacks] == city_wx)
+                &&
+                (_ai_own_stack_wy[itr_stacks] == city_wy)
+            )
+            {
+                city_garrison_shortfall[city_count] -= _ai_own_stack_unit_count[itr_stacks];
+                city_list[city_count] = (int8_t)itr;
+                if(city_garrison_shortfall[city_count] > 0)
                 {
+                    city_count++;
+                }
+                site_added = ST_TRUE;
+            }
+        }
 
-                    Garrison_Units_Needed[City_Arrays_Count] = MAX_STACK;
+        /* If no stack was found at city, add it as a target if it needs units */
+        if(site_added == ST_FALSE)
+        {
+            city_list[city_count] = (int8_t)itr;
+            city_count++;
+        }
+    }
 
+
+    /* Phase 4: Survey Nodes for garrison shortfalls */
+    node_count = 0;
+    for(itr = 0; itr < NUM_NODES; itr++)
+    {
+        if(_NODES[itr].wp != wp)
+        {
+            continue;
+        }
+        node_wx = _NODES[itr].wx;
+        node_wy = _NODES[itr].wy;
+        /* Only process nodes marked as valid AI target sites on the evaluation map */
+        if(g_ai_evaluation_map[wp][((node_wy * WORLD_WIDTH) + node_wx)] != AI_TARGET_SITE)
+        {
+            continue;
+        }
+        /* OGBUG  redundant code */
+        node_wx = _NODES[itr].wx;
+        node_wy = _NODES[itr].wy;
+        /* Ensure Node is on the active landmass being processed */
+        if(_landmasses[((wp * WORLD_SIZE) + (node_wy * WORLD_WIDTH) + node_wx)] != landmass_idx)
+        {
+            continue;
+        }
+        site_added = ST_FALSE;
+        for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
+        {
+            if(site_added != ST_FALSE)
+            {
+                break;
+            }
+            if(
+                (_ai_own_stack_wx[itr_stacks] == node_wx)
+                &&
+                (_ai_own_stack_wy[itr_stacks] == node_wy)
+            )
+            {
+                /* OGBUG  should be if 4 else 8, concern/threat is backwards */
+                if(low_concern_landmass == ST_TRUE)
+                {
+                    node_garrison_shortfall[node_count] = (8 - _ai_own_stack_unit_count[itr_stacks]);
                 }
                 else
                 {
-
-                    if(
-                        (G_Low_Threat == ST_FALSE)
-                        &&
-                        (TrollDwarfDraconian == ST_FALSE)
-                    )
-                    {
-
-                        Garrison_Units_Needed[City_Arrays_Count] = (2 + (_CITIES[itr].population / 3));
-
-                    }
-                    else
-                    {
-
-                        Garrison_Units_Needed[City_Arrays_Count] = (2 + (_CITIES[itr].population / 4));
-
-                    }
-
+                    node_garrison_shortfall[node_count] = (4 - _ai_own_stack_unit_count[itr_stacks]);
                 }
-
-                if(Garrison_Units_Needed[City_Arrays_Count] > MAX_STACK)
+                node_list[node_count] = (int8_t)itr;
+                if(node_garrison_shortfall[node_count] > 0)
                 {
-
-                    Garrison_Units_Needed[City_Arrays_Count] = MAX_STACK;
-
+                    node_count++;
                 }
-
-                for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
-                {
-
-                    if(site_added != ST_FALSE)
-                    {
-
-                        break;
-
-                    }
-
-                    if(
-                        (_ai_own_stack_wx[itr_stacks] == Own_City_X)
-                        &&
-                        (_ai_own_stack_wy[itr_stacks] == Own_City_Y)
-                    )
-                    {
-
-                        Garrison_Units_Needed[City_Arrays_Count] -= _ai_own_stack_unit_count[itr_stacks];
-
-                        City_Indices[City_Arrays_Count] = (int8_t)itr;
-
-                        if(Garrison_Units_Needed[City_Arrays_Count] > 0)
-                        {
-
-                            City_Arrays_Count++;
-
-                        }
-
-                        site_added = ST_TRUE;
-
-                    }
-
-                }
-
-                if(site_added == ST_FALSE)
-                {
-
-                    City_Indices[City_Arrays_Count] = (int8_t)itr;
-
-                    City_Arrays_Count++;
-
-                }
-
+                site_added = ST_TRUE;
             }
-
         }
-
-    }
-
-
-    Node_Arrays_Count = 0;
-
-    for(itr = 0; itr < NUM_NODES; itr++)
-    {
-
-        if(_NODES[itr].wp == wp)
+        if(site_added == ST_FALSE)
         {
-
-            Asset_X = _NODES[itr].wx;
-
-            Asset_Y = _NODES[itr].wx;
-
-            if(g_ai_evaluation_map[wp][((Asset_Y * WORLD_WIDTH) + Asset_X)] == AI_TARGET_SITE)
-            {
-
-                Asset_X = _NODES[itr].wx;
-
-                Asset_Y = _NODES[itr].wx;
-
-                if(_landmasses[((wp * WORLD_SIZE) + (Asset_Y * WORLD_WIDTH) + Asset_X)] == landmass_idx)
-                {
-
-                    site_added = ST_FALSE;
-
-                    for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
-                    {
-
-                        if(site_added != ST_FALSE)
-                        {
-
-                            break;
-
-                        }
-
-                        if(
-                            (_ai_own_stack_wx[itr_stacks] == Asset_X)
-                            &&
-                            (_ai_own_stack_wy[itr_stacks] == Asset_Y)
-                        )
-                        {
-
-                            if(G_Low_Threat == ST_TRUE)
-                            {
-
-                                Node_Units_Needed[Node_Arrays_Count] = (8 - _ai_own_stack_unit_count[itr_stacks]);
-
-                            }
-                            else
-                            {
-
-                                Node_Units_Needed[Node_Arrays_Count] = (4 - _ai_own_stack_unit_count[itr_stacks]);
-
-                            }
-
-                            Node_Indices[Node_Arrays_Count] = (int8_t)itr;
-
-                            if(Node_Units_Needed[Node_Arrays_Count] > 0)
-                            {
-
-                                Node_Arrays_Count++;
-
-                            }
-
-                            site_added = ST_TRUE;
-
-                        }
-
-                    }
-
-                    if(site_added == ST_FALSE)
-                    {
-
-                        Node_Units_Needed[Node_Arrays_Count] = 8;  // ¿ BUGBUG  should if 4 else 8, as above ?
-
-                        Node_Indices[Node_Arrays_Count] = (int8_t)itr;
-
-                        Node_Arrays_Count++;
-
-                    }
-
-                }
-
-            }
-
+            node_garrison_shortfall[node_count] = 8;  /* OGBUG  should if 4 else 8, as above */
+            node_list[node_count] = (int8_t)itr;
+            node_count++;
         }
-
     }
 
 
+    /* Phase 5: Garrison for each Stack */
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     {
+        /* Phase 5a: Sanity Checks */
+        /* Filter out stacks already garrisoned at a site {AISTK_Garrison,AISTK_FortressGarrison} */
         if(
-            (_ai_own_stack_type[itr_stacks] == AISTK_Unknown)
-            ||
-            (_ai_own_stack_type[itr_stacks] == AISTK_Roamer)
+            (_ai_own_stack_type[itr_stacks] != AISTK_Unknown)
+            &&
+            (_ai_own_stack_type[itr_stacks] != AISTK_Roamer)
         )
         {
+            continue;
+        }
+        /* Filter out stacks already at the stage point — those were just handled by AI_Stacks_Stage_Expedition_Forces() */
+        if(
+            (_ai_own_stack_wx[itr_stacks] == cp_landmass_wx_array[landmass_idx])
+            &&
+            (_ai_own_stack_wy[itr_stacks] == cp_landmass_wy_array[landmass_idx])
+        )
+        {
+            continue;
+        }
+    
+        /* Phase 5b: Init */
+        list_unit_count = _ai_own_stack_unit_count[itr_stacks];
+        stack_wx = _ai_own_stack_wx[itr_stacks];
+        stack_wy = _ai_own_stack_wy[itr_stacks];
+        list_unit_count = _ai_own_stack_unit_count[itr_stacks];  /* OGBUG  diplicate line, see three above */
+        best_target_value = 1000;
 
-            if(
-                (_ai_own_stack_wx[itr_stacks] != cp_landmass_wx_array[landmass_idx])
-                ||
-                (_ai_own_stack_wy[itr_stacks] != cp_landmass_wy_array[landmass_idx])
-            )
+        /* Phase 5c: Choose City */
+        for(itr = 0; itr < city_count; itr++)
+        {
+            if(city_garrison_shortfall[itr] > 0)
             {
-
-                list_unit_count = _ai_own_stack_unit_count[itr_stacks];
-
-                stack_wx = _ai_own_stack_wx[itr_stacks];
-                
-                stack_wy = _ai_own_stack_wy[itr_stacks];
-                
-                // ; just did this above
-                list_unit_count = _ai_own_stack_unit_count[itr_stacks];
-
-                best_target_value = 1000;
-
-                for(itr = 0; City_Arrays_Count > itr; itr++)
+                /* Heuristic: value = distance - units_needed. Lower is better (closer + more-needed wins) */
+                target_value = (
+                    Delta_XY_With_Wrap(stack_wx, stack_wy, _CITIES[city_list[itr]].wx, _CITIES[city_list[itr]].wy, WORLD_WIDTH)
+                    -
+                    city_garrison_shortfall[itr]
+                );
+                if(target_value < best_target_value)
                 {
-
-                    if(Garrison_Units_Needed[itr] > 0)
-                    {
-
-                        target_value = (Delta_XY_With_Wrap(stack_wx, stack_wy, _CITIES[City_Indices[itr]].wx, _CITIES[City_Indices[itr]].wy, WORLD_WIDTH) - Garrison_Units_Needed[itr]);
-
-                        if(target_value < best_target_value)
-                        {
-
-                            best_target_value = target_value;
-
-                            target_wx = _CITIES[City_Indices[itr]].wx;
-
-                            target_wy = _CITIES[City_Indices[itr]].wy;
-
-                            Units_To_Send = Garrison_Units_Needed[itr];
-
-                            target_type = 0;
-
-                            target_site_idx = itr;
-
-                        }
-
-                    }
-
+                    best_target_value = target_value;
+                    target_wx = _CITIES[city_list[itr]].wx;
+                    target_wy = _CITIES[city_list[itr]].wy;
+                    units_to_send = city_garrison_shortfall[itr];
+                    target_type = 0;
+                    target_site_idx = itr;
                 }
-
-                if(best_target_value == 1000)  // didn't find a city
-                {
-
-                    for(itr = 0; Node_Arrays_Count > itr; itr++)
-                    {
-
-                        if(Node_Units_Needed[itr] > 0)
-                        {
-
-                            target_value = (Delta_XY_With_Wrap(stack_wx, stack_wy, _NODES[City_Indices[itr]].wx, _NODES[City_Indices[itr]].wy, WORLD_WIDTH) - Node_Units_Needed[itr]);
-
-                            if(target_value < best_target_value)
-                            {
-
-                                best_target_value = target_value;
-
-                                target_wx = _NODES[City_Indices[itr]].wx;
-
-                                target_wy = _NODES[City_Indices[itr]].wy;
-
-                                Units_To_Send = Garrison_Units_Needed[itr];
-
-                                target_type = 1;
-
-                                target_site_idx = itr;
-
-                            }
-
-                        }
-
-                    }
-
-                    if(best_target_value < 1000)
-                    {
-
-                        for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
-                        {
-
-                            // ; already processed units also increase the index
-                            if(itr_list_units >= Units_To_Send)
-                            {
-
-                                break;
-
-                            }
-
-                            unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
-
-                            if(unit_idx != ST_UNDEFINED)
-                            {
-
-                                unit_type = _UNITS[unit_idx].type;
-
-                                if(
-                                    ((_unit_type_table[unit_type].Construction == 0))
-                                    &&
-                                    ((_unit_type_table[unit_type].Abilities & (UA_CREATEOUTPOST | UA_MELD)) == 0)
-                                )
-                                {
-
-#ifdef STU_DEBUG
-                                    dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
-#endif
-                                    g_ai_set_target_caller = 2;
-                                    AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
-
-                                    if(target_type == 0)
-                                    {
-
-                                        Garrison_Units_Needed[target_site_idx] -= 1;
-
-                                    }
-                                    else
-                                    {
-
-                                        Node_Units_Needed[target_site_idx] -= 1;
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
-                        
-                    }
-
-                }
-
             }
+        }
 
+        /* Phase 5d: Choose Node */
+        /* only tries Nodes if it didn't find a City */
+        if(best_target_value == 1000)
+        {
+            for(itr = 0; node_count > itr; itr++)
+            {
+                if(node_garrison_shortfall[itr] > 0)
+                {
+                    /* Heuristic: value = distance - units_needed. Lower is better (closer + more-needed wins) */
+                    target_value = (
+                        Delta_XY_With_Wrap(stack_wx, stack_wy, _NODES[node_list[itr]].wx, _NODES[node_list[itr]].wy, WORLD_WIDTH)
+                        -
+                        node_garrison_shortfall[itr]
+                    );
+                    if(target_value < best_target_value)
+                    {
+                        best_target_value = target_value;
+                        target_wx = _NODES[node_list[itr]].wx;
+                        target_wy = _NODES[node_list[itr]].wy;
+                        units_to_send = node_garrison_shortfall[itr];
+                        target_type = 1;
+                        target_site_idx = itr;
+                    }
+                }
+            }
+        }
+
+        if(best_target_value < 1000)
+        {
+            for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
+            {
+                /* OGBUG  should track units sent, not processed - will exit early */
+                if(itr_list_units >= units_to_send)
+                {
+                    break;
+                }
+                unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
+                if(unit_idx == ST_UNDEFINED)
+                {
+                    continue;
+                }
+                unit_type = _UNITS[unit_idx].type;
+                /* Skip Engineers, Settlers, Melders */
+                if(
+                    ((_unit_type_table[unit_type].Construction != 0))
+                    ||
+                    ((_unit_type_table[unit_type].Abilities & (UA_CREATEOUTPOST | UA_MELD)) != 0)
+                )
+                {
+                    continue;
+                }
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
+#endif
+                g_ai_set_target_caller = 2;
+                AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
+                if(target_type == 0)
+                {
+                    city_garrison_shortfall[target_site_idx] -= 1;
+                }
+                else
+                {
+                    node_garrison_shortfall[target_site_idx] -= 1;
+                }
+            }
         }
 
     }
@@ -4856,7 +4782,32 @@ void AI_Do_RoadBuild(int16_t landmass_idx)
 
 
 // WZD o158p26
-// Eh? Could just get unit_idx from _ai_own_stack_unit_list[][]?
+/**
+ * @brief Assign a unit either an attack-move or plain goto order toward a target square.
+ *
+ * Validates the supplied unit index, looks up the AI evaluation value for the
+ * destination square on the unit's current plane, and chooses between
+ * `us_Move` and `us_GOTO` based on whether the target square currently holds a
+ * hostile stack or a site marker. The destination coordinates are then written
+ * into the unit record and the unit is removed from the originating
+ * `_ai_own_stack_unit_list` slot so later passes do not treat it as still
+ * unassigned within that AI stack.
+ *
+ * @param unit_idx Global unit index receiving the order.
+ * @param target_wx World x-coordinate of the destination square.
+ * @param target_wy World y-coordinate of the destination square.
+ * @param stack_idx Index of the AI-owned stack entry that currently contains
+ *                  the unit.
+ * @param list_unit_idx Slot of the unit inside
+ *                      `_ai_own_stack_unit_list[stack_idx]`.
+ *
+ * @return This function does not return a value. It may update the unit's
+ *         status and destination fields and clears the corresponding entry in
+ *         `_ai_own_stack_unit_list[stack_idx][list_unit_idx]`.
+ *
+ * @note If @p unit_idx is outside the accepted unit range, the function exits
+ *       immediately without modifying unit or stack state.
+ */
 void AI_Stacks_Order_Attack_Target_Or_Goto_Destination(int16_t unit_idx, int16_t target_wx, int16_t target_wy, int16_t stack_idx, int16_t list_unit_idx)
 {
     int16_t wp = 0;
@@ -4866,14 +4817,7 @@ void AI_Stacks_Order_Attack_Target_Or_Goto_Destination(int16_t unit_idx, int16_t
     dbg_prn("DEBUG: [%s, %d]: BEGIN: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()\n", __FILE__, __LINE__);
     trc_prn("DEBUG: [%s, %d]: BEGIN: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()\n", __FILE__, __LINE__);
 #endif
-    if(
-        (unit_idx < 0)
-        ||
-        (unit_idx > MAX_UNIT_COUNT)
-    )
-    {
-        return;
-    }
+    if((unit_idx < 0) || (unit_idx >= MAX_UNIT_COUNT)) { return; }
     wp = _UNITS[unit_idx].wp;
     target_value = g_ai_evaluation_map[wp][((target_wy * WORLD_WIDTH) + target_wx)];
 #ifdef STU_DEBUG

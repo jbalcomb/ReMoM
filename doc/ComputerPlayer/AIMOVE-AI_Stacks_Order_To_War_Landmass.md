@@ -188,7 +188,7 @@ AI_Stacks_Order_To_War_Landmass(player_idx, wp)
 | **10** | **`AI_Stacks_Order_To_War_Landmass`** | **(this function)** — pull mobile non-melder units to war landmass stage point |
 | 11 | [`AI_Stacks_Relocate_Roamers`](AIMOVE-AI_Stacks_Relocate_Roamers.md) | Set up ferry for each roamer on leaveable landmasses |
 | 13 | `AI_Stacks_Stage_Expedition_Forces` | Continent stage fill from pushout pool |
-| 14 | `AI_FillGarrisons__WIP` | Top up garrisons |
+| 14 | `AI_Stacks_Garrison_Sites` | Top up garrisons |
 
 The slot-9 → slot-10 sequencing matters: slot 9's `AI_Stacks_Roamers_Target_Or_Deploy` is the only function that sets `lmt_Leaveable`, and the slot-10 gate accepts landmasses tagged `lmt_Leaveable`. So an `lmt_Leaveable` write in slot 9 directly feeds slot 10's `AI_Stacks_Order_To_War_Landmass` on the same (plane, landmass) iteration.
 

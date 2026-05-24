@@ -26,11 +26,11 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **Purpose:** Per-(plane, landmass) — pull top-9 units from the `G_Pushout_*` pool toward this landmass's stage point, gradually assembling an expedition force sized for downstream overseas attacks. UNGATED at the dispatcher; applies own sanity-check gates internally. See [AIMOVE-AI_Stacks_Stage_Expedition_Forces.md](AIMOVE-AI_Stacks_Stage_Expedition_Forces.md).
 - **Reads `lmt_*`:** `lmt_Leaveable`, `lmt_NoOwnCity` (in Phase 2 sanity-check gates)
 
-### `AI_FillGarrisons__WIP` — [line 298](../../MoM/src/AIMOVE.c#L298)
+### `AI_Stacks_Garrison_Sites` — [line 523](../../MoM/src/AIMOVE.c#L523)
 - **drake178:** `AI_FillGarrisons()` (o158p03)
-- **End:** ~line 741
-- **Purpose:** TBD
-- **Reads `lmt_*`:** `lmt_Leaveable`, `lmt_Own` for `G_Low_Threat` gate (lines 331-344)
+- **End:** ~line 858
+- **Purpose:** Slot 13 — survey own cities and own-plane SITE-flagged nodes on this landmass, compute per-asset garrison shortfalls, then draft non-builder units from `AISTK_Roamer`/`AISTK_Unknown` stacks (NOT at the stage point) toward the best-scored target. City-first, node-fallback. See [AIMOVE-AI_Stacks_Garrison_Sites.md](AIMOVE-AI_Stacks_Garrison_Sites.md).
+- **Reads `lmt_*`:** Phase 1 reads landmass type for the `low_concern_landmass` flag at lines 559-562 (TRUE for `lmt_Own`/`lmt_Leaveable`/`lmt_NoTargets`, FALSE for `lmt_Contested`). Dispatcher gate at [lines 302-309](../../MoM/src/AIMOVE.c#L302-L309) reads `lmt_Own`, `lmt_Contested`, `>= lmt_Leaveable`.
 
 ### `AI_ProcessOcean__WIP` — [line 742](../../MoM/src/AIMOVE.c#L742)
 - **drake178:** `AI_ProcessOcean()` (o158p04)

@@ -51,7 +51,7 @@ _ai_own_stacks
     cp_enroute_unit_count
     g_ai_minattackstack
     ...
-    cp_landmass_wx_array, cp_landmass_wy_array; but, also used by AI_FillGarrisons__WIP()
+    cp_landmass_wx_array, cp_landmass_wy_array; but, also used by AI_Stacks_Garrison_Sites()
     ...
 
 cp_staged_unit_count
@@ -273,7 +273,7 @@ AI_Stacks_Stage_Expedition_Forces(landmass_idx, wp, player_idx)
 | 10 | [`AI_Stacks_Order_To_War_Landmass`](AIMOVE-AI_Stacks_Order_To_War_Landmass.md) | NOT `lmt_Contested` |
 | 11 | [`AI_Stacks_Relocate_Roamers`](AIMOVE-AI_Stacks_Relocate_Roamers.md) | `lmt_Leaveable` / `lmt_NoTargets` / `lmt_Own` |
 | **12** | **`AI_Stacks_Stage_Expedition_Forces`** | **UNGATED — runs for every landmass** |
-| 13 | `AI_FillGarrisons__WIP` | `lmt_Own` / `lmt_Contested` / `>= lmt_Leaveable` |
+| 13 | `AI_Stacks_Garrison_Sites` | `lmt_Own` / `lmt_Contested` / `>= lmt_Leaveable` |
 
 The chain forms a "circulate the army" pair across slots 11 and 12:
 

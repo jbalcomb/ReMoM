@@ -303,9 +303,9 @@ This is a **single-turn assertion** that only persists across one turn boundary 
 |---|---|---|---|
 | `AI_Stacks_Order_To_War_Landmass` ([line 203](../../MoM/src/AIMOVE.c#L203) gate) | `>= lmt_Leaveable` (in OR-chain that's "almost NOT Contested") | Same turn, just after slot 9 wrote it | Pull units off this landmass toward main war |
 | `AI_Stacks_Relocate_Roamers` ([line 220](../../MoM/src/AIMOVE.c#L220) gate) | `>= lmt_Leaveable || == lmt_Own` | Same turn | Stage point is valid — consolidate units there |
-| `AI_FillGarrisons__WIP` ([line 233](../../MoM/src/AIMOVE.c#L233) gate) | `== lmt_Own || == lmt_Contested || >= lmt_Leaveable` | Same turn | Garrison maintenance allowed |
-| `AI_FillGarrisons__WIP` internal ([line 380](../../MoM/src/AIMOVE.c#L380)) | `>= lmt_Leaveable` | Same turn | "We're in the abandoning/no-targets group" |
-| `AI_FillGarrisons__WIP` internal ([line 452](../../MoM/src/AIMOVE.c#L452)) | `< lmt_Leaveable` | Same turn | "We're NOT abandoning" |
+| `AI_Stacks_Garrison_Sites` ([line 233](../../MoM/src/AIMOVE.c#L233) gate) | `== lmt_Own || == lmt_Contested || >= lmt_Leaveable` | Same turn | Garrison maintenance allowed |
+| `AI_Stacks_Garrison_Sites` internal ([line 380](../../MoM/src/AIMOVE.c#L380)) | `>= lmt_Leaveable` | Same turn | "We're in the abandoning/no-targets group" |
+| `AI_Stacks_Garrison_Sites` internal ([line 452](../../MoM/src/AIMOVE.c#L452)) | `< lmt_Leaveable` | Same turn | "We're NOT abandoning" |
 | `AI_Do_Meld` ([line 4558](../../MoM/src/AIMOVE.c#L4558)) | `>= lmt_Leaveable` (node-meld eligibility) | Same turn, BEFORE slot 9 wrote it (Do_Meld is dispatch slot 4) | In practice, never sees Abandon |
 | `AI_Choose_War_Landmass` ([line 7786](../../MoM/src/AIMOVE.c#L7786) switch) | `case lmt_Leaveable:` → `Reevaluate = ST_TRUE` | **Next turn**, before `AI_Evaluate_Continents` clobbers | "We marked this for abandonment last turn — reconsider whether the war target is still right" |
 

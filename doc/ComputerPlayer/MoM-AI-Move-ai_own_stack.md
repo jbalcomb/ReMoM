@@ -8,14 +8,14 @@ includes a subset:
     AI_Stacks_Survey_Expedition_Forces()
     AI_Stacks_Survey_Expedition_Forces_Stack()
     AI_Stacks_Stage_Expedition_Forces()
-    AI_FillGarrisons__WIP()
+    AI_Stacks_Garrison_Sites()
 
 * cp_landmass_wx_array, cp_landmass_wy_array
     * XREF:
         * AI_Stacks_Init_Build_Target_Order()
         * AI_Set_Unit_Orders()
         * AI_Stacks_Stage_Expedition_Forces()
-        * AI_FillGarrisons__WIP()
+        * AI_Stacks_Garrison_Sites()
 * G_Seafaring_Lowest_Value
     * XREF:
         * AI_Stacks_Survey_Expedition_Forces()

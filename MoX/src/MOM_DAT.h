@@ -105,7 +105,7 @@ enum e_AI_OWN_STACK_TYPE
     AISTK_DNE = 2,              /* DNE */
     AISTK_Garrison = 3,         /* Garrison - City, Node, Tower (sitting on a Site, assumed to be garrisoned in a City or protecting a Node or Tower) */
     AISTK_FortressGarrison = 4, /* Garrison - Fortress City     (sitting on a Site, which is the player's Fortress City) */
-    AISTK_COUNT = 5
+    AISTK_OVERRUN = 5
 };
 
 //  ; (sizeof=0x6)
@@ -167,7 +167,7 @@ OON set lmt_Leaveable:
     Phase 2 found an empty (eval == 0) dock square on this landmass to use as the embark point (min_delta_distance got lowered below 1000)
     * seems made specifically for AI_Stacks_Order_To_War_Landmass(), which runs next
     * AI_Stacks_Relocate_Roamers() usage?
-    * AI_FillGarrisons__WIP() usage?
+    * AI_Stacks_Garrison_Sites() usage?
     AI_Choose_War_Landmass() always reevaluates these, so temp condition
 
 */

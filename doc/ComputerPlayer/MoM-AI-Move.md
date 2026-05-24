@@ -85,9 +85,11 @@ AI_Next_Turn()
                         |-> AI_Stacks_Order_Ferry()         ...uses _ai_own_stack_count, etc.
                 |-> AI_Stacks_Stage_Expedition_Forces()
                     |-> AI_Reevaluate_Continent()
-                |-> AI_FillGarrisons__WIP()
+                    |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
+                |-> AI_Stacks_Garrison_Sites()              ...uses _ai_own_stack_count, etc.
+                    |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
             ...Ocean (non-landmass)...
-            |-> AI_ProcessOcean__WIP()
+            |-> AI_ProcessOcean__WIP()                      ...uses *stale _ai_own_stack_*
             |-> G_AI_ProcessTransports__WIP()
 
 Definitely Done-Done:
@@ -135,17 +137,10 @@ Definitely Done-Done:
 [x]                         |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 [x]                     |-> AI_Stacks_Order_Ferry()
 [x]             |-> AI_Stacks_Stage_Expedition_Forces()
-                    ...uses
-                        cp_staged_unit_count    ...cleared in AI_Stacks_Init_Build_Target_Order()
-                        cp_enroute_unit_count   ...cleared in AI_Stacks_Init_Build_Target_Order()
-                        cp_drafted_unit_count   ...
-                        g_ai_minattackstack     ...
-                        g_ai_set_target_caller  ...
-                    ...uses
-                        G_Pushout_CX_IDs[], G_Pushout_UL_Indices[], G_Pushout_Unit_Indices[]
-
 [x]                 |-> AI_Reevaluate_Continent()
-[ ]             |-> AI_FillGarrisons__WIP()
+[x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
+[x]             |-> AI_Stacks_Garrison_Sites()
+[x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 [ ]             |-> AI_ProcessOcean__WIP()
 [x]                 |-> AI_Stacks_Init_Build_Target_Order()
 [ ]             |-> G_AI_ProcessTransports__WIP()
@@ -193,7 +188,7 @@ AI_Set_Unit_Orders(player_idx)
         ├── AI_Stacks_Relocate_Roamers          [gate: lmt_Own / lmt_Leaveable+]
         ├── AI_Stacks_Stage_Expedition_Forces              [always]
         │   └── AI_Reevaluate_Continent     [5% roll when stage is full]
-        └── AI_FillGarrisons__WIP            [gate: lmt_Own / lmt_Contested / lmt_Leaveable+]
+        └── AI_Stacks_Garrison_Sites            [gate: lmt_Own / lmt_Contested / lmt_Leaveable+]
     ├── AI_ProcessOcean__WIP                 [per-plane post-pass]
     └── G_AI_ProcessTransports__WIP          [per-plane post-pass]
 └── EMM_Map_DataH                            [cleanup]
@@ -340,7 +335,7 @@ Down r AI_Stacks_Stage_Expedition_Forces+87   cmp ax, [g_ai_minattackstack]     
 
 Up   J NX_j_AI_Set_Move_Or_Goto_Target              jmp     AI_Stacks_Order_Attack_Target_Or_Goto_Destination         
      p AI_Stacks_Stage_Expedition_Forces+DD                       call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
-Down p AI_FillGarrisons__WIP+76A                    call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_Stacks_Garrison_Sites+76A                    call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p G_AI_ProcessTransports__WIP+646              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p G_AI_ProcessTransports__WIP+75B              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p G_AI_ProcessTransports__WIP+915              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination

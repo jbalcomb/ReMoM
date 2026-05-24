@@ -294,7 +294,7 @@ Every subsequent slot of `AI_Set_Unit_Orders` Phase 4 dispatch consumes some par
 | 10 | `AI_Stacks_Order_To_War_Landmass` | type, unit_count, unit_list |
 | 11 | `AI_Stacks_Relocate_Roamers` | type, wx/wy, unit_list |
 | 13 | `AI_Stacks_Stage_Expedition_Forces` | type, unit_count, unit_list; also `cp_staged_unit_count` / `cp_enroute_unit_count` |
-| 14 | `AI_FillGarrisons__WIP` | type, unit_count, unit_list |
+| 14 | `AI_Stacks_Garrison_Sites` | type, unit_count, unit_list |
 
 Plus [`AI_Stacks_Assign_Target`](AIMOVE-AI_Stacks_Assign_Target.md) (called transitively from slot 9) reads `_ai_own_stack_unit_list` to sum stack effective strength.
 

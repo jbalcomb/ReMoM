@@ -157,7 +157,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
             || (cp_landmass_type_array[landmass_idx] >= lmt_Leaveable)
         )
         {
-            AI_FillGarrisons__WIP(player_idx, wp, landmass_idx);
+            AI_Stacks_Garrison_Sites(player_idx, wp, landmass_idx);
         }
     }
 
@@ -190,7 +190,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
 |---|---|---|
 | `AI_Stacks_Order_To_War_Landmass` (10) | `lmt_Leaveable` or `lmt_Own` or `lmt_NoOwnCityAndAllyHasCity` or `lmt_NoOwnCity` | "almost just NOT `lmt_Contested`" — comment in source. Skips contested-only. |
 | `AI_Stacks_Relocate_Roamers` (11) | `lmt_Leaveable` or `lmt_Own` | Home-base stage — only for landmasses we hold or are abandoning. |
-| `AI_FillGarrisons__WIP` (14) | `lmt_Own` or `lmt_Contested` or `lmt_Leaveable` | Garrison maintenance — needs a city to garrison. Excludes `lmt_NoOwnCity` / `lmt_NoOwnCityAndAllyHasCity`. |
+| `AI_Stacks_Garrison_Sites` (14) | `lmt_Own` or `lmt_Contested` or `lmt_Leaveable` | Garrison maintenance — needs a city to garrison. Excludes `lmt_NoOwnCity` / `lmt_NoOwnCityAndAllyHasCity`. |
 
 (Numbers continue the dispatch-order column; gaps are where the conditional dispatch slot sits.)
 
@@ -241,7 +241,7 @@ AI_Set_Unit_Orders(player_idx)
         ├── AI_Stacks_Relocate_Roamers          [gate: lmt_Own / lmt_Leaveable+]
         ├── AI_Stacks_Stage_Expedition_Forces              [always]
         │   └── AI_Reevaluate_Continent     [5% roll when stage is full]
-        └── AI_FillGarrisons__WIP            [gate: lmt_Own / lmt_Contested / lmt_Leaveable+]
+        └── AI_Stacks_Garrison_Sites            [gate: lmt_Own / lmt_Contested / lmt_Leaveable+]
     ├── AI_ProcessOcean__WIP                 [per-plane post-pass]
     └── G_AI_ProcessTransports__WIP          [per-plane post-pass]
 └── EMM_Map_DataH                            [cleanup]

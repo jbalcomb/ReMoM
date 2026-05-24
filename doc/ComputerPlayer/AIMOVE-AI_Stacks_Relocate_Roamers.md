@@ -176,7 +176,7 @@ AI_Stacks_Relocate_Roamers(landmass_idx, wp, player_idx)
 | 10 | [`AI_Stacks_Order_To_War_Landmass`](AIMOVE-AI_Stacks_Order_To_War_Landmass.md) | Send mobile non-melders to war landmass stage |
 | **11** | **`AI_Stacks_Relocate_Roamers`** | **(this function)** — set up ferry for each roamer stack on a leaveable landmass |
 | 13 | `AI_Stacks_Stage_Expedition_Forces` | Cross-landmass stage fill from pushout pool |
-| 14 | `AI_FillGarrisons__WIP` | Top up garrisons |
+| 14 | `AI_Stacks_Garrison_Sites` | Top up garrisons |
 
 ## Call chain
 
