@@ -139,7 +139,7 @@ Mark any ferry-queue entry whose remaining capacity is exhausted as invalid (`ST
 AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp);
 ```
 
-Same slot-1 rebuild that [`AI_Stacks_Wartime_Ocean_Movement_And_Cleanup`](AIMOVE-AI_Stacks_Wartime_Ocean_Movement_And_Cleanup.md) Phase 4 already did this turn. This is the SECOND ocean rebuild in the per-plane post-pass — Peacetime's Phase 5c Kill_Unit may have culled units that affect this re-snapshot.
+Same slot-1 rebuild that [`AI_Stacks_Wartime_Ocean_Movement_And_Cleanup`](AIMOVE-AI_Stacks_Wartime_Ocean_Movement_And_Cleanup.md) Phase 4 already did this turn. This is the SECOND ocean rebuild in the per-plane post-pass — Wartime's Phase 5c Kill_Unit may have culled units that affect this re-snapshot.
 
 ### Phase 4 — Out-of-band meld ([line 1212](../../MoM/src/AIMOVE.c#L1212))
 
@@ -639,10 +639,10 @@ AI_Set_Unit_Orders(player_idx)
 
 **Pairing with the sibling post-pass:**
 
-- Peacetime ([`AI_Stacks_Wartime_Ocean_Movement_And_Cleanup`](AIMOVE-AI_Stacks_Wartime_Ocean_Movement_And_Cleanup.md)) handles **non-transport** ocean units (pulls swimmers toward war stage, drowns stranded non-mobile stacks).
+- Wartime ([`AI_Stacks_Wartime_Ocean_Movement_And_Cleanup`](AIMOVE-AI_Stacks_Wartime_Ocean_Movement_And_Cleanup.md)) handles **non-transport** ocean units (pulls swimmers toward war stage, drowns stranded non-mobile stacks).
 - This function handles **transport** ocean stacks (routes empty transports to ferry pickups, lands mixed stacks).
 
-Both call `AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp)` independently — the first rebuild is inside Peacetime's Phase 4, the second is inside this function's Phase 3. Peacetime's Phase 5c Kill_Unit may have culled units between the two rebuilds.
+Both call `AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp)` independently — the first rebuild is inside Wartime's Phase 4, the second is inside this function's Phase 3. Wartime's Phase 5c Kill_Unit may have culled units between the two rebuilds.
 
 **`AI_Do_Meld` is called THREE times per (player, plane)** in the production flow: once via each per-landmass dispatch (slots 4-7 for each landmass), and AGAIN here at Phase 4 for the ocean-stack-rebuild context. The per-landmass pathway is documented; the ocean-rebuild meld call is non-obvious and worth investigating during `AI_Do_Meld`'s walkthrough.
 

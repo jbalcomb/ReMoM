@@ -189,7 +189,7 @@ The formula `(2000 - Continent_Values[itr_landmasses] * 10) / Closest_LoadTile_D
 
 Possible interpretation: this represents **"remaining unconquered value"** — the AI prefers landmasses where there's less enemy strength to deal with, treating already-heavily-enemy-occupied landmasses as harder targets. Under this reading, the formula isn't a bug but an intentional risk-aversion heuristic.
 
-Alternative interpretation: it's just wrong, should be `Continent_Values × 10 / Closest_LoadTile_Dist` (proportional to enemy density), matching the peacetime formula's pattern.
+Alternative interpretation: it's just wrong, should be `Continent_Values × 10 / Closest_LoadTile_Dist` (proportional to enemy density), matching the wartime formula's pattern.
 
 GEMINI uses the same `(2000 - enemy × 10) / dist` formula at [line 8433](../../MoM/src/AIMOVE.c#L8433) — both readings preserve it. Whether the OG bytes really do this or it's a shared translation error needs disassembly check.
 

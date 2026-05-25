@@ -1,5 +1,5 @@
 MoM-AI-Move-ai_own_stack.md
-SEEALSO:  C:\STU\devel\ReMoM\doc\ComputerPlayer\AIMOVE-AI_Stacks_Init_Build_Target_Order
+SEEALSO:  C:\STU\devel\ReMoM\doc\ComputerPlayer\AIMOVE-AI_Stacks_Init_Build_Target_Order.md
 
 # "ai_own_stack" - 'Area Of Code'
 
