@@ -514,6 +514,7 @@ static void AI_Stacks_Stage_Expedition_Forces(int16_t landmass_idx, int16_t wp, 
 #endif
         g_ai_set_target_caller = 1;
         AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, cp_landmass_wx_array[landmass_idx], cp_landmass_wy_array[landmass_idx], unit_list_idx, list_unit_idx);
+        /* BUGBUG(JimBalcomb,20260525): Claude on iMustAi just said this is showing always 0,0 - must be bad expedition arrays */
     }
     
 }
