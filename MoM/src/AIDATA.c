@@ -1104,6 +1104,20 @@ void AI_Evaluate_Hostility(int16_t player_idx)
 
     }
 
+    /* Emit final hostility state for each non-self opponent */
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        if(itr_players == player_idx)
+        {
+            continue;
+        }
+        AI_Metrics_Emit_Decision(_turn, player_idx, "HOSTILITY",
+            itr_players,
+            _players[player_idx].Hostility[itr_players],
+            _players[itr_players].name,
+            (int16_t)_players[player_idx].Dipl.Dipl_Status[itr_players],
+            _num_players);
+    }
 }
 
 

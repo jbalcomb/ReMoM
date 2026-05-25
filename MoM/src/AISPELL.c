@@ -8,6 +8,7 @@ MoO2
 Module: AITECH
 */
 
+#include "../../STU/src/AI_METRICS.h"
 #include "../../STU/src/STU_DBG.h"
 
 #include "../../MoX/src/Allocate.h"
@@ -269,6 +270,13 @@ to lower the odds; store the highest of the results
 #ifdef STU_DEBUG
     dbg_prn("[AI_RESEARCH] player[%d] SELECTED [%d] spell=%d\n", player_idx, selection, _players[player_idx].researching_spell_idx);
 #endif
+
+    AI_Metrics_Emit_Decision(_turn, player_idx, "RESEARCH",
+        player_idx,
+        _players[player_idx].researching_spell_idx,
+        spell_data_table[_players[player_idx].researching_spell_idx].name,
+        (int16_t)weights_long[selection],
+        (int16_t)candidate_count);
 
     return _players[player_idx].researching_spell_idx;
 }

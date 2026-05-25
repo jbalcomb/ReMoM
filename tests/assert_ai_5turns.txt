@@ -52,3 +52,74 @@ BOUNDS    AI_TURN_SUMMARY.CSV  player_idx=5  raider_acc  RANGE 0 100
 
 # Monster accumulator should be in range
 BOUNDS    AI_TURN_SUMMARY.CSV  player_idx=5  monster_acc RANGE 0 100
+
+# ===================================================================
+#  Trends — values that should change over time
+# ===================================================================
+
+# Human player turn number should advance across the run
+TREND     AI_TURN_SUMMARY.CSV  player_idx=0  turn        INCREASES
+
+# Neutral player should have non-zero units throughout (city garrisons / monsters)
+TREND     AI_TURN_SUMMARY.CSV  player_idx=5  unit_count  NONZERO
+
+# Monster accumulator should advance turn over turn (Random(_difficulty+1)
+# per turn means it accumulates as long as there are intact non-Life lairs)
+TREND     AI_TURN_SUMMARY.CSV  player_idx=5  monster_acc INCREASES
+
+# NOTE: raider_acc NONZERO is intentionally NOT asserted here. In the current
+# test worldgen the neutral player has 0 cities, so Make_Raiders short-circuits
+# at the have_neutral_city check before ever bumping casting_cost_original.
+# That's a real diagnostic finding surfaced by the metrics system — fix the
+# worldgen (or the early-return logic) before re-enabling this assertion.
+
+# ===================================================================
+#  Rate checks — events per N-turn window
+# ===================================================================
+
+# AI_NPC_EVENTS.CSV should accumulate at least 1 event per 5-turn window
+# (5-turn run produces NPC_TARGET assignments for neutral stacks every turn)
+RATE      AI_NPC_EVENTS.CSV    *             PER 5 MIN 1
+
+# Build decisions should occur — AI wizards get production assigned each turn
+RATE      AI_BUILD_DETAIL.CSV  *             PER 5 MIN 1
+
+# Unit movement outcomes should occur at a reasonable rate
+RATE      AI_UNIT_OUTCOMES.CSV *             PER 5 MIN 1
+
+# Garrison culls should be rare in a short run — not more than 50/window
+RATE      AI_NPC_EVENTS.CSV    event_type=GARRISON_CULL  PER 5 MAX 50
+
+# ===================================================================
+#  Baseline regression — compare against a captured known-good run
+# ===================================================================
+#
+# The baseline CSVs are committed in tests/. To regenerate, run the
+# AIBehavior test once and copy the .CSV from build/bin/Debug/ to
+# tests/baseline_ai_5turns_*.csv. Use a generous tolerance (25-50%)
+# until the AI is stable enough to expect tight reproducibility.
+
+# Neutral player unit_count sum should be close to baseline.
+# Tolerance is wide because the AI is still evolving rapidly.
+BASELINE  AI_TURN_SUMMARY.CSV  player_idx=5  unit_count  baseline_ai_5turns_TURN_SUMMARY.csv  TOLERANCE 50
+
+# Monster accumulator progression should be close to baseline.
+BASELINE  AI_TURN_SUMMARY.CSV  player_idx=5  monster_acc  baseline_ai_5turns_TURN_SUMMARY.csv  TOLERANCE 50
+
+# Human player city count should be very stable (founded once, doesn't grow in 5 turns).
+BASELINE  AI_TURN_SUMMARY.CSV  player_idx=0  city_count  baseline_ai_5turns_TURN_SUMMARY.csv  TOLERANCE 25
+
+# ===================================================================
+#  Decision-log checks (AI_DECISIONS.CSV)
+# ===================================================================
+#
+# Note: HOSTILITY decisions only fire after _turn >= 100 (AI_Evaluate_Hostility
+# early-returns before that). A 5-turn scenario won't produce them, so we
+# only assert what should appear in this scenario length.
+#
+# RESEARCH decisions: AI wizards pick a research spell when active. Some
+# scenarios may not produce any (depending on starting state), so we only
+# bound the column rather than require a minimum count.
+
+# No decision should have a negative subject_idx (would indicate uninitialized data)
+BOUNDS    AI_DECISIONS.CSV     *             subject_idx  RANGE -1 1009

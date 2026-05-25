@@ -29,6 +29,7 @@ static FILE * Turn_Summary_File = NULL;
 static FILE * NPC_Events_File = NULL;
 static FILE * Build_Detail_File = NULL;
 static FILE * Unit_Outcomes_File = NULL;
+static FILE * Decisions_File = NULL;
 
 
 void AI_Metrics_Startup(void)
@@ -69,6 +70,14 @@ void AI_Metrics_Startup(void)
             "turn,player_idx,unit_idx,unit_type,status,src_wx,src_wy,dst_wx,dst_wy,end_wx,end_wy,move_failed,arrived\n");
         fflush(Unit_Outcomes_File);
     }
+
+    Decisions_File = stu_fopen("AI_DECISIONS.CSV", "w");
+    if (Decisions_File != NULL)
+    {
+        fprintf(Decisions_File,
+            "turn,player_idx,category,subject_idx,decision,decision_name,score,alt_count\n");
+        fflush(Decisions_File);
+    }
 }
 
 
@@ -100,6 +109,13 @@ void AI_Metrics_Shutdown(void)
         fflush(Unit_Outcomes_File);
         stu_fclose(Unit_Outcomes_File);
         Unit_Outcomes_File = NULL;
+    }
+
+    if (Decisions_File != NULL)
+    {
+        fflush(Decisions_File);
+        stu_fclose(Decisions_File);
+        Decisions_File = NULL;
     }
 }
 
@@ -311,6 +327,38 @@ void AI_Metrics_Emit_Unit_Outcome(
     );
 
     fflush(Unit_Outcomes_File);
+}
+
+
+void AI_Metrics_Emit_Decision(
+    int16_t turn,
+    int16_t player_idx,
+    const char * category,
+    int16_t subject_idx,
+    int16_t decision,
+    const char * decision_name,
+    int16_t score,
+    int16_t alt_count
+)
+{
+    if (!AI_Metrics_Enabled || Decisions_File == NULL)
+    {
+        return;
+    }
+
+    fprintf(Decisions_File,
+        "%d,%d,%s,%d,%d,%s,%d,%d\n",
+        turn,
+        player_idx,
+        category ? category : "",
+        subject_idx,
+        decision,
+        decision_name ? decision_name : "",
+        score,
+        alt_count
+    );
+
+    fflush(Decisions_File);
 }
 
 #endif /* STU_DEBUG */
