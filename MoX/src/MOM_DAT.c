@@ -2676,9 +2676,16 @@ uint16_t grand_vizier;
 /*
  * EMBARK-SQUARE TABLES — set once at game load, never modified during gameplay.
  *
- * For each (plane, landmass), enumerates the land squares where a transport
- * can embark or disembark units — i.e., land squares within 1 (3x3 Moore
- * neighborhood) of any shore-terrain square.
+ * For each (plane, landmass), enumerates the land squares the AI treats as the
+ * continent's coastal edge for transport planning. These are not water tiles;
+ * they are the candidate land-side embark/disembark squares later movement
+ * code can average into a coastal centroid and then search for a concrete
+ * reachable departure/arrival square.
+ *
+ * The producer uses a 3x3 shoreline test, so the chain is a pragmatic coastal
+ * fringe rather than a mathematically minimal border. That is intentional: the
+ * consumers want a stable set of plausible coastal approach squares for a
+ * continent, not a single exact shoreline contour.
  *
  * Storage layout: a per-landmass linked list whose head is in
  * _ai_landmass_dock_squares_heads[plane][landmass]. The chain
@@ -2692,8 +2699,8 @@ uint16_t grand_vizier;
  *     (called from LoadScr.c:796 via the AI CONT / MOVE init block).
  *   - NEVER rebuilt during gameplay. The __load_init suffix flags this.
  *   - Slot 0 in the first-embark array is ALWAYS ST_UNDEFINED — the producer's
- *     if (landmass_idx != 0) filter at AIDUDES.c:2416 skips the ocean sentinel,
- *     so landmass index 0 has no chain.
+ *     landmass_idx == 0 filter skips the ocean sentinel, so landmass index 0
+ *     has no chain.
  *
  * Why this is safe across the entire game:
  *   - _landmasses[] is computed at map generation and never modified

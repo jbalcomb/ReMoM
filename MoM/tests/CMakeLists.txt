@@ -4,6 +4,8 @@ include(GoogleTest)
 add_executable(MOM_tests
     MOM_tests.cpp
     test_BigBook_PageTurn.cpp
+    test_Build_Dock_Linked_List.cpp
+    test_Build_Land_Linked_List.cpp
     test_Reload_Melee_Sound.cpp
     test_Set_Gibs.cpp
     test_Clear_Gibs.cpp

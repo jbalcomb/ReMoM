@@ -7,6 +7,7 @@
 
 #include "../../STU/src/STU_DBG.h"
 #include "../../STU/src/AI_METRICS.h"
+#include "../../platform/include/Platform.h"  /* Platform_Get_Millies() */
 
 #include "../../MoX/src/EMS/EMS.h"
 #include "../../MoX/src/MOM_DAT.h"
@@ -160,6 +161,21 @@ void AI_Next_Turn(void)
     // int16_t itr_players = 0;  // _SI_
     // int16_t itr_units = 0;  // _DI_
     // int16_t itr_players2 = 0;  // _DI_
+#ifdef STU_DEBUG
+    uint64_t ntc_start_ms = Platform_Get_Millies();
+#endif
+
+#ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: BEGIN: AI_Next_Turn()", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: AI_Next_Turn()", __FILE__, __LINE__);
+    trc_prn("DEBUG: [%s, %d]: BEGIN: AI_Next_Turn()", __FILE__, __LINE__);
+#endif
+
+/* CLAUDE */ #ifdef STU_DEBUG
+/* CLAUDE */ #define PHASE(CALL) do { uint64_t _ps = Platform_Get_Millies(); CALL; { uint64_t _pe = Platform_Get_Millies(); fprintf(stderr, "[NEXTTURN] phase %-48s = %llu ms\n", #CALL, (unsigned long long)(_pe - _ps)); trc_prn("[NEXTTURN] phase %-48s = %llu ms\n", #CALL, (unsigned long long)(_pe - _ps)); } } while(0)
+/* CLAUDE */ #else
+/* CLAUDE */ #define PHASE(CALL) CALL
+/* CLAUDE */ #endif
 
 
     /* Unit sanity/bounds check loop */
@@ -191,8 +207,8 @@ void AI_Next_Turn(void)
     dbg_prn("AI_TURN: === BEGIN Turn %d ===\n", _turn);
 #endif
 
-    EMM_Map_DataH();
-    Allocate_AI_Data();
+    PHASE(EMM_Map_DataH());
+    PHASE(Allocate_AI_Data());
 
     /* Main AI Player processing loop (Skip Human Player 0) */
     for (player_idx = 1; player_idx < _num_players; player_idx++)
@@ -226,45 +242,45 @@ void AI_Next_Turn(void)
         dbg_prn("AI_TURN: --- Player %d (%s) BEGIN ---\n", player_idx, _players[player_idx].name);
 #endif
 
-        AI_Evaluate_Hostility(player_idx);
+        PHASE(AI_Evaluate_Hostility(player_idx));
 
-        AI_Evaluate_Magic_Power_Strategy(player_idx);
+        PHASE(AI_Evaluate_Magic_Power_Strategy(player_idx));
 
         m_niu_ai_turn_eval_var = 0;  /* OON XREF */
 
-        Player_Hostile_Opponents(player_idx);
+        PHASE(Player_Hostile_Opponents(player_idx));
 
-        AI_Player_Calculate_Target_Values(player_idx);
+        PHASE(AI_Player_Calculate_Target_Values(player_idx));
 
-        AI_Landmass_Values_And_Strengths(player_idx);  // uses the arrays just populated in AI_Player_Calculate_Target_Values()
+        PHASE(AI_Landmass_Values_And_Strengths(player_idx));  // uses the arrays just populated in AI_Player_Calculate_Target_Values()
 
-        AI_Choose_War_Landmass(player_idx);  /* populates _ai_landmass_war_targets[]; uses the arrays just populated in AI_Landmass_Values_And_Strengths() */
+        PHASE(AI_Choose_War_Landmass(player_idx));  /* populates _ai_landmass_war_targets[]; uses the arrays just populated in AI_Landmass_Values_And_Strengths() */
 
         /* Handle Overland Casting Completion */
         if (_players[player_idx].casting_cost_remaining <= 0 && _players[player_idx].casting_spell_idx != spl_NONE)
         {
             // Cast_Spell_Overland__WIP(player_idx);
-            EMM_Map_DataH();
+            PHASE(EMM_Map_DataH());
             _players[player_idx].casting_spell_idx = spl_NONE;
             if (AI_Eval_After_Spell == ST_TRUE)
             {
-                Allocate_AI_Data();
-                Player_Hostile_Opponents(player_idx);
-                AI_Player_Calculate_Target_Values(player_idx);
+                PHASE(Allocate_AI_Data());
+                PHASE(Player_Hostile_Opponents(player_idx));
+                PHASE(AI_Player_Calculate_Target_Values(player_idx));
             }
         }
 
         /* Handle New Spell Selection if not casting */
         if (_players[player_idx].casting_spell_idx == spl_NONE)
         {
-            AI_Spell_Select__STUB(player_idx);
+            PHASE(AI_Spell_Select__STUB(player_idx));
         }
 
-        EMM_Map_DataH();
-        AI_Update_Magic_Power(player_idx);
-        AI_Sanity_Check_Overland_Enchantments(player_idx);
-        AI_Update_Gold_And_Mana_Reserves(player_idx);
-        AI_Update_Gold_Income_And_Food_Income(player_idx);
+        PHASE(EMM_Map_DataH());
+        PHASE(AI_Update_Magic_Power(player_idx));
+        PHASE(AI_Sanity_Check_Overland_Enchantments(player_idx));
+        PHASE(AI_Update_Gold_And_Mana_Reserves(player_idx));
+        PHASE(AI_Update_Gold_Income_And_Food_Income(player_idx));
 
         Some_AI_Turn_Var_2 = 0;
         Some_AI_Turn_Var_3 = 0;
@@ -278,21 +294,20 @@ void AI_Next_Turn(void)
             }
         }
 
-        Player_All_Colony_Autobuild(player_idx);
+        PHASE(Player_All_Colony_Autobuild(player_idx));
+        PHASE(AI_Evaluation_Map(player_idx));
+        PHASE(AI_Evaluate_Continents(player_idx));
+        PHASE(AI_Set_Unit_Orders(player_idx));
         
-        AI_Evaluation_Map(player_idx);
-        AI_Evaluate_Continents(player_idx);
-        AI_Set_Unit_Orders(player_idx);
-        
-        EMM_Map_DataH();
-        AI_Kill_Excess_Settlers_And_Engineers(player_idx);
+        PHASE(EMM_Map_DataH());
+        PHASE(AI_Kill_Excess_Settlers_And_Engineers(player_idx));
 
 #ifdef STU_DEBUG
         dbg_prn("AI_TURN: --- Player %d (%s) END ---\n", player_idx, _players[player_idx].name);
 #endif
     }
 
-    EMM_Map_DataH();
+    PHASE(EMM_Map_DataH());
 
     /* Reset Move_Failed flag for all non-human units */
     for (i = 0; i < _units; i++)
@@ -324,49 +339,56 @@ void AI_Next_Turn(void)
 #ifdef STU_DEBUG
             dbg_prn("AI_TURN: Moving units for Player %d (%s)\n", player_idx, _players[player_idx].name);
 #endif
-            AI_MoveUnits(player_idx);
+            PHASE(AI_MoveUnits(player_idx));
         }
     }
 
-    EMM_Map_DataH();
+    PHASE(EMM_Map_DataH());
 
     /* Neutral Player Turn Processing */
 #ifdef STU_DEBUG
     dbg_prn("AI_TURN: === Neutral Player Phase ===\n");
 #endif
-    Player_All_Colony_Autobuild(NEUTRAL_PLAYER_IDX);
-    NPC_Farmers();
+    PHASE(Player_All_Colony_Autobuild(NEUTRAL_PLAYER_IDX));
+    PHASE(NPC_Farmers());
 #ifdef STU_DEBUG
     dbg_prn("AI_TURN: NPC_Farmers done\n");
 #endif
-    NPC_Destinations();
+    PHASE(NPC_Destinations());
 #ifdef STU_DEBUG
     dbg_prn("AI_TURN: NPC_Destinations done\n");
 #endif
-    AI_MoveUnits(NEUTRAL_PLAYER_IDX);
+    PHASE(AI_MoveUnits(NEUTRAL_PLAYER_IDX));
 #ifdef STU_DEBUG
     dbg_prn("AI_TURN: NPC movement done\n");
 #endif
 
     /* Event Generation */
-    Make_Raiders();
+    PHASE(Make_Raiders());
 #ifdef STU_DEBUG
     dbg_prn("AI_TURN: Make_Raiders done\n");
 #endif
-    Make_Monsters();
+    PHASE(Make_Monsters());
 #ifdef STU_DEBUG
     dbg_prn("AI_TURN: Make_Monsters done\n");
 #endif
 
     /* Cleanup and Stasis */
-    NPC_Excess_Garrison();
-    AI_Hopeless_Stasis();
+    PHASE(NPC_Excess_Garrison());
+    PHASE(AI_Hopeless_Stasis());
 
     AI_Log_Metrics();
     AI_Metrics_Emit_Turn_Summary(_turn, _difficulty, _num_players);
 #ifdef STU_DEBUG
     dbg_prn("AI_TURN: === END Turn %d ===\n", _turn);
 #endif
+
+#ifdef STU_DEBUG
+    printf("DEBUG: [%s, %d]: END: AI_Next_Turn()", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: AI_Next_Turn()", __FILE__, __LINE__);
+    trc_prn("DEBUG: [%s, %d]: END: AI_Next_Turn()", __FILE__, __LINE__);
+#endif
+
 }
 
 
@@ -2281,7 +2303,7 @@ void Build_Land_Linked_List(void)
 {
     int16_t previous_node_idx = 0;
     int16_t landmass_idx = 0;
-    int16_t count[2] = { 0, 0 };
+    int16_t count[NUM_PLANES] = { 0, 0 };
     int16_t itr = 0;
     int16_t wy = 0;
     int16_t wx = 0;
@@ -2296,6 +2318,7 @@ void Build_Land_Linked_List(void)
         _ai_landmass_land_squares_heads[MYRROR_PLANE][itr] = ST_UNDEFINED;
     }
 
+    /* DEDU  WTF w/ 1600? */
     for(itr = 0; itr < 1600; itr++)
     {
         _ai_landmass_land_squares_lists[ARCANUS_PLANE][itr] = ST_UNDEFINED;
@@ -2313,28 +2336,29 @@ void Build_Land_Linked_List(void)
             {
                 landmass_idx = _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
                 assert(landmass_idx < NUM_LANDMASSES);
-                if(landmass_idx != 0)
+                if(landmass_idx == 0)
                 {
-                    if(_ai_landmass_land_squares_heads[wp][landmass_idx] == ST_UNDEFINED)
-                    {
-                        _ai_landmass_land_squares_heads[wp][landmass_idx] = count[wp];
-                    }
-                    else
-                    {
-                        next_node_idx = _ai_landmass_land_squares_heads[wp][landmass_idx];
-                        previous_node_idx = next_node_idx;
-                        while(next_node_idx != ST_UNDEFINED)
-                        {
-                            previous_node_idx = next_node_idx;
-                            next_node_idx = _ai_landmass_land_squares_lists[wp][next_node_idx];
-                        }
-                        _ai_landmass_land_squares_lists[wp][previous_node_idx] = count[wp];
-                    }
-                    _ai_landmass_land_squares_wx_array[wp][count[wp]] = (int8_t)wx;
-                    _ai_landmass_land_squares_wy_array[wp][count[wp]] = (int8_t)wy;
-                    _ai_landmass_land_squares_lists[wp][count[wp]] = ST_UNDEFINED;
-                    count[wp] += 1;
+                    continue;
                 }
+                if(_ai_landmass_land_squares_heads[wp][landmass_idx] == ST_UNDEFINED)
+                {
+                    _ai_landmass_land_squares_heads[wp][landmass_idx] = count[wp];
+                }
+                else
+                {
+                    next_node_idx = _ai_landmass_land_squares_heads[wp][landmass_idx];
+                    previous_node_idx = next_node_idx;
+                    while(next_node_idx != ST_UNDEFINED)
+                    {
+                        previous_node_idx = next_node_idx;
+                        next_node_idx = _ai_landmass_land_squares_lists[wp][next_node_idx];
+                    }
+                    _ai_landmass_land_squares_lists[wp][previous_node_idx] = count[wp];
+                }
+                _ai_landmass_land_squares_wx_array[wp][count[wp]] = (int8_t)wx;
+                _ai_landmass_land_squares_wy_array[wp][count[wp]] = (int8_t)wy;
+                _ai_landmass_land_squares_lists[wp][count[wp]] = ST_UNDEFINED;
+                count[wp] += 1;
             }
         }
     }
@@ -2346,20 +2370,26 @@ void Build_Land_Linked_List(void)
 
 // WZD o145p18
 /**
- * @brief Rebuilds the per-plane linked lists of dock or embarkation-adjacent
- *        ocean squares.
+ * @brief Precomputes each landmass's candidate embark/disembark edge.
  *
- * This routine maps the CONTXXX work area, clears the shoreline-list heads for
- * both planes, and scans every map square looking for ocean tiles. For each
- * ocean square, it performs a 3x3 shoreline test; squares adjacent to land are
- * treated as valid dock squares and appended to the array-backed linked list
- * associated with the neighboring landmass.
+ * The AI repeatedly needs a small set of coastal squares for a continent when
+ * it is deciding where transports should leave land, where they should land on
+ * a target continent, and where the "edge" of a landmass is when comparing
+ * continents over water. Rather than rescanning the full map every time, this
+ * routine builds one linked list per (plane, landmass) containing the land
+ * squares that sit on that landmass's shoreline band.
  *
- * The resulting lists store shoreline-accessible water coordinates in the
- * parallel dock x/y arrays and link them through
- * @c _ai_landmass_dock_squares_lists so later transport, embarkation, and
- * continent-evaluation code can iterate only the relevant coastal approach
- * tiles instead of rescanning the full map.
+ * A square qualifies if it belongs to a real landmass and some tile in its 3x3
+ * neighborhood is shoreline terrain. That deliberately produces a slightly
+ * thicker coastal fringe than a strict "adjacent cardinal edge only" test,
+ * which matches how later AI movement code treats usable embark/disembark
+ * approach areas: consumers want a pool of plausible coastal land squares, not
+ * one exact water boundary pixel.
+ *
+ * The resulting arrays are therefore not just a cache of "tiles that passed a
+ * predicate." They are the AI's reusable per-continent entry/exit candidates:
+ * later code walks the list, computes coarse coastal centroids, and chooses a
+ * reachable square near that edge instead of rescanning the entire world map.
  *
  * @return This function does not return a value. It repopulates
  *         @c _ai_landmass_dock_squares_heads,
@@ -2367,8 +2397,8 @@ void Build_Land_Linked_List(void)
  *         @c _ai_landmass_dock_squares_wx_array, and
  *         @c _ai_landmass_dock_squares_wy_array.
  *
- * @note The implementation treats landmass index 0 as ocean and only records
- *       ocean squares that satisfy the shoreline-adjacency test.
+ * @note Landmass index 0 is the ocean sentinel, so it intentionally gets no
+ *       chain; these tables are keyed by actual continents only.
  * @note The routine temporarily remaps CONTXXX via
  *       @c EMM_Map_CONTXXX__WIP() and restores the normal data mapping with
  *       @c EMM_Map_DataH() before returning.
@@ -2380,7 +2410,7 @@ void Build_Dock_Linked_List(void)
     int16_t wx_ofst = 0;
     int16_t previous_node_idx = 0;
     int16_t landmass_idx = 0;
-    int16_t count[2] = { 0, 0 };  /* an array tracking the coastal tile count per plane */
+    int16_t count[NUM_PLANES] = { 0, 0 };  /* an array tracking the coastal tile count per plane */
     int16_t itr = 0;
     int16_t wy = 0;
     int16_t wx = 0;
@@ -2397,6 +2427,16 @@ void Build_Dock_Linked_List(void)
         _ai_landmass_dock_squares_heads[MYRROR_PLANE][itr] = ST_UNDEFINED;
     }
 
+    /* CLAUDE: mirror Build_Land_Linked_List() — initialize the "next" pointers of
+       every list slot to -1.  Without this, slots beyond the populated chains
+       hold allocator zero-fill, which looks like "go to slot 0" to any reader
+       that walks past a chain tail due to a bug elsewhere → infinite loop. */
+    for(itr = 0; itr < 1600; itr++)
+    {
+        _ai_landmass_dock_squares_lists[ARCANUS_PLANE][itr] = ST_UNDEFINED;
+        _ai_landmass_dock_squares_lists[MYRROR_PLANE][itr] = ST_UNDEFINED;
+    }
+
     count[ARCANUS_PLANE] = 0;
     count[MYRROR_PLANE] = 0;
 
@@ -2411,12 +2451,13 @@ void Build_Dock_Linked_List(void)
                 landmass_idx = _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
                 assert(landmass_idx < NUM_LANDMASSES);
                 /* If it's ocean (0), skip it */
-                if(landmass_idx != 0)
+                if(landmass_idx == 0)
                 {
                     continue;
                 }
-/* 4. The 3x3 Shoreline Scan */
+/* 4. The 3x3 Shoreline Scan  (3x3 Moore neighborhood) */
                 square_is_shoreline = ST_FALSE;
+                /* OGBUG  no bounds checks */
                 for(wx_ofst = -1; ((wx_ofst < 2) && (square_is_shoreline == ST_FALSE)); wx_ofst++)
                 {
                     for(wy_ofst = -1; ((wy_ofst < 2) && (square_is_shoreline == ST_FALSE)); wy_ofst++)
