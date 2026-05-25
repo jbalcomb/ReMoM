@@ -3737,6 +3737,20 @@ static void AI_Stacks_Survey_Expedition_Forces(void)
 
 }
 
+/* COPILOT */
+/* TEST HOOK: forwards to the original static implementation without changing in-game call sites. */
+void AI_Stacks_Survey_Expedition_Forces_Test_Hook(void)
+{
+    AI_Stacks_Survey_Expedition_Forces();
+}
+
+/* COPILOT */
+/* TEST HOOK: forwards to the original static stack helper without changing in-game call sites. */
+void AI_Stacks_Survey_Expedition_Forces_Stack_Test_Hook(int16_t stack_idx, int16_t unit_count, int16_t excess_count)
+{
+    AI_Stacks_Survey_Expedition_Forces_Stack(stack_idx, unit_count, excess_count);
+}
+
 
 // WZD o158p21
 /**
