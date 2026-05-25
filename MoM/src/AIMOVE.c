@@ -312,7 +312,7 @@ AI_Stacks_Roamers_Target_Or_Deploy()
         }
 
         /* Process non-landmass based units */
-        AI_ProcessOcean__WIP(player_idx, wp);  /* ¿ only for war landmass ? */
+        AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(player_idx, wp);  /* ¿ only for war landmass ? */
         G_AI_ProcessTransports__WIP(player_idx, wp);
         
     }
@@ -414,7 +414,7 @@ static void AI_Set_Unit_Orders__GEMINI(int player_idx)
         }
 
         /* End of plane processing: naval and transport logistics */
-        AI_ProcessOcean__WIP(player_idx, wp);
+        AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(player_idx, wp);
         G_AI_ProcessTransports__WIP(player_idx, wp);
     }
 
@@ -889,52 +889,82 @@ void AI_Stacks_Garrison_Sites(int16_t player_idx, int16_t wp, int16_t landmass_i
 
 
 // WZD o158p04
-// drake178: AI_ProcessOcean()
-/*
-sends all seafaring units out on the ocean towards
-the main war or another target, and disbands any idle
-stacks (no orders and no seafaring unit)
-*/
-/*
-specific to _ai_landmass_war_targets[] != 0
-*/
-void AI_ProcessOcean__WIP(int16_t player_idx, int16_t wp)
+/**
+ * @brief Route ocean units toward the war stage point and remove stranded ocean stacks.
+ *
+ * This helper runs once per plane after landmass-specific AI processing. If the
+ * player has no main war landmass on `wp`, it returns immediately. Otherwise it
+ * determines a stage point for the current war effort, first from the stored
+ * war-target landmass coordinates and, if those coordinates are unset, by
+ * selecting the nearest contested or no-own-city landmass relative to the
+ * player's fortress.
+ *
+ * When a stage point is available, the function scans all player-owned ocean
+ * units on the plane and sends ready, individually mobile ocean-capable units
+ * there by assigning `us_GOTO` with the stage coordinates. It skips units that
+ * are not on ocean tiles, are already busy, are melders, or are transports.
+ * Ocean-capable movement is recognized through air travel, water travel, or
+ * non-corporeal status.
+ *
+ * The routine then rebuilds AI ocean stack state by calling
+ * AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp). Using that ocean stack
+ * snapshot, it identifies stacks whose tracked entries contain no busy units
+ * and no sea-capable units. Every unit owned by `player_idx` on the matching
+ * ocean square is then killed through Kill_Unit(), preserving the original
+ * stranded-stack cleanup behavior.
+ *
+ * @param player_idx Index of the AI player whose ocean movement is being
+ *                   processed.
+ * @param wp World plane whose ocean units and war stage point are examined.
+ *
+ * @return This function does not return a value. It may assign `us_GOTO`
+ *         orders to individual units and may kill units on invalid ocean
+ *         stacks.
+ *
+ * @note The cleanup pass relies on `AI_Stacks_Init_Build_Target_Order()` being
+ *       able to represent ocean stacks with `landmass_idx == 0`, and preserves
+ *       the original behavior where a stack is considered invalid when its
+ *       tracked entries show neither busy units nor ocean-capable movement.
+ */
+void AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(int16_t player_idx, int16_t wp)
 {
     int16_t stack_wy = 0;
     int16_t stack_wx = 0;
     int16_t list_unit_count = 0;
     int16_t itr_list_units = 0;
     int16_t itr_stacks = 0;
-    int16_t Have_Seafarer = 0;
-    int16_t Have_Assigned_Unit = 0;
+    int16_t stack_has_seafaring_unit = 0;
+    int16_t stack_has_busy_unit = 0;
     int16_t fortress_wy = 0;
     int16_t fortress_wx = 0;
-    int16_t Lowest_Fortress_Distance = 0;
-    int16_t Fortress_Distance = 0;
-    int16_t MainWar_Rally_Y = 0;
-    int16_t MainWar_Rally_X = 0;
+    int16_t min_delta_distance = 0;
+    int16_t delta_distance = 0;
+    int16_t stage_wy = 0;
+    int16_t stage_wx = 0;
     int16_t unit_idx = 0;
     int16_t itr = 0;
 
+
+    /* Phase 1:  No War, bail. */
     if(_ai_landmass_war_targets[wp][player_idx] == 0)
     {
         return;
     }
 
+
+    /* Phase 2 */
+
     /* ¿ war landmass geographic centroid ? */
-    MainWar_Rally_X = _ai_continents.plane[wp].player[player_idx].wx_array[_ai_landmass_war_targets[wp][player_idx]];
-    MainWar_Rally_Y = _ai_continents.plane[wp].player[player_idx].wy_array[_ai_landmass_war_targets[wp][player_idx]];
+    stage_wx = _ai_continents.plane[wp].player[player_idx].wx_array[_ai_landmass_war_targets[wp][player_idx]];
+    stage_wy = _ai_continents.plane[wp].player[player_idx].wy_array[_ai_landmass_war_targets[wp][player_idx]];
 
     fortress_wx = _FORTRESSES[player_idx].wx;
     fortress_wy = _FORTRESSES[player_idx].wy;
 
-    if(
-        (MainWar_Rally_X == 0)
-        &&
-        (MainWar_Rally_Y == 0)
-    )
+    /* ¿ doesn't make sense, cause must be no war ? */
+    if((stage_wx == 0) && (stage_wy == 0))
     {
-        Lowest_Fortress_Distance = 1000;
+        min_delta_distance = 1000;
         for(itr = 0; itr < NUM_LANDMASSES; itr++)
         {
             if(
@@ -943,97 +973,124 @@ void AI_ProcessOcean__WIP(int16_t player_idx, int16_t wp)
                 (_ai_continents.plane[wp].player[player_idx].type_array[itr] == lmt_NoOwnCity)
             )
             {
-                Fortress_Distance = Delta_XY_With_Wrap(fortress_wx, fortress_wy, _ai_continents.plane[wp].player[player_idx].wx_array[itr], _ai_continents.plane[wp].player[player_idx].wy_array[itr], WORLD_WIDTH);
-                if(Fortress_Distance < Lowest_Fortress_Distance)
+                delta_distance = Delta_XY_With_Wrap(fortress_wx, fortress_wy, _ai_continents.plane[wp].player[player_idx].wx_array[itr], _ai_continents.plane[wp].player[player_idx].wy_array[itr], WORLD_WIDTH);
+                if(delta_distance < min_delta_distance)
                 {
-                    Lowest_Fortress_Distance = Fortress_Distance;
-                    MainWar_Rally_X = _ai_continents.plane[wp].player[player_idx].wx_array[itr];
-                    MainWar_Rally_Y = _ai_continents.plane[wp].player[player_idx].wy_array[itr];
+                    min_delta_distance = delta_distance;
+                    stage_wx = _ai_continents.plane[wp].player[player_idx].wx_array[itr];
+                    stage_wy = _ai_continents.plane[wp].player[player_idx].wy_array[itr];
                 }
             }
         }
     }
 
 
-    if(
-        (MainWar_Rally_X != 0)
-        &&
-        (MainWar_Rally_Y != 0)
-    )
+    /* Phase 3 */
+    /* If a stage point was found, assign all idle individual seafarers to go there */
+    if((stage_wx != 0) || (stage_wy != 0))
     {
         for(itr = 0; itr < _units; itr++)
         {
+            if(_UNITS[itr].owner_idx != player_idx)
+            {
+                continue;
+            }
+            if(_UNITS[itr].wp != wp)
+            {
+                continue;
+            }
+            /* Ignore Units that are not on the Ocean */
+            if(_landmasses[((wp * WORLD_SIZE) + (_UNITS[itr].wy * WORLD_WIDTH) + _UNITS[itr].wx)] != 0)  /* 0 is Ocean landmass */
+            {
+                continue;
+            }
+            /* DEDU  How's come? Maybe must mean they did get ordered? */
+            if(_UNITS[itr].Status != us_Ready)
+            {
+                continue;
+            }
+            /* Ignore Melders, because they are all Non-Corporeal/Seafaring */
+            if((_unit_type_table[_UNITS[itr].type].Abilities & UA_MELD) != 0)
+            {
+                continue;
+            }
+            /* Ignore Melders, because they all have Sailing/Seafaring */
+            if(_unit_type_table[_UNITS[itr].type].Transport != 0)
+            {
+                continue;
+            }
+            /* If the Unit can move on the Ocean, send it on it's way */
             if(
-                (_UNITS[itr].owner_idx == player_idx)
-                &&
-                (_UNITS[itr].wp == wp)
-                &&
-                (_landmasses[((wp * WORLD_SIZE) + (_UNITS[itr].wy * WORLD_WIDTH) + _UNITS[itr].wx)])
+                (Unit_Has_AirTravel(itr) != ST_FALSE)
+                ||
+                (Unit_Has_WaterTravel(itr) != ST_FALSE)
+                ||
+                (Unit_Has_NonCorporeal(itr) != ST_FALSE)
             )
             {
-                if(
-                    (_UNITS[itr].Status == us_Ready)
-                    &&
-                    ((_unit_type_table[_UNITS[itr].type].Abilities & UA_MELD) == 0)
-                    &&
-                    (_unit_type_table[_UNITS[itr].type].Transport == 0)
-                )
-                {
-                    if(
-                        (Unit_Has_AirTravel(itr) != ST_FALSE)
-                        ||
-                        (Unit_Has_WaterTravel(itr) != ST_FALSE)
-                        ||
-                        (Unit_Has_NonCorporeal(itr) != ST_FALSE)
-                    )
-                    {
-                        _UNITS[itr].Status = us_GOTO;
-                        _UNITS[itr].dst_wx = (int8_t)MainWar_Rally_X;
-                        _UNITS[itr].dst_wy = (int8_t)MainWar_Rally_Y;
-                    }
-                }
+                _UNITS[itr].Status = us_GOTO;
+                _UNITS[itr].dst_wx = (int8_t)stage_wx;
+                _UNITS[itr].dst_wy = (int8_t)stage_wy;
             }
         }
     }
 
+
+    /* Phase 4: make AI stack data for the Ocean */
+    /* Re-evaluate stacks and process moves */
     AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp);
 
+
+    /* Phase 5: Cleanup the Ocean */
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     {
-        Have_Assigned_Unit = ST_FALSE;
-        Have_Seafarer = ST_FALSE;
+
+        /* Phase 5a: (Re-)Init */
+        stack_has_busy_unit = ST_FALSE;
+        stack_has_seafaring_unit = ST_FALSE;
         list_unit_count = _ai_own_stack_unit_count[itr_stacks];
+
+        /* Phase 5b: Collect our Decision Criteria */
         for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
         {
-            if(Have_Assigned_Unit != ST_FALSE)
+            /* OGBUG  should evaluate the rest of the units in the stack - misses any more invalid units */
+            if(stack_has_busy_unit != ST_FALSE)
             {
                 break;
             }
             unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
             if(unit_idx == ST_UNDEFINED)
             {
-                Have_Assigned_Unit = ST_TRUE;
+                stack_has_busy_unit = ST_TRUE;
             }
             else
             {
                 if(
-                    (Unit_Has_AirTravel(itr) != ST_FALSE)
+                    (Unit_Has_AirTravel(unit_idx) != ST_FALSE)
                     ||
-                    (Unit_Has_WaterTravel(itr) != ST_FALSE)
+                    (Unit_Has_WaterTravel(unit_idx) != ST_FALSE)
                     ||
-                    (Unit_Has_NonCorporeal(itr) != ST_FALSE)
+                    (Unit_Has_NonCorporeal(unit_idx) != ST_FALSE)
                 )
                 {
-                    Have_Seafarer = ST_TRUE;
+                    stack_has_seafaring_unit = ST_TRUE;
                 }
             }
         }
+
+        /* Phase 5c: Invalid State, Destory the Unit */
+        /* Claude says "stranded" - "stack has no busy units AND no swimmers" */
         if(
-            (Have_Assigned_Unit == ST_FALSE)
+            (stack_has_busy_unit == ST_FALSE)
             &&
-            (Have_Seafarer == ST_FALSE)
+            (stack_has_seafaring_unit == ST_FALSE)
         )
         {
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: %s: -> AI Stack Stranded\n", __FILE__, __LINE__, __FUNCTION__);
+    STU_DEBUGBREAK();
+#endif
+            /* ¿ OGBUG  Claude is quite concerned this is killing Seafaring Units that might still be on this square ? */
             stack_wx = _ai_own_stack_wx[itr_stacks];
             stack_wy = _ai_own_stack_wy[itr_stacks];
             for(itr = 0; itr < _units; itr++)
@@ -1048,10 +1105,11 @@ void AI_ProcessOcean__WIP(int16_t player_idx, int16_t wp)
                     (_UNITS[itr].owner_idx == player_idx)
                 )
                 {
-                    Kill_Unit(itr, 0);
+                    Kill_Unit(itr, kt_Normal);
                 }
             }
         }
+        
     }
 
 }
@@ -2856,6 +2914,35 @@ int16_t AI_Stacks_Assign_Target(int16_t stack_wx, int16_t stack_wy, int16_t * ta
 
 
 // WZD o158p13
+/**
+ * @brief Rebuild AI-owned stack state for one landmass and issue immediate roamer orders.
+ *
+ * Clears the `_ai_own_stack_*` working arrays, resets the expedition staging
+ * counters, then scans all units belonging to `player_idx` on the selected
+ * plane. Units standing on `landmass_idx` are grouped into stack records by
+ * shared coordinates and plane, with busy units stored as `ST_UNDEFINED` in
+ * the per-stack unit list while still contributing to stack counts.
+ *
+ * During this rebuild the function also counts units already standing on the
+ * current stage point in `cp_staged_unit_count` and units already travelling
+ * there in `cp_enroute_unit_count`. Newly created stacks are classified as
+ * fortress garrisons, ordinary garrisons, or roamers based on the evaluation
+ * map and fortress coordinates.
+ *
+ * After stack construction, each roamer stack is checked for a ready lead unit.
+ * If one exists and AI_Stacks_Target_Nearest_Hostile_Stack() finds a nearby
+ * hostile roaming stack, all units in the roamer are ordered toward that
+ * target. Otherwise, small inactive roamers are downgraded to `AISTK_Unknown`
+ * and failed target searches reset their units to `us_Ready`.
+ *
+ * @param player_idx Index of the AI player whose units are being grouped.
+ * @param landmass_idx Index of the landmass whose units and stage point are
+ *                     being processed.
+ * @param wp World plane containing the landmass and candidate units.
+ *
+ * @return This function does not return a value. It updates the global
+ *         `_ai_own_stack_*` working state and may issue unit orders.
+ */
 void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx, int16_t wp)
 {
     int16_t first_unit_idx = 0;
@@ -2940,6 +3027,7 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
                 /* ¿ OGBUG  should break here ? */
             }
         }
+
 /*
     BEGIN:  Existing or New
 */
@@ -3749,7 +3837,7 @@ void AI_Stacks_Move_Out_NonMilitary_Garrisoned(int16_t wp)
  * contribute all of their military units, while garrison-style stacks only
  * contribute units beyond the five-unit reserve threshold used here.
  *
- * The resulting global arrays are later consumed by rally and war-staging logic
+ * The resulting global arrays are later consumed by stage and war-staging logic
  * that pulls expedition-capable units away from lower-priority duties.
  *
  * @return This function does not return a value. It resets and repopulates the

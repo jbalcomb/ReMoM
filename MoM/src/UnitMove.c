@@ -499,14 +499,14 @@ int16_t Unit_Has_Swimming(int16_t unit_idx)
 // WZD o71p09
 int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx)
 {
-// Meh.    uint32_t UU_item_enchantments = 0;
+// Meh.    uint32_t niu_item_enchantments = 0;
 // Meh.    int16_t has_watertravel_item = 0;  // DNE in Dasm
 
 // Meh?    has_watertravel_item = ST_FALSE;
 
 // Meh.    if (_UNITS[unit_idx].Hero_Slot != -1)
 // Meh.    {
-// Meh.        UU_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
+// Meh.        niu_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
 // Meh.
 // Meh.        if (
 // Meh.            ((global_battle_unit->item_enchantments & UE_WINDWALKING) != 0)
@@ -528,7 +528,7 @@ int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx)
 // Meh?    if(
 // Meh?        (_UNITS[unit_idx].Hero_Slot == ST_UNDEFINED)
 // Meh?        ||
-// Meh?        ((UU_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit) & UE_WATERWALKING) == 0)
+// Meh?        ((niu_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit) & UE_WATERWALKING) == 0)
 // Meh?    )
 // Meh?    {
 // Meh?        return ST_FALSE;
@@ -557,12 +557,12 @@ int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx)
 // WZD o71p010
 int16_t Unit_Has_AirTravel_Item(int16_t unit_idx)
 {
-    uint32_t UU_item_enchantments;
+    uint32_t niu_item_enchantments;
     int16_t has_airtravel_item = ST_FALSE;
 
     if(_UNITS[unit_idx].Hero_Slot != -1)
     {
-        UU_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
+        niu_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
 
         if(
             ( (global_battle_unit->item_enchantments & UE_WINDWALKING) != 0) ||
@@ -631,12 +631,12 @@ int16_t Unit_Has_Endurance(int16_t unit_idx)
 int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
 {
     int16_t has_planartravel_item;
-    uint32_t UU_item_enchantments;
+    uint32_t niu_item_enchantments;
 
     if(_UNITS[unit_idx].Hero_Slot != ST_UNDEFINED)
     {
 
-        UU_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
+        niu_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
 
         if(
             ( (global_battle_unit->item_enchantments & UE_PLANARTRAVEL) != 0)
@@ -659,51 +659,46 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
 }
 
 // WZD o71p014
-// drake178: UNIT_IsNonCorporeal()
-/*
-returns 1 if the unit is non-corporeal, 0 otherwise
-
-this is an actual FULL check, considering natural
-ability, wraith form enchantment, and item powers
-*/
-/*
-
-*/
+/**
+ * @brief Determine whether a unit currently has non-corporeal movement.
+ *
+ * Performs the full overland check for non-corporeality by testing the unit's
+ * innate `UA_NONCORPOREAL` ability, the unit-level `UE_WRAITHFORM`
+ * enchantment, and hero item powers that grant `UE_WRAITHFORM` after applying
+ * item effects into `global_battle_unit`.
+ *
+ * @param unit_idx Global unit index to evaluate.
+ *
+ * @return `ST_TRUE` if the unit is naturally non-corporeal or currently gains
+ *         Wraith Form from enchantments or hero items; otherwise `ST_FALSE`.
+ *
+ * @note Hero item powers are only checked when the unit occupies a valid hero
+ *       slot.
+ */
+/* NOTE: this is an actual FULL check, considering natural ability, wraith form enchantment, and item powers */
+/* NOTE: AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup() considers this to mean 'Seafairing' */
 int16_t Unit_Has_NonCorporeal(int16_t unit_idx)
 {
-    uint32_t UU_item_enchantments = 0;
+    uint32_t niu_item_enchantments = 0;
     int16_t unit_type = 0;
-
     unit_type = _UNITS[unit_idx].type;
-
     if((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0)
     {
-
         return ST_TRUE;
-
     }
-
     if((_UNITS[unit_idx].enchantments & UE_WRAITHFORM) != 0)
     {
-
         return ST_TRUE;
     }
-
     if(_UNITS[unit_idx].Hero_Slot != ST_UNDEFINED)
     {
-
-        UU_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
-
+        niu_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
         if((global_battle_unit->item_enchantments & UE_WRAITHFORM) != 0)
         {
-
             return ST_TRUE;
         }
-
     }
-
     return ST_FALSE;
-
 }
 
 

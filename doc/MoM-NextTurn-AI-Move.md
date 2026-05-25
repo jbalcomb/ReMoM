@@ -165,7 +165,7 @@ AI_ProcessRoamers()
 AI_Stacks_Order_To_War_Landmass()
 
 
-AI_ProcessOcean__WIP()
+AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup()
 
 
 
@@ -336,7 +336,7 @@ AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 
 
-## AI_ProcessOcean__WIP()
+## AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup()
 
 short-circuits
     if(_ai_landmass_war_targets[wp][player_idx] == 0)

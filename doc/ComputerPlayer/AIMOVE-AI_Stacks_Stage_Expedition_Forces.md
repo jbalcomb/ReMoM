@@ -242,7 +242,7 @@ The `unit_idx` argument to `AI_Stacks_Order_Attack_Target_Or_Goto_Destination` i
 
 ### Why `g_ai_minattackstack` matters here (forward-looking sizing)
 
-The threshold `g_ai_minattackstack = (2 + _turn / 30)` (capped at MAX_STACK) is the **minimum stack size worth committing to an overseas expedition**, NOT the minimum stack size to attack right now. Phase 2's gates use it to decide whether staging more units is worth the opportunity cost (ferry slots, units committed in transit, defenders pulled from home). Early game (low threshold) → easy to qualify; late game (threshold = 9) → only landmasses already close to a full stack qualify, narrowing the rally pipeline.
+The threshold `g_ai_minattackstack = (2 + _turn / 30)` (capped at MAX_STACK) is the **minimum stack size worth committing to an overseas expedition**, NOT the minimum stack size to attack right now. Phase 2's gates use it to decide whether staging more units is worth the opportunity cost (ferry slots, units committed in transit, defenders pulled from home). Early game (low threshold) → easy to qualify; late game (threshold = 9) → only landmasses already close to a full stack qualify, narrowing the stage pipeline.
 
 The attack itself happens turns later: ferried units arrive on the war landmass, get reclassified as `AISTK_Roamer`, and slot 9 `AI_Stacks_Roamers_Target_Or_Deploy` picks attack targets via `AI_Stacks_Assign_Target`. This function only assembles the force; the attack is downstream and contextual.
 

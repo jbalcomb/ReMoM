@@ -32,11 +32,11 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **Purpose:** Slot 13 — survey own cities and own-plane SITE-flagged nodes on this landmass, compute per-asset garrison shortfalls, then draft non-builder units from `AISTK_Roamer`/`AISTK_Unknown` stacks (NOT at the stage point) toward the best-scored target. City-first, node-fallback. See [AIMOVE-AI_Stacks_Garrison_Sites.md](AIMOVE-AI_Stacks_Garrison_Sites.md).
 - **Reads `lmt_*`:** Phase 1 reads landmass type for the `low_concern_landmass` flag at lines 559-562 (TRUE for `lmt_Own`/`lmt_Leaveable`/`lmt_NoTargets`, FALSE for `lmt_Contested`). Dispatcher gate at [lines 302-309](../../MoM/src/AIMOVE.c#L302-L309) reads `lmt_Own`, `lmt_Contested`, `>= lmt_Leaveable`.
 
-### `AI_ProcessOcean__WIP` — [line 742](../../MoM/src/AIMOVE.c#L742)
+### `AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup` — [line 892](../../MoM/src/AIMOVE.c#L892)
 - **drake178:** `AI_ProcessOcean()` (o158p04)
-- **End:** ~line 958
-- **Purpose:** TBD
-- **Reads `lmt_*`:** `lmt_Contested`, `lmt_NoOwnCity` (line 787-791)
+- **End:** ~line 1048
+- **Purpose:** Per-(player, plane) **post-pass** — runs once per plane after the inner per-landmass loop closes. Two halves: (1) pull land-stationed mobile-on-water units (AirTravel/WaterTravel/NonCorporeal, non-melder, non-transport, us_Ready) toward the war-landmass stage point — fortress-closest `lmt_Contested`/`lmt_NoOwnCity` landmass as fallback; (2) rebuild own-stacks for ocean (`landmass_idx = 0`) and `Kill_Unit`-drown every stack with no consumed slot AND no water-mobile unit. See [AIMOVE-AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup.md](AIMOVE-AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup.md).
+- **Reads `lmt_*`:** `lmt_Contested`, `lmt_NoOwnCity` ([lines 932-934](../../MoM/src/AIMOVE.c#L932-L934)) in the Phase 2 fallback stage-point scan.
 
 ### `G_AI_ProcessTransports__WIP` — [line 959](../../MoM/src/AIMOVE.c#L959)
 - **drake178:** `G_AI_ProcessTransports()` (o158p05)
