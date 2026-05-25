@@ -135,7 +135,7 @@ A more accurate name would be something like `lmt_NoHostileAssetsLastSeen` — t
 
 Comment at [337](../../MoM/src/AIMOVE.c#L337) explicitly lists the "threat" group: `lmt_Unevaluated, lmt_Contested, lmt_NoOwnCity, lmt_NoOwnCityAndAllyHasCity`.
 
-### `AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup` ([line 742](../../MoM/src/AIMOVE.c#L742))
+### `AI_Stacks_Wartime_Ocean_Movement_And_Cleanup` ([line 742](../../MoM/src/AIMOVE.c#L742))
 
 | Line | Condition | Action |
 |---|---|---|

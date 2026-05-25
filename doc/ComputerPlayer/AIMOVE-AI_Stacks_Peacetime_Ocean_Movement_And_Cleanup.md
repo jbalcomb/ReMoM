@@ -1,10 +1,10 @@
-AIMOVE-AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup.md
+AIMOVE-AI_Stacks_Wartime_Ocean_Movement_And_Cleanup.md
 
-C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup.c
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Stacks_Wartime_Ocean_Movement_And_Cleanup.c
 
 ---
 
-# AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup — Walkthrough
+# AI_Stacks_Wartime_Ocean_Movement_And_Cleanup — Walkthrough
 
 **Location:** [MoM/src/AIMOVE.c:929](../../MoM/src/AIMOVE.c#L929) (~183 lines, ends [line 1111](../../MoM/src/AIMOVE.c#L1111)). Function-header docstring (Doxygen) at [lines 892-928](../../MoM/src/AIMOVE.c#L892-L928).
 **WZD overlay:** ovr158, p04
@@ -25,11 +25,11 @@ Called once per plane from [`AI_Set_Unit_Orders`](AIMOVE-AI_Set_Unit_Orders.md),
 ## Signature
 
 ```c
-void AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(int16_t player_idx, int16_t wp)
+void AI_Stacks_Wartime_Ocean_Movement_And_Cleanup(int16_t player_idx, int16_t wp)
 ```
 
 Called from:
-- Production dispatcher: [AIMOVE.c:315](../../MoM/src/AIMOVE.c#L315) — `AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(player_idx, wp);  /* ¿ only for war landmass ? */`
+- Production dispatcher: [AIMOVE.c:315](../../MoM/src/AIMOVE.c#L315) — `AI_Stacks_Wartime_Ocean_Movement_And_Cleanup(player_idx, wp);  /* ¿ only for war landmass ? */`
 - GEMINI dispatcher: [AIMOVE.c:417](../../MoM/src/AIMOVE.c#L417)
 
 The trailing comment at line 315 is the user's question to self — the gate at line 949 is internal, not at the call site. The function is **always called** per (player, plane); it returns early itself when there's no main war landmass.
@@ -295,7 +295,7 @@ Previously-flagged divergences that resolved when source caught up to OG:
 ## ASCII summary
 
 ```
-AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(player_idx, wp)
+AI_Stacks_Wartime_Ocean_Movement_And_Cleanup(player_idx, wp)
   ├─ Phase 1: if _ai_landmass_war_targets[wp][player_idx] == 0: return
   ├─ Phase 2: stage point
   │    ├─ primary: war landmass centroid (wx_array/wy_array)
@@ -335,7 +335,7 @@ AI_Set_Unit_Orders(player_idx)
        │    ├─ slot 12: AI_Stacks_Stage_Expedition_Forces
        │    └─ slot 13: AI_Stacks_Garrison_Sites               [gated]
        │
-       ├─ AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(player_idx, wp)         ◄── HERE (per-plane post-pass)
+       ├─ AI_Stacks_Wartime_Ocean_Movement_And_Cleanup(player_idx, wp)         ◄── HERE (per-plane post-pass)
        └─ AI_Stacks_Ocean_Landmass_Orders(player_idx, wp)         (per-plane post-pass)
 ```
 
@@ -354,4 +354,4 @@ AI_Set_Unit_Orders(player_idx)
 - `AI_Stacks_Ocean_Landmass_Orders` at [AIMOVE.c:1195](../../MoM/src/AIMOVE.c#L1195) — sibling per-plane post-pass for transport ships
 - [MoM-AI-Move-ai_own_stack.md](MoM-AI-Move-ai_own_stack.md) — `_ai_own_stack_*` area-of-code reference
 - [MoM-AI-AIMOVE-Index.md](MoM-AI-AIMOVE-Index.md) — function index
-- `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup.asm` — IDA Pro 5.5 disassembly (ground truth)
+- `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Stacks_Wartime_Ocean_Movement_And_Cleanup.asm` — IDA Pro 5.5 disassembly (ground truth)

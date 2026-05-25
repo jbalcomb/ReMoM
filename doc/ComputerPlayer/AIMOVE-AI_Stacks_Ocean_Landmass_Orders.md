@@ -13,7 +13,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\G_AI_ProcessTranspo
 
 ## Purpose
 
-Per-(player, plane) **post-pass** — sibling of [`AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup`](AIMOVE-AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup.md), runs immediately after it at the same per-plane scope (not a 1-13 slot).
+Per-(player, plane) **post-pass** — sibling of [`AI_Stacks_Wartime_Ocean_Movement_And_Cleanup`](AIMOVE-AI_Stacks_Wartime_Ocean_Movement_And_Cleanup.md), runs immediately after it at the same per-plane scope (not a 1-13 slot).
 
 Five phases in source order:
 
@@ -32,7 +32,7 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
 ```
 
 Called from:
-- Production dispatcher: [AIMOVE.c:316](../../MoM/src/AIMOVE.c#L316) — immediately after `AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup`
+- Production dispatcher: [AIMOVE.c:316](../../MoM/src/AIMOVE.c#L316) — immediately after `AI_Stacks_Wartime_Ocean_Movement_And_Cleanup`
 - GEMINI dispatcher: [AIMOVE.c:418](../../MoM/src/AIMOVE.c#L418)
 
 Always called per (player, plane). No early-return gate — always runs at least Phases 1-4. Phase 5 sub-branches gate on `_ai_landmass_war_targets`/`_ai_landmass_settler_targets` internally.
@@ -139,7 +139,7 @@ Mark any ferry-queue entry whose remaining capacity is exhausted as invalid (`ST
 AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp);
 ```
 
-Same slot-1 rebuild that [`AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup`](AIMOVE-AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup.md) Phase 4 already did this turn. This is the SECOND ocean rebuild in the per-plane post-pass — Peacetime's Phase 5c Kill_Unit may have culled units that affect this re-snapshot.
+Same slot-1 rebuild that [`AI_Stacks_Wartime_Ocean_Movement_And_Cleanup`](AIMOVE-AI_Stacks_Wartime_Ocean_Movement_And_Cleanup.md) Phase 4 already did this turn. This is the SECOND ocean rebuild in the per-plane post-pass — Peacetime's Phase 5c Kill_Unit may have culled units that affect this re-snapshot.
 
 ### Phase 4 — Out-of-band meld ([line 1212](../../MoM/src/AIMOVE.c#L1212))
 
@@ -633,13 +633,13 @@ AI_Set_Unit_Orders(player_idx)
        ├─ for landmass_idx in [1, NUM_LANDMASSES):     # per-landmass inner loop
        │    └─ slots 1-13 (see AI_Set_Unit_Orders walkthrough)
        │
-       ├─ AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(player_idx, wp)   (per-plane post-pass A)
+       ├─ AI_Stacks_Wartime_Ocean_Movement_And_Cleanup(player_idx, wp)   (per-plane post-pass A)
        └─ AI_Stacks_Ocean_Landmass_Orders(player_idx, wp)                     ◄── HERE (per-plane post-pass B)
 ```
 
 **Pairing with the sibling post-pass:**
 
-- Peacetime ([`AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup`](AIMOVE-AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup.md)) handles **non-transport** ocean units (pulls swimmers toward war stage, drowns stranded non-mobile stacks).
+- Peacetime ([`AI_Stacks_Wartime_Ocean_Movement_And_Cleanup`](AIMOVE-AI_Stacks_Wartime_Ocean_Movement_And_Cleanup.md)) handles **non-transport** ocean units (pulls swimmers toward war stage, drowns stranded non-mobile stacks).
 - This function handles **transport** ocean stacks (routes empty transports to ferry pickups, lands mixed stacks).
 
 Both call `AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp)` independently — the first rebuild is inside Peacetime's Phase 4, the second is inside this function's Phase 3. Peacetime's Phase 5c Kill_Unit may have culled units between the two rebuilds.
@@ -649,7 +649,7 @@ Both call `AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp)` independently �
 ## Related references
 
 - [AIMOVE-AI_Set_Unit_Orders.md](AIMOVE-AI_Set_Unit_Orders.md) — dispatcher; this function is a per-plane post-pass, not a slot in 1-13
-- [AIMOVE-AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup.md](AIMOVE-AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup.md) — sibling per-plane post-pass A
+- [AIMOVE-AI_Stacks_Wartime_Ocean_Movement_And_Cleanup.md](AIMOVE-AI_Stacks_Wartime_Ocean_Movement_And_Cleanup.md) — sibling per-plane post-pass A
 - [AIMOVE-AI_Stacks_Init_Build_Target_Order.md](AIMOVE-AI_Stacks_Init_Build_Target_Order.md) — Phase 3 calls it for ocean rebuild
 - [AIMOVE-AI_Stacks_Setup_Ferry.md](AIMOVE-AI_Stacks_Setup_Ferry.md) — upstream producer of `_ai_ferry_*` queue entries via patient path
 - [AIMOVE-AI_Stacks_Ferry_Add_Location.md](AIMOVE-AI_Stacks_Ferry_Add_Location.md) — writes `_ai_ferry_*` entries that Phase 2b/2c/5c consume

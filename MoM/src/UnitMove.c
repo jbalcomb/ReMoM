@@ -676,7 +676,7 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
  *       slot.
  */
 /* NOTE: this is an actual FULL check, considering natural ability, wraith form enchantment, and item powers */
-/* NOTE: AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup() considers this to mean 'Seafaring' */
+/* NOTE: AI_Stacks_Wartime_Ocean_Movement_And_Cleanup() considers this to mean 'Seafaring' */
 int16_t Unit_Has_NonCorporeal(int16_t unit_idx)
 {
     uint32_t niu_item_enchantments = 0;

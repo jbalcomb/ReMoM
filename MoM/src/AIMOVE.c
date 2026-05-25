@@ -312,7 +312,7 @@ AI_Stacks_Roamers_Target_Or_Deploy()
         }
 
         /* Process non-landmass based units */
-        AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(player_idx, wp);  /* ¿ only for war landmass ? */
+        AI_Stacks_Wartime_Ocean_Movement_And_Cleanup(player_idx, wp);  /* ¿ only for war landmass ? */
         AI_Stacks_Ocean_Landmass_Orders(player_idx, wp);
         
     }
@@ -414,7 +414,7 @@ static void AI_Set_Unit_Orders__GEMINI(int player_idx)
         }
 
         /* End of plane processing: naval and transport logistics */
-        AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(player_idx, wp);
+        AI_Stacks_Wartime_Ocean_Movement_And_Cleanup(player_idx, wp);
         AI_Stacks_Ocean_Landmass_Orders(player_idx, wp);
     }
 
@@ -926,7 +926,7 @@ void AI_Stacks_Garrison_Sites(int16_t player_idx, int16_t wp, int16_t landmass_i
  *       the original behavior where a stack is considered invalid when its
  *       tracked entries show neither busy units nor ocean-capable movement.
  */
-void AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(int16_t player_idx, int16_t wp)
+void AI_Stacks_Wartime_Ocean_Movement_And_Cleanup(int16_t player_idx, int16_t wp)
 {
     int16_t stack_wy = 0;
     int16_t stack_wx = 0;

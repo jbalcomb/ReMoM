@@ -162,7 +162,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
     }
 
     // Non-landmass passes
-    AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(player_idx, wp);
+    AI_Stacks_Wartime_Ocean_Movement_And_Cleanup(player_idx, wp);
     AI_Stacks_Ocean_Landmass_Orders(player_idx, wp);
 }
 ```
@@ -197,7 +197,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
 ### Per-plane post-landmass passes
 
 After all landmasses on a plane finish, two non-landmass passes run:
-- `AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup` — units at sea (not assigned to any landmass).
+- `AI_Stacks_Wartime_Ocean_Movement_And_Cleanup` — units at sea (not assigned to any landmass).
 - `AI_Stacks_Ocean_Landmass_Orders` — transport assignments / loading.
 
 ## Phase 5 — Cleanup
@@ -242,7 +242,7 @@ AI_Set_Unit_Orders(player_idx)
         ├── AI_Stacks_Stage_Expedition_Forces              [always]
         │   └── AI_Reevaluate_Continent     [5% roll when stage is full]
         └── AI_Stacks_Garrison_Sites            [gate: lmt_Own / lmt_Contested / lmt_Leaveable+]
-    ├── AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup                 [per-plane post-pass]
+    ├── AI_Stacks_Wartime_Ocean_Movement_And_Cleanup                 [per-plane post-pass]
     └── AI_Stacks_Ocean_Landmass_Orders          [per-plane post-pass]
 └── EMM_Map_DataH                            [cleanup]
 ```

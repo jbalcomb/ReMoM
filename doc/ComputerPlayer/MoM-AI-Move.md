@@ -89,7 +89,7 @@ AI_Next_Turn()
                 |-> AI_Stacks_Garrison_Sites()              ...uses _ai_own_stack_count, etc.
                     |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
             ...Ocean (non-landmass)...
-            |-> AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup()                      ...kinda uses _ai_own_stack
+            |-> AI_Stacks_Wartime_Ocean_Movement_And_Cleanup()                      ...kinda uses _ai_own_stack
             |-> AI_Stacks_Ocean_Landmass_Orders()
 
 Definitely Done-Done:
@@ -141,7 +141,7 @@ Definitely Done-Done:
 [x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 [x]             |-> AI_Stacks_Garrison_Sites()
 [x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
-[x]             |-> AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup()    ...calls AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp);
+[x]             |-> AI_Stacks_Wartime_Ocean_Movement_And_Cleanup()    ...calls AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp);
 [x]                 |-> AI_Stacks_Init_Build_Target_Order()
 [x]             |-> AI_Stacks_Ocean_Landmass_Orders()                       ...calls AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp);
 [x]                 |-> AI_Stacks_Init_Build_Target_Order()
@@ -152,7 +152,7 @@ Definitely Done-Done:
 [x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 
-AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup()  IIF _ai_landmass_war_targets[] != 0
+AI_Stacks_Wartime_Ocean_Movement_And_Cleanup()  IIF _ai_landmass_war_targets[] != 0
     |-> AI_Stacks_Init_Build_Target_Order()
     (...|-> Kill_Unit() ...WTF?)
 
@@ -189,7 +189,7 @@ AI_Set_Unit_Orders(player_idx)
         ├── AI_Stacks_Stage_Expedition_Forces              [always]
         │   └── AI_Reevaluate_Continent     [5% roll when stage is full]
         └── AI_Stacks_Garrison_Sites            [gate: lmt_Own / lmt_Contested / lmt_Leaveable+]
-    ├── AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup                 [per-plane post-pass]
+    ├── AI_Stacks_Wartime_Ocean_Movement_And_Cleanup                 [per-plane post-pass]
     └── AI_Stacks_Ocean_Landmass_Orders          [per-plane post-pass]
 └── EMM_Map_DataH                            [cleanup]
 ```
@@ -218,16 +218,16 @@ _ai_continents__1
     AI_Reevaluate_Continent()
     AI_Evaluate_Continents()
     AI_Set_Unit_Orders+A7              add     dx, offset _ai_continents__0    ; _bdata_start                     
-    AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup+4A            mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
-    AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup+13A           mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
-    AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup+175           mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
+    AI_Stacks_Wartime_Ocean_Movement_And_Cleanup+4A            mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
+    AI_Stacks_Wartime_Ocean_Movement_And_Cleanup+13A           mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
+    AI_Stacks_Wartime_Ocean_Movement_And_Cleanup+175           mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
     AI_Stacks_Roamers_Target_Or_Deploy+2EA         mov     [byte ptr _ai_continents__0.Player_0.wx_array+bx], al; _bdata_start
     AI_Stacks_Relocate_Roamers+1F         mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
     AI_Stacks_Order_To_War_Landmass+154         mov     al, [byte ptr _ai_continents__0.Player_0.wx_array+bx]; _bdata_start
 
 ## _ai_landmass_war_targets[]
     Allocate_Data_Space()
-    AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup()
+    AI_Stacks_Wartime_Ocean_Movement_And_Cleanup()
     AI_Stacks_Ocean_Landmass_Orders()
     AI_Stacks_Roamers_Target_Or_Deploy()
     AI_Stacks_Order_To_War_Landmass()

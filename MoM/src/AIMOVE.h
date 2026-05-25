@@ -33,7 +33,7 @@ void AI_Set_Unit_Orders(int16_t player_idx);
 void AI_Stacks_Garrison_Sites(int16_t player_idx, int16_t wp, int16_t landmass_idx);
 
 // WZD o158p04
-void AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(int16_t player_idx, int16_t wp);
+void AI_Stacks_Wartime_Ocean_Movement_And_Cleanup(int16_t player_idx, int16_t wp);
 
 // WZD o158p05
 void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp);

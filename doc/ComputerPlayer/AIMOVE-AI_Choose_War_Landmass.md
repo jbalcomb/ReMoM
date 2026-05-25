@@ -42,9 +42,9 @@ The trade-off:
 ## _ai_landmass_war_targets[]
 XREF:
     Allocate_Data_Space+3B4         mov     [_ai_landmass_war_targets], (offset _players.spells_list+17E8h)  
-    AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup+D          mov     bx, [_ai_landmass_war_targets+bx]                                
-    AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup+3B         mov     bx, [_ai_landmass_war_targets+bx]                                
-    AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup+6B         mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Stacks_Wartime_Ocean_Movement_And_Cleanup+D          mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Stacks_Wartime_Ocean_Movement_And_Cleanup+3B         mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Stacks_Wartime_Ocean_Movement_And_Cleanup+6B         mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_Stacks_Ocean_Landmass_Orders+488 mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_Stacks_Ocean_Landmass_Orders+774 mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_Stacks_Ocean_Landmass_Orders+798 mov     bx, [_ai_landmass_war_targets+bx]                                
