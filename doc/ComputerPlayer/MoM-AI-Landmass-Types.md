@@ -141,7 +141,7 @@ Comment at [337](../../MoM/src/AIMOVE.c#L337) explicitly lists the "threat" grou
 |---|---|---|
 | [787-791](../../MoM/src/AIMOVE.c#L787) | `Contested` OR `NoOwnCity` | (gates a per-landmass action — read context for details) |
 
-### `G_AI_ProcessTransports__WIP` ([line 959](../../MoM/src/AIMOVE.c#L959))
+### `AI_Stacks_Ocean_Landmass_Orders` ([line 959](../../MoM/src/AIMOVE.c#L959))
 
 | Line | Condition | Action |
 |---|---|---|

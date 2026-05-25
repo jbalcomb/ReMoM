@@ -90,7 +90,7 @@ AI_Next_Turn()
                     |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
             ...Ocean (non-landmass)...
             |-> AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup()                      ...kinda uses _ai_own_stack
-            |-> G_AI_ProcessTransports__WIP()
+            |-> AI_Stacks_Ocean_Landmass_Orders()
 
 Definitely Done-Done:
 [ ] Next_Turn_Proc()
@@ -141,9 +141,9 @@ Definitely Done-Done:
 [x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 [x]             |-> AI_Stacks_Garrison_Sites()
 [x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
-[ ]             |-> AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup()  ...kinda uses _ai_own_stack
+[x]             |-> AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup()    ...calls AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp);
 [x]                 |-> AI_Stacks_Init_Build_Target_Order()
-[ ]             |-> G_AI_ProcessTransports__WIP()
+[x]             |-> AI_Stacks_Ocean_Landmass_Orders()                       ...calls AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp);
 [x]                 |-> AI_Stacks_Init_Build_Target_Order()
 [ ]                 |-> AI_Do_Meld()
 [x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
@@ -156,7 +156,7 @@ AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup()  IIF _ai_landmass_war_targets[]
     |-> AI_Stacks_Init_Build_Target_Order()
     (...|-> Kill_Unit() ...WTF?)
 
-G_AI_ProcessTransports__WIP()
+AI_Stacks_Ocean_Landmass_Orders()
     |-> AI_Stacks_Init_Build_Target_Order()
     |-> AI_Do_Meld()
     |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
@@ -190,7 +190,7 @@ AI_Set_Unit_Orders(player_idx)
         │   └── AI_Reevaluate_Continent     [5% roll when stage is full]
         └── AI_Stacks_Garrison_Sites            [gate: lmt_Own / lmt_Contested / lmt_Leaveable+]
     ├── AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup                 [per-plane post-pass]
-    └── G_AI_ProcessTransports__WIP          [per-plane post-pass]
+    └── AI_Stacks_Ocean_Landmass_Orders          [per-plane post-pass]
 └── EMM_Map_DataH                            [cleanup]
 ```
 
@@ -228,7 +228,7 @@ _ai_continents__1
 ## _ai_landmass_war_targets[]
     Allocate_Data_Space()
     AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup()
-    G_AI_ProcessTransports__WIP()
+    AI_Stacks_Ocean_Landmass_Orders()
     AI_Stacks_Roamers_Target_Or_Deploy()
     AI_Stacks_Order_To_War_Landmass()
     AI_Reevaluate_Continent()
@@ -255,7 +255,7 @@ _ai_ferry_count
     AI_Set_Unit_Orders()
     AI_Stacks_Stage_Expedition_Forces()
     ...
-    G_AI_ProcessTransports__WIP()
+    AI_Stacks_Ocean_Landmass_Orders()
     AI_SendToColonize__WIP()
     AI_Stacks_Ferry_Add_Location()
 
@@ -336,10 +336,10 @@ Down r AI_Stacks_Stage_Expedition_Forces+87   cmp ax, [g_ai_minattackstack]     
 Up   J NX_j_AI_Set_Move_Or_Goto_Target              jmp     AI_Stacks_Order_Attack_Target_Or_Goto_Destination         
      p AI_Stacks_Stage_Expedition_Forces+DD                       call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p AI_Stacks_Garrison_Sites+76A                    call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
-Down p G_AI_ProcessTransports__WIP+646              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
-Down p G_AI_ProcessTransports__WIP+75B              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
-Down p G_AI_ProcessTransports__WIP+915              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
-Down p G_AI_ProcessTransports__WIP+9FE              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_Stacks_Ocean_Landmass_Orders+646              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_Stacks_Ocean_Landmass_Orders+75B              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_Stacks_Ocean_Landmass_Orders+915              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
+Down p AI_Stacks_Ocean_Landmass_Orders+9FE              call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p AI_Stacks_Roamers_Target_Or_Deploy:loc_ED7E1             call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p AI_Stacks_Order_To_War_Landmass+15F                   call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination
 Down p AI_Stacks_Setup_Ferry+E1                    call    near ptr AI_Stacks_Order_Attack_Target_Or_Goto_Destination

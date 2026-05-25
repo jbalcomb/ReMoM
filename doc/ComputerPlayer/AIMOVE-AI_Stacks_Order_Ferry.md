@@ -83,7 +83,7 @@ The `unit_idx < 0 || unit_idx >= MAX_UNIT_COUNT` guard is more defensive than ty
 
 Three call sites:
 
-1. **[G_AI_ProcessTransports__WIP at line 1490](../../MoM/src/AIMOVE.c#L1490)** — when iterating own units and finding one with `_unit_type_table[unit_type].Transport > 0`, orders that transport unit to seek ferry. This is structurally odd (a transport ordering itself to seek ferry) — worth flagging as a suspect during walkthrough of `G_AI_ProcessTransports__WIP`. Possibly the intent is "this is the transport we want OTHERS to seek; mark it so we don't reprocess it this pass."
+1. **[AI_Stacks_Ocean_Landmass_Orders at line 1490](../../MoM/src/AIMOVE.c#L1490)** — when iterating own units and finding one with `_unit_type_table[unit_type].Transport > 0`, orders that transport unit to seek ferry. This is structurally odd (a transport ordering itself to seek ferry) — worth flagging as a suspect during walkthrough of `AI_Stacks_Ocean_Landmass_Orders`. Possibly the intent is "this is the transport we want OTHERS to seek; mark it so we don't reprocess it this pass."
 
 2. **[AI_Stacks_Setup_Ferry at line 2261](../../MoM/src/AIMOVE.c#L2261)** — inside Phase 7b (the no-nearby-ocean branch), which is unreachable due to the inverted `if(total_boat_capacity > 0)` gate. So in practice this caller never fires under current data conditions. See [AIMOVE-AI_Stacks_Setup_Ferry.md](AIMOVE-AI_Stacks_Setup_Ferry.md) (bug B12 in that doc) for details on why.
 

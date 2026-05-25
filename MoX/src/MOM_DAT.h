@@ -522,7 +522,7 @@ enum e_UNIT_STATUS
     us_Purify         =   8,
     us_Meld           =   9,
     us_Settle         =  10,
-    us_Ferry  =  11,
+    us_Ferry          =  11,    /* AI_Stacks_Ocean_Landmass_Orders() calls AI_Stacks_Order_Ferry() on boats */
     us_Unknown_12     =  12,
     us_Unknown_13     =  13,
     us_Unknown_14     =  14,
@@ -2922,32 +2922,32 @@ extern int16_t ai_transport_count;
 // WZD dseg:9096
 extern int16_t _ai_ferry_count;
 // WZD dseg:9098 
-extern int16_t _ai_ferry_wp_array[15];
+extern int16_t _ai_ferry_wp_array[MAX_AI_FERRIES];
 // WZD dseg:90B6 
-extern int16_t _ai_ferry_wy_array[15];
+extern int16_t _ai_ferry_wy_array[MAX_AI_FERRIES];
 // WZD dseg:90D4 
-extern int16_t _ai_ferry_wx_array[15];
+extern int16_t _ai_ferry_wx_array[MAX_AI_FERRIES];
 
 // WZD dseg:90F2
-extern int16_t * _ai_landmass_strength_ratios[2];
+extern int16_t * _ai_landmass_strength_ratios[NUM_PLANES];
 
 // WZD dseg:90F6
 /*
 allocated in Allocate_AI_Data()
 */
-extern int16_t * _ai_landmass_enemy_values[2];
+extern int16_t * _ai_landmass_enemy_values[NUM_PLANES];
 
 // WZD dseg:90FA
 /*
 allocated in Allocate_AI_Data()
 */
-extern int16_t * _ai_landmass_own_values[2];
+extern int16_t * _ai_landmass_own_values[NUM_PLANES];
 
 // WZD dseg:90FE
-extern int16_t * _ai_landmass_enemy_strengths[2];
+extern int16_t * _ai_landmass_enemy_strengths[NUM_PLANES];
 
 // WZD dseg:9102
-extern int16_t * _ai_landmass_own_strengths[2];
+extern int16_t * _ai_landmass_own_strengths[NUM_PLANES];
 
 // WZD dseg:9106
 extern struct s_AI_TARGET * _ai_all_enemy_stacks;
@@ -3158,7 +3158,6 @@ extern SAMB_ptr cityscape_rocks_seg[3];
 extern SAMB_ptr cityscape_trees_seg[3];
 
 // WZD dseg:9326
-// drake178: IMG_CTY_Scap_Houses@[15]
 extern SAMB_ptr cityscape_houses_seg[15];
 
 // WZD dseg:9344

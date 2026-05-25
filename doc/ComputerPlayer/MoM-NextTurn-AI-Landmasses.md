@@ -127,9 +127,9 @@ XREF:
     AI_Stacks_Order_To_War_Landmass+8C       mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_Stacks_Order_To_War_Landmass+F        mov     bx, [_ai_landmass_war_targets+bx]                                
     AI_Reevaluate_Continent+8DF   mov     bx, [_ai_landmass_war_targets+bx]                                
-    G_AI_ProcessTransports__WIP+488 mov     bx, [_ai_landmass_war_targets+bx]                                
-    G_AI_ProcessTransports__WIP+774 mov     bx, [_ai_landmass_war_targets+bx]                                
-    G_AI_ProcessTransports__WIP+798 mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Stacks_Ocean_Landmass_Orders+488 mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Stacks_Ocean_Landmass_Orders+774 mov     bx, [_ai_landmass_war_targets+bx]                                
+    AI_Stacks_Ocean_Landmass_Orders+798 mov     bx, [_ai_landmass_war_targets+bx]                                
 
 Allocate_Data_Space()
     mov     [_ai_landmass_war_targets], (offset _players.spells_list+17E8h)

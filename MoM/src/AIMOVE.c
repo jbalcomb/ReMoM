@@ -313,7 +313,7 @@ AI_Stacks_Roamers_Target_Or_Deploy()
 
         /* Process non-landmass based units */
         AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(player_idx, wp);  /* ¿ only for war landmass ? */
-        G_AI_ProcessTransports__WIP(player_idx, wp);
+        AI_Stacks_Ocean_Landmass_Orders(player_idx, wp);
         
     }
 
@@ -415,7 +415,7 @@ static void AI_Set_Unit_Orders__GEMINI(int player_idx)
 
         /* End of plane processing: naval and transport logistics */
         AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(player_idx, wp);
-        G_AI_ProcessTransports__WIP(player_idx, wp);
+        AI_Stacks_Ocean_Landmass_Orders(player_idx, wp);
     }
 
     /* Restore default EMM mapping */
@@ -1088,7 +1088,7 @@ void AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(int16_t player_idx, int16_t 
         {
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: %s: -> AI Stack Stranded\n", __FILE__, __LINE__, __FUNCTION__);
-    STU_DEBUGBREAK();
+    STU_DEBUG_BREAK();
 #endif
             /* ¿ OGBUG  Claude is quite concerned this is killing Seafaring Units that might still be on this square ? */
             stack_wx = _ai_own_stack_wx[itr_stacks];
@@ -1116,661 +1116,495 @@ void AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(int16_t player_idx, int16_t 
 
 
 // WZD o158p05
-// drake178: G_AI_ProcessTransports()
-void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
+void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
 {
-    int16_t Transport_Spaces[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Have_Own_City = 0;
-    int16_t Have_Allied_City = 0;
-    int16_t GoingTo_Order = 0;
-    int16_t Adjacent_Landmass = 0;
+    int16_t Transport_Spaces[MAX_AI_FERRIES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t landmass_has_own_city = 0;
+    int16_t landmass_has_ally_city = 0;
+    int16_t stack_has_goto = 0;
+    int16_t adjacent_landmass_idx = 0;
     int16_t Transport_Stack_Room = 0;
     int16_t Target_Queue_Index = 0;
-    int16_t itr_units = 0;
+    int16_t unit_idx = 0;
     int16_t itr_list_units = 0;
-    int16_t Adj_NonOcean_Y = 0;
-    int16_t Adj_NonOcean_X = 0;
+    int16_t adjacent_landmass_wy = 0;
+    int16_t adjacent_landmass_wx = 0;
     int16_t stack_wy = 0;
     int16_t stack_wx = 0;
     int16_t Landing_Allowed = 0;
     int16_t unit_type = 0;
-    int16_t Settler_In_Stack = 0;
-    int16_t All_Tansport_Stack = 0;
-    int16_t Transport_In_Stack = 0;
+    int16_t stack_has_settler = 0;
+    int16_t stack_has_only_boats = 0;
+    int16_t stack_has_boat = 0;
     int16_t itr2 = 0;
     int16_t list_unit_count = 0;
-    int16_t Tile_Index = 0;
-    int16_t Y_Offset = 0;
-    int16_t X_Offset = 0;
-    int16_t target_distance = 0;
-    int16_t closest_target_distance = 0;
+    int16_t landmass_node_index = 0;
+    int16_t wy_offset = 0;
+    int16_t wx_offset = 0;
+    int16_t delta_distance = 0;
+    int16_t min_delta_distance = 0;
     int16_t target_wy = 0;
     int16_t target_wx = 0;
     int16_t itr_stacks = 0;
-    int16_t itr1 = 0;  // _DI_
+    int16_t itr1 = 0;
 
 
-    GoingTo_Order = ST_FALSE;
+    /* Phase 1: Init */
+    stack_has_goto = ST_FALSE;
 
 
-    for(itr1 = 0; itr1 < 15; itr1++)
+    /* Phase 2: Transport_Spaces */
+    /* Phase 2a: Per-ferry-queue-entry capacity counter */
+    for(itr1 = 0; itr1 < MAX_AI_FERRIES; itr1++)
     {
-
         Transport_Spaces[itr1] = MAX_STACK;
-
     }
-
-
-// ; if the unit is going to a set of transport queue
-// ; coordinates and is a transport, reduce the
-// ; corresponding array element by its capacity plus 1
-// ; 
-// ; BUG: uses the wrong unit index for the transport
-// ;  check
-// ; BUG: should check transport first rather than last
-// ; BUG? how does this 9-x calculation work?
-
+    /* Phase 2b */
     for(itr2 = 0; itr2 < _units; itr2++)
     {
-
-        if(
-            (_UNITS[itr2].Status == us_GOTO)
-            &&
-            (_UNITS[itr2].owner_idx == player_idx)
-            &&
-            (_UNITS[itr2].wp == wp)
-        )
+        if(_UNITS[itr2].Status != us_GOTO)
         {
-
-            for(itr1 = 0; itr1 < _ai_ferry_count; itr1++)
-            {
-
-                if(
-                    (_UNITS[itr2].dst_wx == _ai_ferry_wx_array[itr1])
-                    &&
-                    (_UNITS[itr2].dst_wy == _ai_ferry_wy_array[itr1])
-                    &&
-                    (_ai_ferry_wp_array[itr1] == wp)
-                )
-                {
-
-                    // ; BUG: this is not the unit index
-                    Transport_Spaces[itr1] -= (_unit_type_table[_UNITS[itr1].type].Transport + 1);
-
-                }
-
-            }
-
+            continue;
         }
-
+        if(_UNITS[itr2].owner_idx != player_idx)
+        {
+            continue;
+        }
+        if(_UNITS[itr2].wp != wp)
+        {
+            continue;
+        }
+        /* unit's destination is a ferry stage-point */
+        for(itr1 = 0; itr1 < _ai_ferry_count; itr1++)
+        {
+            if(
+                (_UNITS[itr2].dst_wx == _ai_ferry_wx_array[itr1])
+                &&
+                (_UNITS[itr2].dst_wy == _ai_ferry_wy_array[itr1])
+                &&
+                (_ai_ferry_wp_array[itr1] == wp)
+            )
+            {
+                /* OGBUG  for unit_idx, should use itr2, instead of itr1 */
+                /* available stack slots at destination (+1 to account for the boat's place in the stack) */
+                Transport_Spaces[itr1] -= (_unit_type_table[_UNITS[itr1].type].Transport + 1);
+            }
+        }
     }
 
-
+    /* Phase 2c: invalidate ferry entries */
     for(itr1 = 0; itr1 < _ai_ferry_count; itr1++)
     {
-
+        /* flag any ferry entries that are full or overfull */
         if(Transport_Spaces[itr1] <= 0)
         {
-
             _ai_ferry_wp_array[itr1] = ST_UNDEFINED;
-
         }
-        
     }
 
 
-    // ; just did this in the previous function
+    /* Phase 3: make AI stack data for the Ocean */
+    /* Re-evaluate stacks and process moves */
     AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp);
 
 
+    /* Phase 4 */
     AI_Do_Meld(player_idx);
 
 
+    /* Phase 5: Per-ocean-stack dispatch */
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     {
 
-        Transport_In_Stack = ST_FALSE;
 
-        All_Tansport_Stack = ST_TRUE;
-
-        Settler_In_Stack = ST_FALSE;
-
-        GoingTo_Order = ST_FALSE;
-
+        stack_has_boat = ST_FALSE;
+        stack_has_only_boats = ST_TRUE;
+        stack_has_settler = ST_FALSE;
+        stack_has_goto = ST_FALSE;
         list_unit_count = _ai_own_stack_unit_count[itr_stacks];
-
         stack_wx = _ai_own_stack_wx[itr_stacks];
-
         stack_wy = _ai_own_stack_wy[itr_stacks];
 
 
-// ; evaluate some characteristics of the units in the
-// ; stack
-
-        for(itr_units = 0; itr_units < _units; itr_units++)
+/* Phase 5a: classify — stack_has_boat, stack_has_only_boats, stack_has_settler, stack_has_goto */
+        for(unit_idx = 0; unit_idx < _units; unit_idx++)
         {
-
             if(
-                (_UNITS[itr_units].wx == stack_wx)
+                (_UNITS[unit_idx].wx == stack_wx)
                 &&
-                (_UNITS[itr_units].wy == stack_wy)
+                (_UNITS[unit_idx].wy == stack_wy)
                 &&
-                (_UNITS[itr_units].wp == wp)
+                (_UNITS[unit_idx].wp == wp)
             )
             {
-
-                unit_type = _UNITS[itr_units].type;
-
+                unit_type = _UNITS[unit_idx].type;
                 if(_unit_type_table[unit_type].Transport > 0)
                 {
-
-                    Transport_In_Stack = ST_TRUE;
-
+                    stack_has_boat = ST_TRUE;
                 }
                 else
                 {
-
-                    All_Tansport_Stack = ST_FALSE;
-
+                    stack_has_only_boats = ST_FALSE;
                     if(_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST)
                     {
-
-                        Settler_In_Stack = ST_TRUE;
-
+                        stack_has_settler = ST_TRUE;
                     }
-
                 }
-
-                if(_UNITS[itr_units].Status == us_GOTO)
+                if(_UNITS[unit_idx].Status == us_GOTO)
                 {
-
-                    GoingTo_Order = ST_TRUE;
-
+                    stack_has_goto = ST_TRUE;
                 }
-
             }
-
-
         }
 
 
-// NOTE: the code-flow of the conditions/branching here *feel* *odd*...
+        /* No boat, nothing to do */
+        if(stack_has_boat != ST_TRUE)
+        {
+            continue;
+        }
 
-        if(Transport_In_Stack == ST_TRUE)
+
+        /* 5c	1261-1305	All-transport → closest ferry queue [caller=3] */
+        /* Phase 5c: all-transport stack → route to closest ferry queue */
+        if(stack_has_only_boats != ST_FALSE)
         {
 
-
-            if(All_Tansport_Stack != ST_FALSE)
+            min_delta_distance = 10000;  /* OGBUG  should be 1000, instead of 10000 */
+            for(itr1 = 0; itr1 < _ai_ferry_count; itr1++)
             {
-
-// ; find the closest transport request queue tile
-
-                closest_target_distance = 10000;
-
-                for(itr1 = 0; itr1 < _ai_ferry_count; itr1++)
+                if(_ai_ferry_wp_array[itr1] == wp)
                 {
-
-                    if(_ai_ferry_wp_array[itr1] == wp)
+                    delta_distance = Delta_XY_With_Wrap(stack_wx, stack_wy, _ai_ferry_wx_array[itr1], _ai_ferry_wy_array[itr1], WORLD_WIDTH);
+                    if(delta_distance < min_delta_distance)
                     {
-
-                        target_distance = Delta_XY_With_Wrap(stack_wx, stack_wy, _ai_ferry_wx_array[itr1], _ai_ferry_wy_array[itr1], WORLD_WIDTH);
-
-                        if(target_distance < closest_target_distance)
-                        {
-                            closest_target_distance = target_distance;
-
-                            target_wx = _ai_ferry_wx_array[itr1];
-                            
-                            target_wy = _ai_ferry_wy_array[itr1];
-                            
-                            Target_Queue_Index = itr1;
-
-                        }
-
+                        min_delta_distance = delta_distance;
+                        target_wx = _ai_ferry_wx_array[itr1];
+                        target_wy = _ai_ferry_wy_array[itr1];
+                        Target_Queue_Index = itr1;
                     }
-
                 }
-
-                if(closest_target_distance < 10000)
-                {
-
-// send transports from the stack to the queue location
-// until either it's full (in which case set its plane
-// to -1) or the transport stack is all assigned
-
-                    Transport_Stack_Room = Transport_Spaces[Target_Queue_Index];
-
-                    for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
-                    {
-
-                        if(Transport_Stack_Room > 0)
-                        {
-
-                            itr_units = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
-
-                            Transport_Stack_Room -= (_unit_type_table[_UNITS[itr_units].type].Transport + 1);
-
-#ifdef STU_DEBUG
-                            dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, itr_units, target_wx, target_wy, itr_stacks, itr_list_units);
-#endif
-                            g_ai_set_target_caller = 3;
-                            AI_Stacks_Order_Attack_Target_Or_Goto_Destination(itr_units, target_wx, target_wy, itr_stacks, itr_list_units);
-
-                        }
-
-                    }
-
-                    Transport_Spaces[Target_Queue_Index] = Transport_Stack_Room;
-
-                    if(Transport_Stack_Room <= 0)
-                    {
-
-                        _ai_ferry_wp_array[Target_Queue_Index] = ST_UNDEFINED;
-
-                    }
-
-                }
-
             }
-            else
+
+            if(min_delta_distance < 10000)
+            {
+                Transport_Stack_Room = Transport_Spaces[Target_Queue_Index];
+                for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
+                {
+                    if(Transport_Stack_Room > 0)
+                    {
+                        unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
+                        Transport_Stack_Room -= (_unit_type_table[_UNITS[unit_idx].type].Transport + 1);
+#ifdef STU_DEBUG
+                        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
+#endif
+                        g_ai_set_target_caller = 3;
+                        AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
+                    }
+                }
+                Transport_Spaces[Target_Queue_Index] = Transport_Stack_Room;
+                if(Transport_Stack_Room <= 0)
+                {
+                    _ai_ferry_wp_array[Target_Queue_Index] = ST_UNDEFINED;
+                }
+            }
+
+            continue;
+        }
+        
+
+        /* 5d	1306-1309	Mixed-stack outer gate: skip if already-going */
+        if(stack_has_goto != ST_FALSE)
+        {
+            continue;
+        }
+
+
+        /* 5e	1313-1335	3x3 adjacent ocean-tile scan */
+        /* OGBUG  no range checks */
+        adjacent_landmass_wx = 0;
+        adjacent_landmass_wy = 0;
+        Landing_Allowed = ST_FALSE;
+        for(wy_offset = -1; wy_offset < 2; wy_offset++)
+        {
+            for(wx_offset = -1; wx_offset < 2; wx_offset++)
+            {
+                /* ¿ OGBUG bad indexing, incorrect order of operation ? */
+                /* adjacent square is a land square and occupieable */
+                if(
+                    (_landmasses[((wp * WORLD_SIZE) + ((stack_wy + wy_offset) * WORLD_WIDTH) + (stack_wx + wx_offset))] != 0)
+                    &&
+                    (g_ai_evaluation_map[wp][(((stack_wy + wy_offset) * WORLD_WIDTH) + (stack_wx + wx_offset))] == 0)
+                )
+                {
+                    adjacent_landmass_idx = _landmasses[((wp * WORLD_SIZE) + ((stack_wy + wy_offset) * WORLD_WIDTH) + (stack_wx + wx_offset))];
+                    adjacent_landmass_wx = (stack_wx + wx_offset);
+                    adjacent_landmass_wy = (stack_wy + wy_offset);
+                    Landing_Allowed = ST_TRUE;
+                }
+            }
+        }
+
+
+        /* Phase 5f:  Non-settler landing eligibility (war + city checks) */
+        if(Landing_Allowed == ST_TRUE)
+        {
+
+            if(stack_has_settler != ST_TRUE)
             {
 
-                if(GoingTo_Order == ST_FALSE)
+                /* IDA grey-purple */
+
+                /* OGBUG  no range checking */
+                Landing_Allowed = ST_FALSE;
+                for(wy_offset = -1; wy_offset < 2; wy_offset++)
                 {
-
-// ; check whether there is an adjacent land tile, and if
-// ; so, store the coordinates of the last one
-// ; 
-// ; BUG: the coordinates are not range checked
-
-                    Adj_NonOcean_X = 0;
-
-                    Adj_NonOcean_Y = 0;
-
-                    Landing_Allowed = ST_FALSE;
-
-                    for(Y_Offset = -1; Y_Offset < 2; Y_Offset++)
+                    for(wx_offset = -1; wx_offset < 2; wx_offset++)
                     {
-
-                        for(X_Offset = -1; X_Offset < 2; X_Offset++)
+                        /* Is the adjacent landmass the war landmass? */
+                        if(_landmasses[((wp * WORLD_SIZE) + ((stack_wy + wy_offset) * WORLD_WIDTH) + (stack_wx + wx_offset))] == _ai_landmass_war_targets[wp][player_idx])
                         {
-                            
-                            // BUGBUG bad indexing, incorrect order of operation
-                            // (g_ai_evaluation_map[wp][(((stack_wy * WORLD_WIDTH) + Y_Offset) + (X_Offset + stack_wx))] == 0)
-                            // (g_ai_evaluation_map[wp][(((Y_Offset + stack_wy) * WORLD_WIDTH) + (X_Offset + stack_wx))] == 0)
-                            if(
-                                (_landmasses[((wp * WORLD_SIZE) + ((Y_Offset + stack_wy) * WORLD_WIDTH) + (X_Offset + stack_wx))] == 0)  // ; BUG: no range checks
-                                &&
-                                (g_ai_evaluation_map[wp][(((stack_wy * WORLD_WIDTH) + Y_Offset) + (X_Offset + stack_wx))] == 0)  // ; BUG: no range checks
-                            )
-                            {
-
-                                Adjacent_Landmass = _landmasses[((wp * WORLD_SIZE) + ((Y_Offset + stack_wy) * WORLD_WIDTH) + (X_Offset + stack_wx))];
-
-                                Adj_NonOcean_X = (X_Offset + stack_wx);
-
-                                Adj_NonOcean_Y = (Y_Offset + stack_wy);
-
-                                Landing_Allowed = ST_TRUE;
-
-                            }
-
+                            adjacent_landmass_idx = _landmasses[((wp * WORLD_SIZE) + ((stack_wy + wy_offset) * WORLD_WIDTH) + (stack_wx + wx_offset))];
+                            adjacent_landmass_wx = (stack_wx + wx_offset);
+                            adjacent_landmass_wy = (stack_wy + wy_offset);
+                            Landing_Allowed = ST_TRUE;
                         }
-
                     }
+                }
 
-
-                    if(Landing_Allowed == ST_TRUE)
+                /* maybe, override the unload flag */
+                /* HERE: Landing_Allowed was ST_TRUE, but now ST_FALSE. Because? Adjacent landmass was not war landmass? */
+                if(Landing_Allowed == ST_FALSE)
+                {
+                    landmass_has_own_city = ST_FALSE;
+                    landmass_has_ally_city = ST_FALSE;
+                    for(itr1 = 0; itr1 < _cities; itr1++)
                     {
-
-                        if(Settler_In_Stack != ST_TRUE)
-                        {
-
-// ; check whether one of the adjacent tiles belongs to
-// ; the main war continent
-// ; 
-// ; BUG: no range checking
-
-                            Landing_Allowed = ST_FALSE;
-
-                            for(Y_Offset = -1; Y_Offset < 2; Y_Offset++)
-                            {
-
-                                for(X_Offset = -1; X_Offset < 2; X_Offset++)
-                                {
-
-                                    if(_landmasses[((wp * WORLD_SIZE) + ((Y_Offset + stack_wy) * WORLD_WIDTH) + (X_Offset + stack_wx))] == _ai_landmass_war_targets[wp][player_idx])
-                                    {
-
-                                        Adjacent_Landmass = _landmasses[((wp * WORLD_SIZE) + ((Y_Offset + stack_wy) * WORLD_WIDTH) + (X_Offset + stack_wx))];
-
-                                        Adj_NonOcean_X = (X_Offset + stack_wx);
-
-                                        Adj_NonOcean_Y = (Y_Offset + stack_wy);
-
-                                        Landing_Allowed = ST_TRUE;
-
-                                    }
-
-                                }
-
-                            }
-
-
-                            if(Landing_Allowed == ST_FALSE)
-                            {
-
-// ; check whether the stored adjacent continent has an
-// ; own or allied city
-// ; 
-// ; BUG: only looks at the last stored continent
-
-                                Have_Own_City = ST_FALSE;
-
-                                Have_Allied_City = ST_FALSE;
-
-                                for(itr1 = 0; itr1 < _cities; itr1++)
-                                {
-
-                                    if(
-                                        (_CITIES[itr1].wp == wp)
-                                        &&
-                                        (_landmasses[((wp * WORLD_SIZE) + (_CITIES[itr1].wy * WORLD_WIDTH) + _CITIES[itr1].wx)] == Adjacent_Landmass)
-                                    )
-                                    {
-
-                                        if(_CITIES[itr1].owner_idx == player_idx)
-                                        {
-
-                                            Have_Own_City = ST_TRUE;
-
-                                        }
-                                        else
-                                        {
-
-                                            if(_players[player_idx].Dipl.Dipl_Status[_CITIES[itr1].owner_idx] == DIPL_Alliance)
-                                            {
-
-                                                Have_Allied_City = ST_TRUE;
-
-                                            }
-
-                                        }
-
-                                    }
-
-                                }
-
-                            }
-
-                            if(
-                                (Have_Own_City == ST_TRUE)
-                                ||
-                                (Have_Allied_City == ST_TRUE)
-                            )
-                            {
-
-                                Landing_Allowed = ST_FALSE;
-
-                            }
-
-                        }
-                        else
-                        {
-
-// ; check whether one of the adjacent tiles belongs to
-// ; the next colony continent
-// ; 
-// ; BUG: no range checking
-
-                            for(Y_Offset = -1; Y_Offset < 2; Y_Offset++)
-                            {
-
-                                for(X_Offset = -1; X_Offset < 2; X_Offset++)
-                                {
-
-                                    if(
-                                        (_landmasses[((wp * WORLD_SIZE) + ((Y_Offset + stack_wy) * WORLD_WIDTH) + (X_Offset + stack_wx))] == _ai_landmass_war_targets[wp][player_idx])
-                                        &&
-                                        _ai_landmass_settler_targets[wp][player_idx] != 0
-                                    )
-                                    {
-
-                                        Adjacent_Landmass = _landmasses[((wp * WORLD_SIZE) + ((Y_Offset + stack_wy) * WORLD_WIDTH) + (X_Offset + stack_wx))];
-
-                                        Adj_NonOcean_X = (X_Offset + stack_wx);
-
-                                        Adj_NonOcean_Y = (Y_Offset + stack_wy);
-
-                                    }
-
-                                }
-
-                            }
-
-                            if(
-                                (
-                                    (AI_Enemy_Unit_In_Range(stack_wx, stack_wy, wp, 5, player_idx, Adjacent_Landmass) != ST_FALSE)
-                                    ||
-                                    (_ai_continents.plane[wp].player[player_idx].type_array[Adjacent_Landmass] != lmt_NoOwnCity)
-                                )
-                                &&
-                                (_ai_landmass_settler_targets[wp][player_idx] != Adjacent_Landmass)
-                            )
-                            {
-
-                                Landing_Allowed = ST_FALSE;
-
-                            }
-                            else
-                            {
-
-                                Landing_Allowed = ST_TRUE;
-
-                            }
-
-                        }
-
-                    }
-
-
-                    if(Landing_Allowed == ST_TRUE)
-                    {
-
-// ; set all transports in the stack to seek transport,
-// ; and all other units to move to the stored adjacent
-// ; tile
-// ; 
-// ; BUG: fails to check for already assigned units
-// ; BUG? setting ships to seek transport?
-
-                        for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
-                        {
-
-                            itr_units = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
-
-// ; BUG: need to check for -1 first
-
-                            unit_type = _UNITS[itr_units].type;
-
-                            if(_unit_type_table[unit_type].Transport > 0)
-                            {
-
-                                AI_Stacks_Order_Ferry(itr_units, itr_stacks, itr_list_units);
-
-                            }
-                            else
-                            {
-
-#ifdef STU_DEBUG
-                                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
-#endif
-                                g_ai_set_target_caller = 4;
-                                AI_Stacks_Order_Attack_Target_Or_Goto_Destination(itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
-
-                            }
-
-                        }
-
-                    }
-                    else
-                    {
-
                         if(
-                            (Settler_In_Stack == ST_TRUE)
+                            (_CITIES[itr1].wp == wp)
                             &&
-                            (_ai_landmass_settler_targets[wp][player_idx] != 0)
+                            (_landmasses[((wp * WORLD_SIZE) + (_CITIES[itr1].wy * WORLD_WIDTH) + _CITIES[itr1].wx)] == adjacent_landmass_idx)
                         )
                         {
-
-// ; if the new colony's stage point has an adjacent ocean
-// ; tile, set all units in the stack to move there
-// ; 
-// ; BUG: no range checking
-
-                            Adj_NonOcean_X = 0;
-
-                            Adj_NonOcean_Y = 0;
-
-                            for(Y_Offset = -1; Y_Offset < 2; Y_Offset++)
+                            if(_CITIES[itr1].owner_idx == player_idx)
                             {
-
-                                for(X_Offset = -1; X_Offset < 2; X_Offset++)
+                                landmass_has_own_city = ST_TRUE;
+                            }
+                            else
+                            {
+                                if(_players[player_idx].Dipl.Dipl_Status[_CITIES[itr1].owner_idx] == DIPL_Alliance)
                                 {
-
-                                    if(_landmasses[((wp * WORLD_SIZE) + ((Y_Offset + _ai_landmass_settler_targets_wy_array[wp][player_idx]) * WORLD_WIDTH) + (X_Offset + _ai_landmass_settler_targets_wx_array[wp][player_idx]))] != 0)
-                                    {
-
-                                        Adj_NonOcean_X = (X_Offset + _ai_landmass_settler_targets_wx_array[wp][player_idx]);
-
-                                        Adj_NonOcean_Y = (Y_Offset + _ai_landmass_settler_targets_wy_array[wp][player_idx]);
-
-                                        Landing_Allowed = ST_TRUE;
-
-                                    }
-
+                                    landmass_has_ally_city = ST_TRUE;
                                 }
-
                             }
-
-                            for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
-                            {
-
-                                itr_units = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
-
-#ifdef STU_DEBUG
-                                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
-#endif
-                                g_ai_set_target_caller = 5;
-                                AI_Stacks_Order_Attack_Target_Or_Goto_Destination(itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
-
-                            }
-
-
-
                         }
-                        else
-                        {
-
-                            if(_ai_landmass_war_targets[wp][player_idx] != 0)
-                            {
-
-// ; find the closest empty unload tile on the main war continent, if any
-
-                                Adj_NonOcean_X = stack_wx;
-
-                                Adj_NonOcean_Y = stack_wy;
-
-                                Tile_Index = _ai_landmass_dock_squares_heads[wp][_ai_landmass_war_targets[wp][player_idx]];
-
-                                closest_target_distance = 1000;
-
-                                if(Tile_Index != ST_UNDEFINED)
-                                {
-
-                                    target_distance = Delta_XY_With_Wrap(_ai_landmass_dock_squares_wx_array[wp][Tile_Index], _ai_landmass_dock_squares_wy_array[wp][Tile_Index], Adj_NonOcean_X, Adj_NonOcean_Y, WORLD_WIDTH);
-
-                                    if(target_distance < closest_target_distance)
-                                    {
-
-                                        X_Offset = _ai_landmass_dock_squares_wx_array[wp][Tile_Index];
-
-                                        Y_Offset = _ai_landmass_dock_squares_wy_array[wp][Tile_Index];
-
-                                        if(g_ai_evaluation_map[wp][((Y_Offset * WORLD_WIDTH) + X_Offset)] == 0)  // empty map square
-                                        {
-
-                                            closest_target_distance = target_distance;
-
-                                            target_wx = X_Offset;
-
-                                            target_wy = Y_Offset;
-
-                                        }
-
-                                    }
-
-                                        Tile_Index = _ai_landmass_dock_squares_lists[wp][Tile_Index];
-
-                                }
-
-
-                                if(closest_target_distance < 1000)
-                                {
-
-// ; set all units in the stack to move to either an ocean
-// ; tile adjacent to the target tile if one exists, or
-// ; to their current location if there aren't any
-// ; 
-// ; BUG? possible move order to current position
-
-                                    for(Y_Offset = -1; Y_Offset < 2; Y_Offset++)
-                                    {
-
-                                        for(X_Offset = -1; X_Offset < 2; X_Offset++)
-                                        {
-
-                                            if(_landmasses[((wp * WORLD_SIZE) + ((target_wy + Y_Offset) * WORLD_WIDTH) + (target_wx + X_Offset))] != 0)
-                                            {
-
-                                                Adj_NonOcean_X = (target_wx + X_Offset);
-
-                                                Adj_NonOcean_Y = (target_wy + Y_Offset);
-
-                                            }
-
-                                        }
-
-                                    }
-
-                                    for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
-                                    {
-
-                                        itr_units = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
-
-#ifdef STU_DEBUG
-                                        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
-#endif
-                                        g_ai_set_target_caller = 6;
-                                        AI_Stacks_Order_Attack_Target_Or_Goto_Destination(itr_units, Adj_NonOcean_X, Adj_NonOcean_Y, itr_stacks, itr_list_units);
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
-
                     }
-
                 }
-
+                if(
+                    (landmass_has_own_city == ST_TRUE)
+                    ||
+                    (landmass_has_ally_city == ST_TRUE)
+                )
+                {
+                    Landing_Allowed = ST_FALSE;
+                }
+                else
+                {
+                    Landing_Allowed = ST_TRUE;
+                }
             }
+            else  /* if(stack_has_settler != ST_TRUE) */
+            {
+                /* IDA light-purple */
+
+                /* 5g	1397-1435	Settler landing eligibility (target + enemy-proximity) */
+                /* OGBUG  no range checking */
+                for(wy_offset = -1; wy_offset < 2; wy_offset++)
+                {
+                    for(wx_offset = -1; wx_offset < 2; wx_offset++)
+                    {
+                        if(
+                            (_landmasses[((wp * WORLD_SIZE) + ((stack_wy + wy_offset) * WORLD_WIDTH) + (stack_wx + wx_offset))] == _ai_landmass_settler_targets[wp][player_idx])
+                            &&
+                            _ai_landmass_settler_targets[wp][player_idx] != 0
+                        )
+                        {
+                            adjacent_landmass_idx = _landmasses[((wp * WORLD_SIZE) + ((stack_wy + wy_offset) * WORLD_WIDTH) + (stack_wx + wx_offset))];
+                            adjacent_landmass_wx = (stack_wx + wx_offset);
+                            adjacent_landmass_wy = (stack_wy + wy_offset);
+                        }
+                    }
+                }
+                /* override the unload flag */
+                if(
+                    (
+                        (AI_Enemy_Unit_In_Range(stack_wx, stack_wy, wp, 5, player_idx, adjacent_landmass_idx) != ST_FALSE)
+                        ||
+                        (_ai_continents.plane[wp].player[player_idx].type_array[adjacent_landmass_idx] != lmt_NoOwnCity)
+                    )
+                    &&
+                    (_ai_landmass_settler_targets[wp][player_idx] != adjacent_landmass_idx)
+                )
+                {
+                    Landing_Allowed = ST_FALSE;
+                }
+                else
+                {
+                    Landing_Allowed = ST_TRUE;
+                }
+            }  /* END:  if(stack_has_settler != ST_TRUE) */
 
         }
 
-    }
+/*
+    BEGIN:  Assign Orders
+*/
+        /* HERE:
+            join war or settle continent
+            - all just updated:
+            Landing_Allowed, adjacent_landmass_idx, adjacent_landmass_wx, adjacent_landmass_wy
+        */
+        /* 5h	1439-1462	LAND DISPATCH [caller=4] */
+        if(Landing_Allowed == ST_TRUE)
+        {
+            for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
+            {
+                /* OGBUG  MUST test unit_idx is not ST_UNDEFINED */
+                unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
+                unit_type = _UNITS[unit_idx].type;
+                if(_unit_type_table[unit_type].Transport > 0)
+                {
+                    AI_Stacks_Order_Ferry(unit_idx, itr_stacks, itr_list_units);
+                }
+                else
+                {
+#ifdef STU_DEBUG
+                    dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
+#endif
+                    g_ai_set_target_caller = 4;
+                    AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
+                }
+            }
+
+            continue;
+
+        }
+/*
+    END:  Assign Orders
+*/
+
+
+/*
+BEGIN:  fixup bad orders, for valid colony or military stack
+*/
+    
+        /* IDA Orange */
+
+        /* 5i	1465-1496	Settler-fallback dispatch [caller=5] */
+        /*
+            WTF?
+            maybe, colonization stack bumped into some landmass
+            but, that landmass was not the colonization landmass
+            so, just in case, but for no good reason
+            double-check the colonization landmass coordinates
+            and reset all the unit's orders
+            (did we already handle 'colonization landmass was unset'?)
+        */
+        if((stack_has_settler == ST_TRUE) && (_ai_landmass_settler_targets[wp][player_idx] != 0))
+        {
+// ; if the new colony's stage point has an adjacent ocean tile, set all units in the stack to move there
+// ; BUG: no range checking
+            adjacent_landmass_wx = 0;
+            adjacent_landmass_wy = 0;
+            for(wy_offset = -1; wy_offset < 2; wy_offset++)
+            {
+                for(wx_offset = -1; wx_offset < 2; wx_offset++)
+                {
+                    /* if colonization landmass has valid stage-point coordinates... */
+                    if(_landmasses[((wp * WORLD_SIZE) + ((wy_offset + _ai_landmass_settler_targets_wy_array[wp][player_idx]) * WORLD_WIDTH) + (wx_offset + _ai_landmass_settler_targets_wx_array[wp][player_idx]))] == 0)
+                    {
+                        adjacent_landmass_wx = (wx_offset + _ai_landmass_settler_targets_wx_array[wp][player_idx]);
+                        adjacent_landmass_wy = (wy_offset + _ai_landmass_settler_targets_wy_array[wp][player_idx]);
+                        Landing_Allowed = ST_TRUE;  /* OGBUG  bogus line of code; c&p error? */
+                    }
+                }
+            }
+            for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
+            {
+                unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
+#endif
+                g_ai_set_target_caller = 5;
+                AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
+            }
+
+            continue;
+
+        }
+    
+        /* IDA burgundy */
+
+        /* 5j	1500-1551	War-landing dock dispatch [caller=6] */
+        /* Do we have a war landmass? */
+        /* if, if, if, reset unit's orders to nearest shoreline on war continent */
+        if(_ai_landmass_war_targets[wp][player_idx] != 0)
+        {
+            adjacent_landmass_wx = stack_wx;
+            adjacent_landmass_wy = stack_wy;
+            landmass_node_index = _ai_landmass_dock_squares_heads[wp][_ai_landmass_war_targets[wp][player_idx]];
+            min_delta_distance = 1000;  /* NOTE(JimBalcomb,20260525): this line prove that landmass_node_index was not cleverly set in the while statement */
+            while(landmass_node_index != ST_UNDEFINED)
+            {
+                delta_distance = Delta_XY_With_Wrap(_ai_landmass_dock_squares_wx_array[wp][landmass_node_index], _ai_landmass_dock_squares_wy_array[wp][landmass_node_index], adjacent_landmass_wx, adjacent_landmass_wy, WORLD_WIDTH);
+                if(delta_distance < min_delta_distance)
+                {
+                    /* landmass_node_wx, landmass_node_wy */
+                    wx_offset = _ai_landmass_dock_squares_wx_array[wp][landmass_node_index];
+                    wy_offset = _ai_landmass_dock_squares_wy_array[wp][landmass_node_index];
+                    /* occupieable - no site or enemy stack */
+                    if(g_ai_evaluation_map[wp][((wy_offset * WORLD_WIDTH) + wx_offset)] == 0)
+                    {
+                        min_delta_distance = delta_distance;
+                        target_wx = wx_offset;
+                        target_wy = wy_offset;
+                    }
+                }
+                landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
+            }
+            if(min_delta_distance < 1000)
+            {
+                for(wy_offset = -1; wy_offset < 2; wy_offset++)
+                {
+                    for(wx_offset = -1; wx_offset < 2; wx_offset++)
+                    {
+                        if(_landmasses[((wp * WORLD_SIZE) + ((target_wy + wy_offset) * WORLD_WIDTH) + (target_wx + wx_offset))] == 0)
+                        {
+                            adjacent_landmass_wx = (target_wx + wx_offset);
+                            adjacent_landmass_wy = (target_wy + wy_offset);
+                        }
+                    }
+                }
+                for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
+                {
+                    unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
+#ifdef STU_DEBUG
+                    dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
+#endif
+                    g_ai_set_target_caller = 6;
+                    AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
+                }
+            }
+
+            continue;
+
+        }  /* END:  if(_ai_landmass_war_targets[wp][player_idx] != 0) */
+
+/*
+END:  fixup bad orders, for valid colony or military stack
+*/
+
+    }  /* END:  for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++) */
 
 }
 
@@ -2161,18 +1995,17 @@ void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, 
     int16_t adjacent_unit_on_ocean_wy = 0;  // last-seen ocean unit's square
     int16_t adjacent_unit_on_ocean_wx = 0;  // last-seen ocean unit's square
     int16_t Adjacent_X = 0;
-    int16_t Y_Offset = 0;
+    int16_t wy_offset = 0;
     int16_t itr_units = 0;
     int16_t found_adjacent_unit_on_ocean = 0;
     int16_t niu_embarkable_found = 0;
     int16_t itr_list_units = 0;
-    int16_t X_Offset = 0;
     int16_t wx_offset = 0;
-    int16_t wy_offset = 0;
     int16_t unit_wx = 0;  // DNE in Dasm, reuses wx_offset
     int16_t unit_wy = 0;  // DNE in Dasm, reuses wy_offset
     int16_t itr_stack_wx = 0;  // DNE in Dasm, reuses Adjacent_X
-    int16_t itr_stack_wy = 0;  // DNE in Dasm, reuses Y_Offset
+    int16_t itr_stack_wy = 0;  // DNE in Dasm, reuses wy_offset
+
 
     /* Phase 1: Init*/
     niu_Landmass_idx = landmass_idx;
@@ -5066,7 +4899,7 @@ int16_t Map_Square_Area_Has_Opponent(int16_t wx, int16_t wy, int16_t wp, int16_t
 
 // WZD o158p33
 /*
-OON XREF: G_AI_ProcessTransports__WIP()
+OON XREF: AI_Stacks_Ocean_Landmass_Orders()
 ~== Map_Square_Area_Has_Opponent(), but Landmass aware
 */
 int16_t AI_Enemy_Unit_In_Range(int16_t wx, int16_t wy, int16_t wp, int16_t range, int16_t player_idx, int16_t landmass_idx)

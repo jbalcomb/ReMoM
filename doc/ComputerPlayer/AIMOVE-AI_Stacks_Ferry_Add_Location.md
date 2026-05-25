@@ -14,7 +14,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Stacks_Ferry_Add
 
 Add a `(wx, wy, wp)` coordinate triple to the global **seek-transport request list** (`_ai_ferry_wx_array/Ys/Ps` parallel arrays), but only if the triple isn't already present. Effectively "register that the AI wants a transport to show up at this location."
 
-The seek-transport list is consumed later by [`G_AI_ProcessTransports__WIP`](AIMOVE-G_AI_ProcessTransports__WIP.md) (slot 5 in the next turn's dispatch, [AIMOVE.c:1074, 1201, 1207](../../MoM/src/AIMOVE.c#L1074)) — that pass directs idle transport stacks to the registered pickup points.
+The seek-transport list is consumed later by [`AI_Stacks_Ocean_Landmass_Orders`](AIMOVE-AI_Stacks_Ocean_Landmass_Orders.md) (slot 5 in the next turn's dispatch, [AIMOVE.c:1074, 1201, 1207](../../MoM/src/AIMOVE.c#L1074)) — that pass directs idle transport stacks to the registered pickup points.
 
 Called only from [`AI_Stacks_Setup_Ferry`](AIMOVE-AI_Stacks_Setup_Ferry.md) at [line 2089](../../MoM/src/AIMOVE.c#L2089), after that function locates an ocean tile near a rallying stack.
 
@@ -113,7 +113,7 @@ AI_Stacks_Ferry_Add_Location(wx, wy, wp)
 
 - [AIMOVE-AI_Stacks_Relocate_Roamers.md](AIMOVE-AI_Stacks_Relocate_Roamers.md) — entry-point that drives this chain
 - [AIMOVE-AI_Stacks_Setup_Ferry.md](AIMOVE-AI_Stacks_Setup_Ferry.md) — sole caller of this function
-- [AIMOVE-G_AI_ProcessTransports__WIP.md](AIMOVE-G_AI_ProcessTransports__WIP.md) — consumer of the seek-transport list on the next turn
+- [AIMOVE-AI_Stacks_Ocean_Landmass_Orders.md](AIMOVE-AI_Stacks_Ocean_Landmass_Orders.md) — consumer of the seek-transport list on the next turn
 - [MoX/src/MOM_DAT.h:2922-2928](../../MoX/src/MOM_DAT.h#L2922-L2928) — declarations for `_ai_ferry_count` and the three parallel arrays
 - [MoX/src/MOM_DEF.h:161](../../MoX/src/MOM_DEF.h#L161) — `MAX_AI_FERRIES` constant
 - [MoM-AI-AIMOVE-Index.md](MoM-AI-AIMOVE-Index.md) — function index

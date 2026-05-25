@@ -150,7 +150,7 @@ AI_Stacks_Ferry_Add_Location(ocean_wx, ocean_wy, wp);
 
 Adds `(ocean_wx, ocean_wy, wp)` to the ferry-request list — see [AIMOVE-AI_Stacks_Ferry_Add_Location.md](AIMOVE-AI_Stacks_Ferry_Add_Location.md). Subject to B2 above (may be a land square).
 
-This is the **patient-path** half of the function — the request gets serviced next turn by `G_AI_ProcessTransports__WIP` directing an idle transport toward the registered coord.
+This is the **patient-path** half of the function — the request gets serviced next turn by `AI_Stacks_Ocean_Landmass_Orders` directing an idle transport toward the registered coord.
 
 ### Phase 4 — Issue goto-stage orders if stack not at stage ([lines 2092-2115](../../MoM/src/AIMOVE.c#L2092-L2115))
 
@@ -348,7 +348,7 @@ else  /* (found_adjacent_unit_on_ocean == ST_FALSE) */
 
 This is documented in source (`/* unreachable ... */`). It looks like the `if(total_boat_capacity > 0)` gate is a copy-paste from Phase 7a where the same gate fits ("only embark if there's spare capacity"). In Phase 7b the intent was probably the opposite — "if NO nearby ocean unit, mark each unit as actively seeking transport via `us_Ferry`" — but the inverted gate makes the body unreachable.
 
-**Why no community complaints despite the dead code?** The patient path (Phase 3 + next-turn `G_AI_ProcessTransports__WIP` + auto-embark when units walk onto a transport's tile) covers the basic ferry need without Phase 7b firing. Phase 7b's job was to mark units with `us_Ferry` status as an additional optimization — players don't notice its absence because the patient path is functionally adequate.
+**Why no community complaints despite the dead code?** The patient path (Phase 3 + next-turn `AI_Stacks_Ocean_Landmass_Orders` + auto-embark when units walk onto a transport's tile) covers the basic ferry need without Phase 7b firing. Phase 7b's job was to mark units with `us_Ferry` status as an additional optimization — players don't notice its absence because the patient path is functionally adequate.
 
 (The function [`AI_Stacks_Order_Ferry`](AIMOVE-AI_Stacks_Order_Ferry.md) itself IS called from elsewhere — lines 1490 and 5127 — so it's not dead, just this caller path is.)
 

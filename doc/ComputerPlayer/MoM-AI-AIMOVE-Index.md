@@ -38,11 +38,11 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **Purpose:** Per-(player, plane) **post-pass** — runs once per plane after the inner per-landmass loop closes. Two halves: (1) pull land-stationed mobile-on-water units (AirTravel/WaterTravel/NonCorporeal, non-melder, non-transport, us_Ready) toward the war-landmass stage point — fortress-closest `lmt_Contested`/`lmt_NoOwnCity` landmass as fallback; (2) rebuild own-stacks for ocean (`landmass_idx = 0`) and `Kill_Unit`-drown every stack with no consumed slot AND no water-mobile unit. See [AIMOVE-AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup.md](AIMOVE-AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup.md).
 - **Reads `lmt_*`:** `lmt_Contested`, `lmt_NoOwnCity` ([lines 932-934](../../MoM/src/AIMOVE.c#L932-L934)) in the Phase 2 fallback stage-point scan.
 
-### `G_AI_ProcessTransports__WIP` — [line 959](../../MoM/src/AIMOVE.c#L959)
+### `AI_Stacks_Ocean_Landmass_Orders` — [line 1119](../../MoM/src/AIMOVE.c#L1119)
 - **drake178:** `G_AI_ProcessTransports()` (o158p05)
-- **End:** ~line 1634
-- **Purpose:** TBD
-- **Reads `lmt_*`:** `lmt_NoOwnCity` (line 1394)
+- **End:** ~line 1608
+- **Purpose:** Per-(player, plane) **post-pass** — sibling of [`AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup`](AIMOVE-AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup.md). Five phases: (1) dead init of `GoingTo_Order`; (2) debit `_ai_ferry_*` queue entries by the capacity of en-route transports and invalidate exhausted entries (with an OGBUG that uses the wrong unit-index); (3) rebuild `_ai_own_stack_*` for the OCEAN (`landmass_idx = 0`); (4) `AI_Do_Meld(player_idx)` out-of-band; (5) for each ocean stack containing at least one transport, run a 10-block decision tree (5a classify, 5b gate, 5c all-transport → closest ferry-queue [caller=3], 5d-j mixed stacks: scan adjacent, gate by settler/non-settler landing eligibility, land dispatch [caller=4, transports get suspect `us_Ferry`] OR settler-fallback dispatch [caller=5] OR war-landing dock dispatch [caller=6]). See [AIMOVE-AI_Stacks_Ocean_Landmass_Orders.md](AIMOVE-AI_Stacks_Ocean_Landmass_Orders.md).
+- **Reads `lmt_*`:** `lmt_NoOwnCity` ([line 1423](../../MoM/src/AIMOVE.c#L1423)) in the Phase 5g settler-landing gate.
 
 ### `AI_Stacks_Roamers_Target_Or_Deploy` — [line 1635](../../MoM/src/AIMOVE.c#L1635)
 - **drake178:** `AI_ProcessRoamers()` (o158p06)

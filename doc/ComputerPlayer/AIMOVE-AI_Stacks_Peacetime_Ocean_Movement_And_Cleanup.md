@@ -1,7 +1,6 @@
 AIMOVE-AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup.md
 
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup.c
-C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup.asm
 
 ---
 
@@ -21,7 +20,7 @@ Per-(player, plane) **post-pass** that runs once after the inner per-landmass lo
 
 Both halves operate on ocean squares — Phase 3 acts on individual ocean-stationed units (`_landmasses[...] == 0`), Phase 5 acts on ocean stacks (built via `landmass_idx = 0`).
 
-Called once per plane from [`AI_Set_Unit_Orders`](AIMOVE-AI_Set_Unit_Orders.md), AFTER the per-landmass inner dispatch loop ends — not a slot in the 1-13 sequence. Sibling of [`G_AI_ProcessTransports__WIP`](../../MoM/src/AIMOVE.c#L1195) which runs immediately after at [line 316](../../MoM/src/AIMOVE.c#L316).
+Called once per plane from [`AI_Set_Unit_Orders`](AIMOVE-AI_Set_Unit_Orders.md), AFTER the per-landmass inner dispatch loop ends — not a slot in the 1-13 sequence. Sibling of [`AI_Stacks_Ocean_Landmass_Orders`](../../MoM/src/AIMOVE.c#L1195) which runs immediately after at [line 316](../../MoM/src/AIMOVE.c#L316).
 
 ## Signature
 
@@ -181,7 +180,7 @@ Scan every unit. Take the order-issuing branch only if **all** of:
 2. **Standing in the ocean** — `_landmasses[...] == 0` (any land square hashes to a non-zero landmass index, which is the skip condition here).
 3. `Status == us_Ready` — hasn't been ordered already this turn.
 4. NOT a melder (`UA_MELD` clear) — settlers/melders belong to slot 4-7's overlay logic.
-5. NOT a transport (`Transport == 0`) — boats go through [`G_AI_ProcessTransports__WIP`](../../MoM/src/AIMOVE.c#L1195) next.
+5. NOT a transport (`Transport == 0`) — boats go through [`AI_Stacks_Ocean_Landmass_Orders`](../../MoM/src/AIMOVE.c#L1195) next.
 6. Has AirTravel OR WaterTravel OR NonCorporeal — units that can cross ocean WITHOUT needing a transport.
 
 Then set `Status = us_GOTO` toward the stage point.
@@ -337,14 +336,14 @@ AI_Set_Unit_Orders(player_idx)
        │    └─ slot 13: AI_Stacks_Garrison_Sites               [gated]
        │
        ├─ AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(player_idx, wp)         ◄── HERE (per-plane post-pass)
-       └─ G_AI_ProcessTransports__WIP(player_idx, wp)         (per-plane post-pass)
+       └─ AI_Stacks_Ocean_Landmass_Orders(player_idx, wp)         (per-plane post-pass)
 ```
 
 **Pairing with the dispatch:**
 
 - **Phase 3** is a final per-plane sweep over `_UNITS[]` for swimmers/fliers already in the ocean. Slot 10 ([`AI_Stacks_Order_To_War_Landmass`](AIMOVE-AI_Stacks_Order_To_War_Landmass.md)) handles the equivalent for LAND-stationed units via `_ai_own_stack_*`; this handles ocean-stationed equivalents that wouldn't appear in any per-landmass `_ai_own_stack_*` (since per-landmass slot 1 never builds for landmass 0).
 - **Phase 4** is the only place in the dispatch chain that rebuilds `_ai_own_stack_*` for `landmass_idx = 0` (ocean). Slots 1-13 only ever build for `landmass_idx >= 1`.
-- **`G_AI_ProcessTransports__WIP`** runs next ([line 316](../../MoM/src/AIMOVE.c#L316)) — it handles transport ships specifically, while this function handles non-transport units stranded at sea.
+- **`AI_Stacks_Ocean_Landmass_Orders`** runs next ([line 316](../../MoM/src/AIMOVE.c#L316)) — it handles transport ships specifically, while this function handles non-transport units stranded at sea.
 
 ## Related references
 
@@ -352,7 +351,7 @@ AI_Set_Unit_Orders(player_idx)
 - [AIMOVE-AI_Stacks_Order_To_War_Landmass.md](AIMOVE-AI_Stacks_Order_To_War_Landmass.md) — slot 10; the per-landmass equivalent of Phase 3 for land-stationed units (works through `_ai_own_stack_*` instead of `_UNITS[]`)
 - [AIMOVE-AI_Stacks_Init_Build_Target_Order.md](AIMOVE-AI_Stacks_Init_Build_Target_Order.md) — slot 1; this function calls it with `landmass_idx = 0` for the ocean build
 - [AIMOVE-AI_Choose_War_Landmass.md](AIMOVE-AI_Choose_War_Landmass.md) — populates `_ai_landmass_war_targets[wp][player_idx]` that gates Phase 1
-- `G_AI_ProcessTransports__WIP` at [AIMOVE.c:1195](../../MoM/src/AIMOVE.c#L1195) — sibling per-plane post-pass for transport ships
+- `AI_Stacks_Ocean_Landmass_Orders` at [AIMOVE.c:1195](../../MoM/src/AIMOVE.c#L1195) — sibling per-plane post-pass for transport ships
 - [MoM-AI-Move-ai_own_stack.md](MoM-AI-Move-ai_own_stack.md) — `_ai_own_stack_*` area-of-code reference
 - [MoM-AI-AIMOVE-Index.md](MoM-AI-AIMOVE-Index.md) — function index
 - `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup.asm` — IDA Pro 5.5 disassembly (ground truth)

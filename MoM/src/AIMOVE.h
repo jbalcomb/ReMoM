@@ -36,7 +36,7 @@ void AI_Stacks_Garrison_Sites(int16_t player_idx, int16_t wp, int16_t landmass_i
 void AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup(int16_t player_idx, int16_t wp);
 
 // WZD o158p05
-void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp);
+void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp);
 
 // WZD o158p06
 void AI_Stacks_Roamers_Target_Or_Deploy(int16_t landmass_idx, int16_t wp, int16_t player_idx);

@@ -964,11 +964,11 @@ int16_t ai_transport_count;
 // WZD dseg:9096
 int16_t _ai_ferry_count;
 // WZD dseg:9098
-int16_t _ai_ferry_wp_array[15];
+int16_t _ai_ferry_wp_array[MAX_AI_FERRIES];  /* AI_Stacks_Ocean_Landmass_Orders() uses -1 to means no capacity? */
 // WZD dseg:90B6
-int16_t _ai_ferry_wy_array[15];
+int16_t _ai_ferry_wy_array[MAX_AI_FERRIES];
 // WZD dseg:90D4
-int16_t _ai_ferry_wx_array[15];
+int16_t _ai_ferry_wx_array[MAX_AI_FERRIES];
 
 
 // WZD dseg:90F2 00 00                                           AI_Arc_ContBalances@ dw 0               ; DATA XREF: AI_Landmass_Values_And_Strengths+4C5r ...
