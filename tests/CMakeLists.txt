@@ -238,45 +238,49 @@ set_tests_properties(HeMoM_AIBehavior_Setup PROPERTIES
     LABELS "hemom;integration;ai"
 )
 
-add_test(
-    NAME HeMoM_AIBehavior_Run
-    COMMAND $<TARGET_FILE:HeMoM>
-        --continue
-        --scenario "${HEMOM_TEST_ASSETS}/test_ai_5turns.hms"
-        --ai-metrics
-        --dump-save SAVE1.GAM
-        --seed 12345
-    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
-)
-# DISABLED -- flaky (~1-of-3 timeouts in MSVC-release).  Even with --seed 12345
-# pinning the RNG, the scenario sometimes hangs at the very end: the
-# scenario_tail_save_and_quit.hms tail clicks (62,177) on the Save/Load Quit
-# button, which under Release headless does not always fire the screen
-# transition back to Main Menu Screen.  When it doesn't, the artificial human player
-# ends without ever reaching scr_Quit_To_DOS, quit_game_flag never gets set,
-# and the game idles until ctest's TIMEOUT.  Under Debug it always works.
-# Root cause is in headless input dispatch / field-press handling, not RNG --
-# verified empirically in this session.  Reactivate after that's fixed.
-set_tests_properties(HeMoM_AIBehavior_Run PROPERTIES
-    TIMEOUT 120
-    FIXTURES_REQUIRED HeMoM_AIBehavior
-    FIXTURES_SETUP HeMoM_AIBehavior_Done
-    LABELS "hemom;integration;ai"
-    DISABLED TRUE
-)
+# HeMoM_AIBehavior_Run + HeMoM_AIBehavior_Evaluate are Debug-only.
+#
+# Two reasons:
+#   1. --ai-metrics is gated by #ifdef STU_DEBUG (HeMoM logs "ai-metrics
+#      ignored (not a debug build)" under Release), so the Evaluate step
+#      has nothing to assert against in Release builds.
+#   2. The scenario_tail_save_and_quit.hms tail's click (62,177) on the
+#      Save/Load Quit button is flaky under MSVC-release headless --
+#      ~1-of-3 runs hang because the click doesn't fire the screen
+#      transition back to Main Menu, so quit_game_flag never gets set
+#      and the game idles until TIMEOUT. Under Debug it always works.
+#      Root cause is in headless input dispatch, not in our metrics or
+#      the scenario itself.
+#
+# Reactivate for Release builds when both issues are fixed.
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
-add_test(
-    NAME HeMoM_AIBehavior_Evaluate
-    COMMAND $<TARGET_FILE:check_ai_metrics>
-        "${HEMOM_TEST_WORKDIR}"
-        "${CMAKE_CURRENT_SOURCE_DIR}/assert_ai_5turns.txt"
-)
-# DISABLED — depends on AI_TURN_SUMMARY.CSV produced by --ai-metrics, which
-# is currently a Debug-only flag (HeMoM prints "ai-metrics ignored (not a
-# debug build)" under Release).  Reactivate when AI metrics is Release-safe
-# or when the Run step is moved to a Debug-only test path.
-set_tests_properties(HeMoM_AIBehavior_Evaluate PROPERTIES
-    FIXTURES_REQUIRED HeMoM_AIBehavior_Done
-    LABELS "hemom;integration;ai"
-    DISABLED TRUE
-)
+    add_test(
+        NAME HeMoM_AIBehavior_Run
+        COMMAND $<TARGET_FILE:HeMoM>
+            --continue
+            --scenario "${HEMOM_TEST_ASSETS}/test_ai_5turns.hms"
+            --ai-metrics
+            --dump-save SAVE1.GAM
+            --seed 12345
+        WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+    )
+    set_tests_properties(HeMoM_AIBehavior_Run PROPERTIES
+        TIMEOUT 120
+        FIXTURES_REQUIRED HeMoM_AIBehavior
+        FIXTURES_SETUP HeMoM_AIBehavior_Done
+        LABELS "hemom;integration;ai"
+    )
+
+    add_test(
+        NAME HeMoM_AIBehavior_Evaluate
+        COMMAND $<TARGET_FILE:check_ai_metrics>
+            "${HEMOM_TEST_WORKDIR}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/assert_ai_5turns.txt"
+    )
+    set_tests_properties(HeMoM_AIBehavior_Evaluate PROPERTIES
+        FIXTURES_REQUIRED HeMoM_AIBehavior_Done
+        LABELS "hemom;integration;ai"
+    )
+
+endif()
