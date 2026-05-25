@@ -12,6 +12,7 @@
         AI_NPC_EVENTS.CSV     — raider/monster spawns, NPC targeting, garrison culls
         AI_BUILD_DETAIL.CSV   — city production decisions with weights
         AI_UNIT_OUTCOMES.CSV  — unit movement results (arrived, failed, etc.)
+        AI_DECISIONS.CSV      — spell research, hostility changes, misc choices
 
     Toggle:
         Compile-time:  #ifdef STU_DEBUG
@@ -27,6 +28,7 @@
 #define AI_Metrics_Emit_NPC_Event(t,et,si,sx,sy,sp,cnt,bud,tx,ty,acc,thr) ((void)0)
 #define AI_Metrics_Emit_Build(t,pi,ci,cp,cu,pc,cw,ac,pa,wa) ((void)0)
 #define AI_Metrics_Emit_Unit_Outcome(t,pi,ui,ut,st,sx,sy,dx,dy,ex,ey,mf) ((void)0)
+#define AI_Metrics_Emit_Decision(t,pi,cat,si,dec,nm,sc,ac) ((void)0)
 
 #else
 
@@ -101,6 +103,23 @@ void AI_Metrics_Emit_Unit_Outcome(
     int16_t end_wx,
     int16_t end_wy,
     int16_t move_failed
+);
+
+/*
+    Decision — generic row for AI choice points not covered by the specialized
+    tables. Categories: "RESEARCH", "HOSTILITY", "ORDERS", "SPELL", etc.
+    decision_name is human-readable; subject_idx and decision are ints whose
+    meaning depends on the category (e.g. player_idx, spell_idx, opponent_idx).
+*/
+void AI_Metrics_Emit_Decision(
+    int16_t turn,
+    int16_t player_idx,
+    const char * category,
+    int16_t subject_idx,
+    int16_t decision,
+    const char * decision_name,
+    int16_t score,
+    int16_t alt_count
 );
 
 #ifdef __cplusplus
