@@ -25,7 +25,8 @@ enum log_category
     LOG_CAT_IKI     = 5
 };
 
-void log_init(void);
+/* ini_path: path to an INI file with a [Logging] section, or NULL for built-in defaults. Missing file or missing section is non-fatal — defaults apply. */
+void log_init(const char * ini_path);
 void log_shutdown(void);
 void log_pump(void);
 void log_flush_all(void);

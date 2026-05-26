@@ -3,6 +3,7 @@
 #include "../../ext/stu_compat.h"
 #include "STU_UTIL.h"
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <stddef.h>
@@ -14,14 +15,25 @@
 #define LOG_VSNPRINTF vsnprintf
 #endif
 
-#define LOG_RING_SIZE   ((size_t)(2 * 1024 * 1024))  /* 2 MB */
-#define LOG_FMT_BUF_LEN ((size_t)1024)
-#define LOG_OUTPUT_FILE "remom_log.txt"
+#define LOG_RING_SIZE       ((size_t)(2 * 1024 * 1024))  /* 2 MB */
+#define LOG_FMT_BUF_LEN     ((size_t)1024)
+#define LOG_PUMP_MAX_BYTES  ((size_t)4096)
+#define LOG_OUTPUT_FILE     "remom_log.txt"
+#define LOG_N_CATEGORIES    6
 
 static char   log_ring[LOG_RING_SIZE];
 static size_t log_head = 0;
 static size_t log_tail = 0;
 static FILE * log_file = NULL;
+static size_t log_dropped_since_last_pump = 0;
+
+struct log_config
+{
+    int sev_threshold;
+    int cat_enabled[LOG_N_CATEGORIES];
+};
+
+static struct log_config log_cfg;
 
 static const char * const log_sev_str[] = {
     "TRACE",
@@ -40,6 +52,150 @@ static const char * const log_cat_str[] = {
     "PFL     ",
     "IKI     "
 };
+
+static const char * const log_cat_ini_key[] = {
+    "GENERAL",
+    "AIMOVE",
+    "COMBAT",
+    "SAVE",
+    "PFL",
+    "IKI"
+};
+
+static void log_config_set_defaults(void)
+{
+    int i;
+    log_cfg.sev_threshold = LOG_SEV_TRACE;
+    for (i = 0; i < LOG_N_CATEGORIES; ++i)
+    {
+        log_cfg.cat_enabled[i] = 1;
+    }
+}
+
+static int log_ci_eq(const char * a, const char * b)
+{
+    while (*a != '\0' && *b != '\0')
+    {
+        if (tolower((unsigned char)*a) != tolower((unsigned char)*b))
+        {
+            return 0;
+        }
+        ++a;
+        ++b;
+    }
+    return *a == '\0' && *b == '\0';
+}
+
+static char * log_trim_ws(char * s)
+{
+    char * end;
+    while (*s == ' ' || *s == '\t' || *s == '\r' || *s == '\n')
+    {
+        ++s;
+    }
+    end = s + strlen(s);
+    while (end > s && (end[-1] == ' ' || end[-1] == '\t' || end[-1] == '\r' || end[-1] == '\n'))
+    {
+        --end;
+    }
+    *end = '\0';
+    return s;
+}
+
+static int log_parse_severity(const char * value, int * out)
+{
+    if      (log_ci_eq(value, "TRACE")) { *out = LOG_SEV_TRACE; return 1; }
+    else if (log_ci_eq(value, "DEBUG")) { *out = LOG_SEV_DEBUG; return 1; }
+    else if (log_ci_eq(value, "INFO"))  { *out = LOG_SEV_INFO;  return 1; }
+    else if (log_ci_eq(value, "WARN"))  { *out = LOG_SEV_WARN;  return 1; }
+    else if (log_ci_eq(value, "ERROR")) { *out = LOG_SEV_ERROR; return 1; }
+    else if (log_ci_eq(value, "FATAL")) { *out = LOG_SEV_FATAL; return 1; }
+    return 0;
+}
+
+static int log_parse_bool(const char * value, int * out)
+{
+    if (log_ci_eq(value, "true") || log_ci_eq(value, "yes") || log_ci_eq(value, "on")  || log_ci_eq(value, "1"))
+    {
+        *out = 1;
+        return 1;
+    }
+    if (log_ci_eq(value, "false") || log_ci_eq(value, "no") || log_ci_eq(value, "off") || log_ci_eq(value, "0"))
+    {
+        *out = 0;
+        return 1;
+    }
+    return 0;
+}
+
+static void log_config_load_ini(const char * path)
+{
+    FILE * fp;
+    char   line[512];
+    char * key;
+    char * value;
+    char * eq;
+    int    in_logging_section = 0;
+    int    parsed_int;
+    int    i;
+
+    if (path == NULL)
+    {
+        return;
+    }
+    fp = fopen(path, "r");
+    if (fp == NULL)
+    {
+        return;
+    }
+
+    while (fgets(line, sizeof(line), fp) != NULL)
+    {
+        key = log_trim_ws(line);
+        if (*key == '\0' || *key == '#' || *key == ';')
+        {
+            continue;
+        }
+        if (*key == '[')
+        {
+            in_logging_section = (strncmp(key, "[Logging]", 9) == 0);
+            continue;
+        }
+        if (!in_logging_section)
+        {
+            continue;
+        }
+        eq = strchr(key, '=');
+        if (eq == NULL)
+        {
+            continue;
+        }
+        *eq = '\0';
+        value = log_trim_ws(eq + 1);
+        key   = log_trim_ws(key);
+
+        if (log_ci_eq(key, "severity_threshold"))
+        {
+            if (log_parse_severity(value, &parsed_int))
+            {
+                log_cfg.sev_threshold = parsed_int;
+            }
+            continue;
+        }
+        for (i = 0; i < LOG_N_CATEGORIES; ++i)
+        {
+            if (log_ci_eq(key, log_cat_ini_key[i]))
+            {
+                if (log_parse_bool(value, &parsed_int))
+                {
+                    log_cfg.cat_enabled[i] = parsed_int;
+                }
+                break;
+            }
+        }
+    }
+    fclose(fp);
+}
 
 static const char * log_basename(const char * path)
 {
@@ -93,41 +249,71 @@ static void log_ring_write_bytes(const char * src, size_t n)
     log_head = n - first_chunk;
 }
 
-static void log_drain_all(void)
+static size_t log_drain_up_to(size_t cap)
 {
     size_t used;
+    size_t to_drain;
     size_t first_chunk;
 
     if (log_file == NULL)
     {
         log_tail = log_head;
-        return;
+        return 0;
     }
 
     used = log_ring_used();
     if (used == 0)
     {
-        return;
+        return 0;
     }
+    to_drain = (used < cap) ? used : cap;
 
-    if (log_tail + used <= LOG_RING_SIZE)
+    if (log_tail + to_drain <= LOG_RING_SIZE)
     {
-        fwrite(&log_ring[log_tail], 1, used, log_file);
+        fwrite(&log_ring[log_tail], 1, to_drain, log_file);
+        log_tail = (log_tail + to_drain) % LOG_RING_SIZE;
     }
     else
     {
         first_chunk = LOG_RING_SIZE - log_tail;
-        fwrite(&log_ring[log_tail], 1, first_chunk, log_file);
-        fwrite(&log_ring[0], 1, used - first_chunk, log_file);
+        if (first_chunk >= to_drain)
+        {
+            fwrite(&log_ring[log_tail], 1, to_drain, log_file);
+            log_tail = (log_tail + to_drain) % LOG_RING_SIZE;
+        }
+        else
+        {
+            fwrite(&log_ring[log_tail], 1, first_chunk, log_file);
+            fwrite(&log_ring[0], 1, to_drain - first_chunk, log_file);
+            log_tail = to_drain - first_chunk;
+        }
     }
-    fflush(log_file);
-    log_tail = log_head;
+    return to_drain;
 }
 
-void log_init(void)
+/* The synthetic dropped-message line is written directly to the file (bypassing the ring) so it cannot itself be dropped or split across a pump boundary. */
+static void log_emit_drop_marker(void)
+{
+    char datetime[32];
+
+    if (log_dropped_since_last_pump == 0 || log_file == NULL)
+    {
+        return;
+    }
+    get_datetime(datetime);
+    fprintf(log_file, "[%s] [LOGGER] %lu messages dropped since last drain\n",
+            datetime, (unsigned long)log_dropped_since_last_pump);
+    log_dropped_since_last_pump = 0;
+}
+
+void log_init(const char * ini_path)
 {
     log_head = 0;
     log_tail = 0;
+    log_dropped_since_last_pump = 0;
+    log_config_set_defaults();
+    log_config_load_ini(ini_path);
+
     log_file = fopen(LOG_OUTPUT_FILE, "w");
     if (log_file == NULL)
     {
@@ -137,9 +323,13 @@ void log_init(void)
 
 void log_shutdown(void)
 {
-    log_drain_all();
     if (log_file != NULL)
     {
+        log_emit_drop_marker();
+        while (log_drain_up_to(LOG_RING_SIZE) > 0)
+        {
+            /* keep draining until empty */
+        }
         fflush(log_file);
         fclose(log_file);
         log_file = NULL;
@@ -148,12 +338,26 @@ void log_shutdown(void)
 
 void log_pump(void)
 {
-    log_drain_all();
+    log_emit_drop_marker();
+    log_drain_up_to(LOG_PUMP_MAX_BYTES);
+    if (log_file != NULL)
+    {
+        fflush(log_file);
+    }
 }
 
 void log_flush_all(void)
 {
-    log_drain_all();
+    if (log_file == NULL)
+    {
+        return;
+    }
+    log_emit_drop_marker();
+    while (log_drain_up_to(LOG_RING_SIZE) > 0)
+    {
+        /* keep draining until empty */
+    }
+    fflush(log_file);
 }
 
 void log_write_at_v(int sev, enum log_category cat, const char * file, int line, const char * func, const char * fmt, va_list args)
@@ -172,9 +376,18 @@ void log_write_at_v(int sev, enum log_category cat, const char * file, int line,
     {
         sev_idx = LOG_SEV_INFO;
     }
-    if (cat_idx < 0 || cat_idx > LOG_CAT_IKI)
+    if (cat_idx < 0 || cat_idx >= LOG_N_CATEGORIES)
     {
         cat_idx = LOG_CAT_GENERAL;
+    }
+
+    if (sev_idx < log_cfg.sev_threshold)
+    {
+        return;
+    }
+    if (!log_cfg.cat_enabled[cat_idx])
+    {
+        return;
     }
 
     get_datetime(datetime);
@@ -207,6 +420,7 @@ void log_write_at_v(int sev, enum log_category cat, const char * file, int line,
 
     if (total_len > log_ring_free())
     {
+        ++log_dropped_since_last_pump;
         return;
     }
 
