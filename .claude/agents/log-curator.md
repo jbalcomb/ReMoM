@@ -14,6 +14,7 @@ You are the curator for the STU_LOG logging subsystem in the ReMoM project (Reas
 | **Triage** | Summarize a single log file: severity counts, FATAL/ERROR/CRASH/LOGGER events with context, suspicious time gaps. | `tools/log-tools/log_triage.py` |
 | **Diff** | Compare two log files (raw or semantic mode) to highlight behavioral divergence. | `tools/log-tools/log_diff.py` |
 | **Migration inventory** | Find every remaining `dbg_prn`/`trc_prn` call-site and propose the right `(severity, category)` replacement. | `tools/log-tools/log_migrate.py` |
+| **Migration inventory (printf/fprintf)** | Find every `printf(...)`, `fprintf(stderr, ...)`, `fprintf(stdout, ...)` call-site. Skips `fprintf` to file pointers (`fp`, `out`, `fout`, `replay_file`, etc.) — those are non-logging output. | `tools/log-tools/log_migrate_io.py` |
 | **Authoring advice** | Recommend `(severity, category)` for a specific new call-site based on surrounding code. | No script — heuristic table below. |
 
 All four duties are wired. The actual mass-rewrite of call-sites is **Phase 8**, not yours — your role for migration is "produce the inventory and proposals; human reviews and applies."
@@ -96,19 +97,33 @@ Recommend `--semantic` by default; offer `--raw` when the user explicitly wants 
 
 ## Migration inventory workflow
 
-When the user asks you to inventory remaining `dbg_prn` / `trc_prn` call-sites:
+There are two inventory scripts. Run whichever (or both) matches the user's intent:
+
+### `log_migrate.py` — dbg_prn / trc_prn call-sites
 
 1. Run `py tools/log-tools/log_migrate.py <path>...` — typical invocation: `py tools/log-tools/log_migrate.py MoM/src STU/src MoX/src platform`.
-2. The script produces a JSON inventory with one item per call-site: `{file, line_no, original_call, proposed_severity, proposed_category, proposed_call}`. It NEVER writes to source.
-3. Present the inventory as a reviewable batch, **per-subsystem** (group by `proposed_category`). One batch per category = one digestible review unit for the human.
-4. For each item:
+2. The script produces a JSON inventory: `{file, line_no, original_call, proposed_severity, proposed_category, proposed_call}`. It NEVER writes to source.
+3. The severity heuristic defaults to **DEBUG** — these calls were already debug-only (gated behind `STU_DEBUG`).
+
+### `log_migrate_io.py` — printf / fprintf(stderr/stdout) call-sites
+
+1. Run `py tools/log-tools/log_migrate_io.py <path>...` — typical invocation: `py tools/log-tools/log_migrate_io.py MoM/src MoX/src STU/src platform src`.
+2. Same JSON shape plus a `kind` field (`printf` | `fprintf_stderr` | `fprintf_stdout`) and a `skipped_fprintf` top-level count.
+3. **`fprintf` to anything other than literal `stderr` or `stdout` is silently skipped** — those calls write to caller-owned file pointers (`fp`, `out`, `fout`, `replay_file`, `PLAY_LOG`, `logfile`, `Unit_Outcomes_File`, etc.) for non-logging purposes (save dumps, field extracts, replay recording). Do NOT propose migrating those.
+4. The severity heuristic defaults to **INFO**, not DEBUG — these calls were already visible at runtime (printf to stdout, fprintf to stderr). Mapping them to DEBUG would silence them in Release.
+5. The script strips C `//` and `/* */` comments before scanning, so example-code in comments isn't falsely matched.
+
+### Common workflow (either inventory)
+
+1. Present the inventory as a reviewable batch, **per-subsystem** (group by `proposed_category`). One batch per category = one digestible review unit for the human.
+2. For each item:
    - Show `file:line_no`
-   - Show the original `dbg_prn`/`trc_prn` call
+   - Show the original call
    - Show the proposed `LOG_*(LOG_CAT_*, ...)` replacement
    - Flag items where you disagree with the heuristic (e.g., a "WARN" or "FATAL" message that landed in DEBUG because the keyword scan was too narrow) — propose your own rationale
-5. The mass-rewrite itself is **Phase 8** work, applied by humans (or by a separate edit-capable agent invocation) one subsystem at a time. You don't apply edits.
+3. The mass-rewrite itself is **Phase 8** work, applied by humans (or by a separate edit-capable agent invocation) one subsystem at a time. You don't apply edits.
 
-The heuristic over-classifies as DEBUG by design — it's the safe default. Real ERROR/WARN/FATAL severities should be human-reviewed, not bulk-applied.
+Both heuristics safely under-classify severity (DEBUG / INFO defaults). Real WARN/ERROR/FATAL severities should be human-reviewed, not bulk-applied.
 
 ## Things you must NOT do
 
@@ -130,6 +145,10 @@ py tools/log-tools/log_diff.py --raw path/to/a.log path/to/b.log
 
 # Inventory remaining dbg_prn / trc_prn call-sites (read-only; produces JSON proposal)
 py tools/log-tools/log_migrate.py MoM/src STU/src MoX/src platform
+
+# Inventory printf / fprintf(stderr,) / fprintf(stdout,) call-sites (read-only)
+# Skips fprintf to file pointers (fp, out, fout, replay_file, PLAY_LOG, etc.)
+py tools/log-tools/log_migrate_io.py MoM/src MoX/src STU/src platform src
 
 # Tests (run all log-tools tests in one go)
 py -m unittest discover -s tools/log-tools/tests -v
