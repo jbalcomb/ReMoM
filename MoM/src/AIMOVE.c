@@ -167,7 +167,7 @@ int16_t cp_enroute_unit_count;
 calcuated in AI_Set_Unit_Orders()
 used by AI_Stacks_Stage_Expedition_Forces()
 */
-int16_t g_ai_minattackstack;
+int16_t _ai_expedition_size_threshold;
 
 // WZD dseg:D490
 int16_t niu_unknown_var;
@@ -192,18 +192,47 @@ static void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t 
 */
 
 // WZD o158p01
-// drake178: AI_SetUnitOrders()
-/*
-processes continent reevaluation and gives orders to all available units, including disbanding some if necessary
-many many BUGs
-*/
-/*
-OON XREF: AI_Set_Unit_Orders() |-> AI_Stacks_Stage_Expedition_Forces() |-> AI_Reevaluate_Continent()
-*/
+/**
+ * @brief Execute the AI movement-order pass for one player for the current turn.
+ *
+ * This routine is the top-level dispatcher for the land and ocean movement AI.
+ * It determines whether the AI is currently hostile toward the human player,
+ * switches EMS mapping to the CONTXXX working data, resets ferry staging state,
+ * computes the minimum desired expedition stack size, and performs a set of
+ * once-per-turn global adjustments before processing each world plane.
+ *
+ * For every plane, the function binds the active landmass classification arrays
+ * for `player_idx` and then iterates each non-ocean landmass, rebuilding local
+ * stack state and running the major AI movement phases in order: non-military
+ * garrison cleanup, expedition-force survey, meld/settle/purify/road actions,
+ * target-list construction, roamer assignment or redeployment, reinforcement
+ * toward the main war landmass, expedition staging, and site garrisoning. After
+ * all landmasses on the plane have been processed, it runs the ocean-unit
+ * wartime movement and ocean-landmass order passes.
+ *
+ * @param player_idx Index of the AI player whose units, stacks, and continent
+ *                   state should be evaluated and assigned orders.
+ *
+ * @return This function does not return a value. It updates multiple global AI
+ *         work arrays, may change unit orders across all planes, and restores
+ *         EMS mapping to the default data block before returning.
+ *
+ * @note This function initializes `_ai_expedition_size_threshold`, `_ai_ferry_count`,
+ *       `cp_landmass_wx_array`, `cp_landmass_wy_array`, and
+ *       `cp_landmass_type_array` for downstream helpers during the current AI
+ *       pass.
+ *
+ * @note The current implementation preserves a known original-game quirk where
+ *       `AI_Find_Opportunity_City_Target()` is called with `wp` before the
+ *       plane loop assigns it a defined plane index.
+ */
 void AI_Set_Unit_Orders(int16_t player_idx)
 {
     int16_t wp = 0;
     int16_t landmass_idx = 0;
+
+
+    /* Phase 1: Init */
 
     /* Initialization and Hostility Check */
     ai_human_hostility = ST_FALSE;
@@ -225,10 +254,12 @@ void AI_Set_Unit_Orders(int16_t player_idx)
     _ai_ferry_count = 0;
 
     /* Compute the minimum attack-stack threshold: grows 1 per 30 turns starting from 2, capped at MAX_STACK (9 by turn 240). */
-    /* only used by AI_Stacks_Stage_Expedition_Forces() */
-    g_ai_minattackstack = (2 + (_turn / 30));
-    SETMAX(g_ai_minattackstack,MAX_STACK);
+    /* NOTE(JimBalcomb,20260525): only used by AI_Stacks_Stage_Expedition_Forces() */
+    _ai_expedition_size_threshold = (2 + (_turn / 30));
+    SETMAX(_ai_expedition_size_threshold,MAX_STACK);
 
+
+    /* Phase 2 */
     /* Global AI adjustments */
     AI_Disband_To_Balance_Budget(player_idx);
     AI_Shift_Off_Home_Plane(player_idx);
@@ -236,42 +267,34 @@ void AI_Set_Unit_Orders(int16_t player_idx)
     /* OGBUG: wp is used here before being initialized */
     AI_Find_Opportunity_City_Target(wp, player_idx);
     
+
+    /* Phase 3 */
     /* Iterate through all planes */
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
 
+        /* convenience pointers */
         cp_landmass_wx_array = &_ai_continents.plane[wp].player[player_idx].wx_array[0];
         cp_landmass_wy_array = &_ai_continents.plane[wp].player[player_idx].wy_array[0];
         cp_landmass_type_array = &_ai_continents.plane[wp].player[player_idx].type_array[0];
+
         /* Iterate through all landmasses */
         for(landmass_idx = 1; landmass_idx < NUM_LANDMASSES; landmass_idx++)
         {
+
             AI_Stacks_Init_Build_Target_Order(player_idx, landmass_idx, wp);
             AI_Stacks_Move_Out_NonMilitary_Garrisoned(wp);
             AI_Stacks_Survey_Expedition_Forces();
+
             AI_Do_Meld(player_idx);
             AI_Do_Settle(player_idx, landmass_idx);
             AI_Do_Purify(landmass_idx, wp);
             AI_Do_RoadBuild(landmass_idx);
-/*
-AI_Build_Target_List() and AI_Stacks_Roamers_Target_Or_Deploy()
-are the core of the AI's movement decision-making
-on the strategic layer for each landmass.
-They analyze the current situation, identify targets, and assign roamers
-to those targets based on various factors
-such as threat level, strategic value, and unit capabilities.
-...
-_ai_targets_count, _ai_targets_value[], _ai_targets_strength[], _ai_targets_wy[], _ai_targets_wx[]
-...
-AI_Build_Target_List()
-    |-> AI_Add_Target()
-AI_Stacks_Roamers_Target_Or_Deploy()
-    |-> AI_Stacks_Assign_Target()
-*/
+
             AI_Build_Target_List(player_idx, landmass_idx, wp);
             AI_Stacks_Roamers_Target_Or_Deploy(landmass_idx, wp, player_idx);
 
-            // almost just NOT lmt_Contested
+            /* reallocate stacks where we feel safe */
             if(
                 (cp_landmass_type_array[landmass_idx] >= lmt_Leaveable)  /* {5:lmt_Leaveable,6:lmt_NoTargets} */
                 ||
@@ -304,122 +327,24 @@ AI_Stacks_Roamers_Target_Or_Deploy()
                 ||
                 (cp_landmass_type_array[landmass_idx] == lmt_Contested)
                 ||
-                (cp_landmass_type_array[landmass_idx] >= lmt_Leaveable)
+                (cp_landmass_type_array[landmass_idx] >= lmt_Leaveable)  /* {5:lmt_Leaveable,6:lmt_NoTargets} */
             )
             {
                 AI_Stacks_Garrison_Sites(player_idx, wp, landmass_idx);
             }
         }
 
-        /* Process non-landmass based units */
+        /* Process Ocean landmass based Units */
         AI_Stacks_Wartime_Ocean_Movement_And_Cleanup(player_idx, wp);  /* ¿ only for war landmass ? */
         AI_Stacks_Ocean_Landmass_Orders(player_idx, wp);
         
     }
 
+    
+    /* Phase 4 */
     /* Restore EMM mapping to default Data block */
     EMM_Map_DataH();
 
-}
-/* GEMINI */
-static void AI_Set_Unit_Orders__GEMINI(int player_idx)
-{
-    int wp = 0;
-    int landmass_idx; /* si */
-    unsigned char /* far */ *type_ptr;
-
-    /* Initialize AI state for this turn */
-    ai_human_hostility = ST_FALSE; /* byte_43F10 */
-
-    /* Check hostility levels and war status */
-    /* _players is s_WIZARD array */
-    if (_players[player_idx].Hostility[0] >= 3 || _players[player_idx].Dipl.Dipl_Status[0] >= DIPL_War)
-    {
-        if (_players[player_idx].peace_duration == 0)
-        {
-            ai_human_hostility = ST_TRUE;
-        }
-    }
-
-    /* Map EMM data for continent/landmass processing */
-    EMM_Map_CONTXXX__WIP();
-
-    _ai_ferry_count = 0; /* word_43F12 */
-
-    /* Calculate minimum stack size for AI attacks based on turn number */
-    /* Formula: (turn / 30) + 2, capped at 9 (MAX_STACK) */
-    /* Compute the minimum attack-stack threshold: grows 1 per 30 turns starting from 2, capped at MAX_STACK (9 by turn 240). */
-    g_ai_minattackstack = (2 + (_turn / 30));
-    if (g_ai_minattackstack > MAX_STACK)
-    {
-        g_ai_minattackstack = MAX_STACK;
-    }
-
-    /* Initial AI phase: Global strategic adjustments */
-    AI_Disband_To_Balance_Budget(player_idx);
-    AI_Shift_Off_Home_Plane(player_idx);
-    AI_Move_Out_Boats();
-    /* Check for high-value target cities on this plane */
-    AI_Find_Opportunity_City_Target(player_idx, wp);  /* Error C4700 uninitialized local variable 'wp' used */
-
-    /* Iterate through planes (Arcanus and Myrror) */
-    for (wp = 0; wp < NUM_PLANES; wp++)
-    {
-        /* Setup global pointers for current player/plane context in continent table */
-        // cp_landmass_wx_array = (unsigned char /* far */ *)&_ai_continents__0[wp].Player[player_idx].wx_array;
-        // cp_landmass_wy_array = (unsigned char /* far */ *)&_ai_continents__0[wp].Player[player_idx].wy_array;
-        // cp_landmass_type_array = (unsigned char /* far */ *)&_ai_continents__0[wp].Player[player_idx].type_array;
-        cp_landmass_wx_array = &_ai_continents.plane[wp].player[player_idx].wx_array[0];
-        cp_landmass_wy_array = &_ai_continents.plane[wp].player[player_idx].wy_array[0];
-        cp_landmass_type_array = &_ai_continents.plane[wp].player[player_idx].type_array[0];
-
-        /* Iterate through landmasses on this plane (1 to 99) */
-        for (landmass_idx = 1; landmass_idx < NUM_LANDMASSES; landmass_idx++)
-        {
-            /* Core AI unit management and pathfinding */
-            AI_Stacks_Init_Build_Target_Order(player_idx, landmass_idx, wp);
-            AI_Stacks_Move_Out_NonMilitary_Garrisoned(wp);
-            AI_Stacks_Survey_Expedition_Forces(); /* overlay call */
-            AI_Do_Meld(player_idx);
-            AI_Do_Settle(player_idx, landmass_idx);
-            AI_Do_Purify(landmass_idx, wp);
-            AI_Do_RoadBuild(landmass_idx);
-
-            AI_Build_Target_List(player_idx, landmass_idx, wp);
-
-            AI_Stacks_Roamers_Target_Or_Deploy(landmass_idx, wp, player_idx);
-
-            type_ptr = cp_landmass_type_array + landmass_idx;
-
-            /* Check if landmass needs a main war effort pull */
-            if (*type_ptr >= lmt_Leaveable || *type_ptr == lmt_Own || *type_ptr == lmt_NoOwnCityAndAllyHasCity || *type_ptr == lmt_NoOwnCity)
-            {
-                AI_Stacks_Order_To_War_Landmass(player_idx, wp);
-            }
-
-            /* Home Stage processing */
-            if (*type_ptr >= lmt_Leaveable || *type_ptr == lmt_Own)
-            {
-                AI_Stacks_Relocate_Roamers(landmass_idx, wp, player_idx);
-            }
-
-            /* General Stage processing */
-            AI_Stacks_Stage_Expedition_Forces(landmass_idx, wp, player_idx);
-
-            /* Fill garrisons on controlled or contested landmasses */
-            if (*type_ptr == lmt_Own || *type_ptr == lmt_Contested || *type_ptr >= lmt_Leaveable)
-            {
-                AI_Stacks_Garrison_Sites(player_idx, wp, landmass_idx);
-            }
-        }
-
-        /* End of plane processing: naval and transport logistics */
-        AI_Stacks_Wartime_Ocean_Movement_And_Cleanup(player_idx, wp);
-        AI_Stacks_Ocean_Landmass_Orders(player_idx, wp);
-    }
-
-    /* Restore default EMM mapping */
-    EMM_Map_DataH();
 }
 
 
@@ -453,7 +378,7 @@ static void AI_Set_Unit_Orders__GEMINI(int player_idx)
  *
  * @note This routine relies on the current values of `cp_staged_unit_count`,
  *       `cp_enroute_unit_count`, `cp_drafted_unit_count`, and
- *       `g_ai_minattackstack`, all of which must already have been prepared by
+ *       `_ai_expedition_size_threshold`, all of which must already have been prepared by
  *       earlier AI passes in the same turn.
  */
 static void AI_Stacks_Stage_Expedition_Forces(int16_t landmass_idx, int16_t wp, int16_t player_idx)
@@ -476,7 +401,7 @@ static void AI_Stacks_Stage_Expedition_Forces(int16_t landmass_idx, int16_t wp, 
 
     /* Phase 2: Sanity Checks */
     /* Check if we've already met our quota */
-    if((cp_staged_unit_count + cp_enroute_unit_count) >= g_ai_minattackstack)
+    if((cp_staged_unit_count + cp_enroute_unit_count) >= _ai_expedition_size_threshold)
     {
         return;
     }
@@ -488,7 +413,7 @@ static void AI_Stacks_Stage_Expedition_Forces(int16_t landmass_idx, int16_t wp, 
         &&
         (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] != lmt_NoOwnCity)
         &&
-        ((cp_staged_unit_count + cp_enroute_unit_count + cp_drafted_unit_count) < g_ai_minattackstack)
+        ((cp_staged_unit_count + cp_enroute_unit_count + cp_drafted_unit_count) < _ai_expedition_size_threshold)
     )
     {
         return;
@@ -2792,9 +2717,9 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
     int16_t itr_units2 = 0;  // DNE in Dasm, reuses itr_stacks2
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: BEGIN: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: BEGIN: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
+    printf("DEBUG: [%s, %d]: BEGIN: AI_Stacks_Init_Build_Target_Order()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: AI_Stacks_Init_Build_Target_Order()\n", __FILE__, __LINE__);
+    trc_prn("DEBUG: [%s, %d]: BEGIN: AI_Stacks_Init_Build_Target_Order()\n", __FILE__, __LINE__);
 #endif
 
 
@@ -3006,9 +2931,9 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
     }
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: END: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: END: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: END: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
+    printf("DEBUG: [%s, %d]: END: AI_Stacks_Init_Build_Target_Order()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: AI_Stacks_Init_Build_Target_Order()\n", __FILE__, __LINE__);
+    trc_prn("DEBUG: [%s, %d]: END: AI_Stacks_Init_Build_Target_Order()\n", __FILE__, __LINE__);
 #endif
 
 }
