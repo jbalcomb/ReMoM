@@ -55,7 +55,7 @@ TEST(stu_log_strip_test, StrippedSeveritiesProduceNoOutput)
 	LOG_INFO (LOG_CAT_GENERAL, "kept info");
 	log_shutdown();
 
-	std::string contents = slurp_strip_log("remom_log.txt");
+	std::string contents = slurp_strip_log("remom_log_new.txt");
 	EXPECT_EQ(contents.find("stripped trace"), std::string::npos);
 	EXPECT_EQ(contents.find("stripped debug"), std::string::npos);
 	EXPECT_NE(contents.find("kept info"),       std::string::npos);
@@ -79,7 +79,7 @@ TEST(stu_log_strip_test, CompileTimeFloorBeatsPermissiveIni)
 
 	EXPECT_EQ(counter, 1);  /* only INFO evaluated its argument */
 
-	std::string contents = slurp_strip_log("remom_log.txt");
+	std::string contents = slurp_strip_log("remom_log_new.txt");
 	EXPECT_EQ(contents.find("should still be stripped"), std::string::npos);
 	EXPECT_EQ(contents.find("also stripped"),            std::string::npos);
 	EXPECT_NE(contents.find("info kept"),                std::string::npos);

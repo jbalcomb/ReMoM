@@ -93,8 +93,8 @@ All six severity macros (`LOG_TRACE` through `LOG_FATAL`). Each message gets the
 - [ ] A test where only `_new` exists pre-init confirms it becomes `_current` and a new `_new` is created.
 - [ ] A test where no log files exist pre-init confirms `log_init` succeeds and creates `_new`.
 - [ ] A test calls `LOG_INFO`, then `exit(0)`, and asserts the message is on disk (atexit path).
-- [ ] A platform-specific test (Win32) raises an access violation after `LOG_INFO`, confirms the message and a `[CRASH]` line appear in `_new`.
-- [ ] A platform-specific test (POSIX) raises `SIGSEGV` after `LOG_INFO`, confirms same.
+- [ ] A platform-specific test (Win32) raises an access violation after `LOG_INFO`, confirms the message and a `[CRASH]` line appear in `_new`. **Requires `::testing::GTEST_FLAG(catch_exceptions) = false` scoped around the `ASSERT_DEATH` body** — gtest's `__try/__except` wrap on the test body catches SEH before `SetUnhandledExceptionFilter` can dispatch it to our filter, causing the test to see only the pre-crash message (drained by `atexit`) without the `[CRASH]` marker. Toggling the flag is enough; the death-test child inherits the flag value at spawn time. See PRD Further Notes for the full diagnosis.
+- [ ] A platform-specific test (POSIX) raises `SIGSEGV` after `LOG_INFO`, confirms same. The gtest catch_exceptions flag also covers POSIX signals, so the same scoping pattern works on both platforms — a single platform-agnostic test is sufficient.
 - [ ] A test calls `LOG_FATAL` with 200 KB of pre-existing messages in the ring and confirms all of it (plus the FATAL line) is on disk before `LOG_FATAL` returns control.
 
 ---

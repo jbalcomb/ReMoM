@@ -4,10 +4,16 @@
 #include "STU_UTIL.h"
 
 #include <ctype.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
+
+#if defined(_WIN32)
+#include <windows.h>
+#endif
 
 #if defined(_MSC_VER)
 #define LOG_VSNPRINTF _vsnprintf
@@ -15,11 +21,13 @@
 #define LOG_VSNPRINTF vsnprintf
 #endif
 
-#define LOG_RING_SIZE       ((size_t)(2 * 1024 * 1024))  /* 2 MB */
-#define LOG_FMT_BUF_LEN     ((size_t)1024)
-#define LOG_PUMP_MAX_BYTES  ((size_t)4096)
-#define LOG_OUTPUT_FILE     "remom_log.txt"
-#define LOG_N_CATEGORIES    6
+#define LOG_RING_SIZE        ((size_t)(2 * 1024 * 1024))  /* 2 MB */
+#define LOG_FMT_BUF_LEN      ((size_t)1024)
+#define LOG_PUMP_MAX_BYTES   ((size_t)4096)
+#define LOG_FILE_NEW         "remom_log_new.txt"
+#define LOG_FILE_CURRENT     "remom_log_current.txt"
+#define LOG_FILE_PREVIOUS    "remom_log_previous.txt"
+#define LOG_N_CATEGORIES     6
 
 static char   log_ring[LOG_RING_SIZE];
 static size_t log_head = 0;
@@ -306,18 +314,142 @@ static void log_emit_drop_marker(void)
     log_dropped_since_last_pump = 0;
 }
 
+static void log_rotate_files(void)
+{
+    /* remove(<missing>) returns -1 and rename(<missing>, ...) does the same; both are safe to ignore. */
+    remove(LOG_FILE_PREVIOUS);
+    rename(LOG_FILE_CURRENT, LOG_FILE_PREVIOUS);
+    rename(LOG_FILE_NEW,     LOG_FILE_CURRENT);
+}
+
+static void log_emit_crash_marker(const char * signal_name)
+{
+    char datetime[32];
+
+    if (log_file == NULL)
+    {
+        return;
+    }
+    get_datetime(datetime);
+    fprintf(log_file, "[%s] [CRASH] %s\n", datetime, signal_name);
+}
+
+static void log_atexit_handler(void)
+{
+    log_shutdown();
+}
+
+#if defined(_WIN32)
+
+static LPTOP_LEVEL_EXCEPTION_FILTER log_previous_seh_filter = NULL;
+
+static const char * log_seh_code_name(DWORD code)
+{
+    switch (code)
+    {
+        case EXCEPTION_ACCESS_VIOLATION:        return "EXCEPTION_ACCESS_VIOLATION";
+        case EXCEPTION_ILLEGAL_INSTRUCTION:     return "EXCEPTION_ILLEGAL_INSTRUCTION";
+        case EXCEPTION_INT_DIVIDE_BY_ZERO:      return "EXCEPTION_INT_DIVIDE_BY_ZERO";
+        case EXCEPTION_STACK_OVERFLOW:          return "EXCEPTION_STACK_OVERFLOW";
+        case EXCEPTION_PRIV_INSTRUCTION:        return "EXCEPTION_PRIV_INSTRUCTION";
+        case EXCEPTION_DATATYPE_MISALIGNMENT:   return "EXCEPTION_DATATYPE_MISALIGNMENT";
+        default:                                return "EXCEPTION_UNKNOWN";
+    }
+}
+
+static LONG WINAPI log_seh_filter(EXCEPTION_POINTERS * ep)
+{
+    log_emit_crash_marker(log_seh_code_name(ep->ExceptionRecord->ExceptionCode));
+    log_flush_all();
+    if (log_file != NULL)
+    {
+        fflush(log_file);
+        fclose(log_file);
+        log_file = NULL;
+    }
+    /* EXCEPTION_EXECUTE_HANDLER terminates the process without invoking the JIT debugger / WER dialog, which makes crash tests run cleanly. */
+    return EXCEPTION_EXECUTE_HANDLER;
+}
+
+static void log_install_crash_handlers(void)
+{
+    log_previous_seh_filter = SetUnhandledExceptionFilter(log_seh_filter);
+}
+
+#else  /* POSIX */
+
+static const char * log_signal_name(int sig)
+{
+    switch (sig)
+    {
+        case SIGSEGV:  return "SIGSEGV";
+        case SIGABRT:  return "SIGABRT";
+        case SIGFPE:   return "SIGFPE";
+        case SIGILL:   return "SIGILL";
+        default:       return "SIGNAL_UNKNOWN";
+    }
+}
+
+/* Signal handlers calling stdio is technically UB on POSIX, but consistent with this project's single-threaded posture and acceptable for a crash-time-only path. */
+static void log_signal_handler(int sig)
+{
+    log_emit_crash_marker(log_signal_name(sig));
+    log_flush_all();
+    if (log_file != NULL)
+    {
+        fflush(log_file);
+        fclose(log_file);
+        log_file = NULL;
+    }
+    signal(sig, SIG_DFL);
+    raise(sig);
+}
+
+static void log_install_crash_handlers(void)
+{
+    signal(SIGSEGV, log_signal_handler);
+    signal(SIGABRT, log_signal_handler);
+    signal(SIGFPE,  log_signal_handler);
+    signal(SIGILL,  log_signal_handler);
+}
+
+#endif
+
 void log_init(const char * ini_path)
 {
+    static int atexit_registered = 0;
+    static int crash_handlers_installed = 0;
+
+    if (log_file != NULL)
+    {
+        fflush(log_file);
+        fclose(log_file);
+        log_file = NULL;
+    }
+
     log_head = 0;
     log_tail = 0;
     log_dropped_since_last_pump = 0;
     log_config_set_defaults();
     log_config_load_ini(ini_path);
 
-    log_file = fopen(LOG_OUTPUT_FILE, "w");
+    log_rotate_files();
+
+    log_file = fopen(LOG_FILE_NEW, "w");
     if (log_file == NULL)
     {
-        fprintf(stderr, "STU_LOG: failed to open '%s' for writing\n", LOG_OUTPUT_FILE);
+        fprintf(stderr, "STU_LOG: failed to open '%s' for writing\n", LOG_FILE_NEW);
+    }
+
+    if (!atexit_registered)
+    {
+        atexit(log_atexit_handler);
+        atexit_registered = 1;
+    }
+    if (!crash_handlers_installed)
+    {
+        log_install_crash_handlers();
+        crash_handlers_installed = 1;
     }
 }
 
