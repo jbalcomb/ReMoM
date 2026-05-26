@@ -10,6 +10,8 @@
 #include "../../platform/include/Platform_Keys.h"
 #include "../../platform/include/Platform_Replay.h"
 
+#include "../../STU/src/STU_LOG.h"
+
 #include <stdio.h>
 
 
@@ -136,6 +138,8 @@ void Platform_Event_Handler(void)
     {
         platform_frame_callback();
     }
+
+    log_pump();
 
     /* Record: capture input state (including artificial human player actions). */
     if (Platform_Record_Active())

@@ -12,6 +12,7 @@
 #include <stdbool.h>
 #include <stdio.h>   /* CLAUDE: debug */
 #include "../../STU/src/STU_DBG.h"  /* CLAUDE: trc_prn() for frame logging */
+#include "../../STU/src/STU_LOG.h"
 #include <stdlib.h>
 #include <inttypes.h>
 
@@ -617,6 +618,8 @@ void Platform_Event_Handler(void)
     {
         platform_frame_callback();
     }
+
+    log_pump();
 
     /* CLAUDE: Record — capture input state after processing OS events. */
     if(Platform_Record_Active())

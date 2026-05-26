@@ -31,6 +31,8 @@
 #include "../STU/src/STU_WRLD.h"
 #endif
 
+#include "../STU/src/STU_LOG.h"
+
 #include "../MoX/src/capture.h"
 #include "../MoX/src/CFG.h"
 #include "../MoX/src/DOS.h"
@@ -224,6 +226,9 @@ int main(int argc, char * argv[])
     Trace_Log_Startup();
     trc_prn("TRACE: [%s, %d]: BEGIN: ReMoM main()\n", __FILE__, __LINE__);
 #endif
+
+    log_init();
+    LOG_INFO(LOG_CAT_GENERAL, "BEGIN: ReMoM main() [STU_LOG tracer bullet]");
 #ifdef STU_DEBUG
     AI_Metrics_Startup();
 #endif
@@ -420,6 +425,9 @@ int main(int argc, char * argv[])
     dbg_prn("DEBUG: [%s, %d]: END: ReMoM main()\n", __FILE__, __LINE__);
     Debug_Log_Shutdown();
 #endif
+
+    LOG_INFO(LOG_CAT_GENERAL, "END: ReMoM main() [STU_LOG tracer bullet]");
+    log_shutdown();
 
     return 0;
 

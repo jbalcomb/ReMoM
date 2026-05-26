@@ -10,6 +10,7 @@ set(LIBSTU_SOURCES
     STU_INIT.c
     STU_INT.c
     STU_JSON.c
+    STU_LOG.c
     STU_MSG.c
     STU_PRN.c
     STU_SND.c

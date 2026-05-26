@@ -90,7 +90,7 @@ The new logger lands and stabilizes on a separate branch first. Migration of exi
 Each line written to disk follows this format:
 
 ```
-[2026-05-25T14:32:01Z] [WARN ] [AIMOVE] AIMOVE.c:1234 AI_Stacks_Peacetime_Ocean_Movement_And_Cleanup: stack %d found no valid destination
+[2026-05-25T14:32:01Z] [WARN ] [AIMOVE] AIMOVE.c:1234 AI_Stacks_Wartime_Ocean_Movement_And_Cleanup: stack %d found no valid destination
 ```
 
 Fixed-width severity tag, fixed-width category tag, file:line, function name, then the formatted message. The fixed-width fields make awk/grep one-liners predictable and make the semantic diff trivial to implement.

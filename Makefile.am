@@ -30,6 +30,7 @@ libstu_a_SOURCES = \
     STU/src/STU_FMT.c \
     STU/src/STU_INT.c \
     STU/src/STU_JSON.c \
+    STU/src/STU_LOG.c \
     STU/src/STU_MSG.c \
     STU/src/STU_PRN.c \
     STU/src/STU_SND.c \

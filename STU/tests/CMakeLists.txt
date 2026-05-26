@@ -1,7 +1,10 @@
 
 include(GoogleTest)
 
-add_executable(test_STU test_STU.cpp)
+add_executable(test_STU
+	test_STU_LOG.cpp
+	test_STU_UTIL.cpp
+)
 
 target_link_libraries(test_STU
 	GTest::gtest
