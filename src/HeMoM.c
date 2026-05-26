@@ -32,6 +32,7 @@
 #include "../STU/src/AI_METRICS.h"
 #include "../STU/src/STU_DBG.h"
 #endif
+#include "../STU/src/STU_LOG.h"
 #include "../platform/include/Platform.h"
 #include "../platform/include/Platform_Replay.h"
 #include "../platform/include/Platform_Keys.h"
@@ -517,6 +518,9 @@ int main(int argc, char *argv[])
     trc_prn("TRACE: [%s, %d]: BEGIN: HeMoM  main()\n", __FILE__, __LINE__);
 #endif
 
+    log_init("ReMoM.ini");
+    LOG_INFO(LOG_CAT_GENERAL, "BEGIN: HeMoM main() [STU_LOG tracer bullet]");
+
     /* Log and parse CLI arguments */
     fprintf(stderr, "[HeMoM] argc=%d\n", argc);
 #ifdef STU_DEBUG
@@ -838,6 +842,9 @@ int main(int argc, char *argv[])
     dbg_prn("DEBUG: [%s, %d]: END: HeMoM  main()\n", __FILE__, __LINE__);
     Debug_Log_Shutdown();
 #endif
+
+    LOG_INFO(LOG_CAT_GENERAL, "END: HeMoM main() [STU_LOG tracer bullet]");
+    log_shutdown();
 
     fprintf(stderr, "[HeMoM] Done\n");
     return 0;
