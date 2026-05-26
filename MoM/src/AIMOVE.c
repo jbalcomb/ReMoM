@@ -6175,7 +6175,7 @@ int16_t AI_Stack_Can_Mobilize(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
 
 // WZD o162p35
 /**
- * @brief Rebuilds per-plane continent classifications, stage points, and
+ * @brief Builds per-plane continent classifications, stage points, and
  *        settler targets for one AI player.
  *
  * This routine is the full continent-evaluation pass that feeds later stage,

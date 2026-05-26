@@ -10,6 +10,7 @@ extern "C" {
 #include "../../MoX/src/EMS/EMS.h"
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
+#include "../../MoX/src/MOX_DAT.h"
 #include "../../MoX/src/MOX_DEF.h"
 #include "../src/AIDUDES.h"
 #include "../src/AIMOVE.h"
