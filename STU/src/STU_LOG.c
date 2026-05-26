@@ -23,6 +23,40 @@ static size_t log_head = 0;
 static size_t log_tail = 0;
 static FILE * log_file = NULL;
 
+static const char * const log_sev_str[] = {
+    "TRACE",
+    "DEBUG",
+    "INFO ",
+    "WARN ",
+    "ERROR",
+    "FATAL"
+};
+
+static const char * const log_cat_str[] = {
+    "GENERAL ",
+    "AIMOVE  ",
+    "COMBAT  ",
+    "SAVE    ",
+    "PFL     ",
+    "IKI     "
+};
+
+static const char * log_basename(const char * path)
+{
+    const char * last_slash;
+    const char * last_bslash;
+    const char * last;
+
+    if (path == NULL)
+    {
+        return "";
+    }
+    last_slash  = strrchr(path, '/');
+    last_bslash = strrchr(path, '\\');
+    last = (last_slash > last_bslash) ? last_slash : last_bslash;
+    return (last != NULL) ? (last + 1) : path;
+}
+
 static size_t log_ring_used(void)
 {
     if (log_head >= log_tail)
@@ -59,29 +93,7 @@ static void log_ring_write_bytes(const char * src, size_t n)
     log_head = n - first_chunk;
 }
 
-void log_init(void)
-{
-    log_head = 0;
-    log_tail = 0;
-    log_file = fopen(LOG_OUTPUT_FILE, "w");
-    if (log_file == NULL)
-    {
-        fprintf(stderr, "STU_LOG: failed to open '%s' for writing\n", LOG_OUTPUT_FILE);
-    }
-}
-
-void log_shutdown(void)
-{
-    log_pump();
-    if (log_file != NULL)
-    {
-        fflush(log_file);
-        fclose(log_file);
-        log_file = NULL;
-    }
-}
-
-void log_pump(void)
+static void log_drain_all(void)
 {
     size_t used;
     size_t first_chunk;
@@ -112,20 +124,68 @@ void log_pump(void)
     log_tail = log_head;
 }
 
-void log_write_v(enum log_severity sev, enum log_category cat, const char * fmt, va_list args)
+void log_init(void)
+{
+    log_head = 0;
+    log_tail = 0;
+    log_file = fopen(LOG_OUTPUT_FILE, "w");
+    if (log_file == NULL)
+    {
+        fprintf(stderr, "STU_LOG: failed to open '%s' for writing\n", LOG_OUTPUT_FILE);
+    }
+}
+
+void log_shutdown(void)
+{
+    log_drain_all();
+    if (log_file != NULL)
+    {
+        fflush(log_file);
+        fclose(log_file);
+        log_file = NULL;
+    }
+}
+
+void log_pump(void)
+{
+    log_drain_all();
+}
+
+void log_flush_all(void)
+{
+    log_drain_all();
+}
+
+void log_write_at_v(int sev, enum log_category cat, const char * file, int line, const char * func, const char * fmt, va_list args)
 {
     char   stack_buf[LOG_FMT_BUF_LEN];
     char   datetime[32];
     int    header_len;
     int    body_len;
     size_t total_len;
+    int    sev_idx;
+    int    cat_idx;
 
-    (void)sev;
-    (void)cat;
+    sev_idx = sev;
+    cat_idx = (int)cat;
+    if (sev_idx < 0 || sev_idx > LOG_SEV_FATAL)
+    {
+        sev_idx = LOG_SEV_INFO;
+    }
+    if (cat_idx < 0 || cat_idx > LOG_CAT_IKI)
+    {
+        cat_idx = LOG_CAT_GENERAL;
+    }
 
     get_datetime(datetime);
 
-    header_len = snprintf(stack_buf, LOG_FMT_BUF_LEN, "[%s] ", datetime);
+    header_len = snprintf(stack_buf, LOG_FMT_BUF_LEN, "[%s] [%s] [%s] %s:%d %s: ",
+                          datetime,
+                          log_sev_str[sev_idx],
+                          log_cat_str[cat_idx],
+                          log_basename(file),
+                          line,
+                          (func != NULL) ? func : "");
     if (header_len < 0 || (size_t)header_len >= LOG_FMT_BUF_LEN)
     {
         return;
@@ -153,10 +213,10 @@ void log_write_v(enum log_severity sev, enum log_category cat, const char * fmt,
     log_ring_write_bytes(stack_buf, total_len);
 }
 
-void log_write(enum log_severity sev, enum log_category cat, const char * fmt, ...)
+void log_write_at(int sev, enum log_category cat, const char * file, int line, const char * func, const char * fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
-    log_write_v(sev, cat, fmt, args);
+    log_write_at_v(sev, cat, file, line, func, fmt, args);
     va_end(args);
 }

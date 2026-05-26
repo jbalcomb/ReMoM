@@ -7,29 +7,70 @@
 extern "C" {
 #endif
 
-enum log_severity
-{
-    LOG_SEV_TRACE = 0,
-    LOG_SEV_DEBUG = 1,
-    LOG_SEV_INFO  = 2,
-    LOG_SEV_WARN  = 3,
-    LOG_SEV_ERROR = 4,
-    LOG_SEV_FATAL = 5
-};
+/* Severity levels are preprocessor constants so they can be compared in the #if gates below. */
+#define LOG_SEV_TRACE 0
+#define LOG_SEV_DEBUG 1
+#define LOG_SEV_INFO  2
+#define LOG_SEV_WARN  3
+#define LOG_SEV_ERROR 4
+#define LOG_SEV_FATAL 5
 
 enum log_category
 {
-    LOG_CAT_GENERAL = 0
+    LOG_CAT_GENERAL = 0,
+    LOG_CAT_AIMOVE  = 1,
+    LOG_CAT_COMBAT  = 2,
+    LOG_CAT_SAVE    = 3,
+    LOG_CAT_PFL     = 4,
+    LOG_CAT_IKI     = 5
 };
 
 void log_init(void);
 void log_shutdown(void);
 void log_pump(void);
+void log_flush_all(void);
 
-void log_write(enum log_severity sev, enum log_category cat, const char * fmt, ...);
-void log_write_v(enum log_severity sev, enum log_category cat, const char * fmt, va_list args);
+void log_write_at(int sev, enum log_category cat, const char * file, int line, const char * func, const char * fmt, ...);
+void log_write_at_v(int sev, enum log_category cat, const char * file, int line, const char * func, const char * fmt, va_list args);
 
-#define LOG_INFO(cat, ...) log_write(LOG_SEV_INFO, (cat), __VA_ARGS__)
+#ifndef STU_LOG_MIN_SEVERITY
+#define STU_LOG_MIN_SEVERITY LOG_SEV_TRACE
+#endif
+
+/* sizeof-noop: argument expressions are syntactically validated but never evaluated; produces no code in optimized builds and prevents side effects from stripped-severity call-sites. */
+#define LOG__NOOP(cat, ...) ((void)sizeof((cat), __VA_ARGS__, 0))
+
+#if STU_LOG_MIN_SEVERITY <= LOG_SEV_TRACE
+#define LOG_TRACE(cat, ...) log_write_at(LOG_SEV_TRACE, (cat), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__)
+#else
+#define LOG_TRACE(cat, ...) LOG__NOOP((cat), __VA_ARGS__)
+#endif
+
+#if STU_LOG_MIN_SEVERITY <= LOG_SEV_DEBUG
+#define LOG_DEBUG(cat, ...) log_write_at(LOG_SEV_DEBUG, (cat), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__)
+#else
+#define LOG_DEBUG(cat, ...) LOG__NOOP((cat), __VA_ARGS__)
+#endif
+
+#if STU_LOG_MIN_SEVERITY <= LOG_SEV_INFO
+#define LOG_INFO(cat, ...) log_write_at(LOG_SEV_INFO, (cat), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__)
+#else
+#define LOG_INFO(cat, ...) LOG__NOOP((cat), __VA_ARGS__)
+#endif
+
+#if STU_LOG_MIN_SEVERITY <= LOG_SEV_WARN
+#define LOG_WARN(cat, ...) log_write_at(LOG_SEV_WARN, (cat), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__)
+#else
+#define LOG_WARN(cat, ...) LOG__NOOP((cat), __VA_ARGS__)
+#endif
+
+#if STU_LOG_MIN_SEVERITY <= LOG_SEV_ERROR
+#define LOG_ERROR(cat, ...) log_write_at(LOG_SEV_ERROR, (cat), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__)
+#else
+#define LOG_ERROR(cat, ...) LOG__NOOP((cat), __VA_ARGS__)
+#endif
+
+#define LOG_FATAL(cat, ...) do { log_write_at(LOG_SEV_FATAL, (cat), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__); log_flush_all(); } while(0)
 
 #ifdef __cplusplus
 }
