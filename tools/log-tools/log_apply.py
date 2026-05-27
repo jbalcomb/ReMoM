@@ -178,6 +178,14 @@ def transform_fprintf(original_call, log_macro, log_category):
     return f"{log_macro}({log_category}, {inner_no_nl})"
 
 
+def fprintf_call_filter(original_call, expected_stream, log_macro, log_category):
+    """Filter fprintf calls by stream identifier (stderr or stdout) before transforming. Returns None for other streams so the site is skipped silently."""
+    m = re.match(r"\s*fprintf\s*\(\s*([A-Za-z_][A-Za-z_0-9]*)\s*,", original_call)
+    if not m or m.group(1) != expected_stream:
+        return None
+    return transform_fprintf(original_call, log_macro, log_category)
+
+
 def main():
     if len(sys.argv) != 5:
         sys.stderr.write(__doc__)
@@ -206,11 +214,13 @@ def main():
         call_re = re.compile(r"(?<![a-zA-Z_])printf\s*\(")
         transform = lambda c: transform_printf(c, log_macro, log_category)
     elif original == "fprintf_stderr":
-        call_re = re.compile(r"\bfprintf\s*\(\s*stderr\s*,")
-        transform = lambda c: transform_fprintf(c, log_macro, log_category)
+        # Regex must match through '(' only so find_call's paren-balancer sees a clean
+        # opening paren. Stream filtering happens in the transform via fprintf_call_filter.
+        call_re = re.compile(r"\bfprintf\s*\(")
+        transform = lambda c: fprintf_call_filter(c, "stderr", log_macro, log_category)
     elif original == "fprintf_stdout":
-        call_re = re.compile(r"\bfprintf\s*\(\s*stdout\s*,")
-        transform = lambda c: transform_fprintf(c, log_macro, log_category)
+        call_re = re.compile(r"\bfprintf\s*\(")
+        transform = lambda c: fprintf_call_filter(c, "stdout", log_macro, log_category)
 
     # Find all real (non-comment) call sites in the stripped text.
     sites = []

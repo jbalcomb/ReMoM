@@ -92,7 +92,8 @@ TEST(stu_log_test, MessageFormatHasAllFields)
 	EXPECT_TRUE(std::regex_search(line, std::regex(R"(^\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z\] )"))) << line;
 	EXPECT_TRUE(std::regex_search(line, std::regex(R"(test_STU_LOG\.cpp:\d+ )"))) << line;
 	EXPECT_NE(line.find("[INFO ]"),                       std::string::npos) << line;
-	EXPECT_NE(line.find("[AIMOVE  ]"),                    std::string::npos) << line;
+	/* width-independent: matches "[AIMOVE]" or "[AIMOVE   ]" or any trailing-space padding */
+	EXPECT_TRUE(std::regex_search(line, std::regex(R"(\[AIMOVE\s*\])"))) << line;
 	EXPECT_NE(line.find(": shape test message"),          std::string::npos) << line;
 }
 

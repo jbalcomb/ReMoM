@@ -27,7 +27,7 @@
 #define LOG_FILE_NEW         "remom_log_new.txt"
 #define LOG_FILE_CURRENT     "remom_log_current.txt"
 #define LOG_FILE_PREVIOUS    "remom_log_previous.txt"
-#define LOG_N_CATEGORIES     8
+#define LOG_N_CATEGORIES     17
 
 static char   log_ring[LOG_RING_SIZE];
 static size_t log_head = 0;
@@ -52,15 +52,27 @@ static const char * const log_sev_str[] = {
     "FATAL"
 };
 
+/* Width sized to the longest per-file category name across the codebase
+ * (currently ARTIFICIAL_HUMAN_PLAYER at 23 chars). Fixed-width keeps the
+ * log column predictable for awk-by-position. */
 static const char * const log_cat_str[] = {
-    "GENERAL ",
-    "AIMOVE  ",
-    "COMBAT  ",
-    "SAVE    ",
-    "PFL     ",
-    "IKI     ",
-    "LOADSAVE",
-    "AIDUDES "
+    "GENERAL                ",
+    "AIMOVE                 ",
+    "COMBAT                 ",
+    "SAVE                   ",
+    "PFL                    ",
+    "IKI                    ",
+    "LOADSAVE               ",
+    "AIDUDES                ",
+    "HEADLESS_PFL           ",
+    "REPLAY                 ",
+    "SDL2_AUDIO             ",
+    "SDL2_INIT              ",
+    "SDL2_PFL               ",
+    "SDL3_AUDIO             ",
+    "SDL3_INIT              ",
+    "SDL3_PFL               ",
+    "WIN_PFL                "
 };
 
 static const char * const log_cat_ini_key[] = {
@@ -71,7 +83,16 @@ static const char * const log_cat_ini_key[] = {
     "PFL",
     "IKI",
     "LOADSAVE",
-    "AIDUDES"
+    "AIDUDES",
+    "HEADLESS_PFL",
+    "REPLAY",
+    "SDL2_AUDIO",
+    "SDL2_INIT",
+    "SDL2_PFL",
+    "SDL3_AUDIO",
+    "SDL3_INIT",
+    "SDL3_PFL",
+    "WIN_PFL"
 };
 
 static void log_config_set_defaults(void)

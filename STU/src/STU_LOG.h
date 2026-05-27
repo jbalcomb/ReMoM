@@ -23,8 +23,17 @@ enum log_category
     LOG_CAT_SAVE     = 3,
     LOG_CAT_PFL      = 4,
     LOG_CAT_IKI      = 5,
-    LOG_CAT_LOADSAVE = 6,
-    LOG_CAT_AIDUDES  = 7
+    LOG_CAT_LOADSAVE     = 6,
+    LOG_CAT_AIDUDES      = 7,
+    LOG_CAT_HEADLESS_PFL = 8,
+    LOG_CAT_REPLAY       = 9,
+    LOG_CAT_SDL2_AUDIO   = 10,
+    LOG_CAT_SDL2_INIT    = 11,
+    LOG_CAT_SDL2_PFL     = 12,
+    LOG_CAT_SDL3_AUDIO   = 13,
+    LOG_CAT_SDL3_INIT    = 14,
+    LOG_CAT_SDL3_PFL     = 15,
+    LOG_CAT_WIN_PFL      = 16
 };
 
 /* ini_path: path to an INI file with a [Logging] section, or NULL for built-in defaults. Missing file or missing section is non-fatal — defaults apply. */
