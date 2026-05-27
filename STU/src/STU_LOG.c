@@ -27,7 +27,7 @@
 #define LOG_FILE_NEW         "remom_log_new.txt"
 #define LOG_FILE_CURRENT     "remom_log_current.txt"
 #define LOG_FILE_PREVIOUS    "remom_log_previous.txt"
-#define LOG_N_CATEGORIES     7
+#define LOG_N_CATEGORIES     8
 
 static char   log_ring[LOG_RING_SIZE];
 static size_t log_head = 0;
@@ -59,7 +59,8 @@ static const char * const log_cat_str[] = {
     "SAVE    ",
     "PFL     ",
     "IKI     ",
-    "LOADSAVE"
+    "LOADSAVE",
+    "AIDUDES "
 };
 
 static const char * const log_cat_ini_key[] = {
@@ -69,7 +70,8 @@ static const char * const log_cat_ini_key[] = {
     "SAVE",
     "PFL",
     "IKI",
-    "LOADSAVE"
+    "LOADSAVE",
+    "AIDUDES"
 };
 
 static void log_config_set_defaults(void)

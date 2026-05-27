@@ -23,7 +23,8 @@ enum log_category
     LOG_CAT_SAVE     = 3,
     LOG_CAT_PFL      = 4,
     LOG_CAT_IKI      = 5,
-    LOG_CAT_LOADSAVE = 6
+    LOG_CAT_LOADSAVE = 6,
+    LOG_CAT_AIDUDES  = 7
 };
 
 /* ini_path: path to an INI file with a [Logging] section, or NULL for built-in defaults. Missing file or missing section is non-fatal — defaults apply. */

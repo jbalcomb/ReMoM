@@ -7,6 +7,7 @@
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
 
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
@@ -435,7 +436,7 @@ static void AI_Stacks_Stage_Expedition_Forces(int16_t landmass_idx, int16_t wp, 
         /* Call movement logic to set the unit's target to this landmass's stage point */
 #ifdef STU_DEBUG
 //      dbg_prn("AI_ORDERS: [GarrPush] unit %d -> continent %d coords (%d,%d)\n", unit_idx, landmass_idx, AI_Continent_X_Ptr[landmass_idx], AI_Continent_Y_Ptr[landmass_idx]);
-        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, cp_landmass_wx_array[landmass_idx], cp_landmass_wy_array[landmass_idx], unit_list_idx, list_unit_idx);
+        LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, cp_landmass_wx_array[landmass_idx], cp_landmass_wy_array[landmass_idx], unit_list_idx, list_unit_idx);
 #endif
         g_ai_set_target_caller = 1;
         AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, cp_landmass_wx_array[landmass_idx], cp_landmass_wy_array[landmass_idx], unit_list_idx, list_unit_idx);
@@ -794,7 +795,7 @@ void AI_Stacks_Garrison_Sites(int16_t player_idx, int16_t wp, int16_t landmass_i
                     continue;
                 }
 #ifdef STU_DEBUG
-                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
+                LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
 #endif
                 g_ai_set_target_caller = 2;
                 AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
@@ -1013,7 +1014,7 @@ void AI_Stacks_Wartime_Ocean_Movement_And_Cleanup(int16_t player_idx, int16_t wp
         )
         {
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: %s: -> AI Stack Stranded\n", __FILE__, __LINE__, __FUNCTION__);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI Stack Stranded", __FILE__, __LINE__, __FUNCTION__);
     STU_DEBUG_BREAK();
 #endif
             /* ¿ OGBUG  Claude is quite concerned this is killing Seafaring Units that might still be on this square ? */
@@ -1222,7 +1223,7 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
                         unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
                         Transport_Stack_Room -= (_unit_type_table[_UNITS[unit_idx].type].Transport + 1);
 #ifdef STU_DEBUG
-                        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
+                        LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
 #endif
                         g_ai_set_target_caller = 3;
                         AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
@@ -1405,7 +1406,7 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
                 else
                 {
 #ifdef STU_DEBUG
-                    dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
+                    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
 #endif
                     g_ai_set_target_caller = 4;
                     AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
@@ -1459,7 +1460,7 @@ BEGIN:  fixup bad orders, for valid colony or military stack
             {
                 unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
 #ifdef STU_DEBUG
-                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
+                LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
 #endif
                 g_ai_set_target_caller = 5;
                 AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
@@ -1515,7 +1516,7 @@ BEGIN:  fixup bad orders, for valid colony or military stack
                 {
                     unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
 #ifdef STU_DEBUG
-                    dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
+                    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
 #endif
                     g_ai_set_target_caller = 6;
                     AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
@@ -1637,7 +1638,7 @@ void AI_Stacks_Roamers_Target_Or_Deploy(int16_t landmass_idx, int16_t wp, int16_
                 {
                     unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
 #ifdef STU_DEBUG
-                    dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
+                    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
 #endif
                     g_ai_set_target_caller = 7;
                     AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
@@ -1854,7 +1855,7 @@ void AI_Stacks_Order_To_War_Landmass(int16_t player_idx, int16_t wp)
             war_landmass_stage_point_wy = _ai_continents.plane[wp].player[player_idx].wy_array[war_landmass_idx];
 #ifdef STU_DEBUG
 //                        dbg_prn("AI_ORDERS: [PullMainWar] unit %d -> MainWarCont[%d][%d]=%d coords (%d,%d)\n", unit_idx, wp, player_idx, _ai_landmass_war_targets[wp][player_idx], war_landmass_stage_point_wx, war_landmass_stage_point_wy);
-            dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, war_landmass_stage_point_wx, war_landmass_stage_point_wy, itr_stacks, itr_list_units);
+            LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, war_landmass_stage_point_wx, war_landmass_stage_point_wy, itr_stacks, itr_list_units);
 #endif
             g_ai_set_target_caller = 8;
             AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, war_landmass_stage_point_wx, war_landmass_stage_point_wy, itr_stacks, itr_list_units);
@@ -1980,7 +1981,7 @@ void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, 
             }
             unit_idx = _ai_own_stack_unit_list[stack_idx][itr_list_units];
 #ifdef STU_DEBUG
-            dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, stage_wx, stage_wy, stack_idx, itr_list_units);
+            LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, stage_wx, stage_wy, stack_idx, itr_list_units);
 #endif
             g_ai_set_target_caller = 9;
             AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, stage_wx, stage_wy, stack_idx, itr_list_units);
@@ -2098,7 +2099,7 @@ void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, 
                 {
                     unit_idx = _ai_own_stack_unit_list[stack_idx][itr_list_units];
 #ifdef STU_DEBUG
-                    dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_unit_on_ocean_wx, adjacent_unit_on_ocean_wy, stack_idx, itr_list_units);
+                    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_unit_on_ocean_wx, adjacent_unit_on_ocean_wy, stack_idx, itr_list_units);
 #endif
                     g_ai_set_target_caller = 10;
                     AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_unit_on_ocean_wx, adjacent_unit_on_ocean_wy, stack_idx, itr_list_units);
@@ -2717,9 +2718,9 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
     int16_t itr_units2 = 0;  // DNE in Dasm, reuses itr_stacks2
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: BEGIN: AI_Stacks_Init_Build_Target_Order()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: AI_Stacks_Init_Build_Target_Order()\n", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: BEGIN: AI_Stacks_Init_Build_Target_Order()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
 #endif
 
 
@@ -2911,7 +2912,7 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
                 for(itr_units2 = 0; _ai_own_stack_unit_count[itr_stacks1] > itr_units2; itr_units2++)
                 {
 #ifdef STU_DEBUG
-                    dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, _ai_own_stack_unit_list[itr_stacks1][itr_units2], target_wx, target_wy, itr_stacks1, itr_units2);
+                    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, _ai_own_stack_unit_list[itr_stacks1][itr_units2], target_wx, target_wy, itr_stacks1, itr_units2);
 #endif
                     g_ai_set_target_caller = 11;
                     AI_Stacks_Order_Attack_Target_Or_Goto_Destination(_ai_own_stack_unit_list[itr_stacks1][itr_units2], target_wx, target_wy, itr_stacks1, itr_units2);
@@ -2931,9 +2932,9 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
     }
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: END: AI_Stacks_Init_Build_Target_Order()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: END: AI_Stacks_Init_Build_Target_Order()\n", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: END: AI_Stacks_Init_Build_Target_Order()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
 #endif
 
 }
@@ -3541,7 +3542,7 @@ void AI_Stacks_Move_Out_NonMilitary_Garrisoned(int16_t wp)
                 if(Adjacent_Free_Square(_ai_own_stack_wx[itr_stacks], _ai_own_stack_wy[itr_stacks], _ai_own_stack_wp[itr_stacks], &adjacent_wx, &adjacent_wy) == ST_TRUE)
                 {
 #ifdef STU_DEBUG
-                    dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack_units);
+                    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack_units);
 #endif
                     g_ai_set_target_caller = 12;
                     AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack_units);
@@ -3574,7 +3575,7 @@ void AI_Stacks_Move_Out_NonMilitary_Garrisoned(int16_t wp)
                     if(Adjacent_Free_Square(_ai_own_stack_wx[itr_stacks], _ai_own_stack_wy[itr_stacks], _ai_own_stack_wp[itr_stacks], &adjacent_wx, &adjacent_wy) == ST_TRUE)
                     {
 #ifdef STU_DEBUG
-                        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack_units);
+                        LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack_units);
 #endif
                         g_ai_set_target_caller = 13;
                         AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack_units);
@@ -3754,7 +3755,7 @@ static void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t 
         /* HACK  OGBUG would have result in bogus data, so we try to replicate that */
         ogbug_value = ((Random(256) << 8) | Random(256));
 #ifdef STU_DEBUG
-    trc_prn("DEBUG: [%s, %d]: AI_Stacks_Survey_Expedition_Forces_Stack(): ogbug_value: %d\n", __FILE__, __LINE__, ogbug_value);
+    LOG_TRACE(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: AI_Stacks_Survey_Expedition_Forces_Stack(): ogbug_value: %d", __FILE__, __LINE__, ogbug_value);
 #endif
         military_unit_values[military_unit_count] = ogbug_value;
 
@@ -4057,7 +4058,7 @@ void AI_Do_Meld(int16_t player_idx)
                         node_wx = _NODES[target_node_idx].wx;
                         node_wy = _NODES[target_node_idx].wy;
 #ifdef STU_DEBUG
-                        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, node_wx, node_wy, itr, list_unit_idx);
+                        LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, node_wx, node_wy, itr, list_unit_idx);
 #endif
                         g_ai_set_target_caller = 14;
                         AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, node_wx, node_wy, itr, list_unit_idx);
@@ -4217,7 +4218,7 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                         {
 
 #ifdef STU_DEBUG
-                            dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, Tower_X, Tower_Y, itr_stacks, itr_list_units);
+                            LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, Tower_X, Tower_Y, itr_stacks, itr_list_units);
 #endif
 
                             g_ai_set_target_caller = 15;
@@ -4293,7 +4294,7 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                             else
                             {
 #ifdef STU_DEBUG
-                                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, Best_Tile_X, Best_Tile_Y, itr_stacks, itr_list_units);
+                                LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, Best_Tile_X, Best_Tile_Y, itr_stacks, itr_list_units);
 #endif
                                 g_ai_set_target_caller = 16;
                                 AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, Best_Tile_X, Best_Tile_Y, itr_stacks, itr_list_units);
@@ -4451,7 +4452,7 @@ void AI_Do_Purify(int16_t landmass_idx, int16_t wp)
                             {
 
 #ifdef STU_DEBUG
-                                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, list_unit_idx);
+                                LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, list_unit_idx);
 #endif
                                 g_ai_set_target_caller = 17;
                                 AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, target_wx, target_wy, itr_stacks, list_unit_idx);
@@ -4576,7 +4577,7 @@ void AI_Do_RoadBuild(int16_t landmass_idx)
                     {
 
 #ifdef STU_DEBUG
-                        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, _CITIES[nearest_city_idx].wx, _CITIES[nearest_city_idx].wy, itr_stacks, itr_list_units);
+                        LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, _CITIES[nearest_city_idx].wx, _CITIES[nearest_city_idx].wy, itr_stacks, itr_list_units);
 #endif
                         g_ai_set_target_caller = 18;
                         AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, _CITIES[nearest_city_idx].wx, _CITIES[nearest_city_idx].wy, itr_stacks, itr_list_units);
@@ -4674,15 +4675,15 @@ void AI_Stacks_Order_Attack_Target_Or_Goto_Destination(int16_t unit_idx, int16_t
     int16_t wp = 0;
     int16_t target_value = 0;
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: BEGIN: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()\n", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: BEGIN: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()", __FILE__, __LINE__);
 #endif
     if((unit_idx < 0) || (unit_idx >= MAX_UNIT_COUNT)) { return; }
     wp = _UNITS[unit_idx].wp;
     target_value = g_ai_evaluation_map[wp][((target_wy * WORLD_WIDTH) + target_wx)];
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: unit_idx: %d, target_wx: %d, target_wy: %d, target_value: %d\n", __FILE__, __LINE__, unit_idx, target_wx, target_wy, target_value);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: unit_idx: %d, target_wx: %d, target_wy: %d, target_value: %d", __FILE__, __LINE__, unit_idx, target_wx, target_wy, target_value);
 #endif
     if(
         ((target_value & AI_TARGET_SITE) != 0)
@@ -4700,7 +4701,7 @@ void AI_Stacks_Order_Attack_Target_Or_Goto_Destination(int16_t unit_idx, int16_t
     _UNITS[unit_idx].dst_wy = (int8_t)target_wy;
 
 #ifdef STU_DEBUG
-        dbg_prn("DEBUG: [%s, %d]: unit_idx: %d, status: %d, dst_wx: %d, dst_wy: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].Status, _UNITS[unit_idx].dst_wx, _UNITS[unit_idx].dst_wy);
+        LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: unit_idx: %d, status: %d, dst_wx: %d, dst_wy: %d", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].Status, _UNITS[unit_idx].dst_wx, _UNITS[unit_idx].dst_wy);
 #endif
 
     _ai_own_stack_unit_list[stack_idx][list_unit_idx] = ST_UNDEFINED;
@@ -4708,14 +4709,14 @@ void AI_Stacks_Order_Attack_Target_Or_Goto_Destination(int16_t unit_idx, int16_t
 #ifdef STU_DEBUG
     if (target_wx == 0 && target_wy == 0)
     {
-        dbg_prn("AI_ORDERS: WARNING unit %d (owner %d type %d) at (%d,%d) assigned dst (0,0) — status=%d stack_idx=%d list_unit=%d wp=%d caller=%d\n", unit_idx, _UNITS[unit_idx].owner_idx, _UNITS[unit_idx].type, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].Status, stack_idx, list_unit_idx, _UNITS[unit_idx].wp, g_ai_set_target_caller);
+        LOG_DEBUG(LOG_CAT_AIMOVE, "AI_ORDERS: WARNING unit %d (owner %d type %d) at (%d,%d) assigned dst (0,0) — status=%d stack_idx=%d list_unit=%d wp=%d caller=%d", unit_idx, _UNITS[unit_idx].owner_idx, _UNITS[unit_idx].type, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].Status, stack_idx, list_unit_idx, _UNITS[unit_idx].wp, g_ai_set_target_caller);
     }
 #endif
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: END: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: END: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()\n", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: END: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()", __FILE__, __LINE__);
 #endif
 
 }
@@ -4959,7 +4960,7 @@ void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp
     if(is_seafaring == ST_TRUE)
     {
 #ifdef STU_DEBUG
-        dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, transport_wx, transport_wy, unit_list_idx, list_unit_idx);
+        LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, transport_wx, transport_wy, unit_list_idx, list_unit_idx);
 #endif
         g_ai_set_target_caller = 19;
         AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, transport_wx, transport_wy, unit_list_idx, list_unit_idx);
@@ -5004,7 +5005,7 @@ void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp
             if(TILE_AI_FindEmptyLnd__WIP(Adjacent_Ocean_X, Adjacent_Ocean_Y, wp, &Adjacent_Ocean_X, &Adjacent_Ocean_Y) == ST_TRUE)
             {
 #ifdef STU_DEBUG
-                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, Adjacent_Ocean_X, Adjacent_Ocean_Y, unit_list_idx, list_unit_idx);
+                LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, Adjacent_Ocean_X, Adjacent_Ocean_Y, unit_list_idx, list_unit_idx);
 #endif
                 g_ai_set_target_caller = 20;
                 AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, Adjacent_Ocean_X, Adjacent_Ocean_Y, unit_list_idx, list_unit_idx);
@@ -5041,7 +5042,7 @@ void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp
             if(found_transport == ST_TRUE)
             {
 #ifdef STU_DEBUG
-                dbg_prn("DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)\n", __FILE__, __LINE__, __FUNCTION__, unit_idx, transport_wx, transport_wy, unit_list_idx, list_unit_idx);
+                LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, transport_wx, transport_wy, unit_list_idx, list_unit_idx);
 #endif
                 g_ai_set_target_caller = 21;
                 AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, transport_wx, transport_wy, unit_list_idx, list_unit_idx);
