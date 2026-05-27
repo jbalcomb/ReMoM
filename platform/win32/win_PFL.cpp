@@ -291,7 +291,7 @@ void Platform_Event_Handler(void)
         platform_frame_callback();
     }
 
-    log_pump();
+    STU_Log_Pump();
 
     /* CLAUDE: Record — capture input state after processing OS events.  Matches sdl2/sdl3/headless backends.  Without this, --record produces an empty RMR on win32. */
     if (Platform_Record_Active())

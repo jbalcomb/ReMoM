@@ -612,7 +612,7 @@ void Platform_Event_Handler(void)
         platform_frame_callback();
     }
 
-    log_pump();
+    STU_Log_Pump();
 
     /* CLAUDE: Record — capture input state after processing OS events. */
     if(Platform_Record_Active())

@@ -518,7 +518,7 @@ int main(int argc, char *argv[])
     LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: BEGIN: HeMoM  main()", __FILE__, __LINE__);
 #endif
 
-    log_init("ReMoM.ini");
+    STU_Log_Startup("ReMoM.ini");
     LOG_INFO(LOG_CAT_GENERAL, "BEGIN: HeMoM main() [STU_LOG tracer bullet]");
 
     /* Log and parse CLI arguments */
@@ -844,7 +844,7 @@ int main(int argc, char *argv[])
 #endif
 
     LOG_INFO(LOG_CAT_GENERAL, "END: HeMoM main() [STU_LOG tracer bullet]");
-    log_shutdown();
+    STU_Log_Shutdown();
 
     LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Done");
     return 0;

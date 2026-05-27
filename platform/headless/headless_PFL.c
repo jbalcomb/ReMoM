@@ -139,7 +139,7 @@ void Platform_Event_Handler(void)
         platform_frame_callback();
     }
 
-    log_pump();
+    STU_Log_Pump();
 
     /* Record: capture input state (including artificial human player actions). */
     if (Platform_Record_Active())

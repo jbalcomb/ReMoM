@@ -41,19 +41,19 @@ TEST(stu_log_strip_test, DebugCallDoesNotEvaluateArguments)
 TEST(stu_log_strip_test, InfoCallStillEvaluatesArguments)
 {
 	int counter = 0;
-	log_init(NULL);
+	STU_Log_Startup(NULL);
 	LOG_INFO(LOG_CAT_GENERAL, "side-effect probe %d", ++counter);
-	log_shutdown();
+	STU_Log_Shutdown();
 	EXPECT_EQ(counter, 1);
 }
 
 TEST(stu_log_strip_test, StrippedSeveritiesProduceNoOutput)
 {
-	log_init(NULL);
+	STU_Log_Startup(NULL);
 	LOG_TRACE(LOG_CAT_GENERAL, "stripped trace");
 	LOG_DEBUG(LOG_CAT_GENERAL, "stripped debug");
 	LOG_INFO (LOG_CAT_GENERAL, "kept info");
-	log_shutdown();
+	STU_Log_Shutdown();
 
 	std::string contents = slurp_strip_log("remom_log_new.txt");
 	EXPECT_EQ(contents.find("stripped trace"), std::string::npos);
@@ -70,11 +70,11 @@ TEST(stu_log_strip_test, CompileTimeFloorBeatsPermissiveIni)
 	}
 
 	int counter = 0;
-	log_init(ini_path);
+	STU_Log_Startup(ini_path);
 	LOG_TRACE(LOG_CAT_GENERAL, "should still be stripped %d", ++counter);
 	LOG_DEBUG(LOG_CAT_GENERAL, "also stripped %d",            ++counter);
 	LOG_INFO (LOG_CAT_GENERAL, "info kept %d",                ++counter);
-	log_shutdown();
+	STU_Log_Shutdown();
 	std::remove(ini_path);
 
 	EXPECT_EQ(counter, 1);  /* only INFO evaluated its argument */

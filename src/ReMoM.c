@@ -227,7 +227,7 @@ int main(int argc, char * argv[])
     LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: BEGIN: ReMoM main()", __FILE__, __LINE__);
 #endif
 
-    log_init("ReMoM.ini");
+    STU_Log_Startup("ReMoM.ini");
     LOG_INFO(LOG_CAT_GENERAL, "BEGIN: ReMoM main() [STU_LOG tracer bullet]");
 #ifdef STU_DEBUG
     AI_Metrics_Startup();
@@ -427,7 +427,7 @@ int main(int argc, char * argv[])
 #endif
 
     LOG_INFO(LOG_CAT_GENERAL, "END: ReMoM main() [STU_LOG tracer bullet]");
-    log_shutdown();
+    STU_Log_Shutdown();
 
     return 0;
 

@@ -40,12 +40,12 @@ TEST(stu_log_test, RoundTripNMessagesAppearInOrder)
 {
 	const int N = 100;
 
-	log_init(NULL);
+	STU_Log_Startup(NULL);
 	for (int i = 0; i < N; ++i)
 	{
 		LOG_INFO(LOG_CAT_GENERAL, "round_trip_msg %d", i);
 	}
-	log_shutdown();
+	STU_Log_Shutdown();
 
 	std::string contents = slurp_log_file("remom_log_new.txt");
 	ASSERT_FALSE(contents.empty());
@@ -73,16 +73,16 @@ TEST(stu_log_test, RoundTripNMessagesAppearInOrder)
 TEST(stu_log_test, NoOutputWhenPumpHasNoInit)
 {
 	std::remove("remom_log_new.txt");
-	log_pump();
+	STU_Log_Pump();
 	std::ifstream f("remom_log_new.txt");
 	EXPECT_FALSE(f.good());
 }
 
 TEST(stu_log_test, MessageFormatHasAllFields)
 {
-	log_init(NULL);
+	STU_Log_Startup(NULL);
 	LOG_INFO(LOG_CAT_AIMOVE, "shape test message");
-	log_shutdown();
+	STU_Log_Shutdown();
 
 	std::string contents = slurp_log_file("remom_log_new.txt");
 	std::vector<std::string> lines = split_lines(contents);
@@ -99,14 +99,14 @@ TEST(stu_log_test, MessageFormatHasAllFields)
 
 TEST(stu_log_test, AllSixSeveritiesProduceOutput)
 {
-	log_init(NULL);
+	STU_Log_Startup(NULL);
 	LOG_TRACE(LOG_CAT_GENERAL, "trace msg");
 	LOG_DEBUG(LOG_CAT_GENERAL, "debug msg");
 	LOG_INFO (LOG_CAT_GENERAL, "info msg");
 	LOG_WARN (LOG_CAT_GENERAL, "warn msg");
 	LOG_ERROR(LOG_CAT_GENERAL, "error msg");
 	/* LOG_FATAL handled in its own test — it flushes synchronously and would shut the file early if mixed here. */
-	log_shutdown();
+	STU_Log_Shutdown();
 
 	std::string contents = slurp_log_file("remom_log_new.txt");
 	EXPECT_NE(contents.find("[TRACE]"), std::string::npos);
@@ -120,15 +120,15 @@ TEST(stu_log_test, AllSixSeveritiesProduceOutput)
 
 TEST(stu_log_test, LogFatalFlushesWithoutPump)
 {
-	log_init(NULL);
+	STU_Log_Startup(NULL);
 	LOG_FATAL(LOG_CAT_GENERAL, "fatal flush test");
-	/* DELIBERATELY no log_pump() or log_shutdown() — LOG_FATAL must flush on its own. */
+	/* DELIBERATELY no STU_Log_Pump() or STU_Log_Shutdown() — LOG_FATAL must flush on its own. */
 
 	std::string contents = slurp_log_file("remom_log_new.txt");
 	EXPECT_NE(contents.find("[FATAL]"), std::string::npos);
 	EXPECT_NE(contents.find("fatal flush test"), std::string::npos);
 
-	log_shutdown();
+	STU_Log_Shutdown();
 }
 
 static void write_ini_file(const char * path, const char * body)
@@ -139,7 +139,7 @@ static void write_ini_file(const char * path, const char * body)
 
 TEST(stu_log_test, PumpCapsDrainAt4KB)
 {
-	log_init(NULL);
+	STU_Log_Startup(NULL);
 	/* Each message ~95-byte body + ~70-byte header ≈ 170 bytes. 200 messages ≈ 34 KB — well over 4 KB cap. */
 	const int N = 200;
 	for (int i = 0; i < N; ++i)
@@ -147,7 +147,7 @@ TEST(stu_log_test, PumpCapsDrainAt4KB)
 		LOG_INFO(LOG_CAT_GENERAL, "pump_cap_msg %04d %s", i,
 			"PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PAD");
 	}
-	log_pump();
+	STU_Log_Pump();
 
 	std::ifstream f("remom_log_new.txt", std::ios::ate | std::ios::binary);
 	std::streamsize size_after_one_pump = f.tellg();
@@ -156,9 +156,9 @@ TEST(stu_log_test, PumpCapsDrainAt4KB)
 
 	for (int i = 0; i < 50; ++i)
 	{
-		log_pump();
+		STU_Log_Pump();
 	}
-	log_shutdown();
+	STU_Log_Shutdown();
 
 	std::string contents = slurp_log_file("remom_log_new.txt");
 	int found = 0;
@@ -174,7 +174,7 @@ TEST(stu_log_test, PumpCapsDrainAt4KB)
 
 TEST(stu_log_test, RingOverflowEmitsDropMarker)
 {
-	log_init(NULL);
+	STU_Log_Startup(NULL);
 	/* Each message ~170 bytes; ring is 2 MB. Write enough to overflow without any pump in between. */
 	const int N = 20000;
 	for (int i = 0; i < N; ++i)
@@ -182,8 +182,8 @@ TEST(stu_log_test, RingOverflowEmitsDropMarker)
 		LOG_INFO(LOG_CAT_GENERAL, "overflow_msg %05d %s", i,
 			"PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PAD");
 	}
-	log_pump();
-	log_shutdown();
+	STU_Log_Pump();
+	STU_Log_Shutdown();
 
 	std::string contents = slurp_log_file("remom_log_new.txt");
 	std::string::size_type marker_pos = contents.find("[LOGGER] ");
@@ -201,11 +201,11 @@ TEST(stu_log_test, IniSeverityThresholdFiltersBelowThreshold)
 	const char * ini_path = "test_log_sev.ini";
 	write_ini_file(ini_path, "[Logging]\nseverity_threshold = WARN\n");
 
-	log_init(ini_path);
+	STU_Log_Startup(ini_path);
 	LOG_INFO (LOG_CAT_GENERAL, "info should be filtered");
 	LOG_WARN (LOG_CAT_GENERAL, "warn should appear");
 	LOG_ERROR(LOG_CAT_GENERAL, "error should appear");
-	log_shutdown();
+	STU_Log_Shutdown();
 	std::remove(ini_path);
 
 	std::string contents = slurp_log_file("remom_log_new.txt");
@@ -219,11 +219,11 @@ TEST(stu_log_test, IniCategoryMaskFiltersDisabledCategory)
 	const char * ini_path = "test_log_cat.ini";
 	write_ini_file(ini_path, "[Logging]\nAIMOVE = false\nCOMBAT = true\n");
 
-	log_init(ini_path);
+	STU_Log_Startup(ini_path);
 	LOG_INFO(LOG_CAT_AIMOVE, "aimove should be filtered");
 	LOG_INFO(LOG_CAT_COMBAT, "combat should appear");
 	LOG_INFO(LOG_CAT_GENERAL, "general should appear");
-	log_shutdown();
+	STU_Log_Shutdown();
 	std::remove(ini_path);
 
 	std::string contents = slurp_log_file("remom_log_new.txt");
@@ -234,9 +234,9 @@ TEST(stu_log_test, IniCategoryMaskFiltersDisabledCategory)
 
 TEST(stu_log_test, IniMissingFileFallsBackToDefaults)
 {
-	log_init("definitely_does_not_exist_xyz.ini");
+	STU_Log_Startup("definitely_does_not_exist_xyz.ini");
 	LOG_INFO(LOG_CAT_GENERAL, "default config works");
-	log_shutdown();
+	STU_Log_Shutdown();
 
 	std::string contents = slurp_log_file("remom_log_new.txt");
 	EXPECT_NE(contents.find("default config works"), std::string::npos);
@@ -251,14 +251,14 @@ static void write_fixture_log(const char * path, const char * marker)
 TEST(stu_log_test, RotationWithAllThreeFixturesShifts)
 {
 	/* Pre-stage all three files with distinguishable contents, ensure shutdown so files are closed first. */
-	log_shutdown();
+	STU_Log_Shutdown();
 	write_fixture_log("remom_log_previous.txt", "OLD_PREVIOUS");
 	write_fixture_log("remom_log_current.txt",  "OLD_CURRENT");
 	write_fixture_log("remom_log_new.txt",      "OLD_NEW");
 
-	log_init(NULL);
+	STU_Log_Startup(NULL);
 	LOG_INFO(LOG_CAT_GENERAL, "post-rotation marker");
-	log_shutdown();
+	STU_Log_Shutdown();
 
 	std::string previous = slurp_log_file("remom_log_previous.txt");
 	std::string current  = slurp_log_file("remom_log_current.txt");
@@ -272,14 +272,14 @@ TEST(stu_log_test, RotationWithAllThreeFixturesShifts)
 
 TEST(stu_log_test, RotationWithOnlyNewBecomesCurrent)
 {
-	log_shutdown();
+	STU_Log_Shutdown();
 	std::remove("remom_log_previous.txt");
 	std::remove("remom_log_current.txt");
 	write_fixture_log("remom_log_new.txt", "LONE_NEW");
 
-	log_init(NULL);
+	STU_Log_Startup(NULL);
 	LOG_INFO(LOG_CAT_GENERAL, "after lone-new rotation");
-	log_shutdown();
+	STU_Log_Shutdown();
 
 	std::string current = slurp_log_file("remom_log_current.txt");
 	std::string fresh   = slurp_log_file("remom_log_new.txt");
@@ -290,14 +290,14 @@ TEST(stu_log_test, RotationWithOnlyNewBecomesCurrent)
 
 TEST(stu_log_test, RotationWithNoPriorFilesSucceeds)
 {
-	log_shutdown();
+	STU_Log_Shutdown();
 	std::remove("remom_log_previous.txt");
 	std::remove("remom_log_current.txt");
 	std::remove("remom_log_new.txt");
 
-	log_init(NULL);
+	STU_Log_Startup(NULL);
 	LOG_INFO(LOG_CAT_GENERAL, "first-ever run");
-	log_shutdown();
+	STU_Log_Shutdown();
 
 	std::string fresh = slurp_log_file("remom_log_new.txt");
 	EXPECT_NE(fresh.find("first-ever run"), std::string::npos);
@@ -310,7 +310,7 @@ TEST(stu_log_test, RotationWithNoPriorFilesSucceeds)
 
 TEST(stu_log_test, LogFatalDrainsEntireRingPastPumpCap)
 {
-	log_init(NULL);
+	STU_Log_Startup(NULL);
 	/* Each message ~170 bytes; 1500 messages ≈ 255 KB — well past the 4 KB pump cap. */
 	const int N = 1500;
 	for (int i = 0; i < N; ++i)
@@ -319,7 +319,7 @@ TEST(stu_log_test, LogFatalDrainsEntireRingPastPumpCap)
 			"PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PADDING_PAD");
 	}
 	LOG_FATAL(LOG_CAT_GENERAL, "fatal terminator");
-	/* NO log_shutdown, NO log_pump — LOG_FATAL's log_flush_all must drain everything past the 4 KB cap. */
+	/* NO STU_Log_Shutdown, NO STU_Log_Pump — LOG_FATAL's STU_Log_Flush_All must drain everything past the 4 KB cap. */
 
 	std::string contents = slurp_log_file("remom_log_new.txt");
 	int info_count = 0;
@@ -333,13 +333,13 @@ TEST(stu_log_test, LogFatalDrainsEntireRingPastPumpCap)
 	EXPECT_EQ(info_count, N) << "all N messages should be on disk after LOG_FATAL";
 	EXPECT_NE(contents.find("fatal terminator"), std::string::npos);
 
-	log_shutdown();
+	STU_Log_Shutdown();
 }
 
 TEST(stu_log_test, AtexitFlushesAfterCleanExit)
 {
 	ASSERT_EXIT({
-		log_init(NULL);
+		STU_Log_Startup(NULL);
 		LOG_INFO(LOG_CAT_GENERAL, "atexit probe message");
 		std::exit(0);
 	}, ::testing::ExitedWithCode(0), ".*");
@@ -355,7 +355,7 @@ TEST(stu_log_test, CrashHandlerWritesMarkerOnFatalSignal)
 	::testing::GTEST_FLAG(catch_exceptions) = false;
 
 	ASSERT_DEATH({
-		log_init(NULL);
+		STU_Log_Startup(NULL);
 		LOG_INFO(LOG_CAT_GENERAL, "before crash marker");
 		volatile int * p = (int *)0;
 		*p = 42;

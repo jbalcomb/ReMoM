@@ -1,3 +1,20 @@
+/*
+    STU_LOG - High-throughput ring-buffered structured logger.
+
+    Single-threaded; no mutexes or atomics. 2 MB static ring buffer drained
+    once per frame via the public pump call, capped at 4 KB per pump to keep
+    I/O off the hot path. Messages exceeding ring free space are silently
+    dropped; the per-pump drop count is reported on disk as a synthetic
+    [LOGGER] line, so a gap in the log is distinguishable from a quiet
+    period.
+
+    3-file rotation at startup: previous is deleted, current is renamed to
+    previous, new is renamed to current, fresh new is opened for writing.
+
+    atexit + signal/SEH crash handlers flush the entire ring synchronously
+    before terminating, so messages buffered between pumps survive a crash.
+*/
+
 #include "STU_LOG.h"
 
 #include "../../ext/stu_compat.h"
@@ -153,7 +170,7 @@ static const char * const log_cat_ini_key[] = {
     "MOX2"
 };
 
-static void log_config_set_defaults(void)
+static void STU_Log_Config_Set_Defaults(void)
 {
     int i;
     log_cfg.sev_threshold = LOG_SEV_TRACE;
@@ -163,7 +180,7 @@ static void log_config_set_defaults(void)
     }
 }
 
-static int log_ci_eq(const char * a, const char * b)
+static int STU_Log_CI_Eq(const char * a, const char * b)
 {
     while (*a != '\0' && *b != '\0')
     {
@@ -177,7 +194,7 @@ static int log_ci_eq(const char * a, const char * b)
     return *a == '\0' && *b == '\0';
 }
 
-static char * log_trim_ws(char * s)
+static char * STU_Log_Trim_WS(char * s)
 {
     char * end;
     while (*s == ' ' || *s == '\t' || *s == '\r' || *s == '\n')
@@ -193,25 +210,49 @@ static char * log_trim_ws(char * s)
     return s;
 }
 
-static int log_parse_severity(const char * value, int * out)
+static int STU_Log_Parse_Severity(const char * value, int * out)
 {
-    if      (log_ci_eq(value, "TRACE")) { *out = LOG_SEV_TRACE; return 1; }
-    else if (log_ci_eq(value, "DEBUG")) { *out = LOG_SEV_DEBUG; return 1; }
-    else if (log_ci_eq(value, "INFO"))  { *out = LOG_SEV_INFO;  return 1; }
-    else if (log_ci_eq(value, "WARN"))  { *out = LOG_SEV_WARN;  return 1; }
-    else if (log_ci_eq(value, "ERROR")) { *out = LOG_SEV_ERROR; return 1; }
-    else if (log_ci_eq(value, "FATAL")) { *out = LOG_SEV_FATAL; return 1; }
+    if (STU_Log_CI_Eq(value, "TRACE"))
+    {
+        *out = LOG_SEV_TRACE;
+        return 1;
+    }
+    else if (STU_Log_CI_Eq(value, "DEBUG"))
+    {
+        *out = LOG_SEV_DEBUG;
+        return 1;
+    }
+    else if (STU_Log_CI_Eq(value, "INFO"))
+    {
+        *out = LOG_SEV_INFO;
+        return 1;
+    }
+    else if (STU_Log_CI_Eq(value, "WARN"))
+    {
+        *out = LOG_SEV_WARN;
+        return 1;
+    }
+    else if (STU_Log_CI_Eq(value, "ERROR"))
+    {
+        *out = LOG_SEV_ERROR;
+        return 1;
+    }
+    else if (STU_Log_CI_Eq(value, "FATAL"))
+    {
+        *out = LOG_SEV_FATAL;
+        return 1;
+    }
     return 0;
 }
 
-static int log_parse_bool(const char * value, int * out)
+static int STU_Log_Parse_Bool(const char * value, int * out)
 {
-    if (log_ci_eq(value, "true") || log_ci_eq(value, "yes") || log_ci_eq(value, "on")  || log_ci_eq(value, "1"))
+    if (STU_Log_CI_Eq(value, "true") || STU_Log_CI_Eq(value, "yes") || STU_Log_CI_Eq(value, "on")  || STU_Log_CI_Eq(value, "1"))
     {
         *out = 1;
         return 1;
     }
-    if (log_ci_eq(value, "false") || log_ci_eq(value, "no") || log_ci_eq(value, "off") || log_ci_eq(value, "0"))
+    if (STU_Log_CI_Eq(value, "false") || STU_Log_CI_Eq(value, "no") || STU_Log_CI_Eq(value, "off") || STU_Log_CI_Eq(value, "0"))
     {
         *out = 0;
         return 1;
@@ -219,7 +260,7 @@ static int log_parse_bool(const char * value, int * out)
     return 0;
 }
 
-static void log_config_load_ini(const char * path)
+static void STU_Log_Config_Load_INI(const char * path)
 {
     FILE * fp;
     char   line[512];
@@ -242,7 +283,7 @@ static void log_config_load_ini(const char * path)
 
     while (fgets(line, sizeof(line), fp) != NULL)
     {
-        key = log_trim_ws(line);
+        key = STU_Log_Trim_WS(line);
         if (*key == '\0' || *key == '#' || *key == ';')
         {
             continue;
@@ -262,12 +303,12 @@ static void log_config_load_ini(const char * path)
             continue;
         }
         *eq = '\0';
-        value = log_trim_ws(eq + 1);
-        key   = log_trim_ws(key);
+        value = STU_Log_Trim_WS(eq + 1);
+        key   = STU_Log_Trim_WS(key);
 
-        if (log_ci_eq(key, "severity_threshold"))
+        if (STU_Log_CI_Eq(key, "severity_threshold"))
         {
-            if (log_parse_severity(value, &parsed_int))
+            if (STU_Log_Parse_Severity(value, &parsed_int))
             {
                 log_cfg.sev_threshold = parsed_int;
             }
@@ -275,9 +316,9 @@ static void log_config_load_ini(const char * path)
         }
         for (i = 0; i < LOG_N_CATEGORIES; ++i)
         {
-            if (log_ci_eq(key, log_cat_ini_key[i]))
+            if (STU_Log_CI_Eq(key, log_cat_ini_key[i]))
             {
-                if (log_parse_bool(value, &parsed_int))
+                if (STU_Log_Parse_Bool(value, &parsed_int))
                 {
                     log_cfg.cat_enabled[i] = parsed_int;
                 }
@@ -288,7 +329,7 @@ static void log_config_load_ini(const char * path)
     fclose(fp);
 }
 
-static const char * log_basename(const char * path)
+static const char * STU_Log_Basename(const char * path)
 {
     const char * last_slash;
     const char * last_bslash;
@@ -304,7 +345,7 @@ static const char * log_basename(const char * path)
     return (last != NULL) ? (last + 1) : path;
 }
 
-static size_t log_ring_used(void)
+static size_t STU_Log_Ring_Used(void)
 {
     if (log_head >= log_tail)
     {
@@ -313,12 +354,12 @@ static size_t log_ring_used(void)
     return LOG_RING_SIZE - (log_tail - log_head);
 }
 
-static size_t log_ring_free(void)
+static size_t STU_Log_Ring_Free(void)
 {
-    return LOG_RING_SIZE - log_ring_used() - 1;
+    return LOG_RING_SIZE - STU_Log_Ring_Used() - 1;
 }
 
-static void log_ring_write_bytes(const char * src, size_t n)
+static void STU_Log_Ring_Write_Bytes(const char * src, size_t n)
 {
     size_t first_chunk;
 
@@ -340,7 +381,7 @@ static void log_ring_write_bytes(const char * src, size_t n)
     log_head = n - first_chunk;
 }
 
-static size_t log_drain_up_to(size_t cap)
+static size_t STU_Log_Drain_Up_To(size_t cap)
 {
     size_t used;
     size_t to_drain;
@@ -352,7 +393,7 @@ static size_t log_drain_up_to(size_t cap)
         return 0;
     }
 
-    used = log_ring_used();
+    used = STU_Log_Ring_Used();
     if (used == 0)
     {
         return 0;
@@ -383,7 +424,7 @@ static size_t log_drain_up_to(size_t cap)
 }
 
 /* The synthetic dropped-message line is written directly to the file (bypassing the ring) so it cannot itself be dropped or split across a pump boundary. */
-static void log_emit_drop_marker(void)
+static void STU_Log_Emit_Drop_Marker(void)
 {
     char datetime[32];
 
@@ -397,7 +438,7 @@ static void log_emit_drop_marker(void)
     log_dropped_since_last_pump = 0;
 }
 
-static void log_rotate_files(void)
+static void STU_Log_Rotate_Files(void)
 {
     /* remove(<missing>) returns -1 and rename(<missing>, ...) does the same; both are safe to ignore. */
     remove(LOG_FILE_PREVIOUS);
@@ -405,7 +446,7 @@ static void log_rotate_files(void)
     rename(LOG_FILE_NEW,     LOG_FILE_CURRENT);
 }
 
-static void log_emit_crash_marker(const char * signal_name)
+static void STU_Log_Emit_Crash_Marker(const char * signal_name)
 {
     char datetime[32];
 
@@ -417,16 +458,16 @@ static void log_emit_crash_marker(const char * signal_name)
     fprintf(log_file, "[%s] [CRASH] %s\n", datetime, signal_name);
 }
 
-static void log_atexit_handler(void)
+static void STU_Log_Atexit_Handler(void)
 {
-    log_shutdown();
+    STU_Log_Shutdown();
 }
 
 #if defined(_WIN32)
 
 static LPTOP_LEVEL_EXCEPTION_FILTER log_previous_seh_filter = NULL;
 
-static const char * log_seh_code_name(DWORD code)
+static const char * STU_Log_SEH_Code_Name(DWORD code)
 {
     switch (code)
     {
@@ -440,10 +481,10 @@ static const char * log_seh_code_name(DWORD code)
     }
 }
 
-static LONG WINAPI log_seh_filter(EXCEPTION_POINTERS * ep)
+static LONG WINAPI STU_Log_SEH_Filter(EXCEPTION_POINTERS * ep)
 {
-    log_emit_crash_marker(log_seh_code_name(ep->ExceptionRecord->ExceptionCode));
-    log_flush_all();
+    STU_Log_Emit_Crash_Marker(STU_Log_SEH_Code_Name(ep->ExceptionRecord->ExceptionCode));
+    STU_Log_Flush_All();
     if (log_file != NULL)
     {
         fflush(log_file);
@@ -454,14 +495,14 @@ static LONG WINAPI log_seh_filter(EXCEPTION_POINTERS * ep)
     return EXCEPTION_EXECUTE_HANDLER;
 }
 
-static void log_install_crash_handlers(void)
+static void STU_Log_Install_Crash_Handlers(void)
 {
-    log_previous_seh_filter = SetUnhandledExceptionFilter(log_seh_filter);
+    log_previous_seh_filter = SetUnhandledExceptionFilter(STU_Log_SEH_Filter);
 }
 
 #else  /* POSIX */
 
-static const char * log_signal_name(int sig)
+static const char * STU_Log_Signal_Name(int sig)
 {
     switch (sig)
     {
@@ -474,10 +515,10 @@ static const char * log_signal_name(int sig)
 }
 
 /* Signal handlers calling stdio is technically UB on POSIX, but consistent with this project's single-threaded posture and acceptable for a crash-time-only path. */
-static void log_signal_handler(int sig)
+static void STU_Log_Signal_Handler(int sig)
 {
-    log_emit_crash_marker(log_signal_name(sig));
-    log_flush_all();
+    STU_Log_Emit_Crash_Marker(STU_Log_Signal_Name(sig));
+    STU_Log_Flush_All();
     if (log_file != NULL)
     {
         fflush(log_file);
@@ -488,17 +529,17 @@ static void log_signal_handler(int sig)
     raise(sig);
 }
 
-static void log_install_crash_handlers(void)
+static void STU_Log_Install_Crash_Handlers(void)
 {
-    signal(SIGSEGV, log_signal_handler);
-    signal(SIGABRT, log_signal_handler);
-    signal(SIGFPE,  log_signal_handler);
-    signal(SIGILL,  log_signal_handler);
+    signal(SIGSEGV, STU_Log_Signal_Handler);
+    signal(SIGABRT, STU_Log_Signal_Handler);
+    signal(SIGFPE,  STU_Log_Signal_Handler);
+    signal(SIGILL,  STU_Log_Signal_Handler);
 }
 
 #endif
 
-void log_init(const char * ini_path)
+void STU_Log_Startup(const char * ini_path)
 {
     static int atexit_registered = 0;
     static int crash_handlers_installed = 0;
@@ -513,10 +554,10 @@ void log_init(const char * ini_path)
     log_head = 0;
     log_tail = 0;
     log_dropped_since_last_pump = 0;
-    log_config_set_defaults();
-    log_config_load_ini(ini_path);
+    STU_Log_Config_Set_Defaults();
+    STU_Log_Config_Load_INI(ini_path);
 
-    log_rotate_files();
+    STU_Log_Rotate_Files();
 
     log_file = fopen(LOG_FILE_NEW, "w");
     if (log_file == NULL)
@@ -526,22 +567,22 @@ void log_init(const char * ini_path)
 
     if (!atexit_registered)
     {
-        atexit(log_atexit_handler);
+        atexit(STU_Log_Atexit_Handler);
         atexit_registered = 1;
     }
     if (!crash_handlers_installed)
     {
-        log_install_crash_handlers();
+        STU_Log_Install_Crash_Handlers();
         crash_handlers_installed = 1;
     }
 }
 
-void log_shutdown(void)
+void STU_Log_Shutdown(void)
 {
     if (log_file != NULL)
     {
-        log_emit_drop_marker();
-        while (log_drain_up_to(LOG_RING_SIZE) > 0)
+        STU_Log_Emit_Drop_Marker();
+        while (STU_Log_Drain_Up_To(LOG_RING_SIZE) > 0)
         {
             /* keep draining until empty */
         }
@@ -551,31 +592,31 @@ void log_shutdown(void)
     }
 }
 
-void log_pump(void)
+void STU_Log_Pump(void)
 {
-    log_emit_drop_marker();
-    log_drain_up_to(LOG_PUMP_MAX_BYTES);
+    STU_Log_Emit_Drop_Marker();
+    STU_Log_Drain_Up_To(LOG_PUMP_MAX_BYTES);
     if (log_file != NULL)
     {
         fflush(log_file);
     }
 }
 
-void log_flush_all(void)
+void STU_Log_Flush_All(void)
 {
     if (log_file == NULL)
     {
         return;
     }
-    log_emit_drop_marker();
-    while (log_drain_up_to(LOG_RING_SIZE) > 0)
+    STU_Log_Emit_Drop_Marker();
+    while (STU_Log_Drain_Up_To(LOG_RING_SIZE) > 0)
     {
         /* keep draining until empty */
     }
     fflush(log_file);
 }
 
-void log_write_at_v(int sev, enum log_category cat, const char * file, int line, const char * func, const char * fmt, va_list args)
+void STU_Log_Write_At_V(int sev, enum log_category cat, const char * file, int line, const char * func, const char * fmt, va_list args)
 {
     char   stack_buf[LOG_FMT_BUF_LEN];
     char   datetime[32];
@@ -611,7 +652,7 @@ void log_write_at_v(int sev, enum log_category cat, const char * file, int line,
                           datetime,
                           log_sev_str[sev_idx],
                           log_cat_str[cat_idx],
-                          log_basename(file),
+                          STU_Log_Basename(file),
                           line,
                           (func != NULL) ? func : "");
     if (header_len < 0 || (size_t)header_len >= LOG_FMT_BUF_LEN)
@@ -633,19 +674,19 @@ void log_write_at_v(int sev, enum log_category cat, const char * file, int line,
     stack_buf[total_len] = '\n';
     total_len += 1;
 
-    if (total_len > log_ring_free())
+    if (total_len > STU_Log_Ring_Free())
     {
         ++log_dropped_since_last_pump;
         return;
     }
 
-    log_ring_write_bytes(stack_buf, total_len);
+    STU_Log_Ring_Write_Bytes(stack_buf, total_len);
 }
 
-void log_write_at(int sev, enum log_category cat, const char * file, int line, const char * func, const char * fmt, ...)
+void STU_Log_Write_At(int sev, enum log_category cat, const char * file, int line, const char * func, const char * fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
-    log_write_at_v(sev, cat, file, line, func, fmt, args);
+    STU_Log_Write_At_V(sev, cat, file, line, func, fmt, args);
     va_end(args);
 }
