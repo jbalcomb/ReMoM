@@ -10,6 +10,8 @@
 #include "../../STU/src/STU_TST.h"
 // #endif
 
+#include "../../STU/src/STU_LOG.h"
+
 #include "../../ext/stu_compat.h"
 
 #include "DOS.h"
@@ -213,9 +215,9 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     long file_pointer_position = 0;
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: BEGIN: Load_SAVE_GAM(%d)\n", __FILE__, __LINE__, save_gam_idx);
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_SAVE_GAM(%d)\n", __FILE__, __LINE__, save_gam_idx);
-    trc_prn("DEBUG: [%s, %d]: BEGIN: Load_SAVE_GAM(%d)\n", __FILE__, __LINE__, save_gam_idx);
+    LOG_INFO(LOG_CAT_LOADSAVE, "BEGIN: Load_SAVE_GAM(%d)", save_gam_idx);
+    LOG_DEBUG(LOG_CAT_SAVE, "BEGIN: Load_SAVE_GAM(%d)", save_gam_idx);
+    LOG_TRACE(LOG_CAT_SAVE, "BEGIN: Load_SAVE_GAM(%d)", save_gam_idx);
 #endif
 
     if(save_gam_idx == ST_UNDEFINED)
@@ -385,9 +387,9 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     stu_fclose(file_pointer);
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: END: Load_SAVE_GAM(%d)\n", __FILE__, __LINE__, save_gam_idx);
-    dbg_prn("DEBUG: [%s, %d]: END: Load_SAVE_GAM(%d)\n", __FILE__, __LINE__, save_gam_idx);
-    trc_prn("DEBUG: [%s, %d]: END: Load_SAVE_GAM(%d)\n", __FILE__, __LINE__, save_gam_idx);
+    LOG_INFO(LOG_CAT_LOADSAVE, "END: Load_SAVE_GAM(%d)", save_gam_idx);
+    LOG_DEBUG(LOG_CAT_SAVE, "END: Load_SAVE_GAM(%d)", save_gam_idx);
+    LOG_TRACE(LOG_CAT_SAVE, "END: Load_SAVE_GAM(%d)", save_gam_idx);
 #endif
 
 }

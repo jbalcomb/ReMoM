@@ -24,6 +24,7 @@
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
 
 #include "../../ext/stu_compat.h"
 
@@ -1651,7 +1652,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     while(leave_screen == ST_FALSE)
     {
 #ifdef STU_DEBUG
-dbg_prn("BEGIN:  Combat Screen Loop\n");
+LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Combat Screen Loop");
 #endif
         Assign_Auto_Function(Combat_Screen_Draw, 1);
         Mark_Time();
@@ -1661,7 +1662,7 @@ dbg_prn("BEGIN:  Combat Screen Loop\n");
         */
         {
 #ifdef STU_DEBUG
-dbg_prn("BEGIN:  Auto Combat Loop\n");
+LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
 #endif
             if(_auto_combat_flag == ST_TRUE)
             {
@@ -1685,12 +1686,12 @@ dbg_prn("BEGIN:  Auto Combat Loop\n");
                 /* CLAUDE */ { int16_t dbg_i; DBG_atk_active=0; DBG_atk_dead=0; DBG_atk_gone=0; DBG_def_active=0; DBG_def_dead=0; DBG_def_gone=0; for(dbg_i=0; dbg_i<_combat_total_unit_count; dbg_i++) { if(battle_units[dbg_i].controller_idx==_combat_attacker_player) { if(battle_units[dbg_i].status==bus_Active) DBG_atk_active++; else if(battle_units[dbg_i].status==bus_Dead) DBG_atk_dead++; else if(battle_units[dbg_i].status==bus_Gone) DBG_atk_gone++; } else if(battle_units[dbg_i].controller_idx==_combat_defender_player) { if(battle_units[dbg_i].status==bus_Active) DBG_def_active++; else if(battle_units[dbg_i].status==bus_Dead) DBG_def_dead++; else if(battle_units[dbg_i].status==bus_Gone) DBG_def_gone++; } } }
                 winner = Check_For_Winner();
 #ifdef STU_DEBUG
-                /* CLAUDE */ dbg_prn("[CombatLoop] atk: active=%d dead=%d gone=%d | def: active=%d dead=%d gone=%d | winner=%d _combat_winner=%d\n", DBG_atk_active, DBG_atk_dead, DBG_atk_gone, DBG_def_active, DBG_def_dead, DBG_def_gone, winner, _combat_winner);
+                /* CLAUDE */ LOG_DEBUG(LOG_CAT_COMBAT, "[CombatLoop] atk: active=%d dead=%d gone=%d | def: active=%d dead=%d gone=%d | winner=%d _combat_winner=%d", DBG_atk_active, DBG_atk_dead, DBG_atk_gone, DBG_def_active, DBG_def_dead, DBG_def_gone, winner, _combat_winner);
 #endif
                 if(winner != ST_UNDEFINED)
                 {
 #ifdef STU_DEBUG
-                    dbg_prn("AUTOCOMBATWINNER\n");
+                    LOG_DEBUG(LOG_CAT_COMBAT, "AUTOCOMBATWINNER");
 #endif
                     leave_screen = ST_UNDEFINED;
                     input_field_idx = ST_UNDEFINED;
@@ -2642,7 +2643,7 @@ dbg_prn("BEGIN:  Auto Combat Loop\n");
     Stop_All_Sounds__STUB();
 
 #ifdef STU_DEF
-    /* CLAUDE */ dbg_prn("[Combat_Screen] snapshot: _units=%d  _combat_total_unit_count=%d\n", _units, _combat_total_unit_count);
+    /* CLAUDE */ LOG_DEBUG(LOG_CAT_COMBAT, "[Combat_Screen] snapshot: _units=%d  _combat_total_unit_count=%d", _units, _combat_total_unit_count);
     memcpy(DBG_battle_units, battle_units, (sizeof(struct s_BATTLE_UNIT) * _combat_total_unit_count));
 #endif
     Combat_Cache_Read();  // reloads World_Data
@@ -9136,9 +9137,9 @@ int16_t Check_For_Winner(void)
         }
     }
 #ifdef STU_DEBUG
-    dbg_prn("attacker_count: %d\n", attacker_count);
-    dbg_prn("defender_count: %d\n", defender_count);
-    dbg_prn("_combat_turn: %d\n", _combat_turn);
+    LOG_DEBUG(LOG_CAT_COMBAT, "attacker_count: %d", attacker_count);
+    LOG_DEBUG(LOG_CAT_COMBAT, "defender_count: %d", defender_count);
+    LOG_DEBUG(LOG_CAT_COMBAT, "_combat_turn: %d", _combat_turn);
 #endif
     /* Check for elimination */
     if (attacker_count == 0)    { return _combat_defender_player; }
@@ -28683,11 +28684,11 @@ void DBG_Compare_Battle_Units(const char * label)
     struct s_BATTLE_UNIT * live;
     struct s_BATTLE_UNIT * snap;
 
-    dbg_prn("[DBG_Compare_Battle_Units] %s: _combat_total_unit_count=%d, battle_units=%p, DBG_battle_units=%p\n", label, _combat_total_unit_count, (void *)battle_units, (void *)DBG_battle_units);
+    LOG_DEBUG(LOG_CAT_COMBAT, "[DBG_Compare_Battle_Units] %s: _combat_total_unit_count=%d, battle_units=%p, DBG_battle_units=%p", label, _combat_total_unit_count, (void *)battle_units, (void *)DBG_battle_units);
 
     if(_combat_total_unit_count < 0 || _combat_total_unit_count > MAX_BATTLE_UNIT_SLOT_COUNT)
     {
-        dbg_prn("[DBG_Compare_Battle_Units] %s: BOGUS _combat_total_unit_count=%d, aborting compare\n", label, _combat_total_unit_count);
+        LOG_DEBUG(LOG_CAT_COMBAT, "[DBG_Compare_Battle_Units] %s: BOGUS _combat_total_unit_count=%d, aborting compare", label, _combat_total_unit_count);
         return;
     }
 
@@ -28698,47 +28699,47 @@ void DBG_Compare_Battle_Units(const char * label)
 
         if(snap->unit_idx < 0 || snap->unit_idx > _units || snap->status < bus_Active || snap->status > bus_Gone || snap->controller_idx < 0 || snap->controller_idx > NEUTRAL_PLAYER_IDX)
         {
-            dbg_prn("[DBG_Compare_Battle_Units] SNAPSHOT ALREADY GARBAGE [%d]: unit_idx=%d  status=%d  controller_idx=%d  (_units=%d)\n", itr, snap->unit_idx, snap->status, snap->controller_idx, _units);
+            LOG_DEBUG(LOG_CAT_COMBAT, "[DBG_Compare_Battle_Units] SNAPSHOT ALREADY GARBAGE [%d]: unit_idx=%d  status=%d  controller_idx=%d  (_units=%d)", itr, snap->unit_idx, snap->status, snap->controller_idx, _units);
         }
 
         if(live->unit_idx < 0 || live->unit_idx > _units || live->status < bus_Active || live->status > bus_Gone || live->controller_idx < 0 || live->controller_idx > NEUTRAL_PLAYER_IDX)
         {
-            dbg_prn("[DBG_Compare_Battle_Units] LIVE DATA GARBAGE [%d]: unit_idx=%d  status=%d  controller_idx=%d  (_units=%d)\n", itr, live->unit_idx, live->status, live->controller_idx, _units);
+            LOG_DEBUG(LOG_CAT_COMBAT, "[DBG_Compare_Battle_Units] LIVE DATA GARBAGE [%d]: unit_idx=%d  status=%d  controller_idx=%d  (_units=%d)", itr, live->unit_idx, live->status, live->controller_idx, _units);
         }
 
         if(memcmp(live, snap, sizeof(struct s_BATTLE_UNIT)) != 0)
         {
             mismatch_count++;
-            dbg_prn("[DBG_Compare_Battle_Units] MISMATCH battle_units[%d]:\n", itr);
-            if(live->unit_idx != snap->unit_idx) { dbg_prn("  unit_idx:        live=%d  snap=%d\n", live->unit_idx, snap->unit_idx); }
-            if(live->status != snap->status) { dbg_prn("  status:          live=%d  snap=%d\n", live->status, snap->status); }
-            if(live->controller_idx != snap->controller_idx) { dbg_prn("  controller_idx:  live=%d  snap=%d\n", live->controller_idx, snap->controller_idx); }
-            if(live->melee != snap->melee) { dbg_prn("  melee:           live=%d  snap=%d\n", live->melee, snap->melee); }
-            if(live->ranged != snap->ranged) { dbg_prn("  ranged:          live=%d  snap=%d\n", live->ranged, snap->ranged); }
-            if(live->defense != snap->defense) { dbg_prn("  defense:         live=%d  snap=%d\n", live->defense, snap->defense); }
-            if(live->resist != snap->resist) { dbg_prn("  resist:          live=%d  snap=%d\n", live->resist, snap->resist); }
-            if(live->hits != snap->hits) { dbg_prn("  hits:            live=%d  snap=%d\n", live->hits, snap->hits); }
-            if(live->Cur_Figures != snap->Cur_Figures) { dbg_prn("  Cur_Figures:     live=%d  snap=%d\n", live->Cur_Figures, snap->Cur_Figures); }
-            if(live->Max_Figures != snap->Max_Figures) { dbg_prn("  Max_Figures:     live=%d  snap=%d\n", live->Max_Figures, snap->Max_Figures); }
-            if(live->front_figure_damage != snap->front_figure_damage) { dbg_prn("  front_fig_dmg:   live=%d  snap=%d\n", live->front_figure_damage, snap->front_figure_damage); }
-            if(live->cgx != snap->cgx) { dbg_prn("  cgx:             live=%d  snap=%d\n", live->cgx, snap->cgx); }
-            if(live->cgy != snap->cgy) { dbg_prn("  cgy:             live=%d  snap=%d\n", live->cgy, snap->cgy); }
-            if(live->enchantments != snap->enchantments) { dbg_prn("  enchantments:    live=0x%08X  snap=0x%08X\n", live->enchantments, snap->enchantments); }
-            if(live->Combat_Effects != snap->Combat_Effects) { dbg_prn("  Combat_Effects:  live=0x%04X  snap=0x%04X\n", live->Combat_Effects, snap->Combat_Effects); }
-            if(live->race != snap->race) { dbg_prn("  race:            live=%d  snap=%d\n", live->race, snap->race); }
-            if(live->movement_points != snap->movement_points) { dbg_prn("  movement_points: live=%d  snap=%d\n", live->movement_points, snap->movement_points); }
-            if(live->Abilities != snap->Abilities) { dbg_prn("  Abilities:       live=0x%04X  snap=0x%04X\n", live->Abilities, snap->Abilities); }
-            if(live->item_enchantments != snap->item_enchantments) { dbg_prn("  item_enchants:   live=0x%08X  snap=0x%08X\n", live->item_enchantments, snap->item_enchantments); }
+            LOG_DEBUG(LOG_CAT_COMBAT, "[DBG_Compare_Battle_Units] MISMATCH battle_units[%d]:", itr);
+            if(live->unit_idx != snap->unit_idx) { LOG_DEBUG(LOG_CAT_COMBAT, "  unit_idx:        live=%d  snap=%d", live->unit_idx, snap->unit_idx); }
+            if(live->status != snap->status) { LOG_DEBUG(LOG_CAT_COMBAT, "  status:          live=%d  snap=%d", live->status, snap->status); }
+            if(live->controller_idx != snap->controller_idx) { LOG_DEBUG(LOG_CAT_COMBAT, "  controller_idx:  live=%d  snap=%d", live->controller_idx, snap->controller_idx); }
+            if(live->melee != snap->melee) { LOG_DEBUG(LOG_CAT_COMBAT, "  melee:           live=%d  snap=%d", live->melee, snap->melee); }
+            if(live->ranged != snap->ranged) { LOG_DEBUG(LOG_CAT_COMBAT, "  ranged:          live=%d  snap=%d", live->ranged, snap->ranged); }
+            if(live->defense != snap->defense) { LOG_DEBUG(LOG_CAT_COMBAT, "  defense:         live=%d  snap=%d", live->defense, snap->defense); }
+            if(live->resist != snap->resist) { LOG_DEBUG(LOG_CAT_COMBAT, "  resist:          live=%d  snap=%d", live->resist, snap->resist); }
+            if(live->hits != snap->hits) { LOG_DEBUG(LOG_CAT_COMBAT, "  hits:            live=%d  snap=%d", live->hits, snap->hits); }
+            if(live->Cur_Figures != snap->Cur_Figures) { LOG_DEBUG(LOG_CAT_COMBAT, "  Cur_Figures:     live=%d  snap=%d", live->Cur_Figures, snap->Cur_Figures); }
+            if(live->Max_Figures != snap->Max_Figures) { LOG_DEBUG(LOG_CAT_COMBAT, "  Max_Figures:     live=%d  snap=%d", live->Max_Figures, snap->Max_Figures); }
+            if(live->front_figure_damage != snap->front_figure_damage) { LOG_DEBUG(LOG_CAT_COMBAT, "  front_fig_dmg:   live=%d  snap=%d", live->front_figure_damage, snap->front_figure_damage); }
+            if(live->cgx != snap->cgx) { LOG_DEBUG(LOG_CAT_COMBAT, "  cgx:             live=%d  snap=%d", live->cgx, snap->cgx); }
+            if(live->cgy != snap->cgy) { LOG_DEBUG(LOG_CAT_COMBAT, "  cgy:             live=%d  snap=%d", live->cgy, snap->cgy); }
+            if(live->enchantments != snap->enchantments) { LOG_DEBUG(LOG_CAT_COMBAT, "  enchantments:    live=0x%08X  snap=0x%08X", live->enchantments, snap->enchantments); }
+            if(live->Combat_Effects != snap->Combat_Effects) { LOG_DEBUG(LOG_CAT_COMBAT, "  Combat_Effects:  live=0x%04X  snap=0x%04X", live->Combat_Effects, snap->Combat_Effects); }
+            if(live->race != snap->race) { LOG_DEBUG(LOG_CAT_COMBAT, "  race:            live=%d  snap=%d", live->race, snap->race); }
+            if(live->movement_points != snap->movement_points) { LOG_DEBUG(LOG_CAT_COMBAT, "  movement_points: live=%d  snap=%d", live->movement_points, snap->movement_points); }
+            if(live->Abilities != snap->Abilities) { LOG_DEBUG(LOG_CAT_COMBAT, "  Abilities:       live=0x%04X  snap=0x%04X", live->Abilities, snap->Abilities); }
+            if(live->item_enchantments != snap->item_enchantments) { LOG_DEBUG(LOG_CAT_COMBAT, "  item_enchants:   live=0x%08X  snap=0x%08X", live->item_enchantments, snap->item_enchantments); }
         }
     }
 
     if(mismatch_count == 0)
     {
-        dbg_prn("[DBG_Compare_Battle_Units] %s: all %d battle units match snapshot\n", label, itr);
+        LOG_DEBUG(LOG_CAT_COMBAT, "[DBG_Compare_Battle_Units] %s: all %d battle units match snapshot", label, itr);
     }
     else
     {
-        dbg_prn("[DBG_Compare_Battle_Units] %s: %d of %d battle units DIFFER from snapshot\n", label, mismatch_count, itr);
+        LOG_DEBUG(LOG_CAT_COMBAT, "[DBG_Compare_Battle_Units] %s: %d of %d battle units DIFFER from snapshot", label, mismatch_count, itr);
     }
 }
 #endif

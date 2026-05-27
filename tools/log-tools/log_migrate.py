@@ -123,6 +123,72 @@ def guess_category(path):
     return "GENERAL"
 
 
+def strip_c_comments(text):
+    """Replace C // line and /* ... */ block comments with spaces (preserving line numbering and offsets). Skips comment-like sequences inside string and char literals."""
+    out = []
+    i = 0
+    n = len(text)
+    in_string = False
+    in_char = False
+    escape = False
+    while i < n:
+        c = text[i]
+        if escape:
+            out.append(c)
+            escape = False
+            i += 1
+            continue
+        if in_string:
+            out.append(c)
+            if c == "\\":
+                escape = True
+            elif c == '"':
+                in_string = False
+            i += 1
+            continue
+        if in_char:
+            out.append(c)
+            if c == "\\":
+                escape = True
+            elif c == "'":
+                in_char = False
+            i += 1
+            continue
+        if c == '"':
+            in_string = True
+            out.append(c)
+            i += 1
+            continue
+        if c == "'":
+            in_char = True
+            out.append(c)
+            i += 1
+            continue
+        if c == "/" and i + 1 < n and text[i + 1] == "/":
+            j = i
+            while j < n and text[j] != "\n":
+                out.append(" ")
+                j += 1
+            i = j
+            continue
+        if c == "/" and i + 1 < n and text[i + 1] == "*":
+            j = i + 2
+            out.append(" ")
+            out.append(" ")
+            while j < n - 1 and not (text[j] == "*" and text[j + 1] == "/"):
+                out.append("\n" if text[j] == "\n" else " ")
+                j += 1
+            if j < n - 1:
+                out.append(" ")
+                out.append(" ")
+                j += 2
+            i = j
+            continue
+        out.append(c)
+        i += 1
+    return "".join(out)
+
+
 def severity_to_macro(sev):
     return {
         "TRACE": "LOG_TRACE",
@@ -159,9 +225,10 @@ def scan_file(path):
     items = []
     try:
         with open(path, "r", encoding="utf-8", errors="replace") as f:
-            text = f.read()
+            raw_text = f.read()
     except OSError:
         return items
+    text = strip_c_comments(raw_text)
 
     pos = 0
     while True:
