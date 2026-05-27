@@ -41,6 +41,7 @@
 #include "../../platform/include/Platform.h"  /* CLAUDE: MOUSE_LOG for screen transition timestamps */
 
 #include "MOM_SCR.h"
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -73,9 +74,9 @@ void Screen_Control(void)
     int16_t DBG_mana_total = 0;
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: BEGIN: Screen_Control()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Screen_Control()\n", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: BEGIN: Screen_Control()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_MOM_SCR, "DEBUG: [%s, %d]: BEGIN: Screen_Control()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Screen_Control()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Screen_Control()", __FILE__, __LINE__);
 #endif
 
     quit_flag = ST_FALSE;
@@ -96,8 +97,8 @@ void Screen_Control(void)
                 MOUSE_LOG("SCR t=%llu ENTER screen=Main_Menu\n", (unsigned long long)Platform_Get_Millies());
 #endif
 #ifdef STU_DEBUG
-                trc_prn("[SCR] ENTER scr_Main_Menu_Screen\n");
-                dbg_prn("[SCR] ENTER scr_Main_Menu_Screen\n");
+                LOG_TRACE(LOG_CAT_GENERAL, "[SCR] ENTER scr_Main_Menu_Screen");
+                LOG_DEBUG(LOG_CAT_GENERAL, "[SCR] ENTER scr_Main_Menu_Screen");
 #endif
                 Load_Palette(2, -1, 0);
                 Apply_Palette();
@@ -109,17 +110,17 @@ void Screen_Control(void)
                 MOUSE_LOG("SCR t=%llu LEAVE screen=Main_Menu next=%d\n", (unsigned long long)Platform_Get_Millies(), current_screen);
 #endif
 #ifdef STU_DEBUG
-                trc_prn("[SCR] LEAVE scr_Main_Menu_Screen -> next=%d\n", current_screen);
-                dbg_prn("[SCR] LEAVE scr_Main_Menu_Screen -> next=%d\n", current_screen);
+                LOG_TRACE(LOG_CAT_GENERAL, "[SCR] LEAVE scr_Main_Menu_Screen -> next=%d", current_screen);
+                LOG_DEBUG(LOG_CAT_GENERAL, "[SCR] LEAVE scr_Main_Menu_Screen -> next=%d", current_screen);
 #endif
             } break;
 
             case scr_Continue:
             {
 #ifdef STU_DEBUG
-                printf("DEBUG: [%s, %d]: Screen_Control(): swicth(): scr_Continue\n", __FILE__, __LINE__);
-                dbg_prn("DEBUG: [%s, %d]: Screen_Control(): swicth(): scr_Continue\n", __FILE__, __LINE__);
-                trc_prn("DEBUG: [%s, %d]: Screen_Control(): swicth(): scr_Continue\n", __FILE__, __LINE__);
+                LOG_INFO(LOG_CAT_MOM_SCR, "DEBUG: [%s, %d]: Screen_Control(): swicth(): scr_Continue", __FILE__, __LINE__);
+                LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: Screen_Control(): swicth(): scr_Continue", __FILE__, __LINE__);
+                LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: Screen_Control(): swicth(): scr_Continue", __FILE__, __LINE__);
 #endif
 #ifdef MOUSE_DEBUG
                 MOUSE_LOG("SCR t=%llu ENTER screen=Continue\n", (unsigned long long)Platform_Get_Millies());
@@ -149,14 +150,14 @@ void Screen_Control(void)
                 Print_Unit_Structure(0);
 #endif
 #ifdef STU_DEBUG
-                printf("_num_players: %d\n", _num_players);
-                dbg_prn("_num_players: %d\n", _num_players);
+                LOG_INFO(LOG_CAT_MOM_SCR, "_num_players: %d", _num_players);
+                LOG_DEBUG(LOG_CAT_GENERAL, "_num_players: %d", _num_players);
                 // Meh. ~random AVRL in Player_Magic_Power_Distribution()
                 // for(DBG_player_idx = 0; DBG_player_idx < (_num_players + 1); DBG_player_idx++)
                 for(DBG_player_idx = 0; DBG_player_idx < _num_players; DBG_player_idx++)
                 {
                     Player_Resource_Income_Total(DBG_player_idx, &DBG_gold_total, &DBG_food_total, &DBG_mana_total);
-                    dbg_prn("DBG_player_idx: %d, DBG_gold_total: %d, DBG_food_total: %d, DBG_mana_total: %d\n", DBG_player_idx, DBG_gold_total, DBG_food_total, DBG_mana_total);
+                    LOG_DEBUG(LOG_CAT_GENERAL, "DBG_player_idx: %d, DBG_gold_total: %d, DBG_food_total: %d, DBG_mana_total: %d", DBG_player_idx, DBG_gold_total, DBG_food_total, DBG_mana_total);
                 }
 #endif
 
@@ -206,8 +207,8 @@ void Screen_Control(void)
                 MOUSE_LOG("SCR t=%llu ENTER screen=Quit\n", (unsigned long long)Platform_Get_Millies());
 #endif
 #ifdef STU_DEBUG
-                trc_prn("[SCR] ENTER scr_Quit_To_DOS -> setting quit_flag\n");
-                dbg_prn("[SCR] ENTER scr_Quit_To_DOS -> setting quit_flag\n");
+                LOG_TRACE(LOG_CAT_GENERAL, "[SCR] ENTER scr_Quit_To_DOS -> setting quit_flag");
+                LOG_DEBUG(LOG_CAT_GENERAL, "[SCR] ENTER scr_Quit_To_DOS -> setting quit_flag");
 #endif
                 // TODO  Auto_Save_Game()  ~== F-10 Quick_Save()
                 quit_flag = ST_TRUE;
@@ -332,16 +333,16 @@ void Screen_Control(void)
 #ifdef STU_DEBUG
                 {
                     uint64_t nt_start_ms = Platform_Get_Millies();
-                    fprintf(stderr, "[NEXTTURN] BEGIN Next_Turn_Proc() at %llu ms\n", (unsigned long long)nt_start_ms);
-                    dbg_prn("[NEXTTURN] BEGIN Next_Turn_Proc() at %llu ms\n", (unsigned long long)nt_start_ms);
-                    trc_prn("[NEXTTURN] BEGIN Next_Turn_Proc() at %llu ms\n", (unsigned long long)nt_start_ms);
+                    LOG_INFO(LOG_CAT_MOM_SCR, "[NEXTTURN] BEGIN Next_Turn_Proc() at %llu ms", (unsigned long long)nt_start_ms);
+                    LOG_DEBUG(LOG_CAT_GENERAL, "[NEXTTURN] BEGIN Next_Turn_Proc() at %llu ms", (unsigned long long)nt_start_ms);
+                    LOG_TRACE(LOG_CAT_GENERAL, "[NEXTTURN] BEGIN Next_Turn_Proc() at %llu ms", (unsigned long long)nt_start_ms);
                     Next_Turn_Proc();
                     {
                         uint64_t nt_end_ms = Platform_Get_Millies();
                         uint64_t nt_dur_ms = nt_end_ms - nt_start_ms;
-                        fprintf(stderr, "[NEXTTURN] END   Next_Turn_Proc() at %llu ms (duration=%llu ms)\n", (unsigned long long)nt_end_ms, (unsigned long long)nt_dur_ms);
-                        dbg_prn("[NEXTTURN] END   Next_Turn_Proc() at %llu ms (duration=%llu ms)\n", (unsigned long long)nt_end_ms, (unsigned long long)nt_dur_ms);
-                        trc_prn("[NEXTTURN] END   Next_Turn_Proc() at %llu ms (duration=%llu ms)\n", (unsigned long long)nt_end_ms, (unsigned long long)nt_dur_ms);
+                        LOG_INFO(LOG_CAT_MOM_SCR, "[NEXTTURN] END   Next_Turn_Proc() at %llu ms (duration=%llu ms)", (unsigned long long)nt_end_ms, (unsigned long long)nt_dur_ms);
+                        LOG_DEBUG(LOG_CAT_GENERAL, "[NEXTTURN] END   Next_Turn_Proc() at %llu ms (duration=%llu ms)", (unsigned long long)nt_end_ms, (unsigned long long)nt_dur_ms);
+                        LOG_TRACE(LOG_CAT_GENERAL, "[NEXTTURN] END   Next_Turn_Proc() at %llu ms (duration=%llu ms)", (unsigned long long)nt_end_ms, (unsigned long long)nt_dur_ms);
                     }
                 }
 #else
@@ -387,9 +388,9 @@ void Screen_Control(void)
     }  /* while(quit_flag == ST_FALSE) */
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: END: Screen_Control()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: END: Screen_Control()\n", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: END: Screen_Control()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_MOM_SCR, "DEBUG: [%s, %d]: END: Screen_Control()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Screen_Control()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Screen_Control()", __FILE__, __LINE__);
 #endif
 
 }

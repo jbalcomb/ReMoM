@@ -37,6 +37,7 @@
 #include "../../ext/stu_compat.h"
 
 #include "Spellbook.h"
+#include "../../STU/src/STU_LOG.h"
 
 // Combat.C
 // WZD dseg:C520
@@ -3594,7 +3595,7 @@ void Spell_Research_Select(void)
 
         Spell_GUI_Controls[itr] = Add_Hidden_Field(Left_X, Top_Y, (Left_X + 110), (Top_Y + 33), str_empty_string__ovr118[0], ST_UNDEFINED);
 
-        /* CLAUDE */ fprintf(stderr, "[RESEARCH] slot=%d field=%d spell=%d rect=(%d,%d)-(%d,%d) size=%dx%d\n", itr, Spell_GUI_Controls[itr], _players[HUMAN_PLAYER_IDX].research_spells[itr], Left_X, Top_Y, Left_X + 110, Top_Y + 33, 110, 33);
+        /* CLAUDE */ LOG_INFO(LOG_CAT_SPELLBOOK, "[RESEARCH] slot=%d field=%d spell=%d rect=(%d,%d)-(%d,%d) size=%dx%d", itr, Spell_GUI_Controls[itr], _players[HUMAN_PLAYER_IDX].research_spells[itr], Left_X, Top_Y, Left_X + 110, Top_Y + 33, 110, 33);
 
     }
 
@@ -3692,7 +3693,7 @@ void Spell_Research_Select(void)
             if(Spell_GUI_Controls[itr] == input_field_idx)
             {
 
-                /* CLAUDE */ fprintf(stderr, "[RESEARCH] CLICK matched slot=%d field=%d -> spell=%d (researching_spell_idx)\n", itr, input_field_idx, _players[HUMAN_PLAYER_IDX].research_spells[itr]);
+                /* CLAUDE */ LOG_INFO(LOG_CAT_SPELLBOOK, "[RESEARCH] CLICK matched slot=%d field=%d -> spell=%d (researching_spell_idx)", itr, input_field_idx, _players[HUMAN_PLAYER_IDX].research_spells[itr]);
 
                 if(_players[HUMAN_PLAYER_IDX].research_spells[itr] > 0)
                 {

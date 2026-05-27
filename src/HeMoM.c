@@ -219,11 +219,11 @@ static int Config_Parse(const char *filepath, struct s_HeMoM_Config *cfg)
     fp = stu_fopen_ci(filepath, "r");
     if (fp == NULL)
     {
-        fprintf(stderr, "[HeMoM] Could not open config: %s\n", filepath);
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Could not open config: %s", filepath);
         return 0;
     }
 
-    fprintf(stderr, "[HeMoM] Loading config: %s\n", filepath);
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Loading config: %s", filepath);
 
     while (fgets(line, sizeof(line), fp) != NULL)
     {
@@ -236,7 +236,7 @@ static int Config_Parse(const char *filepath, struct s_HeMoM_Config *cfg)
         eq = stu_strchr(key, '=');
         if (eq == NULL)
         {
-            fprintf(stderr, "[HeMoM] %s:%d: missing '=' in: %s\n", filepath, line_num, key);
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] %s:%d: missing '=' in: %s", filepath, line_num, key);
             continue;
         }
 
@@ -293,7 +293,7 @@ static int Config_Parse(const char *filepath, struct s_HeMoM_Config *cfg)
             }
             else
             {
-                fprintf(stderr, "[HeMoM] %s:%d: unknown wizard '%s'\n", filepath, line_num, value);
+                LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] %s:%d: unknown wizard '%s'", filepath, line_num, value);
             }
             cfg->has_wizard = 1;
         }
@@ -312,7 +312,7 @@ static int Config_Parse(const char *filepath, struct s_HeMoM_Config *cfg)
             }
             else
             {
-                fprintf(stderr, "[HeMoM] %s:%d: unknown race '%s'\n", filepath, line_num, value);
+                LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] %s:%d: unknown race '%s'", filepath, line_num, value);
             }
             cfg->has_race = 1;
         }
@@ -325,7 +325,7 @@ static int Config_Parse(const char *filepath, struct s_HeMoM_Config *cfg)
             }
             else
             {
-                fprintf(stderr, "[HeMoM] %s:%d: unknown banner '%s'\n", filepath, line_num, value);
+                LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] %s:%d: unknown banner '%s'", filepath, line_num, value);
             }
             cfg->has_banner = 1;
         }
@@ -354,7 +354,7 @@ static int Config_Parse(const char *filepath, struct s_HeMoM_Config *cfg)
         else if (Str_Equal_CI(key, "Artificer"))        { cfg->retorts[wsa_Artificer] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
         else
         {
-            fprintf(stderr, "[HeMoM] %s:%d: unknown key '%s'\n", filepath, line_num, key);
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] %s:%d: unknown key '%s'", filepath, line_num, key);
         }
     }
 
@@ -414,17 +414,17 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
     if (cfg->has_seed)
     {
         Set_Random_Seed(cfg->seed);
-        fprintf(stderr, "[HeMoM] RNG seed set to %u (0x%08X)\n", cfg->seed, cfg->seed);
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] RNG seed set to %u (0x%08X)", cfg->seed, cfg->seed);
 #ifdef STU_DEBUG
-        dbg_prn("[HeMoM] RNG seed set to %u (0x%08X)\n", cfg->seed, cfg->seed);
-        trc_prn("[HeMoM] RNG seed set to %u (0x%08X)\n", cfg->seed, cfg->seed);
+        LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] RNG seed set to %u (0x%08X)", cfg->seed, cfg->seed);
+        LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] RNG seed set to %u (0x%08X)", cfg->seed, cfg->seed);
 #endif
     }
 
-    fprintf(stderr, "[HeMoM] Creating new game: difficulty=%d magic=%d landsize=%d opponents=%d wizard=%s race=%d banner=%d seed=%u\n", cfg->difficulty, cfg->magic, cfg->landsize, cfg->opponents, cfg->wizard_name, cfg->race, cfg->banner, Get_Random_Seed());
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Creating new game: difficulty=%d magic=%d landsize=%d opponents=%d wizard=%s race=%d banner=%d seed=%u", cfg->difficulty, cfg->magic, cfg->landsize, cfg->opponents, cfg->wizard_name, cfg->race, cfg->banner, Get_Random_Seed());
 #ifdef STU_DEBUG
-    dbg_prn("[HeMoM] Creating new game: difficulty=%d magic=%d landsize=%d opponents=%d wizard=%s race=%d banner=%d seed=%u\n", cfg->difficulty, cfg->magic, cfg->landsize, cfg->opponents, cfg->wizard_name, cfg->race, cfg->banner, Get_Random_Seed());
-    trc_prn("[HeMoM] Creating new game: difficulty=%d magic=%d landsize=%d opponents=%d wizard=%s race=%d banner=%d seed=%u\n", cfg->difficulty, cfg->magic, cfg->landsize, cfg->opponents, cfg->wizard_name, cfg->race, cfg->banner, Get_Random_Seed());
+    LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] Creating new game: difficulty=%d magic=%d landsize=%d opponents=%d wizard=%s race=%d banner=%d seed=%u", cfg->difficulty, cfg->magic, cfg->landsize, cfg->opponents, cfg->wizard_name, cfg->race, cfg->banner, Get_Random_Seed());
+    LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] Creating new game: difficulty=%d magic=%d landsize=%d opponents=%d wizard=%s race=%d banner=%d seed=%u", cfg->difficulty, cfg->magic, cfg->landsize, cfg->opponents, cfg->wizard_name, cfg->race, cfg->banner, Get_Random_Seed());
 #endif
 
     // New_Game_Screen_7__WIP()
@@ -447,7 +447,7 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
     //         _given_chance_to_rename_home_city = ST_TRUE;
     _given_chance_to_rename_home_city = ST_TRUE;
     
-    fprintf(stderr, "[HeMoM] New game created successfully\n");
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] New game created successfully");
 }
 
 
@@ -478,21 +478,21 @@ static void HeMoM_Replay_Log_Field_Hit(void *log, int mouse_x, int mouse_y)
 
 static void Print_Usage(const char *program_name)
 {
-    fprintf(stderr, "HeMoM — Headless Master of Magic\n\n");
-    fprintf(stderr, "Usage:\n");
-    fprintf(stderr, "  %s --newgame [ReMoM.ini] [--scenario test.hms] [--record out.RMR]\n", program_name);
-    fprintf(stderr, "  %s --continue [--scenario test.hms] [--record out.RMR]\n", program_name);
-    fprintf(stderr, "  %s --load SAVE3.GAM [--scenario test.hms] [--record out.RMR]\n", program_name);
-    fprintf(stderr, "  %s --newgame [ReMoM.ini] [--replay game.RMR]\n", program_name);
-    fprintf(stderr, "\nOptions:\n");
-    fprintf(stderr, "  --newgame [FILE]   Create new game from config (default: ReMoM.ini)\n");
-    fprintf(stderr, "  --continue         Load SAVE9.GAM (continue from previous --newgame)\n");
-    fprintf(stderr, "  --load FILE        Load a save file (SAVE1.GAM .. SAVE9.GAM, SAVETEST.GAM)\n");
-    fprintf(stderr, "  --scenario FILE    Run artificial human player from scenario script (.hms)\n");
-    fprintf(stderr, "  --replay FILE      Replay recorded input from .RMR file\n");
-    fprintf(stderr, "  --record FILE      Record input to .RMR file\n");
-    fprintf(stderr, "  --dump-save FILE   After Screen_Control returns, dump FILE.GAM to FILE.txt\n");
-    fprintf(stderr, "  --help             Show this help\n");
+    LOG_INFO(LOG_CAT_HEMOM, "HeMoM — Headless Master of Magic\n");
+    LOG_INFO(LOG_CAT_HEMOM, "Usage:");
+    LOG_INFO(LOG_CAT_HEMOM, "  %s --newgame [ReMoM.ini] [--scenario test.hms] [--record out.RMR]", program_name);
+    LOG_INFO(LOG_CAT_HEMOM, "  %s --continue [--scenario test.hms] [--record out.RMR]", program_name);
+    LOG_INFO(LOG_CAT_HEMOM, "  %s --load SAVE3.GAM [--scenario test.hms] [--record out.RMR]", program_name);
+    LOG_INFO(LOG_CAT_HEMOM, "  %s --newgame [ReMoM.ini] [--replay game.RMR]", program_name);
+    LOG_INFO(LOG_CAT_HEMOM, "\nOptions:");
+    LOG_INFO(LOG_CAT_HEMOM, "  --newgame [FILE]   Create new game from config (default: ReMoM.ini)");
+    LOG_INFO(LOG_CAT_HEMOM, "  --continue         Load SAVE9.GAM (continue from previous --newgame)");
+    LOG_INFO(LOG_CAT_HEMOM, "  --load FILE        Load a save file (SAVE1.GAM .. SAVE9.GAM, SAVETEST.GAM)");
+    LOG_INFO(LOG_CAT_HEMOM, "  --scenario FILE    Run artificial human player from scenario script (.hms)");
+    LOG_INFO(LOG_CAT_HEMOM, "  --replay FILE      Replay recorded input from .RMR file");
+    LOG_INFO(LOG_CAT_HEMOM, "  --record FILE      Record input to .RMR file");
+    LOG_INFO(LOG_CAT_HEMOM, "  --dump-save FILE   After Screen_Control returns, dump FILE.GAM to FILE.txt");
+    LOG_INFO(LOG_CAT_HEMOM, "  --help             Show this help");
 }
 
 
@@ -511,28 +511,28 @@ int main(int argc, char *argv[])
 
 #ifdef STU_DEBUG
     Debug_Log_Startup();
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: HeMoM  main()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: HeMoM  main()", __FILE__, __LINE__);
 #endif
 #ifdef STU_DEBUG
     Trace_Log_Startup();
-    trc_prn("TRACE: [%s, %d]: BEGIN: HeMoM  main()\n", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: BEGIN: HeMoM  main()", __FILE__, __LINE__);
 #endif
 
     log_init("ReMoM.ini");
     LOG_INFO(LOG_CAT_GENERAL, "BEGIN: HeMoM main() [STU_LOG tracer bullet]");
 
     /* Log and parse CLI arguments */
-    fprintf(stderr, "[HeMoM] argc=%d\n", argc);
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] argc=%d", argc);
 #ifdef STU_DEBUG
-    dbg_prn("[HeMoM] argc=%d\n", argc);
-    trc_prn("[HeMoM] argc=%d\n", argc);
+    LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] argc=%d", argc);
+    LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] argc=%d", argc);
 #endif
     for (argi = 0; argi < argc; argi++)
     {
-        fprintf(stderr, "[HeMoM] argv[%d]=\"%s\"\n", argi, argv[argi]);
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] argv[%d]=\"%s\"", argi, argv[argi]);
 #ifdef STU_DEBUG
-        dbg_prn("[HeMoM] argv[%d]=\"%s\"\n", argi, argv[argi]);
-        trc_prn("[HeMoM] argv[%d]=\"%s\"\n", argi, argv[argi]);
+        LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] argv[%d]=\"%s\"", argi, argv[argi]);
+        LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] argv[%d]=\"%s\"", argi, argv[argi]);
 #endif
     }
 
@@ -560,10 +560,10 @@ int main(int argc, char *argv[])
             {
                 stu_strcpy(hemom_file, "ReMoM.ini");
             }
-            fprintf(stderr, "[HeMoM] CLI: --newgame \"%s\"\n", hemom_file);
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --newgame \"%s\"", hemom_file);
 #ifdef STU_DEBUG
-            dbg_prn("[HeMoM] CLI: --newgame \"%s\"\n", hemom_file);
-            trc_prn("[HeMoM] CLI: --newgame \"%s\"\n", hemom_file);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] CLI: --newgame \"%s\"", hemom_file);
+            LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] CLI: --newgame \"%s\"", hemom_file);
 #endif
         }
         else if (stu_strcmp(argv[argi], "--load") == 0 && (argi + 1) < argc)
@@ -571,28 +571,28 @@ int main(int argc, char *argv[])
             hemom_mode = 2;
             argi++;
             stu_strcpy(hemom_file, argv[argi]);
-            fprintf(stderr, "[HeMoM] CLI: --load \"%s\"\n", hemom_file);
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --load \"%s\"", hemom_file);
 #ifdef STU_DEBUG
-            dbg_prn("[HeMoM] CLI: --load \"%s\"\n", hemom_file);
-            trc_prn("[HeMoM] CLI: --load \"%s\"\n", hemom_file);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] CLI: --load \"%s\"", hemom_file);
+            LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] CLI: --load \"%s\"", hemom_file);
 #endif
         }
         else if (stu_strcmp(argv[argi], "--continue") == 0)
         {
             hemom_mode = 2;
             stu_strcpy(hemom_file, "SAVE9.GAM");
-            fprintf(stderr, "[HeMoM] CLI: --continue (SAVE9.GAM)\n");
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --continue (SAVE9.GAM)");
 #ifdef STU_DEBUG
-            dbg_prn("[HeMoM] CLI: --continue (SAVE9.GAM)\n");
-            trc_prn("[HeMoM] CLI: --continue (SAVE9.GAM)\n");
+            LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] CLI: --continue (SAVE9.GAM)");
+            LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] CLI: --continue (SAVE9.GAM)");
 #endif
         }
         else if (stu_strcmp(argv[argi], "--replay") == 0 || stu_strcmp(argv[argi], "--record") == 0)
         {
-            fprintf(stderr, "[HeMoM] CLI: %s (deferred until after platform init)\n", argv[argi]);
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: %s (deferred until after platform init)", argv[argi]);
 #ifdef STU_DEBUG
-            dbg_prn("[HeMoM] CLI: %s (deferred until after platform init)\n", argv[argi]);
-            trc_prn("[HeMoM] CLI: %s (deferred until after platform init)\n", argv[argi]);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] CLI: %s (deferred until after platform init)", argv[argi]);
+            LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] CLI: %s (deferred until after platform init)", argv[argi]);
 #endif
             /* Handled after Startup_Platform() */
         }
@@ -600,20 +600,20 @@ int main(int argc, char *argv[])
         {
             argi++;
             stu_strcpy(hemom_scenario, argv[argi]);
-            fprintf(stderr, "[HeMoM] CLI: --scenario \"%s\"\n", hemom_scenario);
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --scenario \"%s\"", hemom_scenario);
 #ifdef STU_DEBUG
-            dbg_prn("[HeMoM] CLI: --scenario \"%s\"\n", hemom_scenario);
-            trc_prn("[HeMoM] CLI: --scenario \"%s\"\n", hemom_scenario);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] CLI: --scenario \"%s\"", hemom_scenario);
+            LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] CLI: --scenario \"%s\"", hemom_scenario);
 #endif
         }
         else if (strcmp(argv[argi], "--dump-save") == 0 && (argi + 1) < argc)
         {
             argi++;
             stu_strcpy(hemom_dump_save, argv[argi]);
-            fprintf(stderr, "[HeMoM] CLI: --dump-save \"%s\"\n", hemom_dump_save);
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --dump-save \"%s\"", hemom_dump_save);
 #ifdef STU_DEBUG
-            dbg_prn("[HeMoM] CLI: --dump-save \"%s\"\n", hemom_dump_save);
-            trc_prn("[HeMoM] CLI: --dump-save \"%s\"\n", hemom_dump_save);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] CLI: --dump-save \"%s\"", hemom_dump_save);
+            LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] CLI: --dump-save \"%s\"", hemom_dump_save);
 #endif
         }
         else if (stu_strcmp(argv[argi], "--seed") == 0 && (argi + 1) < argc)
@@ -627,27 +627,27 @@ int main(int argc, char *argv[])
         {
 #ifdef STU_DEBUG
             AI_Metrics_Enabled = 1;
-            fprintf(stderr, "[HeMoM] CLI: --ai-metrics (enabled)\n");
-            dbg_prn("[HeMoM] CLI: --ai-metrics (enabled)\n");
-            trc_prn("[HeMoM] CLI: --ai-metrics (enabled)\n");
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --ai-metrics (enabled)");
+            LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] CLI: --ai-metrics (enabled)");
+            LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] CLI: --ai-metrics (enabled)");
 #else
-            fprintf(stderr, "[HeMoM] CLI: --ai-metrics ignored (not a debug build)\n");
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --ai-metrics ignored (not a debug build)");
 #endif
         }
         else
         {
-            fprintf(stderr, "[HeMoM] CLI: unknown arg \"%s\"\n", argv[argi]);
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: unknown arg \"%s\"", argv[argi]);
 #ifdef STU_DEBUG
-            dbg_prn("[HeMoM] CLI: unknown arg \"%s\"\n", argv[argi]);
-            trc_prn("[HeMoM] CLI: unknown arg \"%s\"\n", argv[argi]);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] CLI: unknown arg \"%s\"", argv[argi]);
+            LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] CLI: unknown arg \"%s\"", argv[argi]);
 #endif
         }
     }
 
-    fprintf(stderr, "[HeMoM] Parsed: mode=%d file=\"%s\" scenario=\"%s\"\n", hemom_mode, hemom_file, hemom_scenario);
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Parsed: mode=%d file=\"%s\" scenario=\"%s\"", hemom_mode, hemom_file, hemom_scenario);
 #ifdef STU_DEBUG
-    dbg_prn("[HeMoM] Parsed: mode=%d file=\"%s\" scenario=\"%s\"\n", hemom_mode, hemom_file, hemom_scenario);
-    trc_prn("[HeMoM] Parsed: mode=%d file=\"%s\" scenario=\"%s\"\n", hemom_mode, hemom_file, hemom_scenario);
+    LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] Parsed: mode=%d file=\"%s\" scenario=\"%s\"", hemom_mode, hemom_file, hemom_scenario);
+    LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] Parsed: mode=%d file=\"%s\" scenario=\"%s\"", hemom_mode, hemom_file, hemom_scenario);
 #endif
 
 #ifdef STU_DEBUG
@@ -657,7 +657,7 @@ int main(int argc, char *argv[])
     if (hemom_mode == 0)
     {
         Print_Usage(argv[0]);
-        fprintf(stderr, "\nError: must specify --newgame or --load\n");
+        LOG_INFO(LOG_CAT_HEMOM, "\nError: must specify --newgame or --load");
         return 1;
     }
 
@@ -683,7 +683,7 @@ int main(int argc, char *argv[])
     }
 
     /* Initialize engine (shared with ReMoMber) */
-    fprintf(stderr, "[HeMoM] Initializing engine...\n");
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Initializing engine...");
     ReMoM_Init_Engine();
 
     /* Create or load game */
@@ -693,7 +693,7 @@ int main(int argc, char *argv[])
         Config_Init(&cfg);
         if (!Config_Parse(hemom_file, &cfg))
         {
-            fprintf(stderr, "[HeMoM] Failed to parse config: %s\n", hemom_file);
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Failed to parse config: %s", hemom_file);
             Shutdown_Platform();
             return 1;
         }
@@ -714,7 +714,7 @@ int main(int argc, char *argv[])
             save_slot = (int16_t)(stu_atoi(digit_ptr) - 1);
         }
 
-        fprintf(stderr, "[HeMoM] Loading save: %s (slot %d)\n", hemom_file, save_slot);
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Loading save: %s (slot %d)", hemom_file, save_slot);
         Load_SAVE_GAM(save_slot);
         Loaded_Game_Update();
         current_screen = scr_Main_Screen;
@@ -723,34 +723,34 @@ int main(int argc, char *argv[])
     /* Load and register artificial human player scenario */
     if (hemom_scenario[0] != '\0')
     {
-        fprintf(stderr, "[HeMoM] Loading scenario: %s\n", hemom_scenario);
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Loading scenario: %s", hemom_scenario);
 #ifdef STU_DEBUG
-        dbg_prn("[HeMoM] Loading scenario: %s\n", hemom_scenario);
-        trc_prn("[HeMoM] Loading scenario: %s\n", hemom_scenario);
+        LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] Loading scenario: %s", hemom_scenario);
+        LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] Loading scenario: %s", hemom_scenario);
 #endif
         if (HeMoM_Player_Load_Scenario(hemom_scenario) != 0)
         {
-            fprintf(stderr, "[HeMoM] Failed to load scenario: %s\n", hemom_scenario);
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Failed to load scenario: %s", hemom_scenario);
 #ifdef STU_DEBUG
-            dbg_prn("[HeMoM] Failed to load scenario: %s\n", hemom_scenario);
-            trc_prn("[HeMoM] Failed to load scenario: %s\n", hemom_scenario);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] Failed to load scenario: %s", hemom_scenario);
+            LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] Failed to load scenario: %s", hemom_scenario);
 #endif
             Shutdown_Platform();
             return 1;
         }
         Platform_Register_Frame_Callback(HeMoM_Player_Frame);
-        fprintf(stderr, "[HeMoM] Registered artificial human player callback\n");
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Registered artificial human player callback");
 #ifdef STU_DEBUG
-        dbg_prn("[HeMoM] Registered artificial human player callback\n");
-        trc_prn("[HeMoM] Registered artificial human player callback\n");
+        LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] Registered artificial human player callback");
+        LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] Registered artificial human player callback");
 #endif
     }
     else
     {
-        fprintf(stderr, "[HeMoM] No --scenario specified\n");
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] No --scenario specified");
 #ifdef STU_DEBUG
-        dbg_prn("[HeMoM] No --scenario specified\n");
-        trc_prn("[HeMoM] No --scenario specified\n");
+        LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] No --scenario specified");
+        LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] No --scenario specified");
 #endif
     }
 
@@ -760,25 +760,25 @@ int main(int argc, char *argv[])
        spin forever waiting for input that can never arrive. */
     if (hemom_mode == 1 && hemom_scenario[0] == '\0')
     {
-        fprintf(stderr, "[HeMoM] Newgame complete — SAVE9.GAM written, skipping Screen_Control()\n");
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Newgame complete — SAVE9.GAM written, skipping Screen_Control()");
 #ifdef STU_DEBUG
-        dbg_prn("[HeMoM] Newgame complete — SAVE9.GAM written, skipping Screen_Control()\n");
-        trc_prn("[HeMoM] Newgame complete — SAVE9.GAM written, skipping Screen_Control()\n");
+        LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] Newgame complete — SAVE9.GAM written, skipping Screen_Control()");
+        LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] Newgame complete — SAVE9.GAM written, skipping Screen_Control()");
 #endif
     }
     else
     {
-        fprintf(stderr, "[HeMoM] Entering Screen_Control()\n");
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Entering Screen_Control()");
 #ifdef STU_DEBUG
-        dbg_prn("[HeMoM] Entering Screen_Control()\n");
-        trc_prn("[HeMoM] Entering Screen_Control()\n");
+        LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] Entering Screen_Control()");
+        LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] Entering Screen_Control()");
 #endif
         Screen_Control();
 
-        fprintf(stderr, "[HeMoM] Screen_Control() returned\n");
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Screen_Control() returned");
 #ifdef STU_DEBUG
-        dbg_prn("[HeMoM] Screen_Control() returned\n");
-        trc_prn("[HeMoM] Screen_Control() returned\n");
+        LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] Screen_Control() returned");
+        LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] Screen_Control() returned");
 #endif
     }
 
@@ -804,30 +804,30 @@ int main(int argc, char *argv[])
             dump_text[i + 3] = 't';
             dump_text[i + 4] = '\0';
         }
-        fprintf(stderr, "[HeMoM] Dumping %s -> %s\n", hemom_dump_save, dump_text);
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Dumping %s -> %s", hemom_dump_save, dump_text);
 #ifdef STU_DEBUG
-        dbg_prn("[HeMoM] Dumping %s -> %s\n", hemom_dump_save, dump_text);
-        trc_prn("[HeMoM] Dumping %s -> %s\n", hemom_dump_save, dump_text);
+        LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] Dumping %s -> %s", hemom_dump_save, dump_text);
+        LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] Dumping %s -> %s", hemom_dump_save, dump_text);
 #endif
         Game_Save_Dump(hemom_dump_save, dump_text);
 #ifdef STU_DEBUG
-        dbg_prn("[HeMoM] Game_Save_Dump returned\n");
-        trc_prn("[HeMoM] Game_Save_Dump returned\n");
+        LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] Game_Save_Dump returned");
+        LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] Game_Save_Dump returned");
 #endif
     }
 
     /* Cleanup */
 #ifdef STU_DEBUG
-    dbg_prn("[HeMoM] Cleanup: HeMoM_Player_Shutdown()\n");
-    trc_prn("[HeMoM] Cleanup: HeMoM_Player_Shutdown()\n");
+    LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] Cleanup: HeMoM_Player_Shutdown()");
+    LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] Cleanup: HeMoM_Player_Shutdown()");
 #endif
     HeMoM_Player_Shutdown();
     if (Platform_Record_Active()) { Platform_Record_Stop(); }
     if (Platform_Replay_Active()) { Platform_Replay_Stop(); }
 
 #ifdef STU_DEBUG
-    dbg_prn("[HeMoM] Cleanup: Shutdown_Platform()\n");
-    trc_prn("[HeMoM] Cleanup: Shutdown_Platform()\n");
+    LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] Cleanup: Shutdown_Platform()");
+    LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] Cleanup: Shutdown_Platform()");
 #endif
     Shutdown_Platform();
 
@@ -835,17 +835,17 @@ int main(int argc, char *argv[])
     AI_Metrics_Shutdown();
 #endif
 #ifdef STU_DEBUG
-    trc_prn("TRACE: [%s, %d]: END: HeMoM  main()\n", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: END: HeMoM  main()", __FILE__, __LINE__);
     Trace_Log_Shutdown();
 #endif
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: HeMoM  main()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: HeMoM  main()", __FILE__, __LINE__);
     Debug_Log_Shutdown();
 #endif
 
     LOG_INFO(LOG_CAT_GENERAL, "END: HeMoM main() [STU_LOG tracer bullet]");
     log_shutdown();
 
-    fprintf(stderr, "[HeMoM] Done\n");
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Done");
     return 0;
 }

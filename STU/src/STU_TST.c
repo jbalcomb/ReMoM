@@ -11,6 +11,7 @@
 
 #include "../../MoM/src/Spellbook.h"
 #include "../../MoM/src/NEXTTURN.h"
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -52,7 +53,7 @@ void TST_Patch_Game_Data(void)
     int16_t spell_idx = 0;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: TST_Patch_Game_Data()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: TST_Patch_Game_Data()", __FILE__, __LINE__);
 #endif
 
     player_idx = HUMAN_PLAYER_IDX;
@@ -67,6 +68,6 @@ void TST_Patch_Game_Data(void)
     // _players[1].Globals[AWARENESS        ] = (1 + 1);  // 209  spl_Awareness
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: TST_Patch_Game_Data()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: TST_Patch_Game_Data()", __FILE__, __LINE__);
 #endif
 }

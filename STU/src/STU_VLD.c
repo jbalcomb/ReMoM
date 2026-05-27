@@ -15,6 +15,7 @@
 #include "STU_VLD.h"
 
 #include <stdio.h>
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -136,7 +137,7 @@ void Validate_Terrain_Types(void)
 
 static int16_t Validate_Lair_Fail_Range(int16_t lair_idx, const char * field_name, int32_t value, int32_t min_value, int32_t max_value)
 {
-    fprintf(stderr, "ERROR: Validate_Lair_Record(): lair_idx=%d has invalid %s=%ld (expected [%ld, %ld])\n",
+    LOG_INFO(LOG_CAT_STU_VLD, "ERROR: Validate_Lair_Record(): lair_idx=%d has invalid %s=%ld (expected [%ld, %ld])",
         lair_idx,
         field_name,
         (long)value,
@@ -148,7 +149,7 @@ static int16_t Validate_Lair_Fail_Range(int16_t lair_idx, const char * field_nam
 
 static int16_t Validate_Lair_Fail_Message(int16_t lair_idx, const char * message)
 {
-    fprintf(stderr, "ERROR: Validate_Lair_Record(): lair_idx=%d %s\n", lair_idx, message);
+    LOG_INFO(LOG_CAT_STU_VLD, "ERROR: Validate_Lair_Record(): lair_idx=%d %s", lair_idx, message);
 
     return ST_FALSE;
 }
@@ -160,13 +161,13 @@ int16_t Validate_Lair_Record(int16_t lair_idx)
 
     if(_LAIRS == NULL)
     {
-        fprintf(stderr, "ERROR: Validate_Lair_Record(): _LAIRS is NULL\n");
+        LOG_INFO(LOG_CAT_STU_VLD, "ERROR: Validate_Lair_Record(): _LAIRS is NULL");
         return ST_FALSE;
     }
 
     if((lair_idx < 0) || (lair_idx >= NUM_LAIRS))
     {
-        fprintf(stderr, "ERROR: Validate_Lair_Record(): lair_idx=%d out of range [0, %d)\n", lair_idx, NUM_LAIRS);
+        LOG_INFO(LOG_CAT_STU_VLD, "ERROR: Validate_Lair_Record(): lair_idx=%d out of range [0, %d)", lair_idx, NUM_LAIRS);
         return ST_FALSE;
     }
 
@@ -214,8 +215,7 @@ int16_t Validate_Lair_Record(int16_t lair_idx)
 
     if((lair->guard1_count + lair->guard2_count) > 9)
     {
-        fprintf(stderr,
-            "ERROR: Validate_Lair_Record(): lair_idx=%d guard count overflow (%u + %u > 9)\n",
+        LOG_INFO(LOG_CAT_STU_VLD, "ERROR: Validate_Lair_Record(): lair_idx=%d guard count overflow (%u + %u > 9)",
             lair_idx,
             (unsigned int)lair->guard1_count,
             (unsigned int)lair->guard2_count);
@@ -256,8 +256,7 @@ int16_t Validate_Lair_Record(int16_t lair_idx)
     {
         if(lair->Item_Values[item_idx] <= 0)
         {
-            fprintf(stderr,
-                "ERROR: Validate_Lair_Record(): lair_idx=%d has non-positive Item_Values[%d]=%d while Item_Count=%d\n",
+            LOG_INFO(LOG_CAT_STU_VLD, "ERROR: Validate_Lair_Record(): lair_idx=%d has non-positive Item_Values[%d]=%d while Item_Count=%d",
                 lair_idx,
                 item_idx,
                 lair->Item_Values[item_idx],
@@ -276,7 +275,7 @@ int16_t Validate_All_Lairs(void)
 
     if(_LAIRS == NULL)
     {
-        fprintf(stderr, "ERROR: Validate_All_Lairs(): _LAIRS is NULL\n");
+        LOG_INFO(LOG_CAT_STU_VLD, "ERROR: Validate_All_Lairs(): _LAIRS is NULL");
         return ST_FALSE;
     }
 
@@ -284,7 +283,7 @@ int16_t Validate_All_Lairs(void)
     {
         if(Validate_Lair_Record(lair_idx) != ST_TRUE)
         {
-            fprintf(stderr, "ERROR: Validate_All_Lairs(): failed at lair_idx=%d\n", lair_idx);
+            LOG_INFO(LOG_CAT_STU_VLD, "ERROR: Validate_All_Lairs(): failed at lair_idx=%d", lair_idx);
             return ST_FALSE;
         }
     }
@@ -295,8 +294,7 @@ int16_t Validate_All_Lairs(void)
 
 static int16_t Validate_City_Fail_Range(int16_t city_idx, const char * field_name, int32_t value, int32_t min_value, int32_t max_value)
 {
-    fprintf(stderr,
-        "ERROR: Validate_City_Record(): city_idx=%d has invalid %s=%ld (expected [%ld, %ld])\n",
+    LOG_INFO(LOG_CAT_STU_VLD, "ERROR: Validate_City_Record(): city_idx=%d has invalid %s=%ld (expected [%ld, %ld])",
         city_idx,
         field_name,
         (long)value,
@@ -312,13 +310,13 @@ int16_t Validate_City_Record(int16_t city_idx)
 
     if(_CITIES == NULL)
     {
-        fprintf(stderr, "ERROR: Validate_City_Record(): _CITIES is NULL\n");
+        LOG_INFO(LOG_CAT_STU_VLD, "ERROR: Validate_City_Record(): _CITIES is NULL");
         return ST_FALSE;
     }
 
     if((city_idx < 0) || (city_idx >= NUM_CITIES))
     {
-        fprintf(stderr, "ERROR: Validate_City_Record(): city_idx=%d out of range [0, %d)\n", city_idx, NUM_CITIES);
+        LOG_INFO(LOG_CAT_STU_VLD, "ERROR: Validate_City_Record(): city_idx=%d out of range [0, %d)", city_idx, NUM_CITIES);
         return ST_FALSE;
     }
 
@@ -373,13 +371,13 @@ int16_t Validate_All_Cities(void)
 
     if(_CITIES == NULL)
     {
-        fprintf(stderr, "ERROR: Validate_All_Cities(): _CITIES is NULL\n");
+        LOG_INFO(LOG_CAT_STU_VLD, "ERROR: Validate_All_Cities(): _CITIES is NULL");
         return ST_FALSE;
     }
 
     if((_cities < 0) || (_cities > NUM_CITIES))
     {
-        fprintf(stderr, "ERROR: Validate_All_Cities(): _cities=%d out of range [0, %d]\n", _cities, NUM_CITIES);
+        LOG_INFO(LOG_CAT_STU_VLD, "ERROR: Validate_All_Cities(): _cities=%d out of range [0, %d]", _cities, NUM_CITIES);
         return ST_FALSE;
     }
 
@@ -387,7 +385,7 @@ int16_t Validate_All_Cities(void)
     {
         if(Validate_City_Record(city_idx) != ST_TRUE)
         {
-            fprintf(stderr, "ERROR: Validate_All_Cities(): failed at city_idx=%d\n", city_idx);
+            LOG_INFO(LOG_CAT_STU_VLD, "ERROR: Validate_All_Cities(): failed at city_idx=%d", city_idx);
             return ST_FALSE;
         }
     }
@@ -401,13 +399,13 @@ int16_t Validate_All_Neutral_Cities(void)
 
     if(_CITIES == NULL)
     {
-        fprintf(stderr, "ERROR: Validate_All_Neutral_Cities(): _CITIES is NULL\n");
+        LOG_INFO(LOG_CAT_STU_VLD, "ERROR: Validate_All_Neutral_Cities(): _CITIES is NULL");
         return ST_FALSE;
     }
 
     if((_cities < 0) || (_cities > NUM_CITIES))
     {
-        fprintf(stderr, "ERROR: Validate_All_Neutral_Cities(): _cities=%d out of range [0, %d]\n", _cities, NUM_CITIES);
+        LOG_INFO(LOG_CAT_STU_VLD, "ERROR: Validate_All_Neutral_Cities(): _cities=%d out of range [0, %d]", _cities, NUM_CITIES);
         return ST_FALSE;
     }
 
@@ -419,7 +417,7 @@ int16_t Validate_All_Neutral_Cities(void)
         }
         if(Validate_City_Record(city_idx) != ST_TRUE)
         {
-            fprintf(stderr, "ERROR: Validate_All_Neutral_Cities(): failed at city_idx=%d\n", city_idx);
+            LOG_INFO(LOG_CAT_STU_VLD, "ERROR: Validate_All_Neutral_Cities(): failed at city_idx=%d", city_idx);
             return ST_FALSE;
         }
     }

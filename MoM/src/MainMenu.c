@@ -35,6 +35,7 @@
 #include "../../platform/include/Platform_Replay.h"
 
 #include "MainMenu.h"
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -492,7 +493,7 @@ int16_t Main_Menu_Screen(void)
         {
             if(Platform_Demo_Start() == 0)
             {
-                fprintf(stderr, "DEMO: auto-started after idle timeout\n");
+                LOG_INFO(LOG_CAT_MAINMENU, "DEMO: auto-started after idle timeout");
             }
             Platform_Demo_Reset_Idle_Timer();
         }
@@ -502,8 +503,8 @@ int16_t Main_Menu_Screen(void)
 /* CLAUDE */  #ifdef STU_DEBUG
 /* CLAUDE */          if(input_field_idx != ST_FALSE)
 /* CLAUDE */          {
-/* CLAUDE */              trc_prn("[MENU] Get_Input() returned field=%d\n", input_field_idx);
-/* CLAUDE */              dbg_prn("[MENU] Get_Input() returned field=%d\n", input_field_idx);
+/* CLAUDE */              LOG_TRACE(LOG_CAT_GENERAL, "[MENU] Get_Input() returned field=%d", input_field_idx);
+/* CLAUDE */              LOG_DEBUG(LOG_CAT_GENERAL, "[MENU] Get_Input() returned field=%d", input_field_idx);
 /* CLAUDE */          }
 /* CLAUDE */  #endif
 
@@ -561,8 +562,8 @@ int16_t Main_Menu_Screen(void)
             if((input_field_idx == _quit_hotkey) || (input_field_idx == _quit_button) || (input_field_idx == _esc_hotkey))
             {
 #ifdef STU_DEBUG
-                trc_prn("[MENU] Quit hit: field=%d _quit_hotkey=%d _quit_button=%d _esc_hotkey=%d\n", input_field_idx, _quit_hotkey, _quit_button, _esc_hotkey);
-                dbg_prn("[MENU] Quit hit: field=%d _quit_hotkey=%d _quit_button=%d _esc_hotkey=%d\n", input_field_idx, _quit_hotkey, _quit_button, _esc_hotkey);
+                LOG_TRACE(LOG_CAT_GENERAL, "[MENU] Quit hit: field=%d _quit_hotkey=%d _quit_button=%d _esc_hotkey=%d", input_field_idx, _quit_hotkey, _quit_button, _esc_hotkey);
+                LOG_DEBUG(LOG_CAT_GENERAL, "[MENU] Quit hit: field=%d _quit_hotkey=%d _quit_button=%d _esc_hotkey=%d", input_field_idx, _quit_hotkey, _quit_button, _esc_hotkey);
 #endif
                 leave_screen_flag = ST_TRUE;
                 current_menu_screen = 3;

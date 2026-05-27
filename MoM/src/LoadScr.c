@@ -63,6 +63,7 @@ MoO2  Module: LOADSAVE
 #include "../../platform/include/Platform.h"  /* CLAUDE: MOUSE_LOG for load screen timestamps */
 
 #include "LoadScr.h"
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -286,9 +287,9 @@ void Load_Screen(void)
     int16_t itr_save_slot_input_field_array = 0;  // _SI_
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: BEGIN: Load_Screen()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_Screen()\n", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: BEGIN: Load_Screen()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_LOADSCR, "DEBUG: [%s, %d]: BEGIN: Load_Screen()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Load_Screen()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Load_Screen()", __FILE__, __LINE__);
 #endif
 
     loaded_game_flag = ST_FALSE;
@@ -571,9 +572,9 @@ void Load_Screen(void)
     }
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: END: Load_Screen()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: END: Load_Screen()\n", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: END: Load_Screen()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_LOADSCR, "DEBUG: [%s, %d]: END: Load_Screen()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Load_Screen()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Load_Screen()", __FILE__, __LINE__);
 #endif
 
 }
@@ -736,9 +737,9 @@ void Loaded_Game_Update(void)
     int16_t itr_players = 0;
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()\n", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_LOADSCR, "DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()", __FILE__, __LINE__);
 #endif
 
     /* seg001 */ GAME_RazeCity = ST_FALSE;
@@ -841,9 +842,9 @@ void Loaded_Game_Update(void)
     */
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: END: Loaded_Game_Update()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: END: Loaded_Game_Update()\n", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: END: Loaded_Game_Update()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_LOADSCR, "DEBUG: [%s, %d]: END: Loaded_Game_Update()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Loaded_Game_Update()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Loaded_Game_Update()", __FILE__, __LINE__);
 #endif
 
 }
@@ -865,7 +866,7 @@ void Init_Overland(void)
     int16_t itr_units = 0;  // _SI_
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Init_Overland()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Init_Overland()", __FILE__, __LINE__);
 #endif
 
 
@@ -951,7 +952,7 @@ void Init_Overland(void)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Init_Overland()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Init_Overland()", __FILE__, __LINE__);
 #endif
 }
 
@@ -973,7 +974,7 @@ void PreInit_Overland(void)
     int16_t itr_players = 0;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: PreInit_Overland()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: PreInit_Overland()", __FILE__, __LINE__);
 #endif
 
 /*
@@ -1034,6 +1035,6 @@ MoO2
 
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: PreInit_Overland()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: PreInit_Overland()", __FILE__, __LINE__);
 #endif
 }

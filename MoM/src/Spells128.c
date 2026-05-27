@@ -20,6 +20,7 @@
 #include "AISPELL.h"
 #include "DIPLOMAC.h"
 #include "Spellbook.h"
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -83,7 +84,7 @@ int16_t Player_Research_Spells(int16_t player_idx)
         {
             if(_players[player_idx].spells_list[_dbg_idx] == sls_Researchable) { _dbg_eligible++; }
         }
-        fprintf(stderr, "[RESEARCH_SETUP] player=%d ENTER  random_seed=0x%08X  random_calls=%llu  m_spell_list_count=%d  spells_list_researchable_count=%d  research_spells=[%d,%d,%d,%d,%d,%d,%d,%d]\n",
+        LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_SETUP] player=%d ENTER  random_seed=0x%08X  random_calls=%llu  m_spell_list_count=%d  spells_list_researchable_count=%d  research_spells=[%d,%d,%d,%d,%d,%d,%d,%d]",
             player_idx, (unsigned)Get_Random_Seed(), (unsigned long long)g_random_call_count, m_spell_list_count, _dbg_eligible,
             _players[player_idx].research_spells[0], _players[player_idx].research_spells[1],
             _players[player_idx].research_spells[2], _players[player_idx].research_spells[3],
@@ -130,7 +131,7 @@ int16_t Player_Research_Spells(int16_t player_idx)
                 spell_realm = ((research_list[research_list_idx] - 1) / NUM_SPELLS_PER_MAGIC_REALM);
                 _players[player_idx].spells_list[((spell_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx)] = sls_Researchable;
                 /* CLAUDE: log the assignment so we can see which Random() call mapped to which slot/spell. */
-                fprintf(stderr, "[RESEARCH_SETUP] player=%d pick: random_calls=%llu->%llu  pool=%d  rng_idx=%d  -> slot=%d spell=%d  spells_list[%d]=Researchable\n",
+                LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_SETUP] player=%d pick: random_calls=%llu->%llu  pool=%d  rng_idx=%d  -> slot=%d spell=%d  spells_list[%d]=Researchable",
                     player_idx, (unsigned long long)_dbg_calls_before, (unsigned long long)g_random_call_count,
                     _dbg_pool_size, research_list_idx, itr, research_list[research_list_idx],
                     (spell_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx);
@@ -143,7 +144,7 @@ int16_t Player_Research_Spells(int16_t player_idx)
     /* CLAUDE: log exit state — final research_spells[] contents.  Compare across
        runs to confirm whether nondeterminism here is upstream (RNG-state /
        eligibility-pool divergence) or local. */
-    fprintf(stderr, "[RESEARCH_SETUP] player=%d EXIT   random_calls=%llu  research_spells=[%d,%d,%d,%d,%d,%d,%d,%d]\n",
+    LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_SETUP] player=%d EXIT   random_calls=%llu  research_spells=[%d,%d,%d,%d,%d,%d,%d,%d]",
         player_idx, (unsigned long long)g_random_call_count,
         _players[player_idx].research_spells[0], _players[player_idx].research_spells[1],
         _players[player_idx].research_spells[2], _players[player_idx].research_spells[3],

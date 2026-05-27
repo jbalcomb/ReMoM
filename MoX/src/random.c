@@ -19,6 +19,7 @@ MoO2
 #include "random.h"
 #include "MOX_BITS.h"
 #include "MOX_TYPE.h"
+#include "../../STU/src/STU_LOG.h"
 
 uint32_t random_seed = 0x35683568;  /* 896021864d  00110101011010000011010101101000b */
 
@@ -163,7 +164,7 @@ void Set_Random_Seed(uint32_t n)
     /* CLAUDE: log every explicit seed assignment so we can see WHO sets it
        (config parse, save-load, etc.) and confirm it matches what the .ini
        requested. */
-    fprintf(stderr, "[RNG] Set_Random_Seed(0x%08X = %u)  (was 0x%08X)  random_calls=%llu\n",
+    LOG_INFO(LOG_CAT_RANDOM, "[RNG] Set_Random_Seed(0x%08X = %u)  (was 0x%08X)  random_calls=%llu",
         (unsigned)n, (unsigned)n, (unsigned)random_seed, (unsigned long long)g_random_call_count);
     random_seed = n;
 }
@@ -185,7 +186,7 @@ void Randomize(void)
        this AFTER the .ini-driven Set_Random_Seed() would clobber the
        deterministic seed with a wall-clock-derived one — exactly the kind
        of bug we are looking for.  Log every call. */
-    fprintf(stderr, "[RNG] Randomize() called  timer=0x%08X  (clobbers prior seed 0x%08X)  random_calls=%llu\n",
+    LOG_INFO(LOG_CAT_RANDOM, "[RNG] Randomize() called  timer=0x%08X  (clobbers prior seed 0x%08X)  random_calls=%llu",
         (unsigned)timer_value, (unsigned)random_seed, (unsigned long long)g_random_call_count);
     random_seed = timer_value;
 }

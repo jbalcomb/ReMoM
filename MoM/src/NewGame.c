@@ -38,6 +38,7 @@
 #include <string.h>
 
 #include "NewGame.h"
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -1541,7 +1542,7 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
     // #pragma message("PLATFORM=" STRINGIFY(PLATFORM))
 
 #ifdef PLATFORM
-    printf("SUCCESS: PLATFORM is #defined\n");
+    LOG_INFO(LOG_CAT_NEWGAME, "SUCCESS: PLATFORM is #defined");
 #endif
 
     /* HACK */  return ST_TRUE;
@@ -1557,7 +1558,7 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
 #elif (PLATFORM == WIN64)
     current_screen = scr_Main_Screen;
 #else
-    printf("FAILURE: BAD_PLATFORM_VALUE: Newgame_Control()\n");
+    LOG_INFO(LOG_CAT_NEWGAME, "FAILURE: BAD_PLATFORM_VALUE: Newgame_Control()");
 #endif
 
     /* HACK */  return ST_UNDEFINED;

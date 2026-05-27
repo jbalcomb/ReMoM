@@ -27,7 +27,7 @@
 #define LOG_FILE_NEW         "remom_log_new.txt"
 #define LOG_FILE_CURRENT     "remom_log_current.txt"
 #define LOG_FILE_PREVIOUS    "remom_log_previous.txt"
-#define LOG_N_CATEGORIES     17
+#define LOG_N_CATEGORIES     46
 
 static char   log_ring[LOG_RING_SIZE];
 static size_t log_head = 0;
@@ -72,7 +72,36 @@ static const char * const log_cat_str[] = {
     "SDL3_AUDIO             ",
     "SDL3_INIT              ",
     "SDL3_PFL               ",
-    "WIN_PFL                "
+    "WIN_PFL                ",
+    "HEMOM                  ",
+    "REMOM                  ",
+    "ARTIFICIAL_HUMAN_PLAYER",
+    "GAME_SAVE_DUMP         ",
+    "STU_WRLD               ",
+    "STU_VLD                ",
+    "STU_SND                ",
+    "STU_INIT               ",
+    "STU_XTRC               ",
+    "STU_FON                ",
+    "STU_PRN                ",
+    "STU_FIO                ",
+    "STU_DBG                ",
+    "STU_LOG                ",
+    "NEXTTURN               ",
+    "MOM_SCR                ",
+    "LOADSCR                ",
+    "LOADER                 ",
+    "NEWGAME                ",
+    "SPELLBOOK              ",
+    "SPELLS128              ",
+    "SBOOKSCR               ",
+    "MAINMENU               ",
+    "MAINSCR                ",
+    "INPUT                  ",
+    "RANDOM                 ",
+    "EXIT                   ",
+    "FONTS                  ",
+    "MOX2                   "
 };
 
 static const char * const log_cat_ini_key[] = {
@@ -92,7 +121,36 @@ static const char * const log_cat_ini_key[] = {
     "SDL3_AUDIO",
     "SDL3_INIT",
     "SDL3_PFL",
-    "WIN_PFL"
+    "WIN_PFL",
+    "HEMOM",
+    "REMOM",
+    "ARTIFICIAL_HUMAN_PLAYER",
+    "GAME_SAVE_DUMP",
+    "STU_WRLD",
+    "STU_VLD",
+    "STU_SND",
+    "STU_INIT",
+    "STU_XTRC",
+    "STU_FON",
+    "STU_PRN",
+    "STU_FIO",
+    "STU_DBG",
+    "STU_LOG",
+    "NEXTTURN",
+    "MOM_SCR",
+    "LOADSCR",
+    "LOADER",
+    "NEWGAME",
+    "SPELLBOOK",
+    "SPELLS128",
+    "SBOOKSCR",
+    "MAINMENU",
+    "MAINSCR",
+    "INPUT",
+    "RANDOM",
+    "EXIT",
+    "FONTS",
+    "MOX2"
 };
 
 static void log_config_set_defaults(void)

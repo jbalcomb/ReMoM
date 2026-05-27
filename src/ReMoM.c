@@ -118,7 +118,7 @@ int16_t remom_start_id;
 void ReMoM_Report_Startup_Platform(void)
 {
     remom_start_id = Random(42);
-    fprintf(stderr, "ReMoM: Starting up platform layer...  (%d)\n", remom_start_id);
+    LOG_INFO(LOG_CAT_REMOM, "ReMoM: Starting up platform layer...  (%d)", remom_start_id);
 }
 
 #ifdef STU_DEBUG
@@ -145,20 +145,20 @@ static void Debug_Print_Working_Directory(void)
     char buffer[MAX_PATH] = { 0 };
     if(GetCurrentDirectoryA(MAX_PATH, buffer) != 0)
     {
-        printf("GetCurrentDirectoryA(): %s\n", buffer);
+        LOG_INFO(LOG_CAT_REMOM, "GetCurrentDirectoryA(): %s", buffer);
     }
 #endif
 
     if (stu_getcwd(working_directory, sizeof(working_directory)) != NULL)
     {
-        fprintf(stderr, "CWD (%s): %s\n", platform_name, working_directory);
-        dbg_prn("CWD (%s): %s\n", platform_name, working_directory);
+        LOG_INFO(LOG_CAT_REMOM, "CWD (%s): %s", platform_name, working_directory);
+        LOG_DEBUG(LOG_CAT_GENERAL, "CWD (%s): %s", platform_name, working_directory);
     }
     else
     {
-        printf("FATAL: stu_getcwd()\n");
-        fprintf(stderr, "FATAL: stu_getcwd() failed\n");
-        dbg_prn("FATAL: stu_getcwd() failed\n");
+        LOG_INFO(LOG_CAT_REMOM, "FATAL: stu_getcwd()");
+        LOG_INFO(LOG_CAT_REMOM, "FATAL: stu_getcwd() failed");
+        LOG_DEBUG(LOG_CAT_GENERAL, "FATAL: stu_getcwd() failed");
         stu_debugbreak();
     }
 }
@@ -220,11 +220,11 @@ int main(int argc, char * argv[])
 #endif
 #ifdef STU_DEBUG
     Debug_Log_Startup();
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: ReMoM main()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: ReMoM main()", __FILE__, __LINE__);
 #endif
 #ifdef STU_DEBUG
     Trace_Log_Startup();
-    trc_prn("TRACE: [%s, %d]: BEGIN: ReMoM main()\n", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: BEGIN: ReMoM main()", __FILE__, __LINE__);
 #endif
 
     log_init("ReMoM.ini");
@@ -259,18 +259,18 @@ int main(int argc, char * argv[])
 //     }
 //     system( "type freopen.out" );
 
-    printf("Hello from the console!\n");
+    LOG_INFO(LOG_CAT_REMOM, "Hello from the console!");
 #endif
 #endif
 
 #ifdef STU_DEBUG
 #ifdef _WIN32
-    printf("argc: %d\n", argc);
-    dbg_prn("argc: %d\n", argc);
+    LOG_INFO(LOG_CAT_REMOM, "argc: %d", argc);
+    LOG_DEBUG(LOG_CAT_GENERAL, "argc: %d", argc);
     for(itr = 0; itr < argc; itr++)
     {
-        printf("argv[%d]: %s\n", itr, argv[itr]);
-        dbg_prn("argv[%d]: %s\n", itr, argv[itr]);
+        LOG_INFO(LOG_CAT_REMOM, "argv[%d]: %s", itr, argv[itr]);
+        LOG_DEBUG(LOG_CAT_GENERAL, "argv[%d]: %s", itr, argv[itr]);
     }
 #endif
 #endif
@@ -297,20 +297,20 @@ int main(int argc, char * argv[])
 #else
                 stu_putenv("SDL_VIDEODRIVER=dummy");
 #endif
-                fprintf(stderr, "[headless] SDL video driver set to offscreen\n");
+                LOG_INFO(LOG_CAT_REMOM, "[headless] SDL video driver set to offscreen");
                 break;
             }
         }
     }
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: BEFORE: Startup_Platform()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: BEFORE: Startup_Platform()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: BEFORE: Startup_Platform()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEFORE: Startup_Platform()", __FILE__, __LINE__);
 #endif
     Startup_Platform();
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: AFTER: Startup_Platform()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: AFTER: Startup_Platform()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: AFTER: Startup_Platform()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: AFTER: Startup_Platform()", __FILE__, __LINE__);
 #endif
 
     /* CLAUDE: Register engine callbacks for replay before parsing CLI flags. */
@@ -325,9 +325,9 @@ int main(int argc, char * argv[])
             if(stu_strcmp(argv[argi], "--record") == 0 && (argi + 1) < argc)
             {
 #ifdef STU_DEBUG
-                printf("DEBUG: [%s, %d]: --record flag detected\n", __FILE__, __LINE__);
-                dbg_prn("DEBUG: [%s, %d]: --record flag detected\n", __FILE__, __LINE__);
-                trc_prn("DEBUG: [%s, %d]: --record flag detected\n", __FILE__, __LINE__);
+                LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: --record flag detected", __FILE__, __LINE__);
+                LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --record flag detected", __FILE__, __LINE__);
+                LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --record flag detected", __FILE__, __LINE__);
 #endif
                 argi++;
                 Platform_Record_Start(argv[argi]);
@@ -335,9 +335,9 @@ int main(int argc, char * argv[])
             else if(stu_strcmp(argv[argi], "--replay") == 0 && (argi + 1) < argc)
             {
 #ifdef STU_DEBUG
-                printf("DEBUG: [%s, %d]: --replay flag detected\n", __FILE__, __LINE__);
-                dbg_prn("DEBUG: [%s, %d]: --replay flag detected\n", __FILE__, __LINE__);
-                trc_prn("DEBUG: [%s, %d]: --replay flag detected\n", __FILE__, __LINE__);
+                LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: --replay flag detected", __FILE__, __LINE__);
+                LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --replay flag detected", __FILE__, __LINE__);
+                LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --replay flag detected", __FILE__, __LINE__);
 #endif
                 argi++;
                 Platform_Replay_Start(argv[argi]);
@@ -345,18 +345,18 @@ int main(int argc, char * argv[])
             else if(stu_strcmp(argv[argi], "--continue") == 0)
             {
 #ifdef STU_DEBUG
-                printf("DEBUG: [%s, %d]: --continue flag detected\n", __FILE__, __LINE__);
-                dbg_prn("DEBUG: [%s, %d]: --continue flag detected\n", __FILE__, __LINE__);
-                trc_prn("DEBUG: [%s, %d]: --continue flag detected\n", __FILE__, __LINE__);
+                LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: --continue flag detected", __FILE__, __LINE__);
+                LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --continue flag detected", __FILE__, __LINE__);
+                LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --continue flag detected", __FILE__, __LINE__);
 #endif
                 remom_continue_flag = 1;
             }
             else if(stu_strcmp(argv[argi], "--demo") == 0)
             {
 #ifdef STU_DEBUG
-                printf("DEBUG: [%s, %d]: --demo flag detected\n", __FILE__, __LINE__);
-                dbg_prn("DEBUG: [%s, %d]: --demo flag detected\n", __FILE__, __LINE__);
-                trc_prn("DEBUG: [%s, %d]: --demo flag detected\n", __FILE__, __LINE__);
+                LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: --demo flag detected", __FILE__, __LINE__);
+                LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --demo flag detected", __FILE__, __LINE__);
+                LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --demo flag detected", __FILE__, __LINE__);
 #endif
                 /* Optional filename: --demo [FILE.RMR], defaults to DEMO.RMR */
                 if((argi + 1) < argc && argv[argi + 1][0] != '-')
@@ -372,9 +372,9 @@ int main(int argc, char * argv[])
             else if(strcmp(argv[argi], "--scenario") == 0 && (argi + 1) < argc)
             {
 #ifdef STU_DEBUG
-                printf("DEBUG: [%s, %d]: --scenario flag detected\n", __FILE__, __LINE__);
-                dbg_prn("DEBUG: [%s, %d]: --scenario flag detected\n", __FILE__, __LINE__);
-                trc_prn("DEBUG: [%s, %d]: --scenario flag detected\n", __FILE__, __LINE__);
+                LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: --scenario flag detected", __FILE__, __LINE__);
+                LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --scenario flag detected", __FILE__, __LINE__);
+                LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --scenario flag detected", __FILE__, __LINE__);
 #endif
                 argi++;
                 if(HeMoM_Player_Load_Scenario(argv[argi]) == 0)
@@ -418,11 +418,11 @@ int main(int argc, char * argv[])
     AI_Metrics_Shutdown();
 #endif
 #ifdef STU_DEBUG
-    trc_prn("TRACE: [%s, %d]: END: ReMoM main()\n", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: END: ReMoM main()", __FILE__, __LINE__);
     Trace_Log_Shutdown();
 #endif
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: ReMoM main()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: ReMoM main()", __FILE__, __LINE__);
     Debug_Log_Shutdown();
 #endif
 

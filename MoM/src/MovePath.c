@@ -10,6 +10,7 @@
 #include "../../MoX/src/MOX_TYPE.h"
 
 #include "MovePath.h"
+#include "../../STU/src/STU_LOG.h"
 
 // somehow, this is meant to be -1 or 255 or 0xFF
 #define INF 0xFF
@@ -449,13 +450,13 @@ static void Move_Path_Find__MEH(int16_t wx, int16_t wy, struct s_MOVE_PATH * mov
     int16_t dbg_wms3_reach_from = 0;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Move_Path_Find(wx = %d, wy = %d, movepath_cost_map = %p)\n", __FILE__, __LINE__, wx, wy, movepath_cost_map);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Move_Path_Find(wx = %d, wy = %d, movepath_cost_map = %p)", __FILE__, __LINE__, wx, wy, movepath_cost_map);
 #endif
 
     // start of first map grid row
     CS_Row_Start = (wy * WORLD_WIDTH);
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: CS_Row_Start: %d\n", __FILE__, __LINE__, CS_Row_Start);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: CS_Row_Start: %d", __FILE__, __LINE__, CS_Row_Start);
 #endif
 
     for(itr = 0; itr < WORLD_SIZE; itr++)
@@ -471,7 +472,7 @@ static void Move_Path_Find__MEH(int16_t wx, int16_t wy, struct s_MOVE_PATH * mov
     // set the src wms to 0 - no cost will ever be less
     movepath_cost_map->Reach_Costs[((wy * WORLD_WIDTH) + wx)] = 0;
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: movepath_cost_map->Reach_Costs[((wy * WORLD_WIDTH) + wx)]: %d\n", __FILE__, __LINE__, movepath_cost_map->Reach_Costs[((wy * WORLD_WIDTH) + wx)]);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: movepath_cost_map->Reach_Costs[((wy * WORLD_WIDTH) + wx)]: %d", __FILE__, __LINE__, movepath_cost_map->Reach_Costs[((wy * WORLD_WIDTH) + wx)]);
 #endif
 
     dbg_wms0_reach_cost = movepath_cost_map->Reach_Costs[(((wy - 0) * WORLD_WIDTH) + (wx + 0))];
@@ -500,10 +501,10 @@ MajorBlock_1_Outer:
     movepath_reach_cost = &movepath_cost_map->Reach_Costs[CS_Row_Start];
     movepath_reach_from = &movepath_cost_map->Reach_From[CS_Row_Start];
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: ofst_movepath_cost: %d\n", __FILE__, __LINE__, ofst_movepath_cost);
-    dbg_prn("DEBUG: [%s, %d]: &movepath_cost_map->moves2[CS_Row_Start]: %p\n", __FILE__, __LINE__, movepath_cost);
-    dbg_prn("DEBUG: [%s, %d]: &movepath_cost_map->Reach_Costs[CS_Row_Start]: %p\n", __FILE__, __LINE__, movepath_reach_cost);
-    dbg_prn("DEBUG: [%s, %d]: &movepath_cost_map->Reach_From[CS_Row_Start]: %p\n", __FILE__, __LINE__, movepath_reach_from);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: ofst_movepath_cost: %d", __FILE__, __LINE__, ofst_movepath_cost);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: &movepath_cost_map->moves2[CS_Row_Start]: %p", __FILE__, __LINE__, movepath_cost);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: &movepath_cost_map->Reach_Costs[CS_Row_Start]: %p", __FILE__, __LINE__, movepath_reach_cost);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: &movepath_cost_map->Reach_From[CS_Row_Start]: %p", __FILE__, __LINE__, movepath_reach_from);
 #endif
 
 /*
@@ -1201,10 +1202,10 @@ MajorBlock_1_Impassible:
     movepath_reach_cost = &movepath_cost_map->Reach_Costs[CS_Row_Start];
     movepath_reach_from = &movepath_cost_map->Reach_From[CS_Row_Start];
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: ofst_movepath_cost: %d\n", __FILE__, __LINE__, ofst_movepath_cost);
-    dbg_prn("DEBUG: [%s, %d]: &movepath_cost_map->moves2[CS_Row_Start]: %p\n", __FILE__, __LINE__, movepath_cost);
-    dbg_prn("DEBUG: [%s, %d]: &movepath_cost_map->Reach_Costs[CS_Row_Start]: %p\n", __FILE__, __LINE__, movepath_reach_cost);
-    dbg_prn("DEBUG: [%s, %d]: &movepath_cost_map->Reach_From[CS_Row_Start]: %p\n", __FILE__, __LINE__, movepath_reach_from);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: ofst_movepath_cost: %d", __FILE__, __LINE__, ofst_movepath_cost);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: &movepath_cost_map->moves2[CS_Row_Start]: %p", __FILE__, __LINE__, movepath_cost);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: &movepath_cost_map->Reach_Costs[CS_Row_Start]: %p", __FILE__, __LINE__, movepath_reach_cost);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: &movepath_cost_map->Reach_From[CS_Row_Start]: %p", __FILE__, __LINE__, movepath_reach_from);
 #endif
 
 
@@ -1906,7 +1907,7 @@ MajorBlock_2_Impassible:
 */
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Move_Path_Find(wx = %d, wy = %d, movepath_cost_map = %p)\n", __FILE__, __LINE__, wx, wy, movepath_cost_map);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Move_Path_Find(wx = %d, wy = %d, movepath_cost_map = %p)", __FILE__, __LINE__, wx, wy, movepath_cost_map);
 #endif
 
 }

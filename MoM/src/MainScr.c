@@ -71,6 +71,7 @@
 #include "../../platform/include/Platform.h"
 
 #include "MainScr.h"
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -839,9 +840,9 @@ void Main_Screen(void)
 
 
 #ifdef STU_DEBUG
-    fprintf(stderr, "DEBUG: [%s, %d]: BEGIN: Main_Screen()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen()\n", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_MAINSCR, "DEBUG: [%s, %d]: BEGIN: Main_Screen()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Main_Screen()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Main_Screen()", __FILE__, __LINE__);
 #endif
 
 
@@ -1139,7 +1140,7 @@ g_dbg_fields_trace = 1;
             DBG_TST_Made_Map_Move = 1;
 #endif
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: DBG_TST_Made_Map_Move: %d\n", __FILE__, __LINE__, DBG_TST_Made_Map_Move);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: DBG_TST_Made_Map_Move: %d", __FILE__, __LINE__, DBG_TST_Made_Map_Move);
 #endif
             /*
                 DBG_TST

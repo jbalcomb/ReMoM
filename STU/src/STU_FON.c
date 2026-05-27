@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -67,9 +68,9 @@ void Dump_Font_Style_Text(int style_index)
     /* TODO  requires loading FONTS.LBX sub-file 0 and parsing s_FONT_HEADER */
     /* TODO  iterate the 96 characters, decode glyph data, print text-art */
 
-    fprintf(stdout, "=== Font Style %d ===\n", style_index);
-    fprintf(stdout, "(not yet implemented - needs FONTS.LBX loaded)\n");
-    fprintf(stdout, "=== End Font Style %d ===\n\n", style_index);
+    LOG_INFO(LOG_CAT_STU_FON, "=== Font Style %d ===", style_index);
+    LOG_INFO(LOG_CAT_STU_FON, "(not yet implemented - needs FONTS.LBX loaded)");
+    LOG_INFO(LOG_CAT_STU_FON, "=== End Font Style %d ===\n", style_index);
 }
 
 
@@ -94,7 +95,7 @@ int Export_Font_Style_BMP(int style_index, const char * out_dir)
     (void)style_index;
     (void)out_dir;
 
-    fprintf(stdout, "Export_Font_Style_BMP: not yet implemented\n");
+    LOG_INFO(LOG_CAT_STU_FON, "Export_Font_Style_BMP: not yet implemented");
     return -1;
 }
 

@@ -55,6 +55,7 @@
 #include <string.h>
 
 #include "LBX_Load.h"
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -959,7 +960,7 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] Exit_With_Message(buffer): %s\n", __FILE__, __LINE__, buffer);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d] Exit_With_Message(buffer): %s", __FILE__, __LINE__, buffer);
 #endif
 
     Exit_With_Message(buffer);

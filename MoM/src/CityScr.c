@@ -43,6 +43,7 @@
 #include <string.h>
 
 #include "CityScr.h"
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -1603,7 +1604,7 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
     uint32_t sound_seg_size = 0;  // DNE in Dasm
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Built_Building_Message()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: City_Built_Building_Message()", __FILE__, __LINE__);
 #endif
 
     // DOMSDOS  Stop_All_Sounds__STUB();
@@ -1692,7 +1693,7 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
     cityscreen_city_built_bldg_idx = bldg_idx;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: City_Built_Building_Message()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: City_Built_Building_Message()", __FILE__, __LINE__);
 #endif
 
 }

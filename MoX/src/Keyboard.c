@@ -13,6 +13,7 @@
 
 #include "../../platform/include/Platform.h"
 #include "../../platform/include/Platform_Keys.h"
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -79,7 +80,7 @@ uint8_t Read_Key(void)
 
         /* CLAUDE: diagnostic — trace every consumption of the keyboard buffer.  If this fires BEFORE the corresponding REC_CAP trace for the same frame, the capture race from Input.c's comment is back. */
 #ifdef STU_DEBUG
-        trc_prn("KBD_READ t=%llu packed=0x%08X key_read=%d->%d key_write=%d\n", (unsigned long long)Platform_Get_Millies(), (unsigned)packed_key_value, platform_keyboard_buffer.key_read, (platform_keyboard_buffer.key_read + 1) % PLATFORM_KEYBOARD_BUFFER_LENGTH, platform_keyboard_buffer.key_write);
+        LOG_TRACE(LOG_CAT_GENERAL, "KBD_READ t=%llu packed=0x%08X key_read=%d->%d key_write=%d", (unsigned long long)Platform_Get_Millies(), (unsigned)packed_key_value, platform_keyboard_buffer.key_read, (platform_keyboard_buffer.key_read + 1) % PLATFORM_KEYBOARD_BUFFER_LENGTH, platform_keyboard_buffer.key_write);
 #endif
 
         platform_keyboard_buffer.key_read = ((platform_keyboard_buffer.key_read + 1) % PLATFORM_KEYBOARD_BUFFER_LENGTH);
@@ -181,13 +182,11 @@ uint8_t Interpret_Keyboard_Input(int16_t * field_num)
     UPPERCASE(character);
 
 #ifdef STU_DEBUG
-    /* CLAUDE */  dbg_prn(
-        "IKI: raw=%d(0x%02X '%c') upper=%d(0x%02X '%c') multi_active=%d\n",
+    /* CLAUDE */  LOG_DEBUG(LOG_CAT_GENERAL, "IKI: raw=%d(0x%02X '%c') upper=%d(0x%02X '%c') multi_active=%d",
         (int)original_character,
         (int)original_character,
         (original_character >= 32 && original_character < 127) ? original_character : '.', (int)character, (int)character, (character >= 32 && character < 127) ? character : '.',
-        multi_hotkey_active_field
-    );
+        multi_hotkey_active_field);
 #endif
 
     /*
@@ -202,20 +201,20 @@ uint8_t Interpret_Keyboard_Input(int16_t * field_num)
         {
             _SI_field_idx = multi_hotkey_active_field;
 #ifdef STU_DEBUG
-            /* CLAUDE */  dbg_prn("IKI: Active multi-hotkey field=%d, hotkey=%d(0x%02X '%c'), character=%d(0x%02X), char-95=%d(0x%02X)\n", _SI_field_idx, (int)p_fields[_SI_field_idx].hotkey, (int)p_fields[_SI_field_idx].hotkey, (p_fields[_SI_field_idx].hotkey >= 32 && p_fields[_SI_field_idx].hotkey < 127) ? (char)p_fields[_SI_field_idx].hotkey : '.', (int)character, (int)character, (int)(uint8_t)(character - 95), (int)(uint8_t)(character - 95));
+            /* CLAUDE */  LOG_DEBUG(LOG_CAT_GENERAL, "IKI: Active multi-hotkey field=%d, hotkey=%d(0x%02X '%c'), character=%d(0x%02X), char-95=%d(0x%02X)", _SI_field_idx, (int)p_fields[_SI_field_idx].hotkey, (int)p_fields[_SI_field_idx].hotkey, (p_fields[_SI_field_idx].hotkey >= 32 && p_fields[_SI_field_idx].hotkey < 127) ? (char)p_fields[_SI_field_idx].hotkey : '.', (int)character, (int)character, (int)(uint8_t)(character - 95), (int)(uint8_t)(character - 95));
 #endif
             character -= 95;  // e.g., convert Alt-A to A
             if(character == p_fields[_SI_field_idx].hotkey)
             {
 #ifdef STU_DEBUG
-                /* CLAUDE */  dbg_prn("IKI: Active multi-hotkey MATCHED (char-95=%d == hotkey=%d)\n", (int)character, (int)p_fields[_SI_field_idx].hotkey);
+                /* CLAUDE */  LOG_DEBUG(LOG_CAT_GENERAL, "IKI: Active multi-hotkey MATCHED (char-95=%d == hotkey=%d)", (int)character, (int)p_fields[_SI_field_idx].hotkey);
 #endif
                 character += 95;
             }
             else
             {
 #ifdef STU_DEBUG
-                /* CLAUDE */  dbg_prn("IKI: Active multi-hotkey NO MATCH (char-95=%d != hotkey=%d)\n", (int)character, (int)p_fields[_SI_field_idx].hotkey);
+                /* CLAUDE */  LOG_DEBUG(LOG_CAT_GENERAL, "IKI: Active multi-hotkey NO MATCH (char-95=%d != hotkey=%d)", (int)character, (int)p_fields[_SI_field_idx].hotkey);
 #endif
                 character += 95;
                 _SI_field_idx = fields_count;
@@ -245,8 +244,7 @@ uint8_t Interpret_Keyboard_Input(int16_t * field_num)
                 if(p_fields[_SI_field_idx].type == ft_MultiHotKey)
                 {
 #ifdef STU_DEBUG
-                    /* CLAUDE */  dbg_prn(
-                        "IKI: Scan field=%d type=MultiHotKey hotkey=%d(0x%02X '%c') char=%d(0x%02X) char-95=%d(0x%02X)\n",
+                    /* CLAUDE */  LOG_DEBUG(LOG_CAT_GENERAL, "IKI: Scan field=%d type=MultiHotKey hotkey=%d(0x%02X '%c') char=%d(0x%02X) char-95=%d(0x%02X)",
                         _SI_field_idx,
                         (int)p_fields[_SI_field_idx].hotkey,
                         (int)p_fields[_SI_field_idx].hotkey,
@@ -254,14 +252,13 @@ uint8_t Interpret_Keyboard_Input(int16_t * field_num)
                         (int)character,
                         (int)character,
                         (int)(uint8_t)(character - 95),
-                        (int)(uint8_t)(character - 95)
-                    );
+                        (int)(uint8_t)(character - 95));
 #endif
                     character -= 95;  // e.g., convert Alt-A to A
                     if(character == p_fields[_SI_field_idx].hotkey)
                     {
 #ifdef STU_DEBUG
-                        /* CLAUDE */  dbg_prn("IKI: Scan MATCHED field=%d\n", _SI_field_idx);
+                        /* CLAUDE */  LOG_DEBUG(LOG_CAT_GENERAL, "IKI: Scan MATCHED field=%d", _SI_field_idx);
 #endif
                         character += 95;
                         break;
@@ -339,14 +336,14 @@ uint8_t Interpret_Keyboard_Input(int16_t * field_num)
             stu_strcpy(temp_string, p_fields[_SI_field_idx].string);
             p_fields[_SI_field_idx].string_pos++;
 #ifdef STU_DEBUG
-            /* CLAUDE */  dbg_prn("IKI: MultiHotKey field=%d string=\"%s\" string_pos=%d/%d\n", _SI_field_idx, temp_string, p_fields[_SI_field_idx].string_pos, p_fields[_SI_field_idx].string_len);
+            /* CLAUDE */  LOG_DEBUG(LOG_CAT_GENERAL, "IKI: MultiHotKey field=%d string=\"%s\" string_pos=%d/%d", _SI_field_idx, temp_string, p_fields[_SI_field_idx].string_pos, p_fields[_SI_field_idx].string_len);
 #endif
             if(p_fields[_SI_field_idx].string_pos < p_fields[_SI_field_idx].string_len)
             {
                 p_fields[_SI_field_idx].hotkey = temp_string[p_fields[_SI_field_idx].string_pos];
                 multi_hotkey_active_field = _SI_field_idx;
 #ifdef STU_DEBUG
-                /* CLAUDE */  dbg_prn("IKI: Partial match, next hotkey='%c'(0x%02X), active_field=%d\n", (char)p_fields[_SI_field_idx].hotkey, (int)p_fields[_SI_field_idx].hotkey, multi_hotkey_active_field);
+                /* CLAUDE */  LOG_DEBUG(LOG_CAT_GENERAL, "IKI: Partial match, next hotkey='%c'(0x%02X), active_field=%d", (char)p_fields[_SI_field_idx].hotkey, (int)p_fields[_SI_field_idx].hotkey, multi_hotkey_active_field);
 #endif
                 *field_num = 0;
                 character = 0;
@@ -355,7 +352,7 @@ uint8_t Interpret_Keyboard_Input(int16_t * field_num)
             else
             {
 #ifdef STU_DEBUG
-                /* CLAUDE */  dbg_prn("IKI: FULL MATCH! Returning field=%d for \"%s\"\n", _SI_field_idx, temp_string);
+                /* CLAUDE */  LOG_DEBUG(LOG_CAT_GENERAL, "IKI: FULL MATCH! Returning field=%d for \"%s\"", _SI_field_idx, temp_string);
 #endif
                 p_fields[_SI_field_idx].string_pos = 0;
                 p_fields[_SI_field_idx].hotkey = temp_string[0];

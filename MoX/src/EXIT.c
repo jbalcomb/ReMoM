@@ -163,6 +163,7 @@ void Reset_Video(void)
 /*
     MoO2
     #include <i86.h>
+#include "../../STU/src/STU_LOG.h"
     void Reset_Video(void)
     {
         mov     [ebp+in_regs], 3
@@ -228,7 +229,7 @@ void Quit_With_Message(char * string)
 
     // ~== //MoO2
     // ORION2.LE  dseg02:00172670 25 73 0A 00                                     printf_fmt_string_newline db '%s',0Ah,0
-    printf("%s\n", string);
+    LOG_INFO(LOG_CAT_EXIT, "%s", string);
 
 #ifdef _WIN32
     // getch();  not without _CRT_INTERNAL_NONSTDC_NAMES

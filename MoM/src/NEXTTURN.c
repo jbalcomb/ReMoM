@@ -74,6 +74,7 @@
 #include <string.h>
 
 #include "NEXTTURN.h"
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -268,7 +269,7 @@ void Next_Turn_Proc(void)
     int16_t DBG_itr_cities = 0;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Next_Turn_Proc()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Next_Turn_Proc()", __FILE__, __LINE__);
 #endif
 
 
@@ -309,7 +310,7 @@ void Next_Turn_Proc(void)
     {
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Next_Turn_Proc(): if(g_bldg_msg_ctr > 0)\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: Next_Turn_Proc(): if(g_bldg_msg_ctr > 0)", __FILE__, __LINE__);
 #endif
 
         o62p01_empty_function(_human_player_idx);
@@ -319,7 +320,7 @@ void Next_Turn_Proc(void)
             if(MSG_Building_Complete[itr_msg].city_idx != ST_UNDEFINED)
             {
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Next_Turn_Proc(): if(MSG_Building_Complete[itr_msg].city_idx != ST_UNDEFINED)\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: Next_Turn_Proc(): if(MSG_Building_Complete[itr_msg].city_idx != ST_UNDEFINED)", __FILE__, __LINE__);
 #endif
                 _city_idx = MSG_Building_Complete[itr_msg].city_idx;
                 orig_map_plane = _map_plane;
@@ -327,7 +328,7 @@ void Next_Turn_Proc(void)
                 if(MSG_Building_Complete[itr_msg].bldg_type_idx >= bt_NONE)
                 {
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Next_Turn_Proc(): if(MSG_Building_Complete[itr_msg].bldg_type_idx >= bt_NONE)\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: Next_Turn_Proc(): if(MSG_Building_Complete[itr_msg].bldg_type_idx >= bt_NONE)", __FILE__, __LINE__);
 #endif
                     city_built_bldg_idx = MSG_Building_Complete[itr_msg].bldg_type_idx;
                     Center_Map(&_map_x, &_map_y, _CITIES[_city_idx].wx, _CITIES[_city_idx].wy, _map_plane);
@@ -342,7 +343,7 @@ void Next_Turn_Proc(void)
                     else
                     {
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Next_Turn_Proc(): (MSG_Building_Complete[itr_msg].bldg_type_idx < bt_NONE)\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: Next_Turn_Proc(): (MSG_Building_Complete[itr_msg].bldg_type_idx < bt_NONE)", __FILE__, __LINE__);
 #endif
                         stu_strcpy(GUI_NearMsgString, "The ");
                         stu_strcat(GUI_NearMsgString, _city_size_names[_CITIES[_city_idx].size]);
@@ -415,7 +416,7 @@ void Next_Turn_Proc(void)
 
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Next_Turn_Proc()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Next_Turn_Proc()", __FILE__, __LINE__);
 #endif
 
 }
@@ -618,13 +619,13 @@ void Next_Turn_Calc(void)
 #endif
 
 #ifdef STU_DEBUG
-    fprintf(stderr, "[NEXTTURN] BEGIN Next_Turn_Calc() at %llu ms\n", (unsigned long long)ntc_start_ms);
-    dbg_prn("[NEXTTURN] BEGIN Next_Turn_Calc() at %llu ms\n", (unsigned long long)ntc_start_ms);
-    trc_prn("[NEXTTURN] BEGIN Next_Turn_Calc() at %llu ms\n", (unsigned long long)ntc_start_ms);
+    LOG_INFO(LOG_CAT_NEXTTURN, "[NEXTTURN] BEGIN Next_Turn_Calc() at %llu ms", (unsigned long long)ntc_start_ms);
+    LOG_DEBUG(LOG_CAT_GENERAL, "[NEXTTURN] BEGIN Next_Turn_Calc() at %llu ms", (unsigned long long)ntc_start_ms);
+    LOG_TRACE(LOG_CAT_GENERAL, "[NEXTTURN] BEGIN Next_Turn_Calc() at %llu ms", (unsigned long long)ntc_start_ms);
 #endif
 
 /* CLAUDE */ #ifdef STU_DEBUG
-/* CLAUDE */ #define PHASE(CALL) do { uint64_t _ps = Platform_Get_Millies(); CALL; { uint64_t _pe = Platform_Get_Millies(); fprintf(stderr, "[NEXTTURN] phase %-48s = %llu ms\n", #CALL, (unsigned long long)(_pe - _ps)); trc_prn("[NEXTTURN] phase %-48s = %llu ms\n", #CALL, (unsigned long long)(_pe - _ps)); } } while(0)
+/* CLAUDE */ #define PHASE(CALL) do { uint64_t _ps = Platform_Get_Millies(); CALL; { uint64_t _pe = Platform_Get_Millies(); LOG_INFO(LOG_CAT_NEXTTURN, "[NEXTTURN] phase %-48s = %llu ms", #CALL, (unsigned long long)(_pe - _ps)); LOG_TRACE(LOG_CAT_GENERAL, "[NEXTTURN] phase %-48s = %llu ms", #CALL, (unsigned long long)(_pe - _ps)); } } while(0)
 /* CLAUDE */ #else
 /* CLAUDE */ #define PHASE(CALL) CALL
 /* CLAUDE */ #endif
@@ -686,9 +687,9 @@ void Next_Turn_Calc(void)
 /* CLAUDE */ PHASE(Decrease_Peace_Duration());
 
         // Update_Players_Gold_Reserve();
-/* CLAUDE */ fprintf(stderr, "[GOLD] BEFORE Update_Players_Gold_Reserve: gold_reserve=%d\n", _players[0].gold_reserve);
+/* CLAUDE */ LOG_INFO(LOG_CAT_NEXTTURN, "[GOLD] BEFORE Update_Players_Gold_Reserve: gold_reserve=%d", _players[0].gold_reserve);
 /* CLAUDE */ PHASE(Update_Players_Gold_Reserve());
-/* CLAUDE */ fprintf(stderr, "[GOLD] AFTER  Update_Players_Gold_Reserve: gold_reserve=%d\n", _players[0].gold_reserve);
+/* CLAUDE */ LOG_INFO(LOG_CAT_NEXTTURN, "[GOLD] AFTER  Update_Players_Gold_Reserve: gold_reserve=%d", _players[0].gold_reserve);
 
         // Players_Update_Magic_Power();
 /* CLAUDE */ PHASE(Players_Update_Magic_Power());
@@ -717,10 +718,10 @@ void Next_Turn_Calc(void)
         // Event_Twiddle();
 /* CLAUDE */ PHASE(Event_Twiddle());
 
-/* CLAUDE */ fprintf(stderr, "[GOLD] BEFORE Players_Apply_Upkeeps: gold_reserve=%d\n", _players[0].gold_reserve);
+/* CLAUDE */ LOG_INFO(LOG_CAT_NEXTTURN, "[GOLD] BEFORE Players_Apply_Upkeeps: gold_reserve=%d", _players[0].gold_reserve);
         // Players_Apply_Upkeeps__WIP();
 /* CLAUDE */ PHASE(Players_Apply_Upkeeps__WIP());
-/* CLAUDE */ fprintf(stderr, "[GOLD] AFTER  Players_Apply_Upkeeps: gold_reserve=%d\n", _players[0].gold_reserve);
+/* CLAUDE */ LOG_INFO(LOG_CAT_NEXTTURN, "[GOLD] AFTER  Players_Apply_Upkeeps: gold_reserve=%d", _players[0].gold_reserve);
 
         // DONT  EMM_Map_DataH()
 
@@ -868,10 +869,10 @@ void Next_Turn_Calc(void)
     {
         uint64_t ntc_end_ms = Platform_Get_Millies();
         uint64_t ntc_dur_ms = ntc_end_ms - ntc_start_ms;
-        fprintf(stderr, "[GOLD] END Next_Turn_Calc: gold_reserve=%d\n", _players[0].gold_reserve);
-        fprintf(stderr, "[NEXTTURN] END   Next_Turn_Calc() at %llu ms (duration=%llu ms)\n", (unsigned long long)ntc_end_ms, (unsigned long long)ntc_dur_ms);
-        dbg_prn("[NEXTTURN] END   Next_Turn_Calc() at %llu ms (duration=%llu ms)\n", (unsigned long long)ntc_end_ms, (unsigned long long)ntc_dur_ms);
-        trc_prn("[NEXTTURN] END   Next_Turn_Calc() at %llu ms (duration=%llu ms)\n", (unsigned long long)ntc_end_ms, (unsigned long long)ntc_dur_ms);
+        LOG_INFO(LOG_CAT_NEXTTURN, "[GOLD] END Next_Turn_Calc: gold_reserve=%d", _players[0].gold_reserve);
+        LOG_INFO(LOG_CAT_NEXTTURN, "[NEXTTURN] END   Next_Turn_Calc() at %llu ms (duration=%llu ms)", (unsigned long long)ntc_end_ms, (unsigned long long)ntc_dur_ms);
+        LOG_DEBUG(LOG_CAT_GENERAL, "[NEXTTURN] END   Next_Turn_Calc() at %llu ms (duration=%llu ms)", (unsigned long long)ntc_end_ms, (unsigned long long)ntc_dur_ms);
+        LOG_TRACE(LOG_CAT_GENERAL, "[NEXTTURN] END   Next_Turn_Calc() at %llu ms (duration=%llu ms)", (unsigned long long)ntc_end_ms, (unsigned long long)ntc_dur_ms);
 /* CLAUDE */ #undef PHASE
     }
 #endif
@@ -1781,7 +1782,7 @@ void Patch_Units_Upkeep_And_Sound(void)
     int16_t itr_unit_types;  // _SI_
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Patch_Units_Upkeep_And_Sound()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Patch_Units_Upkeep_And_Sound()", __FILE__, __LINE__);
 #endif
 
 /*
@@ -2033,7 +2034,7 @@ _TrlSpearmen
 
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Patch_Units_Upkeep_And_Sound()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Patch_Units_Upkeep_And_Sound()", __FILE__, __LINE__);
 #endif
 
 }

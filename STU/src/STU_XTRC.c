@@ -21,6 +21,7 @@
 
 #include "../../ext/stu_compat.h"
 #include <string.h>
+#include "../../STU/src/STU_LOG.h"
 
 /*
 TERRTYPE.LBX
@@ -43,12 +44,12 @@ void Dump_TERRTYPE_LBX(void)
     STU_File_Open(NULL, "TERRTYPE_DUMP.txt", "w");
     for(int i = 0; i < 5; i++)
     {
-        fprintf(stdout, "Record %d:\n", i);
+        LOG_INFO(LOG_CAT_STU_XTRC, "Record %d:", i);
         for(int j = 0; j < 512; j++)
         {
-            fprintf(stdout, "%d ", terrtype[i * 512 + j]);
+            LOG_INFO(LOG_CAT_STU_XTRC, "%d ", terrtype[i * 512 + j]);
         }
-        fprintf(stdout, "\n");
+        LOG_INFO(LOG_CAT_STU_XTRC, "");
     }
 
     /*
@@ -189,7 +190,7 @@ void Extract_FONTS_LBX_0(FILE * out)
 
     if(entry_size <= SZ_FONT_HDR)
     {
-        fprintf(stderr, "Extract_FONTS_LBX_0: entry [0] too small (%u bytes)\n", entry_size);
+        LOG_INFO(LOG_CAT_STU_XTRC, "Extract_FONTS_LBX_0: entry [0] too small (%u bytes)", entry_size);
         return;
     }
 
@@ -354,7 +355,7 @@ void Extract_FONTS_LBX(const char * out_path)
     out = stu_fopen(out_path, "w");
     if(out == NULL)
     {
-        fprintf(stderr, "Extract_FONTS_LBX: cannot open %s for writing\n", out_path);
+        LOG_INFO(LOG_CAT_STU_XTRC, "Extract_FONTS_LBX: cannot open %s for writing", out_path);
         return;
     }
 
@@ -370,5 +371,5 @@ void Extract_FONTS_LBX(const char * out_path)
     Extract_FONTS_LBX_2(out);
 
     fclose(out);
-    fprintf(stdout, "Extract_FONTS_LBX: wrote %s\n", out_path);
+    LOG_INFO(LOG_CAT_STU_XTRC, "Extract_FONTS_LBX: wrote %s", out_path);
 }
