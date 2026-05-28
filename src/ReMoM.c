@@ -224,7 +224,9 @@ int main(int argc, char * argv[])
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: ReMoM main()", __FILE__, __LINE__);
     LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: BEGIN: ReMoM main()", __FILE__, __LINE__);
 
+#ifdef STU_DEBUG
     AI_Metrics_Startup();
+#endif
 
 
 #ifdef STU_DEBUG
@@ -404,7 +406,9 @@ int main(int argc, char * argv[])
 #endif
 #endif
 
+#ifdef STU_DEBUG
     AI_Metrics_Shutdown();
+#endif
 
     LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: END: ReMoM main()", __FILE__, __LINE__);
 

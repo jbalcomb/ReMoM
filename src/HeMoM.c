@@ -643,7 +643,9 @@ int main(int argc, char *argv[])
     LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] Parsed: mode=%d file=\"%s\" scenario=\"%s\"", hemom_mode, hemom_file, hemom_scenario);
 #endif
 
+#ifdef STU_DEBUG
     AI_Metrics_Startup();
+#endif
 
     if (hemom_mode == 0)
     {
@@ -822,7 +824,9 @@ int main(int argc, char *argv[])
 #endif
     Shutdown_Platform();
 
+#ifdef STU_DEBUG
     AI_Metrics_Shutdown();
+#endif
 
     LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: END: HeMoM  main()", __FILE__, __LINE__);
 
