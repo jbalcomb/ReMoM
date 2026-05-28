@@ -88,7 +88,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     // stu_fwrite(_players, PLAYER_COUNT_MAX, sizeof(struct s_WIZARD), file_pointer);
 
     file_pointer_position = stu_ftell(file_pointer);
-    assert(file_pointer_position == 9880);
+    assert(file_pointer_position == 9880);  /* 2536 + (6 * 1224) = 2536 + 7344 = 9880 */
 
     stu_fwrite(_world_maps, NUM_PLANES, 4800, file_pointer);
 

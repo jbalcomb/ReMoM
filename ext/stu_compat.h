@@ -162,6 +162,15 @@ struct tm *stu_localtime(const time_t *timer, struct tm *result);
 /* Portable atoi wrapper with NULL check. Returns 0 on NULL input. */
 int stu_atoi(const char *str);
 
+/* Portable strtol wrapper with NULL check. Mirrors the C standard
+ * strtol signature.  Use base == 0 to auto-detect (0x... for hex,
+ * 0... for octal, otherwise decimal).  Returns 0 (and sets *endptr
+ * to NULL when endptr != NULL) on NULL input.  Returns `long` so the
+ * full 32-bit range is preserved on 16-bit DOS hosts where `int`
+ * would truncate.  CLAUDE 2026-05-28: added to fix --seed hex parsing
+ * which atoi cannot handle. */
+long stu_strtol(const char *str, char **endptr, int base);
+
 /* Portable sscanf wrapper. Same variadic interface as sscanf. */
 int stu_sscanf(const char *str, const char *format, ...);
 
@@ -709,6 +718,19 @@ int stu_atoi(const char *str)
         return 0;
     }
     return atoi(str);
+}
+
+/* --------------------------------------------------------------------------
+ * stu_strtol - portable strtol with NULL check, base-0 hex/oct/dec
+ * -------------------------------------------------------------------------- */
+long stu_strtol(const char *str, char **endptr, int base)
+{
+    if (str == NULL)
+    {
+        if (endptr != NULL) *endptr = NULL;
+        return 0;
+    }
+    return strtol(str, endptr, base);
 }
 
 #endif /* STU_COMPAT_IMPLEMENTATION */

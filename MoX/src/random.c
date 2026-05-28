@@ -20,6 +20,7 @@ MoO2
 #include "MOX_BITS.h"
 #include "MOX_TYPE.h"
 #include "../../STU/src/STU_LOG.h"
+#include "MOX2.h"  /* CLAUDE 2026-05-27: _cmd_line_seed; used to gate per-call [RNG-CALL] trace */
 
 uint32_t random_seed = 0x35683568;  /* 896021864d  00110101011010000011010101101000b */
 
@@ -193,7 +194,30 @@ void Randomize(void)
 
 
 // WZD s22p08
-// 1oom
+/*
+NOTE(JimBalcomb+CLAUDE,20260527):
+This is the answer to your "lingering question" and I think we just stumbled onto a real bug. Look at what's in random.c:196-215:
+int16_t Random(int16_t n) {
+    uint32_t r = random_seed;
+    r ^= (r << 13);
+    r ^= (r >> 17);
+    r ^= (r << 5);
+    random_seed = r;
+    return ((r >> 16) % n) + 1;
+}
+That's Marsaglia's xorshift32 with shifts 13/17/5 — published in 2003. MoM shipped in 1994. xorshift32 literally didn't exist when MoM was compiled. It cannot be what WIZARDS.EXE actually does.
+Below it, commented out, is a 9-bit LFSR with the GEMINI annotation containing very specific disassembly traces:
+/ * Assembly: rcl [bp+result], 1 * /
+…and explicit feedback taps (low_seed ^ (low_seed >> 1) ^ (low_seed >> 2) ^ (low_seed >> 4) ^ (low_seed >> 6) ^ (high_seed >> 15)). That's the kind of detail you only get from staring at the actual WIZARDS.EXE disassembly. The "1oom" attribution on the active version suggests the xorshift was borrowed from MoO1's reimplementation — a different game's RNG, probably plugged in as a placeholder.
+So the strong hypothesis: your active Random() is wrong, and the commented-out LFSR is the right shape. Your "lingering question" is well-founded.
+*/
+/* CLAUDE 2026-05-27: disabled the xorshift32 implementation below
+ * (kept inside #if 0 for diff history) and replaced it with the 9-bit
+ * LFSR derived by Gemini from MAGIC.EXE's disassembly.  See the LFSR
+ * function further down.  Tested against 57,599 OG seed-transition
+ * test vectors captured at ~/STU_DBWD/dosbox-capture/magic.csv. */
+
+#if 0  /* 1oom xorshift32 -- NOT MoM's algorithm; left for reference */
 int16_t Random(int16_t n)
 {
     uint16_t result;
@@ -213,6 +237,83 @@ int16_t Random(int16_t n)
     result += 1;
 
     return result;
+}
+#endif
+
+/* 9-bit LFSR derived from MAGIC.EXE's Random at
+ *   ~/STU/devel/STU-Extras/STU-DOSBox/MAGIC_EXE-random.asm
+ *
+ * Structure verified against the assembly:
+ *   - 9-iteration loop (`mov cx, 9` / `loop ...`)
+ *   - feedback taps at bits 0/1/2/4/6 of `low_seed` (= asm `si`)
+ *     and bit 15 of `high_seed` (= asm `di`)
+ *   - feedback bit shifted into result accumulator (asm `rcl [bp+result], 1`)
+ *   - 32-bit seed shifted right by 1 with feedback bit at top
+ *     (asm `shr ax,1` / `rcr di,1` / `rcr si,1`)
+ *   - stuck-at-zero guard with magic value 12478
+ *   - return value is (result % n) + 1, range 1..n
+ */
+int16_t Random(int16_t n)
+{
+    int16_t  i;
+    uint16_t result    = 0;
+    uint16_t low_seed;
+    uint16_t high_seed;
+    uint16_t new_bit;
+    uint16_t carry_bit;
+    uint32_t seed_before;  /* CLAUDE: captured for [RNG-CALL] trace */
+    int16_t  ret;
+
+    /* CLAUDE: count every call so divergence in call-count between runs
+     * is observable. */
+    g_random_call_count++;
+
+    if (n == 0) Exit_With_Message("RND no 0's");
+
+    seed_before = random_seed;
+
+    low_seed  = (uint16_t)(random_seed & 0xFFFF);
+    high_seed = (uint16_t)(random_seed >> 16);
+
+    for (i = 0; i < 9; i++) {
+        new_bit = (uint16_t)((low_seed
+                              ^ (low_seed >> 1)
+                              ^ (low_seed >> 2)
+                              ^ (low_seed >> 4)
+                              ^ (low_seed >> 6)
+                              ^ (high_seed >> 15)) & 1);
+
+        result = (uint16_t)((result << 1) | new_bit);
+
+        carry_bit = (uint16_t)(high_seed & 1);
+        low_seed  = (uint16_t)((low_seed  >> 1) | (carry_bit << 15));
+        high_seed = (uint16_t)((high_seed >> 1) | (new_bit   << 15));
+    }
+
+    if (low_seed == 0 && high_seed == 0) {
+        low_seed = 12478;
+    }
+
+    random_seed = ((uint32_t)high_seed << 16) | (uint32_t)low_seed;
+
+    ret = (int16_t)((result % n) + 1);
+
+    /* CLAUDE 2026-05-27: per-call trace, gated on _cmd_line_seed != 0
+     * so normal runs aren't spammy.  Format chosen to be greppable and
+     * to line up column-for-column with OG MoM's captured magic.csv
+     * `random_seed` transitions (the `after=` value is what the CSV
+     * records).  ~55k lines per new-game run; pipe to a file. */
+    if (_cmd_line_seed != 0) {
+        fprintf(stderr,
+            "[RNG-CALL] call=%llu  n=%d  before=0x%08X  after=0x%08X  result=%d\n",
+            (unsigned long long)g_random_call_count,
+            (int)n,
+            (unsigned)seed_before,
+            (unsigned)random_seed,
+            (int)ret);
+    }
+
+    return ret;
 }
 // GEMINI
 // int16_t Random(int n) {

@@ -20,6 +20,7 @@ MoO2  Module: fonts     Load_Font_File()
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/SOUND.h"
 #include "../../MoX/src/random.h"
+#include "../../MoX/src/MOX2.h"  /* CLAUDE 2026-05-27: _cmd_line_seed for the MAGIC-side new-game Randomize bypass */
 #include "../../platform/include/Platform.h"
 #include "../../MoX/src/Video2.h"
 
@@ -76,7 +77,21 @@ void Init_Drivers(int input_type, int sound_channels, char * font_file, int midi
 
     }
 
-    Randomize();
+    /* CLAUDE 2026-05-27: mirror the MoO2 pattern that PreInit_Overland
+     * already uses (LoadScr.c:1003) -- if a deterministic seed was
+     * provided on the command line, honour it here in MAGIC's new-game
+     * setup; otherwise call Randomize() as the original code did.  This
+     * is the MAGIC-side equivalent so the new-game path is reproducible
+     * (the existing _cmd_line_seed plumbing only affected the
+     * Loaded_Game_Update / continue path). */
+    if(_cmd_line_seed != 0)
+    {
+        Set_Random_Seed((uint32_t)_cmd_line_seed);
+    }
+    else
+    {
+        Randomize();
+    }
 
     Set_Page_Off();  // initializes `current_video_page`
 
@@ -117,6 +132,16 @@ void UU_Legacy_Startup(int input_type, int midi_driver, int sound_channels, char
 
     }
 
-    Randomize();
+    /* CLAUDE 2026-05-27: same _cmd_line_seed bypass as Init_Drivers.
+     * (UU_Legacy_Startup is annotated "Unused in MoM" above, but we
+     * mirror the pattern so the file is consistent.) */
+    if(_cmd_line_seed != 0)
+    {
+        Set_Random_Seed((uint32_t)_cmd_line_seed);
+    }
+    else
+    {
+        Randomize();
+    }
 
 }

@@ -36,7 +36,10 @@ void Check_Command_Line_Parameters_(int argc, char *argv[])
         if (stu_strcmp(argv[argi], "--seed") == 0 && (argi + 1) < argc)
         {
             argi++;
-            _cmd_line_seed = (int32_t)stu_atoi(argv[argi]);
+            /* CLAUDE 2026-05-28: was stu_atoi (decimal only, int-sized
+             * truncates on 16-bit DOS).  stu_strtol with base 0 auto-
+             * detects 0x-hex and preserves the full 32-bit range. */
+            _cmd_line_seed = (int32_t)stu_strtol(argv[argi], NULL, 0);
             LOG_INFO(LOG_CAT_MOX2, "[MOX2] CLI: --seed %d (0x%08X)",
                 (int)_cmd_line_seed, (unsigned)_cmd_line_seed);
         }
