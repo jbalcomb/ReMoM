@@ -55,27 +55,21 @@
 */
 void Do_City_Calculations(int16_t city_idx)
 {
-
-    // DONT  EMM_Map_DataH();
-
+    EMM_Map_DataH();
     CITIES_FOOD_UNITS(city_idx, (int8_t)City_Food_Production(city_idx));
     CITIES_PRODUCTION_UNITS(city_idx, (int8_t)City_Production_Production(city_idx));
     CITIES_GOLD_UNITS(city_idx, (uint8_t)City_Gold_Production(city_idx));
     CITIES_BUILDING_MAINTENANCE(city_idx, (int8_t)City_Gold_Mainanence(city_idx));
     CITIES_RESEARCH_UNITS(city_idx, (int8_t)City_Research_Production(city_idx));
     CITIES_MANA_UNITS(city_idx, (int8_t)City_Mana_Production(city_idx));
-
     if(
         (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
         &&
         (_CITIES[city_idx].owner_idx != NEUTRAL_PLAYER_IDX)
     )
     {
-
         CITIES_FOOD_UNITS(city_idx, ((_CITIES[city_idx].food_units * difficulty_modifiers_table[_difficulty].food) / 100));
-
     }
-
 }
 
 
@@ -2271,7 +2265,11 @@ int16_t City_Mana_Production(int16_t city_idx)
         building_magic_power = 0;
         building_magic_power_modifier = 100;
 
-        if(_players[city_owner_idx].divine_power != ST_FALSE)
+        if(
+            (_players[city_owner_idx].divine_power != ST_FALSE)
+            ||
+            (_players[city_owner_idx].infernal_power != ST_FALSE)
+        )
         {
             building_magic_power_modifier = 150;
         }
