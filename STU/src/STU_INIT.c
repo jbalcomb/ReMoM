@@ -22,6 +22,7 @@
 #include "STU_DBG.h"
 
 #include <stdio.h>
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -57,25 +58,25 @@ void Dump_Init_Data_Inventory(void)
     int i;
     int j;
 
-    fprintf(stdout, "=== Init Data Inventory ===\n");
+    LOG_INFO(LOG_CAT_STU_INIT, "=== Init Data Inventory ===");
     for(i = 0; i < (int)INIT_ARCHIVE_COUNT; i++)
     {
         const LBX_ARCHIVE_INFO * archive = &init_archives[i];
-        fprintf(stdout, "\n%s  (%d sub-files catalogued)\n", archive->filename, archive->subfile_count);
+        LOG_INFO(LOG_CAT_STU_INIT, "\n%s  (%d sub-files catalogued)", archive->filename, archive->subfile_count);
         for(j = 0; j < archive->subfile_count; j++)
         {
             const LBX_SUBFILE_INFO * sf = &archive->subfiles[j];
             if(sf->size > 0)
             {
-                fprintf(stdout, "  [%d]  %d bytes  %s\n", sf->index, sf->size, sf->label);
+                LOG_INFO(LOG_CAT_STU_INIT, "  [%d]  %d bytes  %s", sf->index, sf->size, sf->label);
             }
             else
             {
-                fprintf(stdout, "  [%d]  (size TBD)  %s\n", sf->index, sf->label);
+                LOG_INFO(LOG_CAT_STU_INIT, "  [%d]  (size TBD)  %s", sf->index, sf->label);
             }
         }
     }
-    fprintf(stdout, "\n=== End Init Data Inventory ===\n");
+    LOG_INFO(LOG_CAT_STU_INIT, "\n=== End Init Data Inventory ===");
 }
 
 
@@ -88,6 +89,6 @@ int Validate_Init_Data(const char * game_data_path)
 
     (void)game_data_path;
 
-    fprintf(stdout, "Validate_Init_Data: not yet implemented\n");
+    LOG_INFO(LOG_CAT_STU_INIT, "Validate_Init_Data: not yet implemented");
     return -1;
 }

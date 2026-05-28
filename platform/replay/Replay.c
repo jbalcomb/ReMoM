@@ -18,6 +18,7 @@
 
 #include "../../ext/stu_compat.h"
 #include "../../STU/src/STU_DBG.h"  /* CLAUDE: trc_prn() */
+#include "../../STU/src/STU_LOG.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -123,7 +124,7 @@ static FILE* Replay_Open_Log(const char *filepath, const char *mode)
         fprintf(logfile, "# mode=%s  file=%s\n", mode, filepath);
         fprintf(logfile, "# timestamp=%s\n", timebuf);
         fprintf(logfile, "#\n");
-        fprintf(stderr, "REPLAY: log -> %s\n", log_path);
+        LOG_INFO(LOG_CAT_REPLAY, "REPLAY: log -> %s", log_path);
     }
     return logfile;
 }
@@ -181,7 +182,7 @@ int Platform_Record_Start(const char *filepath)
 
     record_log = Replay_Open_Log(filepath, "RECORD");
 
-    fprintf(stderr, "REPLAY: recording started -> %s  (random_seed=%u)\n", filepath, (unsigned)(replay_get_random_seed ? replay_get_random_seed() : 0));
+    LOG_INFO(LOG_CAT_REPLAY, "REPLAY: recording started -> %s  (random_seed=%u)", filepath, (unsigned)(replay_get_random_seed ? replay_get_random_seed() : 0));
 
     return 0;
 }
@@ -194,7 +195,7 @@ void Platform_Record_Stop(void)
         return;
     }
 
-    fprintf(stderr, "REPLAY: recording stopped. %u frames captured.\n", record_frame_count);
+    LOG_INFO(LOG_CAT_REPLAY, "REPLAY: recording stopped. %u frames captured.", record_frame_count);
 
     /* Flush the final accumulated log run before closing the log. */
     Log_Flush(&rec_log, "REC", REC_LOG);
@@ -261,7 +262,7 @@ int Platform_Replay_Start(const char *filepath)
     replay_file = stu_fopen(filepath, "rb");
     if(replay_file == NULL)
     {
-        fprintf(stderr, "REPLAY: failed to open %s\n", filepath);
+        LOG_INFO(LOG_CAT_REPLAY, "REPLAY: failed to open %s", filepath);
         return -1;
     }
 
@@ -269,7 +270,7 @@ int Platform_Replay_Start(const char *filepath)
        We read all '#' lines before the data, extracting known fields. */
     if(fgets(line, sizeof(line), replay_file) == NULL || strncmp(line, "# ReMoM Replay v2", 17) != 0)
     {
-        fprintf(stderr, "REPLAY: bad magic in %s\n", filepath);
+        LOG_INFO(LOG_CAT_REPLAY, "REPLAY: bad magic in %s", filepath);
         fclose(replay_file);
         replay_file = NULL;
         return -1;
@@ -316,7 +317,7 @@ int Platform_Replay_Start(const char *filepath)
     replay_log = Replay_Open_Log(filepath, "REPLAY");
     Log_Reset(&play_log);
 
-    fprintf(stderr, "REPLAY: playback started <- %s  (%u frames, random_seed=%u, recorded_screen_scale=%u, current_scale=%d)\n", filepath, frame_count, random_seed, recorded_screen_scale, Platform_Get_Scale());
+    LOG_INFO(LOG_CAT_REPLAY, "REPLAY: playback started <- %s  (%u frames, random_seed=%u, recorded_screen_scale=%u, current_scale=%d)", filepath, frame_count, random_seed, recorded_screen_scale, Platform_Get_Scale());
 
     return 0;
 }
@@ -328,7 +329,7 @@ void Platform_Replay_Stop(void)
         return;
     }
 
-    fprintf(stderr, "REPLAY: playback stopped at frame %u / %u\n", replay_frame_index, replay_frame_count);
+    LOG_INFO(LOG_CAT_REPLAY, "REPLAY: playback stopped at frame %u / %u", replay_frame_index, replay_frame_count);
 
     Log_Flush(&play_log, "PLAY", PLAY_LOG);
 
@@ -444,7 +445,7 @@ void Replay_Capture_Frame(void)
     key0 = (key_count > 0) ? Platform_Keyboard_Buffer_Peek_Latest() : 0;
     /* CLAUDE: diagnostic — trace what Replay_Capture_Frame sees in the keyboard buffer every frame.  Correlate with WIN_KEY BUFFERED and KBD_READ traces to spot the race where Read_Key() consumes a key before capture peeks it. */
 #ifdef STU_DEBUG
-    trc_prn("REC_CAP t=%llu frame=%u pending=%d peek=0x%08X key_pressed=%d btn=0x%X\n", (unsigned long long)Platform_Get_Millies(), record_frame_count, key_count, (unsigned)key0, (int)key_pressed, (unsigned)platform_frame_mouse_buttons);
+    LOG_TRACE(LOG_CAT_PFL, "REC_CAP t=%llu frame=%u pending=%d peek=0x%08X key_pressed=%d btn=0x%X", (unsigned long long)Platform_Get_Millies(), record_frame_count, key_count, (unsigned)key0, (int)key_pressed, (unsigned)platform_frame_mouse_buttons);
 #endif
     if(key_count > 1) { key_count = 1; }  /* Recording format supports 1 key per frame for now. */
 
@@ -762,20 +763,20 @@ void Platform_Replay_Compare_Logs(const char *rmr_filepath)
     play_file = stu_fopen(play_path, "r");
     if(rec_file == NULL)
     {
-        fprintf(stderr, "COMPARE: cannot open %s\n", rec_path);
+        LOG_INFO(LOG_CAT_REPLAY, "COMPARE: cannot open %s", rec_path);
         if(play_file) fclose(play_file);
         return;
     }
     if(play_file == NULL)
     {
-        fprintf(stderr, "COMPARE: cannot open %s\n", play_path);
+        LOG_INFO(LOG_CAT_REPLAY, "COMPARE: cannot open %s", play_path);
         fclose(rec_file);
         return;
     }
 
-    fprintf(stderr, "\n========== REPLAY LOG COMPARISON ==========\n");
-    fprintf(stderr, "%-60s | %-60s\n", "RECORD", "REPLAY");
-    fprintf(stderr, "%-60s | %-60s\n", "------------------------------------------------------------", "------------------------------------------------------------");
+    LOG_INFO(LOG_CAT_REPLAY, "\n========== REPLAY LOG COMPARISON ==========");
+    LOG_INFO(LOG_CAT_REPLAY, "%-60s | %-60s", "RECORD", "REPLAY");
+    LOG_INFO(LOG_CAT_REPLAY, "%-60s | %-60s", "------------------------------------------------------------", "------------------------------------------------------------");
 
     /* Read next "idx=" line from each file, skipping non-state-change lines. */
     while(1)
@@ -825,16 +826,16 @@ void Platform_Replay_Compare_Logs(const char *rmr_filepath)
 
         if(!got_rec)
         {
-            fprintf(stderr, "%-60s | %-60s  <-- RECORD ended\n", "(end)", play_line);
+            LOG_INFO(LOG_CAT_REPLAY, "%-60s | %-60s  <-- RECORD ended", "(end)", play_line);
             mismatches++;
             break;
         }
         if(!got_play)
         {
-            fprintf(stderr, "%-60s | %-60s  <-- REPLAY ended\n", rec_line, "(end)");
+            LOG_INFO(LOG_CAT_REPLAY, "%-60s | %-60s  <-- REPLAY ended", rec_line, "(end)");
             /* Show remaining RECORD lines as "should have been". */
-            fprintf(stderr, "\n--- REPLAY should have continued with: ---\n");
-            fprintf(stderr, "  %s\n", rec_line);
+            LOG_INFO(LOG_CAT_REPLAY, "\n--- REPLAY should have continued with: ---");
+            LOG_INFO(LOG_CAT_REPLAY, "  %s", rec_line);
             {
                 int remaining = max_context_after_mismatch;
                 while(remaining > 0 && fgets(rec_line, sizeof(rec_line), rec_file) != NULL)
@@ -843,7 +844,7 @@ void Platform_Replay_Compare_Logs(const char *rmr_filepath)
                     while(len > 0 && (rec_line[len - 1] == '\n' || rec_line[len - 1] == '\r')) { rec_line[--len] = '\0'; }
                     if(strncmp(rec_line, "idx=", 4) == 0)
                     {
-                        fprintf(stderr, "  %s\n", rec_line);
+                        LOG_INFO(LOG_CAT_REPLAY, "  %s", rec_line);
                         remaining--;
                     }
                 }
@@ -863,17 +864,17 @@ void Platform_Replay_Compare_Logs(const char *rmr_filepath)
 
             if(match)
             {
-                fprintf(stderr, "%-60s | %-60s\n", rec_line, play_line);
+                LOG_INFO(LOG_CAT_REPLAY, "%-60s | %-60s", rec_line, play_line);
             }
             else
             {
-                fprintf(stderr, "%-60s | %-60s  <-- MISMATCH\n", rec_line, play_line);
+                LOG_INFO(LOG_CAT_REPLAY, "%-60s | %-60s  <-- MISMATCH", rec_line, play_line);
                 mismatches++;
                 if(mismatches >= 3)
                 {
-                    fprintf(stderr, "\n--- Too many mismatches, stopping. ---\n");
-                    fprintf(stderr, "--- REPLAY should have been: ---\n");
-                    fprintf(stderr, "  %s\n", rec_line);
+                    LOG_INFO(LOG_CAT_REPLAY, "\n--- Too many mismatches, stopping. ---");
+                    LOG_INFO(LOG_CAT_REPLAY, "--- REPLAY should have been: ---");
+                    LOG_INFO(LOG_CAT_REPLAY, "  %s", rec_line);
                     {
                         int remaining = max_context_after_mismatch;
                         while(remaining > 0 && fgets(rec_line, sizeof(rec_line), rec_file) != NULL)
@@ -882,7 +883,7 @@ void Platform_Replay_Compare_Logs(const char *rmr_filepath)
                             while(len > 0 && (rec_line[len - 1] == '\n' || rec_line[len - 1] == '\r')) { rec_line[--len] = '\0'; }
                             if(strncmp(rec_line, "idx=", 4) == 0)
                             {
-                                fprintf(stderr, "  %s\n", rec_line);
+                                LOG_INFO(LOG_CAT_REPLAY, "  %s", rec_line);
                                 remaining--;
                             }
                         }
@@ -895,11 +896,11 @@ void Platform_Replay_Compare_Logs(const char *rmr_filepath)
 
     if(mismatches == 0)
     {
-        fprintf(stderr, "\n=== PERFECT MATCH: %d state changes compared, all identical. ===\n", line_number);
+        LOG_INFO(LOG_CAT_REPLAY, "\n=== PERFECT MATCH: %d state changes compared, all identical. ===", line_number);
     }
     else
     {
-        fprintf(stderr, "\n=== COMPARISON DONE: %d mismatches found in %d state changes. ===\n", mismatches, line_number);
+        LOG_INFO(LOG_CAT_REPLAY, "\n=== COMPARISON DONE: %d mismatches found in %d state changes. ===", mismatches, line_number);
     }
 
     fclose(rec_file);

@@ -5,6 +5,7 @@
 #include "PFL_Audio_Internal.h"
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
 
 #include <SDL_mixer.h>
 
@@ -170,30 +171,30 @@ void sdl2_Audio_Init(void)
     if(Mix_Init((MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID | MIX_INIT_OPUS)) == 0)
     {
 #ifdef STU_DEBUG
-        dbg_prn("ERROR:  Mix_Init():  %s\n", SDL_GetError());
+        LOG_DEBUG(LOG_CAT_PFL, "ERROR:  Mix_Init():  %s", SDL_GetError());
 #endif
-        printf("ERROR:  Mix_Init():  %s\n", SDL_GetError());
+        LOG_INFO(LOG_CAT_SDL2_AUDIO, "ERROR:  Mix_Init():  %s", SDL_GetError());
     }
     else
     {
-        printf("SUCCESS:  Mix_Init():  %s\n", SDL_GetError());
+        LOG_INFO(LOG_CAT_SDL2_AUDIO, "SUCCESS:  Mix_Init():  %s", SDL_GetError());
     }
     if(Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 1024) < 0)
     {
 #ifdef STU_DEBUG
-        dbg_prn("ERROR:  Mix_OpenAudio():  %s\n", SDL_GetError());
+        LOG_DEBUG(LOG_CAT_PFL, "ERROR:  Mix_OpenAudio():  %s", SDL_GetError());
 #endif
-        printf("ERROR:  Mix_OpenAudio():  %s\n", SDL_GetError());
+        LOG_INFO(LOG_CAT_SDL2_AUDIO, "ERROR:  Mix_OpenAudio():  %s", SDL_GetError());
     }
     else
     {
-        printf("SUCCESS:  Mix_OpenAudio():  %s\n", SDL_GetError());
+        LOG_INFO(LOG_CAT_SDL2_AUDIO, "SUCCESS:  Mix_OpenAudio():  %s", SDL_GetError());
     }
 
     // Set the volume of the music to 50% (half the MAX_VOLUME)
-    printf("Mix_VolumeMusic():  %d\n", Mix_VolumeMusic(-1));
+    LOG_INFO(LOG_CAT_SDL2_AUDIO, "Mix_VolumeMusic():  %d", Mix_VolumeMusic(-1));
     Mix_VolumeMusic(MIX_MAX_VOLUME / 4);
-    printf("Mix_VolumeMusic():  %d\n", Mix_VolumeMusic(-1));
+    LOG_INFO(LOG_CAT_SDL2_AUDIO, "Mix_VolumeMusic():  %d", Mix_VolumeMusic(-1));
     // Later, elsewhere, ...
     // // Set the volume of the sound effect to 75%
     // Mix_VolumeChunk(sdl2_mix_chunk, MIX_MAX_VOLUME * 0.75);
@@ -285,14 +286,14 @@ int16_t Platform_Audio_Play_Sound(void *sound_buffer, uint32_t sound_buffer_size
             if(sdl2_rw_ops == NULL)
             {
 #ifdef STU_DEBUG
-                dbg_prn("ERROR:  SDL_RWFromMem()  %s\n", SDL_GetError());
+                LOG_DEBUG(LOG_CAT_PFL, "ERROR:  SDL_RWFromMem()  %s", SDL_GetError());
 #endif
             }
             sdl2_audio_data_chunk = Mix_LoadWAV_RW(sdl2_rw_ops, 0);
             if(sdl2_audio_data_chunk == NULL)
             {
 #ifdef STU_DEBUG
-                dbg_prn("ERROR:  Mix_LoadWAV_RW()  %s\n", SDL_GetError());
+                LOG_DEBUG(LOG_CAT_PFL, "ERROR:  Mix_LoadWAV_RW()  %s", SDL_GetError());
 #endif
             }
             Mix_VolumeChunk(sdl2_audio_data_chunk, (int)(MIX_MAX_VOLUME * 0.75));
@@ -300,7 +301,7 @@ int16_t Platform_Audio_Play_Sound(void *sound_buffer, uint32_t sound_buffer_size
             if(sdl2_play_channel_result == -1)
             {
 #ifdef STU_DEBUG
-                dbg_prn("ERROR:  Mix_PlayChannel()  %s\n", SDL_GetError());
+                LOG_DEBUG(LOG_CAT_PFL, "ERROR:  Mix_PlayChannel()  %s", SDL_GetError());
 #endif
             }
         } break;
@@ -391,7 +392,7 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
     // // TORAN3M1    intro speech
     // voc_len: 80602
 #ifdef STU_DEBUG
-    dbg_prn("voc_len: %u\n", voc_len);
+    LOG_DEBUG(LOG_CAT_PFL, "voc_len: %u", voc_len);
     if(voc_len >= (128 * 1024))
     {
         STU_DEBUG_BREAK();
@@ -462,7 +463,7 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
             voc_block_size |= voc_rvr[2] <<  8;
             voc_block_size |= voc_rvr[1];
 #ifdef STU_DEBUG
-            dbg_prn("voc_block_size: %u\n", voc_block_size);
+            LOG_DEBUG(LOG_CAT_PFL, "voc_block_size: %u", voc_block_size);
             if(voc_len >= (128 * 1024))
             {
                 STU_DEBUG_BREAK();
@@ -486,7 +487,7 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
             wav_sample_count += voc_block_size;
             voc_len -= voc_block_size;
 #ifdef STU_DEBUG
-            dbg_prn("voc_len: %u\n", voc_len);
+            LOG_DEBUG(LOG_CAT_PFL, "voc_len: %u", voc_len);
     if(voc_len >= (128 * 1024))
     {
         STU_DEBUG_BREAK();
@@ -505,7 +506,7 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
 #ifdef STU_DEBUG
             if(voc_len >= (128 * 1024))
             {
-                dbg_prn("voc_block_size: %u\n", voc_block_size);
+                LOG_DEBUG(LOG_CAT_PFL, "voc_block_size: %u", voc_block_size);
                 STU_DEBUG_BREAK();
             }
 #endif

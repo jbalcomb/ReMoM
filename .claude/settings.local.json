@@ -5,7 +5,8 @@
       "Bash(cmake --build build --target HeMoM)",
       "Bash(cmake .. -DCMAKE_BUILD_TYPE=Debug)",
       "Bash(ctest -L ai -V)",
-      "Bash(cmake ..)"
+      "Bash(cmake ..)",
+      "Bash(cmake --build --preset MSVC-debug)"
     ]
   }
 }

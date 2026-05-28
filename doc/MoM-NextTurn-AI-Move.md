@@ -125,7 +125,7 @@ _target[]
 ai_human_hostility
 EMM_Map_CONTXXX__WIP()
 _ai_ferry_count
-g_ai_minattackstack
+_ai_expedition_size_threshold
 AI_Disband_To_Balance_Budget()
 AI_Shift_Off_Home_Plane()
 AI_Move_Out_Boats()

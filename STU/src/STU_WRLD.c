@@ -102,6 +102,7 @@ Module: MAPGEN
 #include <stdlib.h>  /* malloc, free */
 #include <memory.h>  /* memset() === vcruntime_string.h */
 #include <string.h>  /* memset() */
+#include "../../STU/src/STU_LOG.h"
 // Routine  malloc; Required header  <stdlib.h> and <malloc.h>;
 
 
@@ -343,18 +344,18 @@ static void Display_Landmass_Statistics(int sim_idx, int16_t wp)
 {
     int itr = 0;
 
-    printf("%14s  %9s\n", "Landmass Index", "Squares");
-    printf("--------------  ---------\n");
+    LOG_INFO(LOG_CAT_STU_WRLD, "%14s  %9s", "Landmass Index", "Squares");
+    LOG_INFO(LOG_CAT_STU_WRLD, "--------------  ---------");
     for(itr = 0; itr < LANDMASS_INDEX_MAX; itr++)
     {
         if(itr <= simulation_data[sim_idx].landmass_stats[wp].max_hit_count_index)
         {
-            printf("%14d  %9d\n", itr, simulation_data[sim_idx].landmass_stats[wp].hit_count[itr]);
+            LOG_INFO(LOG_CAT_STU_WRLD, "%14d  %9d", itr, simulation_data[sim_idx].landmass_stats[wp].hit_count[itr]);
         }
     }
-    printf("--------------  ---------\n");
-    printf("%-14s  %9d\n", "Total Count:",  simulation_data[sim_idx].landmass_stats[wp].total_count);
-    printf("%-14s  %9d\n", "Land Squares:", simulation_data[sim_idx].landmass_stats[wp].land_squares);
+    LOG_INFO(LOG_CAT_STU_WRLD, "--------------  ---------");
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-14s  %9d", "Total Count:",  simulation_data[sim_idx].landmass_stats[wp].total_count);
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-14s  %9d", "Land Squares:", simulation_data[sim_idx].landmass_stats[wp].land_squares);
 
 }
 
@@ -436,8 +437,8 @@ static void Display_Heightmap_Statistics(int sim_idx, int16_t wp)
     total_count  = simulation_data[sim_idx].worldmap_stats[wp].total_count;
     land_squares = simulation_data[sim_idx].landmass_stats[wp].land_squares;
 
-    printf("%12s  %9s  %7s  %7s\n", "Height", "Count", "% Total", "% Land");
-    printf("------------  ---------  -------  -------\n");
+    LOG_INFO(LOG_CAT_STU_WRLD, "%12s  %9s  %7s  %7s", "Height", "Count", "% Total", "% Land");
+    LOG_INFO(LOG_CAT_STU_WRLD, "------------  ---------  -------  -------");
     for(itr = 0; itr < TerType_Count; itr++)
     {
         count = simulation_data[sim_idx].worldmap_stats[wp].terrain_type_count[itr];
@@ -448,17 +449,17 @@ static void Display_Heightmap_Statistics(int sim_idx, int16_t wp)
 
         if(itr == tt_Ocean)
         {
-            printf("%12d  %9d  %6.2f%%  %7s\n", itr, count, pct_total, "---");
+            LOG_INFO(LOG_CAT_STU_WRLD, "%12d  %9d  %6.2f%%  %7s", itr, count, pct_total, "---");
         }
         else
         {
             pct_land = (land_squares > 0) ? ((double)count / (double)land_squares * 100.0) : 0.0;
-            printf("%12d  %9d  %6.2f%%  %6.2f%%\n", itr, count, pct_total, pct_land);
+            LOG_INFO(LOG_CAT_STU_WRLD, "%12d  %9d  %6.2f%%  %6.2f%%", itr, count, pct_total, pct_land);
         }
     }
-    printf("------------  ---------  -------  -------\n");
-    printf("%-12s  %9d\n", "Total Count:", total_count);
-    printf("%-12s  %9d\n", "Land Squares:", land_squares);
+    LOG_INFO(LOG_CAT_STU_WRLD, "------------  ---------  -------  -------");
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %9d", "Total Count:", total_count);
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %9d", "Land Squares:", land_squares);
 
 }
 
@@ -483,8 +484,8 @@ static void Display_Heightmap_Histogram(int sim_idx, int16_t wp)
     if(max_count == 0)
         return;
 
-    printf("%s  %3s  %6s  %-40s\n", "Hits", "Idx", "Count", "Bar");
-    printf("-  ---  ------  ----------------------------------------\n");
+    LOG_INFO(LOG_CAT_STU_WRLD, "%s  %3s  %6s  %-40s", "Hits", "Idx", "Count", "Bar");
+    LOG_INFO(LOG_CAT_STU_WRLD, "-  ---  ------  ----------------------------------------");
 
     for(itr = 0; itr < TerType_Count; itr++)
     {
@@ -501,7 +502,7 @@ static void Display_Heightmap_Histogram(int sim_idx, int16_t wp)
             bar[j] = ' ';
         bar[bar_width] = '\0';
 
-        printf("%c  %3d  %6d  %s\n", ch, itr, count, bar);
+        LOG_INFO(LOG_CAT_STU_WRLD, "%c  %3d  %6d  %s", ch, itr, count, bar);
     }
 }
 
@@ -568,8 +569,8 @@ static void Display_Worldmap_Statistics(int sim_idx, int16_t wp)
     total_count  = simulation_data[sim_idx].worldmap_stats[wp].total_count;
     land_squares = simulation_data[sim_idx].landmass_stats[wp].land_squares;
 
-    printf("%c  %3s  %-12s  %-12s  %9s  %7s  %7s\n", 'T', "Idx", "Name", "Group", "Squares", "% Total", "% Land");
-    printf("-  ---  ------------  ------------  ---------  -------  -------\n");
+    LOG_INFO(LOG_CAT_STU_WRLD, "%c  %3s  %-12s  %-12s  %9s  %7s  %7s", 'T', "Idx", "Name", "Group", "Squares", "% Total", "% Land");
+    LOG_INFO(LOG_CAT_STU_WRLD, "-  ---  ------------  ------------  ---------  -------  -------");
     for(itr = 0; itr < TerType_Count; itr++)
     {
         count = simulation_data[sim_idx].worldmap_stats[wp].terrain_type_count[itr];
@@ -584,17 +585,17 @@ static void Display_Worldmap_Statistics(int sim_idx, int16_t wp)
 
         if(itr == tt_Ocean)
         {
-            printf("%c  %3d  %-12s  %-12s  %9d  %6.2f%%  %7s\n", ch, itr, name, group, count, pct_total, "---");
+            LOG_INFO(LOG_CAT_STU_WRLD, "%c  %3d  %-12s  %-12s  %9d  %6.2f%%  %7s", ch, itr, name, group, count, pct_total, "---");
         }
         else
         {
             pct_land = (land_squares > 0) ? ((double)count / (double)land_squares * 100.0) : 0.0;
-            printf("%c  %3d  %-12s  %-12s  %9d  %6.2f%%  %6.2f%%\n", ch, itr, name, group, count, pct_total, pct_land);
+            LOG_INFO(LOG_CAT_STU_WRLD, "%c  %3d  %-12s  %-12s  %9d  %6.2f%%  %6.2f%%", ch, itr, name, group, count, pct_total, pct_land);
         }
     }
-    printf("---  ------------  ------------  ---------  -------  -------\n");
-    printf("%-18s  %9d\n", "Total Count:", total_count);
-    printf("%-18s  %9d\n", "Land Squares:", land_squares);
+    LOG_INFO(LOG_CAT_STU_WRLD, "---  ------------  ------------  ---------  -------  -------");
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-18s  %9d", "Total Count:", total_count);
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-18s  %9d", "Land Squares:", land_squares);
 
 }
 
@@ -619,8 +620,8 @@ static void Display_Worldmap_Histogram(int sim_idx, int16_t wp)
     if(max_count == 0)
         return;
 
-    printf("%c  %3s  %6s  %-40s\n", 'T', "Idx", "Count", "Bar");
-    printf("-  ---  ------  ----------------------------------------\n");
+    LOG_INFO(LOG_CAT_STU_WRLD, "%c  %3s  %6s  %-40s", 'T', "Idx", "Count", "Bar");
+    LOG_INFO(LOG_CAT_STU_WRLD, "-  ---  ------  ----------------------------------------");
 
     for(itr = 0; itr < TerType_Count; itr++)
     {
@@ -637,7 +638,7 @@ static void Display_Worldmap_Histogram(int sim_idx, int16_t wp)
             bar[j] = ' ';
         bar[bar_width] = '\0';
 
-        printf("%c  %3d  %6d  %s\n", ch, itr, count, bar);
+        LOG_INFO(LOG_CAT_STU_WRLD, "%c  %3d  %6d  %s", ch, itr, count, bar);
     }
 }
 
@@ -736,8 +737,8 @@ static void Display_Terrain_Specials_Statistics(int sim_idx, int16_t wp)
     special_squares = simulation_data[sim_idx].specials_stats[wp].special_squares;
 
     /* Minerals table */
-    printf("%-12s  %9s  %7s  %7s\n", "Special", "Squares", "% Total", "% Spcl");
-    printf("------------  ---------  -------  -------\n");
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %9s  %7s  %7s", "Special", "Squares", "% Total", "% Spcl");
+    LOG_INFO(LOG_CAT_STU_WRLD, "------------  ---------  -------  -------");
     for(itr = 0; itr < terrain_special_names_count; itr++)
     {
         terrain_special_square_count = 0;
@@ -751,22 +752,22 @@ static void Display_Terrain_Specials_Statistics(int sim_idx, int16_t wp)
 
                 if(terrain_special_names[itr].value == TS_NONE)
                 {
-                    printf("%-12s  %9d  %6.2f%%  %7s\n", terrain_special_names[itr].name, terrain_special_square_count, pct_total, "---");
+                    LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %9d  %6.2f%%  %7s", terrain_special_names[itr].name, terrain_special_square_count, pct_total, "---");
                 }
                 else
                 {
                     pct_special = (special_squares > 0) ? ((double)terrain_special_square_count / (double)special_squares * 100.0) : 0.0;
-                    printf("%-12s  %9d  %6.2f%%  %6.2f%%\n", terrain_special_names[itr].name, terrain_special_square_count, pct_total, pct_special);
+                    LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %9d  %6.2f%%  %6.2f%%", terrain_special_names[itr].name, terrain_special_square_count, pct_total, pct_special);
                 }
 
             }
         }
 
     }
-    printf("------------  ---------  -------  -------\n");
+    LOG_INFO(LOG_CAT_STU_WRLD, "------------  ---------  -------  -------");
 
-    printf("%-16s  %9d\n", "Total Count:",    total_count);
-    printf("%-16s  %9d\n", "Special Squares:", special_squares);
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-16s  %9d", "Total Count:",    total_count);
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-16s  %9d", "Special Squares:", special_squares);
 }
 
 /*
@@ -815,8 +816,8 @@ static void Display_Terrain_Specials_Histogram(int sim_idx, int16_t wp)
     if(max_count == 0)
         return;
 
-    printf("%-12s  %c  %6s  %-40s\n", "Mineral", 'T', "Count", "Bar");
-    printf("------------  -  ------  ----------------------------------------\n");
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %c  %6s  %-40s", "Mineral", 'T', "Count", "Bar");
+    LOG_INFO(LOG_CAT_STU_WRLD, "------------  -  ------  ----------------------------------------");
 
     for(m = 1; m < 10; m++)   /* skip None */
     {
@@ -831,7 +832,7 @@ static void Display_Terrain_Specials_Histogram(int sim_idx, int16_t wp)
             bar[j] = ' ';
         bar[bar_width] = '\0';
 
-        printf("%-12s  %c  %6d  %s\n", mineral_labels[m], mineral_chars[m], count, bar);
+        LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %c  %6d  %s", mineral_labels[m], mineral_chars[m], count, bar);
     }
 }
 
@@ -923,17 +924,17 @@ static void Evaluate_Terrain_Special_Distribution(int sim_idx, int16_t wp)
         }
     }
 
-    printf("\nTerrain Special Distribution (%s)  Expected: 1:%d (%.2f%%)\n",
+    LOG_INFO(LOG_CAT_STU_WRLD, "\nTerrain Special Distribution (%s)  Expected: 1:%d (%.2f%%)",
         plane_name, expected_div, expected_pct);
-    printf("%-10s  %9s  %8s  %7s  %8s  %8s\n",
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-10s  %9s  %8s  %7s  %8s  %8s",
         "Terrain", "Squares", "Specials", "Ratio", "% Actual", "% Expect");
-    printf("----------  ---------  --------  -------  --------  --------\n");
+    LOG_INFO(LOG_CAT_STU_WRLD, "----------  ---------  --------  -------  --------  --------");
 
     for(i = 0; i < CAT_COUNT; i++)
     {
         if(cat_total[i] == 0)
         {
-            printf("%-10s  %9d  %8d  %7s  %8s  %7.2f%%\n",
+            LOG_INFO(LOG_CAT_STU_WRLD, "%-10s  %9d  %8d  %7s  %8s  %7.2f%%",
                 cat_names[i], 0, 0, "---", "---", expected_pct);
             continue;
         }
@@ -942,7 +943,7 @@ static void Evaluate_Terrain_Special_Distribution(int sim_idx, int16_t wp)
 
         if(cat_special[i] > 0)
         {
-            printf("%-10s  %9d  %8d   1:%-4.1f  %7.2f%%  %7.2f%%\n",
+            LOG_INFO(LOG_CAT_STU_WRLD, "%-10s  %9d  %8d   1:%-4.1f  %7.2f%%  %7.2f%%",
                 cat_names[i],
                 cat_total[i],
                 cat_special[i],
@@ -952,17 +953,17 @@ static void Evaluate_Terrain_Special_Distribution(int sim_idx, int16_t wp)
         }
         else
         {
-            printf("%-10s  %9d  %8d  %7s  %7.2f%%  %7.2f%%\n",
+            LOG_INFO(LOG_CAT_STU_WRLD, "%-10s  %9d  %8d  %7s  %7.2f%%  %7.2f%%",
                 cat_names[i], cat_total[i], 0, "---", actual_pct, expected_pct);
         }
     }
 
-    printf("----------  ---------  --------  -------  --------  --------\n");
+    LOG_INFO(LOG_CAT_STU_WRLD, "----------  ---------  --------  -------  --------  --------");
 
     if(all_total > 0 && all_special > 0)
     {
         actual_pct = (double)all_special / (double)all_total * 100.0;
-        printf("%-10s  %9d  %8d   1:%-4.1f  %7.2f%%  %7.2f%%\n",
+        LOG_INFO(LOG_CAT_STU_WRLD, "%-10s  %9d  %8d   1:%-4.1f  %7.2f%%  %7.2f%%",
             "Total", all_total, all_special,
             (double)all_total / (double)all_special,
             actual_pct, expected_pct);
@@ -970,7 +971,7 @@ static void Evaluate_Terrain_Special_Distribution(int sim_idx, int16_t wp)
     else
     {
         actual_pct = 0.0;
-        printf("%-10s  %9d  %8d  %7s  %7.2f%%  %7.2f%%\n",
+        LOG_INFO(LOG_CAT_STU_WRLD, "%-10s  %9d  %8d  %7s  %7.2f%%  %7.2f%%",
             "Total", all_total, all_special, "---", actual_pct, expected_pct);
     }
 }
@@ -1047,10 +1048,10 @@ static void Evaluate_Desert_Special_Distribution(int sim_idx, int16_t wp)
         }
     }
 
-    printf("\nDesert Special Distribution (%s)  Desert: %d  With Special: %d\n",
+    LOG_INFO(LOG_CAT_STU_WRLD, "\nDesert Special Distribution (%s)  Desert: %d  With Special: %d",
         plane_name, desert_total, desert_special);
-    printf("%-12s  %6s  %8s  %8s\n", "Mineral", "Count", "% Actual", "% Expect");
-    printf("------------  ------  --------  --------\n");
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %6s  %8s  %8s", "Mineral", "Count", "% Actual", "% Expect");
+    LOG_INFO(LOG_CAT_STU_WRLD, "------------  ------  --------  --------");
 
     for(i = 0; i < mineral_names_count; i++)
     {
@@ -1079,14 +1080,14 @@ static void Evaluate_Desert_Special_Distribution(int sim_idx, int16_t wp)
 
         if(expected_pct >= 0.0)
         {
-            printf("%-12s  %6d  %7.1f%%  %7.1f%%\n",
+            LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %6d  %7.1f%%  %7.1f%%",
                 mineral_names[i].name,
                 mineral_count[mineral_names[i].mineral],
                 actual_pct, expected_pct);
         }
         else
         {
-            printf("%-12s  %6d  %7.1f%%  %8s\n",
+            LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %6d  %7.1f%%  %8s",
                 mineral_names[i].name,
                 mineral_count[mineral_names[i].mineral],
                 actual_pct, "---");
@@ -1167,10 +1168,10 @@ static void Evaluate_Hills_Special_Distribution(int sim_idx, int16_t wp)
         }
     }
 
-    printf("\nHills Special Distribution (%s)  Hills: %d  With Special: %d\n",
+    LOG_INFO(LOG_CAT_STU_WRLD, "\nHills Special Distribution (%s)  Hills: %d  With Special: %d",
         plane_name, hills_total, hills_special);
-    printf("%-12s  %6s  %8s  %8s\n", "Mineral", "Count", "% Actual", "% Expect");
-    printf("------------  ------  --------  --------\n");
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %6s  %8s  %8s", "Mineral", "Count", "% Actual", "% Expect");
+    LOG_INFO(LOG_CAT_STU_WRLD, "------------  ------  --------  --------");
 
     for(i = 0; i < mineral_names_count; i++)
     {
@@ -1205,14 +1206,14 @@ static void Evaluate_Hills_Special_Distribution(int sim_idx, int16_t wp)
 
         if(expected_pct >= 0.0)
         {
-            printf("%-12s  %6d  %7.1f%%  %7.1f%%\n",
+            LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %6d  %7.1f%%  %7.1f%%",
                 mineral_names[i].name,
                 mineral_count[mineral_names[i].mineral],
                 actual_pct, expected_pct);
         }
         else
         {
-            printf("%-12s  %6d  %7.1f%%  %8s\n",
+            LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %6d  %7.1f%%  %8s",
                 mineral_names[i].name,
                 mineral_count[mineral_names[i].mineral],
                 actual_pct, "---");
@@ -1293,10 +1294,10 @@ static void Evaluate_Mountain_Special_Distribution(int sim_idx, int16_t wp)
         }
     }
 
-    printf("\nMountain Special Distribution (%s)  Mountain: %d  With Special: %d\n",
+    LOG_INFO(LOG_CAT_STU_WRLD, "\nMountain Special Distribution (%s)  Mountain: %d  With Special: %d",
         plane_name, mountain_total, mountain_special);
-    printf("%-12s  %6s  %8s  %8s\n", "Mineral", "Count", "% Actual", "% Expect");
-    printf("------------  ------  --------  --------\n");
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %6s  %8s  %8s", "Mineral", "Count", "% Actual", "% Expect");
+    LOG_INFO(LOG_CAT_STU_WRLD, "------------  ------  --------  --------");
 
     for(i = 0; i < mineral_names_count; i++)
     {
@@ -1331,14 +1332,14 @@ static void Evaluate_Mountain_Special_Distribution(int sim_idx, int16_t wp)
 
         if(expected_pct >= 0.0)
         {
-            printf("%-12s  %6d  %7.1f%%  %7.1f%%\n",
+            LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %6d  %7.1f%%  %7.1f%%",
                 mineral_names[i].name,
                 mineral_count[mineral_names[i].mineral],
                 actual_pct, expected_pct);
         }
         else
         {
-            printf("%-12s  %6d  %7.1f%%  %8s\n",
+            LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %6d  %7.1f%%  %8s",
                 mineral_names[i].name,
                 mineral_count[mineral_names[i].mineral],
                 actual_pct, "---");
@@ -1518,9 +1519,9 @@ static void Calculate_Average_Terrain_Probability(int num_simulations, int16_t w
 
     total_squares = num_simulations * WORLD_SIZE;
 
-    printf("\nAverage Terrain Probability (%s, %d simulations)\n", (wp == ARCANUS_PLANE) ? "Arcanus" : "Myrror", num_simulations);
-    printf("%3s  %-12s  %9s  %10s\n", "Idx", "Name", "Avg Count", "Avg Prob %");
-    printf("---  ------------  ---------  ----------\n");
+    LOG_INFO(LOG_CAT_STU_WRLD, "\nAverage Terrain Probability (%s, %d simulations)", (wp == ARCANUS_PLANE) ? "Arcanus" : "Myrror", num_simulations);
+    LOG_INFO(LOG_CAT_STU_WRLD, "%3s  %-12s  %9s  %10s", "Idx", "Name", "Avg Count", "Avg Prob %");
+    LOG_INFO(LOG_CAT_STU_WRLD, "---  ------------  ---------  ----------");
 
     for(itr = 0; itr < TerType_Count; itr++)
     {
@@ -1532,12 +1533,12 @@ static void Calculate_Average_Terrain_Probability(int num_simulations, int16_t w
         avg_count = (double)sum_counts[itr] / (double)num_simulations;
         avg_prob  = (total_squares > 0) ? ((double)sum_counts[itr] / (double)total_squares * 100.0) : 0.0;
 
-        printf("%3d  %-12s  %9.1f  %9.2f%%\n", itr, name, avg_count, avg_prob);
+        LOG_INFO(LOG_CAT_STU_WRLD, "%3d  %-12s  %9.1f  %9.2f%%", itr, name, avg_count, avg_prob);
     }
 
-    printf("---  ------------  ---------  ----------\n");
-    printf("%-24s  %9d\n", "Squares per sim:", WORLD_SIZE);
-    printf("%-24s  %9d\n", "Simulations:", num_simulations);
+    LOG_INFO(LOG_CAT_STU_WRLD, "---  ------------  ---------  ----------");
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-24s  %9d", "Squares per sim:", WORLD_SIZE);
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-24s  %9d", "Simulations:", num_simulations);
 }
 
 /*
@@ -1573,9 +1574,9 @@ static void Calculate_Average_Terrain_Group_Probability(int num_simulations, int
     total_squares = num_simulations * WORLD_SIZE;
     land_squares = total_squares - sum_counts[0];
 
-    printf("\nAverage Terrain Group Probability (%s, %d simulations)\n", (wp == ARCANUS_PLANE) ? "Arcanus" : "Myrror", num_simulations);
-    printf("%3s  %-12s  %9s  %10s  %10s\n", "Grp", "Name", "Avg Count", "Avg Prob %", "Avg Land %");
-    printf("---  ------------  ---------  ----------  ----------\n");
+    LOG_INFO(LOG_CAT_STU_WRLD, "\nAverage Terrain Group Probability (%s, %d simulations)", (wp == ARCANUS_PLANE) ? "Arcanus" : "Myrror", num_simulations);
+    LOG_INFO(LOG_CAT_STU_WRLD, "%3s  %-12s  %9s  %10s  %10s", "Grp", "Name", "Avg Count", "Avg Prob %", "Avg Land %");
+    LOG_INFO(LOG_CAT_STU_WRLD, "---  ------------  ---------  ----------  ----------");
 
     for(itr = 0; itr < terrain_group_names_count; itr++)
     {
@@ -1589,18 +1590,18 @@ static void Calculate_Average_Terrain_Group_Probability(int num_simulations, int
 
         if(itr == 0)
         {
-            printf("%3d  %-12s  %9.1f  %9.2f%%  %10s\n", itr, name, avg_count, avg_prob, "---");
+            LOG_INFO(LOG_CAT_STU_WRLD, "%3d  %-12s  %9.1f  %9.2f%%  %10s", itr, name, avg_count, avg_prob, "---");
         }
         else
         {
             avg_land_prob = (land_squares > 0) ? ((double)sum_counts[itr] / (double)land_squares * 100.0) : 0.0;
-            printf("%3d  %-12s  %9.1f  %9.2f%%  %9.2f%%\n", itr, name, avg_count, avg_prob, avg_land_prob);
+            LOG_INFO(LOG_CAT_STU_WRLD, "%3d  %-12s  %9.1f  %9.2f%%  %9.2f%%", itr, name, avg_count, avg_prob, avg_land_prob);
         }
     }
 
-    printf("---  ------------  ---------  ----------  ----------\n");
-    printf("%-24s  %9d\n", "Squares per sim:", WORLD_SIZE);
-    printf("%-24s  %9d\n", "Simulations:", num_simulations);
+    LOG_INFO(LOG_CAT_STU_WRLD, "---  ------------  ---------  ----------  ----------");
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-24s  %9d", "Squares per sim:", WORLD_SIZE);
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-24s  %9d", "Simulations:", num_simulations);
 }
 
 /*
@@ -1654,9 +1655,9 @@ static void Calculate_Average_Terrain_Special_Probability(int num_simulations, i
 
     total_squares = num_simulations * WORLD_SIZE;
 
-    printf("\nAverage Terrain Special Probability (%s, %d simulations)\n", (wp == ARCANUS_PLANE) ? "Arcanus" : "Myrror", num_simulations);
-    printf("%-12s  %9s  %10s  %10s\n", "Special", "Avg Count", "Avg Prob %", "Avg Spcl %");
-    printf("------------  ---------  ----------  ----------\n");
+    LOG_INFO(LOG_CAT_STU_WRLD, "\nAverage Terrain Special Probability (%s, %d simulations)", (wp == ARCANUS_PLANE) ? "Arcanus" : "Myrror", num_simulations);
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %9s  %10s  %10s", "Special", "Avg Count", "Avg Prob %", "Avg Spcl %");
+    LOG_INFO(LOG_CAT_STU_WRLD, "------------  ---------  ----------  ----------");
 
     for(itr = 0; itr < special_names_count; itr++)
     {
@@ -1667,19 +1668,19 @@ static void Calculate_Average_Terrain_Special_Probability(int num_simulations, i
 
         if(special_names[itr].value == TS_NONE)
         {
-            printf("%-12s  %9.1f  %9.2f%%  %10s\n", special_names[itr].name, avg_count, avg_prob, "---");
+            LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %9.1f  %9.2f%%  %10s", special_names[itr].name, avg_count, avg_prob, "---");
         }
         else
         {
             avg_spcl_prob = (sum_special_squares > 0) ? ((double)count / (double)sum_special_squares * 100.0) : 0.0;
-            printf("%-12s  %9.1f  %9.2f%%  %9.2f%%\n", special_names[itr].name, avg_count, avg_prob, avg_spcl_prob);
+            LOG_INFO(LOG_CAT_STU_WRLD, "%-12s  %9.1f  %9.2f%%  %9.2f%%", special_names[itr].name, avg_count, avg_prob, avg_spcl_prob);
         }
     }
 
-    printf("------------  ---------  ----------  ----------\n");
-    printf("%-24s  %9d\n", "Squares per sim:", WORLD_SIZE);
-    printf("%-24s  %9.1f\n", "Avg special squares:", (double)sum_special_squares / (double)num_simulations);
-    printf("%-24s  %9d\n", "Simulations:", num_simulations);
+    LOG_INFO(LOG_CAT_STU_WRLD, "------------  ---------  ----------  ----------");
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-24s  %9d", "Squares per sim:", WORLD_SIZE);
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-24s  %9.1f", "Avg special squares:", (double)sum_special_squares / (double)num_simulations);
+    LOG_INFO(LOG_CAT_STU_WRLD, "%-24s  %9d", "Simulations:", num_simulations);
 }
 
 static void Allocate_Simulation(int simulations_to_run)

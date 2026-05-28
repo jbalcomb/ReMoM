@@ -34,7 +34,7 @@ Source	                Fields
 cp_staged_unit_count	Units currently parked at this landmass's stage point
 cp_enroute_unit_count	Units already ordered to head to the stage point but not yet there
 cp_drafted_unit_count	Pool size — number of units in G_Pushout_* (populated by AI_Stacks_Survey_Expedition_Forces)
-g_ai_minattackstack	    Minimum stack size threshold for triggering stage orders
+_ai_expedition_size_threshold	    Minimum stack size threshold for triggering stage orders
 
 G_Pushout_CX_IDs[itr]	Pool entry: index into _ai_own_stack_* (the stack this excess unit lives in)
 G_Pushout_UL_Indices[itr]	Pool entry: per-stack slot index — into _ai_own_stack_unit_list[CX][UL]
@@ -49,7 +49,7 @@ expedition force
 _ai_own_stacks
     cp_staged_unit_count
     cp_enroute_unit_count
-    g_ai_minattackstack
+    _ai_expedition_size_threshold
     ...
     cp_landmass_wx_array, cp_landmass_wy_array; but, also used by AI_Stacks_Garrison_Sites()
     ...
@@ -60,7 +60,7 @@ _ai_own_stack_expedition_staged_unit_count
 cp_enroute_unit_count
 _ai_own_stack_expedition_enroute_unit_count
 
-g_ai_minattackstack
+_ai_expedition_size_threshold
 _ai_own_stack_expedition_required_size
     ..._cont_stage_required_size
 
@@ -133,7 +133,7 @@ Called from [`AI_Set_Unit_Orders`](AIMOVE-AI_Set_Unit_Orders.md) at [line 289](.
 | `cp_staged_unit_count` | Units currently parked at this landmass's stage point |
 | `cp_enroute_unit_count` | Units already ordered to head to the stage point but not yet there |
 | `cp_drafted_unit_count` | Pool size — number of units in `G_Pushout_*` (populated by `AI_Stacks_Survey_Expedition_Forces`) |
-| `g_ai_minattackstack` | Minimum stack size threshold for triggering stage orders |
+| `_ai_expedition_size_threshold` | Minimum stack size threshold for triggering stage orders |
 | `MAX_STACK` (= 9) | Per-square stack cap |
 | `_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx]` | Landmass type — checked for `lmt_Leaveable` and `lmt_NoOwnCity` |
 | `G_Pushout_CX_IDs[itr]` | Pool entry: index into `_ai_own_stack_*` (the stack this excess unit lives in) |
@@ -183,7 +183,7 @@ If the staged stack is full (`MAX_STACK = 9` units already at the stage point), 
 
 ```c
 /* Check if we've already met our quota */
-if((cp_staged_unit_count + cp_enroute_unit_count) >= g_ai_minattackstack)
+if((cp_staged_unit_count + cp_enroute_unit_count) >= _ai_expedition_size_threshold)
 {
     return;
 }
@@ -195,20 +195,20 @@ if(
     &&
     (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] != lmt_NoOwnCity)
     &&
-    ((cp_staged_unit_count + cp_enroute_unit_count + cp_drafted_unit_count) < g_ai_minattackstack)
+    ((cp_staged_unit_count + cp_enroute_unit_count + cp_drafted_unit_count) < _ai_expedition_size_threshold)
 )
 {
     return;
 }
 ```
 
-**Guard A — quota already met.** If `(staged + enroute) >= g_ai_minattackstack`, return immediately. The expedition force at this landmass already has enough committed; no need to pull more.
+**Guard A — quota already met.** If `(staged + enroute) >= _ai_expedition_size_threshold`, return immediately. The expedition force at this landmass already has enough committed; no need to pull more.
 
 **Guard B — can't fill anyway AND landmass isn't a high-priority source.** Returns when ALL THREE hold:
 
 1. Landmass type is BELOW `lmt_Leaveable` — i.e., NOT one of the "desperate" types (`lmt_Leaveable` = evacuating, `lmt_NoTargets` = idle units available).
 2. Landmass type is NOT `lmt_NoOwnCity` — also a "desperate" type meaning we have no presence here.
-3. `(staged + enroute + drafted) < g_ai_minattackstack` — even adding all available drafts wouldn't reach the minimum.
+3. `(staged + enroute + drafted) < _ai_expedition_size_threshold` — even adding all available drafts wouldn't reach the minimum.
 
 Reading this together: **for the "normal" landmass types (`lmt_Unevaluated`, `lmt_Own`, `lmt_Contested`, `lmt_NoOwnCityAndAllyHasCity`), only commit drafts if they'd actually fill the expedition stack to its threshold.** For the "desperate" types (`lmt_Leaveable`, `lmt_NoTargets`, `lmt_NoOwnCity`), commit whatever drafts are available even if they don't fill it — the source comment phrases this as "assemble what you can?"
 
@@ -240,9 +240,9 @@ The `unit_idx` argument to `AI_Stacks_Order_Attack_Target_Or_Goto_Destination` i
 
 **`gap_count = MAX_STACK - cp_enroute_unit_count`** — how many more units would fit in the destination stack (capped at 9, minus those already enroute). Note this does NOT account for `cp_staged_unit_count` — only enroute units. So a stack at stage with 5 units already there, 2 enroute, would compute `gap_count = 9 - 2 = 7`, planning to send 7 more — overshooting the stack cap of 9 by 5. Maybe intentional (some enroute won't arrive) or another quirk.
 
-### Why `g_ai_minattackstack` matters here (forward-looking sizing)
+### Why `_ai_expedition_size_threshold` matters here (forward-looking sizing)
 
-The threshold `g_ai_minattackstack = (2 + _turn / 30)` (capped at MAX_STACK) is the **minimum stack size worth committing to an overseas expedition**, NOT the minimum stack size to attack right now. Phase 2's gates use it to decide whether staging more units is worth the opportunity cost (ferry slots, units committed in transit, defenders pulled from home). Early game (low threshold) → easy to qualify; late game (threshold = 9) → only landmasses already close to a full stack qualify, narrowing the stage pipeline.
+The threshold `_ai_expedition_size_threshold = (2 + _turn / 30)` (capped at MAX_STACK) is the **minimum stack size worth committing to an overseas expedition**, NOT the minimum stack size to attack right now. Phase 2's gates use it to decide whether staging more units is worth the opportunity cost (ferry slots, units committed in transit, defenders pulled from home). Early game (low threshold) → easy to qualify; late game (threshold = 9) → only landmasses already close to a full stack qualify, narrowing the stage pipeline.
 
 The attack itself happens turns later: ferried units arrive on the war landmass, get reclassified as `AISTK_Roamer`, and slot 9 `AI_Stacks_Roamers_Target_Or_Deploy` picks attack targets via `AI_Stacks_Assign_Target`. This function only assembles the force; the attack is downstream and contextual.
 

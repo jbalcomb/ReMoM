@@ -4,6 +4,7 @@
 #include "sdl3_Audio.h"
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
 
 #include "sdl3_KD.h"
 #include "sdl3_MOM.h"
@@ -53,12 +54,12 @@ void Startup_Platform(void)
 
     sdl3_ticks_startup = SDL_GetTicks();  // the number of milliseconds since SDL library initialization
 #ifdef STU_DEBUG
-    dbg_prn("sdl3_ticks_startup: %llu\n", sdl3_ticks_startup);
+    LOG_DEBUG(LOG_CAT_PFL, "sdl3_ticks_startup: %llu", sdl3_ticks_startup);
 #endif
 
     sdl3_performance_counter = SDL_GetPerformanceCounter();
 #ifdef STU_DEBUG
-    dbg_prn("sdl3_performance_counter: %llu\n", sdl3_performance_counter);
+    LOG_DEBUG(LOG_CAT_PFL, "sdl3_performance_counter: %llu", sdl3_performance_counter);
 #endif
 
     w = sdl3_window_width;
@@ -73,7 +74,7 @@ void Startup_Platform(void)
     {
         int actual_w, actual_h;
         SDL_GetWindowSize(sdl3_window, &actual_w, &actual_h);
-        fprintf(stderr, "CLAUDE: requested window %dx%d, got %dx%d\n", w, h, actual_w, actual_h);
+        LOG_INFO(LOG_CAT_SDL3_INIT, "CLAUDE: requested window %dx%d, got %dx%d", w, h, actual_w, actual_h);
         assert(actual_w == w && "SDL created window with wrong width");
         assert(actual_h == h && "SDL created window with wrong height");
     }

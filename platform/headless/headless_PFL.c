@@ -10,6 +10,8 @@
 #include "../../platform/include/Platform_Keys.h"
 #include "../../platform/include/Platform_Replay.h"
 
+#include "../../STU/src/STU_LOG.h"
+
 #include <stdio.h>
 
 
@@ -38,12 +40,12 @@ void Platform_Register_Frame_Callback(void (*callback)(void))
 
 void Startup_Platform(void)
 {
-    fprintf(stderr, "[headless] Platform started (no display, no audio)\n");
+    LOG_INFO(LOG_CAT_HEADLESS_PFL, "[headless] Platform started (no display, no audio)");
 }
 
 void Shutdown_Platform(void)
 {
-    fprintf(stderr, "[headless] Platform shutdown\n");
+    LOG_INFO(LOG_CAT_HEADLESS_PFL, "[headless] Platform shutdown");
 }
 
 int Platform_Get_Scale(void)
@@ -106,15 +108,15 @@ void Platform_Event_Handler(void)
         headless_event_handler_first_call = 0;
         if (Platform_Replay_Active())
         {
-            fprintf(stderr, "[headless] Platform_Event_Handler: input mode = REPLAY (.RMR)\n");
+            LOG_INFO(LOG_CAT_HEADLESS_PFL, "[headless] Platform_Event_Handler: input mode = REPLAY (.RMR)");
         }
         else if (platform_frame_callback != NULL)
         {
-            fprintf(stderr, "[headless] Platform_Event_Handler: input mode = SCENARIO (.hms artificial human player)\n");
+            LOG_INFO(LOG_CAT_HEADLESS_PFL, "[headless] Platform_Event_Handler: input mode = SCENARIO (.hms artificial human player)");
         }
         else
         {
-            fprintf(stderr, "[headless] Platform_Event_Handler: input mode = NONE (no input source)\n");
+            LOG_INFO(LOG_CAT_HEADLESS_PFL, "[headless] Platform_Event_Handler: input mode = NONE (no input source)");
         }
     }
 
@@ -136,6 +138,8 @@ void Platform_Event_Handler(void)
     {
         platform_frame_callback();
     }
+
+    STU_Log_Pump();
 
     /* Record: capture input state (including artificial human player actions). */
     if (Platform_Record_Active())

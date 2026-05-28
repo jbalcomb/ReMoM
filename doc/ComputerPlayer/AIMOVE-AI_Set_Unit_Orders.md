@@ -9,7 +9,7 @@ first proc in ovr158
 
 # AI_Set_Unit_Orders — Walkthrough
 
-**Location:** [MoM/src/AIMOVE.c:131](../../MoM/src/AIMOVE.c#L131) (~96 lines, ends line 226).
+**Location:** [MoM/src/AIMOVE.c:203](../../MoM/src/AIMOVE.c#L203) (~121 lines, ends [line 323](../../MoM/src/AIMOVE.c#L323)).
 **WZD overlay:** ovr158, p01
 **drake178 name:** `AI_SetUnitOrders()`
 
@@ -29,7 +29,7 @@ cp_landmass_wy_array   = &_ai_continents.plane[wp].player[player_idx].wy_array[0
 cp_landmass_type_array = &_ai_continents.plane[wp].player[player_idx].type_array[0];
 ```
 
-It also writes `ai_human_hostility` (boolean) and `g_ai_minattackstack` (turn-scaled stack size threshold), and resets `_ai_ferry_count = 0`.
+It also writes `ai_human_hostility` (boolean) and `_ai_expedition_size_threshold` (turn-scaled stack size threshold), and resets `_ai_ferry_count = 0`.
 
 ## When it's called
 
@@ -49,7 +49,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
 ## Phase 1 — Hostility flag
 
 ```c
-// AIMOVE.c:137-149
+// AIMOVE.c:209-221
 ai_human_hostility = ST_FALSE;
 if(
     (
@@ -70,13 +70,13 @@ if(
 ## Phase 2 — Per-turn setup
 
 ```c
-// AIMOVE.c:151-157
+// AIMOVE.c:223-230
 EMM_Map_CONTXXX__WIP();
 _ai_ferry_count = 0;
-g_ai_minattackstack = (2 + (_turn / 30));
-if(g_ai_minattackstack > MAX_STACK)
+_ai_expedition_size_threshold = (2 + (_turn / 30));
+if(_ai_expedition_size_threshold > MAX_STACK)
 {
-    g_ai_minattackstack = MAX_STACK;
+    _ai_expedition_size_threshold = MAX_STACK;
 }
 ```
 
@@ -88,7 +88,7 @@ if(g_ai_minattackstack > MAX_STACK)
 ## Phase 3 — Global pre-pass (plane-agnostic)
 
 ```c
-// AIMOVE.c:159-163
+// AIMOVE.c:232-237
 AI_Disband_To_Balance_Budget(player_idx);
 AI_Shift_Off_Home_Plane(player_idx);
 AI_Move_Out_Boats();
@@ -102,14 +102,14 @@ AI_Find_Opportunity_City_Target(wp, player_idx);
 3. `AI_Move_Out_Boats` — redistribute transports.
 4. `AI_Find_Opportunity_City_Target` — look for an opportunity-city to target.
 
-### OGBUG — `wp` passed-before-init (line 162)
+### OGBUG — `wp` passed-before-init (line 237)
 
-`AI_Find_Opportunity_City_Target(wp, player_idx)` is called BEFORE the plane loop starts. At this point `wp` still holds its initializer value `0` (Arcanus). The function only ever evaluates the Arcanus plane this turn — Myrror is never considered for opportunity-city targets in this pass. Inline OGBUG. Preserved faithful-to-dasm.
+`AI_Find_Opportunity_City_Target(wp, player_idx)` is called BEFORE the plane loop starts. At this point `wp` still holds its initializer value `0` (Arcanus). The function only ever evaluates the Arcanus plane this turn — Myrror is never considered for opportunity-city targets in this pass. **IDA-confirmed OG-faithful** — OG asm at `loc_EBE34-` has `mov [bp+wp], 0` AFTER the call (only initializes wp post-call), so the actual OG call passes whatever happened to be on the stack frame at function entry. Production's explicit `int16_t wp = 0;` reproduces the same observable (wp == 0 at the call site) via a different timing. Preserved faithful-to-dasm.
 
 ## Phase 4 — Plane × landmass dispatch loop
 
 ```c
-// AIMOVE.c:165-223
+// AIMOVE.c:240-318
 for(wp = 0; wp < NUM_PLANES; wp++)
 {
     cp_landmass_wx_array   = &_ai_continents.plane[wp].player[player_idx].wx_array[0];
@@ -173,7 +173,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
 
 | Order | Function | Purpose (brief) |
 |---|---|---|
-| 1 | `AI_Stacks_Init_Build_Target_Order` ...ld the per-landmass target list + stack assignments. |
+| 1 | `AI_Stacks_Init_Build_Target_Order` | Build the per-landmass target list + stack assignments. |
 | 2 | `AI_Stacks_Move_Out_NonMilitary_Garrisoned` | Push garrison builds. |
 | 3 | `AI_Stacks_Survey_Expedition_Forces` | Inventory excess units (for later disband). |
 | 4 | `AI_Do_Meld` | Spirit-meld at nodes. |
@@ -182,17 +182,17 @@ for(wp = 0; wp < NUM_PLANES; wp++)
 | 7 | `AI_Do_RoadBuild` | Issue road-build orders. |
 | 8 | `AI_Build_Target_List` | (Re-)build the target list. |
 | 9 | `AI_Stacks_Roamers_Target_Or_Deploy` | Move stray "roamer" stacks. |
-| 13 | `AI_Stacks_Stage_Expedition_Forces` | Top up the stage point with units (always). |
+| 12 | `AI_Stacks_Stage_Expedition_Forces` | Top up the stage point with units (always). |
 
 ### Per-landmass conditional gates
 
-| Function | Gate | Notes |
-|---|---|---|
-| `AI_Stacks_Order_To_War_Landmass` (10) | `lmt_Leaveable` or `lmt_Own` or `lmt_NoOwnCityAndAllyHasCity` or `lmt_NoOwnCity` | "almost just NOT `lmt_Contested`" — comment in source. Skips contested-only. |
-| `AI_Stacks_Relocate_Roamers` (11) | `lmt_Leaveable` or `lmt_Own` | Home-base stage — only for landmasses we hold or are abandoning. |
-| `AI_Stacks_Garrison_Sites` (14) | `lmt_Own` or `lmt_Contested` or `lmt_Leaveable` | Garrison maintenance — needs a city to garrison. Excludes `lmt_NoOwnCity` / `lmt_NoOwnCityAndAllyHasCity`. |
+| Function | Slot | Gate | Notes |
+|---|---|---|---|
+| `AI_Stacks_Order_To_War_Landmass` | 10 | `lmt_Leaveable` or `lmt_Own` or `lmt_NoOwnCityAndAllyHasCity` or `lmt_NoOwnCity` | "almost just NOT `lmt_Contested`" — comment in source. Skips contested-only. |
+| `AI_Stacks_Relocate_Roamers` | 11 | `lmt_Leaveable` or `lmt_Own` | Home-base stage — only for landmasses we hold or are abandoning. |
+| `AI_Stacks_Garrison_Sites` | 13 | `lmt_Own` or `lmt_Contested` or `lmt_Leaveable` | Garrison maintenance — needs a city to garrison. Excludes `lmt_NoOwnCity` / `lmt_NoOwnCityAndAllyHasCity`. |
 
-(Numbers continue the dispatch-order column; gaps are where the conditional dispatch slot sits.)
+(Slots 10 / 11 / 13 are gated; slot 12 is unconditional and listed in the table above.)
 
 ### Per-plane post-landmass passes
 
@@ -203,7 +203,7 @@ After all landmasses on a plane finish, two non-landmass passes run:
 ## Phase 5 — Cleanup
 
 ```c
-// AIMOVE.c:225
+// AIMOVE.c:321
 EMM_Map_DataH();
 ```
 
@@ -213,7 +213,7 @@ Restores the default data-segment mapping in the EMS page frame, undoing the `EM
 
 | # | Severity | Line | Description |
 |---|---|---|---|
-| OGBUG | Medium | 162 (Phase 3) | `AI_Find_Opportunity_City_Target(wp, ...)` called with `wp` still at its initializer (0). Only Arcanus is ever evaluated for opportunity-city targets. Inline OGBUG. |
+| OGBUG | Medium | 237 (Phase 3) | `AI_Find_Opportunity_City_Target(wp, ...)` called with `wp` still at its initializer (0). Only Arcanus is ever evaluated for opportunity-city targets. **IDA-confirmed OG-faithful.** |
 
 All other "many many BUGs" referenced in the function's preamble comment live in the per-landmass callees, not in the dispatcher itself.
 

@@ -5,12 +5,12 @@
 #include "../../MoX/src/MOX_TYPE.h"
 
 #include "STU_DBG.h"
-void dbg_prn(const char * fmt, ...);  // HACK needs to not be behind #ifdef STU_DEBUG
 
 #include "STU_SND.h"
 
 #include <stdlib.h>     /* abs(); SDL_itoa(); malloc(); */
 #include <string.h>
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -139,50 +139,50 @@ void Parse_VOC_LBX_Entry(char * lbx_file_name, int16_t lbx_entry_num)
     uint16_t lbx_entry_type;
     uint16_t lbx_entry_subtype;
 
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: %s, %d\n", __FILE__, __LINE__, lbx_file_name, lbx_entry_num);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: %s, %d", __FILE__, __LINE__, lbx_file_name, lbx_entry_num);
 
     lbx_entry_buf = LBX_Load(lbx_file_name, lbx_entry_num);
     lbx_entry_len = lbxload_entry_length;
 
-    dbg_prn("lbx_entry_len: %d\n", lbx_entry_len);
+    LOG_DEBUG(LOG_CAT_GENERAL, "lbx_entry_len: %d", lbx_entry_len);
 
-    dbg_prn("lbx_entry_buf[0]: %04X\n", GET_2B_OFS(lbx_entry_buf, 0));
-    dbg_prn("lbx_entry_buf[2]: %04X\n", GET_2B_OFS(lbx_entry_buf, 2));
-    dbg_prn("lbx_entry_buf[4]: %04X\n", GET_2B_OFS(lbx_entry_buf, 4));
-    dbg_prn("lbx_entry_buf[6]: %04X\n", GET_2B_OFS(lbx_entry_buf, 6));
+    LOG_DEBUG(LOG_CAT_GENERAL, "lbx_entry_buf[0]: %04X", GET_2B_OFS(lbx_entry_buf, 0));
+    LOG_DEBUG(LOG_CAT_GENERAL, "lbx_entry_buf[2]: %04X", GET_2B_OFS(lbx_entry_buf, 2));
+    LOG_DEBUG(LOG_CAT_GENERAL, "lbx_entry_buf[4]: %04X", GET_2B_OFS(lbx_entry_buf, 4));
+    LOG_DEBUG(LOG_CAT_GENERAL, "lbx_entry_buf[6]: %04X", GET_2B_OFS(lbx_entry_buf, 6));
 
     lbx_entry_type = GET_2B_OFS(lbx_entry_buf, 0);
-    dbg_prn("lbx_entry_type: %04X\n", lbx_entry_type);
+    LOG_DEBUG(LOG_CAT_GENERAL, "lbx_entry_type: %04X", lbx_entry_type);
     if(lbx_entry_type != LBX_ENTRY_TYPE_SOUND)
     {
-        dbg_prn("ERROR: LBX Entry is not a sound type  {lbx_entry_type = %04X}\n", lbx_entry_type);
+        LOG_DEBUG(LOG_CAT_GENERAL, "ERROR: LBX Entry is not a sound type  {lbx_entry_type = %04X}", lbx_entry_type);
         return;
     }
 
     lbx_entry_subtype = GET_2B_OFS(lbx_entry_buf, 2);
-    dbg_prn("lbx_entry_subtype: %04X\n", lbx_entry_subtype);
+    LOG_DEBUG(LOG_CAT_GENERAL, "lbx_entry_subtype: %04X", lbx_entry_subtype);
     if(lbx_entry_subtype != LBX_ENTRY_TYPE_SOUND_VOC)
     {
-        dbg_prn("ERROR: LBX Entry is not a VOC sound type  {lbx_entry_subtype = %04X}\n", lbx_entry_subtype);
+        LOG_DEBUG(LOG_CAT_GENERAL, "ERROR: LBX Entry is not a VOC sound type  {lbx_entry_subtype = %04X}", lbx_entry_subtype);
         return;
     }
 
     voc_buf = (lbx_entry_buf + LEN_LBX_SND_HDR);
     voc_len = (lbx_entry_len - LEN_LBX_SND_HDR);
 
-    dbg_prn("voc_buf[0]: %04X\n", GET_2B_OFS(voc_buf, 0));
-    dbg_prn("voc_buf[2]: %04X\n", GET_2B_OFS(voc_buf, 2));
-    dbg_prn("voc_buf[4]: %04X\n", GET_2B_OFS(voc_buf, 4));
-    dbg_prn("voc_buf[6]: %04X\n", GET_2B_OFS(voc_buf, 6));
+    LOG_DEBUG(LOG_CAT_GENERAL, "voc_buf[0]: %04X", GET_2B_OFS(voc_buf, 0));
+    LOG_DEBUG(LOG_CAT_GENERAL, "voc_buf[2]: %04X", GET_2B_OFS(voc_buf, 2));
+    LOG_DEBUG(LOG_CAT_GENERAL, "voc_buf[4]: %04X", GET_2B_OFS(voc_buf, 4));
+    LOG_DEBUG(LOG_CAT_GENERAL, "voc_buf[6]: %04X", GET_2B_OFS(voc_buf, 6));
     // ...
-    dbg_prn("voc_buf[18]: %04X\n", GET_2B_OFS(voc_buf, 18));
-    dbg_prn("voc_buf[20]: %04X\n", GET_2B_OFS(voc_buf, 20));
-    dbg_prn("voc_buf[22]: %04X\n", GET_2B_OFS(voc_buf, 22));
-    dbg_prn("voc_buf[24]: %04X\n", GET_2B_OFS(voc_buf, 24));
+    LOG_DEBUG(LOG_CAT_GENERAL, "voc_buf[18]: %04X", GET_2B_OFS(voc_buf, 18));
+    LOG_DEBUG(LOG_CAT_GENERAL, "voc_buf[20]: %04X", GET_2B_OFS(voc_buf, 20));
+    LOG_DEBUG(LOG_CAT_GENERAL, "voc_buf[22]: %04X", GET_2B_OFS(voc_buf, 22));
+    LOG_DEBUG(LOG_CAT_GENERAL, "voc_buf[24]: %04X", GET_2B_OFS(voc_buf, 24));
 
     if(memcmp(voc_buf, cl_voc_id, sizeof(cl_voc_id)))
     {
-        dbg_prn("BAD VOC 1!!\n");
+        LOG_DEBUG(LOG_CAT_GENERAL, "BAD VOC 1!!");
         return;
     }
     // if((voc_len < HDR_VOC_LEN) || (memcmp(voc_buf, HDR_VOC, HDR_VOC_LEN) != 0))
@@ -191,26 +191,26 @@ void Parse_VOC_LBX_Entry(char * lbx_file_name, int16_t lbx_entry_num)
     //     return;
     // }
     voc_header_length = GET_2B_OFS(voc_buf, 20);
-    dbg_prn("voc_header_length: %04X\n", voc_header_length);
+    LOG_DEBUG(LOG_CAT_GENERAL, "voc_header_length: %04X", voc_header_length);
     if(voc_header_length != HDR_VOC_LENGTH)
     {
-        dbg_prn("ERROR:  bad VOC header length");
+        LOG_DEBUG(LOG_CAT_GENERAL, "ERROR:  bad VOC header length");
         return;
     }
 
     voc_header_version = GET_2B_OFS(voc_buf, 22);
-    dbg_prn("voc_header_version: %04X\n", voc_header_version);
+    LOG_DEBUG(LOG_CAT_GENERAL, "voc_header_version: %04X", voc_header_version);
     if(voc_header_version != HDR_VOC_VERSION)
     {
-        dbg_prn("ERROR:  bad VOC header version");
+        LOG_DEBUG(LOG_CAT_GENERAL, "ERROR:  bad VOC header version");
         return;
     }
 
     voc_header_check = GET_2B_OFS(voc_buf, 24);
-    dbg_prn("voc_header_check: %02X\n", voc_header_check);
+    LOG_DEBUG(LOG_CAT_GENERAL, "voc_header_check: %02X", voc_header_check);
     if(voc_header_check != HDR_VOC_CHECK)
     {
-        dbg_prn("ERROR:  bad VOC header check");
+        LOG_DEBUG(LOG_CAT_GENERAL, "ERROR:  bad VOC header check");
         return;
     }
 
@@ -226,14 +226,14 @@ void Parse_VOC_LBX_Entry(char * lbx_file_name, int16_t lbx_entry_num)
     {
         case 0:  /* ;terminator? */
         {
-            dbg_prn("block type: terminator");
+            LOG_DEBUG(LOG_CAT_GENERAL, "block type: terminator");
         } break;
         case 1:  /* ;new voice block? */
         {
             block_sample_rate = GET_1B_OFS(block_ptr, 4);
-            dbg_prn("block_sample_rate: %d\n", block_sample_rate);
+            LOG_DEBUG(LOG_CAT_GENERAL, "block_sample_rate: %d", block_sample_rate);
             block_codec_id = GET_1B_OFS(block_ptr, 5);
-            dbg_prn("block_codec_id: %d\n", block_codec_id);
+            LOG_DEBUG(LOG_CAT_GENERAL, "block_codec_id: %d", block_codec_id);
             // CLSBDK20  long voicesize;
             //           voicesize = *(buffer+3) ;
             //           voicesize <<= 16 ;
@@ -243,14 +243,14 @@ void Parse_VOC_LBX_Entry(char * lbx_file_name, int16_t lbx_entry_num)
             // voice_len <<= 16;
             // voice_len += *(uint16_t *)(block_ptr+1);
             voice_len = (GET_3B_OFS(block_ptr, 1) - 2);
-            dbg_prn("voice_len: %d\n", voice_len);
+            LOG_DEBUG(LOG_CAT_GENERAL, "voice_len: %d", voice_len);
             block_ptr += 6;
 
         } break;
         case 2:  /* ;continued voice block? */
         {
             voice_len = (GET_3B_OFS(block_ptr, 0) - 2);
-            dbg_prn("voice_len: %d\n", voice_len);
+            LOG_DEBUG(LOG_CAT_GENERAL, "voice_len: %d", voice_len);
             block_ptr += 4;
 
         } break;
@@ -284,7 +284,7 @@ void Parse_VOC_LBX_Entry(char * lbx_file_name, int16_t lbx_entry_num)
         } break;
         default:
         {
-            dbg_prn("ERROR:  bad VOC type");
+            LOG_DEBUG(LOG_CAT_GENERAL, "ERROR:  bad VOC type");
             STU_DEBUG_BREAK();
         }
 
@@ -377,34 +377,34 @@ int STU_Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t **
     // voc_rvr = &voc_buf[16+26];
     while(voc_len)
     {
-        printf("voc_len: %u\n", voc_len);
+        LOG_INFO(LOG_CAT_STU_SND, "voc_len: %u", voc_len);
         
         voc_block_type = voc_rvr[0];
-        printf("voc_block_type: %u\n", voc_block_type);
+        LOG_INFO(LOG_CAT_STU_SND, "voc_block_type: %u", voc_block_type);
         
         switch(voc_block_type)
         {
             case 0:  /* VOC_TYPE_EOF */
             {
-                printf("VOC_TYPE_EOF\n");
+                LOG_INFO(LOG_CAT_STU_SND, "VOC_TYPE_EOF");
                 voc_len -= 1;  // -1 for block type
             } break;
             case 1:  /* VOC_TYPE_VOICE_DATA */
             {
-                printf("VOC_TYPE_VOICE_DATA\n");
+                LOG_INFO(LOG_CAT_STU_SND, "VOC_TYPE_VOICE_DATA");
                 voc_block_sample_rate = voc_rvr[4];
-                printf("voc_block_sample_rate: %u\n", voc_block_sample_rate);
+                LOG_INFO(LOG_CAT_STU_SND, "voc_block_sample_rate: %u", voc_block_sample_rate);
                 voc_block_codec_id = voc_rvr[5];
-                printf("voc_block_codec_id: %u\n", voc_block_codec_id);
+                LOG_INFO(LOG_CAT_STU_SND, "voc_block_codec_id: %u", voc_block_codec_id);
                 voc_block_size = voc_rvr[3] << 16;
                 voc_block_size |= voc_rvr[2] << 8;
                 voc_block_size |= voc_rvr[1];
                 voc_block_size -= 2;  // -2 for sample rate and codec id
-                printf("voc_block_size: %u\n", voc_block_size);
+                LOG_INFO(LOG_CAT_STU_SND, "voc_block_size: %u", voc_block_size);
                 voc_len -= 6;  // -6 for block type, block size, sample rate, and codec id
                 voc_rvr += 6;  // +6 for block type, block size, sample rate, and codec id
                 voc_block_frequency = 1000000 / (256 - voc_block_sample_rate);  // sample rate in hertz
-                printf("voc_block_frequency: %u\n", voc_block_frequency);
+                LOG_INFO(LOG_CAT_STU_SND, "voc_block_frequency: %u", voc_block_frequency);
                 // wav_frequency = voc_block_frequency;
                 if(voc_block_codec_id != 0)
                 {
@@ -425,19 +425,19 @@ int STU_Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t **
         }
     }
     
-    printf("wav_sample_count: %u\n", wav_sample_count);
+    LOG_INFO(LOG_CAT_STU_SND, "wav_sample_count: %u", wav_sample_count);
     
     wav_data_size = wav_sample_count * wav_sample_frame_size;
     
-    printf("wav_data_size: %u\n", wav_data_size);
+    LOG_INFO(LOG_CAT_STU_SND, "wav_data_size: %u", wav_data_size);
     
     wav_samples_per_second = 1000000 / (256 - voc_block_sample_rate);  // sample rate (frequency, in hertz)
 
-    printf("wav_samples_per_second: %u\n", wav_samples_per_second);
+    LOG_INFO(LOG_CAT_STU_SND, "wav_samples_per_second: %u", wav_samples_per_second);
 
     wav_bytes_per_second = (wav_samples_per_second * wav_sample_frame_size * wav_channel_count);
 
-    printf("wav_bytes_per_second: %u\n", wav_bytes_per_second);
+    LOG_INFO(LOG_CAT_STU_SND, "wav_bytes_per_second: %u", wav_bytes_per_second);
 
     // // wav_header[0x04] = ((44 - 8) + wav_data_size);  /* File size (integer)  (total file size - 8 bytes), in bytes (32-bit integer) */
     // wav_header[0x04] = ((((44 - 8) + wav_data_size) >>  0) & 0x000000FF);
@@ -515,7 +515,7 @@ int FUU_Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, int16_t **
     int16_t sample_16bit_signed;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Convert_VOC_To_WAV()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Convert_VOC_To_WAV()", __FILE__, __LINE__);
 #endif
 
     if((voc_buf == NULL) || (voc_len <= 0))
@@ -562,22 +562,22 @@ int FUU_Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, int16_t **
             } break;
             case VOC_TYPE_VOICE_DATA:
             {
-                dbg_prn("BEGIN: VOC_TYPE_VOICE_DATA\n");
+                LOG_DEBUG(LOG_CAT_GENERAL, "BEGIN: VOC_TYPE_VOICE_DATA");
 
                 voc_block_sample_rate = GET_1B_OFS(voc_ptr, 4);
-                dbg_prn("voc_block_sample_rate: %d\n", voc_block_sample_rate);
+                LOG_DEBUG(LOG_CAT_GENERAL, "voc_block_sample_rate: %d", voc_block_sample_rate);
                 voc_block_codec_id = GET_1B_OFS(voc_ptr, 5);
-                dbg_prn("voc_block_codec_id: %d\n", voc_block_codec_id);
+                LOG_DEBUG(LOG_CAT_GENERAL, "voc_block_codec_id: %d", voc_block_codec_id);
                 voc_block_size = (GET_3B_OFS(voc_ptr, 1) - 2);  // -2 for sample rate and codec id
-                dbg_prn("voc_block_size: %d\n", voc_block_size);
+                LOG_DEBUG(LOG_CAT_GENERAL, "voc_block_size: %d", voc_block_size);
                 voc_len -= 6;  // -6 for block type, block size, sample rate, and codec id
                 voc_ptr += 6;  // +6 for block type, block size, sample rate, and codec id
     
                 voc_block_frequency = 1000000 / (256 - voc_block_sample_rate);  // sample rate in hertz
-                dbg_prn("voc_block_frequency: %d\n", voc_block_frequency);
+                LOG_DEBUG(LOG_CAT_GENERAL, "voc_block_frequency: %d", voc_block_frequency);
                 // TODO  if voc_block_frequency != wav_frequency ... override / libsamplerate
                 wav_frequency = voc_block_frequency;
-                dbg_prn("wav_frequency: %d\n", wav_frequency);
+                LOG_DEBUG(LOG_CAT_GENERAL, "wav_frequency: %d", wav_frequency);
 
                 if(voc_block_codec_id != 0)
                 {
@@ -615,7 +615,7 @@ int FUU_Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, int16_t **
                     *wav_ptr++ = sample_16bit_signed;
                 }
 
-                dbg_prn("END: VOC_TYPE_VOICE_DATA\n");
+                LOG_DEBUG(LOG_CAT_GENERAL, "END: VOC_TYPE_VOICE_DATA");
             } break;
             case VOC_TYPE_VOICE_DATA_CONT:
             {
@@ -679,7 +679,7 @@ int FUU_Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, int16_t **
     STU_DEBUG_BREAK();
 
 success:
-    dbg_prn("Convert_VOC_To_WAV()  success:\n");
+    LOG_DEBUG(LOG_CAT_GENERAL, "Convert_VOC_To_WAV()  success:");
 
     wav_data_size = wav_sample_count * 2 * 2;
 
@@ -722,19 +722,19 @@ success:
     *out_wav_len = (LEN_WAV_HDR + wav_data_size);
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Convert_VOC_To_WAV()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Convert_VOC_To_WAV()", __FILE__, __LINE__);
 #endif
 
     return ST_TRUE;
 
 failure:
-    dbg_prn("Convert_VOC_To_WAV()  failure:\n");
+    LOG_DEBUG(LOG_CAT_GENERAL, "Convert_VOC_To_WAV()  failure:");
     free(wav_data);
     *out_wav_buf = NULL;
     *out_wav_len = 0;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Convert_VOC_To_WAV()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Convert_VOC_To_WAV()", __FILE__, __LINE__);
 #endif
 
     return ST_FALSE;

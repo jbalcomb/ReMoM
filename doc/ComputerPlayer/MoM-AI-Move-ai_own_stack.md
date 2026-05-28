@@ -59,7 +59,7 @@ includes a subset:
     * XREF:
         * AI_Stacks_Init_Build_Target_Order()
         * AI_Stacks_Stage_Expedition_Forces()
-* g_ai_minattackstack
+* _ai_expedition_size_threshold
     * XREF:
         * AI_Set_Unit_Orders()
         * AI_Stacks_Stage_Expedition_Forces()

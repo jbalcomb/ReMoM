@@ -1221,6 +1221,11 @@ int16_t _wall_rise_on;
 // WZD dseg:9274
 // MoO2  Module: MoX  _combat_data
 // MoO2  Module: MoX  _combat_grid
+/*
+never allocated for Strategic_Combat__WIP?
+...crashes at Calc_Battlefield_Bonuses(combat_structure);
+
+*/
 struct s_BATTLEFIELD * battlefield;
 
 /*

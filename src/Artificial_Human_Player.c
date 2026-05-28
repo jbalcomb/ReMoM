@@ -28,6 +28,7 @@
 #ifdef STU_DEBUG
 #include "../STU/src/STU_DBG.h"
 #endif
+#include "../STU/src/STU_LOG.h"
 
 
 
@@ -268,7 +269,7 @@ static void Expand_Vars(const char *src, char *dst, size_t dst_size)
                 }
                 else
                 {
-                    fprintf(stderr, "[HeMoM Player] unknown variable: $%s\n", name);
+                    LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] unknown variable: $%s", name);
                     /* Fall through — emit the literal `$` and keep going. */
                 }
             }
@@ -294,8 +295,8 @@ static void Populate_Builtin_Vars(void)
     }
     Set_Var("SAVE_NAME", save_name);
 #ifdef STU_DEBUG
-    dbg_prn("[HeMoM Player] $SAVE_NAME = %s\n", save_name);
-    trc_prn("[HeMoM Player] $SAVE_NAME = %s\n", save_name);
+    LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] $SAVE_NAME = %s", save_name);
+    LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] $SAVE_NAME = %s", save_name);
 #endif
 }
 
@@ -352,10 +353,10 @@ int HeMoM_Player_Load_Scenario(const char *filepath)
 
     Populate_Builtin_Vars();
 
-    fprintf(stderr, "[HeMoM Player] Loading scenario: %s\n", filepath);
+    LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] Loading scenario: %s", filepath);
 #ifdef STU_DEBUG
-    dbg_prn("[HeMoM Player] Loading scenario: %s\n", filepath);
-    trc_prn("[HeMoM Player] Loading scenario: %s\n", filepath);
+    LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] Loading scenario: %s", filepath);
+    LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] Loading scenario: %s", filepath);
 #endif
 
     rc = Parse_Scenario_File(filepath, 0);
@@ -363,15 +364,15 @@ int HeMoM_Player_Load_Scenario(const char *filepath)
 
     if (hemom_action_count == 0)
     {
-        fprintf(stderr, "[HeMoM Player] Scenario is empty\n");
+        LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] Scenario is empty");
         return 1;
     }
 
     hemom_active = 1;
-    fprintf(stderr, "[HeMoM Player] Loaded %d actions\n", hemom_action_count);
+    LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] Loaded %d actions", hemom_action_count);
 #ifdef STU_DEBUG
-    dbg_prn("[HeMoM Player] Loaded %d actions\n", hemom_action_count);
-    trc_prn("[HeMoM Player] Loaded %d actions\n", hemom_action_count);
+    LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] Loaded %d actions", hemom_action_count);
+    LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] Loaded %d actions", hemom_action_count);
 #endif
     return 0;
 }
@@ -428,20 +429,20 @@ static int Parse_Scenario_File(const char *filepath, int depth)
 
     if (depth >= HEMOM_MAX_INCLUDE_DEPTH)
     {
-        fprintf(stderr, "[HeMoM Player] include depth exceeded (limit %d) at %s\n", HEMOM_MAX_INCLUDE_DEPTH, filepath);
+        LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] include depth exceeded (limit %d) at %s", HEMOM_MAX_INCLUDE_DEPTH, filepath);
         return 1;
     }
 
     fp = stu_fopen_ci(filepath, "r");
     if (fp == NULL)
     {
-        fprintf(stderr, "[HeMoM Player] Could not open scenario: %s\n", filepath);
+        LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] Could not open scenario: %s", filepath);
         return 1;
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("[HeMoM Player] Parsing: %s (depth=%d)\n", filepath, depth);
-    trc_prn("[HeMoM Player] Parsing: %s (depth=%d)\n", filepath, depth);
+    LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] Parsing: %s (depth=%d)", filepath, depth);
+    LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] Parsing: %s (depth=%d)", filepath, depth);
 #endif
 
     while (fgets(line, sizeof(line), fp) != NULL && hemom_action_count < HEMOM_MAX_ACTIONS)
@@ -473,8 +474,8 @@ static int Parse_Scenario_File(const char *filepath, int depth)
             int   sub_rc;
             Resolve_Include_Path(filepath, raw, resolved, sizeof(resolved));
 #ifdef STU_DEBUG
-            dbg_prn("[HeMoM Player] %s:%d: include %s -> %s\n", filepath, line_num, raw, resolved);
-            trc_prn("[HeMoM Player] %s:%d: include %s -> %s\n", filepath, line_num, raw, resolved);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] %s:%d: include %s -> %s", filepath, line_num, raw, resolved);
+            LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] %s:%d: include %s -> %s", filepath, line_num, raw, resolved);
 #endif
             sub_rc = Parse_Scenario_File(resolved, depth + 1);
             if (sub_rc != 0)
@@ -494,7 +495,7 @@ static int Parse_Scenario_File(const char *filepath, int depth)
             uint64_t duration_ms = Parse_Wait_Duration_Ms(raw);
             if (duration_ms == 0)
             {
-                fprintf(stderr, "[HeMoM Player] %s:%d: bad wait duration (need NNNf|NNNms|NNNs|NNNm): %s\n", filepath, line_num, raw);
+                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] %s:%d: bad wait duration (need NNNf|NNNms|NNNs|NNNm): %s", filepath, line_num, raw);
                 continue;
             }
             act->type = act_WAIT;
@@ -541,7 +542,7 @@ static int Parse_Scenario_File(const char *filepath, int depth)
             act->type = act_CLICK;
             if (sscanf(p + 6, "%hd %hd", &act->x, &act->y) != 2)
             {
-                fprintf(stderr, "[HeMoM Player] %s:%d: bad click coords: %s\n", filepath, line_num, p);
+                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] %s:%d: bad click coords: %s", filepath, line_num, p);
                 continue;
             }
             hemom_action_count++;
@@ -551,7 +552,7 @@ static int Parse_Scenario_File(const char *filepath, int depth)
             act->type = act_RCLICK;
             if (sscanf(p + 7, "%hd %hd", &act->x, &act->y) != 2)
             {
-                fprintf(stderr, "[HeMoM Player] %s:%d: bad rclick coords: %s\n", filepath, line_num, p);
+                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] %s:%d: bad rclick coords: %s", filepath, line_num, p);
                 continue;
             }
             hemom_action_count++;
@@ -585,8 +586,8 @@ static int Parse_Scenario_File(const char *filepath, int depth)
             Expand_Vars(raw, expanded, sizeof(expanded));
 
 #ifdef STU_DEBUG
-            dbg_prn("[HeMoM Player] %s:%d: type \"%s\" -> \"%s\"\n", filepath, line_num, raw, expanded);
-            trc_prn("[HeMoM Player] %s:%d: type \"%s\" -> \"%s\"\n", filepath, line_num, raw, expanded);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] %s:%d: type \"%s\" -> \"%s\"", filepath, line_num, raw, expanded);
+            LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] %s:%d: type \"%s\" -> \"%s\"", filepath, line_num, raw, expanded);
 #endif
 
             for (c = expanded; *c != '\0'; c++)
@@ -604,7 +605,7 @@ static int Parse_Scenario_File(const char *filepath, int depth)
         }
         else
         {
-            fprintf(stderr, "[HeMoM Player] %s:%d: unknown action: %s\n", filepath, line_num, p);
+            LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] %s:%d: unknown action: %s", filepath, line_num, p);
             continue;
         }
     }
@@ -632,10 +633,10 @@ void HeMoM_Player_Frame(void)
     if (hemom_action_index >= hemom_action_count)
     {
         hemom_active = 0;
-        fprintf(stderr, "[HeMoM Player] Scenario complete (%d actions)\n", hemom_action_count);
+        LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] Scenario complete (%d actions)", hemom_action_count);
 #ifdef STU_DEBUG
-        dbg_prn("[HeMoM Player] Scenario complete (%d actions)\n", hemom_action_count);
-        trc_prn("[HeMoM Player] Scenario complete (%d actions)\n", hemom_action_count);
+        LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] Scenario complete (%d actions)", hemom_action_count);
+        LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] Scenario complete (%d actions)", hemom_action_count);
 #endif
         quit_game_flag = ST_TRUE;
         return;
@@ -663,10 +664,10 @@ void HeMoM_Player_Frame(void)
                 hemom_wait_until_ms = Platform_Get_Millies() + act->wait_ms;
                 hemom_wait_active = 1;
                 hemom_action_index++;
-                fprintf(stderr, "[HeMoM Player] t=%llu ms wait %llu ms\n", t_now, (unsigned long long)act->wait_ms);
+                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms wait %llu ms", t_now, (unsigned long long)act->wait_ms);
 #ifdef STU_DEBUG
-                dbg_prn("[HeMoM Player] t=%llu ms wait %llu ms\n", t_now, (unsigned long long)act->wait_ms);
-                trc_prn("[HeMoM Player] t=%llu ms wait %llu ms\n", t_now, (unsigned long long)act->wait_ms);
+                LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms wait %llu ms", t_now, (unsigned long long)act->wait_ms);
+                LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms wait %llu ms", t_now, (unsigned long long)act->wait_ms);
 #endif
             } break;
 
@@ -677,10 +678,10 @@ void HeMoM_Player_Frame(void)
                 mox_mod = act->packed_key & 0xFFFF0000u;
                 Platform_Keyboard_Buffer_Add_Key_Press(mox_key, mox_mod, mox_character);
                 hemom_action_index++;
-                fprintf(stderr, "[HeMoM Player] t=%llu ms key '%c' (packed=0x%08X)\n", t_now, act->character, act->packed_key);
+                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms key '%c' (packed=0x%08X)", t_now, act->character, act->packed_key);
 #ifdef STU_DEBUG
-                dbg_prn("[HeMoM Player] t=%llu ms key '%c' (packed=0x%08X)\n", t_now, act->character, act->packed_key);
-                trc_prn("[HeMoM Player] t=%llu ms key '%c' (packed=0x%08X)\n", t_now, act->character, act->packed_key);
+                LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms key '%c' (packed=0x%08X)", t_now, act->character, act->packed_key);
+                LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms key '%c' (packed=0x%08X)", t_now, act->character, act->packed_key);
 #endif
             } break;
 
@@ -691,10 +692,10 @@ void HeMoM_Player_Frame(void)
                 mox_mod = act->packed_key & 0xFFFF0000u;
                 Platform_Keyboard_Buffer_Add_Key_Press(mox_key, mox_mod, mox_character);
                 hemom_action_index++;
-                fprintf(stderr, "[HeMoM Player] t=%llu ms escape\n", t_now);
+                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms escape", t_now);
 #ifdef STU_DEBUG
-                dbg_prn("[HeMoM Player] t=%llu ms escape\n", t_now);
-                trc_prn("[HeMoM Player] t=%llu ms escape\n", t_now);
+                LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms escape", t_now);
+                LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms escape", t_now);
 #endif
             } break;
 
@@ -705,10 +706,10 @@ void HeMoM_Player_Frame(void)
                 mox_mod = act->packed_key & 0xFFFF0000u;
                 Platform_Keyboard_Buffer_Add_Key_Press(mox_key, mox_mod, mox_character);
                 hemom_action_index++;
-                fprintf(stderr, "[HeMoM Player] t=%llu ms enter\n", t_now);
+                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms enter", t_now);
 #ifdef STU_DEBUG
-                dbg_prn("[HeMoM Player] t=%llu ms enter\n", t_now);
-                trc_prn("[HeMoM Player] t=%llu ms enter\n", t_now);
+                LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms enter", t_now);
+                LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms enter", t_now);
 #endif
             } break;
 
@@ -719,10 +720,10 @@ void HeMoM_Player_Frame(void)
                 mox_mod = act->packed_key & 0xFFFF0000u;
                 Platform_Keyboard_Buffer_Add_Key_Press(mox_key, mox_mod, mox_character);
                 hemom_action_index++;
-                fprintf(stderr, "[HeMoM Player] t=%llu ms backspace\n", t_now);
+                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms backspace", t_now);
 #ifdef STU_DEBUG
-                dbg_prn("[HeMoM Player] t=%llu ms backspace\n", t_now);
-                trc_prn("[HeMoM Player] t=%llu ms backspace\n", t_now);
+                LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms backspace", t_now);
+                LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms backspace", t_now);
 #endif
             } break;
 
@@ -738,20 +739,20 @@ void HeMoM_Player_Frame(void)
                 {
                     platform_frame_mouse_buttons |= ST_LEFT_BUTTON;
                     User_Mouse_Handler(ST_LEFT_BUTTON, wx, wy);
-                    fprintf(stderr, "[HeMoM Player] t=%llu ms click (%d, %d)\n", t_now, act->x, act->y);
+                    LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms click (%d, %d)", t_now, act->x, act->y);
 #ifdef STU_DEBUG
-                    dbg_prn("[HeMoM Player] t=%llu ms click (%d, %d)\n", t_now, act->x, act->y);
-                    trc_prn("[HeMoM Player] t=%llu ms click (%d, %d)\n", t_now, act->x, act->y);
+                    LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms click (%d, %d)", t_now, act->x, act->y);
+                    LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms click (%d, %d)", t_now, act->x, act->y);
 #endif
                 }
                 else
                 {
                     platform_frame_mouse_buttons |= ST_RIGHT_BUTTON;
                     User_Mouse_Handler(ST_RIGHT_BUTTON, wx, wy);
-                    fprintf(stderr, "[HeMoM Player] t=%llu ms rclick (%d, %d)\n", t_now, act->x, act->y);
+                    LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms rclick (%d, %d)", t_now, act->x, act->y);
 #ifdef STU_DEBUG
-                    dbg_prn("[HeMoM Player] t=%llu ms rclick (%d, %d)\n", t_now, act->x, act->y);
-                    trc_prn("[HeMoM Player] t=%llu ms rclick (%d, %d)\n", t_now, act->x, act->y);
+                    LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms rclick (%d, %d)", t_now, act->x, act->y);
+                    LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms rclick (%d, %d)", t_now, act->x, act->y);
 #endif
                 }
                 hemom_action_index++;
@@ -761,20 +762,20 @@ void HeMoM_Player_Frame(void)
             {
                 quit_game_flag = ST_TRUE;
                 hemom_action_index++;
-                fprintf(stderr, "[HeMoM Player] t=%llu ms quit\n", t_now);
+                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms quit", t_now);
 #ifdef STU_DEBUG
-                dbg_prn("[HeMoM Player] t=%llu ms quit\n", t_now);
-                trc_prn("[HeMoM Player] t=%llu ms quit\n", t_now);
+                LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms quit", t_now);
+                LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms quit", t_now);
 #endif
             } break;
 
             case act_END:
             {
                 hemom_active = 0;
-                fprintf(stderr, "[HeMoM Player] t=%llu ms end — artificial human player stopped\n", t_now);
+                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms end — artificial human player stopped", t_now);
 #ifdef STU_DEBUG
-                dbg_prn("[HeMoM Player] t=%llu ms end — artificial human player stopped\n", t_now);
-                trc_prn("[HeMoM Player] t=%llu ms end — artificial human player stopped\n", t_now);
+                LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms end — artificial human player stopped", t_now);
+                LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms end — artificial human player stopped", t_now);
 #endif
             } break;
         }

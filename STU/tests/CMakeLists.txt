@@ -1,7 +1,15 @@
 
 include(GoogleTest)
 
-add_executable(test_STU test_STU.cpp)
+add_executable(test_STU
+	test_STU_LOG.cpp
+	test_STU_LOG_strip.cpp
+	test_STU_UTIL.cpp
+)
+
+set_source_files_properties(test_STU_LOG_strip.cpp PROPERTIES
+	COMPILE_DEFINITIONS "STU_LOG_MIN_SEVERITY=LOG_SEV_INFO"
+)
 
 target_link_libraries(test_STU
 	GTest::gtest

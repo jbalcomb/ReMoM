@@ -4,6 +4,7 @@
 #include "sdl2_Audio.h"
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
 
 #include "sdl2_KD.h"
 #include "sdl2_MOM.h"
@@ -48,7 +49,7 @@ void Platform_Report_Startup_Platform(void)
 #else
     platform_start_id = random();
 #endif
-    fprintf(stderr, "ReMoM: Starting up platform layer...  (%d)\n", platform_start_id);
+    LOG_INFO(LOG_CAT_SDL2_INIT, "ReMoM: Starting up platform layer...  (%d)", platform_start_id);
 }
 
 
@@ -68,12 +69,12 @@ void Startup_Platform(void)
 
     sdl2_ticks_startup = (uint64_t)SDL_GetTicks();  // the number of milliseconds since SDL library initialization
 #ifdef STU_DEBUG
-    dbg_prn("sdl2_ticks_startup: %llu\n", sdl2_ticks_startup);
+    LOG_DEBUG(LOG_CAT_PFL, "sdl2_ticks_startup: %llu", sdl2_ticks_startup);
 #endif
 
     sdl2_performance_counter = SDL_GetPerformanceCounter();
 #ifdef STU_DEBUG
-    dbg_prn("sdl2_performance_counter: %llu\n", sdl2_performance_counter);
+    LOG_DEBUG(LOG_CAT_PFL, "sdl2_performance_counter: %llu", sdl2_performance_counter);
 #endif
 
     w = sdl2_window_width;
@@ -90,7 +91,7 @@ void Startup_Platform(void)
     {
         int actual_w, actual_h;
         SDL_GetWindowSize(sdl2_window, &actual_w, &actual_h);
-        fprintf(stderr, "CLAUDE: requested window %dx%d, got %dx%d\n", w, h, actual_w, actual_h);
+        LOG_INFO(LOG_CAT_SDL2_INIT, "CLAUDE: requested window %dx%d, got %dx%d", w, h, actual_w, actual_h);
         assert(actual_w == w && "SDL created window with wrong width");
         assert(actual_h == h && "SDL created window with wrong height");
     }
