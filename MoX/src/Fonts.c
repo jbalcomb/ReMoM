@@ -31,6 +31,7 @@
 #include "../../ext/stu_compat.h"
 
 #include "Init_Data/FONTS_LBX.h"
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -200,9 +201,9 @@ void Load_Font_File(char * font_file)
     int itr = 0;
 
 #ifdef STU_DEBUG
-    fprintf(stderr, "DEBUG: [%s, %d]: BEGIN: Load_Font_File()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_Font_File()\n", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: BEGIN: Load_Font_File()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_FONTS, "DEBUG: [%s, %d]: BEGIN: Load_Font_File()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Load_Font_File()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Load_Font_File()", __FILE__, __LINE__);
 #endif
 
     stu_strcpy(font_name, font_file);

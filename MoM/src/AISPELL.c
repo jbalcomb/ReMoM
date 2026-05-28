@@ -10,6 +10,7 @@ Module: AITECH
 
 #include "../../STU/src/AI_METRICS.h"
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
 
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/EXIT.h"
@@ -93,7 +94,7 @@ int16_t AI_Spell_Research_Select(int16_t player_idx)
 
     if (candidate_count == 0) {
 #ifdef STU_DEBUG
-        dbg_prn("[AI_RESEARCH] player[%d] candidate_count=0, no spells to research\n", player_idx);
+        LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d] candidate_count=0, no spells to research", player_idx);
 #endif
         _players[player_idx].researching_spell_idx = 0;
         _players[player_idx].research_ratio = 0;
@@ -255,11 +256,11 @@ to lower the odds; store the highest of the results
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("[AI_RESEARCH] player[%d] candidates=%d highest_cost=%d research_income=%d\n", player_idx, candidate_count, highest_cost, research_income);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d] candidates=%d highest_cost=%d research_income=%d", player_idx, candidate_count, highest_cost, research_income);
     for (itr = 0; itr < candidate_count; itr++) {
-        dbg_prn("[AI_RESEARCH] player[%d]   [%d] spell=%3d cost=%4d adj_cost=%4d weight=%4ld category=%d %s\n", player_idx, itr, research_spells[itr], (research_spells[itr] == spl_Spell_Of_Mastery) ? _players[player_idx].som_research_cost : spell_data_table[research_spells[itr]].research_cost, candidate_costs[itr], weights_long[itr], spell_data_table[research_spells[itr]].AI_Group, possessed_categories[spell_data_table[research_spells[itr]].AI_Group] ? "(have)" : "");
+        LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d]   [%d] spell=%3d cost=%4d adj_cost=%4d weight=%4ld category=%d %s", player_idx, itr, research_spells[itr], (research_spells[itr] == spl_Spell_Of_Mastery) ? _players[player_idx].som_research_cost : spell_data_table[research_spells[itr]].research_cost, candidate_costs[itr], weights_long[itr], spell_data_table[research_spells[itr]].AI_Group, possessed_categories[spell_data_table[research_spells[itr]].AI_Group] ? "(have)" : "");
     }
-    dbg_prn("[AI_RESEARCH] player[%d] weights_total=%d\n", player_idx, weights_long_total);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d] weights_total=%d", player_idx, weights_long_total);
 #endif
 
     /* Perform weighted random roll */
@@ -268,7 +269,7 @@ to lower the odds; store the highest of the results
     _players[player_idx].researching_spell_idx = research_spells[selection];
 
 #ifdef STU_DEBUG
-    dbg_prn("[AI_RESEARCH] player[%d] SELECTED [%d] spell=%d\n", player_idx, selection, _players[player_idx].researching_spell_idx);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d] SELECTED [%d] spell=%d", player_idx, selection, _players[player_idx].researching_spell_idx);
 #endif
 
     AI_Metrics_Emit_Decision(_turn, player_idx, "RESEARCH",

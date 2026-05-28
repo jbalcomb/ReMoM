@@ -37,6 +37,7 @@
 #include <stdlib.h>
 
 #include "SBookScr.h"
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -568,7 +569,7 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
             if(_players[player_idx].casting_cost_remaining > _players[player_idx].casting_cost_original)
             {
                 _players[player_idx].casting_cost_original = _players[player_idx].casting_cost_remaining;
-                printf("_players[player_idx].casting_cost_original: %d\n", _players[player_idx].casting_cost_original);
+                LOG_INFO(LOG_CAT_SBOOKSCR, "_players[player_idx].casting_cost_original: %d", _players[player_idx].casting_cost_original);
             }
         }
     }

@@ -19,6 +19,7 @@
 #include "Settings.h"
 #include "Spellbook.h"
 #include "UNITTYPE.h"
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -134,7 +135,7 @@ void Load_MGC_Resources(void)
     int16_t itr;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_MGC_Resources()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Load_MGC_Resources()", __FILE__, __LINE__);
 #endif
 
     // TODO  EMM_Load_LBX_File_1("MAINSCR")
@@ -157,7 +158,7 @@ void Load_MGC_Resources(void)
     // TODO  EMM_Load_LBX_File_1("SPELLDAT")
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Load_MGC_Resources()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Load_MGC_Resources()", __FILE__, __LINE__);
 #endif
 }
 
@@ -175,7 +176,7 @@ void Load_WZD_Resources(void)
 {
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_WZD_Resources()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Load_WZD_Resources()", __FILE__, __LINE__);
 #endif
 
     Load_MAGIC_SET();
@@ -224,7 +225,7 @@ void Load_WZD_Resources(void)
     Units_Upkeeps();
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Load_WZD_Resources()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Load_WZD_Resources()", __FILE__, __LINE__);
 #endif
 
 }
@@ -244,7 +245,7 @@ void Units_Upkeeps(void)
     int16_t itr = 0;  // _CX_
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Units_Upkeeps()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Units_Upkeeps()", __FILE__, __LINE__);
 #endif
 
     // TODO(JimBalcomb,20231127): figure out where/what this value is that it is using to iterate over
@@ -274,7 +275,7 @@ void Units_Upkeeps(void)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Units_Upkeeps()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Units_Upkeeps()", __FILE__, __LINE__);
 #endif
 
 }
@@ -450,9 +451,9 @@ void Main_Screen_Load_Pictures(void)
     int16_t itr = 0;
 
 #ifdef STU_DEBUG
-    fprintf(stderr, "DEBUG: [%s, %d]: BEGIN: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_LOADER, "DEBUG: [%s, %d]: BEGIN: Main_Screen_Load_Pictures()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Main_Screen_Load_Pictures()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Main_Screen_Load_Pictures()", __FILE__, __LINE__);
 #endif
 
     main_background_seg = LBX_Load(main_lbx_file,  0);
@@ -558,9 +559,9 @@ void Main_Screen_Load_Pictures(void)
     }
 
 #ifdef STU_DEBUG
-    fprintf(stderr, "DEBUG: [%s, %d]: END: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: END: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_LOADER, "DEBUG: [%s, %d]: END: Main_Screen_Load_Pictures()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Main_Screen_Load_Pictures()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Main_Screen_Load_Pictures()", __FILE__, __LINE__);
 #endif
 
 }
@@ -820,13 +821,13 @@ void Graphics_Cache_Reset(void)
 {
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Graphics_Cache_Reset()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Graphics_Cache_Reset()", __FILE__, __LINE__);
 #endif
 
     Allocate_First_Block(g_graphics_cache_seg, 1);
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Graphics_Cache_Reset()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Graphics_Cache_Reset()", __FILE__, __LINE__);
 #endif
 
 }
@@ -843,7 +844,7 @@ void Load_Unit_StatFigs(void)
     uint16_t itr;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_Unit_StatFigs()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Load_Unit_StatFigs()", __FILE__, __LINE__);
 #endif
 
     // UNITS1.LBX ... STATFIG1
@@ -859,7 +860,7 @@ void Load_Unit_StatFigs(void)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Load_Unit_StatFigs()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Load_Unit_StatFigs()", __FILE__, __LINE__);
 #endif
 
 }
@@ -885,7 +886,7 @@ void Reload_Combat_Graphics_Cache(void)
     int16_t itr2 = 0;  // _DI_
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Reload_Combat_Graphics_Cache()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Reload_Combat_Graphics_Cache()", __FILE__, __LINE__);
 #endif
 
     // CMBMAGIC.LBX, 000  "LIGHTNIN"  ""
@@ -1047,7 +1048,7 @@ void Reload_Combat_Graphics_Cache(void)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Reload_Combat_Graphics_Cache()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Reload_Combat_Graphics_Cache()", __FILE__, __LINE__);
 #endif
 
 }
@@ -1064,7 +1065,7 @@ void Reload_Cityscape_Graphics_Cache(void)
     int16_t itr2;  // _DI_
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Reload_Cityscape_Graphics_Cache()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Reload_Cityscape_Graphics_Cache()", __FILE__, __LINE__);
 #endif
 
     // CITYSCAP.LBX,   0  BACKS      ground background
@@ -1314,7 +1315,7 @@ void Reload_Cityscape_Graphics_Cache(void)
     black_gold1_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 73, g_graphics_cache_seg);
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Reload_Cityscape_Graphics_Cache()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Reload_Cityscape_Graphics_Cache()", __FILE__, __LINE__);
 #endif
 
 }
@@ -1337,7 +1338,7 @@ void GFX_Swap_AppendUView(void)
     int16_t itr;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: GFX_Swap_AppendUView()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: GFX_Swap_AppendUView()", __FILE__, __LINE__);
 #endif
 
     // load [111of111] from SPECIAL.LBX
@@ -1500,7 +1501,7 @@ void GFX_Swap_AppendUView(void)
     city_grey_big_bread_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 95, g_graphics_cache_seg);
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: GFX_Swap_AppendUView()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: GFX_Swap_AppendUView()", __FILE__, __LINE__);
 #endif
 
 }
@@ -1610,7 +1611,7 @@ void Spellbook_Load_Small_Pictures__WIP(void)
     int16_t itr = 0;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Spellbook_Load_Small_Pictures__WIP()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Spellbook_Load_Small_Pictures__WIP()", __FILE__, __LINE__);
 #endif
 
 
@@ -1641,7 +1642,7 @@ void Spellbook_Load_Small_Pictures__WIP(void)
     _spellbook_small_text = LBX_Reload_Next(special2_lbx_file, 43, g_graphics_cache_seg);
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Spellbook_Load_Small_Pictures__WIP()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Spellbook_Load_Small_Pictures__WIP()", __FILE__, __LINE__);
 #endif
 
 }
@@ -1652,7 +1653,7 @@ void Cache_Graphics_Overland(void)
 {
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Overland()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Overland()", __FILE__, __LINE__);
 #endif
 
     Graphics_Cache_Reset();
@@ -1668,7 +1669,7 @@ void Cache_Graphics_Overland(void)
     Spellbook_Load_Small_Pictures__WIP();
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Cache_Graphics_Overland()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Cache_Graphics_Overland()", __FILE__, __LINE__);
 #endif
 
 }
@@ -1678,7 +1679,7 @@ void Cache_Graphics_Things(void)
 {
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Things()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Things()", __FILE__, __LINE__);
 #endif
 
     Graphics_Cache_Reset();
@@ -1690,7 +1691,7 @@ void Cache_Graphics_Things(void)
     Reload_Cityscape_Graphics_Cache();
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Cache_Graphics_Things()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Cache_Graphics_Things()", __FILE__, __LINE__);
 #endif
 
 }
@@ -1708,7 +1709,7 @@ void Cache_Graphics_Unit_List_Window(void)
 {
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Unit_List_Window()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Unit_List_Window()", __FILE__, __LINE__);
 #endif
 
     Graphics_Cache_Reset();
@@ -1718,7 +1719,7 @@ void Cache_Graphics_Unit_List_Window(void)
     GFX_Swap_AppendUView();
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Cache_Graphics_Unit_List_Window()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Cache_Graphics_Unit_List_Window()", __FILE__, __LINE__);
 #endif
 
 }
@@ -1741,7 +1742,7 @@ void Cache_Graphics_Diplomacy(void)
 {
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Diplomacy()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Diplomacy()", __FILE__, __LINE__);
 #endif
 
     Graphics_Cache_Reset();
@@ -1749,7 +1750,7 @@ void Cache_Graphics_Diplomacy(void)
     o52p26_empty_function();
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Cache_Graphics_Diplomacy()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Cache_Graphics_Diplomacy()", __FILE__, __LINE__);
 #endif
 
 }
@@ -1760,7 +1761,7 @@ void Cache_Graphics_Combat(void)
 {
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Combat()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Combat()", __FILE__, __LINE__);
 #endif
 
     Graphics_Cache_Reset();
@@ -1770,7 +1771,7 @@ void Cache_Graphics_Combat(void)
     Spellbook_Load_Small_Pictures__WIP();
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Cache_Graphics_Combat()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Cache_Graphics_Combat()", __FILE__, __LINE__);
 #endif
 
 }

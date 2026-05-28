@@ -19,12 +19,12 @@ input?
 */
 
 #include "STU_DBG.h"
-void dbg_prn(const char * fmt, ...);  // HACK needs to not be behind #ifdef STU_DEBUG
 #include "STU_WAV.h"
 
 #include "../../ext/stu_compat.h"
 
 #include <stdio.h>      /* FILE; fclose(), fread(), frite(), fseek(); */
+#include "../../STU/src/STU_LOG.h"
 
 /*
     LBX File Name
@@ -40,31 +40,31 @@ void Export_WAV_File(void * wav_sound_buffer, int wav_sound_buffer_size)
     // char output_file_name[(8 + 1 + 3 + 1 + 3 + 1 + 3)] = { 0 };  // SOUNDFX.LBX, 001 ... SOUNDFX_LBX_001.wav
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Export_WAV_File()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Export_WAV_File()", __FILE__, __LINE__);
 #endif
 
-    dbg_prn("BEGIN:  fopen()\n");
+    LOG_DEBUG(LOG_CAT_GENERAL, "BEGIN:  fopen()");
     // // file_handle = stu_fopen(filename, "WB");
     file_handle = stu_fopen(filename, mode);
     if(file_handle == NULL)
     {
         STU_DEBUG_BREAK();
     }
-    dbg_prn("END:  fopen()\n");
+    LOG_DEBUG(LOG_CAT_GENERAL, "END:  fopen()");
 
-    dbg_prn("BEGIN:  fwrite()\n");
+    LOG_DEBUG(LOG_CAT_GENERAL, "BEGIN:  fwrite()");
     // stu_fwrite(wav_sound_buffer, wav_sound_buffer_size, 1, file_handle);
-    dbg_prn("END:  fwrite()\n");
+    LOG_DEBUG(LOG_CAT_GENERAL, "END:  fwrite()");
 
-    dbg_prn("BEGIN:  fclose()\n");
+    LOG_DEBUG(LOG_CAT_GENERAL, "BEGIN:  fclose()");
     if(file_handle != NULL)
     {
         stu_fclose(file_handle);
     }
-    dbg_prn("END:  fclose()\n");
+    LOG_DEBUG(LOG_CAT_GENERAL, "END:  fclose()");
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Export_WAV_File()\n", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Export_WAV_File()", __FILE__, __LINE__);
 #endif
 
 }

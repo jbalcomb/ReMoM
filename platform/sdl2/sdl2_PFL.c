@@ -12,6 +12,7 @@
 #include <stdbool.h>
 #include <stdio.h>   /* CLAUDE: debug */
 #include "../../STU/src/STU_DBG.h"  /* CLAUDE: trc_prn() for frame logging */
+#include "../../STU/src/STU_LOG.h"
 #include <stdlib.h>
 #include <inttypes.h>
 
@@ -400,7 +401,7 @@ void DBG_Frame_Reset(void)
     {
         uint64_t avg_delta = (dbg_handler_calls > 0) ? (dbg_total_handler_delta / dbg_handler_calls) : 0;
 #ifdef STU_DEBUG
-        trc_prn("DBG frame=%u  frametime=%llu ms  handler_calls=%u  max_delta=%llu ms  avg_delta=%llu ms  events: key=%u mdown=%u mup=%u mmove=%u win=%u other=%u  mouse_updates=%u\n", dbg_frame_number, (unsigned long long)frametime, dbg_handler_calls, (unsigned long long)dbg_max_handler_delta, (unsigned long long)avg_delta, dbg_events_key, dbg_events_mousedown, dbg_events_mouseup, dbg_events_mousemotion, dbg_events_window, dbg_events_other, dbg_mouse_updates);
+        LOG_TRACE(LOG_CAT_PFL, "DBG frame=%u  frametime=%llu ms  handler_calls=%u  max_delta=%llu ms  avg_delta=%llu ms  events: key=%u mdown=%u mup=%u mmove=%u win=%u other=%u  mouse_updates=%u", dbg_frame_number, (unsigned long long)frametime, dbg_handler_calls, (unsigned long long)dbg_max_handler_delta, (unsigned long long)avg_delta, dbg_events_key, dbg_events_mousedown, dbg_events_mouseup, dbg_events_mousemotion, dbg_events_window, dbg_events_other, dbg_mouse_updates);
 #endif
     }
     dbg_frame_start_ticks = now;
@@ -459,7 +460,7 @@ void Platform_Event_Handler(void)
         {
             if(peek_event.type == SDL_KEYDOWN || peek_event.type == SDL_MOUSEBUTTONDOWN)
             {
-                fprintf(stderr, "REPLAY: cancelled by user input\n");
+                LOG_INFO(LOG_CAT_SDL2_PFL, "REPLAY: cancelled by user input");
                 Platform_Replay_Stop();
                 /* Flush the event that cancelled so it doesn't trigger a game action. */
                 SDL_PollEvent(&peek_event);
@@ -610,6 +611,8 @@ void Platform_Event_Handler(void)
     {
         platform_frame_callback();
     }
+
+    STU_Log_Pump();
 
     /* CLAUDE: Record — capture input state after processing OS events. */
     if(Platform_Record_Active())

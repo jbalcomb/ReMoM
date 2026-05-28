@@ -13,6 +13,7 @@
 
 #include "MOX_TYPE.h"
 #include "MOX2.h"
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -36,7 +37,7 @@ void Check_Command_Line_Parameters_(int argc, char *argv[])
         {
             argi++;
             _cmd_line_seed = (int32_t)stu_atoi(argv[argi]);
-            fprintf(stderr, "[MOX2] CLI: --seed %d (0x%08X)\n",
+            LOG_INFO(LOG_CAT_MOX2, "[MOX2] CLI: --seed %d (0x%08X)",
                 (int)_cmd_line_seed, (unsigned)_cmd_line_seed);
         }
         /* Other flags are still handled by per-target main() during the

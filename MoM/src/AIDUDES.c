@@ -6,6 +6,7 @@
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
 #include "../../STU/src/AI_METRICS.h"
 #include "../../platform/include/Platform.h"  /* Platform_Get_Millies() */
 
@@ -120,9 +121,9 @@ static void AI_Log_Metrics(void)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("AI_METRICS: Turn %d  Difficulty %d  Players %d\n", _turn, _difficulty, _num_players);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "AI_METRICS: Turn %d  Difficulty %d  Players %d", _turn, _difficulty, _num_players);
 
-    dbg_prn("AI_METRICS: P0 %-20s units=%-4d cities=%-3d gold=%-5d mana=%-5d (Human)\n",
+    LOG_DEBUG(LOG_CAT_AIMOVE, "AI_METRICS: P0 %-20s units=%-4d cities=%-3d gold=%-5d mana=%-5d (Human)",
         _players[HUMAN_PLAYER_IDX].name,
         unit_counts[HUMAN_PLAYER_IDX],
         city_counts[HUMAN_PLAYER_IDX],
@@ -131,7 +132,7 @@ static void AI_Log_Metrics(void)
 
     for (player_idx = 1; player_idx < _num_players; player_idx++)
     {
-        dbg_prn("AI_METRICS: P%d %-20s units=%-4d cities=%-3d gold=%-5d mana=%-5d active=%d\n",
+        LOG_DEBUG(LOG_CAT_AIMOVE, "AI_METRICS: P%d %-20s units=%-4d cities=%-3d gold=%-5d mana=%-5d active=%d",
             player_idx,
             _players[player_idx].name,
             unit_counts[player_idx],
@@ -141,7 +142,7 @@ static void AI_Log_Metrics(void)
             _FORTRESSES[player_idx].active);
     }
 
-    dbg_prn("AI_METRICS: NPC %-19s units=%-4d cities=%-3d raider_acc=%-3d monster_acc=%-3d\n",
+    LOG_DEBUG(LOG_CAT_AIMOVE, "AI_METRICS: NPC %-19s units=%-4d cities=%-3d raider_acc=%-3d monster_acc=%-3d",
         "(Neutral)",
         unit_counts[NEUTRAL_PLAYER_IDX],
         city_counts[NEUTRAL_PLAYER_IDX],
@@ -166,13 +167,13 @@ void AI_Next_Turn(void)
 #endif
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: BEGIN: AI_Next_Turn()", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: AI_Next_Turn()", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: BEGIN: AI_Next_Turn()", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_AIDUDES, "DEBUG: [%s, %d]: BEGIN: AI_Next_Turn()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Next_Turn()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Next_Turn()", __FILE__, __LINE__);
 #endif
 
 /* CLAUDE */ #ifdef STU_DEBUG
-/* CLAUDE */ #define PHASE(CALL) do { uint64_t _ps = Platform_Get_Millies(); CALL; { uint64_t _pe = Platform_Get_Millies(); fprintf(stderr, "[NEXTTURN] phase %-48s = %llu ms\n", #CALL, (unsigned long long)(_pe - _ps)); trc_prn("[NEXTTURN] phase %-48s = %llu ms\n", #CALL, (unsigned long long)(_pe - _ps)); } } while(0)
+/* CLAUDE */ #define PHASE(CALL) do { uint64_t _ps = Platform_Get_Millies(); CALL; { uint64_t _pe = Platform_Get_Millies(); LOG_INFO(LOG_CAT_AIDUDES, "[NEXTTURN] phase %-48s = %llu ms", #CALL, (unsigned long long)(_pe - _ps)); LOG_TRACE(LOG_CAT_AIMOVE, "[NEXTTURN] phase %-48s = %llu ms", #CALL, (unsigned long long)(_pe - _ps)); } } while(0)
 /* CLAUDE */ #else
 /* CLAUDE */ #define PHASE(CALL) CALL
 /* CLAUDE */ #endif
@@ -204,7 +205,7 @@ void AI_Next_Turn(void)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("AI_TURN: === BEGIN Turn %d ===\n", _turn);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: === BEGIN Turn %d ===", _turn);
 #endif
 
     PHASE(EMM_Map_DataH());
@@ -219,7 +220,7 @@ void AI_Next_Turn(void)
             if ((g_timestop_player_num - 1) != player_idx)
             {
 #ifdef STU_DEBUG
-                dbg_prn("AI_TURN: Player %d (%s) SKIPPED (Time Stop)\n", player_idx, _players[player_idx].name);
+                LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Player %d (%s) SKIPPED (Time Stop)", player_idx, _players[player_idx].name);
 #endif
                 continue;
             }
@@ -230,7 +231,7 @@ void AI_Next_Turn(void)
         if (_FORTRESSES[player_idx].active != ST_TRUE && _players[player_idx].casting_spell_idx != spl_Spell_Of_Return)
         {
 #ifdef STU_DEBUG
-            dbg_prn("AI_TURN: Player %d (%s) SKIPPED (inactive)\n", player_idx, _players[player_idx].name);
+            LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Player %d (%s) SKIPPED (inactive)", player_idx, _players[player_idx].name);
 #endif
             continue;
         }
@@ -239,7 +240,7 @@ void AI_Next_Turn(void)
         AI_SCircle_Reevals[player_idx]--;
 
 #ifdef STU_DEBUG
-        dbg_prn("AI_TURN: --- Player %d (%s) BEGIN ---\n", player_idx, _players[player_idx].name);
+        LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: --- Player %d (%s) BEGIN ---", player_idx, _players[player_idx].name);
 #endif
 
         PHASE(AI_Evaluate_Hostility(player_idx));
@@ -303,7 +304,7 @@ void AI_Next_Turn(void)
         PHASE(AI_Kill_Excess_Settlers_And_Engineers(player_idx));
 
 #ifdef STU_DEBUG
-        dbg_prn("AI_TURN: --- Player %d (%s) END ---\n", player_idx, _players[player_idx].name);
+        LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: --- Player %d (%s) END ---", player_idx, _players[player_idx].name);
 #endif
     }
 
@@ -320,7 +321,7 @@ void AI_Next_Turn(void)
 
     /* AI Unit Movement Phase */
 #ifdef STU_DEBUG
-    dbg_prn("AI_TURN: === Movement Phase ===\n");
+    LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: === Movement Phase ===");
 #endif
     for (player_idx = 1; player_idx < _num_players; player_idx++)
     {
@@ -337,7 +338,7 @@ void AI_Next_Turn(void)
         if (_FORTRESSES[player_idx].active == ST_TRUE || _players[player_idx].casting_spell_idx == spl_Spell_Of_Return)
         {
 #ifdef STU_DEBUG
-            dbg_prn("AI_TURN: Moving units for Player %d (%s)\n", player_idx, _players[player_idx].name);
+            LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Moving units for Player %d (%s)", player_idx, _players[player_idx].name);
 #endif
             PHASE(AI_MoveUnits(player_idx));
         }
@@ -347,30 +348,30 @@ void AI_Next_Turn(void)
 
     /* Neutral Player Turn Processing */
 #ifdef STU_DEBUG
-    dbg_prn("AI_TURN: === Neutral Player Phase ===\n");
+    LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: === Neutral Player Phase ===");
 #endif
     PHASE(Player_All_Colony_Autobuild(NEUTRAL_PLAYER_IDX));
     PHASE(NPC_Farmers());
 #ifdef STU_DEBUG
-    dbg_prn("AI_TURN: NPC_Farmers done\n");
+    LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: NPC_Farmers done");
 #endif
     PHASE(NPC_Destinations());
 #ifdef STU_DEBUG
-    dbg_prn("AI_TURN: NPC_Destinations done\n");
+    LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: NPC_Destinations done");
 #endif
     PHASE(AI_MoveUnits(NEUTRAL_PLAYER_IDX));
 #ifdef STU_DEBUG
-    dbg_prn("AI_TURN: NPC movement done\n");
+    LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: NPC movement done");
 #endif
 
     /* Event Generation */
     PHASE(Make_Raiders());
 #ifdef STU_DEBUG
-    dbg_prn("AI_TURN: Make_Raiders done\n");
+    LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Make_Raiders done");
 #endif
     PHASE(Make_Monsters());
 #ifdef STU_DEBUG
-    dbg_prn("AI_TURN: Make_Monsters done\n");
+    LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Make_Monsters done");
 #endif
 
     /* Cleanup and Stasis */
@@ -380,13 +381,13 @@ void AI_Next_Turn(void)
     AI_Log_Metrics();
     AI_Metrics_Emit_Turn_Summary(_turn, _difficulty, _num_players);
 #ifdef STU_DEBUG
-    dbg_prn("AI_TURN: === END Turn %d ===\n", _turn);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: === END Turn %d ===", _turn);
 #endif
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: END: AI_Next_Turn()", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: END: AI_Next_Turn()", __FILE__, __LINE__);
-    trc_prn("DEBUG: [%s, %d]: END: AI_Next_Turn()", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_AIDUDES, "DEBUG: [%s, %d]: END: AI_Next_Turn()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Next_Turn()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Next_Turn()", __FILE__, __LINE__);
 #endif
 
 }

@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include "../STU/src/STU_LOG.h"
 
 
 
@@ -605,7 +606,7 @@ int Game_Save_Dump(const char *save_filepath, const char *text_filepath)
     fin = stu_fopen_ci(save_filepath, "rb");
     if (fin == NULL)
     {
-        fprintf(stderr, "[HeMoM SaveDump] Could not open: %s\n", save_filepath);
+        LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] Could not open: %s", save_filepath);
         return 1;
     }
 
@@ -614,14 +615,14 @@ int Game_Save_Dump(const char *save_filepath, const char *text_filepath)
 
     if (bytes_read != SD_TOTAL_SIZE)
     {
-        fprintf(stderr, "[HeMoM SaveDump] Short read: %zu bytes (expected %d) from %s\n", bytes_read, SD_TOTAL_SIZE, save_filepath);
+        LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] Short read: %zu bytes (expected %d) from %s", bytes_read, SD_TOTAL_SIZE, save_filepath);
         return 1;
     }
 
     fout = fopen(text_filepath, "w");
     if (fout == NULL)
     {
-        fprintf(stderr, "[HeMoM SaveDump] Could not create: %s\n", text_filepath);
+        LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] Could not create: %s", text_filepath);
         return 1;
     }
 
@@ -698,6 +699,6 @@ int Game_Save_Dump(const char *save_filepath, const char *text_filepath)
 
     fclose(fout);
 
-    fprintf(stderr, "[HeMoM SaveDump] Wrote: %s\n", text_filepath);
+    LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] Wrote: %s", text_filepath);
     return 0;
 }

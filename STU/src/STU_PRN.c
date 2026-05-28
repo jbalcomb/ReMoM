@@ -19,6 +19,7 @@ _UNITS[]
 
 #include <stdio.h>
 #include <string.h>
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -96,7 +97,7 @@ void Print_Unit_Structure(int16_t unit_idx)
     );
 
     // Print the content of the buffer to the console
-    printf("%s\n", unit_struct_buffer);
+    LOG_INFO(LOG_CAT_STU_PRN, "%s", unit_struct_buffer);
 
 }
 
@@ -120,6 +121,6 @@ void Print_Example(void)
             );
 
     // Print the content of the buffer to the console
-    printf("%s\n", buffer);
+    LOG_INFO(LOG_CAT_STU_PRN, "%s", buffer);
 
 }

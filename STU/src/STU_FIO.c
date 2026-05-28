@@ -12,6 +12,7 @@
 #include "STU_FIO.h"
 
 #include <stdio.h>
+#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -20,7 +21,7 @@ void STU_File_Open(void * file_struct, const char * file_name, const char * mode
     FILE * file = fopen(file_name, mode);
     if(file == NULL)
     {
-        fprintf(stderr, "Error opening file: %s\n", file_name);
+        LOG_INFO(LOG_CAT_STU_FIO, "Error opening file: %s", file_name);
         // Handle error as needed (e.g., exit, return an error code, etc.)
     }
     else

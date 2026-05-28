@@ -6,6 +6,7 @@
  */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
 
 #include <Windows.h>
 #include "windowsx.h"   /* GET_X_LPARAM(), GET_Y_LPARAM() */
@@ -74,8 +75,8 @@ void Startup_Platform(void)
     int h = win_window_height;
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: BEGIN: Startup_Platform()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Startup_Platform()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_WIN_PFL, "DEBUG: [%s, %d]: BEGIN: Startup_Platform()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_PFL, "DEBUG: [%s, %d]: BEGIN: Startup_Platform()", __FILE__, __LINE__);
 #endif
 
     assert(w >= PLATFORM_SCREEN_WIDTH && "window width must be >= PLATFORM_SCREEN_WIDTH");
@@ -93,16 +94,16 @@ void Startup_Platform(void)
     Build_Key_Xlat();
 
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: END: Startup_Platform()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: END: Startup_Platform()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_WIN_PFL, "DEBUG: [%s, %d]: END: Startup_Platform()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_PFL, "DEBUG: [%s, %d]: END: Startup_Platform()", __FILE__, __LINE__);
 #endif
 }
 
 void Shutdown_Platform(void)
 {
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: BEGIN: Shutdown_Platform()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Shutdown_Platform()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_WIN_PFL, "DEBUG: [%s, %d]: BEGIN: Shutdown_Platform()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_PFL, "DEBUG: [%s, %d]: BEGIN: Shutdown_Platform()", __FILE__, __LINE__);
 #endif
     ShowCursor(TRUE);
     timeEndPeriod(1);
@@ -112,8 +113,8 @@ void Shutdown_Platform(void)
         win_window = NULL;
     }
 #ifdef STU_DEBUG
-    printf("DEBUG: [%s, %d]: END: Shutdown_Platform()\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: END: Shutdown_Platform()\n", __FILE__, __LINE__);
+    LOG_INFO(LOG_CAT_WIN_PFL, "DEBUG: [%s, %d]: END: Shutdown_Platform()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_PFL, "DEBUG: [%s, %d]: END: Shutdown_Platform()", __FILE__, __LINE__);
 #endif
 }
 
@@ -266,7 +267,7 @@ void Platform_Event_Handler(void)
 
         if (cancelled)
         {
-            fprintf(stderr, "REPLAY: cancelled by user input\n");
+            LOG_INFO(LOG_CAT_WIN_PFL, "REPLAY: cancelled by user input");
             Platform_Replay_Stop();
             /* Fall through to live input. */
         }
@@ -289,6 +290,8 @@ void Platform_Event_Handler(void)
     {
         platform_frame_callback();
     }
+
+    STU_Log_Pump();
 
     /* CLAUDE: Record — capture input state after processing OS events.  Matches sdl2/sdl3/headless backends.  Without this, --record produces an empty RMR on win32. */
     if (Platform_Record_Active())
@@ -579,7 +582,7 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
         {
             /* CLAUDE: diagnostic — some keys (F10, Alt+key, etc.) arrive as WM_SYSKEYDOWN rather than WM_KEYDOWN.  Log them so we can see if missed keys are landing here. */
 #ifdef STU_DEBUG
-            trc_prn("WIN_KEY t=%llu WM_SYSKEYDOWN vk=0x%02X (%d) wParam=0x%llX lParam=0x%llX repeat=%d\n", (unsigned long long)Platform_Get_Millies(), (int)wParam, (int)wParam, (unsigned long long)wParam, (unsigned long long)lParam, (int)(lParam & 0xFFFF));
+            LOG_TRACE(LOG_CAT_PFL, "WIN_KEY t=%llu WM_SYSKEYDOWN vk=0x%02X (%d) wParam=0x%llX lParam=0x%llX repeat=%d", (unsigned long long)Platform_Get_Millies(), (int)wParam, (int)wParam, (unsigned long long)wParam, (unsigned long long)lParam, (int)(lParam & 0xFFFF));
 #endif
             return DefWindowProc(hWnd, message, wParam, lParam);
         }
@@ -602,7 +605,7 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
 
             /* CLAUDE: diagnostic — trace raw WM_KEYDOWN before translation, to help find keys that are received but dropped. */
 #ifdef STU_DEBUG
-            trc_prn("WIN_KEY t=%llu WM_KEYDOWN vk=0x%02X (%d) mod=0x%X mox_key=0x%X repeat=%d\n", (unsigned long long)Platform_Get_Millies(), vk_code, vk_code, (unsigned)mox_mod, (unsigned)mox_key, (int)(lParam & 0xFFFF));
+            LOG_TRACE(LOG_CAT_PFL, "WIN_KEY t=%llu WM_KEYDOWN vk=0x%02X (%d) mod=0x%X mox_key=0x%X repeat=%d", (unsigned long long)Platform_Get_Millies(), vk_code, vk_code, (unsigned)mox_mod, (unsigned)mox_key, (int)(lParam & 0xFFFF));
 #endif
 
             /* Ctrl+Alt+Q to quit */
@@ -655,14 +658,14 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
             if (mox_key != MOX_KEY_UNKNOWN && mox_key < MOX_KEY_OVERRUN)
             {
 #ifdef STU_DEBUG
-                trc_prn("WIN_KEY t=%llu BUFFERED vk=0x%02X mox_key=0x%X mox_mod=0x%X mox_char=0x%02X ('%c')\n", (unsigned long long)Platform_Get_Millies(), vk_code, (unsigned)mox_key, (unsigned)mox_mod, (unsigned char)mox_character, (mox_character >= 0x20 && mox_character < 0x7F) ? mox_character : '.');
+                LOG_TRACE(LOG_CAT_PFL, "WIN_KEY t=%llu BUFFERED vk=0x%02X mox_key=0x%X mox_mod=0x%X mox_char=0x%02X ('%c')", (unsigned long long)Platform_Get_Millies(), vk_code, (unsigned)mox_key, (unsigned)mox_mod, (unsigned char)mox_character, (mox_character >= 0x20 && mox_character < 0x7F) ? mox_character : '.');
 #endif
                 Platform_Keyboard_Buffer_Add_Key_Press(mox_key, mox_mod, mox_character);
             }
             else
             {
 #ifdef STU_DEBUG
-                trc_prn("WIN_KEY t=%llu DROPPED vk=0x%02X mox_key=0x%X reason=%s\n", (unsigned long long)Platform_Get_Millies(), vk_code, (unsigned)mox_key, (mox_key == MOX_KEY_UNKNOWN) ? "UNKNOWN" : "OVERRUN");
+                LOG_TRACE(LOG_CAT_PFL, "WIN_KEY t=%llu DROPPED vk=0x%02X mox_key=0x%X reason=%s", (unsigned long long)Platform_Get_Millies(), vk_code, (unsigned)mox_key, (mox_key == MOX_KEY_UNKNOWN) ? "UNKNOWN" : "OVERRUN");
 #endif
             }
         } break;
@@ -681,7 +684,7 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
                 MOUSE_LOG("MOUSEt=%llu BTN_DOWN btn=1 wx=%d wy=%d gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (int)(win_x / scale), (int)(win_y / scale));
 #endif
 #ifdef STU_DEBUG
-                trc_prn("WIN_BTN t=%llu WM_LBUTTONDOWN wx=%d wy=%d prev_edge=0x%X\n", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (unsigned)platform_frame_mouse_buttons);
+                LOG_TRACE(LOG_CAT_PFL, "WIN_BTN t=%llu WM_LBUTTONDOWN wx=%d wy=%d prev_edge=0x%X", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (unsigned)platform_frame_mouse_buttons);
 #endif
                 platform_frame_mouse_buttons |= 1;
                 User_Mouse_Handler(ST_LEFT_BUTTON, win_x, win_y);
@@ -701,7 +704,7 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
                 MOUSE_LOG("MOUSEt=%llu BTN_DOWN btn=2 wx=%d wy=%d gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (int)(win_x / scale), (int)(win_y / scale));
 #endif
 #ifdef STU_DEBUG
-                trc_prn("WIN_BTN t=%llu WM_RBUTTONDOWN wx=%d wy=%d prev_edge=0x%X\n", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (unsigned)platform_frame_mouse_buttons);
+                LOG_TRACE(LOG_CAT_PFL, "WIN_BTN t=%llu WM_RBUTTONDOWN wx=%d wy=%d prev_edge=0x%X", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (unsigned)platform_frame_mouse_buttons);
 #endif
                 platform_frame_mouse_buttons |= 2;
                 User_Mouse_Handler(ST_RIGHT_BUTTON, win_x, win_y);

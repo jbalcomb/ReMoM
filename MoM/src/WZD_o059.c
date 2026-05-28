@@ -23,6 +23,7 @@
 #include "UnitMove.h"
 
 #include "WZD_o059.h"
+#include "../../STU/src/STU_LOG.h"
 
 
 /*
@@ -637,7 +638,7 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
     // int16_t curr_map_plane;  // _DI_
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Do_Plane_Button__WIP(player_idx = %d, *map_x = %d, *map_y = %d, *map_plane = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_plane);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Do_Plane_Button__WIP(player_idx = %d, *map_x = %d, *map_y = %d, *map_plane = %d)", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_plane);
 #endif
 
     // curr_map_plane = *map_plane;
@@ -650,7 +651,7 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
 
 #ifdef STU_DEBUG
     // dbg_prn("DEBUG: [%s, %d]: curr_map_plane: %d\n", __FILE__, __LINE__, curr_map_plane);
-    dbg_prn("DEBUG: [%s, %d]: *map_plane: %d\n", __FILE__, __LINE__, *map_plane);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: *map_plane: %d", __FILE__, __LINE__, *map_plane);
 #endif
 
     /*
@@ -698,7 +699,7 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
     */
 #ifdef STU_DEBUG
     // dbg_prn("DEBUG: [%s, %d]: curr_map_plane: %d\n", __FILE__, __LINE__, curr_map_plane);
-    dbg_prn("DEBUG: [%s, %d]: *map_plane: %d\n", __FILE__, __LINE__, *map_plane);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: *map_plane: %d", __FILE__, __LINE__, *map_plane);
 #endif
 
     /*
@@ -795,7 +796,7 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
 
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Do_Plane_Button__WIP(player_idx = %d, *map_x = %d, *map_y = %d, *map_plane = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_plane);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Do_Plane_Button__WIP(player_idx = %d, *map_x = %d, *map_y = %d, *map_plane = %d)", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_plane);
 #endif
 
 }
@@ -823,7 +824,7 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
 
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Check_Stack_Plane_Shift(unit_stack_unit_idx = %d, map_plane = %d)\n", __FILE__, __LINE__, unit_stack_unit_idx, map_plane);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Check_Stack_Plane_Shift(unit_stack_unit_idx = %d, map_plane = %d)", __FILE__, __LINE__, unit_stack_unit_idx, map_plane);
 #endif
 
     unit_idx = unit_stack_unit_idx;
@@ -900,7 +901,7 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Check_Stack_Plane_Shift(unit_stack_unit_idx = %d, map_plane = %d)\n", __FILE__, __LINE__, unit_stack_unit_idx, map_plane);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Check_Stack_Plane_Shift(unit_stack_unit_idx = %d, map_plane = %d)", __FILE__, __LINE__, unit_stack_unit_idx, map_plane);
 #endif
 
     return return_value;
