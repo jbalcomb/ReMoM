@@ -6,6 +6,8 @@
         Module: exit
 */
 
+#include "../../STU/src/STU_LOG.h"
+
 #include "EXIT.h"
 
 #include "EMS/EMS.h"
@@ -163,7 +165,6 @@ void Reset_Video(void)
 /*
     MoO2
     #include <i86.h>
-#include "../../STU/src/STU_LOG.h"
     void Reset_Video(void)
     {
         mov     [ebp+in_regs], 3

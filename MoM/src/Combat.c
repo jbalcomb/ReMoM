@@ -10260,11 +10260,15 @@ void Draw_Combat_Unit_Display(void)
 */
 void Strategic_Combat_Allocate(void)
 {
-    int16_t itr;  // _SI_
+    int16_t itr = 0;
+
+    /* TODO  figure out if battlefield is really not allocated anywhere for Strategic Combat. If so, is there a better hack? Bonus, how did it not crash before? */
+    /* HACK */ battlefield = (struct s_BATTLEFIELD *)Allocate_First_Block(_screen_seg, 348); // 348 PR, 5568 B
 
     // MoO2  Strategic_Combat()  _qcombat_data = Allocate_First_Block()
     // 249 * 16 = 3984 / 110 = 36.2182 ... 36? 2 * max stack = 18 so, ... 36 units, but 16 pictures?
-    battle_units = (struct s_BATTLE_UNIT *)Allocate_First_Block(_screen_seg, 249);
+    // battle_units = (struct s_BATTLE_UNIT *)Allocate_First_Block(_screen_seg, 249);
+    /* HACK */  battle_units = (struct s_BATTLE_UNIT *)Allocate_Next_Block(_screen_seg, 249);
 
     // 3 * 16 = 48 ... 1PR header, 15 2-byte values
     // combat_enchantments = (struct s_COMBAT_ENCHANTMENTS *)Allocate_Next_Block(_screen_seg, 3);

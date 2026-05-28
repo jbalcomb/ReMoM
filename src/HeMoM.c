@@ -509,17 +509,10 @@ int main(int argc, char *argv[])
     char hemom_dump_save[260] = { 0 };
     int argi;
 
-#ifdef STU_DEBUG
-    Debug_Log_Startup();
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: HeMoM  main()", __FILE__, __LINE__);
-#endif
-#ifdef STU_DEBUG
-    Trace_Log_Startup();
-    LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: BEGIN: HeMoM  main()", __FILE__, __LINE__);
-#endif
-
     STU_Log_Startup("ReMoM.ini");
     LOG_INFO(LOG_CAT_GENERAL, "BEGIN: HeMoM main() [STU_LOG tracer bullet]");
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: HeMoM  main()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: BEGIN: HeMoM  main()", __FILE__, __LINE__);
 
     /* Log and parse CLI arguments */
     LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] argc=%d", argc);
@@ -650,9 +643,7 @@ int main(int argc, char *argv[])
     LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] Parsed: mode=%d file=\"%s\" scenario=\"%s\"", hemom_mode, hemom_file, hemom_scenario);
 #endif
 
-#ifdef STU_DEBUG
     AI_Metrics_Startup();
-#endif
 
     if (hemom_mode == 0)
     {
@@ -831,19 +822,14 @@ int main(int argc, char *argv[])
 #endif
     Shutdown_Platform();
 
-#ifdef STU_DEBUG
     AI_Metrics_Shutdown();
-#endif
-#ifdef STU_DEBUG
+
     LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: END: HeMoM  main()", __FILE__, __LINE__);
-    Trace_Log_Shutdown();
-#endif
-#ifdef STU_DEBUG
+
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: HeMoM  main()", __FILE__, __LINE__);
-    Debug_Log_Shutdown();
-#endif
 
     LOG_INFO(LOG_CAT_GENERAL, "END: HeMoM main() [STU_LOG tracer bullet]");
+
     STU_Log_Shutdown();
 
     LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Done");

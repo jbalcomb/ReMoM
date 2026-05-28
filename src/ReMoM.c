@@ -218,20 +218,14 @@ int main(int argc, char * argv[])
     int itr = 0;
 #endif
 #endif
-#ifdef STU_DEBUG
-    Debug_Log_Startup();
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: ReMoM main()", __FILE__, __LINE__);
-#endif
-#ifdef STU_DEBUG
-    Trace_Log_Startup();
-    LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: BEGIN: ReMoM main()", __FILE__, __LINE__);
-#endif
 
     STU_Log_Startup("ReMoM.ini");
     LOG_INFO(LOG_CAT_GENERAL, "BEGIN: ReMoM main() [STU_LOG tracer bullet]");
-#ifdef STU_DEBUG
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: ReMoM main()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: BEGIN: ReMoM main()", __FILE__, __LINE__);
+
     AI_Metrics_Startup();
-#endif
+
 
 #ifdef STU_DEBUG
 #ifdef _WIN32
@@ -259,7 +253,7 @@ int main(int argc, char * argv[])
 //     }
 //     system( "type freopen.out" );
 
-    LOG_INFO(LOG_CAT_REMOM, "Hello from the console!");
+    printf("Hello from the console!");
 #endif
 #endif
 
@@ -303,15 +297,14 @@ int main(int argc, char * argv[])
         }
     }
 
-#ifdef STU_DEBUG
     LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: BEFORE: Startup_Platform()", __FILE__, __LINE__);
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEFORE: Startup_Platform()", __FILE__, __LINE__);
-#endif
+
     Startup_Platform();
-#ifdef STU_DEBUG
+
     LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: AFTER: Startup_Platform()", __FILE__, __LINE__);
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: AFTER: Startup_Platform()", __FILE__, __LINE__);
-#endif
+
 
     /* CLAUDE: Register engine callbacks for replay before parsing CLI flags. */
     Platform_Replay_Register_Random_Seed_Callbacks(Get_Random_Seed, Set_Random_Seed);
@@ -324,40 +317,40 @@ int main(int argc, char * argv[])
         {
             if(stu_strcmp(argv[argi], "--record") == 0 && (argi + 1) < argc)
             {
-#ifdef STU_DEBUG
+
                 LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: --record flag detected", __FILE__, __LINE__);
                 LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --record flag detected", __FILE__, __LINE__);
                 LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --record flag detected", __FILE__, __LINE__);
-#endif
+
                 argi++;
                 Platform_Record_Start(argv[argi]);
             }
             else if(stu_strcmp(argv[argi], "--replay") == 0 && (argi + 1) < argc)
             {
-#ifdef STU_DEBUG
+
                 LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: --replay flag detected", __FILE__, __LINE__);
                 LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --replay flag detected", __FILE__, __LINE__);
                 LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --replay flag detected", __FILE__, __LINE__);
-#endif
+
                 argi++;
                 Platform_Replay_Start(argv[argi]);
             }
             else if(stu_strcmp(argv[argi], "--continue") == 0)
             {
-#ifdef STU_DEBUG
+
                 LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: --continue flag detected", __FILE__, __LINE__);
                 LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --continue flag detected", __FILE__, __LINE__);
                 LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --continue flag detected", __FILE__, __LINE__);
-#endif
+
                 remom_continue_flag = 1;
             }
             else if(stu_strcmp(argv[argi], "--demo") == 0)
             {
-#ifdef STU_DEBUG
+
                 LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: --demo flag detected", __FILE__, __LINE__);
                 LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --demo flag detected", __FILE__, __LINE__);
                 LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --demo flag detected", __FILE__, __LINE__);
-#endif
+
                 /* Optional filename: --demo [FILE.RMR], defaults to DEMO.RMR */
                 if((argi + 1) < argc && argv[argi + 1][0] != '-')
                 {
@@ -371,11 +364,11 @@ int main(int argc, char * argv[])
             }
             else if(strcmp(argv[argi], "--scenario") == 0 && (argi + 1) < argc)
             {
-#ifdef STU_DEBUG
+
                 LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: --scenario flag detected", __FILE__, __LINE__);
                 LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --scenario flag detected", __FILE__, __LINE__);
                 LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --scenario flag detected", __FILE__, __LINE__);
-#endif
+
                 argi++;
                 if(HeMoM_Player_Load_Scenario(argv[argi]) == 0)
                 {
@@ -411,22 +404,14 @@ int main(int argc, char * argv[])
 #endif
 #endif
 
-#ifdef STU_DEBUG
-#endif
-
-#ifdef STU_DEBUG
     AI_Metrics_Shutdown();
-#endif
-#ifdef STU_DEBUG
+
     LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: END: ReMoM main()", __FILE__, __LINE__);
-    Trace_Log_Shutdown();
-#endif
-#ifdef STU_DEBUG
+
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: ReMoM main()", __FILE__, __LINE__);
-    Debug_Log_Shutdown();
-#endif
 
     LOG_INFO(LOG_CAT_GENERAL, "END: ReMoM main() [STU_LOG tracer bullet]");
+
     STU_Log_Shutdown();
 
     return 0;

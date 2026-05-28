@@ -150,11 +150,16 @@ class TestRealTreeSmoke(unittest.TestCase):
         if not existing:
             self.skipTest("repo tree not available")
         report = run_io(existing)
-        self.assertGreater(report["files_scanned"], 0)
-        # Recon (Phase 8 planning) saw ~370 candidate sites; expect at least 100.
-        self.assertGreater(report["total_matches"], 100,
-            "expected ample printf/fprintf-stderr/stdout sites across the real tree")
-        # And we should have skipped a meaningful number of fprintf-to-file-pointer calls.
+        # Smoke check: script runs against the real tree without crashing and scans many files.
+        self.assertGreater(report["files_scanned"], 100,
+            "expected the scan to walk a meaningful portion of the source tree")
+        # Post-Phase-8 migration: most printf/fprintf sites have been migrated to LOG_*.
+        # A handful remain by design (STU_LOG.c can't migrate its own fopen-error fprintf,
+        # and STU_DBG.c's printfs are inside the old logger implementation kept as a library tool).
+        # Upper bound catches regression if someone adds a wave of new ad-hoc printfs.
+        self.assertLess(report["total_matches"], 50,
+            "unexpectedly many printf/fprintf sites left after Phase 8 migration; new ad-hoc printf added?")
+        # fprintf-to-file-pointer skips are real and many (Replay.c writes to fp/PLAY_LOG/etc.).
         self.assertGreater(report["skipped_fprintf"], 100)
 
 
