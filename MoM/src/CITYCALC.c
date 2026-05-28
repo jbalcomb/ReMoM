@@ -69,7 +69,12 @@ void Do_City_Calculations(int16_t city_idx)
         (_CITIES[city_idx].owner_idx != NEUTRAL_PLAYER_IDX)
     )
     {
-        CITIES_FOOD_UNITS(city_idx, ((_CITIES[city_idx].food_units * difficulty_modifiers_table[_difficulty].food) / 100));
+        CITIES_FOOD_UNITS(city_idx,           ( ( _CITIES[city_idx].food_units           * difficulty_modifiers_table[_difficulty].food                 ) / 100 ) );
+        CITIES_PRODUCTION_UNITS(city_idx,     ( ( _CITIES[city_idx].production_units     * difficulty_modifiers_table[_difficulty].production           ) / 100 ) );
+        CITIES_MANA_UNITS(city_idx,           ( ( _CITIES[city_idx].mana_units           * difficulty_modifiers_table[_difficulty].mana                 ) / 100 ) );
+        CITIES_GOLD_UNITS(city_idx,           ( ( _CITIES[city_idx].gold_units           * difficulty_modifiers_table[_difficulty].gold                 ) / 100 ) );
+        CITIES_RESEARCH_UNITS(city_idx,       ( ( _CITIES[city_idx].research_units       * difficulty_modifiers_table[_difficulty].research             ) / 100 ) );
+        CITIES_BUILDING_MAINTENANCE(city_idx, ( ( _CITIES[city_idx].building_maintenance * difficulty_modifiers_table[_difficulty].maintenance          ) / 100 ) );
     }
 }
 
