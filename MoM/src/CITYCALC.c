@@ -17,6 +17,7 @@
 #include "../../MoX/src/MOX_UPD.h"
 #include "../../MoX/src/random.h"
 #include "../../MoX/src/Util.h"
+#include "../../MoX/src/EMS/EMS.h"  /* EMM_Map_DataH() used in Do_City_Calculations */
 
 #include "AIDUDES.h"
 #include "Items.h"

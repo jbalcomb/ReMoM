@@ -875,7 +875,7 @@ void Init_Overland(void)
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-        _CITIES[itr_cities].bldg_status[NONE] = bs_Built;
+        _CITIES[itr_cities].bldg_status[NONE] = bs_Replaced;
     }
     
     for(itr_units = 0; itr_units < _units; itr_units++)
