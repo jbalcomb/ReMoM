@@ -174,7 +174,7 @@ void Players_Update_Magic_Power(void)
 
     for(itr = 1; itr < _num_players; itr++)
     {
-        _players[itr].Power_Base *= ((difficulty_modifiers_table[_difficulty].mana) / 100);  // e.g., * 150 / 100 ~== * 1.5 ~== +50%
+        _players[itr].Power_Base = ((_players[itr].Power_Base * (difficulty_modifiers_table[_difficulty].mana)) / 100);  // e.g., * 150 / 100 ~== * 1.5 ~== +50%
     }
 
     for(itr = 0; itr < _cities; itr++)
