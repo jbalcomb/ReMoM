@@ -916,10 +916,8 @@ void Sort_Research_List(int16_t player_idx, int16_t count)
     // ~== Build_Spellbook()
     for(itr = 0; itr < NUM_MAGIC_REALMS; itr++)
     {
-        // ; BUG: research bonus calculated using an arbitrary
-        // ; spell of the realm, which won't always include all
-        // ; relevant bonuses, and may also add wrong ones
-        research_bonus_percentage = Player_Spell_Research_Bonus(HUMAN_PLAYER_IDX, ((itr * NUM_SPELLS_PER_MAGIC_REALM) + 1));
+        /* OGBUG: research bonus calculated using an arbitrary spell of the realm, which won't always include all relevant bonuses, and may also add wrong ones */
+        research_bonus_percentage = Player_Spell_Research_Bonus(player_idx, ((itr * NUM_SPELLS_PER_MAGIC_REALM) + 1));
         realm_research_incomes[itr] = research_points + ((research_points * research_bonus_percentage) / 100);
     }
     for(research_idx2 = 1; research_idx2 < count; research_idx2++)
@@ -945,10 +943,6 @@ void Sort_Research_List(int16_t player_idx, int16_t count)
         }
         while((research_idx1 > -1) && (cost1 > cost2))
         {
-            // _players[player_idx].research_spells[(research_idx1 + 1)] = _players[player_idx].research_spells[research_idx1];
-            // spell_idx1 = _players[player_idx].research_spells[research_idx1];  // DNE in Dasm
-            // research_idx1--;
-            // Problem: spell_idx1 is set before research_idx1--, so it still holds the spell at the old (higher) index. ...
             _players[player_idx].research_spells[(research_idx1 + 1)] = _players[player_idx].research_spells[research_idx1];
             research_idx1--;
             if(research_idx1 > -1)
