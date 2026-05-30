@@ -561,15 +561,16 @@ Cast_NaturesAwareness()
 */
 void All_AI_Players_Contacted(void)
 {
-    int16_t itr_players = 0;  // _SI_
-    int16_t itr_units = 0;  //_DI_
+    int16_t itr_players = 0;
+    int16_t itr_units = 0;
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
 
-        _players[(itr_players + 1)].Dipl.Contacted[HUMAN_PLAYER_IDX] = ST_TRUE;
+        /* Mark self as contacted. (Why?)*/
+        _players[itr_players].Dipl.Contacted[itr_players] = ST_TRUE;
 
-        if(_players[(itr_players + 1)].Globals[NATURES_AWARENESS] != ST_FALSE)
+        if(_players[itr_players].Globals[NATURES_AWARENESS] != ST_FALSE)
         {
 
             for(itr_units = 0; itr_units < _units; itr_units++)
@@ -582,7 +583,7 @@ void All_AI_Players_Contacted(void)
                     &&
                     (_UNITS[itr_units].owner_idx != NEUTRAL_PLAYER_IDX)
                     &&
-                    ((_UNITS[itr_units].enchantments & UE_INVISIBILITY) == 0)  // OGBUG: only checks enchantment, not ability or item
+                    ((_UNITS[itr_units].enchantments & UE_INVISIBILITY) == 0)  /* OGBUG: only checks enchantment, not ability or item */
                 )
                 {
 

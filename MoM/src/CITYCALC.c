@@ -17,6 +17,7 @@
 #include "../../MoX/src/MOX_UPD.h"
 #include "../../MoX/src/random.h"
 #include "../../MoX/src/Util.h"
+#include "../../MoX/src/EMS/EMS.h"  /* EMM_Map_DataH() used in Do_City_Calculations */
 
 #include "AIDUDES.h"
 #include "Items.h"
@@ -55,27 +56,26 @@
 */
 void Do_City_Calculations(int16_t city_idx)
 {
-
-    // DONT  EMM_Map_DataH();
-
+    EMM_Map_DataH();
     CITIES_FOOD_UNITS(city_idx, (int8_t)City_Food_Production(city_idx));
     CITIES_PRODUCTION_UNITS(city_idx, (int8_t)City_Production_Production(city_idx));
     CITIES_GOLD_UNITS(city_idx, (uint8_t)City_Gold_Production(city_idx));
     CITIES_BUILDING_MAINTENANCE(city_idx, (int8_t)City_Gold_Mainanence(city_idx));
     CITIES_RESEARCH_UNITS(city_idx, (int8_t)City_Research_Production(city_idx));
     CITIES_MANA_UNITS(city_idx, (int8_t)City_Mana_Production(city_idx));
-
     if(
         (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
         &&
         (_CITIES[city_idx].owner_idx != NEUTRAL_PLAYER_IDX)
     )
     {
-
-        CITIES_FOOD_UNITS(city_idx, ((_CITIES[city_idx].food_units * difficulty_modifiers_table[_difficulty].food) / 100));
-
+        CITIES_FOOD_UNITS(city_idx,           ( ( _CITIES[city_idx].food_units           * difficulty_modifiers_table[_difficulty].food                 ) / 100 ) );
+        CITIES_PRODUCTION_UNITS(city_idx,     ( ( _CITIES[city_idx].production_units     * difficulty_modifiers_table[_difficulty].production           ) / 100 ) );
+        CITIES_MANA_UNITS(city_idx,           ( ( _CITIES[city_idx].mana_units           * difficulty_modifiers_table[_difficulty].mana                 ) / 100 ) );
+        CITIES_GOLD_UNITS(city_idx,           ( ( _CITIES[city_idx].gold_units           * difficulty_modifiers_table[_difficulty].gold                 ) / 100 ) );
+        CITIES_RESEARCH_UNITS(city_idx,       ( ( _CITIES[city_idx].research_units       * difficulty_modifiers_table[_difficulty].research             ) / 100 ) );
+        CITIES_BUILDING_MAINTENANCE(city_idx, ( ( _CITIES[city_idx].building_maintenance * difficulty_modifiers_table[_difficulty].maintenance          ) / 100 ) );
     }
-
 }
 
 
@@ -174,7 +174,7 @@ void Players_Update_Magic_Power(void)
 
     for(itr = 1; itr < _num_players; itr++)
     {
-        _players[itr].Power_Base *= ((difficulty_modifiers_table[_difficulty].mana) / 100);  // e.g., * 150 / 100 ~== * 1.5 ~== +50%
+        _players[itr].Power_Base = ((_players[itr].Power_Base * (difficulty_modifiers_table[_difficulty].mana)) / 100);  // e.g., * 150 / 100 ~== * 1.5 ~== +50%
     }
 
     for(itr = 0; itr < _cities; itr++)
@@ -1011,7 +1011,7 @@ int16_t Player_Spell_Research_Bonus(int16_t player_idx, int16_t spell_idx)
         research_bonus_percentage += 25;
     }
 
-    if( (_players[player_idx].conjurer > 0) && ( (spell_data_table[spell_idx].type & 0x00 /* scc_Summoning */) != 0) )
+    if((_players[player_idx].conjurer > 0) && (spell_data_table[spell_idx].type == scc_Summoning))
     {
         research_bonus_percentage += 25;
     }
@@ -2271,7 +2271,11 @@ int16_t City_Mana_Production(int16_t city_idx)
         building_magic_power = 0;
         building_magic_power_modifier = 100;
 
-        if(_players[city_owner_idx].divine_power != ST_FALSE)
+        if(
+            (_players[city_owner_idx].divine_power != ST_FALSE)
+            ||
+            (_players[city_owner_idx].infernal_power != ST_FALSE)
+        )
         {
             building_magic_power_modifier = 150;
         }
