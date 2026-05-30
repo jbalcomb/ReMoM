@@ -28,7 +28,7 @@ void AI_Stacks_Order_Ferry(int16_t unit_idx, int16_t unit_list_idx, int16_t list
 | `unit_list_idx` | Index into `_ai_own_stack_unit_list[][]` — which AI-stack slot |
 | `list_unit_idx` | Sub-index — which slot within the per-stack unit list |
 
-Same shape as the other `AI_Order_*` helpers (`AI_Order_Settle`, `AI_Order_RoadBuild`, `AI_Order_Meld`, `AI_Order_Purify`).
+Same shape as the other `AI_Order_*` helpers (`AI_Order_Settle`, `AI_Order_RoadBuild`, `AI_Stacks_Order_Meld`, `AI_Order_Purify`).
 
 ## Inputs (globals read)
 

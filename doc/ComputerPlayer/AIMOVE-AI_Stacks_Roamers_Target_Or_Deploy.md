@@ -140,10 +140,10 @@ The seven consumers (per the MOM_DAT.c comment):
 - `AI_Order_Settle` at [AIMOVE.c:5120](../../MoM/src/AIMOVE.c#L5120)
 - `AI_Order_RoadBuild`
 - `AI_Stacks_Order_Ferry`
-- `AI_Order_Meld`
+- `AI_Stacks_Order_Meld`
 - `AI_Order_Purify`
 
-By the time this function runs (dispatch slot 9), the stack lists have been sparsified by slots 4-7 (`AI_Do_Meld`, `AI_Do_Settle`, `AI_Do_Purify`, `AI_Do_RoadBuild`) consuming slots as they issue orders to settlers/road-builders/melders. The consumed slots are scattered with valid slots; later slots in the same stack can still hold real unit indices.
+By the time this function runs (dispatch slot 9), the stack lists have been sparsified by slots 4-7 (`AI_Stacks_Do_Meld`, `AI_Do_Settle`, `AI_Do_Purify`, `AI_Do_RoadBuild`) consuming slots as they issue orders to settlers/road-builders/melders. The consumed slots are scattered with valid slots; later slots in the same stack can still hold real unit indices.
 
 That's why the gate works as a whole-stack check: **if ANY slot is `ST_UNDEFINED`, the stack has been partially consumed and should not be re-tasked as a roamer destination.** The `break` is a short-circuit ("I only need to know IF any unit was consumed, not how many").
 
@@ -306,7 +306,7 @@ This is a **single-turn assertion** that only persists across one turn boundary 
 | `AI_Stacks_Garrison_Sites` ([line 233](../../MoM/src/AIMOVE.c#L233) gate) | `== lmt_Own || == lmt_Contested || >= lmt_Leaveable` | Same turn | Garrison maintenance allowed |
 | `AI_Stacks_Garrison_Sites` internal ([line 380](../../MoM/src/AIMOVE.c#L380)) | `>= lmt_Leaveable` | Same turn | "We're in the abandoning/no-targets group" |
 | `AI_Stacks_Garrison_Sites` internal ([line 452](../../MoM/src/AIMOVE.c#L452)) | `< lmt_Leaveable` | Same turn | "We're NOT abandoning" |
-| `AI_Do_Meld` ([line 4558](../../MoM/src/AIMOVE.c#L4558)) | `>= lmt_Leaveable` (node-meld eligibility) | Same turn, BEFORE slot 9 wrote it (Do_Meld is dispatch slot 4) | In practice, never sees Abandon |
+| `AI_Stacks_Do_Meld` ([line 4558](../../MoM/src/AIMOVE.c#L4558)) | `>= lmt_Leaveable` (node-meld eligibility) | Same turn, BEFORE slot 9 wrote it (Do_Meld is dispatch slot 4) | In practice, never sees Abandon |
 | `AI_Choose_War_Landmass` ([line 7786](../../MoM/src/AIMOVE.c#L7786) switch) | `case lmt_Leaveable:` → `Reevaluate = ST_TRUE` | **Next turn**, before `AI_Evaluate_Continents` clobbers | "We marked this for abandonment last turn — reconsider whether the war target is still right" |
 
 ### The real meaning, in one sentence

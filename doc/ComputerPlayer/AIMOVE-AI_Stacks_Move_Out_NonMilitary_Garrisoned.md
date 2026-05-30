@@ -169,7 +169,7 @@ The node-presence check uses the `wp` parameter (not the stack's `_ai_own_stack_
 
 **Why the node check is melder-only:** Magic Spirits parked on top of an unmelded node are doing exactly what they should be doing — finishing the meld. Pushing them off would interrupt that. Settlers and Engineers have no equivalent "in-progress" state worth detecting.
 
-**Melder destination is not node-aware.** When a Spirit IS pushed out (Spirit in a garrison, no node on its square), the destination is whatever `Adjacent_Free_Square` returns first — a generic neighbor, not chosen for proximity to an unmelded node. The Spirit walks one square and then waits for next turn's slot-4 `AI_Do_Meld` pass to assign it a proper meld target. So this function only handles the "extract from garrison" half; it doesn't try to do `AI_Do_Meld`'s job.
+**Melder destination is not node-aware.** When a Spirit IS pushed out (Spirit in a garrison, no node on its square), the destination is whatever `Adjacent_Free_Square` returns first — a generic neighbor, not chosen for proximity to an unmelded node. The Spirit walks one square and then waits for next turn's slot-4 `AI_Stacks_Do_Meld` pass to assign it a proper meld target. So this function only handles the "extract from garrison" half; it doesn't try to do `AI_Stacks_Do_Meld`'s job.
 
 ## `Adjacent_Free_Square` filter semantics
 
@@ -182,7 +182,7 @@ The node-presence check uses the `wp` parameter (not the stack's `_ai_own_stack_
 | Holds an intact lair | `_LAIRS[]` (intact only) |
 | Holds a city | `_CITIES[]` |
 
-It does **not** filter `_NODES[]`. A melder could legitimately be pushed onto a node square — harmless, since next turn's `AI_Do_Meld` pass would target it for melding anyway. Towers, if they live in `_LAIRS[]`, are filtered via the intact-lair check.
+It does **not** filter `_NODES[]`. A melder could legitimately be pushed onto a node square — harmless, since next turn's `AI_Stacks_Do_Meld` pass would target it for melding anyway. Towers, if they live in `_LAIRS[]`, are filtered via the intact-lair check.
 
 Practical consequence: a settler will NEVER be pushed onto water, onto a hostile lair, onto a city, or onto a stack — so the `us_Move`-classification edge case (where the order-setter would see SITE/STRENGTH bits at the destination and Status the unit as attacking) does not arise from this function's pushes.
 
@@ -208,7 +208,7 @@ AI_Stacks_Move_Out_NonMilitary_Garrisoned(wp)
 | 1 | [`AI_Stacks_Init_Build_Target_Order`](AIMOVE-AI_Stacks_Init_Build_Target_Order.md) | Rebuilds `_ai_own_stack_*` from scratch for this (plane, landmass). |
 | **2** | **`AI_Stacks_Move_Out_NonMilitary_Garrisoned`** | **(this function)** — push builders out of garrisons |
 | 3 | `AI_Stacks_Survey_Expedition_Forces` | Score surplus combat units into the `G_Pushout_*` / `G_Seafaring_*` global pools |
-| 4 | `AI_Do_Meld` | Issue meld orders |
+| 4 | `AI_Stacks_Do_Meld` | Issue meld orders |
 | 5 | `AI_Do_Settle` | Issue settle orders |
 | 6 | `AI_Do_Purify` | Issue purify orders |
 | 7 | `AI_Do_RoadBuild` | Issue road-build orders |
@@ -216,7 +216,7 @@ AI_Stacks_Move_Out_NonMilitary_Garrisoned(wp)
 | 9 | [`AI_Stacks_Roamers_Target_Or_Deploy`](AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md) | Assign targets to roamer stacks |
 | 10-14 | stage/garrison fill | Consume excess pool, top up garrisons |
 
-By running before slots 4-7 (the per-job order-setters), `AI_Stacks_Move_Out_NonMilitary_Garrisoned` gets first crack at builders that happen to be parked in garrisons. Once it consumes a unit slot (via the order-setter's `ST_UNDEFINED` write), the same unit won't be re-considered by `AI_Do_Settle` / `AI_Do_RoadBuild` / `AI_Do_Meld` later in the same dispatch round — those consumers all read `_ai_own_stack_unit_list[s][u]` and skip undefined slots.
+By running before slots 4-7 (the per-job order-setters), `AI_Stacks_Move_Out_NonMilitary_Garrisoned` gets first crack at builders that happen to be parked in garrisons. Once it consumes a unit slot (via the order-setter's `ST_UNDEFINED` write), the same unit won't be re-considered by `AI_Do_Settle` / `AI_Do_RoadBuild` / `AI_Stacks_Do_Meld` later in the same dispatch round — those consumers all read `_ai_own_stack_unit_list[s][u]` and skip undefined slots.
 
 ## Related references
 

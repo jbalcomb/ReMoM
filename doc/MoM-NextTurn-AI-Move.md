@@ -13,8 +13,8 @@ AI_CONTX_Regroup()  ==>  AI_Stacks_Init_Build_Target_Order
 TILE_IsLand()  ==>  Map_Square_Is_Land()
 AI_Stacks_Survey_Expedition_Forces()  ==>  AI_Stacks_Survey_Expedition_Forces()
 AI_Stacks_Survey_Expedition_Forces_Stack()  ==>  AI_Stacks_Survey_Expedition_Forces_Stack()
-AI_UNIT_SetMeldOrder()  ==>  AI_Order_Meld()
-AI_ProcessMelders()  ==>  AI_Do_Meld()
+AI_UNIT_SetMeldOrder()  ==>  AI_Stacks_Order_Meld()
+AI_ProcessMelders()  ==>  AI_Stacks_Do_Meld()
 TILE_CheckEnemyUnits()  ==>  Map_Square_Area_Has_Opponent()
 TILE_GetDistance()  ==> Range()  MoO2  Module: special
 G_TILE_IsAIEmbarkable()  ==>  Map_Square_Is_Embarkable()
@@ -96,7 +96,7 @@ AI_Set_Meld_List_Unit()
 AI_Set_List_Unit_To_Meld()
 AI_Set_SLU_To_Meld()
 AI_Set_Meld_SLU()
-AI_Order_Meld_SLU()
+AI_Stacks_Order_Meld_SLU()
 
 
 
@@ -145,8 +145,8 @@ AI_Stacks_Move_Out_NonMilitary_Garrisoned()
 AI_Stacks_Survey_Expedition_Forces()
     |-> AI_Stacks_Survey_Expedition_Forces_Stack()
 
-AI_Do_Meld()
-    |-> AI_Order_Meld()
+AI_Stacks_Do_Meld()
+    |-> AI_Stacks_Order_Meld()
     |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 AI_Do_Settle()
@@ -269,8 +269,8 @@ this should be in the terrain notes  MOVE IT!!!!!
 
 
 
-## AI_Do_Meld()
-    |-> AI_Order_Meld()
+## AI_Stacks_Do_Meld()
+    |-> AI_Stacks_Order_Meld()
     |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 _ai_own_stack_count

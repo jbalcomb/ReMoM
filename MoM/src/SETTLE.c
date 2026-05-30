@@ -87,6 +87,29 @@ Game-Data:
 
 // WZD o100p01
 /* MoO2  Module: AIMOVE  Move_AI_() */
+/**
+ * @brief Processes one AI player's unit orders for the current turn slice.
+ *
+ * Saves the current map-view coordinates and plane, then iterates all units
+ * owned by @p player_idx and dispatches behavior based on each unit's
+ * `Status` (move, goto, build road, meld, settle, or seek transport). While
+ * processing movement-capable orders, it captures pre-action state and emits
+ * per-unit outcome metrics through AI_Metrics_Emit_Unit_Outcome().
+ *
+ * If Time Stop is active, only the casting player is allowed to proceed;
+ * other players return immediately without processing units.
+ *
+ * @param player_idx Index of the AI player whose units should be processed.
+ *
+ * @return This function does not return a value. It may update unit orders,
+ *         positions, statuses, and movement-failure flags through delegated
+ *         unit-action routines.
+ *
+ * @note Regardless of movement results, the function restores global map view
+ *       coordinates (`_map_x`, `_map_y`, `_prev_world_x`, `_prev_world_y`) and
+ *       `_map_plane` to their saved pre-processing values before exiting the
+ *       normal path.
+ */
 void AI_MoveUnits(int16_t player_idx)
 {
     int16_t l_map_plane = 0;
@@ -136,7 +159,7 @@ void AI_MoveUnits(int16_t player_idx)
                 } break;
                 case us_Meld:
                 {
-                    AI_UNIT_Meld__WIP(unit_idx);
+                    AI_UNIT_Meld(unit_idx);
                 } break;
                 case us_Settle:
                 {
@@ -179,21 +202,54 @@ void AI_MoveUnits(int16_t player_idx)
 
 
 // WZD o100p02
-// drake178: AI_UNIT_Meld()
-/*
-; melds the first spirit found on the unit's tile into
-; the node on the tile unless the selected unit is
-; already marked as finished for the turn
-;
-; BUG: marks all other units on the tile as ready
-;  regardless of their previous status
-*/
-/*
-
-*/
-void AI_UNIT_Meld__WIP(int16_t unit_idx)
+/**
+ * @brief Executes AI meld handling for one unit's current stack tile.
+ *
+ * If the referenced unit has already finished its turn, this routine exits
+ * immediately. Otherwise it gathers the owning player's full army stack at the
+ * unit's current coordinates, delegates node-resolution and meld consumption to
+ * STK_DoMeldWithNode(), and then resets every unit in that gathered stack to
+ * @c us_Ready.
+ *
+ * @param unit_idx Index of the AI unit whose square is used to gather the
+ *                 stack for meld processing.
+ *
+ * @return This function does not return a value. It may update unit statuses
+ *         for all units on the square and may indirectly modify node state via
+ *         STK_DoMeldWithNode().
+ *
+ * @note The current implementation preserves legacy behavior that marks the
+ *       entire gathered stack as @c us_Ready after meld handling.
+ */
+void AI_UNIT_Meld(int16_t unit_idx)
 {
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t unit_owner_idx = 0;
+    int16_t unit_wp = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t troop_count = 0;
+    int16_t _unit_idx = 0;
+    int16_t itr_troop_count = 0;
 
+    if(_UNITS[unit_idx].Finished == ST_TRUE)
+    {
+        return;
+    }
+
+    unit_wx = _UNITS[unit_idx].wx;
+    unit_wy = _UNITS[unit_idx].wy;
+    unit_wp = _UNITS[unit_idx].wp;
+    unit_owner_idx = _UNITS[unit_idx].owner_idx;
+
+    Player_Army_At_Square(unit_wx, unit_wy, unit_wp, unit_owner_idx, &troop_count, troops);
+
+    STK_DoMeldWithNode(troop_count, troops);
+
+    for (itr_troop_count = 0; itr_troop_count < troop_count; itr_troop_count++)
+    {
+        _UNITS[troops[itr_troop_count]].Status = us_Ready;
+    }
 
 
 }

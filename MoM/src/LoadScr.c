@@ -253,7 +253,7 @@ void GAME_NextHumanStack(void)
     Update_Scouted_And_Contacted();
 
     // ; does nothing and returns zero; at some point must have been some wizard data refresh function
-    // DONT  o62p01_Empty_pFxn(_human_player_idx);
+    o62p01_empty_function(_human_player_idx);
 
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
 

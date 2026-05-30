@@ -20,7 +20,7 @@ Five phases in source order:
 1. **Init flag** — `stack_has_goto = ST_FALSE` (re-initialized per-stack in Phase 5a; this top-level init is effectively dead).
 2. **Ferry-queue capacity accounting** — debit each `_ai_ferry_*` queue entry by the stack-slot footprint of any en-route transport heading to it; invalidate entries that now have zero/negative remaining capacity.
 3. **Ocean stack rebuild** — call [`AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp)`](AIMOVE-AI_Stacks_Init_Build_Target_Order.md) to repopulate `_ai_own_stack_*` for the OCEAN (landmass 0).
-4. **Out-of-band meld** — [`AI_Do_Meld(player_idx)`](../../MoM/src/AIMOVE.c#L4281) (also called in per-landmass slots 4-7; running it here on the ocean-stack context is non-obvious).
+4. **Out-of-band meld** — [`AI_Stacks_Do_Meld(player_idx)`](../../MoM/src/AIMOVE.c#L4281) (also called in per-landmass slots 4-7; running it here on the ocean-stack context is non-obvious).
 5. **Per-ocean-stack transport dispatch** — for each ocean stack containing at least one transport, classify and dispatch via a multi-branch decision tree based on (`stack_has_only_boats`, `stack_has_settler`, `stack_has_goto`) and landing-tile availability.
 
 Consumer of the `_ai_ferry_*` list written by [`AI_Stacks_Ferry_Add_Location`](AIMOVE-AI_Stacks_Ferry_Add_Location.md) via [`AI_Stacks_Setup_Ferry`](AIMOVE-AI_Stacks_Setup_Ferry.md)'s patient path.
@@ -64,7 +64,7 @@ Always called per (player, plane). No early-return gate — always runs at least
 
 - **Phase 2c** writes `_ai_ferry_wp_array[i] = ST_UNDEFINED` for ferry-queue entries whose capacity reached ≤0 after Phase 2b debiting.
 - **Phase 3** calls [`AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp)`](../../MoM/src/AIMOVE.c#L1208) — repopulates `_ai_own_stack_*` for the OCEAN.
-- **Phase 4** calls [`AI_Do_Meld(player_idx)`](../../MoM/src/AIMOVE.c#L1212) — out-of-band meld dispatch.
+- **Phase 4** calls [`AI_Stacks_Do_Meld(player_idx)`](../../MoM/src/AIMOVE.c#L1212) — out-of-band meld dispatch.
 - **Phase 5c** ferry-queue dispatch — `AI_Stacks_Order_Attack_Target_Or_Goto_Destination(...)` with `g_ai_set_target_caller = 3` per packed transport; invalidates the targeted ferry-queue entry when filled.
 - **Phase 5h** landing dispatch — transports get [`AI_Stacks_Order_Ferry`](AIMOVE-AI_Stacks_Order_Ferry.md) (writes `Status = us_Ferry`), non-transports get `AI_Stacks_Order_Attack_Target_Or_Goto_Destination` with `caller = 4`.
 - **Phase 5i** settler-fallback dispatch — `AI_Stacks_Order_Attack_Target_Or_Goto_Destination` for every unit with `caller = 5`.
@@ -144,10 +144,10 @@ Same slot-1 rebuild that [`AI_Stacks_Wartime_Ocean_Movement_And_Cleanup`](AIMOVE
 ### Phase 4 — Out-of-band meld ([line 1212](../../MoM/src/AIMOVE.c#L1212))
 
 ```c
-AI_Do_Meld(player_idx);
+AI_Stacks_Do_Meld(player_idx);
 ```
 
-`AI_Do_Meld` is also called per-landmass in slots 4-7. Running it here, on the ocean-stack-rebuild context, is non-obvious — melders normally meld nodes (land features). drake178 didn't comment. **Worth investigating during `AI_Do_Meld`'s walkthrough.**
+`AI_Stacks_Do_Meld` is also called per-landmass in slots 4-7. Running it here, on the ocean-stack-rebuild context, is non-obvious — melders normally meld nodes (land features). drake178 didn't comment. **Worth investigating during `AI_Stacks_Do_Meld`'s walkthrough.**
 
 ### Phase 5 — Per-ocean-stack transport dispatch ([lines 1215-1597](../../MoM/src/AIMOVE.c#L1215-L1597))
 
@@ -456,7 +456,7 @@ For each unit in the stack:
 
 **B2 (drake178-flagged at line 1465):** *"BUG? setting ships to seek transport?"*. `us_Ferry` semantically means "unit is waiting for / seeking a transport." Applying it to a transport ITSELF is backwards. **IDA-confirmed OG-faithful** (asm 729-735: `call AI_Order_SeekTransport`). Three interpretations possible — real OGBUG, design overload (`us_Ferry` doubles as "transport available next turn"), or unintended next-turn cascade. Worth deciding intent for the rename to `us_Ferry`.
 
-**B11 (drake178-flagged inline at line 1468):** loop reads `_ai_own_stack_unit_list[...]` and dereferences `_UNITS[unit_idx].type` without checking for `ST_UNDEFINED` sentinel. If Phase 4's `AI_Do_Meld` consumed a slot, this reads `_UNITS[-1].type` (out-of-bounds). **IDA-confirmed OG-faithful** (asm 712-719).
+**B11 (drake178-flagged inline at line 1468):** loop reads `_ai_own_stack_unit_list[...]` and dereferences `_UNITS[unit_idx].type` without checking for `ST_UNDEFINED` sentinel. If Phase 4's `AI_Stacks_Do_Meld` consumed a slot, this reads `_UNITS[-1].type` (out-of-bounds). **IDA-confirmed OG-faithful** (asm 712-719).
 
 ---
 
@@ -568,7 +568,7 @@ All remaining entries are OG-faithful OGBUGs preserved per [feedback_faithful_da
 | B2 | [Line 1473](../../MoM/src/AIMOVE.c#L1473) | Phase 5h lands a mixed stack: cargo → GOTO landing tile, **transports → `AI_Stacks_Order_Ferry` (writes `us_Ferry`)**. Semantically backwards. drake178 inline at line 1465: `BUG? setting ships to seek transport?`. **IDA-confirmed OG-faithful** (asm 729-735: `call AI_Order_SeekTransport`). | OGBUG-faithful; semantically suspect — `us_Ferry` on a transport may have unintended next-turn cascade |
 | B7 | [Lines 1328-1334](../../MoM/src/AIMOVE.c#L1328-L1334) | Phase 5e `g_ai_evaluation_map` access uses bad arithmetic: `((stack_wy * WORLD_WIDTH) + wy_offset) + (stack_wx + wx_offset)` instead of `((stack_wy + wy_offset) * WORLD_WIDTH) + (stack_wx + wx_offset)`. **IDA-confirmed OG-faithful** (asm 329-338). | OGBUG-faithful; behavioral |
 | B8 | [Lines 1332, 1361, 1423](../../MoM/src/AIMOVE.c#L1332) | Phase 5e/5f/5g 3x3 scans use unranged offsets — at world-edge stacks, indices can underflow/overflow. drake178 flagged multiple instances. **IDA-confirmed OG-faithful.** | OGBUG-faithful; behavioral edge case |
-| B11 | [Line 1468](../../MoM/src/AIMOVE.c#L1468) | Phase 5h loop dereferences `_UNITS[unit_idx].type` without `ST_UNDEFINED` check. drake178 OGBUG comment inline. **IDA-confirmed OG-faithful** (asm 712-719). If Phase 4's `AI_Do_Meld` consumed a slot, reads `_UNITS[-1].type`. | OGBUG-faithful; potential OOB read |
+| B11 | [Line 1468](../../MoM/src/AIMOVE.c#L1468) | Phase 5h loop dereferences `_UNITS[unit_idx].type` without `ST_UNDEFINED` check. drake178 OGBUG comment inline. **IDA-confirmed OG-faithful** (asm 712-719). If Phase 4's `AI_Stacks_Do_Meld` consumed a slot, reads `_UNITS[-1].type`. | OGBUG-faithful; potential OOB read |
 | B12 | [Lines 1517, 1521-1529](../../MoM/src/AIMOVE.c#L1517) | Phase 5i: (a) the inner-scan `Landing_Allowed = ST_TRUE` assignment is bogus (never read); (b) the dispatch loop runs unconditionally even when no ocean tile found — `adjacent_landmass_wx/wy` stay 0, stack ordered to (0, 0). **IDA-confirmed OG-faithful** (asm 830, 845-872). User OGBUG comment inline at line 1517. | OGBUG-faithful; (0,0) dispatch on rare path |
 | B-sentinel | [Line 1269 vs 1543](../../MoM/src/AIMOVE.c#L1269) | Phase 5c uses `min_delta_distance = 10000` as no-candidate sentinel; Phase 5j uses `1000`. Inconsistent. Both OG-faithful per asm. User flagged inline. | Stylistic; possibly intentional sizing for the different scan domains |
 
@@ -584,7 +584,7 @@ AI_Stacks_Ocean_Landmass_Orders(player_idx, wp)
   │    └─ 2c (1195-1203): invalidate exhausted ferry entries (set wp = ST_UNDEFINED)
   │
   ├─ Phase 3 (1208): AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp)  /* OCEAN */
-  ├─ Phase 4 (1212): AI_Do_Meld(player_idx)   /* odd — also called per-landmass */
+  ├─ Phase 4 (1212): AI_Stacks_Do_Meld(player_idx)   /* odd — also called per-landmass */
   │
   └─ Phase 5: Per-ocean-stack dispatch (1215-1597)
        for each ocean stack:
@@ -644,7 +644,7 @@ AI_Set_Unit_Orders(player_idx)
 
 Both call `AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp)` independently — the first rebuild is inside Wartime's Phase 4, the second is inside this function's Phase 3. Wartime's Phase 5c Kill_Unit may have culled units between the two rebuilds.
 
-**`AI_Do_Meld` is called THREE times per (player, plane)** in the production flow: once via each per-landmass dispatch (slots 4-7 for each landmass), and AGAIN here at Phase 4 for the ocean-stack-rebuild context. The per-landmass pathway is documented; the ocean-rebuild meld call is non-obvious and worth investigating during `AI_Do_Meld`'s walkthrough.
+**`AI_Stacks_Do_Meld` is called THREE times per (player, plane)** in the production flow: once via each per-landmass dispatch (slots 4-7 for each landmass), and AGAIN here at Phase 4 for the ocean-stack-rebuild context. The per-landmass pathway is documented; the ocean-rebuild meld call is non-obvious and worth investigating during `AI_Stacks_Do_Meld`'s walkthrough.
 
 ## Related references
 

@@ -147,7 +147,7 @@ Comment at [337](../../MoM/src/AIMOVE.c#L337) explicitly lists the "threat" grou
 |---|---|---|
 | [1394](../../MoM/src/AIMOVE.c#L1394) | Adjacent landmass `!= lmt_NoOwnCity` | (gates pathing logic) |
 
-### `AI_Do_Meld` ([line 4442](../../MoM/src/AIMOVE.c#L4442))
+### `AI_Stacks_Do_Meld` ([line 4442](../../MoM/src/AIMOVE.c#L4442))
 
 | Line | Condition | Action |
 |---|---|---|

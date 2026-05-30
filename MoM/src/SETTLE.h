@@ -28,7 +28,7 @@ extern "C" {
 void AI_MoveUnits(int16_t player_idx);
 
 // WZD o100p02
-void AI_UNIT_Meld__WIP(int16_t unit_idx);
+void AI_UNIT_Meld(int16_t unit_idx);
 
 // WZD o100p03
 void AI_UNIT_Settle__WIP(int16_t unit_idx);

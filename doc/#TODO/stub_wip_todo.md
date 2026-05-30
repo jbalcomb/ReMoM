@@ -16,25 +16,25 @@
 - [ ] EMM_Map_CONTXXX__WIP
 
 ## AIMOVE
-- [ ] AI_Stacks_Assign_Target
+- [x] AI_Stacks_Assign_Target
 - [ ] AI_CanSettleOffPlane__STUB
-- [ ] AI_Evaluate_Continents
-- [ ] AI_Stacks_Garrison_Sites
-- [ ] AI_Stacks_Move_Out_NonMilitary_Garrisoned
-- [ ] AI_Choose_War_Landmass
-- [ ] AI_Stacks_Wartime_Ocean_Movement_And_Cleanup
-- [ ] AI_Stacks_Roamers_Target_Or_Deploy
-- [ ] AI_Stacks_Order_To_War_Landmass
-- [ ] AI_Stacks_Ferry_Add_Location
-- [ ] AI_Stacks_Survey_Expedition_Forces
-- [ ] AI_Stacks_Survey_Expedition_Forces_Stack
+- [x] AI_Evaluate_Continents
+- [x] AI_Stacks_Garrison_Sites
+- [x] AI_Stacks_Move_Out_NonMilitary_Garrisoned
+- [x] AI_Choose_War_Landmass
+- [x] AI_Stacks_Wartime_Ocean_Movement_And_Cleanup
+- [x] AI_Stacks_Roamers_Target_Or_Deploy
+- [x] AI_Stacks_Order_To_War_Landmass
+- [x] AI_Stacks_Ferry_Add_Location
+- [x] AI_Stacks_Survey_Expedition_Forces
+- [x] AI_Stacks_Survey_Expedition_Forces_Stack
 - [ ] AI_SendToColonize__WIP
 - [ ] AI_Set_Unit_Orders
-- [ ] AI_Reevaluate_Continent
-- [ ] AI_Stacks_Relocate_Roamers
-- [ ] AI_Stacks_Ocean_Landmass_Orders
-- [ ] AI_Stacks_Stage_Expedition_Forces
-- [ ] AI_Stacks_Setup_Ferry
+- [x] AI_Reevaluate_Continent
+- [x] AI_Stacks_Relocate_Roamers
+- [x] AI_Stacks_Ocean_Landmass_Orders
+- [x] AI_Stacks_Stage_Expedition_Forces
+- [x] AI_Stacks_Setup_Ferry
 - [ ] TILE_AI_FindEmptyLnd__WIP
 - [ ] TILE_AI_FindLoadTile__WIP
 - [ ] TILE_NextFreeLand
@@ -301,7 +301,7 @@
 ## SETTLE
 - [ ] AI_MoveUnits
 - [ ] AI_UNIT_BuildRoad__WIP
-- [ ] AI_UNIT_Meld__WIP
+- [x] AI_UNIT_Meld__WIP — renamed to AI_UNIT_Meld; body implemented in SETTLE.c:224
 - [ ] AI_UNIT_Move
 - [ ] AI_UNIT_SeekTransprt__WIP
 - [ ] AI_UNIT_Settle__WIP

@@ -139,7 +139,7 @@ struct s_AI_Excess_Entry
     int16_t value;            /* unit's effective strength score */
     int16_t stack_idx;        /* index into _ai_own_stack_* (was CX_ID) */
     int16_t list_unit_idx;    /* per-stack slot index   (was UL_Index) */
-    int16_t unit_idx;         /* index into _UNITS[]    (was Unit_Index) */
+    int16_t unit_idx;         /* index into _UNITS[]    (was unit_idx) */
 };
 
 /* Pool: top-N priority queue keyed on value, with cached lowest for fast displacement */
@@ -287,7 +287,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
             AI_Stacks_Move_Out_NonMilitary_Garrisoned(wp);
             AI_Stacks_Survey_Expedition_Forces();
 
-            AI_Do_Meld(player_idx);
+            AI_Stacks_Do_Meld(player_idx);
             AI_Do_Settle(player_idx, landmass_idx);
             AI_Do_Purify(landmass_idx, wp);
             AI_Do_RoadBuild(landmass_idx);
@@ -1136,7 +1136,7 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
 
 
     /* Phase 4 */
-    AI_Do_Meld(player_idx);
+    AI_Stacks_Do_Meld(player_idx);
 
 
     /* Phase 5: Per-ocean-stack dispatch */
@@ -1192,7 +1192,7 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
         }
 
 
-        /* 5c	1261-1305	All-transport → closest ferry queue [caller=3] */
+        /* 5c	1261ST_UNDEFINED305	All-transport → closest ferry queue [caller=3] */
         /* Phase 5c: all-transport stack → route to closest ferry queue */
         if(stack_has_only_boats != ST_FALSE)
         {
@@ -1240,21 +1240,21 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
         }
         
 
-        /* 5d	1306-1309	Mixed-stack outer gate: skip if already-going */
+        /* 5d	1306ST_UNDEFINED309	Mixed-stack outer gate: skip if already-going */
         if(stack_has_goto != ST_FALSE)
         {
             continue;
         }
 
 
-        /* 5e	1313-1335	3x3 adjacent ocean-tile scan */
+        /* 5e	1313ST_UNDEFINED335	3x3 adjacent ocean-tile scan */
         /* OGBUG  no range checks */
         adjacent_landmass_wx = 0;
         adjacent_landmass_wy = 0;
         Landing_Allowed = ST_FALSE;
-        for(wy_offset = -1; wy_offset < 2; wy_offset++)
+        for(wy_offset = ST_UNDEFINED; wy_offset < 2; wy_offset++)
         {
-            for(wx_offset = -1; wx_offset < 2; wx_offset++)
+            for(wx_offset = ST_UNDEFINED; wx_offset < 2; wx_offset++)
             {
                 /* ¿ OGBUG bad indexing, incorrect order of operation ? */
                 /* adjacent square is a land square and occupieable */
@@ -1284,9 +1284,9 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
 
                 /* OGBUG  no range checking */
                 Landing_Allowed = ST_FALSE;
-                for(wy_offset = -1; wy_offset < 2; wy_offset++)
+                for(wy_offset = ST_UNDEFINED; wy_offset < 2; wy_offset++)
                 {
-                    for(wx_offset = -1; wx_offset < 2; wx_offset++)
+                    for(wx_offset = ST_UNDEFINED; wx_offset < 2; wx_offset++)
                     {
                         /* Is the adjacent landmass the war landmass? */
                         if(_landmasses[((wp * WORLD_SIZE) + ((stack_wy + wy_offset) * WORLD_WIDTH) + (stack_wx + wx_offset))] == _ai_landmass_war_targets[wp][player_idx])
@@ -1344,11 +1344,11 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
             {
                 /* IDA light-purple */
 
-                /* 5g	1397-1435	Settler landing eligibility (target + enemy-proximity) */
+                /* 5g	1397ST_UNDEFINED435	Settler landing eligibility (target + enemy-proximity) */
                 /* OGBUG  no range checking */
-                for(wy_offset = -1; wy_offset < 2; wy_offset++)
+                for(wy_offset = ST_UNDEFINED; wy_offset < 2; wy_offset++)
                 {
-                    for(wx_offset = -1; wx_offset < 2; wx_offset++)
+                    for(wx_offset = ST_UNDEFINED; wx_offset < 2; wx_offset++)
                     {
                         if(
                             (_landmasses[((wp * WORLD_SIZE) + ((stack_wy + wy_offset) * WORLD_WIDTH) + (stack_wx + wx_offset))] == _ai_landmass_settler_targets[wp][player_idx])
@@ -1391,7 +1391,7 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
             - all just updated:
             Landing_Allowed, adjacent_landmass_idx, adjacent_landmass_wx, adjacent_landmass_wy
         */
-        /* 5h	1439-1462	LAND DISPATCH [caller=4] */
+        /* 5h	1439ST_UNDEFINED462	LAND DISPATCH [caller=4] */
         if(Landing_Allowed == ST_TRUE)
         {
             for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
@@ -1427,7 +1427,7 @@ BEGIN:  fixup bad orders, for valid colony or military stack
     
         /* IDA Orange */
 
-        /* 5i	1465-1496	Settler-fallback dispatch [caller=5] */
+        /* 5i	1465ST_UNDEFINED496	Settler-fallback dispatch [caller=5] */
         /*
             WTF?
             maybe, colonization stack bumped into some landmass
@@ -1443,9 +1443,9 @@ BEGIN:  fixup bad orders, for valid colony or military stack
 // ; BUG: no range checking
             adjacent_landmass_wx = 0;
             adjacent_landmass_wy = 0;
-            for(wy_offset = -1; wy_offset < 2; wy_offset++)
+            for(wy_offset = ST_UNDEFINED; wy_offset < 2; wy_offset++)
             {
-                for(wx_offset = -1; wx_offset < 2; wx_offset++)
+                for(wx_offset = ST_UNDEFINED; wx_offset < 2; wx_offset++)
                 {
                     /* if colonization landmass has valid stage-point coordinates... */
                     if(_landmasses[((wp * WORLD_SIZE) + ((wy_offset + _ai_landmass_settler_targets_wy_array[wp][player_idx]) * WORLD_WIDTH) + (wx_offset + _ai_landmass_settler_targets_wx_array[wp][player_idx]))] == 0)
@@ -1472,7 +1472,7 @@ BEGIN:  fixup bad orders, for valid colony or military stack
     
         /* IDA burgundy */
 
-        /* 5j	1500-1551	War-landing dock dispatch [caller=6] */
+        /* 5j	1500ST_UNDEFINED551	War-landing dock dispatch [caller=6] */
         /* Do we have a war landmass? */
         /* if, if, if, reset unit's orders to nearest shoreline on war continent */
         if(_ai_landmass_war_targets[wp][player_idx] != 0)
@@ -1501,9 +1501,9 @@ BEGIN:  fixup bad orders, for valid colony or military stack
             }
             if(min_delta_distance < 1000)
             {
-                for(wy_offset = -1; wy_offset < 2; wy_offset++)
+                for(wy_offset = ST_UNDEFINED; wy_offset < 2; wy_offset++)
                 {
-                    for(wx_offset = -1; wx_offset < 2; wx_offset++)
+                    for(wx_offset = ST_UNDEFINED; wx_offset < 2; wx_offset++)
                     {
                         if(_landmasses[((wp * WORLD_SIZE) + ((target_wy + wy_offset) * WORLD_WIDTH) + (target_wx + wx_offset))] == 0)
                         {
@@ -1682,9 +1682,17 @@ void AI_Stacks_Roamers_Target_Or_Deploy(int16_t landmass_idx, int16_t wp, int16_
         landmass_node_count++;
         landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
     }
-    /* OGBUG  divide by zero, should `if(landmass_node_count > 0)` */
-    landmass_node_centroid_wx /= landmass_node_count;
-    landmass_node_centroid_wy /= landmass_node_count;
+    /* HACK */  /* OGBUG  divide by zero, should `if(landmass_node_count > 0)` */
+    /* HACK */  if (landmass_node_count == 0)
+    /* HACK */  {
+    /* HACK */      landmass_node_centroid_wx = 0;
+    /* HACK */      landmass_node_centroid_wy = 0;
+    /* HACK */  }
+    /* HACK */  else
+    /* HACK */  {
+    /* HACK */      landmass_node_centroid_wx /= landmass_node_count;
+    /* HACK */      landmass_node_centroid_wy /= landmass_node_count;
+    /* HACK */  }
     min_delta_distance = 1000;
     landmass_node_index = _ai_landmass_dock_squares_heads[wp][landmass_idx];
     while(landmass_node_index != ST_UNDEFINED)
@@ -1946,9 +1954,9 @@ void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, 
     /* OGBUG  should handle no ocean found */
     /* OGBUG  should validate coordinates */
     /* OGBUG  should early-exit on Ocean found */
-    for(wy_offset = -1; wy_offset < 2; wy_offset++)
+    for(wy_offset = ST_UNDEFINED; wy_offset < 2; wy_offset++)
     {
-        for(wx_offset = -1; wx_offset < 2; wx_offset++)
+        for(wx_offset = ST_UNDEFINED; wx_offset < 2; wx_offset++)
         {
             if(_landmasses[((wp * WORLD_SIZE) + ((stage_wy + wy_offset) * WORLD_WIDTH) + (stage_wx + wx_offset))] == 0)  /* Square is in Ocean landmass */
             {
@@ -2369,7 +2377,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
         {
             continue;
         }
-        /* OGBUG  WTF? (target_owner_idx != ST_UNDEFINED) accessing arrays with -1 index? */
+        /* OGBUG  WTF? (target_owner_idx != ST_UNDEFINED) accessing arrays with ST_UNDEFINED index? */
         if(
             (_players[player_idx].Hostility[target_owner_idx] < 2)
             &&
@@ -2458,7 +2466,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
             }
             else
             {
-                /* OGBUG  WTF? (target_owner_idx != ST_UNDEFINED) accessing arrays with -1 index? */
+                /* OGBUG  WTF? (target_owner_idx != ST_UNDEFINED) accessing arrays with ST_UNDEFINED index? */
                 if(
                     (_players[player_idx].Hostility[target_owner_idx] < 2)
                     &&
@@ -3452,9 +3460,9 @@ void AI_Move_Out_Boats(void)
             do_move_out = ST_FALSE;
             if(landmass_idx > 0)
             {
-                for(itr_wy = -1; itr_wy < 2; itr_wy++)
+                for(itr_wy = ST_UNDEFINED; itr_wy < 2; itr_wy++)
                 {
-                    for(itr_wx = -1; itr_wx < 2; itr_wx++)
+                    for(itr_wx = ST_UNDEFINED; itr_wx < 2; itr_wx++)
                     {
                         if(
                             (itr_wy != 0)
@@ -3926,19 +3934,32 @@ static void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t 
 }
 
 
-
 // WZD o158p22
-// drake178: AI_ProcessMelders()
-/*
-processes all units with the Meld ability in the
-current stacks - if there is a meldable node they
-will start going there, or if already there, they
-will meld into it
-*/
-/*
-
-*/
-void AI_Do_Meld(int16_t player_idx)
+/**
+ * @brief Orders AI meld-capable units to claim nearby eligible magic nodes.
+ *
+ * Iterates every unit slot in the current `_ai_own_stack_*` working stacks,
+ * filters for units with `UA_MELD`, and searches all nodes on the same plane
+ * that are not currently owned by `player_idx`. Candidate nodes are further
+ * constrained to squares flagged as `AI_TARGET_SITE` and to landmasses the AI
+ * currently treats as own/leaveable, or nodes already garrisoned by the AI.
+ *
+ * For each eligible unit, the closest qualifying node (wrapped map distance)
+ * is selected. If the unit is already on that node, the function issues
+ * AI_Stacks_Order_Meld(); otherwise it assigns a movement/attack-goto order via
+ * AI_Stacks_Order_Attack_Target_Or_Goto_Destination() toward that node.
+ *
+ * @param player_idx Index of the AI player issuing meld-related orders.
+ *
+ * @return This function does not return a value. It may update unit status and
+ *         destination fields indirectly through AI_Stacks_Order_Meld() and
+ *         AI_Stacks_Order_Attack_Target_Or_Goto_Destination().
+ *
+ * @note The current implementation preserves original behavior where the
+ *       `UA_MELD` ability check occurs before the `ST_UNDEFINED` unit-index
+ *       guard.
+ */
+void AI_Stacks_Do_Meld(int16_t player_idx)
 {
     int16_t node_landmass_idx = 0;
     int16_t unit_wp = 0;
@@ -3954,8 +3975,8 @@ void AI_Do_Meld(int16_t player_idx)
     int16_t list_unit_idx = 0;
     int16_t min_delta_distance = 0;
     int16_t target_node_idx = 0;
-    int16_t itr = 0;  // _DI_
-    int16_t itr_nodes = 0;  // _SI_
+    int16_t itr = 0;
+    int16_t itr_nodes = 0;
 
     for(itr = 0; itr < _ai_own_stack_count; itr++)
     {
@@ -3967,104 +3988,99 @@ void AI_Do_Meld(int16_t player_idx)
 
             unit_idx = _ai_own_stack_unit_list[itr][list_unit_idx];
 
-// ; BUG: the check for -1 needs to come first
+            /* OGBUG  MUST check for ST_UNDEFINED first */
+            if((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_MELD) == 0)
+            {
+                continue;
+            }
+            if(unit_idx == ST_UNDEFINED)
+            {
+                continue;
+            }
 
-            if(
-                ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_MELD) != 0)
-                &&
-                (unit_idx != ST_UNDEFINED)
-            )
+            unit_wx = _UNITS[unit_idx].wx;
+            unit_wy = _UNITS[unit_idx].wy;
+            unit_wp = _UNITS[unit_idx].wp;
+
+            target_node_idx = ST_UNDEFINED;
+
+            min_delta_distance = 1000;
+
+            for(itr_nodes = 0; itr_nodes < NUM_NODES; itr_nodes++)
             {
 
-// ; find the closest non-owned node that either has own
-// ; units on it, or is on an own, abandon, or no targets
-// ; continent
-
-                unit_wx = _UNITS[unit_idx].wx;
-                unit_wy = _UNITS[unit_idx].wy;
-                unit_wp = _UNITS[unit_idx].wp;
-
-                target_node_idx = ST_UNDEFINED;
-
-                min_delta_distance = 1000;
-
-                for(itr_nodes = 0; itr_nodes < NUM_NODES; itr_nodes++)
+                if(
+                    (_NODES[itr_nodes].wp == unit_wp)
+                    &&
+                    (_NODES[itr_nodes].owner_idx != player_idx)
+                )
                 {
 
-                    if(
-                        (_NODES[itr_nodes].wp == unit_wp)
-                        &&
-                        (_NODES[itr_nodes].owner_idx != player_idx)
-                    )
+                    node_wx = _NODES[itr_nodes].wx;
+                    node_wy = _NODES[itr_nodes].wy;
+
+                    if(g_ai_evaluation_map[unit_wp][((node_wy * WORLD_WIDTH) + node_wx)] == AI_TARGET_SITE)
                     {
 
-                        node_wx = _NODES[itr_nodes].wx;
-                        node_wy = _NODES[itr_nodes].wy;
+                        node_landmass_idx = _landmasses[((unit_wp * WORLD_SIZE) + (node_wy * WORLD_WIDTH) + node_wx)];
+                        node_is_garrisoned = ST_FALSE;
 
-                        if(g_ai_evaluation_map[unit_wp][((node_wy * WORLD_WIDTH) + node_wx)] == AI_TARGET_SITE)
+                        for(itr_units = 0; itr_units < _units; itr_units++)
                         {
-
-                            node_landmass_idx = _landmasses[((unit_wp * WORLD_SIZE) + (node_wy * WORLD_WIDTH) + node_wx)];
-                            node_is_garrisoned = ST_FALSE;
-
-// ; check if the node has any own units on it
-
-                            for(itr_units = 0; itr_units < _units; itr_units++)
-                            {
-                                if(
-                                    (_UNITS[itr_units].owner_idx == player_idx)
-                                    &&
-                                    (_UNITS[itr_units].wx == node_wx)
-                                    &&
-                                    (_UNITS[itr_units].wy == node_wy)
-                                    &&
-                                    (_UNITS[itr_units].wp == unit_wp)
-                                )
-                                {
-                                    node_is_garrisoned = ST_TRUE;
-                                }
-                            }
-
                             if(
-                                (_ai_continents.plane[unit_wp].player[player_idx].type_array[node_landmass_idx] == lmt_Own)
-                                ||
-                                (_ai_continents.plane[unit_wp].player[player_idx].type_array[node_landmass_idx] >= lmt_Leaveable)  // {..., 5: lmt_Leaveable, 6: lmt_NoTargets}
-                                ||
-                                (node_is_garrisoned == ST_TRUE)
+                                (_UNITS[itr_units].owner_idx == player_idx)
+                                &&
+                                (_UNITS[itr_units].wx == node_wx)
+                                &&
+                                (_UNITS[itr_units].wy == node_wy)
+                                &&
+                                (_UNITS[itr_units].wp == unit_wp)
                             )
                             {
-                                delta_distance = Delta_XY_With_Wrap(node_wx, node_wy, unit_wx, unit_wy, WORLD_WIDTH);
-                                if(delta_distance < min_delta_distance)
-                                {
-                                    min_delta_distance = delta_distance;
-                                    target_node_idx = itr_nodes;
-                                }
+                                node_is_garrisoned = ST_TRUE;
                             }
+                        }
 
+                        if(
+                            (_ai_continents.plane[unit_wp].player[player_idx].type_array[node_landmass_idx] == lmt_Own)
+                            ||
+                            (_ai_continents.plane[unit_wp].player[player_idx].type_array[node_landmass_idx] >= lmt_Leaveable)  // {..., 5: lmt_Leaveable, 6: lmt_NoTargets}
+                            ||
+                            (node_is_garrisoned == ST_TRUE)
+                        )
+                        {
+                            delta_distance = Delta_XY_With_Wrap(node_wx, node_wy, unit_wx, unit_wy, WORLD_WIDTH);
+                            if(delta_distance < min_delta_distance)
+                            {
+                                min_delta_distance = delta_distance;
+                                target_node_idx = itr_nodes;
+                            }
                         }
 
                     }
 
                 }
 
-                if(target_node_idx != ST_UNDEFINED)
-                {
-                    if(min_delta_distance == 0)
-                    {
-                        AI_Order_Meld(unit_idx, itr, list_unit_idx);
-                    }
-                    else
-                    {
-                        node_wx = _NODES[target_node_idx].wx;
-                        node_wy = _NODES[target_node_idx].wy;
-#ifdef STU_DEBUG
-                        LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, node_wx, node_wy, itr, list_unit_idx);
-#endif
-                        g_ai_set_target_caller = 14;
-                        AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, node_wx, node_wy, itr, list_unit_idx);
-                    }
-                }
+            }
 
+            if(target_node_idx != ST_UNDEFINED)
+            {
+                if(min_delta_distance == 0)
+                {
+                    /* Unit is at the node; order it to meld */
+                    AI_Stacks_Order_Meld(unit_idx, itr, list_unit_idx);
+                }
+                else
+                {
+                    /* Move toward the closest target node */
+                    node_wx = _NODES[target_node_idx].wx;
+                    node_wy = _NODES[target_node_idx].wy;
+#ifdef STU_DEBUG
+                    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, node_wx, node_wy, itr, list_unit_idx);
+#endif
+                    g_ai_set_target_caller = 14;
+                    AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, node_wx, node_wy, itr, list_unit_idx);
+                }
             }
 
         }
@@ -4345,8 +4361,8 @@ void AI_Do_Purify(int16_t landmass_idx, int16_t wp)
     int16_t target_wx = 0;
     int16_t landmass_node_index = 0;
     int16_t InRange_Corruption = 0;
-    int16_t Unit_Y = 0;
-    int16_t Unit_X = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
 
     int16_t itr_stacks;  // _DI_
 
@@ -4438,11 +4454,11 @@ void AI_Do_Purify(int16_t landmass_idx, int16_t wp)
                         if(_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_PURIFY)
                         {
 
-                            Unit_X = _UNITS[unit_idx].wx;
+                            unit_wx = _UNITS[unit_idx].wx;
                             
-                            Unit_Y = _UNITS[unit_idx].wy;
+                            unit_wy = _UNITS[unit_idx].wy;
 
-                            if((_map_square_flags[((wp * WORLD_SIZE) + (Unit_Y * WORLD_WIDTH) + Unit_X)] & MSF_CORRUPTION) != 0)
+                            if((_map_square_flags[((wp * WORLD_SIZE) + (unit_wy * WORLD_WIDTH) + unit_wx)] & MSF_CORRUPTION) != 0)
                             {
 
                                 AI_Order_Purify(unit_idx, itr_stacks, list_unit_idx);
@@ -4776,7 +4792,28 @@ void AI_Stacks_Order_Ferry(int16_t unit_idx, int16_t unit_list_idx, int16_t list
 
 
 // WZD o158p30
-void AI_Order_Meld(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx)
+/**
+ * @brief Marks one AI-controlled unit to perform a meld action.
+ *
+ * Validates the supplied unit index, then switches the unit status to
+ * @c us_Meld so the unit executes melding logic on its next AI processing
+ * pass. The function also removes the unit from the current
+ * `_ai_own_stack_unit_list` slot so subsequent stack-ordering steps do not
+ * treat it as still unassigned.
+ *
+ * @param unit_idx Global unit index to assign the meld order to.
+ * @param unit_list_idx Index of the owning AI stack within
+ *                      `_ai_own_stack_unit_list`.
+ * @param list_unit_idx Slot of the unit inside that AI stack list.
+ *
+ * @return This function does not return a value. It may update
+ *         @c _UNITS[unit_idx].Status and
+ *         @c _ai_own_stack_unit_list[unit_list_idx][list_unit_idx].
+ *
+ * @note If @p unit_idx falls outside the valid unit array range, the function
+ *       exits without modifying unit or stack state.
+ */
+void AI_Stacks_Order_Meld(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx)
 {
     if((unit_idx < 0) || (unit_idx >= MAX_UNIT_COUNT)) { return; }
     _UNITS[unit_idx].Status = us_Meld;
@@ -5448,7 +5485,7 @@ if we can move units off the current landmass, make sure the stage-square is the
         landmass_node_centroid_wy = 0;
         landmass_node_count = 0;
         /* Calculate average position of all possible coastal loading points */
-        /* ¿ OG BUG  _ai_landmass_dock_squares_heads[][0] -1 on purpose, because _ai_landmass_war_targets[wp][player_idx] could be 0 as in NONE ? */
+        /* ¿ OG BUG  _ai_landmass_dock_squares_heads[][0] ST_UNDEFINED on purpose, because _ai_landmass_war_targets[wp][player_idx] could be 0 as in NONE ? */
         landmass_node_index = _ai_landmass_dock_squares_heads[wp][_ai_landmass_war_targets[wp][player_idx]];
         while(landmass_node_index != ST_UNDEFINED)
         {
@@ -5711,9 +5748,9 @@ void TILE_AI_FindLoadTile__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
         landmass_node_wx = _ai_landmass_dock_squares_wx_array[wp][landmass_node_index];
         landmass_node_wy = _ai_landmass_dock_squares_wy_array[wp][landmass_node_index];
         Adj_Empty_Land = ST_FALSE;
-        for(wy_offset = -1; ((wy_offset < 2) && (Adj_Empty_Land == ST_FALSE)); wy_offset++)
+        for(wy_offset = ST_UNDEFINED; ((wy_offset < 2) && (Adj_Empty_Land == ST_FALSE)); wy_offset++)
         {
-            for(wx_offset = -1; ((wx_offset < 2) && (Adj_Empty_Land == ST_FALSE)); wx_offset++)
+            for(wx_offset = ST_UNDEFINED; ((wx_offset < 2) && (Adj_Empty_Land == ST_FALSE)); wx_offset++)
             {
                 if(
                     (_landmasses[((wp * WORLD_SIZE) + ((wy_offset + landmass_node_wy) * WORLD_WIDTH) + (wx_offset + landmass_node_wx))] != 0)
@@ -6751,7 +6788,7 @@ void AI_Evaluation_Map(int16_t player_idx)
         g_ai_evaluation_map[wp][xy_ofst] += strength;
 
         /* If the unit owner is non-hostile, mark the square with a flag */
-        // OGBUG  will index nonhostiles[] with unit_owner_idx = -1, because it *sanitizes* owner_idx to ST_UNDEFINED at start of turn
+        // OGBUG  will index nonhostiles[] with unit_owner_idx = ST_UNDEFINED, because it *sanitizes* owner_idx to ST_UNDEFINED at start of turn
         if(nonhostiles[unit_owner_idx] == ST_TRUE)
         {
             g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_NONHOSTILE;

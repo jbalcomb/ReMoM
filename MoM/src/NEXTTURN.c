@@ -3529,7 +3529,7 @@ void Determine_Offer(void)
                             _active_world_y = wy;
                             _map_plane = wp;
 
-                            // DONT  o62p01_Empty_pFxn(itr_players);
+                            o62p01_empty_function(itr_players);
 
                         }
 

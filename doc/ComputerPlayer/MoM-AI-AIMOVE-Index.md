@@ -41,7 +41,7 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 ### `AI_Stacks_Ocean_Landmass_Orders` — [line 1119](../../MoM/src/AIMOVE.c#L1119)
 - **drake178:** `G_AI_ProcessTransports()` (o158p05)
 - **End:** ~line 1608
-- **Purpose:** Per-(player, plane) **post-pass** — sibling of [`AI_Stacks_Wartime_Ocean_Movement_And_Cleanup`](AIMOVE-AI_Stacks_Wartime_Ocean_Movement_And_Cleanup.md). Five phases: (1) dead init of `GoingTo_Order`; (2) debit `_ai_ferry_*` queue entries by the capacity of en-route transports and invalidate exhausted entries (with an OGBUG that uses the wrong unit-index); (3) rebuild `_ai_own_stack_*` for the OCEAN (`landmass_idx = 0`); (4) `AI_Do_Meld(player_idx)` out-of-band; (5) for each ocean stack containing at least one transport, run a 10-block decision tree (5a classify, 5b gate, 5c all-transport → closest ferry-queue [caller=3], 5d-j mixed stacks: scan adjacent, gate by settler/non-settler landing eligibility, land dispatch [caller=4, transports get suspect `us_Ferry`] OR settler-fallback dispatch [caller=5] OR war-landing dock dispatch [caller=6]). See [AIMOVE-AI_Stacks_Ocean_Landmass_Orders.md](AIMOVE-AI_Stacks_Ocean_Landmass_Orders.md).
+- **Purpose:** Per-(player, plane) **post-pass** — sibling of [`AI_Stacks_Wartime_Ocean_Movement_And_Cleanup`](AIMOVE-AI_Stacks_Wartime_Ocean_Movement_And_Cleanup.md). Five phases: (1) dead init of `GoingTo_Order`; (2) debit `_ai_ferry_*` queue entries by the capacity of en-route transports and invalidate exhausted entries (with an OGBUG that uses the wrong unit-index); (3) rebuild `_ai_own_stack_*` for the OCEAN (`landmass_idx = 0`); (4) `AI_Stacks_Do_Meld(player_idx)` out-of-band; (5) for each ocean stack containing at least one transport, run a 10-block decision tree (5a classify, 5b gate, 5c all-transport → closest ferry-queue [caller=3], 5d-j mixed stacks: scan adjacent, gate by settler/non-settler landing eligibility, land dispatch [caller=4, transports get suspect `us_Ferry`] OR settler-fallback dispatch [caller=5] OR war-landing dock dispatch [caller=6]). See [AIMOVE-AI_Stacks_Ocean_Landmass_Orders.md](AIMOVE-AI_Stacks_Ocean_Landmass_Orders.md).
 - **Reads `lmt_*`:** `lmt_NoOwnCity` ([line 1423](../../MoM/src/AIMOVE.c#L1423)) in the Phase 5g settler-landing gate.
 
 ### `AI_Stacks_Roamers_Target_Or_Deploy` — [line 1635](../../MoM/src/AIMOVE.c#L1635)
@@ -133,7 +133,7 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **End:** ~line 4129
 - **Purpose:** Per-stack scorer — filters to military units (no engineers/settlers/melders/transports), assigns values (OGBUG: bogus random instead of real strength), bubble-sorts, truncates to excess_count, and inserts the top candidates into the `G_Pushout_*` pool (and the `G_Seafaring_*` pool for water-capable units). See [MoM-AI-Move-ai_own_stack.md](MoM-AI-Move-ai_own_stack.md) for the pool structure.
 
-### `AI_Do_Meld` — [line 4442](../../MoM/src/AIMOVE.c#L4442)
+### `AI_Stacks_Do_Meld` — [line 4442](../../MoM/src/AIMOVE.c#L4442)
 - **drake178:** `AI_ProcessMelders()` (o158p22)
 - **End:** ~line 4611
 - **Purpose:** TBD
@@ -174,7 +174,7 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **End:** ~line 4779
 - **Purpose:** Mark a single unit as waiting for ferry transport — sets `_UNITS[unit_idx].Status = us_Ferry`, stores a "timer" value of 10 in `dst_wx`, consumes the unit's slot in `_ai_own_stack_unit_list`. Bounds-checked against `MAX_UNIT_COUNT` (= 1000). See [AIMOVE-AI_Stacks_Order_Ferry.md](AIMOVE-AI_Stacks_Order_Ferry.md).
 
-### `AI_Order_Meld` — [line 5367](../../MoM/src/AIMOVE.c#L5367)
+### `AI_Stacks_Order_Meld` — [line 4914](../../MoM/src/AIMOVE.c#L4914)
 - **drake178:** `AI_UNIT_SetMeldOrder()` (o158p30)
 - **End:** ~line 5396
 - **Purpose:** TBD

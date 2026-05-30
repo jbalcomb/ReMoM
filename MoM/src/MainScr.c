@@ -2655,7 +2655,7 @@ XREF:
     Next_Turn_Proc__WIP+2A0       call    j_o62p01_empty_function
     Move_Stack+BF                 call    j_o62p01_empty_function
     Move_Stack+D0                 call    j_o62p01_empty_function
-    Stack_Move_To+2FC  call    j_o62p01_empty_function
+    Stack_Move_To+2FC             call    j_o62p01_empty_function
     WIZ_NextIdleStack+23          call    j_o62p01_empty_function
     ArmyList_Screen+265           call    j_o62p01_empty_function
     Unit_Statistics_Popup+73B     call    j_o62p01_empty_function

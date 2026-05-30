@@ -95,7 +95,7 @@ void AI_Stacks_Survey_Expedition_Forces_Test_Hook(void);
 void AI_Stacks_Survey_Expedition_Forces_Stack_Test_Hook(int16_t stack_idx, int16_t unit_count, int16_t excess_count);
 
 // WZD o158p22
-void AI_Do_Meld(int16_t player_idx);
+void AI_Stacks_Do_Meld(int16_t player_idx);
 
 // WZD o158p23
 void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx);
@@ -119,7 +119,7 @@ void AI_Order_RoadBuild(int16_t unit_idx, int16_t wx, int16_t wy, int16_t unit_l
 void AI_Stacks_Order_Ferry(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx);
 
 // WZD o158p30
-void AI_Order_Meld(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx);
+void AI_Stacks_Order_Meld(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx);
 
 // WZD o158p31
 void AI_Order_Purify(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx);

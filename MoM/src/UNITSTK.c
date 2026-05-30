@@ -21,6 +21,7 @@ MoO2
 #include "../../MoX/src/random.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
+#include "Spellbook.h"
 #include "Terrain.h"
 #include "UNITTYPE.h"
 #include "UnitMove.h"
@@ -231,15 +232,15 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 
         _unit = unit_array[0];
 
-// TODO          if(OVL_MapVar3 == 1)
-// TODO          {
-// TODO              OVL_MapVar3 = 0;
-// TODO              CRP_OVL_Obstacle_Var1 = 0;
-// TODO          }
-// TODO          if(CRP_OVL_Obstacle_Var1 == 0)
-// TODO          {
-// TODO              o58p03_Empty_pFxn();
-// TODO          }
+        if(OVL_MapVar3 == ST_TRUE)
+        {
+            OVL_MapVar3 = ST_FALSE;
+            CRP_OVL_Obstacle_Var1 = ST_FALSE;
+        }
+        if(CRP_OVL_Obstacle_Var1 == ST_FALSE)
+        {
+            // TODO  o58p03_Empty_pFxn();
+        }
 
         assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
         assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
@@ -253,11 +254,11 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
         unit_p = _UNITS[unit_idx].wp;
 
 
-        // TODO  o62p01_Empty_pFxn(player_idx);
+        o62p01_empty_function(player_idx);
         movement_points_available = Stack_Moves();
 
 
-        // TODO  o62p01_Empty_pFxn(player_idx);
+        o62p01_empty_function(player_idx);
         Select_Unit_Stack(player_idx, map_x, map_y, *map_p, unit_x, unit_y);
         movement_points_available = Stack_Moves();
 
@@ -435,12 +436,11 @@ int16_t Stack_Move_To(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int1
 
 // WZD o61p04
 /*
-updates _unit
-
+updates _unit, in Next_Unit_Nearest_Available()
 */
 void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p)
 {
-    // DONT  int16_t UU_var8;
+    int16_t niu_var8;
     int16_t next_unit_dst_wy;
     int16_t next_unit_dst_wx;
     int16_t next_unit_wy;
@@ -449,7 +449,7 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
     int16_t done;
     int16_t next_unit_idx;
 
-    // DONT  UU_var8 = 0;
+    niu_var8 = 0;
 
     all_done_none_available = ST_FALSE;
 
@@ -457,11 +457,12 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
     Reset_Map_Draw();
 
-    // TODO  o62p01_Empty_pFxn(player_idx);
+    o62p01_empty_function(player_idx);
 
     while(done == ST_FALSE)
     {
-        // TODO  CRP_OverlandVar_3 = ST_FALSE;
+
+        CRP_OverlandVar_3 = ST_FALSE;
 
         all_done_none_available = Next_Unit_Nearest_Available(player_idx, map_p);  // updates `_unit`
 
@@ -493,7 +494,7 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
                 next_unit_dst_wx = _UNITS[_unit].dst_wx;
                 next_unit_dst_wy = _UNITS[_unit].dst_wy;
 
-                // TODO  CRP_OverlandVar_3 = ST_TRUE;
+                CRP_OverlandVar_3 = ST_TRUE;
 
                 // handling the end of the 'Go To' & 'Build Road'
                 if(
@@ -524,7 +525,6 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
     }  /* while(done == ST_FALSE) */
 
-
     if(all_units_moved == ST_FALSE)
     {
         next_unit_idx = _unit;
@@ -539,8 +539,99 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
         Set_Entities_On_Map_Window(*map_x, *map_y, *map_p);
     }
 
-    // TODO  OVL_MapVar3 = ST_TRUE;
+    OVL_MapVar3 = ST_TRUE;
 
+}
+/* GEMINI */
+static void WIZ_NextIdleStack_GEMINI(int16_t player_idx, int16_t *map_x, int16_t *map_y, int16_t map_plane)
+{
+    int16_t unused_var_10;
+    int16_t next_unit_dst_wy;
+    int16_t next_unit_dst_wx;
+    int16_t next_unit_wy;
+    int16_t next_unit_wx;
+    int16_t AllUnitsMoved;
+    int16_t done;
+    int16_t next_unit_idx;
+
+    /* Initialization */
+    done = ST_FALSE;
+    AllUnitsMoved = ST_FALSE;
+    Reset_Map_Draw();
+    
+    o62p01_empty_function(player_idx);
+
+    while (done == ST_FALSE)
+    {
+        CRP_OverlandVar_3 = ST_FALSE;
+        
+        AllUnitsMoved = Next_Unit_Nearest_Available(player_idx, &map_plane);
+
+        if (AllUnitsMoved == ST_TRUE)
+        {
+            all_units_moved = ST_TRUE;         /* global: all_units_moved */
+            _active_stack_has_path = ST_FALSE; /* global: _active_stack_has_path */
+            done = ST_TRUE;
+        }
+        else
+        {
+            next_unit_idx = _unit; /* global: current active unit index */
+            
+            /* Accessing _UNITS array: sizeof(s_UNIT) is 32 bytes (shl 5) */
+            next_unit_wx = _UNITS[next_unit_idx].wx;
+            next_unit_wy = _UNITS[next_unit_idx].wy;
+
+            Select_Unit_Stack(player_idx, map_x, map_y, map_plane, next_unit_wx, next_unit_wy);
+
+            if (done == ST_FALSE)
+            {
+                done = ST_TRUE; /* default to exit loop unless unit is in GOTO mode */
+
+                if (_UNITS[_unit].Status == us_GOTO)
+                {
+                    next_unit_dst_wx = _UNITS[_unit].dst_wx;
+                    next_unit_dst_wy = _UNITS[_unit].dst_wy;
+                    CRP_OverlandVar_3 = ST_TRUE;
+
+                    /* Check if unit reached destination and is not busy with road construction */
+                    if ((_UNITS[_unit].wx == next_unit_dst_wx) && 
+                        (_UNITS[_unit].wy == next_unit_dst_wy) && 
+                        (_UNITS[_unit].Rd_Constr_Left == (unsigned char)0xFF)) /* e_ST_UNDEFINED_DB */
+                    {
+                        _UNITS[_unit].Status = us_Ready;
+                    }
+                    else
+                    {
+                        Allocate_Reduced_Map();
+                        Stack_Move_To(player_idx, _unit, next_unit_dst_wx, next_unit_dst_wy, map_x, map_y, map_plane);
+                        Allocate_Reduced_Map();
+                    }
+                    
+                    /* Force loop to check for the next available unit after move attempt */
+                    done = ST_FALSE;
+                }
+            }
+        }
+    }
+
+    if (all_units_moved == ST_FALSE)
+    {
+        next_unit_idx = _unit;
+        next_unit_wx = _UNITS[next_unit_idx].wx;
+        next_unit_wy = _UNITS[next_unit_idx].wy;
+        
+        Select_Unit_Stack(player_idx, map_x, map_y, map_plane, next_unit_wx, next_unit_wy);
+    }
+    else
+    {
+        _unit_stack_count = 0;
+        Set_Draw_Active_Stack_Always();
+        
+        /* Dereferencing map pointers for window update */
+        Set_Entities_On_Map_Window(*map_x, *map_y, map_plane);
+    }
+
+    OVL_MapVar3 = ST_TRUE;
 }
 
 
@@ -706,6 +797,149 @@ int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane)
 
     return all_done_none_available;
 }
+/* GEMINI */
+int Next_Unit_Nearest_Available__GEMINI(int player_idx, int /* near */ *map_plane)
+{
+    int uu_flag;
+    int tried_other_plane;
+    int itr_wait_units;
+    int Closest_Active_Unit;
+    int Closest_Active_Dist;
+    int Closest_Waiting_Unit;
+    int Closest_Waiting_Dist;
+    int itr_units;
+    int delta;
+    int all_done_none_available;
+    int done;
+    int _DI_map_plane;
+    int _SI_unit_idx;
+
+    Closest_Waiting_Dist = 1000;
+    Closest_Waiting_Unit = ST_UNDEFINED;
+    Closest_Active_Dist = 1000;
+    Closest_Active_Unit = ST_UNDEFINED;
+    tried_other_plane = ST_FALSE;
+    _DI_map_plane = *map_plane;
+    uu_flag = ST_UNDEFINED;
+    all_done_none_available = ST_FALSE;
+    done = ST_FALSE;
+    itr_units = 0;
+
+    while (done == ST_FALSE)
+    {
+        _SI_unit_idx = itr_units;
+        
+        if (_UNITS[_SI_unit_idx].owner_idx != player_idx)
+        {
+            goto Check_Itr_Units;
+        }
+
+        if (_UNITS[_SI_unit_idx].wp != _DI_map_plane && _UNITS[_SI_unit_idx].in_tower != ST_TRUE)
+        {
+            goto Check_Itr_Units;
+        }
+
+        if (_UNITS[_SI_unit_idx].owner_idx == ST_UNDEFINED)
+        {
+            goto Check_Itr_Units;
+        }
+
+        if (_UNITS[_SI_unit_idx].Finished != ST_FALSE)
+        {
+            goto Check_Itr_Units;
+        }
+
+        delta = Delta_XY_With_Wrap(_active_world_x, _active_world_y, _UNITS[_SI_unit_idx].wx, _UNITS[_SI_unit_idx].wy, WORLD_WIDTH);
+
+        if (_UNITS[_SI_unit_idx].Status == us_Wait)
+        {
+            if (Closest_Waiting_Dist > delta)
+            {
+                Closest_Waiting_Dist = delta;
+                Closest_Waiting_Unit = _SI_unit_idx;
+            }
+            goto Check_Itr_Units;
+        }
+        else if (_UNITS[_SI_unit_idx].Status == us_Purify)
+        {
+            goto Check_Itr_Units;
+        }
+        else if (_UNITS[_SI_unit_idx].Status == us_Unknown_100)
+        {
+            goto Check_Itr_Units;
+        }
+        
+        if (Closest_Active_Dist > delta)
+        {
+            Closest_Active_Dist = delta;
+            Closest_Active_Unit = _SI_unit_idx;
+        }
+
+Check_Itr_Units:
+        itr_units++;
+        
+        if (itr_units == _units)
+        {
+            if (Closest_Active_Unit != ST_UNDEFINED)
+            {
+                done = ST_TRUE;
+                
+                if (_DI_map_plane == 2)
+                {
+                    _DI_map_plane = 0;
+                }
+                
+                *map_plane = _DI_map_plane;
+                _unit = Closest_Active_Unit;
+                _active_world_x = _UNITS[_unit].wx;
+                _active_world_y = _UNITS[_unit].wy;
+            }
+            else if (Closest_Waiting_Unit != ST_UNDEFINED)
+            {
+                if (_DI_map_plane == 2)
+                {
+                    _DI_map_plane = 0;
+                }
+                
+                *map_plane = _DI_map_plane;
+                _unit = Closest_Waiting_Unit;
+                done = ST_TRUE;
+                _active_world_x = _UNITS[_unit].wx;
+                _active_world_y = _UNITS[_unit].wy;
+                
+                for (itr_wait_units = 0; itr_wait_units < _units; itr_wait_units++)
+                {
+                    if (_UNITS[itr_wait_units].owner_idx == player_idx && _UNITS[itr_wait_units].Status == us_Wait)
+                    {
+                        _UNITS[itr_wait_units].Status = us_Ready;
+                    }
+                }
+            }
+            else
+            {
+                if (tried_other_plane != ST_TRUE)
+                {
+                    tried_other_plane = ST_TRUE;
+                    _DI_map_plane = (_DI_map_plane + 1) % 2;
+                    Closest_Waiting_Dist = 1000;
+                    Closest_Waiting_Unit = ST_UNDEFINED;
+                    Closest_Active_Dist = 1000;
+                    Closest_Active_Unit = ST_UNDEFINED;
+                    uu_flag = ST_UNDEFINED;
+                    itr_units = 0;
+                }
+                else
+                {
+                    done = ST_TRUE;
+                    all_done_none_available = ST_TRUE;
+                }
+            }
+        }
+    }
+
+    return all_done_none_available;
+}
+
 
 // WZD o61p06
 /*
@@ -1308,7 +1542,7 @@ int16_t Unit_Action_Special_Purify(int16_t troop_count, int16_t troops[])
 // WZD o61p12
 int16_t Unit_Action_Special_Meld(int16_t troop_count, int16_t troops[])
 {
-    int16_t Guardian;
+    int16_t melder_at_node;
     int16_t node_idx;
     int16_t Spirit;
     int16_t unit_owner;
@@ -1321,7 +1555,7 @@ int16_t Unit_Action_Special_Meld(int16_t troop_count, int16_t troops[])
     unit_owner = _UNITS[troops[0]].owner_idx;
 
     Spirit = ST_FALSE;
-    Guardian = ST_FALSE;
+    melder_at_node = ST_FALSE;
 
     if(node_idx == ST_UNDEFINED)
     {
@@ -1336,12 +1570,12 @@ int16_t Unit_Action_Special_Meld(int16_t troop_count, int16_t troops[])
         {
             // cmp     ax, es:[bx+(Guardian_Spirit*24h)+s_SPELL_DATA.Param0]
             // TODO  if(_UNITS[unit_idx].type == spell_data_table[GUARDIAN_SPIRIT].Param0)
-            // TODO  Guardian = ST_TRUE;
+            // TODO  melder_at_node = ST_TRUE;
             // TODO  Spirit = ST_TRUE;
             // TODO  break;
             // TODO  else
             // TODO  Spirit = ST_TRUE;
-            Guardian = ST_TRUE;
+            melder_at_node = ST_TRUE;
             Spirit = ST_TRUE;
         }
 
@@ -1370,7 +1604,7 @@ int16_t Unit_Action_Special_Meld(int16_t troop_count, int16_t troops[])
             }
             else
             {
-                if(Guardian != ST_TRUE)
+                if(melder_at_node != ST_TRUE)
                 {
                     return ST_FALSE;
                 }
@@ -1391,35 +1625,68 @@ int16_t Unit_Action_Special_Meld(int16_t troop_count, int16_t troops[])
 }
 
 // WZD o61p13
+/**
+ * @brief Executes the meld special action for the currently active stack.
+ *
+ * Collects active units from the current selection into a temporary stack
+ * buffer via Active_Unit_Stack(), then forwards that stack to
+ * STK_DoMeldWithNode() for node ownership resolution, guardian handling, and
+ * meld-unit consumption.
+ *
+ * @return This function does not return a value. It may indirectly change
+ *         node ownership/flags and may remove a meld unit through
+ *         STK_DoMeldWithNode().
+ *
+ * @note This wrapper contains no meld decision logic itself; it only gathers
+ *       active-unit indices and delegates the operation.
+ */
 void STK_MeldWithNode(void)
 {
     int16_t troops[MAX_STACK];
     int16_t troop_count;
-
     Active_Unit_Stack(&troop_count, &troops[0]);
-
     STK_DoMeldWithNode(troop_count, &troops[0]);
-
 }
 
 
 // WZD o61p14
-/*
-// ; attempts to meld the first spirit in the stack with
-// ; the node on their tile, if there is one, handling
-// ; all related mechanics (warp, guardian, fail prompt)
-*/
+/* COPILOT */
+/**
+ * @brief Resolves node melding for an active stack on a magic node square.
+ *
+ * Uses the first unit in @p troops to identify the current node, rejects the
+ * action if the stack is empty or the node is warped, then searches the stack
+ * for a meld-capable unit to spend. If the node is neutral, already owned by
+ * the acting player, or lacks a guardian flag, control is taken immediately.
+ * If an enemy guardian is present, control is taken only on a 25% random roll;
+ * failure triggers the guardian warning message.
+ *
+ * On success, the node owner is set to the acting player, and guardian status
+ * is preserved/restored when the chosen meld unit is identified as a Guardian
+ * Spirit type. The selected meld unit is always removed via Kill_Unit() at the
+ * end of processing.
+ *
+ * @param troop_count Number of unit indices available in @p troops.
+ * @param troops Array of unit indices representing the active stack.
+ *
+ * @return This function does not return a value. It may modify
+ *         @c _NODES[node_idx].owner_idx, @c _NODES[node_idx].flags, display a
+ *         warning message, and kill one unit.
+ *
+ * @note The current implementation preserves original behavior, including use
+ *       of the lead unit context when selecting the unit consumed by melding.
+ */
 void STK_DoMeldWithNode(int16_t troop_count, int16_t troops[])
 {
-    int16_t Random_Result;
-    int16_t Can_Meld;
-    int16_t node_owner;
-    int16_t unit_owner;
-    int16_t Guardian;
-    int16_t Spirit_Unit_Index;
-    int16_t itr_troops;
-    int16_t unit_idx;  // _SI_
-    int16_t node_idx;  // _DI_
+    int16_t percentage = 0;
+    int16_t did_take_node = 0;
+    int16_t node_owner = 0;
+    int16_t unit_owner = 0;
+    int16_t node_has_garrison = 0;
+    int16_t melder_unit_idx = 0;
+    int16_t itr_troops = 0;
+    int16_t unit_idx = 0;
+    int16_t node_idx = 0;
 
     if(troop_count < 1)
     {
@@ -1436,33 +1703,35 @@ void STK_DoMeldWithNode(int16_t troop_count, int16_t troops[])
     }
 
     unit_owner = _UNITS[unit_idx].owner_idx;
-
     node_owner = _NODES[node_idx].owner_idx;
 
-    Guardian = ST_FALSE;
-
-    Spirit_Unit_Index = ST_UNDEFINED;
-
+    node_has_garrison = ST_FALSE;
+    melder_unit_idx = ST_UNDEFINED;
     for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
     {
-        if((_unit_type_table[_UNITS[troops[itr_troops]].type].Abilities & UA_MELD) != 0)
+        unit_idx = troops[itr_troops];
+        if((_unit_type_table[_UNITS[troops[itr_troops]].type].Abilities & UA_MELD) == 0)
         {
-            // cmp     ax, es:[bx+(Guardian_Spirit*24h)+s_SPELL_DATA.Param0]
-            // TODO  if(_UNITS[unit_idx].type == spell_data_table[GUARDIAN_SPIRIT].Param0)
-            // TODO  Spirit_Unit_Index = unit_idx;
-            // TODO  Guardian = ST_TRUE;
-            // TODO  break;
-            // else
-            Spirit_Unit_Index = unit_idx;
+            continue;
+        }
+        if(_UNITS[unit_idx].type == spell_data_table[spl_Guardian_Spirit].unit_type)
+        {
+            melder_unit_idx = unit_idx;
+            node_has_garrison = ST_TRUE;
+            break;
+        }
+        else
+        {
+            melder_unit_idx = unit_idx;
         }
     }
 
-    if(Spirit_Unit_Index == ST_UNDEFINED)
+    if(melder_unit_idx == ST_UNDEFINED)
     {
         return;
     }
 
-    Can_Meld = ST_FALSE;
+    did_take_node = ST_FALSE;
 
     if(
         (node_owner == ST_UNDEFINED)
@@ -1470,40 +1739,45 @@ void STK_DoMeldWithNode(int16_t troop_count, int16_t troops[])
         (node_owner == unit_owner)
     )
     {
-        Can_Meld = ST_TRUE;
+        did_take_node = ST_TRUE;
     }
     else
     {
         if((_NODES[node_idx].flags & NF_GUARDIAN) == 0)
         {
-            Can_Meld = ST_TRUE;
+            did_take_node = ST_TRUE;
         }
         else
         {
-            Random_Result = Random(100);
-            if(Random_Result <= 25)
+            percentage = Random(100);
+            if(
+                (percentage > 25)
+                &&
+                (unit_owner == _human_player_idx)
+            )
             {
-                Can_Meld = ST_TRUE;
-                _NODES[node_idx].flags ^= NF_GUARDIAN;
+                Warn0(_msg_guardian_kills_spirit);  /* "The Guardian Spirit occupying this node kills your spirit." */
             }
             else
             {
-                Warn0(_msg_guardian_kills_spirit);  // "The Guardian Spirit occupying this node kills your spirit."
+                did_take_node = ST_TRUE;
+                _NODES[node_idx].flags ^= NF_GUARDIAN;
             }
         }
     }
 
-    if(Can_Meld == ST_TRUE)
+    if(did_take_node == ST_TRUE)
     {
         _NODES[node_idx].owner_idx = (int8_t)unit_owner;
 
-        if(Guardian == ST_TRUE)
+        if(node_has_garrison == ST_TRUE)
         {
             _NODES[node_idx].flags |= NF_GUARDIAN;
         }
     }
 
-    Kill_Unit(Spirit_Unit_Index, 1);
+    /* Must be will melded or we got killed, so make the Unit cease to exist */
+    Kill_Unit(melder_unit_idx, kt_Dismissed);
 
 }
 
@@ -1525,7 +1799,7 @@ void Next_Turn_Process_Purify(void)
     int16_t itr_units;  // _SI_
     int16_t time_stop_flag;  // _DI_
     int16_t itr_troops;  // _DI_
-    int16_t unit_idx;
+    int16_t unit_idx = 0;
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
