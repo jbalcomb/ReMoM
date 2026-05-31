@@ -756,38 +756,38 @@ TODO  rename View_Type; rename CalledFromFlag to view_type
 */
 void Thing_View_Draw__WIP(int16_t x_start, int16_t y_start, int16_t CalledFromFlag, int16_t thing_idx, struct s_UV_List * specials_list, int16_t specials_count, SAMB_ptr item_icon_pict_seg)
 {
-    char temp_string[20];
-    int16_t Allows_List[9];
-    SAMB_ptr bldg_pict_seg;
-    int16_t Object_IMG_Height;
-    int16_t Object_IMG_Width;
-    int16_t Object_IMG_Top;
-    int16_t Object_IMG_Left;  // In Dasm, reused as tmp unit_type_idx
-    int16_t unit_type_idx;
-    int16_t stat_icon_row_limit;
-    uint8_t colors[6];
-    int16_t bldg_pict_draw_y;
-    int16_t bldg_pict_draw_x;
-    int16_t Gold_Icons;
-    int16_t unit_race;
-    int16_t View_Type;
-    int16_t Allows_Count;
-    int16_t bldg_idx;
-    int16_t unit_idx;
-    int16_t hero_owner_idx;
-    int16_t product_cost;
-    int16_t Text_Top;
-    int16_t Text_Left;
-    int16_t product_idx;
-    int16_t attack_icon_index;
-    int16_t Allows_List_Size;
-    int16_t itr;
-    int16_t UV_x_start_offset;  // _SI_
-    int16_t bldg_pict_h;   // DNE in Dasm
-    int16_t bldg_pict_w;   // DNE in Dasm
-    int16_t bldg_pict_y1;  // DNE in Dasm
-    int16_t bldg_pict_x1;  // DNE in Dasm
-    int16_t moves_icon_idx;  // DNE in Dasm, uses product_idx
+    char temp_string[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Allows_List[9] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    SAMB_ptr bldg_pict_seg = 0;
+    int16_t Object_IMG_Height = 0;
+    int16_t Object_IMG_Width = 0;
+    int16_t Object_IMG_Top = 0;
+    int16_t Object_IMG_Left = 0;  // In Dasm, reused as tmp unit_type_idx
+    int16_t unit_type_idx = 0;
+    int16_t stat_icon_row_limit = 0;
+    uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t bldg_pict_draw_y = 0;
+    int16_t bldg_pict_draw_x = 0;
+    int16_t Gold_Icons = 0;
+    int16_t unit_race = 0;
+    int16_t View_Type = 0;
+    int16_t Allows_Count = 0;
+    int16_t bldg_idx = 0;
+    int16_t unit_idx = 0;
+    int16_t hero_owner_idx = 0;
+    int16_t product_cost = 0;
+    int16_t Text_Top = 0;
+    int16_t Text_Left = 0;
+    int16_t product_idx = 0;
+    int16_t attack_icon_index = 0;
+    int16_t Allows_List_Size = 0;
+    int16_t itr = 0;
+    int16_t UV_x_start_offset = 0;  // _SI_
+    int16_t bldg_pict_h = 0;   // DNE in Dasm
+    int16_t bldg_pict_w = 0;   // DNE in Dasm
+    int16_t bldg_pict_y1 = 0;  // DNE in Dasm
+    int16_t bldg_pict_x1 = 0;  // DNE in Dasm
+    int16_t moves_icon_idx = 0;  // DNE in Dasm, uses product_idx
 
     UV_x_start = x_start;
     UV_y_start = y_start;

@@ -96,11 +96,10 @@
 
     RANDOM NUMBER GENERATOR
     -----------------------
-    The game uses an XOR-shift PRNG (random.c):
-        state ^= (state << 13);
-        state ^= (state >> 17);
-        state ^= (state << 5);
-        return ((state >> 16) % max) + 1;       result is in range [1..max]
+    The game uses a 9-bit LFSR PRNG (random.c, derived from MAGIC.EXE's disassembly):
+        for 9 iterations, fold feedback taps (bits 0/1/2/4/6 of low_seed, bit 15 of high_seed)
+        into a result accumulator while shifting the 32-bit seed right one bit per step,
+        guard against the all-zero state, then return ((result % max) + 1) in range [1..max].
     The global seed is set via Set_Random_Seed() and advanced by each call to Random().
     The test helpers replicate this algorithm locally in Predict_Random() so we can pre-compute what River_Path() will do for
     a given seed without calling Random() and mutating the global state.
@@ -185,15 +184,17 @@ struct s_river_seed_plan
     This is a pure, side-effect-free copy of Random() (random.c, WZD s22p08).  It operates on a caller-supplied seed_state
     pointer instead of the global random_seed, so the tests can predict the RNG sequence without touching global state.
 
-    The algorithm is an XOR-shift PRNG:
-        1)  state ^= (state << 13)      left shift 13, XOR into state
-        2)  state ^= (state >> 17)      right shift 17, XOR into state
-        3)  state ^= (state <<  5)      left shift 5, XOR into state
-        4)  Write the new state back through the pointer.
-        5)  Return ((state >> 16) % max) + 1.
+    The algorithm is a 9-bit LFSR (derived from MAGIC.EXE's disassembly).  Split the 32-bit state into low/high 16-bit halves,
+    then for 9 iterations:
+        1)  new_bit = XOR of low_seed bits 0,1,2,4,6 and high_seed bit 15, masked to one bit.
+        2)  result  = (result << 1) | new_bit                       shift the feedback bit into the accumulator.
+        3)  Shift the 32-bit state right by one bit, carrying high_seed's low bit into low_seed's top bit and dropping
+            new_bit into high_seed's top bit.
+    After the loop, guard the all-zero state (low_seed = 12478), write the recombined state back through the pointer, and
+    return ((result % max) + 1).
 
-    The >> 16 extracts the upper 16 bits of the 32-bit state for the modulo, and the +1 shifts the range from [0..max-1]
-    to [1..max].  This matches the original SimTex implementation byte-for-byte.
+    The +1 shifts the range from [0..max-1] to [1..max].  This mirrors the production Random() in random.c byte-for-byte
+    (minus the call counter, n==0 guard, and tracing, none of which affect the value or state transition).
 
     Parameters:
         seed_state  Pointer to the caller's running RNG state.  Modified in place on each call.
@@ -205,15 +206,35 @@ struct s_river_seed_plan
 */
 static int16_t Predict_Random(uint32_t * seed_state, int16_t max)
 {
-    uint32_t state = *seed_state;
+    int16_t  i;
+    uint16_t result = 0;
+    uint16_t low_seed;
+    uint16_t high_seed;
+    uint16_t new_bit;
+    uint16_t carry_bit;
 
-    state ^= (state << 13);
-    state ^= (state >> 17);
-    state ^= (state << 5);
+    low_seed  = (uint16_t)(*seed_state & 0xFFFF);
+    high_seed = (uint16_t)(*seed_state >> 16);
 
-    *seed_state = state;
+    for(i = 0; i < 9; i++)
+    {
+        new_bit = (uint16_t)((low_seed ^ (low_seed >> 1) ^ (low_seed >> 2) ^ (low_seed >> 4) ^ (low_seed >> 6) ^ (high_seed >> 15)) & 1);
 
-    return (int16_t)(((state >> 16) % max) + 1);
+        result = (uint16_t)((result << 1) | new_bit);
+
+        carry_bit = (uint16_t)(high_seed & 1);
+        low_seed  = (uint16_t)((low_seed  >> 1) | (carry_bit << 15));
+        high_seed = (uint16_t)((high_seed >> 1) | (new_bit   << 15));
+    }
+
+    if(low_seed == 0 && high_seed == 0)
+    {
+        low_seed = 12478;
+    }
+
+    *seed_state = ((uint32_t)high_seed << 16) | (uint32_t)low_seed;
+
+    return (int16_t)((result % max) + 1);
 }
 
 

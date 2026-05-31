@@ -463,7 +463,7 @@ NOTE(JimBalcomb,20260302): These have been deprecated, do not use them anymore -
 // MoO2  Clear_Planet_Explored_Flags_()
 // MoO2  Set_Planet_Explored_Flags_()
 #define GET_SQUARE_EXPLORED(_wx_, _wy_, _wp_)           ( _square_explored[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ]              )
-#define SET_SQUARE_EXPLORED(_wx_, _wy_, _wp_, _value_)  ( _square_explored[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ] = (_value_)  )
+#define SET_SQUARE_EXPLORED(_wx_, _wy_, _wp_, _value_) (_square_explored[(((_wp_) * WORLD_SIZE) + ((_wy_) * WORLD_WIDTH) + (_wx_))] = (uint8_t)(_value_))
 
 #define UNEXPLORED  0x0  /* no bits are set */  /* test as 'any bits are set' */
 #define EXPLORED    0xF  /* ¿ all bits are set ? */  /* test as 'all bits are set' */

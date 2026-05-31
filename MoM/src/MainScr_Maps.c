@@ -956,7 +956,7 @@ void Set_Unit_Draw_Priority(void)
             draw_priority = ST_UNDEFINED;
         }
 
-        _UNITS[unit_idx].Draw_Priority = draw_priority;
+        _UNITS[unit_idx].Draw_Priority = (int8_t)draw_priority;
 
     }
 

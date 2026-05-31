@@ -508,18 +508,18 @@ void Production_Screen_Draw(void)
 // WZD o56p06
 void Production_Screen_Draw_(void)
 {
-    uint8_t colors[6];
-    int16_t build_table_bldg_item_cnt;
-    int16_t build_table_unit_item_cnt;
-    int16_t unit_type;
-    int16_t product_idx;
-    int16_t var_A;
-    int16_t var_8;
-    int16_t UU_y2;
-    int16_t UU_x2;
-    int16_t ystart;
-    int16_t itr;  // _SI_
-    int16_t xstart;  // _DI_
+    uint8_t colors[6] = {0, 0, 0, 0, 0, 0};
+    int16_t build_table_bldg_item_cnt = 0;
+    int16_t build_table_unit_item_cnt = 0;
+    int16_t unit_type = 0;
+    int16_t product_idx = 0;
+    int16_t var_A = 0;
+    int16_t var_8 = 0;
+    int16_t UU_y2 = 0;
+    int16_t UU_x2 = 0;
+    int16_t ystart = 0;
+    int16_t itr = 0;
+    int16_t xstart = 0;
 
     xstart = popup_base_x;
     ystart = popup_base_y;
@@ -1087,9 +1087,9 @@ int16_t City_N_Turns_To_Produce(int16_t production_cost, int16_t city_idx)
 // drake178: BLD_AllowedByRace()
 int16_t BLD_AllowedByRace__WIP_TRUE(int16_t UU_Bld1, int16_t Building)
 {
-    int16_t Building_List;
-    int16_t City_Screen_Race;
-    int16_t Result;
+    // TODO  int16_t Building_List = 0;
+    // TODO  int16_t City_Screen_Race = 0;
+    int16_t Result = 0;
 
     Result = Building;
 

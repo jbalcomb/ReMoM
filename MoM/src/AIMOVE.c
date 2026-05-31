@@ -179,15 +179,6 @@ int16_t niu_unknown_var;
 
 
 
-// WZD o158p02
-static void AI_Stacks_Stage_Expedition_Forces(int16_t landmass_idx, int16_t wp, int16_t player_idx);
-// WZD o158p20
-static void AI_Stacks_Survey_Expedition_Forces(void);
-// WZD o158p21
-static void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t unit_count, int16_t excess_count);
-
-
-
 /*
     WIZARDS.EXE  ovr158
 */
@@ -382,7 +373,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
  *       `_ai_expedition_size_threshold`, all of which must already have been prepared by
  *       earlier AI passes in the same turn.
  */
-static void AI_Stacks_Stage_Expedition_Forces(int16_t landmass_idx, int16_t wp, int16_t player_idx)
+void AI_Stacks_Stage_Expedition_Forces(int16_t landmass_idx, int16_t wp, int16_t player_idx)
 {
     int16_t unit_list_idx = 0;
     int16_t unit_idx = 0;
@@ -3616,7 +3607,7 @@ void AI_Stacks_Move_Out_NonMilitary_Garrisoned(int16_t wp)
  *       (`_turn < 100`), preserving the current heuristic that avoids stripping
  *       the fortress city too aggressively in early turns.
  */
-static void AI_Stacks_Survey_Expedition_Forces(void)
+void AI_Stacks_Survey_Expedition_Forces(void)
 {
     int16_t itr_stacks = 0;
     int16_t stack_unit_count = 0;
@@ -3672,20 +3663,6 @@ static void AI_Stacks_Survey_Expedition_Forces(void)
 
 }
 
-/* COPILOT */
-/* TEST HOOK: forwards to the original static implementation without changing in-game call sites. */
-void AI_Stacks_Survey_Expedition_Forces_Test_Hook(void)
-{
-    AI_Stacks_Survey_Expedition_Forces();
-}
-
-/* COPILOT */
-/* TEST HOOK: forwards to the original static stack helper without changing in-game call sites. */
-void AI_Stacks_Survey_Expedition_Forces_Stack_Test_Hook(int16_t stack_idx, int16_t unit_count, int16_t excess_count)
-{
-    AI_Stacks_Survey_Expedition_Forces_Stack(stack_idx, unit_count, excess_count);
-}
-
 
 // WZD o158p21
 /**
@@ -3717,7 +3694,7 @@ void AI_Stacks_Survey_Expedition_Forces_Stack_Test_Hook(int16_t stack_idx, int16
  *       list length after sorting, matching the current reverse-engineered
  *       implementation rather than an idealized ranking pass.
  */
-static void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t unit_count, int16_t excess_count)
+void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t unit_count, int16_t excess_count)
 {
     int16_t military_unit_indices[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t military_unit_values[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };  /* holds Effective_Unit_Type_Strength() */

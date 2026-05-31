@@ -27,7 +27,7 @@ extern "C" {
 void AI_Set_Unit_Orders(int16_t player_idx);
 
 // WZD o158p02
-// static void AI_Stacks_Stage_Expedition_Forces(int16_t landmass_idx, int16_t wp, int16_t player_idx);
+void AI_Stacks_Stage_Expedition_Forces(int16_t landmass_idx, int16_t wp, int16_t player_idx);
 
 // WZD o158p03
 void AI_Stacks_Garrison_Sites(int16_t player_idx, int16_t wp, int16_t landmass_idx);
@@ -81,18 +81,10 @@ void AI_Move_Out_Boats(void);
 void AI_Stacks_Move_Out_NonMilitary_Garrisoned(int16_t wp);
 
 // WZD o158p20
-// static void AI_Stacks_Survey_Expedition_Forces(void);
-
-/* COPILOT */
-/* TEST HOOK: preserves the original static implementation while exposing a callable seam for GoogleTest. */
-void AI_Stacks_Survey_Expedition_Forces_Test_Hook(void);
+void AI_Stacks_Survey_Expedition_Forces(void);
 
 // WZD o158p21
-// static void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t unit_count, int16_t excess_count);
-
-/* COPILOT */
-/* TEST HOOK: preserves the original static implementation while exposing the stack-level helper for GoogleTest. */
-void AI_Stacks_Survey_Expedition_Forces_Stack_Test_Hook(int16_t stack_idx, int16_t unit_count, int16_t excess_count);
+void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t unit_count, int16_t excess_count);
 
 // WZD o158p22
 void AI_Stacks_Do_Meld(int16_t player_idx);

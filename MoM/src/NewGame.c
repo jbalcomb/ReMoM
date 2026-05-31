@@ -1647,8 +1647,10 @@ int16_t Newgame_Screen_0(void)
     int16_t First_Draw_Done = 0;
     int16_t input_field_idx = 0;  // _SI_
     FILE * file_pointer = 0;  // _DI_
+#ifdef STU_DEBUG
     struct s_MAGIC_SET magic_set_snapshot;
-    
+#endif
+
     screen_changed = ST_TRUE;
     
     // KNOWNBUG  conflicting condition - will never jump

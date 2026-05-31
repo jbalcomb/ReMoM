@@ -1488,7 +1488,7 @@ END:  ¿ jmp     @@BeginTopLevelPlayerLoop ?
             if(banners[random_banner] != ST_TRUE)
             {
                 banners[random_banner] = ST_TRUE;
-                _players[itr2].banner_id = random_banner;
+                _players[itr2].banner_id = (uint8_t)random_banner;
             }
         }
 

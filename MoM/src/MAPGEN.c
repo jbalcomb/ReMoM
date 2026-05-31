@@ -3106,7 +3106,7 @@ void Desert_Autotile(void)
                                 // _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = _landmasses[((wp * WORLD_SIZE) + (Y_Mod * WORLD_WIDTH) + X_Mod)];
                                 landmass_idx = _landmasses[((wp * WORLD_SIZE) + ((wy + Y_Mod) * WORLD_WIDTH) + (wx + X_Mod))];
                                 assert(landmass_idx < NUM_LANDMASSES);
-                                _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = landmass_idx;
+                                _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = (uint8_t)landmass_idx;
                             }
                         }
                     }

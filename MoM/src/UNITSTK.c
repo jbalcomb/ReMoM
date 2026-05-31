@@ -210,16 +210,16 @@ void Update_Stack_Active(int16_t stack_idx)
 // AKA Do_Move_Stack()
 int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p)
 {
-    int16_t unit_array[MAX_STACK];
-    int16_t unit_array_count;
-    int16_t unit_p;
-    int16_t unit_y;
-    int16_t unit_x;
-    int16_t movement_points_available;
-    int16_t move_type;
-    int16_t unit_idx;
+    int16_t unit_array[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, };
+    int16_t unit_array_count = 0;
+    int16_t unit_p = 0;
+    int16_t unit_y = 0;
+    int16_t unit_x = 0;
+    int16_t movement_points_available = 0;
+    int16_t move_type = 0;
+    int16_t unit_idx = 0;
 
-    int16_t itr_units;
+    int16_t itr_units = 0;
 
     assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
     assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
@@ -545,14 +545,14 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 /* GEMINI */
 static void WIZ_NextIdleStack_GEMINI(int16_t player_idx, int16_t *map_x, int16_t *map_y, int16_t map_plane)
 {
-    int16_t unused_var_10;
-    int16_t next_unit_dst_wy;
-    int16_t next_unit_dst_wx;
-    int16_t next_unit_wy;
-    int16_t next_unit_wx;
-    int16_t AllUnitsMoved;
-    int16_t done;
-    int16_t next_unit_idx;
+    int16_t unused_var_10 = 0;
+    int16_t next_unit_dst_wy = 0;
+    int16_t next_unit_dst_wx = 0;
+    int16_t next_unit_wy = 0;
+    int16_t next_unit_wx = 0;
+    int16_t AllUnitsMoved = 0;
+    int16_t done = 0;
+    int16_t next_unit_idx = 0;
 
     /* Initialization */
     done = ST_FALSE;
@@ -798,7 +798,7 @@ int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane)
     return all_done_none_available;
 }
 /* GEMINI */
-int Next_Unit_Nearest_Available__GEMINI(int player_idx, int /* near */ *map_plane)
+static int Next_Unit_Nearest_Available__GEMINI(int player_idx, int /* near */ *map_plane)
 {
     int uu_flag;
     int tried_other_plane;
@@ -997,18 +997,18 @@ void Active_Unit_Stack(int16_t * troop_count, int16_t troops[])
 */
 void Build_Moveable_Stack(int16_t * troop_count, int16_t troops[])
 {
-    int16_t moveable_troops[MAX_STACK];
-    int16_t boatriders[MAX_STACK];
-    int16_t transport_load;
-    int16_t boatriders_idx;
-    int16_t transport_capacity;
-    int16_t boatrider_count;
-    int16_t stack_has_transport;
-    int16_t moveable_troop_count;
-    int16_t l_troop_count;
+    int16_t moveable_troops[MAX_STACK] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int16_t boatriders[MAX_STACK] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int16_t transport_load = 0;
+    int16_t boatriders_idx = 0;
+    int16_t transport_capacity = 0;
+    int16_t boatrider_count = 0;
+    int16_t stack_has_transport = 0;
+    int16_t moveable_troop_count = 0;
+    int16_t l_troop_count = 0;
 
-    int16_t itr_stack;  // _DI_
-    int16_t itr_boatriders;  // _DI_
+    int16_t itr_stack = 0;
+    int16_t itr_boatriders = 0;
 
     stack_has_transport = ST_FALSE;
     transport_capacity = 0;
@@ -1642,8 +1642,8 @@ int16_t Unit_Action_Special_Meld(int16_t troop_count, int16_t troops[])
  */
 void STK_MeldWithNode(void)
 {
-    int16_t troops[MAX_STACK];
-    int16_t troop_count;
+    int16_t troops[MAX_STACK] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int16_t troop_count = 0;
     Active_Unit_Stack(&troop_count, &troops[0]);
     STK_DoMeldWithNode(troop_count, &troops[0]);
 }
@@ -1789,16 +1789,16 @@ void STK_DoMeldWithNode(int16_t troop_count, int16_t troops[])
 */
 void Next_Turn_Process_Purify(void)
 {
-    int16_t troops[MAX_STACK];
-    int16_t unit_owner;
-    int16_t Purify_Progress;
-    int16_t troop_count;
-    int16_t unit_wp;
-    int16_t unit_wy;
-    int16_t unit_wx;
-    int16_t itr_units;  // _SI_
-    int16_t time_stop_flag;  // _DI_
-    int16_t itr_troops;  // _DI_
+    int16_t troops[MAX_STACK] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int16_t unit_owner = 0;
+    int16_t Purify_Progress = 0;
+    int16_t troop_count = 0;
+    int16_t unit_wp = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t itr_units = 0;
+    int16_t time_stop_flag = 0;
+    int16_t itr_troops = 0;
     int16_t unit_idx = 0;
 
     for(itr_units = 0; itr_units < _units; itr_units++)

@@ -5795,8 +5795,8 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 
     for(itr_units = 0; itr_units < unit_array_count; itr_units++)
     {
-        _UNITS[unit_array[itr_units]].wx = destination_x;
-        _UNITS[unit_array[itr_units]].wy = destination_y;
+        _UNITS[unit_array[itr_units]].wx = (int8_t)destination_x;
+        _UNITS[unit_array[itr_units]].wy = (int8_t)destination_y;
     }
 
 

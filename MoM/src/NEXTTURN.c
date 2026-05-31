@@ -613,7 +613,7 @@ void All_AI_Players_Contacted(void)
 // WZD o119p01
 void Next_Turn_Calc(void)
 {
-    int16_t itr_players = 0;  // _SI_
+    int16_t itr_players = 0;
     int16_t DBG_itr_cities = 0;
 #ifdef STU_DEBUG
     uint64_t ntc_start_ms = Platform_Get_Millies();
@@ -648,7 +648,7 @@ void Next_Turn_Calc(void)
     // AI_Next_Turn();
 /* CLAUDE */ PHASE(AI_Next_Turn());
 
-    // Delete_Dead_Units();  // DNE in Dasm
+    // /* HACK */  Delete_Dead_Units();  // DNE in Dasm
 /* CLAUDE */ PHASE(Delete_Dead_Units());
 
     // Next_Turn_Process_Purify();

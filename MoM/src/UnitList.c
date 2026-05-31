@@ -601,11 +601,11 @@ void Unit_List_Window_Draw(void)
 // WZD o79p03
 void Unit_List_Window_Add_Fields(int16_t flag)
 {
-    int16_t x1;
-    int16_t ULW_fields_flag;
-    int16_t itr_max_stack;  // _SI_
-    int16_t itr_troops;  // _SI_
-    int16_t y1;  // _DI_
+    int16_t x1 = 0;
+    // TODO  int16_t ULW_fields_flag = 0;
+    int16_t itr_max_stack = 0;
+    int16_t itr_troops = 0;
+    int16_t y1 = 0;
 
     for(itr_max_stack = 0; itr_max_stack < MAX_STACK; itr_max_stack++)
     {
