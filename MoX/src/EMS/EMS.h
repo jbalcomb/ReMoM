@@ -165,7 +165,7 @@ void EMM_Map4Pages(int emsFirst, SAMB_ptr emsHandle);
 
 /* WIZARDS.EXE seg013 */
 SAMB_ptr EMM_GetHandle(int16_t page_count, const char *handle_name, int16_t reserved_flag);
-SAMB_ptr EMM_Map_DataH(void);
+SAMB_ptr EMMDATAH_Map(void);
 SAMB_ptr EMM_EMMDATAH_AllocFirst(uint16_t nparas);
 SAMB_ptr EMM_EMMDATAH_AllocNext(uint16_t nparas);
 void UU_EMM_Data_Mark(void);
@@ -244,7 +244,7 @@ void EMM_ReleaseAll__STUB(void);
 // RP_EMM_VGARead_P5()
 
 // WZD s13p25
-// EMM_Map_DataH()
+SAMB_ptr EMMDATAH_Map(void);
 
 // WZD s13p26
 // EMM_EMMDATAH_AllocFirst()

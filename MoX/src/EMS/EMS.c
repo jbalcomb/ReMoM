@@ -487,7 +487,7 @@ SAMB_ptr EMM_GetHandle(int16_t page_count, const char *handle_name, int16_t rese
 }
 
 // WZD s13p25
-SAMB_ptr EMM_Map_DataH(void)
+SAMB_ptr EMMDATAH_Map(void)
 {
     if (_EMMDATAH_seg == NULL) {
         return NULL;
@@ -505,7 +505,7 @@ SAMB_ptr EMM_EMMDATAH_AllocFirst(uint16_t nparas)
     SAMB_ptr header;
 
     EMM_Data_Level = 0;
-    if (EMM_Map_DataH() == NULL) {
+    if (EMMDATAH_Map() == NULL) {
         return NULL;
     }
 
@@ -532,7 +532,7 @@ SAMB_ptr EMM_EMMDATAH_AllocNext(uint16_t nparas)
     uint16_t free_paras;
     SAMB_ptr header;
 
-    if (EMM_Map_DataH() == NULL) {
+    if (EMMDATAH_Map() == NULL) {
         return NULL;
     }
 

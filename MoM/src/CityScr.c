@@ -22,6 +22,7 @@
 #include "../../MoX/src/Util.h"
 #include "../../MoX/src/Video.h"
 #include "../../MoX/src/paragrph.h"
+#include "../../MoX/src/EMS/EMS.h"
 
 #include "City_ovr55.h"
 #include "CITYCALC.h"
@@ -1301,7 +1302,7 @@ void City_Screen_Draw2__WIP(void)
 
     stu_strcat(GUI_String_1, " (");
 
-    // TODO  EMM_Map_DataH()
+    EMMDATAH_Map();
 
     pops = (City_Growth_Rate(_city_idx) * 10);
 
@@ -2094,7 +2095,7 @@ void City_Screen_Draw_Map(void)
 
             if(corner_square == ST_FALSE)
             {
-                // TODO  EMM_Map_DataH();
+                EMMDATAH_Map();
 
                 if(City_Area_Square_Is_Shared(mx, my, mp) == ST_TRUE)
                 {

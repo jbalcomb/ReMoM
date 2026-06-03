@@ -18,6 +18,8 @@
 #include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/random.h"
 #include "../../MoX/src/Util.h"
+#include "../../MoX/src/paragrph.h"
+#include "../../MoX/src/EMS/EMS.h"
 
 #include "MovePath.h"
 #include "Terrain.h"
@@ -410,7 +412,7 @@ void Reset_City_Road_Connection_Bitfields(void)
     int16_t dst_city_idx = 0;
     int16_t itr_cities = 0;  // _DI_
 
-    // TODO  EMM_Map_DataH();
+    EMMDATAH_Map();
 
     UU_var1A = 0;
     UU_var10 = WORLD_SIZE;
@@ -545,8 +547,7 @@ void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp)
     int16_t Dest_City_Index;
     int16_t itr_cities;  // _DI_
 
-    // DONT  EMM_Map_DataH()
-
+    EMMDATAH_Map();
 
     UU_var10 = WORLD_SIZE;
 
@@ -681,7 +682,7 @@ int16_t OVL_GetRoadPath(int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t 
     int16_t itr2;  // _SI_
     // _DI_itr1__path_length
 
-    // DONT  EMM_Map_DataH();                   ; maps the EMM Data block into the page frame
+    EMMDATAH_Map();
 
     landmass_num = _landmasses[((wp * WORLD_SIZE) + (src_wy * WORLD_WIDTH) + src_wx)];
 

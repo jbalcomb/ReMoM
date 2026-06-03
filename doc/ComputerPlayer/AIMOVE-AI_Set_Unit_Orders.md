@@ -204,7 +204,7 @@ After all landmasses on a plane finish, two non-landmass passes run:
 
 ```c
 // AIMOVE.c:321
-EMM_Map_DataH();
+EMMDATAH_Map();
 ```
 
 Restores the default data-segment mapping in the EMS page frame, undoing the `EMM_Map_CONTXXX__WIP()` from Phase 2. Mirrors the cleanup pattern in sibling [`AI_Reevaluate_All_Continents`](AIMOVE-AI_Reevaluate_All_Continents.md).
@@ -244,7 +244,7 @@ AI_Set_Unit_Orders(player_idx)
         └── AI_Stacks_Garrison_Sites            [gate: lmt_Own / lmt_Contested / lmt_Leaveable+]
     ├── AI_Stacks_Wartime_Ocean_Movement_And_Cleanup                 [per-plane post-pass]
     └── AI_Stacks_Ocean_Landmass_Orders          [per-plane post-pass]
-└── EMM_Map_DataH                            [cleanup]
+└── EMMDATAH_Map                            [cleanup]
 ```
 
 ## Related references

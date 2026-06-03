@@ -497,7 +497,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
 ## Phase 10 — Cleanup
 
 ```c
-EMM_Map_DataH();
+EMMDATAH_Map();
 ```
 
 Restores the default data-segment mapping in the EMS page frame, undoing the CONTXXX page-in from Phase 1.

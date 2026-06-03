@@ -85,7 +85,7 @@ void AI_Reevaluate_Continent(int16_t player_idx, int16_t landmass_idx, int16_t w
 EMM_Map_CONTXXX__WIP();
 ```
 
-Page the CONTXXX data handle into the EMS frame so the `_ai_landmass_*_squares_*` arrays are accessible during the subsequent phases. Counterpart to the `EMM_Map_DataH()` cleanup at the end of the sibling [`AI_Evaluate_Continents`](AIMOVE-AI_Evaluate_Continents.md) — this function does not perform the cleanup (flagged inline at line 6025 as `/* ¿ OGBUG  no EMM_Map_DataH() ? */`).
+Page the CONTXXX data handle into the EMS frame so the `_ai_landmass_*_squares_*` arrays are accessible during the subsequent phases. Counterpart to the `EMMDATAH_Map()` cleanup at the end of the sibling [`AI_Evaluate_Continents`](AIMOVE-AI_Evaluate_Continents.md) — this function does not perform the cleanup (flagged inline at line 6025 as `/* ¿ OGBUG  no EMMDATAH_Map() ? */`).
 
 ## Phase 2 — Cancel orders for all non-engineer units on this landmass
 
@@ -400,7 +400,7 @@ if(_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_O
     }
 }
 
-/* ¿ OGBUG  no EMM_Map_DataH() ? */
+/* ¿ OGBUG  no EMMDATAH_Map() ? */
 ```
 
 **Intent:** for landmasses we own decisively, the stage point shouldn't just be near our city center — it should be positioned to ship troops out toward the main war. Step A computes the centroid of dock squares on the main war landmass (the embark destination). Step B picks this landmass's dock square closest to that centroid. Step C writes the result back to `wx_array` / `wy_array`.
@@ -417,9 +417,9 @@ When no main war target is set, `_ai_landmass_war_targets[wp][player_idx]` is 0.
 
 ## Phase cleanup — open question (line 6025)
 
-Inline comment: `/* ¿ OGBUG  no EMM_Map_DataH() ? */`
+Inline comment: `/* ¿ OGBUG  no EMMDATAH_Map() ? */`
 
-Unlike sibling [`AI_Evaluate_Continents`](AIMOVE-AI_Evaluate_Continents.md) (which calls `EMM_Map_DataH()` to restore the default EMM mapping), this function ends without restoring the EMM mapping. Caller `AI_Stacks_Stage_Expedition_Forces` does not re-map either. Either:
+Unlike sibling [`AI_Evaluate_Continents`](AIMOVE-AI_Evaluate_Continents.md) (which calls `EMMDATAH_Map()` to restore the default EMM mapping), this function ends without restoring the EMM mapping. Caller `AI_Stacks_Stage_Expedition_Forces` does not re-map either. Either:
 - The CONTXXX mapping happens to be the correct state for downstream callers in this code path, or
 - This is a missing cleanup — preserved-OG behavior.
 
@@ -434,7 +434,7 @@ Unlike sibling [`AI_Evaluate_Continents`](AIMOVE-AI_Evaluate_Continents.md) (whi
 | OGBUG-C | Medium | 5847 (Phase 4a) | Same cross-plane lookup issue as OGBUG-A |
 | Open question | n/a | 5978 (Phase 6) | `_ai_landmass_dock_squares_heads[][0]` lookup when no main war set — inline `¿ OG BUG ?` |
 | OGBUG-D | Known | 5987 (Phase 6) | Division by zero if main war landmass has no dock squares |
-| Open question | n/a | 6025 (cleanup) | No `EMM_Map_DataH()` call before return — inline `¿ OGBUG ?` |
+| Open question | n/a | 6025 (cleanup) | No `EMMDATAH_Map()` call before return — inline `¿ OGBUG ?` |
 
 All entries are inline OG annotations preserved faithful-to-disassembly.
 
@@ -451,7 +451,7 @@ All entries are inline OG annotations preserved faithful-to-disassembly.
 | Has stage-square picker? | Yes (Phases 5-6) | Yes (Phases 6-9) |
 | Same-plane check on unit/city lookups? | No (OGBUG-A, OGBUG-C) | No — Phase 3 has cross-plane stale `wp` OGBUG too |
 | Coord/cost var sharing? | Yes (OGBUG-B) | No — explicit clearing between Phase 4 and Phase 5 |
-| EMM_Map_DataH cleanup? | No (inline open question) | Yes |
+| EMMDATAH_Map cleanup? | No (inline open question) | Yes |
 
 The two functions are siblings — `AI_Evaluate_Continents` is the "rebuild everything" full pass, `AI_Reevaluate_Continent` is the "just this one landmass" focused pass. The per-landmass version closely mirrors the full-rebuild structure. The remaining differences are the preserved-OG bugs (cross-plane contamination, coord/cost var sharing) plus the open questions (non-military clear, EMM cleanup).
 

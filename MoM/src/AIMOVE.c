@@ -335,7 +335,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
     
     /* Phase 4 */
     /* Restore EMM mapping to default Data block */
-    EMM_Map_DataH();
+    EMMDATAH_Map();
 
 }
 
@@ -5221,7 +5221,7 @@ int16_t AI_Tower_Target_Worthwhile(int16_t player_idx, int16_t wx, int16_t wy, i
  * @note Several original-game bugs and reverse-engineering concerns are
  *       preserved in place, including mixed reuse of city-coordinate accumulators
  *       as force totals, landmass tests that do not consistently gate on plane,
- *       and the missing @c EMM_Map_DataH() restore noted at the end of the function.
+ *       and the missing @c EMMDATAH_Map() restore noted at the end of the function.
  */
 /*
 OON XREF: AI_Set_Unit_Orders() |-> AI_Stacks_Stage_Expedition_Forces() |-> AI_Reevaluate_Continent()
@@ -5509,7 +5509,7 @@ if we can move units off the current landmass, make sure the stage-square is the
         }
     }
 
-    /* ¿ OGBUG  no EMM_Map_DataH() ? */
+    /* ¿ OGBUG  no EMMDATAH_Map() ? */
 
 }
 
@@ -6152,7 +6152,7 @@ int16_t AI_Stack_Can_Mobilize(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
  *       @c g_ai_evaluation_map.
  * @note The routine temporarily maps the CONTXXX EMS data via
  *       @c EMM_Map_CONTXXX__WIP() and restores the default data mapping with
- *       @c EMM_Map_DataH() before returning.
+ *       @c EMMDATAH_Map() before returning.
  */
 void AI_Evaluate_Continents(int16_t player_idx)
 {
@@ -6649,7 +6649,7 @@ if we can move units off the current landmass, make sure the stage-square is the
     /* Phase 10:  */
     /* Restore EMM mapping to default Data block */
 /* Safely remap the standard Data Handle before exiting */
-    EMM_Map_DataH();  /* ¿ set EMM back to the default handle - EMMDATAH ? */
+    EMMDATAH_Map();  /* ¿ set EMM back to the default handle - EMMDATAH ? */
 
 }
 

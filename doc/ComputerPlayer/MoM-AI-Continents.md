@@ -126,7 +126,7 @@ Allocate_Data_Space()
 
 
 EMM_Map_CONTXXX__WIP()
-EMM_Map_DataH()
+EMMDATAH_Map()
 
 
 

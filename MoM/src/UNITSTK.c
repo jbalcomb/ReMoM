@@ -400,13 +400,13 @@ int16_t Stack_Move_To(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int1
         {
             if (unit_ptr->Status == us_Ready)
             {
-                EMM_Map_DataH();
+                EMMDATAH_Map();
                 Invalidate_AI_Move_Path(); /* Clears existing pathing data in EMS */
             }
             else
             {
                 /* Recalculate and store long-range path */
-                EMM_Map_DataH();
+                EMMDATAH_Map();
                 Cache_AI_Move_Path(player_idx,
                     (int16_t)unit_ptr->wx,
                     (int16_t)unit_ptr->wy, 

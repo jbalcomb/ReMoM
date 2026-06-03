@@ -208,7 +208,7 @@ void AI_Next_Turn(void)
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: === BEGIN Turn %d ===", _turn);
 #endif
 
-    PHASE(EMM_Map_DataH());
+    PHASE(EMMDATAH_Map());
     PHASE(Allocate_AI_Data());
 
     /* Main AI Player processing loop (Skip Human Player 0) */
@@ -261,7 +261,7 @@ void AI_Next_Turn(void)
         if (_players[player_idx].casting_cost_remaining <= 0 && _players[player_idx].casting_spell_idx != spl_NONE)
         {
             // Cast_Spell_Overland__WIP(player_idx);
-            PHASE(EMM_Map_DataH());
+            PHASE(EMMDATAH_Map());
             _players[player_idx].casting_spell_idx = spl_NONE;
             if (AI_Eval_After_Spell == ST_TRUE)
             {
@@ -277,7 +277,7 @@ void AI_Next_Turn(void)
             PHASE(AI_Spell_Select__STUB(player_idx));
         }
 
-        PHASE(EMM_Map_DataH());
+        PHASE(EMMDATAH_Map());
         PHASE(AI_Update_Magic_Power(player_idx));
         PHASE(AI_Sanity_Check_Overland_Enchantments(player_idx));
         PHASE(AI_Update_Gold_And_Mana_Reserves(player_idx));
@@ -300,7 +300,7 @@ void AI_Next_Turn(void)
         PHASE(AI_Evaluate_Continents(player_idx));
         PHASE(AI_Set_Unit_Orders(player_idx));
         
-        PHASE(EMM_Map_DataH());
+        PHASE(EMMDATAH_Map());
         PHASE(AI_Kill_Excess_Settlers_And_Engineers(player_idx));
 
 #ifdef STU_DEBUG
@@ -308,7 +308,7 @@ void AI_Next_Turn(void)
 #endif
     }
 
-    PHASE(EMM_Map_DataH());
+    PHASE(EMMDATAH_Map());
 
     /* Reset Move_Failed flag for all non-human units */
     for (i = 0; i < _units; i++)
@@ -344,7 +344,7 @@ void AI_Next_Turn(void)
         }
     }
 
-    PHASE(EMM_Map_DataH());
+    PHASE(EMMDATAH_Map());
 
     /* Neutral Player Turn Processing */
 #ifdef STU_DEBUG
@@ -2298,7 +2298,7 @@ void EMM_Map_CONTXXX__WIP(void)
  *       from the generated lists.
  * @note The routine temporarily remaps CONTXXX via
  *       @c EMM_Map_CONTXXX__WIP() and restores the normal data mapping with
- *       @c EMM_Map_DataH() before returning.
+ *       @c EMMDATAH_Map() before returning.
  */
 void Build_Land_Linked_List(void)
 {
@@ -2364,7 +2364,7 @@ void Build_Land_Linked_List(void)
         }
     }
 
-    EMM_Map_DataH();
+    EMMDATAH_Map();
 
 }
 
@@ -2402,7 +2402,7 @@ void Build_Land_Linked_List(void)
  *       chain; these tables are keyed by actual continents only.
  * @note The routine temporarily remaps CONTXXX via
  *       @c EMM_Map_CONTXXX__WIP() and restores the normal data mapping with
- *       @c EMM_Map_DataH() before returning.
+ *       @c EMMDATAH_Map() before returning.
  */
 void Build_Dock_Linked_List(void)
 {
@@ -2521,6 +2521,6 @@ To prevent falling off the edge, the assembly uses previous_node_idx to follow e
         }
     }
 /* Safely remap the standard Data Handle before exiting */
-    EMM_Map_DataH();  /* ¿ set EMM back to the default handle - EMMDATAH ? */
+    EMMDATAH_Map();  /* ¿ set EMM back to the default handle - EMMDATAH ? */
 
 }

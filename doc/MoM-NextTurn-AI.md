@@ -138,7 +138,7 @@ else
 
 ...sanity check all unit coordinates...make insane units be dead... (owner == -1)
 
-EMM_Map_DataH()
+EMMDATAH_Map()
 Allocate_AI_Data()
 
 // process a planning phase for each AI in turn,
