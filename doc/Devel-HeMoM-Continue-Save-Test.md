@@ -76,7 +76,7 @@ unit[5].status = 1
 unit[5].finished = 1
 ```
 
-**Note on indices:** Units 0 and 5 are both owned by player 0 and co-located at the home city's tile. The game uses a sparse slot-array layout — the two starting units happen to land at indices 0 and 5 when the world generator populates the `_UNITS[]` table, not at 0 and 1.
+**Note on indices:** Units 0 and 5 are both owned by player 0 and co-located at the home city's square. The game uses a sparse slot-array layout — the two starting units happen to land at indices 0 and 5 when the world generator populates the `_UNITS[]` table, not at 0 and 1.
 
 ## Other State Changes (Not Asserted)
 
@@ -180,7 +180,7 @@ This test locks down a specific, narrow slice of gameplay state. Many things rem
 - **Multi-turn behavior.** The scenario ends after one Patrol action. `game.turn` is still 0. None of the AI turn processing, city production, spell research, unit movement, or end-of-turn event logic has been exercised.
 - **World generation correctness.** That's already covered by `HeMoM_WorldGen_Golden` via byte-level comparison against a checked-in reference save.
 - **Load-time recomputation.** The fields that change because of `Loaded_Game_Update()` (power_base, bldg_status, etc.) are *deliberately* not asserted here. A separate test — loading a known-good save and asserting its post-load derived state — would be needed to lock that down.
-- **Combat.** No combat initiation, no battle-field actions, no combat resolution. Would need a scenario that moves a unit into an enemy's tile, a complete combat scripting vocabulary, and a much larger assertion surface.
+- **Combat.** No combat initiation, no battle-field actions, no combat resolution. Would need a scenario that moves a unit into an enemy's square, a complete combat scripting vocabulary, and a much larger assertion surface.
 - **Spellcasting.** No overland casting, no spellbook navigation, no research selection.
 - **Diplomacy.** No AI wizard interactions.
 - **City management.** No opening city screen, no production changes, no buildings purchased, no tax rate or research allocation changes.

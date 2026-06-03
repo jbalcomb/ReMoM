@@ -1988,7 +1988,7 @@ void Cast_Holy_Arms(int16_t player_idx)
 /*
 ; processes the effect of Consecration - removes all
 ; negative city enchantments and all corruption from
-; within a 2-tile radius of the city
+; within a 2-square radius of the city
 ;
 ; BUG: will cleanse the corner tiles that are outside
 ; the catchment area

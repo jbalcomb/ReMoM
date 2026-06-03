@@ -239,7 +239,7 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
     // ; attempt to dispel every Magic Vortex that does not
     // ; belong to the caster
     // ; BUG: this will cause all Vortices that are on the
-    // ;  same tile as a unit to be targeted twice
+    // ;  same square as a unit to be targeted twice
     // ; INCONSISTENT: Dispel Magic does not check owners
     // ; INCONSISTENT: there is no dispel message
     for(itr1 = 0; itr1 < _vortex_count; itr1++)
@@ -350,10 +350,10 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
 
     }
 
-    // ; call TILE_DispelMagic for every tile with an active
+    // ; call TILE_DispelMagic for every square with an active
     // ; unit on it
     // ; BUG: can attempt to dispel Magic Vortices twice if
-    // ;  they are on the same tile as an active unit
+    // ;  they are on the same square as an active unit
     // ; BUGs: iherits everything from TILE_DispelMagic
 
     notify_count = 0;
@@ -375,7 +375,7 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
 // WZD o131p02
 // drake178: TILE_DispelMagic()
 /*
-; attempts to dispel, from a combat tile, persistent
+; attempts to dispel, from a combat square, persistent
 ; spells cast by the opponent, and Magic Votrices cast
 ; by anyone, producing click-away GUI messages for each
 ; successful dispel, except for those of Vortices
@@ -494,7 +494,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
         enemy_player_idx = _combat_attacker_player;
     }
 
-    // ; attempt to dispel all Magic Vortices from the tile
+    // ; attempt to dispel all Magic Vortices from the square
     // ; WARNING: will also affect the caster's own!
     for(itr = 0; itr < _vortex_count; itr++)
     {

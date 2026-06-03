@@ -3923,7 +3923,7 @@ void Heal_All_Units(void)
 
     // ; set the healing rate for units inside cities
     // ; BUG: was supposed to mark removed any units that are
-    // ; on a tile that has a city with a non-matching owner,
+    // ; on a square that has a city with a non-matching owner,
     // ; but the design is botched, as the function that
     // ; returns the list of units does not actually include
     // ; these

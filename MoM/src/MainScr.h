@@ -154,7 +154,7 @@ extern SAMB_ptr node_auras_seg[5];               // ; array of 5 reserved EMM he
 // WZD dseg:CB8E                                                                                         ; single-loaded image, called "lumber camp" in the file
 
 // WZD dseg:CB90
-extern SAMB_ptr Warp_Node_WorkArea;                // ; used to save and manipulate the tile graphics to ; display the warp node effect
+extern SAMB_ptr Warp_Node_WorkArea;                // ; used to save and manipulate the square graphics to ; display the warp node effect
 
 // WZD dseg:CB92
 extern SAMB_ptr _unit_colored_backgrounds_seg[6];    // load in Terrain_Init() ovr052

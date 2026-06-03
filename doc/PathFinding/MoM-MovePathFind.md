@@ -304,7 +304,7 @@ void Move_Path_Find_C(int16_t wx, int16_t wy, int8_t * movepath_cost_map)
 00007FF6F0D1DBE2  mov         word ptr [CS_Row_Start (07FF6F0D773A4h)],ax  
 
     // add     ax, [bp+wx]
-    // mov     dx, ax                          ; dx = tile index
+    // mov     dx, ax                          ; dx = square index
     _DX_ = wx;
 00007FF6F0D1DBE9  movzx       eax,word ptr [wx]  
 00007FF6F0D1DBF0  mov         word ptr [_DX_],ax  

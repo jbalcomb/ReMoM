@@ -210,7 +210,7 @@ void Army_At_Square_2(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count,
 // drake178: CRP_TILE_GetUnits_2()
 /*
 returns a list of the units occupying the selected
-tile, excluding any that are marked as owned by
+square, excluding any that are marked as owned by
 player index -1
 
 (slightly better than TILE_GetUnits)
@@ -368,7 +368,7 @@ void o59p10_empty_function(void)
 // WZD o59p12
 /*
 ; returns the index (into Node_Table@) of the node if
-; the tile has one, or -1 if it doesn't
+; the square has one, or -1 if it doesn't
 */
 /* 
 
@@ -853,7 +853,7 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
             if(city_idx == -1)
             {
                 stack_size = 0;
-                // drake178: fills the return variables with the count and indices of all units on the selected tile that do not belong to the specified player
+                // drake178: fills the return variables with the count and indices of all units on the selected square that do not belong to the specified player
                 // TODO  TILE_GetEnemyStack(unit_world_x, unit_world_y, map_plane, _UNITS[unit_idx].owner_idx, &stack_size, &stack_array[0]);
                 if(stack_size > 0)
                 {
@@ -862,7 +862,7 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
                 else
                 {
                     stack_size = 0;
-                    // drake178: fills the return variables with the count and indices of all units on the selected tile that belong to the specified player
+                    // drake178: fills the return variables with the count and indices of all units on the selected square that belong to the specified player
                     // TODO  TILE_GetUnitStack(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, map_plane, _UNITS[unit_idx].owner_idx, &stack_size, &stack_array[0]);
                     stack_size = stack_size + _unit_stack_count;
                     if(stack_size > MAX_STACK)
@@ -886,7 +886,7 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
                     }
                     else
                     {
-                        // drake178: fills the return variables with the count and indices of all units on the selected tile that belong to the specified player
+                        // drake178: fills the return variables with the count and indices of all units on the selected square that belong to the specified player
                         // TODO  TILE_GetUnitStack(unit_world_x, unit_world_y, map_plane, _UNITS[unit_idx].owner_idx, &stack_size, &stack_array[0]);
                         stack_size = stack_size + _unit_stack_count;
 

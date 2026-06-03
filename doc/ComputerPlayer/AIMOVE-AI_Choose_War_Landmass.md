@@ -23,7 +23,7 @@ _ai_landmass_dock_squares_heads[plane][landmass]	head index of chain (this one)
 _ai_landmass_dock_squares_lists[plane][idx]	next-pointer in chain
 _ai_landmass_dock_squares_wx_array[plane][idx]	X coord of chain entry
 _ai_landmass_dock_squares_wy_array[plane][idx]	Y coord of chain entry
-Per project conventions (g_ prefix for new globals, use "square" not "tile"), let me ask which direction you want:
+Per project conventions (g_ prefix for new globals, use "square" not "square"), let me ask which direction you want:
 AskUserQuestion
     User has answered your questions: "Which naming style do you prefer for the CONTX_*LoadT* family?"="Shore-adjacent land". You can now continue with the user's answers in mind.
     Good choice. Let me first scope the change — grep for all uses of each of the 4 names.
@@ -93,9 +93,9 @@ Most of my previous OGBUG flags survive the re-review. The Value_Sum bug I flagg
 | 3 | 8073-8077 | If reeval: zero `final_landmass_weights[]` and `Continent_Values[]` | OK |
 | 4 | 8083-8129 | Per-city pass: accumulate empire centroid (own cities) + raw `Continent_Values[]` (non-own cities, weighted by wartime state) | OGBUG flagged in source for cross-plane city match |
 | 5 | 8131-8140 | Compute empire centroid (or fortress fallback) | OK |
-| 6 | 8149-8214 | Per-landmass: find closest-load-tile distance from empire centroid, compute weighted `final_landmass_weights[itr_landmasses]` (peace or war formula), apply Jihad +1000 fortress bonus | OK; uses correctly-renamed g_world_*__load_init arrays |
+| 6 | 8149-8214 | Per-landmass: find closest-load-square distance from empire centroid, compute weighted `final_landmass_weights[itr_landmasses]` (peace or war formula), apply Jihad +1000 fortress bonus | OK; uses correctly-renamed g_world_*__load_init arrays |
 | 7 | 8220-8229 | "First Double-Check" loop summing weights into `Value_Sum` | **FIXED** (now has explicit `Value_Sum = 0;` at line 8223) |
-| 8 | 8231-8256 | Tile-count fallback when Value_Sum == 0 (replaces empty weights with tile counts for eligible landmasses) | **DIVERGES from GEMINI on fortress polarity (D-2)** |
+| 8 | 8231-8256 | Tile-count fallback when Value_Sum == 0 (replaces empty weights with square counts for eligible landmasses) | **DIVERGES from GEMINI on fortress polarity (D-2)** |
 | 9 | 8260-8272 | Final pick: re-sum (this one properly resets Value_Sum), set `_ai_landmass_war_targets[wp][p]` to 0 or `Get_Weighted_Choice(final_landmass_weights, NUM_LANDMASSES)` | OK |
 
 ## What `lmt_NoTargets` really means at the read sites
@@ -201,7 +201,7 @@ GEMINI uses the same `(2000 - enemy × 10) / dist` formula at [line 8433](../../
 | ~~D-2~~ | Phase 8 fortress-continent polarity | Includes fortress landmass only | Excludes fortress landmass | **PRODUCTION** — verified against disassembly. The OG bytes match production; OG comment and GEMINI are both wrong. |
 | ~~D-3~~ | ~~Phase 7 Value_Sum reset~~ | ~~Missing (BUG-A)~~ | ~~Has explicit reset~~ | **RESOLVED** — production now has `Value_Sum = 0;` at line 8223 |
 | **D-4** | Phase 8 below-threshold filter | None | GEMINI adds `if (final_landmass_weights[itr] < 10) { final_landmass_weights[itr] = 0; }` ([line 8482](../../MoM/src/AIMOVE.c#L8482)) | Unclear — could be GEMINI-only refinement |
-| **D-5** | GEMINI tile-count fallback index bug | Uses `itr` correctly | Uses `landmas_idx` (the OUTER variable, frozen) for the type check at [line 8463](../../MoM/src/AIMOVE.c#L8463) | **PRODUCTION** — GEMINI has its own bug here |
+| **D-5** | GEMINI square-count fallback index bug | Uses `itr` correctly | Uses `landmas_idx` (the OUTER variable, frozen) for the type check at [line 8463](../../MoM/src/AIMOVE.c#L8463) | **PRODUCTION** — GEMINI has its own bug here |
 | **D-6** | Peace formula location | Inside `if (first_hostile_player_idx <= ST_UNDEFINED)` branch at line 8181 | Inside the matching `else` branch at line 8447 — same logical location, different code structure | Equivalent; cosmetic difference |
 | **D-7** | `first_hostile_player_idx` search loop break | Uses `& (first_hostile_player_idx == ST_UNDEFINED)` in for-condition | Uses `if (first_hostile_player_idx != ST_UNDEFINED) break;` after each iteration | Equivalent |
 

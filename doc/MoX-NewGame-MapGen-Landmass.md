@@ -8,7 +8,7 @@ https://masterofmagic.fandom.com/wiki/Terrain_Special#Chances_of_Specials
 
 Terrain Special
 
-Terrain Specials are special properties that can appear on a land tile. Terrain Specials are part of the World Creation that takes place at the start of a New Game. Many Terrain Specials are Minerals and will benefit any Town that can claim the tile where the mineral is found. Some Terrain Specials are bonuses that can be claimed by a Wizard and may contain wondrous Treasures. Magical Nodes are Terrain Specials that can enhance both the Town and the Wizard.
+Terrain Specials are special properties that can appear on a land square. Terrain Specials are part of the World Creation that takes place at the start of a New Game. Many Terrain Specials are Minerals and will benefit any Town that can claim the square where the mineral is found. Some Terrain Specials are bonuses that can be claimed by a Wizard and may contain wondrous Treasures. Magical Nodes are Terrain Specials that can enhance both the Town and the Wizard.
 
 Contents
 1.	Types of Specials
@@ -27,7 +27,7 @@ Nodes
 There are three types of magical Nodes (Nature Nodes, Sorcery Nodes, and Chaos Nodes) found in the game. These nodes can benefit a Town in several ways based on the Terrain where they are found and by how much magic they generate. All nodes are initially Encounter Zones, guarded by creatures of the same type as the node, but once conquered, they are not removed, and may be claimed for further benefits.
 
 Towers of Wizardry
-A Tower of Wizardry is a link between Myrror and Arcanus; a unit on the same tile as a Tower of Wizardry may change planes. Like Nodes, they are initially Encounter zones, and must be cleared before being used, but they cannot be claimed.
+A Tower of Wizardry is a link between Myrror and Arcanus; a unit on the same square as a Tower of Wizardry may change planes. Like Nodes, they are initially Encounter zones, and must be cleared before being used, but they cannot be claimed.
 
 Minerals
 Minerals are prized for the benefits they provide and can be claimed by building a Town nearby. It is possible, but rare, for Minerals to be discovered near an existing Town.
@@ -37,7 +37,7 @@ Minerals are prized for the benefits they provide and can be claimed by building
 https://masterofmagic.fandom.com/wiki/Mineral#Chances_of_Minerals
 
 Chances of Minerals
-6% of Desert, Forest, Hill, Mountain, and Swamp tile on Arcanus, and 10% on Myrror, will have a Special Terrain Feature. While Forest and Swamp tiles always get TerrainSpecial Wild Game Wild Game and TerrainSpecial Nightshade Nightshade respectively, Desert, Hill and Mountain tiles can have a bunch of different mineral deposits; the total odds of each type are:
+6% of Desert, Forest, Hill, Mountain, and Swamp square on Arcanus, and 10% on Myrror, will have a Special Terrain Feature. While Forest and Swamp tiles always get TerrainSpecial Wild Game Wild Game and TerrainSpecial Nightshade Nightshade respectively, Desert, Hill and Mountain tiles can have a bunch of different mineral deposits; the total odds of each type are:
 
 Chances for Terrain Specials
 Terrain	            Iron	Coal	Silver	Gold	Mithril	Adamantium	Gems	Quork	Crysx

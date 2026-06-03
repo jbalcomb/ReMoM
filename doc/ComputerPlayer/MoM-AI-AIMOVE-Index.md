@@ -49,7 +49,7 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **End:** line 1814
 - **Purpose:** Searches for and assigns targets + corresponding move orders to all roamer stacks on a continent. If no targets exist but there is at least one roaming stack of 7+ units, **switches the continent to `lmt_Leaveable`** and picks a stage point at a reachable dock square — preparing the troops to embark and move to the action continent instead.
 - **Writes `lmt_*`:** **`lmt_Leaveable`** at [line 1806](../../MoM/src/AIMOVE.c#L1806) (the "abandon this continent" decision)
-- **Known issue per header:** "when setting the leave continent type, the stage point chosen ignores own units, and can't be a tile with a city, tower, or node either"
+- **Known issue per header:** "when setting the leave continent type, the stage point chosen ignores own units, and can't be a square with a city, tower, or node either"
 
 ### `AI_Stacks_Relocate_Roamers` — [line 1875](../../MoM/src/AIMOVE.c#L1875)
 - **drake178:** `G_AI_HomeRallyFill()` (o158p07)
@@ -293,7 +293,7 @@ Lines 6605-6628 contain stubs for `sub_F64C2()` through `sub_F6EBF()`. No bodies
 ### `AI_Evaluation_Map` — [line 7606](../../MoM/src/AIMOVE.c#L7606)
 - **drake178:** (no drake name at o162p36)
 - **End:** ~line 7833
-- **Purpose:** TBD — likely populates `g_ai_evaluation_map[][]` (the per-tile attribute bitmap used by other AI passes)
+- **Purpose:** TBD — likely populates `g_ai_evaluation_map[][]` (the per-square attribute bitmap used by other AI passes)
 
 ### `AI_Choose_War_Landmass [line 7834](../../MoM/src/AIMOVE.c#L7834)
 - **drake178:** (no drake name at o162p37)

@@ -480,12 +480,12 @@ void Surveyor_Window_Display(void)
 
         Surveyor_IDK_Set_Font_Stuff__1();
 
-        // ; returns 0 if the tile can be settled, or an error
+        // ; returns 0 if the square can be settled, or an error
         // ; value if not:
-        // ;   1 - tile is in the ocean
-        // ;   2 - tile has an intact lair
-        // ;   3 - tile has a tower of wizardry
-        // ;   4 - tile has a node
+        // ;   1 - square is in the ocean
+        // ;   2 - square has an intact lair
+        // ;   3 - square has a tower of wizardry
+        // ;   4 - square has a node
         // ;   5 - there's already a city within 3 tiles
         var_4 = Map_Square_Survey(l_mx, l_my, _map_plane);
 

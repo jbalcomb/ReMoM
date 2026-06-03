@@ -1238,7 +1238,7 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
         }
 
 
-        /* 5e	1313ST_UNDEFINED335	3x3 adjacent ocean-tile scan */
+        /* 5e	1313ST_UNDEFINED335	3x3 adjacent ocean-square scan */
         /* OGBUG  no range checks */
         adjacent_landmass_wx = 0;
         adjacent_landmass_wy = 0;
@@ -1430,7 +1430,7 @@ BEGIN:  fixup bad orders, for valid colony or military stack
         */
         if((stack_has_settler == ST_TRUE) && (_ai_landmass_settler_targets[wp][player_idx] != 0))
         {
-// ; if the new colony's stage point has an adjacent ocean tile, set all units in the stack to move there
+// ; if the new colony's stage point has an adjacent ocean square, set all units in the stack to move there
 // ; BUG: no range checking
             adjacent_landmass_wx = 0;
             adjacent_landmass_wy = 0;
@@ -1897,7 +1897,7 @@ void AI_Stacks_Order_To_War_Landmass(int16_t player_idx, int16_t wp)
  *
  * @note Several original-game quirks are intentionally preserved, including
  *       lack of bounds validation around adjacent-square scans and the fallback
- *       ferry request that can reuse the stack's current land tile when no
+ *       ferry request that can reuse the stack's current land square when no
  *       adjacent ocean square is found.
  */
 void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, int16_t stage_wx, int16_t stage_wy, int16_t stage_count_slot_count, int16_t player_idx)
@@ -1959,7 +1959,7 @@ void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, 
 
 
     /* Phase 3 */
-    /* OGBUG  will add the original land tile if there was no ocean around the stack */
+    /* OGBUG  will add the original land square if there was no ocean around the stack */
     AI_Stacks_Ferry_Add_Location(ocean_wx, ocean_wy, wp);
 
 
@@ -3489,7 +3489,7 @@ void AI_Move_Out_Boats(void)
  * @brief Push non-military units out of garrison stacks.
  *
  * Scans AI stacks whose type is at least `AISTK_Garrison` and looks for units
- * that should not remain parked in a garrison tile. Settlers and Engineers are
+ * that should not remain parked in a garrison square. Settlers and Engineers are
  * moved to an adjacent free square immediately. Melders are also pushed out
  * unless they are already standing on a magic node square on the specified
  * plane.
@@ -4374,7 +4374,7 @@ void AI_Do_Purify(int16_t landmass_idx, int16_t wp)
         )
         {
 
-// ; check the 5 by 5 area centered around the tile to see
+// ; check the 5 by 5 area centered around the square to see
 // ; if there are any cities or nodes, and set
 // ; InRange_Corruption along with the first found
 // ; coordinates if there are
@@ -5695,7 +5695,7 @@ void AI_Stack_Set_Boats_Goto(int16_t ai_stack_idx, int16_t wx, int16_t wy)
 // WZD o162p21
 // drake178: TILE_AI_FindLoadTile()
 /*
-finds the closest land tile from which units can be
+finds the closest land square from which units can be
 loaded onto a transport - or passes back the original
 coordinates if none are found
 
@@ -5770,7 +5770,7 @@ void TILE_AI_FindLoadTile__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
 // WZD o162p23
 // drake178: TILE_AI_FindEmptyLnd()
 /*
-; checks whether there is an empty land tile adjacent
+; checks whether there is an empty land square adjacent
 ; to the specified square
 ; returns 1 and the coordinates if successful, or 0 if
 ; there are no adjacent empty land tiles
@@ -5856,11 +5856,11 @@ in-outs wx,wy
 ¿ weird indexing of the local array ?
 */
 /**
- * @brief Finds an adjacent unoccupied land square around the given tile.
+ * @brief Finds an adjacent unoccupied land square around the given square.
  *
  * Builds a 3x3 availability map centered on the source square, first marking
  * which neighboring tiles are land, then clearing any entries occupied by a
- * unit, an intact lair, or a city on the same plane. The center tile is always
+ * unit, an intact lair, or a city on the same plane. The center square is always
  * treated as unavailable.
  *
  * The search returns the first remaining free square in row-major order,
@@ -6103,7 +6103,7 @@ int16_t AI_Stack_Can_Mobilize(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
         }
     }
 
-    /* If defense requirement met, tile can be left */
+    /* If defense requirement met, square can be left */
     if (garrison <= 0)
     {
         return ST_TRUE;
@@ -6235,7 +6235,7 @@ HERE:
 
 
     /* Phase 3: */
-// ; cancel the orders of all non-engineer units moving to a tile with no enemy presence
+// ; cancel the orders of all non-engineer units moving to a square with no enemy presence
 /* OGBUG  should check unit wp */
 /* OGBUG  settlers and transports (non-military) are not excluded ? */
 /* DEDU  ¿ clearning orders for destination without a site or enemy stack means the orders are considered invalid because they don't have a target for an attack ? */
@@ -6475,7 +6475,7 @@ HERE:
                 territory_centroid_wx = _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx];
                 territory_centroid_wy = _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx];
                 /* DEDU  What does this test amount to? reasons to update the stage-square or even ignore the landmass? */
-                // CLAUDE: Skip if current centroid is already a valid unoccupied tile on this landmass
+                // CLAUDE: Skip if current centroid is already a valid unoccupied square on this landmass
                 if(
                     (g_ai_evaluation_map[wp][((territory_centroid_wy * WORLD_WIDTH) + territory_centroid_wx)] == 0)
                     &&
@@ -6661,7 +6661,7 @@ if we can move units off the current landmass, make sure the stage-square is the
  * @details Clears @c g_ai_evaluation_map for both planes, then repopulates each
  * square with packed evaluation data used by later AI targeting and movement
  * logic. For units not owned by @p player_idx, one tenth of each unit's
- * effective combat strength is added to the tile value. Squares occupied by
+ * effective combat strength is added to the square value. Squares occupied by
  * wizards considered non-hostile to @p player_idx are additionally flagged
  * with @c AI_TARGET_NONHOSTILE. Intact lairs contribute guardian strength, and
  * city, lair, and node squares are marked with @c AI_TARGET_SITE. Non-owned

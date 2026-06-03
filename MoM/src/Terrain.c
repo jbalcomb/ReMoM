@@ -774,7 +774,7 @@ int16_t Square_Adamantium_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have
 // WZD s161p16
 // drake178: TILE_HasMithril()
 /*
-; returns 1 if the tile has Mithril Ore terrain special
+; returns 1 if the square has Mithril Ore terrain special
 ; on it, or 0 otherwise
 */
 /*
@@ -938,7 +938,7 @@ int16_t City_Best_Weapon(int16_t city_idx)
 // drake178: TILE_GetRoadBldTime()
 /*
 ; returns the amount of time, in turns, that it would
-; take to construct a road on the tile, -1 if one may
+; take to construct a road on the square, -1 if one may
 ; not be built, or 0 if there already is one
 */
 /*
@@ -1012,8 +1012,8 @@ Square_Is_OceanLike()
 /*
 WZD s161p22
 TILE_IsAISailable()
-; returns 1 if the tile is a shore, ocean, or lake, or 0 otherwise
-; INCONSISTENT: returns 0 for the single tile no-river
+; returns 1 if the square is a shore, ocean, or lake, or 0 otherwise
+; INCONSISTENT: returns 0 for the single square no-river
 ; lake, which means it should also return 0 for its
 ; river outlet versions (0xC5 - 0xC8)
 
@@ -1025,10 +1025,10 @@ TILE_IsAISailable()
 // WZD s161p22
 // drake178: TILE_IsAISailable()
 /*
-returns 1 if the tile is a shore, ocean, or lake, or
+returns 1 if the square is a shore, ocean, or lake, or
 0 otherwise
 
-INCONSISTENT: returns 0 for the single tile no-river
+INCONSISTENT: returns 0 for the single square no-river
 lake, which means it should also return 0 for its
 river outlet versions (0xC5 - 0xC8)
 */
@@ -1152,10 +1152,10 @@ int16_t Square_Is_Shoreline(int16_t wx, int16_t wy, int16_t wp)
 // drake178: TILE_IsVisibleForest()
 // AKA Square_Is_Explored_Forest()
 /*
-returns 1 if the tile is explored by the human
-player, and is a forest tile, or 0 otherwise
+returns 1 if the square is explored by the human
+player, and is a forest square, or 0 otherwise
 
-INCONSISTENT: unlike all other tile type check
+INCONSISTENT: unlike all other square type check
 functions, this only returns 1 for tiles visible to
 the human player (explored)
 */
@@ -1885,11 +1885,11 @@ Square_Is_OceanLike()
 /*
 used to decide on ocean for cityscape  (not river, not *water*)
 
-; returns 1 if the tile is a shore, ocean, or lake, or 0 otherwise
+; returns 1 if the square is a shore, ocean, or lake, or 0 otherwise
 ; differs from TILE_IsAISailable in that it checks for
-; invalid tile indices (not Plane though), for which
+; invalid square indices (not Plane though), for which
 ; it returns 0 instead
-; INCONSISTENT: returns 0 for the single tile no-river
+; INCONSISTENT: returns 0 for the single square no-river
 ; lake, which means it should also return 0 for its
 ; river outlet versions (0xC5 - 0xC8)
 
@@ -1995,7 +1995,7 @@ int16_t Square_Is_OceanLike(int16_t wx, int16_t wy, int16_t wp)
 ; Unused in MoM, no wonder since its totally botched
 ;
 ; would return a resource value (likely gold) based on
-; tile type, but in the end overwrites most of the
+; square type, but in the end overwrites most of the
 ; values it originally wants to set due to the
 ; non-nesting of its "if" instructions
 */

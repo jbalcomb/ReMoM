@@ -812,7 +812,7 @@ int16_t UU_IDK_turn_to_cast__STUB(int16_t player_idx)
 ; creates a combat spellbook for the selected entity
 ; into the SBK_BookPages@ allocation and performs
 ; a basic check to see if any of its spells may be cast
-; (looks at casting cost and ocean tile eligibility)
+; (looks at casting cost and ocean square eligibility)
 ; returns 1 if there are spells to cast, or 0 otherwise
 ; BUGs: uses a signed comparison when adding hero
 ; spells, resulting in indexes above 127 not being
@@ -978,7 +978,7 @@ int16_t Combat_Spellbook_Build__WIP(int16_t caster_idx)
         {
             // ; BUG: just because it is in an item, the spell may not
             // ; necessarily be castable (e.g. Earth Elemental on a
-            // ; water tile)
+            // ; water square)
             Can_Cast = ST_TRUE;
         }
         else

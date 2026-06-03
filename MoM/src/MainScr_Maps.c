@@ -44,7 +44,7 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 #include "MainScr_Maps.h"
 
 #ifdef STU_DEBUG
-/* Copilot TEMP DEBUG: set DBG_TRACE_FIX_WX/WY/WP to filter a single tile; leave ST_UNDEFINED for all. */
+/* Copilot TEMP DEBUG: set DBG_TRACE_FIX_WX/WY/WP to filter a single square; leave ST_UNDEFINED for all. */
 static int16_t DBG_TRACE_FIX_WX = ST_UNDEFINED;
 static int16_t DBG_TRACE_FIX_WY = ST_UNDEFINED;
 static int16_t DBG_TRACE_FIX_WP = ST_UNDEFINED;
@@ -575,12 +575,12 @@ void Draw_Active_Unit_Stack(int16_t mmap_xw, int16_t mmap_yw, int16_t wp)
 /*
 draws the top movable unit's card from the active
 stack into the current draw segment based on the
-specified starting map tile parameters, unless stack
+specified starting map square parameters, unless stack
 drawing is disabled, or the view is on the opposite
 plane; also redraws the minimap with a white marker
 
 contains a BUG that may unintentionally draw the
-stack over other units/cities already on the tile
+stack over other units/cities already on the square
 when always draw (-1) is set for OVL_ActiveStackDraw
 */
 
@@ -978,7 +978,7 @@ void Reset_Stack_Draw_Priority(void)
 
 // WZD o67p15
 /*
-; returns 1 if the tile has a tower of wizardry and
+; returns 1 if the square has a tower of wizardry and
 ; there is no Planar Seal active; or 0 otherwise
 */
 /*
@@ -1154,7 +1154,7 @@ void City_Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int
 // drake178: OVL_GetMinimapStart()
 // AKA Minimap_Coords()
 /*
-; sets the return values to the top left map tile
+; sets the return values to the top left map square
 ; coordinates that should be displayed at the top left
 ; corner of the minimap
 */
@@ -1391,10 +1391,10 @@ void Set_Map_Square_Explored_Flags_XYP(int16_t wx, int16_t wy, int16_t wp)
 // WZD o68p07
 // drake178: TILE_ExploreCorners()
 /*
-; compares the tile and it's bottom, right, and
+; compares the square and it's bottom, right, and
 ; diagonal bottom-right neighbors to NoSide_Explores,
 ; and if all match one of them, removes the corner
-; corresponding to the original tile's bottom right one
+; corresponding to the original square's bottom right one
 ;
 ; conceptually flawed, it should simply check whether
 ; there is any exploration on all 4 tiles, rather than
@@ -1505,7 +1505,7 @@ void Set_Square_Explored_Flags_Bottom_Right_Corner(int16_t wx, int16_t wy, int16
 ; one of these cases, and then some
 ;
 ; performs exploration matching of neighboring tiles
-; in a 5-by-5 rectangle around the selected tile in an
+; in a 5-by-5 rectangle around the selected square in an
 ; attempt to remove fog of war from between tiles that
 ; are already explored
 ;
@@ -1814,9 +1814,9 @@ void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
                     if(Match_Array[Match_Index].Adj_Scouting == Adj_Tile_Scouting)
                     {
 
-                        // ; BUG: modifying the tile scouting should also modify
+                        // ; BUG: modifying the square scouting should also modify
                         // ; its locally stored value, otherwise matches further
-                        // ; on will not work properly any more (a single tile
+                        // ; on will not work properly any more (a single square
                         // ; can have a match in both directions)
                         // MYBUG?  ptr_square_explored[((wy_u2 * WORLD_WIDTH) + IDK_wx_l2)] = (Match_Array[Match_Index].Mark_Tile || LoopTile_Scouting);
 
@@ -3340,7 +3340,7 @@ void Cartograph_Screen_Draw_Map_Terrain__NOWORKIE(int16_t cartograph_plane, SAMB
                 assert((l_terrain_001_0 & 0x7F) <= 39);
                 assert(l_terrain_001_1 <= 127);
 
-                if((l_terrain_001_0 & 0x80) != 0) /* drake178: animated tile */
+                if((l_terrain_001_0 & 0x80) != 0) /* drake178: animated square */
                 {
                     m_terrain_lbx_001 += terrain_anim_ctr;
                     l_terrain_001_0 = (l_terrain_001_0 & 0x7F);  // clear the sign bit

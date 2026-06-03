@@ -8,9 +8,9 @@
 #include "../../MoX/src/MOX_TYPE.h"
 
 /**
- * @brief Set the terrain type at a specific world map tile.
+ * @brief Set the terrain type at a specific world map square.
  *
- * Writes terrain_type into _world_maps at the tile addressed by
+ * Writes terrain_type into _world_maps at the square addressed by
  * world coordinates (wx, wy) on world plane wp.
  *
  * @param wx World X coordinate.
@@ -26,7 +26,7 @@ void Set_Terrain(int16_t wx, int16_t wy, int16_t wp, int16_t terrain_type)
 }
 
 /**
- * @brief Set every tile on a world plane to the same terrain type.
+ * @brief Set every square on a world plane to the same terrain type.
  *
  * Iterates over all map coordinates on the selected plane and writes
  * terrain_type into _world_maps via Set_Terrain().

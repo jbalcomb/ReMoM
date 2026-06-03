@@ -35,7 +35,7 @@ o122	20270-22700	Attack/defense rolls, resist, melee/ranged resolution	CombatRol
 o123-o124	22701-25642	End-of-combat, results scroll, raze, misc	CombatResults.c
 ovr139	25643-25721	AI combat spell evaluation	fold into CombatAI.c
     ovr153	25722-27959	Draw map, entities, spawn walls/trees/figures	CombatEntities.c
-    ovr154	27960-30045	Terrain init, map gen, tile gen, pathfinding coords	CombatTerrain.c
+    ovr154	27960-30045	Terrain init, map gen, square gen, pathfinding coords	CombatTerrain.c
     ovr155	30046-31676	Pathfinding (GetPath, FillReachMap)	CombatPath.c
     ovr163	31677-32407	GFX loading, background compose, allocations	CombatGFX.c
 I'd start with the cleanest cuts — the ones with no shared static variables and clear segment boundaries:

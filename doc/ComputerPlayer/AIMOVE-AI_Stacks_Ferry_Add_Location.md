@@ -16,7 +16,7 @@ Add a `(wx, wy, wp)` coordinate triple to the global **seek-transport request li
 
 The seek-transport list is consumed later by [`AI_Stacks_Ocean_Landmass_Orders`](AIMOVE-AI_Stacks_Ocean_Landmass_Orders.md) (slot 5 in the next turn's dispatch, [AIMOVE.c:1074, 1201, 1207](../../MoM/src/AIMOVE.c#L1074)) — that pass directs idle transport stacks to the registered pickup points.
 
-Called only from [`AI_Stacks_Setup_Ferry`](AIMOVE-AI_Stacks_Setup_Ferry.md) at [line 2089](../../MoM/src/AIMOVE.c#L2089), after that function locates an ocean tile near a rallying stack.
+Called only from [`AI_Stacks_Setup_Ferry`](AIMOVE-AI_Stacks_Setup_Ferry.md) at [line 2089](../../MoM/src/AIMOVE.c#L2089), after that function locates an ocean square near a rallying stack.
 
 ## Signature
 

@@ -196,8 +196,8 @@ static void Do_Costs_Lst(void)
 }
 
 /*
-; calculates the shortest path to every tile from the starting one;
-; not the best solution for MoM, as it's based on movement costs rather than turns to reach a tile
+; calculates the shortest path to every square from the starting one;
+; not the best solution for MoM, as it's based on movement costs rather than turns to reach a square
 ; rewritten in the overland djikstra patch
 */
 /*

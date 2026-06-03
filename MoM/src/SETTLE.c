@@ -203,7 +203,7 @@ void AI_MoveUnits(int16_t player_idx)
 
 // WZD o100p02
 /**
- * @brief Executes AI meld handling for one unit's current stack tile.
+ * @brief Executes AI meld handling for one unit's current stack square.
  *
  * If the referenced unit has already finished its turn, this routine exits
  * immediately. Otherwise it gathers the owning player's full army stack at the
@@ -258,11 +258,11 @@ void AI_UNIT_Meld(int16_t unit_idx)
 // WZD o100p03
 // drake178: AI_UNIT_Settle()
 /*
-; settles the tile if possible with the first settler
-; found on the unit's tile unless the selected unit is
+; settles the square if possible with the first settler
+; found on the unit's square unless the selected unit is
 ; already marked as finished for the turn
 ;
-; BUG: marks all other units on the tile as ready
+; BUG: marks all other units on the square as ready
 ;  regardless of their previous status
 */
 /*
@@ -644,7 +644,7 @@ Done:
 ; decrease the transport waiting counter of the unit
 ; unless it is already marked as finished, changing its
 ; status back to ready if it either ran out, or there
-; are also other units on its tile
+; are also other units on its square
 ;
 ; RE-EXAMINE in more context!
 */
@@ -681,7 +681,7 @@ void AI_UNIT_BuildRoad__WIP(int16_t unit_idx)
 // WZD o100p13
 // drake178: TILE_CanShiftPlanes()
 /*
-; returns 1 if the stack on the tile can shift to the
+; returns 1 if the stack on the square can shift to the
 ; other plane, or 0 otherwise
 ;
 ; contains multiple BUGs, many of which have to do with

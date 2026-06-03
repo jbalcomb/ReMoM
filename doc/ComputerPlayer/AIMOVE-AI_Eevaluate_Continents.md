@@ -104,7 +104,7 @@ for(itr_units = 0; itr_units < _units; itr_units++)
 }
 ```
 
-**Intent:** any non-engineer player unit currently moving to a tile with no enemy presence has its movement order cancelled — so Phases 4-9 can re-task them based on the fresh classification.
+**Intent:** any non-engineer player unit currently moving to a square with no enemy presence has its movement order cancelled — so Phases 4-9 can re-task them based on the fresh classification.
 
 **Source-flagged OGBUGs** (preserved as faithful-to-disassembly):
 - The `g_ai_evaluation_map[wp][...]` lookup uses the stale `wp` from Phase 2's outermost loop. Cross-plane false-positive cancellations possible.
@@ -321,7 +321,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
         }
         territory_centroid_wx = wx_array[landmass_idx];
         territory_centroid_wy = wy_array[landmass_idx];
-        // Skip if current centroid is already a valid unoccupied tile on this landmass
+        // Skip if current centroid is already a valid unoccupied square on this landmass
         if(
             (g_ai_evaluation_map[wp][((territory_centroid_wy * WORLD_WIDTH) + territory_centroid_wx)] == 0)
             && (_landmasses[((wp * WORLD_SIZE) + (territory_centroid_wy * WORLD_WIDTH) + territory_centroid_wx)] == landmass_idx)
@@ -370,7 +370,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
 }
 ```
 
-**Intent:** for landmasses we hold/contest/are-allied-with, ensure the stage point is a valid unoccupied tile on the landmass. If the current centroid is already valid, leave it; otherwise find the closest unoccupied land square. If no acceptable square exists, downgrade to `lmt_NoOwnCityAndAllyHasCity` with stage [0,0].
+**Intent:** for landmasses we hold/contest/are-allied-with, ensure the stage point is a valid unoccupied square on the landmass. If the current centroid is already valid, leave it; otherwise find the closest unoccupied land square. If no acceptable square exists, downgrade to `lmt_NoOwnCityAndAllyHasCity` with stage [0,0].
 
 **Source-flagged OGBUG:** `target_landmass_idx` is assigned but never read in this phase — likely a copy-paste artifact from the surrounding phases.
 

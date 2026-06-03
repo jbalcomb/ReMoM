@@ -18,7 +18,7 @@ SEEALSO: [MoX-NewGame-MapGen-Landmass.md](MoX-NewGame-MapGen-Landmass.md)
 
 ## 1. Purpose
 
-`NEWG_CreateLands__WIP()` generates the base continent shapes for a single world plane (Arcanus or Myrror). It is the primary land-distribution step during new-game world creation. The function fills the 60x40 tile plane with ocean, then grows organic continent blobs using a Drunkard's Walk (random walk) algorithm. Each tile records how many times a walker visited it; this hit-count is later interpreted as terrain type by downstream functions.
+`NEWG_CreateLands__WIP()` generates the base continent shapes for a single world plane (Arcanus or Myrror). It is the primary land-distribution step during new-game world creation. The function fills the 60x40 square plane with ocean, then grows organic continent blobs using a Drunkard's Walk (random walk) algorithm. Each square records how many times a walker visited it; this hit-count is later interpreted as terrain type by downstream functions.
 
 
 
@@ -70,9 +70,9 @@ void NEWG_CreateLands__WIP(int16_t wp);
 
 After `NEWG_CreateLands__WIP()` returns for a given plane:
 
-1. **All tiles initialized.** Every tile on the plane has been written at least once (ocean baseline).
+1. **All tiles initialized.** Every square on the plane has been written at least once (ocean baseline).
 2. **Land tiles contain hit-counts.** Non-ocean tiles hold a small positive integer (1-6+) representing how many times a walker visited them. These are *not* final terrain type values yet.
-3. **Landmass IDs assigned.** Every land tile has a landmass ID via `Build_Landmass()`. Adjacent land tiles share the same ID. The global `m_landmasses_ctr` reflects the next available ID.
+3. **Landmass IDs assigned.** Every land square has a landmass ID via `Build_Landmass()`. Adjacent land tiles share the same ID. The global `m_landmasses_ctr` reflects the next available ID.
 4. **Land quantity meets target.** At least `n_needed` tiles have been converted from ocean to land.
 5. **Border margins preserved.** No land is placed within 2 tiles of the X edges or 4 tiles of the Y edges.
 
@@ -83,7 +83,7 @@ After `NEWG_CreateLands__WIP()` returns for a given plane:
 ### 6.1 Initialize Plane to Ocean
 
 ```
-for every tile (wx, wy) on the plane:
+for every square (wx, wy) on the plane:
     SET_TERRAIN_TYPE(wx, wy, wp, tt_Ocean1)    // tt_Ocean1 = 0x0
 ```
 
@@ -169,14 +169,14 @@ The cardinal direction arrays are `{S, W, N, E, none}` = `{(0,1), (-1,0), (0,-1)
 For each step, while `Steps_Taken < Steps_To_Take` and `n_generated <= n_needed`:
 
 **a) Count new land:**
-If the current tile is still `tt_Ocean1`, increment `n_generated`.
+If the current square is still `tt_Ocean1`, increment `n_generated`.
 
 **b) Record hit-count:**
-The terrain type value at the current tile is incremented by 1. This builds a density map where repeated visits produce higher values.
+The terrain type value at the current square is incremented by 1. This builds a density map where repeated visits produce higher values.
 
 **c) Assign landmass ID:**
 `Build_Landmass(wp, curr_wx, curr_wy)` is called. This function:
-- Checks the center tile plus all 8 neighbors for existing landmass IDs.
+- Checks the center square plus all 8 neighbors for existing landmass IDs.
 - If no neighbors have a landmass, assigns a new unique ID from `m_landmasses_ctr++`.
 - If neighbors have different landmass IDs, merges them all to the first found ID (full plane scan to reassign).
 
@@ -277,7 +277,7 @@ Returns a value in `{1, ..., n}` inclusive. Uses an xorshift PRNG seeded at game
 
 ### 9.1 `NEWG_SetBaseLands__WIP(wp)` — Hit-Count to Terrain Conversion
 
-This is the immediate consumer of the hit-count values written by `NEWG_CreateLands__WIP()`. It interprets the raw integer stored in each non-ocean tile:
+This is the immediate consumer of the hit-count values written by `NEWG_CreateLands__WIP()`. It interprets the raw integer stored in each non-ocean square:
 
 | Hit-Count | Terrain Type         | Notes |
 |-----------|----------------------|-------|
@@ -298,7 +298,7 @@ Adds climate zones on top of the base terrain:
 
 ### 9.3 `Build_Landmass(wp, wx, wy)` — Landmass ID Tracking
 
-Called once per walker step. Maintains a union-find-like structure of landmass IDs across the plane. When walker paths from different blobs touch, their landmass IDs are merged so the entire connected land area shares one ID. Used later by city placement, AI evaluation, and other systems that need to know which continent a tile belongs to.
+Called once per walker step. Maintains a union-find-like structure of landmass IDs across the plane. When walker paths from different blobs touch, their landmass IDs are merged so the entire connected land area shares one ID. Used later by city placement, AI evaluation, and other systems that need to know which continent a square belongs to.
 
 
 
@@ -391,7 +391,7 @@ protected:
 
 **Given:** `_landsize = gol_Small`, plane = `ARCANUS_PLANE`
 **When:** `NEWG_CreateLands__WIP(ARCANUS_PLANE)` is called
-**Verify:** Before any walking begins (or by checking the function's behavior), every tile was initialized to `tt_Ocean1`. This is implicitly tested by TC-02.
+**Verify:** Before any walking begins (or by checking the function's behavior), every square was initialized to `tt_Ocean1`. This is implicitly tested by TC-02.
 
 #### TC-02: Land Count Meets Target — Small
 
@@ -426,25 +426,25 @@ Same as TC-02 but with `_landsize = gol_Large`. Expected land count >= 721.
 
 **Given:** `_landsize = gol_Medium`
 **When:** `NEWG_CreateLands__WIP(ARCANUS_PLANE)` completes
-**Then:** Every tile on `MYRROR_PLANE` is still 0 (the calloc initial value). Confirms no cross-plane writes.
+**Then:** Every square on `MYRROR_PLANE` is still 0 (the calloc initial value). Confirms no cross-plane writes.
 
 #### TC-08: Landmass IDs Are Non-Zero on Land Tiles
 
 **Given:** Any `_landsize`
 **When:** `NEWG_CreateLands__WIP(ARCANUS_PLANE)` completes
-**Then:** For every tile where `GET_TERRAIN_TYPE(wx,wy,ARCANUS_PLANE) != tt_Ocean1`, `GET_LANDMASS(wx,wy,ARCANUS_PLANE) != 0`.
+**Then:** For every square where `GET_TERRAIN_TYPE(wx,wy,ARCANUS_PLANE) != tt_Ocean1`, `GET_LANDMASS(wx,wy,ARCANUS_PLANE) != 0`.
 
 #### TC-09: Landmass IDs Are Zero on Ocean Tiles
 
 **Given:** Any `_landsize`
 **When:** `NEWG_CreateLands__WIP(ARCANUS_PLANE)` completes
-**Then:** For every tile where `GET_TERRAIN_TYPE(wx,wy,ARCANUS_PLANE) == tt_Ocean1`, `GET_LANDMASS(wx,wy,ARCANUS_PLANE) == 0`.
+**Then:** For every square where `GET_TERRAIN_TYPE(wx,wy,ARCANUS_PLANE) == tt_Ocean1`, `GET_LANDMASS(wx,wy,ARCANUS_PLANE) == 0`.
 
 #### TC-10: Hit-Count Values Are Small Positive Integers
 
 **Given:** `_landsize = gol_Large` (highest density)
 **When:** `NEWG_CreateLands__WIP(ARCANUS_PLANE)` completes
-**Then:** Every non-ocean tile has a terrain value in range `[1, ~20]` (a reasonable upper bound for walker revisits). No tile should have the actual terrain enum values like 0xA2 (162) — those are assigned by `NEWG_SetBaseLands__WIP`, not this function.
+**Then:** Every non-ocean square has a terrain value in range `[1, ~20]` (a reasonable upper bound for walker revisits). No square should have the actual terrain enum values like 0xA2 (162) — those are assigned by `NEWG_SetBaseLands__WIP`, not this function.
 
 #### TC-11: Deterministic with Fixed Seed
 
@@ -470,10 +470,10 @@ Same as TC-02 but with `_landsize = gol_Large`. Expected land count >= 721.
 
 | Term | Definition |
 |------|-----------|
-| **Drunkard's Walk** | Random walk algorithm where each step moves one tile in a random cardinal direction. Used to generate organic, irregular shapes. |
-| **Hit-count** | The number of times a walker visits a tile during continent generation. Stored temporarily in the terrain type field and later converted to actual terrain. |
+| **Drunkard's Walk** | Random walk algorithm where each step moves one square in a random cardinal direction. Used to generate organic, irregular shapes. |
+| **Hit-count** | The number of times a walker visits a square during continent generation. Stored temporarily in the terrain type field and later converted to actual terrain. |
 | **Arm** | One of 3-5 directional walks radiating from a continent's origin point. Each arm extends the continent in a different cardinal direction. |
 | **Section** | A coarse grid region of the map (16x11 tiles) used to ensure continent origins are spatially distributed. |
-| **Landmass ID** | A unique per-continent identifier assigned to each land tile. Adjacent tiles that touch are merged to share the same ID. |
-| **Plane** | One of two parallel worlds: Arcanus (0) or Myrror (1). Each is a separate 60x40 tile grid. |
+| **Landmass ID** | A unique per-continent identifier assigned to each land square. Adjacent tiles that touch are merged to share the same ID. |
+| **Plane** | One of two parallel worlds: Arcanus (0) or Myrror (1). Each is a separate 60x40 square grid. |
 | **Origin** | The randomly selected starting coordinate for a continent blob. |

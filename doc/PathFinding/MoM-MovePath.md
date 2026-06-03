@@ -101,7 +101,7 @@ NOTE:
 // ; values accordingly:
 // ;   Cmplt@ - 1 if running out of moves (no obstacles)
 // ;   Path_Length@ - amount of moves that can be executed
-// ;   Combat@ - the move enters a hostile tile (the human
+// ;   Combat@ - the move enters a hostile square (the human
 // ;     player's move is stopped short before this)
 // ;   Obst@ - a player or unit index identifying the
 // ;     hostile entity (BUG? should be player index?)
@@ -532,7 +532,7 @@ _ai_move_path_table is 1033 (0x409) paragraphs  1033 * 16 = 16528 bytes
 00000076 ends MovePath
 
 ; fills the return arrays with a path from the source
-; to the destination tile, either by reading it out
+; to the destination square, either by reading it out
 ; from the stored paths or by generating a new one from
 ; scratch
 ; returns the path length
@@ -595,7 +595,7 @@ push    [word ptr movepath_cost_map+2]
 push    [word ptr movepath_cost_map]  ; MoveMap@
 push    [bp+src_y]                      ; Unit_Y
 push    [bp+src_x]                      ; Unit_X
-call    j_Overland_Pathfinder           ; calculates the shortest path to every tile from the
+call    j_Overland_Pathfinder           ; calculates the shortest path to every square from the
 ...
 ...
 ...

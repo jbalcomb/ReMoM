@@ -72,9 +72,9 @@ AI_Reevaluate_Continent()
     3: lmt_NoPresence
         just means the player does not have any cities on the landmass
     4: lmt_NoLanding
-        Allied territory OR No stage tile
+        Allied territory OR No stage square
     5: lmt_Leaveable
-        Embarkation tile was found — set when a dock square is reachable. Logically "we can depart from here," not "we have decided to abandon."
+        Embarkation square was found — set when a dock square is reachable. Logically "we can depart from here," not "we have decided to abandon."
     6: lmt_NoTargets
         No attackable enemies, lairs, or nodes worth targeting.
 

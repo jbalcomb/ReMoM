@@ -284,7 +284,7 @@ void Make_Monsters(void)
         return;
     }
 
-    /* Find a valid adjacent tile to spawn the stack */
+    /* Find a valid adjacent square to spawn the stack */
     if (Adjacent_Free_Square(lair_wx, lair_wy, lair_wp, &adjacent_wx, &adjacent_wy) == 0)
     {
         return;
@@ -463,7 +463,7 @@ void Make_Raiders(void)
             continue;
         }
 
-        /* Find a valid adjacent tile for the raiders to spawn */
+        /* Find a valid adjacent square for the raiders to spawn */
         if (Adjacent_Free_Square(city_wx, city_wy, city_wp, &empty_adjacent_x, &empty_adjacent_y) != ST_TRUE)
         {
             continue;

@@ -62,7 +62,7 @@
           "first_line_hash": "8f576ccbe67a",
           "first_line_excerpt": "int16_t Square_Is_Shoreline(int16_t wx, int16_t wy, int16_t wp)",
           "read_at": "2026-05-17T15:30:00Z",
-          "purpose": "Square_Is_Shoreline — reads TERRAIN_TYPE only, checks against shore-terrain-type enum ranges. Result depends only on terrain type at the tile (which Change Terrain and Raise Volcano cannot modify to/from shore)."
+          "purpose": "Square_Is_Shoreline — reads TERRAIN_TYPE only, checks against shore-terrain-type enum ranges. Result depends only on terrain type at the square (which Change Terrain and Raise Volcano cannot modify to/from shore)."
         }
       ]
     },
@@ -76,7 +76,7 @@
           "first_line_hash": "28c485b2911b",
           "first_line_excerpt": "void CONTX_CreateLChains__WIP(void)",
           "read_at": "2026-05-17T15:02:00Z",
-          "purpose": "CONTX_CreateLChains__WIP — producer of _ai_landmass_dock_squares_heads[] and _ai_landmass_dock_squares_lists[]. Reads first 90 lines (signature through partial chain-build loop). Builds load-tile chains: for each non-ocean tile within 1 square of shoreline, add to landmass's chain. Slot 0 always ST_UNDEFINED (loop filters out landmass_idx == 0). Called ONCE at game load, never refreshed."
+          "purpose": "CONTX_CreateLChains__WIP — producer of _ai_landmass_dock_squares_heads[] and _ai_landmass_dock_squares_lists[]. Reads first 90 lines (signature through partial chain-build loop). Builds load-square chains: for each non-ocean square within 1 square of shoreline, add to landmass's chain. Slot 0 always ST_UNDEFINED (loop filters out landmass_idx == 0). Called ONCE at game load, never refreshed."
         }
       ]
     },

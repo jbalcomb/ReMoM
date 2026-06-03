@@ -412,7 +412,7 @@ void Terrain_Init(void)
         }
 
 
-        Warp_Node_WorkArea = Allocate_Space(24);               // ; used to save and manipulate the tile graphics to ; display the warp node effect
+        Warp_Node_WorkArea = Allocate_Space(24);               // ; used to save and manipulate the square graphics to ; display the warp node effect
 
         // Loop MAPBACK 63 to 67:
         for(itr = 0; itr < 5; itr++)
@@ -423,7 +423,7 @@ void Terrain_Init(void)
 
 //     UU_IMG_OVL_WorkMark = LBX_Load(mapback_lbx_file, 89);
 //     // ; single-loaded 6 frame animation, unused afaik
-//     // ; (blue tile frame called "city work area")
+//     // ; (blue square frame called "city work area")
 
         UU_hunters_lodge_seg = LBX_Load(mapback_lbx_file, 90);     // ; single-loaded image, called "hunter's lodge"
         

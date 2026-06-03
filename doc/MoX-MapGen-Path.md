@@ -55,7 +55,7 @@ dseg:89CA 00 00 00 00                                     _map_square_flags dd 0
 dseg:89CA                                                                                         ; 12Eh paragraphs in World_Data@
 dseg:89CE 00 00 00 00                                     _map_square_terrain_specials dd 0       ; DATA XREF: Save_SAVE_GAM+2EBr ...
 dseg:89CE                                                                                         ; 12Eh paragraphs in World_Data@
-dseg:89CE                                                                                         ; 1 byte per map tile (max 1 TER_SPEC on each tile)
+dseg:89CE                                                                                         ; 1 byte per map square (max 1 TER_SPEC on each square)
 dseg:89D2 00 00 00 00                                     _CITIES dd 0                            ; DATA XREF: Save_SAVE_GAM+2B9r ...
 
 

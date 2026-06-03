@@ -241,7 +241,7 @@ Each city has a base food level of Food which can be efficiently produced with e
     1½ for each Grassland in its catchment area.  
     2 for each River, River Mouth¹, or Sorcery Node¹ in its catchment area.  
     2½ for each Nature Node¹ in its catchment area.  
-    The food generated is halved if the terrain tile is shared with another city.  
+    The food generated is halved if the terrain square is shared with another city.  
     Terrain tiles with Corruption do not count. However, tiles with unbroken nodes or lairs do count.  
     +50% to the above quantities if the city has Gaia's Blessing cast on it.  
 ¹ Reported incorrectly by Surveyor.  

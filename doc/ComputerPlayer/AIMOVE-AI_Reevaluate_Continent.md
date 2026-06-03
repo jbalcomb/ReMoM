@@ -118,7 +118,7 @@ The current code excludes only engineers. The OG question asks whether non-milit
 
 ### OGBUG-A — no same-plane check (line 5784)
 
-The landmass lookup correctly uses the unit's own `.wp/.wy/.wx`. But the lookup returns *which landmass index that tile belongs to on that unit's plane*. If a plane-1 unit happens to be on a landmass whose index also exists on plane 0 (landmass indices are per-plane and the value space overlaps — spelled out inline at line 5785), the comparison `== landmass_idx` will spuriously pass.
+The landmass lookup correctly uses the unit's own `.wp/.wy/.wx`. But the lookup returns *which landmass index that square belongs to on that unit's plane*. If a plane-1 unit happens to be on a landmass whose index also exists on plane 0 (landmass indices are per-plane and the value space overlaps — spelled out inline at line 5785), the comparison `== landmass_idx` will spuriously pass.
 
 **Example:** caller passes `(wp=0, landmass_idx=5)`. The loop hits a plane-1 unit standing on plane 1's landmass 5. The lookup returns 5. The check passes. We cancel the plane-1 unit's orders even though we're processing the plane-0 landmass.
 

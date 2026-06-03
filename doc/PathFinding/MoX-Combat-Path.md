@@ -39,23 +39,23 @@ South-East: +22 (South +21 combined with East +1)
 North-West: -22 (North -21 combined with West -1)
 South-West: +20 (South +21 combined with West -1)
 North-East: -20 (North -21 combined with East +1)
-Instead of doing (Y * 21) + X to check neighbors during the flood-fill pathfinding algorithm, the engine just takes the current tile's 1D index and adds these 8 pre-calculated numbers.
+Instead of doing (Y * 21) + X to check neighbors during the flood-fill pathfinding algorithm, the engine just takes the current square's 1D index and adds these 8 pre-calculated numbers.
 3. The "Pac-Man" Wrapping Problem
 Using a flat 1D array introduces a fatal visual bug: screen wrapping.
-Imagine a unit is standing on the far-left edge of the map at X:0, Y:1 (which is 1D index 21). If the algorithm tries to check the tile to the West, it adds -1.
+Imagine a unit is standing on the far-left edge of the map at X:0, Y:1 (which is 1D index 21). If the algorithm tries to check the square to the West, it adds -1.
 The resulting index is 20. But index 20 is the far-right edge of the row above them! The algorithm would essentially teleport the unit across the map like Pac-Man.
 Normally, modern programmers fix this with if statements inside the loop:
 if (current_x > 0) { /* Safe to check West */ }
 But if statements inside a tight loop cause pipeline stalls on older CPUs, drastically slowing down the game.
 4. The -1000 Bounds Check Hack
 To solve the wrapping problem without using expensive if (x > 0) logic, the developers created the CMB_AdjctOfs_NoWest and CMB_AdjctOfs_NoEast arrays.
-When the pathfinder processes a tile on the left edge of the map, it swaps its pointer to use the NoWest array. Notice what happens to the westward offsets in that array:
+When the pathfinder processes a square on the left edge of the map, it swaps its pointer to use the NoWest array. Notice what happens to the westward offsets in that array:
 SW: -1000 (instead of 20)
 NW: -1000 (instead of -22)
 West: -1000 (instead of -1)
 Why exactly -1000?
-The maximum size of the combat grid is 462 tiles (indices 0 to 461). If you add -1000 to any valid tile index on the board, the result is guaranteed to be a massive negative number.
-In the game's assembly code, immediately after applying an offset, there is an instruction that checks for a negative sign flag (like jl - Jump if Less than zero). The CPU's hardware instantly catches the negative number and skips the tile, effectively executing a map boundary check without doing any actual X/Y boundary math!
+The maximum size of the combat grid is 462 tiles (indices 0 to 461). If you add -1000 to any valid square index on the board, the result is guaranteed to be a massive negative number.
+In the game's assembly code, immediately after applying an offset, there is an instruction that checks for a negative sign flag (like jl - Jump if Less than zero). The CPU's hardware instantly catches the negative number and skips the square, effectively executing a map boundary check without doing any actual X/Y boundary math!
 
 
 

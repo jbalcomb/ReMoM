@@ -85,7 +85,7 @@ int16_t CTY_Garrison_Units[MAX_STACK];
 // drake178: TILE_Settle()
 // Colonize_Planet_() |-> Init_Colony_()
 /*
-; creates a new outpost on the tile if possible,
+; creates a new outpost on the square if possible,
 ; removing the settler from play in the process, and
 ; handling any necessary human player interactions
 ; returns 1 if successful, or 0 otherwise
@@ -690,11 +690,11 @@ void Change_City_Name_Popup_Draw(void)
 
 // WZD o077p08
 /*
-; returns 0 if the tile can be settled, or an error value if not:
-;   1 - tile is in the ocean
-;   2 - tile has an intact lair
-;   3 - tile has a tower of wizardry
-;   4 - tile has a node
+; returns 0 if the square can be settled, or an error value if not:
+;   1 - square is in the ocean
+;   2 - square has an intact lair
+;   3 - square has a tower of wizardry
+;   4 - square has a node
 ;   5 - there's already a city within 3 tiles
 */
 int16_t Map_Square_Survey(int16_t wx, int16_t wy, int16_t wp)

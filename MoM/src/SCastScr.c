@@ -832,9 +832,9 @@ void Spell_Casting_Screen_Draw(void)
 // WZD o70p04
 // drake178: OVL_Tile2DrawCoords()
 /*
-; converts the tile coordinates at the passed pointer
+; converts the square coordinates at the passed pointer
 ; locations into draw pixel coordinates for the large
-; overland 12x10 map display; returning 1 if the tile
+; overland 12x10 map display; returning 1 if the square
 ; is visible in the map window, or 0 if it is not
 */
 /*

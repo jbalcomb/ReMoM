@@ -5,11 +5,11 @@ Here is a step-by-step breakdown of NEWG_CreateLands__WIP() (MAPGEN.c:2070):
 
 Overview
 This function generates the base landmasses for a single world plane (Arcanus or Myrror) using a "Drunkard's Walk" (random walk) algorithm.
-It fills the 60x40 tile map with ocean and then grows organic continent shapes by walking randomly from scattered origin points.
+It fills the 60x40 square map with ocean and then grows organic continent shapes by walking randomly from scattered origin points.
 
 Step-by-Step Breakdown
 1. Initialize the entire plane to ocean (lines 2095-2101)
-Every tile on the plane is set to tt_Ocean1. This is the blank slate before any land is placed.
+Every square on the plane is set to tt_Ocean1. This is the blank slate before any land is placed.
 
 2. Clear the map section tracking grid (lines 2107-2113)
 A 5x5 array map_sections is zeroed out. This grid is used to spread continent origins across the map so they don't all cluster in one area. Despite being 5x5, only a 4x3 portion is actually reachable given the coordinate math (the comment at line 2106 notes this inconsistency).
@@ -20,7 +20,7 @@ section_width = 16 — each section column spans 16 tiles wide.
 section_height = 11 — each section row spans 11 tiles tall.
 These values don't cleanly divide the 60x40 world (60/16 ~3.75, 40/11 ~3.6), which the code comments flag as a possible artifact of a different map size at some point in development.
 
-4. Determine the target land tile count based on _landsize (lines 2123-2128)
+4. Determine the target land square count based on _landsize (lines 2123-2128)
 Land Size	n_needed	% of 2400 tiles
 Small	360	15%
 Medium	480	20%
@@ -53,7 +53,7 @@ Since the direction arrays are {S, W, N, E, none} and the loop index goes 0..4, 
 5e. Walk the arm — the inner step loop (lines 2179-2259)
 For each step of the walk:
 
-Count new land (lines 2182-2187): If the current tile is still ocean, increment n_generated (this is how progress toward n_needed is tracked).
+Count new land (lines 2182-2187): If the current square is still ocean, increment n_generated (this is how progress toward n_needed is tracked).
 
 Increment terrain hit counter (line 2189): The terrain type value at (itr_wx, itr_wy) is incremented by 1. The intent is to build a density/heightmap where repeated hits create higher terrain types.
 

@@ -1420,10 +1420,10 @@ sets tt_Tundra1, tt_Desert1, tt_Swamp1
  * - Polar tundra pass: scans rows near the north/south edges and probabilistically
  *   converts `tt_Grasslands1` and `tt_Forest1` tiles to `tt_Tundra1`, with stronger
  *   conversion chance closer to the map edge.
- * - Desert patch pass: attempts up to 8 interior-origin patches. If an origin tile is
+ * - Desert patch pass: attempts up to 8 interior-origin patches. If an origin square is
  *   forest, it is converted to desert and short random walks expand nearby non-ocean
  *   tiles into `tt_Desert1`.
- * - Swamp patch pass: attempts up to 8 interior-origin patches. If an origin tile is
+ * - Swamp patch pass: attempts up to 8 interior-origin patches. If an origin square is
  *   forest, local random walks convert encountered forest tiles to `tt_Swamp1`.
  *
  * Coordinates are wrapped at map boundaries, so neighborhood walks continue across
@@ -1577,7 +1577,7 @@ void Generate_Climate_Terrain_Types(int16_t wp)
 sets tt_Ocean, tt_Grasslands1, tt_Forest1, tt_Hills1, tt_Mountain1
 */
 /**
- * @brief Translates per-tile heightmap hit counts into base terrain types.
+ * @brief Translates per-square heightmap hit counts into base terrain types.
  *
  * @details
  * Interprets each map square value as an intermediate worldgen hit count and
@@ -1651,7 +1651,7 @@ adds Tundra to the top and bottom two rows
  * @brief Applies polar tundra terrain on a world plane.
  *
  * @details
- * Sets every tile on the top and bottom map rows to tundra. It then performs
+ * Sets every square on the top and bottom map rows to tundra. It then performs
  * two independent randomized passes (north inner row and south inner row):
  * for each X position, there is a 25% chance to paint a short horizontal tundra
  * strip of length 0-3 tiles, clamped at the right edge of the map.
@@ -3084,8 +3084,8 @@ void Desert_Autotile(void)
 
     LBX_Load_Data_Static(terrtype_lbx_file__MGC_ovr051, 0, (SAMB_ptr)terrtype, 0, 5, 512);
 
-// ; set the landmass of single tile deserts ($134) to
-// ; that of the last non-ocean tile found among their
+// ; set the landmass of single square deserts ($134) to
+// ; that of the last non-ocean square found among their
 // ; neighbouring tiles, if any
 // but, ...
 // Generate_Climate_Terrain_Types() only creates squares with tt_Desert1 (0x0A5)?
@@ -3249,8 +3249,8 @@ Looks to be a form of Bitmask Autotiling.
 This is a popular method of smoothing that assigns binary values to neighboring positions.
 The process:
 * Each neighbor position gets a bit value (1, 2, 4, 8, etc.)
-* The sum creates a unique index for tile selection
-* Supports up to 256 different tile configurations (8-bit)
+* The sum creates a unique index for square selection
+* Supports up to 256 different square configurations (8-bit)
 It looks like SimTex then had tables of specific terrain types maps to those sums, in TERRTYPE.LBX.
 
 TODO  turn TERRTYPE.LBX into C code
@@ -3888,7 +3888,7 @@ void Simex_Autotiling(void)
                  {
                      mask += 128;
                  }
-                 // NOTE(Drake178): PATCHED here to fix the no-cardinal conversion that causes the tile to become Grassland instead
+                 // NOTE(Drake178): PATCHED here to fix the no-cardinal conversion that causes the square to become Grassland instead
                  if(mask > 0)
                  {
                     /* CLAUDE bugfix: was terrtype[(512 + mask)] — 512 is the byte offset (0x200), not the int16_t index; correct array index is 256 */
@@ -3905,7 +3905,7 @@ void Simex_Autotiling(void)
 // MGC o51p21
 // drake178: NEWG_RandomizeTiles()
 /*
-; randomizes the tile types of grasslands, forests,
+; randomizes the square types of grasslands, forests,
 ; swamps, and all-surround desert and tundra between
 ; their multiple available graphics
 ;
@@ -4051,7 +4051,7 @@ void Shuffle_Terrains(void)
  *
  * @return int16_t
  * @retval ST_TRUE  River path generation succeeded and placeholder river tiles were written.
- * @retval ST_FALSE River path generation failed due to invalid start tile, blocked routing,
+ * @retval ST_FALSE River path generation failed due to invalid start square, blocked routing,
  *                  excessive retries, invalid outflow, or insufficient path length.
  *
  * @details
@@ -4223,7 +4223,7 @@ int16_t River_Path(int16_t wp)
  *    says true, treats it as `TT_RIVER_PLACEHOLDER` for this pass.
  * 3) For placeholder squares, builds a cardinal river mask (N/E/S/W) where each
  *    bit is set when the neighbor is ocean or river.
- * 4) Uses `TILE_River_Types[mask][Random(4)-1]` to pick a concrete river tile
+ * 4) Uses `TILE_River_Types[mask][Random(4)-1]` to pick a concrete river square
  *    and writes it back to `p_world_map`.
  * 5) Rebuilds a river-only cardinal mask (river neighbors only) for downstream
  *    lake and shore/outlet handling.
@@ -4293,7 +4293,7 @@ void River_Terrain(int16_t wp)
 
             if(terrain_type == _1Lake)
             {
-// NOTE(drake178): if the tile has no river flowing into it, turn it into a desert ($134); if it has one, use the corresponding single lake tile; but if it has more than one, convert surrounding tiles to grasslands until only one river inflow remains, and backtrack the loop variables to compensate since previous river tiles may need adjusting
+// NOTE(drake178): if the square has no river flowing into it, turn it into a desert ($134); if it has one, use the corresponding single lake square; but if it has more than one, convert surrounding tiles to grasslands until only one river inflow remains, and backtrack the loop variables to compensate since previous river tiles may need adjusting
                 switch(river_mask)
                 {
                     case 0:
@@ -4376,7 +4376,7 @@ void River_Terrain(int16_t wp)
 
             if(terrain_type < _Shore10000000)  // ¿ DEDU first Shore block/group except Lake? The game Civilation calls these a "watershed"
             {
-// NOTE(drake178): if the tile has river inflow from its only valid cardinal direction, turn it into the corresponding river outlet shore tile
+// NOTE(drake178): if the square has river inflow from its only valid cardinal direction, turn it into the corresponding river outlet shore square
                 switch(terrain_type)  // Dasm (terrain_type - 3)
                 {
                     case _Shore00000010:  /* 0x0006 */
@@ -4490,7 +4490,7 @@ void River_Terrain(int16_t wp)
                 (terrain_type <= _Shore11101110)
             )
             {
-// NOTE(drake178): if the tile has a river inflow from either or both of its two valid sides, turn it into a corresponding single or double river outlet
+// NOTE(drake178): if the square has a river inflow from either or both of its two valid sides, turn it into a corresponding single or double river outlet
                 switch(terrain_type)  // Dasm (terrain_type - 34)  ; switch 16 cases
                 {
                     case _Shore10110011:
@@ -5540,7 +5540,7 @@ void CRP_NEWG_CreatePathGrids__WIP(int16_t wp)
  * @brief Generates terrain specials for one world plane during new game setup.
  *
  * @details
- * Clears all per-tile terrain-special values and map-square flags on the selected
+ * Clears all per-square terrain-special values and map-square flags on the selected
  * plane, then samples candidate squares on a coarse grid and assigns specials based
  * on resulting terrain type.
  *
@@ -6151,8 +6151,8 @@ void Movement_Mode_Cost_Maps(int16_t wp)
 // MGC o51p35
 // drake178: TILE_InvalidOutflow()
 /*
-; returns 1 if the tile is not a valid river outflow
-; tile, or 0 otherwise
+; returns 1 if the square is not a valid river outflow
+; square, or 0 otherwise
 ;
 ; BUG?: why are these shore tiles excluded, and why
 ;  are land tiles included?
@@ -6324,7 +6324,7 @@ void Create_Unit_NewGame(int16_t unit_type, int16_t player_idx, int16_t wx, int1
 
 // MGC o51p38
 /**
- * @brief Applies randomized ocean animation tile swaps on both world planes.
+ * @brief Applies randomized ocean animation square swaps on both world planes.
  *
  * @details
  * Iterates every map square on `ARCANUS_PLANE` and `MYRROR_PLANE` and performs
@@ -6377,7 +6377,7 @@ void Animate_Oceans(void)
                     
                 }
 
-                // NOTE(drake178): conflicting condition - will always jump (myrran tile types are only valid in graphics)
+                // NOTE(drake178): conflicting condition - will always jump (myrran square types are only valid in graphics)
                 // BUGBUG  coded as if Myrror has its own terrain type indices
                 if(p_world_map[wp][wy][wx] == 762)
                 {

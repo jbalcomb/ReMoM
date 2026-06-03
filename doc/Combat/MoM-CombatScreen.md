@@ -187,7 +187,7 @@ cmp     [OVL_Action_Type], 5            ; sets in STK_EvaluatePath()
 ; Moved at a Lair
 push    [bp+player_idx]                 ; Player_Index
 push    [OVL_Action_Structure]          ; Zone_Index
-call    j_EZ_Resolve                    ; resolves movement onto the tile of an lair,
+call    j_EZ_Resolve                    ; resolves movement onto the square of an lair,
                                         ; from the entry dialog to the treasure rewards
                                         ; returns 1 if the encounter was cleared, 0 if not,
                                         ; and 99 if entry was cancelled by the player

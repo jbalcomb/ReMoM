@@ -85,7 +85,7 @@ void Clear_Square_Scouted_Flags(int16_t wp)
  * the game rule that an unexplored square cannot be treated as actively scouted.
  *
  * Implementation notes:
- * - Computes a linear tile index with `wy * WORLD_WIDTH + wx`.
+ * - Computes a linear square index with `wy * WORLD_WIDTH + wx`.
  * - Selects the scouting bitfield based on `wp`.
  * - Combines the bitfield result with explored-state validation before returning.
  *
@@ -136,7 +136,7 @@ int16_t Check_Square_Scouted(int16_t wx, int16_t wy, int16_t wp)
  *
  * @details
  * This function sets the transient "currently visible/scouted" bit for a single square
- * on the requested world plane. It does not mark the tile as explored; persistent map
+ * on the requested world plane. It does not mark the square as explored; persistent map
  * discovery is handled separately by the explored-state system.
  *
  * Implementation behavior:

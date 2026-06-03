@@ -70,7 +70,7 @@ extern uint32_t WarpNode_SeedSave;
 
 // WZD dseg:9CA8
 extern SAMB_ptr m_terrain_lbx_002;
-// array of color indices by tile type for minimap / "reduced map"
+// array of color indices by square type for minimap / "reduced map"
 
 
 // WZD dseg:CC22

@@ -302,7 +302,7 @@ void CityList_Screen(void)
                 _city_idx = list_cities[itr];
                 if(_CITIES[_city_idx].size == 0)
                 {
-                    // ; displays and processes the outpost screen - if the view type is 1, the header calls for naming the new outpost and does not display the units on the tile
+                    // ; displays and processes the outpost screen - if the view type is 1, the header calls for naming the new outpost and does not display the units on the square
                     // ; BUG: fails to draw the altered backgrounds of the Gaia's Blessing, Flying Fortress, Famine, and Cursed Lands enchantments
                     // TODO  Outpost_Screen(0, -1, -1);
                     Assign_Auto_Function(CityList_Screen_Draw, 1);

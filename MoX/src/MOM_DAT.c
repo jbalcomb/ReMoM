@@ -3341,11 +3341,11 @@ int16_t item_pool_in_process;
 int16_t OVL_SWardTriggered;
 
 // WZD dseg:C5DE
-// drake178: set to the path tile before the last before moving units overland
+// drake178: set to the path square before the last before moving units overland
 int16_t OVL_Action_OriginY;
 
 // WZD dseg:C5E0
-// drake178: set to the path tile before the last before moving units overland
+// drake178: set to the path square before the last before moving units overland
 int16_t OVL_Action_OriginX;
 
 // WZD dseg:C5E2 00                                              db    0

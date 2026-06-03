@@ -178,7 +178,7 @@ enum e_LANDMASS_TYPE
     lmt_Contested               = 2,  /* Own vs. Contested;  Own city + non-trivial enemy unit-cost. Name matches. */
     lmt_NoOwnCity               = 3,  /* 'Nay Own City';  Units may be roaming freely on the landmass — that doesn't count as "presence" here. */
     lmt_NoOwnCityAndAllyHasCity = 4,  /* Purpose: flag landmasses that should be ignore/excluded; ally-only landmass OR no occupieable square; not just 'Nay Own City, Yay Ally City'; */
-    lmt_Leaveable               = 5,  /* Embarkation tile was found — set when a dock square is reachable. Logically "we can depart from here," not "we have decided to abandon." */
+    lmt_Leaveable               = 5,  /* Embarkation square was found — set when a dock square is reachable. Logically "we can depart from here," not "we have decided to abandon." */
     lmt_NoTargets               = 6   /* No attackable enemies, lairs, or nodes worth targeting. */
 };
 
@@ -4562,11 +4562,11 @@ extern int16_t item_pool_in_process;
 extern int16_t OVL_SWardTriggered;
 
 // WZD dseg:C5DE
-// drake178: set to the path tile before the last before moving units overland
+// drake178: set to the path square before the last before moving units overland
 extern int16_t OVL_Action_OriginY;
 
 // WZD dseg:C5E0
-// drake178: set to the path tile before the last before moving units overland
+// drake178: set to the path square before the last before moving units overland
 extern int16_t OVL_Action_OriginX;
 
 // WZD dseg:C5E2 00                                              db    0

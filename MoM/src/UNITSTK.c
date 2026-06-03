@@ -1165,11 +1165,11 @@ Done:
 /*
 OON XREF:  RdBd_UNIT_MoveStack_WIP()
 
-; select the stack of units from a tile that match the
+; select the stack of units from a square that match the
 ; destination and road building left of the specified
 ; unit, and fill out the return values accordingly;
-; accounting for transport units if the tile has any,
-; and only returning these if the tile has a city on it
+; accounting for transport units if the square has any,
+; and only returning these if the square has a city on it
 ; BUG: considers Non_Corporeal units to be landlubbers
 ; that require transport to cross oceans
 
@@ -1448,7 +1448,7 @@ void Build_RoadBuilder_Stack(int16_t * troop_count, int16_t troops[], int16_t ds
 // WZD o61p10
 // drake178:  STK_BuildingPossible()
 /*
-; returns 1 if the stack is on a non-sailable tile and
+; returns 1 if the stack is on a non-sailable square and
 ; has at least one unit with the construction ability;
 ; or 0 otherwise
 ; sets GUI_ExtraUnitAction to 0 if returning 1

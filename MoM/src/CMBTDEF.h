@@ -62,7 +62,7 @@ enum e_DAMAGE_TYPES
 
 Generate_Combat_Map()
 "case clt_Fortress:
-2. Fortress excludes tile (1,1) — line 26534 skips (i==1, j==1) for house placement, which is (6,11) — the central structure tile for the fortress. City doesn't do this exclusion.
+2. Fortress excludes square (1,1) — line 26534 skips (i==1, j==1) for house placement, which is (6,11) — the central structure square for the fortress. City doesn't do this exclusion.
 
 */
 #define MIN_CGX_CITY  5

@@ -140,7 +140,7 @@ mov     ah, 0
 mov     [terrain_001_1], ax
 
 
-test    [bp+terrain_001_0], 80h         ; animated tile
+test    [bp+terrain_001_0], 80h         ; animated square
 jz      short loc_D9817
 
 loc_D9817:                              ; determines whether non-animated terrain tiles will

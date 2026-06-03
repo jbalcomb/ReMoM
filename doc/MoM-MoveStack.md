@@ -288,7 +288,7 @@ push    ax                              ; YPos
 mov     al, [(IDK_MovePath_DestinationX+1)+_SI_itr__steps__units]
 cbw
 push    ax                              ; XPos
-call    j_Check_Square_Scouted          ; returns 1 if the tile is both explored and visible,
+call    j_Check_Square_Scouted          ; returns 1 if the square is both explored and visible,
                                      
 
 

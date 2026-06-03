@@ -36,7 +36,7 @@ void PageFlip_FX(void)
 ;   1 - left to right cut (not used in the game)
 ;   2 - black cut with the new image fading in
 ;   3 - mosaic effect
-;   4 - grow out from a tile (not used in the game)
+;   4 - grow out from a square (not used in the game)
 ;   5 - writes out the DAC, but DOES NOT do a page flip
 
     Default: Apply_Palette(); Toggle_Pages();

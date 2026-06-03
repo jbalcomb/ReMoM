@@ -722,7 +722,7 @@ OGBUG: If the target_battle_unit_idx is ST_UNDEFINED (-1), the function will att
     move_points = (int)battle_units[battle_unit_idx].movement_points;
     for (itr = 0; itr < movement_path_grid_cell_count; itr++)
     {
-        /* Skip starting tile */
+        /* Skip starting square */
         if (itr == 0)
         {
             continue;
@@ -1437,7 +1437,7 @@ MoO2  Module: CMBTAI  Auto_Move_Ship_() <-| OON XREF:  Module: CMBTAI  Do_Auto_S
  * restrictions, and computes a path toward the requested destination.
  *
  * When the acting unit belongs to the attacker and either has no explicit target or its current
- * destination tile is blocked, the function performs a "stomp-around" fallback search over the
+ * destination square is blocked, the function performs a "stomp-around" fallback search over the
  * city interior. It finds the shortest reachable square in the city proper and issues an
  * intermediate Auto_Move_Unit() call toward that square before attempting the originally requested
  * move. After that optional fallback, it always performs a final Auto_Move_Unit() call using the
@@ -1611,7 +1611,7 @@ void Do_Auto_Unit_Turn(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy
 ; chosen unit to the specified destination or target
 ;
 ; if not the same as the destination, Max_X/Y define
-; the stage point - a center tile around which the unit
+; the stage point - a center square around which the unit
 ; can only move within the quadrant it starts in
 ;
 ; moves are only expended for the last step, and

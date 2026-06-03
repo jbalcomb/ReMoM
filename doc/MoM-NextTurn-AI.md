@@ -283,11 +283,11 @@ so, CRP_AI_Cont_Nme_Str[] gets overwritten...
 needs
     CRP_UNIT_OverlandPath], -1     ; an index into OvlMovePaths_EMS@
     CONTX_CreateChains()            ; maps in the CONTXXX handle into the EMS page frame
-                                        ; and (re)creates the continent tile chains
+                                        ; and (re)creates the continent square chains
                                         ;
                                         ; BUG: only evaluates the first 60 continents
     CONTX_CreateLChains()           ; maps in the CONTXXX handle into the EMS page frame
-                                        ; and (re)creates the transport loading tile chains
+                                        ; and (re)creates the transport loading square chains
                                         ;
                                         ; BUG: only evaluates the first 60 continents
 from

@@ -13,7 +13,7 @@ enum e_LANDMASS_TYPE  // [MOM_DAT.h:119](../../MoX/src/MOM_DAT.h#L119)
     lmt_Own                      = 1,  // dominant: own unit-cost > 10 × enemy unit-cost
     lmt_Contested                = 2,  // has own city + non-trivial enemy presence
     lmt_NoOwnCity                = 3,  // no owned city (units may still be present)
-    lmt_NoOwnCityAndAllyHasCity  = 4,  // overloaded: ally's land OR no stage tile OR slot-0 sentinel
+    lmt_NoOwnCityAndAllyHasCity  = 4,  // overloaded: ally's land OR no stage square OR slot-0 sentinel
     lmt_Leaveable                  = 5,  // dock square reachable from here (departure-staging point)
     lmt_NoTargets                = 6   // no attackable enemies/lairs/nodes found
 };
@@ -77,14 +77,14 @@ The most overloaded value — five different write sites with three distinct sem
 | [6056](../../MoM/src/AIMOVE.c#L6056) | `AI_Reevaluate_Continent` | Prior state was `lmt_NoOwnCity` AND a non-neutral, allied wizard has a city here | Ally's land |
 | [6061](../../MoM/src/AIMOVE.c#L6061) | `AI_Reevaluate_Continent` | Force-set: `plane[0]...type_array[0]` | Slot-0 sentinel (ocean) |
 | [6063](../../MoM/src/AIMOVE.c#L6063) | `AI_Reevaluate_Continent` | Force-set: `plane[1]...type_array[0]` | Slot-0 sentinel (ocean) |
-| [6134](../../MoM/src/AIMOVE.c#L6134) | `AI_Reevaluate_Continent` | Continent was Own/Contested/(ally-land) but stage-square search found no valid embarking tile within `Best_Tile_Weight < 1000` | No stage tile (downgrade) |
+| [6134](../../MoM/src/AIMOVE.c#L6134) | `AI_Reevaluate_Continent` | Continent was Own/Contested/(ally-land) but stage-square search found no valid embarking square within `Best_Tile_Weight < 1000` | No stage square (downgrade) |
 | [7206](../../MoM/src/AIMOVE.c#L7206) | `AI_Evaluate_Continents` | Same allied-city promotion as 6056 | Ally's land |
 | [7215](../../MoM/src/AIMOVE.c#L7215) | `AI_Evaluate_Continents` | Slot-0 force, plane 0 | Slot-0 sentinel |
 | [7217](../../MoM/src/AIMOVE.c#L7217) | `AI_Evaluate_Continents` | Slot-0 force, plane 1 | Slot-0 sentinel |
-| [7387](../../MoM/src/AIMOVE.c#L7387) | `AI_Evaluate_Continents` | Rally-tile search failed downgrade (continent-pick path) | No stage tile (downgrade) |
-| [7470](../../MoM/src/AIMOVE.c#L7470) | `AI_Evaluate_Continents` | Same — different sub-path | No stage tile (downgrade) |
+| [7387](../../MoM/src/AIMOVE.c#L7387) | `AI_Evaluate_Continents` | Rally-square search failed downgrade (continent-pick path) | No stage square (downgrade) |
+| [7470](../../MoM/src/AIMOVE.c#L7470) | `AI_Evaluate_Continents` | Same — different sub-path | No stage square (downgrade) |
 
-**Three distinct meanings folded into one byte:** "ally's land" (diplomatic), "no stage tile" (physical inability), "ocean sentinel" (geometric). The name only fits the first.
+**Three distinct meanings folded into one byte:** "ally's land" (diplomatic), "no stage square" (physical inability), "ocean sentinel" (geometric). The name only fits the first.
 
 ### `lmt_Leaveable` (5)
 
@@ -124,7 +124,7 @@ A more accurate name would be something like `lmt_NoHostileAssetsLastSeen` — t
 
 | Line | Condition | Action |
 |---|---|---|
-| [259-263](../../MoM/src/AIMOVE.c#L259) | `≥ lmt_Leaveable` OR `NoOwnCity` OR (drafted unit threshold) | (gates an `if` block — staging-tile check) |
+| [259-263](../../MoM/src/AIMOVE.c#L259) | `≥ lmt_Leaveable` OR `NoOwnCity` OR (drafted unit threshold) | (gates an `if` block — staging-square check) |
 
 ### `AI_Stacks_Garrison_Sites` ([line 298](../../MoM/src/AIMOVE.c#L298))
 
@@ -166,7 +166,7 @@ Comment at [337](../../MoM/src/AIMOVE.c#L337) explicitly lists the "threat" grou
 |---|---|---|
 | [6053](../../MoM/src/AIMOVE.c#L6053) | `== lmt_NoOwnCity` | Promote to `NoOwnCityAndAllyHasCity` if allied city present |
 | [6066-6071](../../MoM/src/AIMOVE.c#L6066) | `Contested` OR `Own` OR `NoOwnCityAndAllyHasCity` | Enter stage-square search block |
-| [6146](../../MoM/src/AIMOVE.c#L6146) | `== Own` | Enter embark-tile validation |
+| [6146](../../MoM/src/AIMOVE.c#L6146) | `== Own` | Enter embark-square validation |
 
 ### `AI_Evaluate_Continents` self-reads (analogous to above)
 
@@ -235,7 +235,7 @@ The main consumer — uses the type to decide whether to keep current "main war 
               (then stage-square search if classification is in {Own, Contested, NoOwnCityAndAllyHasCity})
                                                   │
                                             ┌─────┴─────┐
-                                       found tile     no tile
+                                       found square     no square
                                             │             │
                                             ▼             ▼
                                        (preserved)   lmt_NoOwnCityAndAllyHasCity
@@ -260,7 +260,7 @@ AI_Stacks_Setup_Ferry        AI_Build_Target_List          AI_Reevaluate_Contine
 
 1. **`lmt_NoOwnCity` does not mean "no presence."** Units may be roaming. Only cities count.
 2. **`lmt_Own` requires a 10:1 unit-cost dominance.** A single own city with comparable enemy strength → `lmt_Contested`.
-3. **`lmt_NoOwnCityAndAllyHasCity` is overloaded.** Three semantic situations share this value: ally's territory, no stage tile, slot-0 sentinel. The name only fits the first.
+3. **`lmt_NoOwnCityAndAllyHasCity` is overloaded.** Three semantic situations share this value: ally's territory, no stage square, slot-0 sentinel. The name only fits the first.
 4. **`lmt_Leaveable` means "we are leaving this continent."** Set by `AI_Stacks_Roamers_Target_Or_Deploy` when the landmass has no targets AND has at least one roaming stack of 7+ units. The dock square is the embarkation point. The next-turn re-evaluation ([`AI_Choose_War_Landmass66`](../../MoM/src/AIMOVE.c#L7966)) may revise the decision if conditions changed.
 5. **`AI_Reevaluate_Continent` does not zero the slot before counting.** [`AI_Evaluate_Continents`](../../MoM/src/AIMOVE.c#L7013) does. Possible bug in `AI_Reevaluate_Continent` — verify against disassembly.
 6. **`lmt_NoTargets` is unhandled in `AI_Choose_War_Landmass switch.** Falls to default. Gemini's translation includes it with the NoOwnCity group — may be a missing case in production.

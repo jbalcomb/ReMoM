@@ -1105,7 +1105,7 @@ int16_t IDK_AITP_Disjunction__STUB(int16_t * wx, int16_t * wy, int16_t spell_idx
 // WZD o156p45
 // drake178: AITP_OVL_TileSpells()
 /* 
-AI target picker for overland tile spells
+AI target picker for overland square spells
 returns 1 if a successful target is found, 0 if not,
 or the passed return value if the spell is undefined
 contains BUGs in every targeting function, and some
@@ -1192,7 +1192,7 @@ int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx,
 // drake178: AITP_FloatingIsland()
 /*
 ; AI target picker for Floating Island - selects the
-; closest ocean tile within 10 tiles of a random city
+; closest ocean square within 10 tiles of a random city
 ; in a cardinal direction
 ; returns 1 if a valid target was found, or 0 otherwise
 ; BUG: utterly useless targeting
@@ -1246,7 +1246,7 @@ int16_t Pick_Target_For_Floating_Island(int16_t player_idx, int16_t * wx, int16_
         return ST_FALSE;
     }
 
-    // ; find the closest ocean tile within 10 tiles in any of
+    // ; find the closest ocean square within 10 tiles in any of
     // ; the cardinal directions (straight only)
 
     itr_squares = 0;
@@ -1368,11 +1368,11 @@ int16_t AITP_SpellWard_Wrapper__STUB(int16_t * city_idx, int16_t * magic_realm, 
 // WZD o156p57
 // drake178: TILE_IsOcean()
 /*
-; returns 1 if the tile is a shore, ocean, or lake, or
+; returns 1 if the square is a shore, ocean, or lake, or
 ; 0 otherwise
 ; differs from TILE_IsAISailable and TILE_IsAISailable2
 ; in that this also returns 0 for river-outflow single
-; tile lakes
+; square lakes
 ; differs from TILE_IsSailable in that this returns 0
 ; for all inland lakes
 */

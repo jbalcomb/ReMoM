@@ -18139,7 +18139,7 @@
                                 {
                                   "type": 2,
                                   "priority": 223,
-                                  "text": "    ovr154\t27960-30045\tTerrain init, map gen, tile gen, pathfinding coords\tCombatTerrain.c\n",
+                                  "text": "    ovr154\t27960-30045\tTerrain init, map gen, square gen, pathfinding coords\tCombatTerrain.c\n",
                                   "references": [],
                                   "lineBreakBefore": true
                                 }

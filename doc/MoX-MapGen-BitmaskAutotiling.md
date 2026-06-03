@@ -9,8 +9,8 @@ Bitmask Autotiling
 A popular method that assigns binary values to neighboring positions:
 
 Each neighbor position gets a bit value (1, 2, 4, 8, etc.)
-The sum creates a unique index for tile selection
-Supports up to 256 different tile configurations (8-bit)
+The sum creates a unique index for square selection
+Supports up to 256 different square configurations (8-bit)
 
 
 
@@ -85,7 +85,7 @@ Type:       5  Data
 
 if tt_Ocean
 convert to ¿ ?
-// NOTE(drake178): set the tile border flags based on the types of the adjacent tiles in every direction:
+// NOTE(drake178): set the square border flags based on the types of the adjacent tiles in every direction:
 // NOTE(drake178):   1   2   4
 // NOTE(drake178): 128       8
 // NOTE(drake178):  64  32  16
@@ -157,16 +157,16 @@ Hacking with Swift
  +1
 Terrain Smoothing Algorithm (Bitmasking)
 Define Terrain Types: Determine which tiles constitute "land" (e.g., grass) and which are "water".
-Accumulate Bits (Clockwise): For each tile, check its 4 or 8 neighbors to see if they are the same type.
+Accumulate Bits (Clockwise): For each square, check its 4 or 8 neighbors to see if they are the same type.
 4-bit (Cardinal): North, East, South, West (
 ).
 8-bit (Clockwise): NW, N, NE, E, SE, S, SW, W (
 ).
-Example: If a tile has land to the North, East, and South, but not West, the mask might be 
+Example: If a square has land to the North, East, and South, but not West, the mask might be 
  (14).
 Map to Sprites: Use the resulting 4 or 8-bit integer (
 ) as an index or lookup key for a sprite sheet containing all edge, corner, and transition combinations.
-Automapping: Implement an automapping system that checks neighbors and selects the appropriate tile, such as using SKTileMapNode to handle blending water and grass edge tiles automatically. 
+Automapping: Implement an automapping system that checks neighbors and selects the appropriate square, such as using SKTileMapNode to handle blending water and grass edge tiles automatically. 
 Hacking with Swift
 This technique ensures that as the map is generated, tiles are chosen to match the surrounding terrain, creating smooth, non-gridlike transitions. 
 
@@ -190,8 +190,8 @@ https://www.redblobgames.com/articles/autotile/index-claude-me.html
 Bitmask Autotiling
 A popular method that assigns binary values to neighboring positions:
 * Each neighbor position gets a bit value (1, 2, 4, 8, etc.)
-* The sum creates a unique index for tile selection
-* Supports up to 256 different tile configurations (8-bit)
+* The sum creates a unique index for square selection
+* Supports up to 256 different square configurations (8-bit)
 
 
 
@@ -200,9 +200,9 @@ A popular method that assigns binary values to neighboring positions:
 
 As an oldschool C coder, code it up so we have ocean and land terrain types and we want to remap a target ocean square to pictures that have shores to blend with the land squares
 
-Bitmask Autotiling A popular method that assigns binary values to neighboring positions: Each neighbor position gets a bit value (1, 2, 4, 8, etc.) The sum creates a unique index for tile selection Supports up to 256 different tile configurations (8-bit)
+Bitmask Autotiling A popular method that assigns binary values to neighboring positions: Each neighbor position gets a bit value (1, 2, 4, 8, etc.) The sum creates a unique index for square selection Supports up to 256 different square configurations (8-bit)
 It sounds like you're diving into one of the most satisfying parts of 2D game development! Bitmask Autotiling is the industry standard for making level design feel like "painting" rather than manual puzzle-solving.
-By checking the neighbors of a tile and assigning a unique value to each direction, you can instantly swap a generic square for a corner, an edge, or an intersection.
+By checking the neighbors of a square and assigning a unique value to each direction, you can instantly swap a generic square for a corner, an edge, or an intersection.
 How the Math Works
 The system typically uses a Powers of 2 logic. Each neighbor is assigned a specific bit value. If a neighbor of the same type exists in that direction, you add that value to a running total (the index). 
 For a standard 4-neighbor (North, West, East, South) setup, the math looks like this:
@@ -211,10 +211,10 @@ North	1
 West	2	
 East	4	
 South	8	
-The Result: A sum between 0 (no neighbors) and 15 (surrounded on all 4 sides). This maps perfectly to a 16-tile spritesheet. 
+The Result: A sum between 0 (no neighbors) and 15 (surrounded on all 4 sides). This maps perfectly to a 16-square spritesheet. 
 Expanding to 8-Bit (256 Tiles)
-When you include diagonals (Northwest, Northeast, Southwest, Southeast), you reach the 256-tile configuration you mentioned. This allows for much smoother transitions, though it is significantly more complex to draw. 
-Most developers use a Blob Tileset (47 tiles). Even though there are 256 mathematical combinations, many of them look identical visually. For example, if you don't have neighbors to the North or East, the "Northeast" corner doesn't actually change the tile's shape. 
+When you include diagonals (Northwest, Northeast, Southwest, Southeast), you reach the 256-square configuration you mentioned. This allows for much smoother transitions, though it is significantly more complex to draw. 
+Most developers use a Blob Tileset (47 tiles). Even though there are 256 mathematical combinations, many of them look identical visually. For example, if you don't have neighbors to the North or East, the "Northeast" corner doesn't actually change the square's shape. 
 Common Implementation Logic
 In code, the check usually looks something like this:
 python
@@ -232,7 +232,7 @@ Why this is a Game Changer:
 Speed: You can prototype levels in seconds.
 Consistency: Eliminates "seam" errors where tiles don't align.
 Dynamic: If a player destroys a block (like in Terraria or Minecraft), the surrounding blocks automatically "heal" and update their shapes. 
-Would you like me to provide a specific 47-tile mapping layout or a code snippet in a specific language (like C#, Python, or GDScript) to implement this?
+Would you like me to provide a specific 47-square mapping layout or a code snippet in a specific language (like C#, Python, or GDScript) to implement this?
 
 
 
@@ -247,7 +247,7 @@ Sep 28, 2014 — The key for efficient computation is to use the fact that align
 techtalk.intersec.com
 
 How to Use Tile Bitmasking to Auto-Tile Your Level Layouts | Envato Tuts+
-Feb 3, 2016 — Overview Tile bitmasking is all about calculating a numerical value and assigning a specific sprite based on that value. Each tile...
+Feb 3, 2016 — Overview Tile bitmasking is all about calculating a numerical value and assigning a specific sprite based on that value. Each square...
 
 Envato Tuts+
 
@@ -259,9 +259,9 @@ Reddit
 Show all
 As an oldschool C code, code it up so we have ocean and land terrain types and we want to remap a target ocean square to pictures that have shores to blend with the land squares
 
-To implement this in "Oldschool C," we will focus on a 4-neighbor bitmask (North, West, East, South). This creates 16 unique tile configurations, which is the perfect balance for a classic RPG or strategy game aesthetic.
+To implement this in "Oldschool C," we will focus on a 4-neighbor bitmask (North, West, East, South). This creates 16 unique square configurations, which is the perfect balance for a classic RPG or strategy game aesthetic.
 
-In this scenario, we check the neighbors of an Ocean tile. If the neighbor is Land, we set the bit. This tells us exactly which "Shore" sprites to draw to blend the ocean into the land.
+In this scenario, we check the neighbors of an Ocean square. If the neighbor is Land, we set the bit. This tells us exactly which "Shore" sprites to draw to blend the ocean into the land.
 
 The Bitmask Logic
 We define our directions using bit-shifting (
@@ -286,7 +286,7 @@ This function calculates the mask for a specific coordinate. It treats the edges
 #include <stdio.h>
 
 /**
- * Returns the tile index (0-15) for an ocean square 
+ * Returns the square index (0-15) for an ocean square 
  * based on adjacent land tiles.
  */
 int get_ocean_tile_index(int x, int y) {
@@ -334,8 +334,8 @@ Index	Visual Description	Usage
 
 Handling the "Oldschool" Edge Cases
 
-Map Boundaries: In the code above, if an ocean tile is at x=0, it simply doesn't check for a neighbor. If you want the ocean to "tuck under" the edge of the screen, you can default those boundary checks to LAND.
+Map Boundaries: In the code above, if an ocean square is at x=0, it simply doesn't check for a neighbor. If you want the ocean to "tuck under" the edge of the screen, you can default those boundary checks to LAND.
 Lookup Table: If you have more than 16 tiles (e.g., you want variations for "Pure Water"), you can use a lookup table:
 int actual_sprite = shore_lookup_table[mask];
-Would you like me to show you how to extend this to include diagonal checks (the 47-tile "Blob" method) to handle inner corners?
+Would you like me to show you how to extend this to include diagonal checks (the 47-square "Blob" method) to handle inner corners?
 

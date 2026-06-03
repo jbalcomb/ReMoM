@@ -56,7 +56,7 @@ char cityname_lbx_file__ovr143[] = "CITYNAME";
 // drake178: TILE_MakeVolcano()
 // MoO2  DNE, but "...generate..." // "...set..."
 /*
-; turns the tile into a volcano, adjusting the flow of
+; turns the square into a volcano, adjusting the flow of
 ; adjacent tiles accordingly
 ;
 ; BUG: does not update movement costs (fixed in the TERRSTAT patch)
@@ -75,7 +75,7 @@ void Set_Terrain_Type_Volcano_With_Owner(int16_t wx, int16_t wy, int16_t wp, int
     *(_map_square_terrain_specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx) &= 0x2F;  /* 0b00101111  clears bits 5,7,8 ...keeps TS_WILDGAME? */
     *(_map_square_terrain_specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx) = 0;
 
-    // ; attempts to generate a new mineral type terrain special on the tile with a 20% chance
+    // ; attempts to generate a new mineral type terrain special on the square with a 20% chance
     // ; BUG: clears the result after setting it
     // SPELLY  TILE_GenerateOre(wx, wy, wp);
 
@@ -178,7 +178,7 @@ static void Set_Terrain_Type_Desert(int16_t wx, int16_t wy, int16_t wp)
 // WZD o143p06
 // drake178: TILE_MakeMountain()
 /*
-; turns the tile into a mountain, adjusting the flow of adjacent tiles accordingly
+; turns the square into a mountain, adjusting the flow of adjacent tiles accordingly
 ; BUG: does not update movement costs (fixed in the TERRSTAT patch)
 */
 void Set_Terrain_Type_Mountain(int16_t wx, int16_t wy, int16_t wp)
@@ -361,7 +361,7 @@ int16_t EVNT_FindNewMineral__STUB(int16_t player_idx, int16_t * wx, int16_t * wy
 // WZD o143p15
 // drake178: TILE_ReplaceMinerals()
 /*
-; removes all minerals from the tile, replacing them
+; removes all minerals from the square, replacing them
 ; with the passed one, but leaving Wild Games and
 ; Nightshades intact
 */
@@ -377,9 +377,9 @@ void TILE_ReplaceMinerals__STUB(int16_t wx, int16_t wy, int16_t wp, int16_t tera
 // WZD o143p16
 // drake178: TILE_RemoveMinerals()
 /*
-; removes any minerals from the selected tile (but not
+; removes any minerals from the selected square (but not
 ; Wild Game or Nightshade)
-; returns the new terrain special flags for the tile
+; returns the new terrain special flags for the square
 */
 /*
     clears the low-nibble of _map_square_terrain_specials[]

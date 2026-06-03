@@ -73,7 +73,7 @@ int16_t * m_movement_path_grid_cell_index;
     for(itr = 0; itr < COMBAT_GRID_CELL_COUNT; itr++) { _cmbt_path_data[itr] = itr; } \
     /* distance array */ \
     for(itr = 0; itr < COMBAT_GRID_CELL_COUNT; itr++) { _cmbt_mvpth_c[itr] = (uint8_t)INF; } \
-    /* Set the starting tile cost to 0, which "ignites" the flood fill */ \
+    /* Set the starting square cost to 0, which "ignites" the flood fill */ \
     _cmbt_mvpth_c[((source_cgy * COMBAT_GRID_WIDTH) + source_cgx)] = (uint8_t)0; \
 }
 
@@ -134,7 +134,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
 
     movement_path_grid_cell_count = 0;
 
-    /* 1. Bail out early if the destination is an illegal/impassable tile */
+    /* 1. Bail out early if the destination is an illegal/impassable square */
     if (_cmbt_movepath_cost_map[dst_idx] == INF) {
         return; 
     }
@@ -217,7 +217,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
     for (itr = 0; itr < movement_path_grid_cell_count; itr++) {
         /* Calculate the backwards index: (Count - 1) - Current Iteration */
         reversed_idx = (movement_path_grid_cell_count - 1) - itr;
-        /* Grab the 1D tile index from our hijacked buffer */
+        /* Grab the 1D square index from our hijacked buffer */
         map_idx = m_movement_path_grid_cell_index[reversed_idx];
         path_cgx = map_idx % COMBAT_GRID_WIDTH;  // NOTE: in assembly, these could have been one idiv operation for the division and the modulo, which could be considered proof that this was C code, not Assembly
         path_cgy = map_idx / COMBAT_GRID_WIDTH;
@@ -305,23 +305,23 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
         for (itr2_x = 0; itr2_x < COMBAT_GRID_CELL_WIDTH; itr2_x++) {
             ctr = (itr2_y * COMBAT_GRID_CELL_WIDTH) + itr2_x;
             
-            /* Default this tile to "Unreachable" */
+            /* Default this square to "Unreachable" */
             _cmbt_path_data[ctr] = ST_FALSE;
 
-            /* If the flood fill ever reached this tile... */
+            /* If the flood fill ever reached this square... */
             if (_cmbt_mvpth_c[ctr] != INF) {
                 
                 move_cost = _cmbt_movepath_cost_map[ctr];
                 
                 /* Subtract the final step's terrain cost to find out how many 
-                   movement points it took to reach the edge of this tile */
+                   movement points it took to reach the edge of this square */
                 get_to_cost = _cmbt_mvpth_c[ctr] - move_cost;
 
                 /* If our remaining movement points are strictly GREATER than the cost 
                    to get there, we can step into it! */
                 // ...player-friendly mechanic...
                 if (moves2 > get_to_cost) {
-                    /* Mark the tile as "Reachable" (Draw the blue highlight here) */
+                    /* Mark the square as "Reachable" (Draw the blue highlight here) */
                     _cmbt_path_data[ctr] = ST_TRUE;
                 }
             }

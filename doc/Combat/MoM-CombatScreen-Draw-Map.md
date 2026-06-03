@@ -59,7 +59,7 @@ Trees, Rocks, Structures, StoneWall, DarkWall, FireWall, Vortices, UnitCurse, Pr
 
 ; draws the combat map into the current draw frame,
 ; starting with the background saved in VGA frame 3,
-; and drawing all tile animations, roads, and combat
+; and drawing all square animations, roads, and combat
 ; entities on top of that; includes the bottom UI
 ; background, but not the actual controls
 
@@ -69,7 +69,7 @@ Trees, Rocks, Structures, StoneWall, DarkWall, FireWall, Vortices, UnitCurse, Pr
 // drake178: CMB_Terrain_Init()
 /*
 ; sets the terrain and map-related combat variables
-; into the battlefield structure, loads the combat tile
+; into the battlefield structure, loads the combat square
 ; images, generates the combat map, and then draws the
 ; background, saving it into VGA frame 3
 ;

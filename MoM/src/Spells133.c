@@ -1634,7 +1634,7 @@ void Vortex_Combat_Round(void)
 // drake178: CMB_VortexMovement()
 /*
 ; moves a Magic Vortex from its current location to the
-; target tile using an 8-step animation, processing its
+; target square using an 8-step animation, processing its
 ; damage after reaching the destination
 ; prev coordinates are set to / used as next ones for
 ; the duration of the movement

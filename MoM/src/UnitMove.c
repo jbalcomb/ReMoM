@@ -1195,7 +1195,7 @@ void Cache_AI_Move_Path(int16_t player_idx, int16_t src_wx, int16_t src_wy, int1
     path_ptr->wp = plane;
     path_ptr->length = dst_idx - src_idx;
 
-    /* Copy the step coordinates and costs (skipping the source tile itself) */
+    /* Copy the step coordinates and costs (skipping the source square itself) */
     memcpy(path_ptr->wx_array,   &wx_array[src_idx + 1],   path_ptr->length);
     memcpy(path_ptr->wy_array,   &wy_array[src_idx + 1],   path_ptr->length);
     memcpy(path_ptr->cost_array, &cost_array[src_idx + 1], path_ptr->length);

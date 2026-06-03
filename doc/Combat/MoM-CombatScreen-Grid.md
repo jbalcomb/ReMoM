@@ -388,7 +388,7 @@ screen x {0,...,319} / 32 = {0,...,9.96875}
 
 
 
-the first drawn combat grid terrain is a half-height, half-width tile
+the first drawn combat grid terrain is a half-height, half-width square
 the screen x,y have to be -(WIDTH / 2) and -(HEIGHT / 2)
 
 

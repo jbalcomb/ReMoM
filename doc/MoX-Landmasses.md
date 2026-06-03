@@ -83,8 +83,8 @@ void TILE_SetLandMass__WIP(int16_t wp, int16_t wx, int16_t wy)
 
 Landmass_ID_Array
     Its intended role is a local scratch list of neighboring landmass IDs.
-    In MAPGEN.c:2862, the function scans the center tile plus 8 neighbors and pushes each non-zero landmass ID into Landmass_ID_Array.
+    In MAPGEN.c:2862, the function scans the center square plus 8 neighbors and pushes each non-zero landmass ID into Landmass_ID_Array.
     That lets the routine:
-        decide whether the current tile should join an existing landmass or start a new one, and
+        decide whether the current square should join an existing landmass or start a new one, and
         detect conflicting adjacent IDs and merge them into one (the first found ID).
     So the array is basically the temporary set of adjacent continent labels used for consolidation logic.

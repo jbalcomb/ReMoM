@@ -621,7 +621,7 @@ SAMB_ptr node_auras_seg[5];               // ; array of 5 reserved EMM header po
 // WZD dseg:CB8E                                                                                         ; single-loaded image, called "lumber camp" in the file
 
 // WZD dseg:CB90
-SAMB_ptr Warp_Node_WorkArea;                // ; used to save and manipulate the tile graphics to ; display the warp node effect
+SAMB_ptr Warp_Node_WorkArea;                // ; used to save and manipulate the square graphics to ; display the warp node effect
 
 
 // WZD dseg:CB92
@@ -1818,7 +1818,7 @@ g_dbg_fields_trace = 1;
                             Deactivate_Help_List();
                             target_world_x = (int16_t)(_main_map_grid_x * SQUARE_WIDTH);
                             target_world_y = (int16_t)(MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
-                            // ; displays and processes the outpost screen - if the view type is 1, the header calls for naming the new outpost and does not display the units on the tile
+                            // ; displays and processes the outpost screen - if the view type is 1, the header calls for naming the new outpost and does not display the units on the square
                             // ; BUG: fails to draw the altered backgrounds of the Gaia's Blessing, Flying Fortress, Famine, and Cursed Lands enchantments
                             Outpost_Screen(ST_FALSE);
                             Assign_Auto_Function(Main_Screen_Draw, 1);
@@ -2680,7 +2680,7 @@ int16_t o62p01_empty_function(int16_t player_idx)
 // WZD o62p02
 /*
 //drake178
-builds a stack from the units on the tile, selects
+builds a stack from the units on the square, selects
 the one with the highest draw priority that can move
 as the current unit, brings the stack into view, sets
 in_tower flags, calculates GUI_ExtraUnitAction and,
@@ -6004,7 +6004,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
                 // ; duration of the movement "animation"
                 // TODO  RP_OVL_DrawCities2(0, 20, 12, 10, *map_x, *map_y, map_p);
                 // ; draws cities into the current draw segment based on
-                // ; the specified map parameters, unless the tile they
+                // ; the specified map parameters, unless the square they
                 // ; are on is unscouted
                 // ;
                 // ; byte-identical to OVL_DrawCities without the city
@@ -6060,7 +6060,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 ; enemy armies are passable if visible relations are
 ; below -60 and their stack size is equal or smaller
 ;
-; contains some weird transport-related tile enablers,
+; contains some weird transport-related square enablers,
 */
 void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider_count, int16_t troop_count, int16_t wp, int16_t player_idx, int16_t dst_wx, int16_t dst_wy, int16_t src_wx, int16_t src_wy)
 {

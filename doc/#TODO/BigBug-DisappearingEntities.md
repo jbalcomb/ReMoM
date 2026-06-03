@@ -131,7 +131,7 @@ if(city_in_view == ST_TRUE)
 {
     SET_MAP_ENTITY(entity_mx, entity_my, (itr_cities + MAX_UNIT_COUNT));
 }
-Cities are placed unconditionally — they overwrite whatever unit was in that cell. So if an enemy unit is on a city tile, the city overwrites it. But the draw code at line 3072 only draws entities with unit_idx < MAX_UNIT_COUNT. Cities (idx >= MAX_UNIT_COUNT) are drawn separately. That's fine.
+Cities are placed unconditionally — they overwrite whatever unit was in that cell. So if an enemy unit is on a city square, the city overwrites it. But the draw code at line 3072 only draws entities with unit_idx < MAX_UNIT_COUNT. Cities (idx >= MAX_UNIT_COUNT) are drawn separately. That's fine.
 
 But wait — the city loop runs AFTER the unit loop. So if an enemy stack is on a square that also has a city, the city index overwrites the unit index, and then the draw code skips it because unit_idx >= MAX_UNIT_COUNT. The city draws separately, but the enemy unit is lost. That seems like it could be the original game's behavior though.
 
@@ -707,7 +707,7 @@ When drawn (flag > 3 or == -1), line 632: if(draw_active_stack_flag != -1) — t
 
 When draw_active_stack_flag == -1 (always-draw), line 632 is FALSE, so Draw_Unit_Picture is NOT called here. Instead, the active stack was placed in entities_on_movement_map (because flag == -1 at line 796), so it gets drawn by Draw_Map_Units.
 
-This is the documented BUG at line 583: "contains a BUG that may unintentionally draw the stack over other units/cities already on the tile when always draw (-1) is set."
+This is the documented BUG at line 583: "contains a BUG that may unintentionally draw the stack over other units/cities already on the square when always draw (-1) is set."
 
 But the user's issue is stacks NOT being drawn. So:
 

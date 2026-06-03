@@ -58,7 +58,7 @@ When a melder is sitting on a node owned by another wizard (or by no one) and ge
 
 **Production state of the downstream pathway.** The AI dispatch chain reaches `STK_DoMeldWithNode` end-to-end in current production:
 - AIDUDES per-turn AI processing reaches [SETTLE.c:162](../../MoM/src/SETTLE.c#L162) — `case us_Meld:` dispatches to `AI_UNIT_Meld(unit_idx)`.
-- `AI_UNIT_Meld` at [SETTLE.c:224](../../MoM/src/SETTLE.c#L224) checks `Finished`, gathers the on-tile stack via `Player_Army_At_Square`, calls `STK_DoMeldWithNode`, then sets every gathered troop's status to `us_Ready` (drake178-flagged OGBUG that overwrites busy statuses).
+- `AI_UNIT_Meld` at [SETTLE.c:224](../../MoM/src/SETTLE.c#L224) checks `Finished`, gathers the on-square stack via `Player_Army_At_Square`, calls `STK_DoMeldWithNode`, then sets every gathered troop's status to `us_Ready` (drake178-flagged OGBUG that overwrites busy statuses).
 - `STK_DoMeldWithNode` at [UNITSTK.c:1681](../../MoM/src/UNITSTK.c#L1681) handles `Can_Meld` (own, no owner, or Guardian-Spirit 25% roll), then `_NODES[node_idx].owner_idx = unit_owner;` and `Kill_Unit(melder_unit_idx, 1);`. Reached via both the human special-action UI path AND the AI `us_Meld` Status dispatch.
 
 So in current production: `AI_Stacks_Do_Meld` → `AI_Stacks_Order_Meld` → `Status = us_Meld` → next turn → `AI_UNIT_Meld(unit_idx)` → `STK_DoMeldWithNode` → node-ownership flip + spirit kill. The strategic-intent dispatcher and the execution machinery are now wired together.
@@ -119,7 +119,7 @@ void AI_Stacks_Order_Meld(int16_t unit_idx, int16_t unit_list_idx, int16_t list_
 
 `AI_Stacks_Do_Meld` callers:
 - [AIMOVE.c:290](../../MoM/src/AIMOVE.c#L290) — **slot 4** of per-landmass dispatch inside [`AI_Set_Unit_Orders`](AIMOVE-AI_Set_Unit_Orders.md). Runs once per (player, plane, landmass).
-- [AIMOVE.c:1139](../../MoM/src/AIMOVE.c#L1139) — **Phase 4** of [`AI_Stacks_Ocean_Landmass_Orders`](AIMOVE-AI_Stacks_Ocean_Landmass_Orders.md) (out-of-band; called per (player, plane) after the inner per-landmass loop). The out-of-band call is non-obvious — melders normally meld land nodes, but here `_ai_own_stack_*` describes ocean stacks. Possibly a defensive sweep for melders that wandered onto ocean tiles. Worth investigating during a future ocean-tile-melder scenario.
+- [AIMOVE.c:1139](../../MoM/src/AIMOVE.c#L1139) — **Phase 4** of [`AI_Stacks_Ocean_Landmass_Orders`](AIMOVE-AI_Stacks_Ocean_Landmass_Orders.md) (out-of-band; called per (player, plane) after the inner per-landmass loop). The out-of-band call is non-obvious — melders normally meld land nodes, but here `_ai_own_stack_*` describes ocean stacks. Possibly a defensive sweep for melders that wandered onto ocean tiles. Worth investigating during a future ocean-square-melder scenario.
 
 `AI_Stacks_Order_Meld` callers:
 - [AIMOVE.c:4044](../../MoM/src/AIMOVE.c#L4044) — only called from `AI_Stacks_Do_Meld` Phase 4a.
@@ -269,14 +269,14 @@ for(itr_nodes = 0; itr_nodes < NUM_NODES; itr_nodes++)
 
 **Phase 3a — Per-node filter** (lines 3980-3984): take the node only if (a) it's on the unit's plane and (b) it's NOT already owned by this player (so a node we already control is skipped — no point re-melding).
 
-**Phase 3b — `AI_TARGET_SITE` gate** (line 3990): the node tile must be flagged `AI_TARGET_SITE` (`0x8000`) in `g_ai_evaluation_map`. This is the strategic-value flag set during continent evaluation. Nodes that aren't strategically interesting (already-secured nodes far from the front, isolated, etc.) get filtered out here.
+**Phase 3b — `AI_TARGET_SITE` gate** (line 3990): the node square must be flagged `AI_TARGET_SITE` (`0x8000`) in `g_ai_evaluation_map`. This is the strategic-value flag set during continent evaluation. Nodes that aren't strategically interesting (already-secured nodes far from the front, isolated, etc.) get filtered out here.
 
-**Phase 3c — Defender scan** (lines 3996-4010): scan `_UNITS[]` to see if any own unit is already AT the node's tile. Sets `node_is_garrisoned`. **Quirk:** no early-break — keeps scanning all 1000 units even after a match. OG-faithful (asm 168-211 confirms same lack of break). Wasted CPU, no behavioral impact.
+**Phase 3c — Defender scan** (lines 3996-4010): scan `_UNITS[]` to see if any own unit is already AT the node's square. Sets `node_is_garrisoned`. **Quirk:** no early-break — keeps scanning all 1000 units even after a match. OG-faithful (asm 168-211 confirms same lack of break). Wasted CPU, no behavioral impact.
 
 **Phase 3d — Landmass-type filter + distance scoring** (lines 4012-4026): accept the node iff the landmass containing it is one of:
 - `lmt_Own` (we control it) — meld at home is safe
 - `>= lmt_Leaveable` (5 or 6 — `lmt_Leaveable` or `lmt_NoTargets`) — we're done with the landmass for combat, free to meld
-- We have a garrison on the node tile already (`node_is_garrisoned == TRUE`) — safe regardless of landmass type
+- We have a garrison on the node square already (`node_is_garrisoned == TRUE`) — safe regardless of landmass type
 
 **Skipped landmasses:** `lmt_Unevaluated` (0), `lmt_Contested` (2), `lmt_NoOwnCity` (3), `lmt_NoOwnCityAndAllyHasCity` (4). Don't waste melders on landmasses where war is active or we have no foothold (unless we already garrisoned the node itself).
 
@@ -350,7 +350,7 @@ GEMINI adds no behavioral information. Safe to delete on done-done.
 |---|---|---|---|
 | B1 | [Line 3960](../../MoM/src/AIMOVE.c#L3960) | `AI_Stacks_Do_Meld` Phase 2 first early-continue gate evaluates `_UNITS[unit_idx].type` before the ST_UNDEFINED check on line 3964. When `unit_idx == -1` (consumed slot), reads `_UNITS[-1].type` (OOB). drake178 OGBUG comment inline at line 3959. **IDA-confirmed OG-faithful** (asm 60-63). | OGBUG-faithful; OOB read (mostly harmless — the random byte usually misses `UA_MELD` and the first gate continues) |
 | B2 | [Lines 3996-4010](../../MoM/src/AIMOVE.c#L3996-L4010) | `AI_Stacks_Do_Meld` Phase 3c defender-scan has no early-break — keeps scanning all `_units` even after a match. IDA-confirmed OG-faithful (asm 168-211). | OGBUG-faithful; wasted CPU only |
-| B-quirk | [Out-of-band call from Ocean_Landmass_Orders Phase 4](../../MoM/src/AIMOVE.c#L1139) | `AI_Stacks_Do_Meld` called per (player, plane) after the inner per-landmass loop, on the OCEAN stack-rebuild context. Melders normally meld land nodes; running this against ocean-stack data is non-obvious. drake178 didn't comment. Worth investigating during the future ocean-tile-melder scenario. | Behavioral; semantically dubious but not obviously buggy |
+| B-quirk | [Out-of-band call from Ocean_Landmass_Orders Phase 4](../../MoM/src/AIMOVE.c#L1139) | `AI_Stacks_Do_Meld` called per (player, plane) after the inner per-landmass loop, on the OCEAN stack-rebuild context. Melders normally meld land nodes; running this against ocean-stack data is non-obvious. drake178 didn't comment. Worth investigating during the future ocean-square-melder scenario. | Behavioral; semantically dubious but not obviously buggy |
 
 `AI_Stacks_Order_Meld` is OGBUG-clean — bounds check is correct, no OOB, no behavioral surprises.
 

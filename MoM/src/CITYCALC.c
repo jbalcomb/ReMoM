@@ -1453,8 +1453,8 @@ void Make_Road(int16_t wx, int16_t wy, int16_t wp)
 // WZD o142p02
 // drake178: TILE_EnchantRoad()
 /*
-; changes a regular road on a tile to an enchanted one,
-; or does nothing if there is no road on the tile
+; changes a regular road on a square to an enchanted one,
+; or does nothing if there is no road on the square
 */
 /*
     changes a normal road to an enchant road
@@ -1496,8 +1496,8 @@ void Make_Road_Enchanted(int16_t wx, int16_t wy, int16_t wp)
 /*
 ; Legacy Development function, can be removed
 ;
-; would update some aspect of some resource on a tile
-; by tile basis with no return value
+; would update some aspect of some resource on a square
+; by square basis with no return value
 */
 void o142p03_empty_function(int16_t wx, int16_t wy, int16_t wp)
 {
@@ -1510,7 +1510,7 @@ void o142p03_empty_function(int16_t wx, int16_t wy, int16_t wp)
 ; Legacy Development function, can be removed
 ;
 ; would update some aspect of some resource on every
-; tile of every catchment area (including corners)
+; square of every catchment area (including corners)
 */
 void NOOP_Current_Player_All_City_Areas(void)
 {
@@ -1668,15 +1668,15 @@ int16_t City_Food_WildGame(int16_t city_idx)
  * bottom rows (x offsets -1..+1 when y offset is -2 or +2).
  *
  * Vertical bounds are clamped by skipping rows outside the world height.
- * Horizontal coordinates wrap around world edges. Each candidate tile is
+ * Horizontal coordinates wrap around world edges. Each candidate square is
  * checked against map-square flags for MSF_CORRUPTION; only non-corrupted
  * tiles are emitted into the output arrays.
  *
  * @param city_wx City center world X coordinate.
  * @param city_wy City center world Y coordinate.
  * @param city_wp World plane index containing the city.
- * @param wx_array Output array for accepted tile X coordinates.
- * @param wy_array Output array for accepted tile Y coordinates.
+ * @param wx_array Output array for accepted square X coordinates.
+ * @param wy_array Output array for accepted square Y coordinates.
  *
  * @return Number of usable catchment tiles written to the output arrays.
  *
@@ -1884,7 +1884,7 @@ int16_t City_Food_Production(int16_t city_idx)
 // drake178: CTY_GetMaxPop()
 /*
 ; returns the city's maximum population (without cap),
-; based on tile food, gaia's blessing, famine,
+; based on square food, gaia's blessing, famine,
 ; granary, and farmer's market
 */
 /*
@@ -3718,7 +3718,7 @@ int16_t City_Rebel_Count(int16_t city_idx)
 // WZD o142p28
 // drake178: TILE_Survey()
 /*
-; surveys the selected tile, filling out the variables
+; surveys the selected square, filling out the variables
 ; at the return pointer locations
 ; contains one bug that miscalculates wild game food
 ; when looking to settle (marked)

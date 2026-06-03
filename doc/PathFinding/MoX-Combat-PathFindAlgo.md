@@ -14,11 +14,11 @@ BELLMANFORD(s)
                 RELAX(u -> v)
 ```
 Your assembly block maps to this textbook pseudocode line-for-line:
-1. INITSSSP(s): The assembly block starting at loc_E2A21 loops through the entire grid and sets every tile's distance to e_INF (Infinity). It then manually sets the starting coordinate (source_cgx, source_cgy) to 0.
+1. INITSSSP(s): The assembly block starting at loc_E2A21 loops through the entire grid and sets every square's distance to e_INF (Infinity). It then manually sets the starting coordinate (source_cgx, source_cgy) to 0.
 2. while there is at least one tense edge: Look at the variable Map_Changed (which is named unstable in the second function). At the start of every massive grid sweep (loc_E2A51), the engine sets Map_Changed = e_ST_FALSE. If the algorithm finishes scanning the entire 21x22 grid and Map_Changed is still false, it breaks out of the loop and finishes.
-3. for every edge u -> v: The assembly uses CMB_AdjacentOffsets to check the neighbors (the edges) of whatever tile it is currently standing on.
-4. if u -> v is tense: The assembly calculates the potential_path_cost. It then uses a cmp (compare) instruction to see if this new cost is strictly less than the currently saved cost. If the saved cost is lower (jbe - jump if below or equal), it skips to the next tile.
-5. RELAX(u -> v): If the edge is tense, the assembly updates the tile's cost, writes the breadcrumb into _cmbt_path_data, and critically, executes mov [bp+Map_Changed], e_ST_TRUE to ensure the massive while loop runs at least one more time.
+3. for every edge u -> v: The assembly uses CMB_AdjacentOffsets to check the neighbors (the edges) of whatever square it is currently standing on.
+4. if u -> v is tense: The assembly calculates the potential_path_cost. It then uses a cmp (compare) instruction to see if this new cost is strictly less than the currently saved cost. If the saved cost is lower (jbe - jump if below or equal), it skips to the next square.
+5. RELAX(u -> v): If the edge is tense, the assembly updates the square's cost, writes the breadcrumb into _cmbt_path_data, and critically, executes mov [bp+Map_Changed], e_ST_TRUE to ensure the massive while loop runs at least one more time.
 
 https://stackoverflow.com/questions/28857918/bellman-ford-algorithm-explanation
 https://stackoverflow.com/questions/65166477/bellman-ford-implementation-and-simultaneously-relaxation

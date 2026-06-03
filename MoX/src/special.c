@@ -4,9 +4,9 @@
  *
  * Provides low-level helper routines used by map and movement systems,
  * including range/distance estimation, wrapped X-axis distance handling,
- * and Bresenham-style tile-path generation with wrap correction.
+ * and Bresenham-style square-path generation with wrap correction.
  *
- * Key routine `Path_Wrap()` generates a tile-by-tile route between two map
+ * Key routine `Path_Wrap()` generates a square-by-square route between two map
  * coordinates, writes the route into X/Y output buffers, and returns the
  * number of generated steps.
  *
@@ -322,11 +322,11 @@ mov     [bp+error_term], ax
 
 */
 /*
-; plots a "line" between two tile coordinates using
+; plots a "line" between two square coordinates using
 ; Bresenham's line-drawing algorithm, putting the X and
 ; Y coordinates of the resulting array of tiles into
 ; two separate return (byte) arrays
-; returns the length of the array (tile distance)
+; returns the length of the array (square distance)
 */
 /*
 
@@ -334,7 +334,7 @@ TODO  double check MoO2 if "MAP_X" was what should have been used here instead o
 
 */
 /**
- * @brief Plots a wrapped tile path between two map coordinates.
+ * @brief Plots a wrapped square path between two map coordinates.
  *
  * @details
  * Generates a stepwise line from `(x1, y1)` to `(x2, y2)` using a
@@ -343,7 +343,7 @@ TODO  double check MoO2 if "MAP_X" was what should have been used here instead o
  * direction when appropriate.
  *
  * Generated path coordinates are written in order to `path_string_x` and
- * `path_string_y`, one entry per step, excluding the start tile and including
+ * `path_string_y`, one entry per step, excluding the start square and including
  * each traversed intermediate/endpoint step.
  *
  * @param x1 Start X coordinate.

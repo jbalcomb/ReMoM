@@ -36,13 +36,13 @@ world map square for picking up a stack, dropping a stack off, or collecting uni
 drake178:
     CONTX_1stLoadTs, CONTX_LoadTChain, CONTX_LoadTileYs, CONTX_LoadTileXs
     CONTX_FirstTiles, CONTX_TileChain, CONTX_TileYs, CONTX_TileXs
-    "T" for "tile", AKA "sqaure"
+    "T" for "square", AKA "sqaure"
     "Load" as in load a transport, not sure if he meant load and unload
 CLAUDE:
     "coastal landing tiles"
 GEMINI:
     AI Naval Pathfinding and Amphibious Assaults.
-    ...this function sweeps the entire globe and builds an optimized Linked List of every single coastal tile, grouped by continent
+    ...this function sweeps the entire globe and builds an optimized Linked List of every single coastal square, grouped by continent
 
 CONTX_1stLoadTs
 CONTX_LoadTChain
@@ -90,8 +90,8 @@ neighborhood) of any shore-terrain square.
         Because CONTX_CreateLChains pre-builds these Linked Lists, the AI's logic becomes incredibly cheap:
         The AI says: "My Swordsmen are on Continent #4."
         It looks at CONTX_1stLoadTs[0][4].
-        Instantly, it has a linked list of every single valid port/shoreline tile on Continent #4.
-        It just loops through that tiny, pre-calculated list, finds the port tile closest to the enemy continent, and issues the move order!
+        Instantly, it has a linked list of every single valid port/shoreline square on Continent #4.
+        It just loops through that tiny, pre-calculated list, finds the port square closest to the enemy continent, and issues the move order!
         This perfectly ties back to the EMM_Map_CONTXXX__WIP snippet you shared earlier. Now we know exactly what the CONTX_1stLoadTs (First Load Tiles) and CONTX_LoadTChain (Load Tile Chain) arrays are actually doing!
 
 EMM_Map_CONTXXX__WIP()

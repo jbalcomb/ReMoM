@@ -21,7 +21,7 @@ Five phases in source order:
 2. **Ferry-queue capacity accounting** — debit each `_ai_ferry_*` queue entry by the stack-slot footprint of any en-route transport heading to it; invalidate entries that now have zero/negative remaining capacity.
 3. **Ocean stack rebuild** — call [`AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp)`](AIMOVE-AI_Stacks_Init_Build_Target_Order.md) to repopulate `_ai_own_stack_*` for the OCEAN (landmass 0).
 4. **Out-of-band meld** — [`AI_Stacks_Do_Meld(player_idx)`](../../MoM/src/AIMOVE.c#L4281) (also called in per-landmass slots 4-7; running it here on the ocean-stack context is non-obvious).
-5. **Per-ocean-stack transport dispatch** — for each ocean stack containing at least one transport, classify and dispatch via a multi-branch decision tree based on (`stack_has_only_boats`, `stack_has_settler`, `stack_has_goto`) and landing-tile availability.
+5. **Per-ocean-stack transport dispatch** — for each ocean stack containing at least one transport, classify and dispatch via a multi-branch decision tree based on (`stack_has_only_boats`, `stack_has_settler`, `stack_has_goto`) and landing-square availability.
 
 Consumer of the `_ai_ferry_*` list written by [`AI_Stacks_Ferry_Add_Location`](AIMOVE-AI_Stacks_Ferry_Add_Location.md) via [`AI_Stacks_Setup_Ferry`](AIMOVE-AI_Stacks_Setup_Ferry.md)'s patient path.
 
@@ -50,12 +50,12 @@ Always called per (player, plane). No early-return gate — always runs at least
 | `_ai_own_stack_wx[s]`, `_ai_own_stack_wy[s]` | Phase 5a stack position |
 | `_ai_own_stack_unit_count[s]`, `_ai_own_stack_unit_list[s][u]` | Phase 5c/5h/5i/5j per-stack unit dispatch |
 | `_landmasses[wp*WORLD_SIZE + wy*WORLD_WIDTH + wx]` | Phase 5e adjacent-land scan; Phase 5f war-landmass match; Phase 5g settler-target match; Phase 5i/5j adjacent-ocean search |
-| `g_ai_evaluation_map[wp][wy*WORLD_WIDTH + wx]` | Phase 5e adjacent-empty-tile check; Phase 5j dock-square empty check |
+| `g_ai_evaluation_map[wp][wy*WORLD_WIDTH + wx]` | Phase 5e adjacent-empty-square check; Phase 5j dock-square empty check |
 | `_cities`, `_CITIES[c].{wp, wx, wy, owner_idx}` | Phase 5f own/allied-city presence check on adjacent landmass |
 | `_players[player_idx].Dipl.Dipl_Status[other]` | Phase 5f alliance check (`DIPL_Alliance`) |
 | `_ai_landmass_war_targets[wp][player_idx]` | Phase 5f war-target match; Phase 5j war-landing dispatch gate |
 | `_ai_landmass_settler_targets[wp][player_idx]`, `_ai_landmass_settler_targets_wx_array`, `_ai_landmass_settler_targets_wy_array` | Phase 5g settler-target match; Phase 5i settler-target dispatch |
-| `_ai_landmass_dock_squares_heads[wp][lmt_idx]`, `_ai_landmass_dock_squares_wx_array`, `_ai_landmass_dock_squares_wy_array`, `_ai_landmass_dock_squares_lists` | Phase 5j dock-square selection (linked-list head + per-tile coords + next-link) |
+| `_ai_landmass_dock_squares_heads[wp][lmt_idx]`, `_ai_landmass_dock_squares_wx_array`, `_ai_landmass_dock_squares_wy_array`, `_ai_landmass_dock_squares_lists` | Phase 5j dock-square selection (linked-list head + per-square coords + next-link) |
 | `AI_Enemy_Unit_In_Range(stack_wx, stack_wy, wp, 5, player_idx, adjacent_landmass_idx)` | Phase 5g enemy-proximity gate on settler landing |
 | `Delta_XY_With_Wrap(...)` | Toroidal distance helper (Phase 5c ferry-queue scoring, Phase 5j dock scoring) |
 | `MAX_AI_FERRIES` (= 15), `MAX_STACK` (= 9), `WORLD_WIDTH`, `WORLD_SIZE` | Constants |
@@ -77,12 +77,12 @@ int16_t Transport_Spaces[MAX_AI_FERRIES] = { 0, ... };  /* Phase 2a inited to MA
 int16_t landmass_has_own_city = 0;      /* Phase 5f adjacent-landmass own-city flag */
 int16_t landmass_has_ally_city = 0;     /* Phase 5f adjacent-landmass allied-city flag */
 int16_t stack_has_goto = 0;             /* Phase 5a flag — TRUE if any unit in stack has Status == us_GOTO (Phase 1's top-level init is dead — Phase 5a re-inits per-stack) */
-int16_t adjacent_landmass_idx = 0;      /* Phase 5e/5f/5g — landmass index of last-found adjacent land tile */
+int16_t adjacent_landmass_idx = 0;      /* Phase 5e/5f/5g — landmass index of last-found adjacent land square */
 int16_t Transport_Stack_Room = 0;       /* Phase 5c per-ferry-slot remaining capacity */
 int16_t Target_Queue_Index = 0;         /* Phase 5c selected ferry-queue entry index */
 int16_t unit_idx = 0;                   /* Phase 2b / 5a / 5c/5h/5i/5j inner unit iterator (also re-purposed as cached unit_list slot) */
 int16_t itr_list_units = 0;             /* Phase 5c/5h/5i/5j inner unit-list iterator */
-int16_t adjacent_landmass_wy = 0;       /* Phase 5e/5h target-tile y (LAND tile adjacent to stack); 5i/5j target-tile y (OCEAN tile adjacent to settler-target or dock) */
+int16_t adjacent_landmass_wy = 0;       /* Phase 5e/5h target-square y (LAND square adjacent to stack); 5i/5j target-square y (OCEAN square adjacent to settler-target or dock) */
 int16_t adjacent_landmass_wx = 0;       /* same — x */
 int16_t stack_wy = 0;                   /* Phase 5 per-stack y cache */
 int16_t stack_wx = 0;                   /* Phase 5 per-stack x cache */
@@ -121,11 +121,11 @@ Three sub-passes.
 
 #### Phase 2a — Init Transport_Spaces[] ([lines 1157-1161](../../MoM/src/AIMOVE.c#L1157-L1161))
 
-Treats every ferry-queue entry as starting with `MAX_STACK = 9` stack-slot capacity at its pickup tile.
+Treats every ferry-queue entry as starting with `MAX_STACK = 9` stack-slot capacity at its pickup square.
 
 #### Phase 2b — Debit per en-route unit ([lines 1162-1193](../../MoM/src/AIMOVE.c#L1162-L1193))
 
-For each own-plane us_GOTO unit whose destination matches a valid `_ai_ferry_*` pickup coord, debit `Transport_Spaces[ferry_idx]` by `(Transport + 1)`. The `+1` accounts for the transport's own stack slot at the pickup tile.
+For each own-plane us_GOTO unit whose destination matches a valid `_ai_ferry_*` pickup coord, debit `Transport_Spaces[ferry_idx]` by `(Transport + 1)`. The `+1` accounts for the transport's own stack slot at the pickup square.
 
 **B1 (drake178 OGBUG comment inline at line 1188):** the debit uses `_UNITS[itr1].type` where `itr1` is the FERRY-QUEUE iterator (0..14), not the unit iterator `itr2`. **IDA-confirmed OG-faithful** (asm 122-139: `mov ax, _DI_itr1` — uses itr1 directly). Net OG behavior: decrement by 1 per matching en-route unit (since `_UNITS[0..14].type.Transport` is almost always 0).
 
@@ -293,7 +293,7 @@ The mixed-stack branch is `else` of 5c, and the early-`continue` here fires if a
 
 ---
 
-#### Phase 5e — Scan adjacent for a LAND tile ([lines 1318-1343](../../MoM/src/AIMOVE.c#L1318-L1343))
+#### Phase 5e — Scan adjacent for a LAND square ([lines 1318-1343](../../MoM/src/AIMOVE.c#L1318-L1343))
 
 ```c
 adjacent_landmass_wx = 0;
@@ -317,7 +317,7 @@ for(wy_offset = -1; wy_offset < 2; wy_offset++)
 }
 ```
 
-3x3 search around the stack. Looking for a LAND tile (`_landmasses != 0`) that is also empty per the eval map. If found, capture coords and set `Landing_Allowed = TRUE`. The variable name `adjacent_landmass_idx` now matches usage (was `Adjacent_Landmass`).
+3x3 search around the stack. Looking for a LAND square (`_landmasses != 0`) that is also empty per the eval map. If found, capture coords and set `Landing_Allowed = TRUE`. The variable name `adjacent_landmass_idx` now matches usage (was `Adjacent_Landmass`).
 
 **B7 (drake178-flagged inline at lines 1328-1330):** bad arithmetic in `g_ai_evaluation_map` access — `((stack_wy * WORLD_WIDTH) + wy_offset) + (stack_wx + wx_offset)` instead of `((stack_wy + wy_offset) * WORLD_WIDTH) + (stack_wx + wx_offset)`. Computes a different square than intended. **IDA-confirmed OG-faithful** (asm 329-338).
 
@@ -348,7 +348,7 @@ for(wy_offset = -1; wy_offset < 2; wy_offset++)
 }
 ```
 
-If a tile adjacent to the stack belongs to the main war landmass, set `Landing_Allowed = TRUE`. Otherwise, `Landing_Allowed` stays FALSE.
+If a square adjacent to the stack belongs to the main war landmass, set `Landing_Allowed = TRUE`. Otherwise, `Landing_Allowed` stays FALSE.
 
 **Check 2 — Suppress landing if own/allied city on adjacent landmass** ([lines 1373-1410](../../MoM/src/AIMOVE.c#L1373-L1410)):
 
@@ -359,7 +359,7 @@ if(Landing_Allowed == ST_FALSE)
     landmass_has_ally_city = ST_FALSE;
     for(itr1 = 0; itr1 < _cities; itr1++)
     {
-        if((_CITIES[itr1].wp == wp) && (_landmasses[_CITIES tile] == adjacent_landmass_idx))
+        if((_CITIES[itr1].wp == wp) && (_landmasses[_CITIES square] == adjacent_landmass_idx))
         {
             if(_CITIES[itr1].owner_idx == player_idx)         { landmass_has_own_city = ST_TRUE; }
             else if(_players[player_idx].Dipl.Dipl_Status[_CITIES[itr1].owner_idx] == DIPL_Alliance) { landmass_has_ally_city = ST_TRUE; }
@@ -467,7 +467,7 @@ In the `else` of `Landing_Allowed == ST_TRUE`. Fires when settler-bearing stack 
 ```c
 if((stack_has_settler == ST_TRUE) && (_ai_landmass_settler_targets[wp][player_idx] != 0))
 {
-    /* Find OCEAN tile adjacent to settler-target stage point */
+    /* Find OCEAN square adjacent to settler-target stage point */
     adjacent_landmass_wx = 0;
     adjacent_landmass_wy = 0;
     for(wy_offset = -1; wy_offset < 2; wy_offset++)
@@ -491,7 +491,7 @@ if((stack_has_settler == ST_TRUE) && (_ai_landmass_settler_targets[wp][player_id
 }
 ```
 
-Settler-bearing stack that couldn't land: find an ocean tile adjacent to the settler-target landmass's stage point, route the WHOLE stack (including transports) there. `caller = 5`.
+Settler-bearing stack that couldn't land: find an ocean square adjacent to the settler-target landmass's stage point, route the WHOLE stack (including transports) there. `caller = 5`.
 
 **B12 (user OGBUG comment inline at line 1517 + dispatch-loop runs unconditionally):**
 - The `Landing_Allowed = ST_TRUE` assignment inside the inner scan is **bogus** — `Landing_Allowed` is never read after this point in the function, so the assignment has no effect. drake-style c&p artifact. **IDA-confirmed OG-faithful** (asm 830: `mov [bp+Landing_Allowed], e_ST_TRUE` — preserved).
@@ -555,7 +555,7 @@ Route the WHOLE stack toward the closest empty dock square on the main war landm
 **Three sub-steps:**
 
 1. **Pick closest empty dock square** — walk the dock-list chain (head from `_ai_landmass_dock_squares_heads[wp][war_landmass]`, advance via `_ai_landmass_dock_squares_lists[wp][cursor]`), compute distance for each, take the closest one that's empty per the eval map.
-2. **Find adjacent ocean tile** — 3x3 around the target dock square; capture coords of any OCEAN tile.
+2. **Find adjacent ocean square** — 3x3 around the target dock square; capture coords of any OCEAN square.
 3. **Dispatch all units in the stack** — GOTO with `caller = 6`.
 
 ## Bug catalog
@@ -565,11 +565,11 @@ All remaining entries are OG-faithful OGBUGs preserved per [feedback_faithful_da
 | # | Where | Issue | Severity |
 |---|---|---|---|
 | B1 | [Line 1190](../../MoM/src/AIMOVE.c#L1190) | Phase 2b debits Transport_Spaces using `_UNITS[itr1].type` — `itr1` is the ferry-queue index, not the unit index. Should be `itr2`. drake178 OGBUG comment inline at line 1188. **IDA-confirmed OG-faithful** (asm 122 uses `_DI_itr1`). OG net behavior: debit by 1 per matching en-route unit, type-independent (since `_UNITS[0..14].type.Transport` is almost always 0). | OGBUG-faithful; behavioral — ferry-capacity tracking unreliable |
-| B2 | [Line 1473](../../MoM/src/AIMOVE.c#L1473) | Phase 5h lands a mixed stack: cargo → GOTO landing tile, **transports → `AI_Stacks_Order_Ferry` (writes `us_Ferry`)**. Semantically backwards. drake178 inline at line 1465: `BUG? setting ships to seek transport?`. **IDA-confirmed OG-faithful** (asm 729-735: `call AI_Order_SeekTransport`). | OGBUG-faithful; semantically suspect — `us_Ferry` on a transport may have unintended next-turn cascade |
+| B2 | [Line 1473](../../MoM/src/AIMOVE.c#L1473) | Phase 5h lands a mixed stack: cargo → GOTO landing square, **transports → `AI_Stacks_Order_Ferry` (writes `us_Ferry`)**. Semantically backwards. drake178 inline at line 1465: `BUG? setting ships to seek transport?`. **IDA-confirmed OG-faithful** (asm 729-735: `call AI_Order_SeekTransport`). | OGBUG-faithful; semantically suspect — `us_Ferry` on a transport may have unintended next-turn cascade |
 | B7 | [Lines 1328-1334](../../MoM/src/AIMOVE.c#L1328-L1334) | Phase 5e `g_ai_evaluation_map` access uses bad arithmetic: `((stack_wy * WORLD_WIDTH) + wy_offset) + (stack_wx + wx_offset)` instead of `((stack_wy + wy_offset) * WORLD_WIDTH) + (stack_wx + wx_offset)`. **IDA-confirmed OG-faithful** (asm 329-338). | OGBUG-faithful; behavioral |
 | B8 | [Lines 1332, 1361, 1423](../../MoM/src/AIMOVE.c#L1332) | Phase 5e/5f/5g 3x3 scans use unranged offsets — at world-edge stacks, indices can underflow/overflow. drake178 flagged multiple instances. **IDA-confirmed OG-faithful.** | OGBUG-faithful; behavioral edge case |
 | B11 | [Line 1468](../../MoM/src/AIMOVE.c#L1468) | Phase 5h loop dereferences `_UNITS[unit_idx].type` without `ST_UNDEFINED` check. drake178 OGBUG comment inline. **IDA-confirmed OG-faithful** (asm 712-719). If Phase 4's `AI_Stacks_Do_Meld` consumed a slot, reads `_UNITS[-1].type`. | OGBUG-faithful; potential OOB read |
-| B12 | [Lines 1517, 1521-1529](../../MoM/src/AIMOVE.c#L1517) | Phase 5i: (a) the inner-scan `Landing_Allowed = ST_TRUE` assignment is bogus (never read); (b) the dispatch loop runs unconditionally even when no ocean tile found — `adjacent_landmass_wx/wy` stay 0, stack ordered to (0, 0). **IDA-confirmed OG-faithful** (asm 830, 845-872). User OGBUG comment inline at line 1517. | OGBUG-faithful; (0,0) dispatch on rare path |
+| B12 | [Lines 1517, 1521-1529](../../MoM/src/AIMOVE.c#L1517) | Phase 5i: (a) the inner-scan `Landing_Allowed = ST_TRUE` assignment is bogus (never read); (b) the dispatch loop runs unconditionally even when no ocean square found — `adjacent_landmass_wx/wy` stay 0, stack ordered to (0, 0). **IDA-confirmed OG-faithful** (asm 830, 845-872). User OGBUG comment inline at line 1517. | OGBUG-faithful; (0,0) dispatch on rare path |
 | B-sentinel | [Line 1269 vs 1543](../../MoM/src/AIMOVE.c#L1269) | Phase 5c uses `min_delta_distance = 10000` as no-candidate sentinel; Phase 5j uses `1000`. Inconsistent. Both OG-faithful per asm. User flagged inline. | Stylistic; possibly intentional sizing for the different scan domains |
 
 ## ASCII summary
@@ -599,7 +599,7 @@ AI_Stacks_Ocean_Landmass_Orders(player_idx, wp)
        └─ else (mixed stack with cargo):
             ├─ 5d (1313-1316): if stack_has_goto → continue
             │
-            ├─ 5e (1318-1343): 3x3 scan for adjacent LAND tile  [B7 B8]
+            ├─ 5e (1318-1343): 3x3 scan for adjacent LAND square  [B7 B8]
             │
             ├─ if Landing_Allowed:
             │    ├─ 5f (1349-1411): if !stack_has_settler:
@@ -615,12 +615,12 @@ AI_Stacks_Ocean_Landmass_Orders(player_idx, wp)
             │
             └─ else (Landing_Allowed FALSE):
                  ├─ 5i (1488-1530): SETTLER-FALLBACK if stack_has_settler + settler-target
-                 │       find ocean tile adjacent to settler-target stage point
+                 │       find ocean square adjacent to settler-target stage point
                  │       all units → ...Order_Attack_Target_Or_Goto_Destination  [caller=5]
                  │                                                              [B12]
                  └─ 5j (1535-1586): WAR-LANDING (final fallback) if war-target set
                          step 1: walk dock-list chain, pick closest empty dock
-                         step 2: 3x3 find OCEAN tile adjacent to dock
+                         step 2: 3x3 find OCEAN square adjacent to dock
                          step 3: all units → ...Order_Attack_Target_Or_Goto_Destination
                                                                             [caller=6]
 ```

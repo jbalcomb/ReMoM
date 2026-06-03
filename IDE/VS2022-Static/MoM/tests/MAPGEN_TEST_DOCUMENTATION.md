@@ -31,7 +31,7 @@ Tests for `Generate_Nodes()` function.
 **Coverage:** Node generation, power distribution, plane assignment, initialization
 
 ### 3. test_Tile_Checks.cpp
-Tests for tile query functions.
+Tests for square query functions.
 
 **Test Classes:**
 - `TILE_IsOcean_test` - Tests `TILE_IsOcean()`

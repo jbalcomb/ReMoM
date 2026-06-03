@@ -75,7 +75,7 @@ int16_t Check_Square_Explored(int16_t wx, int16_t wy, int16_t wp)
 ; MoO2  Set_Planet_Explored_Flags_
 ; drake178: TILE_Explore()
 ;
-; explores a tile, and the appropriate sides or corners
+; explores a square, and the appropriate sides or corners
 ; of the neighboring tiles around it (equivalent to a
 ; scouting radius of 1)
 

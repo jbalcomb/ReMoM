@@ -238,7 +238,7 @@ if(min_delta_distance != 1000)
 }
 ```
 
-If Step B found an acceptable dock square (`min_delta_distance` lowered below 1000), tag this landmass `lmt_Leaveable` and overwrite its stage point with that dock square. The next dispatch slot will see `lmt_Leaveable` and route troops toward the embark tile.
+If Step B found an acceptable dock square (`min_delta_distance` lowered below 1000), tag this landmass `lmt_Leaveable` and overwrite its stage point with that dock square. The next dispatch slot will see `lmt_Leaveable` and route troops toward the embark square.
 
 ## Inputs / outputs
 

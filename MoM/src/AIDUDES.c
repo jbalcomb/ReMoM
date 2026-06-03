@@ -2280,8 +2280,8 @@ void EMM_Map_CONTXXX__WIP(void)
  *
  * This routine maps the temporary CONTXXX working area, clears the head and
  * next-index arrays for both planes, and then scans every world square. Each
- * non-ocean tile is appended to the array-backed linked list for its landmass,
- * with the tile's world coordinates recorded in the parallel x/y arrays and
+ * non-ocean square is appended to the array-backed linked list for its landmass,
+ * with the square's world coordinates recorded in the parallel x/y arrays and
  * the corresponding head entry initialized on first insertion.
  *
  * The resulting structure gives each nonzero landmass ID a forward chain of
@@ -2380,7 +2380,7 @@ void Build_Land_Linked_List(void)
  * routine builds one linked list per (plane, landmass) containing the land
  * squares that sit on that landmass's shoreline band.
  *
- * A square qualifies if it belongs to a real landmass and some tile in its 3x3
+ * A square qualifies if it belongs to a real landmass and some square in its 3x3
  * neighborhood is shoreline terrain. That deliberately produces a slightly
  * thicker coastal fringe than a strict "adjacent cardinal edge only" test,
  * which matches how later AI movement code treats usable embark/disembark
@@ -2411,7 +2411,7 @@ void Build_Dock_Linked_List(void)
     int16_t wx_ofst = 0;
     int16_t previous_node_idx = 0;
     int16_t landmass_idx = 0;
-    int16_t count[NUM_PLANES] = { 0, 0 };  /* an array tracking the coastal tile count per plane */
+    int16_t count[NUM_PLANES] = { 0, 0 };  /* an array tracking the coastal square count per plane */
     int16_t itr = 0;
     int16_t wy = 0;
     int16_t wx = 0;
@@ -2448,7 +2448,7 @@ void Build_Dock_Linked_List(void)
         {
             for(wx = 0; wx < WORLD_WIDTH; wx++)
             {
-                /* Fetch the Continent ID for the current tile */
+                /* Fetch the Continent ID for the current square */
                 landmass_idx = _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
                 assert(landmass_idx < NUM_LANDMASSES);
                 /* If it's ocean (0), skip it */
@@ -2463,7 +2463,7 @@ void Build_Dock_Linked_List(void)
                 {
                     for(wy_ofst = -1; ((wy_ofst < 2) && (square_is_shoreline == ST_FALSE)); wy_ofst++)
                     {
-/* Does this land tile touch the ocean? */
+/* Does this land square touch the ocean? */
                         if(Square_Is_Shoreline((wx + wx_ofst), (wy + wy_ofst), wp) == ST_TRUE)
                         {
                             square_is_shoreline = ST_TRUE;
@@ -2473,8 +2473,8 @@ void Build_Dock_Linked_List(void)
 /* 5. The Linked List Insertion */
                 if(square_is_shoreline == ST_TRUE)
                 {
-/* If this continent doesn't have a head node yet, this tile becomes the head */
-/* First tile in the chain for this landmass */
+/* If this continent doesn't have a head node yet, this square becomes the head */
+/* First square in the chain for this landmass */
                     if(_ai_landmass_dock_squares_heads[wp][landmass_idx] == ST_UNDEFINED)
                     {
                         _ai_landmass_dock_squares_heads[wp][landmass_idx] = count[wp];
@@ -2487,8 +2487,8 @@ What you are looking at is the classic "Trailing Pointer"
 (or "Previous Node") pattern for traversing an array-based linked list.
 1. The Problem with Array-Based Linked Lists
 In standard C, a linked list uses pointers (Node *next). But in this engine, the "pointers" are just integer indices pointing to a slot in the CONTX_LoadTChain array.
-To add a new coastal tile to the end of the chain, the engine has to walk from the Head node all the way down to the Tail node. The Tail node is the one whose next pointer is e_ST_UNDEFINED (-1).
-If you just write a loop that says next_node_idx = next[next_node_idx] until next_node_idx == -1, you fall off the edge of the list. By the time the loop finishes, next_node_idx is -1, and you have completely forgotten the index of the actual Tail node, meaning you have nowhere to attach the new tile!
+To add a new coastal square to the end of the chain, the engine has to walk from the Head node all the way down to the Tail node. The Tail node is the one whose next pointer is e_ST_UNDEFINED (-1).
+If you just write a loop that says next_node_idx = next[next_node_idx] until next_node_idx == -1, you fall off the edge of the list. By the time the loop finishes, next_node_idx is -1, and you have completely forgotten the index of the actual Tail node, meaning you have nowhere to attach the new square!
 2. The "Trailing Pointer" Solution
 To prevent falling off the edge, the assembly uses previous_node_idx to follow exactly one step behind next_node_idx.
 
@@ -2505,8 +2505,8 @@ To prevent falling off the edge, the assembly uses previous_node_idx to follow e
 /* Step 'next_node_idx' forward to the next node */
                             next_node_idx = _ai_landmass_dock_squares_lists[wp][next_node_idx];
                         }
-/* Append the new coastal tile to the tail */
-/* Link the previous tile to this new tile */
+/* Append the new coastal square to the tail */
+/* Link the previous square to this new square */
                         _ai_landmass_dock_squares_lists[wp][previous_node_idx] = count[wp];
                     }
 /* 6. Save the actual World Coordinates in the data arrays */

@@ -193,7 +193,7 @@ Generate_Combat_Map__WIP()
 
 
 les     bx, [battlefield]
-mov     [byte ptr es:bx+1646], 128      ; tile [8,12]
+mov     [byte ptr es:bx+1646], 128      ; square [8,12]
 ((12 * 21) + 8) = 260
 COMBAT_GRID_CELL_COUNT == 462
 1646 / 462 = 3.5627705627705627705627705627706

@@ -846,7 +846,7 @@ int16_t _human_out_of_moves;
 ;   2 - sorcery node
 ;   3 - nature node
 ;   4 - chaos node
-;   6 - sailable tile
+;   6 - sailable square
 */
 /*
 { 1: city, 2: node, sorcery, 3: node, nature, 4: node, chaos, 6: ocean }
@@ -1200,7 +1200,7 @@ SAMB_ptr IMG_CMB_ChaosOcn[4];
 // WZD dseg:D066
 SAMB_ptr IMG_CMB_Cloud;
 // WZD dseg:D066                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:D068 00 00 00 00 00 00                               UU_IMG_CMB_Cloud_Array dw 3 dup(0)      ; unused, original single-tile cloud image space
+// WZD dseg:D068 00 00 00 00 00 00                               UU_IMG_CMB_Cloud_Array dw 3 dup(0)      ; unused, original single-square cloud image space
 
 // WZD dseg:D06E
 SAMB_ptr IMG_CMB_FlotIsle;
@@ -1286,7 +1286,7 @@ _cmbt_path_data = Near_Allocate_Next(1008);
 21 * 22 = 462
 ...is a 462-element integer array (exactly the size of the 21x22 combat grid) that serves two completely different purposes depending on which of those two pathfinding functions is currently executing.
 In Combat_Move_Path_Find, it stores the "came from" index — for each cell, it records which adjacent cell provided the cheapest path to reach it. That's how the path is reconstructed after the cost map converges: you start at the destination and follow _cmbt_path_data backwards to the source.
-In Combat_Move_Path_Valid, it's being repurposed as a boolean reachability map — marking each tile as reachable (ST_TRUE) or not (ST_FALSE) based on whether the unit has enough movement points to enter it. This is used to draw the blue movement highlight overlay on the combat screen.
+In Combat_Move_Path_Valid, it's being repurposed as a boolean reachability map — marking each square as reachable (ST_TRUE) or not (ST_FALSE) based on whether the unit has enough movement points to enter it. This is used to draw the blue movement highlight overlay on the combat screen.
 
 predecessor / parent array
 When the engine executes the trace loop:
@@ -3084,7 +3084,7 @@ void Set_Movement_Cost_Map(int16_t battle_unit_idx)
 // drake178: BU_Move()
 /*
 ; plays the animation for, and moves the specified unit to the passed coordinates on the combat map
-; BUG: prevents moving into the central structure tile in regular city battles
+; BUG: prevents moving into the central structure square in regular city battles
 ; BUG: teleporting units can't use roads
 */
 /*
@@ -3134,7 +3134,7 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
 
 
     // ; BUG: outposts and cities don't have anything on that
-    // ; tile either
+    // ; square either
     // same as in Assign_Combat_Grids()
     if(battlefield->Central_Structure != CS_None)
     {
@@ -3542,7 +3542,7 @@ void Assign_Combat_Grids(void)
         _cmbt_movepath_cost_map[((_vortexes[itr].cgy * COMBAT_GRID_WIDTH) + _vortexes[itr].cgx)] = INF;
     }
 
-    // OGBUG: cities don't have anything on that tile either
+    // OGBUG: cities don't have anything on that square either
     if(battlefield->Central_Structure!= CS_None)
     {
         _cmbt_movepath_cost_map[COMBAT_STRUCTURE_IDX] = INF;
@@ -4960,7 +4960,7 @@ void Retreat_From_Combat(int16_t player_idx)
             BEGIN:  
         */
 
-        // drake178:  ; BUG: this range check must be performed on the tile to be tested - here, it moves the entire area
+        // drake178:  ; BUG: this range check must be performed on the square to be tested - here, it moves the entire area
         Min_Y = (_combat_wy - 1);
 
         SETMIN(Min_Y, 0);
@@ -4973,8 +4973,8 @@ void Retreat_From_Combat(int16_t player_idx)
         }
 
 // attempt to flee as many units as possible to the adjacent tiles
-// BUG: the tile range checking allows 2-move flight if the origin X or Y is 0
-// BUG: inherits a number of tile eligibility errors
+// BUG: the square range checking allows 2-move flight if the origin X or Y is 0
+// BUG: inherits a number of square eligibility errors
         Diameter = 3;
         Checked_Y = Min_Y;
         while(((Min_Y + Diameter) > Checked_Y) && (Checked_Y < WORLD_HEIGHT))
@@ -5271,7 +5271,7 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
 
         if(Move_Possible == ST_TRUE)
         {
-// move as many fleeing units over to the tile as possible,
+// move as many fleeing units over to the square as possible,
 // marking them as active if successful
 // BUG: there is no guarantee that the wind walker is actually moved over
 
@@ -5914,7 +5914,7 @@ void BU_UnitLoadToBattle__SEGRAX(int16_t battle_unit_idx, int16_t player_idx, in
 /*
 ; creates battle unit structures for the passed stack
 ; as the attacking force, and the action target's units
-; on the action tile as the defending army; maps and
+; on the action square as the defending army; maps and
 ; populates the EMM FIGUREX handle, and positions the
 ; armies on their starting locations
 ; returns the defender's unit count
@@ -8126,7 +8126,7 @@ void Combat_Info_Effects_Base(void)
 // drake178: CMB_CountExternalFX()
 /*
 ; returns the total amount of external effects that
-; affect combat on the current tile
+; affect combat on the current square
 ;
 ; BUG: ignores Evil Omens despite its combat effect
 */
@@ -8733,7 +8733,7 @@ void Combat_Cast_Spell_Error(int16_t type)
  * @brief Executes the movement phase for a confused battle unit.
  *
  * This routine attempts to send the specified unit to a random unoccupied combat square, modeling
- * the erratic behavior caused by confusion. It performs up to 600 random tile probes within the
+ * the erratic behavior caused by confusion. It performs up to 600 random square probes within the
  * combat grid and selects the first location whose entry in CMB_TargetRows indicates that no unit
  * currently occupies the square. If such a square is found, the unit is moved there through
  * Move_Battle_Unit__WIP().
@@ -8745,7 +8745,7 @@ void Combat_Cast_Spell_Error(int16_t type)
  *
  * @note The function does not guarantee movement; if no unoccupied square is found during the
  *       random search, the unit simply loses the rest of its turn in place.
- * @note Occupancy is determined from CMB_TargetRows, where a value of -1 marks an empty tile.
+ * @note Occupancy is determined from CMB_TargetRows, where a value of -1 marks an empty square.
  */
 void Move_Confused(int16_t battle_unit_idx)
 {
@@ -11583,7 +11583,7 @@ int16_t Get_Effective_Melee_Strength(int16_t melee, int16_t thrown, int16_t figu
 ; combined AI target picker for combat spells - returns
 ; -1 if the spell can't be cast, 99 if it doesn't
 ; require a target, a BU index if it does, and sets the
-; X/Y return pointers for spells that target a tile
+; X/Y return pointers for spells that target a square
 ;
 ; contains numerous BUGs, which allow spells to be cast
 ; when they shouldn't, and prevent others when they
@@ -14033,9 +14033,9 @@ int16_t Combat_Casting_Cost_Multiplier(int16_t player_idx)
 ; BUG: Wall Crusher units set the target index for wall
 ;  tiles to 99, which reads BU index #99 to determine
 ;  its cursor type and target validity
-; BUG: tile targeting allows invalid ones
+; BUG: square targeting allows invalid ones
 ; BUG: Torin is treated as a fantastic unit
-; BUG: the targeting frame remains off for tile spells
+; BUG: the targeting frame remains off for square spells
 ; BUG: some targeting types show a red X over the
 ;  bottom combat GUI
 */
@@ -19616,7 +19616,7 @@ void Calc_Battlefield_Bonuses(int16_t combat_structure)
 // drake178: BU_Attack()
 /*
 ; processes a full attack action by the chosen unit
-; against the specified target unit or wall tile
+; against the specified target unit or wall square
 ;
 ; BUG: fails to properly expend the moves of units
 ;  performing ranged attacks
@@ -21910,7 +21910,7 @@ int16_t Total_Ranged_Attack_Strength(int16_t player_idx)
  *
  * This routine updates _cmbt_movepath_cost_map so later pathfinding treats city-edge and city-area
  * cells as impassable when stone walls or Flying Fortress should block movement. It first marks the
- * four city-corner tiles and the central structure tile when applicable, then evaluates whether the
+ * four city-corner tiles and the central structure square when applicable, then evaluates whether the
  * acting unit ignores wall restrictions through movement flags or special abilities.
  *
  * For units affected by city defenses, the function applies different restrictions depending on
@@ -23707,7 +23707,7 @@ void NX_IDK_CombatInit_Tactical(int16_t wx, int16_t wy, int16_t wp)
 /*
 ; draws the combat map into the current draw frame,
 ; starting with the background saved in VGA frame 3,
-; and drawing all tile animations, roads, and combat
+; and drawing all square animations, roads, and combat
 ; entities on top of that; includes the bottom UI
 ; background, but not the actual controls
 */
@@ -25850,7 +25850,7 @@ void Combat_Figure_Compose_USEFULL(void)
 // drake178: CMB_Terrain_Init()
 /*
 ; sets the terrain and map-related combat variables
-; into the battlefield structure, loads the combat tile
+; into the battlefield structure, loads the combat square
 ; images, generates the combat map, and then draws the
 ; background, saving it into VGA frame 3
 ;
@@ -26417,7 +26417,7 @@ void Generate_Combat_Map(
                 {
                     for (i = 0; i <= 3; i++)
                     {
-                        /* Exclude corners if walls, and center tile (1,1) for the fortress */
+                        /* Exclude corners if walls, and center square (1,1) for the fortress */
                         /* should be ~ if not corner or not walls */
                         if ((i == 0 && j == 0) || (i == 3 && j == 0) || (i == 0 && j == 3) || (i == 3 && j == 3))
                         {
@@ -26664,13 +26664,13 @@ void Generate_Combat_Map(
         {
 
             // TODO  CMB_RiverGen(rivers_array);
-            // ; creates a river into the combat map if the tile that
+            // ; creates a river into the combat map if the square that
             // ; the battle is taking place on has one, except the
             // ; the array passed is never filled out, and the
             // ; function will thus do nothing
             // ;
-            // ; BUG: the origin tile for south-east faring rivers has
-            // ; the wrong Y coordinate, causing 1-2 tile rivers to be
+            // ; BUG: the origin square for south-east faring rivers has
+            // ; the wrong Y coordinate, causing 1-2 square rivers to be
             // ; generated at the bottom (non-visible) part of the map
 
         }
@@ -26681,11 +26681,11 @@ void Generate_Combat_Map(
 
         // TODO  CMB_RemoveRough(location_type);
         // ; replaces rough terrain with grass for tiles that have
-        // ; a road, an adjacent dirt tile, or are in the
+        // ; a road, an adjacent dirt square, or are in the
         // ; defender's starting area for non-field battles
 
         // TODO  CMB_MergeDirt();
-        // ; changes any grass tile into a dirt tile if it is
+        // ; changes any grass square into a dirt square if it is
         // ; horizontally or vertically between two dirt tiles
 
     }
@@ -26723,50 +26723,50 @@ void Generate_Combat_Map(
             if(defender_floating_island_flag == ST_TRUE)
             {
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+66Eh], 80h      ; tile [8,12]
+                // mov     [byte ptr es:bx+66Eh], 80h      ; square [8,12]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+66Fh], 80h      ; tile [9,12]
+                // mov     [byte ptr es:bx+66Fh], 80h      ; square [9,12]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+670h], 80h      ; tile [10,12]
+                // mov     [byte ptr es:bx+670h], 80h      ; square [10,12]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+671h], 80h      ; tile [11,12]
+                // mov     [byte ptr es:bx+671h], 80h      ; square [11,12]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+65Ah], 80h      ; tile [9,11]
+                // mov     [byte ptr es:bx+65Ah], 80h      ; square [9,11]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+65Bh], 80h      ; tile [10,11]
+                // mov     [byte ptr es:bx+65Bh], 80h      ; square [10,11]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+65Ch], 80h      ; tile [11,11]
+                // mov     [byte ptr es:bx+65Ch], 80h      ; square [11,11]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+684h], 80h      ; tile [9,13]
+                // mov     [byte ptr es:bx+684h], 80h      ; square [9,13]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+685h], 80h      ; tile [10,13]
+                // mov     [byte ptr es:bx+685h], 80h      ; square [10,13]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+686h], 80h      ; tile [11,13]
+                // mov     [byte ptr es:bx+686h], 80h      ; square [11,13]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+687h], 81h      ; tile [12,13]
+                // mov     [byte ptr es:bx+687h], 81h      ; square [12,13]
             }
             else
             {
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+661h], 80h      ; tile [16,11]
+                // mov     [byte ptr es:bx+661h], 80h      ; square [16,11]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+662h], 80h      ; tile [17,11]
+                // mov     [byte ptr es:bx+662h], 80h      ; square [17,11]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+663h], 80h      ; tile [18,11]
+                // mov     [byte ptr es:bx+663h], 80h      ; square [18,11]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+64Ch], 80h      ; tile [16,10]
+                // mov     [byte ptr es:bx+64Ch], 80h      ; square [16,10]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+64Dh], 80h      ; tile [17,10]
+                // mov     [byte ptr es:bx+64Dh], 80h      ; square [17,10]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+64Eh], 80h      ; tile [18,10]
+                // mov     [byte ptr es:bx+64Eh], 80h      ; square [18,10]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+676h], 80h      ; tile [16,12]
+                // mov     [byte ptr es:bx+676h], 80h      ; square [16,12]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+677h], 80h      ; tile [17,12]
+                // mov     [byte ptr es:bx+677h], 80h      ; square [17,12]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+678h], 80h      ; tile [18,12]
+                // mov     [byte ptr es:bx+678h], 80h      ; square [18,12]
                 // les     bx, [battlefield]
-                // mov     [byte ptr es:bx+679h], 81h      ; tile [19,12]
+                // mov     [byte ptr es:bx+679h], 81h      ; square [19,12]
             }
 
         }
@@ -26837,8 +26837,8 @@ void Generate_Combat_Map(
 // WZD ovr154p09
 // drake178: CMB_TileGen()
 /*
-; fills out the actual tile type array of the
-; battlefield table based on the tile type groups
+; fills out the actual square type array of the
+; battlefield table based on the square type groups
 */
 /*
 
@@ -27615,8 +27615,8 @@ void Patch_Terrain_Group(int16_t ctg, int16_t count, int16_t max, int16_t min)
 // WZD ovr154p12
 // drake178: CMB_GetScreenCoords()
 /*
-; transforms a set of combat map tile coordinates,
-; along with positioning within the tile, into a
+; transforms a set of combat map square coordinates,
+; along with positioning within the square, into a
 ; corresponding set of screen pixel coordinates which
 ; are set into the passed pointer variables
 */
@@ -27695,7 +27695,7 @@ void Apply_Earth_To_Mud(int16_t cgx, int16_t cgy)
 // drake178: CMB_GetTileX()
 /*
 ; calculates and returns the X coordinate of the combat
-; map tile at the selected screen pixel location
+; map square at the selected screen pixel location
 */
 /*
     returns cgx
@@ -27728,7 +27728,7 @@ int16_t Get_Combat_Grid_Cell_X(int16_t screen_x, int16_t screen_y)
 // drake178: CMB_GetTileY()
 /*
 ; calculates and returns the Y coordinate of the combat
-; map tile at the selected screen pixel location
+; map square at the selected screen pixel location
 */
 /*
     returns cgy
@@ -27754,7 +27754,7 @@ int16_t Get_Combat_Grid_Cell_Y(int16_t screen_x, int16_t screen_y)
 /*
 ; calculates and returns in the passed pointers both
 ; the X coordinate of, and the X offset within, the
-; combat tile at the specified screen pixel location
+; combat square at the specified screen pixel location
 */
 /*
 
@@ -27787,7 +27787,7 @@ void Screen_To_Combat_Grid_Cell_X_And_Offset(int16_t screen_x, int16_t screen_y,
 /*
 ; calculates and returns in the passed pointers both
 ; the Y coordinate of, and the Y offset within, the
-; combat tile at the specified screen pixel location
+; combat square at the specified screen pixel location
 */
 /*
 screen x,y  {0,...,319},{0,...199}
@@ -27935,7 +27935,7 @@ void Combat_Cache_Write(void)
 // drake178: CMB_LoadTerrainGFX()
 /*
 ; maps in the TILEX EMM handle, and if the combat
-; terrain is not water, loads the appropriate tile,
+; terrain is not water, loads the appropriate square,
 ; tree, and rock images into it
 */
 /*
@@ -28062,7 +28062,7 @@ void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp)
 // WZD ovr163p02
 // drake178: CMB_ComposeBackgrnd()
 /*
-; composes the combat background (tile images and
+; composes the combat background (square images and
 ; bottom UI base image) into the current draw frame,
 ; advances all combat background animations, and saves
 ; the screen into VGA frame 3 ($A800)
@@ -28116,7 +28116,7 @@ void CMB_ComposeBackgrnd__WIP(void)
             if(battlefield_terrain_type >= CTILE_LeftRightRiver1)  // River
             {
                 STU_DEBUG_BREAK();  // congratulations - you've got river
-                battlefield_terrain_type = ((cgy + cgx) & 0x3);  // mask on first two bits  {0,1,2,3}  ¿ " base tile" ?  ...(56 & 0x3) == 0, ..., (67 & 0x3) == 3
+                battlefield_terrain_type = ((cgy + cgx) & 0x3);  // mask on first two bits  {0,1,2,3}  ¿ " base square" ?  ...(56 & 0x3) == 0, ..., (67 & 0x3) == 3
             }
             if(battlefield_terrain_type < 48)
             {

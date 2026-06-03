@@ -40,7 +40,7 @@ CMB_FillTargetMaps__WIP() ==> Assign_Combat_Grids()
 
 CMB_SetMoveMaps()
     les     bx, [battlefield]
-    mov     [es:bx+(s_BATTLEFIELD.MoveCost_Ground+0EDh)], -1 ; tile [6,11] - central structure
+    mov     [es:bx+(s_BATTLEFIELD.MoveCost_Ground+0EDh)], -1 ; square [6,11] - central structure
 
 
 Q: Who gets the memcpy() of the movement cost map?

@@ -8,7 +8,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Stacks_Setup_Fer
 
 **Location:** [MoM/src/AIMOVE.c:2028](../../MoM/src/AIMOVE.c#L2028) (~234 lines, ends 2261).
 **WZD overlay:** ovr158, p09
-**drake178 name:** `G_AI_RallyOrFerry()` — "gives any unassigned units move orders to the passed tile, gives any adjacent ships a halt order (move to their current location), and tries to move any remaining units in the stack to a ship if there is one adjacent. **full of BUGs and inconsistencies**."
+**drake178 name:** `G_AI_RallyOrFerry()` — "gives any unassigned units move orders to the passed square, gives any adjacent ships a halt order (move to their current location), and tries to move any remaining units in the stack to a ship if there is one adjacent. **full of BUGs and inconsistencies**."
 
 ## Purpose
 
@@ -29,14 +29,14 @@ The bug catalog (numbered here for cross-reference within this doc; not in sourc
 | # | Issue | Source annotation | Severity |
 |---|---|---|---|
 | B1 | Phase 2 scans around the stage point, not around the stack (per the implicit assumption that "vicinity" means stack) | none — code uses `stage_wx`/`stage_wy` | Minor — depends on intent |
-| B2 | Phase 2 may not find any ocean — `ocean_wx/wy` default to the stack's land coords | `/* OGBUG  will add the original land tile if there was no ocean around the stack */` | Real — pollutes ferry-request list |
+| B2 | Phase 2 may not find any ocean — `ocean_wx/wy` default to the stack's land coords | `/* OGBUG  will add the original land square if there was no ocean around the stack */` | Real — pollutes ferry-request list |
 | B3 | Phase 2 doesn't validate world bounds before indexing `_landmasses[]` | `/* OGBUG  should validate coordinates */` | Real — out-of-bounds reads at world edge |
 | B4 | Phase 4 doesn't check that pulled units can physically reach the stage point | none — preserved drake178 spirit, not annotated | Real — orphan goto orders for non-reachable destinations |
 | B5 | Phase 5 result vars are written but never read (`niu_` prefix signals this) | `/* DEDU  For what might this have been meant to be used? */` + the NOTE pointing to `AI_SendToColonize__WIP` | Dead code — entire phase has no observable effect |
 | B6 | Phase 5 stores `itr_stack_wx` (un-wrapped) into `niu_embarkable_wx` instead of the wrapped `wx_offset` | none (my flag) | Dead — would matter only if a consumer existed |
 | B7 | Phase 6 unit-position filter doesn't check the unit's plane | `/* OGBUG  should use unit's wp */` | Real — counts units on the other plane if their (wx,wy) lands in the box |
 | B8 | Phase 6's `Unit_Has_AirTravel` / `Unit_Has_WaterTravel` checks ignore spell/item-granted travel | none — same pattern as flagged in [AIMOVE-AI_Stacks_Order_To_War_Landmass.md](AIMOVE-AI_Stacks_Order_To_War_Landmass.md) | Real — misses Wind Walking, Flight spell, mobility items |
-| B9 | Phase 6 issues a goto order to a transport's own current tile (no-op move) | none — preserved pattern | Quirk — may be intentional "park" marker |
+| B9 | Phase 6 issues a goto order to a transport's own current square (no-op move) | none — preserved pattern | Quirk — may be intentional "park" marker |
 | B10 | Phase 6 tracks `total_boat_capacity` aggregated across all 9 squares but `adjacent_unit_on_ocean_wx/wy` only holds the LAST-found ocean unit | `/* OGBUG  should track coordinates and capacity for where flag was set */` | Real — Phase 7a's destination may not match where the transport capacity actually is |
 | B11 | Phase 7a uses `\|\|` for the "lacks travel" decrement; Phase 6 uses `&&` | none (my flag) | Real inconsistency — Phase 7a decrements too aggressively |
 | B12 | Phase 7b is unreachable (`total_boat_capacity` is always 0 in the `else` branch) | `/* unreachable - total_boat_capacity is always zero if there was no adjacent ocean unit found */` | Documented dead code — see "Why no community complaints?" below |
@@ -67,7 +67,7 @@ int16_t max_wy;                             // bounding-box max Y (Phase 6, arou
 int16_t min_wy;                             // bounding-box min Y (Phase 6)
 int16_t max_wx;                             // bounding-box max X (Phase 6)
 int16_t min_wx;                             // bounding-box min X (Phase 6)
-int16_t ocean_wy;                           // ocean-tile coords for ferry request (Phase 2 output, Phase 3 input)
+int16_t ocean_wy;                           // ocean-square coords for ferry request (Phase 2 output, Phase 3 input)
 int16_t ocean_wx;
 int16_t unit_idx;                           // per-iteration unit index cache
 int16_t list_unit_count;                    // _ai_own_stack_unit_count[stack_idx] cache (Phase 4)
@@ -112,7 +112,7 @@ ocean_wy = stack_wy;
 
 Phase 2's loop only updates `ocean_wx/wy` on a hit, so this seed is what gets passed to `AI_Stacks_Ferry_Add_Location` if no ocean is found (B2).
 
-### Phase 2 — Find an ocean tile in 3×3 around the STAGE point ([lines 2070-2084](../../MoM/src/AIMOVE.c#L2070-L2084))
+### Phase 2 — Find an ocean square in 3×3 around the STAGE point ([lines 2070-2084](../../MoM/src/AIMOVE.c#L2070-L2084))
 
 ```c
 /* Phase 2: Find adjacent Ocean square */
@@ -134,7 +134,7 @@ for(wy_offset = -1; wy_offset < 2; wy_offset++)
 
 Scans the 3×3 area centered on `(stage_wx, stage_wy)` and records the LAST ocean square found (no early-exit on first hit — B/OGBUG marker `should early-exit on Ocean found`).
 
-**B1** — scans around the STAGE point, not the stack. Whether this is the intent depends on whether you read the function as "find an ocean tile that the stage point can ferry-pick up from" (stage-centric, current behavior) or "find an ocean tile adjacent to the stack itself" (stack-centric). Given the function name "RallyOrFerry" and the call context (the stack is at `stack_wx/wy` and wants to embark there), stack-centric would seem more natural. But the code as written is stage-centric.
+**B1** — scans around the STAGE point, not the stack. Whether this is the intent depends on whether you read the function as "find an ocean square that the stage point can ferry-pick up from" (stage-centric, current behavior) or "find an ocean square adjacent to the stack itself" (stack-centric). Given the function name "RallyOrFerry" and the call context (the stack is at `stack_wx/wy` and wants to embark there), stack-centric would seem more natural. But the code as written is stage-centric.
 
 **B2** — if none of the 9 checked squares is ocean (landmass index 0), `ocean_wx`/`ocean_wy` keep their Phase 1 seed values (the stack's own land coords). Phase 3 then registers the stack's land position with `AI_Stacks_Ferry_Add_Location` as if it were an ocean pickup point.
 
@@ -144,7 +144,7 @@ Scans the 3×3 area centered on `(stage_wx, stage_wy)` and records the LAST ocea
 
 ```c
 /* Phase 3 */
-/* OGBUG  will add the original land tile if there was no ocean around the stack */
+/* OGBUG  will add the original land square if there was no ocean around the stack */
 AI_Stacks_Ferry_Add_Location(ocean_wx, ocean_wy, wp);
 ```
 
@@ -187,7 +187,7 @@ This is the **stage** half. For stacks not already at the stage point:
 
 **No ST_UNDEFINED guard.** The iterator reads `unit_idx` without checking `ST_UNDEFINED` first. If a prior dispatch slot consumed this stack's slots, `unit_idx == -1` gets passed to `AI_Stacks_Order_Attack_Target_Or_Goto_Destination`, which has its own range check that handles the bad case. Robust by virtue of the callee's check; not by this function's own logic.
 
-### Phase 5 — "Find embarkable tile in 3×3 around stack" (DEAD WRITES) ([lines 2118-2148](../../MoM/src/AIMOVE.c#L2118-L2148))
+### Phase 5 — "Find embarkable square in 3×3 around stack" (DEAD WRITES) ([lines 2118-2148](../../MoM/src/AIMOVE.c#L2118-L2148))
 
 ```c
 /* Phase 5 */
@@ -275,7 +275,7 @@ Scans every owned unit in `_UNITS[]`, filters to those whose (wx, wy) lies in th
 For each hit:
 - Set `found_adjacent_unit_on_ocean = TRUE`
 - Update `adjacent_unit_on_ocean_wx/wy` (LAST-found ocean unit's position)
-- If it's a transport: park it (no-op goto to own tile, B9) and bump `total_boat_capacity`
+- If it's a transport: park it (no-op goto to own square, B9) and bump `total_boat_capacity`
 - Else if it has neither air nor water travel: decrement `total_boat_capacity` (passenger needing ferry)
 - Decrement `free_stack_slots_on_square` regardless of type
 
@@ -283,9 +283,9 @@ For each hit:
 
 **B8 — Air/Water travel check ignores transient sources.** `Unit_Has_AirTravel` and `Unit_Has_WaterTravel` presumably check unit-type base abilities + persistent ability flags. They likely don't account for spell-granted travel (Flight, Water Walking) or item-granted travel, or stack-mate buffs like Wind Walking. Same caveat as flagged in [AIMOVE-AI_Stacks_Order_To_War_Landmass.md](AIMOVE-AI_Stacks_Order_To_War_Landmass.md).
 
-**B9 — transports get a no-op goto to their current tile.** `dst_wx = wx`, `dst_wy = wy`, `Status = us_GOTO`. Plausibly intentional ("park this transport so it doesn't drift off this turn") but the goto-to-self is unusual.
+**B9 — transports get a no-op goto to their current square.** `dst_wx = wx`, `dst_wy = wy`, `Status = us_GOTO`. Plausibly intentional ("park this transport so it doesn't drift off this turn") but the goto-to-self is unusual.
 
-**B10 — aggregated counts across 9 squares.** `total_boat_capacity` sums transport capacity from any ocean square in the box, but Phase 7a's destination is `adjacent_unit_on_ocean_wx/wy` — the position of the LAST-found ocean unit. Capacity may exist at a tile the stack isn't being directed to. Source comment `/* OGBUG  should track coordinates and capacity for where flag was set */` flags this explicitly.
+**B10 — aggregated counts across 9 squares.** `total_boat_capacity` sums transport capacity from any ocean square in the box, but Phase 7a's destination is `adjacent_unit_on_ocean_wx/wy` — the position of the LAST-found ocean unit. Capacity may exist at a square the stack isn't being directed to. Source comment `/* OGBUG  should track coordinates and capacity for where flag was set */` flags this explicitly.
 
 **`free_stack_slots_on_square` is now meaningfully decremented.** Each found ocean unit reduces the budget. This is a real bound for Phase 7a's inner check — if the box already contains 9 own ocean units, no room left for the stack's units to embark.
 
@@ -348,7 +348,7 @@ else  /* (found_adjacent_unit_on_ocean == ST_FALSE) */
 
 This is documented in source (`/* unreachable ... */`). It looks like the `if(total_boat_capacity > 0)` gate is a copy-paste from Phase 7a where the same gate fits ("only embark if there's spare capacity"). In Phase 7b the intent was probably the opposite — "if NO nearby ocean unit, mark each unit as actively seeking transport via `us_Ferry`" — but the inverted gate makes the body unreachable.
 
-**Why no community complaints despite the dead code?** The patient path (Phase 3 + next-turn `AI_Stacks_Ocean_Landmass_Orders` + auto-embark when units walk onto a transport's tile) covers the basic ferry need without Phase 7b firing. Phase 7b's job was to mark units with `us_Ferry` status as an additional optimization — players don't notice its absence because the patient path is functionally adequate.
+**Why no community complaints despite the dead code?** The patient path (Phase 3 + next-turn `AI_Stacks_Ocean_Landmass_Orders` + auto-embark when units walk onto a transport's square) covers the basic ferry need without Phase 7b firing. Phase 7b's job was to mark units with `us_Ferry` status as an additional optimization — players don't notice its absence because the patient path is functionally adequate.
 
 (The function [`AI_Stacks_Order_Ferry`](AIMOVE-AI_Stacks_Order_Ferry.md) itself IS called from elsewhere — lines 1490 and 5127 — so it's not dead, just this caller path is.)
 
@@ -357,12 +357,12 @@ This is documented in source (`/* unreachable ... */`). It looks like the `if(to
 ```
 AI_Stacks_Setup_Ferry(stack_idx, landmass_idx, wp, stage_wx, stage_wy, stage_count_slot_count, player_idx)
   ├─ Phase 1: cache stack coords, seed ocean_wx/wy with stack position
-  ├─ Phase 2: scan 3×3 around STAGE point for ocean tile  [B1-B3]
+  ├─ Phase 2: scan 3×3 around STAGE point for ocean square  [B1-B3]
   ├─ Phase 3: AI_Stacks_Ferry_Add_Location(ocean_wx, ocean_wy, wp)
   ├─ Phase 4: if stack not at stage:
   │    └─ for u in stack, capped by stage_count_slot_count:
   │         └─ goto order to (stage_wx, stage_wy)         [caller=9]
-  ├─ Phase 5: scan 3×3 for embarkable tile                [B5-B6: dead writes]
+  ├─ Phase 5: scan 3×3 for embarkable square                [B5-B6: dead writes]
   ├─ Phase 6: scan _UNITS[] for own units in 3×3 box on ocean squares:
   │    ├─ set found_adjacent_unit_on_ocean
   │    ├─ track adjacent_unit_on_ocean_wx/wy (last hit)

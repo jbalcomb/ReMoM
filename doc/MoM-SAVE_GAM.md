@@ -470,7 +470,7 @@ p_Premade_Items          250 *     1 =   250    122740
 p_Hero_Names              35 *    16 =   560    123300
 
 
-Arcanus 60×40 map (2 bytes per tile, 000 through 2F9) ... Value	Terrain
+Arcanus 60×40 map (2 bytes per square, 000 through 2F9) ... Value	Terrain
 
 Arcanus 60×40 bonus deposits
 Myrror 60×40 bonus deposits
