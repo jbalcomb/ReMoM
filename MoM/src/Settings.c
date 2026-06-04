@@ -624,6 +624,8 @@ void Set_Default_Game_Settings(void)
 {
     int16_t itr;
 
+    LOG_INFO(LOG_CAT_NEWGAME, "BEGIN: Set_Default_Game_Settings()");
+
     magic_set.sound_effects = ST_TRUE;
     magic_set.background_music = ST_TRUE;
     magic_set.event_music = ST_TRUE;

@@ -915,7 +915,8 @@ void Init_Overland(void)
 
     // DONT  j_o62p01_empty_function(_human_player_idx)
 
-    _unit = 0;  // 0: None / No Unit
+    { int16_t _prev_unit_dbg = _unit; _unit = 0;  /* 0: None / No Unit */
+      LOG_INFO(LOG_CAT_GENERAL, "[_unit ASSIGN] %d -> %d", _prev_unit_dbg, _unit); }
 
     _active_world_x = _FORTRESSES[HUMAN_PLAYER_IDX].wx;
     _active_world_y = _FORTRESSES[HUMAN_PLAYER_IDX].wy;

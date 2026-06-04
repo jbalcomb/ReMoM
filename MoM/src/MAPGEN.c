@@ -22,6 +22,7 @@ MoO2
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"  /* CLAUDE 2026-06-01: LOG_INFO for [LOC_PICK] iteration trace */
 #include "../../STU/src/STU_VLD.h"
 
 #include "../../ext/stu_compat.h"
@@ -933,6 +934,30 @@ Loop_Location_1:
                         }
 
                     }
+
+                    /* CLAUDE 2026-06-01: per-iteration trace of the
+                     * location-pick retry loop.  Emitted on every
+                     * iteration whether the picked (wx,wy) was valid
+                     * or not.  Use when ReMoM's New Game iterates this
+                     * loop more times than OG MAGIC.EXE did and you
+                     * need to see, iteration by iteration, what
+                     * Random()-picked location was rejected and which
+                     * of the five bound checks rejected it.
+                     *
+                     * Fields:
+                     *   player=N     placement attempt is for which player slot
+                     *   try=N        Tries_Per_Distance at this iteration
+                     *   wx,wy,wp     the Random-picked location
+                     *   invalid=0/1  rejected this iteration?
+                     *   reason=N     1=Ocean, 2=NearFortress, 3=NearNode,
+                     *                4=NearTower, 5=NearLair, 6=PopTooLow,
+                     *                0=accepted
+                     */
+                    LOG_INFO(LOG_CAT_GENERAL,
+                        "[LOC_PICK] player=%d try=%d wp=%d wx=%d wy=%d invalid=%d reason=%d",
+                        (int)player_idx, (int)Tries_Per_Distance, (int)wp,
+                        (int)wx, (int)wy,
+                        (int)Invalid, (int)DBG_Invalid_Reason);
 
                     if(
                         (Tries_Per_Distance < 1000)
@@ -2747,21 +2772,21 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
         }
         tries++;
     } while((Picked_Unit_Type == ST_UNDEFINED) && (tries < 200));
-            if(tries < 200)
-            {
-                _LAIRS[lair_idx].guard1_unit_type = (uint8_t)Picked_Unit_Type;
-                _LAIRS[lair_idx].guard1_count = (budget / _unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost);
-                if(
-                    (_LAIRS[lair_idx].guard1_count > 1)
-                    &&
-                    (Random(2) == 1)
-                )
-                {
-                    _LAIRS[lair_idx].guard1_count -= 1;
-                }
-                SETMAX(_LAIRS[lair_idx].guard1_count, 8);
-                budget -= (_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost * _LAIRS[lair_idx].guard1_count);
-            }
+    if(tries < 200)
+    {
+        _LAIRS[lair_idx].guard1_unit_type = (uint8_t)Picked_Unit_Type;
+        _LAIRS[lair_idx].guard1_count = (budget / _unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost);
+        if(
+            (_LAIRS[lair_idx].guard1_count > 1)
+            &&
+            (Random(2) == 1)
+        )
+        {
+            _LAIRS[lair_idx].guard1_count -= 1;
+        }
+        SETMAX(_LAIRS[lair_idx].guard1_count, 8);
+        budget -= (_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost * _LAIRS[lair_idx].guard1_count);
+    }
 
     /* Pick Guard 2 */
     if(
@@ -2799,16 +2824,16 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
             }
             tries++;
         } while((Picked_Unit_Type == ST_UNDEFINED) && (tries < 200));
-                if(tries < 200)
-                {
-                    _LAIRS[lair_idx].guard2_unit_type = (uint8_t)Picked_Unit_Type;
-                    _LAIRS[lair_idx].guard2_count = (budget / _unit_type_table[_LAIRS[lair_idx].guard2_unit_type].cost);
-                    if((_LAIRS[lair_idx].guard1_count + _LAIRS[lair_idx].guard2_count) > 9)
-                    {
-                        _LAIRS[lair_idx].guard2_count = (9 - _LAIRS[lair_idx].guard1_count);
-                    }
-                }
+        if(tries < 200)
+        {
+            _LAIRS[lair_idx].guard2_unit_type = (uint8_t)Picked_Unit_Type;
+            _LAIRS[lair_idx].guard2_count = (budget / _unit_type_table[_LAIRS[lair_idx].guard2_unit_type].cost);
+            if((_LAIRS[lair_idx].guard1_count + _LAIRS[lair_idx].guard2_count) > 9)
+            {
+                _LAIRS[lair_idx].guard2_count = (9 - _LAIRS[lair_idx].guard1_count);
             }
+        }
+    }
 
     if(_LAIRS[lair_idx].guard1_unit_type == 0)
     {
@@ -4871,7 +4896,7 @@ Loop_Location_2:
 
             if(
                 (TERRAIN_TYPE(wx, wy, wp) >= tt_Shore1_Fst)  // ; there are no such map squares yet at this stage
-                ||
+                &&
                 (TERRAIN_TYPE(wx, wy, wp) <= tt_Shore1_Lst)  // ; there are no such map squares yet at this stage
             )
             {
@@ -5293,6 +5318,8 @@ Loop_Location_2:
             }
 
             Random_City_Name_By_Race_NewGame(_CITIES[_cities].race, _CITIES[_cities].name);
+
+            _cities++;
 
         }
 
@@ -6059,7 +6086,8 @@ void Movement_Mode_Cost_Maps(int16_t wp)
         for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
         {
 
-            terrain_type_idx = TERRAIN_TYPE_INDEX(itr_wx, itr_wy, wp);
+            // terrain_type_idx = TERRAIN_TYPE_INDEX(itr_wx, itr_wy, wp);
+            terrain_type_idx = p_world_map[wp][itr_wy][itr_wx];
 
 // void Make_Road(int16_t wx, int16_t wy, int16_t wp)
 //     movement_mode_cost_maps[wp].UU_MvMd.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
@@ -6099,12 +6127,12 @@ void Movement_Mode_Cost_Maps(int16_t wp)
             // terrain_stats_table[terrain_type_idx][]
             // {1,0,2,3,4,5}
             // {Walking,Unused_MoveType,Forester,Mountaineer,Swimming,Sailing}
-            movement_mode_cost_maps[wp].walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 1)];
-            movement_mode_cost_maps[wp].UU_MvMd.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 0)];
-            movement_mode_cost_maps[wp].forester.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 2)];
-            movement_mode_cost_maps[wp].mountaineer.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 3)];
-            movement_mode_cost_maps[wp].swimming.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 4)];
-            movement_mode_cost_maps[wp].sailing.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 5)];
+            movement_mode_cost_maps[wp].walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)]      = terrain_stats_table[((terrain_type_idx * 6) + 1)];
+            movement_mode_cost_maps[wp].UU_MvMd.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)]      = terrain_stats_table[((terrain_type_idx * 6) + 0)];
+            movement_mode_cost_maps[wp].forester.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)]     = terrain_stats_table[((terrain_type_idx * 6) + 2)];
+            movement_mode_cost_maps[wp].mountaineer.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)]  = terrain_stats_table[((terrain_type_idx * 6) + 3)];
+            movement_mode_cost_maps[wp].swimming.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)]     = terrain_stats_table[((terrain_type_idx * 6) + 4)];
+            movement_mode_cost_maps[wp].sailing.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)]      = terrain_stats_table[((terrain_type_idx * 6) + 5)];
 
             if((MAP_SQUARE_FLAG(itr_wx,itr_wy,wp) & MSF_ROAD) != 0)
             {

@@ -1652,7 +1652,7 @@ int16_t Newgame_Screen_0(void)
 #endif
 
     LOG_INFO(LOG_CAT_NEWGAME, "BEGIN: Newgame_Screen_0()");
-    
+
     screen_changed = ST_TRUE;
     
     // KNOWNBUG  conflicting condition - will never jump
@@ -2089,6 +2089,8 @@ void Randomize_Book_Heights(void)
 {
     int32_t itr = 0;
     int32_t niu = 0;
+
+    LOG_INFO(LOG_CAT_NEWGAME, "BEGIN: Randomize_Book_Heights()");
 
     niu = ((((magic_set.MagicPower * magic_set.Opponents) * (magic_set.Difficulty * magic_set.LandSize)) * 123) + 1234);
 

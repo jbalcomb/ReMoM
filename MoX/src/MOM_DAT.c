@@ -2558,6 +2558,9 @@ Volcano_Counts()
 */
 /*
 1-byte, unsigned
+initialized to 0 in Generate_Terrain_Specials()
+reinitialized to 0 in Generate_Roads()
+
 */
 uint8_t * _map_square_flags;                // load in Load_SAVE_GAM()
 

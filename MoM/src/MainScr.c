@@ -1765,7 +1765,8 @@ g_dbg_fields_trace = 1;
                     if(_UNITS[entity_idx].owner_idx == _human_player_idx)
                     {
                         /* #### Section 9.2.2.1      Right-Click Movement Map - Stack - Own */
-                        _unit = entity_idx;
+                        { int16_t _prev_unit_dbg = _unit; _unit = entity_idx;
+                          LOG_INFO(LOG_CAT_GENERAL, "[_unit ASSIGN] %d -> %d", _prev_unit_dbg, _unit); }
                         unit_idx = _unit;
                         selected_unit_wx = _UNITS[unit_idx].wx;
                         selected_unit_wy = _UNITS[unit_idx].wy;
@@ -2849,7 +2850,8 @@ void Sort_Unit_Stack(void)
 
     }
 
-    _unit = _unit_stack[0].unit_idx;
+    { int16_t _prev_unit_dbg = _unit; _unit = _unit_stack[0].unit_idx;
+      LOG_INFO(LOG_CAT_GENERAL, "[_unit ASSIGN] %d -> %d", _prev_unit_dbg, _unit); }
 
     for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
     {
@@ -2857,7 +2859,8 @@ void Sort_Unit_Stack(void)
         if(_unit_stack[itr_stack].active == ST_TRUE)
         {
 
-            _unit = _unit_stack[itr_stack].unit_idx;
+            { int16_t _prev_unit_dbg = _unit; _unit = _unit_stack[itr_stack].unit_idx;
+              LOG_INFO(LOG_CAT_GENERAL, "[_unit ASSIGN] %d -> %d", _prev_unit_dbg, _unit); }
 
             break;
 

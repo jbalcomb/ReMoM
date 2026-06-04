@@ -10,6 +10,7 @@ MoO2
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
 
 #include "../../MoX/src/GENDRAW.h"
 #include "../../MoX/src/MOM_DAT.h"
@@ -230,7 +231,8 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
     {
         Build_Moveable_Stack(&unit_array_count, &unit_array[0]);
 
-        _unit = unit_array[0];
+        { int16_t _prev_unit_dbg = _unit; _unit = unit_array[0];
+          LOG_INFO(LOG_CAT_GENERAL, "[_unit ASSIGN] %d -> %d", _prev_unit_dbg, _unit); }
 
         if(OVL_MapVar3 == ST_TRUE)
         {
@@ -744,7 +746,8 @@ int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane)
 
                 *map_plane = current_world_plane;
 
-                _unit = Closest_Active_Unit;
+                { int16_t _prev_unit_dbg = _unit; _unit = Closest_Active_Unit;
+                  LOG_INFO(LOG_CAT_GENERAL, "[_unit ASSIGN] %d -> %d", _prev_unit_dbg, _unit); }
 
                 _active_world_x = _UNITS[_unit].wx;
                 _active_world_y = _UNITS[_unit].wy;
@@ -758,7 +761,8 @@ int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane)
 
                 *map_plane = current_world_plane;
 
-                _unit = Closest_Waiting_Unit;
+                { int16_t _prev_unit_dbg = _unit; _unit = Closest_Waiting_Unit;
+                  LOG_INFO(LOG_CAT_GENERAL, "[_unit ASSIGN] %d -> %d", _prev_unit_dbg, _unit); }
 
                 done = ST_TRUE;
                 

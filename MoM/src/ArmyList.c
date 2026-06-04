@@ -8,6 +8,7 @@
         Module: ¿ Fleet Screen ?
 */
 
+#include "../../STU/src/STU_LOG.h"
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Fields.h"
@@ -350,7 +351,8 @@ void ArmyList_Screen(void)
             if(m_armies_list_fields[itr] == input_field_idx)
             {
                 Play_Left_Click();
-                _unit = list_armies[itr];
+                { int16_t _prev_unit_dbg = _unit; _unit = list_armies[itr];
+                  LOG_INFO(LOG_CAT_GENERAL, "[_unit ASSIGN] %d -> %d", _prev_unit_dbg, _unit); }
                 _map_plane  = _UNITS[_unit].wp;
                 Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, _UNITS[_unit].wx, _UNITS[_unit].wy);
                 if(all_units_moved == ST_TRUE)
@@ -420,7 +422,8 @@ void ArmyList_Screen(void)
             if(armylist_hero_portrait_fields[itr] == input_field_idx)
             {
                 Play_Left_Click();
-                _unit = _players[_human_player_idx].Heroes[itr].unit_idx;
+                { int16_t _prev_unit_dbg = _unit; _unit = _players[_human_player_idx].Heroes[itr].unit_idx;
+                  LOG_INFO(LOG_CAT_GENERAL, "[_unit ASSIGN] %d -> %d", _prev_unit_dbg, _unit); }
                 _map_plane  = _UNITS[_unit].wp;
                 Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, _UNITS[_unit].wx, _UNITS[_unit].wy);
                 if(all_units_moved == ST_TRUE)

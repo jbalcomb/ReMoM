@@ -218,6 +218,14 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     LOG_INFO(LOG_CAT_LOADSAVE, "BEGIN: Load_SAVE_GAM(%d)", save_gam_idx);
     LOG_DEBUG(LOG_CAT_SAVE, "BEGIN: Load_SAVE_GAM(%d)", save_gam_idx);
     LOG_TRACE(LOG_CAT_SAVE, "BEGIN: Load_SAVE_GAM(%d)", save_gam_idx);
+    /* _unit trajectory: snapshot BEFORE Load_SAVE_GAM does anything,
+     * so we can compare against OG-MoM trace where _unit's first
+     * write is DOS reading the saved value via INT 21h.  Per
+     * og_overlay_findings.md "Save-loaded values land in memory via
+     * DOS" -- in ReMoM this happens via stu_fread below; we want to
+     * see (a) _unit's value before, (b) immediately after the
+     * _unit-specific fread, and (c) after the whole function. */
+    LOG_INFO(LOG_CAT_LOADSAVE, "Load_SAVE_GAM _unit BEFORE = %d", _unit);
 #endif
 
     if(save_gam_idx == ST_UNDEFINED)

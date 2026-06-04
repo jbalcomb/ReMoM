@@ -16,6 +16,13 @@ MoO2
 #include <stdio.h>  /* CLAUDE: fprintf(stderr, ...) for [RNG] diagnostic logging */
 
 #include "EXIT.h"
+/* CLAUDE 2026-06-01: tell random.h NOT to macro-expand `Random(n)` to
+ * `Random_at(...)` inside this translation unit -- we need to define
+ * Random() and Random_at() here as actual functions.  The macro will
+ * be re-introduced below, AFTER the function definitions, so that
+ * helper functions in this file (Get_Weighted_Choice etc) still get
+ * call-site tracing when they invoke Random(). */
+#define RANDOM_C_NO_AUTOTRACE
 #include "random.h"
 #include "MOX_BITS.h"
 #include "MOX_TYPE.h"
@@ -261,16 +268,9 @@ int16_t Random(int16_t n)
     uint16_t high_seed;
     uint16_t new_bit;
     uint16_t carry_bit;
-    uint32_t seed_before;  /* CLAUDE: captured for [RNG-CALL] trace */
     int16_t  ret;
 
-    /* CLAUDE: count every call so divergence in call-count between runs
-     * is observable. */
-    g_random_call_count++;
-
     if (n == 0) Exit_With_Message("RND no 0's");
-
-    seed_before = random_seed;
 
     low_seed  = (uint16_t)(random_seed & 0xFFFF);
     high_seed = (uint16_t)(random_seed >> 16);
@@ -298,23 +298,56 @@ int16_t Random(int16_t n)
 
     ret = (int16_t)((result % n) + 1);
 
-    /* CLAUDE 2026-05-27: per-call trace, gated on _cmd_line_seed != 0
-     * so normal runs aren't spammy.  Format chosen to be greppable and
-     * to line up column-for-column with OG MoM's captured magic.csv
-     * `random_seed` transitions (the `after=` value is what the CSV
-     * records).  ~55k lines per new-game run; pipe to a file. */
+    return ret;
+}
+
+/* CLAUDE 2026-06-01: call-site-traced wrapper around Random().
+ *
+ * Every Random(n) call site in the codebase is macro-expanded (via
+ * random.h) to Random_at(n, __FILE__, __LINE__).  Random_at:
+ *   - bumps the global call counter
+ *   - captures the seed before the LFSR step
+ *   - calls the raw Random() above (which does ONLY the LFSR + return-value math)
+ *   - logs `[RNG-CALL] call=N n=K before=0xX after=0xY result=R at=FILE:LINE`
+ *     when the deterministic-seed flag is set, so the trace records the
+ *     EXACT source location of every Random() invocation.
+ *
+ * The `at=` field is what makes call-by-call comparison with the OG
+ * trace useful: when ReMoM and OG diverge in call ordinality, this
+ * tells us which ReMoM source line is responsible for the extra call. */
+int16_t Random_at(int16_t n, const char *file, int line)
+{
+    uint32_t seed_before;
+    int16_t  ret;
+
+    g_random_call_count++;
+    seed_before = random_seed;
+
+    ret = Random(n);   /* RANDOM_C_NO_AUTOTRACE is still in effect here */
+
     if (_cmd_line_seed != 0) {
+        // TODO  use LOG_INFO(LOG_CAT_RANDOM, "[RNG] Set_Random_Seed(0x%08X = %u)  (was 0x%08X)  random_calls=%llu", (unsigned)n, (unsigned)n, (unsigned)random_seed, (unsigned long long)g_random_call_count);
         fprintf(stderr,
-            "[RNG-CALL] call=%llu  n=%d  before=0x%08X  after=0x%08X  result=%d\n",
+            "[RNG-CALL] call=%llu  n=%d  before=0x%08X  after=0x%08X  result=%d  at=%s:%d\n",
             (unsigned long long)g_random_call_count,
             (int)n,
             (unsigned)seed_before,
             (unsigned)random_seed,
-            (int)ret);
+            (int)ret,
+            file, (int)line);
     }
 
     return ret;
 }
+
+/* From here on, even within random.c, Random(n) is rewritten by the
+ * preprocessor to Random_at((n), __FILE__, __LINE__), so the
+ * weighted-random helpers in this file (Get_Weighted_Choice etc.) get
+ * call-site tracing too -- their internal Random() calls will be
+ * tagged with random.c:NNN. */
+#undef RANDOM_C_NO_AUTOTRACE
+#define Random(n) Random_at((n), __FILE__, __LINE__)
+
 // GEMINI
 // int16_t Random(int n) {
 //     int16_t i = 0;
