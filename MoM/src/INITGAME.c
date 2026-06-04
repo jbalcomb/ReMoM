@@ -790,7 +790,7 @@ void Init_Computer_Players_Wizard_Profile(void)
         banners[itr1] = ST_FALSE;
     }
 
-    banners[_players[HUMAN_PLAYER_IDX].banner_id] = ST_TRUE;
+    /* WTF */ banners[_players[HUMAN_PLAYER_IDX].banner_id] = ST_TRUE;
 
     // ; choose a different random portrait for each AI wizard
     for(itr2 = 1; itr2 < _num_players; itr2++)
@@ -875,7 +875,7 @@ void Init_Computer_Players_Wizard_Profile(void)
 
     // ; if the difficulty is normal or above, roll to try and
     // ; remove some of the default profile traits
-    for(itr2 = 0; itr2 < _num_players; itr2++)
+    for(itr2 = 1; itr2 < _num_players; itr2++)
     {
 
         switch(_difficulty)

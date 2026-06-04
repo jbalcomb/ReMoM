@@ -370,8 +370,10 @@ static int Config_Parse(const char *filepath, struct s_HeMoM_Config *cfg)
 
 static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
 {
-    int8_t *wsa_ptr;
-    int itr;
+    int8_t * wsa_ptr = NULL;
+    int itr = 0;
+
+    wsa_ptr = &_players[0].alchemy;
 
     _difficulty = cfg->difficulty;
     _magic = cfg->magic;
@@ -379,6 +381,15 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
     _num_players = cfg->opponents + 1;
 
     Human_Player_Wizard_Profile(cfg->wizard_id);
+
+    /*
+        "Wizard Creation"  (Custom Wizard)
+        Newgame_Screen_4__WIP()
+    */
+    for(itr = 0; itr < NUM_WIZARD_SPECIAL_ABILITIES; itr++)
+    {
+        wsa_ptr[itr] = 0;
+    }
 
     if (cfg->has_name)
     {
@@ -397,7 +408,6 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
 
     if (cfg->has_retorts)
     {
-        wsa_ptr = &_players[0].alchemy;
         for (itr = 0; itr < NUM_RETORTS; itr++)
         {
             if (cfg->retorts[itr] >= 0)

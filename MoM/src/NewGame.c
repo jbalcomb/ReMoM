@@ -1651,6 +1651,8 @@ int16_t Newgame_Screen_0(void)
     struct s_MAGIC_SET magic_set_snapshot;
 #endif
 
+    LOG_INFO(LOG_CAT_NEWGAME, "BEGIN: Newgame_Screen_0()");
+    
     screen_changed = ST_TRUE;
     
     // KNOWNBUG  conflicting condition - will never jump
