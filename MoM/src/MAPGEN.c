@@ -2715,15 +2715,16 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
     {
         switch((Random(5) - 1))
         {
-            case 0: { race_type = rt_Death;  }  // KNOWNBUG: falls through, missing break
-            case 1: { race_type = rt_Death;  }  // KNOWNBUG: falls through, missing break
-            case 2: { race_type = rt_Chaos;  }  // KNOWNBUG: falls through, missing break
-            case 3: { race_type = rt_Chaos;  }  // KNOWNBUG: falls through, missing break
-            case 4: { race_type = rt_Nature; }  // KNOWNBUG: falls through, missing break
+            case 0: { race_type = rt_Death;  }  /* OGBUG:  falls through, missing break */
+            case 1: { race_type = rt_Death;  }  /* OGBUG:  falls through, missing break */
+            case 2: { race_type = rt_Chaos;  }  /* OGBUG:  falls through, missing break */
+            case 3: { race_type = rt_Chaos;  }  /* OGBUG:  falls through, missing break */
+            case 4: { race_type = rt_Nature; }  /* OGBUG:  falls through, missing break */
         }
     }
+    /* Pick Guard 1 */
     tries = 0;
-    while(tries < 200)
+    do
     {
         Divided_Budget = (budget / Random(4));
         Highest_Cost = 0;
@@ -2745,12 +2746,7 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
             }
         }
         tries++;
-        if(
-            (Picked_Unit_Type != ST_UNDEFINED)
-            ||
-            (tries >= 200)
-        )
-        {
+    } while((Picked_Unit_Type == ST_UNDEFINED) && (tries < 200));
             if(tries < 200)
             {
                 _LAIRS[lair_idx].guard1_unit_type = (uint8_t)Picked_Unit_Type;
@@ -2766,16 +2762,18 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
                 SETMAX(_LAIRS[lair_idx].guard1_count, 8);
                 budget -= (_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost * _LAIRS[lair_idx].guard1_count);
             }
-        }
-    }  /* while(tries < 200) */
-    tries = 0;
+
+    /* Pick Guard 2 */
     if(
-        (_LAIRS[lair_idx].guard1_count != 9)  // ; conflicting condition - will always jump
+        (tries < 200)
+        &&
+        (_LAIRS[lair_idx].guard1_count != 9)  /* OGBUG  not possible, we just set the max to 8 */
         &&
         (_LAIRS[lair_idx].guard1_count != 0)
     )
     {
-        while(tries < 200)
+        tries = 0;
+        do
         {
             Divided_Budget = (budget / Random((10 - _LAIRS[lair_idx].guard1_count)));
             Highest_Cost = 0;
@@ -2800,12 +2798,7 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
                 }
             }
             tries++;
-            if(
-                (Picked_Unit_Type != ST_UNDEFINED)
-                ||
-                (tries >= 200)
-            )
-            {
+        } while((Picked_Unit_Type == ST_UNDEFINED) && (tries < 200));
                 if(tries < 200)
                 {
                     _LAIRS[lair_idx].guard2_unit_type = (uint8_t)Picked_Unit_Type;
@@ -2816,8 +2809,7 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
                     }
                 }
             }
-        }
-    }  /* while(tries < 200) */
+
     if(_LAIRS[lair_idx].guard1_unit_type == 0)
     {
         _LAIRS[lair_idx].guard1_count = 0;
@@ -2826,6 +2818,7 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
     {
         _LAIRS[lair_idx].guard2_count = 0;
     }
+    
     unknown_create_lair_value = (_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost * _LAIRS[lair_idx].guard1_count);
     // KNOWNBUG: this is not always the smaller part of the treasure budget
     unknown_create_lair_value += ((_unit_type_table[_LAIRS[lair_idx].guard2_unit_type].cost * _LAIRS[lair_idx].guard2_count) / 2);
