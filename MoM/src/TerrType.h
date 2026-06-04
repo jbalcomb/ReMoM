@@ -176,7 +176,7 @@ enum OVL_Tiles_Extended
     _Shore11101111  = 0x5F,
     _Shore11111011  = 0x60,
     _Shore11111110  = 0x61,
-    _Shore10111000  = 0x62,     /* 98  start of range for invalid river outflow */
+    _Shore10111000  = 0x62, /*  98  start of range for invalid river outflow */  /* start of first range considered as "an embarkable square" */
     _Shore10110000  = 0x63,
     _Shore10011000  = 0x64,
     _Shore10010000  = 0x65,
@@ -239,7 +239,7 @@ enum OVL_Tiles_Extended
     _Shore00100111  = 0x9E,
     _Shore00101111  = 0x9F,
     _Shore10100111  = 0xA0,
-    _Shore10101111  = 0xA1, /* 161  end of range for invalid river outflow */
+    _Shore10101111  = 0xA1, /* 161  end of range for invalid river outflow */  /* end of first range considered as "an embarkable square" */
 
     tte_Grasslands  = 0xA2, /* tt_Grasslands1  162  0xA2  0b10100010 */
     tte_Forest1        = 0xA3,
@@ -296,7 +296,7 @@ enum OVL_Tiles_Extended
     _Shore00001R1R  = 0xD6,
     _Shore10000R1R  = 0xD7,
     _Shore10001R1R  = 0xD8,
-    _Shore00001R10  = 0xD9,
+    _Shore00001R10  = 0xD9,     /* start of second range considered as "an embarkable square" */
     _Shore00001R00  = 0xDA,
     _Shore00000R10  = 0xDB,
     _Shore00000R00  = 0xDC,
@@ -311,7 +311,7 @@ enum OVL_Tiles_Extended
     _Shore001R1000  = 0xE5,
     _Shore001R0000  = 0xE6,
     _Shore000R1000  = 0xE7,
-    _Shore000R0000  = 0xE8,
+    _Shore000R0000  = 0xE8,     /* end of second range considered as "an embarkable square" */
     _River1100_3    = 0xE9,
     _River0011_3    = 0xEA,
     _River0110_3    = 0xEB,

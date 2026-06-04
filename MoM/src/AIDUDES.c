@@ -2514,7 +2514,7 @@ To prevent falling off the edge, the assembly uses previous_node_idx to follow e
                     _ai_landmass_dock_squares_wy_array[wp][count[wp]] = (int8_t)wy;
 /* Terminate the new tail of the list */
                     _ai_landmass_dock_squares_lists[wp][count[wp]] = ST_UNDEFINED;
-/* Increment the coastal tile counter for this plane */
+/* Increment the coastal square counter for this plane */
                     count[wp] += 1;
                 }
             }

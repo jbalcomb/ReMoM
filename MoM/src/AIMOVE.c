@@ -279,7 +279,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
             AI_Stacks_Survey_Expedition_Forces();
 
             AI_Stacks_Do_Meld(player_idx);
-            AI_Do_Settle(player_idx, landmass_idx);
+            AI_Stacks_Do_Settle(player_idx, landmass_idx);
             AI_Do_Purify(landmass_idx, wp);
             AI_Do_RoadBuild(landmass_idx);
 
@@ -1991,7 +1991,7 @@ void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, 
 
     /* Phase 5 */
     /* DEDU  For what might this have been meant to be used? */
-    /* NOTE(JimBalcomb,20260523): this block is in AI_SendToColonize__WIP(), used properly there */
+    /* NOTE(JimBalcomb,20260523): this block is in AI_Stacks_Reorder_Settle_Elsewhere(), used properly there */
     for(itr_stack_wy = (stack_wy - 1); (stack_wy + 2) > itr_stack_wy; itr_stack_wy++)
     {
         if(
@@ -4068,26 +4068,15 @@ void AI_Stacks_Do_Meld(int16_t player_idx)
 
 
 // WZD o158p23
-// drake178: AI_ProcessSettlers()
-/*
-processes any unassigned settlers, giving them either
-move or settle orders based on the circumstances
-
-has multiple BUGs, including one that allows settling
-while the AI has an empty garrison somewhere
-*/
-/*
-
-*/
-void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
+void AI_Stacks_Do_Settle(int16_t player_idx, int16_t landmass_idx)
 {
     int16_t landmass_node_index = 0;
     int16_t unit_wp = 0;
-    int16_t Best_Tile_Y = 0;
-    int16_t Best_Tile_X = 0;
+    int16_t highest_value_wy = 0;
+    int16_t highest_value_wx = 0;
     int16_t have_adamantium = 0;
     int16_t have_mithril = 0;
-    int16_t Tile_Settling_Value = 0;
+    int16_t map_square_value = 0;
     int16_t have_nightshade = 0;
     int16_t magic_units = 0;
     int16_t gold_units = 0;
@@ -4097,212 +4086,183 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
     int16_t maximum_population = 0;
     int16_t wx = 0;
     int16_t wy = 0;
-    int16_t Best_Tile_Value = 0;
-    int16_t Empty_Garrison = 0;
+    int16_t highest_map_square_value = 0;
+    int16_t have_empty_garrison = 0;
     int16_t Fast_Expand_Chance = 0;
     int16_t Unexplored = 0;
     int16_t have_shore = 0;
-    int16_t Tile_Distance = 0;
+    int16_t distance = 0;
     int16_t unit_wy = 0;
     int16_t unit_wx = 0;
     int16_t list_unit_count = 0;
     int16_t itr_list_units = 0;
-    int16_t Tower_Y = 0;
-    int16_t Tower_X = 0;
+    int16_t tower_wy = 0;
+    int16_t tower_wx = 0;
     int16_t wp = 0;
-    int16_t itr_stacks = 0;  // _SI_
-    int16_t unit_idx = 0;  // _DI_
+    int16_t itr_stacks = 0;
+    int16_t unit_idx = 0;
 
+
+    /* Phase 1 */
+    /* Determine expansion chance based on Wizard Objective */
     Fast_Expand_Chance = 1;
-
-    // DEDU  proabably switch{}?
-    if(_players[player_idx].Objective == OBJ_Expansionist)
+    switch (_players[player_idx].Objective)
     {
-
-        Fast_Expand_Chance = 4;
-
-    }
-    else if(_players[player_idx].Objective == OBJ_Militarist)
-    {
-
-        Fast_Expand_Chance = 2;
-
-    }
-    else if(_players[player_idx].Objective == OBJ_Pragmatist)
-    {
-
-        Fast_Expand_Chance = 2;
-
-    }
-    else if(_players[player_idx].Objective == OBJ_Perfectionist)
-    {
-
-        Fast_Expand_Chance = 1;
-
-    }
-    else if(_players[player_idx].Objective == OBJ_Theurgist)
-    {
-
-        Fast_Expand_Chance = 3;
-
+        case OBJ_Expansionist:  { Fast_Expand_Chance = 4; } break;
+        case OBJ_Militarist:    { Fast_Expand_Chance = 2; } break;
+        case OBJ_Pragmatist:    { Fast_Expand_Chance = 2; } break;
+        case OBJ_Perfectionist: { Fast_Expand_Chance = 1; } break;
+        case OBJ_Theurgist:     { Fast_Expand_Chance = 3; } break;
     }
 
-    Empty_Garrison = ST_FALSE;
 
+    /* Phase 2: Abort if we under defended */
+    have_empty_garrison = ST_FALSE;
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     {
-
         if(
             (_ai_own_stack_type[itr_stacks] == AISTK_Garrison)
             &&
-            (_ai_own_stack_unit_count[itr_stacks] < 1)
+            (_ai_own_stack_unit_count[itr_stacks] < 1)  /* OGBUG  stacks can't have zero or negatives */
         )
         {
-
-            Empty_Garrison = ST_TRUE;
-
+            have_empty_garrison = ST_TRUE;
         }
-
+    }
+    if(have_empty_garrison == ST_TRUE)
+    {
+        return;
     }
 
-    if(Empty_Garrison != ST_TRUE)
+
+    /* Phase 3 */
+    for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     {
 
-        for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
+        list_unit_count = _ai_own_stack_unit_count[itr_stacks];
+
+        for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
         {
 
-            list_unit_count = _ai_own_stack_unit_count[itr_stacks];
+            unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
 
-            for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
+            if(unit_idx == ST_UNDEFINED)
+            {
+                continue;
+            }
+            if((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_CREATEOUTPOST) != 0)
+            {
+                continue;
+            }
+
+            unit_wx = _UNITS[unit_idx].wx;
+            unit_wy = _UNITS[unit_idx].wy;
+            unit_wp = _UNITS[unit_idx].wp;
+
+            if(
+                (
+                    (Map_Square_Area_Has_Opponent(unit_wx, unit_wy, unit_wp, 3, player_idx) == ST_FALSE)
+                    ||
+                    (_turn < 100)
+                    ||
+                    (Random(5) == 1)
+                )
+                &&
+                (
+                    (Map_Square_Survey(unit_wx, unit_wy, unit_wp) == ST_FALSE)
+                    &&
+                    (Random(5) <= Fast_Expand_Chance)
+                )
+            )
+            {
+                AI_Order_Settle(unit_idx, itr_stacks, itr_list_units);
+                continue;
+            }
+
+            if(AI_Find_Tower_To_Settle_Elsewhere(player_idx, unit_idx, &tower_wx, &tower_wy, unit_wp) == ST_TRUE)
             {
 
-                unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
+#ifdef STU_DEBUG
+                LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, tower_wx, tower_wy, itr_stacks, itr_list_units);
+#endif
 
+                g_ai_set_target_caller = 15;
+                AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, tower_wx, tower_wy, itr_stacks, itr_list_units);
 
-                if(
-                    (unit_idx != ST_UNDEFINED)
-                    &&
-                    ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_CREATEOUTPOST) != 0)
-                )
+            }
+            else
+            {
+                highest_map_square_value = ST_UNDEFINED;
+                landmass_node_index = _ai_landmass_land_squares_heads[unit_wp][landmass_idx];
+                while(landmass_node_index != ST_UNDEFINED)
+                {
+                    wx = _ai_landmass_land_squares_wx_array[unit_wp][landmass_node_index];
+                    wy = _ai_landmass_land_squares_wy_array[unit_wp][landmass_node_index];
+                    if(Map_Square_Survey(wx, wy, unit_wp) == 0)
+                    {
+                        if((g_ai_evaluation_map[unit_wp][((wy * WORLD_WIDTH) + wx)] & AI_TARGET_STRENGTH_MASK) == 0)
+                        {
+                            distance = Range(unit_wx, unit_wy, wx, wy);
+                            if(distance != 0)
+                            {
+                                Compute_Base_Values_For_Map_Square(wx, wy, wp, &maximum_population, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &Unexplored);
+                                map_square_value = 
+                                    (
+                                        (
+                                            (
+                                                (maximum_population * 10)
+                                                +
+                                                production_bonus
+                                                +
+                                                gold_bonus
+                                                +
+                                                unit_cost_reduction
+                                            )
+                                            +
+                                            (gold_units * 3)
+                                            +
+                                            (magic_units * 5)
+                                            +
+                                            (have_nightshade * 10)
+                                            +
+                                            (have_mithril * 20)
+                                            +
+                                            (have_adamantium * 50)
+                                            +
+                                            (have_shore * 50)
+                                        )
+                                        /
+                                        distance
+                                    );
+
+                                EMM_Map_CONTXXX__WIP();
+
+                                if(map_square_value > highest_map_square_value)
+                                {
+                                    highest_map_square_value = map_square_value;
+                                    highest_value_wx = wx;
+                                    highest_value_wy = wy;
+                                }
+                            }
+                        }
+                    }
+                    landmass_node_index = _ai_landmass_land_squares_lists[wp][landmass_node_index];
+                }
+
+                if(highest_map_square_value == ST_UNDEFINED)
                 {
 
-                    unit_wx = _UNITS[unit_idx].wx;
+                    /* No good square on this landmass, send settler to colonize elsewhere */
+                    AI_Stacks_Reorder_Settle_Elsewhere(unit_idx, unit_wx, unit_wy, unit_wp, player_idx, itr_stacks, itr_list_units);
 
-                    unit_wy = _UNITS[unit_idx].wy;
-
-                    unit_wp = _UNITS[unit_idx].wp;
-
-                    if(
-                        (Map_Square_Area_Has_Opponent(unit_wx, unit_wy, unit_wp, 3, player_idx) != ST_FALSE)
-                        &&
-                        (_turn >= 100)
-                        &&
-                        (Random(5) != 1)
-                        &&
-                        (
-                            (Map_Square_Survey(unit_wx, unit_wy, unit_wp) != ST_FALSE)
-                            ||
-                            (Random(5) > Fast_Expand_Chance)
-                        )
-                    )
-                    {
-
-                        if(AI_CanSettleOffPlane__STUB(player_idx, unit_idx, &Tower_X, &Tower_Y, unit_wp) == ST_TRUE)
-                        {
-
+                }
+                else
+                {
 #ifdef STU_DEBUG
-                            LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, Tower_X, Tower_Y, itr_stacks, itr_list_units);
+                    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, highest_value_wx, highest_value_wy, itr_stacks, itr_list_units);
 #endif
-
-                            g_ai_set_target_caller = 15;
-                            AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, Tower_X, Tower_Y, itr_stacks, itr_list_units);
-
-                        }
-                        else
-                        {
-                            Best_Tile_Value = ST_UNDEFINED;
-                            landmass_node_index = _ai_landmass_land_squares_heads[unit_wp][landmass_idx];
-                            while(landmass_node_index != ST_UNDEFINED)
-                            {
-                                wx = _ai_landmass_land_squares_wx_array[unit_wp][landmass_node_index];
-                                wy = _ai_landmass_land_squares_wy_array[unit_wp][landmass_node_index];
-                                if(Map_Square_Survey(wx, wy, unit_wp) == 0)
-                                {
-                                    if((g_ai_evaluation_map[unit_wp][((wy * WORLD_WIDTH) + wx)] & AI_TARGET_STRENGTH_MASK) == 0)
-                                    {
-                                        Tile_Distance = Range(unit_wx, unit_wy, wx, wy);
-                                        if(Tile_Distance != 0)
-                                        {
-                                            Compute_Base_Values_For_Map_Square(wx, wy, wp, &maximum_population, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &Unexplored);
-                                            Tile_Settling_Value = 
-                                                (
-                                                    (
-                                                        (
-                                                            (maximum_population * 10)
-                                                            +
-                                                            production_bonus
-                                                            +
-                                                            gold_bonus
-                                                            +
-                                                            unit_cost_reduction
-                                                        )
-                                                        +
-                                                        (gold_units * 3)
-                                                        +
-                                                        (magic_units * 5)
-                                                        +
-                                                        (have_nightshade * 10)
-                                                        +
-                                                        (have_mithril * 20)
-                                                        +
-                                                        (have_adamantium * 50)
-                                                        +
-                                                        (have_shore * 50)
-                                                    )
-                                                    /
-                                                    Tile_Distance  /* JIMBUG: divide by 0? */
-                                                    // NOTE(JimBalcomb,20260207): double-checked the Dasm, it's definitely `if(Tile_Distance != 0)`, so I just got it backwards for some reason
-                                                );
-
-                                            EMM_Map_CONTXXX__WIP();
-
-                                            if(Tile_Settling_Value > Best_Tile_Value)
-                                            {
-                                                Best_Tile_Value = Tile_Settling_Value;
-                                                Best_Tile_X = wx;
-                                                Best_Tile_Y = wy;
-                                            }
-                                        }
-                                    }
-                                }
-                                landmass_node_index = _ai_landmass_land_squares_lists[wp][landmass_node_index];
-                            }
-
-                            if(Best_Tile_Value == ST_UNDEFINED)
-                            {
-
-                                AI_SendToColonize__WIP(unit_idx, unit_wx, unit_wy, unit_wp, player_idx, itr_stacks, itr_list_units);
-
-                            }
-                            else
-                            {
-#ifdef STU_DEBUG
-                                LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, Best_Tile_X, Best_Tile_Y, itr_stacks, itr_list_units);
-#endif
-                                g_ai_set_target_caller = 16;
-                                AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, Best_Tile_X, Best_Tile_Y, itr_stacks, itr_list_units);
-
-                            }
-
-                        }
-
-                    }
-                    else
-                    {
-                        
-                        AI_Order_Settle(unit_idx, itr_stacks, itr_list_units);
-
-                    }
+                    g_ai_set_target_caller = 16;
+                    AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, highest_value_wx, highest_value_wy, itr_stacks, itr_list_units);
 
                 }
 
@@ -4810,7 +4770,7 @@ void AI_Order_Purify(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_
 
 // WZD o158p32
 /*
-OON XREF: AI_Do_Settle()
+OON XREF: AI_Stacks_Do_Settle()
 ~== AI_Enemy_Unit_In_Range(), but Landmass agnostic
 */
 int16_t Map_Square_Area_Has_Opponent(int16_t wx, int16_t wy, int16_t wp, int16_t range, int16_t player_idx)
@@ -4901,61 +4861,155 @@ int16_t AI_Enemy_Unit_In_Range(int16_t wx, int16_t wy, int16_t wp, int16_t range
 
 
 // WZD o158p34
-// drake178: AI_CanSettleOffPlane()
-/*
-; finds the nearest controlled Tower of Wizardry that
-; is on the same continent as the unit, and its non-
-; home plane side leads to a continent that is landable
-; and not contested (not type 2 or 4)
-; returns 1 along with the coordinates if successful
-; returns 0 otherwise, if Planar Seal is in effect, if
-; the selected Plane is not the home Plane, or if the
-; unit is already on a tower's tile
-*/
-/*
-
-*/
-int16_t AI_CanSettleOffPlane__STUB(int16_t player_idx, int16_t unit_idx, int16_t * Tower_X, int16_t * Tower_Y, int16_t unit_wp)
+/* COPILOT */
+/**
+ * @brief Finds a friendly tower route for sending a settler to the opposite plane.
+ *
+ * This helper evaluates whether a settler-like unit should be redirected through
+ * a tower to settle on the other plane. It first aborts when any wizard has
+ * Planar Seal active, then rejects calls already on the destination plane. For
+ * eligible units, it selects the nearest tower owned by @p player_idx on the
+ * unit's current landmass and evaluates the opposite-plane landmass reached at
+ * that tower coordinate.
+ *
+ * The destination is accepted only when the target landmass classification is
+ * neither contested nor ally-occupied-without-own-city.
+ *
+ * @param player_idx AI player requesting the off-plane settlement redirect.
+ * @param unit_idx Index of the unit being evaluated for tower transfer.
+ * @param new_target_wx Output pointer receiving the selected tower x coordinate.
+ * @param new_target_wy Output pointer receiving the selected tower y coordinate.
+ * @param wp Caller-provided current plane context used for early rejection.
+ *
+ * @return ST_TRUE when a valid tower destination is found and written to output
+ *         pointers; otherwise ST_FALSE.
+ *
+ * @note The routine assumes @p unit_idx is valid for _UNITS[] and does not
+ *       perform its own bounds check.
+ */
+int16_t AI_Find_Tower_To_Settle_Elsewhere(int16_t player_idx, int16_t unit_idx, int16_t * new_target_wx, int16_t * new_target_wy, int16_t wp)
 {
+    int16_t landmass_idx = 0;
+    int16_t uu_var_1a = 0;
+    int16_t delta_distance = 0;
+    int16_t unit_landmass_idx = 0;
+    int16_t unit_is_on_tower = 0;
+    int16_t landmass_wp = 0;
+    int16_t min_delta_distance = 0;
+    int16_t tower_wy = 0;
+    int16_t tower_wx = 0;
+    int16_t landmass_wy = 0;
+    int16_t landmass_wx = 0;
+    int16_t unit_wp = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t itr_players = 0;
+    int16_t itr_towers = 0;
 
-    /* HACK TODO ALPHA */  return ST_FALSE;
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        if(_players[itr_players].Globals[PLANAR_SEAL] != 0)
+        {
+            return ST_FALSE;
+        }
+    }
+
+    landmass_wp = (1 - _FORTRESSES[player_idx].wp);
+    
+    if(wp == landmass_wp)
+    {
+        return ST_FALSE;
+    }
+
+    unit_wx = _UNITS[unit_idx].wx;
+    unit_wy = _UNITS[unit_idx].wy;
+    unit_wp = _UNITS[unit_idx].wp;
+    unit_is_on_tower = 0; /* e_ST_FALSE */
+
+    for(itr_towers = 0; itr_towers < NUM_TOWERS; itr_towers++)
+    {
+        if(_TOWERS[itr_towers].wx == unit_wx && _TOWERS[itr_towers].wy == unit_wy)
+        {
+            unit_is_on_tower = 1;
+        }
+    }
+
+    if (unit_is_on_tower == 1) {
+        return 0;
+    }
+
+    unit_landmass_idx = _landmasses[(unit_wp * WORLD_SIZE) + (unit_wy * WORLD_WIDTH) + unit_wx];
+    min_delta_distance = 1000;
+
+    for (itr_towers = 0; itr_towers < NUM_TOWERS; itr_towers++) {
+        if (_TOWERS[itr_towers].owner_idx == player_idx) {
+            if (_landmasses[(unit_wp * WORLD_SIZE) + (_TOWERS[itr_towers].wy * WORLD_WIDTH) + _TOWERS[itr_towers].wx] == unit_landmass_idx) {
+                delta_distance = Delta_XY_With_Wrap(unit_wx, unit_wy, _TOWERS[itr_towers].wx, _TOWERS[itr_towers].wy, WORLD_WIDTH);
+                if (delta_distance < min_delta_distance) {
+                    min_delta_distance = delta_distance;
+                    tower_wx = _TOWERS[itr_towers].wx;
+                    tower_wy = _TOWERS[itr_towers].wy;
+                }
+            }
+        }
+    }
+
+    if (min_delta_distance == 1000) {
+        return 0;
+    }
+
+    landmass_wx = tower_wx;
+    landmass_wy = tower_wy;
+    landmass_idx = _landmasses[(landmass_wp * WORLD_SIZE) + (landmass_wy * WORLD_WIDTH) + landmass_wx];
+    uu_var_1a = 0;
+
+    if(_ai_continents.plane[landmass_wp].player[player_idx].type_array[landmass_idx] == lmt_Contested)
+    {
+        return ST_FALSE;
+    }
+
+    if(_ai_continents.plane[landmass_wp].player[player_idx].type_array[landmass_idx] == lmt_NoOwnCityAndAllyHasCity)
+    {
+        return ST_FALSE;
+    }
+
+    *new_target_wx = landmass_wx;
+    *new_target_wy = landmass_wy;
+
+    return ST_TRUE;
 
 }
 
 
 // WZD o158p35
-// drake178: AI_SendToColonize()
-/*
-if there is a new colony continent set for the plane,
-set the unit to go there - on its own if it is
-seafaring, on land if it can get there, or by
-requesting transport otherwise
-*/
-/*
-
-*/
-void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t unit_list_idx, int16_t list_unit_idx)
+void AI_Stacks_Reorder_Settle_Elsewhere(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t unit_list_idx, int16_t list_unit_idx)
 {
     int16_t target_wy = 0;
     int16_t target_wx = 0;
     int16_t is_seafaring = 0;
-    int16_t Transport_StackSize = 0;
-    int16_t transport_capacity = 0;
-    int16_t Adjacent_Ocean_Y = 0;
-    int16_t Adjacent_Ocean_X = 0;
+    int16_t niu_stack_capacity_free = 0;
+    int16_t niu_stack_capacity_total = 0;
+    int16_t new_target_wy = 0;
+    int16_t new_target_wx = 0;
     int16_t uu_landmass_idx = 0;
-    int16_t transport_wy = 0;
-    int16_t transport_wx = 0;
+    int16_t destination_wy = 0;
+    int16_t destination_wx = 0;
     int16_t itr_wx = 0;
-    int16_t Own_Stack_Index = 0;
+    int16_t itr_stacks = 0;
     int16_t found_transport = 0;
-    int16_t Embarkable_Tile = 0;
+    int16_t square_is_embarkable = 0;
     int16_t unit_wy = 0;
     int16_t unit_wx = 0;
+    
+
+    /* Phase 1: Init */
     uu_landmass_idx = _landmasses[((WORLD_SIZE * wp) + (wy * WORLD_WIDTH) + wx)];
     unit_wx = _UNITS[unit_idx].wx;
-    unit_wy = _UNITS[unit_idx].wx;  // BUGBUG  should be _UNITS[].wy, not _UNITS[].wx
-    wp = _UNITS[unit_idx].wp;
+    unit_wy = _UNITS[unit_idx].wx;  /* OGBUG  should be _UNITS[].wy, not _UNITS[].wx */
+    wp = _UNITS[unit_idx].wp;  /* OGBUG  overwrites WP */
+
+
+    /* Phase 2: Determine if the unit is seafaring */
     is_seafaring = ST_FALSE;
     if(
         (Unit_Has_AirTravel(unit_idx) != ST_FALSE)
@@ -4965,80 +5019,91 @@ void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp
     {
         is_seafaring = ST_TRUE;
     }
+
+
+    /* Phase 3: Sanity Check */
     if(_ai_landmass_settler_targets[wp][player_idx] == 0)
     {
         return;
     }
-    transport_wx = _ai_landmass_settler_targets_wx_array[wp][player_idx];
-    transport_wy = _ai_landmass_settler_targets_wy_array[wp][player_idx];
+
+
+    /* Phase 4 */
+    destination_wx = _ai_landmass_settler_targets_wx_array[wp][player_idx];
+    destination_wy = _ai_landmass_settler_targets_wy_array[wp][player_idx];
     if(is_seafaring == ST_TRUE)
     {
+        /* Phase 4a: send it directly */
 #ifdef STU_DEBUG
-        LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, transport_wx, transport_wy, unit_list_idx, list_unit_idx);
+        LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, destination_wx, destination_wy, unit_list_idx, list_unit_idx);
 #endif
         g_ai_set_target_caller = 19;
-        AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, transport_wx, transport_wy, unit_list_idx, list_unit_idx);
+        AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, destination_wx, destination_wy, unit_list_idx, list_unit_idx);
     }
     else
     {
-// ; check if any of the adjacent tiles can be embarked onto
-// ; BUG: not all valid tiles are ambarkable
-// ; BUG: there's already a CONTX allocation for listing tiles that can be embarked from
-        Embarkable_Tile = ST_FALSE;
+        /* Phase 4b: Ferry */
+        square_is_embarkable = ST_FALSE;
         for(unit_wy = (wy - 1); (wy + 2) > unit_wy; unit_wy++)
         {
             if(
-                (unit_wy > 0)
-                &&
-                (unit_wy < WORLD_HEIGHT)
+                (unit_wy <= 0)
+                ||
+                (unit_wy >= WORLD_HEIGHT)
             )
             {
-                for(itr_wx = (wx - 1); (wx + 2) > itr_wx; itr_wx++)
+                continue;
+            }
+            for(itr_wx = (wx - 1); (wx + 2) > itr_wx; itr_wx++)
+            {
+                unit_wx = itr_wx;
+                if(unit_wx < 0)
                 {
-                    unit_wx = itr_wx;
-                    if(unit_wx > 0)
-                    {
-                        unit_wx += WORLD_WIDTH;
-                    }
-                    if(unit_wx >= WORLD_WIDTH)
-                    {
-                        unit_wx -= WORLD_WIDTH;
-                    }
-                    if(Map_Square_Is_Embarkable(unit_wx, unit_wy, wp) != ST_FALSE)
-                    {
-                        Embarkable_Tile = ST_TRUE;
-                        Adjacent_Ocean_X = itr_wx;  // BUGBUG  ; BUG: this should be itr  [NOTE: "itr" as in unit_wx]
-                        Adjacent_Ocean_Y = unit_wy;
-                    }
+                    unit_wx += WORLD_WIDTH;
+                }
+                if(unit_wx >= WORLD_WIDTH)
+                {
+                    unit_wx -= WORLD_WIDTH;
+                }
+                if(Map_Square_Is_Embarkable(unit_wx, unit_wy, wp) != ST_FALSE)
+                {
+                    square_is_embarkable = ST_TRUE;
+                    new_target_wx = itr_wx;  /* OGBUG  this should be unit_wx, not itr_wx */
+                    new_target_wy = unit_wy;
                 }
             }
         }
-        if(Embarkable_Tile == ST_FALSE)
+
+        /* Phase 4c: */
+        if(square_is_embarkable == ST_FALSE)
         {
-            TILE_AI_FindLoadTile__WIP(wx, wy, wp, &Adjacent_Ocean_X, &Adjacent_Ocean_Y);
-            if(TILE_AI_FindEmptyLnd__WIP(Adjacent_Ocean_X, Adjacent_Ocean_Y, wp, &Adjacent_Ocean_X, &Adjacent_Ocean_Y) == ST_TRUE)
+            /* Phase 4c1: */
+            /* Find a suitable landing site or transport load point */
+            Next_Nearest_Ferry_Square(wx, wy, wp, &new_target_wx, &new_target_wy);
+            if(Adjacent_Land_Square(new_target_wx, new_target_wy, wp, &new_target_wx, &new_target_wy) == ST_TRUE)
             {
 #ifdef STU_DEBUG
-                LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, Adjacent_Ocean_X, Adjacent_Ocean_Y, unit_list_idx, list_unit_idx);
+                LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, new_target_wx, new_target_wy, unit_list_idx, list_unit_idx);
 #endif
                 g_ai_set_target_caller = 20;
-                AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, Adjacent_Ocean_X, Adjacent_Ocean_Y, unit_list_idx, list_unit_idx);
+                AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, new_target_wx, new_target_wy, unit_list_idx, list_unit_idx);
             }
         }
         else
         {
-// ; check if there's an adjacent transport stack
+            /* Phase 4c2: */
+            /* Unit is near water: check if a transport is already nearby */
             found_transport = ST_FALSE;
-            for(Own_Stack_Index = 0; ((Own_Stack_Index < _ai_all_own_stack_count) && (found_transport == ST_FALSE)); Own_Stack_Index++)
+            for(itr_stacks = 0; ((itr_stacks < _ai_all_own_stack_count) && (found_transport == ST_FALSE)); itr_stacks++)
             {
                 if(
-                    (_ai_all_own_stacks[Own_Stack_Index].wp == wp)
+                    (_ai_all_own_stacks[itr_stacks].wp == wp)
                     &&
-                    ((_ai_all_own_stacks[Own_Stack_Index].abilities & AICAP_Transport) != 0)
+                    ((_ai_all_own_stacks[itr_stacks].abilities & AICAP_Transport) != 0)
                 )
                 {
-                    unit_wx = _ai_all_own_stacks[Own_Stack_Index].wx;
-                    unit_wy = _ai_all_own_stacks[Own_Stack_Index].wy;
+                    unit_wx = _ai_all_own_stacks[itr_stacks].wx;
+                    unit_wy = _ai_all_own_stacks[itr_stacks].wy;
                     if(
                         (abs(wx - unit_wx) < 2)
                         &&
@@ -5046,28 +5111,28 @@ void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp
                     )
                     {
                         found_transport = ST_TRUE;
-                        transport_wx = unit_wx;
-                        transport_wy = unit_wy;
-                        transport_capacity = _ai_all_own_stacks[Own_Stack_Index].transport_capacity;
-                        Transport_StackSize = (MAX_STACK - _ai_all_own_stacks[Own_Stack_Index].unit_count);
+                        destination_wx = unit_wx;
+                        destination_wy = unit_wy;
+                        niu_stack_capacity_total = _ai_all_own_stacks[itr_stacks].transport_capacity;
+                        niu_stack_capacity_free = (MAX_STACK - _ai_all_own_stacks[itr_stacks].unit_count);
                     }
                 }
             }
             if(found_transport == ST_TRUE)
             {
 #ifdef STU_DEBUG
-                LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, transport_wx, transport_wy, unit_list_idx, list_unit_idx);
+                LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, destination_wx, destination_wy, unit_list_idx, list_unit_idx);
 #endif
                 g_ai_set_target_caller = 21;
-                AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, transport_wx, transport_wy, unit_list_idx, list_unit_idx);
+                AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, destination_wx, destination_wy, unit_list_idx, list_unit_idx);
             }
             else
             {
-                if(_ai_ferry_count < 15)
+                if(_ai_ferry_count < MAX_AI_FERRIES)
                 {
                     AI_Stacks_Order_Ferry(unit_idx, unit_list_idx, list_unit_idx);
-                    _ai_ferry_wx_array[_ai_ferry_count] = Adjacent_Ocean_X;
-                    _ai_ferry_wy_array[_ai_ferry_count] = Adjacent_Ocean_Y;
+                    _ai_ferry_wx_array[_ai_ferry_count] = new_target_wx;
+                    _ai_ferry_wy_array[_ai_ferry_count] = new_target_wy;
                     _ai_ferry_wp_array[_ai_ferry_count] = wp;
                     _ai_ferry_count++;
                 }
@@ -5690,23 +5755,30 @@ void AI_Stack_Set_Boats_Goto(int16_t ai_stack_idx, int16_t wx, int16_t wy)
 
 
 // WZD o162p20
-// drake178: sub_F60F4()
-
-// WZD o162p21
-// drake178: TILE_AI_FindLoadTile()
-/*
-finds the closest land square from which units can be
-loaded onto a transport - or passes back the original
-coordinates if none are found
-
-WARNING: requires the CONTXXX EMS mapping
-*/
-/*
-
-*/
-void TILE_AI_FindLoadTile__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * RetX, int16_t * RetY)
+/**
+ * @brief Finds the nearest eligible dock square for ferry movement from a source square.
+ *
+ * Scans the linked list of dock squares for the source landmass on the specified plane,
+ * filters candidates to those that have at least one adjacent occupiable land square
+ * (non-zero landmass and zero in g_ai_evaluation_map), and selects the candidate with
+ * the smallest wrapped delta distance to the input coordinates.
+ *
+ * If no eligible dock square is found, the source coordinates are returned unchanged.
+ *
+ * @param wx Source world x coordinate.
+ * @param wy Source world y coordinate.
+ * @param wp Source world plane index.
+ * @param target_wx Output pointer receiving the selected dock-square x coordinate.
+ * @param target_wy Output pointer receiving the selected dock-square y coordinate.
+ * @return This function does not return a value; result coordinates are written via
+ *         @p target_wx and @p target_wy.
+ *
+ * @note This routine expects AI landmass dock-square lists and evaluation-map state to
+ *       be initialized for the specified plane before it is called.
+ */
+void Next_Nearest_Ferry_Square(int16_t wx, int16_t wy, int16_t wp, int16_t * target_wx, int16_t * target_wy)
 {
-    int16_t Adj_Empty_Land = 0;
+    int16_t adjacent_square_is_occupieable_land = 0;
     int16_t landmass_idx = 0;
     int16_t landmass_node_index = 0;
     int16_t min_delta_distance = 0;
@@ -5717,17 +5789,19 @@ void TILE_AI_FindLoadTile__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
     int16_t Return_X = 0;
     int16_t wy_offset = 0;
     int16_t wx_offset = 0;
+
     landmass_idx = _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
     min_delta_distance = 2000;
+    
     landmass_node_index = _ai_landmass_dock_squares_heads[wp][landmass_idx];
     while(landmass_node_index != ST_UNDEFINED)
     {
         landmass_node_wx = _ai_landmass_dock_squares_wx_array[wp][landmass_node_index];
         landmass_node_wy = _ai_landmass_dock_squares_wy_array[wp][landmass_node_index];
-        Adj_Empty_Land = ST_FALSE;
-        for(wy_offset = ST_UNDEFINED; ((wy_offset < 2) && (Adj_Empty_Land == ST_FALSE)); wy_offset++)
+        adjacent_square_is_occupieable_land = ST_FALSE;
+        for(wy_offset = ST_UNDEFINED; ((wy_offset < 2) && (adjacent_square_is_occupieable_land == ST_FALSE)); wy_offset++)
         {
-            for(wx_offset = ST_UNDEFINED; ((wx_offset < 2) && (Adj_Empty_Land == ST_FALSE)); wx_offset++)
+            for(wx_offset = ST_UNDEFINED; ((wx_offset < 2) && (adjacent_square_is_occupieable_land == ST_FALSE)); wx_offset++)
             {
                 if(
                     (_landmasses[((wp * WORLD_SIZE) + ((wy_offset + landmass_node_wy) * WORLD_WIDTH) + (wx_offset + landmass_node_wx))] != 0)
@@ -5735,11 +5809,11 @@ void TILE_AI_FindLoadTile__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
                     (g_ai_evaluation_map[wp][((wy_offset + landmass_node_wy) * WORLD_WIDTH) + (wx_offset + landmass_node_wx)] == 0)
                 )
                 {
-                    Adj_Empty_Land = ST_TRUE;
+                    adjacent_square_is_occupieable_land = ST_TRUE;
                 }
             }
         }
-        if(Adj_Empty_Land == ST_TRUE)
+        if(adjacent_square_is_occupieable_land == ST_TRUE)
         {
             delta_distance = Delta_XY_With_Wrap(landmass_node_wx, landmass_node_wy, wx, wy, WORLD_WIDTH);
             if(delta_distance < min_delta_distance)
@@ -5751,15 +5825,16 @@ void TILE_AI_FindLoadTile__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
         }
         landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
     }
+
     if(min_delta_distance != 2000)
     {
-        *RetX = Return_X;
-        *RetY = Return_Y;
+        *target_wx = Return_X;
+        *target_wy = Return_Y;
     }
     else
     {
-        *RetX = wx;
-        *RetY = wy;
+        *target_wx = wx;
+        *target_wy = wy;
     }
 }
 
@@ -5767,55 +5842,65 @@ void TILE_AI_FindLoadTile__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
 // WZD o162p22
 // drake178: sub_F6316()
 
+
 // WZD o162p23
-// drake178: TILE_AI_FindEmptyLnd()
-/*
-; checks whether there is an empty land square adjacent
-; to the specified square
-; returns 1 and the coordinates if successful, or 0 if
-; there are no adjacent empty land tiles
-;
-; WARNING: requires the CONTXXX EMS mapping
-*/
-/*
-
-returns {F,T}
-maybe, in-outs new wx,wy of unoccupied land square
-
-similar weirdness in AI_SendToColonize__WIP()
-*/
-int16_t TILE_AI_FindEmptyLnd__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * RetX, int16_t * RetY)
+/* COPILOT */
+/**
+ * @brief Finds the first adjacent land square that is a safe landing/staging candidate for the current AI pass.
+ *
+ * Scans the 3x3 neighborhood centered on the input square (including the center tile),
+ * applies horizontal world-wrap for X coordinates, and checks each candidate for two
+ * conditions: terrain is land (Square_Is_Land() == ST_TRUE) and the corresponding
+ * g_ai_evaluation_map entry is exactly zero (no strength bits and no site/nonhostile flags).
+ *
+ * A zero map entry means no AI_TARGET_STRENGTH_MASK bits and no AI_TARGET_SITE or
+ * AI_TARGET_NONHOSTILE flags are set for that square on the evaluated plane.
+ *
+ * On the first match in scan order, writes coordinates to the output pointers and
+ * returns success.
+ *
+ * @param wx Source world X coordinate.
+ * @param wy Source world Y coordinate.
+ * @param wp World plane index.
+ * @param target_wx Output pointer receiving the selected adjacent land-square X.
+ * @param target_wy Output pointer receiving the selected adjacent land-square Y.
+ * @return ST_TRUE if a valid square is found; otherwise ST_FALSE.
+ *
+ * @note This routine wraps X across world boundaries but only evaluates Y values where
+ *       `curr_wy > 0` and `curr_wy < WORLD_HEIGHT`.
+ */
+int16_t Adjacent_Land_Square(int16_t wx, int16_t wy, int16_t wp, int16_t * target_wx, int16_t * target_wy)
 {
     int16_t itr_wx = 0;
-    int16_t some_wy = 0;
-    int16_t some_wx = 0;
-    for(some_wy = (wy - 1); (wy + 2) > some_wy; some_wy++)
+    int16_t curr_wy = 0;
+    int16_t curr_wx = 0;
+    for(curr_wy = (wy - 1); (wy + 2) > curr_wy; curr_wy++)
     {
         if(
-            (some_wy > 0)
+            (curr_wy > 0)
             &&
-            (some_wy < WORLD_HEIGHT)
+            (curr_wy < WORLD_HEIGHT)
         )
         {
             for(itr_wx = (wx - 1); (wx + 2) > itr_wx; itr_wx++)
             {
-                some_wx = itr_wx;
-                if(some_wx < 0)
+                curr_wx = itr_wx;
+                if(curr_wx < 0)
                 {
-                    some_wx += WORLD_WIDTH;
+                    curr_wx += WORLD_WIDTH;
                 }
-                if(some_wx >= WORLD_WIDTH)
+                if(curr_wx >= WORLD_WIDTH)
                 {
-                    some_wx -= WORLD_WIDTH;
+                    curr_wx -= WORLD_WIDTH;
                 }
                 if(
-                    (Square_Is_Land(some_wx, some_wy, wp) == ST_TRUE)
+                    (Square_Is_Land(curr_wx, curr_wy, wp) == ST_TRUE)
                     &&
-                    g_ai_evaluation_map[wp][((some_wy * WORLD_WIDTH) + some_wx)]
+                    (g_ai_evaluation_map[wp][((curr_wy * WORLD_WIDTH) + curr_wx)] == 0)
                 )
                 {
-                    *RetX = some_wx;
-                    *RetY = some_wy;
+                    *target_wx = curr_wx;
+                    *target_wy = curr_wy;
                     return ST_TRUE;
                 }
             }

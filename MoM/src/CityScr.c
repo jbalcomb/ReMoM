@@ -1,5 +1,6 @@
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
 
 #include "../../ext/stu_compat.h"
 
@@ -44,7 +45,6 @@
 #include <string.h>
 
 #include "CityScr.h"
-#include "../../STU/src/STU_LOG.h"
 
 
 

@@ -286,7 +286,7 @@ Every subsequent slot of `AI_Set_Unit_Orders` Phase 4 dispatch consumes some par
 | 2 | `AI_Stacks_Move_Out_NonMilitary_Garrisoned` | type, unit_list (for Garrison+ stacks) |
 | 3 | `AI_Stacks_Survey_Expedition_Forces` | type, unit_count, unit_list (pools excess units) |
 | 4 | `AI_Stacks_Do_Meld` | type, unit_list |
-| 5 | `AI_Do_Settle` | type, unit_list |
+| 5 | `AI_Stacks_Do_Settle` | type, unit_list |
 | 6 | `AI_Do_Purify` | type, unit_list |
 | 7 | `AI_Do_RoadBuild` | type, unit_list |
 | 8 | `AI_Build_Target_List` | (doesn't touch stack arrays) |

@@ -87,7 +87,7 @@ Three call sites:
 
 2. **[AI_Stacks_Setup_Ferry at line 2261](../../MoM/src/AIMOVE.c#L2261)** — inside Phase 7b (the no-nearby-ocean branch), which is unreachable due to the inverted `if(total_boat_capacity > 0)` gate. So in practice this caller never fires under current data conditions. See [AIMOVE-AI_Stacks_Setup_Ferry.md](AIMOVE-AI_Stacks_Setup_Ferry.md) (bug B12 in that doc) for details on why.
 
-3. **[AI_SendToColonize__WIP at line 5127](../../MoM/src/AIMOVE.c#L5127)** — when an adjacent ocean transport is NOT found for a colonizing settler/engineer, register a ferry-pickup request at the adjacent ocean square AND order the unit to ferry. Gated by `if(_ai_ferry_count < MAX_AI_FERRIES)` — note this caller pre-checks the ferry-list capacity before appending, paralleling the guard inside [`AI_Stacks_Ferry_Add_Location`](AIMOVE-AI_Stacks_Ferry_Add_Location.md) itself.
+3. **[AI_Stacks_Reorder_Settle_Elsewhere at line 5343](../../MoM/src/AIMOVE.c#L5343)** — when an adjacent ocean transport is NOT found for a colonizing settler/engineer, register a ferry-pickup request at the adjacent ocean square AND order the unit to ferry. Gated by `if(_ai_ferry_count < MAX_AI_FERRIES)` — note this caller pre-checks the ferry-list capacity before appending, paralleling the guard inside [`AI_Stacks_Ferry_Add_Location`](AIMOVE-AI_Stacks_Ferry_Add_Location.md) itself.
 
 ## ASCII summary
 

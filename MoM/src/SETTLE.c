@@ -33,7 +33,7 @@
 o100p04
 IDK_Settle_s82061()
 o100p05
-STK_SettleTile()
+Army_Do_Settle()
 o77p01
 Create_Outpost()
 
@@ -58,7 +58,7 @@ Program-Flow: Special Unit Action - Settle
 
     IDK_Settle_s82061()
         |-> STK_GetMovableUnits()
-        |-> STK_SettleTile()
+        |-> Army_Do_Settle()
             |-> Create_Outpost(unit_x, unit_y, unit_p, unit_race, unit_owner_idx, unit_idx)
                 |-> TILE_CanBeSettled()
                 |-> CTY_CreateEmpty()
@@ -163,7 +163,7 @@ void AI_MoveUnits(int16_t player_idx)
                 } break;
                 case us_Settle:
                 {
-                    AI_UNIT_Settle__WIP(unit_idx);
+                    Unit_Army_Do_Settle(unit_idx);
                 } break;
                 case us_Ferry:
                 {
@@ -230,7 +230,7 @@ void AI_UNIT_Meld(int16_t unit_idx)
     int16_t unit_wx = 0;
     int16_t troop_count = 0;
     int16_t _unit_idx = 0;
-    int16_t itr_troop_count = 0;
+    int16_t itr_troops = 0;
 
     if(_UNITS[unit_idx].Finished == ST_TRUE)
     {
@@ -246,9 +246,9 @@ void AI_UNIT_Meld(int16_t unit_idx)
 
     STK_DoMeldWithNode(troop_count, troops);
 
-    for (itr_troop_count = 0; itr_troop_count < troop_count; itr_troop_count++)
+    for (itr_troops = 0; itr_troops < troop_count; itr_troops++)
     {
-        _UNITS[troops[itr_troop_count]].Status = us_Ready;
+        _UNITS[troops[itr_troops]].Status = us_Ready;
     }
 
 
@@ -256,51 +256,59 @@ void AI_UNIT_Meld(int16_t unit_idx)
 
 
 // WZD o100p03
-// drake178: AI_UNIT_Settle()
-/*
-; settles the square if possible with the first settler
-; found on the unit's square unless the selected unit is
-; already marked as finished for the turn
-;
-; BUG: marks all other units on the square as ready
-;  regardless of their previous status
-*/
-/*
-
-*/
-void AI_UNIT_Settle__WIP(int16_t unit_idx)
+void Unit_Army_Do_Settle(int16_t unit_idx)
 {
+    int16_t troops[MAX_STACK] =  { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t unit_owner_idx = 0;
+    int16_t unit_wp = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t troop_count = 0;
+    int16_t itr_troops = 0;
 
+    if(_UNITS[unit_idx].Finished ==ST_TRUE)
+    {
+        return;
+    }
 
+    unit_wx = _UNITS[unit_idx].wx;
+    unit_wy = _UNITS[unit_idx].wy;
+    unit_wp = _UNITS[unit_idx].wp;
+    unit_owner_idx = _UNITS[unit_idx].owner_idx;
+
+    Player_Army_At_Square(unit_wx, unit_wy, unit_wp, unit_owner_idx, &troop_count, troops);
+
+    Army_Do_Settle(troop_count, troops);
+
+    for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+    {
+        _UNITS[troops[itr_troops]].Status = us_Ready;
+    }
 
 }
 
 
 // WZD o100p04
-int16_t Do_Build_Outpost(void)
+int16_t Active_Army_Do_Settle(void)
 {
     int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t troop_count = 0;
-
     Active_Unit_Stack(&troop_count, &troops[0]);
-
-    return STK_SettleTile(troop_count, &troops[0]);
-
+    return Army_Do_Settle(troop_count, &troops[0]);
 }
 
 // WZD o100p05
-// drake178: STK_SettleTile()
-int16_t STK_SettleTile(int16_t troop_count, int16_t troops[])
+int16_t Army_Do_Settle(int16_t troop_count, int16_t troops[])
 {
-    int16_t unit_owner;
-    int16_t unit_race;
-    int16_t unit_wp;
-    int16_t unit_wy;
-    int16_t unit_wx;
-    int16_t stack_has_settler;
-    int16_t unit_type;
-    int16_t itr_troops;  // _DI_
-    int16_t unit_idx;  // _SI_
+    int16_t unit_owner = 0;
+    int16_t unit_race = 0;
+    int16_t unit_wp = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t stack_has_settler = 0;
+    int16_t unit_type = 0;
+    int16_t itr_troops = 0;
+    int16_t unit_idx = 0;
 
     stack_has_settler = ST_FALSE;
 
@@ -315,6 +323,7 @@ int16_t STK_SettleTile(int16_t troop_count, int16_t troops[])
         )
         {
             stack_has_settler = ST_TRUE;
+            break;
         }
     }
 
@@ -326,19 +335,15 @@ int16_t STK_SettleTile(int16_t troop_count, int16_t troops[])
     unit_wx = _UNITS[unit_idx].wx;
     unit_wy = _UNITS[unit_idx].wy;
     unit_wp = _UNITS[unit_idx].wp;
-
     unit_owner = _UNITS[unit_idx].owner_idx;
-
     unit_race = _unit_type_table[unit_type].race_type;
-
+    
     if(Create_Outpost(unit_wx, unit_wy, unit_wp, unit_race, unit_owner, unit_idx) == ST_TRUE)
     {
         return ST_TRUE;
     }
-    else
-    {
-        return ST_FALSE;
-    }
+
+    return ST_FALSE;
 
 }
 

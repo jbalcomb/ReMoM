@@ -638,11 +638,7 @@ enum e_BUILDING_TYPE
     bt_Fortress           = 104,
     bt_Dark_Rituals       = 105,
     bt_Altar_Of_Battle    = 106,  /* Last Useable Building Type */
-    
-    /* ¿ drake178: bt_BREQ_Forest        = 101, ? */
-    /* ¿ drake178: bt_BREQ_Grass         = 104, ? */
-    /* ¿ drake178: bt_BREQ_Water         = 110, ? */
-    /* ¿ drake178: bt_BREQ_Hill          = 200 ?  */
+
 };
 /*
 case spl_Move_Fortress:    { _ce_bldg_idx = 104; } break;
@@ -653,6 +649,23 @@ case spl_Summoning_Circle: { _ce_bldg_idx = 100; } break;
 case spl_Dark_Rituals:     { _ce_bldg_idx = 105; } break;
 case spl_Altar_Of_Battle:  { _ce_bldg_idx = 106; } break;
 */
+/*
+"Table G: Building Types in the Appendix shows the cost to produce and maintain the different buildings.
+ If any previously constructed buildings or terrain types are necessary for the construction of a building, this is also indicated."
+Miner’s Guild       Hill or Mountain
+Sawmill             Forest
+Ship Wright’s Guild Open Ocean or River
+Stable              Grasslands
+
+*/
+enum e_BUILDING_TYPE_PREREQUISITE
+{
+    btp_BREQ_Forest = 101, /* ¿ ? */
+    btp_BREQ_Grass  = 104, /* ¿ ? */
+    btp_BREQ_Water  = 110, /* ¿ ? */
+    btp_BREQ_Hill   = 200  /* ¿ ? */
+};
+
 
 /*
 drake178:
@@ -1488,7 +1501,7 @@ struct s_BLDG_DATA
     union
     {
         int16_t reqd_bldg_1;                // bldg_idx
-        int16_t reqd_terrain;
+        int16_t reqd_terrain;               /* enum e_BUILDING_TYPE_PREREQUISITE {} */
     };
     /* 16 */  int16_t reqd_bldg_2;          // bldg_idx
     /* 18 */  int16_t replace_bldg;         // bldg_idx

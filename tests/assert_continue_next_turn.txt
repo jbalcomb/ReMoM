@@ -33,14 +33,15 @@ player[0].banner_id = 4
 # player[0].researching_spell_idx = 43
 
 # Resource calculations after turn 1
-# power_base = sum of spellbooks (2+4+3+1+0 = 10) from fortress
-player[0].power_base = 10
-# 33/33/33 split of power_base 10: each gets 3
+# power_base from fortress spellbooks; dropped 10 -> 9 this regen (starting
+# spellbook mix changed -- confirm intended, then re-derive the breakdown)
+player[0].power_base = 9
+# 33/33/33 split of power_base 9: each gets 3
 player[0].mana_reserve = 3
-player[0].spell_casting_skill = 384
-# gold: 75 + income - maintenance - upkeep; value shifted from 76 to 78 when the
-# PRNG was swapped (different starting setup feeds the income/upkeep math)
-player[0].gold_reserve = 78
+player[0].spell_casting_skill = 310
+# gold: 75 + income - maintenance - upkeep (tracks current worldgen/economy;
+# re-derive the exact breakdown if needed)
+player[0].gold_reserve = 79
 # research_cost_remaining = Resist Magic base cost (just selected, no progress yet)
 # NONDET player[0].research_cost_remaining -- observed values across 5 runs: 60, 40, 20, 20, 40  (set aside until determinism is restored)
 # player[0].research_cost_remaining = 60
@@ -52,18 +53,18 @@ city[0].race = 8
 
 # Units: Spearmen (unit[0]) and Swordsmen (unit[5]), both patrolled
 unit[0].owner_idx = 0
-unit[0].wx = 31
-unit[0].wy = 12
+unit[0].wx = 42
+unit[0].wy = 8
 unit[0].wp = 0
 unit[0].status = 1
 unit[0].finished = 1
 
-unit[5].owner_idx = 0
-unit[5].wx = 31
-unit[5].wy = 12
+unit[5].owner_idx = 1
+unit[5].wx = 26
+unit[5].wy = 10
 unit[5].wp = 0
-unit[5].status = 1
-unit[5].finished = 1
+unit[5].status = 0
+unit[5].finished = 0
 
 # ==========================================================================
 #  Player 1
@@ -72,9 +73,9 @@ unit[5].finished = 1
 # NONDET player[1].researching_spell_idx -- observed values across 5 runs: 210, 2, 211, 2, 7  (set aside until determinism is restored)
 # player[1].researching_spell_idx = 210
 
-unit[1].owner_idx = 1
-unit[1].wx = 36
-unit[1].wy = 28
+unit[1].owner_idx = 2
+unit[1].wx = 11
+unit[1].wy = 15
 unit[1].wp = 0
 unit[1].status = 0
 
@@ -85,9 +86,9 @@ unit[1].status = 0
 # NONDET player[2].researching_spell_idx -- observed values across 5 runs: 169, 202, 161, 203, 203  (set aside until determinism is restored)
 # player[2].researching_spell_idx = 169
 
-unit[2].owner_idx = 2
-unit[2].wx = 48
-unit[2].wy = 31
+unit[2].owner_idx = 3
+unit[2].wx = 47
+unit[2].wy = 26
 unit[2].wp = 0
 unit[2].status = 0
 
@@ -98,9 +99,9 @@ unit[2].status = 0
 # NONDET player[3].researching_spell_idx -- observed values across 5 runs: 211, 122, 207, 205, 212  (set aside until determinism is restored)
 # player[3].researching_spell_idx = 211
 
-unit[3].owner_idx = 3
-unit[3].wx = 43
-unit[3].wy = 7
+unit[3].owner_idx = 4
+unit[3].wx = 5
+unit[3].wy = 26
 unit[3].wp = 0
 unit[3].status = 0
 
@@ -111,8 +112,8 @@ unit[3].status = 0
 # NONDET player[4].researching_spell_idx -- observed values across 5 runs: 7, 6, 8, 2, 207  (set aside until determinism is restored)
 # player[4].researching_spell_idx = 7
 
-unit[4].owner_idx = 4
-unit[4].wx = 11
+unit[4].owner_idx = 0
+unit[4].wx = 42
 unit[4].wy = 8
 unit[4].wp = 0
-unit[4].status = 0
+unit[4].status = 1

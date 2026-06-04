@@ -1422,10 +1422,10 @@ void UNIT_RemoveExcess(int16_t unit_idx)
 // WZD o142p01
 // drake178: TILE_CreateRoad()
 /*
-; creates a road on the tile, setting the corresponding
+; creates a road on the square, setting the corresponding
 ; movement allowances, and removing the enchanted road
 ; flag if set, but then also enchanting the road if the
-; tile is on Myrror
+; square is on Myrror
 */
 void Make_Road(int16_t wx, int16_t wy, int16_t wp)
 {
@@ -1467,7 +1467,7 @@ XREF:
 void Make_Road_Enchanted(int16_t wx, int16_t wy, int16_t wp)
 {
 
-    // TODO  EMM_Map_DataH();                   ; maps the EMM Data block into the page frame
+    EMMDATAH_Map();
 
     if((_map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] & MSF_ROAD) != 0)
     {
@@ -1598,7 +1598,7 @@ int16_t City_Food_Terrain(int16_t city_idx)
 
     if(_CITIES[city_idx].enchantments[GAIAS_BLESSING] != ST_FALSE)
     {
-        food2_units = ((food2_units * 3) / 2);
+        food2_units = ((food2_units * 3) / 2);  /* +50% */
     }
 
     return (food2_units / 4);
@@ -3716,54 +3716,64 @@ int16_t City_Rebel_Count(int16_t city_idx)
 
 
 // WZD o142p28
-// drake178: TILE_Survey()
-/*
-; surveys the selected square, filling out the variables
-; at the return pointer locations
-; contains one bug that miscalculates wild game food
-; when looking to settle (marked)
-*/
-/*
-    "surveyor’s information ... statistics for a potential city built on the selected map square"
-
-    *MaxPop     
-    *production_bonus       Square_Production_Bonus()
-    *gold_bonus                 City_Road_Trade_Bonus() ... if rt_Nomand += 50
-    *unit_cost_reduction    Square_Unit_Cost_Reduction()
-    *Gold       
-    *Power      
-    *have_nightshade     
-    *have_mithril     
-    *have_adamantium     
-    *have_shore     
-    *is_unexplored flag {F,T}
-
-Surveyor_Window_Display()
-    Compute_Base_Values_For_Map_Square(l_mx, l_my, _map_plane, &val, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &is_unexplored);
-...
-"""
-City Resources
-Maximum Pop 10
-Prod Bonus +22%
-gold_units Bonus +10%
-"""
-
-AI_ProcessSettlers()
-    Compute_Base_Values_For_Map_Square(wx, wy, wp, &maximum_population, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &is_unexplored);
-
-
-*/
+/**
+ * @brief Computes city-economy baseline values for a map square and its catchment.
+ *
+ * @details
+ * Scans the 5x5 city working area shape (21 squares with trimmed corners) centered
+ * on (wx, wy), applies world-edge wrapping on X, skips out-of-bounds Y rows,
+ * and aggregates resource-related outputs for map preview/evaluation.
+ *
+ * Processing summary:
+ * - Initializes all output values to zero.
+ * - Detects whether an actual city occupies the target square.
+ * - For each eligible catchment square:
+ *   - Marks `*is_unexplored` if any square is currently unexplored.
+ *   - Uses full contribution when the square is unclaimed (or when evaluating an
+ *     existing city tile), otherwise applies shared-city half contribution logic.
+ *   - Accumulates food-derived population potential, production bonus,
+ *     unit-cost reduction, gold income, and magic income.
+ *   - Sets material/special flags (`nightshade`, `mithril`, `adamantium`).
+ * - Converts accumulated food-quarter units into population units and clamps
+ *   `*MaxPop` to at most 25.
+ * - If a city is present at (wx, wy), overrides `*MaxPop` with
+ *   `City_Maximum_Size(city_idx)` and applies city building/enchantment modifiers
+ *   to production and gold bonuses.
+ * - Scans the surrounding 3x3 explored neighborhood to set `*have_shore` when
+ *   at least one adjacent explored square is sailable.
+ *
+ * @param wx World X coordinate of the evaluated square.
+ * @param wy World Y coordinate of the evaluated square.
+ * @param wp World plane index.
+ * @param MaxPop Output: estimated maximum population potential for the square.
+ * @param production_bonus Output: percent-like production modifier contribution.
+ * @param gold_bonus Output: percent-like gold modifier contribution.
+ * @param unit_cost_reduction Output: cumulative unit cost reduction contribution.
+ * @param gold_units Output: additive gold income from terrain specials.
+ * @param magic_units Output: additive mana income from terrain specials.
+ * @param have_nightshade Output flag: non-zero if any evaluated square has nightshade.
+ * @param have_mithril Output flag: non-zero if mithril is present (unless later
+ *                     replaced by adamantium handling in this routine).
+ * @param have_adamantium Output flag: non-zero if adamantium is present.
+ * @param have_shore Output flag: non-zero if an adjacent explored square is sailable.
+ * @param is_unexplored Output flag: non-zero if any evaluated catchment square is unexplored.
+ *
+ * @return void
+ *
+ * @note This function mutates only the output pointers and does not return a value.
+ * @warning Preserves historical behavior and OGBUG-marked logic in the original routine.
+ */
 void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int16_t *MaxPop, int16_t *production_bonus, int16_t *gold_bonus, int16_t *unit_cost_reduction, int16_t *gold_units, int16_t *magic_units, int16_t *have_nightshade, int16_t *have_mithril, int16_t *have_adamantium, int16_t *have_shore, int16_t *is_unexplored)
 {
-    int16_t city_idx;
-    int16_t itr;
-    int16_t map_square_has_city;
-    int16_t Tile_Food;
-    int16_t food2_remainder;
-    int16_t Bit_Index;
-    int16_t itr_wx;
-    int16_t itr_wy;  // _DI_
-    int16_t curr_wx;  // _SI_
+    int16_t city_idx = 0;
+    int16_t itr = 0;
+    int16_t map_square_has_city = 0;
+    int16_t food2_units = 0;
+    int16_t food2_remainder = 0;
+    int16_t Bit_Index = 0;
+    int16_t itr_wx = 0;
+    int16_t itr_wy = 0;
+    int16_t curr_wx = 0;
 
     EMMDATAH_Map();
 
@@ -3785,6 +3795,8 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
         }
     }
 
+
+    /* Initialize output values */
     *MaxPop = 0;
     *production_bonus = 0;
     *gold_bonus = 0;
@@ -3799,11 +3811,20 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
 
     food2_remainder = 0;
 
+    /* Base gold bonus from the target square itself */
     *gold_bonus = Square_Gold_Bonus(wx, wy, wp);
 
-    for(itr_wy = (wy - 2); ((itr_wy < (wy + 3)) && (itr_wy > 0) && (itr_wy < WORLD_HEIGHT)); itr_wy++)
+    /* Iterate over the 5x5 city catchment area (21 tiles) */
+    for(itr_wy = (wy - 2); (itr_wy < (wy + 3)); itr_wy++)
     {
-
+        if(
+            (itr_wy < 0)
+            ||
+            (itr_wy >= WORLD_HEIGHT)
+        )
+        {
+            continue;
+        }
         for(itr_wx = (wx - 2); itr_wx < (wx + 3); itr_wx++)
         {
 
@@ -3837,10 +3858,10 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
 
             if(curr_wx < 0)
             {
-                curr_wx = WORLD_WIDTH;
+                curr_wx += WORLD_WIDTH;
             }
 
-            if(curr_wx > WORLD_WIDTH)
+            if(curr_wx >= WORLD_WIDTH)
             {
                 curr_wx -= WORLD_WIDTH;
             }
@@ -3864,33 +3885,33 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
 
                 if((GET_TERRAIN_SPECIAL(curr_wx, itr_wy, wp) & ts_Wild_Game) != 0)
                 {
-                    *MaxPop += 2;  // ; BUG: should be 8 (counting quarter foods here)
+                    *MaxPop += 2;  /* OGBUG  should be 8 (counting quarter foods here) */
                 }
 
-                *production_bonus = Square_Production_Bonus(curr_wx, itr_wy, wp, ST_FALSE);
+                *production_bonus += Square_Production_Bonus(curr_wx, itr_wy, wp, ST_FALSE);
 
-                *unit_cost_reduction = Square_Unit_Cost_Reduction(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE);
+                *unit_cost_reduction += Square_Unit_Cost_Reduction(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE);
 
                 SETMAX(*unit_cost_reduction, 50);  // The bonus is cumulative ... up to a maximum reduction in cost of 50%.
 
-                *gold_units = Square_Gold_Income(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE);
+                *gold_units += Square_Gold_Income(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE);
 
-                *magic_units = Square_Magic_Power(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE);
+                *magic_units += Square_Magic_Power(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE);
 
             }
             else
             {
 
-                Tile_Food = Square_Food2(curr_wx, itr_wy, wp);
+                food2_units = Square_Food2(curr_wx, itr_wy, wp);
 
                 if((GET_TERRAIN_SPECIAL(curr_wx, itr_wy, wp) & ts_Wild_Game) != 0)
                 {
-                    Tile_Food += 2;  // ; BUG: should be 8 (counting quarter foods here)
+                    food2_units += 2;  /* OGBUG  should be 8 (counting quarter foods here) */
                 }
 
-                *MaxPop += ((Tile_Food + food2_remainder) / 2);
+                *MaxPop += ((food2_units + food2_remainder) / 2);
 
-                food2_remainder = ((Tile_Food + food2_remainder) % 2);
+                food2_remainder = ((food2_units + food2_remainder) % 2);
 
                 *production_bonus = (Square_Production_Bonus(curr_wx, itr_wy, wp, ST_FALSE) / 2);
 
@@ -3916,6 +3937,7 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
 
             if(Square_Has_Adamantium(curr_wx, itr_wy, wp) == ST_TRUE)
             {
+                /* ¿ OGBUG  Why does this unset have_mithril here ? */
                 *have_adamantium = ST_TRUE;
                 *have_mithril = ST_FALSE;
             }
@@ -3926,7 +3948,7 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
 
     // HERE: *MaxPop is ...
     // *MaxPop = Square_Food2(curr_wx, itr_wy, wp);
-    // *MaxPop += ((Tile_Food + food2_remainder) / 2);
+    // *MaxPop += ((food2_units + food2_remainder) / 2);
     *MaxPop = (*MaxPop / 4);  // ¿ 2 food2 per population unit ?
     // HERE: *MaxPop is population
 
@@ -4029,39 +4051,39 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
     {
 
         if(
-            (itr_wy > 0)
-            &&
-            (itr_wy < WORLD_HEIGHT)
+            (itr_wy < 0)
+            ||
+            (itr_wy >= WORLD_HEIGHT)
         )
         {
+            continue;
+        }
 
-            for(itr_wx = (wx - 1); (wx + 2) > itr_wx; itr_wx++)
+        for(itr_wx = (wx - 1); (wx + 2) > itr_wx; itr_wx++)
+        {
+
+            curr_wx = itr_wx;
+
+            if(curr_wx < 0)
+            {
+                curr_wx += WORLD_WIDTH;
+            }
+
+            if(curr_wx > WORLD_WIDTH)
+            {
+                curr_wx -= WORLD_WIDTH;
+            }
+
+            if(SQUARE_EXPLORED(curr_wx, itr_wy, wp) != ST_FALSE)
             {
 
-                curr_wx = itr_wx;
-
-                if(curr_wx < 0)
+                if(Square_Is_Sailable(curr_wx, itr_wy, wp) != ST_FALSE)
                 {
-                    curr_wx += WORLD_WIDTH;
-                }
-
-                if(curr_wx > WORLD_WIDTH)
-                {
-                    curr_wx -= WORLD_WIDTH;
-                }
-
-                if(SQUARE_EXPLORED(curr_wx, itr_wy, wp) != ST_FALSE)
-                {
-
-                    if(Square_Is_Sailable(curr_wx, itr_wy, wp) != ST_FALSE)
-                    {
-                        *have_shore = ST_TRUE;
-                    }
-
+                    *have_shore = ST_TRUE;
                 }
 
             }
-            
+
         }
 
     }

@@ -139,7 +139,7 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **Purpose:** TBD
 - **Reads `lmt_*`:** `lmt_Own`, `≥ lmt_Leaveable` (lines 4538-4540)
 
-### `AI_Do_Settle` — [line 4612](../../MoM/src/AIMOVE.c#L4612)
+### `AI_Stacks_Do_Settle` — [line 4612](../../MoM/src/AIMOVE.c#L4612)
 - **drake178:** `AI_ProcessSettlers()` (o158p23)
 - **End:** ~line 4879
 - **Purpose:** TBD
@@ -194,15 +194,15 @@ Navigation reference for `MoM/src/AIMOVE.c` (~8500 lines). One row per function.
 - **End:** ~line 5548
 - **Purpose:** TBD
 
-### `AI_CanSettleOffPlane__STUB` — [line 5549](../../MoM/src/AIMOVE.c#L5549)
-- **drake178:** `AI_CanSettleOffPlane()` (o158p34)
-- **End:** ~line 5567
-- **Purpose:** TBD — STUB suffix indicates not implemented
+### `AI_Find_Tower_To_Settle_Elsewhere` — [line 5100](../../MoM/src/AIMOVE.c#L5100)
+- **drake178:** `AI_CanSettleOffPlane__ALWAYS_FALSE()` (o158p34) — empirical name, not structural
+- **End:** ~line 5191
+- **Purpose:** Tower-hop eligibility check for off-plane settling. Returns TRUE + writes destination coords iff: no Planar Seal anywhere, settler is on home-Fortress plane, settler not currently on a Tower, player owns at least one Tower on the settler's landmass, and the off-plane landmass at that Tower is not `lmt_Contested` or `lmt_NoOwnCityAndAllyHasCity`. Renamed from `__STUB` 2026-05-30 (to `AI_CanSettleOffPlane`), then again 2026-06-03 (to current — describes what it does, not what it queries). See [AIMOVE-AI_Stacks_Do_Settle.md](AIMOVE-AI_Stacks_Do_Settle.md).
 
-### `AI_SendToColonize__WIP` — [line 5568](../../MoM/src/AIMOVE.c#L5568)
+### `AI_Stacks_Reorder_Settle_Elsewhere` — [line 5195](../../MoM/src/AIMOVE.c#L5195)
 - **drake178:** `AI_SendToColonize()` (o158p35)
-- **End:** ~line 5797
-- **Purpose:** TBD
+- **End:** ~line 5348
+- **Purpose:** Branch C-fallback of `AI_Stacks_Do_Settle` ([4266](../../MoM/src/AIMOVE.c#L4266)). When a settler has no good square on its current landmass, route it to a pre-decided off-landmass colony target (set by `AI_Evaluate_Continents`) via the best available transport method: direct GOTO (seafaring/flying), walk-to-adjacent-transport, queue a ferry request, or walk-to-dock-then-wait. Renamed from `AI_SendToColonize__WIP` 2026-06-03 at done-done. See [AIMOVE-AI_Stacks_Reorder_Settle_Elsewhere.md](AIMOVE-AI_Stacks_Reorder_Settle_Elsewhere.md).
 
 ### `AI_Stacks_Ferry_Add_Location` — [line 5151](../../MoM/src/AIMOVE.c#L5151)
 - **drake178:** `AI_SeekTransportFrom()` (o158p36)
@@ -250,7 +250,7 @@ Lines 6348-6364 contain stubs for `sub_F57AF()` through `sub_F5EBF()`. No bodies
 
 Line 6419-6421: `sub_F60F4()`. No body.
 
-### `TILE_AI_FindLoadTile__WIP` — [line 6434](../../MoM/src/AIMOVE.c#L6434)
+### `Next_Nearest_Ferry_Square` — [line 6434](../../MoM/src/AIMOVE.c#L6434)
 - **drake178:** `TILE_AI_FindLoadTile()` (o162p21)
 - **End:** ~line 6543
 - **Purpose:** TBD

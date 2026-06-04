@@ -1,0 +1,30 @@
+
+// Help IntelliSense parse implicit-scope or multi-line macros that break code browsing
+
+#define SETMIN(a, b)
+#define SETMAX(a, b)
+#define SETRANGE(a, b, c)
+#define BUCKET(_value_, _size_)
+#define ADDSATT(_v_, _n_, _top_)
+#define SUBSATT(_v_, _n_, _bot_)
+#define SUBSAT0(_v_, _n_)
+
+#define UNITX()
+#define UNITY()
+#define UNITP()
+#define UNITOWNER()
+#define UNITTYPE()
+#define UNITLEVEL()
+#define HEROTYPE()
+#define HEROSLOT()
+
+#define BATTLE_UNIT_OWNER(_bux_)
+#define BATTLE_UNIT_HEROSLOT(_bux_)
+#define BATTLE_UNIT_UNIT_INDEX(_bux_)
+#define BATTLE_UNIT_CONTROLLER_INDEX(_bux_)
+#define BATTLE_UNIT_STATUS(_bux_)
+
+#define BUNITUNIT()
+#define BUNITCONTROLLER()
+#define BUNITOWNER()
+#define BUNITHEROSLOT()

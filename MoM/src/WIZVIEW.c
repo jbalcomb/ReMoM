@@ -243,23 +243,23 @@ void Mirror_Screen(int16_t player_idx, int16_t OL, int16_t OT, int16_t OR, int16
 // WZD o74p02
 void Mirror_Screen_Draw(void)
 {
-    int16_t retort_helps[NUM_WIZARD_SPECIAL_ABILITIES];
-    int16_t wizard_special_abilities_index[9];  // 1-byte, signed
-    char dest[4];
-    int16_t x;
-    int16_t string_width;
-    int16_t y;
-    int16_t var_14;
-    uint8_t colors[6];
-    int16_t val;
-    int8_t * wizard_special_abilities;
-    int16_t hero_unit_idx;
-    int16_t var_6;
-    int16_t var_4;
-    int16_t itr;
-    int16_t wizard_special_abilities_count;  // _SI_
-    int16_t wizard_hero_count;  // _SI_
-    int16_t IDK_x;  // _DI_
+    int16_t retort_helps[NUM_WIZARD_SPECIAL_ABILITIES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int16_t wizard_special_abilities_index[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0};  // 1-byte, signed
+    char dest[4] = { 0, 0, 0, 0, };
+    int16_t x = 0;
+    int16_t string_width = 0;
+    int16_t y = 0;
+    int16_t var_14 = 0;
+    uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t val = 0;
+    int8_t * wizard_special_abilities = NULL;
+    int16_t hero_unit_idx = 0;
+    int16_t var_6 = 0;
+    int16_t var_4 = 0;
+    int16_t itr = 0;
+    int16_t wizard_special_abilities_count = 0;
+    int16_t wizard_hero_count = 0;
+    int16_t IDK_x = 0;
 
     stu_strcpy(dest, str_SPACE__ovr074);
 

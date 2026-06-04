@@ -161,7 +161,7 @@ int16_t Square_Is_Ocean(int16_t wx, int16_t wy, int16_t wp);
 int16_t Map_Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p27
-// TILE_BuildingReqType 
+int16_t Building_Terrain_Type_Prerequisite(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p28
 int16_t Square_Is_Hills(int16_t wx, int16_t wy, int16_t wp);

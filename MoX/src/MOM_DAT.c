@@ -2454,6 +2454,29 @@ else
 ...means some of the first six bits are set?
 
 */
+/**
+ * @brief Per-plane AI threat/site map used during overland AI planning.
+ *
+ * Stores one 16-bit value per world square for each plane. The table is rebuilt
+ * by AI_Evaluation_Map() before continent reevaluation and unit-order assignment,
+ * then consumed by stage-square selection, target construction, ferry/landing
+ * candidate checks, and move-vs-goto decision logic.
+ *
+ * Value layout per square:
+ * - Bits 0..13: accumulated evaluated strength (AI_TARGET_STRENGTH_MASK).
+ * - Bit 14: AI_TARGET_NONHOSTILE, set when contributing unit ownership is
+ *           considered non-hostile to the current AI player.
+ * - Bit 15: AI_TARGET_SITE, set for site squares (city, intact lair, node).
+ *
+ * Practical meaning used by consumers:
+ * - value == 0 means the square is clear in this pass (no strength bits and no flags),
+ *   so it is eligible for "safe" stage/landing candidate checks.
+ * - (value & AI_TARGET_STRENGTH_MASK) is used as the target-strength estimate.
+ * - (value & AI_TARGET_SITE) marks site squares and can trigger attack-move behavior
+ *   even when strength bits are zero.
+ * - (value & AI_TARGET_NONHOSTILE) lets hostile-target builders distinguish
+ *   non-hostile stack presence from hostile presence.
+ */
 uint16_t * g_ai_evaluation_map[NUM_PLANES];
 
 // WZD dseg:9C9C
@@ -2637,6 +2660,9 @@ uint8_t * _world_maps;
 Declare a pointer to a 2D array of the specified dimensions.
 The sizes for dim2 and dim3 must be visible to the compiler.
 int (*array_ptr)[dim2][dim3]; 
+...
+
+p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
 */
 int16_t (*p_world_map)[40][60];
 

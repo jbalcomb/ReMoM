@@ -24,15 +24,15 @@ Module: INITGAME
 
 Main_Screen()
     switch(special_action_flag)
-        Do_Build_Outpost()
-            STK_SettleTile()
+        Active_Army_Do_Settle()
+            Army_Do_Settle()
                 Create_Outpost()
                     |-> Map_Square_Survey()
                     |-> Init_Outpost()
                     |-> UNIT_MarkRemoved()
 
 
-int16_t STK_SettleTile(int16_t troop_count, int16_t troops[])
+int16_t Army_Do_Settle(int16_t troop_count, int16_t troops[])
     |-> Create_Outpost(unit_wx, unit_wy, unit_wp, unit_race, unit_owner, unit_idx)
 
 int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_wp, int16_t outpost_race, int16_t outpost_owner, int16_t settler_unit_idx)
@@ -53,7 +53,7 @@ Create_Outpost()
     returns {F,T}
 
 
-STK_SettleTile()
+Army_Do_Settle()
     checks if the Stack has a Settler and calls out to attempt the outpost creation process
     takes troops, so ~ "Army_..."
 

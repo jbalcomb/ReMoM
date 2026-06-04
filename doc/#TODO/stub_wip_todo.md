@@ -17,7 +17,7 @@
 
 ## AIMOVE
 - [x] AI_Stacks_Assign_Target
-- [ ] AI_CanSettleOffPlane__STUB
+- [x] AI_CanSettleOffPlane__STUB — renamed to AI_Find_Tower_To_Settle_Elsewhere; body was already real (mis-named), compiles clean as of 2026-05-30
 - [x] AI_Evaluate_Continents
 - [x] AI_Stacks_Garrison_Sites
 - [x] AI_Stacks_Move_Out_NonMilitary_Garrisoned
@@ -28,7 +28,7 @@
 - [x] AI_Stacks_Ferry_Add_Location
 - [x] AI_Stacks_Survey_Expedition_Forces
 - [x] AI_Stacks_Survey_Expedition_Forces_Stack
-- [ ] AI_SendToColonize__WIP
+- [x] AI_Stacks_Reorder_Settle_Elsewhere — renamed from AI_SendToColonize__WIP; done-done 2026-06-03 (R1 + Y-bounds fixed, GEMINI variant deleted)
 - [ ] AI_Set_Unit_Orders
 - [x] AI_Reevaluate_Continent
 - [x] AI_Stacks_Relocate_Roamers
@@ -36,7 +36,7 @@
 - [x] AI_Stacks_Stage_Expedition_Forces
 - [x] AI_Stacks_Setup_Ferry
 - [ ] TILE_AI_FindEmptyLnd__WIP
-- [ ] TILE_AI_FindLoadTile__WIP
+- [ ] Next_Nearest_Ferry_Square
 - [ ] TILE_NextFreeLand
 
 ## AISPELL
@@ -304,7 +304,7 @@
 - [x] AI_UNIT_Meld__WIP — renamed to AI_UNIT_Meld; body implemented in SETTLE.c:224
 - [ ] AI_UNIT_Move
 - [ ] AI_UNIT_SeekTransprt__WIP
-- [ ] AI_UNIT_Settle__WIP
+- [x] Unit_Army_Do_Settle — renamed from AI_UNIT_Settle__WIP; body implemented; GEMINI variant deleted 2026-06-04
 
 ## SOUND
 - [ ] Audio_Error__STUB

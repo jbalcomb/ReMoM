@@ -90,7 +90,7 @@ void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t unit_co
 void AI_Stacks_Do_Meld(int16_t player_idx);
 
 // WZD o158p23
-void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx);
+void AI_Stacks_Do_Settle(int16_t player_idx, int16_t landmass_idx);
 
 // WZD o158p24
 void AI_Do_Purify(int16_t landmass_idx, int16_t wp);
@@ -123,11 +123,10 @@ int16_t Map_Square_Area_Has_Opponent(int16_t wx, int16_t wy, int16_t wp, int16_t
 int16_t AI_Enemy_Unit_In_Range(int16_t wx, int16_t wy, int16_t wp, int16_t radius, int16_t player_idx, int16_t landmass_idx);
 
 // WZD o158p34
-// AI_CanSettleOffPlane()
-int16_t AI_CanSettleOffPlane__STUB(int16_t player_idx, int16_t unit_idx, int16_t * Tower_X, int16_t * Tower_Y, int16_t unit_wp);
+int16_t AI_Find_Tower_To_Settle_Elsewhere(int16_t player_idx, int16_t unit_idx, int16_t * tower_wx, int16_t * tower_wy, int16_t wp);
 
 // WZD o158p35
-void AI_SendToColonize__WIP(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t unit_list_idx, int16_t list_unit_idx);
+void AI_Stacks_Reorder_Settle_Elsewhere(int16_t unit_idx, int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t unit_list_idx, int16_t list_unit_idx);
 
 // WZD o158p36
 void AI_Stacks_Ferry_Add_Location(int16_t wx, int16_t wy, int16_t wp);
@@ -205,13 +204,13 @@ void AI_Stack_Set_Boats_Goto(int16_t ai_stack_idx, int16_t wx, int16_t wy);
 // sub_F60F4()
 
 // WZD o162p21
-void TILE_AI_FindLoadTile__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * RetX, int16_t * RetY);
+void Next_Nearest_Ferry_Square(int16_t wx, int16_t wy, int16_t wp, int16_t * target_wx, int16_t * target_wy);
 
 // WZD o162p22
 // sub_F6316()
 
 // WZD o162p23
-int16_t TILE_AI_FindEmptyLnd__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * RetX, int16_t * RetY);
+int16_t Adjacent_Land_Square(int16_t wx, int16_t wy, int16_t wp, int16_t * target_wx, int16_t * target_wy);
 
 // WZD o162p24
 // sub_F64C2()

@@ -99,12 +99,12 @@ XREF:
 */
 void Volcano_Counts(void)
 {
-    int16_t volcano_count_array[10];
-    int16_t player_idx;
-    int16_t itr_wy;
-    int16_t itr_players;  // _CX_
-    int16_t itr_wx;  // _DI_
-    int16_t itr_wp;  // _SI_
+    int16_t volcano_count_array[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t player_idx = 0;
+    int16_t itr_wy = 0;
+    int16_t itr_players = 0;
+    int16_t itr_wx = 0;
+    int16_t itr_wp = 0;
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
@@ -309,10 +309,10 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
 */
 int16_t EVNT_TargetDepletion__STUB(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * terrain_special)
 {
-    int16_t Tile_Tries;
-    int16_t city_idx;
-    int16_t result_city_idx;
-    int16_t City_Tries;
+    int16_t Tile_Tries = 0;
+    int16_t city_idx = 0;
+    int16_t result_city_idx = 0;
+    int16_t City_Tries = 0;
 
     result_city_idx = ST_UNDEFINED;
 
@@ -341,10 +341,10 @@ int16_t EVNT_TargetDepletion__STUB(int16_t player_idx, int16_t * wx, int16_t * w
 */
 int16_t EVNT_FindNewMineral__STUB(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * terrain_special)
 {
-    int16_t Tile_Tries;
-    int16_t city_idx;
-    int16_t result_city_idx;
-    int16_t City_Tries;
+    int16_t Tile_Tries = 0;
+    int16_t city_idx = 0;
+    int16_t result_city_idx = 0;
+    int16_t City_Tries = 0;
 
     result_city_idx = ST_UNDEFINED;
 
@@ -526,26 +526,26 @@ void Reset_City_Road_Connection_Bitfields(void)
 // drake178: TILE_ResetRoadConns()
 /*
 ; resets the road connection bitfields of every city
-; that is on the same landmass as the specified tile
+; that is on the same landmass as the specified square
 ; using the overland pathfinding algorithm
 */
 void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t City_List[100];
-    int16_t square_landmass;
-    int16_t Has_Road_Out;
-    int16_t City_Tile_Index;
-    int16_t itr_bits;
-    int16_t City_Count;
-    int16_t UU_var10;
-    int16_t Y_Loop_Var;
-    int16_t X_Loop_Var;
-    int16_t city_wy;
-    int16_t city_wx;
-    int16_t city_wp;
-    int16_t city_landmass;
-    int16_t Dest_City_Index;
-    int16_t itr_cities;  // _DI_
+    int16_t City_List[100] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t square_landmass = 0;
+    int16_t Has_Road_Out = 0;
+    int16_t City_Tile_Index = 0;
+    int16_t itr_bits = 0;
+    int16_t City_Count = 0;
+    int16_t UU_var10 = 0;
+    int16_t Y_Loop_Var = 0;
+    int16_t X_Loop_Var = 0;
+    int16_t city_wy = 0;
+    int16_t city_wx = 0;
+    int16_t city_wp = 0;
+    int16_t city_landmass = 0;
+    int16_t Dest_City_Index = 0;
+    int16_t itr_cities = 0;
 
     EMMDATAH_Map();
 
@@ -674,12 +674,12 @@ OVL_GetRoadPath(XPos, YPos, destination_x, destination_y, map_p, &movepath_x_arr
 */
 int16_t OVL_GetRoadPath(int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t * path_string_x, int8_t * path_string_y)
 {
-    int16_t Tile_Offset;
-    int16_t itr_world_height;
-    int16_t itr_world_width;
-    int16_t landmass_num;
-    int16_t itr1;  // _DI_
-    int16_t itr2;  // _SI_
+    int16_t Tile_Offset = 0;
+    int16_t itr_world_height = 0;
+    int16_t itr_world_width = 0;
+    int16_t landmass_num = 0;
+    int16_t itr1 = 0;
+    int16_t itr2 = 0;
     // _DI_itr1__path_length
 
     EMMDATAH_Map();

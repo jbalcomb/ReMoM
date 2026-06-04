@@ -1332,82 +1332,251 @@ int16_t Square_Is_Ocean(int16_t wx, int16_t wy, int16_t wp)
 vs. Square_Is_Sailable()?
 vs. Square_Is_OceanLike()?
 */
+/**
+ * @brief Tests whether a map square may be used as an embarkation square.
+ *
+ * Reads the square terrain type and applies the original threshold-based
+ * terrain checks used by AI embark/disembark logic. The function returns true
+ * only for specific shoreline-like terrain intervals and false for explicit
+ * exclusions such as @c tt_BugGrass and @c tt_Lake.
+ *
+ * @param wx World x-coordinate of the square to evaluate.
+ * @param wy World y-coordinate of the square to evaluate.
+ * @param wp World plane containing the evaluated square.
+ *
+ * @return @c ST_TRUE when the terrain falls within accepted embarkable ranges;
+ *         otherwise @c ST_FALSE.
+ *
+ * @note This routine preserves the original game's nested comparison structure
+ *       and naming, including the legacy local variable spelling
+ *       @c is_emarkable.
+ */
 int16_t Map_Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
-    int16_t is_emarkable = 0;  // DNE in Dasm
-    is_emarkable = ST_FALSE;
-    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    terrain_type = p_world_map[wp][wy][wx];
+
     if(terrain_type == tt_BugGrass)
     {
-        is_emarkable = ST_FALSE;
+        return ST_FALSE;
     }
-    else
+
+    if(terrain_type == tt_Lake)
     {
-        if(terrain_type == tt_Lake)
-        {
-            is_emarkable = ST_FALSE;
-        }
-        else
-        {
-            if(terrain_type < _Shore11101110)
-            {
-                is_emarkable = ST_FALSE;
-            }
-            else
-            {
-                if(terrain_type < _Shore10111000)
-                {
-                    is_emarkable = ST_FALSE;
-                }
-                else
-                {
-                    if(terrain_type < tte_Grasslands)
-                    {
-                        is_emarkable = ST_TRUE;
-                    }
-                    else
-                    {
-                        if(terrain_type < _Shore00001R10)
-                        {
-                            is_emarkable = ST_FALSE;
-                        }
-                        else
-                        {
-                            if(terrain_type < _River1100_3)
-                            {
-                                is_emarkable = ST_TRUE;
-                            }
-                            else
-                            {
-                                if(terrain_type < _Shore1100000R)
-                                {
-                                    is_emarkable = ST_FALSE;
-                                }
-                                else
-                                {
-                                    if(terrain_type < _Shore1000111R)
-                                    {
-                                        is_emarkable = ST_TRUE;
-                                    }
-                                    else
-                                    {
-                                        is_emarkable = ST_FALSE;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        return ST_FALSE;
     }
-    return is_emarkable;
+
+    if(terrain_type < _Shore11101110)
+    {
+        return ST_TRUE;
+    }
+
+    if(terrain_type < _Shore10111000)
+    {
+        return ST_FALSE;
+    }
+
+    if(terrain_type < tte_Grasslands)
+    {
+        return ST_TRUE;
+    }
+
+    if(terrain_type < _Shore00001R10)
+    {
+        return ST_FALSE;
+    }
+
+    if(terrain_type < _River1100_3)
+    {
+        return ST_TRUE;
+    }
+
+    if(terrain_type < _Shore1100000R)
+    {
+        return ST_FALSE;
+    }
+
+    if(terrain_type < _Shore1000111R)
+    {
+        return ST_TRUE;
+    }
+
+    return ST_FALSE;
 }
 
 
 // WZD s161p27
-// TILE_BuildingReqType 
+/**
+ * @brief Maps a world-map terrain square to a building terrain prerequisite ID.
+ *
+ * This helper converts a square's raw terrain type into the prerequisite category
+ * IDs used by city production/building requirement checks.
+ *
+ * Classification rules:
+ * - Ocean-like tiles map to @c btp_BREQ_Water.
+ * - Forest tiles and Nature Node map to @c btp_BREQ_Forest.
+ * - Grassland tiles and BugGrass map to @c btp_BREQ_Grass.
+ * - Hills-range tiles map to @c btp_BREQ_Hill.
+ * - Any non-matching terrain returns its raw terrain type value unchanged.
+ *
+ * @param wx World-map X coordinate of the square.
+ * @param wy World-map Y coordinate of the square.
+ * @param wp World plane index containing the square.
+ *
+ * @return A prerequisite identifier in the building-terrain requirement ID space,
+ *         or the raw terrain type when no category override applies.
+ *
+ * @note Used by city terrain prerequisite evaluation to compare a worked square's
+ *       effective prerequisite category against a required terrain ID.
+ */
+int16_t Building_Terrain_Type_Prerequisite(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;
+
+    terrain_type = p_world_map[wp][wy][wx];
+
+    if(Square_Is_OceanLike(wx, wy, wp) == ST_TRUE)
+    {
+        return btp_BREQ_Water;
+    }
+
+    if(
+        (terrain_type == tt_Forest1)
+        ||
+        (terrain_type == tt_Forest2)
+        ||
+        (terrain_type == tt_Forest3)
+        ||
+        (terrain_type == tt_NatureNode)
+    )
+    {
+        return btp_BREQ_Forest;
+    }
+
+    if(
+        (terrain_type == tt_Grasslands1)
+        ||
+        (terrain_type == tt_Grasslands2)
+        ||
+        (terrain_type == tt_Grasslands3)
+        ||
+        (terrain_type == tt_Grasslands4)
+        ||
+        (terrain_type == tt_BugGrass)
+    )
+    {
+        return btp_BREQ_Grass;
+    }
+
+    if(
+        (terrain_type == tt_Hills1)
+        ||
+        ((terrain_type > tt_Mountains_Lst) && (terrain_type < tt_Desert_Fst))
+    )
+    {
+        return btp_BREQ_Hill;
+    }
+
+    return terrain_type;
+}
+
+/* COPILOT: preserved for reference only; excluded from build. */
+#if 0
+/* GEMINI */
+int TILE_BuildingReqType__GEMINI(int XPos, int YPos, int Plane)
+{
+    unsigned int far *world_maps_ptr; /* _world_maps */
+    unsigned int tile_word;
+    unsigned int terrain_type;
+    unsigned int table_idx;
+
+    /* Access the world map array. Each plane is 60x40 words (4800 bytes). */
+    /* Calculation: Plane * 2400 + YPos * 60 + XPos */
+    world_maps_ptr = _world_maps;
+    tile_word = world_maps_ptr[((unsigned long)Plane * 2400) + ((unsigned long)YPos * 60) + (unsigned int)XPos];
+
+    /* Tile word contains terrain type and additional flags. */
+    /* The base terrain type is the remainder of tile_word / NUM_TERRAIN_TYPES. */
+    terrain_type = tile_word % NUM_TERRAIN_TYPES;
+
+    /* Range and Type Checks */
+    if (terrain_type >= tt_Tundra_1st)
+    {
+        return 0; /* loc_F418D */
+    }
+
+    if (terrain_type == TT_BugGrass)
+    {
+        return BREQ_Grass; /* loc_F41F1 */
+    }
+
+    if (terrain_type < tt_Grasslands1)
+    {
+        return BREQ_Water; /* loc_F41B6 */
+    }
+
+    if (terrain_type > TT_4WRiver5)
+    {
+        return BREQ_Water; /* loc_F41B6 */
+    }
+
+    if (terrain_type > TT_Shore2_end)
+    {
+        return BREQ_Grass; /* loc_F41F1 */
+    }
+
+    if (terrain_type > TT_Desert_end)
+    {
+        return BREQ_Water; /* loc_F41B6 */
+    }
+
+    /* Check for Hill types */
+    if (terrain_type > tt_Hills_Lst)
+    {
+        return 0; /* loc_F418D */
+    }
+
+    if (terrain_type > tt_Rivers_end)
+    {
+        return BREQ_Hill; /* loc_F41FF */
+    }
+
+    /* Check for Forest types */
+    if (terrain_type > tt_Forest3)
+    {
+        return BREQ_Grass; /* loc_F41F1 */
+    }
+
+    /* Specific terrain ID switch (range 0xA2 to 0xB8) */
+    /* [bp-02h] -> table_idx : unsigned int */
+    table_idx = terrain_type - 0xA2;
+    if (table_idx > 0x16)
+    {
+        return 0; /* loc_F418D */
+    }
+
+    /* Indirect jump via table at off_F4209 based on table_idx */
+    /* The table maps specific sub-tiles to building requirement categories. */
+    switch (table_idx)
+    {
+        /* Note: Switch cases reconstructed from jump table targets loc_F41E5 to loc_F41FF */
+        /* Exact mapping of indices 0..22 to targets requires the table data. */
+        /* Targets include: 
+           BREQ_Grass  (loc_F41E5, loc_F41F1)
+           BREQ_Forest (loc_F41E7, loc_F41F6)
+           BREQ_Hill   (loc_F41E9, loc_F41FB, loc_F41FF)
+           0           (loc_F41EB, loc_F41ED, loc_F41EF, loc_F4204)
+        */
+        default:
+            /* TODO: Implement specific mappings from CS:F4209 if available */
+            return 0;
+    }
+
+    return 0;
+}
+#endif
+
 
 // WZD s161p28
 // drake178: TILE_IsHills()

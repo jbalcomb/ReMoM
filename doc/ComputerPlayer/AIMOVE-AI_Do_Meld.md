@@ -394,7 +394,7 @@ AI_Set_Unit_Orders(player_idx)
        │    ├─ slot 3: AI_Stacks_Survey_Expedition_Forces
        │    ├─ slot 4: AI_Stacks_Do_Meld                                ◄── HERE
        │    │           └─ AI_Stacks_Order_Meld                         ◄── (on-node case)
-       │    ├─ slot 5: AI_Do_Settle
+       │    ├─ slot 5: AI_Stacks_Do_Settle
        │    ├─ slot 6: AI_Do_Purify
        │    ├─ slot 7: AI_Do_RoadBuild
        │    └─ ... slots 8-13 ...
@@ -409,7 +409,7 @@ AI_Set_Unit_Orders(player_idx)
 
 **Sibling slot-4-through-7 functions** (per-job order-setters):
 - **`AI_Stacks_Do_Meld`** (this) → `AI_Stacks_Order_Meld`
-- `AI_Do_Settle` → `AI_Order_Settle`
+- `AI_Stacks_Do_Settle` → `AI_Order_Settle`
 - `AI_Do_Purify` → `AI_Order_Purify`
 - `AI_Do_RoadBuild` → `AI_Order_RoadBuild`
 

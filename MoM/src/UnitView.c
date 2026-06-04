@@ -1275,21 +1275,21 @@ Any special abilities and unit enchantments appear as icons in the bottom half o
 */
 void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, int16_t * specials_count)
 {
-    char scout_rank[5][5];
-    char temp_string[LEN_TEMP_STRING];
-    uint32_t hero_ability_flag;
-    int16_t ranged_attack_group;
-    int16_t Unit_Mutations;
-    int16_t unit_type;
-    uint32_t hero_abilities_flags;
-    uint32_t unit_enchantments;
-    int16_t item_idx;
-    int16_t hero_slot_idx;
-    int16_t hero_owner_idx;
-    int16_t itr;
-    int16_t ability_value;
-    int16_t specials_index;  // _DI_
-    int16_t item_slot_type;  // DNE in Dasm
+    char scout_rank[5][5] = { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
+    char temp_string[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint32_t hero_ability_flag = 0;
+    int16_t ranged_attack_group = 0;
+    int16_t Unit_Mutations = 0;
+    int16_t unit_type = 0;
+    uint32_t hero_abilities_flags = 0;
+    uint32_t unit_enchantments = 0;
+    int16_t item_idx = 0;
+    int16_t hero_slot_idx = 0;
+    int16_t hero_owner_idx = 0;
+    int16_t itr = 0;
+    int16_t ability_value = 0;
+    int16_t specials_index = 0;
+    int16_t item_slot_type = 0;  // DNE in Dasm
 
     stu_strcpy(scout_rank[0], empty_string_ovr078);  // ""
     stu_strcpy(scout_rank[1], cnst_Rank_I);          // "I"
@@ -2012,6 +2012,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
 
     /*
         BEGIN:  Special Ranged Attacks
+        IDA  Green
     */
     {
         // ¿ BUG: these should be taken from the unit type to avoid double display of chaos channels fire breath ?
@@ -2025,7 +2026,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
                 ability_value = global_battle_unit->ranged;
                 if(
                     (USW_SR_Attacks[itr].Ranged_Type == srat_StoneGaze)
-                    &&
+                    ||
                     (USW_SR_Attacks[itr].Ranged_Type == srat_DeathGaze)
                 )
                 {
@@ -2199,11 +2200,11 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
 */
 void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_list, int16_t * specials_count)
 {
-    char scout_rank[5][5];
-    int16_t value;
-    char temp_buffer[10];
-    int16_t itr;
-    int16_t specials_index;  // SI
+    char scout_rank[5][5] = { {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0} };
+    int16_t value = 0;
+    char temp_buffer[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t itr = 0;
+    int16_t specials_index = 0;
 
     stu_strcpy(scout_rank[0], "");   // if > 1, so never used
     stu_strcpy(scout_rank[1], "I");  // if > 1, so never used
@@ -2600,10 +2601,10 @@ OON XREF:
 */
 void Get_Unit_Enchantment_Names(int16_t unit_idx, char ** unit_enchantment_names, int16_t * unit_enchantment_count)
 {
-    uint8_t unit_mutations;
-    uint32_t unit_enchantments;
-    int16_t itr;  // _SI_
-    struct s_UNIT youknit;
+    uint8_t unit_mutations = 0;
+    uint32_t unit_enchantments = 0;
+    int16_t itr = 0;
+    struct s_UNIT youknit = {0};
 
     unit_enchantments = _UNITS[unit_idx].enchantments;
 
@@ -2720,8 +2721,8 @@ void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_or_type, in
 */
 void Unit_Figure_Position(int16_t figure_count, int16_t current_figure, int16_t * figure_x, int16_t * figure_y)
 {
-    int16_t fig_x;
-    int16_t fig_y;
+    int16_t fig_x = 0;
+    int16_t fig_y = 0;
 
     assert(figure_count   >  0);
     assert(figure_count   <= 8);
@@ -2830,16 +2831,16 @@ Page 77  (PDF Page 82)
 */
 int16_t UV_Remove_Unit_Enchantment(int16_t unit_idx, uint32_t enchantment, char * message_buffer)
 {
-    int16_t troops[MAX_STACK];
-    int16_t multiple_deaths;
-    int16_t unit_has_windwalking;
-    int16_t stack_has_windwalking;
-    int16_t water_hazard;
-    int16_t troop_count;
-    int16_t unit_will_die;
-    int16_t enchantment_idx;
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t multiple_deaths = 0;
+    int16_t unit_has_windwalking = 0;
+    int16_t stack_has_windwalking = 0;
+    int16_t water_hazard = 0;
+    int16_t troop_count = 0;
+    int16_t unit_will_die = 0;
+    int16_t enchantment_idx = 0;
     /* ¿ bogus ? */ // int16_t unit_idx;  // _DI_
-    int16_t itr;  // _SI_
+    int16_t itr = 0;
 
     enchantment_idx = ST_UNDEFINED;
 
@@ -3043,14 +3044,14 @@ void Unit_Remove_Enchantment(int16_t unit_idx, uint32_t enchantment)
 */
 void UNIT_GetDependants__WIP(int16_t unit_idx, int16_t * troop_count, int16_t troops[])
 {
-    int16_t l_troops[MAX_STACK];
-    int16_t l_troop_count;
-    int16_t Have_Dependants;
-    int16_t Windwalking_Unit;
-    int16_t Stack_Has_WW;
-    int16_t On_Ocean_Tile;
-    int16_t Unit_Count;
-    int16_t itr_Unit_Count;  // _SI_
+    int16_t l_troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t l_troop_count = 0;
+    int16_t Have_Dependants = 0;
+    int16_t Windwalking_Unit = 0;
+    int16_t Stack_Has_WW = 0;
+    int16_t On_Ocean_Tile = 0;
+    int16_t Unit_Count = 0;
+    int16_t itr_Unit_Count = 0;
 
     Unit_Count = 0;  // DNE in Dasm
 

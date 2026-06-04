@@ -387,7 +387,7 @@ protected:
 
 ### 12.2 Test Cases
 
-#### TC-01: Ocean Baseline — All Tiles Start as Ocean
+#### TC-01: Ocean Baseline — All Squares Start as Ocean
 
 **Given:** `_landsize = gol_Small`, plane = `ARCANUS_PLANE`
 **When:** `NEWG_CreateLands__WIP(ARCANUS_PLANE)` is called
@@ -428,13 +428,13 @@ Same as TC-02 but with `_landsize = gol_Large`. Expected land count >= 721.
 **When:** `NEWG_CreateLands__WIP(ARCANUS_PLANE)` completes
 **Then:** Every square on `MYRROR_PLANE` is still 0 (the calloc initial value). Confirms no cross-plane writes.
 
-#### TC-08: Landmass IDs Are Non-Zero on Land Tiles
+#### TC-08: Landmass IDs Are Non-Zero on Land Squares
 
 **Given:** Any `_landsize`
 **When:** `NEWG_CreateLands__WIP(ARCANUS_PLANE)` completes
 **Then:** For every square where `GET_TERRAIN_TYPE(wx,wy,ARCANUS_PLANE) != tt_Ocean1`, `GET_LANDMASS(wx,wy,ARCANUS_PLANE) != 0`.
 
-#### TC-09: Landmass IDs Are Zero on Ocean Tiles
+#### TC-09: Landmass IDs Are Zero on Ocean Squares
 
 **Given:** Any `_landsize`
 **When:** `NEWG_CreateLands__WIP(ARCANUS_PLANE)` completes

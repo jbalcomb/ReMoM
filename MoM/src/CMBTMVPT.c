@@ -164,7 +164,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
             }
             ctr++;
 
-            /* -- PHASE 2: Middle Tiles (X = 1 to 19) -- */
+            /* -- PHASE 2: Middle Squares (X = 1 to 19) -- */
             for (itr_x = 0; itr_x < max_x; itr_x++) {
                 move_cost = _cmbt_movepath_cost_map[ctr];
                 if (move_cost != INF) {
@@ -279,7 +279,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
             }
             ctr++;
 
-            /* -- PHASE 2: Middle Tiles (X = 1 to 19) -- */
+            /* -- PHASE 2: Middle Squares (X = 1 to 19) -- */
             for (itr_x = 0; itr_x < max_x; itr_x++) {
                 move_cost = _cmbt_movepath_cost_map[ctr];
                 if (move_cost != INF) {

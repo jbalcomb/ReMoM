@@ -27,6 +27,8 @@
 #include "MainScr.h"
 #include "MOM_SCR.h"
 #include "RACETYPE.h"
+#include "Terrain.h"
+#include "TerrType.h"
 #include "UNITTYPE.h"
 #include "UnitStat.h"
 #include "UnitView.h"
@@ -650,12 +652,12 @@ void Production_Screen_Draw_(void)
 // drake178: BLD_GetAllowsList()
 void Building_Allows_List__WIP(int16_t bldg_idx, int16_t * allows_list_count, int16_t allows_list[])
 {
-    int16_t Building_Index;
-    int16_t reqd_terrtype;
-    int16_t Cant_Build;
-    int16_t city_race;
-    int16_t itr_cantbuild;
-    int16_t itr;  // _SI_
+    int16_t Building_Index = 0;
+    int16_t reqd_terrtype = 0;
+    int16_t Cant_Build = 0;
+    int16_t city_race = 0;
+    int16_t itr_cantbuild = 0;
+    int16_t itr = 0;
 
     *allows_list_count = 0;
 
@@ -685,7 +687,8 @@ void Building_Allows_List__WIP(int16_t bldg_idx, int16_t * allows_list_count, in
                 {
                     reqd_terrtype = bldg_data_table[itr].reqd_terrain;
                     if(
-                        (CTY_CheckTerrainReq__ALWAYS_TRUE(_city_idx, reqd_terrtype) == ST_TRUE) &&
+                        /* enum e_BUILDING_TYPE_PREREQUISITE {} */
+                        (City_Check_Terrain_Requisite(_city_idx, reqd_terrtype) == ST_TRUE) &&
                         (_CITIES[_city_idx].bldg_status[bldg_data_table[itr].reqd_bldg_2] != bs_Built)  // BUGBUG: drake178: may add replaced buildings to the list
                     )
                     {
@@ -913,8 +916,8 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
 
                     reqd_terrtype = bldg_data_table[itr].reqd_terrain;
 
-                    // TODO  CTY_CheckTerrainReq__ALWAYS_TRUE()
-                    if(CTY_CheckTerrainReq__ALWAYS_TRUE(city_idx, reqd_terrtype) == ST_TRUE)
+                    /* enum e_BUILDING_TYPE_PREREQUISITE {} */
+                    if(City_Check_Terrain_Requisite(city_idx, reqd_terrtype) == ST_TRUE)
                     {
 
                         if(
@@ -989,11 +992,101 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
 
 
 // WZD o56p09
-// CTY_CheckTerrainReq()
-int16_t CTY_CheckTerrainReq__ALWAYS_TRUE(int16_t city_idx, int16_t Terrain_Req_ID)
+/**
+ * @brief Checks whether a city satisfies a terrain prerequisite for construction.
+ *
+ * Evaluates the city surroundings for a required building terrain prerequisite.
+ * For @p btp_BREQ_Water, this scans the 3x3 area centered on the city for any
+ * ocean-like square, handling horizontal world wrap and vertical bounds.
+ * For all other prerequisite types, this scans the useable city area and checks
+ * each square's derived building terrain prerequisite.
+ *
+ * @param city_idx Index of the city in the global city table.
+ * @param btp_idx Required terrain prerequisite identifier (enum e_BUILDING_TYPE_PREREQUISITE).
+ * @return int16_t ST_TRUE if at least one qualifying square is found; otherwise ST_FALSE.
+ */
+int16_t City_Check_Terrain_Requisite(int16_t city_idx, int16_t btp_idx)
 {
-    return ST_TRUE;
+    int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t wx_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t itr_wy = 0;
+    int16_t itr_wx = 0;
+    int16_t useable_city_area = 0;
+    int16_t wy = 0;
+    int16_t wx = 0;
+    int16_t can_build_flag = ST_FALSE;
+    int16_t square_wx = 0;
+    int16_t building_terrain_type_prerequisite = 0;
+    int16_t square_wy = 0;
+    int16_t itr = 0;
+
+    if(btp_idx == btp_BREQ_Water)
+    {
+        itr_wy = (_CITIES[city_idx].wy - 1);
+        SETMIN(itr_wy, 0);
+
+        itr_wx = (_CITIES[city_idx].wx - 1);
+        SETMIN(itr_wx, (itr_wx + WORLD_WIDTH));
+
+        for(square_wy = itr_wy; square_wy < (itr_wy + 3); square_wy++)
+        {
+            if(square_wy >= WORLD_HEIGHT)
+            {
+                break;
+            }
+
+            for(itr = itr_wx; itr < (itr_wx + 3); itr++)
+            {
+                if(itr >= WORLD_WIDTH)
+                {
+                    square_wx = (itr - WORLD_WIDTH);
+                }
+                else
+                {
+                    square_wx = itr;
+                }
+
+                if(Square_Is_OceanLike(square_wx, square_wy, _CITIES[city_idx].wp) == ST_TRUE)
+                {
+                    can_build_flag = ST_TRUE;
+                    break;
+                }
+            }
+
+            if(can_build_flag != ST_FALSE)
+            {
+                break;
+            }
+        }
+    }
+    else
+    {
+
+        useable_city_area = Get_Useable_City_Area(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, &wx_array[0], &wy_array[0]);
+
+        for(itr = 0; itr < useable_city_area; itr++)
+        {
+            wx = wx_array[itr];
+            wy = wy_array[itr];
+
+            building_terrain_type_prerequisite = Building_Terrain_Type_Prerequisite(wx, wy, _CITIES[city_idx].wp);
+
+            if(building_terrain_type_prerequisite == btp_idx)
+            {
+                can_build_flag = ST_TRUE;
+            }
+
+            if(can_build_flag != ST_FALSE)
+            {
+                break;
+            }
+        }
+    }
+
+    return can_build_flag;
+    
 }
+
 
 // WZD o56p10
 // drake178: CTY_GetProduceCost()

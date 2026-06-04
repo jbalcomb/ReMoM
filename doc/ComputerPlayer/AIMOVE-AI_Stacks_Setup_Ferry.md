@@ -32,7 +32,7 @@ The bug catalog (numbered here for cross-reference within this doc; not in sourc
 | B2 | Phase 2 may not find any ocean — `ocean_wx/wy` default to the stack's land coords | `/* OGBUG  will add the original land square if there was no ocean around the stack */` | Real — pollutes ferry-request list |
 | B3 | Phase 2 doesn't validate world bounds before indexing `_landmasses[]` | `/* OGBUG  should validate coordinates */` | Real — out-of-bounds reads at world edge |
 | B4 | Phase 4 doesn't check that pulled units can physically reach the stage point | none — preserved drake178 spirit, not annotated | Real — orphan goto orders for non-reachable destinations |
-| B5 | Phase 5 result vars are written but never read (`niu_` prefix signals this) | `/* DEDU  For what might this have been meant to be used? */` + the NOTE pointing to `AI_SendToColonize__WIP` | Dead code — entire phase has no observable effect |
+| B5 | Phase 5 result vars are written but never read (`niu_` prefix signals this) | `/* DEDU  For what might this have been meant to be used? */` + the NOTE pointing to `AI_Stacks_Reorder_Settle_Elsewhere` | Dead code — entire phase has no observable effect |
 | B6 | Phase 5 stores `itr_stack_wx` (un-wrapped) into `niu_embarkable_wx` instead of the wrapped `wx_offset` | none (my flag) | Dead — would matter only if a consumer existed |
 | B7 | Phase 6 unit-position filter doesn't check the unit's plane | `/* OGBUG  should use unit's wp */` | Real — counts units on the other plane if their (wx,wy) lands in the box |
 | B8 | Phase 6's `Unit_Has_AirTravel` / `Unit_Has_WaterTravel` checks ignore spell/item-granted travel | none — same pattern as flagged in [AIMOVE-AI_Stacks_Order_To_War_Landmass.md](AIMOVE-AI_Stacks_Order_To_War_Landmass.md) | Real — misses Wind Walking, Flight spell, mobility items |
@@ -192,7 +192,7 @@ This is the **stage** half. For stacks not already at the stage point:
 ```c
 /* Phase 5 */
 /* DEDU  For what might this have been meant to be used? */
-/* NOTE(JimBalcomb,20260523): this block is in AI_SendToColonize__WIP(), used properly there */
+/* NOTE(JimBalcomb,20260523): this block is in AI_Stacks_Reorder_Settle_Elsewhere(), used properly there */
 for(itr_stack_wy = (stack_wy - 1); (stack_wy + 2) > itr_stack_wy; itr_stack_wy++)
 {
     if(
@@ -219,7 +219,7 @@ for(itr_stack_wy = (stack_wy - 1); (stack_wy + 2) > itr_stack_wy; itr_stack_wy++
 
 **B5 — Dead writes.** `niu_embarkable_found`, `niu_embarkable_wx`, `niu_embarkable_wy` are written here but never read anywhere else in this function. The `niu_` prefix signals "Not In Use" per the project glossary. Phase 5 runs and accomplishes nothing observable.
 
-The inline NOTE points at `AI_SendToColonize__WIP` as a function that contains the same block and DOES use its output. So this Phase 5 is plausibly copy-pasted from there (or was intended to converge), with the consumer left out.
+The inline NOTE points at `AI_Stacks_Reorder_Settle_Elsewhere` as a function that contains the same block and DOES use its output. So this Phase 5 is plausibly copy-pasted from there (or was intended to converge), with the consumer left out.
 
 **B6** — `niu_embarkable_wx = itr_stack_wx` stores the un-wrapped value (could be `-1` or `WORLD_WIDTH`). The wrapped value lives in `wx_offset`. Would matter only if a consumer existed.
 
@@ -393,6 +393,6 @@ The buggy bits (Phase 2's `else if`-vs-`else`, Phase 5's dead writes, Phase 6's 
 - [AIMOVE-AI_Stacks_Ferry_Add_Location.md](AIMOVE-AI_Stacks_Ferry_Add_Location.md) — called from Phase 3 (registers pickup request)
 - [AIMOVE-AI_Stacks_Order_Ferry.md](AIMOVE-AI_Stacks_Order_Ferry.md) — referenced from Phase 7b (unreachable from this caller)
 - [AIMOVE-AI_Stacks_Order_To_War_Landmass.md](AIMOVE-AI_Stacks_Order_To_War_Landmass.md) — shares the `Unit_Has_AirTravel` / `Unit_Has_WaterTravel` B8-equivalent caveat
-- `AI_SendToColonize__WIP` (in AIMOVE.c, not yet walked through) — contains the same Phase 5 block, used properly there per the inline NOTE
+- `AI_Stacks_Reorder_Settle_Elsewhere` (in AIMOVE.c, not yet walked through) — contains the same Phase 5 block, used properly there per the inline NOTE
 - [MoX/src/MOM_DAT.h:524](../../MoX/src/MOM_DAT.h#L524) — `us_GOTO` enum value (used by Phase 6 stay-put writes)
 - [MoM-AI-AIMOVE-Index.md](MoM-AI-AIMOVE-Index.md) — function index

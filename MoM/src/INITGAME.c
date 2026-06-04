@@ -938,7 +938,7 @@ void Init_Computer_Players_Wizard_Profile(void)
     // ; random profile traits, up to the predefined maximum
     // ; of 11 on Normal and below, 13 on Hard, or 15 on the
     // ; Impossible difficulty
-    for(itr2 = 0; itr2 < _num_players; itr2++)
+    for(itr2 = 1; itr2 < _num_players; itr2++)
     {
 
         wsa_ptr = &_players[itr2].alchemy;

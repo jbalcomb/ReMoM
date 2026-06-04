@@ -20,7 +20,7 @@ TILE_GetDistance()  ==> Range()  MoO2  Module: special
 G_TILE_IsAIEmbarkable()  ==>  Map_Square_Is_Embarkable()
 AI_UNIT_SeekTransport()  ==>  AI_Stacks_Order_Ferry()
 AI_UNIT_SettleOrder()  ==>  AI_Order_Settle()
-AI_ProcessSettlers()  ==>  AI_Do_Settle()
+AI_ProcessSettlers()  ==>  AI_Stacks_Do_Settle()
 AI_UNIT_PurifyOrder()  ==>  AI_Order_Purify()
 AI_ProcessPurifiers()  ==>  AI_Do_Purify()
 AI_UNIT_RoadBldOrder()  ==>  AI_Order_RoadBuild()
@@ -149,10 +149,10 @@ AI_Stacks_Do_Meld()
     |-> AI_Stacks_Order_Meld()
     |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
-AI_Do_Settle()
-    |-> AI_CanSettleOffPlane()
+AI_Stacks_Do_Settle()
+    |-> AI_Find_Tower_To_Settle_Elsewhere()
     |-> AI_Order_Settle()
-    |-> AI_SendToColonize()
+    |-> AI_Stacks_Reorder_Settle_Elsewhere()
 
 AI_ProcessPurifiers()
 
@@ -284,21 +284,21 @@ list_unit_idx
 
 
 
-## AI_Do_Settle()
+## AI_Stacks_Do_Settle()
     |-> Map_Square_Area_Has_Opponent()
     |-> Map_Square_Survey
     ...
-    |-> AI_CanSettleOffPlane()
+    |-> AI_Find_Tower_To_Settle_Elsewhere()
     ...
     |-> AI_Order_Settle()
     ...
-    |-> AI_SendToColonize()
+    |-> AI_Stacks_Reorder_Settle_Elsewhere()
 
 Compute_Base_Map_Square_Values()
 
 Map_Square_Is_Embarkable()
 
-TILE_AI_FindLoadTile__WIP()
+Next_Nearest_Ferry_Square()
 
 
 

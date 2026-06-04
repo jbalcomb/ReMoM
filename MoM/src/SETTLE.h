@@ -31,13 +31,13 @@ void AI_MoveUnits(int16_t player_idx);
 void AI_UNIT_Meld(int16_t unit_idx);
 
 // WZD o100p03
-void AI_UNIT_Settle__WIP(int16_t unit_idx);
+void Unit_Army_Do_Settle(int16_t unit_idx);
 
 // WZD o100p04
-int16_t Do_Build_Outpost(void);
+int16_t Active_Army_Do_Settle(void);
 
 // WZD o100p05
-int16_t STK_SettleTile(int16_t troop_count, int16_t troops[]);
+int16_t Army_Do_Settle(int16_t troop_count, int16_t troops[]);
 
 // WZD o100p06
 int16_t AI_UNIT_Move(int16_t unit_idx);

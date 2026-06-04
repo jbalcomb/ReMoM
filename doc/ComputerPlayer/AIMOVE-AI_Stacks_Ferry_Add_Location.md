@@ -107,7 +107,7 @@ AI_Stacks_Ferry_Add_Location(wx, wy, wp)
 
 ## Other callers
 
-- [`AIMOVE.c:5254`](../../MoM/src/AIMOVE.c#L5254) — inside [`AI_SendToColonize__WIP`](../../MoM/src/AIMOVE.c), a direct write to the same arrays (not through this function), pre-gated with the same `if(_ai_ferry_count < 15)` capacity check. Different path to the same global state — could conceivably be refactored to call `AI_Stacks_Ferry_Add_Location` instead, but currently inlines the append.
+- [`AIMOVE.c:5341-5348`](../../MoM/src/AIMOVE.c#L5341-L5348) — inside [`AI_Stacks_Reorder_Settle_Elsewhere`](../../MoM/src/AIMOVE.c#L5195), a direct write to the same arrays (not through this function), pre-gated with the same `if(_ai_ferry_count < MAX_AI_FERRIES)` capacity check. Different path to the same global state — could conceivably be refactored to call `AI_Stacks_Ferry_Add_Location` instead, but currently inlines the append.
 
 ## Related references
 

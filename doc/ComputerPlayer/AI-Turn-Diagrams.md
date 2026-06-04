@@ -50,7 +50,7 @@ flowchart TD
 
         Dispatch --> Slot1["slot 1<br/>AI_Stacks_Init_Build_Target_Order>rebuilds _ai_own_stack_*</i>"]:::func
         Dispatch --> Slot2["slot 2<br/>AI_Stacks_Move_Out_NonMilitary_Garrisoned<br/><i>push settlers/engineers/melders out of garrisons</i>"]:::func
-        Dispatch --> Slots4_7["slots 4-7<br/>AI_Stacks_Do_Meld<br/>AI_Do_Settle<br/>AI_Do_Purify<br/>AI_Do_RoadBuild"]:::func
+        Dispatch --> Slots4_7["slots 4-7<br/>AI_Stacks_Do_Meld<br/>AI_Stacks_Do_Settle<br/>AI_Do_Purify<br/>AI_Do_RoadBuild"]:::func
         Dispatch --> Slot8["slot 8<br/>AI_Build_Target_List<br/>builds _ai_targets_*"]:::func
         Dispatch --> Slot9["slot 9<br/>AI_Stacks_Roamers_Target_Or_Deploy"]:::func
         Dispatch --> SlotsRally["slots 10/11/12/13<br/>AI_Stacks_Order_To_War_Landmass<br/>AI_Stacks_Relocate_Roamers<br/>AI_Stacks_Stage_Expedition_Forces<br/>AI_Stacks_Garrison_Sites"]:::func
@@ -82,7 +82,7 @@ flowchart TD
         StatusGate -- "us_BuildRoad" --> BuildRoad["AI_UNIT_BuildRoad__WIP"]:::func
         BuildRoad --> UnitMove
         StatusGate -- "us_Meld" --> UnitMeld["AI_UNIT_Meld"]:::func
-        StatusGate -- "us_Settle" --> UnitSettle["AI_UNIT_Settle__WIP"]:::func
+        StatusGate -- "us_Settle" --> UnitSettle["Unit_Army_Do_Settle"]:::func
         StatusGate -- "us_Ferry" --> UnitSeek["AI_UNIT_SeekTransprt__WIP"]:::func
 
         UnitMove["AI_UNIT_Move<br/>reads _UNITS[u].dst_wx/wy"]:::func --> MoveUnits["Move_Units<br/>actual movement resolution"]:::terminal

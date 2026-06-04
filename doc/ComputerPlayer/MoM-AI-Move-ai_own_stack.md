@@ -146,7 +146,7 @@ AI_Move_Out_Boats() |-> AI_Stack_Set_Boats_Goto()
 
 
 // WZD o158p35
-AI_SendToColonize__WIP()
+AI_Stacks_Reorder_Settle_Elsewhere()
 ...uses the arrays
 ...also _ai_landmass_settler_targets_wx_array
 ...also _ai_ferry_wx_array/Ys/Ps
@@ -157,7 +157,7 @@ intermingled?
     // WZD o158p33
     AI_Enemy_Unit_In_Range
     // WZD o158p34
-    AI_CanSettleOffPlane__STUB
+    AI_Find_Tower_To_Settle_Elsewhere
     // WZD o158p36
     AI_Stacks_Ferry_Add_Location()
     // WZD o158p37
@@ -336,7 +336,7 @@ AI_Next_Turn (per-AI-player driver)
                 case us_Move:        → AI_UNIT_Move(unit_idx)         [SETTLE.c:151]
                 case us_BuildRoad:   → AI_UNIT_BuildRoad__WIP, then AI_UNIT_Move
                 case us_Meld:        → AI_UNIT_Meld
-                case us_Settle:      → AI_UNIT_Settle__WIP
+                case us_Settle:      → Unit_Army_Do_Settle
                 case us_Ferry: → AI_UNIT_SeekTransprt__WIP
                 default:             → skip
                   │

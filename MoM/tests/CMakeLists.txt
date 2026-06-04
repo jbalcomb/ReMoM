@@ -29,6 +29,7 @@ add_executable(MOM_tests
     test_Create_Lair.cpp
     test_Generate_Lairs.cpp
     test_Generate_Home_City.cpp
+    test_Map_Square_Is_Embarkable.cpp
  )
 
 target_include_directories(MOM_tests PRIVATE

@@ -212,7 +212,7 @@ West	2
 East	4	
 South	8	
 The Result: A sum between 0 (no neighbors) and 15 (surrounded on all 4 sides). This maps perfectly to a 16-square spritesheet. 
-Expanding to 8-Bit (256 Tiles)
+Expanding to 8-Bit (256 Squares)
 When you include diagonals (Northwest, Northeast, Southwest, Southeast), you reach the 256-square configuration you mentioned. This allows for much smoother transitions, though it is significantly more complex to draw. 
 Most developers use a Blob Tileset (47 tiles). Even though there are 256 mathematical combinations, many of them look identical visually. For example, if you don't have neighbors to the North or East, the "Northeast" corner doesn't actually change the square's shape. 
 Common Implementation Logic

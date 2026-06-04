@@ -1687,11 +1687,11 @@ void Moves_Type_Icon(int16_t move_flags, int16_t * moves_icon_idx)
 */
 void USW_DrawListPage(int16_t xstart, int16_t ystart, struct s_UV_List * specials_list, int16_t specials_count, int16_t specials_item, SAMB_ptr item_icon_pict_seg)
 {
-    uint8_t colors[6];
-    int16_t item_icon_y_start;
-    int16_t item_icon_x_start;
-    int16_t display_count;
-    int16_t itr; // _SI_
+    uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t item_icon_y_start = 0;
+    int16_t item_icon_x_start = 0;
+    int16_t display_count = 0;
+    int16_t itr = 0;
 
     display_count = 8;
 

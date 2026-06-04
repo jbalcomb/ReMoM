@@ -1312,7 +1312,7 @@ g_dbg_fields_trace = 1;
                 {
                     // // TODO  DLOG("switch(special_action_flag)  case 1:");
                     // o100p04
-                    if(Do_Build_Outpost() == ST_TRUE)
+                    if(Active_Army_Do_Settle() == ST_TRUE)
                     {
                         o62p01_empty_function(_human_player_idx);
                         Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_wx, selected_unit_wy);

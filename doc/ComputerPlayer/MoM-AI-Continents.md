@@ -92,13 +92,13 @@ neighborhood) of any shore-terrain square.
         It looks at CONTX_1stLoadTs[0][4].
         Instantly, it has a linked list of every single valid port/shoreline square on Continent #4.
         It just loops through that tiny, pre-calculated list, finds the port square closest to the enemy continent, and issues the move order!
-        This perfectly ties back to the EMM_Map_CONTXXX__WIP snippet you shared earlier. Now we know exactly what the CONTX_1stLoadTs (First Load Tiles) and CONTX_LoadTChain (Load Tile Chain) arrays are actually doing!
+        This perfectly ties back to the EMM_Map_CONTXXX__WIP snippet you shared earlier. Now we know exactly what the CONTX_1stLoadTs (First Load Squares) and CONTX_LoadTChain (Load Tile Chain) arrays are actually doing!
 
 EMM_Map_CONTXXX__WIP()
 CONTX_CreateChains__WIP()
 CONTX_CreateLChains__WIP()
 ...last three procs in over145 ...later additions? ...after other weirder later additions, so rearrangement?
-AI_Set_Unit_Orders() |-> AI_Do_Settle() |-> AI_SendToColonize__WIP() |-> j_TILE_AI_FindLoadTile__WIP() |-> TILE_AI_FindLoadTile__WIP()
+AI_Set_Unit_Orders() |-> AI_Stacks_Do_Settle() |-> AI_Stacks_Reorder_Settle_Elsewhere() |-> j_TILE_AI_FindLoadTile__WIP() |-> Next_Nearest_Ferry_Square()
 
 Loaded_Game_Update__seg001()
     |-> CONTX_CreateChains__WIP()
