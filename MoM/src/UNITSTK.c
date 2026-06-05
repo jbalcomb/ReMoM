@@ -241,7 +241,7 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
         }
         if(CRP_OVL_Obstacle_Var1 == ST_FALSE)
         {
-            // TODO  o58p03_Empty_pFxn();
+            o58p03_empty_function();
         }
 
         assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
@@ -267,7 +267,6 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 
         if(movement_points_available < 1)
         {
-            // TODO  DLOG("(movement_points_available < 1)");
             for(itr_units = 0; itr_units < unit_array_count; itr_units++)
             {
                 if(_UNITS[unit_array[itr_units]].Status == us_Ready)
@@ -279,15 +278,11 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 
             WIZ_NextIdleStack(player_idx, map_x, map_y, map_p);
         }
-        else
-        {
-            // TODO  DLOG("(movement_points_available >= 1)");
-        }
 
         Set_Unit_Draw_Priority();
         Reset_Stack_Draw_Priority();
         Set_Entities_On_Map_Window(*map_x, *map_y, *map_p);
-        // TODO  fxnptr_o59p();
+        o59p10_empty_function();
         Reset_Draw_Active_Stack();
     }
 
@@ -598,7 +593,7 @@ static void WIZ_NextIdleStack_GEMINI(int16_t player_idx, int16_t *map_x, int16_t
                     /* Check if unit reached destination and is not busy with road construction */
                     if ((_UNITS[_unit].wx == next_unit_dst_wx) && 
                         (_UNITS[_unit].wy == next_unit_dst_wy) && 
-                        (_UNITS[_unit].Rd_Constr_Left == (unsigned char)0xFF)) /* e_ST_UNDEFINED_DB */
+                        (_UNITS[_unit].Rd_Constr_Left == (int8_t)ST_UNDEFINED))
                     {
                         _UNITS[_unit].Status = us_Ready;
                     }
