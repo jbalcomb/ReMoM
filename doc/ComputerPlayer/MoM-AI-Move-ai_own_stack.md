@@ -121,7 +121,7 @@ _ai_own_stack_unit_list[][] = ST_UNDEFINED
     AI_Order_RoadBuild()
     AI_Stacks_Order_Ferry()
     AI_Stacks_Order_Meld()
-    AI_Order_Purify()
+    AI_Stacks_Order_Purify()
 */
 int16_t _ai_own_stack_count;
 int16_t * _ai_own_stack_unit_list[MAX_AI_STACKS];
@@ -377,6 +377,6 @@ Tradeoffs vs the ASCII art I've been using
 ## AI_Stacks_Order_Meld()
 
 
-## AI_Order_Purify()
+## AI_Stacks_Order_Purify()
 
 

@@ -280,7 +280,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
 
             AI_Stacks_Do_Meld(player_idx);
             AI_Stacks_Do_Settle(player_idx, landmass_idx);
-            AI_Do_Purify(landmass_idx, wp);
+            AI_Stacks_Do_Purify(landmass_idx, wp);
             AI_Do_RoadBuild(landmass_idx);
 
             AI_Build_Target_List(player_idx, landmass_idx, wp);
@@ -4276,141 +4276,129 @@ void AI_Stacks_Do_Settle(int16_t player_idx, int16_t landmass_idx)
 
 
 // WZD o158p24
-// drake178: AI_ProcessPurifiers()
-/*
-; processes any unassigned purifiers on the continent,
-; either by giving a purify or a move order - provided
-; that there are any harmful corrupted tiles to purify
-*/
-/*
-
-*/
-void AI_Do_Purify(int16_t landmass_idx, int16_t wp)
+/**
+ * @brief Orders Purify-capable units to clear corruption threatening AI assets.
+ *
+ * Scouts the selected landmass (via the work lists in `_ai_landmass_land_squares_*`)
+ * for a corrupted square that is not itself an active hostile target — no
+ * target-strength bits set in @c g_ai_evaluation_map — and that lies within a
+ * 5x5 box of an @c AI_TARGET_SITE square, i.e. corruption near a city or node
+ * the AI cares about. The first such square becomes the single dispatch target.
+ *
+ * If no qualifying corruption is found, the function returns without changing
+ * any orders. Otherwise it scans every @c AISTK_Unknown stack and, for each unit
+ * with the @c UA_PURIFY ability, either issues an in-place purify order via
+ * AI_Stacks_Order_Purify() (when the unit already stands on a corrupted square)
+ * or routes it toward the target via
+ * AI_Stacks_Order_Attack_Target_Or_Goto_Destination() (when it does not).
+ * Non-purifier units and units in other stack types are left untouched.
+ *
+ * @param landmass_idx Index of the landmass to scan for corruption.
+ * @param wp World plane containing the landmass.
+ *
+ * @return This function does not return a value. It may update unit orders and
+ *         the per-stack unit lists via AI_Stacks_Order_Purify() or
+ *         AI_Stacks_Order_Attack_Target_Or_Goto_Destination().
+ *
+ * @note Preserves the original game's broad search: it scans the entire landmass
+ *       land-square list and a full 5x5 area rather than restricting to city
+ *       catchment squares (see the OGBUG comment below), and it dispatches every
+ *       qualifying purifier toward the single scouted square.
+ */
+/* OGBUG  should only check in city areas (excluding corners)*/
+void AI_Stacks_Do_Purify(int16_t landmass_idx, int16_t wp)
 {
     int16_t unit_idx = 0;
     int16_t list_unit_idx = 0;
     int16_t list_unit_count = 0;
     int16_t landmass_node_wy = 0;
     int16_t landmass_node_wx = 0;
-    int16_t Tile_Y_Offset = 0;
-    int16_t Tile_X_Offset = 0;
+    int16_t wy_offset = 0;
+    int16_t wx_offset = 0;
     int16_t target_wy = 0;
     int16_t target_wx = 0;
     int16_t landmass_node_index = 0;
     int16_t InRange_Corruption = 0;
     int16_t unit_wy = 0;
     int16_t unit_wx = 0;
-
-    int16_t itr_stacks;  // _DI_
-
-// ; check if there are any corrupted tiles on the
-// ; continent near own assets and not under enemy control
-// ; 
-// ; BUG: should really only check city catchments
+    int16_t itr_stacks = 0;
 
     InRange_Corruption = ST_FALSE;
 
     landmass_node_index = _ai_landmass_land_squares_heads[wp][landmass_idx];
-
-    // while(landmass_node_index = _ai_landmass_land_squares_lists[wp][landmass_node_index] != ST_UNDEFINED)
     while(landmass_node_index != ST_UNDEFINED)
     {
-
         if(InRange_Corruption != ST_FALSE)
         {
-
             break;
-
         }
-
         landmass_node_wx = _ai_landmass_land_squares_wx_array[wp][landmass_node_index];
-        
         landmass_node_wy = _ai_landmass_land_squares_wy_array[wp][landmass_node_index];
-
         if(
             ((_map_square_flags[((wp * WORLD_SIZE) + (landmass_node_wy * WORLD_WIDTH) + landmass_node_wx)] & MSF_CORRUPTION) != 0)
             &&
             ((g_ai_evaluation_map[wp][((landmass_node_wy * WORLD_WIDTH) + landmass_node_wx)] & AI_TARGET_STRENGTH_MASK) == 0)
         )
         {
-
-// ; check the 5 by 5 area centered around the square to see
-// ; if there are any cities or nodes, and set
-// ; InRange_Corruption along with the first found
-// ; coordinates if there are
-// ; 
-// ; BUG: should really only go for city catchments
-
-            for(Tile_Y_Offset = -2; Tile_Y_Offset < 3; Tile_Y_Offset++)
+            for(wy_offset = -2; wy_offset < 3; wy_offset++)
             {
-
-                for(Tile_X_Offset = -2; Tile_X_Offset < 3; Tile_X_Offset++)
+                for(wx_offset = -2; wx_offset < 3; wx_offset++)
                 {
-
-                    if(g_ai_evaluation_map[wp][(((Tile_Y_Offset + landmass_node_wy) * WORLD_WIDTH) + (Tile_X_Offset + landmass_node_wx))] == AI_TARGET_SITE)
+                    if(g_ai_evaluation_map[wp][(((wy_offset + landmass_node_wy) * WORLD_WIDTH) + (wx_offset + landmass_node_wx))] == AI_TARGET_SITE)
                     {
-
                         InRange_Corruption = ST_TRUE;
-
                         target_wx = landmass_node_wx;
-
                         target_wy = landmass_node_wy;
-
                     }
-
-
                 }
-
             }
-
         }
-
         landmass_node_index = _ai_landmass_land_squares_lists[wp][landmass_node_index];
-
     }
 
-    if(InRange_Corruption != ST_FALSE)
+    if(InRange_Corruption == ST_FALSE)
+    {
+        return;
+    }
+
+    for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
     {
 
-        for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
+        if(_ai_own_stack_type[itr_stacks] == AISTK_Unknown)
         {
 
-            if(_ai_own_stack_type[itr_stacks] == AISTK_Unknown)
+            list_unit_count = _ai_own_stack_unit_count[itr_stacks];
+
+            for(list_unit_idx = 0; list_unit_idx < list_unit_count; list_unit_idx++)
             {
 
-                list_unit_count = _ai_own_stack_unit_count[itr_stacks];
+                unit_idx = _ai_own_stack_unit_list[itr_stacks][list_unit_idx];
 
-                for(list_unit_idx = 0; list_unit_idx < list_unit_count; list_unit_idx++)
+                if(unit_idx != ST_UNDEFINED)
                 {
 
-                    unit_idx = _ai_own_stack_unit_list[itr_stacks][list_unit_idx];
-
-                    if(unit_idx == ST_UNDEFINED)
+                    if((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_PURIFY) != 0)
                     {
 
-                        if(_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_PURIFY)
+                        unit_wx = _UNITS[unit_idx].wx;
+                        unit_wy = _UNITS[unit_idx].wy;
+
+                        /* If the unit is already on a corrupted square, order it to Purify */
+                        if((_map_square_flags[((wp * WORLD_SIZE) + (unit_wy * WORLD_WIDTH) + unit_wx)] & MSF_CORRUPTION) != 0)
                         {
 
-                            unit_wx = _UNITS[unit_idx].wx;
-                            
-                            unit_wy = _UNITS[unit_idx].wy;
+                            AI_Stacks_Order_Purify(unit_idx, itr_stacks, list_unit_idx);
 
-                            if((_map_square_flags[((wp * WORLD_SIZE) + (unit_wy * WORLD_WIDTH) + unit_wx)] & MSF_CORRUPTION) != 0)
-                            {
-
-                                AI_Order_Purify(unit_idx, itr_stacks, list_unit_idx);
-
-                            }
-                            else
-                            {
+                        }
+                        else
+                        {
+                            /* Otherwise, move toward the target corrupted square */
 
 #ifdef STU_DEBUG
-                                LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, list_unit_idx);
+                            LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, list_unit_idx);
 #endif
-                                g_ai_set_target_caller = 17;
-                                AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, target_wx, target_wy, itr_stacks, list_unit_idx);
-
-                            }
+                            g_ai_set_target_caller = 17;
+                            AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, target_wx, target_wy, itr_stacks, list_unit_idx);
 
                         }
 
@@ -4759,7 +4747,29 @@ void AI_Stacks_Order_Meld(int16_t unit_idx, int16_t unit_list_idx, int16_t list_
 
 
 // WZD o158p31
-void AI_Order_Purify(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx)
+/**
+ * @brief Marks one AI-controlled unit to purify corruption.
+ *
+ * Sets the unit's status to @c us_Purify, stores the original game's purify
+ * timer value in @c dst_wx, and clears the unit's slot from the owning AI
+ * stack list so it is not processed again as an unassigned unit this pass.
+ *
+ * @param unit_idx Global unit index to assign the purify order to.
+ * @param unit_list_idx Index of the owning AI stack within
+ *                      @_ai_own_stack_unit_list.
+ * @param list_unit_idx Slot of the unit inside that AI stack list.
+ *
+ * @return This function does not return a value. It may update
+ *         @c _UNITS[unit_idx].Status, @c _UNITS[unit_idx].dst_wx, and
+ *         @c _ai_own_stack_unit_list[unit_list_idx][list_unit_idx].
+ *
+ * @note If @p unit_idx falls outside the valid unit array range, the function
+ *       exits without modifying unit or stack state.
+ * @note The purify timer is preserved in @c dst_wx as a legacy behavior, just
+ *       as other AI order helpers store small per-order timers in destination
+ *       fields.
+ */
+void AI_Stacks_Order_Purify(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx)
 {
     if((unit_idx < 0) || (unit_idx >= MAX_UNIT_COUNT)) { return; }
     _UNITS[unit_idx].Status = us_Purify;
@@ -5848,7 +5858,7 @@ void Next_Nearest_Ferry_Square(int16_t wx, int16_t wy, int16_t wp, int16_t * tar
 /**
  * @brief Finds the first adjacent land square that is a safe landing/staging candidate for the current AI pass.
  *
- * Scans the 3x3 neighborhood centered on the input square (including the center tile),
+ * Scans the 3x3 neighborhood centered on the input square (including the center square),
  * applies horizontal world-wrap for X coordinates, and checks each candidate for two
  * conditions: terrain is land (Square_Is_Land() == ST_TRUE) and the corresponding
  * g_ai_evaluation_map entry is exactly zero (no strength bits and no site/nonhostile flags).

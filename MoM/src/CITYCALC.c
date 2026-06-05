@@ -3730,7 +3730,7 @@ int16_t City_Rebel_Count(int16_t city_idx)
  * - For each eligible catchment square:
  *   - Marks `*is_unexplored` if any square is currently unexplored.
  *   - Uses full contribution when the square is unclaimed (or when evaluating an
- *     existing city tile), otherwise applies shared-city half contribution logic.
+ *     existing city square), otherwise applies shared-city half contribution logic.
  *   - Accumulates food-derived population potential, production bonus,
  *     unit-cost reduction, gold income, and magic income.
  *   - Sets material/special flags (`nightshade`, `mithril`, `adamantium`).

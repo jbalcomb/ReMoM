@@ -123,7 +123,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
         AI_Stacks_Survey_Expedition_Forces();
         AI_Stacks_Do_Meld(player_idx);
         AI_Stacks_Do_Settle(player_idx, landmass_idx);
-        AI_Do_Purify(landmass_idx, wp);
+        AI_Stacks_Do_Purify(landmass_idx, wp);
         AI_Do_RoadBuild(landmass_idx);
         AI_Build_Target_List(player_idx, landmass_idx, wp);
         AI_Stacks_Roamers_Target_Or_Deploy(landmass_idx, wp, player_idx);
@@ -178,7 +178,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
 | 3 | `AI_Stacks_Survey_Expedition_Forces` | Inventory excess units (for later disband). |
 | 4 | `AI_Stacks_Do_Meld` | Spirit-meld at nodes. |
 | 5 | `AI_Stacks_Do_Settle` | Issue settler-settle orders. |
-| 6 | `AI_Do_Purify` | Issue purify orders for corrupted tiles. |
+| 6 | `AI_Stacks_Do_Purify` | Issue purify orders for corrupted tiles. |
 | 7 | `AI_Do_RoadBuild` | Issue road-build orders. |
 | 8 | `AI_Build_Target_List` | (Re-)build the target list. |
 | 9 | `AI_Stacks_Roamers_Target_Or_Deploy` | Move stray "roamer" stacks. |
@@ -233,7 +233,7 @@ AI_Set_Unit_Orders(player_idx)
         ├── AI_Stacks_Survey_Expedition_Forces
         ├── AI_Stacks_Do_Meld
         ├── AI_Stacks_Do_Settle
-        ├── AI_Do_Purify
+        ├── AI_Stacks_Do_Purify
         ├── AI_Do_RoadBuild
         ├── AI_Build_Target_List
         ├── AI_Stacks_Roamers_Target_Or_Deploy

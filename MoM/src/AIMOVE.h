@@ -93,7 +93,7 @@ void AI_Stacks_Do_Meld(int16_t player_idx);
 void AI_Stacks_Do_Settle(int16_t player_idx, int16_t landmass_idx);
 
 // WZD o158p24
-void AI_Do_Purify(int16_t landmass_idx, int16_t wp);
+void AI_Stacks_Do_Purify(int16_t landmass_idx, int16_t wp);
 
 // WZD o158p25
 void AI_Do_RoadBuild(int16_t landmass_idx);
@@ -114,7 +114,7 @@ void AI_Stacks_Order_Ferry(int16_t unit_idx, int16_t unit_list_idx, int16_t list
 void AI_Stacks_Order_Meld(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx);
 
 // WZD o158p31
-void AI_Order_Purify(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx);
+void AI_Stacks_Order_Purify(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx);
 
 // WZD o158p32
 int16_t Map_Square_Area_Has_Opponent(int16_t wx, int16_t wy, int16_t wp, int16_t radius, int16_t player_idx);

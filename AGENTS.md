@@ -9,7 +9,7 @@ Ignore the Register annotations. (e.g., `_DI_`, `_SI_`, `_CX_`, etc.) They are j
 ## Style Guide
 - Use Allman style braces
 - Wrap block comments at 180 characters
-- Use "square", not "tile"
+- Use "square", not "square"
 
 ## Naming Conventions
 - Use lower_snake_case for variable names  (e.g., )

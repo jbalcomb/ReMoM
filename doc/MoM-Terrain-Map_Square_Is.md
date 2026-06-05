@@ -88,7 +88,7 @@ Implementation shape:
 
 Behavior notes:
 - Returns true for a wide set of ocean/shore/lake-like IDs and shoreline ranges.
-- Unlike OceanLike, this path includes the single-tile lake case because it does not special-case tt_Lake as false.
+- Unlike OceanLike, this path includes the single-square lake case because it does not special-case tt_Lake as false.
 - Uses historical threshold/goto flow; behavior is broader than Embarkable.
 
 Takeaway:

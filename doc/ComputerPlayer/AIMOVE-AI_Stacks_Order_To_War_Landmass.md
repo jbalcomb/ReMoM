@@ -182,7 +182,7 @@ AI_Stacks_Order_To_War_Landmass(player_idx, wp)
 | 1 | [`AI_Stacks_Init_Build_Target_Order`](AIMOVE-AI_Stacks_Init_Build_Target_Order.md) | Rebuilds `_ai_own_stack_*` |
 | 2 | [`AI_Stacks_Move_Out_NonMilitary_Garrisoned`](AIMOVE-AI_Stacks_Move_Out_NonMilitary_Garrisoned.md) | Push builders out of garrisons |
 | 3 | `AI_Stacks_Survey_Expedition_Forces` | Score surplus combat units into `G_Pushout_*` / `G_Seafaring_*` |
-| 4-7 | `AI_Stacks_Do_Meld` / `AI_Stacks_Do_Settle` / `AI_Do_Purify` / `AI_Do_RoadBuild` | Per-job order-setters |
+| 4-7 | `AI_Stacks_Do_Meld` / `AI_Stacks_Do_Settle` / `AI_Stacks_Do_Purify` / `AI_Do_RoadBuild` | Per-job order-setters |
 | 8 | [`AI_Build_Target_List`](AIMOVE-AI_Build_Target_List.md) | Build `_ai_targets_*` |
 | 9 | [`AI_Stacks_Roamers_Target_Or_Deploy`](AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md) | Assign targets to roamer stacks; sets `lmt_Leaveable` as needed |
 | **10** | **`AI_Stacks_Order_To_War_Landmass`** | **(this function)** — pull mobile non-melder units to war landmass stage point |

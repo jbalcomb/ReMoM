@@ -210,7 +210,7 @@ AI_Stacks_Move_Out_NonMilitary_Garrisoned(wp)
 | 3 | `AI_Stacks_Survey_Expedition_Forces` | Score surplus combat units into the `G_Pushout_*` / `G_Seafaring_*` global pools |
 | 4 | `AI_Stacks_Do_Meld` | Issue meld orders |
 | 5 | `AI_Stacks_Do_Settle` | Issue settle orders |
-| 6 | `AI_Do_Purify` | Issue purify orders |
+| 6 | `AI_Stacks_Do_Purify` | Issue purify orders |
 | 7 | `AI_Do_RoadBuild` | Issue road-build orders |
 | 8 | `AI_Build_Target_List` | Build `_ai_targets_*` (separate from stack arrays) |
 | 9 | [`AI_Stacks_Roamers_Target_Or_Deploy`](AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md) | Assign targets to roamer stacks |
