@@ -2092,6 +2092,7 @@ void Randomize_Book_Heights(void)
 
     LOG_INFO(LOG_CAT_NEWGAME, "BEGIN: Randomize_Book_Heights()");
 
+    /* OGBUG  niu is leftover, should be remnoved */
     niu = ((((magic_set.MagicPower * magic_set.Opponents) * (magic_set.Difficulty * magic_set.LandSize)) * 123) + 1234);
 
     for(itr = 0; itr < 11; itr++)

@@ -431,6 +431,12 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
 #endif
     }
 
+    /* Mirror the ReMoM Screen 0 OK path: Randomize_Book_Heights consumes 66
+       Random() draws.  Without this, HeMoM enters Init_New_Game with the RNG
+       cursor 66 ticks ahead of ReMoM and every downstream world-gen draw
+       diverges.  See doc/Devel-HeMoM-Newgame-Path-Alignment.md. */
+    Randomize_Book_Heights();
+
     LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Creating new game: difficulty=%d magic=%d landsize=%d opponents=%d wizard=%s race=%d banner=%d seed=%u", cfg->difficulty, cfg->magic, cfg->landsize, cfg->opponents, cfg->wizard_name, cfg->race, cfg->banner, Get_Random_Seed());
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] Creating new game: difficulty=%d magic=%d landsize=%d opponents=%d wizard=%s race=%d banner=%d seed=%u", cfg->difficulty, cfg->magic, cfg->landsize, cfg->opponents, cfg->wizard_name, cfg->race, cfg->banner, Get_Random_Seed());
