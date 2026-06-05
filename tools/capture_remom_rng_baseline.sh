@@ -10,12 +10,12 @@
 #   2. Launches ReMoMber with --seed ${SEED} --record menu_baseline.RMR,
 #      capturing stderr to a raw log.
 #   3. Waits for you to click through the new-game menus making the choices
-#      that match assets/test_worldgen.ini, then quit.
+#      that match assets/matchup_hemom.ini, then quit.
 #   4. After ReMoMber exits, filters the [RNG-CALL] stream into
 #      tests/baseline_seed${SEED}_rng.log.
 #   5. Prints the next step (run verify_rng_alignment.sh to compare).
 #
-# Manual menu walkthrough (must match assets/test_worldgen.ini):
+# Manual menu walkthrough (must match assets/matchup_hemom.ini):
 #   Screen 0 (Options):
 #     Difficulty = Normal,  Opponents = Four,
 #     Landsize   = Large,   Magic     = Normal

@@ -1817,12 +1817,9 @@ int16_t Newgame_Screen_0(void)
 
             Randomize_Book_Heights();
 
-            _landsize = magic_set.LandSize;
-            
+            _landsize = magic_set.LandSize;  /* ~== NewGame.c  Line 1820 */
             _magic = magic_set.MagicPower;
-            
             _num_players = (magic_set.Opponents + 1);
-            
             _difficulty = magic_set.Difficulty;
             
             return 1;          }
