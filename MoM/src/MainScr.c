@@ -240,11 +240,9 @@ char cnst_Moves[] = "Moves:";
 // WZD dseg:C040
 // CRP_OverlandVar_4 dw 0
 // WZD dseg:C042
-// OVL_MapVar3 dw 0
-
+int16_t OVL_MapVar3;
 // WZD dseg:C044
 int16_t CRP_OVL_Obstacle_Var1;
-
 // WZD dseg:C046
 // CRP_OVL_UU_Control_1 dw 0
 // WZD dseg:C048
