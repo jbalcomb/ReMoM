@@ -25,10 +25,11 @@ city[0].owner_idx = 0
 city[0].race = 8
 
 # --- Home stack units: both patrolled (status=1=us_Patrol, finished=1) ---
+# The human's capital stack is unit[0] (Spearmen) + unit[3] (Swordsmen).
 unit[0].owner_idx = 0
 unit[0].status = 1
 unit[0].finished = 1
 
-unit[5].owner_idx = 0
-unit[5].status = 1
-unit[5].finished = 1
+unit[3].owner_idx = 0
+unit[3].status = 1
+unit[3].finished = 1
