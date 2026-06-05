@@ -127,10 +127,10 @@ Two layers of evidence — pass both or it isn't working:
 The strict test. If this passes, by construction every downstream `Random()` consumer sees the same value, so the worlds are identical.
 
 1. Pick a fixed seed `S`. Set the same wizard/race/banner/difficulty/landsize/magic/opponents in `assets/ReMoM.ini` *and* in a recorded menu-click sequence.
-2. Run `ReMoMber --seed S` (or equivalent), click through the new-game menus making the same selections, hit OK on Screen 0 → ... → Screen 7. Capture stderr to `og.trace`.
-3. Run `HeMoM --newgame assets/ReMoM.ini --seed S`. Capture stderr to `hemom.trace`.
-4. Filter both to `[RNG-CALL]` lines only.
-5. `diff og.trace hemom.trace` — expect zero difference. The first diverging line names the source file:line of the offending call.
+2. Run `ReMoMber --seed S` (or equivalent), click through the new-game menus making the same selections, hit OK on Screen 0 → ... → Screen 7. Capture stderr to `remom_seed${S}_stderr.log`.
+3. Run `HeMoM --newgame assets/ReMoM.ini --seed S`. Capture stderr to `hemom_seed${S}_stderr.log`.
+4. Filter both to `[RNG-CALL]` lines only (e.g. `*_rng.log`).
+5. `diff remom_seed${S}_rng.log hemom_seed${S}_rng.log` — expect zero difference. The first diverging line names the source file:line of the offending call.
 
 The expected first divergence today is at call #1 of `Init_New_Game`: HeMoM's `seed_before` will differ from ReMoM's by 66 ticks (the missing `Randomize_Book_Heights` draws). After Step 1, that line should match.
 

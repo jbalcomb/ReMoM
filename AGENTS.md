@@ -17,6 +17,10 @@ Ignore the Register annotations. (e.g., `_DI_`, `_SI_`, `_CX_`, etc.) They are j
 - Use UPPER_SNAKE_CASE for manifest constants and macro names
 - Name shared modules by what they do, not by which target first uses them. A file/symbol prefix that names one consumer (e.g., `HeMoM_*` on code that is also linked into ReMoMber) reads as a layering violation and misleads readers. Reserve target-specific naming for code that genuinely cannot be linked into another target (e.g., main entry points, target-specific glue).
 
+## Filenames
+- One period per filename, reserved for the extension. Use underscores to separate stem components — `hemom_seed12345_stderr.log`, not `hemom.seed12345.stderr.log` or `hemom_seed12345.stderr.log`. Multiple dots confuse tools (shell glob behaviour, IDE syntax detection, archive extractors) and obscure which suffix is actually the extension.
+- Use real, recognized extensions (`.log`, `.txt`, `.csv`, `.json`). Do not use words like `raw`, `trace`, `out`, or `dump` as extensions — they aren't recognized by editors/tools and trigger "unknown file type" handling. If you need to distinguish kinds of output, encode that in the stem (`*_stderr.log`, `*_rng.log`), not the extension.
+
 ## Error Handling
 - Always log errors with contextual information
 

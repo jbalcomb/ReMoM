@@ -12,7 +12,7 @@
 #   3. Waits for you to click through the new-game menus making the choices
 #      that match assets/test_worldgen.ini, then quit.
 #   4. After ReMoMber exits, filters the [RNG-CALL] stream into
-#      tests/baseline_rng_seed${SEED}.trace.
+#      tests/baseline_seed${SEED}_rng.log.
 #   5. Prints the next step (run verify_rng_alignment.sh to compare).
 #
 # Manual menu walkthrough (must match assets/test_worldgen.ini):
@@ -56,6 +56,11 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SEED="${1:-${SEED:-12345}}"
 
+# cmake --build --preset reads CMakePresets.json from CWD, not from the source
+# tree.  Run from the repo root so the script works regardless of where the
+# user invoked it from.
+cd "${REPO_ROOT}"
+
 # === Platform selection (matches verify_rng_alignment.sh) ===================
 if [ -d "${REPO_ROOT}/out/build/MSVC-debug/bin/Debug" ]; then
     BUILD_PRESET="MSVC-debug"
@@ -78,8 +83,8 @@ ASSETS="${REPO_ROOT}/assets"
 TESTS_DIR="${REPO_ROOT}/tests"
 mkdir -p "${TESTS_DIR}"
 
-BASELINE_TRACE="${TESTS_DIR}/baseline_rng_seed${SEED}.trace"
-REMOM_TRACE_RAW="${BIN_DIR}/remom_rng_seed${SEED}.trace.raw"
+BASELINE_RNG_LOG="${TESTS_DIR}/baseline_seed${SEED}_rng.log"
+REMOM_STDERR_LOG="${BIN_DIR}/remom_seed${SEED}_stderr.log"
 RMR_FILE="${ASSETS}/menu_baseline_seed${SEED}.RMR"
 
 echo "=== Step 1/4: Build ReMoMber (${BUILD_PRESET}) ==="
@@ -111,27 +116,27 @@ EOF
 
 echo
 echo "=== Step 3/4: Launch ReMoMber --seed ${SEED} --record ${RMR_FILE##*/} ==="
-echo "  stderr → ${REMOM_TRACE_RAW}"
+echo "  stderr → ${REMOM_STDERR_LOG}"
 echo "  Press Enter to launch..."
 read -r _
 cd "${BIN_DIR}"
-rm -f SAVE9.GAM SAVE9.txt "${REMOM_TRACE_RAW}"
+rm -f SAVE9.GAM SAVE9.txt "${REMOM_STDERR_LOG}"
 # Run interactively so the user can play through; stderr captures the RNG stream.
-"${REMOM_EXE}" --seed "${SEED}" --record "${RMR_FILE}" 2> "${REMOM_TRACE_RAW}" || {
+"${REMOM_EXE}" --seed "${SEED}" --record "${RMR_FILE}" 2> "${REMOM_STDERR_LOG}" || {
     echo "  NOTE: ReMoMber exit was non-zero (this is normal for a user-initiated quit)."
 }
 
 echo
-echo "=== Step 4/4: Extract [RNG-CALL] trace ==="
-grep '^\[RNG-CALL\]' "${REMOM_TRACE_RAW}" > "${BASELINE_TRACE}" || true
-CALL_COUNT=$(wc -l < "${BASELINE_TRACE}")
+echo "=== Step 4/4: Extract [RNG-CALL] log ==="
+grep '^\[RNG-CALL\]' "${REMOM_STDERR_LOG}" > "${BASELINE_RNG_LOG}" || true
+CALL_COUNT=$(wc -l < "${BASELINE_RNG_LOG}")
 if [ "${CALL_COUNT}" -eq 0 ]; then
     echo "FAIL: no [RNG-CALL] lines captured"
     echo "  Either --seed wasn't honored, or stderr was redirected elsewhere."
-    echo "  Check raw log:  ${REMOM_TRACE_RAW}"
+    echo "  Check stderr log:  ${REMOM_STDERR_LOG}"
     exit 2
 fi
-echo "  captured ${CALL_COUNT} Random() calls → ${BASELINE_TRACE}"
+echo "  captured ${CALL_COUNT} Random() calls → ${BASELINE_RNG_LOG}"
 if [ -f "${RMR_FILE}" ]; then
     echo "  saved RMR replay  → ${RMR_FILE}"
 fi
@@ -146,6 +151,6 @@ cat <<EOF
   If not, the first divergent line tells you which Random() site differs.
 
   To re-baseline later via replay (no clicking):
-    ${REMOM_EXE##${REPO_ROOT}/} --seed ${SEED} --replay ${RMR_FILE##${REPO_ROOT}/} 2> ${REMOM_TRACE_RAW##${REPO_ROOT}/}
-    grep '^\[RNG-CALL\]' ${REMOM_TRACE_RAW##${REPO_ROOT}/} > ${BASELINE_TRACE##${REPO_ROOT}/}
+    ${REMOM_EXE##${REPO_ROOT}/} --seed ${SEED} --replay ${RMR_FILE##${REPO_ROOT}/} 2> ${REMOM_STDERR_LOG##${REPO_ROOT}/}
+    grep '^\[RNG-CALL\]' ${REMOM_STDERR_LOG##${REPO_ROOT}/} > ${BASELINE_RNG_LOG##${REPO_ROOT}/}
 EOF
