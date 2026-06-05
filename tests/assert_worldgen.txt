@@ -36,8 +36,10 @@ game.num_players = 5
 game.landsize = 2
 game.magic = 1
 game.difficulty = 2
-game.cities = 5
-game.units = 12
+# cities and units now include neutral cities and their garrisons from
+# Generate_Neutral_Cities() (the 5 wizard capitals are only part of the 32 cities)
+game.cities = 32
+game.units = 49
 game.turn = 0
 game.unit = 0
 
@@ -58,119 +60,129 @@ player[1].banner_id = 1
 
 player[2].name = Raven
 player[2].wizard_id = 1
-player[2].capital_race = 3
+player[2].capital_race = 4
 player[2].banner_id = 0
 
 player[3].name = Merlin
 player[3].wizard_id = 0
-player[3].capital_race = 2
+player[3].capital_race = 13
 player[3].banner_id = 0
 
 player[4].name = Oberic
 player[4].wizard_id = 5
-player[4].capital_race = 2
+player[4].capital_race = 3
 player[4].banner_id = 0
 
 # =============================================================================
-# Starting cities — one per wizard, named per the data table
+# Wizard capital cities — one per wizard.  Generate_Neutral_Cities() also places
+# neutral cities (game.cities = 32 total); only the 5 capitals are asserted here.
 # =============================================================================
 
-city[0].name = Oxford
+city[0].name = Newcastle
 city[0].owner_idx = 0
 city[0].race = 8
-city[0].wx = 42
-city[0].wy = 8
+city[0].wx = 35
+city[0].wy = 29
 
-city[1].name = Hearth
+city[1].name = Raug Wall
 city[1].owner_idx = 1
 city[1].race = 4
-city[1].wx = 26
-city[1].wy = 10
+city[1].wx = 45
+city[1].wy = 11
 
-city[2].name = Minnlow
+city[2].name = Crag Keep
 city[2].owner_idx = 2
-city[2].race = 3
-city[2].wx = 11
-city[2].wy = 15
+city[2].race = 4
+city[2].wx = 10
+city[2].wy = 9
 
-city[3].name = Bladewater
+city[3].name = Bryn
 city[3].owner_idx = 3
-city[3].race = 2
-city[3].wx = 47
-city[3].wy = 26
+city[3].race = 13
+city[3].wx = 34
+city[3].wy = 16
 
-city[4].name = Bloodrock
+city[4].name = Dragon Pass
 city[4].owner_idx = 4
-city[4].race = 2
-city[4].wx = 5
-city[4].wy = 26
+city[4].race = 3
+city[4].wx = 21
+city[4].wy = 19
 
 # =============================================================================
-# Starting units — two stacks per wizard (units 0..9, paired) plus two
-# neutral units (10..11) for lair garrisons
+# Starting units — each wizard gets two starting units; the engine assigns them
+# across indices 0..9 interleaved by owner, so they are grouped by owner below.
+# unit[10..11] are the neutral (owner 5) starting garrison.
+# Generate_Neutral_Cities() adds further neutral-city garrisons (units 12..48,
+# game.units = 49); those are intentionally left unconstrained.
 # =============================================================================
 
+# Player 0 — Rjak (human): Spearmen + Swordsmen at the capital
 unit[0].owner_idx = 0
 unit[0].type = 104
-unit[0].wx = 42
-unit[0].wy = 8
+unit[0].wx = 35
+unit[0].wy = 29
 unit[0].status = 0
 
-unit[1].owner_idx = 2
-unit[1].type = 66
-unit[1].wx = 11
-unit[1].wy = 15
-unit[1].status = 0
-
-unit[2].owner_idx = 3
-unit[2].type = 57
-unit[2].wx = 47
-unit[2].wy = 26
-unit[2].status = 0
-
-unit[3].owner_idx = 4
-unit[3].type = 57
-unit[3].wx = 5
-unit[3].wy = 26
+unit[3].owner_idx = 0
+unit[3].type = 105
+unit[3].wx = 35
+unit[3].wy = 29
 unit[3].status = 0
 
-unit[4].owner_idx = 0
-unit[4].type = 105
-unit[4].wx = 42
-unit[4].wy = 8
+# Player 1 — Tlaloc
+unit[4].owner_idx = 1
+unit[4].type = 76
+unit[4].wx = 45
+unit[4].wy = 11
 unit[4].status = 0
 
 unit[5].owner_idx = 1
 unit[5].type = 76
-unit[5].wx = 26
-unit[5].wy = 10
+unit[5].wx = 45
+unit[5].wy = 11
 
-unit[6].owner_idx = 1
+# Player 2 — Raven
+unit[6].owner_idx = 2
 unit[6].type = 76
-unit[6].wx = 26
-unit[6].wy = 10
+unit[6].wx = 10
+unit[6].wy = 9
 
 unit[7].owner_idx = 2
-unit[7].type = 67
-unit[7].wx = 11
-unit[7].wy = 15
+unit[7].type = 76
+unit[7].wx = 10
+unit[7].wy = 9
+
+# Player 3 — Merlin
+unit[1].owner_idx = 3
+unit[1].type = 147
+unit[1].wx = 34
+unit[1].wy = 16
+unit[1].status = 0
 
 unit[8].owner_idx = 3
-unit[8].type = 58
-unit[8].wx = 47
-unit[8].wy = 26
+unit[8].type = 148
+unit[8].wx = 34
+unit[8].wy = 16
+
+# Player 4 — Oberic
+unit[2].owner_idx = 4
+unit[2].type = 66
+unit[2].wx = 21
+unit[2].wy = 19
+unit[2].status = 0
 
 unit[9].owner_idx = 4
-unit[9].type = 58
-unit[9].wx = 5
-unit[9].wy = 26
+unit[9].type = 67
+unit[9].wx = 21
+unit[9].wy = 19
 
+# Player 5 — neutral starting garrison
 unit[10].owner_idx = 5
-unit[10].type = 105
-unit[10].wx = 55
-unit[10].wy = 18
+unit[10].type = 40
+unit[10].wx = 28
+unit[10].wy = 26
 
 unit[11].owner_idx = 5
-unit[11].type = 148
-unit[11].wx = 37
-unit[11].wy = 25
+unit[11].type = 40
+unit[11].wx = 28
+unit[11].wy = 26

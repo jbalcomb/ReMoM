@@ -25,12 +25,17 @@ protected:
         _world_maps = (uint8_t *)Allocate_Space(602);
         ASSERT_NE(_world_maps, nullptr);
         memset(_world_maps, 0, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
+
+        /* Map_Square_Is_Embarkable() now reads through p_world_map; bind it to
+           _world_maps the same way the game does in Allocate_Data_Space(). */
+        p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
     }
 
     void TearDown() override
     {
         free(_world_maps);
         _world_maps = nullptr;
+        p_world_map = nullptr;
     }
 
     void Set_Terrain(int16_t wx, int16_t wy, int16_t wp, int16_t terrain_type)
