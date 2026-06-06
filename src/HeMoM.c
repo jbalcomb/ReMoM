@@ -53,6 +53,8 @@
 #include "../MoM/src/INITGAME.h"
 #include "../MoM/src/LoadScr.h"
 #include "../MoM/src/MOM_SCR.h"
+#include "../MoM/src/WZD_o143.h"  /* Random_City_Name_By_Race */
+#include "../MoX/src/MOX_SET.h"   /* magic_set.Save_Names[] */
 
 #include "ReMoM_Init.h"
 #include "Artificial_Human_Player.h"
@@ -97,7 +99,7 @@ static char *Trim_Whitespace(char *str)
 {
     char *end;
     while (*str && isspace((unsigned char)*str)) { str++; }
-    if (*str == '\0') { return str; }
+    if(*str == '\0') { return str; }
     end = str + strlen(str) - 1;
     while (end > str && isspace((unsigned char)*end)) { *end-- = '\0'; }
     return str;
@@ -113,7 +115,7 @@ static int Lookup_Wizard_By_Name(const char *name)
     int itr;
     for (itr = 0; itr < 14; itr++)
     {
-        if (Str_Equal_CI(name, _wizard_presets_table[itr].name)) { return itr; }
+        if(Str_Equal_CI(name, _wizard_presets_table[itr].name)) { return itr; }
     }
     return -1;
 }
@@ -124,26 +126,26 @@ static int Lookup_Race_By_Name(const char *name)
     int itr;
     for (itr = 0; itr < 14; itr++)
     {
-        if (Str_Equal_CI(name, race_names[itr])) { return itr; }
+        if(Str_Equal_CI(name, race_names[itr])) { return itr; }
     }
     return -1;
 }
 
 static int Lookup_Banner_By_Name(const char *name)
 {
-    if (Str_Equal_CI(name, "Blue"))   { return BNR_Blue; }
-    if (Str_Equal_CI(name, "Green"))  { return BNR_Green; }
-    if (Str_Equal_CI(name, "Purple")) { return BNR_Purple; }
-    if (Str_Equal_CI(name, "Red"))    { return BNR_Red; }
-    if (Str_Equal_CI(name, "Yellow")) { return BNR_Yellow; }
-    if (Str_Equal_CI(name, "Brown"))  { return BNR_Brown; }
+    if(Str_Equal_CI(name, "Blue"))   { return BNR_Blue; }
+    if(Str_Equal_CI(name, "Green"))  { return BNR_Green; }
+    if(Str_Equal_CI(name, "Purple")) { return BNR_Purple; }
+    if(Str_Equal_CI(name, "Red"))    { return BNR_Red; }
+    if(Str_Equal_CI(name, "Yellow")) { return BNR_Yellow; }
+    if(Str_Equal_CI(name, "Brown"))  { return BNR_Brown; }
     return -1;
 }
 
 static int Parse_Bool_TF(const char *value)
 {
-    if (Str_Equal_CI(value, "T") || Str_Equal_CI(value, "True") || Str_Equal_CI(value, "1")) { return 1; }
-    if (Str_Equal_CI(value, "F") || Str_Equal_CI(value, "False") || Str_Equal_CI(value, "0")) { return 0; }
+    if(Str_Equal_CI(value, "T") || Str_Equal_CI(value, "True") || Str_Equal_CI(value, "1")) { return 1; }
+    if(Str_Equal_CI(value, "F") || Str_Equal_CI(value, "False") || Str_Equal_CI(value, "0")) { return 0; }
     return -1;
 }
 
@@ -184,6 +186,14 @@ struct s_HeMoM_Config
 
     int has_retorts;
     int8_t retorts[18];
+
+    int has_home_city_name;
+    int has_save_slot;
+    int has_save_name;
+
+    char    home_city_name[LEN_CITY_NAME];
+    int16_t save_slot;
+    char    save_name[LEN_SAVE_DESCRIPTION];
 };
 
 static void Config_Init(struct s_HeMoM_Config *cfg)
@@ -204,6 +214,7 @@ static void Config_Init(struct s_HeMoM_Config *cfg)
     cfg->books_life = -1;
     cfg->books_death = -1;
     for (itr = 0; itr < 18; itr++) { cfg->retorts[itr] = -1; }
+    cfg->save_slot = -1;
 }
 
 static int Config_Parse(const char *filepath, struct s_HeMoM_Config *cfg)
@@ -217,7 +228,7 @@ static int Config_Parse(const char *filepath, struct s_HeMoM_Config *cfg)
     int val_int;
 
     fp = stu_fopen_ci(filepath, "r");
-    if (fp == NULL)
+    if(fp == NULL)
     {
         LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Could not open config: %s", filepath);
         return 0;
@@ -230,11 +241,11 @@ static int Config_Parse(const char *filepath, struct s_HeMoM_Config *cfg)
         line_num++;
         key = Trim_Whitespace(line);
 
-        if (*key == '\0' || *key == '#' || *key == ';') { continue; }
-        if (*key == '[') { continue; }
+        if(*key == '\0' || *key == '#' || *key == ';') { continue; }
+        if(*key == '[') { continue; }
 
         eq = stu_strchr(key, '=');
-        if (eq == NULL)
+        if(eq == NULL)
         {
             LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] %s:%d: missing '=' in: %s", filepath, line_num, key);
             continue;
@@ -244,49 +255,49 @@ static int Config_Parse(const char *filepath, struct s_HeMoM_Config *cfg)
         value = Trim_Whitespace(eq + 1);
         key = Trim_Whitespace(key);
 
-        if (Str_Equal_CI(key, "difficulty"))
+        if(Str_Equal_CI(key, "difficulty"))
         {
             val_int = stu_atoi(value);
-            if (Str_Equal_CI(value, "Intro"))           { val_int = god_Intro; }
-            else if (Str_Equal_CI(value, "Easy"))       { val_int = god_Easy; }
-            else if (Str_Equal_CI(value, "Normal"))     { val_int = god_Normal; }
-            else if (Str_Equal_CI(value, "Hard"))       { val_int = god_Hard; }
-            else if (Str_Equal_CI(value, "Impossible")) { val_int = god_Impossible; }
+            if(Str_Equal_CI(value, "Intro"))           { val_int = god_Intro; }
+            else if(Str_Equal_CI(value, "Easy"))       { val_int = god_Easy; }
+            else if(Str_Equal_CI(value, "Normal"))     { val_int = god_Normal; }
+            else if(Str_Equal_CI(value, "Hard"))       { val_int = god_Hard; }
+            else if(Str_Equal_CI(value, "Impossible")) { val_int = god_Impossible; }
             cfg->difficulty = (int16_t)val_int;
             cfg->has_difficulty = 1;
         }
-        else if (Str_Equal_CI(key, "magic"))
+        else if(Str_Equal_CI(key, "magic"))
         {
             val_int = stu_atoi(value);
-            if (Str_Equal_CI(value, "Weak"))          { val_int = gom_Weak; }
-            else if (Str_Equal_CI(value, "Normal"))   { val_int = gom_Normal; }
-            else if (Str_Equal_CI(value, "Powerful")) { val_int = gom_Powerful; }
+            if(Str_Equal_CI(value, "Weak"))          { val_int = gom_Weak; }
+            else if(Str_Equal_CI(value, "Normal"))   { val_int = gom_Normal; }
+            else if(Str_Equal_CI(value, "Powerful")) { val_int = gom_Powerful; }
             cfg->magic = (int16_t)val_int;
             cfg->has_magic = 1;
         }
-        else if (Str_Equal_CI(key, "landsize"))
+        else if(Str_Equal_CI(key, "landsize"))
         {
             val_int = stu_atoi(value);
-            if (Str_Equal_CI(value, "Small"))       { val_int = gol_Small; }
-            else if (Str_Equal_CI(value, "Medium"))  { val_int = gol_Medium; }
-            else if (Str_Equal_CI(value, "Large"))   { val_int = gol_Large; }
+            if(Str_Equal_CI(value, "Small"))       { val_int = gol_Small; }
+            else if(Str_Equal_CI(value, "Medium"))  { val_int = gol_Medium; }
+            else if(Str_Equal_CI(value, "Large"))   { val_int = gol_Large; }
             cfg->landsize = (int16_t)val_int;
             cfg->has_landsize = 1;
         }
-        else if (Str_Equal_CI(key, "opponents"))
+        else if(Str_Equal_CI(key, "opponents"))
         {
             cfg->opponents = (int16_t)stu_atoi(value);
             cfg->has_opponents = 1;
         }
-        else if (Str_Equal_CI(key, "seed"))
+        else if(Str_Equal_CI(key, "seed"))
         {
             cfg->seed = (uint32_t)strtoul(value, NULL, 0);
             cfg->has_seed = 1;
         }
-        else if (Str_Equal_CI(key, "wizard"))
+        else if(Str_Equal_CI(key, "wizard"))
         {
             val_int = Lookup_Wizard_By_Name(value);
-            if (val_int >= 0)
+            if(val_int >= 0)
             {
                 cfg->wizard_id = (int16_t)val_int;
                 stu_strcpy(cfg->wizard_name, _wizard_presets_table[val_int].name);
@@ -297,16 +308,16 @@ static int Config_Parse(const char *filepath, struct s_HeMoM_Config *cfg)
             }
             cfg->has_wizard = 1;
         }
-        else if (Str_Equal_CI(key, "name"))
+        else if(Str_Equal_CI(key, "name"))
         {
             stu_strncpy(cfg->wizard_name, value, 19);
             cfg->wizard_name[19] = '\0';
             cfg->has_name = 1;
         }
-        else if (Str_Equal_CI(key, "race"))
+        else if(Str_Equal_CI(key, "race"))
         {
             val_int = Lookup_Race_By_Name(value);
-            if (val_int >= 0)
+            if(val_int >= 0)
             {
                 cfg->race = (int16_t)val_int;
             }
@@ -316,10 +327,10 @@ static int Config_Parse(const char *filepath, struct s_HeMoM_Config *cfg)
             }
             cfg->has_race = 1;
         }
-        else if (Str_Equal_CI(key, "banner"))
+        else if(Str_Equal_CI(key, "banner"))
         {
             val_int = Lookup_Banner_By_Name(value);
-            if (val_int >= 0)
+            if(val_int >= 0)
             {
                 cfg->banner = (int16_t)val_int;
             }
@@ -329,29 +340,46 @@ static int Config_Parse(const char *filepath, struct s_HeMoM_Config *cfg)
             }
             cfg->has_banner = 1;
         }
-        else if (Str_Equal_CI(key, "books_nature"))  { cfg->books_nature = (int16_t)stu_atoi(value); cfg->has_books = 1; }
-        else if (Str_Equal_CI(key, "books_sorcery")) { cfg->books_sorcery = (int16_t)stu_atoi(value); cfg->has_books = 1; }
-        else if (Str_Equal_CI(key, "books_chaos"))   { cfg->books_chaos = (int16_t)stu_atoi(value); cfg->has_books = 1; }
-        else if (Str_Equal_CI(key, "books_life"))    { cfg->books_life = (int16_t)stu_atoi(value); cfg->has_books = 1; }
-        else if (Str_Equal_CI(key, "books_death"))   { cfg->books_death = (int16_t)stu_atoi(value); cfg->has_books = 1; }
-        else if (Str_Equal_CI(key, "Alchemy"))          { cfg->retorts[wsa_Alchemy] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
-        else if (Str_Equal_CI(key, "Warlord"))          { cfg->retorts[wsa_Warlord] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
-        else if (Str_Equal_CI(key, "Chaos Mastery"))    { cfg->retorts[wsa_Chaos_Mastery] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
-        else if (Str_Equal_CI(key, "Nature Mastery"))   { cfg->retorts[wsa_Nature_Mastery] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
-        else if (Str_Equal_CI(key, "Sorcery Mastery"))  { cfg->retorts[wsa_Sorcery_Mastery] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
-        else if (Str_Equal_CI(key, "Infernal Power"))   { cfg->retorts[wsa_Infernal_Power] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
-        else if (Str_Equal_CI(key, "Divine Power"))     { cfg->retorts[wsa_Divine_Power] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
-        else if (Str_Equal_CI(key, "Sage Master"))      { cfg->retorts[wsa_Sage_Master] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
-        else if (Str_Equal_CI(key, "Channeler"))        { cfg->retorts[wsa_Channeller] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
-        else if (Str_Equal_CI(key, "Myrran"))           { cfg->retorts[wsa_Myrran] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
-        else if (Str_Equal_CI(key, "Archmage"))         { cfg->retorts[wsa_Archmage] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
-        else if (Str_Equal_CI(key, "Mana Focusing"))    { cfg->retorts[wsa_Mana_Focusing] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
-        else if (Str_Equal_CI(key, "Node Mastery"))     { cfg->retorts[wsa_Node_Mastery] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
-        else if (Str_Equal_CI(key, "Famous"))           { cfg->retorts[wsa_Famous] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
-        else if (Str_Equal_CI(key, "Runemaster"))       { cfg->retorts[wsa_Runemaster] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
-        else if (Str_Equal_CI(key, "Conjurer"))         { cfg->retorts[wsa_Conjurer] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
-        else if (Str_Equal_CI(key, "Charismatic"))      { cfg->retorts[wsa_Charismatic] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
-        else if (Str_Equal_CI(key, "Artificer"))        { cfg->retorts[wsa_Artificer] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "books_nature"))  { cfg->books_nature = (int16_t)stu_atoi(value); cfg->has_books = 1; }
+        else if(Str_Equal_CI(key, "books_sorcery")) { cfg->books_sorcery = (int16_t)stu_atoi(value); cfg->has_books = 1; }
+        else if(Str_Equal_CI(key, "books_chaos"))   { cfg->books_chaos = (int16_t)stu_atoi(value); cfg->has_books = 1; }
+        else if(Str_Equal_CI(key, "books_life"))    { cfg->books_life = (int16_t)stu_atoi(value); cfg->has_books = 1; }
+        else if(Str_Equal_CI(key, "books_death"))   { cfg->books_death = (int16_t)stu_atoi(value); cfg->has_books = 1; }
+        else if(Str_Equal_CI(key, "home_city_name"))
+        {
+            stu_strncpy(cfg->home_city_name, value, LEN_CITY_NAME - 1);
+            cfg->home_city_name[LEN_CITY_NAME - 1] = '\0';
+            cfg->has_home_city_name = 1;
+        }
+        else if(Str_Equal_CI(key, "save_slot"))
+        {
+            cfg->save_slot = (int16_t)stu_atoi(value);
+            cfg->has_save_slot = 1;
+        }
+        else if(Str_Equal_CI(key, "save_name"))
+        {
+            stu_strncpy(cfg->save_name, value, LEN_SAVE_DESCRIPTION - 1);
+            cfg->save_name[LEN_SAVE_DESCRIPTION - 1] = '\0';
+            cfg->has_save_name = 1;
+        }
+        else if(Str_Equal_CI(key, "Alchemy"))          { cfg->retorts[wsa_Alchemy] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "Warlord"))          { cfg->retorts[wsa_Warlord] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "Chaos Mastery"))    { cfg->retorts[wsa_Chaos_Mastery] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "Nature Mastery"))   { cfg->retorts[wsa_Nature_Mastery] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "Sorcery Mastery"))  { cfg->retorts[wsa_Sorcery_Mastery] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "Infernal Power"))   { cfg->retorts[wsa_Infernal_Power] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "Divine Power"))     { cfg->retorts[wsa_Divine_Power] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "Sage Master"))      { cfg->retorts[wsa_Sage_Master] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "Channeler"))        { cfg->retorts[wsa_Channeller] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "Myrran"))           { cfg->retorts[wsa_Myrran] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "Archmage"))         { cfg->retorts[wsa_Archmage] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "Mana Focusing"))    { cfg->retorts[wsa_Mana_Focusing] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "Node Mastery"))     { cfg->retorts[wsa_Node_Mastery] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "Famous"))           { cfg->retorts[wsa_Famous] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "Runemaster"))       { cfg->retorts[wsa_Runemaster] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "Conjurer"))         { cfg->retorts[wsa_Conjurer] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "Charismatic"))      { cfg->retorts[wsa_Charismatic] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
+        else if(Str_Equal_CI(key, "Artificer"))        { cfg->retorts[wsa_Artificer] = (int8_t)Parse_Bool_TF(value); cfg->has_retorts = 1; }
         else
         {
             LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] %s:%d: unknown key '%s'", filepath, line_num, key);
@@ -368,6 +396,135 @@ static int Config_Parse(const char *filepath, struct s_HeMoM_Config *cfg)
 /*  New Game Creation                                                        */
 /* ========================================================================= */
 
+/* These globals live in NewGame.c and are not declared in NewGame.h.  We
+   reference them here so HeMoM can re-fill _player_start_spells[0] after
+   overriding the human player's book counts.  Kept as local externs to
+   avoid touching the game-code headers. */
+extern int16_t m_select_count_common[10];
+extern int16_t m_select_count_uncommon[10];
+extern struct s_DEFAULT_SPELLS _default_spells[5];
+extern struct s_Init_Base_Realms _player_start_spells[PLAYER_COUNT_MAX];
+
+/* Verbatim local copy of the per-realm start-spell fill block from
+   Human_Player_Wizard_Profile (NewGame.c).  Read the human player's
+   current spellranks[] and rewrite _player_start_spells[0] from
+   _default_spells[] accordingly.
+
+   Reason for the local copy: HeMoM overrides spellranks[] AFTER
+   Human_Player_Wizard_Profile has already run, so the original inline
+   fill becomes stale.  Re-running this against the post-override
+   spellranks brings _player_start_spells[0] back in sync with the
+   configured books — without that, Init_Computer_Players_Spell_Library
+   sees a stale start-spell pool and produces a different spells_list[]
+   than ReMoM's menu path, which surfaces as a Layer-A divergence inside
+   Player_Research_Spells (Spells128.c:121).
+
+   See doc/Devel-HeMoM-Newgame-Path-Alignment.md gap #2.
+
+   Behavior is verbatim — including the pre-existing off-by-one indexing
+   in the m_select_count_* lookups (doc gap #5).  Do not "fix" the
+   indexing here: bug-for-bug equivalence with the game code is what
+   keeps the RNG trace aligned. */
+static void HeMoM_Refill_Human_Player_Start_Spells(void)
+{
+    int16_t itr = 0;
+    int16_t spellranks = 0;
+
+    for(itr = 0; itr < 13; itr++)
+    {
+        _player_start_spells[0].realms[sbr_Nature].spells[itr]  = 0;
+        _player_start_spells[0].realms[sbr_Sorcery].spells[itr] = 0;
+        _player_start_spells[0].realms[sbr_Chaos].spells[itr]   = 0;
+        _player_start_spells[0].realms[sbr_Life].spells[itr]    = 0;
+        _player_start_spells[0].realms[sbr_Death].spells[itr]   = 0;
+    }
+
+    spellranks = _players[0].spellranks[sbr_Nature];
+    if(spellranks > 1)
+    {
+        for(itr = 0; (m_select_count_common[spellranks] - 2) > itr; itr++)
+        {
+            _player_start_spells[0].realms[sbr_Nature].spells[( 0 + itr)] = _default_spells[sbr_Nature].spells[(0 + itr)];
+        }
+        for(itr = 0; (m_select_count_uncommon[spellranks] - 2) > itr; itr++)
+        {
+            _player_start_spells[0].realms[sbr_Nature].spells[(10 + itr)] = _default_spells[sbr_Nature].spells[(10 + itr)];
+        }
+        if((m_select_count_uncommon[spellranks] - 2) > 0)
+        {
+            _player_start_spells[0].realms[sbr_Nature].spells[(12 + itr)] = _default_spells[sbr_Nature].spells[(12 + itr)];
+        }
+    }
+
+    spellranks = _players[0].spellranks[sbr_Sorcery];
+    if(spellranks > 1)
+    {
+        for(itr = 0; (m_select_count_common[spellranks] - 2) > itr; itr++)
+        {
+            _player_start_spells[0].realms[sbr_Sorcery].spells[( 0 + itr)] = _default_spells[sbr_Sorcery].spells[(0 + itr)];
+        }
+        for(itr = 0; (m_select_count_uncommon[spellranks] - 2) > itr; itr++)
+        {
+            _player_start_spells[0].realms[sbr_Sorcery].spells[(10 + itr)] = _default_spells[sbr_Sorcery].spells[(10 + itr)];
+        }
+        if((m_select_count_uncommon[spellranks] - 2) > 0)
+        {
+            _player_start_spells[0].realms[sbr_Sorcery].spells[(12 + itr)] = _default_spells[sbr_Sorcery].spells[(12 + itr)];
+        }
+    }
+
+    spellranks = _players[0].spellranks[sbr_Chaos];
+    if(spellranks > 1)
+    {
+        for(itr = 0; (m_select_count_common[spellranks] - 2) > itr; itr++)
+        {
+            _player_start_spells[0].realms[sbr_Chaos].spells[( 0 + itr)] = _default_spells[sbr_Chaos].spells[(0 + itr)];
+        }
+        for(itr = 0; (m_select_count_uncommon[spellranks] - 2) > itr; itr++)
+        {
+            _player_start_spells[0].realms[sbr_Chaos].spells[(10 + itr)] = _default_spells[sbr_Chaos].spells[(10 + itr)];
+        }
+        if((m_select_count_uncommon[spellranks] - 2) > 0)
+        {
+            _player_start_spells[0].realms[sbr_Chaos].spells[(12 + itr)] = _default_spells[sbr_Chaos].spells[(12 + itr)];
+        }
+    }
+
+    spellranks = _players[0].spellranks[sbr_Life];
+    if(spellranks > 1)
+    {
+        for(itr = 0; (m_select_count_common[spellranks] - 2) > itr; itr++)
+        {
+            _player_start_spells[0].realms[sbr_Life].spells[( 0 + itr)] = _default_spells[sbr_Life].spells[(0 + itr)];
+        }
+        for(itr = 0; (m_select_count_uncommon[spellranks] - 2) > itr; itr++)
+        {
+            _player_start_spells[0].realms[sbr_Life].spells[(10 + itr)] = _default_spells[sbr_Life].spells[(10 + itr)];
+        }
+        if((m_select_count_uncommon[spellranks] - 2) > 0)
+        {
+            _player_start_spells[0].realms[sbr_Life].spells[(12 + itr)] = _default_spells[sbr_Life].spells[(12 + itr)];
+        }
+    }
+
+    spellranks = _players[0].spellranks[sbr_Death];
+    if(spellranks > 1)
+    {
+        for(itr = 0; (m_select_count_common[spellranks] - 2) > itr; itr++)
+        {
+            _player_start_spells[0].realms[sbr_Death].spells[( 0 + itr)] = _default_spells[sbr_Death].spells[(0 + itr)];
+        }
+        for(itr = 0; (m_select_count_uncommon[spellranks] - 2) > itr; itr++)
+        {
+            _player_start_spells[0].realms[sbr_Death].spells[(10 + itr)] = _default_spells[sbr_Death].spells[(10 + itr)];
+        }
+        if((m_select_count_uncommon[spellranks] - 2) > 0)
+        {
+            _player_start_spells[0].realms[sbr_Death].spells[(12 + itr)] = _default_spells[sbr_Death].spells[(12 + itr)];
+        }
+    }
+}
+
 static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
 {
     int8_t * wsa_ptr = NULL;
@@ -375,12 +532,12 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
 
     wsa_ptr = &_players[0].alchemy;
 
-    _difficulty = cfg->difficulty;
-    _magic = cfg->magic;
-    _landsize = cfg->landsize;
-    _num_players = cfg->opponents + 1;
+    _landsize = cfg->landsize;          /* ~== NewGame.c  Line 1820 */
+    _magic = cfg->magic;                /* ~== NewGame.c  Line 1821 */
+    _num_players = cfg->opponents + 1;  /* ~== NewGame.c  Line 1822 */
+    _difficulty = cfg->difficulty;      /* ~== NewGame.c  Line 1823 */
 
-    Human_Player_Wizard_Profile(cfg->wizard_id);
+    Human_Player_Wizard_Profile(cfg->wizard_id);  /* ~== Newgame_Screen_1__WIP() Line 2294 */
 
     /*
         "Wizard Creation"  (Custom Wizard)
@@ -391,26 +548,35 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
         wsa_ptr[itr] = 0;
     }
 
-    if (cfg->has_name)
+    if(cfg->has_name)
     {
         memset(_players[0].name, 0, LEN_WIZARD_NAME);
         stu_strncpy(_players[0].name, cfg->wizard_name, LEN_WIZARD_NAME);
     }
 
-    if (cfg->has_books)
+    if(cfg->has_books)
     {
-        if (cfg->books_nature >= 0)  { _players[0].spellranks[sbr_Nature]  = cfg->books_nature; }
-        if (cfg->books_sorcery >= 0) { _players[0].spellranks[sbr_Sorcery] = cfg->books_sorcery; }
-        if (cfg->books_chaos >= 0)   { _players[0].spellranks[sbr_Chaos]   = cfg->books_chaos; }
-        if (cfg->books_life >= 0)    { _players[0].spellranks[sbr_Life]    = cfg->books_life; }
-        if (cfg->books_death >= 0)   { _players[0].spellranks[sbr_Death]   = cfg->books_death; }
+        if(cfg->books_nature >= 0)  { _players[0].spellranks[sbr_Nature]  = cfg->books_nature; }
+        if(cfg->books_sorcery >= 0) { _players[0].spellranks[sbr_Sorcery] = cfg->books_sorcery; }
+        if(cfg->books_chaos >= 0)   { _players[0].spellranks[sbr_Chaos]   = cfg->books_chaos; }
+        if(cfg->books_life >= 0)    { _players[0].spellranks[sbr_Life]    = cfg->books_life; }
+        if(cfg->books_death >= 0)   { _players[0].spellranks[sbr_Death]   = cfg->books_death; }
+
+        /* Re-fill _player_start_spells[0] from the updated spellranks.
+           Human_Player_Wizard_Profile() above already filled it once for
+           Rjak's prefab; if we override the books, the start-spells must
+           be refreshed to match — otherwise Init_Computer_Players_Spell_Library
+           (called from Init_New_Game) ends up with a stale start-spell pool
+           and produces a different spells_list[] than ReMoM's menu path.
+           See doc/Devel-HeMoM-Newgame-Path-Alignment.md gap #2. */
+        HeMoM_Refill_Human_Player_Start_Spells();
     }
 
-    if (cfg->has_retorts)
+    if(cfg->has_retorts)
     {
         for (itr = 0; itr < NUM_RETORTS; itr++)
         {
-            if (cfg->retorts[itr] >= 0)
+            if(cfg->retorts[itr] >= 0)
             {
                 wsa_ptr[itr] = cfg->retorts[itr];
             }
@@ -418,10 +584,11 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
     }
 
     NEWG_Clicked_Race = cfg->race;
+
     _players[0].banner_id = (uint8_t)cfg->banner;
 
     /* Set deterministic RNG seed if specified in config. */
-    if (cfg->has_seed)
+    if(cfg->has_seed)
     {
         Set_Random_Seed(cfg->seed);
         LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] RNG seed set to %u (0x%08X)", cfg->seed, cfg->seed);
@@ -430,6 +597,12 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
         LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] RNG seed set to %u (0x%08X)", cfg->seed, cfg->seed);
 #endif
     }
+
+    /* Mirror the ReMoM Screen 0 OK path: Randomize_Book_Heights consumes 66
+       Random() draws.  Without this, HeMoM enters Init_New_Game with the RNG
+       cursor 66 ticks ahead of ReMoM and every downstream world-gen draw
+       diverges.  See doc/Devel-HeMoM-Newgame-Path-Alignment.md. */
+    Randomize_Book_Heights();
 
     LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Creating new game: difficulty=%d magic=%d landsize=%d opponents=%d wizard=%s race=%d banner=%d seed=%u", cfg->difficulty, cfg->magic, cfg->landsize, cfg->opponents, cfg->wizard_name, cfg->race, cfg->banner, Get_Random_Seed());
 #ifdef STU_DEBUG
@@ -447,15 +620,50 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
     Init_Runtime();
     Save_SAVE_GAM(8);
 
-    /* Dump structured text representation of the save file for testing */
-    Game_Save_Dump("SAVE9.GAM", "SAVE9.txt");
+    /* Mirror ReMoM's scr_Continue routing after Newgame_Control (MOM_SCR.c:131-134):
+       Load_SAVE_GAM(8) + Loaded_Game_Update().  Load_SAVE_GAM is RNG-neutral but
+       not necessarily a perfect inverse of Save_SAVE_GAM — some in-memory state
+       gets reset to its on-disk shape during load, and PreInit_Overland reads
+       that state.  Round-tripping through the file matches what ReMoM does so
+       the trace can't diverge on save-format subtleties.
+       See doc/Devel-HeMoM-Newgame-Path-Alignment.md §Stage 4. */
+    Load_SAVE_GAM(8);
+    Loaded_Game_Update();
 
-    // MainScr.c  Main_Screen()  1910:
-    //     if((_turn == 0) && (_given_chance_to_rename_home_city == ST_FALSE))
-    //         Change_Home_City_Name_Popup(HUMAN_PLAYER_IDX);
-    //         Assign_Auto_Function(Main_Screen_Draw, 1);
-    //         _given_chance_to_rename_home_city = ST_TRUE;
+    // TODO  separate function, mimicing Change_Home_City_Name_Popup()  gated by if --newgame? and turn == 0?
+    /* Mirror the home-city-name popup non-interactively.  Change_Home_City_Name_Popup
+       (CityScr.c:1742) calls Random_City_Name_By_Race first — that is the RNG
+       consumer that must run for trace parity.  Then override with cfg->home_city_name
+       if set, equivalent to the user typing a name into the popup. */
+    Random_City_Name_By_Race(_CITIES[HUMAN_PLAYER_IDX].race, _CITIES[HUMAN_PLAYER_IDX].name);
+    if(cfg->has_home_city_name)
+    {
+        stu_strncpy(_CITIES[HUMAN_PLAYER_IDX].name, cfg->home_city_name, LEN_CITY_NAME - 1);
+        _CITIES[HUMAN_PLAYER_IDX].name[LEN_CITY_NAME - 1] = '\0';
+    }
     _given_chance_to_rename_home_city = ST_TRUE;
+
+    /* Optional named-slot save.  Save_SAVE_GAM (LOADSAVE.c:197-201) writes
+       MAGIC.SET internally for slots 0..7, so we only need to set the slot
+       name first. */
+    if(cfg->has_save_slot && cfg->save_slot >= 0 && cfg->save_slot < NUM_SAVES)
+    {
+        if(cfg->has_save_name)
+        {
+            stu_strncpy(magic_set.Save_Names[cfg->save_slot],
+                        cfg->save_name, LEN_SAVE_DESCRIPTION - 1);
+            magic_set.Save_Names[cfg->save_slot][LEN_SAVE_DESCRIPTION - 1] = '\0';
+        }
+        Save_SAVE_GAM(cfg->save_slot);
+    }
+
+    /* Re-save the continue-save so SAVE9.GAM reflects the named city and any
+       other post-Newgame_Control state.  Matches the quit-auto-save intent
+       at MOM_SCR.c:213 (currently a TODO in ReMoM). */
+    Save_SAVE_GAM(8);
+
+    /* Dump structured text representation of the final save file for testing. */
+    Game_Save_Dump("SAVE9.GAM", "SAVE9.txt");
     
     LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] New game created successfully");
 }
@@ -472,7 +680,7 @@ static void HeMoM_Replay_Log_Field_Hit(void *log, int mouse_x, int mouse_y)
     int fi;
     for (fi = 0; fi < fields_count; fi++)
     {
-        if (mouse_x >= p_fields[fi].x1 && mouse_x <= p_fields[fi].x2 && mouse_y >= p_fields[fi].y1 && mouse_y <= p_fields[fi].y2)
+        if(mouse_x >= p_fields[fi].x1 && mouse_x <= p_fields[fi].x2 && mouse_y >= p_fields[fi].y1 && mouse_y <= p_fields[fi].y2)
         {
             fprintf(fp, "  field[%d]=(%d,%d)-(%d,%d)", fi, p_fields[fi].x1, p_fields[fi].y1, p_fields[fi].x2, p_fields[fi].y2);
             break;
@@ -546,15 +754,15 @@ int main(int argc, char *argv[])
 
     for (argi = 1; argi < argc; argi++)
     {
-        if (stu_strcmp(argv[argi], "--help") == 0 || stu_strcmp(argv[argi], "-h") == 0)
+        if(stu_strcmp(argv[argi], "--help") == 0 || stu_strcmp(argv[argi], "-h") == 0)
         {
             Print_Usage(argv[0]);
             return 0;
         }
-        else if (stu_strcmp(argv[argi], "--newgame") == 0)
+        else if(stu_strcmp(argv[argi], "--newgame") == 0)
         {
             hemom_mode = 1;
-            if ((argi + 1) < argc && argv[argi + 1][0] != '-')
+            if((argi + 1) < argc && argv[argi + 1][0] != '-')
             {
                 argi++;
                 stu_strcpy(hemom_file, argv[argi]);
@@ -569,7 +777,7 @@ int main(int argc, char *argv[])
             LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] CLI: --newgame \"%s\"", hemom_file);
 #endif
         }
-        else if (stu_strcmp(argv[argi], "--load") == 0 && (argi + 1) < argc)
+        else if(stu_strcmp(argv[argi], "--load") == 0 && (argi + 1) < argc)
         {
             hemom_mode = 2;
             argi++;
@@ -580,7 +788,7 @@ int main(int argc, char *argv[])
             LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] CLI: --load \"%s\"", hemom_file);
 #endif
         }
-        else if (stu_strcmp(argv[argi], "--continue") == 0)
+        else if(stu_strcmp(argv[argi], "--continue") == 0)
         {
             hemom_mode = 2;
             stu_strcpy(hemom_file, "SAVE9.GAM");
@@ -590,7 +798,7 @@ int main(int argc, char *argv[])
             LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] CLI: --continue (SAVE9.GAM)");
 #endif
         }
-        else if (stu_strcmp(argv[argi], "--replay") == 0 || stu_strcmp(argv[argi], "--record") == 0)
+        else if(stu_strcmp(argv[argi], "--replay") == 0 || stu_strcmp(argv[argi], "--record") == 0)
         {
             LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: %s (deferred until after platform init)", argv[argi]);
 #ifdef STU_DEBUG
@@ -599,7 +807,7 @@ int main(int argc, char *argv[])
 #endif
             /* Handled after Startup_Platform() */
         }
-        else if (stu_strcmp(argv[argi], "--scenario") == 0 && (argi + 1) < argc)
+        else if(stu_strcmp(argv[argi], "--scenario") == 0 && (argi + 1) < argc)
         {
             argi++;
             stu_strcpy(hemom_scenario, argv[argi]);
@@ -609,7 +817,7 @@ int main(int argc, char *argv[])
             LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] CLI: --scenario \"%s\"", hemom_scenario);
 #endif
         }
-        else if (strcmp(argv[argi], "--dump-save") == 0 && (argi + 1) < argc)
+        else if(strcmp(argv[argi], "--dump-save") == 0 && (argi + 1) < argc)
         {
             argi++;
             stu_strcpy(hemom_dump_save, argv[argi]);
@@ -619,14 +827,14 @@ int main(int argc, char *argv[])
             LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] CLI: --dump-save \"%s\"", hemom_dump_save);
 #endif
         }
-        else if (stu_strcmp(argv[argi], "--seed") == 0 && (argi + 1) < argc)
+        else if(stu_strcmp(argv[argi], "--seed") == 0 && (argi + 1) < argc)
         {
             /* CLAUDE: --seed parsing migrated to MOX2::Check_Command_Line_Parameters_().
                Skip the value here so the rest of this loop doesn't see it as
                an "unknown arg". */
             argi++;
         }
-        else if (strcmp(argv[argi], "--ai-metrics") == 0)
+        else if(strcmp(argv[argi], "--ai-metrics") == 0)
         {
 #ifdef STU_DEBUG
             AI_Metrics_Enabled = 1;
@@ -657,7 +865,7 @@ int main(int argc, char *argv[])
     AI_Metrics_Startup();
 #endif
 
-    if (hemom_mode == 0)
+    if(hemom_mode == 0)
     {
         Print_Usage(argv[0]);
         LOG_INFO(LOG_CAT_HEMOM, "\nError: must specify --newgame or --load");
@@ -673,12 +881,12 @@ int main(int argc, char *argv[])
     /* Process --replay and --record flags (after platform init) */
     for (argi = 1; argi < argc; argi++)
     {
-        if (stu_strcmp(argv[argi], "--record") == 0 && (argi + 1) < argc)
+        if(stu_strcmp(argv[argi], "--record") == 0 && (argi + 1) < argc)
         {
             argi++;
             Platform_Record_Start(argv[argi]);
         }
-        else if (stu_strcmp(argv[argi], "--replay") == 0 && (argi + 1) < argc)
+        else if(stu_strcmp(argv[argi], "--replay") == 0 && (argi + 1) < argc)
         {
             argi++;
             Platform_Replay_Start(argv[argi]);
@@ -690,11 +898,11 @@ int main(int argc, char *argv[])
     ReMoM_Init_Engine();
 
     /* Create or load game */
-    if (hemom_mode == 1)
+    if(hemom_mode == 1)
     {
         struct s_HeMoM_Config cfg;
         Config_Init(&cfg);
-        if (!Config_Parse(hemom_file, &cfg))
+        if(!Config_Parse(hemom_file, &cfg))
         {
             LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Failed to parse config: %s", hemom_file);
             Shutdown_Platform();
@@ -703,11 +911,11 @@ int main(int argc, char *argv[])
         Config_Apply_And_Create_New_Game(&cfg);
         current_screen = scr_Main_Screen;
     }
-    else if (hemom_mode == 2)
+    else if(hemom_mode == 2)
     {
         int16_t save_slot;
 
-        if (Str_Equal_CI(hemom_file, "SAVETEST.GAM"))
+        if(Str_Equal_CI(hemom_file, "SAVETEST.GAM"))
         {
             save_slot = ST_UNDEFINED;
         }
@@ -724,14 +932,14 @@ int main(int argc, char *argv[])
     }
 
     /* Load and register artificial human player scenario */
-    if (hemom_scenario[0] != '\0')
+    if(hemom_scenario[0] != '\0')
     {
         LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Loading scenario: %s", hemom_scenario);
 #ifdef STU_DEBUG
         LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] Loading scenario: %s", hemom_scenario);
         LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] Loading scenario: %s", hemom_scenario);
 #endif
-        if (HeMoM_Player_Load_Scenario(hemom_scenario) != 0)
+        if(HeMoM_Player_Load_Scenario(hemom_scenario) != 0)
         {
             LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Failed to load scenario: %s", hemom_scenario);
 #ifdef STU_DEBUG
@@ -761,7 +969,7 @@ int main(int argc, char *argv[])
        Config_Apply_And_Create_New_Game() already wrote SAVE9.GAM, and HeMoM
        has no interactive UI, so entering Screen_Control() here would just
        spin forever waiting for input that can never arrive. */
-    if (hemom_mode == 1 && hemom_scenario[0] == '\0')
+    if(hemom_mode == 1 && hemom_scenario[0] == '\0')
     {
         LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Newgame complete — SAVE9.GAM written, skipping Screen_Control()");
 #ifdef STU_DEBUG
@@ -787,19 +995,19 @@ int main(int argc, char *argv[])
 
     /* Dump a save file to text after the game loop exits.  Used by tests
        that need to inspect a save produced by the scenario. */
-    if (hemom_dump_save[0] != '\0')
+    if(hemom_dump_save[0] != '\0')
     {
         char dump_text[260];
         size_t len = strlen(hemom_dump_save);
         size_t i;
         stu_strcpy(dump_text, hemom_dump_save);
         /* Replace ".GAM" suffix with ".txt" if present, else append ".txt". */
-        if (len >= 4 && stu_stricmp(dump_text + len - 4, ".GAM") == 0)
+        if(len >= 4 && stu_stricmp(dump_text + len - 4, ".GAM") == 0)
         {
             dump_text[len - 4] = '\0';
         }
         i = strlen(dump_text);
-        if ((i + 4) < sizeof(dump_text))
+        if((i + 4) < sizeof(dump_text))
         {
             dump_text[i + 0] = '.';
             dump_text[i + 1] = 't';
@@ -825,8 +1033,8 @@ int main(int argc, char *argv[])
     LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] Cleanup: HeMoM_Player_Shutdown()");
 #endif
     HeMoM_Player_Shutdown();
-    if (Platform_Record_Active()) { Platform_Record_Stop(); }
-    if (Platform_Replay_Active()) { Platform_Replay_Stop(); }
+    if(Platform_Record_Active()) { Platform_Record_Stop(); }
+    if(Platform_Replay_Active()) { Platform_Replay_Stop(); }
 
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] Cleanup: Shutdown_Platform()");

@@ -1,0 +1,53 @@
+# TBD - should match up with the Record & Replay
+# assets/menu_baseline_seed12345.RMR — a recorded mouse/key replay (.RMR) of a human clicking through ReMoMber's new-game menus.
+# assets/menu_baseline_seed12345-RECORD.log — the stderr capture from that recording run.
+# 
+# matchup_hemom.hms — Smoke test: create game, run 3 turns, quit
+#
+# Usage:
+#   HeMoM --newgame matchup_hemom.ini --scenario matchup_hemom.hms
+#
+# Actions (durations require an explicit unit suffix):
+#   wait <N>f         wait N frames (1 frame = 55ms)
+#   wait <N>ms        wait N milliseconds (wall clock)
+#   wait <N>s         wait N seconds (wall clock)
+#   wait <N>m         wait N minutes (wall clock)
+#   next_turn         press 'N' (Next Turn hotkey)
+#   key <char>        press a key
+#   click <x> <y>     left-click at game coordinates (320x200)
+#   rclick <x> <y>    right-click at game coordinates
+#   escape            press Escape
+#   enter             press Enter
+#   quit              set quit flag
+#   end               stop player (idle forever)
+
+# === Home city naming popup ===
+wait 500ms                # let the popup finish loading
+backspace                 # clear the random pre-filled city name
+type MatchUpHeMoM
+enter                     # confirm the name; popup closes
+
+wait 500ms                # let the popup close and the Main Screen settle
+
+# === Main Screen: Game button ===
+click 290 180             # Patrol button (rect ~280,176 - 313,186)
+wait 300ms                # let the patrol action take effect
+
+# Scenario ends here without quitting — control hands back to the human.
+end
+
+
+# Turn 1
+next_turn
+wait 10s
+
+# Turn 2
+next_turn
+wait 10s
+
+# Turn 3
+next_turn
+wait 10s
+
+# Done — quit the game
+quit
