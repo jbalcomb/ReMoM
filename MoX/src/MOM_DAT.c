@@ -2802,7 +2802,7 @@ _ai_own_stack_unit_list[][] = ST_UNDEFINED
     AI_Stacks_Init_Build_Target_Order
     AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
     AI_Order_Settle()
-    AI_Order_RoadBuild()
+    AI_Stacks_Order_RoadBuild()
     AI_Stacks_Order_Ferry()
     AI_Stacks_Order_Meld()
     AI_Stacks_Order_Purify()

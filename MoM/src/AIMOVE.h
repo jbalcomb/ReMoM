@@ -96,7 +96,7 @@ void AI_Stacks_Do_Settle(int16_t player_idx, int16_t landmass_idx);
 void AI_Stacks_Do_Purify(int16_t landmass_idx, int16_t wp);
 
 // WZD o158p25
-void AI_Do_RoadBuild(int16_t landmass_idx);
+void AI_Stacks_Do_RoadBuild(int16_t landmass_idx);
 
 // WZD o158p26
 void AI_Stacks_Order_Attack_Target_Or_Goto_Destination(int16_t unit_idx, int16_t target_wx, int16_t target_wy, int16_t itr_stacks1, int16_t itr_stacks2);
@@ -105,7 +105,7 @@ void AI_Stacks_Order_Attack_Target_Or_Goto_Destination(int16_t unit_idx, int16_t
 void AI_Order_Settle(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx);
 
 // WZD o158p28
-void AI_Order_RoadBuild(int16_t unit_idx, int16_t wx, int16_t wy, int16_t unit_list_idx, int16_t list_unit_idx);
+void AI_Stacks_Order_RoadBuild(int16_t unit_idx, int16_t wx, int16_t wy, int16_t unit_list_idx, int16_t list_unit_idx);
 
 // WZD o158p29
 void AI_Stacks_Order_Ferry(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_idx);

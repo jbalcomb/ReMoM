@@ -50,7 +50,7 @@ flowchart TD
 
         Dispatch --> Slot1["slot 1<br/>AI_Stacks_Init_Build_Target_Order>rebuilds _ai_own_stack_*</i>"]:::func
         Dispatch --> Slot2["slot 2<br/>AI_Stacks_Move_Out_NonMilitary_Garrisoned<br/><i>push settlers/engineers/melders out of garrisons</i>"]:::func
-        Dispatch --> Slots4_7["slots 4-7<br/>AI_Stacks_Do_Meld<br/>AI_Stacks_Do_Settle<br/>AI_Stacks_Do_Purify<br/>AI_Do_RoadBuild"]:::func
+        Dispatch --> Slots4_7["slots 4-7<br/>AI_Stacks_Do_Meld<br/>AI_Stacks_Do_Settle<br/>AI_Stacks_Do_Purify<br/>AI_Stacks_Do_RoadBuild"]:::func
         Dispatch --> Slot8["slot 8<br/>AI_Build_Target_List<br/>builds _ai_targets_*"]:::func
         Dispatch --> Slot9["slot 9<br/>AI_Stacks_Roamers_Target_Or_Deploy"]:::func
         Dispatch --> SlotsRally["slots 10/11/12/13<br/>AI_Stacks_Order_To_War_Landmass<br/>AI_Stacks_Relocate_Roamers<br/>AI_Stacks_Stage_Expedition_Forces<br/>AI_Stacks_Garrison_Sites"]:::func
@@ -65,7 +65,7 @@ flowchart TD
 
         SetTgt["AI_Stacks_Order_Attack_Target_Or_Goto_Destination<br/><br/>reads g_ai_evaluation_map at target<br/>SITE or STRENGTH_MASK bits set → Status = us_Move<br/>else → Status = us_GOTO<br/>writes dst_wx/wy<br/>consumes _ai_own_stack_unit_list slot"]:::func
 
-        Slots4_7 --> OrderXxx["AI_Stacks_Order_Meld<br/>AI_Order_Settle<br/>AI_Stacks_Order_Purify<br/>AI_Order_RoadBuild<br/>AI_Stacks_Order_Ferry<br/><br/>sets Status to the matching us_* value<br/>consumes _ai_own_stack_unit_list slot"]:::func
+        Slots4_7 --> OrderXxx["AI_Stacks_Order_Meld<br/>AI_Order_Settle<br/>AI_Stacks_Order_Purify<br/>AI_Stacks_Order_RoadBuild<br/>AI_Stacks_Order_Ferry<br/><br/>sets Status to the matching us_* value<br/>consumes _ai_own_stack_unit_list slot"]:::func
     end
 
     SetTgt -. "writes" .-> UnitFields

@@ -281,7 +281,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
             AI_Stacks_Do_Meld(player_idx);
             AI_Stacks_Do_Settle(player_idx, landmass_idx);
             AI_Stacks_Do_Purify(landmass_idx, wp);
-            AI_Do_RoadBuild(landmass_idx);
+            AI_Stacks_Do_RoadBuild(landmass_idx);
 
             AI_Build_Target_List(player_idx, landmass_idx, wp);
             AI_Stacks_Roamers_Target_Or_Deploy(landmass_idx, wp, player_idx);
@@ -4416,16 +4416,35 @@ void AI_Stacks_Do_Purify(int16_t landmass_idx, int16_t wp)
 
 
 // WZD o158p25
-// drake178: AI_ProcessRoadBuilds()
-/*
-*/
-/*
-
-*/
-void AI_Do_RoadBuild(int16_t landmass_idx)
+/**
+ * @brief Assigns road-building tasks to eligible AI units on one landmass.
+ *
+ * Iterates the current `_ai_own_stack_*` working stacks and evaluates units
+ * that can participate in road construction. For each eligible unit, the
+ * routine searches for the nearest valid city on the same plane (and, for
+ * land-only movement, effectively on the same landmass) and then chooses one
+ * of two actions:
+ *
+ * - If the unit is not adjacent to that city, it is ordered to move there via
+ *   AI_Stacks_Order_Attack_Target_Or_Goto_Destination().
+ * - If the unit is already adjacent, it searches for the nearest same-landmass
+ *   city not already connected in the road bitfield and issues
+ *   AI_Stacks_Order_RoadBuild() toward that city.
+ *
+ * @param landmass_idx Landmass index used by this AI pass when filtering unit
+ *                     activity and road targets.
+ *
+ * @return This function does not return a value. It may assign movement or
+ *         road-build orders and clear unit entries from
+ *         `_ai_own_stack_unit_list` via called helper routines.
+ *
+ * @note Preserves legacy behavior, including historical local scratch values
+ *       and original filtering/order-selection quirks kept for compatibility.
+ */
+void AI_Stacks_Do_RoadBuild(int16_t landmass_idx)
 {
-    int16_t UU_Local_2 = 0;
-    int16_t UU_Local_1 = 0;
+    int16_t unused_variable_2 = 0;
+    int16_t unused_variable_1 = 0;
     int16_t unit_wp = 0;
     int16_t unit_idx = 0;
     int16_t itr_list_units = 0;
@@ -4435,20 +4454,22 @@ void AI_Do_RoadBuild(int16_t landmass_idx)
     int16_t delta_distance = 0;
     int16_t city_landmass_idx = 0;
     int16_t min_delta_distance = 0;
-    int16_t Landmass_Dup = 0;
+    int16_t dupe_landmass_idx = 0;
     int16_t unit_wy = 0;
     int16_t unit_wx = 0;
     int16_t itr_stacks = 0;
-    int16_t city_idx = 0;  // _DI_
+    int16_t city_idx = 0;
 
 
     /*
         DEDU  could this be meaningful?
-        ovr158:4C30 C7 46 E4 EA D4                                  mov     [bp+UU_Local_1], 0D4EAh
-        ovr158:4C35 C7 46 E2 26 D5                                  mov     [bp+UU_Local_2], 0D526h
+        ovr158:4C30 C7 46 E4 EA D4                                  mov     [bp+unused_variable_1], 0D4EAh
+        ovr158:4C35 C7 46 E2 26 D5                                  mov     [bp+unused_variable_1], 0D526h
+        mov     [bp+unused_variable_1], 54506
+        mov     [bp+unused_variable_1], 54566
     */
-    UU_Local_1 = 0xD4EA;
-    UU_Local_2 = 0xD526;
+    unused_variable_1 = 0xD4EA;
+    unused_variable_2 = 0xD526;
 
 
     for(itr_stacks = 0; itr_stacks < _ai_own_stack_count; itr_stacks++)
@@ -4469,108 +4490,92 @@ void AI_Do_RoadBuild(int16_t landmass_idx)
             {
 
                 unit_wx = _UNITS[unit_idx].wx;
-                
                 unit_wy = _UNITS[unit_idx].wy;
-                
                 unit_wp = _UNITS[unit_idx].wp;
                 
-                Landmass_Dup = landmass_idx;
+                dupe_landmass_idx = landmass_idx;
 
                 nearest_city_idx = ST_UNDEFINED;
-
                 min_delta_distance = 1000;
-
                 for(city_idx = 0; city_idx < _cities; city_idx++)
                 {
-
-// ; BUG: parameter mismatch (and redundant branching, as
-// ; the next comparison would be enough by itself)
+                    /* OGBUG  `_CITIES[city_idx].wp != unit_wp` is redundant */
+                    /* OGBUG  should use _CITIES[city_idx].wp, not unit_wp */
+                    if(_CITIES[city_idx].wp != unit_wp)
+                    {
+                        continue;
+                    }
+                    /* If stack is walker and city is on different landmass */
+                    /* ¿ OGBUG  should be walker && can't walk there ? */
                     if(
-                        (_CITIES[city_idx].wp == unit_wp)
+                        ((_ai_all_own_stacks[itr_stacks].abilities & AICAP_LandOnly) == 0)
                         &&
-                        (
-                            ((_ai_all_own_stacks[itr_stacks].abilities & AICAP_LandOnly) != 0)
-                            ||
-                            ((unit_wp * WORLD_SIZE) + (_CITIES[city_idx].wy * WORLD_WIDTH) + _CITIES[city_idx].wx)  == Landmass_Dup
-                        )
+                        (_landmasses[((unit_wp * WORLD_SIZE) + (_CITIES[city_idx].wy * WORLD_WIDTH) + _CITIES[city_idx].wx)] != dupe_landmass_idx)
                     )
                     {
-
-                        delta_distance = Delta_XY_With_Wrap(unit_wx, unit_wy, _CITIES[city_idx].wx, _CITIES[city_idx].wy, WORLD_WIDTH);
-
-                        if(delta_distance < min_delta_distance)
-                        {
-                            
-                            min_delta_distance = delta_distance;
-
-                            nearest_city_idx = city_idx;
-
-                        }
-
+                        continue;
                     }
-
+                    
+                    delta_distance = Delta_XY_With_Wrap(unit_wx, unit_wy, _CITIES[city_idx].wx, _CITIES[city_idx].wy, WORLD_WIDTH);
+                    if(delta_distance < min_delta_distance)
+                    {
+                        min_delta_distance = delta_distance;
+                        nearest_city_idx = city_idx;
+                    }
+                    
+                }
+                if(nearest_city_idx == ST_UNDEFINED)
+                {
+                    continue;
                 }
 
-                if(nearest_city_idx != ST_UNDEFINED)
+                if(min_delta_distance > 1)
                 {
 
-                    if(min_delta_distance > 1)
-                    {
-
 #ifdef STU_DEBUG
-                        LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, _CITIES[nearest_city_idx].wx, _CITIES[nearest_city_idx].wy, itr_stacks, itr_list_units);
+                    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, _CITIES[nearest_city_idx].wx, _CITIES[nearest_city_idx].wy, itr_stacks, itr_list_units);
 #endif
-                        g_ai_set_target_caller = 18;
-                        AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, _CITIES[nearest_city_idx].wx, _CITIES[nearest_city_idx].wy, itr_stacks, itr_list_units);
+                    g_ai_set_target_caller = 18;
+                    AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, _CITIES[nearest_city_idx].wx, _CITIES[nearest_city_idx].wy, itr_stacks, itr_list_units);
 
-                    }
-                    else
+                }
+                else
+                {
+
+                    RoadTo_City = ST_UNDEFINED;
+                    min_delta_distance = 1000;
+                    city_landmass_idx = _landmasses[((unit_wp * WORLD_SIZE) + (_CITIES[nearest_city_idx].wy * WORLD_WIDTH) + _CITIES[nearest_city_idx].wx)];
+                    for(city_idx = 0; city_idx < _cities; city_idx++)
                     {
-
-                        RoadTo_City = ST_UNDEFINED;
-
-                        min_delta_distance = 1000;
-
-                        city_landmass_idx = _landmasses[((unit_wp * WORLD_SIZE) + (_CITIES[nearest_city_idx].wy * WORLD_WIDTH) + _CITIES[nearest_city_idx].wx)];
-
-                        for(city_idx = 0; city_idx < _cities; city_idx++)
+                        if(city_idx == nearest_city_idx)
                         {
-
-                            if(city_idx == nearest_city_idx)
-                            {
-
-                                if(
-                                    (Test_Bit_Field(city_idx, (uint8_t *)&_CITIES[nearest_city_idx].road_connections[0]) == 0)
-                                    &&
-                                    (_landmasses[((unit_wp * WORLD_SIZE) + (_CITIES[city_idx].wy * WORLD_WIDTH) + _CITIES[city_idx].wx)] == city_landmass_idx)
-                                    )
-                                {
-
-                                    delta_distance = Delta_XY_With_Wrap(_CITIES[nearest_city_idx].wx, _CITIES[nearest_city_idx].wy, _CITIES[city_idx].wx, _CITIES[city_idx].wy, WORLD_WIDTH);
-
-                                    if(delta_distance < min_delta_distance)
-                                    {
-                                        
-                                        min_delta_distance = delta_distance;
-
-                                        RoadTo_City = city_idx;
-
-                                    }
-
-
-                                }
-
-                            }
-
+                            continue;
                         }
-
-                        if(RoadTo_City != ST_UNDEFINED)
+                        if(_CITIES[city_idx].wp != unit_wp)
                         {
-
-                            AI_Order_RoadBuild(unit_idx, _CITIES[RoadTo_City].wx, _CITIES[RoadTo_City].wy, itr_stacks, itr_list_units);
-
+                            continue;
                         }
+                        /* Check if road connection already exists in bitfield */
+                        if(Test_Bit_Field(city_idx, (uint8_t *)&_CITIES[nearest_city_idx].road_connections[0]) != 0)
+                        {
+                            continue;
+                        }
+                        /* Must be on same landmass for road building */
+                        if(_landmasses[((unit_wp * WORLD_SIZE) + (_CITIES[city_idx].wy * WORLD_WIDTH) + _CITIES[city_idx].wx)] != city_landmass_idx)
+                        {
+                            continue;
+                        }
+                        delta_distance = Delta_XY_With_Wrap(_CITIES[nearest_city_idx].wx, _CITIES[nearest_city_idx].wy, _CITIES[city_idx].wx, _CITIES[city_idx].wy, WORLD_WIDTH);
+                        if(delta_distance < min_delta_distance)
+                        {
+                            min_delta_distance = delta_distance;
+                            RoadTo_City = city_idx;
+                        }
+                    }
 
+                    if(RoadTo_City != ST_UNDEFINED)
+                    {
+                        AI_Stacks_Order_RoadBuild(unit_idx, _CITIES[RoadTo_City].wx, _CITIES[RoadTo_City].wy, itr_stacks, itr_list_units);
                     }
 
                 }
@@ -4673,7 +4678,33 @@ void AI_Order_Settle(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_
 
 
 // WZD o158p28
-void AI_Order_RoadBuild(int16_t unit_idx, int16_t wx, int16_t wy, int16_t unit_list_idx, int16_t list_unit_idx)
+/**
+ * @brief Assigns a road-building order to one AI-controlled unit.
+ *
+ * Validates the supplied unit index, snapshots the unit's current coordinates
+ * into the road-source fields, switches the unit status to @c us_BuildRoad,
+ * stores the requested destination square, and removes the unit from its
+ * current AI stack slot so later passes do not treat it as still unassigned.
+ *
+ * @param unit_idx Global unit index that receives the road-building order.
+ * @param wx World x-coordinate of the requested road-build destination.
+ * @param wy World y-coordinate of the requested road-build destination.
+ * @param unit_list_idx Index of the owning AI stack in
+ *                      @c _ai_own_stack_unit_list.
+ * @param list_unit_idx Slot of the unit inside that AI stack list.
+ *
+ * @return This function does not return a value. It may update
+ *         @c _UNITS[unit_idx].Rd_From_X,
+ *         @c _UNITS[unit_idx].Rd_From_Y,
+ *         @c _UNITS[unit_idx].Status,
+ *         @c _UNITS[unit_idx].dst_wx,
+ *         @c _UNITS[unit_idx].dst_wy, and
+ *         @c _ai_own_stack_unit_list[unit_list_idx][list_unit_idx].
+ *
+ * @note If @p unit_idx is outside the valid unit range, the function exits
+ *       immediately without modifying unit or stack state.
+ */
+void AI_Stacks_Order_RoadBuild(int16_t unit_idx, int16_t wx, int16_t wy, int16_t unit_list_idx, int16_t list_unit_idx)
 {
     if((unit_idx < 0) || (unit_idx >= MAX_UNIT_COUNT)) { return; }
     _UNITS[unit_idx].Rd_From_X = _UNITS[unit_idx].wx;

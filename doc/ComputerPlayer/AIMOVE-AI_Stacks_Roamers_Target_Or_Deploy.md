@@ -138,12 +138,12 @@ The seven consumers (per the MOM_DAT.c comment):
 - `AI_Stacks_Init_Build_Target_Order` ...ial empty state)
 - `AI_Stacks_Order_Attack_Target_Or_Goto_Destination` at [AIMOVE.c:5076](../../MoM/src/AIMOVE.c#L5076)
 - `AI_Order_Settle` at [AIMOVE.c:5120](../../MoM/src/AIMOVE.c#L5120)
-- `AI_Order_RoadBuild`
+- `AI_Stacks_Order_RoadBuild`
 - `AI_Stacks_Order_Ferry`
 - `AI_Stacks_Order_Meld`
 - `AI_Stacks_Order_Purify`
 
-By the time this function runs (dispatch slot 9), the stack lists have been sparsified by slots 4-7 (`AI_Stacks_Do_Meld`, `AI_Stacks_Do_Settle`, `AI_Stacks_Do_Purify`, `AI_Do_RoadBuild`) consuming slots as they issue orders to settlers/road-builders/melders. The consumed slots are scattered with valid slots; later slots in the same stack can still hold real unit indices.
+By the time this function runs (dispatch slot 9), the stack lists have been sparsified by slots 4-7 (`AI_Stacks_Do_Meld`, `AI_Stacks_Do_Settle`, `AI_Stacks_Do_Purify`, `AI_Stacks_Do_RoadBuild`) consuming slots as they issue orders to settlers/road-builders/melders. The consumed slots are scattered with valid slots; later slots in the same stack can still hold real unit indices.
 
 That's why the gate works as a whole-stack check: **if ANY slot is `ST_UNDEFINED`, the stack has been partially consumed and should not be re-tasked as a roamer destination.** The `break` is a short-circuit ("I only need to know IF any unit was consumed, not how many").
 

@@ -288,7 +288,7 @@ Every subsequent slot of `AI_Set_Unit_Orders` Phase 4 dispatch consumes some par
 | 4 | `AI_Stacks_Do_Meld` | type, unit_list |
 | 5 | `AI_Stacks_Do_Settle` | type, unit_list |
 | 6 | `AI_Stacks_Do_Purify` | type, unit_list |
-| 7 | `AI_Do_RoadBuild` | type, unit_list |
+| 7 | `AI_Stacks_Do_RoadBuild` | type, unit_list |
 | 8 | `AI_Build_Target_List` | (doesn't touch stack arrays) |
 | 9 | [`AI_Stacks_Roamers_Target_Or_Deploy`](AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md) | type, unit_count, wx/wy, unit_list (for Roamer stacks) |
 | 10 | `AI_Stacks_Order_To_War_Landmass` | type, unit_count, unit_list |

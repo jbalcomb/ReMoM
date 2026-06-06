@@ -151,7 +151,7 @@ Navigation reference for `MoM/src/AIMOVE.c` (~7400 lines). One row per function,
 - **End:** ~line 4415
 - **Purpose:** Slot 6 — scout the landmass for a corrupted square near an `AI_TARGET_SITE` (city/node area), then order `UA_PURIFY` units to purify in place or route toward it. See [AIMOVE-AI_Stacks_Do_Purify.md](AIMOVE-AI_Stacks_Do_Purify.md).
 
-### `AI_Do_RoadBuild` — [line 4425](../../MoM/src/AIMOVE.c#L4425)
+### `AI_Stacks_Do_RoadBuild` — [line 4425](../../MoM/src/AIMOVE.c#L4425)
 - **drake178:** `AI_ProcessRoadBuilds()` (o158p25)
 - **End:** ~line 4584
 - **Purpose:** TBD
@@ -166,7 +166,7 @@ Navigation reference for `MoM/src/AIMOVE.c` (~7400 lines). One row per function,
 - **End:** ~line 4672
 - **Purpose:** TBD
 
-### `AI_Order_RoadBuild` — [line 4676](../../MoM/src/AIMOVE.c#L4676)
+### `AI_Stacks_Order_RoadBuild` — [line 4676](../../MoM/src/AIMOVE.c#L4676)
 - **drake178:** `AI_UNIT_RoadBldOrder()` (o158p28)
 - **End:** ~line 4685
 - **Purpose:** TBD

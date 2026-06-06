@@ -396,7 +396,7 @@ AI_Set_Unit_Orders(player_idx)
        │    │           └─ AI_Stacks_Order_Meld                         ◄── (on-node case)
        │    ├─ slot 5: AI_Stacks_Do_Settle
        │    ├─ slot 6: AI_Stacks_Do_Purify
-       │    ├─ slot 7: AI_Do_RoadBuild
+       │    ├─ slot 7: AI_Stacks_Do_RoadBuild
        │    └─ ... slots 8-13 ...
        │
        ├─ AI_Stacks_Wartime_Ocean_Movement_And_Cleanup
@@ -411,7 +411,7 @@ AI_Set_Unit_Orders(player_idx)
 - **`AI_Stacks_Do_Meld`** (this) → `AI_Stacks_Order_Meld`
 - `AI_Stacks_Do_Settle` → `AI_Order_Settle`
 - `AI_Stacks_Do_Purify` → `AI_Stacks_Order_Purify`
-- `AI_Do_RoadBuild` → `AI_Order_RoadBuild`
+- `AI_Stacks_Do_RoadBuild` → `AI_Stacks_Order_RoadBuild`
 
 All share the same shape: scan `_ai_own_stack_*` for the relevant ability-bit, find a valid target, issue order via the matching `AI_Order_*` helper. The `AI_Order_*` helpers are all minimal: bounds-check + set `Status` + consume slot.
 

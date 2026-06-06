@@ -238,7 +238,7 @@ AI_Set_Unit_Orders(player_idx)
             ├─ slot 4: AI_Stacks_Do_Meld     → AI_Stacks_Order_Meld
             ├─ slot 5: AI_Stacks_Do_Settle   → AI_Order_Settle
             ├─ slot 6: AI_Stacks_Do_Purify   → AI_Stacks_Order_Purify     ◄── HERE
-            ├─ slot 7: AI_Do_RoadBuild       → AI_Order_RoadBuild
+            ├─ slot 7: AI_Stacks_Do_RoadBuild       → AI_Stacks_Order_RoadBuild
             └─ ... slots 8-13 ...
 ```
 
@@ -246,7 +246,7 @@ AI_Set_Unit_Orders(player_idx)
 - `AI_Stacks_Do_Meld` → `AI_Stacks_Order_Meld` (`UA_MELD`)
 - `AI_Stacks_Do_Settle` → `AI_Order_Settle` (settler ability)
 - **`AI_Stacks_Do_Purify`** (this) → `AI_Stacks_Order_Purify` (`UA_PURIFY`)
-- `AI_Do_RoadBuild` → `AI_Order_RoadBuild` (road-build ability)
+- `AI_Stacks_Do_RoadBuild` → `AI_Stacks_Order_RoadBuild` (road-build ability)
 
 (`AI_Stacks_Do_Meld`/`AI_Stacks_Do_Purify` carry the `AI_Stacks_` prefix on both halves; `Settle`/`RoadBuild` have not yet been renamed from their OG `AI_Do_*`/`AI_Order_*` form.)
 

@@ -23,8 +23,8 @@ AI_UNIT_SettleOrder()  ==>  AI_Order_Settle()
 AI_ProcessSettlers()  ==>  AI_Stacks_Do_Settle()
 AI_UNIT_PurifyOrder()  ==>  AI_Stacks_Order_Purify()
 AI_ProcessPurifiers()  ==>  AI_Stacks_Do_Purify()
-AI_UNIT_RoadBldOrder()  ==>  AI_Order_RoadBuild()
-AI_ProcessRoadBuilds()  ==>  AI_Do_RoadBuild()
+AI_UNIT_RoadBldOrder()  ==>  AI_Stacks_Order_RoadBuild()
+AI_ProcessRoadBuilds()  ==>  AI_Stacks_Do_RoadBuild()
 AI_CheckOtherPlane()  ==>  AI_Tower_Target_Worthwhile()
 AI_CreateTargetList()  ==>  AI_Build_Target_List()
 
@@ -156,7 +156,7 @@ AI_Stacks_Do_Settle()
 
 AI_ProcessPurifiers()
 
-AI_Do_RoadBuild()
+AI_Stacks_Do_RoadBuild()
 
 AI_CreateTargetList()
 
@@ -307,7 +307,7 @@ Next_Nearest_Ferry_Square()
 
 
 
-## AI_Do_RoadBuild()
+## AI_Stacks_Do_RoadBuild()
 
 
 

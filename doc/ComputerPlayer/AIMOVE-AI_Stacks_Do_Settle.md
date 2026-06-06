@@ -498,7 +498,7 @@ AI_Set_Unit_Orders(player_idx)
             ├─ slot 4: AI_Stacks_Do_Meld                       (→ AI_Stacks_Order_Meld)
             ├─ slot 5: AI_Stacks_Do_Settle                            ◄── HERE (→ AI_Order_Settle)
             ├─ slot 6: AI_Stacks_Do_Purify                            (→ AI_Stacks_Order_Purify)
-            ├─ slot 7: AI_Do_RoadBuild                         (→ AI_Order_RoadBuild)
+            ├─ slot 7: AI_Stacks_Do_RoadBuild                         (→ AI_Stacks_Order_RoadBuild)
             └─ ... slots 8-13 ...
 ```
 

@@ -211,12 +211,12 @@ AI_Stacks_Move_Out_NonMilitary_Garrisoned(wp)
 | 4 | `AI_Stacks_Do_Meld` | Issue meld orders |
 | 5 | `AI_Stacks_Do_Settle` | Issue settle orders |
 | 6 | `AI_Stacks_Do_Purify` | Issue purify orders |
-| 7 | `AI_Do_RoadBuild` | Issue road-build orders |
+| 7 | `AI_Stacks_Do_RoadBuild` | Issue road-build orders |
 | 8 | `AI_Build_Target_List` | Build `_ai_targets_*` (separate from stack arrays) |
 | 9 | [`AI_Stacks_Roamers_Target_Or_Deploy`](AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md) | Assign targets to roamer stacks |
 | 10-14 | stage/garrison fill | Consume excess pool, top up garrisons |
 
-By running before slots 4-7 (the per-job order-setters), `AI_Stacks_Move_Out_NonMilitary_Garrisoned` gets first crack at builders that happen to be parked in garrisons. Once it consumes a unit slot (via the order-setter's `ST_UNDEFINED` write), the same unit won't be re-considered by `AI_Stacks_Do_Settle` / `AI_Do_RoadBuild` / `AI_Stacks_Do_Meld` later in the same dispatch round — those consumers all read `_ai_own_stack_unit_list[s][u]` and skip undefined slots.
+By running before slots 4-7 (the per-job order-setters), `AI_Stacks_Move_Out_NonMilitary_Garrisoned` gets first crack at builders that happen to be parked in garrisons. Once it consumes a unit slot (via the order-setter's `ST_UNDEFINED` write), the same unit won't be re-considered by `AI_Stacks_Do_Settle` / `AI_Stacks_Do_RoadBuild` / `AI_Stacks_Do_Meld` later in the same dispatch round — those consumers all read `_ai_own_stack_unit_list[s][u]` and skip undefined slots.
 
 ## Related references
 

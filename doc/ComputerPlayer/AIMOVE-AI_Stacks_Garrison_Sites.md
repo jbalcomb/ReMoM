@@ -467,7 +467,7 @@ AI_Stacks_Garrison_Sites(player_idx, wp, landmass_idx)
 | 1 | [`AI_Stacks_Init_Build_Target_Order`](AIMOVE-AI_Stacks_Init_Build_Target_Order.md) | Always |
 | 2 | [`AI_Stacks_Move_Out_NonMilitary_Garrisoned`](AIMOVE-AI_Stacks_Move_Out_NonMilitary_Garrisoned.md) | Always |
 | 3 | [`AI_Stacks_Survey_Expedition_Forces`](MoM-AI-Move-ai_own_stack.md) | Always — populates `G_Pushout_*` / `G_Seafaring_*` pools |
-| 4-7 | `AI_Stacks_Do_Meld` / `AI_Stacks_Do_Settle` / `AI_Stacks_Do_Purify` / `AI_Do_RoadBuild` | Always |
+| 4-7 | `AI_Stacks_Do_Meld` / `AI_Stacks_Do_Settle` / `AI_Stacks_Do_Purify` / `AI_Stacks_Do_RoadBuild` | Always |
 | 8 | [`AI_Build_Target_List`](AIMOVE-AI_Build_Target_List.md) | Always |
 | 9 | [`AI_Stacks_Roamers_Target_Or_Deploy`](AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md) | Always |
 | 10 | [`AI_Stacks_Order_To_War_Landmass`](AIMOVE-AI_Stacks_Order_To_War_Landmass.md) | NOT `lmt_Contested` |
