@@ -340,7 +340,7 @@ void AI_Next_Turn(void)
 #ifdef STU_DEBUG
             LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Moving units for Player %d (%s)", player_idx, _players[player_idx].name);
 #endif
-            PHASE(AI_MoveUnits(player_idx));
+            PHASE(AI_Execute_Orders(player_idx));
         }
     }
 
@@ -359,7 +359,7 @@ void AI_Next_Turn(void)
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: NPC_Destinations done");
 #endif
-    PHASE(AI_MoveUnits(NEUTRAL_PLAYER_IDX));
+    PHASE(AI_Execute_Orders(NEUTRAL_PLAYER_IDX));
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: NPC movement done");
 #endif

@@ -299,7 +299,7 @@
 - [ ] GAME_OVER__STUB
 
 ## SETTLE
-- [ ] AI_MoveUnits
+- [ ] AI_Execute_Orders
 - [ ] AI_UNIT_BuildRoad__WIP
 - [x] AI_UNIT_Meld__WIP — renamed to AI_UNIT_Meld; body implemented in SETTLE.c:224
 - [ ] AI_UNIT_Move

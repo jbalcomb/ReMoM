@@ -323,9 +323,9 @@ Down r OVL_ResolveConflict+76C               push    [_map_y]                   
 Down r UU_IDK_Main_Screen_Draw+C             mov     ax, [_map_y]                              
 Down w UU_IDK_Main_Screen_Draw+37            mov     [_map_y], ax                              
 Down w UU_IDK_Main_Screen_Draw+A0            mov     [_map_y], ax                              
-Down r AI_MoveUnits:loc_81E01                mov     ax, [_map_y]                              
-Down w AI_MoveUnits+AB                       mov     [_map_y], ax                              
-Down r AI_MoveUnits+B4                       mov     ax, [_map_y]                              
+Down r AI_Execute_Orders:loc_81E01                mov     ax, [_map_y]                              
+Down w AI_Execute_Orders+AB                       mov     [_map_y], ax                              
+Down r AI_Execute_Orders+B4                       mov     ax, [_map_y]                              
 Down r AI_UNIT_Move+A9                       mov     ax, [_map_y]                              
 Down w AI_UNIT_Move+B8                       mov     [_map_y], ax                              
 Down o GAME_NextHumanStack+2E                mov     ax, offset _map_y                         
@@ -410,4 +410,4 @@ Down w Surveyor_Screen+1DD                   add     [_prev_world_x], ax
 Down r IDK_SurveyorScreenAddFields_s7A5EF+17 cmp     ax, [_prev_world_x]                                               
 Down r IDK_SurveyorScreenAddFields_s7A5EF+57 cmp     ax, [_prev_world_x]                                               
 Down r IDK_SurveyorDraw_s7A6A9+15            push    [_prev_world_x]                 ; XPos                            
-Down w AI_MoveUnits+B1                       mov     [_prev_world_x], ax                                               
+Down w AI_Execute_Orders+B1                       mov     [_prev_world_x], ax                                               

@@ -22,11 +22,11 @@ AI_Next_Turn()
                 |-> TILE_AI_FindEmptyLnd__WIP()
             |-> AI_Order_Settle()
                 `_UNITS[unit_idx].Status = us_Settle;`
-    |-> AI_MoveUnits()
+    |-> AI_Execute_Orders()
         |-> Unit_Army_Do_Settle()
         |-> Army_Do_Settle()
 
-AI_MoveUnits()
+AI_Execute_Orders()
     case us_Settle:
     {
         Unit_Army_Do_Settle(unit_idx);
@@ -42,7 +42,7 @@ Main_Screen()
 
 ...
 Status == us_Settle
-    |-> AI_MoveUnits
+    |-> AI_Execute_Orders
 
 ---
 
@@ -70,7 +70,7 @@ Settlers (units with `UA_CREATEOUTPOST` ability) need orders every turn until th
 3. **Move toward the best nearby square** (scored by population + production + gold + magic + special resources).
 4. **Send-to-colonize** as a last resort if no good square was found.
 
-The settler bears `Status = us_Settle` until next turn's per-unit dispatch in [`AI_MoveUnits`](../../MoM/src/SETTLE.c#L113) hits `case us_Settle` and calls `Unit_Army_Do_Settle`. Both paths — AI (`AI_MoveUnits` → `Unit_Army_Do_Settle` → `Army_Do_Settle` → `Create_Outpost`) and human (`Main_Screen` → `Active_Army_Do_Settle` → `Army_Do_Settle` → `Create_Outpost`) — are fully wired and produce a city.
+The settler bears `Status = us_Settle` until next turn's per-unit dispatch in [`AI_Execute_Orders`](../../MoM/src/SETTLE.c#L113) hits `case us_Settle` and calls `Unit_Army_Do_Settle`. Both paths — AI (`AI_Execute_Orders` → `Unit_Army_Do_Settle` → `Army_Do_Settle` → `Create_Outpost`) and human (`Main_Screen` → `Active_Army_Do_Settle` → `Army_Do_Settle` → `Create_Outpost`) — are fully wired and produce a city.
 
 ## Call paths reaching `Create_Outpost`
 
@@ -94,7 +94,7 @@ flowchart TD
     AIDoSettle["AI_Stacks_Do_Settle<br/>AIMOVE.c:4071<br/>(slot 5)"]
     AIOrderSettle["AI_Order_Settle<br/>AIMOVE.c:4890<br/>Status = us_Settle"]
 
-    AIMove["AI_MoveUnits<br/>SETTLE.c:113<br/>(next turn)"]
+    AIMove["AI_Execute_Orders<br/>SETTLE.c:113<br/>(next turn)"]
     DispatchSettle["switch(Status) case us_Settle:<br/>SETTLE.c:164-167"]
     StubBody["Unit_Army_Do_Settle<br/>SETTLE.c:259<br/>Finished-guard + Player_Army_At_Square +<br/>Army_Do_Settle + us_Ready loop"]
 
@@ -254,7 +254,7 @@ void AI_Order_Settle(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_
 }
 ```
 
-Same minimal shape as `AI_Stacks_Order_Meld`, `AI_Stacks_Order_Ferry`, etc.: bounds-check, set Status, consume stack slot. The Status persists until next turn's `AI_MoveUnits` dispatch.
+Same minimal shape as `AI_Stacks_Order_Meld`, `AI_Stacks_Order_Ferry`, etc.: bounds-check, set Status, consume stack slot. The Status persists until next turn's `AI_Execute_Orders` dispatch.
 
 ## Code walk — `Unit_Army_Do_Settle` ([lines 259-288](../../MoM/src/SETTLE.c#L259-L288))
 
@@ -470,7 +470,7 @@ AI_Order_Settle(unit_idx, stack_idx, list_unit_idx)
 
 
 next turn:
-AI_MoveUnits → switch(Status) → case us_Settle: → Unit_Army_Do_Settle
+AI_Execute_Orders → switch(Status) → case us_Settle: → Unit_Army_Do_Settle
   ├─ Finished guard
   ├─ Player_Army_At_Square → gather stack at settler's square
   ├─ Army_Do_Settle(troop_count, troops)
@@ -502,7 +502,7 @@ AI_Set_Unit_Orders(player_idx)
             └─ ... slots 8-13 ...
 ```
 
-**Pairing with sibling slot-4-through-7 functions:** All four `AI_Do_*` slots scan `_ai_own_stack_*` for the relevant ability bit, find a target, issue order via a minimal `AI_Order_*` helper. The order-issuer just writes Status + consumes the slot; next-turn dispatch in `AI_MoveUnits` (SETTLE.c) reads Status and calls the matching `AI_UNIT_*` handler.
+**Pairing with sibling slot-4-through-7 functions:** All four `AI_Do_*` slots scan `_ai_own_stack_*` for the relevant ability bit, find a target, issue order via a minimal `AI_Order_*` helper. The order-issuer just writes Status + consumes the slot; next-turn dispatch in `AI_Execute_Orders` (SETTLE.c) reads Status and calls the matching `AI_UNIT_*` handler.
 
 **Why slot 5 (settle) runs AFTER slot 4 (meld)?** Settlers and melders share the same slot-consumption mechanism (`ST_UNDEFINED` write). If slot 4 already claimed a unit as a melder (because it has both `UA_MELD` and `UA_CREATEOUTPOST`? — unlikely in stock data but technically possible), slot 5 wouldn't see it. In practice the two ability bits are disjoint across `_unit_type_table[]`.
 

@@ -25,7 +25,7 @@ extern "C" {
 */
 
 // WZD o100p01
-void AI_MoveUnits(int16_t player_idx);
+void AI_Execute_Orders(int16_t player_idx);
 
 // WZD o100p02
 void AI_UNIT_Meld(int16_t unit_idx);

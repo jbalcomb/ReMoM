@@ -20,7 +20,7 @@ AI_Next_Turn()
         |-> AI_Stacks_Ocean_Landmass_Orders()
             |-> AI_Stacks_Do_Meld()
                 |-> AI_Stacks_Order_Meld()
-    |-> AI_MoveUnits()
+    |-> AI_Execute_Orders()
         |-> AI_UNIT_Meld()
             |-> STK_DoMeldWithNode()
 
@@ -77,7 +77,7 @@ flowchart TD
 
     %% AI dispatch path
     AINext(["AI_Next_Turn<br/>NEXTTURN.c:648<br/>(called from Next_Turn_Calc)"])
-    AIMove["AI_MoveUnits<br/>SETTLE.c:90<br/>(called AIDUDES.c:343, 362)"]
+    AIMove["AI_Execute_Orders<br/>SETTLE.c:90<br/>(called AIDUDES.c:343, 362)"]
     DispatchMeld["switch(Status) case us_Meld:<br/>SETTLE.c:160-163"]
     AIUnitMeld["AI_UNIT_Meld<br/>SETTLE.c:224"]
     PlayerArmy["Player_Army_At_Square<br/>fills troops[] from world position"]
@@ -104,8 +104,8 @@ flowchart TD
 - `MainScr.c:1371-1374` — Read confirmed `case 9: /* Meld */` (inside Main_Screen's `switch(special_action_flag)`) calls `STK_MeldWithNode()`.
 - `STK_MeldWithNode` at UNITSTK.c:1645 — Read confirmed it calls `Active_Unit_Stack` then `STK_DoMeldWithNode`.
 - `AI_Next_Turn` called from NEXTTURN.c:648 — grep confirmed `PHASE(AI_Next_Turn())`.
-- `AIDUDES.c:343, 362` — grep confirmed `PHASE(AI_MoveUnits(player_idx))` and `PHASE(AI_MoveUnits(NEUTRAL_PLAYER_IDX))`.
-- `AI_MoveUnits` at SETTLE.c:90 — grep confirmed function definition.
+- `AIDUDES.c:343, 362` — grep confirmed `PHASE(AI_Execute_Orders(player_idx))` and `PHASE(AI_Execute_Orders(NEUTRAL_PLAYER_IDX))`.
+- `AI_Execute_Orders` at SETTLE.c:90 — grep confirmed function definition.
 - `case us_Meld` at SETTLE.c:160-163 — grep confirmed dispatch calls `AI_UNIT_Meld(unit_idx)` at SETTLE.c:162.
 - `AI_UNIT_Meld` at SETTLE.c:224 — Read confirmed function definition (gathers stack via `Player_Army_At_Square`, calls `STK_DoMeldWithNode`, marks troops `us_Ready`).
 - `STK_DoMeldWithNode` at UNITSTK.c:1681 — grep confirmed function definition.

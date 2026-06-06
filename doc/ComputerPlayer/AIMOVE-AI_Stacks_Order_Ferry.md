@@ -14,7 +14,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Stacks_Order_Fer
 
 Set a single unit's status to `us_Ferry`, prime its `dst_wx` field with a "timer" value of 10, and consume its slot in the AI's per-stack unit list.
 
-The unit will then be re-examined on subsequent turns by the `us_Ferry`-status handler (see [`AI_MoveUnits`](AIMOVE-AI_MoveUnits.md) dispatch) — that handler walks the seek-transport list ([`AI_SeekTransport_*`](AIMOVE-AI_Stacks_Ferry_Add_Location.md)) and tries to send the unit toward a transport pickup point.
+The unit will then be re-examined on subsequent turns by the `us_Ferry`-status handler (see [`AI_Execute_Orders`](AIMOVE-AI_Execute_Orders.md) dispatch) — that handler walks the seek-transport list ([`AI_SeekTransport_*`](AIMOVE-AI_Stacks_Ferry_Add_Location.md)) and tries to send the unit toward a transport pickup point.
 
 ## Signature
 

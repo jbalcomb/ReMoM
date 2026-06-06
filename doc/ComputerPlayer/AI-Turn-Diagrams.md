@@ -8,7 +8,7 @@ If a diagram doesn't render in your viewer, look at the inline source — the re
 
 ## Per-turn driver (per AI player)
 
-Where `AI_Set_Unit_Orders` and `AI_MoveUnits` fit in `AI_Next_Turn`:
+Where `AI_Set_Unit_Orders` and `AI_Execute_Orders` fit in `AI_Next_Turn`:
 
 ```mermaid
 sequenceDiagram
@@ -17,7 +17,7 @@ sequenceDiagram
     participant Choose as AI_Choose_War_Landmass
     participant Eval as AI_Evaluate_Continents
     participant Orders as AI_Set_Unit_Orders
-    participant Move as AI_MoveUnits
+    participant Move as AI_Execute_Orders
 
     Note over Driver: per AI player_idx
     Driver->>Choose: AI_Choose_War_Landmass(player_idx)
@@ -26,7 +26,7 @@ sequenceDiagram
     Note over Eval: rewrites _ai_continents.type_array<br/>(preserves lmt_NoTargets, clobbers lmt_Leaveable)
     Driver->>Orders: AI_Set_Unit_Orders(player_idx)
     Note over Orders: per (plane, landmass) dispatch<br/>writes _UNITS.Status + dst_wx/wy
-    Driver->>Move: AI_MoveUnits(player_idx)
+    Driver->>Move: AI_Execute_Orders(player_idx)
     Note over Move: reads _UNITS.Status<br/>dispatches to per-status handlers
 ```
 
@@ -73,7 +73,7 @@ flowchart TD
 
     UnitFields["_UNITS[u].Status<br/>_UNITS[u].dst_wx / dst_wy"]:::state
 
-    subgraph PhaseMove["MOVEMENT PHASE — AI_MoveUnits(player_idx)"]
+    subgraph PhaseMove["MOVEMENT PHASE — AI_Execute_Orders(player_idx)"]
         direction TB
         MoveLoop["for unit_idx in 0.._units:<br/>switch(_UNITS[unit_idx].Status)"]:::func
         MoveLoop --> StatusGate{Status}:::gate
@@ -105,7 +105,7 @@ flowchart TD
 Two of the order-setters classify the target via `g_ai_evaluation_map`:
 
 - **`AI_Stacks_Order_Attack_Target_Or_Goto_Destination`** — reads the target square's eval value. If SITE flag set OR STRENGTH_MASK bits non-zero → `us_Move` (target has a site or units). Else → `us_GOTO` (empty travel destination). This is why opportunistic ambush retargeting in slot 1 keeps the unit in `us_Move` — the new target (free-roaming enemy stack) has STRENGTH_MASK bits set.
-- **`AI_Order_*` family** — each sets its own dedicated status (`us_Settle`, `us_BuildRoad`, etc.) directly without consulting `g_ai_evaluation_map`. The Status determines which `AI_UNIT_*__WIP` handler `AI_MoveUnits` dispatches to.
+- **`AI_Order_*` family** — each sets its own dedicated status (`us_Settle`, `us_BuildRoad`, etc.) directly without consulting `g_ai_evaluation_map`. The Status determines which `AI_UNIT_*__WIP` handler `AI_Execute_Orders` dispatches to.
 
 ### `us_Move` vs `us_GOTO` at the execution level
 

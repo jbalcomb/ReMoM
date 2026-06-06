@@ -7,11 +7,11 @@ ovr158
 How does the AI decide what the Computer Player should do with its units?
 
 Per-turn driver (per AI player)
-Where AI_Set_Unit_Orders and AI_MoveUnits fit in AI_Next_Turn:
+Where AI_Set_Unit_Orders and AI_Execute_Orders fit in AI_Next_Turn:
 The order is strict: Orders writes Status + dst, then Move reads Status + dst. No interleaving. (See AIDUDES.c:241/284/285/327 for the call sites.)
 AI_Next_Turn()
     |-> AI_Set_Unit_Orders()
-    |-> AI_MoveUnits()
+    |-> AI_Execute_Orders()
 
 ...roughly...
 |-> AI_Evaluate_Hostility(player_idx)
@@ -169,11 +169,37 @@ Definitely Done-Done:
 [x]                 |-> AI_Stacks_Init_Build_Target_Order()
 [x]             |-> AI_Stacks_Ocean_Landmass_Orders()                       ...calls AI_Stacks_Init_Build_Target_Order(player_idx, 0, wp);
 [x]                 |-> AI_Stacks_Init_Build_Target_Order()
-[ ]                 |-> AI_Stacks_Do_Meld()
+[x]                 |-> AI_Stacks_Do_Meld()
 [x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 [ ]                 |-> AI_Enemy_Unit_In_Range()
 [x]                 |-> AI_Stacks_Order_Ferry()
 [x]                 |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 /*
     END:  'AI Turn - Orders Phase'
+*/
+/*
+    BEGIN:  'AI Turn - Execute Orders Phase'
+*/
+Definitely Done-Done:
+[ ] Next_Turn_Proc()
+[ ] |-> Next_Turn_Calc()
+[ ]     |-> AI_Next_Turn()
+[x]          |-> AI_Execute_Orders()
+    case us_BuildRoad:
+[ ]     AI_UNIT_BuildRoad__WIP(unit_idx);
+[ ]     AI_UNIT_Move(unit_idx);
+    case us_GOTO:
+[ ]     AI_UNIT_Move(unit_idx);
+    case us_Meld:
+[ ]     AI_UNIT_Meld(unit_idx);
+    case us_Settle:
+[x]     Unit_Army_Do_Settle(unit_idx);
+    case us_Ferry:
+[ ]     AI_UNIT_SeekTransprt__WIP(unit_idx);
+    case us_Move:
+[ ]     AI_UNIT_Move(unit_idx);
+
+
+/*
+    END:  'AI Turn - Execute Orders Phase'
 */

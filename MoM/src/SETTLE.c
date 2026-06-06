@@ -110,17 +110,20 @@ Game-Data:
  *       `_map_plane` to their saved pre-processing values before exiting the
  *       normal path.
  */
-void AI_MoveUnits(int16_t player_idx)
+void AI_Execute_Orders(int16_t player_idx)
 {
     int16_t l_map_plane = 0;
     int16_t l_map_y = 0;
     int16_t l_map_x = 0;
     int16_t unit_idx = 0;
 
+
     /* Store current map state to restore later */
     l_map_x = _map_x;
     l_map_y = _map_y;
     l_map_plane = _map_plane;
+
+    /* ¿ OGBUG  This is in and only in a per-player-loop that already checks for Time-Stop ? */
 
     /* Time Stop Logic Check */
     if (g_timestop_player_num > 0)
@@ -135,17 +138,21 @@ void AI_MoveUnits(int16_t player_idx)
     /* Iterate through all units in the game world */
     for (unit_idx = 0; unit_idx < _units; unit_idx++)
     {
+
         /* Check if unit belongs to the player currently processing AI moves */
         if (_UNITS[unit_idx].owner_idx == (int8_t)player_idx)
         {
-            /* Snapshot state before movement for metrics */
-            int16_t pre_wx = _UNITS[unit_idx].wx;
-            int16_t pre_wy = _UNITS[unit_idx].wy;
-            int16_t pre_status = _UNITS[unit_idx].Status;
-            int16_t pre_dst_wx = _UNITS[unit_idx].dst_wx;
-            int16_t pre_dst_wy = _UNITS[unit_idx].dst_wy;
+
+            /* AI_METRICS */    /* Snapshot state before movement for metrics */
+            /* AI_METRICS */    int16_t pre_wx = _UNITS[unit_idx].wx;
+            /* AI_METRICS */    int16_t pre_wy = _UNITS[unit_idx].wy;
+            /* AI_METRICS */    int16_t pre_status = _UNITS[unit_idx].Status;
+            /* AI_METRICS */    int16_t pre_dst_wx = _UNITS[unit_idx].dst_wx;
+            /* AI_METRICS */    int16_t pre_dst_wy = _UNITS[unit_idx].dst_wy;
 
             /* Process unit orders based on its current Status */
+            /* Switch based on unit status (2 to 16) */
+            /* Logic: bx = status - 2; if (bx > 14) skip; */
             switch(_UNITS[unit_idx].Status)
             {
                 case us_BuildRoad:
@@ -174,21 +181,23 @@ void AI_MoveUnits(int16_t player_idx)
                     AI_UNIT_Move(unit_idx);
                 } break;
                 default:
-                    /* Cases 4-8, 12-15 are skipped */
+                    /* Cases 0-1, 4-8, 12-15 are skipped */
                     break;
             }
 
-            /* Emit unit outcome for non-idle units */
-            if (pre_status == us_GOTO || pre_status == us_Move || pre_status == us_BuildRoad)
-            {
-                AI_Metrics_Emit_Unit_Outcome(_turn, player_idx, unit_idx,
-                    _UNITS[unit_idx].type, pre_status,
-                    pre_wx, pre_wy,
-                    pre_dst_wx, pre_dst_wy,
-                    _UNITS[unit_idx].wx, _UNITS[unit_idx].wy,
-                    _UNITS[unit_idx].Move_Failed);
-            }
+            /* AI_METRICS */    /* Emit unit outcome for non-idle units */
+            /* AI_METRICS */    if (pre_status == us_GOTO || pre_status == us_Move || pre_status == us_BuildRoad)
+            /* AI_METRICS */    {
+            /* AI_METRICS */        AI_Metrics_Emit_Unit_Outcome(_turn, player_idx, unit_idx,
+            /* AI_METRICS */            _UNITS[unit_idx].type, pre_status,
+            /* AI_METRICS */            pre_wx, pre_wy,
+            /* AI_METRICS */            pre_dst_wx, pre_dst_wy,
+            /* AI_METRICS */            _UNITS[unit_idx].wx, _UNITS[unit_idx].wy,
+            /* AI_METRICS */            _UNITS[unit_idx].Move_Failed);
+            /* AI_METRICS */    }
+
         }
+
     }
 
     /* Restore map view coordinates and plane to state before AI movement */

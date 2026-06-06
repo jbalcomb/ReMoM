@@ -499,7 +499,7 @@ AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 // WZD o100p01
 / * MoO2  Module: AIMOVE  Move_AI_() * /
-AI_MoveUnits()
+AI_Execute_Orders()
     case us_BuildRoad:
         AI_UNIT_BuildRoad__WIP(unit_idx);
         AI_UNIT_Move(unit_idx);

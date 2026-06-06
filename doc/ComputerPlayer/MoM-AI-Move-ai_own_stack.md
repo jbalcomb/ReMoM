@@ -302,9 +302,9 @@ So us_Move is uniformly "I'm going to fight something at the destination" and us
 ## AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 Code-Path:
-    AI_Stacks_Order_Attack_Target_Or_Goto_Destination() |-> ¿ ... ? |-> AI_MoveUnits() |-> AI_UNIT_Move()
+    AI_Stacks_Order_Attack_Target_Or_Goto_Destination() |-> ¿ ... ? |-> AI_Execute_Orders() |-> AI_UNIT_Move()
 
-AI_MoveUnits()
+AI_Execute_Orders()
     case us_GOTO:
         AI_UNIT_Move(unit_idx);
     case us_Move:
@@ -328,7 +328,7 @@ AI_Next_Turn (per-AI-player driver)
   │                      └─ writes _UNITS[unit].dst_wx/dst_wy = target
   │                      └─ consumes _ai_own_stack_unit_list[s][u] = ST_UNDEFINED
   │
-  └─ AI_MoveUnits(player_idx)                        [AIDUDES.c:327, SETTLE.c:90]
+  └─ AI_Execute_Orders(player_idx)                        [AIDUDES.c:327, SETTLE.c:90]
        │
        └─ for unit_idx in 0.._units:
             switch(_UNITS[unit_idx].Status):
@@ -344,7 +344,7 @@ AI_Next_Turn (per-AI-player driver)
                         unit_dst_wx = _UNITS[unit_idx].dst_wx;   ← reads dst set by AI_Stacks_Order_Attack_Target_Or_Goto_Destination
                         unit_dst_wy = _UNITS[unit_idx].dst_wy;
                         ... eventually Move_Units(...) ...       ← actual movement
-Plus AI_MoveUnits(NEUTRAL_PLAYER_IDX) at AIDUDES.c:346 — neutrals' garrisons get the same treatment.
+Plus AI_Execute_Orders(NEUTRAL_PLAYER_IDX) at AIDUDES.c:346 — neutrals' garrisons get the same treatment.
 
 
 
@@ -359,7 +359,7 @@ flowchart TD
 Useful diagram types for what we've been documenting:
 flowchart — dispatch graphs, call chains (better than my ASCII art when there are multiple branches/joins)
 stateDiagram-v2 — the lmt_* state machine (writer-by-writer transitions)
-sequenceDiagram — turn-driver flow (AI_Next_Turn → AI_Choose_War_Landmass → AI_Evaluate_Continents → AI_Set_Unit_Orders → AI_MoveUnits), particularly good for showing the temporal ordering of reads vs writes for lmt_NoTargets and lmt_Leaveable
+sequenceDiagram — turn-driver flow (AI_Next_Turn → AI_Choose_War_Landmass → AI_Evaluate_Continents → AI_Set_Unit_Orders → AI_Execute_Orders), particularly good for showing the temporal ordering of reads vs writes for lmt_NoTargets and lmt_Leaveable
 classDiagram — _ai_continents and _UNITS structure relationships
 Tradeoffs vs the ASCII art I've been using
 
