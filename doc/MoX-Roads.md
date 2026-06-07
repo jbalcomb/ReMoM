@@ -63,7 +63,7 @@ XREF:
     WIZ_NextIdleStack()
     j_RdBd_UNIT_MoveStack_STUB()
         Road_Build_Screen()
-        AI_UNIT_Move()
+        AI_Unit_Army_Do_Move()
 
 WIZ_NextIdleStack()
 XREF:

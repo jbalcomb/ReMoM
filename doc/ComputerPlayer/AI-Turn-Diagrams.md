@@ -34,7 +34,7 @@ The order is strict: `Orders` writes Status + dst, then `Move` reads Status + ds
 
 ---
 
-## Order phase → Movement phase: how unit assignments reach `AI_UNIT_Move`
+## Order phase → Movement phase: how unit assignments reach `AI_Unit_Army_Do_Move`
 
 ```mermaid
 flowchart TD
@@ -82,10 +82,10 @@ flowchart TD
         StatusGate -- "us_BuildRoad" --> BuildRoad["AI_UNIT_BuildRoad__WIP"]:::func
         BuildRoad --> UnitMove
         StatusGate -- "us_Meld" --> UnitMeld["AI_UNIT_Meld"]:::func
-        StatusGate -- "us_Settle" --> UnitSettle["Unit_Army_Do_Settle"]:::func
+        StatusGate -- "us_Settle" --> UnitSettle["AI_Unit_Army_Do_Settle"]:::func
         StatusGate -- "us_Ferry" --> UnitSeek["AI_UNIT_SeekTransprt__WIP"]:::func
 
-        UnitMove["AI_UNIT_Move<br/>reads _UNITS[u].dst_wx/wy"]:::func --> MoveUnits["Move_Units<br/>actual movement resolution"]:::terminal
+        UnitMove["AI_Unit_Army_Do_Move<br/>reads _UNITS[u].dst_wx/wy"]:::func --> MoveUnits["Move_Units<br/>actual movement resolution"]:::terminal
 
         MoveUnits -. "post-move: if Status was us_GOTO/us_Move and unit didn't budge" .-> MoveFailed["_UNITS[u].Move_Failed = ST_TRUE<br/>(UNITSTK.c:385)"]:::state
     end
@@ -109,7 +109,7 @@ Two of the order-setters classify the target via `g_ai_evaluation_map`:
 
 ### `us_Move` vs `us_GOTO` at the execution level
 
-Both dispatch to the same `AI_UNIT_Move` handler. The distinction matters only for downstream consumers that gate on Status:
+Both dispatch to the same `AI_Unit_Army_Do_Move` handler. The distinction matters only for downstream consumers that gate on Status:
 
 - **Next turn's slot 1 (`AI_Stacks_Init_Build_Target_Order 3)** uses `Status == us_Move` to detect mid-attack-run stacks for the opportunistic ambush re-check.
 - **Post-move bookkeeping in `UNITSTK.c:385`** sets `Move_Failed = TRUE` if Status was `us_GOTO` or `us_Move` and the unit didn't actually move. (Cleared at the start of each AI turn per `AIDUDES.c:297-303`.)

@@ -302,13 +302,13 @@ So us_Move is uniformly "I'm going to fight something at the destination" and us
 ## AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
 Code-Path:
-    AI_Stacks_Order_Attack_Target_Or_Goto_Destination() |-> ¿ ... ? |-> AI_Execute_Orders() |-> AI_UNIT_Move()
+    AI_Stacks_Order_Attack_Target_Or_Goto_Destination() |-> ¿ ... ? |-> AI_Execute_Orders() |-> AI_Unit_Army_Do_Move()
 
 AI_Execute_Orders()
     case us_GOTO:
-        AI_UNIT_Move(unit_idx);
+        AI_Unit_Army_Do_Move(unit_idx);
     case us_Move:
-        AI_UNIT_Move(unit_idx);
+        AI_Unit_Army_Do_Move(unit_idx);
 
 
 
@@ -332,15 +332,15 @@ AI_Next_Turn (per-AI-player driver)
        │
        └─ for unit_idx in 0.._units:
             switch(_UNITS[unit_idx].Status):
-                case us_GOTO:        → AI_UNIT_Move(unit_idx)         [SETTLE.c:135]
-                case us_Move:        → AI_UNIT_Move(unit_idx)         [SETTLE.c:151]
-                case us_BuildRoad:   → AI_UNIT_BuildRoad__WIP, then AI_UNIT_Move
+                case us_GOTO:        → AI_Unit_Army_Do_Move(unit_idx)         [SETTLE.c:135]
+                case us_Move:        → AI_Unit_Army_Do_Move(unit_idx)         [SETTLE.c:151]
+                case us_BuildRoad:   → AI_UNIT_BuildRoad__WIP, then AI_Unit_Army_Do_Move
                 case us_Meld:        → AI_UNIT_Meld
-                case us_Settle:      → Unit_Army_Do_Settle
+                case us_Settle:      → AI_Unit_Army_Do_Settle
                 case us_Ferry: → AI_UNIT_SeekTransprt__WIP
                 default:             → skip
                   │
-                  └─ AI_UNIT_Move(unit_idx)                            [SETTLE.c:296]
+                  └─ AI_Unit_Army_Do_Move(unit_idx)                            [SETTLE.c:296]
                         unit_dst_wx = _UNITS[unit_idx].dst_wx;   ← reads dst set by AI_Stacks_Order_Attack_Target_Or_Goto_Destination
                         unit_dst_wy = _UNITS[unit_idx].dst_wy;
                         ... eventually Move_Units(...) ...       ← actual movement

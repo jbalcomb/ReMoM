@@ -64,9 +64,9 @@ extern int64_t _main_map_grid_y;
 // WZD dseg:C03E                                                 BEGIN: Main_Screen
 
 // WZD dseg:C03E
-// CRP_OverlandVar_2 dw 0
+extern int16_t CRP_OverlandVar_2;
 // WZD dseg:C040
-// CRP_OverlandVar_4 dw 0
+extern int16_t CRP_OverlandVar_4;
 // WZD dseg:C042
 extern int16_t OVL_MapVar3;
 // WZD dseg:C044
@@ -90,7 +90,7 @@ extern int16_t special_action_flag;
 extern int16_t g_unit_window_fields[MAX_STACK];
 
 // WZD dseg:C064
-// CRP_OverlandVar_3 dw 0
+extern int16_t CRP_OverlandVar_3;
 
 // WZD dseg:C066
 // int16_t _active_stack_path_length;

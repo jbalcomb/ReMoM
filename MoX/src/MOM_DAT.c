@@ -3133,7 +3133,8 @@ int16_t m_resource_id;
 // WZD dseg:C03E                                                 BEGIN: Main_Screen
 
 // WZD dseg:C03E 00 00                                           CRP_OverlandVar_2 dw 0                  ; DATA XREF: Main_Screen+60w
-// WZD dseg:C040 00 00                                           CRP_OverlandVar_4 dw 0                  ; DATA XREF: Main_Screen:loc_4FC07r ...
+// WZD dseg:C040
+// MainScr  int16_t CRP_OverlandVar_4;
 // WZD dseg:C042
 // MainScr  int16_t OVL_MapVar3;
 // WZD dseg:C044
@@ -3153,7 +3154,7 @@ int16_t m_resource_id;
 // WZD dseg:C050 00 00                                           _next_turn_button dw 0                  ; DATA XREF: Main_Screen:@@Check_Input_NextTurnButtonr ...
 // WZD dseg:C052 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+g_unit_window_fields dw 9 dup(0)          ; DATA XREF: IDK_CityScreen_AddFields+2Cw ...
 // WZD dseg:C064
-int16_t CRP_OverlandVar_3;
+// MainScr  int16_t CRP_OverlandVar_3;
 // WZD dseg:C066 00 00                                           _active_stack_path_length dw 0                    ; DATA XREF: Main_Screen+CBDr ...
 
 // WZD dseg:C068

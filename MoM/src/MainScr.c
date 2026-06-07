@@ -236,9 +236,9 @@ char cnst_Moves[] = "Moves:";
 // WZD dseg:C03E                                                 ¿ BEGIN:  ovr057 - Uninitialized Data  (Main_Screen) ?
 
 // WZD dseg:C03E
-// CRP_OverlandVar_2 dw 0
+int16_t CRP_OverlandVar_2;
 // WZD dseg:C040
-// CRP_OverlandVar_4 dw 0
+int16_t CRP_OverlandVar_4;
 // WZD dseg:C042
 int16_t OVL_MapVar3;
 // WZD dseg:C044
@@ -269,7 +269,7 @@ int16_t _next_turn_button;
 // WZD dseg:C052
 int16_t g_unit_window_fields[MAX_STACK];
 // WZD dseg:C064
-// CRP_OverlandVar_3 dw 0
+int16_t CRP_OverlandVar_3;
 
 // WZD dseg:C066
 int16_t _active_stack_path_length;
@@ -882,9 +882,9 @@ void Main_Screen(void)
 
     m_citylist_first_item = 0;
 
-    // TODO  CRP_OverlandVar_2 = 0;  // ? ST_FALSE ?
-    // TODO  CRP_OVL_Obstacle_Var1 = 0;  // ? ST_FALSE ?
-    // TODO  OVL_MapVar3 = 1;  // ? ST_TRUE ?
+    CRP_OverlandVar_2 = 0;
+    CRP_OVL_Obstacle_Var1 = 0;
+    OVL_MapVar3 = 1;
 
     Reset_Map_Draw();
     MainScr_Create_Reduced_Map_Picture();
@@ -894,8 +894,8 @@ void Main_Screen(void)
 
     Set_Unit_Action_Special();
 
-    // TODO  if (CRP_OverlandVar_3 != 1) { CRP_OverlandVar_3 = 0; }  // ? ST_TRUE ST_FALSE ?
-    // TODO  if (CRP_OverlandVar_4 != 1) { CRP_OverlandVar_4 = 0; }  // ? ST_TRUE ST_FALSE ?
+    if(CRP_OverlandVar_3 != 1) { CRP_OverlandVar_3 = 0; }
+    if(CRP_OverlandVar_4 != 1) { CRP_OverlandVar_4 = 0; }
 
     screen_changed = ST_FALSE;
 
@@ -1673,7 +1673,7 @@ g_dbg_fields_trace = 1;
                                 if(_main_map_grid_y == unit_stack_world_y)
                                 {
                                     Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, us_Ready, 0, 0);
-                                    // TODO  CRP_OverlandVar_3 == ST_FALSE;
+                                    CRP_OverlandVar_3 = 0;
                                     _active_stack_has_path = ST_FALSE;
                                 }
                             }

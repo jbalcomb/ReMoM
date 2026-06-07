@@ -23,16 +23,16 @@ AI_Next_Turn()
             |-> AI_Order_Settle()
                 `_UNITS[unit_idx].Status = us_Settle;`
     |-> AI_Execute_Orders()
-        |-> Unit_Army_Do_Settle()
+        |-> AI_Unit_Army_Do_Settle()
         |-> Army_Do_Settle()
 
 AI_Execute_Orders()
     case us_Settle:
     {
-        Unit_Army_Do_Settle(unit_idx);
+        AI_Unit_Army_Do_Settle(unit_idx);
     } break;
 
-Unit_Army_Do_Settle() |-> Army_Do_Settle()
+AI_Unit_Army_Do_Settle() |-> Army_Do_Settle()
 ¿ ~= AI_UNIT_Meld() |-> STK_DoMeldWithNode() ? 
 
 Main_Screen()
@@ -54,7 +54,7 @@ Seven functions across three files implement the AI settler-management pipeline 
 |---|---|---|
 | `AI_Stacks_Do_Settle` | [AIMOVE.c:4071](../../MoM/src/AIMOVE.c#L4071) | Per-(player, landmass) dispatcher (slot 5). Decides for each settler: settle-in-place, hop-to-Tower, move-to-best-square, or send-to-colonize. |
 | `AI_Order_Settle` | [AIMOVE.c:4890](../../MoM/src/AIMOVE.c#L4890) | 3-line order-issuer. Sets `Status = us_Settle`, consumes the stack slot. |
-| `Unit_Army_Do_Settle` | [SETTLE.c:259](../../MoM/src/SETTLE.c#L259) | Status-dispatch handler for `us_Settle`. Finished-guard + `Player_Army_At_Square` + `Army_Do_Settle` + OGBUG mark-all-Ready loop. |
+| `AI_Unit_Army_Do_Settle` | [SETTLE.c:259](../../MoM/src/SETTLE.c#L259) | Status-dispatch handler for `us_Settle`. Finished-guard + `Player_Army_At_Square` + `Army_Do_Settle` + OGBUG mark-all-Ready loop. |
 | `Active_Army_Do_Settle` | [SETTLE.c:292](../../MoM/src/SETTLE.c#L292) | Human-side wrapper. Gathers `Active_Unit_Stack`, calls `Army_Do_Settle`. |
 | `Army_Do_Settle` | [SETTLE.c:301](../../MoM/src/SETTLE.c#L301) | Actual settle machinery. Finds first non-undead settler in the gathered stack and calls `Create_Outpost`. |
 | `AI_Find_Tower_To_Settle_Elsewhere` | [AIMOVE.c:5100](../../MoM/src/AIMOVE.c#L5100) | Tower-hop eligibility check. Returns TRUE + writes off-plane destination iff settler is on the home-Fortress plane, owns a same-landmass Tower, and the off-plane landmass at that Tower isn't Contested or hostile. |
@@ -70,7 +70,7 @@ Settlers (units with `UA_CREATEOUTPOST` ability) need orders every turn until th
 3. **Move toward the best nearby square** (scored by population + production + gold + magic + special resources).
 4. **Send-to-colonize** as a last resort if no good square was found.
 
-The settler bears `Status = us_Settle` until next turn's per-unit dispatch in [`AI_Execute_Orders`](../../MoM/src/SETTLE.c#L113) hits `case us_Settle` and calls `Unit_Army_Do_Settle`. Both paths — AI (`AI_Execute_Orders` → `Unit_Army_Do_Settle` → `Army_Do_Settle` → `Create_Outpost`) and human (`Main_Screen` → `Active_Army_Do_Settle` → `Army_Do_Settle` → `Create_Outpost`) — are fully wired and produce a city.
+The settler bears `Status = us_Settle` until next turn's per-unit dispatch in [`AI_Execute_Orders`](../../MoM/src/SETTLE.c#L113) hits `case us_Settle` and calls `AI_Unit_Army_Do_Settle`. Both paths — AI (`AI_Execute_Orders` → `AI_Unit_Army_Do_Settle` → `Army_Do_Settle` → `Create_Outpost`) and human (`Main_Screen` → `Active_Army_Do_Settle` → `Army_Do_Settle` → `Create_Outpost`) — are fully wired and produce a city.
 
 ## Call paths reaching `Create_Outpost`
 
@@ -96,7 +96,7 @@ flowchart TD
 
     AIMove["AI_Execute_Orders<br/>SETTLE.c:113<br/>(next turn)"]
     DispatchSettle["switch(Status) case us_Settle:<br/>SETTLE.c:164-167"]
-    StubBody["Unit_Army_Do_Settle<br/>SETTLE.c:259<br/>Finished-guard + Player_Army_At_Square +<br/>Army_Do_Settle + us_Ready loop"]
+    StubBody["AI_Unit_Army_Do_Settle<br/>SETTLE.c:259<br/>Finished-guard + Player_Army_At_Square +<br/>Army_Do_Settle + us_Ready loop"]
 
     %% Data stores
     EvalMap[("g_ai_evaluation_map<br/>(per-square target/threat bits)")]
@@ -149,8 +149,8 @@ flowchart TD
 - `Active_Army_Do_Settle` called from MainScr.c:1315 — grep confirmed.
 - `AI_Stacks_Do_Settle` at AIMOVE.c:4071, called from AIMOVE.c:282 (slot 5 of `AI_Set_Unit_Orders` per-landmass dispatch) — grep confirmed.
 - `AI_Order_Settle` at AIMOVE.c:4890 — Read confirmed 3-line body.
-- `case us_Settle` at SETTLE.c:164-167 — grep confirmed dispatch calls `Unit_Army_Do_Settle(unit_idx)` at SETTLE.c:166.
-- `Unit_Army_Do_Settle` at SETTLE.c:259 — Read confirmed implemented body (Finished guard + Player_Army_At_Square + Army_Do_Settle + OGBUG us_Ready loop).
+- `case us_Settle` at SETTLE.c:164-167 — grep confirmed dispatch calls `AI_Unit_Army_Do_Settle(unit_idx)` at SETTLE.c:166.
+- `AI_Unit_Army_Do_Settle` at SETTLE.c:259 — Read confirmed implemented body (Finished guard + Player_Army_At_Square + Army_Do_Settle + OGBUG us_Ready loop).
 - `Army_Do_Settle` at SETTLE.c:301 — Read confirmed full implementation.
 - `Create_Outpost` at Outpost.c:93 — grep confirmed function definition.
 - `AI_Find_Tower_To_Settle_Elsewhere` at AIMOVE.c:5100 — Read confirmed real body with TRUE-return path; renamed from `__STUB` 2026-05-30 (to `AI_CanSettleOffPlane`), then again 2026-06-03 (to current); compiles clean.
@@ -256,10 +256,10 @@ void AI_Order_Settle(int16_t unit_idx, int16_t unit_list_idx, int16_t list_unit_
 
 Same minimal shape as `AI_Stacks_Order_Meld`, `AI_Stacks_Order_Ferry`, etc.: bounds-check, set Status, consume stack slot. The Status persists until next turn's `AI_Execute_Orders` dispatch.
 
-## Code walk — `Unit_Army_Do_Settle` ([lines 259-288](../../MoM/src/SETTLE.c#L259-L288))
+## Code walk — `AI_Unit_Army_Do_Settle` ([lines 259-288](../../MoM/src/SETTLE.c#L259-L288))
 
 ```c
-void Unit_Army_Do_Settle(int16_t unit_idx)
+void AI_Unit_Army_Do_Settle(int16_t unit_idx)
 {
     int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t unit_owner_idx = 0;
@@ -443,7 +443,7 @@ Two-step rename history:
 |---|---|---|---|
 | B1 | [Lines 4120-4135](../../MoM/src/AIMOVE.c#L4120-L4135) | Phase 2 empty-garrison check **early-returns from the entire settle pass** for this landmass if ANY `AISTK_Garrison` stack has zero units. Doesn't filter by landmass — an empty garrison on a DIFFERENT landmass on the same plane still cancels. drake178 flagged in function header. | OG-faithful (asm verified); behavioral — settlers freeze on multi-landmass turns whenever any one garrison is empty |
 | B2 | [Lines 5100-5191](../../MoM/src/AIMOVE.c#L5100-L5191) | `AI_Find_Tower_To_Settle_Elsewhere` gate-stack is highly restrictive (Planar Seal, home-plane, not-in-Tower, owns-Tower-on-current-landmass, off-plane-landmass-not-Contested-or-hostile). drake178's OG name `__ALWAYS_FALSE` reflects empirical "never observed TRUE in traces" — likely true under most realistic game states, but the function has a real TRUE return path. Worth instrumenting if studying off-plane expansion behavior. | OG-faithful; behavioral observation, not a bug |
-| B3 | [SETTLE.c:283-286](../../MoM/src/SETTLE.c#L283-L286) | `Unit_Army_Do_Settle` mark-all-Ready post-loop sets every unit in the gathered stack to `us_Ready`, regardless of prior status. Same OGBUG as `AI_UNIT_Meld`. | OGBUG-faithful; preserved per Dasm |
+| B3 | [SETTLE.c:283-286](../../MoM/src/SETTLE.c#L283-L286) | `AI_Unit_Army_Do_Settle` mark-all-Ready post-loop sets every unit in the gathered stack to `us_Ready`, regardless of prior status. Same OGBUG as `AI_UNIT_Meld`. | OGBUG-faithful; preserved per Dasm |
 
 ## ASCII summary
 
@@ -470,7 +470,7 @@ AI_Order_Settle(unit_idx, stack_idx, list_unit_idx)
 
 
 next turn:
-AI_Execute_Orders → switch(Status) → case us_Settle: → Unit_Army_Do_Settle
+AI_Execute_Orders → switch(Status) → case us_Settle: → AI_Unit_Army_Do_Settle
   ├─ Finished guard
   ├─ Player_Army_At_Square → gather stack at settler's square
   ├─ Army_Do_Settle(troop_count, troops)
@@ -518,5 +518,5 @@ AI_Set_Unit_Orders(player_idx)
 - [MoM-AI-AIMOVE-Index.md](MoM-AI-AIMOVE-Index.md) — function index
 - `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Stacks_Do_Settle.asm` — IDA Pro 5.5 disassembly (ground truth, verified for B2)
 - `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Order_Settle.asm` — IDA Pro 5.5 disassembly
-- `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr100\AI_UNIT_Settle.asm` — IDA Pro 5.5 disassembly of the OG version of the SETTLE.c handler (drake178's OG name `AI_UNIT_Settle`; production renamed to `Unit_Army_Do_Settle`; ground truth, verified for Finished guard + Player_Army_At_Square + leaf call + OGBUG mark-all-Ready)
+- `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr100\AI_UNIT_Settle.asm` — IDA Pro 5.5 disassembly of the OG version of the SETTLE.c handler (drake178's OG name `AI_UNIT_Settle`; production renamed to `AI_Unit_Army_Do_Settle`; ground truth, verified for Finished guard + Player_Army_At_Square + leaf call + OGBUG mark-all-Ready)
 - `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_CanSettleOffPlane__ALWAYS_FALSE.asm` — OG; the drake178 `__ALWAYS_FALSE` suffix is empirical (never-observed-TRUE), not structural — asm has a real TRUE return path. Production C body matches.

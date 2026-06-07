@@ -326,8 +326,8 @@ Down w UU_IDK_Main_Screen_Draw+A0            mov     [_map_y], ax
 Down r AI_Execute_Orders:loc_81E01                mov     ax, [_map_y]                              
 Down w AI_Execute_Orders+AB                       mov     [_map_y], ax                              
 Down r AI_Execute_Orders+B4                       mov     ax, [_map_y]                              
-Down r AI_UNIT_Move+A9                       mov     ax, [_map_y]                              
-Down w AI_UNIT_Move+B8                       mov     [_map_y], ax                              
+Down r AI_Unit_Army_Do_Move+A9                       mov     ax, [_map_y]                              
+Down w AI_Unit_Army_Do_Move+B8                       mov     [_map_y], ax                              
 Down o GAME_NextHumanStack+2E                mov     ax, offset _map_y                         
 Down r sub_9EC10+1F6                         push    [_map_y]                        ; TopY    
 Down r sA9AC5_Events_Anim_Scroll+28          push    [_map_y]                        ; TopY    

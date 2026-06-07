@@ -302,9 +302,9 @@
 - [ ] AI_Execute_Orders
 - [ ] AI_UNIT_BuildRoad__WIP
 - [x] AI_UNIT_Meld__WIP — renamed to AI_UNIT_Meld; body implemented in SETTLE.c:224
-- [ ] AI_UNIT_Move
+- [ ] AI_Unit_Army_Do_Move
 - [ ] AI_UNIT_SeekTransprt__WIP
-- [x] Unit_Army_Do_Settle — renamed from AI_UNIT_Settle__WIP; body implemented; GEMINI variant deleted 2026-06-04
+- [x] AI_Unit_Army_Do_Settle — renamed from AI_UNIT_Settle__WIP; body implemented; GEMINI variant deleted 2026-06-04
 
 ## SOUND
 - [ ] Audio_Error__STUB

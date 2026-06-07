@@ -31,7 +31,7 @@ void AI_Execute_Orders(int16_t player_idx);
 void AI_UNIT_Meld(int16_t unit_idx);
 
 // WZD o100p03
-void Unit_Army_Do_Settle(int16_t unit_idx);
+void AI_Unit_Army_Do_Settle(int16_t unit_idx);
 
 // WZD o100p04
 int16_t Active_Army_Do_Settle(void);
@@ -40,7 +40,7 @@ int16_t Active_Army_Do_Settle(void);
 int16_t Army_Do_Settle(int16_t troop_count, int16_t troops[]);
 
 // WZD o100p06
-int16_t AI_UNIT_Move(int16_t unit_idx);
+int16_t AI_Unit_Army_Do_Move(int16_t unit_idx);
 
 // WZD o100p07
 // sub_8227A()

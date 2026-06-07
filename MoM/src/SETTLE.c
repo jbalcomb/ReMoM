@@ -158,11 +158,11 @@ void AI_Execute_Orders(int16_t player_idx)
                 case us_BuildRoad:
                 {
                     AI_UNIT_BuildRoad__WIP(unit_idx);
-                    AI_UNIT_Move(unit_idx);
+                    AI_Unit_Army_Do_Move(unit_idx);
                 } break;
                 case us_GOTO:
                 {
-                    AI_UNIT_Move(unit_idx);
+                    AI_Unit_Army_Do_Move(unit_idx);
                 } break;
                 case us_Meld:
                 {
@@ -170,7 +170,7 @@ void AI_Execute_Orders(int16_t player_idx)
                 } break;
                 case us_Settle:
                 {
-                    Unit_Army_Do_Settle(unit_idx);
+                    AI_Unit_Army_Do_Settle(unit_idx);
                 } break;
                 case us_Ferry:
                 {
@@ -178,7 +178,7 @@ void AI_Execute_Orders(int16_t player_idx)
                 } break;
                 case us_Move:
                 {
-                    AI_UNIT_Move(unit_idx);
+                    AI_Unit_Army_Do_Move(unit_idx);
                 } break;
                 default:
                     /* Cases 0-1, 4-8, 12-15 are skipped */
@@ -265,7 +265,7 @@ void AI_UNIT_Meld(int16_t unit_idx)
 
 
 // WZD o100p03
-void Unit_Army_Do_Settle(int16_t unit_idx)
+void AI_Unit_Army_Do_Settle(int16_t unit_idx)
 {
     int16_t troops[MAX_STACK] =  { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t unit_owner_idx = 0;
@@ -358,16 +358,33 @@ int16_t Army_Do_Settle(int16_t troop_count, int16_t troops[])
 
 
 // WZD o100p06
-/*
-only other call to Stack_Move_To() is in WIZ_NextIdleStack()
-which wraps Move_Units()
-whose return value is {F,T} - did_move_stack
-*/
-int16_t AI_UNIT_Move(int16_t unit_idx)
+/**
+ * @brief Attempts to move one AI-controlled unit stack toward its destination.
+ *
+ * This routine skips processing when the unit is already marked finished for
+ * the turn. Otherwise, it rebuilds the reduced-map artifacts used by movement,
+ * snapshots the current global map-view coordinates, and forwards movement to
+ * Stack_Move_To() using the unit's owner, destination tile, and plane.
+ *
+ * The movement result from Stack_Move_To() is returned unchanged.
+ *
+ * @param unit_idx Index into the global _UNITS array for the unit whose stack
+ *                 should execute movement.
+ *
+ * @return ST_FALSE if the unit is already finished; otherwise the status value
+ *         returned by Stack_Move_To() indicating movement outcome.
+ *
+ * @note This function has side effects beyond unit position changes:
+ *       - Recreates reduced-map state via Allocate_Reduced_Map() and
+ *         MainScr_Create_Reduced_Map_Picture().
+ *       - Reads and writes global map-view coordinates (_map_x, _map_y) as
+ *         part of legacy movement-call setup.
+ */
+int16_t AI_Unit_Army_Do_Move(int16_t unit_idx)
 {
-    int16_t did_move_stack = 0;
-    int16_t unit_wy = 0;
-    int16_t unit_wx = 0;
+    int16_t return_value = 0;
+    int16_t niu_unit_wy = 0;
+    int16_t niu_unit_wx = 0;
     int16_t unit_owner_idx = 0;
     int16_t unit_wp = 0;
     int16_t l_map_y = 0;
@@ -381,17 +398,17 @@ int16_t AI_UNIT_Move(int16_t unit_idx)
         return ST_FALSE;
     }
 
+    /* ~== MainScr.c  Main_Screen_Reset();  WTF? multiplayer/hotseat? */
     Allocate_Reduced_Map();
     MainScr_Create_Reduced_Map_Picture();
 
     /* Extract unit data to local variables */
-    /* Note: cbw in assembly indicates sign-extension from byte fields */
     unit_dst_wx = (int16_t)_UNITS[unit_idx].dst_wx;
     unit_dst_wy = (int16_t)_UNITS[unit_idx].dst_wy;
     unit_wp = (int16_t)_UNITS[unit_idx].wp;
     unit_owner_idx = (int16_t)_UNITS[unit_idx].owner_idx;
-    unit_wx = (int16_t)_UNITS[unit_idx].wx;
-    unit_wy = (int16_t)_UNITS[unit_idx].wy;
+    niu_unit_wx = (int16_t)_UNITS[unit_idx].wx;
+    niu_unit_wy = (int16_t)_UNITS[unit_idx].wy;
 
     /* Logic involves temporary map coordinate storage */
     /* Assembly shows redundant assignment back to globals before passing pointers */
@@ -401,7 +418,8 @@ int16_t AI_UNIT_Move(int16_t unit_idx)
     _map_y = l_map_y;
 
     /* Attempt to move the stack */
-    did_move_stack = Stack_Move_To(
+    /* DEDU  maybe, probably was just `return Stack_Move_To();` */
+    return_value = Stack_Move_To(
         unit_owner_idx, 
         unit_idx, 
         unit_dst_wx, 
@@ -411,7 +429,7 @@ int16_t AI_UNIT_Move(int16_t unit_idx)
         unit_wp
     );
 
-    return did_move_stack;
+    return return_value;
 }
 
 

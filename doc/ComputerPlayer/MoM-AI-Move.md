@@ -185,19 +185,20 @@ Definitely Done-Done:
 [ ] |-> Next_Turn_Calc()
 [ ]     |-> AI_Next_Turn()
 [x]          |-> AI_Execute_Orders()
-    case us_BuildRoad:
+[ ]             |-> AI_Unit_Army_Do_Move()
+[ ]                 |-> Allocate_Reduced_Map()
+[ ]                 |-> MainScr_Create_Reduced_Map_Picture()
+[ ]                 |-> Stack_Move_To()
+[ ]                     |-> Build_RoadBuilder_Stack()
+
 [ ]     AI_UNIT_BuildRoad__WIP(unit_idx);
-[ ]     AI_UNIT_Move(unit_idx);
-    case us_GOTO:
-[ ]     AI_UNIT_Move(unit_idx);
-    case us_Meld:
+
 [ ]     AI_UNIT_Meld(unit_idx);
-    case us_Settle:
-[x]     Unit_Army_Do_Settle(unit_idx);
-    case us_Ferry:
+
+[x]     AI_Unit_Army_Do_Settle(unit_idx);
+
 [ ]     AI_UNIT_SeekTransprt__WIP(unit_idx);
-    case us_Move:
-[ ]     AI_UNIT_Move(unit_idx);
+
 
 
 /*
