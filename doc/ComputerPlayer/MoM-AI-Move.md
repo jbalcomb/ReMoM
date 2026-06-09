@@ -191,13 +191,15 @@ Definitely Done-Done:
 [ ]                 |-> Stack_Move_To()
 [ ]                     |-> Build_RoadBuilder_Stack()
 
-[ ]     AI_Unit_Army_Do_Road(unit_idx);
+[x]     AI_Unit_Army_Do_Road(unit_idx);
 
-[ ]     AI_Unit_Army_Do_Meld(unit_idx);
+[x]     AI_Unit_Army_Do_Meld(unit_idx);
+[x]         |-> Army_Do_Meld
 
 [x]     AI_Unit_Army_Do_Settle(unit_idx);
+[x]         |-> Army_Do_Settle(troop_count, troops);
 
-[ ]     AI_UNIT_SeekTransprt__WIP(unit_idx);
+[x]     AI_Unit_Army_Do_Ferry(unit_idx);
 
 
 

@@ -337,7 +337,7 @@ AI_Next_Turn (per-AI-player driver)
                 case us_BuildRoad:   → AI_Unit_Army_Do_Road, then AI_Unit_Army_Do_Move
                 case us_Meld:        → AI_Unit_Army_Do_Meld
                 case us_Settle:      → AI_Unit_Army_Do_Settle
-                case us_Ferry: → AI_UNIT_SeekTransprt__WIP
+                case us_Ferry: → AI_Unit_Army_Do_Ferry
                 default:             → skip
                   │
                   └─ AI_Unit_Army_Do_Move(unit_idx)                            [SETTLE.c:296]

@@ -83,7 +83,7 @@ flowchart TD
         BuildRoad --> UnitMove
         StatusGate -- "us_Meld" --> UnitMeld["AI_Unit_Army_Do_Meld"]:::func
         StatusGate -- "us_Settle" --> UnitSettle["AI_Unit_Army_Do_Settle"]:::func
-        StatusGate -- "us_Ferry" --> UnitSeek["AI_UNIT_SeekTransprt__WIP"]:::func
+        StatusGate -- "us_Ferry" --> UnitSeek["AI_Unit_Army_Do_Ferry"]:::func
 
         UnitMove["AI_Unit_Army_Do_Move<br/>reads _UNITS[u].dst_wx/wy"]:::func --> MoveUnits["Move_Units<br/>actual movement resolution"]:::terminal
 

@@ -8,7 +8,7 @@ AI_Execute_Orders()
     |-> AI_Unit_Army_Do_Move()                                (us_GOTO, us_Move)
     |-> AI_Unit_Army_Do_Meld()                                (us_Meld)
     |-> AI_Unit_Army_Do_Settle()                         (us_Settle)
-    |-> AI_UNIT_SeekTransprt__WIP()                   (us_Ferry)
+    |-> AI_Unit_Army_Do_Ferry()                   (us_Ferry)
     |-> AI_Metrics_Emit_Unit_Outcome()               (ReMoM instrumentation)
 
 ---
@@ -83,7 +83,7 @@ Flat scan of all `_units` filtered by `owner_idx == player_idx`, then dispatch o
 | `us_GOTO` (3) | `AI_Unit_Army_Do_Move(unit_idx)` | `sw_aius_03` → `sw_aius_16` |
 | `us_Meld` (9) | `AI_Unit_Army_Do_Meld(unit_idx)` | `sw_aius_09` |
 | `us_Settle` (10) | `AI_Unit_Army_Do_Settle(unit_idx)` | `sw_aius_10` (OG `AI_UNIT_Settle`) |
-| `us_Ferry` (11) | `AI_UNIT_SeekTransprt__WIP(unit_idx)` | `sw_aius_11` |
+| `us_Ferry` (11) | `AI_Unit_Army_Do_Ferry(unit_idx)` | `sw_aius_11` |
 | `us_Move` (16) | `AI_Unit_Army_Do_Move(unit_idx)` | `sw_aius_16` |
 | everything else (4-8, 12-15) | `default:` — do nothing | falls to loop tail |
 
@@ -132,7 +132,7 @@ AI_Execute_Orders(player_idx)            ── EXECUTE orders already stamped o
               us_GOTO(3) / us_Move(16): AI_Unit_Army_Do_Move
               us_Meld(9):   AI_Unit_Army_Do_Meld
               us_Settle(10): AI_Unit_Army_Do_Settle     (= OG AI_UNIT_Settle)
-              us_Ferry(11):  AI_UNIT_SeekTransprt__WIP
+              us_Ferry(11):  AI_Unit_Army_Do_Ferry
               default (4-8,12-15): nothing
           if pre_status in {GOTO,Move,BuildRoad}: AI_Metrics_Emit_Unit_Outcome   (ReMoM)
   restore _map_x/_map_y/_prev_world_x/_prev_world_y/_map_plane

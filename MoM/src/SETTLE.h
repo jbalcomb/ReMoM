@@ -55,7 +55,7 @@ void UNIT_PushOffTile(int16_t unit_idx);
 int16_t Unit_Space_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t unit_idx);
 
 // WZD o100p11
-void AI_UNIT_SeekTransprt__WIP(uint16_t unit_idx);
+void AI_Unit_Army_Do_Ferry(uint16_t unit_idx);
 
 // WZD o100p12
 void AI_Unit_Army_Do_Road(int16_t unit_idx);

@@ -175,7 +175,7 @@ void AI_Execute_Orders(int16_t player_idx)
                 } break;
                 case us_Ferry:
                 {
-                    AI_UNIT_SeekTransprt__WIP(unit_idx);
+                    AI_Unit_Army_Do_Ferry(unit_idx);
                 } break;
                 case us_Move:
                 {
@@ -682,10 +682,46 @@ Done:
 /*
 
 */
-void AI_UNIT_SeekTransprt__WIP(uint16_t unit_idx)
+void AI_Unit_Army_Do_Ferry(uint16_t unit_idx)
 {
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t unit_owner_idx = 0;
+    int16_t unit_wp = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t troop_count = 0;
 
+    /* Check if unit is already finished its turn */
+    if(_UNITS[unit_idx].Finished == ST_TRUE)
+    {
+        return;
+    }
 
+    /* Extract unit data for army search */
+    unit_wx = _UNITS[unit_idx].wx;
+    unit_wy = _UNITS[unit_idx].wy;
+    unit_wp = _UNITS[unit_idx].wp;
+    unit_owner_idx = _UNITS[unit_idx].owner_idx;
+
+    /* Get list of units at the current location belonging to the owner */
+    Player_Army_At_Square(unit_wx, unit_wy, unit_wp, unit_owner_idx, &troop_count, troops);
+
+    /* 
+     * In this AI context, dst_wx is repurposed as a counter/wait timer. 
+     * The AI decrements it while waiting for transport or rendezvous.
+     */
+    _UNITS[unit_idx].dst_wx -= 1;
+
+    /* 
+     * Transition back to 'Ready' state if:
+     * 1. The wait timer (dst_wx) has expired (< 1)
+     * 2. There is more than one unit at the square (regrouped with army)
+     */
+    if(_UNITS[unit_idx].dst_wx < 1 || troop_count > 1)
+    {
+        _UNITS[unit_idx].Status = us_Ready;
+        _UNITS[unit_idx].dst_wx = 0;
+    }
 
 }
 
