@@ -25,7 +25,7 @@ game.turn = 1
 # Identity (sanity check, unchanged from new game config)
 player[0].name = Rjak
 player[0].wizard_id = 6
-player[0].capital_race = 8
+player[0].capital_race = 12
 player[0].banner_id = 4
 
 # Research pick: Resist Magic selected via click (54,38) on picker
@@ -40,7 +40,7 @@ player[0].mana_reserve = 3
 player[0].spell_casting_skill = 384
 # gold: 75 + income - maintenance - upkeep (tracks current worldgen/economy;
 # re-derive the exact breakdown if needed)
-player[0].gold_reserve = 79
+player[0].gold_reserve = 76
 # research_cost_remaining = Resist Magic base cost (just selected, no progress yet)
 # NONDET player[0].research_cost_remaining -- observed values across 5 runs: 60, 40, 20, 20, 40  (set aside until determinism is restored)
 # player[0].research_cost_remaining = 60
@@ -48,73 +48,72 @@ player[0].gold_reserve = 79
 # Home city: renamed via popup
 city[0].name = Claudesville
 city[0].owner_idx = 0
-city[0].race = 8
+city[0].race = 12
 
-# Patrol click set status=1 on the human's capital stack: unit[0] (Spearmen,
-# also finished=1) and unit[3] (Swordsmen).
+# Patrol click set status=1 on the human's capital stack: unit[0] and unit[5]
+# (both at the capital, both finished=1).  Units pair as unit[N]/unit[N+5] for player N.
 unit[0].owner_idx = 0
-unit[0].wx = 35
-unit[0].wy = 29
+unit[0].wx = 36
+unit[0].wy = 14
 unit[0].wp = 0
 unit[0].status = 1
 unit[0].finished = 1
 
-unit[3].owner_idx = 0
-unit[3].wx = 35
-unit[3].wy = 29
-unit[3].wp = 0
-unit[3].status = 1
+unit[5].owner_idx = 0
+unit[5].wx = 36
+unit[5].wy = 14
+unit[5].wp = 0
+unit[5].status = 1
+unit[5].finished = 1
 
 # ==========================================================================
-#  Player 1 — Tlaloc
+#  Player 1 — Custom
 # ==========================================================================
 
 # NONDET player[1].researching_spell_idx -- observed values across 5 runs: 210, 2, 211, 2, 7  (set aside until determinism is restored)
 # player[1].researching_spell_idx = 210
 
-unit[4].owner_idx = 1
-unit[4].wx = 45
-unit[4].wy = 11
-unit[4].wp = 0
-unit[4].status = 0
-
-unit[5].owner_idx = 1
-unit[5].wx = 45
-unit[5].wy = 11
-unit[5].wp = 0
-unit[5].status = 0
-unit[5].finished = 0
+unit[1].owner_idx = 1
+unit[1].wx = 34
+unit[1].wy = 21
+unit[1].wp = 1
+unit[1].status = 0
 
 # ==========================================================================
-#  Player 2 — Raven
+#  Player 2 — Freya
 # ==========================================================================
 
 # NONDET player[2].researching_spell_idx -- observed values across 5 runs: 169, 202, 161, 203, 203  (set aside until determinism is restored)
 # player[2].researching_spell_idx = 169
-# (no Player 2 starting unit is constrained in this test)
+
+unit[2].owner_idx = 2
+unit[2].wx = 16
+unit[2].wy = 8
+unit[2].wp = 0
+unit[2].status = 0
 
 # ==========================================================================
-#  Player 3 — Merlin
+#  Player 3 — Tauron
 # ==========================================================================
 
 # NONDET player[3].researching_spell_idx -- observed values across 5 runs: 211, 122, 207, 205, 212  (set aside until determinism is restored)
 # player[3].researching_spell_idx = 211
 
-unit[1].owner_idx = 3
-unit[1].wx = 34
-unit[1].wy = 16
-unit[1].wp = 0
-unit[1].status = 0
+unit[3].owner_idx = 3
+unit[3].wx = 38
+unit[3].wy = 31
+unit[3].wp = 0
+unit[3].status = 0
 
 # ==========================================================================
-#  Player 4 — Oberic
+#  Player 4 — Raven
 # ==========================================================================
 
 # NONDET player[4].researching_spell_idx -- observed values across 5 runs: 7, 6, 8, 2, 207  (set aside until determinism is restored)
 # player[4].researching_spell_idx = 7
 
-unit[2].owner_idx = 4
-unit[2].wx = 21
-unit[2].wy = 19
-unit[2].wp = 0
-unit[2].status = 0
+unit[4].owner_idx = 4
+unit[4].wx = 5
+unit[4].wy = 28
+unit[4].wp = 0
+unit[4].status = 0

@@ -37,11 +37,11 @@ game.landsize = 2
 game.magic = 1
 game.difficulty = 2
 # cities and units now include neutral cities and their garrisons from
-# Generate_Neutral_Cities() (the 5 wizard capitals are only part of the 32 cities)
-game.cities = 32
-game.units = 49
+# Generate_Neutral_Cities() (the 5 wizard capitals are only part of the 30 cities)
+game.cities = 30
+game.units = 26
 game.turn = 0
-game.unit = 0
+game.unit = 5
 
 # =============================================================================
 # Wizards (player[0]: human "Rjak"; players 1-4: AI; player[5]: neutral)
@@ -49,140 +49,143 @@ game.unit = 0
 
 player[0].name = Rjak
 player[0].wizard_id = 6
-player[0].capital_race = 8
+player[0].capital_race = 12
 player[0].banner_id = 4
 player[0].fame = 0
 
-player[1].name = Tlaloc
-player[1].wizard_id = 12
-player[1].capital_race = 4
-player[1].banner_id = 1
+player[1].name = Custom
+player[1].wizard_id = 14
+player[1].capital_race = 10
+player[1].banner_id = 3
 
-player[2].name = Raven
-player[2].wizard_id = 1
-player[2].capital_race = 4
-player[2].banner_id = 0
+player[2].name = Freya
+player[2].wizard_id = 9
+player[2].capital_race = 2
+player[2].banner_id = 1
 
-player[3].name = Merlin
-player[3].wizard_id = 0
-player[3].capital_race = 13
+player[3].name = Tauron
+player[3].wizard_id = 8
+player[3].capital_race = 3
 player[3].banner_id = 0
 
-player[4].name = Oberic
-player[4].wizard_id = 5
-player[4].capital_race = 3
+player[4].name = Raven
+player[4].wizard_id = 1
+player[4].capital_race = 13
 player[4].banner_id = 0
 
 # =============================================================================
 # Wizard capital cities — one per wizard.  Generate_Neutral_Cities() also places
-# neutral cities (game.cities = 32 total); only the 5 capitals are asserted here.
+# neutral cities (game.cities = 30 total); only the 5 capitals are asserted here.
 # =============================================================================
 
-city[0].name = Newcastle
+# NONDET city[0].name -- the human capital is unnamed at worldgen (the player names
+# it later; cf. "Claudesville" in the continue test).  Under Release this buffer is
+# uninitialized and varies run-to-run (observed: Xanten, Gotartop, Charack).  Every
+# other city name IS deterministic, so this is specific to the human capital slot.
+# city[0].name = Xanten
 city[0].owner_idx = 0
-city[0].race = 8
-city[0].wx = 35
-city[0].wy = 29
+city[0].race = 12
+city[0].wx = 36
+city[0].wy = 14
 
-city[1].name = Raug Wall
+city[1].name = Mudspray
 city[1].owner_idx = 1
-city[1].race = 4
-city[1].wx = 45
-city[1].wy = 11
+city[1].race = 10
+city[1].wx = 34
+city[1].wy = 21
 
-city[2].name = Crag Keep
+city[2].name = Jet
 city[2].owner_idx = 2
-city[2].race = 4
-city[2].wx = 10
-city[2].wy = 9
+city[2].race = 2
+city[2].wx = 16
+city[2].wy = 8
 
-city[3].name = Bryn
+city[3].name = Doomcastle
 city[3].owner_idx = 3
-city[3].race = 13
-city[3].wx = 34
-city[3].wy = 16
+city[3].race = 3
+city[3].wx = 38
+city[3].wy = 31
 
-city[4].name = Dragon Pass
+city[4].name = Undermarsh
 city[4].owner_idx = 4
-city[4].race = 3
-city[4].wx = 21
-city[4].wy = 19
+city[4].race = 13
+city[4].wx = 5
+city[4].wy = 28
 
 # =============================================================================
-# Starting units — each wizard gets two starting units; the engine assigns them
-# across indices 0..9 interleaved by owner, so they are grouped by owner below.
-# unit[10..11] are the neutral (owner 5) starting garrison.
-# Generate_Neutral_Cities() adds further neutral-city garrisons (units 12..48,
-# game.units = 49); those are intentionally left unconstrained.
+# Starting units — two per wizard, paired as unit[N] (first) and unit[N+5]
+# (second) for player N.  unit[10..11] are the neutral (owner 5) garrison.
+# Generate_Neutral_Cities() adds further neutral-city garrisons (units 12..25,
+# game.units = 26); those are intentionally left unconstrained.
 # =============================================================================
 
-# Player 0 — Rjak (human): Spearmen + Swordsmen at the capital
+# Player 0 — Rjak (human)
 unit[0].owner_idx = 0
-unit[0].type = 104
-unit[0].wx = 35
-unit[0].wy = 29
+unit[0].type = 137
+unit[0].wx = 36
+unit[0].wy = 14
 unit[0].status = 0
 
-unit[3].owner_idx = 0
-unit[3].type = 105
-unit[3].wx = 35
-unit[3].wy = 29
-unit[3].status = 0
+unit[5].owner_idx = 0
+unit[5].type = 138
+unit[5].wx = 36
+unit[5].wy = 14
 
-# Player 1 — Tlaloc
-unit[4].owner_idx = 1
-unit[4].type = 76
-unit[4].wx = 45
-unit[4].wy = 11
-unit[4].status = 0
-
-unit[5].owner_idx = 1
-unit[5].type = 76
-unit[5].wx = 45
-unit[5].wy = 11
-
-# Player 2 — Raven
-unit[6].owner_idx = 2
-unit[6].type = 76
-unit[6].wx = 10
-unit[6].wy = 9
-
-unit[7].owner_idx = 2
-unit[7].type = 76
-unit[7].wx = 10
-unit[7].wy = 9
-
-# Player 3 — Merlin
-unit[1].owner_idx = 3
-unit[1].type = 147
+# Player 1 — Custom
+unit[1].owner_idx = 1
+unit[1].type = 120
 unit[1].wx = 34
-unit[1].wy = 16
+unit[1].wy = 21
 unit[1].status = 0
 
-unit[8].owner_idx = 3
-unit[8].type = 148
-unit[8].wx = 34
-unit[8].wy = 16
+unit[6].owner_idx = 1
+unit[6].type = 121
+unit[6].wx = 34
+unit[6].wy = 21
 
-# Player 4 — Oberic
-unit[2].owner_idx = 4
-unit[2].type = 66
-unit[2].wx = 21
-unit[2].wy = 19
+# Player 2 — Freya
+unit[2].owner_idx = 2
+unit[2].type = 57
+unit[2].wx = 16
+unit[2].wy = 8
 unit[2].status = 0
 
+unit[7].owner_idx = 2
+unit[7].type = 58
+unit[7].wx = 16
+unit[7].wy = 8
+
+# Player 3 — Tauron
+unit[3].owner_idx = 3
+unit[3].type = 66
+unit[3].wx = 38
+unit[3].wy = 31
+unit[3].status = 0
+
+unit[8].owner_idx = 3
+unit[8].type = 67
+unit[8].wx = 38
+unit[8].wy = 31
+
+# Player 4 — Raven
+unit[4].owner_idx = 4
+unit[4].type = 147
+unit[4].wx = 5
+unit[4].wy = 28
+unit[4].status = 0
+
 unit[9].owner_idx = 4
-unit[9].type = 67
-unit[9].wx = 21
-unit[9].wy = 19
+unit[9].type = 148
+unit[9].wx = 5
+unit[9].wy = 28
 
 # Player 5 — neutral starting garrison
 unit[10].owner_idx = 5
-unit[10].type = 40
-unit[10].wx = 28
-unit[10].wy = 26
+unit[10].type = 128
+unit[10].wx = 8
+unit[10].wy = 21
 
 unit[11].owner_idx = 5
-unit[11].type = 40
-unit[11].wx = 28
-unit[11].wy = 26
+unit[11].type = 90
+unit[11].wx = 39
+unit[11].wy = 24

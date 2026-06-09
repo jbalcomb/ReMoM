@@ -16,20 +16,21 @@
 # --- Wizard identity (unchanged from new game config, sanity check) ---
 player[0].name = Rjak
 player[0].wizard_id = 6
-player[0].capital_race = 8
+player[0].capital_race = 12
 player[0].banner_id = 4
 
 # --- Home city: renamed via popup ---
 city[0].name = Claudesville
 city[0].owner_idx = 0
-city[0].race = 8
+city[0].race = 12
 
 # --- Home stack units: both patrolled (status=1=us_Patrol, finished=1) ---
-# The human's capital stack is unit[0] (Spearmen) + unit[3] (Swordsmen).
+# The human's capital stack is unit[0] (first) + unit[5] (second); paired as
+# unit[N]/unit[N+5] per player N in this world layout.
 unit[0].owner_idx = 0
 unit[0].status = 1
 unit[0].finished = 1
 
-unit[3].owner_idx = 0
-unit[3].status = 1
-unit[3].finished = 1
+unit[5].owner_idx = 0
+unit[5].status = 1
+unit[5].finished = 1
