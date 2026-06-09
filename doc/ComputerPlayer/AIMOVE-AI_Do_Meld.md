@@ -8,9 +8,9 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Order_Meld.c
 IDGI
 
 Main_Screen()
-    |-> STK_MeldWithNode()
+    |-> Active_Army_Do_Meld()
         |-> Active_Unit_Stack()
-        |-> STK_DoMeldWithNode()
+        |-> Army_Do_Meld()
 AI_Next_Turn()
 
     |-> AI_Set_Unit_Orders()
@@ -21,20 +21,20 @@ AI_Next_Turn()
             |-> AI_Stacks_Do_Meld()
                 |-> AI_Stacks_Order_Meld()
     |-> AI_Execute_Orders()
-        |-> AI_UNIT_Meld()
-            |-> STK_DoMeldWithNode()
+        |-> AI_Unit_Army_Do_Meld()
+            |-> Army_Do_Meld()
 
-The two flows reach the same destination (STK_DoMeldWithNode) but gather "the stack" from completely different data sources.
-STK_MeldWithNode (human path) — pulls from UI selection state
+The two flows reach the same destination (Army_Do_Meld) but gather "the stack" from completely different data sources.
+Active_Army_Do_Meld (human path) — pulls from UI selection state
  * Input: no parameters except output buffers.
  * Source: _unit_stack[] — the global current-selection array that the UI maintains.
  * Filter: .active == ST_TRUE — units the human has marked active in the current selection.
  * Context: runs right after a click on the Meld special-action button. The "stack" IS whatever the human has actively selected via the UI.
-AI_UNIT_Meld (AI path) — synthesizes the stack from world position
+AI_Unit_Army_Do_Meld (AI path) — synthesizes the stack from world position
  * Input: an explicit (wx, wy, wp, owner) tuple — derived from a starting unit_idx.
  * Source: _UNITS[] directly, walked end-to-end.
  * Filter: same square + same owner (with an extra in_tower clause that bypasses the plane match).
- * Context: runs during AI turn processing where there's no UI selection. The AI has a single unit_idx and needs to gather all OTHER units belonging to the same owner at the same square (because the meld machinery in STK_DoMeldWithNode needs the full stack — to find a Guardian Spirit if present, to mark them all us_Ready afterward, etc.).
+ * Context: runs during AI turn processing where there's no UI selection. The AI has a single unit_idx and needs to gather all OTHER units belonging to the same owner at the same square (because the meld machinery in Army_Do_Meld needs the full stack — to find a Guardian Spirit if present, to mark them all us_Ready afterward, etc.).
 
 ---
 
@@ -56,34 +56,34 @@ A melder is the meta-AI's primary node-acquisition vehicle:
 
 When a melder is sitting on a node owned by another wizard (or by no one) and gets the `us_Meld` status, the next turn's dispatch is INTENDED to flip ownership so that the node starts feeding mana into THIS player's spell income. So this pair is the AI's strategic mana-grab dispatcher.
 
-**Production state of the downstream pathway.** The AI dispatch chain reaches `STK_DoMeldWithNode` end-to-end in current production:
-- AIDUDES per-turn AI processing reaches [SETTLE.c:162](../../MoM/src/SETTLE.c#L162) — `case us_Meld:` dispatches to `AI_UNIT_Meld(unit_idx)`.
-- `AI_UNIT_Meld` at [SETTLE.c:224](../../MoM/src/SETTLE.c#L224) checks `Finished`, gathers the on-square stack via `Player_Army_At_Square`, calls `STK_DoMeldWithNode`, then sets every gathered troop's status to `us_Ready` (drake178-flagged OGBUG that overwrites busy statuses).
-- `STK_DoMeldWithNode` at [UNITSTK.c:1681](../../MoM/src/UNITSTK.c#L1681) handles `Can_Meld` (own, no owner, or Guardian-Spirit 25% roll), then `_NODES[node_idx].owner_idx = unit_owner;` and `Kill_Unit(melder_unit_idx, 1);`. Reached via both the human special-action UI path AND the AI `us_Meld` Status dispatch.
+**Production state of the downstream pathway.** The AI dispatch chain reaches `Army_Do_Meld` end-to-end in current production:
+- AIDUDES per-turn AI processing reaches [SETTLE.c:162](../../MoM/src/SETTLE.c#L162) — `case us_Meld:` dispatches to `AI_Unit_Army_Do_Meld(unit_idx)`.
+- `AI_Unit_Army_Do_Meld` at [SETTLE.c:224](../../MoM/src/SETTLE.c#L224) checks `Finished`, gathers the on-square stack via `Player_Army_At_Square`, calls `Army_Do_Meld`, then sets every gathered troop's status to `us_Ready` (drake178-flagged OGBUG that overwrites busy statuses).
+- `Army_Do_Meld` at [UNITSTK.c:1681](../../MoM/src/UNITSTK.c#L1681) handles `Can_Meld` (own, no owner, or Guardian-Spirit 25% roll), then `_NODES[node_idx].owner_idx = unit_owner;` and `Kill_Unit(melder_unit_idx, 1);`. Reached via both the human special-action UI path AND the AI `us_Meld` Status dispatch.
 
-So in current production: `AI_Stacks_Do_Meld` → `AI_Stacks_Order_Meld` → `Status = us_Meld` → next turn → `AI_UNIT_Meld(unit_idx)` → `STK_DoMeldWithNode` → node-ownership flip + spirit kill. The strategic-intent dispatcher and the execution machinery are now wired together.
+So in current production: `AI_Stacks_Do_Meld` → `AI_Stacks_Order_Meld` → `Status = us_Meld` → next turn → `AI_Unit_Army_Do_Meld(unit_idx)` → `Army_Do_Meld` → node-ownership flip + spirit kill. The strategic-intent dispatcher and the execution machinery are now wired together.
 
-### Call paths reaching `STK_DoMeldWithNode`
+### Call paths reaching `Army_Do_Meld`
 
-The actual node-ownership-flip machinery (`STK_DoMeldWithNode` at [UNITSTK.c:1681](../../MoM/src/UNITSTK.c#L1681)) is reachable through two production paths — human special-action and AI per-turn dispatch — both now wired end-to-end.
+The actual node-ownership-flip machinery (`Army_Do_Meld` at [UNITSTK.c:1681](../../MoM/src/UNITSTK.c#L1681)) is reachable through two production paths — human special-action and AI per-turn dispatch — both now wired end-to-end.
 
 ```mermaid
 flowchart TD
     %% Human path
     MainScreen(["Main_Screen<br/>MainScr.c:773"])
     MainScr["switch(special_action_flag)<br/>case 9: /* Meld */<br/>MainScr.c:1371-1374"]
-    StkMeld["STK_MeldWithNode<br/>UNITSTK.c:1645"]
+    StkMeld["Active_Army_Do_Meld<br/>UNITSTK.c:1645"]
     ActiveStack["Active_Unit_Stack<br/>fills troops[] from UI selection"]
 
     %% AI dispatch path
     AINext(["AI_Next_Turn<br/>NEXTTURN.c:648<br/>(called from Next_Turn_Calc)"])
     AIMove["AI_Execute_Orders<br/>SETTLE.c:90<br/>(called AIDUDES.c:343, 362)"]
     DispatchMeld["switch(Status) case us_Meld:<br/>SETTLE.c:160-163"]
-    AIUnitMeld["AI_UNIT_Meld<br/>SETTLE.c:224"]
+    AIUnitMeld["AI_Unit_Army_Do_Meld<br/>SETTLE.c:224"]
     PlayerArmy["Player_Army_At_Square<br/>fills troops[] from world position"]
 
     %% Central target
-    Target(["STK_DoMeldWithNode<br/>UNITSTK.c:1681<br/>━━━━━━━━━━━━━━━<br/>flip _NODES[node].owner_idx<br/>Kill_Unit(melder, 1)"])
+    Target(["Army_Do_Meld<br/>UNITSTK.c:1681<br/>━━━━━━━━━━━━━━━<br/>flip _NODES[node].owner_idx<br/>Kill_Unit(melder, 1)"])
 
     %% Edges
     MainScreen --> MainScr --> StkMeld --> ActiveStack --> Target
@@ -97,18 +97,18 @@ flowchart TD
 ```
 
 **Legend:**
-- 🟢 Green: both call paths reach `STK_DoMeldWithNode`. Human path pulls the stack from UI selection state (`_unit_stack[]` via `Active_Unit_Stack`); AI path synthesizes the stack from world position (`_UNITS[]` via `Player_Army_At_Square`).
+- 🟢 Green: both call paths reach `Army_Do_Meld`. Human path pulls the stack from UI selection state (`_unit_stack[]` via `Active_Unit_Stack`); AI path synthesizes the stack from world position (`_UNITS[]` via `Player_Army_At_Square`).
 
 **Verified line refs (this section only):**
 - `Main_Screen` at MainScr.c:773 — grep confirmed function definition.
-- `MainScr.c:1371-1374` — Read confirmed `case 9: /* Meld */` (inside Main_Screen's `switch(special_action_flag)`) calls `STK_MeldWithNode()`.
-- `STK_MeldWithNode` at UNITSTK.c:1645 — Read confirmed it calls `Active_Unit_Stack` then `STK_DoMeldWithNode`.
+- `MainScr.c:1371-1374` — Read confirmed `case 9: /* Meld */` (inside Main_Screen's `switch(special_action_flag)`) calls `Active_Army_Do_Meld()`.
+- `Active_Army_Do_Meld` at UNITSTK.c:1645 — Read confirmed it calls `Active_Unit_Stack` then `Army_Do_Meld`.
 - `AI_Next_Turn` called from NEXTTURN.c:648 — grep confirmed `PHASE(AI_Next_Turn())`.
 - `AIDUDES.c:343, 362` — grep confirmed `PHASE(AI_Execute_Orders(player_idx))` and `PHASE(AI_Execute_Orders(NEUTRAL_PLAYER_IDX))`.
 - `AI_Execute_Orders` at SETTLE.c:90 — grep confirmed function definition.
-- `case us_Meld` at SETTLE.c:160-163 — grep confirmed dispatch calls `AI_UNIT_Meld(unit_idx)` at SETTLE.c:162.
-- `AI_UNIT_Meld` at SETTLE.c:224 — Read confirmed function definition (gathers stack via `Player_Army_At_Square`, calls `STK_DoMeldWithNode`, marks troops `us_Ready`).
-- `STK_DoMeldWithNode` at UNITSTK.c:1681 — grep confirmed function definition.
+- `case us_Meld` at SETTLE.c:160-163 — grep confirmed dispatch calls `AI_Unit_Army_Do_Meld(unit_idx)` at SETTLE.c:162.
+- `AI_Unit_Army_Do_Meld` at SETTLE.c:224 — Read confirmed function definition (gathers stack via `Player_Army_At_Square`, calls `Army_Do_Meld`, marks troops `us_Ready`).
+- `Army_Do_Meld` at UNITSTK.c:1681 — grep confirmed function definition.
 
 ## Signatures
 
@@ -323,7 +323,7 @@ void AI_Stacks_Order_Meld(int16_t unit_idx, int16_t unit_list_idx, int16_t list_
 Three lines:
 
 1. **Bounds check** — reject `unit_idx` out of `[0, MAX_UNIT_COUNT)`. **IDA-confirmed OG-faithful** ([asm 9-13](C:/STU/devel/STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr158/AI_Order_Meld.asm): `or dx, dx; jl ret; cmp dx, 1000; jl proceed`). OG hardcodes `1000`; production uses `MAX_UNIT_COUNT` constant — same value. Production has a Doxygen `/** @brief ... @param ... */` header at [lines 4892-4913](../../MoM/src/AIMOVE.c#L4892-L4913) matching the sibling `AI_Stacks_Order_Ferry` pattern.
-2. **Set Status** — `_UNITS[unit_idx].Status = us_Meld`. The melder waits one turn; next turn's melder-Status processing IS INTENDED to flip the node owner via [SETTLE.c:137-140](../../MoM/src/SETTLE.c#L137-L140) `case us_Meld: AI_UNIT_Meld(unit_idx)` — but that function is an empty WIP stub in production (see Purpose section caveat). drake178's OG name is `AI_UNIT_Meld()` (no `__WIP` suffix; the suffix is the project's "not-yet-reconstructed" marker).
+2. **Set Status** — `_UNITS[unit_idx].Status = us_Meld`. The melder waits one turn; next turn's melder-Status processing IS INTENDED to flip the node owner via [SETTLE.c:137-140](../../MoM/src/SETTLE.c#L137-L140) `case us_Meld: AI_Unit_Army_Do_Meld(unit_idx)` — but that function is an empty WIP stub in production (see Purpose section caveat). drake178's OG name is `AI_Unit_Army_Do_Meld()` (no `__WIP` suffix; the suffix is the project's "not-yet-reconstructed" marker).
 3. **Consume stack slot** — `_ai_own_stack_unit_list[unit_list_idx][list_unit_idx] = ST_UNDEFINED`. Marks the slot as "spoken for" so downstream dispatchers (slots 5-13 and the per-plane post-passes) skip this unit.
 
 OG asm also `xor ax, ax` returns 0 (function declared `int` in OG, `void` in production — cosmetic).

@@ -28,7 +28,7 @@ extern "C" {
 void AI_Execute_Orders(int16_t player_idx);
 
 // WZD o100p02
-void AI_UNIT_Meld(int16_t unit_idx);
+void AI_Unit_Army_Do_Meld(int16_t unit_idx);
 
 // WZD o100p03
 void AI_Unit_Army_Do_Settle(int16_t unit_idx);

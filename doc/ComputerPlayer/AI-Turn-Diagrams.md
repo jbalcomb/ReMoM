@@ -81,7 +81,7 @@ flowchart TD
         StatusGate -- "us_Move" --> UnitMove
         StatusGate -- "us_BuildRoad" --> BuildRoad["AI_Unit_Army_Do_Road"]:::func
         BuildRoad --> UnitMove
-        StatusGate -- "us_Meld" --> UnitMeld["AI_UNIT_Meld"]:::func
+        StatusGate -- "us_Meld" --> UnitMeld["AI_Unit_Army_Do_Meld"]:::func
         StatusGate -- "us_Settle" --> UnitSettle["AI_Unit_Army_Do_Settle"]:::func
         StatusGate -- "us_Ferry" --> UnitSeek["AI_UNIT_SeekTransprt__WIP"]:::func
 

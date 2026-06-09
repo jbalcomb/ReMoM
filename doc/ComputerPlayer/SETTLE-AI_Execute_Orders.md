@@ -6,7 +6,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr100\AI_MoveUnits__WIP.c
 AI_Execute_Orders()
     |-> AI_Unit_Army_Do_Road()  + AI_Unit_Army_Do_Move()   (us_BuildRoad)
     |-> AI_Unit_Army_Do_Move()                                (us_GOTO, us_Move)
-    |-> AI_UNIT_Meld()                                (us_Meld)
+    |-> AI_Unit_Army_Do_Meld()                                (us_Meld)
     |-> AI_Unit_Army_Do_Settle()                         (us_Settle)
     |-> AI_UNIT_SeekTransprt__WIP()                   (us_Ferry)
     |-> AI_Metrics_Emit_Unit_Outcome()               (ReMoM instrumentation)
@@ -81,7 +81,7 @@ Flat scan of all `_units` filtered by `owner_idx == player_idx`, then dispatch o
 |---|---|---|
 | `us_BuildRoad` (2) | `AI_Unit_Army_Do_Road(unit_idx)` **then** `AI_Unit_Army_Do_Move(unit_idx)` (fall-through) | `sw_aius_02` → `sw_aius_16` |
 | `us_GOTO` (3) | `AI_Unit_Army_Do_Move(unit_idx)` | `sw_aius_03` → `sw_aius_16` |
-| `us_Meld` (9) | `AI_UNIT_Meld(unit_idx)` | `sw_aius_09` |
+| `us_Meld` (9) | `AI_Unit_Army_Do_Meld(unit_idx)` | `sw_aius_09` |
 | `us_Settle` (10) | `AI_Unit_Army_Do_Settle(unit_idx)` | `sw_aius_10` (OG `AI_UNIT_Settle`) |
 | `us_Ferry` (11) | `AI_UNIT_SeekTransprt__WIP(unit_idx)` | `sw_aius_11` |
 | `us_Move` (16) | `AI_Unit_Army_Do_Move(unit_idx)` | `sw_aius_16` |
@@ -130,7 +130,7 @@ AI_Execute_Orders(player_idx)            ── EXECUTE orders already stamped o
           switch(_UNITS[unit_idx].Status):                 ── 1:1, no AI-stack concept here
               us_BuildRoad(2): AI_Unit_Army_Do_Road; ↓ (fall through)
               us_GOTO(3) / us_Move(16): AI_Unit_Army_Do_Move
-              us_Meld(9):   AI_UNIT_Meld
+              us_Meld(9):   AI_Unit_Army_Do_Meld
               us_Settle(10): AI_Unit_Army_Do_Settle     (= OG AI_UNIT_Settle)
               us_Ferry(11):  AI_UNIT_SeekTransprt__WIP
               default (4-8,12-15): nothing
@@ -141,7 +141,7 @@ AI_Execute_Orders(player_idx)            ── EXECUTE orders already stamped o
 ## Related references
 
 - [AIMOVE-AI_Set_Unit_Orders.md](AIMOVE-AI_Set_Unit_Orders.md) — the **set** phase that writes the `Status` values this function executes
-- [AIMOVE-AI_Do_Meld.md](AIMOVE-AI_Do_Meld.md) — sets `us_Meld`; this dispatches it to `AI_UNIT_Meld` ([SETTLE.c:297](../../MoM/src/SETTLE.c#L297))
+- [AIMOVE-AI_Do_Meld.md](AIMOVE-AI_Do_Meld.md) — sets `us_Meld`; this dispatches it to `AI_Unit_Army_Do_Meld` ([SETTLE.c:297](../../MoM/src/SETTLE.c#L297))
 - [AIMOVE-AI_Stacks_Do_Purify.md](AIMOVE-AI_Stacks_Do_Purify.md), [AIMOVE-AI_Stacks_Do_RoadBuild.md](AIMOVE-AI_Stacks_Do_RoadBuild.md) — set `us_Purify`/`us_BuildRoad`/move orders
 - [MoM-AI-Move-ai_own_stack.md](MoM-AI-Move-ai_own_stack.md) — the stack structures used by the **set** phase (and deliberately absent here)
 - `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr100\AI_Execute_Orders__WIP.asm` — IDA Pro 5.5 disassembly (ground truth, verified)

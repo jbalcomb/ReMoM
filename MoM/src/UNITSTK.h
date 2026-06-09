@@ -59,10 +59,10 @@ int16_t Unit_Action_Special_Purify(int16_t troop_count, int16_t troops[]);
 int16_t Unit_Action_Special_Meld(int16_t troop_count, int16_t troops[]);
 
 // WZD o61p13
-void STK_MeldWithNode(void);
+void Active_Army_Do_Meld(void);
 
 // WZD o61p14
-void STK_DoMeldWithNode(int16_t troop_count, int16_t troops[]);
+void Army_Do_Meld(int16_t troop_count, int16_t troops[]);
 
 // WZD o61p15
 void Next_Turn_Process_Purify(void);

@@ -167,7 +167,7 @@ void AI_Execute_Orders(int16_t player_idx)
                 } break;
                 case us_Meld:
                 {
-                    AI_UNIT_Meld(unit_idx);
+                    AI_Unit_Army_Do_Meld(unit_idx);
                 } break;
                 case us_Settle:
                 {
@@ -218,7 +218,7 @@ void AI_Execute_Orders(int16_t player_idx)
  * If the referenced unit has already finished its turn, this routine exits
  * immediately. Otherwise it gathers the owning player's full army stack at the
  * unit's current coordinates, delegates node-resolution and meld consumption to
- * STK_DoMeldWithNode(), and then resets every unit in that gathered stack to
+ * Army_Do_Meld(), and then resets every unit in that gathered stack to
  * @c us_Ready.
  *
  * @param unit_idx Index of the AI unit whose square is used to gather the
@@ -226,12 +226,12 @@ void AI_Execute_Orders(int16_t player_idx)
  *
  * @return This function does not return a value. It may update unit statuses
  *         for all units on the square and may indirectly modify node state via
- *         STK_DoMeldWithNode().
+ *         Army_Do_Meld().
  *
  * @note The current implementation preserves legacy behavior that marks the
  *       entire gathered stack as @c us_Ready after meld handling.
  */
-void AI_UNIT_Meld(int16_t unit_idx)
+void AI_Unit_Army_Do_Meld(int16_t unit_idx)
 {
     int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t unit_owner_idx = 0;
@@ -239,7 +239,6 @@ void AI_UNIT_Meld(int16_t unit_idx)
     int16_t unit_wy = 0;
     int16_t unit_wx = 0;
     int16_t troop_count = 0;
-    int16_t _unit_idx = 0;
     int16_t itr_troops = 0;
 
     if(_UNITS[unit_idx].Finished == ST_TRUE)
@@ -254,13 +253,12 @@ void AI_UNIT_Meld(int16_t unit_idx)
 
     Player_Army_At_Square(unit_wx, unit_wy, unit_wp, unit_owner_idx, &troop_count, troops);
 
-    STK_DoMeldWithNode(troop_count, troops);
+    Army_Do_Meld(troop_count, troops);
 
     for (itr_troops = 0; itr_troops < troop_count; itr_troops++)
     {
         _UNITS[troops[itr_troops]].Status = us_Ready;
     }
-
 
 }
 

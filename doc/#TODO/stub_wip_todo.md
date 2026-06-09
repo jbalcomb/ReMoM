@@ -301,7 +301,7 @@
 ## SETTLE
 - [ ] AI_Execute_Orders
 - [ ] AI_Unit_Army_Do_Road
-- [x] AI_UNIT_Meld__WIP — renamed to AI_UNIT_Meld; body implemented in SETTLE.c:224
+- [x] AI_UNIT_Meld__WIP — renamed to AI_Unit_Army_Do_Meld; body implemented in SETTLE.c:224
 - [ ] AI_Unit_Army_Do_Move
 - [ ] AI_UNIT_SeekTransprt__WIP
 - [x] AI_Unit_Army_Do_Settle — renamed from AI_UNIT_Settle__WIP; body implemented; GEMINI variant deleted 2026-06-04

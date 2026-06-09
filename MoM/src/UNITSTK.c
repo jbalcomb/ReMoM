@@ -1629,27 +1629,26 @@ int16_t Unit_Action_Special_Meld(int16_t troop_count, int16_t troops[])
  *
  * Collects active units from the current selection into a temporary stack
  * buffer via Active_Unit_Stack(), then forwards that stack to
- * STK_DoMeldWithNode() for node ownership resolution, guardian handling, and
+ * Army_Do_Meld() for node ownership resolution, guardian handling, and
  * meld-unit consumption.
  *
  * @return This function does not return a value. It may indirectly change
  *         node ownership/flags and may remove a meld unit through
- *         STK_DoMeldWithNode().
+ *         Army_Do_Meld().
  *
  * @note This wrapper contains no meld decision logic itself; it only gathers
  *       active-unit indices and delegates the operation.
  */
-void STK_MeldWithNode(void)
+void Active_Army_Do_Meld(void)
 {
     int16_t troops[MAX_STACK] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     int16_t troop_count = 0;
     Active_Unit_Stack(&troop_count, &troops[0]);
-    STK_DoMeldWithNode(troop_count, &troops[0]);
+    Army_Do_Meld(troop_count, &troops[0]);
 }
 
 
 // WZD o61p14
-/* COPILOT */
 /**
  * @brief Resolves node melding for an active stack on a magic node square.
  *
@@ -1675,7 +1674,7 @@ void STK_MeldWithNode(void)
  * @note The current implementation preserves original behavior, including use
  *       of the lead unit context when selecting the unit consumed by melding.
  */
-void STK_DoMeldWithNode(int16_t troop_count, int16_t troops[])
+void Army_Do_Meld(int16_t troop_count, int16_t troops[])
 {
     int16_t percentage = 0;
     int16_t did_take_node = 0;
@@ -1749,18 +1748,17 @@ void STK_DoMeldWithNode(int16_t troop_count, int16_t troops[])
         else
         {
             percentage = Random(100);
-            if(
-                (percentage > 25)
-                &&
-                (unit_owner == _human_player_idx)
-            )
-            {
-                Warn0(_msg_guardian_kills_spirit);  /* "The Guardian Spirit occupying this node kills your spirit." */
-            }
-            else
+            if(percentage <= 25)
             {
                 did_take_node = ST_TRUE;
                 _NODES[node_idx].flags ^= NF_GUARDIAN;
+            }
+            else
+            {
+                if(unit_owner == _human_player_idx)
+                {
+                    Warn0(_msg_guardian_kills_spirit);  /* "The Guardian Spirit occupying this node kills your spirit." */
+                }
             }
         }
     }

@@ -33,7 +33,7 @@ AI_Execute_Orders()
     } break;
 
 AI_Unit_Army_Do_Settle() |-> Army_Do_Settle()
-¿ ~= AI_UNIT_Meld() |-> STK_DoMeldWithNode() ? 
+¿ ~= AI_Unit_Army_Do_Meld() |-> Army_Do_Meld() ? 
 
 Main_Screen()
     |-> Active_Army_Do_Settle()
@@ -293,7 +293,7 @@ AI-side dispatch handler for `Status = us_Settle`. Four phases:
 4. **Settle via `Army_Do_Settle`** — the leaf finds the first non-undead UA_CREATEOUTPOST unit in the gathered stack and calls `Create_Outpost`.
 5. **OGBUG mark-all-Ready loop** — every unit in the gathered stack has its Status reset to `us_Ready`, regardless of prior status. drake178 flagged this in the header as *"BUG: marks all other units on the square as ready regardless of their previous status."* Preserved per faithful-to-Dasm rule.
 
-Mirrors `AI_UNIT_Meld` at [SETTLE.c:224](../../MoM/src/SETTLE.c#L224) — same structure, with `Army_Do_Settle` substituted for `STK_DoMeldWithNode`.
+Mirrors `AI_Unit_Army_Do_Meld` at [SETTLE.c:224](../../MoM/src/SETTLE.c#L224) — same structure, with `Army_Do_Settle` substituted for `Army_Do_Meld`.
 
 ## Code walk — `Active_Army_Do_Settle` ([lines 292-298](../../MoM/src/SETTLE.c#L292-L298))
 
@@ -358,7 +358,7 @@ Two phases:
 
 **Phase 2 — Settle.** Cache settler's position + owner + race, call `Create_Outpost(...)`. Return TRUE on success.
 
-**Compare to `STK_DoMeldWithNode`'s loop bug:** Army_Do_Settle uses the loop-current `unit_idx` correctly (the loop exits when the settler is found, so `unit_idx` is the settler's index). Unlike `STK_DoMeldWithNode` which had the production-only `Spirit_Unit_Index = unit_idx` outer-scope-cache bug, Army_Do_Settle is clean.
+**Compare to `Army_Do_Meld`'s loop bug:** Army_Do_Settle uses the loop-current `unit_idx` correctly (the loop exits when the settler is found, so `unit_idx` is the settler's index). Unlike `Army_Do_Meld` which had the production-only `Spirit_Unit_Index = unit_idx` outer-scope-cache bug, Army_Do_Settle is clean.
 
 ## Code walk — `AI_Find_Tower_To_Settle_Elsewhere` ([lines 5100-5191](../../MoM/src/AIMOVE.c#L5100-L5191))
 
@@ -443,7 +443,7 @@ Two-step rename history:
 |---|---|---|---|
 | B1 | [Lines 4120-4135](../../MoM/src/AIMOVE.c#L4120-L4135) | Phase 2 empty-garrison check **early-returns from the entire settle pass** for this landmass if ANY `AISTK_Garrison` stack has zero units. Doesn't filter by landmass — an empty garrison on a DIFFERENT landmass on the same plane still cancels. drake178 flagged in function header. | OG-faithful (asm verified); behavioral — settlers freeze on multi-landmass turns whenever any one garrison is empty |
 | B2 | [Lines 5100-5191](../../MoM/src/AIMOVE.c#L5100-L5191) | `AI_Find_Tower_To_Settle_Elsewhere` gate-stack is highly restrictive (Planar Seal, home-plane, not-in-Tower, owns-Tower-on-current-landmass, off-plane-landmass-not-Contested-or-hostile). drake178's OG name `__ALWAYS_FALSE` reflects empirical "never observed TRUE in traces" — likely true under most realistic game states, but the function has a real TRUE return path. Worth instrumenting if studying off-plane expansion behavior. | OG-faithful; behavioral observation, not a bug |
-| B3 | [SETTLE.c:283-286](../../MoM/src/SETTLE.c#L283-L286) | `AI_Unit_Army_Do_Settle` mark-all-Ready post-loop sets every unit in the gathered stack to `us_Ready`, regardless of prior status. Same OGBUG as `AI_UNIT_Meld`. | OGBUG-faithful; preserved per Dasm |
+| B3 | [SETTLE.c:283-286](../../MoM/src/SETTLE.c#L283-L286) | `AI_Unit_Army_Do_Settle` mark-all-Ready post-loop sets every unit in the gathered stack to `us_Ready`, regardless of prior status. Same OGBUG as `AI_Unit_Army_Do_Meld`. | OGBUG-faithful; preserved per Dasm |
 
 ## ASCII summary
 

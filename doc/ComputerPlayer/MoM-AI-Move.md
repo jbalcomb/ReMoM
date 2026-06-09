@@ -193,7 +193,7 @@ Definitely Done-Done:
 
 [ ]     AI_Unit_Army_Do_Road(unit_idx);
 
-[ ]     AI_UNIT_Meld(unit_idx);
+[ ]     AI_Unit_Army_Do_Meld(unit_idx);
 
 [x]     AI_Unit_Army_Do_Settle(unit_idx);
 
