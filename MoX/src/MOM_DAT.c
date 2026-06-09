@@ -2667,7 +2667,7 @@ int (*array_ptr)[dim2][dim3];
 
 p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
 */
-int16_t (*p_world_map)[40][60];
+int16_t (*p_world_map)[WORLD_HEIGHT][WORLD_WIDTH];
 
 // WZD dseg:9CE0
 int8_t * TBL_Unrest[NUM_RACES];

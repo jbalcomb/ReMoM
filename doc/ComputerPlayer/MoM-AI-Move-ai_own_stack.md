@@ -334,7 +334,7 @@ AI_Next_Turn (per-AI-player driver)
             switch(_UNITS[unit_idx].Status):
                 case us_GOTO:        → AI_Unit_Army_Do_Move(unit_idx)         [SETTLE.c:135]
                 case us_Move:        → AI_Unit_Army_Do_Move(unit_idx)         [SETTLE.c:151]
-                case us_BuildRoad:   → AI_UNIT_BuildRoad__WIP, then AI_Unit_Army_Do_Move
+                case us_BuildRoad:   → AI_Unit_Army_Do_Road, then AI_Unit_Army_Do_Move
                 case us_Meld:        → AI_UNIT_Meld
                 case us_Settle:      → AI_Unit_Army_Do_Settle
                 case us_Ferry: → AI_UNIT_SeekTransprt__WIP

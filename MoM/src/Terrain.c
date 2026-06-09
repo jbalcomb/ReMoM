@@ -935,24 +935,43 @@ int16_t City_Best_Weapon(int16_t city_idx)
 
 
 // WZD s161p20
-// drake178: TILE_GetRoadBldTime()
-/*
-; returns the amount of time, in turns, that it would
-; take to construct a road on the square, -1 if one may
-; not be built, or 0 if there already is one
-*/
 /*
 TABLE F
 ROAD BUILDING
 TERRAIN TYPE OR SPECIAL
 TURNS TO BUILD
 */
-
+/**
+ * @brief Returns the number of turns required to build a road on a map square.
+ *
+ * This routine first checks whether the target square already has a road and
+ * returns zero in that case. Otherwise it derives the square's base terrain
+ * type from the packed world-map value and applies the original terrain-range
+ * classification used by road-building logic.
+ *
+ * Build time depends on the square's effective terrain category:
+ * grasslands are fast, deserts and sorcery nodes are moderate, forests and
+ * tundra are slower, while mountains, swamps, and volcanoes take the longest.
+ * Terrain outside the supported road-buildable categories returns
+ * @c ST_UNDEFINED.
+ *
+ * @param wx World x-coordinate of the square.
+ * @param wy World y-coordinate of the square.
+ * @param wp World plane containing the square.
+ *
+ * @return 0 if the square already has a road; otherwise the number of turns
+ *         required to build one on the square's terrain, or @c ST_UNDEFINED if
+ *         the terrain does not support road construction.
+ *
+ * @note The function preserves the original threshold-based terrain checks and
+ *       uses @c p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES to strip any packed
+ *       non-terrain bits before classifying the square.
+ */
 int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type;
     if((_map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] & MSF_ROAD) != 0) { return 0; }
-    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+    terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
     if(terrain_type >= tt_Tundra_1st)   { return 6; }
     if(terrain_type == tt_BugGrass)     { return 2; }
     if(terrain_type < tt_Grasslands1)   { return ST_UNDEFINED; }

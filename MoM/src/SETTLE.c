@@ -26,6 +26,7 @@
 #include "UNITSTK.h"
 #include "UNITTYPE.h"   // WTFMATE
 #include "WZD_o059.h"
+#include "WZD_o143.h"   /* OVL_GetRoadPath() */
 
 
 
@@ -157,7 +158,7 @@ void AI_Execute_Orders(int16_t player_idx)
             {
                 case us_BuildRoad:
                 {
-                    AI_UNIT_BuildRoad__WIP(unit_idx);
+                    AI_Unit_Army_Do_Road(unit_idx);
                     AI_Unit_Army_Do_Move(unit_idx);
                 } break;
                 case us_GOTO:
@@ -692,20 +693,77 @@ void AI_UNIT_SeekTransprt__WIP(uint16_t unit_idx)
 
 
 // WZD o100p12
-// drake178: AI_UNIT_BuildRoad()
-/*
-; still not quite clear, and definitely conceptually
-; flawed
-;
-; RE-EXPLORE!
-*/
-/*
-
-*/
-void AI_UNIT_BuildRoad__WIP(int16_t unit_idx)
+void AI_Unit_Army_Do_Road(int16_t unit_idx)
 {
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t construction_points = 0;
+    int16_t troop_count = 0;
+    int16_t unit_owner_idx = 0;
+    int16_t unit_wp = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t unit_dst_wy = 0;
+    int16_t unit_dst_wx = 0;
+    int16_t path_length = 0;
+    int16_t itr_troops = 0;
 
+    if(_UNITS[unit_idx].Finished == ST_TRUE)
+    {
+        return;
+    }
 
+    /* Extract unit data to local variables */
+    /* Extract unit and target data */
+    unit_wx = (int16_t)_UNITS[unit_idx].wx;
+    unit_wy = (int16_t)_UNITS[unit_idx].wy;
+    unit_wp = (int16_t)_UNITS[unit_idx].wp;
+    unit_dst_wx = (int16_t)_UNITS[unit_idx].dst_wx;
+    unit_dst_wy = (int16_t)_UNITS[unit_idx].dst_wy;
+    unit_owner_idx = (int16_t)_UNITS[unit_idx].owner_idx;
+
+    /* Get all units in the same square */
+    Player_Army_At_Square(unit_wx, unit_wy, unit_wp, unit_owner_idx, &troop_count, troops);
+
+    /* Calculate road path from current position to destination */
+    path_length = OVL_GetRoadPath(unit_wx, unit_wy, unit_dst_wx, unit_dst_wy, unit_wp, &movepath_x_array[2], &movepath_y_array[2]);
+
+    construction_points = 0;
+
+    /* First pass: Calculate total construction power of the stack */
+    for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+    {
+        if(_UNITS[troops[itr_troops]].Status == us_BuildRoad)
+        {
+            /* Add unit's base construction capability from the type table */
+            construction_points += _unit_type_table[_UNITS[troops[itr_troops]].type].Construction;
+
+            /* If unit has 'Endurance' enchantment/ability, it contributes more */
+            if(Unit_Has_Endurance(troops[itr_troops]) == ST_TRUE)
+            {
+                construction_points++;
+            }
+        }
+    }
+
+    /* Second pass: Initialize road building status for all participating units */
+    for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+    {
+        if (_UNITS[troops[itr_troops]].Status == us_BuildRoad)
+        {
+            /* Transition status to GOTO (AI will move and build along the path) */
+            _UNITS[troops[itr_troops]].Status = us_GOTO;
+
+            /* Calculate base turns/points required for the next segment in the path */
+            _UNITS[troops[itr_troops]].Rd_Constr_Left = Turns_To_Build_Road((int)movepath_x_array[2], (int)movepath_y_array[2], unit_wp);
+
+            /* Divide total required points by stack's construction capacity */
+            _UNITS[troops[itr_troops]].Rd_Constr_Left = _UNITS[troops[itr_troops]].Rd_Constr_Left / construction_points;
+
+            /* Store the starting point of the current road segment */
+            _UNITS[troops[itr_troops]].Rd_From_X = unit_wx;
+            _UNITS[troops[itr_troops]].Rd_From_Y = unit_wy;
+        }
+    }
 
 }
 

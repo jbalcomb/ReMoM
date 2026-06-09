@@ -607,15 +607,18 @@ int16_t Unit_Has_Invisibility(int16_t unit_idx)
 }
 
 // WZD o71p012
-/*
-¿ BUG ? effectively only counts for non-ghero units, as it does not check items
-
-XREF:
-    j_Unit_Has_Endurance()
-        Road_Build_Screen()
-        Move_Units()
-        AI_UNIT_BuildRoad()
-*/
+/* OGBUG  does not check hero items */
+/**
+ * @brief Checks whether a unit currently has the Endurance enchantment.
+ *
+ * This is a direct unit-enchantment test against @c UE_ENDURANCE on the
+ * referenced unit entry in @c _UNITS.
+ *
+ * @param unit_idx Index of the unit in the global @c _UNITS table.
+ *
+ * @return @c ST_TRUE when the unit's enchantment bitfield contains
+ *         @c UE_ENDURANCE; otherwise @c ST_FALSE.
+ */
 int16_t Unit_Has_Endurance(int16_t unit_idx)
 {
     if((_UNITS[unit_idx].enchantments & UE_ENDURANCE) != 0)

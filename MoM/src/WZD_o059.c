@@ -122,6 +122,27 @@ void Army_At_City(int16_t city_idx, int16_t * troop_count, int16_t troops[])
 
 
 // WZD o59p04
+/**
+ * @brief Collects all units owned by a specific player on a target square.
+ *
+ * Scans the global unit table and appends indices for units that match the
+ * requested map coordinates and owner. A unit is considered present on the
+ * square when it is on the requested plane, or marked as currently in a tower.
+ *
+ * The output count is reset to zero before scanning.
+ *
+ * @param wx World x-coordinate of the square to query.
+ * @param wy World y-coordinate of the square to query.
+ * @param wp World plane of the queried square.
+ * @param player_idx Owning player index to filter units by.
+ * @param troop_count Output pointer receiving the number of matching units.
+ * @param troops Output array receiving matching unit indices from @c _UNITS.
+ *
+ * @return This function does not return a value.
+ *
+ * @note This routine does not enforce @c MAX_STACK bounds while writing to
+ *       @p troops; callers are expected to provide sufficient capacity.
+ */
 void Player_Army_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * troop_count, int16_t troops[])
 {
     int16_t itr = 0;

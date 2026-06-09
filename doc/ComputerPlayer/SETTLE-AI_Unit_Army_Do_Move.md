@@ -34,7 +34,7 @@ int16_t AI_Unit_Army_Do_Move(int16_t unit_idx);   // returns Stack_Move_To()'s r
 ```
 
 Callers — all inside [`AI_Execute_Orders`](SETTLE-AI_Execute_Orders.md):
-- [SETTLE.c:161](../../MoM/src/SETTLE.c#L161) — `us_BuildRoad` case (after `AI_UNIT_BuildRoad__WIP`)
+- [SETTLE.c:161](../../MoM/src/SETTLE.c#L161) — `us_BuildRoad` case (after `AI_Unit_Army_Do_Road`)
 - [SETTLE.c:165](../../MoM/src/SETTLE.c#L165) — `us_GOTO` case
 - [SETTLE.c:181](../../MoM/src/SETTLE.c#L181) — `us_Move` case
 

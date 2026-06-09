@@ -4,7 +4,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr100\AI_MoveUnits__WIP.a
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr100\AI_MoveUnits__WIP.c
 
 AI_Execute_Orders()
-    |-> AI_UNIT_BuildRoad__WIP()  + AI_Unit_Army_Do_Move()   (us_BuildRoad)
+    |-> AI_Unit_Army_Do_Road()  + AI_Unit_Army_Do_Move()   (us_BuildRoad)
     |-> AI_Unit_Army_Do_Move()                                (us_GOTO, us_Move)
     |-> AI_UNIT_Meld()                                (us_Meld)
     |-> AI_Unit_Army_Do_Settle()                         (us_Settle)
@@ -79,7 +79,7 @@ Flat scan of all `_units` filtered by `owner_idx == player_idx`, then dispatch o
 
 | `Status` (value) | Handler | asm label |
 |---|---|---|
-| `us_BuildRoad` (2) | `AI_UNIT_BuildRoad__WIP(unit_idx)` **then** `AI_Unit_Army_Do_Move(unit_idx)` (fall-through) | `sw_aius_02` → `sw_aius_16` |
+| `us_BuildRoad` (2) | `AI_Unit_Army_Do_Road(unit_idx)` **then** `AI_Unit_Army_Do_Move(unit_idx)` (fall-through) | `sw_aius_02` → `sw_aius_16` |
 | `us_GOTO` (3) | `AI_Unit_Army_Do_Move(unit_idx)` | `sw_aius_03` → `sw_aius_16` |
 | `us_Meld` (9) | `AI_UNIT_Meld(unit_idx)` | `sw_aius_09` |
 | `us_Settle` (10) | `AI_Unit_Army_Do_Settle(unit_idx)` | `sw_aius_10` (OG `AI_UNIT_Settle`) |
@@ -108,7 +108,7 @@ Unit processing scrolls the map view as a side effect; this restores the pre-cal
 
 ## Production vs GEMINI
 
-GEMINI ([line 206](../../MoM/src/SETTLE.c#L206)) is structurally the same flat Status switch, but its **case values are wrong** — it uses `case 4 / 5 / 11 / 12 / 13` where the real `us_*` values are `2 / 3 / 9 / 10 / 11`; only `case 16` (Move) is correct. Its "statuses that do nothing" comment (`2,3,6,7,8,10,14,15`) is likewise wrong (it lists handled statuses as skipped). Production's named-enum cases and its "4-8, 12-15 skipped" comment are the accurate ones. Another **GEMINI-is-not-ground-truth** case — verify against the `us_*` enum ([MOM_DAT.h:516-530](../../MoX/src/MOM_DAT.h#L516-L530)), not GEMINI's literals. GEMINI also calls the OG names (`AI_UNIT_BuildRoad` / `AI_UNIT_Settle` / `AI_UNIT_SeekTransprt`) rather than the current reconstruction names.
+GEMINI ([line 206](../../MoM/src/SETTLE.c#L206)) is structurally the same flat Status switch, but its **case values are wrong** — it uses `case 4 / 5 / 11 / 12 / 13` where the real `us_*` values are `2 / 3 / 9 / 10 / 11`; only `case 16` (Move) is correct. Its "statuses that do nothing" comment (`2,3,6,7,8,10,14,15`) is likewise wrong (it lists handled statuses as skipped). Production's named-enum cases and its "4-8, 12-15 skipped" comment are the accurate ones. Another **GEMINI-is-not-ground-truth** case — verify against the `us_*` enum ([MOM_DAT.h:516-530](../../MoX/src/MOM_DAT.h#L516-L530)), not GEMINI's literals. GEMINI also calls the OG names (`AI_Unit_Army_Do_Road` / `AI_UNIT_Settle` / `AI_UNIT_SeekTransprt`) rather than the current reconstruction names.
 
 ## Bug catalog
 
@@ -128,7 +128,7 @@ AI_Execute_Orders(player_idx)            ── EXECUTE orders already stamped o
       if _UNITS[unit_idx].owner_idx == player_idx:
           (snapshot pre-state for metrics)
           switch(_UNITS[unit_idx].Status):                 ── 1:1, no AI-stack concept here
-              us_BuildRoad(2): AI_UNIT_BuildRoad__WIP; ↓ (fall through)
+              us_BuildRoad(2): AI_Unit_Army_Do_Road; ↓ (fall through)
               us_GOTO(3) / us_Move(16): AI_Unit_Army_Do_Move
               us_Meld(9):   AI_UNIT_Meld
               us_Settle(10): AI_Unit_Army_Do_Settle     (= OG AI_UNIT_Settle)

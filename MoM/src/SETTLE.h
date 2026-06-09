@@ -58,7 +58,7 @@ int16_t Unit_Space_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_
 void AI_UNIT_SeekTransprt__WIP(uint16_t unit_idx);
 
 // WZD o100p12
-void AI_UNIT_BuildRoad__WIP(int16_t unit_idx);
+void AI_Unit_Army_Do_Road(int16_t unit_idx);
 
 // WZD o100p13
 int16_t Map_Square_Troops_Can_Plane_Shift(int16_t wx, int16_t wy, int16_t wp);

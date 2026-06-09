@@ -79,7 +79,7 @@ flowchart TD
         MoveLoop --> StatusGate{Status}:::gate
         StatusGate -- "us_GOTO" --> UnitMove
         StatusGate -- "us_Move" --> UnitMove
-        StatusGate -- "us_BuildRoad" --> BuildRoad["AI_UNIT_BuildRoad__WIP"]:::func
+        StatusGate -- "us_BuildRoad" --> BuildRoad["AI_Unit_Army_Do_Road"]:::func
         BuildRoad --> UnitMove
         StatusGate -- "us_Meld" --> UnitMeld["AI_UNIT_Meld"]:::func
         StatusGate -- "us_Settle" --> UnitSettle["AI_Unit_Army_Do_Settle"]:::func

@@ -300,7 +300,7 @@
 
 ## SETTLE
 - [ ] AI_Execute_Orders
-- [ ] AI_UNIT_BuildRoad__WIP
+- [ ] AI_Unit_Army_Do_Road
 - [x] AI_UNIT_Meld__WIP — renamed to AI_UNIT_Meld; body implemented in SETTLE.c:224
 - [ ] AI_Unit_Army_Do_Move
 - [ ] AI_UNIT_SeekTransprt__WIP

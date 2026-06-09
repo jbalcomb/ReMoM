@@ -415,6 +415,7 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
             Volcano Player, Road - Regular, Road - Enchanted, Corruption
 
 NOTE(JimBalcomb,20260302): These have been deprecated, do not use them anymore - GET_TERRAIN_TYPE, TERRAIN_TYPE, SET_TERRAIN_TYPE, TERRAIN_TYPE_INDEX.
+use `terrain_type = p_world_map[wp][wy][wx];`
 */
 // #define GET_TERRAIN_TYPE(_value_, _size_) do { GET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2))) } while (0)
 /*
@@ -426,6 +427,7 @@ NOTE(JimBalcomb,20260302): These have been deprecated, do not use them anymore -
 // NOWORKIE  #define TERRAIN_TYPE(_wx_, _wy_, _wp_)      ( (*( (uint16_t *)(_world_maps + ( ((_wp_) * WORLD_SIZE) + ((_wy_) * WORLD_WIDTH) + (_wx_) )) ) % NUM_TERRAIN_TYPES) )
 /* DELETEME */  #define TERRAIN_TYPE_INDEX(_wx_, _wy_, _wp_)  ( (int16_t)GET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2)))                     )
 /* DELETEME */  #define TERRAIN_TYPE(_wx_, _wy_, _wp_)        ( (int16_t)GET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2))) % NUM_TERRAIN_TYPES )
+// ¿ TODO  #define TERRAIN_TYPE(_wx_, _wy_, _wp_)        ( p_world_map[(_wp_)][(_wy_)][(_wx_)] % NUM_TERRAIN_TYPES ) ?
 
 // #define SET_TERRAIN_TYPE(_terrain_type_) do { SET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2)), (_terrain_type_)) } while (0)
 /*

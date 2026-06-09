@@ -501,7 +501,7 @@ AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 / * MoO2  Module: AIMOVE  Move_AI_() * /
 AI_Execute_Orders()
     case us_BuildRoad:
-        AI_UNIT_BuildRoad__WIP(unit_idx);
+        AI_Unit_Army_Do_Road(unit_idx);
         AI_Unit_Army_Do_Move(unit_idx);
     case us_GOTO:
         AI_Unit_Army_Do_Move(unit_idx);
@@ -4051,7 +4051,7 @@ extern uint8_t * _landmasses;
 extern SAMB_ptr UU_TBL_2;
 extern SAMB_ptr UU_TBL_1;
 extern uint8_t * _world_maps;
-extern int16_t (*p_world_map)[40][60];
+extern int16_t (*p_world_map)[WORLD_HEIGHT][WORLD_WIDTH];
 
 // WZD dseg:9CE0
 extern int8_t * TBL_Unrest[NUM_RACES];
