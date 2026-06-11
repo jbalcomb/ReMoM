@@ -20,6 +20,7 @@
 #include "Spellbook.h"
 #include "UNITTYPE.h"
 #include "../../STU/src/STU_LOG.h"
+#include "../../MoX/src/random.h"  /* g_random_call_count for CALL_TRACE */
 
 
 
@@ -783,14 +784,18 @@ void Load_Button_Sounds(void)
 */
 void Load_TERRSTAT(void)
 {
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
     terrain_stats_table = LBX_Load_Data(terrstat_lbx_file, 0, 0, 770, 6);
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 }
 
 
 // WZD o52p16
 void Load_SPELLDAT(void)
 {
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
     spell_data_table = (struct s_SPELL_DATA *)LBX_Load_Data(spelldat_lbx_file, 0, 0, 215, 36);
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 }
 
 

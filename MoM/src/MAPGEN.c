@@ -263,6 +263,9 @@ void Init_New_Game(void)
     int16_t rivers = 0;
     int16_t tries = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu",
+              __func__, (unsigned long long)g_random_call_count);
+
     bldg_data_table = (struct s_BLDG_DATA *)LBX_Load_Data(builddat_lbx_file__MGC_ovr051, 0, 0, 36, 52);
     
     Set_Mouse_List(1, mouselist_mapgen);
@@ -403,6 +406,8 @@ void Init_New_Game(void)
 
     Set_Upper_Lair_Guardian_Count();
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu",
+              __func__, (unsigned long long)g_random_call_count);
 }
 
 // MGC o51p02
@@ -792,6 +797,8 @@ void Generate_Home_Cities(void)
     int16_t DBG_Invalid_Reason_6_Count = 0;  // Max Pop
     int16_t DBG_Loop_Location[7] = { 0, 0, 0, 0, 0, 0, 0 };
 // #endif
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     minimum_fortress_distance = 16;
 
@@ -1243,6 +1250,8 @@ Done_Done:
     }
 
     // @@Done
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 }
 
@@ -4849,6 +4858,8 @@ void Generate_Neutral_Cities(int16_t wp)
     int16_t itr2 = 0;
     int16_t itr1 = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     tries = 0;
 
     // ; fill the default continental race table with random
@@ -5336,6 +5347,8 @@ void Generate_Neutral_Cities(int16_t wp)
 
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
 }
 
 
@@ -5347,6 +5360,7 @@ void Random_City_Name_By_Race_NewGame(int16_t race_idx, char * name)
     int16_t attempts = 0;
     char * city_names_buffer = 0;
     int16_t itr_cities = 0;
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
     city_names_buffer = (char *)Near_Allocate_First(SZ_CITY_NAME_RECORD);
     LBX_Load_Data_Static(cityname_lbx_file__MGC_ovr051, 0, (SAMB_ptr)city_names_buffer, race_idx, 1, SZ_CITY_NAME_RECORD);
     attempts = 0;
@@ -5369,6 +5383,7 @@ attempt:
         }
     }
     stu_strcpy(name, &city_names_buffer[(city_name_idx * LEN_CITY_NAME)]);
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 }
 
 // MGC o51p26

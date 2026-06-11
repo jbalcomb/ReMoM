@@ -32,6 +32,7 @@
 
 #include "Init_Data/FONTS_LBX.h"
 #include "../../STU/src/STU_LOG.h"
+#include "random.h"  /* g_random_call_count for CALL_TRACE */
 
 
 
@@ -2935,6 +2936,8 @@ void Load_Palette(int entry, int start_color, int end_color)
     int color_count;
     int itr;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     if((entry == 0) && (FONTS_LBX_ENTRY_2_SIZE > 0))
     {
         palette_data = palette_block + 16;
@@ -2997,6 +3000,7 @@ void Load_Palette(int entry, int start_color, int end_color)
         Set_Palette_Changes(start_color, end_color);
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Load_Palette rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -3453,6 +3457,8 @@ void Apply_Palette(void)
     // uint8_t * pal;
     int itr;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     // pal = (uint8_t*)current_palette;
     // 
     // for(itr = 0; itr < 256; itr++)
@@ -3487,6 +3493,7 @@ void Apply_Palette(void)
 
     // HERE: in MoO1 and MoM, it clears the palette change flags - REP STOSW of 0 128 times
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Apply_Palette rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 // #endif

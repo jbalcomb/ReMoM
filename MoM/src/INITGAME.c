@@ -11,6 +11,8 @@ Module: INITGAME
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/random.h"
 
+#include "../../STU/src/STU_LOG.h"  /* Init_Heroes Spells write trace */
+
 #include "NewGame.h"
 #include "Spellbook.h"
 #include "UNITTYPE.h"
@@ -75,6 +77,8 @@ void Init_Computer_Players(void)
     int16_t itr_num_players = 0;
     int16_t itr2 = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     Init_Computer_Players_Wizard_Profile();
 
     for(itr_num_players = 1; itr_num_players < _num_players; itr_num_players++)
@@ -99,6 +103,7 @@ void Init_Computer_Players(void)
 
     _players[NEUTRAL_PLAYER_IDX].average_unit_cost = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_Computer_Players rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -141,6 +146,9 @@ void Init_Computer_Players(void)
 void Init_Runtime(void)
 {
     int16_t itr_players = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     Draw_Building_The_Worlds(100);
     Initialize_Items();
     Init_Heroes();
@@ -160,6 +168,9 @@ void Init_Runtime(void)
         _players[itr_players].gold_reserve = 150;
         AI_SCircle_Reevals[itr_players] = (80 + Random(40));
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
 }
 
 
@@ -770,6 +781,9 @@ void Init_Computer_Players_Wizard_Profile(void)
     int16_t Bookshelf[5] = { 0, 0, 0, 0, 0 };
     int16_t myrran_count = 0;
     int16_t Picks_Left = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     int16_t banners[5] = { 0, 0, 0, 0, 0 };
     int8_t * wsa_ptr = 0;  // Pointer to 'Wizard Special Abilities'
     int16_t Book_Count = 0;
@@ -1011,12 +1025,28 @@ void Init_Computer_Players_Wizard_Profile(void)
         }
 
         // ; spend any remaining picks on random profile traits
-        while(Picks_Used < Picks_Left)
         {
+            int16_t WP_iter = 0;
+            LOG_INFO(LOG_CAT_NEWGAME,
+                "[WP-LOOP] enter  player=%d Picks_Used=%d Picks_Left=%d Book_Count=%d rng=%llu",
+                (int)itr2, (int)Picks_Used, (int)Picks_Left, (int)Book_Count,
+                (unsigned long long)g_random_call_count);
+            while(Picks_Used < Picks_Left)
+            {
+                WP_iter++;
+                LOG_INFO(LOG_CAT_NEWGAME,
+                    "[WP-LOOP] iter#%d top   Picks_Used=%d Book_Count=%d rng=%llu",
+                    (int)WP_iter, (int)Picks_Used, (int)Book_Count,
+                    (unsigned long long)g_random_call_count);
 
             Trait_Type = Random(8);
 
             Trait_Value = Random(4);  // NOTE: used to index wsa_ptr[]
+
+            LOG_INFO(LOG_CAT_NEWGAME,
+                "[WP-LOOP] iter#%d rand  Trait_Type=%d Trait_Value=%d (raw, before adjust)  rng=%llu",
+                (int)WP_iter, (int)Trait_Type, (int)Trait_Value,
+                (unsigned long long)g_random_call_count);
 
             if((Trait_Value + Picks_Used) > Picks_Left)
             {
@@ -1371,6 +1401,16 @@ void Init_Computer_Players_Wizard_Profile(void)
 
             }
 
+            LOG_INFO(LOG_CAT_NEWGAME,
+                "[WP-LOOP] iter#%d end   Trait_Type=%d Trait_Value=%d  Picks_Used=%d Book_Count=%d rng=%llu",
+                (int)WP_iter, (int)Trait_Type, (int)Trait_Value,
+                (int)Picks_Used, (int)Book_Count,
+                (unsigned long long)g_random_call_count);
+            }
+            LOG_INFO(LOG_CAT_NEWGAME,
+                "[WP-LOOP] exit  player=%d iters=%d Picks_Used=%d Picks_Left=%d rng=%llu",
+                (int)itr2, (int)WP_iter, (int)Picks_Used, (int)Picks_Left,
+                (unsigned long long)g_random_call_count);
         }
 
         /*
@@ -1496,6 +1536,7 @@ END:  ¿ jmp     @@BeginTopLevelPlayerLoop ?
 
     // @@Done
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_Computer_Players_Wizard_Profile rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -1530,6 +1571,9 @@ void Init_Computer_Players_Spell_Library(void)
     int16_t sri = 0;
     int16_t sbr = 0;
     int16_t itr = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     int16_t IDK_itr_10 = 0;
 
     for(itr = 0; itr < _num_players; itr++)
@@ -2011,11 +2055,13 @@ void Init_Computer_Players_Spell_Library(void)
             _players[itr].spells_list[spl_Detect_Magic] = sls_Known;
 
             _players[itr].spells_list[spl_Disjunction] = sls_Known;
-            
+
         }
 
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_Computer_Players_Spell_Library rng_call=%llu", (unsigned long long)g_random_call_count);
+    
 }
 
 
@@ -2064,6 +2110,8 @@ void Init_Heroes(void)
     int16_t itr_hero_types = 0;
     int16_t itr_players = 0;
     int16_t warrior_picks = 0;  // _DI_
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     for(itr_players = 0; itr_players < 5; itr_players++)
     {
@@ -2200,9 +2248,24 @@ void Init_Heroes(void)
             _HEROES2[itr_players]->heroes[itr_hero_types].Spells[2] = (uint8_t)_hero_premade_table[itr_hero_types].spell_3;
             _HEROES2[itr_players]->heroes[itr_hero_types].Spells[3] = (uint8_t)_hero_premade_table[itr_hero_types].spell_4;
 
+            LOG_TRACE(LOG_CAT_GENERAL,
+                "[Init_Heroes] p=%d ht=%d table_spells=(%d,%d,%d,%d) struct_after=(0x%02X,0x%02X,0x%02X,0x%02X) rng_call=%llu",
+                itr_players, itr_hero_types,
+                _hero_premade_table[itr_hero_types].spell_1,
+                _hero_premade_table[itr_hero_types].spell_2,
+                _hero_premade_table[itr_hero_types].spell_3,
+                _hero_premade_table[itr_hero_types].spell_4,
+                _HEROES2[itr_players]->heroes[itr_hero_types].Spells[0],
+                _HEROES2[itr_players]->heroes[itr_hero_types].Spells[1],
+                _HEROES2[itr_players]->heroes[itr_hero_types].Spells[2],
+                _HEROES2[itr_players]->heroes[itr_hero_types].Spells[3],
+                (unsigned long long)g_random_call_count);
+
         }
 
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 }
 

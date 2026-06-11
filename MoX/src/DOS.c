@@ -19,9 +19,12 @@ MoO2  Module: dos
 
 #include "../../ext/stu_compat.h"
 
+#include "../../STU/src/STU_LOG.h"  /* CALL_TRACE */
+
 #include "Mouse.h"
 #include "MOX_BASE.h"
 #include "MOX_TYPE.h"
+#include "random.h"  /* g_random_call_count */
 
 #include <stdio.h>
 
@@ -190,6 +193,9 @@ int32_t LOF(char * file_name)
     FILE * file_pointer = 0;
     signed int long position = 0;
     uint32_t size = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     Save_Mouse_State();
     file_pointer = stu_fopen_ci(file_name, "rb");
     if(
@@ -211,6 +217,9 @@ int32_t LOF(char * file_name)
         fclose(file_pointer);
     }
     Restore_Mouse_State();
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     return size;
 }
 
@@ -228,6 +237,9 @@ int16_t DIR(char * match_string, char * found_file)
 {
     int16_t st_status = 0;
     FILE * file_pointer = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    
     Save_Mouse_State();
     file_pointer = stu_fopen_ci(match_string, "rb");
     if(file_pointer == NULL)
@@ -243,6 +255,9 @@ int16_t DIR(char * match_string, char * found_file)
         st_status = ST_SUCCESS;
     }
     Restore_Mouse_State();
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     return st_status;
 }
 

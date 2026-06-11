@@ -40,6 +40,7 @@
 #include "../MoX/src/MOM_DAT.h"
 #include "../MoX/src/MOX_DAT.h"
 #include "../MoX/src/MOX_DEF.h"
+#include "../MoX/src/DOS.h"
 #include "../MoX/src/MOX_TYPE.h"
 #include "../MoX/src/MOX_T4.h"
 #include "../MoX/src/Fields.h"
@@ -47,14 +48,17 @@
 #include "../MoX/src/LOADSAVE.h"
 #include "../MoX/src/random.h"
 #include "../MoX/src/MOX2.h"  /* CLAUDE: Check_Command_Line_Parameters_() */
+#include "../MoX/src/MOX_SET.h"   /* magic_set.Save_Names[] */
 
 #include "../MoM/src/NewGame.h"
 #include "../MoM/src/MAPGEN.h"
 #include "../MoM/src/INITGAME.h"
 #include "../MoM/src/LoadScr.h"
+#include "../MoM/src/LOADER.h"   /* Load_WZD_Resources */
 #include "../MoM/src/MOM_SCR.h"
+#include "../MoM/src/Settings.h"
+#include "../MoM/src/UNITTYPE.h"
 #include "../MoM/src/WZD_o143.h"  /* Random_City_Name_By_Race */
-#include "../MoX/src/MOX_SET.h"   /* magic_set.Save_Names[] */
 
 #include "ReMoM_Init.h"
 #include "Artificial_Human_Player.h"
@@ -62,6 +66,13 @@
 
 /* _wizard_presets_table is defined in NewGame.c but has no extern in a header */
 extern struct s_WIZARD_PRESET _wizard_presets_table[];
+
+/* NewGame.c */
+// MGC  dseg:309C
+extern char str_MAGIC_SET__ovr050[];
+extern char str_rb__ovr050[];
+extern char str_wb__ovr050[];
+
 
 
 /* HeMoM is always headless — no SDL_main / SDL header pull-in needed. */
@@ -525,17 +536,91 @@ static void HeMoM_Refill_Human_Player_Start_Spells(void)
     }
 }
 
+/*
+This is meant to match the OG-MoM code that finishes main() in MAGIC.EXE
+and launches WIZARDS.EXE.
+Effectively, after a 'New Game', you fall into the 'Continue' program-flow.
+*/
+static void New_Game_Continue(void)
+{
+    /* HACK */  Load_WZD_Resources();
+    Load_SAVE_GAM(8);
+    Loaded_Game_Update();
+    current_screen = scr_Main_Screen;
+}
+static void New_Game_Settings(struct s_HeMoM_Config *cfg)
+{
+    char file_found[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    FILE * file_pointer = 0;
+#ifdef STU_DEBUG
+    struct s_MAGIC_SET magic_set_snapshot;
+#endif
+
+/*
+    BEGIN: Game Settings Load
+*/
+    if((DIR(str_MAGIC_SET__ovr050, file_found) == 0) || (LOF(str_MAGIC_SET__ovr050) == 0))
+    {
+        Set_Default_Game_Settings();
+    }
+    else
+    {
+        file_pointer = stu_fopen_ci(str_MAGIC_SET__ovr050, str_rb__ovr050);
+        fread(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
+        fclose(file_pointer);
+    }
+    if((magic_set.Difficulty < 0) || (magic_set.Difficulty > 4))
+    {
+        magic_set.Difficulty = 0;
+    }
+    if((magic_set.Opponents < 0) || (magic_set.Opponents > 4))
+    {
+        magic_set.Opponents = 1;
+    }
+    if((magic_set.LandSize < 0) || (magic_set.LandSize > 2))
+    {
+        magic_set.LandSize = 0;
+    }
+    if((magic_set.MagicPower < 0) || (magic_set.MagicPower > 2))
+    {
+        magic_set.MagicPower = 0;
+    }
+#ifdef STU_DEBUG
+    DBG_Print_MAGIC_SET("Newgame_Screen_0 after load");
+    memcpy(&magic_set_snapshot, &magic_set, sizeof(struct s_MAGIC_SET));
+#endif
+/*
+    END: Game Settings Load
+*/
+
+    /* ~== Screen Loop */
+    magic_set.Difficulty = cfg->difficulty;
+    magic_set.Opponents  = cfg->opponents;
+    magic_set.LandSize   = cfg->landsize;
+    magic_set.MagicPower = cfg->magic;
+    if(magic_set.Difficulty > god_Impossible) { magic_set.Difficulty = god_Intro; }
+    if(magic_set.Opponents  > goo_Four      ) { magic_set.Opponents  = goo_One;   }
+    if(magic_set.LandSize   > gol_Large     ) { magic_set.LandSize   = gol_Small; }
+    if(magic_set.MagicPower > gom_Powerful  ) { magic_set.MagicPower = gom_Weak;  }
+    /* if(input_field_idx == _ok_button) */
+#ifdef STU_DEBUG
+    DBG_Compare_MAGIC_SET(&magic_set_snapshot, &magic_set, "Newgame_Screen_0 before save");
+#endif
+    file_pointer = stu_fopen_ci(str_MAGIC_SET__ovr050, str_wb__ovr050);
+    stu_fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
+    stu_fclose(file_pointer);
+    _landsize = magic_set.LandSize;  /* ~== NewGame.c  Line 1820 */
+    _magic = magic_set.MagicPower;
+    _num_players = (magic_set.Opponents + 1);
+    _difficulty = magic_set.Difficulty;
+
+}
 static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
 {
     int8_t * wsa_ptr = NULL;
     int itr = 0;
 
     wsa_ptr = &_players[0].alchemy;
-
-    _landsize = cfg->landsize;          /* ~== NewGame.c  Line 1820 */
-    _magic = cfg->magic;                /* ~== NewGame.c  Line 1821 */
-    _num_players = cfg->opponents + 1;  /* ~== NewGame.c  Line 1822 */
-    _difficulty = cfg->difficulty;      /* ~== NewGame.c  Line 1823 */
 
     Human_Player_Wizard_Profile(cfg->wizard_id);  /* ~== Newgame_Screen_1__WIP() Line 2294 */
 
@@ -584,6 +669,10 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
     }
 
     NEWG_Clicked_Race = cfg->race;
+// NEWG_Clicked_Race = Arcanus_Races[itr];
+// LOG_DEBUG(LOG_CAT_GENERAL, "NEWG_Clicked_Race: %d, Arcanus_Races[%d]: %d", NEWG_Clicked_Race, itr, Arcanus_Races[itr]);
+// NEWG_Clicked_Race = Myrran_Races[(itr - 9)];
+// LOG_DEBUG(LOG_CAT_GENERAL, "NEWG_Clicked_Race: %d, Myrran_Races[%d]: %d", NEWG_Clicked_Race, (itr - 9), Myrran_Races[(itr - 9)]);
 
     _players[0].banner_id = (uint8_t)cfg->banner;
 
@@ -598,10 +687,16 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
 #endif
     }
 
-    /* Mirror the ReMoM Screen 0 OK path: Randomize_Book_Heights consumes 66
+    /*
+    Mirror the ReMoM Screen 0 OK path: Randomize_Book_Heights consumes 66
        Random() draws.  Without this, HeMoM enters Init_New_Game with the RNG
        cursor 66 ticks ahead of ReMoM and every downstream world-gen draw
-       diverges.  See doc/Devel-HeMoM-Newgame-Path-Alignment.md. */
+       diverges.  See doc/Devel-HeMoM-Newgame-Path-Alignment.md.
+        This includes the first call to Random().
+        This is the entirety of the code from the 'New Game Screen Functions'
+    */
+    /* Newgame_Screen_0 */
+    New_Game_Settings(cfg);
     Randomize_Book_Heights();
 
     LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Creating new game: difficulty=%d magic=%d landsize=%d opponents=%d wizard=%s race=%d banner=%d seed=%u", cfg->difficulty, cfg->magic, cfg->landsize, cfg->opponents, cfg->wizard_name, cfg->race, cfg->banner, Get_Random_Seed());
@@ -618,28 +713,41 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
     Init_New_Game();
     Initialize_Events();
     Init_Runtime();
+
     Save_SAVE_GAM(8);
 
-    /* Mirror ReMoM's scr_Continue routing after Newgame_Control (MOM_SCR.c:131-134):
-       Load_SAVE_GAM(8) + Loaded_Game_Update().  Load_SAVE_GAM is RNG-neutral but
-       not necessarily a perfect inverse of Save_SAVE_GAM — some in-memory state
-       gets reset to its on-disk shape during load, and PreInit_Overland reads
-       that state.  Round-tripping through the file matches what ReMoM does so
-       the trace can't diverge on save-format subtleties.
-       See doc/Devel-HeMoM-Newgame-Path-Alignment.md §Stage 4. */
-    Load_SAVE_GAM(8);
-    Loaded_Game_Update();
+/*
+    END: MAGIC.EXE
+*/
 
-    // TODO  separate function, mimicing Change_Home_City_Name_Popup()  gated by if --newgame? and turn == 0?
-    /* Mirror the home-city-name popup non-interactively.  Change_Home_City_Name_Popup
-       (CityScr.c:1742) calls Random_City_Name_By_Race first — that is the RNG
-       consumer that must run for trace parity.  Then override with cfg->home_city_name
-       if set, equivalent to the user typing a name into the popup. */
+/*
+    BEGIN: WIZARDS.EXE
+*/
+
+    /* Loaded_Game_Update(), etc. */
+    New_Game_Continue();
+
+    /*
+        MainScr.c
+        Change_Home_City_Name_Popup
+        (CityScr.c:1742) calls Random_City_Name_By_Race first
+        — RNG consumer that must run for trace parity.
+        Then override with cfg->home_city_name if set,
+        equivalent to the user typing a name into the popup.
+    */
     Random_City_Name_By_Race(_CITIES[HUMAN_PLAYER_IDX].race, _CITIES[HUMAN_PLAYER_IDX].name);
     if(cfg->has_home_city_name)
     {
-        stu_strncpy(_CITIES[HUMAN_PLAYER_IDX].name, cfg->home_city_name, LEN_CITY_NAME - 1);
-        _CITIES[HUMAN_PLAYER_IDX].name[LEN_CITY_NAME - 1] = '\0';
+        /* Mirror the keyboard popup: typed chars overwrite the random pre-fill
+           byte-by-byte, Enter places one '\0' at the cursor, bytes past the
+           cursor keep whatever Random_City_Name_By_Race wrote.  stu_strncpy
+           would zero-pad the tail and diverge from ReMoMber's SAVE bytes. */
+        int i;
+        for(i = 0; (i < LEN_CITY_NAME - 1) && (cfg->home_city_name[i] != '\0'); i++)
+        {
+            _CITIES[HUMAN_PLAYER_IDX].name[i] = cfg->home_city_name[i];
+        }
+        _CITIES[HUMAN_PLAYER_IDX].name[i] = '\0';
     }
     _given_chance_to_rename_home_city = ST_TRUE;
 
@@ -650,18 +758,22 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
     {
         if(cfg->has_save_name)
         {
-            stu_strncpy(magic_set.Save_Names[cfg->save_slot],
-                        cfg->save_name, LEN_SAVE_DESCRIPTION - 1);
-            magic_set.Save_Names[cfg->save_slot][LEN_SAVE_DESCRIPTION - 1] = '\0';
+            /* Same keyboard-popup semantics as the home city name above:
+               typed chars overwrite the pre-existing slot name byte-by-byte,
+               Enter writes one '\0' at the cursor, bytes past the cursor
+               keep whatever was there (e.g. residual "----" padding from a
+               prior slot name).  stu_strncpy would zero-pad the tail. */
+            int i;
+            for(i = 0; (i < LEN_SAVE_DESCRIPTION - 1) && (cfg->save_name[i] != '\0'); i++)
+            {
+                magic_set.Save_Names[cfg->save_slot][i] = cfg->save_name[i];
+            }
+            magic_set.Save_Names[cfg->save_slot][i] = '\0';
         }
         Save_SAVE_GAM(cfg->save_slot);
     }
 
-    /* Re-save the continue-save so SAVE9.GAM reflects the named city and any
-       other post-Newgame_Control state.  Matches the quit-auto-save intent
-       at MOM_SCR.c:213 (currently a TODO in ReMoM). */
-    Save_SAVE_GAM(8);
-
+    
     /* Dump structured text representation of the final save file for testing. */
     Game_Save_Dump("SAVE9.GAM", "SAVE9.txt");
     
@@ -926,6 +1038,10 @@ int main(int argc, char *argv[])
         }
 
         LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Loading save: %s (slot %d)", hemom_file, save_slot);
+        /* WIZARDS.EXE-path startup: load WZD resources before Load_SAVE_GAM,
+           mirroring WIZARDS.EXE _main's `Load_WZD_Resources` -> `Load_SAVE_GAM`
+           -> `Loaded_Game_Update` sequence. */
+        Load_WZD_Resources();
         Load_SAVE_GAM(save_slot);
         Loaded_Game_Update();
         current_screen = scr_Main_Screen;
@@ -984,6 +1100,13 @@ int main(int argc, char *argv[])
         LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] Entering Screen_Control()");
         LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] Entering Screen_Control()");
 #endif
+        /* Crossing from MAGIC.EXE-path (--newgame setup) or no-flag init into
+           WIZARDS.EXE-path (gameplay).  Load WZD resources now if mode 2 didn't
+           already (mode 1 + --scenario, or no-flag interactive). */
+        if(hemom_mode != 2)
+        {
+            Load_WZD_Resources();
+        }
         Screen_Control();
 
         LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Screen_Control() returned");

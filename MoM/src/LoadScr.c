@@ -21,6 +21,7 @@ MoO2  Module: LOADSAVE
 #include "../../ext/stu_compat.h"
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
 #include "../../STU/src/STU_TST.h"
 #include "../../STU/src/STU_VLD.h"
 
@@ -63,7 +64,6 @@ MoO2  Module: LOADSAVE
 #include "../../platform/include/Platform.h"  /* CLAUDE: MOUSE_LOG for load screen timestamps */
 
 #include "LoadScr.h"
-#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -974,9 +974,7 @@ void PreInit_Overland(void)
     int16_t itr_cities = 0;
     int16_t itr_players = 0;
 
-#ifdef STU_DEBUG
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: PreInit_Overland()", __FILE__, __LINE__);
-#endif
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 /*
 MoO2
@@ -1034,8 +1032,6 @@ MoO2
         Player_Research_Spells(itr_players);
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-#ifdef STU_DEBUG
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: PreInit_Overland()", __FILE__, __LINE__);
-#endif
 }

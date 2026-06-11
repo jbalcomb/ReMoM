@@ -1,0 +1,416 @@
+# ReMoM Replay Log
+# mode=REPLAY  file=/home/jbalcomb/STU/devel/ReMoM/assets/menu_baseline_seed12345.RMR
+# timestamp=2026-06-08 22:28:20
+#
+PLAY SKIP   1 duplicate frames (idx 0..1)
+idx=1      t=138       mouse=(292,104) btn=0  key=0 sccc=0x0000  elapsed=444  field[1]=(0,0)-(319,199)
+PLAY SKIP   1 duplicate frames (idx 2..3)
+PLAY SKIP   1 duplicate frames (idx 4..5)
+PLAY SKIP   1 duplicate frames (idx 6..7)
+PLAY SKIP   1 duplicate frames (idx 8..9)
+PLAY  idx=1     ..4       mouse=(292,104) btn=0  key=0  (4 frames, no change)
+idx=9      t=1078      mouse=(291,104) btn=0  key=0 sccc=0x0000  elapsed=1104  field[1]=(0,0)-(319,199)
+PLAY  idx=9       mouse=(291,104) btn=0  key=0  (1 frame)
+idx=10     t=1245      mouse=(291,104) btn=1  key=0 sccc=0x0000  elapsed=1270  field[1]=(0,0)-(319,199)
+PLAY CLICK  btn=1 at window=(1164,416) -> game=(291,104)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(291,104)  platform_frame_mouse_buttons=0  mouse_buffer_x=291  mouse_buffer_y=104
+PLAY  idx=10      mouse=(291,104) btn=1  key=0  (1 frame)
+idx=11     t=1245      mouse=(291,104) btn=0  key=0 sccc=0x0000  elapsed=1270  field[1]=(0,0)-(319,199)
+PLAY  idx=11    ..12      mouse=(291,104) btn=0  key=0  (2 frames, no change)
+idx=13     t=1712      mouse=(290,103) btn=0  key=0 sccc=0x0000  elapsed=1733
+PLAY  idx=13    ..14      mouse=(290,103) btn=0  key=0  (2 frames, no change)
+idx=15     t=1934      mouse=(278,103) btn=0  key=0 sccc=0x0000  elapsed=1953
+PLAY SKIP   1 duplicate frames (idx 16..17)
+PLAY  idx=15      mouse=(278,103) btn=0  key=0  (1 frame)
+idx=17     t=2044      mouse=(235,124) btn=0  key=0 sccc=0x0000  elapsed=2063
+PLAY SKIP   1 duplicate frames (idx 18..19)
+PLAY  idx=17      mouse=(235,124) btn=0  key=0  (1 frame)
+idx=19     t=2155      mouse=(230,127) btn=0  key=0 sccc=0x0000  elapsed=2174
+PLAY SKIP   1 duplicate frames (idx 20..21)
+PLAY  idx=19      mouse=(230,127) btn=0  key=0  (1 frame)
+idx=21     t=2264      mouse=(218,141) btn=0  key=0 sccc=0x0000  elapsed=2284
+PLAY SKIP   1 duplicate frames (idx 22..23)
+PLAY  idx=21      mouse=(218,141) btn=0  key=0  (1 frame)
+idx=23     t=2374      mouse=(212,143) btn=0  key=0 sccc=0x0000  elapsed=2394
+PLAY SKIP   1 duplicate frames (idx 24..25)
+PLAY  idx=23      mouse=(212,143) btn=0  key=0  (1 frame)
+idx=25     t=2484      mouse=(191,151) btn=0  key=0 sccc=0x0000  elapsed=2504  field[1]=(108,150)-(211,161)
+PLAY SKIP   1 duplicate frames (idx 26..27)
+PLAY  idx=25      mouse=(191,151) btn=0  key=0  (1 frame)
+idx=27     t=2594      mouse=(183,155) btn=0  key=0 sccc=0x0000  elapsed=2614  field[1]=(108,150)-(211,161)
+PLAY SKIP   1 duplicate frames (idx 28..29)
+PLAY  idx=27      mouse=(183,155) btn=0  key=0  (1 frame)
+idx=29     t=2704      mouse=(173,160) btn=0  key=0 sccc=0x0000  elapsed=2724  field[1]=(108,150)-(211,161)
+PLAY SKIP   1 duplicate frames (idx 30..31)
+PLAY  idx=29      mouse=(173,160) btn=0  key=0  (1 frame)
+idx=31     t=2814      mouse=(164,162) btn=0  key=0 sccc=0x0000  elapsed=2835  field[2]=(108,162)-(211,173)
+PLAY SKIP   1 duplicate frames (idx 32..33)
+PLAY SKIP   1 duplicate frames (idx 34..35)
+PLAY  idx=31    ..32      mouse=(164,162) btn=0  key=0  (2 frames, no change)
+idx=35     t=3036      mouse=(156,167) btn=0  key=0 sccc=0x0000  elapsed=3054  field[2]=(108,162)-(211,173)
+PLAY SKIP   1 duplicate frames (idx 36..37)
+PLAY  idx=35      mouse=(156,167) btn=0  key=0  (1 frame)
+idx=37     t=3146      mouse=(151,169) btn=0  key=0 sccc=0x0000  elapsed=3164  field[2]=(108,162)-(211,173)
+PLAY SKIP   1 duplicate frames (idx 38..39)
+PLAY  idx=37    ..38      mouse=(151,169) btn=0  key=0  (2 frames, no change)
+idx=40     t=3367      mouse=(151,169) btn=1  key=0 sccc=0x0000  elapsed=3384  field[2]=(108,162)-(211,173)
+PLAY CLICK  btn=1 at window=(604,676) -> game=(151,169)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(151,169)  platform_frame_mouse_buttons=0  mouse_buffer_x=151  mouse_buffer_y=169
+PLAY SKIP   3 duplicate frames (idx 41..44)
+PLAY  idx=40      mouse=(151,169) btn=1  key=0  (1 frame)
+idx=44     t=3368      mouse=(151,169) btn=0  key=0 sccc=0x0000  elapsed=3384  field[2]=(108,162)-(211,173)
+PLAY SKIP   1 duplicate frames (idx 46..47)
+PLAY SKIP   1 duplicate frames (idx 48..49)
+PLAY SKIP   1 duplicate frames (idx 50..51)
+PLAY  idx=44    ..47      mouse=(151,169) btn=0  key=0  (4 frames, no change)
+idx=51     t=4091      mouse=(154,167) btn=0  key=0 sccc=0x0000  elapsed=4160
+PLAY SKIP   1 duplicate frames (idx 52..53)
+PLAY  idx=51      mouse=(154,167) btn=0  key=0  (1 frame)
+idx=53     t=4202      mouse=(192,137) btn=0  key=0 sccc=0x0000  elapsed=4271
+PLAY SKIP   1 duplicate frames (idx 54..55)
+PLAY  idx=53      mouse=(192,137) btn=0  key=0  (1 frame)
+idx=55     t=4313      mouse=(197,125) btn=0  key=0 sccc=0x0000  elapsed=4381
+PLAY SKIP   1 duplicate frames (idx 56..57)
+PLAY SKIP   1 duplicate frames (idx 58..59)
+PLAY  idx=55    ..56      mouse=(197,125) btn=0  key=0  (2 frames, no change)
+idx=59     t=4533      mouse=(219,110) btn=0  key=0 sccc=0x0000  elapsed=4601
+PLAY SKIP   1 duplicate frames (idx 60..61)
+PLAY  idx=59      mouse=(219,110) btn=0  key=0  (1 frame)
+idx=61     t=4643      mouse=(227, 99) btn=0  key=0 sccc=0x0000  elapsed=4711
+PLAY SKIP   1 duplicate frames (idx 62..63)
+PLAY  idx=61      mouse=(227, 99) btn=0  key=0  (1 frame)
+idx=63     t=4754      mouse=(228, 93) btn=0  key=0 sccc=0x0000  elapsed=4821
+PLAY SKIP   1 duplicate frames (idx 64..65)
+PLAY  idx=63      mouse=(228, 93) btn=0  key=0  (1 frame)
+idx=65     t=4864      mouse=(229, 90) btn=0  key=0 sccc=0x0000  elapsed=4931
+PLAY SKIP   1 duplicate frames (idx 66..67)
+PLAY SKIP   1 duplicate frames (idx 68..69)
+PLAY  idx=65    ..66      mouse=(229, 90) btn=0  key=0  (2 frames, no change)
+idx=69     t=5086      mouse=(245, 91) btn=0  key=0 sccc=0x0000  elapsed=5151
+PLAY SKIP   1 duplicate frames (idx 70..71)
+PLAY  idx=69      mouse=(245, 91) btn=0  key=0  (1 frame)
+idx=71     t=5196      mouse=(256, 82) btn=0  key=0 sccc=0x0000  elapsed=5261
+PLAY SKIP   1 duplicate frames (idx 72..73)
+PLAY  idx=71      mouse=(256, 82) btn=0  key=0  (1 frame)
+idx=73     t=5308      mouse=(265, 77) btn=0  key=0 sccc=0x0000  elapsed=5371  field[4]=(250,65)-(315,81)
+PLAY  idx=73      mouse=(265, 77) btn=0  key=0  (1 frame)
+idx=74     t=5418      mouse=(265, 77) btn=1  key=0 sccc=0x0000  elapsed=5482  field[4]=(250,65)-(315,81)
+PLAY CLICK  btn=1 at window=(1060,308) -> game=(265,77)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(265,77)  platform_frame_mouse_buttons=0  mouse_buffer_x=265  mouse_buffer_y=77
+PLAY SKIP   5 duplicate frames (idx 75..80)
+PLAY  idx=74      mouse=(265, 77) btn=1  key=0  (1 frame)
+idx=80     t=5473      mouse=(265, 77) btn=0  key=0 sccc=0x0000  elapsed=5482  field[4]=(250,65)-(315,81)
+PLAY SKIP   2 duplicate frames (idx 81..83)
+PLAY SKIP   1 duplicate frames (idx 84..85)
+PLAY SKIP   1 duplicate frames (idx 86..87)
+PLAY  idx=80    ..83      mouse=(265, 77) btn=0  key=0  (4 frames, no change)
+idx=88     t=5915      mouse=(265, 77) btn=1  key=0 sccc=0x0000  elapsed=5978  field[4]=(250,65)-(315,81)
+PLAY CLICK  btn=1 at window=(1060,308) -> game=(265,77)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(265,77)  platform_frame_mouse_buttons=0  mouse_buffer_x=265  mouse_buffer_y=77
+PLAY SKIP   4 duplicate frames (idx 89..93)
+PLAY  idx=88      mouse=(265, 77) btn=1  key=0  (1 frame)
+idx=93     t=5970      mouse=(265, 77) btn=0  key=0 sccc=0x0000  elapsed=5978  field[4]=(250,65)-(315,81)
+PLAY SKIP   1 duplicate frames (idx 94..95)
+PLAY SKIP   1 duplicate frames (idx 96..97)
+PLAY SKIP   1 duplicate frames (idx 98..99)
+PLAY SKIP   1 duplicate frames (idx 100..101)
+PLAY  idx=93    ..97      mouse=(265, 77) btn=0  key=0  (5 frames, no change)
+idx=102    t=6520      mouse=(265, 77) btn=1  key=0 sccc=0x0000  elapsed=6586  field[4]=(250,65)-(315,81)
+PLAY CLICK  btn=1 at window=(1060,308) -> game=(265,77)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(265,77)  platform_frame_mouse_buttons=0  mouse_buffer_x=265  mouse_buffer_y=77
+PLAY  idx=102     mouse=(265, 77) btn=1  key=0  (1 frame)
+idx=103    t=6520      mouse=(265, 77) btn=0  key=0 sccc=0x0000  elapsed=6586  field[4]=(250,65)-(315,81)
+PLAY SKIP   1 duplicate frames (idx 104..105)
+PLAY SKIP   1 duplicate frames (idx 106..107)
+PLAY SKIP   1 duplicate frames (idx 108..109)
+PLAY SKIP   1 duplicate frames (idx 110..111)
+PLAY  idx=103   ..106     mouse=(265, 77) btn=0  key=0  (4 frames, no change)
+idx=111    t=7016      mouse=(264, 95) btn=0  key=0 sccc=0x0000  elapsed=7082  field[5]=(250,92)-(315,108)
+PLAY SKIP   1 duplicate frames (idx 112..113)
+PLAY  idx=111     mouse=(264, 95) btn=0  key=0  (1 frame)
+idx=113    t=7127      mouse=(264,100) btn=0  key=0 sccc=0x0000  elapsed=7192  field[5]=(250,92)-(315,108)
+PLAY SKIP   1 duplicate frames (idx 114..115)
+PLAY  idx=113     mouse=(264,100) btn=0  key=0  (1 frame)
+idx=115    t=7238      mouse=(264,101) btn=0  key=0 sccc=0x0000  elapsed=7302  field[5]=(250,92)-(315,108)
+PLAY  idx=115     mouse=(264,101) btn=0  key=0  (1 frame)
+idx=116    t=7348      mouse=(264,101) btn=1  key=0 sccc=0x0000  elapsed=7414  field[5]=(250,92)-(315,108)
+PLAY CLICK  btn=1 at window=(1056,404) -> game=(264,101)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(264,101)  platform_frame_mouse_buttons=0  mouse_buffer_x=264  mouse_buffer_y=101
+PLAY SKIP   4 duplicate frames (idx 117..121)
+PLAY  idx=116     mouse=(264,101) btn=1  key=0  (1 frame)
+idx=121    t=7405      mouse=(264,101) btn=0  key=0 sccc=0x0000  elapsed=7414  field[5]=(250,92)-(315,108)
+PLAY SKIP   1 duplicate frames (idx 122..123)
+PLAY SKIP   1 duplicate frames (idx 124..125)
+PLAY SKIP   1 duplicate frames (idx 126..127)
+PLAY  idx=121   ..124     mouse=(264,101) btn=0  key=0  (4 frames, no change)
+idx=128    t=7848      mouse=(264,101) btn=1  key=0 sccc=0x0000  elapsed=7909  field[5]=(250,92)-(315,108)
+PLAY CLICK  btn=1 at window=(1056,404) -> game=(264,101)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(264,101)  platform_frame_mouse_buttons=0  mouse_buffer_x=264  mouse_buffer_y=101
+PLAY SKIP   4 duplicate frames (idx 129..133)
+PLAY  idx=128     mouse=(264,101) btn=1  key=0  (1 frame)
+idx=133    t=7903      mouse=(264,101) btn=0  key=0 sccc=0x0000  elapsed=7909  field[5]=(250,92)-(315,108)
+PLAY SKIP   1 duplicate frames (idx 134..135)
+PLAY SKIP   1 duplicate frames (idx 136..137)
+PLAY SKIP   1 duplicate frames (idx 138..139)
+PLAY SKIP   1 duplicate frames (idx 140..141)
+PLAY SKIP   1 duplicate frames (idx 142..143)
+PLAY SKIP   1 duplicate frames (idx 144..145)
+PLAY SKIP   1 duplicate frames (idx 146..147)
+PLAY  idx=133   ..139     mouse=(264,101) btn=0  key=0  (7 frames, no change)
+idx=147    t=8677      mouse=(268,122) btn=0  key=0 sccc=0x0000  elapsed=8738  field[6]=(250,119)-(315,135)
+PLAY  idx=147     mouse=(268,122) btn=0  key=0  (1 frame)
+idx=148    t=8787      mouse=(268,123) btn=0  key=0 sccc=0x0000  elapsed=8849  field[6]=(250,119)-(315,135)
+PLAY  idx=148     mouse=(268,123) btn=0  key=0  (1 frame)
+idx=149    t=8787      mouse=(268,124) btn=0  key=0 sccc=0x0000  elapsed=8849  field[6]=(250,119)-(315,135)
+PLAY SKIP   1 duplicate frames (idx 150..151)
+PLAY  idx=149     mouse=(268,124) btn=0  key=0  (1 frame)
+idx=151    t=8897      mouse=(268,134) btn=0  key=0 sccc=0x0000  elapsed=8960  field[6]=(250,119)-(315,135)
+PLAY  idx=151     mouse=(268,134) btn=0  key=0  (1 frame)
+idx=152    t=9007      mouse=(268,134) btn=1  key=0 sccc=0x0000  elapsed=9070  field[6]=(250,119)-(315,135)
+PLAY CLICK  btn=1 at window=(1072,536) -> game=(268,134)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(268,134)  platform_frame_mouse_buttons=0  mouse_buffer_x=268  mouse_buffer_y=134
+PLAY SKIP   5 duplicate frames (idx 153..158)
+PLAY  idx=152     mouse=(268,134) btn=1  key=0  (1 frame)
+idx=158    t=9064      mouse=(268,134) btn=0  key=0 sccc=0x0000  elapsed=9070  field[6]=(250,119)-(315,135)
+PLAY SKIP   2 duplicate frames (idx 159..161)
+PLAY SKIP   1 duplicate frames (idx 162..163)
+PLAY  idx=158   ..159     mouse=(268,134) btn=0  key=0  (2 frames, no change)
+idx=163    t=9284      mouse=(268,133) btn=0  key=0 sccc=0x0000  elapsed=9347  field[6]=(250,119)-(315,135)
+PLAY SKIP   1 duplicate frames (idx 164..165)
+PLAY SKIP   1 duplicate frames (idx 166..167)
+PLAY  idx=163   ..165     mouse=(268,133) btn=0  key=0  (3 frames, no change)
+idx=168    t=9615      mouse=(268,133) btn=1  key=0 sccc=0x0000  elapsed=9678  field[6]=(250,119)-(315,135)
+PLAY CLICK  btn=1 at window=(1072,532) -> game=(268,133)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(268,133)  platform_frame_mouse_buttons=0  mouse_buffer_x=268  mouse_buffer_y=133
+PLAY SKIP   4 duplicate frames (idx 169..173)
+PLAY  idx=168     mouse=(268,133) btn=1  key=0  (1 frame)
+idx=173    t=9670      mouse=(268,133) btn=0  key=0 sccc=0x0000  elapsed=9678  field[6]=(250,119)-(315,135)
+PLAY SKIP   1 duplicate frames (idx 174..175)
+PLAY SKIP   1 duplicate frames (idx 176..177)
+PLAY  idx=173   ..175     mouse=(268,133) btn=0  key=0  (3 frames, no change)
+idx=178    t=10002     mouse=(268,133) btn=1  key=0 sccc=0x0000  elapsed=10064  field[6]=(250,119)-(315,135)
+PLAY CLICK  btn=1 at window=(1072,532) -> game=(268,133)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(268,133)  platform_frame_mouse_buttons=0  mouse_buffer_x=268  mouse_buffer_y=133
+PLAY SKIP   5 duplicate frames (idx 179..184)
+PLAY  idx=178     mouse=(268,133) btn=1  key=0  (1 frame)
+idx=184    t=10057     mouse=(268,133) btn=0  key=0 sccc=0x0000  elapsed=10064  field[6]=(250,119)-(315,135)
+PLAY SKIP   2 duplicate frames (idx 185..187)
+PLAY SKIP   1 duplicate frames (idx 188..189)
+PLAY  idx=184   ..186     mouse=(268,133) btn=0  key=0  (3 frames, no change)
+idx=190    t=10443     mouse=(268,133) btn=1  key=0 sccc=0x0000  elapsed=10450  field[6]=(250,119)-(315,135)
+PLAY CLICK  btn=1 at window=(1072,532) -> game=(268,133)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(268,133)  platform_frame_mouse_buttons=0  mouse_buffer_x=268  mouse_buffer_y=133
+PLAY SKIP   3 duplicate frames (idx 191..194)
+PLAY  idx=190     mouse=(268,133) btn=1  key=0  (1 frame)
+idx=194    t=10443     mouse=(268,133) btn=0  key=0 sccc=0x0000  elapsed=10450  field[6]=(250,119)-(315,135)
+PLAY SKIP   2 duplicate frames (idx 195..197)
+PLAY SKIP   1 duplicate frames (idx 198..199)
+PLAY SKIP   1 duplicate frames (idx 200..201)
+PLAY  idx=194   ..197     mouse=(268,133) btn=0  key=0  (4 frames, no change)
+idx=202    t=10939     mouse=(268,133) btn=1  key=0 sccc=0x0000  elapsed=10946  field[6]=(250,119)-(315,135)
+PLAY CLICK  btn=1 at window=(1072,532) -> game=(268,133)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(268,133)  platform_frame_mouse_buttons=0  mouse_buffer_x=268  mouse_buffer_y=133
+PLAY SKIP   3 duplicate frames (idx 203..206)
+PLAY  idx=202     mouse=(268,133) btn=1  key=0  (1 frame)
+idx=206    t=10939     mouse=(268,133) btn=0  key=0 sccc=0x0000  elapsed=10946  field[6]=(250,119)-(315,135)
+PLAY SKIP   2 duplicate frames (idx 207..209)
+PLAY SKIP   1 duplicate frames (idx 210..211)
+PLAY  idx=206   ..208     mouse=(268,133) btn=0  key=0  (3 frames, no change)
+idx=212    t=11325     mouse=(268,133) btn=1  key=0 sccc=0x0000  elapsed=11332  field[6]=(250,119)-(315,135)
+PLAY CLICK  btn=1 at window=(1072,532) -> game=(268,133)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(268,133)  platform_frame_mouse_buttons=0  mouse_buffer_x=268  mouse_buffer_y=133
+PLAY SKIP   3 duplicate frames (idx 213..216)
+PLAY  idx=212     mouse=(268,133) btn=1  key=0  (1 frame)
+idx=216    t=11326     mouse=(268,133) btn=0  key=0 sccc=0x0000  elapsed=11333  field[6]=(250,119)-(315,135)
+PLAY SKIP   2 duplicate frames (idx 217..219)
+PLAY SKIP   1 duplicate frames (idx 220..221)
+PLAY  idx=216   ..218     mouse=(268,133) btn=0  key=0  (3 frames, no change)
+idx=222    t=11714     mouse=(268,133) btn=1  key=0 sccc=0x0000  elapsed=11718  field[6]=(250,119)-(315,135)
+PLAY CLICK  btn=1 at window=(1072,532) -> game=(268,133)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(268,133)  platform_frame_mouse_buttons=0  mouse_buffer_x=268  mouse_buffer_y=133
+PLAY SKIP   3 duplicate frames (idx 223..226)
+PLAY  idx=222     mouse=(268,133) btn=1  key=0  (1 frame)
+idx=226    t=11714     mouse=(268,133) btn=0  key=0 sccc=0x0000  elapsed=11718  field[6]=(250,119)-(315,135)
+PLAY SKIP   2 duplicate frames (idx 227..229)
+PLAY SKIP   1 duplicate frames (idx 230..231)
+PLAY SKIP   1 duplicate frames (idx 232..233)
+PLAY SKIP   1 duplicate frames (idx 234..235)
+PLAY SKIP   1 duplicate frames (idx 236..237)
+PLAY  idx=226   ..230     mouse=(268,133) btn=0  key=0  (5 frames, no change)
+idx=237    t=12323     mouse=(268,134) btn=0  key=0 sccc=0x0000  elapsed=12324  field[6]=(250,119)-(315,135)
+PLAY SKIP   1 duplicate frames (idx 238..239)
+PLAY  idx=237     mouse=(268,134) btn=0  key=0  (1 frame)
+idx=239    t=12434     mouse=(270,157) btn=0  key=0 sccc=0x0000  elapsed=12434
+PLAY SKIP   1 duplicate frames (idx 240..241)
+PLAY SKIP   1 duplicate frames (idx 242..243)
+PLAY SKIP   1 duplicate frames (idx 244..245)
+PLAY  idx=239   ..242     mouse=(270,157) btn=0  key=0  (4 frames, no change)
+idx=246    t=12875     mouse=(272,172) btn=0  key=0 sccc=0x0000  elapsed=12875
+PLAY  idx=246     mouse=(272,172) btn=0  key=0  (1 frame)
+idx=247    t=12875     mouse=(272,173) btn=0  key=0 sccc=0x0000  elapsed=12875
+PLAY SKIP   1 duplicate frames (idx 248..249)
+PLAY  idx=247     mouse=(272,173) btn=0  key=0  (1 frame)
+idx=249    t=12985     mouse=(272,175) btn=0  key=0 sccc=0x0000  elapsed=12985
+PLAY SKIP   1 duplicate frames (idx 250..251)
+PLAY  idx=249     mouse=(272,175) btn=0  key=0  (1 frame)
+idx=251    t=13097     mouse=(272,179) btn=0  key=0 sccc=0x0000  elapsed=13097  field[1]=(252,179)-(315,194)
+PLAY SKIP   1 duplicate frames (idx 252..253)
+PLAY  idx=251     mouse=(272,179) btn=0  key=0  (1 frame)
+idx=253    t=13208     mouse=(272,181) btn=0  key=0 sccc=0x0000  elapsed=13317  field[1]=(252,179)-(315,194)
+PLAY SKIP   1 duplicate frames (idx 254..255)
+PLAY  idx=253     mouse=(272,181) btn=0  key=0  (1 frame)
+idx=255    t=13318     mouse=(272,182) btn=0  key=0 sccc=0x0000  elapsed=13427  field[1]=(252,179)-(315,194)
+PLAY SKIP   1 duplicate frames (idx 256..257)
+PLAY  idx=255     mouse=(272,182) btn=0  key=0  (1 frame)
+idx=257    t=13428     mouse=(273,184) btn=0  key=0 sccc=0x0000  elapsed=13537  field[1]=(252,179)-(315,194)
+PLAY SKIP   1 duplicate frames (idx 258..259)
+PLAY  idx=257   ..258     mouse=(273,184) btn=0  key=0  (2 frames, no change)
+idx=260    t=13648     mouse=(273,184) btn=1  key=0 sccc=0x0000  elapsed=13757  field[1]=(252,179)-(315,194)
+PLAY CLICK  btn=1 at window=(1092,736) -> game=(273,184)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(273,184)  platform_frame_mouse_buttons=0  mouse_buffer_x=273  mouse_buffer_y=184
+PLAY SKIP   5 duplicate frames (idx 261..266)
+PLAY  idx=260     mouse=(273,184) btn=1  key=0  (1 frame)
+idx=266    t=13705     mouse=(273,184) btn=0  key=0 sccc=0x0000  elapsed=13757  field[1]=(252,179)-(315,194)
+PLAY SKIP   1 duplicate frames (idx 268..269)
+PLAY SKIP   1 duplicate frames (idx 270..271)
+PLAY SKIP   1 duplicate frames (idx 272..273)
+PLAY SKIP   1 duplicate frames (idx 274..275)
+PLAY  idx=266   ..270     mouse=(273,184) btn=0  key=0  (5 frames, no change)
+idx=275    t=14256     mouse=(272,187) btn=0  key=0 sccc=0x0000  elapsed=14365
+PLAY  idx=275     mouse=(272,187) btn=0  key=0  (1 frame)
+idx=276    t=14367     mouse=(272,187) btn=1  key=0 sccc=0x0000  elapsed=14476
+PLAY CLICK  btn=1 at window=(1088,748) -> game=(272,187)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(272,187)  platform_frame_mouse_buttons=0  mouse_buffer_x=272  mouse_buffer_y=187
+PLAY SKIP   1 duplicate frames (idx 277..278)
+PLAY  idx=276     mouse=(272,187) btn=1  key=0  (1 frame)
+idx=278    t=14422     mouse=(272,187) btn=0  key=0 sccc=0x0000  elapsed=14476
+PLAY  idx=278     mouse=(272,187) btn=0  key=0  (1 frame)
+idx=279    t=14533     mouse=(261,186) btn=0  key=0 sccc=0x0000  elapsed=14586
+PLAY SKIP   1 duplicate frames (idx 280..281)
+PLAY  idx=279     mouse=(261,186) btn=0  key=0  (1 frame)
+idx=281    t=14643     mouse=(251,189) btn=0  key=0 sccc=0x0000  elapsed=14696
+PLAY SKIP   1 duplicate frames (idx 282..283)
+PLAY  idx=281     mouse=(251,189) btn=0  key=0  (1 frame)
+idx=283    t=14754     mouse=(238,190) btn=0  key=0 sccc=0x0000  elapsed=14806
+PLAY SKIP   1 duplicate frames (idx 284..285)
+PLAY  idx=283     mouse=(238,190) btn=0  key=0  (1 frame)
+idx=285    t=14865     mouse=(227,183) btn=0  key=0 sccc=0x0000  elapsed=14917
+PLAY SKIP   1 duplicate frames (idx 286..287)
+PLAY  idx=285     mouse=(227,183) btn=0  key=0  (1 frame)
+idx=287    t=14975     mouse=(222,174) btn=0  key=0 sccc=0x0000  elapsed=15028  field[7]=(168,158)-(237,174)
+PLAY SKIP   1 duplicate frames (idx 288..289)
+PLAY  idx=287     mouse=(222,174) btn=0  key=0  (1 frame)
+idx=289    t=15086     mouse=(220,171) btn=0  key=0 sccc=0x0000  elapsed=15139  field[7]=(168,158)-(237,174)
+PLAY  idx=289     mouse=(220,171) btn=0  key=0  (1 frame)
+idx=290    t=15196     mouse=(220,171) btn=1  key=0 sccc=0x0000  elapsed=15249  field[7]=(168,158)-(237,174)
+PLAY CLICK  btn=1 at window=(880,684) -> game=(220,171)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(220,171)  platform_frame_mouse_buttons=0  mouse_buffer_x=220  mouse_buffer_y=171
+PLAY  idx=290     mouse=(220,171) btn=1  key=0  (1 frame)
+idx=291    t=15196     mouse=(220,171) btn=0  key=0 sccc=0x0000  elapsed=15249  field[7]=(168,158)-(237,174)
+PLAY  idx=291   ..293     mouse=(220,171) btn=0  key=0  (3 frames, no change)
+idx=294    t=15365     mouse=(220,173) btn=0  key=0 sccc=0x0000  elapsed=15416
+PLAY  idx=294     mouse=(220,173) btn=0  key=0  (1 frame)
+idx=295    t=15420     mouse=(220,178) btn=0  key=0 sccc=0x0000  elapsed=15472
+PLAY  idx=295     mouse=(220,178) btn=0  key=0  (1 frame)
+idx=296    t=15475     mouse=(219,180) btn=0  key=0 sccc=0x0000  elapsed=15527
+PLAY  idx=296     mouse=(219,180) btn=0  key=0  (1 frame)
+idx=297    t=15530     mouse=(219,181) btn=0  key=0 sccc=0x0000  elapsed=15582
+PLAY  idx=297   ..298     mouse=(219,181) btn=0  key=0  (2 frames, no change)
+idx=299    t=15641     mouse=(219,181) btn=1  key=0 sccc=0x0000  elapsed=15693
+PLAY CLICK  btn=1 at window=(876,724) -> game=(219,181)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(219,181)  platform_frame_mouse_buttons=0  mouse_buffer_x=219  mouse_buffer_y=181
+PLAY SKIP   3394 duplicate frames (idx 300..3694)
+PLAY  idx=299     mouse=(219,181) btn=1  key=0  (1 frame)
+idx=3694   t=15678     mouse=(219,181) btn=0  key=0 sccc=0x0000  elapsed=15693
+PLAY SKIP   1 duplicate frames (idx 3695..3696)
+PLAY SKIP   1 duplicate frames (idx 3697..3698)
+PLAY SKIP   1 duplicate frames (idx 3699..3700)
+PLAY  idx=3694  ..3696    mouse=(219,181) btn=0  key=0  (3 frames, no change)
+idx=3700   t=16009     mouse=(221,164) btn=0  key=0 sccc=0x0000  elapsed=16026  field[11]=(211,157)-(270,164)
+PLAY SKIP   1 duplicate frames (idx 3701..3702)
+PLAY  idx=3700    mouse=(221,164) btn=0  key=0  (1 frame)
+idx=3702   t=16120     mouse=(224,121) btn=0  key=0 sccc=0x0000  elapsed=16137  field[9]=(211,118)-(270,125)
+PLAY SKIP   1 duplicate frames (idx 3703..3704)
+PLAY  idx=3702    mouse=(224,121) btn=0  key=0  (1 frame)
+idx=3704   t=16231     mouse=(216,101) btn=0  key=0 sccc=0x0000  elapsed=16246  field[7]=(211,98)-(270,105)
+PLAY SKIP   1 duplicate frames (idx 3705..3706)
+PLAY  idx=3704    mouse=(216,101) btn=0  key=0  (1 frame)
+idx=3706   t=16341     mouse=(211, 96) btn=0  key=0 sccc=0x0000  elapsed=16356
+PLAY SKIP   1 duplicate frames (idx 3707..3708)
+PLAY  idx=3706    mouse=(211, 96) btn=0  key=0  (1 frame)
+idx=3708   t=16451     mouse=(197, 76) btn=0  key=0 sccc=0x0000  elapsed=16466
+PLAY SKIP   1 duplicate frames (idx 3709..3710)
+PLAY  idx=3708    mouse=(197, 76) btn=0  key=0  (1 frame)
+idx=3710   t=16562     mouse=(199, 71) btn=0  key=0 sccc=0x0000  elapsed=16576
+PLAY SKIP   1 duplicate frames (idx 3711..3712)
+PLAY  idx=3710    mouse=(199, 71) btn=0  key=0  (1 frame)
+idx=3712   t=16673     mouse=(199, 54) btn=0  key=0 sccc=0x0000  elapsed=16686
+PLAY SKIP   1 duplicate frames (idx 3713..3714)
+PLAY  idx=3712    mouse=(199, 54) btn=0  key=0  (1 frame)
+idx=3714   t=16784     mouse=(199, 50) btn=0  key=0 sccc=0x0000  elapsed=16796
+PLAY SKIP   1 duplicate frames (idx 3715..3716)
+PLAY  idx=3714    mouse=(199, 50) btn=0  key=0  (1 frame)
+idx=3716   t=16894     mouse=(198, 44) btn=0  key=0 sccc=0x0000  elapsed=16906
+PLAY SKIP   1 duplicate frames (idx 3717..3718)
+PLAY  idx=3716    mouse=(198, 44) btn=0  key=0  (1 frame)
+idx=3718   t=17004     mouse=(197, 41) btn=0  key=0 sccc=0x0000  elapsed=17016
+PLAY SKIP   1 duplicate frames (idx 3719..3720)
+PLAY  idx=3718    mouse=(197, 41) btn=0  key=0  (1 frame)
+idx=3720   t=17114     mouse=(194, 34) btn=0  key=0 sccc=0x0000  elapsed=17126
+PLAY SKIP   1 duplicate frames (idx 3721..3722)
+PLAY  idx=3720    mouse=(194, 34) btn=0  key=0  (1 frame)
+idx=3722   t=17224     mouse=(193, 32) btn=0  key=0 sccc=0x0000  elapsed=17236
+PLAY SKIP   1 duplicate frames (idx 3723..3724)
+PLAY SKIP   1 duplicate frames (idx 3725..3726)
+PLAY  idx=3722  ..3723    mouse=(193, 32) btn=0  key=0  (2 frames, no change)
+idx=3726   t=17446     mouse=(192, 35) btn=0  key=0 sccc=0x0000  elapsed=17456
+PLAY SKIP   1 duplicate frames (idx 3727..3728)
+PLAY  idx=3726    mouse=(192, 35) btn=0  key=0  (1 frame)
+idx=3728   t=17556     mouse=(192, 36) btn=0  key=0 sccc=0x0000  elapsed=17566
+PLAY  idx=3728    mouse=(192, 36) btn=0  key=0  (1 frame)
+idx=3729   t=17666     mouse=(192, 36) btn=1  key=0 sccc=0x0000  elapsed=17677
+PLAY CLICK  btn=1 at window=(768,144) -> game=(192,36)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(192,36)  platform_frame_mouse_buttons=0  mouse_buffer_x=192  mouse_buffer_y=36
+PLAY SKIP   3 duplicate frames (idx 3730..3733)
+PLAY  idx=3729    mouse=(192, 36) btn=1  key=0  (1 frame)
+idx=3733   t=17666     mouse=(192, 36) btn=0  key=0 sccc=0x0000  elapsed=17677
+PLAY SKIP   1 duplicate frames (idx 3735..3736)
+PLAY SKIP   1 duplicate frames (idx 3737..3738)
+PLAY SKIP   1 duplicate frames (idx 3739..3740)
+PLAY  idx=3733  ..3736    mouse=(192, 36) btn=0  key=0  (4 frames, no change)
+idx=3740   t=18052     mouse=(202, 48) btn=0  key=0 sccc=0x0000  elapsed=18118
+PLAY SKIP   1 duplicate frames (idx 3741..3742)
+PLAY  idx=3740    mouse=(202, 48) btn=0  key=0  (1 frame)
+idx=3742   t=18162     mouse=(208, 58) btn=0  key=0 sccc=0x0000  elapsed=18228
+PLAY SKIP   1 duplicate frames (idx 3743..3744)
+PLAY  idx=3742    mouse=(208, 58) btn=0  key=0  (1 frame)
+idx=3744   t=18272     mouse=(210, 63) btn=0  key=0 sccc=0x0000  elapsed=18338
+PLAY SKIP   1 duplicate frames (idx 3745..3746)
+PLAY  idx=3744    mouse=(210, 63) btn=0  key=0  (1 frame)
+idx=3746   t=18383     mouse=(210, 64) btn=0  key=0 sccc=0x0000  elapsed=18448
+PLAY SKIP   1 duplicate frames (idx 3747..3748)
+PLAY  idx=3746    mouse=(210, 64) btn=0  key=0  (1 frame)
+idx=3748   t=18493     mouse=(209, 66) btn=0  key=0 sccc=0x0000  elapsed=18559
+PLAY  idx=3748    mouse=(209, 66) btn=0  key=0  (1 frame)
+idx=3749   t=18603     mouse=(209, 66) btn=1  key=0 sccc=0x0000  elapsed=18670
+PLAY CLICK  btn=1 at window=(836,264) -> game=(209,66)  mouse_enabled=0  mouse_interrupt_active=0
+PLAY AFTER  pointer=(209,66)  platform_frame_mouse_buttons=0  mouse_buffer_x=209  mouse_buffer_y=66
+PLAY  idx=3749    mouse=(209, 66) btn=1  key=0  (1 frame)
+idx=3750   t=18603     mouse=(209, 66) btn=0  key=0 sccc=0x0000  elapsed=18670
+PLAY SKIP   1 duplicate frames (idx 3751..3752)
+PLAY  idx=3750    mouse=(209, 66) btn=0  key=0  (1 frame)
+idx=3752   t=18769     mouse=(209, 79) btn=0  key=0 sccc=0x0000  elapsed=18780
+PLAY SKIP   1 duplicate frames (idx 3753..3754)
+PLAY  idx=3752    mouse=(209, 79) btn=0  key=0  (1 frame)
+idx=3754   t=18879     mouse=(209, 86) btn=0  key=0 sccc=0x0000  elapsed=18890
+PLAY SKIP   1 duplicate frames (idx 3755..3756)
+PLAY  idx=3754    mouse=(209, 86) btn=0  key=0  (1 frame)
+idx=3756   t=18990     mouse=(209,101) btn=0  key=0 sccc=0x0000  elapsed=19000
+PLAY SKIP   1 duplicate frames (idx 3757..3758)
+PLAY  idx=3756    mouse=(209,101) btn=0  key=0  (1 frame)
+idx=3758   t=19100     mouse=(209,105) btn=0  key=0 sccc=0x0000  elapsed=19110
+PLAY SKIP   1 duplicate frames (idx 3759..3760)
+PLAY  idx=3758    mouse=(209,105) btn=0  key=0  (1 frame)
+idx=3760   t=19212     mouse=(209,111) btn=0  key=0 sccc=0x0000  elapsed=19220
+PLAY SKIP   1 duplicate frames (idx 3761..3762)
+P

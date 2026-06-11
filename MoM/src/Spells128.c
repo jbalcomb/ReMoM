@@ -56,8 +56,9 @@ int16_t Player_Research_Spells(int16_t player_idx)
     int16_t spells_cnt = 0;
     int16_t research_list_idx = 0;
     int16_t spells_max = 0;
-    int16_t itr = 0; // _SI_
+    int16_t itr = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     spells_max = NUM_RESEARCH_SPELLS;
 
@@ -203,6 +204,8 @@ int16_t Player_Research_Spells(int16_t player_idx)
         }
 
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     return spells_cnt;
     

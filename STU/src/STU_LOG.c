@@ -44,7 +44,13 @@
 #define LOG_FILE_NEW         "remom_log_new.txt"
 #define LOG_FILE_CURRENT     "remom_log_current.txt"
 #define LOG_FILE_PREVIOUS    "remom_log_previous.txt"
-#define LOG_N_CATEGORIES     46
+#define LOG_N_CATEGORIES     47
+
+/* CALL_TRACE rng-call ordinal.  Definition lives here in libSTU so the
+   stu_compat.h CALL_TRACE wrappers (part of libSTU via stu_compat.c) link
+   cleanly even in libSTU-only targets like test_STU.  Random_at() in
+   MoX/src/random.c increments it via the extern declaration in random.h. */
+uint64_t g_random_call_count = 0;
 
 static char   log_ring[LOG_RING_SIZE];
 static size_t log_head = 0;
@@ -118,7 +124,8 @@ static const char * const log_cat_str[] = {
     "RANDOM                 ",
     "EXIT                   ",
     "FONTS                  ",
-    "MOX2                   "
+    "MOX2                   ",
+    "CALL_TRACE             "
 };
 
 static const char * const log_cat_ini_key[] = {
@@ -167,7 +174,8 @@ static const char * const log_cat_ini_key[] = {
     "RANDOM",
     "EXIT",
     "FONTS",
-    "MOX2"
+    "MOX2",
+    "CALL_TRACE"
 };
 
 static void STU_Log_Config_Set_Defaults(void)

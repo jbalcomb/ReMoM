@@ -56,6 +56,7 @@
 
 #include "LBX_Load.h"
 #include "../../STU/src/STU_LOG.h"
+#include "random.h"  /* g_random_call_count for CALL_TRACE */
 
 
 
@@ -990,5 +991,7 @@ void File_Name_Base(char * file_name)
 // AKA  RAM_SetMinKB()
 void RAM_Set_Minimum(int16_t amount)
 {
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
     RAM_MinKbytes = amount;
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 }

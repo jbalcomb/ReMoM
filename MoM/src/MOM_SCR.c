@@ -1,6 +1,7 @@
 
 // #ifdef STU_DEBUG
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
 #include "../../STU/src/STU_PRN.h"
 // #endif
 
@@ -24,6 +25,7 @@
 #include "Combat.h"
 #include "DIPLOMAC.h"
 #include "ItemScrn.h"
+#include "LOADER.h"
 #include "LoadScr.h"
 #include "MainMenu.h"
 #include "MagicScr.h"
@@ -36,12 +38,13 @@
 #include "SCORE.h"      // Hall Of Fame (HoF)
 #include "SPLMASTR.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <stdio.h>
 
 #include "../../platform/include/Platform.h"  /* CLAUDE: MOUSE_LOG for screen transition timestamps */
 
 #include "MOM_SCR.h"
-#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -129,6 +132,7 @@ void Screen_Control(void)
                 // MGC  Stop_Music__STUB()
                 // MGC  j_GAME_WizardsLaunch__WIP(e_SAVE9GAM)
                 // /* HACK */ Load_SAVE_GAM(-1);  // SAVETEST.GAM
+                /* HACK */  Load_WZD_Resources();
                 Load_SAVE_GAM(8);
                 Loaded_Game_Update();
                 current_screen = scr_Main_Screen;

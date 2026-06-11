@@ -2,9 +2,9 @@
     WIZARDS.EXE
         ovr143
 */
-#ifdef STU_DEBUG
+
 #include "../../STU/src/STU_DBG.h"
-#endif
+#include "../../STU/src/STU_LOG.h"
 
 #include "../../ext/stu_compat.h"
 
@@ -249,6 +249,8 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
     /* HACK */ char hack_new_name[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     /* HACK */ char * city_names_buffer_ptr = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     city_names_buffer = (char *)Near_Allocate_First(280);
 
     LBX_Load_Data_Static(cityname_lbx_file__ovr143, 0, (SAMB_ptr)city_names_buffer, race_idx, 1, 280);
@@ -292,6 +294,8 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
     city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
     stu_strcpy(name, city_names_buffer_ptr);
     
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
 }
 
 

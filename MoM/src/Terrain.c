@@ -7,13 +7,16 @@
     Terrain Type Attributes
 */
 
-#include "CITYCALC.h"
+#include "../../STU/src/STU_LOG.h"
+
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_BITS.h"
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_TYPE.h"
-
+#include "../../MoX/src/random.h"
 #include "../../MoX/src/Util.h"
+
+#include "CITYCALC.h"
 #include "TerrType.h"
 #include "Terrain.h"
 
@@ -321,8 +324,10 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
 */
 int16_t Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have_gaias_blessing)
 {
-    uint16_t terrain_type;  // _SI_
-    int16_t production_bonus;  // _DI_
+    uint16_t terrain_type = 0;
+    int16_t production_bonus = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
@@ -396,6 +401,8 @@ int16_t Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have
         // HERE:  Above last range that has any production bonus
         production_bonus = 0;
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     return production_bonus;
 }

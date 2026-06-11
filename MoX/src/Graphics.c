@@ -15,6 +15,9 @@ Module: shear
 #include "MOX_TYPE.h"
 
 #include "Graphics.h"
+#include "random.h"  /* g_random_call_count for CALL_TRACE */
+
+#include "../../STU/src/STU_LOG.h"  /* CALL_TRACE */
 
 
 
@@ -705,11 +708,13 @@ void Gradient_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t fill_
 */
 void DOS_PrintString__STUB(char * string)
 {
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 // mov     _SI_string, [bp+string]
 // mov     dx, [bp+string]
 // mov     ah, 9
 // int     21h                             ; DOS - PRINT STRING
 //                                         ; DS:DX -> string terminated by "$"
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 }
 
 

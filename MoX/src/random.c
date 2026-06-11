@@ -31,10 +31,11 @@ MoO2
 
 uint32_t random_seed = 0x35683568;  /* 896021864d  00110101011010000011010101101000b */
 
-/* CLAUDE: diagnostic — counts every call to Random() since process start.  Used to
-   investigate whether the RNG-state divergence between supposedly-deterministic
-   runs is caused by different numbers of calls, not different seed handling. */
-uint64_t g_random_call_count = 0;
+/* CLAUDE: g_random_call_count -- counts every call to Random() since process
+   start.  Definition moved to STU/src/STU_LOG.c so libSTU is self-contained
+   (stu_compat.h's CALL_TRACE wrappers reference the counter, and stu_compat.c
+   is part of libSTU).  Random_at() in this TU still increments the counter
+   via the extern declaration in random.h. */
 
 /* CLAUDE: _cmd_line_seed moved to MoX/src/MOX2.c.  In MoO2 SimTex declared it
    in the MOX2 module alongside Check_Command_Line_Parameters_(); we mirror
@@ -57,6 +58,8 @@ int16_t Get_Weighted_Choice(int16_t * weight_array, int16_t weight_count)
     int16_t weight_remainder = 0;
     int16_t j = 0;
     int16_t max_weight = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 restart_sum:
     max_weight = 0;
@@ -93,6 +96,8 @@ restart_sum:
         choice++;
         weight_remainder -= weight_array[choice];
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     return choice;
 }

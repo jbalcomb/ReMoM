@@ -4,8 +4,10 @@
 #include "MOX_TYPE.h"
 #include "Timer.h"
 #include "Video.h"
+#include "random.h"  /* g_random_call_count for CALL_TRACE */
 
 #include "../../platform/include/Platform.h"
+#include "../../STU/src/STU_LOG.h"  /* CALL_TRACE */
 
 #include <stdbool.h>
 
@@ -31,9 +33,11 @@ static uint64_t timer_frame_count;
 // ui_delay_prepare()
 void Mark_Time(void)
 {
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
     timer_ticks_mark_time = Platform_Get_Millies();
 
     delay_start = Read_System_Clock_Timer();
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 }
 
 // WZD s02p02
@@ -74,6 +78,8 @@ void Release_Time(int ticks)
 
     uint64_t tick_end;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     tick_end = timer_ticks_mark_time + (ticks * PLATFORM_MILLISECONDS_PER_FRAME);  /* ~ IBM-PC - 55 ms per BIOS timer tick */
 
     while(Platform_Get_Millies() < tick_end)
@@ -83,6 +89,8 @@ void Release_Time(int ticks)
     }
 
     timer_frame_count += ticks;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 }
 
 // ui_delay_us_or_click()

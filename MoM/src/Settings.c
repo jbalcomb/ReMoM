@@ -38,6 +38,7 @@ MoO2
 
 #include "Settings.h"
 #include "../../STU/src/STU_LOG.h"
+#include "../../MoX/src/random.h"  /* g_random_call_count for CALL_TRACE */
 
 
 
@@ -579,6 +580,8 @@ void Load_MAGIC_SET(void)
     FILE * file_pointer = 0;
     int16_t itr = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     if(
         (DIR("MAGIC.SET", found_file) == ST_FAILURE)
         ||
@@ -588,14 +591,14 @@ void Load_MAGIC_SET(void)
         // STU_DEBUG_BREAK();
         Set_Default_Game_Settings();
         file_pointer = stu_fopen_ci("MAGIC.SET","wb");
-        fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
+        stu_fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
     }
     else
     {
         file_pointer = stu_fopen_ci("MAGIC.SET","rb");
-        fread(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
+        stu_fread(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
     }
-    fclose(file_pointer);
+    stu_fclose(file_pointer);
 
 
     if(magic_set.movement_animations != ST_FALSE) { magic_set.movement_animations = ST_TRUE; }
@@ -613,9 +616,11 @@ void Load_MAGIC_SET(void)
     }
 
     file_pointer = stu_fopen_ci("MAGIC.SET","wb");
-    fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
-    fclose(file_pointer);
+    stu_fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
+    stu_fclose(file_pointer);
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    
 }
 
 
